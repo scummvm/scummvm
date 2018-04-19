@@ -27,6 +27,7 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace U1Gfx {
 
 /**
  * Displays the total hits, food, experience, and coins you have
@@ -44,6 +45,7 @@ public:
 	virtual void draw();
 };
 
+} // End of namespace U1Gfx
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

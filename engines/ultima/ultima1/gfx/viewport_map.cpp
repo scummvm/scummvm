@@ -24,6 +24,7 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace U1Gfx {
 
 ViewportMap::ViewportMap(TreeItem *parent) : Shared::ViewportMap(parent) {
 	_sprites.load("t1ktiles.bin", 4);
@@ -31,5 +32,6 @@ ViewportMap::ViewportMap(TreeItem *parent) : Shared::ViewportMap(parent) {
 	_sprites.load("t1ktown.bin", 4, 100);
 }
 
+} // End of namespace U1Gfx
 } // End of namespace Ultima1
 } // End of namespace Ultima

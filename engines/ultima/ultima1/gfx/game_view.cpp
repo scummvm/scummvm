@@ -30,6 +30,7 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace U1Gfx {
 
 GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
 	_info = new Shared::Info(this);
@@ -52,5 +53,6 @@ void GameView::draw() {
 	Shared::Gfx::VisualContainer::draw();
 }
 
+} // End of namespace U1Gfx
 } // End of namespace Shared
 } // End of namespace Ultima

@@ -27,6 +27,7 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace U1Gfx {
 
 EMPTY_MESSAGE_MAP(Status, Shared::Gfx::VisualItem);
 
@@ -49,5 +50,6 @@ void Status::draw() {
 	}
 }
 
+} // End of namespace U1Gfx
 } // End of namespace Ultima1
 } // End of namespace Ultima

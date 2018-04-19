@@ -31,7 +31,7 @@ EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
 
 Ultima1Game::Ultima1Game() : Shared::Game() {
 	_res = new GameResources();
-	_gameView = new GameView(this);
+	_gameView = new U1Gfx::GameView(this);
 }
 
 Ultima1Game::~Ultima1Game() {
