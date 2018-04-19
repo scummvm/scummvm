@@ -30,6 +30,8 @@ namespace Ultima1 {
 
 class Ultima1Game;
 
+namespace U1Gfx {
+
 /**
  * Implements various support methods for drawing onto visual surfaces
  */
@@ -70,6 +72,7 @@ public:
 	void drawLeftArrow();
 };
 
+} // End of namespace U1Gfx
 } // End of namespace Shared
 } // End of namespace Ultima
 

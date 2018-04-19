@@ -27,6 +27,7 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace U1Gfx {
 
 class ViewportMap : public Shared::ViewportMap {
 public:
@@ -34,6 +35,7 @@ public:
 	virtual ~ViewportMap() {}
 };
 
+} // End of namespace U1Gfx
 } // End of namespace Ultima1
 } // End of namespace Xeen
 

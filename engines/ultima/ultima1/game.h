@@ -28,14 +28,17 @@
 namespace Ultima {
 namespace Ultima1 {
 
+namespace U1Gfx {
+	class GameView;
+}
+
 class GameResources;
-class GameView;
 
 class Ultima1Game : public Shared::Game {
 	DECLARE_MESSAGE_MAP;
 public:
 	GameResources *_res;
-	GameView *_gameView;
+	U1Gfx::GameView *_gameView;
 public:
 	CLASSDEF;
 	Ultima1Game();

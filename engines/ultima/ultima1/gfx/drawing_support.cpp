@@ -26,6 +26,7 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace U1Gfx {
 
 DrawingSupport::DrawingSupport(const Shared::Gfx::VisualSurface &s) : _surface(s) {
 	_game = static_cast<Ultima1Game *>(g_vm->_game);
@@ -104,5 +105,6 @@ void DrawingSupport::drawLeftArrow() {
 
 }
 
-} // End of namespace Shared
+} // End of namespace U1Gfx
+} // End of namespace Ultima1
 } // End of namespace Ultima

@@ -33,6 +33,7 @@ namespace Shared {
 }
 	
 namespace Ultima1 {
+namespace U1Gfx {
 
 class Status;
 class ViewportMap;
@@ -57,6 +58,7 @@ public:
 	virtual void draw();
 };
 
+} // End of namespace U1Gfx
 } // End of namespace Shared
 } // End of namespace Ultima
 
