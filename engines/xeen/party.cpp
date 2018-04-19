@@ -926,35 +926,40 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 	case 20:
 		_gameFlags[files._ccNum][takeVal] = false;
 		break;
-	case 21:
-		if (takeVal >= 82) {
-			_questItems[takeVal - 82]--;
+	case 21: {
+		const uint WEAPONS_END = _vm->getGameID() != GType_Swords ? 35 : 41;
+		const uint ARMOR_END = _vm->getGameID() != GType_Swords ? 49 : 55;
+		const uint ACCESSORIES_END = _vm->getGameID() != GType_Swords ? 60 : 66;
+		const uint MISC_END = _vm->getGameID() != GType_Swords ? 82 : 88;
+
+		if (takeVal >= MISC_END) {
+			_questItems[takeVal - MISC_END]--;
 		} else {
 			bool found = false;
 			for (int idx = 0; idx < 9; ++idx) {
-				if (takeVal < 35) {
+				if (takeVal < WEAPONS_END) {
 					if (ps._weapons[idx]._id == takeVal) {
 						ps._weapons[idx].clear();
 						ps._weapons.sort();
 						found = true;
 						break;
 					}
-				} else if (takeVal < 49) {
-					if (ps._armor[idx]._id == (takeVal - 35)) {
+				} else if (takeVal < ARMOR_END) {
+					if (ps._armor[idx]._id == (takeVal - WEAPONS_END)) {
 						ps._armor[idx].clear();
 						ps._armor.sort();
 						found = true;
 						break;
 					}
-				} else if (takeVal < 60) {
-					if (ps._accessories[idx]._id == (takeVal - 49)) {
+				} else if (takeVal < ACCESSORIES_END) {
+					if (ps._accessories[idx]._id == (takeVal - ARMOR_END)) {
 						ps._accessories[idx].clear();
 						ps._accessories.sort();
 						found = true;
 						break;
 					}
 				} else {
-					if (ps._misc[idx]._material == ((int)takeVal - 60)) {
+					if (ps._misc[idx]._material == ((int)takeVal - ACCESSORIES_END)) {
 						ps._misc[idx].clear();
 						ps._misc.sort();
 						found = true;
@@ -966,6 +971,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 				return true;
 		}
 		break;
+	}
 	case 25:
 		changeTime(takeVal);
 		break;
