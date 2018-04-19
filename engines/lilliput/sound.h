@@ -47,7 +47,7 @@ private:
 	byte **_unpackedFiles;
 	uint16 *_unpackedSizes;
 
-	uint32 decode(const byte *src, byte *dst, uint32 len);
+	uint32 decode(const byte *src, byte *dst, uint32 len, uint32 start);
 	byte readByte(const byte *data, uint32 offset);
 
 	void loadMusic(Common::String filename);

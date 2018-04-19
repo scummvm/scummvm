@@ -46,8 +46,8 @@ byte LilliputSound::readByte(const byte *data, uint32 offset) {
 	return data[1 + (offset & 1) + (al << 1)];
 }
 
-uint32 LilliputSound::decode(const byte *src, byte *dst, uint32 len) {
-	uint32 i = 0;
+uint32 LilliputSound::decode(const byte *src, byte *dst, uint32 len, uint32 start) {
+	uint32 i = start;
 	for (; i < len; ++i) {
 		*dst++ = readByte(src, i);
 	}
@@ -82,7 +82,7 @@ void LilliputSound::loadMusic(Common::String filename) {
 			int shift = (srcBuf[0] == 'c') ? 1 : 0;
 			_unpackedSizes[i] = (1 + packedSize - 0x201) * 2 - shift;
 			byte *dstBuf = new byte[_unpackedSizes[i]];
-			decode(srcBuf + shift, dstBuf, _unpackedSizes[i]);
+			decode(srcBuf, dstBuf, _unpackedSizes[i], shift);
 			_unpackedFiles[i] = dstBuf;
 		} else {
 			_unpackedSizes[i] = packedSize;
