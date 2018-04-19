@@ -85,7 +85,7 @@ bool GraphicsManager::freeze() {
 
 	_vm->_peopleMan->freeze(newFreezer);
 
-	StatusStuff  *newStatusStuff = new StatusStuff ;
+	StatusStuff *newStatusStuff = new StatusStuff;
 	if (!checkNew(newStatusStuff))
 		return false;
 	newFreezer->frozenStatus = copyStatusBarStuff(newStatusStuff);

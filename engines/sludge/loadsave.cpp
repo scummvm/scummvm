@@ -257,7 +257,7 @@ bool loadVariable(Variable *to, Common::SeekableReadStream *stream) {
 			return true;
 
 		case SVT_ANIM:
-			to->varData.animHandler = new PersonaAnimation ;
+			to->varData.animHandler = new PersonaAnimation;
 			if (!checkNew(to->varData.animHandler))
 				return false;
 			to->varData.animHandler->load(stream);

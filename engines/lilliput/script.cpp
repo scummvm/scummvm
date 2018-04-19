@@ -1222,7 +1222,7 @@ void LilliputScript::listAllTexts() {
 		int index = _vm->_packedStringIndex[i];
 		int variantCount = 0;
 		while (_vm->_packedStrings[index + variantCount] == 0x5B)
-			++variantCount ;
+			++variantCount;
 		/*
 		int it = 0;
 		if (variantCount != 0) {

@@ -2321,7 +2321,7 @@ void EdenGame::my_bulle() {
 		} else if (c >= 0x80 && c < 0x90)
 			SysBeep(1);
 		else if (c >= 0x90 && c < 0xA0) {
-			while (*textPtr++ != 0xFF) ;
+			while (*textPtr++ != 0xFF);
 			textPtr--;
 		} else if (c >= 0xA0 && c < 0xC0)
 			_globals->_textToken1 = c & 0xF;
@@ -2333,7 +2333,7 @@ void EdenGame::my_bulle() {
 #ifdef FAKE_DOS_VERSION
 				_globals->_textWidthLimit = c1 + 160;
 #else
-				_globals->_textWidthLimit = c1 + _subtitlesXCenter; //TODO: signed? 160 in pc ver
+				_globals->_textWidthLimit = c1 + _subtitlesXCenter; // TODO: signed? 160 in pc ver
 #endif
 			else {
 				byte c2 = *textPtr++;

@@ -110,7 +110,7 @@ void AudioSpeech::stopSpeech() {
 
 bool AudioSpeech::isPlaying() const {
 	if (_channel == -1) {
-		return  false;
+		return false;
 	}
 	return _isActive;
 }

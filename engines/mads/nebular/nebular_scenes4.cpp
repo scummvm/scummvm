@@ -2443,7 +2443,7 @@ void Scene405::step() {
 	}
 
 	if (_game._trigger == 70) {
-		_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount ;
+		_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
 		_game._player._visible = true;
 		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
@@ -2458,7 +2458,7 @@ void Scene405::step() {
 	}
 
 	if (_game._trigger == 75) {
-		_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount ;
+		_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
 		_game._player._visible = true;
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);

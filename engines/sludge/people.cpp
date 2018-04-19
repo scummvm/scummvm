@@ -175,7 +175,7 @@ bool Persona::load(Common::SeekableReadStream *stream) {
 	if (!checkNew(animation))
 		return false;
 	for (a = 0; a < numDirections * 3; a++) {
-		animation[a] = new PersonaAnimation ;
+		animation[a] = new PersonaAnimation;
 		if (!checkNew(animation[a]))
 			return false;
 
@@ -1088,7 +1088,7 @@ bool PeopleManager::loadPeople(Common::SeekableReadStream *stream) {
 		if (!checkNew(me->myPersona))
 			return false;
 
-		me->myAnim = new PersonaAnimation ;
+		me->myAnim = new PersonaAnimation;
 		if (!checkNew(me->myAnim))
 			return false;
 

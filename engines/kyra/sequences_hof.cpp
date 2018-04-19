@@ -3378,7 +3378,7 @@ void KyraEngine_HoF::seq_showStarcraftLogo() {
 
 int KyraEngine_HoF::seq_playIntro() {
 	bool startupSaveLoadable = saveFileLoadable(0);
-	return SeqPlayer_HOF(this, _screen, _system, startupSaveLoadable).play(kSequenceVirgin, startupSaveLoadable? kSequenceTitle : kSequenceNoLooping);
+	return SeqPlayer_HOF(this, _screen, _system, startupSaveLoadable).play(kSequenceVirgin, startupSaveLoadable ? kSequenceTitle : kSequenceNoLooping);
 }
 
 int KyraEngine_HoF::seq_playOutro() {

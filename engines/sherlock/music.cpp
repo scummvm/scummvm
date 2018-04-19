@@ -182,8 +182,8 @@ bool MidiParser_SH::loadMusic(byte *musData, uint32 musDataSize) {
 	_musData     = musData;
 	_musDataSize = musDataSize;
 
-	byte  *headerPtr = _musData + 12; // skip over the already checked SPACE header
-	byte  *pos       = headerPtr;
+	byte *headerPtr = _musData + 12; // skip over the already checked SPACE header
+	byte *pos       = headerPtr;
 
 	uint16 headerSize = READ_LE_UINT16(headerPtr);
 	assert(headerSize == 0x7F); // Security check

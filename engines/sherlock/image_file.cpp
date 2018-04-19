@@ -703,7 +703,7 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 			error("load3DOCelRoomData: expected cel data, not enough bytes");
 
 		// read data into memory
-		byte  *celDataPtr = new byte[celDataSize];
+		byte *celDataPtr = new byte[celDataSize];
 
 		stream.read(celDataPtr, celDataSize);
 		streamLeft -= celDataSize;
@@ -936,15 +936,15 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 	stream.read(bitsTablePtr, bitsTableSize);
 
 	// Now extract all characters
-	uint16       curChar = 0;
-	const byte  *curBitsLinePtr = bitsTablePtr;
-	const byte  *curBitsPtr = NULL;
-	byte         curBitsLeft = 0;
-	uint32       curCharHeightLeft = 0;
-	uint32       curCharWidthLeft = 0;
-	byte         curBits = 0;
-	byte         curBitsReversed = 0;
-	byte         curPosX = 0;
+	uint16      curChar = 0;
+	const byte *curBitsLinePtr = bitsTablePtr;
+	const byte *curBitsPtr = NULL;
+	byte        curBitsLeft = 0;
+	uint32      curCharHeightLeft = 0;
+	uint32      curCharWidthLeft = 0;
+	byte        curBits = 0;
+	byte        curBitsReversed = 0;
+	byte        curPosX = 0;
 
 	assert(bitsTableSize >= (header_maxChar * header_fontHeight * header_bytesPerLine)); // Security
 

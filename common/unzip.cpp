@@ -485,13 +485,13 @@ static uLong unzlocal_SearchCentralDir(Common::SeekableReadStream &fin) {
 
 	uBackRead = 4;
 	while (uBackRead<uMaxBack) {
-		uLong uReadSize,uReadPos ;
+		uLong uReadSize,uReadPos;
 		int i;
 		if (uBackRead+BUFREADCOMMENT>uMaxBack)
 			uBackRead = uMaxBack;
 		else
 			uBackRead+=BUFREADCOMMENT;
-		uReadPos = uSizeFile-uBackRead ;
+		uReadPos = uSizeFile-uBackRead;
 
 		uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
                      (BUFREADCOMMENT+4) : (uSizeFile-uReadPos);
@@ -670,13 +670,13 @@ int unzGetGlobalInfo(unzFile file, unz_global_info *pglobal_info) {
 static void unzlocal_DosDateToTmuDate(uLong ulDosDate, tm_unz* ptm) {
 	uLong uDate;
 	uDate = (uLong)(ulDosDate>>16);
-	ptm->tm_mday = (uInt)(uDate&0x1f) ;
-	ptm->tm_mon =  (uInt)((((uDate)&0x1E0)/0x20)-1) ;
-	ptm->tm_year = (uInt)(((uDate&0x0FE00)/0x0200)+1980) ;
+	ptm->tm_mday = (uInt)(uDate&0x1f);
+	ptm->tm_mon =  (uInt)((((uDate)&0x1E0)/0x20)-1);
+	ptm->tm_year = (uInt)(((uDate&0x0FE00)/0x0200)+1980);
 
 	ptm->tm_hour = (uInt) ((ulDosDate &0xF800)/0x800);
-	ptm->tm_min =  (uInt) ((ulDosDate&0x7E0)/0x20) ;
-	ptm->tm_sec =  (uInt) (2*(ulDosDate&0x1f)) ;
+	ptm->tm_min =  (uInt) ((ulDosDate&0x7E0)/0x20);
+	ptm->tm_sec =  (uInt) (2*(ulDosDate&0x1f));
 }
 
 /*
@@ -772,7 +772,7 @@ static int unzlocal_GetCurrentFileInfoInternal(unzFile file,
 
 	lSeek+=file_info.size_filename;
 	if ((err==UNZ_OK) && (szFileName!=NULL)) {
-		uLong uSizeRead ;
+		uLong uSizeRead;
 		if (file_info.size_filename<fileNameBufferSize) {
 			*(szFileName+file_info.size_filename)='\0';
 			uSizeRead = file_info.size_filename;
@@ -787,7 +787,7 @@ static int unzlocal_GetCurrentFileInfoInternal(unzFile file,
 
 
 	if ((err==UNZ_OK) && (extraField!=NULL)) {
-		uLong uSizeRead ;
+		uLong uSizeRead;
 		if (file_info.size_file_extra<extraFieldBufferSize)
 			uSizeRead = file_info.size_file_extra;
 		else
@@ -810,7 +810,7 @@ static int unzlocal_GetCurrentFileInfoInternal(unzFile file,
 
 
 	if ((err==UNZ_OK) && (szComment!=NULL)) {
-		uLong uSizeRead ;
+		uLong uSizeRead;
 		if (file_info.size_file_comment<commentBufferSize) {
 			*(szComment+file_info.size_file_comment)='\0';
 			uSizeRead = file_info.size_file_comment;
@@ -897,7 +897,7 @@ int unzGoToNextFile(unzFile file) {
 		return UNZ_END_OF_LIST_OF_FILE;
 
 	s->pos_in_central_dir += SIZECENTRALDIRITEM + s->cur_file_info.size_filename +
-			s->cur_file_info.size_file_extra + s->cur_file_info.size_file_comment ;
+			s->cur_file_info.size_file_extra + s->cur_file_info.size_file_comment;
 	s->num_file++;
 	err = unzlocal_GetCurrentFileInfoInternal(file,&s->cur_file_info,
 											   &s->cur_file_info_internal,
@@ -1185,11 +1185,11 @@ int unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
 		}
 
 		if (pfile_in_zip_read_info->compression_method==0) {
-			uInt uDoCopy,i ;
+			uInt uDoCopy,i;
 			if (pfile_in_zip_read_info->stream.avail_out < pfile_in_zip_read_info->stream.avail_in)
-				uDoCopy = pfile_in_zip_read_info->stream.avail_out ;
+				uDoCopy = pfile_in_zip_read_info->stream.avail_out;
 			else
-				uDoCopy = pfile_in_zip_read_info->stream.avail_in ;
+				uDoCopy = pfile_in_zip_read_info->stream.avail_in;
 
 			for (i=0;i<uDoCopy;i++)
 				*(pfile_in_zip_read_info->stream.next_out+i) = *(pfile_in_zip_read_info->stream.next_in+i);
@@ -1327,7 +1327,7 @@ int unzGetLocalExtrafield(unzFile file, voidp buf, unsigned len) {
 	if (len>size_to_read)
 		read_now = (uInt)size_to_read;
 	else
-		read_now = (uInt)len ;
+		read_now = (uInt)len;
 
 	if (read_now==0)
 		return 0;
@@ -1392,7 +1392,7 @@ int unzCloseCurrentFile(unzFile file) {
 */
 int unzGetGlobalComment(unzFile file, char *szComment, uLong uSizeBuf) {
 	unz_s* s;
-	uLong uReadThis ;
+	uLong uReadThis;
 	if (file==NULL)
 		return UNZ_PARAMERROR;
 	s=(unz_s*)file;

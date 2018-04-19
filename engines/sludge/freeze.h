@@ -30,7 +30,7 @@ struct OnScreenPerson;
 struct PersonaAnimation;
 struct ScreenRegion;
 struct SpeechStruct;
-struct StatusStuff ;
+struct StatusStuff;
 struct EventHandlers;
 struct ScreenRegion;
 

@@ -876,7 +876,7 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 				const uint8 *shp = sq->_shapes[(*++posOld) - 1];
 				items[i + 1].data = shp;
 				items[i + 1].size = shp[1];
-				items[i + 1].x = (dm->w - shp[2]) << 2 ;
+				items[i + 1].x = (dm->w - shp[2]) << 2;
 				items[i + 1].dataType = 1;
 				delete[] items[i + 1].str;
 				items[i + 1].str = 0;

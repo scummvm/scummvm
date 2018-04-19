@@ -27,6 +27,6 @@
 	const char *gScummVMPluginBuildDate = "Git Master"; /* ScummVM Git Master */
 	#else
 	const char *gScummVMPluginBuildDate __attribute__((visibility("hidden"))) =
-		__DATE__ " " __TIME__ ;
+		__DATE__ " " __TIME__;
 	#endif
 #endif

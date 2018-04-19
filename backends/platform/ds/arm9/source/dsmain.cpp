@@ -440,12 +440,12 @@ void playSound(const void *data, u32 length, bool loop, bool adpcm, int rate) {
 		soundControl.count = 0;
 	}
 
-	soundControl.data[soundControl.count].data = data;
-	soundControl.data[soundControl.count].len = length | (loop? 0x80000000: 0x00000000);
-	soundControl.data[soundControl.count].rate = rate;		// 367 samples per frame
-	soundControl.data[soundControl.count].pan = 64;
-	soundControl.data[soundControl.count].vol = 127;
-	soundControl.data[soundControl.count].format = adpcm? 2: 0;
+	soundControl.data[soundControl.count].data   = data;
+	soundControl.data[soundControl.count].len    = length | (loop ? 0x80000000 : 0x00000000);
+	soundControl.data[soundControl.count].rate   = rate; // 367 samples per frame
+	soundControl.data[soundControl.count].pan    = 64;
+	soundControl.data[soundControl.count].vol    = 127;
+	soundControl.data[soundControl.count].format = adpcm ? 2 : 0;
 
 	soundControl.count++;
 
@@ -641,7 +641,7 @@ void displayMode8Bit() {
 	displayModeIs8Bit = true;
 
 	if (isCpuScalerEnabled()) {
-		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+		videoSetMode(MODE_5_2D | (consoleEnable ? DISPLAY_BG0_ACTIVE : 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
 		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
 
 		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
@@ -660,7 +660,7 @@ void displayMode8Bit() {
 		BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 
 	} else {
-		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+		videoSetMode(MODE_5_2D | (consoleEnable ? DISPLAY_BG0_ACTIVE : 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
 		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
 
 		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
@@ -691,7 +691,7 @@ void displayMode8Bit() {
 	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, true, true);
 
 	// Set this again because consoleinit resets it
-	videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+	videoSetMode(MODE_5_2D | (consoleEnable ? DISPLAY_BG0_ACTIVE : 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
 
 	// Move the cursor to the bottom of the screen using ANSI escape code
 	consolePrintf("\033[23;0f");
@@ -971,7 +971,7 @@ void displayMode16BitFlipBuffer() {
 		u16 *back = get16BitBackBuffer();
 
 //		highBuffer = !highBuffer;
-//		BG3_CR = BG_BMP16_512x256 |	BG_BMP_RAM(highBuffer? 1: 0);
+//		BG3_CR = BG_BMP16_512x256 |	BG_BMP_RAM(highBuffer ? 1 : 0);
 
 		if (isCpuScalerEnabled()) {
 			Rescale_320x256x1555_To_256x256x1555(BG_GFX, back, 512, 512);
@@ -1806,13 +1806,13 @@ void triggerIcon(int imageNum) {
 
 
 void setIcon(int num, int x, int y, int imageNum, int flags, bool enable) {
-	sprites[num].attribute[0] = ATTR0_BMP | (enable? (y & 0xFF): 192) | (!enable? ATTR0_DISABLED: 0);
+	sprites[num].attribute[0] = ATTR0_BMP | (enable ? (y & 0xFF) : 192) | (!enable ? ATTR0_DISABLED : 0);
 	sprites[num].attribute[1] = ATTR1_SIZE_32 | (x & 0x1FF) | flags;
 	sprites[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
 }
 
 void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable) {
-	spritesMain[num].attribute[0] = ATTR0_BMP | (y & 0xFF) | (!enable? ATTR0_DISABLED: 0);
+	spritesMain[num].attribute[0] = ATTR0_BMP | (y & 0xFF) | (!enable ? ATTR0_DISABLED : 0);
 	spritesMain[num].attribute[1] = ATTR1_SIZE_32 | (x & 0x1FF) | flags;
 	spritesMain[num].attribute[2] = ATTR2_ALPHA(1)| (imageNum * 16);
 }
@@ -1842,7 +1842,7 @@ void updateStatus() {
 		}
 
 		if (indyFightState) {
-			setIcon(1, (190 - 32), 150, 3, (indyFightRight? 0: ATTR1_FLIP_X), true);
+			setIcon(1, (190 - 32), 150, 3, (indyFightRight ? 0 : ATTR1_FLIP_X), true);
 //			consolePrintf("%d\n", indyFightRight);
 		} else {
 //			setIcon(1, 0, 0, 0, 0, false);

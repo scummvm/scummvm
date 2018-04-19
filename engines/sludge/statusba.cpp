@@ -37,8 +37,8 @@ namespace Sludge {
 SpritePalette verbLinePalette;
 SpritePalette litVerbLinePalette;
 
-StatusStuff  mainStatus;
-StatusStuff  *nowStatus = & mainStatus;
+StatusStuff mainStatus;
+StatusStuff *nowStatus = & mainStatus;
 
 void setLitStatus(int i) {
 	nowStatus->litStatus = i;
@@ -144,7 +144,7 @@ StatusStuff *copyStatusBarStuff(StatusStuff  *here) {
 	here->litStatus = -1;
 	here->firstStatusBar = NULL;
 
-	StatusStuff  *old = nowStatus;
+	StatusStuff *old = nowStatus;
 	nowStatus = here;
 
 	return old;
