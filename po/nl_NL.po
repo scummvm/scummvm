@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-18 20:19+0200\n"
+"POT-Creation-Date: 2018-04-19 19:42+0200\n"
 "PO-Revision-Date: 2018-04-18 09:57+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -1596,28 +1596,28 @@ msgstr "URL openen mislukt! Navigeer a.u.b. handmatig naar deze pagina."
 msgid "Select a Theme"
 msgstr "Selecteer een thema"
 
-#: gui/ThemeEngine.cpp:258
+#: gui/ThemeEngine.cpp:256
 msgid "Disabled GFX"
 msgstr "GFX uitgeschakeld"
 
-#: gui/ThemeEngine.cpp:258
+#: gui/ThemeEngine.cpp:256
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX uitgeschakeld"
 
-#: gui/ThemeEngine.cpp:259
+#: gui/ThemeEngine.cpp:257
 msgid "Standard Renderer"
 msgstr "Standaard Renderer"
 
-#: gui/ThemeEngine.cpp:259 engines/scumm/dialogs.cpp:660
+#: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
 msgid "Standard"
 msgstr "Standaard"
 
-#: gui/ThemeEngine.cpp:261
+#: gui/ThemeEngine.cpp:259
 msgid "Antialiased Renderer"
 msgstr "Antialiased Renderer"
 
-#: gui/ThemeEngine.cpp:261
+#: gui/ThemeEngine.cpp:259
 msgid "Antialiased"
 msgstr "Antialiased"
 
@@ -1644,7 +1644,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "Ga verder"
 
-#: gui/widget.cpp:379 gui/widget.cpp:381 gui/widget.cpp:387 gui/widget.cpp:389
+#: gui/widget.cpp:356 gui/widget.cpp:358 gui/widget.cpp:364 gui/widget.cpp:366
 msgid "Clear value"
 msgstr "Veld leegmaken"
 
