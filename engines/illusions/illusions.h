@@ -139,6 +139,7 @@ public:
 
 	int _resumeFromSavegameRequested;
 	int _savegameSlotNum;
+	Common::String _savegameDescription;
 	uint32 _savegameSceneId;
 	uint32 _savegameThreadId;
 
