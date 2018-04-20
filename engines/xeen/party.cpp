@@ -245,8 +245,7 @@ Party::Party(XeenEngine *vm) {
 	Common::fill(&_gameFlags[0][0], &_gameFlags[0][256], false);
 	Common::fill(&_gameFlags[1][0], &_gameFlags[1][256], false);
 	Common::fill(&_worldFlags[0], &_worldFlags[128], false);
-	Common::fill(&_questFlags[0][0], &_questFlags[0][30], false);
-	Common::fill(&_questFlags[1][0], &_questFlags[1][30], false);
+	Common::fill(&_questFlags[0], &_questFlags[60], false);
 	Common::fill(&_questItems[0], &_questItems[85], 0);
 
 	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
@@ -331,8 +330,7 @@ void Party::synchronize(Common::Serializer &s) {
 	File::syncBitFlags(s, &_gameFlags[0][0], &_gameFlags[0][256]);
 	File::syncBitFlags(s, &_gameFlags[1][0], &_gameFlags[1][256]);
 	File::syncBitFlags(s, &_worldFlags[0], &_worldFlags[128]);
-	File::syncBitFlags(s, &_questFlags[0][0], &_questFlags[0][30]);
-	File::syncBitFlags(s, &_questFlags[1][0], &_questFlags[1][30]);
+	File::syncBitFlags(s, &_questFlags[0], &_questFlags[60]);
 
 	for (int i = 0; i < 85; ++i)
 		s.syncAsByte(_questItems[i]);
@@ -1108,7 +1106,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		_worldFlags[takeVal] = false;
 		break;
 	case 104:
-		_questFlags[files._ccNum][takeVal] = false;
+		_questFlags[(_vm->getGameID() == GType_Swords ? 0 : files._ccNum * 30) + takeVal] = false;
 		break;
 	case 107:
 		_characterFlags[ps._rosterId][takeVal] = false;
@@ -1442,7 +1440,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	case 104:
 		assert(giveVal < 30);
-		_questFlags[files._ccNum][giveVal] = true;
+		_questFlags[(_vm->getGameID() == GType_Swords ? 0 : files._ccNum * 30) + giveVal] = true;
 		break;
 	case 107:
 		assert(giveVal < 24);

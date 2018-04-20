@@ -220,7 +220,7 @@ public:
 	bool _rested;
 	bool _gameFlags[2][256];
 	bool _worldFlags[128];
-	bool _questFlags[2][30];
+	bool _questFlags[60];
 	int _questItems[TOTAL_QUEST_ITEMS];
 	bool _characterFlags[30][24];
 public:

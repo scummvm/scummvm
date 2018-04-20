@@ -136,7 +136,7 @@ void Quests::execute() {
 			count = 0;
 			headerShown = false;
 			for (int idx = 0; idx < TOTAL_QUEST_FLAGS; ++idx) {
-				if (party._questFlags[(idx + 1) / 30][(idx + 1) % 30]) {
+				if (party._questFlags[idx + 1]) {
 					if (!count && !headerShown && (_vm->getGameID() == GType_Swords || idx < 29)) {
 						lines[count++] = title1;
 					}

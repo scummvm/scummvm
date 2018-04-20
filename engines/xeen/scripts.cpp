@@ -1834,7 +1834,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 104:
 		// Get value of quest flag
-		v = party._questFlags[files._ccNum][val] ? val : 0xffffffff;
+		v = party._questFlags[(_vm->getGameID() == GType_Swords ? 0 : files._ccNum * 30) + val] ? val : 0xffffffff;
 		break;
 	case 105:
 		// Test number of Megacredits in party. Only used by King's Engineer in Castle Burlock

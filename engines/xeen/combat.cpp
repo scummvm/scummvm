@@ -1474,7 +1474,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 				party._gameFlags[0][11] = true;
 			if (_monster2Attack == 8 && party._mazeId == 78) {
 				party._gameFlags[0][60] = true;
-				party._questFlags[0][23] = false;
+				party._questFlags[23] = false;
 
 				for (uint idx = 0; idx < party._activeParty.size(); ++idx)
 					party._activeParty[idx].setAward(42, true);
