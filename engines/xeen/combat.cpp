@@ -1452,9 +1452,9 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			intf.draw3d(true);
 
 			sound.stopSound();
-			File powVoc(Common::String::format("pow%d.voc",
-				POW_WEAPON_VOCS[_attackWeaponId]));
-			sound.playFX(60 + POW_WEAPON_VOCS[_attackWeaponId]);
+			int powNum = (_attackWeaponId > XEEN_SLAYER_SWORD) ? 0 : POW_WEAPON_VOCS[_attackWeaponId];
+			File powVoc(Common::String::format("pow%d.voc", powNum));
+			sound.playFX(60 + powNum);
 			sound.playSound(powVoc, 1);
 
 			if (monster._hp > damage) {
