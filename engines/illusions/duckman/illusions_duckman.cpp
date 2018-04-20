@@ -1180,8 +1180,7 @@ bool IllusionsEngine_Duckman::loadSavegameFromScript(int16 slotNum, uint32 calli
 
 bool IllusionsEngine_Duckman::saveSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
 	const char *fileName = getSavegameFilename(_savegameSlotNum);
-	bool success = savegame(fileName, "");//_savegameDescription.c_str()); //TODO
-	return success;
+	return savegame(fileName, _savegameDescription.c_str());
 }
 
 void IllusionsEngine_Duckman::activateSavegame(uint32 callingThreadId) {

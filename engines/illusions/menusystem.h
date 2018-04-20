@@ -103,6 +103,7 @@ public:
 	void setMenuCallerThreadId(uint32 menuCallerThreadId);
 	void setMenuChoiceOffsets(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset);
 	void setSavegameSlotNum(int slotNum);
+	void setSavegameDescription(Common::String desc);
 	virtual bool initMenuCursor() = 0;
 	virtual int getGameState() = 0;
 	virtual void setGameState(int gameState) = 0;

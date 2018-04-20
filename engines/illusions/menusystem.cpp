@@ -504,6 +504,10 @@ void BaseMenuSystem::setSavegameSlotNum(int slotNum) {
 	_vm->_savegameSlotNum = slotNum;
 }
 
+void BaseMenuSystem::setSavegameDescription(Common::String desc) {
+    _vm->_savegameDescription = desc;
+}
+
 void BaseMenuSystem::updateTimeOut(bool resetTimeOut) {
 
 	if (!_isTimeOutEnabled)
@@ -636,11 +640,13 @@ void MenuActionLoadGame::execute() {
 
 		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+        desc = dialog->getResultString().c_str();
 
-		delete dialog;
+        delete dialog;
 
-		if (slot >= 0) {
-			_menuSystem->setSavegameSlotNum(slot);
+        if (slot >= 0) {
+            _menuSystem->setSavegameSlotNum(slot);
+            _menuSystem->setSavegameDescription(desc);
 			_menuSystem->selectMenuChoiceIndex(_choiceIndex);
 		}
 	}
