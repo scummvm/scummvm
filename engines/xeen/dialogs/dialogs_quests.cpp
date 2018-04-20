@@ -76,13 +76,12 @@ void Quests::execute() {
 			headerShown = false;
 			for (int idx = 0; idx < itemsCount; ++idx) {
 				if (party._questItems[idx]) {
-					if (!count && !headerShown) {
+					if (!count ) {
 						if (_vm->getGameID() == GType_Swords)
 							lines[count++] = Res.SWORDS_OF_XEEN_LINE;
 						else if (idx < 35)
-							lines[count++] = title1;
-					}
-					if (idx >= 35 && !headerShown) {
+							lines[count++] = Res.CLOUDS_OF_XEEN_LINE;
+					} else if (_vm->getGameID() != GType_Swords && idx >= 35 && !headerShown) {
 						lines[count++] = Res.DARKSIDE_OF_XEEN_LINE;
 						headerShown = true;
 					}
@@ -138,10 +137,10 @@ void Quests::execute() {
 			headerShown = false;
 			for (int idx = 0; idx < TOTAL_QUEST_FLAGS; ++idx) {
 				if (party._questFlags[(idx + 1) / 30][(idx + 1) % 30]) {
-					if (!count && !headerShown && idx < 29) {
+					if (!count && !headerShown && (_vm->getGameID() == GType_Swords || idx < 29)) {
 						lines[count++] = title1;
 					}
-					if (idx > 28 && !headerShown) {
+					if (_vm->getGameID() != GType_Swords && idx > 28 && !headerShown) {
 						lines[count++] = Res.DARKSIDE_OF_XEEN_LINE;
 						headerShown = true;
 					}
@@ -165,10 +164,10 @@ void Quests::execute() {
 			headerShown = false;
 			for (int idx = 0; idx < MAX_DIALOG_LINES; ++idx) {
 				if (party._worldFlags[idx]) {
-					if (!count && !headerShown && idx < 72) {
+					if (!count && !headerShown && (_vm->getGameID() == GType_Swords || idx < 72)) {
 						lines[count++] = title1;
 					}
-					if (idx >= 72 && !headerShown) {
+					if (_vm->getGameID() != GType_Swords && idx >= 72 && !headerShown) {
 						lines[count++] = Res.DARKSIDE_OF_XEEN_LINE;
 						headerShown = true;
 					}
