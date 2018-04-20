@@ -156,23 +156,24 @@ void Quests::execute() {
 				lines[topRow].c_str(), lines[topRow + 1].c_str(), lines[topRow + 2].c_str()));
 			break;
 
-		case AUTO_NOTES:
-			for (int idx = 0; idx < MAX_DIALOG_LINES; ++idx)
+		case AUTO_NOTES: {
+			int count = _vm->getGameID() == GType_Swords ? 49 : MAX_DIALOG_LINES;
+			for (int idx = 0; idx < count; ++idx)
 				lines[idx] = "";
 
 			count = 0;
 			headerShown = false;
-			for (int idx = 0; idx < MAX_DIALOG_LINES; ++idx) {
+			for (int idx = 0; idx < count; ++idx) {
 				if (party._worldFlags[idx]) {
 					if (!count && !headerShown && (_vm->getGameID() == GType_Swords || idx < 72)) {
 						lines[count++] = title1;
 					}
-					if (_vm->getGameID() != GType_Swords && idx >= 72 && !headerShown) {
+					if (idx >= 72 && !headerShown) {
 						lines[count++] = Res.DARKSIDE_OF_XEEN_LINE;
 						headerShown = true;
 					}
 
-					lines[count++] = _questNotes[idx + 56];
+					lines[count++] = _questNotes[idx + (_vm->getGameID() == GType_Swords ? 51 : 56)];
 				}
 			}
 
@@ -187,6 +188,7 @@ void Quests::execute() {
 				lines[topRow + 8].c_str()
 			));
 			break;
+		}
 		}
 
 		windows[30].writeString("\v000\t000");

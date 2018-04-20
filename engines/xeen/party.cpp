@@ -957,7 +957,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 						break;
 					}
 				} else {
-					if (ps._misc[idx]._material == ((int)takeVal - ACCESSORIES_END)) {
+					if (ps._misc[idx]._material == (int)(takeVal - ACCESSORIES_END)) {
 						ps._misc[idx].clear();
 						ps._misc.sort();
 						found = true;
@@ -1435,11 +1435,11 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		_gold += _vm->getRandomNumber(1, giveVal);
 		break;
 	case 103:
-		assert(giveVal < 128);
+		assert(giveVal < (uint)(_vm->getGameID() == GType_Swords ? 49 : 128));
 		_worldFlags[giveVal] = true;
 		break;
 	case 104:
-		assert(giveVal < 30);
+		assert(giveVal < (uint)(_vm->getGameID() == GType_Swords ? 60 : 30));
 		_questFlags[(_vm->getGameID() == GType_Swords ? 0 : files._ccNum * 30) + giveVal] = true;
 		break;
 	case 107:
