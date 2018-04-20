@@ -1599,8 +1599,8 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		uint itemOffset = _vm->getGameID() == GType_Swords ? 6 : 0;
 		v = 0xFFFFFFFF;
 		if (val < (82 + itemOffset)) {
-			for (int idx = 0; idx < 9; ++idx) {
-				if (val == (35 + itemOffset)) {
+			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+				if (val < (35 + itemOffset)) {
 					if (ps->_weapons[idx]._id == val) {
 						v = val;
 						break;
