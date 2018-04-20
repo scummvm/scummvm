@@ -1389,7 +1389,10 @@ void LilliputEngine::homeInPathFinding(int index) {
 
 	if (enclosureSrc == -1) {
 		int tmpVal = checkOuterEnclosure(_characterTargetPos[index]);
-		_characterSubTargetPos[index] = _portalPos[tmpVal];
+		if (tmpVal == -1)
+			warning("homeInPathFinding: Unexpected negative index");
+		else
+			_characterSubTargetPos[index] = _portalPos[tmpVal];
 		return;
 	}
 
