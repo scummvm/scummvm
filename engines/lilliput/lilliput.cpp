@@ -236,12 +236,9 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_listIndex = nullptr;
 	_listArr = nullptr;
 	_rectNumb = 0;
-	for (int i = 0; i < 40; ++i) {
-		_rectXMinMax[i].min = 0;
-		_rectXMinMax[i].max = 0;
-		_rectYMinMax[i].min = 0;
-		_rectYMinMax[i].max = 0;
-	}
+	for (int i = 0; i < 40; ++i)
+		_enclosureRect[i] = Common::Rect(0, 0, 0, 0);
+
 	_interfaceHotspotNumb = 0;
 	for (int i = 0; i < 20; ++i)
 		_keyboardMapping[i] = Common::KEYCODE_DOLLAR;
@@ -1396,32 +1393,28 @@ void LilliputEngine::homeInPathFinding(int index) {
 		return;
 	}
 
-	if ((enclosureDst != -1) &&
-		(_characterTargetPos[index].x >= _rectXMinMax[enclosureSrc].min) &&
-		(_characterTargetPos[index].x <= _rectXMinMax[enclosureSrc].max) &&
-		(_characterTargetPos[index].y >= _rectYMinMax[enclosureSrc].min) &&
-		(_characterTargetPos[index].y <= _rectYMinMax[enclosureSrc].max)) {
+	if ((enclosureDst != -1) && _enclosureRect->contains(_characterTargetPos[index])) {
 		_characterSubTargetPos[index] = _portalPos[enclosureDst];
 		return;
 	}
 
 	_characterSubTargetPos[index] = _portalPos[enclosureSrc];
 
-	if (_rectXMinMax[enclosureSrc].min != _rectXMinMax[enclosureSrc].max) {
-		if (_portalPos[enclosureSrc].x == _rectXMinMax[enclosureSrc].min) {
+	if (_enclosureRect[enclosureSrc].left != _enclosureRect[enclosureSrc].right) {
+		if (_portalPos[enclosureSrc].x == _enclosureRect[enclosureSrc].left) {
 			_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x - 1, _portalPos[enclosureSrc].y);
 			return;
 		}
 
-		if (_portalPos[enclosureSrc].x == _rectXMinMax[enclosureSrc].max) {
+		if (_portalPos[enclosureSrc].x == _enclosureRect[enclosureSrc].right) {
 			_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x + 1, _portalPos[enclosureSrc].y);
 			return;
 		}
 
-		if (_rectYMinMax[enclosureSrc].min != _rectYMinMax[enclosureSrc].max) {
-			if (_portalPos[enclosureSrc].y == _rectYMinMax[enclosureSrc].min)
+		if (_enclosureRect[enclosureSrc].bottom != _enclosureRect[enclosureSrc].top) {
+			if (_portalPos[enclosureSrc].y == _enclosureRect[enclosureSrc].bottom)
 				_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x, _portalPos[enclosureSrc].y - 1);
-			else // CHECKME: Should be a check on y == max
+			else // CHECKME: Should be a check on y == top
 				_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x, _portalPos[enclosureSrc].y + 1);
 
 			return;
@@ -1499,18 +1492,14 @@ byte LilliputEngine::homeInAvoidDeadEnds(int indexb, int indexs) {
 
 	Common::Point tmpPos = Common::Point(_curCharacterTilePos.x + constDirX[indexb], _curCharacterTilePos.y + constDirY[indexb]);
 
-	int16 var2 = checkEnclosure(tmpPos);
-	if (var2 == -1)
+	int16 idx = checkEnclosure(tmpPos);
+	if (idx == -1)
 		return 1;
 
-	tmpPos = _curCharacterTilePos;
-
-	if ((tmpPos.x >= _rectXMinMax[var2].min) && (tmpPos.x <= _rectXMinMax[var2].max) && (tmpPos.y >= _rectYMinMax[var2].min) && (tmpPos.y <= _rectYMinMax[var2].max))
+	if (_enclosureRect[idx].contains(_curCharacterTilePos))
 		return 0;
 
-	tmpPos = _characterSubTargetPos[indexs];
-
-	if ((tmpPos.x >= _rectXMinMax[var2].min) && (tmpPos.x <= _rectXMinMax[var2].max) && (tmpPos.y >= _rectYMinMax[var2].min) && (tmpPos.y <= _rectYMinMax[var2].max))
+	if (_enclosureRect[idx].contains(_characterSubTargetPos[indexs]))
 		return 0;
 
 	return 1;
@@ -1519,8 +1508,8 @@ byte LilliputEngine::homeInAvoidDeadEnds(int indexb, int indexs) {
 int16 LilliputEngine::checkEnclosure(Common::Point pos) {
 	debugC(2, kDebugEngine, "checkEnclosure(%d, %d)", pos.x, pos.y);
 
-	for (int i = 0; i < _rectNumb; i++) {
-		if ((pos.x >= _rectXMinMax[i].min) && (pos.x <= _rectXMinMax[i].max) && (pos.y >= _rectYMinMax[i].min) && (pos.y <= _rectYMinMax[i].max))
+	for (int i = 0; i < _rectNumb; ++i) {
+		if (_enclosureRect[i].contains(pos))
 			return i;
 	}
 	return -1;
@@ -1529,8 +1518,8 @@ int16 LilliputEngine::checkEnclosure(Common::Point pos) {
 int16 LilliputEngine::checkOuterEnclosure(Common::Point pos) {
 	debugC(2, kDebugEngine, "checkOuterEnclosure(%d, %d)", pos.x, pos.y);
 
-	for (int i = _rectNumb - 1; i >= 0 ; i--) {
-		if ((pos.x >= _rectXMinMax[i].min) && (pos.x <= _rectXMinMax[i].max) && (pos.y >= _rectYMinMax[i].min) && (pos.y <= _rectYMinMax[i].max))
+	for (int i = _rectNumb - 1; i >= 0 ; --i) {
+		if (_enclosureRect[i].contains(pos))
 			return i;
 	}
 	return -1;
@@ -2571,10 +2560,10 @@ void LilliputEngine::loadRules() {
 	assert((_rectNumb >= 0) && (_rectNumb <= 40));
 
 	for (int i = 0; i < _rectNumb; i++) {
-		_rectXMinMax[i].max = (int16)f.readByte();
-		_rectXMinMax[i].min = (int16)f.readByte();
-		_rectYMinMax[i].max = (int16)f.readByte();
-		_rectYMinMax[i].min = (int16)f.readByte();
+		_enclosureRect[i].right = (int16)f.readByte();
+		_enclosureRect[i].left = (int16)f.readByte();
+		_enclosureRect[i].top = (int16)f.readByte();
+		_enclosureRect[i].bottom = (int16)f.readByte();
 
 		int16 tmpValY = (int16)f.readByte();
 		int16 tmpValX = (int16)f.readByte();

@@ -1518,36 +1518,29 @@ byte LilliputScript::OC_CompareCharacterVariables() {
 	return compareValues(var1, operation, var2);
 }
 
-// TODO Rename function to "Check if character pos in rectangle"
+// TODO Rename function to "Check if current script character pos is in enclosure"
 byte LilliputScript::OC_compareCoords_1() {
 	debugC(1, kDebugScript, "OC_compareCoords_1()");
 
 	int index = _currScript->readUint16LE();
 	assert(index < 40);
 
-	MinMax xMinMax = _vm->_rectXMinMax[index];
-	MinMax yMinMax = _vm->_rectYMinMax[index];
-	Common::Point var1 = _vm->_currentScriptCharacterPos;
+	if (_vm->_enclosureRect[index].contains(_vm->_currentScriptCharacterPos))
+		return 1;
 
-	if ((var1.x < xMinMax.min) || (var1.x > xMinMax.max) || (var1.y < yMinMax.min) || (var1.y > yMinMax.max))
-		return 0;
-
-	return 1;
+	return 0;
 }
 
-// TODO Rename function to "Check if character pos in rectangle"
+// TODO Rename function to "Check if given character pos is in enclosure"
 byte LilliputScript::OC_compareCoords_2() {
 	debugC(1, kDebugScript, "OC_compareCoords_2()");
 
 	int16 index = getValue1();
-	Common::Point var1 = _characterTilePos[index];
 	index = _currScript->readUint16LE();
-	MinMax xMinMax = _vm->_rectXMinMax[index];
-	MinMax yMinMax = _vm->_rectYMinMax[index];
 
-	if ((var1.x < xMinMax.min) || (var1.x > xMinMax.max) || (var1.y < yMinMax.min) || (var1.y > yMinMax.max))
-		return 0;
-	return 1;
+	if (_vm->_enclosureRect[index].contains(_characterTilePos[index]))
+		return 1;
+	return 0;
 }
 
 byte LilliputScript::OC_CompareDistanceFromCharacterToPositionWith() {
