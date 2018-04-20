@@ -1965,7 +1965,30 @@ exit:
 void DwarfCutscene::getNewLocation() {
 	Party &party = *g_vm->_party;
 
-	if (_ccNum) {
+	if (g_vm->getGameID() == GType_Swords) {
+		switch (party._mazeId) {
+		case 1:
+			if (party._questItems[0]) {
+				_mazeId = 53;
+				_mazePos = Common::Point(8, 1);
+				_mazeDir = DIR_NORTH;
+				_keyFound = true;
+			}
+			break;
+
+		case 7:
+			if (party._questItems[1]) {
+				_mazeId = 92;
+				_mazePos = Common::Point(8, 1);
+				_mazeDir = DIR_NORTH;
+				_keyFound = true;
+			}
+			break;
+
+		default:
+			break;
+		}
+	} else if (_ccNum) {
 		switch (party._mazeId) {
 		case 4:
 			if (party._questItems[35]) {
