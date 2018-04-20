@@ -326,8 +326,9 @@ void TuckerEngine::handleMapSequence() {
 		copyMapRect(220, 0, 100, 180);
 	}
 	_fadePaletteCounter = 0;
-	int xPos = 0, yPos = 0, textNum = 0;
+	int xPos = 0, yPos = 0;
 	while (!_quitGame) {
+		int textNum = 0;
 		waitForTimer(2);
 		updateMouseState();
 		Graphics::copyRect(_locationBackgroundGfxBuf + _scrollOffset, 640, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
