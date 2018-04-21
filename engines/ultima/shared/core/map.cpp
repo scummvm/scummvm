@@ -64,6 +64,9 @@ void Map::setPosition(const Point &pt) {
 	// Set the new party/player position
 	_position = Point(pt.x * _tilesPerOrigTile.x, pt.y * _tilesPerOrigTile.y);
 
+	// The party is kept in the first widget slot, so keep it's position up to date
+	_widgets[0]->_position = _position;
+
 	// Reset the viewport, so it's position will get recalculated
 	_viewportPos.reset();
 }
@@ -98,7 +101,15 @@ Point Map::getViewportPosition(const Point &viewportSize) {
 }
 
 void Map::getTileAt(const Point &pt, MapTile *tile) {
+	// Get the base tile
 	tile->_tileNum = _data[pt.y * _size.x + pt.x];
+
+	// Get the tiles for any widgets on that map tile
+	tile->_widgetTiles.clear();
+	for (uint idx = 0; idx < _widgets.size(); ++idx) {
+		if (_widgets[idx]->_position == pt)
+			tile->_widgetTiles.push_back(_widgets[idx]->getTileNum());
+	}
 }
 
 } // End of namespace Shared

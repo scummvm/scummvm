@@ -38,7 +38,7 @@ public:
 	/**
 	 * Get the tile for the widget
 	 */
-	virtual uint getTileNum() const { return 42; }
+	virtual uint getTileNum() const { return 10; }
 };
 
 } // End of namespace Ultima1

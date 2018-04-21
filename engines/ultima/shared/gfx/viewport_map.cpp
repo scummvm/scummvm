@@ -45,11 +45,15 @@ void ViewportMap::draw() {
 	MapTile tile;
 	for (int y = 0; y < visibleTiles.y; ++y) {
 		for (int x = 0; x < visibleTiles.x; ++x) {
-			// Get the next tile to display
-			map->getTileAt(Point(topLeft.x + x, topLeft.y + y), &tile);
+			Point drawPos(x * spriteSize.x, y * spriteSize.y);
 
-			// Draw it
-			_sprites[tile._tileNum].draw(s, Point(x * spriteSize.x, y * spriteSize.y));
+			// Get the next tile to display and draw it
+			map->getTileAt(Point(topLeft.x + x, topLeft.y + y), &tile);
+			_sprites[tile._tileNum].draw(s, drawPos);
+
+			// Draw any extra tiles for widgets on that tile
+			for (uint idx = 0; idx < tile._widgetTiles.size(); ++idx)
+				_sprites[tile._widgetTiles[idx]].draw(s, drawPos);
 		}
 	}
 }
