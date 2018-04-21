@@ -1202,28 +1202,28 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 			_questItems[giveVal - MISC_END]++;
 		}
 		if (giveVal < WEAPONS_END || giveVal >= MISC_END) {
-			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._weapons[idx].empty(); ++idx);
+			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._weapons[idx].empty(); ++idx) {}
 			if (idx < MAX_TREASURE_ITEMS) {
 				_treasure._weapons[idx]._id = giveVal;
 				_treasure._hasItems = true;
 				return false;
 			}
 		} else if (giveVal < ARMOR_END) {
-			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._armor[idx].empty(); ++idx);
+			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._armor[idx].empty(); ++idx) {}
 			if (idx < MAX_TREASURE_ITEMS) {
 				_treasure._armor[idx]._id = giveVal - WEAPONS_END;
 				_treasure._hasItems = true;
 				return false;
 			}
 		} else if (giveVal < ACCESSORIES_END) {
-			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._accessories[idx].empty(); ++idx);
+			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._accessories[idx].empty(); ++idx) {}
 			if (idx < MAX_TREASURE_ITEMS) {
 				_treasure._accessories[idx]._id = giveVal - ARMOR_END;
 				_treasure._hasItems = true;
 				return false;
 			}
 		} else {
-			for (idx = 0; idx < MAX_TREASURE_ITEMS && _treasure._misc[idx]._material; ++idx);
+			for (idx = 0; idx < MAX_TREASURE_ITEMS && _treasure._misc[idx]._material; ++idx) {}
 			if (idx < MAX_TREASURE_ITEMS) {
 				_treasure._accessories[idx]._material = giveVal - ACCESSORIES_END;
 				_treasure._hasItems = true;
@@ -1357,7 +1357,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		Character &tempChar = _itemsCharacter;
 		int idx = -1;
 		if (scripts._itemType != 0) {
-			for (idx = 0; idx < 10 && _treasure._misc[idx]._material; ++idx);
+			for (idx = 0; idx < 10 && _treasure._misc[idx]._material; ++idx) {}
 			if (idx == 10)
 				return true;
 		}
@@ -1368,7 +1368,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		XeenItem *trItems = _treasure[itemCat];
 
 		// Check for a free treasure slot
-		for (idx = 0; idx < 10 && trItems[idx]._id; ++idx);
+		for (idx = 0; idx < 10 && trItems[idx]._id; ++idx) {}
 		if (idx == 10)
 			return true;
 

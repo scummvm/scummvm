@@ -876,9 +876,9 @@ void GameManager::telomat(int nr) {
 			_vm->renderBox(0, 0, 320, 200, kColorDarkBlue);
 			_vm->renderText(kStringTelomat12, 50, 80, kColorGreen);
 			_vm->renderText(kStringTelomat13, 50, 91, kColorGreen);
-			do
+			do {
 				edit(input, 50, 105, 30);
-			while ((_key.keycode != Common::KEYCODE_RETURN) && (_key.keycode != Common::KEYCODE_ESCAPE));
+			} while ((_key.keycode != Common::KEYCODE_RETURN) && (_key.keycode != Common::KEYCODE_ESCAPE));
 
 			if (_key.keycode == Common::KEYCODE_ESCAPE) {
 				_vm->renderBox(0, 0, 320, 200, kColorBlack);
@@ -966,9 +966,9 @@ void GameManager::telomat(int nr) {
 			_vm->renderBox(0, 0, 320, 200, kColorDarkBlue);
 			_vm->renderText(kStringTelomat21, 100, 90, kColorGreen);
 			input = "";
-			do
+			do {
 				edit(input, 100, 105, 30);
-			while ((_key.keycode != Common::KEYCODE_RETURN) && (_key.keycode != Common::KEYCODE_ESCAPE));
+			} while ((_key.keycode != Common::KEYCODE_RETURN) && (_key.keycode != Common::KEYCODE_ESCAPE));
 
 			if (_key.keycode == Common::KEYCODE_RETURN) {
 				_vm->renderText(kStringShipSleepCabin9, 100, 120, kColorGreen);

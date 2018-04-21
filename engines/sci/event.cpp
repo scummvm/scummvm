@@ -418,7 +418,7 @@ SciEvent EventManager::getSciEvent(SciEventType mask) {
 void EventManager::flushEvents() {
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event event;
-	while (em->pollEvent(event));
+	while (em->pollEvent(event)) {}
 	_events.clear();
 }
 

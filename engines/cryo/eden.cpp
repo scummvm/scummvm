@@ -2321,7 +2321,7 @@ void EdenGame::my_bulle() {
 		} else if (c >= 0x80 && c < 0x90)
 			SysBeep(1);
 		else if (c >= 0x90 && c < 0xA0) {
-			while (*textPtr++ != 0xFF);
+			while (*textPtr++ != 0xFF) {}
 			textPtr--;
 		} else if (c >= 0xA0 && c < 0xC0)
 			_globals->_textToken1 = c & 0xF;

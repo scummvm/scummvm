@@ -1231,8 +1231,7 @@ void LilliputScript::listAllTexts() {
 				warning("Text 0x%x variant %d : %s", i, j, _vm->_displayStringBuf);
 				do {
 					++it;
-				}
-				while (_vm->_packedStrings[index + variantCount + it] != 0x5B);
+				} while (_vm->_packedStrings[index + variantCount + it] != 0x5B);
 			}
 		} else {*/
 			decodePackedText(&_vm->_packedStrings[index + variantCount]);
@@ -1259,9 +1258,9 @@ void LilliputScript::startSpeech(int speechId) {
 		int tmpVal = _vm->_rnd->getRandomNumber(count);
 		if (tmpVal != 0) {
 			for (int j = 0; j < tmpVal; j++) {
-				do
+				do {
 					++i;
-				while (_vm->_packedStrings[index + count + i] != ']');
+				} while (_vm->_packedStrings[index + count + i] != ']');
 				++i;
 			}
 		}

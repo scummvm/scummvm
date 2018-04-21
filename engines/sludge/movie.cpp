@@ -911,7 +911,8 @@ int playMovie(int fileNumber) {
 	glBindFramebuffer(GL_FRAMEBUFFER, old_fbo);
 
 	movieIsPlaying = nothing;
-	for (int i = 0; i < 10; i++) Wait_Frame();
+	for (int i = 0; i < 10; i++)
+		Wait_Frame();
 	huntKillFreeSound(fileNumber);
 
 	if (vpx_codec_destroy(&codec))
