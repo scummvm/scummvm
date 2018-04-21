@@ -872,7 +872,20 @@ bool Character::guildMember() const {
 	FileManager &files = *g_vm->_files;
 	Party &party = *g_vm->_party;
 
-	if (files._ccNum) {
+	if (g_vm->getGameID() == GType_Swords) {
+		switch (party._mazeId) {
+		case 49:
+			return true;
+		case 53:
+			return hasAward(83);
+		case 63:
+			return hasAward(85);
+		case 92:
+			return hasAward(84);
+		default:
+			return hasAward(87);
+		}
+	} else if (files._ccNum) {
 		switch (party._mazeId) {
 		case 29:
 			return hasAward(CASTLEVIEW_GUILD_MEMBER);
