@@ -1023,7 +1023,7 @@ uint16 Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {
 	if (sourceEnabled) {
 		if (position == solution) {
 			soundId = soundIdGood;
-		} else if (position > solution && position <= solution + 50) {
+		} else if (position > solution && position < solution + 50) {
 			_soundReceiverNearBlinkCounter++;
 			if (_soundReceiverNearBlinkCounter % 2) {
 				_soundReceiverLeftButton->drawConditionalDataToScreen(2);
@@ -1031,7 +1031,7 @@ uint16 Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {
 				_soundReceiverLeftButton->drawConditionalDataToScreen(0);
 			}
 			soundId = soundIdNear;
-		} else if (position < solution && position >= solution - 50) {
+		} else if (position < solution && position > solution - 50) {
 			_soundReceiverNearBlinkCounter++;
 			if (_soundReceiverNearBlinkCounter % 2) {
 				_soundReceiverRightButton->drawConditionalDataToScreen(2);
