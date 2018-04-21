@@ -79,7 +79,7 @@ private:
 		kSoundReceiverSpeedSlow   = 1,
 		kSoundReceiverSpeedNormal = 5,   // The original has this at 10
 		kSoundReceiverSpeedFast   = 10,  // The original has this at 50 too fast!
-		kSoundReceiverSpeedFaster = 13,  // The original has this at 100, way too fast!
+		kSoundReceiverSpeedFaster = 13   // The original has this at 100, way too fast!
 	};
 
 	void soundReceiver_run();
