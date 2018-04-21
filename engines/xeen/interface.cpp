@@ -654,7 +654,7 @@ void Interface::doStepCode() {
 		break;
 	}
 
-	if (_vm->_files->_ccNum && party._gameFlags[1][118]) {
+	if (_vm->getGameID() != GType_Swords && _vm->_files->_ccNum && party._gameFlags[1][118]) {
 		_falling = FALL_NONE;
 	} else {
 		if (_falling != FALL_NONE)

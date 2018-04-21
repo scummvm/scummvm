@@ -1589,9 +1589,9 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	}
 	case 20:
-		if (files._ccNum)
+		assert(val < 256);
+		if (files._ccNum && _vm->getGameID() != GType_Swords)
 			val += 256;
-		assert(val < 512);
 		v = party._gameFlags[val / 256][val % 256] ? val : 0xffffffff;
 		break;
 	case 21: {

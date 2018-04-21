@@ -157,7 +157,7 @@ void Quests::execute() {
 			break;
 
 		case AUTO_NOTES: {
-			int count = _vm->getGameID() == GType_Swords ? 49 : MAX_DIALOG_LINES;
+			count = _vm->getGameID() == GType_Swords ? 49 : MAX_DIALOG_LINES;
 			for (int idx = 0; idx < count; ++idx)
 				lines[idx] = "";
 

@@ -922,7 +922,8 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	}
 	case 20:
-		_gameFlags[files._ccNum][takeVal] = false;
+		assert(takeVal < 256);
+		_gameFlags[_vm->getGameID() == GType_Swords ? 0 : files._ccNum][takeVal] = false;
 		break;
 	case 21: {
 		const uint WEAPONS_END = _vm->getGameID() != GType_Swords ? 35 : 41;
@@ -1187,7 +1188,8 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	}
 	case 20:
-		_gameFlags[files._ccNum][giveVal] = true;
+		assert(giveVal < 256);
+		_gameFlags[_vm->getGameID() == GType_Swords ? 0 : files._ccNum][giveVal] = true;
 		break;
 	case 21: {
 		const uint WEAPONS_END = _vm->getGameID() != GType_Swords ? 35 : 41;
