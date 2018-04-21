@@ -970,13 +970,13 @@ void Selenitic::soundReceiver_run() {
 void Selenitic::soundReceiverIncreaseSpeed() {
 	switch (_soundReceiverSpeed) {
 	case 1:
-		_soundReceiverSpeed = 10;
+		_soundReceiverSpeed = 5; // The original has this at 10
+		break;
+	case 5:
+		_soundReceiverSpeed = 10; // The original has this at 50 too fast!
 		break;
 	case 10:
-		_soundReceiverSpeed = 50;
-		break;
-	case 50:
-		_soundReceiverSpeed = 100;
+		_soundReceiverSpeed = 13; // The original has this at 100, way too fast!
 		break;
 	}
 }
