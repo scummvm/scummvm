@@ -647,7 +647,9 @@ enum ImageId {
 	kImageCellRobotSparks,
 	kImageCellRobotBroken,
 	kImageCellDoorClosed,
-	kImageCellDummy1
+	kImageCellDummy1,
+	// file 55
+	kImageOutroScreen
 };
 
 }

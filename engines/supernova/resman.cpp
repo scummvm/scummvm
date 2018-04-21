@@ -163,10 +163,12 @@ void ResourceManager::initCursorGraphics() {
 }
 
 void ResourceManager::initImages() {
-	for (int i = 0; i < kNumImageFiles; ++i) {
+	for (int i = 0; i < 44; ++i) {
 		if (!_images[i].init(i))
 			error("Failed reading image file msn_data.%03d", i);
 	}
+	if (!_images[44].init(55))
+			error("Failed reading image file msn_data.055");
 }
 
 Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
@@ -190,9 +192,12 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 }
 
 const MSNImage *ResourceManager::getImage(int filenumber) const {
-	assert(filenumber < kNumImageFiles);
-
-	return &_images[filenumber];
+	if (filenumber < 44)
+		return &_images[filenumber];
+	else if (filenumber == 55)
+		return &_images[44];
+	else
+		return nullptr;
 }
 
 const byte *ResourceManager::getImage(CursorId id) const {
