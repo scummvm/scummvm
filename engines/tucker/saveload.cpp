@@ -286,13 +286,16 @@ bool TuckerEngine::isAutosaveAllowed(const char *target) {
 
 void TuckerEngine::writeAutosave() {
 	if (canSaveGameStateCurrently()) {
+		// unconditionally reset last autosave timestamp so we don't start
+		// hammering the disk in case we can't/don't actually write the file
+		_lastSaveTime = _system->getMillis();
+
 		if (!isAutosaveAllowed()) {
 			warning("Refusing to overwrite non-autosave savegame in slot %i, skipping autosave", kAutoSaveSlot);
 			return;
 		}
 
 		writeSavegame(kAutoSaveSlot, "Autosave", true);
-		_lastSaveTime = _system->getMillis();
 	}
 }
 
