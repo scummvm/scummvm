@@ -28,7 +28,7 @@ namespace Illusions {
 
 bool TextDrawer::wrapText(FontResource *font, uint16 *text, WidthHeight *dimensions, Common::Point offsPt,
 	uint textFlags, uint16 *&outTextPtr) {
-	_font = font;	
+	_font = font;
 	_text = text;
 	_dimensions = dimensions;
 	_offsPt = offsPt;
@@ -52,7 +52,7 @@ void TextDrawer::drawText(Screen *screen, Graphics::Surface *surface, uint16 col
 			debugN("%c", c);
 		}
 		debug(" ");
-#endif		
+#endif
 	}
 }
 	
