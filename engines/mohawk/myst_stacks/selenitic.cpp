@@ -61,7 +61,7 @@ Selenitic::Selenitic(MohawkEngine_Myst *vm) :
 
 	_soundReceiverCurrentSource = nullptr;
 	_soundReceiverPosition = nullptr;
-	_soundReceiverSpeed = 0;
+	_soundReceiverSpeed = kSoundReceiverSpeedStill;
 	_soundReceiverViewer = nullptr;
 	_soundReceiverRightButton = nullptr;
 	_soundReceiverLeftButton = nullptr;
@@ -669,7 +669,7 @@ void Selenitic::soundReceiverLeftRight(uint direction) {
 	_vm->_sound->stopEffect();
 
 	_soundReceiverDirection = direction;
-	_soundReceiverSpeed = 1;
+	_soundReceiverSpeed = kSoundReceiverSpeedSlow;
 	_soundReceiverStartTime = _vm->_system->getMillis();
 
 	soundReceiverUpdate();
@@ -951,7 +951,7 @@ void Selenitic::soundReceiver_run() {
 		if (_soundReceiverDirection) {
 			uint32 currentTime = _vm->_system->getMillis();
 
-			if (_soundReceiverSpeed == 50 && currentTime > _soundReceiverStartTime + 500) {
+			if (_soundReceiverSpeed == kSoundReceiverSpeedFast && currentTime > _soundReceiverStartTime + 500) {
 				soundReceiverIncreaseSpeed();
 				_soundReceiverStartTime = currentTime;
 			} else if (currentTime > _soundReceiverStartTime + 1000) {
@@ -959,8 +959,9 @@ void Selenitic::soundReceiver_run() {
 				_soundReceiverStartTime = currentTime;
 			}
 
-			if (currentTime > _soundReceiverStartTime + 100)
+			if (_soundReceiverSpeed > kSoundReceiverSpeedSlow || currentTime > _soundReceiverStartTime + 100) {
 				soundReceiverUpdate();
+			}
 		} else if (!_soundReceiverSigmaPressed) {
 			soundReceiverUpdateSound();
 		}
@@ -969,14 +970,20 @@ void Selenitic::soundReceiver_run() {
 
 void Selenitic::soundReceiverIncreaseSpeed() {
 	switch (_soundReceiverSpeed) {
-	case 1:
-		_soundReceiverSpeed = 5; // The original has this at 10
+	case kSoundReceiverSpeedStill:
+		// Should not happen
 		break;
-	case 5:
-		_soundReceiverSpeed = 10; // The original has this at 50 too fast!
+	case kSoundReceiverSpeedSlow:
+		_soundReceiverSpeed = kSoundReceiverSpeedNormal;
 		break;
-	case 10:
-		_soundReceiverSpeed = 13; // The original has this at 100, way too fast!
+	case kSoundReceiverSpeedNormal:
+		_soundReceiverSpeed = kSoundReceiverSpeedFast;
+		break;
+	case kSoundReceiverSpeedFast:
+		_soundReceiverSpeed = kSoundReceiverSpeedFaster;
+		break;
+	case kSoundReceiverSpeedFaster:
+		// Can't go faster
 		break;
 	}
 }
