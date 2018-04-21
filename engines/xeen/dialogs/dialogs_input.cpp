@@ -216,7 +216,7 @@ int NumericInput::execute(int maxLength, int maxWidth) {
 /*------------------------------------------------------------------------*/
 
 int Choose123::show(XeenEngine *vm, uint numOptions) {
-	assert(numOptions <= 3);
+	assert(numOptions <= 9);
 	Choose123 *dlg = new Choose123(vm);
 	int result = dlg->execute(numOptions);
 	delete dlg;
