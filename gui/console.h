@@ -174,11 +174,12 @@ protected:
 	void print(const char *str);
 	void updateScrollBuffer();
 	void scrollToCurrent();
+	Common::String getUserInput();
 
 	void defaultKeyDownHandler(Common::KeyState &state);
 
 	// Line editing
-	void specialKeys(int keycode);
+	void specialKeys(Common::KeyCode keycode);
 	void nextLine();
 	void killChar();
 	void killLine();
