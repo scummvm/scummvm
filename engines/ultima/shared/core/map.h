@@ -24,6 +24,7 @@
 #define ULTIMA_SHARED_CORE_MAP_H
 
 #include "common/array.h"
+#include "common/ptr.h"
 #include "ultima/shared/core/rect.h"
 
 namespace Ultima {
@@ -46,6 +47,7 @@ class Map;
 class MapTile {
 public:
 	int _tileNum;
+	Common::Array<int> _widgetTiles;
 public:
 	/**
 	 * Constructor
@@ -66,6 +68,7 @@ class MapWidget {
 protected:
 	Game *_game;						// Game reference
 	Map *_map;							// Map reference
+public:
 	Point _position;					// Position within the map
 	int _hitPoints;						// Hit pointers
 public:
@@ -79,8 +82,10 @@ public:
 	/**
 	 * Get the tile for the widget
 	 */
-	virtual uint getTileNum() const { return 0; }
+	virtual uint getTileNum() const = 0;
 };
+
+typedef Common::SharedPtr<MapWidget> MapWidgetPtr;
 
 /**
  * Base class for managing maps within the game
@@ -112,7 +117,7 @@ class Map {
 	};
 protected:
 	byte _mapId;						// The map Id
-	Common::Array<MapWidget> _widgets;	// Party, monsteres, transports, etc.
+	Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
 	MapType _mapType;
 	uint _mapStyle;						// Map style category for towns & castles
 	Common::Array<int16> _data;			// Data for the map
