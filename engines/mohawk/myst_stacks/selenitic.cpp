@@ -61,7 +61,7 @@ Selenitic::Selenitic(MohawkEngine_Myst *vm) :
 
 	_soundReceiverCurrentSource = nullptr;
 	_soundReceiverPosition = nullptr;
-	_soundReceiverSpeed = 0;
+	_soundReceiverSpeed = kSoundReceiverSpeedStill;
 	_soundReceiverViewer = nullptr;
 	_soundReceiverRightButton = nullptr;
 	_soundReceiverLeftButton = nullptr;
@@ -669,7 +669,7 @@ void Selenitic::soundReceiverLeftRight(uint direction) {
 	_vm->_sound->stopEffect();
 
 	_soundReceiverDirection = direction;
-	_soundReceiverSpeed = 1;
+	_soundReceiverSpeed = kSoundReceiverSpeedSlow;
 	_soundReceiverStartTime = _vm->_system->getMillis();
 
 	soundReceiverUpdate();
@@ -951,7 +951,7 @@ void Selenitic::soundReceiver_run() {
 		if (_soundReceiverDirection) {
 			uint32 currentTime = _vm->_system->getMillis();
 
-			if (_soundReceiverSpeed == 50 && currentTime > _soundReceiverStartTime + 500) {
+			if (_soundReceiverSpeed == kSoundReceiverSpeedFast && currentTime > _soundReceiverStartTime + 500) {
 				soundReceiverIncreaseSpeed();
 				_soundReceiverStartTime = currentTime;
 			} else if (currentTime > _soundReceiverStartTime + 1000) {
@@ -959,8 +959,9 @@ void Selenitic::soundReceiver_run() {
 				_soundReceiverStartTime = currentTime;
 			}
 
-			if (currentTime > _soundReceiverStartTime + 100)
+			if (_soundReceiverSpeed > kSoundReceiverSpeedSlow || currentTime > _soundReceiverStartTime + 100) {
 				soundReceiverUpdate();
+			}
 		} else if (!_soundReceiverSigmaPressed) {
 			soundReceiverUpdateSound();
 		}
@@ -969,14 +970,20 @@ void Selenitic::soundReceiver_run() {
 
 void Selenitic::soundReceiverIncreaseSpeed() {
 	switch (_soundReceiverSpeed) {
-	case 1:
-		_soundReceiverSpeed = 10;
+	case kSoundReceiverSpeedStill:
+		// Should not happen
 		break;
-	case 10:
-		_soundReceiverSpeed = 50;
+	case kSoundReceiverSpeedSlow:
+		_soundReceiverSpeed = kSoundReceiverSpeedNormal;
 		break;
-	case 50:
-		_soundReceiverSpeed = 100;
+	case kSoundReceiverSpeedNormal:
+		_soundReceiverSpeed = kSoundReceiverSpeedFast;
+		break;
+	case kSoundReceiverSpeedFast:
+		_soundReceiverSpeed = kSoundReceiverSpeedFaster;
+		break;
+	case kSoundReceiverSpeedFaster:
+		// Can't go faster
 		break;
 	}
 }
@@ -1023,7 +1030,7 @@ uint16 Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {
 	if (sourceEnabled) {
 		if (position == solution) {
 			soundId = soundIdGood;
-		} else if (position > solution && position <= solution + 50) {
+		} else if (position > solution && position < solution + 50) {
 			_soundReceiverNearBlinkCounter++;
 			if (_soundReceiverNearBlinkCounter % 2) {
 				_soundReceiverLeftButton->drawConditionalDataToScreen(2);
@@ -1031,7 +1038,7 @@ uint16 Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {
 				_soundReceiverLeftButton->drawConditionalDataToScreen(0);
 			}
 			soundId = soundIdNear;
-		} else if (position < solution && position >= solution - 50) {
+		} else if (position < solution && position > solution - 50) {
 			_soundReceiverNearBlinkCounter++;
 			if (_soundReceiverNearBlinkCounter % 2) {
 				_soundReceiverRightButton->drawConditionalDataToScreen(2);
