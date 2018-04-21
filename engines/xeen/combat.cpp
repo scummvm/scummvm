@@ -716,7 +716,10 @@ void Combat::moveMonster(int monsterId, const Common::Point &moveDelta) {
 	MazeMonster &monster = map._mobData._monsters[monsterId];
 	Common::Point newPos = monster._position + moveDelta;
 
-	assert((uint)newPos.x < 32 && (uint)newPos.y < 32);
+	// FIXME: Monster moved outside mapping area. Which shouldn't happen, so ignore the move if it does
+	if ((uint)newPos.x >= 32 || (uint)newPos.y >= 32)
+		return;
+
 	if (_monsterMap[newPos.y][newPos.x] < 3 && monster._damageType == DT_PHYSICAL && _moveMonsters) {
 		// Adjust monster's position
 		++_monsterMap[newPos.y][newPos.x];
