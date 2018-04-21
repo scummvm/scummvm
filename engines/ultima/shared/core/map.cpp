@@ -25,6 +25,12 @@
 namespace Ultima {
 namespace Shared {
 
+void MapTile::clear() {
+	_tileNum = -1;
+}
+
+/*-------------------------------------------------------------------*/
+
 Map::Map() {
 	_mapId = 0;
 	_mapType = MAP_OVERWORLD;
@@ -34,7 +40,7 @@ Map::Map() {
 }
 
 Point Map::getRelativePosition(const Point &delta) {
-	Point pt = _currentPos + delta;
+	Point pt = _position + delta;
 	if (pt.x < 0)
 		pt.x += _size.x;
 	else if (pt.x >= _size.x)
@@ -55,8 +61,42 @@ void Map::loadMap(int mapId, uint videoMode) {
 }
 
 void Map::setPosition(const Point &pt) {
-	_currentPos = Point(pt.x * _tilesPerOrigTile.x, pt.y * _tilesPerOrigTile.y);
+	// Set the new party/player position
+	_position = Point(pt.x * _tilesPerOrigTile.x, pt.y * _tilesPerOrigTile.y);
+
+	// Reset the viewport, so it's position will get recalculated
+	_viewportPos.reset();
 }
+
+Point Map::getViewportPosition(const Point &viewportSize) {
+	Point &topLeft = _viewportPos._topLeft;
+
+	if (!_viewportPos.isValid() || _viewportPos._size != viewportSize) {
+		// Calculate the new position
+		if (_fixed) {
+
+		} else {
+			// Non-fixed map, so it wraps around the edges if necessary
+			topLeft.x = _position.x + (viewportSize.x - 1) / 2;
+			topLeft.y = _position.y + (viewportSize.y - 1) / 2;
+
+			if (topLeft.x < 0)
+				topLeft.x += width();
+			else if (topLeft.x >= (int)width())
+				topLeft.x -= width();
+
+			if (topLeft.y < 0)
+				topLeft.y += height();
+			else if (topLeft.y >= (int)height())
+				topLeft.y -= height();
+		}
+
+		_viewportPos._mapId = _mapId;
+	}
+
+	return topLeft;
+}
+
 
 } // End of namespace Shared
 } // End of namespace Ultima
