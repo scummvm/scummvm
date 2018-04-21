@@ -33,6 +33,8 @@ lib*.a
 /.settings
 /.autotools
 /Icon.*
+/scummvm-conf.cpp
+/tmp_*.cpp
 
 /build
 /staging
