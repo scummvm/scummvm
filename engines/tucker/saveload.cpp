@@ -295,7 +295,10 @@ void TuckerEngine::writeAutosave() {
 			return;
 		}
 
-		writeSavegame(kAutoSaveSlot, "Autosave", true);
+		if (writeSavegame(kAutoSaveSlot, "Autosave", true).getCode() != Common::kNoError) {
+			warning("Can't create autosave in slot %i, game not saved", kAutoSaveSlot);
+			return;
+		}
 	}
 }
 
