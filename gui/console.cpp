@@ -243,9 +243,19 @@ void ConsoleDialog::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
 
-void ConsoleDialog::handleKeyDown(Common::KeyState state) {
-	int i;
+Common::String ConsoleDialog::getUserInput() {
+	assert(_promptEndPos >= _promptStartPos);
+	int len = _promptEndPos - _promptStartPos;
 
+	// Copy the user input to str
+	Common::String str;
+	for (int i = 0; i < len; i++)
+		str.insertChar(buffer(_promptStartPos + i), i);
+
+	return str;
+}
+
+void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 	if (_slideMode != kNoSlideMode)
 		return;
 
@@ -257,26 +267,16 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 
 		nextLine();
 
-		assert(_promptEndPos >= _promptStartPos);
-		int len = _promptEndPos - _promptStartPos;
 		bool keepRunning = true;
 
-
-		if (len > 0) {
-
-			Common::String str;
-
-			// Copy the user input to str
-			for (i = 0; i < len; i++)
-				str.insertChar(buffer(_promptStartPos + i), i);
-
+		Common::String userInput = getUserInput();
+		if (!userInput.empty()) {
 			// Add the input to the history
-			addToHistory(str);
+			addToHistory(userInput);
 
 			// Pass it to the input callback, if any
 			if (_callbackProc)
-				keepRunning = (*_callbackProc)(this, str.c_str(), _callbackRefCon);
-
+				keepRunning = (*_callbackProc)(this, userInput.c_str(), _callbackRefCon);
 		}
 
 		print(PROMPT);
@@ -311,7 +311,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 			char *str = new char[len + 1];
 
 			// Copy the user input to str
-			for (i = 0; i < len; i++)
+			for (int i = 0; i < len; i++)
 				str[i] = buffer(_promptStartPos + i);
 			str[len] = '\0';
 
@@ -504,7 +504,7 @@ void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 
-void ConsoleDialog::specialKeys(int keycode) {
+void ConsoleDialog::specialKeys(Common::KeyCode keycode) {
 	switch (keycode) {
 	case Common::KEYCODE_a:
 		_currentPos = _promptStartPos;
@@ -527,6 +527,23 @@ void ConsoleDialog::specialKeys(int keycode) {
 	case Common::KEYCODE_w:
 		killLastWord();
 		g_gui.scheduleTopDialogRedraw();
+		break;
+	case Common::KEYCODE_v:
+		if (g_system->hasFeature(OSystem::kFeatureClipboardSupport) && g_system->hasTextInClipboard()) {
+			Common::String text = g_system->getTextFromClipboard();
+			insertIntoPrompt(text.c_str());
+			scrollToCurrent();
+			drawLine(pos2line(_currentPos));
+		}
+		break;
+	case Common::KEYCODE_c:
+		if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
+			Common::String userInput = getUserInput();
+			if (!userInput.empty())
+				g_system->setTextInClipboard(userInput);
+		}
+		break;
+	default:
 		break;
 	}
 }
