@@ -29,8 +29,6 @@
 #include "engines/unknown-game-dialog.h"
 #include "backends/platform/sdl/sdl.h"
 
-namespace GUI {
-
 enum {
 	kCopyToClipboard = 'cpcl',
 	kOpenBugtrackerURL = 'ourl',
@@ -85,11 +83,12 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 	int closeButtonPos = _w - closeButtonWidth - 10;
 	int copyToClipboardButtonPos = _w - copyToClipboardButtonWidth - closeButtonWidth - 15;
 	int openBugtrackerURLButtonPos = _w - copyToClipboardButtonWidth - closeButtonWidth - openBugtrackerURLButtonWidth - 20;
-	_closeButton = new ButtonWidget(this, closeButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Close"), 0, kClose);
+
+	new GUI::ButtonWidget(this, closeButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Close"), 0, kClose);
 
 	//Check if we have clipboard functionality
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
-		new ButtonWidget(this, copyToClipboardButtonPos, _h - buttonHeight - 8, copyToClipboardButtonWidth, buttonHeight, _("Copy to clipboard"), 0, kCopyToClipboard);
+		new GUI::ButtonWidget(this, copyToClipboardButtonPos, _h - buttonHeight - 8, copyToClipboardButtonWidth, buttonHeight, _("Copy to clipboard"), 0, kCopyToClipboard);
 	} else {
 			//Set the bug tracker position to the one of the disabled copy-to-clipboard button
 			openBugtrackerURLButtonPos = copyToClipboardButtonPos;
@@ -97,7 +96,7 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 
 	//Check if we have support for opening URLs
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
-		new ButtonWidget(this, openBugtrackerURLButtonPos, _h - buttonHeight - 8, openBugtrackerURLButtonWidth, buttonHeight, _("Report game"), 0, kOpenBugtrackerURL);
+		new GUI::ButtonWidget(this, openBugtrackerURLButtonPos, _h - buttonHeight - 8, openBugtrackerURLButtonWidth, buttonHeight, _("Report game"), 0, kOpenBugtrackerURL);
 		//Formatting the reportData for bugtracker submission [replace line breaks]...
 		_bugtrackerGameData = _reportData;
 		while (_bugtrackerGameData.contains("\n")) {
@@ -108,7 +107,7 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 	// Each line is represented by one static text item.
 	uint y = 10;
 	for (uint i = 0; i < lines.size(); i++) {
-		new StaticTextWidget(this, 10, y, _w, kLineHeight,
+		new GUI::StaticTextWidget(this, 10, y, _w, kLineHeight,
 								lines[i], Graphics::kTextAlignLeft);
 		y += kLineHeight;
 	}
@@ -133,7 +132,7 @@ Common::String UnknownGameDialog::generateBugtrackerURL() {
 		_bugtrackerAffectedEngine.c_str(), _bugtrackerGameData.c_str(), _bugtrackerAffectedEngine.c_str(), _bugtrackerAffectedEngine.c_str());
 }
 
-void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+void UnknownGameDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
 	case kCopyToClipboard:
 	{
@@ -157,4 +156,3 @@ void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	}
 }
 }
-} //End of namespace GUI

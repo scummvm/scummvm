@@ -374,7 +374,7 @@ void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFileP
 
 	// Check if the GUI is running, show the UnknownGameDialog and print the translated unknown game information
 	if (GUI::GuiManager::hasInstance() && g_gui.isActive()) {
-		GUI::UnknownGameDialog dialog(report, reportTranslated, bugtrackerAffectedEngine);
+		UnknownGameDialog dialog(report, reportTranslated, bugtrackerAffectedEngine);
 		dialog.runModal();
 	}
 }

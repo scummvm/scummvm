@@ -22,16 +22,14 @@
 
 #include "gui/dialog.h"
 
-namespace GUI {
-
 class ButtonWidget;
 class StaticTextWidget;
 class CommandSender;
 
-class UnknownGameDialog : public Dialog {
+class UnknownGameDialog : public GUI::Dialog {
 public:
 	UnknownGameDialog(const Common::String &reportData, const Common::String &reportTranslated, const Common::String &bugtrackerAffectedEngine);
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	virtual Common::String generateBugtrackerURL();
 	virtual void reflowLayout();
 
@@ -44,5 +42,3 @@ private:
 	ButtonWidget *_openBugtrackerURLButton;
 	ButtonWidget *_closeButton;
 };
-
-} // End of namespace GUI 
