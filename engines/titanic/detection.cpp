@@ -156,7 +156,7 @@ SaveStateDescriptor TitanicMetaEngine::querySaveMetaInfos(const char *target, in
 		file.open(f);
 
 		Titanic::TitanicSavegameHeader header;
-		if (!Titanic::CProjectItem::readSavegameHeader(&file, header, true)) {
+		if (!Titanic::CProjectItem::readSavegameHeader(&file, header, false)) {
 			file.close();
 			return SaveStateDescriptor();
 		}
