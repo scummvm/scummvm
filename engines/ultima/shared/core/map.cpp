@@ -37,7 +37,7 @@ Map::Map() {
 	_fixed = false;
 }
 
-Point Map::getRelativePosition(const Point &delta) {
+Point Map::getDeltaPosition(const Point &delta) {
 	Point pt = _position + delta;
 	if (pt.x < 0)
 		pt.x += _size.x;
@@ -78,13 +78,13 @@ Point Map::getViewportPosition(const Point &viewportSize) {
 			if (_position.x < (int)(width() / 2)) {
 				topLeft.x = MAX(_position.x - 5, 0);
 			} else {
-				topLeft.x = MIN(_position.x + 5, (int)width()) - viewportSize.x;
+				topLeft.x = MAX((int)(_position.x + 5 - width()), 0);
 			}
 
 			if (_position.y < (int)(height() / 2)) {
 				topLeft.y = MAX(_position.y - 5, 0);
 			} else {
-				topLeft.y = MIN(_position.y + 5, (int)height()) - viewportSize.y;
+				topLeft.y = MAX((int)(_position.y + 5 - height()), 0);
 			}
 		} else {
 			// Non-fixed map, so it wraps around the edges if necessary
@@ -130,7 +130,7 @@ void Map::shiftViewport(const Point &delta) {
 
 void Map::getTileAt(const Point &pt, MapTile *tile) {
 	// Get the base tile
-	tile->_tileNum = _data[pt.y * _size.x + pt.x];
+	tile->_tileNum = tile->_tileId = _data[pt.y * _size.x + pt.x];
 
 	// Get the tiles for any widgets on that map tile
 	tile->_widgetTiles.clear();

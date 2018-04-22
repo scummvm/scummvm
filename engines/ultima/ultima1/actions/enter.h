@@ -20,41 +20,36 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GAME_H
-#define ULTIMA_ULTIMA1_GAME_H
+#ifndef ULTIMA_ULTIMA1_ACTIONS_ENTER_H
+#define ULTIMA_ULTIMA1_ACTIONS_ENTER_H
 
-#include "ultima/shared/early/game.h"
+#include "ultima/ultima1/actions/action.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Actions {
 
-namespace U1Gfx {
-	class GameView;
-}
+using Shared::CEnterMsg;
 
-class GameResources;
-
-class Ultima1Game : public Shared::Game {
+class Enter : public Action {
 	DECLARE_MESSAGE_MAP;
-public:
-	GameResources *_res;
-	U1Gfx::GameView *_gameView;
+	bool EnterMsg(CEnterMsg &msg);
 public:
 	CLASSDEF;
-	Ultima1Game();
-	virtual ~Ultima1Game();
 
 	/**
-	 * Called when the game starts
-	 */
-	void starting();
+	* Constructor
+	*/
+	Enter(TreeItem *parent) : Action(parent) {}
 
 	/**
-	 * Play a sound effect
+	 * Destructor
 	 */
-	void playFX(uint effectId);
+	virtual ~Enter() {}
 };
 
+} // End of namespace Actions
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

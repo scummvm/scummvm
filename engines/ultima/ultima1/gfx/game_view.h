@@ -46,7 +46,7 @@ namespace U1Gfx {
 
 class Status;
 class ViewportMap;
-using Shared::CVirtualKeyCharMsg;
+using Shared::CKeypressMsg;
 
 /**
  * This class implements a standard view screen that shows a status and log area, as well as either
@@ -54,13 +54,13 @@ using Shared::CVirtualKeyCharMsg;
  */
 class GameView : public Shared::Gfx::VisualContainer {
 	DECLARE_MESSAGE_MAP;
-	bool VirtualKeyCharMsg(CVirtualKeyCharMsg &msg);
+	bool KeypressMsg(CKeypressMsg &msg);
 private:
 	Shared::Info *_info;
 	Shared::ViewportDungeon *_viewportDungeon;
 	ViewportMap *_viewportMap;
 	Status *_status;
-	Actions::Action *_actions[1];
+	Actions::Action *_actions[2];
 public:
 	CLASSDEF;
 	GameView(TreeItem *parent = nullptr);

@@ -71,7 +71,7 @@ void Sprite::draw(Graphics::ManagedSurface &dest, const Common::Point &pt) {
 
 /*-------------------------------------------------------------------*/
 
-void Sprites::load(const Common::String &name, uint bpp, size_t startingIndex, uint16 w, uint16 h) {
+void Sprites::load(const Common::String &name, uint bpp, uint16 w, uint16 h) {
 	_spriteSize = Point(w, h);
 
 	// Open the tiles for access
@@ -83,14 +83,14 @@ void Sprites::load(const Common::String &name, uint bpp, size_t startingIndex, u
 	size_t count = f.size() / bytesPerTile;
 
 	// Ensure there's enough capacity for the tileset
-	if ((startingIndex + count) > size())
-		resize(startingIndex + count);
+	if (count > size())
+		resize(count);
 
 	// Iterate through loading the tile data and creating sprites for them
 	for (size_t idx = 0; idx < count; ++idx) {
 		f.read(buffer, bytesPerTile);
 
-		(*this)[startingIndex + idx] = Sprite(buffer, bpp, w, h);
+		(*this)[idx] = Sprite(buffer, bpp, w, h);
 	}
 
 	delete[] buffer;

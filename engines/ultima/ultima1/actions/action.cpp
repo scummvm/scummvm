@@ -53,6 +53,10 @@ void Action::addStatusMsg(const Common::String &text) {
 	msg.execute(getView());
 }
 
+void Action::playFX(uint effectId) {
+	getRoot()->playFX(effectId);
+}
+
 } // End of namespace Actions
 } // End of namespace Ultima1
 } // End of namespace Ultima

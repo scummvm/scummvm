@@ -43,5 +43,9 @@ void Ultima1Game::starting() {
 	_gameView->setView("GameView");
 }
 
+void Ultima1Game::playFX(uint effectId) {
+	warning("TODO: playFX");
+}
+
 } // End of namespace Ultima1
 } // End of namespace Ultima

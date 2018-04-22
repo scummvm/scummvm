@@ -20,42 +20,41 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GAME_H
-#define ULTIMA_ULTIMA1_GAME_H
-
-#include "ultima/shared/early/game.h"
+#include "ultima/ultima1/actions/enter.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/map.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Actions {
 
-namespace U1Gfx {
-	class GameView;
+BEGIN_MESSAGE_MAP(Enter, Action)
+	ON_MESSAGE(EnterMsg)
+END_MESSAGE_MAP()
+
+bool Enter::EnterMsg(CEnterMsg &msg) {
+	Ultima1Game *game = getRoot();
+	Ultima1Map *map = getMap();
+	U1MapTile mapTile;
+
+	map->getTileAt(map->getPosition(), &mapTile);
+	
+	if (mapTile._locationNum == -1) {
+		addStatusMsg(game->_res->ENTER_QUESTION);
+		playFX(1);
+	} else {
+		// Load the location
+		map->loadMap(mapTile._locationNum, getGameState()->_videoMode);
+
+		// Add message for location having been entered
+		addStatusMsg(game->_res->ENTERING);
+		addStatusMsg(map->_name);
+	}
+
+	return true;
 }
 
-class GameResources;
-
-class Ultima1Game : public Shared::Game {
-	DECLARE_MESSAGE_MAP;
-public:
-	GameResources *_res;
-	U1Gfx::GameView *_gameView;
-public:
-	CLASSDEF;
-	Ultima1Game();
-	virtual ~Ultima1Game();
-
-	/**
-	 * Called when the game starts
-	 */
-	void starting();
-
-	/**
-	 * Play a sound effect
-	 */
-	void playFX(uint effectId);
-};
-
+} // End of namespace Actions
 } // End of namespace Ultima1
 } // End of namespace Ultima
-
-#endif

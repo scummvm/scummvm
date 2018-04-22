@@ -20,39 +20,34 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GAME_H
-#define ULTIMA_ULTIMA1_GAME_H
+#ifndef ULTIMA_ULTIMA1_CORE_PEOPLE_H
+#define ULTIMA_ULTIMA1_CORE_PEOPLE_H
 
-#include "ultima/shared/early/game.h"
+#include "ultima/shared/core/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
-namespace U1Gfx {
-	class GameView;
-}
-
-class GameResources;
-
-class Ultima1Game : public Shared::Game {
-	DECLARE_MESSAGE_MAP;
+class Person : public Shared::MapWidget {
+private:
+	uint _tileNum;
+	int _hitPoints;
 public:
-	GameResources *_res;
-	U1Gfx::GameView *_gameView;
-public:
-	CLASSDEF;
-	Ultima1Game();
-	virtual ~Ultima1Game();
+	/**
+	 * Constructor
+	 */
+	Person(Shared::Game *game, Shared::Map *map, uint tileNum, int hitPoints) : Shared::MapWidget(game, map),
+		_tileNum(tileNum), _hitPoints(hitPoints) {}
 
 	/**
-	 * Called when the game starts
+	 * Destructor
 	 */
-	void starting();
+	virtual ~Person() {}
 
 	/**
-	 * Play a sound effect
+	 * Get the tile number for the person
 	 */
-	void playFX(uint effectId);
+	virtual uint getTileNum() const { return _tileNum; }
 };
 
 } // End of namespace Ultima1

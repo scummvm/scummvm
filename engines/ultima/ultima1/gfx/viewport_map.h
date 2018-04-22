@@ -24,15 +24,23 @@
 #define ULTIMA_ULTIMA1_GFX_VIEWPORT_MAP_H
 
 #include "ultima/shared/gfx/viewport_map.h"
+#include "ultima/ultima1/core/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
 class ViewportMap : public Shared::ViewportMap {
+private:
+	MapType _mapType;
 public:
 	ViewportMap(TreeItem *parent);
 	virtual ~ViewportMap() {}
+
+	/**
+	 * Draws the map
+	 */
+	virtual void draw();
 };
 
 } // End of namespace U1Gfx

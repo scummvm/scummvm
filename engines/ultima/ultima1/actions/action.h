@@ -65,6 +65,11 @@ public:
 	 * Adds a text string to the status area
 	 */
 	void addStatusMsg(const Common::String &text);
+
+	/**
+	 * Play a sound effect
+	 */
+	void playFX(uint effectId);
 };
 
 } // End of namespace Actions

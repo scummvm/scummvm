@@ -67,6 +67,7 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 	} else {
 		// Nope, so show a blocked message
 		addStatusMsg(getRes()->BLOCKED);
+		playFX(1);
 	}
 
 	return true;

@@ -29,18 +29,74 @@ namespace Ultima {
 namespace Ultima1 {
 
 enum MapType {
-	MAP_OVERWORLD = 0, MAP_TOWN = 1, MAP_CASTLE = 2, MAP_DUNGEON = 3, MAP_UNKNOWN = 4
+	MAP_OVERWORLD = 0, MAP_CITY = 1, MAP_CASTLE = 2, MAP_DUNGEON = 3, MAP_UNKNOWN = 4
+};
+
+enum MapId {
+	MAPID_OVERWORLD = 0, MAP_UNDERWORLD = 999
 };
 
 class Ultima1Game;
+class Ultima1Map;
 class WidgetTransport;
 
 class U1MapTile : public Shared::MapTile {
 public:
+	int _locationNum;
+public:
+	/**
+	 * Return true if the tile base is water
+	 */
+	bool isWater() const { return _tileNum == 0; }
 
+	/**
+	 * Return true if the tile base is grass
+	 */
+	bool isGrass() const { return _tileNum == 1; }
+
+	/**
+	 * Return true if the tile base is woods
+	 */
+	bool isWoods() const { return _tileNum == 2; }
+
+	/**
+	 * Return true if the tile base in the original map is water
+	 */
+	bool isOriginalWater() const { return _tileNum == 0; }
+
+	/**
+	 * Return true if the tile base in the original map is grass
+	 */
+	bool isOriginalGrass() const { return _tileNum == 1; }
+
+	/**
+	 * Return true if the tile base in the original map is woods
+	 */
+	bool isOriginalWoods() const { return _tileNum == 2; }
+};
+
+/**
+ * Used to hold the total number of tiles surrounding location entrances
+ */
+struct SurroundingTotals {
+	uint _water;
+	uint _grass;
+	uint _woods;
+
+	/**
+	 * Constructor
+	 */
+	SurroundingTotals() : _water(0), _grass(0), _woods(0) {}
+
+	/**
+	 * Loads the totals from a passed map
+	 */
+	void load(Ultima1Map *map);
 };
 
 class Ultima1Map : public Shared::Map {
+private:
+	Ultima1Game *_game;
 private:
 	/**
 	 * Load the overworld map
@@ -51,10 +107,15 @@ private:
 	 * Load a town/castle map
 	 */
 	void loadTownCastleMap();
+
+	/**
+	 * Load widgets for locations
+	 */
+	void loadLocationWidgets();
 public:
 	MapType _mapType;					// Type of map
 	uint _mapStyle;						// Map style category for towns & castles
-	uint _mapIndex;						// Map index, such as city/castle #; not to be confused with mapId
+	uint _mapIndex;						// Map index within cateogry, such as city/castle #; not to be confused with mapId
 	Common::String _name;				// Name of map, if applicable
 	WidgetTransport *_currentTransport;	// Current means of transport, even if on foot
 public:
@@ -71,7 +132,12 @@ public:
 	/**
 	 * Gets a tile at a given position
 	 */
-	void getTileAt(const Point &pt, U1MapTile *tile);
+	virtual void getTileAt(const Point &pt, Shared::MapTile *tile);
+
+	/**
+	 * Returns true if Lord British's castle is the currently active map
+	 */
+	bool isLordBritishCastle() const { return _mapType == MAP_CASTLE && _mapIndex == 0; }
 };
 
 } // End of namespace Ultima1

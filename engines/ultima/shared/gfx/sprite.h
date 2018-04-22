@@ -83,11 +83,10 @@ public:
 	 * Load a raw data file containing sprite pixels
 	 * @param name			Filename
 	 * @param bpp			The bits per pixel for tiles in the file
-	 * @param startingIndex	The starting index within the array to add the tiles in
 	 * @param w				Width of tiles
 	 * @param h				Height of files
 	 */
-	void load(const Common::String &name, uint bpp, size_t startingIndex = 0, uint16 w = 16, uint16 h = 16);
+	void load(const Common::String &name, uint bpp, uint16 w = 16, uint16 h = 16);
 
 	/**
 	 * Return the default dimensions for tiles

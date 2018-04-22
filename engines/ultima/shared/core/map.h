@@ -43,12 +43,13 @@ class Map;
 class MapTile {
 public:
 	int _tileNum;
+	int _tileId;
 	Common::Array<int> _widgetTiles;
 public:
 	/**
 	 * Constructor
 	 */
-	MapTile() : _tileNum(-1) {}
+	MapTile() : _tileNum(-1), _tileId(-1) {}
 	virtual ~MapTile() {}
 
 	/**
@@ -122,11 +123,6 @@ public:
 	Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
 	Direction _direction;				// Current direction being faced in the underworld
 	bool _fixed;						// Town/city type maps that don't scroll as the player moves
-protected:
-	/**
-	 * Gets a point relative to the current position
-	 */
-	virtual Point getRelativePosition(const Point &delta);
 public:
 	/**
 	 * Constructor
@@ -150,6 +146,11 @@ public:
 	Point getPosition() const { return _position; }
 
 	/**
+	 * Gets a point relative to the current position
+	 */
+	Point getDeltaPosition(const Point &delta);
+
+	/**
 	 * Set the position
 	 */
 	void setPosition(const Point &pt);
@@ -165,14 +166,14 @@ public:
 	void shiftViewport(const Point &delta);
 
 	/**
-	 * Gets a tile at a given position
-	 */
-	void getTileAt(const Point &pt, MapTile *tile);
-
-	/**
 	 * Adds a widget to the map
 	 */
 	void addWidget(MapWidget *widget);
+
+	/**
+	 * Gets a tile at a given position
+	 */
+	virtual void getTileAt(const Point &pt, MapTile *tile);
 
 	/**
 	 * Load a given map
