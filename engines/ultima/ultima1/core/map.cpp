@@ -106,8 +106,8 @@ void Ultima1Map::loadTownCastleMap() {
 	} else {
 		// Castle
 		_mapType = MAP_CASTLE;
-		_mapStyle = _mapId % 2;
 		_mapIndex = _mapId - 33;
+		_mapStyle = _mapIndex % 2;
 		setPosition(Common::Point(0, height() / 2));		// Start at center left edge of map
 		_name = _game->_res->LOCATION_NAMES[_mapId - 1];
 	}
@@ -115,8 +115,8 @@ void Ultima1Map::loadTownCastleMap() {
 	// Load the contents of the map
 	File f("tcd.bin");
 	f.seek(_mapStyle * 684);
-	for (int y = 0; y < _size.y; ++y) {
-		for (int x = 0; x < _size.x; ++x)
+	for (int x = 0; x < _size.x; ++x) {
+		for (int y = 0; y < _size.y; ++y)
 			_data[y * _size.x + x] = f.readByte();
 	}
 
