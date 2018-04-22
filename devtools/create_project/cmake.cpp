@@ -37,7 +37,7 @@ CMakeProvider::CMakeProvider(StringList &global_warnings, std::map<std::string, 
 const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *feature, bool useSDL2) const {
 	static const Library s_libraries[] = {
 		{ "sdl",       kSDLVersion1,   "FindSDL",      "SDL",      "SDL_INCLUDE_DIR",       "SDL_LIBRARY",         0            },
-		{ "sdl",       kSDLVersion2,   0,              "SDL2",     "SDL2_INCLUDE_DIRS",     "SDL2_LIBRARIES",      0            },
+		{ "sdl",       kSDLVersion2,   0,              "SDL2",     0,                       "SDL2_LIBRARIES",      0            },
 		{ "freetype",  kSDLVersionAny, "FindFreetype", "Freetype", "FREETYPE_INCLUDE_DIRS", "FREETYPE_LIBRARIES",  0            },
 		{ "libz",      kSDLVersionAny, "FindZLIB",     "ZLIB",     "ZLIB_INCLUDE_DIRS",     "ZLIB_LIBRARIES",      0            },
 		{ "png",       kSDLVersionAny, "FindPNG",      "PNG",      "PNG_INCLUDE_DIRS",      "PNG_LIBRARIES",       0            },
@@ -84,8 +84,17 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR} ${" << setup.projectDescription << "_SOURCE_DIR}/engines "
 			"$ENV{"<<LIBS_DEFINE<<"}/include .)\n\n";
 
-	workspace << "# Libraries and features\n";
+	workspace << "# Libraries and features\n\n";
 	writeFeatureLibSearch(setup, workspace, "sdl");
+
+	workspace << "# Depending on how SDL2 was built, there can be either and imported target or flags variables\n";
+	workspace << "# Define the flags variables from the imported target if necessary\n";
+	workspace << "if (TARGET SDL2::SDL2)\n";
+	workspace << "    get_target_property(SDL2_INCLUDE_DIRS SDL2::SDL2 INTERFACE_INCLUDE_DIRECTORIES)\n";
+	workspace << "    get_target_property(SDL2_LIBRARIES SDL2::SDL2 LOCATION)\n";
+	workspace << "endif()\n";
+	workspace << "include_directories(${SDL2_INCLUDE_DIRS})\n\n";
+
 	for (FeatureList::const_iterator i = setup.features.begin(), end = setup.features.end(); i != end; ++i) {
 		if (!i->enable || featureExcluded(i->name)) continue;
 
