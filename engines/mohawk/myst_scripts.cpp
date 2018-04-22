@@ -754,10 +754,10 @@ void MystScriptParser::o_changeCardPlaySoundDirectional(uint16 var, const Argume
 	debugC(kDebugScript, "\tdelay between steps: %d", delayBetweenSteps);
 	debugC(kDebugScript, "\tanimated update data size: %d", dataSize);
 
+	_vm->changeToCard(cardId, kNoTransition);
+
 	if (soundId)
 		_vm->_sound->playEffect(soundId);
-
-	_vm->changeToCard(cardId, kNoTransition);
 
 	animatedUpdate(ArgumentsArray(args.begin() + 4, dataSize), delayBetweenSteps);
 }
