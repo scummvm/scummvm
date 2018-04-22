@@ -1349,14 +1349,17 @@ void LBCode::cmdSetPlayParams(const Common::Array<LBValue> &params) {
 	switch (params.size()) {
 	case 8:
 		target->_soundMode = params[7].integer;
+		// fall through
 	case 7:
 		target->_controlMode = params[6].integer;
+		// fall through
 	case 6:
 		// TODO: _relocPoint?
 	case 5:
 		// TODO: _periodMin/Max
 	case 4:
 		target->_timingMode = params[3].integer;
+		// fall through
 	case 3:
 		// TODO: _delayMin/Max
 	case 2:
