@@ -65,8 +65,6 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 	//Calculate the size the dialog needs
 	Common::Array<Common::String> lines;
 	int maxlineWidth = g_gui.getFont().wordWrapText(_reportTranslated, screenW - 2 * 20, lines);
-
-	_w = MAX(MAX(maxlineWidth, 0), (2 * buttonWidth) + 10) + 20;
 	int lineCount = lines.size() + 1;
 
 	_h =  3 * kLineHeight;
@@ -76,6 +74,14 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 	int closeButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_("Close")) + 10);
 	int copyToClipboardButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_("Copy to clipboard")) + 10);
 	int openBugtrackerURLButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_("Report game")) + 10);
+	int totalButtonWidth = closeButtonWidth;
+	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport))
+		totalButtonWidth += 10 + copyToClipboardButtonWidth;
+	if (g_system->hasFeature(OSystem::kFeatureOpenUrl))
+		totalButtonWidth += 10 + openBugtrackerURLButtonWidth;
+
+	_w = MAX(MAX(maxlineWidth, 0), totalButtonWidth) + 20;
+
 	int closeButtonPos = _w - closeButtonWidth - 10;
 	int copyToClipboardButtonPos = _w - copyToClipboardButtonWidth - closeButtonWidth - 15;
 	int openBugtrackerURLButtonPos = _w - copyToClipboardButtonWidth - closeButtonWidth - openBugtrackerURLButtonWidth - 20;
