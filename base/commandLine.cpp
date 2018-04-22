@@ -68,7 +68,8 @@ static const char HELP_STRING[] =
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
-	"  --list-saves             Display a list of saved games for the target specified with --game=TARGET\n"
+	"  --list-saves             Display a list of saved games for the target specified\n"
+	"                           with --game=TARGET, or all targets if none is specified\n"
 	"  -a, --add                Add all games from current or specified directory.\n"
 	"                           If --game=ID is passed only the game with id ID is added. See also --detect\n"
 	"                           Use --path=PATH to specify a directory.\n"
@@ -732,66 +733,93 @@ static void listTargets() {
 static Common::Error listSaves(const Common::String &target) {
 	Common::Error result = Common::kNoError;
 
-	// TODO: Make the target argument optional. If no argument is given, list all saved games
-	// for all configured targets.
-	if (target.empty())
-		usage("You must specify a target using --game=TARGET when using --list-saves.");
+	// If no target is specified, list save games for all known targets
+	Common::Array<Common::String> targets;
+	if (!target.empty())
+		targets.push_back(target);
+	else {
+		const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+		Common::ConfigManager::DomainMap::const_iterator iter;
+
+		targets.reserve(domains.size());
+		for (iter = domains.begin(); iter != domains.end(); ++iter)
+			targets.push_back(iter->_key);
+	}
 
 	// FIXME HACK
 	g_system->initBackend();
 
-	// Grab the "target" domain, if any
-	const Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
-
-	// Set up the game domain as newly active domain, so
-	// target specific savepath will be checked
 	Common::String oldDomain = ConfMan.getActiveDomainName();
-	ConfMan.setActiveDomain(target);
 
-	// Grab the gameid from the domain resp. use the target as gameid
-	Common::String gameid;
-	if (domain)
-		gameid = domain->getVal("gameid");
-	if (gameid.empty())
-		gameid = target;
-	gameid.toLowercase(); // Normalize it to lower case
+	bool atLeastOneFound = false;
+	for (Common::Array<Common::String>::const_iterator i = targets.begin(), end = targets.end(); i != end; ++i) {
+		// Grab the "target" domain, if any
+		const Common::ConfigManager::Domain *domain = ConfMan.getDomain(*i);
 
-	// Find the plugin that will handle the specified gameid
-	const Plugin *plugin = nullptr;
-	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
+		// Set up the game domain as newly active domain, so
+		// target specific savepath will be checked
+		ConfMan.setActiveDomain(*i);
 
-	if (!plugin) {
-		return Common::Error(Common::kEnginePluginNotFound,
-		                     Common::String::format("target '%s', gameid '%s", target.c_str(), gameid.c_str()));
-	}
+		// Grab the gameid from the domain resp. use the target as gameid
+		Common::String gameid;
+		if (domain)
+			gameid = domain->getVal("gameid");
+		if (gameid.empty())
+			gameid = *i;
+		gameid.toLowercase(); // Normalize it to lower case
 
-	const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+		// Find the plugin that will handle the specified gameid
+		const Plugin *plugin = nullptr;
+		GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
-	if (!metaEngine.hasFeature(MetaEngine::kSupportsListSaves)) {
-		// TODO: Include more info about the target (desc, engine name, ...) ???
-		return Common::Error(Common::kEnginePluginNotSupportSaves,
-		                     Common::String::format("target '%s', gameid '%s", target.c_str(), gameid.c_str()));
-	} else {
+		if (!plugin) {
+			// If the target was specified, treat this as an error, and otherwise skip it.
+			if (!target.empty())
+				return Common::Error(Common::kEnginePluginNotFound,
+				                     Common::String::format("target '%s', gameid '%s", i->c_str(), gameid.c_str()));
+			printf("Plugin could not be loaded for target '%s', gameid '%s", i->c_str(), gameid.c_str());
+			continue;
+		}
+
+		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+
+		if (!metaEngine.hasFeature(MetaEngine::kSupportsListSaves)) {
+			// If the target was specified, treat this as an error, and otherwise skip it.
+			if (!target.empty())
+				// TODO: Include more info about the target (desc, engine name, ...) ???
+				return Common::Error(Common::kEnginePluginNotSupportSaves,
+				                     Common::String::format("target '%s', gameid '%s", i->c_str(), gameid.c_str()));
+			continue;
+		}
+
 		// Query the plugin for a list of saved games
-		SaveStateList saveList = metaEngine.listSaves(target.c_str());
+		SaveStateList saveList = metaEngine.listSaves(i->c_str());
 
 		if (saveList.size() > 0) {
 			// TODO: Include more info about the target (desc, engine name, ...) ???
-			printf("Save states for target '%s' (gameid '%s'):\n", target.c_str(), gameid.c_str());
+			if (atLeastOneFound)
+				printf("\n");
+			printf("Save states for target '%s' (gameid '%s'):\n", i->c_str(), gameid.c_str());
 			printf("  Slot Description                                           \n"
-				   "  ---- ------------------------------------------------------\n");
+					   "  ---- ------------------------------------------------------\n");
 
 			for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
 				printf("  %-4d %s\n", x->getSaveSlot(), x->getDescription().c_str());
 				// TODO: Could also iterate over the full hashmap, printing all key-value pairs
 			}
+			atLeastOneFound = true;
 		} else {
-			printf("There are no save states for target '%s' (gameid '%s'):\n", target.c_str(), gameid.c_str());
+			// If the target was specified, indicate no save games were found for it. Otherwise just skip it.
+			if (!target.empty())
+				printf("There are no save states for target '%s' (gameid '%s'):\n", i->c_str(), gameid.c_str());
 		}
 	}
 
 	// Revert to the old active domain
 	ConfMan.setActiveDomain(oldDomain);
+
+	if (!atLeastOneFound && target.empty())
+		printf("No save states could be found.\n");
 
 	return result;
 }
