@@ -132,15 +132,16 @@ public:
 	static int textWidth(const Common::String &text);
 
 public:
-	Screen(SupernovaEngine *vm, GameManager *gm, ResourceManager *resMan);
+	Screen(SupernovaEngine *vm, ResourceManager *resMan);
 
 	int getViewportBrightness() const;
 	void setViewportBrightness(int brightness);
 	int getGuiBrightness() const;
 	void setGuiBrightness(int brightness);
 	const MSNImage *getCurrentImage() const;
+	const ImageInfo *getImageInfo(ImageId id) const;
 	bool isMessageShown() const;
-	void paletteFadeIn();
+	void paletteFadeIn(int maxViewportBrightness);
 	void paletteFadeOut();
 	void paletteBrightness();
 	void renderImage(ImageId id, bool removeImage = false);
@@ -174,11 +175,10 @@ public:
 	void update();
 
 private:
-	void renderImageSection(const MSNImage *image, int section);
+	void renderImageSection(const MSNImage *image, int section, bool invert);
 
 private:
 	SupernovaEngine *_vm;
-	GameManager *_gm;
 	ResourceManager *_resMan;
 	const MSNImage *_currentImage;
 	ScreenBufferStack _screenBuffer;

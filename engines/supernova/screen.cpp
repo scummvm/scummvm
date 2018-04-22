@@ -168,9 +168,8 @@ void Marquee::renderCharacter() {
 	}
 }
 
-Screen::Screen(SupernovaEngine *vm, GameManager *gm, ResourceManager *resMan)
+Screen::Screen(SupernovaEngine *vm, ResourceManager *resMan)
 	: _vm(vm)
-	, _gm(gm)
 	, _resMan(resMan)
 	, _currentImage(nullptr)
 	, _viewportBrightness(255)
@@ -206,6 +205,10 @@ void Screen::setGuiBrightness(int brightness) {
 
 const MSNImage *Screen::getCurrentImage() const {
 	return _currentImage;
+}
+
+const Screen::ImageInfo *Screen::getImageInfo(ImageId id) const {
+	return &imageInfo[(int)id];
 }
 
 bool Screen::isMessageShown() const {
@@ -327,21 +330,16 @@ void Screen::renderText(StringId stringId, int x, int y, byte color) {
 	renderText(_vm->getGameString(stringId), x, y, color);
 }
 
-void Screen::renderImageSection(const MSNImage *image, int section) {
+void Screen::renderImageSection(const MSNImage *image, int section, bool invert) {
 	// Note: inverting means we are removing the section. So we should get the rect for that
 	// section but draw the background (section 0) instead.
-	bool invert = false;
-	if (section > 128) {
-		section -= 128;
-		invert = true;
-	}
 	if (section > image->_numSections - 1)
 		return;
 
 	Common::Rect sectionRect(image->_section[section].x1,
-	                         image->_section[section].y1,
-	                         image->_section[section].x2 + 1,
-	                         image->_section[section].y2 + 1);
+							 image->_section[section].y1,
+							 image->_section[section].x2 + 1,
+							 image->_section[section].y2 + 1);
 	if (image->_filenumber == 1 || image->_filenumber == 2) {
 		sectionRect.setWidth(640);
 		sectionRect.setHeight(480);
@@ -383,11 +381,7 @@ void Screen::renderImage(ImageId id, bool removeImage) {
 	}
 
 	do {
-		if (removeImage)
-			renderImageSection(image, info.section + 128);
-		else
-			renderImageSection(image, info.section);
-
+		renderImageSection(image, info.section, removeImage);
 		info.section = image->_section[info.section].next;
 	} while (info.section != 0);
 }
@@ -396,20 +390,14 @@ void Screen::renderImage(int section) {
 	if (!_currentImage)
 		return;
 
-	bool sectionVisible = true;
-
+	bool removeImage = false;
 	if (section > 128) {
-		sectionVisible = false;
+		removeImage = true;
 		section -= 128;
 	}
 
-	_gm->_currentRoom->setSectionVisible(section, sectionVisible);
-
 	do {
-		if (sectionVisible)
-			renderImageSection(_currentImage, section);
-		else
-			renderImageSection(_currentImage, section + 128);
+		renderImageSection(_currentImage, section, removeImage);
 		section = _currentImage->_section[section].next;
 	} while (section != 0);
 }
@@ -443,7 +431,7 @@ void Screen::renderRoom(Room &room) {
 			int section = i;
 			if (room.isSectionVisible(section)) {
 				do {
-					renderImageSection(_currentImage, section);
+					renderImageSection(_currentImage, section, false);
 					section = _currentImage->_section[section].next;
 				} while (section != 0);
 			}
@@ -554,7 +542,6 @@ void Screen::renderMessage(const char *text, MessagePosition position) {
 	}
 
 	_messageShown = true;
-	_gm->_messageDuration = (Common::strnlen(text, 512) + 20) * _vm->_textSpeed / 10;
 }
 
 void Screen::removeMessage() {
@@ -613,9 +600,9 @@ void Screen::paletteFadeOut() {
 	_vm->_system->updateScreen();
 }
 
-void Screen::paletteFadeIn() {
+void Screen::paletteFadeIn(int maxViewportBrightness) {
 	while (_guiBrightness < 245) {
-		if (_viewportBrightness < _gm->_roomBrightness)
+		if (_viewportBrightness < maxViewportBrightness)
 			_viewportBrightness += 10;
 		_guiBrightness += 10;
 		paletteBrightness();
@@ -623,7 +610,7 @@ void Screen::paletteFadeIn() {
 		_vm->_system->delayMillis(_vm->_delay);
 	}
 	_guiBrightness = 255;
-	_viewportBrightness = _gm->_roomBrightness;
+	_viewportBrightness = maxViewportBrightness;
 	paletteBrightness();
 	_vm->_system->updateScreen();
 }

@@ -136,7 +136,7 @@ void SupernovaEngine::init() {
 	_resMan = new ResourceManager();
 	_sound = new Sound(_mixer, _resMan);
 	_gm = new GameManager(this, _sound);
-	_screen = new Screen(this, _gm, _resMan);
+	_screen = new Screen(this, _resMan);
 	_console = new Console(this, _gm);
 
 	setTotalPlayTime(0);
@@ -244,10 +244,16 @@ void SupernovaEngine::playSound(MusicId index) {
 }
 
 void SupernovaEngine::renderImage(int section) {
+	if (section > 128)
+		_gm->_currentRoom->setSectionVisible(section - 128, false);
+	else
+		_gm->_currentRoom->setSectionVisible(section, true);
+
 	_screen->renderImage(section);
 }
 
 void SupernovaEngine::renderImage(ImageId id, bool removeImage) {
+	_gm->_currentRoom->setSectionVisible(_screen->getImageInfo(id)->section, !removeImage);
 	_screen->renderImage(id, removeImage);
 }
 
@@ -271,14 +277,17 @@ void SupernovaEngine::renderRoom(Room &room) {
 }
 
 void SupernovaEngine::renderMessage(const char *text, MessagePosition position) {
+	_gm->_messageDuration = (Common::strnlen(text, 512) + 20) * _textSpeed / 10;
 	_screen->renderMessage(text, position);
 }
 
 void SupernovaEngine::renderMessage(const Common::String &text, MessagePosition position) {
+	_gm->_messageDuration = (text.size() + 20) * _textSpeed / 10;
 	_screen->renderMessage(text, position);
 }
 
 void SupernovaEngine::renderMessage(StringId stringId, MessagePosition position, Common::String var1, Common::String var2) {
+	_gm->_messageDuration = (getGameString(stringId).size() + 20) * _textSpeed / 10;
 	_screen->renderMessage(stringId, position, var1, var2);
 }
 
@@ -329,6 +338,7 @@ void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color)
 void SupernovaEngine::renderBox(const GuiElement &guiElement) {
 	_screen->renderBox(guiElement);
 }
+
 void SupernovaEngine::paletteBrightness() {
 	_screen->paletteBrightness();
 }
@@ -338,7 +348,8 @@ void SupernovaEngine::paletteFadeOut() {
 }
 
 void SupernovaEngine::paletteFadeIn() {
-	_screen->paletteFadeIn();
+	_gm->roomBrightness();
+	_screen->paletteFadeIn(_gm->_roomBrightness);
 }
 
 void SupernovaEngine::setColor63(byte value) {
