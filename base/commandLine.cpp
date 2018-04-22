@@ -68,7 +68,7 @@ static const char HELP_STRING[] =
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
-	"  --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified\n"
+	"  --list-saves             Display a list of saved games for the target specified with --game=TARGET\n"
 	"  -a, --add                Add all games from current or specified directory.\n"
 	"                           If --game=ID is passed only the game with id ID is added. See also --detect\n"
 	"                           Use --path=PATH to specify a directory.\n"
@@ -458,13 +458,8 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_COMMAND
 #endif
 
-			DO_LONG_OPTION("list-saves")
-				// TODO: Make the argument optional. If no argument is given, list all saved games
-				// for all configured targets.
-				// TODO: Consider breaking the command line interface to pass the argument via the --game option
-				ensureFirstCommand(command, "list-saves");
-				command = "list-saves";
-			END_OPTION
+			DO_LONG_COMMAND("list-saves")
+			END_COMMAND
 
 			DO_OPTION('c', "config")
 			END_OPTION
@@ -734,8 +729,13 @@ static void listTargets() {
 }
 
 /** List all saves states for the given target. */
-static Common::Error listSaves(const char *target) {
+static Common::Error listSaves(const Common::String &target) {
 	Common::Error result = Common::kNoError;
+
+	// TODO: Make the target argument optional. If no argument is given, list all saved games
+	// for all configured targets.
+	if (target.empty())
+		usage("You must specify a target using --game=TARGET when using --list-saves.");
 
 	// FIXME HACK
 	g_system->initBackend();
@@ -762,7 +762,7 @@ static Common::Error listSaves(const char *target) {
 
 	if (!plugin) {
 		return Common::Error(Common::kEnginePluginNotFound,
-		                     Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
+		                     Common::String::format("target '%s', gameid '%s", target.c_str(), gameid.c_str()));
 	}
 
 	const MetaEngine &metaEngine = plugin->get<MetaEngine>();
@@ -770,14 +770,14 @@ static Common::Error listSaves(const char *target) {
 	if (!metaEngine.hasFeature(MetaEngine::kSupportsListSaves)) {
 		// TODO: Include more info about the target (desc, engine name, ...) ???
 		return Common::Error(Common::kEnginePluginNotSupportSaves,
-		                     Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
+		                     Common::String::format("target '%s', gameid '%s", target.c_str(), gameid.c_str()));
 	} else {
 		// Query the plugin for a list of saved games
-		SaveStateList saveList = metaEngine.listSaves(target);
+		SaveStateList saveList = metaEngine.listSaves(target.c_str());
 
 		if (saveList.size() > 0) {
 			// TODO: Include more info about the target (desc, engine name, ...) ???
-			printf("Save states for target '%s' (gameid '%s'):\n", target, gameid.c_str());
+			printf("Save states for target '%s' (gameid '%s'):\n", target.c_str(), gameid.c_str());
 			printf("  Slot Description                                           \n"
 				   "  ---- ------------------------------------------------------\n");
 
@@ -786,7 +786,7 @@ static Common::Error listSaves(const char *target) {
 				// TODO: Could also iterate over the full hashmap, printing all key-value pairs
 			}
 		} else {
-			printf("There are no save states for target '%s' (gameid '%s'):\n", target, gameid.c_str());
+			printf("There are no save states for target '%s' (gameid '%s'):\n", target.c_str(), gameid.c_str());
 		}
 	}
 
@@ -1165,7 +1165,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		listGames();
 		return true;
 	} else if (command == "list-saves") {
-		err = listSaves(settings["list-saves"].c_str());
+		err = listSaves(settings["game"]);
 		return true;
 	} else if (command == "list-themes") {
 		listThemes();
