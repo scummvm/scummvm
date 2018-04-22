@@ -1463,7 +1463,8 @@ arguments -- see the next section.
   -h, --help               Display a brief help text and exit
   -z, --list-games         Display list of supported games and exit
   -t, --list-targets       Display list of configured targets and exit
-  --list-saves             Display a list of saved games for the target specified with --game=TARGET
+  --list-saves             Display a list of saved games for the target specified
+                           with --game=TARGET, or all targets if none is specified
   -a, --add                Add all games from current or specified directory.
                            If --game=ID is passed only the game with id ID is
                            added. See also --detect.
@@ -2009,7 +2010,8 @@ Where 'xxx' is exact the saved game slot (i.e., 001) under ScummVM
 --list-saves:
 
    This switch may be used to display a list of the current saved games
-   of the specified target game and their corresponding save slots.
+   of the specified target game and their corresponding save slots. If no
+   target is specified, it lists saved games for all known target.
 
    Usage: --list-saves --game=[TARGET], where [TARGET] is the target game.
 
