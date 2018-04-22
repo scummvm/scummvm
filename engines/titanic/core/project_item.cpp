@@ -495,7 +495,7 @@ SaveStateList CProjectItem::getSavegameList(const Common::String &target) {
 	return saveList;
 }
 
-bool CProjectItem::readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header, bool skipThumbnail) {
+WARN_UNUSED_RESULT bool CProjectItem::readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
 	header._thumbnail = nullptr;
 	header._totalFrames = 0;
