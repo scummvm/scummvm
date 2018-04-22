@@ -837,6 +837,7 @@ void LBPage::loadBITL(uint16 resourceId) {
 			break;
 		default:
 			warning("Unknown item type %04x", type);
+			// fall through
 		case 3: // often used for buttons
 			res = new LBItem(_vm, this, rect);
 			break;
