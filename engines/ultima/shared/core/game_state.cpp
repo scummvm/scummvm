@@ -36,15 +36,15 @@ GameState::GameState(Game *game) : MAX_TILES_PER_ORIGINAL(16, 16), _videoMode(EG
 	switch (_gameId) {
 	case GAME_ULTIMA1:
 		_map = new Ultima1::Ultima1Map(static_cast<Ultima1::Ultima1Game *>(game));
+
+		// Load the default overworld map
+		_map->loadMap(Ultima1::MAPID_OVERWORLD, _videoMode);
+		_map->setPosition(Point(49, 40));
 		break;
 	default:
 		error("Unspported game");
 		break;
 	}
-
-	// Load the default overworld map
-	_map->loadMap(0, _videoMode);
-	_map->setPosition(Point(49, 40));
 }
 
 GameState::~GameState() {

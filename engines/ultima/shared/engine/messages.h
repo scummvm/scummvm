@@ -51,7 +51,7 @@ class VisualItem;
 
 #define MESSAGE0(NAME) \
 	class NAME: public CMessage { \
-	public: NAME() : Message() {} \
+	public: NAME() : CMessage() {} \
 	MESSAGEDEF(NAME); \
 	}
 #define MESSAGE1(NAME, F1, N1, V1) \
@@ -229,7 +229,7 @@ MESSAGE1(CKeyCharMsg, int, key, 32);
 /**
  * Signals a keypress
  */
-MESSAGE1(CVirtualKeyCharMsg, Common::KeyState, keyState, Common::KeyState());
+MESSAGE1(CKeypressMsg, Common::KeyState, keyState, Common::KeyState());
 
 /**
  * Called when a game view is shown
@@ -247,19 +247,19 @@ MESSAGE2(CHideMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fa
 MESSAGE1(CFrameMsg, uint, ticks, 0);
 
 /**
- * Used to trigger a party movement
- */
-MESSAGE1(CMoveMsg, int, direction, 0);
-
-/**
  * Adds text strings to the status area
  */
 MESSAGE1(CStatusMsg, Common::String, text, "");
 
 /**
- * Signals a sound effect
+ * Used to trigger a party movement
  */
-MESSAGE1(CSoundEffectMsg, uint, effectNum, 0);
+MESSAGE1(CMoveMsg, int, direction, 0);
+
+/**
+ * Used to trigger an Enter action
+ */
+MESSAGE0(CEnterMsg);
 
 } // End of namespace Shared
 } // End of namespace Ultima

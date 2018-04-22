@@ -107,12 +107,12 @@ void InputTranslator::rightButtonDoubleClick(int special, const Point &pt) {
 }
 
 void InputTranslator::keyDown(const Common::KeyState &keyState) {
-	if (keyState.ascii == 0 || keyState.ascii > 127) {
-		CVirtualKeyCharMsg msg(keyState);
-		_inputHandler->handleMessage(msg);
-	} else {
-		CKeyCharMsg msg(keyState.ascii);
-		_inputHandler->handleMessage(msg);
+	CKeypressMsg pressMsg(keyState);
+	_inputHandler->handleMessage(pressMsg);
+
+	if (keyState.ascii >= 32 && keyState.ascii <= 127) {
+		CKeyCharMsg charMsg(keyState.ascii);
+		_inputHandler->handleMessage(charMsg);
 	}
 }
 

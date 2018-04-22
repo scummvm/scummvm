@@ -20,42 +20,13 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GAME_H
-#define ULTIMA_ULTIMA1_GAME_H
-
-#include "ultima/shared/early/game.h"
+#include "ultima/ultima1/core/people.h"
+#include "ultima/ultima1/core/map.h"
+#include "common/algorithm.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
-namespace U1Gfx {
-	class GameView;
-}
-
-class GameResources;
-
-class Ultima1Game : public Shared::Game {
-	DECLARE_MESSAGE_MAP;
-public:
-	GameResources *_res;
-	U1Gfx::GameView *_gameView;
-public:
-	CLASSDEF;
-	Ultima1Game();
-	virtual ~Ultima1Game();
-
-	/**
-	 * Called when the game starts
-	 */
-	void starting();
-
-	/**
-	 * Play a sound effect
-	 */
-	void playFX(uint effectId);
-};
 
 } // End of namespace Ultima1
 } // End of namespace Ultima
-
-#endif
