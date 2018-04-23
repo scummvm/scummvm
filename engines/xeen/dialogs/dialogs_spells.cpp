@@ -30,6 +30,14 @@
 
 namespace Xeen {
 
+// FIXME: This new array for Swords isn't worth regenerating the xeen.ccs file over, but it could be
+// moved in if there's any cause in future to regenerate the file for other reasons
+const int SWORDS_SPELL_RANGES[12][2] = {
+	{ 0, 20 }, { 16, 35 }, { 27, 39 }, { 29, 39 },
+	{ 0, 17 }, { 14, 34 }, { 26, 39 }, { 29, 39 },
+	{ 0, 20 }, { 16, 35 }, { 27, 39 }, {29, 39 }
+};
+
 Character *SpellsDialog::show(XeenEngine *vm, ButtonContainer *priorDialog,
 		Character *c, SpellDialogMode mode) {
 	SpellsDialog *dlg = new SpellsDialog(vm);
@@ -283,7 +291,7 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 
 	if ((mode & 0x7f) == 0) {
 		if (category != SPELLCAT_INVALID) {
-			if (party._mazeId == 49 || party._mazeId == 37) {
+			if (_vm->getGameID() != GType_Swords && (party._mazeId == 49 || party._mazeId == 37)) {
 				for (uint spellId = 0; spellId < TOTAL_SPELLS; ++spellId) {
 					int idx = 0;
 					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] != (int)spellId)
@@ -300,11 +308,32 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 					}
 				}
 			} else if (ccNum) {
-				int groupIndex = (party._mazeId - 29) / 2;
-				for (int spellId = Res.DARK_SPELL_RANGES[groupIndex][0];
-						spellId < Res.DARK_SPELL_RANGES[groupIndex][1]; ++spellId) {
+				const int *RANGE;
+
+				if (_vm->getGameID() == GType_Swords) {
+					// Set subset of spells to sell in each Swords of Xeen guild
+					int groupIndex;
+					switch (party._mazeId) {
+					case 92:
+						groupIndex = 1;
+						break;
+					case 63:
+						groupIndex = 2;
+						break;
+					case 53:
+					default:
+						groupIndex = 0;
+						break;
+					}
+					RANGE = SWORDS_SPELL_RANGES[category * 4 + groupIndex];
+				} else {
+					int groupIndex = (party._mazeId - 29) / 2;
+					RANGE = Res.DARK_SPELL_RANGES[category * 4 + groupIndex];
+				}
+
+				for (int spellId = RANGE[0]; spellId < RANGE[1]; ++spellId) {
 					int idx = 0;
-					while (idx <= SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] ==
+					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] !=
 							Res.DARK_SPELL_OFFSETS[category][spellId])
 						++idx;
 
