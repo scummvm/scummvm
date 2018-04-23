@@ -375,10 +375,8 @@ void Screen::renderImage(ImageId id, bool removeImage) {
 	ImageInfo info = imageInfo[id];
 	const MSNImage *image = _resMan->getImage(info.filenumber);
 
-	if (_currentImage != image) {
-		_currentImage = image;
-		_vm->_system->getPaletteManager()->setPalette(image->getPalette(), 16, 239);
-	}
+	if (_currentImage != image)
+		setCurrentImage(info.filenumber);
 
 	do {
 		renderImageSection(image, info.section, removeImage);
