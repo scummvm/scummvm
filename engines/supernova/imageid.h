@@ -252,7 +252,6 @@ enum ImageId {
 	kImageAxacussCorridorAlienLeft,
 	kImageAxacussCorridorAlienBottom,
 	kImageAxacussCorridorAlienTop,
-	kImageAxacussCorridorDummy1,
 	// file 17
 	kImageShipCorridorCabinBackground,
 	kImageShipCorridorCabinL1Open,
