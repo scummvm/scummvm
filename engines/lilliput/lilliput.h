@@ -116,9 +116,6 @@ public:
 	byte _keyboard_oldIndex;
 	Common::Event _keyboard_buffer[8];
 	byte _byte12A05;
-	byte _byte12A06;
-	byte _byte12A07;
-	byte _byte12A08;
 	bool _refreshScreenFlag;
 	byte _byte16552;
 	int8 _lastInterfaceHotspotIndex;

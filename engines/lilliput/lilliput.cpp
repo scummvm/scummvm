@@ -243,6 +243,17 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	for (int i = 0; i < 20; ++i)
 		_keyboardMapping[i] = Common::KEYCODE_DOLLAR;
 
+	_mainSurface = nullptr;
+	_smallAnimsFrameIndex = 0;
+	_keyDelay = 0;
+	_int8Timer = 0;
+	_keyboard_nextIndex = 0;
+	_keyboard_oldIndex = 0;
+	_normalCursor = nullptr;
+	_greenCursor = nullptr;
+	_word10800_ERULES = 0;
+	_currentDisplayCharacter = 0;
+
 	_shouldQuit = false;
 	_eventMan = nullptr;
 	_lastTime = 0;
