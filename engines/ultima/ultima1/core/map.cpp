@@ -124,20 +124,19 @@ void Ultima1Map::loadTown() {
 	_mapType = MAP_CITY;
 	_mapStyle = (_mapId % 8) + 2;
 	_mapIndex = _mapId;
-	setPosition(Common::Point(width() / 2, height() - 1));		// Start at bottom center edge of map
 	_name = Common::String::format("%s %s", _game->_res->THE_CITY_OF, _game->_res->LOCATION_NAMES[_mapId - 1]);
 
 	loadTownCastleData();
 
 	// Load up the widgets for the given map
 	loadWidgets();
+	setPosition(Common::Point(width() / 2, height() - 1));		// Start at bottom center edge of map
 }
 
 void Ultima1Map::loadCastle() {
 	_mapType = MAP_CASTLE;
 	_mapIndex = _mapId - 33;
 	_mapStyle = _mapIndex % 2;
-	setPosition(Common::Point(0, height() / 2));		// Start at center left edge of map
 	_name = _game->_res->LOCATION_NAMES[_mapId - 1];
 	_castleKey = _game->getRandomNumber(255) & 1 ? 61 : 60;
 
@@ -149,6 +148,7 @@ void Ultima1Map::loadCastle() {
 
 	// Load up the widgets for the given map
 	loadWidgets();
+	setPosition(Common::Point(0, height() / 2));		// Start at center left edge of map
 }
 
 void Ultima1Map::getTileAt(const Point &pt, Shared::MapTile *tile) {

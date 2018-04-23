@@ -27,6 +27,11 @@
 namespace Ultima {
 namespace Ultima1 {
 
+uint TransportOnFoot::getTileNum() const {
+	Ultima1Map *map = static_cast<Ultima1Map *>(_map);
+	return map->_mapType == MAP_OVERWORLD ? 10 : 18;
+}
+
 bool TransportOnFoot::canMoveTo(const Point &destPos) {
 	return true;
 }

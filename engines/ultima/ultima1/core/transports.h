@@ -79,7 +79,7 @@ public:
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const { return 10; }
+	virtual uint getTileNum() const;
 
 	/**
 	 * Returns true if the given transport type can move to a given position on the map
