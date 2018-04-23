@@ -72,25 +72,16 @@ Point Map::getViewportPosition(const Point &viewportSize) {
 
 	if (!_viewportPos.isValid() || _viewportPos._size != viewportSize) {
 		// Calculate the new position
-		if (_fixed) {
-			// Whilst in the original Ultima i cities and castles fit onto a single screen, with enhancements this
-			// may not be the case. So allow for showing the relevant part of a fixed map so the player is on-screen
-			if (_position.x < (int)(width() / 2)) {
-				topLeft.x = MAX(_position.x - 5, 0);
-			} else {
-				topLeft.x = MAX((int)(_position.x + 5 - width()), 0);
-			}
+		topLeft.x = _position.x - (viewportSize.x - 1) / 2;
+		topLeft.y = _position.y - (viewportSize.y - 1) / 2;
 
-			if (_position.y < (int)(height() / 2)) {
-				topLeft.y = MAX(_position.y - 5, 0);
-			} else {
-				topLeft.y = MAX((int)(_position.y + 5 - height()), 0);
-			}
+		if (_fixed) {
+			// Fixed maps, so constrain top left corner so the map fills the viewport. This will accomodate
+			// future renderings with more tiles, or greater tile size
+			topLeft.x = CLIP((int)topLeft.x, 0, (int)(width() - viewportSize.x));
+			topLeft.y = CLIP((int)topLeft.y, 0, (int)(height() - viewportSize.y));
 		} else {
 			// Non-fixed map, so it wraps around the edges if necessary
-			topLeft.x = _position.x - (viewportSize.x - 1) / 2;
-			topLeft.y = _position.y - (viewportSize.y - 1) / 2;
-
 			if (topLeft.x < 0)
 				topLeft.x += width();
 			else if (topLeft.x >= (int)width())
@@ -103,6 +94,7 @@ Point Map::getViewportPosition(const Point &viewportSize) {
 		}
 
 		_viewportPos._mapId = _mapId;
+		_viewportPos._size = viewportSize;
 	}
 
 	return topLeft;
