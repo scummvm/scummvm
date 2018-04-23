@@ -1138,16 +1138,14 @@ void Myst::o_bookGivePage(uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Card Id (Book Cover): %d", cardIdBookCover);
 	debugC(kDebugScript, "SoundId (Add Page): %d", soundIdAddPage);
 
-	// No page or white page
-	if (_globals.heldPage == kNoPage || _globals.heldPage == kWhitePage) {
-		_vm->changeToCard(cardIdBookCover, kTransitionDissolve);
-		return;
-	}
-
 	uint16 bookVar = 101;
 	uint16 mask = 0;
 
 	switch (_globals.heldPage) {
+	case kNoPage:
+	case kWhitePage:
+		_vm->changeToCard(cardIdBookCover, kTransitionDissolve);
+		return;
 	case kRedLibraryPage:
 		bookVar = 100;
 		// fallthrough
