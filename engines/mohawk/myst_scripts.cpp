@@ -603,9 +603,11 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 var, const ArgumentsArray 
 
 	Common::Rect dstRect = Common::Rect(args[5], args[6], 544, 333);
 
-	if (dstRect.left == -1 || dstRect.top == -1) {
-		// Interpreted as full screen
+	if (dstRect.left == -1) {
 		dstRect.left = 0;
+	}
+
+	if (dstRect.top == -1) {
 		dstRect.top = 0;
 	}
 
