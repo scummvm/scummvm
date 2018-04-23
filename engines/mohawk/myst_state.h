@@ -53,6 +53,24 @@ struct MystSaveMetadata {
 	bool sync(Common::Serializer &s);
 };
 
+// Page being held
+enum HeldPage {
+	kNoPage              = 0,
+	kBlueLibraryPage     = 1,
+	kBlueSeleniticPage   = 2,
+	kBlueMechanicalPage  = 3,
+	kBlueStoneshipPage   = 4,
+	kBlueChannelwoodPage = 5,
+	kBlueFirePlacePage   = 6,
+	kRedLibraryPage      = 7,
+	kRedSeleniticPage    = 8,
+	kRedMechanicalPage   = 9,
+	kRedStoneshipPage    = 10,
+	kRedChannelwoodPage  = 11,
+	kRedFirePlacePage    = 12,
+	kWhitePage           = 13
+};
+
 class MystGameState {
 public:
 	MystGameState(MohawkEngine_Myst*, Common::SaveFileManager*);
@@ -81,7 +99,7 @@ public:
 	struct Globals {
 		uint16 u0;
 		uint16 currentAge;
-		uint16 heldPage;
+		HeldPage heldPage;
 		uint16 u1;
 		uint16 transitions;
 		uint16 zipMode;

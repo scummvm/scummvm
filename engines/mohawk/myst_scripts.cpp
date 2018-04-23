@@ -378,7 +378,7 @@ void MystScriptParser::o_takePage(uint16 var, const ArgumentsArray &args) {
 			cursorId = kDefaultMystCursor;
 	}
 
-	uint16 oldPage = _globals.heldPage;
+	HeldPage oldPage = _globals.heldPage;
 
 	// Take / drop page
 	toggleVar(var);
@@ -388,7 +388,7 @@ void MystScriptParser::o_takePage(uint16 var, const ArgumentsArray &args) {
 		_vm->redrawArea(var);
 
 		// Set new cursor
-		if (_globals.heldPage)
+		if (_globals.heldPage != kNoPage)
 			_vm->setMainCursor(cursorId);
 		else
 			_vm->setMainCursor(kDefaultMystCursor);

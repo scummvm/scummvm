@@ -89,7 +89,7 @@ uint16 Dni::getVar(uint16 var) {
 	case 2: // Music Type
 		if (_notSeenAtrus) {
 			_notSeenAtrus = false;
-			return _globals.ending != 4 && _globals.heldPage != 13;
+			return _globals.ending != 4 && _globals.heldPage != kWhitePage;
 		} else
 			return 2;
 	default:
@@ -106,7 +106,7 @@ void Dni::o_handPage(uint16 var, const ArgumentsArray &args) {
 	// Good ending and Atrus asked to give page
 	if (_globals.ending == 1 && atrus && atrus->getTime() > (uint)Audio::Timestamp(0, 6801, 600).msecs()) {
 		_globals.ending = 2;
-		_globals.heldPage = 0;
+		_globals.heldPage = kNoPage;
 		_vm->setMainCursor(kDefaultMystCursor);
 
 		// Play movie end (atrus leaving)
@@ -166,7 +166,7 @@ void Dni::atrus_run() {
 			atrus->setBounds(Audio::Timestamp(0, 7388, 600), Audio::Timestamp(0, 14700, 600));
 		}
 	} else if (_globals.ending != 3 && _globals.ending != 4) {
-		if (_globals.heldPage == 13) {
+		if (_globals.heldPage == kWhitePage) {
 			_video = "atr1page";
 			_videoPos = Common::Point(215, 76);
 			VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);

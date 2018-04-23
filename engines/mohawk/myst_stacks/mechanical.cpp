@@ -170,12 +170,12 @@ uint16 Mechanical::getVar(uint16 var) {
 		return _state.sirrusPanelState;
 	case 2: // Achenar's Secret Room Crate Lid Open and Blue Page Present
 		if (_state.achenarCrateOpened) {
-			if (_globals.bluePagesInBook & 4 || _globals.heldPage == 3)
+			if (_globals.bluePagesInBook & 4 || _globals.heldPage == kBlueMechanicalPage)
 				return 2;
 			else
 				return 3;
 		} else {
-			return _globals.bluePagesInBook & 4 || _globals.heldPage == 3;
+			return _globals.bluePagesInBook & 4 || _globals.heldPage == kBlueMechanicalPage;
 		}
 	case 3: // Achenar's Secret Room Crate State
 		return _state.achenarCrateOpened;
@@ -223,9 +223,9 @@ uint16 Mechanical::getVar(uint16 var) {
 	case 22: // Crystal Lit Flag - Red
 		return _crystalLit == 2;
 	case 102: // Red page
-		return !(_globals.redPagesInBook & 4) && (_globals.heldPage != 9);
+		return !(_globals.redPagesInBook & 4) && (_globals.heldPage != kRedMechanicalPage);
 	case 103: // Blue page
-		return !(_globals.bluePagesInBook & 4) && (_globals.heldPage != 3);
+		return !(_globals.bluePagesInBook & 4) && (_globals.heldPage != kBlueMechanicalPage);
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -259,18 +259,18 @@ void Mechanical::toggleVar(uint16 var) {
 		break;
 	case 102: // Red page
 		if (!(_globals.redPagesInBook & 4)) {
-			if (_globals.heldPage == 9)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kRedMechanicalPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 9;
+				_globals.heldPage = kRedMechanicalPage;
 		}
 		break;
 	case 103: // Blue page
 		if (!(_globals.bluePagesInBook & 4)) {
-			if (_globals.heldPage == 3)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kBlueMechanicalPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 3;
+				_globals.heldPage = kBlueMechanicalPage;
 		}
 		break;
 	default:
