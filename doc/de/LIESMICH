@@ -65,10 +65,10 @@ Inhaltsverzeichnis:
  * 7.3 MT-32-Emulation
  * 7.4 MIDI-Emulation
  * 7.5 Native MIDI-Unterstützung
- * 7.5.1 Native MIDI-Ausgabe mithilfe der MIDI-Optionen anpassen
+ * * 7.5.1 Native MIDI-Ausgabe mithilfe der MIDI-Optionen anpassen
  * 7.6 UNIX-eigene, ALSA- und dmedia-Sequenzer-Unterstützung
- * 7.6.1 ALSA-Sequencer [NUR UNIX]
- * 7.6.2 IRIX dmedia-Sequencer [NUR UNIX]
+ * * 7.6.1 ALSA-Sequencer [NUR UNIX]
+ * * 7.6.2 IRIX dmedia-Sequencer [NUR UNIX]
  * 7.7 TiMidity++-MIDI-Server-Unterstützung
  * 7.8 Komprimierte Audio-Dateien verwenden (MP3, Ogg Vorbis, FLAC)
  * * 7.8.1 MP3-Dateien für CD-Audio verwenden
