@@ -103,14 +103,14 @@ BaseMenu *DuckmanMenuSystem::createLoadGameMenu() {
 
 BaseMenu *DuckmanMenuSystem::createOptionsMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 1);
-	menu->addText("              GAME OPTIONS");
+	menu->addText("              GAME OPTIONS             @@@@");
 	menu->addText("--------------------------------------");
-	menu->addMenuItem(new MenuItem("SFX Volume     @@{~~~~~~~~~~~~|~~~}", new MenuActionReturnChoice(this, 21)));
-	menu->addMenuItem(new MenuItem("Music Volume  @@@{~~~~~~~~~~~~|~~~}", new MenuActionReturnChoice(this, 21)));
-	menu->addMenuItem(new MenuItem("Speech Volume {~~~~~~~~~~~~|~~~}", new MenuActionReturnChoice(this, 21)));
-	menu->addMenuItem(new MenuItem("Text Duration @@@{~~~~~~~~~~~~|~~~}", new MenuActionReturnChoice(this, 21)));
-	menu->addMenuItem(new MenuItem("Restore Defaults", new MenuActionReturnChoice(this, 21)));
-	menu->addMenuItem(new MenuItem("Back", new MenuActionLeaveMenu(this)));
+	menu->addMenuItem(new MenuItem("SFX Volume     @@{~~~~~~~~~~~~|~~~} @@@", new MenuActionReturnChoice(this, 21)));
+	menu->addMenuItem(new MenuItem("Music Volume  @@@{~~~~~~~~~~~~|~~~} @@@", new MenuActionReturnChoice(this, 21)));
+	menu->addMenuItem(new MenuItem("Speech Volume {~~~~~~~~~~~~|~~~} @@@", new MenuActionReturnChoice(this, 21)));
+	menu->addMenuItem(new MenuItem("Text Duration @@@{~~~~~~~~~~~~|~~~} @@@", new MenuActionReturnChoice(this, 21)));
+	menu->addMenuItem(new MenuItem("Restore Defaults                      @@", new MenuActionReturnChoice(this, 21)));
+	menu->addMenuItem(new MenuItem("Back                                       @@@", new MenuActionLeaveMenu(this)));
 	return menu;
 }
 
