@@ -121,7 +121,7 @@ bool MystGameState::load(int slot) {
 
 	// Set our default cursor
 	_vm->_cursor->showCursor();
-	if (_globals.heldPage == kNoPage || _globals.heldPage > kWhitePage) // TODO: This second condition can never happen
+	if (_globals.heldPage == kNoPage)
 		_vm->setMainCursor(kDefaultMystCursor);
 	else if (_globals.heldPage < kRedLibraryPage) //A blue page is held
 		_vm->setMainCursor(kBluePageCursor);

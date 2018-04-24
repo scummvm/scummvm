@@ -1222,7 +1222,7 @@ void MohawkEngine_Myst::dropPage() {
 		if (page == kRedFirePlacePage) {
 			if (_gameState->_globals.currentAge == 2)
 				redrawArea(25);
-		} else if (page == kRedStoneshipPage) { //TODO: Should this also happen for the blue page above?
+		} else if (page == kRedStoneshipPage) {
 			if (_gameState->_globals.currentAge == 1)
 				redrawArea(35);
 		} else {
