@@ -5,7 +5,7 @@ at se i den Engelske README-fil.
 
 For mere information, kompatibilitet lister, detaljer om donering, den
 seneste udgivelse, statusrapporter og mere, kan du besøge ScummVMs hjemme-
-side på: http://www.scummvm.org/
+side på: https://www.scummvm.org/
 
 Indholdsfortegnelse:
 --------------------
@@ -73,7 +73,7 @@ følge vejledning fra den engelske README fil.
 For de utålmodige blandt jer, er her hvordan du får ScummVM op at køre 
 i fem enkle trin.
 
-1. Hent ScummVM fra <http://www.scummvm.org/downloads.php> og 
+1. Hent ScummVM fra <https://www.scummvm.org/downloads/> og 
 installere det.
 
 2. Opret en mappe på din harddisk og kopiere spillets datafiler fra de 
@@ -128,7 +128,7 @@ og stadig forekommer i den seneste git/Daglig byggede version.
 Kontroller også listen med kendte problemer (nedenfor) og kompatibilitetslisten 
 på vores hjemmeside for spillet, for at sikre, at problemet ikke allerede er kendt:
 
-  http://www.scummvm.org/compatibility_stable.php
+  https://www.scummvm.org/compatibility/
 
 Vær venlig ikke at rapportere fejl på spil, der ikke er anført som værende 
 mulige at gennemføre i 'understøttede spil' sektionen, eller kompatibilitetslisten. 

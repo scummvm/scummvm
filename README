@@ -3,7 +3,7 @@ ScummVM README
 
 For more information, compatibility lists, details on donating, the latest
 release, progress reports and more, please visit the ScummVM home page
-at: <http://www.scummvm.org/>
+at: <https://www.scummvm.org/>
 
 
 Table of Contents:
@@ -143,7 +143,7 @@ patch!
 For the impatient among you, here is how to get ScummVM running in five
 simple steps.
 
-1. Download ScummVM from <http://www.scummvm.org/downloads.php> and
+1. Download ScummVM from <https://www.scummvm.org/downloads/> and
 install it.
 
 2. Create a directory on your hard drive and copy the game datafiles
@@ -174,7 +174,7 @@ subdirectories for supported games.
 ---- ------
 We've compiled a list of F.A.Q. at:
 
-  <http://www.scummvm.org/faq/>
+  <https://www.scummvm.org/faq/>
 
 
 2.0) Contact:
@@ -194,7 +194,7 @@ reproducible, and still occurs in the latest git/Daily build version.
 Also check the known problems list (below) and the compatibility list
 on our website for that game, to ensure the issue is not already known:
 
-  <http://scummvm.org/compatibility/>
+  <https://www.scummvm.org/compatibility/>
 
 Please do not report bugs for games that are not listed as being
 completeable in the 'Supported Games' section, or compatibility list. We
@@ -222,7 +222,7 @@ At the moment the following games have been reported to work, and should
 be playable to the end:
 A more detailed compatibility list of the supported games can be found here:
 
-  <http://www.scummvm.org/compatibility/>)
+  <https://www.scummvm.org/compatibility/>
 
 LucasArts (SCUMM) Games:
      Maniac Mansion                              [maniac]
@@ -733,7 +733,7 @@ Some re-releases of the games, as well as the PlayStation version, do
 not have Smacker videos. Revolution Software has kindly allowed us to
 provide re-encoded cutscenes for download on our website:
 
-  <http://www.scummvm.org/downloads.php>
+  <https://www.scummvm.org/downloads/>
 
 These cutscenes are provided in DXA format with FLAC audio. Their
 quality is equal to the original games due to the use of lossless
@@ -1047,7 +1047,7 @@ of these versions of The Feeble Files.
 It's called "The Feeble Files - Omni TV and epilogue cutscenes for the
 Amiga and Macintosh versions" and you can get it here:
 
-  <http://www.scummvm.org/games/#feeble>
+  <https://www.scummvm.org/games/#feeble>
 
 Windows:
 If you have the Windows version of The Feeble Files, there are several
@@ -1261,7 +1261,7 @@ Alternatively, download the GNU FreeFont TTF package
 ttf files from the sfd directory into your ScummVM extras directory,
 though at the time of writing these fonts cause some text rendering issues.
 Download the subtitles patch
-<http://www.thezorklibrary.com/installguides/znpatch.zip> and unzip
+<https://www.thezorklibrary.com/installguides/znpatch.zip> and unzip
 the addon directory into the game root directory
 
 GoG version
@@ -1295,7 +1295,7 @@ Zork: Grand Inquisitor
 All versions
 
 Download the Liberation(tm) fonts package
-<https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
+<https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
 and unpack all the ttf files into your ScummVM extras directory.
 Alternatively, download the GNU FreeFont TTF package
 <https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> and unzip all the
@@ -1320,7 +1320,7 @@ subtitle.zfs
 From CD1, copy the zassets1 directory into the game root directory
 From CD2, copy the zassets2 directory into the game root directory
 It's recommended to apply patch 1.2
-<http://www.thezorklibrary.com/installguides/Zpatch.exe>, but you may
+<https://www.thezorklibrary.com/installguides/Zpatch.exe>, but you may
 have to install the game normally for that, as the patch has its own installer.
 
 DVD version
@@ -2859,12 +2859,12 @@ compressed sound. For compressed save states, zlib is required.
 
 Some parts of ScummVM, particularly scalers, have highly optimized
 versions written in assembler. If you wish to use this option, you will
-need to install nasm assembler (see <http://www.nasm.us/>). Note that
+need to install nasm assembler (see <https://www.nasm.us/>). Note that
 we currently only have x86 MMX optimized versions, and they will not
 compile on other processors.
 
 On Win9x/NT/XP, you can define USE_WINDBG and attach WinDbg to browse
-debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.aspx>).
+debug messages (see <https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/index>).
 
 
    Windows:
@@ -2955,11 +2955,11 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
 ----- -------
 Please refer to our extensive Credits list at:
 
-  <http://www.scummvm.org/credits>
+  <https://www.scummvm.org/credits/>
 
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
 The ScummVM team.
-<http://www.scummvm.org/>
+<https://www.scummvm.org/>
 ------------------------------------------------------------------------
