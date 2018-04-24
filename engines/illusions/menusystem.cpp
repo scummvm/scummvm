@@ -50,9 +50,9 @@ void MenuItem::executeAction() {
 
 // BaseMenu
 
-BaseMenu::BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte field8, byte fieldA, byte fieldC, byte fieldE,
+BaseMenu::BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte field8, byte fieldA, byte textColor, byte fieldE,
 	uint defaultMenuItemIndex)
-	: _menuSystem(menuSystem), _fontId(fontId), _field8(field8), _fieldA(fieldA), _fieldC(fieldC), _fieldE(fieldE),
+	: _menuSystem(menuSystem), _fontId(fontId), _field8(field8), _fieldA(fieldA), _textColor(textColor), _fieldE(fieldE),
 	_defaultMenuItemIndex(defaultMenuItemIndex)
 {
 }
@@ -133,8 +133,8 @@ void BaseMenuSystem::enterSubMenu(BaseMenu *menu) {
 	_hoveredMenuItemIndex = _hoveredMenuItemIndex3;
 	_hoveredMenuItemIndex2 = _hoveredMenuItemIndex3;
 	setMouseCursorToMenuItem(_hoveredMenuItemIndex);
-	placeActor318();
-	placeActor323();
+	placeActorHoverBackground();
+	placeActorTextColorRect();
 }
 
 void BaseMenuSystem::leaveSubMenu() {
@@ -148,8 +148,8 @@ void BaseMenuSystem::leaveSubMenu() {
 	_hoveredMenuItemIndex = _hoveredMenuItemIndex3;
 	_hoveredMenuItemIndex2 = _hoveredMenuItemIndex3;
 	setMouseCursorToMenuItem(_hoveredMenuItemIndex);
-	initActor318();
-	placeActor323();
+	initActorHoverBackground();
+	placeActorTextColorRect();
 }
 
 void BaseMenuSystem::enterSubMenuById(int menuId) {
@@ -216,7 +216,7 @@ bool BaseMenuSystem::calcMenuItemIndexAtPoint(Common::Point pt, uint &menuItemIn
 }
 
 void BaseMenuSystem::setMousePos(Common::Point &mousePos) {
-	//TODO Strange behavior _vm->_input->setCursorPosition(mousePos);
+	_vm->_input->setCursorPosition(mousePos);
 	Control *mouseCursor = _vm->getObjectControl(0x40004);
 	mouseCursor->_actor->_position = mousePos;
 }
@@ -237,7 +237,7 @@ void BaseMenuSystem::activateMenu(BaseMenu *menu) {
 
 }
 
-void BaseMenuSystem::initActor318() {
+void BaseMenuSystem::initActorHoverBackground() {
 	Control *v0 = _vm->getObjectControl(0x4013E);
 	if (!v0) {
 		WidthHeight dimensions;
@@ -247,11 +247,11 @@ void BaseMenuSystem::initActor318() {
 		v0 = _vm->getObjectControl(0x4013E);
 		v0->_flags |= 8;
 	}
-	placeActor318();
+	placeActorHoverBackground();
 	v0->appearActor();
 }	
 
-void BaseMenuSystem::placeActor318() {
+void BaseMenuSystem::placeActorHoverBackground() {
 	Control *v0 = _vm->getObjectControl(0x4013E);
 	v0->fillActor(0);
 	
@@ -272,24 +272,24 @@ void BaseMenuSystem::placeActor318() {
 		charHeight = frameDimensions._height;
 		
 	v0->drawActorRect(Common::Rect(textInfoDimensions._width - 1, charHeight - 1), _activeMenu->_fieldE);
-	
-	updateActor318();
+
+	updateActorHoverBackground();
 }
 
-void BaseMenuSystem::updateActor318() {
+void BaseMenuSystem::updateActorHoverBackground() {
 	Control *v0 = _vm->getObjectControl(0x4013E);
 	WRect rect;
 	calcMenuItemRect(_hoveredMenuItemIndex2 - _hoveredMenuItemIndex3 + 1, rect);
   	v0->setActorPosition(rect._topLeft);
 }
 
-void BaseMenuSystem::hideActor318() {
+void BaseMenuSystem::hideActorHoverBackground() {
 	Control *v0 = _vm->getObjectControl(0x4013E);
 	if (v0)
 		v0->disappearActor();
 }
 
-void BaseMenuSystem::initActor323() {
+void BaseMenuSystem::initActorTextColorRect() {
 	Control *v0 = _vm->getObjectControl(0x40143);
 	if (!v0) {
 		WidthHeight dimensions;
@@ -299,11 +299,11 @@ void BaseMenuSystem::initActor323() {
 		v0 = _vm->getObjectControl(0x40143);
 		v0->_flags |= 8;
 	}
-	placeActor323();
+	placeActorTextColorRect();
 	v0->appearActor();
 }
 
-void BaseMenuSystem::placeActor323() {
+void BaseMenuSystem::placeActorTextColorRect() {
 	Control *v0 = _vm->getObjectControl(0x40143);
 	v0->fillActor(0);
 	
@@ -312,19 +312,19 @@ void BaseMenuSystem::placeActor323() {
 	_vm->_screenText->getTextInfoPosition(textInfoPosition);
 	_vm->_screenText->getTextInfoDimensions(textInfoDimensions);
 	
-	/* TODO	
+	/* TODO
 	if (_activeMenu->_field8 && _activeMenu->_fieldA != _activeMenu->_field8) {
 		textInfoDimensions._width -= 2;
 		textInfoDimensions._height -= 6;
 	}
-	*/	
+	*/
 
 	v0->setActorPosition(textInfoPosition);
-	v0->drawActorRect(Common::Rect(textInfoDimensions._width - 1, textInfoDimensions._height - 1), _activeMenu->_fieldC);
+	v0->drawActorRect(Common::Rect(textInfoDimensions._width - 1, textInfoDimensions._height - 1), _activeMenu->_textColor);
 	
 }
 
-void BaseMenuSystem::hideActor323() {
+void BaseMenuSystem::hideActorTextColorRect() {
 	Control *v0 = _vm->getObjectControl(0x40143);
 	if (v0)
 		v0->disappearActor();
@@ -351,8 +351,8 @@ void BaseMenuSystem::openMenu(BaseMenu *menu) {
 	_hoveredMenuItemIndex = _hoveredMenuItemIndex3;
 	_hoveredMenuItemIndex2 = _hoveredMenuItemIndex3;
 	setMouseCursorToMenuItem(_hoveredMenuItemIndex);
-	initActor318();
-	initActor323();
+	initActorHoverBackground();
+	initActorTextColorRect();
 	_vm->_input->discardAllEvents();
 }
 
@@ -362,8 +362,8 @@ void BaseMenuSystem::closeMenu() {
 		_menuStack.pop();
 	}
 	_vm->_screenText->removeText();
-	hideActor318();
-	hideActor323();
+	hideActorHoverBackground();
+	hideActorTextColorRect();
 	Control *mouseCursor = _vm->getObjectControl(0x40004);
 	setGameState(_savedGameState);
 	mouseCursor->_actor->_actorIndex = _savedCursorActorIndex;
@@ -448,16 +448,16 @@ void BaseMenuSystem::update(Control *cursorControl) {
 	if (calcMenuItemIndexAtPoint(mousePos, newHoveredMenuItemIndex)) {
 		if (newHoveredMenuItemIndex != _hoveredMenuItemIndex) {
 			if (_hoveredMenuItemIndex == 0)
-				initActor318();
+				initActorHoverBackground();
 			_hoveredMenuItemIndex = newHoveredMenuItemIndex;
 			_hoveredMenuItemIndex2 = newHoveredMenuItemIndex;
 			setMenuCursorNum(2);
-			updateActor318();
+			updateActorHoverBackground();
 			resetTimeOut = true;
 		}
 	} else if (_hoveredMenuItemIndex != 0) {
 		setMenuCursorNum(1);
-		hideActor318();
+		hideActorHoverBackground();
 		_hoveredMenuItemIndex = 0;
 		resetTimeOut = true;
 	}
@@ -471,8 +471,17 @@ void BaseMenuSystem::update(Control *cursorControl) {
 		handleClick(_activeMenu->_defaultMenuItemIndex, mousePos);
 	} else if (_vm->_input->pollEvent(kEventUp)) {
 		// TODO handleUpKey();
+		if (_hoveredMenuItemIndex > 0) {
+			setMouseCursorToMenuItem(--_hoveredMenuItemIndex);
+			_hoveredMenuItemIndex2 = _hoveredMenuItemIndex;
+			updateActorHoverBackground();
+		}
+
 	} else if (_vm->_input->pollEvent(kEventDown)) {
 		// TODO handleDownKey();
+		setMouseCursorToMenuItem(++_hoveredMenuItemIndex);
+		_hoveredMenuItemIndex2 = _hoveredMenuItemIndex;
+		updateActorHoverBackground();
 	}
 	
 	updateTimeOut(resetTimeOut);

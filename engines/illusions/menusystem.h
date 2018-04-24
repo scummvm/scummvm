@@ -54,7 +54,7 @@ protected:
 
 class BaseMenu {
 public:
-	BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte field8, byte fieldA, byte fieldC, byte fieldE,
+	BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte field8, byte fieldA, byte textColor, byte fieldE,
 		uint defaultMenuItemIndex);
 	virtual ~BaseMenu();
 	void addText(const Common::String text);
@@ -68,7 +68,7 @@ public://protected://TODO
 	typedef Common::Array<MenuItem*> MenuItems;
 	BaseMenuSystem *_menuSystem;
 	uint32 _fontId;
-	byte _field8, _fieldA, _fieldC, _fieldE;
+	byte _field8, _fieldA, _textColor, _fieldE;
 	uint _field2C18;
 	uint _defaultMenuItemIndex;
 	Common::Array<Common::String> _text;
@@ -153,14 +153,14 @@ protected:
 	
 	void updateTimeOut(bool resetTimeOut);
 	
-	void initActor318();
-	void placeActor318();
-	void updateActor318();
-	void hideActor318();
+	void initActorHoverBackground();
+	void placeActorHoverBackground();
+	void updateActorHoverBackground();
+	void hideActorHoverBackground();
 	
-	void initActor323();
-	void placeActor323();
-	void hideActor323();
+	void initActorTextColorRect();
+	void placeActorTextColorRect();
+	void hideActorTextColorRect();
 	
 	virtual BaseMenu *getMenuById(int menuId) = 0;
 };
