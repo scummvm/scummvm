@@ -263,6 +263,7 @@ protected:
 	uint16 _towerRotationSpeed; // 124
 	bool _towerRotationMapClicked; // 132
 	bool _towerRotationOverSpot; // 136
+	const Common::Point _towerRotationCenter;
 
 	bool _matchBurning;
 	uint16 _matchGoOutCnt;
@@ -332,10 +333,11 @@ protected:
 	void clockResetGear(uint16 gear);
 
 	void towerRotationMapRotate();
+	void towerRotationMapRedraw();
 	void towerRotationDrawBuildings();
 	uint16 towerRotationMapComputeAngle();
-	Common::Point towerRotationMapComputeCoords(const Common::Point &center, uint16 angle);
-	void towerRotationMapDrawLine(const Common::Point &center, const Common::Point &end);
+	Common::Point towerRotationMapComputeCoords(uint16 angle);
+	void towerRotationMapDrawLine(const Common::Point &end, bool rotationLabelVisible);
 
 	void boilerFireInit();
 	void boilerFireUpdate(bool init);

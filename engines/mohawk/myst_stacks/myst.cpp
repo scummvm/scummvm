@@ -38,7 +38,8 @@ namespace MystStacks {
 
 Myst::Myst(MohawkEngine_Myst *vm) :
 		MystScriptParser(vm),
-		_state(_vm->_gameState->_myst) {
+		_state(_vm->_gameState->_myst),
+		_towerRotationCenter(Common::Point(383, 124)) {
 	setupOpcodes();
 
 	// Card ID preinitialized by the engine for use by opcode 18
@@ -1021,10 +1022,9 @@ void Myst::o_towerRotationStart(uint16 var, const ArgumentsArray &args) {
 
 	_vm->_cursor->setCursor(700);
 
-	const Common::Point center = Common::Point(383, 124);
-	Common::Point end = towerRotationMapComputeCoords(center, _state.towerRotationAngle);
+	Common::Point end = towerRotationMapComputeCoords(_state.towerRotationAngle);
 	towerRotationMapComputeAngle();
-	towerRotationMapDrawLine(center, end);
+	towerRotationMapDrawLine(end, true);
 
 	_vm->_sound->playEffect(5378, true);
 }
@@ -3178,7 +3178,7 @@ void Myst::towerRotationMap_run() {
 		} else {
 			// Stop blinking label
 			_towerRotationBlinkLabel = false;
-			_towerRotationMapLabel->drawConditionalDataToScreen(0);
+			towerRotationMapRedraw();
 
 			// Blink tower
 			_startTime = time + 500;
@@ -3244,18 +3244,18 @@ uint16 Myst::towerRotationMapComputeAngle() {
 	return angle;
 }
 
-Common::Point Myst::towerRotationMapComputeCoords(const Common::Point &center, uint16 angle) {
+Common::Point Myst::towerRotationMapComputeCoords(uint16 angle) {
 	Common::Point end;
 
 	// Polar to rect coords
 	double radians = angle * M_PI / 180.0;
-	end.x = (int16)(center.x + cos(radians) * 310.0);
-	end.y = (int16)(center.y + sin(radians) * 310.0);
+	end.x = (int16)(_towerRotationCenter.x + cos(radians) * 310.0);
+	end.y = (int16)(_towerRotationCenter.y + sin(radians) * 310.0);
 
 	return end;
 }
 
-void Myst::towerRotationMapDrawLine(const Common::Point &center, const Common::Point &end) {
+void Myst::towerRotationMapDrawLine(const Common::Point &end, bool rotationLabelVisible) {
 	uint32 color;
 
 	if (_vm->getFeatures() & GF_ME) {
@@ -3290,18 +3290,22 @@ void Myst::towerRotationMapDrawLine(const Common::Point &center, const Common::P
 	_towerRotationMapTower->drawConditionalDataToScreen(0, false);
 
 	// Draw label
-	_towerRotationMapLabel->drawConditionalDataToScreen(1, false);
+	_towerRotationMapLabel->drawConditionalDataToScreen(rotationLabelVisible ? 1 : 0, false);
 
 	// Draw line
-	_vm->_gfx->drawLine(center, end, color);
+	_vm->_gfx->drawLine(_towerRotationCenter, end, color);
 	_vm->_gfx->copyBackBufferToScreen(rect);
 }
 
 void Myst::towerRotationMapRotate() {
-	const Common::Point center = Common::Point(383, 124);
 	uint16 angle = towerRotationMapComputeAngle();
-	Common::Point end = towerRotationMapComputeCoords(center, angle);
-	towerRotationMapDrawLine(center, end);
+	Common::Point end = towerRotationMapComputeCoords(angle);
+	towerRotationMapDrawLine(end, true);
+}
+
+void Myst::towerRotationMapRedraw() {
+	Common::Point end = towerRotationMapComputeCoords(_state.towerRotationAngle);
+	towerRotationMapDrawLine(end, false);
 }
 
 void Myst::o_forechamberDoor_init(uint16 var, const ArgumentsArray &args) {
