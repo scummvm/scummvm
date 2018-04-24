@@ -291,7 +291,23 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 
 	if ((mode & 0x7f) == 0) {
 		if (category != SPELLCAT_INVALID) {
-			if (_vm->getGameID() != GType_Swords && (party._mazeId == 49 || party._mazeId == 37)) {
+			if (_vm->getGameID() == GType_Swords && party._mazeId == 49) {
+				for (int spellId = 0; spellId < 10; ++spellId) {
+					int idx = 0;
+					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] !=
+						Res.DARK_SPELL_OFFSETS[category][spellId])
+						++idx;
+
+					if (idx < SPELLS_PER_CLASS) {
+						if (!c->_spells[idx] || (mode & 0x80)) {
+							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
+							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
+								spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
+								idx, spellId));
+						}
+					}
+				}
+			} else if (party._mazeId == 49 || party._mazeId == 37) {
 				for (uint spellId = 0; spellId < TOTAL_SPELLS; ++spellId) {
 					int idx = 0;
 					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] != (int)spellId)
