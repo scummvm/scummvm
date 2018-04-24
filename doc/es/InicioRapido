@@ -5,7 +5,7 @@ buscar en el README original.
 
 Para conseguir más información, listas de compatibilidad, instrucciones para
 colaborar económicamente, la última actualización, informes de progreso,
-etcétera, por favor, visita la página oficial de ScummVM: http://www.scummvm.org/
+etcétera, por favor, visita la página oficial de ScummVM: https://www.scummvm.org/
 
 Contenidos:
 ------------------
@@ -74,7 +74,7 @@ prefieras seguir la guía del archivo README inglés.
 Para los impacientes, estos son los cinco pasos básicos para
 hacer funcionar ScummVM:
 
-1. Descarga ScummVM desde <http://www.scummvm.org/downloads.php> e
+1. Descarga ScummVM desde <https://www.scummvm.org/downloads/> e
 instálalo.
 
 2. Crea una carpeta en tu disco duro y copia los archivos originales
@@ -137,7 +137,7 @@ también la lista de problemas conocidos (más abajo), y la lista
 de compatibilidad de ese juego concreto, para confirmar que
 no se trata de un fallo ya conocido:
 
-  http://www.scummvm.org/compatibility_stable.php
+  https://www.scummvm.org/compatibility/
 
 Por favor, no informes de fallos en juegos que no aparezcan como
 completables en la sección de juegos compatibles. Ya sabemos que
