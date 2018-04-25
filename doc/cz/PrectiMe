@@ -2022,7 +2022,7 @@ Nebo novější (starší verze mohou fungovat, ale nejsou podporovány) a podpo
 
 Některé části ScummVM, zvláště zvětšovače, mají vysoce optimalizované verze napsané v assembleru. Pokud si přejete tuto možnost použít, potřebuje mít nainstalován assembler nasm (viz https://www.nasm.us/). Nezapomeňte, že v současnosti máme pouze verze optimalizované pro x86 MMX, a nebudou sestaveny pro jiné procesory.
 
-Na Win9x/NT/XP můžete určit USE_WINDBG a připojit WinDbg pro procházení ladících zpráv (viz <https://docs.microsoft.com/cs-cz/windows-hardware/drivers/debugger/index>).
+Na Windows můžete určit USE_WINDBG a připojit WinDbg pro procházení ladících zpráv (viz <https://docs.microsoft.com/cs-cz/windows-hardware/drivers/debugger/index>).
 
    Windows:
    * Dev-C++

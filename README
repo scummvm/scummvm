@@ -2863,7 +2863,7 @@ need to install nasm assembler (see <https://www.nasm.us/>). Note that
 we currently only have x86 MMX optimized versions, and they will not
 compile on other processors.
 
-On Win9x/NT/XP, you can define USE_WINDBG and attach WinDbg to browse
+On Windows, you can define USE_WINDBG and attach WinDbg to browse
 debug messages (see <https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/index>).
 
 

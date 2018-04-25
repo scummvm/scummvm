@@ -1726,7 +1726,7 @@ Om du kompilerar för Windows, Linux eller Mac OS X behöver du SDL-1.2.2 eller 
 
 Vissa delar av ScummVM, speciellt skalningsfilter, har optimerade versioner skrivna i assembler-kod. Om du vill använda dem måste du installera nasm-assemblern (se https://nasm.us/). Märk att vi för tillfället endast har optimerade versioner för x86 MMX och att de inte kan kompileras med andra processorer.
 
-På Win9x/NT/XP kan du definiera USE_WINDBG och lägga till WinDbg för att visa debug-meddelanden (se https://docs.microsoft.com/sv-se/windows-hardware/drivers/debugger/index).
+På Windows kan du definiera USE_WINDBG och lägga till WinDbg för att visa debug-meddelanden (se https://docs.microsoft.com/sv-se/windows-hardware/drivers/debugger/index).
 
   GCC och MinGW32:
     * Skriv "./configure"

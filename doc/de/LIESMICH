@@ -3042,7 +3042,7 @@ verwenden möchten, müssen Sie den Assembler nasm installieren
 optimierte Versionen haben und diese auf keinem anderen Prozessor kompiliert
 werden können.
 
-Bei Win9x/NT/XP können Sie USE_WINDBG definieren und WinDbg anhängen, um
+Unter Windows können Sie USE_WINDBG definieren und WinDbg anhängen, um
 Debug-Nachrichten zu durchsuchen
 (siehe https://docs.microsoft.com/de-de/windows-hardware/drivers/debugger/index).
 
