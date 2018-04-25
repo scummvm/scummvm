@@ -1208,9 +1208,9 @@ void Myst::o_bookGivePage(uint16 var, const ArgumentsArray &args) {
 	if (mask == 32) {
 		// You lose!
 		if (var == 100)
-			_globals.currentAge = 9;
+			_globals.currentAge = kSirrusEnding;
 		else
-			_globals.currentAge = 10;
+			_globals.currentAge = kAchenarEnding;
 
 		_vm->changeToCard(cardIdLose, kTransitionDissolve);
 	} else {

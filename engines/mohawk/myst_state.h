@@ -71,6 +71,21 @@ enum HeldPage {
 	kWhitePage           = 13
 };
 
+// Age the player is in
+enum ActiveAge {
+	kSelenitic     = 0,
+	kStoneship     = 1,
+	kMystLibrary   = 2,
+	kMechanical    = 3,
+	kChannelwood   = 4,
+	kIntro         = 5,
+	kDini          = 6,
+	kMystStart     = 7,
+	kCredits       = 8,
+	kSirrusEnding  = 9,
+	kAchenarEnding = 10
+};
+
 class MystGameState {
 public:
 	MystGameState(MohawkEngine_Myst*, Common::SaveFileManager*);
@@ -98,7 +113,7 @@ public:
 	*/
 	struct Globals {
 		uint16 u0;
-		uint16 currentAge;
+		ActiveAge currentAge;
 		HeldPage heldPage;
 		uint16 u1;
 		uint16 transitions;
