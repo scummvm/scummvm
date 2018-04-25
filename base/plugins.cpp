@@ -514,7 +514,7 @@ GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &game
 	return result;
 }
 
-GameList EngineManager::detectGames(const Common::FSList &fslist) const {
+GameList EngineManager::detectGames(const Common::FSList &fslist, bool useUnknownGameDialog) const {
 	GameList candidates;
 	PluginList plugins;
 	PluginList::const_iterator iter;
@@ -524,7 +524,7 @@ GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 		// Iterate over all known games and for each check if it might be
 		// the game in the presented directory.
 		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-			candidates.push_back((*iter)->get<MetaEngine>().detectGames(fslist));
+			candidates.push_back((*iter)->get<MetaEngine>().detectGames(fslist, useUnknownGameDialog));
 		}
 	} while (PluginManager::instance().loadNextPlugin());
 	return candidates;

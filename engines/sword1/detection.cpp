@@ -89,7 +89,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist) const;
+	virtual GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -175,7 +175,7 @@ void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound, bool r
 	}
 }
 
-GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
+GameList SwordMetaEngine::detectGames(const Common::FSList &fslist, bool /*useUnknownGameDialog*/) const {
 	int i, j;
 	GameList detectedGames;
 	bool filesFound[NUM_FILES_TO_CHECK];
