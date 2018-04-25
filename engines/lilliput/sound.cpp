@@ -27,12 +27,50 @@
 
 namespace Lilliput {
 
+static const byte _aliasArr[40] = {
+	44,  0,  1,  2, 37,  3, 24,   45, 20, 19,
+	16, 10, 11, 12, 41, 39, 40,   21, 22, 23,
+	 4,  5,  6, 52,  7,  8,  9,   33, 13, 14,
+	15, 18, 26, 25, 38, 29, 36, 0xFF, 28, 40
+};
+
+static const bool _loopArr[40] = {
+	0, 0, 0, 1, 1, 1, 0, 1, 1, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 1, 0, 0, 1, 1, 1, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+static const byte _soundType [40] = {
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 0, 0, 1, 1, 1, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 1, 0, 0, 0
+};
+
 LilliputSound::LilliputSound(LilliputEngine *vm) : _vm(vm) {
 	_unpackedFiles = nullptr;
 	_unpackedSizes = nullptr;
+	_fileNumb = 0;
+
+	_isGM = false;
+
+	MidiPlayer::createDriver();
+
+	int ret = _driver->open();
+	if (ret == 0) {
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
+
+		_driver->setTimerCallback(this, &timerCallback);
+	}
 }
 
 LilliputSound::~LilliputSound() {
+	Audio::MidiPlayer::stop();
+
 	if (_unpackedFiles) {
 		for (int i = 0; i < _fileNumb; i++)
 			free(_unpackedFiles[i]);
@@ -91,14 +129,14 @@ void LilliputSound::loadMusic(Common::String filename) {
 				dstBuf[j] = srcBuf[j];
 			_unpackedFiles[i] = dstBuf;
 		}
-		delete srcBuf;
+		delete[] srcBuf;
 		pos += packedSize;
 	}
 
-	delete fileSizes;
+	delete[] fileSizes;
 	f.close();
 
-	// Debug code
+	/* Debug code
 	for (int i = 0; i < _fileNumb; ++i) {
 		Common::DumpFile dmp;
 		Common::String name = Common::String::format("dmp%d.mid", i);
@@ -106,7 +144,28 @@ void LilliputSound::loadMusic(Common::String filename) {
 		dmp.write(_unpackedFiles[i], _unpackedSizes[i]);
 		dmp.close();
 	}
-	//
+	*/
+}
+
+void LilliputSound::send(uint32 b) {
+	if (((b & 0xF0) == 0xC0) && !_isGM && !_nativeMT32) {
+		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
+	}
+
+	Audio::MidiPlayer::send(b);
+}
+
+void LilliputSound::sendToChannel(byte channel, uint32 b) {
+	if (!_channelsTable[channel]) {
+		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		// If a new channel is allocated during the playback, make sure
+		// its volume is correctly initialized.
+		if (_channelsTable[channel])
+			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
+	}
+
+	if (_channelsTable[channel])
+		_channelsTable[channel]->send(b);
 }
 
 // Used during initialization
@@ -122,22 +181,68 @@ void LilliputSound::refresh() {
 
 void LilliputSound::play(int var1, Common::Point var2, Common::Point var3, Common::Point var4) {
 	debugC(1, kDebugSound, "LilliputSound::play(%d, %d - %d, %d - %d, %d - %d)", var1, var2.x, var2.y, var3.x, var3.y, var4.x, var4.y);
+	// warning("LilliputSound::play(%d, %d - %d, %d - %d, %d - %d)", var1, var2.x, var2.y, var3.x, var3.y, var4.x, var4.y);
+
+	// save camera (var2)
+	if (_aliasArr[var1] == 0xFF) {
+		return;
+	}
+
+	if (var3 == Common::Point(-1, -1)) {
+		playMusic(var1);
+	} else if (_soundType[var1] == 0) {
+		warning("Transient");
+	} else {
+		warning("longterm");
+	}
+
+	return;
+}
+void LilliputSound::playMusic(int var1) {
+	int idx = _aliasArr[var1];
+	bool loop = _loopArr[var1];
+
+	_isGM = true;
+
+	if (_parser)
+		_parser->stopPlaying();
+
+	MidiParser *parser = MidiParser::createParser_SMF();
+	if (parser->loadMusic(_unpackedFiles[idx], _unpackedSizes[idx])) {
+		parser->setTrack(0);
+		parser->setMidiDriver(this);
+		parser->setTimerRate(_driver->getBaseTempo());
+		parser->property(MidiParser::mpAutoLoop, loop);
+		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+
+		_parser = parser;
+
+		syncVolume();
+
+		_isLooping = loop;
+		_isPlaying = true;
+	}
 }
 
 void LilliputSound::stop(Common::Point pos) {
 	debugC(1, kDebugSound, "LilliputSound::stop(%d - %d)", pos.x, pos.y);
+	warning("LilliputSound::stop(%d - %d)", pos.x, pos.y);
 }
 
 void LilliputSound::toggleOnOff() {
 	debugC(1, kDebugSound, "LilliputSound::toggleOnOff()");
+	warning("LilliputSound::toggleOnOff()");
 }
 
 void LilliputSound::update() {
 	debugC(1, kDebugSound, "LilliputSound::update()");
+	warning("LilliputSound::update()");
 }
 
 void LilliputSound::remove() {
 	debugC(1, kDebugSound, "Lilliput::remove()");
+
+	_parser->stopPlaying();
 }
 
 } // End of namespace
