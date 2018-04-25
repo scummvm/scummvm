@@ -190,9 +190,9 @@ uint16 Selenitic::getVar(uint16 var) {
 	case 33: // Maze runner at entry
 		return _mazeRunnerPosition != 288;
 	case 102: // Red page
-		return !(_globals.redPagesInBook & 2) && (_globals.heldPage != 8);
+		return !(_globals.redPagesInBook & 2) && (_globals.heldPage != kRedSeleniticPage);
 	case 103: // Blue page
-		return !(_globals.bluePagesInBook & 2) && (_globals.heldPage != 2);
+		return !(_globals.bluePagesInBook & 2) && (_globals.heldPage != kBlueSeleniticPage);
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -223,18 +223,18 @@ void Selenitic::toggleVar(uint16 var) {
 		break;
 	case 102: // Red page
 		if (!(_globals.redPagesInBook & 2)) {
-			if (_globals.heldPage == 8)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kRedSeleniticPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 8;
+				_globals.heldPage = kRedSeleniticPage;
 		}
 		break;
 	case 103: // Blue page
 		if (!(_globals.bluePagesInBook & 2)) {
-			if (_globals.heldPage == 2)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kBlueSeleniticPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 2;
+				_globals.heldPage = kBlueSeleniticPage;
 		}
 		break;
 	default:

@@ -488,12 +488,12 @@ uint16 Myst::getVar(uint16 var) {
 				&& _fireplaceLines[5] == 250;
 	case 24: // Fireplace Blue Page Present
 		if (_globals.ending != 4)
-			return !(_globals.bluePagesInBook & 32) && (_globals.heldPage != 6);
+			return !(_globals.bluePagesInBook & 32) && (_globals.heldPage != kBlueFirePlacePage);
 		else
 			return 0;
 	case 25: // Fireplace Red Page Present
 		if (_globals.ending != 4)
-			return !(_globals.redPagesInBook & 32) && (_globals.heldPage != 12);
+			return !(_globals.redPagesInBook & 32) && (_globals.heldPage != kRedFirePlacePage);
 		else
 			return 0;
 	case 26: // Courtyard Image Box - Cross
@@ -707,12 +707,12 @@ uint16 Myst::getVar(uint16 var) {
 		return _state.cabinValvePosition % 6;
 	case 102: // Red page
 		if (_globals.ending != 4)
-			return !(_globals.redPagesInBook & 1) && (_globals.heldPage != 7);
+			return !(_globals.redPagesInBook & 1) && (_globals.heldPage != kRedLibraryPage);
 		else
 			return 0;
 	case 103: // Blue page
 		if (_globals.ending != 4)
-			return !(_globals.bluePagesInBook & 1) && (_globals.heldPage != 1);
+			return !(_globals.bluePagesInBook & 1) && (_globals.heldPage != kBlueLibraryPage);
 		else
 			return 0;
 	case 300: // Rocket Ship Music Puzzle Slider State
@@ -771,18 +771,18 @@ void Myst::toggleVar(uint16 var) {
 		break;
 	case 24: // Fireplace Blue Page
 		if (_globals.ending != 4 && !(_globals.bluePagesInBook & 32)) {
-			if (_globals.heldPage == 6)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kBlueFirePlacePage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 6;
+				_globals.heldPage = kBlueFirePlacePage;
 		}
 		break;
 	case 25: // Fireplace Red page
 		if (_globals.ending != 4 && !(_globals.redPagesInBook & 32)) {
-			if (_globals.heldPage == 12)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kRedFirePlacePage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 12;
+				_globals.heldPage = kRedFirePlacePage;
 		}
 		break;
 	case 26: // Courtyard Image Box - Cross
@@ -805,27 +805,27 @@ void Myst::toggleVar(uint16 var) {
 		if (_globals.ending != 4) {
 			if (_dockVaultState == 1) {
 				_dockVaultState = 2;
-				_globals.heldPage = 0;
+				_globals.heldPage = kNoPage;
 			} else if (_dockVaultState == 2) {
 				_dockVaultState = 1;
-				_globals.heldPage = 13;
+				_globals.heldPage = kWhitePage;
 			}
 		}
 		break;
 	case 102: // Red page
 		if (_globals.ending != 4 && !(_globals.redPagesInBook & 1)) {
-			if (_globals.heldPage == 7)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kRedLibraryPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 7;
+				_globals.heldPage = kRedLibraryPage;
 		}
 		break;
 	case 103: // Blue page
 		if (_globals.ending != 4 && !(_globals.bluePagesInBook & 1)) {
-			if (_globals.heldPage == 1)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kBlueLibraryPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 1;
+				_globals.heldPage = kBlueLibraryPage;
 		}
 		break;
 	default:
@@ -1095,7 +1095,7 @@ void Myst::o_dockVaultOpen(uint16 var, const ArgumentsArray &args) {
 		(_state.observatoryMarkerSwitch == 1) &&
 		(_state.poolMarkerSwitch == 1) &&
 		(_state.rocketshipMarkerSwitch == 1)) {
-		if (_globals.heldPage != 13 && _globals.ending != 4)
+		if (_globals.heldPage != kWhitePage && _globals.ending != 4)
 			_dockVaultState = 2;
 		else
 			_dockVaultState = 1;
@@ -1138,50 +1138,48 @@ void Myst::o_bookGivePage(uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Card Id (Book Cover): %d", cardIdBookCover);
 	debugC(kDebugScript, "SoundId (Add Page): %d", soundIdAddPage);
 
-	// No page or white page
-	if (!_globals.heldPage || _globals.heldPage == 13) {
-		_vm->changeToCard(cardIdBookCover, kTransitionDissolve);
-		return;
-	}
-
 	uint16 bookVar = 101;
 	uint16 mask = 0;
 
 	switch (_globals.heldPage) {
-	case 7:
+	case kNoPage:
+	case kWhitePage:
+		_vm->changeToCard(cardIdBookCover, kTransitionDissolve);
+		return;
+	case kRedLibraryPage:
 		bookVar = 100;
 		// fallthrough
-	case 1:
+	case kBlueLibraryPage:
 		mask = 1;
 		break;
-	case 8:
+	case kRedSeleniticPage:
 		bookVar = 100;
 		// fallthrough
-	case 2:
+	case kBlueSeleniticPage:
 		mask = 2;
 		break;
-	case 9:
+	case kRedMechanicalPage:
 		bookVar = 100;
 		// fallthrough
-	case 3:
+	case kBlueMechanicalPage:
 		mask = 4;
 		break;
-	case 10:
+	case kRedStoneshipPage:
 		bookVar = 100;
 		// fallthrough
-	case 4:
+	case kBlueStoneshipPage:
 		mask = 8;
 		break;
-	case 11:
+	case kRedChannelwoodPage:
 		bookVar = 100;
 		// fallthrough
-	case 5:
+	case kBlueChannelwoodPage:
 		mask = 16;
 		break;
-	case 12:
+	case kRedFirePlacePage:
 		bookVar = 100;
 		// fallthrough
-	case 6:
+	case kBlueFirePlacePage:
 		mask = 32;
 		break;
 	}
@@ -1203,7 +1201,7 @@ void Myst::o_bookGivePage(uint16 var, const ArgumentsArray &args) {
 		_globals.bluePagesInBook |= mask;
 
 	// Remove page from hand
-	_globals.heldPage = 0;
+	_globals.heldPage = kNoPage;
 
 	_vm->_cursor->showCursor();
 

@@ -1196,8 +1196,8 @@ bool MohawkEngine_Myst::canSaveGameStateCurrently() {
 }
 
 void MohawkEngine_Myst::dropPage() {
-	uint16 page = _gameState->_globals.heldPage;
-	bool whitePage = page == 13;
+	HeldPage page = _gameState->_globals.heldPage;
+	bool whitePage = page == kWhitePage;
 	bool bluePage = page - 1 < 6;
 	bool redPage = page - 7 < 6;
 
@@ -1205,24 +1205,24 @@ void MohawkEngine_Myst::dropPage() {
 	_sound->playEffect(800);
 
 	// Drop page
-	_gameState->_globals.heldPage = 0;
+	_gameState->_globals.heldPage = kNoPage;
 
 	// Redraw page area
 	if (whitePage && _gameState->_globals.currentAge == 2) {
 		_scriptParser->toggleVar(41);
 		redrawArea(41);
 	} else if (bluePage) {
-		if (page == 6) {
+		if (page == kBlueFirePlacePage) {
 			if (_gameState->_globals.currentAge == 2)
 				redrawArea(24);
 		} else {
 			redrawArea(103);
 		}
 	} else if (redPage) {
-		if (page == 12) {
+		if (page == kRedFirePlacePage) {
 			if (_gameState->_globals.currentAge == 2)
 				redrawArea(25);
-		} else if (page == 10) {
+		} else if (page == kRedStoneshipPage) {
 			if (_gameState->_globals.currentAge == 1)
 				redrawArea(35);
 		} else {

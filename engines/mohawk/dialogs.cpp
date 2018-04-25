@@ -204,7 +204,7 @@ MystOptionsDialog::~MystOptionsDialog() {
 void MystOptionsDialog::open() {
 	MohawkOptionsDialog::open();
 
-	_dropPageButton->setEnabled(_vm->_gameState->_globals.heldPage != 0);
+	_dropPageButton->setEnabled(_vm->_gameState->_globals.heldPage != kNoPage);
 
 	if (_showMapButton)
 		_showMapButton->setEnabled(_vm->_scriptParser &&

@@ -187,7 +187,7 @@ uint16 Channelwood::getVar(uint16 var) {
 		}
 	case 102: // Sirrus's Desk Drawer / Red Page State
 		if (_siriusDrawerState) {
-			if(!(_globals.redPagesInBook & 16) && (_globals.heldPage != 11))
+			if(!(_globals.redPagesInBook & 16) && (_globals.heldPage != kRedChannelwoodPage))
 				return 2; // Drawer Open, Red Page Present
 			else
 				return 1; // Drawer Open, Red Page Taken
@@ -195,7 +195,7 @@ uint16 Channelwood::getVar(uint16 var) {
 			return 0; // Drawer Closed
 		}
 	case 103: // Blue Page Present
-		return !(_globals.bluePagesInBook & 16) && (_globals.heldPage != 5);
+		return !(_globals.bluePagesInBook & 16) && (_globals.heldPage != kBlueChannelwoodPage);
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -214,18 +214,18 @@ void Channelwood::toggleVar(uint16 var) {
 		break;
 	case 102: // Red page
 		if (!(_globals.redPagesInBook & 16)) {
-			if (_globals.heldPage == 11)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kRedChannelwoodPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 11;
+				_globals.heldPage = kRedChannelwoodPage;
 		}
 		break;
 	case 103: // Blue page
 		if (!(_globals.bluePagesInBook & 16)) {
-			if (_globals.heldPage == 5)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kBlueChannelwoodPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 5;
+				_globals.heldPage = kBlueChannelwoodPage;
 		}
 		break;
 	default:

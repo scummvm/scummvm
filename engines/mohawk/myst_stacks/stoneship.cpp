@@ -280,9 +280,9 @@ uint16 Stoneship::getVar(uint16 var) {
 			return 0; // Closed
 		}
 	case 102: // Red page
-		return !(_globals.redPagesInBook & 8) && (_globals.heldPage != 10);
+		return !(_globals.redPagesInBook & 8) && (_globals.heldPage != kRedStoneshipPage);
 	case 103: // Blue page
-		return !(_globals.bluePagesInBook & 8) && (_globals.heldPage != 4);
+		return !(_globals.bluePagesInBook & 8) && (_globals.heldPage != kBlueStoneshipPage);
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -334,18 +334,18 @@ void Stoneship::toggleVar(uint16 var) {
 		break;
 	case 102: // Red page
 		if (!(_globals.redPagesInBook & 8)) {
-			if (_globals.heldPage == 10)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kRedStoneshipPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 10;
+				_globals.heldPage = kRedStoneshipPage;
 		}
 		break;
 	case 103: // Blue page
 		if (!(_globals.bluePagesInBook & 8)) {
-			if (_globals.heldPage == 4)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kBlueStoneshipPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 4;
+				_globals.heldPage = kBlueStoneshipPage;
 		}
 		break;
 	default:
