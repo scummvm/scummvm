@@ -332,7 +332,7 @@ public:
 	int getMaximumSaveSlot() const { return 'O' - 'A'; }
 	SaveStateList listSaves(const char *target) const;
 	void removeSaveState(const char *target, int slot) const;
-	virtual ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
+	virtual ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, bool useUnknownGameDialog = false) const;
 
 	bool addFileProps(const FileMap &allFiles, Common::String fname, ADFilePropertiesMap &filePropsMap) const;
 
@@ -511,9 +511,9 @@ bool AdlMetaEngine::addFileProps(const FileMap &allFiles, Common::String fname, 
 }
 
 // Based on AdvancedMetaEngine::detectGame
-ADGameDescList AdlMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
+ADGameDescList AdlMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, bool useUnknownGameDialog) const {
 	// We run the file-based detector first and then add to the returned list
-	ADGameDescList matched = AdvancedMetaEngine::detectGame(parent, allFiles, language, platform, extra);
+	ADGameDescList matched = AdvancedMetaEngine::detectGame(parent, allFiles, language, platform, extra, useUnknownGameDialog);
 
 	debug(3, "Starting disk image detection in dir '%s'", parent.getPath().c_str());
 
@@ -605,7 +605,7 @@ ADGameDescList AdlMetaEngine::detectGame(const Common::FSNode &parent, const Fil
 	// TODO: This could be improved to handle matched and unknown games together in a single directory
 	if (matched.empty()) {
 		if (!filesProps.empty() && gotAnyMatchesWithAllFiles) {
-			reportUnknown(parent, filesProps, matchedGameIds);
+			reportUnknown(parent, filesProps, matchedGameIds, useUnknownGameDialog);
 		}
 	}
 

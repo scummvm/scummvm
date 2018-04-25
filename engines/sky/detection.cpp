@@ -79,7 +79,7 @@ public:
 	virtual GameList getSupportedGames() const;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist) const;
+       virtual GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
@@ -141,7 +141,7 @@ GameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
 	return GameDescriptor();
 }
 
-GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
+GameList SkyMetaEngine::detectGames(const Common::FSList &fslist, bool /*useUnknownGameDialog*/) const {
 	GameList detectedGames;
 	bool hasSkyDsk = false;
 	bool hasSkyDnr = false;

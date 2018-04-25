@@ -95,7 +95,7 @@ public:
 	virtual GameList getSupportedGames() const;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist) const;
+       virtual GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -223,7 +223,7 @@ GameList detectGamesImpl(const Common::FSList &fslist, bool recursion = false) {
 	return detectedGames;
 }
 
-GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
+GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist, bool /*useUnknownGameDialog*/) const {
 	return detectGamesImpl(fslist);
 }
 
