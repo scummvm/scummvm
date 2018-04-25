@@ -550,18 +550,18 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 
 	switch (_curStack) {
 	case kChannelwoodStack:
-		_gameState->_globals.currentAge = 4;
+		_gameState->_globals.currentAge = kChannelwood;
 		_scriptParser = new MystStacks::Channelwood(this);
 		break;
 	case kCreditsStack:
 		_scriptParser = new MystStacks::Credits(this);
 		break;
 	case kDemoStack:
-		_gameState->_globals.currentAge = 0;
+		_gameState->_globals.currentAge = kSelenitic;
 		_scriptParser = new MystStacks::Demo(this);
 		break;
 	case kDniStack:
-		_gameState->_globals.currentAge = 6;
+		_gameState->_globals.currentAge = kDini;
 		_scriptParser = new MystStacks::Dni(this);
 		break;
 	case kIntroStack:
@@ -571,26 +571,26 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		_scriptParser = new MystStacks::MakingOf(this);
 		break;
 	case kMechanicalStack:
-		_gameState->_globals.currentAge = 3;
+		_gameState->_globals.currentAge = kMechanical;
 		_scriptParser = new MystStacks::Mechanical(this);
 		break;
 	case kMystStack:
-		_gameState->_globals.currentAge = 2;
+		_gameState->_globals.currentAge = kMystLibrary;
 		_scriptParser = new MystStacks::Myst(this);
 		break;
 	case kDemoPreviewStack:
 		_scriptParser = new MystStacks::Preview(this);
 		break;
 	case kSeleniticStack:
-		_gameState->_globals.currentAge = 0;
+		_gameState->_globals.currentAge = kSelenitic;
 		_scriptParser = new MystStacks::Selenitic(this);
 		break;
 	case kDemoSlidesStack:
-		_gameState->_globals.currentAge = 1;
+		_gameState->_globals.currentAge = kStoneship;
 		_scriptParser = new MystStacks::Slides(this);
 		break;
 	case kStoneshipStack:
-		_gameState->_globals.currentAge = 1;
+		_gameState->_globals.currentAge = kStoneship;
 		_scriptParser = new MystStacks::Stoneship(this);
 		break;
 	default:
@@ -690,7 +690,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 
 	// The demo resets the cursor at each card change except when in the library
 	if (getFeatures() & GF_DEMO
-			&& _gameState->_globals.currentAge != 2) {
+			&& _gameState->_globals.currentAge != kMystLibrary) {
 		_cursor->setDefaultCursor();
 	}
 
@@ -1208,22 +1208,22 @@ void MohawkEngine_Myst::dropPage() {
 	_gameState->_globals.heldPage = kNoPage;
 
 	// Redraw page area
-	if (whitePage && _gameState->_globals.currentAge == 2) {
+	if (whitePage && _gameState->_globals.currentAge == kMystLibrary) {
 		_scriptParser->toggleVar(41);
 		redrawArea(41);
 	} else if (bluePage) {
 		if (page == kBlueFirePlacePage) {
-			if (_gameState->_globals.currentAge == 2)
+			if (_gameState->_globals.currentAge == kMystLibrary)
 				redrawArea(24);
 		} else {
 			redrawArea(103);
 		}
 	} else if (redPage) {
 		if (page == kRedFirePlacePage) {
-			if (_gameState->_globals.currentAge == 2)
+			if (_gameState->_globals.currentAge == kMystLibrary)
 				redrawArea(25);
 		} else if (page == kRedStoneshipPage) {
-			if (_gameState->_globals.currentAge == 1)
+			if (_gameState->_globals.currentAge == kStoneship)
 				redrawArea(35);
 		} else {
 			redrawArea(102);
