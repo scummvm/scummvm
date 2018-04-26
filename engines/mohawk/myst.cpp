@@ -568,7 +568,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		_scriptParser = new MystStacks::Demo(this);
 		break;
 	case kDniStack:
-		_gameState->_globals.currentAge = kDini;
+		_gameState->_globals.currentAge = kDni;
 		_scriptParser = new MystStacks::Dni(this);
 		break;
 	case kIntroStack:

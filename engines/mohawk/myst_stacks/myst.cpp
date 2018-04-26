@@ -406,7 +406,7 @@ uint16 Myst::getVar(uint16 var) {
 	case 0: // Myst Library Bookcase Closed
 		return _state.libraryBookcaseDoor;
 	case 1:
-		if (_globals.ending != 4)
+		if (_globals.ending != kBooksDestroyed)
 			return _state.libraryBookcaseDoor != 1;
 		else if (_state.libraryBookcaseDoor == 1)
 			return 2;
@@ -487,12 +487,12 @@ uint16 Myst::getVar(uint16 var) {
 				&& _fireplaceLines[4] == 204
 				&& _fireplaceLines[5] == 250;
 	case 24: // Fireplace Blue Page Present
-		if (_globals.ending != 4)
+		if (_globals.ending != kBooksDestroyed)
 			return !(_globals.bluePagesInBook & 32) && (_globals.heldPage != kBlueFirePlacePage);
 		else
 			return 0;
 	case 25: // Fireplace Red Page Present
-		if (_globals.ending != 4)
+		if (_globals.ending != kBooksDestroyed)
 			return !(_globals.redPagesInBook & 32) && (_globals.heldPage != kRedFirePlacePage);
 		else
 			return 0;
@@ -706,12 +706,12 @@ uint16 Myst::getVar(uint16 var) {
 	case 99: // Cabin Boiler Gas Valve Position
 		return _state.cabinValvePosition % 6;
 	case 102: // Red page
-		if (_globals.ending != 4)
+		if (_globals.ending != kBooksDestroyed)
 			return !(_globals.redPagesInBook & 1) && (_globals.heldPage != kRedLibraryPage);
 		else
 			return 0;
 	case 103: // Blue page
-		if (_globals.ending != 4)
+		if (_globals.ending != kBooksDestroyed)
 			return !(_globals.bluePagesInBook & 1) && (_globals.heldPage != kBlueLibraryPage);
 		else
 			return 0;
@@ -770,7 +770,7 @@ void Myst::toggleVar(uint16 var) {
 		_state.rocketshipMarkerSwitch = (_state.rocketshipMarkerSwitch + 1) % 2;
 		break;
 	case 24: // Fireplace Blue Page
-		if (_globals.ending != 4 && !(_globals.bluePagesInBook & 32)) {
+		if (_globals.ending != kBooksDestroyed && !(_globals.bluePagesInBook & 32)) {
 			if (_globals.heldPage == kBlueFirePlacePage)
 				_globals.heldPage = kNoPage;
 			else
@@ -778,7 +778,7 @@ void Myst::toggleVar(uint16 var) {
 		}
 		break;
 	case 25: // Fireplace Red page
-		if (_globals.ending != 4 && !(_globals.redPagesInBook & 32)) {
+		if (_globals.ending != kBooksDestroyed && !(_globals.redPagesInBook & 32)) {
 			if (_globals.heldPage == kRedFirePlacePage)
 				_globals.heldPage = kNoPage;
 			else
@@ -802,7 +802,7 @@ void Myst::toggleVar(uint16 var) {
 		}
 		break;
 	case 41: // Vault white page
-		if (_globals.ending != 4) {
+		if (_globals.ending != kBooksDestroyed) {
 			if (_dockVaultState == 1) {
 				_dockVaultState = 2;
 				_globals.heldPage = kNoPage;
@@ -813,7 +813,7 @@ void Myst::toggleVar(uint16 var) {
 		}
 		break;
 	case 102: // Red page
-		if (_globals.ending != 4 && !(_globals.redPagesInBook & 1)) {
+		if (_globals.ending != kBooksDestroyed && !(_globals.redPagesInBook & 1)) {
 			if (_globals.heldPage == kRedLibraryPage)
 				_globals.heldPage = kNoPage;
 			else
@@ -821,7 +821,7 @@ void Myst::toggleVar(uint16 var) {
 		}
 		break;
 	case 103: // Blue page
-		if (_globals.ending != 4 && !(_globals.bluePagesInBook & 1)) {
+		if (_globals.ending != kBooksDestroyed && !(_globals.bluePagesInBook & 1)) {
 			if (_globals.heldPage == kBlueLibraryPage)
 				_globals.heldPage = kNoPage;
 			else
@@ -1095,7 +1095,7 @@ void Myst::o_dockVaultOpen(uint16 var, const ArgumentsArray &args) {
 		(_state.observatoryMarkerSwitch == 1) &&
 		(_state.poolMarkerSwitch == 1) &&
 		(_state.rocketshipMarkerSwitch == 1)) {
-		if (_globals.heldPage != kWhitePage && _globals.ending != 4)
+		if (_globals.heldPage != kWhitePage && _globals.ending != kBooksDestroyed)
 			_dockVaultState = 2;
 		else
 			_dockVaultState = 1;
@@ -3718,7 +3718,7 @@ void Myst::greenBook_run() {
 		VideoEntryPtr book = _vm->playMovie(videoName, kMystStack);
 		book->moveTo(314, 76);
 
-		if (_globals.ending != 4) {
+		if (_globals.ending != kBooksDestroyed) {
 			_tempVar = 2;
 		} else {
 			book->setBounds(Audio::Timestamp(0, loopStart, 600), Audio::Timestamp(0, loopEnd, 600));

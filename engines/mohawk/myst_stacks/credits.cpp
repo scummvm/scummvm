@@ -83,7 +83,7 @@ uint16 Credits::getVar(uint16 var) {
 	case 0: // Credits Image Control
 		return _curImage;
 	case 1: // Credits Music Control (Good / bad ending)
-		return _globals.ending != 4;
+		return _globals.ending != kBooksDestroyed;
 	default:
 		return MystScriptParser::getVar(var);
 	}

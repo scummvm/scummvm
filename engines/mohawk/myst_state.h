@@ -79,11 +79,21 @@ enum ActiveAge {
 	kMechanical    = 3,
 	kChannelwood   = 4,
 	kIntro         = 5,
-	kDini          = 6,
+	kDni           = 6,
 	kMystStart     = 7,
 	kCredits       = 8,
 	kSirrusEnding  = 9,
 	kAchenarEnding = 10
+};
+
+// Various states that Atrus can be in when in Dni
+enum DniEnding {
+	kDniNotVisited    = 0, // Player hasn't been to Dni/K'veer yet
+	kAtrusWantsPage   = 1, // Player is in Dni with the white page
+	kAtrusLeaves      = 2, // Atrus leaves Dni after receiving the white page
+	kForgotPage       = 3, // Player has entered Dni without bringing the white page
+	kBooksDestroyed   = 4  // Atrus returns to Dni after previously leaving 
+						   // and destroying the books of his sons
 };
 
 class MystGameState {
@@ -120,7 +130,7 @@ public:
 		uint16 zipMode;
 		uint16 redPagesInBook;
 		uint16 bluePagesInBook;
-		uint16 ending;
+		DniEnding ending;
 	} _globals;
 
 	/* 50 Myst Specific Variables :
