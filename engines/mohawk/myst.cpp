@@ -446,9 +446,16 @@ void MohawkEngine_Myst::doFrame() {
 						}
 
 						if (_needsShowCredits) {
-							_cursor->hideCursor();
-							changeToStack(kCreditsStack, 10000, 0, 0);
-							_needsShowCredits = false;
+							if (_interactive) {
+								_cursor->hideCursor();
+								changeToStack(kCreditsStack, 10000, 0, 0);
+								_needsShowCredits = false;
+							} else {
+								// Showing the credits in the middle of a script is not possible
+								// because it unloads the previous age, removing data needed by the
+								// rest of the script. Instead we just quit without showing the credits.
+								quitGame();
+							}
 						}
 						break;
 					case Common::KEYCODE_ESCAPE:
