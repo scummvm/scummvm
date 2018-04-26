@@ -43,10 +43,27 @@ bool TextDrawer::wrapText(FontResource *font, uint16 *text, WidthHeight *dimensi
 
 void TextDrawer::drawText(Screen *screen, Graphics::Surface *surface, uint16 color2, uint16 color1) {
 	// TODO Fill box, draw borders and shadow if flags are set
+	uint16 x = 0;
+	uint16 y = 0;
+
+	if (_textFlags & TEXT_FLAG_BORDER_DECORATION) {
+		surface->frameRect(Common::Rect(0, 0, surface->w - 3, surface->h - 6), color1);
+
+		surface->fillRect(Common::Rect(1, 1, surface->w - 4, 4), color2);
+		surface->fillRect(Common::Rect(1, surface->h - 10, surface->w - 4, surface->h - 7), color2);
+		surface->fillRect(Common::Rect(1, 4, 4, surface->h - 10), color2);
+		surface->fillRect(Common::Rect(surface->w - 7, 4, surface->w - 4, surface->h - 10), color2);
+
+		surface->fillRect(Common::Rect(3, surface->h - 7, surface->w, surface->h), color1);
+		surface->fillRect(Common::Rect(surface->w - 3, 6, surface->w, surface->h), color1);
+		x = 4;
+		y = 4;
+	}
+
 	for (Common::Array<TextLine>::iterator it = _textLines.begin(); it != _textLines.end(); ++it) {
 		const TextLine &textLine = *it;
 		if (textLine._text)
-			screen->drawText(_font, surface, textLine._x, textLine._y, textLine._text, textLine._length);
+			screen->drawText(_font, surface, textLine._x + x, textLine._y + y, textLine._text, textLine._length);
 #if 0
 		for (int16 linePos = 0; linePos < textLine._length; ++linePos) {
 			const uint16 c = textLine._text[linePos];

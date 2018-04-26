@@ -88,6 +88,10 @@ bool ScreenText::refreshScreenText(FontResource *font, WidthHeight dimensions, C
 	uint16 *text, uint textFlags, uint16 color2, uint16 color1, uint16 *&outTextPtr) {
 	TextDrawer textDrawer;
 	bool done = textDrawer.wrapText(font, text, &dimensions, offsPt, textFlags, outTextPtr);
+	if (textFlags & TEXT_FLAG_BORDER_DECORATION) {
+		dimensions._width += 11;
+		dimensions._height += 14;
+	}
 	_surface = _vm->_screen->allocSurface(dimensions._width, dimensions._height);
 	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), _vm->_screen->getColorKey1());
 	_dimensions = dimensions;
