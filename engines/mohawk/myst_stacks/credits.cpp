@@ -23,6 +23,7 @@
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
+#include "mohawk/cursors.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/credits.h"
@@ -89,6 +90,10 @@ uint16 Credits::getVar(uint16 var) {
 }
 
 void Credits::o_runCredits(uint16 var, const ArgumentsArray &args) {
+	// The credits stack does not have all the cursors, reset to the default cursor.
+	_globals.heldPage = kNoPage;
+	_vm->setMainCursor(kDefaultMystCursor);
+
 	// Activate the credits
 	_creditsRunning = true;
 	_curImage = 0;
