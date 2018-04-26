@@ -1423,9 +1423,9 @@ void LilliputEngine::homeInPathFinding(int index) {
 		}
 
 		if (_enclosureRect[enclosureSrc].bottom != _enclosureRect[enclosureSrc].top) {
-			if (_portalPos[enclosureSrc].y == _enclosureRect[enclosureSrc].bottom)
+			if (_portalPos[enclosureSrc].y == _enclosureRect[enclosureSrc].top)
 				_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x, _portalPos[enclosureSrc].y - 1);
-			else // CHECKME: Should be a check on y == top
+			else // CHECKME: Should be a check on y == bottom
 				_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x, _portalPos[enclosureSrc].y + 1);
 
 			return;
@@ -2573,8 +2573,8 @@ void LilliputEngine::loadRules() {
 	for (int i = 0; i < _rectNumb; i++) {
 		_enclosureRect[i].right = (int16)f.readByte();
 		_enclosureRect[i].left = (int16)f.readByte();
-		_enclosureRect[i].top = (int16)f.readByte();
 		_enclosureRect[i].bottom = (int16)f.readByte();
+		_enclosureRect[i].top = (int16)f.readByte();
 
 		int16 tmpValY = (int16)f.readByte();
 		int16 tmpValX = (int16)f.readByte();

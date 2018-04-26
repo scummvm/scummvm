@@ -1534,10 +1534,10 @@ byte LilliputScript::OC_compareCoords_1() {
 byte LilliputScript::OC_compareCoords_2() {
 	debugC(1, kDebugScript, "OC_compareCoords_2()");
 
-	int16 index = getValue1();
-	index = _currScript->readUint16LE();
+	int16 idx1 = getValue1();
+	int16 idx2 = _currScript->readUint16LE();
 
-	if (_vm->_enclosureRect[index].contains(_characterTilePos[index]))
+	if (_vm->_enclosureRect[idx2].contains(_characterTilePos[idx1]))
 		return 1;
 	return 0;
 }
