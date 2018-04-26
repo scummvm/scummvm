@@ -30,6 +30,11 @@
 
 namespace Illusions {
 
+#define TEXT_FLAG_LEFT_ALIGN 1
+#define TEXT_FLAG_CENTER_ALIGN 2
+#define TEXT_FLAG_RIGHT_ALIGN 4
+#define TEXT_FLAG_BORDER_DECORATION 24
+
 class IllusionsEngine;
 class FontResource;
 
