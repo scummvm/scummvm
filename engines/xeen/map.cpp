@@ -608,7 +608,6 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_sideObjects = 0;
 	_sideMonsters = 0;
 	_sidePictures = 0;
-	_sideMusic = 0;
 	_isOutdoors = false;
 	_mazeDataIndex = 0;
 	_currentSteppedOn = false;
@@ -879,8 +878,7 @@ void Map::load(int mapId) {
 		const int MUS_INDEXES[] = { 1, 2, 3, 4, 3, 5 };
 		Common::String musName;
 
-		_sideMusic = ccNum;
-		if (ccNum) {
+		if (files._ccNum) {
 			int randIndex = _vm->getRandomNumber(6);
 			musName = Res.MUSIC_FILES2[MUS_INDEXES[_mazeData->_wallKind]][randIndex];
 		} else {

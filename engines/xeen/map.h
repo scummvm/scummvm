@@ -407,7 +407,6 @@ private:
 	int _sidePictures;
 	int _sideObjects;
 	int _sideMonsters;
-	int _sideMusic;
 	int _mazeDataIndex;
 
 	/**
