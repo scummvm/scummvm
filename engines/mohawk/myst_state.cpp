@@ -79,7 +79,9 @@ MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *sav
 	_globals.u0 = 2;
 	// Current Age / Stack - Start in Myst
 	_globals.currentAge = kMystStart;
+	_globals.heldPage = kNoPage;
 	_globals.u1 = 1;
+	_globals.ending = kDniNotVisited;
 
 	// Library Bookcase Door - Default to Up
 	_myst.libraryBookcaseDoor = 1;
