@@ -258,11 +258,9 @@ void BaseMenuSystem::placeActorHoverBackground() {
 	WidthHeight textInfoDimensions;
 	_vm->_screenText->getTextInfoDimensions(textInfoDimensions);
 
-	/* TODO	
 	if ( _activeMenu->_field8 && _activeMenu->_fieldA != _activeMenu->_field8)
 		textInfoDimensions._width -= 6;
-		*/
-		
+
 	WidthHeight frameDimensions;
 	v0->getActorFrameDimensions(frameDimensions);
 	
@@ -312,12 +310,10 @@ void BaseMenuSystem::placeActorTextColorRect() {
 	_vm->_screenText->getTextInfoPosition(textInfoPosition);
 	_vm->_screenText->getTextInfoDimensions(textInfoDimensions);
 	
-	/* TODO
 	if (_activeMenu->_field8 && _activeMenu->_fieldA != _activeMenu->_field8) {
 		textInfoDimensions._width -= 2;
 		textInfoDimensions._height -= 6;
 	}
-	*/
 
 	v0->setActorPosition(textInfoPosition);
 	v0->drawActorRect(Common::Rect(textInfoDimensions._width - 1, textInfoDimensions._height - 1), _activeMenu->_textColor);

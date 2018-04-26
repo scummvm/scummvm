@@ -81,11 +81,11 @@ public:
 
 class FontInstance : public ResourceInstance {
 public:
-	FontInstance(IllusionsEngine *vm);              
+	FontInstance(IllusionsEngine *vm);
 	virtual void load(Resource *resource);
 	virtual void unload();
 public:
-	IllusionsEngine *_vm;	
+	IllusionsEngine *_vm;
 	FontResource *_fontResource;
 	uint32 _resId;
 };
