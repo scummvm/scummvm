@@ -524,7 +524,7 @@ GameList EngineManager::detectGames(const Common::FSList &fslist, bool useUnknow
 		// Iterate over all known games and for each check if it might be
 		// the game in the presented directory.
 		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-                       candidates.push_back((*iter)->get<MetaEngine>().detectGames(fslist, useUnknownGameDialog));
+			candidates.push_back((*iter)->get<MetaEngine>().detectGames(fslist, useUnknownGameDialog));
 		}
 	} while (PluginManager::instance().loadNextPlugin());
 	return candidates;

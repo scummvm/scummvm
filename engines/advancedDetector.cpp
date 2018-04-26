@@ -574,7 +574,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 	// We didn't find a match
 	if (matched.empty()) {
 		if (!filesProps.empty() && gotAnyMatchesWithAllFiles) {
-                       reportUnknown(parent, filesProps, matchedGameIds, useUnknownGameDialog);
+			reportUnknown(parent, filesProps, matchedGameIds, useUnknownGameDialog);
 		}
 
 		// Filename based fallback

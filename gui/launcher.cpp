@@ -573,7 +573,7 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 
 	// ...so let's determine a list of candidates, games that
 	// could be contained in the specified directory.
-       GameList candidates(EngineMan.detectGames(files, true));
+	GameList candidates(EngineMan.detectGames(files, true));
 
 	int idx;
 	if (candidates.empty()) {

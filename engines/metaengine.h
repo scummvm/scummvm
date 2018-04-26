@@ -79,7 +79,7 @@ public:
 	 * (possibly empty) list of games supported by the engine which it was able
 	 * to detect amongst the given files.
 	 */
-       virtual GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const = 0;
+	virtual GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const = 0;
 
 	/**
 	 * Tries to instantiate an engine instance based on the settings of
@@ -269,7 +269,7 @@ class EngineManager : public Common::Singleton<EngineManager> {
 public:
 	GameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin = NULL) const;
 	GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL) const;
-       GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const;
+	GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const;
 	const PluginList &getPlugins() const;
 };
 
