@@ -1285,7 +1285,7 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 	screen.horizMerge(0);
 	sc16.draw(0, 0, Common::Point(7, 29));
 	_subtitles.show();
-	sound.playSound("fail1.voc");
+	sound.playVoice("fail1.voc", 2);
 
 	for (int idx = 0; idx < 5; ++idx) {
 		screen.horizMerge(0);
@@ -1689,21 +1689,25 @@ void DarkSideCutscenes::showDarkSideScore(uint endingScore) {
 
 	sound.stopAllAudio();
 
-	if (g_vm->shouldExit()) {
+	if (!g_vm->shouldExit()) {
 		sound.playSong("outday3.m");
 
 		Common::String str = Common::String::format(Res.DARKSIDE_ENDING1, endingScore);
 		showPharaohEndText(str.c_str(), Res.DARKSIDE_ENDING2);
 
+		g_vm->_mode = MODE_INTERACTIVE;
 		if (!g_vm->shouldExit())
 			saves.saveGame();
 	}
 }
 
 bool DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, const char *msg3) {
+	Windows &windows = *g_vm->_windows;
 	_ball.load("ball.int");
 	_claw.load("claw.int");
 	_dragon1.load("dragon1.int");
+
+	windows[39].setBounds(Common::Rect(12, 8, 162, 198));
 	bool result = showPharaohEndTextInner(msg1, msg2, msg3);
 
 	_ball.clear();

@@ -238,6 +238,9 @@ int Scripts::checkEvents() {
 	_vm->_mode = oldMode;
 	windows.closeAll();
 
+	if (g_vm->shouldExit())
+		return g_vm->_gameMode;
+
 	if (_scriptExecuted)
 		intf.clearEvents();
 	if (_scriptExecuted || intf._objNumber == -1 || _dirFlag) {

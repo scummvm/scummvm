@@ -25,9 +25,10 @@
 namespace Xeen {
 namespace WorldOfXeen {
 
-const char *const WorldOfXeenResources::CLOUDS_INTRO1 = "\xC" "00\xB" "082\x9" "040\x3"
-	"cKing Burlock\xB" "190\x9" "040Peasants\xB" "082\x9" "247"
-	"Lord Xeen\xB" "190\x9" "258Xeen's Pet\xB" "179\x9" "150Crodo";
+// FIXME: These should really go into into the xeen.ccs datafile
+const char *const WorldOfXeenResources::CLOUDS_INTRO1 = "\f00\v082\t040\x3"
+	"cKing Burlock\v190\t040Peasants\v082\t247"
+	"Lord Xeen\v190\t258Xeen's Pet\v179\t150Crodo";
 
 const char *const WorldOfXeenResources::DARKSIDE_ENDING1 = "\n\x3" "cCongratulations\n"
 	"\n"
@@ -53,10 +54,8 @@ const char *const WorldOfXeenResources::DARKSIDE_ENDING2 = "\n"
 	"Load your game afterwards and come visit me in the "
 	"Great Pyramid for further instructions";
 
-const char *const WorldOfXeenResources::PHAROAH_ENDING_TEXT1 = "\xC" "d\xB"
-	"001\x9" "001%s\x3" "c\x9" "000\xB" "180Press a Key!\x3" "l";
-const char *const WorldOfXeenResources::PHAROAH_ENDING_TEXT2 = "\xC" "04\xB"
-	"000\x9" "000%s\x3" "c\x9" "000\xB" "180Press a Key!\x3" "l\xC" "d";
+const char *const WorldOfXeenResources::PHAROAH_ENDING_TEXT1 = "\fd\v001\t001%s\x3" "c\t000\v180Press a Key!\x3" "l";
+const char *const WorldOfXeenResources::PHAROAH_ENDING_TEXT2 = "\f04\v000\t000%s\x3" "c\t000\v180Press a Key!\x3" "l\fd";
 
 } // End of namespace WorldOfXeen
 } // End of namespace Xeen
