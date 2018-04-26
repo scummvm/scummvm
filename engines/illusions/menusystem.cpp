@@ -416,9 +416,9 @@ uint BaseMenuSystem::drawMenuText(BaseMenu *menu) {
 	textPt.x = v9;
 	textPt.y = v9;
 
-	uint flags = 1;
+	uint flags = TEXT_FLAG_LEFT_ALIGN;
 	if (menu->_field8 != menu->_fieldA)
-		flags = 25;
+		flags |= TEXT_FLAG_BORDER_DECORATION;
 		
 	WidthHeight dimensions;
 	dimensions._width = 300;

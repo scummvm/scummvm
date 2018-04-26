@@ -23,6 +23,7 @@
 #include "illusions/illusions.h"
 #include "illusions/textdrawer.h"
 #include "illusions/screen.h"
+#include "illusions/screentext.h"
 
 namespace Illusions {
 
@@ -111,10 +112,10 @@ bool TextDrawer::wrapTextIntern(int16 x, int16 y, int16 maxWidth, int16 maxHeigh
 			if (textPosY + _font->_charHeight <= maxHeight) {
 				int16 textPosX;
 
-				if (_textFlags & 2) {
+				if (_textFlags & TEXT_FLAG_CENTER_ALIGN) {
 					textPosX = (_dimensions->_width - currLineWidth) / 2;
 					maxLineWidth = _dimensions->_width;
-				} else if (_textFlags & 4) {
+				} else if (_textFlags & TEXT_FLAG_RIGHT_ALIGN) {
 					textPosX = _dimensions->_width - currLineWidth;
 				} else {
 					textPosX = x;
