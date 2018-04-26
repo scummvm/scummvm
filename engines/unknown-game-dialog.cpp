@@ -48,11 +48,13 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 		_reportTranslated += _("Use the button below to copy the required game information into your clipboard.");
 	}
 
+	#if 0
 	//Check if we have support for opening URLs and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
 		_reportTranslated += "\n";
 		_reportTranslated += _("You can also directly report your game to the Bug Tracker!");
 	}
+	#endif
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -94,6 +96,13 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 			openBugtrackerURLButtonPos = copyToClipboardButtonPos;
 	}
 
+	#if 0
+	//Generation of the button for reporting the game directly to the bugtracker
+	//is skipped by now until we find a proper solution for the problem that a change
+	//to our bugtracker system might break the URL generation. The current approach
+	//for solving this is to create some sort of "redirect website" under the .scummvm.org
+	//domain that will accept the URL as a parameter and then forward it to the bugtracker.
+	
 	//Check if we have support for opening URLs
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
 		new GUI::ButtonWidget(this, openBugtrackerURLButtonPos, _h - buttonHeight - 8, openBugtrackerURLButtonWidth, buttonHeight, _("Report game"), 0, kOpenBugtrackerURL);
@@ -103,6 +112,7 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 			Common::replace(_bugtrackerGameData, "\n", "%0A");
 		}
 	}
+	#endif
 
 	// Each line is represented by one static text item.
 	uint y = 10;
