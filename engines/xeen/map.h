@@ -413,7 +413,7 @@ private:
 	/**
 	 * Load the events for a new map
 	 */
-	void loadEvents(int mapId);
+	void loadEvents(int mapId, int ccNum);
 
 	/**
 	 * Save the events for a map

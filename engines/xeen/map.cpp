@@ -713,7 +713,7 @@ void Map::load(int mapId) {
 	}
 
 	// Load any events for the new map
-	loadEvents(mapId);
+	loadEvents(mapId, _loadCcNum);
 
 	// Iterate through loading the given maze as well as the two successive
 	// mazes in each of the four cardinal directions
@@ -1069,11 +1069,11 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 	}
 }
 
-void Map::loadEvents(int mapId) {
+void Map::loadEvents(int mapId, int ccNum) {
 	// Load events
 	Common::String filename = Common::String::format("maze%c%03d.evt",
 		(mapId >= 100) ? 'x' : '0', mapId);
-	File fEvents(filename);
+	File fEvents(filename, ccNum);
 	XeenSerializer sEvents(&fEvents, nullptr);
 	_events.synchronize(sEvents);
 	fEvents.close();
@@ -1081,7 +1081,7 @@ void Map::loadEvents(int mapId) {
 	// Load text data
 	filename = Common::String::format("aaze%c%03d.txt",
 		(mapId >= 100) ? 'x' : '0', mapId);
-	File fText(filename);
+	File fText(filename, ccNum);
 	_events._text.clear();
 	while (fText.pos() < fText.size())
 		_events._text.push_back(fText.readString());
