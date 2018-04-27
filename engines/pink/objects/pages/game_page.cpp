@@ -86,7 +86,7 @@ void GamePage::init(bool isLoadingSave) {
         _actors[i]->init(startNow);
     }
 
-    bool isHandler = 0;
+    bool isHandler = false;
     if (!isLoadingSave) {
         isHandler = initHandler();
     }
@@ -106,6 +106,7 @@ bool GamePage::initHandler() {
 
 void GamePage::loadManagers() {
     _isLoaded = true;
+
     _cursorMgr = new CursorMgr(_module->getGame(), this);
     _walkMgr = new WalkMgr;
     _sequencer = new Sequencer(this);
@@ -114,6 +115,7 @@ void GamePage::loadManagers() {
 
     if (_memFile != nullptr) {
         loadState();
+
         delete _memFile;
         _memFile = nullptr;
     }
@@ -176,18 +178,23 @@ void GamePage::saveState() {
 
 void GamePage::unload() {
     _leadActor->setAction(_leadActor->findAction("Idle"));
+
     saveState();
     clear();
+
     _isLoaded = false;
 }
 
 void GamePage::clear() {
     Page::clear();
     _variables.clear(1);
+
     for (int i = 0; i < _handlers.size(); ++i) {
         delete _handlers[i];
     }
+
     _handlers.clear();
+
     delete _cursorMgr; _cursorMgr = nullptr;
     delete _sequencer; _sequencer = nullptr;
     delete _walkMgr; _walkMgr = nullptr;
