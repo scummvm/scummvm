@@ -20,7 +20,7 @@ The next step is to compile the **create_project** tool. Open the Xcode project 
 Execute the following commands in a terminal:
 ```
 $ cd path_to_the_build_directory
-$ create_project path_to_scummvm_repository --xcode --enable-fluidsynth --disable-jpeg --disable-bink --disable-16bit --disable-mt32emu --disable-nasm --disable-opengl --disable-theora --disable-taskbar
+$ create_project path_to_scummvm_repository --xcode --enable-fluidsynth --disable-jpeg --disable-bink --disable-16bit --disable-mt32emu --disable-nasm --disable-opengl --disable-theora --disable-taskbar --disable-libcurl --disable-sdlnet --disable-cloud
 ```
 
 This will create an Xcode project for ScummVM, for both the OS X, and the iOS target.
