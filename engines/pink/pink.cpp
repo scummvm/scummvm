@@ -68,10 +68,10 @@ Common::Error PinkEngine::init() {
 
     _console = new Console(this);
 
-    Common::String orbName{_desc.filesDescriptions[0].fileName};
-    Common::String broName{_desc.filesDescriptions[1].fileName};
+    const Common::String orbName{_desc.filesDescriptions[0].fileName};
+    const Common::String broName{_desc.filesDescriptions[1].fileName};
 
-    if (strcmp(_desc.gameId, "peril") == 0){
+    if (strcmp(_desc.gameId, kPeril) == 0){
         _bro = new BroFile();
     }
     else debug("This game doesn't need to use bro");
@@ -87,8 +87,8 @@ Common::Error PinkEngine::init() {
     _system->showMouse(1);
 
     _orb.loadGame(this);
-    const Common::String empty;
-    initModule(_modules[0]->getName(), kLoadingNewGame, empty);
+
+    initModule(_modules[0]->getName(), kLoadingNewGame, "");
 
     return Common::kNoError;
 }
@@ -193,7 +193,7 @@ void PinkEngine::loadModule(int index) {
 
 bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &value) {
     if (!_variables.contains(variable))
-        return value == "UNDEFINED";
+        return value == kUndefined;
     return _variables[variable] == value;
 }
 
@@ -203,7 +203,7 @@ void PinkEngine::setVariable(Common::String &variable, Common::String &value) {
 
 bool PinkEngine::loadCursors() {
     Common::PEResources exeResources;
-    bool isPokus = !strcmp(_desc.gameId, "pokus");
+    bool isPokus = !strcmp(_desc.gameId, kPokus);
     Common::String fileName = isPokus ? _desc.filesDescriptions[1].fileName : _desc.filesDescriptions[2].fileName;
     if (!exeResources.loadFromEXE(fileName))
         return false;
