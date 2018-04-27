@@ -133,7 +133,7 @@ Module *GamePage::getModule() const {
 
 bool GamePage::checkValueOfVariable(Common::String &variable, Common::String &value) {
     if (!_variables.contains(variable))
-        return value == "UNDEFINED";
+        return value == kUndefined;
     return _variables[variable] == value;
 }
 

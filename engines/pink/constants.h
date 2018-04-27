@@ -138,8 +138,12 @@ enum {
     kBroMinorVersion = 0,
 };
 
+static const char *kPinkGame = "PinkGame";
 
-const char *kPinkGame = "PinkGame";
+static const char *kPokus = "pokus";
+static const char *kPeril = "peril";
+
+static const char *kUndefined = "UNDEFINED";
 
 } // End of namespace Pink
 
