@@ -37,11 +37,13 @@ struct ScriptEntry {
 
 const byte DS_MAP54_LINE8[] = { 8, 10, 10, DIR_EAST, 8, OP_MoveWallObj, 20, 100, 100 };
 const byte SW_MAP53_LINE8[] = { 5, 14, 6, DIR_EAST, 8, OP_Exit };
+const byte DS_MAP116[] = { 9, 10, 6, 4, 2, OP_TakeOrGive, 0, 0, 103, 127 };
 
-#define SCRIPT_PATCHES_COUNT 2
+#define SCRIPT_PATCHES_COUNT 3
 static const ScriptEntry SCRIPT_PATCHES[] = {
 	{ GType_DarkSide, 54, DS_MAP54_LINE8 },	// Fix curtain on level 2 of Ellinger's Tower
-	{ GType_Swords, 53, SW_MAP53_LINE8 }	// Fix chest in Hart having gems, but saying "Nothing Here"
+	{ GType_Swords, 53, SW_MAP53_LINE8 },	// Fix chest in Hart having gems, but saying "Nothing Here"
+	{ GType_DarkSide, 116, DS_MAP116 }		// Fix statue in Dark Tower setting invalid world flag
 };
 
 /*------------------------------------------------------------------------*/
