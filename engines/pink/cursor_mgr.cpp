@@ -53,7 +53,7 @@ void CursorMgr::update() {
         return;
 
     uint newTime = _game->getTotalPlayTime();
-    if (newTime - _time > 0xC8){
+    if (newTime - _time > kCursorsUpdateTime){
         _time = newTime;
         _isSecondFrame = !_isSecondFrame;
         _game->setCursor(_firstFrameIndex + _isSecondFrame);
@@ -62,15 +62,16 @@ void CursorMgr::update() {
 
 void CursorMgr::setCursor(Common::String &cursorName, Common::Point point) {
     uint index;
-    if (cursorName == "ExitLeft") {
+    if (cursorName == kCursorNameExitLeft) {
         index = kExitLeftCursor;
     }
-    else if (cursorName == "ExitRight"){
+    else if (cursorName == kCursorNameExitRight){
         index = kExitRightCursor;
     }
-    else if (cursorName == "ExitForward" || cursorName == "ExitUp")
+    else if (cursorName == kCursorNameExitForward || cursorName == kCursorNameExitUp)
         index = kExitForwardCursor;
     else assert(0);
+
     setCursor(index, point);
 }
 
