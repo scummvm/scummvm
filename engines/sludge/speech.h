@@ -60,6 +60,7 @@ public:
 	void setObjFontColour(ObjectType *t);
 	void setSpeechSpeed(float speed) { _speechSpeed = speed; }
 	float getSpeechSpeed() { return _speechSpeed; }
+	void setSpeechMode(int speechMode) { _speechMode = speechMode; }
 
 	// load & save
 	void save(Common::WriteStream *stream);

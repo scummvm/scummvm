@@ -54,8 +54,6 @@
 
 namespace Sludge {
 
-int speechMode = 0;
-
 Variable *launchResult = NULL;
 
 extern int lastFramesPerSecond;
@@ -1280,6 +1278,7 @@ builtIn(setLightMap) {
 
 builtIn(setSpeechMode) {
 	UNUSEDALL
+	int speechMode;
 	if (!getValueType(speechMode, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
@@ -1287,6 +1286,7 @@ builtIn(setSpeechMode) {
 		fatal("Valid parameters are be SPEECHANDTEXT, SPEECHONLY or TEXTONLY");
 		return BR_ERROR;
 	}
+	g_sludge->_speechMan->setSpeechMode(speechMode);
 	return BR_CONTINUE;
 }
 
