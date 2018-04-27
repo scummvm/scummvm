@@ -110,6 +110,15 @@ CharInfo *FontResource::getCharInfo(uint16 c) {
 	return 0;
 }
 
+const Common::Rect FontResource::calculateRectForText(uint16 *text, uint textLength) {
+	int16 width = 0;
+	for (uint i = 0; i < textLength && *text; i++) {
+		width += getCharInfo(*text)->_width;
+		text++;
+	}
+	return Common::Rect(width, getCharHeight() + getLineIncr());
+}
+
 // FontInstance
 
 FontInstance::FontInstance(IllusionsEngine *vm) : _vm(vm) {

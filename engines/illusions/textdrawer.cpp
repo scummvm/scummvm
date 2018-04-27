@@ -42,7 +42,6 @@ bool TextDrawer::wrapText(FontResource *font, uint16 *text, WidthHeight *dimensi
 }
 
 void TextDrawer::drawText(Screen *screen, Graphics::Surface *surface, uint16 backgroundColor, uint16 borderColor) {
-	// TODO Fill box, draw borders and shadow if flags are set
 	uint16 x = 0;
 	uint16 y = 0;
 
@@ -62,8 +61,15 @@ void TextDrawer::drawText(Screen *screen, Graphics::Surface *surface, uint16 bac
 
 	for (Common::Array<TextLine>::iterator it = _textLines.begin(); it != _textLines.end(); ++it) {
 		const TextLine &textLine = *it;
-		if (textLine._text)
+		if (textLine._text) {
 			screen->drawText(_font, surface, textLine._x + x, textLine._y + y, textLine._text, textLine._length);
+			if (_textFlags & TEXT_FLAG_BORDER_DECORATION) {
+				Common::Rect textRect = _font->calculateRectForText(textLine._text, textLine._length);
+				// Fill in remainder of text line with background color.
+				surface->fillRect(Common::Rect(textLine._x + x + textRect.right, textLine._y + y,
+											   surface->w - 4, textLine._y + y + textRect.bottom), backgroundColor);
+			}
+		}
 #if 0
 		for (int16 linePos = 0; linePos < textLine._length; ++linePos) {
 			const uint16 c = textLine._text[linePos];
@@ -73,7 +79,7 @@ void TextDrawer::drawText(Screen *screen, Graphics::Surface *surface, uint16 bac
 #endif
 	}
 }
-	
+
 bool TextDrawer::wrapTextIntern(int16 x, int16 y, int16 maxWidth, int16 maxHeight, uint16 *&outTextPtr) {
 
 	bool lineBreak = false;
