@@ -50,6 +50,7 @@ private:
 
     uint _time;
     uint _firstFrameIndex;
+
     bool _isPlayingAnimation;
     bool _isSecondFrame;
 };

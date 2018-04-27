@@ -25,6 +25,7 @@
 #include <audio/decoders/adpcm.h>
 #include <common/substream.h>
 #include "sound.h"
+#include "constants.h"
 
 namespace Pink {
 
@@ -76,7 +77,7 @@ void Sound::setBalance(int8 balance) {
 }
 
 uint32 Sound::getCurrentSample() {
-    return _mixer->getSoundElapsedTime(_handle) * 22050 / 1000;
+    return _mixer->getSoundElapsedTime(_handle) * kSampleRate / 1000;
 }
 
 } // End of namespace Pink

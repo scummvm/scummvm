@@ -104,7 +104,7 @@ void Sequencer::skipToLastSubSequence() {
 
 void Sequencer::updateTimers() {
     uint time = _page->getGame()->getTotalPlayTime();
-    if (time - _time <= 0x64) {
+    if (time - _time <= kTimersUpdateTime) {
         return;
     }
 

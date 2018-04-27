@@ -113,13 +113,13 @@ bool InventoryMgr::start(bool playOpening) {
             return false;
     }
 
-    _window = _lead->getPage()->findActor("InventoryWindow");
-    _itemActor = _lead->getPage()->findActor("InventoryItem");
-    _rightArrow = _lead->getPage()->findActor("InventoryRightArrow");
-    _leftArrow = _lead->getPage()->findActor("InventoryLeftArrow");
+    _window = _lead->getPage()->findActor(kInventoryWindowActor);
+    _itemActor = _lead->getPage()->findActor(kInventoryItemActor);
+    _rightArrow = _lead->getPage()->findActor(kInventoryRightArrowActor);
+    _leftArrow = _lead->getPage()->findActor(kInventoryLeftArrowActor);
 
     if (playOpening){
-        _window->setAction("Open");
+        _window->setAction(kOpenAction);
         _state = kOpening;
     }
 
@@ -130,16 +130,17 @@ void InventoryMgr::update() {
     if (_state == kOpening && !_window->isPlaying()){
         _state = kReady;
         _itemActor->setAction(_item->getName());
-        _window->setAction("Show");
-        _leftArrow->setAction("Show");
-        _rightArrow->setAction("Show");
+        _window->setAction(kShowAction);
+        _leftArrow->setAction(kShowAction);
+        _rightArrow->setAction(kShowAction);
     }
     else if (_state == kClosing && !_window->isPlaying()){
-        _window->setAction("Idle");
+        _window->setAction(kIdleAction);
 
         _lead->onInventoryClosed(_isClickedOnItem);
 
         _state = kIdle;
+
         _window = nullptr;
         _itemActor = nullptr;
         _isClickedOnItem = false;
@@ -164,10 +165,10 @@ void InventoryMgr::onClick(Common::Point point) {
 void InventoryMgr::close() {
     _state = kClosing;
 
-    _window->setAction("Close");
-    _itemActor->setAction("Idle");
-    _leftArrow->setAction("Idle");
-    _rightArrow->setAction("Idle");
+    _window->setAction(kCloseAction);
+    _itemActor->setAction(kIdleAction);
+    _leftArrow->setAction(kIdleAction);
+    _rightArrow->setAction(kIdleAction);
 }
 
 void InventoryMgr::showNextItem(bool direction) {

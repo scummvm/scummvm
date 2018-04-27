@@ -62,7 +62,7 @@ GamePage *Actor::getPage() const {
 
 void Actor::init(bool unk) {
     if (!_action) {
-        _action = findAction({"Idle"});
+        _action = findAction(kIdleAction);
     }
 
     if (!_action) {
@@ -75,7 +75,7 @@ void Actor::init(bool unk) {
 }
 
 void Actor::hide() {
-    setAction({"Hide"});
+    setAction(kHideAction);
 }
 
 void Actor::endAction() {

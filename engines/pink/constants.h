@@ -138,12 +138,40 @@ enum {
     kBroMinorVersion = 0,
 };
 
+enum {
+    kTimersUpdateTime = 0x64,
+    kCursorsUpdateTime = 0xC8
+};
+
+enum {
+    kSampleRate = 22050
+};
+
 static const char *kPinkGame = "PinkGame";
 
 static const char *kPokus = "pokus";
 static const char *kPeril = "peril";
 
 static const char *kUndefined = "UNDEFINED";
+
+
+static const char *kCloseAction = "Close";
+static const char *kIdleAction = "Idle";
+static const char *kOpenAction = "Open";
+static const char *kPlayAction = "Play";
+static const char *kShowAction = "Show";
+static const char *kHideAction = "Hide";
+
+static const char *kInventoryWindowActor = "InventoryWindow";
+static const char *kInventoryItemActor = "InventoryItem";
+static const char *kInventoryRightArrowActor = "InventoryWindow";
+static const char *kInventoryLeftArrowActor = "InventoryWindow";
+
+static const char *kCursorNameExitUp = "ExitUp";
+static const char *kCursorNameExitLeft = "ExitLeft";
+static const char *kCursorNameExitRight = "ExitRight";
+static const char *kCursorNameExitForward = "ExitForward";
+
 
 } // End of namespace Pink
 
