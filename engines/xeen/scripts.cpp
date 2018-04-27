@@ -1571,9 +1571,8 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 18:
 		// Condition
-		assert(val < 16);
-		if (!ps->_conditions[val] && !(val & 0x10))
-			v = val;
+		assert(val <= NO_CONDITION);
+		v = (ps->_conditions[val] || val == NO_CONDITION) ? val : 0xffffffff;
 		break;
 	case 19: {
 		// Can player cast a given spell
