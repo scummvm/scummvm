@@ -83,6 +83,10 @@ void GraphicsManager::init() {
 	_currentBurnR = 0;
 	_currentBurnG = 0;
 	_currentBurnB = 0;
+
+	// Thumbnail
+	_thumbWidth = 0;
+	_thumbHeight = 0;
 }
 
 void GraphicsManager::kill() {

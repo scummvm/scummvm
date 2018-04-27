@@ -167,7 +167,8 @@ public:
 	void saveColors(Common::WriteStream *stream);
 	void loadColors(Common::SeekableReadStream *stream);
 
-	// Thumb nail
+	// Thumbnail
+	bool setThumbnailSize(int thumbWidth, int thumbHeight);
 	bool saveThumbnail(Common::WriteStream *stream);
 	bool skipThumbnail(Common::SeekableReadStream *stream);
 	void showThumbnail(const Common::String &filename, int x, int y);
@@ -222,6 +223,10 @@ private:
 	// Colors
 	uint _currentBlankColour;
 	byte _currentBurnR, _currentBurnG, _currentBurnB;
+
+	// Thumbnail
+	int _thumbWidth;
+	int _thumbHeight;
 };
 
 } // End of namespace Sludge

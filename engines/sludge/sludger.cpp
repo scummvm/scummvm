@@ -79,7 +79,7 @@ Variable *globalVars;
 int numGlobals = 0;
 
 extern Variable *launchResult;
-extern int lastFramesPerSecond, thumbWidth, thumbHeight;
+extern int lastFramesPerSecond;
 
 extern bool allowAnyFilename;
 extern byte fadeMode;
@@ -167,7 +167,6 @@ void initSludge() {
 	launchResult = nullptr;
 
 	lastFramesPerSecond = -1;
-	thumbWidth = thumbHeight = 0;
 	allowAnyFilename = true;
 	noStack = nullptr;
 	numBIFNames = numUserFunc = 0;

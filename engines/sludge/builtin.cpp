@@ -58,7 +58,7 @@ int speechMode = 0;
 
 Variable *launchResult = NULL;
 
-extern int lastFramesPerSecond, thumbWidth, thumbHeight;
+extern int lastFramesPerSecond;
 extern bool allowAnyFilename;
 extern VariableStack *noStack;
 extern StatusStuff  *nowStatus;
@@ -2460,13 +2460,14 @@ builtIn(showThumbnail) {
 
 builtIn(setThumbnailSize) {
 	UNUSEDALL
+	int thumbHeight, thumbWidth;
 	if (!getValueType(thumbHeight, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (!getValueType(thumbWidth, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!g_sludge->_gfxMan->checkSizeValide(thumbWidth, thumbHeight)) {
+	if (!g_sludge->_gfxMan->setThumbnailSize(thumbWidth, thumbHeight)) {
 		Common::String buff = Common::String::format("%i x %i", thumbWidth, thumbWidth);
 		fatal("Invalid thumbnail size", buff);
 		return BR_ERROR;
