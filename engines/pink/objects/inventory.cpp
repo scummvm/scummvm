@@ -178,12 +178,16 @@ void InventoryMgr::showNextItem(bool direction) {
             break;
         }
     }
-    index = (direction == kLeft) ? --index : ++index;
-    index %= _items.size();
 
-    //add check for item owner
-    _itemActor->setAction(_items[index]->getName());
-    _item = _items[index];
+    int i = 0;
+    do {
+        index = (direction == kLeft) ? --index : ++index;
+    } while(_items[index % _items.size()]->getCurrentOwner() != _item->getCurrentOwner() && ++i < _items.size());
+
+    if (i != _items.size()) {
+        _item = _items[index % _items.size()];
+        _itemActor->setAction(_item->getName());
+    }
 }
 
 } // End of namespace Pink
