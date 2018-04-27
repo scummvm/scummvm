@@ -41,7 +41,6 @@ bool OrbFile::open(const Common::String &name) {
         return false;
 
     if (readUint32BE() != 'ORB\0'){
-        close();
         return false;
     }
 
@@ -50,7 +49,7 @@ bool OrbFile::open(const Common::String &name) {
 
     debug("Orb v%hu.%hu loaded", major, minor);
 
-    if (minor || major != 2){
+    if (major != kOrbMajorVersion || minor != kOrbMinorVersion){
         return false;
     }
 
@@ -73,7 +72,7 @@ bool OrbFile::open(const Common::String &name) {
 }
 
 void OrbFile::loadGame(PinkEngine *game) {
-    seekToObject("PinkGame");
+    seekToObject(kPinkGame);
     Archive archive(this);
     archive.mapObject(reinterpret_cast<Object*>(game)); // hack
     game->load(archive);
@@ -90,7 +89,6 @@ void OrbFile::loadObject(Object *obj, ObjectDescription *objDesc) {
     Archive archive(this);
     obj->load(archive);
 }
-
 
 uint32 OrbFile::getTimestamp() {
     return _timestamp;
@@ -110,11 +108,10 @@ ObjectDescription *OrbFile::getObjDesc(const char *name){
 }
 
 ResourceDescription *OrbFile::getResDescTable(ObjectDescription *objDesc){
-    const uint32 size = objDesc->resourcesCount;
+    ResourceDescription *table = new ResourceDescription[objDesc->resourcesCount];
     seek(objDesc->resourcesOffset);
-    ResourceDescription *table = new ResourceDescription[size];
 
-    for (size_t i = 0; i < size; ++i) {
+    for (size_t i = 0; i < objDesc->resourcesCount; ++i) {
         table[i].load(*this);
     }
 
@@ -122,7 +119,7 @@ ResourceDescription *OrbFile::getResDescTable(ObjectDescription *objDesc){
 }
 
 
-bool BroFile::open(Common::String &name, uint32 orbTimestamp) {
+bool BroFile::open(const Common::String &name, uint32 orbTimestamp) {
     if (!File::open(name) || readUint32BE() != 'BRO\0')
         return false;
 
@@ -131,31 +128,30 @@ bool BroFile::open(Common::String &name, uint32 orbTimestamp) {
 
     debug("Bro v%hu.%hu loaded", major, minor);
 
-    if (major != 1 || minor != 0){
+    if (major != kBroMajorVersion || minor != kBroMinorVersion){
         return false;
     }
 
-    uint32 _timestamp = readUint32LE();
+    uint32 timestamp = readUint32LE();
 
-    return _timestamp == orbTimestamp;
+    return timestamp == orbTimestamp;
 }
 
 void ObjectDescription::load(Common::File &file) {
     file.read(name, sizeof(name));
-    file.read(&objectsOffset, sizeof(objectsOffset));
-    file.read(&objectsCount, sizeof(objectsCount));
-    file.read(&resourcesOffset, sizeof(resourcesOffset));
-    file.read(&resourcesCount, sizeof(resourcesCount));
+
+    objectsOffset = file.readUint32LE();
+    objectsCount = file.readUint32LE();
+    resourcesOffset = file.readUint32LE();
+    resourcesCount = file.readUint32LE();
 }
 
 void ResourceDescription::load(Common::File &file) {
     file.read(name, sizeof(name));
-    file.read(&offset, sizeof(offset));
-    file.read(&size, sizeof(offset));
 
-    uint16 temp;
-    file.read(&temp, sizeof(temp));
-    inBro = (bool) temp;
+    offset = file.readUint32LE();
+    size = file.readUint32LE();
+    inBro = (bool) file.readUint16LE();
 }
 
 } // End of namespace Pink
