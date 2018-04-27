@@ -154,9 +154,13 @@ public:
 
 	bool hasSuffix(const String &x) const;
 	bool hasSuffix(const char *x) const;
+	bool hasSuffixIgnoreCase(const String &x) const;
+	bool hasSuffixIgnoreCase(const char *x) const;
 
 	bool hasPrefix(const String &x) const;
 	bool hasPrefix(const char *x) const;
+	bool hasPrefixIgnoreCase(const String &x) const;
+	bool hasPrefixIgnoreCase(const char *x) const;
 
 	bool contains(const String &x) const;
 	bool contains(const char *x) const;
