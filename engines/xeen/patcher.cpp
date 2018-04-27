@@ -50,6 +50,7 @@ static const ScriptEntry SCRIPT_PATCHES[] = {
 
 void Patcher::patch() {
 	patchScripts();
+	patchObjects();
 }
 
 void Patcher::patchScripts() {
@@ -82,6 +83,18 @@ void Patcher::patchScripts() {
 			map._events.push_back(evt);
 		else
 			map._events[idx] = evt;
+	}
+}
+
+void Patcher::patchObjects() {
+	FileManager &files = *g_vm->_files;
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+
+	if ((g_vm->getGameID() == GType_Clouds || (g_vm->getGameID() == GType_WorldOfXeen && !files._ccNum)) &&
+			party._mazeId == 24) {
+		// Remove floating statue in the distance off SE corner of Clouds of Xeen map
+		map._mobData._objects[15]._position = Common::Point(-128, -128);
 	}
 }
 
