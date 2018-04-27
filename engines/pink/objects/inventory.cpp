@@ -148,6 +148,9 @@ void InventoryMgr::update() {
 }
 
 void InventoryMgr::onClick(Common::Point point) {
+    if (_state != kReady)
+        return;
+
     Actor *actor = _lead->getPage()->getGame()->getDirector()->getActorByPoint(point);
     if (actor == _itemActor || actor == _window) {
         _isClickedOnItem = true;

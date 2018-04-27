@@ -73,7 +73,7 @@ void HandlerTimerActions::handle(Actor *actor) {
 
 
 void HandlerTimerSequences::execute(Sequence *sequence) {
-    debug("HandlerTimerSequences function is not implemented");
+    error("HandlerTimerSequences function is not implemented");
 }
 
 void HandlerTimerSequences::toConsole() {

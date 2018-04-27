@@ -164,8 +164,8 @@ static const char *kHideAction = "Hide";
 
 static const char *kInventoryWindowActor = "InventoryWindow";
 static const char *kInventoryItemActor = "InventoryItem";
-static const char *kInventoryRightArrowActor = "InventoryWindow";
-static const char *kInventoryLeftArrowActor = "InventoryWindow";
+static const char *kInventoryRightArrowActor = "InventoryRightArrow";
+static const char *kInventoryLeftArrowActor = "InventoryLeftArrow";
 
 static const char *kCursorNameExitUp = "ExitUp";
 static const char *kCursorNameExitLeft = "ExitLeft";

@@ -146,7 +146,7 @@ void LeadActor::start(bool isHandler) {
         _state = kInDialog1;
         _nextState = kReady;
     }
-    updateCursor({0,0});
+    forceUpdateCursor();
 }
 
 void LeadActor::onMouseMove(Common::Point point) {
@@ -222,7 +222,7 @@ void LeadActor::onLeftButtonClick(Common::Point point) {
 
 void LeadActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
     if (_page->getModule()->getInventoryMgr()->isPinkOwnsAnyItems())
-        _cursorMgr->setCursor(kClickableFirstFrameCursor, {0, 0});
+        _cursorMgr->setCursor(kClickableFirstFrameCursor, point);
     else Actor::onMouseOver(point, mgr);
 }
 
@@ -278,6 +278,12 @@ void LeadActor::onInventoryClosed(bool isItemClicked) {
     _state = _stateCopy;
     _stateCopy = kUnk_Loading;
     _page->unpause();
+    forceUpdateCursor();
+}
+
+void LeadActor::forceUpdateCursor() {
+    Common::Point point = _page->getGame()->getEventManager()->getMousePos();
+    updateCursor(point);
 }
 
 void ParlSqPink::toConsole() {

@@ -53,8 +53,7 @@ bool OrbFile::open(const Common::String &name) {
         return false;
     }
 
-    _timestamp = readUint32LE();
-    if (!_timestamp){
+    if (!(_timestamp = readUint32LE())){
         return false;
     }
 
