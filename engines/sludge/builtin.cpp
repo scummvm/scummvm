@@ -67,7 +67,6 @@ extern int numBIFNames, numUserFunc;
 extern Common::String *allUserFunc;
 extern Common::String *allBIFNames;
 
-extern byte brightnessLevel;
 extern byte fadeMode;
 extern uint16 saveEncoding;
 
@@ -1971,17 +1970,12 @@ builtIn(setFontSpacing) {
 
 builtIn(transitionLevel) {
 	UNUSEDALL
-	int number;
-	if (!getValueType(number, SVT_INT, fun->stack->thisVar))
+	int brightnessLevel;
+	if (!getValueType(brightnessLevel, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	if (number < 0)
-		brightnessLevel = 0;
-	else if (number > 255)
-		brightnessLevel = 255;
-	else
-		brightnessLevel = number;
+	g_sludge->_gfxMan->setBrightnessLevel(brightnessLevel);
 
 	setVariable(fun->reg, SVT_INT, 1);
 	return BR_CONTINUE;

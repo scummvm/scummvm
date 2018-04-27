@@ -22,15 +22,24 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
+#include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 
 namespace Sludge {
 
-extern byte brightnessLevel;
-
 extern float snapTexW, snapTexH;
 
 byte fadeMode = 2;
+
+void GraphicsManager::setBrightnessLevel(int brightnessLevel)
+{
+	if (brightnessLevel < 0)
+		_brightnessLevel = 0;
+	else if (brightnessLevel > 255)
+		_brightnessLevel = 255;
+	else
+		_brightnessLevel = brightnessLevel;
+}
 
 //----------------------------------------------------
 // PROPER BRIGHTNESS FADING

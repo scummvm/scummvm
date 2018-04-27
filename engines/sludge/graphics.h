@@ -91,6 +91,8 @@ public:
 	void drawVerticalLine(uint, uint, uint);
 	void hardScroll(int distance);
 	bool getRGBIntoStack(uint x, uint y, StackHandler *sH);
+	void saveBackdrop(Common::WriteStream *stream); // To game save
+	void loadBackdrop(int ssgVersion, Common::SeekableReadStream *streamn); // From game save
 
 	// Lightmap
 	int _lightMapMode;
@@ -109,11 +111,6 @@ public:
 	int getCamX() { return _cameraX; }
 	int getCamY() { return _cameraY; }
 	float getCamZoom() { return _cameraZoom; }
-	void setCamera(int camerX, int camerY, float camerZ) {
-		_cameraX = camerX;
-		_cameraY = camerY;
-		_cameraZoom = camerZ;
-	}
 	void aimCamera(int cameraX, int cameraY);
 	void zoomCamera(int z);
 
@@ -173,6 +170,9 @@ public:
 	bool skipThumbnail(Common::SeekableReadStream *stream);
 	void showThumbnail(const Common::String &filename, int x, int y);
 
+	// Transition
+	void setBrightnessLevel(int brightnessLevel);
+
 private:
 	SludgeEngine *_vm;
 
@@ -227,6 +227,9 @@ private:
 	// Thumbnail
 	int _thumbWidth;
 	int _thumbHeight;
+
+	// Transition
+	byte _brightnessLevel;
 };
 
 } // End of namespace Sludge

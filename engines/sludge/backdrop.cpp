@@ -504,6 +504,27 @@ void GraphicsManager::saveHSI(Common::WriteStream *stream) {
 	Image::writePNG(*stream, _backdropSurface);
 }
 
+void GraphicsManager::saveBackdrop(Common::WriteStream *stream) {
+	stream->writeUint16BE(_cameraX);
+	stream->writeUint16BE(_cameraY);
+	stream->writeFloatLE(_cameraZoom);
+	stream->writeByte(_brightnessLevel);
+	saveHSI(stream);
+}
+
+void GraphicsManager::loadBackdrop(int ssgVersion, Common::SeekableReadStream *stream) {
+	_cameraX = stream->readUint16BE();
+	_cameraY = stream->readUint16BE();
+	if (ssgVersion >= VERSION(2, 0)) {
+		_cameraZoom = stream->readFloatLE();
+	} else {
+		_cameraZoom = 1.0;
+	}
+
+	_brightnessLevel = stream->readByte();
+
+	loadHSI(stream, 0, 0, true);
+}
 
 bool GraphicsManager::getRGBIntoStack(uint x, uint y, StackHandler *sH) {
 	if (x >= _sceneWidth || y >= _sceneHeight) {

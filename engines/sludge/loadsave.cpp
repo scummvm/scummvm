@@ -60,7 +60,6 @@ extern int numGlobals;                              // In sludger.cpp
 extern Variable *globalVars;                        // In sludger.cpp
 extern Floor *currentFloor;                          // In floor.cpp
 extern FILETIME fileTime;                           // In sludger.cpp
-extern byte brightnessLevel;               // "    "   "
 extern byte fadeMode;                      // In transition.cpp
 extern bool allowAnyFilename;
 extern uint16 saveEncoding;                 // in savedata.cpp
@@ -363,12 +362,7 @@ bool saveGame(const Common::String &fname) {
 	g_sludge->_txtMan->saveFont(fp);
 
 	// Save backdrop
-	fp->writeUint16BE(g_sludge->_gfxMan->getCamX());
-	fp->writeUint16BE(g_sludge->_gfxMan->getCamY());
-	fp->writeFloatLE(g_sludge->_gfxMan->getCamZoom());
-
-	fp->writeByte(brightnessLevel);
-	g_sludge->_gfxMan->saveHSI(fp);
+	g_sludge->_gfxMan->saveBackdrop(fp);
 
 	// Save event handlers
 	g_sludge->_evtMan->saveHandlers(fp);
@@ -504,19 +498,10 @@ bool loadGame(const Common::String &fname) {
 
 	g_sludge->_regionMan->kill();
 
-	int camerX = fp->readUint16BE();
-	int camerY = fp->readUint16BE();
-	float camerZ;
-	if (ssgVersion >= VERSION(2, 0)) {
-		camerZ = fp->readFloatLE();
-	} else {
-		camerZ = 1.0;
-	}
+	g_sludge->_gfxMan->loadBackdrop(ssgVersion, fp);
 
-	brightnessLevel = fp->readByte();
-
-	g_sludge->_gfxMan->loadHSI(fp, 0, 0, true);
 	g_sludge->_evtMan->loadHandlers(fp);
+
 	g_sludge->_regionMan->loadRegions(fp);
 
 	if (!g_sludge->_cursorMan->loadCursor(fp)) {
@@ -597,8 +582,6 @@ bool loadGame(const Common::String &fname) {
 	}
 
 	delete fp;
-
-	g_sludge->_gfxMan->setCamera(camerX, camerY, camerZ);
 
 	clearStackLib();
 	return true;
