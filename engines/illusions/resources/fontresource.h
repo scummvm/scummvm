@@ -67,6 +67,7 @@ public:
 	int16 getColorIndex() const { return _colorIndex; }
 	int16 getCharHeight() const { return _charHeight; }
 	int16 getLineIncr() const { return _lineIncr; }
+	const Common::Rect calculateRectForText(uint16 *text, uint textLength);
 public:
 	uint32 _totalSize;
 	int16 _charHeight;
