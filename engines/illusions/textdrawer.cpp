@@ -41,21 +41,21 @@ bool TextDrawer::wrapText(FontResource *font, uint16 *text, WidthHeight *dimensi
 	return done;
 }
 
-void TextDrawer::drawText(Screen *screen, Graphics::Surface *surface, uint16 color2, uint16 color1) {
+void TextDrawer::drawText(Screen *screen, Graphics::Surface *surface, uint16 backgroundColor, uint16 borderColor) {
 	// TODO Fill box, draw borders and shadow if flags are set
 	uint16 x = 0;
 	uint16 y = 0;
 
 	if (_textFlags & TEXT_FLAG_BORDER_DECORATION) {
-		surface->frameRect(Common::Rect(0, 0, surface->w - 3, surface->h - 6), color1);
+		surface->frameRect(Common::Rect(0, 0, surface->w - 3, surface->h - 6), borderColor);
 
-		surface->fillRect(Common::Rect(1, 1, surface->w - 4, 4), color2);
-		surface->fillRect(Common::Rect(1, surface->h - 10, surface->w - 4, surface->h - 7), color2);
-		surface->fillRect(Common::Rect(1, 4, 4, surface->h - 10), color2);
-		surface->fillRect(Common::Rect(surface->w - 7, 4, surface->w - 4, surface->h - 10), color2);
+		surface->fillRect(Common::Rect(1, 1, surface->w - 4, 4), backgroundColor);
+		surface->fillRect(Common::Rect(1, surface->h - 10, surface->w - 4, surface->h - 7), backgroundColor);
+		surface->fillRect(Common::Rect(1, 4, 4, surface->h - 10), backgroundColor);
+		surface->fillRect(Common::Rect(surface->w - 7, 4, surface->w - 4, surface->h - 10), backgroundColor);
 
-		surface->fillRect(Common::Rect(3, surface->h - 7, surface->w, surface->h), color1);
-		surface->fillRect(Common::Rect(surface->w - 3, 6, surface->w, surface->h), color1);
+		surface->fillRect(Common::Rect(3, surface->h - 7, surface->w, surface->h), borderColor);
+		surface->fillRect(Common::Rect(surface->w - 3, 6, surface->w, surface->h), borderColor);
 		x = 4;
 		y = 4;
 	}
