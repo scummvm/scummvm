@@ -1480,7 +1480,7 @@ void ReaperCutscene::getNewLocation() {
 	} else {
 		switch (party._mazeId) {
 		case 7:
-			if (party._questItems[30]) {
+			if (party._questItems[46]) {
 				map._loadCcNum = 1;
 				_mazeId = 113;
 				_mazePos = Common::Point(7, 4);
