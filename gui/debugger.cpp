@@ -470,7 +470,7 @@ bool Debugger::tabComplete(const char *input, Common::String &completion) const 
 
 	CommandsMap::const_iterator i, e = _cmds.end();
 	for (i = _cmds.begin(); i != e; ++i) {
-		if (i->_key.hasPrefix(input)) {
+		if (i->_key.hasPrefixIgnoreCase(input)) {
 			uint commandlen = i->_key.size();
 			if (commandlen == inputlen) { // perfect match, so no tab completion possible
 				return false;

@@ -302,6 +302,23 @@ bool String::hasPrefix(const char *x) const {
 	return *x == 0;
 }
 
+bool String::hasPrefixIgnoreCase(const String &x) const {
+	return hasPrefixIgnoreCase(x.c_str());
+}
+
+bool String::hasPrefixIgnoreCase(const char *x) const {
+	assert(x != nullptr);
+	// Compare x with the start of _str.
+	const char *y = c_str();
+	while (*x && tolower(*x) == tolower(*y)) {
+		++x;
+		++y;
+	}
+	// It's a prefix, if and only if all letters in x are 'used up' before
+	// _str ends.
+	return *x == 0;
+}
+
 bool String::hasSuffix(const String &x) const {
 	return hasSuffix(x.c_str());
 }
@@ -314,6 +331,26 @@ bool String::hasSuffix(const char *x) const {
 		return false;
 	const char *y = c_str() + _size - x_size;
 	while (*x && *x == *y) {
+		++x;
+		++y;
+	}
+	// It's a suffix, if and only if all letters in x are 'used up' before
+	// _str ends.
+	return *x == 0;
+}
+
+bool String::hasSuffixIgnoreCase(const String &x) const {
+	return hasSuffixIgnoreCase(x.c_str());
+}
+
+bool String::hasSuffixIgnoreCase(const char *x) const {
+	assert(x != nullptr);
+	// Compare x with the end of _str.
+	const uint32 x_size = strlen(x);
+	if (x_size > _size)
+		return false;
+	const char *y = c_str() + _size - x_size;
+	while (*x && tolower(*x) == tolower(*y)) {
 		++x;
 		++y;
 	}
