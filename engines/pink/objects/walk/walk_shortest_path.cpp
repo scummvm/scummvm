@@ -142,9 +142,9 @@ double WalkShortestPath::getWeight(WalkLocation *location) {
 bool WalkShortestPath::isLocationVisited(WalkLocation *location) {
     for (int i = 0; i < _visited.size(); ++i) {
         if (_visited[i] == location)
-            return 1;
+            return true;
     }
-    return 0;
+    return false;
 }
 
 void WalkShortestPath::remove(WalkLocation *location) {
@@ -152,6 +152,7 @@ void WalkShortestPath::remove(WalkLocation *location) {
         if (_locations[i] == location){
             _locations.remove_at(i);
             _weight.remove_at(i);
+            break;
         }
     }
 }

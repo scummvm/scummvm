@@ -25,6 +25,7 @@
 
 #include <common/stream.h>
 #include <audio/mixer.h>
+#include <common/substream.h>
 
 namespace Pink {
 

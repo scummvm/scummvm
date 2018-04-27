@@ -56,22 +56,21 @@ Sound *ResourceMgr::loadSound(Common::String &name) {
 
 Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(Common::String &name) {
     Common::SeekableReadStream *stream;
-    uint i;
-    for (i = 0; i < _resCount; ++i) {
-        if (name.compareToIgnoreCase(_resDescTable[i].name) == 0){
-            break;
-        }
-    }
-    assert(i < _resDescTable[i].size);
 
-    if (_resDescTable[i].inBro)
+    const ResourceDescription &desc = *Common::find_if(_resDescTable, _resDescTable + _resCount,
+            [&] (const ResourceDescription &desc) {
+        return name.compareToIgnoreCase(desc.name) == 0;
+    });
+
+
+    if (desc.inBro)
         stream = _game->getBro();
     else stream = _game->getOrb();
 
-    stream->seek(_resDescTable[i].offset);
+    stream->seek(desc.offset);
 
-    return new Common::SafeSeekableSubReadStream(stream, _resDescTable[i].offset,
-                                             _resDescTable[i].offset + _resDescTable[i].size);
+    return new Common::SafeSeekableSubReadStream(stream, desc.offset,
+                                             desc.offset + desc.size);
 }
 
 PinkEngine *ResourceMgr::getGame() const {

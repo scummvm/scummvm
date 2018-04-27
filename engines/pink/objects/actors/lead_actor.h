@@ -75,6 +75,7 @@ public:
 
 private:
     void updateCursor(Common::Point point);
+    void forceUpdateCursor();
 
     bool sendUseClickMessage(SupportingActor *actor);
     bool sendLeftClickMessage(SupportingActor *actor);
