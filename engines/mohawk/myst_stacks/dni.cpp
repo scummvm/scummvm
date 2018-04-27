@@ -127,6 +127,7 @@ void Dni::atrusLeft_run() {
 		atrus->moveTo(_videoPos.x, _videoPos.y);
 		atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 98000, 600));
 
+		_atrusRunning = false;
 		_waitForLoop = true;
 		_loopStart = 73095;
 		_loopEnd = 98000;
@@ -187,6 +188,7 @@ void Dni::atrus_run() {
 			atrus->moveTo(_videoPos.x, _videoPos.y);
 			atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 46175, 600));
 
+			_atrusRunning = false;
 			_waitForLoop = true;
 			_loopStart = 30656;
 			_loopEnd = 46175;
