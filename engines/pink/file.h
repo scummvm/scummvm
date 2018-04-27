@@ -76,7 +76,7 @@ private:
 
 class BroFile : public Common::File {
 public:
-    virtual bool open(Common::String &name, uint32 orbTimestamp);
+    virtual bool open(const Common::String &name, uint32 orbTimestamp);
 };
 
 } // End of namespace Pink

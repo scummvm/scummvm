@@ -131,6 +131,16 @@ enum {
     kLoadingNewGame = 0
 };
 
+enum {
+    kOrbMajorVersion = 2,
+    kOrbMinorVersion = 0,
+    kBroMajorVersion = 1,
+    kBroMinorVersion = 0,
+};
+
+
+const char *kPinkGame = "PinkGame";
+
 } // End of namespace Pink
 
 #endif
