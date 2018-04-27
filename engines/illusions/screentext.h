@@ -43,8 +43,8 @@ struct ScreenTextInfo {
 	WidthHeight _dimensions;
 	Common::Point _offsPt;
 	uint32 _fontId;
-	uint16 _color2;
-	uint16 _color1;
+	uint16 _backgroundColor;
+	uint16 _borderColor;
 	byte _colorR, _colorG, _colorB;
 	uint _flags;
 };
@@ -64,9 +64,9 @@ public:
 	void updateTextInfoPosition(Common::Point position);
 	void clipTextInfoPosition(Common::Point &position);
 	bool refreshScreenText(FontResource *font, WidthHeight dimensions, Common::Point offsPt,
-		uint16 *text, uint textFlags, uint16 color2, uint16 color1, uint16 *&outTextPtr);
+		uint16 *text, uint textFlags, uint16 backgroundColor, uint16 borderColor, uint16 *&outTextPtr);
 	bool insertText(uint16 *text, uint32 fontId, WidthHeight dimensions, Common::Point offsPt, uint flags,
-		uint16 color2, uint16 color1, byte colorR, byte colorG, byte colorB, uint16 *&outTextPtr);
+		uint16 backgroundColor, uint16 borderColor, byte colorR, byte colorG, byte colorB, uint16 *&outTextPtr);
 	void removeText();
 	void clearText();
 public:

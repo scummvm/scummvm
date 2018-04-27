@@ -46,7 +46,7 @@ class TextDrawer {
 public:
 	bool wrapText(FontResource *font, uint16 *text, WidthHeight *dimensions, Common::Point offsPt,
 		uint textFlags, uint16 *&outTextPtr);
-	void drawText(Screen *screen, Graphics::Surface *surface, uint16 color2, uint16 color1);
+	void drawText(Screen *screen, Graphics::Surface *surface, uint16 backgroundColor, uint16 borderColor);
 protected:
 	FontResource *_font;
 	uint16 *_text;

@@ -54,7 +54,7 @@ protected:
 
 class BaseMenu {
 public:
-	BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte field8, byte fieldA, byte textColor, byte fieldE,
+	BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte backgroundColor, byte borderColor, byte textColor, byte fieldE,
 		uint defaultMenuItemIndex);
 	virtual ~BaseMenu();
 	void addText(const Common::String text);
@@ -68,7 +68,7 @@ public://protected://TODO
 	typedef Common::Array<MenuItem*> MenuItems;
 	BaseMenuSystem *_menuSystem;
 	uint32 _fontId;
-	byte _field8, _fieldA, _textColor, _fieldE;
+	byte _backgroundColor, _borderColor, _textColor, _fieldE;
 	uint _field2C18;
 	uint _defaultMenuItemIndex;
 	Common::Array<Common::String> _text;

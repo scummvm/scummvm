@@ -50,9 +50,9 @@ void MenuItem::executeAction() {
 
 // BaseMenu
 
-BaseMenu::BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte field8, byte fieldA, byte textColor, byte fieldE,
+BaseMenu::BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte backgroundColor, byte borderColor, byte textColor, byte fieldE,
 	uint defaultMenuItemIndex)
-	: _menuSystem(menuSystem), _fontId(fontId), _field8(field8), _fieldA(fieldA), _textColor(textColor), _fieldE(fieldE),
+	: _menuSystem(menuSystem), _fontId(fontId), _backgroundColor(backgroundColor), _borderColor(borderColor), _textColor(textColor), _fieldE(fieldE),
 	_defaultMenuItemIndex(defaultMenuItemIndex)
 {
 }
@@ -176,12 +176,10 @@ void BaseMenuSystem::calcMenuItemRect(uint menuItemIndex, WRect &rect) {
 	int charHeight = font->getCharHeight() + font->getLineIncr();
 	
 	_vm->_screenText->getTextInfoPosition(rect._topLeft);
-	/* TODO
-	if (_activeMenu->_field8) {
+	if (_activeMenu->_backgroundColor) {
 		rect._topLeft.y += 4;
 		rect._topLeft.x += 4;
 	}
-	*/	
 	rect._topLeft.y += charHeight * (menuItemIndex + _menuLinesCount - 1);
 
 	WidthHeight textInfoDimensions;
@@ -258,7 +256,7 @@ void BaseMenuSystem::placeActorHoverBackground() {
 	WidthHeight textInfoDimensions;
 	_vm->_screenText->getTextInfoDimensions(textInfoDimensions);
 
-	if ( _activeMenu->_field8 && _activeMenu->_fieldA != _activeMenu->_field8)
+	if ( _activeMenu->_backgroundColor && _activeMenu->_borderColor != _activeMenu->_backgroundColor)
 		textInfoDimensions._width -= 6;
 
 	WidthHeight frameDimensions;
@@ -269,7 +267,7 @@ void BaseMenuSystem::placeActorHoverBackground() {
 	if (frameDimensions._height < charHeight)
 		charHeight = frameDimensions._height;
 		
-	v0->drawActorRect(Common::Rect(textInfoDimensions._width - 1, charHeight - 1), _activeMenu->_fieldE);
+	v0->drawActorRect(Common::Rect(textInfoDimensions._width - 1, charHeight), _activeMenu->_fieldE);
 
 	updateActorHoverBackground();
 }
@@ -310,7 +308,7 @@ void BaseMenuSystem::placeActorTextColorRect() {
 	_vm->_screenText->getTextInfoPosition(textInfoPosition);
 	_vm->_screenText->getTextInfoDimensions(textInfoDimensions);
 	
-	if (_activeMenu->_field8 && _activeMenu->_fieldA != _activeMenu->_field8) {
+	if (_activeMenu->_backgroundColor && _activeMenu->_borderColor != _activeMenu->_backgroundColor) {
 		textInfoDimensions._width -= 2;
 		textInfoDimensions._height -= 6;
 	}
@@ -407,13 +405,13 @@ uint BaseMenuSystem::drawMenuText(BaseMenu *menu) {
 
 	Common::Point textPt;
 	int16 v9 = 0;
-	if (menu->_field8)
+	if (menu->_backgroundColor)
 		v9 = 4;
 	textPt.x = v9;
 	textPt.y = v9;
 
 	uint flags = TEXT_FLAG_LEFT_ALIGN;
-	if (menu->_field8 != menu->_fieldA)
+	if (menu->_backgroundColor != menu->_borderColor)
 		flags |= TEXT_FLAG_BORDER_DECORATION;
 		
 	WidthHeight dimensions;
@@ -421,7 +419,7 @@ uint BaseMenuSystem::drawMenuText(BaseMenu *menu) {
 	dimensions._height = 180;
 	
 	uint16 *outTextPtr;
-	if (!_vm->_screenText->insertText(text, menu->_fontId, dimensions, textPt, flags, menu->_field8, menu->_fieldA, 0xFF, 0xFF, 0xFF, outTextPtr)) {
+	if (!_vm->_screenText->insertText(text, menu->_fontId, dimensions, textPt, flags, menu->_backgroundColor, menu->_borderColor, 0xFF, 0xFF, 0xFF, outTextPtr)) {
 		--lineCount;
 		for ( ; *outTextPtr; ++outTextPtr) {
 			if (*outTextPtr == 13)
