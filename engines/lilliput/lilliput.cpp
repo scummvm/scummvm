@@ -1404,7 +1404,11 @@ void LilliputEngine::homeInPathFinding(int index) {
 		return;
 	}
 
-	if ((enclosureDst != -1) && _enclosureRect->contains(_characterTargetPos[index])) {
+	if ((enclosureDst != -1) &&
+		(_characterTargetPos[index].x >= _enclosureRect[enclosureSrc].left) &&
+		(_characterTargetPos[index].x <= _enclosureRect[enclosureSrc].right) &&
+		(_characterTargetPos[index].y >= _enclosureRect[enclosureSrc].top) &&
+		(_characterTargetPos[index].y <= _enclosureRect[enclosureSrc].bottom)) {
 		_characterSubTargetPos[index] = _portalPos[enclosureDst];
 		return;
 	}
@@ -1507,10 +1511,10 @@ byte LilliputEngine::homeInAvoidDeadEnds(int indexb, int indexs) {
 	if (idx == -1)
 		return 1;
 
-	if (_enclosureRect[idx].contains(_curCharacterTilePos))
+	if ((tmpPos.x >= _enclosureRect[idx].left) && (tmpPos.x <= _enclosureRect[idx].right) && (tmpPos.y >= _enclosureRect[idx].top) && (tmpPos.y <= _enclosureRect[idx].bottom))
 		return 0;
 
-	if (_enclosureRect[idx].contains(_characterSubTargetPos[indexs]))
+	if ((tmpPos.x >= _enclosureRect[idx].left) && (tmpPos.x <= _enclosureRect[idx].right) && (tmpPos.y >= _enclosureRect[idx].top) && (tmpPos.y <= _enclosureRect[idx].bottom))
 		return 0;
 
 	return 1;
@@ -1520,7 +1524,7 @@ int16 LilliputEngine::checkEnclosure(Common::Point pos) {
 	debugC(2, kDebugEngine, "checkEnclosure(%d, %d)", pos.x, pos.y);
 
 	for (int i = 0; i < _rectNumb; ++i) {
-		if (_enclosureRect[i].contains(pos))
+		if ((pos.x >= _enclosureRect[i].left) && (pos.x <= _enclosureRect[i].right) && (pos.y >= _enclosureRect[i].top) && (pos.y <= _enclosureRect[i].bottom))
 			return i;
 	}
 	return -1;
@@ -1530,7 +1534,7 @@ int16 LilliputEngine::checkOuterEnclosure(Common::Point pos) {
 	debugC(2, kDebugEngine, "checkOuterEnclosure(%d, %d)", pos.x, pos.y);
 
 	for (int i = _rectNumb - 1; i >= 0 ; --i) {
-		if (_enclosureRect[i].contains(pos))
+		if ((pos.x >= _enclosureRect[i].left) && (pos.x <= _enclosureRect[i].right) && (pos.y >= _enclosureRect[i].top) && (pos.y <= _enclosureRect[i].bottom))
 			return i;
 	}
 	return -1;
