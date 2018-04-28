@@ -73,7 +73,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE | ADGF_CD,
+			ADGF_TESTING | ADGF_CD,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_WorldOfXeen,

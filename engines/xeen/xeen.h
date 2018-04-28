@@ -211,6 +211,7 @@ public:
 	uint16 getVersion() const;
 	uint32 getGameID() const;
 	uint32 getGameFeatures() const;
+	bool getIsCD() const;
 
 	int getRandomNumber(int maxNumber);
 

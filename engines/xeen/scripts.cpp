@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "backends/audiocd/audiocd.h"
 #include "xeen/scripts.h"
 #include "xeen/dialogs/dialogs_copy_protection.h"
 #include "xeen/dialogs/dialogs_input.h"
@@ -1466,7 +1467,14 @@ bool Scripts::cmdFlipWorld(ParamsIterator &params) {
 	return true;
 }
 
-bool Scripts::cmdPlayCD(ParamsIterator &params) { error("TODO"); }
+bool Scripts::cmdPlayCD(ParamsIterator &params) {
+	int trackNum = params.readByte();
+	int start = params.readUint16LE();
+	int finish = params.readUint16LE();
+
+	g_system->getAudioCDManager()->play(trackNum, 1, start, finish);
+	return true;
+}
 
 void Scripts::doCloudsEnding() {
 	g_vm->_party->_cloudsCompleted = true;

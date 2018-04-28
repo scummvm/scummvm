@@ -61,6 +61,10 @@ Common::Platform XeenEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
+bool XeenEngine::getIsCD() const {
+	return getFeatures() & ADGF_CD;
+}
+
 } // End of namespace Xeen
 
 static const PlainGameDescriptor XeenGames[] = {
