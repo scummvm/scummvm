@@ -283,7 +283,8 @@ void MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 #ifdef ENABLE_MYST
 	if (strstr(target, "myst")) {
-		return Mohawk::MystGameState::querySaveMetaInfos(slot);
+		SaveStateDescriptor desc = Mohawk::MystGameState::querySaveMetaInfos(slot);
+		return desc;
 	}
 #endif
 #ifdef ENABLE_RIVEN

@@ -41,10 +41,11 @@ MystSaveMetadata::MystSaveMetadata() {
 	saveHour = 0;
 	saveMinute = 0;
 	totalPlayTime = 0;
+	autoSave = false;
 }
 
 bool MystSaveMetadata::sync(Common::Serializer &s) {
-	static const Common::Serializer::Version kCurrentVersion = 1;
+	static const Common::Serializer::Version kCurrentVersion = 2;
 
 	if (!s.syncVersion(kCurrentVersion)) {
 		return false;
@@ -57,6 +58,7 @@ bool MystSaveMetadata::sync(Common::Serializer &s) {
 	s.syncAsByte(saveMinute);
 	s.syncString(saveDescription);
 	s.syncAsUint32LE(totalPlayTime);
+	s.syncAsByte(autoSave, 2);
 
 	return true;
 }
@@ -185,7 +187,9 @@ bool MystGameState::save(int slot, const Common::String &desc) {
 		return false;
 	}
 
-	updateMetadateForSaving(desc);
+	bool isAutoSave = isAutoSaveAllowed() && (slot == Mohawk::kAutoSaveSlot);
+
+	updateMetadateForSaving(desc, isAutoSave);
 
 	return saveMetadata(slot);
 }
@@ -216,7 +220,7 @@ Common::String MystGameState::buildMetadataFilename(int slot) {
 	return Common::String::format("myst-%03d.mym", slot);
 }
 
-void MystGameState::updateMetadateForSaving(const Common::String &desc) {
+void MystGameState::updateMetadateForSaving(const Common::String &desc, bool autosave) {
 	// Update save creation info
 	TimeDate t;
 	g_system->getTimeAndDate(t);
@@ -227,6 +231,7 @@ void MystGameState::updateMetadateForSaving(const Common::String &desc) {
 	_metadata.saveMinute = t.tm_min;
 	_metadata.saveDescription = desc;
 	_metadata.totalPlayTime = _vm->getTotalPlayTime();
+	_metadata.autoSave = autosave;
 }
 
 bool MystGameState::saveMetadata(int slot) {
@@ -251,12 +256,41 @@ bool MystGameState::saveMetadata(int slot) {
 	return true;
 }
 
+bool MystGameState::isAutoSaveAllowed() {
+	// Open autosave slot and see if it an autosave
+	// Autosaving will be enabled if it is an autosave or if there is no save in that slot
+	Common::String filename = buildMetadataFilename(Mohawk::kAutoSaveSlot);
+	Common::InSaveFile *metadataFile = g_system->getSavefileManager()->openForLoading(filename);
+	if (!metadataFile) { // There is no save in the autosave slot, enable autosave
+		return true;
+	}
+
+	Common::Serializer m(metadataFile, nullptr);
+
+	// Read the metadata file
+	Mohawk::MystSaveMetadata metadata;
+	if (!metadata.sync(m)) { // the save in the autosave slot is corrupted, enable autosave
+		delete metadataFile;
+		return true;
+	}
+
+	if (metadata.autoSave == true) {
+		return true;
+	}
+
+	delete metadataFile;
+	return false;
+}
+
 SaveStateDescriptor MystGameState::querySaveMetaInfos(int slot) {
 	// Open the metadata file
 	Common::String filename = buildMetadataFilename(slot);
 	Common::InSaveFile *metadataFile = g_system->getSavefileManager()->openForLoading(filename);
+	SaveStateDescriptor desc;
+	desc.setWriteProtectedFlag(slot == Mohawk::kAutoSaveSlot);
+
 	if (!metadataFile) {
-		return SaveStateDescriptor();
+		return desc;
 	}
 
 	Common::Serializer m(metadataFile, nullptr);
@@ -265,19 +299,20 @@ SaveStateDescriptor MystGameState::querySaveMetaInfos(int slot) {
 	Mohawk::MystSaveMetadata metadata;
 	if (!metadata.sync(m)) {
 		delete metadataFile;
-		return SaveStateDescriptor();
+		return desc;
 	}
 
 	// Set the save description
-	SaveStateDescriptor desc;
 	desc.setDescription(metadata.saveDescription);
 	desc.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	desc.setSaveTime(metadata.saveHour, metadata.saveMinute);
 	desc.setPlayTime(metadata.totalPlayTime);
+	
+	desc.setDeletableFlag(slot != Mohawk::kAutoSaveSlot);
 	Graphics::Surface *thumbnail;
 	if (!Graphics::loadThumbnail(*metadataFile, thumbnail)) {
 		delete metadataFile;
-		return SaveStateDescriptor();
+		return desc;
 	}
 	desc.setThumbnail(thumbnail);
 
