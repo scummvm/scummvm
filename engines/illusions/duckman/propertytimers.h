@@ -45,11 +45,12 @@ class PropertyTimers {
 public:
 	PropertyTimers(IllusionsEngine_Duckman *vm);
 	~PropertyTimers();
-public:
-	IllusionsEngine_Duckman *_vm;	
+private:
+	IllusionsEngine_Duckman *_vm;
 	PropertyTimer _propertyTimers[kPropertyTimersCount];
 	bool _propertyTimersActive;
 	bool _propertyTimersPaused;
+public:
 	void addPropertyTimer(uint32 propertyId);
 	void setPropertyTimer(uint32 propertyId, uint32 duration);
 	void removePropertyTimer(uint32 propertyId);

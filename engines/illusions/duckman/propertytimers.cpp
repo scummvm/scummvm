@@ -32,6 +32,7 @@ namespace Illusions {
 // PropertyTimers
 
 PropertyTimers::PropertyTimers(IllusionsEngine_Duckman *vm) {
+	_vm = vm;
 	_propertyTimersActive = false;
 	_propertyTimersPaused = false;
 }
