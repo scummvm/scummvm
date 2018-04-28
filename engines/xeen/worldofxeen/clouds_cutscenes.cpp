@@ -21,7 +21,6 @@
  */
 
 #include "xeen/worldofxeen/clouds_cutscenes.h"
-#include "xeen/worldofxeen/worldofxeen_resources.h"
 #include "xeen/sound.h"
 
 namespace Xeen {

@@ -24,7 +24,6 @@
 #include "xeen/xeen.h"
 #include "xeen/worldofxeen/darkside_cutscenes.h"
 #include "xeen/worldofxeen/worldofxeen.h"
-#include "xeen/worldofxeen/worldofxeen_resources.h"
 
 #define WAIT(TIME) if (_subtitles.wait(TIME)) return false
 

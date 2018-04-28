@@ -240,6 +240,7 @@ public:
 	int CLOUDS_GUILD_SPELLS[5][20];
 	int DARK_SPELL_OFFSETS[3][39];
 	int DARK_SPELL_RANGES[12][2];
+	int SWORDS_SPELL_RANGES[12][2];
 	int SPELL_GEM_COST[77];
 	const char *NOT_A_SPELL_CASTER;
 	const char *SPELLS_LEARNED_ALL;
@@ -455,6 +456,11 @@ public:
 	const char *MUSIC_FILES2[6][7];
 	const char *DIFFICULTY_TEXT;
 	const char *SAVE_OFF_LIMITS;
+	const char *CLOUDS_INTRO1;
+	const char *DARKSIDE_ENDING1;
+	const char *DARKSIDE_ENDING2;
+	const char *PHAROAH_ENDING_TEXT1;
+	const char *PHAROAH_ENDING_TEXT2;
 public:
 	/**
 	 * Constructor

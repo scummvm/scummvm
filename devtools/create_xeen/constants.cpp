@@ -1043,6 +1043,12 @@ const int DARK_SPELL_RANGES[12][2] = {
 	{ 0, 20 }, { 16, 35 }, { 27, 37 }, { 29, 39 }
 };
 
+const int SWORDS_SPELL_RANGES[12][2] = {
+	{ 0, 20 },{ 16, 35 },{ 27, 39 },{ 29, 39 },
+	{ 0, 17 },{ 14, 34 },{ 26, 39 },{ 29, 39 },
+	{ 0, 20 },{ 16, 35 },{ 27, 39 },{ 29, 39 }
+};
+
 const int CLOUDS_GUILD_SPELLS[5][20] = {
 	{
 		1, 10, 20, 26, 27, 38, 40, 42, 45, 50,
@@ -1936,6 +1942,38 @@ const char *const DIFFICULTY_TEXT = "\v000\t000\x3""cSelect Game Preference";
 const char *const SAVE_OFF_LIMITS = "\x3""c\v002\t000The Gods of Game Restoration deem this area off limits!\n"
 	"Sorry, no saving in this maze.";
 
+const char *const CLOUDS_INTRO1 = "\f00\v082\t040\x3"
+	"cKing Burlock\v190\t040Peasants\v082\t247"
+	"Lord Xeen\v190\t258Xeen's Pet\v179\t150Crodo";
+
+const char *const DARKSIDE_ENDING1 = "\n\x3" "cCongratulations\n"
+	"\n"
+	"Your Final Score is:\n"
+	"\n"
+	"%010lu\n"
+	"\x3" "l\n"
+	"Please send this score to the Ancient's Headquarters "
+	"where you'll be added to the Hall of Legends!\n"
+	"\n"
+	"Ancient's Headquarters\n"
+	"New World Computing, Inc.\n"
+	"P.O. Box 4302\n"
+	"Hollywood, CA 90078";
+
+const char *const DARKSIDE_ENDING2 = "\n"
+	"Adventurers,\n"
+	"\n"
+	"I will save your game in Castleview.\n"
+	"\n"
+	"The World of Xeen still needs you!\n"
+	"\n"
+	"Load your game afterwards and come visit me in the "
+	"Great Pyramid for further instructions";
+
+const char *const PHAROAH_ENDING_TEXT1 = "\fd\v001\t001%s\x3" "c\t000\v180Press a Key!\x3" "l";
+const char *const PHAROAH_ENDING_TEXT2 = "\f04\v000\t000%s\x3" "c\t000\v180Press a Key!\x3" "l\fd";
+
+
 void writeConstants(CCArchive &cc) {
 	Common::MemFile file;
 	file.syncString(CLOUDS_CREDITS);
@@ -2062,6 +2100,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncNumbers2D((const int *)CLOUDS_GUILD_SPELLS, 5, 20);
 	file.syncNumbers2D((const int *)DARK_SPELL_OFFSETS, 3, 39);
 	file.syncNumbers2D((const int *)DARK_SPELL_RANGES, 12, 2);
+	file.syncNumbers2D((const int *)SWORDS_SPELL_RANGES, 12, 2);
 	file.syncNumbers((const int *)SPELL_GEM_COST, 77);
 	file.syncString(NOT_A_SPELL_CASTER);
 	file.syncString(SPELLS_LEARNED_ALL);
@@ -2277,6 +2316,11 @@ void writeConstants(CCArchive &cc) {
 	file.syncStrings2D((const char *const *)MUSIC_FILES2, 6, 7);
 	file.syncString(DIFFICULTY_TEXT);
 	file.syncString(SAVE_OFF_LIMITS);
+	file.syncString(CLOUDS_INTRO1);
+	file.syncString(DARKSIDE_ENDING1);
+	file.syncString(DARKSIDE_ENDING2);
+	file.syncString(PHAROAH_ENDING_TEXT1);
+	file.syncString(PHAROAH_ENDING_TEXT2);
 
 	cc.add("CONSTANTS", file);
 }

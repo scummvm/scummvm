@@ -30,14 +30,6 @@
 
 namespace Xeen {
 
-// FIXME: This new array for Swords isn't worth regenerating the xeen.ccs file over, but it could be
-// moved in if there's any cause in future to regenerate the file for other reasons
-const int SWORDS_SPELL_RANGES[12][2] = {
-	{ 0, 20 }, { 16, 35 }, { 27, 39 }, { 29, 39 },
-	{ 0, 17 }, { 14, 34 }, { 26, 39 }, { 29, 39 },
-	{ 0, 20 }, { 16, 35 }, { 27, 39 }, {29, 39 }
-};
-
 Character *SpellsDialog::show(XeenEngine *vm, ButtonContainer *priorDialog,
 		Character *c, SpellDialogMode mode) {
 	SpellsDialog *dlg = new SpellsDialog(vm);
@@ -341,7 +333,7 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 						groupIndex = 0;
 						break;
 					}
-					RANGE = SWORDS_SPELL_RANGES[category * 4 + groupIndex];
+					RANGE = Res.SWORDS_SPELL_RANGES[category * 4 + groupIndex];
 				} else {
 					int groupIndex = (party._mazeId - 29) / 2;
 					RANGE = Res.DARK_SPELL_RANGES[category * 4 + groupIndex];
