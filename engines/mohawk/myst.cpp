@@ -72,6 +72,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_showResourceRects = false;
 	_curStack = 0;
 	_curCard = 0;
+	_lastSaveTime = 0;
 
 	_hoverResource = nullptr;
 	_activeResource = nullptr;
@@ -395,6 +396,11 @@ void MohawkEngine_Myst::doFrame() {
 		_waitingOnBlockingOperation = false;
 	}
 
+	if (shouldPerformAutoSave(_lastSaveTime) && canSaveGameStateCurrently() && _gameState->isAutoSaveAllowed()) {
+		autoSave();
+		_lastSaveTime = _system->getMillis();
+	}
+
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -447,6 +453,11 @@ void MohawkEngine_Myst::doFrame() {
 
 						if (_needsShowCredits) {
 							if (isInteractive()) {
+								if (canSaveGameStateCurrently() && _gameState->isAutoSaveAllowed()) {
+									// Attempt to autosave before exiting
+									autoSave();
+								}
+
 								_cursor->hideCursor();
 								changeToStack(kCreditsStack, 10000, 0, 0);
 								_needsShowCredits = false;
@@ -472,6 +483,13 @@ void MohawkEngine_Myst::doFrame() {
 						break;
 					default:
 						break;
+				}
+				break;
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RTL:
+				if (canSaveGameStateCurrently() && _gameState->isAutoSaveAllowed()) {
+					// Attempt to autosave before exiting
+					autoSave();
 				}
 				break;
 			default:
@@ -1158,7 +1176,12 @@ Common::Error MohawkEngine_Myst::loadGameState(int slot) {
 }
 
 Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &desc) {
-	return _gameState->save(slot, desc) ? Common::kNoError : Common::kUnknownError;
+	return _gameState->save(slot, desc, false) ? Common::kNoError : Common::kUnknownError;
+}
+
+void MohawkEngine_Myst::autoSave() {
+	if (!_gameState->save(Mohawk::kAutoSaveSlot, Mohawk::kAutoSaveName, true))
+		warning("Attempt to autosave has failed.");
 }
 
 bool MohawkEngine_Myst::hasGameSaveSupport() const {

@@ -47,6 +47,8 @@ struct MystSaveMetadata {
 
 	uint32 totalPlayTime;
 
+	bool autoSave;
+
 	Common::String saveDescription;
 
 	MystSaveMetadata();
@@ -105,7 +107,8 @@ public:
 	static Common::String querySaveDescription(int slot);
 
 	bool load(int slot);
-	bool save(int slot, const Common::String &desc);
+	bool save(int slot, const Common::String &desc, bool autoSave);
+	bool isAutoSaveAllowed();
 	static void deleteSave(int slot);
 
 	void addZipDest(uint16 stack, uint16 view);
@@ -340,7 +343,7 @@ private:
 	bool loadState(int slot);
 	void loadMetadata(int slot);
 	bool saveState(int slot);
-	void updateMetadateForSaving(const Common::String &desc);
+	void updateMetadateForSaving(const Common::String &desc, bool autoSave);
 	bool saveMetadata(int slot);
 
 	// The values in these regions are lists of VIEW resources
