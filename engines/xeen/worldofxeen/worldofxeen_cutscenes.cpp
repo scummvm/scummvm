@@ -479,14 +479,14 @@ bool WorldOfXeenCutscenes::worldEnding2() {
 		if (idx == 2 || idx == 15 || idx == 21)
 			sound.playSound("photon.voc", 1, 0);
 
-		screen.restoreBackground();
+		screen.blitFrom(savedBg);
 		sc24.draw(0, idx, Common::Point(103, 6));
 
 		WAIT(3);
 	}
 
 	for (int idx = 20; idx < 35; ++idx) {
-		screen.restoreBackground();
+		screen.blitFrom(savedBg);
 		sc24.draw(0, idx, Common::Point(103, 6));
 
 		WAIT(3);
@@ -599,13 +599,13 @@ bool WorldOfXeenCutscenes::worldEnding3() {
 
 	SpriteResource sc30("sc30.eg2");
 	SpriteResource sc28[14] = {
-		SpriteResource("sc28a.eg2"), SpriteResource("sc28b1.eg2"),
-		SpriteResource("sc28c.eg2"), SpriteResource("sc28d.eg2"),
-		SpriteResource("sc28e.eg2"), SpriteResource("sc28f.eg2"),
-		SpriteResource("sc28g.eg2"), SpriteResource("sc28h.eg2"),
-		SpriteResource("sc28i.eg2"), SpriteResource("sc28j.eg2"),
-		SpriteResource("sc28k.eg2"), SpriteResource("sc28l.eg2"),
-		SpriteResource("sc28m.eg2"), SpriteResource("sc28n.eg2"),
+		SpriteResource("sc28a.eg2", 2), SpriteResource("sc28b1.eg2", 2),
+		SpriteResource("sc28c.eg2", 2), SpriteResource("sc28d.eg2", 2),
+		SpriteResource("sc28e.eg2", 2), SpriteResource("sc28f.eg2", 2),
+		SpriteResource("sc28g.eg2", 2), SpriteResource("sc28h.eg2", 2),
+		SpriteResource("sc28i.eg2", 2), SpriteResource("sc28j.eg2", 2),
+		SpriteResource("sc28k.eg2", 2), SpriteResource("sc28l.eg2", 2),
+		SpriteResource("sc28m.eg2", 2), SpriteResource("sc28n.eg2", 2),
 	};
 
 	// Transformation of Xeen into a globe
@@ -652,7 +652,7 @@ bool WorldOfXeenCutscenes::worldEnding3() {
 	}
 
 	screen.fadeOut();
-	while (sound.isMusicPlaying()) {
+	while (sound.isSoundPlaying()) {
 		WAIT(2);
 	}
 
