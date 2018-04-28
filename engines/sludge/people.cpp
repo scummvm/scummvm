@@ -199,7 +199,7 @@ void OnScreenPerson::makeSilent() {
 
 PeopleManager::PeopleManager(SludgeEngine *vm) {
 	_vm = vm;
-	_allPeople = nullptr;
+	_allPeople = new OnScreenPersonList;
 	_scaleHorizon = 75;
 	_scaleDivide = 150;
 	_personRegion = new ScreenRegion;
@@ -210,6 +210,9 @@ PeopleManager::~PeopleManager() {
 
 	delete _personRegion;
 	_personRegion = nullptr;
+
+	delete _allPeople;
+	_allPeople = nullptr;
 }
 
 void PeopleManager::turnMeAngle(OnScreenPerson *thisPerson, int direc) {
@@ -293,13 +296,12 @@ void PeopleManager::moveAndScale(OnScreenPerson &me, float x, float y) {
 }
 
 OnScreenPerson *PeopleManager::findPerson(int v) {
-	OnScreenPerson *thisPerson = _allPeople;
-	while (thisPerson) {
-		if (v == thisPerson->thisType->objectNum)
-			break;
-		thisPerson = thisPerson->next;
+	for (OnScreenPersonList::iterator it = _allPeople->begin(); it != _allPeople->end(); ++it) {
+		if (v == (*it)->thisType->objectNum) {
+			return (*it);
+		}
 	}
-	return thisPerson;
+	return nullptr;
 }
 
 void PeopleManager::movePerson(int x, int y, int objNum) {
@@ -473,42 +475,29 @@ void PeopleManager::setPersonColourise(int ob, byte r, byte g, byte b, byte colo
 	moveMe->colourmix = colourmix;
 }
 
-void PeopleManager::shufflePeople() {
-	OnScreenPerson **thisReference = &_allPeople;
-	OnScreenPerson *A, *B;
+struct PeopleYComperator {
+	bool operator()(const OnScreenPerson *p1, const OnScreenPerson *p2) {
+		float y1 = p1->extra & EXTRA_FRONT ? p1->y + 1000 : p1->y;
+		float y2 = p2->extra & EXTRA_FRONT ? p2->y + 1000 : p2->y;
+		return y1 < y2;
+	}
+};
 
-	if (!_allPeople)
+void PeopleManager::shufflePeople() {
+	if (_allPeople->empty())
 		return;
 
-	while ((*thisReference)->next) {
-		float y1 = (*thisReference)->y;
-		if ((*thisReference)->extra & EXTRA_FRONT)
-			y1 += 1000;
-
-		float y2 = (*thisReference)->next->y;
-		if ((*thisReference)->next->extra & EXTRA_FRONT)
-			y2 += 1000;
-
-		if (y1 > y2) {
-			A = (*thisReference);
-			B = (*thisReference)->next;
-			A->next = B->next;
-			B->next = A;
-			(*thisReference) = B;
-		} else {
-			thisReference = &((*thisReference)->next);
-		}
-	}
+	Common::sort(_allPeople->begin(), _allPeople->end(), PeopleYComperator());
 }
 
 void PeopleManager::drawPeople() {
 	shufflePeople();
 
-	OnScreenPerson *thisPerson = _allPeople;
 	PersonaAnimation *myAnim = NULL;
 	_vm->_regionMan->resetOverRegion();
 
-	while (thisPerson) {
+	for (OnScreenPersonList::iterator it = _allPeople->begin(); it != _allPeople->end(); ++it) {
+		OnScreenPerson * thisPerson = (*it);
 		if (thisPerson->show) {
 			myAnim = thisPerson->myAnim;
 			if (myAnim != thisPerson->lastUsedAnim) {
@@ -567,7 +556,6 @@ void PeopleManager::drawPeople() {
 				}
 			}
 		}
-		thisPerson = thisPerson->next;
 	}
 }
 
@@ -832,9 +820,8 @@ bool PeopleManager::setCharacterWalkSpeed(int f, int objNum) {
 }
 
 void PeopleManager::walkAllPeople() {
-	OnScreenPerson *thisPerson = _allPeople;
-
-	while (thisPerson) {
+	for (OnScreenPersonList::iterator it = _allPeople->begin(); it != _allPeople->end(); ++it) {
+		OnScreenPerson *thisPerson = (*it);
 		if (thisPerson->walking) {
 			walkMe(thisPerson);
 		} else if (thisPerson->spinning) {
@@ -845,7 +832,6 @@ void PeopleManager::walkAllPeople() {
 			restartFunction(thisPerson->continueAfterWalking);
 			thisPerson->continueAfterWalking = NULL;
 		}
-		thisPerson = thisPerson->next;
 	}
 }
 
@@ -854,7 +840,7 @@ bool PeopleManager::addPerson(int x, int y, int objNum, Persona *p) {
 	if (!checkNew(newPerson))
 		return false;
 
-	// EASY STUFF
+	// Init newPerson
 	newPerson->thisType = _vm->_objMan->loadObjectType(objNum);
 	newPerson->scale = 1;
 	newPerson->extra = 0;
@@ -898,14 +884,18 @@ bool PeopleManager::addPerson(int x, int y, int objNum, Persona *p) {
 		newPerson->height = p->animation[0]->theSprites->bank.sprites[fNum].yhot + 5;
 	}
 
-	// NOW ADD IT IN THE RIGHT PLACE
-	OnScreenPerson **changethat = &_allPeople;
-
-	while (((*changethat) != NULL) && ((*changethat)->y < y))
-		changethat = &((*changethat)->next);
-
-	newPerson->next = (*changethat);
-	(*changethat) = newPerson;
+	// NOW INSERT IT IN THE RIGHT PLACE
+	bool inserted = false;
+	for (OnScreenPersonList::iterator it = _allPeople->begin(); it != _allPeople->end(); ++it) {
+		if ((*it)->y >= y) {
+			_allPeople->insert(it, newPerson);
+			inserted = true;
+			break;
+		}
+	}
+	if (!inserted) {
+		_allPeople->push_back(newPerson);
+	}
 
 	return (bool)(newPerson->thisType != NULL);
 }
@@ -925,9 +915,6 @@ void PeopleManager::animatePerson(int obj, PersonaAnimation *fram) { // Set a ne
 void PeopleManager::animatePerson(int obj, Persona *per) {             // Set a new costume
 	OnScreenPerson *moveMe = findPerson(obj);
 	if (moveMe) {
-		//  if (moveMe->continueAfterWalking) abortFunction (moveMe->continueAfterWalking);
-		//  moveMe->continueAfterWalking = NULL;
-		//  moveMe->walking = false;
 		moveMe->spinning = false;
 		moveMe->myPersona = per;
 		rethinkAngle(moveMe);
@@ -940,30 +927,22 @@ void PeopleManager::animatePerson(int obj, Persona *per) {             // Set a 
 }
 
 void PeopleManager::kill() {
-	OnScreenPerson *killPeople;
-	while (_allPeople) {
-		if (_allPeople->continueAfterWalking)
-			abortFunction(_allPeople->continueAfterWalking);
-		_allPeople->continueAfterWalking = NULL;
-		killPeople = _allPeople;
-		_allPeople = _allPeople->next;
-		_vm->_objMan->removeObjectType(killPeople->thisType);
-		delete killPeople;
+	for (OnScreenPersonList::iterator it = _allPeople->begin(); it != _allPeople->end(); ++it) {
+		if ((*it)->continueAfterWalking)
+			abortFunction((*it)->continueAfterWalking);
+		(*it)->continueAfterWalking = NULL;
+		_vm->_objMan->removeObjectType((*it)->thisType);
+		delete (*it);
+		(*it) = nullptr;
 	}
+	_allPeople->clear();
 }
 
 void PeopleManager::killMostPeople() {
-	OnScreenPerson *killPeople;
-	OnScreenPerson **lookyHere = &_allPeople;
-
-	while (*lookyHere) {
-		if ((*lookyHere)->extra & EXTRA_NOREMOVE) {
-			lookyHere = &(*lookyHere)->next;
-		} else {
-			killPeople = (*lookyHere);
-
-			// Change last pointer to NEXT in the list instead
-			(*lookyHere) = killPeople->next;
+	for (OnScreenPersonList::iterator it = _allPeople->begin(); it != _allPeople->end(); ++it) {
+		if (!((*it)->extra & EXTRA_NOREMOVE)) {
+			OnScreenPerson *killPeople = (*it);
+			_allPeople->reverse_erase(it);
 
 			// Gone from the list... now free some memory
 			if (killPeople->continueAfterWalking)
@@ -976,92 +955,69 @@ void PeopleManager::killMostPeople() {
 }
 
 void PeopleManager::removeOneCharacter(int i) {
-	OnScreenPerson *p = findPerson(i);
-
-	if (p) {
+	OnScreenPerson *removePerson = findPerson(i);
+	if (removePerson) {
 		ScreenRegion *overRegion = _vm->_regionMan->getOverRegion();
-		if (overRegion == _personRegion && overRegion->thisType == p->thisType) {
+		if (overRegion == _personRegion && overRegion->thisType == removePerson->thisType) {
 			overRegion = nullptr;
 		}
 
-		if (p->continueAfterWalking)
-			abortFunction(p->continueAfterWalking);
-		p->continueAfterWalking = NULL;
-		OnScreenPerson **killPeople;
+		if (removePerson->continueAfterWalking)
+			abortFunction(removePerson->continueAfterWalking);
+		removePerson->continueAfterWalking = NULL;
 
-		for (killPeople = &_allPeople; *killPeople != p; killPeople = &((*killPeople)->next)) {
-			;
-		}
-
-		*killPeople = p->next;
-		_vm->_objMan->removeObjectType(p->thisType);
-		delete p;
+		_allPeople->remove(removePerson);
+		_vm->_objMan->removeObjectType(removePerson->thisType);
+		delete removePerson;
+		removePerson = nullptr;
 	}
 }
 
-bool PeopleManager::savePeople(Common::WriteStream *stream) {
-	OnScreenPerson *me = _allPeople;
-	int countPeople = 0, a;
-
+bool PeopleManager::savePeople(Common::WriteStream* stream) {
 	stream->writeSint16LE(_scaleHorizon);
 	stream->writeSint16LE(_scaleDivide);
-
-	while (me) {
-		countPeople++;
-		me = me->next;
-	}
-
+	int countPeople = _allPeople->size();
 	stream->writeUint16BE(countPeople);
-
-	me = _allPeople;
-	for (a = 0; a < countPeople; a++) {
-
-		stream->writeFloatLE(me->x);
-		stream->writeFloatLE(me->y);
-
-		me->myPersona->save(stream);
-		me->myAnim->save(stream);
-		stream->writeByte(me->myAnim == me->lastUsedAnim);
-
-		stream->writeFloatLE(me->scale);
-
-		stream->writeUint16BE(me->extra);
-		stream->writeUint16BE(me->height);
-		stream->writeUint16BE(me->walkToX);
-		stream->writeUint16BE(me->walkToY);
-		stream->writeUint16BE(me->thisStepX);
-		stream->writeUint16BE(me->thisStepY);
-		stream->writeUint16BE(me->frameNum);
-		stream->writeUint16BE(me->frameTick);
-		stream->writeUint16BE(me->walkSpeed);
-		stream->writeUint16BE(me->spinSpeed);
-		stream->writeSint16LE(me->floaty);
-		stream->writeByte(me->show);
-		stream->writeByte(me->walking);
-		stream->writeByte(me->spinning);
-		if (me->continueAfterWalking) {
+	for (OnScreenPersonList::iterator it = _allPeople->begin(); it != _allPeople->end(); ++it) {
+		stream->writeFloatLE((*it)->x);
+		stream->writeFloatLE((*it)->y);
+		(*it)->myPersona->save(stream);
+		(*it)->myAnim->save(stream);
+		stream->writeByte((*it)->myAnim == (*it)->lastUsedAnim);
+		stream->writeFloatLE((*it)->scale);
+		stream->writeUint16BE((*it)->extra);
+		stream->writeUint16BE((*it)->height);
+		stream->writeUint16BE((*it)->walkToX);
+		stream->writeUint16BE((*it)->walkToY);
+		stream->writeUint16BE((*it)->thisStepX);
+		stream->writeUint16BE((*it)->thisStepY);
+		stream->writeUint16BE((*it)->frameNum);
+		stream->writeUint16BE((*it)->frameTick);
+		stream->writeUint16BE((*it)->walkSpeed);
+		stream->writeUint16BE((*it)->spinSpeed);
+		stream->writeSint16LE((*it)->floaty);
+		stream->writeByte((*it)->show);
+		stream->writeByte((*it)->walking);
+		stream->writeByte((*it)->spinning);
+		if ((*it)->continueAfterWalking) {
 			stream->writeByte(1);
-			saveFunction(me->continueAfterWalking, stream);
+			saveFunction((*it)->continueAfterWalking, stream);
 		} else {
 			stream->writeByte(0);
 		}
-		stream->writeUint16BE(me->direction);
-		stream->writeUint16BE(me->angle);
-		stream->writeUint16BE(me->angleOffset);
-		stream->writeUint16BE(me->wantAngle);
-		stream->writeSint16LE(me->directionWhenDoneWalking);
-		stream->writeSint16LE(me->inPoly);
-		stream->writeSint16LE(me->walkToPoly);
-
-		stream->writeByte(me->r);
-		stream->writeByte(me->g);
-		stream->writeByte(me->b);
-		stream->writeByte(me->colourmix);
-		stream->writeByte(me->transparency);
-
-		_vm->_objMan->saveObjectRef(me->thisType, stream);
-
-		me = me->next;
+		stream->writeUint16BE((*it)->direction);
+		stream->writeUint16BE((*it)->angle);
+		stream->writeUint16BE((*it)->angleOffset);
+		stream->writeUint16BE((*it)->wantAngle);
+		stream->writeSint16LE((*it)->directionWhenDoneWalking);
+		stream->writeSint16LE((*it)->inPoly);
+		stream->writeSint16LE((*it)->walkToPoly);
+		stream->writeByte((*it)->r);
+		stream->writeByte((*it)->g);
+		stream->writeByte((*it)->b);
+		stream->writeByte((*it)->colourmix);
+		stream->writeByte((*it)->transparency);
+		_vm->_objMan->saveObjectRef((*it)->thisType, stream);
 	}
 	return true;
 }
@@ -1069,18 +1025,14 @@ bool PeopleManager::savePeople(Common::WriteStream *stream) {
 bool PeopleManager::loadPeople(Common::SeekableReadStream *stream) {
 	kill();
 
-	OnScreenPerson **pointy = &_allPeople;
-	OnScreenPerson *me;
-
 	_scaleHorizon = stream->readSint16LE();
 	_scaleDivide = stream->readSint16LE();
 
 	int countPeople = stream->readUint16BE();
 	int a;
 
-	_allPeople = NULL;
 	for (a = 0; a < countPeople; a++) {
-		me = new OnScreenPerson;
+		OnScreenPerson *me = new OnScreenPerson;
 		if (!checkNew(me))
 			return false;
 
@@ -1154,10 +1106,7 @@ bool PeopleManager::loadPeople(Common::SeekableReadStream *stream) {
 				stream->readFloatLE();
 			}
 		}
-
-		me->next = NULL;
-		*pointy = me;
-		pointy = &(me->next);
+		_allPeople->push_back(me);
 	}
 	return true;
 }
@@ -1165,10 +1114,13 @@ bool PeopleManager::loadPeople(Common::SeekableReadStream *stream) {
 void PeopleManager::freeze(FrozenStuffStruct *frozenStuff) {
 	frozenStuff->allPeople = _allPeople;
 	_allPeople = nullptr;
+	_allPeople = new OnScreenPersonList;
 }
 
 void PeopleManager::resotre(FrozenStuffStruct *frozenStuff) {
 	kill();
+	delete _allPeople;
+	_allPeople = nullptr;
 	_allPeople = frozenStuff->allPeople;
 }
 

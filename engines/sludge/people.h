@@ -75,7 +75,6 @@ struct OnScreenPerson {
 	float x, y;
 	int height, floaty, walkSpeed;
 	float scale;
-	OnScreenPerson *next;
 	int walkToX, walkToY, thisStepX, thisStepY, inPoly, walkToPoly;
 	bool walking, spinning;
 	struct LoadedFunction *continueAfterWalking;
@@ -93,6 +92,8 @@ struct OnScreenPerson {
 	void makeSilent();
 	void setFrames(int a);
 };
+
+typedef Common::List<OnScreenPerson *> OnScreenPersonList;
 
 class PeopleManager {
 public:
@@ -148,7 +149,7 @@ public:
 
 private:
 	ScreenRegion *_personRegion;
-	OnScreenPerson *_allPeople;
+	OnScreenPersonList *_allPeople;
 	int16 _scaleHorizon;
 	int16 _scaleDivide;
 

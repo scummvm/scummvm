@@ -35,11 +35,12 @@ struct EventHandlers;
 struct ScreenRegion;
 
 typedef Common::List<ScreenRegion *> ScreenRegionList;
+typedef Common::List<OnScreenPerson *> OnScreenPersonList;
 
 class Parallax;
 
 struct FrozenStuffStruct {
-	OnScreenPerson *allPeople;
+	OnScreenPersonList *allPeople;
 	ScreenRegionList *allScreenRegions;
 	Graphics::Surface backdropSurface;
 	Graphics::Surface lightMapSurface;
