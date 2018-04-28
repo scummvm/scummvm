@@ -35,7 +35,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_TESTING,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_WorldOfXeen,
@@ -54,7 +54,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_WorldOfXeen,
@@ -73,7 +73,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE | ADGF_CD,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_WorldOfXeen,
@@ -91,7 +91,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_TESTING,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_Clouds,
@@ -109,7 +109,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_TESTING,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_DarkSide,
@@ -117,7 +117,7 @@ static const XeenGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Swords of Xeen (GOG)
+		// Swords of Xeen
 		{
 			"swordsofxeen",
 			nullptr,
@@ -127,7 +127,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_TESTING,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_Swords,
