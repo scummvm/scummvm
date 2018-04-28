@@ -30,6 +30,7 @@ namespace Illusions {
 // UpdateFunctions
 
 UpdateFunctions::UpdateFunctions() {
+	_lastTimerUpdateTime = 0;
 }
 
 UpdateFunctions::~UpdateFunctions() {

@@ -109,7 +109,7 @@ public:
 	void updateEvents();
 
 	Screen *_screen;
-	ScreenPaletteBase *_screenPalette;	
+	ScreenPaletteBase *_screenPalette;
 	ScreenText *_screenText;
 	Input *_input;
 	ActorInstanceList *_actorInstances;

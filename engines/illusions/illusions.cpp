@@ -70,6 +70,7 @@ IllusionsEngine::IllusionsEngine(OSystem *syst, const IllusionsGameDescription *
 	_resumeFromSavegameRequested = false;
 	_savegameSceneId = 0;
 	_savegameThreadId = 0;
+	_nextTempThreadId = 0;
 
 	Engine::syncSoundSettings();
 
