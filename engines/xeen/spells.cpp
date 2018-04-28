@@ -428,52 +428,7 @@ void Spells::deadlySwarm() {
 }
 
 void Spells::detectMonster() {
-	EventsManager &events = *_vm->_events;
-	Interface &intf = *_vm->_interface;
-	Map &map = *_vm->_map;
-	Party &party = *_vm->_party;
-	Resources &res = *_vm->_resources;
-	Sound &sound = *_vm->_sound;
-	Windows &windows = *_vm->_windows;
-	Window &w = windows[19];
-	int ccNum = _vm->_files->_ccNum;
-	int grid[7][7];
-
-	SpriteResource sprites(ccNum ? "detectmn.icn" : "detctmon.icn");
-	Common::fill(&grid[0][0], &grid[6][6], 0);
-
-	w.open();
-	w.writeString(Res.DETECT_MONSTERS);
-	sprites.draw(w, 0, Common::Point(243, 80));
-
-	for (int yDiff = 3; yDiff >= -3; --yDiff) {
-		for (int xDiff = -3; xDiff <= 3; ++xDiff) {
-			for (uint monIndex = 0; monIndex < map._mobData._monsters.size(); ++monIndex) {
-				MazeMonster &monster = map._mobData._monsters[monIndex];
-				Common::Point pt = party._mazePosition + Common::Point(xDiff, yDiff);
-				if (monster._position == pt) {
-					int &gridEntry = grid[yDiff + 3][xDiff + 3];
-					if (++gridEntry > 3)
-						gridEntry = 3;
-
-					sprites.draw(w, gridEntry, Common::Point(271 + xDiff * 9, 102 - yDiff * 7));
-				}
-			}
-		}
-	}
-
-	res._globalSprites.draw(w, party._mazeDirection + 1, Common::Point(270, 101));
-	sound.playFX(20);
-	w.update();
-
-	while (!g_vm->shouldExit() && !events.isKeyMousePressed()) {
-		events.updateGameCounter();
-		intf.draw3d(true);
-
-		events.wait(1, false);
-	}
-
-	w.close();
+	DetectMonsters::show(_vm);
 }
 
 void Spells::divineIntervention() {
