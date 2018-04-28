@@ -921,7 +921,11 @@ bool Interface::checkMoveDirection(int key) {
 		break;
 	}
 
+	// Get next facing tile information, and then reset back to the old direction (if changed)
 	map.getCell(7);
+	party._mazeDirection = dir;
+
+
 	int startSurfaceId = map._currentSurfaceId;
 	int surfaceId;
 
@@ -929,8 +933,6 @@ bool Interface::checkMoveDirection(int key) {
 		return true;
 
 	if (map._isOutdoors) {
-		party._mazeDirection = dir;
-
 		switch (map._currentWall) {
 		case 5:
 			if (_vm->_files->_ccNum)
@@ -976,12 +978,9 @@ bool Interface::checkMoveDirection(int key) {
 	} else {
 		surfaceId = map.getCell(2);
 		if (surfaceId >= map.mazeData()._difficulties._wallNoPass) {
-			party._mazeDirection = dir;
 			sound.playFX(46);
 			return false;
 		} else {
-			party._mazeDirection = dir;
-
 			if (startSurfaceId != SURFTYPE_SWAMP || party.checkSkill(SWIMMING) ||
 					party._walkOnWaterActive) {
 				if (_buttonValue == Common::KEYCODE_UP && _wo[107]) {
