@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-19 19:42+0200\n"
+"POT-Creation-Date: 2018-04-29 00:07+0200\n"
 "PO-Revision-Date: 2018-04-14 11:03+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4615,11 +4615,11 @@ msgstr "Spritejen bilineaarinen suodatus (HIDAS)"
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Käytä bilineaarista suodatusta yksittäisiin spriteihin"
 
-#: engines/xeen/detection.cpp:85
+#: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"
 msgstr "Näytä esineiden hinnat normaalissa inventoriossa"
 
-#: engines/xeen/detection.cpp:86
+#: engines/xeen/detection.cpp:90
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
@@ -4627,11 +4627,11 @@ msgstr ""
 "Näyttää esineiden hinnat normaalissa inventoriossa, mahdollistaen arvojen "
 "vertailun"
 
-#: engines/xeen/detection.cpp:95
+#: engines/xeen/detection.cpp:99
 msgid "More durable armor"
 msgstr "Kestävämmät suojavarusteet"
 
-#: engines/xeen/detection.cpp:96
+#: engines/xeen/detection.cpp:100
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 "Suojavaruste hajoaa vasta hahmon ollessa -80HP:ssä normaalin -10HP sijasta"

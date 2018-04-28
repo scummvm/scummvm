@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-19 19:42+0200\n"
+"POT-Creation-Date: 2018-04-29 00:07+0200\n"
 "PO-Revision-Date: 2018-04-16 22:20+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -4682,11 +4682,11 @@ msgstr "Bilineare Filterung für Sprites (LANGSAM)"
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Bilineare Filterung auf einzelne Sprites anwenden"
 
-#: engines/xeen/detection.cpp:85
+#: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"
 msgstr "Item-Kosten im Standard-Inventarmodus anzeigen"
 
-#: engines/xeen/detection.cpp:86
+#: engines/xeen/detection.cpp:90
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
@@ -4694,11 +4694,11 @@ msgstr ""
 "Zeigt die Gegenstandskosten im Standard-Inventarmodus an, um einen Vergleich "
 "der Gegenstände zu ermöglichen"
 
-#: engines/xeen/detection.cpp:95
+#: engines/xeen/detection.cpp:99
 msgid "More durable armor"
 msgstr "Widerstandsfähigere Rüstung"
 
-#: engines/xeen/detection.cpp:96
+#: engines/xeen/detection.cpp:100
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 "Rüstung zerbricht erst, wenn der Charakter -80HP besitzt und nicht bereits "
