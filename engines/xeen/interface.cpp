@@ -464,6 +464,13 @@ void Interface::perform() {
 		}
 		break;
 
+	case (Common::KBD_CTRL << 16) | Common::KEYCODE_DOWN:
+		party._mazeDirection = (Direction)((int)party._mazeDirection ^ 2);
+		_flipSky = !_flipSky;
+		_isAnimReset = true;
+		stepTime();
+		break;
+
 	case Common::KEYCODE_F1:
 	case Common::KEYCODE_F2:
 	case Common::KEYCODE_F3:
@@ -895,22 +902,6 @@ bool Interface::checkMoveDirection(int key) {
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 	Direction dir = party._mazeDirection;
-
-	switch (key) {
-	case (Common::KBD_CTRL << 16) | Common::KEYCODE_LEFT:
-		party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? DIR_WEST :
-			(Direction)(party._mazeDirection - 1);
-		break;
-	case (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT:
-		party._mazeDirection = (party._mazeDirection == DIR_WEST) ? DIR_NORTH :
-			(Direction)(party._mazeDirection + 1);
-		break;
-	case Common::KEYCODE_DOWN:
-		party._mazeDirection = (Direction)((int)party._mazeDirection ^ 2);
-		break;
-	default:
-		break;
-	}
 
 	map.getCell(7);
 	int startSurfaceId = map._currentSurfaceId;
