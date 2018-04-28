@@ -901,7 +901,25 @@ bool Interface::checkMoveDirection(int key) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
+
+	// For strafing or moving backwards, temporarily move to face the direction being checked,
+	// since the call to getCell will the adjacent cell details in the direction being faced
 	Direction dir = party._mazeDirection;
+	switch (key) {
+	case (Common::KBD_CTRL << 16) | Common::KEYCODE_LEFT:
+		party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? DIR_WEST :
+			(Direction)(party._mazeDirection - 1);
+		break;
+	case (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT:
+		party._mazeDirection = (party._mazeDirection == DIR_WEST) ? DIR_NORTH :
+			(Direction)(party._mazeDirection + 1);
+		break;
+	case Common::KEYCODE_DOWN:
+		party._mazeDirection = (Direction)((int)party._mazeDirection ^ 2);
+		break;
+	default:
+		break;
+	}
 
 	map.getCell(7);
 	int startSurfaceId = map._currentSurfaceId;
