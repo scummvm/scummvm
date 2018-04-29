@@ -22,13 +22,13 @@
 
 #include "common/translation.h"
 #include "common/str-array.h"
+#include "common/system.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "gui/ThemeEval.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/scrollcontainer.h"
 #include "engines/unknown-game-dialog.h"
-#include "backends/platform/sdl/sdl.h"
 
 enum {
 	kCopyToClipboard = 'cpcl',
