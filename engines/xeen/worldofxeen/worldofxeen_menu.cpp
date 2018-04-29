@@ -258,6 +258,7 @@ void WorldOfXeenCDMainMenuContainer::showMenuDialog() {
 /*------------------------------------------------------------------------*/
 
 bool MainMenuDialog::handleEvents() {
+	FileManager &files = *g_vm->_files;
 	checkEvents(g_vm);
 	int difficulty;
 
@@ -274,14 +275,18 @@ bool MainMenuDialog::handleEvents() {
 		g_vm->_gameMode = GMODE_PLAY_GAME;
 		break;
 
-	case Common::KEYCODE_l:
+	case Common::KEYCODE_l: {
 		// Load existing game
+		int ccNum = files._ccNum;
 		g_vm->_saves->newGame();
-		if (!g_vm->_saves->loadGame())
+		if (!g_vm->_saves->loadGame()) {
+			files.setGameCc(ccNum);
 			return true;
+		}
 
 		g_vm->_gameMode = GMODE_PLAY_GAME;
 		break;
+	}
 
 	case Common::KEYCODE_c:
 	case Common::KEYCODE_v:
