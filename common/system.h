@@ -324,8 +324,8 @@ public:
 		kFeatureDisplayLogFile,
 
 		/**
-		 * The presence of this feature indicates whether the hasTextInClipboard()
-		 * and getTextFromClipboard() calls are supported.
+		 * The presence of this feature indicates whether the hasTextInClipboard(),
+		 * getTextFromClipboard() and setTextInClipboard() calls are supported.
 		 *
 		 * This feature has no associated state.
 		 */
@@ -1334,6 +1334,17 @@ public:
 	 * @return clipboard contents ("" if hasTextInClipboard() == false)
 	 */
 	virtual Common::String getTextFromClipboard() { return ""; }
+
+	/**
+	 * Set the content of the clipboard to the given string.
+	 *
+	 * The kFeatureClipboardSupport feature flag can be used to
+	 * test whether this call has been implemented by the active
+	 * backend.
+	 *
+	 * @return true if the text was properly set in the clipboard, false otherwise
+	 */
+	virtual bool setTextInClipboard(const Common::String&) { return false; }
 
 	/**
 	 * Open the given Url in the default browser (if available on the target

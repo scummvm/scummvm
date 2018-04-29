@@ -200,6 +200,15 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		}
 		break;
 
+	case Common::KEYCODE_c:
+		if (g_system->hasFeature(OSystem::kFeatureClipboardSupport) && state.flags & Common::KBD_CTRL) {
+			if (!getEditString().empty())
+				g_system->setTextInClipboard(getEditString());
+		} else {
+			defaultKeyDownHandler(state, dirty, forcecaret, handled);
+		}
+		break;
+
 #ifdef MACOSX
 	// Let ctrl-a / ctrl-e move the caret to the start / end of the line.
 	//
