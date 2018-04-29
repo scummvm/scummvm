@@ -902,6 +902,10 @@ bool Interface::checkMoveDirection(int key) {
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 
+	// If intangibility is turned on in the debugger, allow any movement
+	if (debugger._intangible)
+		return true;
+
 	// For strafing or moving backwards, temporarily move to face the direction being checked,
 	// since the call to getCell will the adjacent cell details in the direction being faced
 	Direction dir = party._mazeDirection;
@@ -921,18 +925,16 @@ bool Interface::checkMoveDirection(int key) {
 		break;
 	}
 
-	// Get next facing tile information, and then reset back to the old direction (if changed)
+	// Get next facing tile information
 	map.getCell(7);
-	party._mazeDirection = dir;
-
 
 	int startSurfaceId = map._currentSurfaceId;
 	int surfaceId;
 
-	if (debugger._intangible)
-		return true;
-
 	if (map._isOutdoors) {
+		// Reset direction back to original facing, if it was changed for strafing checks
+		party._mazeDirection = dir;
+
 		switch (map._currentWall) {
 		case 5:
 			if (_vm->_files->_ccNum)
@@ -977,6 +979,10 @@ bool Interface::checkMoveDirection(int key) {
 		}
 	} else {
 		surfaceId = map.getCell(2);
+
+		// Reset direction back to original facing, if it was changed for strafing checks
+		party._mazeDirection = dir;
+
 		if (surfaceId >= map.mazeData()._difficulties._wallNoPass) {
 			sound.playFX(46);
 			return false;
@@ -1499,7 +1505,7 @@ void Interface::doCombat() {
 		w.open();
 		bool breakFlag = false;
 
-		while (!_vm->shouldExit() && !breakFlag) {
+		while (!_vm->shouldExit() && !breakFlag && !party._dead && _vm->_mode == MODE_COMBAT) {
 			highlightChar(combat._whosTurn);
 			combat.setSpeedTable();
 
@@ -1688,8 +1694,6 @@ void Interface::doCombat() {
 			}
 
 			party.checkPartyDead();
-			if (party._dead || _vm->_mode != MODE_COMBAT)
-				break;
 		}
 
 		_vm->_mode = MODE_INTERACTIVE;

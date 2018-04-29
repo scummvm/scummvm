@@ -1060,7 +1060,7 @@ void Combat::setSpeedTable() {
 	bool hasSpeed = _whosSpeed != -1;
 	int oldSpeed = hasSpeed && _whosSpeed < (int)_speedTable.size() ? _speedTable[_whosSpeed] : 0;
 
-	// Set up speeds for party membres
+	// Set up speeds for party members
 	int maxSpeed = 0;
 	for (uint charNum = 0; charNum < _combatParty.size(); ++charNum) {
 		Character &c = *_combatParty[charNum];
