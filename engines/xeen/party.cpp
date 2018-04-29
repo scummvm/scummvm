@@ -464,8 +464,12 @@ void Party::changeTime(int numMinutes) {
 				}
 			}
 
-			player._conditions[WEAK] = player._conditions[DRUNK];
-			player._conditions[DRUNK] = 0;
+			// WORKAROUND: Original incorrectly reset weakness (due to lack of sleep) even when party
+			// wasn't drunk. We now have any resetting drunkness add to, rather than replace, weakness
+			if (player._conditions[WEAK] != -1) {
+				player._conditions[WEAK] += player._conditions[DRUNK];
+				player._conditions[DRUNK] = 0;
+			}
 
 			if (player._conditions[DEPRESSED]) {
 				player._conditions[DEPRESSED] = (player._conditions[DEPRESSED] + 1) % 4;

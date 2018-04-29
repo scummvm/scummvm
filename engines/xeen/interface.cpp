@@ -1077,6 +1077,10 @@ void Interface::rest() {
 					c._conditions[UNCONSCIOUS] = 0;
 					c._currentHp = c.getMaxHP();
 					c._currentSp = c.getMaxSP();
+
+					// WORKAROUND: Resting curing weakness only originally worked due to a bug in changeTime
+					// resetting WEAK if party wasn't drunk. With that resolved, we have to reset WEAK here
+					c._conditions[WEAK] = 0;
 				}
 			}
 		}
