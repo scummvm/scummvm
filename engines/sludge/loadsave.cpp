@@ -37,6 +37,7 @@
 #include "sludge/objtypes.h"
 #include "sludge/people.h"
 #include "sludge/region.h"
+#include "sludge/savedata.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/sound.h"
@@ -62,7 +63,6 @@ extern Floor *currentFloor;                          // In floor.cpp
 extern FILETIME fileTime;                           // In sludger.cpp
 extern byte fadeMode;                      // In transition.cpp
 extern bool allowAnyFilename;
-extern uint16 saveEncoding;                 // in savedata.cpp
 
 //----------------------------------------------------------------------
 // Globals (so we know what's saved already and what's a reference
@@ -409,7 +409,7 @@ bool saveGame(const Common::String &fname) {
 	saveStatusBars(fp);
 	g_sludge->_soundMan->saveSounds(fp);
 
-	fp->writeUint16BE(saveEncoding);
+	fp->writeUint16BE(CustomSaveHelper::_saveEncoding);
 
 	blur_saveSettings(fp);
 
@@ -544,7 +544,7 @@ bool loadGame(const Common::String &fname) {
 	loadStatusBars(fp);
 	g_sludge->_soundMan->loadSounds(fp);
 
-	saveEncoding = fp->readUint16BE();
+	CustomSaveHelper::_saveEncoding = fp->readUint16BE();
 
 	if (ssgVersion >= VERSION(1, 6)) {
 		if (ssgVersion < VERSION(2, 0)) {

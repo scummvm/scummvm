@@ -66,7 +66,6 @@ extern Common::String *allUserFunc;
 extern Common::String *allBIFNames;
 
 extern byte fadeMode;
-extern uint16 saveEncoding;
 
 int paramNum[] = { -1, 0, 1, 1, -1, -1, 1, 3, 4, 1, 0, 0, 8, -1,    // SAY->MOVEMOUSE
                    -1, 0, 0, -1, -1, 1, 1, 1, 1, 4, 1, 1, 2, 1,// FOCUS->REMOVEREGION
@@ -2246,7 +2245,7 @@ builtIn(saveCustomData) {
 		fatal("First parameter isn't a stack");
 		return BR_ERROR;
 	}
-	if (!stackToFile(fileName, fun->stack->thisVar))
+	if (!CustomSaveHelper::stackToFile(fileName, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	return BR_CONTINUE;
@@ -2271,7 +2270,7 @@ builtIn(loadCustomData) {
 	fun->reg.varData.theStack->first = NULL;
 	fun->reg.varData.theStack->last = NULL;
 	fun->reg.varData.theStack->timesUsed = 1;
-	if (!fileToStack(newText, fun->reg.varData.theStack))
+	if (!CustomSaveHelper::fileToStack(newText, fun->reg.varData.theStack))
 		return BR_ERROR;
 	return BR_CONTINUE;
 }
@@ -2281,7 +2280,7 @@ builtIn(setCustomEncoding) {
 	int n;
 	if (!getValueType(n, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
-	saveEncoding = n;
+	CustomSaveHelper::_saveEncoding = n;
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, 1);
 	return BR_CONTINUE;

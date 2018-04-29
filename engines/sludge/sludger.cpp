@@ -41,6 +41,7 @@
 #include "sludge/objtypes.h"
 #include "sludge/people.h"
 #include "sludge/region.h"
+#include "sludge/savedata.h"
 #include "sludge/statusba.h"
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
@@ -83,7 +84,6 @@ extern int lastFramesPerSecond;
 
 extern bool allowAnyFilename;
 extern byte fadeMode;
-extern uint16 saveEncoding;
 
 const char *sludgeText[] = { "?????", "RETURN", "BRANCH", "BR_ZERO",
 		"SET_GLOBAL", "SET_LOCAL", "LOAD_GLOBAL", "LOAD_LOCAL", "PLUS", "MINUS",
@@ -162,6 +162,8 @@ void initSludge() {
 		g_sludge->_soundMan->initSoundStuff();
 	}
 
+	CustomSaveHelper::_saveEncoding = false;
+
 	// global variables
 	numGlobals = 0;
 	launchResult = nullptr;
@@ -173,7 +175,6 @@ void initSludge() {
 	allUserFunc = allBIFNames = nullptr;
 	brightnessLevel = 255;
 	fadeMode = 2;
-	saveEncoding = false;
 }
 
 void killSludge() {
