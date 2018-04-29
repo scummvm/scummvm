@@ -1461,6 +1461,7 @@ void Interface::doCombat() {
 	Windows &windows = *_vm->_windows;
 	bool upDoorText = _upDoorText;
 	bool reloadMap = false;
+	int index = 0;
 
 	_upDoorText = false;
 	combat._combatMode = COMBATMODE_2;
@@ -1506,6 +1507,12 @@ void Interface::doCombat() {
 		bool breakFlag = false;
 
 		while (!_vm->shouldExit() && !breakFlag && !party._dead && _vm->_mode == MODE_COMBAT) {
+			// FIXME: I've had a rare issue where the loop starts with a non-party _whosTurn. Unfortunately,
+			// I haven't been able to consistently replicate and diagnose the problem, so for now,
+			// I'm simply detecting if it happens and resetting the combat round
+			if (combat._whosTurn >= party._activeParty.size())
+				goto new_round;
+
 			highlightChar(combat._whosTurn);
 			combat.setSpeedTable();
 
@@ -1516,7 +1523,7 @@ void Interface::doCombat() {
 			w.update();
 
 			// Wait for keypress
-			int index = 0;
+			index = 0;
 			do {
 				events.updateGameCounter();
 				draw3d(true);
@@ -1662,6 +1669,7 @@ void Interface::doCombat() {
 
 			// Handling for if the combat turn is complete
 			if (combat.allHaveGone()) {
+new_round:
 				Common::fill(&combat._charsGone[0], &combat._charsGone[PARTY_AND_MONSTERS], false);
 				combat.clearBlocked();
 				combat.setSpeedTable();
