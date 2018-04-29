@@ -357,7 +357,6 @@ void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFileP
 	report += "\n\n";
 	reportTranslated += "\n\n";
 
-	reportTranslated.wordWrap(65);
 	Common::String reportLog = report;
 	reportLog.wordWrap(80);
 

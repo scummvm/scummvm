@@ -58,44 +58,14 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 	}
 #endif
 
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
-	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
-
-	//Calculate the size the dialog needs
-	// We use a ScrollContainer to display the text, with a 2 * 8 pixels margin to the dialog border,
-	// the scrollbar, and 2 * 10 margin for the text in the container.
-	// We also keep 2 * 10 pixels between the screen border and the dialog.
-	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
-	Common::Array<Common::String> lines;
-	int maxlineWidth = g_gui.getFont().wordWrapText(_reportTranslated, screenW - 2 * 20 - 16 - scrollbarWidth, lines);
-
-	int lineCount = lines.size() + 1;
-
-	_h = MIN(screenH - 20, lineCount * kLineHeight + kLineHeight + buttonHeight + 24);
-
-	// Buttons
-	int closeButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_("Close")) + 10);
-	int copyToClipboardButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_("Copy to clipboard")) + 10);
-	int openBugtrackerURLButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_("Report game")) + 10);
-	int totalButtonWidth = closeButtonWidth;
-	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport))
-		totalButtonWidth += 10 + copyToClipboardButtonWidth;
-	if (g_system->hasFeature(OSystem::kFeatureOpenUrl))
-		totalButtonWidth += 10 + openBugtrackerURLButtonWidth;
-
-	_w = MAX(MAX(maxlineWidth, 0) + 16 + scrollbarWidth, totalButtonWidth) + 20;
-
-	int buttonPos = _w - closeButtonWidth - 10;
-	new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Close"), 0, kClose);
+	// For now place the buttons with a default place and size. They will be resized and moved when rebuild() is called.
+	_closeButton = new GUI::ButtonWidget(this, 0, 0, 0, 0, _("Close"), 0, kClose);
 
 	//Check if we have clipboard functionality
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
-		buttonPos -= copyToClipboardButtonWidth + 5;
-		new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, copyToClipboardButtonWidth, buttonHeight, _("Copy to clipboard"), 0, kCopyToClipboard);
-	}
+		_copyToClipboardButton = new GUI::ButtonWidget(this, 0, 0, 0, 0, _("Copy to clipboard"), 0, kCopyToClipboard);
+	} else
+		_copyToClipboardButton = nullptr;
 
 #if 0
 	// Do not create the button for reporting the game directly to the bugtracker
@@ -108,32 +78,94 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 	//Check if we have support for opening URLs
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
 		buttonPos -= openBugtrackerURLButtonWidth + 5;
-		new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, openBugtrackerURLButtonWidth, buttonHeight, _("Report game"), 0, kOpenBugtrackerURL);
+		_openBugTrackerUrlButton = new GUI::ButtonWidget(this, 0, 0, 0, 0, _("Report game"), 0, kOpenBugtrackerURL);
 		//Formatting the reportData for bugtracker submission [replace line breaks]...
 		_bugtrackerGameData = _reportData;
 		while (_bugtrackerGameData.contains("\n")) {
 			Common::replace(_bugtrackerGameData, "\n", "%0A");
 		}
-	}
+	} else
 #endif
+		_openBugTrackerUrlButton = nullptr;
 
-	// Each line is represented by one static text item.
 	// Use a ScrollContainer for the report in case we have a lot of lines.
-	int containerHeight = _h - kLineHeight - buttonHeight - 8;
-	GUI::ScrollContainerWidget *container = new GUI::ScrollContainerWidget(this, 8, 8, _w - 16, containerHeight, kScrollContainerReflow);
-	container->setTarget(this);
-	uint y = 8;
-	for (uint i = 0; i < lines.size() ; i++) {
-		GUI::StaticTextWidget *widget = new GUI::StaticTextWidget(container, 10, y, _w - 36 - scrollbarWidth, kLineHeight, lines[i], Graphics::kTextAlignLeft);
-		_textWidgets.push_back(widget);
-		y += kLineHeight;
-	}
+	_textContainer = new GUI::ScrollContainerWidget(this, 0, 0, 0, 0, kScrollContainerReflow);
+	_textContainer->setTarget(this);
+
+	rebuild();
 }
 
 void UnknownGameDialog::reflowLayout() {
+	rebuild();
+	GUI::Dialog::reflowLayout();
+}
+
+void UnknownGameDialog::rebuild() {
+	// First remove the old text widgets
+	for (uint i = 0; i < _textWidgets.size() ; i++) {
+		_textContainer->removeWidget(_textWidgets[i]);
+		delete _textWidgets[i];
+	}
+	_textWidgets.clear();
+
+	// Work out dialog size and position of the various elements in the dialog.
+	// Limit the width of the dialog to 600 - 2 * 10 pixels.
+	const int screenW = MIN((int)g_system->getOverlayWidth(), 600);
+	const int screenH = g_system->getOverlayHeight();
+
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
+	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
+
+	// We use a ScrollContainer to display the text, with a 2 * 8 pixels margin to the dialog border,
+	// the scrollbar, and 2 * 10 margin for the text in the container.
+	// We also keep 2 * 10 pixels between the screen border and the dialog.
+	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
+	Common::Array<Common::String> lines;
+	int maxlineWidth = g_gui.getFont().wordWrapText(_reportTranslated, screenW - 2 * 20 - 16 - scrollbarWidth, lines);
+
+	int lineCount = lines.size() + 1;
+
+	_h = MIN(screenH - 20, lineCount * kLineHeight + kLineHeight + buttonHeight + 24);
+
+	int closeButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_closeButton->getLabel()) + 10);
+	int copyToClipboardButtonWidth = 0, openBugtrackerURLButtonWidth = 0, totalButtonWidth = closeButtonWidth;
+	if (_copyToClipboardButton) {
+		copyToClipboardButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_copyToClipboardButton->getLabel()) + 10);
+		totalButtonWidth += copyToClipboardButtonWidth + 10;
+	}
+	if (_openBugTrackerUrlButton) {
+		openBugtrackerURLButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_openBugTrackerUrlButton->getLabel()) + 10);
+		totalButtonWidth += openBugtrackerURLButtonWidth + 10;
+	}
+
+	_w = MAX(MAX(maxlineWidth, 0) + 16 + scrollbarWidth, totalButtonWidth) + 20;
+
+	// Center the dialog on the screen
 	_x = (g_system->getOverlayWidth() - _w) / 2;
 	_y = (g_system->getOverlayHeight() - _h) / 2;
-	GUI::Dialog::reflowLayout();
+
+	// Now move the buttons and text container to their proper place
+	int buttonPos = _w - closeButtonWidth - 10;
+	_closeButton->resize(buttonPos, _h - buttonHeight - 8, closeButtonWidth, buttonHeight);
+	if (_copyToClipboardButton) {
+		buttonPos -= copyToClipboardButtonWidth + 5;
+		_copyToClipboardButton->resize(buttonPos, _h - buttonHeight - 8, copyToClipboardButtonWidth, buttonHeight);
+	}
+	if (_openBugTrackerUrlButton) {
+		buttonPos -= openBugtrackerURLButtonWidth + 5;
+		_openBugTrackerUrlButton->resize(buttonPos, _h - buttonHeight - 8, openBugtrackerURLButtonWidth, buttonHeight);
+	}
+
+	int containerHeight = _h - kLineHeight - buttonHeight - 16;
+	_textContainer->resize(8, 8, _w - 16, containerHeight);
+
+	// And create text widgets
+	uint y = 8;
+	for (uint i = 0; i < lines.size() ; i++) {
+		GUI::StaticTextWidget *widget = new GUI::StaticTextWidget(_textContainer, 10, y, _w - 36 - scrollbarWidth, kLineHeight, lines[i], Graphics::kTextAlignLeft);
+		_textWidgets.push_back(widget);
+		y += kLineHeight;
+	}
 }
 
 Common::String UnknownGameDialog::generateBugtrackerURL() {
