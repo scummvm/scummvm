@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-29 00:07+0200\n"
+"POT-Creation-Date: 2018-04-29 22:47+0200\n"
 "PO-Revision-Date: 2018-04-18 10:12+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -540,10 +540,10 @@ msgstr ""
 "Seguro que queres restablecer a configuración de FluidSynth aos seus valores "
 "predefinidos?"
 
-#: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
-#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
-#: engines/scumm/help.cpp:210
+#: gui/gui-manager.cpp:119 engines/unknown-game-dialog.cpp:62
+#: backends/keymapper/remap-dialog.cpp:53 engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
+#: engines/scumm/help.cpp:192 engines/scumm/help.cpp:210
 msgid "Close"
 msgstr "Pechar"
 
@@ -1790,20 +1790,7 @@ msgstr "Mensualmente"
 msgid "<Bad value>"
 msgstr "<Valor erróneo>"
 
-#: engines/advancedDetector.cpp:330
-#, c-format
-msgid ""
-"The game in '%s' seems to be an unknown %s engine game variant.\n"
-"\n"
-"Please report the following data to the ScummVM team at %s along with the "
-"name of the game you tried to add and its version, language, etc.:"
-msgstr ""
-"O xogo en %s semella ser unha variante descoñecida do motor %s.\n"
-"\n"
-"Por favor, envía os seguintes datos ao equipo de ScummVM en %s xunto co nome "
-"do xogo que tentaches engadir, a súa versión, lingua, etc.:"
-
-#: engines/advancedDetector.cpp:338
+#: engines/advancedDetector.cpp:343
 msgid "Matched game IDs:"
 msgstr "ID de xogo emparellados:"
 
@@ -1981,6 +1968,34 @@ msgstr ""
 #: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Iniciar de todos os xeitos"
+
+#: engines/unknown-game-dialog.cpp:50
+msgid ""
+"Use the button below to copy the required game information into your "
+"clipboard."
+msgstr ""
+
+#: engines/unknown-game-dialog.cpp:57
+msgid "You can also directly report your game to the Bug Tracker!"
+msgstr ""
+
+#: engines/unknown-game-dialog.cpp:66
+msgid "Copy to clipboard"
+msgstr ""
+
+#: engines/unknown-game-dialog.cpp:81
+#, fuzzy
+msgid "Report game"
+msgstr "Restaurar xogo:"
+
+#: engines/unknown-game-dialog.cpp:187
+msgid ""
+"All necessary information about your game has been copied into the clipboard"
+msgstr ""
+
+#: engines/unknown-game-dialog.cpp:189
+msgid "Copying the game information to the clipboard has failed!"
+msgstr ""
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
@@ -4693,6 +4708,17 @@ msgstr ""
 "Esta partida gardada emprega a versión %u. No entanto, o motor só é "
 "compatíbel até a versión %d. Cómpre descargar unha versión actualizada do "
 "motor para empregar esta partida gardada."
+
+#~ msgid ""
+#~ "The game in '%s' seems to be an unknown %s engine game variant.\n"
+#~ "\n"
+#~ "Please report the following data to the ScummVM team at %s along with the "
+#~ "name of the game you tried to add and its version, language, etc.:"
+#~ msgstr ""
+#~ "O xogo en %s semella ser unha variante descoñecida do motor %s.\n"
+#~ "\n"
+#~ "Por favor, envía os seguintes datos ao equipo de ScummVM en %s xunto co "
+#~ "nome do xogo que tentaches engadir, a súa versión, lingua, etc.:"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""
