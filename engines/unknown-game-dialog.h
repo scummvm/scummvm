@@ -47,7 +47,7 @@ private:
 
 	GUI::ScrollContainerWidget *_textContainer;
 	Common::Array<GUI::StaticTextWidget*> _textWidgets;
-	GUI::ButtonWidget* _openBugTrackerUrlButton;
-	GUI::ButtonWidget* _copyToClipboardButton;
-	GUI::ButtonWidget* _closeButton;
+	GUI::ButtonWidget *_openBugTrackerUrlButton;
+	GUI::ButtonWidget *_copyToClipboardButton;
+	GUI::ButtonWidget *_closeButton;
 };
