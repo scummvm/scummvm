@@ -151,11 +151,6 @@ public:
 	MystSoundBlock readSoundBlock(Common::ReadStream *stream) const;
 	void applySoundBlock(const MystSoundBlock &block);
 
-	bool _needsPageDrop;
-	bool _needsShowMap;
-	bool _needsShowDemoMenu;
-	bool _needsShowCredits;
-
 	bool _showResourceRects;
 
 	VideoManager *_video;
@@ -204,6 +199,11 @@ private:
 	uint32 _lastSaveTime;
 
 	bool hasGameSaveSupport() const;
+	void pauseEngineIntern(bool pause) override;
+
+	void runLoadDialog();
+	void runSaveDialog();
+	void runOptionsDialog();
 
 	void dropPage();
 
@@ -217,8 +217,6 @@ private:
 
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
-
-	void pauseEngineIntern(bool pause) override;
 };
 
 } // End of namespace Mohawk

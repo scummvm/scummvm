@@ -26,6 +26,8 @@
 #include "common/translation.h"
 #include "common/textconsole.h"
 
+#include "gui/saveload.h"
+
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
@@ -85,11 +87,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_mouseMoved = false;
 	_escapePressed = false;
 	_waitingOnBlockingOperation = false;
-
-	_needsPageDrop = false;
-	_needsShowCredits = false;
-	_needsShowDemoMenu = false;
-	_needsShowMap = false;
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
@@ -415,50 +412,24 @@ void MohawkEngine_Myst::doFrame() {
 						pauseGame();
 						break;
 					case Common::KEYCODE_F5:
-						_needsPageDrop = false;
-						_needsShowMap = false;
-						_needsShowDemoMenu = false;
-						_needsShowCredits = false;
-
-						runDialog(*_optionsDialog);
-						if (_optionsDialog->getLoadSlot() >= 0)
-							loadGameState(_optionsDialog->getLoadSlot());
-						if (_optionsDialog->getSaveSlot() >= 0)
-							saveGameState(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
-
-						if (_needsPageDrop) {
-							dropPage();
-							_needsPageDrop = false;
-						}
-
-						if (_needsShowMap) {
-							_stack->showMap();
-							_needsShowMap = false;
-						}
-
-						if (_needsShowDemoMenu) {
-							changeToStack(kDemoStack, 2002, 0, 0);
-							_needsShowDemoMenu = false;
-						}
-
-						if (_needsShowCredits) {
-							if (isInteractive()) {
-								// Attempt to autosave before exiting
-								tryAutoSaving();
-
-								_cursor->hideCursor();
-								changeToStack(kCreditsStack, 10000, 0, 0);
-								_needsShowCredits = false;
-							} else {
-								// Showing the credits in the middle of a script is not possible
-								// because it unloads the previous age, removing data needed by the
-								// rest of the script. Instead we just quit without showing the credits.
-								quitGame();
-							}
-						}
+						runOptionsDialog();
 						break;
 					case Common::KEYCODE_ESCAPE:
 						_escapePressed = true;
+						break;
+					case Common::KEYCODE_o:
+						if (event.kbd.flags & Common::KBD_CTRL) {
+							if (canLoadGameStateCurrently()) {
+								runLoadDialog();
+							}
+						}
+						break;
+					case Common::KEYCODE_s:
+						if (event.kbd.flags & Common::KBD_CTRL) {
+							if (canSaveGameStateCurrently()) {
+								runSaveDialog();
+							}
+						}
 						break;
 					default:
 						break;
@@ -500,6 +471,41 @@ void MohawkEngine_Myst::doFrame() {
 
 	// Cut down on CPU usage
 	_system->delayMillis(10);
+}
+
+void MohawkEngine_Myst::runOptionsDialog() {
+	_optionsDialog->setCanDropPage(isInteractive() && _gameState->_globals.heldPage != kNoPage);
+	_optionsDialog->setCanShowMap(isInteractive() && _stack->getMap());
+	_optionsDialog->setCanReturnToMenu(isInteractive() && _stack->getStackId() != kDemoStack);
+
+	switch (runDialog(*_optionsDialog)) {
+	case MystOptionsDialog::kActionDropPage:
+		dropPage();
+		break;
+	case MystOptionsDialog::kActionShowMap:
+		_stack->showMap();
+		break;
+	case MystOptionsDialog::kActionGoToMenu:
+		changeToStack(kDemoStack, 2002, 0, 0);
+		break;
+	case MystOptionsDialog::kActionShowCredits:
+		if (isInteractive() && getGameType() != GType_MAKINGOF) {
+			_cursor->hideCursor();
+			changeToStack(kCreditsStack, 10000, 0, 0);
+		} else {
+			// Showing the credits in the middle of a script is not possible
+			// because it unloads the previous age, removing data needed by the
+			// rest of the script. Instead we just quit without showing the credits.
+			quitGame();
+		}
+		break;
+	default:
+		if (_optionsDialog->getLoadSlot() >= 0)
+			loadGameState(_optionsDialog->getLoadSlot());
+		if (_optionsDialog->getSaveSlot() >= 0)
+			saveGameState(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
+		break;
+	}
 }
 
 bool MohawkEngine_Myst::wait(uint32 duration, bool skippable) {
@@ -805,6 +811,36 @@ bool MohawkEngine_Myst::canSaveGameStateCurrently() {
 		return true;
 	default:
 		return false;
+	}
+}
+
+void MohawkEngine_Myst::runLoadDialog() {
+	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
+
+	pauseEngine(true);
+	int slot = slc.runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	if (slot >= 0) {
+		loadGameState(slot);
+	}
+}
+
+void MohawkEngine_Myst::runSaveDialog() {
+	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
+
+	pauseEngine(true);
+	int slot = slc.runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	if (slot >= 0) {
+		Common::String result(slc.getResultString());
+		if (result.empty()) {
+			// If the user was lazy and entered no save name, come up with a default name.
+			result = slc.createDefaultSaveDescription(slot);
+		}
+
+		saveGameState(slot, result);
 	}
 }
 

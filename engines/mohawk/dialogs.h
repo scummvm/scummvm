@@ -115,11 +115,27 @@ public:
 	explicit MystOptionsDialog(MohawkEngine_Myst *vm);
 	~MystOptionsDialog() override;
 
+	enum ResultAction {
+		kActionNone = 1,
+		kActionDropPage,
+		kActionShowMap,
+		kActionGoToMenu,
+		kActionShowCredits
+	};
+
+	void setCanDropPage(bool canDropPage);
+	void setCanShowMap(bool canShowMap);
+	void setCanReturnToMenu(bool canReturnToMenu);
+
 	void open() override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 private:
 	MohawkEngine_Myst *_vm;
+
+	bool _canDropPage;
+	bool _canShowMap;
+	bool _canReturnToMenu;
 
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_transitionsCheckbox;
