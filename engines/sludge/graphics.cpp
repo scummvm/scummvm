@@ -87,6 +87,11 @@ void GraphicsManager::init() {
 	// Thumbnail
 	_thumbWidth = 0;
 	_thumbHeight = 0;
+
+	// Transition
+	resetRandW();
+	_brightnessLevel = 255;
+	_fadeMode = 2;
 }
 
 void GraphicsManager::kill() {
@@ -161,6 +166,8 @@ bool GraphicsManager::initGfx() {
 void GraphicsManager::display() {
 	g_system->copyRectToScreen((byte *)_renderSurface.getPixels(), _renderSurface.pitch, 0, 0, _renderSurface.w, _renderSurface.h);
 	g_system->updateScreen();
+	if (_brightnessLevel < 255)
+		fixBrightness();
 }
 
 void GraphicsManager::clear() {

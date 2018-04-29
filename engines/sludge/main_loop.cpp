@@ -39,7 +39,6 @@
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/speech.h"
-#include "sludge/transition.h"
 #include "sludge/timing.h"
 
 namespace Sludge {

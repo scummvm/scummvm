@@ -172,6 +172,9 @@ public:
 
 	// Transition
 	void setBrightnessLevel(int brightnessLevel);
+	void setFadeMode(int fadeMode) { _fadeMode = fadeMode; };
+	void fixBrightness();
+	void resetRandW();
 
 private:
 	SludgeEngine *_vm;
@@ -230,6 +233,7 @@ private:
 
 	// Transition
 	byte _brightnessLevel;
+	byte _fadeMode;
 };
 
 } // End of namespace Sludge

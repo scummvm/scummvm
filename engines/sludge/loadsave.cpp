@@ -61,7 +61,6 @@ extern int numGlobals;                              // In sludger.cpp
 extern Variable *globalVars;                        // In sludger.cpp
 extern Floor *currentFloor;                          // In floor.cpp
 extern FILETIME fileTime;                           // In sludger.cpp
-extern byte fadeMode;                      // In transition.cpp
 extern bool allowAnyFilename;
 
 //----------------------------------------------------------------------
@@ -403,8 +402,6 @@ bool saveGame(const Common::String &fname) {
 	g_sludge->_gfxMan->saveZBuffer(fp);
 	g_sludge->_gfxMan->saveLightMap(fp);
 
-	fp->writeByte(fadeMode);
-
 	g_sludge->_speechMan->save(fp);
 	saveStatusBars(fp);
 	g_sludge->_soundMan->saveSounds(fp);
@@ -539,7 +536,6 @@ bool loadGame(const Common::String &fname) {
 		return false;
 	}
 
-	fadeMode = fp->readByte();
 	g_sludge->_speechMan->load(fp);
 	loadStatusBars(fp);
 	g_sludge->_soundMan->loadSounds(fp);

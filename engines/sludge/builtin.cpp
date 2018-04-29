@@ -65,8 +65,6 @@ extern int numBIFNames, numUserFunc;
 extern Common::String *allUserFunc;
 extern Common::String *allBIFNames;
 
-extern byte fadeMode;
-
 int paramNum[] = { -1, 0, 1, 1, -1, -1, 1, 3, 4, 1, 0, 0, 8, -1,    // SAY->MOVEMOUSE
                    -1, 0, 0, -1, -1, 1, 1, 1, 1, 4, 1, 1, 2, 1,// FOCUS->REMOVEREGION
                    2, 2, 0, 0, 2,                              // ANIMATE->SETSCALE
@@ -2202,7 +2200,7 @@ builtIn(transitionMode) {
 	int n;
 	if (!getValueType(n, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
-	fadeMode = n;
+	g_sludge->_gfxMan->setFadeMode(n);
 	trimStack(fun->stack);
 	setVariable(fun->reg, SVT_INT, 1);
 	return BR_CONTINUE;

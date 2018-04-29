@@ -422,6 +422,7 @@ void GraphicsManager::saveLightMap(Common::WriteStream *stream) {
 		stream->writeByte(0);
 	}
 	stream->writeByte(_lightMapMode);
+	stream->writeByte(_fadeMode);
 }
 
 bool GraphicsManager::loadLightMap(int ssgVersion, Common::SeekableReadStream *stream) {
@@ -433,6 +434,8 @@ bool GraphicsManager::loadLightMap(int ssgVersion, Common::SeekableReadStream *s
 	if (ssgVersion >= VERSION(1, 4)) {
 		_lightMapMode = stream->readByte() % 3;
 	}
+
+	_fadeMode = stream->readByte();
 
 	return true;
 }

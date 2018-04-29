@@ -49,7 +49,6 @@
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/speech.h"
-#include "sludge/transition.h"
 #include "sludge/variable.h"
 #include "sludge/version.h"
 #include "sludge/zbuffer.h"
@@ -69,8 +68,6 @@ int selectedLanguage = 0;
 int gameVersion;
 FILETIME fileTime;
 
-byte brightnessLevel = 255;
-
 extern LoadedFunction *saverFunc;
 
 LoadedFunction *allRunningFunctions = NULL;
@@ -83,7 +80,6 @@ extern Variable *launchResult;
 extern int lastFramesPerSecond;
 
 extern bool allowAnyFilename;
-extern byte fadeMode;
 
 const char *sludgeText[] = { "?????", "RETURN", "BRANCH", "BR_ZERO",
 		"SET_GLOBAL", "SET_LOCAL", "LOAD_GLOBAL", "LOAD_LOCAL", "PLUS", "MINUS",
@@ -152,7 +148,6 @@ void initSludge() {
 	g_sludge->_objMan->init();
 	g_sludge->_speechMan->init();
 	initStatusBar();
-	resetRandW();
 	g_sludge->_evtMan->init();
 	g_sludge->_txtMan->init();
 	g_sludge->_cursorMan->init();
@@ -173,8 +168,6 @@ void initSludge() {
 	noStack = nullptr;
 	numBIFNames = numUserFunc = 0;
 	allUserFunc = allBIFNames = nullptr;
-	brightnessLevel = 255;
-	fadeMode = 2;
 }
 
 void killSludge() {
@@ -340,7 +333,6 @@ void sludgeDisplay() {
 	drawStatusBar();
 	g_sludge->_cursorMan->displayCursor();
 	g_sludge->_gfxMan->display();
-	if (brightnessLevel < 255) fixBrightness();// This is for transitionLevel special effects
 }
 
 void pauseFunction(LoadedFunction *fun) {
