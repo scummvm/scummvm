@@ -338,6 +338,72 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Myst Masterpiece Edition - 25th Anniversary
+	// English Windows
+	// Created by the ScummVM team
+	{
+		{
+			"myst",
+			"Masterpiece Edition - 25th Anniversary",
+			{
+				{"MYST.DAT", 0, "c4cae9f143b5947262e6cb2397e1617e", -1},
+				{"MENU.DAT", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST_ME
+		},
+		GType_MYST,
+		GF_ME | GF_25TH,
+		0,
+	},
+
+	// Myst Masterpiece Edition - 25th Anniversary
+	// French Windows
+	// Created by the ScummVM team
+	{
+		{
+			"myst",
+			"Masterpiece Edition - 25th Anniversary",
+			{
+				{"MYST.DAT", 0, "aea81633b2d2ae498f09072fb87263b6", -1},
+				{"MENU.DAT", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST_ME
+		},
+		GType_MYST,
+		GF_ME | GF_25TH,
+		0,
+	},
+
+	// Myst Masterpiece Edition - 25th Anniversary
+	// German Windows
+	// Created by the ScummVM team
+	{
+		{
+			"myst",
+			"Masterpiece Edition",
+			{
+				{"MYST.DAT", 0, "f88e0ace66dbca78eebdaaa1d3314ceb", -1},
+				{"MENU.DAT", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST_ME
+		},
+		GType_MYST,
+		GF_ME,
+		0,
+	},
+
 	// Riven: The Sequel to Myst
 	// Version 1.0 (5CD)
 	// From clone2727

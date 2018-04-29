@@ -75,7 +75,8 @@ enum MystStack {
 	kSeleniticStack,		// Selenitic Age
 	kDemoSlidesStack,		// Demo Slideshow
 	kDemoPreviewStack,		// Demo Myst Library Preview
-	kStoneshipStack			// Stoneship Age
+	kStoneshipStack,		// Stoneship Age
+	kMenuStack				// Main menu
 };
 
 // Transitions
@@ -190,20 +191,27 @@ public:
 	void tryAutoSaving();
 	bool hasFeature(EngineFeature f) const override;
 
+	void resumeFromMainMenu();
+
+	void runLoadDialog();
+	void runSaveDialog();
+	void runOptionsDialog();
+
 private:
 	MystConsole *_console;
 	MystOptionsDialog *_optionsDialog;
 	ResourceCache _cache;
 
+	MystScriptParserPtr _prevStack;
+
 	MystCardPtr _card;
+	MystCardPtr _prevCard;
 	uint32 _lastSaveTime;
 
 	bool hasGameSaveSupport() const;
 	void pauseEngineIntern(bool pause) override;
 
-	void runLoadDialog();
-	void runSaveDialog();
-	void runOptionsDialog();
+	void goToMainMenu();
 
 	void dropPage();
 

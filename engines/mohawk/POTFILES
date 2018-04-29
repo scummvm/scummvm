@@ -2,6 +2,7 @@ engines/mohawk/detection.cpp
 engines/mohawk/dialogs.cpp
 engines/mohawk/mohawk.cpp
 engines/mohawk/myst.cpp
+engines/mohawk/myst_stacks/menu.cpp
 engines/mohawk/riven.cpp
 engines/mohawk/riven_stack.cpp
 engines/mohawk/riven_stacks/aspit.cpp

@@ -137,7 +137,14 @@ void Intro::introMovies_run() {
 
 void Intro::o_playIntroMovies(uint16 var, const ArgumentsArray &args) {
 	_introMoviesRunning = true;
-	_introStep = 0;
+
+	if (_vm->getFeatures() & GF_25TH) {
+		// In the 25th anniversary version, the Broderbund / Cyan Logo were already shown
+		// before the main menu. No need to play them again here.
+		_introStep = 4;
+	} else {
+		_introStep = 0;
+	}
 }
 
 void Intro::mystLinkBook_run() {

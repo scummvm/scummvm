@@ -65,7 +65,14 @@ bool MystSaveMetadata::sync(Common::Serializer &s) {
 
 const int MystGameState::kAutoSaveSlot = 0;
 
-MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
+MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *saveFileMan) :
+		_vm(vm),
+		_saveFileMan(saveFileMan) {
+
+	reset();
+}
+
+void MystGameState::reset() {
 	// Most of the variables are zero at game start.
 	memset(&_globals, 0, sizeof(_globals));
 	memset(&_myst, 0, sizeof(_myst));
@@ -184,14 +191,14 @@ void MystGameState::loadMetadata(int slot) {
 	delete metadataFile;
 }
 
-bool MystGameState::save(int slot, const Common::String &desc, bool autoSave) {
+bool MystGameState::save(int slot, const Common::String &desc, const Graphics::Surface *thumbnail, bool autoSave) {
 	if (!saveState(slot)) {
 		return false;
 	}
 
 	updateMetadateForSaving(desc, autoSave);
 
-	return saveMetadata(slot);
+	return saveMetadata(slot, thumbnail);
 }
 
 bool MystGameState::saveState(int slot) {
@@ -234,7 +241,7 @@ void MystGameState::updateMetadateForSaving(const Common::String &desc, bool aut
 	_metadata.autoSave = autoSave;
 }
 
-bool MystGameState::saveMetadata(int slot) {
+bool MystGameState::saveMetadata(int slot, const Graphics::Surface *thumbnail) {
 	// Write the metadata to a separate file so that the save files
 	// are still compatible with the original engine
 	Common::String metadataFilename = buildMetadataFilename(slot);
@@ -248,7 +255,11 @@ bool MystGameState::saveMetadata(int slot) {
 	_metadata.sync(m);
 
 	// Append a thumbnail
-	Graphics::saveThumbnail(*metadataFile);
+	if (thumbnail) {
+		Graphics::saveThumbnail(*metadataFile, *thumbnail);
+	} else {
+		Graphics::saveThumbnail(*metadataFile);
+	}
 
 	metadataFile->finalize();
 	delete metadataFile;

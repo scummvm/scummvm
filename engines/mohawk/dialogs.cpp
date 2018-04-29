@@ -98,7 +98,7 @@ MohawkOptionsDialog::MohawkOptionsDialog(MohawkEngine *vm) :
 		_vm(vm), _loadSlot(-1), _saveSlot(-1) {
 	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), nullptr, kLoadCmd);
 	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), nullptr, kSaveCmd);
-	new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), nullptr, kQuitCmd);
+	_quitButton = new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), nullptr, kQuitCmd);
 
 	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), nullptr, GUI::kOKCmd);
 	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), nullptr, GUI::kCloseCmd);
@@ -228,6 +228,13 @@ void MystOptionsDialog::open() {
 
 	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
 	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
+
+	if (_vm->getFeatures() & GF_25TH) {
+		// The 25th anniversary version has a main menu, no need to show these buttons here
+		_loadButton->setVisible(false);
+		_saveButton->setVisible(false);
+		_quitButton->setVisible(false);
+	}
 }
 
 void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {

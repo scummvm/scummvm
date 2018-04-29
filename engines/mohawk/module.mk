@@ -45,6 +45,7 @@ MODULE_OBJS += \
 	myst_stacks/intro.o \
 	myst_stacks/makingof.o \
 	myst_stacks/mechanical.o \
+	myst_stacks/menu.o \
 	myst_stacks/myst.o \
 	myst_stacks/preview.o \
 	myst_stacks/selenitic.o \

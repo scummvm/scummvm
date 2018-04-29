@@ -26,6 +26,7 @@
 #include "mohawk/graphics.h"
 
 #include "common/file.h"
+#include "graphics/font.h"
 
 namespace Mohawk {
 
@@ -58,6 +59,15 @@ public:
 	void setPaletteToScreen();
 	const byte *getPalette() const { return _palette; }
 
+	void saveStateForMainMenu();
+	void restoreStateForMainMenu();
+	Graphics::Surface *getThumbnailForMainMenu() const;
+
+	Common::Rect getTextBoundingBox(const char *text, const Common::Rect &dest, Graphics::TextAlign align);
+	void drawText(uint16 image, const char *text, const Common::Rect &dest, uint8 r, uint8 g, uint8 b, Graphics::TextAlign align, int16 deltaY);
+
+	void replaceImageWithRect(uint16 destImage, uint16 sourceImage, const Common::Rect &sourceRect);
+
 protected:
 	MohawkSurface *decodeImage(uint16 id) override;
 	MohawkEngine *getVM() override { return (MohawkEngine *)_vm; }
@@ -71,6 +81,10 @@ private:
 	Common::Rect _viewport;
 	byte _palette[256 * 3];
 
+	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> _mainMenuBackupScreen;
+	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> _mainMenuBackupScreenThumbnail;
+	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> _mainMenuBackupBackBuffer;
+
 	void transitionDissolve(Common::Rect rect, uint step);
 	void transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16 delay);
 	void transitionSlideToRight(Common::Rect rect, uint16 steps, uint16 delay);
@@ -83,6 +97,10 @@ private:
 	byte getColorIndex(const byte *palette, byte red, byte green, byte blue);
 
 	void applyImagePatches(uint16 id, const MohawkSurface *mhkSurface) const;
+
+	Graphics::Font *_menuFont;
+
+	const Graphics::Font *getMenuFont() const;
 };
 
 } // End of namespace Mohawk

@@ -87,11 +87,12 @@ public:
 	int getSaveSlot() const { return _saveSlot; }
 	Common::String getSaveDescription() const { return _saveDescription; }
 
-private:
+protected:
 	MohawkEngine *_vm;
 
 	GUI::ButtonWidget    *_loadButton;
 	GUI::ButtonWidget    *_saveButton;
+	GUI::ButtonWidget    *_quitButton;
 
 	GUI::SaveLoadChooser *_loadDialog;
 	GUI::SaveLoadChooser *_saveDialog;

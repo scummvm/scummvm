@@ -108,8 +108,9 @@ public:
 	static SaveStateDescriptor querySaveMetaInfos(int slot);
 	static Common::String querySaveDescription(int slot);
 
+	void reset();
 	bool load(int slot);
-	bool save(int slot, const Common::String &desc, bool autoSave);
+	bool save(int slot, const Common::String &desc, const Graphics::Surface *thumbnail, bool autosave);
 	bool isAutoSaveAllowed();
 	static void deleteSave(int slot);
 
@@ -346,7 +347,7 @@ private:
 	void loadMetadata(int slot);
 	bool saveState(int slot);
 	void updateMetadateForSaving(const Common::String &desc, bool autoSave);
-	bool saveMetadata(int slot);
+	bool saveMetadata(int slot, const Graphics::Surface *thumbnail);
 
 	// The values in these regions are lists of VIEW resources
 	// which correspond to visited zip destinations

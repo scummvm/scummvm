@@ -49,6 +49,7 @@
 #include "mohawk/myst_stacks/intro.h"
 #include "mohawk/myst_stacks/makingof.h"
 #include "mohawk/myst_stacks/mechanical.h"
+#include "mohawk/myst_stacks/menu.h"
 #include "mohawk/myst_stacks/myst.h"
 #include "mohawk/myst_stacks/preview.h"
 #include "mohawk/myst_stacks/selenitic.h"
@@ -163,7 +164,8 @@ static const char *mystFiles[] = {
 	"selen.dat",
 	"slides.dat",
 	"sneak.dat",
-	"stone.dat"
+	"stone.dat",
+	"menu.dat"
 };
 
 // Myst Hardcoded Movie Paths
@@ -345,6 +347,11 @@ Common::Error MohawkEngine_Myst::run() {
 	// Cursor is visible by default
 	_cursor->showCursor();
 
+	_mhk.resize(3);
+	_mhk[0] = new MohawkArchive();
+	_mhk[1] = new MohawkArchive();
+	_mhk[2] = new MohawkArchive();
+
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && hasGameSaveSupport()) {
 		int saveSlot = ConfMan.getInt("save_slot");
@@ -356,16 +363,20 @@ Common::Error MohawkEngine_Myst::run() {
 			changeToStack(kMakingOfStack, 1, 0, 0);
 		else if (getFeatures() & GF_DEMO)
 			changeToStack(kDemoStack, 2000, 0, 0);
+		else if (getFeatures() & GF_25TH)
+			changeToStack(kMenuStack, 1, 0, 0);
 		else
 			changeToStack(kIntroStack, 1, 0, 0);
 	}
 
 	// Load Help System (Masterpiece Edition Only)
 	if (getFeatures() & GF_ME) {
-		MohawkArchive *mhk = new MohawkArchive();
-		if (!mhk->openFile("help.dat"))
+		if (!_mhk[1]->openFile("help.dat"))
 			error("Could not load help.dat");
-		_mhk.push_back(mhk);
+	}
+	if (getFeatures() & GF_25TH) {
+		if (!_mhk[2]->openFile("menu.dat"))
+			error("Could not load menu.dat");
 	}
 
 	while (!shouldQuit()) {
@@ -415,7 +426,23 @@ void MohawkEngine_Myst::doFrame() {
 						runOptionsDialog();
 						break;
 					case Common::KEYCODE_ESCAPE:
-						_escapePressed = true;
+						if (_stack->getStackId() == kCreditsStack) {
+							// Don't allow going to the menu while the credits play
+							break;
+						}
+
+						if (!isInteractive()) {
+							// Try to skip the currently playing video
+							_escapePressed = true;
+						} else if (_stack->getStackId() == kMenuStack) {
+							// If the menu is active and a game is loaded, go back to the game
+							if (_prevStack) {
+								resumeFromMainMenu();
+							}
+						} else if (getFeatures() & GF_25TH) {
+							// If the game is interactive, open the main menu
+							goToMainMenu();
+						}
 						break;
 					case Common::KEYCODE_o:
 						if (event.kbd.flags & Common::KBD_CTRL) {
@@ -474,18 +501,40 @@ void MohawkEngine_Myst::doFrame() {
 }
 
 void MohawkEngine_Myst::runOptionsDialog() {
-	_optionsDialog->setCanDropPage(isInteractive() && _gameState->_globals.heldPage != kNoPage);
-	_optionsDialog->setCanShowMap(isInteractive() && _stack->getMap());
-	_optionsDialog->setCanReturnToMenu(isInteractive() && _stack->getStackId() != kDemoStack);
+	bool inMenu = (_stack->getStackId() == kMenuStack) && _prevStack;
+	bool actionsAllowed = inMenu || isInteractive();
+
+	MystScriptParserPtr stack;
+	if (inMenu) {
+		stack = _prevStack;
+	} else {
+		stack = _stack;
+	}
+
+	_optionsDialog->setCanDropPage(actionsAllowed && _gameState->_globals.heldPage != kNoPage);
+	_optionsDialog->setCanShowMap(actionsAllowed && stack->getMap());
+	_optionsDialog->setCanReturnToMenu(actionsAllowed && stack->getStackId() != kDemoStack);
 
 	switch (runDialog(*_optionsDialog)) {
 	case MystOptionsDialog::kActionDropPage:
+		if (inMenu) {
+			resumeFromMainMenu();
+		}
+
 		dropPage();
 		break;
 	case MystOptionsDialog::kActionShowMap:
-		_stack->showMap();
+		if (inMenu) {
+			resumeFromMainMenu();
+		}
+
+		stack->showMap();
 		break;
 	case MystOptionsDialog::kActionGoToMenu:
+		if (inMenu) {
+			resumeFromMainMenu();
+		}
+
 		changeToStack(kDemoStack, 2002, 0, 0);
 		break;
 	case MystOptionsDialog::kActionShowCredits:
@@ -596,6 +645,9 @@ void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 lin
 		_gameState->_globals.currentAge = kMechanical;
 		_stack = MystScriptParserPtr(new MystStacks::Mechanical(this));
 		break;
+	case kMenuStack:
+		_stack = MystScriptParserPtr(new MystStacks::Menu(this));
+		break;
 	case kMystStack:
 		_gameState->_globals.currentAge = kMystLibrary;
 		_stack = MystScriptParserPtr(new MystStacks::Myst(this));
@@ -621,12 +673,8 @@ void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 lin
 
 	// If the array is empty, add a new one. Otherwise, delete the first
 	// entry which is the stack file (the second, if there, is the help file).
-	if (_mhk.empty())
-		_mhk.push_back(new MohawkArchive());
-	else {
-		delete _mhk[0];
-		_mhk[0] = new MohawkArchive();
-	}
+	delete _mhk[0];
+	_mhk[0] = new MohawkArchive();
 
 	if (!_mhk[0]->openFile(mystFiles[stackId]))
 		error("Could not open %s", mystFiles[stackId]);
@@ -745,6 +793,8 @@ MystArea *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream
 }
 
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {
+	tryAutoSaving();
+
 	if (_gameState->load(slot))
 		return Common::kNoError;
 
@@ -752,7 +802,12 @@ Common::Error MohawkEngine_Myst::loadGameState(int slot) {
 }
 
 Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &desc) {
-	return _gameState->save(slot, desc, false) ? Common::kNoError : Common::kUnknownError;
+	const Graphics::Surface *thumbnail = nullptr;
+	if (_stack->getStackId() == kMenuStack) {
+		thumbnail = _gfx->getThumbnailForMainMenu();
+	}
+
+	return _gameState->save(slot, desc, thumbnail, false) ? Common::kNoError : Common::kUnknownError;
 }
 
 void MohawkEngine_Myst::tryAutoSaving() {
@@ -766,7 +821,12 @@ void MohawkEngine_Myst::tryAutoSaving() {
 		return; // Can't autosave ever, try again after the next autosave delay
 	}
 
-	if (!_gameState->save(MystGameState::kAutoSaveSlot, "Autosave", true))
+	const Graphics::Surface *thumbnail = nullptr;
+	if (_stack->getStackId() == kMenuStack) {
+		thumbnail = _gfx->getThumbnailForMainMenu();
+	}
+
+	if (!_gameState->save(MystGameState::kAutoSaveSlot, "Autosave", thumbnail, true))
 		warning("Attempt to autosave has failed.");
 }
 
@@ -779,12 +839,16 @@ bool MohawkEngine_Myst::isInteractive() {
 }
 
 bool MohawkEngine_Myst::canLoadGameStateCurrently() {
-	if (!isInteractive()) {
-		return false;
-	}
+	bool isInMenu = (_stack->getStackId() == kMenuStack) && _prevStack;
 
-	if (_card->isDraggingResource()) {
-		return false;
+	if (!isInMenu) {
+		if (!isInteractive()) {
+			return false;
+		}
+
+		if (_card->isDraggingResource()) {
+			return false;
+		}
 	}
 
 	if (!hasGameSaveSupport()) {
@@ -809,6 +873,8 @@ bool MohawkEngine_Myst::canSaveGameStateCurrently() {
 	case kSeleniticStack:
 	case kStoneshipStack:
 		return true;
+	case kMenuStack:
+		return _prevStack;
 	default:
 		return false;
 	}
@@ -958,6 +1024,50 @@ void MohawkEngine_Myst::applySoundBlock(const MystSoundBlock &block) {
 	} else {
 		error("Unknown sound action %d", soundAction);
 	}
+}
+
+void MohawkEngine_Myst::goToMainMenu() {
+	_waitingOnBlockingOperation = false;
+
+	_prevCard = _card;
+	_prevStack = _stack;
+	_gfx->saveStateForMainMenu();
+
+	MystStacks::Menu *menu = new MystStacks::Menu(this);
+	menu->setInGame(true);
+	menu->setCanSave(canSaveGameStateCurrently());
+
+	_stack = MystScriptParserPtr(menu);
+	_card.reset();
+
+	// Clear the resource cache and the image cache
+	_cache.clear();
+	_gfx->clearCache();
+
+	_card = MystCardPtr(new MystCard(this, 1000));
+	_card->enter();
+
+	_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
+}
+
+void MohawkEngine_Myst::resumeFromMainMenu() {
+	_card->leave();
+	_card.reset();
+
+	_stack = _prevStack;
+	_prevStack.reset();
+
+
+	// Clear the resource cache and image cache
+	_cache.clear();
+	_gfx->clearCache();
+
+	_mouseClicked = false;
+	_mouseMoved = false;
+	_escapePressed = false;
+	_card = _prevCard;
+
+	_prevCard.reset();
 }
 
 } // End of namespace Mohawk
