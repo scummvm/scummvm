@@ -45,8 +45,6 @@ namespace Sludge {
 
 extern VariableStack *noStack;
 
-int dialogValue = 0;
-
 int main_loop(Common::String filename) {
 
 	if (!initSludge(filename)) {

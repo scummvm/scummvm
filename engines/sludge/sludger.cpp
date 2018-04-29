@@ -55,8 +55,6 @@
 
 namespace Sludge {
 
-extern int dialogValue;
-
 int numBIFNames = 0;
 Common::String *allBIFNames;
 int numUserFunc = 0;
@@ -604,8 +602,6 @@ bool continueFunction(LoadedFunction *fun) {
 			break;
 
 		case SLU_UNREG:
-			if (dialogValue != 1)
-				fatal(ERROR_HACKER);
 			break;
 
 		case SLU_LOAD_STRING:
