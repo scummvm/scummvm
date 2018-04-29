@@ -578,7 +578,7 @@ void ScriptOpcodes_Duckman::opPlayVideo(ScriptThread *scriptThread, OpCall &opCa
 	ARG_SKIP(2);
 	ARG_UINT32(objectId);
 	// NOTE This has no attached objectId or priority
-	// TODO _vm->playVideo(videoId, objectId, value, opCall._threadId);
+	_vm->playVideo(0, objectId, 0, opCall._threadId);
 	
 	//DEBUG Resume calling thread, later done by the video player
 	_vm->notifyThreadId(opCall._threadId);

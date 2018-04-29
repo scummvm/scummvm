@@ -45,6 +45,8 @@
 #include "illusions/threads/talkthread.h"
 
 #include "audio/audiostream.h"
+#include "video/video_decoder.h"
+#include "video/avi_decoder.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
@@ -260,7 +262,42 @@ bool IllusionsEngine::calcPointDirection(Common::Point &srcPt, Common::Point &ds
 }
 
 void IllusionsEngine::playVideo(uint32 videoId, uint32 objectId, uint32 priority, uint32 threadId) {
-	// TODO
+	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
+	Common::String filename = Common::String::format("%08X.AVI", objectId);
+	if (!videoDecoder->loadFile(filename)) {
+		delete videoDecoder;
+		warning("Unable to open video %s", filename.c_str());
+		return;
+	}
+
+	videoDecoder->start();
+
+	bool skipVideo = false;
+
+	while (!shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
+		if (videoDecoder->needsUpdate()) {
+			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+			if (videoDecoder->hasDirtyPalette()) {
+				const byte *palette = videoDecoder->getPalette();
+				_system->getPaletteManager()->setPalette(palette, 0, 256);
+			}
+
+			if (frame) {
+				_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
+				_system->updateScreen();
+			}
+		}
+
+		Common::Event event;
+		while (_eventMan->pollEvent(event)) {
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
+				event.type == Common::EVENT_LBUTTONUP)
+				skipVideo = true;
+		}
+	}
+
+	videoDecoder->close();
+	delete videoDecoder;
 }
 
 bool IllusionsEngine::isSoundActive() {
