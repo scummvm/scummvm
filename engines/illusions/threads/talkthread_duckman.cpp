@@ -293,17 +293,6 @@ void TalkThread_Duckman::refreshText() {
 	_textEndTime = _textStartTime + _textDuration;
 }
 
-static char *debugW2I(byte *wstr) {
-	static char buf[65];
-	char *p = buf;
-	while (*wstr != 0) {
-		*p++ = *wstr;
-		wstr += 2;
-	}
-	*p = 0;
-	return buf;
-}
-
 int TalkThread_Duckman::insertText() {
 	debug(0, "%08X %08X [%s]", _threadId, _talkId, debugW2I(_currEntryText));
 	WidthHeight dimensions;

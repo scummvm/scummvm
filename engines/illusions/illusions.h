@@ -44,6 +44,8 @@ struct ADGameDescription;
 
 namespace Illusions {
 
+char *debugW2I(byte *wstr);
+
 #define ILLUSIONS_SAVEGAME_VERSION 0
 
 class ResourceSystem;

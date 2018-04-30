@@ -217,17 +217,6 @@ SceneInfo::~SceneInfo() {
 	delete[] _resources;
 }
 
-char *debugW2I(byte *wstr) {
-	static char buf[65];
-	char *p = buf;
-	while (*wstr != 0) {
-		*p++ = *wstr;
-		wstr += 2;
-	}
-	*p = 0;
-	return buf;
-}
-
 void SceneInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_id = stream.readUint16LE();
 	_unk = stream.readUint16LE();
