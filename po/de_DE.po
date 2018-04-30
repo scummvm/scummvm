@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-29 22:47+0200\n"
+"POT-Creation-Date: 2018-04-30 15:03+0200\n"
 "PO-Revision-Date: 2018-04-16 22:20+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -544,10 +544,11 @@ msgstr ""
 "Möchten Sie wirklich alle FluidSynth-Einstellungen auf ihre Standard-Werte "
 "zurücksetzen?"
 
-#: gui/gui-manager.cpp:119 engines/unknown-game-dialog.cpp:62
-#: backends/keymapper/remap-dialog.cpp:53 engines/scumm/help.cpp:126
-#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
-#: engines/scumm/help.cpp:192 engines/scumm/help.cpp:210
+#: gui/gui-manager.cpp:119 engines/unknown-game-dialog.cpp:73
+#: engines/unknown-game-dialog.cpp:85 backends/keymapper/remap-dialog.cpp:53
+#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
+#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
+#: engines/scumm/help.cpp:210
 msgid "Close"
 msgstr "Schließen"
 
@@ -1989,31 +1990,31 @@ msgstr ""
 msgid "Start anyway"
 msgstr "Trotzdem starten"
 
-#: engines/unknown-game-dialog.cpp:50
+#: engines/unknown-game-dialog.cpp:48
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
 
-#: engines/unknown-game-dialog.cpp:57
+#: engines/unknown-game-dialog.cpp:55
 msgid "You can also directly report your game to the Bug Tracker!"
 msgstr ""
 
-#: engines/unknown-game-dialog.cpp:66
+#: engines/unknown-game-dialog.cpp:74 engines/unknown-game-dialog.cpp:90
 msgid "Copy to clipboard"
 msgstr ""
 
-#: engines/unknown-game-dialog.cpp:81
+#: engines/unknown-game-dialog.cpp:75 engines/unknown-game-dialog.cpp:104
 #, fuzzy
 msgid "Report game"
 msgstr "Spiel laden:"
 
-#: engines/unknown-game-dialog.cpp:187
+#: engines/unknown-game-dialog.cpp:144
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr ""
 
-#: engines/unknown-game-dialog.cpp:189
+#: engines/unknown-game-dialog.cpp:146
 msgid "Copying the game information to the clipboard has failed!"
 msgstr ""
 

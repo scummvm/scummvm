@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-29 22:47+0200\n"
+"POT-Creation-Date: 2018-04-30 15:03+0200\n"
 "PO-Revision-Date: 2018-04-29 21:01+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
-"Language-Team: French "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
+"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -542,10 +542,11 @@ msgstr ""
 "Voulez-vous vraiment remettre tous les réglages FluidSynth à leurs valeurs "
 "par défaut ?"
 
-#: gui/gui-manager.cpp:119 engines/unknown-game-dialog.cpp:62
-#: backends/keymapper/remap-dialog.cpp:53 engines/scumm/help.cpp:126
-#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
-#: engines/scumm/help.cpp:192 engines/scumm/help.cpp:210
+#: gui/gui-manager.cpp:119 engines/unknown-game-dialog.cpp:73
+#: engines/unknown-game-dialog.cpp:85 backends/keymapper/remap-dialog.cpp:53
+#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
+#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
+#: engines/scumm/help.cpp:210
 msgid "Close"
 msgstr "Fermer"
 
@@ -1981,7 +1982,7 @@ msgstr ""
 msgid "Start anyway"
 msgstr "Je comprends"
 
-#: engines/unknown-game-dialog.cpp:50
+#: engines/unknown-game-dialog.cpp:48
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
@@ -1989,29 +1990,29 @@ msgstr ""
 "Utilisez le bouton ci-dessous pour copier les informations requises dans le "
 "presse-papiers."
 
-#: engines/unknown-game-dialog.cpp:57
+#: engines/unknown-game-dialog.cpp:55
 msgid "You can also directly report your game to the Bug Tracker!"
 msgstr ""
 "Vous pouvez également signaler directement votre jeu dans notre Tracker de "
 "Bogues !"
 
-#: engines/unknown-game-dialog.cpp:66
+#: engines/unknown-game-dialog.cpp:74 engines/unknown-game-dialog.cpp:90
 msgid "Copy to clipboard"
 msgstr "Copier Informations"
 
-#: engines/unknown-game-dialog.cpp:81
+#: engines/unknown-game-dialog.cpp:75 engines/unknown-game-dialog.cpp:104
 #, fuzzy
 msgid "Report game"
 msgstr "Charger le jeu :"
 
-#: engines/unknown-game-dialog.cpp:187
+#: engines/unknown-game-dialog.cpp:144
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr ""
 "Toutes les informations nécessaires sur votre jeu ont été copiées dans le "
 "presse-papiers"
 
-#: engines/unknown-game-dialog.cpp:189
+#: engines/unknown-game-dialog.cpp:146
 msgid "Copying the game information to the clipboard has failed!"
 msgstr "La copie des informations du jeu dans le presse-papiers a échouée !"
 
