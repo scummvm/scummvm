@@ -465,15 +465,22 @@ void BaseMenuSystem::update(Control *cursorControl) {
 		handleClick(_activeMenu->_defaultMenuItemIndex, mousePos);
 	} else if (_vm->_input->pollEvent(kEventUp)) {
 		// TODO handleUpKey();
-		if (_hoveredMenuItemIndex > 0) {
-			setMouseCursorToMenuItem(--_hoveredMenuItemIndex);
-			_hoveredMenuItemIndex2 = _hoveredMenuItemIndex;
-			updateActorHoverBackground();
+		if (_hoveredMenuItemIndex == 1) {
+			_hoveredMenuItemIndex = _activeMenu->getMenuItemsCount();
+		} else {
+			_hoveredMenuItemIndex--;
 		}
-
+		setMouseCursorToMenuItem(_hoveredMenuItemIndex);
+		_hoveredMenuItemIndex2 = _hoveredMenuItemIndex;
+		updateActorHoverBackground();
 	} else if (_vm->_input->pollEvent(kEventDown)) {
 		// TODO handleDownKey();
-		setMouseCursorToMenuItem(++_hoveredMenuItemIndex);
+		if (_hoveredMenuItemIndex == _activeMenu->getMenuItemsCount()) {
+			_hoveredMenuItemIndex = 1;
+		} else {
+			_hoveredMenuItemIndex++;
+		}
+		setMouseCursorToMenuItem(_hoveredMenuItemIndex);
 		_hoveredMenuItemIndex2 = _hoveredMenuItemIndex;
 		updateActorHoverBackground();
 	}

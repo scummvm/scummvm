@@ -61,7 +61,7 @@ void GameState::deleteReadStream() {
 }
 
 Common::WriteStream *GameState::newWriteStream() {
-	if (!_writeBufferSize == 0 || !_writeBuffer) {
+	if (_writeBufferSize == 0 || !_writeBuffer) {
 		_writeBufferSize = calcWriteBufferSize();
 		_writeBuffer = (byte*)malloc(_writeBufferSize);
 	}

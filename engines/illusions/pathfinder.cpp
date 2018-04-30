@@ -315,7 +315,8 @@ int PathFinder::calcLineStatus(PathLine &sourceLine, PathLine &destRect, Common:
 		return 2;
 
 	int v15 = sourceDeltaX * delta1, v18 = sourceDeltaY * delta1;
-	int v16, v17;
+	int v16 = 0;
+	int v17 = 0;
 	
 	if ((v15 >= 0 && delta2 >= 0) || (v15 < 0 && delta2 < 0)) {
 		v16 = delta2 / 2;
