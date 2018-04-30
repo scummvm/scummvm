@@ -27,11 +27,11 @@
 
 namespace Illusions {
 
-class ActorType;
+struct ActorType;
 class Control;
 class FontResource;
-class Sequence;
-class TalkEntry;
+struct Sequence;
+struct TalkEntry;
 
 template<class T>
 class DictionaryHashMap {

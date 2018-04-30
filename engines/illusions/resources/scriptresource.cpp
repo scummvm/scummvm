@@ -295,7 +295,7 @@ void ScriptResource::load(Resource *resource) {
 
 	Common::MemoryReadStream stream(_data, _dataSize, DisposeAfterUse::NO);
 	
-	uint32 objectMapOffs, sceneInfosOffs;
+	uint32 objectMapOffs = 0, sceneInfosOffs = 0;
 	_objectMapCount = 0;
 	
 	if (resource->_gameId == kGameIdBBDOU) {
@@ -322,7 +322,7 @@ void ScriptResource::load(Resource *resource) {
 	uint32 propertiesOffs = stream.readUint32LE();
 	uint32 blockCountersOffs = stream.readUint32LE();
 	if (resource->_gameId == kGameIdDuckman)
-		objectMapOffs = stream.readUint32LE();
+		objectMapOffs = stream.readUint32LE(); //TODO Is this needed for BBDOU?
 	uint32 codeTblOffs = stream.readUint32LE();
 	
 	debug(2, "ScriptResource::load() propertiesCount: %d; blockCountersCount: %d; _codeCount: %d; _sceneInfosCount: %d; _objectMapCount: %d",

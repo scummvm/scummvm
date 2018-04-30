@@ -32,7 +32,7 @@ namespace Illusions {
 class IllusionsEngine_BBDOU;
 class BbdouSpecialCode;
 class Control;
-class TriggerFunction;
+struct TriggerFunction;
 
 struct InventoryItem {
 	uint32 _objectId;
