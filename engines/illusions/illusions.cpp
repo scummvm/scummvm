@@ -61,6 +61,19 @@
 
 namespace Illusions {
 
+char *debugW2I(byte *wstr) {
+	static char buf[65];
+	char *p = buf;
+	int i = 0;
+	while (*wstr != 0 && i < sizeof(buf) - 1) {
+		*p++ = *wstr;
+		wstr += 2;
+		i++;
+	}
+	*p = 0;
+	return buf;
+}
+
 IllusionsEngine::IllusionsEngine(OSystem *syst, const IllusionsGameDescription *gd) :
 	Engine(syst), _gameDescription(gd) {
 	
