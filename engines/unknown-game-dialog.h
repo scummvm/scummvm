@@ -21,11 +21,6 @@
  */
 
 #include "gui/dialog.h"
-#include "common/array.h"
-
-namespace GUI {
-	class StaticTextWidget;
-}
 
 class UnknownGameDialog : public GUI::Dialog {
 public:
@@ -39,6 +34,4 @@ private:
 	Common::String _reportTranslated;
 	Common::String _bugtrackerGameData;
 	Common::String _bugtrackerAffectedEngine;
-
-	Common::Array<GUI::StaticTextWidget*> _textWidgets;
 };
