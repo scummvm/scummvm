@@ -25,8 +25,6 @@
 
 namespace GUI {
 	class StaticTextWidget;
-	class ScrollContainerWidget;
-	class ButtonWidget;
 }
 
 class UnknownGameDialog : public GUI::Dialog {
@@ -36,18 +34,11 @@ public:
 	virtual Common::String generateBugtrackerURL();
 	virtual void reflowLayout();
 
-protected:
-	void rebuild();
-
 private:
 	Common::String _reportData;
 	Common::String _reportTranslated;
 	Common::String _bugtrackerGameData;
 	Common::String _bugtrackerAffectedEngine;
 
-	GUI::ScrollContainerWidget *_textContainer;
 	Common::Array<GUI::StaticTextWidget*> _textWidgets;
-	GUI::ButtonWidget* _openBugTrackerUrlButton;
-	GUI::ButtonWidget* _copyToClipboardButton;
-	GUI::ButtonWidget* _closeButton;
 };
