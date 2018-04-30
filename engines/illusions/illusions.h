@@ -53,10 +53,8 @@ class BaseResourceReader;
 
 struct SurfInfo;
 
-class ActorItem;
 class ActorInstanceList;
-class ActorType;
-class BackgroundItem;
+struct ActorType;
 class BackgroundInstanceList;
 class BackgroundResource;
 class Camera;
@@ -72,7 +70,7 @@ class ScreenText;
 class ScriptOpcodes;
 class ScriptResource;
 class ScriptStack;
-class Sequence;
+struct Sequence;
 class SoundMan;
 class SpecialCode;
 class TalkInstanceList;
