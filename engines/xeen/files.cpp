@@ -488,8 +488,10 @@ void SaveArchive::load(Common::SeekableReadStream &stream) {
 	_data = new byte[_dataSize];
 	stream.seek(0);
 	stream.read(_data, _dataSize);
+}
 
-	// Load in the character stats and active party
+void SaveArchive::loadParty() {
+	// Load in the character roster and active party
 	Common::SeekableReadStream *chr = createReadStreamForMember("maze.chr");
 	Common::Serializer sChr(chr, nullptr);
 	_party->_roster.synchronize(sChr);

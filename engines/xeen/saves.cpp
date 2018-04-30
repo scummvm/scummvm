@@ -177,9 +177,13 @@ Common::Error SavesManager::loadGameState(int slot) {
 		uint fileSize = saveFile->readUint32LE();
 
 		if (archives[idx]) {
-			Common::SeekableSubReadStream arcStream(saveFile, saveFile->pos(),
-				saveFile->pos() + fileSize);
-			archives[idx]->load(arcStream);
+			if (fileSize) {
+				Common::SeekableSubReadStream arcStream(saveFile, saveFile->pos(),
+					saveFile->pos() + fileSize);
+				archives[idx]->load(arcStream);
+			} else {
+				archives[idx]->reset((idx == 1) ? File::_darkCc : File::_xeenCc);
+			}
 		} else {
 			assert(!fileSize);
 		}
@@ -187,6 +191,9 @@ Common::Error SavesManager::loadGameState(int slot) {
 
 	// Read in miscellaneous
 	files.load(*saveFile);
+
+	// Load the character roster and party
+	File::_currentSave->loadParty();
 
 	// Reset any combat information from the previous game
 	combat.reset();
@@ -227,6 +234,9 @@ void SavesManager::newGame() {
 	File::_currentSave = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
 		File::_darkSave : File::_xeenSave;
 	assert(File::_currentSave);
+
+	// Load the character roster and party
+	File::_currentSave->loadParty();
 
 	// Set any final initial values
 	Party &party = *g_vm->_party;
