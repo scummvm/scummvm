@@ -1469,10 +1469,10 @@ bool Scripts::cmdFlipWorld(ParamsIterator &params) {
 
 bool Scripts::cmdPlayCD(ParamsIterator &params) {
 	int trackNum = params.readByte();
-	int start = params.readUint16LE();
-	int finish = params.readUint16LE();
+	int start = params.readUint16LE() * 60 / 75;
+	int finish = params.readUint16LE() * 60 / 75;
 
-	g_system->getAudioCDManager()->play(trackNum, 1, start, finish);
+	g_system->getAudioCDManager()->play(trackNum, 1, start, finish - start);
 	return true;
 }
 

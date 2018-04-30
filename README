@@ -926,6 +926,26 @@ is simpler and more straightforward than moving around using the menu.
 
 3.15 Might and Magic Xeen games notes:
 --------------------------------------
+To properly plan the World of Xeen CD Talkie using original discs,
+use LAME or some other MP3 encoder to rip the cd audio tracks to files.
+Name the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with
+MAD support to use this option. You will need to rip the file from the
+CD as a WAV file, then encode the MP3 files in constant bit rate. This
+can be done with the following LAME command line:
+
+  lame -t -q 0 -b 96 track1.wav track1.mp3
+
+For the GOG Might and Magic 4-5 installation, install the game to your
+computer, and do the following steps:
+* The game1.ogg file from the game folder is a CD ISO. Use software like
+Virtual CloneDrive to mount it as a drive.
+* Copy all the .cc files from the subfolder in the mounted drive to a new
+empty game folder that you create for the game.
+* Copy all the music/*.ogg files from the GOG installation to your game
+folder. You'll then need to rename all of them from xeen??.ogg to track??.ogg
+* You should then be able to point ScummVM to this new game folder, and the
+CD talkie version should be detected.
+
 Savegames from either Clouds or Darkside of Xeen games can be transferred
 across to World of Xeen (that combines both games) simply by setting up
 and detecting World of Xeen (either by manually combining the two games
