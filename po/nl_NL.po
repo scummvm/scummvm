@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-29 22:47+0200\n"
-"PO-Revision-Date: 2018-04-30 13:00+0000\n"
+"PO-Revision-Date: 2018-04-30 13:02+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
@@ -1929,7 +1929,7 @@ msgstr ""
 "U lijkt het spel direct van CD the spelen.\n"
 "Hiervan is bekend dat dit problemen veroorzaakt.\n"
 "Het wordt daarom aangeraden om de data\n"
-"bestanden naar uw harddisk te kopieren.\n"
+"bestanden naar uw harddisk te kopiëren.\n"
 "Voor details kijk in de README."
 
 #: engines/engine.cpp:450
@@ -1976,7 +1976,7 @@ msgid ""
 "clipboard."
 msgstr ""
 "Gebruik de onderstaande knop om de benodigde spelinformatie naar het "
-"clipboard te kopieren."
+"clipboard te kopiëren."
 
 #: engines/unknown-game-dialog.cpp:57
 msgid "You can also directly report your game to the Bug Tracker!"
@@ -1998,7 +1998,7 @@ msgstr ""
 
 #: engines/unknown-game-dialog.cpp:189
 msgid "Copying the game information to the clipboard has failed!"
-msgstr "Kopieren van de spelinformatie naar het clipboard is mislukt!"
+msgstr "Kopiëren van de spelinformatie naar het clipboard is mislukt!"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
