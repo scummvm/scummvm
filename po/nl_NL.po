@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-29 22:47+0200\n"
-"PO-Revision-Date: 2018-04-18 09:57+0000\n"
-"Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
-"Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/nl/>\n"
+"PO-Revision-Date: 2018-04-30 13:00+0000\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"Language-Team: Dutch "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1975,28 +1975,30 @@ msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
+"Gebruik de onderstaande knop om de benodigde spelinformatie naar het "
+"clipboard te kopieren."
 
 #: engines/unknown-game-dialog.cpp:57
 msgid "You can also directly report your game to the Bug Tracker!"
-msgstr ""
+msgstr "Je kan ook direct je spel in Bug Tracker rapporteren!"
 
 #: engines/unknown-game-dialog.cpp:66
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Kopiëer naar clipboard"
 
 #: engines/unknown-game-dialog.cpp:81
-#, fuzzy
 msgid "Report game"
-msgstr "Laad opgeslagen spel:"
+msgstr "Rapporteer  spel"
 
 #: engines/unknown-game-dialog.cpp:187
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr ""
+"Alle benodigde informatie van jouw spel is naar het clipboard gekopiëerd"
 
 #: engines/unknown-game-dialog.cpp:189
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "Kopieren van de spelinformatie naar het clipboard is mislukt!"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
