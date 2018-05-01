@@ -916,8 +916,7 @@ void Interpreter::O_ADDFLAG() {
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) + value);
 	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
-	}
-	else {
+	} else {
 		_result = 0;
 	}
 	debugInterpreter("O_ADDFLAG flagId %04x (%s), value %d", flagId, Flags::getFlagName(flagId), value);
@@ -936,8 +935,7 @@ void Interpreter::O_SUBFLAG() {
 	_flags->setFlagValue(flagId, _flags->getFlagValue(flagId) - value);
 	if (_flags->getFlagValue(flagId)) {
 		_result = 1;
-	}
-	else {
+	} else {
 		_result = 0;
 	}
 	debugInterpreter("O_SUBFLAG flagId %d, value %d", flagId, value);
@@ -949,8 +947,7 @@ void Interpreter::O_SETSTRING() {
 	if (offset >= 80000) {
 		_string = _vm->_variaTxt->getString(offset - 80000);
 		debugInterpreter("GetVaria %s", _string);
-	}
-	else if (offset < 2000) {
+	} else if (offset < 2000) {
 		_vm->_dialogData = &_vm->_dialogDat[offset * 4 - 4];
 		uint32 of = READ_LE_UINT32(_vm->_talkTxt + offset * 4);
 		const char *txt = (const char *)&_vm->_talkTxt[of];

@@ -464,8 +464,7 @@ void PrinceEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 	if (pause) {
 		_midiPlayer->pause();
-	}
-	else {
+	} else {
 		_midiPlayer->resume();
 	}
 }
