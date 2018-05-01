@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-30 15:03+0200\n"
+"POT-Creation-Date: 2018-05-01 10:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1742,6 +1742,15 @@ msgstr ""
 
 #: common/updates.cpp:64
 msgid "<Bad value>"
+msgstr ""
+
+#: engines/advancedDetector.cpp:331
+#, c-format
+msgid ""
+"The game in '%s' seems to be an unknown %s engine game variant.\n"
+"\n"
+"Please report the following data to the ScummVM team at %s along with the "
+"name of the game you tried to add and its version, language, etc.:"
 msgstr ""
 
 #: engines/advancedDetector.cpp:343
