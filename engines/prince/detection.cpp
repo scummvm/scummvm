@@ -21,8 +21,14 @@
  */
 
 #include "prince/prince.h"
+#include "engines/advancedDetector.h"
 
 namespace Prince {
+
+struct PrinceGameDescription {
+	ADGameDescription desc;
+	PrinceGameType gameType;
+};
 
 int PrinceEngine::getGameType() const {
 	return _gameDescription->gameType;

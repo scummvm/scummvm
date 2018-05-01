@@ -38,7 +38,6 @@
 
 #include "gui/debugger.h"
 
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "engines/util.h"
 
@@ -58,14 +57,10 @@ enum PrinceGameType {
 	kPrinceDataPL
 };
 
-struct PrinceGameDescription {
-	ADGameDescription desc;
-	PrinceGameType gameType;
-};
-
 struct SavegameHeader;
 
 class PrinceEngine;
+struct PrinceGameDescription;
 class GraphicsMan;
 class Script;
 class Interpreter;
