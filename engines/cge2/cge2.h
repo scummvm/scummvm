@@ -32,11 +32,12 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "engines/engine.h"
-#include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "cge2/fileio.h"
 #include "cge2/console.h"
 #include "audio/mixer.h"
+
+struct ADGameDescription;
 
 namespace CGE2 {
 
