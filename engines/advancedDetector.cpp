@@ -328,10 +328,10 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 }
 
 void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps, const ADGameIdList &matchedGameIds, bool useUnknownGameDialog) const {
-	const char *reportCommon = "The game in '%s' seems to be an unknown %s engine game "
+	const char *reportCommon = _s("The game in '%s' seems to be an unknown %s engine game "
 							   "variant.\n\nPlease report the following data to the ScummVM "
 							   "team at %s along with the name of the game you tried to add and "
-							   "its version, language, etc.:";
+							   "its version, language, etc.:");
 	Common::String report           = Common::String::format(reportCommon, path.getPath().c_str(), getName(), "https://bugs.scummvm.org/");
 	Common::String reportTranslated = Common::String::format(_(reportCommon), path.getPath().c_str(), getName(), "https://bugs.scummvm.org/");
 	Common::String bugtrackerAffectedEngine = getName();
