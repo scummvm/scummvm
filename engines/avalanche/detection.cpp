@@ -35,12 +35,20 @@
 
 namespace Avalanche {
 
+struct AvalancheGameDescription {
+	ADGameDescription desc;
+};
+
 uint32 AvalancheEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
 
 const char *AvalancheEngine::getGameId() const {
 	return _gameDescription->desc.gameId;
+}
+
+Common::Platform AvalancheEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
 }
 
 static const PlainGameDescriptor avalancheGames[] = {
