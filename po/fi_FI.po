@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-05-01 12:49+0200\n"
-"PO-Revision-Date: 2018-05-01 12:02+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2018-05-01 12:03+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -1986,25 +1986,24 @@ msgstr ""
 
 #: engines/unknown-game-dialog.cpp:55
 msgid "You can also directly report your game to the Bug Tracker!"
-msgstr ""
+msgstr "Voit myös ilmoittaa pelisi suoraan Bug Trackeriin!"
 
 #: engines/unknown-game-dialog.cpp:74 engines/unknown-game-dialog.cpp:90
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Kopioi leikepöydälle"
 
 #: engines/unknown-game-dialog.cpp:75 engines/unknown-game-dialog.cpp:104
-#, fuzzy
 msgid "Report game"
-msgstr "Lataa pelitallenne:"
+msgstr "Tee ilmoitus pelistä"
 
 #: engines/unknown-game-dialog.cpp:144
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "Tarpeelliset tiedot pelistäsi on kopioitu leikepöydälle"
 
 #: engines/unknown-game-dialog.cpp:146
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "Pelin tietojen kopiointi leikepöydälle epäonnistui!"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
