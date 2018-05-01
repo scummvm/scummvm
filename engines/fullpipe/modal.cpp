@@ -36,7 +36,6 @@
 #include "graphics/surface.h"
 
 #include "engines/savestate.h"
-#include "engines/advancedDetector.h"
 
 namespace Fullpipe {
 
