@@ -829,6 +829,12 @@ begin_credits("Credits");
 				add_person("Tobia Tesan", "t0by", "");
 			end_section();
 
+			begin_section("Xeen");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("David Goldsmith", "WizardStan", "(analysis)");
+				add_person("Matt Taylor", "", "(analysis)");
+			end_section();
+
 			begin_section("Z-Vision");
 				add_person("Adrian Astley", "RichieSams", "");
 				add_person("Filippos Karapetis", "[md5]", "");
