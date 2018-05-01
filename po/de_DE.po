@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-01 10:34+0200\n"
+"POT-Creation-Date: 2018-05-01 12:49+0200\n"
 "PO-Revision-Date: 2018-05-01 07:22+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -1862,7 +1862,7 @@ msgstr "Zur Spiele~l~iste"
 
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:761
 #: engines/avalanche/parser.cpp:1900 engines/cge/events.cpp:72
-#: engines/cge2/events.cpp:65 engines/cine/various.cpp:348
+#: engines/cge2/events.cpp:64 engines/cine/various.cpp:348
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
@@ -1882,7 +1882,7 @@ msgstr "Speichern:"
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/agi/saveload.cpp:761 engines/avalanche/parser.cpp:1900
-#: engines/cge/events.cpp:72 engines/cge2/events.cpp:65
+#: engines/cge/events.cpp:72 engines/cge2/events.cpp:64
 #: engines/cine/various.cpp:348 engines/cruise/menu.cpp:212
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
@@ -2957,7 +2957,7 @@ msgstr ""
 "SCI) anstelle einer Eingabe in Echtzeit."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
-#: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
+#: engines/cge/events.cpp:83 engines/cge2/events.cpp:75
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
@@ -2971,7 +2971,7 @@ msgid "Restore game:"
 msgstr "Spiel laden:"
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
-#: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
+#: engines/cge/events.cpp:83 engines/cge2/events.cpp:75
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
@@ -4695,20 +4695,20 @@ msgstr "Spielstand #%d geladen"
 msgid "Could not quick load the saved game #%d"
 msgstr "Schnellladen des Spielstandes #%d nicht möglich"
 
-#: engines/wintermute/detection.cpp:58
+#: engines/wintermute/detection.cpp:59
 msgid "Show FPS-counter"
 msgstr "FPS-Zähler anzeigen"
 
-#: engines/wintermute/detection.cpp:59
+#: engines/wintermute/detection.cpp:60
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr ""
 "Zeige die aktuelle Anzahl von Bildern pro Sekunde in der oberen linken Ecke"
 
-#: engines/wintermute/detection.cpp:68
+#: engines/wintermute/detection.cpp:69
 msgid "Sprite bilinear filtering (SLOW)"
 msgstr "Bilineare Filterung für Sprites (LANGSAM)"
 
-#: engines/wintermute/detection.cpp:69
+#: engines/wintermute/detection.cpp:70
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Bilineare Filterung auf einzelne Sprites anwenden"
 
