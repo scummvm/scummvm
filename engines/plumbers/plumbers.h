@@ -25,7 +25,6 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
 #include "common/error.h"
 #include "engines/engine.h"
 
@@ -43,6 +42,8 @@
 #include "image/bmp.h"
 
 #include "plumbers/console.h"
+
+struct ADGameDescription;
 
 namespace Plumbers {
 enum PlumbersDebugChannels {
