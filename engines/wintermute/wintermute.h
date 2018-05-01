@@ -24,9 +24,8 @@
 #define WINTERMUTE_WINTERMUTE_H
 
 #include "engines/engine.h"
-#include "engines/advancedDetector.h"
 #include "gui/debugger.h"
-#include "engines/wintermute/game_description.h"
+#include "common/fs.h"
 
 namespace Wintermute {
 
@@ -34,6 +33,7 @@ class Console;
 class BaseGame;
 class SystemClassRegistry;
 class DebuggerController;
+struct WMEGameDescription;
 
 // our engine debug channels
 enum {

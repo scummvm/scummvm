@@ -33,6 +33,7 @@
 #include "engines/util.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/game_description.h"
 #include "engines/wintermute/debugger.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_engine.h"

@@ -24,24 +24,9 @@
 #define WINTERMUTE_GAME_DESCRIPTION_H
 
 #include "engines/advancedDetector.h"
+#include "engines/wintermute/base/base_engine.h"
 
 namespace Wintermute {
-
-enum WMETargetExecutable {
-	OLDEST_VERSION,
-	WME_1_0_0,
-	WME_1_1_0,
-	WME_1_2_0,
-	WME_1_3_0,
-	WME_1_4_0,
-	WME_1_5_0,
-	WME_1_6_0,
-	WME_1_7_0,
-	WME_1_8_0,
-	WME_1_8_6,
-	WME_1_9_0,
-	LATEST_VERSION
-};
 
 struct WMEGameDescription {
 	ADGameDescription adDesc;

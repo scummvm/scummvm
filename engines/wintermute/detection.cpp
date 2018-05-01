@@ -22,6 +22,7 @@
 
 #include "engines/advancedDetector.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/game_description.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
 #include "common/config-manager.h"
