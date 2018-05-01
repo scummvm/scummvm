@@ -623,11 +623,11 @@ void ScriptOpcodes_Duckman::opStopSound(ScriptThread *scriptThread, OpCall &opCa
 void ScriptOpcodes_Duckman::opStartMidiMusic(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(musicId);
-	// TODO _vm->playMidiMusic(musicId);
+	_vm->_soundMan->playMidiMusic(musicId);
 }
 
 void ScriptOpcodes_Duckman::opStopMidiMusic(ScriptThread *scriptThread, OpCall &opCall) {
-	// TODO _vm->stopMidiMusic();
+	_vm->_soundMan->stopMidiMusic();
 }
 
 void ScriptOpcodes_Duckman::opFadeMidiMusic(ScriptThread *scriptThread, OpCall &opCall) {

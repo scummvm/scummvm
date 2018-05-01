@@ -22,6 +22,7 @@
 
 #include "illusions/illusions.h"
 #include "illusions/sound.h"
+#include "audio/midiparser.h"
 
 namespace Illusions {
 
@@ -70,6 +71,85 @@ void MusicPlayer::stop() {
 
 bool MusicPlayer::isPlaying() {
 	return (_flags & 1) && (_flags & 2) && g_system->getMixer()->isSoundHandleActive(_soundHandle);
+}
+
+// MidiPlayer
+
+MidiPlayer::MidiPlayer() {
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = MidiDriver::createMidi(dev);
+	assert(_driver);
+	_paused = false;
+
+
+	int ret = _driver->open();
+	if (ret == 0) {
+		_driver->sendGMReset();
+
+		_driver->setTimerCallback(this, &timerCallback);
+	}
+}
+
+void MidiPlayer::play(const Common::String &filename) {
+	Common::StackLock lock(_mutex);
+
+	stop();
+
+	Common::File *fd = new Common::File();
+	if (!fd->open(filename)) {
+		delete fd;
+		error("MidiPlayer::play() Could not load %s", filename.c_str());
+	}
+
+	uint32 size = (uint32)fd->size();
+	_midiData = (uint8 *)malloc(size);
+
+	if (_midiData) {
+		fd->read(_midiData, size);
+
+		syncVolume();	// FIXME: syncVolume calls setVolume which in turn also locks the mutex! ugh
+
+		_parser = MidiParser::createParser_SMF();
+		_parser->loadMusic(_midiData, size);
+		_parser->setTrack(0);
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
+		_isLooping = false;
+		_isPlaying = true;
+	}
+	fd->close();
+	delete fd;
+}
+
+void MidiPlayer::pause(bool p) {
+	_paused = p;
+
+	for (int i = 0; i < kNumChannels; ++i) {
+		if (_channelsTable[i]) {
+			_channelsTable[i]->volume(_paused ? 0 : _channelsVolume[i] * _masterVolume / 255);
+		}
+	}
+}
+
+void MidiPlayer::onTimer() {
+	Common::StackLock lock(_mutex);
+
+	if (!_paused && _isPlaying && _parser) {
+		_parser->onTimer();
+	}
+}
+
+void MidiPlayer::sendToChannel(byte channel, uint32 b) {
+	if (!_channelsTable[channel]) {
+		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		// If a new channel is allocated during the playback, make sure
+		// its volume is correctly initialized.
+		if (_channelsTable[channel])
+			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
+	}
+
+	if (_channelsTable[channel])
+		_channelsTable[channel]->send(b);
 }
 
 // VoicePlayer
@@ -175,11 +255,13 @@ bool Sound::isPlaying() {
 SoundMan::SoundMan(IllusionsEngine *vm)
 	: _vm(vm), _musicNotifyThreadId(0) {
 	_musicPlayer = new MusicPlayer();
+	_midiPlayer = new MidiPlayer();
 	_voicePlayer = new VoicePlayer();
 }
 
 SoundMan::~SoundMan() {
 	delete _musicPlayer;
+	delete _midiPlayer;
 	delete _voicePlayer;
 	unloadSounds(0);
 }
@@ -262,6 +344,15 @@ Sound *SoundMan::getSound(uint32 soundEffectId) {
 		if ((*it)->_soundEffectId == soundEffectId)
 			return *it;
 	return 0;
+}
+
+void SoundMan::playMidiMusic(uint32 musicId) {
+	Common::String filename = Common::String::format("%08x.MID", musicId);
+	_midiPlayer->play(filename);
+}
+
+void SoundMan::stopMidiMusic() {
+	_midiPlayer->stop();
 }
 
 } // End of namespace Illusions
