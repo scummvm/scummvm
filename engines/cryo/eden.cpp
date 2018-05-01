@@ -26,7 +26,6 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
-#include "gui/EventRecorder.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/fs.h"
