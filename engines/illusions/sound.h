@@ -25,6 +25,7 @@
 
 #include "illusions/graphics.h"
 #include "audio/audiostream.h"
+#include "audio/midiplayer.h"
 #include "audio/mixer.h"
 #include "audio/decoders/wave.h"
 #include "common/list.h"
@@ -44,6 +45,27 @@ protected:
 	Audio::SoundHandle _soundHandle;
 	uint32 _musicId;
 	uint _flags;
+};
+
+class MidiPlayer : public Audio::MidiPlayer {
+public:
+	MidiPlayer();
+
+	void pause(bool p);
+	void play(const Common::String &filename);
+
+	// The following line prevents compiler warnings about hiding the pause()
+	// method from the parent class.
+	// FIXME: Maybe the pause(bool p) method should be removed and the
+	// pause/resume methods of the parent class be used instead?
+	virtual void pause() { Audio::MidiPlayer::pause(); }
+
+	// Overload Audio::MidiPlayer method
+	virtual void sendToChannel(byte channel, uint32 b);
+	virtual void onTimer();
+
+private:
+	bool _paused;
 };
 
 class VoicePlayer {
@@ -90,6 +112,9 @@ public:
 	void playMusic(uint32 musicId, int16 type, int16 volume, int16 pan, uint32 notifyThreadId);
 	void stopMusic();
 
+	void playMidiMusic(uint32 musicId);
+	void stopMidiMusic();
+
 	bool cueVoice(const char *voiceName);
 	void stopCueingVoice();
 	void startVoice(int16 volume, int16 pan);
@@ -109,6 +134,7 @@ protected:
 	IllusionsEngine *_vm;
 	uint32 _musicNotifyThreadId;
 	MusicPlayer *_musicPlayer;
+	MidiPlayer *_midiPlayer;
 	VoicePlayer *_voicePlayer;
 	SoundList _sounds;
 	Sound *getSound(uint32 soundEffectId);
