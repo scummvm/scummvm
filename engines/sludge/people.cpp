@@ -39,7 +39,6 @@
 #include "sludge/version.h"
 #include "sludge/zbuffer.h"
 
-#define ANGLEFIX (180.0 / 3.14157)
 #define ANI_STAND 0
 #define ANI_WALK 1
 #define ANI_TALK 2
@@ -48,7 +47,6 @@ namespace Sludge {
 
 extern VariableStack *noStack;
 extern int ssgVersion;
-extern Floor *currentFloor;
 
 PersonaAnimation::PersonaAnimation() {
 	theSprites = nullptr;
@@ -559,110 +557,6 @@ void PeopleManager::drawPeople() {
 	}
 }
 
-bool PeopleManager::handleClosestPoint(int &setX, int &setY, int &setPoly) {
-	int gotX = 320, gotY = 200, gotPoly = -1, i, j, xTest1, yTest1, xTest2, yTest2, closestX, closestY, oldJ, currentDistance = 0xFFFFF, thisDistance;
-
-	for (i = 0; i < currentFloor->numPolygons; i++) {
-		oldJ = currentFloor->polygon[i].numVertices - 1;
-		for (j = 0; j < currentFloor->polygon[i].numVertices; j++) {
-			xTest1 = currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].x;
-			yTest1 = currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].y;
-			xTest2 = currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].x;
-			yTest2 = currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].y;
-			closestPointOnLine(closestX, closestY, xTest1, yTest1, xTest2, yTest2, setX, setY);
-			xTest1 = setX - closestX;
-			yTest1 = setY - closestY;
-			thisDistance = xTest1 * xTest1 + yTest1 * yTest1;
-
-			if (thisDistance < currentDistance) {
-				currentDistance = thisDistance;
-				gotX = closestX;
-				gotY = closestY;
-				gotPoly = i;
-			}
-			oldJ = j;
-		}
-	}
-
-	if (gotPoly == -1)
-		return false;
-	setX = gotX;
-	setY = gotY;
-	setPoly = gotPoly;
-
-	return true;
-}
-
-bool PeopleManager::doBorderStuff(OnScreenPerson *moveMe) {
-	if (moveMe->inPoly == moveMe->walkToPoly) {
-		moveMe->inPoly = -1;
-		moveMe->thisStepX = moveMe->walkToX;
-		moveMe->thisStepY = moveMe->walkToY;
-	} else {
-		// The section in which we need to be next...
-		int newPoly = currentFloor->matrix[moveMe->inPoly][moveMe->walkToPoly];
-		if (newPoly == -1)
-			return false;
-
-		// Grab the index of the second matching corner...
-		int ID, ID2;
-		if (!getMatchingCorners(currentFloor->polygon[moveMe->inPoly], currentFloor->polygon[newPoly], ID, ID2))
-			return fatal("Not a valid floor plan!");
-
-		// Remember that we're walking to the new polygon...
-		moveMe->inPoly = newPoly;
-
-		// Calculate the destination position on the coincidantal line...
-		int x1 = moveMe->x, y1 = moveMe->y;
-		int x2 = moveMe->walkToX, y2 = moveMe->walkToY;
-		int x3 = currentFloor->vertex[ID].x, y3 = currentFloor->vertex[ID].y;
-		int x4 = currentFloor->vertex[ID2].x, y4 = currentFloor->vertex[ID2].y;
-
-		int xAB = x1 - x2;
-		int yAB = y1 - y2;
-		int xCD = x4 - x3;
-		int yCD = y4 - y3;
-
-		double m = (yAB * (x3 - x1) - xAB * (y3 - y1));
-		m /= ((xAB * yCD) - (yAB * xCD));
-
-		if (m > 0 && m < 1) {
-			moveMe->thisStepX = x3 + m * xCD;
-			moveMe->thisStepY = y3 + m * yCD;
-		} else {
-			int dx13 = x1 - x3, dx14 = x1 - x4, dx23 = x2 - x3, dx24 = x2 - x4;
-			int dy13 = y1 - y3, dy14 = y1 - y4, dy23 = y2 - y3, dy24 = y2 - y4;
-
-			dx13 *= dx13;
-			dx14 *= dx14;
-			dx23 *= dx23;
-			dx24 *= dx24;
-			dy13 *= dy13;
-			dy14 *= dy14;
-			dy23 *= dy23;
-			dy24 *= dy24;
-
-			if (sqrt((double)dx13 + dy13) + sqrt((double)dx23 + dy23) < sqrt((double)dx14 + dy14) + sqrt((double)dx24 + dy24)) {
-				moveMe->thisStepX = x3;
-				moveMe->thisStepY = y3;
-			} else {
-				moveMe->thisStepX = x4;
-				moveMe->thisStepY = y4;
-			}
-		}
-	}
-
-	float yDiff = moveMe->thisStepY - moveMe->y;
-	float xDiff = moveMe->x - moveMe->thisStepX;
-	if (xDiff || yDiff) {
-		moveMe->wantAngle = 180 + ANGLEFIX * atan2(xDiff, yDiff * 2);
-		moveMe->spinning = true;
-	}
-
-	moveMe->setFrames(ANI_WALK);
-	return true;
-}
-
 bool PeopleManager::walkMe(OnScreenPerson *thisPerson, bool move) {
 	float xDiff, yDiff, maxDiff, s;
 
@@ -694,7 +588,7 @@ bool PeopleManager::walkMe(OnScreenPerson *thisPerson, bool move) {
 			}
 			break;
 		}
-		if (!doBorderStuff(thisPerson))
+		if (!_vm->_floorMan->doBorderStuff(thisPerson))
 			break;
 	}
 
@@ -707,7 +601,7 @@ bool PeopleManager::walkMe(OnScreenPerson *thisPerson, bool move) {
 bool PeopleManager::makeWalkingPerson(int x, int y, int objNum, LoadedFunction *func, int di) {
 	if (x == 0 && y == 0)
 		return false;
-	if (currentFloor->numPolygons == 0)
+	if (_vm->_floorMan->isFloorNoPolygon())
 		return false;
 	OnScreenPerson *moveMe = findPerson(objNum);
 	if (!moveMe)
@@ -721,20 +615,20 @@ bool PeopleManager::makeWalkingPerson(int x, int y, int objNum, LoadedFunction *
 
 	moveMe->walkToX = x;
 	moveMe->walkToY = y;
-	moveMe->walkToPoly = inFloor(x, y);
+	moveMe->walkToPoly = _vm->_floorMan->inFloor(x, y);
 	if (moveMe->walkToPoly == -1) {
-		if (!handleClosestPoint(moveMe->walkToX, moveMe->walkToY, moveMe->walkToPoly))
+		if (!_vm->_floorMan->handleClosestPoint(moveMe->walkToX, moveMe->walkToY, moveMe->walkToPoly))
 			return false;
 	}
 
-	moveMe->inPoly = inFloor(moveMe->x, moveMe->y);
+	moveMe->inPoly = _vm->_floorMan->inFloor(moveMe->x, moveMe->y);
 	if (moveMe->inPoly == -1) {
 		int xxx = moveMe->x, yyy = moveMe->y;
-		if (!handleClosestPoint(xxx, yyy, moveMe->inPoly))
+		if (!_vm->_floorMan->handleClosestPoint(xxx, yyy, moveMe->inPoly))
 			return false;
 	}
 
-	doBorderStuff(moveMe);
+	_vm->_floorMan->doBorderStuff(moveMe);
 	if (walkMe(moveMe, false) || moveMe->spinning) {
 		moveMe->continueAfterWalking = func;
 		return true;
@@ -778,7 +672,7 @@ bool PeopleManager::forceWalkingPerson(int x, int y, int objNum, LoadedFunction 
 	moveMe->inPoly = 0;
 	moveMe->walkToPoly = 0;
 
-	doBorderStuff(moveMe);
+	_vm->_floorMan->doBorderStuff(moveMe);
 	if (walkMe(moveMe) || moveMe->spinning) {
 		moveMe->continueAfterWalking = func;
 		return true;

@@ -1208,18 +1208,18 @@ builtIn(setFloor) {
 		int v;
 		getValueType(v, SVT_FILE, fun->stack->thisVar);
 		trimStack(fun->stack);
-		if (!setFloor(v))
+		if (!g_sludge->_floorMan->setFloor(v))
 			return BR_ERROR;
 	} else {
 		trimStack(fun->stack);
-		setFloorNull();
+		g_sludge->_floorMan->setFloorNull();
 	}
 	return BR_CONTINUE;
 }
 
 builtIn(showFloor) {
 	UNUSEDALL
-	drawFloor();
+	g_sludge->_floorMan->drawFloor();
 	return BR_CONTINUE;
 }
 

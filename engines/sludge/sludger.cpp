@@ -142,7 +142,7 @@ void initSludge() {
 	g_sludge->_gfxMan->init();
 	g_sludge->_resMan->init();
 	g_sludge->_peopleMan->init();
-	initFloor();
+	g_sludge->_floorMan->init();
 	g_sludge->_objMan->init();
 	g_sludge->_speechMan->init();
 	initStatusBar();
@@ -172,7 +172,7 @@ void killSludge() {
 	killAllFunctions();
 	g_sludge->_peopleMan->kill();
 	g_sludge->_regionMan->kill();
-	setFloorNull();
+	g_sludge->_floorMan->kill();
 	g_sludge->_speechMan->kill();
 	g_sludge->_languageMan->kill();
 	g_sludge->_gfxMan->kill();

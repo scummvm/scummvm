@@ -156,7 +156,6 @@ private:
 	SludgeEngine *_vm;
 
 	void shufflePeople();
-	bool handleClosestPoint(int &setX, int &setY, int &setPoly);
 
 	// OnScreenPerson manipulation
 	void turnMeAngle(OnScreenPerson *thisPerson, int direc);
@@ -164,7 +163,6 @@ private:
 	void rethinkAngle(OnScreenPerson *thisPerson);
 	void moveAndScale(OnScreenPerson &me, float x, float y);
 	void setMyDrawMode(OnScreenPerson *moveMe, int h);
-	bool doBorderStuff(OnScreenPerson *moveMe);
 	bool walkMe(OnScreenPerson *thisPerson, bool move = true);
 };
 

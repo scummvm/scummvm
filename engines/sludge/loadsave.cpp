@@ -59,7 +59,6 @@ extern LoadedFunction *allRunningFunctions;         // In sludger.cpp
 extern const char *typeName[];                      // In variable.cpp
 extern int numGlobals;                              // In sludger.cpp
 extern Variable *globalVars;                        // In sludger.cpp
-extern Floor *currentFloor;                          // In floor.cpp
 extern FILETIME fileTime;                           // In sludger.cpp
 extern bool allowAnyFilename;
 
@@ -392,12 +391,7 @@ bool saveGame(const Common::String &fname) {
 
 	g_sludge->_peopleMan->savePeople(fp);
 
-	if (currentFloor->numPolygons) {
-		fp->writeByte(1);
-		fp->writeUint16BE(currentFloor->originalNum);
-	} else {
-		fp->writeByte(0);
-	}
+	g_sludge->_floorMan->save(fp);
 
 	g_sludge->_gfxMan->saveZBuffer(fp);
 	g_sludge->_gfxMan->saveLightMap(fp);
@@ -523,11 +517,9 @@ bool loadGame(const Common::String &fname) {
 
 	g_sludge->_peopleMan->loadPeople(fp);
 
-	if (fp->readByte()) {
-		if (!setFloor(fp->readUint16BE()))
-			return false;
-	} else
-		setFloorNull();
+	if (!g_sludge->_floorMan->load(fp)) {
+		return false;
+	}
 
 	if (!g_sludge->_gfxMan->loadZBuffer(fp))
 		return false;
