@@ -1324,6 +1324,14 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 	}
 
 	SaveStateDescriptor desc(slot, saveDesc);
+
+	// Do not allow save slot 0 (used for auto-saving) to be deleted or
+	// overwritten.
+	if (slot == 0) {
+		desc.setWriteProtectedFlag(true);
+		desc.setDeletableFlag(false);
+	}
+
 	desc.setThumbnail(thumbnail);
 
 	if (infoPtr) {
