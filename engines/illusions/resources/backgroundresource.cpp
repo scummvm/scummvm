@@ -58,7 +58,7 @@ void TileMap::load(byte *dataStart, Common::SeekableReadStream &stream) {
 
 void BgInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_flags = stream.readUint32LE();
-	stream.skip(2); // Unknown
+	uint16 unknown = stream.readUint16LE(); //	TODO Unknown
 	_priorityBase = stream.readSint16LE();
 	_surfInfo.load(stream);
 	loadPoint(stream, _panPoint);
@@ -67,8 +67,8 @@ void BgInfo::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	stream.seek(tileMapOffs);
 	_tileMap.load(dataStart, stream);
 	_tilePixels = dataStart + tilePixelsOffs;
-	debug(0, "BgInfo::load() _flags: %08X; _priorityBase: %d; tileMapOffs: %08X; tilePixelsOffs: %08X",
-		_flags, _priorityBase, tileMapOffs, tilePixelsOffs);
+	debug(0, "BgInfo::load() _flags: %08X; unknown: %04X; _priorityBase: %d; tileMapOffs: %08X; tilePixelsOffs: %08X",
+		_flags, unknown, _priorityBase, tileMapOffs, tilePixelsOffs);
 }
 
 // PriorityLayer
