@@ -69,29 +69,29 @@ public:
 
 protected:
 	enum {
-		kBufferSize	= 32768,
+		kBufferSize   = 32768,
 		kCharsPerLine = 128,
 
-		kHistorySize = 20
+		kHistorySize  = 20
 	};
 
 	const Graphics::Font *_font;
 
-	char	_buffer[kBufferSize];
-	int		_linesInBuffer;
+	char _buffer[kBufferSize];
+	int  _linesInBuffer;
 
-	int		_pageWidth;
-	int		_linesPerPage;
+	int _pageWidth;
+	int _linesPerPage;
 
-	int		_currentPos;
-	int		_scrollLine;
-	int		_firstLineInBuffer;
+	int _currentPos;
+	int _scrollLine;
+	int _firstLineInBuffer;
 
-	int		_promptStartPos;
-	int		_promptEndPos;
+	int _promptStartPos;
+	int _promptEndPos;
 
-	bool	_caretVisible;
-	uint32	_caretTime;
+	bool   _caretVisible;
+	uint32 _caretTime;
 
 	enum SlideMode {
 		kNoSlideMode,
@@ -99,8 +99,8 @@ protected:
 		kDownSlideMode
 	};
 
-	SlideMode	_slideMode;
-	uint32	_slideTime;
+	SlideMode _slideMode;
+	uint32    _slideTime;
 
 	ScrollBarWidget *_scrollBar;
 
@@ -120,10 +120,10 @@ protected:
 
 	float _widthPercent, _heightPercent;
 
-	int	_leftPadding;
-	int	_rightPadding;
-	int	_topPadding;
-	int	_bottomPadding;
+	int _leftPadding;
+	int _rightPadding;
+	int _topPadding;
+	int _bottomPadding;
 
 	void slideUpAndClose();
 
