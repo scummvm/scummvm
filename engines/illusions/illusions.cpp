@@ -303,7 +303,7 @@ void IllusionsEngine::playVideo(uint32 videoId, uint32 objectId, uint32 priority
 
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_SPACE) ||
 				event.type == Common::EVENT_LBUTTONUP)
 				skipVideo = true;
 		}
