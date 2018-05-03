@@ -30,6 +30,8 @@
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/flac.h"
 
+#include "common/util.h"
+
 namespace Kyra {
 
 class KyraAudioStream : public Audio::SeekableAudioStream {
@@ -203,11 +205,7 @@ int AUDStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 inline int16 clip8BitSample(int16 sample) {
-	if (sample > 255)
-		return 255;
-	if (sample < 0)
-		return 0;
-	return sample;
+	return CLIP<int16>(sample, 0, 255);
 }
 
 int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
