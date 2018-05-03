@@ -2435,6 +2435,9 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
 				VAR(VAR_GAME_LOADED) = 201;
+
+			if (!_saveTemporaryState)
+				_lastSaveTime = _system->getMillis();
 		} else {
 			success = loadState(_saveLoadSlot, _saveTemporaryState, filename);
 			if (!success)
@@ -2458,7 +2461,6 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 			clearClickedStatus();
 
 		_saveLoadFlag = 0;
-		_lastSaveTime = _system->getMillis();
 	}
 }
 
