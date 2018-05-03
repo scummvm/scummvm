@@ -65,7 +65,7 @@ static const XeenGameDescription gameDescriptions[] = {
 		// World of Xeen (2 CD talkie version)
 		{
 			"worldofxeen",
-			nullptr,
+			"CD",
 			{
 				{"xeen.cc", 0, "964078c53f649937ce9a1a3596ce3d9f", 13438429},
 				{"dark.cc", 0, "7f755ce39ea614fa6adb016f8bfc6e43", 11288403},
