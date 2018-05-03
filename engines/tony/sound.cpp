@@ -412,11 +412,7 @@ void FPSfx::setPause(bool pause) {
  *
  */
 void FPSfx::setVolume(int volume) {
-	if (volume > 63)
-		volume = 63;
-
-	if (volume < 0)
-		volume = 0;
+	volume = CLIP(volume, 0, 63);
 
 	_lastVolume = volume;
 
