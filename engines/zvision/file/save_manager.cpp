@@ -128,6 +128,8 @@ void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::S
 	file->writeSint16LE(td.tm_mday);
 	file->writeSint16LE(td.tm_hour);
 	file->writeSint16LE(td.tm_min);
+
+	file->writeUint32LE(g_engine->getTotalPlayTime() / 1000);
 }
 
 Common::Error SaveManager::loadGame(int slot) {
@@ -184,6 +186,8 @@ Common::Error SaveManager::loadGame(int slot) {
 		}
 	}
 
+	g_engine->setTotalPlayTime(header.playTime * 1000);
+
 	return Common::kNoError;
 }
 
@@ -193,6 +197,7 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 	header.saveDay     = 0;
 	header.saveHour    = 0;
 	header.saveMinutes = 0;
+	header.playTime    = 0;
 	header.saveName.clear();
 	header.thumbnail   = nullptr;
 	header.version     = 0;
@@ -237,11 +242,15 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 	}
 
 	// Read in save date/time
-	header.saveYear = in->readSint16LE();
-	header.saveMonth = in->readSint16LE();
-	header.saveDay = in->readSint16LE();
-	header.saveHour = in->readSint16LE();
+	header.saveYear    = in->readSint16LE();
+	header.saveMonth   = in->readSint16LE();
+	header.saveDay     = in->readSint16LE();
+	header.saveHour    = in->readSint16LE();
 	header.saveMinutes = in->readSint16LE();
+
+	if (header.version >= 2) {
+		header.playTime  = in->readUint32LE();
+	}
 
 	return true;
 }
