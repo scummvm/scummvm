@@ -118,13 +118,13 @@ void FollowPath::changeItemAnim() {
 		if (_anim) {
 			_item->resetActionAnim();
 		} else {
-			_item->setAnimKind(Resources::Anim::kActorUsageIdle);
+			_item->setAnimActivity(Resources::Anim::kActorActivityIdle);
 		}
 	} else {
 		if (_anim) {
 			_item->playActionAnim(_anim);
 		} else {
-			_item->setAnimKind(Resources::Anim::kActorUsageWalk);
+			_item->setAnimActivity(Resources::Anim::kActorActivityWalk);
 		}
 	}
 }

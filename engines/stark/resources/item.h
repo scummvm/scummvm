@@ -170,10 +170,10 @@ public:
 	bool doAction(uint32 action, uint32 hotspotIndex);
 
 	/** Define the current animation kind for the item */
-	void setAnimKind(int32 usage);
+	void setAnimActivity(int32 activity);
 
 	/** Get the current animation kind */
-	int32 getAnimKind() const;
+	int32 getAnimActivity() const;
 
 	/** Get the currently playing animation */
 	Anim *getAnim() const;
@@ -197,7 +197,7 @@ protected:
 
 	Anim *_actionAnim;
 	AnimHierarchy *_animHierarchy;
-	int32 _currentAnimKind;
+	int32 _currentAnimActivity;
 	bool _clickable;
 };
 

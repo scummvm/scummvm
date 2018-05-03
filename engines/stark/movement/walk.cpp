@@ -207,13 +207,13 @@ void Walk::setRunning() {
 
 void Walk::changeItemAnim() {
 	if (_ended) {
-		_item->setAnimKind(Resources::Anim::kActorUsageIdle);
+		_item->setAnimActivity(Resources::Anim::kActorActivityIdle);
 	} else if (_turnDirection != kTurnNone) {
-		_item->setAnimKind(Resources::Anim::kActorUsageIdle);
+		_item->setAnimActivity(Resources::Anim::kActorActivityIdle);
 	} else if (_running) {
-		_item->setAnimKind(Resources::Anim::kActorUsageRun);
+		_item->setAnimActivity(Resources::Anim::kActorActivityRun);
 	} else {
-		_item->setAnimKind(Resources::Anim::kActorUsageWalk);
+		_item->setAnimActivity(Resources::Anim::kActorActivityWalk);
 	}
 }
 

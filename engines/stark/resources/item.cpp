@@ -183,7 +183,7 @@ ItemVisual::ItemVisual(Object *parent, byte subType, uint16 index, const Common:
 				_renderEntry(nullptr),
 				_actionAnim(nullptr),
 				_animHierarchy(nullptr),
-				_currentAnimKind(-1),
+				_currentAnimActivity(-1),
 				_clickable(true) {
 	_renderEntry = new Gfx::RenderEntry(this, getName());
 }
@@ -202,7 +202,7 @@ void ItemVisual::onAllLoaded() {
 	_renderEntry->setClickable(_clickable);
 
 	if (_subType != kItemModel) {
-		setAnimKind(Anim::kActionUsagePassive);
+		setAnimActivity(Anim::kActionUsagePassive);
 	}
 
 	if (!_enabled) {
@@ -218,7 +218,7 @@ void ItemVisual::onAllLoaded() {
 void ItemVisual::saveLoad(ResourceSerializer *serializer) {
 	Item::saveLoad(serializer);
 
-	serializer->syncAsSint32LE(_currentAnimKind);
+	serializer->syncAsSint32LE(_currentAnimActivity);
 
 	serializer->syncAsResourceReference(&_animHierarchy);
 	if (serializer->isLoading() && _animHierarchy) {
@@ -230,7 +230,7 @@ void ItemVisual::saveLoad(ResourceSerializer *serializer) {
 		if (_actionAnim) {
 			_actionAnim->applyToItem(this);
 		} else {
-			setAnimKind(_currentAnimKind);
+			setAnimActivity(_currentAnimActivity);
 		}
 	}
 }
@@ -248,7 +248,7 @@ void ItemVisual::saveLoadCurrent(ResourceSerializer *serializer) {
 		if (_actionAnim) {
 			_actionAnim->applyToItem(this);
 		} else {
-			setAnimKind(_currentAnimKind);
+			setAnimActivity(_currentAnimActivity);
 		}
 	}
 }
@@ -277,18 +277,18 @@ ItemVisual *ItemVisual::getSceneInstance() {
 	return this;
 }
 
-int32 ItemVisual::getAnimKind() const {
-	return _currentAnimKind;
+int32 ItemVisual::getAnimActivity() const {
+	return _currentAnimActivity;
 }
 
-void ItemVisual::setAnimKind(int32 usage) {
-	bool animNeedsUpdate = usage != _currentAnimKind || _actionAnim != nullptr || _animHierarchy->getCurrentAnim() == nullptr;
+void ItemVisual::setAnimActivity(int32 activity) {
+	bool animNeedsUpdate = activity != _currentAnimActivity || _actionAnim != nullptr || _animHierarchy->getCurrentAnim() == nullptr;
 
 	resetActionAnim();
 
-	_currentAnimKind = usage;
+	_currentAnimActivity = activity;
 	if (animNeedsUpdate && _animHierarchy) {
-		_animHierarchy->setItemAnim(this, usage);
+		_animHierarchy->setItemAnim(this, activity);
 	}
 }
 
@@ -369,7 +369,7 @@ void ItemVisual::resetActionAnim() {
 		// TODO: Add a condition to this?
 		_animHierarchy->selectItemAnim(this);
 		if (_subType == kItemModel) {
-			_animHierarchy->setItemAnim(this, Anim::kActorUsageIdle);
+			_animHierarchy->setItemAnim(this, Anim::kActorActivityIdle);
 		}
 	}
 }
@@ -534,7 +534,7 @@ InventoryItem::InventoryItem(Object *parent, byte subType, uint16 index, const C
 
 Gfx::RenderEntry *InventoryItem::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
-		setAnimKind(Anim::kUIUsageInventory);
+		setAnimActivity(Anim::kUIUsageInventory);
 
 		Visual *visual = getVisual();
 
@@ -898,7 +898,7 @@ void ModelItem::onEnterLocation() {
 		_animHierarchy = _referencedItem->findStockAnimHierarchy();
 	}
 
-	setAnimKind(Anim::kActorUsageIdle);
+	setAnimActivity(Anim::kActorActivityIdle);
 }
 
 void ModelItem::onExitLocation() {

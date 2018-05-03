@@ -40,9 +40,8 @@ AnimHierarchy::~AnimHierarchy() {
 
 AnimHierarchy::AnimHierarchy(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Object(parent, subType, index, name),
-		_animUsage(0),
+		_currentActivity(0),
 		_currentAnim(nullptr),
-		_animHierarchy(nullptr),
 		_field_5C(0),
 		_idleActionsFrequencySum(0) {
 	_type = TYPE;
@@ -56,39 +55,65 @@ void AnimHierarchy::readData(Formats::XRCReadStream *stream) {
 		_animationReferences.push_back(stream->readResourceReference());
 	}
 
-	_animHierarchyReference = stream->readResourceReference();
+	_parentAnimHierarchyReference = stream->readResourceReference();
 	_field_5C = stream->readFloatLE();
 }
 
 void AnimHierarchy::onAllLoaded() {
 	Object::onAllLoaded();
 
-	_animations.clear();
+	loadActivityAnimations();
+	loadIdleAnimations();
+}
 
-	// Animations can be provided directly ...
+void AnimHierarchy::loadActivityAnimations() {
+	AnimHierarchy *parentHierarchy = _parentAnimHierarchyReference.resolve<AnimHierarchy>();
+
+	// Activity animations are inherited from the parent ...
+	if (parentHierarchy) {
+		_activityAnimations = parentHierarchy->_activityAnimations;
+	}
+
+	// ... but can be overridden
 	for (uint i = 0; i < _animationReferences.size(); i++) {
-		_animations.push_back(_animationReferences[i].resolve<Anim>());
-	}
+		Anim *anim = _animationReferences[i].resolve<Anim>();
 
-	// ... or through another animation hierarchy
-	_animHierarchy = _animHierarchyReference.resolve<AnimHierarchy>();
-	if (_animHierarchy) {
-		for (uint i = 0; i < _animHierarchy->_animations.size(); i++) {
-			_animations.push_back(_animHierarchy->_animations[i]);
+		bool inserted = false;
+		for (uint j = 0; j < _activityAnimations.size(); j++) {
+			if (_activityAnimations[j]->getActivity() == anim->getActivity()) {
+				_activityAnimations[j] = anim;
+				inserted = true;
+			}
 		}
-	}
 
-	_idleActionsFrequencySum = 0;
-	for (uint i = 0; i < _animations.size(); i++) {
-		if (_animations[i]->getUsage() == Anim::kActorUsageIdleAction) {
-			_idleActionsFrequencySum += _animations[i]->getIdleActionFrequency();
+		if (!inserted) {
+			_activityAnimations.push_back(anim);
 		}
 	}
 }
 
-void AnimHierarchy::setItemAnim(ItemVisual *item, int32 usage) {
+void AnimHierarchy::loadIdleAnimations() {
+	AnimHierarchy *parentHierarchy = _parentAnimHierarchyReference.resolve<AnimHierarchy>();
+	if (parentHierarchy) {
+		_idleAnimations = parentHierarchy->_idleAnimations;
+	}
+
+	for (uint i = 0; i < _animationReferences.size(); i++) {
+		Anim *anim = _animationReferences[i].resolve<Anim>();
+		if (anim->getActivity() == Anim::kActorActivityIdleAction) {
+			_idleAnimations.push_back(anim);
+		}
+	}
+
+	_idleActionsFrequencySum = 0;
+	for (uint i = 0; i < _idleAnimations.size(); i++) {
+		_idleActionsFrequencySum += _idleAnimations[i]->getIdleActionFrequency();
+	}
+}
+
+void AnimHierarchy::setItemAnim(ItemVisual *item, int32 activity) {
 	unselectItemAnim(item);
-	_animUsage = usage;
+	_currentActivity = activity;
 	selectItemAnim(item);
 }
 
@@ -102,16 +127,16 @@ void AnimHierarchy::unselectItemAnim(ItemVisual *item) {
 
 void AnimHierarchy::selectItemAnim(ItemVisual *item) {
 	// Search for an animation with the appropriate index
-	for (uint i = 0; i < _animations.size(); i++) {
-		if (_animations[i]->getUsage() == _animUsage) {
-			_currentAnim = _animations[i];
+	for (uint i = 0; i < _activityAnimations.size(); i++) {
+		if (_activityAnimations[i]->getActivity() == _currentActivity) {
+			_currentAnim = _activityAnimations[i];
 			break;
 		}
 	}
 
 	// Default to the first animation
-	if (!_currentAnim && !_animations.empty()) {
-		_currentAnim = _animations[0];
+	if (!_currentAnim && !_activityAnimations.empty()) {
+		_currentAnim = _activityAnimations[0];
 	}
 
 	if (!_currentAnim) {
@@ -135,11 +160,11 @@ TextureSet *AnimHierarchy::findTextureSet(uint32 textureType) {
 	return findChildWithSubtype<TextureSet>(textureType);
 }
 
-Anim *AnimHierarchy::getAnimForUsage(uint32 usage) {
+Anim *AnimHierarchy::getAnimForActivity(uint32 activity) {
 	// Search for an animation with the appropriate use
-	for (uint i = 0; i < _animations.size(); i++) {
-		if (_animations[i]->getUsage() == usage) {
-			return _animations[i];
+	for (uint i = 0; i < _activityAnimations.size(); i++) {
+		if (_activityAnimations[i]->getActivity() == activity) {
+			return _activityAnimations[i];
 		}
 	}
 
@@ -147,7 +172,7 @@ Anim *AnimHierarchy::getAnimForUsage(uint32 usage) {
 }
 
 Visual *AnimHierarchy::getVisualForUsage(uint32 usage) {
-	Anim *anim = getAnimForUsage(usage);
+	Anim *anim = getAnimForActivity(usage);
 	if (anim) {
 		return anim->getVisual();
 	}
@@ -161,15 +186,11 @@ Anim *AnimHierarchy::getIdleActionAnim() const {
 	}
 
 	int pick = StarkRandomSource->getRandomNumber(_idleActionsFrequencySum - 1);
-	for (uint i = 0; i < _animations.size(); i++) {
-		if (_animations[i]->getUsage() != Anim::kActorUsageIdleAction) {
-			continue;
-		}
-
-		pick -= _animations[i]->getIdleActionFrequency();
+	for (uint i = 0; i < _idleAnimations.size(); i++) {
+		pick -= _idleAnimations[i]->getIdleActionFrequency();
 
 		if (pick < 0) {
-			return _animations[i];
+			return _idleAnimations[i];
 		}
 	}
 
@@ -181,7 +202,7 @@ void AnimHierarchy::printData() {
 		debug("anim %d: %s", i, _animationReferences[i].describe().c_str());
 	}
 
-	debug("animHierarchy: %s", _animHierarchyReference.describe().c_str());
+	debug("animHierarchy: %s", _parentAnimHierarchyReference.describe().c_str());
 	debug("field_5C: %f", _field_5C);
 }
 

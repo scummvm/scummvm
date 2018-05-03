@@ -82,7 +82,7 @@ void Location::onGameLoop() {
 	if (april) {
 		_idleActionWaitMs -= StarkGlobal->getMillisecondsPerGameloop();
 		if (_idleActionWaitMs <= 0) {
-			if (!april->getActionAnim() && april->getAnimKind() == Anim::kActorUsageIdle) {
+			if (!april->getActionAnim() && april->getAnimActivity() == Anim::kActorActivityIdle) {
 				Anim *idleAction = april->getIdleActionAnim();
 				if (idleAction) {
 					april->playActionAnim(idleAction);

@@ -72,7 +72,7 @@ void Speech::playSound() {
 void Speech::setCharacterTalkAnim() {
 	ItemVisual *characterItem = getCharacterItem();
 	if (characterItem) {
-		characterItem->setAnimKind(Anim::kActorUsageTalk);
+		characterItem->setAnimActivity(Anim::kActorActivityTalk);
 
 		_lipSync = findChild<LipSync>();
 		if (_lipSync) {
@@ -83,8 +83,8 @@ void Speech::setCharacterTalkAnim() {
 
 void Speech::removeCharacterTalkAnim() const {
 	ItemVisual *characterItem = getCharacterItem();
-	if (characterItem && characterItem->getAnimKind() == Anim::kActorUsageTalk) {
-		characterItem->setAnimKind(Anim::kActorUsageIdle);
+	if (characterItem && characterItem->getAnimActivity() == Anim::kActorActivityTalk) {
+		characterItem->setAnimActivity(Anim::kActorActivityIdle);
 	}
 }
 

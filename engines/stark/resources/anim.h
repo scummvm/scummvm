@@ -73,22 +73,22 @@ public:
 		kUIUsageUseCursorActive = 5
 	};
 
-	enum ActorUsage {
-		kActorUsageIdle       = 1,
-		kActorUsageWalk       = 2,
-		kActorUsageTalk       = 3,
-		kActorUsageRun        = 6,
-		kActorUsageIdleAction = 10
+	enum ActorActivity {
+		kActorActivityIdle       = 1,
+		kActorActivityWalk       = 2,
+		kActorActivityTalk       = 3,
+		kActorActivityRun        = 6,
+		kActorActivityIdleAction = 10
 	};
 
 	/** Anim factory */
 	static Object *construct(Object *parent, byte subType, uint16 index, const Common::String &name);
 
 	Anim(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Anim();
+	~Anim() override;
 
 	// Resource API
-	virtual void readData(Formats::XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 	/** Sets the animation frame to be displayed */
 	virtual void selectFrame(uint32 frameIndex);
@@ -106,7 +106,7 @@ public:
 	bool isInUse();
 
 	/** Obtain the purpose of this anim */
-	uint32 getUsage() const;
+	uint32 getActivity() const;
 
 	/** Return the hotspot index for a point given in relative coordinates */
 	virtual int getPointHotspotIndex(const Common::Point &point) const;
@@ -136,7 +136,7 @@ public:
 protected:
 	virtual void printData() override;
 
-	uint32 _usage;
+	uint32 _activity;
 	uint32 _currentFrame;
 	uint32 _numFrames;
 	int32 _refCount;

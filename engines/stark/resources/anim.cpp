@@ -68,7 +68,7 @@ Anim::~Anim() {
 
 Anim::Anim(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Object(parent, subType, index, name),
-		_usage(0),
+		_activity(0),
 		_currentFrame(0),
 		_numFrames(0),
 		_refCount(0) {
@@ -76,15 +76,15 @@ Anim::Anim(Object *parent, byte subType, uint16 index, const Common::String &nam
 }
 
 void Anim::readData(Formats::XRCReadStream *stream) {
-	_usage = stream->readUint32LE();
+	_activity = stream->readUint32LE();
 	_numFrames = stream->readUint32LE();
 }
 
 void Anim::selectFrame(uint32 frameIndex) {
 }
 
-uint32 Anim::getUsage() const {
-	return _usage;
+uint32 Anim::getActivity() const {
+	return _activity;
 }
 
 void Anim::applyToItem(Item *item) {
@@ -135,7 +135,7 @@ uint32 Anim::getIdleActionFrequency() const {
 }
 
 void Anim::printData() {
-	debug("usage: %d", _usage);
+	debug("activity: %d", _activity);
 	debug("numFrames: %d", _numFrames);
 }
 

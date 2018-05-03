@@ -599,7 +599,7 @@ Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 	return nextCommand();
 }
 
-Command *Command::opItemSetActivity(Script *script, const ResourceReference &itemRef, int32 animUsage, bool wait) {
+Command *Command::opItemSetActivity(Script *script, const ResourceReference &itemRef, int32 animActivity, bool wait) {
 	Item *item = itemRef.resolve<Item>();
 	ItemVisual *sceneItem = item->getSceneInstance();
 	Anim *actionAnim = sceneItem->getActionAnim();
@@ -617,10 +617,10 @@ void Command::resumeItemSetActivity() {
 	assert(_subType == kItemSetActivity);
 
 	Item *item = _arguments[1].referenceValue.resolve<Item>();
-	int32 animUsage = _arguments[2].intValue;
+	int32 animActivity = _arguments[2].intValue;
 	ItemVisual *sceneItem = item->getSceneInstance();
 	sceneItem->setMovement(nullptr);
-	sceneItem->setAnimKind(animUsage);
+	sceneItem->setAnimActivity(animActivity);
 }
 
 Command *Command::opItemSelectInInventory(const ResourceReference &itemRef) {
@@ -636,9 +636,9 @@ Command *Command::opUseAnimHierachy(const ResourceReference &animHierRef) {
 
 	item->setAnimHierarchy(animHier);
 
-	// TODO: Only set the anim usage if the next opcode is not going to do it
+	// TODO: Only set the anim activity if the next opcode is not going to do it
 	ItemVisual *sceneItem = item->getSceneInstance();
-	sceneItem->setAnimKind(Anim::kActorUsageIdle);
+	sceneItem->setAnimActivity(Anim::kActorActivityIdle);
 
 	return nextCommand();
 }
@@ -1276,7 +1276,7 @@ Command *Command::opIsItemActivity(const ResourceReference &itemRef, int32 value
 	Item *item = itemRef.resolve<Item>();
 	ItemVisual *sceneItem = item->getSceneInstance();
 
-	return nextCommandIf(sceneItem->getAnimKind() == value);
+	return nextCommandIf(sceneItem->getAnimActivity() == value);
 }
 
 Command *Command::opIsAnimAtTime(const ResourceReference &animRef, int32 time) {

@@ -229,7 +229,7 @@ protected:
 	Command *opItemFollowPath(Script *script, ResourceReference itemRef, ResourceReference pathRef, uint32 speed, uint32 suspend);
 	Command *opItemLookAt(Script *script, const ResourceReference &itemRef, const ResourceReference &objRef, bool suspend, int32 unknown);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
-	Command *opItemSetActivity(Script *script, const ResourceReference &itemRef, int32 animUsage, bool wait);
+	Command *opItemSetActivity(Script *script, const ResourceReference &itemRef, int32 animActivity, bool wait);
 	Command *opItemSelectInInventory(const ResourceReference &itemRef);
 	Command *opUseAnimHierachy(const ResourceReference &animHierRef);
 	Command *opPlayAnimation(Script *script, const ResourceReference &animRef, bool suspend);

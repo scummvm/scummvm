@@ -54,14 +54,14 @@ public:
 	static const Type::ResourceType TYPE = Type::kAnimHierarchy;
 
 	AnimHierarchy(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~AnimHierarchy();
+	~AnimHierarchy() override;
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 
 	/** Set and apply the current animation kind for an item */
-	void setItemAnim(ItemVisual *item, int32 usage);
+	void setItemAnim(ItemVisual *item, int32 activity);
 
 	/** Unselect the current animation and remove it from an item */
 	void unselectItemAnim(ItemVisual *item);
@@ -87,17 +87,20 @@ public:
 	Anim *getIdleActionAnim() const;
 
 protected:
-	Anim *getAnimForUsage(uint32 usage);
+	void loadActivityAnimations();
+	void loadIdleAnimations();
+
+	Anim *getAnimForActivity(uint32 activity);
 	void printData() override;
 
 	Common::Array<ResourceReference> _animationReferences;
-	Common::Array<Anim *> _animations;
+	Common::Array<Anim *> _activityAnimations;
+	Common::Array<Anim *> _idleAnimations;
 
-	ResourceReference _animHierarchyReference;
-	AnimHierarchy * _animHierarchy;
+	ResourceReference _parentAnimHierarchyReference;
 
 	float _field_5C;
-	uint32 _animUsage;
+	uint32 _currentActivity;
 	Anim *_currentAnim;
 	uint32 _idleActionsFrequencySum;
 };
