@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-01 22:34+0200\n"
+"POT-Creation-Date: 2018-05-03 19:27+0200\n"
 "PO-Revision-Date: 2018-04-18 10:17+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -169,7 +169,7 @@ msgstr ""
 #: engines/sword1/control.cpp:887 engines/sword1/logic.cpp:1633
 #: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
 #: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
-#: engines/zvision/file/save_manager.cpp:225
+#: engines/zvision/file/save_manager.cpp:230
 msgid "OK"
 msgstr "OK"
 
@@ -4709,7 +4709,7 @@ msgstr ""
 "Использовать MPEG-видео из DVD-версии вместо видео низкого разрешения в "
 "формате AVI"
 
-#: engines/zvision/file/save_manager.cpp:221
+#: engines/zvision/file/save_manager.cpp:226
 #, c-format
 msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
