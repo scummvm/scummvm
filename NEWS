@@ -31,6 +31,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - In Discworld 1, Held items being released that were never in the Luggage or Rincewind's inventory
      will now be automatically dropped into the Luggage rather than being lost
 
+ Titanic:
+    - Fixed bug in entering floor numbers numerically that could crash the game
+
  Tucker:
    - Fixed multiple graphic issues in Bud Tucker in Double Trouble.
    - Fixed multiple issues with font and subtitle rendering.
