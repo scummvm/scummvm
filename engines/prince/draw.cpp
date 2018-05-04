@@ -702,4 +702,64 @@ void PrinceEngine::setPalette(const byte *palette) {
 	}
 }
 
+void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
+	Text &text = _textSlots[slot];
+	int lines = calcTextLines((const char *)_interpreter->getString());
+	int time = lines * 30;
+	if (animType == kNormalAnimation) {
+		Anim &normAnim = _normAnimList[animNumber];
+		if (normAnim._animData != nullptr) {
+			if (!normAnim._state) {
+				if (normAnim._currW && normAnim._currH) {
+					text._color = _flags->getFlagValue(Flags::KOLOR);
+					text._x = normAnim._currX + normAnim._currW / 2;
+					text._y = normAnim._currY - 10;
+				}
+			}
+		}
+	} else if (animType == kBackgroundAnimation) {
+		if (!_backAnimList[animNumber].backAnims.empty()) {
+			int currAnim = _backAnimList[animNumber]._seq._currRelative;
+			Anim &backAnim = _backAnimList[animNumber].backAnims[currAnim];
+			if (backAnim._animData != nullptr) {
+				if (!backAnim._state) {
+					if (backAnim._currW && backAnim._currH) {
+						text._color = _flags->getFlagValue(Flags::KOLOR);
+						text._x = backAnim._currX + backAnim._currW / 2;
+						text._y = backAnim._currY - 10;
+					}
+				}
+			}
+		}
+	} else {
+		error("doTalkAnim() - wrong animType: %d", animType);
+	}
+	text._time = time;
+	if (getLanguage() == Common::DE_DEU) {
+		correctStringDEU((char *)_interpreter->getString());
+	}
+	text._str = (const char *)_interpreter->getString();
+	_interpreter->increaseString();
+}
+
+void PrinceEngine::freeNormAnim(int slot) {
+	if (!_normAnimList.empty()) {
+		_normAnimList[slot]._state = 1;
+		if (_normAnimList[slot]._animData != nullptr) {
+			delete _normAnimList[slot]._animData;
+			_normAnimList[slot]._animData = nullptr;
+		}
+		if (_normAnimList[slot]._shadowData != nullptr) {
+			delete _normAnimList[slot]._shadowData;
+			_normAnimList[slot]._shadowData = nullptr;
+		}
+	}
+}
+
+void PrinceEngine::freeAllNormAnims() {
+	for (int i = 0; i < kMaxNormAnims; i++) {
+		freeNormAnim(i);
+	}
+}
+
 } // End of namespace Prince
