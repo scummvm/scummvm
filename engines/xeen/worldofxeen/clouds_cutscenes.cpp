@@ -41,6 +41,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 
 	bool darkCc = files._ccNum;
 	files.setGameCc(0);
+	sound._musicSide = 0;
 
 	bool seenIntro = showCloudsTitle() && showCloudsIntroInner();
 
