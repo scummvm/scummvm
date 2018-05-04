@@ -89,6 +89,9 @@ bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamNam
 }
 
 bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::String &streamName) {
+	if (getFeatures() & GF_NOVOICES)
+		return false;
+
 	debugEngine("Loading wav %s slot %d", streamName.c_str(), slot);
 
 	if (slot >= kMaxTexts) {

@@ -86,7 +86,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("talktxt.dat", "02bb2372f19aca3c65896ed81b2cefb3", 125702),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_TESTING | GF_EXTRACTED,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataDE
@@ -98,7 +98,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("databank.ptc", "a67b55730f3d7064921bd2a59e1063a3", 3892982),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_TESTING | GF_NOVOICES,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataPL

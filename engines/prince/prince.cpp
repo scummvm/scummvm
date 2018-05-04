@@ -208,14 +208,17 @@ void PrinceEngine::init() {
 
 	debugEngine("Adding all path: %s", gameDataDir.getPath().c_str());
 
-	if (getLanguage() != Common::RU_RUS) {
+	if (!(getFeatures() & GF_EXTRACTED)) {
 		PtcArchive *all = new PtcArchive();
 		if (!all->open("all/databank.ptc"))
 			error("Can't open all/databank.ptc");
 
 		PtcArchive *voices = new PtcArchive();
-		if (!voices->open("voices/databank.ptc"))
-			error("Can't open voices/databank.ptc");
+
+		if (!(getFeatures() & GF_NOVOICES)) {
+			if (!voices->open("voices/databank.ptc"))
+				error("Can't open voices/databank.ptc");
+		}
 
 		PtcArchive *sound = new PtcArchive();
 		if (!sound->open("sound/databank.ptc"))

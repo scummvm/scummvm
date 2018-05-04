@@ -77,7 +77,9 @@ class Room;
 class Pscr;
 
 enum {
-	GF_TRANSLATED = 1 << 0
+	GF_TRANSLATED = 1 << 0,
+	GF_EXTRACTED  = 1 << 1,
+	GF_NOVOICES   = 1 << 2
 };
 
 struct SavegameHeader {
