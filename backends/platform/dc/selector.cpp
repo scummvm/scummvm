@@ -155,11 +155,7 @@ static Game the_game;
 
 static bool isIcon(const Common::FSNode &entry)
 {
-  int l = entry.getDisplayName().size();
-  if (l>4 && !strcasecmp(entry.getDisplayName().c_str()+l-4, ".ICO"))
-    return true;
-  else
-    return false;
+	return entry.getDisplayName().hasSuffixIgnoreCase(".ICO");
 }
 
 static bool loadIcon(Game &game, Dir *dirs, int num_dirs)
@@ -203,7 +199,7 @@ static bool uniqueGame(const char *base, const char *dir,
 	  this is a workaround for the detector bug in toon... */
 	sameOrSubdir(dir, games->dir) &&
 	/*!strcmp(dir, games->dir) &&*/
-	!stricmp(base, games->filename_base) &&
+	!scumm_stricmp(base, games->filename_base) &&
 	lang == games->language &&
 	plf == games->platform)
       return false;
