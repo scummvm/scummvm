@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	debugger.o \
 	decompress.o \
 	detection.o \
+	draw.o \
 	flags.o \
 	font.o \
 	graphics.o \

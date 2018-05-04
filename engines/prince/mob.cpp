@@ -20,7 +20,11 @@
  *
  */
 
+#include "prince/prince.h"
+
 #include "prince/mob.h"
+#include "prince/animation.h"
+#include "prince/font.h"
 
 namespace Prince {
 
@@ -103,6 +107,160 @@ uint16 Mob::getData(AttrId dataId) {
 		assert(false);
 		return 0;
 	}
+}
+
+int PrinceEngine::getMob(Common::Array<Mob> &mobList, bool usePriorityList, int posX, int posY) {
+
+	Common::Point pointPos(posX, posY);
+
+	int mobListSize;
+	if (usePriorityList) {
+		mobListSize = _mobPriorityList.size();
+	} else {
+		mobListSize = mobList.size();
+	}
+
+	for (int mobNumber = 0; mobNumber < mobListSize; mobNumber++) {
+		Mob *mob = nullptr;
+		if (usePriorityList) {
+			mob = &mobList[_mobPriorityList[mobNumber]];
+		} else {
+			mob = &mobList[mobNumber];
+		}
+
+		if (mob->_visible) {
+			continue;
+		}
+
+		int type = mob->_type & 7;
+		switch (type) {
+		case 0:
+		case 1:
+			//normal_mob
+			if (!mob->_rect.contains(pointPos)) {
+				continue;
+			}
+			break;
+		case 3:
+			//mob_obj
+			if (mob->_mask < kMaxObjects) {
+				int nr = _objSlot[mob->_mask];
+				if (nr != 0xFF) {
+					Object &obj = *_objList[nr];
+					Common::Rect objectRect(obj._x, obj._y, obj._x + obj._width, obj._y + obj._height);
+					if (objectRect.contains(pointPos)) {
+						Graphics::Surface *objSurface = obj.getSurface();
+						byte *pixel = (byte *)objSurface->getBasePtr(posX - obj._x, posY - obj._y);
+						if (*pixel != 255) {
+							break;
+						}
+					}
+				}
+			}
+			continue;
+			break;
+		case 2:
+		case 5:
+			//check_ba_mob
+			if (!_backAnimList[mob->_mask].backAnims.empty()) {
+				int currentAnim = _backAnimList[mob->_mask]._seq._currRelative;
+				Anim &backAnim = _backAnimList[mob->_mask].backAnims[currentAnim];
+				if (backAnim._animData != nullptr) {
+					if (!backAnim._state) {
+						Common::Rect backAnimRect(backAnim._currX, backAnim._currY, backAnim._currX + backAnim._currW, backAnim._currY + backAnim._currH);
+						if (backAnimRect.contains(pointPos)) {
+							int phase = backAnim._showFrame;
+							int phaseFrameIndex = backAnim._animData->getPhaseFrameIndex(phase);
+							Graphics::Surface *backAnimSurface = backAnim._animData->getFrame(phaseFrameIndex);
+							byte pixel = *(byte *)backAnimSurface->getBasePtr(posX - backAnim._currX, posY - backAnim._currY);
+							if (pixel != 255) {
+								if (type == 5) {
+									if (mob->_rect.contains(pointPos)) {
+										break;
+									}
+								} else {
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			continue;
+			break;
+		default:
+			//not_part_ba
+			continue;
+			break;
+		}
+
+		if (usePriorityList) {
+			return _mobPriorityList[mobNumber];
+		} else {
+			return mobNumber;
+		}
+	}
+	return -1;
+}
+
+int PrinceEngine::checkMob(Graphics::Surface *screen, Common::Array<Mob> &mobList, bool usePriorityList) {
+	if (_mouseFlag == 0 || _mouseFlag == 3) {
+		return -1;
+	}
+	Common::Point mousePos = _system->getEventManager()->getMousePos();
+	int mobNumber = getMob(mobList, usePriorityList, mousePos.x + _picWindowX, mousePos.y);
+
+	if (mobNumber != -1) {
+		Common::String mobName = mobList[mobNumber]._name;
+
+		if (getLanguage() == Common::DE_DEU) {
+			for (uint i = 0; i < mobName.size(); i++) {
+				switch (mobName[i]) {
+				case '\xc4':
+					mobName.setChar('\x83', i);
+					break;
+				case '\xd6':
+					mobName.setChar('\x84', i);
+					break;
+				case '\xdc':
+					mobName.setChar('\x85', i);
+					break;
+				case '\xdf':
+					mobName.setChar('\x7f', i);
+					break;
+				case '\xe4':
+					mobName.setChar('\x80', i);
+					break;
+				case '\xf6':
+					mobName.setChar('\x81', i);
+					break;
+				case '\xfc':
+					mobName.setChar('\x82', i);
+					break;
+				}
+			}
+		}
+
+		uint16 textW = getTextWidth(mobName.c_str());
+
+		uint16 x = mousePos.x - textW / 2;
+		if (x > screen->w) {
+			x = 0;
+		}
+
+		if (x + textW > screen->w) {
+			x = screen->w - textW;
+		}
+
+		uint16 y = mousePos.y - _font->getFontHeight();
+		if (y > screen->h) {
+			y = _font->getFontHeight() - 2;
+		}
+
+		_font->drawString(screen, mobName, x, y, screen->w, 216);
+	}
+
+	return mobNumber;
 }
 
 } // End of namespace Prince
