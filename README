@@ -938,7 +938,7 @@ can be done with the following LAME command line:
 
 For the GOG Might and Magic 4-5 installation, install the game to your
 computer, and do the following steps:
-* The game1.ogg file from the game folder is a CD ISO. Use software like
+* The game1.gog file from the game folder is a CD ISO. Use software like
 Virtual CloneDrive to mount it as a drive.
 * Copy all the .cc files from the subfolder in the mounted drive to a new
 empty game folder that you create for the game.
