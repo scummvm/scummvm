@@ -1376,7 +1376,7 @@ void Interface::assembleBorder() {
 
 	_face2UIFrame = (_face2UIFrame + 1) % 4 + 12;
 	if (_face2State == 0)
-		_face2UIFrame += 252;
+		_face2UIFrame - 3;
 	else if (_face2State == 2)
 		_face2UIFrame = 8;
 
