@@ -49,7 +49,7 @@
 #include "prince/debugger.h"
 #include "prince/object.h"
 #include "prince/mob.h"
-#include "prince/sound.h"
+#include "prince/music.h"
 #include "prince/variatxt.h"
 #include "prince/flags.h"
 #include "prince/font.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef PRINCE_SOUND_H
-#define PRINCE_SOUND_H
+#ifndef PRINCE_MUSIC_H
+#define PRINCE_MUSIC_H
 
 #include "audio/midiplayer.h"
 #include "common/memstream.h"

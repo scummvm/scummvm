@@ -20,7 +20,7 @@
  *
  */
 
-#include "prince/sound.h"
+#include "prince/music.h"
 #include "prince/musNum.h"
 
 #include "common/archive.h"

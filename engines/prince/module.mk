@@ -12,13 +12,13 @@ MODULE_OBJS = \
 	graphics.o \
 	hero.o \
 	mhwanh.o \
+	music.o \
 	mob.o \
 	object.o \
 	prince.o \
 	pscr.o \
 	saveload.o \
 	script.o \
-	sound.o \
 	variatxt.o \
 	videoplayer.o
 
