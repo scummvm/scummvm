@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	object.o \
 	prince.o \
 	pscr.o \
+	resources.o \
 	saveload.o \
 	script.o \
 	variatxt.o \
