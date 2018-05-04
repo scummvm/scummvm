@@ -63,7 +63,7 @@ MainMenuContainer::MainMenuContainer(const char *spritesName1, const char *sprit
 	if (spritesName2)
 		_backgroundSprites[1].load(spritesName2);
 	if (spritesName3)
-		_backgroundSprites[0].load(spritesName3);
+		_backgroundSprites[2].load(spritesName3);
 
 	_frameCount = 0;
 	for (uint idx = 0; idx < _backgroundSprites.size(); ++idx)
