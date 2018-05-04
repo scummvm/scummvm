@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	resources.o \
 	saveload.o \
 	script.o \
+	sound.o \
 	variatxt.o \
 	videoplayer.o
 

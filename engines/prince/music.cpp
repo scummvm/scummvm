@@ -20,6 +20,7 @@
  *
  */
 
+#include "prince/prince.h"
 #include "prince/music.h"
 #include "prince/musNum.h"
 
@@ -205,6 +206,28 @@ void MusicPlayer::sendToChannel(byte channel, uint32 b) {
 
 	if (_channelsTable[channel])
 		_channelsTable[channel]->send(b);
+}
+
+bool PrinceEngine::loadMusic(int musNumber) {
+	uint8 midiNumber = MusicPlayer::_musRoomTable[musNumber];
+	if (midiNumber) {
+		if (midiNumber != 100) {
+			 if (_currentMidi != midiNumber) {
+				_currentMidi = midiNumber;
+				const char *musName = MusicPlayer::_musTable[_currentMidi];
+				_midiPlayer->loadMidi(musName);
+			 }
+		}
+	} else {
+		stopMusic();
+	}
+	return true;
+}
+
+void PrinceEngine::stopMusic() {
+	if (_midiPlayer->isPlaying()) {
+		_midiPlayer->stop();
+	}
 }
 
 } // End of namespace Prince
