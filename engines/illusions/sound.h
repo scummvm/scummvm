@@ -53,6 +53,7 @@ public:
 
 	void pause(bool p);
 	void play(const Common::String &filename);
+	void fade(int16 finalVolume, int16 duration);
 
 	// The following line prevents compiler warnings about hiding the pause()
 	// method from the parent class.
@@ -114,6 +115,7 @@ public:
 
 	void playMidiMusic(uint32 musicId);
 	void stopMidiMusic();
+	void fadeMidiMusic(int16 finalVolume, int16 duration);
 
 	bool cueVoice(const char *voiceName);
 	void stopCueingVoice();

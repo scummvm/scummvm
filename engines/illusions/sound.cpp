@@ -152,6 +152,11 @@ void MidiPlayer::sendToChannel(byte channel, uint32 b) {
 		_channelsTable[channel]->send(b);
 }
 
+void MidiPlayer::fade(int16 finalVolume, int16 duration) {
+	//TODO fade here.
+	debug(0, "Fade midi. finalVolume: %d, duration: %d", finalVolume, duration);
+}
+
 // VoicePlayer
 
 VoicePlayer::VoicePlayer() {
@@ -353,6 +358,10 @@ void SoundMan::playMidiMusic(uint32 musicId) {
 
 void SoundMan::stopMidiMusic() {
 	_midiPlayer->stop();
+}
+
+void SoundMan::fadeMidiMusic(int16 finalVolume, int16 duration) {
+	_midiPlayer->fade(finalVolume, duration);
 }
 
 } // End of namespace Illusions
