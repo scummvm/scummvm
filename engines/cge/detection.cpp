@@ -176,12 +176,13 @@ const ADGameDescription *CGEMetaEngine::fallbackDetect(const FileMap &allFiles, 
 
 bool CGEMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
 		(f == kSimpleSavesNames);
 }
 
@@ -262,6 +263,10 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 			desc.setThumbnail(header.thumbnail);
 			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
 			desc.setSaveTime(header.saveHour, header.saveMinutes);
+
+			if (header.playTime) {
+				desc.setPlayTime(header.playTime * 1000);
+			}
 
 			// Slot 0 is used for the 'automatic save on exit' save in Soltys, thus
 			// we prevent it from being deleted or overwritten by accident.
