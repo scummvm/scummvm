@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 #include "backends/audiocd/audiocd.h"
 #include "xeen/scripts.h"
 #include "xeen/dialogs/dialogs_copy_protection.h"
@@ -1475,6 +1476,7 @@ bool Scripts::cmdPlayCD(ParamsIterator &params) {
 	int trackNum = params.readByte();
 	int start = params.readUint16LE();
 	int finish = params.readUint16LE();
+	debugC(3, kDebugScripts, "cmdPlayCD Track=%d start=%d finish=%d", trackNum, start, finish);
 
 	if (_vm->_files->_ccNum)
 		trackNum += 30;
