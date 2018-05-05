@@ -23,6 +23,7 @@
 #ifndef BACKENDS_AUDIOCD_ABSTRACT_H
 #define BACKENDS_AUDIOCD_ABSTRACT_H
 
+#include "audio/mixer.h"
 #include "common/scummsys.h"
 #include "common/noncopyable.h"
 
@@ -65,10 +66,12 @@ public:
 	 * @param startFrame     the frame at which playback should start (75 frames = 1 second).
 	 * @param duration       the number of frames to play.
 	 * @param onlyEmulate    determines if the track should be emulated only
+	 * @param soundType      What sound type to play as. By default, it's as music
 	 * @note The @c onlyEmulate parameter is deprecated.
 	 * @return @c true if the track started playing, @c false otherwise
 	 */
-	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false) = 0;
+	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
+		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType) = 0;
 
 	/**
 	 * Get if audio is being played.
