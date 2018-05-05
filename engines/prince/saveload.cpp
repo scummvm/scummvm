@@ -38,7 +38,6 @@
 
 namespace Prince {
 
-#define kBadSVG 99
 #define kSavegameVersion 1
 
 class InterpreterFlags;
