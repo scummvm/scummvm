@@ -76,8 +76,8 @@ bool AnimListItem::loadFromStream(Common::SeekableReadStream &stream) {
 	_nextAnim = stream.readUint16LE();
 	_flags = stream.readUint16LE();
 
-	//debug("AnimListItem type %d, fileNumber %d, x %d, y %d, flags %d", _type, _fileNumber, _x, _y, _flags);
-	//debug("startPhase %d, endPhase %d, loopPhase %d", _startPhase, _endPhase, _loopPhase);
+	//debug(2, "AnimListItem type %d, fileNumber %d, x %d, y %d, flags %d", _type, _fileNumber, _x, _y, _flags);
+	//debug(2, "startPhase %d, endPhase %d, loopPhase %d", _startPhase, _endPhase, _loopPhase);
 
 	// 32 byte aligment
 	stream.seek(pos + 32);
@@ -143,7 +143,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mobList.clear();
 	if (getGameType() == kPrinceDataDE) {
 		const Common::String mobLstName = Common::String::format("mob%02d.lst", _locationNr);
-		debug("name: %s", mobLstName.c_str());
+		debug(2, "name: %s", mobLstName.c_str());
 		Resource::loadResource(_mobList, mobLstName.c_str(), false);
 	} else if (getGameType() == kPrinceDataPL) {
 		Resource::loadResource(_mobList, "mob.lst", false);

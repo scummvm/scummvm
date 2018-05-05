@@ -222,7 +222,7 @@ void Script::setObjId(int roomObjOffset, int slot, byte objectId) {
 }
 
 int Script::scanMobEvents(int mobMask, int dataEventOffset) {
-	debug("mobMask: %d", mobMask);
+	debug(2, "mobMask: %d", mobMask);
 	int i = 0;
 	int16 mob;
 	int32 code;
@@ -230,7 +230,7 @@ int Script::scanMobEvents(int mobMask, int dataEventOffset) {
 		mob = (int)READ_LE_UINT16(&_data[dataEventOffset + i * 6]);
 		if (mob == mobMask) {
 			code = (int)READ_LE_UINT32(&_data[dataEventOffset + i * 6 + 2]);
-			debug("code: %d", code);
+			debug(2, "code: %d", code);
 			return code;
 		}
 		i++;
@@ -239,7 +239,7 @@ int Script::scanMobEvents(int mobMask, int dataEventOffset) {
 }
 
 int Script::scanMobEventsWithItem(int mobMask, int dataEventOffset, int itemMask) {
-	debug("mobMask: %d", mobMask);
+	debug(2, "mobMask: %d", mobMask);
 	int i = 0;
 	int16 mob;
 	int16 item;
@@ -250,8 +250,8 @@ int Script::scanMobEventsWithItem(int mobMask, int dataEventOffset, int itemMask
 			item = (int)READ_LE_UINT16(&_data[dataEventOffset + i * 8 + 2]);
 			if (item == itemMask) {
 				code = (int)READ_LE_UINT32(&_data[dataEventOffset + i * 8 + 4]);
-				debug("itemMask: %d", item);
-				debug("code: %d", code);
+				debug(2, "itemMask: %d", item);
+				debug(2, "code: %d", code);
 				return code;
 			}
 		}
@@ -388,7 +388,7 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 			tempMask._width = 0;
 			tempMask._height = 0;
 			tempMask._data = nullptr;
-			debug("Can't load %s", msStreamName.c_str());
+			warning("Can't load %s", msStreamName.c_str());
 			delete msStream;
 		} else {
 			msStream = Resource::getDecompressedStream(msStream);

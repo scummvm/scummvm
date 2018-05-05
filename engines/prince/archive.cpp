@@ -158,7 +158,7 @@ Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::
 		buffer = decompData;
 	}
 
-	//debug("PtcArchive::createReadStreamForMember name %s", name.c_str());
+	//debug(2, "PtcArchive::createReadStreamForMember name %s", name.c_str());
 
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }

@@ -63,7 +63,7 @@ void PrinceEngine::debugEngine(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-	debug("Prince::Engine %s", buf);
+	debug(2, "Prince::Engine %s", buf);
 }
 
 PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc) :
