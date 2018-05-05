@@ -325,6 +325,9 @@ void PrinceEngine::init() {
 		error("Can't load dialogDatStream");
 		return;
 	}
+
+	dialogDatStream = Resource::getDecompressedStream(dialogDatStream);
+
 	_dialogDatSize = dialogDatStream->size();
 	_dialogDat = (byte *)malloc(_dialogDatSize);
 	dialogDatStream->read(_dialogDat, _dialogDatSize);

@@ -391,6 +391,8 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 			debug("Can't load %s", msStreamName.c_str());
 			delete msStream;
 		} else {
+			msStream = Resource::getDecompressedStream(msStream);
+
 			int32 dataSize = msStream->size();
 			if (dataSize != -1) {
 				tempMask._data = (byte *)malloc(dataSize);

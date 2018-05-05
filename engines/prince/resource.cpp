@@ -203,6 +203,8 @@ bool PrinceEngine::loadAnim(uint16 animNr, bool loop) {
 		return false;
 	}
 
+	flicStream = Resource::getDecompressedStream(flicStream);
+
 	if (!_flicPlayer.loadStream(flicStream)) {
 		error("Can't load flic stream %s", streamName.c_str());
 	}
@@ -220,6 +222,8 @@ bool PrinceEngine::loadZoom(byte *zoomBitmap, uint32 dataSize, const char *resou
 		delete stream;
 		return false;
 	}
+	stream = Resource::getDecompressedStream(stream);
+
 	if (stream->read(zoomBitmap, dataSize) != dataSize) {
 		free(zoomBitmap);
 		delete stream;
@@ -236,6 +240,8 @@ bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *r
 		return false;
 	}
 
+	stream = Resource::getDecompressedStream(stream);
+
 	if (stream->read(shadowBitmap, dataSize) != dataSize) {
 		free(shadowBitmap);
 		delete stream;
@@ -248,6 +254,8 @@ bool PrinceEngine::loadShadow(byte *shadowBitmap, uint32 dataSize, const char *r
 		delete stream2;
 		return false;
 	}
+
+	stream2 = Resource::getDecompressedStream(stream2);
 
 	byte *shadowBitmap2 = shadowBitmap + dataSize;
 	if (stream2->read(shadowBitmap2, dataSize) != dataSize) {
@@ -273,6 +281,9 @@ bool PrinceEngine::loadTrans(byte *transTable, const char *resourceName) {
 		}
 		return true;
 	}
+
+	stream = Resource::getDecompressedStream(stream);
+
 	if (stream->read(transTable, kTransTableSize) != kTransTableSize) {
 		delete stream;
 		return false;
@@ -287,6 +298,9 @@ bool PrinceEngine::loadPath(const char *resourceName) {
 		delete stream;
 		return false;
 	}
+
+	stream = Resource::getDecompressedStream(stream);
+
 	if (stream->read(_roomPathBitmap, kPathBitmapLen) != kPathBitmapLen) {
 		delete stream;
 		return false;
@@ -305,6 +319,8 @@ bool PrinceEngine::loadAllInv() {
 			delete invStream;
 			return true;
 		}
+
+		invStream = Resource::getDecompressedStream(invStream);
 
 		tempInvItem._x = invStream->readUint16LE();
 		tempInvItem._y = invStream->readUint16LE();
@@ -330,6 +346,8 @@ bool PrinceEngine::loadMobPriority(const char *resourceName) {
 		delete stream;
 		return false;
 	}
+
+	stream = Resource::getDecompressedStream(stream);
 
 	_mobPriorityList.clear();
 	uint mobId;

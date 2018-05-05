@@ -23,6 +23,7 @@
 #include "prince/prince.h"
 #include "prince/music.h"
 #include "prince/musNum.h"
+#include "prince/resource.h"
 
 #include "common/archive.h"
 #include "common/debug.h"
@@ -152,6 +153,8 @@ void MusicPlayer::loadMidi(const char *name) {
 		debug("Can't load midi stream %s", name);
 		return;
 	}
+
+	stream = Resource::getDecompressedStream(stream);
 
 	// Stop any currently playing MIDI file
 	killMidi();
