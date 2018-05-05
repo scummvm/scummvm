@@ -343,7 +343,7 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 
 int BackgroundResource::findMasterBgIndex() {
 	int index = 1;
-	while (!_bgInfos[index - 1]._flags & 1) //TODO check if this is a typo
+	while (!(_bgInfos[index - 1]._flags & 1)) //TODO check if this is correct
 		++index;
 	return index;
 }
