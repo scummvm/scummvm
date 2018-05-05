@@ -35,7 +35,7 @@ namespace Prince {
 
 namespace Resource {
 
-static Common::SeekableReadStream *getDecompressedStream(Common::SeekableReadStream *stream);
+Common::SeekableReadStream *getDecompressedStream(Common::SeekableReadStream *stream);
 
 template <typename T>
 bool loadFromStream(T &resource, Common::SeekableReadStream &stream) {
@@ -102,28 +102,6 @@ bool loadResource(Common::Array<T *> &array, const char *resourceName, bool requ
 		array.push_back(t);
 	}
 	return true;
-}
-
-static Common::SeekableReadStream *getDecompressedStream(Common::SeekableReadStream *stream) {
-	byte header[4];
-
-	stream->read(header, 4);
-	stream->seek(0);
-
-	if (READ_BE_UINT32(header) == MKTAG('M', 'A', 'S', 'M')) {
-		byte *buffer = (byte *)malloc(stream->size());
-		stream->read(buffer, stream->size());
-
-		Decompressor dec;
-		uint32 decompLen = READ_BE_UINT32(buffer + 14);
-		byte *decompData = (byte *)malloc(decompLen);
-		dec.decompress(buffer + 18, decompData, decompLen);
-		free(buffer);
-
-		return new Common::MemoryReadStream(decompData, decompLen, DisposeAfterUse::YES);
-	} else {
-		return stream;
-	}
 }
 
 }

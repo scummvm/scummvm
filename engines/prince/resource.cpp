@@ -32,6 +32,28 @@
 
 namespace Prince {
 
+Common::SeekableReadStream *Resource::getDecompressedStream(Common::SeekableReadStream *stream) {
+	byte header[4];
+
+	stream->read(header, 4);
+	stream->seek(0);
+
+	if (READ_BE_UINT32(header) == MKTAG('M', 'A', 'S', 'M')) {
+		byte *buffer = (byte *)malloc(stream->size());
+		stream->read(buffer, stream->size());
+
+		Decompressor dec;
+		uint32 decompLen = READ_BE_UINT32(buffer + 14);
+		byte *decompData = (byte *)malloc(decompLen);
+		dec.decompress(buffer + 18, decompData, decompLen);
+		free(buffer);
+
+		return new Common::MemoryReadStream(decompData, decompLen, DisposeAfterUse::YES);
+	} else {
+		return stream;
+	}
+}
+
 bool AnimListItem::loadFromStream(Common::SeekableReadStream &stream) {
 	int32 pos = stream.pos();
 
