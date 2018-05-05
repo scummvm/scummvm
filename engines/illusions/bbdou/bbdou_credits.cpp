@@ -107,7 +107,7 @@ void BbdouCredits::drawTextToControl(uint32 objectId, const char *text, uint ali
 	control->fillActor(0);
 	textDrawer.wrapText(font, wtext, &dimensions, Common::Point(0, 0), alignment, outText);
 	textDrawer.drawText(_vm->_screen, control->_actor->_surface, 0, 0);
-	control->_actor->_flags |= 0x4000;
+	control->_actor->_flags |= Illusions::ACTOR_FLAG_4000;
 
 }
 

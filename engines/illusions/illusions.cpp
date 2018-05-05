@@ -188,14 +188,14 @@ int IllusionsEngine::updateGraphics(uint flags) {
 	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
 		Control *control = *it;
 		Actor *actor = control->_actor;
-		if (control->_pauseCtr == 0 && actor && (actor->_flags & 1) && !(actor->_flags & 0x0200)) {
+		if (control->_pauseCtr == 0 && actor && (actor->_flags & Illusions::ACTOR_FLAG_1) && !(actor->_flags & Illusions::ACTOR_FLAG_200)) {
 			Common::Point drawPosition = control->calcPosition(panPoint);
-			if (actor->_flags & 0x2000) {
+			if (actor->_flags & Illusions::ACTOR_FLAG_2000) {
 				Frame *frame = &(*actor->_frames)[actor->_frameIndex - 1];
 				_screen->_decompressQueue->insert(&actor->_drawFlags, frame->_flags,
 					frame->_surfInfo._pixelSize, frame->_surfInfo._dimensions,
 					frame->_compressedPixels, actor->_surface);
-				actor->_flags &= ~0x2000;
+				actor->_flags &= ~Illusions::ACTOR_FLAG_2000;
 			}
 			/* Unused
 			if (actor->_flags & 0x4000) {

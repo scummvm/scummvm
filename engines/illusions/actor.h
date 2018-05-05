@@ -39,6 +39,25 @@ class IllusionsEngine;
 class SequenceOpcodes;
 struct OpCall;
 
+enum ActorFlags {
+	ACTOR_FLAG_1 = 1,
+	ACTOR_FLAG_2 = 2,
+	ACTOR_FLAG_4 = 4,
+	ACTOR_FLAG_8 = 8,
+	ACTOR_FLAG_10 = 0x10,
+	ACTOR_FLAG_20 = 0x20,
+	ACTOR_FLAG_40 = 0x40,
+	ACTOR_FLAG_80 = 0x80,
+	ACTOR_FLAG_100 = 0x100,
+	ACTOR_FLAG_200 = 0x200,
+	ACTOR_FLAG_400 = 0x400,
+	ACTOR_FLAG_800 = 0x800,
+	ACTOR_FLAG_1000 = 0x1000,
+	ACTOR_FLAG_2000 = 0x2000,
+	ACTOR_FLAG_4000 = 0x4000,
+	ACTOR_FLAG_8000 = 0x8000
+};
+
 const uint kSubObjectsCount = 15;
 
 struct DefaultSequence {

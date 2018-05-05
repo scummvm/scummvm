@@ -107,7 +107,7 @@ int DuckmanCredits::update(uint flags) {
 				control->getActorFrameDimensions(dimensions);
 				textDrawer.wrapText(font, wtext, &dimensions, Common::Point(0, 0), 2, outText);
 				textDrawer.drawText(_vm->_screen, control->_actor->_surface, 0, 0);
-				control->_actor->_flags |= 0x4000;
+				control->_actor->_flags |= Illusions::ACTOR_FLAG_4000;
 
 				_lastItemIndex = index;
 			}
