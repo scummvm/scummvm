@@ -929,17 +929,18 @@ is simpler and more straightforward than moving around using the menu.
 --------------------------------------
 To properly plan the World of Xeen CD Talkie using original discs,
 use LAME or some other MP3 encoder to rip the cd audio tracks to files.
-Name the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with
+Name the files track2.mp3 track3.mp3 etc. ScummVM must be compiled with
 MAD support to use this option. You will need to rip the file from the
 CD as a WAV file, then encode the MP3 files in constant bit rate. This
-can be done with the following LAME command line:
+can be done for each track with a LAME command line like:
 
-  lame -t -q 0 -b 96 track1.wav track1.mp3
+  lame -t -q 0 -b 96 track2.wav track2.mp3
 
 For the GOG Might and Magic 4-5 installation, install the game to your
 computer, and do the following steps:
-* The game1.gog file from the game folder is a CD ISO. Use software like
-Virtual CloneDrive to mount it as a drive.
+* The game1.inst (CUE) and game1.gog (BIN) file from the game folder is a 
+CD image. Use software like Virtual CloneDrive to mount it as a drive.
+Linux and MacOS users can use bchunk to convert it to an ISO.
 * Copy all the .cc files from the subfolder in the mounted drive to a new
 empty game folder that you create for the game.
 * Copy all the music/*.ogg files from the GOG installation to your game

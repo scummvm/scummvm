@@ -1472,7 +1472,7 @@ bool Scripts::cmdPlayCD(ParamsIterator &params) {
 	int start = params.readUint16LE() * 60 / 75;
 	int finish = params.readUint16LE() * 60 / 75;
 
-	g_system->getAudioCDManager()->play(trackNum, 1, start, finish - start);
+	g_system->getAudioCDManager()->play(trackNum, 1, start, finish - start, false, Audio::Mixer::kSpeechSoundType);
 	return true;
 }
 
