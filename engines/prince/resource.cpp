@@ -33,6 +33,9 @@
 namespace Prince {
 
 Common::SeekableReadStream *Resource::getDecompressedStream(Common::SeekableReadStream *stream) {
+	if (!(((PrinceEngine *)g_engine)->getFeatures() & GF_EXTRACTED))
+		return stream;
+
 	byte header[4];
 
 	stream->read(header, 4);
