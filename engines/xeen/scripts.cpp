@@ -1814,16 +1814,16 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		v = ps->_ACTemp;
 		break;
 	case 78:
-		// Test whether current Hp is equal to or exceeds the max HP
-		v = ps->_currentHp >= ps->getMaxHP() ? 1 : 0;
+		// Test whether current Hp exceeds max HP or not
+		v = ps->_currentHp <= ps->getMaxHP() ? 1 : 0;
 		break;
 	case 79:
 		// Test for Wizard Eye being active
 		v = party._wizardEyeActive ? 1 : 0;
 		break;
 	case 81:
-		// Test whether current Sp is equal to or exceeds the max SP
-		v = ps->_currentSp >= ps->getMaxSP() ? 1 : 0;
+		// Test whether current Sp exceeds the max SP or not
+		v = ps->_currentSp <= ps->getMaxSP() ? 1 : 0;
 		break;
 	case 84:
 		// Current facing direction
