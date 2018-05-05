@@ -83,11 +83,15 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	const Common::String locationNrStr = Common::String::format("%02d", _locationNr);
 	debugEngine("loadLocation %s", locationNrStr.c_str());
 
-	PtcArchive *locationArchive = new PtcArchive();
-	if (!locationArchive->open(locationNrStr + "/databank.ptc"))
-		error("Can't open location %s", locationNrStr.c_str());
+	if (!(getFeatures() & GF_EXTRACTED)) {
+		PtcArchive *locationArchive = new PtcArchive();
+		if (!locationArchive->open(locationNrStr + "/databank.ptc"))
+			error("Can't open location %s", locationNrStr.c_str());
 
-	SearchMan.add(locationNrStr, locationArchive);
+		SearchMan.add(locationNrStr, locationArchive);
+	} else {
+		SearchMan.addSubDirectoryMatching(gameDataDir, locationNrStr);
+	}
 
 	loadMusic(_locationNr);
 
