@@ -106,7 +106,7 @@ struct SavegameHeader;
 #define kQuitText         201
 #define kNoQuitText       202
 
-#define kSavegameVersion    1
+#define kSavegameVersion    2
 #define kSavegameStrSize   12
 #define kSavegameStr       "SCUMMVM_CGE2"
 
@@ -116,8 +116,9 @@ struct SavegameHeader {
 	uint8 version;
 	Common::String saveName;
 	Graphics::Surface *thumbnail;
-	int saveYear, saveMonth, saveDay;
-	int saveHour, saveMinutes;
+	int16 saveYear, saveMonth, saveDay;
+	int16 saveHour, saveMinutes;
+	uint32 playTime;
 };
 
 enum ColorBank { kCBRel, kCBStd, kCBSay, kCBInf, kCBMnu, kCBWar };

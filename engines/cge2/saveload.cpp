@@ -117,6 +117,8 @@ bool CGE2Engine::loadGame(int slotNumber) {
 			delete readStream;
 			return false;
 		}
+
+		g_engine->setTotalPlayTime(saveHeader.playTime * 1000);
 	}
 
 	resetGame();
@@ -174,16 +176,27 @@ void CGE2Engine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &h
 	out->writeSint16LE(td.tm_mday);
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
+
+	out->writeUint32LE(g_engine->getTotalPlayTime() / 1000);
 }
 
 WARN_UNUSED_RESULT bool CGE2Engine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
+	header.version     = 0;
+	header.saveName.clear();
+	header.thumbnail   = nullptr;
+	header.saveYear    = 0;
+	header.saveMonth   = 0;
+	header.saveDay     = 0;
+	header.saveHour    = 0;
+	header.saveMinutes = 0;
+	header.playTime    = 0;
+
 	// Get the savegame version
 	header.version = in->readByte();
 	if (header.version > kSavegameVersion)
 		return false;
 
 	// Read in the string
-	header.saveName.clear();
 	char ch;
 	while ((ch = (char)in->readByte()) != '\0')
 		header.saveName += ch;
@@ -194,11 +207,16 @@ WARN_UNUSED_RESULT bool CGE2Engine::readSavegameHeader(Common::InSaveFile *in, S
 	}
 
 	// Read in save date/time
-	header.saveYear = in->readSint16LE();
-	header.saveMonth = in->readSint16LE();
-	header.saveDay = in->readSint16LE();
-	header.saveHour = in->readSint16LE();
+	header.saveYear    = in->readSint16LE();
+	header.saveMonth   = in->readSint16LE();
+	header.saveDay     = in->readSint16LE();
+	header.saveHour    = in->readSint16LE();
 	header.saveMinutes = in->readSint16LE();
+
+	if (header.version >= 2) {
+		header.playTime = in->readUint32LE();
+	}
+
 
 	return true;
 }
