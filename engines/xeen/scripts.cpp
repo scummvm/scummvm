@@ -239,6 +239,10 @@ int Scripts::checkEvents() {
 	_vm->_mode = oldMode;
 	windows.closeAll();
 
+	if (g_vm->getIsCD() && g_system->getAudioCDManager()->isPlaying())
+		// Stop any playing voice
+		g_system->getAudioCDManager()->stop();
+
 	if (g_vm->shouldExit())
 		return g_vm->_gameMode;
 
