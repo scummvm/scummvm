@@ -1475,6 +1475,8 @@ bool Scripts::cmdPlayCD(ParamsIterator &params) {
 	int trackNum = params.readByte();
 	int start = params.readUint16LE() * 60 / 75;
 	int finish = params.readUint16LE() * 60 / 75;
+	if (_vm->_files->_ccNum)
+		trackNum += 30;
 
 	g_system->getAudioCDManager()->play(trackNum, 1, start, finish - start, false, Audio::Mixer::kSpeechSoundType);
 	return true;

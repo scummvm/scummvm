@@ -927,14 +927,11 @@ is simpler and more straightforward than moving around using the menu.
 
 3.15 Might and Magic Xeen games notes:
 --------------------------------------
-To properly plan the World of Xeen CD Talkie using original discs,
-use LAME or some other MP3 encoder to rip the cd audio tracks to files.
-Name the files track2.mp3 track3.mp3 etc. ScummVM must be compiled with
-MAD support to use this option. You will need to rip the file from the
-CD as a WAV file, then encode the MP3 files in constant bit rate. This
-can be done for each track with a LAME command line like:
-
-  lame -t -q 0 -b 96 track2.wav track2.mp3
+To properly play the World of Xeen CD Talkie using original discs,
+use LAME or some other encoder to rip the cd audio tracks to files,
+either mp3 or ogg. Whichever you choose, the tracks of the first CD
+should be named from track02 to track29, whereas the second CD's
+audio tracks should be encoded as track30 through to track60.
 
 For the GOG Might and Magic 4-5 installation, install the game to your
 computer, and do the following steps:
