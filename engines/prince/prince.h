@@ -86,8 +86,9 @@ struct SavegameHeader {
 	uint8 version;
 	Common::String saveName;
 	Graphics::Surface *thumbnail;
-	int saveYear, saveMonth, saveDay;
-	int saveHour, saveMinutes;
+	int16 saveYear, saveMonth, saveDay;
+	int16 saveHour, saveMinutes;
+	uint32 playTime;
 };
 
 #define kSavegameStrSize 14

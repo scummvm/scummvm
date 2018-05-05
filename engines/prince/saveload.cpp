@@ -44,13 +44,22 @@ class InterpreterFlags;
 class Interpreter;
 
 WARN_UNUSED_RESULT bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
+	header.version     = 0;
+	header.saveName.clear();
+	header.thumbnail   = nullptr;
+	header.saveYear    = 0;
+	header.saveMonth   = 0;
+	header.saveDay     = 0;
+	header.saveHour    = 0;
+	header.saveMinutes = 0;
+	header.playTime    = 0;
+
 	// Get the savegame version
 	header.version = in->readByte();
 	if (header.version > kSavegameVersion)
 		return false;
 
 	// Read in the string
-	header.saveName.clear();
 	char ch;
 	while ((ch = (char)in->readByte()) != '\0')
 		header.saveName += ch;
@@ -61,11 +70,12 @@ WARN_UNUSED_RESULT bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in,
 	}
 
 	// Read in save date/time
-	header.saveYear = in->readSint16LE();
-	header.saveMonth = in->readSint16LE();
-	header.saveDay = in->readSint16LE();
-	header.saveHour = in->readSint16LE();
+	header.saveYear    = in->readSint16LE();
+	header.saveMonth   = in->readSint16LE();
+	header.saveDay     = in->readSint16LE();
+	header.saveHour    = in->readSint16LE();
 	header.saveMinutes = in->readSint16LE();
+	header.playTime    = in->readUint32LE();
 
 	return true;
 }
@@ -154,6 +164,8 @@ void PrinceEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader 
 	out->writeSint16LE(td.tm_mday);
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
+
+	out->writeUint32LE(g_engine->getTotalPlayTime() / 1000);
 }
 
 void PrinceEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream) {
@@ -413,6 +425,8 @@ bool PrinceEngine::loadGame(int slotNumber) {
 			delete readStream;
 			return false;
 		}
+
+		g_engine->setTotalPlayTime(saveHeader.playTime * 1000);
 	}
 
 	// Get in the savegame
