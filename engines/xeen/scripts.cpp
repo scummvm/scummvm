@@ -1473,13 +1473,26 @@ bool Scripts::cmdFlipWorld(ParamsIterator &params) {
 
 bool Scripts::cmdPlayCD(ParamsIterator &params) {
 	int trackNum = params.readByte();
-	int start = params.readUint16LE() * 60 / 75;
-	int finish = params.readUint16LE() * 60 / 75;
+	int start = params.readUint16LE();
+	int finish = params.readUint16LE();
+
 	if (_vm->_files->_ccNum)
 		trackNum += 30;
+	assert(trackNum <= 60);
+
+	start = convertCDTime(start);
+	finish = convertCDTime(finish);
 
 	g_system->getAudioCDManager()->play(trackNum, 1, start, finish - start, false, Audio::Mixer::kSpeechSoundType);
 	return true;
+}
+
+#define CD_FRAME_RATE 75
+uint Scripts::convertCDTime(uint srcTime) {
+	// Times are encoded as MMSSCC - MM=Minutes, SS=Seconds, CC=Centiseconds (1/100th second)
+	uint mins = srcTime / 10000;
+	uint csec = srcTime % 10000;
+	return (mins * 6000 + csec) * CD_FRAME_RATE / 100;
 }
 
 void Scripts::doCloudsEnding() {
