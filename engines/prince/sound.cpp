@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/archive.h"
+
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 

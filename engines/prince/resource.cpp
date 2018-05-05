@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/fs.h"
 #include "common/config-manager.h"
 
 #include "prince/prince.h"
