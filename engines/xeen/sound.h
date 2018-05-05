@@ -40,6 +40,7 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	byte _musicPercent;
+	int _musicVolume, _sfxVolume;
 private:
 	/**
 	 * Loads effects data that was embedded in the music driver
@@ -50,6 +51,11 @@ private:
 	 * Updates any playing music
 	 */
 	void update();
+
+	/**
+	 * Updates the music and sound effects playing volume
+	 */
+	void updateVolume();
 public:
 	bool _fxOn;
 	bool _musicOn;
@@ -73,7 +79,7 @@ public:
 	/**
 	 * Executes special music command
 	 */
-	int songCommand(uint commandId, byte volume = 0);
+	int songCommand(uint commandId, byte musicVolume = 0, byte sfxVolume = 0);
 
 	/**
 	 * Stops any currently playing music

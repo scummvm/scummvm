@@ -225,7 +225,7 @@ void SoundDriver::playSong(const byte *data) {
 	debugC(1, kDebugSound, "Starting song");
 }
 
-int SoundDriver::songCommand(uint commandId, byte volume) {
+int SoundDriver::songCommand(uint commandId, byte musicVolume, byte sfxVolume) {
 	if (commandId == STOP_SONG) {
 		_musicPlaying = false;
 	} else if (commandId == RESTART_SONG) {
@@ -262,7 +262,7 @@ const CommandFn SoundDriver::FX_COMMANDS[16] = {
 /*------------------------------------------------------------------------*/
 
 AdlibSoundDriver::AdlibSoundDriver() : _field180(0), _field181(0), _field182(0),
-		_volume(127) {
+		_musicVolume(0), _sfxVolume(0) {
 	Common::fill(&_musInstrumentPtrs[0], &_musInstrumentPtrs[16], (const byte *)nullptr);
 	Common::fill(&_fxInstrumentPtrs[0], &_fxInstrumentPtrs[16], (const byte *)nullptr);
 
@@ -304,9 +304,9 @@ void AdlibSoundDriver::playSong(const byte *data) {
 	resetFrequencies();
 }
 
-int AdlibSoundDriver::songCommand(uint commandId, byte volume) {
+int AdlibSoundDriver::songCommand(uint commandId, byte musicVolume, byte sfxVolume) {
 	Common::StackLock slock(_driverMutex);
-	SoundDriver::songCommand(commandId, volume);
+	SoundDriver::songCommand(commandId, musicVolume, sfxVolume);
 
 	if (commandId == STOP_SONG) {
 		_field180 = 0;
@@ -320,7 +320,8 @@ int AdlibSoundDriver::songCommand(uint commandId, byte volume) {
 			_field182 = 63;
 		}
 	} else if (commandId == SET_VOLUME) {
-		_volume = volume;
+		_musicVolume = musicVolume;
+		_sfxVolume = sfxVolume;
 	} else if (commandId == GET_STATUS) {
 		return _field180;
 	}
@@ -428,7 +429,7 @@ void AdlibSoundDriver::setOutputLevel(byte channelNum, uint level) {
 		(_channels[channelNum]._scalingValue & 0xC0));
 }
 
-void AdlibSoundDriver::playInstrument(byte channelNum, const byte *data) {
+void AdlibSoundDriver::playInstrument(byte channelNum, const byte *data, byte volume) {
 	byte op1 = OPERATOR1_INDEXES[channelNum];
 	byte op2 = OPERATOR2_INDEXES[channelNum];
 	debugC(2, kDebugSound, "---START-playInstrument - %d", channelNum);
@@ -441,7 +442,7 @@ void AdlibSoundDriver::playInstrument(byte channelNum, const byte *data) {
 
 	int scalingVal = *data++;
 	_channels[channelNum]._scalingValue = scalingVal;
-	scalingVal += (127 - _volume) / 2;
+	scalingVal += (127 - volume) / 2;
 
 	if (scalingVal > 63) {
 		scalingVal = 63;
@@ -535,7 +536,7 @@ bool AdlibSoundDriver::musPlayInstrument(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "musPlayInstrument %d, %d", param, instrument);
 
 	if (param < 7)
-		playInstrument(param, _musInstrumentPtrs[instrument]);
+		playInstrument(param, _musInstrumentPtrs[instrument], _musicVolume);
 
 	return false;
 }
@@ -633,7 +634,7 @@ bool AdlibSoundDriver::fxPlayInstrument(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxPlayInstrument %d, %d", param, instrument);
 
 	if (!_exclude7 || param != 7)
-		playInstrument(param, _fxInstrumentPtrs[instrument]);
+		playInstrument(param, _fxInstrumentPtrs[instrument], _sfxVolume);
 
 	return false;
 }
