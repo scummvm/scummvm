@@ -99,7 +99,8 @@ Common::Error StarTrekEngine::run() {
 		} else {
 			_gfx->setPalette("BRIDGE.PAL");
 			//_gfx->loadEGAData("BRIDGE.EGA");
-			_gfx->drawImage("BRIDGE.BMP");
+			_gfx->drawImage("DEMON5.BMP");
+			//_gfx->drawImage("BRIDGE.BMP");
 		}
 		
 		if (getPlatform() == Common::kPlatformAmiga)
@@ -132,7 +133,19 @@ Common::Error StarTrekEngine::run() {
 	return Common::kNoError;
 }
 
-Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename) {
+Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename, int fileIndex) {
+	Common::String basename, extension;
+
+	for (int i=filename.size()-1; ; i--) {
+		if (filename[i] == '.') {
+			basename = filename;
+			extension = filename;
+			basename.replace(i, filename.size()-i, "");
+			extension.replace(0, i+1, "");
+			break;
+		}
+	}
+
 	// The Judgment Rites demo has its files not in the standard archive
 	if (getGameType() == GType_STJR && (getFeatures() & GF_DEMO)) {
 		Common::File *file = new Common::File();
@@ -170,11 +183,11 @@ Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename) {
 				testfile += c;
 		}
 		testfile += '.';
-	
+
 		for (byte i = 0; i < 3; i++)
 			testfile += indexFile->readByte();
-		
-		if (getFeatures() & GF_DEMO) {
+
+		if (getFeatures() & GF_DEMO && getPlatform() == Common::kPlatformDOS) {
 			indexFile->readByte(); // Always 0?
 			fileCount = indexFile->readUint16LE(); // Always 1
 			indexOffset = indexFile->readUint32LE();
@@ -188,25 +201,35 @@ Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename) {
 			if (indexOffset & (1 << 23)) {
 				fileCount = (indexOffset >> 16) & 0x7F;
 				indexOffset = indexOffset & 0xFFFF;
-			
-				// TODO: Replace necessary number with ?
+				assert(fileCount > 1);
 			} else {
 				fileCount = 1;
 			}
 		}
-		
+
 		if (filename.matchString(testfile)) {
 			foundData = true;
 			break;
 		}		
 	}
-	
+
 	delete indexFile;
-	
-	if (!foundData)
-		error ("Could not find file \'%s\'", filename.c_str());
+
+	if (!foundData) {
+		// Files with a number at the end are stored a bit differently; they are accessed
+		// based on a "base number". See if there's an earlier number that can be opened.
+		if (basename.lastChar() >= '1' && basename.lastChar() <= '9') {
+			basename.setChar(basename.lastChar()-1, basename.size()-1);
+			return openFile(basename + "." + extension, fileIndex+1);
+		} else
+			error ("Could not find file \'%s\'", filename.c_str());
+	}
+
+	if (fileIndex >= fileCount)
+		error("Tried to access file index %d for file '%s' which doesn't exist.", fileIndex, filename.c_str());
 
 	Common::SeekableReadStream *dataFile = 0;
+	Common::SeekableReadStream *dataRunFile = 0; // FIXME: Amiga & Mac code don't implement this
 
 	if (getPlatform() == Common::kPlatformAmiga) {
 		dataFile = SearchMan.createReadStreamForMember("data.000");
@@ -220,57 +243,42 @@ Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename) {
 		dataFile = SearchMan.createReadStreamForMember("data.001");
 		if (!dataFile)
 			error("Could not open data.001");
+		dataRunFile = SearchMan.createReadStreamForMember("data.run");
+		if (!dataFile)
+			error("Could not open data.run");
 	}
-		
-	dataFile->seek(indexOffset);
-	
-	if (getFeatures() & GF_DEMO) {
+
+	if (getFeatures() & GF_DEMO && getPlatform() == Common::kPlatformDOS) {
 		assert(fileCount == 1); // Sanity check...
 		Common::SeekableReadStream *stream = dataFile->readStream(uncompressedSize);
 		delete dataFile;
 		return stream;
 	} else {
-		uint16 fileIndex = 0;
-	
-		// TODO!
-		//if (fileCount > 1)
-		//	fileIndex = filename.lastChar() - '0';
-		if (fileCount != 1)
-			error ("Multi-part files not yet handled");
-	
-		for (uint16 i = 0; i < fileCount; i++) {
-			uncompressedSize = (getPlatform() == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
-			uint16 compressedSize = (getPlatform() == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
-			if (i == fileIndex) {
-				debug(0, "Opening file \'%s\'\n", filename.c_str());
-				Common::SeekableReadStream *stream = decodeLZSS(dataFile->readStream(compressedSize), uncompressedSize);
-				delete dataFile;
-				return stream;
-			} else {
-				dataFile->skip(compressedSize);
+		if (fileCount != 1) {
+			dataRunFile->seek(indexOffset);
+
+			indexOffset = dataRunFile->readByte() + (dataRunFile->readByte() << 8) + (dataRunFile->readByte() << 16);
+			//indexOffset &= 0xFFFFFE;
+
+			for (uint16 i = 0; i < fileIndex; i++) {
+				uint16 size = dataRunFile->readUint16LE();
+				indexOffset += size;
 			}
 		}
+		dataFile->seek(indexOffset);
+
+		uncompressedSize = (getPlatform() == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
+		uint16 compressedSize = (getPlatform() == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
+
+		Common::SeekableReadStream *stream = decodeLZSS(dataFile->readStream(compressedSize), uncompressedSize);
+		delete dataFile;
+		return stream;
 	}
 	
 	// We should not get to this point...
 	error("Could not find data for \'%s\'", filename.c_str());
 		
 	return NULL;
-}
-
-byte StarTrekEngine::getStartingIndex(Common::String filename) {
-	// Find last number
-	int32 lastNumIndex = -1;
-	for (uint32 i = 0; i < filename.size(); i++) {
-		if (filename[i] >= '0' && filename[i] <= '9')
-			lastNumIndex = i;
-		else if (filename[i] == '.')
-			break;
-	}
-	
-	if (lastNumIndex == -1)
-		return 0;
-	return (filename[lastNumIndex] - '0');
 }
 
 void StarTrekEngine::playMovie(Common::String filename) {
