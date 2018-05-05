@@ -437,7 +437,7 @@ bool IllusionsEngine_Duckman::testMainActorCollision(Control *control) {
 			_currWalkOverlappedControl = overlappedControl;
 			if (runTriggerCause(9, 0, overlappedControl->_objectId)) {
 				delete control->_actor->_pathNode;
-				control->_actor->_flags &= ~0x0400;
+				control->_actor->_flags &= ~Illusions::ACTOR_FLAG_400;
 				control->_actor->_pathNode = 0;
 				control->_actor->_pathPoints = 0;
 				control->_actor->_pathPointsCount = 0;
@@ -692,7 +692,7 @@ void IllusionsEngine_Duckman::stopCursorHoldingObject() {
 
 void IllusionsEngine_Duckman::cursorControlRoutine(Control *control, uint32 deltaTime) {
 	control->_actor->_seqCodeValue1 = 100 * deltaTime;
-	if (control->_actor->_flags & 1) {
+	if (control->_actor->_flags & Illusions::ACTOR_FLAG_1) {
 		switch (_cursor._gameState) {
 		case 2:
 			updateGameState2();

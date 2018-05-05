@@ -121,31 +121,31 @@ void SequenceOpcodes::opYield(Control *control, OpCall &opCall) {
 
 void SequenceOpcodes::opSetFrameIndex(Control *control, OpCall &opCall) {
 	ARG_INT16(frameIndex);
-	if (control->_actor->_flags & 0x80) {
+	if (control->_actor->_flags & Illusions::ACTOR_FLAG_80) {
 		int16 frameIncr = READ_LE_UINT16(control->_actor->_entryTblPtr);
 		if (frameIncr) {
 			frameIndex += frameIncr - 1;
 			control->_actor->_entryTblPtr += 2;
 		} else {
-			control->_actor->_flags &= ~0x80;
+			control->_actor->_flags &= ~Illusions::ACTOR_FLAG_80;
 			control->_actor->_entryTblPtr = 0;
 			control->_actor->_notifyThreadId2 = 0;
 			_vm->notifyThreadId(control->_actor->_notifyThreadId1);
 			opCall._result = 1;
 		}
 	}
-	control->_actor->_flags &= ~0x0100;
-	if (control->_actor->_flags & 0x8000) {
+	control->_actor->_flags &= ~Illusions::ACTOR_FLAG_100;
+	if (control->_actor->_flags & Illusions::ACTOR_FLAG_8000) {
 		control->appearActor();
-		control->_actor->_flags &= ~0x8000;
+		control->_actor->_flags &= ~Illusions::ACTOR_FLAG_8000;
 	}
 	control->_actor->_newFrameIndex = frameIndex;
 }
 
 void SequenceOpcodes::opEndSequence(Control *control, OpCall &opCall) {
 	control->_actor->_seqCodeIp = 0;
-	if (control->_actor->_flags & 0x0800) {
-		control->_actor->_flags &= ~0x0800;
+	if (control->_actor->_flags & Illusions::ACTOR_FLAG_800) {
+		control->_actor->_flags &= ~Illusions::ACTOR_FLAG_800;
 		control->_actor->_frames = 0;
 		control->_actor->_frameIndex = 0;
 		control->_actor->_newFrameIndex = 0;
@@ -295,64 +295,64 @@ void SequenceOpcodes::opSetPathCtrY(Control *control, OpCall &opCall) {
 void SequenceOpcodes::opSetPathWalkPoints(Control *control, OpCall &opCall) {
 	ARG_INT16(pathWalkPointsIndex);
 	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
-	control->_actor->_flags |= 2;
+	control->_actor->_flags |= Illusions::ACTOR_FLAG_2;
 	control->_actor->_pathWalkPoints = bgRes->getPathWalkPoints(pathWalkPointsIndex - 1);
 }
 
 void SequenceOpcodes::opDisableAutoScale(Control *control, OpCall &opCall) {
 	// Keep current scale but don't autoscale
-	control->_actor->_flags &= ~4;
+	control->_actor->_flags &= ~Illusions::ACTOR_FLAG_4;
 }
 
 void SequenceOpcodes::opSetScale(Control *control, OpCall &opCall) {
 	ARG_INT16(scale);
-	control->_actor->_flags &= ~4;
+	control->_actor->_flags &= ~Illusions::ACTOR_FLAG_4;
 	control->setActorScale(scale);
 }
 
 void SequenceOpcodes::opSetScaleLayer(Control *control, OpCall &opCall) {
 	ARG_INT16(scaleLayerIndex);
 	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
-	control->_actor->_flags |= 4;
+	control->_actor->_flags |= Illusions::ACTOR_FLAG_4;
 	control->_actor->_scaleLayer = bgRes->getScaleLayer(scaleLayerIndex - 1);
 	int scale = control->_actor->_scaleLayer->getScale(control->_actor->_position);
 	control->setActorScale(scale);
 }
 
 void SequenceOpcodes::opDeactivatePathWalkRects(Control *control, OpCall &opCall) {
-	control->_actor->_flags &= ~0x0010;
+	control->_actor->_flags &= ~Illusions::ACTOR_FLAG_10;
 }
 
 void SequenceOpcodes::opSetPathWalkRects(Control *control, OpCall &opCall) {
 	ARG_INT16(pathWalkRectsIndex);
 	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
-	control->_actor->_flags |= 0x0010;
+	control->_actor->_flags |= Illusions::ACTOR_FLAG_10;
 	control->_actor->_pathWalkRects = bgRes->getPathWalkRects(pathWalkRectsIndex - 1);
 }
 
 void SequenceOpcodes::opSetPriority(Control *control, OpCall &opCall) {
 	ARG_INT16(priority);
-	control->_actor->_flags &= ~8;
+	control->_actor->_flags &= ~Illusions::ACTOR_FLAG_8;
 	control->setPriority(priority);
 }
 
 void SequenceOpcodes::opSetPriorityLayer(Control *control, OpCall &opCall) {
 	ARG_INT16(priorityLayerIndex);
 	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
-	control->_actor->_flags |= 8;
+	control->_actor->_flags |= Illusions::ACTOR_FLAG_8;
 	control->_actor->_priorityLayer = bgRes->getPriorityLayer(priorityLayerIndex - 1);
 	int priority = control->_actor->_priorityLayer->getPriority(control->_actor->_position);
 	control->setPriority(priority);
 }
 
 void SequenceOpcodes::opDisableAutoRegionLayer(Control *control, OpCall &opCall) {
-	control->_actor->_flags &= ~0x20;
+	control->_actor->_flags &= ~Illusions::ACTOR_FLAG_20;
 }
 
 void SequenceOpcodes::opSetRegionLayer(Control *control, OpCall &opCall) {
 	ARG_INT16(regionLayerIndex);
 	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
-	control->_actor->_flags |= 0x20;
+	control->_actor->_flags |= Illusions::ACTOR_FLAG_20;
 	control->_actor->_regionLayer = bgRes->getRegionLayer(regionLayerIndex - 1);
 }
 

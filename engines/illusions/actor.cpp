@@ -146,11 +146,11 @@ void Actor::createSurface(SurfInfo &surfInfo) {
 			_surface->fillRect(Common::Rect(surfInfo._dimensions._width, surfInfo._dimensions._height), 0);
 			gfx_sub_40CA70(_surface, font, _field18C, _surfInfo._dimensions, _field198);
 			*/
-			_flags |= 0x4000;
+			_flags |= Illusions::ACTOR_FLAG_4000;
 		}
 		else {
-			_flags |= 0x2000;
-			_flags |= 0x4000;
+			_flags |= Illusions::ACTOR_FLAG_2000;
+			_flags |= Illusions::ACTOR_FLAG_4000;
 		}
 	}
 }
@@ -225,7 +225,7 @@ void Control::pause() {
 	if (_objectId == 0x40004)
 		_vm->setCursorControl(0);
 
-	if (_actor && !(_actor->_flags & 0x0200))
+	if (_actor && !(_actor->_flags & Illusions::ACTOR_FLAG_200))
 		_actor->destroySurface();
 
 }
@@ -237,7 +237,7 @@ void Control::unpause() {
 	if (_objectId == 0x40004)
 		_vm->setCursorControl(this);
   
-	if (_actor && !(_actor->_flags & 0x0200)) {
+	if (_actor && !(_actor->_flags & Illusions::ACTOR_FLAG_200)) {
 		SurfInfo surfInfo;
 		ActorType *actorType = _vm->_dict->findActorType(_actorTypeId);
 		if (actorType)
@@ -252,11 +252,11 @@ void Control::unpause() {
 void Control::appearActor() {
 	if (_vm->getGameId() == kGameIdDuckman) {
 		_flags |= 1;
-		_actor->_flags |= 1;
+		_actor->_flags |= Illusions::ACTOR_FLAG_1;
 		if (_objectId == 0x40004) {
 			if (_actor->_frameIndex) {
-				_actor->_flags |= 0x2000;
-				_actor->_flags |= 0x4000;
+				_actor->_flags |= Illusions::ACTOR_FLAG_2000;
+				_actor->_flags |= Illusions::ACTOR_FLAG_4000;
 			}
 			_vm->_input->discardAllEvents();
 		}
@@ -265,9 +265,9 @@ void Control::appearActor() {
 			_vm->showCursor();
 		} else {
 			if (_actor->_frameIndex || _actorTypeId == 0x50004)
-				_actor->_flags |= 1;
+				_actor->_flags |= Illusions::ACTOR_FLAG_1;
 			else
-				_actor->_flags |= 0x1000;
+				_actor->_flags |= Illusions::ACTOR_FLAG_1000;
 			for (uint i = 0; i < kSubObjectsCount; ++i)
 				if (_actor->_subobjects[i]) {
 					Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
@@ -280,13 +280,13 @@ void Control::appearActor() {
 void Control::disappearActor() {
 	if (_vm->getGameId() == kGameIdDuckman) {
 		_flags &= ~1;
-		_actor->_flags &= ~1;
+		_actor->_flags &= ~Illusions::ACTOR_FLAG_1;
 	} else {
 		if (_objectId == 0x40004) {
 			_vm->hideCursor();
 		} else {
-			_actor->_flags &= ~1;
-			_actor->_flags &= ~0x1000;
+			_actor->_flags &= ~Illusions::ACTOR_FLAG_1;
+			_actor->_flags &= ~Illusions::ACTOR_FLAG_1000;
 			for (uint i = 0; i < kSubObjectsCount; ++i)
 				if (_actor->_subobjects[i]) {
 					Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
@@ -297,7 +297,7 @@ void Control::disappearActor() {
 }
 
 bool Control::isActorVisible() {
-	return (_actor->_flags & 1) != 0;
+	return (_actor->_flags & Illusions::ACTOR_FLAG_1) != 0;
 }
 
 void Control::activateObject() {
@@ -388,11 +388,11 @@ void Control::clearNotifyThreadId2() {
 	for (uint i = 0; i < kSubObjectsCount; ++i)
 		if (_actor->_subobjects[i]) {
 			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
-			subControl->_actor->_flags &= ~0x80;
+			subControl->_actor->_flags &= ~Illusions::ACTOR_FLAG_80;
 			subControl->_actor->_entryTblPtr = 0;
 			subControl->_actor->_notifyThreadId2 = 0;
 		}
-	_actor->_flags &= ~0x80;
+	_actor->_flags &= ~Illusions::ACTOR_FLAG_80;
 	_actor->_entryTblPtr = 0;
 	_actor->_notifyThreadId2 = 0;
 }
@@ -405,7 +405,7 @@ uint32 Control::getPriority() {
 	uint32 objectId;
 	int16 positionY, priority, priority1;
 	if (_actor) {
-		if (_actor->_parentObjectId && (_actor->_flags & 0x40)) {
+		if (_actor->_parentObjectId && (_actor->_flags & Illusions::ACTOR_FLAG_40)) {
 			uint32 parentObjectId = getSubActorParent();
 			Control *parentControl = _vm->_dict->getObjectControl(parentObjectId);
 			objectId = parentControl->_objectId;
@@ -480,7 +480,7 @@ uint32 Control::getSubActorParent() {
 	uint32 parentObjectId = _objectId;
 	while (1) {
 		Actor *actor = _vm->_dict->getObjectControl(parentObjectId)->_actor;
-		if (actor->_parentObjectId && (actor->_flags & 0x40))
+		if (actor->_parentObjectId && (actor->_flags & Illusions::ACTOR_FLAG_40))
 			parentObjectId = actor->_parentObjectId;
 		else
 			break;
@@ -545,8 +545,8 @@ void Control::setActorFrameIndex(int16 frameIndex) {
 		const Frame &frame = (*_actor->_frames)[frameIndex - 1];
 		_actor->_surfInfo = frame._surfInfo;
 		readPointsConfig(frame._pointsConfig);
-		_actor->_flags |= 0x2000;
-		_actor->_flags |= 0x4000;
+		_actor->_flags |= Illusions::ACTOR_FLAG_2000;
+		_actor->_flags |= Illusions::ACTOR_FLAG_4000;
 		_actor->_newFrameIndex = 0;
 	}
 }
@@ -554,9 +554,9 @@ void Control::setActorFrameIndex(int16 frameIndex) {
 void Control::stopActor() {
 	_actor->_seqCodeIp = 0;
 	if (_actor->_pathNode) {
-		if (_actor->_flags & 0x0400) {
+		if (_actor->_flags & Illusions::ACTOR_FLAG_400) {
 			delete _actor->_pathNode;
-			_actor->_flags &= ~0x0400;
+			_actor->_flags &= ~Illusions::ACTOR_FLAG_400;
 		}
 		_actor->_pathNode = 0;
 		_actor->_pathPoints = 0;
@@ -575,12 +575,12 @@ void Control::startSequenceActor(uint32 sequenceId, int value, uint32 notifyThre
 }
 
 void Control::stopSequenceActor() {
-	if (_actor->_flags & 0x40) {
+	if (_actor->_flags & Illusions::ACTOR_FLAG_40) {
 		stopActor();
 		_actor->_frameIndex = 0;
-		if ((_actor->_flags & 1) || (_actor->_flags & 0x1000)) {
-			_actor->_flags &= ~1;
-			_actor->_flags |= 0x1000;
+		if ((_actor->_flags & Illusions::ACTOR_FLAG_1) || (_actor->_flags & Illusions::ACTOR_FLAG_1000)) {
+			_actor->_flags &= ~Illusions::ACTOR_FLAG_1;
+			_actor->_flags |= Illusions::ACTOR_FLAG_1000;
 		}
 	}
 	for (uint i = 0; i < kSubObjectsCount; ++i)
@@ -594,12 +594,12 @@ void Control::startTalkActor(uint32 sequenceId, byte *entryTblPtr, uint32 thread
 	bool doSeq = true;
 	if (_actor->_linkIndex2) {
 		Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[_actor->_linkIndex2 - 1]);
-		if (subControl->_actor->_flags & 1) {
+		if (subControl->_actor->_flags & Illusions::ACTOR_FLAG_1) {
 			if (_actor->_pathNode) {
 				doSeq = false;
 				subControl->_actor->_notifyThreadId2 = threadId;
 				subControl->_actor->_entryTblPtr = entryTblPtr;
-				subControl->_actor->_flags |= 0x80;
+				subControl->_actor->_flags |= Illusions::ACTOR_FLAG_80;
 				Thread *thread = _vm->_threads->findThread(threadId);
 				thread->sendMessage(kMsgClearSequenceId2, 0);
 			}
@@ -646,9 +646,9 @@ void Control::sequenceActor() {
 		//debug(1, "New frame %d", _actor->_newFrameIndex);
 		setActorFrameIndex(_actor->_newFrameIndex);
 		if (_vm->getGameId() == kGameIdBBDOU &&
-			!(_actor->_flags & 1) && (_actor->_flags & 0x1000) && (_objectId != 0x40004)) {
+			!(_actor->_flags & Illusions::ACTOR_FLAG_1) && (_actor->_flags & Illusions::ACTOR_FLAG_1000) && (_objectId != 0x40004)) {
 			appearActor();
-			_actor->_flags &= ~0x1000;
+			_actor->_flags &= ~Illusions::ACTOR_FLAG_1000;
 		}
 		//debug(1, "New frame OK");
 	}
@@ -676,9 +676,9 @@ void Control::startSubSequence(int linkIndex, uint32 sequenceId) {
 	Control *linkedControl = _vm->_dict->getObjectControl(_actor->_subobjects[linkIndex - 1]);
 	Actor *linkedActor = linkedControl->_actor;
 	if (!linkedActor->_entryTblPtr)
-		linkedActor->_flags &= ~0x80;
-	linkedActor->_flags &= ~0x400;
-	linkedActor->_flags |= 0x100;
+		linkedActor->_flags &= ~Illusions::ACTOR_FLAG_80;
+	linkedActor->_flags &= ~Illusions::ACTOR_FLAG_400;
+	linkedActor->_flags |= Illusions::ACTOR_FLAG_100;
 	linkedActor->_sequenceId = sequenceId;
 	linkedActor->_notifyThreadId1 = 0;
 	linkedActor->_notifyId3C = 0;
@@ -701,12 +701,12 @@ void Control::stopSubSequence(int linkIndex) {
 	uint32 notifyThreadId2 = _actor->_notifyThreadId2;
 	_actor->_linkIndex2 = linkIndex;
 	if (_actor->_entryTblPtr) {
-		linkedActor->_flags |= 0x80;
+		linkedActor->_flags |= Illusions::ACTOR_FLAG_80;
 		linkedActor->_entryTblPtr = _actor->_entryTblPtr;
 		linkedActor->_notifyThreadId2 = _actor->_notifyThreadId2;
 		linkedActor->_seqCodeValue1 = _actor->_seqCodeValue1;
 		linkedActor->_seqCodeValue3 = _actor->_seqCodeValue3;
-		_actor->_flags &= ~0x80;
+		_actor->_flags &= ~Illusions::ACTOR_FLAG_80;
 		_actor->_entryTblPtr = 0;
 		_actor->_notifyThreadId1 = 0;
 		_actor->_notifyThreadId2 = 0;
@@ -755,7 +755,7 @@ void Control::startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 cal
 		_actor->_pathNode = pathNode;
 		_actor->_pathPointsCount = pathNode->size();
 		_actor->_pathPoints = pathNode->size();
-		_actor->_flags |= 0x0400;
+		_actor->_flags |= Illusions::ACTOR_FLAG_400;
 		_actor->_walkCallerThreadId1 = callerThreadId1;
 		_vm->notifyThreadId(_actor->_notifyId3C);
 		_actor->_notifyId3C = callerThreadId2;
@@ -766,8 +766,8 @@ void Control::startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 cal
 }
 
 PointArray *Control::createPath(Common::Point destPt) {
-	PointArray *walkPoints = (_actor->_flags & 2) ? _actor->_pathWalkPoints->_points : 0;
-	PathLines *walkRects = (_actor->_flags & 0x10) ? _actor->_pathWalkRects->_rects : 0;
+	PointArray *walkPoints = (_actor->_flags & Illusions::ACTOR_FLAG_2) ? _actor->_pathWalkPoints->_points : 0;
+	PathLines *walkRects = (_actor->_flags & Illusions::ACTOR_FLAG_10) ? _actor->_pathWalkRects->_rects : 0;
 	PathFinder pathFinder;
 	WidthHeight bgDimensions = _vm->_backgroundInstances->getMasterBgDimensions();
 	PointArray *path = pathFinder.findPath(_actor->_position, destPt, walkPoints, walkRects, bgDimensions);
@@ -789,7 +789,7 @@ void Control::updateActorMovement(uint32 deltaTime) {
 	if (!fastWalked && _vm->testMainActorFastWalk(this)) {
 		fastWalked = true;
 		disappearActor();
-		_actor->_flags |= 0x8000;
+		_actor->_flags |= Illusions::ACTOR_FLAG_8000;
 		_actor->_seqCodeIp = 0;
 		deltaTime = 2;
 	}
@@ -853,7 +853,7 @@ void Control::updateActorMovement(uint32 deltaTime) {
 
 	FP16 deltaX24, deltaY24;
 
-	if (_actor->_flags & 0x0400) {
+	if (_actor->_flags & Illusions::ACTOR_FLAG_400) {
 
 		FP16 v20 = fixedMul((deltaTime + _actor->_pathCtrX) << 16, _actor->_pathCtrY << 16);
 		FP16 v21 = fixedDiv(v20, 100 << 16);
@@ -900,9 +900,9 @@ void Control::updateActorMovement(uint32 deltaTime) {
 		++_actor->_pathPoints;
 		_actor->_pathInitialPosFlag = true;
 		if (_actor->_pathPointsCount == 0) {
-			if (_actor->_flags & 0x0400) {
+			if (_actor->_flags & Illusions::ACTOR_FLAG_400) {
 				delete _actor->_pathNode;
-				_actor->_flags &= ~0x0400;
+				_actor->_flags &= ~Illusions::ACTOR_FLAG_400;
 			}
 			_actor->_pathNode = 0;
 			_actor->_pathPoints = 0;
@@ -936,12 +936,12 @@ void Control::getActorFrameDimensions(WidthHeight &dimensions) {
 
 void Control::drawActorRect(const Common::Rect r, byte color) {
 	_actor->_surface->fillRect(r, color);
-	_actor->_flags |= 0x4000;
+	_actor->_flags |= Illusions::ACTOR_FLAG_4000;
 }
 
 void Control::fillActor(byte color) {
 	_vm->_screen->fillSurface(_actor->_surface, color);
-	_actor->_flags |= 0x4000;
+	_actor->_flags |= Illusions::ACTOR_FLAG_4000;
 }
 
 bool Control::isPixelCollision(Common::Point &pt) {
@@ -953,9 +953,9 @@ bool Control::isPixelCollision(Common::Point &pt) {
 void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId) {
 	stopActor();
 
-	_actor->_flags &= ~0x80;
-	_actor->_flags &= ~0x0400;
-	_actor->_flags |= 0x0100;
+	_actor->_flags &= ~Illusions::ACTOR_FLAG_80;
+	_actor->_flags &= ~Illusions::ACTOR_FLAG_400;
+	_actor->_flags |= Illusions::ACTOR_FLAG_100;
 
 	sequenceId = _actor->_defaultSequences.use(sequenceId);
 
@@ -971,7 +971,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 		//debug(1, "Load external sequence...");
 		_vm->_resSys->loadResource(0x00060000 | (sequenceId & 0xFFFF), _vm->getCurrentScene(), 0);
 		sequence = _vm->_dict->findSequence(sequenceId);
-		_actor->_flags |= 0x800;
+		_actor->_flags |= Illusions::ACTOR_FLAG_800;
 	}
 
 	_actor->_seqCodeIp = sequence->_sequenceCode;
@@ -994,7 +994,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	_actor->_linkIndex2 = 0;
 	
 	if (entryTblPtr) {
-		_actor->_flags |= 0x80;
+		_actor->_flags |= Illusions::ACTOR_FLAG_80;
 		_actor->_entryTblPtr = entryTblPtr;
 		if (_vm->getGameId() == kGameIdBBDOU) {
 			_actor->_notifyThreadId1 = 0;
@@ -1053,7 +1053,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	if (actorType->_surfInfo._dimensions._width > 0 || actorType->_surfInfo._dimensions._height > 0) {
 		actor->createSurface(actorType->_surfInfo);
 	} else {
-		actor->_flags |= 0x0200;
+		actor->_flags |= Illusions::ACTOR_FLAG_200;
 	}
 
 	actor->_position = placePt;
@@ -1067,27 +1067,27 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
 	if (actorType->_pathWalkPointsIndex) {
 		actor->_pathWalkPoints = bgRes->getPathWalkPoints(actorType->_pathWalkPointsIndex - 1);
-		actor->_flags |= 0x02;
+		actor->_flags |= Illusions::ACTOR_FLAG_2;
 	}
 
 	if (actorType->_scaleLayerIndex) {
 		actor->_scaleLayer = bgRes->getScaleLayer(actorType->_scaleLayerIndex - 1);
-		actor->_flags |= 0x04;
+		actor->_flags |= Illusions::ACTOR_FLAG_4;
 	}
 
 	if (actorType->_pathWalkRectIndex) {
 		actor->_pathWalkRects = bgRes->getPathWalkRects(actorType->_pathWalkRectIndex - 1);
-		actor->_flags |= 0x10;
+		actor->_flags |= Illusions::ACTOR_FLAG_10;
 	}
 	
 	if (actorType->_priorityLayerIndex) {
 		actor->_priorityLayer = bgRes->getPriorityLayer(actorType->_priorityLayerIndex - 1);
-		actor->_flags |= 0x08;
+		actor->_flags |= Illusions::ACTOR_FLAG_8;
 	}
 	
 	if (actorType->_regionLayerIndex) {
 		actor->_regionLayer = bgRes->getRegionLayer(actorType->_regionLayerIndex - 1);
-		actor->_flags |= 0x20;
+		actor->_flags |= Illusions::ACTOR_FLAG_20;
 	}
 	
 	actor->_pathCtrY = 140;
@@ -1099,7 +1099,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 		control->appearActor();
 	} else if (_vm->getGameId() == kGameIdBBDOU) {
 		control->_flags |= 0x01;
-		actor->_flags |= 0x1000;
+		actor->_flags |= Illusions::ACTOR_FLAG_1000;
 	}
 
 	if (_vm->isCursorObject(actorTypeId, objectId))
@@ -1162,7 +1162,7 @@ void Controls::placeSubActor(uint32 objectId, int linkIndex, uint32 actorTypeId,
 	placeActor(actorTypeId, Common::Point(0, 0), sequenceId, tempObjectId, 0);
 	parentControl->_actor->_subobjects[linkIndex - 1] = tempObjectId;
 	Actor *subActor = _vm->_dict->getObjectControl(tempObjectId)->_actor;
-	subActor->_flags |= 0x40;
+	subActor->_flags |= Illusions::ACTOR_FLAG_40;
 	subActor->_parentObjectId = parentControl->_objectId;
 	subActor->_linkIndex = linkIndex;
 }
@@ -1291,7 +1291,7 @@ bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control *
 		Control *testControl = *it;
 		if (testControl != control && testControl->_pauseCtr == 0 &&
 			(testControl->_flags & 1) && !(testControl->_flags & 0x10) &&
-			(!testControl->_actor || (testControl->_actor->_flags & 1))) {
+			(!testControl->_actor || (testControl->_actor->_flags & Illusions::ACTOR_FLAG_1))) {
 			Common::Rect collisionRect;
 			testControl->getCollisionRect(collisionRect);
 			if (!collisionRect.isEmpty() && collisionRect.contains(pt)) {
@@ -1306,7 +1306,7 @@ bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control *
 	}
 
 	if (foundControl) {
-		if (foundControl->_actor && foundControl->_actor->_parentObjectId && (foundControl->_actor->_flags & 0x40)) {
+		if (foundControl->_actor && foundControl->_actor->_parentObjectId && (foundControl->_actor->_flags & Illusions::ACTOR_FLAG_40)) {
 			uint32 parentObjectId = foundControl->getSubActorParent();
 			foundControl = _vm->_dict->getObjectControl(parentObjectId);
 		}
@@ -1325,7 +1325,7 @@ bool Controls::getOverlappedObjectAccurate(Control *control, Common::Point pt, C
 		Control *testControl = *it;
 		if (testControl != control && testControl->_pauseCtr == 0 &&
 			(testControl->_flags & 1) && !(testControl->_flags & 0x10) &&
-			(!testControl->_actor || (testControl->_actor->_flags & 1))) {
+			(!testControl->_actor || (testControl->_actor->_flags & Illusions::ACTOR_FLAG_1))) {
 			Common::Rect collisionRect;
 			testControl->getCollisionRectAccurate(collisionRect);
 			if (!collisionRect.isEmpty() && collisionRect.contains(pt) &&
@@ -1341,7 +1341,7 @@ bool Controls::getOverlappedObjectAccurate(Control *control, Common::Point pt, C
 	}
 
 	if (foundControl) {
-		if (foundControl->_actor && foundControl->_actor->_parentObjectId && (foundControl->_actor->_flags & 0x40)) {
+		if (foundControl->_actor && foundControl->_actor->_parentObjectId && (foundControl->_actor->_flags & Illusions::ACTOR_FLAG_40)) {
 			uint32 parentObjectId = foundControl->getSubActorParent();
 			foundControl = _vm->_dict->getObjectControl(parentObjectId);
 		}
@@ -1413,18 +1413,18 @@ void Controls::actorControlRoutine(Control *control, uint32 deltaTime) {
 		actor->_seqCodeValue1 = 100 * deltaTime;
 	}
 
-	if (actor->_flags & 4) {
+	if (actor->_flags & Illusions::ACTOR_FLAG_4) {
 		int scale = actor->_scaleLayer->getScale(actor->_position);
 		control->setActorScale(scale);
 	}
 
-	if (actor->_flags & 8) {
+	if (actor->_flags & Illusions::ACTOR_FLAG_8) {
 		int16 priority = actor->_priorityLayer->getPriority(actor->_position);
 		if (priority)
 			control->setPriority(priority + 1);
 	}
 
-	if (actor->_flags & 0x20) {
+	if (actor->_flags & Illusions::ACTOR_FLAG_20) {
 		// Update transition sequence
 		int regionIndex = actor->_regionLayer->getRegionIndex(actor->_position);
 		if (actor->_regionIndex != regionIndex) {
@@ -1485,9 +1485,9 @@ void Controls::destroyControlInternal(Control *control) {
 		_vm->setCursorControl(0);
 
 	if (control->_actor) {
-		if (control->_actor->_pathNode && (control->_actor->_flags & 0x400))
+		if (control->_actor->_pathNode && (control->_actor->_flags & Illusions::ACTOR_FLAG_400))
 			delete control->_actor->_pathNode;
-		if (!(control->_actor->_flags & 0x200))
+		if (!(control->_actor->_flags & Illusions::ACTOR_FLAG_200))
 			control->_actor->destroySurface();
 		/* TODO
 		if (control->_actor->_field2)

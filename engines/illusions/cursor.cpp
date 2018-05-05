@@ -62,10 +62,10 @@ void Cursor::show() {
 	++_visibleCtr;
 	if (_visibleCtr > 0) {
 		_control->_flags |= 1;
-		_control->_actor->_flags |= 1;
+		_control->_actor->_flags |= Illusions::ACTOR_FLAG_1;
 		if (_control->_actor->_frameIndex) {
-			_control->_actor->_flags |= 0x2000;
-			_control->_actor->_flags |= 0x4000;
+			_control->_actor->_flags |= Illusions::ACTOR_FLAG_2000;
+			_control->_actor->_flags |= Illusions::ACTOR_FLAG_4000;
 		}
 		_vm->_input->discardAllEvents();
 	}
@@ -75,7 +75,7 @@ void Cursor::hide() {
 	--_visibleCtr;
 	if (_visibleCtr <= 0) {
 		_control->_flags &= ~1;
-		_control->_actor->_flags &= ~1;
+		_control->_actor->_flags &= ~Illusions::ACTOR_FLAG_1;
 	}
 }
 
