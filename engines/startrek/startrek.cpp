@@ -88,9 +88,14 @@ Common::Error StarTrekEngine::run() {
 #if 1
 	if (getGameType() == GType_ST25) {
 		if (getPlatform() == Common::kPlatformMacintosh) {
-			playMovie("Voice Data/Additional Audio/Intro Movie");
-			_gfx->setPalette("BRIDGES.PAL");
-			_gfx->drawImage("BRIDGE0.BMP");
+			if (getFeatures() & GF_DEMO) {
+				_gfx->setPalette("BRIDGE.PAL");
+				_gfx->drawImage("BRIDGE.BMP");
+			} else {
+				playMovie("Voice Data/Additional Audio/Intro Movie");
+				_gfx->setPalette("BRIDGES.PAL");
+				_gfx->drawImage("BRIDGE0.BMP");
+			}
 		} else {
 			_gfx->setPalette("BRIDGE.PAL");
 			//_gfx->loadEGAData("BRIDGE.EGA");
