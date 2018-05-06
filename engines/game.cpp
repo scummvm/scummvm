@@ -75,10 +75,7 @@ DetectedGame::DetectedGame(const Common::String &id, const Common::String &d, Co
 }
 
 void DetectedGame::setGUIOptions(const Common::String &guioptions) {
-	if (guioptions.empty())
-		_guiOptions.clear();
-	else
-		_guiOptions = Common::getGameGUIOptionsDescription(guioptions);
+	_guiOptions = Common::getGameGUIOptionsDescription(guioptions);
 }
 
 void DetectedGame::appendGUIOptions(const Common::String &str) {

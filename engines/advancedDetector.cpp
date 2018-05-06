@@ -33,33 +33,16 @@
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
 
-DetectedGame AdvancedMetaEngine::toDetectedGame(const ADDetectedGame &adGame) const {
-	const char *title;
-	const char *extra;
+static Common::String sanitizeName(const char *name) {
+	Common::String res;
 
-	if (adGame.desc->flags & ADGF_USEEXTRAASTITLE) {
-		title = adGame.desc->extra;
-		extra = "";
-	} else {
-		const PlainGameDescriptor *pgd = findPlainGameDescriptor(adGame.desc->gameId, _gameIds);
-		title = pgd->description;
-		extra = adGame.desc->extra;
+	while (*name) {
+		if (Common::isAlnum(*name))
+			res += tolower(*name);
+		name++;
 	}
 
-	DetectedGame game(adGame.desc->gameId, title, adGame.desc->language, adGame.desc->platform, extra);
-	game.engineName = getName();
-	game.hasUnknownFiles = adGame.hasUnknownFiles;
-	game.matchedFiles = adGame.matchedFiles;
-
-	game.gameSupportLevel = kStableGame;
-	if (adGame.desc->flags & ADGF_UNSTABLE)
-		game.gameSupportLevel = kUnstableGame;
-	else if (adGame.desc->flags & ADGF_TESTING)
-		game.gameSupportLevel = kTestingGame;
-
-	updateGameDescriptor(game, adGame.desc);
-
-	return game;
+	return res;
 }
 
 /**
@@ -68,8 +51,14 @@ DetectedGame AdvancedMetaEngine::toDetectedGame(const ADDetectedGame &adGame) co
  * or (if ADGF_DEMO has been set)
  *   GAMEID-demo-PLAFORM-LANG
  */
-static Common::String generatePreferredTarget(const Common::String &id, const ADGameDescription *desc) {
-	Common::String res(id);
+static Common::String generatePreferredTarget(const ADGameDescription *desc) {
+	Common::String res;
+
+	if (desc->flags & ADGF_AUTOGENTARGET && desc->extra && *desc->extra) {
+		res = sanitizeName(desc->extra);
+	} else {
+		res = desc->gameId;
+	}
 
 	if (desc->flags & ADGF_DEMO) {
 		res = res + "-demo";
@@ -90,42 +79,43 @@ static Common::String generatePreferredTarget(const Common::String &id, const AD
 	return res;
 }
 
-static Common::String sanitizeName(const char *name) {
-	Common::String res;
+DetectedGame AdvancedMetaEngine::toDetectedGame(const ADDetectedGame &adGame) const {
+	const ADGameDescription *desc = adGame.desc;
 
-	while (*name) {
-		if (Common::isAlnum(*name))
-			res += tolower(*name);
-		name++;
+	const char *gameId = _singleId ? _singleId : desc->gameId;
+
+	const char *title;
+	const char *extra;
+	if (desc->flags & ADGF_USEEXTRAASTITLE) {
+		title = desc->extra;
+		extra = "";
+	} else {
+		const PlainGameDescriptor *pgd = findPlainGameDescriptor(desc->gameId, _gameIds);
+		title = pgd->description;
+		extra = desc->extra;
 	}
 
-	return res;
-}
+	DetectedGame game(gameId, title, desc->language, desc->platform, extra);
+	game.hasUnknownFiles = adGame.hasUnknownFiles;
+	game.matchedFiles = adGame.matchedFiles;
+	game.preferredTarget = generatePreferredTarget(desc);
 
-void AdvancedMetaEngine::updateGameDescriptor(DetectedGame &desc, const ADGameDescription *realDesc) const {
-	if (_singleId) {
-		desc.preferredTarget = desc.gameId;
-		desc.gameId = _singleId;
-	}
+	game.gameSupportLevel = kStableGame;
+	if (desc->flags & ADGF_UNSTABLE)
+		game.gameSupportLevel = kUnstableGame;
+	else if (desc->flags & ADGF_TESTING)
+		game.gameSupportLevel = kTestingGame;
 
-	if (desc.preferredTarget.empty())
-		desc.preferredTarget = desc.gameId;
+	game.setGUIOptions(desc->guiOptions + _guiOptions);
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(desc->language));
 
-	if (realDesc->flags & ADGF_AUTOGENTARGET) {
-		if (*realDesc->extra)
-			desc.preferredTarget = sanitizeName(realDesc->extra);
-	}
-
-	desc.preferredTarget = generatePreferredTarget(desc.preferredTarget, realDesc);
+	if (desc->flags & ADGF_ADDENGLISH)
+		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
 
 	if (_flags & kADFlagUseExtraAsHint)
-		desc.extra = realDesc->extra;
+		game.extra = desc->extra;
 
-	desc.setGUIOptions(realDesc->guiOptions + _guiOptions);
-	desc.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(realDesc->language));
-
-	if (realDesc->flags & ADGF_ADDENGLISH)
-		desc.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+	return game;
 }
 
 bool cleanupPirated(ADDetectedGames &matched) {
