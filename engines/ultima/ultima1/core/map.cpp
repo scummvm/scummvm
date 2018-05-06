@@ -32,6 +32,19 @@ namespace Ultima1 {
 
 using Shared::File;
 
+enum CityTile {
+	CTILE_GATE = 11
+};
+
+enum DungeonTile {
+	DTILE_HALLWAY = 0, DTILE_WALL = 1, DTILE_SECRET_DOOR = 2, DTILE_DOOR = 3, DTILE_4 = 4,
+	DTILE_5 = 5, DTILE_LADDER_DOWN = 6, DTILE_LADDER_UP = 7, DTILE_BEAMS = 8
+};
+
+enum DungeonItem {
+	DITEM_NONE = 0, DITEM_CHEST = 4, DITEM_COFFIN = 5
+};
+
 void SurroundingTotals::load(Ultima1Map *map) {
 	U1MapTile mapTile;
 	_water = _woods = _grass = 0;
@@ -111,25 +124,24 @@ void Ultima1Map::loadMap(int mapId, uint videoMode) {
 
 	if (mapId == MAPID_OVERWORLD)
 		loadOverworldMap();
-	else if (mapId == MAP_UNDERWORLD)
-		loadUnderworldMap();
+	else if (mapId == MAPID_DUNGEON)
+		loadDungeonMap();
 	else
 		loadTownCastleMap();
 }
 
 void Ultima1Map::loadOverworldMap() {
+	setDimensions(Point(168, 156));
 	_mapType = MAP_OVERWORLD;
-	_size = Point(168, 156);
 	_tilesPerOrigTile = Point(1, 1);
-	_data.resize(_size.x * _size.y);
 
 	File f("map.bin");
 	byte b;
 	for (int y = 0; y < _size.y; ++y) {
 		for (int x = 0; x < _size.x; x += 2) {
 			b = f.readByte();
-			_data[y * _size.x + x] = b >> 4;
-			_data[y * _size.x + x + 1] = b & 0xf;
+			_data[y][x] = b >> 4;
+			_data[y][x + 1] = b & 0xf;
 		}
 	}
 
@@ -138,9 +150,8 @@ void Ultima1Map::loadOverworldMap() {
 }
 
 void Ultima1Map::loadTownCastleMap() {
-	_size = Point(38, 18);
+	setDimensions(Point(38, 18));
 	_tilesPerOrigTile = Point(1, 1);
-	_data.resize(_size.x * _size.y);
 	_fixed = true;
 
 	// Set up properties for the map
@@ -158,7 +169,7 @@ void Ultima1Map::loadTownCastleData() {
 	f.seek(_mapStyle * 684);
 	for (int x = 0; x < _size.x; ++x) {
 		for (int y = 0; y < _size.y; ++y)
-			_data[y * _size.x + x] = f.readByte();
+			_data[y][x] = f.readByte();
 	}
 }
 
@@ -185,8 +196,8 @@ void Ultima1Map::loadCastle() {
 	loadTownCastleData();
 
 	// Set up door locks
-	_data[35 + (_mapStyle ? 4 : 14) * _size.x] = 11;
-	_data[31 + (_mapStyle ? 4 : 14) * _size.x] = 11;
+	_data[_mapStyle ? 4 : 14][35] = CTILE_GATE;
+	_data[_mapStyle ? 4 : 14][31] = CTILE_GATE;
 
 	// Load up the widgets for the given map
 	loadWidgets();
@@ -220,8 +231,6 @@ void Ultima1Map::getTileAt(const Point &pt, Shared::MapTile *tile) {
 }
 
 void Ultima1Map::loadWidgets() {
-	_widgets.clear();
-
 	// Set up widget for the player
 	_currentTransport = new TransportOnFoot(_game, this);
 	addWidget(_currentTransport);
@@ -239,8 +248,31 @@ void Ultima1Map::loadWidgets() {
 	}
 }
 
-void Ultima1Map::loadUnderworldMap() {
+void Ultima1Map::loadDungeonMap() {
+	setDimensions(Point(DUNGEON_WIDTH, DUNGEON_HEIGHT));
+	_mapType = MAP_DUNGEON;
+	_tilesPerOrigTile = Point(1, 1);
 
+	// Set initial value for each cell
+	_data.resize(DUNGEON_WIDTH * DUNGEON_HEIGHT);
+
+	// Place walls around the edge of the map
+	for (int y = 0; y < DUNGEON_HEIGHT; ++y) {
+		_data[y][0] = DTILE_WALL;
+		_data[y][DUNGEON_WIDTH - 1] = DTILE_WALL;
+	}
+	for (int x = 0; x < DUNGEON_WIDTH; ++x) {
+		_data[0][x] = DTILE_WALL;
+		_data[DUNGEON_HEIGHT - 1][x] = DTILE_WALL;
+	}
+
+	// Place wall sections of every other wall that are always fixed
+	for (int x = 2; x < (DUNGEON_WIDTH - 1); ++x) {
+		_data[2][x] = DTILE_WALL;
+		_data[4][x] = DTILE_WALL;
+		_data[6][x] = DTILE_WALL;
+		_data[8][x] = DTILE_WALL;
+	}
 }
 
 } // End of namespace Ultima1

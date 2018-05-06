@@ -65,6 +65,11 @@ public:
 	 * Draw a character
 	 */
 	void writeChar(unsigned char c, const Point &pt, byte color);
+
+	/**
+	 * Draw a character
+	 */
+	void writeChar(unsigned char c, byte color);
 };
 
 } // End of namespace Gfx
