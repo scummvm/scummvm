@@ -63,6 +63,11 @@ public:
 	 * Video mode
 	 */
 	VideoMode _videoMode;
+
+	/**
+	 * The number of hit points to generate when a dungeon is left
+	 */
+	uint _dungeonExitHitPoints;
 public:
 	/**
 	 * Constructor
