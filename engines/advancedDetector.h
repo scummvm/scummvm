@@ -321,7 +321,7 @@ protected:
 	ADDetectedGame detectGameFilebased(const FileMap &allFiles, const Common::FSList &fslist, const ADFileBasedFallback *fileBasedFallback) const;
 
 	// TODO
-	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;
+	void updateGameDescriptor(DetectedGame &desc, const ADGameDescription *realDesc) const;
 
 	/**
 	 * Compose a hashmap of all files in fslist.

@@ -182,18 +182,16 @@ DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 			++sv;
 		}
 
-		DetectedGame game;
 		if (sv->dinnerTableEntries) {
 			Common::String extra = Common::String::format("v0.0%d %s", sv->version, sv->extraDesc);
 
-			game.matchedGame = GameDescriptor(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
-			game.matchedGame.setGUIOptions(sv->guioptions);
+			DetectedGame game = DetectedGame(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
+			game.setGUIOptions(sv->guioptions);
 
+			detectedGames.push_back(game);
 		} else {
-			game.matchedGame = GameDescriptor(skySetting.gameId, skySetting.description);
+			detectedGames.push_back(DetectedGame(skySetting.gameId, skySetting.description));
 		}
-
-		detectedGames.push_back(game);
 	}
 
 	return detectedGames;

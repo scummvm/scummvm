@@ -117,13 +117,13 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 }
 
 struct GameTargetLess {
-	bool operator()(const GameDescriptor &x, const GameDescriptor &y) const {
+	bool operator()(const DetectedGame &x, const DetectedGame &y) const {
 		return x.preferredTarget.compareToIgnoreCase(y.preferredTarget) < 0;
 	}
 };
 
 struct GameDescLess {
-	bool operator()(const GameDescriptor &x, const GameDescriptor &y) const {
+	bool operator()(const DetectedGame &x, const DetectedGame &y) const {
 		return x.description.compareToIgnoreCase(y.description) < 0;
 	}
 };
@@ -142,7 +142,7 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		// people who want to edit their config file by hand after a mass add.
 		Common::sort(_games.begin(), _games.end(), GameTargetLess());
 		// Add all the detected games to the config
-		for (GameList::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
+		for (DetectedGames::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
 			debug(1, "  Added gameid '%s', desc '%s'\n",
 				iter->gameId.c_str(),
 				iter->description.c_str());
@@ -199,7 +199,8 @@ void MassAddDialog::handleTickle() {
 		// However, we only add games which are not already in the config file.
 		DetectedGames candidates = detectionResults.listRecognizedGames();
 		for (DetectedGames::const_iterator cand = candidates.begin(); cand != candidates.end(); ++cand) {
-			const GameDescriptor &result = cand->matchedGame;
+			const DetectedGame &result = *cand;
+
 			Common::String path = dir.getPath();
 
 			// Remove trailing slashes

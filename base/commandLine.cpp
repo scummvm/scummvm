@@ -854,13 +854,13 @@ static void listAudioDevices() {
 }
 
 /** Display all games in the given directory, or current directory if empty */
-static GameList getGameList(const Common::FSNode &dir) {
+static DetectedGames getGameList(const Common::FSNode &dir) {
 	Common::FSList files;
 
 	// Collect all files from directory
 	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
 		printf("Path %s does not exist or is not a directory.\n", dir.getPath().c_str());
-		return GameList();
+		return DetectedGames();
 	}
 
 	// detect Games
@@ -871,25 +871,18 @@ static GameList getGameList(const Common::FSNode &dir) {
 		g_system->logMessage(LogMessageType::kInfo, report.c_str());
 	}
 
-	DetectedGames detectedGames = detectionResults.listRecognizedGames();
-
-	GameList candidates;
-	for (uint i = 0; i < detectedGames.size(); i++) {
-		candidates.push_back(detectedGames[i].matchedGame);
-	}
-
-	return candidates;
+	return detectionResults.listRecognizedGames();
 }
 
-static GameList recListGames(const Common::FSNode &dir, const Common::String &gameId, bool recursive) {
-	GameList list = getGameList(dir);
+static DetectedGames recListGames(const Common::FSNode &dir, const Common::String &gameId, bool recursive) {
+	DetectedGames list = getGameList(dir);
 
 	if (recursive) {
 		Common::FSList files;
 		dir.getChildren(files, Common::FSNode::kListDirectoriesOnly);
 		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
-			GameList rec = recListGames(*file, gameId, recursive);
-			for (GameList::const_iterator game = rec.begin(); game != rec.end(); ++game) {
+			DetectedGames rec = recListGames(*file, gameId, recursive);
+			for (DetectedGames::const_iterator game = rec.begin(); game != rec.end(); ++game) {
 				if (gameId.empty() || game->gameId == gameId)
 					list.push_back(*game);
 			}
@@ -904,7 +897,7 @@ static Common::String detectGames(const Common::String &path, const Common::Stri
 	bool noPath = path.empty();
 	//Current directory
 	Common::FSNode dir(path);
-	GameList candidates = recListGames(dir, gameId, recursive);
+	DetectedGames candidates = recListGames(dir, gameId, recursive);
 
 	if (candidates.empty()) {
 		printf("WARNING: ScummVM could not find any game in %s\n", dir.getPath().c_str());
@@ -919,7 +912,7 @@ static Common::String detectGames(const Common::String &path, const Common::Stri
 	// TODO this is not especially pretty
 	printf("ID             Description                                                Full Path\n");
 	printf("-------------- ---------------------------------------------------------- ---------------------------------------------------------\n");
-	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
+	for (DetectedGames::const_iterator v = candidates.begin(); v != candidates.end(); ++v) {
 		printf("%-14s %-58s %s\n", v->gameId.c_str(), v->description.c_str(), v->path.c_str());
 	}
 
@@ -928,17 +921,25 @@ static Common::String detectGames(const Common::String &path, const Common::Stri
 
 static int recAddGames(const Common::FSNode &dir, const Common::String &game, bool recursive) {
 	int count = 0;
-	GameList list = getGameList(dir);
-	for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
+	DetectedGames list = getGameList(dir);
+	for (DetectedGames::const_iterator v = list.begin(); v != list.end(); ++v) {
 		if (v->gameId != game && !game.empty()) {
 			printf("Found %s, only adding %s per --game option, ignoring...\n", v->gameId.c_str(), game.c_str());
 		} else if (ConfMan.hasGameDomain(v->preferredTarget)) {
 			// TODO Better check for game already added?
 			printf("Found %s, but has already been added, skipping\n", v->gameId.c_str());
 		} else {
-			printf("Found %s, adding...\n", v->gameId.c_str());
-			EngineMan.createTargetForGame(*v);
+			Common::String target = EngineMan.createTargetForGame(*v);
 			count++;
+
+			// Display added game info
+			printf("Game Added: \n  Target:   %s\n  GameID:   %s\n  Name:     %s\n  Language: %s\n  Platform: %s\n",
+			       target.c_str(),
+			       v->gameId.c_str(),
+			       v->description.c_str(),
+			       Common::getLanguageDescription(v->language),
+			       Common::getPlatformDescription(v->platform)
+			);
 		}
 	}
 
@@ -998,15 +999,10 @@ static void runDetectorTest() {
 		}
 
 		DetectionResults detectionResults = EngineMan.detectGames(files);
-		DetectedGames detectedGames = detectionResults.listRecognizedGames();
-
-		GameList candidates;
-		for (uint i = 0; i < detectedGames.size(); i++) {
-			candidates.push_back(detectedGames[i].matchedGame);
-		}
+		DetectedGames candidates = detectionResults.listRecognizedGames();
 
 		bool gameidDiffers = false;
-		GameList::iterator x;
+		DetectedGames::const_iterator x;
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
 			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameId.c_str()) != 0);
 		}
@@ -1083,14 +1079,9 @@ void upgradeTargets() {
 		Common::String desc(dom.getVal("description"));
 
 		DetectionResults detectionResults = EngineMan.detectGames(files);
-		DetectedGames detectedGames = detectionResults.listRecognizedGames();
+		DetectedGames candidates = detectionResults.listRecognizedGames();
 
-		GameList candidates;
-		for (uint i = 0; i < detectedGames.size(); i++) {
-			candidates.push_back(detectedGames[i].matchedGame);
-		}
-
-		GameDescriptor *g = 0;
+		DetectedGame *g = 0;
 
 		// We proceed as follows:
 		// * If detection failed to produce candidates, skip.
@@ -1103,7 +1094,7 @@ void upgradeTargets() {
 		}
 		if (candidates.size() > 1) {
 			// Scan over all candidates, check if there is a unique match for gameid, language and platform
-			GameList::iterator x;
+			DetectedGames::iterator x;
 			int matchesFound = 0;
 			for (x = candidates.begin(); x != candidates.end(); ++x) {
 				if (x->gameId == gameid && x->language == lang && x->platform == plat) {

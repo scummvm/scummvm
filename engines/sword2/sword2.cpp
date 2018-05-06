@@ -192,9 +192,8 @@ DetectedGames detectGamesImpl(const Common::FSList &fslist, bool recursion = fal
 						continue;
 
 					// Match found, add to list of candidates, then abort inner loop.
-					DetectedGame game;
-					game.matchedGame = GameDescriptor(g->gameid, g->description);
-					game.matchedGame.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+					DetectedGame game = DetectedGame(g->gameid, g->description);
+					game.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 
 					detectedGames.push_back(game);
 					break;
@@ -285,7 +284,7 @@ Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) c
 	DetectedGames detectedGames = detectGames(fslist);
 
 	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].matchedGame.gameId == gameid) {
+		if (detectedGames[i].gameId == gameid) {
 			*engine = new Sword2::Sword2Engine(syst);
 			return Common::kNoError;
 		}

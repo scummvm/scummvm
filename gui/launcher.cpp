@@ -562,14 +562,14 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 		// Display the candidates to the user and let her/him pick one
 		StringArray list;
 		for (idx = 0; idx < (int)candidates.size(); idx++)
-			list.push_back(candidates[idx].matchedGame.description);
+			list.push_back(candidates[idx].description);
 
 		ChooserDialog dialog(_("Pick the game:"));
 		dialog.setList(list);
 		idx = dialog.runModal();
 	}
 	if (0 <= idx && idx < (int)candidates.size()) {
-		const GameDescriptor &result = candidates[idx].matchedGame;
+		const DetectedGame &result = candidates[idx];
 
 		Common::String domain = EngineMan.createTargetForGame(result);
 

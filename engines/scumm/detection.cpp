@@ -1036,15 +1036,14 @@ DetectedGames ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
 		assert(g);
 
-		DetectedGame game;
-		game.matchedGame = GameDescriptor(x->game.gameid, g->description, x->language, x->game.platform, x->extra);
+		DetectedGame game = DetectedGame(x->game.gameid, g->description, x->language, x->game.platform, x->extra);
 
 		// Compute and set the preferred target name for this game.
 		// Based on generateComplexID() in advancedDetector.cpp.
-		game.matchedGame.preferredTarget = generatePreferredTarget(*x);
+		game.preferredTarget = generatePreferredTarget(*x);
 
-		game.matchedGame.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
-		game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
+		game.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
+		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
 
 		detectedGames.push_back(game);
 	}

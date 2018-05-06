@@ -51,7 +51,7 @@ public:
 
 private:
 	Common::Stack<Common::FSNode>  _scanStack;
-	GameList _games;
+	DetectedGames _games;
 
 	/**
 	 * Map each path occuring in the config file to the target(s) using that path.

@@ -35,13 +35,19 @@ const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const Pla
 	return 0;
 }
 
-GameDescriptor::GameDescriptor() :
+DetectedGame::DetectedGame() :
+		engineName(nullptr),
+		hasUnknownFiles(false),
+		canBeAdded(true),
 		language(Common::UNK_LANG),
 		platform(Common::kPlatformUnknown),
 		gameSupportLevel(kStableGame) {
 }
 
-GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd) :
+DetectedGame::DetectedGame(const PlainGameDescriptor &pgd) :
+		engineName(nullptr),
+		hasUnknownFiles(false),
+		canBeAdded(true),
 		language(Common::UNK_LANG),
 		platform(Common::kPlatformUnknown),
 		gameSupportLevel(kStableGame) {
@@ -51,7 +57,12 @@ GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd) :
 	description = pgd.description;
 }
 
-GameDescriptor::GameDescriptor(const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &ex) {
+DetectedGame::DetectedGame(const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &ex) :
+		engineName(nullptr),
+		hasUnknownFiles(false),
+		canBeAdded(true),
+		gameSupportLevel(kStableGame) {
+
 	gameId = id;
 	preferredTarget = id;
 	description = d;
@@ -63,21 +74,21 @@ GameDescriptor::GameDescriptor(const Common::String &id, const Common::String &d
 	description += updateDesc();
 }
 
-void GameDescriptor::setGUIOptions(const Common::String &guioptions) {
+void DetectedGame::setGUIOptions(const Common::String &guioptions) {
 	if (guioptions.empty())
 		_guiOptions.clear();
 	else
 		_guiOptions = Common::getGameGUIOptionsDescription(guioptions);
 }
 
-void GameDescriptor::appendGUIOptions(const Common::String &str) {
+void DetectedGame::appendGUIOptions(const Common::String &str) {
 	if (!_guiOptions.empty())
 		_guiOptions += " ";
 
 	_guiOptions += str;
 }
 
-Common::String GameDescriptor::updateDesc() const {
+Common::String DetectedGame::updateDesc() const {
 	const bool hasCustomLanguage = (language != Common::UNK_LANG);
 	const bool hasCustomPlatform = (platform != Common::kPlatformUnknown);
 	const bool hasExtraDesc = !extra.empty();
@@ -140,7 +151,7 @@ Common::String DetectionResults::generateUnknownGameReport(bool translate, uint3
 	const char *reportEngineHeader = _s("Matched game IDs for the %s engine:");
 
 	Common::String report = Common::String::format(
-			translate ? _(reportStart) : reportStart, _detectedGames[0].matchedGame.path.c_str(),
+			translate ? _(reportStart) : reportStart, _detectedGames[0].path.c_str(),
 			"https://bugs.scummvm.org/"
 	);
 	report += "\n";
@@ -171,7 +182,7 @@ Common::String DetectionResults::generateUnknownGameReport(bool translate, uint3
 		// Add the gameId to the list of matched games for the engine
 		// TODO: Use the gameId here instead of the preferred target.
 		// This is currently impossible due to the AD singleId feature losing the information.
-		report += game.matchedGame.preferredTarget;
+		report += game.preferredTarget;
 
 		// Consolidate matched files across all engines and detection entries
 		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {

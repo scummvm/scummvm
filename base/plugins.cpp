@@ -531,7 +531,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 
 			for (uint i = 0; i < engineCandidates.size(); i++) {
 				engineCandidates[i].engineName = metaEngine.getName();
-				engineCandidates[i].matchedGame.path = path;
+				engineCandidates[i].path = path;
 				candidates.push_back(engineCandidates[i]);
 			}
 
@@ -554,7 +554,7 @@ void addStringToConf(const Common::String &key, const Common::String &value, con
 
 } // End of anonymous namespace
 
-Common::String EngineManager::createTargetForGame(const GameDescriptor &game) {
+Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 	// The auto detector or the user made a choice.
 	// Pick a domain name which does not yet exist (after all, we
 	// are *adding* a game to the config, not replacing).

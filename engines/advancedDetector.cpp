@@ -33,42 +33,32 @@
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
 
-static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGameDescriptor *sg) {
-	const char *title = 0;
+DetectedGame AdvancedMetaEngine::toDetectedGame(const ADDetectedGame &adGame) const {
+	const char *title;
 	const char *extra;
 
-	if (g.flags & ADGF_USEEXTRAASTITLE) {
-		title = g.extra;
+	if (adGame.desc->flags & ADGF_USEEXTRAASTITLE) {
+		title = adGame.desc->extra;
 		extra = "";
 	} else {
-		while (sg->gameId) {
-			if (!scumm_stricmp(g.gameId, sg->gameId))
-				title = sg->description;
-			sg++;
-		}
-
-		extra = g.extra;
+		const PlainGameDescriptor *pgd = findPlainGameDescriptor(adGame.desc->gameId, _gameIds);
+		title = pgd->description;
+		extra = adGame.desc->extra;
 	}
 
-	GameSupportLevel gsl = kStableGame;
-	if (g.flags & ADGF_UNSTABLE)
-		gsl = kUnstableGame;
-	else if (g.flags & ADGF_TESTING)
-		gsl = kTestingGame;
-
-	GameDescriptor gd(g.gameId, title, g.language, g.platform, extra);
-	gd.gameSupportLevel = gsl;
-	return gd;
-}
-
-DetectedGame AdvancedMetaEngine::toDetectedGame(const ADDetectedGame &adGame) const {
-	DetectedGame game;
+	DetectedGame game(adGame.desc->gameId, title, adGame.desc->language, adGame.desc->platform, extra);
 	game.engineName = getName();
-	game.gameId = adGame.desc->gameId;
 	game.hasUnknownFiles = adGame.hasUnknownFiles;
 	game.matchedFiles = adGame.matchedFiles;
-	game.matchedGame = toGameDescriptor(*adGame.desc, _gameIds);
-	updateGameDescriptor(game.matchedGame, adGame.desc);
+
+	game.gameSupportLevel = kStableGame;
+	if (adGame.desc->flags & ADGF_UNSTABLE)
+		game.gameSupportLevel = kUnstableGame;
+	else if (adGame.desc->flags & ADGF_TESTING)
+		game.gameSupportLevel = kTestingGame;
+
+	updateGameDescriptor(game, adGame.desc);
+
 	return game;
 }
 
@@ -112,8 +102,8 @@ static Common::String sanitizeName(const char *name) {
 	return res;
 }
 
-void AdvancedMetaEngine::updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const {
-	if (_singleId != NULL) {
+void AdvancedMetaEngine::updateGameDescriptor(DetectedGame &desc, const ADGameDescription *realDesc) const {
+	if (_singleId) {
 		desc.preferredTarget = desc.gameId;
 		desc.gameId = _singleId;
 	}
@@ -321,7 +311,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	Common::updateGameGUIOptions(agdDesc.desc->guiOptions + _guiOptions, lang);
 
-	GameDescriptor gameDescriptor = toGameDescriptor(*agdDesc.desc, _gameIds);
+	DetectedGame gameDescriptor = toDetectedGame(agdDesc);
 
 	bool showTestingWarning = false;
 

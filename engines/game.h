@@ -71,26 +71,69 @@ enum GameSupportLevel {
 	kUnstableGame // the game is not even ready for public testing yet
 };
 
+
 /**
- * A hashmap describing details about a given game. In a sense this is a refined
- * version of PlainGameDescriptor, as it also contains a gameid and a description string.
- * But in addition, platform and language settings, as well as arbitrary other settings,
- * can be contained in a GameDescriptor.
- * This is an essential part of the glue between the game engines and the launcher code.
+ * A record describing the properties of a file. Used on the existing
+ * files while detecting a game.
  */
-class GameDescriptor {
-public:
-	GameDescriptor();
-	explicit GameDescriptor(const PlainGameDescriptor &pgd);
-	GameDescriptor(const Common::String &id,
-	              const Common::String &description,
-	              Common::Language language = Common::UNK_LANG,
-	              Common::Platform platform = Common::kPlatformUnknown,
-	              const Common::String &extra = Common::String());
+struct FileProperties {
+	int32 size;
+	Common::String md5;
+
+	FileProperties() : size(-1) {}
+};
+
+/**
+ * A map of all relevant existing files while detecting.
+ */
+typedef Common::HashMap<Common::String, FileProperties, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FilePropertiesMap;
+
+/**
+ * Details about a given game.
+ *
+ * While PlainGameDescriptor refers to a game supported by an engine, this refers to a game copy
+ * that has been detected by an engine's detector.
+ * It contains all the necessary data to add the game to the configuration manager and / or to launch it.
+ */
+struct DetectedGame {
+	DetectedGame();
+	explicit DetectedGame(const PlainGameDescriptor &pgd);
+	DetectedGame(const Common::String &id,
+	               const Common::String &description,
+	               Common::Language language = Common::UNK_LANG,
+	               Common::Platform platform = Common::kPlatformUnknown,
+	               const Common::String &extra = Common::String());
 
 	void setGUIOptions(const Common::String &options);
 	void appendGUIOptions(const Common::String &str);
 	Common::String getGUIOptions() const { return _guiOptions; }
+
+	/**
+	 * The name of the engine supporting the detected game
+	 */
+	const char *engineName;
+
+	/**
+	 * A game was detected, but some files were not recognized
+	 *
+	 * This can happen when the md5 or size of the detected files did not match the engine's detection tables.
+	 * When this is true, the list of matched files below contains detail about the unknown files.
+	 *
+	 * @see matchedFiles
+	 */
+	bool hasUnknownFiles;
+
+	/**
+	 * An optional list of the files that were used to match the game with the engine's detection tables
+	 */
+	FilePropertiesMap matchedFiles;
+
+	/**
+	 * This detection entry contains enough data to add the game to the configuration manager and launch it
+	 *
+	 * @see matchedGame
+	 */
+	bool canBeAdded;
 
 	Common::String gameId;
 	Common::String preferredTarget;
@@ -117,67 +160,6 @@ private:
 };
 
 /** List of games. */
-typedef Common::Array<GameDescriptor> GameList;
-
-/**
- * A record describing the properties of a file. Used on the existing
- * files while detecting a game.
- */
-struct FileProperties {
-	int32 size;
-	Common::String md5;
-
-	FileProperties() : size(-1) {}
-};
-
-/**
- * A map of all relevant existing files while detecting.
- */
-typedef Common::HashMap<Common::String, FileProperties, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FilePropertiesMap;
-
-struct DetectedGame {
-	/**
-	 * The name of the engine supporting the detected game
-	 */
-	const char *engineName;
-
-	/**
-	 * The identifier of the detected game
-	 *
-	 * For engines using the singleId feature, this is the true engine-specific gameId, not the singleId.
-	 */
-	const char *gameId;
-
-	/**
-	 * A game was detected, but some files were not recognized
-	 *
-	 * This can happen when the md5 or size of the detected files did not match the engine's detection tables.
-	 * When this is true, the list of matched files below contains detail about the unknown files.
-	 *
-	 * @see matchedFiles
-	 */
-	bool hasUnknownFiles;
-
-	/**
-	 * An optional list of the files that were used to match the game with the engine's detection tables
-	 */
-	FilePropertiesMap matchedFiles;
-
-	/**
-	 * This detection entry contains enough data to add the game to the configuration manager and launch it
-	 *
-	 * @see matchedGame
-	 */
-	bool canBeAdded;
-
-	/**
-	 * Details about the detected game
-	 */
-	GameDescriptor matchedGame;
-
-	DetectedGame() : engineName(nullptr), gameId(nullptr), hasUnknownFiles(false), canBeAdded(true) {}
-};
-
 typedef Common::Array<DetectedGame> DetectedGames;
 
 /**

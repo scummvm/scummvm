@@ -214,29 +214,29 @@ DetectedGames SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 
 	DetectedGame game;
 	if (mainFilesFound && pcFilesFound && demoFilesFound)
-		game.matchedGame = GameDescriptor(sword1DemoSettings);
+		game = DetectedGame(sword1DemoSettings);
 	else if (mainFilesFound && pcFilesFound && psxFilesFound)
-		game.matchedGame = GameDescriptor(sword1PSXSettings);
+		game = DetectedGame(sword1PSXSettings);
 	else if (mainFilesFound && pcFilesFound && psxDemoFilesFound)
-		game.matchedGame = GameDescriptor(sword1PSXDemoSettings);
+		game = DetectedGame(sword1PSXDemoSettings);
 	else if (mainFilesFound && pcFilesFound && !psxFilesFound)
-		game.matchedGame = GameDescriptor(sword1FullSettings);
+		game = DetectedGame(sword1FullSettings);
 	else if (mainFilesFound && macFilesFound)
-		game.matchedGame = GameDescriptor(sword1MacFullSettings);
+		game = DetectedGame(sword1MacFullSettings);
 	else if (mainFilesFound && macDemoFilesFound)
-		game.matchedGame = GameDescriptor(sword1MacDemoSettings);
+		game = DetectedGame(sword1MacDemoSettings);
 	else
 		return detectedGames;
 
-	game.matchedGame.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+	game.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 
-	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
-	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
-	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
-	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
-	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
-	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::PT_BRA));
-	game.matchedGame.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::CZ_CZE));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::PT_BRA));
+	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::CZ_CZE));
 
 	detectedGames.push_back(game);
 

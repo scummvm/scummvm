@@ -277,7 +277,7 @@ public:
 	 *
 	 * Returns the created target name.
 	 */
-	Common::String createTargetForGame(const GameDescriptor &game);
+	Common::String createTargetForGame(const DetectedGame &game);
 };
 
 /** Convenience shortcut for accessing the engine manager. */

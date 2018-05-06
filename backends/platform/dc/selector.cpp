@@ -271,21 +271,21 @@ static int findGames(Game *games, int max, bool use_ini)
     }
 
     if (!use_ini) {
-      GameList candidates = EngineMan.detectGames(files);
+      DetectedGames candidates = EngineMan.detectGames(files);
 
-      for (GameList::const_iterator ge = candidates.begin();
+      for (DetectedGames::const_iterator ge = candidates.begin();
 	   ge != candidates.end(); ++ge)
 	if (curr_game < max) {
-	  strcpy(games[curr_game].filename_base, ge->gameid().c_str());
+	  strcpy(games[curr_game].filename_base, ge->gameId.c_str());
 	  strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
-	  games[curr_game].language = ge->language();
-	  games[curr_game].platform = ge->platform();
+	  games[curr_game].language = ge->language;
+	  games[curr_game].platform = ge->platform;
 	  if (uniqueGame(games[curr_game].filename_base,
 			 games[curr_game].dir,
 			 games[curr_game].language,
 			 games[curr_game].platform, games, curr_game)) {
 
-	    strcpy(games[curr_game].text, ge->description().c_str());
+	    strcpy(games[curr_game].text, ge->description.c_str());
 #if 0
 	    printf("Registered game <%s> (l:%d p:%d) in <%s> <%s> because of <%s> <*>\n",
 		   games[curr_game].text,
