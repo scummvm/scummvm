@@ -521,14 +521,16 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c, ItemCategory catego
 		addButton(Common::Rect(8, 83, 263, 91), Common::KEYCODE_8);
 		addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9);
 	} else {
+		bool flag = mode == ITEMMODE_BUY || mode == ITEMMODE_SELL || mode == ITEMMODE_IDENTIFY
+			|| mode == ITEMMODE_REPAIR;
 		addButton(Common::Rect(12, 109, 36, 129), Common::KEYCODE_w, &_iconSprites);
 		addButton(Common::Rect(46, 109, 70, 129), Common::KEYCODE_a, &_iconSprites);
 		addButton(Common::Rect(80, 109, 104, 129), Common::KEYCODE_c, &_iconSprites);
 		addButton(Common::Rect(114, 109, 138, 129), Common::KEYCODE_m, &_iconSprites);
-		addButton(Common::Rect(148, 109, 172, 129), Common::KEYCODE_e, &_iconSprites);
-		addButton(Common::Rect(182, 109, 206, 129), Common::KEYCODE_r, &_iconSprites);
-		addButton(Common::Rect(216, 109, 240, 129), Common::KEYCODE_d, &_iconSprites);
-		addButton(Common::Rect(250, 109, 274, 129), Common::KEYCODE_q, &_iconSprites);
+		addButton(Common::Rect(148, 109, 172, 129), flag ? Common::KEYCODE_b : Common::KEYCODE_e, &_iconSprites);
+		addButton(Common::Rect(182, 109, 206, 129), flag ? Common::KEYCODE_s : Common::KEYCODE_r, &_iconSprites);
+		addButton(Common::Rect(216, 109, 240, 129), flag ? Common::KEYCODE_i : Common::KEYCODE_d, &_iconSprites);
+		addButton(Common::Rect(250, 109, 274, 129), flag ? Common::KEYCODE_f : Common::KEYCODE_q, &_iconSprites);
 		addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites);
 		addButton(Common::Rect(8, 20, 263, 28), Common::KEYCODE_1);
 		addButton(Common::Rect(8, 29, 263, 37), Common::KEYCODE_2);
@@ -540,18 +542,6 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c, ItemCategory catego
 		addButton(Common::Rect(8, 83, 263, 91), Common::KEYCODE_8);
 		addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9);
 		addPartyButtons(_vm);
-	}
-
-	if (mode == ITEMMODE_BUY) {
-		_buttons[4]._value = Common::KEYCODE_b;
-		_buttons[5]._value = Common::KEYCODE_s;
-		_buttons[6]._value = Common::KEYCODE_i;
-		_buttons[7]._value = Common::KEYCODE_f;
-	} else {
-		_buttons[4]._value = Common::KEYCODE_e;
-		_buttons[5]._value = Common::KEYCODE_r;
-		_buttons[6]._value = Common::KEYCODE_d;
-		_buttons[7]._value = Common::KEYCODE_q;
 	}
 
 	if (mode == ITEMMODE_CHAR_INFO && category == CATEGORY_MISC) {
