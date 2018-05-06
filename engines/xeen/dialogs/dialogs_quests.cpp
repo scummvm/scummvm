@@ -157,13 +157,13 @@ void Quests::execute() {
 			break;
 
 		case AUTO_NOTES: {
-			count = _vm->getGameID() == GType_Swords ? 49 : MAX_DIALOG_LINES;
+			int max = _vm->getGameID() == GType_Swords ? 49 : MAX_DIALOG_LINES;
 			for (int idx = 0; idx < count; ++idx)
 				lines[idx] = "";
 
 			count = 0;
 			headerShown = false;
-			for (int idx = 0; idx < count; ++idx) {
+			for (int idx = 0; idx < max; ++idx) {
 				if (party._worldFlags[idx]) {
 					if (!count && !headerShown && (_vm->getGameID() == GType_Swords || idx < 72)) {
 						lines[count++] = title1;
