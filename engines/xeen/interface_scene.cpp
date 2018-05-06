@@ -3687,8 +3687,9 @@ void InterfaceScene::drawIndoors() {
 			_indoorList._fwl_4F4R._frame = 9;
 		else if (_wo[35])
 			_indoorList._fwl_4F4R._frame = 0;
+		/* TODO: Duplicated switch in the original executable.. original bug meant to check some other index?
 		else if (_wo[79])
-			_indoorList._fwl_4F4R._frame = 15;
+			_indoorList._fwl_4F4R._frame = 15;*/
 		else if (_wo[213])
 			_indoorList._fwl_4F4R._frame = 14;
 		else if (_wo[233])
