@@ -328,13 +328,13 @@ int Graphics::handleTextboxEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
 
 			case TREKEVENT_LBUTTONDOWN:
 				if (_activeMenu->selectedButton != -1) {
-					_vm->playSound(0x10);
+					_vm->playSoundEffectIndex(0x10);
 					return _activeMenu->retvals[_activeMenu->selectedButton];
 				}
 				else {
 					Common::Point mouse = getMousePos();
 					if (getMenuButtonAt(*_activeMenu, mouse.x, mouse.y) == -1) {
-						_vm->playSound(0x10);
+						_vm->playSoundEffectIndex(0x10);
 						return TEXTEVENT_LCLICK_OFFBUTTON;
 					}
 				}

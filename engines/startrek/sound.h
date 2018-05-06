@@ -40,35 +40,42 @@ namespace StarTrek {
 
 class StarTrekEngine;
 
+
+struct MidiSlot {
+	int slot;
+	int track;
+	MidiParser *midiParser;
+};
+
 class Sound {
 public:
 	Sound(StarTrekEngine *vm);
 	~Sound();
 	
-	void playSound(const char *baseSoundName);	
-	void playSoundEffect(const char *baseSoundName);	
+	void playMidiTrack(int track);
+
+	void loadMusicFile(const char *baseSoundName);
+	void playSoundEffect(const char *baseSoundName);
 	
 private:
 	StarTrekEngine *_vm;
 	Audio::SoundHandle *_soundHandle;
 	
-	// PC Sound Functions
-	void playXMIDISound(const char *baseSoundName);
-	void playSMFSound(const char *baseSoundName);
-	
-	// Macintosh Sound Functions
-	void playMacSMFSound(const char *baseSoundName);
-	void playMacSoundEffect(const char *baseSoundName);
-	Common::MacResManager *_macAudioResFork;
-	
-	// Amiga Sound Functions
-	void playAmigaSound(const char *baseSoundName);
-	void playAmigaSoundEffect(const char *baseSoundName);
+	void loadPCMusicFile(const char *baseSoundName);
+	void clearMidiSlot(int slot);
+	void clearAllMidiSlots();
 	
 	// MIDI-Related Variables
-	MidiParser *_midiParser;
 	MidiDriver *_midiDriver;
+	MidiSlot _midiSlots[8]; // 0 is for music; 1-7 are for sfx
+	Common::List<MidiSlot*> _sfxSlotList; // Sorts midi slots by most recently used
+
+	byte *loadedSoundData;
 	uint32 _midiDevice;	
+
+
+	// Driver callback
+	static void midiDriverCallback(void *data);
 };
 
 }

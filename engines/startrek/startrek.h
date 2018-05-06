@@ -91,7 +91,7 @@ public:
 	Room *getRoom();
 	void pollSystemEvents();
 
-	void playSound(int id); // TODO: rename, figure out what it is
+	void playSoundEffectIndex(int index);
 
 	// Events
 public:
@@ -137,6 +137,8 @@ public:
 
 	bool _midiAudioEnabled;
 	bool _cdAudioEnabled;
+	uint16 _word_467a6;
+	uint16 _word_467a8;
 	bool _textboxVar4;
 
 	

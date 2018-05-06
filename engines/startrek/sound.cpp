@@ -17,10 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/sound.cpp $
- * $Id: sound.cpp 15 2010-06-27 06:13:42Z clone2727 $
- *
  */
  
 #include "startrek/sound.h"
@@ -37,38 +33,78 @@ namespace StarTrek {
 
 Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 	if (_vm->getPlatform() == Common::kPlatformDOS || _vm->getPlatform() == Common::kPlatformMacintosh) {
-		// The main PC versions use XMIDI. ST25 Demo and Macintosh versions use SMF.
-		if ((_vm->getGameType() == GType_ST25 && _vm->getFeatures() & GF_DEMO) || _vm->getPlatform() == Common::kPlatformMacintosh)
-			_midiParser = MidiParser::createParser_SMF();
-		else
-			_midiParser = MidiParser::createParser_XMIDI();
-			
 		_midiDevice = MidiDriver::detectDevice(MDT_PCSPK|MDT_ADLIB|MDT_MIDI);
 		_midiDriver = MidiDriver::createMidi(_midiDevice);
 		_midiDriver->open();
-		_midiParser->setMidiDriver(_midiDriver);
-		_midiParser->setTimerRate(_midiDriver->getBaseTempo());
+		_midiDriver->setTimerCallback(this, Sound::midiDriverCallback);
+
+		for (int i=0; i<8; i++) {
+			_midiSlots[i].slot = i;
+			_midiSlots[i].track = -1;
+
+			// The main PC versions use XMIDI. ST25 Demo and Macintosh versions use SMF.
+			if ((_vm->getGameType() == GType_ST25 && _vm->getFeatures() & GF_DEMO) || _vm->getPlatform() == Common::kPlatformMacintosh)
+				_midiSlots[i].midiParser = MidiParser::createParser_SMF();
+			else
+				_midiSlots[i].midiParser = MidiParser::createParser_XMIDI();
+
+			_midiSlots[i].midiParser->setMidiDriver(_midiDriver);
+			_midiSlots[i].midiParser->setTimerRate(_midiDriver->getBaseTempo());
+		}
 	}
 
-	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-		_macAudioResFork = new Common::MacResManager();
-		if (!_macAudioResFork->open("Star Trek Audio"))
-			error("Could not open 'Star Trek Audio'");
-		assert(_macAudioResFork->hasResFork());
-	} else
-		_macAudioResFork = 0;
-
 	_soundHandle = new Audio::SoundHandle();
+	loadedSoundData = nullptr;
+
+	for (int i=1; i<8; i++) {
+		_sfxSlotList.push_back(&_midiSlots[i]);
+	}
 }
 
 Sound::~Sound() {
-	delete _midiParser;
+	for (int i=0; i<8; i++)
+		delete _midiSlots[i].midiParser;
 	delete _midiDriver;
 	delete _soundHandle;
-	delete _macAudioResFork;
+	delete[] loadedSoundData;
 }
 
-void Sound::playSound(const char *baseSoundName) {
+
+void Sound::playMidiTrack(int track) {
+	if (!_vm->_midiAudioEnabled)
+		return;
+	/*
+	if (!_vm->_word_467a8)
+		return;
+	*/
+
+	assert(loadedSoundData != NULL);
+
+	// Check if a midi slot for this track exists already
+	for (int i=1; i<8; i++) {
+		if (_midiSlots[i].track == track) {
+			_midiSlots[i].midiParser->loadMusic(loadedSoundData, sizeof(loadedSoundData));
+			_midiSlots[i].midiParser->setTrack(track);
+
+			// Shift this to the back (most recently used)
+			_sfxSlotList.remove(&_midiSlots[i]);
+			_sfxSlotList.push_back(&_midiSlots[i]);
+			return;
+		}
+	}
+
+	// Take the least recently used slot and use that for the sound effect
+	MidiSlot *slot = _sfxSlotList.front();
+	_sfxSlotList.pop_front();
+	_sfxSlotList.push_back(slot);
+	slot->track = track;
+	slot->midiParser->loadMusic(loadedSoundData, sizeof(loadedSoundData));
+	slot->midiParser->setTrack(track);
+}
+
+void Sound::loadMusicFile(const char *baseSoundName) {
+	clearAllMidiSlots();
+	/*
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
 		playAmigaSound(baseSoundName);
 	else if (_vm->getPlatform() == Common::kPlatformMacintosh)
@@ -76,115 +112,78 @@ void Sound::playSound(const char *baseSoundName) {
 	else if (_vm->getFeatures() & GF_DEMO)
 		playSMFSound(baseSoundName);
 	else
-		playXMIDISound(baseSoundName);
+	*/
+	loadPCMusicFile(baseSoundName);
 }
 
 void Sound::playSoundEffect(const char *baseSoundName) {
+	/*
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
 		playAmigaSoundEffect(baseSoundName);
 	else if (_vm->getPlatform() == Common::kPlatformMacintosh)
 		playMacSoundEffect(baseSoundName);
 	else
-		error("PC Sound Effects Not Supported");
+	*/
+	error("PC Sound Effects Not Supported");
 }
 
 // PC Functions
 
-void Sound::playSMFSound(const char *baseSoundName) {
+
+// XMIDI or SM sound
+void Sound::loadPCMusicFile(const char *baseSoundName) {
 	Common::String soundName = baseSoundName;
 	
 	soundName += '.';
 	
 	switch (MidiDriver::getMusicType(_midiDevice)) {
 		case MT_MT32:
-			soundName += "ROL";
+			if (_vm->getFeatures() & GF_DEMO)
+				soundName += "ROL";
+			else
+				soundName += "MT";
 			break;
 		case MT_PCSPK:
-			return; // Not supported...
+			if (_vm->getFeatures() & GF_DEMO)
+				return; // Not supported...
+			else
+				soundName += "PC";
+			break;
 		default:
-			soundName += "ADL";
+			if (_vm->getFeatures() & GF_DEMO)
+				soundName += "ADL";
+			else
+				soundName += "AD";
 			break;
 	}
 	
 	debug(0, "Playing sound \'%s\'\n", soundName.c_str());
 	SharedPtr<Common::SeekableReadStream> soundStream = _vm->openFile(soundName.c_str());
 	
-	byte *soundData = (byte *)malloc(soundStream->size());
-	soundStream->read(soundData, soundStream->size());
-	_midiParser->loadMusic(soundData, soundStream->size());
-	
-	_midiDriver->setTimerCallback(_midiParser, MidiParser::timerCallback);
+	if (loadedSoundData != nullptr)
+		delete[] loadedSoundData;
+	loadedSoundData = new byte[soundStream->size()];
+	soundStream->read(loadedSoundData, soundStream->size());
+	_midiSlots[0].midiParser->loadMusic(loadedSoundData, soundStream->size());
 }
 
-void Sound::playXMIDISound(const char *baseSoundName) {
-	Common::String soundName = baseSoundName;
-	
-	soundName += '.';
-	
-	switch (MidiDriver::getMusicType(_midiDevice)) {
-		case MT_MT32:
-			soundName += "MT";
-			break;
-		case MT_PCSPK:
-			soundName += "PC";
-			break;
-		default:
-			soundName += "AD";
-			break;
+void Sound::clearMidiSlot(int slot) {
+	_midiSlots[slot].midiParser->stopPlaying();
+	_midiSlots[slot].midiParser->unloadMusic();
+	_midiSlots[slot].track = -1;
+}
+
+void Sound::clearAllMidiSlots() {
+	for (int i=0; i<8; i++) {
+		clearMidiSlot(i);
 	}
-	
-	debug(0, "Playing sound \'%s\'\n", soundName.c_str());
-	SharedPtr<Common::SeekableReadStream> soundStream = _vm->openFile(soundName.c_str());
-	
-	byte *soundData = (byte *)malloc(soundStream->size());
-	soundStream->read(soundData, soundStream->size());
-	_midiParser->loadMusic(soundData, soundStream->size());
-	
-	_midiDriver->setTimerCallback(_midiParser, MidiParser::timerCallback);
 }
 
-// Amiga Functions
-
-void Sound::playAmigaSound(const char *baseSoundName) {
-	// Nope, this is wrong... see http://protracker.de/files/amiga/formats/theplayer_41_format.txt
-#if 0
-	Common::String soundName = baseSoundName;
-	soundName += ".SNG";
-	if (_vm->_mixer->isSoundHandleActive(*_soundHandle))
-		_vm->_mixer->stopHandle(*_soundHandle);
-	_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType, _soundHandle, Audio::makeProtrackerStream(_vm->openFile(soundName.c_str())));
-#endif
+void Sound::midiDriverCallback(void *data) {
+	Sound *s = (Sound*)data;
+	for (int i=0; i<8; i++)
+		s->_midiSlots[i].midiParser->onTimer();
 }
 
-void Sound::playAmigaSoundEffect(const char *baseSoundName) {
-	Common::String soundName = baseSoundName;
-	soundName += ".SFX";
-
-	if (_vm->_mixer->isSoundHandleActive(*_soundHandle))
-		_vm->_mixer->stopHandle(*_soundHandle);
-
-	Audio::AudioStream *audStream = (Audio::AudioStream *)Audio::makeRawStream(_vm->openFile(soundName.c_str()).get(), 11025, 0);
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, _soundHandle, audStream);
-}
-
-// Macintosh Functions
-
-void Sound::playMacSMFSound(const char *baseSoundName) {
-	Common::SeekableReadStream *soundStream = _macAudioResFork->getResource(baseSoundName);
-	byte *soundData = (byte *)malloc(soundStream->size());
-	soundStream->read(soundData, soundStream->size());
-	_midiParser->loadMusic(soundData, soundStream->size());
-	delete soundStream;
-	
-	_midiDriver->setTimerCallback(_midiParser, MidiParser::timerCallback);
-}
-
-void Sound::playMacSoundEffect(const char *baseSoundName) {
-	if (_vm->_mixer->isSoundHandleActive(*_soundHandle))
-		_vm->_mixer->stopHandle(*_soundHandle);
-
-	Audio::AudioStream *audStream = (Audio::AudioStream *)Audio::makeRawStream(_macAudioResFork->getResource(baseSoundName), 11025, 0);
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, _soundHandle, audStream);
-}
 
 } // End of namespace StarTrek
