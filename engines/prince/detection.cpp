@@ -101,7 +101,7 @@ static const PrinceGameDescription gameDescriptions[] = {
 			ADGF_TESTING | GF_NOVOICES,
 			GUIO1(GUIO_NONE)
 		},
-		kPrinceDataPL
+		kPrinceDataDE
 	},
 	{
 		{
