@@ -204,6 +204,7 @@ _sparklepath=
 _sdlconfig=sdl2-config
 _libcurlconfig=curl-config
 _freetypeconfig=freetype-config
+_freetype_found="false"
 _sdlpath="$PATH"
 _freetypepath="$PATH"
 _libcurlpath="$PATH"
@@ -4668,28 +4669,45 @@ echo "$_libunity"
 #
 # Check for FreeType2 to be present
 #
+find_freetype() {
+        # Wrapper function which tries to find freetype
+        # either by callimg freetype-config or by using
+        # pkg-config.
+        # As of freetype-2.9.1 the freetype-config file
+        # no longer gets installed by default.
+
+	if pkg-config --exists freetype2; then
+		FREETYPE2_LIBS=`pkg-config --libs freetype2`
+		FREETYPE2_CFLAGS=`pkg-config --cflags freetype2`
+		FREETYPE2_STATIC_LIBS=`pkg-config --static --libs freetype2`
+		_freetype_found="true"
+	else
+		# Look for the freetype-config script
+		find_freetypeconfig
+		if test -n "$_freetypeconfig"; then
+			# Since 2.3.12, freetype-config prepends $SYSROOT to everything.
+			# This means we can't pass it a --prefix that includes $SYSROOT.
+			freetypeprefix="$_freetypepath"
+			if test -n "$SYSROOT" -a "$SYSROOT" != "/"; then
+				teststring=VeryImplausibleSysrootX1Y2Z3
+				if ( env SYSROOT=/$teststring "$_freetypeconfig" --cflags | grep $teststring 2> /dev/null > /dev/null ); then
+					echo "Adapting FreeType prefix to SYSROOT" >> "$TMPLOG"
+					freetypeprefix="${freetypeprefix##$SYSROOT}"
+				fi
+			fi
+			FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --libs`
+			FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$freetypeprefix" --cflags`
+			FREETYPE2_STATIC_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --static --libs 2>/dev/null`
+			_freetype_found="true"
+		fi
+	fi
+}
+
 if test "$_freetype2" != "no"; then
-
-	# Look for the freetype-config script
-	find_freetypeconfig
-
-	if test -z "$_freetypeconfig"; then
+	find_freetype
+	if test $_freetype_found != true; then
 		_freetype2=no
 	else
-		# Since 2.3.12, freetype-config prepends $SYSROOT to everything.
-		# This means we can't pass it a --prefix that includes $SYSROOT.
-		freetypeprefix="$_freetypepath"
-		if test -n "$SYSROOT" -a "$SYSROOT" != "/"; then
-			teststring=VeryImplausibleSysrootX1Y2Z3
-			if ( env SYSROOT=/$teststring "$_freetypeconfig" --cflags | grep $teststring 2> /dev/null > /dev/null ); then
-				echo "Adapting FreeType prefix to SYSROOT" >> "$TMPLOG"
-				freetypeprefix="${freetypeprefix##$SYSROOT}"
-			fi
-		fi
-
-		FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --libs`
-		FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$freetypeprefix" --cflags`
-
 		if test "$_freetype2" = "auto"; then
 			_freetype2=no
 
@@ -4709,7 +4727,7 @@ EOF
 			# required flags for static linking. We abuse this to detect
 			# FreeType2 builds which are static themselves.
 			if test "$_freetype2" != "yes"; then
-				FREETYPE2_LIBS=`$_freetypeconfig --prefix="$_freetypepath" --static --libs 2>/dev/null`
+				FREETYPE2_LIBS="$FREETYPE2_STATIC_LIBS"
 				cc_check_no_clean $FREETYPE2_CFLAGS $FREETYPE2_LIBS && _freetype2=yes
 			fi
 			cc_check_clean
