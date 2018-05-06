@@ -410,7 +410,7 @@ void IllusionsEngine_BBDOU::hideCursor() {
 
 void IllusionsEngine_BBDOU::cursorControlRoutine(Control *control, uint32 deltaTime) {
 	control->_actor->_seqCodeValue1 = 100 * deltaTime;
-	if (control->_actor->_flags & Illusions::ACTOR_FLAG_1) {
+	if (control->_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE) {
 		switch (_cursor->_status) {
 		case 2:
 			// Unused nullsub_1(control);

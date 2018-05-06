@@ -692,7 +692,7 @@ void IllusionsEngine_Duckman::stopCursorHoldingObject() {
 
 void IllusionsEngine_Duckman::cursorControlRoutine(Control *control, uint32 deltaTime) {
 	control->_actor->_seqCodeValue1 = 100 * deltaTime;
-	if (control->_actor->_flags & Illusions::ACTOR_FLAG_1) {
+	if (control->_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE) {
 		switch (_cursor._gameState) {
 		case 2:
 			updateGameState2();
