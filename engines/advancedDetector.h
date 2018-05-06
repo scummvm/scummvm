@@ -267,7 +267,7 @@ public:
 	 */
 	virtual GameList getSupportedGames() const;
 
-	virtual GameDescriptor findGame(const char *gameId) const;
+	PlainGameDescriptor findGame(const char *gameId) const override;
 
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 

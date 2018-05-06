@@ -88,7 +88,7 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
-	virtual GameDescriptor findGame(const char *gameid) const;
+	PlainGameDescriptor findGame(const char *gameId) const override;
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
@@ -127,20 +127,20 @@ GameList SwordMetaEngine::getSupportedGames() const {
 	return games;
 }
 
-GameDescriptor SwordMetaEngine::findGame(const char *gameid) const {
-	if (0 == scumm_stricmp(gameid, sword1FullSettings.gameId))
+PlainGameDescriptor SwordMetaEngine::findGame(const char *gameId) const {
+	if (0 == scumm_stricmp(gameId, sword1FullSettings.gameId))
 		return sword1FullSettings;
-	if (0 == scumm_stricmp(gameid, sword1DemoSettings.gameId))
+	if (0 == scumm_stricmp(gameId, sword1DemoSettings.gameId))
 		return sword1DemoSettings;
-	if (0 == scumm_stricmp(gameid, sword1MacFullSettings.gameId))
+	if (0 == scumm_stricmp(gameId, sword1MacFullSettings.gameId))
 		return sword1MacFullSettings;
-	if (0 == scumm_stricmp(gameid, sword1MacDemoSettings.gameId))
+	if (0 == scumm_stricmp(gameId, sword1MacDemoSettings.gameId))
 		return sword1MacDemoSettings;
-	if (0 == scumm_stricmp(gameid, sword1PSXSettings.gameId))
+	if (0 == scumm_stricmp(gameId, sword1PSXSettings.gameId))
 		return sword1PSXSettings;
-	if (0 == scumm_stricmp(gameid, sword1PSXDemoSettings.gameId))
+	if (0 == scumm_stricmp(gameId, sword1PSXDemoSettings.gameId))
 		return sword1PSXDemoSettings;
-	return GameDescriptor();
+	return PlainGameDescriptor();
 }
 
 void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound, bool recursion = false) {

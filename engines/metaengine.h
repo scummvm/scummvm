@@ -71,8 +71,8 @@ public:
 	/** Returns a list of games supported by this engine. */
 	virtual GameList getSupportedGames() const = 0;
 
-	/** Query the engine for a GameDescriptor for the specified gameid, if any. */
-	virtual GameDescriptor findGame(const char *gameid) const = 0;
+	/** Query the engine for a PlainGameDescriptor for the specified gameid, if any. */
+	virtual PlainGameDescriptor findGame(const char *gameId) const = 0;
 
 	/**
 	 * Runs the engine's game detector on the given list of files, and returns a
@@ -267,8 +267,8 @@ public:
  */
 class EngineManager : public Common::Singleton<EngineManager> {
 public:
-	GameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin = NULL) const;
-	GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL) const;
+	PlainGameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin = NULL) const;
+	PlainGameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL) const;
 	DetectionResults detectGames(const Common::FSList &fslist) const;
 	const PluginList &getPlugins() const;
 };

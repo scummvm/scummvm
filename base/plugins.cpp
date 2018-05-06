@@ -458,13 +458,13 @@ DECLARE_SINGLETON(EngineManager);
  * For the uncached version, we first try to find the plugin using the gameId
  * and only if we can't find it there, we loop through the plugins.
  **/
-GameDescriptor EngineManager::findGame(const Common::String &gameName, const Plugin **plugin) const {
-	GameDescriptor result;
+PlainGameDescriptor EngineManager::findGame(const Common::String &gameName, const Plugin **plugin) const {
+	PlainGameDescriptor result;
 
 	// First look for the game using the plugins in memory. This is critical
 	// for calls coming from inside games
 	result = findGameInLoadedPlugins(gameName, plugin);
-	if (!result.gameid().empty()) {
+	if (result.gameId) {
 		return result;
 	}
 
@@ -472,7 +472,7 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Plu
 	// by plugin
 	if (PluginMan.loadPluginFromGameId(gameName))  {
 		result = findGameInLoadedPlugins(gameName, plugin);
-		if (!result.gameid().empty()) {
+		if (result.gameId) {
 			return result;
 		}
 	}
@@ -481,7 +481,7 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Plu
 	PluginMan.loadFirstPlugin();
 	do {
 		result = findGameInLoadedPlugins(gameName, plugin);
-		if (!result.gameid().empty()) {
+		if (result.gameId) {
 			// Update with new plugin file name
 			PluginMan.updateConfigWithFileName(gameName);
 			break;
@@ -494,10 +494,10 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Plu
 /**
  * Find the game within the plugins loaded in memory
  **/
-GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin) const {
+PlainGameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin) const {
 	// Find the GameDescriptor for this target
 	const PluginList &plugins = getPlugins();
-	GameDescriptor result;
+	PlainGameDescriptor result;
 
 	if (plugin)
 		*plugin = 0;
@@ -506,7 +506,7 @@ GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &game
 
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		result = (*iter)->get<MetaEngine>().findGame(gameName.c_str());
-		if (!result.gameid().empty()) {
+		if (result.gameId) {
 			if (plugin)
 				*plugin = *iter;
 			return result;

@@ -38,6 +38,9 @@
 struct PlainGameDescriptor {
 	const char *gameId;
 	const char *description;
+
+	PlainGameDescriptor() : gameId(nullptr), description(nullptr) {}
+	PlainGameDescriptor(const char *id, const char *desc) : gameId(id), description(desc) {}
 };
 
 /**
@@ -66,7 +69,7 @@ enum GameSupportLevel {
 class GameDescriptor : public Common::StringMap {
 public:
 	GameDescriptor();
-	GameDescriptor(const PlainGameDescriptor &pgd, Common::String guioptions = Common::String());
+	explicit GameDescriptor(const PlainGameDescriptor &pgd, Common::String guioptions = Common::String());
 	GameDescriptor(const Common::String &gameid,
 	              const Common::String &description,
 	              Common::Language language = Common::UNK_LANG,

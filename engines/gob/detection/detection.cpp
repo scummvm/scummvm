@@ -33,7 +33,7 @@ class GobMetaEngine : public AdvancedMetaEngine {
 public:
 	GobMetaEngine();
 
-	virtual GameDescriptor findGame(const char *gameId) const;
+	PlainGameDescriptor findGame(const char *gameId) const override;
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 
@@ -59,7 +59,7 @@ GobMetaEngine::GobMetaEngine() :
 	_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 }
 
-GameDescriptor GobMetaEngine::findGame(const char *gameId) const {
+PlainGameDescriptor GobMetaEngine::findGame(const char *gameId) const {
 	return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 }
 

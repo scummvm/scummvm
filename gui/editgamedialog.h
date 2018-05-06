@@ -62,7 +62,7 @@ class EditGameDialog : public OptionsDialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
 public:
-	EditGameDialog(const String &domain, const String &desc);
+	EditGameDialog(const String &domain);
 
 	void open();
 	virtual void apply();

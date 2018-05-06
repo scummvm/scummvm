@@ -960,7 +960,7 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
-	virtual GameDescriptor findGame(const char *gameid) const;
+	PlainGameDescriptor findGame(const char *gameid) const override;
 	virtual DetectedGames detectGames(const Common::FSList &fslist) const override;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
@@ -996,7 +996,7 @@ GameList ScummMetaEngine::getSupportedGames() const {
 	return GameList(gameDescriptions);
 }
 
-GameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
+PlainGameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
 	return Engines::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
 

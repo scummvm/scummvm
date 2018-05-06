@@ -94,7 +94,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
-	virtual GameDescriptor findGame(const char *gameid) const;
+	PlainGameDescriptor findGame(const char *gameid) const override;
 	virtual DetectedGames detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
@@ -135,14 +135,14 @@ const ExtraGuiOptions Sword2MetaEngine::getExtraGuiOptions(const Common::String 
 	return options;
 }
 
-GameDescriptor Sword2MetaEngine::findGame(const char *gameid) const {
+PlainGameDescriptor Sword2MetaEngine::findGame(const char *gameid) const {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
 			break;
 		g++;
 	}
-	return GameDescriptor(g->gameid, g->description);
+	return PlainGameDescriptor(g->gameid, g->description);
 }
 
 bool isFullGame(const Common::FSList &fslist) {

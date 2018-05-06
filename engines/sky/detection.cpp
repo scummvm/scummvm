@@ -78,7 +78,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
-	virtual GameDescriptor findGame(const char *gameid) const;
+	PlainGameDescriptor findGame(const char *gameid) const override;
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
@@ -112,7 +112,7 @@ bool Sky::SkyEngine::hasFeature(EngineFeature f) const {
 
 GameList SkyMetaEngine::getSupportedGames() const {
 	GameList games;
-	games.push_back(skySetting);
+	games.push_back(GameDescriptor(skySetting));
 	return games;
 }
 
@@ -135,10 +135,10 @@ const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &ta
 	return options;
 }
 
-GameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
+PlainGameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
 	if (0 == scumm_stricmp(gameid, skySetting.gameId))
 		return skySetting;
-	return GameDescriptor();
+	return PlainGameDescriptor();
 }
 
 DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {

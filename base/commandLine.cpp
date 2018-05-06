@@ -714,10 +714,10 @@ static void listTargets() {
 			// FIXME: At this point, we should check for a "gameid" override
 			// to find the proper desc. In fact, the platform probably should
 			// be taken into account, too.
-			Common::String gameid(name);
-			GameDescriptor g = EngineMan.findGame(gameid);
-			if (g.description().size() > 0)
-				description = g.description();
+			const Common::String &gameid = name;
+			PlainGameDescriptor g = EngineMan.findGame(gameid);
+			if (g.description)
+				description = g.description;
 		}
 
 		targets.push_back(Common::String::format("%-20s %s", name.c_str(), description.c_str()));
@@ -770,7 +770,7 @@ static Common::Error listSaves(const Common::String &target) {
 
 		// Find the plugin that will handle the specified gameid
 		const Plugin *plugin = nullptr;
-		GameDescriptor game = EngineMan.findGame(gameid, &plugin);
+		EngineMan.findGame(gameid, &plugin);
 
 		if (!plugin) {
 			// If the target was specified, treat this as an error, and otherwise skip it.
@@ -1276,8 +1276,8 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	// domain (i.e. a target) matching this argument, or alternatively
 	// whether there is a gameid matching that name.
 	if (!command.empty()) {
-		GameDescriptor gd = EngineMan.findGame(command);
-		if (ConfMan.hasGameDomain(command) || !gd.gameid().empty()) {
+		PlainGameDescriptor gd = EngineMan.findGame(command);
+		if (ConfMan.hasGameDomain(command) || gd.gameId) {
 			bool idCameFromCommandLine = false;
 
 			// WORKAROUND: Fix for bug #1719463: "DETECTOR: Launching

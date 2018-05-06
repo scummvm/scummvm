@@ -267,9 +267,9 @@ void LauncherDialog::updateListing() {
 		if (gameid.empty())
 			gameid = iter->_key;
 		if (description.empty()) {
-			GameDescriptor g = EngineMan.findGame(gameid);
-			if (g.contains("description"))
-				description = g.description();
+			PlainGameDescriptor g = EngineMan.findGame(gameid);
+			if (g.description)
+				description = g.description;
 		}
 
 		if (description.empty()) {
@@ -443,7 +443,8 @@ void LauncherDialog::editGame(int item) {
 	String gameId(ConfMan.get("gameid", _domains[item]));
 	if (gameId.empty())
 		gameId = _domains[item];
-	EditGameDialog editDialog(_domains[item], EngineMan.findGame(gameId).description());
+
+	EditGameDialog editDialog(_domains[item]);
 	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent
 
@@ -612,7 +613,7 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 		Common::String domain = addGameToConf(result);
 
 		// Display edit dialog for the new entry
-		EditGameDialog editDialog(domain, result.description());
+		EditGameDialog editDialog(domain);
 		if (editDialog.runModal() > 0) {
 			// User pressed OK, so make changes permanent
 

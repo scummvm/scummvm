@@ -602,14 +602,14 @@ GameList AdvancedMetaEngine::getSupportedGames() const {
 	return GameList(_gameIds);
 }
 
-GameDescriptor AdvancedMetaEngine::findGame(const char *gameId) const {
+PlainGameDescriptor AdvancedMetaEngine::findGame(const char *gameId) const {
 	// First search the list of supported gameids for a match.
 	const PlainGameDescriptor *g = findPlainGameDescriptor(gameId, _gameIds);
 	if (g)
-		return GameDescriptor(*g);
+		return *g;
 
 	// No match found
-	return GameDescriptor();
+	return PlainGameDescriptor();
 }
 
 AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions)

@@ -95,7 +95,7 @@ protected:
 	}
 };
 
-EditGameDialog::EditGameDialog(const String &domain, const String &desc)
+EditGameDialog::EditGameDialog(const String &domain)
 	: OptionsDialog(domain, "GameOptions") {
 	// Retrieve all game specific options.
 	const Plugin *plugin = nullptr;
@@ -106,7 +106,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 		gameId = domain;
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
-	EngineMan.findGame(gameId, &plugin);
+	PlainGameDescriptor pgd = EngineMan.findGame(gameId, &plugin);
 	if (plugin) {
 		_engineOptions = plugin->get<MetaEngine>().getExtraGuiOptions(domain);
 	} else {
@@ -120,8 +120,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.empty() && !desc.empty()) {
-		description = desc;
+	if (description.empty() && pgd.description) {
+		description = pgd.description;
 	}
 
 	// GUI:  Add tab widget
