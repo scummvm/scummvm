@@ -97,12 +97,18 @@ void DrawingSupport::roundFrameCorners(bool skipBottom) {
 	}
 }
 
-void DrawingSupport::drawRightArrow() {
-
+void DrawingSupport::drawRightArrow(const Point &pt) {
+	_surface.writeChar(16, pt, _game->_borderColor);
+	_surface.drawLine(pt.x, pt.y, pt.x + 7, pt.y + 3, _game->_edgeColor);
+	_surface.drawLine(pt.x + 7, pt.y + 3, pt.x, pt.y, _game->_edgeColor);
+	_surface.drawLine(pt.x, pt.y + 1, pt.x, pt.y + 6, _game->_edgeColor);
 }
 
-void DrawingSupport::drawLeftArrow() {
-
+void DrawingSupport::drawLeftArrow(const Point &pt) {
+	_surface.writeChar(17, pt, _game->_borderColor);
+	_surface.drawLine(pt.x + 7, pt.y, pt.x, pt.y + 3, _game->_edgeColor);
+	_surface.drawLine(pt.x, pt.y, pt.x + 7, pt.y + 7, _game->_edgeColor);
+	_surface.drawLine(pt.x + 7, pt.y + 1, pt.x + 7, pt.y + 6, _game->_edgeColor);
 }
 
 } // End of namespace U1Gfx

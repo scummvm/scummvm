@@ -64,12 +64,12 @@ public:
 	/**
 	 * Draw a right arrow glyph
 	 */
-	void drawRightArrow();
+	void drawRightArrow(const Point &pt);
 
 	/**
 	 * Draw a left arrow glyph
 	 */
-	void drawLeftArrow();
+	void drawLeftArrow(const Point &pt);
 };
 
 } // End of namespace U1Gfx

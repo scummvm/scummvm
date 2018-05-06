@@ -140,10 +140,16 @@ private:
 	 * Loads a castle
 	 */
 	void loadCastle();
+
 	/**
 	 * Load widget list for the given map
 	 */
 	void loadWidgets();
+
+	/**
+	 * Loads a underworld/dungeon map
+	 */
+	void loadUnderworldMap();
 public:
 	MapType _mapType;					// Type of map
 	uint _mapStyle;						// Map style category for towns & castles

@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Shared {
 
-GameState::GameState(Game *game) : _videoMode(EGA) {
+GameState::GameState(Game *game) : _videoMode(EGA), _dungeonExitHitPoints(0) {
 	_characters.resize(1);
 	_gameId = g_vm->getGameID();
 
