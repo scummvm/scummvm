@@ -104,7 +104,7 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 	freeSample(sampleSlot);
 	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(streamName);
 	if (sampleStream == nullptr) {
-		warning("Can't open %s", streamName.c_str());
+		debug("Can't open %s", streamName.c_str());
 		return false;
 	}
 
