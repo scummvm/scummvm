@@ -188,7 +188,7 @@ int IllusionsEngine::updateGraphics(uint flags) {
 	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
 		Control *control = *it;
 		Actor *actor = control->_actor;
-		if (control->_pauseCtr == 0 && actor && (actor->_flags & Illusions::ACTOR_FLAG_1) && !(actor->_flags & Illusions::ACTOR_FLAG_200)) {
+		if (control->_pauseCtr == 0 && actor && (actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE) && !(actor->_flags & Illusions::ACTOR_FLAG_200)) {
 			Common::Point drawPosition = control->calcPosition(panPoint);
 			if (actor->_flags & Illusions::ACTOR_FLAG_2000) {
 				Frame *frame = &(*actor->_frames)[actor->_frameIndex - 1];
