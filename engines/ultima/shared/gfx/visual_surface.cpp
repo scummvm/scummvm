@@ -48,6 +48,11 @@ void VisualSurface::writeString(const Common::String &msg, byte color) {
 }
 
 void VisualSurface::writeChar(unsigned char c, const Point &pt, byte color) {
+	_textPos = pt;
+	writeChar(c, color);
+}
+
+void VisualSurface::writeChar(unsigned char c, byte color) {
 	Gfx::Font *font = g_vm->_game->getFont();
 	font->writeChar(*this, c, _textPos, color);
 	_textPos.x += font->charWidth(c);

@@ -34,6 +34,8 @@ enum Direction {
 	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4
 };
 
+typedef byte MapCell;
+
 class Game;
 class Map;
 
@@ -68,6 +70,33 @@ public:
 
 typedef Common::SharedPtr<MapWidget> MapWidgetPtr;
 
+/**
+ * Base class for items that appear within the dungeons
+ */
+class MapItem {
+protected:
+	Game *_game;						// Game reference
+	Map *_map;							// Map reference
+public:
+	Point _position;					// Position within the map
+public:
+	/**
+	* Constructor
+	*/
+	MapItem(Game *game, Map *map) : _game(game), _map(map) {}
+
+	/**
+ 	 * Destructor
+	 */
+	virtual ~MapItem() {}
+
+	/**
+	 * Draw the item
+	 */
+	virtual void draw();
+};
+
+typedef Common::SharedPtr<MapItem> MapItemPtr;
 
 /**
  * Contains data about a given position within the map
@@ -78,11 +107,17 @@ public:
 	int _tileNum;							// Tile number to display. Normally equals Tile Id, but can differ in rare cases
 	int _widgetNum;							// Widget number, if any
 	MapWidget *_widget;						// Widget pointer
+	int _itemNum;							// Item number, if any
+	MapItem *_item;							// Item pointer
 public:
 	/**
 	 * Constructor
 	 */
-	MapTile() : _tileNum(-1), _tileId(-1), _widgetNum(-1), _widget(nullptr) {}
+	MapTile() : _tileNum(-1), _tileId(-1), _widgetNum(-1), _widget(nullptr), _itemNum(-1), _item(nullptr) {}
+
+	/**
+ 	 * Destructor
+	 */
 	virtual ~MapTile() {}
 
 	/**
@@ -119,12 +154,29 @@ class Map {
 		 */
 		void reset() { _mapId = -1; }
 	};
+
+	/**
+	 * Internal class used for storing the data for a row
+	 */
+	struct MapCellsRow {
+		friend class Map;
+	private:
+		Common::Array<MapCell> _data;
+	public:
+		byte &operator[](int idx) { return _data[idx]; }
+	};
 protected:
 	byte _mapId;						// The map Id
 	Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
-	Common::Array<byte> _data;			// Data for the map
+	Common::Array<MapItemPtr> _items;	// Items like coffins and chests that appear in dungeons
+	Common::Array<MapCellsRow> _data;	// Data for the map
 	Point _position;					// Current position within the map
 	ViewportPosition _viewportPos;		// Viewport position
+protected:
+	/**
+	 * Set the size of the map
+	 */
+	void setDimensions(const Point &size);
 public:
 	Point _size;						// X, Y size of the map
 	Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
@@ -137,6 +189,11 @@ public:
 	 */
 	Map();
 	virtual ~Map() {}
+
+	/**
+	 * Clears all map data
+	 */
+	virtual void clear();
 
 	/**
 	 * Returns the width of the map

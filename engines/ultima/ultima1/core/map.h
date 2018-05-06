@@ -28,12 +28,15 @@
 namespace Ultima {
 namespace Ultima1 {
 
+#define DUNGEON_WIDTH 11
+#define DUNGEON_HEIGHT 11
+
 enum MapType {
 	MAP_OVERWORLD = 0, MAP_CITY = 1, MAP_CASTLE = 2, MAP_DUNGEON = 3, MAP_UNKNOWN = 4
 };
 
 enum MapId {
-	MAPID_OVERWORLD = 0, MAP_UNDERWORLD = 999
+	MAPID_OVERWORLD = 0, MAPID_DUNGEON = 999
 };
 
 class Ultima1Game;
@@ -149,7 +152,7 @@ private:
 	/**
 	 * Loads a underworld/dungeon map
 	 */
-	void loadUnderworldMap();
+	void loadDungeonMap();
 public:
 	MapType _mapType;					// Type of map
 	uint _mapStyle;						// Map style category for towns & castles

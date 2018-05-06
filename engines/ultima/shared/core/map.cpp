@@ -29,6 +29,8 @@ void MapTile::clear() {
 	_tileId = _tileNum = -1;
 	_widgetNum = -1;
 	_widget = nullptr;
+	_itemNum = -1;
+	_item = nullptr;
 }
 
 /*-------------------------------------------------------------------*/
@@ -38,6 +40,20 @@ Map::Map() {
 	_direction = DIR_UP;
 	_fixed = false;
 	_dungeonLevel = 0;
+}
+
+void Map::clear() {
+	_mapId = 0;
+	_data.clear();
+	_widgets.clear();
+	_items.clear();
+}
+
+void Map::setDimensions(const Point &size) {
+	_data.resize(size.y);
+	for (int y = 0; y < size.y; ++y)
+		_data[y]._data.resize(size.x);
+	_size = size;
 }
 
 Point Map::getDeltaPosition(const Point &delta) {
@@ -58,6 +74,7 @@ Point Map::getDeltaPosition(const Point &delta) {
 }
 
 void Map::loadMap(int mapId, uint videoMode) {
+	clear();
 	_mapId = mapId;
 	_fixed = false;
 }
@@ -130,13 +147,22 @@ void Map::getTileAt(const Point &pt, MapTile *tile) {
 	tile->clear();
 
 	// Get the base tile
-	tile->_tileNum = tile->_tileId = _data[pt.y * _size.x + pt.x];
+	tile->_tileNum = tile->_tileId = _data[pt.y][pt.x];
 
 	// Check for any widget on that map tile
 	for (uint idx = 0; idx < _widgets.size(); ++idx) {
 		if (_widgets[idx]->_position == pt) {
 			tile->_widgetNum = idx;
 			tile->_widget = _widgets[idx].get();
+			break;
+		}
+	}
+
+	// Check for any item on that map tile
+	for (uint idx = 0; idx < _items.size(); ++idx) {
+		if (_items[idx]->_position == pt) {
+			tile->_itemNum = idx;
+			tile->_item = _items[idx].get();
 			break;
 		}
 	}
