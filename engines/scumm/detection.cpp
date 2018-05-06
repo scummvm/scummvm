@@ -959,7 +959,7 @@ public:
 	virtual const char *getOriginalCopyright() const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual GameList getSupportedGames() const;
+	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	virtual DetectedGames detectGames(const Common::FSList &fslist) const override;
 
@@ -992,8 +992,8 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSubtitleOptions);
 }
 
-GameList ScummMetaEngine::getSupportedGames() const {
-	return GameList(gameDescriptions);
+PlainGameList ScummMetaEngine::getSupportedGames() const {
+	return PlainGameList(gameDescriptions);
 }
 
 PlainGameDescriptor ScummMetaEngine::findGame(const char *gameid) const {

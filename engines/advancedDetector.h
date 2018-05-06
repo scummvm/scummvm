@@ -265,7 +265,7 @@ public:
 	 * Returns list of targets supported by the engine.
 	 * Distinguishes engines with single ID
 	 */
-	virtual GameList getSupportedGames() const;
+	PlainGameList getSupportedGames() const override;
 
 	PlainGameDescriptor findGame(const char *gameId) const override;
 

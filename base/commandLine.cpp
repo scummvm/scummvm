@@ -687,9 +687,9 @@ static void listGames() {
 
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		GameList list = (*iter)->get<MetaEngine>().getSupportedGames();
-		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
-			printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
+		PlainGameList list = (*iter)->get<MetaEngine>().getSupportedGames();
+		for (PlainGameList::iterator v = list.begin(); v != list.end(); ++v) {
+			printf("%-20s %s\n", v->gameId, v->description);
 		}
 	}
 }

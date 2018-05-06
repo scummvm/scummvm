@@ -92,7 +92,7 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual GameList getSupportedGames() const;
+	PlainGameList getSupportedGames() const override;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	virtual DetectedGames detectGames(const Common::FSList &fslist) const;
@@ -119,11 +119,11 @@ bool Sword2::Sword2Engine::hasFeature(EngineFeature f) const {
 		(f == kSupportsLoadingDuringRuntime);
 }
 
-GameList Sword2MetaEngine::getSupportedGames() const {
+PlainGameList Sword2MetaEngine::getSupportedGames() const {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;
-	GameList games;
+	PlainGameList games;
 	while (g->gameid) {
-		games.push_back(GameDescriptor(g->gameid, g->description));
+		games.push_back(PlainGameDescriptor(g->gameid, g->description));
 		g++;
 	}
 	return games;

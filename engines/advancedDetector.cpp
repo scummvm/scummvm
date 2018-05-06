@@ -583,14 +583,14 @@ ADDetectedGame AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, 
 	return result;
 }
 
-GameList AdvancedMetaEngine::getSupportedGames() const {
+PlainGameList AdvancedMetaEngine::getSupportedGames() const {
 	if (_singleId != NULL) {
-		GameList gl;
+		PlainGameList gl;
 
 		const PlainGameDescriptor *g = _gameIds;
 		while (g->gameId) {
 			if (0 == scumm_stricmp(_singleId, g->gameId)) {
-				gl.push_back(GameDescriptor(g->gameId, g->description));
+				gl.push_back(*g);
 
 				return gl;
 			}
@@ -599,7 +599,7 @@ GameList AdvancedMetaEngine::getSupportedGames() const {
 		error("Engine %s doesn't have its singleid specified in ids list", _singleId);
 	}
 
-	return GameList(_gameIds);
+	return PlainGameList(_gameIds);
 }
 
 PlainGameDescriptor AdvancedMetaEngine::findGame(const char *gameId) const {

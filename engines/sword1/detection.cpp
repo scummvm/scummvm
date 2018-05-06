@@ -87,7 +87,7 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual GameList getSupportedGames() const;
+	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameId) const override;
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 	virtual SaveStateList listSaves(const char *target) const;
@@ -116,14 +116,14 @@ bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
 	    (f == kSupportsLoadingDuringRuntime);
 }
 
-GameList SwordMetaEngine::getSupportedGames() const {
-	GameList games;
-	games.push_back(GameDescriptor(sword1FullSettings, GUIO_NOMIDI));
-	games.push_back(GameDescriptor(sword1DemoSettings, GUIO_NOMIDI));
-	games.push_back(GameDescriptor(sword1MacFullSettings, GUIO_NOMIDI));
-	games.push_back(GameDescriptor(sword1MacDemoSettings, GUIO_NOMIDI));
-	games.push_back(GameDescriptor(sword1PSXSettings, GUIO_NOMIDI));
-	games.push_back(GameDescriptor(sword1PSXDemoSettings, GUIO_NOMIDI));
+PlainGameList SwordMetaEngine::getSupportedGames() const {
+	PlainGameList games;
+	games.push_back(sword1FullSettings);
+	games.push_back(sword1DemoSettings);
+	games.push_back(sword1MacFullSettings);
+	games.push_back(sword1MacDemoSettings);
+	games.push_back(sword1PSXSettings);
+	games.push_back(sword1PSXDemoSettings);
 	return games;
 }
 

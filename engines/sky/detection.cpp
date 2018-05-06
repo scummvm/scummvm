@@ -76,7 +76,7 @@ public:
 	virtual const char *getOriginalCopyright() const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual GameList getSupportedGames() const;
+	PlainGameList getSupportedGames() const override;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
@@ -110,9 +110,9 @@ bool Sky::SkyEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-GameList SkyMetaEngine::getSupportedGames() const {
-	GameList games;
-	games.push_back(GameDescriptor(skySetting));
+PlainGameList SkyMetaEngine::getSupportedGames() const {
+	PlainGameList games;
+	games.push_back(skySetting);
 	return games;
 }
 

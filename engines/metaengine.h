@@ -69,7 +69,7 @@ public:
 	virtual const char *getOriginalCopyright() const = 0;
 
 	/** Returns a list of games supported by this engine. */
-	virtual GameList getSupportedGames() const = 0;
+	virtual PlainGameList getSupportedGames() const = 0;
 
 	/** Query the engine for a PlainGameDescriptor for the specified gameid, if any. */
 	virtual PlainGameDescriptor findGame(const char *gameId) const = 0;

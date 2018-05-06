@@ -50,6 +50,18 @@ struct PlainGameDescriptor {
  */
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list);
 
+class PlainGameList : public Common::Array<PlainGameDescriptor> {
+public:
+	PlainGameList() {}
+	PlainGameList(const PlainGameList &list) : Common::Array<PlainGameDescriptor>(list) {}
+	PlainGameList(const PlainGameDescriptor *g) {
+		while (g->gameId) {
+			push_back(*g);
+			g++;
+		}
+	}
+};
+
 /**
  * Ths is an enum to describe how done a game is. This also indicates what level of support is expected.
  */
@@ -106,17 +118,7 @@ public:
 };
 
 /** List of games. */
-class GameList : public Common::Array<GameDescriptor> {
-public:
-	GameList() {}
-	GameList(const GameList &list) : Common::Array<GameDescriptor>(list) {}
-	GameList(const PlainGameDescriptor *g) {
-		while (g->gameId) {
-			push_back(GameDescriptor(*g));
-			g++;
-		}
-	}
-};
+typedef Common::Array<GameDescriptor> GameList;
 
 /**
  * A record describing the properties of a file. Used on the existing
