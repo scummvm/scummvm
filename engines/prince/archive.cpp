@@ -135,6 +135,8 @@ Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::
 		return 0;
 	}
 
+	debug(8, "PtcArchive::createReadStreamForMember(%s)", name.c_str());
+
 	const FileEntry &entryHeader = _items[name];
 
 	if (entryHeader._size < 4)
@@ -156,6 +158,8 @@ Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::
 		free(buffer);
 		size = decompLen;
 		buffer = decompData;
+
+		debug(8, "PtcArchive::createReadStreamForMember: decompressed %d to %d bytes", entryHeader._size, decompLen);
 	}
 
 	//debug("PtcArchive::createReadStreamForMember name %s", name.c_str());
