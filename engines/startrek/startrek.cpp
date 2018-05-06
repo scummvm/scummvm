@@ -101,14 +101,7 @@ Common::Error StarTrekEngine::run() {
 		_gfx->loadPri("DEMON0.PRI");
 		_gfx->redrawScreen();
 		
-		if (getPlatform() == Common::kPlatformAmiga)
-			_sound->playSoundEffect("TREK2");
-		else if (getPlatform() == Common::kPlatformMacintosh)
-			_sound->playSound("title 2");
-		else if (getFeatures() & GF_DEMO)
-			_sound->playSound("STTITLE");
-		else
-			_sound->playSound("TITLE");
+		_sound->loadMusicFile("BRIDGEW");
 	} else {
 		_gfx->drawBackgroundImage("BRIDGE.BGD");
 	}
@@ -197,8 +190,56 @@ void StarTrekEngine::pollSystemEvents() {
 	_system->delayMillis(1000/60);
 }
 
-void StarTrekEngine::playSound(int id) {
-	// TODO
+void StarTrekEngine::playSoundEffectIndex(int index) {
+	switch(index-4) {
+	case 0:
+		_sound->playSoundEffect("tricorde");
+		break;
+	case 1:
+		_sound->playSoundEffect("STDOOR1");
+		break;
+	case 2:
+		_sound->playSoundEffect("PHASSHOT");
+		break;
+	case 3:
+		_sound->playMidiTrack(index);
+		break;
+	case 4:
+		_sound->playSoundEffect("TRANSDEM");
+		break;
+	case 5:
+		_sound->playSoundEffect("TRANSMAT");
+		break;
+	case 6:
+		_sound->playSoundEffect("TRANSENE");
+		break;
+	case 0x0c: // Menu selection sound
+		_sound->playMidiTrack(index);
+		break;
+	case 0x1e:
+		_sound->playSoundEffect("HAILING");
+		break;
+	case 0x20:
+		_sound->playSoundEffect("PHASSHOT");
+		break;
+	case 0x21:
+		_sound->playSoundEffect("PHOTSHOT");
+		break;
+	case 0x22:
+		_sound->playSoundEffect("HITSHIEL");
+		break;
+	case 0x23:
+		_sound->playMidiTrack(index);
+		break;
+	case 0x24:
+		_sound->playSoundEffect("REDALERT");
+		break;
+	case 0x25:
+		_sound->playSoundEffect("WARP");
+		break;
+	default:
+	    break;
+	}
 }
 
 void StarTrekEngine::updateClockTicks() {
