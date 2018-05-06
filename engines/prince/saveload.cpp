@@ -30,11 +30,14 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
+#include "common/translation.h"
 
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
+
+#include "gui/saveload.h"
 
 namespace Prince {
 
@@ -42,6 +45,37 @@ namespace Prince {
 
 class InterpreterFlags;
 class Interpreter;
+
+bool PrinceEngine::scummVMSaveLoadDialog(bool isSave) {
+	GUI::SaveLoadChooser *dialog;
+	Common::String desc;
+	int slot;
+
+	if (isSave) {
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+
+		slot = dialog->runModalWithCurrentTarget();
+		desc = dialog->getResultString();
+
+		if (desc.empty()) {
+			desc = dialog->createDefaultSaveDescription(slot);
+		}
+	} else {
+		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		slot = dialog->runModalWithCurrentTarget();
+	}
+
+	delete dialog;
+
+	if (slot < 0)
+		return false;
+
+	if (isSave) {
+		return saveGameState(slot, desc).getCode() == Common::kNoError;
+	} else {
+		return loadGameState(slot).getCode() == Common::kNoError;
+	}
+}
 
 WARN_UNUSED_RESULT bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
 	header.version     = 0;

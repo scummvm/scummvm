@@ -279,6 +279,8 @@ public:
 	PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc);
 	virtual ~PrinceEngine();
 
+	bool scummVMSaveLoadDialog(bool isSave);
+
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
 	virtual bool canSaveGameStateCurrently();

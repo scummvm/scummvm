@@ -544,6 +544,14 @@ void PrinceEngine::setMobTranslationTexts() {
 void PrinceEngine::keyHandler(Common::Event event) {
 	uint16 nChar = event.kbd.keycode;
 	switch (nChar) {
+	case Common::KEYCODE_F1:
+		if (canLoadGameStateCurrently())
+			scummVMSaveLoadDialog(false);
+		break;
+	case Common::KEYCODE_F2:
+		if (canSaveGameStateCurrently())
+			scummVMSaveLoadDialog(true);
+		break;
 	case Common::KEYCODE_d:
 		if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 			getDebugger()->attach();
