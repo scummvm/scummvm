@@ -52,6 +52,8 @@ Common::SeekableReadStream *Resource::getDecompressedStream(Common::SeekableRead
 		dec.decompress(buffer + 18, decompData, decompLen);
 		free(buffer);
 
+		debug(8, "Resource::getDecompressedStream: decompressed %d to %d bytes", stream->size(), decompLen);
+
 		return new Common::MemoryReadStream(decompData, decompLen, DisposeAfterUse::YES);
 	} else {
 		return stream;
@@ -143,7 +145,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	_mobList.clear();
 	if (getGameType() == kPrinceDataDE) {
 		const Common::String mobLstName = Common::String::format("mob%02d.lst", _locationNr);
-		debug("name: %s", mobLstName.c_str());
+		debug(3, "moblist name: %s", mobLstName.c_str());
 		Resource::loadResource(_mobList, mobLstName.c_str(), false);
 	} else if (getGameType() == kPrinceDataPL) {
 		Resource::loadResource(_mobList, "mob.lst", false);
