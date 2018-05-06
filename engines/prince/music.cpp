@@ -150,7 +150,7 @@ void MusicPlayer::killMidi() {
 void MusicPlayer::loadMidi(const char *name) {
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
 	if (!stream) {
-		debug("Can't load midi stream %s", name);
+		warning("Can't load midi stream %s", name);
 		return;
 	}
 

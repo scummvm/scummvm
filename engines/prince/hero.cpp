@@ -68,7 +68,7 @@ bool Hero::loadAnimSet(uint32 animSetNr) {
 
 	_moveSet.resize(kMoveSetSize);
 	for (uint32 i = 0; i < kMoveSetSize; i++) {
-		debug("Anim set item %d %s", i, animSet[i]);
+		debug(5, "Anim set item %d %s", i, animSet[i]);
 		Animation *anim = nullptr;
 		if (animSet[i] != nullptr) {
 			anim = new Animation();

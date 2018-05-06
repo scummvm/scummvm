@@ -78,8 +78,8 @@ bool AnimListItem::loadFromStream(Common::SeekableReadStream &stream) {
 	_nextAnim = stream.readUint16LE();
 	_flags = stream.readUint16LE();
 
-	//debug("AnimListItem type %d, fileNumber %d, x %d, y %d, flags %d", _type, _fileNumber, _x, _y, _flags);
-	//debug("startPhase %d, endPhase %d, loopPhase %d", _startPhase, _endPhase, _loopPhase);
+	debug(7, "AnimListItem type %d, fileNumber %d, x %d, y %d, flags %d", _type, _fileNumber, _x, _y, _flags);
+	debug(7, "startPhase %d, endPhase %d, loopPhase %d", _startPhase, _endPhase, _loopPhase);
 
 	// 32 byte aligment
 	stream.seek(pos + 32);
