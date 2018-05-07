@@ -159,7 +159,7 @@ int DialogueMenu::queryInput() {
 		if (_items[0].isDone) {
 			_selectedItemIndex = 1;
 			answer = _items[0].answerValue;
-		} else if (_items[0].isDone) {
+		} else if (_items[1].isDone) {
 			_selectedItemIndex = 0;
 			answer = _items[1].answerValue;
 		}
