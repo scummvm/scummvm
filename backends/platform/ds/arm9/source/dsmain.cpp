@@ -2165,19 +2165,11 @@ void VBlankHandler(void) {
 	}
 
 
-	subScTargetX = xCenter - ((subScreenWidth >> 1) << 8);
+	subScTargetX = xCenter - ((subScreenWidth  >> 1) << 8);
 	subScTargetY = yCenter - ((subScreenHeight >> 1) << 8);
 
-
-
-
-	if (subScTargetX < 0) subScTargetX = 0;
-	if (subScTargetX > (gameWidth - subScreenWidth) << 8) subScTargetX = (gameWidth - subScreenWidth) << 8;
-
-	if (subScTargetY < 0) subScTargetY = 0;
-	if (subScTargetY > (gameHeight - subScreenHeight) << 8) subScTargetY = (gameHeight - subScreenHeight) << 8;
-
-
+	subScTargetX = CLIP(subScTargetX, 0, (gameWidth  - subScreenWidth)  << 8);
+	subScTargetY = CLIP(subScTargetY, 0, (gameHeight - subScreenHeight) << 8);
 
 	subScX += (subScTargetX - subScX) >> 2;
 	subScY += (subScTargetY - subScY) >> 2;
