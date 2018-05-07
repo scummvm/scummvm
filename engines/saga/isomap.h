@@ -95,20 +95,20 @@ struct IsoTileData {
 	byte *tilePointer;
 	uint16 terrainMask;
 	byte FGDBGDAttr;
-	int8 GetMaskRule() const {
+	int8 getMaskRule() const {
 		return attributes & 0x0F;
 	}
-	byte GetFGDAttr() const {
+	byte getFGDAttr() const {
 		return FGDBGDAttr >> 4;
 	}
-	byte GetBGDAttr() const {
+	byte getBGDAttr() const {
 		return FGDBGDAttr & 0x0F;
 	}
-	uint16 GetFGDMask() const {
-		return 1 << GetFGDAttr();
+	uint16 getFGDMask() const {
+		return 1 << getFGDAttr();
 	}
-	uint16 GetBGDMask() const {
-		return 1 << GetBGDAttr();
+	uint16 getBGDMask() const {
+		return 1 << getBGDAttr();
 	}
 };
 

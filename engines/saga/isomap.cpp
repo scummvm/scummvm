@@ -740,7 +740,7 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 			if (location->z >= 16) {
 				return;
 			} else {
-				switch (_tilesTable[tileIndex].GetMaskRule()) {
+				switch (_tilesTable[tileIndex].getMaskRule()) {
 				case kMaskRuleNever:
 					return;
 				case kMaskRuleAlways:
@@ -1078,8 +1078,8 @@ void IsoMap::testPossibleDirections(int16 u, int16 v, uint16 terraComp[8], int s
 #define TEST_TILE_PROLOG(offsetU, offsetV)						\
 	tile = getTile(u + offsetU, v + offsetV , _platformHeight);	\
 	if (tile != NULL) {											\
-		fgdMask = tile->GetFGDMask();							\
-		bgdMask = tile->GetBGDMask();							\
+		fgdMask = tile->getFGDMask();							\
+		bgdMask = tile->getBGDMask();							\
 		mask = tile->terrainMask;
 
 #define TEST_TILE_EPILOG(index)									\
@@ -1368,8 +1368,8 @@ void IsoMap::findDragonTilePath(ActorData* actor, const Location &start, const L
 			tile = getTile(u1, v1, _platformHeight);
 			if (tile != NULL) {
 				mask = tile->terrainMask;
-				if (((mask != 0) && (tile->GetFGDAttr() >= kTerrBlock)) ||
-					((mask != 0xFFFF) && (tile->GetBGDAttr() >= kTerrBlock))) {
+				if (((mask != 0     ) && (tile->getFGDAttr() >= kTerrBlock)) ||
+				    ((mask != 0xFFFF) && (tile->getBGDAttr() >= kTerrBlock))) {
 					pcell->visited = 1;
 				}
 			} else {
