@@ -49,6 +49,7 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	_backgroundImage = new Bitmap(_vm->openFile("DEMON0.BMP").get());
 
 	_numSprites = 0;
+	_textboxVar1 = 2;
 
 	CursorMan.showMouse(true);
 }

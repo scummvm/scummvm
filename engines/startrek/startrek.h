@@ -92,6 +92,8 @@ public:
 	void pollSystemEvents();
 
 	void playSoundEffectIndex(int index);
+	void playSpeech(const Common::String &filename);
+	void stopPlayingSpeech();
 
 	// Events
 public:
@@ -135,11 +137,12 @@ public:
 
 	uint32 _clockTicks;
 
-	bool _midiAudioEnabled;
-	bool _cdAudioEnabled;
+	bool _musicEnabled;
+	bool _sfxEnabled;
 	uint16 _word_467a6;
 	uint16 _word_467a8;
-	bool _textboxVar4;
+	bool _audioEnabled;
+	bool _finishedPlayingSpeech;
 
 	
 private:

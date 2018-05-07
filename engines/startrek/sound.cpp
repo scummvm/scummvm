@@ -24,8 +24,10 @@
 #include "common/file.h"
 #include "common/macresman.h"
 
-#include "audio/mods/protracker.h"
+#include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/voc.h"
+#include "audio/mods/protracker.h"
 
 namespace StarTrek {
 
@@ -59,6 +61,12 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 	for (int i=1; i<8; i++) {
 		_sfxSlotList.push_back(&_midiSlots[i]);
 	}
+
+	if (!SearchMan.hasFile("voc/speech.mrk")) {
+		error("Couldn't find 'voc/speech.mrk'. The 'trekcd/voc/' directory must be dumped from the CD");
+	}
+
+	_playingSpeech = false;
 }
 
 Sound::~Sound() {
@@ -71,7 +79,7 @@ Sound::~Sound() {
 
 
 void Sound::playMidiTrack(int track) {
-	if (!_vm->_midiAudioEnabled)
+	if (!_vm->_musicEnabled)
 		return;
 	/*
 	if (!_vm->_word_467a8)
@@ -94,7 +102,7 @@ void Sound::playMidiTrack(int track) {
 	}
 
 	// Take the least recently used slot and use that for the sound effect
-	MidiSlot *slot = _sfxSlotList.front();
+	MidiPlaybackSlot *slot = _sfxSlotList.front();
 	_sfxSlotList.pop_front();
 	_sfxSlotList.push_back(slot);
 	slot->track = track;
@@ -124,10 +132,75 @@ void Sound::playSoundEffect(const char *baseSoundName) {
 		playMacSoundEffect(baseSoundName);
 	else
 	*/
-	error("PC Sound Effects Not Supported");
+	if (scumm_stricmp(baseSoundName+4, "loop") == 0)
+		_loopingAudioName = Common::String(baseSoundName);
+
+	if (!_vm->_sfxEnabled || !_vm->_audioEnabled)
+		return;
+
+	/*
+	if (word_5113a == 0)
+		sub_2aaa3();
+	*/
+
+	for (int i=0; i<MAX_SFX_PLAYING; i++) {
+		if (_vm->_system->getMixer()->isSoundHandleActive(_sfxHandles[i]))
+			continue;
+
+		Common::String soundName = Common::String("voc/sfx/") + baseSoundName + ".voc";
+		Common::SeekableReadStream *readStream = SearchMan.createReadStreamForMember(soundName);
+		if (readStream == nullptr)
+			error("Couldn't open '%s'", soundName.c_str());
+
+		Audio::AudioStream *audioStream = Audio::makeVOCStream(readStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+		_vm->_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[i], audioStream);
+		return;
+	}
 }
 
-// PC Functions
+void Sound::playSpeech(const Common::String &basename) {
+	stopPlayingSpeech();
+
+	Audio::QueuingAudioStream *audioQueue = nullptr;
+	Common::String name = basename;
+
+	// Play a list of comma-separated audio files in sequence (usually there's only one)
+	while (!name.empty()) {
+		uint i = 0;
+		while (i < name.size() && name[i] != ',') {
+			if (name[i] == '\\')
+				name.setChar('/', i);
+			i++;
+		}
+
+		Common::String filename = "voc/" + Common::String(name.c_str(), name.c_str()+i) + ".voc";
+		debug("Playing speech '%s'", filename.c_str());
+		Common::SeekableReadStream *readStream = SearchMan.createReadStreamForMember(filename);
+		if (readStream == nullptr)
+			error("Couldn't open '%s'", filename.c_str());
+
+		Audio::AudioStream *audioStream = Audio::makeVOCStream(readStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+		if (audioQueue == nullptr)
+			audioQueue = Audio::makeQueuingAudioStream(audioStream->getRate(), audioStream->isStereo());
+		audioQueue->queueAudioStream(audioStream, DisposeAfterUse::YES);
+
+		name.erase(0,i+1);
+	}
+
+	if (audioQueue != nullptr) {
+		audioQueue->finish();
+		_vm->_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, audioQueue);
+	}
+
+	_playingSpeech = true;
+}
+
+void Sound::stopPlayingSpeech() {
+	if (_playingSpeech) {
+		_playingSpeech = false;
+		_vm->_system->getMixer()->stopHandle(_speechHandle);
+	}
+}
 
 
 // XMIDI or SM sound
@@ -179,10 +252,17 @@ void Sound::clearAllMidiSlots() {
 	}
 }
 
+// Static callback method
 void Sound::midiDriverCallback(void *data) {
 	Sound *s = (Sound*)data;
 	for (int i=0; i<8; i++)
 		s->_midiSlots[i].midiParser->onTimer();
+
+	// TODO: put this somewhere other than the midi callback...
+	if (s->_playingSpeech && !s->_vm->_system->getMixer()->isSoundHandleActive(s->_speechHandle)) {
+		s->stopPlayingSpeech();
+		s->_vm->_finishedPlayingSpeech = true;
+	}
 }
 
 

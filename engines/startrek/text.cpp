@@ -88,12 +88,12 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	int choiceIndex = 0;
 	int scrollOffset = 0;
 	if (tmpTextboxVar1 != 0 && tmpTextboxVar1 != 1 && numChoices == 1
-			&& _vm->_cdAudioEnabled && !_vm->_textboxVar4)
+			&& _vm->_sfxEnabled && !_vm->_audioEnabled)
 		_textboxHasMultipleChoices = false;
 	else
 		_textboxHasMultipleChoices = true;
 
-	if (tmpTextboxVar1 >= 0 && tmpTextboxVar1 <= 2 && _vm->_cdAudioEnabled && !_vm->_textboxVar4)
+	if (tmpTextboxVar1 >= 0 && tmpTextboxVar1 <= 2 && _vm->_sfxEnabled && !_vm->_audioEnabled)
 		_textboxVar6 = true;
 	else
 		_textboxVar6 = false;
@@ -268,7 +268,7 @@ reloadText:
 	}
 
 	_textboxVar2 = _textboxVar3;
-	// sub_29EE3();
+	_vm->stopPlayingSpeech();
 	return choiceIndex;
 }
 
@@ -312,8 +312,8 @@ int Graphics::handleTextboxEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
 				// sub_10BE7();
 				// sub_2A4B1();
 
-				if (_word_4B422 != 0) {
-					_word_4B422 = 0;
+				if (_vm->_finishedPlayingSpeech != 0) {
+					_vm->_finishedPlayingSpeech = 0;
 					if (_textboxVar1 != 0) {
 						return TEXTEVENT_SPEECH_DONE;
 					}
@@ -539,13 +539,13 @@ String Graphics::readLineFormattedText(TextGetterFunc textGetter, int var, int c
 	String headerText;
 	String text = (this->*textGetter)(choiceIndex, &var, &headerText);
 
-	if (_textboxVar1 == 2 && _vm->_cdAudioEnabled && _vm->_textboxVar4) {
+	if (_textboxVar1 == 2 && _vm->_sfxEnabled && _vm->_audioEnabled) {
 		uint32 oldSize = text.size();
 		text = playTextAudio(text);
 		if (oldSize != text.size())
 			_textboxHasMultipleChoices = true;
 	}
-	else if ((_textboxVar1 == 0 || _textboxVar1 == 1) && _vm->_cdAudioEnabled && _vm->_textboxVar4) {
+	else if ((_textboxVar1 == 0 || _textboxVar1 == 1) && _vm->_sfxEnabled && _vm->_audioEnabled) {
 		text = playTextAudio(text);
 	}
 	else {
@@ -682,9 +682,29 @@ String Graphics::skipTextAudioPrompt(const String &str) {
 	return String(text+1);
 }
 
+/**
+ * Plays an audio prompt, if it exists, and returns the string starting at the end of the
+ * prompt.
+ */
 String Graphics::playTextAudio(const String &str) {
-	// TODO
-	return skipTextAudioPrompt(str);
+	const char *text = str.c_str();
+	char soundFile[0x100];
+
+	if (*text != '#')
+		return str;
+
+	int len = 0;
+	text++;
+	while (*text != '#') {
+		if (*text == '\0' || len > 0xfa)
+			return str;
+		soundFile[len++] = *text++;
+	}
+
+	soundFile[len] = '\0';
+	_vm->playSpeech(soundFile);
+
+	return String(text+1);
 }
 
 /**
