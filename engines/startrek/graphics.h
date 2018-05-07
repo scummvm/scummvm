@@ -153,7 +153,6 @@ private:
 	SharedPtr<Menu> _activeMenu;
 
 	uint16 _textboxButtonVar4;
-	uint16 _word_4B422;
 };
 
 }

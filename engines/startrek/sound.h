@@ -41,11 +41,15 @@ namespace StarTrek {
 class StarTrekEngine;
 
 
-struct MidiSlot {
+const int MAX_LOADED_SFX_FILES = 8;
+const int MAX_SFX_PLAYING = 4;
+
+struct MidiPlaybackSlot {
 	int slot;
 	int track;
 	MidiParser *midiParser;
 };
+
 
 class Sound {
 public:
@@ -56,6 +60,8 @@ public:
 
 	void loadMusicFile(const char *baseSoundName);
 	void playSoundEffect(const char *baseSoundName);
+	void playSpeech(const Common::String &basename);
+	void stopPlayingSpeech();
 	
 private:
 	StarTrekEngine *_vm;
@@ -67,12 +73,17 @@ private:
 	
 	// MIDI-Related Variables
 	MidiDriver *_midiDriver;
-	MidiSlot _midiSlots[8]; // 0 is for music; 1-7 are for sfx
-	Common::List<MidiSlot*> _sfxSlotList; // Sorts midi slots by most recently used
+	MidiPlaybackSlot _midiSlots[8]; // 0 is for music; 1-7 are for sfx
+	Common::List<MidiPlaybackSlot*> _sfxSlotList; // Sorts midi slots by most recently used
 
 	byte *loadedSoundData;
 	uint32 _midiDevice;	
 
+	// VOC-related variables
+	Common::String _loopingAudioName;
+	Audio::SoundHandle _sfxHandles[MAX_SFX_PLAYING];
+	Audio::SoundHandle _speechHandle;
+	bool _playingSpeech;
 
 	// Driver callback
 	static void midiDriverCallback(void *data);
