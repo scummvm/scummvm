@@ -57,8 +57,8 @@ void Hotspots::save(Common::WriteStream *Stream) {
 	}
 }
 
-int32 Hotspots::FindBasedOnCorner(int16 x, int16 y) {
-	debugC(1, kDebugHotspot, "FindBasedOnCorner(%d, %d)", x, y);
+int32 Hotspots::findBasedOnCorner(int16 x, int16 y) {
+	debugC(1, kDebugHotspot, "findBasedOnCorner(%d, %d)", x, y);
 
 	for (int32 i = 0; i < _numItems; i++) {
 		if (x == _items[i].getX1()) {
@@ -73,8 +73,8 @@ int32 Hotspots::FindBasedOnCorner(int16 x, int16 y) {
 	return -1;
 }
 
-int32 Hotspots::Find(int16 x, int16 y) {
-	debugC(6, kDebugHotspot, "Find(%d, %d)", x, y);
+int32 Hotspots::find(int16 x, int16 y) {
+	debugC(6, kDebugHotspot, "find(%d, %d)", x, y);
 
 	int32 priority = -1;
 	int32 foundId = -1;
@@ -96,8 +96,8 @@ int32 Hotspots::Find(int16 x, int16 y) {
 	return foundId;
 }
 
-bool Hotspots::LoadRif(const Common::String &rifName, const Common::String &additionalRifName) {
-	debugC(1, kDebugHotspot, "LoadRif(%s, %s)", rifName.c_str(), additionalRifName.c_str());
+bool Hotspots::loadRif(const Common::String &rifName, const Common::String &additionalRifName) {
+	debugC(1, kDebugHotspot, "loadRif(%s, %s)", rifName.c_str(), additionalRifName.c_str());
 
 	uint32 size = 0;
 	uint8 *rifData = _vm->resources()->getFileData(rifName, &size);
@@ -139,8 +139,8 @@ bool Hotspots::LoadRif(const Common::String &rifName, const Common::String &addi
 	return true;
 }
 
-HotspotData *Hotspots::Get(int32 id) {
-	debugC(5, kDebugHotspot, "Get(%d)", id);
+HotspotData *Hotspots::get(int32 id) {
+	debugC(5, kDebugHotspot, "get(%d)", id);
 
 	if (id < 0 || id >= _numItems)
 		return 0;
