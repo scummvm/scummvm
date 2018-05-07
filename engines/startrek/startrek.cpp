@@ -75,16 +75,6 @@ Common::Error StarTrekEngine::run() {
 
 	initializeEventsAndMouse();
 	
-// Hexdump data
-#if 0
-	Common::SeekableReadStream *stream = openFile("BRIDGE.PAL");
-	byte *data = (byte *)malloc(stream->size());
-	stream->read(data, stream->size());
-	Common::hexdump(data, stream->size());
-	free(data);
-	delete stream;
-#endif
-
 // Test graphics/music:
 
 // Music Status:
@@ -149,6 +139,7 @@ Common::Error StarTrekEngine::run() {
 	*/
 
 
+	_gfx->openTextConfigurationMenu(false);
 	_gfx->showText(&Graphics::readTextFromRdf, 0x2220, 150, 160, 0xb3, 0, 10, 0);
 	
 	while (!shouldQuit()) {

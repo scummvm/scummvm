@@ -64,7 +64,7 @@ struct Menu {
 };
 
 class Graphics;
-typedef String (Graphics::*TextGetterFunc)(int, void *, String *);
+typedef String (Graphics::*TextGetterFunc)(int, uintptr, String *);
 
 
 class Graphics {
@@ -115,10 +115,11 @@ private:
 
 	// text.cpp (TODO: separate class)
 public:
-	int showText(TextGetterFunc textGetter, int var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10);
+	int showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10);
 
-	String readTextFromRdf(int choiceIndex, void *data, String *headerTextOutput);
-	String readTextFromBuffer(int choiceIndex, void *data, String *headerTextOutput);
+	String readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput);
+	String readTextFromBuffer(int choiceIndex, uintptr data, String *headerTextOutput);
+	String readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput);
 
 private:
 	int handleTextboxEvents(uint32 ticksUntilClickingEnabled, bool arg4);
@@ -129,7 +130,7 @@ private:
 	int getNumLines(const String &str);
 	void getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex);
 
-	String readLineFormattedText(TextGetterFunc textGetter, int var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
+	String readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
 	String putTextIntoLines(const String &text);
 	const char *getNextTextLine(const char *text, char *line, int lineWidth);
 
@@ -139,11 +140,16 @@ private:
 	int getMenuButtonAt(const Menu &menu, int x, int y);
 	void drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color);
 	void loadMenuButtons(String mnuFilename, int xpos, int ypos);
-	void setMenuButtonVar2Bits(uint32 bits);
-	void clearMenuButtonVar2Bits(uint32 bits);
+	void disableMenuButton(uint32 bits);
+	void enableMenuButton(uint32 bits);
 
+public:
+	void openTextConfigurationMenu(bool fromOptionMenu);
+	int loadTextDisplayMode();
+	void saveTextDisplayMode(int value);
 
-	uint16 _textboxVar1;
+private:
+	int16 _textDisplayMode;
 	uint32 _textboxVar2;
 	uint32 _textboxVar3;
 	uint16 _textboxVar6;

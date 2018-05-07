@@ -154,7 +154,7 @@ void Sound::playSoundEffect(const char *baseSoundName) {
 		if (readStream == nullptr)
 			error("Couldn't open '%s'", soundName.c_str());
 
-		debugC(5, kDebugSound, "Playing sound effect '%s'", baseSoundName);
+		debugC(5, kDebugSound, "Playing sound effect '%s'", soundName.c_str());
 		Audio::AudioStream *audioStream = Audio::makeVOCStream(readStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 		_vm->_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[i], audioStream);
 		return;

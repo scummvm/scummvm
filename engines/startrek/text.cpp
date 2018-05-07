@@ -46,8 +46,8 @@ enum TextEvent {
 
 namespace StarTrek {
 
-int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10) {
-	uint16 tmpTextboxVar1 = _textboxVar1;
+int Graphics::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10) {
+	int16 tmpTextDisplayMode = _textDisplayMode;
 
 	uint32 var7c = 8;
 	if (_textboxVar3 > _textboxVar2+1) {
@@ -60,7 +60,7 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	String speakerText;
 
 	while(true) {
-		String choiceText = (this->*textGetter)(numChoices, &var, &speakerText);
+		String choiceText = (this->*textGetter)(numChoices, var, &speakerText);
 		if (choiceText.empty())
 			break;
 
@@ -87,13 +87,14 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 
 	int choiceIndex = 0;
 	int scrollOffset = 0;
-	if (tmpTextboxVar1 != 0 && tmpTextboxVar1 != 1 && numChoices == 1
-			&& _vm->_sfxEnabled && !_vm->_audioEnabled)
+	if (tmpTextDisplayMode != TEXTDISPLAY_WAIT && tmpTextDisplayMode != TEXTDISPLAY_SUBTITLES
+			&& numChoices == 1 && _vm->_sfxEnabled && !_vm->_audioEnabled)
 		_textboxHasMultipleChoices = false;
 	else
 		_textboxHasMultipleChoices = true;
 
-	if (tmpTextboxVar1 >= 0 && tmpTextboxVar1 <= 2 && _vm->_sfxEnabled && !_vm->_audioEnabled)
+	if (tmpTextDisplayMode >= TEXTDISPLAY_WAIT && tmpTextDisplayMode <= TEXTDISPLAY_NONE
+			&& _vm->_sfxEnabled && !_vm->_audioEnabled)
 		_textboxVar6 = true;
 	else
 		_textboxVar6 = false;
@@ -119,13 +120,13 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 		int var80 = (numChoices > 1 ? 0x18 : 0);
 
 		// TODO: sub_288FB function call
-		// TODO: sub_28ACA(0x0002);
+		disableMenuButton(0x0002); // Disable scroll up
 
-		if (var7c == 0) {
-			// sub_28ACA(0x0001);
+		if (var7c == 0) { // Disable done button
+			disableMenuButton(0x0001);
 		}
-		if (loopChoices == 0) {
-			// sub_28ACA(0x0008);
+		if (!loopChoices) { // Disable prev button
+			disableMenuButton(0x0008);
 		}
 
 		bool doneShowingText = false;
@@ -135,7 +136,7 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 			int textboxReturnCode = handleTextboxEvents(var7c, true);
 
 			if (var7c == 0) {
-				clearMenuButtonVar2Bits(0x0001);
+				enableMenuButton(0x0001);
 			}
 
 			switch(textboxReturnCode) {
@@ -178,21 +179,21 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 				goto readjustScrollDown;
 
 readjustScrollUp:
-				clearMenuButtonVar2Bits(0x0004);
+				enableMenuButton(0x0004);
 				if (scrollOffset < 0)
 					scrollOffset = 0;
 				if (scrollOffset == 0)
-					setMenuButtonVar2Bits(0x0002);
+					disableMenuButton(0x0002);
 				goto readjustScroll;
 
 readjustScrollDown:
-				clearMenuButtonVar2Bits(0x0002);
+				enableMenuButton(0x0002);
 				if (scrollOffset >= numTextLines)
 					scrollOffset -= numTextboxLines;
 				if (scrollOffset > numTextLines-1)
 					scrollOffset = numTextLines-1;
 				if (scrollOffset+numTextboxLines >= numTextLines)
-					setMenuButtonVar2Bits(0x0004);
+					disableMenuButton(0x0004);
 				goto readjustScroll;
 
 readjustScroll:
@@ -208,20 +209,20 @@ readjustScroll:
 			case TEXTEVENT_PREVCHOICE:
 				choiceIndex--;
 				if (!loopChoices && choiceIndex == 0) {
-					setMenuButtonVar2Bits(0x0008);
+					disableMenuButton(0x0008);
 				}
 				else {
 					if (choiceIndex < 0)
 						choiceIndex = numChoices-1;
 				}
-				clearMenuButtonVar2Bits(0x0010);
+				enableMenuButton(0x0010);
 				goto reloadText;
 
 			case TEXTEVENT_NEXTCHOICE:
-				clearMenuButtonVar2Bits(0x0008);
+				enableMenuButton(0x0008);
 				choiceIndex++;
 				if (!loopChoices && choiceIndex == numChoices-1) {
-					setMenuButtonVar2Bits(0x0010);
+					disableMenuButton(0x0010);
 				}
 				else {
 					choiceIndex %= numChoices;
@@ -237,8 +238,8 @@ reloadText:
 				else {
 					// sub_288FB(0x001F);
 				}
-				clearMenuButtonVar2Bits(0x0004);
-				setMenuButtonVar2Bits(0x0002);
+				enableMenuButton(0x0004);
+				disableMenuButton(0x0002);
 				textboxSprite.bitmapChanged = true;
 				break;
 
@@ -314,7 +315,7 @@ int Graphics::handleTextboxEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
 
 				if (_vm->_finishedPlayingSpeech != 0) {
 					_vm->_finishedPlayingSpeech = 0;
-					if (_textboxVar1 != 0) {
+					if (_textDisplayMode != TEXTDISPLAY_WAIT) {
 						return TEXTEVENT_SPEECH_DONE;
 					}
 				}
@@ -358,10 +359,10 @@ int Graphics::handleTextboxEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
 /**
  * Text getter for showText which reads from an rdf file.
  */
-String Graphics::readTextFromRdf(int choiceIndex, void *data, String *headerTextOutput) {
+String Graphics::readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput) {
 	Room *room = _vm->getRoom();
 
-	int rdfVar = *(int*)data;
+	int rdfVar = (size_t)data;
 
 	uint16 textOffset = room->readRdfWord(rdfVar + (choiceIndex+1)*2);
 
@@ -387,15 +388,34 @@ String Graphics::readTextFromRdf(int choiceIndex, void *data, String *headerText
 /**
  * Text getter for showText which reads from a given buffer.
  */
-String Graphics::readTextFromBuffer(int choiceIndex, void *data, String *headerTextOutput) {
+String Graphics::readTextFromBuffer(int choiceIndex, uintptr data, String *headerTextOutput) {
 	char buf[TEXTBOX_WIDTH];
-	memcpy(buf, data, TEXTBOX_WIDTH-2);
+	memcpy(buf, (byte*)data, TEXTBOX_WIDTH-2);
 	buf[TEXTBOX_WIDTH-2] = '\0';
 
 	*headerTextOutput = String(buf);
 
 	char *text = (char*)data+TEXTBOX_WIDTH-2;
 	return String(text);
+}
+
+/**
+ * Text getter for showText which reads choices from an array of pointers.
+ * Last element in the array must be an empty string.
+ */
+String Graphics::readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput) {
+	const char **textArray = (const char**)data;
+
+	const char *headerText = textArray[0];
+	const char *mainText = textArray[choiceIndex+1];
+
+	if (*mainText == '\0')
+		return Common::String(); // Technically should be nullptr...
+
+	*headerTextOutput = headerText;
+	while (headerTextOutput->size() < TEXTBOX_WIDTH-2)
+		*headerTextOutput += ' ';
+	return String(mainText);
 }
 
 /**
@@ -535,17 +555,18 @@ void Graphics::getTextboxHeader(String *headerTextOutput, String speakerText, in
 	*headerTextOutput = header;
 }
 
-String Graphics::readLineFormattedText(TextGetterFunc textGetter, int var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numTextLines) {
+String Graphics::readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numTextLines) {
 	String headerText;
-	String text = (this->*textGetter)(choiceIndex, &var, &headerText);
+	String text = (this->*textGetter)(choiceIndex, var, &headerText);
 
-	if (_textboxVar1 == 2 && _vm->_sfxEnabled && _vm->_audioEnabled) {
+	if (_textDisplayMode == TEXTDISPLAY_NONE && _vm->_sfxEnabled && _vm->_audioEnabled) {
 		uint32 oldSize = text.size();
 		text = playTextAudio(text);
 		if (oldSize != text.size())
 			_textboxHasMultipleChoices = true;
 	}
-	else if ((_textboxVar1 == 0 || _textboxVar1 == 1) && _vm->_sfxEnabled && _vm->_audioEnabled) {
+	else if ((_textDisplayMode == TEXTDISPLAY_WAIT || _textDisplayMode == TEXTDISPLAY_SUBTITLES)
+			&& _vm->_sfxEnabled && _vm->_audioEnabled) {
 		text = playTextAudio(text);
 	}
 	else {
@@ -802,16 +823,66 @@ void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	_textboxButtonVar4 = 0;
 }
 
-// 0x0002: Disable scroll up
-// 0x0004: Disable scroll down
-// 0x0008: Disable prev choice
-// 0x0010: Disable next choice
-void Graphics::setMenuButtonVar2Bits(uint32 bits) {
-	// TODO
+// Values for standard text displays:
+//   0x0001: Disable done button
+//   0x0002: Disable scroll up
+//   0x0004: Disable scroll down
+//   0x0008: Disable prev choice
+//   0x0010: Disable next choice
+void Graphics::disableMenuButton(uint32 bits) {
+	_activeMenu->disabledButtons |= bits;
+	if (_activeMenu->selectedButton != -1
+			&& (_activeMenu->disabledButtons & (1<<_activeMenu->selectedButton))) {
+		Sprite *sprite = &_activeMenu->sprites[_activeMenu->selectedButton];
+		drawMenuButtonOutline(sprite->bitmap, 0x00);
+
+		sprite->bitmapChanged = true;
+		_activeMenu->selectedButton = -1;
+	}
 }
 
-void Graphics::clearMenuButtonVar2Bits(uint32 bits) {
-	// TODO
+void Graphics::enableMenuButton(uint32 bits) {
+	_activeMenu->disabledButtons &= ~bits;
+}
+
+/**
+ * This can be called from startup or from the options menu.
+ * On startup, this tries to load the setting without user input.
+ */
+void Graphics::openTextConfigurationMenu(bool fromOptionMenu) {
+	const char *options[] = { // TODO: languages...
+		"Text display",
+		"Text subtitles.",
+		"Display text until you press enter.",
+		"No text displayed.",
+		""
+	};
+
+	int val;
+	if (fromOptionMenu || (val = loadTextDisplayMode()) == -1) {
+		// TODO: fix X coordinate (should be 0x14, not 130)
+		val = showText(&Graphics::readTextFromArray, (uintptr)options, 130, 0x1e, 0xb0, true, 0, 1);
+		saveTextDisplayMode(val);
+	}
+
+	switch(val) {
+	case 0:
+		_textDisplayMode = TEXTDISPLAY_SUBTITLES;
+		break;
+	case 1:
+		_textDisplayMode = TEXTDISPLAY_WAIT;
+		break;
+	case 2:
+		_textDisplayMode = TEXTDISPLAY_NONE;
+		break;
+	}
+}
+
+int Graphics::loadTextDisplayMode() {
+	return -1; // TODO
+}
+void Graphics::saveTextDisplayMode(int value) {
+	// TODO;
 }
 
 }
