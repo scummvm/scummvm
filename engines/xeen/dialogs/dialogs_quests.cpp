@@ -157,14 +157,29 @@ void Quests::execute() {
 			break;
 
 		case AUTO_NOTES: {
-			int max = _vm->getGameID() == GType_Swords ? 49 : MAX_DIALOG_LINES;
-			for (int idx = 0; idx < count; ++idx)
+			int max, offset;
+			switch (_vm->getGameID()) {
+			case GType_Swords:
+				max = 49;
+				offset = 51;
+				break;
+			case GType_Clouds:
+				max = MAX_DIALOG_LINES;
+				offset = 31;
+				break;
+			default:
+				max = MAX_DIALOG_LINES;
+				offset = 56;
+				break;
+			}
+
+			for (int idx = 0; idx < max; ++idx)
 				lines[idx] = "";
 
 			count = 0;
 			headerShown = false;
 			for (int idx = 0; idx < max; ++idx) {
-				if (party._worldFlags[idx]) {
+				if (party._worldFlags[idx + (_vm->getGameID() != GType_Swords ? 1 : 0)]) {
 					if (!count && !headerShown && (_vm->getGameID() == GType_Swords || idx < 72)) {
 						lines[count++] = title1;
 					}
@@ -173,7 +188,7 @@ void Quests::execute() {
 						headerShown = true;
 					}
 
-					lines[count++] = _questNotes[idx + (_vm->getGameID() == GType_Swords ? 51 : 56)];
+					lines[count++] = _questNotes[idx + offset];
 				}
 			}
 
@@ -262,7 +277,7 @@ void Quests::addButtons() {
 }
 
 void Quests::loadQuestNotes() {
-	File f("qnotes.bin");
+	File f("qnotes.bin", 1);
 	while (f.pos() < f.size())
 		_questNotes.push_back(f.readString());
 	f.close();
