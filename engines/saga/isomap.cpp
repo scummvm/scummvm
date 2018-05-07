@@ -304,18 +304,8 @@ void IsoMap::adjustScroll(bool jump) {
 	maxScrollPos.y = playerPoint.y + SAGA_SCROLL_LIMIT_Y2;
 
 	if (jump) {
-		if (_viewScroll.y < minScrollPos.y) {
-			_viewScroll.y = minScrollPos.y;
-		}
-		if (_viewScroll.y > maxScrollPos.y) {
-			_viewScroll.y = maxScrollPos.y;
-		}
-		if (_viewScroll.x < minScrollPos.x) {
-			_viewScroll.x = minScrollPos.x;
-		}
-		if (_viewScroll.x > maxScrollPos.x) {
-			_viewScroll.x = maxScrollPos.x;
-		}
+		_viewScroll.x = CLIP(_viewScroll.x, minScrollPos.x, maxScrollPos.x);
+		_viewScroll.y = CLIP(_viewScroll.y, minScrollPos.y, maxScrollPos.y);
 	} else {
 		_viewScroll.y = smoothSlide(_viewScroll.y, minScrollPos.y, maxScrollPos.y);
 		_viewScroll.x = smoothSlide(_viewScroll.x, minScrollPos.x, maxScrollPos.x);
