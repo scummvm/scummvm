@@ -72,6 +72,12 @@ enum TrekEventType {
 	TREKEVENT_KEYDOWN = 6
 };
 
+enum TextDisplayMode {
+	TEXTDISPLAY_WAIT = 0,  // Wait for input before closing text
+	TEXTDISPLAY_SUBTITLES, // Automatically continue when speech is done
+	TEXTDISPLAY_NONE       // No text displayed
+};
+
 struct TrekEvent {
 	TrekEventType type;
 	Common::KeyState kbd;
