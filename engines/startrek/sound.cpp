@@ -88,6 +88,8 @@ void Sound::playMidiTrack(int track) {
 
 	assert(loadedSoundData != NULL);
 
+	debugC(6, kDebugSound, "Playing MIDI track %d", track);
+
 	// Check if a midi slot for this track exists already
 	for (int i=1; i<8; i++) {
 		if (_midiSlots[i].track == track) {
@@ -152,10 +154,13 @@ void Sound::playSoundEffect(const char *baseSoundName) {
 		if (readStream == nullptr)
 			error("Couldn't open '%s'", soundName.c_str());
 
+		debugC(5, kDebugSound, "Playing sound effect '%s'", baseSoundName);
 		Audio::AudioStream *audioStream = Audio::makeVOCStream(readStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 		_vm->_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[i], audioStream);
 		return;
 	}
+
+	debugC(3, kDebugSound, "No sound slot to play '%s'", baseSoundName);
 }
 
 void Sound::playSpeech(const Common::String &basename) {
@@ -174,7 +179,7 @@ void Sound::playSpeech(const Common::String &basename) {
 		}
 
 		Common::String filename = "voc/" + Common::String(name.c_str(), name.c_str()+i) + ".voc";
-		debug("Playing speech '%s'", filename.c_str());
+		debugC(5, kDebugSound, "Playing speech '%s'", filename.c_str());
 		Common::SeekableReadStream *readStream = SearchMan.createReadStreamForMember(filename);
 		if (readStream == nullptr)
 			error("Couldn't open '%s'", filename.c_str());
@@ -197,6 +202,7 @@ void Sound::playSpeech(const Common::String &basename) {
 
 void Sound::stopPlayingSpeech() {
 	if (_playingSpeech) {
+		debugC(5, kDebugSound, "Canceled speech playback");
 		_playingSpeech = false;
 		_vm->_system->getMixer()->stopHandle(_speechHandle);
 	}
@@ -230,7 +236,7 @@ void Sound::loadPCMusicFile(const char *baseSoundName) {
 			break;
 	}
 	
-	debug(0, "Playing sound \'%s\'\n", soundName.c_str());
+	debugC(5, kDebugSound, "Loading midi \'%s\'\n", soundName.c_str());
 	SharedPtr<Common::SeekableReadStream> soundStream = _vm->openFile(soundName.c_str());
 	
 	if (loadedSoundData != nullptr)

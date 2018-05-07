@@ -57,6 +57,10 @@ enum StarTrekGameFeatures {
 	GF_DEMO =    (1 << 0)
 };
 
+enum kDebugLevels {
+	kDebugSound =  1 << 0
+};
+
 
 enum TrekEventType {
 	TREKEVENT_TICK = 0, // DOS clock changes (see updateClockTicks)

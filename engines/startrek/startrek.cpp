@@ -24,6 +24,7 @@
 #include "base/version.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -39,6 +40,8 @@
 namespace StarTrek {
 
 StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc) {
+	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound");
+
 	_gfx = nullptr;
 	_sound = nullptr;
 	_macResFork = nullptr;
