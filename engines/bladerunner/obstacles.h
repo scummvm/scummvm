@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_OBSTACLES_H
 #define BLADERUNNER_OBSTACLES_H
 
+#include "bladerunner/rect.h"
 #include "bladerunner/vector.h"
 
 namespace BladeRunner {
@@ -36,15 +37,27 @@ class Obstacles {
 	static const int kPolygonCount       =  50;
 	static const int kPolygonVertexCount = 160;
 
+	enum VertexType {
+		BOTTOM_LEFT,
+		TOP_LEFT,
+		TOP_RIGHT,
+		BOTTOM_RIGHT
+	};
+
+	struct LineSegment {
+		Vector2 start;
+		Vector2 end;
+	};
+
 	struct Polygon {
-		bool    isPresent;
-		int     verticeCount;
-		float   left;
-		float   bottom;
-		float   right;
-		float   top;
-		Vector2 vertices[kPolygonVertexCount];
-		int     vertexType[kPolygonVertexCount];
+		bool       isPresent;
+		int        verticeCount;
+		Rect       rect;
+		Vector2    vertices[kPolygonVertexCount];
+		VertexType vertexType[kPolygonVertexCount];
+
+		Polygon() : isPresent(false), verticeCount(0)
+		{}
 	};
 
 	BladeRunnerEngine *_vm;
@@ -56,16 +69,39 @@ class Obstacles {
 	int      _count;
 	bool     _backup;
 
+	static bool lineLineIntersection(LineSegment a, LineSegment b, Vector2 *intersectionPoint);
+	static bool linePolygonIntersection(LineSegment lineA, VertexType lineAType, Polygon *polyB, Vector2 *intersectionPoint, int *intersectionIndex);
+
+	bool mergePolygons(Polygon &polyA, Polygon &PolyB);
+
 public:
 	Obstacles(BladeRunnerEngine *vm);
 	~Obstacles();
 
 	void clear();
-	void add(float x0, float z0, float x1, float z1);
+	void add(Rect rect);
+	void add(float x0, float z0, float x1, float z1) { add(Rect(x0, z0, x1, z1)); }
+	int findEmptyPolygon() const;
+	static float getLength(float x0, float z0, float x1, float z1);
 	bool find(const Vector3 &from, const Vector3 &to, Vector3 *next) const;
+
+	bool findIntersectionNearest(int polygonIndex, Vector2 from, Vector2 to,
+	                             int *outVertexIndex, float *outDistance, Vector2 *out) const;
+	bool findIntersectionFarthest(int polygonIndex, Vector2 from, Vector2 to,
+	                              int *outVertexIndex, float *outDistance, Vector2 *out) const;
+
+	bool findPolygonVerticeByXZ(int *polygonIndex, int *verticeIndex, int *verticeCount, float x, float z) const;
+	bool findPolygonVerticeByXZWithinTolerance(float x, float z, int *polygonIndex, int *verticeIndex) const;
+
+	void clearVertices();
+	void copyVerticesReverse();
+	void copyVertices();
+
 	void backup();
 	void restore();
+	void reset();
 
+	void draw();
 	void save(SaveFileWriteStream &f);
 	void load(SaveFileReadStream &f);
 };

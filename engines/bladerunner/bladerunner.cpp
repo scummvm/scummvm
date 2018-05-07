@@ -860,6 +860,9 @@ void BladeRunnerEngine::gameTick() {
 			if (_debugger->_viewSceneObjects) {
 				_debugger->drawSceneObjects();
 			}
+			if (_debugger->_viewObstacles) {
+				_obstacles->draw();
+			}
 
 			blitToScreen(_surfaceFront);
 			_system->delayMillis(10);
