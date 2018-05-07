@@ -330,7 +330,7 @@ public:
 	void setEnableSpeedText(bool value) { _enableSpeedText = value; }
 	bool getEnableSpeedText() const { return _enableSpeedText; }
 
-	void DoSync(Common::Serializer &s, uint8 saveVersion);
+	void synchronize(Common::Serializer &s, uint8 saveVersion);
 
 private:
 	void updateOrdinaryCursor();

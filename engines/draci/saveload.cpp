@@ -106,7 +106,7 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, 
 	} else {
 		// Create the remainder of the savegame
 		Common::Serializer s(NULL, f);
-		vm._game->DoSync(s, header.version);
+		vm._game->synchronize(s, header.version);
 
 		f->finalize();
 		delete f;
@@ -136,7 +136,7 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 
 	// Synchronise the remaining data of the savegame
 	Common::Serializer s(f, NULL);
-	vm->_game->DoSync(s, header.version);
+	vm->_game->synchronize(s, header.version);
 	delete f;
 
 	// Post-processing
