@@ -90,13 +90,13 @@ bool Obstacles::lineLineIntersection(LineSegment a, LineSegment b, Vector2 *inte
 
 	if (a.start.x == a.end.x && b.start.y == b.end.y && IN_RANGE(a.start.x, b.start.x, b.end.x) && IN_RANGE(b.start.y, a.start.y, a.end.y)) {
 		// A is vertical, B is horizontal
-		*intersection = Vector2 { a.start.x, b.start.y };
+		*intersection = Vector2(a.start.x, b.start.y);
 		return true;
 	}
 
 	if (a.start.y == a.end.y && b.start.x == b.end.x && IN_RANGE(a.start.y, b.start.y, b.end.y) && IN_RANGE(b.start.x, a.start.x, a.end.x)) {
 		// A is horizontal, B is vertical
-		*intersection = Vector2 { b.start.x, a.start.y };
+		*intersection = Vector2(b.start.x, a.start.y);
 		return true;
 	}
 
@@ -117,10 +117,10 @@ bool Obstacles::linePolygonIntersection(LineSegment lineA, VertexType lineAType,
 		Vector2 newIntersectionPoint;
 
 		if (lineLineIntersection(lineA, lineB, &newIntersectionPoint)) {
-			if (lineAType == TOP_RIGHT    && lineBType == TOP_LEFT
-			 || lineAType == BOTTOM_RIGHT && lineBType == TOP_RIGHT
-			 || lineAType == BOTTOM_LEFT  && lineBType == BOTTOM_RIGHT
-			 || lineAType == TOP_LEFT     && lineBType == BOTTOM_LEFT
+			if ((lineAType == TOP_RIGHT    && lineBType == TOP_LEFT)
+			 || (lineAType == BOTTOM_RIGHT && lineBType == TOP_RIGHT)
+			 || (lineAType == BOTTOM_LEFT  && lineBType == BOTTOM_RIGHT)
+			 || (lineAType == TOP_LEFT     && lineBType == BOTTOM_LEFT)
 			) {
 				if (!WITHIN_TOLERANCE(lineB.end.x, intersectionPoint->x)
 				 || !WITHIN_TOLERANCE(lineB.end.y, intersectionPoint->y)) {
