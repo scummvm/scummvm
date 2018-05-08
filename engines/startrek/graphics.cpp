@@ -46,11 +46,12 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	if (_vm->getGameType() == GType_ST25 && _vm->getPlatform() == Common::kPlatformDOS)
 		_font = new Font(_vm);
 
-	_backgroundImage = new Bitmap(_vm->openFile("DEMON0.BMP").get());
+	_backgroundImage = loadBitmap("DEMON0");
 
 	_numSprites = 0;
 	_textDisplayMode = TEXTDISPLAY_WAIT;
 
+	setMouseCursor(loadBitmap("pushbtn"));
 	CursorMan.showMouse(true);
 }
 
@@ -60,7 +61,6 @@ Graphics::~Graphics() {
 	delete[] _lutData;
 
 	delete _font;
-	delete _backgroundImage;
 }
 
 
@@ -138,7 +138,7 @@ void Graphics::loadPri(const char *priFile) {
 }
 
 SharedPtr<Bitmap> Graphics::loadBitmap(Common::String basename) {
-	return SharedPtr<Bitmap>(new Bitmap(_vm->openFile(basename+".BMP").get()));
+	return SharedPtr<Bitmap>(new Bitmap(_vm->openFile(basename+".BMP")));
 }
 
 Common::Point Graphics::getMousePos() {
