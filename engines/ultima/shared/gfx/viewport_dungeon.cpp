@@ -68,11 +68,25 @@ void ViewportDungeon::draw() {
 	bool isWall = map->isWallOrSecretDoor(map->getPosition());
 	int distance = distanceToOccupiedCell(delta);
 
+	// If stuck in a wall, draw it and exit
 	if (isWall) {
 		drawWall(0);
 		return;
 	}
 
+	Point backDelta1(delta.x * distance, delta.y * distance),
+		backDelta2(delta.x * distance, delta.y * distance);
+
+	if (isDoor && map->isWallOrDoorway(map->getPosition() + delta)) {
+		drawWall(0);
+	} else {
+		if (isDoor)
+			drawDoorway(0);
+
+		// TODO
+	}
+
+	// TODO
 }
 
 uint ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
@@ -109,6 +123,18 @@ void ViewportDungeon::drawWall(uint distance) {
 			303 - WALL_ARRAY_X[distance] - offsetX, game->_edgeColor);
 		s.hLine(WALL_ARRAY_X[distance] + 16 + offsetX, 15 - WALL_ARRAY_Y[distance] - offsetY,
 			303 - WALL_ARRAY_X[distance] - offsetX, game->_edgeColor);
+	}
+}
+
+void ViewportDungeon::drawDoorway(uint distance) {
+	Game *game = getGame();
+	Gfx::VisualSurface s = getSurface();
+	int offsetY = !distance ? 8 : 0;
+	byte color = !distance ? 0 : game->_edgeColor;
+
+	if (distance < 5) {
+		s.frameRect(Rect(WALL_ARRAY_X[distance + 1] + 16, WALL_ARRAY_Y[distance + 1] + 8,
+			303 - WALL_ARRAY_X[distance + 1], 151 - WALL_ARRAY_Y[distance] - offsetY), color);
 	}
 }
 
