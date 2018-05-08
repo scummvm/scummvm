@@ -105,7 +105,7 @@ private:
 	byte *_lutData;
 
 	Common::Rect _screenRect;
-	Bitmap *_backgroundImage;
+	SharedPtr<Bitmap> _backgroundImage;
 
 	Sprite *_sprites[MAX_SPRITES];
 	int _numSprites;
