@@ -1478,7 +1478,7 @@ bool Scripts::cmdPlayCD(ParamsIterator &params) {
 	int finish = params.readUint16LE();
 	debugC(3, kDebugScripts, "cmdPlayCD Track=%d start=%d finish=%d", trackNum, start, finish);
 
-	if (_vm->_files->_ccNum)
+	if (_vm->_files->_ccNum && trackNum < 31)
 		trackNum += 30;
 	assert(trackNum <= 60);
 
