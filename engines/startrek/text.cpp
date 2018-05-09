@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "common/events.h"
@@ -31,7 +32,7 @@ enum MenuEvent {
 	MENUEVENT_RCLICK_OFFBUTTON = -4,
 	MENUEVENT_ENABLEINPUT,          // Makes buttons selectable (occurs after a delay)
 	MENUEVENT_RCLICK_ONBUTTON,
-	MENUEVENT_LCLICK_OFFBUTTON,
+	MENUEVENT_LCLICK_OFFBUTTON
 };
 
 // Buttons for standard text display
@@ -896,6 +897,122 @@ void Graphics::enableMenuButtons(uint32 bits) {
 	_activeMenu->disabledButtons &= ~bits;
 }
 
+/**
+ * This chooses a sprite from the list to place the mouse cursor at. The sprite it chooses
+ * may be, for example, the top-leftmost one in the list. Exact behaviour is determined by
+ * the "mode" parameter.
+ *
+ * If "containMouseSprite" is a valid index, it's ensured that the mouse is contained
+ * within it. "mode" should be -1 in this case.
+ */
+void Graphics::choseMousePositionFromSprites(Sprite *sprites, int numSprites, int containMouseSprite, int mode) {
+	uint16 mouseX1 = 0x7fff; // Candidate positions to warp mouse to
+	uint16 mouseY1 = 0x7fff;
+	uint16 mouseX2 = 0x7fff;
+	uint16 mouseY2 = 0x7fff;
+
+	Common::Point mousePos = getMousePos();
+
+	// Ensure the cursor is contained within one of the sprites
+	if (containMouseSprite >= 0 && containMouseSprite < numSprites) {
+		Common::Rect rect = sprites[containMouseSprite].getRect();
+
+		if (mousePos.x < rect.left || mousePos.x >= rect.right
+				|| mousePos.y < rect.top || mousePos.y >= rect.bottom) {
+			mousePos.x = (rect.left + rect.right) / 2;
+			mousePos.y = (rect.top + rect.bottom) / 2;
+		}
+	}
+
+	// Choose a sprite to warp the cursor to
+	for (int i = 0; i < numSprites; i++) {
+		Sprite *sprite = &sprites[i];
+		if (sprite->drawMode != 2)
+			continue;
+
+		Common::Rect rect = sprite->getRect();
+
+		int hCenter = (rect.left + rect.right) / 2;
+		int vCenter = (rect.top + rect.bottom) / 2;
+
+		// Choose which sprite is closest based on certain criteria?
+		switch(mode) {
+		case 0: // Choose topmost, leftmost sprite that's below the cursor
+			if (((vCenter == mousePos.y && hCenter > mousePos.x) || vCenter > mousePos.y)
+					&& (vCenter < mouseY1 || (vCenter == mouseY1 && hCenter < mouseX1))) {
+				mouseX1 = hCenter;
+				mouseY1 = vCenter;
+			}
+			// fall through
+
+		case 4: // Choose topmost, leftmost sprite
+			if (vCenter < mouseY2 || (vCenter == mouseY2 && hCenter < mouseX2)) {
+				mouseX2 = hCenter;
+				mouseY2 = vCenter;
+			}
+			break;
+
+		case 1: // Choose bottommost, rightmost sprite that's above the cursor
+			if (((vCenter == mousePos.y && hCenter < mousePos.x) || vCenter < mousePos.y)
+					&& (mouseY1 == 0x7fff || vCenter > mouseY1
+						|| (vCenter == mouseY1 && hCenter > mouseX1))) {
+				mouseX1 = hCenter;
+				mouseY1 = vCenter;
+			}
+			// fall through
+
+		case 5: // Choose bottommost, rightmost sprite
+			if (mouseY2 == 0x7fff || vCenter > mouseY2
+					|| (vCenter == mouseY2 && hCenter > mouseX2)) {
+				mouseX2 = hCenter;
+				mouseY2 = vCenter;
+			}
+			break;
+
+		case 2:
+			// This seems broken... OR condition on first line has no affect on the logic...
+			if ((vCenter < mousePos.y || (vCenter == mouseY1 && hCenter == mousePos.x))
+					&& (mouseX1 == 0x7fff || vCenter >= mouseY1)) {
+				mouseX1 = hCenter;
+				mouseY1 = vCenter;
+				debug("Try %d %d", mouseX1, mouseY1);
+			}
+			if (mouseX2 == 0x7fff || vCenter > mouseY2
+					|| (hCenter == mouseX2 && vCenter == mouseY2)) {
+				mouseX2 = hCenter;
+				mouseY2 = vCenter;
+			}
+			break;
+
+		case 3:
+			// Similar to above...
+			if ((vCenter > mousePos.y || (vCenter == mouseY1 && hCenter == mousePos.x))
+					&& (mouseX1 == 0x7fff || vCenter <= mouseY1)) {
+				mouseX1 = hCenter;
+				mouseY1 = vCenter;
+			}
+			if (mouseX2 == 0x7fff || vCenter < mouseY2
+					|| (hCenter == mouseX2 && vCenter == mouseY2)) {
+				mouseX2 = hCenter;
+				mouseY2 = vCenter;
+			}
+			break;
+		}
+	}
+
+	// Warp mouse to one of the coordinates, if one is valid
+	if (mouseX1 != 0x7fff) {
+		mousePos.x = mouseX1;
+		mousePos.y = mouseY1;
+	}
+	else if (mouseX2 != 0x7fff) {
+		mousePos.x = mouseX2;
+		mousePos.y = mouseY2;
+	}
+
+	_vm->_system->warpMouse(mousePos.x, mousePos.y);
+
+}
 
 void Graphics::showOptionsMenu(int x, int y) {
 	bool tmpMouseControllingShip = _vm->_mouseControllingShip;
@@ -927,7 +1044,7 @@ void Graphics::showOptionsMenu(int x, int y) {
 		disabledButtons |= (1 << OPTIONBUTTON_ENABLESFX) | (1 << OPTIONBUTTON_DISABLESFX);
 
 	disableMenuButtons(disabledButtons);
-	// sub_28b5d();
+	choseMousePositionFromSprites(_activeMenu->sprites, _activeMenu->numButtons, -1, 4);
 	int event = handleMenuEvents(0, false);
 
 	unloadMenuButtons();
@@ -940,19 +1057,70 @@ void Graphics::showOptionsMenu(int x, int y) {
 
 	// Can't use OPTIONBUTTON constants since the button retvals differ from the button
 	// indices...
-	switch(event) { // TODO
+	switch(event) {
 	case 0: // Save
+		showSaveMenu();
+		break;
 	case 1: // Load
+		showLoadMenu();
+		break;
 	case 2: // Enable music
+		setMusicEnabled(true);
+		break;
 	case 3: // Disable music
+		setMusicEnabled(false);
+		break;
 	case 4: // Enable sfx
+		setSfxEnabled(true);
+		break;
 	case 5: // Disable sfx
+		setSfxEnabled(false);
+		break;
 	case 6: // Quit
+		showQuitGamePrompt(120, 20); // TODO: revert 120 to 20
+		break;
 	case 7: // Text
 		showTextConfigurationMenu(true);
 		break;
 	default:
 		break;
+	}
+}
+
+void Graphics::showSaveMenu() {
+	// TODO
+}
+
+void Graphics::showLoadMenu() {
+	// TODO
+}
+
+void Graphics::setMusicEnabled(bool enabled) {
+	// TODO
+}
+
+void Graphics::setSfxEnabled(bool enabled) {
+	// TODO
+}
+
+void Graphics::showQuitGamePrompt(int x, int y) {
+	const char *options[] = {
+		"Quit Game",
+		"#GENE\\GENER028#Yes, quit the game.",
+		"#GENE\\GENER008#No, do not quit the game.",
+		""
+	};
+
+	if (_vm->_inQuitGameMenu)
+		return;
+
+	_vm->_inQuitGameMenu = true;
+	int val = showText(&Graphics::readTextFromArray, (uintptr)options, x, y, 0xb0, true, 0, 1);
+	_vm->_inQuitGameMenu = false;
+
+	if (val == 0) {
+		// sub_1e70d();
+		_vm->_system->quit();
 	}
 }
 
