@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/sound.h $
- * $Id: sound.h 15 2010-06-27 06:13:42Z clone2727 $
- *
  */
 
 #ifndef STARTREK_SOUND_H
@@ -41,7 +38,7 @@ namespace StarTrek {
 class StarTrekEngine;
 
 
-const int MAX_LOADED_SFX_FILES = 8;
+// Max # of VOC files that can play at once
 const int MAX_SFX_PLAYING = 4;
 
 struct MidiPlaybackSlot {
@@ -57,24 +54,29 @@ public:
 	~Sound();
 	
 	void playMidiTrack(int track);
-
-	void loadMusicFile(const char *baseSoundName);
-	void playSoundEffect(const char *baseSoundName);
+	void playMidiTrackInSlot(int slot, int track);
+	void loadMusicFile(const Common::String &baseSoundName);
+	void playMidiMusicTracks(int startTrack, int loopTrack);
+	void playVoc(const Common::String &baseSoundName);
 	void playSpeech(const Common::String &basename);
+	void stopAllVocSounds();
 	void stopPlayingSpeech();
+	void setMusicEnabled(bool enable);
+	void setSfxEnabled(bool enable);
 	
 private:
 	StarTrekEngine *_vm;
 	Audio::SoundHandle *_soundHandle;
 	
-	void loadPCMusicFile(const char *baseSoundName);
+	void loadPCMusicFile(const Common::String &baseSoundName);
 	void clearMidiSlot(int slot);
 	void clearAllMidiSlots();
 	
 	// MIDI-Related Variables
 	MidiDriver *_midiDriver;
 	MidiPlaybackSlot _midiSlots[8]; // 0 is for music; 1-7 are for sfx
-	Common::List<MidiPlaybackSlot*> _sfxSlotList; // Sorts midi slots by most recently used
+	Common::List<MidiPlaybackSlot*> _midiSlotList; // Sorts midi slots by most recently used
+	int _loopingMidiTrack;
 
 	byte *loadedSoundData;
 	uint32 _midiDevice;	

@@ -81,7 +81,7 @@ Common::Error StarTrekEngine::run() {
 		assert(_macResFork->hasDataFork() && _macResFork->hasResFork());
 	}
 
-	initGraphics(320, 200);
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	initializeEventsAndMouse();
 	
@@ -199,49 +199,49 @@ void StarTrekEngine::pollSystemEvents() {
 void StarTrekEngine::playSoundEffectIndex(int index) {
 	switch(index) {
 	case 0x04:
-		_sound->playSoundEffect("tricorde");
+		_sound->playVoc("tricorde");
 		break;
 	case 0x05:
-		_sound->playSoundEffect("STDOOR1");
+		_sound->playVoc("STDOOR1");
 		break;
 	case 0x06:
-		_sound->playSoundEffect("PHASSHOT");
+		_sound->playVoc("PHASSHOT");
 		break;
 	case 0x07:
 		_sound->playMidiTrack(index);
 		break;
 	case 0x08:
-		_sound->playSoundEffect("TRANSDEM");
+		_sound->playVoc("TRANSDEM");
 		break;
 	case 0x09:
-		_sound->playSoundEffect("TRANSMAT");
+		_sound->playVoc("TRANSMAT");
 		break;
 	case 0x0a:
-		_sound->playSoundEffect("TRANSENE");
+		_sound->playVoc("TRANSENE");
 		break;
 	case 0x10: // Menu selection sound
 		_sound->playMidiTrack(index);
 		break;
 	case 0x22:
-		_sound->playSoundEffect("HAILING");
+		_sound->playVoc("HAILING");
 		break;
 	case 0x24:
-		_sound->playSoundEffect("PHASSHOT");
+		_sound->playVoc("PHASSHOT");
 		break;
 	case 0x25:
-		_sound->playSoundEffect("PHOTSHOT");
+		_sound->playVoc("PHOTSHOT");
 		break;
 	case 0x26:
-		_sound->playSoundEffect("HITSHIEL");
+		_sound->playVoc("HITSHIEL");
 		break;
 	case 0x27:
 		_sound->playMidiTrack(index);
 		break;
 	case 0x28:
-		_sound->playSoundEffect("REDALERT");
+		_sound->playVoc("REDALERT");
 		break;
 	case 0x29:
-		_sound->playSoundEffect("WARP");
+		_sound->playVoc("WARP");
 		break;
 	default:
 	    break;

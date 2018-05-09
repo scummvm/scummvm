@@ -164,11 +164,11 @@ public:
 	bool _inQuitGameMenu;
 
 	
-private:
 	Graphics *_gfx;
 	Sound *_sound;
-	Common::MacResManager *_macResFork;
 
+private:
+	Common::MacResManager *_macResFork;
 	Room *_room;
 };
 
