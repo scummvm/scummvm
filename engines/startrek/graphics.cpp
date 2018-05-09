@@ -383,7 +383,7 @@ void Graphics::drawAllSprites() {
 	for (int i=0; i<_numSprites; i++) {
 		Sprite *spr = _sprites[i];
 
-		if (spr->field16 == 0 && spr->isOnScreen) {
+		if (!spr->field16 && spr->isOnScreen) {
 			bool mustRedrawSprite = false;
 			Common::Rect rect2;
 
@@ -403,7 +403,7 @@ void Graphics::drawAllSprites() {
 				drawSprite(*spr, rect2);
 		}
 
-		spr->field16 = 0;
+		spr->field16 = false;
 		spr->bitmapChanged = 0;
 		spr->lastDrawRect = spr->drawRect;
 	}
@@ -418,7 +418,7 @@ void Graphics::addSprite(Sprite *sprite) {
 	// Initialize some fields
 	sprite->drawMode = 0;
 	sprite->field8 = 0;
-	sprite->field16 = 0;
+	sprite->field16 = false;
 
 	sprite->lastDrawRect.top = -1;
 	sprite->lastDrawRect.left = -1;

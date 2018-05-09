@@ -150,9 +150,16 @@ public:
 	bool _musicEnabled;
 	bool _sfxEnabled;
 	uint16 _word_467a6;
-	uint16 _word_467a8;
-	bool _audioEnabled;
+	uint16 _musicWorking;
+	bool _sfxWorking;
 	bool _finishedPlayingSpeech;
+
+	bool _mouseControllingShip;
+
+	// TODO: make this work.
+	// When false, the keyboard generally acts in a more specific way (ie. move mouse
+	// between items in a menu).
+	bool _keyboardControlsMouse;
 
 	
 private:

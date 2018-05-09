@@ -26,22 +26,39 @@
 #include "startrek/graphics.h"
 
 
-// List of events that can be returned by handleTextboxEvents.
-enum TextEvent {
-	TEXTEVENT_RCLICK_OFFBUTTON = -4,
-	TEXTEVENT_ENABLEINPUT,          // Makes buttons selectable (occurs after a delay)
-	TEXTEVENT_RCLICK_ONBUTTON,
-	TEXTEVENT_LCLICK_OFFBUTTON,
-	TEXTEVENT_CONFIRM = 0,
-	TEXTEVENT_SCROLLUP,
-	TEXTEVENT_SCROLLDOWN,
-	TEXTEVENT_PREVCHOICE,
-	TEXTEVENT_NEXTCHOICE,
-	TEXTEVENT_SCROLLUP_ONELINE,
-	TEXTEVENT_SCROLLDOWN_ONELINE,
-	TEXTEVENT_GOTO_TOP,
-	TEXTEVENT_GOTO_BOTTOM,
-	TEXTEVENT_SPEECH_DONE
+// Special events that can be returned by handleMenuEvents.
+enum MenuEvent {
+	MENUEVENT_RCLICK_OFFBUTTON = -4,
+	MENUEVENT_ENABLEINPUT,          // Makes buttons selectable (occurs after a delay)
+	MENUEVENT_RCLICK_ONBUTTON,
+	MENUEVENT_LCLICK_OFFBUTTON,
+};
+
+// Buttons for standard text display
+enum TextButtons {
+	TEXTBUTTON_CONFIRM = 0,
+	TEXTBUTTON_SCROLLUP,
+	TEXTBUTTON_SCROLLDOWN,
+	TEXTBUTTON_PREVCHOICE,
+	TEXTBUTTON_NEXTCHOICE,
+	TEXTBUTTON_SCROLLUP_ONELINE,
+	TEXTBUTTON_SCROLLDOWN_ONELINE,
+	TEXTBUTTON_GOTO_TOP,
+	TEXTBUTTON_GOTO_BOTTOM,
+	TEXTBUTTON_SPEECH_DONE // "Virtual" button?
+};
+
+// Buttons for option menu (corresponding to button indices, not button retvals, which are
+// different for some reason)
+enum OptionMenuButtons {
+	OPTIONBUTTON_TEXT,
+	OPTIONBUTTON_SAVE,
+	OPTIONBUTTON_LOAD,
+	OPTIONBUTTON_ENABLEMUSIC,
+	OPTIONBUTTON_DISABLEMUSIC,
+	OPTIONBUTTON_ENABLESFX,
+	OPTIONBUTTON_DISABLESFX,
+	OPTIONBUTTON_QUIT
 };
 
 namespace StarTrek {
@@ -88,13 +105,13 @@ int Graphics::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int 
 	int choiceIndex = 0;
 	int scrollOffset = 0;
 	if (tmpTextDisplayMode != TEXTDISPLAY_WAIT && tmpTextDisplayMode != TEXTDISPLAY_SUBTITLES
-			&& numChoices == 1 && _vm->_sfxEnabled && !_vm->_audioEnabled)
+			&& numChoices == 1 && _vm->_sfxEnabled && !_vm->_sfxWorking)
 		_textboxHasMultipleChoices = false;
 	else
 		_textboxHasMultipleChoices = true;
 
 	if (tmpTextDisplayMode >= TEXTDISPLAY_WAIT && tmpTextDisplayMode <= TEXTDISPLAY_NONE
-			&& _vm->_sfxEnabled && !_vm->_audioEnabled)
+			&& _vm->_sfxEnabled && !_vm->_sfxWorking)
 		_textboxVar6 = true;
 	else
 		_textboxVar6 = false;
@@ -106,7 +123,7 @@ int Graphics::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int 
 		// TODO
 	}
 	else {
-		loadMenuButtons("textbtns", xoffset+0x96, yoffset-0x11);
+		loadMenuButtons("textbtns", xoffset + 0x96, yoffset - 0x11);
 
 		Common::Point oldMousePos = getMousePos();
 		SharedPtr<Bitmap> oldMouseBitmap = _mouseBitmap;
@@ -114,35 +131,35 @@ int Graphics::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int 
 		_vm->_system->warpMouse(xoffset + 0xde, yoffset - 0x08);
 		setMouseCursor(loadBitmap("pushbtn"));
 
-		uint16 tmpTextboxVar7 = _textboxVar7;
-		_textboxVar7 = 0;
+		bool tmpMouseControllingShip = _vm->_mouseControllingShip;
+		_vm->_mouseControllingShip = false;
 
 		int var80 = (numChoices > 1 ? 0x18 : 0);
 
 		// TODO: sub_288FB function call
-		disableMenuButton(0x0002); // Disable scroll up
+		disableMenuButtons(1 << TEXTBUTTON_SCROLLUP); // Disable scroll up
 
 		if (var7c == 0) { // Disable done button
-			disableMenuButton(0x0001);
+			disableMenuButtons(1 << TEXTBUTTON_CONFIRM);
 		}
 		if (!loopChoices) { // Disable prev button
-			disableMenuButton(0x0008);
+			disableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
 		}
 
 		bool doneShowingText = false;
 
 		// Loop until text is done being displayed
 		while (!doneShowingText) {
-			int textboxReturnCode = handleTextboxEvents(var7c, true);
+			int textboxReturnCode = handleMenuEvents(var7c, true);
 
 			if (var7c == 0) {
-				enableMenuButton(0x0001);
+				enableMenuButtons(1 << TEXTBUTTON_CONFIRM);
 			}
 
 			switch(textboxReturnCode) {
 
-			case TEXTEVENT_RCLICK_OFFBUTTON:
-			case TEXTEVENT_RCLICK_ONBUTTON:
+			case MENUEVENT_RCLICK_OFFBUTTON:
+			case MENUEVENT_RCLICK_ONBUTTON:
 				if (var7c == 0) {
 					doneShowingText = true;
 					if (arg10)
@@ -150,50 +167,50 @@ int Graphics::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int 
 				}
 				break;
 
-			case TEXTEVENT_CONFIRM:
+			case TEXTBUTTON_CONFIRM:
 				doneShowingText = true;
 				break;
 
-			case TEXTEVENT_SCROLLUP:
+			case TEXTBUTTON_SCROLLUP:
 				scrollOffset -= numTextboxLines;
 				goto readjustScrollUp;
 
-			case TEXTEVENT_SCROLLDOWN:
+			case TEXTBUTTON_SCROLLDOWN:
 				scrollOffset += numTextboxLines;
 				goto readjustScrollDown;
 
-			case TEXTEVENT_SCROLLUP_ONELINE:
+			case TEXTBUTTON_SCROLLUP_ONELINE:
 				scrollOffset--;
 				goto readjustScrollUp;
 
-			case TEXTEVENT_SCROLLDOWN_ONELINE:
+			case TEXTBUTTON_SCROLLDOWN_ONELINE:
 				scrollOffset++;
 				goto readjustScrollDown;
 
-			case TEXTEVENT_GOTO_TOP:
+			case TEXTBUTTON_GOTO_TOP:
 				scrollOffset = 0;
 				goto readjustScrollUp;
 
-			case TEXTEVENT_GOTO_BOTTOM:
+			case TEXTBUTTON_GOTO_BOTTOM:
 				scrollOffset = numTextLines - numTextboxLines;
 				goto readjustScrollDown;
 
 readjustScrollUp:
-				enableMenuButton(0x0004);
+				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
 				if (scrollOffset < 0)
 					scrollOffset = 0;
 				if (scrollOffset == 0)
-					disableMenuButton(0x0002);
+					disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				goto readjustScroll;
 
 readjustScrollDown:
-				enableMenuButton(0x0002);
+				enableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				if (scrollOffset >= numTextLines)
 					scrollOffset -= numTextboxLines;
 				if (scrollOffset > numTextLines-1)
 					scrollOffset = numTextLines-1;
 				if (scrollOffset+numTextboxLines >= numTextLines)
-					disableMenuButton(0x0004);
+					disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
 				goto readjustScroll;
 
 readjustScroll:
@@ -206,23 +223,23 @@ readjustScroll:
 						numChoicesWithNames != 0);
 				break;
 
-			case TEXTEVENT_PREVCHOICE:
+			case TEXTBUTTON_PREVCHOICE:
 				choiceIndex--;
 				if (!loopChoices && choiceIndex == 0) {
-					disableMenuButton(0x0008);
+					disableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
 				}
 				else {
 					if (choiceIndex < 0)
 						choiceIndex = numChoices-1;
 				}
-				enableMenuButton(0x0010);
+				enableMenuButtons(1 << TEXTBUTTON_NEXTCHOICE);
 				goto reloadText;
 
-			case TEXTEVENT_NEXTCHOICE:
-				enableMenuButton(0x0008);
+			case TEXTBUTTON_NEXTCHOICE:
+				enableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
 				choiceIndex++;
 				if (!loopChoices && choiceIndex == numChoices-1) {
-					disableMenuButton(0x0010);
+					disableMenuButtons(1 << TEXTBUTTON_NEXTCHOICE);
 				}
 				else {
 					choiceIndex %= numChoices;
@@ -238,18 +255,18 @@ reloadText:
 				else {
 					// sub_288FB(0x001F);
 				}
-				enableMenuButton(0x0004);
-				disableMenuButton(0x0002);
+				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
+				disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				textboxSprite.bitmapChanged = true;
 				break;
 
-			case TEXTEVENT_SPEECH_DONE:
+			case TEXTBUTTON_SPEECH_DONE:
 				if (numChoices == 1)
 					doneShowingText = true;
 				break;
 
-			case TEXTEVENT_ENABLEINPUT:
-			case TEXTEVENT_LCLICK_OFFBUTTON:
+			case MENUEVENT_ENABLEINPUT:
+			case MENUEVENT_LCLICK_OFFBUTTON:
 			default:
 				break;
 			}
@@ -258,10 +275,10 @@ reloadText:
 		setMouseCursor(oldMouseBitmap);
 		_vm->_system->warpMouse(oldMousePos.x, oldMousePos.y);
 
-		_textboxVar7 = tmpTextboxVar7;
-		// sub_29326();
-		textboxSprite.field16 = 1;
-		textboxSprite.bitmapChanged = 1;
+		_vm->_mouseControllingShip = tmpMouseControllingShip;
+		unloadMenuButtons();
+		textboxSprite.field16 = true;
+		textboxSprite.bitmapChanged = true;
 
 		drawAllSprites();
 		delSprite(&textboxSprite);
@@ -273,7 +290,11 @@ reloadText:
 	return choiceIndex;
 }
 
-int Graphics::handleTextboxEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
+/**
+ * This returns either a special menu event (negative number) or the retval of the button
+ * clicked (usually an index, always positive).
+ */
+int Graphics::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
 	// TODO: finish
 
 	uint32 tickWhenClickingEnabled = _vm->_clockTicks + ticksUntilClickingEnabled;
@@ -316,14 +337,14 @@ int Graphics::handleTextboxEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
 				if (_vm->_finishedPlayingSpeech != 0) {
 					_vm->_finishedPlayingSpeech = 0;
 					if (_textDisplayMode != TEXTDISPLAY_WAIT) {
-						return TEXTEVENT_SPEECH_DONE;
+						return TEXTBUTTON_SPEECH_DONE;
 					}
 				}
 				// sub_1E88C();
 				_textboxVar3++;
 
 				if (ticksUntilClickingEnabled != 0 && _vm->_clockTicks >= tickWhenClickingEnabled)
-					return TEXTEVENT_ENABLEINPUT;
+					return MENUEVENT_ENABLEINPUT;
 				break;
 			}
 
@@ -336,7 +357,7 @@ int Graphics::handleTextboxEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
 					Common::Point mouse = getMousePos();
 					if (getMenuButtonAt(*_activeMenu, mouse.x, mouse.y) == -1) {
 						_vm->playSoundEffectIndex(0x10);
-						return TEXTEVENT_LCLICK_OFFBUTTON;
+						return MENUEVENT_LCLICK_OFFBUTTON;
 					}
 				}
 				break;
@@ -559,14 +580,14 @@ String Graphics::readLineFormattedText(TextGetterFunc textGetter, uintptr var, i
 	String headerText;
 	String text = (this->*textGetter)(choiceIndex, var, &headerText);
 
-	if (_textDisplayMode == TEXTDISPLAY_NONE && _vm->_sfxEnabled && _vm->_audioEnabled) {
+	if (_textDisplayMode == TEXTDISPLAY_NONE && _vm->_sfxEnabled && _vm->_sfxWorking) {
 		uint32 oldSize = text.size();
 		text = playTextAudio(text);
 		if (oldSize != text.size())
 			_textboxHasMultipleChoices = true;
 	}
 	else if ((_textDisplayMode == TEXTDISPLAY_WAIT || _textDisplayMode == TEXTDISPLAY_SUBTITLES)
-			&& _vm->_sfxEnabled && _vm->_audioEnabled) {
+			&& _vm->_sfxEnabled && _vm->_sfxWorking) {
 		text = playTextAudio(text);
 	}
 	else {
@@ -732,7 +753,7 @@ String Graphics::playTextAudio(const String &str) {
  * Returns the index of the button at the given position, or -1 if none.
  */
 int Graphics::getMenuButtonAt(const Menu &menu, int x, int y) {
-	for (int i=0; i<menu.numButtons; i++) {
+	for (int i = 0; i < menu.numButtons; i++) {
 		const Sprite &spr = menu.sprites[i];
 
 		if (spr.drawMode != 2)
@@ -780,7 +801,13 @@ void Graphics::drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color) {
 	}
 }
 
+/**
+ * Loads a .MNU file, which is a list of buttons to display.
+ */
 void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
+	if (_activeMenu == nullptr)
+		_keyboardControlsMouseOutsideMenu = _vm->_keyboardControlsMouse;
+
 	SharedPtr<Menu> oldMenu = _activeMenu;
 	_activeMenu = SharedPtr<Menu>(new Menu());
 	_activeMenu->nextMenu = oldMenu;
@@ -790,7 +817,7 @@ void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	_activeMenu->menuFile = stream;
 	_activeMenu->numButtons = _activeMenu->menuFile->size()/16;
 
-	for (int i=0; i<_activeMenu->numButtons; i++) {
+	for (int i = 0; i < _activeMenu->numButtons; i++) {
 		memset(&_activeMenu->sprites[i], 0, sizeof(Sprite));
 		addSprite(&_activeMenu->sprites[i]);
 		_activeMenu->sprites[i].drawMode = 2;
@@ -814,25 +841,49 @@ void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 
 	if (_activeMenu->retvals[_activeMenu->numButtons-1] == 0) {
 		// Set default retvals for buttons
-		for (int i=0; i<_activeMenu->numButtons; i++)
+		for (int i = 0; i < _activeMenu->numButtons; i++)
 			_activeMenu->retvals[i] = i;
 	}
 
 	_activeMenu->selectedButton = -1;
 	_activeMenu->disabledButtons = 0;
-	_textboxButtonVar4 = 0;
+	_vm->_keyboardControlsMouse = false;
 }
 
-// Values for standard text displays:
-//   0x0001: Disable done button
-//   0x0002: Disable scroll up
-//   0x0004: Disable scroll down
-//   0x0008: Disable prev choice
-//   0x0010: Disable next choice
-void Graphics::disableMenuButton(uint32 bits) {
+void Graphics::unloadMenuButtons() {
+	if (_activeMenu->selectedButton != -1)
+		drawMenuButtonOutline(_activeMenu->sprites[_activeMenu->selectedButton].bitmap, 0x00);
+
+	for (int i = 0; i < _activeMenu->numButtons; i++) {
+		Sprite *sprite = &_activeMenu->sprites[i];
+		if (sprite->drawMode == 2) {
+			sprite->field16 = true;
+			sprite->bitmapChanged = true;
+		}
+	}
+
+	drawAllSprites();
+
+	for (int i = 0; i < _activeMenu->numButtons; i++) {
+		Sprite *sprite = &_activeMenu->sprites[i];
+		sprite->bitmap.reset();
+		if (sprite->drawMode == 2)
+			delSprite(sprite);
+	}
+
+	_activeMenu = _activeMenu->nextMenu;
+
+	if (_activeMenu == nullptr)
+		_vm->_keyboardControlsMouse = _keyboardControlsMouseOutsideMenu;
+}
+
+/**
+ * Disables the given bitmask of buttons.
+ */
+void Graphics::disableMenuButtons(uint32 bits) {
 	_activeMenu->disabledButtons |= bits;
 	if (_activeMenu->selectedButton != -1
-			&& (_activeMenu->disabledButtons & (1<<_activeMenu->selectedButton))) {
+			&& (_activeMenu->disabledButtons & (1 << _activeMenu->selectedButton))) {
 		Sprite *sprite = &_activeMenu->sprites[_activeMenu->selectedButton];
 		drawMenuButtonOutline(sprite->bitmap, 0x00);
 
@@ -841,15 +892,75 @@ void Graphics::disableMenuButton(uint32 bits) {
 	}
 }
 
-void Graphics::enableMenuButton(uint32 bits) {
+void Graphics::enableMenuButtons(uint32 bits) {
 	_activeMenu->disabledButtons &= ~bits;
+}
+
+
+void Graphics::showOptionsMenu(int x, int y) {
+	bool tmpMouseControllingShip = _vm->_mouseControllingShip;
+	_vm->_mouseControllingShip = false;
+
+	Common::Point oldMousePos = getMousePos();
+	SharedPtr<Bitmap> oldMouseBitmap = _mouseBitmap;
+
+	setMouseCursor(loadBitmap("options"));
+	loadMenuButtons("options", x, y);
+
+	uint32 disabledButtons = 0;
+	if (_vm->_musicWorking) {
+		if (_vm->_musicEnabled)
+			disabledButtons |= (1 << OPTIONBUTTON_ENABLEMUSIC);
+		else
+			disabledButtons |= (1 << OPTIONBUTTON_DISABLEMUSIC);
+	}
+	else
+		disabledButtons |= (1 << OPTIONBUTTON_ENABLEMUSIC) | (1 << OPTIONBUTTON_DISABLEMUSIC);
+
+	if (_vm->_sfxWorking) {
+		if (_vm->_sfxEnabled)
+			disabledButtons |= (1 << OPTIONBUTTON_ENABLESFX);
+		else
+			disabledButtons |= (1 << OPTIONBUTTON_DISABLESFX);
+	}
+	else
+		disabledButtons |= (1 << OPTIONBUTTON_ENABLESFX) | (1 << OPTIONBUTTON_DISABLESFX);
+
+	disableMenuButtons(disabledButtons);
+	// sub_28b5d();
+	int event = handleMenuEvents(0, false);
+
+	unloadMenuButtons();
+	_vm->_mouseControllingShip = tmpMouseControllingShip;
+	setMouseCursor(oldMouseBitmap);
+
+	if (event != MENUEVENT_LCLICK_OFFBUTTON && event != MENUEVENT_RCLICK_OFFBUTTON)
+		_vm->_system->warpMouse(oldMousePos.x, oldMousePos.y);
+
+
+	// Can't use OPTIONBUTTON constants since the button retvals differ from the button
+	// indices...
+	switch(event) { // TODO
+	case 0: // Save
+	case 1: // Load
+	case 2: // Enable music
+	case 3: // Disable music
+	case 4: // Enable sfx
+	case 5: // Disable sfx
+	case 6: // Quit
+	case 7: // Text
+		showTextConfigurationMenu(true);
+		break;
+	default:
+		break;
+	}
 }
 
 /**
  * This can be called from startup or from the options menu.
  * On startup, this tries to load the setting without user input.
  */
-void Graphics::openTextConfigurationMenu(bool fromOptionMenu) {
+void Graphics::showTextConfigurationMenu(bool fromOptionMenu) {
 	const char *options[] = { // TODO: languages...
 		"Text display",
 		"Text subtitles.",
