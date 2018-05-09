@@ -37,12 +37,10 @@ using Common::SharedPtr;
 namespace StarTrek {
 
 
-// Note: Rects in Star Trek are probably considered to have their bottom-right pixel
-// contained in the rectangle, but ScummVM is the opposite... (Trek might be inconsistent)
-// Be careful when using some of Rect's functions, including:
-// * The width/height constructor
-// * width/height methods
-// * "contains" method for points (it should work for other rects)
+// Note: Rects in Star Trek are considered to have their bottom-right pixel contained in
+// the rectangle, but ScummVM rects are not. Functions from Trek have been adapted to use
+// ScummVM's rect format. Be wary of off-by-1 errors...
+
 struct Sprite {
 	Common::Point pos;
 	uint16 drawPriority;

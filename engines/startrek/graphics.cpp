@@ -38,7 +38,7 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	_priData = nullptr;
 	_lutData = nullptr;
 
-	_screenRect = Common::Rect(SCREEN_WIDTH-1, SCREEN_HEIGHT-1);
+	_screenRect = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	if (ConfMan.hasKey("render_mode"))
 		_egaMode = (Common::parseRenderMode(ConfMan.get("render_mode").c_str()) == Common::kRenderEGA) && (_vm->getGameType() != GType_STJR) && !(_vm->getFeatures() & GF_DEMO);
@@ -133,12 +133,12 @@ void Graphics::loadPri(const char *priFile) {
 	SharedPtr<Common::SeekableReadStream> priStream = _vm->openFile(priFile);
 
 	delete[] _priData;
-	_priData = new byte[SCREEN_WIDTH*SCREEN_HEIGHT/2];
-	priStream->read(_priData, SCREEN_WIDTH*SCREEN_HEIGHT/2);
+	_priData = new byte[SCREEN_WIDTH*SCREEN_HEIGHT / 2];
+	priStream->read(_priData, SCREEN_WIDTH*SCREEN_HEIGHT / 2);
 }
 
 SharedPtr<Bitmap> Graphics::loadBitmap(Common::String basename) {
-	return SharedPtr<Bitmap>(new Bitmap(_vm->openFile(basename+".BMP")));
+	return SharedPtr<Bitmap>(new Bitmap(_vm->openFile(basename + ".BMP")));
 }
 
 Common::Point Graphics::getMousePos() {
@@ -156,14 +156,18 @@ void Graphics::redrawScreen() {
 }
 
 void Graphics::drawSprite(const Sprite &sprite) {
-	drawSprite(sprite, Common::Rect(sprite.drawX,sprite.drawY,sprite.drawX+sprite.bitmap->width-1,sprite.drawY+sprite.bitmap->height-1));
+	int left = sprite.drawX;
+	int top = sprite.drawY;
+	int right = left + sprite.bitmap->width;
+	int bottom = top + sprite.bitmap->height;
+	drawSprite(sprite, Common::Rect(left, top, right, bottom));
 }
 
 // rect is the portion of the sprite to update. It must be entirely contained within the
 // sprite's actual, full rectangle.
 void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 	Common::Rect spriteRect = Common::Rect(sprite.drawX, sprite.drawY,
-			sprite.drawX+sprite.bitmap->width-1, sprite.drawY+sprite.bitmap->height-1);
+			sprite.drawX+sprite.bitmap->width, sprite.drawY+sprite.bitmap->height);
 
 	assert(_screenRect.contains(rect));
 	assert(spriteRect.contains(rect));
@@ -179,14 +183,14 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 
 		int priOffset = rect.top*SCREEN_WIDTH + rect.left;
 
-		for (int y=rect.top; y<=rect.bottom; y++) {
-			for (int x=rect.left; x<=rect.right; x++) {
-				byte priByte = _priData[priOffset/2];
+		for (int y = rect.top; y < rect.bottom; y++) {
+			for (int x = rect.left; x < rect.right; x++) {
+				byte priByte = _priData[priOffset / 2];
 				byte bgPriority;
-				if ((priOffset%2) == 1)
-					bgPriority = priByte&0xf;
+				if ((priOffset % 2) == 1)
+					bgPriority = priByte & 0xf;
 				else
-					bgPriority = priByte>>4;
+					bgPriority = priByte >> 4;
 				priOffset++;
 
 				byte b = *src++;
@@ -197,9 +201,9 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 				*dest++ = b;
 			}
 
-			src       += sprite.bitmap->width - rect.width() - 1;
-			dest      += SCREEN_WIDTH - rect.width() - 1;
-			priOffset += SCREEN_WIDTH - rect.width() - 1;
+			src       += sprite.bitmap->width - rect.width();
+			dest      += SCREEN_WIDTH - rect.width();
+			priOffset += SCREEN_WIDTH - rect.width();
 		}
 		break;
 	}
@@ -211,8 +215,8 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 		byte *src = sprite.bitmap->pixels + (rect.left - sprite.drawX)
 			+ (rect.top - sprite.drawY) * sprite.bitmap->width;
 
-		for (int y=rect.top; y<=rect.bottom; y++) {
-			for (int x=rect.left; x<=rect.right; x++) {
+		for (int y = rect.top; y < rect.bottom; y++) {
+			for (int x = rect.left; x < rect.right; x++) {
 				byte b = *src;
 
 				if (b == 0) // Transparent (darken the pixel)
@@ -224,8 +228,8 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 				dest++;
 			}
 
-			src += sprite.bitmap->width - rect.width() - 1;
-			dest += SCREEN_WIDTH - rect.width() - 1;
+			src += sprite.bitmap->width - rect.width();
+			dest += SCREEN_WIDTH - rect.width();
 		}
 
 		break;
@@ -237,21 +241,21 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 
 		Common::Rect rectangle1;
 
-		rectangle1.left   = (rect.left   - sprite.drawX)/8;
-		rectangle1.top    = (rect.top    - sprite.drawY)/8;
-		rectangle1.right  = (rect.right  - sprite.drawX)/8;
-		rectangle1.bottom = (rect.bottom - sprite.drawY)/8;
+		rectangle1.left   = (rect.left   - sprite.drawX) / 8;
+		rectangle1.top    = (rect.top    - sprite.drawY) / 8;
+		rectangle1.right  = (rect.right  - sprite.drawX) / 8;
+		rectangle1.bottom = (rect.bottom - sprite.drawY) / 8;
 
-		int drawWidth = rectangle1.width() + 1;
-		int drawHeight = rectangle1.height() + 1;
+		int drawWidth = rectangle1.width();
+		int drawHeight = rectangle1.height();
 
 		dest = (byte*)surface->getPixels() + sprite.drawY*SCREEN_WIDTH + sprite.drawX
 			+ rectangle1.top*8*SCREEN_WIDTH + rectangle1.left*8;
 
-		byte *src = sprite.bitmap->pixels + rectangle1.top*sprite.bitmap->width/8 + rectangle1.left;
+		byte *src = sprite.bitmap->pixels + rectangle1.top * sprite.bitmap->width / 8 + rectangle1.left;
 
-		for (int y=0; y<drawHeight; y++) {
-			for (int x=0; x<drawWidth; x++) {
+		for (int y=0; y < drawHeight; y++) {
+			for (int x=0; x < drawWidth; x++) {
 				byte c = *src;
 
 				int textColor;
@@ -262,8 +266,8 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 
 				byte *fontData = _font->getCharData(c);
 
-				for (int i=0;i<8;i++) {
-					for (int j=0;j<8;j++) {
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
 						byte b = *fontData;
 
 						if (b == 0) // Transparent: use lookup table to darken this pixel
@@ -279,12 +283,12 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 					dest += SCREEN_WIDTH - 8;
 				}
 
-				dest -= (SCREEN_WIDTH*8 - 8);
+				dest -= (SCREEN_WIDTH * 8 - 8);
 				src++;
 			}
 
-			src += sprite.bitmap->width/8 - drawWidth;
-			dest += SCREEN_WIDTH*8 - drawWidth*8;
+			src += (sprite.bitmap->width / 8) - drawWidth;
+			dest += (SCREEN_WIDTH * 8) - drawWidth * 8;
 
 		}
 
@@ -300,6 +304,8 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 }
 
 void Graphics::drawAllSprites() {
+	// TODO: different video modes?
+
 	if (_numSprites == 0)
 		return;
 
@@ -308,13 +314,12 @@ void Graphics::drawAllSprites() {
 	// Update sprite rectangles
 	for (int i=0; i<_numSprites; i++) {
 		Sprite *spr = _sprites[i];
-		spr->bitmapChanged = true; // FIXME (delete this later)
 		Common::Rect rect;
 
 		rect.left   = spr->pos.x - spr->bitmap->xoffset;
 		rect.top    = spr->pos.y - spr->bitmap->yoffset;
-		rect.right  = rect.left + spr->bitmap->width - 1;
-		rect.bottom = rect.top + spr->bitmap->height - 1;
+		rect.right  = rect.left + spr->bitmap->width;
+		rect.bottom = rect.top + spr->bitmap->height;
 
 		spr->drawX = rect.left;
 		spr->drawY = rect.top;
@@ -322,7 +327,7 @@ void Graphics::drawAllSprites() {
 		spr->drawRect = rect.findIntersectingRect(_screenRect);
 
 		if (!spr->drawRect.isEmpty()) { // At least partly on-screen
-			if (spr->lastDrawRect.left <= spr->lastDrawRect.right) {
+			if (spr->lastDrawRect.left < spr->lastDrawRect.right) {
 				// If the sprite's position is close to where it was last time it was
 				// drawn, combine the two rectangles and redraw that whole section.
 				// Otherwise, redraw the old position and current position separately.
@@ -349,10 +354,10 @@ void Graphics::drawAllSprites() {
 	}
 
 	// Determine what portions of the screen need to be updated
-	Common::Rect dirtyRects[MAX_SPRITES*2];
+	Common::Rect dirtyRects[MAX_SPRITES * 2];
 	int numDirtyRects = 0;
 
-	for (int i=0; i<_numSprites; i++) {
+	for (int i = 0; i < _numSprites; i++) {
 		Sprite *spr = _sprites[i];
 
 		if (spr->bitmapChanged) {
@@ -372,22 +377,22 @@ void Graphics::drawAllSprites() {
 	}
 
 	// Redraw the background on every dirty rectangle
-	for (int i=0; i<numDirtyRects; i++) {
+	for (int i = 0; i < numDirtyRects; i++) {
 		Common::Rect &r = dirtyRects[i];
 
-		int offset = r.top*SCREEN_WIDTH + r.left;
+		int offset = r.top * SCREEN_WIDTH + r.left;
 		_vm->_system->copyRectToScreen(_backgroundImage->pixels+offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
 	}
 
 	// For each sprite, merge the rectangles that overlap with it and redraw the sprite.
-	for (int i=0; i<_numSprites; i++) {
+	for (int i = 0; i < _numSprites; i++) {
 		Sprite *spr = _sprites[i];
 
 		if (!spr->field16 && spr->isOnScreen) {
 			bool mustRedrawSprite = false;
 			Common::Rect rect2;
 
-			for (int j=0; j<numDirtyRects; j++) {
+			for (int j = 0; j < numDirtyRects; j++) {
 				Common::Rect rect1 = spr->drawRect.findIntersectingRect(dirtyRects[j]);
 
 				if (!rect1.isEmpty()) {
@@ -404,7 +409,7 @@ void Graphics::drawAllSprites() {
 		}
 
 		spr->field16 = false;
-		spr->bitmapChanged = 0;
+		spr->bitmapChanged = false;
 		spr->lastDrawRect = spr->drawRect;
 	}
 
@@ -419,6 +424,7 @@ void Graphics::addSprite(Sprite *sprite) {
 	sprite->drawMode = 0;
 	sprite->field8 = 0;
 	sprite->field16 = false;
+	sprite->bitmapChanged = true; // FIXME (delete this later?)
 
 	sprite->lastDrawRect.top = -1;
 	sprite->lastDrawRect.left = -1;
@@ -445,9 +451,9 @@ void Graphics::delSprite(Sprite *sprite) {
 void Graphics::drawBitmapToScreen(Bitmap *bitmap) {
 	int xoffset = bitmap->xoffset;
 	int yoffset = bitmap->yoffset;
-	if (xoffset >= 320)
+	if (xoffset >= SCREEN_WIDTH)
 		xoffset = 0;
-	if (yoffset >= 200)
+	if (yoffset >= SCREEN_HEIGHT)
 		yoffset = 0;
 
 	_vm->_system->copyRectToScreen(bitmap->pixels, bitmap->width, xoffset, yoffset, bitmap->width, bitmap->height);
