@@ -399,7 +399,11 @@ void Console::decompileScriptChildren(Resources::Object *level) {
 }
 
 bool Console::Cmd_DumpLocation(int argc, const char **argv) {
-	StarkGlobal->getCurrent()->getLocation()->print();
+	if (StarkStaticProvider->isStaticLocation()) {
+		StarkStaticProvider->getLocation()->print();
+	} else {
+		StarkGlobal->getCurrent()->getLocation()->print();
+	}
 
 	return true;
 }
