@@ -445,7 +445,7 @@ String Graphics::readTextFromArray(int choiceIndex, uintptr data, String *header
  */
 SharedPtr<TextBitmap> Graphics::initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite) {
 	int linesBeforeTextStart = 2;
-	if (withHeader != 0)
+	if (withHeader)
 		linesBeforeTextStart = 4;
 
 	int xoffset = *xoffsetPtr;
@@ -463,26 +463,26 @@ SharedPtr<TextBitmap> Graphics::initTextSprite(int *xoffsetPtr, int *yoffsetPtr,
 
 	memset(bitmap->pixels, ' ', textHeight*TEXTBOX_WIDTH);
 
-	int varC = SCREEN_WIDTH-1 - xoffset - (bitmap->width+0x1d)/2;
+	int varC = SCREEN_WIDTH-1 - xoffset - (bitmap->width + 0x1d) / 2;
 	if (varC < 0)
 		xoffset += varC;
 
-	varC = xoffset - (bitmap->width+0x1d)/2;
+	varC = xoffset - (bitmap->width + 0x1d) / 2;
 	if (varC < 1)
-		xoffset += varC-1;
+		xoffset -= varC - 1;
 
-	varC = yoffset - (bitmap->height+0x11) - 20;
+	varC = yoffset - (bitmap->height + 0x11) - 20;
 	if (varC < 0)
 		yoffset -= varC;
 
-	xoffset -= (bitmap->width+0x1d)/2;
+	xoffset -= (bitmap->width + 0x1d)/2;
 	yoffset -= bitmap->height;
 
 	bitmap->pixels[0] = 0x10;
 	memset(&bitmap->pixels[1], 0x11, TEXTBOX_WIDTH-2);
 	bitmap->pixels[TEXTBOX_WIDTH-1] = 0x12;
 
-	byte *textAddr = bitmap->pixels+TEXTBOX_WIDTH;
+	byte *textAddr = bitmap->pixels + TEXTBOX_WIDTH;
 
 	if (withHeader) {
 		textAddr[0] = 0x13;
@@ -1077,7 +1077,7 @@ void Graphics::showOptionsMenu(int x, int y) {
 		setSfxEnabled(false);
 		break;
 	case 6: // Quit
-		showQuitGamePrompt(120, 20); // TODO: revert 120 to 20
+		showQuitGamePrompt(20, 20);
 		break;
 	case 7: // Text
 		showTextConfigurationMenu(true);
@@ -1139,8 +1139,7 @@ void Graphics::showTextConfigurationMenu(bool fromOptionMenu) {
 
 	int val;
 	if (fromOptionMenu || (val = loadTextDisplayMode()) == -1) {
-		// TODO: fix X coordinate (should be 0x14, not 130)
-		val = showText(&Graphics::readTextFromArray, (uintptr)options, 130, 0x1e, 0xb0, true, 0, 1);
+		val = showText(&Graphics::readTextFromArray, (uintptr)options, 20, 30, 0xb0, true, 0, 1);
 		saveTextDisplayMode(val);
 	}
 
