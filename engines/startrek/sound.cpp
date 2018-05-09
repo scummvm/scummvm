@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
  
 #include "startrek/sound.h"
@@ -59,7 +60,7 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 	loadedSoundData = nullptr;
 
 	for (int i=1; i<8; i++) {
-		_sfxSlotList.push_back(&_midiSlots[i]);
+		_midiSlotList.push_back(&_midiSlots[i]);
 	}
 
 	if (!SearchMan.hasFile("voc/speech.mrk")) {
@@ -78,37 +79,50 @@ Sound::~Sound() {
 }
 
 
+/**
+ * Plays a midi track as a sound effect (one of midi slots 1-7)
+ */
 void Sound::playMidiTrack(int track) {
 	if (!_vm->_musicEnabled || !_vm->_musicWorking)
 		return;
 
-	assert(loadedSoundData != NULL);
-
-	debugC(6, kDebugSound, "Playing MIDI track %d", track);
+	assert(loadedSoundData != nullptr);
 
 	// Check if a midi slot for this track exists already
 	for (int i=1; i<8; i++) {
 		if (_midiSlots[i].track == track) {
+			debugC(6, kDebugSound, "Playing MIDI track %d (slot %d)", track, i);
 			_midiSlots[i].midiParser->loadMusic(loadedSoundData, sizeof(loadedSoundData));
 			_midiSlots[i].midiParser->setTrack(track);
 
 			// Shift this to the back (most recently used)
-			_sfxSlotList.remove(&_midiSlots[i]);
-			_sfxSlotList.push_back(&_midiSlots[i]);
+			_midiSlotList.remove(&_midiSlots[i]);
+			_midiSlotList.push_back(&_midiSlots[i]);
 			return;
 		}
 	}
 
 	// Take the least recently used slot and use that for the sound effect
-	MidiPlaybackSlot *slot = _sfxSlotList.front();
-	_sfxSlotList.pop_front();
-	_sfxSlotList.push_back(slot);
-	slot->track = track;
-	slot->midiParser->loadMusic(loadedSoundData, sizeof(loadedSoundData));
-	slot->midiParser->setTrack(track);
+	MidiPlaybackSlot *slot = _midiSlotList.front();
+	_midiSlotList.pop_front();
+	_midiSlotList.push_back(slot);
+	playMidiTrackInSlot(slot->slot, track);
 }
 
-void Sound::loadMusicFile(const char *baseSoundName) {
+void Sound::playMidiTrackInSlot(int slot, int track) {
+	assert(loadedSoundData != nullptr);
+	debugC(6, kDebugSound, "Playing MIDI track %d (slot %d)", track, slot);
+
+	clearMidiSlot(slot);
+
+	if (track != -1) {
+		_midiSlots[slot].track = track;
+		_midiSlots[slot].midiParser->loadMusic(loadedSoundData, sizeof(loadedSoundData));
+		_midiSlots[slot].midiParser->setTrack(track);
+	}
+}
+
+void Sound::loadMusicFile(const Common::String &baseSoundName) {
 	clearAllMidiSlots();
 	/*
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
@@ -122,7 +136,20 @@ void Sound::loadMusicFile(const char *baseSoundName) {
 	loadPCMusicFile(baseSoundName);
 }
 
-void Sound::playSoundEffect(const char *baseSoundName) {
+void Sound::playMidiMusicTracks(int startTrack, int loopTrack) {
+	if (!_vm->_musicWorking || !_vm->_musicEnabled)
+		return;
+
+	if (loopTrack == -3)
+		_loopingMidiTrack = startTrack;
+	else if (loopTrack != -2)
+		_loopingMidiTrack = loopTrack;
+
+	if (startTrack != -2 && _vm->_musicEnabled)
+		playMidiTrackInSlot(0, startTrack);
+}
+
+void Sound::playVoc(const Common::String &baseSoundName) {
 	/*
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
 		playAmigaSoundEffect(baseSoundName);
@@ -130,13 +157,14 @@ void Sound::playSoundEffect(const char *baseSoundName) {
 		playMacSoundEffect(baseSoundName);
 	else
 	*/
-	if (scumm_stricmp(baseSoundName+4, "loop") == 0)
-		_loopingAudioName = Common::String(baseSoundName);
+	if (baseSoundName.size() == 8 && baseSoundName.hasSuffixIgnoreCase("loop"))
+		_loopingAudioName = baseSoundName;
 
 	if (!_vm->_sfxEnabled || !_vm->_sfxWorking)
 		return;
 
 	/*
+	// This is probably just driver initialization stuff...
 	if (word_5113a == 0)
 		sub_2aaa3();
 	*/
@@ -156,7 +184,7 @@ void Sound::playSoundEffect(const char *baseSoundName) {
 		return;
 	}
 
-	debugC(3, kDebugSound, "No sound slot to play '%s'", baseSoundName);
+	debugC(3, kDebugSound, "No sound slot to play '%s'", baseSoundName.c_str());
 }
 
 void Sound::playSpeech(const Common::String &basename) {
@@ -196,6 +224,17 @@ void Sound::playSpeech(const Common::String &basename) {
 	_playingSpeech = true;
 }
 
+/**
+ * Called when disabling sfx.
+ */
+void Sound::stopAllVocSounds() {
+	stopPlayingSpeech();
+
+	for (int i = 0; i < MAX_SFX_PLAYING; i++) {
+		_vm->_system->getMixer()->stopHandle(_sfxHandles[i]);
+	}
+}
+
 void Sound::stopPlayingSpeech() {
 	if (_playingSpeech) {
 		debugC(5, kDebugSound, "Canceled speech playback");
@@ -205,8 +244,40 @@ void Sound::stopPlayingSpeech() {
 }
 
 
+void Sound::setMusicEnabled(bool enable) {
+	if (!_vm->_musicWorking || _vm->_musicEnabled == enable)
+		return;
+
+	_vm->_musicEnabled = enable;
+
+	if (enable)
+		playMidiMusicTracks(_loopingMidiTrack, _loopingMidiTrack);
+	else
+		clearMidiSlot(0);
+}
+
+void Sound::setSfxEnabled(bool enable) {
+	if (!_vm->_sfxWorking || _vm->_sfxEnabled == enable)
+		return;
+
+	_vm->_sfxEnabled = enable;
+
+	if (!enable) {
+		for (int i = 1; i < 8; i++)
+			clearMidiSlot(i);
+	}
+
+	if (!enable) {
+		stopAllVocSounds();
+	}
+	else if (!_loopingAudioName.empty()) {
+		playVoc(_loopingAudioName);
+	}
+}
+
+
 // XMIDI or SM sound
-void Sound::loadPCMusicFile(const char *baseSoundName) {
+void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 	Common::String soundName = baseSoundName;
 	
 	soundName += '.';

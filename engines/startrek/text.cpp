@@ -816,7 +816,7 @@ void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	SharedPtr<FileStream> stream = _vm->openFile(mnuFilename + ".MNU");
 
 	_activeMenu->menuFile = stream;
-	_activeMenu->numButtons = _activeMenu->menuFile->size()/16;
+	_activeMenu->numButtons = _activeMenu->menuFile->size() / 16;
 
 	for (int i = 0; i < _activeMenu->numButtons; i++) {
 		memset(&_activeMenu->sprites[i], 0, sizeof(Sprite));
@@ -824,9 +824,9 @@ void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 		_activeMenu->sprites[i].drawMode = 2;
 
 		char bitmapBasename[11];
-		stream->seek(i*16, SEEK_SET);
+		stream->seek(i * 16, SEEK_SET);
 		stream->read(bitmapBasename, 10);
-		for (int j=0; j<10; j++) {
+		for (int j = 0; j < 10; j++) {
 			if (bitmapBasename[j] == ' ')
 				bitmapBasename[j] = '\0';
 		}
@@ -840,7 +840,7 @@ void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 		_activeMenu->sprites[i].field6 = 8;
 	}
 
-	if (_activeMenu->retvals[_activeMenu->numButtons-1] == 0) {
+	if (_activeMenu->retvals[_activeMenu->numButtons - 1] == 0) {
 		// Set default retvals for buttons
 		for (int i = 0; i < _activeMenu->numButtons; i++)
 			_activeMenu->retvals[i] = i;
@@ -1065,16 +1065,16 @@ void Graphics::showOptionsMenu(int x, int y) {
 		showLoadMenu();
 		break;
 	case 2: // Enable music
-		setMusicEnabled(true);
+		_vm->_sound->setMusicEnabled(true);
 		break;
 	case 3: // Disable music
-		setMusicEnabled(false);
+		_vm->_sound->setMusicEnabled(false);
 		break;
 	case 4: // Enable sfx
-		setSfxEnabled(true);
+		_vm->_sound->setSfxEnabled(true);
 		break;
 	case 5: // Disable sfx
-		setSfxEnabled(false);
+		_vm->_sound->setSfxEnabled(false);
 		break;
 	case 6: // Quit
 		showQuitGamePrompt(20, 20);
@@ -1092,14 +1092,6 @@ void Graphics::showSaveMenu() {
 }
 
 void Graphics::showLoadMenu() {
-	// TODO
-}
-
-void Graphics::setMusicEnabled(bool enabled) {
-	// TODO
-}
-
-void Graphics::setSfxEnabled(bool enabled) {
 	// TODO
 }
 

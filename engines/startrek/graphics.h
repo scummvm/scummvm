@@ -147,8 +147,6 @@ public:
 	void showOptionsMenu(int x, int y);
 	void showSaveMenu();
 	void showLoadMenu();
-	void setMusicEnabled(bool enabled);
-	void setSfxEnabled(bool enabled);
 	void showQuitGamePrompt(int x, int y);
 	void showTextConfigurationMenu(bool fromOptionMenu);
 
