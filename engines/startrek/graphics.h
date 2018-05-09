@@ -44,7 +44,7 @@ const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 200;
 
 const int MAX_SPRITES = 32;
-const int MAX_MENUBUTTONS = 16; // This is arbitrary, the original game has no such limit
+const int MAX_MENUBUTTONS = 32;
 
 const int TEXTBOX_WIDTH = 26;
 const int MAX_TEXTBOX_LINES = 12;
@@ -59,8 +59,6 @@ struct Menu {
 	uint16 numButtons;
 	int16 selectedButton;
 	SharedPtr<Menu> nextMenu;
-
-	Menu() : nextMenu(SharedPtr<Menu>()) {}
 };
 
 class Graphics;
@@ -122,7 +120,7 @@ public:
 	String readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput);
 
 private:
-	int handleTextboxEvents(uint32 ticksUntilClickingEnabled, bool arg4);
+	int handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4);
 
 	SharedPtr<TextBitmap> initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite);
 	void drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &text, bool withHeader);
@@ -140,11 +138,13 @@ private:
 	int getMenuButtonAt(const Menu &menu, int x, int y);
 	void drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color);
 	void loadMenuButtons(String mnuFilename, int xpos, int ypos);
-	void disableMenuButton(uint32 bits);
-	void enableMenuButton(uint32 bits);
+	void unloadMenuButtons();
+	void disableMenuButtons(uint32 bits);
+	void enableMenuButtons(uint32 bits);
 
 public:
-	void openTextConfigurationMenu(bool fromOptionMenu);
+	void showOptionsMenu(int x, int y);
+	void showTextConfigurationMenu(bool fromOptionMenu);
 	int loadTextDisplayMode();
 	void saveTextDisplayMode(int value);
 
@@ -153,12 +153,12 @@ private:
 	uint32 _textboxVar2;
 	uint32 _textboxVar3;
 	uint16 _textboxVar6;
-	uint16 _textboxVar7;
 	bool _textboxHasMultipleChoices;
 
 	SharedPtr<Menu> _activeMenu;
 
-	uint16 _textboxButtonVar4;
+	// Saved value of StarTrekEngine::_keyboardControlsMouse when menus are up
+	bool _keyboardControlsMouseOutsideMenu;
 };
 
 }

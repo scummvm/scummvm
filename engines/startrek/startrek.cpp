@@ -47,9 +47,17 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_macResFork = nullptr;
 	_room = nullptr;
 
-	_audioEnabled = true;
+	_clockTicks = 0;
+
 	_musicEnabled = true;
 	_sfxEnabled = true;
+	_word_467a6 = true;
+	_musicWorking = true;
+	_sfxWorking = true;
+	_finishedPlayingSpeech = false;
+
+	_mouseControllingShip = false;
+	_keyboardControlsMouse = true;
 }
 
 StarTrekEngine::~StarTrekEngine() {
@@ -139,7 +147,9 @@ Common::Error StarTrekEngine::run() {
 	*/
 
 
-	_gfx->openTextConfigurationMenu(false);
+	while (true) {
+		_gfx->showOptionsMenu(0, 0);
+	}
 	_gfx->showText(&Graphics::readTextFromRdf, 0x2220, 150, 160, 0xb3, 0, 10, 0);
 	
 	while (!shouldQuit()) {

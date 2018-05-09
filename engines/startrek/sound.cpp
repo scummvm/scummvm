@@ -79,12 +79,8 @@ Sound::~Sound() {
 
 
 void Sound::playMidiTrack(int track) {
-	if (!_vm->_musicEnabled)
+	if (!_vm->_musicEnabled || !_vm->_musicWorking)
 		return;
-	/*
-	if (!_vm->_word_467a8)
-		return;
-	*/
 
 	assert(loadedSoundData != NULL);
 
@@ -137,7 +133,7 @@ void Sound::playSoundEffect(const char *baseSoundName) {
 	if (scumm_stricmp(baseSoundName+4, "loop") == 0)
 		_loopingAudioName = Common::String(baseSoundName);
 
-	if (!_vm->_sfxEnabled || !_vm->_audioEnabled)
+	if (!_vm->_sfxEnabled || !_vm->_sfxWorking)
 		return;
 
 	/*

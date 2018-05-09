@@ -54,7 +54,7 @@ struct Sprite {
 	bool bitmapChanged;
 	bool rect2Valid;
 	bool isOnScreen;
-	uint16 field16; // When set, sprite isn't drawn next refresh? (Gets reset to 0 after)
+	bool field16; // When set, sprite isn't drawn next refresh? (Gets reset to 0 after)
 	Common::Rect lastDrawRect; // Rect encompassing the sprite last time it was drawn
 	Common::Rect drawRect;     // Rect encompassing the sprite currently
 	Common::Rect rectangle2;
