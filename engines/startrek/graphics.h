@@ -143,8 +143,15 @@ private:
 	void enableMenuButtons(uint32 bits);
 
 public:
+	void choseMousePositionFromSprites(Sprite *sprites, int numSprites, int spriteIndex, int mode);
 	void showOptionsMenu(int x, int y);
+	void showSaveMenu();
+	void showLoadMenu();
+	void setMusicEnabled(bool enabled);
+	void setSfxEnabled(bool enabled);
+	void showQuitGamePrompt(int x, int y);
 	void showTextConfigurationMenu(bool fromOptionMenu);
+
 	int loadTextDisplayMode();
 	void saveTextDisplayMode(int value);
 

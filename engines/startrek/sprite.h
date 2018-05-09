@@ -62,6 +62,7 @@ struct Sprite {
 
 	Sprite() { memset(this, 0, sizeof(Sprite)); }
 	void setBitmap(SharedPtr<Bitmap> b);
+	Common::Rect getRect();
 };
 
 

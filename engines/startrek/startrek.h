@@ -161,6 +161,8 @@ public:
 	// between items in a menu).
 	bool _keyboardControlsMouse;
 
+	bool _inQuitGameMenu;
+
 	
 private:
 	Graphics *_gfx;

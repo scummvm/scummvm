@@ -58,6 +58,8 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 
 	_mouseControllingShip = false;
 	_keyboardControlsMouse = true;
+
+	_inQuitGameMenu = false;
 }
 
 StarTrekEngine::~StarTrekEngine() {
