@@ -43,6 +43,7 @@ public:
 	byte LOCATION_X[LOCATION_COUNT];
 	byte LOCATION_Y[LOCATION_COUNT];
 	int LOCATION_PEOPLE[150][4];
+	byte DUNGEON_DRAW_DATA[1964];
 	const char *BLOCKED;
 	const char *ENTER_QUESTION;
 	const char *ENTERING;
