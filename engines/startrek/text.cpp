@@ -135,9 +135,14 @@ int Graphics::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int 
 		bool tmpMouseControllingShip = _vm->_mouseControllingShip;
 		_vm->_mouseControllingShip = false;
 
-		int var80 = (numChoices > 1 ? 0x18 : 0);
+		// Decide which buttons to show
+		uint32 visibleButtons = (1 << TEXTBUTTON_CONFIRM);
+		if (numChoices > 1)
+			visibleButtons |= (1 << TEXTBUTTON_PREVCHOICE) | (1 << TEXTBUTTON_NEXTCHOICE);
+		if (numTextLines > numTextboxLines)
+			visibleButtons |= (1 << TEXTBUTTON_SCROLLUP) | (1 << TEXTBUTTON_SCROLLDOWN);
+		setVisibleMenuButtons(visibleButtons);
 
-		// TODO: sub_288FB function call
 		disableMenuButtons(1 << TEXTBUTTON_SCROLLUP); // Disable scroll up
 
 		if (var7c == 0) { // Disable done button
@@ -251,10 +256,10 @@ reloadText:
 				scrollOffset = 0;
 				lineFormattedText = readLineFormattedText(textGetter, var, choiceIndex, textBitmap, numTextboxLines, &numTextLines);
 				if (numTextLines <= numTextboxLines) {
-					// sub_288FB(0x0019);
+					setVisibleMenuButtons((1 << TEXTBUTTON_CONFIRM) | (1 << TEXTBUTTON_PREVCHOICE) | (1 << TEXTBUTTON_NEXTCHOICE));
 				}
 				else {
-					// sub_288FB(0x001F);
+					setVisibleMenuButtons((1 << TEXTBUTTON_CONFIRM) | (1 << TEXTBUTTON_SCROLLUP) | (1 << TEXTBUTTON_SCROLLDOWN)| (1 << TEXTBUTTON_PREVCHOICE) | (1 << TEXTBUTTON_NEXTCHOICE));
 				}
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
 				disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
@@ -898,6 +903,52 @@ void Graphics::enableMenuButtons(uint32 bits) {
 }
 
 /**
+ * Sets which buttons are visible based on the given bitmask.
+ */
+void Graphics::setVisibleMenuButtons(uint32 bits) {
+	for (int i = 0; i < _activeMenu->numButtons; i++) {
+		Sprite *sprite = &_activeMenu->sprites[i];
+		uint32 spriteBitmask = (1 << i);
+		if (spriteBitmask == 0)
+			break;
+
+		if ((bits & spriteBitmask) == 0 || sprite->drawMode != 0) {
+			if ((bits & spriteBitmask) == 0 && sprite->drawMode == 2) {
+				if (i == _activeMenu->selectedButton) {
+					drawMenuButtonOutline(sprite->bitmap, 0x00);
+					_activeMenu->selectedButton = -1;
+				}
+
+				sprite->field16 = true;
+				sprite->bitmapChanged = true;
+			}
+		}
+		else {
+			addSprite(sprite);
+			sprite->drawMode = 2;
+			sprite->bitmapChanged = true;
+		}
+	}
+
+	drawAllSprites();
+
+	for (int i = 0; i < _activeMenu->numButtons; i++) {
+		Sprite *sprite = &_activeMenu->sprites[i];
+		uint32 spriteBitmask = (1 << i);
+		if (spriteBitmask == 0)
+			break;
+
+		if ((bits & spriteBitmask) == 0 && sprite->drawMode == 2) {
+			delSprite(sprite);
+
+			// Setting drawMode to 0 is the game's way of saying that the menu button is
+			// hidden (since it would normally be 2).
+			sprite->drawMode = 0;
+		}
+	}
+}
+
+/**
  * This chooses a sprite from the list to place the mouse cursor at. The sprite it chooses
  * may be, for example, the top-leftmost one in the list. Exact behaviour is determined by
  * the "mode" parameter.
@@ -927,7 +978,7 @@ void Graphics::choseMousePositionFromSprites(Sprite *sprites, int numSprites, in
 	// Choose a sprite to warp the cursor to
 	for (int i = 0; i < numSprites; i++) {
 		Sprite *sprite = &sprites[i];
-		if (sprite->drawMode != 2)
+		if (sprite->drawMode != 2) // Skip hidden buttons
 			continue;
 
 		Common::Rect rect = sprite->getRect();

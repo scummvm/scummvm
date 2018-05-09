@@ -141,6 +141,7 @@ private:
 	void unloadMenuButtons();
 	void disableMenuButtons(uint32 bits);
 	void enableMenuButtons(uint32 bits);
+	void setVisibleMenuButtons(uint32 bits);
 
 public:
 	void choseMousePositionFromSprites(Sprite *sprites, int numSprites, int spriteIndex, int mode);
