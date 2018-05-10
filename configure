@@ -1712,8 +1712,6 @@ if test "$_release_build" = yes; then
 	# Add a define, which indicates we are doing
 	# an build for a release version.
 	append_var DEFINES "-DRELEASE_BUILD"
-	_sdlnet=no
-	_libcurl=no
 fi
 
 
