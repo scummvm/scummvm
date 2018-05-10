@@ -123,7 +123,7 @@ PlainGameList Sword2MetaEngine::getSupportedGames() const {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;
 	PlainGameList games;
 	while (g->gameid) {
-		games.push_back(PlainGameDescriptor(g->gameid, g->description));
+		games.push_back(PlainGameDescriptor::of(g->gameid, g->description));
 		g++;
 	}
 	return games;
@@ -142,7 +142,7 @@ PlainGameDescriptor Sword2MetaEngine::findGame(const char *gameid) const {
 			break;
 		g++;
 	}
-	return PlainGameDescriptor(g->gameid, g->description);
+	return PlainGameDescriptor::of(g->gameid, g->description);
 }
 
 bool isFullGame(const Common::FSList &fslist) {

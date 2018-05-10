@@ -140,7 +140,7 @@ PlainGameDescriptor SwordMetaEngine::findGame(const char *gameId) const {
 		return sword1PSXSettings;
 	if (0 == scumm_stricmp(gameId, sword1PSXDemoSettings.gameId))
 		return sword1PSXDemoSettings;
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound, bool recursion = false) {

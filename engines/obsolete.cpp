@@ -73,16 +73,16 @@ PlainGameDescriptor findGameID(
 			if (0 == scumm_stricmp(gameid, o->from)) {
 				g = findPlainGameDescriptor(o->to, gameids);
 				if (g && g->description)
-					return PlainGameDescriptor(gameid, g->description);
+					return PlainGameDescriptor::of(gameid, g->description);
 				else
-					return PlainGameDescriptor(gameid, "Obsolete game ID");
+					return PlainGameDescriptor::of(gameid, "Obsolete game ID");
 			}
 			o++;
 		}
 	}
 
 	// No match found
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 } // End of namespace Engines

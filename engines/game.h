@@ -39,8 +39,8 @@ struct PlainGameDescriptor {
 	const char *gameId;
 	const char *description;
 
-	PlainGameDescriptor() : gameId(nullptr), description(nullptr) {}
-	PlainGameDescriptor(const char *id, const char *desc) : gameId(id), description(desc) {}
+	static PlainGameDescriptor empty();
+	static PlainGameDescriptor of(const char *gameId, const char *description);
 };
 
 /**

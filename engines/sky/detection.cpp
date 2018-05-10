@@ -138,7 +138,7 @@ const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &ta
 PlainGameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
 	if (0 == scumm_stricmp(gameid, skySetting.gameId))
 		return skySetting;
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {

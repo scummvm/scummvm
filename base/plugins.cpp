@@ -459,11 +459,9 @@ DECLARE_SINGLETON(EngineManager);
  * and only if we can't find it there, we loop through the plugins.
  **/
 PlainGameDescriptor EngineManager::findGame(const Common::String &gameName, const Plugin **plugin) const {
-	PlainGameDescriptor result;
-
 	// First look for the game using the plugins in memory. This is critical
 	// for calls coming from inside games
-	result = findGameInLoadedPlugins(gameName, plugin);
+	PlainGameDescriptor result = findGameInLoadedPlugins(gameName, plugin);
 	if (result.gameId) {
 		return result;
 	}
@@ -497,7 +495,6 @@ PlainGameDescriptor EngineManager::findGame(const Common::String &gameName, cons
 PlainGameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin) const {
 	// Find the GameDescriptor for this target
 	const PluginList &plugins = getPlugins();
-	PlainGameDescriptor result;
 
 	if (plugin)
 		*plugin = 0;
@@ -505,14 +502,15 @@ PlainGameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String 
 	PluginList::const_iterator iter;
 
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		result = (*iter)->get<MetaEngine>().findGame(gameName.c_str());
-		if (result.gameId) {
+		PlainGameDescriptor pgd = (*iter)->get<MetaEngine>().findGame(gameName.c_str());
+		if (pgd.gameId) {
 			if (plugin)
 				*plugin = *iter;
-			return result;
+			return pgd;
 		}
 	}
-	return result;
+
+	return PlainGameDescriptor::empty();
 }
 
 DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const {

@@ -35,6 +35,20 @@ const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const Pla
 	return 0;
 }
 
+PlainGameDescriptor PlainGameDescriptor::empty() {
+	PlainGameDescriptor pgd;
+	pgd.gameId = nullptr;
+	pgd.description = nullptr;
+	return pgd;
+}
+
+PlainGameDescriptor PlainGameDescriptor::of(const char *gameId, const char *description) {
+	PlainGameDescriptor pgd;
+	pgd.gameId = gameId;
+	pgd.description = description;
+	return pgd;
+}
+
 DetectedGame::DetectedGame() :
 		engineName(nullptr),
 		hasUnknownFiles(false),

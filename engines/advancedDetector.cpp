@@ -589,7 +589,7 @@ PlainGameDescriptor AdvancedMetaEngine::findGame(const char *gameId) const {
 		return *g;
 
 	// No match found
-	return PlainGameDescriptor();
+	return PlainGameDescriptor::empty();
 }
 
 AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions)
