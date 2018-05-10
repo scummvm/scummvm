@@ -2401,7 +2401,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
-	// Simon the Sorcerer 2 - Russian Fan with MT-32 fix (25th Anniversary Edition)
+	// Simon the Sorcerer 2 - Russian Fan with MT-32 hack (25th Anniversary Edition)
 	{
 		{
 			"simon2",
@@ -2426,7 +2426,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
-	// Simon the Sorcerer 2 - Polish with MT-32 fix (25th Anniversary Edition)
+	// Simon the Sorcerer 2 - Polish with MT-32 hack (25th Anniversary Edition)
 	{
 		{
 			"simon2",
@@ -2451,7 +2451,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE | GF_WAVSFX
 	},
 
-	// Simon the Sorcerer 2 - Hebrew with MT-32 fix (25th Anniversary Edition)
+	// Simon the Sorcerer 2 - Hebrew with MT-32 hack (25th Anniversary Edition)
 	{
 		{
 			"simon2",
@@ -2476,7 +2476,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE | GF_WAVSFX
 	},
 
-	// Simon the Sorcerer 2 - Italian with MT-32 fix (25th Anniversary Edition)
+	// Simon the Sorcerer 2 - Italian with MT-32 hack (25th Anniversary Edition)
 	{
 		{
 			"simon2",
@@ -2501,7 +2501,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE | GF_WAVSFX
 	},
 
-	// Simon the Sorcerer 2 - Czech with MT-32 fix (25th Anniversary Edition)
+	// Simon the Sorcerer 2 - Czech with MT-32 hack (25th Anniversary Edition)
 	{
 		{
 			"simon2",
@@ -2526,7 +2526,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE | GF_WAVSFX
 	},
 
-	// Simon the Sorcerer 2 - Spanish with MT-32 fix (25th Anniversary Edition)
+	// Simon the Sorcerer 2 - Spanish with MT-32 hack (25th Anniversary Edition)
 	{
 		{
 			"simon2",
