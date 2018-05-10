@@ -83,7 +83,9 @@ void PSpit::catherineIdleTimer() {
 void PSpit::xpisland990_elevcombo(const ArgumentArray &args) {
 	// Play button sound based on args[0]
 	_vm->_sound->playSound(args[0] + 5);
+	_vm->_cursor->hideCursor();
 	_vm->delay(500);
+	_vm->_cursor->showCursor();
 
 	// It is impossible to get here if Gehn is not trapped. However,
 	// the original also disallows brute forcing the ending if you have
