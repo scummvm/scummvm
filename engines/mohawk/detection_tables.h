@@ -500,6 +500,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst
+	// Version 1.1 (DVD, Pressing code rvd 2811 ab, RVD8AB-BI RVD2811AB)
+	// From wouwehand in #10519
+	{
+		{
+			"riven",
+			"DVD",
+			AD_ENTRY1("a_Data.MHK", "3370cd9a9696814365a2b7fd7a7b726e"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_RIVEN
+		},
+		GType_RIVEN,
+		GF_DVD,
+		0,
+	},
+
+	// Riven: The Sequel to Myst
 	// Version 1.0 (DVD, From "Myst: Die Trilogie")
 	// From DrMcCoy
 	{
