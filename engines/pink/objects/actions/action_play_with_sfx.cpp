@@ -35,7 +35,7 @@ void ActionPlayWithSfx::deserialize(Pink::Archive &archive) {
 
 void ActionPlayWithSfx::toConsole() {
     debug("\tActionPlayWithSfx: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
-                  " _endFrame = %u, _isLoop = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame);
+                  " _endFrame = %u, _isLoop = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _isLoop);
     for (int i = 0; i < _sfxArray.size(); ++i) {
         _sfxArray[i]->toConsole();
     }
