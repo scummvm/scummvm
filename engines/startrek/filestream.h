@@ -39,7 +39,7 @@ private:
 public:
 	// ReadStream functions
 	virtual bool eos() const;
-	virtual uint32 read(void* dataPtr, uint32 dataSize);
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
 
 	// SeekableReadStream functions
 	virtual int32 pos() const;

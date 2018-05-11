@@ -82,11 +82,14 @@ private:
 	uint32 _midiDevice;	
 
 	// VOC-related variables
-	Common::String _loopingAudioName;
 	Audio::SoundHandle _sfxHandles[MAX_SFX_PLAYING];
 	Audio::SoundHandle _speechHandle;
 	bool _playingSpeech;
 
+public:
+	Common::String _loopingAudioName;
+
+private:
 	// Driver callback
 	static void midiDriverCallback(void *data);
 };

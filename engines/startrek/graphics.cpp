@@ -33,9 +33,7 @@ namespace StarTrek {
 
 Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	_font = nullptr;
-
 	_egaData = nullptr;
-	_priData = nullptr;
 	_lutData = nullptr;
 
 	_screenRect = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -50,6 +48,9 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 
 	_numSprites = 0;
 	_textDisplayMode = TEXTDISPLAY_WAIT;
+	_textboxVar2 = 0;
+	_textboxVar6 = 0;
+	_textboxHasMultipleChoices = false;
 
 	setMouseCursor(loadBitmap("pushbtn"));
 	CursorMan.showMouse(true);
@@ -57,58 +58,22 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 
 Graphics::~Graphics() {
 	delete[] _egaData;
-	delete[] _priData;
 	delete[] _lutData;
 
 	delete _font;
 }
 
 
-void Graphics::loadEGAData(const char *filename) {
-	// Load EGA palette data
-	if (!_egaMode)
-		return;
-
-	if (!_egaData)
-		_egaData = new byte[256];
-
-	SharedPtr<Common::SeekableReadStream> egaStream = _vm->openFile(filename);
-	egaStream->read(_egaData, 256);
+void Graphics::setBackgroundImage(SharedPtr<Bitmap> bitmap) {
+	_backgroundImage = bitmap;
 }
-
-void Graphics::drawBackgroundImage(const char *filename) {
-	// Draw an stjr BGD image (palette built-in)
-
-	SharedPtr<Common::SeekableReadStream> imageStream = _vm->openFile(filename);
-	byte *palette = new byte[256 * 3];
-	imageStream->read(palette, 256 * 3);
-
-	// Expand color components
-	for (uint16 i = 0; i < 256 * 3; i++)
-		palette[i] <<= 2;
-
-	uint16 xoffset = imageStream->readUint16LE();
-	uint16 yoffset = imageStream->readUint16LE();
-	uint16 width = imageStream->readUint16LE();
-	uint16 height = imageStream->readUint16LE();
-
-	byte *pixels = new byte[width * height];
-	imageStream->read(pixels, width * height);
-
-	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
-	_vm->_system->copyRectToScreen(pixels, width, xoffset, yoffset, width, height);
-	_vm->_system->updateScreen();
-
-	delete[] palette;
-}
-
 
 void Graphics::loadPalette(const Common::String &paletteName) {
 	// Set the palette from a PAL file
 	Common::String palFile = paletteName + ".PAL";
 	Common::String lutFile = paletteName + ".LUT";
 
-	SharedPtr<Common::SeekableReadStream> palStream = _vm->openFile(palFile.c_str());
+	SharedPtr<Common::SeekableReadStream> palStream = _vm->loadFile(palFile.c_str());
 	byte *palette = new byte[256 * 3];
 	palStream->read(palette, 256 * 3);
 
@@ -122,7 +87,7 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 	delete[] palette;
 
 	// Load LUT file
-	SharedPtr<Common::SeekableReadStream> lutStream = _vm->openFile(lutFile.c_str());
+	SharedPtr<Common::SeekableReadStream> lutStream = _vm->loadFile(lutFile.c_str());
 
 	delete[] _lutData;
 	_lutData = new byte[256];
@@ -130,15 +95,27 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 }
 
 void Graphics::loadPri(const char *priFile) {
-	SharedPtr<Common::SeekableReadStream> priStream = _vm->openFile(priFile);
-
-	delete[] _priData;
-	_priData = new byte[SCREEN_WIDTH*SCREEN_HEIGHT / 2];
+	SharedPtr<Common::SeekableReadStream> priStream = _vm->loadFile(priFile);
 	priStream->read(_priData, SCREEN_WIDTH*SCREEN_HEIGHT / 2);
 }
 
+void Graphics::clearPri() {
+	memset(_priData, 0, sizeof(_priData));
+}
+
+byte Graphics::getPriValue(int x, int y) {
+	assert(_screenRect.contains(x, y));
+
+	int priOffset = y * SCREEN_WIDTH + x;
+	byte b = _priData[priOffset / 2];
+	if ((priOffset % 2) == 1)
+		return b & 0xf;
+	else
+		return b >> 4;
+}
+
 SharedPtr<Bitmap> Graphics::loadBitmap(Common::String basename) {
-	return SharedPtr<Bitmap>(new Bitmap(_vm->openFile(basename + ".BMP")));
+	return SharedPtr<Bitmap>(new Bitmap(_vm->loadFile(basename + ".BMP")));
 }
 
 Common::Point Graphics::getMousePos() {
@@ -148,11 +125,6 @@ Common::Point Graphics::getMousePos() {
 void Graphics::setMouseCursor(SharedPtr<Bitmap> bitmap) {
 	_mouseBitmap = bitmap;
 	_vm->_system->setMouseCursor(bitmap->pixels, bitmap->width, bitmap->height, bitmap->xoffset, bitmap->yoffset, 0);
-}
-
-void Graphics::redrawScreen() {
-	_vm->_system->copyRectToScreen(_backgroundImage->pixels, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	drawAllSprites();
 }
 
 void Graphics::drawSprite(const Sprite &sprite) {
@@ -448,17 +420,50 @@ void Graphics::delSprite(Sprite *sprite) {
 }
 
 
-void Graphics::drawBitmapToScreen(Bitmap *bitmap) {
+void Graphics::drawDirectToScreen(SharedPtr<Bitmap> bitmap) {
 	int xoffset = bitmap->xoffset;
 	int yoffset = bitmap->yoffset;
-	if (xoffset >= SCREEN_WIDTH)
-		xoffset = 0;
-	if (yoffset >= SCREEN_HEIGHT)
-		yoffset = 0;
 
 	_vm->_system->copyRectToScreen(bitmap->pixels, bitmap->width, xoffset, yoffset, bitmap->width, bitmap->height);
-	_vm->_system->updateScreen();
 }
 
+
+void Graphics::loadEGAData(const char *filename) {
+	// Load EGA palette data
+	if (!_egaMode)
+		return;
+
+	if (!_egaData)
+		_egaData = new byte[256];
+
+	SharedPtr<Common::SeekableReadStream> egaStream = _vm->loadFile(filename);
+	egaStream->read(_egaData, 256);
+}
+
+void Graphics::drawBackgroundImage(const char *filename) {
+	// Draw an stjr BGD image (palette built-in)
+
+	SharedPtr<Common::SeekableReadStream> imageStream = _vm->loadFile(filename);
+	byte *palette = new byte[256 * 3];
+	imageStream->read(palette, 256 * 3);
+
+	// Expand color components
+	for (uint16 i = 0; i < 256 * 3; i++)
+		palette[i] <<= 2;
+
+	uint16 xoffset = imageStream->readUint16LE();
+	uint16 yoffset = imageStream->readUint16LE();
+	uint16 width = imageStream->readUint16LE();
+	uint16 height = imageStream->readUint16LE();
+
+	byte *pixels = new byte[width * height];
+	imageStream->read(pixels, width * height);
+
+	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
+	_vm->_system->copyRectToScreen(pixels, width, xoffset, yoffset, width, height);
+	_vm->_system->updateScreen();
+
+	delete[] palette;
+}
 
 }
