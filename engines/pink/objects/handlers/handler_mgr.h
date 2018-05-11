@@ -46,6 +46,7 @@ public:
     virtual void toConsole();
 
     bool isLeftClickHandler(Actor *actor);
+    bool isUseClickHandler(Actor *actor, const Common::String &itemName);
 
     void onTimerMessage(Actor *actor);
     bool onLeftClickMessage(Actor *actor);
@@ -53,12 +54,12 @@ public:
 
 private:
     Handler *findSuitableHandlerTimer(Actor *actor);
-    Handler *findSuitableHandlerLeftClick(Actor *actor);
-    Handler *findSuitableHandlerUseClick(Actor *actor);
+    HandlerLeftClick *findSuitableHandlerLeftClick(Actor *actor);
+    HandlerUseClick *findSuitableHandlerUseClick(Actor *actor, InventoryItem *item);
 
     Common::Array<HandlerLeftClick*> _leftClickHandlers;
     Common::Array<HandlerUseClick*> _useClickHandlers;
-    Common::Array<HandlerTimer*> _timerHandlers;
+    Common::Array<Handler*> _timerHandlers;
 };
 
 }

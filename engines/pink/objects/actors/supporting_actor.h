@@ -41,10 +41,13 @@ public:
 
     virtual bool isClickable() { return 1; }
     bool isLeftClickHandlers();
+    bool isUseClickHandlers(InventoryItem *item);
 
     void onTimerMessage();
     bool onLeftClickMessage();
     bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr);
+
+    virtual void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
 
     const Common::String &getLocation() const;
 

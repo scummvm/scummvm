@@ -34,6 +34,8 @@ class Action;
 class Sequencer;
 class Director;
 class CursorMgr;
+class InventoryItem;
+class InventoryMgr;
 
 class Actor : public NamedObject {
 public:
@@ -68,6 +70,7 @@ public:
     virtual void update() {};
 
     virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
+    virtual void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
 
     virtual bool isClickable() { return 0;}
 

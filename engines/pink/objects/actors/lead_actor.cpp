@@ -161,19 +161,26 @@ void LeadActor::updateCursor(Common::Point point) {
         case kMoving: {
             Director *director = _page->getGame()->getDirector();
             Actor *actor = director->getActorByPoint(point);
-            if (actor)
+            InventoryItem *item = _page->getModule()->getInventoryMgr()->getCurrentItem();
+            if (_isHaveItem) {
+                if (actor) {
+                    actor->onHover(point, item->getName(), _cursorMgr);
+                }
+                else _cursorMgr->setCursor(kHoldingItemCursor, point, item->getName());
+            }
+            else if (actor)
                 actor->onMouseOver(point, _cursorMgr);
-            else _cursorMgr->setCursor(kDefaultCursor, point);
+            else _cursorMgr->setCursor(kDefaultCursor, point, Common::String());
             break;
         }
         case kInDialog1:
         case kInDialog2:
         case kPlayingVideo:
-            _cursorMgr->setCursor(kNotClickableCursor, point);
+            _cursorMgr->setCursor(kNotClickableCursor, point, Common::String());
             break;
         case kPDA:
         case kInventory:
-            _cursorMgr->setCursor(kDefaultCursor, point);
+            _cursorMgr->setCursor(kDefaultCursor, point, Common::String());
             break;
         default:
             break;
@@ -181,6 +188,8 @@ void LeadActor::updateCursor(Common::Point point) {
 }
 
 void LeadActor::onLeftButtonClick(Common::Point point) {
+    InventoryMgr *invMgr = _page->getModule()->getInventoryMgr();
+
     switch (_state) {
         case kReady:
         case kMoving: {
@@ -192,9 +201,8 @@ void LeadActor::onLeftButtonClick(Common::Point point) {
         }
 
         _recipient = (SupportingActor*) actor;
-        if (actor->isClickable() &&
-            _recipient->isLeftClickHandlers()) {
-            WalkLocation *location = _walkMgr->findLocation(_recipient->getLocation());
+        if (actor->isClickable() && isInteractingWith(_recipient)) {
+            WalkLocation *location = getWalkDestination();
             if (location) {
                 _state = kMoving;
                 _nextState = kInDialog1;
@@ -213,7 +221,7 @@ void LeadActor::onLeftButtonClick(Common::Point point) {
 
             break;
         case kInventory:
-            _page->getModule()->getInventoryMgr()->onClick(point);
+            invMgr->onClick(point);
             break;
         default:
             break;
@@ -222,7 +230,7 @@ void LeadActor::onLeftButtonClick(Common::Point point) {
 
 void LeadActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
     if (_page->getModule()->getInventoryMgr()->isPinkOwnsAnyItems())
-        _cursorMgr->setCursor(kClickableFirstFrameCursor, point);
+        _cursorMgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
     else Actor::onMouseOver(point, mgr);
 }
 
@@ -238,7 +246,14 @@ void LeadActor::onWalkEnd() {
 }
 
 bool LeadActor::sendUseClickMessage(SupportingActor *actor) {
-    return false;
+    InventoryMgr *mgr = _page->getModule()->getInventoryMgr();
+    _nextState = _state != kPlayingVideo ? kReady : kPlayingVideo;
+    _state = kInDialog1;
+    actor->onUseClickMessage(mgr->getCurrentItem(), mgr);
+    if (mgr->getCurrentItem() == nullptr
+        || mgr->getCurrentItem()->getCurrentOwner() != this->_name)
+                _isHaveItem = false;
+     return true;
 }
 
 bool LeadActor::sendLeftClickMessage(SupportingActor *actor) {
@@ -284,6 +299,17 @@ void LeadActor::onInventoryClosed(bool isItemClicked) {
 void LeadActor::forceUpdateCursor() {
     Common::Point point = _page->getGame()->getEventManager()->getMousePos();
     updateCursor(point);
+}
+
+WalkLocation *LeadActor::getWalkDestination() {
+    return _walkMgr->findLocation(_recipient->getLocation());
+}
+
+bool LeadActor::isInteractingWith(SupportingActor *actor) {
+    if (!_isHaveItem)
+        return actor->isLeftClickHandlers();
+
+    return actor->isUseClickHandlers(_page->getModule()->getInventoryMgr()->getCurrentItem());
 }
 
 void ParlSqPink::toConsole() {

@@ -68,17 +68,21 @@ public:
     void onLeftButtonClick(Common::Point point);
     void onMouseMove(Common::Point point);
     void onWalkEnd();
-    void onClick();
+    virtual void onClick();
     void onInventoryClosed(bool isItemClicked);
 
     virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
 
-private:
-    void updateCursor(Common::Point point);
+    bool isInteractingWith(SupportingActor *actor);
+
+protected:
+    virtual void updateCursor(Common::Point point);
     void forceUpdateCursor();
 
-    bool sendUseClickMessage(SupportingActor *actor);
+    virtual bool sendUseClickMessage(SupportingActor *actor);
     bool sendLeftClickMessage(SupportingActor *actor);
+
+    virtual WalkLocation *getWalkDestination();
 
     State _state;
     State _nextState;

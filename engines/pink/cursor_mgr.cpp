@@ -20,19 +20,23 @@
  *
  */
 
+#include <engines/pink/objects/actors/actor.h>
+#include <engines/pink/objects/actions/action_cel.h>
+#include <engines/pink/cel_decoder.h>
 #include "cursor_mgr.h"
 #include "pink.h"
+#include "objects/pages/game_page.h"
 
 namespace Pink {
 
 CursorMgr::CursorMgr(PinkEngine *game, GamePage *page)
-        : _actor(nullptr), _page(page), _game(game),
+        : _actor(nullptr), _action(nullptr), _page(page), _game(game),
           _isPlayingAnimation(0), _firstFrameIndex(0)
 {}
 
 CursorMgr::~CursorMgr() {}
 
-void CursorMgr::setCursor(uint index, Common::Point point) {
+void CursorMgr::setCursor(uint index, Common::Point point, const Common::String &itemName) {
     if (index == kClickableFirstFrameCursor) {
         if (!_isPlayingAnimation) {
             _isPlayingAnimation = 1;
@@ -41,11 +45,30 @@ void CursorMgr::setCursor(uint index, Common::Point point) {
             _isSecondFrame = 0;
             _game->setCursor(index);
         }
+        return;
     }
-    else {
+    if (index != kHoldingItemCursor){
         _isPlayingAnimation = 0;
         _game->setCursor(index);
+        return;
     }
+
+    _game->setCursor(index);
+    _actor = _actor ? _actor : _page->findActor(kCursor);
+    assert(_actor);
+
+    Action *action = _actor->findAction(itemName);
+    assert(action);
+    if (action != _action) {
+        _action = action;
+        _actor->setAction(action, 0);
+    }
+
+    assert(dynamic_cast<ActionCEL*>(action));
+    CelDecoder *decoder = static_cast<ActionCEL*>(_action)->getDecoder();
+    // this is buggy
+    //decoder->setX(point.x);
+    //decoder->setY(point.y);
 }
 
 void CursorMgr::update() {
@@ -68,11 +91,12 @@ void CursorMgr::setCursor(Common::String &cursorName, Common::Point point) {
     else if (cursorName == kCursorNameExitRight){
         index = kExitRightCursor;
     }
-    else if (cursorName == kCursorNameExitForward || cursorName == kCursorNameExitUp)
+    else //if (cursorName == kCursorNameExitForward || cursorName == kCursorNameExitUp)
         index = kExitForwardCursor;
-    else assert(0);
+    //else assert(0);
 
-    setCursor(index, point);
+
+    setCursor(index, point, Common::String());
 }
 
 } // End of namespace Pink
