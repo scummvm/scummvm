@@ -155,7 +155,6 @@ static const char *kPeril = "peril";
 
 static const char *kUndefined = "UNDEFINED";
 
-
 static const char *kCloseAction = "Close";
 static const char *kIdleAction = "Idle";
 static const char *kOpenAction = "Open";
@@ -173,6 +172,22 @@ static const char *kCursorNameExitLeft = "ExitLeft";
 static const char *kCursorNameExitRight = "ExitRight";
 static const char *kCursorNameExitForward = "ExitForward";
 
+static const char *kClickable = "Clickable";
+static const char *kCursor = "Cursor";
+
+static const char *kFoodPuzzle = "FoodPuzzle";
+static const char *kJackson = "Jackson";
+static const char *kBolted = "Bolted";
+static const char *kDrunkLocation = "DrunkLocation";
+static const char *kDrunk = "Drunk";
+
+static const char *kFirstRound = "15.1";
+static const char *kSecondRound = "15.2";
+static const char *kThirdRound = "15.3";
+
+static const char *kBoy = "Boy";
+static const char *kSirBaldley = "SirBaldley";
+static const char *kBoyBlocked = "BoyBlocked";
 
 } // End of namespace Pink
 

@@ -319,11 +319,97 @@ void ParlSqPink::toConsole() {
     }
 }
 
+WalkLocation *ParlSqPink::getWalkDestination() {
+    if (_recipient->getName() == kBoy &&
+        _page->checkValueOfVariable(kBoyBlocked, kUndefined))
+    {
+        return _walkMgr->findLocation(kSirBaldley);
+    }
+    return LeadActor::getWalkDestination();
+}
+
+PubPink::PubPink() :
+        LeadActor(), _round(0)
+{}
+
 void PubPink::toConsole() {
     debug("PubPink: _name = %s", _name.c_str());
     for (int i = 0; i < _actions.size(); ++i) {
         _actions[i]->toConsole();
     }
+}
+
+bool PubPink::playingMiniGame() {
+    return !(_page->checkValueOfVariable(kFoodPuzzle, "TRUE") ||
+              _page->checkValueOfVariable(kFoodPuzzle, kUndefined));
+}
+
+void PubPink::onClick() {
+    if (!playingMiniGame())
+        LeadActor::onClick();
+}
+
+void PubPink::updateCursor(Common::Point point) {
+    if (playingMiniGame()) {
+        SupportingActor *actor = static_cast<SupportingActor*>(_page->getGame()->getDirector()->getActorByPoint(point));
+        if (_state == kReady &&
+            actor &&
+            actor->isUseClickHandlers(_page->getModule()->getInventoryMgr()->getCurrentItem()))
+        {
+                   _cursorMgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
+        }
+        else _cursorMgr->setCursor(kDefaultCursor, point, Common::String());
+    }
+    else LeadActor::updateCursor(point);
+}
+
+WalkLocation *PubPink::getWalkDestination() {
+    if (playingMiniGame())
+        return nullptr;
+
+    if (_recipient->getName() == kJackson &&
+        !_page->checkValueOfVariable(kDrunkLocation, kBolted))
+    {
+        return _walkMgr->findLocation(_page->findActor(kDrunk)->getName());
+    }
+
+    return LeadActor::getWalkDestination();
+}
+
+bool PubPink::sendUseClickMessage(SupportingActor *actor) {
+   if (!LeadActor::sendUseClickMessage(actor) &&
+           playingMiniGame()) {
+       _nextState = _state;
+       _state = kInDialog1;
+
+       const char *roundName;
+       switch (_round++ % 3) {
+           case 0:
+               roundName = kFirstRound;
+               break;
+           case 1:
+               roundName = kSecondRound;
+               break;
+           case 2:
+               roundName = kThirdRound;
+               break;
+           default:
+               roundName = nullptr;
+               assert(0);
+               break;
+       }
+       _sequencer->authorSequence(_sequencer->findSequence(roundName), 0);
+   }
+
+   if (playingMiniGame())
+       _isHaveItem = true;
+
+   return true;
+}
+
+void PubPink::onVariableSet() {
+    if (playingMiniGame())
+        _isHaveItem = true;
 }
 
 } // End of namespace Pink

@@ -32,6 +32,7 @@ namespace Pink {
 
 class CursorMgr;
 class WalkMgr;
+class WalkLocation;
 class Sequencer;
 
 class SupportingActor;
@@ -70,6 +71,7 @@ public:
     void onWalkEnd();
     virtual void onClick();
     void onInventoryClosed(bool isItemClicked);
+    virtual void onVariableSet() {};
 
     virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
 
@@ -100,12 +102,27 @@ protected:
 
 class ParlSqPink : public LeadActor {
 public:
+    virtual WalkLocation *getWalkDestination();
     void toConsole();
 };
 
 class PubPink : public LeadActor {
 public:
+    PubPink();
+
     void toConsole();
+
+    virtual void onClick();
+    virtual void onVariableSet();
+
+private:
+    int _round;
+
+    virtual bool sendUseClickMessage(SupportingActor *actor);
+    virtual void updateCursor(Common::Point point);
+    virtual WalkLocation *getWalkDestination();
+
+    bool playingMiniGame();
 };
 
 
