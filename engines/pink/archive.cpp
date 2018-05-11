@@ -45,7 +45,8 @@
 #include <engines/pink/objects/actors/cursor_actor.h>
 #include <engines/pink/objects/handlers/handler_timer.h>
 #include <engines/pink/objects/actors/inventory_actor.h>
-#include "constants.h"
+#include <engines/pink/objects/actors/audio_info_pda_button.h>
+#include <engines/pink/objects/actors/pda_button_actor.h>
 
 namespace Pink {
 
@@ -128,7 +129,7 @@ static Object* createObject(int objectId){
         case kActor:
             return new Actor;
         case kAudioInfoPDAButton:
-        //  return new AudioInfoPDAButton;
+            return new AudioInfoPDAButton;
         case kConditionGameVariable:
             return new ConditionGameVariable;
         case kConditionInventoryItemOwner:
@@ -167,7 +168,7 @@ static Object* createObject(int objectId){
         case kModuleProxy:
             return new ModuleProxy;
         case kPDAButtonActor:
-          //return new PDAButtonActor;
+            return new PDAButtonActor;
         case kParlSqPink:
             return new ParlSqPink;
         case kPubPink:
@@ -207,6 +208,7 @@ static Object* createObject(int objectId){
         case kWalkLocation:
             return new WalkLocation;
         default:
+            error("Unknown object id");
             return nullptr;
     }
 }
