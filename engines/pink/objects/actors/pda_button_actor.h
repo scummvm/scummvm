@@ -27,7 +27,7 @@
 
 namespace Pink {
 
-class PDAButtonActor : Actor {
+class PDAButtonActor : public Actor {
 public:
     enum Command {Null = 0, GoToPage = 1, Close = 2, Unk = 4};
 
