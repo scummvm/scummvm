@@ -76,8 +76,6 @@ void ActionSound::end() {
         Director *director = _actor->getPage()->getGame()->getDirector();
         director->removeSound(this);
 
-        _sound->stop();
-
         delete _sound;
         _sound = nullptr;
     }
