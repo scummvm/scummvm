@@ -36,7 +36,6 @@ public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
     virtual void update();
-    virtual void end();
 
 protected:
     virtual void onStart();
