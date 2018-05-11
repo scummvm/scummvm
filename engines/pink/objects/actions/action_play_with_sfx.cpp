@@ -78,13 +78,6 @@ ActionPlayWithSfx::~ActionPlayWithSfx() {
     }
 }
 
-void ActionPlayWithSfx::end() {
-    ActionPlay::end();
-    for (int i = 0; i < _sfxArray.size(); ++i) {
-        _sfxArray[i]->end();
-    }
-}
-
 void ActionSfx::deserialize(Pink::Archive &archive) {
     archive >> _frame >> _volume >> _sfxName;
     archive.readObject();
