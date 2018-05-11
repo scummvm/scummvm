@@ -61,9 +61,10 @@ int ControlPanel::execute() {
 		w.writeString("\xB""000\t000\x1");
 		w.update();
 
+		events.updateGameCounter();
+		intf.draw3d(false, false);
+
 		do {
-			events.updateGameCounter();
-			intf.draw3d(false, false);
 			w.writeString("\r");
 			drawButtons(&w);
 			w.writeString(text);
@@ -80,7 +81,7 @@ int ControlPanel::execute() {
 			checkEvents(_vm);
 			if (_vm->shouldExit())
 				return 0;
-		} while (!_buttonValue && !events.timeElapsed());
+		} while (!_buttonValue && events.timeElapsed() < 2);
 
 		switch (_buttonValue) {
 		case Common::KEYCODE_q:
