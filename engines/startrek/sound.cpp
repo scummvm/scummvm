@@ -149,6 +149,9 @@ void Sound::playMidiMusicTracks(int startTrack, int loopTrack) {
 		playMidiTrackInSlot(0, startTrack);
 }
 
+/**
+ * TODO: original game had some caching of loaded voc files.
+ */
 void Sound::playVoc(const Common::String &baseSoundName) {
 	/*
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
@@ -169,7 +172,7 @@ void Sound::playVoc(const Common::String &baseSoundName) {
 		sub_2aaa3();
 	*/
 
-	for (int i=0; i<MAX_SFX_PLAYING; i++) {
+	for (int i = 0; i < MAX_SFX_PLAYING; i++) {
 		if (_vm->_system->getMixer()->isSoundHandleActive(_sfxHandles[i]))
 			continue;
 
@@ -304,7 +307,7 @@ void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 	}
 	
 	debugC(5, kDebugSound, "Loading midi \'%s\'\n", soundName.c_str());
-	SharedPtr<Common::SeekableReadStream> soundStream = _vm->openFile(soundName.c_str());
+	SharedPtr<Common::SeekableReadStream> soundStream = _vm->loadFile(soundName.c_str());
 	
 	if (loadedSoundData != nullptr)
 		delete[] loadedSoundData;

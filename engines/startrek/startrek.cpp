@@ -39,13 +39,23 @@
 
 namespace StarTrek {
 
-StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc) {
+StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc) :
+	Engine(syst),
+	_gameDescription(gamedesc),
+	_kirkObject(&_objectList[0]),
+	_spockObject(&_objectList[1]),
+	_mccoyObject(&_objectList[2]),
+	_redshirtObject(&_objectList[3]) {
+
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound");
+	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics");
 
 	_gfx = nullptr;
 	_sound = nullptr;
 	_macResFork = nullptr;
 	_room = nullptr;
+
+	_redshirtDead = false;
 
 	_clockTicks = 0;
 
@@ -82,84 +92,188 @@ Common::Error StarTrekEngine::run() {
 	}
 
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
-
 	initializeEventsAndMouse();
-	
-// Test graphics/music:
 
-// Music Status:
-// DOS Full: Adlib and MT-32 Sounds supported
-// DOS Demo: Adlib and MT-32 Sounds supported
-// Amiga: Sound effects supported
-// Macintosh: MIDI and sound effects playable, format not handled.
+	_frameIndex = 0;
 
-// Graphics Status:
-// DOS/Amiga/Macintosh/Demo Graphics: 100%
-// Judgment Rites Backgrounds supported too
-// EGA not supported
+	_gameMode = -1;
+	_lastGameMode = -1;
+
+	runGameMode(GAMEMODE_BEAMDOWN);
+	return Common::kNoError;
+
+
 #if 1
 	_room = new Room(this, "DEMON0");
-	if (getGameType() == GType_ST25) {
-		_gfx->loadPalette("PALETTE");
-		_gfx->loadPri("DEMON0.PRI");
-		_gfx->redrawScreen();
-		
-		_sound->loadMusicFile("GROUND");
-	} else {
-		_gfx->drawBackgroundImage("BRIDGE.BGD");
-	}
+	_gfx->loadPalette("PALETTE");
+	_gfx->loadPri("DEMON0.PRI");
 
-	// Sprite tests
-
-	// Draw mode 0
-	Sprite *spr = new Sprite;
-	_gfx->addSprite(spr);
-	spr->bitmap = _gfx->loadBitmap("MWALKE00");
-	spr->drawPriority = 1;
-	spr->pos.x = 150;
-	spr->pos.y = 100;
-	spr->drawMode = 0;
-
-	// Draw mode 2 (translucent background)
-	spr = new Sprite;
-	_gfx->addSprite(spr);
-	spr->bitmap = _gfx->loadBitmap("KWALKS00");
-	spr->drawPriority = 1;
-	spr->pos.x = 230;
-	spr->pos.y = 100;
-	spr->drawMode = 2;
-
-	/*
-	// Draw mode 3 (text)
-	spr = new Sprite;
-	_gfx->addSprite(spr);
-	spr->bitmap = SharedPtr<Bitmap>(new TextBitmap(8*8,8*8));
-	for (int i=0;i<8*8;i++)
-		spr->bitmap->pixels[i] = 0x40+i;
-	spr->pos.x = 8*10;
-	spr->pos.y = 50;
-	spr->textColor = 0xb3;
-	spr->drawMode = 3;
-
-	// initTextSprite function
-	spr = new Sprite;
-	int x=0,y=0;
-	_gfx->initTextSprite(&x, &y, 0xb3, 3, false, spr);
-	spr->pos.y = 150;
-	*/
+	_sound->loadMusicFile("GROUND");
 
 
 	while (true) {
 		_gfx->showOptionsMenu(0, 0);
 	}
-	_gfx->showText(&Graphics::readTextFromRdf, 0x2220, 150, 160, 0xb3, 0, 10, 0);
 	
 	while (!shouldQuit()) {
 		pollSystemEvents();
 	}
-#endif
 
 	return Common::kNoError;
+#endif
+}
+
+Common::Error StarTrekEngine::runGameMode(int mode) {
+	_gameMode = mode;
+
+	_sound->stopAllVocSounds();
+	if (!_sound->_loopingAudioName.empty())
+		_sound->playVoc(_sound->_loopingAudioName);
+
+	if (_gameMode == GAMEMODE_START)
+		_gameMode = GAMEMODE_BRIDGE;
+
+	while (true) {
+		if (_gameMode != _lastGameMode) {
+			// Cleanup previous game mode
+			switch (_lastGameMode) {
+			case GAMEMODE_BRIDGE:
+				//cleanupBridgeMode();
+				break;
+
+			case GAMEMODE_AWAYMISSION:
+				//cleanupAwayMissionMode();
+				break;
+
+			case GAMEMODE_BEAMDOWN:
+			case GAMEMODE_BEAMUP:
+				break;
+			}
+
+			_lastGameMode = _gameMode;
+
+			// Load next game mode
+			switch (_gameMode) {
+			case GAMEMODE_BRIDGE:
+				_sound->loadMusicFile("bridge");
+				//initBridge();
+				break;
+
+			case GAMEMODE_AWAYMISSION:
+				//initAwayMission();
+				break;
+
+			case GAMEMODE_BEAMDOWN:
+				_redshirtDead = false;
+				_sound->loadMusicFile("ground");
+				runTransportSequence("teled");
+				_gameMode = GAMEMODE_AWAYMISSION;
+				continue; // Back to start of loop
+
+			case GAMEMODE_BEAMUP:
+				runTransportSequence("teleb");
+				_gameMode = GAMEMODE_BRIDGE;
+				//sub_15c61();
+				_sound->stopAllVocSounds();
+				_sound->playVoc("bridloop");
+				continue; // Back to start of loop
+			}
+		}
+
+		// Run current game mode
+		switch (_gameMode) {
+		case GAMEMODE_BRIDGE:
+			//runBridge();
+			break;
+
+		case GAMEMODE_AWAYMISSION:
+			//runAwayMission();
+			break;
+
+		case GAMEMODE_BEAMDOWN:
+		case GAMEMODE_BEAMUP:
+			error("Can't be here.");
+			break;
+		}
+	}
+
+	return Common::kNoError;
+}
+
+void StarTrekEngine::runTransportSequence(const Common::String &name) {
+	const uint16 crewmanTransportPositions[][2] = {
+		{ 0x8e, 0x7c },
+		{ 0xbe, 0x7c },
+		{ 0x7e, 0x72 },
+		{ 0xaa, 0x72 }
+	};
+
+	_sound->stopAllVocSounds();
+	// sub_1e70d();
+	objectFunc1();
+	initObjects();
+
+	SharedPtr<Bitmap> bgImage = _gfx->loadBitmap("transprt");
+	_gfx->setBackgroundImage(bgImage);
+	_gfx->clearPri();
+	_gfx->loadPalette("palette");
+	_gfx->drawDirectToScreen(bgImage);
+	_system->updateScreen();
+
+	for (int i = 0; i < (_redshirtDead ? 3 : 4); i++) {
+		Common::String filename = getCrewmanAnimFilename(i, name);
+		int x = crewmanTransportPositions[i][0];
+		int y = crewmanTransportPositions[i][1];
+		loadAnimationForObject(i, filename, x, y, 256);
+		_objectList[i].animationString[0] = '\0';
+	}
+
+	if (_missionToLoad.equalsIgnoreCase("feather") && name[4] == 'b') {
+		loadAnimationForObject(9, "qteleb", 0x61, 0x79, 0x100);
+	}
+	else if (_missionToLoad.equalsIgnoreCase("trial")) {
+		if (name[4] == 'd') {
+			loadAnimationForObject(9, "qteled", 0x61, 0x79, 0x100);
+		}
+		/* TODO
+		else if (word_51156 >= 3) {
+			loadAnimationForObject(9, "qteleb", 0x61, 0x79, 0x100);
+		}
+		*/
+	}
+
+	loadAnimationForObject(8, "transc", 0, 0, 0x100);
+
+	// TODO: redraw mouse and sprite_52c4e?
+
+	_gfx->drawAllSprites();
+	// sub_1e6ab();
+
+	playSoundEffectIndex(0x0a);
+
+	if (name.equalsIgnoreCase("teled"))
+		playSoundEffectIndex(0x08);
+	else
+		playSoundEffectIndex(0x09);
+
+	while (_objectList[0].field62 == 0) {
+		TrekEvent event;
+		if (popNextEvent(&event)) {
+			if (event.type == TREKEVENT_TICK) {
+				// TODO: redraw sprite_52c4e?
+				_frameIndex++;
+				updateObjectAnimations();
+				_gfx->drawAllSprites();
+			}
+		}
+	}
+
+	// TODO: redraw sprite_52c4e?
+
+	_gfx->drawAllSprites();
+	// sub_1e70d();
+	objectFunc1();
+	initObjects();
 }
 
 Room *StarTrekEngine::getRoom() {
@@ -191,13 +305,19 @@ void StarTrekEngine::pollSystemEvents() {
 			break;
 		}
 	}
-	_gfx->drawAllSprites();
+
+	// FIXME: get the actual duration of a tick right
+	_clockTicks++;
+	TrekEvent tickEvent;
+	tickEvent.type = TREKEVENT_TICK;
+	tickEvent.tick = _clockTicks;
+	addEventToQueue(tickEvent);
 
 	_system->delayMillis(1000/60);
 }
 
 void StarTrekEngine::playSoundEffectIndex(int index) {
-	switch(index) {
+	switch (index) {
 	case 0x04:
 		_sound->playVoc("tricorde");
 		break;
@@ -256,14 +376,262 @@ void StarTrekEngine::stopPlayingSpeech() {
 	_sound->stopPlayingSpeech();
 }
 
+void StarTrekEngine::initObjects() {
+	for (int i = 0; i < MAX_OBJECTS; i++) {
+		_objectList[i] = Object();
+	}
+	for (int i = 0; i < MAX_OBJECTS / 2; i++)
+		_objectBanFiles[i].reset();
+
+	strcpy(_kirkObject->animationString, "kstnd");
+	strcpy(_spockObject->animationString, "sstnd");
+	strcpy(_mccoyObject->animationString, "mstnd");
+	strcpy(_redshirtObject->animationString, "rstnd");
+}
+
+int StarTrekEngine::loadAnimationForObject(int objectIndex, const Common::String &animName, uint16 x, uint16 y, uint16 arg8) {
+	debugC(6, kDebugGraphics, "Load animation '%s' on object %d", animName.c_str(), objectIndex);
+
+	Object *object;
+
+	if (objectIndex == -1) {
+		// TODO
+	}
+	else
+		object = &_objectList[objectIndex];
+
+	if (object->spriteDrawn) {
+		releaseAnim(object);
+		drawObjectToScreen(object, animName, x, y, arg8, false);
+	}
+	else {
+		drawObjectToScreen(object, animName, x, y, arg8, true);
+	}
+
+	object->field64 = 0;
+	object->field66 = 0;
+
+	return objectIndex;
+}
+
+void StarTrekEngine::updateObjectAnimations() {
+	for (int i = 0; i < MAX_OBJECTS; i++) {
+		Object *object = &_objectList[i];
+		if (!object->spriteDrawn)
+			continue;
+
+		switch (object->animType) {
+		case 0:
+		case 2:
+			if (object->frameToStartNextAnim >= _frameIndex) {
+				int nextAnimIndex = 0; // TODO: "chooseNextAnimFrame" function
+				object->animFile->seek(18 + nextAnimIndex + object->animFrame * 22, SEEK_SET);
+				byte nextAnimFrame = object->animFile->readByte();
+
+				debugC(7, kDebugGraphics, "Object %d animation frame %d", i, nextAnimFrame);
+
+				if (object->animFrame != nextAnimFrame) {
+					if (nextAnimFrame == object->numAnimFrames - 1) {
+						object->field62++;
+						if (object->field64 != 0) {
+							// sub_20099(10, object->field66, 0, 0);
+						}
+					}
+				}
+
+				object->animFrame = nextAnimFrame;
+				if (object->animFrame >= object->numAnimFrames) {
+					if (object->animationString[0] == '\0')
+						removeObjectFromScreen(i);
+					/*
+					else // TODO
+						initStandAnim(i);
+						*/
+				}
+				else {
+					Sprite *sprite = &object->sprite;
+
+					object->animFile->seek(object->animFrame * 22, SEEK_SET);
+					char animFrameFilename[16];
+					object->animFile->read(animFrameFilename, 16);
+					sprite->setBitmap(loadAnimationFrame(animFrameFilename, object->scale));
+
+					memset(object->animationString4, 0, 16);
+					strncpy(object->animationString4, animFrameFilename, 15);
+
+					object->animFile->seek(10, SEEK_SET);
+					uint16 xOffset = object->animFile->readUint16();
+					uint16 yOffset = object->animFile->readUint16();
+					uint16 basePriority = object->animFile->readUint16();
+
+					sprite->pos.x = xOffset + object->field5e;
+					sprite->pos.y = yOffset + object->field60;
+					sprite->drawPriority = _gfx->getPriValue(0, yOffset + object->field60) + basePriority;
+					sprite->bitmapChanged = true;
+
+					object->frameToStartNextAnim = object->animFile->readUint16() + _frameIndex;
+				}
+			}
+			break;
+		case 1: // TODO
+			warning("Unimplemented anim type %d", object->animType);
+			break;
+		default:
+			error("Invalid anim type.");
+			break;
+		}
+	}
+}
+
+void StarTrekEngine::removeObjectFromScreen(int objectIndex) {
+	Object *object = &_objectList[objectIndex];
+
+	if (object->spriteDrawn != 1)
+		return;
+
+	debugC(6, kDebugGraphics, "Stop drawing object %d", objectIndex);
+
+	Sprite *sprite = &object->sprite;
+	sprite->field16 = true;
+	sprite->bitmapChanged = true;
+	_gfx->drawAllSprites();
+	_gfx->delSprite(sprite);
+	releaseAnim(object);
+}
+
+void StarTrekEngine::objectFunc1() {
+	for (int i = 0; i < MAX_OBJECTS; i++) {
+		if (_objectList[i].spriteDrawn == 1) {
+			removeObjectFromScreen(i);
+		}
+	}
+
+	for (int i = 0; i < MAX_OBJECTS / 2; i++) {
+		_objectBanFiles[i].reset();
+	}
+}
+
+void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_animName, uint16 x, uint16 y, uint16 arg8, bool addSprite) {
+	Common::String animFilename = _animName;
+	if (_animName.hasPrefixIgnoreCase("stnd") /* && word_45d20 == -1 */) // TODO
+		animFilename += 'j';
+	memcpy(object->animationString3, _animName.c_str(), sizeof(object->animationString3));
+
+	object->animType = 2;
+	object->animFile = loadFile(animFilename + ".anm");
+	object->numAnimFrames = object->animFile->size() / 22;
+	object->animFrame = 0;
+	object->field5e = x;
+	object->field60 = y;
+	object->field62 = 0;
+	object->scale = arg8;
+
+	object->animFile->seek(16, SEEK_SET);
+	object->frameToStartNextAnim = object->animFile->readUint16() + _frameIndex;
+
+	char firstFrameFilename[10];
+	object->animFile->seek(0, SEEK_SET);
+	object->animFile->read(firstFrameFilename, 10);
+
+	Sprite *sprite = &object->sprite;
+	if (addSprite)
+		_gfx->addSprite(sprite);
+
+	sprite->setBitmap(loadAnimationFrame(firstFrameFilename, arg8));
+	memset(object->animationString4, 0, sizeof(char) * 10);
+	strncpy(object->animationString4, firstFrameFilename, sizeof(char) * 9);
+
+	object->scale = arg8;
+
+	object->animFile->seek(10, SEEK_SET);
+	uint16 xOffset = object->animFile->readUint16();
+	uint16 yOffset = object->animFile->readUint16();
+	uint16 basePriority = object->animFile->readUint16();
+
+	sprite->pos.x = xOffset + object->field5e;
+	sprite->pos.y = yOffset + object->field60;
+	sprite->drawPriority = _gfx->getPriValue(0, yOffset + object->field60) + basePriority;
+	sprite->bitmapChanged = true;
+
+	object->spriteDrawn = 1;
+}
+
+void StarTrekEngine::releaseAnim(Object *object) {
+	switch (object->animType) {
+	case 0:
+	case 2:
+		object->sprite.bitmap.reset();
+		object->animFile.reset();
+		break;
+	case 1: // TODO
+		warning("Unimplemented anim type %d", object->animType);
+		break;
+	default:
+		error("Invalid anim type.");
+		break;
+	}
+
+	object->spriteDrawn = 0;
+}
+
+SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, uint16 arg2) {
+	SharedPtr<Bitmap> bitmapToReturn;
+
+	char basename[5];
+	strncpy(basename, filename.c_str()+1, 4);
+	basename[4] = '\0';
+
+	char c = filename[0];
+	if ((strcmp(basename, "stnd") == 0 || strcmp(basename, "tele") == 0)
+			&& (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
+		if (c == 'm') {
+			bitmapToReturn = _gfx->loadBitmap(filename);
+		}
+		else {
+			// bitmapToReturn = _gfx->loadBitmap(filename + ".$bm"); // FIXME: should be this?
+			if (bitmapToReturn == nullptr) {
+				Common::String newFilename = filename;
+				newFilename.setChar('m', 0); // FIXME: original writes directly to argument; does that affect anything?
+				bitmapToReturn = _gfx->loadBitmap(newFilename);
+			}
+		}
+	}
+	else {
+		// TODO: when loading a bitmap, it passes a different argument than is standard to
+		// the "file loading with cache" function...
+		bitmapToReturn = _gfx->loadBitmap(filename);
+	}
+
+	if (arg2 != 256) {
+		// TODO
+		// bitmapToReturn = scaleBitmap(bitmapToReturn, arg2);
+	}
+
+	return bitmapToReturn;
+}
+
+Common::String StarTrekEngine::getCrewmanAnimFilename(int objectIndex, const Common::String &basename) {
+	const char *crewmanChars = "ksmr";
+	assert(objectIndex >= 0 && objectIndex < 4);
+	return crewmanChars[objectIndex] + basename;
+}
+
 void StarTrekEngine::updateClockTicks() {
 	// TODO (based on DOS interrupt 1A, AH=0; read system clock counter)
 
 	_clockTicks = 0;
 }
 
-SharedPtr<FileStream> StarTrekEngine::openFile(Common::String filename, int fileIndex) {
+/**
+ * TODO:
+ *   - Should return nullptr on failure to open a file?
+ *   - This is supposed to cache results, return same FileStream on multiple accesses.
+ *   - This is supposed to read from a "patches" folder which overrides files in the
+ *     packed blob.
+ */
+SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int fileIndex) {
 	filename.toUppercase();
+
 	Common::String basename, extension;
 
 	bool bigEndian = getPlatform() == Common::kPlatformAmiga;
@@ -278,11 +646,18 @@ SharedPtr<FileStream> StarTrekEngine::openFile(Common::String filename, int file
 		}
 	}
 
+	// FIXME: don't know if this is right, or if it goes here
+	while (!basename.empty() && basename.lastChar() == ' ') {
+		basename.erase(basename.size() - 1, 1);
+	}
+
+	filename = basename + '.' + extension;
+
 	// The Judgment Rites demo has its files not in the standard archive
 	if (getGameType() == GType_STJR && (getFeatures() & GF_DEMO)) {
 		Common::File *file = new Common::File();
 		if (!file->open(filename.c_str()))
-			error ("Could not find file \'%s\'", filename.c_str());
+			error("Could not find file \'%s\'", filename.c_str());
 		return SharedPtr<FileStream>(new FileStream(file, bigEndian));
 	}
 
@@ -291,7 +666,7 @@ SharedPtr<FileStream> StarTrekEngine::openFile(Common::String filename, int file
 	if (getPlatform() == Common::kPlatformAmiga) {
 		indexFile = SearchMan.createReadStreamForMember("data000.dir");
 		if (!indexFile)
-			error ("Could not open data000.dir");
+			error("Could not open data000.dir");
 	} else if (getPlatform() == Common::kPlatformMacintosh) {
 		indexFile = _macResFork->getResource("Directory");
 		if (!indexFile)
@@ -299,7 +674,7 @@ SharedPtr<FileStream> StarTrekEngine::openFile(Common::String filename, int file
 	} else {
 		indexFile = SearchMan.createReadStreamForMember("data.dir");
 		if (!indexFile)
-			error ("Could not open data.dir");
+			error("Could not open data.dir");
 	}
 	
 	uint32 indexOffset = 0;
@@ -353,9 +728,9 @@ SharedPtr<FileStream> StarTrekEngine::openFile(Common::String filename, int file
 		if ((basename.lastChar() >= '1' && basename.lastChar() <= '9') ||
 				(basename.lastChar() >= 'B' && basename.lastChar() <= 'Z')) {
 			basename.setChar(basename.lastChar()-1, basename.size()-1);
-			return openFile(basename + "." + extension, fileIndex+1);
+			return loadFile(basename + "." + extension, fileIndex+1);
 		} else
-			error ("Could not find file \'%s\'", filename.c_str());
+			error("Could not find file \'%s\'", filename.c_str());
 	}
 
 	if (fileIndex >= fileCount)

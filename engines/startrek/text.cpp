@@ -68,7 +68,7 @@ int Graphics::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int 
 	int16 tmpTextDisplayMode = _textDisplayMode;
 
 	uint32 var7c = 8;
-	if (_textboxVar3 > _textboxVar2+1) {
+	if (_vm->_frameIndex > _textboxVar2+1) {
 		var7c = 0x10;
 	}
 
@@ -291,7 +291,7 @@ reloadText:
 		// sub_272B4
 	}
 
-	_textboxVar2 = _textboxVar3;
+	_textboxVar2 = _vm->_frameIndex;
 	_vm->stopPlayingSpeech();
 	return choiceIndex;
 }
@@ -347,7 +347,7 @@ int Graphics::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
 					}
 				}
 				// sub_1E88C();
-				_textboxVar3++;
+				_vm->_frameIndex++;
 
 				if (ticksUntilClickingEnabled != 0 && _vm->_clockTicks >= tickWhenClickingEnabled)
 					return MENUEVENT_ENABLEINPUT;
@@ -818,7 +818,7 @@ void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	_activeMenu = SharedPtr<Menu>(new Menu());
 	_activeMenu->nextMenu = oldMenu;
 
-	SharedPtr<FileStream> stream = _vm->openFile(mnuFilename + ".MNU");
+	SharedPtr<FileStream> stream = _vm->loadFile(mnuFilename + ".MNU");
 
 	_activeMenu->menuFile = stream;
 	_activeMenu->numButtons = _activeMenu->menuFile->size() / 16;

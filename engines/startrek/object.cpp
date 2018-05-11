@@ -18,32 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/graphics.h $
- * $Id: graphics.h 2 2009-09-12 20:13:40Z clone2727 $
- *
  */
 
-#include "startrek/filestream.h"
-#include "startrek/room.h"
-#include "startrek/startrek.h"
-
+#include "object.h"
 
 namespace StarTrek {
-
-Room::Room(StarTrekEngine *vm, Common::String name) : _vm(vm) {
-	SharedPtr<FileStream> rdfFile = _vm->loadFile(name + ".RDF");
-
-	int size = rdfFile->size();
-	_rdfData = new byte[size];
-	rdfFile->read(_rdfData, size);
-}
-
-Room::~Room() {
-	delete[] _rdfData;
-}
-
-uint16 Room::readRdfWord(int offset) {
-	return _rdfData[offset] | (_rdfData[offset+1]<<8);
-}
 
 }

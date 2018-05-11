@@ -63,18 +63,6 @@ struct Sprite {
 	Common::Rect getRect();
 };
 
-
-class SpriteList {
-public:
-	SpriteList(int n) { sprites = new Sprite[n]; }
-	~SpriteList() { delete[] sprites; }
-
-	Sprite &operator[](int i) const { return sprites[i]; }
-
-private:
-	Sprite *sprites;
-};
-
 }
 
 #endif

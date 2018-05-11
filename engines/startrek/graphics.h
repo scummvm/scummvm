@@ -70,18 +70,17 @@ public:
 	Graphics(StarTrekEngine *vm);
 	~Graphics();
 	
-	void loadEGAData(const char *egaFile);
-	void drawBackgroundImage(const char *filename);
-
+	void setBackgroundImage(SharedPtr<Bitmap> bitmap);
 	void loadPalette(const String &paletteFile);
 	void loadPri(const char *priFile);
+	void clearPri();
+	byte getPriValue(int x, int y);
 
 	SharedPtr<Bitmap> loadBitmap(String basename);
 
 	Common::Point getMousePos();
 	void setMouseCursor(SharedPtr<Bitmap> bitmap);
 
-	void redrawScreen();
 	void drawSprite(const Sprite &sprite);
 	void drawSprite(const Sprite &sprite, const Common::Rect &rect);
 	void drawAllSprites();
@@ -89,18 +88,19 @@ public:
 	void addSprite(Sprite *sprite);
 	void delSprite(Sprite *sprite);
 	
+
+	void drawDirectToScreen(SharedPtr<Bitmap> bitmap);
+	void loadEGAData(const char *egaFile);
+	void drawBackgroundImage(const char *filename);
 	
 private:
-	void drawBitmapToScreen(Bitmap *bitmap);
-
-
 	StarTrekEngine *_vm;
 	Font *_font;
 	
 	bool _egaMode;
 	byte *_egaData;
-	byte *_priData;
 	byte *_lutData;
+	byte _priData[SCREEN_WIDTH*SCREEN_HEIGHT / 2];
 
 	Common::Rect _screenRect;
 	SharedPtr<Bitmap> _backgroundImage;
@@ -156,11 +156,13 @@ public:
 
 private:
 	int16 _textDisplayMode;
+
+public:
 	uint32 _textboxVar2;
-	uint32 _textboxVar3;
 	uint16 _textboxVar6;
 	bool _textboxHasMultipleChoices;
 
+private:
 	SharedPtr<Menu> _activeMenu;
 
 	// Saved value of StarTrekEngine::_keyboardControlsMouse when menus are up

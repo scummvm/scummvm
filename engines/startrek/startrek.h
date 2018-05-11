@@ -36,6 +36,7 @@
 
 #include "startrek/filestream.h"
 #include "startrek/graphics.h"
+#include "startrek/object.h"
 #include "startrek/room.h"
 #include "startrek/sound.h"
 
@@ -58,9 +59,24 @@ enum StarTrekGameFeatures {
 };
 
 enum kDebugLevels {
-	kDebugSound =  1 << 0
+	kDebugSound =     1 << 0,
+	kDebugGraphics =  1 << 1
 };
 
+
+enum GameMode {
+	GAMEMODE_START = 0,
+	GAMEMODE_BRIDGE,
+	GAMEMODE_AWAYMISSION,
+	GAMEMODE_BEAMDOWN,
+	GAMEMODE_BEAMUP
+};
+
+enum TextDisplayMode {
+	TEXTDISPLAY_WAIT = 0,  // Wait for input before closing text
+	TEXTDISPLAY_SUBTITLES, // Automatically continue when speech is done
+	TEXTDISPLAY_NONE       // No text displayed
+};
 
 enum TrekEventType {
 	TREKEVENT_TICK = 0, // DOS clock changes (see updateClockTicks)
@@ -72,18 +88,14 @@ enum TrekEventType {
 	TREKEVENT_KEYDOWN = 6
 };
 
-enum TextDisplayMode {
-	TEXTDISPLAY_WAIT = 0,  // Wait for input before closing text
-	TEXTDISPLAY_SUBTITLES, // Automatically continue when speech is done
-	TEXTDISPLAY_NONE       // No text displayed
-};
-
 struct TrekEvent {
 	TrekEventType type;
 	Common::KeyState kbd;
 	Common::Point mouse;
 	uint32 tick;
 };
+
+const int MAX_OBJECTS = 0x20;
 
 struct StarTrekGameDescription;
 class Graphics;
@@ -92,6 +104,11 @@ class Sound;
 class StarTrekEngine : public ::Engine {
 protected:
 	Common::Error run();
+
+private:
+	// Game modes
+	Common::Error runGameMode(int mode);
+	void runTransportSequence(const Common::String &name);
 
 public:
 	StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc);
@@ -104,6 +121,18 @@ public:
 	void playSoundEffectIndex(int index);
 	void playSpeech(const Common::String &filename);
 	void stopPlayingSpeech();
+
+	// Objects
+	void initObjects();
+	int loadAnimationForObject(int objectIndex, const Common::String &animName, uint16 x, uint16 y, uint16 arg8);
+	void updateObjectAnimations();
+	void removeObjectFromScreen(int objectIndex);
+	void objectFunc1();
+	void drawObjectToScreen(Object *object, const Common::String &animName, uint16 field5e, uint16 field60, uint16 arg8, bool addSprite);
+	void releaseAnim(Object *object);
+
+	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, uint16 arg2);
+	Common::String getCrewmanAnimFilename(int objectIndex, const Common::String &basename);
 
 	// Events
 public:
@@ -138,14 +167,30 @@ public:
 	Common::Language getLanguage();
 
 	// Resource related functions
-	SharedPtr<FileStream> openFile(Common::String filename, int fileIndex=0);
+	SharedPtr<FileStream> loadFile(Common::String filename, int fileIndex=0);
 
 	// Movie related functions
 	void playMovie(Common::String filename);
 	void playMovieMac(Common::String filename);
 
 
+public:
+	int _gameMode;
+	int _lastGameMode;
+	bool _redshirtDead;
+	Common::String _missionToLoad;
+
+	Object _objectList[MAX_OBJECTS];
+	Object * const _kirkObject;
+	Object * const _spockObject;
+	Object * const _mccoyObject;
+	Object * const _redshirtObject;
+
+	SharedPtr<FileStream> _objectBanFiles[MAX_OBJECTS / 2];
+	uint16 _objectBanVar2[MAX_OBJECTS / 2]; // TODO: initialize?
+
 	uint32 _clockTicks;
+	uint32 _frameIndex;
 
 	bool _musicEnabled;
 	bool _sfxEnabled;
