@@ -21,6 +21,7 @@
  */
 
 #include "audio/audiostream.h"
+#include "audio/decoders/ac3.h"
 #include "audio/decoders/mp3.h"
 #include "common/debug.h"
 #include "common/endian.h"
@@ -118,7 +119,7 @@ void MPEGPSDecoder::readNextPacket() {
 
 #ifdef USE_A52
 					handled = true;
-					AC3AudioTrack *ac3Track = new AC3AudioTrack(packet);
+					AC3AudioTrack *ac3Track = new AC3AudioTrack(*packet, getSoundType());
 					stream = ac3Track;
 					_streamMap[startCode] = ac3Track;
 					addTrack(ac3Track);
@@ -545,137 +546,29 @@ Audio::AudioStream *MPEGPSDecoder::MPEGAudioTrack::getAudioStream() const {
 
 #ifdef USE_A52
 
-MPEGPSDecoder::AC3AudioTrack::AC3AudioTrack(Common::SeekableReadStream *firstPacket) {
-	// In theory, I should pass mm_accel() to a52_init(), but I don't know
-	// where that's supposed to be defined.
-	_a52State = a52_init(0);
-
-	initStream(firstPacket);
-	if (_sampleRate >= 0) {
-		_audStream = Audio::makeQueuingAudioStream(_sampleRate, true);
-	} else {
-		_audStream = 0;
-	}
-
-	firstPacket->seek(0);
-
-	_inBufPtr = _inBuf;
-	_flags = 0;
-	_frameSize = 0;
+MPEGPSDecoder::AC3AudioTrack::AC3AudioTrack(Common::SeekableReadStream &firstPacket, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType) {
+	_audStream = Audio::makeAC3Stream(firstPacket);
+	if (!_audStream)
+		error("Could not create AC-3 stream");
 }
 
 MPEGPSDecoder::AC3AudioTrack::~AC3AudioTrack() {
 	delete _audStream;
-	a52_free(_a52State);
 }
 
 bool MPEGPSDecoder::AC3AudioTrack::sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts) {
-	if (_audStream) {
-		decodeAC3Data(packet);
-	}
-	delete packet;
+	// Skip DVD code
+	packet->readUint32LE();
+	if (packet->eos())
+		return true;
+
+	_audStream->queuePacket(packet);
 	return true;
 }
 
 Audio::AudioStream *MPEGPSDecoder::AC3AudioTrack::getAudioStream() const {
 	return _audStream;
-}
-
-enum {
-	HEADER_SIZE = 7
-};
-
-void MPEGPSDecoder::AC3AudioTrack::initStream(Common::SeekableReadStream *packet) {
-	byte buf[HEADER_SIZE];
-
-	_sampleRate = -1;
-
-	// Probably not very efficient, but hopefully we never do more than a
-	// few iterations of this loop.
-	for (uint i = 0; i < packet->size() - sizeof(buf); i++) {
-		int flags, bitRate;
-
-		packet->seek(i, SEEK_SET);
-		packet->read(buf, sizeof(buf));
-
-		if (a52_syncinfo(buf, &flags, &_sampleRate, &bitRate) > 0) {
-			break;
-		}
-	}
-}
-
-void MPEGPSDecoder::AC3AudioTrack::decodeAC3Data(Common::SeekableReadStream *packet) {
-	// Skip the DVD code
-	packet->readUint32LE();
-	if (packet->eos())
-		return;
-
-	while (packet->pos() < packet->size()) {
-		uint32 leftSize = packet->size() - packet->pos();
-		uint32 len = _inBufPtr - _inBuf;
-		if (_frameSize == 0) {
-			// No header seen: find one
-			len = HEADER_SIZE - len;
-			if (len > leftSize)
-				len = leftSize;
-			packet->read(_inBufPtr, len);
-			leftSize -= len;
-			_inBufPtr += len;
-			if ((_inBufPtr - _inBuf) == HEADER_SIZE) {
-				int sampleRate, bitRate;
-				len = a52_syncinfo(_inBuf, &_flags, &sampleRate, &bitRate);
-				if (len == 0) {
-					memmove(_inBuf, _inBuf + 1, HEADER_SIZE - 1);
-					_inBufPtr--;
-				} else {
-					_frameSize = len;
-				}
-			}
-		} else if (len < _frameSize) {
-			len = _frameSize - len;
-			if (len > leftSize)
-				len = leftSize;
-
-			assert(len < sizeof(_inBuf) - (_inBufPtr - _inBuf));
-			packet->read(_inBufPtr, len);
-			leftSize -= len;
-			_inBufPtr += len;
-		} else {
-			int flags = A52_STEREO | A52_ADJUST_LEVEL;
-			sample_t level = 32767;
-
-			if (a52_frame(_a52State, _inBuf, &flags, &level, 0) != 0)
-				error("Frame fail");
-
-			int16 *outputBuffer = (int16 *)malloc(6 * 256 * 2 * 2);
-			int16 *outputPtr = outputBuffer;
-			int outputLength = 0;
-			for (int i = 0; i < 6; i++) {
-				if (a52_block(_a52State) == 0) {
-					sample_t *samples = a52_samples(_a52State);
-					for (int j = 0; j < 256; j++) {
-						*outputPtr++ = (int16)samples[j];
-						*outputPtr++ = (int16)samples[j + 256];
-					}
-
-					outputLength += 1024;
-				}
-			}
-
-			if (outputLength > 0) {
-				flags = Audio::FLAG_STEREO | Audio::FLAG_16BITS;
-
-#ifdef SCUMM_LITTLE_ENDIAN
-				flags |= Audio::FLAG_LITTLE_ENDIAN;
-#endif
-
-				_audStream->queueBuffer((byte *)outputBuffer, outputLength, DisposeAfterUse::YES, flags);
-			}
-
-			_inBufPtr = _inBuf;
-			_frameSize = 0;
-		}
-	}
 }
 
 #endif
