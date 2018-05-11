@@ -123,6 +123,7 @@ enum {
 enum {
     kPerilClickableThirdCursorID = 140,
     kPerilNotClickableCursorID = 139,
+    kPerilHoldingItemCursorID = 101,
     kPerilPDASecondCursorID = 142
 };
 
