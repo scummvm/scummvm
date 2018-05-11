@@ -261,12 +261,17 @@ void PathFinder::findDeltaPt(Common::Point pt, Common::Point &outDeltaPt) {
 		}
 	}
 }
-
-bool PathFinder::testRect(PathLine &line, PathLine &rect) {
+/**
+ * returns true if line is contained within rect.
+ */
+bool PathFinder::isLineWithinRectangle(PathLine &line, PathLine &rect) {
 	return line.p0.x <= rect.p1.x && line.p1.x >= rect.p0.x &&
 		line.p0.y <= rect.p1.y && line.p1.y >= rect.p0.y;
 }
 
+/**
+ * flip line coordinates so it starts top left and finishes bottom right
+ */
 void PathFinder::swapLine(PathLine &line, PathLine &outLine) {
 	if (line.p1.x <= line.p0.x) {
 		outLine.p1.x = line.p0.x;
@@ -289,7 +294,7 @@ int PathFinder::calcLineStatus(PathLine &sourceLine, PathLine &destRect, Common:
 	swapLine(sourceLine, sourceLine1);
 	swapLine(destRect, destRect1);
 
-	if (!testRect(sourceLine1, destRect1))
+	if (!isLineWithinRectangle(sourceLine1, destRect1))
 		return 3;
 
 	int sourceDeltaX = sourceLine.p1.x - sourceLine.p0.x;

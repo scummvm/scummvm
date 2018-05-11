@@ -57,7 +57,7 @@ protected:
 	void swapDimensions(WidthHeight &dimensions);
 	void clipLineToBg(Common::Point &destPt, WidthHeight &rectDimensions, PathLine &outDestLine);
 	void findDeltaPt(Common::Point pt, Common::Point &outDeltaPt);
-	bool testRect(PathLine &line, PathLine &rect);
+	bool isLineWithinRectangle(PathLine &line, PathLine &rect);
 	void swapLine(PathLine &line, PathLine &outLine);
 	int calcLineStatus(PathLine &sourceLine, PathLine &destRect, Common::Point *outPoint);
 };

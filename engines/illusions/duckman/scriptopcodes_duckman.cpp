@@ -274,6 +274,7 @@ void ScriptOpcodes_Duckman::opUnloadResourcesBySceneId(ScriptThread *scriptThrea
 //static uint dsceneId = 0x0001005B, dthreadId = 0x00020341;
 //static uint dsceneId = 0x00010010, dthreadId = 0x0002008A;
 //static uint dsceneId = 0x10002, dthreadId = 0x20001;//Debug menu, not supported
+//static uint dsceneId = 0x10035, dthreadId = 0x000201B4; // Starship Enterprise (outside)
 //static uint dsceneId = 0x10044, dthreadId = 0x000202B8; // Starship Enterprise
 //static uint dsceneId = 0x00010039, dthreadId = 0x00020089; // Map
 //static uint dsceneId = 0x00010052, dthreadId = 0x00020347; // Credits
