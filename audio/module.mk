@@ -65,7 +65,10 @@ MODULE_OBJS += \
 	softsynth/opl/nuked.o
 endif
 
-
+ifdef USE_A52
+MODULE_OBJS += \
+	decoders/ac3.o
+endif
 
 ifdef USE_ALSA
 MODULE_OBJS += \
