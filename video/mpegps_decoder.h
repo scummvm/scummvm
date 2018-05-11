@@ -28,11 +28,6 @@
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
 
-#ifdef USE_A52
-extern "C" {
-#include <a52dec/a52.h>
-}
-
 namespace Audio {
 class PacketizedAudioStream;
 }
@@ -136,7 +131,7 @@ private:
 #ifdef USE_A52
 	class AC3AudioTrack : public AudioTrack, public MPEGStream {
 	public:
-		AC3AudioTrack(Common::SeekableReadStream *firstPacket);
+		AC3AudioTrack(Common::SeekableReadStream &firstPacket, Audio::Mixer::SoundType soundType);
 		~AC3AudioTrack();
 
 		bool sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts);
@@ -146,16 +141,7 @@ private:
 		Audio::AudioStream *getAudioStream() const;
 
 	private:
-		Audio::QueuingAudioStream *_audStream;
-		a52_state_t *_a52State;
-		uint32 _frameSize;
-		byte _inBuf[4096];
-		byte *_inBufPtr;
-		int _flags;
-		int _sampleRate;
-
-		void initStream(Common::SeekableReadStream *packet);
-		void decodeAC3Data(Common::SeekableReadStream *packet);
+		Audio::PacketizedAudioStream *_audStream;
 	};
 #endif
 
