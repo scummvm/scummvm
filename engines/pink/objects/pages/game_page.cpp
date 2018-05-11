@@ -133,7 +133,7 @@ Module *GamePage::getModule() const {
     return _module;
 }
 
-bool GamePage::checkValueOfVariable(Common::String &variable, Common::String &value) {
+bool GamePage::checkValueOfVariable(const Common::String &variable, const Common::String &value) {
     if (!_variables.contains(variable))
         return value == kUndefined;
     return _variables[variable] == value;
@@ -141,6 +141,7 @@ bool GamePage::checkValueOfVariable(Common::String &variable, Common::String &va
 
 void GamePage::setVariable(Common::String &variable, Common::String &value) {
     _variables[variable] = value;
+    _leadActor->onVariableSet();
 }
 
 WalkMgr *GamePage::getWalkMgr() {
@@ -149,8 +150,11 @@ WalkMgr *GamePage::getWalkMgr() {
 
 void GamePage::loadState() {
     Archive archive(static_cast<Common::SeekableReadStream*>(_memFile));
-    _variables.clear(0);
-    archive >> _variables;
+    //_variables.clear(1);
+    Common::StringMap mapTest; // HACK. Without it isn't working
+    //archive >> _variables;
+    archive >> mapTest;
+    _variables = mapTest;
 
     uint16 actorCount;
     archive >> actorCount;
@@ -177,7 +181,7 @@ void GamePage::saveState() {
 }
 
 void GamePage::unload() {
-    _leadActor->setAction(_leadActor->findAction("Idle"));
+    _leadActor->setAction(_leadActor->findAction(kIdleAction));
 
     saveState();
     clear();
@@ -187,7 +191,7 @@ void GamePage::unload() {
 
 void GamePage::clear() {
     Page::clear();
-    _variables.clear(1);
+    //_variables.clear(1);
 
     for (int i = 0; i < _handlers.size(); ++i) {
         delete _handlers[i];

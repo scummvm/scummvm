@@ -25,6 +25,7 @@
 #include <engines/pink/objects/actions/action.h>
 #include <engines/pink/constants.h>
 #include "pink/cursor_mgr.h"
+#include "../inventory.h"
 
 namespace Pink {
 
@@ -48,13 +49,17 @@ void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
         if (!_cursor.empty()){
             mgr->setCursor(_cursor, point);
         }
-        else mgr->setCursor(kClickableFirstFrameCursor, point);
+        else mgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
     }
     else Actor::onMouseOver(point, mgr);
 }
 
 bool SupportingActor::isLeftClickHandlers() {
     return _handlerMgr.isLeftClickHandler(this);
+}
+
+bool SupportingActor::isUseClickHandlers(InventoryItem *item) {
+    return _handlerMgr.isUseClickHandler(this, item->getName());
 }
 
 void SupportingActor::onTimerMessage() {
@@ -73,8 +78,14 @@ const Common::String &SupportingActor::getLocation() const {
     return _location;
 }
 
-SupportingActor::~SupportingActor() {
+SupportingActor::~SupportingActor() {}
 
+void SupportingActor::onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+    Common::String item = itemName;
+    if (_handlerMgr.isUseClickHandler(this, itemName)) {
+        item += kClickable;
+    }
+    Actor::onHover(point, item, cursorMgr);
 }
 
 } // End of namespace Pink

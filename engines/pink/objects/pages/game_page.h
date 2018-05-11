@@ -50,7 +50,7 @@ public:
     WalkMgr *getWalkMgr();
     Module *getModule() const;
 
-    bool checkValueOfVariable(Common::String &variable, Common::String &value);
+    bool checkValueOfVariable(const Common::String &variable, const Common::String &value);
     void setVariable(Common::String &variable, Common::String &value);
 
     virtual void clear();

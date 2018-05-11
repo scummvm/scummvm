@@ -125,7 +125,7 @@ bool Actor::initPallete(Director *director) {
 }
 
 void Actor::onMouseOver(Common::Point point, CursorMgr *mgr) {
-    mgr->setCursor(kDefaultCursor, point);
+    mgr->setCursor(kDefaultCursor, point, Common::String());
 }
 
 Actor::~Actor() {
@@ -157,6 +157,10 @@ void Actor::pause() {
 void Actor::unpause() {
     if (_action)
         _action->unpause();
+}
+
+void Actor::onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+    cursorMgr->setCursor(kHoldingItemCursor, point, itemName);
 }
 
 } // End of namespace Pink

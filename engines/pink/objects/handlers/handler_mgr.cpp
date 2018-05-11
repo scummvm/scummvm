@@ -22,9 +22,7 @@
 
 #include "handler_mgr.h"
 #include "handler.h"
-#include "handler_timer.h"
 #include <pink/archive.h>
-#include <common/debug.h>
 #include <pink/objects/inventory.h>
 
 namespace Pink {
@@ -55,6 +53,17 @@ bool HandlerMgr::isLeftClickHandler(Actor *actor) {
     return false;
 }
 
+bool HandlerMgr::isUseClickHandler(Actor *actor, const Common::String &itemName){
+    for (int i = 0; i < _useClickHandlers.size(); ++i) {
+        if (itemName == _useClickHandlers[i]->getInventoryItem() &&
+            _useClickHandlers[i]->isSuitable(actor))
+            return true;
+    }
+
+    return false;
+}
+
+
 void HandlerMgr::onTimerMessage(Actor *actor) {
     Handler *handler = findSuitableHandlerTimer(actor);
     if (handler)
@@ -71,10 +80,10 @@ bool HandlerMgr::onLeftClickMessage(Actor *actor) {
 }
 
 bool HandlerMgr::onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr) {
-    HandlerUseClick *handler = (HandlerUseClick*) findSuitableHandlerUseClick(actor);
+    HandlerUseClick *handler = findSuitableHandlerUseClick(actor, item);
     if (handler) {
-        handler->handle(actor);
-        mgr->setItemOwner(handler->getRecepient(), item);
+        if (!handler->getRecepient().empty())
+            mgr->setItemOwner(handler->getRecepient(), item);
         handler->handle(actor);
         return true;
     }
@@ -90,7 +99,7 @@ Handler *HandlerMgr::findSuitableHandlerTimer(Actor *actor) {
     return nullptr;
 }
 
-Handler *HandlerMgr::findSuitableHandlerLeftClick(Actor *actor) {
+HandlerLeftClick *HandlerMgr::findSuitableHandlerLeftClick(Actor *actor) {
     for (int i = 0; i < _leftClickHandlers.size(); ++i) {
         if (_leftClickHandlers[i]->isSuitable(actor))
             return _leftClickHandlers[i];
@@ -99,9 +108,9 @@ Handler *HandlerMgr::findSuitableHandlerLeftClick(Actor *actor) {
     return nullptr;
 }
 
-Handler *HandlerMgr::findSuitableHandlerUseClick(Actor *actor) {
+HandlerUseClick *HandlerMgr::findSuitableHandlerUseClick(Actor *actor, InventoryItem *item) {
     for (int i = 0; i < _useClickHandlers.size(); ++i) {
-        if (_useClickHandlers[i]->isSuitable(actor))
+        if (item->getName() == _useClickHandlers[i]->getInventoryItem() && _useClickHandlers[i]->isSuitable(actor))
             return _useClickHandlers[i];
     }
 

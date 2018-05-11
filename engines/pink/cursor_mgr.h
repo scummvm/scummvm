@@ -29,8 +29,8 @@
 
 namespace Pink {
 
-
 class Actor;
+class Action;
 class GamePage;
 class PinkEngine;
 
@@ -40,11 +40,15 @@ public:
     ~CursorMgr();
 
     void update();
-    void setCursor(uint index, Common::Point point);
+    void setCursor(uint index, Common::Point point, const Common::String &itemName);
     void setCursor(Common::String &cursorName, Common::Point point);
 
 private:
+    void hideItem();
+    void stopAnimation();
+
     Actor *_actor;
+    Action *_action;
     GamePage *_page;
     PinkEngine *_game;
 

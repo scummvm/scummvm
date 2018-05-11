@@ -100,10 +100,11 @@ void InventoryMgr::setItemOwner(const Common::String &owner, InventoryItem *item
 
     if (item == _item && _lead->getName() != owner)
         _item = nullptr;
-    else if (_lead->getName() == owner)
-        _item = item;
 
     item->_currentOwner = owner;
+
+    if (_lead->getName() == owner)
+        _item = item;
 }
 
 bool InventoryMgr::start(bool playOpening) {
@@ -192,6 +193,10 @@ void InventoryMgr::showNextItem(bool direction) {
         _item = _items[index % _items.size()];
         _itemActor->setAction(_item->getName());
     }
+}
+
+InventoryItem *InventoryMgr::getCurrentItem() {
+    return _item;
 }
 
 } // End of namespace Pink

@@ -66,6 +66,8 @@ public:
     bool isPinkOwnsAnyItems();
     void setItemOwner(const Common::String &owner, InventoryItem *item);
 
+    InventoryItem *getCurrentItem();
+
 private:
     void close();
     enum Direction {
