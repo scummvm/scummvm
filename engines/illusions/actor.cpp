@@ -1063,7 +1063,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 		actor->_facing = 64;
 	actor->_scale = actorType->_scale;
 	actor->_namedPoints = &actorType->_namedPoints;
-	
+
 	BackgroundResource *bgRes = _vm->_backgroundInstances->getActiveBgResource();
 	if (actorType->_pathWalkPointsIndex) {
 		actor->_pathWalkPoints = bgRes->getPathWalkPoints(actorType->_pathWalkPointsIndex - 1);
