@@ -200,7 +200,7 @@ void LeadActor::onLeftButtonClick(Common::Point point) {
             return;
         }
 
-        _recipient = (SupportingActor*) actor;
+        _recipient = dynamic_cast<SupportingActor*>(actor);
         if (actor->isClickable() && isInteractingWith(_recipient)) {
             WalkLocation *location = getWalkDestination();
             if (location) {
@@ -351,7 +351,7 @@ void PubPink::onClick() {
 
 void PubPink::updateCursor(Common::Point point) {
     if (playingMiniGame()) {
-        SupportingActor *actor = static_cast<SupportingActor*>(_page->getGame()->getDirector()->getActorByPoint(point));
+        SupportingActor *actor = dynamic_cast<SupportingActor*>(_page->getGame()->getDirector()->getActorByPoint(point));
         if (_state == kReady &&
             actor &&
             actor->isUseClickHandlers(_page->getModule()->getInventoryMgr()->getCurrentItem()))
