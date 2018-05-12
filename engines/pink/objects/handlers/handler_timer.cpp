@@ -24,7 +24,6 @@
 #include "handler_timer.h"
 #include <common/debug.h>
 #include <engines/pink/archive.h>
-#include <engines/pink/objects/condition.h>
 #include <engines/pink/objects/sequences/sequence.h>
 #include <engines/pink/objects/side_effect.h>
 #include <engines/pink/objects/actors/lead_actor.h>
@@ -61,8 +60,7 @@ void HandlerTimerActions::toConsole() {
 
 void HandlerTimerActions::handle(Actor *actor) {
     Handler::handle(actor);
-    assert(_actions.size());
-    if (!actor->isPlaying()){
+    if (!actor->isPlaying() && _actions.size()) {
         Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
         uint index = rnd.getRandomNumber(_actions.size() - 1);
         Action *action = actor->findAction(_actions[index]);
