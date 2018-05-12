@@ -35,6 +35,8 @@ public:
 
     virtual void end();
 
+    void update() override;
+
 protected:
     virtual void onStart();
 
