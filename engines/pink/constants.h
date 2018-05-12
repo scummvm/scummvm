@@ -27,7 +27,7 @@ namespace Pink {
 
 enum {
     kMaxClassLength = 32,
-    kMaxStringLength = 64,
+    kMaxStringLength = 128,
     kNullObject = 0
 };
 
