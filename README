@@ -1718,6 +1718,7 @@ other games.
                              stretches the image to use 320x240 pixels
                              instead, or a multiple thereof
     Ctrl-Alt f             - Enable/disable graphics filtering
+    Ctrl-Alt s             - Cycle through scaling modes
     Alt-Enter              - Toggles full screen/windowed
     Alt-s                  - Make a screenshot (SDL backend only)
     Ctrl-F7                - Open virtual keyboard (if enabled)
