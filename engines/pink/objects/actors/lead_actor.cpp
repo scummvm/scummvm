@@ -249,10 +249,10 @@ bool LeadActor::sendUseClickMessage(SupportingActor *actor) {
     InventoryMgr *mgr = _page->getModule()->getInventoryMgr();
     _nextState = _state != kPlayingVideo ? kReady : kPlayingVideo;
     _state = kInDialog1;
+    InventoryItem *item = mgr->getCurrentItem();
     actor->onUseClickMessage(mgr->getCurrentItem(), mgr);
-    if (mgr->getCurrentItem() == nullptr
-        || mgr->getCurrentItem()->getCurrentOwner() != this->_name)
-                _isHaveItem = false;
+    if (item->getCurrentOwner() != this->_name)
+        _isHaveItem = false;
      return true;
 }
 
