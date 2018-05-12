@@ -92,6 +92,7 @@ void Actor::setAction(Action *newAction) {
         _isActionEnded = 1;
         _action->end();
     }
+    _action = newAction;
     if (newAction) {
         _isActionEnded = 0;
         _action->start(0);
