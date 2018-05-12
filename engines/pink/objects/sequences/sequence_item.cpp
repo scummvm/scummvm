@@ -53,7 +53,6 @@ bool SequenceItem::execute(int index, Sequence *sequence, bool unk2) {
     Action *action;
     if (!(actor = sequence->_sequencer->_page->findActor(_actor)) ||
         !(action = actor->findAction(_action))) {
-        assert(0);
         return false;
     }
 
