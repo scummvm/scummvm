@@ -47,11 +47,11 @@ Sequencer *Actor::getSequencer() const {
 }
 
 Action *Actor::findAction(const Common::String &name) {
-    Action ** action = Common::find_if(_actions.begin(), _actions.end(), [&name]
+    auto action = Common::find_if(_actions.begin(), _actions.end(), [&name]
             (Action* action) {
         return name == action->getName();
-    });;
-    if (!action)
+    });
+    if (action == _actions.end())
         return nullptr;
     return *action;
 }
@@ -94,7 +94,6 @@ void Actor::setAction(Action *newAction) {
     }
     if (newAction) {
         _isActionEnded = 0;
-        _action = newAction;
         _action->start(0);
     }
 }
