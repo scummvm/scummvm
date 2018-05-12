@@ -319,7 +319,7 @@ uint Archive::findObjectId(const char *name) {
 Common::String Archive::readString() {
     char buffer[kMaxStringLength];
     byte len = _readStream->readByte();
-    assert(len <= 64);
+    assert(len <= kMaxStringLength);
     _readStream->read(buffer, len);
     return Common::String(buffer, len);
 }
