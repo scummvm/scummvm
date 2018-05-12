@@ -32,13 +32,16 @@ class CelDecoder : public Video::FlicDecoder {
 public:
     virtual bool loadStream(Common::SeekableReadStream *stream);
 
-    uint32 getX();
-    uint32 getY();
+    int32 getX();
+    int32 getY();
     uint16 getTransparentColourIndex();
 
     Common::Point getCenter();
     Common::Rect &getRectangle();
     const Graphics::Surface *getCurrentFrame();
+
+    void setX(int32 x);
+    void setY(int32 y);
 
 protected:
     class CelVideoTrack : public FlicVideoTrack {
@@ -46,13 +49,16 @@ protected:
         CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader = false);
         virtual void readHeader();
 
-        uint32 getX() const;
-        uint32 getY() const;
+        int32 getX() const;
+        int32 getY() const;
         uint16 getTransparentColourIndex();
 
         Common::Point getCenter();
         Common::Rect &getRect();
         const Graphics::Surface *getCurrentFrame();
+
+        void setX(int32 x);
+        void setY(int32 y);
 
     private:
         const Graphics::Surface *decodeNextFrame();

@@ -45,10 +45,9 @@ public:
 
 private:
     void hideItem();
-    void stopAnimation();
+    void startAnimation(int index);
 
     Actor *_actor;
-    Action *_action;
     GamePage *_page;
     PinkEngine *_game;
 

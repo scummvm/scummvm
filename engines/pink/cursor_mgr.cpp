@@ -30,7 +30,7 @@
 namespace Pink {
 
 CursorMgr::CursorMgr(PinkEngine *game, GamePage *page)
-        : _actor(nullptr), _action(nullptr), _page(page), _game(game),
+        : _actor(nullptr), _page(page), _game(game),
           _isPlayingAnimation(0), _firstFrameIndex(0)
 {}
 
@@ -38,37 +38,42 @@ CursorMgr::~CursorMgr() {}
 
 void CursorMgr::setCursor(uint index, Common::Point point, const Common::String &itemName) {
     if (index == kClickableFirstFrameCursor) {
-        if (!_isPlayingAnimation) {
-            _isPlayingAnimation = 1;
-            _time = _game->getTotalPlayTime();
-            _firstFrameIndex = index;
-            _isSecondFrame = 0;
-            _game->setCursor(index);
-        }
-        return;
+        startAnimation(index);
+        return hideItem();
     }
-    if (index != kHoldingItemCursor){
-        _isPlayingAnimation = 0;
-        _game->setCursor(index);
-        return;
+    else if (index != kHoldingItemCursor){
+
+        if (index != kPDASecondCursor) {
+            _game->setCursor(index);
+            _isPlayingAnimation = 0;
+            return hideItem();
+        }
+
+        hideItem();
+        return startAnimation(index);
     }
 
     _game->setCursor(index);
+    _isPlayingAnimation = 0;
+
     _actor = _actor ? _actor : _page->findActor(kCursor);
     assert(_actor);
 
     Action *action = _actor->findAction(itemName);
-    assert(action);
-    if (action != _action) {
-        _action = action;
+    assert(dynamic_cast<ActionCEL*>(action));
+
+    if (action != _actor->getAction()) {
         _actor->setAction(action, 0);
+        CelDecoder *decoder = static_cast<ActionCEL*>(action)->getDecoder();
+        decoder->setX(point.x);
+        decoder->setY(point.y);
+    }
+    else {
+        CelDecoder *decoder = static_cast<ActionCEL*>(action)->getDecoder();
+        decoder->setX(point.x);
+        decoder->setY(point.y);
     }
 
-    assert(dynamic_cast<ActionCEL*>(action));
-    CelDecoder *decoder = static_cast<ActionCEL*>(_action)->getDecoder();
-    // this is buggy
-    //decoder->setX(point.x);
-    //decoder->setY(point.y);
 }
 
 void CursorMgr::update() {
@@ -97,6 +102,20 @@ void CursorMgr::setCursor(Common::String &cursorName, Common::Point point) {
 
 
     setCursor(index, point, Common::String());
+}
+
+void CursorMgr::hideItem() {
+    if (_actor) _actor->hide();
+}
+
+void CursorMgr::startAnimation(int index) {
+    if (!_isPlayingAnimation) {
+        _isPlayingAnimation = 1;
+        _time = _game->getTotalPlayTime();
+        _firstFrameIndex = index;
+        _isSecondFrame = 0;
+        _game->setCursor(index);
+    }
 }
 
 } // End of namespace Pink

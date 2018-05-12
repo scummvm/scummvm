@@ -29,7 +29,7 @@
 
 namespace Pink {
 Director::Director(OSystem *system)
-    : _system(system), showBounds(0) {}
+    : _system(system), showBounds(1) {}
 
 void Director::draw() {
     _system->fillScreen(0);
@@ -48,11 +48,18 @@ void Director::drawSprite(ActionCEL *sprite) {
     }
     else surface = decoder->getCurrentFrame();
 
+    int h = surface->h;
+    if (surface->h + decoder->getY() > 480)
+        h = 480 - decoder->getY();
+    int w = surface->w;
+    if (surface->w + decoder->getX() > 640)
+        w = 640 - decoder->getX();
+
     if (!showBounds) {
         Graphics::Surface *screen = _system->lockScreen();
 
-        for (int y = 0; y < decoder->getHeight(); ++y) {
-            for (int x = 0; x < decoder->getWidth(); ++x) {
+        for (int y = 0; y < h; ++y) {
+            for (int x = 0; x < w; ++x) {
                 uint16 spritePixelColourIndex = *(byte*)surface->getBasePtr(x, y);
                 if (spritePixelColourIndex != decoder->getTransparentColourIndex()) {
                     *(byte *) screen->getBasePtr(decoder->getX() + x, decoder->getY() + y) = spritePixelColourIndex;
@@ -63,7 +70,7 @@ void Director::drawSprite(ActionCEL *sprite) {
     }
     else _system->copyRectToScreen(surface->getPixels(), surface->pitch,
                                    decoder->getX(), decoder->getY(),
-                                   surface->w, surface->h);
+                                   w, h);
 
 }
 
