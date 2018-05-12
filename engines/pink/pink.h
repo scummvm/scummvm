@@ -42,6 +42,22 @@
  *  Games using this engine:
  *  - The Pink Panther: Passport to Peril
  *  - The Pink Panther: Hokus Pokus Pink
+ *
+ *  Peril game status:
+ *      Fully playable*
+ *      (crashes on cutscene before Stonehenge because of strange sprite format.
+ *      Currently I use hack which isn't in branch.)
+ *
+ *  Pokus game status:
+ *      Playable before entering to BlackHole (HandlerTimerSequences)
+ *
+ *  Known bugs:
+ *      High CPU usage(no dirty rects)
+ *      Walking sprites don't recalculate position
+ *      Walking can't be skipped
+ *      PDA doesn't work
+ *      Sprites, which has not zero startFrame start playing with delay
+ *
  */
 
 namespace Pink {
