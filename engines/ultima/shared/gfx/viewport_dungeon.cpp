@@ -61,9 +61,13 @@ void ViewportDungeon::draw() {
 		break;
 	}
 
+	MapTile tile, deltaTile, leftTile, rightTile;
 	Point currentPos = map->getPosition();
-	bool isDoor = map->isDoor(map->getPosition());
-	bool isWall = map->isWallOrSecretDoor(currentPos);
+	map->getTileAt(currentPos, &tile);
+	map->getTileAt(currentPos + delta, &deltaTile);
+
+	bool isDoor = tile.isDoor();
+	bool isWall = tile.isWallOrSecretDoor();
 	int distance = distanceToOccupiedCell(delta);
 
 	// If stuck in a wall, draw it and exit
@@ -75,7 +79,7 @@ void ViewportDungeon::draw() {
 	Point backDelta(delta.x * distance, delta.y * distance),
 		currDelta(delta.x * distance, delta.y * distance);
 
-	if (isDoor && map->isWallOrDoorway(map->getPosition() + delta)) {
+	if (isDoor && deltaTile.isWallOrDoorway()) {
 		s.drawWall(0);
 	} else {
 		if (isDoor)
@@ -93,7 +97,7 @@ void ViewportDungeon::draw() {
 
 
 		}
-
+/*
 		if (isDoor)
 			drawCell(0, currentPos);
 
@@ -111,6 +115,7 @@ void ViewportDungeon::draw() {
 			if (endingRight)
 				s.drawRightEdge(distance);
 		}
+		*/
 	}
 
 	if (isDoor) {
@@ -131,7 +136,10 @@ uint ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
 bool ViewportDungeon::isCellOccupied(const Point &delta) {
 	Map *map = getMap();
 	Point pt = map->getPosition() + delta;
-	if (map->isWallOrDoorway(pt))
+	
+	MapTile tile;
+	map->getTileAt(pt, &tile);
+	if (tile.isWallOrDoorway())
 		return true;
 
 	return isMonsterBlocking(pt);
@@ -154,7 +162,7 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 
 	if (tile._widget) {
 		// Draw a monster
-		if (map->isWallOrDoorway(pt))
+		if (tile.isWallOrDoorway())
 			s.drawWall(distance);
 		if (tile._tileNum == 7)
 			// Ladder down
@@ -204,10 +212,12 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 void ViewportDungeon::drawLeftCell(uint distance, const Point &pt) {
 	DungeonSurface s = getSurface();
 	Map *map = getMap();
+	MapTile tile;
+	map->getTileAt(pt, &tile);
 
-	if (map->isDoor(pt))
+	if (tile.isDoor())
 		s.drawLeftDoor(distance);
-	else if (map->isWallOrSecretDoor(pt))
+	else if (tile.isWallOrSecretDoor())
 		s.drawLeftWall(distance);
 	else
 		s.drawLeftBlank(distance);
@@ -216,10 +226,12 @@ void ViewportDungeon::drawLeftCell(uint distance, const Point &pt) {
 void ViewportDungeon::drawRightCell(uint distance, const Point &pt) {
 	DungeonSurface s = getSurface();
 	Map *map = getMap();
+	MapTile tile;
+	map->getTileAt(pt, &tile);
 
-	if (map->isDoor(pt))
+	if (tile.isDoor())
 		s.drawRightDoor(distance);
-	else if (map->isWallOrSecretDoor(pt))
+	else if (tile.isWallOrSecretDoor())
 		s.drawRightWall(distance);
 	else
 		s.drawRightBlank(distance);

@@ -212,6 +212,16 @@ void Ultima1Map::getTileAt(const Point &pt, Shared::MapTile *tile) {
 	if (tile->_tileNum >= 51 && (_mapType == MAP_CITY || _mapType == MAP_CASTLE))
 		tile->_tileNum = 1;
 
+	// Setting dungeon flags
+	if (_mapType == MAP_DUNGEON) {
+		tile->_isHallway = tile->_tileNum == DTILE_HALLWAY;
+		tile->_isDoor = tile->_tileNum == DTILE_DOOR;
+		tile->_isSecretDoor = tile->_tileNum == DTILE_SECRET_DOOR;
+		tile->_isWall = tile->_tileNum == DTILE_WALL;
+		tile->_isLadderUp = tile->_tileNum == DTILE_LADDER_UP;
+		tile->_isLadderDown = tile->_tileNum == DTILE_LADDER_DOWN;
+	}
+
 	// Extended properties to set if an Ultima 1 map tile structure was passed in
 	U1MapTile *mapTile = dynamic_cast<U1MapTile *>(tile);
 	if (mapTile) {
@@ -324,26 +334,6 @@ void Ultima1Map::loadDungeonMap() {
 
 void Ultima1Map::spawnMonster() {
 	// TODO
-}
-
-bool Ultima1Map::isDoor(const Point &pt) const {
-	return _data[pt.y][pt.x] == DTILE_DOOR;
-}
-
-bool Ultima1Map::isWallOrSecretDoor(const Point &pt) const {
-	return _data[pt.y][pt.x] == DTILE_WALL || _data[pt.y][pt.x] == DTILE_SECRET_DOOR;
-}
-
-/**
- * Returns true if the cell is a type that has walls on it: walls, doors, or secret doors
- */
-bool Ultima1Map::isWallOrDoorway(const Point &pt) const {
-	return _data[pt.y][pt.x] == DTILE_WALL || _data[pt.y][pt.x] == DTILE_DOOR || _data[pt.y][pt.x] == DTILE_SECRET_DOOR;
-}
-
-bool Ultima1Map::isSolid(const Point &pt) const {
-	return _data[pt.y][pt.x] != DTILE_HALLWAY && _data[pt.y][pt.x] != DTILE_LADDER_DOWN
-		&& _data[pt.y][pt.x] == DTILE_LADDER_UP;
 }
 
 } // End of namespace Ultima1

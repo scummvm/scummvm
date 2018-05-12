@@ -31,6 +31,9 @@ void MapTile::clear() {
 	_widget = nullptr;
 	_itemNum = -1;
 	_item = nullptr;
+	_isDoor = _isSecretDoor = false;
+	_isLadderUp = _isLadderDown = false;
+	_isWall = _isHallway = false;
 }
 
 /*-------------------------------------------------------------------*/

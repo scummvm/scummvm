@@ -109,11 +109,16 @@ public:
 	MapWidget *_widget;						// Widget pointer
 	int _itemNum;							// Item number, if any
 	MapItem *_item;							// Item pointer
+	// Dungeon tile flags 
+	bool _isDoor, _isSecretDoor;
+	bool _isLadderUp, _isLadderDown;
+	bool _isWall, _isHallway;
 public:
 	/**
 	 * Constructor
 	 */
-	MapTile() : _tileNum(-1), _tileId(-1), _widgetNum(-1), _widget(nullptr), _itemNum(-1), _item(nullptr) {}
+	MapTile() : _tileNum(-1), _tileId(-1), _widgetNum(-1), _widget(nullptr), _itemNum(-1), _item(nullptr),
+	_isDoor(false), _isSecretDoor(false), _isLadderUp(false), _isLadderDown(false), _isWall(false), _isHallway(false) {}
 
 	/**
  	 * Destructor
@@ -124,12 +129,33 @@ public:
 	 * Clears the map tile information
 	 */
 	virtual void clear();
+
+	/**
+	 * Returns true if the tile is a door in a dungeon
+	 */
+	bool isDoor() const { return _isDoor; }
+
+	/**
+	 * Returns true if the tile is a wall or secret door in a dungeon
+	 */
+	bool isWallOrSecretDoor() const { return _isWall || _isSecretDoor; }
+
+	/**
+	 * Returns true if the tile in a dungeon is a type that has walls on it: walls, doors, or secret doors
+	 */
+	bool isWallOrDoorway() const { return _isWall || _isDoor || _isSecretDoor; }
+
+	/**
+	 * Returns true if a tile is a solid type within a dungeon
+	 */
+	bool isSolid() const { return !(_isHallway || _isLadderUp || _isLadderDown); }
 };
 
 /**
  * Base class for managing maps within the game
  */
 class Map {
+	friend class MapTile;
 	/**
 	 * Stores state about the current viewport being displayed. It's kept as part of the Map class
 	 * as a convenience to be alongside the current party position
@@ -245,26 +271,6 @@ public:
 	 * Load a given map
 	 */
 	virtual void loadMap(int mapId, uint videoMode);
-
-	/**
-	 * Returns true if the cell at the given position is a door
-	 */
-	virtual bool isDoor(const Point &pt) const = 0;
-
-	/**
-	 * Returns true if the cell at the given position is a wall or secret door
-	 */
-	virtual bool isWallOrSecretDoor(const Point &pt) const = 0;
-
-	/**
-	 * Returns true if the cell is a type that has walls on it: walls, doors, or secret doors
-	 */
-	virtual bool isWallOrDoorway(const Point &pt) const = 0;
-
-	/**
-	 * Returns true if the cell represents a solid (non-walkable) tile
-	 */
-	virtual bool isSolid(const Point &pt) const = 0;
 };
 
 } // End of namespace Shared
