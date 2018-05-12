@@ -51,8 +51,8 @@ void SideEffectLocation::deserialize(Archive &archive) {
 void SideEffectLocation::execute(Actor *actor) {
     WalkMgr *mgr = actor->getPage()->getWalkMgr();
     WalkLocation *location = mgr->findLocation(_location);
-    assert(location);
-    mgr->setCurrentWayPoint(location);
+    if (location)
+        mgr->setCurrentWayPoint(location);
 }
 
 void SideEffectLocation::toConsole() {
