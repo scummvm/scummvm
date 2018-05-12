@@ -24,6 +24,7 @@
 #include <pink/archive.h>
 #include <pink/objects/actors/actor.h>
 #include <pink/objects/pages/game_page.h>
+#include <pink/cel_decoder.h>
 #include <pink/sound.h>
 
 namespace Pink {
@@ -47,8 +48,10 @@ void ActionTalk::onStart() {
 
 void ActionTalk::update() {
     ActionLoop::update();
-    if (!_sound->isPlaying())
+    if (!_sound->isPlaying()) {
+        _decoder->stop();
         _actor->endAction();
+    }
 }
 
 void ActionTalk::end() {
