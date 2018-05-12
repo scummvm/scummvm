@@ -54,7 +54,7 @@ void ActionLoop::toConsole() {
 void ActionLoop::update() {
     // for now it supports only forward loop animation
     if (_style == kForward) {
-        if (_decoder->endOfVideo()){
+        if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame){
             //debug("ACTION LOOP : NEXT ITERATION");
             _decoder->rewind();
         }
