@@ -49,9 +49,13 @@ void ActionPlay::onStart() {
     for (int i = 0; i <= _startFrame; ++i) {
         _decoder->decodeNextFrame();
     }
+}
 
-    if (_stopFrame != -1)
-        _decoder->setEndFrame(_stopFrame);
+void ActionPlay::update() {
+    if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame){
+        _decoder->stop();
+        _actor->endAction();
+    }
 }
 
 } // End of namespace Pink

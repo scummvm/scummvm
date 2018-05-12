@@ -42,9 +42,9 @@ void ActionPlayWithSfx::toConsole() {
 }
 
 void ActionPlayWithSfx::update() {
-    if (_decoder->endOfVideo() && _isLoop) {
+    if ((_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) && _isLoop) {
         _decoder->rewind();
-    } else if (_decoder->endOfVideo()) {
+    } else if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) {
         _decoder->stop();
         _actor->endAction();
     }
