@@ -51,14 +51,14 @@ bool CelDecoder::loadStream(Common::SeekableReadStream *stream) {
     return true;
 }
 
-uint32 CelDecoder::getX(){
+int32 CelDecoder::getX(){
     CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
     if (!track)
         return -1;
     return track->getX();
 }
 
-uint32 CelDecoder::getY() {
+int32 CelDecoder::getY() {
     CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
     if (!track)
         return -1;
@@ -90,6 +90,16 @@ Common::Point CelDecoder::getCenter() {
 Common::Rect &CelDecoder::getRectangle() {
     CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
     return track->getRect();
+}
+
+void CelDecoder::setX(int32 x) {
+    CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+    track->setX(x);
+}
+
+void CelDecoder::setY(int32 y) {
+    CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+    track->setY(y);
 }
 
 CelDecoder::CelVideoTrack::CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader)
@@ -141,12 +151,12 @@ void CelDecoder::CelVideoTrack::readHeader() {
     _fileStream->seek(_offsetFrame1);
 }
 
-uint32 CelDecoder::CelVideoTrack::getX() const {
-    return _center.x - getWidth() / 2;
+int32 CelDecoder::CelVideoTrack::getX() const {
+    return (_center.x - getWidth() / 2) < 0 ? 0 : _center.x - getWidth() / 2;
 }
 
-uint32 CelDecoder::CelVideoTrack::getY() const {
-    return _center.y - getHeight() / 2;
+int32 CelDecoder::CelVideoTrack::getY() const {
+    return (_center.y - getHeight() / 2) < 0 ? 0 : _center.y - getHeight() / 2;
 }
 
 uint16 CelDecoder::CelVideoTrack::getTransparentColourIndex() {
@@ -194,6 +204,14 @@ const Graphics::Surface *CelDecoder::CelVideoTrack::decodeNextFrame() {
         _transparentColourIndex = *(byte*)_surface->getBasePtr(0,0);
 
     return _surface;
+}
+
+void CelDecoder::CelVideoTrack::setX(int32 x) {
+    _center.x = x ;//+ getWidth() / 2;
+}
+
+void CelDecoder::CelVideoTrack::setY(int32 y) {
+    _center.y = y;//+ getHeight() / 2;
 }
 
 } // End of namepsace Pink
