@@ -132,6 +132,8 @@ public:
 
 	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, uint16 arg2);
 	Common::String getCrewmanAnimFilename(int objectIndex, const Common::String &basename);
+	SharedPtr<Bitmap> scaleBitmap(SharedPtr<Bitmap> bitmap, uint16 scale);
+	void scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uint16 scaledWidth);
 
 	// Events
 public:
@@ -142,7 +144,6 @@ public:
 	bool popNextEvent(TrekEvent *e);
 	void addEventToQueue(const TrekEvent &e);
 	void clearEventBuffer();
-	uint32 getClockTicks();
 	void updateEvents();
 	void updateTimerEvent();
 	void updateMouseEvents();
@@ -190,6 +191,9 @@ public:
 	SharedPtr<FileStream> _objectBanFiles[MAX_OBJECTS / 2];
 	uint16 _objectBanVar2[MAX_OBJECTS / 2]; // TODO: initialize?
 
+
+	// _clockTicks is based on DOS interrupt 1A, AH=0; read system clock counter.
+	// Updates 18.206 times every second.
 	uint32 _clockTicks;
 	uint32 _frameIndex;
 

@@ -53,6 +53,8 @@ void StarTrekEngine::pollSystemEvents() {
 		int delay = 1000/18.206 - (_system->getMillis() - _frameStartMillis);
 
 		_clockTicks++;
+		if (delay < 0)
+			debug(5, "Late frame");
 		while (delay < 0) { // Check if we're behind...
 			delay += 1000/18.206;
 			_clockTicks++;
