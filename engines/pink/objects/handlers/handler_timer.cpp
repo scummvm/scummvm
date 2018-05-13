@@ -29,6 +29,7 @@
 #include <engines/pink/objects/condition.h>
 #include <engines/pink/objects/actors/lead_actor.h>
 #include <engines/pink/objects/pages/game_page.h>
+#include <engines/pink/objects/sequences/sequencer.h>
 #include <engines/pink/pink.h>
 
 
@@ -92,6 +93,20 @@ void HandlerTimerSequences::toConsole() {
     for (int i = 0; i < _sequences.size(); ++i) {
         debug("\t\t%s", _sequences[i].c_str());
     }
+}
+
+void HandlerTimerSequences::handle(Actor *actor) {
+    Handler::handle(actor);
+    Sequencer *sequencer = actor->getSequencer();
+
+    assert(!_sequences.empty());
+
+    Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
+    uint index = rnd.getRandomNumber(_sequences.size() - 1);
+
+    Sequence *sequence = sequencer->findSequence(_sequences[index]);
+
+    assert(sequence);
 }
 
 } // End of namespace Pink
