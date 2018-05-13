@@ -39,7 +39,8 @@ GameState::GameState(Game *game) : _videoMode(EGA), _dungeonExitHitPoints(0) {
 
 		// Load the default overworld map
 		_map->loadMap(Ultima1::MAPID_OVERWORLD, _videoMode);
-		_map->setPosition(Point(49, 40));
+		//_map->setPosition(Point(49, 40));
+		_map->setPosition(Point(62, 49));
 		break;
 	default:
 		error("Unspported game");
