@@ -229,7 +229,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 		Common::String filename = getCrewmanAnimFilename(i, name);
 		int x = crewmanTransportPositions[i][0];
 		int y = crewmanTransportPositions[i][1];
-		loadAnimationForObject(i, filename, x, y, 256);
+		loadAnimationForObject(i, filename, x, y, 128);
 		_objectList[i].animationString[0] = '\0';
 	}
 
@@ -358,7 +358,7 @@ void StarTrekEngine::initObjects() {
 	strcpy(_redshirtObject->animationString, "rstnd");
 }
 
-int StarTrekEngine::loadAnimationForObject(int objectIndex, const Common::String &animName, uint16 x, uint16 y, uint16 arg8) {
+int StarTrekEngine::loadAnimationForObject(int objectIndex, const Common::String &animName, uint16 x, uint16 y, uint16 scale) {
 	debugC(6, kDebugGraphics, "Load animation '%s' on object %d", animName.c_str(), objectIndex);
 
 	Object *object;
@@ -371,10 +371,10 @@ int StarTrekEngine::loadAnimationForObject(int objectIndex, const Common::String
 
 	if (object->spriteDrawn) {
 		releaseAnim(object);
-		drawObjectToScreen(object, animName, x, y, arg8, false);
+		drawObjectToScreen(object, animName, x, y, scale, false);
 	}
 	else {
-		drawObjectToScreen(object, animName, x, y, arg8, true);
+		drawObjectToScreen(object, animName, x, y, scale, true);
 	}
 
 	object->field64 = 0;
@@ -425,8 +425,8 @@ void StarTrekEngine::updateObjectAnimations() {
 					object->animFile->read(animFrameFilename, 16);
 					sprite->setBitmap(loadAnimationFrame(animFrameFilename, object->scale));
 
-					memset(object->animationString4, 0, 16);
-					strncpy(object->animationString4, animFrameFilename, 15);
+					memset(object->animationString4, 0, 10);
+					strncpy(object->animationString4, animFrameFilename, 9);
 
 					object->animFile->seek(10 + object->animFrame * 22, SEEK_SET);
 					uint16 xOffset = object->animFile->readUint16();
@@ -481,7 +481,7 @@ void StarTrekEngine::objectFunc1() {
 	}
 }
 
-void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_animName, uint16 x, uint16 y, uint16 arg8, bool addSprite) {
+void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_animName, uint16 x, uint16 y, uint16 scale, bool addSprite) {
 	Common::String animFilename = _animName;
 	if (_animName.hasPrefixIgnoreCase("stnd") /* && word_45d20 == -1 */) // TODO
 		animFilename += 'j';
@@ -494,7 +494,7 @@ void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_a
 	object->field5e = x;
 	object->field60 = y;
 	object->field62 = 0;
-	object->scale = arg8;
+	object->scale = scale;
 
 	object->animFile->seek(16, SEEK_SET);
 	object->frameToStartNextAnim = object->animFile->readUint16() + _frameIndex;
@@ -507,11 +507,11 @@ void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_a
 	if (addSprite)
 		_gfx->addSprite(sprite);
 
-	sprite->setBitmap(loadAnimationFrame(firstFrameFilename, arg8));
+	sprite->setBitmap(loadAnimationFrame(firstFrameFilename, scale));
 	memset(object->animationString4, 0, sizeof(char) * 10);
 	strncpy(object->animationString4, firstFrameFilename, sizeof(char) * 9);
 
-	object->scale = arg8;
+	object->scale = scale;
 
 	object->animFile->seek(10, SEEK_SET);
 	uint16 xOffset = object->animFile->readUint16();
@@ -544,7 +544,7 @@ void StarTrekEngine::releaseAnim(Object *object) {
 	object->spriteDrawn = 0;
 }
 
-SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, uint16 arg2) {
+SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, uint16 scale) {
 	SharedPtr<Bitmap> bitmapToReturn;
 
 	char basename[5];
@@ -633,9 +633,8 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 		bitmapToReturn = _gfx->loadBitmap(filename);
 	}
 
-	if (arg2 != 256) {
-		// TODO
-		// bitmapToReturn = scaleBitmap(bitmapToReturn, arg2);
+	if (scale != 256) {
+		bitmapToReturn = scaleBitmap(bitmapToReturn, scale);
 	}
 
 	return bitmapToReturn;
@@ -647,10 +646,148 @@ Common::String StarTrekEngine::getCrewmanAnimFilename(int objectIndex, const Com
 	return crewmanChars[objectIndex] + basename;
 }
 
-void StarTrekEngine::updateClockTicks() {
-	// TODO (based on DOS interrupt 1A, AH=0; read system clock counter)
+/**
+ * A scale of 256 is the baseline.
+ */
+SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, uint16 scale) {
+	int scaledWidth  = (bitmap->width  * scale) >> 8;
+	int scaledHeight = (bitmap->height * scale) >> 8;
+	int origWidth  = bitmap->width;
+	int origHeight = bitmap->height;
 
-	_clockTicks = 0;
+	if (scaledWidth < 1)
+		scaledWidth = 1;
+	if (scaledHeight < 1)
+		scaledHeight = 1;
+
+	SharedPtr<Bitmap> scaledBitmap(new Bitmap(scaledWidth, scaledHeight));
+	scaledBitmap->xoffset = (bitmap->xoffset * scale) >> 8;
+	scaledBitmap->yoffset = (bitmap->yoffset * scale) >> 8;
+
+	// sub_344a5(scaledWidth, origWidth);
+
+	origHeight--;
+	scaledHeight--;
+
+	byte *src = bitmap->pixels;
+	byte *dest = scaledBitmap->pixels;
+
+	if (scale <= 256) {
+		int16 var2e = 0;
+		uint16 var30 = scaledHeight << 1;
+		uint16 var32 = (scaledHeight - origHeight) << 1;
+		uint16 origRow = 0;
+
+		while (origRow <= origHeight) {
+			if (var2e < 0) {
+				var2e += var30;
+			}
+			else {
+				var2e += var32;
+				scaleBitmapRow(src, dest, origWidth, scaledWidth);
+				dest += scaledWidth;
+			}
+
+			src += bitmap->width;
+			origRow++;
+		}
+	}
+	else {
+		int16 var2e = (origHeight << 1) - scaledHeight;
+		uint16 var30 = origHeight << 1;
+		uint16 var32 = (origHeight - scaledHeight) << 1;
+		uint16 srcRowChanged = true;
+		origWidth = bitmap->width;
+		uint16 scaledRow = 0;
+		byte *rowData = new byte[scaledWidth];
+
+		while (scaledRow++ <= scaledHeight) {
+			if (srcRowChanged) {
+				scaleBitmapRow(src, rowData, origWidth, scaledWidth);
+				srcRowChanged = false;
+			}
+
+			memcpy(dest, rowData, scaledWidth);
+			dest += scaledWidth;
+
+			if (var2e < 0) {
+				var2e += var30;
+			}
+			else {
+				var2e += var32;
+				src += origWidth;
+				srcRowChanged = true;
+			}
+		}
+
+		delete[] rowData;
+	}
+
+	return scaledBitmap;
+}
+
+/**
+ * This was heavily optimized in the original game (manually constructed an unrolled
+ * loop).
+ */
+void StarTrekEngine::scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uint16 scaledWidth) {
+	if (origWidth >= scaledWidth) {
+		int16 var2 = (scaledWidth << 1) - origWidth;
+		uint16 var4 = scaledWidth << 1;
+		uint16 var6 = (scaledWidth - origWidth) << 1;
+		uint16 varE = 0;
+		uint16 varA = 0;
+		uint16 var8 = origWidth;
+		uint16 di = 0;
+
+		while (var8-- != 0) {
+			if (var2 < 0) {
+				var2 += var4;
+			}
+			else {
+				var2 += var6;
+				if (di != 0) {
+					if (varE != 0) {
+						*(dest - 1) = *src++;
+						varE = 0;
+						di--;
+					}
+					src += di;
+					di = 0;
+				}
+				*dest++ = *src;
+				varE = 1;
+			}
+
+			di++;
+			varA++;
+		}
+	}
+	else {
+		int16 var2 = ((origWidth - 1) << 1) - (scaledWidth - 1);
+		uint16 var4 = (origWidth - 1) << 1;
+		uint16 var6 = ((origWidth - 1) - (scaledWidth - 1)) << 1;
+		uint16 varA = 0;
+		uint16 var8 = scaledWidth;
+		uint16 di = 0;
+
+		while (var8-- != 0) {
+			if (di != 0) {
+				src += di;
+				di = 0;
+			}
+			*dest++ = *src;
+
+			if (var2 < 0)
+				var2 += var4;
+			else {
+				var2 += var6;
+				di++;
+			}
+
+			varA++;
+		}
+	}
 }
 
 /**
