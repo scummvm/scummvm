@@ -71,14 +71,10 @@ void Sequence::init(int unk) {
 }
 
 void Sequence::start(int unk) {
-    if (_context->_nextItemIndex >= _items.size()){
+    if (_context->_nextItemIndex >= _items.size() || !_items[_context->_nextItemIndex]->execute(_context->_index, this, unk)){
         debug("Sequence %s ended", _name.c_str());
         end();
         return;
-    }
-
-    if (!_items[_context->_nextItemIndex]->execute(_context->_index, this, unk)){
-        assert(0);
     }
 
     uint i;
