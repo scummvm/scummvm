@@ -49,7 +49,8 @@
  *      Currently I use hack which isn't in branch.)
  *
  *  Pokus game status:
- *      Playable before entering to BlackHole (HandlerTimerSequences)
+ *      Fully Playable*
+ *      sequences by timer are broken (HandlerTimerSequences)
  *
  *  Known bugs:
  *      High CPU usage(no dirty rects)
