@@ -23,9 +23,56 @@
 
 namespace StarTrek {
 
+void StarTrekEngine::pollSystemEvents() {
+	Common::Event event;
+	TrekEvent trekEvent;
+
+	while (_eventMan->pollEvent(event)) {
+		trekEvent.mouse = event.mouse;
+		trekEvent.kbd = event.kbd;
+
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_system->quit();
+			break;
+
+		case Common::EVENT_MOUSEMOVE:
+			trekEvent.type = TREKEVENT_MOUSEMOVE;
+			addEventToQueue(trekEvent);
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			trekEvent.type = TREKEVENT_LBUTTONDOWN;
+			addEventToQueue(trekEvent);
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (_eventQueue.empty()) {
+		int delay = 1000/18.206 - (_system->getMillis() - _frameStartMillis);
+
+		_clockTicks++;
+		while (delay < 0) { // Check if we're behind...
+			delay += 1000/18.206;
+			_clockTicks++;
+		}
+		_system->delayMillis(delay);
+
+		_frameStartMillis = _system->getMillis();
+
+		TrekEvent tickEvent;
+		tickEvent.type = TREKEVENT_TICK;
+		tickEvent.tick = _clockTicks;
+		addEventToQueue(tickEvent);
+	}
+
+}
+
 void StarTrekEngine::initializeEventsAndMouse() {
 	_mouseMoveEventInQueue = false;
 	_tickEventInQueue = false;
+	_frameStartMillis = _system->getMillis();
 
 	// TODO: mouse
 }
