@@ -61,7 +61,7 @@ void HandlerTimerActions::toConsole() {
 
 void HandlerTimerActions::handle(Actor *actor) {
     Handler::handle(actor);
-    if (!actor->isPlaying() && _actions.size()) {
+    if (!actor->isPlaying() && !_actions.empty()) {
         Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
         uint index = rnd.getRandomNumber(_actions.size() - 1);
         Action *action = actor->findAction(_actions[index]);
