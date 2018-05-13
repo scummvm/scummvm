@@ -214,7 +214,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	};
 
 	_sound->stopAllVocSounds();
-	// sub_1e70d();
+	_gfx->fadeoutScreen();
 	objectFunc1();
 	initObjects();
 
@@ -229,7 +229,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 		Common::String filename = getCrewmanAnimFilename(i, name);
 		int x = crewmanTransportPositions[i][0];
 		int y = crewmanTransportPositions[i][1];
-		loadAnimationForObject(i, filename, x, y, 128);
+		loadAnimationForObject(i, filename, x, y, 256);
 		_objectList[i].animationString[0] = '\0';
 	}
 
@@ -252,7 +252,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	// TODO: redraw mouse and sprite_52c4e?
 
 	_gfx->drawAllSprites();
-	// sub_1e6ab();
+	_gfx->fadeinScreen();
 
 	playSoundEffectIndex(0x0a);
 
@@ -276,7 +276,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	// TODO: redraw sprite_52c4e?
 
 	_gfx->drawAllSprites();
-	// sub_1e70d();
+	_gfx->fadeoutScreen();
 	objectFunc1();
 	initObjects();
 }

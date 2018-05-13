@@ -71,7 +71,12 @@ public:
 	~Graphics();
 	
 	void setBackgroundImage(SharedPtr<Bitmap> bitmap);
+
 	void loadPalette(const String &paletteFile);
+	void fadeinScreen();
+	void fadeoutScreen();
+	void setPaletteFadeLevel(byte *palData, int fadeLevel);
+
 	void loadPri(const char *priFile);
 	void clearPri();
 	byte getPriValue(int x, int y);
@@ -99,8 +104,11 @@ private:
 	
 	bool _egaMode;
 	byte *_egaData;
+	byte *_palData;
 	byte *_lutData;
 	byte _priData[SCREEN_WIDTH*SCREEN_HEIGHT / 2];
+
+	int16 _paletteFadeLevel;
 
 	Common::Rect _screenRect;
 	SharedPtr<Bitmap> _backgroundImage;
