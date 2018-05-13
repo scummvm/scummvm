@@ -555,14 +555,75 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 	if ((strcmp(basename, "stnd") == 0 || strcmp(basename, "tele") == 0)
 			&& (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
 		if (c == 'm') {
+			// Mccoy has the "base" animations for all crewmen
 			bitmapToReturn = _gfx->loadBitmap(filename);
 		}
 		else {
-			// bitmapToReturn = _gfx->loadBitmap(filename + ".$bm"); // FIXME: should be this?
+			// All crewman other than mccoy copy the animation frames from mccoy, change
+			// the colors of the uniforms, and load an "xor" file to redraw the face.
+
+			// TODO: The ".$bm" extension is a "virtual file"? Caches the changes to the
+			// file made here?
+			// bitmapToReturn = _gfx->loadBitmap(filename + ".$bm");
+
 			if (bitmapToReturn == nullptr) {
-				Common::String newFilename = filename;
-				newFilename.setChar('m', 0); // FIXME: original writes directly to argument; does that affect anything?
-				bitmapToReturn = _gfx->loadBitmap(newFilename);
+				Common::String mccoyFilename = filename;
+				mccoyFilename.setChar('m', 0);
+				SharedPtr<Bitmap> bitmap = _gfx->loadBitmap(mccoyFilename);
+
+				uint16 width = bitmap->width;
+				uint16 height = bitmap->height;
+
+				bitmapToReturn = SharedPtr<Bitmap>(new Bitmap(width, height));
+				bitmapToReturn->xoffset = bitmap->xoffset;
+				bitmapToReturn->yoffset = bitmap->yoffset;
+
+				// Change uniform color
+				int16 colorShift;
+				switch (c) {
+				case 'k':
+					colorShift = 8;
+					break;
+				case 'r':
+					colorShift = -8;
+					break;
+				case 's':
+					colorShift = 0;
+					break;
+				}
+
+				if (colorShift == 0) {
+					memcpy(bitmapToReturn->pixels, bitmap->pixels, width * height);
+				}
+				else {
+					byte *src = bitmap->pixels;
+					byte *dest = bitmapToReturn->pixels;
+					byte baseUniformColor = 0xa8;
+
+					for (int i = 0; i < width * height; i++) {
+						byte b = *src++;
+						if (b >= baseUniformColor && b < baseUniformColor + 8)
+							*dest++ = b + colorShift;
+						else
+							*dest++ = b;
+					}
+				}
+
+				// Redraw face with xor file
+				SharedPtr<FileStream> xorFile = loadFile(filename + ".xor");
+				xorFile->seek(0, SEEK_SET);
+				uint16 xoffset = bitmap->xoffset - xorFile->readUint16();
+				uint16 yoffset = bitmap->yoffset - xorFile->readUint16();
+				uint16 xorWidth = xorFile->readUint16();
+				uint16 xorHeight = xorFile->readUint16();
+
+				byte *dest = bitmapToReturn->pixels + yoffset * bitmap->width + xoffset;
+
+				for (int i = 0; i < xorHeight; i++) {
+					for (int j = 0; j < xorWidth; j++)
+						*dest++ ^= xorFile->readByte();
+					dest += (bitmap->width - xorWidth);
+				}
 			}
 		}
 	}
