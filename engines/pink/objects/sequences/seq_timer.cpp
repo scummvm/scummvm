@@ -53,7 +53,7 @@ void SeqTimer::update() {
 
     calculateUpdatesCount();
     SupportingActor *actor = static_cast<SupportingActor*>(_sequencer->_page->findActor(_actor));
-    if (!_sequencer->findSequenceActorState(actor->getName())){
+    if (actor && !_sequencer->findSequenceActorState(actor->getName())){
         actor->onTimerMessage();
     }
 }
