@@ -30,15 +30,15 @@ namespace Pink {
 
 class LeadActor;
 
-//TODO: in Peril create HandlerTimerActions when it is request for HandlerTimer
-
+/*
 // This class has differences in games
 class HandlerTimer : public Handler {
 
 };
+*/
 
 //in Peril this is HandlerTimer
-class HandlerTimerActions : public HandlerTimer {
+class HandlerTimerActions : public Handler {
 public:
     virtual void toConsole();
     virtual void deserialize(Archive &archive);
@@ -52,8 +52,11 @@ private:
 class HandlerTimerSequences : public HandlerSequences { //originally it was inherited from HandlerTimer
 public:
     virtual void toConsole();
+
+    virtual void handle(Actor *actor);
+
 protected:
-    virtual void execute(Sequence *sequence); // very big and hard function
+    virtual void execute(Sequence *sequence);
 };
 
 } // End of namespace Pink
