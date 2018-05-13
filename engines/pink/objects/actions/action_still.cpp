@@ -45,9 +45,10 @@ void ActionStill::end() {
 
 void ActionStill::onStart() {
     debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
-    for (int i = 0; i <= _startFrame; ++i) {
-        _decoder->decodeNextFrame();
+    for (int i = 0; i < _startFrame; ++i) {
+        _decoder->skipFrame();
     }
+    _decoder->decodeNextFrame();
     _decoder->stop();
     _actor->endAction();
 }

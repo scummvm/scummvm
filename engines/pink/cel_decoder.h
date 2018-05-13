@@ -39,6 +39,7 @@ public:
     Common::Point getCenter();
     Common::Rect &getRectangle();
     const Graphics::Surface *getCurrentFrame();
+    void skipFrame();
 
     void setX(int32 x);
     void setY(int32 y);
@@ -60,6 +61,7 @@ protected:
         void setX(int32 x);
         void setY(int32 y);
 
+        void skipFrame();
     private:
         const Graphics::Surface *decodeNextFrame();
         void readPrefixChunk();
