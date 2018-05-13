@@ -37,6 +37,7 @@ class Game;
  */
 class DungeonSurface : public Gfx::VisualSurface {
 private:
+	Point _penPos;
 	byte _edgeColor;
 	byte _widgetColor;
 	DrawWidgetFn _widgetFn;
@@ -45,6 +46,46 @@ public:
 	 * Constructor
 	 */
 	DungeonSurface(const Graphics::ManagedSurface &src, const Rect &bounds, Game *game, DrawWidgetFn widgetFn);
+
+	/**
+	 * Draw a line
+	 */
+	void drawLine(int x0, int y0, int x1, int y1, uint32 color) {
+		Gfx::VisualSurface::drawLine(x0, y0, x1, y1, color);
+		_penPos = Point(x1, y1);
+	}
+
+	/**
+	 * Draw a line from a prior line ending point to a new destination pos
+	 */
+	void drawLineTo(int x, int y, uint32 color) {
+		Gfx::VisualSurface::drawLine(_penPos.x, _penPos.y, x, y, color);
+		_penPos = Point(x, y);
+	}
+
+	/**
+	 * Draw a thick line.
+	 */
+	void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color) {
+		Gfx::VisualSurface::drawThickLine(x0, y0, x1, y1, penX, penY, color);
+		_penPos = Point(x1, y1);
+	}
+
+	/**
+	 * Draw a horizontal line.
+	 */
+	void hLine(int x, int y, int x2, uint32 color) {
+		Gfx::VisualSurface::hLine(x, y, x2, color);
+		_penPos = Point(x2, y);
+	}
+
+	/**
+	 * Draw a vertical line.
+	 */
+	void vLine(int x, int y, int y2, uint32 color) {
+		Gfx::VisualSurface::vLine(x, y, y2, color);
+		_penPos = Point(x, y2);
+	}
 
 	/**
 	 * Draws a wall
