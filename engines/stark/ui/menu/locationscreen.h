@@ -52,6 +52,9 @@ public:
 	void open() override;
 	void close() override;
 
+	// Called when the screen resolution changes
+	void onScreenChanged();
+
 protected:
 	// Window API
 	void onMouseMove(const Common::Point &pos) override;

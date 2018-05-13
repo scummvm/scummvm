@@ -169,3 +169,11 @@ gmon.out
 \#*\#
 \#*
 TAGS
+
+#Ignore Visual Studio Code files
+/.vscode
+
+#Ignore testing .dll files
+libogg.dll
+libvorbis.dll
+libvorbisfile.dll
