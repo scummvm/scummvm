@@ -52,13 +52,17 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	_textboxVar6 = 0;
 	_textboxHasMultipleChoices = false;
 
+	_palData = new byte[256 * 3];
+	_lutData = new byte[256 * 3];
+
+	_paletteFadeLevel = 0;
+
 	setMouseCursor(loadBitmap("pushbtn"));
 	CursorMan.showMouse(true);
 }
 
 Graphics::~Graphics() {
 	delete[] _egaData;
-	delete[] _lutData;
 
 	delete _font;
 }
@@ -68,35 +72,79 @@ void Graphics::setBackgroundImage(SharedPtr<Bitmap> bitmap) {
 	_backgroundImage = bitmap;
 }
 
+/**
+ * Note: this doesn't flush the palette to the screen (must call "setPaletteFadeLevel")
+ */
 void Graphics::loadPalette(const Common::String &paletteName) {
 	// Set the palette from a PAL file
 	Common::String palFile = paletteName + ".PAL";
 	Common::String lutFile = paletteName + ".LUT";
 
 	SharedPtr<Common::SeekableReadStream> palStream = _vm->loadFile(palFile.c_str());
-	byte *palette = new byte[256 * 3];
-	palStream->read(palette, 256 * 3);
-
-	// Expand color components
-	if (_vm->getPlatform() == Common::kPlatformDOS || _vm->getPlatform() == Common::kPlatformMacintosh)
-		for (uint16 i = 0; i < 256 * 3; i++)
-			palette[i] <<= 2;
-
-	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
-
-	delete[] palette;
+	palStream->read(_palData, 256 * 3);
 
 	// Load LUT file
 	SharedPtr<Common::SeekableReadStream> lutStream = _vm->loadFile(lutFile.c_str());
 
-	delete[] _lutData;
-	_lutData = new byte[256];
 	lutStream->read(_lutData, 256);
+}
+
+void Graphics::fadeinScreen() {
+	while (_paletteFadeLevel <= 100) {
+		TrekEvent event;
+		do {
+			_vm->popNextEvent(&event);
+		}
+		while (event.type != TREKEVENT_TICK);
+
+		setPaletteFadeLevel(_palData, _paletteFadeLevel);
+		_paletteFadeLevel += 10;
+	}
+
+	_paletteFadeLevel = 100;
+}
+
+void Graphics::fadeoutScreen() {
+	while (_paletteFadeLevel >= 0) {
+		TrekEvent event;
+		do {
+			_vm->popNextEvent(&event);
+		}
+		while (event.type != TREKEVENT_TICK);
+
+		setPaletteFadeLevel(_palData, _paletteFadeLevel);
+		_paletteFadeLevel -= 10;
+	}
+
+	_paletteFadeLevel = 0;
+}
+
+/**
+ * This flushes the palette to the screen. fadeLevel ranges from 0-100.
+ */
+void Graphics::setPaletteFadeLevel(byte *palData, int fadeLevel) {
+	byte palBuffer[256 * 3];
+
+	int multiplier = (fadeLevel << 8) / 100;
+
+	for (uint16 i = 0; i < 256 * 3; i++) {
+		palBuffer[i] = (palData[i] * multiplier) >> 8;
+
+		// Expand color components
+		if (_vm->getPlatform() == Common::kPlatformDOS || _vm->getPlatform() == Common::kPlatformMacintosh)
+			palBuffer[i] <<= 2;
+	}
+
+	_vm->_system->getPaletteManager()->setPalette(palBuffer, 0, 256);
+
+	// FIXME: this isn't supposed to flush changes to graphics, only palettes.
+	// Might not matter...
+	_vm->_system->updateScreen();
 }
 
 void Graphics::loadPri(const char *priFile) {
 	SharedPtr<Common::SeekableReadStream> priStream = _vm->loadFile(priFile);
-	priStream->read(_priData, SCREEN_WIDTH*SCREEN_HEIGHT / 2);
+	priStream->read(_priData, SCREEN_WIDTH * SCREEN_HEIGHT / 2);
 }
 
 void Graphics::clearPri() {
