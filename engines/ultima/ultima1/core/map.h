@@ -49,6 +49,7 @@ private:
 	Ultima1Map *_map;
 public:
 	int _locationNum;
+	bool _isBeams;
 public:
 	/**
 	 * Clears tile data
@@ -115,11 +116,6 @@ private:
 	Ultima1Game *_game;
 private:
 	/**
-	 * Clears Ultima 1 extended fields
-	 */
-	void clearFields();
-
-	/**
 	 * Load the overworld map
 	 */
 	void loadOverworldMap();
@@ -165,6 +161,11 @@ public:
 	 * Constructor
 	 */
 	Ultima1Map(Ultima1Game *game);
+
+	/**
+	 * Clears all map data
+	 */
+	virtual void clear();
 
 	/**
 	 * Load a given map

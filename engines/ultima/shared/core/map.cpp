@@ -59,6 +59,19 @@ void Map::setDimensions(const Point &size) {
 	_size = size;
 }
 
+Point Map::getDirectionDelta() const {
+	switch (_direction) {
+	case DIR_LEFT:
+		return Point(-1, 0);
+	case DIR_RIGHT:
+		return Point(1, 0);
+	case DIR_UP:
+		return Point(0, -1);
+	default:
+		return Point(0, 1);
+	}
+}
+
 Point Map::getDeltaPosition(const Point &delta) {
 	Point pt = _position + delta;
 

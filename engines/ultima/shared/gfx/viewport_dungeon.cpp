@@ -35,29 +35,27 @@ void ViewportDungeon::draw() {
 	DungeonSurface s = getSurface();
 	s.clear();
 
-	// Get the position delta for the cells to the left and right of the player's position
+	// Get the position delta for the facing direction, and the cells to the left and right of that
 	Map *map = getMap();
-	Point rightDelta, leftDelta, delta;
+	Point delta = map->getDirectionDelta();
+
+	Point leftDelta, rightDelta;
 	switch (map->_direction) {
 	case DIR_LEFT:
 		leftDelta.y = 1;
 		rightDelta.y = -1;
-		delta.x = -1;
 		break;
 	case DIR_RIGHT:
 		leftDelta.y = -1;
 		rightDelta.y = 1;
-		delta.x = 1;
 		break;
 	case DIR_UP:
 		leftDelta.x = -1;
 		rightDelta.x = 1;
-		delta.y = -1;
 		break;
 	case DIR_DOWN:
 		leftDelta.x = 1;
 		rightDelta.x = -1;
-		delta.y = 1;
 		break;
 	}
 
@@ -148,7 +146,7 @@ void ViewportDungeon::draw() {
 uint ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
 	Point d = delta;
 	uint distance;
-	for (distance = 1; !isCellOccupied(d); ++distance, d.x += ABS(d.x), d.y += ABS(d.y)) {}
+	for (distance = 1; !isCellOccupied(d); ++distance, d.x += delta.x, d.y += delta.y) {}
 
 	return MIN(distance, (uint)5);
 }

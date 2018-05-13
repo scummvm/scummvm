@@ -68,7 +68,7 @@ protected:
 	virtual DungeonSurface getSurface() = 0;
 public:
 	CLASSDEF;
-	ViewportDungeon(TreeItem *parent) : Gfx::VisualItem("ViewportDungeon", Rect(8, 8, 312, 168), parent) {}
+	ViewportDungeon(TreeItem *parent) : Gfx::VisualItem("ViewportDungeon", Rect(8, 8, 312, 152), parent) {}
 	virtual ~ViewportDungeon() {}
 
 	/**
