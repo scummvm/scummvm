@@ -51,14 +51,27 @@ bool TransportOnFoot::canMoveTo(const Point &destPos) {
 		return true;
 
 	// Get the details of the position
-	U1MapTile tile;
-	map->getTileAt(destPos, &tile);
+	U1MapTile currTile, destTile;
+	map->getTileAt(map->getPosition(), &currTile);
+	map->getTileAt(destPos, &destTile);
 
 	// If there's a widget blocking the tile, return false
-	if (tile._widget && tile._widget->isBlocking())
+	if (destTile._widget && destTile._widget->isBlocking())
 		return false;
 
-	return tile.isGround();
+	if (map->_mapType == MAP_DUNGEON) {
+		// Can't move onto certain dungeon tile types
+		if (destTile._isWall || destTile._isSecretDoor || destTile._isBeams)
+			return false;
+
+		// Can't move to directly adjoining doorway cells (they'd be in parralel to each other, not connected)
+		if (destTile._isDoor && currTile._isDoor)
+			return false;
+
+		return true;
+	} else {
+		return destTile.isGround();
+	}
 }
 
 bool TransportOnFoot::moveTo(const Point &destPos) {

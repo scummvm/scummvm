@@ -71,6 +71,7 @@ void SurroundingTotals::load(Ultima1Map *map) {
 void U1MapTile::clear() {
 	_map = nullptr;
 	_locationNum = -1;
+	_isBeams = false;
 }
 
 bool U1MapTile::isWater() const {
@@ -108,16 +109,17 @@ bool U1MapTile::isGround() const {
 /*------------------------------------------------------------------------*/
 
 Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map(), _game(game), _mapType(MAP_OVERWORLD) {
-	clearFields();
+	Ultima1Map::clear();
 }
 
-void Ultima1Map::clearFields() {
+void Ultima1Map::clear() {
 	_currentTransport = nullptr;
 	_mapType = MAP_OVERWORLD;
 	_mapStyle = _mapIndex = 0;
 	_name.clear();
 	_fixed = false;
 	_castleKey = 0;
+	_currentTransport = nullptr;
 }
 
 void Ultima1Map::loadMap(int mapId, uint videoMode) {
@@ -230,6 +232,8 @@ void Ultima1Map::getTileAt(const Point &pt, Shared::MapTile *tile) {
 		GameResources *res = _game->_res;
 		mapTile->_map = this;
 
+		mapTile->_isBeams = mapTile->_tileNum == DTILE_BEAMS;
+
 		// Check for a location at the given position
 		mapTile->_locationNum = -1;
 		if (_mapType == MAP_OVERWORLD) {
@@ -265,6 +269,13 @@ void Ultima1Map::loadDungeonMap() {
 	setDimensions(Point(DUNGEON_WIDTH, DUNGEON_HEIGHT));
 	_mapType = MAP_DUNGEON;
 	_tilesPerOrigTile = Point(1, 1);
+	_dungeonLevel = 1;
+	_position = Point(1, 1);
+	_direction = Shared::DIR_DOWN;
+
+	// Set up widget for the player
+	_currentTransport = new TransportOnFoot(_game, this);
+	addWidget(_currentTransport);
 
 	// Place walls around the edge of the map
 	for (int y = 0; y < DUNGEON_HEIGHT; ++y) {

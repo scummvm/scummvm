@@ -36,41 +36,128 @@ END_MESSAGE_MAP()
 
 bool Move::MoveMsg(CMoveMsg &msg) {
 	Ultima1Map *map = getMap();
-	WidgetTransport *transport = map->_currentTransport;
-
-	// Figure out the new position
-	Point delta;
-	switch (msg._direction) {
-	case Shared::DIR_LEFT:
-		delta = Point(-1, 0);
-		break;
-	case Shared::DIR_RIGHT:
-		delta = Point(1, 0);
-		break;
-	case Shared::DIR_UP:
-		delta = Point(0, -1);
-		break;
-	case Shared::DIR_DOWN:
-		delta = Point(0, 1);
-		break;
-	}
-
-	// Check if the given transport type can move to the new position
-	Point newPos = map->getDeltaPosition(delta);
-	if (transport->canMoveTo(newPos)) {
-		// Shift the viewport
-		map->shiftViewport(delta);
-
-		// Move to the new position
-		if (transport->moveTo(newPos))
-			addStatusMsg(getRes()->DIRECTION_NAMES[msg._direction - 1]);
+	
+	if (map->_mapType == MAP_DUNGEON) {
+		switch (msg._direction) {
+		case Shared::DIR_LEFT:
+			dungeonTurnLeft();
+			break;
+		case Shared::DIR_RIGHT:
+			dungeonTurnRight();
+			break;
+		case Shared::DIR_DOWN:
+			dungeonTurnAround();
+			break;
+		case Shared::DIR_UP:
+			dungeonMoveForward();
+			break;
+		}
 	} else {
-		// Nope, so show a blocked message
-		addStatusMsg(getRes()->BLOCKED);
-		playFX(1);
+		WidgetTransport *transport = map->_currentTransport;
+
+		// Figure out the new position
+		Point delta;
+		switch (msg._direction) {
+		case Shared::DIR_LEFT:
+			delta = Point(-1, 0);
+			break;
+		case Shared::DIR_RIGHT:
+			delta = Point(1, 0);
+			break;
+		case Shared::DIR_UP:
+			delta = Point(0, -1);
+			break;
+		case Shared::DIR_DOWN:
+			delta = Point(0, 1);
+			break;
+		}
+
+		// Check if the given transport type can move to the new position
+		Point newPos = map->getDeltaPosition(delta);
+		if (transport->canMoveTo(newPos)) {
+			// Shift the viewport
+			map->shiftViewport(delta);
+
+			// Move to the new position
+			if (transport->moveTo(newPos))
+				addStatusMsg(getRes()->DIRECTION_NAMES[msg._direction - 1]);
+		} else {
+			// Nope, so show a blocked message
+			addStatusMsg(getRes()->BLOCKED);
+			playFX(1);
+		}
 	}
 
 	return true;
+}
+
+void Move::dungeonTurnLeft() {
+	Ultima1Map *map = getMap();
+
+	switch (map->_direction) {
+	case Shared::DIR_LEFT:
+		map->_direction = Shared::DIR_DOWN;
+		break;
+	case Shared::DIR_RIGHT:
+		map->_direction = Shared::DIR_UP;
+		break;
+	case Shared::DIR_DOWN:
+		map->_direction = Shared::DIR_RIGHT;
+		break;
+	case Shared::DIR_UP:
+		map->_direction = Shared::DIR_LEFT;
+		break;
+	}
+}
+
+void Move::dungeonTurnRight() {
+	Ultima1Map *map = getMap();
+
+	switch (map->_direction) {
+	case Shared::DIR_LEFT:
+		map->_direction = Shared::DIR_UP;
+		break;
+	case Shared::DIR_RIGHT:
+		map->_direction = Shared::DIR_DOWN;
+		break;
+	case Shared::DIR_DOWN:
+		map->_direction = Shared::DIR_LEFT;
+		break;
+	case Shared::DIR_UP:
+		map->_direction = Shared::DIR_RIGHT;
+		break;
+	}
+}
+
+void Move::dungeonTurnAround() {
+	Ultima1Map *map = getMap();
+
+	switch (map->_direction) {
+	case Shared::DIR_LEFT:
+		map->_direction = Shared::DIR_RIGHT;
+		break;
+	case Shared::DIR_RIGHT:
+		map->_direction = Shared::DIR_LEFT;
+		break;
+	case Shared::DIR_DOWN:
+		map->_direction = Shared::DIR_UP;
+		break;
+	case Shared::DIR_UP:
+		map->_direction = Shared::DIR_DOWN;
+		break;
+	}
+}
+
+void Move::dungeonMoveForward() {
+	Ultima1Map *map = getMap();
+	WidgetTransport *transport = map->_currentTransport;
+	Point delta = map->getDirectionDelta();
+
+	if (transport->canMoveTo(map->getPosition() + delta)) {
+		map->setPosition(map->getPosition() + delta);
+	} else {
+		playFX(0);
+	}
 }
 
 } // End of namespace Actions
