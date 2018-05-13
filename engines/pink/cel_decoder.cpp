@@ -102,6 +102,11 @@ void CelDecoder::setY(int32 y) {
     track->setY(y);
 }
 
+void CelDecoder::skipFrame() {
+    CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+    track->skipFrame();
+}
+
 CelDecoder::CelVideoTrack::CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader)
         : FlicVideoTrack(stream, frameCount, width, height, 1), _center(0,0), _transparentColourIndex(0){
     readHeader();
@@ -176,6 +181,34 @@ Common::Rect &CelDecoder::CelVideoTrack::getRect() {
 }
 
 #define FRAME_TYPE 0xF1FA
+
+void CelDecoder::CelVideoTrack::skipFrame() {
+    // Read chunk
+    /*uint32 frameSize = */ _fileStream->readUint32LE();
+    uint16 frameType = _fileStream->readUint16LE();
+
+    switch (frameType) {
+        case FRAME_TYPE:
+            handleFrame();
+            break;
+        default:
+            error("FlicDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);
+            break;
+    }
+
+    _curFrame++;
+    //_nextFrameStartTime += _frameDelay;
+
+    if (_atRingFrame) {
+        // If we decoded the ring frame, seek to the second frame
+        _atRingFrame = false;
+        _fileStream->seek(_offsetFrame2);
+    }
+
+    if (_curFrame == 0)
+        _transparentColourIndex = *(byte*)_surface->getBasePtr(0,0);
+
+}
 
 const Graphics::Surface *CelDecoder::CelVideoTrack::decodeNextFrame() {
     // Read chunk

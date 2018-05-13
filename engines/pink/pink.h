@@ -57,7 +57,6 @@
  *      Walking sprites don't recalculate position
  *      Walking can't be skipped
  *      PDA doesn't work
- *      Sprites, which has not zero startFrame start playing with delay
  *
  */
 
