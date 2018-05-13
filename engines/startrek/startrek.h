@@ -116,7 +116,6 @@ public:
 
 	// Running the game
 	Room *getRoom();
-	void pollSystemEvents();
 
 	void playSoundEffectIndex(int index);
 	void playSpeech(const Common::String &filename);
@@ -136,6 +135,7 @@ public:
 
 	// Events
 public:
+	void pollSystemEvents();
 	void initializeEventsAndMouse();
 	bool getNextEvent(TrekEvent *e);
 	void removeNextEvent();
@@ -156,6 +156,7 @@ private:
 	Common::List<TrekEvent> _eventQueue;
 	bool _mouseMoveEventInQueue;
 	bool _tickEventInQueue;
+	uint32 _frameStartMillis;
 
 public:
 	// Detection related functions

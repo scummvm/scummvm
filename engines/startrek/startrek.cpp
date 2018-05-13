@@ -134,6 +134,8 @@ Common::Error StarTrekEngine::runGameMode(int mode) {
 		_gameMode = GAMEMODE_BRIDGE;
 
 	while (true) {
+		TrekEvent event;
+
 		if (_gameMode != _lastGameMode) {
 			// Cleanup previous game mode
 			switch (_lastGameMode) {
@@ -183,10 +185,13 @@ Common::Error StarTrekEngine::runGameMode(int mode) {
 		// Run current game mode
 		switch (_gameMode) {
 		case GAMEMODE_BRIDGE:
+			popNextEvent(&event);
 			//runBridge();
 			break;
 
 		case GAMEMODE_AWAYMISSION:
+			popNextEvent(&event);
+			_system->updateScreen();
 			//runAwayMission();
 			break;
 
@@ -278,42 +283,6 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 
 Room *StarTrekEngine::getRoom() {
 	return _room;
-}
-
-void StarTrekEngine::pollSystemEvents() {
-	Common::Event event;
-	TrekEvent trekEvent;
-
-	while (_eventMan->pollEvent(event)) {
-		trekEvent.mouse = event.mouse;
-		trekEvent.kbd = event.kbd;
-
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_system->quit();
-			break;
-
-		case Common::EVENT_MOUSEMOVE:
-			trekEvent.type = TREKEVENT_MOUSEMOVE;
-			addEventToQueue(trekEvent);
-			break;
-		case Common::EVENT_LBUTTONDOWN:
-			trekEvent.type = TREKEVENT_LBUTTONDOWN;
-			addEventToQueue(trekEvent);
-			break;
-		default:
-			break;
-		}
-	}
-
-	// FIXME: get the actual duration of a tick right
-	_clockTicks++;
-	TrekEvent tickEvent;
-	tickEvent.type = TREKEVENT_TICK;
-	tickEvent.tick = _clockTicks;
-	addEventToQueue(tickEvent);
-
-	_system->delayMillis(1000/60);
 }
 
 void StarTrekEngine::playSoundEffectIndex(int index) {
@@ -423,7 +392,7 @@ void StarTrekEngine::updateObjectAnimations() {
 		switch (object->animType) {
 		case 0:
 		case 2:
-			if (object->frameToStartNextAnim >= _frameIndex) {
+			if (_frameIndex >= object->frameToStartNextAnim) {
 				int nextAnimIndex = 0; // TODO: "chooseNextAnimFrame" function
 				object->animFile->seek(18 + nextAnimIndex + object->animFrame * 22, SEEK_SET);
 				byte nextAnimFrame = object->animFile->readByte();
@@ -459,17 +428,18 @@ void StarTrekEngine::updateObjectAnimations() {
 					memset(object->animationString4, 0, 16);
 					strncpy(object->animationString4, animFrameFilename, 15);
 
-					object->animFile->seek(10, SEEK_SET);
+					object->animFile->seek(10 + object->animFrame * 22, SEEK_SET);
 					uint16 xOffset = object->animFile->readUint16();
 					uint16 yOffset = object->animFile->readUint16();
 					uint16 basePriority = object->animFile->readUint16();
+					uint16 frames = object->animFile->readUint16();
 
 					sprite->pos.x = xOffset + object->field5e;
 					sprite->pos.y = yOffset + object->field60;
 					sprite->drawPriority = _gfx->getPriValue(0, yOffset + object->field60) + basePriority;
 					sprite->bitmapChanged = true;
 
-					object->frameToStartNextAnim = object->animFile->readUint16() + _frameIndex;
+					object->frameToStartNextAnim = frames + _frameIndex;
 				}
 			}
 			break;
