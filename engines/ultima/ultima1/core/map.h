@@ -36,7 +36,7 @@ enum MapType {
 };
 
 enum MapId {
-	MAPID_OVERWORLD = 0, MAPID_DUNGEON = 999
+	MAPID_OVERWORLD = 0
 };
 
 class Ultima1Game;

@@ -125,10 +125,12 @@ void Ultima1Map::loadMap(int mapId, uint videoMode) {
 
 	if (mapId == MAPID_OVERWORLD)
 		loadOverworldMap();
-	else if (mapId == MAPID_DUNGEON)
-		loadDungeonMap();
-	else
+	else if (mapId < 41)
 		loadTownCastleMap();
+	else if (mapId < 49)
+		error("TODO: load Pillar");
+	else
+		loadDungeonMap();
 }
 
 void Ultima1Map::loadOverworldMap() {
@@ -264,9 +266,6 @@ void Ultima1Map::loadDungeonMap() {
 	_mapType = MAP_DUNGEON;
 	_tilesPerOrigTile = Point(1, 1);
 
-	// Set initial value for each cell
-	_data.resize(DUNGEON_WIDTH * DUNGEON_HEIGHT);
-
 	// Place walls around the edge of the map
 	for (int y = 0; y < DUNGEON_HEIGHT; ++y) {
 		_data[y][0] = DTILE_WALL;
@@ -303,7 +302,7 @@ void Ultima1Map::loadDungeonMap() {
 
 	// Further tiles that placed randomly
 	for (uint ctr = 0; ctr <= _dungeonLevel; ++ctr) {
-		Point pt(g_vm->getRandomNumber(10, 99) / 10, g_vm->getRandomNumber(10, 99));
+		Point pt(g_vm->getRandomNumber(10, 99) / 10, g_vm->getRandomNumber(10, 99) / 10);
 		byte currTile = _data[pt.y][pt.x];
 
 		if (currTile != DTILE_WALL && currTile != DTILE_SECRET_DOOR && currTile != DTILE_BEAMS) {
