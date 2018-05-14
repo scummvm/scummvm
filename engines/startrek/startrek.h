@@ -114,6 +114,7 @@ const int MAX_OBJECTS = 0x20;
 
 struct StarTrekGameDescription;
 class Graphics;
+class IWFile;
 class Sound;
 
 class StarTrekEngine : public ::Engine {
@@ -165,6 +166,7 @@ public:
 	void initStandAnim(int objectIndex);
 	void updateObjectPositionWhileWalking(Object *object, int16 x, int16 y);
 	void chooseObjectDirectionForWalking(Object *object, int16 srcX, int16 srcY, int16 destX, int16 destY);
+	bool directPathExists(int16 srcX, int16 srcY, int16 destX, int16 destY);
 
 	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, uint16 arg2);
 	Common::String getCrewmanAnimFilename(int objectIndex, const Common::String &basename);
@@ -270,6 +272,7 @@ public:
 private:
 	Common::MacResManager *_macResFork;
 	Room *_room;
+	SharedPtr<IWFile> _iwFile;
 };
 
 } // End of namespace StarTrek

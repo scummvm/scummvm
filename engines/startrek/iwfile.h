@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -17,26 +18,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
-#ifndef STARTREK_COMMON_H
-#define STARTREK_COMMON_H
+#ifndef STARTREK_IWFILE_H
+#define STARTREK_IWFILE_H
 
-#include "common/rect.h"
+#include "startrek/startrek.h"
 
+/**
+ * Files with the ".iw" extension define a set of "key points" through a room used for
+ * pathing. This is a basic interface for that.
+ */
 namespace StarTrek {
 
-template<class T>
-T min(T a, T b) { return a < b ? a : b; }
+const int MAX_KEY_POSITIONS = 32;
 
-template<class T>
-T max(T a, T b) { return a > b ? a : b; }
+class IWFile {
+public:
+	IWFile(StarTrekEngine *vm, const Common::String &filename);
 
-Common::Rect getRectEncompassing(Common::Rect r1, Common::Rect r2);
+	int getNumEntries() { return _numEntries; }
+	int getClosestKeyPosition(int16 x, int16 y);
 
+	///< List of "key positions" used for pathing.
+	Common::Point _keyPositions[MAX_KEY_POSITIONS];
 
-// Fixed-point (16.16) number
-typedef int32 FixedInt;
+	///< _iwEntries[i][j] is the index of the next key position to move to, when one is
+	///   already at key position "i" and is trying to get to key position "j".
+	byte _iwEntries[MAX_KEY_POSITIONS][MAX_KEY_POSITIONS];
+
+private:
+	StarTrekEngine *_vm;
+
+	uint16 _numEntries;
+};
 
 }
 

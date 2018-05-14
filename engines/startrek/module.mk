@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	events.o \
 	filestream.o \
 	font.o \
+	iwfile.o \
 	lzss.o \
 	graphics.o \
 	object.o \
