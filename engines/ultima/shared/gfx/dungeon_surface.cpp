@@ -42,7 +42,7 @@ void DungeonSurface::drawWall(uint distance) {
 	if (distance <= 5) {
 		hLine(WALL_ARRAY_X[distance] + 16 + offsetX, WALL_ARRAY_Y[distance] + 8 + offsetY,
 			303 - WALL_ARRAY_X[distance] - offsetX, _edgeColor);
-		hLine(WALL_ARRAY_X[distance] + 16 + offsetX, 15 - WALL_ARRAY_Y[distance] - offsetY,
+		hLine(WALL_ARRAY_X[distance] + 16 + offsetX, 151 - WALL_ARRAY_Y[distance] - offsetY,
 			303 - WALL_ARRAY_X[distance] - offsetX, _edgeColor);
 	}
 }
