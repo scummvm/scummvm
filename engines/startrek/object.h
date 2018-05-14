@@ -23,6 +23,7 @@
 #ifndef STARTREK_OBJECT_H
 #define STARTREK_OBJECT_H
 
+#include "startrek/common.h"
 #include "startrek/sprite.h"
 
 #include "common/scummsys.h"
@@ -58,12 +59,12 @@ struct Object {
 	int16 iwDestPosition;
 
 	// Fixed-point position values (16.16) used while walking.
-	uint32 granularPosX;
-	uint32 granularPosY;
+	FixedInt granularPosX;
+	FixedInt granularPosY;
 
 	// Fixed-point speed values (16.16).
-	uint32 speedX;
-	uint32 speedY;
+	FixedInt speedX;
+	FixedInt speedY;
 
 	Common::Point dest; // Position object is walking toward
 	uint16 field90;

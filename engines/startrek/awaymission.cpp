@@ -20,6 +20,7 @@
  *
  */
 
+#include "startrek/iwfile.h"
 #include "startrek/startrek.h"
 
 namespace StarTrek {
@@ -89,13 +90,13 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	_awayMission.mapFileLoaded = 1;
 	_mapFilename = _screenName;
 	_mapFile = loadFile(_mapFilename + ".map");
-	// loadIWFile(_mapFilename);
+	_iwFile = SharedPtr<IWFile>(new IWFile(this, _mapFilename + ".iw"));
 
 	objectFunc1();
 	initObjects();
 
-	double num = _room->readRdfWord(0x0c) - _room->readRdfWord(0x0a);
-	double den = _room->readRdfWord(0x06) - _room->readRdfWord(0x08) + 1;
+	double num = _room->getVar0c() - _room->getVar0a();
+	double den = _room->getVar06() - _room->getVar08() + 1;
 	_playerObjectScale = (int32)(num * 256 / den);
 
 	// TODO: RDF vars 1e/1f and 20/21; relates to BAN files?
@@ -239,6 +240,8 @@ void StarTrekEngine::runAwayMissionCycle() {
  * when that position is solid.
  */
 bool StarTrekEngine::isPositionSolid(int16 x, int16 y) {
+	assert(x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT);
+
 	_mapFile->seek((y * SCREEN_WIDTH + x) / 8, SEEK_SET);
 	return _mapFile->readByte() & (0x80 >> (x % 8));
 }
