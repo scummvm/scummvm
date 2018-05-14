@@ -51,7 +51,7 @@ public:
 	 * Draw a line
 	 */
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color) {
-		Gfx::VisualSurface::drawLine(x0, y0, x1, y1, color);
+		Gfx::VisualSurface::drawLine(x0 - 8, y0 - 8, x1 - 8, y1 - 8, color);
 		_penPos = Point(x1, y1);
 	}
 
@@ -59,23 +59,15 @@ public:
 	 * Draw a line from a prior line ending point to a new destination pos
 	 */
 	void drawLineTo(int x, int y, uint32 color) {
-		Gfx::VisualSurface::drawLine(_penPos.x, _penPos.y, x, y, color);
+		Gfx::VisualSurface::drawLine(_penPos.x - 8, _penPos.y - 8, x - 8, y - 8, color);
 		_penPos = Point(x, y);
-	}
-
-	/**
-	 * Draw a thick line.
-	 */
-	void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color) {
-		Gfx::VisualSurface::drawThickLine(x0, y0, x1, y1, penX, penY, color);
-		_penPos = Point(x1, y1);
 	}
 
 	/**
 	 * Draw a horizontal line.
 	 */
 	void hLine(int x, int y, int x2, uint32 color) {
-		Gfx::VisualSurface::hLine(x, y, x2, color);
+		Gfx::VisualSurface::hLine(x - 8, y - 8, x2 - 8, color);
 		_penPos = Point(x2, y);
 	}
 
@@ -83,7 +75,7 @@ public:
 	 * Draw a vertical line.
 	 */
 	void vLine(int x, int y, int y2, uint32 color) {
-		Gfx::VisualSurface::vLine(x, y, y2, color);
+		Gfx::VisualSurface::vLine(x - 8, y - 8, y2 - 8, color);
 		_penPos = Point(x, y2);
 	}
 
