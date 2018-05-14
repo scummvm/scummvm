@@ -65,7 +65,7 @@ void DungeonSurface::drawLeftEdge(uint distance) {
 
 void DungeonSurface::drawRightEdge(uint distance) {
 	if (distance <= 5) {
-		vLine(WALL_ARRAY_X[distance] + 303, WALL_ARRAY_Y[distance] + 8, 151 - WALL_ARRAY_Y[distance], _edgeColor);
+		vLine(303 - WALL_ARRAY_X[distance], WALL_ARRAY_Y[distance] + 8, 151 - WALL_ARRAY_Y[distance], _edgeColor);
 	}
 }
 
@@ -144,7 +144,7 @@ void DungeonSurface::drawLeftBlank(uint distance) {
 		Point p1(WALL_ARRAY_X[distance], WALL_ARRAY_Y[distance]),
 			p2(WALL_ARRAY_X[distance - 1], WALL_ARRAY_Y[distance - 1]);
 		drawLine(p2.x + 16, p1.y + 8, p1.x + 16, p1.y + 8, _edgeColor);
-		drawLine(p2.x + 16, 151 - p1.y, p1.x + 16, 151 - p1.x, _edgeColor);
+		drawLine(p2.x + 16, 151 - p1.y, p1.x + 16, 151 - p1.y, _edgeColor);
 	}
 }
 
