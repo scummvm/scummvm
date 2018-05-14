@@ -158,10 +158,10 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				_gfx->incPaletteFadeLevel();
 			break;
 		case TREKEVENT_LBUTTONDOWN:
-			if (_awayMission.field1d != 0)
-				break;
+			//if (_awayMission.field1d != 0) // FIXME: uncomment
+			//	break;
 			switch (_awayMission.mapFileLoaded) {
-			case 0:
+			case 1:
 				if (_awayMission.field1c == 0) {
 					_kirkObject->sprite.drawMode = 1; // Hide these objects for function call below?
 					_spockObject->sprite.drawMode = 1;
@@ -178,10 +178,8 @@ void StarTrekEngine::handleAwayMissionEvents() {
 
 					Common::String animFilename = getCrewmanAnimFilename(0, "walk");
 					Common::Point mousePos = _gfx->getMousePos();
-					// objectWalkToPosition(0, animFilename, _kirkObject->pos.x, _kirkObject->pos.y, mousePos.x, mousePos.y);
+					objectWalkToPosition(0, animFilename, _kirkObject->pos.x, _kirkObject->pos.y, mousePos.x, mousePos.y);
 				}
-				break;
-			case 1:
 				break;
 			case 2:
 				break;
@@ -232,6 +230,17 @@ Room *StarTrekEngine::getRoom() {
 }
 
 void StarTrekEngine::runAwayMissionCycle() {
+	// TODO
+}
+
+/**
+ * Returns true if the given position in the room is solid (not walkable).
+ * Reads from a ".map" file which has a bit for each position in the room, which is true
+ * when that position is solid.
+ */
+bool StarTrekEngine::isPositionSolid(int16 x, int16 y) {
+	_mapFile->seek((y * SCREEN_WIDTH + x) / 8, SEEK_SET);
+	return _mapFile->readByte() & (0x80 >> (x % 8));
 }
 
 }

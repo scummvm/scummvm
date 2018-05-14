@@ -99,7 +99,8 @@ struct TrekEvent {
 
 enum Commands {
 	COMMAND_TICK = 0,
-	COMMAND_CLICKED_ON_OBJECT
+	COMMAND_CLICKED_ON_OBJECT = 1,
+	COMMAND_12 = 12
 };
 
 struct Command {
@@ -134,6 +135,8 @@ private:
 	uint16 getObjectScaleAtPosition(int16 y);
 	void runAwayMissionCycle();
 
+	bool isPositionSolid(int16 x, int16 y);
+
 public:
 	Room *getRoom();
 
@@ -153,13 +156,15 @@ public:
 	// Objects
 	void initObjects();
 	int loadObjectAnim(int objectIndex, const Common::String &animName, int16 x, int16 y, uint16 arg8);
-	bool objectWalkToPosition(int objectIndex, Common::Point src, Common::Point dest);
+	bool objectWalkToPosition(int objectIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY);
 	void updateObjectAnimations();
 	void removeObjectFromScreen(int objectIndex);
 	void objectFunc1();
-	void drawObjectToScreen(Object *object, const Common::String &animName, uint16 field5e, uint16 field60, uint16 arg8, bool addSprite);
+	void drawObjectToScreen(Object *object, const Common::String &animName, int16 x, int16 y, uint16 scale, bool addSprite);
 	void releaseAnim(Object *object);
 	void initStandAnim(int objectIndex);
+	void updateObjectPositionWhileWalking(Object *object, int16 x, int16 y);
+	void chooseObjectDirectionForWalking(Object *object, int16 srcX, int16 srcY, int16 destX, int16 destY);
 
 	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, uint16 arg2);
 	Common::String getCrewmanAnimFilename(int objectIndex, const Common::String &basename);

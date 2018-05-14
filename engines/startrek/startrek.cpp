@@ -100,7 +100,7 @@ Common::Error StarTrekEngine::run() {
 	_gameMode = -1;
 	_lastGameMode = -1;
 
-	runGameMode(GAMEMODE_BEAMDOWN);
+	runGameMode(GAMEMODE_AWAYMISSION);
 	return Common::kNoError;
 
 
@@ -381,6 +381,43 @@ int StarTrekEngine::loadObjectAnim(int objectIndex, const Common::String &animNa
 	return objectIndex;
 }
 
+/**
+ * Tries to make an object walk to a position.
+ * Returns true if successful in initiating the walk.
+ */
+bool StarTrekEngine::objectWalkToPosition(int objectIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY) {
+	debugC(6, "Obj %d: walk from (%d,%d) to (%d,%d)", objectIndex, srcX, srcY, destX, destY);
+
+	Object *object = &_objectList[objectIndex];
+
+	object->field64 = 0;
+	if (isPositionSolid(destX, destY))
+		return false;
+
+	if (object->spriteDrawn)
+		releaseAnim(object);
+	else
+		_gfx->addSprite(&object->sprite);
+
+	object->spriteDrawn = true;
+	object->animType = 1;
+	object->frameToStartNextAnim = _frameIndex + 1;
+	strcpy(object->animationString2, animFile.c_str());
+
+	object->dest.x = destX;
+	object->dest.y = destY;
+	object->field92 = 0;
+	object->field64 = 0;
+
+	object->iwDestPosition = -1;
+	object->iwSrcPosition = -1;
+
+	// TODO: if (directPathExists(srcX, srcY, destX, destY)) {
+
+	chooseObjectDirectionForWalking(object, srcX, srcY, destX, destY);
+	updateObjectPositionWhileWalking(object, (object->granularPosX + 0x8000) >> 16, (object->granularPosY + 0x8000) >> 16);
+}
+
 void StarTrekEngine::updateObjectAnimations() {
 	for (int i = 0; i < MAX_OBJECTS; i++) {
 		Object *object = &_objectList[i];
@@ -388,7 +425,7 @@ void StarTrekEngine::updateObjectAnimations() {
 			continue;
 
 		switch (object->animType) {
-		case 0:
+		case 0: // Not walking?
 		case 2:
 			if (_frameIndex >= object->frameToStartNextAnim) {
 				int nextAnimIndex = 0; // TODO: "chooseNextAnimFrame" function
@@ -439,8 +476,60 @@ void StarTrekEngine::updateObjectAnimations() {
 				}
 			}
 			break;
-		case 1: // TODO
-			warning("Unimplemented anim type %d", object->animType);
+		case 1: // Walking
+			if (_frameIndex < object->frameToStartNextAnim)
+				break;
+			/*
+			if (i == 0) // TODO: Kirk only
+				sub_22c2d(object->pos.x, object->pos.y);
+			*/
+			if (object->field90 != 0) {
+				Sprite *sprite = &object->sprite;
+				int loops;
+				if (getObjectScaleAtPosition((object->granularPosY + 0x8000) >> 16) < 0xa0)
+					loops = 1;
+				else
+					loops = 2;
+				for (int k = 0; k < loops; k++) {
+					if (object->field90 == 0)
+						break;
+					object->field90--;
+					uint32 newX = object->granularPosX + object->speedX;
+					uint32 newY = object->granularPosY + object->speedY;
+					if ((object->field90 & 3) == 0) {
+						sprite->bitmap.reset();
+						updateObjectPositionWhileWalking(object, (newX + 0x8000) >> 16, (newY + 0x8000) >> 16);
+						object->field92++;
+					}
+
+					object->granularPosX = newX;
+					object->granularPosY = newY;
+					object->frameToStartNextAnim = _frameIndex;
+				}
+			}
+			else { // object->field90 == 0
+				if (object->iwSrcPosition == -1) {
+					if (object->field64 != 0) {
+						object->field64 = 0;
+						//addCommand(COMMAND_12, object->field66 & 0xff, 0, 0);
+					}
+
+					object->sprite.bitmap.reset();
+					updateObjectPositionWhileWalking(object, (object->granularPosX + 0x8000) >> 16, (object->granularPosY + 0x8000) >> 16);
+					initStandAnim(i);
+				}
+				else { // object->iwSrcPosition != -1
+					if (object->iwSrcPosition == object->iwDestPosition) {
+						object->animationString2[strlen(object->animationString2) - 1] = '\0';
+						object->iwDestPosition = -1;
+						object->iwSrcPosition = -1;
+						// sub_11677(object->pos.x, object->pos.y, object->dest.x, object->dest.y);
+					}
+					else {
+
+					}
+				}
+			}
 			break;
 		default:
 			error("Invalid anim type.");
@@ -477,7 +566,7 @@ void StarTrekEngine::objectFunc1() {
 	}
 }
 
-void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_animName, uint16 x, uint16 y, uint16 scale, bool addSprite) {
+void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_animName, int16 x, int16 y, uint16 scale, bool addSprite) {
 	Common::String animFilename = _animName;
 	if (_animName.hasPrefixIgnoreCase("stnd") /* && word_45d20 == -1 */) // TODO
 		animFilename += 'j';
@@ -569,6 +658,86 @@ void StarTrekEngine::initStandAnim(int objectIndex) {
 	uint16 scale = getObjectScaleAtPosition(object->pos.y);
 	loadObjectAnim(objectIndex, animName, object->pos.x, object->pos.y, scale);
 	object->animType = 0;
+}
+
+void StarTrekEngine::updateObjectPositionWhileWalking(Object *object, int16 x, int16 y) {
+	object->scale = getObjectScaleAtPosition(y);
+	Common::String animName = Common::String::format("%s%02d", object->animationString2, object->field92 & 7);
+	object->sprite.setBitmap(loadAnimationFrame(animName, object->scale));
+
+	memset(object->animationString4, 0, 10);
+	strncpy(object->animationString4, animName.c_str(), 9);
+
+	Sprite *sprite = &object->sprite;
+	sprite->drawPriority = _gfx->getPriValue(0, y);
+	sprite->pos.x = x;
+	sprite->pos.y = y;
+	sprite->bitmapChanged = true;
+
+	object->frameToStartNextAnim = _frameIndex;
+	object->pos.x = x;
+	object->pos.y = y;
+}
+
+/**
+ * Chooses a value for the object's speed and direction, based on a source position and
+ * a destination position it's walking to.
+ */
+void StarTrekEngine::chooseObjectDirectionForWalking(Object *object, int16 srcX, int16 srcY, int16 destX, int16 destY) {
+	object->granularPosX = srcX << 16;
+	object->granularPosY = srcY << 16;
+
+	int16 distX = destX - srcX;
+	int16 distY = destY - srcY;
+	int16 absDistX = abs(distX);
+	int16 absDistY = abs(distY);
+
+	if (absDistX > absDistY) {
+		char d;
+		if (distX > 0)
+			d = 'E';
+		else
+			d = 'W';
+
+		// Append direction to animation string
+		object->animationString2[strlen(object->animationString2) + 1] = '\0';
+		object->animationString2[strlen(object->animationString2)] = d;
+
+		object->direction = d;
+		object->field90 = absDistX;
+
+		if (distX != 0) {
+			if (distX > 0)
+				object->speedX = 1 << 16;
+			else
+				object->speedX = -1 << 16; // 0xffff0000
+
+			object->speedY = (distY << 16) / absDistX;
+		}
+	}
+	else {
+		char d;
+		if (distY > 0)
+			d = 'S';
+		else
+			d = 'N';
+
+		// Append direction to animation string
+		object->animationString2[strlen(object->animationString2) + 1] = '\0';
+		object->animationString2[strlen(object->animationString2)] = d;
+
+		object->direction = d;
+		object->field90 = absDistY;
+
+		if (distY != 0) {
+			if (distY > 0)
+				object->speedY = 1 << 16;
+			else
+				object->speedY = -1 << 16; // 0xffff0000
+
+			object->speedX = (distX << 16) / absDistY;
+		}
+	}
 }
 
 SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, uint16 scale) {
