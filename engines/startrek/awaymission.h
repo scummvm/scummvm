@@ -28,7 +28,7 @@ struct AwayMission {
 	int16 mouseX;
 	int16 mouseY;
 	byte field1c;
-	byte field1d;
+	byte field1d; // Set while beaming in?
 	bool redshirtDead;
 	byte mapFileLoaded;
 	int8 field25[4];

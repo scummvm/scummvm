@@ -54,21 +54,25 @@ struct Object {
 	uint16 field72;
 	uint16 field74;
 	uint16 field76;
-	uint16 iwSrcPosition;
-	uint16 iwDestPosition;
-	uint16 field7c;
-	uint16 field7e;
-	uint16 field80;
-	uint16 field82;
-	uint16 field84;
-	uint16 field86;
-	uint16 field88;
-	uint16 field8a;
-	uint16 field8c;
-	uint16 field8e;
+	int16 iwSrcPosition;
+	int16 iwDestPosition;
+
+	// Fixed-point position values (16.16) used while walking.
+	uint32 granularPosX;
+	uint32 granularPosY;
+
+	// Fixed-point speed values (16.16).
+	uint32 speedX;
+	uint32 speedY;
+
+	Common::Point dest; // Position object is walking toward
 	uint16 field90;
 	byte field92;
-	char direction; // Can 'n', 's', 'e', 'w', or 0 for uninitialized?
+
+	// Can 'n', 's', 'e', 'w', or 0 for uninitialized?
+	// Can also be capitalized?
+	char direction;
+
 	uint16 field94;
 	uint16 field96;
 	char animationString[9];
