@@ -22,6 +22,7 @@
 #include "startrek/common.h"
 #include "startrek/graphics.h"
 
+#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/rendermode.h"
@@ -336,13 +337,28 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 	_vm->_system->unlockScreen();
 }
 
+/**
+ * Compare 2 sprites for the purpose of sorting them by layer before drawing.
+ * FIXME: Original returned an int, not a bool. This may affect the stability of the sort...
+ */
+bool compareSpritesByLayer(Sprite *s1, Sprite *s2) {
+	if (s1->drawPriority != s2->drawPriority)
+		return s1->drawPriority < s2->drawPriority;
+	if (s1->field6 != s2->field6)
+		return s1->field6 < s2->field6;
+	if (s1->pos.y != s2->pos.y)
+		return s1->pos.y < s2->pos.y;
+	return s1->pos.x < s2->pos.x;
+}
+
 void Graphics::drawAllSprites() {
 	// TODO: different video modes?
 
 	if (_numSprites == 0)
 		return;
 
-	// TODO: calculateSpriteDrawPriority()
+	// Sort sprites by layer
+	Common::sort(_sprites, _sprites + _numSprites, &compareSpritesByLayer);
 
 	// Update sprite rectangles
 	for (int i=0; i<_numSprites; i++) {
