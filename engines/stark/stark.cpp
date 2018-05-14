@@ -146,6 +146,8 @@ Common::Error StarkEngine::run() {
 	// Initialize the UI
 	_userInterface->init();
 
+	/*
+
 	if (ConfMan.hasKey("save_slot")) {
 		// Load game from specified slot, if any
 		loadGameState(ConfMan.getInt("save_slot"));
@@ -153,6 +155,8 @@ Common::Error StarkEngine::run() {
 		// Otherwise, set the startup location, ie the House of All Worlds by default
 		setStartupLocation();
 	}
+
+	*/
 
 	// Start running
 	mainLoop();

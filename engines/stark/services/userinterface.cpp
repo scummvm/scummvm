@@ -35,6 +35,7 @@
 
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/menu/diaryindex.h"
+#include "engines/stark/ui/menu/mainmenu.h"
 #include "engines/stark/ui/world/inventorywindow.h"
 #include "engines/stark/ui/world/fmvscreen.h"
 #include "engines/stark/ui/world/gamescreen.h"
@@ -46,6 +47,7 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_cursor(nullptr),
 		_diaryIndexScreen(nullptr),
+		_mainMenuScreen(nullptr),
 		_exitGame(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
@@ -67,9 +69,12 @@ UserInterface::~UserInterface() {
 void UserInterface::init() {
 	_cursor = new Cursor(_gfx);
 
-	_currentScreen = _gameScreen = new GameScreen(_gfx, _cursor);
+	_mainMenuScreen = new MainMenuScreen(_gfx, _cursor);
+	_gameScreen = new GameScreen(_gfx, _cursor);
 	_diaryIndexScreen = new DiaryIndexScreen(_gfx, _cursor);
 	_fmvScreen = new FMVScreen(_gfx, _cursor);
+
+	_currentScreen = _mainMenuScreen;
 }
 
 void UserInterface::update() {

@@ -36,6 +36,7 @@ namespace Stark {
 class Screen {
 public:
 	enum Name {
+		kScreenMainMenu,
 		kScreenGame,
 		kScreenFMV,
 		kScreenDiaryIndex
