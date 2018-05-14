@@ -1490,8 +1490,8 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		giveExperience(monsterData._experience);
 
 		if (party._mazeId != 85) {
-			party._treasure._gold = monsterData._gold;
-			party._treasure._gems = monsterData._gems;
+			party._treasure._gold += monsterData._gold;
+			party._treasure._gems += monsterData._gems;
 
 			if (!ccNum && monster._spriteId == 89) {
 				// Xeen's Scepter of Temporal Distortion
