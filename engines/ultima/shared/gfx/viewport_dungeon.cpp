@@ -83,9 +83,10 @@ void ViewportDungeon::draw() {
 		if (isDoor)
 			s.drawDoorway(0);
 
-		bool endingLeft = false, endingRight = false;
-		bool leftFlag = false, rightFlag = false;
-		bool priorLeftFlag = false, priorRightFlag = false;
+		// These are essentially boolean flags with an extra 'initial' state
+		byte endingLeft = 100, endingRight = 100;
+		byte leftFlag = 100, rightFlag = 100;
+		byte priorLeftFlag = 100, priorRightFlag = 100;
 
 		for (int index = distance; index; --index) {
 			currDelta -= delta;
