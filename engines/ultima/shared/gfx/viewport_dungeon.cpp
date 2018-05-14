@@ -87,7 +87,7 @@ void ViewportDungeon::draw() {
 		bool leftFlag = false, rightFlag = false;
 		bool priorLeftFlag = false, priorRightFlag = false;
 
-		for (int index = distance; distance; --distance) {
+		for (int index = distance; index; --index) {
 			currDelta -= delta;
 			Point pt = currentPos + currDelta;
 			
