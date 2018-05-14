@@ -265,9 +265,9 @@ void FlicDecoder::FlicVideoTrack::copyFrame(uint8 *data) {
 
 void FlicDecoder::FlicVideoTrack::decodeByteRun(uint8 *data) {
 	byte *ptr = (byte *)_surface->getPixels();
-	while ((int32)(ptr - (byte *)_surface->getPixels()) < (getWidth() * getHeight())) {
-		int chunks = *data++;
-		while (chunks--) {
+	for (int i = 0; i < getHeight(); ++i) {
+		data++;
+		for (int j = 0; j < getWidth();) {
 			int count = (int8)*data++;
 			if (count > 0) {
 				memset(ptr, *data++, count);
@@ -277,6 +277,7 @@ void FlicDecoder::FlicVideoTrack::decodeByteRun(uint8 *data) {
 				data += count;
 			}
 			ptr += count;
+			j += count;
 		}
 	}
 
