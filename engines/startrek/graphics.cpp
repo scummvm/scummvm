@@ -44,8 +44,6 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	if (_vm->getGameType() == GType_ST25 && _vm->getPlatform() == Common::kPlatformDOS)
 		_font = new Font(_vm);
 
-	_backgroundImage = loadBitmap("DEMON0");
-
 	_numSprites = 0;
 	_textDisplayMode = TEXTDISPLAY_WAIT;
 	_textboxVar2 = 0;
@@ -142,7 +140,22 @@ void Graphics::setPaletteFadeLevel(byte *palData, int fadeLevel) {
 	_vm->_system->updateScreen();
 }
 
-void Graphics::loadPri(const char *priFile) {
+void Graphics::incPaletteFadeLevel() {
+	if (_paletteFadeLevel < 100) {
+		_paletteFadeLevel += 10;
+		setPaletteFadeLevel(_palData, _paletteFadeLevel);
+	}
+}
+
+void Graphics::decPaletteFadeLevel() {
+	if (_paletteFadeLevel > 0) {
+		_paletteFadeLevel -= 10;
+		setPaletteFadeLevel(_palData, _paletteFadeLevel);
+	}
+}
+
+
+void Graphics::loadPri(const Common::String &priFile) {
 	SharedPtr<Common::SeekableReadStream> priStream = _vm->loadFile(priFile);
 	priStream->read(_priData, SCREEN_WIDTH * SCREEN_HEIGHT / 2);
 }
@@ -467,6 +480,10 @@ void Graphics::delSprite(Sprite *sprite) {
 	error("delSprite: sprite not in list");
 }
 
+
+void Graphics::copyBackgroundScreen() {
+	drawDirectToScreen(_backgroundImage);
+}
 
 void Graphics::drawDirectToScreen(SharedPtr<Bitmap> bitmap) {
 	int xoffset = bitmap->xoffset;

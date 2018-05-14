@@ -18,37 +18,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/graphics.h $
- * $Id: graphics.h 2 2009-09-12 20:13:40Z clone2727 $
- *
  */
 
-#include "startrek/filestream.h"
-#include "startrek/room.h"
-#include "startrek/startrek.h"
+#ifndef STARTREK_AWAYMISSION_H
+#define STARTREK_AWAYMISSION_H
 
+// All variables here get cleared to 0 upon starting an away mission.
+struct AwayMission {
+	int16 mouseX;
+	int16 mouseY;
+	byte field1c;
+	byte field1d;
+	bool redshirtDead;
+	byte mapFileLoaded;
+	int8 field25[4];
 
-namespace StarTrek {
+	bool rdfRunNextCommand;
+};
+// Size: 0x129 bytes
 
-Room::Room(StarTrekEngine *vm, Common::String name) : _vm(vm) {
-	SharedPtr<FileStream> rdfFile = _vm->loadFile(name + ".RDF");
-
-	int size = rdfFile->size();
-	_rdfData = new byte[size];
-	rdfFile->read(_rdfData, size);
-}
-
-Room::~Room() {
-	delete[] _rdfData;
-}
-
-uint16 Room::readRdfWord(int offset) {
-	return _rdfData[offset] | (_rdfData[offset+1]<<8);
-}
-
-Common::Point Room::getBeamInPosition(int crewmanIndex) {
-	int base = 0xaa + crewmanIndex * 4;
-	return Common::Point(readRdfWord(base), readRdfWord(base + 2));
-}
-
-}
+#endif

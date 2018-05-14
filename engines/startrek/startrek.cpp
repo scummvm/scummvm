@@ -55,8 +55,6 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_macResFork = nullptr;
 	_room = nullptr;
 
-	_redshirtDead = false;
-
 	_clockTicks = 0;
 
 	_musicEnabled = true;
@@ -70,6 +68,9 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_keyboardControlsMouse = true;
 
 	_inQuitGameMenu = false;
+
+	_missionToLoad = "DEMON";
+	_roomIndexToLoad = 0;
 }
 
 StarTrekEngine::~StarTrekEngine() {
@@ -140,11 +141,11 @@ Common::Error StarTrekEngine::runGameMode(int mode) {
 			// Cleanup previous game mode
 			switch (_lastGameMode) {
 			case GAMEMODE_BRIDGE:
-				//cleanupBridgeMode();
+				//cleanupBridge();
 				break;
 
 			case GAMEMODE_AWAYMISSION:
-				//cleanupAwayMissionMode();
+				cleanupAwayMission();
 				break;
 
 			case GAMEMODE_BEAMDOWN:
@@ -162,11 +163,11 @@ Common::Error StarTrekEngine::runGameMode(int mode) {
 				break;
 
 			case GAMEMODE_AWAYMISSION:
-				//initAwayMission();
+				initAwayMission();
 				break;
 
 			case GAMEMODE_BEAMDOWN:
-				_redshirtDead = false;
+				_awayMission.redshirtDead = false;
 				_sound->loadMusicFile("ground");
 				runTransportSequence("teled");
 				_gameMode = GAMEMODE_AWAYMISSION;
@@ -190,9 +191,7 @@ Common::Error StarTrekEngine::runGameMode(int mode) {
 			break;
 
 		case GAMEMODE_AWAYMISSION:
-			popNextEvent(&event);
-			_system->updateScreen();
-			//runAwayMission();
+			runAwayMission();
 			break;
 
 		case GAMEMODE_BEAMDOWN:
@@ -225,29 +224,29 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	_gfx->drawDirectToScreen(bgImage);
 	_system->updateScreen();
 
-	for (int i = 0; i < (_redshirtDead ? 3 : 4); i++) {
+	for (int i = 0; i < (_awayMission.redshirtDead ? 3 : 4); i++) {
 		Common::String filename = getCrewmanAnimFilename(i, name);
 		int x = crewmanTransportPositions[i][0];
 		int y = crewmanTransportPositions[i][1];
-		loadAnimationForObject(i, filename, x, y, 256);
+		loadObjectAnim(i, filename, x, y, 256);
 		_objectList[i].animationString[0] = '\0';
 	}
 
 	if (_missionToLoad.equalsIgnoreCase("feather") && name[4] == 'b') {
-		loadAnimationForObject(9, "qteleb", 0x61, 0x79, 0x100);
+		loadObjectAnim(9, "qteleb", 0x61, 0x79, 0x100);
 	}
 	else if (_missionToLoad.equalsIgnoreCase("trial")) {
 		if (name[4] == 'd') {
-			loadAnimationForObject(9, "qteled", 0x61, 0x79, 0x100);
+			loadObjectAnim(9, "qteled", 0x61, 0x79, 0x100);
 		}
 		/* TODO
 		else if (word_51156 >= 3) {
-			loadAnimationForObject(9, "qteleb", 0x61, 0x79, 0x100);
+			loadObjectAnim(9, "qteleb", 0x61, 0x79, 0x100);
 		}
 		*/
 	}
 
-	loadAnimationForObject(8, "transc", 0, 0, 0x100);
+	loadObjectAnim(8, "transc", 0, 0, 0x100);
 
 	// TODO: redraw mouse and sprite_52c4e?
 
@@ -279,10 +278,6 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	_gfx->fadeoutScreen();
 	objectFunc1();
 	initObjects();
-}
-
-Room *StarTrekEngine::getRoom() {
-	return _room;
 }
 
 void StarTrekEngine::playSoundEffectIndex(int index) {
@@ -358,7 +353,10 @@ void StarTrekEngine::initObjects() {
 	strcpy(_redshirtObject->animationString, "rstnd");
 }
 
-int StarTrekEngine::loadAnimationForObject(int objectIndex, const Common::String &animName, uint16 x, uint16 y, uint16 scale) {
+/**
+ * Set an object's animation, position, and scale.
+ */
+int StarTrekEngine::loadObjectAnim(int objectIndex, const Common::String &animName, int16 x, int16 y, uint16 scale) {
 	debugC(6, kDebugGraphics, "Load animation '%s' on object %d", animName.c_str(), objectIndex);
 
 	Object *object;
@@ -412,10 +410,8 @@ void StarTrekEngine::updateObjectAnimations() {
 				if (object->animFrame >= object->numAnimFrames) {
 					if (object->animationString[0] == '\0')
 						removeObjectFromScreen(i);
-					/*
-					else // TODO
+					else
 						initStandAnim(i);
-						*/
 				}
 				else {
 					Sprite *sprite = &object->sprite;
@@ -434,9 +430,9 @@ void StarTrekEngine::updateObjectAnimations() {
 					uint16 basePriority = object->animFile->readUint16();
 					uint16 frames = object->animFile->readUint16();
 
-					sprite->pos.x = xOffset + object->field5e;
-					sprite->pos.y = yOffset + object->field60;
-					sprite->drawPriority = _gfx->getPriValue(0, yOffset + object->field60) + basePriority;
+					sprite->pos.x = xOffset + object->pos.x;
+					sprite->pos.y = yOffset + object->pos.y;
+					sprite->drawPriority = _gfx->getPriValue(0, yOffset + object->pos.y) + basePriority;
 					sprite->bitmapChanged = true;
 
 					object->frameToStartNextAnim = frames + _frameIndex;
@@ -491,8 +487,8 @@ void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_a
 	object->animFile = loadFile(animFilename + ".anm");
 	object->numAnimFrames = object->animFile->size() / 22;
 	object->animFrame = 0;
-	object->field5e = x;
-	object->field60 = y;
+	object->pos.x = x;
+	object->pos.y = y;
 	object->field62 = 0;
 	object->scale = scale;
 
@@ -518,9 +514,9 @@ void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_a
 	uint16 yOffset = object->animFile->readUint16();
 	uint16 basePriority = object->animFile->readUint16();
 
-	sprite->pos.x = xOffset + object->field5e;
-	sprite->pos.y = yOffset + object->field60;
-	sprite->drawPriority = _gfx->getPriValue(0, yOffset + object->field60) + basePriority;
+	sprite->pos.x = xOffset + object->pos.x;
+	sprite->pos.y = yOffset + object->pos.y;
+	sprite->drawPriority = _gfx->getPriValue(0, yOffset + object->pos.y) + basePriority;
 	sprite->bitmapChanged = true;
 
 	object->spriteDrawn = 1;
@@ -537,11 +533,42 @@ void StarTrekEngine::releaseAnim(Object *object) {
 		warning("Unimplemented anim type %d", object->animType);
 		break;
 	default:
-		error("Invalid anim type.");
+		error("Invalid anim type");
 		break;
 	}
 
 	object->spriteDrawn = 0;
+}
+
+void StarTrekEngine::initStandAnim(int objectIndex) {
+	Object *object = &_objectList[objectIndex];
+
+	if (!object->spriteDrawn)
+		error("initStandAnim: dead anim");
+
+	////////////////////
+	// sub_239d2
+	const char *directions = "nsew";
+
+	if (objectIndex >= 0 && objectIndex <= 3) {
+		int8 dir = _awayMission.field25[objectIndex];
+		if (dir != -1) {
+			object->direction = directions[dir];
+			_awayMission.field25[objectIndex] = -1;
+		}
+	}
+	// end of sub_239d2
+	////////////////////
+
+	Common::String animName;
+	if (object->direction != 0)
+		animName = Common::String(object->animationString) + (char)object->direction;
+	else // Default to facing south
+		animName = Common::String(object->animationString) + 's';
+
+	uint16 scale = getObjectScaleAtPosition(object->pos.y);
+	loadObjectAnim(objectIndex, animName, object->pos.x, object->pos.y, scale);
+	object->animType = 0;
 }
 
 SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, uint16 scale) {
@@ -581,13 +608,13 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 				// Change uniform color
 				int16 colorShift;
 				switch (c) {
-				case 'k':
+				case 'k': // Kirk
 					colorShift = 8;
 					break;
-				case 'r':
+				case 'r': // Redshirt
 					colorShift = -8;
 					break;
-				case 's':
+				case 's': // Spock
 					colorShift = 0;
 					break;
 				}
@@ -727,6 +754,7 @@ SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, uint16 s
 }
 
 /**
+ * This takes a row of an unscaled bitmap, and copies it to a row of a scaled bitmap.
  * This was heavily optimized in the original game (manually constructed an unrolled
  * loop).
  */

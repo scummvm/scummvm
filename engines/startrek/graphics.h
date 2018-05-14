@@ -76,8 +76,10 @@ public:
 	void fadeinScreen();
 	void fadeoutScreen();
 	void setPaletteFadeLevel(byte *palData, int fadeLevel);
+	void incPaletteFadeLevel();
+	void decPaletteFadeLevel();
 
-	void loadPri(const char *priFile);
+	void loadPri(const Common::String &priFile);
 	void clearPri();
 	byte getPriValue(int x, int y);
 
@@ -94,6 +96,7 @@ public:
 	void delSprite(Sprite *sprite);
 	
 
+	void copyBackgroundScreen();
 	void drawDirectToScreen(SharedPtr<Bitmap> bitmap);
 	void loadEGAData(const char *egaFile);
 	void drawBackgroundImage(const char *filename);
@@ -106,7 +109,7 @@ private:
 	byte *_egaData;
 	byte *_palData;
 	byte *_lutData;
-	byte _priData[SCREEN_WIDTH*SCREEN_HEIGHT / 2];
+	byte _priData[SCREEN_WIDTH * SCREEN_HEIGHT / 2];
 
 	int16 _paletteFadeLevel;
 

@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef STARTREK_H
@@ -34,6 +35,7 @@
 
 #include "engines/engine.h"
 
+#include "startrek/awaymission.h"
 #include "startrek/filestream.h"
 #include "startrek/graphics.h"
 #include "startrek/object.h"
@@ -95,6 +97,18 @@ struct TrekEvent {
 	uint32 tick;
 };
 
+enum Commands {
+	COMMAND_TICK = 0,
+	COMMAND_CLICKED_ON_OBJECT
+};
+
+struct Command {
+	byte type;
+	byte b1; // These depend on command type?
+	byte b2;
+	byte b3;
+};
+
 const int MAX_OBJECTS = 0x20;
 
 struct StarTrekGameDescription;
@@ -108,6 +122,23 @@ protected:
 private:
 	// Game modes
 	Common::Error runGameMode(int mode);
+
+	// Away missions
+	void initAwayMission();
+	void runAwayMission();
+	void cleanupAwayMission();
+	void loadRoom(const Common::String &missionName, int roomIndex);
+	void initAwayCrewPositions(int warpEntryIndex);
+	void handleAwayMissionEvents();
+	int loadObjectAnimWithRoomScaling(int objectIndex, const Common::String &animName, int16 x, int16 y);
+	uint16 getObjectScaleAtPosition(int16 y);
+	void runAwayMissionCycle();
+
+public:
+	Room *getRoom();
+
+private:
+	// Transporter room
 	void runTransportSequence(const Common::String &name);
 
 public:
@@ -115,20 +146,20 @@ public:
 	virtual ~StarTrekEngine();
 
 	// Running the game
-	Room *getRoom();
-
 	void playSoundEffectIndex(int index);
 	void playSpeech(const Common::String &filename);
 	void stopPlayingSpeech();
 
 	// Objects
 	void initObjects();
-	int loadAnimationForObject(int objectIndex, const Common::String &animName, uint16 x, uint16 y, uint16 arg8);
+	int loadObjectAnim(int objectIndex, const Common::String &animName, int16 x, int16 y, uint16 arg8);
+	bool objectWalkToPosition(int objectIndex, Common::Point src, Common::Point dest);
 	void updateObjectAnimations();
 	void removeObjectFromScreen(int objectIndex);
 	void objectFunc1();
 	void drawObjectToScreen(Object *object, const Common::String &animName, uint16 field5e, uint16 field60, uint16 arg8, bool addSprite);
 	void releaseAnim(Object *object);
+	void initStandAnim(int objectIndex);
 
 	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, uint16 arg2);
 	Common::String getCrewmanAnimFilename(int objectIndex, const Common::String &basename);
@@ -179,8 +210,21 @@ public:
 public:
 	int _gameMode;
 	int _lastGameMode;
-	bool _redshirtDead;
+
 	Common::String _missionToLoad;
+	int _roomIndexToLoad;
+
+	Common::String _missionName;
+	int _roomIndex;
+	Common::String _screenName; // _screenName = _missionName + _roomIndex
+	Common::String _mapFilename; // Similar to _screenName, but used for .map files?
+	SharedPtr<FileStream> _mapFile;
+	int32 _playerObjectScale;
+
+	// Queue of "commands" (ie. next frame, clicked on object) for away mission or bridge
+	Common::Queue<Command> _commandQueue;
+
+	AwayMission _awayMission;
 
 	Object _objectList[MAX_OBJECTS];
 	Object * const _kirkObject;
@@ -196,6 +240,7 @@ public:
 	// Updates 18.206 times every second.
 	uint32 _clockTicks;
 	uint32 _frameIndex;
+	uint32 _roomFrameCounter; // Resets to 0 on loading a room
 
 	bool _musicEnabled;
 	bool _sfxEnabled;

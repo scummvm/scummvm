@@ -1,6 +1,7 @@
 MODULE := engines/startrek
 
 MODULE_OBJS = \
+	awaymission.o \
 	bitmap.o \
 	common.o \
 	detection.o \

@@ -17,11 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef STARTREK_ROOM_H
 #define STARTREK_ROOM_H
 
+#include "common/rect.h"
 #include "common/ptr.h"
 #include "common/str.h"
 
@@ -38,7 +40,16 @@ public:
 	Room(StarTrekEngine *vm, Common::String name);
 	~Room();
 
+	// Helper stuff for RDF access
 	uint16 readRdfWord(int offset);
+
+	// Scale-related stuff (rename these later)
+	int16 getVar06() { return readRdfWord(0x06); }
+	int16 getVar08() { return readRdfWord(0x08); }
+	int16 getVar0a() { return readRdfWord(0x0a); }
+	int16 getVar0c() { return readRdfWord(0x0c); }
+
+	Common::Point getBeamInPosition(int crewmanIndex);
 
 	byte *_rdfData;
 
