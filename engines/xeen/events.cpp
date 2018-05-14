@@ -31,8 +31,8 @@
 
 namespace Xeen {
 
-EventsManager::EventsManager(XeenEngine *vm) : _vm(vm), _playTime(0),
-		_frameCounter(0), _priorFrameCounterTime(0), _gameCounter(0),
+EventsManager::EventsManager(XeenEngine *vm) : _vm(vm), _playTime(0), _gameCounter(0),
+		_frameCounter(0), _priorFrameCounterTime(0), _priorScreenRefreshTime(0),
 		_mousePressed(false), _sprites("mouse.icn") {
 	Common::fill(&_gameCounters[0], &_gameCounters[6], 0);
 }
@@ -62,7 +62,15 @@ bool EventsManager::isCursorVisible() {
 
 void EventsManager::pollEvents() {
 	uint32 timer = g_system->getMillis();
+
+	if (timer >= (_priorScreenRefreshTime + SCREEN_UPDATE_TIME)) {
+		// Refresh the screen at a higher frame rate than the game's own frame rate
+		// to allow for more responsive mouse movement
+		_priorScreenRefreshTime = timer;
+		g_vm->_screen->update();
+	}
 	if (timer >= (_priorFrameCounterTime + GAME_FRAME_TIME)) {
+		// Time to build up next game frame
 		_priorFrameCounterTime = timer;
 		nextFrame();
 	}
