@@ -44,7 +44,7 @@ struct Object {
 	uint16 numAnimFrames;
 	uint16 animFrame;
 	uint32 frameToStartNextAnim;
-	uint16 field5e;
+	Common::Point pos;
 	uint16 field60;
 	uint16 field62;
 	uint16 field64;
@@ -67,7 +67,8 @@ struct Object {
 	uint16 field8c;
 	uint16 field8e;
 	uint16 field90;
-	uint16 field92;
+	byte field92;
+	char direction; // Can 'n', 's', 'e', 'w', or 0 for uninitialized?
 	uint16 field94;
 	uint16 field96;
 	char animationString[9];
