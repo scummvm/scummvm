@@ -41,6 +41,8 @@ void StarTrekEngine::pollSystemEvents() {
 			addEventToQueue(trekEvent);
 			break;
 		case Common::EVENT_LBUTTONDOWN:
+			// TODO: what happens when mouse click is outside normal screen bounds?
+			// (apparently this can happen)
 			trekEvent.type = TREKEVENT_LBUTTONDOWN;
 			addEventToQueue(trekEvent);
 			break;

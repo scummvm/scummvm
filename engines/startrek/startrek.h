@@ -100,14 +100,20 @@ struct TrekEvent {
 enum Commands {
 	COMMAND_TICK = 0,
 	COMMAND_CLICKED_ON_OBJECT = 1,
-	COMMAND_12 = 12
+	COMMAND_TOUCHED_WARP = 6,
+	COMMAND_7 = 7, // Doors? (Or just hotspots activated by Kirk moving there?)
+	COMMAND_FINISHED_BEAMING_IN = 10,
+	FINISHED_ENTERING_ROOM = 12
 };
 
 struct Command {
 	byte type;
-	byte b1; // These depend on command type?
+	byte b1;
 	byte b2;
 	byte b3;
+
+	Command(byte _type, byte _b1, byte _b2, byte _b3)
+		: type(_type), b1(_b1), b2(_b2), b3(_b3) {}
 };
 
 const int MAX_OBJECTS = 0x20;
@@ -132,14 +138,18 @@ private:
 	void loadRoom(const Common::String &missionName, int roomIndex);
 	void initAwayCrewPositions(int warpEntryIndex);
 	void handleAwayMissionEvents();
+	void unloadRoom();
 	int loadObjectAnimWithRoomScaling(int objectIndex, const Common::String &animName, int16 x, int16 y);
 	uint16 getObjectScaleAtPosition(int16 y);
-	void runAwayMissionCycle();
+	void addCommand(const Command &command);
+	void handleAwayMissionCommand();
 
+	bool isPointInPolygon(int16 *data, int16 x, int16 y);
+	void checkTouchedLoadingZone(int16 x, int16 y);
 	bool isPositionSolid(int16 x, int16 y);
 
 public:
-	Room *getRoom();
+	SharedPtr<Room> getRoom();
 
 private:
 	// Transporter room
@@ -232,6 +242,9 @@ public:
 	Common::Queue<Command> _commandQueue;
 
 	AwayMission _awayMission;
+	bool _warpHotspotsActive;
+	int16 _activeWarpHotspot;
+	int16 _activeDoorWarpHotspot;
 
 	Object _objectList[MAX_OBJECTS];
 	Object * const _kirkObject;
@@ -271,7 +284,7 @@ public:
 
 private:
 	Common::MacResManager *_macResFork;
-	Room *_room;
+	SharedPtr<Room> _room;
 	SharedPtr<IWFile> _iwFile;
 };
 

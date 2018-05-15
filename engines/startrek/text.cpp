@@ -387,7 +387,7 @@ int Graphics::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
  * Text getter for showText which reads from an rdf file.
  */
 String Graphics::readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput) {
-	Room *room = _vm->getRoom();
+	SharedPtr<Room> room = _vm->getRoom();
 
 	int rdfVar = (size_t)data;
 

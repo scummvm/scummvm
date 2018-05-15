@@ -48,7 +48,7 @@ struct Object {
 	Common::Point pos;
 	uint16 field60;
 	uint16 field62;
-	uint16 field64;
+	uint16 walkingIntoRoom; // Walking or beaming into a room?
 	uint16 field66;
 	char animationString2[8];
 	uint16 field70;

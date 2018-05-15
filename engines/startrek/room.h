@@ -34,6 +34,12 @@ namespace StarTrek {
 
 class StarTrekEngine;
 
+// Offsets of data in RDF files
+
+const int RDF_WARP_ROOM_INDICES = 0x22;
+const int RDF_ROOM_ENTRY_POSITIONS = 0x2a;
+const int RDF_BEAM_IN_POSITIONS = 0xaa;
+
 class Room {
 
 public:
@@ -48,6 +54,12 @@ public:
 	int16 getVar08() { return readRdfWord(0x08); }
 	int16 getVar0a() { return readRdfWord(0x0a); }
 	int16 getVar0c() { return readRdfWord(0x0c); }
+
+	// Warp-related stuff
+	int16 getFirstWarpPolygonOffset() { return readRdfWord(0x16); }
+	int16 getWarpPolygonEndOffset()   { return readRdfWord(0x18); }
+	int16 getFirstDoorPolygonOffset() { return readRdfWord(0x1a); }
+	int16 getDoorPolygonEndOffset()   { return readRdfWord(0x1c); }
 
 	Common::Point getBeamInPosition(int crewmanIndex);
 
