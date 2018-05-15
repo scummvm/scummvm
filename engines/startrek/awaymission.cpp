@@ -51,7 +51,7 @@ void StarTrekEngine::runAwayMission() {
 		if (!_commandQueue.empty()) {
 			// sub_200e7();
 			// sub_20118();
-			runAwayMissionCycle();
+			handleAwayMissionCommand();
 		}
 	}
 }
@@ -61,16 +61,13 @@ void StarTrekEngine::cleanupAwayMission() {
 }
 
 void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) {
-	if (_room != nullptr)
-		delete _room;
-
 	_keyboardControlsMouse = true;
 
 	_missionName = _missionToLoad;
-	_roomIndex = _roomIndexToLoad;
+	_roomIndex = roomIndex;
 
 	_roomFrameCounter = 0;
-	_awayMission.field1d = 0;
+	_awayMission.transitioningIntoRoom = 0;
 
 	_gfx->fadeoutScreen();
 	_sound->stopAllVocSounds();
@@ -82,7 +79,7 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	_gfx->loadPalette("palette");
 	_gfx->copyBackgroundScreen();
 
-	_room = new Room(this, _screenName);
+	_room = SharedPtr<Room>(new Room(this, _screenName));
 
 	// Original sets up bytes 0-3 of rdf file as "remote function caller"
 
@@ -110,13 +107,27 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 	memset(_awayMission.field25, 0xff, 4);
 
 	switch (warpEntryIndex) {
-	case 0:
-		break;
+	case 0: // 0-3: Read warp positions from RDF file
 	case 1:
-		break;
 	case 2:
-		break;
 	case 3:
+		for (int i = 0; i < (_awayMission.redshirtDead ? 3 : 4); i++) {
+			Common::String anim = getCrewmanAnimFilename(i, "walk");
+
+			int16 rdfOffset = RDF_ROOM_ENTRY_POSITIONS + warpEntryIndex * 32 + i * 8;
+
+			int16 srcX = _room->readRdfWord(rdfOffset + 0);  // Position to spawn at
+			int16 srcY = _room->readRdfWord(rdfOffset + 2);
+			int16 destX = _room->readRdfWord(rdfOffset + 4); // Position to walk to
+			int16 destY = _room->readRdfWord(rdfOffset + 6);
+
+			objectWalkToPosition(i, anim, srcX, srcY, destX, destY);
+		}
+
+		_kirkObject->walkingIntoRoom = 1;
+		_kirkObject->field66 = 0xff;
+		_awayMission.transitioningIntoRoom = 1;
+		_warpHotspotsActive = false;
 		break;
 	case 4: // Crew is beaming in.
 		warpEntryIndex -= 4;
@@ -125,11 +136,11 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 			Common::Point warpPos = _room->getBeamInPosition(i);
 			loadObjectAnimWithRoomScaling(i, animFilename, warpPos.x, warpPos.y);
 		}
-		_kirkObject->field64 = 1;
+		_kirkObject->walkingIntoRoom = 1;
 		_kirkObject->field66 = 0xff;
-		_awayMission.field1d = 1;
+		_awayMission.transitioningIntoRoom = 1;
 		playSoundEffectIndex(0x09);
-		// word_466f2 = 0;
+		_warpHotspotsActive = false;
 		break;
 	case 5:
 		break;
@@ -154,13 +165,13 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			// sub_22de0();
 			_frameIndex++;
 			_roomFrameCounter++;
-			// sub_20099(0, _roomFrameCounter & 0xff, (_roomFrameCounter >> 8) & 0xff, 0);
+			addCommand(Command(COMMAND_TICK, _roomFrameCounter & 0xff, (_roomFrameCounter >> 8) & 0xff, 0));
 			if (_roomFrameCounter >= 2)
 				_gfx->incPaletteFadeLevel();
 			break;
 		case TREKEVENT_LBUTTONDOWN:
-			//if (_awayMission.field1d != 0) // FIXME: uncomment
-			//	break;
+			if (_awayMission.transitioningIntoRoom != 0)
+				break;
 			switch (_awayMission.mapFileLoaded) {
 			case 1:
 				if (_awayMission.field1c == 0) {
@@ -204,6 +215,14 @@ void StarTrekEngine::handleAwayMissionEvents() {
 	}
 }
 
+void StarTrekEngine::unloadRoom() {
+	_gfx->fadeoutScreen();
+	// sub_2394b(); // TODO
+	objectFunc1();
+	_room.reset();
+	_mapFile.reset();
+}
+
 /**
  * Similar to loadObjectAnim, but scale is determined by the y-position in the room. The
  * further up (away) the object is, the smaller it is.
@@ -226,12 +245,108 @@ uint16 StarTrekEngine::getObjectScaleAtPosition(int16 y) {
 	return ((_playerObjectScale * (y - var08)) >> 8) + var0a;
 }
 
-Room *StarTrekEngine::getRoom() {
+SharedPtr<Room> StarTrekEngine::getRoom() {
 	return _room;
 }
 
-void StarTrekEngine::runAwayMissionCycle() {
-	// TODO
+void StarTrekEngine::addCommand(const Command &command) {
+	if (command.type != COMMAND_TICK)
+		debug("Command %d: %x, %x, %x", command.type, command.b1, command.b2, command.b3);
+	_commandQueue.push(command);
+}
+
+void StarTrekEngine::handleAwayMissionCommand() {
+	Command command = _commandQueue.pop();
+
+	if ((command.type == COMMAND_FINISHED_BEAMING_IN || command.type == FINISHED_ENTERING_ROOM) && command.b1 == 0xff) {
+		_awayMission.transitioningIntoRoom = 0;
+		_warpHotspotsActive = true;
+		return;
+	}
+	else if (command.type == FINISHED_ENTERING_ROOM && command.b1 >= 0xe0) { // TODO
+		return;
+	}
+
+	switch (command.type) { // TODO: everything
+	case COMMAND_TOUCHED_WARP:
+		// if (!sub_203e1(command.type)) // Probably calls RDF code
+		{
+			byte warpIndex = command.b1;
+			int16 roomIndex = _room->readRdfWord(RDF_WARP_ROOM_INDICES + warpIndex * 2);
+			unloadRoom();
+			_sound->loadMusicFile("ground");
+			loadRoom(_missionName, roomIndex);
+			initAwayCrewPositions(warpIndex ^ 1);
+		}
+		break;
+	}
+}
+
+/**
+ * Returns true if the given position is contained in a polygon?
+ *
+ * The data passed contains the following words in this order:
+ *   * Index of polygon (unused here)
+ *   * Number of vertices in polygon
+ *   * For each vertex: x and y coordinates.
+ */
+bool StarTrekEngine::isPointInPolygon(int16 *data, int16 x, int16 y) {
+	int16 numVertices = data[1];
+	int16 *vertData = &data[2];
+
+	for (int i = 0; i < numVertices; i++) {
+		Common::Point p1(vertData[0], vertData[1]);
+		Common::Point p2;
+		if (i == numVertices - 1) // Loop to 1st vertex
+			p2 = Common::Point(data[2], data[3]);
+		else
+			p2 = Common::Point(vertData[2], vertData[3]);
+
+		if ((p2.x - p1.x) * (y - p1.y) - (p2.y - p1.y) * (x - p1.x) < 0)
+			return false;
+
+		vertData += 2;
+	}
+
+	return true;
+}
+
+void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
+	int16 offset = _room->getFirstDoorPolygonOffset();
+
+	while (offset != _room->getDoorPolygonEndOffset()) {
+		if (isPointInPolygon((int16*)(_room->_rdfData + offset), x, y)) {
+			uint16 var = _room->readRdfWord(offset);
+			if (_activeDoorWarpHotspot != var) {
+				_activeDoorWarpHotspot = var;
+				addCommand(Command(COMMAND_7, var & 0xff, 0, 0));
+			}
+			return;
+		}
+
+		int16 numVertices = _room->readRdfWord(offset + 2);
+		offset += numVertices * 4 + 4;
+	}
+	_activeDoorWarpHotspot = -1;
+
+	if (_awayMission.field24 == 0 && _warpHotspotsActive) {
+		offset = _room->getFirstWarpPolygonOffset();
+
+		while (offset != _room->getWarpPolygonEndOffset()) {
+			if (isPointInPolygon((int16*)(_room->_rdfData + offset), x, y)) {
+				uint16 var = _room->readRdfWord(offset);
+				if (_activeWarpHotspot != var) {
+					_activeWarpHotspot = var;
+					addCommand(Command(COMMAND_TOUCHED_WARP, var & 0xff, 0, 0));
+				}
+				return;
+			}
+
+			int16 numVertices = _room->readRdfWord(offset + 2);
+			offset += numVertices * 4 + 4;
+		}
+	}
+	_activeWarpHotspot = -1;
 }
 
 /**

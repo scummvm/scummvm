@@ -54,7 +54,6 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_gfx = nullptr;
 	_sound = nullptr;
 	_macResFork = nullptr;
-	_room = nullptr;
 
 	_clockTicks = 0;
 
@@ -78,8 +77,6 @@ StarTrekEngine::~StarTrekEngine() {
 	delete _gfx;
 	delete _sound;
 	delete _macResFork;
-
-	delete _room;
 }
 
 Common::Error StarTrekEngine::run() {
@@ -103,26 +100,6 @@ Common::Error StarTrekEngine::run() {
 
 	runGameMode(GAMEMODE_AWAYMISSION);
 	return Common::kNoError;
-
-
-#if 1
-	_room = new Room(this, "DEMON0");
-	_gfx->loadPalette("PALETTE");
-	_gfx->loadPri("DEMON0.PRI");
-
-	_sound->loadMusicFile("GROUND");
-
-
-	while (true) {
-		_gfx->showOptionsMenu(0, 0);
-	}
-	
-	while (!shouldQuit()) {
-		pollSystemEvents();
-	}
-
-	return Common::kNoError;
-#endif
 }
 
 Common::Error StarTrekEngine::runGameMode(int mode) {
@@ -298,10 +275,10 @@ void StarTrekEngine::playSoundEffectIndex(int index) {
 	case 0x08:
 		_sound->playVoc("TRANSDEM");
 		break;
-	case 0x09:
+	case 0x09: // Beaming in?
 		_sound->playVoc("TRANSMAT");
 		break;
-	case 0x0a:
+	case 0x0a: // Beaming out?
 		_sound->playVoc("TRANSENE");
 		break;
 	case 0x10: // Menu selection sound
@@ -376,7 +353,7 @@ int StarTrekEngine::loadObjectAnim(int objectIndex, const Common::String &animNa
 		drawObjectToScreen(object, animName, x, y, scale, true);
 	}
 
-	object->field64 = 0;
+	object->walkingIntoRoom = 0;
 	object->field66 = 0;
 
 	return objectIndex;
@@ -391,7 +368,7 @@ bool StarTrekEngine::objectWalkToPosition(int objectIndex, const Common::String 
 
 	Object *object = &_objectList[objectIndex];
 
-	object->field64 = 0;
+	object->walkingIntoRoom = 0;
 	if (isPositionSolid(destX, destY))
 		return false;
 
@@ -408,7 +385,7 @@ bool StarTrekEngine::objectWalkToPosition(int objectIndex, const Common::String 
 	object->dest.x = destX;
 	object->dest.y = destY;
 	object->field92 = 0;
-	object->field64 = 0;
+	object->walkingIntoRoom = 0;
 
 	object->iwDestPosition = -1;
 	object->iwSrcPosition = -1;
@@ -458,8 +435,8 @@ void StarTrekEngine::updateObjectAnimations() {
 				if (object->animFrame != nextAnimFrame) {
 					if (nextAnimFrame == object->numAnimFrames - 1) {
 						object->field62++;
-						if (object->field64 != 0) {
-							// sub_20099(10, object->field66, 0, 0);
+						if (object->walkingIntoRoom != 0) {
+							addCommand(Command(COMMAND_FINISHED_BEAMING_IN, object->field66, 0, 0));
 						}
 					}
 				}
@@ -500,10 +477,8 @@ void StarTrekEngine::updateObjectAnimations() {
 		case 1: // Walking
 			if (_frameIndex < object->frameToStartNextAnim)
 				break;
-			/*
-			if (i == 0) // TODO: Kirk only
-				sub_22c2d(object->pos.x, object->pos.y);
-			*/
+			if (i == 0) // Kirk only
+				checkTouchedLoadingZone(object->pos.x, object->pos.y);
 			if (object->field90 != 0) {
 				Sprite *sprite = &object->sprite;
 				int loops;
@@ -530,9 +505,9 @@ void StarTrekEngine::updateObjectAnimations() {
 			}
 			else { // object->field90 == 0
 				if (object->iwSrcPosition == -1) {
-					if (object->field64 != 0) {
-						object->field64 = 0;
-						//addCommand(COMMAND_12, object->field66 & 0xff, 0, 0); // TODO
+					if (object->walkingIntoRoom != 0) {
+						object->walkingIntoRoom = 0;
+						addCommand(Command(FINISHED_ENTERING_ROOM, object->field66 & 0xff, 0, 0));
 					}
 
 					object->sprite.bitmap.reset();
@@ -1287,7 +1262,7 @@ void StarTrekEngine::playMovieMac(Common::String filename) {
 	delete qtDecoder;
 
 	// Swap back to 8bpp mode
-	initGraphics(320, 200);
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 } // End of namespace StarTrek
