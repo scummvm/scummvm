@@ -15,9 +15,6 @@ public:
 
     // StaticLocationScreen API
     void open() override;
-
-    // Called when the screen resolution changes
-    void onScreenChanged();
 };
 
 }

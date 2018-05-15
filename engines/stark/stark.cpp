@@ -146,7 +146,7 @@ Common::Error StarkEngine::run() {
 	// Initialize the UI
 	_userInterface->init();
 
-	/*
+	/* Comment for testting the main menu
 
 	if (ConfMan.hasKey("save_slot")) {
 		// Load game from specified slot, if any

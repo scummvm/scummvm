@@ -123,7 +123,7 @@ void StaticLocationScreen::onRender() {
 }
 
 void StaticLocationScreen::onScreenChanged() {
-	// Right now only focus on reseting the text texture
+	// Right now only focus on resetting the text texture
 	for (uint i = 0; i < _widgets.size(); i++) {
 		_widgets[i]->resetTextTexture();
 	}

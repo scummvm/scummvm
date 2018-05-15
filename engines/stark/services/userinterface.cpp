@@ -75,6 +75,8 @@ void UserInterface::init() {
 	_fmvScreen = new FMVScreen(_gfx, _cursor);
 
 	_currentScreen = _mainMenuScreen;
+
+	_currentScreen->open();
 }
 
 void UserInterface::update() {
@@ -251,6 +253,7 @@ const Graphics::Surface *UserInterface::getGameWindowThumbnail() const {
 }
 
 void UserInterface::onScreenChanged() {
+	_mainMenuScreen->onScreenChanged();
 	_gameScreen->onScreenChanged();
 	_diaryIndexScreen->onScreenChanged();
 }
