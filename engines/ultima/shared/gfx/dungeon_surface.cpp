@@ -52,8 +52,9 @@ void DungeonSurface::drawDoorway(uint distance) {
 	byte color = !distance ? 0 : _edgeColor;
 
 	if (distance < 5) {
+		drawWall(distance);
 		frameRect(Rect(WALL_ARRAY_X[distance + 1] + 16, WALL_ARRAY_Y[distance + 1] + 8,
-			303 - WALL_ARRAY_X[distance + 1], 151 - WALL_ARRAY_Y[distance] - offsetY), color);
+			303 - WALL_ARRAY_X[distance + 1], 152 - WALL_ARRAY_Y[distance] - offsetY), color);
 	}
 }
 
@@ -124,7 +125,8 @@ void DungeonSurface::drawLeftDoor(uint distance) {
 		diff.x /= 5;
 		diff.y /= 9;
 
-		vLine(p2.x + diff.x * 2 + 16, 151 - diff.y - p2.y - 1, p1.y + 8 - diff.y, _edgeColor);
+		drawLine(p2.x + diff.x * 2 + 16, 151 - diff.y - p2.y - 1, p2.x + diff.x * 2 + 16,
+			p1.y + 8 - diff.y, _edgeColor);
 		drawLineTo(p2.x + diff.x + 16, p1.y + diff.y + 8, _edgeColor);
 		drawLineTo(p2.x + diff.x + 16, 151 - p1.y + diff.y * 2 - (distance == 1 ? 2 : 0), _edgeColor);
 	}
