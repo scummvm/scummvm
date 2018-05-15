@@ -80,12 +80,20 @@ public:
 	}
 
 	/**
+	 * Draw a frame around a specified rect.
+	 */
+	void frameRect(const Common::Rect &r, uint32 color) {
+		Gfx::VisualSurface::frameRect(Rect(r.left - 8, r.top - 8, r.right - 8, r.bottom - 8), color);
+	}
+
+
+	/**
 	 * Draws a wall
 	 */
 	void drawWall(uint distance);
 
 	/**
-	 * Draws a doorway
+	 * Draws a doorway directly in front of the player
 	 */
 	void drawDoorway(uint distance);
 
