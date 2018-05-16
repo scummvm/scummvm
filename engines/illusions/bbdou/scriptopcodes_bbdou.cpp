@@ -792,11 +792,12 @@ void ScriptOpcodes_BBDOU::opPlayVideo(ScriptThread *scriptThread, OpCall &opCall
 	ARG_UINT32(objectId);
 	ARG_UINT32(videoId);
 	ARG_UINT32(priority);
-	// TODO _vm->playVideo(videoId, objectId, value, opCall._threadId);
-
+#if 1 // TODO DEBUG Set to 0 to skip videos
+	_vm->playVideo(videoId, objectId, priority, opCall._threadId);
+#else
 	//DEBUG Resume calling thread, later done by the video player
 	_vm->notifyThreadId(opCall._callerThreadId);
-
+#endif
 }
 
 void ScriptOpcodes_BBDOU::opStackPop(ScriptThread *scriptThread, OpCall &opCall) {

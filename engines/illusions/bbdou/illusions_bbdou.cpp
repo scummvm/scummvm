@@ -21,6 +21,7 @@
  */
 
 #include "illusions/bbdou/illusions_bbdou.h"
+#include "illusions/bbdou/bbdou_videoplayer.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
@@ -166,6 +167,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_threads = new ThreadList(this);
 	_updateFunctions = new UpdateFunctions();
 	_soundMan = new SoundMan(this);
+	_videoPlayer = new BBDOUVideoPlayer(this);
 
 	_screen->setColorKey1(0xF81F);
 
@@ -215,6 +217,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _stack;
 	delete _scriptOpcodes;
 
+	delete _videoPlayer;
 	delete _soundMan;
 	delete _updateFunctions;
 	delete _threads;
@@ -279,6 +282,7 @@ void IllusionsEngine_BBDOU::initUpdateFunctions() {
 	UPDATEFUNCTION(50, 0, updateActors);
 	UPDATEFUNCTION(60, 0, updateSequences);
 	UPDATEFUNCTION(70, 0, updateGraphics);
+	UPDATEFUNCTION(70, 0, updateVideoPlayer);
 	UPDATEFUNCTION(90, 0, updateSprites);
 	UPDATEFUNCTION(120, 0, updateSoundMan);
 }
@@ -312,6 +316,20 @@ uint32 IllusionsEngine_BBDOU::causeTrigger(uint32 sceneId, uint32 verbId, uint32
 			callingThreadId, verbId, objectId2, objectId);
 	}
 	return causeThreadId;
+}
+
+int IllusionsEngine_BBDOU::updateVideoPlayer(uint flags) {
+	if (_videoPlayer->isPlaying())
+		_videoPlayer->update();
+	return kUFNext;
+}
+
+void IllusionsEngine_BBDOU::playVideo(uint32 videoId, uint32 objectId, uint32 priority, uint32 callingThreadId) {
+	_videoPlayer->start(videoId, objectId, priority, callingThreadId);
+}
+
+bool IllusionsEngine_BBDOU::isVideoPlaying() {
+	return _videoPlayer->isPlaying();
 }
 
 void IllusionsEngine_BBDOU::setDefaultTextCoords() {
