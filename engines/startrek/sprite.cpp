@@ -29,9 +29,13 @@ namespace StarTrek {
 
 void Sprite::setBitmap(SharedPtr<Bitmap> b) {
 	bitmap = b;
-	bitmapChanged = 1;
+	bitmapChanged = true;
 }
 
+void Sprite::dontDrawNextFrame() {
+	field16 = true;
+	bitmapChanged = true;
+}
 /**
  * Returns a rect containing the sprite's bitmap on the screen.
  */

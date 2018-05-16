@@ -67,11 +67,13 @@ public:
 	SharedPtr<Bitmap> loadBitmap(String basename);
 
 	Common::Point getMousePos();
-	void setMouseCursor(SharedPtr<Bitmap> bitmap);
+	void setMouseBitmap(SharedPtr<Bitmap> bitmap);
+	void lockMousePosition(int16 x, int16 y);
+	void unlockMousePosition();
 
 	void drawSprite(const Sprite &sprite);
 	void drawSprite(const Sprite &sprite, const Common::Rect &rect);
-	void drawAllSprites();
+	void drawAllSprites(bool updateScreen=true);
 
 	void addSprite(Sprite *sprite);
 	void delSprite(Sprite *sprite);
@@ -99,6 +101,11 @@ private:
 
 	Sprite *_sprites[MAX_SPRITES];
 	int _numSprites;
+
+	// These are used as a workaround for when the mouse position must be locked.
+	// The mouse is turned into a native game sprite when this happens.
+	bool _mouseLocked;
+	Sprite _lockedMouseSprite;
 
 public:
 	SharedPtr<Bitmap> _mouseBitmap;

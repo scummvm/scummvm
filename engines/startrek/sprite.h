@@ -44,7 +44,7 @@ namespace StarTrek {
 struct Sprite {
 	Common::Point pos;
 	uint16 drawPriority;
-	uint16 field6;
+	uint16 drawPriority2; // If two sprites' drawPriorities are equal, this is checked.
 	uint16 field8;
 	SharedPtr<Bitmap> bitmap;
 	uint16 drawMode;
@@ -59,7 +59,10 @@ struct Sprite {
 	int16 drawX,drawY;
 
 	Sprite() { memset(this, 0, sizeof(Sprite)); }
+
 	void setBitmap(SharedPtr<Bitmap> b);
+	void dontDrawNextFrame();
+
 	Common::Rect getRect();
 };
 

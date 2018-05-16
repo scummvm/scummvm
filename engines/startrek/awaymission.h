@@ -28,9 +28,11 @@ struct AwayMission {
 	int16 mouseX;
 	int16 mouseY;
 	byte field1c;
+	byte field1d;
 	byte transitioningIntoRoom; // Set while beaming in or walking into a room
 	bool redshirtDead;
-	byte mapFileLoaded;
+	byte activeAction;
+	byte field20;
 	byte field24;
 	int8 field25[4];
 
