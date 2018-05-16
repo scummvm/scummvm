@@ -423,7 +423,7 @@ void Screen::updateSprites() {
 	_drawQueue->drawAll();
 	if (_isScreenOffsetActive)
 		clearScreenOffsetAreas();
-	if (!_displayOn) // TODO Check if a video is playing then don't do it
+	if (!_displayOn && !_vm->isVideoPlaying())
 		_backSurface->fillRect(Common::Rect(_backSurface->w, _backSurface->h), 0);
 	g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(0, 0), _backSurface->pitch, 0, 0, _backSurface->w, _backSurface->h);
 }

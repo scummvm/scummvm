@@ -33,6 +33,7 @@ class Dictionary;
 class ScriptStack;
 class DuckmanDialogSystem;
 class DuckmanMenuSystem;
+class DuckmanVideoPlayer;
 
 struct Cursor_Duckman {
 	int _gameState;
@@ -101,6 +102,7 @@ public:
 
 	ScreenShaker *_screenShaker;
 	DuckmanMenuSystem *_menuSystem;
+	DuckmanVideoPlayer *_videoPlayer;
 
 	void initInput();
 
@@ -116,6 +118,10 @@ public:
 	void clearFader();
 	void pauseFader();
 	void unpauseFader();
+
+	int updateVideoPlayer(uint flags);
+	void playVideo(uint32 videoId, uint32 callingThreadId);
+	bool isVideoPlaying();
 
 	void setDefaultTextCoords();
 

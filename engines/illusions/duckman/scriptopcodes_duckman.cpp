@@ -583,13 +583,13 @@ void ScriptOpcodes_Duckman::opStartCursorHoldingObject(ScriptThread *scriptThrea
 
 void ScriptOpcodes_Duckman::opPlayVideo(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
-	ARG_UINT32(objectId);
-	// NOTE This has no attached objectId or priority
-	_vm->playVideo(0, objectId, 0, opCall._threadId);
-
+	ARG_UINT32(videoId);
+#if 1 // TODO DEBUG Set to 0 to skip videos
+	_vm->playVideo(videoId, opCall._threadId);
+#else
 	//DEBUG Resume calling thread, later done by the video player
 	_vm->notifyThreadId(opCall._threadId);
-
+#endif
 }
 
 void ScriptOpcodes_Duckman::opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall) {
@@ -640,7 +640,7 @@ void ScriptOpcodes_Duckman::opStopMidiMusic(ScriptThread *scriptThread, OpCall &
 void ScriptOpcodes_Duckman::opFadeMidiMusic(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(duration);
 	ARG_INT16(finalVolume);
-	//FIXME _vm->_soundMan->fadeMidiMusic(finalVolume, duration);
+	// TODO _vm->fadeMidiMusic(2, finalVolume, duration, opCall._threadId);
 }
 
 void ScriptOpcodes_Duckman::opAddMenuChoice(ScriptThread *scriptThread, OpCall &opCall) {
@@ -684,7 +684,7 @@ void ScriptOpcodes_Duckman::opQuitGame(ScriptThread *scriptThread, OpCall &opCal
 void ScriptOpcodes_Duckman::opResetGame(ScriptThread *scriptThread, OpCall &opCall) {
 	_vm->reset();
 	_vm->_input->activateButton(0xFFFF);
-	_vm->_soundMan->stopMidiMusic();
+	// TODO _vm->stopMusic();
 	// TODO _vm->_gameStates->clear();
 }
 
