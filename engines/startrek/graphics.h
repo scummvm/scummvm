@@ -70,6 +70,8 @@ public:
 	void setMouseBitmap(SharedPtr<Bitmap> bitmap);
 	void lockMousePosition(int16 x, int16 y);
 	void unlockMousePosition();
+	SharedPtr<Bitmap> getMouseBitmap();
+	void warpMouse(int16 x, int16 y);
 
 	void drawSprite(const Sprite &sprite);
 	void drawSprite(const Sprite &sprite, const Common::Rect &rect);
@@ -102,13 +104,21 @@ private:
 	Sprite *_sprites[MAX_SPRITES];
 	int _numSprites;
 
+	// Any changes to the mouse image are buffered until the next time "drawAllSprites" is
+	// called (since the original game treats it like a sprite).
+	bool _mouseToBeShown;
+	bool _mouseToBeHidden;
+	int16 _mouseWarpX, _mouseWarpY;
+	SharedPtr<Bitmap> _mouseBitmapLastFrame;
+	SharedPtr<Bitmap> _mouseBitmap;
+
 	// These are used as a workaround for when the mouse position must be locked.
 	// The mouse is turned into a native game sprite when this happens.
 	bool _mouseLocked;
 	Sprite _lockedMouseSprite;
 
+
 public:
-	SharedPtr<Bitmap> _mouseBitmap;
 };
 
 }

@@ -165,7 +165,7 @@ void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSpri
 		mousePos.y = mouseY2;
 	}
 
-	_system->warpMouse(mousePos.x, mousePos.y);
+	_gfx->warpMouse(mousePos.x, mousePos.y);
 
 }
 
@@ -202,7 +202,7 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 	_mouseControllingShip = false;
 
 	Common::Point oldMousePos = _gfx->getMousePos();
-	SharedPtr<Bitmap> oldMouseBitmap = _gfx->_mouseBitmap;
+	SharedPtr<Bitmap> oldMouseBitmap = _gfx->getMouseBitmap();
 
 	_gfx->setMouseBitmap(_gfx->loadBitmap("options"));
 	loadMenuButtons("options", x, y);
@@ -235,7 +235,7 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 	_gfx->setMouseBitmap(oldMouseBitmap);
 
 	if (event != MENUEVENT_LCLICK_OFFBUTTON && event != MENUEVENT_RCLICK_OFFBUTTON)
-		_system->warpMouse(oldMousePos.x, oldMousePos.y);
+		_gfx->warpMouse(oldMousePos.x, oldMousePos.y);
 
 
 	// Can't use OPTIONBUTTON constants since the button retvals differ from the button
@@ -331,7 +331,7 @@ int StarTrekEngine::showActionMenu() {
 	int menuWidth = menuSprite.bitmap->width;
 	int menuHeight = menuSprite.bitmap->height;
 
-	_system->warpMouse(pos.x + menuWidth / 2, pos.y + menuHeight / 2);
+	_gfx->warpMouse(pos.x + menuWidth / 2, pos.y + menuHeight / 2);
 
 	_gfx->addSprite(&menuSprite);
 	menuSprite.pos = pos;
@@ -409,8 +409,6 @@ mousePosChanged:
 					_gfx->lockMousePosition(lockMousePoint.x, lockMousePoint.y);
 				else
 					_gfx->unlockMousePosition();
-
-				_system->updateScreen();
 			}
 			break;
 
@@ -485,11 +483,11 @@ lookupNextAction:
 
 			// Warp mouse to the position of the selected action
 			if (nextAction == ACTION_WALK)
-				_system->warpMouse(pos.x + menuWidth / 2, pos.y + menuHeight / 2);
+				_gfx->warpMouse(pos.x + menuWidth / 2, pos.y + menuHeight / 2);
 			else {
 				assert((action >= ACTION_WALK && action <= ACTION_TALK) || action == ACTION_OPTIONS);
 				const Common::Point &p = actionPositions[action == ACTION_OPTIONS ? 4 : action - 2];
-				_system->warpMouse(pos.x + p.x, pos.y + p.y);
+				_gfx->warpMouse(pos.x + p.x, pos.y + p.y);
 			}
 
 			goto mousePosChanged;
@@ -500,13 +498,13 @@ lookupNextAction:
 		}
 	}
 
-	_gfx->unlockMousePosition();
-
 	playSoundEffectIndex(0x10);
 
 	menuSprite.dontDrawNextFrame();
 	_gfx->drawAllSprites();
 	_gfx->delSprite(&menuSprite);
+
+	_gfx->unlockMousePosition();
 
 	if (action == ACTION_OPTIONS) {
 		showOptionsMenu(50, 50);
@@ -519,7 +517,7 @@ lookupNextAction:
 			addEventToQueue(event); // Add left-click event back to queue so Kirk can walk there
 	}
 	else
-		_system->warpMouse(oldMousePos.x, oldMousePos.y);
+		_gfx->warpMouse(oldMousePos.x, oldMousePos.y);
 
 	chooseMouseBitmapForAction(action, false);
 	_keyboardControlsMouse = keyboardControlledMouse;
