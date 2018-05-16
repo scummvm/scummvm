@@ -241,7 +241,114 @@ if (true) {
 	}
 
 	return kTSTerminate;
+}
 
+void TalkThread::onSuspend() {
+	switch (_status) {
+	case 1:
+		_voiceDurationElapsed = getDurationElapsed(_voiceStartTime, _voiceEndTime);
+		_status = 7;
+		break;
+	case 4:
+		_vm->_soundMan->stopCueingVoice();
+		_status = 7;
+		break;
+	case 6:
+	case 7:
+		if (!(_flags & 4)) {
+			_vm->_soundMan->stopVoice();
+			_flags |= 4;
+		}
+		if (!(_flags & 8)) {
+			_vm->_screenText->removeText();
+			_flags |= 8;
+		}
+		_status = 7;
+		break;
+	default:
+		_status = 7;
+		break;
+	}
+}
+
+void TalkThread::onPause() {
+	switch (_status) {
+	case 1:
+		_voiceDurationElapsed = getDurationElapsed(_voiceStartTime, _voiceEndTime);
+		break;
+	case 4:
+		_vm->_soundMan->stopCueingVoice();
+		break;
+	case 6:
+	case 7:
+		if (!(_flags & 4)) {
+			// TODO audvocPauseVoice();
+		}
+		if (!(_flags & 8)) {
+			_textDurationElapsed = getDurationElapsed(_textStartTime, _textEndTime);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void TalkThread::onUnpause() {
+	switch (_status) {
+	case 1:
+		_voiceStartTime = getCurrentTime();
+		if (_voiceDuration <= _voiceDurationElapsed) {
+			_voiceDurationElapsed = 0;
+			_voiceEndTime = _voiceStartTime;
+		} else {
+			_voiceDurationElapsed = 0;
+			_voiceEndTime = _voiceStartTime + _voiceDuration - _voiceDurationElapsed;
+		}
+		break;
+	case 4:
+		if (_vm->isSoundActive()) {
+			TalkEntry *talkEntry = getTalkResourceEntry(_talkId);
+			_vm->_soundMan->cueVoice((char*)talkEntry->_voiceName);
+		}
+		break;
+	case 6:
+		if (!(_flags & 4)) {
+			// TODO audvocUnpauseVoice();
+		}
+		if (!(_flags & 8)) {
+			_textStartTime = getCurrentTime();
+			if (_textDuration <= _textDurationElapsed) {
+				_textDurationElapsed = 0;
+				_textEndTime = _textStartTime;
+			} else {
+				_textDurationElapsed = 0;
+				_textEndTime = _textStartTime + _textDuration - _textDurationElapsed;
+			}
+		}
+		break;
+	}
+}
+
+void TalkThread::onTerminated() {
+	if (_status == 4) {
+		_vm->_soundMan->stopCueingVoice();
+	} else if (_status == 6) {
+		if (!(_flags & 4)) {
+			_vm->_soundMan->stopVoice();
+			_flags |= 4;
+		}
+		if (!(_flags & 8)) {
+			_vm->_screenText->removeText();
+			_flags |= 8;
+		}
+		if (!(_flags & 2)) {
+			if (_sequenceId2) {
+				Control *control = _vm->_dict->getObjectControl(_objectId);
+				control->startSequenceActor(_sequenceId2, 2, 0);
+			}
+			_flags |= 2;
+		}
+	}
 }
 
 void TalkThread::onKill() {
