@@ -204,7 +204,7 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 	Common::Point oldMousePos = _gfx->getMousePos();
 	SharedPtr<Bitmap> oldMouseBitmap = _gfx->_mouseBitmap;
 
-	_gfx->setMouseCursor(_gfx->loadBitmap("options"));
+	_gfx->setMouseBitmap(_gfx->loadBitmap("options"));
 	loadMenuButtons("options", x, y);
 
 	uint32 disabledButtons = 0;
@@ -232,7 +232,7 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 
 	unloadMenuButtons();
 	_mouseControllingShip = tmpMouseControllingShip;
-	_gfx->setMouseCursor(oldMouseBitmap);
+	_gfx->setMouseBitmap(oldMouseBitmap);
 
 	if (event != MENUEVENT_LCLICK_OFFBUTTON && event != MENUEVENT_RCLICK_OFFBUTTON)
 		_system->warpMouse(oldMousePos.x, oldMousePos.y);
@@ -271,6 +271,262 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 }
 
 /**
+ * Show the "action selection" menu, ie. look, talk, etc.
+ */
+int StarTrekEngine::showActionMenu() {
+	const int actionMappingUp[] = { // Actions to jump to when up is pressed
+		ACTION_TALK,    // <- ACTION_WALK
+		ACTION_TALK,    // <- ACTION_USE
+		ACTION_OPTIONS, // <- ACTION_GET
+		ACTION_LOOK,    // <- ACTION_LOOK
+		ACTION_LOOK,    // <- ACTION_TALK
+		ACTION_OPTIONS  // <- ACTION_OPTIONS
+	};
+	const int actionMappingRight[] = { // Actions to jump to when right is pressed
+		ACTION_GET,     // <- ACTION_WALK
+		ACTION_WALK,    // <- ACTION_USE
+		ACTION_GET,     // <- ACTION_GET
+		ACTION_OPTIONS, // <- ACTION_LOOK
+		ACTION_OPTIONS, // <- ACTION_TALK
+		ACTION_OPTIONS  // <- ACTION_OPTIONS
+	};
+	const int actionMappingDown[] = { // Actions to jump to when down is pressed
+		ACTION_GET,  // <- ACTION_WALK
+		ACTION_WALK, // <- ACTION_USE
+		ACTION_GET,  // <- ACTION_GET
+		ACTION_TALK, // <- ACTION_LOOK
+		ACTION_WALK, // <- ACTION_TALK
+		ACTION_GET   // <- ACTION_OPTIONS
+	};
+	const int actionMappingLeft[] = { // Actions to jump to when left is pressed
+		ACTION_USE,  // <- ACTION_WALK
+		ACTION_USE,  // <- ACTION_USE
+		ACTION_WALK, // <- ACTION_GET
+		ACTION_USE,  // <- ACTION_LOOK
+		ACTION_USE,  // <- ACTION_TALK
+		ACTION_LOOK  // <- ACTION_OPTIONS
+	};
+
+	const Common::Point pos(50, 50); // Top-left position to put action menu at
+
+	// Positions to put mouse cursor at to select actions (when using arrow keys)
+	const Common::Point actionPositions[] = {
+		Common::Point(7, 21),  // ACTION_USE
+		Common::Point(48, 38), // ACTION_GET
+		Common::Point(28, 5),  // ACTION_LOOK
+		Common::Point(28, 14), // ACTION_TALK
+		Common::Point(45, 9)   // ACTION_OPTIONS
+	};
+
+	TrekEvent event;
+	Sprite menuSprite;
+
+	bool keyboardControlledMouse = _keyboardControlsMouse;
+	Common::Point oldMousePos = _gfx->getMousePos();
+
+	bool addEventBack = false;
+	int action = ACTION_WALK;
+
+	menuSprite.bitmap = _gfx->loadBitmap("action");
+	int menuWidth = menuSprite.bitmap->width;
+	int menuHeight = menuSprite.bitmap->height;
+
+	_system->warpMouse(pos.x + menuWidth / 2, pos.y + menuHeight / 2);
+
+	_gfx->addSprite(&menuSprite);
+	menuSprite.pos = pos;
+	menuSprite.drawPriority = 15;
+
+	chooseMouseBitmapForAction(action, false);
+
+	_gfx->drawAllSprites();
+
+	menuSprite.drawPriority2 = 8;
+	bool displayMenu = true;
+
+	while (displayMenu) {
+		_sound->checkLoopMusic();
+
+		if (!popNextEvent(&event))
+			continue;
+
+		switch (event.type) {
+
+		case TREKEVENT_TICK:
+			_gfx->incPaletteFadeLevel();
+			_gfx->drawAllSprites();
+			break;
+
+		case TREKEVENT_LBUTTONDOWN:
+selectAndExit:
+			displayMenu = false;
+			addEventBack = true;
+			break;
+
+		case TREKEVENT_MOUSEMOVE:
+mousePosChanged:
+			{
+				Common::Point mouse = _gfx->getMousePos();
+				Common::Point relMouse(mouse.x - pos.x, mouse.y - pos.y);
+
+				Common::String bitmapName;
+				Common::Point lockMousePoint(-1, -1);
+
+				// Check if the mouse is hovering over one of the selectable actions
+				if (relMouse.x >= 39 && relMouse.x <= 50 && relMouse.y >= 2 && relMouse.y <= 17) {
+					action = ACTION_OPTIONS;
+					bitmapName = "options";
+					lockMousePoint = Common::Point(pos.x + 44, pos.y + 2);
+				}
+				else if (relMouse.x >= 18 && relMouse.x <= 38 && relMouse.y >= 2 && relMouse.y <= 9) {
+					action = ACTION_LOOK;
+					bitmapName = "look";
+					lockMousePoint = Common::Point(pos.x + 28, pos.y + 6);
+				}
+				else if (relMouse.x >= 18 && relMouse.x <= 38 && relMouse.y >= 11 && relMouse.y <= 17) {
+					action = ACTION_TALK;
+					bitmapName = "talk";
+					lockMousePoint = Common::Point(pos.x + 27, pos.y + 14);
+				}
+				else if (relMouse.x >= 2 && relMouse.x <= 13 && relMouse.y >= 16 && relMouse.y <= 26) {
+					action = ACTION_USE;
+					bitmapName = "use";
+					lockMousePoint = Common::Point(pos.x + 7, pos.y + 19);
+				}
+				else if (relMouse.x >= 40 && relMouse.x <= 53 && relMouse.y >= 34 && relMouse.y <= 43) {
+					action = ACTION_GET;
+					bitmapName = "get";
+					lockMousePoint = Common::Point(pos.x + 44, pos.y + 38);
+				}
+				else {
+					action = ACTION_WALK;
+					bitmapName = "walk";
+				}
+
+				_gfx->setMouseBitmap(_gfx->loadBitmap(bitmapName));
+
+				if (lockMousePoint.x != -1)
+					_gfx->lockMousePosition(lockMousePoint.x, lockMousePoint.y);
+				else
+					_gfx->unlockMousePosition();
+
+				_system->updateScreen();
+			}
+			break;
+
+		case TREKEVENT_RBUTTONDOWN:
+exitMenu:
+			displayMenu = false;
+			action = ACTION_WALK;
+			break;
+
+		case TREKEVENT_KEYDOWN: {
+			int nextAction = action;
+			const int *lookupArray;
+
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
+			case Common::KEYCODE_SPACE:
+			case Common::KEYCODE_F2: // Exit menu without selecting anything
+				goto exitMenu;
+				goto exitMenu;
+
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+			case Common::KEYCODE_F1: // Exit menu with whatever is selected
+				goto selectAndExit;
+
+			case Common::KEYCODE_PAGEUP:
+			case Common::KEYCODE_KP9:
+				nextAction = ACTION_OPTIONS;
+				break;
+
+			case Common::KEYCODE_PAGEDOWN:
+			case Common::KEYCODE_KP3:
+				nextAction = ACTION_GET;
+				break;
+
+			// Direction buttons
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_KP8:
+				lookupArray = actionMappingUp;
+				goto lookupNextAction;
+
+			case Common::KEYCODE_RIGHT:
+			case Common::KEYCODE_KP6:
+				lookupArray = actionMappingRight;
+				goto lookupNextAction;
+
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_KP2:
+				lookupArray = actionMappingDown;
+				goto lookupNextAction;
+
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_KP4:
+				lookupArray = actionMappingLeft;
+				goto lookupNextAction;
+
+lookupNextAction:
+				// Use a lookup table to decide which action is next after a direction
+				// button is pressed.
+				assert((action >= ACTION_WALK && action <= ACTION_TALK) || action == ACTION_OPTIONS);
+				nextAction = lookupArray[action == ACTION_OPTIONS ? 5 : action - 1];
+				break;
+
+			default:
+				break;
+			}
+
+			if (nextAction == action)
+				break;
+
+			action = nextAction;
+
+			// Warp mouse to the position of the selected action
+			if (nextAction == ACTION_WALK)
+				_system->warpMouse(pos.x + menuWidth / 2, pos.y + menuHeight / 2);
+			else {
+				assert((action >= ACTION_WALK && action <= ACTION_TALK) || action == ACTION_OPTIONS);
+				const Common::Point &p = actionPositions[action == ACTION_OPTIONS ? 4 : action - 2];
+				_system->warpMouse(pos.x + p.x, pos.y + p.y);
+			}
+
+			goto mousePosChanged;
+		}
+
+		default:
+			break;
+		}
+	}
+
+	_gfx->unlockMousePosition();
+
+	playSoundEffectIndex(0x10);
+
+	menuSprite.dontDrawNextFrame();
+	_gfx->drawAllSprites();
+	_gfx->delSprite(&menuSprite);
+
+	if (action == ACTION_OPTIONS) {
+		showOptionsMenu(50, 50);
+		action = ACTION_WALK;
+	}
+
+	Common::Point mouse = _gfx->getMousePos();
+	if (mouse.x < pos.x || mouse.x >= pos.x + menuWidth || mouse.y < pos.y || mouse.y >= pos.y + menuHeight) {
+		if (action == ACTION_WALK && addEventBack)
+			addEventToQueue(event); // Add left-click event back to queue so Kirk can walk there
+	}
+	else
+		_system->warpMouse(oldMousePos.x, oldMousePos.y);
+
+	chooseMouseBitmapForAction(action, false);
+	_keyboardControlsMouse = keyboardControlledMouse;
+	return action;
+}
+
+/**
  * Loads a .MNU file, which is a list of buttons to display.
  */
 void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
@@ -305,7 +561,7 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 		_activeMenu->sprites[i].pos.y = stream->readUint16() + ypos;
 		_activeMenu->retvals[i] = stream->readUint16();
 
-		_activeMenu->sprites[i].field6 = 8;
+		_activeMenu->sprites[i].drawPriority2 = 8;
 	}
 
 	if (_activeMenu->retvals[_activeMenu->numButtons - 1] == 0) {
@@ -496,6 +752,73 @@ void StarTrekEngine::unloadMenuButtons() {
 
 	if (_activeMenu == nullptr)
 		_keyboardControlsMouse = _keyboardControlsMouseOutsideMenu;
+}
+
+/**
+ * Sets the mouse bitmap based on which action is selected.
+ */
+void StarTrekEngine::chooseMouseBitmapForAction(int action, bool withRedOutline) {
+	const char *lookActionBitmaps[] = {
+		"lookh0", // The "look" action randomly animates with these images
+		"lookh0",
+		"lookh0",
+		"lookh0",
+		"lookh0",
+		"lookh1",
+		"lookh2",
+		"lookh3"
+	};
+
+	Common::String bitmapName;
+
+	switch (action) {
+
+	case ACTION_USE:
+		if (withRedOutline)
+			bitmapName = "useh";
+		else
+			bitmapName = "usen";
+		break;
+
+	case ACTION_GET:
+		if (withRedOutline)
+			bitmapName = "geth";
+		else
+			bitmapName = "getn";
+		break;
+
+	case ACTION_LOOK:
+		if (withRedOutline) {
+			if ((getRandomWord() & 7) == 0)
+				_lookActionBitmapIndex = getRandomWord() & 7; // Choose an image randomly
+			bitmapName = lookActionBitmaps[_lookActionBitmapIndex];
+		}
+		else
+			bitmapName = "lookn";
+		break;
+
+	case ACTION_TALK:
+		if (withRedOutline) {
+			if (getRandomWord() & 3)
+				bitmapName = "talkh0";
+			else
+				bitmapName = "talkh1";
+		}
+		else
+			bitmapName = "talkn";
+		break;
+
+	case ACTION_OPTIONS:
+		bitmapName = "options";
+		break;
+
+	case ACTION_WALK:
+	default:
+		bitmapName = "walk";
+		break;
+	}
+
+	_gfx->setMouseBitmap(_gfx->loadBitmap(bitmapName));
 }
 
 void StarTrekEngine::showSaveMenu() {

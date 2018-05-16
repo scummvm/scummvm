@@ -51,8 +51,9 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	_lutData = new byte[256 * 3];
 
 	_paletteFadeLevel = 0;
+	_mouseLocked = false;
 
-	setMouseCursor(loadBitmap("pushbtn"));
+	setMouseBitmap(loadBitmap("pushbtn"));
 	CursorMan.showMouse(true);
 }
 
@@ -180,9 +181,58 @@ Common::Point Graphics::getMousePos() {
 	return _vm->_system->getEventManager()->getMousePos();
 }
 
-void Graphics::setMouseCursor(SharedPtr<Bitmap> bitmap) {
+void Graphics::setMouseBitmap(SharedPtr<Bitmap> bitmap) {
 	_mouseBitmap = bitmap;
 	_vm->_system->setMouseCursor(bitmap->pixels, bitmap->width, bitmap->height, bitmap->xoffset, bitmap->yoffset, 0);
+
+	if (_mouseLocked) {
+		_lockedMouseSprite.setBitmap(_mouseBitmap);
+		drawAllSprites(false);
+	}
+}
+
+/**
+ * This function is a workaround for when the mouse position needs to be locked in a set
+ * position (used in the action menu). This only affects the position it is drawn at; the
+ * sprite's "real" position is still updated normally.
+ *
+ * This does not call updateScreen.
+ */
+void Graphics::lockMousePosition(int16 x, int16 y) {
+	if (_mouseLocked) {
+		if (x != _lockedMouseSprite.pos.x || y != _lockedMouseSprite.pos.y) {
+			_lockedMouseSprite.pos.x = x;
+			_lockedMouseSprite.pos.y = y;
+			_lockedMouseSprite.bitmapChanged = true;
+			drawAllSprites(false);
+		}
+		return;
+	}
+
+	CursorMan.showMouse(false);
+	_mouseLocked = true;
+
+	_lockedMouseSprite = Sprite();
+	_lockedMouseSprite.setBitmap(_mouseBitmap);
+	_lockedMouseSprite.drawPriority = 15;
+	_lockedMouseSprite.drawPriority2 = 16;
+	_lockedMouseSprite.pos.x = x;
+	_lockedMouseSprite.pos.y = y;
+
+	addSprite(&_lockedMouseSprite);
+	drawAllSprites(false);
+}
+
+void Graphics::unlockMousePosition() {
+	if (!_mouseLocked)
+		return;
+
+	_mouseLocked = false;
+	CursorMan.showMouse(true);
+
+	_lockedMouseSprite.dontDrawNextFrame();
+	drawAllSprites();
+	delSprite(&_lockedMouseSprite);
 }
 
 void Graphics::drawSprite(const Sprite &sprite) {
@@ -340,14 +390,14 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 bool compareSpritesByLayer(Sprite *s1, Sprite *s2) {
 	if (s1->drawPriority != s2->drawPriority)
 		return s1->drawPriority < s2->drawPriority;
-	if (s1->field6 != s2->field6)
-		return s1->field6 < s2->field6;
+	if (s1->drawPriority2 != s2->drawPriority2)
+		return s1->drawPriority2 < s2->drawPriority2;
 	if (s1->pos.y != s2->pos.y)
 		return s1->pos.y < s2->pos.y;
 	return s1->pos.x < s2->pos.x;
 }
 
-void Graphics::drawAllSprites() {
+void Graphics::drawAllSprites(bool updateScreen) {
 	// TODO: different video modes?
 
 	if (_numSprites == 0)
@@ -458,7 +508,8 @@ void Graphics::drawAllSprites() {
 		spr->lastDrawRect = spr->drawRect;
 	}
 
-	_vm->_system->updateScreen();
+	if (updateScreen)
+		_vm->_system->updateScreen();
 }
 
 void Graphics::addSprite(Sprite *sprite) {

@@ -63,6 +63,7 @@ public:
 	void stopPlayingSpeech();
 	void setMusicEnabled(bool enable);
 	void setSfxEnabled(bool enable);
+	void checkLoopMusic();
 	
 private:
 	StarTrekEngine *_vm;

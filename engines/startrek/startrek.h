@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "common/list.h"
 #include "common/ptr.h"
+#include "common/random.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -137,7 +138,7 @@ enum OptionMenuButtons {
 };
 
 enum TrekEventType {
-	TREKEVENT_TICK = 0, // DOS clock changes (see updateClockTicks)
+	TREKEVENT_TICK = 0, // DOS clock changes
 	TREKEVENT_LBUTTONDOWN = 1,
 	TREKEVENT_MOUSEMOVE = 2,
 	TREKEVENT_LBUTTONUP = 3,
@@ -153,6 +154,8 @@ struct TrekEvent {
 	uint32 tick;
 };
 
+// Commands: Signals that can be passed to "handleAwayMissionCommands" or to room-specfiic
+// code.
 enum Commands {
 	COMMAND_TICK = 0,
 	COMMAND_CLICKED_ON_OBJECT = 1,
@@ -170,6 +173,16 @@ struct Command {
 
 	Command(byte _type, byte _b1, byte _b2, byte _b3)
 		: type(_type), b1(_b1), b2(_b2), b3(_b3) {}
+};
+
+// Actions that can be used on away missions.
+enum Acton {
+	ACTION_WALK = 1,
+	ACTION_USE = 2,
+	ACTION_GET = 3,
+	ACTION_LOOK = 4,
+	ACTION_TALK = 5,
+	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
 };
 
 
@@ -292,6 +305,7 @@ public:
 	void chooseMousePositionFromSprites(Sprite *sprites, int numSprites, int spriteIndex, int mode);
 	void drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color);
 	void showOptionsMenu(int x, int y);
+	int showActionMenu();
 	void loadMenuButtons(String mnuFilename, int xpos, int ypos);
 	void setVisibleMenuButtons(uint32 bits);
 	void disableMenuButtons(uint32 bits);
@@ -299,6 +313,7 @@ public:
 	int handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4);
 	void unloadMenuButtons();
 
+	void chooseMouseBitmapForAction(int action, bool withRedOutline);
 	void showSaveMenu();
 	void showLoadMenu();
 	void showQuitGamePrompt(int x, int y);
@@ -333,6 +348,9 @@ public:
 	void playMovie(Common::String filename);
 	void playMovieMac(Common::String filename);
 
+	// Misc
+	uint16 getRandomWord();
+
 
 public:
 	int _gameMode;
@@ -355,6 +373,7 @@ public:
 	bool _warpHotspotsActive;
 	int16 _activeWarpHotspot;
 	int16 _activeDoorWarpHotspot;
+	int16 _lookActionBitmapIndex;
 
 	Object _objectList[MAX_OBJECTS];
 	Object * const _kirkObject;
@@ -393,6 +412,8 @@ public:
 	Sound *_sound;
 
 private:
+	Common::RandomSource _randomSource;
+
 	Common::MacResManager *_macResFork;
 	SharedPtr<Room> _room;
 	SharedPtr<IWFile> _iwFile;

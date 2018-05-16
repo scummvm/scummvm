@@ -84,7 +84,7 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	// Original sets up bytes 0-3 of rdf file as "remote function caller"
 
 	// Load map file
-	_awayMission.mapFileLoaded = 1;
+	_awayMission.activeAction = ACTION_WALK;
 	_mapFilename = _screenName;
 	_mapFile = loadFile(_mapFilename + ".map");
 	_iwFile = SharedPtr<IWFile>(new IWFile(this, _mapFilename + ".iw"));
@@ -161,7 +161,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			// doSomethingWithBanData1();
 			_gfx->drawAllSprites();
 			// doSomethingWithBanData2();
-			// updateMusic(); // Is this needed?
+			_sound->checkLoopMusic();
 			// sub_22de0();
 			_frameIndex++;
 			_roomFrameCounter++;
@@ -172,7 +172,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 		case TREKEVENT_LBUTTONDOWN:
 			if (_awayMission.transitioningIntoRoom != 0)
 				break;
-			switch (_awayMission.mapFileLoaded) {
+			switch (_awayMission.activeAction) {
 			case 1:
 				if (_awayMission.field1c == 0) {
 					_kirkObject->sprite.drawMode = 1; // Hide these objects for function call below?
@@ -205,7 +205,35 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			break;
 		case TREKEVENT_MOUSEMOVE:
 			break;
-		case TREKEVENT_RBUTTONDOWN:
+		case TREKEVENT_RBUTTONDOWN: // TODO: also triggered by key press?
+			/*
+			if (_awayMission.field1d)
+				break;
+				*/
+			//sub_2394b();
+			playSoundEffectIndex(0x07);
+			_awayMission.activeAction = showActionMenu();
+			/*
+			if (awayMission.activeAction == ACTION_USE) {
+				int16 clickedObject = sub_22f08();
+				if (clickedObject == -1)
+					break;
+				else
+					_awayMission.field20 = clickedObject;
+			}
+			if (_awayMission.activeAction == ACTION_USE
+					&& _awayMission.field20 == 0x47 && (_awayMission.field24 & 1) == 0) {
+				if (sub_2330c() == 0) {
+					addCommand(Command(_awayMission.activeAction, _awayMission.field20, 0, 0));
+					_sound->playVoc("communic");
+					_awayMission.activeAction = ACTION_WALK;
+				}
+			}
+			else if (_awayMission.activeAction == ACTION_LOOK)
+				sub_2383a(0);
+			else if (_awayMission.activeAction == ACTION_USE && (_awayMission.field24 & 1) == 0)
+				sub_2383a(1);
+				*/
 			break;
 		case TREKEVENT_KEYDOWN:
 			break;

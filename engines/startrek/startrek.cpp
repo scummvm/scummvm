@@ -43,6 +43,7 @@ namespace StarTrek {
 StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc) :
 	Engine(syst),
 	_gameDescription(gamedesc),
+	_randomSource("Star Trek"),
 	_kirkObject(&_objectList[0]),
 	_spockObject(&_objectList[1]),
 	_mccoyObject(&_objectList[2]),
@@ -63,6 +64,8 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_musicWorking = true;
 	_sfxWorking = true;
 	_finishedPlayingSpeech = false;
+
+	_lookActionBitmapIndex = 0;
 
 	_mouseControllingShip = false;
 	_keyboardControlsMouse = true;
@@ -432,7 +435,7 @@ void StarTrekEngine::updateObjectAnimations() {
 		case 0: // Not walking?
 		case 2:
 			if (_frameIndex >= object->frameToStartNextAnim) {
-				int nextAnimIndex = 0; // TODO: "chooseNextAnimFrame" function
+				int nextAnimIndex = getRandomWord() & 3;
 				object->animFile->seek(18 + nextAnimIndex + object->animFrame * 22, SEEK_SET);
 				byte nextAnimFrame = object->animFile->readByte();
 
@@ -1267,6 +1270,10 @@ void StarTrekEngine::playMovieMac(Common::String filename) {
 
 	// Swap back to 8bpp mode
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
+}
+
+uint16 StarTrekEngine::getRandomWord() {
+	return _randomSource.getRandomNumber(0xffff);
 }
 
 } // End of namespace StarTrek

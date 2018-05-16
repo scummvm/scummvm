@@ -250,7 +250,7 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 		SharedPtr<Bitmap> oldMouseBitmap = _gfx->_mouseBitmap;
 
 		_system->warpMouse(xoffset + 0xde, yoffset - 0x08);
-		_gfx->setMouseCursor(_gfx->loadBitmap("pushbtn"));
+		_gfx->setMouseBitmap(_gfx->loadBitmap("pushbtn"));
 
 		bool tmpMouseControllingShip = _mouseControllingShip;
 		_mouseControllingShip = false;
@@ -398,7 +398,7 @@ reloadText:
 			}
 		}
 
-		_gfx->setMouseCursor(oldMouseBitmap);
+		_gfx->setMouseBitmap(oldMouseBitmap);
 		_system->warpMouse(oldMousePos.x, oldMousePos.y);
 
 		_mouseControllingShip = tmpMouseControllingShip;
@@ -471,7 +471,7 @@ SharedPtr<TextBitmap> StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffs
 
 	memset(sprite, 0, sizeof(Sprite));
 	sprite->drawPriority = 15;
-	sprite->field6 = 8;
+	sprite->drawPriority2 = 8;
 	sprite->bitmap = bitmap;
 	sprite->textColor = textColor;
 
