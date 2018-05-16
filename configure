@@ -221,6 +221,7 @@ _have_x86=no
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
+add_feature bink "Bink" "_bink"
 add_feature cloud "cloud" "_cloud"
 add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
