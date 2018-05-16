@@ -35,7 +35,8 @@ Shared::DungeonSurface ViewportDungeon::getSurface() {
 
 void ViewportDungeon::drawWidget(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color) {
 	// Pass on to the dungeon widget drawer
-	DungeonWidget::drawWidget(s, (DungeonWidgetId)widgetId, distance, color);
+	Graphics::ManagedSurface surf(s, Common::Rect(-8, -8, s.w - 8, s.h - 8));
+	DungeonWidget::drawWidget(surf, (DungeonWidgetId)widgetId, distance, color);
 }
 
 } // End of namespace U1Gfx
