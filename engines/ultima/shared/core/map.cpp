@@ -166,7 +166,7 @@ void Map::getTileAt(const Point &pt, MapTile *tile) {
 	tile->_tileNum = tile->_tileId = _data[pt.y][pt.x];
 
 	// Check for any widget on that map tile
-	for (uint idx = 0; idx < _widgets.size(); ++idx) {
+	for (int idx = (int)_widgets.size() - 1; idx >= 0; --idx) {
 		if (_widgets[idx]->_position == pt) {
 			tile->_widgetNum = idx;
 			tile->_widget = _widgets[idx].get();
