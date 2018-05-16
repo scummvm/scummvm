@@ -52,6 +52,10 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 
 	_paletteFadeLevel = 0;
 	_mouseLocked = false;
+	_mouseToBeShown = false;
+	_mouseToBeHidden = false;
+	_mouseWarpX = -1;
+	_mouseWarpY = -1;
 
 	setMouseBitmap(loadBitmap("pushbtn"));
 	CursorMan.showMouse(true);
@@ -180,17 +184,21 @@ SharedPtr<Bitmap> Graphics::loadBitmap(Common::String basename) {
 }
 
 Common::Point Graphics::getMousePos() {
+	if (_mouseWarpX != -1)
+		return Common::Point(_mouseWarpX, _mouseWarpY);
+
 	return _vm->_system->getEventManager()->getMousePos();
 }
 
+/**
+ * The change to the mouse's bitmap won't take effect until drawAllSprites is called
+ * again.
+ */
 void Graphics::setMouseBitmap(SharedPtr<Bitmap> bitmap) {
 	_mouseBitmap = bitmap;
-	_vm->_system->setMouseCursor(bitmap->pixels, bitmap->width, bitmap->height, bitmap->xoffset, bitmap->yoffset, 0);
 
-	if (_mouseLocked) {
+	if (_mouseLocked)
 		_lockedMouseSprite.setBitmap(_mouseBitmap);
-		drawAllSprites(false);
-	}
 }
 
 /**
@@ -206,13 +214,13 @@ void Graphics::lockMousePosition(int16 x, int16 y) {
 			_lockedMouseSprite.pos.x = x;
 			_lockedMouseSprite.pos.y = y;
 			_lockedMouseSprite.bitmapChanged = true;
-			drawAllSprites(false);
 		}
 		return;
 	}
 
-	CursorMan.showMouse(false);
 	_mouseLocked = true;
+	_mouseToBeHidden = true;
+	_mouseToBeShown = false;
 
 	_lockedMouseSprite = Sprite();
 	_lockedMouseSprite.setBitmap(_mouseBitmap);
@@ -222,7 +230,6 @@ void Graphics::lockMousePosition(int16 x, int16 y) {
 	_lockedMouseSprite.pos.y = y;
 
 	addSprite(&_lockedMouseSprite);
-	drawAllSprites(false);
 }
 
 void Graphics::unlockMousePosition() {
@@ -230,11 +237,21 @@ void Graphics::unlockMousePosition() {
 		return;
 
 	_mouseLocked = false;
-	CursorMan.showMouse(true);
+	_mouseToBeShown = true;
+	_mouseToBeHidden = false;
 
 	_lockedMouseSprite.dontDrawNextFrame();
-	drawAllSprites();
+	drawAllSprites(false);
 	delSprite(&_lockedMouseSprite);
+}
+
+SharedPtr<Bitmap> Graphics::getMouseBitmap() {
+	return _mouseBitmap;
+}
+
+void Graphics::warpMouse(int16 x, int16 y) {
+	_mouseWarpX = x;
+	_mouseWarpY = y;
 }
 
 void Graphics::drawSprite(const Sprite &sprite) {
@@ -510,8 +527,29 @@ void Graphics::drawAllSprites(bool updateScreen) {
 		spr->lastDrawRect = spr->drawRect;
 	}
 
-	if (updateScreen)
+	if (updateScreen) {
+		// Check if there are any pending updates to the mouse.
+		if (_mouseBitmap != _mouseBitmapLastFrame) {
+			_mouseBitmapLastFrame = _mouseBitmap;
+			_vm->_system->setMouseCursor(_mouseBitmap->pixels, _mouseBitmap->width, _mouseBitmap->height, _mouseBitmap->xoffset, _mouseBitmap->yoffset, 0);
+		}
+		if (_mouseToBeShown) {
+			CursorMan.showMouse(true);
+			_mouseToBeShown = false;
+		}
+		else if (_mouseToBeHidden) {
+			CursorMan.showMouse(false);
+			_mouseToBeHidden = false;
+		}
+
+		if (_mouseWarpX != -1) {
+			_vm->_system->warpMouse(_mouseWarpX, _mouseWarpY);
+			_mouseWarpX = -1;
+			_mouseWarpY = -1;
+		}
+
 		_vm->_system->updateScreen();
+	}
 }
 
 void Graphics::addSprite(Sprite *sprite) {

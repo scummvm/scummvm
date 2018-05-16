@@ -247,9 +247,9 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 		loadMenuButtons("textbtns", xoffset + 0x96, yoffset - 0x11);
 
 		Common::Point oldMousePos = _gfx->getMousePos();
-		SharedPtr<Bitmap> oldMouseBitmap = _gfx->_mouseBitmap;
+		SharedPtr<Bitmap> oldMouseBitmap = _gfx->getMouseBitmap();
 
-		_system->warpMouse(xoffset + 0xde, yoffset - 0x08);
+		_gfx->warpMouse(xoffset + 0xde, yoffset - 0x08);
 		_gfx->setMouseBitmap(_gfx->loadBitmap("pushbtn"));
 
 		bool tmpMouseControllingShip = _mouseControllingShip;
@@ -399,7 +399,7 @@ reloadText:
 		}
 
 		_gfx->setMouseBitmap(oldMouseBitmap);
-		_system->warpMouse(oldMousePos.x, oldMousePos.y);
+		_gfx->warpMouse(oldMousePos.x, oldMousePos.y);
 
 		_mouseControllingShip = tmpMouseControllingShip;
 		unloadMenuButtons();
