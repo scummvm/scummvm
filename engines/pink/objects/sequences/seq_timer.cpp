@@ -31,9 +31,7 @@
 namespace Pink {
 
 SeqTimer::SeqTimer()
-        : _updatesToMessage(0) {
-
-}
+        : _updatesToMessage(0) {}
 
 void SeqTimer::deserialize(Archive &archive) {
     archive >> _actor;
@@ -47,20 +45,18 @@ void SeqTimer::toConsole() {
 }
 
 void SeqTimer::update() {
-    Common::RandomSource &random =_sequencer->_page->getGame()->getRnd();
+    Common::RandomSource &rnd =_sequencer->_page->getGame()->getRnd();
     if (_updatesToMessage--)
         return;
 
-    calculateUpdatesCount();
-    SupportingActor *actor = static_cast<SupportingActor*>(_sequencer->_page->findActor(_actor));
+	_updatesToMessage = _range ? _period + rnd.getRandomNumber(_range) : _period;
+
+	SupportingActor *actor = static_cast<SupportingActor*>(_sequencer->_page->findActor(_actor));
     if (actor && !_sequencer->findSequenceActorState(actor->getName())){
         actor->onTimerMessage();
     }
 }
 
-void SeqTimer::calculateUpdatesCount() {
-    Common::RandomSource &random =_sequencer->_page->getGame()->getRnd();
-    _updatesToMessage = _range ? _period + random.getRandomNumber(_range) : _period;
-}
+
 
 } // End of namespace Pink

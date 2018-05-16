@@ -34,12 +34,9 @@ public:
     SeqTimer();
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
-
     virtual void update();
 
-
 private:
-    void calculateUpdatesCount();
     Common::String _actor;
     Sequencer *_sequencer;
     int _period;
