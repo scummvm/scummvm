@@ -45,6 +45,11 @@ enum {
 	kWintermuteDebugGeneral = 1 << 5
 };
 
+enum WintermuteGameFeatures {
+ 	/** A game with low-spec resources. */
+ 	GF_LOWSPEC_ASSETS       = 1 << 0
+};
+
 class WintermuteEngine : public Engine {
 public:
 	WintermuteEngine(OSystem *syst, const WMEGameDescription *desc);
