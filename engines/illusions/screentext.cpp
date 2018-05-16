@@ -95,6 +95,17 @@ bool ScreenText::refreshScreenText(FontResource *font, WidthHeight dimensions, C
 	_surface = _vm->_screen->allocSurface(dimensions._width, dimensions._height);
 	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), _vm->_screen->getColorKey1());
 	_dimensions = dimensions;
+	if (_vm->getGameId() == kGameIdBBDOU) {
+		if (backgroundColor == 0) {
+			backgroundColor = _vm->_screen->getColorKey1();
+			borderColor = g_system->getScreenFormat().RGBToColor(128, 128, 128);
+		} else if (backgroundColor == 218) {
+			backgroundColor = g_system->getScreenFormat().RGBToColor(50, 50, 180);
+			borderColor = 0;
+		} else {
+			borderColor = g_system->getScreenFormat().RGBToColor(128, 128, 128);
+		}
+	}
 	textDrawer.drawText(_vm->_screen, _surface, backgroundColor, borderColor);
 	return done;
 }
