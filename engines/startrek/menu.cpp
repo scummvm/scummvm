@@ -561,6 +561,7 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 		_activeMenu->sprites[i].pos.y = stream->readUint16() + ypos;
 		_activeMenu->retvals[i] = stream->readUint16();
 
+		_activeMenu->sprites[i].drawPriority = 15;
 		_activeMenu->sprites[i].drawPriority2 = 8;
 	}
 
