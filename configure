@@ -236,6 +236,7 @@ add_feature freetype2 "FreeType2" "_freetype2"
 add_feature highres "high resolution" "_highres"
 add_feature mad "MAD" "_mad"
 add_feature jpeg "JPEG" "_jpeg"
+add_feature opengl_shaders "OpenGL with shaders" "_opengl_shaders" #ResidualVM specific
 add_feature png "PNG" "_png"
 add_feature theoradec "libtheoradec" "_theoradec"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
@@ -5120,11 +5121,6 @@ fi
 #
 if test `get_engine_build monkey4` = yes && test ! "$_mpeg2" = yes ; then
 	echo "...disabling support for video cutscenes in PS2 version of Escape from Monkey Island. mpeg2dec is required"
-fi
-
-if test `get_engine_build stark` = yes && test ! "$_opengl_shaders" = yes ; then
-	echo "...disabling STARK engine. OpenGL with shaders is required"
-	engine_disable stark
 fi
 
 #
