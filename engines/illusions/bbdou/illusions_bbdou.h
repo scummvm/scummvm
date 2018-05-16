@@ -33,6 +33,7 @@ namespace Illusions {
 class Dictionary;
 class ScriptMan;
 class ScriptStack;
+class BBDOUVideoPlayer;
 
 struct ActiveScene {
 	uint32 _sceneId;
@@ -72,6 +73,8 @@ public:
 	uint32 _theThreadId;
 	uint32 _globalSceneId;
 
+	BBDOUVideoPlayer *_videoPlayer;
+
 	bool _walkthroughStarted;
 
 	void initInput();
@@ -82,6 +85,10 @@ public:
 	bool causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
 	void causeDeclare(uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback);
 	uint32 causeTrigger(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 callingThreadId);
+
+	int updateVideoPlayer(uint flags);
+	void playVideo(uint32 videoId, uint32 objectId, uint32 priority, uint32 callingThreadId);
+	bool isVideoPlaying();
 
 	void setDefaultTextCoords();
 
