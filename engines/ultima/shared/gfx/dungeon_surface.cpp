@@ -122,13 +122,13 @@ void DungeonSurface::drawLeftDoor(uint distance) {
 		Point p1(WALL_ARRAY_X[distance], WALL_ARRAY_Y[distance]),
 			p2(WALL_ARRAY_X[distance - 1], WALL_ARRAY_Y[distance - 1]);
 		Point diff = p1 - p2;
-		diff.x /= 5;
-		diff.y /= 9;
+		diff.x /= 9;
+		diff.y /= 5;
 
 		drawLine(p2.x + diff.x * 2 + 16, 151 - diff.y - p2.y - 1, p2.x + diff.x * 2 + 16,
 			p1.y + 8 - diff.y, _edgeColor);
-		drawLineTo(p2.x + diff.x + 16, p1.y + diff.y + 8, _edgeColor);
-		drawLineTo(p2.x + diff.x + 16, 151 - p1.y + diff.y * 2 - (distance == 1 ? 2 : 0), _edgeColor);
+		drawLineTo(p2.x + diff.x * 6 + 16, p1.y + diff.y + 8, _edgeColor);
+		drawLineTo(p2.x + diff.x * 6 + 16, 151 - p1.y + diff.y * 2 - (distance == 1 ? 2 : 0), _edgeColor);
 	}
 }
 
@@ -157,13 +157,13 @@ void DungeonSurface::drawRightDoor(uint distance) {
 		Point p1(WALL_ARRAY_X[distance], WALL_ARRAY_Y[distance]),
 			p2(WALL_ARRAY_X[distance - 1], WALL_ARRAY_Y[distance - 1]);
 		Point diff = p1 - p2;
-		diff.x /= 5;
-		diff.y /= 9;
+		diff.x /= 9;
+		diff.y /= 5;
 
-		drawLine(303 - (p2.x + diff.x), 151 - diff.y - p2.y, 303 - (diff.x * 2 + p2.x),
+		drawLine(303 - (p2.x + diff.x * 2), 151 - diff.y - p2.y - 1, 303 - (p2.x + diff.x * 2),
 			p1.y + 8 - diff.y, _edgeColor);
-		drawLineTo(303 - diff.x * 6, p1.x + 8 + diff.y, _edgeColor);
-		drawLineTo(303 - (diff.x * 6 + p2.x), 151 - p1.x + diff.y * 2 - (distance == 1 ? 2 : 0), _edgeColor);
+		drawLineTo(303 - diff.x * 6, p1.y + 8 + diff.y, _edgeColor);
+		drawLineTo(303 - (diff.x * 6 + p2.x), 151 - p1.y + diff.y * 2 - (distance == 1 ? 2 : 0), _edgeColor);
 	}
 }
 
