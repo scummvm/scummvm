@@ -83,8 +83,8 @@ const byte *DungeonWidget::getData() {
 }
 
 void DungeonWidget::getPos(const byte *&data, int bitShift, Point &pt) {
-	pt.x = (*data++ >> bitShift) + 160;
-	pt.y = (*data++ >> bitShift);
+	pt.x = ((int8)*data++ >> bitShift) + 160;
+	pt.y = ((int8)*data++ >> bitShift);
 }
 
 void DungeonWidget::postDraw(Shared::DungeonSurface &s) {

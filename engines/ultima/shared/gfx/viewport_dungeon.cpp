@@ -116,7 +116,7 @@ void ViewportDungeon::draw() {
 			priorRightFlag = rightFlag;
 		}
 
-		if (isDoor)
+		if (!isDoor)
 			drawCell(0, currentPos);
 
 		map->getTileAt(currentPos + delta, &backTile);
