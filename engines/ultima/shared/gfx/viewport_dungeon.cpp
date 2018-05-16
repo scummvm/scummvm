@@ -181,7 +181,8 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 	MapTile tile;
 	map->getTileAt(pt, &tile);
 
-	if (tile._widget) {
+	DungeonMonster *monster = dynamic_cast<DungeonMonster *>(tile._widget);
+	if (monster) {
 		// Draw a monster
 		if (tile.isWallOrDoorway())
 			s.drawWall(distance);
@@ -192,7 +193,7 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 			// Ladder up
 			s.drawWidget(26, distance, game->_edgeColor);
 
-		static_cast<DungeonMonster *>(tile._widget)->draw(s, distance);
+		monster->draw(s, distance);
 	} else {
 		switch (tile._tileNum) {
 		case 1:
