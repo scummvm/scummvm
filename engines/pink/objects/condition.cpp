@@ -32,40 +32,40 @@ void Pink::ConditionVariable::deserialize(Archive &archive) {
     archive >> _name >> _value;
 }
 
-bool Pink::ConditionGameVariable::evaluate(Actor *leadActor) {
-    return leadActor->getPage()->getModule()->getGame()->checkValueOfVariable(_name, _value);
+bool Pink::ConditionGameVariable::evaluate(Actor *actor) {
+    return actor->getPage()->getModule()->getGame()->checkValueOfVariable(_name, _value);
 }
 
 void ConditionGameVariable::toConsole() {
     debug("\t\tConditionGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-bool Pink::ConditionModuleVariable::evaluate(Actor *leadActor) {
-    return leadActor->getPage()->getModule()->checkValueOfVariable(_name, _value);
+bool Pink::ConditionModuleVariable::evaluate(Actor *actor) {
+    return actor->getPage()->getModule()->checkValueOfVariable(_name, _value);
 }
 
 void ConditionModuleVariable::toConsole() {
     debug("\t\tConditionModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-bool Pink::ConditionNotModuleVariable::evaluate(Actor *leadActor) {
-    return !ConditionModuleVariable::evaluate(leadActor);
+bool Pink::ConditionNotModuleVariable::evaluate(Actor *actor) {
+    return !ConditionModuleVariable::evaluate(actor);
 }
 
 void ConditionNotModuleVariable::toConsole() {
     debug("\t\tConditionNotModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-bool ConditionPageVariable::evaluate(Actor *leadActor) {
-    return leadActor->getPage()->checkValueOfVariable(_name, _value);
+bool ConditionPageVariable::evaluate(Actor *actor) {
+    return actor->getPage()->checkValueOfVariable(_name, _value);
 }
 
 void ConditionPageVariable::toConsole() {
     debug("\t\tConditionPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-bool ConditionNotPageVariable::evaluate(Actor *leadActor) {
-    return !ConditionPageVariable::evaluate(leadActor);
+bool ConditionNotPageVariable::evaluate(Actor *actor) {
+    return !ConditionPageVariable::evaluate(actor);
 }
 
 void ConditionNotPageVariable::toConsole() {
@@ -76,8 +76,8 @@ void ConditionInventoryItemOwner::deserialize(Archive &archive) {
     archive >> _item >> _owner;
 }
 
-bool ConditionInventoryItemOwner::evaluate(Actor *leadActor) {
-    InventoryMgr *mgr = leadActor->getPage()->getModule()->getInventoryMgr();
+bool ConditionInventoryItemOwner::evaluate(Actor *actor) {
+    InventoryMgr *mgr = actor->getPage()->getModule()->getInventoryMgr();
     InventoryItem *item = mgr->findInventoryItem(_item);
     return item->getCurrentOwner() == _owner;
 }
@@ -86,8 +86,8 @@ void ConditionInventoryItemOwner::toConsole() {
     debug("\t\tConditionInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
 }
 
-bool ConditionNotInventoryItemOwner::evaluate(Actor *leadActor) {
-    return !ConditionInventoryItemOwner::evaluate(leadActor);
+bool ConditionNotInventoryItemOwner::evaluate(Actor *actor) {
+    return !ConditionInventoryItemOwner::evaluate(actor);
 }
 
 void ConditionNotInventoryItemOwner::toConsole() {

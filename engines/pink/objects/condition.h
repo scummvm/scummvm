@@ -32,7 +32,7 @@ class LeadActor;
 class Condition : public Object {
 public:
     virtual void deserialize(Archive &archive) = 0;
-    virtual bool evaluate(Actor *leadActor) = 0;
+    virtual bool evaluate(Actor *actor) = 0;
 };
 
 class ConditionVariable : public Condition {
