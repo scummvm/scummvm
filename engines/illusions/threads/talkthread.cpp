@@ -282,7 +282,7 @@ void TalkThread::onPause() {
 	case 6:
 	case 7:
 		if (!(_flags & 4)) {
-			// TODO audvocPauseVoice();
+			_vm->_soundMan->pauseVoice();
 		}
 		if (!(_flags & 8)) {
 			_textDurationElapsed = getDurationElapsed(_textStartTime, _textEndTime);
@@ -313,7 +313,7 @@ void TalkThread::onUnpause() {
 		break;
 	case 6:
 		if (!(_flags & 4)) {
-			// TODO audvocUnpauseVoice();
+			_vm->_soundMan->unpauseVoice();
 		}
 		if (!(_flags & 8)) {
 			_textStartTime = getCurrentTime();

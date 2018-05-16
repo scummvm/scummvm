@@ -229,7 +229,7 @@ void MidiPlayer::endOfTrack() {
 
 // VoicePlayer
 
-VoicePlayer::VoicePlayer() {
+VoicePlayer::VoicePlayer() : _wasPlaying(false), _isPaused(false) {
 }
 
 VoicePlayer::~VoicePlayer() {
@@ -267,6 +267,22 @@ void VoicePlayer::stop() {
 	_voiceName.clear();
 }
 
+void VoicePlayer::pause() {
+	if (!_isPaused) {
+		_isPaused = true;
+		_wasPlaying = isPlaying();
+		g_system->getMixer()->pauseHandle(_soundHandle, true);
+	}
+}
+
+void VoicePlayer::unpause() {
+	if (_isPaused) {
+		_isPaused = false;
+		if (_wasPlaying)
+			g_system->getMixer()->pauseHandle(_soundHandle, false);
+	}
+}
+
 bool VoicePlayer::isPlaying() {
 	return g_system->getMixer()->isSoundHandleActive(_soundHandle);
 }
@@ -278,12 +294,6 @@ bool VoicePlayer::isEnabled() {
 
 bool VoicePlayer::isCued() {
 	return _voiceStatus == 2;
-}
-
-void VoicePlayer::pause(bool paused) {
-	if (isPlaying()) {
-		g_system->getMixer()->pauseHandle(_soundHandle, paused);
-	}
 }
 
 // Sound
@@ -394,8 +404,12 @@ void SoundMan::stopVoice() {
 	_voicePlayer->stop();
 }
 
-void SoundMan::pauseVoice(bool paused) {
-	_voicePlayer->pause(paused);
+void SoundMan::pauseVoice() {
+	_voicePlayer->pause();
+}
+
+void SoundMan::unpauseVoice() {
+	_voicePlayer->unpause();
 }
 
 bool SoundMan::isVoicePlaying() {
