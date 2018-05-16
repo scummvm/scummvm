@@ -61,7 +61,7 @@ public:
 	/** Get the texture width */
 	uint32 width() const { return _width; }
 
-	/** Get teh texture height */
+	/** Get the texture height */
 	uint32 height() const { return _height; }
 
 protected:
