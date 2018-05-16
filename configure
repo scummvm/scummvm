@@ -228,6 +228,7 @@ _have_x86=no
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
+add_feature bink "Bink" "_bink"
 add_feature cloud "cloud" "_cloud"
 add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
@@ -5119,16 +5120,6 @@ fi
 #
 if test `get_engine_build monkey4` = yes && test ! "$_mpeg2" = yes ; then
 	echo "...disabling support for video cutscenes in PS2 version of Escape from Monkey Island. mpeg2dec is required"
-fi
-
-if test `get_engine_build monkey4` = yes && test ! "$_bink" = yes ; then
-	echo "...disabling Escape from Monkey Island. bink is required"
-	engine_disable monkey4
-fi
-
-if test `get_engine_build myst3` = yes && test ! "$_bink" = yes ; then
-	echo "...disabling Myst 3 engine. bink is required"
-	engine_disable myst3
 fi
 
 if test `get_engine_build stark` = yes && test ! "$_opengl_shaders" = yes ; then
