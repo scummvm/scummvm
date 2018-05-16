@@ -27,48 +27,168 @@
 #include "startrek/graphics.h"
 
 
-// Special events that can be returned by handleMenuEvents.
-enum MenuEvent {
-	MENUEVENT_RCLICK_OFFBUTTON = -4,
-	MENUEVENT_ENABLEINPUT,          // Makes buttons selectable (occurs after a delay)
-	MENUEVENT_RCLICK_ONBUTTON,
-	MENUEVENT_LCLICK_OFFBUTTON
-};
-
-// Buttons for standard text display
-enum TextButtons {
-	TEXTBUTTON_CONFIRM = 0,
-	TEXTBUTTON_SCROLLUP,
-	TEXTBUTTON_SCROLLDOWN,
-	TEXTBUTTON_PREVCHOICE,
-	TEXTBUTTON_NEXTCHOICE,
-	TEXTBUTTON_SCROLLUP_ONELINE,
-	TEXTBUTTON_SCROLLDOWN_ONELINE,
-	TEXTBUTTON_GOTO_TOP,
-	TEXTBUTTON_GOTO_BOTTOM,
-	TEXTBUTTON_SPEECH_DONE // "Virtual" button?
-};
-
-// Buttons for option menu (corresponding to button indices, not button retvals, which are
-// different for some reason)
-enum OptionMenuButtons {
-	OPTIONBUTTON_TEXT,
-	OPTIONBUTTON_SAVE,
-	OPTIONBUTTON_LOAD,
-	OPTIONBUTTON_ENABLEMUSIC,
-	OPTIONBUTTON_DISABLEMUSIC,
-	OPTIONBUTTON_ENABLESFX,
-	OPTIONBUTTON_DISABLESFX,
-	OPTIONBUTTON_QUIT
-};
-
 namespace StarTrek {
 
-int Graphics::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10) {
+/**
+ * Gets one line of text (does not include words that won't fit).
+ * Returns position of text to continue from, or nullptr if done.
+ */
+const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, int lineWidth) {
+	*lineOutput = '\0';
+	if (*text == '\0')
+		return nullptr;
+
+	const char *lastSpaceInput = nullptr;
+	char *lastSpaceOutput = nullptr;
+	int var4;
+	int charIndex = 0;
+
+	while (charIndex != lineWidth && *text != '\0') {
+		char c = *text;
+
+		if (c == '\n') {
+			*lineOutput = '\0';
+			return text+1;
+		}
+
+		if (c == ' ') {
+			var4 = charIndex;
+			lastSpaceInput = text;
+			lastSpaceOutput = lineOutput;
+		}
+
+		if (c == '\r') {
+			text++;
+			charIndex--;
+		}
+		else {
+			text++;
+			*(lineOutput++) = c;
+		}
+		charIndex++;
+	}
+
+	if (*text == '\0') {
+		*lineOutput = '\0';
+		return text;
+	}
+	if (*text == ' ') {
+		*lineOutput = '\0';
+		return text+1;
+	}
+	if (lastSpaceOutput == nullptr) { // Long word couldn't fit on line
+		*lineOutput = '\0';
+		return text;
+	}
+
+	// In the middle of a word; must go back to the start of it
+	*lastSpaceOutput = '\0';
+	return lastSpaceInput+1;
+}
+
+void StarTrekEngine::getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex) {
+	String header = speakerText;
+
+	if (choiceIndex != 0)
+		header += String::format(" choice %d", choiceIndex);
+
+	if (header.size() > TEXTBOX_WIDTH-2)
+		header.erase(TEXTBOX_WIDTH-2);
+	while (header.size() < TEXTBOX_WIDTH-2)
+		header += ' ';
+
+	*headerTextOutput = header;
+}
+
+/**
+ * Text getter for showText which reads from an rdf file.
+ */
+String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput) {
+	SharedPtr<Room> room = getRoom();
+
+	int rdfVar = (size_t)data;
+
+	uint16 textOffset = room->readRdfWord(rdfVar + (choiceIndex+1)*2);
+
+	if (textOffset == 0)
+		return "";
+
+	if (headerTextOutput != nullptr) {
+		uint16 speakerOffset = room->readRdfWord(rdfVar);
+		if (speakerOffset == 0 || room->_rdfData[speakerOffset] == '\0')
+			*headerTextOutput = "";
+		else {
+			char *speakerText = (char*)&room->_rdfData[speakerOffset];
+			if (room->readRdfWord(rdfVar+4) != 0) // Check if there's more than one option
+				getTextboxHeader(headerTextOutput, speakerText, choiceIndex+1);
+			else
+				getTextboxHeader(headerTextOutput, speakerText, 0);
+		}
+	}
+
+	return (char*)&room->_rdfData[textOffset];
+}
+
+/**
+ * Text getter for showText which reads from a given buffer.
+ */
+String StarTrekEngine::readTextFromBuffer(int choiceIndex, uintptr data, String *headerTextOutput) {
+	char buf[TEXTBOX_WIDTH];
+	memcpy(buf, (byte*)data, TEXTBOX_WIDTH-2);
+	buf[TEXTBOX_WIDTH-2] = '\0';
+
+	*headerTextOutput = String(buf);
+
+	char *text = (char*)data+TEXTBOX_WIDTH-2;
+	return String(text);
+}
+
+String StarTrekEngine::skipTextAudioPrompt(const String &str) {
+	const char *text = str.c_str();
+
+	if (*text != '#')
+		return str;
+
+	text++;
+	while (*text != '#') {
+		if (*text == '\0')
+			return str;
+		text++;
+	}
+
+	return String(text+1);
+}
+
+/**
+ * Plays an audio prompt, if it exists, and returns the string starting at the end of the
+ * prompt.
+ */
+String StarTrekEngine::playTextAudio(const String &str) {
+	const char *text = str.c_str();
+	char soundFile[0x100];
+
+	if (*text != '#')
+		return str;
+
+	int len = 0;
+	text++;
+	while (*text != '#') {
+		if (*text == '\0' || len > 0xfa)
+			return str;
+		soundFile[len++] = *text++;
+	}
+
+	soundFile[len] = '\0';
+	playSpeech(soundFile);
+
+	return String(text+1);
+}
+
+int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10) {
 	int16 tmpTextDisplayMode = _textDisplayMode;
 
 	uint32 var7c = 8;
-	if (_vm->_frameIndex > _textboxVar2+1) {
+	if (_frameIndex > _textboxVar2+1) {
 		var7c = 0x10;
 	}
 
@@ -82,7 +202,7 @@ int Graphics::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int 
 		if (choiceText.empty())
 			break;
 
-		int lines = getNumLines(choiceText);
+		int lines = getNumTextboxLines(choiceText);
 		if (lines > numTextboxLines)
 			numTextboxLines = lines;
 
@@ -106,13 +226,13 @@ int Graphics::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int 
 	int choiceIndex = 0;
 	int scrollOffset = 0;
 	if (tmpTextDisplayMode != TEXTDISPLAY_WAIT && tmpTextDisplayMode != TEXTDISPLAY_SUBTITLES
-			&& numChoices == 1 && _vm->_sfxEnabled && !_vm->_sfxWorking)
+			&& numChoices == 1 && _sfxEnabled && !_sfxWorking)
 		_textboxHasMultipleChoices = false;
 	else
 		_textboxHasMultipleChoices = true;
 
 	if (tmpTextDisplayMode >= TEXTDISPLAY_WAIT && tmpTextDisplayMode <= TEXTDISPLAY_NONE
-			&& _vm->_sfxEnabled && !_vm->_sfxWorking)
+			&& _sfxEnabled && !_sfxWorking)
 		_textboxVar6 = true;
 	else
 		_textboxVar6 = false;
@@ -126,14 +246,14 @@ int Graphics::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int 
 	else {
 		loadMenuButtons("textbtns", xoffset + 0x96, yoffset - 0x11);
 
-		Common::Point oldMousePos = getMousePos();
-		SharedPtr<Bitmap> oldMouseBitmap = _mouseBitmap;
+		Common::Point oldMousePos = _gfx->getMousePos();
+		SharedPtr<Bitmap> oldMouseBitmap = _gfx->_mouseBitmap;
 
-		_vm->_system->warpMouse(xoffset + 0xde, yoffset - 0x08);
-		setMouseCursor(loadBitmap("pushbtn"));
+		_system->warpMouse(xoffset + 0xde, yoffset - 0x08);
+		_gfx->setMouseCursor(_gfx->loadBitmap("pushbtn"));
 
-		bool tmpMouseControllingShip = _vm->_mouseControllingShip;
-		_vm->_mouseControllingShip = false;
+		bool tmpMouseControllingShip = _mouseControllingShip;
+		_mouseControllingShip = false;
 
 		// Decide which buttons to show
 		uint32 visibleButtons = (1 << TEXTBUTTON_CONFIRM);
@@ -278,177 +398,66 @@ reloadText:
 			}
 		}
 
-		setMouseCursor(oldMouseBitmap);
-		_vm->_system->warpMouse(oldMousePos.x, oldMousePos.y);
+		_gfx->setMouseCursor(oldMouseBitmap);
+		_system->warpMouse(oldMousePos.x, oldMousePos.y);
 
-		_vm->_mouseControllingShip = tmpMouseControllingShip;
+		_mouseControllingShip = tmpMouseControllingShip;
 		unloadMenuButtons();
 		textboxSprite.field16 = true;
 		textboxSprite.bitmapChanged = true;
 
-		drawAllSprites();
-		delSprite(&textboxSprite);
+		_gfx->drawAllSprites();
+		_gfx->delSprite(&textboxSprite);
 		// sub_272B4
 	}
 
-	_textboxVar2 = _vm->_frameIndex;
-	_vm->stopPlayingSpeech();
+	_textboxVar2 = _frameIndex;
+	stopPlayingSpeech();
 	return choiceIndex;
 }
 
 /**
- * This returns either a special menu event (negative number) or the retval of the button
- * clicked (usually an index, always positive).
+ * Returns the number of lines this string will take up in a textbox.
  */
-int Graphics::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
-	// TODO: finish
+int StarTrekEngine::getNumTextboxLines(const String &str) {
+	const char *text = str.c_str();
+	char line[TEXTBOX_WIDTH];
 
-	uint32 tickWhenClickingEnabled = _vm->_clockTicks + ticksUntilClickingEnabled;
+	int lines = 0;
 
-	while (true) {
-		TrekEvent event;
-		while (_vm->popNextEvent(&event)) {
-			switch(event.type) {
-
-			case TREKEVENT_TICK: {
-			case TREKEVENT_MOUSEMOVE: // FIXME: actual game only uses TICK event here
-				Common::Point mousePos = getMousePos();
-				int buttonIndex = getMenuButtonAt(*_activeMenu, mousePos.x, mousePos.y);
-				if (buttonIndex != -1) {
-					if (_activeMenu->disabledButtons & (1<<buttonIndex))
-						buttonIndex = -1;
-				}
-
-				if (buttonIndex != _activeMenu->selectedButton) {
-					if (_activeMenu->selectedButton != -1) {
-						Sprite &spr = _activeMenu->sprites[_activeMenu->selectedButton];
-						drawMenuButtonOutline(spr.bitmap, 0x00);
-						spr.bitmapChanged = true;
-					}
-					if (buttonIndex != -1) {
-						Sprite &spr = _activeMenu->sprites[buttonIndex];
-						drawMenuButtonOutline(spr.bitmap, 0xda);
-						spr.bitmapChanged = true;
-					}
-					_activeMenu->selectedButton = buttonIndex;
-				}
-				// Not added: updating mouse position (scummvm handles that)
-
-				// sub_10492();
-				// sub_10A91();
-				drawAllSprites();
-				// sub_10BE7();
-				// sub_2A4B1();
-
-				if (_vm->_finishedPlayingSpeech != 0) {
-					_vm->_finishedPlayingSpeech = 0;
-					if (_textDisplayMode != TEXTDISPLAY_WAIT) {
-						return TEXTBUTTON_SPEECH_DONE;
-					}
-				}
-				// sub_1E88C();
-				_vm->_frameIndex++;
-
-				if (ticksUntilClickingEnabled != 0 && _vm->_clockTicks >= tickWhenClickingEnabled)
-					return MENUEVENT_ENABLEINPUT;
-				break;
-			}
-
-			case TREKEVENT_LBUTTONDOWN:
-				if (_activeMenu->selectedButton != -1) {
-					_vm->playSoundEffectIndex(0x10);
-					return _activeMenu->retvals[_activeMenu->selectedButton];
-				}
-				else {
-					Common::Point mouse = getMousePos();
-					if (getMenuButtonAt(*_activeMenu, mouse.x, mouse.y) == -1) {
-						_vm->playSoundEffectIndex(0x10);
-						return MENUEVENT_LCLICK_OFFBUTTON;
-					}
-				}
-				break;
-
-			case TREKEVENT_RBUTTONDOWN:
-				// TODO
-				break;
-
-			case TREKEVENT_KEYDOWN:
-				// TODO
-				break;
-
-			default:
-				break;
-			}
-		}
+	while (text != nullptr) {
+		text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
+		lines++;
 	}
+	return lines-1;
 }
 
-/**
- * Text getter for showText which reads from an rdf file.
- */
-String Graphics::readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput) {
-	SharedPtr<Room> room = _vm->getRoom();
+String StarTrekEngine::putTextIntoLines(const String &_text) {
+	char line[TEXTBOX_WIDTH];
 
-	int rdfVar = (size_t)data;
+	const char *text = _text.c_str();
+	String output;
 
-	uint16 textOffset = room->readRdfWord(rdfVar + (choiceIndex+1)*2);
+	text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
 
-	if (textOffset == 0)
-		return "";
-
-	if (headerTextOutput != nullptr) {
-		uint16 speakerOffset = room->readRdfWord(rdfVar);
-		if (speakerOffset == 0 || room->_rdfData[speakerOffset] == '\0')
-			*headerTextOutput = "";
-		else {
-			char *speakerText = (char*)&room->_rdfData[speakerOffset];
-			if (room->readRdfWord(rdfVar+4) != 0) // Check if there's more than one option
-				getTextboxHeader(headerTextOutput, speakerText, choiceIndex+1);
-			else
-				getTextboxHeader(headerTextOutput, speakerText, 0);
+	while (text != nullptr) {
+		int len = strlen(line);
+		while (len != TEXTBOX_WIDTH-2) {
+			line[len++] = ' ';
+			line[len] = '\0';
 		}
+		output += line;
+
+		text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
 	}
 
-	return (char*)&room->_rdfData[textOffset];
-}
-
-/**
- * Text getter for showText which reads from a given buffer.
- */
-String Graphics::readTextFromBuffer(int choiceIndex, uintptr data, String *headerTextOutput) {
-	char buf[TEXTBOX_WIDTH];
-	memcpy(buf, (byte*)data, TEXTBOX_WIDTH-2);
-	buf[TEXTBOX_WIDTH-2] = '\0';
-
-	*headerTextOutput = String(buf);
-
-	char *text = (char*)data+TEXTBOX_WIDTH-2;
-	return String(text);
-}
-
-/**
- * Text getter for showText which reads choices from an array of pointers.
- * Last element in the array must be an empty string.
- */
-String Graphics::readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput) {
-	const char **textArray = (const char**)data;
-
-	const char *headerText = textArray[0];
-	const char *mainText = textArray[choiceIndex+1];
-
-	if (*mainText == '\0')
-		return Common::String(); // Technically should be nullptr...
-
-	*headerTextOutput = headerText;
-	while (headerTextOutput->size() < TEXTBOX_WIDTH-2)
-		*headerTextOutput += ' ';
-	return String(mainText);
+	return output;
 }
 
 /**
  * Creates a blank textbox in a TextBitmap, and initializes a sprite to use it.
  */
-SharedPtr<TextBitmap> Graphics::initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite) {
+SharedPtr<TextBitmap> StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite) {
 	int linesBeforeTextStart = 2;
 	if (withHeader)
 		linesBeforeTextStart = 4;
@@ -510,7 +519,7 @@ SharedPtr<TextBitmap> Graphics::initTextSprite(int *xoffsetPtr, int *yoffsetPtr,
 	memset(&textAddr[1], 0x16, TEXTBOX_WIDTH-2);
 	textAddr[TEXTBOX_WIDTH-1] = 0x17;
 
-	addSprite(sprite);
+	_gfx->addSprite(sprite);
 	sprite->drawMode = 3;
 	sprite->pos.x = xoffset;
 	sprite->pos.y = yoffset;
@@ -526,7 +535,7 @@ SharedPtr<TextBitmap> Graphics::initTextSprite(int *xoffsetPtr, int *yoffsetPtr,
  * Draws the "main" text (everything but the header which includes the speaker) to
  * a TextBitmap.
  */
-void Graphics::drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &_text, bool withHeader) {
+void StarTrekEngine::drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &_text, bool withHeader) {
 	byte *dest = bitmap->pixels + TEXTBOX_WIDTH + 1; // Start of 2nd row
 	const char *text = _text.c_str();
 
@@ -552,48 +561,18 @@ void Graphics::drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int 
 	}
 }
 
-/**
- * Returns the number of lines this string will take up in a textbox.
- */
-int Graphics::getNumLines(const String &str) {
-	const char *text = str.c_str();
-	char line[TEXTBOX_WIDTH];
-
-	int lines = 0;
-
-	while (text != nullptr) {
-		text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
-		lines++;
-	}
-	return lines-1;
-}
-
-void Graphics::getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex) {
-	String header = speakerText;
-
-	if (choiceIndex != 0)
-		header += String::format(" choice %d", choiceIndex);
-
-	if (header.size() > TEXTBOX_WIDTH-2)
-		header.erase(TEXTBOX_WIDTH-2);
-	while (header.size() < TEXTBOX_WIDTH-2)
-		header += ' ';
-
-	*headerTextOutput = header;
-}
-
-String Graphics::readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numTextLines) {
+String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numTextLines) {
 	String headerText;
 	String text = (this->*textGetter)(choiceIndex, var, &headerText);
 
-	if (_textDisplayMode == TEXTDISPLAY_NONE && _vm->_sfxEnabled && _vm->_sfxWorking) {
+	if (_textDisplayMode == TEXTDISPLAY_NONE && _sfxEnabled && _sfxWorking) {
 		uint32 oldSize = text.size();
 		text = playTextAudio(text);
 		if (oldSize != text.size())
 			_textboxHasMultipleChoices = true;
 	}
 	else if ((_textDisplayMode == TEXTDISPLAY_WAIT || _textDisplayMode == TEXTDISPLAY_SUBTITLES)
-			&& _vm->_sfxEnabled && _vm->_sfxWorking) {
+			&& _sfxEnabled && _sfxWorking) {
 		text = playTextAudio(text);
 	}
 	else {
@@ -601,7 +580,7 @@ String Graphics::readLineFormattedText(TextGetterFunc textGetter, uintptr var, i
 	}
 
 	if (_textboxHasMultipleChoices) {
-		*numTextLines = getNumLines(text);
+		*numTextLines = getNumTextboxLines(text);
 
 		bool hasHeader = !headerText.empty();
 
@@ -635,575 +614,23 @@ String Graphics::readLineFormattedText(TextGetterFunc textGetter, uintptr var, i
 	*/
 }
 
-String Graphics::putTextIntoLines(const String &_text) {
-	char line[TEXTBOX_WIDTH];
-
-	const char *text = _text.c_str();
-	String output;
-
-	text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
-
-	while (text != nullptr) {
-		int len = strlen(line);
-		while (len != TEXTBOX_WIDTH-2) {
-			line[len++] = ' ';
-			line[len] = '\0';
-		}
-		output += line;
-
-		text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
-	}
-
-	return output;
-}
-
 /**
- * Gets one line of text (does not include words that won't fit).
- * Returns position of text to continue from, or nullptr if done.
+ * Text getter for showText which reads choices from an array of pointers.
+ * Last element in the array must be an empty string.
  */
-const char *Graphics::getNextTextLine(const char *text, char *lineOutput, int lineWidth) {
-	*lineOutput = '\0';
-	if (*text == '\0')
-		return nullptr;
-
-	const char *lastSpaceInput = nullptr;
-	char *lastSpaceOutput = nullptr;
-	int var4;
-	int charIndex = 0;
-
-	while (charIndex != lineWidth && *text != '\0') {
-		char c = *text;
-
-		if (c == '\n') {
-			*lineOutput = '\0';
-			return text+1;
-		}
-
-		if (c == ' ') {
-			var4 = charIndex;
-			lastSpaceInput = text;
-			lastSpaceOutput = lineOutput;
-		}
-
-		if (c == '\r') {
-			text++;
-			charIndex--;
-		}
-		else {
-			text++;
-			*(lineOutput++) = c;
-		}
-		charIndex++;
-	}
-
-	if (*text == '\0') {
-		*lineOutput = '\0';
-		return text;
-	}
-	if (*text == ' ') {
-		*lineOutput = '\0';
-		return text+1;
-	}
-	if (lastSpaceOutput == nullptr) { // Long word couldn't fit on line
-		*lineOutput = '\0';
-		return text;
-	}
-
-	// In the middle of a word; must go back to the start of it
-	*lastSpaceOutput = '\0';
-	return lastSpaceInput+1;
-}
-
-String Graphics::skipTextAudioPrompt(const String &str) {
-	const char *text = str.c_str();
-
-	if (*text != '#')
-		return str;
-
-	text++;
-	while (*text != '#') {
-		if (*text == '\0')
-			return str;
-		text++;
-	}
-
-	return String(text+1);
-}
-
-/**
- * Plays an audio prompt, if it exists, and returns the string starting at the end of the
- * prompt.
- */
-String Graphics::playTextAudio(const String &str) {
-	const char *text = str.c_str();
-	char soundFile[0x100];
-
-	if (*text != '#')
-		return str;
-
-	int len = 0;
-	text++;
-	while (*text != '#') {
-		if (*text == '\0' || len > 0xfa)
-			return str;
-		soundFile[len++] = *text++;
-	}
-
-	soundFile[len] = '\0';
-	_vm->playSpeech(soundFile);
-
-	return String(text+1);
-}
-
-/**
- * Returns the index of the button at the given position, or -1 if none.
- */
-int Graphics::getMenuButtonAt(const Menu &menu, int x, int y) {
-	for (int i = 0; i < menu.numButtons; i++) {
-		const Sprite &spr = menu.sprites[i];
-
-		if (spr.drawMode != 2)
-			continue;
-
-		int left = spr.pos.x - spr.bitmap->xoffset;
-		int top = spr.pos.y - spr.bitmap->yoffset;
-
-		// Oddly, this doesn't account for x/yoffset...
-		int right = spr.pos.x + spr.bitmap->width - 1;
-		int bottom = spr.pos.y + spr.bitmap->height - 1;
-
-		if (x >= left && x <= right && y >= top && y <= bottom)
-			return i;
-	}
-
-	return -1;
-}
-
-/**
- * Draws or removes the outline on menu buttons when the cursor hovers on them, or leaves
- * them.
- */
-void Graphics::drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color) {
-	int lineWidth = bitmap->width-2;
-	int offsetToBottom = (bitmap->height-3)*bitmap->width;
-
-	byte *dest = bitmap->pixels + bitmap->width + 1;
-
-	while (lineWidth--) {
-		*dest = color;
-		*(dest+offsetToBottom) = color;
-		dest++;
-	}
-
-	int lineHeight = bitmap->height - 2;
-	int offsetToRight = bitmap->width - 3;
-
-	dest = bitmap->pixels + bitmap->width + 1;
-
-	while (lineHeight--) {
-		*dest = color;
-		*(dest+offsetToRight) = color;
-		dest += bitmap->width;
-	}
-}
-
-/**
- * Loads a .MNU file, which is a list of buttons to display.
- */
-void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
-	if (_activeMenu == nullptr)
-		_keyboardControlsMouseOutsideMenu = _vm->_keyboardControlsMouse;
-
-	SharedPtr<Menu> oldMenu = _activeMenu;
-	_activeMenu = SharedPtr<Menu>(new Menu());
-	_activeMenu->nextMenu = oldMenu;
-
-	SharedPtr<FileStream> stream = _vm->loadFile(mnuFilename + ".MNU");
-
-	_activeMenu->menuFile = stream;
-	_activeMenu->numButtons = _activeMenu->menuFile->size() / 16;
-
-	for (int i = 0; i < _activeMenu->numButtons; i++) {
-		memset(&_activeMenu->sprites[i], 0, sizeof(Sprite));
-		addSprite(&_activeMenu->sprites[i]);
-		_activeMenu->sprites[i].drawMode = 2;
-
-		char bitmapBasename[11];
-		stream->seek(i * 16, SEEK_SET);
-		stream->read(bitmapBasename, 10);
-		for (int j = 0; j < 10; j++) {
-			if (bitmapBasename[j] == ' ')
-				bitmapBasename[j] = '\0';
-		}
-		bitmapBasename[10] = '\0';
-
-		_activeMenu->sprites[i].bitmap = loadBitmap(bitmapBasename);
-		_activeMenu->sprites[i].pos.x = stream->readUint16() + xpos;
-		_activeMenu->sprites[i].pos.y = stream->readUint16() + ypos;
-		_activeMenu->retvals[i] = stream->readUint16();
-
-		_activeMenu->sprites[i].field6 = 8;
-	}
-
-	if (_activeMenu->retvals[_activeMenu->numButtons - 1] == 0) {
-		// Set default retvals for buttons
-		for (int i = 0; i < _activeMenu->numButtons; i++)
-			_activeMenu->retvals[i] = i;
-	}
-
-	_activeMenu->selectedButton = -1;
-	_activeMenu->disabledButtons = 0;
-	_vm->_keyboardControlsMouse = false;
-}
-
-void Graphics::unloadMenuButtons() {
-	if (_activeMenu->selectedButton != -1)
-		drawMenuButtonOutline(_activeMenu->sprites[_activeMenu->selectedButton].bitmap, 0x00);
-
-	for (int i = 0; i < _activeMenu->numButtons; i++) {
-		Sprite *sprite = &_activeMenu->sprites[i];
-		if (sprite->drawMode == 2) {
-			sprite->field16 = true;
-			sprite->bitmapChanged = true;
-		}
-	}
-
-	drawAllSprites();
-
-	for (int i = 0; i < _activeMenu->numButtons; i++) {
-		Sprite *sprite = &_activeMenu->sprites[i];
-		sprite->bitmap.reset();
-		if (sprite->drawMode == 2)
-			delSprite(sprite);
-	}
-
-	_activeMenu = _activeMenu->nextMenu;
-
-	if (_activeMenu == nullptr)
-		_vm->_keyboardControlsMouse = _keyboardControlsMouseOutsideMenu;
-}
-
-/**
- * Disables the given bitmask of buttons.
- */
-void Graphics::disableMenuButtons(uint32 bits) {
-	_activeMenu->disabledButtons |= bits;
-	if (_activeMenu->selectedButton != -1
-			&& (_activeMenu->disabledButtons & (1 << _activeMenu->selectedButton))) {
-		Sprite *sprite = &_activeMenu->sprites[_activeMenu->selectedButton];
-		drawMenuButtonOutline(sprite->bitmap, 0x00);
-
-		sprite->bitmapChanged = true;
-		_activeMenu->selectedButton = -1;
-	}
-}
-
-void Graphics::enableMenuButtons(uint32 bits) {
-	_activeMenu->disabledButtons &= ~bits;
-}
-
-/**
- * Sets which buttons are visible based on the given bitmask.
- */
-void Graphics::setVisibleMenuButtons(uint32 bits) {
-	for (int i = 0; i < _activeMenu->numButtons; i++) {
-		Sprite *sprite = &_activeMenu->sprites[i];
-		uint32 spriteBitmask = (1 << i);
-		if (spriteBitmask == 0)
-			break;
-
-		if ((bits & spriteBitmask) == 0 || sprite->drawMode != 0) {
-			if ((bits & spriteBitmask) == 0 && sprite->drawMode == 2) {
-				if (i == _activeMenu->selectedButton) {
-					drawMenuButtonOutline(sprite->bitmap, 0x00);
-					_activeMenu->selectedButton = -1;
-				}
-
-				sprite->field16 = true;
-				sprite->bitmapChanged = true;
-			}
-		}
-		else {
-			addSprite(sprite);
-			sprite->drawMode = 2;
-			sprite->bitmapChanged = true;
-		}
-	}
-
-	drawAllSprites();
-
-	for (int i = 0; i < _activeMenu->numButtons; i++) {
-		Sprite *sprite = &_activeMenu->sprites[i];
-		uint32 spriteBitmask = (1 << i);
-		if (spriteBitmask == 0)
-			break;
-
-		if ((bits & spriteBitmask) == 0 && sprite->drawMode == 2) {
-			delSprite(sprite);
-
-			// Setting drawMode to 0 is the game's way of saying that the menu button is
-			// hidden (since it would normally be 2).
-			sprite->drawMode = 0;
-		}
-	}
-}
-
-/**
- * This chooses a sprite from the list to place the mouse cursor at. The sprite it chooses
- * may be, for example, the top-leftmost one in the list. Exact behaviour is determined by
- * the "mode" parameter.
- *
- * If "containMouseSprite" is a valid index, it's ensured that the mouse is contained
- * within it. "mode" should be -1 in this case.
- */
-void Graphics::choseMousePositionFromSprites(Sprite *sprites, int numSprites, int containMouseSprite, int mode) {
-	uint16 mouseX1 = 0x7fff; // Candidate positions to warp mouse to
-	uint16 mouseY1 = 0x7fff;
-	uint16 mouseX2 = 0x7fff;
-	uint16 mouseY2 = 0x7fff;
-
-	Common::Point mousePos = getMousePos();
-
-	// Ensure the cursor is contained within one of the sprites
-	if (containMouseSprite >= 0 && containMouseSprite < numSprites) {
-		Common::Rect rect = sprites[containMouseSprite].getRect();
-
-		if (mousePos.x < rect.left || mousePos.x >= rect.right
-				|| mousePos.y < rect.top || mousePos.y >= rect.bottom) {
-			mousePos.x = (rect.left + rect.right) / 2;
-			mousePos.y = (rect.top + rect.bottom) / 2;
-		}
-	}
-
-	// Choose a sprite to warp the cursor to
-	for (int i = 0; i < numSprites; i++) {
-		Sprite *sprite = &sprites[i];
-		if (sprite->drawMode != 2) // Skip hidden buttons
-			continue;
-
-		Common::Rect rect = sprite->getRect();
-
-		int hCenter = (rect.left + rect.right) / 2;
-		int vCenter = (rect.top + rect.bottom) / 2;
-
-		// Choose which sprite is closest based on certain criteria?
-		switch(mode) {
-		case 0: // Choose topmost, leftmost sprite that's below the cursor
-			if (((vCenter == mousePos.y && hCenter > mousePos.x) || vCenter > mousePos.y)
-					&& (vCenter < mouseY1 || (vCenter == mouseY1 && hCenter < mouseX1))) {
-				mouseX1 = hCenter;
-				mouseY1 = vCenter;
-			}
-			// fall through
-
-		case 4: // Choose topmost, leftmost sprite
-			if (vCenter < mouseY2 || (vCenter == mouseY2 && hCenter < mouseX2)) {
-				mouseX2 = hCenter;
-				mouseY2 = vCenter;
-			}
-			break;
-
-		case 1: // Choose bottommost, rightmost sprite that's above the cursor
-			if (((vCenter == mousePos.y && hCenter < mousePos.x) || vCenter < mousePos.y)
-					&& (mouseY1 == 0x7fff || vCenter > mouseY1
-						|| (vCenter == mouseY1 && hCenter > mouseX1))) {
-				mouseX1 = hCenter;
-				mouseY1 = vCenter;
-			}
-			// fall through
-
-		case 5: // Choose bottommost, rightmost sprite
-			if (mouseY2 == 0x7fff || vCenter > mouseY2
-					|| (vCenter == mouseY2 && hCenter > mouseX2)) {
-				mouseX2 = hCenter;
-				mouseY2 = vCenter;
-			}
-			break;
-
-		case 2:
-			// This seems broken... OR condition on first line has no affect on the logic...
-			if ((vCenter < mousePos.y || (vCenter == mouseY1 && hCenter == mousePos.x))
-					&& (mouseX1 == 0x7fff || vCenter >= mouseY1)) {
-				mouseX1 = hCenter;
-				mouseY1 = vCenter;
-				debug("Try %d %d", mouseX1, mouseY1);
-			}
-			if (mouseX2 == 0x7fff || vCenter > mouseY2
-					|| (hCenter == mouseX2 && vCenter == mouseY2)) {
-				mouseX2 = hCenter;
-				mouseY2 = vCenter;
-			}
-			break;
-
-		case 3:
-			// Similar to above...
-			if ((vCenter > mousePos.y || (vCenter == mouseY1 && hCenter == mousePos.x))
-					&& (mouseX1 == 0x7fff || vCenter <= mouseY1)) {
-				mouseX1 = hCenter;
-				mouseY1 = vCenter;
-			}
-			if (mouseX2 == 0x7fff || vCenter < mouseY2
-					|| (hCenter == mouseX2 && vCenter == mouseY2)) {
-				mouseX2 = hCenter;
-				mouseY2 = vCenter;
-			}
-			break;
-		}
-	}
-
-	// Warp mouse to one of the coordinates, if one is valid
-	if (mouseX1 != 0x7fff) {
-		mousePos.x = mouseX1;
-		mousePos.y = mouseY1;
-	}
-	else if (mouseX2 != 0x7fff) {
-		mousePos.x = mouseX2;
-		mousePos.y = mouseY2;
-	}
-
-	_vm->_system->warpMouse(mousePos.x, mousePos.y);
-
-}
-
-void Graphics::showOptionsMenu(int x, int y) {
-	bool tmpMouseControllingShip = _vm->_mouseControllingShip;
-	_vm->_mouseControllingShip = false;
-
-	Common::Point oldMousePos = getMousePos();
-	SharedPtr<Bitmap> oldMouseBitmap = _mouseBitmap;
-
-	setMouseCursor(loadBitmap("options"));
-	loadMenuButtons("options", x, y);
-
-	uint32 disabledButtons = 0;
-	if (_vm->_musicWorking) {
-		if (_vm->_musicEnabled)
-			disabledButtons |= (1 << OPTIONBUTTON_ENABLEMUSIC);
-		else
-			disabledButtons |= (1 << OPTIONBUTTON_DISABLEMUSIC);
-	}
-	else
-		disabledButtons |= (1 << OPTIONBUTTON_ENABLEMUSIC) | (1 << OPTIONBUTTON_DISABLEMUSIC);
-
-	if (_vm->_sfxWorking) {
-		if (_vm->_sfxEnabled)
-			disabledButtons |= (1 << OPTIONBUTTON_ENABLESFX);
-		else
-			disabledButtons |= (1 << OPTIONBUTTON_DISABLESFX);
-	}
-	else
-		disabledButtons |= (1 << OPTIONBUTTON_ENABLESFX) | (1 << OPTIONBUTTON_DISABLESFX);
-
-	disableMenuButtons(disabledButtons);
-	choseMousePositionFromSprites(_activeMenu->sprites, _activeMenu->numButtons, -1, 4);
-	int event = handleMenuEvents(0, false);
-
-	unloadMenuButtons();
-	_vm->_mouseControllingShip = tmpMouseControllingShip;
-	setMouseCursor(oldMouseBitmap);
-
-	if (event != MENUEVENT_LCLICK_OFFBUTTON && event != MENUEVENT_RCLICK_OFFBUTTON)
-		_vm->_system->warpMouse(oldMousePos.x, oldMousePos.y);
-
-
-	// Can't use OPTIONBUTTON constants since the button retvals differ from the button
-	// indices...
-	switch(event) {
-	case 0: // Save
-		showSaveMenu();
-		break;
-	case 1: // Load
-		showLoadMenu();
-		break;
-	case 2: // Enable music
-		_vm->_sound->setMusicEnabled(true);
-		break;
-	case 3: // Disable music
-		_vm->_sound->setMusicEnabled(false);
-		break;
-	case 4: // Enable sfx
-		_vm->_sound->setSfxEnabled(true);
-		break;
-	case 5: // Disable sfx
-		_vm->_sound->setSfxEnabled(false);
-		break;
-	case 6: // Quit
-		showQuitGamePrompt(20, 20);
-		break;
-	case 7: // Text
-		showTextConfigurationMenu(true);
-		break;
-	default:
-		break;
-	}
-}
-
-void Graphics::showSaveMenu() {
-	// TODO
-}
-
-void Graphics::showLoadMenu() {
-	// TODO
-}
-
-void Graphics::showQuitGamePrompt(int x, int y) {
-	const char *options[] = {
-		"Quit Game",
-		"#GENE\\GENER028#Yes, quit the game.",
-		"#GENE\\GENER008#No, do not quit the game.",
-		""
-	};
-
-	if (_vm->_inQuitGameMenu)
-		return;
-
-	_vm->_inQuitGameMenu = true;
-	int val = showText(&Graphics::readTextFromArray, (uintptr)options, x, y, 0xb0, true, 0, 1);
-	_vm->_inQuitGameMenu = false;
-
-	if (val == 0) {
-		// sub_1e70d();
-		_vm->_system->quit();
-	}
-}
-
-/**
- * This can be called from startup or from the options menu.
- * On startup, this tries to load the setting without user input.
- */
-void Graphics::showTextConfigurationMenu(bool fromOptionMenu) {
-	const char *options[] = { // TODO: languages...
-		"Text display",
-		"Text subtitles.",
-		"Display text until you press enter.",
-		"No text displayed.",
-		""
-	};
-
-	int val;
-	if (fromOptionMenu || (val = loadTextDisplayMode()) == -1) {
-		val = showText(&Graphics::readTextFromArray, (uintptr)options, 20, 30, 0xb0, true, 0, 1);
-		saveTextDisplayMode(val);
-	}
-
-	switch(val) {
-	case 0:
-		_textDisplayMode = TEXTDISPLAY_SUBTITLES;
-		break;
-	case 1:
-		_textDisplayMode = TEXTDISPLAY_WAIT;
-		break;
-	case 2:
-		_textDisplayMode = TEXTDISPLAY_NONE;
-		break;
-	}
-}
-
-int Graphics::loadTextDisplayMode() {
-	return -1; // TODO
-}
-void Graphics::saveTextDisplayMode(int value) {
-	// TODO;
+String StarTrekEngine::readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput) {
+	const char **textArray = (const char**)data;
+
+	const char *headerText = textArray[0];
+	const char *mainText = textArray[choiceIndex+1];
+
+	if (*mainText == '\0')
+		return Common::String(); // Technically should be nullptr...
+
+	*headerTextOutput = headerText;
+	while (headerTextOutput->size() < TEXTBOX_WIDTH-2)
+		*headerTextOutput += ' ';
+	return String(mainText);
 }
 
 }

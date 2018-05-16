@@ -8,9 +8,10 @@ MODULE_OBJS = \
 	events.o \
 	filestream.o \
 	font.o \
+	graphics.o \
 	iwfile.o \
 	lzss.o \
-	graphics.o \
+	menu.o \
 	object.o \
 	room.o \
 	sound.o \
