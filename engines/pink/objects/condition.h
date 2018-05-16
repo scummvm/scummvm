@@ -27,7 +27,7 @@
 
 namespace Pink {
 
-class LeadActor;
+class Actor;
 
 class Condition : public Object {
 public:
