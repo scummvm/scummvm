@@ -89,7 +89,8 @@ void Graphics::fadeinScreen() {
 	while (_paletteFadeLevel <= 100) {
 		TrekEvent event;
 		do {
-			_vm->popNextEvent(&event);
+			if (!_vm->popNextEvent(&event))
+				continue;
 		}
 		while (event.type != TREKEVENT_TICK);
 
@@ -104,7 +105,8 @@ void Graphics::fadeoutScreen() {
 	while (_paletteFadeLevel >= 0) {
 		TrekEvent event;
 		do {
-			_vm->popNextEvent(&event);
+			if (!_vm->popNextEvent(&event))
+				continue;
 		}
 		while (event.type != TREKEVENT_TICK);
 

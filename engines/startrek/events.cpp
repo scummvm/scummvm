@@ -23,67 +23,77 @@
 
 namespace StarTrek {
 
+/**
+ * Doesn't return until an event occurs.
+ */
 void StarTrekEngine::pollSystemEvents() {
 	Common::Event event;
 	TrekEvent trekEvent;
 
-	while (_eventMan->pollEvent(event)) {
-		trekEvent.mouse = event.mouse;
-		trekEvent.kbd = event.kbd;
+	while (_eventQueue.empty()) {
+		while (_eventMan->pollEvent(event)) {
+			trekEvent.mouse = event.mouse;
+			trekEvent.kbd = event.kbd;
 
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-			_system->quit();
-			break;
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				_system->quit();
+				break;
 
-		case Common::EVENT_MOUSEMOVE:
-			trekEvent.type = TREKEVENT_MOUSEMOVE;
-			addEventToQueue(trekEvent);
-			break;
+			case Common::EVENT_MOUSEMOVE:
+				trekEvent.type = TREKEVENT_MOUSEMOVE;
+				addEventToQueue(trekEvent);
 
-		case Common::EVENT_LBUTTONDOWN:
-			// TODO: what happens when mouse click is outside normal screen bounds?
-			// (apparently this can happen)
-			trekEvent.type = TREKEVENT_LBUTTONDOWN;
-			addEventToQueue(trekEvent);
-			break;
+				// WORKAROUND: this improves the responsiveness of the mouse.
+				_system->updateScreen();
+				break;
 
-		case Common::EVENT_RBUTTONDOWN:
-			trekEvent.type = TREKEVENT_RBUTTONDOWN;
-			addEventToQueue(trekEvent);
-			break;
+			case Common::EVENT_LBUTTONDOWN:
+				// TODO: what happens when mouse click is outside normal screen bounds?
+				// (apparently this can happen)
+				trekEvent.type = TREKEVENT_LBUTTONDOWN;
+				addEventToQueue(trekEvent);
+				break;
 
-		case Common::EVENT_KEYDOWN:
-			trekEvent.type = TREKEVENT_KEYDOWN;
-			addEventToQueue(trekEvent);
-			break;
+			case Common::EVENT_RBUTTONDOWN:
+				trekEvent.type = TREKEVENT_RBUTTONDOWN;
+				addEventToQueue(trekEvent);
+				break;
 
-		default:
-			break;
+			case Common::EVENT_KEYDOWN:
+				trekEvent.type = TREKEVENT_KEYDOWN;
+				addEventToQueue(trekEvent);
+				break;
+
+			default:
+				break;
+			}
 		}
-	}
 
-	// TODO: check for events other than "tick" more often.
-	if (_eventQueue.empty()) {
-		int delay = 1000/18.206 - (_system->getMillis() - _frameStartMillis);
+		// Check for tick event
+		uint nextFrame = _frameStartMillis + 1000 / 18.206;
 
-		_clockTicks++;
-		if (delay < 0)
-			debug(5, "Late frame");
-		while (delay < 0) { // Check if we're behind...
-			delay += 1000/18.206;
+		if (_system->getMillis() >= nextFrame) {
 			_clockTicks++;
+
+			_frameStartMillis = _system->getMillis();
+
+			TrekEvent tickEvent;
+			tickEvent.type = TREKEVENT_TICK;
+			tickEvent.tick = _clockTicks;
+			addEventToQueue(tickEvent);
 		}
-		_system->delayMillis(delay);
 
-		_frameStartMillis = _system->getMillis();
+		if (!_eventQueue.empty())
+			break;
 
-		TrekEvent tickEvent;
-		tickEvent.type = TREKEVENT_TICK;
-		tickEvent.tick = _clockTicks;
-		addEventToQueue(tickEvent);
+		// Wait a 60th of a second before checking for events again
+		uint delay = 1000 / 60;
+		if (_system->getMillis() + delay > nextFrame)
+			delay = nextFrame - _system->getMillis();
+		if (delay > 0)
+			_system->delayMillis(delay);
 	}
-
 }
 
 void StarTrekEngine::initializeEventsAndMouse() {
