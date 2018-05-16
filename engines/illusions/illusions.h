@@ -176,6 +176,7 @@ public:
 	virtual void clearFader() {};
 	virtual void pauseFader() {};
 	virtual void unpauseFader() {};
+	virtual bool isVideoPlaying() { return false; }
 
 	void setCurrFontId(uint32 fontId);
 	bool checkActiveTalkThreads();

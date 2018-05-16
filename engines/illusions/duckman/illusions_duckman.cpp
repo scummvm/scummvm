@@ -26,6 +26,7 @@
 #include "illusions/duckman/gamestate_duckman.h"
 #include "illusions/duckman/menusystem_duckman.h"
 #include "illusions/duckman/scriptopcodes_duckman.h"
+#include "illusions/duckman/duckman_videoplayer.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
@@ -116,6 +117,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_updateFunctions = new UpdateFunctions();
 	_soundMan = new SoundMan(this);
 	_menuSystem = new DuckmanMenuSystem(this);
+	_videoPlayer = new DuckmanVideoPlayer(this);
 	_gameState = new Duckman_GameState(this);
 
 	_fader = new Fader();
@@ -215,6 +217,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 	delete _gameState;
 	delete _menuSystem;
+	delete _videoPlayer;
 	delete _soundMan;
 	delete _updateFunctions;
 	delete _threads;
@@ -273,6 +276,7 @@ void IllusionsEngine_Duckman::initInput() {
 		(this, &IllusionsEngine_Duckman::callback));
 
 void IllusionsEngine_Duckman::initUpdateFunctions() {
+	UPDATEFUNCTION(25, 0, updateVideoPlayer);
 	UPDATEFUNCTION(30, 0, updateScript);
 	UPDATEFUNCTION(50, 0, updateActors);
 	UPDATEFUNCTION(60, 0, updateSequences);
@@ -410,6 +414,20 @@ void IllusionsEngine_Duckman::pauseFader() {
 void IllusionsEngine_Duckman::unpauseFader() {
 	_fader->_startTime = getCurrentTime() - _fader->_startTime;
 	_fader->_paused = false;
+}
+
+int IllusionsEngine_Duckman::updateVideoPlayer(uint flags) {
+	if (_videoPlayer->isPlaying())
+		_videoPlayer->update();
+	return kUFNext;
+}
+
+void IllusionsEngine_Duckman::playVideo(uint32 videoId, uint32 callingThreadId) {
+	_videoPlayer->start(videoId, callingThreadId);
+}
+
+bool IllusionsEngine_Duckman::isVideoPlaying() {
+	return _videoPlayer->isPlaying();
 }
 
 void IllusionsEngine_Duckman::setDefaultTextCoords() {

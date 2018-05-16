@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	duckman/duckman_inventory.o \
 	duckman/duckman_screenshakereffects.o \
 	duckman/duckman_specialcode.o \
+	duckman/duckman_videoplayer.o \
 	duckman/gamestate_duckman.o \
 	duckman/illusions_duckman.o \
 	duckman/menusystem_duckman.o \

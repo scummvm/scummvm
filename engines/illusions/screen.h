@@ -168,6 +168,7 @@ public:
 	uint16 getColorKey2() const { return _colorKey2; }
 	int16 getScreenWidth() const { return _backSurface->w; }
 	int16 getScreenHeight() const { return _backSurface->h; }
+	Graphics::Surface *getBackSurface() const { return _backSurface; }
 	virtual void decompressSprite(SpriteDecompressQueueItem *item) = 0;
 	virtual void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) = 0;
 	virtual void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) = 0;
