@@ -46,10 +46,6 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 		_font = new Font(_vm);
 
 	_numSprites = 0;
-	_textDisplayMode = TEXTDISPLAY_WAIT;
-	_textboxVar2 = 0;
-	_textboxVar6 = 0;
-	_textboxHasMultipleChoices = false;
 
 	_palData = new byte[256 * 3];
 	_lutData = new byte[256 * 3];

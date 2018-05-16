@@ -68,6 +68,10 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_keyboardControlsMouse = true;
 
 	_inQuitGameMenu = false;
+	_textDisplayMode = TEXTDISPLAY_WAIT;
+	_textboxVar2 = 0;
+	_textboxVar6 = 0;
+	_textboxHasMultipleChoices = false;
 
 	_missionToLoad = "DEMON";
 	_roomIndexToLoad = 0;

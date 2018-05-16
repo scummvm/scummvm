@@ -44,12 +44,23 @@
 
 
 using Common::SharedPtr;
+using Common::String;
 
 namespace Common {
 	class MacResManager;
 }
 
 namespace StarTrek {
+
+class StarTrekEngine;
+
+typedef String (StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
+
+const int MAX_OBJECTS = 32;
+const int MAX_MENUBUTTONS = 32;
+const int TEXTBOX_WIDTH = 26;
+const int MAX_TEXTBOX_LINES = 12;
+
 
 enum StarTrekGameType {
 	GType_ST25 = 1,
@@ -65,7 +76,6 @@ enum kDebugLevels {
 	kDebugGraphics =  1 << 1
 };
 
-
 enum GameMode {
 	GAMEMODE_START = 0,
 	GAMEMODE_BRIDGE,
@@ -78,6 +88,52 @@ enum TextDisplayMode {
 	TEXTDISPLAY_WAIT = 0,  // Wait for input before closing text
 	TEXTDISPLAY_SUBTITLES, // Automatically continue when speech is done
 	TEXTDISPLAY_NONE       // No text displayed
+};
+
+// Keeps track of data for a list of buttons making up a menu
+struct Menu {
+	Sprite sprites[MAX_MENUBUTTONS];
+	uint16 retvals[MAX_MENUBUTTONS];
+	uint32 disabledButtons;
+	SharedPtr<FileStream> menuFile;
+	uint16 numButtons;
+	int16 selectedButton;
+	SharedPtr<Menu> nextMenu;
+};
+
+// Special events that can be returned by handleMenuEvents.
+enum MenuEvent {
+	MENUEVENT_RCLICK_OFFBUTTON = -4,
+	MENUEVENT_ENABLEINPUT,          // Makes buttons selectable (occurs after a delay)
+	MENUEVENT_RCLICK_ONBUTTON,
+	MENUEVENT_LCLICK_OFFBUTTON
+};
+
+// Buttons for standard text display
+enum TextButtons {
+	TEXTBUTTON_CONFIRM = 0,
+	TEXTBUTTON_SCROLLUP,
+	TEXTBUTTON_SCROLLDOWN,
+	TEXTBUTTON_PREVCHOICE,
+	TEXTBUTTON_NEXTCHOICE,
+	TEXTBUTTON_SCROLLUP_ONELINE,
+	TEXTBUTTON_SCROLLDOWN_ONELINE,
+	TEXTBUTTON_GOTO_TOP,
+	TEXTBUTTON_GOTO_BOTTOM,
+	TEXTBUTTON_SPEECH_DONE // "Virtual" button?
+};
+
+// Buttons for option menu (corresponding to button indices, not button retvals, which are
+// different for some reason)
+enum OptionMenuButtons {
+	OPTIONBUTTON_TEXT,
+	OPTIONBUTTON_SAVE,
+	OPTIONBUTTON_LOAD,
+	OPTIONBUTTON_ENABLEMUSIC,
+	OPTIONBUTTON_DISABLEMUSIC,
+	OPTIONBUTTON_ENABLESFX,
+	OPTIONBUTTON_DISABLESFX,
+	OPTIONBUTTON_QUIT
 };
 
 enum TrekEventType {
@@ -116,7 +172,6 @@ struct Command {
 		: type(_type), b1(_b1), b2(_b2), b3(_b3) {}
 };
 
-const int MAX_OBJECTS = 0x20;
 
 struct StarTrekGameDescription;
 class Graphics;
@@ -207,8 +262,63 @@ private:
 	bool _tickEventInQueue;
 	uint32 _frameStartMillis;
 
+
+	// text.cpp
 public:
+	const char *getNextTextLine(const char *text, char *line, int lineWidth);
+
+	void getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex);
+	String readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput);
+	String readTextFromBuffer(int choiceIndex, uintptr data, String *headerTextOutput);
+
+	String skipTextAudioPrompt(const String &str);
+	String playTextAudio(const String &str);
+
+	int showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10);
+
+	int getNumTextboxLines(const String &str);
+	String putTextIntoLines(const String &text);
+
+	SharedPtr<TextBitmap> initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite);
+	void drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &text, bool withHeader);
+
+	String readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
+
+	String readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput);
+
+	// menu.cpp
+public:
+	int getMenuButtonAt(const Menu &menu, int x, int y);
+	void chooseMousePositionFromSprites(Sprite *sprites, int numSprites, int spriteIndex, int mode);
+	void drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color);
+	void showOptionsMenu(int x, int y);
+	void loadMenuButtons(String mnuFilename, int xpos, int ypos);
+	void setVisibleMenuButtons(uint32 bits);
+	void disableMenuButtons(uint32 bits);
+	void enableMenuButtons(uint32 bits);
+	int handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4);
+	void unloadMenuButtons();
+
+	void showSaveMenu();
+	void showLoadMenu();
+	void showQuitGamePrompt(int x, int y);
+	void showTextConfigurationMenu(bool fromOptionMenu);
+
+	int loadTextDisplayMode();
+	void saveTextDisplayMode(int value);
+
+
+private:
+	int16 _textDisplayMode;
+	uint32 _textboxVar2;
+	uint16 _textboxVar6;
+	bool _textboxHasMultipleChoices;
+	SharedPtr<Menu> _activeMenu;
+	// Saved value of StarTrekEngine::_keyboardControlsMouse when menus are up
+	bool _keyboardControlsMouseOutsideMenu;
+
 	// Detection related functions
+public:
 	const StarTrekGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	uint16 getVersion() const;

@@ -44,25 +44,6 @@ const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 200;
 
 const int MAX_SPRITES = 32;
-const int MAX_MENUBUTTONS = 32;
-
-const int TEXTBOX_WIDTH = 26;
-const int MAX_TEXTBOX_LINES = 12;
-
-
-// Keeps track of data for a list of buttons making up a menu
-struct Menu {
-	Sprite sprites[MAX_MENUBUTTONS];
-	uint16 retvals[MAX_MENUBUTTONS];
-	uint32 disabledButtons;
-	SharedPtr<FileStream> menuFile;
-	uint16 numButtons;
-	int16 selectedButton;
-	SharedPtr<Menu> nextMenu;
-};
-
-class Graphics;
-typedef String (Graphics::*TextGetterFunc)(int, uintptr, String *);
 
 
 class Graphics {
@@ -119,65 +100,8 @@ private:
 	Sprite *_sprites[MAX_SPRITES];
 	int _numSprites;
 
+public:
 	SharedPtr<Bitmap> _mouseBitmap;
-
-
-	// text.cpp (TODO: separate class)
-public:
-	int showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10);
-
-	String readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput);
-	String readTextFromBuffer(int choiceIndex, uintptr data, String *headerTextOutput);
-	String readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput);
-
-private:
-	int handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4);
-
-	SharedPtr<TextBitmap> initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite);
-	void drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &text, bool withHeader);
-
-	int getNumLines(const String &str);
-	void getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex);
-
-	String readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
-	String putTextIntoLines(const String &text);
-	const char *getNextTextLine(const char *text, char *line, int lineWidth);
-
-	String skipTextAudioPrompt(const String &str);
-	String playTextAudio(const String &str);
-
-	int getMenuButtonAt(const Menu &menu, int x, int y);
-	void drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color);
-	void loadMenuButtons(String mnuFilename, int xpos, int ypos);
-	void unloadMenuButtons();
-	void disableMenuButtons(uint32 bits);
-	void enableMenuButtons(uint32 bits);
-	void setVisibleMenuButtons(uint32 bits);
-
-public:
-	void choseMousePositionFromSprites(Sprite *sprites, int numSprites, int spriteIndex, int mode);
-	void showOptionsMenu(int x, int y);
-	void showSaveMenu();
-	void showLoadMenu();
-	void showQuitGamePrompt(int x, int y);
-	void showTextConfigurationMenu(bool fromOptionMenu);
-
-	int loadTextDisplayMode();
-	void saveTextDisplayMode(int value);
-
-private:
-	int16 _textDisplayMode;
-
-public:
-	uint32 _textboxVar2;
-	uint16 _textboxVar6;
-	bool _textboxHasMultipleChoices;
-
-private:
-	SharedPtr<Menu> _activeMenu;
-
-	// Saved value of StarTrekEngine::_keyboardControlsMouse when menus are up
-	bool _keyboardControlsMouseOutsideMenu;
 };
 
 }
