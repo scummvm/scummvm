@@ -64,6 +64,7 @@ UserInterface::~UserInterface() {
 	delete _fmvScreen;
 	delete _diaryIndexScreen;
 	delete _cursor;
+	delete _mainMenuScreen;
 }
 
 void UserInterface::init() {

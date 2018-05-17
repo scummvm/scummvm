@@ -26,6 +26,8 @@
 #include "common/singleton.h"
 #include "common/scummsys.h"
 
+struct ADGameDescription;
+
 namespace Common {
 class RandomSource;
 }
@@ -79,6 +81,7 @@ public:
 	GameInterface *gameInterface;
 	UserInterface *userInterface;
 	FontProvider *fontProvider;
+	const ADGameDescription *gameDescription;
 };
 
 /** Shortcuts for accessing the services. */
@@ -94,6 +97,7 @@ public:
 #define StarkGameInterface      StarkServices::instance().gameInterface
 #define StarkUserInterface      StarkServices::instance().userInterface
 #define StarkFontProvider       StarkServices::instance().fontProvider
+#define StarkGameDescription	StarkServices::instance().gameDescription
 
 } // End of namespace Stark
 

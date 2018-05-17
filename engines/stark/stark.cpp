@@ -138,6 +138,7 @@ Common::Error StarkEngine::run() {
 	services.gameInterface = _gameInterface;
 	services.userInterface = _userInterface;
 	services.fontProvider = _fontProvider;
+	services.gameDescription = _gameDescription;
 
 	// Load global resources
 	_resourceProvider->initGlobal();
