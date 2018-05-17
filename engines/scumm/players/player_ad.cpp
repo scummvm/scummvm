@@ -97,6 +97,7 @@ void Player_AD::startSound(int sound) {
 
 	// Query the sound resource
 	const byte *res = _vm->getResourceAddress(rtSound, sound);
+	assert(res);
 
 	if (res[2] == 0x80) {
 		// Stop the current sounds
