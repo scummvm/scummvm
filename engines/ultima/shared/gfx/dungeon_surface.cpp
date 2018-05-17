@@ -162,7 +162,7 @@ void DungeonSurface::drawRightDoor(uint distance) {
 
 		drawLine(303 - (p2.x + diff.x * 2), 151 - diff.y - p2.y - 1, 303 - (p2.x + diff.x * 2),
 			p1.y + 8 - diff.y, _edgeColor);
-		drawLineTo(303 - diff.x * 6, p1.y + 8 + diff.y, _edgeColor);
+		drawLineTo(303 - (diff.x * 6 + p2.x), p1.y + 8 + diff.y, _edgeColor);
 		drawLineTo(303 - (diff.x * 6 + p2.x), 151 - p1.y + diff.y * 2 - (distance == 1 ? 2 : 0), _edgeColor);
 	}
 }
