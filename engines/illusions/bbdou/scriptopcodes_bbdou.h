@@ -95,7 +95,11 @@ protected:
 	void opSetDenySfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetAdjustUpSfx(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetAdjustDnSfx(ScriptThread *scriptThread, OpCall &opCall);
+	void opPause(ScriptThread *scriptThread, OpCall &opCall);
+	void opResume(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartSound(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartSoundAtPosition(ScriptThread *scriptThread, OpCall &opCall);
+	void opStartSoundAtActor(ScriptThread *scriptThread, OpCall &opCall);
 	void opStopSound(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartMusic(ScriptThread *scriptThread, OpCall &opCall);
 	void opStopMusic(ScriptThread *scriptThread, OpCall &opCall);
@@ -107,6 +111,7 @@ protected:
 	void opResetGame(ScriptThread *scriptThread, OpCall &opCall);
 	void opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opActivateButton(ScriptThread *scriptThread, OpCall &opCall);
+	void opNop(ScriptThread *scriptThread, OpCall &opCall);
 	void opJumpIf(ScriptThread *scriptThread, OpCall &opCall);
 	void opIsPrevSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opIsCurrentSceneId(ScriptThread *scriptThread, OpCall &opCall);

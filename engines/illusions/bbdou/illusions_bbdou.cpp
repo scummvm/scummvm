@@ -589,6 +589,24 @@ void IllusionsEngine_BBDOU::dumpActiveScenes(uint32 sceneId, uint32 threadId) {
 	_camera->clearCameraModeStack();
 }
 
+void IllusionsEngine_BBDOU::pause(uint32 callerThreadId) {
+	if (++_pauseCtr == 1) {
+		_threads->pauseThreads(callerThreadId);
+		_camera->pause();
+		pauseFader();
+		_controls->pauseActors(0x40004);
+	}
+}
+
+void IllusionsEngine_BBDOU::unpause(uint32 callerThreadId) {
+	if (--_pauseCtr == 0) {
+		_controls->unpauseActors(0x40004);
+		unpauseFader();
+		_camera->unpause();
+		_threads->unpauseThreads(callerThreadId);
+	}
+}
+
 void IllusionsEngine_BBDOU::enterMenuPause() {
 	// TODO suspendAudio();
 	_screenText->clearText();
