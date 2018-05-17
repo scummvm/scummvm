@@ -552,6 +552,34 @@ void Graphics::drawAllSprites(bool updateScreen) {
 	}
 }
 
+/**
+ * Returns the sprite at the given position (ignores mouse).
+ */
+Sprite *Graphics::getSpriteAt(int16 x, int16 y) {
+	for (int i = _numSprites - 1; i >= 0; i--) {
+		Sprite *sprite = _sprites[i];
+
+		if (sprite == &_lockedMouseSprite)
+			continue;
+		if (sprite->drawMode == 1) // Invisible
+			continue;
+
+		if (sprite->drawRect.contains(Common::Point(x, y))) {
+			if (sprite->drawMode == 2 || sprite->drawMode == 3) // Button or text
+				return sprite;
+
+			// For draw mode 0 only, check that we're not clicking on a transparent part.
+			int16 relX = x - sprite->drawX;
+			int16 relY = y - sprite->drawY;
+			byte pixel = sprite->bitmap->pixels[relY * sprite->bitmap->width + relX];
+			if (pixel != 0)
+				return sprite;
+		}
+	}
+
+	return nullptr;
+}
+
 void Graphics::addSprite(Sprite *sprite) {
 	if (_numSprites >= MAX_SPRITES)
 		error("addSprite: too many sprites");

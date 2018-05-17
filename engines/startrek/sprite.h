@@ -58,7 +58,7 @@ struct Sprite {
 	Common::Rect rectangle2;
 	int16 drawX,drawY;
 
-	Sprite() { memset(this, 0, sizeof(Sprite)); }
+	Sprite();
 
 	void setBitmap(SharedPtr<Bitmap> b);
 	void dontDrawNextFrame();

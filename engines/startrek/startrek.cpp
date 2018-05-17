@@ -78,6 +78,9 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 
 	_missionToLoad = "DEMON";
 	_roomIndexToLoad = 0;
+
+	for (int i = 0; i < NUM_ITEMS; i++)
+		_itemList[i] = g_itemList[i];
 }
 
 StarTrekEngine::~StarTrekEngine() {
@@ -805,6 +808,56 @@ bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16
 	return true;
 }
 
+int StarTrekEngine::findObjectAt(int x, int y) {
+	Sprite *sprite = _gfx->getSpriteAt(x, y);
+
+	if (sprite != nullptr) {
+		if (sprite == &_inventoryIconSprite)
+			return OBJECT_INVENTORY_ICON;
+		else if (sprite == &_itemIconSprite)
+			return _awayMission.activeItem;
+
+		for (int i = 0; i < MAX_OBJECTS; i++) {
+			Object *object = &_objectList[i];
+			if (sprite == &object->sprite)
+				return i;
+		}
+
+		error("findObject: Clicked on an unknown sprite");
+	}
+
+	// word_4b418 = 0;
+	int actionBit = 1 << (_awayMission.activeAction - 1);
+	int offset = _room->getFirstHotspot();
+
+	while (offset != _room->getHotspotEnd()) {
+		uint16 word = _room->readRdfWord(offset);
+		if (word & 0x8000) {
+			if ((word & actionBit) && isPointInPolygon((int16 *)(_room->_rdfData + offset + 6), x, y)) {
+				int objectIndex = _room->readRdfWord(offset + 6);
+				// word_4b418 = 1;
+				// word_4a792 = _room->readRdfWord(offset + 2);
+				// word_4a796 = _room->readRdfWord(offset + 4);
+				return objectIndex;
+			}
+
+			int numVertices = _room->readRdfWord(offset + 8);
+			offset = offset + 10 + numVertices * 4;
+		}
+		else {
+			if (isPointInPolygon((int16 *)(_room->_rdfData + offset), x, y)) {
+				int objectIndex = _room->readRdfWord(offset);
+				return objectIndex;
+			}
+
+			int numVertices = _room->readRdfWord(offset + 2);
+			offset = offset + 4 + numVertices * 4;
+		}
+	}
+
+	return -1;
+}
+
 /**
  * Loads a bitmap for the animation frame with the given scale.
  */
@@ -908,6 +961,279 @@ Common::String StarTrekEngine::getCrewmanAnimFilename(int objectIndex, const Com
 	const char *crewmanChars = "ksmr";
 	assert(objectIndex >= 0 && objectIndex < 4);
 	return crewmanChars[objectIndex] + basename;
+}
+
+/**
+ * Checks whether to change the mouse bitmap to have the red outline.
+ */
+void StarTrekEngine::updateMouseBitmap() {
+	const bool worksOnCrewmen[] = { // True if the action reacts with crewmen
+		false, // ACTION_WALK
+		true,  // ACTION_USE
+		false, // ACTION_GET
+		true,  // ACTION_LOOK
+		true   // ACTION_TALK
+	};
+	const bool worksOnObjects[] = { // True if the action reacts with other objects
+		false, // ACTION_WALK
+		true,  // ACTION_USE
+		true,  // ACTION_GET
+		true,  // ACTION_LOOK
+		true   // ACTION_TALK
+	};
+	const bool worksOnHotspots[] = { // True if the action reacts with hotspots?
+		false, // ACTION_WALK
+		true,  // ACTION_USE
+		true,  // ACTION_GET
+		true,  // ACTION_LOOK
+		false  // ACTION_TALK
+	};
+
+	Common::Point mousePos = _gfx->getMousePos();
+	int selected = findObjectAt(mousePos.x, mousePos.y);
+	int action = _awayMission.activeAction;
+	assert(action >= 1 && action <= 5);
+
+	bool withRedOutline;
+
+	if (selected >= 0 && selected <= 3 && worksOnCrewmen[action - 1])
+		withRedOutline = true;
+	else if (selected > 3 && selected < MAX_OBJECTS && worksOnObjects[action - 1])
+		withRedOutline = true;
+	else if (selected >= MAX_OBJECTS && selected < MAX_OBJECTS_2 && worksOnHotspots[action - 1])
+		withRedOutline = true;
+	else
+		withRedOutline = false;
+
+	chooseMouseBitmapForAction(action, withRedOutline);
+}
+
+void StarTrekEngine::showInventoryIcons(bool showItem) {
+	const char *crewmanFilenames[] = {
+		"ikirk",
+		"ispock",
+		"imccoy",
+		"iredshir"
+	};
+
+	Common::String itemFilename;
+
+	if (showItem) {
+		int i = _awayMission.activeItem;
+		if (i >= 0 && i <= 3)
+			itemFilename = crewmanFilenames[i];
+		else {
+			// TODO
+		}
+	}
+
+	if (itemFilename.empty())
+		_inventoryIconSprite.pos.x = 10;
+	else {
+		_gfx->addSprite(&_itemIconSprite);
+		_itemIconSprite.drawMode = 2;
+		_itemIconSprite.pos.x = 10;
+		_itemIconSprite.pos.y = 10;
+		_itemIconSprite.drawPriority = 15;
+		_itemIconSprite.drawPriority2 = 8;
+		_itemIconSprite.setBitmap(_gfx->loadBitmap(itemFilename));
+
+		_inventoryIconSprite.pos.x = 46;
+	}
+
+	_gfx->addSprite(&_inventoryIconSprite);
+
+	_inventoryIconSprite.pos.y = 10;
+	_inventoryIconSprite.drawMode = 2;
+	_inventoryIconSprite.drawPriority = 15;
+	_inventoryIconSprite.drawPriority2 = 15;
+	_inventoryIconSprite.setBitmap(_gfx->loadBitmap("inv00"));
+}
+
+void StarTrekEngine::hideInventoryIcons() {
+	// Clear these sprites from the screen
+	if (_itemIconSprite.drawMode == 2)
+		_itemIconSprite.dontDrawNextFrame();
+	if (_inventoryIconSprite.drawMode == 2)
+		_inventoryIconSprite.dontDrawNextFrame();
+
+	_gfx->drawAllSprites();
+
+	if (_itemIconSprite.drawMode == 2) {
+		_gfx->delSprite(&_itemIconSprite);
+		_itemIconSprite.drawMode = 0;
+		_itemIconSprite.bitmap.reset();
+	}
+
+	if (_inventoryIconSprite.drawMode == 2) {
+		_gfx->delSprite(&_inventoryIconSprite);
+		_inventoryIconSprite.drawMode = 0;
+		_inventoryIconSprite.bitmap.reset();
+	}
+}
+
+int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
+	const int ITEMS_PER_ROW = 5;
+
+	Common::Point oldMousePos = _gfx->getMousePos();
+	bool keyboardControlledMouse = _keyboardControlsMouse;
+	_keyboardControlsMouse = false;
+
+	int itemIndex = 0;
+	int numItems = 0;
+
+	char itemNames[NUM_ITEMS][10];
+	Common::Point itemPositions[NUM_ITEMS];
+	int16 itemIndices[NUM_ITEMS];
+
+	while (itemIndex < NUM_ITEMS) {
+		if (_itemList[itemIndex].have) {
+			strcpy(itemNames[numItems], _itemList[itemIndex].name);
+
+			int16 itemX = (numItems % ITEMS_PER_ROW) * 32 + x;
+			int16 itemY = (numItems / ITEMS_PER_ROW) * 32 + y;
+			itemPositions[numItems] = Common::Point(itemX, itemY);
+			itemIndices[numItems] = _itemList[itemIndex].field2;
+
+			numItems++;
+		}
+		itemIndex++;
+	}
+
+	Sprite itemSprites[NUM_ITEMS];
+
+	for (int i = 0; i < numItems; i++) {
+		_gfx->addSprite(&itemSprites[i]);
+
+		itemSprites[i].drawMode = 2;
+		itemSprites[i].pos.x = itemPositions[i].x;
+		itemSprites[i].pos.y = itemPositions[i].y;
+		itemSprites[i].drawPriority = 15;
+		itemSprites[i].drawPriority2 = 8;
+		itemSprites[i].setBitmap(_gfx->loadBitmap(itemNames[i]));
+	}
+
+	chooseMousePositionFromSprites(itemSprites, numItems, -1, 4);
+	bool displayMenu = true;
+	int lastItemIndex = -1;
+
+	while (displayMenu) {
+		_sound->checkLoopMusic();
+
+		TrekEvent event;
+		if (!getNextEvent(&event))
+			continue;
+
+		switch (event.type) {
+		case TREKEVENT_TICK: {
+			Common::Point mousePos = _gfx->getMousePos();
+			itemIndex = getMenuButtonAt(itemSprites, numItems, mousePos.x, mousePos.y);
+			if (itemIndex != lastItemIndex) {
+				if (lastItemIndex != -1) {
+					drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
+					itemSprites[lastItemIndex].bitmapChanged = true;
+				}
+				if (itemIndex != -1) {
+					drawMenuButtonOutline(itemSprites[itemIndex].bitmap, 15);
+					itemSprites[itemIndex].bitmapChanged = true;
+				}
+				lastItemIndex = itemIndex;
+			}
+			_gfx->drawAllSprites();
+			break;
+		}
+
+		case TREKEVENT_LBUTTONDOWN:
+exitWithSelection:
+			displayMenu = false;
+			break;
+
+		case TREKEVENT_RBUTTONDOWN:
+exitWithoutSelection:
+			displayMenu = false;
+			lastItemIndex = -1;
+			break;
+
+		case TREKEVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
+			case Common::KEYCODE_F2:
+				goto exitWithoutSelection;
+
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+			case Common::KEYCODE_F1:
+				goto exitWithSelection;
+
+			case Common::KEYCODE_HOME:
+			case Common::KEYCODE_KP7:
+				chooseMousePositionFromSprites(itemSprites, numItems, lastItemIndex, 4);
+				break;
+
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_KP8:
+			case Common::KEYCODE_PAGEUP:
+			case Common::KEYCODE_KP9:
+				chooseMousePositionFromSprites(itemSprites, numItems, lastItemIndex, 2);
+				break;
+
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_KP4:
+				chooseMousePositionFromSprites(itemSprites, numItems, lastItemIndex, 1);
+				break;
+
+			case Common::KEYCODE_RIGHT:
+			case Common::KEYCODE_KP6:
+				chooseMousePositionFromSprites(itemSprites, numItems, lastItemIndex, 0);
+				break;
+
+			case Common::KEYCODE_END:
+			case Common::KEYCODE_KP1:
+				chooseMousePositionFromSprites(itemSprites, numItems, lastItemIndex, 5);
+				break;
+
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_KP2:
+			case Common::KEYCODE_PAGEDOWN:
+			case Common::KEYCODE_KP3:
+				chooseMousePositionFromSprites(itemSprites, numItems, lastItemIndex, 3);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		removeNextEvent();
+	}
+
+	playSoundEffectIndex(0x10);
+	if (lastItemIndex >= 0)
+		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
+
+	for (int i = 0; i < numItems; i++)
+		itemSprites[i].dontDrawNextFrame();
+
+	_gfx->drawAllSprites();
+
+	for (int i = 0; i < numItems; i++) {
+		itemSprites[i].bitmap.reset();
+		_gfx->delSprite(&itemSprites[i]);
+	}
+
+	if (lastItemIndex >= 0) {
+		lastItemIndex = itemIndices[lastItemIndex];
+	}
+
+	if (restoreMouse)
+		_gfx->warpMouse(oldMousePos.x, oldMousePos.y);
+
+	_keyboardControlsMouse = keyboardControlledMouse;
+	return lastItemIndex;
 }
 
 /**

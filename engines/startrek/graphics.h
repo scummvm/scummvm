@@ -76,6 +76,7 @@ public:
 	void drawSprite(const Sprite &sprite);
 	void drawSprite(const Sprite &sprite, const Common::Rect &rect);
 	void drawAllSprites(bool updateScreen=true);
+	Sprite *getSpriteAt(int16 x, int16 y);
 
 	void addSprite(Sprite *sprite);
 	void delSprite(Sprite *sprite);

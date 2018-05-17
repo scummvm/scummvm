@@ -50,16 +50,19 @@ public:
 	uint16 readRdfWord(int offset);
 
 	// Scale-related stuff (rename these later)
-	int16 getVar06() { return readRdfWord(0x06); }
-	int16 getVar08() { return readRdfWord(0x08); }
-	int16 getVar0a() { return readRdfWord(0x0a); }
-	int16 getVar0c() { return readRdfWord(0x0c); }
+	uint16 getVar06() { return readRdfWord(0x06); }
+	uint16 getVar08() { return readRdfWord(0x08); }
+	uint16 getVar0a() { return readRdfWord(0x0a); }
+	uint16 getVar0c() { return readRdfWord(0x0c); }
+
+	uint16 getFirstHotspot() { return readRdfWord(0x12); }
+	uint16 getHotspotEnd() { return readRdfWord(0x14); }
 
 	// Warp-related stuff
-	int16 getFirstWarpPolygonOffset() { return readRdfWord(0x16); }
-	int16 getWarpPolygonEndOffset()   { return readRdfWord(0x18); }
-	int16 getFirstDoorPolygonOffset() { return readRdfWord(0x1a); }
-	int16 getDoorPolygonEndOffset()   { return readRdfWord(0x1c); }
+	uint16 getFirstWarpPolygonOffset() { return readRdfWord(0x16); }
+	uint16 getWarpPolygonEndOffset()   { return readRdfWord(0x18); }
+	uint16 getFirstDoorPolygonOffset() { return readRdfWord(0x1a); }
+	uint16 getDoorPolygonEndOffset()   { return readRdfWord(0x1c); }
 
 	Common::Point getBeamInPosition(int crewmanIndex);
 

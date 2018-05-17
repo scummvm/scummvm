@@ -157,7 +157,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 		case TREKEVENT_TICK:
 			updateObjectAnimations();
 			// sub_236bb();
-			// sub_2325d();
+			updateMouseBitmap();
 			// doSomethingWithBanData1();
 			_gfx->drawAllSprites();
 			// doSomethingWithBanData2();
@@ -169,11 +169,13 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			if (_roomFrameCounter >= 2)
 				_gfx->incPaletteFadeLevel();
 			break;
+
 		case TREKEVENT_LBUTTONDOWN:
 			if (_awayMission.transitioningIntoRoom != 0)
 				break;
+
 			switch (_awayMission.activeAction) {
-			case 1:
+			case ACTION_WALK:
 				if (_awayMission.field1c == 0) {
 					_kirkObject->sprite.drawMode = 1; // Hide these objects for function call below?
 					_spockObject->sprite.drawMode = 1;
@@ -193,7 +195,33 @@ void StarTrekEngine::handleAwayMissionEvents() {
 					objectWalkToPosition(0, animFilename, _kirkObject->pos.x, _kirkObject->pos.y, mousePos.x, mousePos.y);
 				}
 				break;
-			case 2:
+
+			case ACTION_USE:
+				if (_awayMission.activeItem != OBJECT_REDSHIRT
+						|| (!_awayMission.redshirtDead && !(_awayMission.field24 & 8))) {
+					int clickedObject = findObjectAt(_gfx->getMousePos());
+					hideInventoryIcons();
+
+					if (clickedObject == OBJECT_INVENTORY_ICON)
+						clickedObject = showInventoryMenu(50, 50, false);
+
+					if (clickedObject == -1)
+						clickedObject = -2;
+
+					_awayMission.passiveItem = clickedObject;
+					if (clickedObject != -2) {
+						// TODO
+					}
+
+					// if (!sub_2330c()) // TODO
+					{
+						if (clickedObject != -2)
+							addCommand(Command(_awayMission.activeAction, _awayMission.activeItem, _awayMission.passiveItem, 0));
+
+						if (!(_awayMission.field24 & 1))
+							showInventoryIcons(true);
+					}
+				}
 				break;
 			case 3:
 				break;
@@ -203,37 +231,39 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				break;
 			}
 			break;
+
 		case TREKEVENT_MOUSEMOVE:
 			break;
+
 		case TREKEVENT_RBUTTONDOWN: // TODO: also triggered by key press?
-			/*
 			if (_awayMission.field1d)
 				break;
-				*/
-			//sub_2394b();
+			hideInventoryIcons();
 			playSoundEffectIndex(0x07);
 			_awayMission.activeAction = showActionMenu();
-			/*
-			if (awayMission.activeAction == ACTION_USE) {
+			if (_awayMission.activeAction == ACTION_USE) {
+				/*
 				int16 clickedObject = sub_22f08();
 				if (clickedObject == -1)
 					break;
 				else
-					_awayMission.field20 = clickedObject;
+					_awayMission.activeItem = clickedObject;
+					*/
 			}
 			if (_awayMission.activeAction == ACTION_USE
-					&& _awayMission.field20 == 0x47 && (_awayMission.field24 & 1) == 0) {
+					&& _awayMission.activeItem == 0x47 && (_awayMission.field24 & 1) == 0) {
+				/*
 				if (sub_2330c() == 0) {
-					addCommand(Command(_awayMission.activeAction, _awayMission.field20, 0, 0));
+					addCommand(Command(_awayMission.activeAction, _awayMission.activeItem, 0, 0));
 					_sound->playVoc("communic");
 					_awayMission.activeAction = ACTION_WALK;
 				}
+				*/
 			}
 			else if (_awayMission.activeAction == ACTION_LOOK)
-				sub_2383a(0);
+				showInventoryIcons(false);
 			else if (_awayMission.activeAction == ACTION_USE && (_awayMission.field24 & 1) == 0)
-				sub_2383a(1);
-				*/
+				showInventoryIcons(true);
 			break;
 		case TREKEVENT_KEYDOWN:
 			break;
