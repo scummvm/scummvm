@@ -630,7 +630,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
-		GF_HASMIDI,
+		0,
 		0
 	},
 
@@ -645,7 +645,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
-		GF_HASMIDI,
+		0,
 		0
 	},
 
@@ -660,7 +660,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
-		GF_HASMIDI,
+		0,
 		0
 	},
 
@@ -675,7 +675,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
-		GF_HASMIDI,
+		0,
 		0
 	},
 
@@ -690,7 +690,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_ZOOMBINI,
-		GF_HASMIDI,
+		0,
 		0
 	},
 
@@ -962,7 +962,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_JAMESMATH,
-		GF_HASMIDI,
+		0,
 		0
 	},
 
@@ -978,7 +978,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_JAMESMATH,
-		GF_HASMIDI,
+		0,
 		0
 	},
 
@@ -993,7 +993,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_TREEHOUSE,
-		GF_HASMIDI,
+		0,
 		0
 	},
 
@@ -1115,7 +1115,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_1STDEGREE,
-		GF_HASMIDI,
+		0,
 		0
 	},
 
@@ -1133,7 +1133,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_1STDEGREE,
-		GF_HASMIDI,
+		0,
 		0
 	},
 
