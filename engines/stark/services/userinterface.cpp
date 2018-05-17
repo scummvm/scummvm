@@ -154,6 +154,8 @@ Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
 			return _diaryIndexScreen;
 		case Screen::kScreenGame:
 			return _gameScreen;
+		case Screen::kScreenMainMenu:
+			return _mainMenuScreen;
 		default:
 			error("Unhandled screen name '%d'", screenName);
 	}

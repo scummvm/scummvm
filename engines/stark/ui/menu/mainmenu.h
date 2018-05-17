@@ -45,6 +45,7 @@ private:
 	void helpTextHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
 
 	void newGameHandler();
+	void quitHandler();
 
 	bool isDemo() {
 		return StarkGameDescription->flags & ADGF_DEMO;

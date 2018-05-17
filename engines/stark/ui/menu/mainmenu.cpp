@@ -68,7 +68,7 @@ void MainMenuScreen::open() {
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Quit",
-			nullptr,
+			CLICK_HANDLER(MainMenuScreen, quitHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<10>)));
 	_widgets.back()->setupSounds(0, 1);
 	
@@ -140,6 +140,10 @@ void MainMenuScreen::newGameHandler() {
 	} else {
 		StarkResourceProvider->requestLocationChange(0x45, 0x00);
 	}
+}
+
+void MainMenuScreen::quitHandler() {
+	StarkUserInterface->notifyShouldExit();
 }
 
 } // End of namespace Stark
