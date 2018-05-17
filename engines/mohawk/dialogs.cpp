@@ -204,16 +204,19 @@ MystOptionsDialog::~MystOptionsDialog() {
 void MystOptionsDialog::open() {
 	MohawkOptionsDialog::open();
 
-	_dropPageButton->setEnabled(_vm->_gameState->_globals.heldPage != kNoPage);
+	bool canDropPage = _vm->isInteractive() && _vm->_gameState->_globals.heldPage != kNoPage;
+	_dropPageButton->setEnabled(canDropPage);
 
-	if (_showMapButton)
-		_showMapButton->setEnabled(_vm->_scriptParser &&
-				_vm->_scriptParser->getMap());
+	if (_showMapButton) {
+		bool canShowMap = _vm->isInteractive() && _vm->_scriptParser->getMap();
+		_showMapButton->setEnabled(canShowMap);
+	}
 
-	// Return to menu button is not enabled on the menu
-	if (_returnToMenuButton)
-		_returnToMenuButton->setEnabled(_vm->_scriptParser &&
-				_vm->getCurStack() != kDemoStack);
+	if (_returnToMenuButton) {
+		// Return to menu button is not enabled on the menu
+		bool canReturnToMenu = _vm->isInteractive() && _vm->getCurStack() != kDemoStack;
+		_returnToMenuButton->setEnabled(canReturnToMenu);
+	}
 
 	// Zip mode is disabled in the demo
 	if (_vm->getFeatures() & GF_DEMO)

@@ -236,6 +236,13 @@ public:
 
 	GUI::Debugger *getDebugger() override { return _console; }
 
+	/**
+	 * Is the game currently interactive
+	 *
+	 * When the game is interactive, the user can interact with the game world
+	 * and perform other operations such as loading saved games, ...
+	 */
+	bool isInteractive();
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
@@ -284,7 +291,7 @@ private:
 	bool _mouseClicked;
 	bool _mouseMoved;
 	bool _escapePressed;
-	bool _interactive; // Is the game currently interactive
+	bool _waitingOnBlockingOperation;
 
 	Common::Array<MystCursorHint> _cursorHints;
 	void loadCursorHints();

@@ -91,7 +91,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_mouseClicked = false;
 	_mouseMoved = false;
 	_escapePressed = false;
-	_interactive = true;
+	_waitingOnBlockingOperation = false;
 	_runExitScript = true;
 
 	_needsPageDrop = false;
@@ -310,7 +310,7 @@ void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
 	if (!video)
 		return;
 
-	_interactive = false;
+	_waitingOnBlockingOperation = true;
 
 	// Sanity check
 	if (video->isLooping())
@@ -328,17 +328,17 @@ void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
 
 	// Ensure it's removed
 	_video->removeEntry(video);
-	_interactive = true;
+	_waitingOnBlockingOperation = false;
 }
 
 void MohawkEngine_Myst::playSoundBlocking(uint16 id) {
-	_interactive = false;
+	_waitingOnBlockingOperation = true;
 	_sound->playEffect(id);
 
 	while (_sound->isEffectPlaying() && !shouldQuit()) {
 		doFrame();
 	}
-	_interactive = true;
+	_waitingOnBlockingOperation = false;
 }
 
 Common::Error MohawkEngine_Myst::run() {
@@ -389,10 +389,10 @@ Common::Error MohawkEngine_Myst::run() {
 void MohawkEngine_Myst::doFrame() {
 	// Update any background videos
 	_video->updateMovies();
-	if (!_scriptParser->isScriptRunning() && _interactive) {
-		_interactive = false;
+	if (isInteractive()) {
+		_waitingOnBlockingOperation = true;
 		_scriptParser->runPersistentScripts();
-		_interactive = true;
+		_waitingOnBlockingOperation = false;
 	}
 
 	Common::Event event;
@@ -446,7 +446,7 @@ void MohawkEngine_Myst::doFrame() {
 						}
 
 						if (_needsShowCredits) {
-							if (_interactive) {
+							if (isInteractive()) {
 								_cursor->hideCursor();
 								changeToStack(kCreditsStack, 10000, 0, 0);
 								_needsShowCredits = false;
@@ -479,7 +479,7 @@ void MohawkEngine_Myst::doFrame() {
 		}
 	}
 
-	if (!_scriptParser->isScriptRunning() && _interactive) {
+	if (isInteractive()) {
 		updateActiveResource();
 		checkCurrentResource();
 	}
@@ -491,7 +491,7 @@ void MohawkEngine_Myst::doFrame() {
 }
 
 bool MohawkEngine_Myst::wait(uint32 duration, bool skippable) {
-	_interactive = false;
+	_waitingOnBlockingOperation = true;
 	uint32 end = getTotalPlayTime() + duration;
 
 	do {
@@ -503,7 +503,7 @@ bool MohawkEngine_Myst::wait(uint32 duration, bool skippable) {
 		}
 	} while (getTotalPlayTime() < end && !shouldQuit());
 
-	_interactive = true;
+	_waitingOnBlockingOperation = false;
 	return false;
 }
 
@@ -1165,8 +1165,12 @@ bool MohawkEngine_Myst::hasGameSaveSupport() const {
 	return !(getFeatures() & GF_DEMO) && getGameType() != GType_MAKINGOF;
 }
 
+bool MohawkEngine_Myst::isInteractive() {
+	return !_scriptParser->isScriptRunning() && !_waitingOnBlockingOperation;
+}
+
 bool MohawkEngine_Myst::canLoadGameStateCurrently() {
-	if (_scriptParser->isScriptRunning() || !_interactive) {
+	if (!isInteractive()) {
 		return false;
 	}
 
