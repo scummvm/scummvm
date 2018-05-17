@@ -39,6 +39,7 @@
 #include "startrek/awaymission.h"
 #include "startrek/filestream.h"
 #include "startrek/graphics.h"
+#include "startrek/items.h"
 #include "startrek/object.h"
 #include "startrek/room.h"
 #include "startrek/sound.h"
@@ -58,6 +59,8 @@ class StarTrekEngine;
 typedef String (StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
 
 const int MAX_OBJECTS = 32;
+const int MAX_OBJECTS_2 = 64; // TODO: better name; indices 32 and above used for something
+
 const int MAX_MENUBUTTONS = 32;
 const int TEXTBOX_WIDTH = 26;
 const int MAX_TEXTBOX_LINES = 12;
@@ -185,6 +188,15 @@ enum Acton {
 	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
 };
 
+// First 4 objects are reserved for crewmen
+enum Objects {
+	OBJECT_KIRK = 0,
+	OBJECT_SPOCK = 1,
+	OBJECT_MCCOY = 2,
+	OBJECT_REDSHIRT = 3,
+	OBJECT_INVENTORY_ICON = 31
+};
+
 
 struct StarTrekGameDescription;
 class Graphics;
@@ -246,8 +258,14 @@ public:
 	void chooseObjectDirectionForWalking(Object *object, int16 srcX, int16 srcY, int16 destX, int16 destY);
 	bool directPathExists(int16 srcX, int16 srcY, int16 destX, int16 destY);
 
+	int findObjectAt(int x, int y);
+	int findObjectAt(Common::Point p) { return findObjectAt(p.x, p.y); }
 	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, uint16 arg2);
 	Common::String getCrewmanAnimFilename(int objectIndex, const Common::String &basename);
+	void updateMouseBitmap();
+	void showInventoryIcons(bool showItem);
+	void hideInventoryIcons();
+	int showInventoryMenu(int x, int y, bool restoreMouse);
 	SharedPtr<Bitmap> scaleBitmap(SharedPtr<Bitmap> bitmap, uint16 scale);
 	void scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uint16 scaledWidth);
 
@@ -301,7 +319,7 @@ public:
 
 	// menu.cpp
 public:
-	int getMenuButtonAt(const Menu &menu, int x, int y);
+	int getMenuButtonAt(Sprite *sprites, int numSprites, int x, int y);
 	void chooseMousePositionFromSprites(Sprite *sprites, int numSprites, int spriteIndex, int mode);
 	void drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color);
 	void showOptionsMenu(int x, int y);
@@ -375,6 +393,8 @@ public:
 	int16 _activeDoorWarpHotspot;
 	int16 _lookActionBitmapIndex;
 
+	Item _itemList[NUM_ITEMS];
+
 	Object _objectList[MAX_OBJECTS];
 	Object * const _kirkObject;
 	Object * const _spockObject;
@@ -384,6 +404,8 @@ public:
 	SharedPtr<FileStream> _objectBanFiles[MAX_OBJECTS / 2];
 	uint16 _objectBanVar2[MAX_OBJECTS / 2]; // TODO: initialize?
 
+	Sprite _inventoryIconSprite;
+	Sprite _itemIconSprite;
 
 	// _clockTicks is based on DOS interrupt 1A, AH=0; read system clock counter.
 	// Updates 18.206 times every second.

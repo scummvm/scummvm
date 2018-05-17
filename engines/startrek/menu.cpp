@@ -31,9 +31,9 @@ namespace StarTrek {
 /**
  * Returns the index of the button at the given position, or -1 if none.
  */
-int StarTrekEngine::getMenuButtonAt(const Menu &menu, int x, int y) {
-	for (int i = 0; i < menu.numButtons; i++) {
-		const Sprite &spr = menu.sprites[i];
+int StarTrekEngine::getMenuButtonAt(Sprite *sprites, int numSprites, int x, int y) {
+	for (int i = 0; i < numSprites; i++) {
+		const Sprite &spr = sprites[i];
 
 		if (spr.drawMode != 2)
 			continue;
@@ -130,7 +130,6 @@ void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSpri
 					&& (mouseX1 == 0x7fff || vCenter >= mouseY1)) {
 				mouseX1 = hCenter;
 				mouseY1 = vCenter;
-				debug("Try %d %d", mouseX1, mouseY1);
 			}
 			if (mouseX2 == 0x7fff || vCenter > mouseY2
 					|| (hCenter == mouseX2 && vCenter == mouseY2)) {
@@ -656,7 +655,7 @@ int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4
 			case TREKEVENT_TICK: {
 			case TREKEVENT_MOUSEMOVE: // FIXME: actual game only uses TICK event here
 				Common::Point mousePos = _gfx->getMousePos();
-				int buttonIndex = getMenuButtonAt(*_activeMenu, mousePos.x, mousePos.y);
+				int buttonIndex = getMenuButtonAt(_activeMenu->sprites, _activeMenu->numButtons, mousePos.x, mousePos.y);
 				if (buttonIndex != -1) {
 					if (_activeMenu->disabledButtons & (1<<buttonIndex))
 						buttonIndex = -1;
@@ -704,7 +703,7 @@ int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4
 				}
 				else {
 					Common::Point mouse = _gfx->getMousePos();
-					if (getMenuButtonAt(*_activeMenu, mouse.x, mouse.y) == -1) {
+					if (getMenuButtonAt(_activeMenu->sprites, _activeMenu->numButtons, mouse.x, mouse.y) == -1) {
 						playSoundEffectIndex(0x10);
 						return MENUEVENT_LCLICK_OFFBUTTON;
 					}

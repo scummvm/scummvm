@@ -18,14 +18,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/graphics.h $
- * $Id: graphics.h 2 2009-09-12 20:13:40Z clone2727 $
- *
  */
 
 #include "startrek/sprite.h"
 
 namespace StarTrek {
+
+Sprite::Sprite() :
+	pos(),
+	drawPriority(),
+	drawPriority2(),
+	field8(),
+	bitmap(),
+	drawMode(),
+	textColor(),
+	bitmapChanged(),
+	rect2Valid(),
+	isOnScreen(),
+	field16(),
+	lastDrawRect(),
+	drawRect(),
+	rectangle2(),
+	drawX(),
+	drawY()
+	{}
 
 void Sprite::setBitmap(SharedPtr<Bitmap> b) {
 	bitmap = b;
