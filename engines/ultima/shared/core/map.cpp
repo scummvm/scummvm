@@ -33,7 +33,7 @@ void MapTile::clear() {
 	_item = nullptr;
 	_isDoor = _isSecretDoor = false;
 	_isLadderUp = _isLadderDown = false;
-	_isWall = _isHallway = false;
+	_isWall = _isHallway = _isBeams = false;
 }
 
 /*-------------------------------------------------------------------*/

@@ -38,8 +38,8 @@ enum CityTile {
 };
 
 enum DungeonTile {
-	DTILE_HALLWAY = 0, DTILE_WALL = 1, DTILE_SECRET_DOOR = 2, DTILE_DOOR = 3, DTILE_4 = 4,
-	DTILE_5 = 5, DTILE_LADDER_DOWN = 6, DTILE_LADDER_UP = 7, DTILE_BEAMS = 8
+	DTILE_HALLWAY = 0, DTILE_WALL = 1, DTILE_SECRET_DOOR = 2, DTILE_DOOR = 3, DTILE_CHEST = 4,
+	DTILE_COFFIN = 5, DTILE_LADDER_DOWN = 6, DTILE_LADDER_UP = 7, DTILE_BEAMS = 8
 };
 
 enum DungeonItem {
@@ -71,7 +71,6 @@ void SurroundingTotals::load(Ultima1Map *map) {
 void U1MapTile::clear() {
 	_map = nullptr;
 	_locationNum = -1;
-	_isBeams = false;
 }
 
 bool U1MapTile::isWater() const {
@@ -224,6 +223,7 @@ void Ultima1Map::getTileAt(const Point &pt, Shared::MapTile *tile) {
 		tile->_isWall = tile->_tileNum == DTILE_WALL;
 		tile->_isLadderUp = tile->_tileNum == DTILE_LADDER_UP;
 		tile->_isLadderDown = tile->_tileNum == DTILE_LADDER_DOWN;
+		tile->_isBeams = tile->_tileNum == DTILE_BEAMS;
 	}
 
 	// Extended properties to set if an Ultima 1 map tile structure was passed in
@@ -231,8 +231,6 @@ void Ultima1Map::getTileAt(const Point &pt, Shared::MapTile *tile) {
 	if (mapTile) {
 		GameResources *res = _game->_res;
 		mapTile->_map = this;
-
-		mapTile->_isBeams = mapTile->_tileNum == DTILE_BEAMS;
 
 		// Check for a location at the given position
 		mapTile->_locationNum = -1;
@@ -292,10 +290,10 @@ void Ultima1Map::loadDungeonMap() {
 		for (int y = 2; y < (DUNGEON_HEIGHT - 1); y += 2)
 			_data[y][x] = DTILE_WALL;
 
-	// Set up randomly selected segments between the fixed wall areas
+	// Randomly set up walls, doors, secret doors, or chests
 	for (int x = 2; x < (DUNGEON_WIDTH - 1); x += 2)
 		for (int y = 1; y < DUNGEON_HEIGHT; y += 2)
-			_data[y][x] = g_vm->getRandomNumber(DTILE_WALL, DTILE_4);
+			_data[y][x] = g_vm->getRandomNumber(DTILE_WALL, DTILE_CHEST);
 
 	// Set up wall and beams randomly to subdivide the blank columns
 	const byte DATA1[15] = { 8, 5, 2, 8, 1, 5, 4, 6, 1, 3, 7, 3, 9, 2, 6 };
@@ -311,13 +309,13 @@ void Ultima1Map::loadDungeonMap() {
 		}
 	}
 
-	// Further tiles that placed randomly
+	// Place chests and/or coffins randomly throughout the level
 	for (uint ctr = 0; ctr <= _dungeonLevel; ++ctr) {
 		Point pt(g_vm->getRandomNumber(10, 99) / 10, g_vm->getRandomNumber(10, 99) / 10);
 		byte currTile = _data[pt.y][pt.x];
 
 		if (currTile != DTILE_WALL && currTile != DTILE_SECRET_DOOR && currTile != DTILE_BEAMS) {
-			_data[pt.y][pt.x] = (g_vm->getRandomNumber(1, 100) & 1) + DTILE_4;
+			_data[pt.y][pt.x] = (g_vm->getRandomNumber(1, 100) & 1) ? DTILE_COFFIN : DTILE_CHEST;
 		}
 	}
 
