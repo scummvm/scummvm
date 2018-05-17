@@ -49,7 +49,6 @@ private:
 	Ultima1Map *_map;
 public:
 	int _locationNum;
-	bool _isBeams;
 public:
 	/**
 	 * Clears tile data
