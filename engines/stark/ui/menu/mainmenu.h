@@ -14,9 +14,13 @@ public:
 	virtual ~MainMenuScreen();
 
 	// StaticLocationScreen API
-	void open() override;
+	void open();
+
+private:
+	template<uint N>
+	void helpTextHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
 };
 
-}
+} // End of namespace Stark
 
 #endif // STARK_UI_MENU_MAIN_MENU_H

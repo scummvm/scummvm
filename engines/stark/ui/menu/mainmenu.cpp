@@ -21,31 +21,31 @@ void MainMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"NewGame",
 			nullptr,
-			nullptr));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<7>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Continue",
 			nullptr,
-			nullptr));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<8>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Options",
 			nullptr,
-			nullptr));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<6>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Box",
 			nullptr,
-			nullptr));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<9>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Quit",
 			nullptr,
-			nullptr));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<10>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -81,7 +81,7 @@ void MainMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"Credits",
 			nullptr,
-			nullptr));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<12>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -101,4 +101,11 @@ void MainMenuScreen::open() {
 			nullptr));
 }
 
+template<uint N>
+void MainMenuScreen::helpTextHandler(StaticLocationWidget &widget, const Common::Point &mousePos) {
+	if (widget.isVisible()) {
+		_widgets[N]->setVisible(widget.isMouseInside(mousePos));
+	}
 }
+
+} // End of namespace Stark

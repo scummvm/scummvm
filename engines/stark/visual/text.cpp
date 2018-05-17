@@ -124,8 +124,8 @@ void VisualText::createTexture() {
 		_originalRect.bottom = _originalRect.top + originalLineHeight * lines.size();
 	} else {
 		// For Empty text, preserve the original width and height for being used as clicking area
-		_originalRect.right = _originalRect.left + maxScaledLineWidth;
-		_originalRect.bottom = _originalRect.top + StarkGfx->scaleHeightOriginalToCurrent(_targetHeight);
+		_originalRect.right = _originalRect.left + _targetWidth;
+		_originalRect.bottom = _originalRect.top + _targetHeight;
 	}
 
 	// Create a surface to render to
