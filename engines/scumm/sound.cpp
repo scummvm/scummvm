@@ -1321,8 +1321,9 @@ int ScummEngine::readSoundResource(ResId idx) {
 			//dumpResource("sound-", idx, ptr);
 			return 1;
 		}
-		error("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	}
+
+	warning("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	_res->_types[rtSound][idx]._roomoffs = RES_INVALID_OFFSET;
 	return 0;
 }
