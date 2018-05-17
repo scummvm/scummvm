@@ -34,6 +34,7 @@
 #include "illusions/input.h"
 #include "illusions/scriptstack.h"
 #include "illusions/scriptopcodes.h"
+#include "illusions/sound.h"
 
 namespace Illusions {
 
@@ -501,7 +502,7 @@ void BbdouSpecialCode::playSoundEffect(int soundIndex) {
 	};
 	uint32 soundEffectId = kSoundEffectIds[2 * soundIndex];
 	if (soundEffectId) {
-		// TODO _vm->startSound(soundEffectId, 255, 0);
+		_vm->_soundMan->playSound(soundEffectId, 255, 0);
 	}
 }
 

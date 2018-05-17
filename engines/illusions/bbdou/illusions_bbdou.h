@@ -136,6 +136,9 @@ public:
 	void leavePause(uint32 threadId);
 	void dumpActiveScenes(uint32 sceneId, uint32 threadId);
 
+	void pause(uint32 callerThreadId);
+	void unpause(uint32 callerThreadId);
+
 	void enterMenuPause();
 	void leaveMenuPause();
 

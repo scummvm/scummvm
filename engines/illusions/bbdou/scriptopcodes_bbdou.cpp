@@ -122,11 +122,11 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(66, opSetAdjustUpSfx);
 	OPCODE(67, opSetAdjustDnSfx);
 	// 68 unused
-	// TODO OPCODE(69, opPause);
-	// TODO OPCODE(70, opResume);
+	OPCODE(69, opPause);
+	OPCODE(70, opResume);
 	OPCODE(71, opStartSound);
-	// TODO OPCODE(72, opStartSoundAtNamedPoint);
-	// TODO OPCODE(73, opStartSoundAtActor);
+	OPCODE(72, opStartSoundAtPosition);
+	OPCODE(73, opStartSoundAtActor);
 	OPCODE(74, opStopSound);
 	OPCODE(75, opStartMusic);
 	OPCODE(76, opStopMusic);
@@ -142,9 +142,9 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	// TODO OPCODE(86, opRestoreGame);
 	OPCODE(87, opDeactivateButton);
 	OPCODE(88, opActivateButton);
-	// TODO 89 NOP
+	OPCODE(89, opNop);
 	// 90 unused
-	// TODO 91 NOP
+	OPCODE(91, opNop);
 	// 92-102 unused
 	OPCODE(103, opJumpIf);
 	OPCODE(104, opIsPrevSceneId);
@@ -614,6 +614,14 @@ void ScriptOpcodes_BBDOU::opSetAdjustDnSfx(ScriptThread *scriptThread, OpCall &o
 	// TODO _vm->setAdjustDnSfx(soundEffectId);
 }
 
+void ScriptOpcodes_BBDOU::opPause(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->pause(opCall._callerThreadId);
+}
+
+void ScriptOpcodes_BBDOU::opResume(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->unpause(opCall._callerThreadId);
+}
+
 void ScriptOpcodes_BBDOU::opStartSound(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_INT16(volume);
@@ -621,6 +629,26 @@ void ScriptOpcodes_BBDOU::opStartSound(ScriptThread *scriptThread, OpCall &opCal
 	ARG_UINT32(soundEffectId);
 	_vm->_soundMan->playSound(soundEffectId, volume, pan);
 }
+
+void ScriptOpcodes_BBDOU::opStartSoundAtPosition(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(volume);
+	ARG_UINT32(soundEffectId);
+	ARG_UINT32(namedPointId);
+	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
+	int16 pan = _vm->convertPanXCoord(pos.x);
+	_vm->_soundMan->playSound(soundEffectId, volume, pan);
+}
+
+void ScriptOpcodes_BBDOU::opStartSoundAtActor(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_INT16(volume);
+	ARG_UINT32(objectId);
+	ARG_UINT32(soundEffectId);
+	Control *control = _vm->_dict->getObjectControl(objectId);
+	Common::Point pos = control->getActorPosition();
+	int16 pan = _vm->convertPanXCoord(pos.x);
+	_vm->_soundMan->playSound(soundEffectId, volume, pan);
+}
+
 void ScriptOpcodes_BBDOU::opStopSound(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(soundEffectId);
@@ -697,6 +725,10 @@ void ScriptOpcodes_BBDOU::opDeactivateButton(ScriptThread *scriptThread, OpCall 
 void ScriptOpcodes_BBDOU::opActivateButton(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(button)
 	_vm->_input->activateButton(button);
+}
+
+void ScriptOpcodes_BBDOU::opNop(ScriptThread *scriptThread, OpCall &opCall) {
+	// Opcode empty but still called
 }
 
 void ScriptOpcodes_BBDOU::opJumpIf(ScriptThread *scriptThread, OpCall &opCall) {
@@ -792,7 +824,7 @@ void ScriptOpcodes_BBDOU::opPlayVideo(ScriptThread *scriptThread, OpCall &opCall
 	ARG_UINT32(objectId);
 	ARG_UINT32(videoId);
 	ARG_UINT32(priority);
-#if 1 // TODO DEBUG Set to 0 to skip videos
+#if 0 // TODO DEBUG Set to 0 to skip videos
 	_vm->playVideo(videoId, objectId, priority, opCall._threadId);
 #else
 	//DEBUG Resume calling thread, later done by the video player
