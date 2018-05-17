@@ -236,6 +236,8 @@ void Player_Towns_v1::setMusicVolume(int vol) {
 
 void Player_Towns_v1::startSound(int sound) {
 	uint8 *ptr = _vm->getResourceAddress(rtSound, sound);
+	assert(ptr);
+
 	if (_vm->_game.version != 3)
 		ptr += 2;
 
@@ -620,6 +622,7 @@ int Player_Towns_v2::getSoundStatus(int sound) const {
 
 void Player_Towns_v2::startSound(int sound) {
 	uint8 *ptr = _vm->getResourceAddress(rtSound, sound);
+	assert(ptr);
 
 	if (READ_BE_UINT32(ptr) == MKTAG('T','O','W','S')) {
 		_soundOverride[sound].type = 7;
