@@ -335,6 +335,7 @@ void Channelwood::o_pipeExtend(uint16 var, const ArgumentsArray &args) {
 void Channelwood::o_drawImageChangeCardAndVolume(uint16 var, const ArgumentsArray &args) {
 	uint16 imageId = args[0];
 	uint16 cardId = args[1];
+	uint16 volume = args.size() == 3 ? args[2] : 0;
 
 	debugC(kDebugScript, "\timageId: %d", imageId);
 	debugC(kDebugScript, "\tcardId: %d", cardId);
@@ -344,8 +345,7 @@ void Channelwood::o_drawImageChangeCardAndVolume(uint16 var, const ArgumentsArra
 
 	_vm->changeToCard(cardId, kTransitionPartToLeft);
 
-	if (args.size() == 3) {
-		uint16 volume = args[2];
+	if (volume) {
 		_vm->_sound->changeBackgroundVolume(volume);
 	}
 }
