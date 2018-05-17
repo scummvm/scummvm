@@ -39,6 +39,7 @@ class DungeonSurface : public Gfx::VisualSurface {
 private:
 	Point _penPos;
 	byte _edgeColor;
+	byte _highlightColor;
 	byte _widgetColor;
 	DrawWidgetFn _widgetFn;
 public:
