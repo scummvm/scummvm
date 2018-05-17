@@ -63,7 +63,7 @@ private:
 	void createTexture();
 	void freeTexture();
 
-	// Check whether the text is blank
+	/** Check whether the text is blank */
 	bool isBlank();
 
 	Gfx::Driver *_gfx;

@@ -10,11 +10,11 @@ namespace Stark {
  */
 class MainMenuScreen : public StaticLocationScreen {
 public:
-    MainMenuScreen(Gfx::Driver *gfx, Cursor *cursor);
-    virtual ~MainMenuScreen();
+	MainMenuScreen(Gfx::Driver *gfx, Cursor *cursor);
+	virtual ~MainMenuScreen();
 
-    // StaticLocationScreen API
-    void open() override;
+	// StaticLocationScreen API
+	void open() override;
 };
 
 }

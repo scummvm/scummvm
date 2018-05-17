@@ -33,6 +33,8 @@
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
 
+#include "common/util.h"
+
 namespace Stark {
 
 VisualText::VisualText(Gfx::Driver *gfx) :
@@ -160,8 +162,8 @@ void VisualText::resetTexture() {
 }
 
 bool VisualText::isBlank() {
-	for (auto c : _text) {
-		if (c != ' ' && c != '\r' && c != '\n' && c != '\t') {
+	for (uint i = 0; i < _text.size(); ++i) {
+		if (!Common::isSpace(_text[i])) {
 			return false;
 		}
 	}
