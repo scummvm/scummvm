@@ -20,36 +20,25 @@
  *
  */
 
-#ifndef ILLUSIONS_SPECIALCODE_H
-#define ILLUSIONS_SPECIALCODE_H
+#ifndef ILLUSIONS_BBDOU_GAMESTATE_BBDOU_H
+#define ILLUSIONS_BBDOU_GAMESTATE_BBDOU_H
 
-#include "illusions/resourcesystem.h"
+#include "illusions/gamestate.h"
 
 namespace Illusions {
 
-class IllusionsEngine;
-struct OpCall;
+class IllusionsEngine_BBDOU;
 
-class SpecialCodeLoader : public BaseResourceLoader {
+class BBDOU_GameState : public GameState {
 public:
-	SpecialCodeLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~SpecialCodeLoader() {}
-	virtual void load(Resource *resource);
-	virtual void unload(Resource *resource);
-	virtual void buildFilename(Resource *resource);
-	virtual bool isFlag(int flag);
+	BBDOU_GameState(IllusionsEngine_BBDOU *vm);
 protected:
-	IllusionsEngine *_vm;
-};
-
-class SpecialCode {
-public:
-	virtual ~SpecialCode() {}
-	virtual void init() = 0;
-	virtual void run(uint32 specialCodeId, OpCall &opCall) = 0;
-	virtual void resetBeforeResumeSavegame() {};
+	IllusionsEngine_BBDOU *_vm;
+	uint32 calcWriteBufferSizeInternal();
+	bool readStateInternal(Common::ReadStream *in);
+	void writeStateInternal(Common::WriteStream *out);
 };
 
 } // End of namespace Illusions
 
-#endif // ILLUSIONS_SPECIALCODE_H
+#endif // ILLUSIONS_BBDOU_GAMESTATE_BBDOU_H

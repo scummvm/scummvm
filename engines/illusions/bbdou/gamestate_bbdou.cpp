@@ -20,36 +20,34 @@
  *
  */
 
-#ifndef ILLUSIONS_SPECIALCODE_H
-#define ILLUSIONS_SPECIALCODE_H
-
-#include "illusions/resourcesystem.h"
+#include "illusions/bbdou/gamestate_bbdou.h"
+#include "illusions/bbdou/illusions_bbdou.h"
+#include "illusions/resources/scriptresource.h"
 
 namespace Illusions {
 
-class IllusionsEngine;
-struct OpCall;
+BBDOU_GameState::BBDOU_GameState(IllusionsEngine_BBDOU *vm)
+	: _vm(vm) {
+}
 
-class SpecialCodeLoader : public BaseResourceLoader {
-public:
-	SpecialCodeLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~SpecialCodeLoader() {}
-	virtual void load(Resource *resource);
-	virtual void unload(Resource *resource);
-	virtual void buildFilename(Resource *resource);
-	virtual bool isFlag(int flag);
-protected:
-	IllusionsEngine *_vm;
-};
+uint32 BBDOU_GameState::calcWriteBufferSizeInternal() {
+	return
+		4 + // uint32 prevSceneId
+		_vm->_scriptResource->_properties.getSize() +
+		_vm->_scriptResource->_blockCounters.getSize();
+}
 
-class SpecialCode {
-public:
-	virtual ~SpecialCode() {}
-	virtual void init() = 0;
-	virtual void run(uint32 specialCodeId, OpCall &opCall) = 0;
-	virtual void resetBeforeResumeSavegame() {};
-};
+bool BBDOU_GameState::readStateInternal(Common::ReadStream *in) {
+	_vm->_prevSceneId = in->readUint32LE();
+	return
+		_vm->_scriptResource->_properties.readFromStream(in) &&
+		_vm->_scriptResource->_blockCounters.readFromStream(in);
+}
+
+void BBDOU_GameState::writeStateInternal(Common::WriteStream *out) {
+	out->writeUint32LE(_vm->_prevSceneId);
+	_vm->_scriptResource->_properties.writeToStream(out);
+	_vm->_scriptResource->_blockCounters.writeToStream(out);
+}
 
 } // End of namespace Illusions
-
-#endif // ILLUSIONS_SPECIALCODE_H

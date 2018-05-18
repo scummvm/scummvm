@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	bbdou/bbdou_menukeys.o \
 	bbdou/bbdou_specialcode.o \
 	bbdou/bbdou_videoplayer.o \
+	bbdou/gamestate_bbdou.o \
 	bbdou/bbdou_triggerfunctions.o \
 	bbdou/illusions_bbdou.o \
 	bbdou/menusystem_bbdou.o \

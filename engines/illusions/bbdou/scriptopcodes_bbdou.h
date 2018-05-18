@@ -110,6 +110,8 @@ protected:
 	void opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall);
 	void opQuitGame(ScriptThread *scriptThread, OpCall &opCall);
 	void opResetGame(ScriptThread *scriptThread, OpCall &opCall);
+	void opSaveGame(ScriptThread *scriptThread, OpCall &opCall);
+	void opRestoreGameState(ScriptThread *scriptThread, OpCall &opCall);
 	void opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opActivateButton(ScriptThread *scriptThread, OpCall &opCall);
 	void opNop(ScriptThread *scriptThread, OpCall &opCall);
@@ -135,6 +137,9 @@ protected:
 	void opSetActorUsePan(ScriptThread *scriptThread, OpCall &opCall);
 	void opStartAbortableThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opKillThread(ScriptThread *scriptThread, OpCall &opCall);
+	void opLoadGame(ScriptThread *scriptThread, OpCall &opCall);
+	void opPushLoadgameResult(ScriptThread *scriptThread, OpCall &opCall);
+	void opPushSavegameResult(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetSceneIdThreadId(ScriptThread *scriptThread, OpCall &opCall);
 	void opStackPush0(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetFontId(ScriptThread *scriptThread, OpCall &opCall);
