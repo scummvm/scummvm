@@ -173,6 +173,7 @@ public:
 	virtual void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) = 0;
 	virtual void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) = 0;
 	virtual void fillSurface(Graphics::Surface *surface, byte color) = 0;
+	virtual void fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, byte color) = 0;
 	virtual bool isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
 		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) = 0;
 public:
@@ -194,6 +195,7 @@ public:
 	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
 	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
 	void fillSurface(Graphics::Surface *surface, byte color);
+	void fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, byte color);
 	bool isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
 		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels);
 public:
@@ -209,6 +211,7 @@ public:
 	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
 	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
 	void fillSurface(Graphics::Surface *surface, byte color);
+	void fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, byte color);
 	bool isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
 		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels);
 public:

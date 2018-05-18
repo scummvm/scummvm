@@ -935,7 +935,7 @@ void Control::getActorFrameDimensions(WidthHeight &dimensions) {
 }
 
 void Control::drawActorRect(const Common::Rect r, byte color) {
-	_actor->_surface->fillRect(r, color);
+	_vm->_screen->fillSurfaceRect(_actor->_surface, r, color);
 	_actor->_flags |= Illusions::ACTOR_FLAG_4000;
 }
 

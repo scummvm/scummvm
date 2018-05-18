@@ -22,6 +22,8 @@
 
 #include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/scriptopcodes_bbdou.h"
+#include "illusions/bbdou/bbdou_menukeys.h"
+#include "illusions/bbdou/menusystem_bbdou.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
@@ -311,12 +313,12 @@ void ScriptOpcodes_BBDOU::opUnloadActiveScenes(ScriptThread *scriptThread, OpCal
 //uint32 dsceneId = 0x00010017, dthreadId = 0x0002001C;//Dorms int
 //uint32 dsceneId = 0x0001000D, dthreadId = 0x00020012;//Food minigame
 //uint32 dsceneId = 0x00010067, dthreadId = 0x0002022A;
-//uint32 dsceneId = 0x0001000C, dthreadId = 0x00020011;//Cafeteria
+uint32 dsceneId = 0x0001000C, dthreadId = 0x00020011;//Cafeteria
 //uint32 dsceneId = 0x0001000B, dthreadId = 0x00020010;
 //uint32 dsceneId = 0x0001001A, dthreadId = 0x0002001F;
 //uint32 dsceneId = 0x00010047, dthreadId = 0x0002005F;
 //uint32 dsceneId = 0x0001007D, dthreadId = 0x000203B9;
-uint32 dsceneId = 0x0001000D, dthreadId = 0x00020012;
+// uint32 dsceneId = 0x0001000D, dthreadId = 0x00020012; // Food minigame
 
 void ScriptOpcodes_BBDOU::opChangeScene(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
@@ -691,17 +693,34 @@ void ScriptOpcodes_BBDOU::opAddMenuChoice(ScriptThread *scriptThread, OpCall &op
 }
 
 void ScriptOpcodes_BBDOU::opDisplayMenu(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(unk1);
+	ARG_INT16(timeoutChoiceOfs);
 	ARG_UINT32(menuId);
-	ARG_UINT32(unk2);
-	// TODO _vm->_shellMgr->displayMenu(_vm->_stack->topPtr(), &_vm->_menuChoiceOfs, menuId, unk1, unk2, opCall._callerThreadId);
-	// Remove menu choices from the stack
+	ARG_UINT32(timeOutDuration);
+
+	MenuChoiceOffsets menuChoiceOffsets;
+
+	// Load menu choices from the stack
 	do {
-		_vm->_stack->pop();
+		int16 choiceOffs = _vm->_stack->pop();
+		menuChoiceOffsets.push_back(choiceOffs);
 	} while (_vm->_stack->pop() == 0);
 
-	//DEBUG Resume calling thread, later done by the video player
-	_vm->notifyThreadId(opCall._callerThreadId);
+	// TODO DBEUG Start menu not yet implemented, fake selection of "Start game"
+	if (menuId == 0x001C0001) {
+		_vm->_menuChoiceOfs = 88;
+		_vm->notifyThreadId(opCall._callerThreadId);
+		return;
+	}
+
+	// Duckman has the timeout choice offset on the stack and the index as parameter
+	// BBDOU instead has only the choice offset as parameter
+	// So we just add the timeout choice offset and use its index.
+	menuChoiceOffsets.push_back(timeoutChoiceOfs);
+	uint timeOutMenuChoiceIndex = menuChoiceOffsets.size() - 1;
+
+	_vm->_menuSystem->runMenu(menuChoiceOffsets, &_vm->_menuChoiceOfs,
+		menuId, timeOutDuration, timeOutMenuChoiceIndex,
+		opCall._callerThreadId);
 
 }
 
@@ -918,7 +937,8 @@ void ScriptOpcodes_BBDOU::opAddMenuKey(ScriptThread *scriptThread, OpCall &opCal
 	ARG_SKIP(2);
 	ARG_UINT32(key);
 	ARG_UINT32(threadId);
-	// TODO _vm->addMenuKey(key, threadId);
+	debug("addMenuKey(%08X; %08X)", key, threadId);
+	_vm->_menuKeys->addMenuKey(key, threadId);
 }
 
 void ScriptOpcodes_BBDOU::opChangeSceneAll(ScriptThread *scriptThread, OpCall &opCall) {

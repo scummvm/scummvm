@@ -83,6 +83,7 @@ public:
 	bool hasNewEvents();
 	void discardEvent(uint evt);
 	void discardAllEvents();
+	bool pollButton(uint bitMask);
 	void activateButton(uint bitMask);
 	void deactivateButton(uint bitMask);
 	Common::Point getCursorPosition();
@@ -99,7 +100,6 @@ protected:
 	InputEvent _inputEvents[kEventMax];
 	void handleKey(Common::KeyCode key, int mouseButton, bool down);
 	void handleMouseButton(int mouseButton, bool down);
-	bool pollButton(uint bitMask);
 	void discardButtons(uint bitMask);
 	bool lookButtonStates(uint bitMask);
 	bool lookNewButtons(uint bitMask);

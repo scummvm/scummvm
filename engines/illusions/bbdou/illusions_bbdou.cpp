@@ -21,7 +21,9 @@
  */
 
 #include "illusions/bbdou/illusions_bbdou.h"
+#include "illusions/bbdou/bbdou_menukeys.h"
 #include "illusions/bbdou/bbdou_videoplayer.h"
+#include "illusions/bbdou/menusystem_bbdou.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
@@ -167,7 +169,9 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_threads = new ThreadList(this);
 	_updateFunctions = new UpdateFunctions();
 	_soundMan = new SoundMan(this);
+	_menuSystem = new BBDOUMenuSystem(this);
 	_videoPlayer = new BBDOUVideoPlayer(this);
+	_menuKeys = new BBDOUMenuKeys(this);
 
 	_screen->setColorKey1(0xF81F);
 
@@ -217,7 +221,9 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _stack;
 	delete _scriptOpcodes;
 
+	delete _menuKeys;
 	delete _videoPlayer;
+	delete _menuSystem;
 	delete _soundMan;
 	delete _updateFunctions;
 	delete _threads;
@@ -280,6 +286,7 @@ void IllusionsEngine_BBDOU::initInput() {
 void IllusionsEngine_BBDOU::initUpdateFunctions() {
 	UPDATEFUNCTION(30, 0, updateScript);
 	UPDATEFUNCTION(50, 0, updateActors);
+	UPDATEFUNCTION(60, 0, updateMenuKeys);
 	UPDATEFUNCTION(60, 0, updateSequences);
 	UPDATEFUNCTION(70, 0, updateGraphics);
 	UPDATEFUNCTION(70, 0, updateVideoPlayer);
@@ -291,7 +298,12 @@ void IllusionsEngine_BBDOU::initUpdateFunctions() {
 
 int IllusionsEngine_BBDOU::updateScript(uint flags) {
 	_threads->updateThreads();
-	return 1;
+	return kUFNext;
+}
+
+int IllusionsEngine_BBDOU::updateMenuKeys(uint flags) {
+	_menuKeys->update();
+	return kUFNext;
 }
 
 bool IllusionsEngine_BBDOU::causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
@@ -436,7 +448,7 @@ void IllusionsEngine_BBDOU::cursorControlRoutine(Control *control, uint32 deltaT
 			// Unused nullsub_1(control);
 			break;
 		case 3:
-			// TODO _vm->_shellMgr->handleMouse(control);
+			_menuSystem->update(control);
 			break;
 		}
 	}

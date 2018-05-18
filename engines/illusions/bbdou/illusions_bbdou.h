@@ -34,6 +34,8 @@ class Dictionary;
 class ScriptMan;
 class ScriptStack;
 class BBDOUVideoPlayer;
+class BBDOUMenuKeys;
+class BBDOUMenuSystem;
 
 struct ActiveScene {
 	uint32 _sceneId;
@@ -73,7 +75,9 @@ public:
 	uint32 _theThreadId;
 	uint32 _globalSceneId;
 
+	BBDOUMenuSystem *_menuSystem;
 	BBDOUVideoPlayer *_videoPlayer;
+	BBDOUMenuKeys *_menuKeys;
 
 	bool _walkthroughStarted;
 
@@ -81,6 +85,7 @@ public:
 
 	void initUpdateFunctions();
 	int updateScript(uint flags);
+	int updateMenuKeys(uint flags);
 
 	bool causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
 	void causeDeclare(uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback);
