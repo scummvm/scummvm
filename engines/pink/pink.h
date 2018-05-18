@@ -45,8 +45,6 @@
  *
  *  Peril game status:
  *      Fully playable*
- *      (crashes on cutscene before Stonehenge because of strange sprite format.
- *      Currently I use hack which isn't in branch.)
  *
  *  Pokus game status:
  *      Fully Playable*
