@@ -178,10 +178,9 @@ void StaticLocationWidget::onClick() {
 
 	if (_soundMouseClick) {
 		_soundMouseClick->play();
+		// Ensure the click sound is played completely
+		while (_soundMouseClick->isPlaying()) {};
 	}
-
-	// Ensure the click sound is played completely
-	while (_soundMouseClick->isPlaying()) {};
 
 	if (_onClick) {
 		(*_onClick)();

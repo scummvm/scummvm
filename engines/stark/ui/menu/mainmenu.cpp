@@ -104,7 +104,7 @@ void MainMenuScreen::open() {
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Credits",
-			nullptr,
+			CLICK_HANDLER(MainMenuScreen, creditsHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<12>)));
 	_widgets.back()->setupSounds(0, 1);
 	
@@ -129,6 +129,12 @@ template<uint N>
 void MainMenuScreen::helpTextHandler(StaticLocationWidget &widget, const Common::Point &mousePos) {
 	if (widget.isVisible()) {
 		_widgets[N]->setVisible(widget.isMouseInside(mousePos));
+	}
+}
+
+void MainMenuScreen::creditsHandler() {
+	if (!isDemo()) {
+		StarkUserInterface->requestFMVPlayback("0e02.bbb");
 	}
 }
 
