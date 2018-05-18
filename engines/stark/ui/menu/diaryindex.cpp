@@ -110,7 +110,7 @@ void DiaryIndexScreen::widgetTextColorHandler(StaticLocationWidget &widget, cons
 }
 
 void DiaryIndexScreen::backHandler() {
-	StarkUserInterface->changeScreen(Screen::kScreenGame);
+	StarkUserInterface->backPreScreen();
 }
 
 void DiaryIndexScreen::quitHandler() {
