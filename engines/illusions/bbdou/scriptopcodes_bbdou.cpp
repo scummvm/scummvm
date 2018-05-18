@@ -138,7 +138,7 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(80, opAddMenuChoice);
 	OPCODE(81, opDisplayMenu);
 	OPCODE(82, opSwitchMenuChoice);
-	// TODO OPCODE(83, opQuitGame);
+	OPCODE(83, opQuitGame);
 	OPCODE(84, opResetGame);
 	// TODO OPCODE(85, opSaveGame);
 	// TODO OPCODE(86, opRestoreGame);
@@ -726,6 +726,10 @@ void ScriptOpcodes_BBDOU::opDisplayMenu(ScriptThread *scriptThread, OpCall &opCa
 
 void ScriptOpcodes_BBDOU::opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall) {
 	opCall._deltaOfs += _vm->_menuChoiceOfs;
+}
+
+void ScriptOpcodes_BBDOU::opQuitGame(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->quitGame();
 }
 
 void ScriptOpcodes_BBDOU::opResetGame(ScriptThread *scriptThread, OpCall &opCall) {
