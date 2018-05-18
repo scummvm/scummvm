@@ -290,10 +290,10 @@ void Ultima1Map::loadDungeonMap() {
 		for (int y = 2; y < (DUNGEON_HEIGHT - 1); y += 2)
 			_data[y][x] = DTILE_WALL;
 
-	// Randomly set up walls, doors, secret doors, or chests
+	// Randomly set up random tiles for all alternate positions in wall columns
 	for (int x = 2; x < (DUNGEON_WIDTH - 1); x += 2)
 		for (int y = 1; y < DUNGEON_HEIGHT; y += 2)
-			_data[y][x] = g_vm->getRandomNumber(DTILE_WALL, DTILE_CHEST);
+			_data[y][x] = g_vm->getRandomNumber(DTILE_HALLWAY, DTILE_DOOR);
 
 	// Set up wall and beams randomly to subdivide the blank columns
 	const byte DATA1[15] = { 8, 5, 2, 8, 1, 5, 4, 6, 1, 3, 7, 3, 9, 2, 6 };

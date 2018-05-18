@@ -154,7 +154,7 @@ public:
 	void drawLeftWall(uint distance);
 
 	/**
-	 * Draws open/walkable areas on the left hand side
+	 * Draws the partial wall visible at the back of a corridor leading to the left
 	 */
 	void drawLeftBlank(uint distance);
 
@@ -169,7 +169,7 @@ public:
 	void drawRightWall(uint distance);
 
 	/**
-	 * Draws open/walkable areas on the right hand side
+	 * Draws the partial wall visible at the back of a corridor leading to the right
 	 */
 	void drawRightBlank(uint distance);
 };
