@@ -77,8 +77,10 @@ void UserInterface::init() {
 	_fmvScreen = new FMVScreen(_gfx, _cursor);
 
 	_currentScreen = _mainMenuScreen;
-
 	_currentScreen->open();
+
+	// Play the FunCom logo video
+	requestFMVPlayback("1402.bbb");
 }
 
 void UserInterface::update() {
