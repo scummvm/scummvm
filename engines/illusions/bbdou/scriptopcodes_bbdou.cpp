@@ -23,6 +23,7 @@
 #include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/scriptopcodes_bbdou.h"
 #include "illusions/bbdou/bbdou_menukeys.h"
+#include "illusions/bbdou/gamestate_bbdou.h"
 #include "illusions/bbdou/menusystem_bbdou.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
@@ -140,8 +141,8 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(82, opSwitchMenuChoice);
 	OPCODE(83, opQuitGame);
 	OPCODE(84, opResetGame);
-	// TODO OPCODE(85, opSaveGame);
-	// TODO OPCODE(86, opRestoreGame);
+	OPCODE(85, opSaveGame);
+	OPCODE(86, opRestoreGameState);
 	OPCODE(87, opDeactivateButton);
 	OPCODE(88, opActivateButton);
 	OPCODE(89, opNop);
@@ -170,6 +171,10 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(161, opSetActorUsePan);
 	OPCODE(168, opStartAbortableThread);
 	OPCODE(169, opKillThread);
+	OPCODE(170, opLoadGame);
+	OPCODE(171, opPushLoadgameResult);
+	OPCODE(172, opPushSavegameResult);
+	// 173, 174 unused
 	OPCODE(175, opSetSceneIdThreadId);
 	OPCODE(176, opStackPush0);
 	OPCODE(177, opSetFontId);
@@ -342,7 +347,7 @@ void ScriptOpcodes_BBDOU::opChangeScene(ScriptThread *scriptThread, OpCall &opCa
 	_vm->_prevSceneId = _vm->getCurrentScene();
 	_vm->exitScene(opCall._callerThreadId);
 	_vm->enterScene(sceneId, opCall._callerThreadId);
-	// TODO _vm->_gameStates->writeStates(_vm->_prevSceneId, sceneId, threadId);
+	_vm->_gameState->writeState(sceneId, threadId);
 	_vm->startAnonScriptThread(threadId, 0,
 		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
 }
@@ -740,6 +745,17 @@ void ScriptOpcodes_BBDOU::opResetGame(ScriptThread *scriptThread, OpCall &opCall
 	// TODO _vm->_gameStates->clear();
 }
 
+void ScriptOpcodes_BBDOU::opSaveGame(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_INT16(bankNum)
+	ARG_INT16(slotNum)
+	_vm->saveSavegameFromScript(slotNum, opCall._callerThreadId);
+}
+
+void ScriptOpcodes_BBDOU::opRestoreGameState(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->activateSavegame(opCall._callerThreadId);
+}
+
 void ScriptOpcodes_BBDOU::opDeactivateButton(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(button)
 	_vm->_input->deactivateButton(button);
@@ -920,6 +936,21 @@ void ScriptOpcodes_BBDOU::opKillThread(ScriptThread *scriptThread, OpCall &opCal
 	_vm->_threads->killThread(threadId);
 }
 
+void ScriptOpcodes_BBDOU::opLoadGame(ScriptThread *scriptThread, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_INT16(bankNum)
+	ARG_INT16(slotNum)
+	_vm->loadSavegameFromScript(slotNum, opCall._callerThreadId);
+}
+
+void ScriptOpcodes_BBDOU::opPushLoadgameResult(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->_stack->push(_vm->_loadGameResult ? 1 : 0);
+}
+
+void ScriptOpcodes_BBDOU::opPushSavegameResult(ScriptThread *scriptThread, OpCall &opCall) {
+	_vm->_stack->push(_vm->_saveGameResult ? 1 : 0);
+}
+
 void ScriptOpcodes_BBDOU::opSetSceneIdThreadId(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(sceneId);
@@ -941,7 +972,6 @@ void ScriptOpcodes_BBDOU::opAddMenuKey(ScriptThread *scriptThread, OpCall &opCal
 	ARG_SKIP(2);
 	ARG_UINT32(key);
 	ARG_UINT32(threadId);
-	debug("addMenuKey(%08X; %08X)", key, threadId);
 	_vm->_menuKeys->addMenuKey(key, threadId);
 }
 
@@ -954,7 +984,7 @@ void ScriptOpcodes_BBDOU::opChangeSceneAll(ScriptThread *scriptThread, OpCall &o
 	_vm->_prevSceneId = _vm->getCurrentScene();
 	_vm->dumpActiveScenes(_vm->_globalSceneId, opCall._callerThreadId);
 	_vm->enterScene(sceneId, opCall._callerThreadId);
-	// TODO _vm->_gameStates->writeStates(_vm->_prevSceneId, sceneId, threadId);
+	_vm->_gameState->writeState(sceneId, threadId);
 	_vm->startAnonScriptThread(threadId, 0,
 		scriptThread->_value8, scriptThread->_valueC, scriptThread->_value10);
 }

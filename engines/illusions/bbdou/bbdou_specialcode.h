@@ -110,6 +110,7 @@ public:
 	virtual ~BbdouSpecialCode();
 	virtual void init();
 	virtual void run(uint32 specialCodeId, OpCall &opCall);
+	virtual void resetBeforeResumeSavegame();
 public:
 	typedef Common::HashMap<uint32, SpecialCodeFunction*> Map;
 	typedef Map::iterator MapIterator;

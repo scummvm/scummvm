@@ -75,11 +75,14 @@ public:
 	uint32 _theThreadId;
 	uint32 _globalSceneId;
 
+	bool _loadGameResult, _saveGameResult;
+
 	BBDOUMenuSystem *_menuSystem;
 	BBDOUVideoPlayer *_videoPlayer;
 	BBDOUMenuKeys *_menuKeys;
 
 	bool _walkthroughStarted;
+	bool _canResumeFromSavegame;
 
 	void initInput();
 
@@ -128,7 +131,6 @@ public:
 		uint32 sequenceId2, uint32 namedPointId, uint32 callingThreadId);
 	uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 		uint32 value8, uint32 valueC, uint32 value10);
-	void resumeFromSavegame(uint32 callingThreadId);
 
 	void newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10);
@@ -150,6 +152,11 @@ public:
 	void setSceneIdThreadId(uint32 theSceneId, uint32 theThreadId);
 	bool findTriggerCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs);
 	void reset();
+
+	void loadSavegameFromScript(int16 slotNum, uint32 callingThreadId);
+	void saveSavegameFromScript(int16 slotNum, uint32 callingThreadId);
+	void activateSavegame(uint32 callingThreadId);
+	void resumeFromSavegame();
 
 };
 

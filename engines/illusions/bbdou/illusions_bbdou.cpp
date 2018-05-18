@@ -23,6 +23,7 @@
 #include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_menukeys.h"
 #include "illusions/bbdou/bbdou_videoplayer.h"
+#include "illusions/bbdou/gamestate_bbdou.h"
 #include "illusions/bbdou/menusystem_bbdou.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
@@ -171,6 +172,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_soundMan = new SoundMan(this);
 	_menuSystem = new BBDOUMenuSystem(this);
 	_videoPlayer = new BBDOUVideoPlayer(this);
+	_gameState = new BBDOU_GameState(this);
 	_menuKeys = new BBDOUMenuKeys(this);
 
 	_screen->setColorKey1(0xF81F);
@@ -205,13 +207,22 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	startScriptThread(0x00020004, 0, 0, 0, 0);
 	_doScriptThreadInit = true;
 
+	if (ConfMan.hasKey("save_slot")) {
+		loadGameState(ConfMan.getInt("save_slot"));
+	}
+
 	_walkthroughStarted = false;
+	_canResumeFromSavegame = false;
 
 	while (!shouldQuit()) {
 		if (_walkthroughStarted) {
 			//enterScene(0x10003, 0);
 			startScriptThread(0x00020404, 0, 0, 0, 0);
 			_walkthroughStarted = false;
+		}
+		if (_resumeFromSavegameRequested && _canResumeFromSavegame) {
+			resumeFromSavegame();
+			_resumeFromSavegameRequested = false;
 		}
 		runUpdateFunctions();
 		_system->updateScreen();
@@ -222,6 +233,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _scriptOpcodes;
 
 	delete _menuKeys;
+	delete _gameState;
 	delete _videoPlayer;
 	delete _menuSystem;
 	delete _soundMan;
@@ -248,12 +260,9 @@ Common::Error IllusionsEngine_BBDOU::run() {
 
 bool IllusionsEngine_BBDOU::hasFeature(EngineFeature f) const {
 	return
-		false;
-		/*
 		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
-		*/
 }
 
 void IllusionsEngine_BBDOU::initInput() {
@@ -460,6 +469,11 @@ void IllusionsEngine_BBDOU::startScriptThreadSimple(uint32 threadId, uint32 call
 
 void IllusionsEngine_BBDOU::startScriptThread(uint32 threadId, uint32 callingThreadId,
 	uint32 value8, uint32 valueC, uint32 value10) {
+	if (threadId == 0x0002041E && ConfMan.hasKey("save_slot")) {
+		// Skip intro videos when loading a savegame from the launcher (kludge)
+		notifyThreadId(callingThreadId);
+		return;
+	}
 	debug(2, "Starting script thread %08X", threadId);
 	byte *scriptCodeIp = _scriptResource->getThreadCode(threadId);
 	newScriptThread(threadId, callingThreadId, 0, scriptCodeIp, value8, valueC, value10);
@@ -501,10 +515,6 @@ uint32 IllusionsEngine_BBDOU::startTalkThread(int16 duration, uint32 objectId, u
 		duration, objectId, talkId, sequenceId1, sequenceId2, namedPointId);
 	_threads->startThread(talkThread);
 	return tempThreadId;
-}
-
-void IllusionsEngine_BBDOU::resumeFromSavegame(uint32 callingThreadId) {
-	// TODO
 }
 
 uint32 IllusionsEngine_BBDOU::startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
@@ -555,6 +565,13 @@ bool IllusionsEngine_BBDOU::enterScene(uint32 sceneId, uint32 threadId) {
 		sceneId = _theSceneId;
 	}
 	_activeScenes.push(sceneId);
+	if (sceneId == 0x0001007D) {
+		// Savegame loading from the ScummVM GUI or command line is only
+		// possible after resources have been initialized by the startup script.
+		// Once that script is done, it switches to the start menu scene.
+		// After that the game is ready and a savegame can finally be loaded.
+		_canResumeFromSavegame = true;
+	}
 	return sceneInfo != 0;
 }
 
@@ -645,6 +662,36 @@ void IllusionsEngine_BBDOU::reset() {
 	_scriptResource->_blockCounters.clear();
 	_scriptResource->_properties.clear();
 	// TODO script_sub_417FF0(1, 0);
+}
+
+void IllusionsEngine_BBDOU::loadSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
+	// NOTE Just loads the savegame, doesn't activate it yet
+	const char *fileName = getSavegameFilename(_savegameSlotNum);
+	_loadGameResult = loadgame(fileName);
+}
+
+void IllusionsEngine_BBDOU::saveSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
+	// TODO
+	// const char *fileName = getSavegameFilename(slotNum);
+	_saveGameResult = false;//savegame(fileName, _savegameDescription.c_str());
+}
+
+void IllusionsEngine_BBDOU::activateSavegame(uint32 callingThreadId) {
+	uint32 sceneId, threadId;
+	_prevSceneId = 0x10000;
+	_gameState->readState(sceneId, threadId);
+	enterScene(sceneId, callingThreadId);
+	// TODO Check if value8, valueC, value10 are needed at all
+	startAnonScriptThread(threadId, 0, 0, 0, 0);
+	_gameState->deleteReadStream();
+}
+
+void IllusionsEngine_BBDOU::resumeFromSavegame() {
+	// Resetting the game is usually done by the script, when loading from the ScummVM menu or
+	// command line this has to be done manually.
+	_specialCode->resetBeforeResumeSavegame();
+	dumpActiveScenes(0x00010003, 0);
+	activateSavegame(0);
 }
 
 } // End of namespace Illusions

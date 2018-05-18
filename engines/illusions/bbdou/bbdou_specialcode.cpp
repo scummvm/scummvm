@@ -214,6 +214,19 @@ void BbdouSpecialCode::run(uint32 specialCodeId, OpCall &opCall) {
 	}
 }
 
+void BbdouSpecialCode::resetBeforeResumeSavegame() {
+	if (_vm->getCurrentScene() == 0x00010032)
+		_inventory->close();
+	_vm->_threads->terminateThreads(0);
+	_vm->reset();
+	_vm->_input->activateButton(0xFFFF);
+	// TODO _vm->stopMusic();
+	// TODO _vm->_gameStates->clear();
+	_cursor->reset(0x0004001A);
+	setCursorControlRoutine(0x0004001A, 0);
+	_cursor->enable(0x0004001A);
+}
+
 // Special codes
 
 void BbdouSpecialCode::spcInitCursor(OpCall &opCall) {
