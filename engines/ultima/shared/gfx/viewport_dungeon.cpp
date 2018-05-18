@@ -92,7 +92,7 @@ void ViewportDungeon::draw() {
 			currDelta -= delta;
 			Point pt = currentPos + currDelta;
 			
-			if (!isDoor || distance > 1) {
+			if (!isDoor || index > 1) {
 				map->getTileAt(pt + leftDelta, &leftTile);
 				map->getTileAt(pt + rightDelta, &rightTile);
 				leftFlag = leftTile.isSolid();

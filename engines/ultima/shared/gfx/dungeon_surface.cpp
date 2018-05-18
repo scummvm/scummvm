@@ -54,8 +54,11 @@ void DungeonSurface::drawDoorway(uint distance) {
 
 	if (distance < 5) {
 		drawWall(distance);
-		frameRect(Rect(ARRAY_X[distance + 1] + 16, ARRAY_Y[distance + 1] + 8,
-			303 - ARRAY_X[distance + 1], 152 - ARRAY_Y[distance] - offsetY), color);
+		drawLine(ARRAY_X[distance + 1] + 16, 151 - ARRAY_Y[distance] - offsetY,
+			ARRAY_X[distance + 1] + 16, ARRAY_Y[distance + 1] + 8, _edgeColor);
+		drawLineTo(303 - ARRAY_X[distance + 1], ARRAY_Y[distance + 1] + 8, _edgeColor);
+		drawLineTo(303 - ARRAY_X[distance + 1], 151 - ARRAY_Y[distance] - offsetY, _edgeColor);
+		drawLineTo(ARRAY_X[distance + 1] + 16, 151 - ARRAY_Y[distance] - offsetY, color);
 	}
 }
 
