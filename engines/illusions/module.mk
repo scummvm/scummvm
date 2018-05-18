@@ -8,10 +8,12 @@ MODULE_OBJS := \
 	bbdou/bbdou_credits_staticdata.o \
 	bbdou/bbdou_foodctl.o \
 	bbdou/bbdou_inventory.o \
+	bbdou/bbdou_menukeys.o \
 	bbdou/bbdou_specialcode.o \
 	bbdou/bbdou_videoplayer.o \
 	bbdou/bbdou_triggerfunctions.o \
 	bbdou/illusions_bbdou.o \
+	bbdou/menusystem_bbdou.o \
 	bbdou/scriptopcodes_bbdou.o \
 	camera.o \
 	cursor.o \

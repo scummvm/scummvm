@@ -151,7 +151,11 @@ bool ScreenText::insertText(uint16 *text, uint32 fontId, WidthHeight dimensions,
 	}
 	*textPart = 0;
 
-	updateTextInfoPosition(Common::Point(160, 100));
+	if (_vm->getGameId() == kGameIdBBDOU) {
+		updateTextInfoPosition(Common::Point(320, 240));
+	} else {
+		updateTextInfoPosition(Common::Point(160, 100));
+	}
 
 	return done;
 }
