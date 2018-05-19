@@ -96,6 +96,8 @@ enum TransitionType {
 };
 
 const uint16 kMasterpieceOnly = 0xFFFF;
+const int kAutoSaveSlot = 0;
+const Common::String kAutoSaveName = "Autosave";
 
 struct MystCondition {
 	uint16 var;
@@ -247,6 +249,7 @@ public:
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	void autoSave();
 	bool hasFeature(EngineFeature f) const override;
 
 private:
@@ -258,6 +261,7 @@ private:
 
 	uint16 _curStack;
 	uint16 _curCard;
+	uint32 _lastSaveTime;
 	MystView _view;
 
 	bool _runExitScript;
