@@ -107,7 +107,7 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 	#ifdef USE_VORBIS
 		if (strFilename.hasSuffix(".ogg")) {
 			_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::YES);
-		}
+		} else
 	#endif
 	if (strFilename.hasSuffix(".wav")) {
 		int waveSize, waveRate;
