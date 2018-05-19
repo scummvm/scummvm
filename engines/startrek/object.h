@@ -40,7 +40,7 @@ struct Object {
 	uint16 animType;
 	Sprite sprite;
 	char animationString4[10];
-	uint16 scale;
+	Fixed16 scale;
 	SharedPtr<FileStream> animFile;
 	uint16 numAnimFrames;
 	uint16 animFrame;
@@ -59,12 +59,12 @@ struct Object {
 	int16 iwDestPosition;
 
 	// Fixed-point position values (16.16) used while walking.
-	FixedInt granularPosX;
-	FixedInt granularPosY;
+	Fixed32 granularPosX;
+	Fixed32 granularPosY;
 
 	// Fixed-point speed values (16.16).
-	FixedInt speedX;
-	FixedInt speedY;
+	Fixed32 speedX;
+	Fixed32 speedY;
 
 	Common::Point dest; // Position object is walking toward
 	uint16 field90;

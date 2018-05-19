@@ -246,12 +246,12 @@ public:
 
 	// Objects
 	void initObjects();
-	int loadObjectAnim(int objectIndex, const Common::String &animName, int16 x, int16 y, uint16 arg8);
+	int loadObjectAnim(int objectIndex, const Common::String &animName, int16 x, int16 y, Fixed16 scale);
 	bool objectWalkToPosition(int objectIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY);
 	void updateObjectAnimations();
 	void removeObjectFromScreen(int objectIndex);
 	void objectFunc1();
-	void drawObjectToScreen(Object *object, const Common::String &animName, int16 x, int16 y, uint16 scale, bool addSprite);
+	void drawObjectToScreen(Object *object, const Common::String &animName, int16 x, int16 y, Fixed16 scale, bool addSprite);
 	void releaseAnim(Object *object);
 	void initStandAnim(int objectIndex);
 	void updateObjectPositionWhileWalking(Object *object, int16 x, int16 y);
@@ -260,13 +260,13 @@ public:
 
 	int findObjectAt(int x, int y);
 	int findObjectAt(Common::Point p) { return findObjectAt(p.x, p.y); }
-	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, uint16 arg2);
+	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, Fixed16 scale);
 	Common::String getCrewmanAnimFilename(int objectIndex, const Common::String &basename);
 	void updateMouseBitmap();
 	void showInventoryIcons(bool showItem);
 	void hideInventoryIcons();
 	int showInventoryMenu(int x, int y, bool restoreMouse);
-	SharedPtr<Bitmap> scaleBitmap(SharedPtr<Bitmap> bitmap, uint16 scale);
+	SharedPtr<Bitmap> scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed16 scale);
 	void scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uint16 scaledWidth);
 
 	// Events
