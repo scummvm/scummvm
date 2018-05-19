@@ -35,6 +35,8 @@
 
 #include "engines/stark/visual/text.h"
 
+#include "common/system.h"
+
 namespace Stark {
 
 StaticLocationScreen::StaticLocationScreen(Gfx::Driver *gfx, Cursor *cursor,
@@ -179,7 +181,9 @@ void StaticLocationWidget::onClick() {
 	if (_soundMouseClick) {
 		_soundMouseClick->play();
 		// Ensure the click sound is played completely
-		while (_soundMouseClick->isPlaying()) {};
+		while (_soundMouseClick->isPlaying()) {
+			g_system->delayMillis(10);
+		};
 	}
 
 	if (_onClick) {
