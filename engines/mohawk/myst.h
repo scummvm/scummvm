@@ -95,10 +95,6 @@ enum TransitionType {
 	kNoTransition			= 999
 };
 
-const uint16 kMasterpieceOnly = 0xFFFF;
-const int kAutoSaveSlot = 0;
-const Common::String kAutoSaveName = "Autosave";
-
 struct MystCondition {
 	uint16 var;
 	Common::Array<uint16> values;

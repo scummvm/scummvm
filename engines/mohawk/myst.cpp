@@ -264,6 +264,8 @@ void MohawkEngine_Myst::playMovieBlocking(const Common::String &name, MystStack 
 }
 
 void MohawkEngine_Myst::playFlybyMovie(uint16 stack, uint16 card) {
+	static const uint16 kMasterpieceOnly = 0xFFFF;
+
 	// Play Flyby Entry Movie on Masterpiece Edition.
 	const char *flyby = nullptr;
 
@@ -1180,7 +1182,7 @@ Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &d
 }
 
 void MohawkEngine_Myst::autoSave() {
-	if (!_gameState->save(Mohawk::kAutoSaveSlot, Mohawk::kAutoSaveName, true))
+	if (!_gameState->save(MystGameState::kAutoSaveSlot, "Autosave", true))
 		warning("Attempt to autosave has failed.");
 }
 

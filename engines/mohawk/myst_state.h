@@ -100,6 +100,8 @@ enum DniEnding {
 
 class MystGameState {
 public:
+	static const int kAutoSaveSlot;
+
 	MystGameState(MohawkEngine_Myst*, Common::SaveFileManager*);
 	~MystGameState();
 
