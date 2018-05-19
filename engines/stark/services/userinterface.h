@@ -86,7 +86,7 @@ public:
 	void changeScreen(Screen::Name screenName);
 
 	/** Back to the previous displayed screen */
-	void backPreScreen();
+	void backPrevScreen();
 
 	/** Is the game screen currently displayed? */
 	bool isInGameScreen() const;
@@ -146,7 +146,7 @@ private:
 	DiaryIndexScreen *_diaryIndexScreen;
 	MainMenuScreen *_mainMenuScreen;
 	Screen *_currentScreen;
-	Common::Stack<Screen::Name> _preScreenNameStack;
+	Common::Stack<Screen::Name> _prevScreenNameStack;
 
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;

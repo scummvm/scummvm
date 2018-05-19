@@ -55,7 +55,7 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_interactionAttemptDenied(false),
 		_currentScreen(nullptr),
 		_gameWindowThumbnail(nullptr),
-		_preScreenNameStack() {
+		_prevScreenNameStack() {
 }
 
 UserInterface::~UserInterface() {
@@ -134,7 +134,7 @@ void UserInterface::requestFMVPlayback(const Common::String &name) {
 }
 
 void UserInterface::onFMVStopped() {
-	backPreScreen();
+	backPrevScreen();
 }
 
 void UserInterface::changeScreen(Screen::Name screenName) {
@@ -142,16 +142,16 @@ void UserInterface::changeScreen(Screen::Name screenName) {
 		return;
 	}
 
-	_preScreenNameStack.push(_currentScreen->getName());
+	_prevScreenNameStack.push(_currentScreen->getName());
 	_currentScreen->close();
 	_currentScreen = getScreenByName(screenName);
 	_currentScreen->open();
 }
 
-void UserInterface::backPreScreen() {
+void UserInterface::backPrevScreen() {
 	// No need to check the stack since at least there will be a MainMenuScreen in it
 	// and MainMenuScreen will not request to go back
-	changeScreen(_preScreenNameStack.pop());
+	changeScreen(_prevScreenNameStack.pop());
 }
 
 Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
