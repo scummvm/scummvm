@@ -89,12 +89,12 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	_mapFile = loadFile(_mapFilename + ".map");
 	_iwFile = SharedPtr<IWFile>(new IWFile(this, _mapFilename + ".iw"));
 
-	objectFunc1();
-	initObjects();
+	actorFunc1();
+	initActors();
 
 	double num = _room->getVar0c() - _room->getVar0a();
 	double den = _room->getVar06() - _room->getVar08() + 1;
-	_playerObjectScale = (int32)(num * 256 / den);
+	_playerActorScale = (int32)(num * 256 / den);
 
 	// TODO: RDF vars 1e/1f and 20/21; relates to BAN files?
 
@@ -121,11 +121,11 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 			int16 destX = _room->readRdfWord(rdfOffset + 4); // Position to walk to
 			int16 destY = _room->readRdfWord(rdfOffset + 6);
 
-			objectWalkToPosition(i, anim, srcX, srcY, destX, destY);
+			actorWalkToPosition(i, anim, srcX, srcY, destX, destY);
 		}
 
-		_kirkObject->walkingIntoRoom = 1;
-		_kirkObject->field66 = 0xff;
+		_kirkActor->walkingIntoRoom = 1;
+		_kirkActor->field66 = 0xff;
 		_awayMission.transitioningIntoRoom = 1;
 		_warpHotspotsActive = false;
 		break;
@@ -134,10 +134,10 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 		for (int i = 0; i < (_awayMission.redshirtDead ? 3 : 4); i++) {
 			Common::String animFilename = getCrewmanAnimFilename(i, "tele");
 			Common::Point warpPos = _room->getBeamInPosition(i);
-			loadObjectAnimWithRoomScaling(i, animFilename, warpPos.x, warpPos.y);
+			loadActorAnimWithRoomScaling(i, animFilename, warpPos.x, warpPos.y);
 		}
-		_kirkObject->walkingIntoRoom = 1;
-		_kirkObject->field66 = 0xff;
+		_kirkActor->walkingIntoRoom = 1;
+		_kirkActor->field66 = 0xff;
 		_awayMission.transitioningIntoRoom = 1;
 		playSoundEffectIndex(0x09);
 		_warpHotspotsActive = false;
@@ -155,7 +155,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 	if (popNextEvent(&event)) {
 		switch (event.type) {
 		case TREKEVENT_TICK:
-			updateObjectAnimations();
+			updateActorAnimations();
 			// sub_236bb();
 			updateMouseBitmap();
 			// doSomethingWithBanData1();
@@ -177,22 +177,22 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			switch (_awayMission.activeAction) {
 			case ACTION_WALK:
 				if (_awayMission.field1c == 0) {
-					_kirkObject->sprite.drawMode = 1; // Hide these objects for function call below?
-					_spockObject->sprite.drawMode = 1;
-					_mccoyObject->sprite.drawMode = 1;
-					_redshirtObject->sprite.drawMode = 1;
+					_kirkActor->sprite.drawMode = 1; // Hide these objects for function call below?
+					_spockActor->sprite.drawMode = 1;
+					_mccoyActor->sprite.drawMode = 1;
+					_redshirtActor->sprite.drawMode = 1;
 
-					// findObjectClickedOn();
+					// findActorClickedOn();
 					// ...
 
-					_kirkObject->sprite.drawMode = 0;
-					_spockObject->sprite.drawMode = 0;
-					_mccoyObject->sprite.drawMode = 0;
-					_redshirtObject->sprite.drawMode = 0;
+					_kirkActor->sprite.drawMode = 0;
+					_spockActor->sprite.drawMode = 0;
+					_mccoyActor->sprite.drawMode = 0;
+					_redshirtActor->sprite.drawMode = 0;
 
 					Common::String animFilename = getCrewmanAnimFilename(0, "walk");
 					Common::Point mousePos = _gfx->getMousePos();
-					objectWalkToPosition(0, animFilename, _kirkObject->pos.x, _kirkObject->pos.y, mousePos.x, mousePos.y);
+					actorWalkToPosition(0, animFilename, _kirkActor->pos.x, _kirkActor->pos.y, mousePos.x, mousePos.y);
 				}
 				break;
 
@@ -276,21 +276,21 @@ void StarTrekEngine::handleAwayMissionEvents() {
 void StarTrekEngine::unloadRoom() {
 	_gfx->fadeoutScreen();
 	// sub_2394b(); // TODO
-	objectFunc1();
+	actorFunc1();
 	_room.reset();
 	_mapFile.reset();
 }
 
 /**
- * Similar to loadObjectAnim, but scale is determined by the y-position in the room. The
+ * Similar to loadActorAnim, but scale is determined by the y-position in the room. The
  * further up (away) the object is, the smaller it is.
  */
-int StarTrekEngine::loadObjectAnimWithRoomScaling(int objectIndex, const Common::String &animName, int16 x, int16 y) {
-	uint16 scale = getObjectScaleAtPosition(y);
-	return loadObjectAnim(objectIndex, animName, x, y, scale);
+int StarTrekEngine::loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y) {
+	uint16 scale = getActorScaleAtPosition(y);
+	return loadActorAnim(actorIndex, animName, x, y, scale);
 }
 
-uint16 StarTrekEngine::getObjectScaleAtPosition(int16 y) {
+uint16 StarTrekEngine::getActorScaleAtPosition(int16 y) {
 	int16 var06 = _room->getVar06();
 	int16 var08 = _room->getVar08();
 	int16 var0a = _room->getVar0a();
@@ -300,7 +300,7 @@ uint16 StarTrekEngine::getObjectScaleAtPosition(int16 y) {
 	if (var08 > y)
 		y = var08;
 
-	return ((_playerObjectScale * (y - var08)) >> 8) + var0a;
+	return ((_playerActorScale * (y - var08)) >> 8) + var0a;
 }
 
 SharedPtr<Room> StarTrekEngine::getRoom() {
@@ -316,12 +316,12 @@ void StarTrekEngine::addCommand(const Command &command) {
 void StarTrekEngine::handleAwayMissionCommand() {
 	Command command = _commandQueue.pop();
 
-	if ((command.type == COMMAND_FINISHED_BEAMING_IN || command.type == FINISHED_ENTERING_ROOM) && command.b1 == 0xff) {
+	if ((command.type == COMMAND_FINISHED_BEAMING_IN || command.type == COMMAND_FINISHED_ENTERING_ROOM) && command.b1 == 0xff) {
 		_awayMission.transitioningIntoRoom = 0;
 		_warpHotspotsActive = true;
 		return;
 	}
-	else if (command.type == FINISHED_ENTERING_ROOM && command.b1 >= 0xe0) { // TODO
+	else if (command.type == COMMAND_FINISHED_ENTERING_ROOM && command.b1 >= 0xe0) { // TODO
 		return;
 	}
 

@@ -58,8 +58,7 @@ class StarTrekEngine;
 
 typedef String (StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
 
-const int MAX_OBJECTS = 32;
-const int MAX_OBJECTS_2 = 64; // TODO: better name; indices 32 and above used for something
+
 
 const int MAX_MENUBUTTONS = 32;
 const int TEXTBOX_WIDTH = 26;
@@ -106,6 +105,7 @@ struct Menu {
 };
 
 // Special events that can be returned by handleMenuEvents.
+// (Normally it returns the "retval" of a pressed button, which is positive.)
 enum MenuEvent {
 	MENUEVENT_RCLICK_OFFBUTTON = -4,
 	MENUEVENT_ENABLEINPUT,          // Makes buttons selectable (occurs after a delay)
@@ -165,7 +165,7 @@ enum Commands {
 	COMMAND_TOUCHED_WARP = 6,
 	COMMAND_7 = 7, // Doors? (Or just hotspots activated by Kirk moving there?)
 	COMMAND_FINISHED_BEAMING_IN = 10,
-	FINISHED_ENTERING_ROOM = 12
+	COMMAND_FINISHED_ENTERING_ROOM = 12
 };
 
 struct Command {
@@ -186,15 +186,6 @@ enum Acton {
 	ACTION_LOOK = 4,
 	ACTION_TALK = 5,
 	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
-};
-
-// First 4 objects are reserved for crewmen
-enum Objects {
-	OBJECT_KIRK = 0,
-	OBJECT_SPOCK = 1,
-	OBJECT_MCCOY = 2,
-	OBJECT_REDSHIRT = 3,
-	OBJECT_INVENTORY_ICON = 31
 };
 
 
@@ -219,8 +210,8 @@ private:
 	void initAwayCrewPositions(int warpEntryIndex);
 	void handleAwayMissionEvents();
 	void unloadRoom();
-	int loadObjectAnimWithRoomScaling(int objectIndex, const Common::String &animName, int16 x, int16 y);
-	uint16 getObjectScaleAtPosition(int16 y);
+	int loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y);
+	uint16 getActorScaleAtPosition(int16 y);
 	void addCommand(const Command &command);
 	void handleAwayMissionCommand();
 
@@ -244,24 +235,24 @@ public:
 	void playSpeech(const Common::String &filename);
 	void stopPlayingSpeech();
 
-	// Objects
-	void initObjects();
-	int loadObjectAnim(int objectIndex, const Common::String &animName, int16 x, int16 y, Fixed16 scale);
-	bool objectWalkToPosition(int objectIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY);
-	void updateObjectAnimations();
-	void removeObjectFromScreen(int objectIndex);
-	void objectFunc1();
-	void drawObjectToScreen(Object *object, const Common::String &animName, int16 x, int16 y, Fixed16 scale, bool addSprite);
-	void releaseAnim(Object *object);
-	void initStandAnim(int objectIndex);
-	void updateObjectPositionWhileWalking(Object *object, int16 x, int16 y);
-	void chooseObjectDirectionForWalking(Object *object, int16 srcX, int16 srcY, int16 destX, int16 destY);
+	// Actors
+	void initActors();
+	int loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed16 scale);
+	bool actorWalkToPosition(int actorIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY);
+	void updateActorAnimations();
+	void removeActorFromScreen(int actorIndex);
+	void actorFunc1();
+	void drawActorToScreen(Actor *actor, const Common::String &animName, int16 x, int16 y, Fixed16 scale, bool addSprite);
+	void releaseAnim(Actor *actor);
+	void initStandAnim(int actorIndex);
+	void updateActorPositionWhileWalking(Actor *actor, int16 x, int16 y);
+	void chooseActorDirectionForWalking(Actor *actor, int16 srcX, int16 srcY, int16 destX, int16 destY);
 	bool directPathExists(int16 srcX, int16 srcY, int16 destX, int16 destY);
 
 	int findObjectAt(int x, int y);
 	int findObjectAt(Common::Point p) { return findObjectAt(p.x, p.y); }
 	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, Fixed16 scale);
-	Common::String getCrewmanAnimFilename(int objectIndex, const Common::String &basename);
+	Common::String getCrewmanAnimFilename(int actorIndex, const Common::String &basename);
 	void updateMouseBitmap();
 	void showInventoryIcons(bool showItem);
 	void hideInventoryIcons();
@@ -382,7 +373,7 @@ public:
 	Common::String _screenName; // _screenName = _missionName + _roomIndex
 	Common::String _mapFilename; // Similar to _screenName, but used for .map files?
 	SharedPtr<FileStream> _mapFile;
-	int32 _playerObjectScale;
+	int32 _playerActorScale;
 
 	// Queue of "commands" (ie. next frame, clicked on object) for away mission or bridge
 	Common::Queue<Command> _commandQueue;
@@ -395,14 +386,14 @@ public:
 
 	Item _itemList[NUM_ITEMS];
 
-	Object _objectList[MAX_OBJECTS];
-	Object * const _kirkObject;
-	Object * const _spockObject;
-	Object * const _mccoyObject;
-	Object * const _redshirtObject;
+	Actor _actorList[NUM_ACTORS];
+	Actor * const _kirkActor;
+	Actor * const _spockActor;
+	Actor * const _mccoyActor;
+	Actor * const _redshirtActor;
 
-	SharedPtr<FileStream> _objectBanFiles[MAX_OBJECTS / 2];
-	uint16 _objectBanVar2[MAX_OBJECTS / 2]; // TODO: initialize?
+	SharedPtr<FileStream> _actorBanFiles[NUM_ACTORS / 2];
+	uint16 _actorBanVar2[NUM_ACTORS / 2]; // TODO: initialize?
 
 	Sprite _inventoryIconSprite;
 	Sprite _itemIconSprite;

@@ -44,10 +44,10 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	Engine(syst),
 	_gameDescription(gamedesc),
 	_randomSource("Star Trek"),
-	_kirkObject(&_objectList[0]),
-	_spockObject(&_objectList[1]),
-	_mccoyObject(&_objectList[2]),
-	_redshirtObject(&_objectList[3]) {
+	_kirkActor(&_actorList[0]),
+	_spockActor(&_actorList[1]),
+	_mccoyActor(&_actorList[2]),
+	_redshirtActor(&_actorList[3]) {
 
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics");
@@ -79,7 +79,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_missionToLoad = "DEMON";
 	_roomIndexToLoad = 0;
 
-	for (int i = 0; i < NUM_ITEMS; i++)
+	for (int i = 0; i < NUM_OBJECTS; i++)
 		_itemList[i] = g_itemList[i];
 }
 
@@ -202,8 +202,8 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 
 	_sound->stopAllVocSounds();
 	_gfx->fadeoutScreen();
-	objectFunc1();
-	initObjects();
+	actorFunc1();
+	initActors();
 
 	SharedPtr<Bitmap> bgImage = _gfx->loadBitmap("transprt");
 	_gfx->setBackgroundImage(bgImage);
@@ -216,25 +216,25 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 		Common::String filename = getCrewmanAnimFilename(i, name);
 		int x = crewmanTransportPositions[i][0];
 		int y = crewmanTransportPositions[i][1];
-		loadObjectAnim(i, filename, x, y, 256);
-		_objectList[i].animationString[0] = '\0';
+		loadActorAnim(i, filename, x, y, 256);
+		_actorList[i].animationString[0] = '\0';
 	}
 
 	if (_missionToLoad.equalsIgnoreCase("feather") && name[4] == 'b') {
-		loadObjectAnim(9, "qteleb", 0x61, 0x79, 0x100);
+		loadActorAnim(9, "qteleb", 0x61, 0x79, 0x100);
 	}
 	else if (_missionToLoad.equalsIgnoreCase("trial")) {
 		if (name[4] == 'd') {
-			loadObjectAnim(9, "qteled", 0x61, 0x79, 0x100);
+			loadActorAnim(9, "qteled", 0x61, 0x79, 0x100);
 		}
 		/* TODO
 		else if (word_51156 >= 3) {
-			loadObjectAnim(9, "qteleb", 0x61, 0x79, 0x100);
+			loadActorAnim(9, "qteleb", 0x61, 0x79, 0x100);
 		}
 		*/
 	}
 
-	loadObjectAnim(8, "transc", 0, 0, 0x100);
+	loadActorAnim(8, "transc", 0, 0, 0x100);
 
 	// TODO: redraw mouse and sprite_52c4e?
 
@@ -248,13 +248,13 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	else
 		playSoundEffectIndex(0x09);
 
-	while (_objectList[0].field62 == 0) {
+	while (_actorList[0].field62 == 0) {
 		TrekEvent event;
 		if (popNextEvent(&event)) {
 			if (event.type == TREKEVENT_TICK) {
 				// TODO: redraw sprite_52c4e?
 				_frameIndex++;
-				updateObjectAnimations();
+				updateActorAnimations();
 				_gfx->drawAllSprites();
 			}
 		}
@@ -264,8 +264,8 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 
 	_gfx->drawAllSprites();
 	_gfx->fadeoutScreen();
-	objectFunc1();
-	initObjects();
+	actorFunc1();
+	initActors();
 }
 
 void StarTrekEngine::playSoundEffectIndex(int index) {
@@ -328,215 +328,215 @@ void StarTrekEngine::stopPlayingSpeech() {
 	_sound->stopPlayingSpeech();
 }
 
-void StarTrekEngine::initObjects() {
-	for (int i = 0; i < MAX_OBJECTS; i++) {
-		_objectList[i] = Object();
+void StarTrekEngine::initActors() {
+	for (int i = 0; i < NUM_ACTORS; i++) {
+		_actorList[i] = Actor();
 	}
-	for (int i = 0; i < MAX_OBJECTS / 2; i++)
-		_objectBanFiles[i].reset();
+	for (int i = 0; i < NUM_ACTORS / 2; i++)
+		_actorBanFiles[i].reset();
 
-	strcpy(_kirkObject->animationString, "kstnd");
-	strcpy(_spockObject->animationString, "sstnd");
-	strcpy(_mccoyObject->animationString, "mstnd");
-	strcpy(_redshirtObject->animationString, "rstnd");
+	strcpy(_kirkActor->animationString, "kstnd");
+	strcpy(_spockActor->animationString, "sstnd");
+	strcpy(_mccoyActor->animationString, "mstnd");
+	strcpy(_redshirtActor->animationString, "rstnd");
 }
 
 /**
- * Set an object's animation, position, and scale.
+ * Set an actor's animation, position, and scale.
  */
-int StarTrekEngine::loadObjectAnim(int objectIndex, const Common::String &animName, int16 x, int16 y, Fixed16 scale) {
-	debugC(6, kDebugGraphics, "Load animation '%s' on object %d", animName.c_str(), objectIndex);
+int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed16 scale) {
+	debugC(6, kDebugGraphics, "Load animation '%s' on actor %d", animName.c_str(), actorIndex);
 
-	Object *object;
+	Actor *actor;
 
-	if (objectIndex == -1) {
+	if (actorIndex == -1) {
 		// TODO
 	}
 	else
-		object = &_objectList[objectIndex];
+		actor = &_actorList[actorIndex];
 
-	if (object->spriteDrawn) {
-		releaseAnim(object);
-		drawObjectToScreen(object, animName, x, y, scale, false);
+	if (actor->spriteDrawn) {
+		releaseAnim(actor);
+		drawActorToScreen(actor, animName, x, y, scale, false);
 	}
 	else {
-		drawObjectToScreen(object, animName, x, y, scale, true);
+		drawActorToScreen(actor, animName, x, y, scale, true);
 	}
 
-	object->walkingIntoRoom = 0;
-	object->field66 = 0;
+	actor->walkingIntoRoom = 0;
+	actor->field66 = 0;
 
-	return objectIndex;
+	return actorIndex;
 }
 
 /**
- * Tries to make an object walk to a position.
+ * Tries to make an actor walk to a position.
  * Returns true if successful in initiating the walk.
  */
-bool StarTrekEngine::objectWalkToPosition(int objectIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY) {
-	debugC(6, "Obj %d: walk from (%d,%d) to (%d,%d)", objectIndex, srcX, srcY, destX, destY);
+bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY) {
+	debugC(6, "Obj %d: walk from (%d,%d) to (%d,%d)", actorIndex, srcX, srcY, destX, destY);
 
-	Object *object = &_objectList[objectIndex];
+	Actor *actor = &_actorList[actorIndex];
 
-	object->walkingIntoRoom = 0;
+	actor->walkingIntoRoom = 0;
 	if (isPositionSolid(destX, destY))
 		return false;
 
-	if (object->spriteDrawn)
-		releaseAnim(object);
+	if (actor->spriteDrawn)
+		releaseAnim(actor);
 	else
-		_gfx->addSprite(&object->sprite);
+		_gfx->addSprite(&actor->sprite);
 
-	object->spriteDrawn = true;
-	object->animType = 1;
-	object->frameToStartNextAnim = _frameIndex + 1;
-	strcpy(object->animationString2, animFile.c_str());
+	actor->spriteDrawn = true;
+	actor->animType = 1;
+	actor->frameToStartNextAnim = _frameIndex + 1;
+	strcpy(actor->animationString2, animFile.c_str());
 
-	object->dest.x = destX;
-	object->dest.y = destY;
-	object->field92 = 0;
-	object->walkingIntoRoom = 0;
+	actor->dest.x = destX;
+	actor->dest.y = destY;
+	actor->field92 = 0;
+	actor->walkingIntoRoom = 0;
 
-	object->iwDestPosition = -1;
-	object->iwSrcPosition = -1;
+	actor->iwDestPosition = -1;
+	actor->iwSrcPosition = -1;
 
 	if (directPathExists(srcX, srcY, destX, destY)) {
-		chooseObjectDirectionForWalking(object, srcX, srcY, destX, destY);
-		updateObjectPositionWhileWalking(object, (object->granularPosX + 0x8000) >> 16, (object->granularPosY + 0x8000) >> 16);
+		chooseActorDirectionForWalking(actor, srcX, srcY, destX, destY);
+		updateActorPositionWhileWalking(actor, (actor->granularPosX + 0x8000) >> 16, (actor->granularPosY + 0x8000) >> 16);
 		return true;
 	}
 	else {
-		object->iwSrcPosition = _iwFile->getClosestKeyPosition(srcX, srcY);
-		object->iwDestPosition = _iwFile->getClosestKeyPosition(destX, destY);
+		actor->iwSrcPosition = _iwFile->getClosestKeyPosition(srcX, srcY);
+		actor->iwDestPosition = _iwFile->getClosestKeyPosition(destX, destY);
 
-		if (object->iwSrcPosition == -1 || object->iwDestPosition == -1) {
+		if (actor->iwSrcPosition == -1 || actor->iwDestPosition == -1) {
 			// No path exists; face south by default.
-			strcat(object->animationString2, "S");
-			object->direction = 'S';
+			strcat(actor->animationString2, "S");
+			actor->direction = 'S';
 
-			updateObjectPositionWhileWalking(object, srcX, srcY);
-			initStandAnim(objectIndex);
+			updateActorPositionWhileWalking(actor, srcX, srcY);
+			initStandAnim(actorIndex);
 
 			return false;
 		}
 		else {
-			Common::Point iwSrc = _iwFile->_keyPositions[object->iwSrcPosition];
-			chooseObjectDirectionForWalking(object, srcX, srcY, iwSrc.x, iwSrc.y);
-			updateObjectPositionWhileWalking(object, (object->granularPosX + 0x8000) >> 16, (object->granularPosY + 0x8000) >> 16);
+			Common::Point iwSrc = _iwFile->_keyPositions[actor->iwSrcPosition];
+			chooseActorDirectionForWalking(actor, srcX, srcY, iwSrc.x, iwSrc.y);
+			updateActorPositionWhileWalking(actor, (actor->granularPosX + 0x8000) >> 16, (actor->granularPosY + 0x8000) >> 16);
 			return true;
 		}
 	}
 }
 
-void StarTrekEngine::updateObjectAnimations() {
-	for (int i = 0; i < MAX_OBJECTS; i++) {
-		Object *object = &_objectList[i];
-		if (!object->spriteDrawn)
+void StarTrekEngine::updateActorAnimations() {
+	for (int i = 0; i < NUM_ACTORS; i++) {
+		Actor *actor = &_actorList[i];
+		if (!actor->spriteDrawn)
 			continue;
 
-		switch (object->animType) {
+		switch (actor->animType) {
 		case 0: // Not walking?
 		case 2:
-			if (_frameIndex >= object->frameToStartNextAnim) {
+			if (_frameIndex >= actor->frameToStartNextAnim) {
 				int nextAnimIndex = getRandomWord() & 3;
-				object->animFile->seek(18 + nextAnimIndex + object->animFrame * 22, SEEK_SET);
-				byte nextAnimFrame = object->animFile->readByte();
+				actor->animFile->seek(18 + nextAnimIndex + actor->animFrame * 22, SEEK_SET);
+				byte nextAnimFrame = actor->animFile->readByte();
 
-				if (object->animFrame != nextAnimFrame) {
-					if (nextAnimFrame == object->numAnimFrames - 1) {
-						object->field62++;
-						if (object->walkingIntoRoom != 0) {
-							addCommand(Command(COMMAND_FINISHED_BEAMING_IN, object->field66, 0, 0));
+				if (actor->animFrame != nextAnimFrame) {
+					if (nextAnimFrame == actor->numAnimFrames - 1) {
+						actor->field62++;
+						if (actor->walkingIntoRoom != 0) {
+							addCommand(Command(COMMAND_FINISHED_BEAMING_IN, actor->field66, 0, 0));
 						}
 					}
 				}
 
-				object->animFrame = nextAnimFrame;
-				if (object->animFrame >= object->numAnimFrames) {
-					if (object->animationString[0] == '\0')
-						removeObjectFromScreen(i);
+				actor->animFrame = nextAnimFrame;
+				if (actor->animFrame >= actor->numAnimFrames) {
+					if (actor->animationString[0] == '\0')
+						removeActorFromScreen(i);
 					else
 						initStandAnim(i);
 				}
 				else {
-					Sprite *sprite = &object->sprite;
+					Sprite *sprite = &actor->sprite;
 
-					object->animFile->seek(object->animFrame * 22, SEEK_SET);
+					actor->animFile->seek(actor->animFrame * 22, SEEK_SET);
 					char animFrameFilename[16];
-					object->animFile->read(animFrameFilename, 16);
-					sprite->setBitmap(loadAnimationFrame(animFrameFilename, object->scale));
+					actor->animFile->read(animFrameFilename, 16);
+					sprite->setBitmap(loadAnimationFrame(animFrameFilename, actor->scale));
 
-					memset(object->animationString4, 0, 10);
-					strncpy(object->animationString4, animFrameFilename, 9);
+					memset(actor->animationString4, 0, 10);
+					strncpy(actor->animationString4, animFrameFilename, 9);
 
-					object->animFile->seek(10 + object->animFrame * 22, SEEK_SET);
-					uint16 xOffset = object->animFile->readUint16();
-					uint16 yOffset = object->animFile->readUint16();
-					uint16 basePriority = object->animFile->readUint16();
-					uint16 frames = object->animFile->readUint16();
+					actor->animFile->seek(10 + actor->animFrame * 22, SEEK_SET);
+					uint16 xOffset = actor->animFile->readUint16();
+					uint16 yOffset = actor->animFile->readUint16();
+					uint16 basePriority = actor->animFile->readUint16();
+					uint16 frames = actor->animFile->readUint16();
 
-					sprite->pos.x = xOffset + object->pos.x;
-					sprite->pos.y = yOffset + object->pos.y;
-					sprite->drawPriority = _gfx->getPriValue(0, yOffset + object->pos.y) + basePriority;
+					sprite->pos.x = xOffset + actor->pos.x;
+					sprite->pos.y = yOffset + actor->pos.y;
+					sprite->drawPriority = _gfx->getPriValue(0, yOffset + actor->pos.y) + basePriority;
 					sprite->bitmapChanged = true;
 
-					object->frameToStartNextAnim = frames + _frameIndex;
+					actor->frameToStartNextAnim = frames + _frameIndex;
 				}
 			}
 			break;
 		case 1: // Walking
-			if (_frameIndex < object->frameToStartNextAnim)
+			if (_frameIndex < actor->frameToStartNextAnim)
 				break;
 			if (i == 0) // Kirk only
-				checkTouchedLoadingZone(object->pos.x, object->pos.y);
-			if (object->field90 != 0) {
-				Sprite *sprite = &object->sprite;
+				checkTouchedLoadingZone(actor->pos.x, actor->pos.y);
+			if (actor->field90 != 0) {
+				Sprite *sprite = &actor->sprite;
 				int loops;
-				if (getObjectScaleAtPosition((object->granularPosY + 0x8000) >> 16) < 0xa0)
+				if (getActorScaleAtPosition((actor->granularPosY + 0x8000) >> 16) < 0xa0)
 					loops = 1;
 				else
 					loops = 2;
 				for (int k = 0; k < loops; k++) {
-					if (object->field90 == 0)
+					if (actor->field90 == 0)
 						break;
-					object->field90--;
-					uint32 newX = object->granularPosX + object->speedX;
-					uint32 newY = object->granularPosY + object->speedY;
-					if ((object->field90 & 3) == 0) {
+					actor->field90--;
+					uint32 newX = actor->granularPosX + actor->speedX;
+					uint32 newY = actor->granularPosY + actor->speedY;
+					if ((actor->field90 & 3) == 0) {
 						sprite->bitmap.reset();
-						updateObjectPositionWhileWalking(object, (newX + 0x8000) >> 16, (newY + 0x8000) >> 16);
-						object->field92++;
+						updateActorPositionWhileWalking(actor, (newX + 0x8000) >> 16, (newY + 0x8000) >> 16);
+						actor->field92++;
 					}
 
-					object->granularPosX = newX;
-					object->granularPosY = newY;
-					object->frameToStartNextAnim = _frameIndex;
+					actor->granularPosX = newX;
+					actor->granularPosY = newY;
+					actor->frameToStartNextAnim = _frameIndex;
 				}
 			}
-			else { // object->field90 == 0
-				if (object->iwSrcPosition == -1) {
-					if (object->walkingIntoRoom != 0) {
-						object->walkingIntoRoom = 0;
-						addCommand(Command(FINISHED_ENTERING_ROOM, object->field66 & 0xff, 0, 0));
+			else { // actor->field90 == 0
+				if (actor->iwSrcPosition == -1) {
+					if (actor->walkingIntoRoom != 0) {
+						actor->walkingIntoRoom = 0;
+						addCommand(Command(COMMAND_FINISHED_ENTERING_ROOM, actor->field66 & 0xff, 0, 0));
 					}
 
-					object->sprite.bitmap.reset();
-					updateObjectPositionWhileWalking(object, (object->granularPosX + 0x8000) >> 16, (object->granularPosY + 0x8000) >> 16);
+					actor->sprite.bitmap.reset();
+					updateActorPositionWhileWalking(actor, (actor->granularPosX + 0x8000) >> 16, (actor->granularPosY + 0x8000) >> 16);
 					initStandAnim(i);
 				}
-				else { // object->iwSrcPosition != -1
-					if (object->iwSrcPosition == object->iwDestPosition) {
-						object->animationString2[strlen(object->animationString2) - 1] = '\0';
-						object->iwDestPosition = -1;
-						object->iwSrcPosition = -1;
-						chooseObjectDirectionForWalking(object, object->pos.x, object->pos.y, object->dest.x, object->dest.y);
+				else { // actor->iwSrcPosition != -1
+					if (actor->iwSrcPosition == actor->iwDestPosition) {
+						actor->animationString2[strlen(actor->animationString2) - 1] = '\0';
+						actor->iwDestPosition = -1;
+						actor->iwSrcPosition = -1;
+						chooseActorDirectionForWalking(actor, actor->pos.x, actor->pos.y, actor->dest.x, actor->dest.y);
 					}
 					else {
-						int index = _iwFile->_iwEntries[object->iwSrcPosition][object->iwDestPosition];
-						object->iwSrcPosition = index;
-						Common::Point dest = _iwFile->_keyPositions[object->iwSrcPosition];
-						object->animationString2[strlen(object->animationString2) - 1] = '\0';
-						chooseObjectDirectionForWalking(object, object->pos.x, object->pos.y, dest.x, dest.y);
+						int index = _iwFile->_iwEntries[actor->iwSrcPosition][actor->iwDestPosition];
+						actor->iwSrcPosition = index;
+						Common::Point dest = _iwFile->_keyPositions[actor->iwSrcPosition];
+						actor->animationString2[strlen(actor->animationString2) - 1] = '\0';
+						chooseActorDirectionForWalking(actor, actor->pos.x, actor->pos.y, dest.x, dest.y);
 					}
 				}
 			}
@@ -548,154 +548,154 @@ void StarTrekEngine::updateObjectAnimations() {
 	}
 }
 
-void StarTrekEngine::removeObjectFromScreen(int objectIndex) {
-	Object *object = &_objectList[objectIndex];
+void StarTrekEngine::removeActorFromScreen(int actorIndex) {
+	Actor *actor = &_actorList[actorIndex];
 
-	if (object->spriteDrawn != 1)
+	if (actor->spriteDrawn != 1)
 		return;
 
-	debugC(6, kDebugGraphics, "Stop drawing object %d", objectIndex);
+	debugC(6, kDebugGraphics, "Stop drawing actor %d", actorIndex);
 
-	Sprite *sprite = &object->sprite;
+	Sprite *sprite = &actor->sprite;
 	sprite->field16 = true;
 	sprite->bitmapChanged = true;
 	_gfx->drawAllSprites();
 	_gfx->delSprite(sprite);
-	releaseAnim(object);
+	releaseAnim(actor);
 }
 
-void StarTrekEngine::objectFunc1() {
-	for (int i = 0; i < MAX_OBJECTS; i++) {
-		if (_objectList[i].spriteDrawn == 1) {
-			removeObjectFromScreen(i);
+void StarTrekEngine::actorFunc1() {
+	for (int i = 0; i < NUM_ACTORS; i++) {
+		if (_actorList[i].spriteDrawn == 1) {
+			removeActorFromScreen(i);
 		}
 	}
 
-	for (int i = 0; i < MAX_OBJECTS / 2; i++) {
-		_objectBanFiles[i].reset();
+	for (int i = 0; i < NUM_ACTORS / 2; i++) {
+		_actorBanFiles[i].reset();
 	}
 }
 
-void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_animName, int16 x, int16 y, Fixed16 scale, bool addSprite) {
+void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_animName, int16 x, int16 y, Fixed16 scale, bool addSprite) {
 	Common::String animFilename = _animName;
 	if (_animName.hasPrefixIgnoreCase("stnd") /* && word_45d20 == -1 */) // TODO
 		animFilename += 'j';
-	memcpy(object->animationString3, _animName.c_str(), sizeof(object->animationString3));
+	memcpy(actor->animationString3, _animName.c_str(), sizeof(actor->animationString3));
 
-	object->animType = 2;
-	object->animFile = loadFile(animFilename + ".anm");
-	object->numAnimFrames = object->animFile->size() / 22;
-	object->animFrame = 0;
-	object->pos.x = x;
-	object->pos.y = y;
-	object->field62 = 0;
-	object->scale = scale;
+	actor->animType = 2;
+	actor->animFile = loadFile(animFilename + ".anm");
+	actor->numAnimFrames = actor->animFile->size() / 22;
+	actor->animFrame = 0;
+	actor->pos.x = x;
+	actor->pos.y = y;
+	actor->field62 = 0;
+	actor->scale = scale;
 
-	object->animFile->seek(16, SEEK_SET);
-	object->frameToStartNextAnim = object->animFile->readUint16() + _frameIndex;
+	actor->animFile->seek(16, SEEK_SET);
+	actor->frameToStartNextAnim = actor->animFile->readUint16() + _frameIndex;
 
 	char firstFrameFilename[10];
-	object->animFile->seek(0, SEEK_SET);
-	object->animFile->read(firstFrameFilename, 10);
+	actor->animFile->seek(0, SEEK_SET);
+	actor->animFile->read(firstFrameFilename, 10);
 
-	Sprite *sprite = &object->sprite;
+	Sprite *sprite = &actor->sprite;
 	if (addSprite)
 		_gfx->addSprite(sprite);
 
 	sprite->setBitmap(loadAnimationFrame(firstFrameFilename, scale));
-	memset(object->animationString4, 0, sizeof(char) * 10);
-	strncpy(object->animationString4, firstFrameFilename, sizeof(char) * 9);
+	memset(actor->animationString4, 0, sizeof(char) * 10);
+	strncpy(actor->animationString4, firstFrameFilename, sizeof(char) * 9);
 
-	object->scale = scale;
+	actor->scale = scale;
 
-	object->animFile->seek(10, SEEK_SET);
-	uint16 xOffset = object->animFile->readUint16();
-	uint16 yOffset = object->animFile->readUint16();
-	uint16 basePriority = object->animFile->readUint16();
+	actor->animFile->seek(10, SEEK_SET);
+	uint16 xOffset = actor->animFile->readUint16();
+	uint16 yOffset = actor->animFile->readUint16();
+	uint16 basePriority = actor->animFile->readUint16();
 
-	sprite->pos.x = xOffset + object->pos.x;
-	sprite->pos.y = yOffset + object->pos.y;
-	sprite->drawPriority = _gfx->getPriValue(0, yOffset + object->pos.y) + basePriority;
+	sprite->pos.x = xOffset + actor->pos.x;
+	sprite->pos.y = yOffset + actor->pos.y;
+	sprite->drawPriority = _gfx->getPriValue(0, yOffset + actor->pos.y) + basePriority;
 	sprite->bitmapChanged = true;
 
-	object->spriteDrawn = 1;
+	actor->spriteDrawn = 1;
 }
 
-void StarTrekEngine::releaseAnim(Object *object) {
-	switch (object->animType) {
+void StarTrekEngine::releaseAnim(Actor *actor) {
+	switch (actor->animType) {
 	case 0:
 	case 2:
-		object->sprite.bitmap.reset();
-		object->animFile.reset();
+		actor->sprite.bitmap.reset();
+		actor->animFile.reset();
 		break;
 	case 1:
-		object->sprite.bitmap.reset();
+		actor->sprite.bitmap.reset();
 		break;
 	default:
 		error("Invalid anim type");
 		break;
 	}
 
-	object->spriteDrawn = 0;
+	actor->spriteDrawn = 0;
 }
 
-void StarTrekEngine::initStandAnim(int objectIndex) {
-	Object *object = &_objectList[objectIndex];
+void StarTrekEngine::initStandAnim(int actorIndex) {
+	Actor *actor = &_actorList[actorIndex];
 
-	if (!object->spriteDrawn)
+	if (!actor->spriteDrawn)
 		error("initStandAnim: dead anim");
 
 	////////////////////
 	// sub_239d2
 	const char *directions = "nsew";
 
-	if (objectIndex >= 0 && objectIndex <= 3) {
-		int8 dir = _awayMission.field25[objectIndex];
+	if (actorIndex >= 0 && actorIndex <= 3) {
+		int8 dir = _awayMission.field25[actorIndex];
 		if (dir != -1) {
-			object->direction = directions[dir];
-			_awayMission.field25[objectIndex] = -1;
+			actor->direction = directions[dir];
+			_awayMission.field25[actorIndex] = -1;
 		}
 	}
 	// end of sub_239d2
 	////////////////////
 
 	Common::String animName;
-	if (object->direction != 0)
-		animName = Common::String(object->animationString) + (char)object->direction;
+	if (actor->direction != 0)
+		animName = Common::String(actor->animationString) + (char)actor->direction;
 	else // Default to facing south
-		animName = Common::String(object->animationString) + 's';
+		animName = Common::String(actor->animationString) + 's';
 
-	uint16 scale = getObjectScaleAtPosition(object->pos.y);
-	loadObjectAnim(objectIndex, animName, object->pos.x, object->pos.y, scale);
-	object->animType = 0;
+	uint16 scale = getActorScaleAtPosition(actor->pos.y);
+	loadActorAnim(actorIndex, animName, actor->pos.x, actor->pos.y, scale);
+	actor->animType = 0;
 }
 
-void StarTrekEngine::updateObjectPositionWhileWalking(Object *object, int16 x, int16 y) {
-	object->scale = getObjectScaleAtPosition(y);
-	Common::String animName = Common::String::format("%s%02d", object->animationString2, object->field92 & 7);
-	object->sprite.setBitmap(loadAnimationFrame(animName, object->scale));
+void StarTrekEngine::updateActorPositionWhileWalking(Actor *actor, int16 x, int16 y) {
+	actor->scale = getActorScaleAtPosition(y);
+	Common::String animName = Common::String::format("%s%02d", actor->animationString2, actor->field92 & 7);
+	actor->sprite.setBitmap(loadAnimationFrame(animName, actor->scale));
 
-	memset(object->animationString4, 0, 10);
-	strncpy(object->animationString4, animName.c_str(), 9);
+	memset(actor->animationString4, 0, 10);
+	strncpy(actor->animationString4, animName.c_str(), 9);
 
-	Sprite *sprite = &object->sprite;
+	Sprite *sprite = &actor->sprite;
 	sprite->drawPriority = _gfx->getPriValue(0, y);
 	sprite->pos.x = x;
 	sprite->pos.y = y;
 	sprite->bitmapChanged = true;
 
-	object->frameToStartNextAnim = _frameIndex;
-	object->pos.x = x;
-	object->pos.y = y;
+	actor->frameToStartNextAnim = _frameIndex;
+	actor->pos.x = x;
+	actor->pos.y = y;
 }
 
 /**
- * Chooses a value for the object's speed and direction, based on a source position and
+ * Chooses a value for the actor's speed and direction, based on a source position and
  * a destination position it's walking to.
  */
-void StarTrekEngine::chooseObjectDirectionForWalking(Object *object, int16 srcX, int16 srcY, int16 destX, int16 destY) {
-	object->granularPosX = srcX << 16;
-	object->granularPosY = srcY << 16;
+void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, int16 srcY, int16 destX, int16 destY) {
+	actor->granularPosX = srcX << 16;
+	actor->granularPosY = srcY << 16;
 
 	int16 distX = destX - srcX;
 	int16 distY = destY - srcY;
@@ -710,19 +710,19 @@ void StarTrekEngine::chooseObjectDirectionForWalking(Object *object, int16 srcX,
 			d = 'W';
 
 		// Append direction to animation string
-		object->animationString2[strlen(object->animationString2) + 1] = '\0';
-		object->animationString2[strlen(object->animationString2)] = d;
+		actor->animationString2[strlen(actor->animationString2) + 1] = '\0';
+		actor->animationString2[strlen(actor->animationString2)] = d;
 
-		object->direction = d;
-		object->field90 = absDistX;
+		actor->direction = d;
+		actor->field90 = absDistX;
 
 		if (distX != 0) {
 			if (distX > 0)
-				object->speedX = 1 << 16;
+				actor->speedX = 1 << 16;
 			else
-				object->speedX = -1 << 16; // 0xffff0000
+				actor->speedX = -1 << 16; // 0xffff0000
 
-			object->speedY = (distY << 16) / absDistX;
+			actor->speedY = (distY << 16) / absDistX;
 		}
 	}
 	else {
@@ -733,25 +733,25 @@ void StarTrekEngine::chooseObjectDirectionForWalking(Object *object, int16 srcX,
 			d = 'N';
 
 		// Append direction to animation string
-		object->animationString2[strlen(object->animationString2) + 1] = '\0';
-		object->animationString2[strlen(object->animationString2)] = d;
+		actor->animationString2[strlen(actor->animationString2) + 1] = '\0';
+		actor->animationString2[strlen(actor->animationString2)] = d;
 
-		object->direction = d;
-		object->field90 = absDistY;
+		actor->direction = d;
+		actor->field90 = absDistY;
 
 		if (distY != 0) {
 			if (distY > 0)
-				object->speedY = 1 << 16;
+				actor->speedY = 1 << 16;
 			else
-				object->speedY = -1 << 16; // 0xffff0000
+				actor->speedY = -1 << 16; // 0xffff0000
 
-			object->speedX = (distX << 16) / absDistY;
+			actor->speedX = (distX << 16) / absDistY;
 		}
 	}
 }
 
 /**
- * Returns true if an object can walk directly from a source position to a destination
+ * Returns true if an actor can walk directly from a source position to a destination
  * position without running into unwalkable terrain.
  */
 bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16 destY) {
@@ -817,9 +817,9 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 		else if (sprite == &_itemIconSprite)
 			return _awayMission.activeItem;
 
-		for (int i = 0; i < MAX_OBJECTS; i++) {
-			Object *object = &_objectList[i];
-			if (sprite == &object->sprite)
+		for (int i = 0; i < NUM_ACTORS; i++) {
+			Actor *actor = &_actorList[i];
+			if (sprite == &actor->sprite)
 				return i;
 		}
 
@@ -834,11 +834,11 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 		uint16 word = _room->readRdfWord(offset);
 		if (word & 0x8000) {
 			if ((word & actionBit) && isPointInPolygon((int16 *)(_room->_rdfData + offset + 6), x, y)) {
-				int objectIndex = _room->readRdfWord(offset + 6);
+				int actorIndex = _room->readRdfWord(offset + 6);
 				// word_4b418 = 1;
 				// word_4a792 = _room->readRdfWord(offset + 2);
 				// word_4a796 = _room->readRdfWord(offset + 4); // TODO
-				return objectIndex;
+				return actorIndex;
 			}
 
 			int numVertices = _room->readRdfWord(offset + 8);
@@ -846,8 +846,8 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 		}
 		else {
 			if (isPointInPolygon((int16 *)(_room->_rdfData + offset), x, y)) {
-				int objectIndex = _room->readRdfWord(offset);
-				return objectIndex;
+				int actorIndex = _room->readRdfWord(offset);
+				return actorIndex;
 			}
 
 			int numVertices = _room->readRdfWord(offset + 2);
@@ -957,10 +957,10 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 	return bitmapToReturn;
 }
 
-Common::String StarTrekEngine::getCrewmanAnimFilename(int objectIndex, const Common::String &basename) {
+Common::String StarTrekEngine::getCrewmanAnimFilename(int actorIndex, const Common::String &basename) {
 	const char *crewmanChars = "ksmr";
-	assert(objectIndex >= 0 && objectIndex < 4);
-	return crewmanChars[objectIndex] + basename;
+	assert(actorIndex >= 0 && actorIndex < 4);
+	return crewmanChars[actorIndex] + basename;
 }
 
 /**
@@ -974,7 +974,7 @@ void StarTrekEngine::updateMouseBitmap() {
 		true,  // ACTION_LOOK
 		true   // ACTION_TALK
 	};
-	const bool worksOnObjects[] = { // True if the action reacts with other objects
+	const bool worksOnActors[] = { // True if the action reacts with other objects
 		false, // ACTION_WALK
 		true,  // ACTION_USE
 		true,  // ACTION_GET
@@ -998,9 +998,9 @@ void StarTrekEngine::updateMouseBitmap() {
 
 	if (selected >= 0 && selected <= 3 && worksOnCrewmen[action - 1])
 		withRedOutline = true;
-	else if (selected > 3 && selected < MAX_OBJECTS && worksOnObjects[action - 1])
+	else if (selected > 3 && selected < NUM_ACTORS && worksOnActors[action - 1])
 		withRedOutline = true;
-	else if (selected >= MAX_OBJECTS && selected < MAX_OBJECTS_2 && worksOnHotspots[action - 1])
+	else if (selected >= NUM_ACTORS && selected < HOTSPOTS_END && worksOnHotspots[action - 1])
 		withRedOutline = true;
 	else
 		withRedOutline = false;
@@ -1082,11 +1082,11 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 	int itemIndex = 0;
 	int numItems = 0;
 
-	char itemNames[NUM_ITEMS][10];
-	Common::Point itemPositions[NUM_ITEMS];
-	int16 itemIndices[NUM_ITEMS];
+	char itemNames[NUM_OBJECTS][10];
+	Common::Point itemPositions[NUM_OBJECTS];
+	int16 itemIndices[NUM_OBJECTS];
 
-	while (itemIndex < NUM_ITEMS) {
+	while (itemIndex < NUM_OBJECTS) {
 		if (_itemList[itemIndex].have) {
 			strcpy(itemNames[numItems], _itemList[itemIndex].name);
 
@@ -1100,7 +1100,7 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 		itemIndex++;
 	}
 
-	Sprite itemSprites[NUM_ITEMS];
+	Sprite itemSprites[NUM_OBJECTS];
 
 	for (int i = 0; i < numItems; i++) {
 		_gfx->addSprite(&itemSprites[i]);
