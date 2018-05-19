@@ -540,7 +540,7 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	_activeMenu->numButtons = _activeMenu->menuFile->size() / 16;
 
 	for (int i = 0; i < _activeMenu->numButtons; i++) {
-		memset(&_activeMenu->sprites[i], 0, sizeof(Sprite));
+		_activeMenu->sprites[i] = Sprite();
 		_gfx->addSprite(&_activeMenu->sprites[i]);
 		_activeMenu->sprites[i].drawMode = 2;
 

@@ -36,7 +36,10 @@ Common::Rect getRectEncompassing(Common::Rect r1, Common::Rect r2);
 
 
 // Fixed-point (16.16) number
-typedef int32 FixedInt;
+typedef int32 Fixed32;
+
+// Fixed-point (8.8) number
+typedef int16 Fixed16;
 
 }
 

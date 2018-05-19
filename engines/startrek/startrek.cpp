@@ -344,7 +344,7 @@ void StarTrekEngine::initObjects() {
 /**
  * Set an object's animation, position, and scale.
  */
-int StarTrekEngine::loadObjectAnim(int objectIndex, const Common::String &animName, int16 x, int16 y, uint16 scale) {
+int StarTrekEngine::loadObjectAnim(int objectIndex, const Common::String &animName, int16 x, int16 y, Fixed16 scale) {
 	debugC(6, kDebugGraphics, "Load animation '%s' on object %d", animName.c_str(), objectIndex);
 
 	Object *object;
@@ -576,7 +576,7 @@ void StarTrekEngine::objectFunc1() {
 	}
 }
 
-void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_animName, int16 x, int16 y, uint16 scale, bool addSprite) {
+void StarTrekEngine::drawObjectToScreen(Object *object, const Common::String &_animName, int16 x, int16 y, Fixed16 scale, bool addSprite) {
 	Common::String animFilename = _animName;
 	if (_animName.hasPrefixIgnoreCase("stnd") /* && word_45d20 == -1 */) // TODO
 		animFilename += 'j';
@@ -762,7 +762,7 @@ bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16
 	int32 absDistY = abs(distY);
 
 	int32 distCounter;
-	FixedInt speedX, speedY;
+	Fixed32 speedX, speedY;
 
 	if (absDistX > absDistY) {
 		distCounter = absDistX;
@@ -791,8 +791,8 @@ bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16
 			speedY = -1 << 16;
 	}
 
-	FixedInt fixedX = srcX << 16;
-	FixedInt fixedY = srcY << 16;
+	Fixed32 fixedX = srcX << 16;
+	Fixed32 fixedY = srcY << 16;
 
 	if (isPositionSolid((fixedX + 0x8000) >> 16, (fixedY + 0x8000) >> 16))
 		return false;
@@ -837,7 +837,7 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 				int objectIndex = _room->readRdfWord(offset + 6);
 				// word_4b418 = 1;
 				// word_4a792 = _room->readRdfWord(offset + 2);
-				// word_4a796 = _room->readRdfWord(offset + 4);
+				// word_4a796 = _room->readRdfWord(offset + 4); // TODO
 				return objectIndex;
 			}
 
@@ -861,7 +861,7 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 /**
  * Loads a bitmap for the animation frame with the given scale.
  */
-SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, uint16 scale) {
+SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed16 scale) {
 	SharedPtr<Bitmap> bitmapToReturn;
 
 	char basename[5];
@@ -1239,7 +1239,7 @@ exitWithoutSelection:
 /**
  * A scale of 256 is the baseline.
  */
-SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, uint16 scale) {
+SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed16 scale) {
 	int scaledWidth  = (bitmap->width  * scale) >> 8;
 	int scaledHeight = (bitmap->height * scale) >> 8;
 	int origWidth  = bitmap->width;

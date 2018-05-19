@@ -469,7 +469,7 @@ SharedPtr<TextBitmap> StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffs
 
 	SharedPtr<TextBitmap> bitmap(new TextBitmap(TEXTBOX_WIDTH*8, textHeight*8));
 
-	memset(sprite, 0, sizeof(Sprite));
+	*sprite = Sprite();
 	sprite->drawPriority = 15;
 	sprite->drawPriority2 = 8;
 	sprite->bitmap = bitmap;
