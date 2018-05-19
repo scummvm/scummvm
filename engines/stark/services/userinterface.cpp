@@ -76,11 +76,11 @@ void UserInterface::init() {
 	_diaryIndexScreen = new DiaryIndexScreen(_gfx, _cursor);
 	_fmvScreen = new FMVScreen(_gfx, _cursor);
 
-	_currentScreen = _mainMenuScreen;
-	_currentScreen->open();
+	_prevScreenNameStack.push(Screen::kScreenMainMenu);
+	_currentScreen = _fmvScreen;
 
 	// Play the FunCom logo video
-	requestFMVPlayback("1402.bbb");
+	_fmvScreen->play("1402.bbb");
 }
 
 void UserInterface::update() {
