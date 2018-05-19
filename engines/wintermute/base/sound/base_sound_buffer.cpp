@@ -104,12 +104,13 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 	}
 	Common::String strFilename(filename);
 	strFilename.toLowercase();
-	#ifdef USE_VORBIS
-		if (strFilename.hasSuffix(".ogg")) {
-			_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::YES);
-		} else
-	#endif
-	if (strFilename.hasSuffix(".wav")) {
+	if (strFilename.hasSuffix(".ogg")) {
+#ifdef USE_VORBIS
+		_stream = Audio::makeVorbisStream(_file, DisposeAfterUse::YES);
+#else
+		error("BSoundBuffer::LoadFromFile - Ogg Vorbis not supported by this version of ScummVM (please report as this shouldn't trigger)");
+#endif
+	} else if (strFilename.hasSuffix(".wav")) {
 		int waveSize, waveRate;
 		byte waveFlags;
 		uint16 waveType;
