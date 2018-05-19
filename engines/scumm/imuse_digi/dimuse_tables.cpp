@@ -392,7 +392,7 @@ const imuseComiTable _comiSeqMusicTable[] = {
 	{8, 2220, "seqSnakeVomits",  0, 1,    0, ""},
 	{8, 2222, "seqPopBalloon",   0, 1,    0, ""},
 	{3, 2225, "seqDropBalls",    0, 0,   60, "2225-D~1.IMX"},
-	{4, 2232, "seqArriveBarber", 0, 0,   60, "2232-A~1.IMX"},
+	{3, 2232, "seqArriveBarber", 0, 0,   60, "2232-A~1.IMX"},
 	{3, 2233, "seqAtonal",       0, 0,   60, "2233-A~1.IMX"},
 	{3, 2235, "seqShaveHead1",   0, 0,   60, "2235-S~1.IMX"},
 	{2, 2236, "seqShaveHead2",   0, 2,   60, "2235-S~1.IMX"},
