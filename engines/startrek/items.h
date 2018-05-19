@@ -177,7 +177,7 @@ const Item g_itemList[] = {
 	{  false,  0x00,  "",          0x00  },
 };
 
-const int NUM_ITEMS = sizeof(g_itemList) / sizeof(struct Item);
+const int NUM_ITEMS = sizeof(g_itemList) / sizeof(struct Item) - 0x40; // 0x49
 
 }
 
