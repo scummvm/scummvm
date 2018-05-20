@@ -44,10 +44,11 @@ public:
 	SRTParser();
 	~SRTParser();
 
+	void cleanup();
 	bool parseFile(const char *fname);
 
 private:
-	Common::Array<SRTEntry> _entries;
+	Common::Array<SRTEntry *> _entries;
 };
 
 } // End of namespace Video
