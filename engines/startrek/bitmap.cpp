@@ -24,7 +24,7 @@
 
 namespace StarTrek {
 
-Bitmap::Bitmap(SharedPtr<Common::ReadStreamEndian> stream) {
+Bitmap::Bitmap(SharedPtr<FileStream> stream) {
 	xoffset = stream->readUint16();
 	yoffset = stream->readUint16();
 	width = stream->readUint16();

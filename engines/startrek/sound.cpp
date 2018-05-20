@@ -312,7 +312,7 @@ void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 	}
 	
 	debugC(5, kDebugSound, "Loading midi \'%s\'\n", soundName.c_str());
-	SharedPtr<Common::SeekableReadStream> soundStream = _vm->loadFile(soundName.c_str());
+	SharedPtr<FileStream> soundStream = _vm->loadFile(soundName.c_str());
 	
 	if (loadedSoundData != nullptr)
 		delete[] loadedSoundData;

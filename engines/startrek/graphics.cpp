@@ -80,11 +80,11 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 	Common::String palFile = paletteName + ".PAL";
 	Common::String lutFile = paletteName + ".LUT";
 
-	SharedPtr<Common::SeekableReadStream> palStream = _vm->loadFile(palFile.c_str());
+	SharedPtr<FileStream> palStream = _vm->loadFile(palFile.c_str());
 	palStream->read(_palData, 256 * 3);
 
 	// Load LUT file
-	SharedPtr<Common::SeekableReadStream> lutStream = _vm->loadFile(lutFile.c_str());
+	SharedPtr<FileStream> lutStream = _vm->loadFile(lutFile.c_str());
 
 	lutStream->read(_lutData, 256);
 }
@@ -160,7 +160,7 @@ void Graphics::decPaletteFadeLevel() {
 
 
 void Graphics::loadPri(const Common::String &priFile) {
-	SharedPtr<Common::SeekableReadStream> priStream = _vm->loadFile(priFile);
+	SharedPtr<FileStream> priStream = _vm->loadFile(priFile);
 	priStream->read(_priData, SCREEN_WIDTH * SCREEN_HEIGHT / 2);
 }
 
@@ -632,14 +632,14 @@ void Graphics::loadEGAData(const char *filename) {
 	if (!_egaData)
 		_egaData = new byte[256];
 
-	SharedPtr<Common::SeekableReadStream> egaStream = _vm->loadFile(filename);
+	SharedPtr<FileStream> egaStream = _vm->loadFile(filename);
 	egaStream->read(_egaData, 256);
 }
 
 void Graphics::drawBackgroundImage(const char *filename) {
 	// Draw an stjr BGD image (palette built-in)
 
-	SharedPtr<Common::SeekableReadStream> imageStream = _vm->loadFile(filename);
+	SharedPtr<FileStream> imageStream = _vm->loadFile(filename);
 	byte *palette = new byte[256 * 3];
 	imageStream->read(palette, 256 * 3);
 
@@ -647,10 +647,10 @@ void Graphics::drawBackgroundImage(const char *filename) {
 	for (uint16 i = 0; i < 256 * 3; i++)
 		palette[i] <<= 2;
 
-	uint16 xoffset = imageStream->readUint16LE();
-	uint16 yoffset = imageStream->readUint16LE();
-	uint16 width = imageStream->readUint16LE();
-	uint16 height = imageStream->readUint16LE();
+	uint16 xoffset = imageStream->readUint16();
+	uint16 yoffset = imageStream->readUint16();
+	uint16 width = imageStream->readUint16();
+	uint16 height = imageStream->readUint16();
 
 	byte *pixels = new byte[width * height];
 	imageStream->read(pixels, width * height);

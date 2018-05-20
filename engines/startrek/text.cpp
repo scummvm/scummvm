@@ -130,17 +130,32 @@ String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *he
 }
 
 /**
- * Text getter for showText which reads from a given buffer.
+ * Shows text with the given header and main text.
  */
-String StarTrekEngine::readTextFromBuffer(int choiceIndex, uintptr data, String *headerTextOutput) {
-	char buf[TEXTBOX_WIDTH];
-	memcpy(buf, (byte*)data, TEXTBOX_WIDTH-2);
-	buf[TEXTBOX_WIDTH-2] = '\0';
+int StarTrekEngine::showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines) {
+	if (!headerText.empty()) {
+		while (headerText.size() < TEXTBOX_WIDTH - 2)
+			headerText += ' ';
+	}
 
-	*headerTextOutput = String(buf);
+	int newMaxTextLines = (maxTextLines < 0 ? 0 : maxTextLines);
+	if (maxTextLines < 0)
+		maxTextLines = -maxTextLines;
 
-	char *text = (char*)data+TEXTBOX_WIDTH-2;
-	return String(text);
+	const char *strings[3];
+
+	if (headerText.empty())
+		strings[0] = nullptr;
+	else
+		strings[0] = headerText.c_str();
+	strings[1] = mainText.c_str();
+	strings[2] = "";
+
+	showText(&StarTrekEngine::readTextFromArray, (uintptr)strings, xoffset, yoffset, textColor, false, maxTextLines, 0);
+
+	// TODO
+	// sub_15a77();
+	// sub_14669(newMaxTextLines);
 }
 
 String StarTrekEngine::skipTextAudioPrompt(const String &str) {
@@ -587,8 +602,7 @@ String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr 
 		String lineFormattedText = putTextIntoLines(text);
 		drawMainText(textBitmap, *numTextLines, numTextboxLines, lineFormattedText, hasHeader);
 
-		assert(headerText.size() == TEXTBOX_WIDTH-2);
-		memcpy(textBitmap->pixels+TEXTBOX_WIDTH+1, headerText.c_str(), TEXTBOX_WIDTH-2);
+		memcpy(textBitmap->pixels+TEXTBOX_WIDTH+1, headerText.c_str(), headerText.size());
 
 		return lineFormattedText;
 	}
@@ -627,9 +641,13 @@ String StarTrekEngine::readTextFromArray(int choiceIndex, uintptr data, String *
 	if (*mainText == '\0')
 		return Common::String(); // Technically should be nullptr...
 
-	*headerTextOutput = headerText;
-	while (headerTextOutput->size() < TEXTBOX_WIDTH-2)
-		*headerTextOutput += ' ';
+	if (headerText == nullptr)
+		*headerTextOutput = "";
+	else {
+		*headerTextOutput = headerText;
+		while (headerTextOutput->size() < TEXTBOX_WIDTH-2)
+			*headerTextOutput += ' ';
+	}
 	return String(mainText);
 }
 
