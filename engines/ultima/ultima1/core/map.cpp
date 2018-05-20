@@ -311,7 +311,6 @@ void Ultima1Map::loadDungeonMap() {
 
 	// Place chests and/or coffins randomly throughout the level
 	_random.setSeed(_random.getSeed() + 1777);
-	_dungeonLevel = 10; //****DEBUG*****
 	for (uint ctr = 0; ctr <= _dungeonLevel; ++ctr) {
 		Point pt(getRandomNumber(10, 99) / 10, getRandomNumber(10, 99) / 10);
 		byte currTile = _data[pt.y][pt.x];

@@ -72,7 +72,7 @@ public:
 	/**
 	 * Returns true if the player can move onto a tile the widget occupies
 	 */
-	virtual bool isBlocking() const { return true; }
+	virtual bool isBlocking() const { return false; }
 };
 
 typedef Common::SharedPtr<MapWidget> MapWidgetPtr;
