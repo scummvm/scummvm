@@ -32,6 +32,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
+#include "engines/stark/services/resourceprovider.h"
 
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/menu/diaryindex.h"
@@ -142,20 +143,29 @@ void UserInterface::changeScreen(Screen::Name screenName) {
 		return;
 	}
 
-	_prevScreenNameStack.push(_currentScreen->getName());
+	if (screenName == Screen::kScreenMainMenu) {
+		// MainMenuScreen will not request to go back
+		_prevScreenNameStack.clear();
+	} else {
+		_prevScreenNameStack.push(_currentScreen->getName());
+	}
+
 	_currentScreen->close();
 	_currentScreen = getScreenByName(screenName);
 	_currentScreen->open();
-
-	if (_currentScreen->getName() == Screen::kScreenMainMenu) {
-		_prevScreenNameStack.clear();
-	}
 }
 
 void UserInterface::backPrevScreen() {
 	// No need to check the stack since at least there will be a MainMenuScreen in it
 	// and MainMenuScreen will not request to go back
 	changeScreen(_prevScreenNameStack.pop());
+}
+
+void UserInterface::quitToMainMenu() {
+	changeScreen(Screen::kScreenGame);
+	StarkResourceProvider->shutdown();
+	StarkResourceProvider->initGlobal();
+	changeScreen(Screen::kScreenMainMenu);
 }
 
 Screen *UserInterface::getScreenByName(Screen::Name screenName) const {

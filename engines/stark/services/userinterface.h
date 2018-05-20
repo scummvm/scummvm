@@ -88,6 +88,9 @@ public:
 	/** Back to the previous displayed screen */
 	void backPrevScreen();
 
+	/** Back to the main menu screen and rest resources */
+	void quitToMainMenu();
+
 	/** Is the game screen currently displayed? */
 	bool isInGameScreen() const;
 
