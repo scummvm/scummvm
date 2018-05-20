@@ -89,6 +89,19 @@ int SRTEntryComparator(const void *item1, const void *item2) {
 	return l->start - r->start;
 }
 
+int SRTEntryComparatorBSearch(const void *item1, const void *item2) {
+	const SRTEntry *k = *(const SRTEntry **)item1;
+	const SRTEntry *i = *(const SRTEntry **)item2;
+
+	if (k->start < i->start)
+		return -1;
+
+	if (k->start > i->end - 1)
+		return 1;
+
+	return 0;
+}
+
 bool SRTParser::parseFile(const char *fname) {
 	Common::File f;
 
@@ -188,13 +201,14 @@ bool SRTParser::parseFile(const char *fname) {
 
 Common::String SRTParser::getSubtitle(uint32 timestamp) {
 	SRTEntry test(0, timestamp, 0, "");
+	SRTEntry *testptr = &test;
 
-	const SRTEntry *entry = (const SRTEntry *)bsearch(&test, _entries.data(), _entries.size(), sizeof(SRTEntry *), &SRTEntryComparator);
+	const SRTEntry **entry = (const SRTEntry **)bsearch(&testptr, _entries.data(), _entries.size(), sizeof(SRTEntry *), &SRTEntryComparatorBSearch);
 
-	if (entry->start >= timestamp && entry->end <= timestamp)
-		return entry->text;
+	if (entry == NULL)
+		return "";
 
-	return "";
+	return (*entry)->text;
 }
 
 } // End of namespace Video
