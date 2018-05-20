@@ -53,7 +53,7 @@ void MainMenuScreen::open() {
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Continue",
-			nullptr,
+			CLICK_HANDLER(MainMenuScreen, loadHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<8>)));
 	_widgets.back()->setupSounds(0, 1);
 	
@@ -161,6 +161,13 @@ void MainMenuScreen::newGameHandler() {
 			// Start us up at the house of all worlds
 			StarkResourceProvider->requestLocationChange(0x45, 0x00);
 		}
+	}
+}
+
+void MainMenuScreen::loadHandler() {
+	if (ConfMan.hasKey("save_slot")) {
+		// Load game from specified slot, if any
+		g_engine->loadGameState(ConfMan.getInt("save_slot"));
 	}
 }
 
