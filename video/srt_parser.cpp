@@ -29,6 +29,12 @@ SRTParser::SRTParser() {
 }
 
 SRTParser::~SRTParser() {
+	cleanup();
+}
+
+void SRTParser::cleanup() {
+	for (Common::Array<SRTEntry *>::const_iterator item = _entries.begin(); item != _entries.end(); ++item)
+		delete *item;
 }
 
 bool parseTime(const char **pptr, uint32 *res) {
@@ -76,6 +82,11 @@ bool parseTime(const char **pptr, uint32 *res) {
 	return true;
 }
 
+struct SRTEntryComparator {
+	bool operator()(const SRTEntry *l, const SRTEntry *r) {
+		return (l->start < r->start);
+	}
+};
 
 bool SRTParser::parseFile(const char *fname) {
 	Common::File f;
@@ -166,8 +177,10 @@ bool SRTParser::parseFile(const char *fname) {
 			break;
 		}
 
-		_entries.push_back(SRTEntry(seq, start, end, text));
+		_entries.push_back(new SRTEntry(seq, start, end, text));
 	}
+
+	Common::sort(_entries.begin(), _entries.end(), SRTEntryComparator());
 
 	return true;
 }
