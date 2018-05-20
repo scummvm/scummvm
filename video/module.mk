@@ -13,7 +13,7 @@ MODULE_OBJS := \
 	psx_decoder.o \
 	qt_decoder.o \
 	smk_decoder.o \
-	srt_parser.o \
+	subtitles.o \
 	video_decoder.o
 
 ifdef USE_BINK
