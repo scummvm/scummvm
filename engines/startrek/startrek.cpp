@@ -815,7 +815,7 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 		if (sprite == &_inventoryIconSprite)
 			return OBJECT_INVENTORY_ICON;
 		else if (sprite == &_itemIconSprite)
-			return _awayMission.activeItem;
+			return _awayMission.activeObject;
 
 		for (int i = 0; i < NUM_ACTORS; i++) {
 			Actor *actor = &_actorList[i];
@@ -1019,11 +1019,13 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 	Common::String itemFilename;
 
 	if (showItem) {
-		int i = _awayMission.activeItem;
-		if (i >= 0 && i <= 3)
+		int i = _awayMission.activeObject;
+		if (i >= OBJECT_KIRK && i <= OBJECT_REDSHIRT)
 			itemFilename = crewmanFilenames[i];
 		else {
-			// TODO
+			assert(i >= ITEMS_START && i < ITEMS_END);
+			Item *item = &_itemList[i - ITEMS_START];
+			itemFilename = item->name;
 		}
 	}
 
@@ -1600,6 +1602,22 @@ void StarTrekEngine::playMovieMac(Common::String filename) {
 
 uint16 StarTrekEngine::getRandomWord() {
 	return _randomSource.getRandomNumber(0xffff);
+}
+
+/**
+ * ".txt" files are just lists of strings. This traverses the file to get a particular
+ * string index.
+ */
+Common::String StarTrekEngine::getItemDescription(int itemIndex) {
+	SharedPtr<FileStream> txtFile = loadFile(_txtFilename + ".txt");
+
+	byte *data = txtFile->_data;
+	while (itemIndex != 0) {
+		while (*(data++) != '\0');
+		itemIndex--;
+	}
+
+	return (char *)data;
 }
 
 } // End of namespace StarTrek

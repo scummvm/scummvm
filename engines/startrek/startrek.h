@@ -93,6 +93,10 @@ enum TextDisplayMode {
 	TEXTDISPLAY_NONE       // No text displayed
 };
 
+enum TextColor {
+	TEXTCOLOR_YELLOW = 0xb0
+};
+
 // Keeps track of data for a list of buttons making up a menu
 struct Menu {
 	Sprite sprites[MAX_MENUBUTTONS];
@@ -161,7 +165,11 @@ struct TrekEvent {
 // code.
 enum Commands {
 	COMMAND_TICK = 0,
-	COMMAND_CLICKED_ON_OBJECT = 1,
+	COMMAND_WALK = 1, // Commands 1-5 correspond to Actions of the same number.
+	COMMAND_USE = 2,
+	COMMAND_GET = 3,
+	COMMAND_LOOK = 4,
+	COMMAND_TALK = 5,
 	COMMAND_TOUCHED_WARP = 6,
 	COMMAND_7 = 7, // Doors? (Or just hotspots activated by Kirk moving there?)
 	COMMAND_FINISHED_BEAMING_IN = 10,
@@ -170,12 +178,26 @@ enum Commands {
 
 struct Command {
 	byte type;
-	byte b1;
-	byte b2;
-	byte b3;
+
+	union { // FIXME: using unions in a dangeous way here...
+		struct {
+			byte b1;
+			byte b2;
+			byte b3;
+		} gen;
+
+		struct {
+			byte activeObject;
+			byte passiveObject;
+		} action;
+	};
 
 	Command(byte _type, byte _b1, byte _b2, byte _b3)
-		: type(_type), b1(_b1), b2(_b2), b3(_b3) {}
+		: type(_type) {
+			gen.b1 = _b1;
+			gen.b2 = _b2;
+			gen.b3 = _b3;
+		}
 };
 
 // Actions that can be used on away missions.
@@ -213,6 +235,7 @@ private:
 	int loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y);
 	uint16 getActorScaleAtPosition(int16 y);
 	void addCommand(const Command &command);
+	bool checkItemInteractionExists(int action, int activeItem, int passiveItem, int16 arg6);
 	void handleAwayMissionCommand();
 
 	bool isPointInPolygon(int16 *data, int16 x, int16 y);
@@ -254,6 +277,7 @@ public:
 	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, Fixed16 scale);
 	Common::String getCrewmanAnimFilename(int actorIndex, const Common::String &basename);
 	void updateMouseBitmap();
+	bool sub_2330c() { return false; } // TODO
 	void showInventoryIcons(bool showItem);
 	void hideInventoryIcons();
 	int showInventoryMenu(int x, int y, bool restoreMouse);
@@ -292,6 +316,8 @@ public:
 	void getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex);
 	String readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput);
 	String readTextFromBuffer(int choiceIndex, uintptr data, String *headerTextOutput);
+
+	int showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines); // TODO: better name. (return type?)
 
 	String skipTextAudioPrompt(const String &str);
 	String playTextAudio(const String &str);
@@ -359,6 +385,7 @@ public:
 
 	// Misc
 	uint16 getRandomWord();
+	Common::String getItemDescription(int itemIndex);
 
 
 public:
@@ -375,6 +402,9 @@ public:
 	SharedPtr<FileStream> _mapFile;
 	int32 _playerActorScale;
 
+	Common::String _txtFilename;
+	Common::String _itemDescription;
+
 	// Queue of "commands" (ie. next frame, clicked on object) for away mission or bridge
 	Common::Queue<Command> _commandQueue;
 
@@ -384,7 +414,7 @@ public:
 	int16 _activeDoorWarpHotspot;
 	int16 _lookActionBitmapIndex;
 
-	Item _itemList[NUM_ITEMS];
+	Item _itemList[NUM_OBJECTS];
 
 	Actor _actorList[NUM_ACTORS];
 	Actor * const _kirkActor;

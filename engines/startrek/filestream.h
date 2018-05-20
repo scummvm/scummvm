@@ -26,25 +26,31 @@
 
 namespace StarTrek {
 
-class FileStream : public Common::SeekableReadStreamEndian {
+class FileStream {
 
 public:
 	FileStream(Common::SeekableReadStream *stream, bool bigEndian);
 	~FileStream();
 
+	byte *_data;
+
 private:
-	Common::SeekableReadStream *_stream;
 	bool _bigEndian;
+	int32 _pos;
+	int32 _size;
 
 public:
 	// ReadStream functions
-	virtual bool eos() const;
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	bool eos() const;
+	uint32 read(void *dataPtr, uint32 dataSize);
+
+	byte readByte();
+	uint16 readUint16();
 
 	// SeekableReadStream functions
-	virtual int32 pos() const;
-	virtual int32 size() const;
-	virtual bool seek(int32 offset, int whence);
+	int32 pos() const;
+	int32 size() const;
+	bool seek(int32 offset, int whence);
 
 };
 

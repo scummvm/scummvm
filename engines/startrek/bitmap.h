@@ -1,6 +1,8 @@
 #ifndef STARTREK_BITMAP_H
 #define STARTREK_BITMAP_H
 
+#include "startrek/filestream.h"
+
 #include "common/ptr.h"
 #include "common/stream.h"
 
@@ -13,7 +15,7 @@ struct Bitmap {
 	uint16 height;
 	byte *pixels;
 
-	Bitmap(Common::SharedPtr<Common::ReadStreamEndian> stream);
+	Bitmap(Common::SharedPtr<FileStream> stream);
 	Bitmap(int w, int h);
 	~Bitmap();
 

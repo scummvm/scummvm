@@ -31,33 +31,12 @@ static const byte CHARACTER_COUNT = 0x80;
 static const byte CHARACTER_SIZE = 0x40;
 
 Font::Font(StarTrekEngine *vm) : _vm(vm) {
-	SharedPtr<Common::SeekableReadStream> fontStream = _vm->loadFile("FONT.FNT");
+	SharedPtr<FileStream> fontStream = _vm->loadFile("FONT.FNT");
 
 	_characters = new Character[CHARACTER_COUNT];
 
 	for (byte i = 0; i < CHARACTER_COUNT; i++)
 		fontStream->read(_characters[i].data, CHARACTER_SIZE);
-
-#if 0
-	// Code to dump the font
-	printf ("DUMPING FONT");
-	for (byte i = 0; i < CHARACTER_COUNT; i++) {
-		printf ("\n\nCHARACTER %02x (%d):\n", i, i);
-		for (byte j = 0; j < CHARACTER_SIZE; j++) {
-			if (!(j % 8))
-				printf ("\n");
-			if (_characters[i].data[j] == 0x7d)
-				printf ("1 ");
-			else if (_characters[i].data[j] == 0x78)
-				printf ("0 ");
-			else if (_characters[i].data[j] == 0)
-				printf ("  ");
-			else
-				printf ("? ");
-		}
-	}
-	printf("\n\n");
-#endif
 }
 
 Font::~Font() {

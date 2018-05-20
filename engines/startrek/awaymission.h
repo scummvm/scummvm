@@ -32,8 +32,8 @@ struct AwayMission {
 	byte transitioningIntoRoom; // Set while beaming in or walking into a room
 	bool redshirtDead;
 	byte activeAction;
-	byte activeItem;  // The item that is going to be used on something
-	byte passiveItem; // The item that the active item is used on (or the item looked at, etc).
+	byte activeObject;  // The item that is going to be used on something
+	byte passiveObject; // The item that the active item is used on (or the item looked at, etc).
 	byte field24;
 	int8 field25[4];
 
