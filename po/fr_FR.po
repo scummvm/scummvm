@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-17 20:49+0200\n"
+"POT-Creation-Date: 2018-05-20 15:18+0200\n"
 "PO-Revision-Date: 2018-04-29 21:01+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -684,7 +684,7 @@ msgid "Search:"
 msgstr "Filtre :"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:533
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:549
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -694,7 +694,7 @@ msgstr "Charger le jeu :"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
-#: engines/mohawk/riven.cpp:533 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:549 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -1862,7 +1862,7 @@ msgstr "Retour au ~L~anceur"
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
-#: engines/mohawk/riven.cpp:545 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/riven.cpp:561 engines/neverhood/menumodule.cpp:880
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:658
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
@@ -1882,7 +1882,7 @@ msgstr "Sauvegarde :"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:106 engines/mohawk/riven.cpp:545
+#: engines/mohawk/dialogs.cpp:106 engines/mohawk/riven.cpp:561
 #: engines/neverhood/menumodule.cpp:880 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:659
 #: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
@@ -3376,7 +3376,7 @@ msgstr "Meilleur"
 msgid "The game is paused. Press any key to continue."
 msgstr "Jeu en pause. Appuyer sur une touche pour Reprendre."
 
-#: engines/mohawk/riven.cpp:149
+#: engines/mohawk/riven.cpp:150
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
@@ -3384,7 +3384,7 @@ msgstr ""
 "Il vous manque l'exécutable de Riven. L'exécutable pour Windows se nomme "
 "'rivent.exe' ou 'rivendmo.exe'. "
 
-#: engines/mohawk/riven.cpp:150
+#: engines/mohawk/riven.cpp:151
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
@@ -3392,7 +3392,7 @@ msgstr ""
 "Utiliser le fichier archive 'arcriven.z' marche également. Vous pouvez "
 "également utiliser l'exécutable pour Mac qui se nomme 'Riven'."
 
-#: engines/mohawk/riven.cpp:161
+#: engines/mohawk/riven.cpp:162
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
@@ -3400,7 +3400,7 @@ msgstr ""
 "Il vous manque le fichier 'extras.mhk'. Utiliser le fichier archive "
 "'arcriven.z' marche également."
 
-#: engines/mohawk/riven.cpp:432
+#: engines/mohawk/riven.cpp:448
 msgid "You are missing the following required Riven data files:\n"
 msgstr ""
 "Il vous manque les fichiers de données obligatoires suivants pour Riven :\n"
