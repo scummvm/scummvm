@@ -197,7 +197,7 @@ public:
 		case SEEK_CUR: _offset += whence; break;
 		case SEEK_END: _offset = _size + whence; break;
 		}
-		
+
 		return _offset;
 	}
 	virtual long read(void *buffer, size_t len) {

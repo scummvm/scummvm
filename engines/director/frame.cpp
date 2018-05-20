@@ -241,7 +241,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._width = stream->readUint16();
 			stream->readUint16();
 			stream->readUint16();
-			
+
 		}
 
 		if (sprite._castId) {

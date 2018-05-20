@@ -554,7 +554,7 @@ int CreateCharacterDialog::exchangeAttribute(int srcAttr) {
 			break;
 
 		int destAttr = getAttribFromKeycode(_buttonValue);
-		
+
 		if (destAttr != -1 && srcAttr != destAttr) {
 			result = destAttr;
 			break;

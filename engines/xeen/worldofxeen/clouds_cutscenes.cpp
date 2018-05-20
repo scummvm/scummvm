@@ -278,7 +278,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 			sound.playVoice(_INTRO_VOCS[lineCtr]);
 		}
 
-		for (int frameCtr = 0, lookup = 0; sound.isSoundPlaying() || 
+		for (int frameCtr = 0, lookup = 0; sound.isSoundPlaying() ||
 				(_subtitles.active() && (lineCtr == 0 || lineCtr == 4 || lineCtr == 10 || lineCtr == 13)); ) {
 			groupo.draw(0, 0);
 			groupo.draw(0, 1, Common::Point(160, 0));
@@ -332,7 +332,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 				windows[0].writeString(Res.CLOUDS_INTRO1);
 
 				ctr5 = (ctr5 + 1) % 19;
-				
+
 				WAIT(1);
 				continue;
 			}
@@ -985,7 +985,7 @@ bool CloudsCutscenes::showCloudsEnding5() {
 	king.draw(0, 1, Common::Point(160, 0));
 	screen.fadeIn();
 	_subtitles.setLine(13);
-	
+
 	sound.playVoice("king4.voc");
 	do {
 		king.draw(0, 0, Common::Point(0, 0));

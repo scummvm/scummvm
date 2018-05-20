@@ -1146,7 +1146,7 @@ int ArenaLocation::show() {
 		int count = party._activeParty[0]._awards[WARZONE_AWARD];
 		int suffixNum = (count < 10) ? count : 0;
 		Common::String msg = Common::String::format(format.c_str(), count, SUFFIXES[suffixNum]);
-	
+
 		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, msg, 1);
 
 		map.load(28);
@@ -1383,7 +1383,7 @@ int ReaperCutscene::show() {
 			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sprites1.draw(0, 0, Common::Point(REAPER_X1[_ccNum][idx], REAPER_Y1[_ccNum][idx]), 0, idx);
-			
+
 			if (_ccNum) {
 				sprites1.draw(0, 1, Common::Point(REAPER_X2[idx], REAPER_Y1[1][idx]), 0, idx);
 				sprites1.draw(0, party._isNight ? 3 : 2, Common::Point(REAPER_X3[idx], REAPER_Y1[1][idx]), 0, idx);
@@ -1592,7 +1592,7 @@ int GolemCutscene::show() {
 		if (!_ccNum)
 			sprites2[0].draw(0, 2, Common::Point(idx + g_vm->getRandomNumber(9) - 5,
 				g_vm->getRandomNumber(9) - 5), SPRFLAG_800);
-		
+
 		if (!_ccNum && !sound.isSoundPlaying())
 			sound.playSound("ogre.voc");
 
@@ -2101,7 +2101,7 @@ int SphinxCutscene::show() {
 	// Save background
 	Graphics::ManagedSurface bgSurface;
 	bgSurface.copyFrom(screen);
-	
+
 	for (int idx = 8; idx >= 0; --idx) {
 		events.updateGameCounter();
 		screen.blitFrom(bgSurface);

@@ -57,7 +57,7 @@ void Patcher::patchScripts() {
 	FileManager &files = *g_vm->_files;
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
-	
+
 	uint gameId = g_vm->getGameID();
 	if (gameId == GType_WorldOfXeen)
 		gameId = files._ccNum ? GType_DarkSide : GType_Clouds;
@@ -66,7 +66,7 @@ void Patcher::patchScripts() {
 		const ScriptEntry &se = SCRIPT_PATCHES[patchIdx];
 		if (se._gameId != gameId || se._mapId != party._mazeId)
 			continue;
-		
+
 		MazeEvent evt;
 		Common::MemoryReadStream memStream(se._data, se._data[0] + 1);
 		Common::Serializer s(&memStream, nullptr);

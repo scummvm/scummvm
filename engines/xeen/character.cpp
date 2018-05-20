@@ -196,7 +196,7 @@ void Character::synchronize(Common::Serializer &s) {
 	// upper nibble of the first 64 bytes. Except for award 9, which was a full
 	// byte counter counting the number of times the warzone was awarded
 	for (int idx = 0; idx < 64; ++idx) {
-		byte b = (idx == WARZONE_AWARD) ? _awards[idx] :			
+		byte b = (idx == WARZONE_AWARD) ? _awards[idx] :
 			(_awards[idx] ? 0x1 : 0) | (_awards[idx + 64] ? 0x10 : 0);
 		s.syncAsByte(b);
 		if (s.isLoading()) {

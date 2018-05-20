@@ -161,7 +161,7 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 		(map._currentSteppedOn || party._wizardEyeActive)) {
 		map._tileSprites.draw(1,
 			map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
-			Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2), 
+			Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2),
 				MINIMAP_YSTART - (TILE_HEIGHT / 2) + 1));
 	}
 
@@ -192,7 +192,7 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	}
 
 	// Handle drawing partially clip top row and left column
-	for (int xp = MINIMAP_XSTART, yp = MINIMAP_YSTART + (MINIMAP_SIZE - 1) * TILE_HEIGHT,		
+	for (int xp = MINIMAP_XSTART, yp = MINIMAP_YSTART + (MINIMAP_SIZE - 1) * TILE_HEIGHT,
 			mazeX = pt.x - MINIMAP_DIFF, mazeY = pt.y + MINIMAP_DIFF;
 			mazeX <= (pt.x - MINIMAP_DIFF);
 			xp += TILE_WIDTH, yp -= TILE_HEIGHT, ++mazeX, --mazeY) {

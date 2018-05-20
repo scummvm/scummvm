@@ -1760,7 +1760,7 @@ void TTparser::preprocessGerman(TTstring &line) {
 			continue;
 
 		const char *wordEndP = p + _replacements4[idx].size();
-		
+
 		for (int sIdx = 0; sIdx < 12; ++sIdx) {
 			const char *suffixP = SUFFIXES[sIdx];
 			if (!strncmp(wordEndP, suffixP, strlen(suffixP))) {

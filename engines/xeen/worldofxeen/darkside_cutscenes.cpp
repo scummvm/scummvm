@@ -104,7 +104,7 @@ bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 		// Render the next frame
 		screen.vertMerge(0);
 		nwc[nwcIndex].draw(0, nwcFrame);
-	
+
 		switch (idx) {
 		case 17:
 			sound.playSound(voc[0]);
@@ -128,7 +128,7 @@ bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 	for (int idx = 0; idx < 42 && !g_vm->shouldExit(); ++idx) {
 		screen.vertMerge(SCREEN_HEIGHT);
 		nwc[3].draw(0, idx);
-	
+
 		switch (idx) {
 		case 3:
 			sound.playFX(40);
@@ -808,7 +808,7 @@ bool DarkSideCutscenes::showWorldOfXeenLogo() {
 		for (int idx = 0; idx < 21; ++idx) {
 			screen.restoreBackground();
 			wfire[6].draw(0, idx, Common::Point(0, 45));
-			
+
 			switch (idx) {
 			case 0:
 			case 11:

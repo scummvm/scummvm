@@ -57,7 +57,7 @@ void MainMenuContainer::show() {
 MainMenuContainer::MainMenuContainer(const char *spritesName1, const char *spritesName2, const char *spritesName3) :
 		_animateCtr(0), _dialog(nullptr) {
 	g_vm->_files->setGameCc(g_vm->getGameID() == GType_Clouds ? 0 : 1);
-	
+
 	_backgroundSprites.resize(1 + (spritesName2 ? 1 : 0) + (spritesName3 ? 1 : 0));
 	_backgroundSprites[0].load(spritesName1);
 	if (spritesName2)
@@ -120,7 +120,7 @@ void MainMenuContainer::execute() {
 
 		// Check for events
 		events.updateGameCounter();
-		
+
 		if (events.wait(4, true)) {
 			if (_dialog) {
 				// There's a dialog active, so let it handle the event
@@ -337,7 +337,7 @@ void CloudsMenuDialog::loadButtons() {
 void CloudsMenuDialog::draw() {
 	Windows &windows = *g_vm->_windows;
 	Window &w = windows[GAME_WINDOW];
-	
+
 	w.frame();
 	w.writeString(Common::String::format(Res.OPTIONS_MENU, Res.GAME_NAMES[0], g_vm->_gameWon[0] ? 117 : 92, 1992));
 	drawButtons(&w);
@@ -584,7 +584,7 @@ void OtherOptionsDialog::draw() {
 
 	w.frame();
 	w.writeString(Common::String::format(Res.OPTIONS_MENU,
-		Res.GAME_NAMES[g_vm->getGameID() == GType_WorldOfXeen ? 2 : 1], 
+		Res.GAME_NAMES[g_vm->getGameID() == GType_WorldOfXeen ? 2 : 1],
 		w.getBounds().height() - 33, 1993));
 	drawButtons(&w);
 }
