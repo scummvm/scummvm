@@ -51,9 +51,7 @@ public:
 	// Screen API
 	void open() override;
 	void close() override;
-
-	// Called when the screen resolution changes
-	void onScreenChanged();
+	void onScreenChanged() override;
 
 protected:
 	// Window API

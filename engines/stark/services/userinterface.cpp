@@ -264,9 +264,11 @@ const Graphics::Surface *UserInterface::getGameWindowThumbnail() const {
 }
 
 void UserInterface::onScreenChanged() {
-	_mainMenuScreen->onScreenChanged();
 	_gameScreen->onScreenChanged();
-	_diaryIndexScreen->onScreenChanged();
+
+	if (!isInGameScreen()) {
+		_currentScreen->onScreenChanged();
+	}
 }
 
 void UserInterface::notifyInventoryItemEnabled(uint16 itemIndex) {
