@@ -144,6 +144,8 @@ void MainMenuScreen::creditsHandler() {
 void MainMenuScreen::newGameHandler() {
 	StarkUserInterface->changeScreen(kScreenGame);
 
+	StarkResourceProvider->initGlobal();
+
 	if (ConfMan.hasKey("startup_chapter")) {
 		StarkGlobal->setCurrentChapter(ConfMan.getInt("startup_chapter"));
 	} else {
@@ -165,10 +167,7 @@ void MainMenuScreen::newGameHandler() {
 }
 
 void MainMenuScreen::loadHandler() {
-	if (ConfMan.hasKey("save_slot")) {
-		// Load game from specified slot, if any
-		g_engine->loadGameState(ConfMan.getInt("save_slot"));
-	}
+	// TODO: Link to the load screen
 }
 
 void MainMenuScreen::quitHandler() {

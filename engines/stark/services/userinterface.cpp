@@ -164,7 +164,6 @@ void UserInterface::backPrevScreen() {
 void UserInterface::quitToMainMenu() {
 	changeScreen(Screen::kScreenGame);
 	StarkResourceProvider->shutdown();
-	StarkResourceProvider->initGlobal();
 	changeScreen(Screen::kScreenMainMenu);
 }
 

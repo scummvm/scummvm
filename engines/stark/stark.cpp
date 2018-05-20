@@ -141,12 +141,18 @@ Common::Error StarkEngine::run() {
 	services.gameDescription = _gameDescription;
 
 	// Load global resources
-	_resourceProvider->initGlobal();
 	_staticProvider->init();
 	_fontProvider->initFonts();
 	
 	// Initialize the UI
 	_userInterface->init();
+
+	// Load through ResidualVM launcher
+	if (ConfMan.hasKey("save_slot")) {
+		_resourceProvider->initGlobal();
+		_userInterface->changeScreen(Screen::kScreenGame);
+		loadGameState(ConfMan.getInt("save_slot"));
+	}
 
 	// Start running
 	mainLoop();
