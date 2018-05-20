@@ -40,7 +40,6 @@ const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, 
 
 	const char *lastSpaceInput = nullptr;
 	char *lastSpaceOutput = nullptr;
-	int var4;
 	int charIndex = 0;
 
 	while (charIndex != lineWidth && *text != '\0') {
@@ -52,7 +51,6 @@ const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, 
 		}
 
 		if (c == ' ') {
-			var4 = charIndex;
 			lastSpaceInput = text;
 			lastSpaceOutput = lineOutput;
 		}
@@ -132,13 +130,14 @@ String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *he
 /**
  * Shows text with the given header and main text.
  */
-int StarTrekEngine::showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines) {
+void StarTrekEngine::showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines) {
 	if (!headerText.empty()) {
 		while (headerText.size() < TEXTBOX_WIDTH - 2)
 			headerText += ' ';
 	}
 
-	int newMaxTextLines = (maxTextLines < 0 ? 0 : maxTextLines);
+	int commandParam = (maxTextLines < 0 ? 0 : maxTextLines);
+
 	if (maxTextLines < 0)
 		maxTextLines = -maxTextLines;
 
@@ -151,11 +150,9 @@ int StarTrekEngine::showTextbox(String headerText, const String &mainText, int x
 	strings[1] = mainText.c_str();
 	strings[2] = "";
 
-	showText(&StarTrekEngine::readTextFromArray, (uintptr)strings, xoffset, yoffset, textColor, false, maxTextLines, 0);
+	showText(&StarTrekEngine::readTextFromArray, (uintptr)strings, xoffset, yoffset, textColor, false, maxTextLines, false);
 
-	// TODO
-	// sub_15a77();
-	// sub_14669(newMaxTextLines);
+	addCommand(Command(COMMAND_TALK, commandParam, 0, 0));
 }
 
 String StarTrekEngine::skipTextAudioPrompt(const String &str) {
@@ -199,12 +196,16 @@ String StarTrekEngine::playTextAudio(const String &str) {
 	return String(text+1);
 }
 
-int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10) {
+/**
+ * @param rclickCancelsChoice   If true, right-clicks return "-1" as choice instead of
+ *                              whetever was selected.
+ */
+int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, bool rclickCancelsChoice) {
 	int16 tmpTextDisplayMode = _textDisplayMode;
 
-	uint32 var7c = 8;
-	if (_frameIndex > _textboxVar2+1) {
-		var7c = 0x10;
+	uint32 ticksUntilClickingEnabled = 8;
+	if (_frameIndex > _textboxVar2 + 1) {
+		ticksUntilClickingEnabled = 0x10;
 	}
 
 	int numChoicesWithNames = 0;
@@ -217,11 +218,11 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 		if (choiceText.empty())
 			break;
 
-		int lines = getNumTextboxLines(choiceText);
+		int lines = getNumTextboxLines(skipTextAudioPrompt(choiceText));
 		if (lines > numTextboxLines)
 			numTextboxLines = lines;
 
-		if (!speakerText.empty()) // Technically should check for nullptr
+		if (!speakerText.empty()) // FIXME: Technically should check for nullptr
 			numChoicesWithNames++;
 
 		numChoices++;
@@ -256,6 +257,8 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 	String lineFormattedText = readLineFormattedText(textGetter, var, choiceIndex, textBitmap, numTextboxLines, &numTextLines);
 
 	if (lineFormattedText.empty()) { // Technically should check for nullptr
+		_gfx->delSprite(&textboxSprite);
+
 		// TODO
 	}
 	else {
@@ -280,7 +283,7 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 
 		disableMenuButtons(1 << TEXTBUTTON_SCROLLUP); // Disable scroll up
 
-		if (var7c == 0) { // Disable done button
+		if (ticksUntilClickingEnabled == 0) { // Disable done button
 			disableMenuButtons(1 << TEXTBUTTON_CONFIRM);
 		}
 		if (!loopChoices) { // Disable prev button
@@ -291,9 +294,9 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 
 		// Loop until text is done being displayed
 		while (!doneShowingText) {
-			int textboxReturnCode = handleMenuEvents(var7c, true);
+			int textboxReturnCode = handleMenuEvents(ticksUntilClickingEnabled, true);
 
-			if (var7c == 0) {
+			if (ticksUntilClickingEnabled == 0) {
 				enableMenuButtons(1 << TEXTBUTTON_CONFIRM);
 			}
 
@@ -301,9 +304,9 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 
 			case MENUEVENT_RCLICK_OFFBUTTON:
 			case MENUEVENT_RCLICK_ONBUTTON:
-				if (var7c == 0) {
+				if (ticksUntilClickingEnabled == 0) {
 					doneShowingText = true;
-					if (arg10)
+					if (rclickCancelsChoice)
 						choiceIndex = -1;
 				}
 				break;
@@ -411,6 +414,8 @@ reloadText:
 			default:
 				break;
 			}
+
+			ticksUntilClickingEnabled = 0;
 		}
 
 		_gfx->setMouseBitmap(oldMouseBitmap);
@@ -418,12 +423,10 @@ reloadText:
 
 		_mouseControllingShip = tmpMouseControllingShip;
 		unloadMenuButtons();
-		textboxSprite.field16 = true;
-		textboxSprite.bitmapChanged = true;
 
+		textboxSprite.dontDrawNextFrame();
 		_gfx->drawAllSprites();
 		_gfx->delSprite(&textboxSprite);
-		// sub_272B4
 	}
 
 	_textboxVar2 = _frameIndex;

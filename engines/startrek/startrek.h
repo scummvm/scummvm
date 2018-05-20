@@ -317,12 +317,12 @@ public:
 	String readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput);
 	String readTextFromBuffer(int choiceIndex, uintptr data, String *headerTextOutput);
 
-	int showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines); // TODO: better name. (return type?)
+	void showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines); // TODO: better name. (return type?)
 
 	String skipTextAudioPrompt(const String &str);
 	String playTextAudio(const String &str);
 
-	int showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10);
+	int showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, bool rclickCancelsChoice);
 
 	int getNumTextboxLines(const String &str);
 	String putTextIntoLines(const String &text);
@@ -403,7 +403,7 @@ public:
 	int32 _playerActorScale;
 
 	Common::String _txtFilename;
-	Common::String _itemDescription;
+	Common::String _loadedText; // TODO: might be OK to delete this
 
 	// Queue of "commands" (ie. next frame, clicked on object) for away mission or bridge
 	Common::Queue<Command> _commandQueue;

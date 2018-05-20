@@ -31,7 +31,7 @@ void StarTrekEngine::initAwayMission() {
 	// memset(bitmapBuffer->pixels, 0, 0xfa00);
 
 	_txtFilename = "ground";
-	_itemDescription = "";
+	_loadedText = "";
 
 	// sub_23a60(); // TODO
 	_sound->loadMusicFile("ground");
@@ -425,6 +425,11 @@ void StarTrekEngine::handleAwayMissionCommand() {
 		else {
 			if (command.action.activeObject == OBJECT_REDSHIRT)
 				showTextbox("", getItemDescription(0x4c), 20, 20, TEXTCOLOR_YELLOW, 0);
+
+			// Show generic "nothing of note" text.
+			// BUG? This text is also shown after looking at the redshirt. However, his
+			// text is normally overridden on a per-mission basis, so perhaps this bug
+			// never manifests itself?
 			showTextbox("", getItemDescription(0x4d), 20, 20, TEXTCOLOR_YELLOW, 0);
 		}
 		break;

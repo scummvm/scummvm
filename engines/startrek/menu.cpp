@@ -839,7 +839,7 @@ void StarTrekEngine::showQuitGamePrompt(int x, int y) {
 		return;
 
 	_inQuitGameMenu = true;
-	int val = showText(&StarTrekEngine::readTextFromArray, (uintptr)options, x, y, 0xb0, true, 0, 1);
+	int val = showText(&StarTrekEngine::readTextFromArray, (uintptr)options, x, y, TEXTCOLOR_YELLOW, true, 0, true);
 	_inQuitGameMenu = false;
 
 	if (val == 0) {
@@ -863,7 +863,7 @@ void StarTrekEngine::showTextConfigurationMenu(bool fromOptionMenu) {
 
 	int val;
 	if (fromOptionMenu || (val = loadTextDisplayMode()) == -1) {
-		val = showText(&StarTrekEngine::readTextFromArray, (uintptr)options, 20, 30, 0xb0, true, 0, 1);
+		val = showText(&StarTrekEngine::readTextFromArray, (uintptr)options, 20, 30, TEXTCOLOR_YELLOW, true, 0, true);
 		saveTextDisplayMode(val);
 	}
 
