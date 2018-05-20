@@ -46,6 +46,7 @@ public:
 
 	void cleanup();
 	bool parseFile(const char *fname);
+	Common::String getSubtitle(uint32 timestamp);
 
 private:
 	Common::Array<SRTEntry *> _entries;
