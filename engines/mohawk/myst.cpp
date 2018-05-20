@@ -398,9 +398,8 @@ void MohawkEngine_Myst::doFrame() {
 		_waitingOnBlockingOperation = false;
 	}
 
-	if (shouldPerformAutoSave(_lastSaveTime) && canSaveGameStateCurrently() && _gameState->isAutoSaveAllowed()) {
-		autoSave();
-		_lastSaveTime = _system->getMillis();
+	if (shouldPerformAutoSave(_lastSaveTime)) {
+		tryAutoSaving();
 	}
 
 	Common::Event event;
@@ -455,10 +454,8 @@ void MohawkEngine_Myst::doFrame() {
 
 						if (_needsShowCredits) {
 							if (isInteractive()) {
-								if (canSaveGameStateCurrently() && _gameState->isAutoSaveAllowed()) {
-									// Attempt to autosave before exiting
-									autoSave();
-								}
+								// Attempt to autosave before exiting
+								tryAutoSaving();
 
 								_cursor->hideCursor();
 								changeToStack(kCreditsStack, 10000, 0, 0);
@@ -489,10 +486,8 @@ void MohawkEngine_Myst::doFrame() {
 				break;
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RTL:
-				if (canSaveGameStateCurrently() && _gameState->isAutoSaveAllowed()) {
-					// Attempt to autosave before exiting
-					autoSave();
-				}
+				// Attempt to autosave before exiting
+				tryAutoSaving();
 				break;
 			default:
 				break;
@@ -1181,7 +1176,17 @@ Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &d
 	return _gameState->save(slot, desc, false) ? Common::kNoError : Common::kUnknownError;
 }
 
-void MohawkEngine_Myst::autoSave() {
+void MohawkEngine_Myst::tryAutoSaving() {
+	if (!canSaveGameStateCurrently()) {
+		return; // Can't save right now, try again on the next frame
+	}
+
+	_lastSaveTime = _system->getMillis();
+
+	if (!_gameState->isAutoSaveAllowed()) {
+		return; // Can't autosave ever, try again after the next autosave delay
+	}
+
 	if (!_gameState->save(MystGameState::kAutoSaveSlot, "Autosave", true))
 		warning("Attempt to autosave has failed.");
 }
