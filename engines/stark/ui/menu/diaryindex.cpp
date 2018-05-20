@@ -114,7 +114,7 @@ void DiaryIndexScreen::backHandler() {
 }
 
 void DiaryIndexScreen::quitHandler() {
-	StarkUserInterface->notifyShouldExit();
+	StarkUserInterface->changeScreen(Screen::kScreenMainMenu);
 }
 
 void DiaryIndexScreen::loadHandler() {

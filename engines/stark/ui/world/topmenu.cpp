@@ -133,7 +133,7 @@ void TopMenu::onClick(const Common::Point &pos) {
 
 	if (_exitButton->containsPoint(pos)) {
 		// TODO: Confirmation dialog
-		StarkUserInterface->notifyShouldExit();
+		StarkUserInterface->changeScreen(Screen::kScreenMainMenu);
 	}
 
 	if (_inventoryButton->containsPoint(pos)) {

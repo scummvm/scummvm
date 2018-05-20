@@ -146,6 +146,10 @@ void UserInterface::changeScreen(Screen::Name screenName) {
 	_currentScreen->close();
 	_currentScreen = getScreenByName(screenName);
 	_currentScreen->open();
+
+	if (_currentScreen->getName() == Screen::kScreenMainMenu) {
+		_prevScreenNameStack.clear();
+	}
 }
 
 void UserInterface::backPrevScreen() {
