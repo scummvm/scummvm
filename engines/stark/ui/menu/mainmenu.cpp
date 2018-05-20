@@ -23,6 +23,9 @@
 #include "engines/stark/ui/menu/mainmenu.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/resourceprovider.h"
+#include "engines/stark/services/global.h"
+
+#include "common/config-manager.h"
 
 namespace Stark {
 
@@ -141,10 +144,23 @@ void MainMenuScreen::creditsHandler() {
 void MainMenuScreen::newGameHandler() {
 	StarkUserInterface->changeScreen(kScreenGame);
 
-	if (isDemo()) {
-		StarkResourceProvider->requestLocationChange(0x4f, 0x00);
+	if (ConfMan.hasKey("startup_chapter")) {
+		StarkGlobal->setCurrentChapter(ConfMan.getInt("startup_chapter"));
 	} else {
-		StarkResourceProvider->requestLocationChange(0x45, 0x00);
+		StarkGlobal->setCurrentChapter(0);
+	}
+
+	if (ConfMan.hasKey("startup_level") && ConfMan.hasKey("startup_location")) {
+		uint levelIndex = strtol(ConfMan.get("startup_level").c_str(), nullptr, 16);
+		uint locationIndex = strtol(ConfMan.get("startup_location").c_str(), nullptr, 16);
+		StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
+	} else {
+		if (isDemo()) {
+			StarkResourceProvider->requestLocationChange(0x4f, 0x00);
+		} else {
+			// Start us up at the house of all worlds
+			StarkResourceProvider->requestLocationChange(0x45, 0x00);
+		}
 	}
 }
 
