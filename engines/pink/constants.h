@@ -140,8 +140,8 @@ enum {
 };
 
 enum {
-    kTimersUpdateTime = 0x64,
-    kCursorsUpdateTime = 0xC8
+    kTimersUpdateTime = 100,
+    kCursorsUpdateTime = 200
 };
 
 enum {
