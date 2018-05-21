@@ -63,11 +63,12 @@ void InventoryMgr::deserialize(Archive &archive) {
 }
 
 InventoryItem *InventoryMgr::findInventoryItem(const Common::String &name) {
-    auto it = Common::find_if(_items.begin(), _items.end(), [&name]
-            (InventoryItem *item) {
-        return name == item->getName();
-    });;
-    return it != _items.end() ? *it : nullptr;
+	for (uint i = 0; i < _items.size(); ++i) {
+		if (_items[i]->getName() == name) {
+			return _items[i];
+		}
+	}
+	return nullptr;
 }
 
 void InventoryMgr::setLeadActor(LeadActor *lead) {

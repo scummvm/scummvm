@@ -47,13 +47,12 @@ Sequencer *Actor::getSequencer() const {
 }
 
 Action *Actor::findAction(const Common::String &name) {
-    auto action = Common::find_if(_actions.begin(), _actions.end(), [&name]
-            (Action* action) {
-        return name == action->getName();
-    });
-    if (action == _actions.end())
-        return nullptr;
-    return *action;
+	for (uint i = 0; i < _actions.size(); ++i) {
+		if (_actions[i]->getName() == name) {
+			return _actions[i];
+		}
+	}
+	return nullptr;
 }
 
 GamePage *Actor::getPage() const {

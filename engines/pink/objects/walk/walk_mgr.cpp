@@ -41,10 +41,12 @@ void WalkMgr::deserialize(Pink::Archive &archive) {
 }
 
 WalkLocation *WalkMgr::findLocation(const Common::String &name) {
-    auto it = Common::find_if(_locations.begin(), _locations.end(), [&name](WalkLocation *location) {
-        return location->getName() == name;
-    });
-    return (it != _locations.end()) ? *it : nullptr;
+	for (uint i = 0; i < _locations.size(); ++i) {
+		if (_locations[i]->getName() == name) {
+			return 	_locations[i];
+		}
+	}
+	return nullptr;
 }
 
 void WalkMgr::toConsole() {

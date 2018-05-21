@@ -38,15 +38,12 @@ void Page::load(Archive &archive) {
 }
 
 Actor *Page::findActor(const Common::String &name) {
-    auto it = Common::find_if(_actors.begin(), _actors.end(), [&name]
-            (Actor *actor) {
-        return name == actor->getName();
-    });
-
-    if (it == _actors.end())
-        return nullptr;
-
-    return *it;
+	for (uint i = 0; i < _actors.size(); ++i) {
+		if (_actors[i]->getName() == name) {
+			return _actors[i];
+		}
+	}
+	return nullptr;
 }
 
 Sound *Page::loadSound(Common::String &fileName) {
