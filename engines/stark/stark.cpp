@@ -303,6 +303,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	_userInterface->skipFMV();
 	_userInterface->clearLocationDependentState();
 	_userInterface->setInteractive(true);
+	_userInterface->changeScreen(Screen::kScreenGame);
 
 	// Clear the previous world resources
 	_resourceProvider->shutdown();
