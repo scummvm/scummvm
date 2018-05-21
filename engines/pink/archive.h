@@ -23,10 +23,11 @@
 #ifndef PINK_ARCHIVE_H
 #define PINK_ARCHIVE_H
 
-#include <engines/pink/objects/object.h>
-#include <common/str-array.h>
-#include "common/stream.h"
 #include "common/hash-str.h"
+#include "common/str-array.h"
+#include "common/stream.h"
+
+#include "pink/objects/object.h"
 
 namespace Common {
 

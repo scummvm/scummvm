@@ -20,8 +20,8 @@
  *
  */
 
-#include "pda_button_actor.h"
 #include "pink/archive.h"
+#include "pink/objects/actors/pda_button_actor.h"
 
 namespace Pink {
 

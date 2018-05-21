@@ -23,7 +23,7 @@
 #ifndef PINK_SEQUENCE_ITEM_H
 #define PINK_SEQUENCE_ITEM_H
 
-#include <engines/pink/objects/object.h>
+#include "pink/objects/object.h"
 
 namespace Pink {
 

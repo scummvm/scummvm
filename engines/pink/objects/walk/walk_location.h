@@ -22,10 +22,9 @@
 #ifndef PINK_WALK_LOCATION_H
 #define PINK_WALK_LOCATION_H
 
-#include <engines/pink/objects/object.h>
-#include <common/array.h>
-#include <common/str-array.h>
+#include "common/str-array.h"
 
+#include "pink/objects/object.h"
 
 namespace Pink {
 

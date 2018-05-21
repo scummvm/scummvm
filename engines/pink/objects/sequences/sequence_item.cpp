@@ -20,15 +20,16 @@
  *
  */
 
-#include "sequence_item.h"
-#include <common/debug.h>
-#include <engines/pink/objects/sequences/sequence.h>
-#include <engines/pink/objects/sequences/sequencer.h>
-#include <engines/pink/objects/actions/action.h>
-#include "engines/pink/archive.h"
-#include "engines/pink/objects/pages/game_page.h"
-#include "engines/pink/objects/actors/actor.h"
-#include "sequence_context.h"
+#include "common/debug.h"
+
+#include "pink/archive.h"
+#include "pink/objects/actions/action.h"
+#include "pink/objects/actors/actor.h"
+#include "pink/objects/pages/game_page.h"
+#include "pink/objects/sequences/sequence_item.h"
+#include "pink/objects/sequences/sequence.h"
+#include "pink/objects/sequences/sequencer.h"
+#include "pink/objects/sequences/sequence_context.h"
 
 namespace Pink {
 

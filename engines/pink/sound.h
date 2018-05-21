@@ -23,9 +23,10 @@
 #ifndef PINK_SOUND_H
 #define PINK_SOUND_H
 
-#include <common/stream.h>
-#include <audio/mixer.h>
-#include <common/substream.h>
+#include "audio/mixer.h"
+
+#include "common/stream.h"
+#include "common/substream.h"
 
 namespace Pink {
 

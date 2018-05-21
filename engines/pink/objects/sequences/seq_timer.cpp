@@ -20,13 +20,14 @@
  *
  */
 
-#include "seq_timer.h"
-#include <engines/pink/archive.h>
-#include "./sequencer.h"
-#include <common/debug.h>
-#include <engines/pink/objects/actors/supporting_actor.h>
-#include "pink/objects/pages/game_page.h"
+#include "common/debug.h"
+
+#include "pink/archive.h"
 #include "pink/pink.h"
+#include "pink/objects/actors/supporting_actor.h"
+#include "pink/objects/pages/game_page.h"
+#include "pink/objects/sequences/seq_timer.h"
+#include "pink/objects/sequences/sequencer.h"
 
 namespace Pink {
 

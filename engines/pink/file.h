@@ -23,7 +23,7 @@
 #ifndef PINK_FILE_H
 #define PINK_FILE_H
 
-#include <common/file.h>
+#include "common/file.h"
 
 namespace Pink {
 

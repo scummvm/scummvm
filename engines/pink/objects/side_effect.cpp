@@ -20,15 +20,15 @@
  *
  */
 
-#include <common/hash-str.h>
-#include "side_effect.h"
-#include <engines/pink/archive.h>
-#include <engines/pink/objects/actors/lead_actor.h>
-#include <engines/pink/objects/pages/game_page.h>
-#include <engines/pink/pink.h>
-#include <engines/pink/objects/walk/walk_location.h>
-#include <engines/pink/objects/walk/walk_mgr.h>
+#include "common/hash-str.h"
 
+#include "pink/archive.h"
+#include "pink/pink.h"
+#include "pink/objects/side_effect.h"
+#include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/pages/game_page.h"
+#include "pink/objects/walk/walk_location.h"
+#include "pink/objects/walk/walk_mgr.h"
 
 namespace Pink {
 

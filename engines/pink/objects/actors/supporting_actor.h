@@ -23,8 +23,8 @@
 #ifndef PINK_SUPPORTING_ACTOR_H
 #define PINK_SUPPORTING_ACTOR_H
 
-#include <engines/pink/objects/handlers/handler_mgr.h>
-#include "actor.h"
+#include "pink/objects/actors/actor.h"
+#include "pink/objects/handlers/handler_mgr.h"
 
 namespace Pink {
 

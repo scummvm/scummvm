@@ -23,8 +23,9 @@
 #ifndef PINK_GAME_PAGE_H
 #define PINK_GAME_PAGE_H
 
-#include <common/memstream.h>
-#include "page.h"
+#include "common/memstream.h"
+
+#include "pink/objects/pages/page.h"
 
 namespace Pink {
 

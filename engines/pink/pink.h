@@ -23,14 +23,18 @@
 #ifndef PINK_PINK_H
 #define PINK_PINK_H
 
-#include <graphics/wincursor.h>
 #include "common/random.h"
+
 #include "engines/engine.h"
+
+#include "graphics/wincursor.h"
+
 #include "gui/EventRecorder.h"
 #include "gui/debugger.h"
-#include "file.h"
-#include "director.h"
-#include "constants.h"
+
+#include "pink/constants.h"
+#include "pink/director.h"
+#include "pink/file.h"
 
 /*
  *  This is the namespace of the Pink engine.

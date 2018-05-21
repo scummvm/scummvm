@@ -23,7 +23,7 @@
 #ifndef PINK_DETECTION_TABLES_H
 #define PINK_DETECTION_TABLES_H
 
-#include <gui/EventRecorder.h>
+#include "gui/EventRecorder.h"
 
 namespace Pink {
 

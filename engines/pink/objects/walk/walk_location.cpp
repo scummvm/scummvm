@@ -20,9 +20,10 @@
  *
  */
 
-#include <common/debug.h>
-#include "walk_location.h"
-#include "engines/pink/archive.h"
+#include "common/debug.h"
+
+#include "pink/archive.h"
+#include "pink/objects/walk/walk_location.h"
 
 namespace Pink {
 

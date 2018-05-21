@@ -23,9 +23,10 @@
 #ifndef PINK_WALK_MGR_H
 #define PINK_WALK_MGR_H
 
-#include <common/array.h>
-#include "engines/pink/objects/object.h"
-#include "walk_shortest_path.h"
+#include "common/array.h"
+
+#include "pink/objects/object.h"
+#include "pink/objects/walk/walk_shortest_path.h"
 
 namespace Pink {
 

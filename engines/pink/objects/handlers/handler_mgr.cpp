@@ -20,10 +20,10 @@
  *
  */
 
-#include "handler_mgr.h"
-#include "handler.h"
-#include <pink/archive.h>
-#include <pink/objects/inventory.h>
+#include "pink/archive.h"
+#include "pink/objects/inventory.h"
+#include "pink/objects/handlers/handler.h"
+#include "pink/objects/handlers/handler_mgr.h"
 
 namespace Pink {
 

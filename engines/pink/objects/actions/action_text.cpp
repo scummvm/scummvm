@@ -20,9 +20,10 @@
  *
  */
 
-#include "action_text.h"
-#include <pink/archive.h>
-#include <common/debug.h>
+#include "common/debug.h"
+
+#include "pink/archive.h"
+#include "pink/objects/actions/action_text.h"
 
 namespace Pink {
 

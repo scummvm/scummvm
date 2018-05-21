@@ -20,13 +20,11 @@
  *
  */
 
-#include <common/scummsys.h>
-#include <common/substream.h>
-
 #ifndef PINK_RESOURCE_MGR_H
 #define PINK_RESOURCE_MGR_H
 
 namespace Common {
+	class SafeSeekableSubReadStream;
     class String;
 }
 

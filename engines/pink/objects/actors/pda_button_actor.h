@@ -23,7 +23,7 @@
 #ifndef PINK_PDA_BUTTON_ACTOR_H
 #define PINK_PDA_BUTTON_ACTOR_H
 
-#include "actor.h"
+#include "pink/objects/actors/actor.h"
 
 namespace Pink {
 

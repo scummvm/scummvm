@@ -23,11 +23,12 @@
 #ifndef PINK_AUDIO_INFO_PDA_BUTTON_H
 #define PINK_AUDIO_INFO_PDA_BUTTON_H
 
-#include <common/debug.h>
-#include <pink/objects/actions/action.h>
-#include <engines/pink/constants.h>
-#include <engines/pink/cursor_mgr.h>
-#include "actor.h"
+#include "common/debug.h"
+
+#include "pink/constants.h"
+#include "pink/cursor_mgr.h"
+#include "pink/objects/actions/action.h"
+#include "pink/objects/actors/actor.h"
 
 namespace Pink {
 

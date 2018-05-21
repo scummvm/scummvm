@@ -20,18 +20,20 @@
  *
  */
 
-#include "pink.h"
-#include "console.h"
-#include <engines/util.h>
-#include <common/debug-channels.h>
-#include <video/flic_decoder.h>
-#include "engines/pink/objects/module.h"
-#include "engines/pink/objects/actors/lead_actor.h"
-#include <graphics/surface.h>
-#include <graphics/cursorman.h>
-#include <common/winexe_pe.h>
-#include <common/config-manager.h>
+#include "common/debug-channels.h"
+#include "common/winexe_pe.h"
+#include "common/config-manager.h"
 
+#include "engines/util.h"
+
+#include "graphics/cursorman.h"
+
+#include "pink/pink.h"
+#include "pink/console.h"
+#include "pink/objects/side_effect.h"
+#include "pink/objects/module.h"
+#include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/sequences/sequencer.h"
 
 namespace Pink {
 

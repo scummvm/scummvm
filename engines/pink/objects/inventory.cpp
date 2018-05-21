@@ -21,14 +21,15 @@
  */
 
 
-#include <common/debug.h>
-#include "inventory.h"
-#include "engines/pink/archive.h"
-#include "pink/objects/actors/lead_actor.h"
-#include "pink/objects/actions/action.h"
-#include "pink/objects/pages/game_page.h"
+#include "common/debug.h"
+
+#include "pink/archive.h"
 #include "pink/director.h"
 #include "pink/pink.h"
+#include "pink/objects/inventory.h"
+#include "pink/objects/actions/action.h"
+#include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/pages/game_page.h"
 
 namespace Pink {
 

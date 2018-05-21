@@ -23,10 +23,9 @@
 #ifndef PINK_HANDLER_H
 #define PINK_HANDLER_H
 
-#include <common/array.h>
-#include <common/str-array.h>
-#include <engines/pink/objects/object.h>
+#include "common/str-array.h"
 
+#include "pink/objects/object.h"
 
 namespace Pink {
 

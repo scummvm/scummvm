@@ -20,11 +20,12 @@
  *
  */
 
-#include <common/debug.h>
-#include "action_play.h"
-#include "../actors/actor.h"
-#include "engines/pink/archive.h"
+#include "common/debug.h"
+
+#include "pink/archive.h"
 #include "pink/cel_decoder.h"
+#include "pink/objects/actions/action_play.h"
+#include "pink/objects/actors/actor.h"
 
 namespace Pink {
 

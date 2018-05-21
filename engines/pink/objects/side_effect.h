@@ -23,8 +23,9 @@
 #ifndef PINK_SIDE_EFFECT_H
 #define PINK_SIDE_EFFECT_H
 
-#include <engines/pink/objects/object.h>
-#include <common/str-array.h>
+#include "common/str-array.h"
+
+#include "pink/objects/object.h"
 
 namespace Pink {
 

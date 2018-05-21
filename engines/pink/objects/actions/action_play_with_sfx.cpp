@@ -20,11 +20,11 @@
  *
  */
 
-#include "action_play_with_sfx.h"
-#include <pink/objects/pages/game_page.h>
-#include <pink/sound.h>
-#include <pink/objects/actors/actor.h>
-#include <pink/cel_decoder.h>
+#include "pink/cel_decoder.h"
+#include "pink/sound.h"
+#include "pink/objects/actors/actor.h"
+#include "pink/objects/actions/action_play_with_sfx.h"
+#include "pink/objects/pages/game_page.h"
 
 namespace Pink {
 

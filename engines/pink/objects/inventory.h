@@ -23,10 +23,10 @@
 #ifndef PINK_INVENTORY_H
 #define PINK_INVENTORY_H
 
+#include "common/array.h"
+#include "common/rect.h"
 
-#include <common/array.h>
-#include <common/rect.h>
-#include "engines/pink/objects/object.h"
+#include "pink/objects/object.h"
 
 namespace Pink {
 

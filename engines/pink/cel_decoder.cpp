@@ -20,9 +20,11 @@
  *
  */
 
-#include <common/stream.h>
-#include <graphics/surface.h>
-#include "cel_decoder.h"
+#include "common/stream.h"
+
+#include "graphics/surface.h"
+
+#include "pink/cel_decoder.h"
 
 namespace Pink {
 
