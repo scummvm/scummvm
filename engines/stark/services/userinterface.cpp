@@ -143,13 +143,7 @@ void UserInterface::changeScreen(Screen::Name screenName) {
 		return;
 	}
 
-	if (screenName == Screen::kScreenMainMenu) {
-		// MainMenuScreen will not request to go back
-		_prevScreenNameStack.clear();
-	} else {
-		_prevScreenNameStack.push(_currentScreen->getName());
-	}
-
+	_prevScreenNameStack.push(_currentScreen->getName());
 	_currentScreen->close();
 	_currentScreen = getScreenByName(screenName);
 	_currentScreen->open();
@@ -159,12 +153,21 @@ void UserInterface::backPrevScreen() {
 	// No need to check the stack since at least there will be a MainMenuScreen in it
 	// and MainMenuScreen will not request to go back
 	changeScreen(_prevScreenNameStack.pop());
+
+	// No need to push for going back
+	_prevScreenNameStack.pop();
 }
 
 void UserInterface::quitToMainMenu() {
 	changeScreen(Screen::kScreenGame);
 	StarkResourceProvider->shutdown();
 	changeScreen(Screen::kScreenMainMenu);
+	_prevScreenNameStack.clear();
+}
+
+void UserInterface::restoreScreenHistory() {
+	_prevScreenNameStack.clear();
+	_prevScreenNameStack.push(Screen::kScreenMainMenu);
 }
 
 Screen *UserInterface::getScreenByName(Screen::Name screenName) const {

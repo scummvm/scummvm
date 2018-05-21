@@ -91,6 +91,9 @@ public:
 	/** Back to the main menu screen and rest resources */
 	void quitToMainMenu();
 
+	/** Restore the screen travelling history to the initial state*/
+	void restoreScreenHistory();
+
 	/** Is the game screen currently displayed? */
 	bool isInGameScreen() const;
 
