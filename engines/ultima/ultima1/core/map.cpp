@@ -252,8 +252,6 @@ void Ultima1Map::loadWidgets() {
 }
 
 void Ultima1Map::loadDungeonMap() {
-	setDimensions(Point(DUNGEON_WIDTH, DUNGEON_HEIGHT));
-	setRandomSeed();
 	_mapType = MAP_DUNGEON;
 	_tilesPerOrigTile = Point(1, 1);
 	_dungeonLevel = 1;
@@ -267,6 +265,14 @@ bool Ultima1Map::changeDungeonLevel(int delta) {
 	_dungeonLevel += delta;
 	if (_dungeonLevel <= 0)
 		return false;
+
+	// Set seed for generating a deterministic resulting dungoen level
+	setRandomSeed();
+
+	// Reset dungeon area
+	setDimensions(Point(DUNGEON_WIDTH, DUNGEON_HEIGHT));
+	_widgets.clear();
+	_currentTransport = nullptr;
 
 	// Set up widget for the player
 	_currentTransport = new TransportOnFoot(_game, this);
