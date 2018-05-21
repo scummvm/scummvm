@@ -39,7 +39,7 @@ public:
 protected:
     virtual void onStart();
 
-    uint32 _stopFrame;
+    int32 _stopFrame;
 };
 
 } // End of namespace Pink
