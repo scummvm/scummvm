@@ -59,7 +59,7 @@ void LeadActor::init(bool unk) {
 
 void LeadActor::toConsole() {
     debug("LeadActor: _name = %s", _name.c_str());
-    for (int i = 0; i < _actions.size(); ++i) {
+    for (uint i = 0; i < _actions.size(); ++i) {
         _actions[i]->toConsole();
     }
 }
@@ -314,7 +314,7 @@ bool LeadActor::isInteractingWith(SupportingActor *actor) {
 
 void ParlSqPink::toConsole() {
     debug("ParlSqPink: _name = %s", _name.c_str());
-    for (int i = 0; i < _actions.size(); ++i) {
+    for (uint i = 0; i < _actions.size(); ++i) {
         _actions[i]->toConsole();
     }
 }
@@ -334,7 +334,7 @@ PubPink::PubPink() :
 
 void PubPink::toConsole() {
     debug("PubPink: _name = %s", _name.c_str());
-    for (int i = 0; i < _actions.size(); ++i) {
+    for (uint i = 0; i < _actions.size(); ++i) {
         _actions[i]->toConsole();
     }
 }

@@ -38,7 +38,7 @@ Sequence::Sequence()
       _sequencer(nullptr) {}
 
 Sequence::~Sequence() {
-    for (int i = 0; i < _items.size(); ++i) {
+    for (uint i = 0; i < _items.size(); ++i) {
         delete _items[i];
     }
 }
@@ -52,7 +52,7 @@ void Sequence::deserialize(Archive &archive) {
 void Sequence::toConsole() {
     debug("\t\tSequence %s", _name.c_str());
     debug("\t\t\tItems:");
-    for (int i = 0; i < _items.size(); ++i) {
+    for (uint i = 0; i < _items.size(); ++i) {
         _items[i]->toConsole();
     }
 }
@@ -144,14 +144,14 @@ void SequenceAudio::deserialize(Archive &archive) {
 void SequenceAudio::toConsole() {
     debug("\t\tSequenceAudio %s : _sound = %s", _name.c_str(), _soundName.c_str());
     debug("\t\t\tItems:");
-    for (int i = 0; i < _items.size(); ++i) {
+    for (uint i = 0; i < _items.size(); ++i) {
         _items[i]->toConsole();
     }
 }
 
 void SequenceAudio::start(int unk) {
     Sequence::start(unk);
-    int index = _context->getNextItemIndex();
+    uint index = _context->getNextItemIndex();
     if (index < _items.size()) {
         SequenceItemLeaderAudio* leaderAudio = (SequenceItemLeaderAudio*) _items[index];
         _sample = leaderAudio->getSample();

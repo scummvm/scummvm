@@ -57,7 +57,7 @@ CelDecoder *Page::loadCel(Common::String &fileName) {
 
 
 void Page::toConsole() {
-    for (int i = 0; i < _actors.size(); ++i) {
+    for (uint i = 0; i < _actors.size(); ++i) {
         _actors[i]->toConsole();
     }
 }
@@ -66,7 +66,7 @@ void Page::init() {
     LeadActor::State state = _leadActor->getState();
     bool unk = (state == LeadActor::kInventory || state == LeadActor::kPDA);
 
-    for (int i = 0; i < _actors.size(); ++i) {
+    for (uint i = 0; i < _actors.size(); ++i) {
         _actors[i]->init(unk);
     }
 }
@@ -76,7 +76,7 @@ LeadActor *Page::getLeadActor() {
 }
 
 void Page::clear() {
-    for (int i = 0; i < _actors.size(); ++i) {
+    for (uint i = 0; i < _actors.size(); ++i) {
         delete _actors[i];
     }
     _actors.clear();
@@ -84,13 +84,13 @@ void Page::clear() {
 }
 
 void Page::pause() {
-    for (int i = 0; i < _actors.size(); ++i) {
+    for (uint i = 0; i < _actors.size(); ++i) {
         _actors[i]->pause();
     }
 }
 
 void Page::unpause() {
-    for (int i = 0; i < _actors.size(); ++i) {
+    for (uint i = 0; i < _actors.size(); ++i) {
         _actors[i]->unpause();
     }
 }

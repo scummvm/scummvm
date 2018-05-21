@@ -49,7 +49,7 @@ class SequenceContext {
 public:
     SequenceContext(Sequence *sequence, Sequencer* sequencer);
 
-    int getNextItemIndex() const;
+    uint getNextItemIndex() const;
     Sequence *getSequence() const;
 
     void setNextItemIndex(int index);
@@ -59,7 +59,7 @@ public:
 public:
     Sequence *_sequence;
     Sequencer *_sequencer;
-    int _nextItemIndex;
+    uint _nextItemIndex;
     Actor *_actor;
     Common::Array<SequenceActorState> _states;
     int _index;

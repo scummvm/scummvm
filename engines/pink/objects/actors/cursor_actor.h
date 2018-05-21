@@ -35,7 +35,7 @@ class CursorActor : public Actor {
 public:
     void toConsole() {
         debug("CursorActor: _name = %s", _name.c_str());
-        for (int i = 0; i < _actions.size(); ++i) {
+        for (uint i = 0; i < _actions.size(); ++i) {
             _actions[i]->toConsole();
         }
     }

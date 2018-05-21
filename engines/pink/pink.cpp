@@ -56,7 +56,7 @@ Pink::PinkEngine::~PinkEngine() {
     for (uint i = 0; i < _modules.size(); ++i) {
         delete _modules[i];
     }
-    for (int j = 0; j < _cursors.size(); ++j) {
+    for (uint j = 0; j < _cursors.size(); ++j) {
         delete _cursors[j];
     }
 

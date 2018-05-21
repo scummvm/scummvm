@@ -110,7 +110,7 @@ inline Archive &operator>>(Archive &archive, Common::StringArray &array){
 
 inline Archive &operator>>(Archive &archive, Common::StringMap &map){
     uint size = archive.readCount();
-    for (int i = 0; i < size; ++i) {
+    for (uint i = 0; i < size; ++i) {
         Common::String key = archive.readString();
         Common::String val = archive.readString();
         map.setVal(key, val);

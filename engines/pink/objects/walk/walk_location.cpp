@@ -35,7 +35,7 @@ void WalkLocation::deserialize(Pink::Archive &archive) {
 void WalkLocation::toConsole() {
     debug("\tWalkLocation: _name =%s", _name.c_str());
     debug("\tNeighbors:");
-    for (int i = 0; i < _neighbors.size(); ++i) {
+    for (uint i = 0; i < _neighbors.size(); ++i) {
         debug("\t\t%s", _neighbors[i].c_str());
     }
 }

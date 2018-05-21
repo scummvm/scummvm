@@ -38,7 +38,7 @@ void Handler::deserialize(Archive &archive) {
 }
 
 bool Handler::isSuitable(Actor *actor) {
-    for (int i = 0; i < _conditions.size(); ++i) {
+    for (uint i = 0; i < _conditions.size(); ++i) {
         if (!_conditions[i]->evaluate(actor)){
             return false;
         }
@@ -47,7 +47,7 @@ bool Handler::isSuitable(Actor *actor) {
 }
 
 void Handler::executeSideEffects(Actor *actor) {
-    for (int i = 0; i < _sideEffects.size(); ++i) {
+    for (uint i = 0; i < _sideEffects.size(); ++i) {
         _sideEffects[i]->execute(actor);
     }
 }
@@ -57,10 +57,10 @@ void Handler::handle(Actor *actor) {
 }
 
 Handler::~Handler() {
-    for (int i = 0; i < _sideEffects.size(); ++i) {
+    for (uint i = 0; i < _sideEffects.size(); ++i) {
         delete _sideEffects[i];
     }
-    for (int i = 0; i < _conditions.size(); ++i) {
+    for (uint i = 0; i < _conditions.size(); ++i) {
         delete _conditions[i];
     }
 }
@@ -95,17 +95,17 @@ void HandlerStartPage::toConsole() {
     debug("HandlerStartPage:");
 
     debug("\tSideEffects:");
-    for (int i = 0; i < _sideEffects.size(); ++i) {
+    for (uint i = 0; i < _sideEffects.size(); ++i) {
         _sideEffects[i]->toConsole();
     }
 
     debug("\tConditions:");
-    for (int i = 0; i < _conditions.size(); ++i) {
+    for (uint i = 0; i < _conditions.size(); ++i) {
         _conditions[i]->toConsole();
     }
 
     debug("\tSequences:");
-    for (int i = 0; i < _sequences.size(); ++i) {
+    for (uint i = 0; i < _sequences.size(); ++i) {
         debug("\t\t%s", _sequences[i].c_str());
     }
 }
@@ -114,17 +114,17 @@ void HandlerLeftClick::toConsole() {
     debug("HandlerLeftClick:");
 
     debug("\tSideEffects:");
-    for (int i = 0; i < _sideEffects.size(); ++i) {
+    for (uint i = 0; i < _sideEffects.size(); ++i) {
         _sideEffects[i]->toConsole();
     }
 
     debug("\tConditions:");
-    for (int i = 0; i < _conditions.size(); ++i) {
+    for (uint i = 0; i < _conditions.size(); ++i) {
         _conditions[i]->toConsole();
     }
 
     debug("\tSequences:");
-    for (int i = 0; i < _sequences.size(); ++i) {
+    for (uint i = 0; i < _sequences.size(); ++i) {
         debug("\t\t%s", _sequences[i].c_str());
     }
 }
@@ -137,17 +137,17 @@ void HandlerUseClick::deserialize(Archive &archive) {
 void HandlerUseClick::toConsole() {
     debug("HandlerUseClick: _inventoryItem=%s, _recepient=%s", _inventoryItem.c_str(), _recepient.c_str());
     debug("\tSideEffects:");
-    for (int i = 0; i < _sideEffects.size(); ++i) {
+    for (uint i = 0; i < _sideEffects.size(); ++i) {
         _sideEffects[i]->toConsole();
     }
 
     debug("\tConditions:");
-    for (int i = 0; i < _conditions.size(); ++i) {
+    for (uint i = 0; i < _conditions.size(); ++i) {
         _conditions[i]->toConsole();
     }
 
     debug("\tSequences:");
-    for (int i = 0; i < _sequences.size(); ++i) {
+    for (uint i = 0; i < _sequences.size(); ++i) {
         debug("\t\t%s", _sequences[i].c_str());
     }
 }

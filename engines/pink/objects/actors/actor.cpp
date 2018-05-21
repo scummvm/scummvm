@@ -37,7 +37,7 @@ void Actor::deserialize(Archive &archive) {
 
 void Actor::toConsole() {
     debug("Actor: _name = %s", _name.c_str());
-    for (int i = 0; i < _actions.size(); ++i) {
+    for (uint i = 0; i < _actions.size(); ++i) {
         _actions[i]->toConsole();
     }
 }
@@ -116,7 +116,7 @@ bool Actor::isPlaying() {
 }
 
 bool Actor::initPallete(Director *director) {
-    for (int i = 0; i < _actions.size(); ++i) {
+    for (uint i = 0; i < _actions.size(); ++i) {
         if (_actions[i]->initPalette(director))
             return true;
     }
@@ -128,7 +128,7 @@ void Actor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 }
 
 Actor::~Actor() {
-    for (int i = 0; i < _actions.size(); ++i) {
+    for (uint i = 0; i < _actions.size(); ++i) {
         delete _actions[i];
     }
 }
