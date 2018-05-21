@@ -36,7 +36,7 @@ void ActionPlay::deserialize(Archive &archive) {
 
 void ActionPlay::toConsole() {
     debug("\tActionPlay: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
-                  " _endFrame = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame);
+                  " _endFrame = %d", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame);
 }
 
 void ActionPlay::end() {

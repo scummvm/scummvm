@@ -89,6 +89,11 @@ inline Archive &operator>>(Archive &archive, Common::String &string){
     return archive;
 }
 
+inline Archive &operator>>(Archive &archive, int32 &num){
+	num = archive.readDWORD();
+	return archive;
+}
+
 inline Archive &operator>>(Archive &archive, uint32 &num){
     num = archive.readDWORD();
     return archive;
