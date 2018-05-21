@@ -143,10 +143,10 @@ inline Archive &operator<<(Archive &archive, Common::StringArray &array){
 
 inline Archive &operator<<(Archive &archive, Common::StringMap &map){
     archive.writeWORD(map.size());
-    for (auto &pair : map) {
-        archive.writeString(pair._key);
-        archive.writeString(pair._value);
-    }
+	for (Common::StringMap::const_iterator it = map.begin(); it != map.end(); ++it) {
+		archive.writeString(it->_key);
+		archive.writeString(it->_value);
+	}
     return archive;
 }
 

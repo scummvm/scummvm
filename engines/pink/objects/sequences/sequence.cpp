@@ -153,7 +153,7 @@ void SequenceAudio::start(int unk) {
     Sequence::start(unk);
     int index = _context->getNextItemIndex();
     if (index < _items.size()) {
-        auto leaderAudio = (SequenceItemLeaderAudio*) _items[index];
+        SequenceItemLeaderAudio* leaderAudio = (SequenceItemLeaderAudio*) _items[index];
         _sample = leaderAudio->getSample();
     }
 }

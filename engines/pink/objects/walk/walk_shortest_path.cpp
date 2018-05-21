@@ -91,7 +91,7 @@ void WalkShortestPath::addLocationsToVisit() {
 
 double WalkShortestPath::getLengthToNearestNeigbor(WalkLocation *location) {
     double minLength = -1.0;
-    auto &neighbors = location->getNeigbors();
+	Common::StringArray &neighbors = location->getNeigbors();
     for (int i = 0; i < neighbors.size(); ++i) {
         WalkLocation *neighbor = _manager->findLocation(neighbors[i]);
         if (!isLocationVisited(neighbor)){
@@ -110,7 +110,7 @@ double WalkShortestPath::getLengthToNearestNeigbor(WalkLocation *location) {
 WalkLocation *WalkShortestPath::findNearestNeighbor(WalkLocation *location) {
     double minLength = -1.0;
     WalkLocation *nearest = nullptr;
-    auto neighbors = location->getNeigbors();
+    Common::StringArray &neighbors = location->getNeigbors();
     for (int i = 0; i < neighbors.size(); ++i) {
         WalkLocation *neighbor = _manager->findLocation(neighbors[i]);
         if (!isLocationVisited(neighbor)){
