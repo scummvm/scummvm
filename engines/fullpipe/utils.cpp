@@ -49,7 +49,7 @@ bool ObArray::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "ObArray::load()");
 	int count = file.readCount();
 
-	resize(count);
+	reserve(count);
 
 	for (int i = 0; i < count; i++) {
 		CObject *t = file.readClass<CObject>();
@@ -66,7 +66,7 @@ bool DWordArray::load(MfcArchive &file) {
 
 	debugC(9, kDebugLoading, "DWordArray::count: %d", count);
 
-	resize(count);
+	reserve(count);
 
 	for (int i = 0; i < count; i++) {
 		int32 t = file.readSint32LE();
