@@ -184,7 +184,7 @@ void StaticLocationWidget::onClick() {
 		while (_soundMouseClick->isPlaying()) {
 			g_system->delayMillis(10);
 			g_system->updateScreen();
-		};
+		}
 	}
 
 	if (_onClick) {
