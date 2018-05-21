@@ -350,6 +350,8 @@ void ResourceProvider::commitActiveLocationsState() {
 }
 
 void ResourceProvider::shutdown() {
+	_stateProvider->clear();
+
 	// Flush the locations list
 	for (CurrentList::const_iterator it = _locations.begin(); it != _locations.end(); it++) {
 		Current *location = *it;
