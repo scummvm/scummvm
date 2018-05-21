@@ -44,7 +44,8 @@ Sequencer::~Sequencer() {
 }
 
 void Sequencer::deserialize(Archive &archive) {
-    archive >> _sequences >> _timers;
+    _sequences.deserialize(archive);
+    _timers.deserialize(archive);
 }
 
 Sequence *Sequencer::findSequence(const Common::String &name) {

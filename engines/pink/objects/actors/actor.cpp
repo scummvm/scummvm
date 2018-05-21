@@ -32,7 +32,7 @@ namespace Pink {
 void Actor::deserialize(Archive &archive) {
     NamedObject::deserialize(archive);
     _page = static_cast<GamePage*>(archive.readObject());
-    archive >> _actions;
+    _actions.deserialize(archive);
 }
 
 void Actor::toConsole() {
@@ -135,7 +135,7 @@ Actor::~Actor() {
 
 void Actor::loadState(Archive &archive) {
     Common::String actionName;
-    archive >> actionName;
+    actionName = archive.readString();
     _action = findAction(actionName);
 }
 

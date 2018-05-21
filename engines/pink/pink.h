@@ -35,6 +35,7 @@
 #include "pink/constants.h"
 #include "pink/director.h"
 #include "pink/file.h"
+#include "pink/utils.h"
 
 /*
  *  This is the namespace of the Pink engine.
@@ -122,7 +123,7 @@ private:
     LeadActor *_actor;
 
     Module *_module;
-    Common::Array<NamedObject*> _modules;
+    Array<NamedObject*> _modules;
 
     Common::StringMap _variables;
 

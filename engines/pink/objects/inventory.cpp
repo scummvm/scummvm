@@ -23,7 +23,6 @@
 
 #include "common/debug.h"
 
-#include "pink/archive.h"
 #include "pink/director.h"
 #include "pink/pink.h"
 #include "pink/objects/inventory.h"
@@ -59,7 +58,7 @@ InventoryMgr::~InventoryMgr() {
 }
 
 void InventoryMgr::deserialize(Archive &archive) {
-    archive >> _items;
+    _items.deserialize(archive);
 }
 
 InventoryItem *InventoryMgr::findInventoryItem(const Common::String &name) {

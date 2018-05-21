@@ -37,7 +37,7 @@ WalkMgr::WalkMgr()
 
 void WalkMgr::deserialize(Pink::Archive &archive) {
     _leadActor = static_cast<LeadActor *>(archive.readObject());
-    archive >> _locations;
+    _locations.deserialize(archive);
 }
 
 WalkLocation *WalkMgr::findLocation(const Common::String &name) {

@@ -23,13 +23,11 @@
 #ifndef PINK_INVENTORY_H
 #define PINK_INVENTORY_H
 
-#include "common/array.h"
 #include "common/rect.h"
 
-#include "pink/objects/object.h"
+#include "pink/utils.h"
 
 namespace Pink {
-
 
 class InventoryItem : public NamedObject {
 public:
@@ -77,14 +75,16 @@ private:
     void showNextItem(bool direction);
 
 
-    InventoryItem *_item;
-    Common::Array<InventoryItem*> _items;
+
 
     LeadActor *_lead;
     Actor *_window;
     Actor *_itemActor;
     Actor *_rightArrow;
     Actor *_leftArrow;
+
+    InventoryItem *_item;
+    Array<InventoryItem*> _items;
 
     enum State {
         kIdle = 0,

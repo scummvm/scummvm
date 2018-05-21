@@ -23,8 +23,7 @@
 #ifndef PINK_SIDE_EFFECT_H
 #define PINK_SIDE_EFFECT_H
 
-#include "common/str-array.h"
-
+#include "pink/utils.h"
 #include "pink/objects/object.h"
 
 namespace Pink {
@@ -46,6 +45,7 @@ public:
 private:
     Common::String _nextModule;
     Common::String _nextPage;
+    Common::StringMap map;
 };
 
 class SideEffectLocation : public SideEffect {
@@ -106,9 +106,9 @@ public:
 
 private:
     Common::String _name;
-    Common::StringArray _values;
+    StringArray _values;
 };
 
-}
+} // End of namespace Pink
 
 #endif

@@ -29,7 +29,8 @@
 namespace Pink {
 
 void Pink::ConditionVariable::deserialize(Archive &archive) {
-    archive >> _name >> _value;
+    _name = archive.readString();
+    _value = archive.readString();
 }
 
 bool Pink::ConditionGameVariable::evaluate(Actor *actor) {
@@ -73,7 +74,8 @@ void ConditionNotPageVariable::toConsole() {
 }
 
 void ConditionInventoryItemOwner::deserialize(Archive &archive) {
-    archive >> _item >> _owner;
+    _item = archive.readString();
+    _owner = archive.readString();
 }
 
 bool ConditionInventoryItemOwner::evaluate(Actor *actor) {

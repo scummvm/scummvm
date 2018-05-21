@@ -65,7 +65,7 @@ private:
 
     PinkEngine *_game;
     GamePage *_page;
-    Common::Array<GamePage*> _pages;
+    Array<GamePage*> _pages;
     InventoryMgr _invMgr;
     Common::StringMap _variables;
 };

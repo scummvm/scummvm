@@ -28,7 +28,9 @@
 namespace Pink {
 
 void HandlerMgr::deserialize(Archive &archive) {
-    archive >> _leftClickHandlers >> _useClickHandlers >> _timerHandlers;
+    _leftClickHandlers.deserialize(archive);
+    _useClickHandlers.deserialize(archive);
+    _timerHandlers.deserialize(archive);
 }
 
 void HandlerMgr::toConsole() {

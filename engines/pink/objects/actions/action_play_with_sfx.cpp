@@ -30,7 +30,8 @@ namespace Pink {
 
 void ActionPlayWithSfx::deserialize(Pink::Archive &archive) {
     ActionPlay::deserialize(archive);
-    archive >> _isLoop >> _sfxArray;
+    _isLoop = archive.readDWORD();
+    _sfxArray.deserialize(archive);
 }
 
 void ActionPlayWithSfx::toConsole() {
@@ -79,8 +80,10 @@ ActionPlayWithSfx::~ActionPlayWithSfx() {
 }
 
 void ActionSfx::deserialize(Pink::Archive &archive) {
-    archive >> _frame >> _volume >> _sfxName;
-    archive.readObject();
+    _frame = archive.readDWORD();
+	_volume = archive.readDWORD();
+    _sfxName = archive.readString();
+    archive.readObject(); // pointer of ActionPlayWithSfx
 }
 
 void ActionSfx::toConsole() {

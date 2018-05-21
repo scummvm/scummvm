@@ -41,7 +41,7 @@ ActionSound::~ActionSound(){
 
 void ActionSound::deserialize(Archive &archive) {
     Action::deserialize(archive);
-    archive >> _fileName;
+    _fileName = archive.readString();
     _volume = archive.readDWORD();
     _isLoop = (bool) archive.readDWORD();
     _isBackground = (bool) archive.readDWORD();

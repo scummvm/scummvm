@@ -31,7 +31,7 @@ namespace Pink {
 
 void ActionPlay::deserialize(Archive &archive) {
     ActionStill::deserialize(archive);
-    archive >> _stopFrame;
+    _stopFrame = archive.readDWORD();
 }
 
 void ActionPlay::toConsole() {

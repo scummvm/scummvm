@@ -29,7 +29,7 @@ namespace Pink {
 
 void WalkLocation::deserialize(Pink::Archive &archive) {
     NamedObject::deserialize(archive);
-    archive >> _neighbors;
+    _neighbors.deserialize(archive);
 }
 
 void WalkLocation::toConsole() {

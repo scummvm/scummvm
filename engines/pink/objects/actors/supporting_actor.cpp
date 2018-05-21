@@ -20,7 +20,7 @@
  *
  */
 
-#include "pink/archive.h"
+#include "pink/utils.h"
 #include "pink/constants.h"
 #include "pink/cursor_mgr.h"
 #include "pink/objects/inventory.h"
@@ -31,7 +31,9 @@ namespace Pink {
 
 void SupportingActor::deserialize(Archive &archive) {
     Actor::deserialize(archive);
-    archive >> _location >> _pdaLink >> _cursor;
+    _location = archive.readString();
+    _pdaLink = archive.readString();
+    _cursor = archive.readString();
     _handlerMgr.deserialize(archive);
 }
 

@@ -37,7 +37,7 @@ namespace Pink {
 
 void HandlerTimerActions::deserialize(Archive &archive) {
     Handler::deserialize(archive);
-    archive >> _actions;
+    _actions.deserialize(archive);
 }
 
 void HandlerTimerActions::toConsole() {

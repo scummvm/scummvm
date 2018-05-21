@@ -33,8 +33,8 @@
 namespace Pink {
 
 void Handler::deserialize(Archive &archive) {
-    archive >> _conditions;
-    archive >> _sideEffects;
+	_conditions.deserialize(archive);
+    _sideEffects.deserialize(archive);
 }
 
 bool Handler::isSuitable(Actor *actor) {
@@ -67,7 +67,7 @@ Handler::~Handler() {
 
 void HandlerSequences::deserialize(Archive &archive) {
     Handler::deserialize(archive);
-    archive >> _sequences;
+    _sequences.deserialize(archive);
 }
 
 void HandlerSequences::handle(Actor *actor) {
@@ -131,7 +131,8 @@ void HandlerLeftClick::toConsole() {
 
 void HandlerUseClick::deserialize(Archive &archive) {
     HandlerSequences::deserialize(archive);
-    archive >> _inventoryItem >> _recepient;
+    _inventoryItem = archive.readString();
+    _recepient = archive.readString();
 }
 
 void HandlerUseClick::toConsole() {
