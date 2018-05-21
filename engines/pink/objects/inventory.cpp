@@ -49,7 +49,7 @@ Common::String &InventoryItem::getCurrentOwner() {
 }
 
 void InventoryItem::toConsole() {
-    debug("\tInventoryItem: _initialOwner=%s _currentOwner=%s", _initialOwner, _currentOwner);
+    debug("\tInventoryItem: _initialOwner=%s _currentOwner=%s", _initialOwner.c_str(), _currentOwner.c_str());
 }
 
 InventoryMgr::~InventoryMgr() {
