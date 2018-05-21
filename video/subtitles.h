@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SRT_PARSER_H
-#define SRT_PARSER_H
+#ifndef VIDEO_SUBTITLES_H
+#define VIDEO_SUBTITLES_H
 
 #include "common/str.h"
 #include "common/array.h"
@@ -50,6 +50,18 @@ public:
 
 private:
 	Common::Array<SRTEntry *> _entries;
+};
+
+class Subtitles {
+public:
+	Subtitles();
+	~Subtitles();
+
+	void loadSRTFile(const char *fname);
+
+private:
+	SRTParser _srtParser;
+	bool _loaded;
 };
 
 } // End of namespace Video

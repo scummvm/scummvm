@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/file.h"
 
 #include "video/subtitles.h"
@@ -104,6 +105,8 @@ int SRTEntryComparatorBSearch(const void *item1, const void *item2) {
 
 bool SRTParser::parseFile(const char *fname) {
 	Common::File f;
+
+	cleanup();
 
 	if (!f.open(fname))
 		return false;
@@ -209,6 +212,18 @@ Common::String SRTParser::getSubtitle(uint32 timestamp) {
 		return "";
 
 	return (*entry)->text;
+}
+
+Subtitles::Subtitles() : _loaded(false) {
+}
+
+Subtitles::~Subtitles() {
+}
+
+void Subtitles::loadSRTFile(const char *fname) {
+	debug(1, "loadSRTFile('%s')", fname);
+
+	_loaded = _srtParser.parseFile(fname);
 }
 
 } // End of namespace Video
