@@ -950,6 +950,18 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			if (_version == kGroovieCDY && _scriptFile == "26a_graf.grv")
 				_bitflags |= 1;
 			_vm->_videoPlayer->load(_videoFile, _bitflags);
+
+			// Find correct filename
+			ResInfo info;
+			_vm->_resMan->getResInfo(fileref, info);
+
+			// Remove the extension and add ".txt"
+			info.filename.deleteLastChar();
+			info.filename.deleteLastChar();
+			info.filename.deleteLastChar();
+			info.filename += "txt";
+
+			_vm->_videoPlayer->loadSubtitles(info.filename.c_str());
 		} else {
 			error("Groovie::Script: Couldn't open file");
 			return true;
