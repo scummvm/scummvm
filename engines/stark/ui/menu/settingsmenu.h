@@ -20,36 +20,41 @@
  *
  */
 
-#ifndef STARK_UI_MENU_DIARY_INDEX_H
-#define STARK_UI_MENU_DIARY_INDEX_H
+#ifndef STARK_UI_MENU_SETTING_MENU_H
+#define STARK_UI_MENU_SETTING_MENU_H
 
 #include "engines/stark/ui/menu/locationscreen.h"
+#include "engines/stark/services/services.h"
+#include "engines/advancedDetector.h"
 
 namespace Stark {
 
 /**
- * The diary index is the in-game menu
+ * The setting menu of the game
  */
-class DiaryIndexScreen : public StaticLocationScreen {
+class SettingsMenuScreen : public StaticLocationScreen {
 public:
-	DiaryIndexScreen(Gfx::Driver *gfx, Cursor *cursor);
-	virtual ~DiaryIndexScreen();
+	SettingsMenuScreen(Gfx::Driver *gfx, Cursor *cursor);
+	virtual ~SettingsMenuScreen();
 
 	// StaticLocationScreen API
 	void open() override;
 
 private:
-	void widgetTextColorHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
-	void backHandler();
-	void settingsHandler();
-	void loadHandler();
-	void saveHandler();
-	void quitHandler();
+	template<uint N>
+	void textHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
 
+	void backHandler();
+
+private:
 	static const uint32 _textColorHovered = 0xFF961E1E;
 	static const uint32 _textColorDefault = 0xFF000000;
+
+	bool isDemo() {
+		return StarkGameDescription->flags & ADGF_DEMO;
+	}
 };
 
 } // End of namespace Stark
 
- #endif // STARK_UI_MENU_DIARY_INDEX_H
+#endif // STARK_UI_MENU_SETTING_MENU_H

@@ -47,6 +47,7 @@ class Driver;
 class DiaryIndexScreen;
 class GameScreen;
 class MainMenuScreen;
+class SettingsMenuScreen;
 class Cursor;
 class FMVScreen;
 
@@ -151,6 +152,7 @@ private:
 	FMVScreen *_fmvScreen;
 	DiaryIndexScreen *_diaryIndexScreen;
 	MainMenuScreen *_mainMenuScreen;
+	SettingsMenuScreen *_settingsMenuScreen;
 	Screen *_currentScreen;
 	Common::Stack<Screen::Name> _prevScreenNameStack;
 

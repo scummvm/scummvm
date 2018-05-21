@@ -59,7 +59,7 @@ void MainMenuScreen::open() {
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Options",
-			nullptr,
+			CLICK_HANDLER(MainMenuScreen, settingsHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<6>)));
 	_widgets.back()->setupSounds(0, 1);
 	
@@ -168,6 +168,10 @@ void MainMenuScreen::newGameHandler() {
 
 void MainMenuScreen::loadHandler() {
 	// TODO: Link to the load screen
+}
+
+void MainMenuScreen::settingsHandler() {
+	StarkUserInterface->changeScreen(Screen::kScreenSettingsMenu);
 }
 
 void MainMenuScreen::quitHandler() {

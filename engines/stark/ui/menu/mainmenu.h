@@ -47,6 +47,7 @@ private:
 	void newGameHandler();
 	void loadHandler();
 	void creditsHandler();
+	void settingsHandler();
 	void quitHandler();
 
 	bool isDemo() {

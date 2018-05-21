@@ -37,6 +37,7 @@
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/menu/diaryindex.h"
 #include "engines/stark/ui/menu/mainmenu.h"
+#include "engines/stark/ui/menu/settingsmenu.h"
 #include "engines/stark/ui/world/inventorywindow.h"
 #include "engines/stark/ui/world/fmvscreen.h"
 #include "engines/stark/ui/world/gamescreen.h"
@@ -49,6 +50,7 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_cursor(nullptr),
 		_diaryIndexScreen(nullptr),
 		_mainMenuScreen(nullptr),
+		_settingsMenuScreen(nullptr),
 		_exitGame(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
@@ -67,6 +69,7 @@ UserInterface::~UserInterface() {
 	delete _diaryIndexScreen;
 	delete _cursor;
 	delete _mainMenuScreen;
+	delete _settingsMenuScreen;
 }
 
 void UserInterface::init() {
@@ -75,6 +78,7 @@ void UserInterface::init() {
 	_mainMenuScreen = new MainMenuScreen(_gfx, _cursor);
 	_gameScreen = new GameScreen(_gfx, _cursor);
 	_diaryIndexScreen = new DiaryIndexScreen(_gfx, _cursor);
+	_settingsMenuScreen = new SettingsMenuScreen(_gfx, _cursor);
 	_fmvScreen = new FMVScreen(_gfx, _cursor);
 
 	_prevScreenNameStack.push(Screen::kScreenMainMenu);
@@ -180,6 +184,8 @@ Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
 			return _gameScreen;
 		case Screen::kScreenMainMenu:
 			return _mainMenuScreen;
+		case Screen::kScreenSettingsMenu:
+			return _settingsMenuScreen;
 		default:
 			error("Unhandled screen name '%d'", screenName);
 	}
