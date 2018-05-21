@@ -23,10 +23,8 @@
 #ifndef PINK_PAGE_H
 #define PINK_PAGE_H
 
-#include <video/flic_decoder.h>
-#include "engines/pink/objects/object.h"
-#include "engines/pink/objects/module.h"
-#include "engines/pink/resource_mgr.h"
+#include "pink/resource_mgr.h"
+#include "pink/objects/module.h"
 
 namespace Pink {
 

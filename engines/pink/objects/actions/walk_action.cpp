@@ -20,9 +20,9 @@
  *
  */
 
-#include "walk_action.h"
-#include <engines/pink/archive.h>
+#include "pink/archive.h"
 #include "pink/cel_decoder.h"
+#include "pink/objects/actions/walk_action.h"
 
 namespace Pink {
 

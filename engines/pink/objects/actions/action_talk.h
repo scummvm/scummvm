@@ -23,7 +23,7 @@
 #ifndef PINK_ACTION_TALK_H
 #define PINK_ACTION_TALK_H
 
-#include <engines/pink/objects/actions/action_loop.h>
+#include "pink/objects/actions/action_loop.h"
 
 namespace Pink {
 

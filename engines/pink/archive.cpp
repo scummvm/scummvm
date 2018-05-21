@@ -20,33 +20,31 @@
  *
  */
 
-#include <common/debug.h>
-#include <common/file.h>
-#include <engines/pink/objects/object.h>
-#include <engines/pink/objects/module.h>
-#include <engines/pink/objects/pages/game_page.h>
-#include <engines/pink/objects/actors/lead_actor.h>
-#include <engines/pink/objects/condition.h>
-#include <engines/pink/objects/side_effect.h>
-#include <engines/pink/objects/sequences/sequence_item.h>
-#include <engines/pink/objects/sequences/sequence.h>
-#include <engines/pink/objects/handlers/handler.h>
-#include <engines/pink/objects/actions/action_play.h>
-#include <engines/pink/objects/actions/action_sound.h>
-#include <engines/pink/objects/actions/action_hide.h>
-#include <engines/pink/objects/walk/walk_location.h>
-#include <engines/pink/objects/actions/walk_action.h>
-#include <engines/pink/objects/actors/supporting_actor.h>
-#include <engines/pink/objects/sequences/seq_timer.h>
-#include <engines/pink/objects/actions/action_loop.h>
-#include <engines/pink/objects/actions/action_play_with_sfx.h>
-#include <engines/pink/objects/actions/action_talk.h>
-#include <engines/pink/objects/actions/action_text.h>
-#include <engines/pink/objects/actors/cursor_actor.h>
-#include <engines/pink/objects/handlers/handler_timer.h>
-#include <engines/pink/objects/actors/inventory_actor.h>
-#include <engines/pink/objects/actors/audio_info_pda_button.h>
-#include <engines/pink/objects/actors/pda_button_actor.h>
+#include "common/debug.h"
+#include "common/file.h"
+
+#include "pink/objects/condition.h"
+#include "pink/objects/module.h"
+#include "pink/objects/side_effect.h"
+#include "pink/objects/actions/action_hide.h"
+#include "pink/objects/actions/action_play_with_sfx.h"
+#include "pink/objects/actions/action_sound.h"
+#include "pink/objects/actions/action_talk.h"
+#include "pink/objects/actions/action_text.h"
+#include "pink/objects/actions/walk_action.h"
+#include "pink/objects/actors/audio_info_pda_button.h"
+#include "pink/objects/actors/cursor_actor.h"
+#include "pink/objects/actors/inventory_actor.h"
+#include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/actors/pda_button_actor.h"
+#include "pink/objects/actors/supporting_actor.h"
+#include "pink/objects/handlers/handler.h"
+#include "pink/objects/handlers/handler_timer.h"
+#include "pink/objects/pages/game_page.h"
+#include "pink/objects/sequences/seq_timer.h"
+#include "pink/objects/sequences/sequence.h"
+#include "pink/objects/sequences/sequence_item.h"
+#include "pink/objects/walk/walk_location.h"
 
 namespace Pink {
 

@@ -23,7 +23,7 @@
 #ifndef PINK_WALK_ACTION_H
 #define PINK_WALK_ACTION_H
 
-#include "action_cel.h"
+#include "pink/objects/actions/action_cel.h"
 
 namespace Pink {
 

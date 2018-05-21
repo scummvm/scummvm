@@ -23,8 +23,7 @@
 #ifndef PINK_ACTION_CEL_H
 #define PINK_ACTION_CEL_H
 
-#include <video/flic_decoder.h>
-#include "action.h"
+#include "pink/objects/actions/action.h"
 
 namespace Pink {
 

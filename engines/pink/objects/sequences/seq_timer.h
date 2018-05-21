@@ -23,7 +23,7 @@
 #ifndef PINK_SEQ_TIMER_H
 #define PINK_SEQ_TIMER_H
 
-#include <engines/pink/objects/object.h>
+#include "pink/objects/object.h"
 
 namespace Pink {
 

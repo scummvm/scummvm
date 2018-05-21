@@ -20,13 +20,13 @@
  *
  */
 
-#include <engines/pink/objects/handlers/handler.h>
-#include "game_page.h"
-#include <engines/pink/objects/walk/walk_mgr.h>
-#include "engines/pink/cursor_mgr.h"
-#include "engines/pink/objects/actors/lead_actor.h"
-#include "engines/pink/objects/sequences/sequencer.h"
+#include "pink/cursor_mgr.h"
 #include "pink/pink.h"
+#include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/handlers/handler.h"
+#include "pink/objects/pages/game_page.h"
+#include "pink/objects/sequences/sequencer.h"
+#include "pink/objects/walk/walk_mgr.h"
 
 namespace Pink {
 

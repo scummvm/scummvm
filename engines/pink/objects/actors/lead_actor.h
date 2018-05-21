@@ -23,10 +23,10 @@
 #ifndef PINK_LEAD_ACTOR_H
 #define PINK_LEAD_ACTOR_H
 
-#include <common/keyboard.h>
-#include <common/rect.h>
-#include "actor.h"
+#include "common/rect.h"
+#include "common/keyboard.h"
 
+#include "pink/objects/actors/actor.h"
 
 namespace Pink {
 

@@ -23,9 +23,9 @@
 #ifndef PINK_DIRECTOR_H
 #define PINK_DIRECTOR_H
 
-#include <common/array.h>
-#include <common/system.h>
-#include <common/rect.h>
+#include "common/array.h"
+#include "common/rect.h"
+#include "common/system.h"
 
 namespace Pink {
 

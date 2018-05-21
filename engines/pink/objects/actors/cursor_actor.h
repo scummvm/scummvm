@@ -23,9 +23,10 @@
 #ifndef PINK_CURSOR_ACTOR_H
 #define PINK_CURSOR_ACTOR_H
 
-#include <common/debug.h>
-#include <pink/objects/actions/action.h>
-#include "actor.h"
+#include "common/debug.h"
+
+#include "pink/objects/actions/action.h"
+#include "pink/objects/actors/actor.h"
 
 namespace Pink {
 

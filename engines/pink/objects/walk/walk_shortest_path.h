@@ -23,7 +23,7 @@
 #ifndef PINK_WALK_SHORTEST_PATH_H
 #define PINK_WALK_SHORTEST_PATH_H
 
-#include <common/array.h>
+#include "common/array.h"
 
 namespace Pink {
 

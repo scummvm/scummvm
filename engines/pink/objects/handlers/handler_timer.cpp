@@ -20,18 +20,17 @@
  *
  */
 
+#include "common/debug.h"
 
-#include "handler_timer.h"
-#include <common/debug.h>
-#include <engines/pink/archive.h>
-#include <engines/pink/objects/sequences/sequence.h>
-#include <engines/pink/objects/side_effect.h>
-#include <engines/pink/objects/condition.h>
-#include <engines/pink/objects/actors/lead_actor.h>
-#include <engines/pink/objects/pages/game_page.h>
-#include <engines/pink/objects/sequences/sequencer.h>
-#include <engines/pink/pink.h>
-
+#include "pink/archive.h"
+#include "pink/pink.h"
+#include "pink/objects/side_effect.h"
+#include "pink/objects/condition.h"
+#include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/handlers/handler_timer.h"
+#include "pink/objects/pages/game_page.h"
+#include "pink/objects/sequences/sequence.h"
+#include "pink/objects/sequences/sequencer.h"
 
 namespace Pink {
 

@@ -23,9 +23,10 @@
 #ifndef PINK_ACTOR_H
 #define PINK_ACTOR_H
 
-#include <common/array.h>
-#include <common/rect.h>
-#include "engines/pink/objects/object.h"
+#include "common/array.h"
+#include "common/rect.h"
+
+#include "pink/objects/object.h"
 
 namespace Pink {
 

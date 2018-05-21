@@ -20,9 +20,9 @@
  *
  */
 
-#include <gui/EventRecorder.h>
-#include "pink.h"
+#include "gui/EventRecorder.h"
 
+#include "pink/pink.h"
 
 static const PlainGameDescriptor pinkGames[] = {
         {"peril", "The Pink Panther: Passport to Peril"},

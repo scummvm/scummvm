@@ -23,9 +23,11 @@
 #ifndef PINK_CURSOR_MGR_H
 #define PINK_CURSOR_MGR_H
 
-#include <graphics/wincursor.h>
-#include <engines/pink/objects/object.h>
-#include <common/rect.h>
+#include "common/rect.h"
+
+#include "graphics/wincursor.h"
+
+#include "pink/objects/object.h"
 
 namespace Pink {
 

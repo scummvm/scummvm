@@ -20,10 +20,9 @@
  *
  */
 
-#include "page.h"
-#include "engines/pink/objects/actors/lead_actor.h"
-#include "engines/pink/director.h"
-
+#include "pink/director.h"
+#include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/pages/page.h"
 
 namespace Pink {
 

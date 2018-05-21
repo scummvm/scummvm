@@ -23,7 +23,7 @@
 #ifndef PINK_ACTION_LOOP_H
 #define PINK_ACTION_LOOP_H
 
-#include "action_play.h"
+#include "pink/objects/actions/action_play.h"
 
 namespace Pink {
 

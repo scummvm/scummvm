@@ -23,7 +23,7 @@
 #ifndef PINK_ACTION_TEXT_H
 #define PINK_ACTION_TEXT_H
 
-#include "action.h"
+#include "pink/objects/actions/action.h"
 
 namespace Pink {
 

@@ -23,7 +23,7 @@
 #ifndef PINK_OBJECT_H
 #define PINK_OBJECT_H
 
-#include <common/str.h>
+#include "common/str.h"
 
 namespace Pink {
 

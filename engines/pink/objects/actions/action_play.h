@@ -23,8 +23,7 @@
 #ifndef PINK_ACTION_PLAY_H
 #define PINK_ACTION_PLAY_H
 
-#include "action.h"
-#include "action_still.h"
+#include "pink/objects/actions/action_still.h"
 
 namespace Pink {
 

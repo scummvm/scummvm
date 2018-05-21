@@ -20,9 +20,9 @@
  *
  */
 
-#include "module.h"
-#include "engines/pink/objects/pages/game_page.h"
 #include "pink/pink.h"
+#include "pink/objects/module.h"
+#include "pink/objects/pages/game_page.h"
 
 namespace Pink {
 

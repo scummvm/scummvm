@@ -20,15 +20,14 @@
  *
  */
 
-#include <video/flic_decoder.h>
-#include <common/substream.h>
-#include <graphics/surface.h>
-#include "resource_mgr.h"
-#include "file.h"
-#include "pink.h"
-#include "sound.h"
-#include "engines/pink/objects/pages/game_page.h"
-#include "cel_decoder.h"
+#include "common/substream.h"
+
+#include "pink/cel_decoder.h"
+#include "pink/file.h"
+#include "pink/pink.h"
+#include "pink/resource_mgr.h"
+#include "pink/sound.h"
+#include "pink/objects/pages/game_page.h"
 
 namespace Pink {
 

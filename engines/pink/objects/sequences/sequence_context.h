@@ -23,7 +23,7 @@
 #ifndef PINK_SEQUENCE_CONTEXT_H
 #define PINK_SEQUENCE_CONTEXT_H
 
-#include <common/array.h>
+#include "common/array.h"
 
 namespace Pink {
 

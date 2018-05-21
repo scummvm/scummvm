@@ -23,11 +23,12 @@
 #ifndef PINK_MODULE_H
 #define PINK_MODULE_H
 
-#include "engines/pink/archive.h"
-#include "engines/pink/objects/object.h"
-#include <common/debug.h>
-#include <common/hash-str.h>
-#include "engines/pink/objects/inventory.h"
+#include "common/debug.h"
+#include "common/hash-str.h"
+
+#include "pink/archive.h"
+#include "pink/objects/object.h"
+#include "pink/objects/inventory.h"
 
 namespace Pink {
 

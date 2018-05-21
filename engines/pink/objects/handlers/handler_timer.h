@@ -23,8 +23,9 @@
 #ifndef PINK_HANDLER_TIMER_H
 #define PINK_HANDLER_TIMER_H
 
-#include <common/str-array.h>
-#include "handler.h"
+#include "common/str-array.h"
+
+#include "pink/objects/handlers/handler.h"
 
 namespace Pink {
 

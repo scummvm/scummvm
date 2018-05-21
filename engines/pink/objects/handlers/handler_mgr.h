@@ -23,8 +23,9 @@
 #ifndef PINK_HANDLER_MGR_H
 #define PINK_HANDLER_MGR_H
 
-#include <engines/pink/objects/object.h>
-#include <common/array.h>
+#include "common/array.h"
+
+#include "pink/objects/object.h"
 
 namespace Pink {
 

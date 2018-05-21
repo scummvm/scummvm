@@ -20,9 +20,9 @@
  *
  */
 
-#include "action.h"
-#include "engines/pink/objects/actors/actor.h"
-#include "engines/pink/archive.h"
+#include "pink/archive.h"
+#include "pink/objects/actions/action.h"
+#include "pink/objects/actors/actor.h"
 
 namespace Pink {
 

@@ -23,7 +23,7 @@
 #ifndef PINK_ACTION_H
 #define PINK_ACTION_H
 
-#include "engines/pink/objects/object.h"
+#include "pink/objects/object.h"
 
 namespace Pink {
 

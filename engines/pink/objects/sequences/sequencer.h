@@ -20,12 +20,12 @@
  *
  */
 
-
 #ifndef PINK_SEQUENCER_H
 #define PINK_SEQUENCER_H
 
-#include <common/array.h>
-#include "engines/pink/objects/object.h"
+#include "common/array.h"
+
+#include "pink/objects/object.h"
 
 namespace Pink {
 

@@ -23,8 +23,7 @@
 #ifndef PINK_CEL_DECODER_H
 #define PINK_CEL_DECODER_H
 
-
-#include <video/flic_decoder.h>
+#include "video/flic_decoder.h"
 
 namespace Pink {
 

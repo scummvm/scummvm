@@ -23,8 +23,9 @@
 #ifndef PINK_ACTION_PLAY_WITH_SFX_H
 #define PINK_ACTION_PLAY_WITH_SFX_H
 
-#include <common/array.h>
-#include "action_play.h"
+#include "common/array.h"
+
+#include "pink/objects/actions/action_play.h"
 
 namespace Pink {
 

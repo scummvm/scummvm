@@ -20,12 +20,12 @@
  *
  */
 
-#include <engines/pink/constants.h>
-#include "actor.h"
-#include "engines/pink/objects/pages/game_page.h"
-#include "lead_actor.h"
-#include "engines/pink/objects/actions/action.h"
+#include "pink/constants.h"
 #include "pink/cursor_mgr.h"
+#include "pink/objects/actions/action.h"
+#include "pink/objects/actors/actor.h"
+#include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/pages/game_page.h"
 
 namespace Pink {
 

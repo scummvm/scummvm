@@ -20,12 +20,13 @@
  *
  */
 
-#include <audio/audiostream.h>
-#include <audio/decoders/wave.h>
-#include <audio/decoders/adpcm.h>
-#include <common/substream.h>
-#include "sound.h"
-#include "constants.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
+
+#include "common/substream.h"
+
+#include "pink/constants.h"
+#include "pink/sound.h"
 
 namespace Pink {
 

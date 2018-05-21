@@ -20,12 +20,13 @@
  *
  */
 
-#include "director.h"
-#include <engines/pink/objects/actions/action_sound.h>
-#include <engines/pink/objects/actions/action_cel.h>
-#include <graphics/managed_surface.h>
+#include "graphics/managed_surface.h"
 #include "graphics/palette.h"
-#include "cel_decoder.h"
+
+#include "pink/cel_decoder.h"
+#include "pink/director.h"
+#include "pink/objects/actions/action_sound.h"
+#include "pink/objects/actions/action_cel.h"
 
 namespace Pink {
 Director::Director(OSystem *system)
