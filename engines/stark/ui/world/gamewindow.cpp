@@ -133,6 +133,10 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 }
 
 void GameWindow::onClick(const Common::Point &pos) {
+	if (!StarkGlobal->getCurrent()) {
+		return; // No level is loaded yet, interaction is impossible
+	}
+
 	if (!StarkUserInterface->isInteractive()) {
 		StarkUserInterface->markInteractionDenied();
 		return;
@@ -148,7 +152,7 @@ void GameWindow::onClick(const Common::Point &pos) {
 
 	if (_objectUnderCursor) {
 		if (singlePossibleAction != -1) {
-                        StarkGameInterface->itemDoActionAt(_objectUnderCursor, singlePossibleAction, _objectRelativePosition);
+			StarkGameInterface->itemDoActionAt(_objectUnderCursor, singlePossibleAction, _objectRelativePosition);
 		} else if (selectedInventoryItem == -1) {
 			_actionMenu->open(_objectUnderCursor, _objectRelativePosition);
 		}
