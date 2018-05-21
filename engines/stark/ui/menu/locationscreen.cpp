@@ -35,6 +35,8 @@
 
 #include "engines/stark/visual/text.h"
 
+#include "common/system.h"
+
 namespace Stark {
 
 StaticLocationScreen::StaticLocationScreen(Gfx::Driver *gfx, Cursor *cursor,
@@ -122,6 +124,13 @@ void StaticLocationScreen::onRender() {
 	}
 }
 
+void StaticLocationScreen::onScreenChanged() {
+	// Right now only focus on resetting the text texture
+	for (uint i = 0; i < _widgets.size(); i++) {
+		_widgets[i]->resetTextTexture();
+	}
+}
+
 StaticLocationWidget::StaticLocationWidget(const char *renderEntryName, WidgetOnClickCallback *onClickCallback,
                                            WidgetOnMouseMoveCallback *onMouseMoveCallback):
 		_onClick(onClickCallback),
@@ -171,6 +180,11 @@ void StaticLocationWidget::onClick() {
 
 	if (_soundMouseClick) {
 		_soundMouseClick->play();
+		// Ensure the click sound is played completely
+		while (_soundMouseClick->isPlaying()) {
+			g_system->delayMillis(10);
+			g_system->updateScreen();
+		}
 	}
 
 	if (_onClick) {

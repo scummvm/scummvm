@@ -138,20 +138,18 @@ Common::Error StarkEngine::run() {
 	services.gameInterface = _gameInterface;
 	services.userInterface = _userInterface;
 	services.fontProvider = _fontProvider;
+	services.gameDescription = _gameDescription;
 
 	// Load global resources
-	_resourceProvider->initGlobal();
 	_staticProvider->init();
 	_fontProvider->initFonts();
+	
 	// Initialize the UI
 	_userInterface->init();
 
+	// Load through ResidualVM launcher
 	if (ConfMan.hasKey("save_slot")) {
-		// Load game from specified slot, if any
 		loadGameState(ConfMan.getInt("save_slot"));
-	} else {
-		// Otherwise, set the startup location, ie the House of All Worlds by default
-		setStartupLocation();
 	}
 
 	// Start running
@@ -161,27 +159,6 @@ Common::Error StarkEngine::run() {
 	_resourceProvider->shutdown();
 
 	return Common::kNoError;
-}
-
-void StarkEngine::setStartupLocation() {
-	if (ConfMan.hasKey("startup_chapter")) {
-		_global->setCurrentChapter(ConfMan.getInt("startup_chapter"));
-	} else {
-		_global->setCurrentChapter(0);
-	}
-
-	if (ConfMan.hasKey("startup_level") && ConfMan.hasKey("startup_location")) {
-		uint levelIndex = strtol(ConfMan.get("startup_level").c_str(), nullptr, 16);
-		uint locationIndex = strtol(ConfMan.get("startup_location").c_str(), nullptr, 16);
-		_resourceProvider->requestLocationChange(levelIndex, locationIndex);
-	} else {
-		if (isDemo()) {
-			_resourceProvider->requestLocationChange(0x4f, 0x00);
-		} else {
-			// Start us up at the house of all worlds
-			_resourceProvider->requestLocationChange(0x45, 0x00);
-		}
-	}
 }
 
 void StarkEngine::mainLoop() {
@@ -324,6 +301,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	_userInterface->skipFMV();
 	_userInterface->clearLocationDependentState();
 	_userInterface->setInteractive(true);
+	_userInterface->changeScreen(Screen::kScreenGame);
 
 	// Clear the previous world resources
 	_resourceProvider->shutdown();
@@ -395,10 +373,6 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 	delete save;
 
 	return Common::kNoError;
-}
-
-bool StarkEngine::isDemo() {
-	return _gameDescription->flags & ADGF_DEMO;
 }
 
 Common::String StarkEngine::formatSaveName(const char *target, int slot) {

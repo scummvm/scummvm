@@ -51,6 +51,7 @@ public:
 	// Screen API
 	void open() override;
 	void close() override;
+	void onScreenChanged() override;
 
 protected:
 	// Window API

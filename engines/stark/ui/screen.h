@@ -36,6 +36,7 @@ namespace Stark {
 class Screen {
 public:
 	enum Name {
+		kScreenMainMenu,
 		kScreenGame,
 		kScreenFMV,
 		kScreenDiaryIndex
@@ -55,6 +56,9 @@ public:
 
 	/** Draw the screen */
 	virtual void render() = 0;
+
+	/** Called when the screen resolution changes */
+	virtual void onScreenChanged() {}
 
 	virtual void handleMouseMove() = 0;
 	virtual void handleClick() = 0;

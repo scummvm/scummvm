@@ -73,8 +73,6 @@ private:
 	void mainLoop();
 	void updateDisplayScene();
 	void processEvents();
-	void setStartupLocation();
-	bool isDemo();
 
 	Gfx::Driver *_gfx;
 	Gfx::FrameLimiter *_frameLimiter;

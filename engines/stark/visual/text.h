@@ -53,6 +53,7 @@ public:
 	void setColor(uint32 color);
 	void setBackgroundColor(uint32 color);
 	void setTargetWidth(uint32 width);
+	void setTargetHeight(uint32 height);
 	void setFont(FontProvider::FontType type, int32 customFontIndex = -1);
 
 	void render(const Common::Point &position);
@@ -62,6 +63,9 @@ private:
 	void createTexture();
 	void freeTexture();
 
+	/** Check whether the text is blank */
+	bool isBlank();
+
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_texture;
@@ -70,6 +74,7 @@ private:
 	uint32 _color;
 	uint32 _backgroundColor;
 	uint32 _targetWidth;
+	uint32 _targetHeight;
 	Common::Rect _originalRect;
 
 	FontProvider::FontType _fontType;

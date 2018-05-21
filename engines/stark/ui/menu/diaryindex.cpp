@@ -102,13 +102,6 @@ void DiaryIndexScreen::open() {
 	}
 }
 
-void DiaryIndexScreen::onScreenChanged() {
-	for (uint i = 1; i < _widgets.size(); i++) {
-		// The background image is intentionally ignored
-		_widgets[i]->resetTextTexture();
-	}
-}
-
 void DiaryIndexScreen::widgetTextColorHandler(StaticLocationWidget &widget, const Common::Point &mousePos) {
 	if (widget.isVisible()) {
 		uint32 textColor = widget.isMouseInside(mousePos) ? _textColorHovered : _textColorDefault;
@@ -117,11 +110,11 @@ void DiaryIndexScreen::widgetTextColorHandler(StaticLocationWidget &widget, cons
 }
 
 void DiaryIndexScreen::backHandler() {
-	StarkUserInterface->changeScreen(Screen::kScreenGame);
+	StarkUserInterface->backPrevScreen();
 }
 
 void DiaryIndexScreen::quitHandler() {
-	StarkUserInterface->notifyShouldExit();
+	StarkUserInterface->quitToMainMenu();
 }
 
 void DiaryIndexScreen::loadHandler() {

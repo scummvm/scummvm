@@ -27,6 +27,7 @@
 
 #include "common/rect.h"
 #include "common/str-array.h"
+#include "common/stack.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -45,6 +46,7 @@ class Driver;
 
 class DiaryIndexScreen;
 class GameScreen;
+class MainMenuScreen;
 class Cursor;
 class FMVScreen;
 
@@ -82,6 +84,12 @@ public:
 
 	/** Set the currently displayed screen */
 	void changeScreen(Screen::Name screenName);
+
+	/** Back to the previous displayed screen */
+	void backPrevScreen();
+
+	/** Back to the main menu screen and rest resources */
+	void quitToMainMenu();
 
 	/** Is the game screen currently displayed? */
 	bool isInGameScreen() const;
@@ -139,7 +147,9 @@ private:
 	GameScreen *_gameScreen;
 	FMVScreen *_fmvScreen;
 	DiaryIndexScreen *_diaryIndexScreen;
+	MainMenuScreen *_mainMenuScreen;
 	Screen *_currentScreen;
+	Common::Stack<Screen::Name> _prevScreenNameStack;
 
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;

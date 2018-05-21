@@ -49,6 +49,7 @@ public:
 	void open() override;
 	void close() override;
 	void render() override;
+	void onScreenChanged() override;
 	void handleMouseMove() override;
 	void handleClick() override;
 	void handleRightClick() override;
@@ -60,9 +61,6 @@ public:
 
 	/** Clear any location dependant state */
 	void reset();
-
-	/** Called when the screen resolution changes */
-	void onScreenChanged();
 
 	/** A new item has been added to the player's inventory */
 	void notifyInventoryItemEnabled(uint16 itemIndex);

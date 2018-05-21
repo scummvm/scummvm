@@ -32,9 +32,11 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
+#include "engines/stark/services/resourceprovider.h"
 
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/menu/diaryindex.h"
+#include "engines/stark/ui/menu/mainmenu.h"
 #include "engines/stark/ui/world/inventorywindow.h"
 #include "engines/stark/ui/world/fmvscreen.h"
 #include "engines/stark/ui/world/gamescreen.h"
@@ -46,13 +48,15 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_cursor(nullptr),
 		_diaryIndexScreen(nullptr),
+		_mainMenuScreen(nullptr),
 		_exitGame(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
 		_interactive(true),
 		_interactionAttemptDenied(false),
 		_currentScreen(nullptr),
-		_gameWindowThumbnail(nullptr) {
+		_gameWindowThumbnail(nullptr),
+		_prevScreenNameStack() {
 }
 
 UserInterface::~UserInterface() {
@@ -62,14 +66,22 @@ UserInterface::~UserInterface() {
 	delete _fmvScreen;
 	delete _diaryIndexScreen;
 	delete _cursor;
+	delete _mainMenuScreen;
 }
 
 void UserInterface::init() {
 	_cursor = new Cursor(_gfx);
 
-	_currentScreen = _gameScreen = new GameScreen(_gfx, _cursor);
+	_mainMenuScreen = new MainMenuScreen(_gfx, _cursor);
+	_gameScreen = new GameScreen(_gfx, _cursor);
 	_diaryIndexScreen = new DiaryIndexScreen(_gfx, _cursor);
 	_fmvScreen = new FMVScreen(_gfx, _cursor);
+
+	_prevScreenNameStack.push(Screen::kScreenMainMenu);
+	_currentScreen = _fmvScreen;
+
+	// Play the FunCom logo video
+	_fmvScreen->play("1402.bbb");
 }
 
 void UserInterface::update() {
@@ -117,15 +129,13 @@ void UserInterface::selectInventoryItem(int16 itemIndex) {
 }
 
 void UserInterface::requestFMVPlayback(const Common::String &name) {
-	// TODO: Save the current screen so that it can be restored when the playback ends
 	changeScreen(Screen::kScreenFMV);
 
 	_fmvScreen->play(name);
 }
 
 void UserInterface::onFMVStopped() {
-	// TODO: Restore the previous screen
-	changeScreen(Screen::kScreenGame);
+	backPrevScreen();
 }
 
 void UserInterface::changeScreen(Screen::Name screenName) {
@@ -133,9 +143,28 @@ void UserInterface::changeScreen(Screen::Name screenName) {
 		return;
 	}
 
+	if (screenName == Screen::kScreenMainMenu) {
+		// MainMenuScreen will not request to go back
+		_prevScreenNameStack.clear();
+	} else {
+		_prevScreenNameStack.push(_currentScreen->getName());
+	}
+
 	_currentScreen->close();
 	_currentScreen = getScreenByName(screenName);
 	_currentScreen->open();
+}
+
+void UserInterface::backPrevScreen() {
+	// No need to check the stack since at least there will be a MainMenuScreen in it
+	// and MainMenuScreen will not request to go back
+	changeScreen(_prevScreenNameStack.pop());
+}
+
+void UserInterface::quitToMainMenu() {
+	changeScreen(Screen::kScreenGame);
+	StarkResourceProvider->shutdown();
+	changeScreen(Screen::kScreenMainMenu);
 }
 
 Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
@@ -146,6 +175,8 @@ Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
 			return _diaryIndexScreen;
 		case Screen::kScreenGame:
 			return _gameScreen;
+		case Screen::kScreenMainMenu:
+			return _mainMenuScreen;
 		default:
 			error("Unhandled screen name '%d'", screenName);
 	}
@@ -247,7 +278,10 @@ const Graphics::Surface *UserInterface::getGameWindowThumbnail() const {
 
 void UserInterface::onScreenChanged() {
 	_gameScreen->onScreenChanged();
-	_diaryIndexScreen->onScreenChanged();
+
+	if (!isInGameScreen()) {
+		_currentScreen->onScreenChanged();
+	}
 }
 
 void UserInterface::notifyInventoryItemEnabled(uint16 itemIndex) {

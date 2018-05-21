@@ -33,6 +33,8 @@
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
 
+#include "common/util.h"
+
 namespace Stark {
 
 VisualText::VisualText(Gfx::Driver *gfx) :
@@ -42,6 +44,7 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		_color(0),
 		_backgroundColor(0),
 		_targetWidth(600),
+		_targetHeight(600),
 		_fontCustomIndex(-1),
 		_fontType(FontProvider::kBigFont) {
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
@@ -88,6 +91,13 @@ void VisualText::setTargetWidth(uint32 width) {
 	}
 }
 
+void VisualText::setTargetHeight(uint32 height) {
+	if (height != _targetHeight) {
+		freeTexture();
+		_targetHeight = height;
+	}
+}
+
 void VisualText::setFont(FontProvider::FontType type, int32 customFontIndex) {
 	if (type != _fontType || customFontIndex != _fontCustomIndex) {
 		freeTexture();
@@ -108,8 +118,15 @@ void VisualText::createTexture() {
 	Common::Array<Common::String> lines;
 	scaledRect.right = scaledRect.left + font->wordWrapText(_text, maxScaledLineWidth, lines);
 	scaledRect.bottom = scaledRect.top + scaledLineHeight * lines.size();
-	_originalRect.right = _originalRect.left + StarkGfx->scaleWidthCurrentToOriginal(scaledRect.width());
-	_originalRect.bottom = _originalRect.top + originalLineHeight * lines.size();
+	
+	if (!isBlank()) {
+		_originalRect.right = _originalRect.left + StarkGfx->scaleWidthCurrentToOriginal(scaledRect.width());
+		_originalRect.bottom = _originalRect.top + originalLineHeight * lines.size();
+	} else {
+		// For Empty text, preserve the original width and height for being used as clicking area
+		_originalRect.right = _originalRect.left + _targetWidth;
+		_originalRect.bottom = _originalRect.top + _targetHeight;
+	}
 
 	// Create a surface to render to
 	Graphics::Surface surface;
@@ -142,6 +159,15 @@ void VisualText::render(const Common::Point &position) {
 void VisualText::resetTexture() {
 	freeTexture();
 	createTexture();
+}
+
+bool VisualText::isBlank() {
+	for (uint i = 0; i < _text.size(); ++i) {
+		if (!Common::isSpace(_text[i])) {
+			return false;
+		}
+	}
+	return true;
 }
 
 } // End of namespace Stark
