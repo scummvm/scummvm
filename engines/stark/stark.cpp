@@ -149,8 +149,6 @@ Common::Error StarkEngine::run() {
 
 	// Load through ResidualVM launcher
 	if (ConfMan.hasKey("save_slot")) {
-		_resourceProvider->initGlobal();
-		_userInterface->changeScreen(Screen::kScreenGame);
 		loadGameState(ConfMan.getInt("save_slot"));
 	}
 
