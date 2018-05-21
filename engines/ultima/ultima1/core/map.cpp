@@ -260,10 +260,14 @@ void Ultima1Map::loadDungeonMap() {
 	_position = Point(1, 1);
 	_direction = Shared::DIR_DOWN;
 
-	generateDungeonMap();
+	changeDungeonLevel(0);
 }
 
-void Ultima1Map::generateDungeonMap() {
+bool Ultima1Map::changeDungeonLevel(int delta) {
+	_dungeonLevel += delta;
+	if (_dungeonLevel <= 0)
+		return false;
+
 	// Set up widget for the player
 	_currentTransport = new TransportOnFoot(_game, this);
 	addWidget(_currentTransport);
@@ -333,6 +337,8 @@ void Ultima1Map::generateDungeonMap() {
 
 	for (int ctr = 0; ctr < 3; ++ctr)
 		spawnMonster();
+
+	return true;
 }
 
 void Ultima1Map::setRandomSeed() {

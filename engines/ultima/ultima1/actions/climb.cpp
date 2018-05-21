@@ -56,9 +56,7 @@ void Climb::ladderUp() {
 	Ultima1Map *map = getMap();
 	Shared::GameState *gs = getGameState();
 
-	if (map->_dungeonLevel-- > 1) {
-		map->generateDungeonMap();
-	} else {
+	if (!map->changeDungeonLevel(-1)) {
 		map->loadMap(MAPID_OVERWORLD, 0);
 		map->setPosition(gs->_worldMapPos);
 	}
@@ -66,8 +64,7 @@ void Climb::ladderUp() {
 
 void Climb::ladderDown() {
 	Ultima1Map *map = getMap();
-	map->_dungeonLevel++;
-	map->generateDungeonMap();
+	map->changeDungeonLevel(1);
 }
 
 } // End of namespace Actions

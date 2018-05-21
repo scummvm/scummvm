@@ -208,9 +208,11 @@ public:
 	void spawnMonster();
 
 	/**
-	 * Generates a predeterministic dungeon level
+	 * Changes the dungeon level by a given delta amount, and generates a new map
+	 * @param delta		Delta to change dungeon level by
+	 * @returns			False if dungeon left, true if still within dungeon
 	 */
-	void generateDungeonMap();
+	bool changeDungeonLevel(int delta);
 
 };
 
