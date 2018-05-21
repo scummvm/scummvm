@@ -64,7 +64,6 @@ Console::Console() :
 	registerCmd("changeLocation",       WRAP_METHOD(Console, Cmd_ChangeLocation));
 	registerCmd("changeChapter",        WRAP_METHOD(Console, Cmd_ChangeChapter));
 	registerCmd("changeKnowledge",      WRAP_METHOD(Console, Cmd_ChangeKnowledge));
-	registerCmd("selectDialogOption",   WRAP_METHOD(Console, Cmd_SelectDialogOption));
 	registerCmd("enableInventoryItem",  WRAP_METHOD(Console, Cmd_EnableInventoryItem));
 }
 
@@ -500,18 +499,6 @@ bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
 	StarkGlobal->setCurrentChapter(value);
 
 	return true;
-}
-
-bool Console::Cmd_SelectDialogOption(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Select a dialog option.\n");
-		debugPrintf("Usage :\n");
-		debugPrintf("selectDialogOption [option]\n");
-		return true;
-	}
-	StarkDialogPlayer->selectOption(atoi(argv[1]));
-
-	return false;
 }
 
 bool Console::Cmd_Location(int argc, const char **argv) {
