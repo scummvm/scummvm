@@ -64,7 +64,7 @@ bool OrbFile::open(const Common::String &name) {
 
     seek(_tableOffset);
 
-    for (size_t i = 0; i < _tableSize; ++i) {
+    for (uint i = 0; i < _tableSize; ++i) {
         _table[i].load(*this);
     }
 
@@ -111,7 +111,7 @@ ResourceDescription *OrbFile::getResDescTable(ObjectDescription *objDesc){
     ResourceDescription *table = new ResourceDescription[objDesc->resourcesCount];
     seek(objDesc->resourcesOffset);
 
-    for (size_t i = 0; i < objDesc->resourcesCount; ++i) {
+    for (uint i = 0; i < objDesc->resourcesCount; ++i) {
         table[i].load(*this);
     }
 
