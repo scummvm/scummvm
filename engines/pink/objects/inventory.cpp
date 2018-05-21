@@ -77,7 +77,7 @@ void InventoryMgr::setLeadActor(LeadActor *lead) {
 
 void InventoryMgr::toConsole() {
     debug("InventoryMgr:");
-    for (int i = 0; i < _items.size(); ++i) {
+    for (uint i = 0; i < _items.size(); ++i) {
         _items[i]->toConsole();
     }
 }
@@ -86,7 +86,7 @@ bool InventoryMgr::isPinkOwnsAnyItems() {
     if (_item)
         return true;
 
-    for (int i = 0; i < _items.size(); ++i) {
+    for (uint i = 0; i < _items.size(); ++i) {
         if (_items[i]->getCurrentOwner() == _lead->getName()){
             _item = _items[i];
             return true;
@@ -179,14 +179,14 @@ void InventoryMgr::close() {
 
 void InventoryMgr::showNextItem(bool direction) {
     int index = 0;
-    for (int i = 0; i < _items.size(); ++i) {
+    for (uint i = 0; i < _items.size(); ++i) {
         if (_item == _items[i]) {
             index = i + _items.size();
             break;
         }
     }
 
-    int i = 0;
+    uint i = 0;
     do {
         index = (direction == kLeft) ? --index : ++index;
     } while(_items[index % _items.size()]->getCurrentOwner() != _item->getCurrentOwner() && ++i < _items.size());

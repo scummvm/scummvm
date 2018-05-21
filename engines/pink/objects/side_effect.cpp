@@ -116,7 +116,7 @@ void SideEffectRandomPageVariable::execute(Actor *actor) {
 
 void SideEffectRandomPageVariable::toConsole() {
     Common::String values("{");
-    for (int i = 0; i < _values.size(); ++i) {
+    for (uint i = 0; i < _values.size(); ++i) {
         values += _values[i];
         values += ',';
     }

@@ -72,7 +72,7 @@ SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
     }
 }
 
-int SequenceContext::getNextItemIndex() const {
+uint SequenceContext::getNextItemIndex() const {
     return _nextItemIndex;
 }
 
@@ -81,7 +81,7 @@ Sequence *SequenceContext::getSequence() const {
 }
 
 void SequenceContext::clearActionsFromActorStates() {
-    for (int i = 0; i < _states.size(); ++i) {
+    for (uint i = 0; i < _states.size(); ++i) {
         _states[i]._actionName.clear();
     }
 }

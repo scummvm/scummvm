@@ -44,17 +44,17 @@ void HandlerTimerActions::toConsole() {
     debug("HandlerTimerActions:");
 
     debug("\tSideEffects:");
-    for (int i = 0; i < _sideEffects.size(); ++i) {
+    for (uint i = 0; i < _sideEffects.size(); ++i) {
         _sideEffects[i]->toConsole();
     }
 
     debug("\tConditions:");
-    for (int i = 0; i < _conditions.size(); ++i) {
+    for (uint i = 0; i < _conditions.size(); ++i) {
         _conditions[i]->toConsole();
     }
 
     debug("\tActions:");
-    for (int i = 0; i < _actions.size(); ++i) {
+    for (uint i = 0; i < _actions.size(); ++i) {
         debug("\t\t%s", _actions[i].c_str());
     }
 }
@@ -79,17 +79,17 @@ void HandlerTimerSequences::toConsole() {
     debug("HandlerTimerSequences:");
 
     debug("\tSideEffects:");
-    for (int i = 0; i < _sideEffects.size(); ++i) {
+    for (uint i = 0; i < _sideEffects.size(); ++i) {
         _sideEffects[i]->toConsole();
     }
 
     debug("\tConditions:");
-    for (int i = 0; i < _conditions.size(); ++i) {
+    for (uint i = 0; i < _conditions.size(); ++i) {
         _conditions[i]->toConsole();
     }
 
     debug("\tSequences:");
-    for (int i = 0; i < _sequences.size(); ++i) {
+    for (uint i = 0; i < _sequences.size(); ++i) {
         debug("\t\t%s", _sequences[i].c_str());
     }
 }

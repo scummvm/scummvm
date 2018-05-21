@@ -82,7 +82,7 @@ public:
 private:
     Common::String _soundName;
     Sound *_sound;
-    int _sample;
+    uint _sample;
 };
 
 } // End of namespace Pink

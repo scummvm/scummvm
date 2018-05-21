@@ -36,7 +36,7 @@ void ActionPlayWithSfx::deserialize(Pink::Archive &archive) {
 void ActionPlayWithSfx::toConsole() {
     debug("\tActionPlayWithSfx: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
                   " _endFrame = %u, _isLoop = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _isLoop);
-    for (int i = 0; i < _sfxArray.size(); ++i) {
+    for (uint i = 0; i < _sfxArray.size(); ++i) {
         _sfxArray[i]->toConsole();
     }
 }
@@ -64,7 +64,7 @@ void ActionPlayWithSfx::updateSound() {
     if (!_actor->isPlaying() && !_isLoop)
         return;
 
-    for (int i = 0; i < _sfxArray.size(); ++i) {
+    for (uint i = 0; i < _sfxArray.size(); ++i) {
         if (_sfxArray[i]->getFrame() == _decoder->getCurFrame()) {
             _sfxArray[i]->play(_actor->getPage());
         }
@@ -73,7 +73,7 @@ void ActionPlayWithSfx::updateSound() {
 
 ActionPlayWithSfx::~ActionPlayWithSfx() {
     ActionPlay::end();
-    for (int i = 0; i < _sfxArray.size(); ++i) {
+    for (uint i = 0; i < _sfxArray.size(); ++i) {
         delete _sfxArray[i];
     }
 }

@@ -38,7 +38,7 @@ Sequencer::Sequencer(GamePage *page)
 {}
 
 Sequencer::~Sequencer() {
-    for (int i = 0; i < _sequences.size(); ++i) {
+    for (uint i = 0; i < _sequences.size(); ++i) {
         delete _sequences[i];
     }
 }
@@ -70,10 +70,10 @@ void Sequencer::authorSequence(Sequence *sequence, bool unk) {
 
 void Sequencer::toConsole() {
     debug("Sequencer:");
-    for (int i = 0; i < _sequences.size(); ++i) {
+    for (uint i = 0; i < _sequences.size(); ++i) {
         _sequences[i]->toConsole();
     }
-    for (int i = 0; i < _timers.size(); ++i) {
+    for (uint i = 0; i < _timers.size(); ++i) {
         _timers[i]->toConsole();
     }
 }
@@ -109,7 +109,7 @@ void Sequencer::updateTimers() {
     }
 
     _time = time;
-    for (int i = 0; i < _timers.size(); ++i) {
+    for (uint i = 0; i < _timers.size(); ++i) {
         _timers[i]->update();
     }
 }
@@ -118,7 +118,7 @@ SequenceActorState *Sequencer::findSequenceActorState(const Common::String &name
     if (!_context)
         return nullptr;
 
-    for (int i = 0; i < _context->_states.size(); ++i) {
+    for (uint i = 0; i < _context->_states.size(); ++i) {
        if (_context->_states[i].getActor() == name)
            return &_context->_states[i];
     }

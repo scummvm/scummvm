@@ -34,7 +34,7 @@ Director::Director(OSystem *system)
 
 void Director::draw() {
     _system->fillScreen(0);
-    for (int i = 0; i < _sprites.size(); ++i) {
+    for (uint i = 0; i < _sprites.size(); ++i) {
         drawSprite(_sprites[i]);
     }
     _system->updateScreen();
@@ -88,7 +88,7 @@ void Director::addSprite(ActionCEL *sprite) {
 }
 
 void Director::removeSprite(ActionCEL *sprite) {
-    for (int i = 0; i < _sprites.size(); ++i) {
+    for (uint i = 0; i < _sprites.size(); ++i) {
         if (sprite == _sprites[i]) {
             _sprites.remove_at(i);
             break;
@@ -101,10 +101,10 @@ void Director::setPallette(const byte *pallete) {
 }
 
 void Director::update() {
-    for (int i = 0; i < _sounds.size(); ++i) {
+    for (uint i = 0; i < _sounds.size(); ++i) {
         _sounds[i]->update();
     }
-    for (int i = 0; i < _sprites.size(); ++i) {
+    for (uint i = 0; i < _sprites.size(); ++i) {
         _sprites[i]->update();
     }
 }
@@ -114,7 +114,7 @@ void Director::addSound(ActionSound *sound) {
 }
 
 void Director::removeSound(ActionSound *sound) {
-    for (int i = 0; i < _sounds.size(); ++i) {
+    for (uint i = 0; i < _sounds.size(); ++i) {
         if (_sounds[i] == sound)
             _sounds.remove_at(i);
     }

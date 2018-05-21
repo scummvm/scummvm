@@ -33,19 +33,19 @@ void HandlerMgr::deserialize(Archive &archive) {
 
 void HandlerMgr::toConsole() {
     debug("HandlerMgr:");
-    for (int i = 0; i < _leftClickHandlers.size(); ++i) {
+    for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
         _leftClickHandlers[i]->toConsole();
     }
-    for (int i = 0; i < _useClickHandlers.size(); ++i) {
+    for (uint i = 0; i < _useClickHandlers.size(); ++i) {
         _useClickHandlers[i]->toConsole();
     }
-    for (int i = 0; i < _timerHandlers.size(); ++i) {
+    for (uint i = 0; i < _timerHandlers.size(); ++i) {
         _timerHandlers[i]->toConsole();
     }
 }
 
 bool HandlerMgr::isLeftClickHandler(Actor *actor) {
-    for (int i = 0; i < _leftClickHandlers.size(); ++i) {
+    for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
         if (_leftClickHandlers[i]->isSuitable(actor))
             return true;
     }
@@ -54,7 +54,7 @@ bool HandlerMgr::isLeftClickHandler(Actor *actor) {
 }
 
 bool HandlerMgr::isUseClickHandler(Actor *actor, const Common::String &itemName){
-    for (int i = 0; i < _useClickHandlers.size(); ++i) {
+    for (uint i = 0; i < _useClickHandlers.size(); ++i) {
         if (itemName == _useClickHandlers[i]->getInventoryItem() &&
             _useClickHandlers[i]->isSuitable(actor))
             return true;
@@ -91,7 +91,7 @@ bool HandlerMgr::onUseClickMessage(Actor *actor, InventoryItem *item, InventoryM
 }
 
 Handler *HandlerMgr::findSuitableHandlerTimer(Actor *actor) {
-    for (int i = 0; i < _timerHandlers.size(); ++i) {
+    for (uint i = 0; i < _timerHandlers.size(); ++i) {
         if (_timerHandlers[i]->isSuitable(actor))
             return _timerHandlers[i];
     }
@@ -100,7 +100,7 @@ Handler *HandlerMgr::findSuitableHandlerTimer(Actor *actor) {
 }
 
 HandlerLeftClick *HandlerMgr::findSuitableHandlerLeftClick(Actor *actor) {
-    for (int i = 0; i < _leftClickHandlers.size(); ++i) {
+    for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
         if (_leftClickHandlers[i]->isSuitable(actor))
             return _leftClickHandlers[i];
     }
@@ -109,7 +109,7 @@ HandlerLeftClick *HandlerMgr::findSuitableHandlerLeftClick(Actor *actor) {
 }
 
 HandlerUseClick *HandlerMgr::findSuitableHandlerUseClick(Actor *actor, InventoryItem *item) {
-    for (int i = 0; i < _useClickHandlers.size(); ++i) {
+    for (uint i = 0; i < _useClickHandlers.size(); ++i) {
         if (item->getName() == _useClickHandlers[i]->getInventoryItem() && _useClickHandlers[i]->isSuitable(actor))
             return _useClickHandlers[i];
     }
@@ -118,13 +118,13 @@ HandlerUseClick *HandlerMgr::findSuitableHandlerUseClick(Actor *actor, Inventory
 }
 
 HandlerMgr::~HandlerMgr() {
-    for (int i = 0; i < _leftClickHandlers.size(); ++i) {
+    for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
         delete _leftClickHandlers[i];
     }
-    for (int j = 0; j < _useClickHandlers.size(); ++j) {
+    for (uint j = 0; j < _useClickHandlers.size(); ++j) {
         delete _useClickHandlers[j];
     }
-    for (int k = 0; k < _timerHandlers.size(); ++k) {
+    for (uint k = 0; k < _timerHandlers.size(); ++k) {
         delete _timerHandlers[k];
     }
 }

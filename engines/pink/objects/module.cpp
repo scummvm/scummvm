@@ -37,7 +37,7 @@ Module::Module(PinkEngine *game, const Common::String &name)
 {}
 
 Module::~Module() {
-    for (int i = 0; i < _pages.size(); ++i) {
+    for (uint i = 0; i < _pages.size(); ++i) {
         delete _pages[i];
     }
 }

@@ -47,7 +47,7 @@ void ActionPlay::end() {
 void ActionPlay::onStart() {
     debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
     _decoder->start();
-    for (int i = 0; i < _startFrame; ++i) {
+    for (uint i = 0; i < _startFrame; ++i) {
         _decoder->skipFrame();
     }
     _decoder->decodeNextFrame();

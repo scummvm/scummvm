@@ -43,7 +43,7 @@ void GamePage::toConsole() {
     Page::toConsole();
     _walkMgr->toConsole();
     _sequencer->toConsole();
-    for (int i = 0; i < _handlers.size(); ++i) {
+    for (uint i = 0; i < _handlers.size(); ++i) {
         _handlers[i]->toConsole();
     }
 }
@@ -74,7 +74,7 @@ void GamePage::init(bool isLoadingSave) {
 
     toConsole();
 
-    for (int j = 0; j < _actors.size(); ++j) {
+    for (uint j = 0; j < _actors.size(); ++j) {
         if (_actors[j]->initPallete(_module->getGame()->getDirector()))
             break;
     }
@@ -82,7 +82,7 @@ void GamePage::init(bool isLoadingSave) {
     LeadActor::State state = _leadActor->getState();
     bool startNow = !(state == LeadActor::kInventory || state == LeadActor::kPDA);
 
-    for (int i = 0; i < _actors.size(); ++i) {
+    for (uint i = 0; i < _actors.size(); ++i) {
         _actors[i]->init(startNow);
     }
 
@@ -173,7 +173,7 @@ void GamePage::saveState() {
     archive << _variables;
 
     archive.writeWORD(_actors.size());
-    for (int i = 0; i < _actors.size(); ++i) {
+    for (uint i = 0; i < _actors.size(); ++i) {
         archive.writeString(_actors[i]->getName());
         _actors[i]->saveState(archive);
     }
@@ -193,7 +193,7 @@ void GamePage::clear() {
     Page::clear();
     //_variables.clear(1);
 
-    for (int i = 0; i < _handlers.size(); ++i) {
+    for (uint i = 0; i < _handlers.size(); ++i) {
         delete _handlers[i];
     }
 

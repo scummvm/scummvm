@@ -51,7 +51,7 @@ WalkLocation *WalkMgr::findLocation(const Common::String &name) {
 
 void WalkMgr::toConsole() {
     debug("WalkMgr:");
-    for (int i = 0; i < _locations.size(); ++i) {
+    for (uint i = 0; i < _locations.size(); ++i) {
         _locations[i]->toConsole();
     }
 }
