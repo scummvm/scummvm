@@ -23,10 +23,9 @@
 #ifndef PINK_ACTOR_H
 #define PINK_ACTOR_H
 
-#include "common/array.h"
 #include "common/rect.h"
 
-#include "pink/objects/object.h"
+#include "pink/utils.h"
 
 namespace Pink {
 
@@ -81,7 +80,7 @@ public:
 protected:
     GamePage *_page;
     Action *_action;
-    Common::Array<Action*> _actions;
+    Array<Action*> _actions;
     bool _isActionEnded;
 };
 

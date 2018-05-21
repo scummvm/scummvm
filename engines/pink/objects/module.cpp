@@ -49,7 +49,7 @@ void Module::load(Archive &archive){
     archive.readString(); // skip directory
 
     _invMgr.deserialize(archive);
-    archive >> _pages;
+    _pages.deserialize(archive);
 }
 
 void Module::init(bool isLoadingSave, const Common::String &pageName) {

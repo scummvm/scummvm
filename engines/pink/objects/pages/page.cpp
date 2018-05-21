@@ -34,7 +34,7 @@ void Page::load(Archive &archive) {
     archive.mapObject(this);
     NamedObject::deserialize(archive);
     archive.readString(); //skip directory
-    archive >> _actors;
+    _actors.deserialize(archive);
 }
 
 Actor *Page::findActor(const Common::String &name) {

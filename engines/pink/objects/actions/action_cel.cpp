@@ -38,7 +38,8 @@ ActionCEL::ActionCEL()
 
 void ActionCEL::deserialize(Archive &archive) {
     Action::deserialize(archive);
-    archive >> _fileName >> _z;
+    _fileName = archive.readString();
+    _z = archive.readDWORD();
 }
 
 void ActionCEL::start(bool unk) {

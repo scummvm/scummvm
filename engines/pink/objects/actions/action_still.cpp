@@ -31,7 +31,7 @@ namespace Pink {
 
 void ActionStill::deserialize(Archive &archive) {
     ActionCEL::deserialize(archive);
-    archive >> _startFrame;
+    _startFrame = archive.readDWORD();
 }
 
 void ActionStill::toConsole() {

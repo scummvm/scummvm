@@ -22,9 +22,7 @@
 #ifndef PINK_WALK_LOCATION_H
 #define PINK_WALK_LOCATION_H
 
-#include "common/str-array.h"
-
-#include "pink/objects/object.h"
+#include "pink/utils.h"
 
 namespace Pink {
 
@@ -35,7 +33,7 @@ public:
     Common::StringArray &getNeigbors() { return _neighbors;}
 
 private:
-    Common::StringArray _neighbors;
+    StringArray _neighbors;
 };
 
 } // End of namespace Pink

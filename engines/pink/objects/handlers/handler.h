@@ -44,8 +44,8 @@ public:
 protected:
     void executeSideEffects(Actor *actor);
 
-    Common::Array<Condition*> _conditions;
-    Common::Array<SideEffect*> _sideEffects;
+    Array<Condition*> _conditions;
+    Array<SideEffect*> _sideEffects;
 };
 
 class Sequence;
@@ -58,7 +58,7 @@ public:
 protected:
     virtual void execute(Sequence *sequence) = 0;
 
-    Common::StringArray _sequences;
+    StringArray _sequences;
 };
 
 class HandlerStartPage : public HandlerSequences {

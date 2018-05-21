@@ -23,8 +23,6 @@
 #ifndef PINK_WALK_MGR_H
 #define PINK_WALK_MGR_H
 
-#include "common/array.h"
-
 #include "pink/objects/object.h"
 #include "pink/objects/walk/walk_shortest_path.h"
 
@@ -65,7 +63,7 @@ private:
 
     LeadActor *_leadActor;
     WalkLocation *_destination;
-    Common::Array<WalkLocation*> _locations;
+    Array<WalkLocation*> _locations;
     WayPoint _current;
     WayPoint _next;
     bool _isWalking;

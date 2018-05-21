@@ -23,8 +23,6 @@
 #ifndef PINK_HANDLER_MGR_H
 #define PINK_HANDLER_MGR_H
 
-#include "common/array.h"
-
 #include "pink/objects/object.h"
 
 namespace Pink {
@@ -58,9 +56,9 @@ private:
     HandlerLeftClick *findSuitableHandlerLeftClick(Actor *actor);
     HandlerUseClick *findSuitableHandlerUseClick(Actor *actor, InventoryItem *item);
 
-    Common::Array<HandlerLeftClick*> _leftClickHandlers;
-    Common::Array<HandlerUseClick*> _useClickHandlers;
-    Common::Array<Handler*> _timerHandlers;
+    Array<HandlerLeftClick*> _leftClickHandlers;
+    Array<HandlerUseClick*> _useClickHandlers;
+    Array<Handler*> _timerHandlers;
 };
 
 }

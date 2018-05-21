@@ -23,8 +23,6 @@
 #ifndef PINK_SEQUENCER_H
 #define PINK_SEQUENCER_H
 
-#include "common/array.h"
-
 #include "pink/objects/object.h"
 
 namespace Pink {
@@ -62,10 +60,10 @@ public:
 
     SequenceContext *_context;
     // context array
-    Common::Array<Sequence*> _sequences;
-    Common::String _currentSequenceName;
-    Common::Array<SeqTimer*> _timers;
-    GamePage *_page;
+    Array<Sequence*> _sequences;
+    Array<SeqTimer*> _timers;
+	Common::String _currentSequenceName;
+	GamePage *_page;
     uint _time;
 };
 

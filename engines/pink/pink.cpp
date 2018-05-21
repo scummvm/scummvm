@@ -30,7 +30,6 @@
 
 #include "pink/pink.h"
 #include "pink/console.h"
-#include "pink/objects/side_effect.h"
 #include "pink/objects/module.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/sequences/sequencer.h"
@@ -140,7 +139,7 @@ Common::Error Pink::PinkEngine::run() {
 void PinkEngine::load(Archive &archive) {
     archive.readString();
     archive.readString();
-    archive >> _modules;
+    _modules.deserialize(archive);
 }
 
 void PinkEngine::initModule(const Common::String &moduleName, bool isLoadingFromSave, const Common::String &pageName) {

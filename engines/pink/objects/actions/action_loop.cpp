@@ -30,7 +30,8 @@ namespace Pink {
 void ActionLoop::deserialize(Archive &archive) {
     ActionPlay::deserialize(archive);
     uint16 style;
-    archive >> _intro >> style;
+    _intro = archive.readDWORD();
+    style = archive.readWORD();
     switch (style) {
         case kPingPong:
             _style = kPingPong;

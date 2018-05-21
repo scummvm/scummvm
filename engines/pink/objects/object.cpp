@@ -23,7 +23,6 @@
 #include "common/debug.h"
 
 #include "pink/archive.h"
-#include "pink/objects/object.h"
 
 namespace Pink {
 

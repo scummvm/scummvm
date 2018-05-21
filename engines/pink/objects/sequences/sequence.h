@@ -23,8 +23,6 @@
 #ifndef PINK_SEQUENCE_H
 #define PINK_SEQUENCE_H
 
-#include "common/array.h"
-
 #include "pink/objects/object.h"
 
 namespace Pink {
@@ -58,7 +56,7 @@ public:
 public:
     SequenceContext *_context;
     Sequencer *_sequencer;
-    Common::Array<SequenceItem*> _items;
+    Array<SequenceItem*> _items;
     int _unk;
 };
 

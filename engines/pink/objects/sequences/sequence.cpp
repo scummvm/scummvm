@@ -46,7 +46,7 @@ Sequence::~Sequence() {
 void Sequence::deserialize(Archive &archive) {
     NamedObject::deserialize(archive);
     _sequencer = static_cast<Sequencer*>(archive.readObject());
-    archive >> _items;
+    _items.deserialize(archive);
 }
 
 void Sequence::toConsole() {
@@ -138,7 +138,7 @@ void Sequence::skipSubSequence() {
 
 void SequenceAudio::deserialize(Archive &archive) {
     Sequence::deserialize(archive);
-    archive >> _soundName;
+    _soundName = archive.readString();
 }
 
 void SequenceAudio::toConsole() {

@@ -31,7 +31,7 @@ namespace Pink {
 
 void ActionTalk::deserialize(Archive &archive) {
     ActionLoop::deserialize(archive);
-    archive >> _vox;
+    _vox = archive.readString();
 }
 
 void ActionTalk::toConsole() {

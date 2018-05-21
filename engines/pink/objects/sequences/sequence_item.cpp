@@ -34,7 +34,8 @@
 namespace Pink {
 
 void SequenceItem::deserialize(Archive &archive) {
-    archive >> _actor >> _action;
+    _actor = archive.readString();
+    _action = archive.readString();
 }
 
 void SequenceItem::toConsole() {

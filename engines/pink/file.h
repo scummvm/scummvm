@@ -71,7 +71,6 @@ private:
     uint32 _timestamp;
     uint32 _tableOffset;
     uint32 _tableSize;
-    ObjectDescription *_table;
 };
 
 class BroFile : public Common::File {

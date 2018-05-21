@@ -65,7 +65,7 @@ void GamePage::load(Archive &archive) {
 
     _walkMgr->deserialize(archive);
     _sequencer->deserialize(archive);
-    archive >> _handlers;
+    _handlers.deserialize(archive);
 }
 
 void GamePage::init(bool isLoadingSave) {
@@ -153,11 +153,17 @@ void GamePage::loadState() {
     //_variables.clear(1);
     Common::StringMap mapTest; // HACK. Without it isn't working
     //archive >> _variables;
-    archive >> mapTest;
+
+	uint size = archive.readCount();
+	for (uint i = 0; i < size; ++i) {
+		Common::String key = archive.readString();
+		Common::String val = archive.readString();
+		mapTest.setVal(key, val);
+	}
+
     _variables = mapTest;
 
-    uint16 actorCount;
-    archive >> actorCount;
+    uint16 actorCount = archive.readWORD();
 
     Common::String actorName;
     for (int i = 0; i < actorCount; ++i) {
@@ -170,7 +176,10 @@ void GamePage::saveState() {
     _memFile = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
     Archive archive(static_cast<Common::WriteStream*>(_memFile));
 
-    archive << _variables;
+    for (Common::StringMap::const_iterator it = _variables.begin(); it != _variables.end(); ++it) {
+        archive.writeString(it->_key);
+        archive.writeString(it->_value);
+    }
 
     archive.writeWORD(_actors.size());
     for (uint i = 0; i < _actors.size(); ++i) {

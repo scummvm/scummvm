@@ -33,7 +33,8 @@
 namespace Pink {
 
 void SideEffectExit::deserialize(Archive &archive) {
-    archive >> _nextModule >> _nextPage;
+    _nextModule = archive.readString();
+    _nextPage = archive.readString();
 }
 
 void SideEffectExit::execute(Actor *actor) {
@@ -45,7 +46,7 @@ void SideEffectExit::toConsole() {
 }
 
 void SideEffectLocation::deserialize(Archive &archive) {
-    archive >> _location;
+    _location = archive.readString();
 }
 
 void SideEffectLocation::execute(Actor *actor) {
@@ -60,7 +61,8 @@ void SideEffectLocation::toConsole() {
 }
 
 void SideEffectInventoryItemOwner::deserialize(Archive &archive) {
-    archive >> _item >> _owner;
+    _item = archive.readString();
+    _owner = archive.readString();
 }
 
 void SideEffectInventoryItemOwner::execute(Actor *actor) {
@@ -74,7 +76,8 @@ void SideEffectInventoryItemOwner::toConsole() {
 }
 
 void SideEffectVariable::deserialize(Pink::Archive &archive) {
-    archive >> _name >> _value;
+    _name = archive.readString();
+    _value = archive.readString();
 }
 
 void SideEffectGameVariable::execute(Actor *actor) {
@@ -102,7 +105,8 @@ void SideEffectPageVariable::toConsole() {
 }
 
 void SideEffectRandomPageVariable::deserialize(Archive &archive) {
-    archive >> _name >> _values;
+    _name = archive.readString();
+	_values.deserialize(archive);
 }
 
 void SideEffectRandomPageVariable::execute(Actor *actor) {
