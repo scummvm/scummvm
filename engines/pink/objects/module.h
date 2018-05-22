@@ -34,8 +34,8 @@ namespace Pink {
 
 class ModuleProxy : public NamedObject {
 public:
-    ModuleProxy();
-    ModuleProxy(const Common::String &name);
+	ModuleProxy();
+	ModuleProxy(const Common::String &name);
 };
 
 class PinkEngine;
@@ -43,31 +43,31 @@ class GamePage;
 
 class Module : public NamedObject {
 public:
-    Module(PinkEngine *game, const Common::String &name);
-    ~Module();
+	Module(PinkEngine *game, const Common::String &name);
+	~Module();
 
-    void load(Archive &archive);
-    void init(bool isLoadingSave, const Common::String &pageName);
-    void changePage(const Common::String &pageName);
+	void load(Archive &archive);
+	void init(bool isLoadingSave, const Common::String &pageName);
+	void changePage(const Common::String &pageName);
 
-    void OnLeftButtonDown();
-    void OnMouseMove();
-    void OnKeyboardButtonClick();
+	void OnLeftButtonDown();
+	void OnMouseMove();
+	void OnKeyboardButtonClick();
 
-    PinkEngine *getGame() const;
-    InventoryMgr *getInventoryMgr();
+	PinkEngine *getGame() const;
+	InventoryMgr *getInventoryMgr();
 
-    bool checkValueOfVariable(Common::String &variable, Common::String &value);
-    void setVariable(Common::String &variable, Common::String &value);
+	bool checkValueOfVariable(Common::String &variable, Common::String &value);
+	void setVariable(Common::String &variable, Common::String &value);
 
 private:
-    GamePage *findPage(const Common::String &pageName) const;
+	GamePage *findPage(const Common::String &pageName) const;
 
-    PinkEngine *_game;
-    GamePage *_page;
-    Array<GamePage*> _pages;
-    InventoryMgr _invMgr;
-    Common::StringMap _variables;
+	PinkEngine *_game;
+	GamePage *_page;
+	Array<GamePage*> _pages;
+	InventoryMgr _invMgr;
+	Common::StringMap _variables;
 };
 
 

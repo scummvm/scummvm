@@ -36,28 +36,28 @@ class CelDecoder;
 
 class Director {
 public:
-    Director(OSystem *system);
-    Actor *getActorByPoint(Common::Point point);
+	Director(OSystem *system);
+	Actor *getActorByPoint(Common::Point point);
 
-    void draw();
-    void update();
+	void draw();
+	void update();
 
-    void addSprite(ActionCEL *sprite);
-    void removeSprite(ActionCEL *sprite);
-    void setPallette(const byte *pallete);
+	void addSprite(ActionCEL *sprite);
+	void removeSprite(ActionCEL *sprite);
+	void setPallette(const byte *pallete);
 
-    void addSound(ActionSound* sound);
-    void removeSound(ActionSound* sound);
+	void addSound(ActionSound* sound);
+	void removeSound(ActionSound* sound);
 
-    void clear();
+	void clear();
 
-    bool showBounds;
+	bool showBounds;
 
 private:
-    void drawSprite(ActionCEL *sprite);
-    OSystem *_system;
-    Common::Array<ActionCEL*> _sprites;
-    Common::Array<ActionSound*> _sounds;
+	void drawSprite(ActionCEL *sprite);
+	OSystem *_system;
+	Common::Array<ActionCEL*> _sprites;
+	Common::Array<ActionSound*> _sounds;
 };
 
 } // End of namespace Pink

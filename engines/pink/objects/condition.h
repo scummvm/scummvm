@@ -31,73 +31,73 @@ class Actor;
 
 class Condition : public Object {
 public:
-    virtual void deserialize(Archive &archive) = 0;
-    virtual bool evaluate(Actor *actor) = 0;
+	virtual void deserialize(Archive &archive) = 0;
+	virtual bool evaluate(Actor *actor) = 0;
 };
 
 class ConditionVariable : public Condition {
 public:
 
-    virtual void deserialize(Archive &archive);
-    virtual bool evaluate(Actor *actor) = 0;
+	virtual void deserialize(Archive &archive);
+	virtual bool evaluate(Actor *actor) = 0;
 
 protected:
-    Common::String _name;
-    Common::String _value;
+	Common::String _name;
+	Common::String _value;
 };
 
 class ConditionGameVariable : public ConditionVariable {
 public:
-    virtual void toConsole();
-    virtual bool evaluate(Actor *actor);
+	virtual void toConsole();
+	virtual bool evaluate(Actor *actor);
 };
 
 /*
  * It is not used in games and has evaluate method with infinity recursion
 class ConditionNotGameVariable : public ConditionGameVariable {
-    virtual bool evaluate(LeadActor *leadActor);
+	virtual bool evaluate(LeadActor *leadActor);
 };
  */
 
 class ConditionModuleVariable : public ConditionVariable {
 public:
-    virtual void toConsole();
-    virtual bool evaluate(Actor *actor);
+	virtual void toConsole();
+	virtual bool evaluate(Actor *actor);
 };
 
 class ConditionNotModuleVariable : public ConditionModuleVariable {
 public:
-    virtual void toConsole();
-    virtual bool evaluate(Actor *actor);
+	virtual void toConsole();
+	virtual bool evaluate(Actor *actor);
 };
 
 class ConditionPageVariable : public ConditionVariable {
 public:
-    virtual void toConsole();
-    virtual bool evaluate(Actor *actor);
+	virtual void toConsole();
+	virtual bool evaluate(Actor *actor);
 };
 
 class ConditionNotPageVariable : public ConditionPageVariable {
 public:
-    virtual void toConsole();
-    virtual bool evaluate(Actor *actor);
+	virtual void toConsole();
+	virtual bool evaluate(Actor *actor);
 };
 
 class ConditionInventoryItemOwner : public Condition {
 public:
-    virtual void toConsole();
-    virtual void deserialize(Archive &archive);
-    virtual bool evaluate(Actor *actor);
+	virtual void toConsole();
+	virtual void deserialize(Archive &archive);
+	virtual bool evaluate(Actor *actor);
 
 protected:
-    Common::String _item;
-    Common::String _owner;
+	Common::String _item;
+	Common::String _owner;
 };
 
 class ConditionNotInventoryItemOwner : public ConditionInventoryItemOwner {
 public:
-    virtual void toConsole();
-    virtual bool evaluate(Actor *actor);
+	virtual void toConsole();
+	virtual bool evaluate(Actor *actor);
 };
 
 } // End of namespace Pink

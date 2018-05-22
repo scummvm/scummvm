@@ -29,46 +29,46 @@ namespace Pink {
 
 class CelDecoder : public Video::FlicDecoder {
 public:
-    virtual bool loadStream(Common::SeekableReadStream *stream);
+	virtual bool loadStream(Common::SeekableReadStream *stream);
 
-    int32 getX();
-    int32 getY();
-    uint16 getTransparentColourIndex();
+	int32 getX();
+	int32 getY();
+	uint16 getTransparentColourIndex();
 
-    Common::Point getCenter();
-    Common::Rect &getRectangle();
-    const Graphics::Surface *getCurrentFrame();
-    void skipFrame();
+	Common::Point getCenter();
+	Common::Rect &getRectangle();
+	const Graphics::Surface *getCurrentFrame();
+	void skipFrame();
 
-    void setX(int32 x);
-    void setY(int32 y);
+	void setX(int32 x);
+	void setY(int32 y);
 
 protected:
-    class CelVideoTrack : public FlicVideoTrack {
-    public:
-        CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader = false);
-        virtual void readHeader();
+	class CelVideoTrack : public FlicVideoTrack {
+	public:
+		CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader = false);
+		virtual void readHeader();
 
-        int32 getX() const;
-        int32 getY() const;
-        uint16 getTransparentColourIndex();
+		int32 getX() const;
+		int32 getY() const;
+		uint16 getTransparentColourIndex();
 
-        Common::Point getCenter();
-        Common::Rect &getRect();
-        const Graphics::Surface *getCurrentFrame();
+		Common::Point getCenter();
+		Common::Rect &getRect();
+		const Graphics::Surface *getCurrentFrame();
 
-        void setX(int32 x);
-        void setY(int32 y);
+		void setX(int32 x);
+		void setY(int32 y);
 
-        void skipFrame();
-    private:
-        const Graphics::Surface *decodeNextFrame();
-        void readPrefixChunk();
+		void skipFrame();
+	private:
+		const Graphics::Surface *decodeNextFrame();
+		void readPrefixChunk();
 
-        Common::Point _center;
-        Common::Rect _rect;
-        byte _transparentColourIndex;
-    };
+		Common::Point _center;
+		Common::Rect _rect;
+		byte _transparentColourIndex;
+	};
 };
 
 }

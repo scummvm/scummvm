@@ -39,49 +39,49 @@ class InventoryMgr;
 
 class Actor : public NamedObject {
 public:
-    Actor()
-     : _page(nullptr), _action(nullptr),
-        _isActionEnded(1)
-    {};
-    ~Actor();
-    virtual void deserialize(Archive &archive);
+	Actor()
+	 : _page(nullptr), _action(nullptr),
+		_isActionEnded(1)
+	{};
+	~Actor();
+	virtual void deserialize(Archive &archive);
 
-    virtual void toConsole();
+	virtual void toConsole();
 
-    Sequencer *getSequencer() const;
-    GamePage *getPage() const;
-    Action *getAction() const;
+	Sequencer *getSequencer() const;
+	GamePage *getPage() const;
+	Action *getAction() const;
 
-    bool isPlaying();
-    virtual void init(bool unk);
-    void hide();
-    void endAction();
+	bool isPlaying();
+	virtual void init(bool unk);
+	void hide();
+	void endAction();
 
-    Action *findAction(const Common::String &name);
-    void setAction(const Common::String &name);
-    void setAction(Action *newAction);
-    void setAction(Action *newAction, bool unk);
+	Action *findAction(const Common::String &name);
+	void setAction(const Common::String &name);
+	void setAction(Action *newAction);
+	void setAction(Action *newAction, bool unk);
 
-    void loadState(Archive &archive);
-    void saveState(Archive &archive);
+	void loadState(Archive &archive);
+	void saveState(Archive &archive);
 
-    bool initPallete(Director *director);
+	bool initPallete(Director *director);
 
-    virtual void update() {};
+	virtual void update() {};
 
-    virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
-    virtual void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
+	virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
+	virtual void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
 
-    virtual bool isClickable() { return 0;}
+	virtual bool isClickable() { return 0;}
 
-    virtual void pause();
-    virtual void unpause();
+	virtual void pause();
+	virtual void unpause();
 
 protected:
-    GamePage *_page;
-    Action *_action;
-    Array<Action*> _actions;
-    bool _isActionEnded;
+	GamePage *_page;
+	Action *_action;
+	Array<Action*> _actions;
+	bool _isActionEnded;
 };
 
 } // End of namespace Pink

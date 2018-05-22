@@ -35,36 +35,36 @@ class SequenceActorState;
 
 class Sequencer : public Object {
 public:
-    Sequencer(GamePage *page);
-    ~Sequencer();
+	Sequencer(GamePage *page);
+	~Sequencer();
 
-    virtual void toConsole();
+	virtual void toConsole();
 
-    virtual void deserialize(Archive &archive);
-    Sequence* findSequence(const Common::String &name);
-    SequenceActorState *findSequenceActorState(const Common::String &name);
+	virtual void deserialize(Archive &archive);
+	Sequence* findSequence(const Common::String &name);
+	SequenceActorState *findSequenceActorState(const Common::String &name);
 
-    void authorSequence(Sequence *sequence, bool unk);
+	void authorSequence(Sequence *sequence, bool unk);
 
-    void removeContext(SequenceContext *context);
+	void removeContext(SequenceContext *context);
 
-    void update();
+	void update();
 
-    void skipSubSequence();
-    void restartSequence();
-    void skipToLastSubSequence();
+	void skipSubSequence();
+	void restartSequence();
+	void skipToLastSubSequence();
 
 
 public:
-    void updateTimers();
+	void updateTimers();
 
-    SequenceContext *_context;
-    // context array
-    Array<Sequence*> _sequences;
-    Array<SeqTimer*> _timers;
+	SequenceContext *_context;
+	// context array
+	Array<Sequence*> _sequences;
+	Array<SeqTimer*> _timers;
 	Common::String _currentSequenceName;
 	GamePage *_page;
-    uint _time;
+	uint _time;
 };
 
 } // End of namespace Pink

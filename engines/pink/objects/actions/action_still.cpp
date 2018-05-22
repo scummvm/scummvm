@@ -30,28 +30,28 @@
 namespace Pink {
 
 void ActionStill::deserialize(Archive &archive) {
-    ActionCEL::deserialize(archive);
-    _startFrame = archive.readDWORD();
+	ActionCEL::deserialize(archive);
+	_startFrame = archive.readDWORD();
 }
 
 void ActionStill::toConsole() {
-    debug("\tActionStill: _name = %s, _fileName = %s, _z =%u _startFrame = %u",
-          _name.c_str(), _fileName.c_str(), _z, _startFrame);
+	debug("\tActionStill: _name = %s, _fileName = %s, _z =%u _startFrame = %u",
+		  _name.c_str(), _fileName.c_str(), _z, _startFrame);
 }
 
 void ActionStill::end() {
-    ActionCEL::end();
-    debug("ActionStill %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	ActionCEL::end();
+	debug("ActionStill %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 void ActionStill::onStart() {
-    debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
-    for (uint i = 0; i < _startFrame; ++i) {
-        _decoder->skipFrame();
-    }
-    _decoder->decodeNextFrame();
-    _decoder->stop();
-    _actor->endAction();
+	debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
+	for (uint i = 0; i < _startFrame; ++i) {
+		_decoder->skipFrame();
+	}
+	_decoder->decodeNextFrame();
+	_decoder->stop();
+	_actor->endAction();
 }
 
 } // End of namespace Pink

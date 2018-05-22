@@ -31,21 +31,21 @@ class Sound;
 
 class ActionTalk : public ActionLoop {
 public:
-    virtual void deserialize(Archive &archive);
-    virtual void toConsole();
-    virtual void update();
+	virtual void deserialize(Archive &archive);
+	virtual void toConsole();
+	virtual void update();
 
-    virtual void end();
+	virtual void end();
 
-    void pause() override;
-    void unpause() override;
+	void pause() override;
+	void unpause() override;
 
 protected:
-    virtual void onStart();
+	virtual void onStart();
 
 private:
-    Sound *_sound;
-    Common::String _vox;
+	Sound *_sound;
+	Common::String _vox;
 };
 
 } // End of namespace Pink

@@ -31,16 +31,16 @@ namespace Pink {
 
 class InventoryItem : public NamedObject {
 public:
-    virtual void deserialize(Archive &archive);
+	virtual void deserialize(Archive &archive);
 
-    virtual void toConsole();
+	virtual void toConsole();
 
-    Common::String &getCurrentOwner();
+	Common::String &getCurrentOwner();
 
-    friend class InventoryMgr;
+	friend class InventoryMgr;
 private:
-    Common::String _initialOwner;
-    Common::String _currentOwner;
+	Common::String _initialOwner;
+	Common::String _currentOwner;
 };
 
 class LeadActor;
@@ -48,51 +48,51 @@ class Actor;
 
 class InventoryMgr : public Object {
 public:
-    InventoryMgr();
-    virtual ~InventoryMgr();
-    virtual void deserialize(Archive &archive);
-    virtual void toConsole();
+	InventoryMgr();
+	virtual ~InventoryMgr();
+	virtual void deserialize(Archive &archive);
+	virtual void toConsole();
 
-    void update();
-    void onClick(Common::Point point);
+	void update();
+	void onClick(Common::Point point);
 
-    bool start(bool playOpening);
+	bool start(bool playOpening);
 
-    void setLeadActor(LeadActor *lead);
-    InventoryItem* findInventoryItem(const Common::String &name);
+	void setLeadActor(LeadActor *lead);
+	InventoryItem* findInventoryItem(const Common::String &name);
 
-    bool isPinkOwnsAnyItems();
-    void setItemOwner(const Common::String &owner, InventoryItem *item);
+	bool isPinkOwnsAnyItems();
+	void setItemOwner(const Common::String &owner, InventoryItem *item);
 
-    InventoryItem *getCurrentItem();
+	InventoryItem *getCurrentItem();
 
 private:
-    void close();
-    enum Direction {
-        kLeft = 0,
-        kRight = 1,
-    };
-    void showNextItem(bool direction);
+	void close();
+	enum Direction {
+		kLeft = 0,
+		kRight = 1,
+	};
+	void showNextItem(bool direction);
 
 
 
 
-    LeadActor *_lead;
-    Actor *_window;
-    Actor *_itemActor;
-    Actor *_rightArrow;
-    Actor *_leftArrow;
+	LeadActor *_lead;
+	Actor *_window;
+	Actor *_itemActor;
+	Actor *_rightArrow;
+	Actor *_leftArrow;
 
-    InventoryItem *_item;
-    Array<InventoryItem*> _items;
+	InventoryItem *_item;
+	Array<InventoryItem*> _items;
 
-    enum State {
-        kIdle = 0,
-        kOpening = 1,
-        kReady = 2,
-        kClosing = 3,
-    } _state;
-    bool _isClickedOnItem;
+	enum State {
+		kIdle = 0,
+		kOpening = 1,
+		kReady = 2,
+		kClosing = 3,
+	} _state;
+	bool _isClickedOnItem;
 };
 
 } // End of namespace Pink

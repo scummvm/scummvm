@@ -34,20 +34,20 @@ namespace Pink {
 
 class AudioInfoPDAButton : public Actor {
 public:
-    void toConsole() {
-        debug("CursorActor: _name = %s", _name.c_str());
-        for (uint i = 0; i < _actions.size(); ++i) {
-            _actions[i]->toConsole();
-        }
-    }
+	void toConsole() {
+		debug("CursorActor: _name = %s", _name.c_str());
+		for (uint i = 0; i < _actions.size(); ++i) {
+			_actions[i]->toConsole();
+		}
+	}
 
-    void onMouseOver(Common::Point point, CursorMgr *mgr) override {
-        mgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
-    }
+	void onMouseOver(Common::Point point, CursorMgr *mgr) override {
+		mgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
+	}
 
-    void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override {
-        onMouseOver(point, cursorMgr);
-    }
+	void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override {
+		onMouseOver(point, cursorMgr);
+	}
 };
 
 } // End of namespace Pink

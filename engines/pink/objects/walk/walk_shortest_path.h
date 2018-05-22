@@ -32,27 +32,27 @@ class WalkMgr;
 
 class WalkShortestPath {
 public:
-    WalkShortestPath(WalkMgr *manager);
-    WalkLocation *next(WalkLocation *start, WalkLocation *destination);
+	WalkShortestPath(WalkMgr *manager);
+	WalkLocation *next(WalkLocation *start, WalkLocation *destination);
 
 private:
-    void add(WalkLocation *wl, double val, WalkLocation *nearest);
-    void remove(WalkLocation *location);
-    WalkLocation *build();
-    WalkLocation *getNearestNeighbor(WalkLocation *location);
-    WalkLocation *findNearestNeighbor(WalkLocation *location);
-    double getLengthToNearestNeigbor(WalkLocation *location);
-    double getWeight(WalkLocation *location);
-    void addLocationsToVisit();
-    bool isLocationVisited(WalkLocation *location);
+	void add(WalkLocation *wl, double val, WalkLocation *nearest);
+	void remove(WalkLocation *location);
+	WalkLocation *build();
+	WalkLocation *getNearestNeighbor(WalkLocation *location);
+	WalkLocation *findNearestNeighbor(WalkLocation *location);
+	double getLengthToNearestNeigbor(WalkLocation *location);
+	double getWeight(WalkLocation *location);
+	void addLocationsToVisit();
+	bool isLocationVisited(WalkLocation *location);
 
 
-    WalkMgr *_manager;
-    Common::Array<WalkLocation*> _locations;
-    Common::Array<WalkLocation*> _toVisit;
-    Common::Array<double> _weight;
-    Common::Array<WalkLocation*> _visited;
-    Common::Array<WalkLocation*> _nearestNeigbor;
+	WalkMgr *_manager;
+	Common::Array<WalkLocation*> _locations;
+	Common::Array<WalkLocation*> _toVisit;
+	Common::Array<double> _weight;
+	Common::Array<WalkLocation*> _visited;
+	Common::Array<WalkLocation*> _nearestNeigbor;
 };
 
 } // End of namespace Pink

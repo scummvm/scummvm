@@ -29,19 +29,19 @@ namespace Pink {
 
 class PDAButtonActor : public Actor {
 public:
-    enum Command {Null = 0, GoToPage = 1, Close = 2, Unk = 4};
+	enum Command {Null = 0, GoToPage = 1, Close = 2, Unk = 4};
 
-    void deserialize(Archive &archive) override;
-    void toConsole() override;
+	void deserialize(Archive &archive) override;
+	void toConsole() override;
 
 private:
-    int _x;
-    int _y;
+	int _x;
+	int _y;
 
-    bool _hideOnStop;
-    bool _opaque;
+	bool _hideOnStop;
+	bool _opaque;
 
-    Command _command;
+	Command _command;
 };
 
 } // End of namespace Pink

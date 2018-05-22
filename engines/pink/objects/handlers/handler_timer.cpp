@@ -36,76 +36,76 @@ namespace Pink {
 
 
 void HandlerTimerActions::deserialize(Archive &archive) {
-    Handler::deserialize(archive);
-    _actions.deserialize(archive);
+	Handler::deserialize(archive);
+	_actions.deserialize(archive);
 }
 
 void HandlerTimerActions::toConsole() {
-    debug("HandlerTimerActions:");
+	debug("HandlerTimerActions:");
 
-    debug("\tSideEffects:");
-    for (uint i = 0; i < _sideEffects.size(); ++i) {
-        _sideEffects[i]->toConsole();
-    }
+	debug("\tSideEffects:");
+	for (uint i = 0; i < _sideEffects.size(); ++i) {
+		_sideEffects[i]->toConsole();
+	}
 
-    debug("\tConditions:");
-    for (uint i = 0; i < _conditions.size(); ++i) {
-        _conditions[i]->toConsole();
-    }
+	debug("\tConditions:");
+	for (uint i = 0; i < _conditions.size(); ++i) {
+		_conditions[i]->toConsole();
+	}
 
-    debug("\tActions:");
-    for (uint i = 0; i < _actions.size(); ++i) {
-        debug("\t\t%s", _actions[i].c_str());
-    }
+	debug("\tActions:");
+	for (uint i = 0; i < _actions.size(); ++i) {
+		debug("\t\t%s", _actions[i].c_str());
+	}
 }
 
 void HandlerTimerActions::handle(Actor *actor) {
-    Handler::handle(actor);
-    if (!actor->isPlaying() && !_actions.empty()) {
-        Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
-        uint index = rnd.getRandomNumber(_actions.size() - 1);
-        Action *action = actor->findAction(_actions[index]);
-        assert(action);
-        actor->setAction(action, 0);
-    }
+	Handler::handle(actor);
+	if (!actor->isPlaying() && !_actions.empty()) {
+		Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
+		uint index = rnd.getRandomNumber(_actions.size() - 1);
+		Action *action = actor->findAction(_actions[index]);
+		assert(action);
+		actor->setAction(action, 0);
+	}
 }
 
 
 void HandlerTimerSequences::execute(Sequence *sequence) {
-    error("HandlerTimerSequences function is not implemented");
+	error("HandlerTimerSequences function is not implemented");
 }
 
 void HandlerTimerSequences::toConsole() {
-    debug("HandlerTimerSequences:");
+	debug("HandlerTimerSequences:");
 
-    debug("\tSideEffects:");
-    for (uint i = 0; i < _sideEffects.size(); ++i) {
-        _sideEffects[i]->toConsole();
-    }
+	debug("\tSideEffects:");
+	for (uint i = 0; i < _sideEffects.size(); ++i) {
+		_sideEffects[i]->toConsole();
+	}
 
-    debug("\tConditions:");
-    for (uint i = 0; i < _conditions.size(); ++i) {
-        _conditions[i]->toConsole();
-    }
+	debug("\tConditions:");
+	for (uint i = 0; i < _conditions.size(); ++i) {
+		_conditions[i]->toConsole();
+	}
 
-    debug("\tSequences:");
-    for (uint i = 0; i < _sequences.size(); ++i) {
-        debug("\t\t%s", _sequences[i].c_str());
-    }
+	debug("\tSequences:");
+	for (uint i = 0; i < _sequences.size(); ++i) {
+		debug("\t\t%s", _sequences[i].c_str());
+	}
 }
 
 void HandlerTimerSequences::handle(Actor *actor) {
-    Handler::handle(actor);
-    Sequencer *sequencer = actor->getSequencer();
+	Handler::handle(actor);
+	Sequencer *sequencer = actor->getSequencer();
 
-    assert(!_sequences.empty());
+	assert(!_sequences.empty());
 
-    Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
-    uint index = rnd.getRandomNumber(_sequences.size() - 1);
+	Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
+	uint index = rnd.getRandomNumber(_sequences.size() - 1);
 
-    Sequence *sequence = sequencer->findSequence(_sequences[index]);
+	Sequence *sequence = sequencer->findSequence(_sequences[index]);
 
-    assert(sequence);
+	assert(sequence);
 }
 
 } // End of namespace Pink

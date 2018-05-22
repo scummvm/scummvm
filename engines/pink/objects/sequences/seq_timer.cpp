@@ -32,30 +32,30 @@
 namespace Pink {
 
 SeqTimer::SeqTimer()
-        : _updatesToMessage(0) {}
+		: _updatesToMessage(0) {}
 
 void SeqTimer::deserialize(Archive &archive) {
-    _actor = archive.readString();
-    _period = archive.readDWORD();
-    _range = archive.readDWORD();
-    _sequencer = static_cast<Sequencer*>(archive.readObject());
+	_actor = archive.readString();
+	_period = archive.readDWORD();
+	_range = archive.readDWORD();
+	_sequencer = static_cast<Sequencer*>(archive.readObject());
 }
 
 void SeqTimer::toConsole() {
-    debug("\tSeqTimer: _actor=%s _period=%u _range=%u", _actor.c_str(), _period, _range);
+	debug("\tSeqTimer: _actor=%s _period=%u _range=%u", _actor.c_str(), _period, _range);
 }
 
 void SeqTimer::update() {
-    Common::RandomSource &rnd =_sequencer->_page->getGame()->getRnd();
-    if (_updatesToMessage--)
-        return;
+	Common::RandomSource &rnd =_sequencer->_page->getGame()->getRnd();
+	if (_updatesToMessage--)
+		return;
 
 	_updatesToMessage = _range ? _period + rnd.getRandomNumber(_range) : _period;
 
 	SupportingActor *actor = static_cast<SupportingActor*>(_sequencer->_page->findActor(_actor));
-    if (actor && !_sequencer->findSequenceActorState(actor->getName())){
-        actor->onTimerMessage();
-    }
+	if (actor && !_sequencer->findSequenceActorState(actor->getName())){
+		actor->onTimerMessage();
+	}
 }
 
 } // End of namespace Pink

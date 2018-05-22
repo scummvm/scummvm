@@ -27,15 +27,15 @@
 namespace Pink {
 
 Pink::NamedObject::NamedObject(const Common::String &name)
-        : _name(name)
+		: _name(name)
 {}
 
 void Pink::NamedObject::deserialize(Archive &archive) {
-    _name = archive.readString();
+	_name = archive.readString();
 }
 
 const Common::String &Pink::NamedObject::getName() const {
-    return _name;
+	return _name;
 }
 
 void NamedObject::store(Archive &archive) {

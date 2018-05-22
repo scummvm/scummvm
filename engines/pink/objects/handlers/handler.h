@@ -36,60 +36,60 @@ class Actor;
 
 class Handler : public Object {
 public:
-    ~Handler();
-    virtual void deserialize(Archive &archive);
-    virtual void handle(Actor *actor);
-    bool isSuitable(Actor *actor);
+	~Handler();
+	virtual void deserialize(Archive &archive);
+	virtual void handle(Actor *actor);
+	bool isSuitable(Actor *actor);
 
 protected:
-    void executeSideEffects(Actor *actor);
+	void executeSideEffects(Actor *actor);
 
-    Array<Condition*> _conditions;
-    Array<SideEffect*> _sideEffects;
+	Array<Condition*> _conditions;
+	Array<SideEffect*> _sideEffects;
 };
 
 class Sequence;
 
 class HandlerSequences : public Handler {
 public:
-    virtual void deserialize(Archive &archive);
-    virtual void handle(Actor *actor);
+	virtual void deserialize(Archive &archive);
+	virtual void handle(Actor *actor);
 
 protected:
-    virtual void execute(Sequence *sequence) = 0;
+	virtual void execute(Sequence *sequence) = 0;
 
-    StringArray _sequences;
+	StringArray _sequences;
 };
 
 class HandlerStartPage : public HandlerSequences {
 public:
-    virtual void toConsole();
+	virtual void toConsole();
 
 private:
-    virtual void execute(Sequence *sequence);
+	virtual void execute(Sequence *sequence);
 };
 
 class HandlerLeftClick : public HandlerSequences {
 public:
-    virtual void toConsole();
+	virtual void toConsole();
 
 private:
-    virtual void execute(Sequence *sequence) {}
+	virtual void execute(Sequence *sequence) {}
 };
 
 class HandlerUseClick : public HandlerSequences {
 public:
-    virtual void deserialize(Archive &archive);
-    virtual void toConsole();
+	virtual void deserialize(Archive &archive);
+	virtual void toConsole();
 
-    const Common::String &getInventoryItem() const { return _inventoryItem; }
-    const Common::String &getRecepient() const { return _recepient; }
+	const Common::String &getInventoryItem() const { return _inventoryItem; }
+	const Common::String &getRecepient() const { return _recepient; }
 
 private:
-    virtual void execute(Sequence *sequence) {};
+	virtual void execute(Sequence *sequence) {};
 
-    Common::String _inventoryItem;
-    Common::String _recepient;
+	Common::String _inventoryItem;
+	Common::String _recepient;
 };
 
 } // End of namespace Pink

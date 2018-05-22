@@ -33,59 +33,59 @@
 namespace Pink {
 
 void SideEffectExit::deserialize(Archive &archive) {
-    _nextModule = archive.readString();
-    _nextPage = archive.readString();
+	_nextModule = archive.readString();
+	_nextPage = archive.readString();
 }
 
 void SideEffectExit::execute(Actor *actor) {
-    actor->getPage()->getLeadActor()->setNextExecutors(_nextModule, _nextPage);
+	actor->getPage()->getLeadActor()->setNextExecutors(_nextModule, _nextPage);
 }
 
 void SideEffectExit::toConsole() {
-    debug("\t\tSideEffectExit: _nextModule=%s, _nextPage=%s", _nextModule.c_str(), _nextPage.c_str());
+	debug("\t\tSideEffectExit: _nextModule=%s, _nextPage=%s", _nextModule.c_str(), _nextPage.c_str());
 }
 
 void SideEffectLocation::deserialize(Archive &archive) {
-    _location = archive.readString();
+	_location = archive.readString();
 }
 
 void SideEffectLocation::execute(Actor *actor) {
-    WalkMgr *mgr = actor->getPage()->getWalkMgr();
-    WalkLocation *location = mgr->findLocation(_location);
-    if (location)
-        mgr->setCurrentWayPoint(location);
+	WalkMgr *mgr = actor->getPage()->getWalkMgr();
+	WalkLocation *location = mgr->findLocation(_location);
+	if (location)
+		mgr->setCurrentWayPoint(location);
 }
 
 void SideEffectLocation::toConsole() {
-    debug("\t\tSideEffectLocation: _location=%s", _location.c_str());
+	debug("\t\tSideEffectLocation: _location=%s", _location.c_str());
 }
 
 void SideEffectInventoryItemOwner::deserialize(Archive &archive) {
-    _item = archive.readString();
-    _owner = archive.readString();
+	_item = archive.readString();
+	_owner = archive.readString();
 }
 
 void SideEffectInventoryItemOwner::execute(Actor *actor) {
-    InventoryMgr *mgr = actor->getPage()->getModule()->getInventoryMgr();
-    InventoryItem *item = mgr->findInventoryItem(_item);
-    mgr->setItemOwner(_owner, item);
+	InventoryMgr *mgr = actor->getPage()->getModule()->getInventoryMgr();
+	InventoryItem *item = mgr->findInventoryItem(_item);
+	mgr->setItemOwner(_owner, item);
 }
 
 void SideEffectInventoryItemOwner::toConsole() {
-    debug("\t\tSideEffectInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
+	debug("\t\tSideEffectInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
 }
 
 void SideEffectVariable::deserialize(Pink::Archive &archive) {
-    _name = archive.readString();
-    _value = archive.readString();
+	_name = archive.readString();
+	_value = archive.readString();
 }
 
 void SideEffectGameVariable::execute(Actor *actor) {
-    actor->getPage()->getGame()->setVariable(_name, _value);
+	actor->getPage()->getGame()->setVariable(_name, _value);
 }
 
 void SideEffectGameVariable::toConsole() {
-    debug("\t\tSideEffectGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
+	debug("\t\tSideEffectGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
 void SideEffectModuleVariable::execute(Actor *actor) {
@@ -93,39 +93,39 @@ void SideEffectModuleVariable::execute(Actor *actor) {
 }
 
 void SideEffectModuleVariable::toConsole() {
-    debug("\t\tSideEffectModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
+	debug("\t\tSideEffectModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
 void SideEffectPageVariable::execute(Actor *actor) {
-    actor->getPage()->setVariable(_name, _value);
+	actor->getPage()->setVariable(_name, _value);
 }
 
 void SideEffectPageVariable::toConsole() {
-    debug("\t\tSideEffectPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
+	debug("\t\tSideEffectPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
 void SideEffectRandomPageVariable::deserialize(Archive &archive) {
-    _name = archive.readString();
+	_name = archive.readString();
 	_values.deserialize(archive);
 }
 
 void SideEffectRandomPageVariable::execute(Actor *actor) {
-    assert(!_values.empty());
+	assert(!_values.empty());
 
-    Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
-    uint index = rnd.getRandomNumber(_values.size() - 1);
+	Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
+	uint index = rnd.getRandomNumber(_values.size() - 1);
 
-    actor->getPage()->setVariable(_name, _values[index]);
+	actor->getPage()->setVariable(_name, _values[index]);
 }
 
 void SideEffectRandomPageVariable::toConsole() {
-    Common::String values("{");
-    for (uint i = 0; i < _values.size(); ++i) {
-        values += _values[i];
-        values += ',';
-    }
-    values += '}';
-    debug("\t\tSideEffectRandomPageVariable: _name=%s, _values=%s", _name.c_str(), values.c_str());
+	Common::String values("{");
+	for (uint i = 0; i < _values.size(); ++i) {
+		values += _values[i];
+		values += ',';
+	}
+	values += '}';
+	debug("\t\tSideEffectRandomPageVariable: _name=%s, _values=%s", _name.c_str(), values.c_str());
 }
 
 } // End of namespace Pink

@@ -39,32 +39,32 @@ namespace Pink {
 
 class Archive {
 public:
-    Archive(Common::SeekableReadStream *stream);
-    Archive(Common::WriteStream *stream);
-    ~Archive();
+	Archive(Common::SeekableReadStream *stream);
+	Archive(Common::WriteStream *stream);
+	~Archive();
 
-    void mapObject(Object *obj);
+	void mapObject(Object *obj);
 
-    int readCount();
-    uint32 readDWORD();
-    uint16 readWORD();
+	int readCount();
+	uint32 readDWORD();
+	uint16 readWORD();
 
-    void writeDWORD(uint32 val);
-    void writeWORD(uint16 val);
+	void writeDWORD(uint32 val);
+	void writeWORD(uint16 val);
 
-    Object *readObject();
-    Common::String readString();
-    void writeString(const Common::String &string);
+	Object *readObject();
+	Common::String readString();
+	void writeString(const Common::String &string);
 
 private:
-    uint findObjectId(const char *name);
+	uint findObjectId(const char *name);
 
-    Object *parseObject(bool &isCopyReturned);
+	Object *parseObject(bool &isCopyReturned);
 
-    Common::Array<Object *> _objectMap;
-    Common::Array<uint> _objectIdMap;
-    Common::SeekableReadStream *_readStream;
-    Common::WriteStream *_writeStream;
+	Common::Array<Object *> _objectMap;
+	Common::Array<uint> _objectIdMap;
+	Common::SeekableReadStream *_readStream;
+	Common::WriteStream *_writeStream;
 };
 
 } // End of namespace Pink

@@ -32,59 +32,59 @@
 namespace Pink {
 
 ResourceMgr::ResourceMgr()
-        : _game(nullptr), _resDescTable(nullptr),
-          _resCount(0) {}
+		: _game(nullptr), _resDescTable(nullptr),
+		  _resCount(0) {}
 
 ResourceMgr::~ResourceMgr() {
-    clear();
+	clear();
 }
 
 void ResourceMgr::init(PinkEngine *game, GamePage *page) {
-    OrbFile *orb = game->getOrb();
-    _game = game;
+	OrbFile *orb = game->getOrb();
+	_game = game;
 
-    ObjectDescription *objDesc = orb->getObjDesc(page->getName().c_str());
-    _resCount = objDesc->resourcesCount;
-    orb->loadObject(page, objDesc);
-    _resDescTable = orb->getResDescTable(objDesc);
+	ObjectDescription *objDesc = orb->getObjDesc(page->getName().c_str());
+	_resCount = objDesc->resourcesCount;
+	orb->loadObject(page, objDesc);
+	_resDescTable = orb->getResDescTable(objDesc);
 }
 
 Sound *ResourceMgr::loadSound(Common::String &name) {
-    return new Sound(_game->_mixer, getResourceStream(name));
+	return new Sound(_game->_mixer, getResourceStream(name));
 }
 
 Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(Common::String &name) {
-    Common::SeekableReadStream *stream;
+	Common::SeekableReadStream *stream;
 
-    ResourceDescription &desc = _resDescTable[0];
+	ResourceDescription &desc = _resDescTable[0];
 	for (uint i = 0; i < _resCount; ++i) {
 		if (name.compareToIgnoreCase(_resDescTable[i].name) == 0)
 			desc = _resDescTable[i];
 	}
 
-    if (desc.inBro)
-        stream = _game->getBro();
-    else stream = _game->getOrb();
+	if (desc.inBro)
+		stream = _game->getBro();
+	else stream = _game->getOrb();
 
-    stream->seek(desc.offset);
+	stream->seek(desc.offset);
 
-    return new Common::SafeSeekableSubReadStream(stream, desc.offset,
-                                             desc.offset + desc.size);
+	return new Common::SafeSeekableSubReadStream(stream, desc.offset,
+											 desc.offset + desc.size);
 }
 
 PinkEngine *ResourceMgr::getGame() const {
-    return _game;
+	return _game;
 }
 
 CelDecoder *ResourceMgr::loadCEL(Common::String &name) {
-    CelDecoder *decoder = new CelDecoder();
-    decoder->loadStream(getResourceStream(name));
-    return decoder;
+	CelDecoder *decoder = new CelDecoder();
+	decoder->loadStream(getResourceStream(name));
+	return decoder;
 }
 
 void ResourceMgr::clear() {
-    delete[] _resDescTable;
-    _resDescTable = nullptr;
+	delete[] _resDescTable;
+	_resDescTable = nullptr;
 }
 
 } // End of namespace Pink

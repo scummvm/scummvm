@@ -38,24 +38,24 @@ namespace Pink {
 
 class Sound {
 public:
-    Sound(Audio::Mixer *mixer, Common::SafeSeekableSubReadStream *stream);
-    ~Sound();
+	Sound(Audio::Mixer *mixer, Common::SafeSeekableSubReadStream *stream);
+	~Sound();
 
-    void play(Audio::Mixer::SoundType type, int volume, bool isLoop);
+	void play(Audio::Mixer::SoundType type, int volume, bool isLoop);
 
-    bool isPlaying();
+	bool isPlaying();
 
-    void pause();
-    void resume();
-    void stop();
+	void pause();
+	void resume();
+	void stop();
 
-    uint32 getCurrentSample();
-    void setBalance(int8 balance);
+	uint32 getCurrentSample();
+	void setBalance(int8 balance);
 
 private:
-    Audio::Mixer *_mixer;
-    Audio::SoundHandle _handle;
-    Common::SafeSeekableSubReadStream *_fileStream;
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _handle;
+	Common::SafeSeekableSubReadStream *_fileStream;
 };
 
 } // End of namespace Pink

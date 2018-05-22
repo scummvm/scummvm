@@ -73,61 +73,61 @@ class GamePage;
 class LeadActor;
 
 enum {
-    kPinkDebugGeneral = 1 << 0,
-    kPinkDebugLoadingResources = 1 << 1,
-    kPinkDebugLoadingObjects = 1 << 2,
-    kPinkDebugGraphics = 1 << 3,
-    kPinkDebugSound = 1 << 4
+	kPinkDebugGeneral = 1 << 0,
+	kPinkDebugLoadingResources = 1 << 1,
+	kPinkDebugLoadingObjects = 1 << 2,
+	kPinkDebugGraphics = 1 << 3,
+	kPinkDebugSound = 1 << 4
 };
 
 class PinkEngine : public Engine {
 public:
-    PinkEngine(OSystem *system, const ADGameDescription *desc);
-    ~PinkEngine();
+	PinkEngine(OSystem *system, const ADGameDescription *desc);
+	~PinkEngine();
 
-    virtual Common::Error run();
+	virtual Common::Error run();
 
-    void load(Archive &archive);
-    void initModule(const Common::String &moduleName, bool isLoadingFromSave, const Common::String &pageName);
-    void changeScene(GamePage *page);
+	void load(Archive &archive);
+	void initModule(const Common::String &moduleName, bool isLoadingFromSave, const Common::String &pageName);
+	void changeScene(GamePage *page);
 
-    OrbFile *getOrb()  { return &_orb; }
-    BroFile *getBro()  { return _bro; }
-    Common::RandomSource &getRnd() { return _rnd; };
-    Director *getDirector() { return &_director; }
+	OrbFile *getOrb()  { return &_orb; }
+	BroFile *getBro()  { return _bro; }
+	Common::RandomSource &getRnd() { return _rnd; };
+	Director *getDirector() { return &_director; }
 
-    void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage);
-    void setLeadActor(LeadActor *actor) { _actor = actor; };
-    void setCursor(uint cursorIndex);
+	void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage);
+	void setLeadActor(LeadActor *actor) { _actor = actor; };
+	void setCursor(uint cursorIndex);
 
-    void setVariable(Common::String &variable, Common::String &value);
-    bool checkValueOfVariable(Common::String &variable, Common::String &value);
+	void setVariable(Common::String &variable, Common::String &value);
+	bool checkValueOfVariable(Common::String &variable, Common::String &value);
 
 private:
-    Common::Error init();
-    bool loadCursors();
+	Common::Error init();
+	bool loadCursors();
 
-    void loadModule(int index);
+	void loadModule(int index);
 
-    Console *_console;
-    Common::RandomSource _rnd;
-    Common::Array<Graphics::WinCursorGroup*> _cursors;
+	Console *_console;
+	Common::RandomSource _rnd;
+	Common::Array<Graphics::WinCursorGroup*> _cursors;
 
-    Common::String _nextModule;
-    Common::String _nextPage;
+	Common::String _nextModule;
+	Common::String _nextPage;
 
-    OrbFile  _orb;
-    BroFile *_bro;
+	OrbFile  _orb;
+	BroFile *_bro;
 
-    Director _director;
-    LeadActor *_actor;
+	Director _director;
+	LeadActor *_actor;
 
-    Module *_module;
-    Array<NamedObject*> _modules;
+	Module *_module;
+	Array<NamedObject*> _modules;
 
-    Common::StringMap _variables;
+	Common::StringMap _variables;
 
-    const ADGameDescription _desc;
+	const ADGameDescription _desc;
 };
 
 } // End of namespace Pink

@@ -25,7 +25,7 @@
 
 namespace Common {
 	class SafeSeekableSubReadStream;
-    class String;
+	class String;
 }
 
 namespace Pink {
@@ -41,23 +41,23 @@ struct ResourceDescription;
 
 class ResourceMgr {
 public:
-    ResourceMgr();
-    ~ResourceMgr();
+	ResourceMgr();
+	~ResourceMgr();
 
-    void init(PinkEngine *game, GamePage *page);
-    void clear();
+	void init(PinkEngine *game, GamePage *page);
+	void clear();
 
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    CelDecoder *loadCEL(Common::String &name);
-    PinkEngine *getGame() const;
+	//Common::String loadText(Common::String &name);
+	Sound *loadSound(Common::String &name);
+	CelDecoder *loadCEL(Common::String &name);
+	PinkEngine *getGame() const;
 
 private:
-    Common::SafeSeekableSubReadStream *getResourceStream(Common::String &name);
+	Common::SafeSeekableSubReadStream *getResourceStream(Common::String &name);
 
-    PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
+	PinkEngine *_game;
+	ResourceDescription *_resDescTable;
+	uint32 _resCount;
 };
 
 } // End of namespace Pink

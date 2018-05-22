@@ -38,26 +38,26 @@ class PinkEngine;
 
 class CursorMgr : public Object {
 public:
-    CursorMgr(PinkEngine *game, GamePage *page);
-    ~CursorMgr();
+	CursorMgr(PinkEngine *game, GamePage *page);
+	~CursorMgr();
 
-    void update();
-    void setCursor(uint index, Common::Point point, const Common::String &itemName);
-    void setCursor(Common::String &cursorName, Common::Point point);
+	void update();
+	void setCursor(uint index, Common::Point point, const Common::String &itemName);
+	void setCursor(Common::String &cursorName, Common::Point point);
 
 private:
-    void hideItem();
-    void startAnimation(int index);
+	void hideItem();
+	void startAnimation(int index);
 
-    Actor *_actor;
-    GamePage *_page;
-    PinkEngine *_game;
+	Actor *_actor;
+	GamePage *_page;
+	PinkEngine *_game;
 
-    uint _time;
-    uint _firstFrameIndex;
+	uint _time;
+	uint _firstFrameIndex;
 
-    bool _isPlayingAnimation;
-    bool _isSecondFrame;
+	bool _isPlayingAnimation;
+	bool _isSecondFrame;
 };
 
 } // End of namespace Pink

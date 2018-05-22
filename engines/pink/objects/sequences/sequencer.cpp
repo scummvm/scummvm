@@ -34,18 +34,18 @@
 namespace Pink {
 
 Sequencer::Sequencer(GamePage *page)
-    : _context(nullptr), _page(page), _time(0)
+	: _context(nullptr), _page(page), _time(0)
 {}
 
 Sequencer::~Sequencer() {
-    for (uint i = 0; i < _sequences.size(); ++i) {
-        delete _sequences[i];
-    }
+	for (uint i = 0; i < _sequences.size(); ++i) {
+		delete _sequences[i];
+	}
 }
 
 void Sequencer::deserialize(Archive &archive) {
-    _sequences.deserialize(archive);
-    _timers.deserialize(archive);
+	_sequences.deserialize(archive);
+	_timers.deserialize(archive);
 }
 
 Sequence *Sequencer::findSequence(const Common::String &name) {
@@ -57,75 +57,75 @@ Sequence *Sequencer::findSequence(const Common::String &name) {
 }
 
 void Sequencer::authorSequence(Sequence *sequence, bool unk) {
-    if (_context){
+	if (_context){
 
-    }
+	}
 
-    if (sequence){
-        _context = new SequenceContext(sequence, this);
-        //unload array of unknown objects
-        _currentSequenceName = sequence->getName();
-        sequence->init(unk);
-    }
-    else _currentSequenceName.clear();
+	if (sequence){
+		_context = new SequenceContext(sequence, this);
+		//unload array of unknown objects
+		_currentSequenceName = sequence->getName();
+		sequence->init(unk);
+	}
+	else _currentSequenceName.clear();
 }
 
 void Sequencer::toConsole() {
-    debug("Sequencer:");
-    for (uint i = 0; i < _sequences.size(); ++i) {
-        _sequences[i]->toConsole();
-    }
-    for (uint i = 0; i < _timers.size(); ++i) {
-        _timers[i]->toConsole();
-    }
+	debug("Sequencer:");
+	for (uint i = 0; i < _sequences.size(); ++i) {
+		_sequences[i]->toConsole();
+	}
+	for (uint i = 0; i < _timers.size(); ++i) {
+		_timers[i]->toConsole();
+	}
 }
 
 void Sequencer::update() {
-    if (_context)
-        _context->_sequence->update();
-    updateTimers();
+	if (_context)
+		_context->_sequence->update();
+	updateTimers();
 }
 
 void Sequencer::removeContext(SequenceContext *context) {
-    delete _context;
-    _context = nullptr;
+	delete _context;
+	_context = nullptr;
 }
 
 void Sequencer::skipSubSequence() {
-    if (_context)
-        _context->getSequence()->skipSubSequence();
+	if (_context)
+		_context->getSequence()->skipSubSequence();
 }
 
 void Sequencer::restartSequence() {
-    _context->getSequence()->restart();
+	_context->getSequence()->restart();
 }
 
 void Sequencer::skipToLastSubSequence() {
-    _context->getSequence()->skipToLastSubSequence();
+	_context->getSequence()->skipToLastSubSequence();
 }
 
 void Sequencer::updateTimers() {
-    uint time = _page->getGame()->getTotalPlayTime();
-    if (time - _time <= kTimersUpdateTime) {
-        return;
-    }
+	uint time = _page->getGame()->getTotalPlayTime();
+	if (time - _time <= kTimersUpdateTime) {
+		return;
+	}
 
-    _time = time;
-    for (uint i = 0; i < _timers.size(); ++i) {
-        _timers[i]->update();
-    }
+	_time = time;
+	for (uint i = 0; i < _timers.size(); ++i) {
+		_timers[i]->update();
+	}
 }
 
 SequenceActorState *Sequencer::findSequenceActorState(const Common::String &name) {
-    if (!_context)
-        return nullptr;
+	if (!_context)
+		return nullptr;
 
-    for (uint i = 0; i < _context->_states.size(); ++i) {
-       if (_context->_states[i].getActor() == name)
-           return &_context->_states[i];
-    }
+	for (uint i = 0; i < _context->_states.size(); ++i) {
+	   if (_context->_states[i].getActor() == name)
+		   return &_context->_states[i];
+	}
 
-    return nullptr;
+	return nullptr;
 }
 
 } // End of namespace Pink

@@ -31,53 +31,53 @@ class Sequence;
 
 class SequenceItem : public Object {
 public:
-    virtual void deserialize(Archive &archive);
+	virtual void deserialize(Archive &archive);
 
-    virtual void toConsole();
+	virtual void toConsole();
 
-    const Common::String &getActor() const;
-    const Common::String &getAction() const;
+	const Common::String &getActor() const;
+	const Common::String &getAction() const;
 
-    virtual bool execute(int index, Sequence *sequence, bool unk2);
-    virtual bool isLeader();
-    virtual void skip(Sequence *sequence) {};
+	virtual bool execute(int index, Sequence *sequence, bool unk2);
+	virtual bool isLeader();
+	virtual void skip(Sequence *sequence) {};
 
 protected:
-    Common::String _actor;
-    Common::String _action;
+	Common::String _actor;
+	Common::String _action;
 };
 
 class SequenceItemLeader : public SequenceItem {
 public:
-    virtual void toConsole();
-    virtual bool isLeader();
+	virtual void toConsole();
+	virtual bool isLeader();
 };
 
 class SequenceItemLeaderAudio : public SequenceItemLeader {
 public:
-    virtual void deserialize(Archive &archive);
-    virtual void toConsole();
-    uint32 getSample();
+	virtual void deserialize(Archive &archive);
+	virtual void toConsole();
+	uint32 getSample();
 
 private:
-    uint32 _sample;
+	uint32 _sample;
 };
 
 class SequenceItemDefaultAction : public SequenceItem {
 public:
-    virtual bool execute(int index, Sequence *sequence, bool unk2);
-    virtual void skip(Sequence *sequence);
+	virtual bool execute(int index, Sequence *sequence, bool unk2);
+	virtual void skip(Sequence *sequence);
 
-    virtual void toConsole();
+	virtual void toConsole();
 };
 
 /* not used in games but is implemented in engine
 class SequenceItemSideEffects : public SequenceItemDefaultAction {
 public:
-    virtual void deserialize(Archive &archive);
-    virtual bool execute(int unk, Sequence *sequence, bool unk2);
+	virtual void deserialize(Archive &archive);
+	virtual bool execute(int unk, Sequence *sequence, bool unk2);
 private
-    Common::Array<SideEffect*> _sideEffects
+	Common::Array<SideEffect*> _sideEffects
 };
  */
 

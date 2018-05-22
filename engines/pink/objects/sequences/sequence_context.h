@@ -32,37 +32,37 @@ class Sequencer;
 
 class SequenceActorState {
 public:
-    SequenceActorState(const Common::String &name);
+	SequenceActorState(const Common::String &name);
 
-    const Common::String &getActor() const;
-    void check(int index, Sequence *sequence, bool unk);
+	const Common::String &getActor() const;
+	void check(int index, Sequence *sequence, bool unk);
 
 public:
-    Common::String _actorName;
-    Common::String _actionName;
-    int _index;
+	Common::String _actorName;
+	Common::String _actionName;
+	int _index;
 };
 
 class Actor;
 
 class SequenceContext {
 public:
-    SequenceContext(Sequence *sequence, Sequencer* sequencer);
+	SequenceContext(Sequence *sequence, Sequencer* sequencer);
 
-    uint getNextItemIndex() const;
-    Sequence *getSequence() const;
+	uint getNextItemIndex() const;
+	Sequence *getSequence() const;
 
-    void setNextItemIndex(int index);
+	void setNextItemIndex(int index);
 
-    void clearActionsFromActorStates();
+	void clearActionsFromActorStates();
 
 public:
-    Sequence *_sequence;
-    Sequencer *_sequencer;
-    uint _nextItemIndex;
-    Actor *_actor;
-    Common::Array<SequenceActorState> _states;
-    int _index;
+	Sequence *_sequence;
+	Sequencer *_sequencer;
+	uint _nextItemIndex;
+	Actor *_actor;
+	Common::Array<SequenceActorState> _states;
+	int _index;
 };
 
 }

@@ -30,20 +30,20 @@
 namespace Pink {
 
 void Actor::deserialize(Archive &archive) {
-    NamedObject::deserialize(archive);
-    _page = static_cast<GamePage*>(archive.readObject());
-    _actions.deserialize(archive);
+	NamedObject::deserialize(archive);
+	_page = static_cast<GamePage*>(archive.readObject());
+	_actions.deserialize(archive);
 }
 
 void Actor::toConsole() {
-    debug("Actor: _name = %s", _name.c_str());
-    for (uint i = 0; i < _actions.size(); ++i) {
-        _actions[i]->toConsole();
-    }
+	debug("Actor: _name = %s", _name.c_str());
+	for (uint i = 0; i < _actions.size(); ++i) {
+		_actions[i]->toConsole();
+	}
 }
 
 Sequencer *Actor::getSequencer() const {
-    return _page->getSequencer();
+	return _page->getSequencer();
 }
 
 Action *Actor::findAction(const Common::String &name) {
@@ -56,112 +56,112 @@ Action *Actor::findAction(const Common::String &name) {
 }
 
 GamePage *Actor::getPage() const {
-    return _page;
+	return _page;
 }
 
 void Actor::init(bool unk) {
-    if (!_action) {
-        _action = findAction(kIdleAction);
-    }
+	if (!_action) {
+		_action = findAction(kIdleAction);
+	}
 
-    if (!_action) {
-        _isActionEnded = 1;
-    }
-    else {
-        _isActionEnded = 0;
-        _action->start(unk);
-    }
+	if (!_action) {
+		_isActionEnded = 1;
+	}
+	else {
+		_isActionEnded = 0;
+		_action->start(unk);
+	}
 }
 
 void Actor::hide() {
-    setAction(kHideAction);
+	setAction(kHideAction);
 }
 
 void Actor::endAction() {
-    _isActionEnded = 1;
+	_isActionEnded = 1;
 }
 
 void Actor::setAction(const Common::String &name) {
-    Action *newAction = findAction(name);
-    setAction(newAction);
+	Action *newAction = findAction(name);
+	setAction(newAction);
 }
 
 void Actor::setAction(Action *newAction) {
-    if (_action) {
-        _isActionEnded = 1;
-        _action->end();
-    }
-    _action = newAction;
-    if (newAction) {
-        _isActionEnded = 0;
-        _action->start(0);
-    }
+	if (_action) {
+		_isActionEnded = 1;
+		_action->end();
+	}
+	_action = newAction;
+	if (newAction) {
+		_isActionEnded = 0;
+		_action->start(0);
+	}
 }
 
 void Actor::setAction(Action *newAction, bool unk) {
-    if (unk) {
-        assert(0); // want to see this
-        _isActionEnded = 1;
-        _action = newAction;
-    }
-    else {
+	if (unk) {
+		assert(0); // want to see this
+		_isActionEnded = 1;
+		_action = newAction;
+	}
+	else {
 		setAction(newAction);
 	}
 }
 
 Action *Actor::getAction() const {
-    return _action;
+	return _action;
 }
 
 bool Actor::isPlaying() {
-    return !_isActionEnded;
+	return !_isActionEnded;
 }
 
 bool Actor::initPallete(Director *director) {
-    for (uint i = 0; i < _actions.size(); ++i) {
-        if (_actions[i]->initPalette(director))
-            return true;
-    }
-    return false;
+	for (uint i = 0; i < _actions.size(); ++i) {
+		if (_actions[i]->initPalette(director))
+			return true;
+	}
+	return false;
 }
 
 void Actor::onMouseOver(Common::Point point, CursorMgr *mgr) {
-    mgr->setCursor(kDefaultCursor, point, Common::String());
+	mgr->setCursor(kDefaultCursor, point, Common::String());
 }
 
 Actor::~Actor() {
-    for (uint i = 0; i < _actions.size(); ++i) {
-        delete _actions[i];
-    }
+	for (uint i = 0; i < _actions.size(); ++i) {
+		delete _actions[i];
+	}
 }
 
 void Actor::loadState(Archive &archive) {
-    Common::String actionName;
-    actionName = archive.readString();
-    _action = findAction(actionName);
+	Common::String actionName;
+	actionName = archive.readString();
+	_action = findAction(actionName);
 }
 
 void Actor::saveState(Archive &archive) {
-    Common::String actionName;
+	Common::String actionName;
 
-    if (_action)
-        actionName = _action->getName();
+	if (_action)
+		actionName = _action->getName();
 
-    archive.writeString(actionName);
+	archive.writeString(actionName);
 }
 
 void Actor::pause() {
-    if (_action)
-        _action->pause();
+	if (_action)
+		_action->pause();
 }
 
 void Actor::unpause() {
-    if (_action)
-        _action->unpause();
+	if (_action)
+		_action->unpause();
 }
 
 void Actor::onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
-    cursorMgr->setCursor(kHoldingItemCursor, point, itemName);
+	cursorMgr->setCursor(kHoldingItemCursor, point, itemName);
 }
 
 } // End of namespace Pink

@@ -32,21 +32,21 @@ class Director;
 
 class Action : public NamedObject {
 public:
-    virtual void deserialize(Archive &archive);
-    virtual void start(bool unk) {};
-    virtual void end() {};
-    virtual void update() {};
-    virtual void toConsole() {};
+	virtual void deserialize(Archive &archive);
+	virtual void start(bool unk) {};
+	virtual void end() {};
+	virtual void update() {};
+	virtual void toConsole() {};
 
-    virtual bool initPalette(Director *director) { return 0;}
+	virtual bool initPalette(Director *director) { return 0;}
 
-    Actor *getActor() { return _actor;}
+	Actor *getActor() { return _actor;}
 
-    virtual void pause() {};
-    virtual void unpause() {};
+	virtual void pause() {};
+	virtual void unpause() {};
 
 protected:
-    Actor *_actor;
+	Actor *_actor;
 };
 
 } // End of namespace Pink

@@ -31,26 +31,26 @@ class Sound;
 
 class ActionSound : public Action {
 public:
-    ActionSound();
-    ~ActionSound();
+	ActionSound();
+	~ActionSound();
 
-    virtual void deserialize(Archive &archive);
+	virtual void deserialize(Archive &archive);
 
-    virtual void toConsole();
+	virtual void toConsole();
 
-    virtual void start(bool unk_startNow);
-    virtual void end();
-    virtual void update();
+	virtual void start(bool unk_startNow);
+	virtual void end();
+	virtual void update();
 
-    void pause() override;
-    void unpause() override;
+	void pause() override;
+	void unpause() override;
 
 private:
-    Sound *_sound;
-    Common::String _fileName;
-    uint32 _volume;
-    bool _isLoop;
-    bool _isBackground;
+	Sound *_sound;
+	Common::String _fileName;
+	uint32 _volume;
+	bool _isLoop;
+	bool _isBackground;
 };
 
 } // End of namespace Pink

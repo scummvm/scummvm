@@ -30,34 +30,34 @@
 namespace Pink {
 
 void ActionPlay::deserialize(Archive &archive) {
-    ActionStill::deserialize(archive);
-    _stopFrame = archive.readDWORD();
+	ActionStill::deserialize(archive);
+	_stopFrame = archive.readDWORD();
 }
 
 void ActionPlay::toConsole() {
-    debug("\tActionPlay: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
-                  " _endFrame = %d", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame);
+	debug("\tActionPlay: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
+				  " _endFrame = %d", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame);
 }
 
 void ActionPlay::end() {
-    ActionCEL::end();
-    debug("ActionPlay %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	ActionCEL::end();
+	debug("ActionPlay %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 void ActionPlay::onStart() {
-    debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
-    _decoder->start();
-    for (uint i = 0; i < _startFrame; ++i) {
-        _decoder->skipFrame();
-    }
-    _decoder->decodeNextFrame();
+	debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
+	_decoder->start();
+	for (uint i = 0; i < _startFrame; ++i) {
+		_decoder->skipFrame();
+	}
+	_decoder->decodeNextFrame();
 }
 
 void ActionPlay::update() {
-    if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame){
-        _decoder->stop();
-        _actor->endAction();
-    }
+	if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame){
+		_decoder->stop();
+		_actor->endAction();
+	}
 }
 
 } // End of namespace Pink

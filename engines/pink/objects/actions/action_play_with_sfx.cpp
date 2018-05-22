@@ -29,90 +29,90 @@
 namespace Pink {
 
 void ActionPlayWithSfx::deserialize(Pink::Archive &archive) {
-    ActionPlay::deserialize(archive);
-    _isLoop = archive.readDWORD();
-    _sfxArray.deserialize(archive);
+	ActionPlay::deserialize(archive);
+	_isLoop = archive.readDWORD();
+	_sfxArray.deserialize(archive);
 }
 
 void ActionPlayWithSfx::toConsole() {
-    debug("\tActionPlayWithSfx: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
-                  " _endFrame = %d, _isLoop = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _isLoop);
-    for (uint i = 0; i < _sfxArray.size(); ++i) {
-        _sfxArray[i]->toConsole();
-    }
+	debug("\tActionPlayWithSfx: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
+				  " _endFrame = %d, _isLoop = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _isLoop);
+	for (uint i = 0; i < _sfxArray.size(); ++i) {
+		_sfxArray[i]->toConsole();
+	}
 }
 
 void ActionPlayWithSfx::update() {
-    if ((_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) && _isLoop) {
-        _decoder->rewind();
-    } else if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) {
-        _decoder->stop();
-        _actor->endAction();
-    }
+	if ((_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) && _isLoop) {
+		_decoder->rewind();
+	} else if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) {
+		_decoder->stop();
+		_actor->endAction();
+	}
 
-    updateSound();
+	updateSound();
 }
 
 void ActionPlayWithSfx::onStart() {
-    ActionPlay::onStart();
-    if (_isLoop) {
-        _actor->endAction();
-    }
-    updateSound();
+	ActionPlay::onStart();
+	if (_isLoop) {
+		_actor->endAction();
+	}
+	updateSound();
 }
 
 void ActionPlayWithSfx::updateSound() {
-    if (!_actor->isPlaying() && !_isLoop)
-        return;
+	if (!_actor->isPlaying() && !_isLoop)
+		return;
 
-    for (uint i = 0; i < _sfxArray.size(); ++i) {
-        if (_sfxArray[i]->getFrame() == _decoder->getCurFrame()) {
-            _sfxArray[i]->play(_actor->getPage());
-        }
-    }
+	for (uint i = 0; i < _sfxArray.size(); ++i) {
+		if (_sfxArray[i]->getFrame() == _decoder->getCurFrame()) {
+			_sfxArray[i]->play(_actor->getPage());
+		}
+	}
 }
 
 ActionPlayWithSfx::~ActionPlayWithSfx() {
-    ActionPlay::end();
-    for (uint i = 0; i < _sfxArray.size(); ++i) {
-        delete _sfxArray[i];
-    }
+	ActionPlay::end();
+	for (uint i = 0; i < _sfxArray.size(); ++i) {
+		delete _sfxArray[i];
+	}
 }
 
 void ActionSfx::deserialize(Pink::Archive &archive) {
-    _frame = archive.readDWORD();
+	_frame = archive.readDWORD();
 	_volume = archive.readDWORD();
-    _sfxName = archive.readString();
-    archive.readObject(); // pointer of ActionPlayWithSfx
+	_sfxName = archive.readString();
+	archive.readObject(); // pointer of ActionPlayWithSfx
 }
 
 void ActionSfx::toConsole() {
-    debug("\t\tActionSfx: _sfx = %s, _volume = %u, _frame = %u", _sfxName.c_str(), _volume, _frame);
+	debug("\t\tActionSfx: _sfx = %s, _volume = %u, _frame = %u", _sfxName.c_str(), _volume, _frame);
 }
 
 void ActionSfx::play(GamePage *page) {
-    if (!_sound)
-        _sound = page->loadSound(_sfxName);
+	if (!_sound)
+		_sound = page->loadSound(_sfxName);
 
-    if (!_sound->isPlaying())
-        _sound->play(Audio::Mixer::SoundType::kSFXSoundType, _volume, 0);
+	if (!_sound->isPlaying())
+		_sound->play(Audio::Mixer::SoundType::kSFXSoundType, _volume, 0);
 }
 
 ActionSfx::~ActionSfx() {
-    end();
+	end();
 }
 
 uint32 ActionSfx::getFrame() {
-    return _frame;
+	return _frame;
 }
 
 ActionSfx::ActionSfx()
-    : _sound(nullptr)
+	: _sound(nullptr)
 {}
 
 void ActionSfx::end() {
-    delete _sound;
-    _sound = nullptr;
+	delete _sound;
+	_sound = nullptr;
 }
 
 } // End of namespace Pink
