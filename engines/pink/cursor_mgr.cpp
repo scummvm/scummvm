@@ -39,7 +39,7 @@ void CursorMgr::setCursor(uint index, Common::Point point, const Common::String 
 	if (index == kClickableFirstFrameCursor) {
 		startAnimation(index);
 		return hideItem();
-	} else if (index != kHoldingItemCursor){
+	} else if (index != kHoldingItemCursor) {
 
 		if (index != kPDASecondCursor) {
 			_game->setCursor(index);
@@ -78,7 +78,7 @@ void CursorMgr::update() {
 		return;
 
 	uint newTime = _game->getTotalPlayTime();
-	if (newTime - _time > kCursorsUpdateTime){
+	if (newTime - _time > kCursorsUpdateTime) {
 		_time = newTime;
 		_isSecondFrame = !_isSecondFrame;
 		_game->setCursor(_firstFrameIndex + _isSecondFrame);
