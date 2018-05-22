@@ -142,7 +142,8 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 	descriptor.setPlayTime(metadata.totalPlayTime);
 	descriptor.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	descriptor.setSaveTime(metadata.saveHour, metadata.saveMinute);
-	descriptor.setDeletableFlag(slot != kAutoSaveSlot);
+	if (metadata.autoSave) // Allow non-saves to be deleted, but not autosaves
+		descriptor.setDeletableFlag(slot != kAutoSaveSlot);	
 
 	delete metaStream;
 
