@@ -22,6 +22,9 @@
 #include "common/debug.h"
 #include "common/file.h"
 
+#include "graphics/fonts/ttf.h"
+#include "graphics/fontman.h"
+
 #include "video/subtitles.h"
 
 namespace Video {
@@ -218,10 +221,30 @@ Common::String SRTParser::getSubtitle(uint32 timestamp) {
 	return (*entry)->text;
 }
 
-Subtitles::Subtitles() : _loaded(false) {
+Subtitles::Subtitles() : _loaded(false), _font(nullptr) {
 }
 
 Subtitles::~Subtitles() {
+}
+
+void Subtitles::loadFont(const char *fontname, int height) {
+	Common::File file;
+
+	_fontHeight = height;
+
+	if (!file.open(fontname)) {
+		_font = Graphics::loadTTFFont(file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
+	}
+
+	if (!_font)
+		_font = FontMan.getFontByName(fontname);
+
+	if (!_font) {
+		warning("Cannot load font %s", fontname);
+
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	}
+
 }
 
 void Subtitles::loadSRTFile(const char *fname) {
