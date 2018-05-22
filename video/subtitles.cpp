@@ -21,9 +21,12 @@
 
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/system.h"
 
 #include "graphics/fonts/ttf.h"
+#include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/surface.h"
 
 #include "video/subtitles.h"
 
@@ -222,9 +225,11 @@ Common::String SRTParser::getSubtitle(uint32 timestamp) {
 }
 
 Subtitles::Subtitles() : _loaded(false), _font(nullptr) {
+	_surface = new Graphics::Surface();
 }
 
 Subtitles::~Subtitles() {
+	delete _surface;
 }
 
 void Subtitles::loadFont(const char *fontname, int height) {
@@ -251,6 +256,39 @@ void Subtitles::loadSRTFile(const char *fname) {
 	debug(1, "loadSRTFile('%s')", fname);
 
 	_loaded = _srtParser.parseFile(fname);
+}
+
+void Subtitles::setBBox(const Common::Rect bbox) {
+	_bbox = bbox;
+
+	_surface->create(_bbox.width(), _bbox.height(), g_system->getOverlayFormat());
+}
+
+
+void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
+	if (!_loaded)
+		return;
+
+	Common::String subtitle = _srtParser.getSubtitle(timestamp);
+
+	if (!force && subtitle == _prevSubtitle)
+		return;
+
+	_prevSubtitle = subtitle;
+
+	Common::Array<Common::String> lines;
+
+	int maxlineWidth = _font->wordWrapText(subtitle, _bbox.width(), lines);
+
+	int y = _bbox.top;
+
+	for (int i = 0; i < lines.size(); i++) {
+		_font->drawString(_surface, lines[i], _bbox.left, y, _bbox.width(), _color);
+
+		y += _font->getFontHeight();
+	}
+
+	g_system->copyRectToOverlay(_surface->getPixels(), _surface->pitch, _bbox.left, _bbox.right, _bbox.width(), _bbox.height());
 }
 
 } // End of namespace Video
