@@ -76,10 +76,11 @@ void Module::changePage(const Common::String &pageName) {
 }
 
 GamePage *Module::findPage(const Common::String &pageName) const {
-    return *Common::find_if(_pages.begin(), _pages.end(), [&pageName]
-            (GamePage* page) {
-        return pageName == page->getName();
-    });
+	for (uint i = 0; i < _pages.size(); ++i) {
+		if (_pages[i]->getName() == pageName)
+			return _pages[i];
+	}
+	return nullptr;
 }
 
 PinkEngine *Module::getGame() const {

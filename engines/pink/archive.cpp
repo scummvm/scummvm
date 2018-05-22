@@ -302,14 +302,15 @@ Object *Archive::parseObject(bool &isCopyReturned) {
     return res;
 }
 
+static int runtimeClassCmp(const void *key, const void *elem) {
+	return strcmp((const char *) key, *(const char **) elem);
+}
+
 uint Archive::findObjectId(const char *name) {
-    RuntimeClass *found = static_cast<RuntimeClass*>
-    (bsearch(name, classMap, sizeof(classMap) / sizeof(RuntimeClass) , sizeof(RuntimeClass), [] (const void *a, const void *b) {
-                return strcmp((const char *) a, *(const char **) b);
-    }));
+    RuntimeClass *found = (RuntimeClass*) bsearch(name, classMap, sizeof(classMap) / sizeof(RuntimeClass) , sizeof(RuntimeClass), runtimeClassCmp);
 
     if (!found)
-        error("Class %s is not in class Map", name);
+    	error("Class %s is not in class Map", name);
 
     return found->id;
 }

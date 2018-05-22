@@ -99,10 +99,12 @@ void OrbFile::seekToObject(const char *name) {
     seek(desc->objectsOffset);
 }
 
+static int objDescComp(const void *a, const void *b) {
+	return scumm_stricmp((char *) a, (char *) b);
+}
+
 ObjectDescription *OrbFile::getObjDesc(const char *name){
-    ObjectDescription *desc = static_cast<ObjectDescription*>(bsearch(name, _table, _tableSize, sizeof(ObjectDescription),
-                                                                      [] (const void *a, const void *b) {
-                                                                          return scumm_stricmp((char *) a, (char *) b); }));
+    ObjectDescription *desc = (ObjectDescription*) bsearch(name, _table, _tableSize, sizeof(ObjectDescription), objDescComp);
     assert(desc != nullptr);
     return desc;
 }
