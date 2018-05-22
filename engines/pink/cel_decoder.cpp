@@ -129,15 +129,15 @@ void CelDecoder::CelVideoTrack::readPrefixChunk() {
 	uint16 subchunkType = _fileStream->readUint16LE();
 
 	switch (subchunkType) {
-		case CEL_DATA:
-			_fileStream->readUint16LE();
-			_center.x = _fileStream->readUint16LE();
-			_center.y = _fileStream->readUint16LE();
-			break;
-		default:
-			error("Unknown subchunk type");
-			_fileStream->skip(subchunkSize - 6);
-			break;
+	case CEL_DATA:
+		_fileStream->readUint16LE();
+		_center.x = _fileStream->readUint16LE();
+		_center.y = _fileStream->readUint16LE();
+		break;
+	default:
+		error("Unknown subchunk type");
+		_fileStream->skip(subchunkSize - 6);
+		break;
 	}
 	_rect = Common::Rect::center(_center.x, _center.y, _surface->w, _surface->h);
 }
@@ -151,9 +151,8 @@ void CelDecoder::CelVideoTrack::readHeader() {
 	_offsetFrame1 = _fileStream->readUint32LE();
 	_offsetFrame2 = _fileStream->readUint32LE();
 
-	if (_offsetFrame1 > 0x80) {
+	if (_offsetFrame1 > 0x80)
 		readPrefixChunk();
-	}
 
 	_fileStream->seek(_offsetFrame1);
 }
@@ -190,12 +189,12 @@ void CelDecoder::CelVideoTrack::skipFrame() {
 	uint16 frameType = _fileStream->readUint16LE();
 
 	switch (frameType) {
-		case FRAME_TYPE:
-			handleFrame();
-			break;
-		default:
-			error("FlicDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);
-			break;
+	case FRAME_TYPE:
+		handleFrame();
+		break;
+	default:
+		error("FlicDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);
+		break;
 	}
 
 	_curFrame++;
@@ -218,12 +217,12 @@ const Graphics::Surface *CelDecoder::CelVideoTrack::decodeNextFrame() {
 	uint16 frameType = _fileStream->readUint16LE();
 
 	switch (frameType) {
-		case FRAME_TYPE:
-			handleFrame();
-			break;
-		default:
-			error("FlicDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);
-			break;
+	case FRAME_TYPE:
+		handleFrame();
+		break;
+	default:
+		error("FlicDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);
+		break;
 	}
 
 	_curFrame++;

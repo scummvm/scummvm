@@ -34,8 +34,8 @@
 namespace Pink {
 
 Sequence::Sequence()
-	: _unk(0), _context(nullptr),
-	  _sequencer(nullptr) {}
+		: _unk(0), _context(nullptr),
+		  _sequencer(nullptr) {}
 
 Sequence::~Sequence() {
 	for (uint i = 0; i < _items.size(); ++i) {
@@ -72,7 +72,8 @@ void Sequence::init(int unk) {
 }
 
 void Sequence::start(int unk) {
-	if (_context->_nextItemIndex >= _items.size() || !_items[_context->_nextItemIndex]->execute(_context->_index, this, unk)){
+	if (_context->_nextItemIndex >= _items.size() ||
+		!_items[_context->_nextItemIndex]->execute(_context->_index, this, unk)) {
 		debug("Sequence %s ended", _name.c_str());
 		end();
 		return;
@@ -95,7 +96,7 @@ void Sequence::start(int unk) {
 }
 
 void Sequence::update() {
-	if (!_context->_actor->isPlaying()){
+	if (!_context->_actor->isPlaying()) {
 		debug("Sequence step ended");
 		start(0);
 	}
@@ -114,9 +115,9 @@ void Sequence::restart() {
 }
 
 void Sequence::skipToLastSubSequence() {
-	if (_unk && _context->getNextItemIndex() < _items.size()){
+	if (_unk && _context->getNextItemIndex() < _items.size()) {
 		int i = _items.size() - 1;
-		while(i >= 0 && !_items[--i]->isLeader());
+		while (i >= 0 && !_items[--i]->isLeader()) {};
 		assert(i >= 0);
 		_context->setNextItemIndex(i);
 		_context->clearActionsFromActorStates();
@@ -126,7 +127,7 @@ void Sequence::skipToLastSubSequence() {
 }
 
 void Sequence::skipItemsTo(int index) {
-	for(int i = 0; i < index; ++i){
+	for (int i = 0; i < index; ++i) {
 		_items[i]->skip(this);
 	}
 }
@@ -167,9 +168,8 @@ void SequenceAudio::end() {
 void SequenceAudio::update() {
 	if (!_sound->isPlaying())
 		end();
-	else if (_sample <= _sound->getCurrentSample()){
+	else if (_sample <= _sound->getCurrentSample())
 		start(0);
-	}
 }
 
 void SequenceAudio::init(int unk) {

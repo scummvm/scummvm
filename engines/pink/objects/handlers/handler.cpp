@@ -39,9 +39,8 @@ void Handler::deserialize(Archive &archive) {
 
 bool Handler::isSuitable(Actor *actor) {
 	for (uint i = 0; i < _conditions.size(); ++i) {
-		if (!_conditions[i]->evaluate(actor)){
+		if (!_conditions[i]->evaluate(actor))
 			return false;
-		}
 	}
 	return true;
 }

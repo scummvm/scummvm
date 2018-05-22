@@ -34,8 +34,7 @@
 namespace Pink {
 
 Sequencer::Sequencer(GamePage *page)
-	: _context(nullptr), _page(page), _time(0)
-{}
+	: _context(nullptr), _page(page), _time(0) {}
 
 Sequencer::~Sequencer() {
 	for (uint i = 0; i < _sequences.size(); ++i) {
@@ -57,17 +56,17 @@ Sequence *Sequencer::findSequence(const Common::String &name) {
 }
 
 void Sequencer::authorSequence(Sequence *sequence, bool unk) {
-	if (_context){
+	if (_context) {
 
 	}
 
-	if (sequence){
+	if (sequence) {
 		_context = new SequenceContext(sequence, this);
 		//unload array of unknown objects
 		_currentSequenceName = sequence->getName();
 		sequence->init(unk);
-	}
-	else _currentSequenceName.clear();
+	} else
+		_currentSequenceName.clear();
 }
 
 void Sequencer::toConsole() {

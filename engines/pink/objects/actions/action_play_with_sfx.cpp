@@ -66,9 +66,8 @@ void ActionPlayWithSfx::updateSound() {
 		return;
 
 	for (uint i = 0; i < _sfxArray.size(); ++i) {
-		if (_sfxArray[i]->getFrame() == _decoder->getCurFrame()) {
+		if (_sfxArray[i]->getFrame() == _decoder->getCurFrame())
 			_sfxArray[i]->play(_actor->getPage());
-		}
 	}
 }
 
@@ -107,8 +106,7 @@ uint32 ActionSfx::getFrame() {
 }
 
 ActionSfx::ActionSfx()
-	: _sound(nullptr)
-{}
+	: _sound(nullptr) {}
 
 void ActionSfx::end() {
 	delete _sound;

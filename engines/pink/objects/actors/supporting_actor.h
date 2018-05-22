@@ -33,7 +33,6 @@ class InventoryMgr;
 
 class SupportingActor : public Actor {
 public:
-	virtual ~SupportingActor();
 	virtual void deserialize(Archive &archive);
 	virtual void toConsole();
 

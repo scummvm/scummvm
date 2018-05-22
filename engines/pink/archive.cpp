@@ -212,21 +212,16 @@ static Object* createObject(int objectId){
 }
 
 Archive::Archive(Common::SeekableReadStream  *stream)
-	: _readStream(stream), _writeStream(nullptr)
-{
+	: _readStream(stream), _writeStream(nullptr) {
 	_objectMap.push_back(0);
 	_objectIdMap.push_back(kNullObject);
 }
 
 Archive::Archive(Common::WriteStream *stream)
-	: _writeStream(stream), _readStream(nullptr)
-{
+	: _writeStream(stream), _readStream(nullptr) {
 	_objectMap.push_back(0);
 	_objectIdMap.push_back(kNullObject);
 }
-
-Archive::~Archive()
-{}
 
 void Archive::mapObject(Object *obj) {
 	_objectMap.push_back(obj);
@@ -246,9 +241,8 @@ Object *Archive::readObject() {
 	bool isCopyReturned;
 	Object *res = parseObject(isCopyReturned);
 
-	if (res && !isCopyReturned) {
+	if (res && !isCopyReturned)
 		res->deserialize(*this);
-	}
 
 	return res;
 }

@@ -63,7 +63,7 @@ private:
 
 	LeadActor *_leadActor;
 	WalkLocation *_destination;
-	Array<WalkLocation*> _locations;
+	Array<WalkLocation *> _locations;
 	WayPoint _current;
 	WayPoint _next;
 	bool _isWalking;

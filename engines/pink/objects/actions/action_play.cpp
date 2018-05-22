@@ -54,7 +54,7 @@ void ActionPlay::onStart() {
 }
 
 void ActionPlay::update() {
-	if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame){
+	if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) {
 		_decoder->stop();
 		_actor->endAction();
 	}

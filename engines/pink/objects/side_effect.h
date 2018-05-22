@@ -97,8 +97,7 @@ public:
 	virtual void execute(Actor *actor);
 };
 
-class SideEffectRandomPageVariable : public SideEffect
-{
+class SideEffectRandomPageVariable : public SideEffect {
 public:
 	virtual void deserialize(Archive &archive);
 	virtual void toConsole();

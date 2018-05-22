@@ -48,12 +48,13 @@ void SupportingActor::toConsole() {
 
 void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 	if (isLeftClickHandlers()){
-		if (!_cursor.empty()){
+		if (!_cursor.empty())
 			mgr->setCursor(_cursor, point);
-		}
-		else mgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
+		else
+			mgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
 	}
-	else Actor::onMouseOver(point, mgr);
+	else
+		Actor::onMouseOver(point, mgr);
 }
 
 bool SupportingActor::isLeftClickHandlers() {
@@ -80,13 +81,10 @@ const Common::String &SupportingActor::getLocation() const {
 	return _location;
 }
 
-SupportingActor::~SupportingActor() {}
-
 void SupportingActor::onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
 	Common::String item = itemName;
-	if (_handlerMgr.isUseClickHandler(this, itemName)) {
+	if (_handlerMgr.isUseClickHandler(this, itemName))
 		item += kClickable;
-	}
 	Actor::onHover(point, item, cursorMgr);
 }
 

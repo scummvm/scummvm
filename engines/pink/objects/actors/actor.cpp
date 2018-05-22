@@ -48,9 +48,8 @@ Sequencer *Actor::getSequencer() const {
 
 Action *Actor::findAction(const Common::String &name) {
 	for (uint i = 0; i < _actions.size(); ++i) {
-		if (_actions[i]->getName() == name) {
+		if (_actions[i]->getName() == name)
 			return _actions[i];
-		}
 	}
 	return nullptr;
 }
@@ -60,14 +59,12 @@ GamePage *Actor::getPage() const {
 }
 
 void Actor::init(bool unk) {
-	if (!_action) {
+	if (!_action)
 		_action = findAction(kIdleAction);
-	}
 
 	if (!_action) {
 		_isActionEnded = 1;
-	}
-	else {
+	} else {
 		_isActionEnded = 0;
 		_action->start(unk);
 	}
@@ -103,8 +100,7 @@ void Actor::setAction(Action *newAction, bool unk) {
 		assert(0); // want to see this
 		_isActionEnded = 1;
 		_action = newAction;
-	}
-	else {
+	} else {
 		setAction(newAction);
 	}
 }

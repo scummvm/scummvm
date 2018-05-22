@@ -33,9 +33,7 @@
 namespace Pink {
 
 InventoryMgr::InventoryMgr()
-	: _lead(nullptr), _item(nullptr), _isClickedOnItem(false)
-{
-}
+	: _lead(nullptr), _item(nullptr), _isClickedOnItem(false) {}
 
 void Pink::InventoryItem::deserialize(Archive &archive) {
 	NamedObject::deserialize(archive);
@@ -129,14 +127,13 @@ bool InventoryMgr::start(bool playOpening) {
 }
 
 void InventoryMgr::update() {
-	if (_state == kOpening && !_window->isPlaying()){
+	if (_state == kOpening && !_window->isPlaying()) {
 		_state = kReady;
 		_itemActor->setAction(_item->getName());
 		_window->setAction(kShowAction);
 		_leftArrow->setAction(kShowAction);
 		_rightArrow->setAction(kShowAction);
-	}
-	else if (_state == kClosing && !_window->isPlaying()){
+	} else if (_state == kClosing && !_window->isPlaying()) {
 		_window->setAction(kIdleAction);
 
 		_lead->onInventoryClosed(_isClickedOnItem);
@@ -157,14 +154,12 @@ void InventoryMgr::onClick(Common::Point point) {
 	if (actor == _itemActor || actor == _window) {
 		_isClickedOnItem = true;
 		close();
-	}
-	else if (actor == _leftArrow) {
+	} else if (actor == _leftArrow) {
 		showNextItem(kLeft);
-	}
-	else if (actor == _rightArrow) {
+	} else if (actor == _rightArrow) {
 		showNextItem(kRight);
-	}
-	else close();
+	} else
+		close();
 }
 
 void InventoryMgr::close() {
@@ -188,7 +183,7 @@ void InventoryMgr::showNextItem(bool direction) {
 	uint i = 0;
 	do {
 		index = (direction == kLeft) ? index - 1 : index + 1;
-	} while(_items[index % _items.size()]->getCurrentOwner() != _item->getCurrentOwner() && ++i < _items.size());
+	} while (_items[index % _items.size()]->getCurrentOwner() != _item->getCurrentOwner() && ++i < _items.size());
 
 	if (i != _items.size()) {
 		_item = _items[index % _items.size()];

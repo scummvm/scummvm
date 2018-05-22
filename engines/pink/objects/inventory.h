@@ -84,7 +84,7 @@ private:
 	Actor *_leftArrow;
 
 	InventoryItem *_item;
-	Array<InventoryItem*> _items;
+	Array<InventoryItem *> _items;
 
 	enum State {
 		kIdle = 0,

@@ -67,7 +67,7 @@ private:
 	CursorMgr *_cursorMgr;
 	WalkMgr *_walkMgr;
 	Sequencer *_sequencer;
-	Array<HandlerStartPage*> _handlers;
+	Array<HandlerStartPage *> _handlers;
 	Common::StringMap _variables;
 };
 

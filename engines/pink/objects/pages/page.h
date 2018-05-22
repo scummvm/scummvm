@@ -51,7 +51,7 @@ public:
 protected:
 	void init();
 
-	Array<Actor*> _actors;
+	Array<Actor *> _actors;
 	ResourceMgr _resMgr;
 	LeadActor *_leadActor;
 };

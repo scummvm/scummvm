@@ -32,8 +32,7 @@
 namespace Pink {
 
 ResourceMgr::ResourceMgr()
-		: _game(nullptr), _resDescTable(nullptr),
-		  _resCount(0) {}
+		: _game(nullptr), _resDescTable(nullptr), _resCount(0) {}
 
 ResourceMgr::~ResourceMgr() {
 	clear();
@@ -64,7 +63,8 @@ Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(Common::String
 
 	if (desc.inBro)
 		stream = _game->getBro();
-	else stream = _game->getOrb();
+	else
+		stream = _game->getOrb();
 
 	stream->seek(desc.offset);
 

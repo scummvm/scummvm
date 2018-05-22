@@ -43,11 +43,10 @@ void Director::draw() {
 void Director::drawSprite(ActionCEL *sprite) {
 	CelDecoder *decoder = sprite->getDecoder();
 	const Graphics::Surface *surface;
-	if (decoder->needsUpdate()) {
-
+	if (decoder->needsUpdate())
 		surface = decoder->decodeNextFrame();
-	}
-	else surface = decoder->getCurrentFrame();
+	else
+		surface = decoder->getCurrentFrame();
 
 	int h = surface->h;
 	if (surface->h + decoder->getY() > 480)
@@ -69,7 +68,8 @@ void Director::drawSprite(ActionCEL *sprite) {
 		}
 		_system->unlockScreen();
 	}
-	else _system->copyRectToScreen(surface->getPixels(), surface->pitch,
+	else
+		_system->copyRectToScreen(surface->getPixels(), surface->pitch,
 								   decoder->getX(), decoder->getY(),
 								   w, h);
 
@@ -80,9 +80,10 @@ void Director::addSprite(ActionCEL *sprite) {
 	_sprites.push_back(sprite);
 	int i;
 	for (i = _sprites.size() - 1; i > 0 ; --i) {
-		if (sprite->getZ() < _sprites[i - 1]->getZ()){
+		if (sprite->getZ() < _sprites[i - 1]->getZ())
 			_sprites[i] = _sprites[i - 1];
-		} else break;
+		else
+			break;
 	}
 	_sprites[i] = sprite;
 }
