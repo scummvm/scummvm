@@ -187,7 +187,7 @@ void InventoryMgr::showNextItem(bool direction) {
 
 	uint i = 0;
 	do {
-		index = (direction == kLeft) ? --index : ++index;
+		index = (direction == kLeft) ? index - 1 : index + 1;
 	} while(_items[index % _items.size()]->getCurrentOwner() != _item->getCurrentOwner() && ++i < _items.size());
 
 	if (i != _items.size()) {
