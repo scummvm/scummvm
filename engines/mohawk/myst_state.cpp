@@ -259,10 +259,17 @@ bool MystGameState::saveMetadata(int slot) {
 bool MystGameState::isAutoSaveAllowed() {
 	// Open autosave slot and see if it an autosave
 	// Autosaving will be enabled if it is an autosave or if there is no save in that slot
-	Common::String filename = buildMetadataFilename(kAutoSaveSlot);
-	Common::ScopedPtr<Common::InSaveFile> metadataFile(g_system->getSavefileManager()->openForLoading(filename));
-	if (!metadataFile) { // There is no save in the autosave slot, enable autosave
+
+	Common::String dataFilename = buildSaveFilename(kAutoSaveSlot);
+	Common::ScopedPtr<Common::InSaveFile> dataFile(g_system->getSavefileManager()->openForLoading(dataFilename));
+	if (!dataFile) { // Cannot load non-meta file, enable autosave
 		return true;
+	}
+
+	Common::String metaFilename = buildMetadataFilename(kAutoSaveSlot);
+	Common::ScopedPtr<Common::InSaveFile> metadataFile(g_system->getSavefileManager()->openForLoading(metaFilename));
+	if (!metadataFile) { // Can load non-meta file, but not metafile, could be a save from the original, disable autosave
+		return false;
 	}
 
 	Common::Serializer m(metadataFile.get(), nullptr);
