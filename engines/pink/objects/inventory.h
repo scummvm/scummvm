@@ -70,7 +70,7 @@ private:
 	void close();
 	enum Direction {
 		kLeft = 0,
-		kRight = 1,
+		kRight = 1
 	};
 	void showNextItem(bool direction);
 
@@ -90,7 +90,7 @@ private:
 		kIdle = 0,
 		kOpening = 1,
 		kReady = 2,
-		kClosing = 3,
+		kClosing = 3
 	} _state;
 	bool _isClickedOnItem;
 };

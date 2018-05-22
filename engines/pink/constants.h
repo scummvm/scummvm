@@ -136,7 +136,7 @@ enum {
 	kOrbMajorVersion = 2,
 	kOrbMinorVersion = 0,
 	kBroMajorVersion = 1,
-	kBroMinorVersion = 0,
+	kBroMinorVersion = 0
 };
 
 enum {
