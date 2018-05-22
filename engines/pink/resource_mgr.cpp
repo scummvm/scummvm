@@ -56,11 +56,11 @@ Sound *ResourceMgr::loadSound(Common::String &name) {
 Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(Common::String &name) {
     Common::SeekableReadStream *stream;
 
-    const ResourceDescription &desc = *Common::find_if(_resDescTable, _resDescTable + _resCount,
-            [&] (const ResourceDescription &desc) {
-        return name.compareToIgnoreCase(desc.name) == 0;
-    });
-
+    ResourceDescription &desc = _resDescTable[0];
+	for (uint i = 0; i < _resCount; ++i) {
+		if (name.compareToIgnoreCase(_resDescTable[i].name) == 0)
+			desc = _resDescTable[i];
+	}
 
     if (desc.inBro)
         stream = _game->getBro();

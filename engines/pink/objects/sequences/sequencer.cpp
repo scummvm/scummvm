@@ -49,10 +49,11 @@ void Sequencer::deserialize(Archive &archive) {
 }
 
 Sequence *Sequencer::findSequence(const Common::String &name) {
-    return *Common::find_if(_sequences.begin(), _sequences.end(), [&name]
-            (Sequence* sequence) {
-        return name == sequence->getName();
-    });
+	for (uint i = 0; i < _sequences.size(); ++i) {
+		if (_sequences[i]->getName() == name)
+			return _sequences[i];
+	}
+	return nullptr;
 }
 
 void Sequencer::authorSequence(Sequence *sequence, bool unk) {
