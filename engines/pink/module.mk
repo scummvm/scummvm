@@ -3,7 +3,6 @@ MODULE := engines/pink
 MODULE_OBJS = \
 	archive.o \
 	cel_decoder.o \
-	console.o \
 	cursor_mgr.o \
 	detection.o \
 	director.o \
@@ -29,6 +28,7 @@ MODULE_OBJS = \
 	objects/actions/walk_action.o \
 	objects/actors/actor.o \
 	objects/actors/lead_actor.o \
+	objects/actors/pda_button_actor.o \
 	objects/actors/supporting_actor.o \
 	objects/handlers/handler.o \
 	objects/handlers/handler_mgr.o \
@@ -42,7 +42,7 @@ MODULE_OBJS = \
 	objects/sequences/sequencer.o \
 	objects/walk/walk_mgr.o \
 	objects/walk/walk_location.o \
-	objects/walk/walk_shortest_path.o \
+	objects/walk/walk_shortest_path.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PINK), DYNAMIC_PLUGIN)
