@@ -87,6 +87,17 @@ VisualImageXMG *StaticProvider::getUIElement(UIElement element) const {
 	return getCursorImage(element);
 }
 
+VisualImageXMG *StaticProvider::getUIElement(UIElement element, uint32 index) const {
+	Resources::Anim *anim = _stockAnims[element];
+
+	uint32 prevIndex = anim->getCurrentFrame();
+	anim->selectFrame(index);
+	VisualImageXMG *visualImage = anim->getVisual()->get<VisualImageXMG>();
+	anim->selectFrame(prevIndex);
+	
+	return visualImage;
+}
+
 VisualImageXMG *StaticProvider::getUIImage(UIImage image) const {
 	Resources::Image *anim = _stockImages[image];
 	return anim->getVisual()->get<VisualImageXMG>();

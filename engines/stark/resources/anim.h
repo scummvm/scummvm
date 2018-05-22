@@ -90,6 +90,9 @@ public:
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 
+	/** Get current displayed frame */
+	uint32 getCurrentFrame() { return _currentFrame; }
+
 	/** Sets the animation frame to be displayed */
 	virtual void selectFrame(uint32 frameIndex);
 

@@ -238,6 +238,10 @@ void StaticLocationWidget::onMouseMove(const Common::Point &mousePos) {
 	}
 }
 
+Common::Point StaticLocationWidget::getPosition() const {
+	return _renderEntry->getPosition();
+}
+
 StaticLocationWidget::~StaticLocationWidget() {
 	delete _onClick;
 	delete _onMouseMove;

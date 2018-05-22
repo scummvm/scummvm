@@ -23,6 +23,9 @@
 #include "engines/stark/ui/menu/settingsmenu.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/staticprovider.h"
+
+#include "engines/stark/visual/image.h"
 
 namespace Stark {
 
@@ -59,8 +62,9 @@ void SettingsMenuScreen::open() {
 			nullptr,
 			nullptr));
 	
-	_widgets.push_back(new StaticLocationWidget(
+	_widgets.push_back(new CheckboxWidget(
 			"AprilHighRes",
+			true,
 			nullptr,
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kHighRes>)));
 	_widgets.back()->setupSounds(3, 4);
@@ -71,8 +75,9 @@ void SettingsMenuScreen::open() {
 			nullptr));
 	_widgets.back()->setVisible(false);
 	
-	_widgets.push_back(new StaticLocationWidget(
+	_widgets.push_back(new CheckboxWidget(
 			"Subtitles",
+			true,
 			nullptr,
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kSubtitles>)));
 	_widgets.back()->setupSounds(3, 4);
@@ -83,8 +88,9 @@ void SettingsMenuScreen::open() {
 			nullptr));
 	_widgets.back()->setVisible(false);
 
-	_widgets.push_back(new StaticLocationWidget(
+	_widgets.push_back(new CheckboxWidget(
 			"SpecialFX",
+			true,
 			nullptr,
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kSpecialFX>)));
 	_widgets.back()->setupSounds(3, 4);
@@ -95,8 +101,9 @@ void SettingsMenuScreen::open() {
 			nullptr));
 	_widgets.back()->setVisible(false);
 
-	_widgets.push_back(new StaticLocationWidget(
+	_widgets.push_back(new CheckboxWidget(
 			"Shadows",
+			true,
 			nullptr,
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kShadows>)));
 	_widgets.back()->setupSounds(3, 4);
@@ -107,8 +114,9 @@ void SettingsMenuScreen::open() {
 			nullptr));
 	_widgets.back()->setVisible(false);
 
-	_widgets.push_back(new StaticLocationWidget(
+	_widgets.push_back(new CheckboxWidget(
 			"HighResFMV",
+			true,
 			nullptr,
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kHighResFMV>)));
 	_widgets.back()->setupSounds(3, 4);
@@ -158,8 +166,9 @@ void SettingsMenuScreen::open() {
 	_widgets.back()->setVisible(false);
 
 	if (!isDemo()) {
-		_widgets.push_back(new StaticLocationWidget(
+		_widgets.push_back(new CheckboxWidget(
 				"AllowFF",
+				true,
 				nullptr,
 				MOVE_HANDLER(SettingsMenuScreen, textHandler<kAllowFF>)));
 		_widgets.back()->setupSounds(3, 4);
@@ -187,6 +196,44 @@ void SettingsMenuScreen::textHandler(StaticLocationWidget &widget, const Common:
 
 void SettingsMenuScreen::backHandler() {
 	StarkUserInterface->backPrevScreen();
+}
+
+CheckboxWidget::CheckboxWidget(const char *renderEntryName, bool isChecked,
+							   WidgetOnClickCallback *onClickCallback,
+	            			   WidgetOnMouseMoveCallback *onMouseMoveCallback):
+		StaticLocationWidget(renderEntryName, onClickCallback, onMouseMoveCallback),
+		_isChecked(isChecked) {
+	// Load the image
+	_checkBoxImage[0] = StarkStaticProvider->getUIElement(StaticProvider::UIElement::kCheckMark, 0);
+	_checkBoxImage[1] = StarkStaticProvider->getUIElement(StaticProvider::UIElement::kCheckMark, 1);
+	_width = _checkBoxImage[0]->getWidth();
+	_height = _checkBoxImage[0]->getHeight();
+	_currentImage = _checkBoxImage[_isChecked];
+
+	// Set the position
+	Common::Point textPosition = getPosition();
+	_position.x = textPosition.x - _width - 8;
+	_position.y = textPosition.y - 4;
+}
+
+void CheckboxWidget::render() {
+	StaticLocationWidget::render();
+	_currentImage->render(_position, true);
+}
+
+bool CheckboxWidget::isMouseInside(const Common::Point &mousePos) const {
+	return StaticLocationWidget::isMouseInside(mousePos) || isMouseInsideCheckbox(mousePos);
+}
+
+void CheckboxWidget::onClick() {
+	StaticLocationWidget::onClick();
+	_isChecked = !_isChecked;
+	_currentImage = _checkBoxImage[_isChecked];
+}
+
+bool CheckboxWidget::isMouseInsideCheckbox(const Common::Point &mousePos) const {
+	return mousePos.x >= _position.x && mousePos.x <= _position.x + _width &&
+		   mousePos.y >= _position.y && mousePos.y <= _position.y + _height;
 }
 
 } // End of namespace Stark
