@@ -30,10 +30,7 @@
 namespace Pink {
 
 WalkMgr::WalkMgr()
-	: _isWalking(false), _leadActor(nullptr)
-{
-
-}
+	: _isWalking(false), _leadActor(nullptr) {}
 
 void WalkMgr::deserialize(Pink::Archive &archive) {
 	_leadActor = static_cast<LeadActor *>(archive.readObject());
@@ -42,9 +39,8 @@ void WalkMgr::deserialize(Pink::Archive &archive) {
 
 WalkLocation *WalkMgr::findLocation(const Common::String &name) {
 	for (uint i = 0; i < _locations.size(); ++i) {
-		if (_locations[i]->getName() == name) {
+		if (_locations[i]->getName() == name)
 			return 	_locations[i];
-		}
 	}
 	return nullptr;
 }
@@ -69,8 +65,7 @@ void WalkMgr::start(WalkLocation *destination) {
 
 	if (_current.name == _destination->getName()) {
 		end();
-	}
-	else {
+	} else {
 		_isWalking = true;
 		WalkLocation *currentLocation = findLocation(_current.name);
 		WalkShortestPath path(this);
@@ -87,16 +82,15 @@ void WalkMgr::initNextWayPoint(WalkLocation *location) {
 
 WalkAction *WalkMgr::getWalkAction() {
 	Common::String walkActionName;
-	if (_current.coord.z == _next.coord.z){
-		if (_next.coord.x > _current.coord.x){
+	if (_current.coord.z == _next.coord.z) {
+		if (_next.coord.x > _current.coord.x) {
 			walkActionName = Common::String::format("%dRight", _current.coord.z);
-		}
-		else walkActionName = Common::String::format("%dLeft", _next.coord.z);
-	}
-	else walkActionName = Common::String::format("%dTo%d", _current.coord.z, _next.coord.z);
+		} else
+			walkActionName = Common::String::format("%dLeft", _next.coord.z);
+	} else
+		walkActionName = Common::String::format("%dTo%d", _current.coord.z, _next.coord.z);
 
 	Action *action = _leadActor->findAction(walkActionName);
-
 
 	return static_cast<WalkAction*>(action);
 }
@@ -136,11 +130,11 @@ void WalkMgr::update() {
 	WalkShortestPath path(this);
 	_current = _next;
 	WalkLocation *next = path.next(findLocation(_current.name), _destination);
-	if (next){
+	if (next) {
 		initNextWayPoint(next);
 		_leadActor->setAction(getWalkAction(), 0);
-	}
-	else end();
+	} else
+		end();
 
 }
 

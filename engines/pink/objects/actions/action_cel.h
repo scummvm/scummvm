@@ -49,7 +49,7 @@ public:
 	void unpause() override;
 
 protected:
-	virtual void onStart() {} ;
+	virtual void onStart() {};
 	CelDecoder *_decoder;
 	Common::String _fileName;
 	uint32 _z;

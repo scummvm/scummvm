@@ -38,8 +38,8 @@ namespace Pink {
 
 Pink::PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 		: Engine(system), _console(nullptr), _rnd("pink"),
-		  _desc(*desc), _bro(nullptr), _module(nullptr), _director(_system)
-{
+		  _desc(*desc), _bro(nullptr), _module(nullptr),
+		  _director(_system) {
 	debug("PinkEngine constructed");
 
 	DebugMan.addDebugChannel(kPinkDebugGeneral, "general", "General issues");
@@ -72,14 +72,13 @@ Common::Error PinkEngine::init() {
 	const Common::String orbName = _desc.filesDescriptions[0].fileName;
 	const Common::String broName = _desc.filesDescriptions[1].fileName;
 
-	if (strcmp(_desc.gameId, kPeril) == 0){
+	if (strcmp(_desc.gameId, kPeril) == 0)
 		_bro = new BroFile();
-	}
-	else debug("This game doesn't need to use bro");
+	else
+		debug("This game doesn't need to use bro");
 
-	if (!_orb.open(orbName) || (_bro && !_bro->open(broName, _orb.getTimestamp()))){
+	if (!_orb.open(orbName) || (_bro && !_bro->open(broName, _orb.getTimestamp())))
 		return Common::kNoGameDataFoundError;
-	}
 
 	if (!loadCursors())
 		return Common::kNoGameDataFoundError;
@@ -99,33 +98,32 @@ Common::Error Pink::PinkEngine::run() {
 	if (error.getCode() != Common::kNoError)
 		return error;
 
-	while(!shouldQuit()){
+	while (!shouldQuit()) {
 		Common::Event event;
-		while(_eventMan->pollEvent(event)){
-			switch (event.type){
-				case Common::EVENT_QUIT:
-				case Common::EVENT_RTL:
-					return Common::kNoError;
-				case Common::EVENT_MOUSEMOVE:
-					_actor->onMouseMove(event.mouse);
-					break;
-				case Common::EVENT_LBUTTONDOWN:
-					_actor->onLeftButtonClick(event.mouse);
-					break;
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_d)
-						_director.showBounds = !_director.showBounds;
-					else _actor->onKeyboardButtonClick(event.kbd.keycode);
-					break;
-
-					// don't know why it is used in original
-				case Common::EVENT_LBUTTONUP:
-				case Common::EVENT_RBUTTONDOWN:
-				default:
-					break;
+		while (_eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RTL:
+				return Common::kNoError;
+			case Common::EVENT_MOUSEMOVE:
+				_actor->onMouseMove(event.mouse);
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				_actor->onLeftButtonClick(event.mouse);
+				break;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_d)
+					_director.showBounds = !_director.showBounds;
+				else
+					_actor->onKeyboardButtonClick(event.kbd.keycode);
+				break;
+				// don't know why it is used in original
+			case Common::EVENT_LBUTTONUP:
+			case Common::EVENT_RBUTTONDOWN:
+			default:
+				break;
 			}
 		}
-
 
 		_actor->update();
 		_director.update();
@@ -145,7 +143,7 @@ void PinkEngine::load(Archive &archive) {
 void PinkEngine::initModule(const Common::String &moduleName, bool isLoadingFromSave, const Common::String &pageName) {
 	if (_module) {
 		for (uint i = 0; i < _modules.size(); ++i) {
-			if (_module == _modules[i]){
+			if (_module == _modules[i]) {
 				_modules[i] = new ModuleProxy(_module->getName());
 
 				delete _module;
@@ -170,12 +168,10 @@ void PinkEngine::changeScene(GamePage *page) {
 	setCursor(kLoadingCursor);
 	if (!_nextModule.empty() && _nextModule.compareTo(_module->getName())) {
 		initModule(_nextModule, kLoadingNewGame, _nextPage);
-	}
-	else {
+	} else {
 		assert(!_nextPage.empty());
 		_module->changePage(_nextPage);
 	}
-
 }
 
 void PinkEngine::setNextExecutors(const Common::String &nextModule, const Common::String &nextPage) {
@@ -222,8 +218,7 @@ bool PinkEngine::loadCursors() {
 		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusClickableThirdCursorID));
 		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusNotClickableCursorID));
 		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusHoldingItemCursorID));
-	}
-	else {
+	} else {
 		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilClickableThirdCursorID));
 		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilNotClickableCursorID));
 		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilHoldingItemCursorID));

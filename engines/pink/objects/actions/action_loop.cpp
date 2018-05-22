@@ -33,15 +33,14 @@ void ActionLoop::deserialize(Archive &archive) {
 	_intro = archive.readDWORD();
 	style = archive.readWORD();
 	switch (style) {
-		case kPingPong:
-			_style = kPingPong;
-			break;
-		case kRandom:
-			_style = kRandom;
-			break;
-		default:
-			_style = kForward;
-			break;
+	case kPingPong:
+		_style = kPingPong;
+		break;
+	case kRandom:
+		_style = kRandom;
+		break;
+	default:
+		_style = kForward;
 	}
 }
 
@@ -54,7 +53,7 @@ void ActionLoop::toConsole() {
 void ActionLoop::update() {
 	// for now it supports only forward loop animation
 	if (_style == kForward) {
-		if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame){
+		if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) {
 			//debug("ACTION LOOP : NEXT ITERATION");
 			_decoder->rewind();
 		}

@@ -56,9 +56,9 @@ private:
 	HandlerLeftClick *findSuitableHandlerLeftClick(Actor *actor);
 	HandlerUseClick *findSuitableHandlerUseClick(Actor *actor, InventoryItem *item);
 
-	Array<HandlerLeftClick*> _leftClickHandlers;
-	Array<HandlerUseClick*> _useClickHandlers;
-	Array<Handler*> _timerHandlers;
+	Array<HandlerLeftClick *> _leftClickHandlers;
+	Array<HandlerUseClick *> _useClickHandlers;
+	Array<Handler *> _timerHandlers;
 };
 
 }

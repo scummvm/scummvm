@@ -32,8 +32,7 @@
 namespace Pink {
 
 SequenceActorState::SequenceActorState(const Common::String &name)
-		:_actorName(name), _index(0)
-{}
+		:_actorName(name), _index(0) {}
 
 const Common::String &SequenceActorState::getActor() const {
 	return _actorName;
@@ -42,7 +41,7 @@ const Common::String &SequenceActorState::getActor() const {
 void SequenceActorState::check(int index, Sequence *sequence, bool unk) {
 	Actor *actor = sequence->_sequencer->_page->findActor(_actorName);
 	debug("%s %s", _actorName.c_str(), _actionName.c_str());
-	if (_index != index && !_actionName.empty()){
+	if (_index != index && !_actionName.empty()) {
 		Action *action = actor->findAction(_actionName);
 		if (actor->getAction() != action)
 			actor->setAction(action, unk);
@@ -60,7 +59,7 @@ SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
 	for (uint i = 0; i < items.size(); ++i) {
 		bool found = 0;
 		for (uint j = 0; j < _states.size(); ++j) {
-			if (items[i]->getActor() == _states[j].getActor()){
+			if (items[i]->getActor() == _states[j].getActor()) {
 				found = 1;
 				break;
 			}

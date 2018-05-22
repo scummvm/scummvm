@@ -55,9 +55,8 @@ public:
 };
 
 bool PinkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
+	if (desc)
 		*engine = new Pink::PinkEngine(syst, desc);
-	}
 
 	return desc != 0;
 }

@@ -41,7 +41,7 @@ public:
 	virtual void toConsole();
 
 	virtual void deserialize(Archive &archive);
-	Sequence* findSequence(const Common::String &name);
+	Sequence *findSequence(const Common::String &name);
 	SequenceActorState *findSequenceActorState(const Common::String &name);
 
 	void authorSequence(Sequence *sequence, bool unk);
@@ -60,8 +60,8 @@ public:
 
 	SequenceContext *_context;
 	// context array
-	Array<Sequence*> _sequences;
-	Array<SeqTimer*> _timers;
+	Array<Sequence *> _sequences;
+	Array<SeqTimer *> _timers;
 	Common::String _currentSequenceName;
 	GamePage *_page;
 	uint _time;

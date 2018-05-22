@@ -32,9 +32,7 @@
 namespace Pink {
 
 ActionCEL::ActionCEL()
-	: _decoder(nullptr) {
-
-}
+	: _decoder(nullptr) {}
 
 void ActionCEL::deserialize(Archive &archive) {
 	Action::deserialize(archive);
@@ -74,7 +72,7 @@ bool ActionCEL::initPalette(Director *director) {
 }
 
 void ActionCEL::update() {
-	if (_decoder->endOfVideo()){
+	if (_decoder->endOfVideo()) {
 		_decoder->stop();
 		_actor->endAction();
 	}

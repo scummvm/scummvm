@@ -54,9 +54,8 @@ bool SequenceItem::execute(int index, Sequence *sequence, bool unk2) {
 	Actor *actor;
 	Action *action;
 	if (!(actor = sequence->_sequencer->_page->findActor(_actor)) ||
-		!(action = actor->findAction(_action))) {
+		!(action = actor->findAction(_action)))
 		return false;
-	}
 
 	actor->setAction(action, unk2);
 

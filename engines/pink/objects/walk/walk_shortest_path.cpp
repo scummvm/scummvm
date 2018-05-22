@@ -34,7 +34,7 @@ WalkLocation *WalkShortestPath::next(WalkLocation *start, WalkLocation *destinat
 	if (start == destination)
 		return nullptr;
 	add(start, 0.0, 0);
-	while (build() != destination);
+	while (build() != destination) {}
 	return getNearestNeighbor(destination);
 }
 
@@ -94,13 +94,13 @@ double WalkShortestPath::getLengthToNearestNeigbor(WalkLocation *location) {
 	Common::StringArray &neighbors = location->getNeigbors();
 	for (uint i = 0; i < neighbors.size(); ++i) {
 		WalkLocation *neighbor = _manager->findLocation(neighbors[i]);
-		if (!isLocationVisited(neighbor)){
+		if (!isLocationVisited(neighbor)) {
 			double length = _manager->getLengthBetweenLocations(location, neighbor);
 			if (minLength >= 0.0) {
 				if (length < minLength)
 					minLength = length;
-			}
-			else minLength = length;
+			} else
+				minLength = length;
 		}
 	}
 
@@ -113,15 +113,14 @@ WalkLocation *WalkShortestPath::findNearestNeighbor(WalkLocation *location) {
 	Common::StringArray &neighbors = location->getNeigbors();
 	for (uint i = 0; i < neighbors.size(); ++i) {
 		WalkLocation *neighbor = _manager->findLocation(neighbors[i]);
-		if (!isLocationVisited(neighbor)){
+		if (!isLocationVisited(neighbor)) {
 			double length = _manager->getLengthBetweenLocations(location, neighbor);
 			if (minLength >= 0.0) {
 				if (length < minLength) {
 					nearest = neighbor;
 					minLength = length;
 				}
-			}
-			else {
+			} else {
 				nearest = neighbor;
 				minLength = length;
 			}
@@ -149,7 +148,7 @@ bool WalkShortestPath::isLocationVisited(WalkLocation *location) {
 
 void WalkShortestPath::remove(WalkLocation *location) {
 	for (uint i = 0; i < _locations.size(); ++i) {
-		if (_locations[i] == location){
+		if (_locations[i] == location) {
 			_locations.remove_at(i);
 			_weight.remove_at(i);
 			break;

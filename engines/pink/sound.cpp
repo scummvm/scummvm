@@ -31,10 +31,7 @@
 namespace Pink {
 
 Sound::Sound(Audio::Mixer *mixer, Common::SafeSeekableSubReadStream *stream)
-	: _mixer(mixer), _fileStream(stream)
-{
-
-}
+	: _mixer(mixer), _fileStream(stream) {}
 
 Sound::~Sound() {
 	stop();
@@ -67,8 +64,8 @@ void Sound::play(Audio::Mixer::SoundType type, int volume, bool isLoop) {
 	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(_fileStream, DisposeAfterUse::NO);
 	if (isLoop) {
 		audioStream = Audio::makeLoopingAudioStream(wavStream, 0, 0, 0);
-	}
-	else audioStream = wavStream;
+	} else
+		audioStream = wavStream;
 
 	_mixer->playStream(type, &_handle , audioStream, -1 , 50, 0, DisposeAfterUse::YES);
 }

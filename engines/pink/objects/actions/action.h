@@ -38,9 +38,9 @@ public:
 	virtual void update() {};
 	virtual void toConsole() {};
 
-	virtual bool initPalette(Director *director) { return 0;}
+	virtual bool initPalette(Director *director) { return 0; }
 
-	Actor *getActor() { return _actor;}
+	Actor *getActor() { return _actor; }
 
 	virtual void pause() {};
 	virtual void unpause() {};

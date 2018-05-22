@@ -39,7 +39,7 @@ public:
 
 	virtual void toConsole();
 
-	Common::Array<SequenceItem*> &getItems();
+	Common::Array<SequenceItem *> &getItems();
 
 	void setContext(SequenceContext *context);
 	virtual void init(int unk);
@@ -56,7 +56,7 @@ public:
 public:
 	SequenceContext *_context;
 	Sequencer *_sequencer;
-	Array<SequenceItem*> _items;
+	Array<SequenceItem *> _items;
 	int _unk;
 };
 

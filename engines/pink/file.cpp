@@ -41,22 +41,19 @@ bool OrbFile::open(const Common::String &name) {
 	if (!File::open(name))
 		return false;
 
-	if (readUint32BE() != 'ORB\0'){
+	if (readUint32BE() != 'ORB\0')
 		return false;
-	}
 
 	uint16 minor = readUint16LE();
 	uint16 major = readUint16LE();
 
 	debug("Orb v%hu.%hu loaded", major, minor);
 
-	if (major != kOrbMajorVersion || minor != kOrbMinorVersion){
+	if (major != kOrbMajorVersion || minor != kOrbMinorVersion)
 		return false;
-	}
 
-	if (!(_timestamp = readUint32LE())){
+	if (!(_timestamp = readUint32LE()))
 		return false;
-	}
 
 	_tableOffset = readUint32LE();
 	_tableSize = readUint32LE();
@@ -120,7 +117,6 @@ ResourceDescription *OrbFile::getResDescTable(ObjectDescription *objDesc){
 	return table;
 }
 
-
 bool BroFile::open(const Common::String &name, uint32 orbTimestamp) {
 	if (!File::open(name) || readUint32BE() != 'BRO\0')
 		return false;
@@ -130,9 +126,8 @@ bool BroFile::open(const Common::String &name, uint32 orbTimestamp) {
 
 	debug("Bro v%hu.%hu loaded", major, minor);
 
-	if (major != kBroMajorVersion || minor != kBroMinorVersion){
+	if (major != kBroMajorVersion || minor != kBroMinorVersion)
 		return false;
-	}
 
 	uint32 timestamp = readUint32LE();
 

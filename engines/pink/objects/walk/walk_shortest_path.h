@@ -48,11 +48,11 @@ private:
 
 
 	WalkMgr *_manager;
-	Common::Array<WalkLocation*> _locations;
-	Common::Array<WalkLocation*> _toVisit;
+	Common::Array<WalkLocation *> _locations;
+	Common::Array<WalkLocation *> _toVisit;
 	Common::Array<double> _weight;
-	Common::Array<WalkLocation*> _visited;
-	Common::Array<WalkLocation*> _nearestNeigbor;
+	Common::Array<WalkLocation *> _visited;
+	Common::Array<WalkLocation *> _nearestNeigbor;
 };
 
 } // End of namespace Pink

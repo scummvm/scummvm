@@ -111,7 +111,7 @@ private:
 
 	Console *_console;
 	Common::RandomSource _rnd;
-	Common::Array<Graphics::WinCursorGroup*> _cursors;
+	Common::Array<Graphics::WinCursorGroup *> _cursors;
 
 	Common::String _nextModule;
 	Common::String _nextPage;
@@ -123,7 +123,7 @@ private:
 	LeadActor *_actor;
 
 	Module *_module;
-	Array<NamedObject*> _modules;
+	Array<NamedObject *> _modules;
 
 	Common::StringMap _variables;
 

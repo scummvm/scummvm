@@ -42,7 +42,7 @@ protected:
 private:
 	void updateSound();
 	uint32 _isLoop;
-	Array<ActionSfx*> _sfxArray;
+	Array<ActionSfx *> _sfxArray;
 };
 
 class Sound;

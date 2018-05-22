@@ -29,27 +29,31 @@ namespace Pink {
 
 static const ADGameDescription gameDescriptions[] = {
 		{
-				"peril",
-				0,{
-						{"PPTP.ORB", NULL, NULL, -1},
-						{"PPTP.BRO", NULL, NULL, -1},
-						{"PPTP.EXE", NULL, NULL, -1},
-						AD_LISTEND},
-				Common::EN_ANY,
-				Common::kPlatformWindows,
-				ADGF_UNSTABLE,
-				GUIO1(GUIO_NONE)
+			"peril",
+			0,
+			{
+				{"PPTP.ORB", NULL, NULL, -1},
+				{"PPTP.BRO", NULL, NULL, -1},
+				{"PPTP.EXE", NULL, NULL, -1},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
 		},
 		{
-				"pokus",
-				0, {
-						{"HPP.orb", NULL, NULL, -1},
-						{"hpp.exe", NULL, NULL, -1},
-						AD_LISTEND},
-				Common::EN_ANY,
-				Common::kPlatformWindows,
-				ADGF_UNSTABLE,
-				GUIO1(GUIO_NONE)
+			"pokus",
+			0,
+			{
+				{"HPP.orb", NULL, NULL, -1},
+				{"hpp.exe", NULL, NULL, -1},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
 		},
 		AD_TABLE_END_MARKER
 };

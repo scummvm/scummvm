@@ -56,8 +56,8 @@ public:
 private:
 	void drawSprite(ActionCEL *sprite);
 	OSystem *_system;
-	Common::Array<ActionCEL*> _sprites;
-	Common::Array<ActionSound*> _sounds;
+	Common::Array<ActionCEL *> _sprites;
+	Common::Array<ActionSound *> _sounds;
 };
 
 } // End of namespace Pink

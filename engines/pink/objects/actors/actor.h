@@ -41,8 +41,7 @@ class Actor : public NamedObject {
 public:
 	Actor()
 	 : _page(nullptr), _action(nullptr),
-		_isActionEnded(1)
-	{};
+		_isActionEnded(1) {};
 	~Actor();
 	virtual void deserialize(Archive &archive);
 
@@ -72,7 +71,7 @@ public:
 	virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
 	virtual void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
 
-	virtual bool isClickable() { return 0;}
+	virtual bool isClickable() { return 0; }
 
 	virtual void pause();
 	virtual void unpause();
@@ -80,7 +79,7 @@ public:
 protected:
 	GamePage *_page;
 	Action *_action;
-	Array<Action*> _actions;
+	Array<Action *> _actions;
 	bool _isActionEnded;
 };
 

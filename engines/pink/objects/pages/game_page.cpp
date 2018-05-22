@@ -32,8 +32,7 @@ namespace Pink {
 
 GamePage::GamePage()
 		: _cursorMgr(nullptr), _walkMgr(nullptr), _sequencer(nullptr),
-		  _isLoaded(false), _memFile(nullptr)
-{}
+		  _isLoaded(false), _memFile(nullptr) {}
 
 GamePage::~GamePage() {
 	clear();
@@ -87,16 +86,15 @@ void GamePage::init(bool isLoadingSave) {
 	}
 
 	bool isHandler = false;
-	if (!isLoadingSave) {
+	if (!isLoadingSave)
 		isHandler = initHandler();
-	}
 
 	_leadActor->start(isHandler);
 }
 
 bool GamePage::initHandler() {
 	for (uint i = 0; i < _handlers.size(); ++i) {
-		if (_handlers[i]->isSuitable(_leadActor)){
+		if (_handlers[i]->isSuitable(_leadActor)) {
 			_handlers[i]->handle(_leadActor);
 			return true;
 		}

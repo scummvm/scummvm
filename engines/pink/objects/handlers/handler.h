@@ -44,8 +44,8 @@ public:
 protected:
 	void executeSideEffects(Actor *actor);
 
-	Array<Condition*> _conditions;
-	Array<SideEffect*> _sideEffects;
+	Array<Condition *> _conditions;
+	Array<SideEffect *> _sideEffects;
 };
 
 class Sequence;
