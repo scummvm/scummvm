@@ -85,7 +85,7 @@ const Graphics::Surface *CelDecoder::getCurrentFrame() {
 Common::Point CelDecoder::getCenter() {
 	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
 	if (!track)
-		return {0,0};
+		return Common::Point(0, 0);
 	return track->getCenter();
 }
 
