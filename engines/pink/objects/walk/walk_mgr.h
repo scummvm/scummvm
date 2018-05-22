@@ -34,39 +34,39 @@ class WalkAction;
 
 class WalkMgr : public Object {
 public:
-    WalkMgr();
-    virtual void deserialize(Archive &archive);
-    void toConsole() override;
+	WalkMgr();
+	virtual void deserialize(Archive &archive);
+	void toConsole() override;
 
-    WalkLocation *findLocation(const Common::String &name);
-    void start(WalkLocation *destination);
-    void update();
+	WalkLocation *findLocation(const Common::String &name);
+	void start(WalkLocation *destination);
+	void update();
 
-    double getLengthBetweenLocations(WalkLocation *first, WalkLocation *second);
-    void setCurrentWayPoint(WalkLocation *location);
+	double getLengthBetweenLocations(WalkLocation *first, WalkLocation *second);
+	void setCurrentWayPoint(WalkLocation *location);
 
 private:
-    struct Coordinates {
-        int x;
-        int y;
-        int z;
-    };
-    struct WayPoint {
-        Common::String name;
-        Coordinates coord;
-    };
+	struct Coordinates {
+		int x;
+		int y;
+		int z;
+	};
+	struct WayPoint {
+		Common::String name;
+		Coordinates coord;
+	};
 
-    Coordinates getLocationCoordinates(const Common::String &locationName);
-    void end();
-    void initNextWayPoint(WalkLocation *location);
-    WalkAction *getWalkAction();
+	Coordinates getLocationCoordinates(const Common::String &locationName);
+	void end();
+	void initNextWayPoint(WalkLocation *location);
+	WalkAction *getWalkAction();
 
-    LeadActor *_leadActor;
-    WalkLocation *_destination;
-    Array<WalkLocation*> _locations;
-    WayPoint _current;
-    WayPoint _next;
-    bool _isWalking;
+	LeadActor *_leadActor;
+	WalkLocation *_destination;
+	Array<WalkLocation*> _locations;
+	WayPoint _current;
+	WayPoint _next;
+	bool _isWalking;
 };
 
 } // End of namespace Pink

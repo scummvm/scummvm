@@ -33,30 +33,30 @@ class InventoryMgr;
 
 class SupportingActor : public Actor {
 public:
-    virtual ~SupportingActor();
-    virtual void deserialize(Archive &archive);
-    virtual void toConsole();
+	virtual ~SupportingActor();
+	virtual void deserialize(Archive &archive);
+	virtual void toConsole();
 
-    virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
+	virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
 
-    virtual bool isClickable() { return 1; }
-    bool isLeftClickHandlers();
-    bool isUseClickHandlers(InventoryItem *item);
+	virtual bool isClickable() { return 1; }
+	bool isLeftClickHandlers();
+	bool isUseClickHandlers(InventoryItem *item);
 
-    void onTimerMessage();
-    bool onLeftClickMessage();
-    bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr);
+	void onTimerMessage();
+	bool onLeftClickMessage();
+	bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr);
 
-    virtual void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
+	virtual void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
 
-    const Common::String &getLocation() const;
+	const Common::String &getLocation() const;
 
 
 private:
-    HandlerMgr _handlerMgr;
-    Common::String _location;
-    Common::String _pdaLink;
-    Common::String _cursor;
+	HandlerMgr _handlerMgr;
+	Common::String _location;
+	Common::String _pdaLink;
+	Common::String _cursor;
 };
 
 } // End of namespace Pink

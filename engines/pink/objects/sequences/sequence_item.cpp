@@ -34,77 +34,77 @@
 namespace Pink {
 
 void SequenceItem::deserialize(Archive &archive) {
-    _actor = archive.readString();
-    _action = archive.readString();
+	_actor = archive.readString();
+	_action = archive.readString();
 }
 
 void SequenceItem::toConsole() {
-    debug("\t\t\t\tSequenceItem: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
+	debug("\t\t\t\tSequenceItem: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
 const Common::String &SequenceItem::getActor() const {
-    return _actor;
+	return _actor;
 }
 
 const Common::String &SequenceItem::getAction() const {
-    return _action;
+	return _action;
 }
 
 bool SequenceItem::execute(int index, Sequence *sequence, bool unk2) {
-    Actor *actor;
-    Action *action;
-    if (!(actor = sequence->_sequencer->_page->findActor(_actor)) ||
-        !(action = actor->findAction(_action))) {
-        return false;
-    }
+	Actor *actor;
+	Action *action;
+	if (!(actor = sequence->_sequencer->_page->findActor(_actor)) ||
+		!(action = actor->findAction(_action))) {
+		return false;
+	}
 
-    actor->setAction(action, unk2);
+	actor->setAction(action, unk2);
 
-    SequenceActorState *state = sequence->_sequencer->findSequenceActorState(_actor);
-    state->_index = index;
-    sequence->_context->_actor = isLeader() ? actor : sequence->_context->_actor;
+	SequenceActorState *state = sequence->_sequencer->findSequenceActorState(_actor);
+	state->_index = index;
+	sequence->_context->_actor = isLeader() ? actor : sequence->_context->_actor;
 
-    return true;
+	return true;
 }
 
 bool SequenceItem::isLeader() {
-    return false;
+	return false;
 }
 
 bool SequenceItemLeader::isLeader() {
-    return true;
+	return true;
 }
 
 void SequenceItemLeader::toConsole() {
-    debug("\t\t\t\tSequenceItemLeader: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
+	debug("\t\t\t\tSequenceItemLeader: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
 
 void SequenceItemLeaderAudio::deserialize(Archive &archive) {
-    SequenceItem::deserialize(archive);
-    _sample = archive.readDWORD();
+	SequenceItem::deserialize(archive);
+	_sample = archive.readDWORD();
 }
 
 void SequenceItemLeaderAudio::toConsole() {
-    debug("\t\t\t\tSequenceItemLeaderAudio: _actor=%s, _action=%s _sample=%d", _actor.c_str(), _action.c_str(), _sample);
+	debug("\t\t\t\tSequenceItemLeaderAudio: _actor=%s, _action=%s _sample=%d", _actor.c_str(), _action.c_str(), _sample);
 }
 
 uint32 SequenceItemLeaderAudio::getSample() {
-    return _sample;
+	return _sample;
 }
 
 bool SequenceItemDefaultAction::execute(int index, Sequence *sequence, bool unk2) {
-    SequenceActorState *state = sequence->_sequencer->findSequenceActorState(_actor);
-    state->_actionName = _action;
-    return true;
+	SequenceActorState *state = sequence->_sequencer->findSequenceActorState(_actor);
+	state->_actionName = _action;
+	return true;
 }
 
 void SequenceItemDefaultAction::toConsole() {
-    debug("\t\t\t\tSequenceItemDefaultAction: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
+	debug("\t\t\t\tSequenceItemDefaultAction: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
 void SequenceItemDefaultAction::skip(Sequence *sequence) {
-    execute(0, sequence, 1);
+	execute(0, sequence, 1);
 }
 
 } // End of namespace Pink

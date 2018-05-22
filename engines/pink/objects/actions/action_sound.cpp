@@ -32,68 +32,68 @@
 namespace Pink {
 
 ActionSound::ActionSound()
-    : _sound(nullptr)
+	: _sound(nullptr)
 {}
 
 ActionSound::~ActionSound(){
-    end();
+	end();
 }
 
 void ActionSound::deserialize(Archive &archive) {
-    Action::deserialize(archive);
-    _fileName = archive.readString();
-    _volume = archive.readDWORD();
-    _isLoop = (bool) archive.readDWORD();
-    _isBackground = (bool) archive.readDWORD();
+	Action::deserialize(archive);
+	_fileName = archive.readString();
+	_volume = archive.readDWORD();
+	_isLoop = (bool) archive.readDWORD();
+	_isBackground = (bool) archive.readDWORD();
 }
 
 void ActionSound::toConsole() {
-    debug("\tActionSound: _name = %s, _fileName = %s, _volume = %u, _isLoop = %u,"
-                  " _isBackground = %u", _name.c_str(), _fileName.c_str(), _volume, _isLoop, _isBackground);
+	debug("\tActionSound: _name = %s, _fileName = %s, _volume = %u, _isLoop = %u,"
+				  " _isBackground = %u", _name.c_str(), _fileName.c_str(), _volume, _isLoop, _isBackground);
 }
 
 void ActionSound::start(bool unk) {
-    assert(!_sound);
-    _sound = _actor->getPage()->loadSound(_fileName);
+	assert(!_sound);
+	_sound = _actor->getPage()->loadSound(_fileName);
 
-    Audio::Mixer::SoundType soundType =  _isBackground ? Audio::Mixer::SoundType::kMusicSoundType
-                                                       : Audio::Mixer::SoundType::kSpeechSoundType;
+	Audio::Mixer::SoundType soundType =  _isBackground ? Audio::Mixer::SoundType::kMusicSoundType
+													   : Audio::Mixer::SoundType::kSpeechSoundType;
 
-    Director *director = _actor->getPage()->getGame()->getDirector();
-    director->addSound(this);
+	Director *director = _actor->getPage()->getGame()->getDirector();
+	director->addSound(this);
 
-    _sound->play(soundType, _volume, _isLoop);
-    if (_isLoop)
-        _actor->endAction();
+	_sound->play(soundType, _volume, _isLoop);
+	if (_isLoop)
+		_actor->endAction();
 
-    debug("Actor %s has now ActionSound %s", _actor->getName().c_str(), _name.c_str());
+	debug("Actor %s has now ActionSound %s", _actor->getName().c_str(), _name.c_str());
 }
 
 void ActionSound::end() {
-    if (_sound) {
-        debug("ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	if (_sound) {
+		debug("ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 
-        Director *director = _actor->getPage()->getGame()->getDirector();
-        director->removeSound(this);
+		Director *director = _actor->getPage()->getGame()->getDirector();
+		director->removeSound(this);
 
-        delete _sound;
-        _sound = nullptr;
-    }
+		delete _sound;
+		_sound = nullptr;
+	}
 }
 
 void ActionSound::update() {
-    if (!_sound->isPlaying())
-        _actor->endAction();
+	if (!_sound->isPlaying())
+		_actor->endAction();
 }
 
 void ActionSound::pause() {
-    if (_sound)
-        _sound->pause();
+	if (_sound)
+		_sound->pause();
 }
 
 void ActionSound::unpause() {
-    if (_sound)
-        _sound->resume();
+	if (_sound)
+		_sound->resume();
 }
 
 } // End of namespace Pink

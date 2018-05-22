@@ -33,32 +33,32 @@
 namespace Pink {
 
 InventoryMgr::InventoryMgr()
-    : _lead(nullptr), _item(nullptr), _isClickedOnItem(false)
+	: _lead(nullptr), _item(nullptr), _isClickedOnItem(false)
 {
 }
 
 void Pink::InventoryItem::deserialize(Archive &archive) {
-    NamedObject::deserialize(archive);
-    _initialOwner = archive.readString();
-    _currentOwner = _initialOwner;
+	NamedObject::deserialize(archive);
+	_initialOwner = archive.readString();
+	_currentOwner = _initialOwner;
 }
 
 Common::String &InventoryItem::getCurrentOwner() {
-    return _currentOwner;
+	return _currentOwner;
 }
 
 void InventoryItem::toConsole() {
-    debug("\tInventoryItem: _initialOwner=%s _currentOwner=%s", _initialOwner.c_str(), _currentOwner.c_str());
+	debug("\tInventoryItem: _initialOwner=%s _currentOwner=%s", _initialOwner.c_str(), _currentOwner.c_str());
 }
 
 InventoryMgr::~InventoryMgr() {
-    for (uint i = 0; i < _items.size(); ++i) {
-        delete _items[i];
-    }
+	for (uint i = 0; i < _items.size(); ++i) {
+		delete _items[i];
+	}
 }
 
 void InventoryMgr::deserialize(Archive &archive) {
-    _items.deserialize(archive);
+	_items.deserialize(archive);
 }
 
 InventoryItem *InventoryMgr::findInventoryItem(const Common::String &name) {
@@ -71,133 +71,133 @@ InventoryItem *InventoryMgr::findInventoryItem(const Common::String &name) {
 }
 
 void InventoryMgr::setLeadActor(LeadActor *lead) {
-    _lead = lead;
+	_lead = lead;
 }
 
 void InventoryMgr::toConsole() {
-    debug("InventoryMgr:");
-    for (uint i = 0; i < _items.size(); ++i) {
-        _items[i]->toConsole();
-    }
+	debug("InventoryMgr:");
+	for (uint i = 0; i < _items.size(); ++i) {
+		_items[i]->toConsole();
+	}
 }
 
 bool InventoryMgr::isPinkOwnsAnyItems() {
-    if (_item)
-        return true;
+	if (_item)
+		return true;
 
-    for (uint i = 0; i < _items.size(); ++i) {
-        if (_items[i]->getCurrentOwner() == _lead->getName()){
-            _item = _items[i];
-            return true;
-        }
-    }
+	for (uint i = 0; i < _items.size(); ++i) {
+		if (_items[i]->getCurrentOwner() == _lead->getName()){
+			_item = _items[i];
+			return true;
+		}
+	}
 
-    return false;
+	return false;
 }
 
 void InventoryMgr::setItemOwner(const Common::String &owner, InventoryItem *item) {
-    if (owner == item->getCurrentOwner())
-       return;
+	if (owner == item->getCurrentOwner())
+	   return;
 
-    if (item == _item && _lead->getName() != owner)
-        _item = nullptr;
+	if (item == _item && _lead->getName() != owner)
+		_item = nullptr;
 
-    item->_currentOwner = owner;
+	item->_currentOwner = owner;
 
-    if (_lead->getName() == owner)
-        _item = item;
+	if (_lead->getName() == owner)
+		_item = item;
 }
 
 bool InventoryMgr::start(bool playOpening) {
-    if (!_item) {
-        _item = findInventoryItem(_lead->getName());
-        if (!_item)
-            return false;
-    }
+	if (!_item) {
+		_item = findInventoryItem(_lead->getName());
+		if (!_item)
+			return false;
+	}
 
-    _window = _lead->getPage()->findActor(kInventoryWindowActor);
-    _itemActor = _lead->getPage()->findActor(kInventoryItemActor);
-    _rightArrow = _lead->getPage()->findActor(kInventoryRightArrowActor);
-    _leftArrow = _lead->getPage()->findActor(kInventoryLeftArrowActor);
+	_window = _lead->getPage()->findActor(kInventoryWindowActor);
+	_itemActor = _lead->getPage()->findActor(kInventoryItemActor);
+	_rightArrow = _lead->getPage()->findActor(kInventoryRightArrowActor);
+	_leftArrow = _lead->getPage()->findActor(kInventoryLeftArrowActor);
 
-    if (playOpening){
-        _window->setAction(kOpenAction);
-        _state = kOpening;
-    }
+	if (playOpening){
+		_window->setAction(kOpenAction);
+		_state = kOpening;
+	}
 
-    return true;
+	return true;
 }
 
 void InventoryMgr::update() {
-    if (_state == kOpening && !_window->isPlaying()){
-        _state = kReady;
-        _itemActor->setAction(_item->getName());
-        _window->setAction(kShowAction);
-        _leftArrow->setAction(kShowAction);
-        _rightArrow->setAction(kShowAction);
-    }
-    else if (_state == kClosing && !_window->isPlaying()){
-        _window->setAction(kIdleAction);
+	if (_state == kOpening && !_window->isPlaying()){
+		_state = kReady;
+		_itemActor->setAction(_item->getName());
+		_window->setAction(kShowAction);
+		_leftArrow->setAction(kShowAction);
+		_rightArrow->setAction(kShowAction);
+	}
+	else if (_state == kClosing && !_window->isPlaying()){
+		_window->setAction(kIdleAction);
 
-        _lead->onInventoryClosed(_isClickedOnItem);
+		_lead->onInventoryClosed(_isClickedOnItem);
 
-        _state = kIdle;
+		_state = kIdle;
 
-        _window = nullptr;
-        _itemActor = nullptr;
-        _isClickedOnItem = false;
-    }
+		_window = nullptr;
+		_itemActor = nullptr;
+		_isClickedOnItem = false;
+	}
 }
 
 void InventoryMgr::onClick(Common::Point point) {
-    if (_state != kReady)
-        return;
+	if (_state != kReady)
+		return;
 
-    Actor *actor = _lead->getPage()->getGame()->getDirector()->getActorByPoint(point);
-    if (actor == _itemActor || actor == _window) {
-        _isClickedOnItem = true;
-        close();
-    }
-    else if (actor == _leftArrow) {
-        showNextItem(kLeft);
-    }
-    else if (actor == _rightArrow) {
-        showNextItem(kRight);
-    }
-    else close();
+	Actor *actor = _lead->getPage()->getGame()->getDirector()->getActorByPoint(point);
+	if (actor == _itemActor || actor == _window) {
+		_isClickedOnItem = true;
+		close();
+	}
+	else if (actor == _leftArrow) {
+		showNextItem(kLeft);
+	}
+	else if (actor == _rightArrow) {
+		showNextItem(kRight);
+	}
+	else close();
 }
 
 void InventoryMgr::close() {
-    _state = kClosing;
+	_state = kClosing;
 
-    _window->setAction(kCloseAction);
-    _itemActor->setAction(kIdleAction);
-    _leftArrow->setAction(kIdleAction);
-    _rightArrow->setAction(kIdleAction);
+	_window->setAction(kCloseAction);
+	_itemActor->setAction(kIdleAction);
+	_leftArrow->setAction(kIdleAction);
+	_rightArrow->setAction(kIdleAction);
 }
 
 void InventoryMgr::showNextItem(bool direction) {
-    int index = 0;
-    for (uint i = 0; i < _items.size(); ++i) {
-        if (_item == _items[i]) {
-            index = i + _items.size();
-            break;
-        }
-    }
+	int index = 0;
+	for (uint i = 0; i < _items.size(); ++i) {
+		if (_item == _items[i]) {
+			index = i + _items.size();
+			break;
+		}
+	}
 
-    uint i = 0;
-    do {
-        index = (direction == kLeft) ? --index : ++index;
-    } while(_items[index % _items.size()]->getCurrentOwner() != _item->getCurrentOwner() && ++i < _items.size());
+	uint i = 0;
+	do {
+		index = (direction == kLeft) ? --index : ++index;
+	} while(_items[index % _items.size()]->getCurrentOwner() != _item->getCurrentOwner() && ++i < _items.size());
 
-    if (i != _items.size()) {
-        _item = _items[index % _items.size()];
-        _itemActor->setAction(_item->getName());
-    }
+	if (i != _items.size()) {
+		_item = _items[index % _items.size()];
+		_itemActor->setAction(_item->getName());
+	}
 }
 
 InventoryItem *InventoryMgr::getCurrentItem() {
-    return _item;
+	return _item;
 }
 
 } // End of namespace Pink

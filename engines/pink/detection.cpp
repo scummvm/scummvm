@@ -25,41 +25,41 @@
 #include "pink/pink.h"
 
 static const PlainGameDescriptor pinkGames[] = {
-        {"peril", "The Pink Panther: Passport to Peril"},
-        {"pokus", "The Pink Panther: Hokus Pokus Pink"},
-        {0, 0}
+		{"peril", "The Pink Panther: Passport to Peril"},
+		{"pokus", "The Pink Panther: Hokus Pokus Pink"},
+		{0, 0}
 };
 
 #include "detection_tables.h"
 
 class PinkMetaEngine : public AdvancedMetaEngine {
 public:
-    PinkMetaEngine() : AdvancedMetaEngine(Pink::gameDescriptions, sizeof(ADGameDescription), pinkGames) {
-        _gameIds = pinkGames;
-    }
+	PinkMetaEngine() : AdvancedMetaEngine(Pink::gameDescriptions, sizeof(ADGameDescription), pinkGames) {
+		_gameIds = pinkGames;
+	}
 
-    virtual const char *getName() const {
-        return "Pink Panther Engine";
-    }
+	virtual const char *getName() const {
+		return "Pink Panther Engine";
+	}
 
-    virtual const char *getOriginalCopyright() const {
-        return "Pink Panther Engine (C) Wanderlust Interactive";
-    }
+	virtual const char *getOriginalCopyright() const {
+		return "Pink Panther Engine (C) Wanderlust Interactive";
+	}
 
-    //virtual bool hasFeature(MetaEngineFeature f) const;
-    //virtual int getMaximumSaveSlot() const { return 0; }
-    //virtual SaveStateList listSaves(const char *target) const;
-    //virtual void removeSaveState(const char *target, int slot) const;
-    //virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-    virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	//virtual bool hasFeature(MetaEngineFeature f) const;
+	//virtual int getMaximumSaveSlot() const { return 0; }
+	//virtual SaveStateList listSaves(const char *target) const;
+	//virtual void removeSaveState(const char *target, int slot) const;
+	//virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
 bool PinkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-    if (desc) {
-        *engine = new Pink::PinkEngine(syst, desc);
-    }
+	if (desc) {
+		*engine = new Pink::PinkEngine(syst, desc);
+	}
 
-    return desc != 0;
+	return desc != 0;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PINK)

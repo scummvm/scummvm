@@ -31,54 +31,54 @@
 namespace Pink {
 
 Sound::Sound(Audio::Mixer *mixer, Common::SafeSeekableSubReadStream *stream)
-    : _mixer(mixer), _fileStream(stream)
+	: _mixer(mixer), _fileStream(stream)
 {
 
 }
 
 Sound::~Sound() {
-    stop();
-    delete _fileStream;
+	stop();
+	delete _fileStream;
 }
 
 bool Sound::isPlaying() {
-    return _mixer->isSoundHandleActive(_handle);
+	return _mixer->isSoundHandleActive(_handle);
 }
 
 void Sound::pause() {
-    _mixer->pauseHandle(_handle, true);
+	_mixer->pauseHandle(_handle, true);
 }
 
 void Sound::resume() {
-    _mixer->pauseHandle(_handle, false);
+	_mixer->pauseHandle(_handle, false);
 }
 
 void Sound::stop() {
-    _mixer->stopHandle(_handle);
+	_mixer->stopHandle(_handle);
 }
 
 void Sound::play(Audio::Mixer::SoundType type, int volume, bool isLoop) {
-    // Vox files in pink have wave format.
-    // RIFF (little-endian) data, WAVE audio, Microsoft PCM, 8 bit, mono 22050 Hz
-    _mixer->stopHandle(_handle);
+	// Vox files in pink have wave format.
+	// RIFF (little-endian) data, WAVE audio, Microsoft PCM, 8 bit, mono 22050 Hz
+	_mixer->stopHandle(_handle);
 
-    _fileStream->seek(0);
-    Audio::AudioStream *audioStream ;
-    Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(_fileStream, DisposeAfterUse::NO);
-    if (isLoop) {
-        audioStream = Audio::makeLoopingAudioStream(wavStream, 0, 0, 0);
-    }
-    else audioStream = wavStream;
+	_fileStream->seek(0);
+	Audio::AudioStream *audioStream ;
+	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(_fileStream, DisposeAfterUse::NO);
+	if (isLoop) {
+		audioStream = Audio::makeLoopingAudioStream(wavStream, 0, 0, 0);
+	}
+	else audioStream = wavStream;
 
-    _mixer->playStream(type, &_handle , audioStream, -1 , 50, 0, DisposeAfterUse::YES);
+	_mixer->playStream(type, &_handle , audioStream, -1 , 50, 0, DisposeAfterUse::YES);
 }
 
 void Sound::setBalance(int8 balance) {
-    _mixer->setChannelBalance(_handle, balance);
+	_mixer->setChannelBalance(_handle, balance);
 }
 
 uint32 Sound::getCurrentSample() {
-    return _mixer->getSoundElapsedTime(_handle) * kSampleRate / 1000;
+	return _mixer->getSoundElapsedTime(_handle) * kSampleRate / 1000;
 }
 
 } // End of namespace Pink

@@ -30,64 +30,64 @@
 namespace Pink {
 
 void SupportingActor::deserialize(Archive &archive) {
-    Actor::deserialize(archive);
-    _location = archive.readString();
-    _pdaLink = archive.readString();
-    _cursor = archive.readString();
-    _handlerMgr.deserialize(archive);
+	Actor::deserialize(archive);
+	_location = archive.readString();
+	_pdaLink = archive.readString();
+	_cursor = archive.readString();
+	_handlerMgr.deserialize(archive);
 }
 
 void SupportingActor::toConsole() {
-    debug("SupportingActor: _name = %s, _location=%s, _pdaLink=%s, _cursor=%s",
-          _name.c_str(), _location.c_str(), _pdaLink.c_str(), _cursor.c_str());
-    for (uint i = 0; i < _actions.size(); ++i) {
-        _actions[i]->toConsole();
-    }
-    _handlerMgr.toConsole();
+	debug("SupportingActor: _name = %s, _location=%s, _pdaLink=%s, _cursor=%s",
+		  _name.c_str(), _location.c_str(), _pdaLink.c_str(), _cursor.c_str());
+	for (uint i = 0; i < _actions.size(); ++i) {
+		_actions[i]->toConsole();
+	}
+	_handlerMgr.toConsole();
 }
 
 void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
-    if (isLeftClickHandlers()){
-        if (!_cursor.empty()){
-            mgr->setCursor(_cursor, point);
-        }
-        else mgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
-    }
-    else Actor::onMouseOver(point, mgr);
+	if (isLeftClickHandlers()){
+		if (!_cursor.empty()){
+			mgr->setCursor(_cursor, point);
+		}
+		else mgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
+	}
+	else Actor::onMouseOver(point, mgr);
 }
 
 bool SupportingActor::isLeftClickHandlers() {
-    return _handlerMgr.isLeftClickHandler(this);
+	return _handlerMgr.isLeftClickHandler(this);
 }
 
 bool SupportingActor::isUseClickHandlers(InventoryItem *item) {
-    return _handlerMgr.isUseClickHandler(this, item->getName());
+	return _handlerMgr.isUseClickHandler(this, item->getName());
 }
 
 void SupportingActor::onTimerMessage() {
-    _handlerMgr.onTimerMessage(this);
+	_handlerMgr.onTimerMessage(this);
 }
 
 bool SupportingActor::onLeftClickMessage() {
-    return _handlerMgr.onLeftClickMessage(this);
+	return _handlerMgr.onLeftClickMessage(this);
 }
 
 bool SupportingActor::onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) {
-    return _handlerMgr.onUseClickMessage(this, item, mgr);
+	return _handlerMgr.onUseClickMessage(this, item, mgr);
 }
 
 const Common::String &SupportingActor::getLocation() const {
-    return _location;
+	return _location;
 }
 
 SupportingActor::~SupportingActor() {}
 
 void SupportingActor::onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
-    Common::String item = itemName;
-    if (_handlerMgr.isUseClickHandler(this, itemName)) {
-        item += kClickable;
-    }
-    Actor::onHover(point, item, cursorMgr);
+	Common::String item = itemName;
+	if (_handlerMgr.isUseClickHandler(this, itemName)) {
+		item += kClickable;
+	}
+	Actor::onHover(point, item, cursorMgr);
 }
 
 } // End of namespace Pink

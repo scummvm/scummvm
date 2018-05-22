@@ -27,14 +27,14 @@
 namespace Pink {
 
 Page::~Page() {
-    clear();
+	clear();
 }
 
 void Page::load(Archive &archive) {
-    archive.mapObject(this);
-    NamedObject::deserialize(archive);
-    archive.readString(); //skip directory
-    _actors.deserialize(archive);
+	archive.mapObject(this);
+	NamedObject::deserialize(archive);
+	archive.readString(); //skip directory
+	_actors.deserialize(archive);
 }
 
 Actor *Page::findActor(const Common::String &name) {
@@ -47,52 +47,52 @@ Actor *Page::findActor(const Common::String &name) {
 }
 
 Sound *Page::loadSound(Common::String &fileName) {
-    return _resMgr.loadSound(fileName);
+	return _resMgr.loadSound(fileName);
 }
 
 
 CelDecoder *Page::loadCel(Common::String &fileName) {
-    return _resMgr.loadCEL(fileName);
+	return _resMgr.loadCEL(fileName);
 }
 
 
 void Page::toConsole() {
-    for (uint i = 0; i < _actors.size(); ++i) {
-        _actors[i]->toConsole();
-    }
+	for (uint i = 0; i < _actors.size(); ++i) {
+		_actors[i]->toConsole();
+	}
 }
 
 void Page::init() {
-    LeadActor::State state = _leadActor->getState();
-    bool unk = (state == LeadActor::kInventory || state == LeadActor::kPDA);
+	LeadActor::State state = _leadActor->getState();
+	bool unk = (state == LeadActor::kInventory || state == LeadActor::kPDA);
 
-    for (uint i = 0; i < _actors.size(); ++i) {
-        _actors[i]->init(unk);
-    }
+	for (uint i = 0; i < _actors.size(); ++i) {
+		_actors[i]->init(unk);
+	}
 }
 
 LeadActor *Page::getLeadActor() {
-    return _leadActor;
+	return _leadActor;
 }
 
 void Page::clear() {
-    for (uint i = 0; i < _actors.size(); ++i) {
-        delete _actors[i];
-    }
-    _actors.clear();
-    _resMgr.clear();
+	for (uint i = 0; i < _actors.size(); ++i) {
+		delete _actors[i];
+	}
+	_actors.clear();
+	_resMgr.clear();
 }
 
 void Page::pause() {
-    for (uint i = 0; i < _actors.size(); ++i) {
-        _actors[i]->pause();
-    }
+	for (uint i = 0; i < _actors.size(); ++i) {
+		_actors[i]->pause();
+	}
 }
 
 void Page::unpause() {
-    for (uint i = 0; i < _actors.size(); ++i) {
-        _actors[i]->unpause();
-    }
+	for (uint i = 0; i < _actors.size(); ++i) {
+		_actors[i]->unpause();
+	}
 }
 
 } // End of namespace Pink

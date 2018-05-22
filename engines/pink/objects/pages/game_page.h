@@ -36,39 +36,39 @@ class HandlerStartPage;
 
 class GamePage : public Page {
 public:
-    GamePage();
-    ~GamePage();
-    virtual void toConsole();
-    virtual void deserialize(Archive &archive);
+	GamePage();
+	~GamePage();
+	virtual void toConsole();
+	virtual void deserialize(Archive &archive);
 
-    virtual void load(Archive &archive);
-    void unload();
-    void loadManagers();
-    void init(bool isLoadingSave);
+	virtual void load(Archive &archive);
+	void unload();
+	void loadManagers();
+	void init(bool isLoadingSave);
 
-    PinkEngine *getGame();
-    Sequencer *getSequencer();
-    WalkMgr *getWalkMgr();
-    Module *getModule() const;
+	PinkEngine *getGame();
+	Sequencer *getSequencer();
+	WalkMgr *getWalkMgr();
+	Module *getModule() const;
 
-    bool checkValueOfVariable(const Common::String &variable, const Common::String &value);
-    void setVariable(Common::String &variable, Common::String &value);
+	bool checkValueOfVariable(const Common::String &variable, const Common::String &value);
+	void setVariable(Common::String &variable, Common::String &value);
 
-    virtual void clear();
+	virtual void clear();
 
 private:
-    bool initHandler();
-    void loadState();
-    void saveState();
+	bool initHandler();
+	void loadState();
+	void saveState();
 
-    bool _isLoaded;
-    Common::MemoryReadWriteStream *_memFile;
-    Module *_module;
-    CursorMgr *_cursorMgr;
-    WalkMgr *_walkMgr;
-    Sequencer *_sequencer;
-    Array<HandlerStartPage*> _handlers;
-    Common::StringMap _variables;
+	bool _isLoaded;
+	Common::MemoryReadWriteStream *_memFile;
+	Module *_module;
+	CursorMgr *_cursorMgr;
+	WalkMgr *_walkMgr;
+	Sequencer *_sequencer;
+	Array<HandlerStartPage*> _handlers;
+	Common::StringMap _variables;
 };
 
 }

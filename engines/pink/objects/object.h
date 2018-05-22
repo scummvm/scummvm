@@ -31,26 +31,26 @@ class Archive;
 
 class Object {
 public:
-    virtual ~Object() {};
-    virtual void load(Archive &){};
-    virtual void store(Archive &){};
-    virtual void deserialize(Archive &){};
-    virtual void init() {}
-    virtual void toConsole() {};
+	virtual ~Object() {};
+	virtual void load(Archive &){};
+	virtual void store(Archive &){};
+	virtual void deserialize(Archive &){};
+	virtual void init() {}
+	virtual void toConsole() {};
 };
 
 class NamedObject : public Object {
 public:
-    NamedObject(){};
-    NamedObject(const Common::String &name);
+	NamedObject(){};
+	NamedObject(const Common::String &name);
 
-    void deserialize(Archive &archive);
-    void store(Archive &archive);
+	void deserialize(Archive &archive);
+	void store(Archive &archive);
 
-    const Common::String &getName() const;
+	const Common::String &getName() const;
 
 protected:
-    Common::String _name;
+	Common::String _name;
 };
 
 } // End of namespace Pink

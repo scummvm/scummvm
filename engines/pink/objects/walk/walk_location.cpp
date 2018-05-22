@@ -28,16 +28,16 @@
 namespace Pink {
 
 void WalkLocation::deserialize(Pink::Archive &archive) {
-    NamedObject::deserialize(archive);
-    _neighbors.deserialize(archive);
+	NamedObject::deserialize(archive);
+	_neighbors.deserialize(archive);
 }
 
 void WalkLocation::toConsole() {
-    debug("\tWalkLocation: _name =%s", _name.c_str());
-    debug("\tNeighbors:");
-    for (uint i = 0; i < _neighbors.size(); ++i) {
-        debug("\t\t%s", _neighbors[i].c_str());
-    }
+	debug("\tWalkLocation: _name =%s", _name.c_str());
+	debug("\tNeighbors:");
+	for (uint i = 0; i < _neighbors.size(); ++i) {
+		debug("\t\t%s", _neighbors[i].c_str());
+	}
 }
 
 } // End of namespace Pink

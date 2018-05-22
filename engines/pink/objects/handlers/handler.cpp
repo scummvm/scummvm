@@ -34,123 +34,123 @@ namespace Pink {
 
 void Handler::deserialize(Archive &archive) {
 	_conditions.deserialize(archive);
-    _sideEffects.deserialize(archive);
+	_sideEffects.deserialize(archive);
 }
 
 bool Handler::isSuitable(Actor *actor) {
-    for (uint i = 0; i < _conditions.size(); ++i) {
-        if (!_conditions[i]->evaluate(actor)){
-            return false;
-        }
-    }
-    return true;
+	for (uint i = 0; i < _conditions.size(); ++i) {
+		if (!_conditions[i]->evaluate(actor)){
+			return false;
+		}
+	}
+	return true;
 }
 
 void Handler::executeSideEffects(Actor *actor) {
-    for (uint i = 0; i < _sideEffects.size(); ++i) {
-        _sideEffects[i]->execute(actor);
-    }
+	for (uint i = 0; i < _sideEffects.size(); ++i) {
+		_sideEffects[i]->execute(actor);
+	}
 }
 
 void Handler::handle(Actor *actor) {
-    executeSideEffects(actor);
+	executeSideEffects(actor);
 }
 
 Handler::~Handler() {
-    for (uint i = 0; i < _sideEffects.size(); ++i) {
-        delete _sideEffects[i];
-    }
-    for (uint i = 0; i < _conditions.size(); ++i) {
-        delete _conditions[i];
-    }
+	for (uint i = 0; i < _sideEffects.size(); ++i) {
+		delete _sideEffects[i];
+	}
+	for (uint i = 0; i < _conditions.size(); ++i) {
+		delete _conditions[i];
+	}
 }
 
 void HandlerSequences::deserialize(Archive &archive) {
-    Handler::deserialize(archive);
-    _sequences.deserialize(archive);
+	Handler::deserialize(archive);
+	_sequences.deserialize(archive);
 }
 
 void HandlerSequences::handle(Actor *actor) {
-    Handler::handle(actor);
-    Sequencer *sequencer = actor->getSequencer();
+	Handler::handle(actor);
+	Sequencer *sequencer = actor->getSequencer();
 
-    assert(!_sequences.empty());
+	assert(!_sequences.empty());
 
-    Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
-    uint index = rnd.getRandomNumber(_sequences.size() - 1);
+	Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
+	uint index = rnd.getRandomNumber(_sequences.size() - 1);
 
-    Sequence *sequence = sequencer->findSequence(_sequences[index]);
+	Sequence *sequence = sequencer->findSequence(_sequences[index]);
 
-    assert(sequence);
-    sequencer->authorSequence(sequence, 0);
+	assert(sequence);
+	sequencer->authorSequence(sequence, 0);
 
-    execute(sequence);
+	execute(sequence);
 }
 
 void HandlerStartPage::execute(Sequence *sequence) {
-    sequence->_unk = 1;
+	sequence->_unk = 1;
 }
 
 void HandlerStartPage::toConsole() {
-    debug("HandlerStartPage:");
+	debug("HandlerStartPage:");
 
-    debug("\tSideEffects:");
-    for (uint i = 0; i < _sideEffects.size(); ++i) {
-        _sideEffects[i]->toConsole();
-    }
+	debug("\tSideEffects:");
+	for (uint i = 0; i < _sideEffects.size(); ++i) {
+		_sideEffects[i]->toConsole();
+	}
 
-    debug("\tConditions:");
-    for (uint i = 0; i < _conditions.size(); ++i) {
-        _conditions[i]->toConsole();
-    }
+	debug("\tConditions:");
+	for (uint i = 0; i < _conditions.size(); ++i) {
+		_conditions[i]->toConsole();
+	}
 
-    debug("\tSequences:");
-    for (uint i = 0; i < _sequences.size(); ++i) {
-        debug("\t\t%s", _sequences[i].c_str());
-    }
+	debug("\tSequences:");
+	for (uint i = 0; i < _sequences.size(); ++i) {
+		debug("\t\t%s", _sequences[i].c_str());
+	}
 }
 
 void HandlerLeftClick::toConsole() {
-    debug("HandlerLeftClick:");
+	debug("HandlerLeftClick:");
 
-    debug("\tSideEffects:");
-    for (uint i = 0; i < _sideEffects.size(); ++i) {
-        _sideEffects[i]->toConsole();
-    }
+	debug("\tSideEffects:");
+	for (uint i = 0; i < _sideEffects.size(); ++i) {
+		_sideEffects[i]->toConsole();
+	}
 
-    debug("\tConditions:");
-    for (uint i = 0; i < _conditions.size(); ++i) {
-        _conditions[i]->toConsole();
-    }
+	debug("\tConditions:");
+	for (uint i = 0; i < _conditions.size(); ++i) {
+		_conditions[i]->toConsole();
+	}
 
-    debug("\tSequences:");
-    for (uint i = 0; i < _sequences.size(); ++i) {
-        debug("\t\t%s", _sequences[i].c_str());
-    }
+	debug("\tSequences:");
+	for (uint i = 0; i < _sequences.size(); ++i) {
+		debug("\t\t%s", _sequences[i].c_str());
+	}
 }
 
 void HandlerUseClick::deserialize(Archive &archive) {
-    HandlerSequences::deserialize(archive);
-    _inventoryItem = archive.readString();
-    _recepient = archive.readString();
+	HandlerSequences::deserialize(archive);
+	_inventoryItem = archive.readString();
+	_recepient = archive.readString();
 }
 
 void HandlerUseClick::toConsole() {
-    debug("HandlerUseClick: _inventoryItem=%s, _recepient=%s", _inventoryItem.c_str(), _recepient.c_str());
-    debug("\tSideEffects:");
-    for (uint i = 0; i < _sideEffects.size(); ++i) {
-        _sideEffects[i]->toConsole();
-    }
+	debug("HandlerUseClick: _inventoryItem=%s, _recepient=%s", _inventoryItem.c_str(), _recepient.c_str());
+	debug("\tSideEffects:");
+	for (uint i = 0; i < _sideEffects.size(); ++i) {
+		_sideEffects[i]->toConsole();
+	}
 
-    debug("\tConditions:");
-    for (uint i = 0; i < _conditions.size(); ++i) {
-        _conditions[i]->toConsole();
-    }
+	debug("\tConditions:");
+	for (uint i = 0; i < _conditions.size(); ++i) {
+		_conditions[i]->toConsole();
+	}
 
-    debug("\tSequences:");
-    for (uint i = 0; i < _sequences.size(); ++i) {
-        debug("\t\t%s", _sequences[i].c_str());
-    }
+	debug("\tSequences:");
+	for (uint i = 0; i < _sequences.size(); ++i) {
+		debug("\t\t%s", _sequences[i].c_str());
+	}
 }
 
 } // End of namespace Pink

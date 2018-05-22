@@ -33,54 +33,54 @@ class SequenceContext;
 
 class Sequence : public NamedObject {
 public:
-    Sequence();
-    virtual ~Sequence();
-    virtual void deserialize(Archive &archive);
+	Sequence();
+	virtual ~Sequence();
+	virtual void deserialize(Archive &archive);
 
-    virtual void toConsole();
+	virtual void toConsole();
 
-    Common::Array<SequenceItem*> &getItems();
+	Common::Array<SequenceItem*> &getItems();
 
-    void setContext(SequenceContext *context);
-    virtual void init(int unk);
-    virtual void start(int unk);
-    virtual void end();
+	void setContext(SequenceContext *context);
+	virtual void init(int unk);
+	virtual void start(int unk);
+	virtual void end();
 
-    virtual void update();
-    virtual void restart();
-    virtual void skipSubSequence();
-    virtual void skipToLastSubSequence();
-    void skipItemsTo(int index);
+	virtual void update();
+	virtual void restart();
+	virtual void skipSubSequence();
+	virtual void skipToLastSubSequence();
+	void skipItemsTo(int index);
 
 
 public:
-    SequenceContext *_context;
-    Sequencer *_sequencer;
-    Array<SequenceItem*> _items;
-    int _unk;
+	SequenceContext *_context;
+	Sequencer *_sequencer;
+	Array<SequenceItem*> _items;
+	int _unk;
 };
 
 class Sound;
 
 class SequenceAudio : public Sequence {
 public:
-    virtual void deserialize(Archive &archive);
-    virtual void toConsole();
+	virtual void deserialize(Archive &archive);
+	virtual void toConsole();
 
-    virtual void init(int unk);
-    virtual void start(int unk);
-    virtual void end();
+	virtual void init(int unk);
+	virtual void start(int unk);
+	virtual void end();
 
-    virtual void update();
-    virtual void restart();
+	virtual void update();
+	virtual void restart();
 
-    virtual void skipSubSequence() {};
-    virtual void skipToLastSubSequence();
+	virtual void skipSubSequence() {};
+	virtual void skipToLastSubSequence();
 
 private:
-    Common::String _soundName;
-    Sound *_sound;
-    uint _sample;
+	Common::String _soundName;
+	Sound *_sound;
+	uint _sample;
 };
 
 } // End of namespace Pink

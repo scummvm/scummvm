@@ -28,19 +28,19 @@
 namespace Pink {
 
 void ActionText::deserialize(Archive &archive) {
-    for (int i = 0; i < 4 ; ++i) {
-        _bounds[i] = archive.readDWORD();
-    }
-    _centered = archive.readDWORD();
-    _scrollBar = archive.readDWORD();
-    _textColor = archive.readDWORD();
-    _backgroundColor = archive.readDWORD();
+	for (int i = 0; i < 4 ; ++i) {
+		_bounds[i] = archive.readDWORD();
+	}
+	_centered = archive.readDWORD();
+	_scrollBar = archive.readDWORD();
+	_textColor = archive.readDWORD();
+	_backgroundColor = archive.readDWORD();
 }
 
 void ActionText::toConsole() {
-    debug("\tActionText: _name = %s, _text = %s, "
-                  "_bound0 = %u, _bound1 = %u, _bound2 = %u, _bound3 = %u _centered = %u, _scrollBar = %u, _textColor = %u _backgroundColor = %u",
-          _name.c_str(), _text.c_str(), _bounds[0], _bounds[1], _bounds[2], _bounds[3], _centered, _scrollBar, _textColor, _backgroundColor);
+	debug("\tActionText: _name = %s, _text = %s, "
+				  "_bound0 = %u, _bound1 = %u, _bound2 = %u, _bound3 = %u _centered = %u, _scrollBar = %u, _textColor = %u _backgroundColor = %u",
+		  _name.c_str(), _text.c_str(), _bounds[0], _bounds[1], _bounds[2], _bounds[3], _centered, _scrollBar, _textColor, _backgroundColor);
 }
 
 } // End of namespace Pink

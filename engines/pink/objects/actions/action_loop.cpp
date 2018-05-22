@@ -28,42 +28,42 @@
 namespace Pink {
 
 void ActionLoop::deserialize(Archive &archive) {
-    ActionPlay::deserialize(archive);
-    uint16 style;
-    _intro = archive.readDWORD();
-    style = archive.readWORD();
-    switch (style) {
-        case kPingPong:
-            _style = kPingPong;
-            break;
-        case kRandom:
-            _style = kRandom;
-            break;
-        default:
-            _style = kForward;
-            break;
-    }
+	ActionPlay::deserialize(archive);
+	uint16 style;
+	_intro = archive.readDWORD();
+	style = archive.readWORD();
+	switch (style) {
+		case kPingPong:
+			_style = kPingPong;
+			break;
+		case kRandom:
+			_style = kRandom;
+			break;
+		default:
+			_style = kForward;
+			break;
+	}
 }
 
 void ActionLoop::toConsole() {
-    debug("\tActionLoop: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
-                  " _endFrame = %d, _intro = %u, _style = %u",
-          _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style);
+	debug("\tActionLoop: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
+				  " _endFrame = %d, _intro = %u, _style = %u",
+		  _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style);
 }
 
 void ActionLoop::update() {
-    // for now it supports only forward loop animation
-    if (_style == kForward) {
-        if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame){
-            //debug("ACTION LOOP : NEXT ITERATION");
-            _decoder->rewind();
-        }
-    }
+	// for now it supports only forward loop animation
+	if (_style == kForward) {
+		if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame){
+			//debug("ACTION LOOP : NEXT ITERATION");
+			_decoder->rewind();
+		}
+	}
 }
 
 void ActionLoop::onStart() {
-    ActionPlay::onStart();
-    _actor->endAction();
+	ActionPlay::onStart();
+	_actor->endAction();
 }
 
 } // End of namespace Pink

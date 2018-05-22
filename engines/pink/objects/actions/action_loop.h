@@ -29,19 +29,19 @@ namespace Pink {
 
 class ActionLoop : public ActionPlay {
 public:
-    virtual void deserialize(Archive &archive);
-    virtual void toConsole();
-    virtual void update();
+	virtual void deserialize(Archive &archive);
+	virtual void toConsole();
+	virtual void update();
 protected:
-    virtual void onStart();
+	virtual void onStart();
 
-    enum Style {
-        kPingPong = 2,
-        kRandom = 3,
-        kForward = 4
-    };
-    uint _intro;
-    Style _style;
+	enum Style {
+		kPingPong = 2,
+		kRandom = 3,
+		kForward = 4
+	};
+	uint _intro;
+	Style _style;
 };
 
 } // End of namespace Pink

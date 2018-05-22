@@ -31,18 +31,18 @@ class ActionSfx;
 
 class ActionPlayWithSfx : public ActionPlay {
 public:
-    virtual ~ActionPlayWithSfx();
-    virtual void deserialize(Archive &archive);
-    virtual void toConsole();
-    virtual void update();
+	virtual ~ActionPlayWithSfx();
+	virtual void deserialize(Archive &archive);
+	virtual void toConsole();
+	virtual void update();
 
 protected:
-    virtual void onStart();
+	virtual void onStart();
 
 private:
-    void updateSound();
-    uint32 _isLoop;
-    Array<ActionSfx*> _sfxArray;
+	void updateSound();
+	uint32 _isLoop;
+	Array<ActionSfx*> _sfxArray;
 };
 
 class Sound;
@@ -50,20 +50,20 @@ class GamePage;
 
 class ActionSfx : public Object {
 public:
-    ActionSfx();
-    virtual ~ActionSfx();
-    virtual void deserialize(Archive &archive);
-    virtual void toConsole();
+	ActionSfx();
+	virtual ~ActionSfx();
+	virtual void deserialize(Archive &archive);
+	virtual void toConsole();
 
-    void play(GamePage *page);
-    uint32 getFrame();
-    void end();
+	void play(GamePage *page);
+	uint32 getFrame();
+	void end();
 
 private:
-    Sound *_sound;
-    Common::String _sfxName;
-    uint32 _volume;
-    uint32 _frame;
+	Sound *_sound;
+	Common::String _sfxName;
+	uint32 _volume;
+	uint32 _frame;
 };
 
 } // End of namespace Pink

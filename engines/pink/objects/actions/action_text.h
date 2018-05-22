@@ -29,17 +29,17 @@ namespace Pink {
 
 class ActionText : public Action {
 public:
-    void deserialize(Archive &archive) override;
+	void deserialize(Archive &archive) override;
 
-    void toConsole() override;
+	void toConsole() override;
 
 private:
-    Common::String _text;
-    uint32 _bounds[4];
-    uint32 _centered;
-    uint32 _scrollBar;
-    uint32 _textColor;
-    uint32 _backgroundColor;
+	Common::String _text;
+	uint32 _bounds[4];
+	uint32 _centered;
+	uint32 _scrollBar;
+	uint32 _textColor;
+	uint32 _backgroundColor;
 };
 
 } // End of namespace Pink

@@ -27,8 +27,8 @@
 namespace Pink {
 
 void Action::deserialize(Archive &archive) {
-    NamedObject::deserialize(archive);
-    _actor = static_cast<Actor*>(archive.readObject());
+	NamedObject::deserialize(archive);
+	_actor = static_cast<Actor*>(archive.readObject());
 }
 
 } // End of namespace Pink

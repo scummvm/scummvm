@@ -25,18 +25,18 @@
 namespace Pink {
 
 void PDAButtonActor::deserialize(Archive &archive) {
-    Actor::deserialize(archive);
-    _hideOnStop = (bool) archive.readDWORD();
-    _opaque = (bool) archive.readDWORD();
+	Actor::deserialize(archive);
+	_hideOnStop = (bool) archive.readDWORD();
+	_opaque = (bool) archive.readDWORD();
 
-    int comm = archive.readDWORD();
-    assert(comm <= 4);
-    _command = (Command) comm;
+	int comm = archive.readDWORD();
+	assert(comm <= 4);
+	_command = (Command) comm;
 }
 
 void PDAButtonActor::toConsole() {
-    debug("PDAButtonActor: _name = %s, _x = %u _y = %u _hideOnStop = %u, _opaque = %u, _command = %u",
-          _name.c_str(), _x, _y, _hideOnStop, _opaque, (int) _command);
+	debug("PDAButtonActor: _name = %s, _x = %u _y = %u _hideOnStop = %u, _opaque = %u, _command = %u",
+		  _name.c_str(), _x, _y, _hideOnStop, _opaque, (int) _command);
 }
 
 } // End of namespace Pink

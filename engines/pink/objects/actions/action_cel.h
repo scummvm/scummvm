@@ -31,28 +31,28 @@ class CelDecoder;
 
 class ActionCEL : public Action {
 public:
-    ~ActionCEL() override;
+	~ActionCEL() override;
 
-    ActionCEL();
-    virtual void deserialize(Archive &archive);
-    virtual void start(bool unk);
-    virtual void end();
-    virtual void update();
+	ActionCEL();
+	virtual void deserialize(Archive &archive);
+	virtual void start(bool unk);
+	virtual void end();
+	virtual void update();
 
-    uint32 getZ();
-    CelDecoder *getDecoder();
+	uint32 getZ();
+	CelDecoder *getDecoder();
 
-    virtual bool initPalette(Director *director);
+	virtual bool initPalette(Director *director);
 
-    void pause() override;
+	void pause() override;
 
-    void unpause() override;
+	void unpause() override;
 
 protected:
-    virtual void onStart() {} ;
-    CelDecoder *_decoder;
-    Common::String _fileName;
-    uint32 _z;
+	virtual void onStart() {} ;
+	CelDecoder *_decoder;
+	Common::String _fileName;
+	uint32 _z;
 };
 
 } // End of namespace Pink

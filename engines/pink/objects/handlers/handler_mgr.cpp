@@ -28,107 +28,107 @@
 namespace Pink {
 
 void HandlerMgr::deserialize(Archive &archive) {
-    _leftClickHandlers.deserialize(archive);
-    _useClickHandlers.deserialize(archive);
-    _timerHandlers.deserialize(archive);
+	_leftClickHandlers.deserialize(archive);
+	_useClickHandlers.deserialize(archive);
+	_timerHandlers.deserialize(archive);
 }
 
 void HandlerMgr::toConsole() {
-    debug("HandlerMgr:");
-    for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
-        _leftClickHandlers[i]->toConsole();
-    }
-    for (uint i = 0; i < _useClickHandlers.size(); ++i) {
-        _useClickHandlers[i]->toConsole();
-    }
-    for (uint i = 0; i < _timerHandlers.size(); ++i) {
-        _timerHandlers[i]->toConsole();
-    }
+	debug("HandlerMgr:");
+	for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
+		_leftClickHandlers[i]->toConsole();
+	}
+	for (uint i = 0; i < _useClickHandlers.size(); ++i) {
+		_useClickHandlers[i]->toConsole();
+	}
+	for (uint i = 0; i < _timerHandlers.size(); ++i) {
+		_timerHandlers[i]->toConsole();
+	}
 }
 
 bool HandlerMgr::isLeftClickHandler(Actor *actor) {
-    for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
-        if (_leftClickHandlers[i]->isSuitable(actor))
-            return true;
-    }
+	for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
+		if (_leftClickHandlers[i]->isSuitable(actor))
+			return true;
+	}
 
-    return false;
+	return false;
 }
 
 bool HandlerMgr::isUseClickHandler(Actor *actor, const Common::String &itemName){
-    for (uint i = 0; i < _useClickHandlers.size(); ++i) {
-        if (itemName == _useClickHandlers[i]->getInventoryItem() &&
-            _useClickHandlers[i]->isSuitable(actor))
-            return true;
-    }
+	for (uint i = 0; i < _useClickHandlers.size(); ++i) {
+		if (itemName == _useClickHandlers[i]->getInventoryItem() &&
+			_useClickHandlers[i]->isSuitable(actor))
+			return true;
+	}
 
-    return false;
+	return false;
 }
 
 
 void HandlerMgr::onTimerMessage(Actor *actor) {
-    Handler *handler = findSuitableHandlerTimer(actor);
-    if (handler)
-        handler->handle(actor);
+	Handler *handler = findSuitableHandlerTimer(actor);
+	if (handler)
+		handler->handle(actor);
 }
 
 bool HandlerMgr::onLeftClickMessage(Actor *actor) {
-    Handler *handler = findSuitableHandlerLeftClick(actor);
-    if (handler) {
-        handler->handle(actor);
-        return true;
-    }
-    return false;
+	Handler *handler = findSuitableHandlerLeftClick(actor);
+	if (handler) {
+		handler->handle(actor);
+		return true;
+	}
+	return false;
 }
 
 bool HandlerMgr::onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr) {
-    HandlerUseClick *handler = findSuitableHandlerUseClick(actor, item);
-    if (handler) {
-        if (!handler->getRecepient().empty())
-            mgr->setItemOwner(handler->getRecepient(), item);
-        handler->handle(actor);
-        return true;
-    }
-    return false;
+	HandlerUseClick *handler = findSuitableHandlerUseClick(actor, item);
+	if (handler) {
+		if (!handler->getRecepient().empty())
+			mgr->setItemOwner(handler->getRecepient(), item);
+		handler->handle(actor);
+		return true;
+	}
+	return false;
 }
 
 Handler *HandlerMgr::findSuitableHandlerTimer(Actor *actor) {
-    for (uint i = 0; i < _timerHandlers.size(); ++i) {
-        if (_timerHandlers[i]->isSuitable(actor))
-            return _timerHandlers[i];
-    }
+	for (uint i = 0; i < _timerHandlers.size(); ++i) {
+		if (_timerHandlers[i]->isSuitable(actor))
+			return _timerHandlers[i];
+	}
 
-    return nullptr;
+	return nullptr;
 }
 
 HandlerLeftClick *HandlerMgr::findSuitableHandlerLeftClick(Actor *actor) {
-    for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
-        if (_leftClickHandlers[i]->isSuitable(actor))
-            return _leftClickHandlers[i];
-    }
+	for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
+		if (_leftClickHandlers[i]->isSuitable(actor))
+			return _leftClickHandlers[i];
+	}
 
-    return nullptr;
+	return nullptr;
 }
 
 HandlerUseClick *HandlerMgr::findSuitableHandlerUseClick(Actor *actor, InventoryItem *item) {
-    for (uint i = 0; i < _useClickHandlers.size(); ++i) {
-        if (item->getName() == _useClickHandlers[i]->getInventoryItem() && _useClickHandlers[i]->isSuitable(actor))
-            return _useClickHandlers[i];
-    }
+	for (uint i = 0; i < _useClickHandlers.size(); ++i) {
+		if (item->getName() == _useClickHandlers[i]->getInventoryItem() && _useClickHandlers[i]->isSuitable(actor))
+			return _useClickHandlers[i];
+	}
 
-    return nullptr;
+	return nullptr;
 }
 
 HandlerMgr::~HandlerMgr() {
-    for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
-        delete _leftClickHandlers[i];
-    }
-    for (uint j = 0; j < _useClickHandlers.size(); ++j) {
-        delete _useClickHandlers[j];
-    }
-    for (uint k = 0; k < _timerHandlers.size(); ++k) {
-        delete _timerHandlers[k];
-    }
+	for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
+		delete _leftClickHandlers[i];
+	}
+	for (uint j = 0; j < _useClickHandlers.size(); ++j) {
+		delete _useClickHandlers[j];
+	}
+	for (uint k = 0; k < _timerHandlers.size(); ++k) {
+		delete _timerHandlers[k];
+	}
 }
 
 } // End of namespace Pink

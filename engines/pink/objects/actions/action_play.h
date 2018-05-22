@@ -29,17 +29,17 @@ namespace Pink {
 
 class ActionPlay : public ActionStill {
 public:
-    virtual void deserialize(Archive &archive);
-    virtual void toConsole();
+	virtual void deserialize(Archive &archive);
+	virtual void toConsole();
 
-    virtual void end();
+	virtual void end();
 
-    void update() override;
+	void update() override;
 
 protected:
-    virtual void onStart();
+	virtual void onStart();
 
-    int32 _stopFrame;
+	int32 _stopFrame;
 };
 
 } // End of namespace Pink

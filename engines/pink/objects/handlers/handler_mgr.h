@@ -39,26 +39,26 @@ class Actor;
 
 class HandlerMgr : public Object {
 public:
-    virtual ~HandlerMgr();
-    virtual void deserialize(Archive &archive);
+	virtual ~HandlerMgr();
+	virtual void deserialize(Archive &archive);
 
-    virtual void toConsole();
+	virtual void toConsole();
 
-    bool isLeftClickHandler(Actor *actor);
-    bool isUseClickHandler(Actor *actor, const Common::String &itemName);
+	bool isLeftClickHandler(Actor *actor);
+	bool isUseClickHandler(Actor *actor, const Common::String &itemName);
 
-    void onTimerMessage(Actor *actor);
-    bool onLeftClickMessage(Actor *actor);
-    bool onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr);
+	void onTimerMessage(Actor *actor);
+	bool onLeftClickMessage(Actor *actor);
+	bool onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr);
 
 private:
-    Handler *findSuitableHandlerTimer(Actor *actor);
-    HandlerLeftClick *findSuitableHandlerLeftClick(Actor *actor);
-    HandlerUseClick *findSuitableHandlerUseClick(Actor *actor, InventoryItem *item);
+	Handler *findSuitableHandlerTimer(Actor *actor);
+	HandlerLeftClick *findSuitableHandlerLeftClick(Actor *actor);
+	HandlerUseClick *findSuitableHandlerUseClick(Actor *actor, InventoryItem *item);
 
-    Array<HandlerLeftClick*> _leftClickHandlers;
-    Array<HandlerUseClick*> _useClickHandlers;
-    Array<Handler*> _timerHandlers;
+	Array<HandlerLeftClick*> _leftClickHandlers;
+	Array<HandlerUseClick*> _useClickHandlers;
+	Array<Handler*> _timerHandlers;
 };
 
 }

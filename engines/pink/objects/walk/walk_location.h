@@ -28,12 +28,12 @@ namespace Pink {
 
 class WalkLocation : public NamedObject {
 public:
-    virtual void deserialize(Archive &archive);
-    void toConsole() override;
-    Common::StringArray &getNeigbors() { return _neighbors;}
+	virtual void deserialize(Archive &archive);
+	void toConsole() override;
+	Common::StringArray &getNeigbors() { return _neighbors;}
 
 private:
-    StringArray _neighbors;
+	StringArray _neighbors;
 };
 
 } // End of namespace Pink

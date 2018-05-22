@@ -27,18 +27,18 @@
 namespace Pink {
 
 void WalkAction::deserialize(Archive &archive) {
-    ActionCEL::deserialize(archive);
-    uint32 calcFramePositions = archive.readDWORD();
-    _toCalcFramePositions = calcFramePositions;
+	ActionCEL::deserialize(archive);
+	uint32 calcFramePositions = archive.readDWORD();
+	_toCalcFramePositions = calcFramePositions;
 }
 
 void WalkAction::toConsole() {
-    debug("\tWalkAction: _name = %s, _fileName = %s, _calcFramePositions = %u",
-          _name.c_str(), _fileName.c_str(), _toCalcFramePositions);
+	debug("\tWalkAction: _name = %s, _fileName = %s, _calcFramePositions = %u",
+		  _name.c_str(), _fileName.c_str(), _toCalcFramePositions);
 }
 
 void WalkAction::onStart() {
-    _decoder->start();
+	_decoder->start();
 }
 
 } // End of namespace Pink

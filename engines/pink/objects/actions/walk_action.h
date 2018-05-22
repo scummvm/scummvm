@@ -29,15 +29,15 @@ namespace Pink {
 
 class WalkAction : public ActionCEL {
 public:
-    virtual void deserialize(Archive &archive);
+	virtual void deserialize(Archive &archive);
 
-    virtual void toConsole();
+	virtual void toConsole();
 
 protected:
-    void onStart() override;
+	void onStart() override;
 
 private:
-    bool _toCalcFramePositions;
+	bool _toCalcFramePositions;
 };
 
 } // End of namespace Pink
