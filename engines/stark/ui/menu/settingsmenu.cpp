@@ -29,7 +29,7 @@
 
 namespace Stark {
 
-SettingsMenuScreen::SettingsMenuScreen(Gfx::Driver *gfx, Cursor *cursor):
+SettingsMenuScreen::SettingsMenuScreen(Gfx::Driver *gfx, Cursor *cursor) :
 		StaticLocationScreen(gfx, cursor, "OptionLocation", Screen::kScreenSettingsMenu) {
 }
 
@@ -132,9 +132,8 @@ void SettingsMenuScreen::open() {
 			nullptr,
 			nullptr));
 	
-	_widgets.push_back(new StaticLocationWidget(
+	_widgets.push_back(new VolumeWidget(
 			"Voice",
-			nullptr,
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kVoice>)));
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -200,19 +199,19 @@ void SettingsMenuScreen::backHandler() {
 
 CheckboxWidget::CheckboxWidget(const char *renderEntryName, bool isChecked,
 							   WidgetOnClickCallback *onClickCallback,
-	            			   WidgetOnMouseMoveCallback *onMouseMoveCallback):
+	            			   WidgetOnMouseMoveCallback *onMouseMoveCallback) :
 		StaticLocationWidget(renderEntryName, onClickCallback, onMouseMoveCallback),
 		_isChecked(isChecked) {
-	// Load the image
-	_checkBoxImage[0] = StarkStaticProvider->getUIElement(StaticProvider::UIElement::kCheckMark, 0);
-	_checkBoxImage[1] = StarkStaticProvider->getUIElement(StaticProvider::UIElement::kCheckMark, 1);
-	_width = _checkBoxImage[0]->getWidth();
-	_height = _checkBoxImage[0]->getHeight();
+	// Load images
+	_checkBoxImage[0] = StarkStaticProvider->getUIElement(StaticProvider::kCheckMark, 0);
+	_checkBoxImage[1] = StarkStaticProvider->getUIElement(StaticProvider::kCheckMark, 1);
+	_checkboxWidth = _checkBoxImage[0]->getWidth();
+	_checkboxHeight = _checkBoxImage[0]->getHeight();
 	_currentImage = _checkBoxImage[_isChecked];
 
-	// Set the position
+	// Set positions
 	Common::Point textPosition = getPosition();
-	_position.x = textPosition.x - _width - 8;
+	_position.x = textPosition.x - _checkboxWidth - 8;
 	_position.y = textPosition.y - 4;
 }
 
@@ -232,8 +231,43 @@ void CheckboxWidget::onClick() {
 }
 
 bool CheckboxWidget::isMouseInsideCheckbox(const Common::Point &mousePos) const {
-	return mousePos.x >= _position.x && mousePos.x <= _position.x + _width &&
-		   mousePos.y >= _position.y && mousePos.y <= _position.y + _height;
+	return mousePos.x >= _position.x && mousePos.x <= _position.x + _checkboxWidth &&
+		   mousePos.y >= _position.y && mousePos.y <= _position.y + _checkboxHeight;
+}
+
+VolumeWidget::VolumeWidget(const char *renderEntryName, WidgetOnMouseMoveCallback *onMouseMoveCallback) :
+		StaticLocationWidget(renderEntryName, nullptr, onMouseMoveCallback) {
+	// Load images
+	_sliderImage = StarkStaticProvider->getUIElement(StaticProvider::kVolume, 0);
+	_bgImage = StarkStaticProvider->getUIElement(StaticProvider::kVolume, 1);
+	_bgWidth = _bgImage->getWidth();
+	_bgHeight = _bgImage->getHeight();
+
+	// Set positions
+	// TODO: get the real position
+	_bgPosition.x = 100; _bgPosition.y = 200;
+	_sliderPosition.x = 100; _sliderPosition.y = 200;
+}
+
+void VolumeWidget::render() {
+	StaticLocationWidget::render();
+	_sliderImage->render(_sliderPosition, true);
+}
+
+bool VolumeWidget::isMouseInside(const Common::Point &mousePos) const {
+	return StaticLocationWidget::isMouseInside(mousePos) || isMouseInsideBg(mousePos);
+}
+
+void VolumeWidget::onMouseMove(const Common::Point &mousePos) {
+	StaticLocationWidget::onMouseMove(mousePos);
+	if (isMouseInsideBg(mousePos)) {
+		setTextColor(_textColorBgHovered);
+	}
+}
+
+bool VolumeWidget::isMouseInsideBg(const Common::Point &mousePos) const {
+	return mousePos.x >= _bgPosition.x && mousePos.x <= _bgPosition.x + _bgWidth &&
+		   mousePos.y >= _bgPosition.y && mousePos.y <= _bgPosition.y + _bgHeight;
 }
 
 } // End of namespace Stark

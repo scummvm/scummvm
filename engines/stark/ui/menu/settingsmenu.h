@@ -85,27 +85,33 @@ private:
 	VisualImageXMG *_currentImage;
 	VisualImageXMG *_checkBoxImage[2];
 	Common::Point _position;
-	int _width, _height;
+	int _checkboxWidth, _checkboxHeight;
 	bool _isChecked;
 
 	bool isMouseInsideCheckbox(const Common::Point &mousePos) const;
 };
 
-/*
 class VolumeWidget : public StaticLocationWidget {
 public:
-	VolumeWidget(const char *renderEntryName,
-				 WidgetOnClickCallback *onClickCallback,
-	             WidgetOnMouseMoveCallback *onMouseMoveCallback);
-	virtual ~VolumeWidget();
+	VolumeWidget(const char *renderEntryName, WidgetOnMouseMoveCallback *onMouseMoveCallback);
+	virtual ~VolumeWidget() {};
 
 	// StaticLocationWidget API
 	void render() override;
 	bool isMouseInside(const Common::Point &mousePos) const override;
-	void onClick() override;
 	void onMouseMove(const Common::Point &mousePos) override;
+
+private:
+	static const uint32 _textColorBgHovered = 0xFFFFFFFF;
+
+	VisualImageXMG *_sliderImage;
+	VisualImageXMG *_bgImage;
+	Common::Point _sliderPosition, _bgPosition;
+	int _bgWidth, _bgHeight;
+
+	bool isMouseInsideBg(const Common::Point &mousePos) const;
 };
-*/
+
 
 } // End of namespace Stark
 
