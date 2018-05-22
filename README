@@ -964,6 +964,9 @@ Space: Pause the game
 Esc: Skip cutscene
 F5: Menu
 
+Myst will autosave to slot 0 if no save or an autosave is present in
+slot 0.
+
 
 3.17) Nippon Safes Inc. Amiga notes:
 ----- ------------------------------
@@ -1009,6 +1012,9 @@ Esc: Skip cutscene
 F5: Menu
 Ctrl-o: Load game
 Ctrl-s: Save game
+
+Riven will autosave to slot 0 if no save or an autosave is present in
+slot 0.
 
 
 3.20) Simon the Sorcerer games notes:
@@ -1985,11 +1991,24 @@ saved games from the old default location, to the new default location.
 
 6.1) Autosaves:
 ---- ----------
-For some games (namely "Beneath a Steel Sky", "Flight of the Amazon
-Queen", all AGI games, and all SCUMM games), ScummVM will by default
-automatically save the current state every five minutes (adjustable via
-the "autosave_period" config setting). For the AGI and SCUMM engines, it
-will save in Slot 0. For the SCUMM engine, this saved game can then be
+For some games ScummVM will by default automatically save the current state
+every five minutes (adjustable via the "autosave_period" config setting).
+The default autosave slot for many engines is slot 0.
+
+The games/engines listed below have autosave support.
+
+AGI games
+Beneath a Steel Sky
+Bud Tucker in Double Trouble
+COMPOSER games
+Flight of the Amazon Queen
+Myst
+Riven
+SCUMM games
+The Legend of Kyrandia I (slot 999)
+ZVISION games
+
+For the SCUMM engine, this saved game can then be
 loaded again via Ctrl-0, or the F5 menu.
 
 
