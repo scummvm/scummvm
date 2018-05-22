@@ -50,9 +50,9 @@ public:
 	void init(bool isLoadingSave, const Common::String &pageName);
 	void changePage(const Common::String &pageName);
 
-	void OnLeftButtonDown();
-	void OnMouseMove();
-	void OnKeyboardButtonClick();
+	void onLeftButtonDown();
+	void onMouseMove();
+	void onKeyboardButtonClick();
 
 	PinkEngine *getGame() const;
 	InventoryMgr *getInventoryMgr();
