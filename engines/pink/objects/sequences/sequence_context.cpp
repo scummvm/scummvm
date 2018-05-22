@@ -67,7 +67,7 @@ SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
 		}
 		if (!found) {
 			debug(items[i]->getActor().c_str());
-			_states.push_back({items[i]->getActor()});
+			_states.push_back(SequenceActorState(items[i]->getActor()));
 		}
 	}
 }
