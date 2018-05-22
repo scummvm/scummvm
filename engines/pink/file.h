@@ -67,7 +67,7 @@ public:
 
 private:
     void seekToObject(const char *name);
-
+	ObjectDescription *_table;
     uint32 _timestamp;
     uint32 _tableOffset;
     uint32 _tableSize;
