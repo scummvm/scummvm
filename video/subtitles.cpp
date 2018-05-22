@@ -36,6 +36,8 @@ SRTParser::~SRTParser() {
 void SRTParser::cleanup() {
 	for (Common::Array<SRTEntry *>::const_iterator item = _entries.begin(); item != _entries.end(); ++item)
 		delete *item;
+
+	_entries.clear();
 }
 
 bool parseTime(const char **pptr, uint32 *res) {
@@ -198,6 +200,8 @@ bool SRTParser::parseFile(const char *fname) {
 	}
 
 	qsort(_entries.data(), _entries.size(), sizeof(SRTEntry *), &SRTEntryComparator);
+
+	debug(6, "SRTParser: Loaded %d entries", _entries.size());
 
 	return true;
 }
