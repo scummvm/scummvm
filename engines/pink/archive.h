@@ -41,7 +41,6 @@ class Archive {
 public:
 	Archive(Common::SeekableReadStream *stream);
 	Archive(Common::WriteStream *stream);
-	~Archive();
 
 	void mapObject(Object *obj);
 
