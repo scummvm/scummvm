@@ -175,12 +175,12 @@ void SequenceAudio::update() {
 void SequenceAudio::init(int unk) {
 	_sample = 0;
 	_sound = _sequencer->_page->loadSound(_soundName);
-	_sound->play(Audio::Mixer::SoundType::kMusicSoundType, 100, 0);
+	_sound->play(Audio::Mixer::kMusicSoundType, 100, 0);
 	Sequence::init(unk);
 }
 
 void SequenceAudio::restart() {
-	_sound->play(Audio::Mixer::SoundType::kMusicSoundType, 100, 0);
+	_sound->play(Audio::Mixer::kMusicSoundType, 100, 0);
 	Sequence::restart();
 }
 

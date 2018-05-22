@@ -69,8 +69,8 @@ Common::Error PinkEngine::init() {
 
 	_console = new Console(this);
 
-	const Common::String orbName{_desc.filesDescriptions[0].fileName};
-	const Common::String broName{_desc.filesDescriptions[1].fileName};
+	const Common::String orbName = _desc.filesDescriptions[0].fileName;
+	const Common::String broName = _desc.filesDescriptions[1].fileName;
 
 	if (strcmp(_desc.gameId, kPeril) == 0){
 		_bro = new BroFile();
