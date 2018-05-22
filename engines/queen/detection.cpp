@@ -422,6 +422,19 @@ static const QueenGameDescription gameDescriptions[] = {
 	},
 #endif
 
+	// GoG.com Release - German
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1", "28f78dbec7e20f603a10c2f8ea889a5c", 108738717),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_ALT_INTRO)
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
