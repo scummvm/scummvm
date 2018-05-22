@@ -43,7 +43,7 @@ void ActionTalk::toConsole() {
 void ActionTalk::onStart() {
 	ActionPlay::onStart();
 	_sound = _actor->getPage()->loadSound(_vox);
-	_sound->play(Audio::Mixer::SoundType::kSpeechSoundType, 100, 0);
+	_sound->play(Audio::Mixer::kSpeechSoundType, 100, 0);
 }
 
 void ActionTalk::update() {

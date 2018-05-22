@@ -56,8 +56,8 @@ void ActionSound::start(bool unk) {
 	assert(!_sound);
 	_sound = _actor->getPage()->loadSound(_fileName);
 
-	Audio::Mixer::SoundType soundType =  _isBackground ? Audio::Mixer::SoundType::kMusicSoundType
-													   : Audio::Mixer::SoundType::kSpeechSoundType;
+	Audio::Mixer::SoundType soundType =  _isBackground ? Audio::Mixer::kMusicSoundType
+													   : Audio::Mixer::kSpeechSoundType;
 
 	Director *director = _actor->getPage()->getGame()->getDirector();
 	director->addSound(this);
