@@ -48,31 +48,31 @@ void MainMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"NewGame",
 			CLICK_HANDLER(MainMenuScreen, newGameHandler),
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<7>)));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kNewGame>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Continue",
 			CLICK_HANDLER(MainMenuScreen, loadHandler),
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<8>)));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kContinue>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Options",
 			CLICK_HANDLER(MainMenuScreen, settingsHandler),
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<6>)));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kOption>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Box",
 			nullptr,
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<9>)));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kBox>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Quit",
 			CLICK_HANDLER(MainMenuScreen, quitHandler),
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<10>)));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kQuit>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -108,7 +108,7 @@ void MainMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"Credits",
 			CLICK_HANDLER(MainMenuScreen, creditsHandler),
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<12>)));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kCredits>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -128,7 +128,7 @@ void MainMenuScreen::open() {
 			nullptr));
 }
 
-template<uint N>
+template<MainMenuScreen::HelpTextIndex N>
 void MainMenuScreen::helpTextHandler(StaticLocationWidget &widget, const Common::Point &mousePos) {
 	if (widget.isVisible()) {
 		_widgets[N]->setVisible(widget.isMouseInside(mousePos));

@@ -41,7 +41,16 @@ public:
 	void open() override;
 
 private:
-	template<uint N>
+	enum HelpTextIndex {
+		kNewGame = 7,
+		kContinue = 8,
+		kOption = 6,
+		kBox = 9,
+		kQuit = 10,
+		kCredits = 12
+	};
+
+	template<HelpTextIndex N>
 	void helpTextHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
 
 	void newGameHandler();

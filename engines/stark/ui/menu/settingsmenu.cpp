@@ -62,7 +62,7 @@ void SettingsMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"AprilHighRes",
 			nullptr,
-			MOVE_HANDLER(SettingsMenuScreen, textHandler<5>)));
+			MOVE_HANDLER(SettingsMenuScreen, textHandler<kHighRes>)));
 	_widgets.back()->setupSounds(3, 4);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -74,7 +74,7 @@ void SettingsMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"Subtitles",
 			nullptr,
-			MOVE_HANDLER(SettingsMenuScreen, textHandler<7>)));
+			MOVE_HANDLER(SettingsMenuScreen, textHandler<kSubtitles>)));
 	_widgets.back()->setupSounds(3, 4);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -86,7 +86,7 @@ void SettingsMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"SpecialFX",
 			nullptr,
-			MOVE_HANDLER(SettingsMenuScreen, textHandler<9>)));
+			MOVE_HANDLER(SettingsMenuScreen, textHandler<kSpecialFX>)));
 	_widgets.back()->setupSounds(3, 4);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -98,7 +98,7 @@ void SettingsMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"Shadows",
 			nullptr,
-			MOVE_HANDLER(SettingsMenuScreen, textHandler<11>)));
+			MOVE_HANDLER(SettingsMenuScreen, textHandler<kShadows>)));
 	_widgets.back()->setupSounds(3, 4);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -110,7 +110,7 @@ void SettingsMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"HighResFMV",
 			nullptr,
-			MOVE_HANDLER(SettingsMenuScreen, textHandler<13>)));
+			MOVE_HANDLER(SettingsMenuScreen, textHandler<kHighResFMV>)));
 	_widgets.back()->setupSounds(3, 4);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -127,7 +127,7 @@ void SettingsMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"Voice",
 			nullptr,
-			MOVE_HANDLER(SettingsMenuScreen, textHandler<16>)));
+			MOVE_HANDLER(SettingsMenuScreen, textHandler<kVoice>)));
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"VoiceHelp",
@@ -138,7 +138,7 @@ void SettingsMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"Music",
 			nullptr,
-			MOVE_HANDLER(SettingsMenuScreen, textHandler<18>)));
+			MOVE_HANDLER(SettingsMenuScreen, textHandler<kMusic>)));
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"MusicHelp",
@@ -149,7 +149,7 @@ void SettingsMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"Sfx",
 			nullptr,
-			MOVE_HANDLER(SettingsMenuScreen, textHandler<20>)));
+			MOVE_HANDLER(SettingsMenuScreen, textHandler<kSfx>)));
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"SfxHelp",
@@ -161,7 +161,7 @@ void SettingsMenuScreen::open() {
 		_widgets.push_back(new StaticLocationWidget(
 				"AllowFF",
 				nullptr,
-				MOVE_HANDLER(SettingsMenuScreen, textHandler<22>)));
+				MOVE_HANDLER(SettingsMenuScreen, textHandler<kAllowFF>)));
 		_widgets.back()->setupSounds(3, 4);
 		
 		_widgets.push_back(new StaticLocationWidget(
@@ -172,7 +172,7 @@ void SettingsMenuScreen::open() {
 	}
 }
 
-template<uint N>
+template<SettingsMenuScreen::HelpTextIndex N>
 void SettingsMenuScreen::textHandler(StaticLocationWidget &widget, const Common::Point &mousePos) {
 	if (widget.isVisible()) {
 		if (widget.isMouseInside(mousePos)) {

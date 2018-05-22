@@ -41,7 +41,19 @@ public:
 	void open() override;
 
 private:
-	template<uint N>
+	enum HelpTextIndex {
+		kHighRes = 5,
+		kSubtitles = 7,
+		kSpecialFX = 9,
+		kShadows = 11,
+		kHighResFMV = 13,
+		kVoice = 16,
+		kMusic = 18,
+		kSfx = 20,
+		kAllowFF = 22
+	};
+
+	template<HelpTextIndex N>
 	void textHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
 
 	void backHandler();
