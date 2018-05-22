@@ -58,6 +58,4 @@ void SeqTimer::update() {
     }
 }
 
-
-
 } // End of namespace Pink

@@ -213,5 +213,4 @@ void GamePage::clear() {
     delete _walkMgr; _walkMgr = nullptr;
 }
 
-
 } // End of namespace Pink

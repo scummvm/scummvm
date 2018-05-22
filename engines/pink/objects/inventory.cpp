@@ -201,5 +201,3 @@ InventoryItem *InventoryMgr::getCurrentItem() {
 }
 
 } // End of namespace Pink
-
-

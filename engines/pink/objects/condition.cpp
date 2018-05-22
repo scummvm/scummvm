@@ -97,4 +97,3 @@ void ConditionNotInventoryItemOwner::toConsole() {
 }
 
 } // End of namespace Pink
-

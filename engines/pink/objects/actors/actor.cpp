@@ -99,12 +99,14 @@ void Actor::setAction(Action *newAction) {
 }
 
 void Actor::setAction(Action *newAction, bool unk) {
-    if (unk){
+    if (unk) {
         assert(0); // want to see this
         _isActionEnded = 1;
         _action = newAction;
     }
-    else setAction(newAction);
+    else {
+		setAction(newAction);
+	}
 }
 
 Action *Actor::getAction() const {

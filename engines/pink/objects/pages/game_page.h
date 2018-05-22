@@ -73,4 +73,4 @@ private:
 
 }
 
-#endif //SCUMMVM_GAME_PAGE_H
+#endif

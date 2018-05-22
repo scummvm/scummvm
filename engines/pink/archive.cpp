@@ -344,5 +344,3 @@ void Archive::writeString(const Common::String &string) {
 }
 
 } // End of namespace Pink
-
-

@@ -44,6 +44,6 @@ private:
     Command _command;
 };
 
-}
+} // End of namespace Pink
 
 #endif

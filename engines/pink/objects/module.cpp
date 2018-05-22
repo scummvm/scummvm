@@ -101,6 +101,3 @@ InventoryMgr *Module::getInventoryMgr() {
 }
 
 } // End of namespace Pink
-
-
-
