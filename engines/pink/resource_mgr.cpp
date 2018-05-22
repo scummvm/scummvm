@@ -52,14 +52,14 @@ Sound *ResourceMgr::loadSound(Common::String &name) {
 	return new Sound(_game->_mixer, getResourceStream(name));
 }
 
+static int resDescComp(const void *a, const void *b) {
+	return scumm_stricmp((char *) a, (char *) b);
+}
+
 Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(Common::String &name) {
 	Common::SeekableReadStream *stream;
 
-	ResourceDescription *desc;
-	for (uint i = 0; i < _resCount; ++i) {
-		if (name.compareToIgnoreCase(_resDescTable[i].name) == 0)
-			desc = &_resDescTable[i];
-	}
+	ResourceDescription *desc = (ResourceDescription*) bsearch(name.c_str(), _resDescTable, _resCount, sizeof(ResourceDescription), resDescComp);
 
 	if (desc->inBro)
 		stream = _game->getBro();
