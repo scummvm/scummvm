@@ -60,5 +60,4 @@ protected:
 
 } // End of namespace Pink
 
-
 #endif

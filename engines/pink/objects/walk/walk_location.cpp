@@ -40,4 +40,4 @@ void WalkLocation::toConsole() {
     }
 }
 
-} // End of namespace Pink;
+} // End of namespace Pink

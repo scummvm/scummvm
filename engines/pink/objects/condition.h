@@ -102,5 +102,4 @@ public:
 
 } // End of namespace Pink
 
-
 #endif

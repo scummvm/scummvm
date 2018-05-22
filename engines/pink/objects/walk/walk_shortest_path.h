@@ -57,5 +57,4 @@ private:
 
 } // End of namespace Pink
 
-
 #endif

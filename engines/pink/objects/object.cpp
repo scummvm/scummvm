@@ -43,4 +43,3 @@ void NamedObject::store(Archive &archive) {
 }
 
 } // End of namespace Pink
-

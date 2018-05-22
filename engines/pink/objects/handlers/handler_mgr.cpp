@@ -131,4 +131,4 @@ HandlerMgr::~HandlerMgr() {
     }
 }
 
-}
+} // End of namespace Pink

@@ -95,5 +95,4 @@ void Page::unpause() {
     }
 }
 
-
 } // End of namespace Pink
