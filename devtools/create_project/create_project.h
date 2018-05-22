@@ -86,7 +86,7 @@ struct EngineDesc {
 	 * Whether the engine should be included in the build or not.
 	 */
 	bool enable;
-	
+
 	/**
 	 * Features required for this engine.
 	 */

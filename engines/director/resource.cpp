@@ -176,7 +176,7 @@ void DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
 
 void DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
 	uint32 ver = stream->readUint32LE();
-	
+
 	if (ver != MKTAG('P', 'J', '9', '5'))
 		error("Invalid projector tag found in v5 EXE [%s]", tag2str(ver));
 

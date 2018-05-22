@@ -28,7 +28,7 @@ namespace Xeen {
 
 void CreditsScreen::show(XeenEngine *vm) {
 	CreditsScreen *dlg = new CreditsScreen(vm);
-	
+
 	switch (vm->getGameID()) {
 	case GType_Clouds:
 		dlg->execute(Res.CLOUDS_CREDITS);
@@ -41,7 +41,7 @@ void CreditsScreen::show(XeenEngine *vm) {
 		dlg->execute(Res.DARK_SIDE_CREDITS);
 		break;
 	}
-	
+
 	delete dlg;
 }
 

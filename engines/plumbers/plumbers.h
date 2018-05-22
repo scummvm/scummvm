@@ -111,7 +111,7 @@ private:
 	};
 
 	Common::Queue<Action> _actions;
-	
+
 	void loadImage(const Common::String &dirname, const Common::String &filename);
 	void drawScreen();
 

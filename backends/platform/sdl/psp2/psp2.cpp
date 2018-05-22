@@ -55,11 +55,11 @@ OSystem_PSP2::OSystem_PSP2(Common::String baseConfigName)
 }
 
 void OSystem_PSP2::init() {
-	
+
 #if __PSP2_DEBUG__
 	gDebugLevel = 3;
 #endif
-	
+
 	// Initialze File System Factory
 	sceIoMkdir("ux0:data", 0755);
 	sceIoMkdir("ux0:data/scummvm", 0755);
@@ -71,7 +71,7 @@ void OSystem_PSP2::init() {
 }
 
 void OSystem_PSP2::initBackend() {
-	
+
 	ConfMan.set("joystick_num", 0);
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", false);
@@ -105,7 +105,7 @@ void OSystem_PSP2::initBackend() {
 		ConfMan.setBool("frontpanel_touchpad_mode", false);
 	}
 
-	
+
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new DefaultSaveFileManager("ux0:data/scummvm/saves");

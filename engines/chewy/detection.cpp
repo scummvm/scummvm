@@ -70,7 +70,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
-	
+
 	{
 		// Chewy - ESC von F5 - German
 		// Master version 1.1 (CHEWY.EXE - offset 0x8AB28)
@@ -87,7 +87,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
-	
+
 	{
 		// Chewy - ESC von F5 - German
 		// Master version 1.0 (CHEWY.EXE - offset 0x8AB10)

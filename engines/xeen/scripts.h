@@ -278,7 +278,7 @@ private:
 	 * Moves the position of an object
 	 */
 	bool cmdMoveObj(ParamsIterator &params);
-	
+
 	/**
 	 * Take or give amounts from various character or party figures
 	 */
@@ -319,13 +319,13 @@ private:
 	 * Gives up to three different item/amounts to various character and/or party properties
 	 */
 	bool cmdGiveMulti(ParamsIterator &params);
-	
+
 	/**
 	 * Prompts the user to enter a word for passwords or mirror
 	 * teleport destinations
 	 */
 	bool cmdConfirmWord(ParamsIterator &params);
-	
+
 	/**
 	 * Deals damage to a character
 	 */

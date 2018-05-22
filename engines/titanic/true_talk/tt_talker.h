@@ -54,7 +54,7 @@ public:
 	 * End the speech
 	 */
 	void endSpeech(int val);
-	
+
 	/**
 	 * Called when a speech is finished, to signal to the associated character
 	 * that the speech is over

@@ -601,7 +601,7 @@ TestExitStatus GFXtests::filteringMode() {
 
 	return passed;
 }
-	
+
 /**
  * Tests the aspect ratio correction by: drawing an ellipse, when corrected the ellipse should render to a circle
  */

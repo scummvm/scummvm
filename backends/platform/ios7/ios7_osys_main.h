@@ -123,7 +123,7 @@ public:
 	static OSystem_iOS7 *sharedInstance();
 
 	virtual void initBackend();
-	
+
 	virtual void engineInit();
 	virtual void engineDone();
 

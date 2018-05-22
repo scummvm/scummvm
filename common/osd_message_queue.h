@@ -38,9 +38,9 @@ class OSDMessageQueue : public Singleton<OSDMessageQueue>, public EventSource {
 public:
 	OSDMessageQueue();
 	~OSDMessageQueue();
-	
+
 	void registerEventSource();
-	
+
 	enum {
 		kMinimumDelay = 1000 /** < Minimum delay between two OSD messages (in milliseconds) */
 	};
@@ -49,7 +49,7 @@ public:
 	 * Add a message to the OSD message queue.
 	 */
 	void addMessage(const char *msg);
-	
+
 	/**
 	 * Common::EventSource interface
 	 *

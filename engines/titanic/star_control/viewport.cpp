@@ -178,7 +178,7 @@ void CViewport::randomizeOrientation() {
 	FPose m1(X_AXIS, ranRotAngleX);
 	FPose m2(Y_AXIS, ranRotAngleY);
 	FPose m3(Z_AXIS, ranRotAngleZ);
-	
+
 	FPose s1(m1, m2);
 	FPose s2(s1, m3);
 

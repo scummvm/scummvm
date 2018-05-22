@@ -209,7 +209,7 @@ void Interface::mainIconsPrint() {
 	Windows &windows = *_vm->_windows;
 	windows[38].close();
 	windows[12].close();
-	
+
 	res._globalSprites.draw(0, 7, Common::Point(232, 74));
 	drawButtons(&windows[0]);
 	windows[34].update();

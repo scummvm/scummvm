@@ -81,7 +81,7 @@ protected:
 	ButtonWidget *_soundFontButton;
 	StaticTextWidget *_soundFont;
 	ButtonWidget *_soundFontClearButton;
-	
+
 	virtual void build();
 	virtual void clean();
 	void rebuild();
@@ -115,7 +115,7 @@ protected:
 	int _pathsTabId;
 
 private:
-	
+
 	//
 	// Control controls
 	//
@@ -143,7 +143,7 @@ private:
 	CheckboxWidget *_aspectCheckbox;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
-	
+
 	//
 	// Shader controls
 	//

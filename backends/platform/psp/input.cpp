@@ -336,7 +336,7 @@ bool Nub::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 	// keep track of remainder for true sub-pixel cursor position
 	_hiresX %= 1024;
 	_hiresY %= 1024;
-	
+
 	int32 oldX = _cursor->getX();
 	int32 oldY = _cursor->getY();
 

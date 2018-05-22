@@ -32,7 +32,7 @@ Resources *g_resources;
 Resources::Resources() {
 	g_resources = this;
 	g_vm->_files->setGameCc(1);
-	
+
 	_globalSprites.load("global.icn");
 	if (g_vm->getGameID() == GType_Swords)
 		_logoSprites.load("logo.int");

@@ -479,7 +479,7 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 	Sound &sound = *_vm->_sound;
 
 	windows.closeAll();
-	
+
 	bool restartFlag = _event->_opcode == OP_TeleportAndContinue;
 	int mapId = params.readByte();
 	Common::Point pt;

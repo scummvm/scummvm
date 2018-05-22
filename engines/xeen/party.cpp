@@ -1603,7 +1603,7 @@ uint Party::getScore() {
 	uint time = _vm->_events->playTime() / GAME_FRAME_RATE;
 	int minutes = (time % 3600) / 60;
 	int hours = time / 3600;
-	
+
 	score += minutes + (hours * 100);
 	return score;
 }

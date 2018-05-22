@@ -65,7 +65,7 @@ public:
 	 * Set which subtitle line to display
 	 */
 	void setLine(int line);
-	
+
 	/**
 	 * Resets subtitles, stopping any display
 	 */

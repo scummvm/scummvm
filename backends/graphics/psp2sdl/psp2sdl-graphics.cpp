@@ -238,7 +238,7 @@ void PSP2SdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 SDL_Surface *PSP2SdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 
 	SDL_Surface *screen = SurfaceSdlGraphicsManager::SDL_SetVideoMode(width, height, bpp, flags);
-	
+
 	if (screen != nullptr) {
 		vita2d_set_vblank_wait(true);
 		_vitatex_hwscreen = vita2d_create_empty_texture_format(width, height, SCE_GXM_TEXTURE_FORMAT_R5G6B5);

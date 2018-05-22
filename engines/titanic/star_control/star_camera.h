@@ -234,7 +234,7 @@ public:
 	 * Lock in the first matched star marker
 	 */
 	bool lockMarker1(FVector v1, FVector v2, FVector v3);
-	
+
 	/**
 	 * Lock in the second matched star marker
 	 */
