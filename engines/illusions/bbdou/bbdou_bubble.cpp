@@ -38,7 +38,7 @@ BbdouBubble::~BbdouBubble() {
 
 void BbdouBubble::init() {
 
-	static const uint32 kObjectIds3[] = {
+	static const uint32 kTrailObjectIds[] = {
 		0x0004003B, 0x0004003C, 0x0004003D, 0x0004003E,
 		0x0004003F, 0x00040040, 0x00040041, 0x00040042,
 		0x00040043, 0x00040044, 0x00040045, 0x00040046,
@@ -49,7 +49,7 @@ void BbdouBubble::init() {
 		0x00040057, 0x00040058, 0x00040059, 0x0004005A
 	};
 
-	static const uint32 kObjectIds2[] = {
+	static const uint32 kIconObjectIds[] = {
 		0x0004001B, 0x0004001C, 0x0004001D, 0x0004001E,
 		0x0004001F, 0x00040020, 0x00040021, 0x00040022,
 		0x00040023, 0x00040024, 0x00040025, 0x00040026,
@@ -60,136 +60,136 @@ void BbdouBubble::init() {
 		0x00040037, 0x00040038, 0x00040039, 0x0004003A
 	};
 
-	_objectId1414 = 0x4005B;
-	_objectId1418 = 0x4005C;
+	_bubbleObjectId1 = 0x4005B;
+	_bubbleObjectId2 = 0x4005C;
 
 	for (uint i = 0; i < 32; ++i) {
-		_objectIds[i] = kObjectIds3[i];
+		_trailObjectIds[i] = kTrailObjectIds[i];
 	}
 
 	for (uint i = 0; i < 32; ++i) {
-		_items[i]._objectId = kObjectIds2[i];
-		_items[i]._enabled = 0;
-		_items[i]._position.x = 0;
-		_items[i]._position.y = 0;
-		_items[i]._sequenceId = 0;
+		_icons[i]._objectId = kIconObjectIds[i];
+		_icons[i]._enabled = false;
+		_icons[i]._position.x = 0;
+		_icons[i]._position.y = 0;
+		_icons[i]._sequenceId = 0;
 	}
 
-	_currItem0 = 0;
-	_prevItem0 = 0;
-	_someItem0 = 0;
-	_pt1.x = 0;
-	_pt1.y = 0;
-	_pt2.x = 0;
-	_pt2.y = 0;
+	_currBubbleStyle = 0;
+	_showingBubbleStyle = 0;
+	_hidingBubbleStyle = 0;
+	_sourcePt.x = 0;
+	_sourcePt.y = 0;
+	_destPt.x = 0;
+	_destPt.y = 0;
 
 }
 
-void BbdouBubble::addItem0(uint32 sequenceId1, uint32 sequenceId2, uint32 progResKeywordId,
+void BbdouBubble::addBubbleStyle(uint32 showSequenceId, uint32 hideSequenceId, uint32 progResKeywordId,
 	uint32 namedPointId, int16 count, uint32 *namedPointIds) {
-	Item0 item0;
-	item0._sequenceId1 = sequenceId1;
-	item0._sequenceId2 = sequenceId2;
-	item0._progResKeywordId = progResKeywordId;
-	item0._baseNamedPointId = namedPointId;
-	item0._count = count;
+	BubbleStyle style;
+	style._showSequenceId = showSequenceId;
+	style._hideSequenceId = hideSequenceId;
+	style._progResKeywordId = progResKeywordId;
+	style._baseNamedPointId = namedPointId;
+	style._count = count;
 	for (int16 i = 0; i < count; ++i) {
-		item0._namedPointIds[i] = FROM_LE_32(namedPointIds[i]);
+		style._namedPointIds[i] = FROM_LE_32(namedPointIds[i]);
 	}
-	item0._objectId = 0;
-	item0._pt.x = 0;
-	item0._pt.y = 0;
-	_item0s.push_back(item0);
+	style._objectId = 0;
+	style._position.x = 0;
+	style._position.y = 0;
+	_bubbleStyles.push_back(style);
 }
 
 void BbdouBubble::show() {
-
-	if (_prevItem0) {
+	
+	if (_showingBubbleStyle) {
 		hide();
 	}
 
-	_prevItem0 = _currItem0;
-	_currItem0 = 0;
+	_showingBubbleStyle = _currBubbleStyle;
+	_currBubbleStyle = 0;
 
-	calcBubbles(_pt1, _pt2);
+	calcBubbleTrail(_sourcePt, _destPt);
 
-	Control *control = _vm->_dict->getObjectControl(_prevItem0->_objectId);
-	control->setActorPosition(_pt2);
-	control->startSequenceActor(0x60057, 2, 0);
-	control->startSequenceActor(_prevItem0->_sequenceId1, 2, 0);
-	control->appearActor();
-	control->deactivateObject();
+	Control *bubbleControl = _vm->_dict->getObjectControl(_showingBubbleStyle->_objectId);
+	bubbleControl->setActorPosition(_destPt);
+	bubbleControl->startSequenceActor(0x60057, 2, 0);
+	bubbleControl->startSequenceActor(_showingBubbleStyle->_showSequenceId, 2, 0);
+	bubbleControl->appearActor();
+	bubbleControl->deactivateObject();
 
 	for (uint i = 0; i < 32; ++i) {
-		if (_items[i]._enabled == 1) {
-			Control *subControl = _vm->_dict->getObjectControl(_items[i]._objectId);
-			subControl->setActorPosition(_items[i]._position);
-			subControl->startSequenceActor(_items[i]._sequenceId, 2, 0);
+		if (_icons[i]._enabled) {
+			Control *iconControl = _vm->_dict->getObjectControl(_icons[i]._objectId);
+			iconControl->setActorPosition(_icons[i]._position);
+			iconControl->startSequenceActor(_icons[i]._sequenceId, 2, 0);
 		}
 	}
 
 }
 
 void BbdouBubble::hide() {
-	_someItem0 = _prevItem0;
-	_prevItem0 = 0;
-	if (_someItem0) {
-		Control *control = _vm->_dict->getObjectControl(_someItem0->_objectId);
-		control->startSequenceActor(_someItem0->_sequenceId2, 2, 0);
+	_hidingBubbleStyle = _showingBubbleStyle;
+	_showingBubbleStyle = 0;
+	if (_hidingBubbleStyle) {
+		Control *bubbleControl = _vm->_dict->getObjectControl(_hidingBubbleStyle->_objectId);
+		bubbleControl->startSequenceActor(_hidingBubbleStyle->_hideSequenceId, 2, 0);
 		for (uint i = 0; i < 32; ++i) {
-			Control *subControl = _vm->_dict->getObjectControl(_objectIds[i]);
-			subControl->stopActor();
-			subControl->disappearActor();
+			Control *trailControl = _vm->_dict->getObjectControl(_trailObjectIds[i]);
+			trailControl->stopActor();
+			trailControl->disappearActor();
 		}
 		for (uint i = 0; i < 32; ++i) {
-			Control *subControl = _vm->_dict->getObjectControl(_items[i]._objectId);
-			subControl->stopActor();
-			subControl->disappearActor();
+			Control *iconControl = _vm->_dict->getObjectControl(_icons[i]._objectId);
+			iconControl->stopActor();
+			iconControl->disappearActor();
 		}
 	}
 }
 
-void BbdouBubble::setup(int16 minCount, Common::Point pt1, Common::Point pt2, uint32 progResKeywordId) {
+void BbdouBubble::selectBubbleStyle(int16 minCount, Common::Point sourcePt, Common::Point destPt, uint32 progResKeywordId) {
 	for (uint i = 0; i < 32; ++i) {
-		_items[i]._enabled = 0;
+		_icons[i]._enabled = false;
 	}
 	int16 maxCount = 32;
-	for (uint i = 0; i < _item0s.size(); ++i) {
-		Item0 *item0 = &_item0s[i];
-		if (item0->_count < maxCount && item0->_count >= minCount &&
-			(!progResKeywordId || item0->_progResKeywordId == progResKeywordId)) {
-			maxCount = item0->_count;
-			_currItem0 = item0;
+	for (uint i = 0; i < _bubbleStyles.size(); ++i) {
+		BubbleStyle *style = &_bubbleStyles[i];
+		if (style->_count < maxCount && style->_count >= minCount &&
+			(progResKeywordId == 0 || progResKeywordId == style->_progResKeywordId)) {
+			maxCount = style->_count;
+			_currBubbleStyle = style;
 		}
 	}
-	_pt1 = pt1;
-	_pt2 = pt2;
-	_currItem0->_pt = pt2;
-	_currItem0->_objectId = _objectId1414;
-	if (_prevItem0 && _prevItem0->_objectId == _currItem0->_objectId)
-		_currItem0->_objectId = _objectId1418;
+	_sourcePt = sourcePt;
+	_destPt = destPt;
+	_currBubbleStyle->_position = destPt;
+	_currBubbleStyle->_objectId = _bubbleObjectId1;
+	if (_showingBubbleStyle && _showingBubbleStyle->_objectId == _currBubbleStyle->_objectId)
+		_currBubbleStyle->_objectId = _bubbleObjectId2;
 }
 
-uint32 BbdouBubble::addItem(uint positionIndex, uint32 sequenceId) {
+uint32 BbdouBubble::addBubbleIcon(uint positionIndex, uint32 sequenceId) {
 	for (uint i = 0; i < 32; ++i) {
-		Item141C *item = &_items[i];
-		if (!item->_enabled) {
-			Common::Point itemPos = _vm->getNamedPointPosition(_currItem0->_namedPointIds[positionIndex]);
-			Common::Point basePos = _vm->getNamedPointPosition(_currItem0->_baseNamedPointId);
-			item->_enabled = 1;
-			item->_sequenceId = sequenceId;
-			item->_position.x = itemPos.x + _currItem0->_pt.x - basePos.x;
-			item->_position.y = itemPos.y + _currItem0->_pt.y - basePos.y;
-			return item->_objectId;
+		BubbleIcon *icon = &_icons[i];
+		if (!icon->_enabled) {
+			Common::Point itemPos = _vm->getNamedPointPosition(_currBubbleStyle->_namedPointIds[positionIndex]);
+			Common::Point basePos = _vm->getNamedPointPosition(_currBubbleStyle->_baseNamedPointId);
+			icon->_enabled = true;
+			icon->_sequenceId = sequenceId;
+			icon->_position.x = itemPos.x + _currBubbleStyle->_position.x - basePos.x;
+			icon->_position.y = itemPos.y + _currBubbleStyle->_position.y - basePos.y;
+			return icon->_objectId;
 		}
 	}
 	return 0;
 }
 
-void BbdouBubble::calcBubbles(Common::Point &pt1, Common::Point &pt2) {
+void BbdouBubble::calcBubbleTrail(Common::Point &sourcePt, Common::Point &destPt) {
 	const int kSequenceIdsCount = 10;
 	const float kDistanceBetweenPoints = 30.0;
-	static const uint32 kSequenceIds[] = {
+	static const uint32 kBubbleTrailSequenceIds[] = {
 		0x00060042, 0x00060043, 0x00060044, 0x00060045, 0x00060046,
 		0x00060047, 0x00060048, 0x00060049, 0x0006004A, 0x0006004B
 	};
@@ -201,7 +201,7 @@ void BbdouBubble::calcBubbles(Common::Point &pt1, Common::Point &pt2) {
 	float currentAngle, radius;
 
 	for (int i = 0; i < 32; ++i) {
-		Control *control = _vm->_dict->getObjectControl(_objectIds[i]);
+		Control *control = _vm->_dict->getObjectControl(_trailObjectIds[i]);
 		control->startSequenceActor(0x00060056, 2, 0);
 	}
 
@@ -209,27 +209,27 @@ void BbdouBubble::calcBubbles(Common::Point &pt1, Common::Point &pt2) {
 		sequenceCounters[i] = 0;
 	}
 
-	if (pt2.y >= pt1.y) {
+	if (destPt.y >= sourcePt.y) {
 		swapY = true;
-		if (pt1.x == pt2.x)
-			pt2.x = pt2.x + 20;
+		if (sourcePt.x == destPt.x)
+			destPt.x = destPt.x + 20;
 	} else {
 		swapY = false;
-		if (pt1.y == pt2.y)
-			pt2.y = pt2.y + 20;
+		if (sourcePt.y == destPt.y)
+			destPt.y = destPt.y + 20;
 	}
 
 	if (swapY) {
-		centerX = (pt2.x * pt2.x - (pt2.y - pt1.y) * (pt2.y - pt1.y) - pt1.x * pt1.x) / (2 * (pt2.x - pt1.x));
-		centerY = pt2.y;
-		radius = ABS(pt2.x - centerX);
+		centerX = (destPt.x * destPt.x - (destPt.y - sourcePt.y) * (destPt.y - sourcePt.y) - sourcePt.x * sourcePt.x) / (2 * (destPt.x - sourcePt.x));
+		centerY = destPt.y;
+		radius = ABS(destPt.x - centerX);
 	} else {
-		centerX = pt2.x;
-		centerY = (pt2.y * pt2.y - (pt2.x - pt1.x) * (pt2.x - pt1.x) - pt1.y * pt1.y) / (2 * (pt2.y - pt1.y));
-		radius = ABS(pt2.y - centerY);
+		centerX = destPt.x;
+		centerY = (destPt.y * destPt.y - (destPt.x - sourcePt.x) * (destPt.x - sourcePt.x) - sourcePt.y * sourcePt.y) / (2 * (destPt.y - sourcePt.y));
+		radius = ABS(destPt.y - centerY);
 	}
 
-	const float fullDistance = sqrt((pt2.y - pt1.y) * (pt2.y - pt1.y) + (pt2.x - pt1.x) * (pt2.x - pt1.x));
+	const float fullDistance = sqrt((destPt.y - sourcePt.y) * (destPt.y - sourcePt.y) + (destPt.x - sourcePt.x) * (destPt.x - sourcePt.x));
 	const float arcAngle = 2 * asin(CLIP(0.5 * fullDistance / radius, -1.0, 1.0));
 	const float arcLength = arcAngle * radius;
 	int pointsCount = (int)(arcLength / kDistanceBetweenPoints);
@@ -240,26 +240,25 @@ void BbdouBubble::calcBubbles(Common::Point &pt1, Common::Point &pt2) {
 	}
 
 	if (!swapY) {
-		if (pt2.y < pt1.y) {
+		if (destPt.y < sourcePt.y) {
 			currentAngle = M_PI * 0.5;
 		} else {
 			currentAngle = M_PI * 1.5;
 			partAngle = -partAngle;
 		}
-		if (pt2.x < pt1.x)
+		if (destPt.x < sourcePt.x)
 			partAngle = -partAngle;
 	} else {
-		if (pt2.x <= pt1.x) {
+		if (destPt.x <= sourcePt.x) {
 			currentAngle = M_PI;
 		} else {
 			currentAngle = 0.0;
 			partAngle = -partAngle;
 		}
-		if (pt2.y > pt1.y)
+		if (destPt.y > sourcePt.y)
 			partAngle = -partAngle;
 	}
 
-	int index = kSequenceIdsCount - 1;
 	float angleStep = partAngle / (float)pointsCount * 0.5;
 	float angleIncr = (float)(pointsCount / 2) * angleStep + partAngle;
 
@@ -275,15 +274,15 @@ void BbdouBubble::calcBubbles(Common::Point &pt1, Common::Point &pt2) {
 			centerX + _vm->getRandom(8) - 2 + (int)(cos(currentAngle) * radius),
 			centerY + _vm->getRandom(8) - 2 - (int)(sin(currentAngle) * radius));
 
-		Control *control = _vm->_dict->getObjectControl(_objectIds[i]);
+		Control *trailControl = _vm->_dict->getObjectControl(_trailObjectIds[i]);
 
-		for (; index >= 0; --index) {
+		for (int index = kSequenceIdsCount - 1; index >= 0; --index) {
 			if (sequenceCounters[index] > 0) {
 				--sequenceCounters[index];
-				control->setActorPosition(newPoint);
-				control->startSequenceActor(kSequenceIds[index], 2, 0);
-				control->appearActor();
-				control->deactivateObject();
+				trailControl->setActorPosition(newPoint);
+				trailControl->startSequenceActor(kBubbleTrailSequenceIds[index], 2, 0);
+				trailControl->appearActor();
+				trailControl->deactivateObject();
 				break;
 			}
 		}

@@ -38,13 +38,13 @@
 
 namespace Illusions {
 
-static const Struct10 kStruct10s[] = {
+static const Struct10 kVerbIconSequenceIds[] = {
 	{0x1B0000,       0,       0,       0},
-	{0x1B0001, 0x6001A, 0x6001B, 0x6001C},
-	{0x1B0002, 0x6001D, 0x6001E, 0x6001F},
-	{0x1B0003, 0x60020, 0x60021, 0x60022},
-	{0x1B0004, 0x60023, 0x60024, 0x60025},
-	{0x1B0005, 0x60026, 0x60027, 0x60028},
+	{0x1B0001, 0x6001A, 0x6001B, 0x6001C}, // TALK, LOOK
+	{0x1B0002, 0x6001D, 0x6001E, 0x6001F}, // USE, LOOK
+	{0x1B0003, 0x60020, 0x60021, 0x60022}, // USE
+	{0x1B0004, 0x60023, 0x60024, 0x60025}, // USE, LOOK
+	{0x1B0005, 0x60026, 0x60027, 0x60028}, // TALK, LOOK
 	{0x1B0006,       0,       0,       0},
 	{0x1B0007,       0,       0,       0},
 	{0x1B0008,       0,       0,       0},
@@ -296,7 +296,7 @@ void BbdouSpecialCode::spcSetupBubble(OpCall &opCall) {
 	ARG_UINT32(progResKeywordId);
 	ARG_UINT32(namedPointId);
 	ARG_INT16(count);
-	_bubble->addItem0(sequenceId1, sequenceId2, progResKeywordId, namedPointId,
+	_bubble->addBubbleStyle(sequenceId1, sequenceId2, progResKeywordId, namedPointId,
 		count, (uint32*)opCall._code);
 	_vm->notifyThreadId(opCall._threadId);
 }
@@ -552,7 +552,7 @@ void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, ui
 	VerbState *verbState, uint32 progResKeywordId) {
 
 	Common::Rect collisionRect;
-	Control *overlappedControl, *control2, *control3;
+	Control *overlappedControl, *control2;
 	Common::Point bubbleSourcePt(320, 240), bubbleDestPt, currPan;
 
 	overlappedControl = _vm->_dict->getObjectControl(overlappedObjectId);
@@ -574,10 +574,10 @@ void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, ui
 			bubbleSourcePt.y += 80;
 	}
 
-	_bubble->setup(1, bubbleSourcePt, bubbleDestPt, progResKeywordId);
+	_bubble->selectBubbleStyle(1, bubbleSourcePt, bubbleDestPt, progResKeywordId);
 
-	verbState->_objectIds[0] = _bubble->addItem(0, 0x6005A);
-	verbState->_objectIds[1] = _bubble->addItem(0, 0x6005A);
+	verbState->_objectIds[0] = _bubble->addBubbleIcon(0, 0x6005A);
+	verbState->_objectIds[1] = _bubble->addBubbleIcon(0, 0x6005A);
 	verbState->_index = 0;
 
 	int value = _objectInteractModeMap.getObjectInteractMode(overlappedControl->_objectId);
@@ -591,13 +591,13 @@ void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, ui
 		verbState->_verbId = 0x1B0002;
 	}
 
-	uint32 sequenceId = kStruct10s[verbState->_verbId & 0xFFFF]._sequenceId2;
 	_bubble->show();
 
-	control3 = _vm->_dict->getObjectControl(verbState->_objectIds[0]);
-	control3->startSequenceActor(sequenceId, 2, 0);
-	control3->appearActor();
-	control3->deactivateObject();
+	Control *verbIconControl = _vm->_dict->getObjectControl(verbState->_objectIds[0]);
+	uint32 sequenceId = kVerbIconSequenceIds[verbState->_verbId & 0xFFFF]._sequenceId2;
+	verbIconControl->startSequenceActor(sequenceId, 2, 0);
+	verbIconControl->appearActor();
+	verbIconControl->deactivateObject();
 
 	verbState->_isBubbleVisible = true;
 	_vm->_input->discardAllEvents();
