@@ -25,6 +25,7 @@
 #include "graphics/cursorman.h"
 
 #include "startrek/graphics.h"
+#include "startrek/room.h"
 
 
 namespace StarTrek {
@@ -136,7 +137,7 @@ void StarTrekEngine::showTextbox(String headerText, const String &mainText, int 
 			headerText += ' ';
 	}
 
-	int commandParam = (maxTextLines < 0 ? 0 : maxTextLines);
+	int actionParam = (maxTextLines < 0 ? 0 : maxTextLines);
 
 	if (maxTextLines < 0)
 		maxTextLines = -maxTextLines;
@@ -152,7 +153,8 @@ void StarTrekEngine::showTextbox(String headerText, const String &mainText, int 
 
 	showText(&StarTrekEngine::readTextFromArray, (uintptr)strings, xoffset, yoffset, textColor, false, maxTextLines, false);
 
-	addCommand(Command(COMMAND_TALK, commandParam, 0, 0));
+	if (actionParam != 0)
+		addAction(Action(ACTION_TALK, actionParam, 0, 0));
 }
 
 String StarTrekEngine::skipTextAudioPrompt(const String &str) {

@@ -21,6 +21,7 @@
  */
 
 #include "startrek/iwfile.h"
+#include "startrek/room.h"
 #include "startrek/startrek.h"
 
 namespace StarTrek {
@@ -50,11 +51,11 @@ void StarTrekEngine::runAwayMission() {
 		_awayMission.mouseX = mousePos.x;
 		_awayMission.mouseY = mousePos.y;
 
-		assert(_commandQueue.size() <= 16);
-		if (!_commandQueue.empty()) {
+		assert(_actionQueue.size() <= 16);
+		if (!_actionQueue.empty()) {
 			// sub_200e7();
 			// sub_20118();
-			handleAwayMissionCommand();
+			handleAwayMissionAction();
 		}
 	}
 }
@@ -101,7 +102,7 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 
 	// TODO: RDF vars 1e/1f and 20/21; relates to BAN files?
 
-	_commandQueue.clear();
+	_actionQueue.clear();
 }
 
 void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
@@ -168,7 +169,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			// sub_22de0();
 			_frameIndex++;
 			_roomFrameCounter++;
-			addCommand(Command(COMMAND_TICK, _roomFrameCounter & 0xff, (_roomFrameCounter >> 8) & 0xff, 0));
+			addAction(Action(ACTION_TICK, _roomFrameCounter & 0xff, (_roomFrameCounter >> 8) & 0xff, 0));
 			if (_roomFrameCounter >= 2)
 				_gfx->incPaletteFadeLevel();
 			break;
@@ -209,11 +210,15 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				int clickedObject = findObjectAt(_gfx->getMousePos());
 				hideInventoryIcons();
 
-				if (clickedObject == OBJECT_INVENTORY_ICON)
+				if (clickedObject == OBJECT_INVENTORY_ICON) {
 					clickedObject = showInventoryMenu(50, 50, false);
 
-				if (clickedObject == -1)
-					clickedObject = -2;
+					// -1 means "clicked on something unknown"; -2 means "clicked on
+					// nothing". In the case of the inventory, either one clicks on an
+					// inventory item, or no action is performed.
+					if (clickedObject == -1)
+						clickedObject = -2;
+				}
 
 				_awayMission.passiveObject = clickedObject;
 
@@ -223,18 +228,18 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				bool passiveIsItem = _awayMission.passiveObject >= ITEMS_START && _awayMission.passiveObject <= ITEMS_END; // FIXME: "<= ITEMS_END" doesn't make sense?
 
 				if (clickedObject == -2)
-					goto checkAddCommand;
-				if (checkItemInteractionExists(ACTION_USE, _awayMission.activeObject, _awayMission.passiveObject, 0))
-					goto checkAddCommand;
+					goto checkAddAction;
+				if (_room->actionHasCode(Action(ACTION_USE, _awayMission.activeObject, _awayMission.passiveObject, 0)))
+					goto checkAddAction;
 				if (_awayMission.activeObject == OBJECT_MCCOY) {
-					if (checkItemInteractionExists(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
-						goto checkAddCommand;
-					if (checkItemInteractionExists(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
-						goto checkAddCommand;
+					if (_room->actionHasCode(Action(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0)))
+						goto checkAddAction;
+					if (_room->actionHasCode(Action(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0)))
+						goto checkAddAction;
 				}
 				else if (_awayMission.activeObject == OBJECT_SPOCK) {
-					if (checkItemInteractionExists(ACTION_USE, OBJECT_ISTRICOR, _awayMission.passiveObject, 0))
-						goto checkAddCommand;
+					if (_room->actionHasCode(Action(ACTION_USE, OBJECT_ISTRICOR, _awayMission.passiveObject, 0)))
+						goto checkAddAction;
 				}
 
 				if ((activeIsCrewman && passiveIsCrewman)
@@ -243,7 +248,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 					if (_awayMission.passiveObject == OBJECT_ICOMM) {
 						if (sub_2330c())
 							break;
-						addCommand(Command(ACTION_USE, OBJECT_ICOMM, 0, 0));
+						addAction(Action(ACTION_USE, OBJECT_ICOMM, 0, 0));
 						_sound->playVoc("commun30");
 						if (_awayMission.activeObject <= OBJECT_REDSHIRT) {
 							goto checkShowInventory;
@@ -258,11 +263,11 @@ void StarTrekEngine::handleAwayMissionEvents() {
 					goto checkShowInventory;
 				}
 
-checkAddCommand:
+checkAddAction:
 				if (!sub_2330c())
 				{
 					if (clickedObject != -2)
-						addCommand(Command(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0));
+						addAction(Action(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0));
 
 checkShowInventory:
 					if (!(_awayMission.field24 & 1))
@@ -290,7 +295,7 @@ checkShowInventory:
 						break;
 
 					if (clickedObject != -2)
-						addCommand(Command(_awayMission.activeAction, _awayMission.activeObject, 0, 0));
+						addAction(Action(_awayMission.activeAction, _awayMission.activeObject, 0, 0));
 
 					if (_awayMission.activeAction == ACTION_LOOK && !(_awayMission.field24 & 1))
 						showInventoryIcons(false);
@@ -310,19 +315,18 @@ checkShowInventory:
 			hideInventoryIcons();
 			playSoundEffectIndex(0x07);
 			_awayMission.activeAction = showActionMenu();
-			if (_awayMission.activeAction == ACTION_USE) { // TODO
-				/*
-				int16 clickedObject = sub_22f08();
+			if (_awayMission.activeAction == ACTION_USE) {
+				//int16 clickedObject = selectObjectForGetAction(); // TODO
+				int16 clickedObject = 0;
 				if (clickedObject == -1)
 					break;
 				else
 					_awayMission.activeObject = clickedObject;
-					*/
 			}
 			if (_awayMission.activeAction == ACTION_USE
 					&& _awayMission.activeObject == OBJECT_ICOMM && (_awayMission.field24 & 1) == 0) { // TODO
 				if (!sub_2330c()) {
-					addCommand(Command(_awayMission.activeAction, _awayMission.activeObject, 0, 0));
+					addAction(Action(_awayMission.activeAction, _awayMission.activeObject, 0, 0));
 					_sound->playVoc("communic");
 					_awayMission.activeAction = ACTION_WALK;
 				}
@@ -376,54 +380,57 @@ SharedPtr<Room> StarTrekEngine::getRoom() {
 	return _room;
 }
 
-void StarTrekEngine::addCommand(const Command &command) {
-	if (command.type != COMMAND_TICK)
-		debug("Command %d: %x, %x, %x", command.type, command.gen.b1, command.gen.b2, command.gen.b3);
-	_commandQueue.push(command);
+void StarTrekEngine::addAction(const Action &action) {
+	if (action.type != ACTION_TICK)
+		debug("Action %d: %x, %x, %x", action.type, action.b1, action.b2, action.b3);
+	_actionQueue.push(action);
 }
 
-bool StarTrekEngine::checkItemInteractionExists(int action, int activeItem, int passiveItem, int16 arg6) {
-	// TODO
-	return false;
-}
+void StarTrekEngine::handleAwayMissionAction() {
+	Action action = _actionQueue.pop();
 
-void StarTrekEngine::handleAwayMissionCommand() {
-	Command command = _commandQueue.pop();
-
-	if ((command.type == COMMAND_FINISHED_BEAMING_IN || command.type == COMMAND_FINISHED_ENTERING_ROOM) && command.gen.b1 == 0xff) {
+	if ((action.type == ACTION_FINISHED_BEAMING_IN || action.type == ACTION_FINISHED_ENTERING_ROOM) && action.b1 == 0xff) {
 		_awayMission.transitioningIntoRoom = 0;
 		_warpHotspotsActive = true;
 		return;
 	}
-	else if (command.type == COMMAND_FINISHED_ENTERING_ROOM && command.gen.b1 >= 0xe0) { // TODO
+	else if (action.type == ACTION_FINISHED_ENTERING_ROOM && action.b1 >= 0xe0) { // TODO
 		return;
 	}
 
-	switch (command.type) { // TODO: everything
+	if (_room->handleAction(action))
+		return;
 
-	case COMMAND_WALK: // TODO
+	// Action not defined for the room, check for default behaviour
+
+	switch (action.type) { // TODO: everything
+
+	case ACTION_WALK: // TODO
+		warning("Unhandled walk action: %d %d %d", action.b1, action.b2, action.b3);
 		break;
 
-	case COMMAND_USE: // TODO
+	case ACTION_USE: // TODO
+		warning("Unhandled use action: %d %d %d", action.b1, action.b2, action.b3);
 		break;
 
-	case COMMAND_GET: // TODO
+	case ACTION_GET: // TODO
+		warning("Unhandled get action: %d %d %d", action.b1, action.b2, action.b3);
 		break;
 
-	case COMMAND_LOOK:
-		if (command.action.activeObject >= ITEMS_START && command.action.activeObject < ITEMS_END) {
-			int i = command.action.activeObject - ITEMS_START;
+	case ACTION_LOOK:
+		if (action.activeObject() >= ITEMS_START && action.activeObject() < ITEMS_END) {
+			int i = action.activeObject() - ITEMS_START;
 			Common::String text = getItemDescription(_itemList[i].textIndex);
 			showTextbox("", text, 20, 20, TEXTCOLOR_YELLOW, 0);
 		}
-		else if (command.action.activeObject == OBJECT_KIRK)
+		else if (action.activeObject() == OBJECT_KIRK)
 			showTextbox("", getItemDescription(0x49), 20, 20, TEXTCOLOR_YELLOW, 0);
-		else if (command.action.activeObject == OBJECT_SPOCK)
+		else if (action.activeObject() == OBJECT_SPOCK)
 			showTextbox("", getItemDescription(0x4a), 20, 20, TEXTCOLOR_YELLOW, 0);
-		else if (command.action.activeObject == OBJECT_MCCOY)
+		else if (action.activeObject() == OBJECT_MCCOY)
 			showTextbox("", getItemDescription(0x4b), 20, 20, TEXTCOLOR_YELLOW, 0);
 		else {
-			if (command.action.activeObject == OBJECT_REDSHIRT)
+			if (action.activeObject() == OBJECT_REDSHIRT)
 				showTextbox("", getItemDescription(0x4c), 20, 20, TEXTCOLOR_YELLOW, 0);
 
 			// Show generic "nothing of note" text.
@@ -434,13 +441,14 @@ void StarTrekEngine::handleAwayMissionCommand() {
 		}
 		break;
 
-	case COMMAND_TALK: // TODO
+	case ACTION_TALK: // TODO
+		warning("Unhandled talk action: %d %d %d", action.b1, action.b2, action.b3);
 		break;
 
-	case COMMAND_TOUCHED_WARP:
-		// if (!sub_203e1(command.type)) // Probably calls RDF code
+	case ACTION_TOUCHED_WARP:
+		// if (!sub_203e1(action.type)) // Probably calls RDF code
 		{
-			byte warpIndex = command.gen.b1;
+			byte warpIndex = action.b1;
 			int16 roomIndex = _room->readRdfWord(RDF_WARP_ROOM_INDICES + warpIndex * 2);
 			unloadRoom();
 			_sound->loadMusicFile("ground");
@@ -488,7 +496,7 @@ void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 			uint16 var = _room->readRdfWord(offset);
 			if (_activeDoorWarpHotspot != var) {
 				_activeDoorWarpHotspot = var;
-				addCommand(Command(COMMAND_7, var & 0xff, 0, 0));
+				addAction(Action(ACTION_TOUCHED_HOTSPOT, var & 0xff, 0, 0));
 			}
 			return;
 		}
@@ -506,7 +514,7 @@ void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 				uint16 var = _room->readRdfWord(offset);
 				if (_activeWarpHotspot != var) {
 					_activeWarpHotspot = var;
-					addCommand(Command(COMMAND_TOUCHED_WARP, var & 0xff, 0, 0));
+					addAction(Action(ACTION_TOUCHED_WARP, var & 0xff, 0, 0));
 				}
 				return;
 			}

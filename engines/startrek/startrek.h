@@ -36,12 +36,12 @@
 
 #include "engines/engine.h"
 
+#include "startrek/action.h"
 #include "startrek/awaymission.h"
 #include "startrek/filestream.h"
 #include "startrek/graphics.h"
 #include "startrek/items.h"
 #include "startrek/object.h"
-#include "startrek/room.h"
 #include "startrek/sound.h"
 
 
@@ -55,6 +55,7 @@ namespace Common {
 namespace StarTrek {
 
 class StarTrekEngine;
+class Room;
 
 typedef String (StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
 
@@ -94,7 +95,10 @@ enum TextDisplayMode {
 };
 
 enum TextColor {
-	TEXTCOLOR_YELLOW = 0xb0
+	TEXTCOLOR_GREY   = 0x88,
+	TEXTCOLOR_RED    = 0xa1,
+	TEXTCOLOR_YELLOW = 0xb0,
+	TEXTCOLOR_BLUE   = 0xc0
 };
 
 // Keeps track of data for a list of buttons making up a menu
@@ -161,55 +165,6 @@ struct TrekEvent {
 	uint32 tick;
 };
 
-// Commands: Signals that can be passed to "handleAwayMissionCommands" or to room-specfiic
-// code.
-enum Commands {
-	COMMAND_TICK = 0,
-	COMMAND_WALK = 1, // Commands 1-5 correspond to Actions of the same number.
-	COMMAND_USE = 2,
-	COMMAND_GET = 3,
-	COMMAND_LOOK = 4,
-	COMMAND_TALK = 5,
-	COMMAND_TOUCHED_WARP = 6,
-	COMMAND_7 = 7, // Doors? (Or just hotspots activated by Kirk moving there?)
-	COMMAND_FINISHED_BEAMING_IN = 10,
-	COMMAND_FINISHED_ENTERING_ROOM = 12
-};
-
-struct Command {
-	byte type;
-
-	union { // FIXME: using unions in a dangeous way here...
-		struct {
-			byte b1;
-			byte b2;
-			byte b3;
-		} gen;
-
-		struct {
-			byte activeObject;
-			byte passiveObject;
-		} action;
-	};
-
-	Command(byte _type, byte _b1, byte _b2, byte _b3)
-		: type(_type) {
-			gen.b1 = _b1;
-			gen.b2 = _b2;
-			gen.b3 = _b3;
-		}
-};
-
-// Actions that can be used on away missions.
-enum Acton {
-	ACTION_WALK = 1,
-	ACTION_USE = 2,
-	ACTION_GET = 3,
-	ACTION_LOOK = 4,
-	ACTION_TALK = 5,
-	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
-};
-
 
 struct StarTrekGameDescription;
 class Graphics;
@@ -220,7 +175,7 @@ class StarTrekEngine : public ::Engine {
 protected:
 	Common::Error run();
 
-private:
+public:
 	// Game modes
 	Common::Error runGameMode(int mode);
 
@@ -234,9 +189,9 @@ private:
 	void unloadRoom();
 	int loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y);
 	uint16 getActorScaleAtPosition(int16 y);
-	void addCommand(const Command &command);
+	void addAction(const Action &action);
 	bool checkItemInteractionExists(int action, int activeItem, int passiveItem, int16 arg6);
-	void handleAwayMissionCommand();
+	void handleAwayMissionAction();
 
 	bool isPointInPolygon(int16 *data, int16 x, int16 y);
 	void checkTouchedLoadingZone(int16 x, int16 y);
@@ -255,6 +210,7 @@ public:
 
 	// Running the game
 	void playSoundEffectIndex(int index);
+	void playMidiMusicTracks(int startTrack, int loopTrack);
 	void playSpeech(const Common::String &filename);
 	void stopPlayingSpeech();
 
@@ -405,8 +361,8 @@ public:
 	Common::String _txtFilename;
 	Common::String _loadedText; // TODO: might be OK to delete this
 
-	// Queue of "commands" (ie. next frame, clicked on object) for away mission or bridge
-	Common::Queue<Command> _commandQueue;
+	// Queue of "actions" (ie. next frame, clicked on object) for away mission or bridge
+	Common::Queue<Action> _actionQueue;
 
 	AwayMission _awayMission;
 	bool _warpHotspotsActive;
