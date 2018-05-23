@@ -36,6 +36,7 @@
 #include "startrek/filestream.h"
 #include "startrek/iwfile.h"
 #include "startrek/lzss.h"
+#include "startrek/room.h"
 #include "startrek/startrek.h"
 
 namespace StarTrek {
@@ -71,7 +72,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_keyboardControlsMouse = true;
 
 	_inQuitGameMenu = false;
-	_textDisplayMode = TEXTDISPLAY_WAIT;
+	_textDisplayMode = TEXTDISPLAY_SUBTITLES;
 	_textboxVar2 = 0;
 	_textboxVar6 = 0;
 	_textboxHasMultipleChoices = false;
@@ -320,6 +321,10 @@ void StarTrekEngine::playSoundEffectIndex(int index) {
 	}
 }
 
+void StarTrekEngine::playMidiMusicTracks(int startTrack, int loopTrack) {
+	_sound->playMidiMusicTracks(startTrack, loopTrack);
+}
+
 void StarTrekEngine::playSpeech(const Common::String &filename) {
 	_sound->playSpeech(filename.c_str());
 }
@@ -446,7 +451,7 @@ void StarTrekEngine::updateActorAnimations() {
 					if (nextAnimFrame == actor->numAnimFrames - 1) {
 						actor->field62++;
 						if (actor->walkingIntoRoom != 0) {
-							addCommand(Command(COMMAND_FINISHED_BEAMING_IN, actor->field66, 0, 0));
+							addAction(Action(ACTION_FINISHED_BEAMING_IN, actor->field66, 0, 0));
 						}
 					}
 				}
@@ -517,7 +522,7 @@ void StarTrekEngine::updateActorAnimations() {
 				if (actor->iwSrcPosition == -1) {
 					if (actor->walkingIntoRoom != 0) {
 						actor->walkingIntoRoom = 0;
-						addCommand(Command(COMMAND_FINISHED_ENTERING_ROOM, actor->field66 & 0xff, 0, 0));
+						addAction(Action(ACTION_FINISHED_ENTERING_ROOM, actor->field66 & 0xff, 0, 0));
 					}
 
 					actor->sprite.bitmap.reset();
@@ -981,7 +986,7 @@ void StarTrekEngine::updateMouseBitmap() {
 		true,  // ACTION_LOOK
 		true   // ACTION_TALK
 	};
-	const bool worksOnHotspots[] = { // True if the action reacts with hotspots?
+	const bool worksOnHotspots[] = { // True if the action reacts with hotspots
 		false, // ACTION_WALK
 		true,  // ACTION_USE
 		true,  // ACTION_GET
@@ -1048,7 +1053,7 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 	_inventoryIconSprite.pos.y = 10;
 	_inventoryIconSprite.drawMode = 2;
 	_inventoryIconSprite.drawPriority = 15;
-	_inventoryIconSprite.drawPriority2 = 15;
+	_inventoryIconSprite.drawPriority2 = 8;
 	_inventoryIconSprite.setBitmap(_gfx->loadBitmap("inv00"));
 }
 

@@ -17,7 +17,8 @@ MODULE_OBJS = \
 	sound.o \
 	sprite.o \
 	startrek.o \
-	text.o
+	text.o \
+	rooms/demon0.o
 	
 
 

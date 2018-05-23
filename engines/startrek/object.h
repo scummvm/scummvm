@@ -42,6 +42,7 @@ class FileStream;
 // other, ie. object 0 (kirk) interacts with object 32 (a hotspot) via ACTION_LOOK.
 
 const int ACTORS_START = 0;
+const int SCALED_ACTORS_END = 8; // Only first 8 actors have room scaling applied?
 const int ACTORS_END = 32;
 const int NUM_ACTORS = ACTORS_END - ACTORS_START;
 

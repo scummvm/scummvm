@@ -20,38 +20,46 @@
  *
  */
 
-#ifndef STARTREK_AWAYMISSION_H
-#define STARTREK_AWAYMISSION_H
+#ifndef STARTREK_ACTION_H
+#define STARTREK_ACTION_H
 
-// All variables here get cleared to 0 upon starting an away mission.
-struct AwayMission {
-	int16 mouseX;
-	int16 mouseY;
-	byte field1c;
-	byte field1d;
-	byte transitioningIntoRoom; // Set while beaming in or walking into a room
-	bool redshirtDead;
-	byte activeAction;
-	byte activeObject;  // The item that is going to be used on something
-	byte passiveObject; // The item that the active item is used on (or the item looked at, etc).
 
-	// If this is true after calling room-specific RDF code, the game will continue to run
-	// any "default" code for the event, if any.
-	bool rdfStillDoDefaultAction;
+enum Acton {
+	ACTION_TICK = 0,
 
-	byte field24;
-	int8 field25[4];
+	ACTION_WALK = 1, // Actions 1-5 are directly usable on away missions.
+	ACTION_USE = 2,
+	ACTION_GET = 3,
+	ACTION_LOOK = 4,
+	ACTION_TALK = 5,
 
-	// Demon Word: nonzero if a rude response was given to the prelate.
-	int16 field29;
-
-	byte field33;
-	byte field36;
-	byte field38;
-	byte field3a;
-
-	int16 missionScore;
+	ACTION_TOUCHED_WARP = 6,
+	ACTION_TOUCHED_HOTSPOT = 7, // Doors? (Or just hotspots activated by Kirk moving there?)
+	ACTION_FINISHED_BEAMING_IN = 10,
+	ACTION_FINISHED_ENTERING_ROOM = 12,
+	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
 };
-// Size: 0x129 bytes
+
+struct Action {
+	byte type;
+	byte b1;
+	byte b2;
+	byte b3;
+
+	Action(byte _type, byte _b1, byte _b2, byte _b3)
+		: type(_type),
+		b1(_b1),
+		b2(_b2),
+		b3(_b3) {}
+
+
+	// ACTION_USE, ACTION_GET, ACTION_LOOK, ACTION_TALK
+	byte activeObject() { return b1; }
+	byte passiveObject() { return b2; }
+
+	bool operator==(const Action &a) const {
+		return type == a.type && b1 == a.b1 && b2 == a.b2 && b3 == a.b3;
+	}
+};
 
 #endif
