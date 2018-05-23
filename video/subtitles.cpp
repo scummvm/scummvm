@@ -239,7 +239,7 @@ void Subtitles::setFont(const char *fontname, int height) {
 	_fontHeight = height;
 
 	if (file.open(fontname)) {
-		_font = Graphics::loadTTFFont(file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
+		_font = Graphics::loadTTFFont(file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96, Graphics::kTTFRenderModeMonochrome);
 	}
 
 	if (!_font) {
