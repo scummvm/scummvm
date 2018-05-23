@@ -37,10 +37,17 @@ RoomAction demon0ActionList[] = {
 
 	{ Action(ACTION_TOUCHED_WARP, 0, 0, 0), &Room::demon0TouchedWarp0 },
 
-	// TODO: Walk events; entered room event; beamed in event
-
+	{ Action(ACTION_WALK, 0x27, 0, 0), &Room::demon0WalkToBottomDoor },
+	{ Action(ACTION_WALK, 9, 0, 0), &Room::demon0WalkToBottomDoor },
 	{ Action(ACTION_TOUCHED_HOTSPOT, 1, 0, 0), &Room::demon0TouchedHotspot1 },
+	{ Action(ACTION_FINISHED_WALKING, 1, 0, 0), &Room::demon0ReachedBottomDoor },
+	{ Action(ACTION_FINISHED_ANIMATION, 1, 0, 0), &Room::demon0ReachedBottomDoor },
+
+	{ Action(ACTION_WALK, 0x26, 0, 0), &Room::demon0WalkToTopDoor },
+	{ Action(ACTION_WALK, 10, 0, 0), &Room::demon0WalkToTopDoor },
 	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0), &Room::demon0TouchedHotspot0 },
+	{ Action(ACTION_FINISHED_WALKING, 2, 0, 0), &Room::demon0ReachedTopDoor },
+	{ Action(ACTION_FINISHED_ANIMATION, 2, 0, 0), &Room::demon0ReachedTopDoor },
 
 	{ Action(ACTION_TALK, 8, 0, 0), &Room::demon0TalkToPrelate },
 	{ Action(ACTION_LOOK, 8, 0, 0), &Room::demon0LookAtPrelate },
@@ -59,23 +66,23 @@ RoomAction demon0ActionList[] = {
 	{ Action(ACTION_LOOK, 0xff, 0, 0), &Room::demon0LookAnywhere },
 	{ Action(ACTION_LOOK, 0x24, 0, 0), &Room::demon0LookAtBushes },
 
-	{ Action(ACTION_LOOK, 0, 0, 0), &Room::demon0LookAtKirk },
-	{ Action(ACTION_LOOK, 2, 0, 0), &Room::demon0LookAtMcCoy },
-	{ Action(ACTION_LOOK, 3, 0, 0), &Room::demon0LookAtRedShirt },
-	{ Action(ACTION_LOOK, 1, 0, 0), &Room::demon0LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_KIRK,     0, 0), &Room::demon0LookAtKirk },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY,    0, 0), &Room::demon0LookAtMcCoy },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::demon0LookAtRedShirt },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK,    0, 0), &Room::demon0LookAtSpock },
 
 	{ Action(ACTION_LOOK, 9, 0, 0), &Room::demon0LookAtShelter },    // Door 1
 	{ Action(ACTION_LOOK, 10, 0, 0), &Room::demon0LookAtShelter },   // Door 2
 	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::demon0LookAtShelter }, // Shelter itself
 
-	{ Action(ACTION_TALK, 0, 0, 0), &Room::demon0TalkToKirk },
-	{ Action(ACTION_TALK, 3, 0, 0), &Room::demon0TalkToRedshirt },
-	{ Action(ACTION_TALK, 2, 0, 0), &Room::demon0TalkToMcCoy },
-	{ Action(ACTION_TALK, 1, 0, 0), &Room::demon0TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_KIRK,     0, 0), &Room::demon0TalkToKirk },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::demon0TalkToRedshirt },
+	{ Action(ACTION_TALK, OBJECT_MCCOY,    0, 0), &Room::demon0TalkToMcCoy },
+	{ Action(ACTION_TALK, OBJECT_SPOCK,    0, 0), &Room::demon0TalkToSpock },
 
-	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0xff, 0), &Room::useSTricorderAnywhere },
-	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0xff, 0), &Room::useMTricorderAnywhere },
-	{ Action(ACTION_USE, OBJECT_IMTRICOR, 8, 0), &Room::useMTricorderOnPrelate },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, -1, 0), &Room::demon0UseSTricorderAnywhere },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, -1, 0), &Room::demon0UseMTricorderAnywhere },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 8, 0), &Room::demon0UseMTricorderOnPrelate },
 };
 
 }

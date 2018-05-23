@@ -72,6 +72,13 @@ void Room::demon0TouchedWarp0() {
 	_vm->_awayMission.rdfStillDoDefaultAction = true;
 }
 
+void Room::demon0WalkToBottomDoor() {
+	_vm->_awayMission.transitioningIntoRoom = 1;
+	_rdfData[0xcd] = 1; // FIXME
+	_vm->_awayMission.field25[OBJECT_KIRK] = DIR_E;
+	walkCrewman(OBJECT_KIRK, 243, 158, 1);
+}
+
 void Room::demon0TouchedHotspot1() {
 	if (_rdfData[0xcd] != 1) // FIXME: not portable to mac/amiga?
 		return;
@@ -79,11 +86,30 @@ void Room::demon0TouchedHotspot1() {
 	playSoundEffectIndex(0x05);
 }
 
+void Room::demon0ReachedBottomDoor() {
+	if (++_rdfData[0xca] != 2) // FIXME
+		return;
+	loadRoomIndex(5, 0);
+}
+
+void Room::demon0WalkToTopDoor() {
+	_vm->_awayMission.transitioningIntoRoom = 1;
+	_rdfData[0xcc] = 1; // FIXME
+	_vm->_awayMission.field25[OBJECT_KIRK] = DIR_E;
+	walkCrewman(OBJECT_KIRK, 157, 134, 2);
+}
+
 void Room::demon0TouchedHotspot0() {
-	if (_rdfData[0xcd] != 1) // FIXME: not portable to mac/amiga?
+	if (_rdfData[0xcc] != 1) // FIXME: not portable to mac/amiga?
 		return;
 	loadActorAnim2(10, "s0r0d2", 158, 130, 2);
 	playSoundEffectIndex(0x05);
+}
+
+void Room::demon0ReachedTopDoor() {
+	if (++_rdfData[0xcb] != 2) // FIXME
+		return;
+	loadRoomIndex(6, 3);
 }
 
 void Room::demon0TalkToPrelate() {
@@ -471,7 +497,7 @@ void Room::demon0AskPrelateAboutSightings() {
 	_vm->_awayMission.field36 = 1;
 }
 
-void Room::useSTricorderAnywhere() {
+void Room::demon0UseSTricorderAnywhere() {
 	loadActorAnim2(OBJECT_SPOCK, "sscans", -1, -1, 0);
 	playSoundEffectIndex(0x04);
 
@@ -484,7 +510,7 @@ void Room::useSTricorderAnywhere() {
 	showRoomSpecificText(text);
 }
 
-void Room::useMTricorderAnywhere() {
+void Room::demon0UseMTricorderAnywhere() {
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
 	playSoundEffectIndex(0x04);
 
@@ -496,7 +522,7 @@ void Room::useMTricorderAnywhere() {
 	showRoomSpecificText(text);
 }
 
-void Room::useMTricorderOnPrelate() {
+void Room::demon0UseMTricorderOnPrelate() {
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
 	playSoundEffectIndex(0x04);
 

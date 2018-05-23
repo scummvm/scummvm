@@ -69,6 +69,9 @@ public:
 	bool actionHasCode(const Action &action);
 	bool handleAction(const Action &action);
 
+	// Same as above, but if any byte in the action is -1 (0xff), it matches any value.
+	bool handleActionWithBitmask(const Action &action);
+
 	uint16 getFirstHotspot() { return readRdfWord(0x12); }
 	uint16 getHotspotEnd()   { return readRdfWord(0x14); }
 
@@ -94,10 +97,10 @@ private:
 	void loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66); // Cmd 0x00
 	void loadActorStandAnim(int actorIndex);                                                   // Cmd 0x01
 	void loadActorAnim2(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66);// Cmd 0x02
-	int showRoomSpecificText(const char **textAddr);                                                 // Cmd 0x03
+	int showRoomSpecificText(const char **textAddr);                                           // Cmd 0x03
 	void giveItem(int item);                                                                   // Cmd 0x04
 	void loadRoomIndex(int roomIndex, int spawnIndex);                                         // Cmd 0x06
-	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 field66);                // Cmd 0x08
+	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam);// Cmd 0x08
 	void playSoundEffectIndex(int soundEffect);                                                // Cmd 0x0f
 	void playMidiMusicTracks(int startTrack, int loopTrack);                                   // Cmd 0x10
 	void playVoc(Common::String filename);                                                     // Cmd 0x15
@@ -111,8 +114,12 @@ public:
 	void demon0Tick100();
 	void demon0Tick140();
 	void demon0TouchedWarp0();
+	void demon0WalkToBottomDoor();
 	void demon0TouchedHotspot1();
+	void demon0ReachedBottomDoor();
+	void demon0WalkToTopDoor();
 	void demon0TouchedHotspot0();
+	void demon0ReachedTopDoor();
 	void demon0TalkToPrelate();
 	void demon0LookAtPrelate();
 	void demon0UsePhaserOnSnow();
@@ -134,9 +141,9 @@ public:
 	void demon0TalkToMcCoy();
 	void demon0TalkToSpock();
 	void demon0AskPrelateAboutSightings();
-	void useSTricorderAnywhere();
-	void useMTricorderAnywhere();
-	void useMTricorderOnPrelate();
+	void demon0UseSTricorderAnywhere();
+	void demon0UseMTricorderAnywhere();
+	void demon0UseMTricorderOnPrelate();
 
 	void demon0BadResponse();
 };

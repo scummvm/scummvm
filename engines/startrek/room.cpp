@@ -83,6 +83,23 @@ bool Room::handleAction(const Action &action) {
 	return false;
 }
 
+bool Room::handleActionWithBitmask(const Action &action) {
+	RoomAction *roomActionPtr = _roomActionList;
+	int n = _numRoomActions;
+
+	while (n-- > 0) {
+		uint32 bitmask = action.getBitmask();
+		if ((action.toUint32() & bitmask) == (roomActionPtr->action.toUint32() & bitmask)) {
+			_vm->_awayMission.rdfStillDoDefaultAction = false;
+			(this->*(roomActionPtr->funcPtr))();
+			if (!_vm->_awayMission.rdfStillDoDefaultAction)
+				return true;
+		}
+		roomActionPtr++;
+	}
+	return false;
+}
+
 Common::Point Room::getBeamInPosition(int crewmanIndex) {
 	int base = 0xaa + crewmanIndex * 4;
 	return Common::Point(readRdfWord(base), readRdfWord(base + 2));
@@ -91,7 +108,7 @@ Common::Point Room::getBeamInPosition(int crewmanIndex) {
 
 // Interface for room-specific code
 
-void Room::loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66) {
+void Room::loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, uint16 finishedAnimActionParam) {
 	Actor *actor = &_vm->_actorList[actorIndex];
 
 	if (x == -1 || y == -1) {
@@ -104,9 +121,9 @@ void Room::loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, 
 	else
 		_vm->loadActorAnim(actorIndex, anim, x, y, 256);
 
-	if (field66 != 0) {
-		actor->walkingIntoRoom = 1;
-		actor->field66 = field66;
+	if (finishedAnimActionParam != 0) {
+		actor->triggerActionWhenAnimFinished = true;
+		actor->finishedAnimActionParam = finishedAnimActionParam;
 	}
 }
 
@@ -125,8 +142,8 @@ void Room::loadActorStandAnim(int actorIndex) {
 /**
  * This is exactly the same as "loadActorAnim", but the game calls it at different times?
  */
-void Room::loadActorAnim2(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66) {
-	loadActorAnim(actorIndex, anim, x, y, field66);
+void Room::loadActorAnim2(int actorIndex, Common::String anim, int16 x, int16 y, uint16 finishedAnimActionParam) {
+	loadActorAnim(actorIndex, anim, x, y, finishedAnimActionParam);
 }
 
 // TODO: replace "rdfOffset" with a pointer, so we no longer read from RDF files? (This
@@ -168,17 +185,15 @@ void Room::loadRoomIndex(int roomIndex, int spawnIndex) {
 	if (_vm->_awayMission.field24 != 0)
 		return;
 
-	_vm->unloadRoom();
-	_vm->_sound->loadMusicFile("ground");
+	_vm->loadRoomIndex(roomIndex, spawnIndex);
 
-	_vm->loadRoom(_vm->_missionName, roomIndex);
-	_vm->initAwayCrewPositions(spawnIndex % 6);
-
-	// TODO: "retrieveStackVars" call returns program counter directly to beginning of
-	// away mission loop. How to handle this?
+	// This room has now been deleted, don't do anything else here.
+	// FIXME: this could a bit dangerous since this is generally called from room-specific
+	// code, which isn't guaranteed to do nothing afterward. Original game would
+	// manipulate the stack to jump directly back to the start of "runAwayMission"...
 }
 
-void Room::walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 field66) {
+void Room::walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam) {
 	if (!(actorIndex >= OBJECT_KIRK && actorIndex < OBJECT_REDSHIRT))
 		error("Tried to walk a non PC");
 
@@ -186,9 +201,9 @@ void Room::walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 field66)
 	Common::String anim = _vm->getCrewmanAnimFilename(actorIndex, "walk");
 	bool success = _vm->actorWalkToPosition(actorIndex, anim, actor->pos.x, actor->pos.y, destX, destY);
 
-	if (success && field66 != 0) {
-		actor->walkingIntoRoom = 1;
-		actor->field66 = field66;
+	if (success && finishedAnimActionParam != 0) {
+		actor->triggerActionWhenAnimFinished = true;
+		actor->finishedAnimActionParam = finishedAnimActionParam;
 	}
 }
 

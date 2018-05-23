@@ -128,8 +128,8 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 			actorWalkToPosition(i, anim, srcX, srcY, destX, destY);
 		}
 
-		_kirkActor->walkingIntoRoom = 1;
-		_kirkActor->field66 = 0xff;
+		_kirkActor->triggerActionWhenAnimFinished = true;
+		_kirkActor->finishedAnimActionParam = 0xff;
 		_awayMission.transitioningIntoRoom = 1;
 		_warpHotspotsActive = false;
 		break;
@@ -140,8 +140,8 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 			Common::Point warpPos = _room->getBeamInPosition(i);
 			loadActorAnimWithRoomScaling(i, animFilename, warpPos.x, warpPos.y);
 		}
-		_kirkActor->walkingIntoRoom = 1;
-		_kirkActor->field66 = 0xff;
+		_kirkActor->triggerActionWhenAnimFinished = true;
+		_kirkActor->finishedAnimActionParam = 0xff;
 		_awayMission.transitioningIntoRoom = 1;
 		playSoundEffectIndex(0x09);
 		_warpHotspotsActive = false;
@@ -179,26 +179,33 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				break;
 
 			switch (_awayMission.activeAction) {
-			case ACTION_WALK:
-				if (_awayMission.field1c == 0) {
-					_kirkActor->sprite.drawMode = 1; // Hide these objects for function call below?
-					_spockActor->sprite.drawMode = 1;
-					_mccoyActor->sprite.drawMode = 1;
-					_redshirtActor->sprite.drawMode = 1;
+			case ACTION_WALK: {
+				if (_awayMission.field1c != 0)
+					break;
+				_kirkActor->sprite.drawMode = 1; // Hide these objects for function call below?
+				_spockActor->sprite.drawMode = 1;
+				_mccoyActor->sprite.drawMode = 1;
+				_redshirtActor->sprite.drawMode = 1;
 
-					// findActorClickedOn();
-					// ...
+				int clickedObject = findObjectAt(_gfx->getMousePos());
 
-					_kirkActor->sprite.drawMode = 0;
-					_spockActor->sprite.drawMode = 0;
-					_mccoyActor->sprite.drawMode = 0;
-					_redshirtActor->sprite.drawMode = 0;
+				_kirkActor->sprite.drawMode = 0;
+				_spockActor->sprite.drawMode = 0;
+				_mccoyActor->sprite.drawMode = 0;
+				_redshirtActor->sprite.drawMode = 0;
 
-					Common::String animFilename = getCrewmanAnimFilename(0, "walk");
+				if (walkActiveObjectToHotspot())
+					break;
+
+				if (clickedObject > OBJECT_KIRK && clickedObject < ITEMS_START)
+					addAction(ACTION_WALK, clickedObject, 0, 0);
+				else {
+					Common::String animFilename = getCrewmanAnimFilename(OBJECT_KIRK, "walk");
 					Common::Point mousePos = _gfx->getMousePos();
-					actorWalkToPosition(0, animFilename, _kirkActor->pos.x, _kirkActor->pos.y, mousePos.x, mousePos.y);
+					actorWalkToPosition(OBJECT_KIRK, animFilename, _kirkActor->pos.x, _kirkActor->pos.y, mousePos.x, mousePos.y);
 				}
 				break;
+			}
 
 			case ACTION_USE: {
 				if (_awayMission.activeObject == OBJECT_REDSHIRT && (_awayMission.redshirtDead || (_awayMission.field24 & 8))) {
@@ -246,7 +253,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 						|| (activeIsCrewman && passiveIsItem)
 						|| (activeIsItem && passiveIsItem)) {
 					if (_awayMission.passiveObject == OBJECT_ICOMM) {
-						if (sub_2330c())
+						if (walkActiveObjectToHotspot())
 							break;
 						addAction(Action(ACTION_USE, OBJECT_ICOMM, 0, 0));
 						_sound->playVoc("commun30");
@@ -264,7 +271,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				}
 
 checkAddAction:
-				if (!sub_2330c())
+				if (!walkActiveObjectToHotspot())
 				{
 					if (clickedObject != -2)
 						addAction(Action(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0));
@@ -291,13 +298,13 @@ checkShowInventory:
 
 					_awayMission.activeObject = clickedObject;
 
-					if (sub_2330c())
+					if (walkActiveObjectToHotspot())
 						break;
 
 					if (clickedObject != -2)
 						addAction(Action(_awayMission.activeAction, _awayMission.activeObject, 0, 0));
 
-					if (_awayMission.activeAction == ACTION_LOOK && !(_awayMission.field24 & 1))
+					if (_awayMission.activeAction == ACTION_LOOK && !(_awayMission.field24 & (1 << OBJECT_KIRK)))
 						showInventoryIcons(false);
 				}
 				break;
@@ -316,16 +323,15 @@ checkShowInventory:
 			playSoundEffectIndex(0x07);
 			_awayMission.activeAction = showActionMenu();
 			if (_awayMission.activeAction == ACTION_USE) {
-				//int16 clickedObject = selectObjectForGetAction(); // TODO
-				int16 clickedObject = 0;
+				int16 clickedObject = selectObjectForUseAction();
 				if (clickedObject == -1)
 					break;
 				else
 					_awayMission.activeObject = clickedObject;
 			}
 			if (_awayMission.activeAction == ACTION_USE
-					&& _awayMission.activeObject == OBJECT_ICOMM && (_awayMission.field24 & 1) == 0) { // TODO
-				if (!sub_2330c()) {
+					&& _awayMission.activeObject == OBJECT_ICOMM && (_awayMission.field24 & (1 << OBJECT_KIRK)) == 0) {
+				if (!walkActiveObjectToHotspot()) {
 					addAction(Action(_awayMission.activeAction, _awayMission.activeObject, 0, 0));
 					_sound->playVoc("communic");
 					_awayMission.activeAction = ACTION_WALK;
@@ -389,13 +395,17 @@ void StarTrekEngine::addAction(const Action &action) {
 void StarTrekEngine::handleAwayMissionAction() {
 	Action action = _actionQueue.pop();
 
-	if ((action.type == ACTION_FINISHED_BEAMING_IN || action.type == ACTION_FINISHED_ENTERING_ROOM) && action.b1 == 0xff) {
+	if ((action.type == ACTION_FINISHED_ANIMATION || action.type == ACTION_FINISHED_WALKING) && action.b1 == 0xff) {
 		_awayMission.transitioningIntoRoom = 0;
 		_warpHotspotsActive = true;
 		return;
 	}
-	else if (action.type == ACTION_FINISHED_ENTERING_ROOM && action.b1 >= 0xe0) { // TODO
-		return;
+	else if (action.type == ACTION_FINISHED_WALKING && action.b1 >= 0xe0) {
+		// Finished walking to a position; perform the action that was input back when
+		// they started walking over there.
+		int index = action.b1 - 0xe0;
+		addAction(_actionOnWalkCompletion[index]);
+		_actionOnWalkCompletionInUse[index] = false;
 	}
 
 	if (_room->handleAction(action))
@@ -403,10 +413,14 @@ void StarTrekEngine::handleAwayMissionAction() {
 
 	// Action not defined for the room, check for default behaviour
 
-	switch (action.type) { // TODO: everything
+	switch (action.type) {
 
-	case ACTION_WALK: // TODO
-		warning("Unhandled walk action: %d %d %d", action.b1, action.b2, action.b3);
+	case ACTION_WALK:
+		if (!_room->handleActionWithBitmask(action)) {
+			Common::String animFilename = getCrewmanAnimFilename(OBJECT_KIRK, "walk");
+			Common::Point mousePos = _gfx->getMousePos();
+			actorWalkToPosition(OBJECT_KIRK, animFilename, _kirkActor->pos.x, _kirkActor->pos.y, mousePos.x, mousePos.y);
+		}
 		break;
 
 	case ACTION_USE: // TODO
@@ -446,8 +460,7 @@ void StarTrekEngine::handleAwayMissionAction() {
 		break;
 
 	case ACTION_TOUCHED_WARP:
-		// if (!sub_203e1(action.type)) // Probably calls RDF code
-		{
+		if (!_room->handleActionWithBitmask(action)) {
 			byte warpIndex = action.b1;
 			int16 roomIndex = _room->readRdfWord(RDF_WARP_ROOM_INDICES + warpIndex * 2);
 			unloadRoom();
@@ -536,6 +549,17 @@ bool StarTrekEngine::isPositionSolid(int16 x, int16 y) {
 
 	_mapFile->seek((y * SCREEN_WIDTH + x) / 8, SEEK_SET);
 	return _mapFile->readByte() & (0x80 >> (x % 8));
+}
+
+void StarTrekEngine::loadRoomIndex(int roomIndex, int spawnIndex) {
+	unloadRoom();
+	_sound->loadMusicFile("ground");
+
+	loadRoom(_missionName, roomIndex);
+	initAwayCrewPositions(spawnIndex % 6);
+
+	// WORKAROUND: original game calls "retrieveStackVars" to return execution directly to
+	// the top of "runAwayMission". That can't really be done here. But does it matter?
 }
 
 }
