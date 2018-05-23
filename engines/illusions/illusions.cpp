@@ -142,7 +142,6 @@ uint32 IllusionsEngine::getElapsedUpdateTime() {
 }
 
 int IllusionsEngine::updateActors(uint flags) {
-	// TODO Move to Controls class
 	uint32 deltaTime = getElapsedUpdateTime();
 	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
 		Control *control = *it;
@@ -153,7 +152,6 @@ int IllusionsEngine::updateActors(uint flags) {
 }
 
 int IllusionsEngine::updateSequences(uint flags) {
-	// TODO Move to Controls class
 	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
 		Control *control = *it;
 		if (control->_pauseCtr == 0 && control->_actor && control->_actor->_seqCodeIp) {
@@ -171,7 +169,6 @@ int IllusionsEngine::updateGraphics(uint flags) {
 	_camera->update(currTime);
 	updateFader();
 
-	// TODO Move to BackgroundInstanceList class
 	BackgroundInstance *backgroundItem = _backgroundInstances->findActiveBackgroundInstance();
 	if (backgroundItem) {
 		BackgroundResource *bgRes = backgroundItem->_bgRes;
@@ -185,7 +182,6 @@ int IllusionsEngine::updateGraphics(uint flags) {
 		}
 	}
 
-	// TODO Move to Controls class
 	for (Controls::ItemsIterator it = _controls->_controls.begin(); it != _controls->_controls.end(); ++it) {
 		Control *control = *it;
 		Actor *actor = control->_actor;
@@ -198,12 +194,6 @@ int IllusionsEngine::updateGraphics(uint flags) {
 					frame->_compressedPixels, actor->_surface);
 				actor->_flags &= ~Illusions::ACTOR_FLAG_2000;
 			}
-			/* Unused
-			if (actor->_flags & 0x4000) {
-				nullsub_1(&actor->drawFlags);
-				actor->flags &= ~0x4000;
-			}
-			*/
 			if (actor->_surfInfo._dimensions._width && actor->_surfInfo._dimensions._height) {
 				uint32 priority = control->getDrawPriority();
 				_screen->_drawQueue->insertSprite(&actor->_drawFlags, actor->_surface,
@@ -214,7 +204,6 @@ int IllusionsEngine::updateGraphics(uint flags) {
 	}
 
 	if (_screenText->_surface) {
-		// TODO Make nicer
 		uint32 priority = getGameId() == kGameIdDuckman ? getPriorityFromBase(19) : getPriorityFromBase(99);
 		_screen->_drawQueue->insertTextSurface(_screenText->_surface, _screenText->_dimensions,
 			_screenText->_position, priority);

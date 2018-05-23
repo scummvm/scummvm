@@ -186,7 +186,6 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_scriptOpcodes = new ScriptOpcodes_BBDOU(this);
 	_stack = new ScriptStack();
 
-	// TODO Move to own class
 	_resGetCtr = 0;
 	_unpauseControlActorFlag = false;
 	_lastUpdateTime = 0;
@@ -266,7 +265,6 @@ bool IllusionsEngine_BBDOU::hasFeature(EngineFeature f) const {
 }
 
 void IllusionsEngine_BBDOU::initInput() {
-	// TODO Check if these are correct...
 	_input->setInputEvent(kEventLeftClick, 0x01)
 		.addMouseButton(MOUSE_LEFT_BUTTON)
 		.addKey(Common::KEYCODE_RETURN);

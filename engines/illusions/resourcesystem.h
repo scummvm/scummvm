@@ -83,8 +83,6 @@ public:
 	virtual bool isFlag(int flag) = 0;
 };
 
-// TODO Possibly split resource loaders from the system?
-
 class ResourceSystem {
 public:
 	ResourceSystem(IllusionsEngine *vm);

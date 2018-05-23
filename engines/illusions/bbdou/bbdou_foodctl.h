@@ -30,7 +30,6 @@ namespace Illusions {
 
 class IllusionsEngine_BBDOU;
 
-// TODO Merge counts?
 const uint kFoodMaxPropertyIdsCount = 15;
 const uint kFoodCount = 16;
 

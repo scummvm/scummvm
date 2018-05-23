@@ -110,10 +110,8 @@ int TalkThread::onUpdate() {
 		_entryText = talkEntry->_text;
 		_entryTblPtr = talkEntry->_tblPtr;
 		if (_sequenceId1) {
-			// TODO _field30 = v6;
 			_pauseCtr = 0;
 		} else {
-			// TODO _field30 = 0;
 			_flags |= 2;
 			_flags |= 1;
 		}
@@ -358,7 +356,6 @@ void TalkThread::onKill() {
 }
 
 uint32 TalkThread::sendMessage(int msgNum, uint32 msgValue) {
-	// TODO
 	switch (msgNum) {
 	case kMsgQueryTalkThreadActive:
 		if (_status != 1 && _status != 2)
@@ -367,7 +364,6 @@ uint32 TalkThread::sendMessage(int msgNum, uint32 msgValue) {
 	case kMsgClearSequenceId1:
 		_sequenceId1 = 0;
 		_flags |= 3;
-		// TODO _field30 = 0;
 		break;
 	case kMsgClearSequenceId2:
 		_sequenceId2 = 0;
