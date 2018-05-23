@@ -25,6 +25,7 @@
 #include "engines/myst3/gfx.h"
 
 #include "common/debug-channels.h"
+#include "common/ptr.h"
 #include "common/savefile.h"
 
 #include "graphics/surface.h"
@@ -77,6 +78,7 @@ GameState::StateData::StateData() {
 	saveYear = 0;
 	saveHour = 0;
 	saveMinute = 0;
+	autoSave = false;
 }
 
 GameState::GameState(const Common::Platform platform, Database *database):
@@ -472,6 +474,7 @@ void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 	s.syncAsUint16LE(saveYear, 149);
 	s.syncAsByte(saveHour, 149);
 	s.syncAsByte(saveMinute, 149);
+	s.syncAsByte(autoSave, 150);	
 	s.syncString(saveDescription, 149);
 
 #ifdef SCUMM_BIG_ENDIAN
@@ -531,7 +534,21 @@ bool GameState::load(Common::InSaveFile *saveFile) {
 	return true;
 }
 
-bool GameState::save(Common::OutSaveFile *saveFile) {
+bool GameState::isAutoSaveAllowed(Common::InSaveFile *saveFile) {
+	// Check if file exists
+	if (!saveFile) { // The autosave file doesn't exist or is corrupt
+		return true;
+	}
+
+	// Get autoSave value from saved file
+	StateData data;
+	Common::Serializer s = Common::Serializer(saveFile, 0);
+	data.syncWithSaveGame(s);
+
+	return data.autoSave; // The autosave file exists and is either an autosave or not
+}
+
+bool GameState::save(Common::OutSaveFile *saveFile, bool autosave) {
 	Common::Serializer s = Common::Serializer(0, saveFile);
 
 	// Update save creation info
@@ -542,6 +559,7 @@ bool GameState::save(Common::OutSaveFile *saveFile) {
 	_data.saveDay = t.tm_mday;
 	_data.saveHour = t.tm_hour;
 	_data.saveMinute = t.tm_min;
+	_data.autoSave = autosave;
 
 	_data.gameRunning = false;
 	_data.syncWithSaveGame(s);

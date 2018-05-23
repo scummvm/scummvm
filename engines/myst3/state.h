@@ -53,7 +53,13 @@ public:
 
 	void newGame();
 	bool load(Common::InSaveFile *saveFile);
-	bool save(Common::OutSaveFile *saveFile);
+	bool save(Common::OutSaveFile *saveFile, bool autosave);
+
+	/*
+	* Autosaving will be enabled if The autosave file is an autosave or if The autosave file doesn't exist
+	* The autosave file name is version dependent (PC vs. Xbox)
+	*/
+	bool isAutoSaveAllowed(Common::InSaveFile *saveFile);
 
 	int32 getVar(uint16 var);
 	void setVar(uint16 var, int32 value);
@@ -338,6 +344,7 @@ public:
 	void setSaveThumbnail(Graphics::Surface *thumb);
 	Common::String formatSaveTime();
 	void setSaveDescription(const Common::String &description) { _data.saveDescription = description; }
+	const Common::String getSaveDescription() { return _data.saveDescription; }	
 
 	Common::Array<uint16> getInventory();
 	void updateInventory(const Common::Array<uint16> &items);
@@ -379,6 +386,7 @@ public:
 
 		uint8 saveHour;
 		uint8 saveMinute;
+		bool autoSave;
 
 		Common::String saveDescription;
 
@@ -397,7 +405,7 @@ private:
 	const Common::Platform _platform;
 	Database *_db;
 
-	static const uint32 kSaveVersion = 149;
+	static const uint32 kSaveVersion = 150;
 
 	StateData _data;
 

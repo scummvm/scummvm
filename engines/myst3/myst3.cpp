@@ -71,7 +71,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_inputSpacePressed(false), _inputEnterPressed(false),
 		_inputEscapePressed(false), _inputTildePressed(false),
 		_inputEscapePressedNotConsumed(false),
-		_interactive(false),
+		_interactive(false), _lastSaveTime(0),
 		_menuAction(0), _projectorBackground(0),
 		_shakeEffect(0), _rotationEffect(0), _backgroundSoundScriptLastRoomId(0),
 		_transition(0), _frameLimiter(0), _inventoryManualHide(false) {
@@ -210,6 +210,9 @@ Common::Error Myst3Engine::run() {
 		drawFrame();
 	}
 
+	if (!_menu->getThumbnailValid())
+		_menu->saveThumbnail(); // Update thumbnail before saving
+	tryAutoSaving(); //Attempt to autosave before exiting
 	unloadNode();
 
 	_archiveNode->close();
@@ -431,6 +434,7 @@ void Myst3Engine::processInput(bool interactive) {
 	}
 
 	bool shouldInteractWithHoveredElement = false;
+	_menu->setThumbnailValid(false);
 
 	// Process events
 	Common::Event event;
@@ -536,6 +540,11 @@ void Myst3Engine::processInput(bool interactive) {
 
 	if (shouldInteractWithHoveredElement && interactive) {
 		interactWithHoveredElement();
+	}
+
+	if (shouldPerformAutoSave(_lastSaveTime)) {
+		_menu->saveThumbnail(); // Update thumbnail before saving
+		tryAutoSaving();
 	}
 
 	// Open main menu
@@ -1479,12 +1488,47 @@ void Myst3Engine::dragItem(uint16 statusVar, uint16 movie, uint16 frame, uint16 
 	}
 }
 
+bool Myst3Engine::canSaveGameStateCurrently() {
+	return canLoadGameStateCurrently() && !(_state->getLocationRoom() == 901 && _state->getMenuSavedAge()==0);
+}
+
+bool Myst3Engine::canSaveCurrently() {
+	return canLoadGameStateCurrently() && !(_state->getLocationRoom() == 901 && _state->getMenuSavedAge()==0);
+}
+
 bool Myst3Engine::canLoadGameStateCurrently() {
 	// Loading from the GMM is only possible when the game is interactive
 	// This is to prevent loading from inner loops. Loading while
 	// in an inner loop can cause the exit condition to never happen,
 	// or can unload required resources.
 	return _interactive;
+}
+
+void Myst3Engine::tryAutoSaving() {
+	if (!canSaveGameStateCurrently()) {
+		return; // Can't save right now, try again on the next frame
+	}
+
+	_lastSaveTime = _system->getMillis();
+
+	Common::String saveName = "Autosave";
+
+	Common::String fileName = Saves::buildName(saveName.c_str(),getPlatform());
+	Common::ScopedPtr<Common::InSaveFile> saveFile(getSaveFileManager()->openForLoading(fileName));
+
+	if (!_state->isAutoSaveAllowed(saveFile.get())) {
+		return; // Can't autosave ever, try again after the next autosave delay
+	}
+
+	// Save the state and the thumbnail
+	Common::OutSaveFile *save = getSaveFileManager()->openForSaving(fileName);
+	const Common::String prevSaveName = _state->getSaveDescription();
+	_state->setSaveDescription(saveName);
+
+	if (!_state->save(save,true))
+		warning("Attempt to autosave has failed.");
+	_state->setSaveDescription(prevSaveName);
+	delete save;
 }
 
 Common::Error Myst3Engine::loadGameState(int slot) {

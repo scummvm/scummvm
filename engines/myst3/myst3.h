@@ -119,7 +119,10 @@ public:
 	uint32 getGameLocalizationType() const;
 	bool isWideScreenModEnabled() const;
 
+	bool canSaveGameStateCurrently() override; // Determines autosave saveability
 	bool canLoadGameStateCurrently() override;
+	bool canSaveCurrently() override; // Determines GMM saveability
+	void tryAutoSaving();
 	Common::Error loadGameState(int slot) override;
 	Common::Error loadGameState(Common::String fileName, TransitionType transition);
 
@@ -218,6 +221,8 @@ private:
 	bool _inputTildePressed;
 
 	bool _interactive;
+
+	uint32 _lastSaveTime;
 
 	uint32 _backgroundSoundScriptLastRoomId;
 

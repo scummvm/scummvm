@@ -209,7 +209,8 @@ int16 GamepadDialog::update() {
 
 Menu::Menu(Myst3Engine *vm) :
 		_vm(vm),
-		_saveLoadSpotItem(0) {
+		_saveLoadSpotItem(0),
+		_thumbnailValid(false) {
 }
 
 Menu::~Menu() {
@@ -295,6 +296,23 @@ void Menu::updateMainMenu(uint16 action) {
 	}
 }
 
+void Menu::saveThumbnail() {
+	// ... and capture the screen
+	Graphics::Surface *big = _vm->_gfx->getScreenshot();
+	Graphics::Surface *thumb = createThumbnail(big);
+	_vm->_state->setSaveThumbnail(thumb);
+	big->free();
+	delete big;
+}
+
+bool Menu::getThumbnailValid() {
+	return _thumbnailValid;
+}
+
+void Menu::setThumbnailValid(bool valid) {
+	_thumbnailValid = valid;
+}
+
 void Menu::goToNode(uint16 node) {
 	if (_vm->_state->getMenuSavedAge() == 0 && _vm->_state->getLocationRoom() != 901) {
 		// Entering menu, save current location ...
@@ -302,12 +320,8 @@ void Menu::goToNode(uint16 node) {
 		_vm->_state->setMenuSavedRoom(_vm->_state->getLocationRoom());
 		_vm->_state->setMenuSavedNode(_vm->_state->getLocationNode());
 
-		// ... and capture the screen
-		Graphics::Surface *big = _vm->_gfx->getScreenshot();
-		Graphics::Surface *thumb = createThumbnail(big);
-		_vm->_state->setSaveThumbnail(thumb);
-		big->free();
-		delete big;
+		saveThumbnail();
+		_thumbnailValid = true;
 
 		// Reset some sound variables
 		if (_vm->_state->getLocationAge() == 6 && _vm->_state->getSoundEdannaUnk587() == 1 && _vm->_state->getSoundEdannaUnk1031()) {
@@ -614,7 +628,7 @@ void PagingMenu::saveMenuSave() {
 	// Save the state and the thumbnail
 	Common::OutSaveFile *save = _vm->getSaveFileManager()->openForSaving(fileName);
 	_vm->_state->setSaveDescription(_saveName);
-	_vm->_state->save(save);
+	_vm->_state->save(save,false);
 	delete save;
 
 	// Do next action
@@ -953,7 +967,7 @@ void AlbumMenu::saveMenuSave() {
 	// Save the state and the thumbnail
 	Common::OutSaveFile *save = _vm->getSaveFileManager()->openForSaving(fileName);
 	_vm->_state->setSaveDescription(saveName);
-	_vm->_state->save(save);
+	_vm->_state->save(save,false);
 	delete save;
 
 	// Do next action

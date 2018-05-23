@@ -63,6 +63,12 @@ public:
 
 	void updateMainMenu(uint16 action);
 	void goToNode(uint16 node);
+	/*
+	*  Grab a screenshot save it to state and free memory
+	*/
+	void saveThumbnail();
+	bool getThumbnailValid();
+	void setThumbnailValid(bool value);
 
 	virtual void saveLoadAction(uint16 action, uint16 item) = 0;
 	virtual void setSaveLoadSpotItem(uint16 id, SpotItemFace *spotItem);
@@ -72,6 +78,8 @@ protected:
 
 	SpotItemFace *_saveLoadSpotItem;
 	Common::String _saveLoadAgeName;
+
+	bool _thumbnailValid;
 
 	uint dialogIdFromType(DialogType type);
 	uint16 dialogConfirmValue();
