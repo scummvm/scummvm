@@ -35,8 +35,8 @@ enum Acton {
 
 	ACTION_TOUCHED_WARP = 6,
 	ACTION_TOUCHED_HOTSPOT = 7, // Doors? (Or just hotspots activated by Kirk moving there?)
-	ACTION_FINISHED_BEAMING_IN = 10,
-	ACTION_FINISHED_ENTERING_ROOM = 12,
+	ACTION_FINISHED_ANIMATION = 10,
+	ACTION_FINISHED_WALKING = 12,
 	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
 };
 
@@ -46,6 +46,7 @@ struct Action {
 	byte b2;
 	byte b3;
 
+	Action() {}
 	Action(byte _type, byte _b1, byte _b2, byte _b3)
 		: type(_type),
 		b1(_b1),
@@ -59,6 +60,23 @@ struct Action {
 
 	bool operator==(const Action &a) const {
 		return type == a.type && b1 == a.b1 && b2 == a.b2 && b3 == a.b3;
+	}
+
+	uint32 getBitmask() const {
+		uint32 ret = 0;
+		if (type != 0xff)
+			ret |= (0xff << 24);
+		if (b1 != 0xff)
+			ret |= (0xff << 16);
+		if (b2 != 0xff)
+			ret |= (0xff << 8);
+		if (b3 != 0xff)
+			ret |= (0xff << 0);
+		return ret;
+	}
+
+	uint32 toUint32() const {
+		return (type << 24) | (b1 << 16) | (b2 << 8) | (b3 << 0);
 	}
 };
 

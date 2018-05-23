@@ -57,6 +57,8 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_sound = nullptr;
 	_macResFork = nullptr;
 
+	memset(_actionOnWalkCompletionInUse, 0, sizeof(_actionOnWalkCompletionInUse));
+
 	_clockTicks = 0;
 
 	_musicEnabled = true;
@@ -368,8 +370,8 @@ int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName
 		drawActorToScreen(actor, animName, x, y, scale, true);
 	}
 
-	actor->walkingIntoRoom = 0;
-	actor->field66 = 0;
+	actor->triggerActionWhenAnimFinished = false;
+	actor->finishedAnimActionParam = 0;
 
 	return actorIndex;
 }
@@ -383,7 +385,7 @@ bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &a
 
 	Actor *actor = &_actorList[actorIndex];
 
-	actor->walkingIntoRoom = 0;
+	actor->triggerActionWhenAnimFinished = false;
 	if (isPositionSolid(destX, destY))
 		return false;
 
@@ -400,7 +402,7 @@ bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &a
 	actor->dest.x = destX;
 	actor->dest.y = destY;
 	actor->field92 = 0;
-	actor->walkingIntoRoom = 0;
+	actor->triggerActionWhenAnimFinished = false;
 
 	actor->iwDestPosition = -1;
 	actor->iwSrcPosition = -1;
@@ -450,8 +452,8 @@ void StarTrekEngine::updateActorAnimations() {
 				if (actor->animFrame != nextAnimFrame) {
 					if (nextAnimFrame == actor->numAnimFrames - 1) {
 						actor->field62++;
-						if (actor->walkingIntoRoom != 0) {
-							addAction(Action(ACTION_FINISHED_BEAMING_IN, actor->field66, 0, 0));
+						if (actor->triggerActionWhenAnimFinished) {
+							addAction(Action(ACTION_FINISHED_ANIMATION, actor->finishedAnimActionParam, 0, 0));
 						}
 					}
 				}
@@ -520,9 +522,9 @@ void StarTrekEngine::updateActorAnimations() {
 			}
 			else { // actor->field90 == 0
 				if (actor->iwSrcPosition == -1) {
-					if (actor->walkingIntoRoom != 0) {
-						actor->walkingIntoRoom = 0;
-						addAction(Action(ACTION_FINISHED_ENTERING_ROOM, actor->field66 & 0xff, 0, 0));
+					if (actor->triggerActionWhenAnimFinished) {
+						actor->triggerActionWhenAnimFinished = false;
+						addAction(Action(ACTION_FINISHED_WALKING, actor->finishedAnimActionParam & 0xff, 0, 0));
 					}
 
 					actor->sprite.bitmap.reset();
@@ -831,7 +833,7 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 		error("findObject: Clicked on an unknown sprite");
 	}
 
-	// word_4b418 = 0;
+	_objectHasWalkPosition = false;
 	int actionBit = 1 << (_awayMission.activeAction - 1);
 	int offset = _room->getFirstHotspot();
 
@@ -840,9 +842,9 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 		if (word & 0x8000) {
 			if ((word & actionBit) && isPointInPolygon((int16 *)(_room->_rdfData + offset + 6), x, y)) {
 				int actorIndex = _room->readRdfWord(offset + 6);
-				// word_4b418 = 1;
-				// word_4a792 = _room->readRdfWord(offset + 2);
-				// word_4a796 = _room->readRdfWord(offset + 4); // TODO
+				_objectHasWalkPosition = true;
+				 _objectWalkPosition.x = _room->readRdfWord(offset + 2);
+				 _objectWalkPosition.y = _room->readRdfWord(offset + 4);
 				return actorIndex;
 			}
 
@@ -962,6 +964,112 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 	return bitmapToReturn;
 }
 
+
+/**
+ * Called when the "get" action is first selected. Returns a selected object.
+ * This behaves like other menus in that it holds game execution, but no actual menu pops
+ * up; it just waits for the player to select something on the screen.
+ */
+int StarTrekEngine::selectObjectForUseAction() {
+	while (true) {
+		if (!(_awayMission.field24 & (1 << OBJECT_KIRK)))
+			showInventoryIcons(false);
+
+		TrekEvent event;
+
+		while (true) {
+			if (!getNextEvent(&event))
+				continue;
+
+			if (event.type == TREKEVENT_TICK) {
+				updateMouseBitmap();
+				_gfx->drawAllSprites();
+				_sound->checkLoopMusic();
+			}
+			else if (event.type == TREKEVENT_LBUTTONDOWN) {
+				removeNextEvent();
+				break;
+			}
+			else if (event.type == TREKEVENT_MOUSEMOVE) {
+			}
+			else if (event.type == TREKEVENT_RBUTTONDOWN) {
+				// Allow this to be processed by main away mission loop
+				break;
+			}
+			else if (event.type == TREKEVENT_KEYDOWN) {
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE
+						|| event.kbd.keycode == Common::KEYCODE_w
+						|| event.kbd.keycode == Common::KEYCODE_t
+						|| event.kbd.keycode == Common::KEYCODE_u
+						|| event.kbd.keycode == Common::KEYCODE_g
+						|| event.kbd.keycode == Common::KEYCODE_l
+						|| event.kbd.keycode == Common::KEYCODE_SPACE
+						|| event.kbd.keycode == Common::KEYCODE_F2) {
+					// Allow these buttons to be processed by main away mission loop
+					break;
+				}
+				else if (event.kbd.keycode == Common::KEYCODE_i) {
+					removeNextEvent();
+					break;
+				}
+				else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_KP_ENTER || event.kbd.keycode == Common::KEYCODE_F1) {
+					// Simulate left-click
+					removeNextEvent();
+					event.type = TREKEVENT_LBUTTONDOWN;
+					break;
+				}
+			}
+
+			removeNextEvent();
+		}
+
+		if (event.type == TREKEVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_i) {
+			hideInventoryIcons();
+			int clickedObject = showInventoryMenu(50, 50, true);
+			if (clickedObject == -1)
+				continue;
+			return clickedObject;
+		}
+		else if (event.type == TREKEVENT_LBUTTONDOWN) {
+			int clickedObject = findObjectAt(_gfx->getMousePos());
+			hideInventoryIcons();
+
+			if (clickedObject == -1)
+				continue;
+			else if (isObjectUnusable(clickedObject, ACTION_USE))
+				continue;
+			else if (clickedObject == OBJECT_INVENTORY_ICON) {
+				clickedObject = showInventoryMenu(50, 50, false);
+				if (clickedObject == -1)
+					continue;
+				else
+					return clickedObject;
+			}
+			else if (clickedObject <= OBJECT_REDSHIRT)
+				return clickedObject;
+			else if (isObjectUnusable(OBJECT_KIRK, ACTION_USE))
+				continue;
+			else if (_room->actionHasCode(Action(ACTION_USE, OBJECT_KIRK, clickedObject, 0))
+					|| _room->actionHasCode(Action(ACTION_GET, clickedObject, 0, 0))
+					|| _room->actionHasCode(Action(ACTION_WALK, clickedObject, 0, 0))) {
+				_awayMission.activeObject = OBJECT_KIRK;
+				_awayMission.passiveObject = clickedObject;
+				_awayMission.activeAction = ACTION_USE;
+				clickedObject = OBJECT_KIRK;
+				if (!walkActiveObjectToHotspot())
+					addAction(Action(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0));
+				return clickedObject;
+			}
+			else
+				continue;
+		}
+		else {
+			hideInventoryIcons();
+			return -1;
+		}
+	}
+}
+
 Common::String StarTrekEngine::getCrewmanAnimFilename(int actorIndex, const Common::String &basename) {
 	const char *crewmanChars = "ksmr";
 	assert(actorIndex >= 0 && actorIndex < 4);
@@ -1013,6 +1121,72 @@ void StarTrekEngine::updateMouseBitmap() {
 	chooseMouseBitmapForAction(action, withRedOutline);
 }
 
+/**
+ * Checks whether to walk a crewman to a hotspot (the last one obtained from
+ * a "findObjectAt" call).
+ */
+bool StarTrekEngine::walkActiveObjectToHotspot() {
+	if (!_objectHasWalkPosition)
+		return false;
+
+	int objectIndex;
+	if (_awayMission.activeAction != ACTION_USE)
+		objectIndex = OBJECT_KIRK;
+	else if (_awayMission.activeObject >= OBJECT_KIRK && _awayMission.activeObject <= OBJECT_REDSHIRT)
+		objectIndex = _awayMission.activeObject;
+	else if (_awayMission.activeObject >= ITEMS_START && _awayMission.activeObject <= ITEMS_END) { // FIXME: "<= ITEMS_END" doesn't make sense?
+		if (_awayMission.activeObject == OBJECT_ISTRICOR)
+			objectIndex = OBJECT_SPOCK;
+		else if (_awayMission.activeObject == OBJECT_IMTRICOR)
+			objectIndex = OBJECT_MCCOY;
+		else
+			objectIndex = OBJECT_KIRK;
+	}
+	else // This is the original error message...
+		error("Jay didn't think about pmcheck");
+
+	byte finishedAnimActionParam = false;
+	bool walk = false;
+
+	if (_awayMission.activeAction == ACTION_WALK)
+		walk = true;
+	else {
+		// If this action has code defined for it in this room, buffer the action to be
+		// done after the object finished walking there.
+		Action action(_awayMission.activeAction, _awayMission.activeObject, 0, 0);
+		if (_awayMission.activeAction == ACTION_USE)
+			action.b2 = _awayMission.passiveObject;
+
+		if (_room->actionHasCode(action)) {
+			for (int i = 0; i < MAX_BUFFERED_WALK_ACTIONS; i++) {
+				if (!_actionOnWalkCompletionInUse[i]) {
+					finishedAnimActionParam = i + 0xe0;
+					_actionOnWalkCompletionInUse[i] = true;
+					_actionOnWalkCompletion[i] = action;
+					walk = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if (walk) {
+		Actor *actor = &_actorList[objectIndex];
+		Common::String anim = getCrewmanAnimFilename(objectIndex, "walk");
+		actorWalkToPosition(objectIndex, anim, actor->pos.x, actor->pos.y, _objectWalkPosition.x, _objectWalkPosition.y);
+		if (finishedAnimActionParam != 0) {
+			actor->triggerActionWhenAnimFinished = true;
+			actor->finishedAnimActionParam = finishedAnimActionParam;
+		}
+		_objectHasWalkPosition = false;
+		return true;
+	}
+	else {
+		_objectHasWalkPosition = false;
+		return false;
+	}
+}
+
 void StarTrekEngine::showInventoryIcons(bool showItem) {
 	const char *crewmanFilenames[] = {
 		"ikirk",
@@ -1055,6 +1229,23 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 	_inventoryIconSprite.drawPriority = 15;
 	_inventoryIconSprite.drawPriority2 = 8;
 	_inventoryIconSprite.setBitmap(_gfx->loadBitmap("inv00"));
+}
+
+/**
+ * Return true if an object is unselectable with use?
+ */
+bool StarTrekEngine::isObjectUnusable(int object, int action) {
+	if (action == ACTION_LOOK)
+		return false;
+	if (object == OBJECT_REDSHIRT && _awayMission.redshirtDead)
+		return true;
+	if (object >= OBJECT_KIRK && object <= OBJECT_REDSHIRT && (_awayMission.field24 & (1 << object)))
+		return true;
+	if (object == OBJECT_IMTRICOR && (_awayMission.field24 & (1 << OBJECT_MCCOY)))
+		return true;
+	if (object == OBJECT_ISTRICOR && (_awayMission.field24 & (1 << OBJECT_SPOCK)))
+		return true;
+	return false;
 }
 
 void StarTrekEngine::hideInventoryIcons() {

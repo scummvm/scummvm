@@ -56,6 +56,13 @@ const int ITEMS_END = ITEMS_START + NUM_ITEMS; // See items.h
 const int NUM_OBJECTS = ITEMS_END;
 
 
+enum Directions {
+	DIR_N = 0,
+	DIR_S = 1,
+	DIR_E = 2,
+	DIR_W = 3
+};
+
 // Some object indices are reserved (see items.h for item objects)
 enum Objects {
 	OBJECT_KIRK = 0,
@@ -80,8 +87,8 @@ struct Actor {
 	Common::Point pos;
 	uint16 field60;
 	uint16 field62;
-	uint16 walkingIntoRoom; // Walking or beaming into a room?
-	uint16 field66;
+	bool triggerActionWhenAnimFinished;
+	uint16 finishedAnimActionParam;
 	char animationString2[8];
 	uint16 field70;
 	uint16 field72;

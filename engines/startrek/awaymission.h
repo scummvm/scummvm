@@ -29,7 +29,7 @@ struct AwayMission {
 	int16 mouseY;
 	byte field1c;
 	byte field1d;
-	byte transitioningIntoRoom; // Set while beaming in or walking into a room
+	byte transitioningIntoRoom; // Set while beaming in or walking into a room. Disables control?
 	bool redshirtDead;
 	byte activeAction;
 	byte activeObject;  // The item that is going to be used on something
@@ -39,8 +39,11 @@ struct AwayMission {
 	// any "default" code for the event, if any.
 	bool rdfStillDoDefaultAction;
 
+	// Bits 0-3 correspond to the crewmen? A bit is set if they're not selectable with
+	// the use action?
 	byte field24;
-	int8 field25[4];
+
+	int8 field25[4]; // Sets an object's direction after they finish walking somewhere?
 
 	// Demon Word: nonzero if a rude response was given to the prelate.
 	int16 field29;

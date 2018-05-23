@@ -65,6 +65,8 @@ const int MAX_MENUBUTTONS = 32;
 const int TEXTBOX_WIDTH = 26;
 const int MAX_TEXTBOX_LINES = 12;
 
+const int MAX_BUFFERED_WALK_ACTIONS = 32;
+
 
 enum StarTrekGameType {
 	GType_ST25 = 1,
@@ -190,12 +192,14 @@ public:
 	int loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y);
 	uint16 getActorScaleAtPosition(int16 y);
 	void addAction(const Action &action);
+	void addAction(byte b1, byte b2, byte b3, byte b4) { addAction(Action(b1, b2, b3, b4)); }
 	bool checkItemInteractionExists(int action, int activeItem, int passiveItem, int16 arg6);
 	void handleAwayMissionAction();
 
 	bool isPointInPolygon(int16 *data, int16 x, int16 y);
 	void checkTouchedLoadingZone(int16 x, int16 y);
 	bool isPositionSolid(int16 x, int16 y);
+	void loadRoomIndex(int roomIndex, int spawnIndex);
 
 public:
 	SharedPtr<Room> getRoom();
@@ -231,9 +235,12 @@ public:
 	int findObjectAt(int x, int y);
 	int findObjectAt(Common::Point p) { return findObjectAt(p.x, p.y); }
 	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, Fixed16 scale);
+
+	int selectObjectForUseAction();
 	Common::String getCrewmanAnimFilename(int actorIndex, const Common::String &basename);
 	void updateMouseBitmap();
-	bool sub_2330c() { return false; } // TODO
+	bool walkActiveObjectToHotspot();
+	bool isObjectUnusable(int objectIndex, int action);
 	void showInventoryIcons(bool showItem);
 	void hideInventoryIcons();
 	int showInventoryMenu(int x, int y, bool restoreMouse);
@@ -383,6 +390,15 @@ public:
 
 	Sprite _inventoryIconSprite;
 	Sprite _itemIconSprite;
+
+	// Certain hotspots store a position value where objects must walk to before
+	// interacting with them. After calling "findObjectAt", these values are updated.
+	bool _objectHasWalkPosition;
+	Common::Point _objectWalkPosition;
+
+	// Actions to perform after a crewman finishes walking to a position.
+	Action _actionOnWalkCompletion[MAX_BUFFERED_WALK_ACTIONS];
+	bool _actionOnWalkCompletionInUse[MAX_BUFFERED_WALK_ACTIONS];
 
 	// _clockTicks is based on DOS interrupt 1A, AH=0; read system clock counter.
 	// Updates 18.206 times every second.
