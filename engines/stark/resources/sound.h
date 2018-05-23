@@ -83,6 +83,9 @@ public:
 	/** Fade the sound's current volume and pan to the specified target over duration milliseconds */
 	void changeVolumePan(int32 volume, int32 pan, int32 duration);
 
+	/** Set whether to loop or not */
+	void setLooping(bool looping) { _looping = looping; }
+
 protected:
 	void printData() override;
 

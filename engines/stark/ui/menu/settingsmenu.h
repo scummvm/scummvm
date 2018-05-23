@@ -32,6 +32,35 @@ namespace Stark {
 class VisualImageXMG;
 
 /**
+ * Manager of test sound
+ */
+class SoundManager {
+public:
+	SoundManager();
+	~SoundManager() {}
+
+	/** Load sounds **/
+	void load();
+
+	/** play a specific sound in a loop */
+	void play(int index);
+
+	/** request to end the playing loop */
+	void endLoop();
+
+	/** stop any currently playing sound */
+	void stop();
+
+	/** update on game frame */
+	void update();
+
+private:
+	Resources::Sound *_currentSound;
+	Resources::Sound *_sounds[3];
+	bool _isLopping;
+};
+
+/**
  * The setting menu of the game
  */
 class SettingsMenuScreen : public StaticLocationScreen {
@@ -41,6 +70,8 @@ public:
 
 	// StaticLocationScreen API
 	void open() override;
+	void close() override;
+	void onMouseMove(const Common::Point &pos) override;
 
 	void handleMouseUp();
 
@@ -72,11 +103,16 @@ private:
 	static const uint32 _textColorHovered = 0xFF961E1E;
 	static const uint32 _textColorDefault = 0xFF000000;
 
+	SoundManager _soundManager;
+
 	bool isDemo() {
 		return StarkGameDescription->flags & ADGF_DEMO;
 	}
 };
 
+/**
+ * Widget with a checkbox
+ */
 class CheckboxWidget : public StaticLocationWidget {
 public:
 	CheckboxWidget(const char *renderEntryName, bool isChecked,
@@ -99,9 +135,14 @@ private:
 	bool isMouseInsideCheckbox(const Common::Point &mousePos) const;
 };
 
+/**
+ * Widget with a dragged slider for twisting the volume
+ */
 class VolumeWidget : public StaticLocationWidget {
 public:
-	VolumeWidget(const char *renderEntryName, Cursor *_cursor, WidgetOnMouseMoveCallback *onMouseMoveCallback);
+	VolumeWidget(const char *renderEntryName, Cursor *cursor,
+				 SoundManager &soundManager, int soundIndex,
+				 WidgetOnMouseMoveCallback *onMouseMoveCallback);
 	virtual ~VolumeWidget() {};
 
 	// StaticLocationWidget API
@@ -117,13 +158,14 @@ private:
 	VisualImageXMG *_sliderImage;
 	VisualImageXMG *_bgImage;
 	Cursor *_cursor;
+	SoundManager &_soundManager;
+	const int _soundIndex;
 	Common::Point _sliderPosition, _bgPosition;
 	int _bgWidth, _bgHeight, _sliderWidth, _minX, _maxX;
 	bool _isDragged;
 
 	bool isMouseInsideBg(const Common::Point &mousePos) const;
 };
-
 
 } // End of namespace Stark
 
