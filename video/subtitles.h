@@ -64,9 +64,9 @@ public:
 	~Subtitles();
 
 	void loadSRTFile(const char *fname);
-	void loadFont(const char *fontname, int height = 30);
+	void setFont(const char *fontname, int height = 18);
 	void setBBox(const Common::Rect bbox);
-	void setColor(int color) { _color = color; }
+	void setColor(byte r, byte g, byte b);
 	void drawSubtitle(uint32 timestamp, bool force = false);
 
 private:
@@ -83,6 +83,7 @@ private:
 
 	Common::String _prevSubtitle;
 	uint32 _color;
+	uint32 _transparentColor;
 };
 
 } // End of namespace Video

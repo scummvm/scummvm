@@ -92,15 +92,15 @@ bool parseTime(const char **pptr, uint32 *res) {
 }
 
 int SRTEntryComparator(const void *item1, const void *item2) {
-	const SRTEntry *l = *(const SRTEntry **)item1;
-	const SRTEntry *r = *(const SRTEntry **)item2;
+	const SRTEntry *l = *(const SRTEntry * const *)item1;
+	const SRTEntry *r = *(const SRTEntry * const *)item2;
 
 	return l->start - r->start;
 }
 
 int SRTEntryComparatorBSearch(const void *item1, const void *item2) {
-	const SRTEntry *k = *(const SRTEntry **)item1;
-	const SRTEntry *i = *(const SRTEntry **)item2;
+	const SRTEntry *k = *(const SRTEntry * const *)item1;
+	const SRTEntry *i = *(const SRTEntry * const *)item2;
 
 	if (k->start < i->start)
 		return -1;
@@ -232,17 +232,19 @@ Subtitles::~Subtitles() {
 	delete _surface;
 }
 
-void Subtitles::loadFont(const char *fontname, int height) {
+void Subtitles::setFont(const char *fontname, int height) {
 	Common::File file;
 
 	_fontHeight = height;
 
-	if (!file.open(fontname)) {
+	if (file.open(fontname)) {
 		_font = Graphics::loadTTFFont(file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
 	}
 
-	if (!_font)
+	if (!_font) {
+		warning("Cannot load font %s directly", fontname);
 		_font = FontMan.getFontByName(fontname);
+	}
 
 	if (!_font) {
 		warning("Cannot load font %s", fontname);
@@ -264,6 +266,10 @@ void Subtitles::setBBox(const Common::Rect bbox) {
 	_surface->create(_bbox.width(), _bbox.height(), g_system->getOverlayFormat());
 }
 
+void Subtitles::setColor(byte r, byte g, byte b) {
+	_color = _surface->format.ARGBToColor(255, r, g, b);
+	_transparentColor = _surface->format.ARGBToColor(0, 0, 0, 0);
+}
 
 void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 	if (!_loaded)
@@ -274,21 +280,29 @@ void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 	if (!force && subtitle == _prevSubtitle)
 		return;
 
+	debug(1, "%d: %s", timestamp, subtitle.c_str());
+
+	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), _transparentColor);
+
 	_prevSubtitle = subtitle;
 
 	Common::Array<Common::String> lines;
 
-	int maxlineWidth = _font->wordWrapText(subtitle, _bbox.width(), lines);
+	_font->wordWrapText(subtitle, _bbox.width(), lines);
 
-	int y = _bbox.top;
+	int y = 0;
 
 	for (int i = 0; i < lines.size(); i++) {
-		_font->drawString(_surface, lines[i], _bbox.left, y, _bbox.width(), _color);
+		_font->drawString(_surface, lines[i], 0, y, _bbox.width(), _color);
 
 		y += _font->getFontHeight();
+
+		if (y > _bbox.bottom)
+			break;
 	}
 
-	g_system->copyRectToOverlay(_surface->getPixels(), _surface->pitch, _bbox.left, _bbox.right, _bbox.width(), _bbox.height());
+	g_system->copyRectToOverlay(_surface->getPixels(), _surface->pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
+	g_system->updateScreen();
 }
 
 } // End of namespace Video
