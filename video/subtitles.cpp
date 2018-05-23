@@ -293,7 +293,7 @@ void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 	int y = 0;
 
 	for (int i = 0; i < lines.size(); i++) {
-		_font->drawString(_surface, lines[i], 0, y, _bbox.width(), _color);
+		_font->drawString(_surface, lines[i], 0, y, _bbox.width(), _color, Graphics::kTextAlignCenter);
 
 		y += _font->getFontHeight();
 
