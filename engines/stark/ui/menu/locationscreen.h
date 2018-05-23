@@ -95,6 +95,9 @@ public:
 	/** Called when the mouse hovers the widget */
 	virtual void onMouseMove(const Common::Point &mousePos);
 
+	/** Called when the mouse's left button just gets up */
+	virtual void onMouseUp() {}
+
 	/** Lookup sounds in the static location for use when hovering / clicking the widget */
 	void setupSounds(int16 enterSound, int16 clickSound);
 

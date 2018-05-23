@@ -99,6 +99,11 @@ void UserInterface::handleMouseMove(const Common::Point &pos) {
 	_cursor->setMousePosition(pos);
 }
 
+void UserInterface::handleMouseUp() {
+	// Only the settings menu needs to handle this event
+	_settingsMenuScreen->handleMouseUp();
+}
+
 void UserInterface::handleClick() {
 	_currentScreen->handleClick();
 }

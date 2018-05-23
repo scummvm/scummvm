@@ -63,6 +63,7 @@ public:
 	void update();
 	void render();
 	void handleMouseMove(const Common::Point &pos);
+	void handleMouseUp();
 	void handleClick();
 	void handleRightClick();
 	void handleDoubleClick();

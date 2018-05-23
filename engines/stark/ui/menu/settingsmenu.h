@@ -42,6 +42,8 @@ public:
 	// StaticLocationScreen API
 	void open() override;
 
+	void handleMouseUp();
+
 private:
 	enum HelpTextIndex {
 		kHighRes = 5,
@@ -53,6 +55,12 @@ private:
 		kMusic = 18,
 		kSfx = 20,
 		kAllowFF = 22
+	};
+
+	enum WidgetIndex {
+		kWidgetVoice = 15,
+		kWidgetMusic = 17,
+		kWidgetSfx = 19
 	};
 
 	template<HelpTextIndex N>
@@ -93,21 +101,25 @@ private:
 
 class VolumeWidget : public StaticLocationWidget {
 public:
-	VolumeWidget(const char *renderEntryName, WidgetOnMouseMoveCallback *onMouseMoveCallback);
+	VolumeWidget(const char *renderEntryName, Cursor *_cursor, WidgetOnMouseMoveCallback *onMouseMoveCallback);
 	virtual ~VolumeWidget() {};
 
 	// StaticLocationWidget API
 	void render() override;
 	bool isMouseInside(const Common::Point &mousePos) const override;
+	void onClick() override;
 	void onMouseMove(const Common::Point &mousePos) override;
+	void onMouseUp() override;
 
 private:
 	static const uint32 _textColorBgHovered = 0xFFFFFFFF;
 
 	VisualImageXMG *_sliderImage;
 	VisualImageXMG *_bgImage;
+	Cursor *_cursor;
 	Common::Point _sliderPosition, _bgPosition;
-	int _bgWidth, _bgHeight;
+	int _bgWidth, _bgHeight, _sliderWidth, _minX, _maxX;
+	bool _isDragged;
 
 	bool isMouseInsideBg(const Common::Point &mousePos) const;
 };

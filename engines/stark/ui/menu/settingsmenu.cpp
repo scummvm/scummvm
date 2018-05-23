@@ -21,6 +21,7 @@
  */
 
 #include "engines/stark/ui/menu/settingsmenu.h"
+#include "engines/stark/ui/cursor.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/staticprovider.h"
@@ -134,6 +135,7 @@ void SettingsMenuScreen::open() {
 	
 	_widgets.push_back(new VolumeWidget(
 			"Voice",
+			_cursor,
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kVoice>)));
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -177,6 +179,14 @@ void SettingsMenuScreen::open() {
 				nullptr,
 				nullptr));
 		_widgets.back()->setVisible(false);
+	}
+}
+
+void SettingsMenuScreen::handleMouseUp() {
+	if (!_widgets.empty()) {
+		_widgets[kWidgetVoice]->onMouseUp();
+		_widgets[kWidgetMusic]->onMouseUp();
+		_widgets[kWidgetSfx]->onMouseUp();
 	}
 }
 
@@ -235,34 +245,63 @@ bool CheckboxWidget::isMouseInsideCheckbox(const Common::Point &mousePos) const 
 		   mousePos.y >= _position.y && mousePos.y <= _position.y + _checkboxHeight;
 }
 
-VolumeWidget::VolumeWidget(const char *renderEntryName, WidgetOnMouseMoveCallback *onMouseMoveCallback) :
-		StaticLocationWidget(renderEntryName, nullptr, onMouseMoveCallback) {
+VolumeWidget::VolumeWidget(const char *renderEntryName, Cursor *cursor, WidgetOnMouseMoveCallback *onMouseMoveCallback) :
+		StaticLocationWidget(renderEntryName, nullptr, onMouseMoveCallback),
+		_cursor(cursor),
+		_isDragged(false) {
 	// Load images
 	_sliderImage = StarkStaticProvider->getUIElement(StaticProvider::kVolume, 0);
 	_bgImage = StarkStaticProvider->getUIElement(StaticProvider::kVolume, 1);
 	_bgWidth = _bgImage->getWidth();
 	_bgHeight = _bgImage->getHeight();
+	_sliderWidth = _sliderImage->getWidth();
 
 	// Set positions
 	// TODO: get the real position
-	_bgPosition.x = 100; _bgPosition.y = 200;
-	_sliderPosition.x = 100; _sliderPosition.y = 200;
+	_bgPosition.x = 300; _bgPosition.y = 300;
+	_minX = _bgPosition.x - _sliderWidth / 2;
+	_maxX = _bgPosition.x + _bgWidth + _sliderWidth / 2;
+	_sliderPosition.x = _minX;
+	_sliderPosition.y = _bgPosition.y + (_bgHeight - _sliderImage->getHeight()) / 2;
 }
 
 void VolumeWidget::render() {
 	StaticLocationWidget::render();
 	_sliderImage->render(_sliderPosition, true);
+	_bgImage->render(_bgPosition, true);
 }
 
 bool VolumeWidget::isMouseInside(const Common::Point &mousePos) const {
 	return StaticLocationWidget::isMouseInside(mousePos) || isMouseInsideBg(mousePos);
 }
 
+void VolumeWidget::onClick() {
+	if (isMouseInsideBg(_cursor->getMousePosition())) {
+		_isDragged = true;
+	}
+}
+
 void VolumeWidget::onMouseMove(const Common::Point &mousePos) {
-	StaticLocationWidget::onMouseMove(mousePos);
 	if (isMouseInsideBg(mousePos)) {
 		setTextColor(_textColorBgHovered);
+	} else {
+		StaticLocationWidget::onMouseMove(mousePos);
 	}
+
+	if (_isDragged) {
+		int posX = mousePos.x - _sliderWidth / 2;
+		if (posX < _minX) {
+			_sliderPosition.x = _minX;
+		} else if (posX > _maxX) {
+			_sliderPosition.x = _maxX;
+		} else {
+			_sliderPosition.x = posX;
+		}
+	}
+}
+
+void VolumeWidget::onMouseUp() {
+	_isDragged = false;
 }
 
 bool VolumeWidget::isMouseInsideBg(const Common::Point &mousePos) const {

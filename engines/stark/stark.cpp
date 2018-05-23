@@ -211,7 +211,7 @@ void StarkEngine::processEvents() {
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
-			// Do nothing for now
+			_userInterface->handleMouseUp();
 		} else if (e.type == Common::EVENT_MOUSEMOVE) {
 			_userInterface->handleMouseMove(e.mouse);
 		} else if (e.type == Common::EVENT_LBUTTONDOWN) {
