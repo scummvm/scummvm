@@ -22,6 +22,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/ustr.h"
 
 #include "graphics/fonts/ttf.h"
 #include "graphics/font.h"
@@ -286,9 +287,9 @@ void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 
 	_prevSubtitle = subtitle;
 
-	Common::Array<Common::String> lines;
+	Common::Array<Common::U32String> lines;
 
-	_font->wordWrapText(subtitle, _bbox.width(), lines);
+	_font->wordWrapText(convertUtf8ToUtf32(subtitle), _bbox.width(), lines);
 
 	int y = 0;
 
