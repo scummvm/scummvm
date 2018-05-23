@@ -87,7 +87,7 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(28, opNotifyThreadId1);
 	OPCODE(29, opSetPathCtrY);
 	// 30-31 unused in Duckman, CHECKME BBDOU
-	// TODO OPCODE(32, );
+	OPCODE(32, opDisablePathWalkPoints);
 	OPCODE(33, opSetPathWalkPoints);
 	OPCODE(34, opDisableAutoScale);
 	OPCODE(35, opSetScale);
@@ -294,6 +294,10 @@ void SequenceOpcodes::opNotifyThreadId1(Control *control, OpCall &opCall) {
 void SequenceOpcodes::opSetPathCtrY(Control *control, OpCall &opCall) {
 	ARG_INT16(pathCtrY);
 	control->_actor->_pathCtrY = pathCtrY;
+}
+
+void SequenceOpcodes::opDisablePathWalkPoints(Control *control, OpCall &opCall) {
+	control->_actor->_flags &= ~2;
 }
 
 void SequenceOpcodes::opSetPathWalkPoints(Control *control, OpCall &opCall) {
