@@ -40,8 +40,6 @@ protected:
 	IllusionsEngine *_vm;
 };
 
-// TODO
-
 struct CharInfo {
 	int16 _width;
 	int16 _field_2;

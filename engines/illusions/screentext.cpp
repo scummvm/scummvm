@@ -60,7 +60,6 @@ void ScreenText::updateTextInfoPosition(Common::Point position) {
 }
 
 void ScreenText::clipTextInfoPosition(Common::Point &position) {
-	// TODO Move values outside
 	if (_vm->getGameId() == kGameIdBBDOU) {
 		// BBDOU
 		if (position.x < 2)

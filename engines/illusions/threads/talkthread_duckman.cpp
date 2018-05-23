@@ -268,7 +268,6 @@ uint32 TalkThread_Duckman::sendMessage(int msgNum, uint32 msgValue) {
 	case kMsgClearSequenceId1:
 		_sequenceId1 = 0;
 		_flags |= 3;
-		// TODO _pauseCtrPtr = 0;
 		break;
 	case kMsgClearSequenceId2:
 		_sequenceId2 = 0;

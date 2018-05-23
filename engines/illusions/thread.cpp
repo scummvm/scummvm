@@ -137,12 +137,10 @@ ThreadList::ThreadList(IllusionsEngine *vm)
 }
 
 void ThreadList::startThread(Thread *thread) {
-	// TODO sceneId has to be set by the Thread class
 	_threads.push_back(thread);
 }
 
 void ThreadList::updateThreads() {
-	// TODO Move outer loop to caller
 	while (1) {
 		Iterator it = _threads.begin();
 		while (it != _threads.end()) {

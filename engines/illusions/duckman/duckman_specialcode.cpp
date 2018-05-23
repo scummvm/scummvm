@@ -66,7 +66,6 @@ typedef Common::Functor1Mem<OpCall&, void, DuckmanSpecialCode> SpecialCodeFuncti
 #define SPECIAL(id, func) _specialCodeMap[id] = new SpecialCodeFunctionDM(this, &DuckmanSpecialCode::func);
 
 void DuckmanSpecialCode::init() {
-	// TODO
 	SPECIAL(0x00160001, spcStartScreenShaker);
 	SPECIAL(0x00160002, spcSetCursorHandMode);
 	SPECIAL(0x00160003, spcResetChinesePuzzle);

@@ -115,15 +115,6 @@ Actor::Actor(IllusionsEngine *vm)
 	_pathPointsCount = 0;
 	_pathNode = 0;
 
-#if 0 // TODO
-	_field2 = 0;
-	_field164 = 0;
-	_field18C = 0;
-	_field190 = 0;
-	_field192 = 0;
-	_field198 = 0;
-#endif
-
 }
 
 Actor::~Actor() {
@@ -732,11 +723,7 @@ void Control::startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 cal
 	_actor->_pathFlag50 = false;
 	_actor->_seqCodeValue3 = 0;
 	_actor->_seqCodeValue1 = 0;
-	// TODO _actor->_field_BC = _actor->_position.x;
-	// TODO _actor->_field_BE = _actor->_position.x;
 	_actor->_pathInitialPosFlag = true;
-	// TODO _actor->_field_C0 = destPt.x;
-	// TODO _actor->_field_C2 = destPt.y;
 
 	uint newFacing;
 	if (_vm->calcPointDirection(_actor->_position, destPt, newFacing))
@@ -819,7 +806,6 @@ void Control::updateActorMovement(uint32 deltaTime) {
 
 		if (!_actor->_pathFlag50) {
 
-			// TODO Move to own function
 			FixedPoint16 angle;
 			if (currPt.x == prevPt.x) {
 				if (prevPt.y >= currPt.y)
@@ -831,7 +817,6 @@ void Control::updateActorMovement(uint32 deltaTime) {
 			}
 			_actor->_pathAngle = angle;
 
-			// TODO Move to own function
 			int16 v13 = (fixedTrunc(fixedMul(angle, 0x394BB8)) + 360) % 360; // 0x394BB8 is 180 / pi
 			if (deltaX >= 0)
 				v13 += 180;
@@ -1008,7 +993,6 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 }
 
 void Control::execSequenceOpcode(OpCall &opCall) {
-	// TODO Clean this up
 	_vm->_controls->_sequenceOpcodes->execOpcode(this, opCall);
 }
 

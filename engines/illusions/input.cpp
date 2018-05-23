@@ -97,7 +97,6 @@ Input::Input() {
 }
 
 void Input::processEvent(Common::Event event) {
-	// TODO
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		handleKey(event.kbd.keycode, MOUSE_NONE, true);

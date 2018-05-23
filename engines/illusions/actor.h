@@ -244,7 +244,6 @@ public:
 	Common::Point _feetPt;
 	Common::Point _position;
 	Common::Point _subobjectsPos[kSubObjectsCount];
-	// TODO 0000001C - 00000054 unknown
 	void startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId);
 	void execSequenceOpcode(OpCall &opCall);
 };

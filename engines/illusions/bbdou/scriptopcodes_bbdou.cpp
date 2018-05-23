@@ -504,7 +504,6 @@ void ScriptOpcodes_BBDOU::opStartMoveActor(ScriptThread *scriptThread, OpCall &o
 	ARG_UINT32(namedPointId);
 	// NOTE Skipped checking for stalled sequence, not sure if needed
 	Control *control = _vm->_dict->getObjectControl(objectId);
-	//if (!control) { opCall._deltaOfs = 0; return; }// TODO CHECKME
 	if (!control) { return; }// TODO CHECKME
 	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
 	control->startMoveActor(sequenceId, pos, opCall._callerThreadId, opCall._threadId);
