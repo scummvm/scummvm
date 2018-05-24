@@ -26,6 +26,8 @@
 #include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
 
+#include "common/math.h"
+
 namespace Titanic {
 
 CViewport::CViewport() {
@@ -299,8 +301,8 @@ void CViewport::reset() {
 
 	_center = FPoint((double)_width * 0.5, (double)_height * 0.5);
 	_centerVector._x = MIN(_center._x, _center._y);
-	_centerVector._y = tan(_centerYAngleDegrees * Deg2Rad);
-	_centerVector._z = tan(_centerZAngleDegrees * Deg2Rad);
+	_centerVector._y = tan(Common::deg2rad<double>(_centerYAngleDegrees));
+	_centerVector._z = tan(Common::deg2rad<double>(_centerZAngleDegrees));
 }
 
 const FMatrix &CViewport::getOrientation() const {
