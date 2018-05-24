@@ -39,6 +39,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/staticprovider.h"
+#include "engines/stark/services/settings.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/framelimiter.h"
 
@@ -70,6 +71,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_diary(nullptr),
 		_userInterface(nullptr),
 		_fontProvider(nullptr),
+		_settings(nullptr),
 		_lastClickTime(0) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -99,6 +101,7 @@ StarkEngine::~StarkEngine() {
 	delete _archiveLoader;
 	delete _userInterface;
 	delete _fontProvider;
+	delete _settings;
 
 	StarkServices::destroy();
 }
@@ -123,6 +126,7 @@ Common::Error StarkEngine::run() {
 	_diary = new Diary();
 	_gameInterface = new GameInterface();
 	_userInterface = new UserInterface(_gfx);
+	_settings = new Settings(this);
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -139,6 +143,7 @@ Common::Error StarkEngine::run() {
 	services.userInterface = _userInterface;
 	services.fontProvider = _fontProvider;
 	services.gameDescription = _gameDescription;
+	services.settings = _settings;
 
 	// Load global resources
 	_staticProvider->init();

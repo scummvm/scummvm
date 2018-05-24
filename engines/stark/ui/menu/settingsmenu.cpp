@@ -70,8 +70,8 @@ void SettingsMenuScreen::open() {
 	
 	_widgets.push_back(new CheckboxWidget(
 			"AprilHighRes",
-			true,
-			nullptr,
+			StarkSettings->getBoolSetting(Settings::kHighModel),
+			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kHighModel>),
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kHighRes>)));
 	_widgets.back()->setupSounds(3, 4);
 	
@@ -83,8 +83,8 @@ void SettingsMenuScreen::open() {
 	
 	_widgets.push_back(new CheckboxWidget(
 			"Subtitles",
-			true,
-			nullptr,
+			StarkSettings->getBoolSetting(Settings::kSubtitle),
+			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kSubtitle>),
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kSubtitles>)));
 	_widgets.back()->setupSounds(3, 4);
 	
@@ -96,8 +96,8 @@ void SettingsMenuScreen::open() {
 
 	_widgets.push_back(new CheckboxWidget(
 			"SpecialFX",
-			true,
-			nullptr,
+			StarkSettings->getBoolSetting(Settings::kSpecialFX),
+			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kSpecialFX>),
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kSpecialFX>)));
 	_widgets.back()->setupSounds(3, 4);
 	
@@ -109,8 +109,8 @@ void SettingsMenuScreen::open() {
 
 	_widgets.push_back(new CheckboxWidget(
 			"Shadows",
-			true,
-			nullptr,
+			StarkSettings->getBoolSetting(Settings::kShadow),
+			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kShadow>),
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kShadows>)));
 	_widgets.back()->setupSounds(3, 4);
 	
@@ -122,8 +122,8 @@ void SettingsMenuScreen::open() {
 
 	_widgets.push_back(new CheckboxWidget(
 			"HighResFMV",
-			true,
-			nullptr,
+			StarkSettings->getBoolSetting(Settings::kHighFMV),
+			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kHighFMV>),
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kHighResFMV>)));
 	_widgets.back()->setupSounds(3, 4);
 	
@@ -175,8 +175,8 @@ void SettingsMenuScreen::open() {
 	if (!isDemo()) {
 		_widgets.push_back(new CheckboxWidget(
 				"AllowFF",
-				true,
-				nullptr,
+				StarkSettings->getBoolSetting(Settings::kTimeSkip),
+				CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kTimeSkip>),
 				MOVE_HANDLER(SettingsMenuScreen, textHandler<kAllowFF>)));
 		_widgets.back()->setupSounds(3, 4);
 		
@@ -191,6 +191,7 @@ void SettingsMenuScreen::open() {
 void SettingsMenuScreen::close() {
 	StaticLocationScreen::close();
 	_soundManager.stop();
+	StarkSettings->save();
 }
 
 void SettingsMenuScreen::onMouseMove(const Common::Point &pos) {
@@ -218,6 +219,11 @@ void SettingsMenuScreen::textHandler(StaticLocationWidget &widget, const Common:
 			_widgets[N]->setVisible(false);
 		}
 	}
+}
+
+template<Settings::BoolSettingIndex N>
+void SettingsMenuScreen::flipSettingHandler() {
+	StarkSettings->flipSetting(N);
 }
 
 void SettingsMenuScreen::backHandler() {

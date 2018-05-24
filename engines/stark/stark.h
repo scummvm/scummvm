@@ -49,6 +49,7 @@ class StateProvider;
 class StaticProvider;
 class ResourceProvider;
 class UserInterface;
+class Settings;
 
 class StarkEngine : public Engine {
 public:
@@ -88,6 +89,7 @@ private:
 	StaticProvider *_staticProvider;
 	ResourceProvider *_resourceProvider;
 	FontProvider *_fontProvider;
+	Settings *_settings;
 	Common::RandomSource *_randomSource;
 
 	const ADGameDescription *_gameDescription;

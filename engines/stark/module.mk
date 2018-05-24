@@ -79,6 +79,7 @@ MODULE_OBJS := \
 	services/stateprovider.o \
 	services/staticprovider.o \
 	services/userinterface.o \
+	services/settings.o \
 	stark.o \
 	tools/abstractsyntaxtree.o \
 	tools/block.o \

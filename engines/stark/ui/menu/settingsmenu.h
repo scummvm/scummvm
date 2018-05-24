@@ -20,11 +20,12 @@
  *
  */
 
-#ifndef STARK_UI_MENU_SETTING_MENU_H
-#define STARK_UI_MENU_SETTING_MENU_H
+#ifndef STARK_UI_MENU_SETTINGS_MENU_H
+#define STARK_UI_MENU_SETTINGS_MENU_H
 
 #include "engines/stark/ui/menu/locationscreen.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 #include "engines/advancedDetector.h"
 
 namespace Stark {
@@ -96,6 +97,9 @@ private:
 
 	template<HelpTextIndex N>
 	void textHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
+
+	template<Settings::BoolSettingIndex N>
+	void flipSettingHandler();
 
 	void backHandler();
 
