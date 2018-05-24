@@ -97,7 +97,6 @@ void BbdouCredits::drawTextToControl(uint32 objectId, const char *text, uint ali
 	uint16 wtext[128];
 	charToWChar(text, wtext, ARRAYSIZE(wtext));
 
-	// TODO Extract to Actor class
 	Control *control = _vm->getObjectControl(objectId);
 	FontResource *font = _vm->_dict->findFont(_currFontId);
 	TextDrawer textDrawer;

@@ -234,7 +234,6 @@ public:
 	int _pauseCtr;
 	int16 _priority;
 	Actor *_actor;
-	//field_6 dw
 	uint32 _sceneId;
 	uint32 _objectId;
 	uint32 _actorTypeId;
