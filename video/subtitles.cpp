@@ -225,7 +225,7 @@ Common::String SRTParser::getSubtitle(uint32 timestamp) {
 	return (*entry)->text;
 }
 
-#define SHADOW 2
+#define SHADOW 1
 
 Subtitles::Subtitles() : _loaded(false), _font(nullptr) {
 	_surface = new Graphics::Surface();
@@ -241,7 +241,7 @@ void Subtitles::setFont(const char *fontname, int height) {
 	_fontHeight = height;
 
 	if (file.open(fontname)) {
-		_font = Graphics::loadTTFFont(file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96, Graphics::kTTFRenderModeMonochrome);
+		_font = Graphics::loadTTFFont(file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
 	}
 
 	if (!_font) {
