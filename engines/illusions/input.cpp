@@ -21,6 +21,7 @@
  */
 
 #include "illusions/input.h"
+#include "common/system.h"
 
 namespace Illusions {
 
@@ -93,6 +94,7 @@ Input::Input() {
 	_cursorPos.y = 0;
 	_prevCursorPos.x = 0;
 	_prevCursorPos.y = 0;
+	_cursorMovedByKeyboard = false;
 	_cheatCodeIndex = 0;
 }
 
@@ -105,6 +107,7 @@ void Input::processEvent(Common::Event event) {
 		handleKey(event.kbd.keycode, MOUSE_NONE, false);
 		break;
 	case Common::EVENT_MOUSEMOVE:
+		_cursorMovedByKeyboard = false;
 		_cursorPos.x = event.mouse.x;
 		_cursorPos.y = event.mouse.y;
 		break;
@@ -172,6 +175,22 @@ InputEvent& Input::setInputEvent(uint evt, uint bitMask) {
 }
 
 void Input::handleKey(Common::KeyCode key, int mouseButton, bool down) {
+	switch (key) {
+	case Common::KEYCODE_UP:
+		moveCursorByKeyboard(0, -4);
+		break;
+	case Common::KEYCODE_DOWN:
+		moveCursorByKeyboard(0, 4);
+		break;
+	case Common::KEYCODE_RIGHT:
+		moveCursorByKeyboard(4, 0);
+		break;
+	case Common::KEYCODE_LEFT:
+		moveCursorByKeyboard(-4, 0);
+		break;
+	default:
+		break;
+	}
 	for (uint i = 0; i < kEventMax; ++i) {
 		_newKeys |= _inputEvents[i].handle(key, mouseButton, down);
 	}
@@ -219,6 +238,12 @@ void Input::setButtonState(uint bitMask) {
 
 void Input::discardButtons(uint bitMask) {
 	_buttonStates &= ~bitMask;
+}
+
+void Input::moveCursorByKeyboard(int deltaX, int deltaY) {
+	_cursorMovedByKeyboard = true;
+	_cursorPos.x = CLIP(_cursorPos.x + deltaX, 0, g_system->getWidth() - 1);
+	_cursorPos.y = CLIP(_cursorPos.y + deltaY, 0, g_system->getHeight() - 1);
 }
 
 bool Input::isCheatModeActive() {
