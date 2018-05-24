@@ -225,6 +225,8 @@ Common::String SRTParser::getSubtitle(uint32 timestamp) {
 	return (*entry)->text;
 }
 
+#define SHADOW 2
+
 Subtitles::Subtitles() : _loaded(false), _font(nullptr) {
 	_surface = new Graphics::Surface();
 }
@@ -264,11 +266,12 @@ void Subtitles::loadSRTFile(const char *fname) {
 void Subtitles::setBBox(const Common::Rect bbox) {
 	_bbox = bbox;
 
-	_surface->create(_bbox.width(), _bbox.height(), g_system->getOverlayFormat());
+	_surface->create(_bbox.width() + SHADOW * 2, _bbox.height() + SHADOW * 2, g_system->getOverlayFormat());
 }
 
 void Subtitles::setColor(byte r, byte g, byte b) {
 	_color = _surface->format.ARGBToColor(255, r, g, b);
+	_blackColor = _surface->format.ARGBToColor(255, 0, 0, 0);
 	_transparentColor = _surface->format.ARGBToColor(0, 0, 0, 0);
 }
 
@@ -294,7 +297,12 @@ void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
 	int y = 0;
 
 	for (int i = 0; i < lines.size(); i++) {
-		_font->drawString(_surface, lines[i], 0, y, _bbox.width(), _color, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, lines[i], 0, y, _bbox.width(), _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, lines[i], SHADOW * 2, y, _bbox.width(), _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, lines[i], 0, y + SHADOW * 2, _bbox.width(), _blackColor, Graphics::kTextAlignCenter);
+		_font->drawString(_surface, lines[i], SHADOW * 2, y + SHADOW * 2, _bbox.width(), _blackColor, Graphics::kTextAlignCenter);
+
+		_font->drawString(_surface, lines[i], SHADOW, y + SHADOW, _bbox.width(), _color, Graphics::kTextAlignCenter);
 
 		y += _font->getFontHeight();
 
