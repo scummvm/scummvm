@@ -30,6 +30,7 @@
 #include "mohawk/myst_stacks/myst.h"
 
 #include "common/events.h"
+#include "common/math.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -3246,9 +3247,9 @@ Common::Point Myst::towerRotationMapComputeCoords(uint16 angle) {
 	Common::Point end;
 
 	// Polar to rect coords
-	double radians = angle * M_PI / 180.0;
-	end.x = (int16)(_towerRotationCenter.x + cos(radians) * 310.0);
-	end.y = (int16)(_towerRotationCenter.y + sin(radians) * 310.0);
+	float radians = Common::deg2rad<uint16,float>(angle);
+	end.x = (int16)(_towerRotationCenter.x + cos(radians) * 310.0f);
+	end.y = (int16)(_towerRotationCenter.y + sin(radians) * 310.0f);
 
 	return end;
 }
