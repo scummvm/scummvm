@@ -9,7 +9,7 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be enableful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -71,11 +71,15 @@ public:
 	/** Set the integer settings */
 	void setIntSetting(IntSettingIndex index, int value) { _intSettings[index] = value; }
 
+	/** Check whether low-resolution fmv is available */
+	bool hasLowResFMV() { return _hasLowRes; }
+
 private:
 	Engine *_engine;
 	bool _boolSettings[8];
 	int _intSettings[3];
 	const Common::String &_domainName;
+	bool _hasLowRes;
 
 	void loadConf(const Common::String &key, bool &value, bool defaultValue) {
 		value = ConfMan.hasKey(key, _domainName) ? ConfMan.getBool(key, _domainName) : defaultValue;

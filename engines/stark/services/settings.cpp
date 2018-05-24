@@ -9,7 +9,7 @@
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be enableful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -21,6 +21,8 @@
  */
 
 #include "engines/stark/services/settings.h"
+#include "engines/stark/services/services.h"
+#include "engines/stark/services/archiveloader.h"
 
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -41,6 +43,9 @@ Settings::Settings(Engine *engine) :
 	loadConf("speech_volume", _intSettings[kVoice], 256);
 	loadConf("music_volume", _intSettings[kMusic], 256);
 	loadConf("sfx_volume", _intSettings[kSfx], 256);
+
+	// Use the FunCom logo video to check low-resolution fmv
+	_hasLowRes = StarkArchiveLoader->getExternalFile("1402_lo_res.bbb", "Global/");
 }
 
 void Settings::save() const {

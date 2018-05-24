@@ -126,6 +126,7 @@ void SettingsMenuScreen::open() {
 			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kHighFMV>),
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kHighResFMV>)));
 	_widgets.back()->setupSounds(3, 4);
+	_widgets.back()->setVisible(StarkSettings->hasLowResFMV());
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"FMVHelp",
