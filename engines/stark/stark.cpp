@@ -206,7 +206,7 @@ void StarkEngine::processEvents() {
 				if (!skipped) {
 					skipped = _userInterface->skipFMV();
 				}
-				if (!skipped) {
+				if (!skipped && StarkSettings->getBoolSetting(Settings::kTimeSkip)) {
 					_global->setFastForward();
 				}
 			} else if ((e.kbd.keycode == Common::KEYCODE_RETURN

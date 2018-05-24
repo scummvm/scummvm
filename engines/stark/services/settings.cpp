@@ -36,7 +36,7 @@ Settings::Settings(Engine *engine) :
 	loadConf("specialfx", _boolSettings[kSpecialFX], true);
 	loadConf("shadow", _boolSettings[kShadow], true);
 	loadConf("high_fmv", _boolSettings[kHighFMV], true);
-	loadConf("enable_time_skip", _boolSettings[kTimeSkip], true);
+	loadConf("enable_time_skip", _boolSettings[kTimeSkip], false);
 
 	loadConf("speech_volume", _intSettings[kVoice], 256);
 	loadConf("music_volume", _intSettings[kMusic], 256);
