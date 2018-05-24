@@ -406,7 +406,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
 	if (shrinkArray && _mask >= HASHMAP_MIN_CAPACITY) {
 		delete[] _storage;
 
-		_mask = HASHMAP_MIN_CAPACITY;
+		_mask = HASHMAP_MIN_CAPACITY - 1;
 		_storage = new Node *[HASHMAP_MIN_CAPACITY];
 		assert(_storage != nullptr);
 		memset(_storage, 0, HASHMAP_MIN_CAPACITY * sizeof(Node *));
