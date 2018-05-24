@@ -83,6 +83,7 @@ private:
 
 	Common::String _prevSubtitle;
 	uint32 _color;
+	uint32 _blackColor;
 	uint32 _transparentColor;
 };
 
