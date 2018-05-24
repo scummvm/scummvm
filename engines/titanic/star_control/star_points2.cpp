@@ -26,10 +26,11 @@
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 
+#include "common/math.h"
+
 namespace Titanic {
 
 #define ARRAY_COUNT 80
-const double FACTOR = 2 * M_PI / 360.0;
 
 bool CStarPoints2::initialize() {
 	// Get a reference to the starfield points resource
@@ -51,8 +52,8 @@ bool CStarPoints2::initialize() {
 			for (int fctr = 0; fctr < 2; ++fctr) {
 				v1 = stream->readSint32LE();
 				v2 = stream->readSint32LE();
-				v1 *= 0.015 * FACTOR;
-				v2 *= FACTOR / 100.0;
+				v1 *= Common::deg2rad<double>(0.015);
+				v2 *= Common::deg2rad<double>(0.01);
 
 				vectors[fctr]->_x = cos(v1) * 3000000.0 * cos(v2);
 				vectors[fctr]->_y = sin(v1) * 3000000.0 * cos(v2);

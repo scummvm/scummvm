@@ -77,6 +77,7 @@ class CStarCloseup {
 
 	/**
 	 * Maintains a pre-calculated table of sine values
+	 * TODO: May be able to reuse common/sinetables.h
 	 */
 	struct SineTable {
 	private:
