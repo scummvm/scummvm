@@ -848,6 +848,39 @@ void StarTrekEngine::showQuitGamePrompt(int x, int y) {
 	}
 }
 
+void StarTrekEngine::showGameOverMenu() {
+	const char *options[] = {
+		"Game Over",
+		"#GENE\\GENER006#Load a previously saved game.",
+		"#GENE\\GENER020#Restart the game.",
+		"#GENE\\GENER018#Quit the game.",
+		""
+	};
+
+	while (true) {
+		_inQuitGameMenu = true;
+		int selected = showText(&StarTrekEngine::readTextFromArray, (uintptr)options, 20, 20, TEXTCOLOR_YELLOW, true, false, true);
+		_inQuitGameMenu = false;
+
+		switch (selected) {
+		case 0: // Load game
+			_gfx->fadeoutScreen();
+			showLoadMenu(); // TODO: this probably manipulates the stack to jump out of this function...
+			break;
+		case 1: // Restart
+			_gfx->fadeoutScreen();
+			// TODO
+			break;
+		case 2: // Quit
+			_gfx->fadeoutScreen();
+			_system->quit();
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 /**
  * This can be called from startup or from the options menu.
  * On startup, this tries to load the setting without user input.

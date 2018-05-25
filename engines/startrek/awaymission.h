@@ -25,33 +25,47 @@
 
 // All variables here get cleared to 0 upon starting an away mission.
 struct AwayMission {
-	int16 mouseX;
-	int16 mouseY;
-	byte field1c;
-	byte field1d;
-	byte transitioningIntoRoom; // Set while beaming in or walking into a room. Disables control?
-	bool redshirtDead;
-	byte activeAction;
-	byte activeObject;  // The item that is going to be used on something
-	byte passiveObject; // The item that the active item is used on (or the item looked at, etc).
+	// These timers count down automatically when nonzero. When they reach 0,
+	// ACTION_TIMER_EXPIRED is invoked with the corresponding index (0-7).
+	int16 timers[8]; // 0x00-0x0f
+
+	int16 mouseX; // 0x10
+	int16 mouseY; // 0x12
+	int16 crewGetupTimers[4]; // 0x14
+	bool disableWalking; // 0x1c
+	byte transitioningIntoRoom; // 0x1d; Set while beaming in or walking into a room. Disables control?
+	bool redshirtDead; // 0x1e
+	byte activeAction; // 0x1f
+	byte activeObject;  // 0x20; The item that is going to be used on something
+	byte passiveObject; // 0x21; The item that the active item is used on (or the item looked at, etc).
 
 	// If this is true after calling room-specific RDF code, the game will continue to run
 	// any "default" code for the event, if any.
-	bool rdfStillDoDefaultAction;
+	bool rdfStillDoDefaultAction; // 0x23
 
-	// Bits 0-3 correspond to the crewmen? A bit is set if they're not selectable with
-	// the use action?
-	byte field24;
+	// If a bit in "crewDownBitset" is set, the corresponding timer in "crewGetupTimers"
+	// begins counting down. When it reaches 0, they get up.
+	byte crewDownBitset;
 
-	int8 field25[4]; // Sets an object's direction after they finish walking somewhere?
+	int8 crewDirectionsAfterWalk[4]; // Sets an object's direction after they finish walking somewhere?
 
-	// Demon Word: nonzero if a rude response was given to the prelate.
-	int16 field29;
+	// Mission-specific variables
+	union {
+		// Demon World
+		struct {
+			bool wasRudeToPrelate; // 0x29
+			bool beatKlingons; // 0x2f
+			bool tookKlingonHand; // 0x31
 
-	byte field33;
-	byte field36;
-	byte field38;
-	byte field3a;
+			bool talkedToPrelate; // 0x33
+			bool askedPrelateAboutSightings; // 0x36
+			byte field37; // 0x37
+			bool mccoyMentionedFlora; // 0x38
+			byte enteredFrom; // 0x3a
+
+			bool warpsDisabled; // 0x48
+		} demon;
+	};
 
 	int16 missionScore;
 };

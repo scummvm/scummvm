@@ -108,7 +108,7 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 	_sound->stopAllVocSounds();
 
-	memset(_awayMission.field25, 0xff, 4);
+	memset(_awayMission.crewDirectionsAfterWalk, 0xff, 4);
 
 	switch (warpEntryIndex) {
 	case 0: // 0-3: Read warp positions from RDF file
@@ -160,13 +160,13 @@ void StarTrekEngine::handleAwayMissionEvents() {
 		switch (event.type) {
 		case TREKEVENT_TICK:
 			updateActorAnimations();
-			// sub_236bb();
+			updateCrewmanGetupTimers();
 			updateMouseBitmap();
 			// doSomethingWithBanData1();
 			_gfx->drawAllSprites();
 			// doSomethingWithBanData2();
 			_sound->checkLoopMusic();
-			// sub_22de0();
+			updateAwayMissionTimers();
 			_frameIndex++;
 			_roomFrameCounter++;
 			addAction(Action(ACTION_TICK, _roomFrameCounter & 0xff, (_roomFrameCounter >> 8) & 0xff, 0));
@@ -180,7 +180,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 
 			switch (_awayMission.activeAction) {
 			case ACTION_WALK: {
-				if (_awayMission.field1c != 0)
+				if (_awayMission.disableWalking)
 					break;
 				_kirkActor->sprite.drawMode = 1; // Hide these objects for function call below?
 				_spockActor->sprite.drawMode = 1;
@@ -208,7 +208,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			}
 
 			case ACTION_USE: {
-				if (_awayMission.activeObject == OBJECT_REDSHIRT && (_awayMission.redshirtDead || (_awayMission.field24 & 8))) {
+				if (_awayMission.activeObject == OBJECT_REDSHIRT && (_awayMission.redshirtDead || (_awayMission.crewDownBitset & (1 << OBJECT_REDSHIRT)))) {
 					hideInventoryIcons();
 					_awayMission.activeAction = ACTION_WALK;
 					break;
@@ -277,7 +277,7 @@ checkAddAction:
 						addAction(Action(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0));
 
 checkShowInventory:
-					if (!(_awayMission.field24 & 1))
+					if (!(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
 						showInventoryIcons(true);
 				}
 				break;
@@ -304,7 +304,7 @@ checkShowInventory:
 					if (clickedObject != -2)
 						addAction(Action(_awayMission.activeAction, _awayMission.activeObject, 0, 0));
 
-					if (_awayMission.activeAction == ACTION_LOOK && !(_awayMission.field24 & (1 << OBJECT_KIRK)))
+					if (_awayMission.activeAction == ACTION_LOOK && !(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
 						showInventoryIcons(false);
 				}
 				break;
@@ -317,7 +317,7 @@ checkShowInventory:
 			break;
 
 		case TREKEVENT_RBUTTONDOWN: // TODO: also triggered by key press?
-			if (_awayMission.field1d)
+			if (_awayMission.transitioningIntoRoom)
 				break;
 			hideInventoryIcons();
 			playSoundEffectIndex(0x07);
@@ -330,7 +330,7 @@ checkShowInventory:
 					_awayMission.activeObject = clickedObject;
 			}
 			if (_awayMission.activeAction == ACTION_USE
-					&& _awayMission.activeObject == OBJECT_ICOMM && (_awayMission.field24 & (1 << OBJECT_KIRK)) == 0) {
+					&& _awayMission.activeObject == OBJECT_ICOMM && (_awayMission.crewDownBitset & (1 << OBJECT_KIRK)) == 0) {
 				if (!walkActiveObjectToHotspot()) {
 					addAction(Action(_awayMission.activeAction, _awayMission.activeObject, 0, 0));
 					_sound->playVoc("communic");
@@ -339,7 +339,7 @@ checkShowInventory:
 			}
 			else if (_awayMission.activeAction == ACTION_LOOK)
 				showInventoryIcons(false);
-			else if (_awayMission.activeAction == ACTION_USE && (_awayMission.field24 & 1) == 0)
+			else if (_awayMission.activeAction == ACTION_USE && (_awayMission.crewDownBitset & 1) == 0)
 				showInventoryIcons(true);
 			break;
 
@@ -519,7 +519,7 @@ void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 	}
 	_activeDoorWarpHotspot = -1;
 
-	if (_awayMission.field24 == 0 && _warpHotspotsActive) {
+	if (_awayMission.crewDownBitset == 0 && _warpHotspotsActive) {
 		offset = _room->getFirstWarpPolygonOffset();
 
 		while (offset != _room->getWarpPolygonEndOffset()) {
@@ -537,6 +537,20 @@ void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 		}
 	}
 	_activeWarpHotspot = -1;
+}
+
+/**
+ * Updates any nonzero away mission timers, and invokes ACTION_TIMER_EXPIRED when any one
+ * reached 0.
+ */
+void StarTrekEngine::updateAwayMissionTimers() {
+	for (int i = 0; i < 8; i++) {
+		if (_awayMission.timers[i] == 0)
+			continue;
+		_awayMission.timers[i]--;
+		if (_awayMission.timers[i] == 0)
+			addAction(ACTION_TIMER_EXPIRED, i, 0, 0);
+	}
 }
 
 /**

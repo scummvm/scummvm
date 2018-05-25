@@ -40,11 +40,16 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 		_roomActionList = demon0ActionList;
 		_numRoomActions = sizeof(demon0ActionList) / sizeof(RoomAction);
 	}
+	else if (name == "DEMON1") {
+		_roomActionList = demon1ActionList;
+		_numRoomActions = sizeof(demon1ActionList) / sizeof(RoomAction);
+	}
 	else {
 		warning("Room \"%s\" unimplemented", name.c_str());
 		_numRoomActions = 0;
-		return;
 	}
+
+	memset(&_roomVar, 0, sizeof(_roomVar));
 }
 
 Room::~Room() {
@@ -182,7 +187,7 @@ void Room::giveItem(int item) {
 }
 
 void Room::loadRoomIndex(int roomIndex, int spawnIndex) {
-	if (_vm->_awayMission.field24 != 0)
+	if (_vm->_awayMission.crewDownBitset != 0)
 		return;
 
 	_vm->loadRoomIndex(roomIndex, spawnIndex);
@@ -213,6 +218,10 @@ void Room::playSoundEffectIndex(int soundEffect) {
 
 void Room::playMidiMusicTracks(int startTrack, int loopTrack) {
 	_vm->playMidiMusicTracks(startTrack, loopTrack);
+}
+
+void Room::showGameOverMenu() {
+	_vm->showGameOverMenu();
 }
 
 void Room::playVoc(Common::String filename) {

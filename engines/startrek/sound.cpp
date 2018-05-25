@@ -318,7 +318,9 @@ void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 		delete[] loadedSoundData;
 	loadedSoundData = new byte[soundStream->size()];
 	soundStream->read(loadedSoundData, soundStream->size());
-	_midiSlots[0].midiParser->loadMusic(loadedSoundData, soundStream->size());
+
+	// FIXME: should music start playing when this is called?
+	//_midiSlots[0].midiParser->loadMusic(loadedSoundData, soundStream->size());
 }
 
 void Sound::clearMidiSlot(int slot) {

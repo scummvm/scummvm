@@ -35,6 +35,7 @@ enum Acton {
 
 	ACTION_TOUCHED_WARP = 6,
 	ACTION_TOUCHED_HOTSPOT = 7, // Doors? (Or just hotspots activated by Kirk moving there?)
+	ACTION_TIMER_EXPIRED = 8,
 	ACTION_FINISHED_ANIMATION = 10,
 	ACTION_FINISHED_WALKING = 12,
 	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu

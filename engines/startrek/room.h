@@ -103,6 +103,7 @@ private:
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam);// Cmd 0x08
 	void playSoundEffectIndex(int soundEffect);                                                // Cmd 0x0f
 	void playMidiMusicTracks(int startTrack, int loopTrack);                                   // Cmd 0x10
+	void showGameOverMenu();                                                                   // Cmd 0x12
 	void playVoc(Common::String filename);                                                     // Cmd 0x15
 
 	// Room-specific code
@@ -144,8 +145,75 @@ public:
 	void demon0UseSTricorderAnywhere();
 	void demon0UseMTricorderAnywhere();
 	void demon0UseMTricorderOnPrelate();
-
 	void demon0BadResponse();
+
+	// DEMON1
+	void demon1Tick1();
+	void demon1WalkToCave();
+	void demon1TouchedTopWarp();
+	void demon1TouchedBottomWarp();
+	void demon1Timer2Expired();
+	void demon1Timer0Expired();
+	void demon1Timer3Expired();
+	void demon1Timer1Expired();
+	void demon1KlingonFinishedAimingWeapon();
+	void demon1KirkShot();
+	void demon1UsePhaserOnAnything();
+	void demon1UsePhaserOnKlingon1();
+	void demon1ShootKlingon1();
+	void demon1KlingonDropsHand();
+	void demon1UsePhaserOnKlingon2();
+	void demon1ShootKlingon2();
+	void demon1UsePhaserOnKlingon3();
+	void demon1ShootKlingon3();
+	void demon1AllKlingonsDead();
+	void demon1Timer5Expired();
+	void demon1UseMTricorderOnKlingon();
+	void demon1UseSTricorderOnTulips();
+	void demon1UseSTricorderOnPods();
+	void demon1UseSTricorderOnCattails();
+	void demon1UseSTricorderOnFerns();
+	void demon1UseSTricorderOnHand();
+	void demon1UseSTricorderOnKlingon1();
+	void demon1UseSTricorderOnKlingon2Or3();
+	void demon1UseMTricorderOnKirk();
+	void demon1UseMTricorderOnSpock();
+	void demon1UseMTricorderOnRedshirt();
+	void demon1UseMTricorderOnCrewman();
+	void demon1GetHand();
+	void demon1ReachedHand();
+	void demon1PickedUpHand();
+	void demon1FinishedGettingHand();
+	void demon1LookAtKlingon();
+	void demon1LookAtCattails();
+	void demon1LookAtTulips();
+	void demon1LookAtPods();
+	void demon1LookAtFerns();
+	void demon1LookAtStream();
+	void demon1LookAtMine();
+	void demon1LookAtMountain();
+	void demon1LookAtHand();
+	void demon1LookAnywhere();
+	void demon1LookAtKirk();
+	void demon1LookAtSpock();
+	void demon1LookAtMcCoy();
+	void demon1LookAtRedshirt();
+	void demon1TalkToKirk();
+	void demon1TalkToSpock();
+	void demon1TalkToMcCoy();
+	void demon1TalkToRedshirt();
+	void demon1TalkToUnconsciousCrewman();
+
+private:
+	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
+	union {
+		struct {
+			int numKlingonsKilled;
+			byte attackIndex;
+			bool kirkShooting;
+			char d6[10];
+		} demon1;
+	} _roomVar;
 };
 
 }
