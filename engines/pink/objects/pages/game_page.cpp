@@ -112,7 +112,7 @@ void GamePage::loadManagers() {
 	_resMgr.init(_module->getGame(), this);
 
 	if (_memFile != nullptr) {
-		loadState();
+		loadStateFromMem();
 
 		delete _memFile;
 		_memFile = nullptr;
@@ -146,51 +146,50 @@ WalkMgr *GamePage::getWalkMgr() {
 	return _walkMgr;
 }
 
-void GamePage::loadState() {
+void GamePage::loadStateFromMem() {
 	Archive archive(static_cast<Common::SeekableReadStream*>(_memFile));
-	//_variables.clear(1);
-	Common::StringMap mapTest; // HACK. Without it isn't working
-	//archive >> _variables;
+	_variables.deserialize(archive);
 
-	uint size = archive.readCount();
-	for (uint i = 0; i < size; ++i) {
-		Common::String key = archive.readString();
-		Common::String val = archive.readString();
-		mapTest.setVal(key, val);
-	}
-
-	_variables = mapTest;
-
-	uint16 actorCount = archive.readWORD();
-
-	Common::String actorName;
-	for (int i = 0; i < actorCount; ++i) {
-		actorName = archive.readString();
-		findActor(actorName)->loadState(archive);
+	for (uint i = 0; i < _actors.size(); ++i) {
+		_actors[i]->loadState(archive);
 	}
 }
 
-void GamePage::saveState() {
+void GamePage::saveStateToMem() {
 	_memFile = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
 	Archive archive(static_cast<Common::WriteStream*>(_memFile));
+	_variables.serialize(archive);
 
-	for (Common::StringMap::const_iterator it = _variables.begin(); it != _variables.end(); ++it) {
-		archive.writeString(it->_key);
-		archive.writeString(it->_value);
-	}
-
-	archive.writeWORD(_actors.size());
 	for (uint i = 0; i < _actors.size(); ++i) {
-		archive.writeString(_actors[i]->getName());
 		_actors[i]->saveState(archive);
 	}
+}
 
+void GamePage::loadState(Archive &archive) {
+	uint size = archive.readDWORD();
+	_memFile = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+	for (uint i = 0; i < size; ++i) {
+		_memFile->writeByte(_memFile->readByte());
+	}
+}
+
+void GamePage::saveState(Archive &archive) {
+	if (this == _module->getPage()) {
+		saveStateToMem();
+		archive.writeDWORD(_memFile->size());
+	} else {
+		if (_memFile != nullptr) {
+			archive.writeDWORD(_memFile->size());
+			archive.getWriteStream()->write(_memFile->getData(), _memFile->size());
+		} else
+			archive.writeDWORD(0);
+	}
 }
 
 void GamePage::unload() {
 	_leadActor->setAction(_leadActor->findAction(kIdleAction));
 
-	saveState();
+	saveStateToMem();
 	clear();
 
 	_isLoaded = false;
@@ -198,7 +197,7 @@ void GamePage::unload() {
 
 void GamePage::clear() {
 	Page::clear();
-	//_variables.clear(1);
+	_variables.clear(1);
 
 	for (uint i = 0; i < _handlers.size(); ++i) {
 		delete _handlers[i];
