@@ -112,6 +112,18 @@ protected:
 	bool _looping;
 };
 
+struct MidiMusicFader {
+	bool _active;
+	uint _flags;
+	int16 _currVolume;
+	int16 _startVolume;
+	int16 _finalVolume;
+	int16 _startTime;
+	int16 _duration;
+	uint32 _notifyThreadId;
+	MidiMusicFader() : _active(false), _currVolume(255) {}
+};
+
 class SoundMan {
 public:
 	SoundMan(IllusionsEngine *vm);
@@ -123,6 +135,7 @@ public:
 
 	void playMidiMusic(uint32 musicId);
 	void stopMidiMusic();
+	void fadeMidiMusic(int16 finalVolume, int16 duration, uint32 notifyThreadId);
 	void clearMidiMusicQueue();
 
 	uint16 getMusicVolume();
@@ -158,8 +171,10 @@ protected:
 	VoicePlayer *_voicePlayer;
 	SoundList _sounds;
 	Common::Array<uint32> _midiMusicQueue;
+	MidiMusicFader _midiMusicFader;
 	Sound *getSound(uint32 soundEffectId);
 	void updateMidi();
+	void updateMidiMusicFader();
 	uint16 calcAdjustedVolume(const Common::String &volumeConfigKey, uint16 volume);
 };
 

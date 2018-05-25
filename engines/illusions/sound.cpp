@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "illusions/illusions.h"
 #include "illusions/sound.h"
+#include "illusions/time.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
 
@@ -384,6 +385,15 @@ void SoundMan::stopMidiMusic() {
 	_midiPlayer->stop();
 }
 
+void SoundMan::fadeMidiMusic(int16 finalVolume, int16 duration, uint32 notifyThreadId) {
+	_midiMusicFader._active = true;
+	_midiMusicFader._notifyThreadId = notifyThreadId;
+	_midiMusicFader._startVolume = _midiMusicFader._currVolume;
+	_midiMusicFader._finalVolume = finalVolume;
+	_midiMusicFader._startTime = getCurrentTime();
+	_midiMusicFader._duration = duration;
+}
+
 void SoundMan::clearMidiMusicQueue() {
 	_midiMusicQueue.clear();
 }
@@ -467,7 +477,26 @@ void SoundMan::updateMidi() {
 		_midiMusicQueue.remove_at(0);
 		_midiPlayer->play(musicId);
 	}
-	// TODO Update music volume fading
+	updateMidiMusicFader();
+}
+
+void SoundMan::updateMidiMusicFader() {
+	if (_midiMusicFader._active) {
+		int16 currTime = getCurrentTime();
+		if (currTime - _midiMusicFader._startTime > _midiMusicFader._duration) {
+			_midiMusicFader._active = false;
+			currTime = _midiMusicFader._startTime + _midiMusicFader._duration;
+			if (_midiMusicFader._notifyThreadId) {
+				_vm->notifyThreadId(_midiMusicFader._notifyThreadId);
+				_midiMusicFader._notifyThreadId = 0;
+			}
+		}
+		const int16 elapsedTime = currTime - _midiMusicFader._startTime;
+		const int16 volumeDelta = _midiMusicFader._finalVolume - _midiMusicFader._startVolume;
+		const int masterMusicVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+		_midiMusicFader._currVolume = _midiMusicFader._startVolume + (elapsedTime * volumeDelta / _midiMusicFader._duration);
+		_midiPlayer->setVolume(_midiMusicFader._currVolume * masterMusicVolume / 255);
+	}
 }
 
 void SoundMan::setMusicVolume(uint16 volume) {
