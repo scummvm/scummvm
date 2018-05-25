@@ -160,7 +160,7 @@ void ThreadList::updateThreads() {
 		if (_vm->_rerunThreads)
 			_vm->_rerunThreads = false;
 		else
-			break;		
+			break;
 	}
 }
 

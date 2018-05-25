@@ -147,6 +147,7 @@ public:
 
 	void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId);
 	void startScriptThread(uint32 threadId, uint32 callingThreadId);
+	void startScriptThread2(uint32 threadId, uint32 callingThreadId, uint32 unk);
 	uint32 startAbortableTimerThread(uint32 duration, uint32 threadId);
 	uint32 startTimerThread(uint32 duration, uint32 threadId);
 	uint32 startAbortableThread(byte *scriptCodeIp1, byte *scriptCodeIp2, uint32 callingThreadId);

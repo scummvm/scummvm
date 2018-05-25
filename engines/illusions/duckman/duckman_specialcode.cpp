@@ -103,6 +103,7 @@ void DuckmanSpecialCode::run(uint32 specialCodeId, OpCall &opCall) {
 	} else {
 		debug("DuckmanSpecialCode::run() Unimplemented special code %08X", specialCodeId);
 		_vm->notifyThreadId(opCall._threadId);
+		error("DuckmanSpecialCode::run() Unimplemented special code");
 	}
 }
 
@@ -392,7 +393,7 @@ void DuckmanSpecialCode::updateTeleporterProperties() {
 	_vm->_scriptResource->_properties.set(0x000E0075, _teleporterPosition.x == 4 && _teleporterPosition.y == 3);
 	_vm->_scriptResource->_properties.set(0x000E0076, _teleporterPosition.x == 3 && _teleporterPosition.y == 3);
 	_vm->_scriptResource->_properties.set(0x000E0077, _teleporterPosition.x == 2 && _teleporterPosition.y == 2);
-	_vm->_scriptResource->_properties.set(0x000E0078, _teleporterPosition.x == 1 && _teleporterPosition.y == 1);	
+	_vm->_scriptResource->_properties.set(0x000E0078, _teleporterPosition.x == 1 && _teleporterPosition.y == 1);
 }
 
 } // End of namespace Illusions
