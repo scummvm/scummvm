@@ -770,7 +770,7 @@ PointArray *Control::createPath(Common::Point destPt) {
 	PathLines *walkRects = (_actor->_flags & Illusions::ACTOR_FLAG_HAS_WALK_RECTS) ? _actor->_pathWalkRects->_rects : 0;
 	PathFinder pathFinder;
 	WidthHeight bgDimensions = _vm->_backgroundInstances->getMasterBgDimensions();
-	PointArray *path = pathFinder.findPath(_actor->_position, destPt, walkPoints, walkRects, bgDimensions);
+	PointArray *path = pathFinder.findPath(_vm->_camera, _actor->_position, destPt, walkPoints, walkRects, bgDimensions);
 	for (uint i = 0; i < path->size(); ++i) {
 		//debug(0, "Path(%d) (%d, %d)", i, (*path)[i].x, (*path)[i].y);
 	}

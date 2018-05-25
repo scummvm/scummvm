@@ -39,9 +39,10 @@ typedef Common::Array<Common::Point> PointArray;
 
 class PathFinder {
 public:
-	PointArray *findPath(Common::Point sourcePt, Common::Point destPt,
+	PointArray *findPath(Camera *camera, Common::Point sourcePt, Common::Point destPt,
 		PointArray *walkPoints, PathLines *walkRects, WidthHeight bgDimensions);
 protected:
+	PathLine _screenRect;
 	PointArray *_walkPoints;
 	PathLines *_walkRects;
 	WidthHeight _bgDimensions;

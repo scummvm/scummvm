@@ -261,10 +261,10 @@ void IllusionsEngine_Duckman::initInput() {
 	_input->setInputEvent(kEventDown, 0x80)
 		.addMouseButton(MOUSE_RIGHT_BUTTON)
 		.addKey(Common::KEYCODE_DOWN);
-	/* Not implemented, used for original debugging purposes
+#if 1 //TODO hide behind "gosanta" code
 	_input->setInputEvent(kEventF1, 0x100)
 		.addKey(Common::KEYCODE_F1);
-	*/
+#endif
 }
 
 #define UPDATEFUNCTION(priority, sceneId, callback) \
@@ -294,6 +294,8 @@ int IllusionsEngine_Duckman::updateScript(uint flags) {
 	}
 
 	_threads->updateThreads();
+
+	//TODO need to call startScriptThread2(0x10002, 0x20001, 0);
 	return kUFNext;
 }
 
@@ -459,6 +461,22 @@ Control *IllusionsEngine_Duckman::getObjectControl(uint32 objectId) {
 	return _dict->getObjectControl(objectId);
 }
 
+static const uint8 kPointConversionTable[] = {
+		0, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 1, 2, 3,
+		4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 35,
+		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+		35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+		35, 35, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
+		33, 34
+};
 Common::Point IllusionsEngine_Duckman::getNamedPointPosition(uint32 namedPointId) {
 	Common::Point pt;
 	Common::Point currPan = _camera->getCurrentPan();
@@ -471,8 +489,50 @@ Common::Point IllusionsEngine_Duckman::getNamedPointPosition(uint32 namedPointId
 			return currPan;
 		}
 	} else {
-		// TODO
-		debug(1, "getNamedPointPosition(%08X) UNKNOWN", namedPointId);
+		debug(1, "getNamedPointPosition(%02d)", kPointConversionTable[namedPointId - 0x00070001]);
+		switch(kPointConversionTable[namedPointId - 0x00070001]) {
+			case 0 : return Common::Point(160, 100);
+			case 1 : return currPan;
+			case 2 : return Common::Point(currPan.x - 160, currPan.y);
+			case 3 : return Common::Point(currPan.x + 160, currPan.y);
+			case 4 : return Common::Point(currPan.x, currPan.y - 100);
+			case 5 : return Common::Point(currPan.x, currPan.y + 100);
+			case 6 : return Common::Point(currPan.x - 160, currPan.y - 100);
+			case 7 : return Common::Point((uint16)(currPan.x + 160), currPan.y - 100);
+			case 8 : return Common::Point(currPan.x - 160, currPan.y + 100);
+			case 9 : return Common::Point(currPan.x + 160, currPan.y + 100);
+			/* TODO implement these
+			case 10 : return Common::Point(0, 0);
+			case 11 : return Common::Point(0, 0);
+			case 12 : return Common::Point(0, 0);
+			case 13 : return Common::Point(0, 0);
+			case 14 : return Common::Point(0, 0);
+			*/
+			case 15 : return Common::Point(0, 0);
+			/* TODO implement these
+			case 16 : return Common::Point(0, 0);
+			case 17 : return Common::Point(0, 0);
+			case 18 : return Common::Point(0, 0);
+			 */
+			case 19 : return Common::Point(0, 0);
+			case 20 : return Common::Point(320, 0);
+			case 21 : return Common::Point(640, 0);
+			case 22 : return Common::Point(960, 0);
+			case 23 : return Common::Point(0, 200);
+			case 24 : return Common::Point(320, 200);
+			case 25 : return Common::Point(640, 200);
+			case 26 : return Common::Point(960, 200);
+			case 27 : return Common::Point(0, 400);
+			case 28 : return Common::Point(320, 400);
+			case 29 : return Common::Point(640, 400);
+			case 30 : return Common::Point(960, 400);
+			case 31 : return Common::Point(0, 600);
+			case 32 : return Common::Point(320, 0);
+			case 33 : return Common::Point(640, 0);
+			case 34 : return Common::Point(960, 0);
+			default : break;
+		}
+		error("getNamedPointPosition(%02d) UNKNOWN", kPointConversionTable[namedPointId - 0x00070001]);
 		return Common::Point(0, 0);
 	}
 }
@@ -717,6 +777,13 @@ void IllusionsEngine_Duckman::startScriptThread(uint32 threadId, uint32 callingT
 	newScriptThread(threadId, callingThreadId, 0, scriptCodeIp);
 }
 
+void IllusionsEngine_Duckman::startScriptThread2(uint32 sceneId, uint32 threadId, uint32 callingThreadId) {
+	debug(2, "Starting script thread2");
+	_savegameSceneId = sceneId;
+	_savegameThreadId = threadId;
+	startScriptThread(0x20002, callingThreadId);
+}
+
 uint32 IllusionsEngine_Duckman::startAbortableTimerThread(uint32 duration, uint32 threadId) {
 	return newTimerThread(duration, threadId, true);
 }
@@ -824,7 +891,7 @@ bool IllusionsEngine_Duckman::enterScene(uint32 sceneId, uint32 threadId) {
 			startScriptThread(threadId, 0);
 		return true;
 	}
-	// TODO startScriptThread2(0x10002, 0x20001, 0);
+	startScriptThread2(0x10002, 0x20001, 0);
 	return false;
 }
 

@@ -321,7 +321,7 @@ void ScriptOpcodes_Duckman::opStartModalScene(ScriptThread *scriptThread, OpCall
 void ScriptOpcodes_Duckman::opExitModalScene(ScriptThread *scriptThread, OpCall &opCall) {
 	_vm->_input->discardAllEvents();
 	if (_vm->_scriptResource->_properties.get(0x000E0027)) {
-		// TODO _vm->startScriptThread2(0x10002, 0x20001, 0);
+		_vm->startScriptThread2(0x10002, 0x20001, 0);
 		opCall._result = kTSTerminate;
 	} else {
 		_vm->dumpCurrSceneFiles(_vm->getCurrentScene(), opCall._callerThreadId);
@@ -521,7 +521,7 @@ void ScriptOpcodes_Duckman::opAppearActor(ScriptThread *scriptThread, OpCall &op
 	ARG_UINT32(objectId);
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	if (!control) {
-		Common::Point pos = _vm->getNamedPointPosition(0x70001);		
+		Common::Point pos = _vm->getNamedPointPosition(0x70001);
 		_vm->_controls->placeActor(0x50001, pos, 0x60001, objectId, 0);
 		control = _vm->_dict->getObjectControl(objectId);
 	}

@@ -22,11 +22,16 @@
 
 #include "illusions/illusions.h"
 #include "illusions/pathfinder.h"
+#include "camera.h"
 
 namespace Illusions {
 
-PointArray *PathFinder::findPath(Common::Point sourcePt, Common::Point destPt,
+PointArray *PathFinder::findPath(Camera *camera, Common::Point sourcePt, Common::Point destPt,
 	PointArray *walkPoints, PathLines *walkRects, WidthHeight bgDimensions) {
+	Common::Point cameraPt = camera->getScreenOffset();
+	_screenRect.p0 = cameraPt;
+	_screenRect.p1.x = cameraPt.x + 320; //TODO fix me get screen dimentions here.
+	_screenRect.p1.y = cameraPt.y + 200;
 	_walkPoints = walkPoints;
 	_walkRects = walkRects;
 	_bgDimensions = bgDimensions;
@@ -132,8 +137,16 @@ void PathFinder::findValidDestPt(Common::Point &destPt) {
 	int minDistance = 0xFFFF, currDistance;
 	PathLine destLine;
 	for (uint i = 0; i < _walkRects->size(); ++i) {
-		PathLine &currRect = (*_walkRects)[i];
+		PathLine currRect = (*_walkRects)[i];
+		//TODO fix this hack. Used here to get xmas tree scene to work.
+		if(currRect.p1.x > _screenRect.p1.x) {
+			currRect.p1.x = _screenRect.p1.x;
+		}
+		if(currRect.p0.x < _screenRect.p0.x) {
+			currRect.p0.x = _screenRect.p0.x;
+		}
 		WidthHeight rectDimensions = calcRectDimensions(currRect);
+
 		adjustRectDimensions(rectDimensions);
 		clipLineToBg(destPt, rectDimensions, destLine);
 		if (calcLineStatus(destLine, currRect, &outPt) == 3) {

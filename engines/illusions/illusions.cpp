@@ -238,8 +238,19 @@ int IllusionsEngine::getRandom(int max) {
 }
 
 int IllusionsEngine::convertPanXCoord(int16 x) {
-	// TODO
-	return 0;
+	int16 diff = x - _camera->getCurrentPan().x;
+	int16 absX = ABS(diff);
+	int newX = 0;
+	if ( absX < 160) {
+		newX = (diff << 7) / 320;
+	} else if (diff < 0) {
+		newX = -64;
+	} else {
+		newX = 64;
+	}
+	debug(1, "convertPanXCoord %d %d -> %d", diff, x, newX);
+
+	return newX;
 }
 
 bool IllusionsEngine::calcPointDirection(Common::Point &srcPt, Common::Point &dstPt, uint &facing) {
