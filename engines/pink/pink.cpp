@@ -296,6 +296,7 @@ bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
 void PinkEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 	_director.pause(pause);
+	_system->showMouse(!pause);
 }
 
 Common::String generateSaveName(int slot, const char *gameId) {
