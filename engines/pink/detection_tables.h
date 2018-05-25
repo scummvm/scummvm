@@ -39,7 +39,7 @@ static const ADGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NONE)
 		},
 		{
@@ -52,7 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NONE)
 		},
 		AD_TABLE_END_MARKER

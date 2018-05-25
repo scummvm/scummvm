@@ -88,7 +88,10 @@ Common::Error PinkEngine::init() {
 
 	_orb.loadGame(this);
 
-	initModule(_modules[0]->getName(), kLoadingNewGame, "");
+	if (ConfMan.hasKey("save_slot")) {
+		loadGameState(ConfMan.getInt("save_slot"));
+	}
+	else initModule(_modules[0]->getName(), "", nullptr);
 
 	return Common::kNoError;
 }
@@ -140,7 +143,7 @@ void PinkEngine::load(Archive &archive) {
 	_modules.deserialize(archive);
 }
 
-void PinkEngine::initModule(const Common::String &moduleName, bool isLoadingFromSave, const Common::String &pageName) {
+void PinkEngine::initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile) {
 	if (_module) {
 		for (uint i = 0; i < _modules.size(); ++i) {
 			if (_module == _modules[i]) {
@@ -158,7 +161,9 @@ void PinkEngine::initModule(const Common::String &moduleName, bool isLoadingFrom
 		if (_modules[i]->getName() == moduleName) {
 			loadModule(i);
 			_module = static_cast<Module*>(_modules[i]);
-			_module->init(isLoadingFromSave, pageName);
+			if (saveFile)
+				_module->loadState(*saveFile);
+			_module->init( saveFile ? kLoadingSave : kLoadingNewGame, pageName);
 			break;
 		}
 	}
@@ -167,7 +172,7 @@ void PinkEngine::initModule(const Common::String &moduleName, bool isLoadingFrom
 void PinkEngine::changeScene(GamePage *page) {
 	setCursor(kLoadingCursor);
 	if (!_nextModule.empty() && _nextModule.compareTo(_module->getName())) {
-		initModule(_nextModule, kLoadingNewGame, _nextPage);
+		initModule(_nextModule, _nextPage, nullptr);
 	} else {
 		assert(!_nextPage.empty());
 		_module->changePage(_nextPage);
@@ -239,6 +244,55 @@ void PinkEngine::setCursor(uint cursorIndex) {
 	_system->setCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
 	_system->setMouseCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
 							cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
+}
+
+Common::Error PinkEngine::loadGameState(int slot) {
+	Common::SeekableReadStream *stream = _saveFileMan->openForLoading(generateSaveName(slot, _desc.gameId));
+	if (!stream)
+		return Common::kNoGameDataFoundError;
+
+	Archive archive(stream);
+	_variables.deserialize(archive);
+	_nextModule = archive.readString();
+	_nextPage = archive.readString();
+	initModule(archive.readString(), "", &archive);
+
+	return Common::kNoError;
+}
+
+bool PinkEngine::canLoadGameStateCurrently() {
+	return true;
+}
+
+Common::Error PinkEngine::saveGameState(int slot, const Common::String &desc) {
+	Common::WriteStream *stream = _saveFileMan->openForSaving(generateSaveName(slot, _desc.gameId));
+	if (!stream)
+		return Common::kUnknownError;
+
+	Archive archive(stream);
+	_variables.serialize(archive);
+	archive.writeString(_nextModule);
+	archive.writeString(_nextPage);
+
+	archive.writeString(_module->getName());
+	_module->saveState(archive);
+
+	delete stream;
+
+	return Common::kNoError;
+}
+
+bool PinkEngine::canSaveGameStateCurrently() {
+	return true;
+}
+
+bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
+	return f == kSupportsLoadingDuringRuntime ||
+		    f == kSupportsSavingDuringRuntime;
+}
+
+Common::String generateSaveName(int slot, const char *gameId) {
+	return Common::String::format("%s.s%02d", gameId, slot);
 }
 
 }
