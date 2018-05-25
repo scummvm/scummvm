@@ -51,6 +51,8 @@ public:
 
 	void clear();
 
+	void pause(bool pause);
+
 	bool showBounds;
 
 private:

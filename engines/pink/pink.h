@@ -111,6 +111,9 @@ public:
 	void setVariable(Common::String &variable, Common::String &value);
 	bool checkValueOfVariable(Common::String &variable, Common::String &value);
 
+protected:
+	virtual void pauseEngineIntern(bool pause);
+
 private:
 	Common::Error init();
 	bool loadCursors();

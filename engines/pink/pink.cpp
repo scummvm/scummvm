@@ -291,6 +291,11 @@ bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
 		    f == kSupportsSavingDuringRuntime;
 }
 
+void PinkEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	_director.pause(pause);
+}
+
 Common::String generateSaveName(int slot, const char *gameId) {
 	return Common::String::format("%s.s%02d", gameId, slot);
 }
