@@ -29,6 +29,7 @@
 
 #include "avalanche/avalanche.h"
 
+#include "common/math.h"
 #include "common/random.h"
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -1300,7 +1301,7 @@ uint16 AvalancheEngine::bearing(byte whichPed) {
 
 	int16 deltaX = avvy->_x - curPed->_x;
 	int16 deltaY = avvy->_y - curPed->_y;
-	uint16 result = (uint16)(atan((float)(deltaY / deltaX)) * 180 / M_PI);
+	uint16 result = Common::rad2deg<float,uint16>(atan((float)deltaY / (float)deltaX)); // TODO: Would atan2 be preferable?
 	if (avvy->_x < curPed->_x) {
 		return result + 90;
 	} else {
