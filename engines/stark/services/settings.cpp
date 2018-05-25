@@ -27,40 +27,57 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 
+#include "audio/mixer.h"
+
 namespace Stark {
 
-Settings::Settings(Engine *engine) :
-		_engine(engine),
-		_domainName(ConfMan.getActiveDomainName()) {
-	// Load from the configure
-	loadConf("high_model", _boolSettings[kHighModel], true);
-	loadConf("subtitles", _boolSettings[kSubtitle], true);
-	loadConf("specialfx", _boolSettings[kSpecialFX], true);
-	loadConf("shadow", _boolSettings[kShadow], true);
-	loadConf("high_fmv", _boolSettings[kHighFMV], true);
-	loadConf("enable_time_skip", _boolSettings[kTimeSkip], false);
+Settings::Settings(Audio::Mixer *mixer) :
+		_mixer(mixer) {
+	// Initialize keys
+	_boolKey[kHighModel] = "high_model";
+	_boolKey[kSubtitle] = "subtitles";
+	_boolKey[kSpecialFX] = "specialfx";
+	_boolKey[kShadow] = "shadow";
+	_boolKey[kHighFMV] = "high_fmv";
+	_boolKey[kTimeSkip] = "enable_time_skip";
+	_intKey[kVoice] = "speech_volume";
+	_intKey[kMusic] = "music_volume";
+	_intKey[kSfx] = "sfx_volume";
 
-	loadConf("speech_volume", _intSettings[kVoice], 256);
-	loadConf("music_volume", _intSettings[kMusic], 256);
-	loadConf("sfx_volume", _intSettings[kSfx], 256);
+	// Register default settings
+	ConfMan.registerDefault(_boolKey[kHighModel], true);
+	ConfMan.registerDefault(_boolKey[kSubtitle], true);
+	ConfMan.registerDefault(_boolKey[kSpecialFX], true);
+	ConfMan.registerDefault(_boolKey[kShadow], true);
+	ConfMan.registerDefault(_boolKey[kHighFMV], true);
+	ConfMan.registerDefault(_boolKey[kTimeSkip], false);
 
 	// Use the FunCom logo video to check low-resolution fmv
 	_hasLowRes = StarkArchiveLoader->getExternalFile("1402_lo_res.bbb", "Global/");
+
+	// Apply the volume
+	setIntSetting(kVoice, getIntSetting(kVoice));
+	setIntSetting(kMusic, getIntSetting(kMusic));
+	setIntSetting(kSfx, getIntSetting(kSfx));
 }
 
-void Settings::save() const {
-	saveConf("high_model", _boolSettings[kHighModel]);
-	saveConf("subtitles", _boolSettings[kSubtitle]);
-	saveConf("specialfx", _boolSettings[kSpecialFX]);
-	saveConf("shadow", _boolSettings[kShadow]);
-	saveConf("high_fmv",  _boolSettings[kHighFMV]);
-	saveConf("enable_time_skip", _boolSettings[kTimeSkip]);
+void Settings::setIntSetting(IntSettingIndex index, int value) {
+	ConfMan.setInt(_intKey[index], value);
 
-	saveConf("speech_volume",_intSettings[kVoice]);
-	saveConf("music_volume", _intSettings[kMusic]);
-	saveConf("sfx_volume", _intSettings[kSfx]);
+	Audio::Mixer::SoundType type;
+	switch (index) {
+		case kVoice:
+			type = Audio::Mixer::kSpeechSoundType;
+			break;
+		case kMusic:
+			type = Audio::Mixer::kMusicSoundType;
+			break;
+		case kSfx:
+			type = Audio::Mixer::kSFXSoundType;
+	}
 
-	ConfMan.flushToDisk();
+	bool flag = ConfMan.getBool("mute");
+	_mixer->setVolumeForSoundType(type, flag ? 0 : value);
 }
 
 } // End of namespace Stark

@@ -145,7 +145,8 @@ private:
 class VolumeWidget : public StaticLocationWidget {
 public:
 	VolumeWidget(const char *renderEntryName, Cursor *cursor,
-				 SoundManager &soundManager, int soundIndex,
+				 SoundManager &soundManager, int soundIndex, 
+				 Settings::IntSettingIndex settingIndex,
 				 WidgetOnMouseMoveCallback *onMouseMoveCallback);
 	virtual ~VolumeWidget() {};
 
@@ -158,17 +159,31 @@ public:
 
 private:
 	static const uint32 _textColorBgHovered = 0xFFFFFFFF;
+	static const int _maxVolume = 256;
 
 	VisualImageXMG *_sliderImage;
 	VisualImageXMG *_bgImage;
+
 	Cursor *_cursor;
+
 	SoundManager &_soundManager;
 	const int _soundIndex;
+
 	Common::Point _sliderPosition, _bgPosition;
 	int _bgWidth, _bgHeight, _sliderWidth, _minX, _maxX;
+	
 	bool _isDragged;
+	const Settings::IntSettingIndex _settingIndex;
 
 	bool isMouseInsideBg(const Common::Point &mousePos) const;
+
+	int volumeToX(int volume) {
+		return volume * (_maxX - _minX) / _maxVolume + _minX;
+	}
+
+	int xToVolume(int x) {
+		return (x - _minX) * _maxVolume / (_maxX - _minX);	
+	}
 };
 
 } // End of namespace Stark

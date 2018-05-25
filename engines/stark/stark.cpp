@@ -74,9 +74,6 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_settings(nullptr),
 		_lastClickTime(0) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	// Add the available debug channels
 	DebugMan.addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
@@ -126,7 +123,7 @@ Common::Error StarkEngine::run() {
 	_diary = new Diary();
 	_gameInterface = new GameInterface();
 	_userInterface = new UserInterface(_gfx);
-	_settings = new Settings(this);
+	_settings = new Settings(_mixer);
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();

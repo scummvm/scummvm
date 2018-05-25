@@ -25,10 +25,8 @@
 
 #include "common/config-manager.h"
 
-class Engine;
-
-namespace Common {
-class String;
+namespace Audio {
+class Mixer;
 }
 
 namespace Stark {
@@ -55,55 +53,32 @@ public:
 		kSfx
 	};
 
-	explicit Settings(Engine *engine);
+	explicit Settings(Audio::Mixer *mixer);
 	~Settings() {}
 
-	/** Save all the settings */
-	void save() const;
-
 	/** Get the settings value */
-	bool getBoolSetting(BoolSettingIndex index) { return _boolSettings[index]; }
-	int getIntSetting(IntSettingIndex index) { return _intSettings[index]; }
+	bool getBoolSetting(BoolSettingIndex index) { return ConfMan.getBool(_boolKey[index]); }
+	int getIntSetting(IntSettingIndex index) { return ConfMan.getInt(_intKey[index]); }
 
 	/** Flip the boolean settings */
-	void flipSetting(BoolSettingIndex index) { _boolSettings[index] = !_boolSettings[index]; }
+	void flipSetting(BoolSettingIndex index) { 
+		ConfMan.setBool(_boolKey[index], !getBoolSetting(index));
+	}
 
 	/** Set the integer settings */
-	void setIntSetting(IntSettingIndex index, int value) { _intSettings[index] = value; }
+	void setIntSetting(IntSettingIndex index, int value);
 
 	/** Check whether low-resolution fmv is available */
 	bool hasLowResFMV() { return _hasLowRes; }
 
 private:
-	Engine *_engine;
-	bool _boolSettings[8];
-	int _intSettings[3];
-	const Common::String &_domainName;
+	const static int _maxVolume = 256;
+
+	Audio::Mixer *_mixer;
 	bool _hasLowRes;
 
-	void loadConf(const Common::String &key, bool &value, bool defaultValue) {
-		value = ConfMan.hasKey(key, _domainName) ? ConfMan.getBool(key, _domainName) : defaultValue;
-	}
-
-	void loadConf(const Common::String &key, int &value, int defaultValue) {
-		value = ConfMan.hasKey(key, _domainName) ? ConfMan.getInt(key, _domainName) : defaultValue;
-	}
-
-	bool getBoolDefault(const Common::String &key) const {
-		return ConfMan.getBool(key, "residualvm");
-	}
-
-	bool getIntDefault(const Common::String &key) const {
-		return ConfMan.getInt(key, "residualvm");
-	}
-
-	void saveConf(const Common::String &key, bool value) const {
-		ConfMan.setBool(key, value, _domainName);
-	}
-
-	void saveConf(const Common::String &key, int value) const {
-		ConfMan.setInt(key, value, _domainName);
-	}
+	const char *_boolKey[6];
+	const char *_intKey[3];
 };
 
 } // End of namespace Stark
