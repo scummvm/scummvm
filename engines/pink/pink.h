@@ -87,8 +87,16 @@ public:
 
 	virtual Common::Error run();
 
+	virtual bool hasFeature(EngineFeature f) const;
+
+	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
+
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual bool canSaveGameStateCurrently();
+
 	void load(Archive &archive);
-	void initModule(const Common::String &moduleName, bool isLoadingFromSave, const Common::String &pageName);
+	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
 	void changeScene(GamePage *page);
 
 	OrbFile *getOrb()  { return &_orb; }
@@ -125,10 +133,12 @@ private:
 	Module *_module;
 	Array<NamedObject *> _modules;
 
-	Common::StringMap _variables;
+	StringMap _variables;
 
 	const ADGameDescription _desc;
 };
+
+Common::String generateSaveName(int slot, const char *gameId);
 
 } // End of namespace Pink
 

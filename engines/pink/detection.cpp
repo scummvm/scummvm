@@ -46,13 +46,49 @@ public:
 		return "Pink Panther Engine (C) Wanderlust Interactive";
 	}
 
-	//virtual bool hasFeature(MetaEngineFeature f) const;
-	//virtual int getMaximumSaveSlot() const { return 0; }
-	//virtual SaveStateList listSaves(const char *target) const;
-	//virtual void removeSaveState(const char *target, int slot) const;
+	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual int getMaximumSaveSlot() const { return 99; }
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
 	//virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
+
+bool PinkMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+			(f == kSupportsListSaves) ||
+			(f == kSupportsDeleteSave) ||
+			(f == kSupportsLoadingDuringStartup) ||
+			(f == kSimpleSavesNames);
+}
+
+SaveStateList PinkMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::String pattern = Common::String::format("%s.s##", target);
+	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
+			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
+			if (in) {
+				SaveStateDescriptor desc;
+				desc.setSaveSlot(slotNum);
+				saveList.push_back(desc);
+			}
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
+}
+
+void PinkMetaEngine::removeSaveState(const char *target, int slot) const {
+	g_system->getSavefileManager()->removeSavefile(Pink::generateSaveName(slot, target));
+}
 
 bool PinkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc)
