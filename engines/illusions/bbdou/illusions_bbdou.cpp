@@ -659,7 +659,7 @@ bool IllusionsEngine_BBDOU::findTriggerCause(uint32 sceneId, uint32 verbId, uint
 void IllusionsEngine_BBDOU::reset() {
 	_scriptResource->_blockCounters.clear();
 	_scriptResource->_properties.clear();
-	// TODO script_sub_417FF0(1, 0);
+	setTextDuration(1, 0);
 }
 
 void IllusionsEngine_BBDOU::loadSavegameFromScript(int16 slotNum, uint32 callingThreadId) {

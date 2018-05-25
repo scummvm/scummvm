@@ -195,7 +195,12 @@ bool TextDrawer::wrapTextIntern(int16 x, int16 y, int16 maxWidth, int16 maxHeigh
 }
 
 bool TextDrawer::textHasChar(uint16 c) {
-	// TODO
+	uint16 *textp = _text;
+	while (*textp != 0) {
+		if (*textp == c)
+			return true;
+		++textp;
+	}
 	return false;
 }
 

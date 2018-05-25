@@ -84,7 +84,6 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 public:
 
-	// TODO ActiveScenes _activeScenes;
 	uint32 _prevSceneId;
 	uint32 _theSceneId;
 	uint32 _theThreadId;

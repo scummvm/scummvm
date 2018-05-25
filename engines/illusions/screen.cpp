@@ -405,7 +405,12 @@ bool Screen::isDisplayOn() {
 
 void Screen::setDisplayOn(bool isOn) {
 	_displayOn = isOn;
-	// TODO Clear screen when off
+	if (!_displayOn) {
+		// Clear screen when off
+		_backSurface->fillRect(Common::Rect(_backSurface->w, _backSurface->h), 0);
+		g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(0, 0), _backSurface->pitch, 0, 0, _backSurface->w, _backSurface->h);
+		g_system->updateScreen();
+	}
 }
 
 void Screen::setScreenOffset(Common::Point offsPt) {

@@ -32,7 +32,7 @@ class Cursor {
 public:
 	Cursor(IllusionsEngine *vm);
 	void place(Control *control, uint32 sequenceId);
-	void setActorIndex(int a2, int a3, int a4);
+	void setActorIndex(int actorIndex, int a, int b);
 	void setControl(Control *control);
 	void show();
 	void hide();

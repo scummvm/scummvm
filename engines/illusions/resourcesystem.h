@@ -90,7 +90,6 @@ public:
 
 	void addResourceLoader(uint32 resTypeId, BaseResourceLoader *resourceLoader);
 
-	// TODO Handle threadId in caller as well as pausing of timer
 	void loadResource(uint32 resId, uint32 sceneId, uint32 threadId);
 	void unloadResourceById(uint32 resId);
 	void unloadResourcesBySceneId(uint32 sceneId);
