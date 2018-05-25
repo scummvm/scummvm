@@ -60,6 +60,7 @@ VisualEffectFish::~VisualEffectFish() {
 }
 
 void VisualEffectFish::render(const Common::Point &position) {
+	// Stop rendering if special effect is off
 	if (!StarkSettings->getBoolSetting(Settings::kSpecialFX)) return;
 
 	_timeRemainingUntilNextUpdate -= StarkGlobal->getMillisecondsPerGameloop();

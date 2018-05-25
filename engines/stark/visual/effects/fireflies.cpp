@@ -49,6 +49,7 @@ VisualEffectFireFlies::~VisualEffectFireFlies() {
 }
 
 void VisualEffectFireFlies::render(const Common::Point &position) {
+	// Stop rendering if special effect is off
 	if (!StarkSettings->getBoolSetting(Settings::kSpecialFX)) return;
 
 	_timeRemainingUntilNextUpdate -= StarkGlobal->getMillisecondsPerGameloop();
