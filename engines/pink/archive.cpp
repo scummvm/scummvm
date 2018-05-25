@@ -317,12 +317,20 @@ Common::String Archive::readString() {
 	return Common::String(buffer, len);
 }
 
+byte Archive::readByte() {
+	return _readStream->readByte();
+}
+
 uint32 Archive::readDWORD() {
 	return _readStream->readUint32LE();
 }
 
 uint16 Archive::readWORD() {
 	return _readStream->readUint16LE();
+}
+
+void Archive::writeByte(byte val) {
+	return _writeStream->writeByte(val);
 }
 
 void Archive::writeDWORD(uint32 val) {

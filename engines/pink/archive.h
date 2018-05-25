@@ -48,9 +48,11 @@ public:
 	void mapObject(Object *obj);
 
 	int readCount();
+	byte readByte();
 	uint32 readDWORD();
 	uint16 readWORD();
 
+	void writeByte(byte val);
 	void writeDWORD(uint32 val);
 	void writeWORD(uint16 val);
 
