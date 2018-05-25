@@ -153,8 +153,6 @@ public:
 	uint32 _notifyThreadId2;
 	byte *_entryTblPtr;
 
-	int _surfaceTextFlag;
-
 	ActorControlRoutine *_controlRoutine;
 
 	uint32 _sequenceId;
@@ -237,9 +235,7 @@ public:
 	uint32 _sceneId;
 	uint32 _objectId;
 	uint32 _actorTypeId;
-	// TODO Move points into own struct
-	Common::Point _unkPt;
-	Common::Point _pt;
+	WRect _bounds;
 	Common::Point _feetPt;
 	Common::Point _position;
 	Common::Point _subobjectsPos[kSubObjectsCount];

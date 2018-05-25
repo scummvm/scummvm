@@ -50,8 +50,23 @@ void Cursor::place(Control *control, uint32 sequenceId) {
 	_vm->_input->setCursorPosition(_control->_actor->_position);
 }
 
-void Cursor::setActorIndex(int a2, int a3, int a4) {
-	_control->_actor->_actorIndex = 1;// TODO?!? *((_BYTE *)&stru_42C040[30].y + 2 * ((always0 != 0) + 2 * a2) + a3 + 1);
+void Cursor::setActorIndex(int actorIndex, int a, int b) {
+	static int kCursorMap[13][2][2] = {
+		{{ 1,  2}, { 0,  0}},
+		{{ 3,  4}, { 0,  0}},
+		{{ 5,  6}, {13, 14}},
+		{{ 7,  8}, { 0,  0}},
+		{{ 9, 10}, { 0,  0}},
+		{{11, 12}, { 0,  0}},
+		{{ 1,  2}, { 0,  0}},
+		{{ 0,  0}, { 0,  0}},
+		{{ 0,  0}, { 0,  0}},
+		{{15, 16}, { 0,  0}},
+		{{17, 18}, { 0,  0}},
+		{{19, 20}, { 0,  0}},
+		{{21, 22}, { 0,  0}}
+	};
+	_control->_actor->_actorIndex = kCursorMap[actorIndex - 1][b][a - 1];
 }
 
 void Cursor::setControl(Control *control) {

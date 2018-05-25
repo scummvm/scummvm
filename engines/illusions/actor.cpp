@@ -89,7 +89,6 @@ Actor::Actor(IllusionsEngine *vm)
 	}
 	_notifyThreadId1 = 0;
 	_notifyThreadId2 = 0;
-	_surfaceTextFlag = 0;
 	_entryTblPtr = 0;
 	_seqCodeIp = 0;
 	_sequenceId = 0;
@@ -131,13 +130,11 @@ void Actor::unpause() {
 
 void Actor::createSurface(SurfInfo &surfInfo) {
 	_surface = _vm->_screen->allocSurface(surfInfo);
-	if (_frameIndex) {
-		if (_surfaceTextFlag) {
-			/* TODO
-			Font *font = _vm->findFont(_fontId);
-			_surface->fillRect(Common::Rect(surfInfo._dimensions._width, surfInfo._dimensions._height), 0);
-			gfx_sub_40CA70(_surface, font, _field18C, _surfInfo._dimensions, _field198);
-			*/
+	if (_vm->getGameId() == kGameIdDuckman) {
+		if (_flags & Illusions::ACTOR_FLAG_IS_VISIBLE) {
+			if (_frameIndex) {
+				_flags |= Illusions::ACTOR_FLAG_2000;
+			}
 			_flags |= Illusions::ACTOR_FLAG_4000;
 		}
 		else {
@@ -194,10 +191,10 @@ Control::Control(IllusionsEngine *vm)
 	_pauseCtr = 0;
 	_priority = 0;
 	_objectId = 0;
-	_unkPt.x = 0;
-	_unkPt.y = 0;
-	_pt.x = 0;
-	_pt.y = 0;
+	_bounds._topLeft.x = 0;
+	_bounds._topLeft.y = 0;
+	_bounds._bottomRight.x = 0;
+	_bounds._bottomRight.y = 0;
 	_feetPt.x = 0;
 	_feetPt.y = 0;
 	_position.x = 0;
@@ -212,10 +209,11 @@ Control::~Control() {
 
 void Control::pause() {
 
-	_vm->_dict->setObjectControl(_objectId, 0);
-
-	if (_objectId == Illusions::CURSOR_OBJECT_ID)
-		_vm->setCursorControl(0);
+	if (_vm->getGameId() == kGameIdBBDOU || !(_flags & Illusions::ACTOR_FLAG_SCALED)) {
+		_vm->_dict->setObjectControl(_objectId, 0);
+		if (_objectId == Illusions::CURSOR_OBJECT_ID)
+			_vm->setCursorControl(0);
+	}
 
 	if (_actor && !(_actor->_flags & Illusions::ACTOR_FLAG_200))
 		_actor->destroySurface();
@@ -223,11 +221,13 @@ void Control::pause() {
 }
 
 void Control::unpause() {
-	_vm->_dict->setObjectControl(_objectId, this);
 
-	if (_objectId == Illusions::CURSOR_OBJECT_ID)
-		_vm->setCursorControl(this);
-
+	if (_vm->getGameId() == kGameIdBBDOU || !(_flags & Illusions::ACTOR_FLAG_SCALED)) {
+		_vm->_dict->setObjectControl(_objectId, this);
+		if (_objectId == Illusions::CURSOR_OBJECT_ID)
+			_vm->setCursorControl(this);
+	}
+  
 	if (_actor && !(_actor->_flags & Illusions::ACTOR_FLAG_200)) {
 		SurfInfo surfInfo;
 		ActorType *actorType = _vm->_dict->findActorType(_actorTypeId);
@@ -318,11 +318,11 @@ void Control::deactivateObject() {
 }
 
 void Control::readPointsConfig(byte *pointsConfig) {
-	_unkPt.x = READ_LE_UINT16(pointsConfig + 0);
-	_unkPt.y = READ_LE_UINT16(pointsConfig + 2);
+	_bounds._topLeft.x = READ_LE_UINT16(pointsConfig + 0);
+	_bounds._topLeft.y = READ_LE_UINT16(pointsConfig + 2);
 	pointsConfig += 4;
-	_pt.x = READ_LE_UINT16(pointsConfig + 0);
-	_pt.y = READ_LE_UINT16(pointsConfig + 2);
+	_bounds._bottomRight.x = READ_LE_UINT16(pointsConfig + 0);
+	_bounds._bottomRight.y = READ_LE_UINT16(pointsConfig + 2);
 	pointsConfig += 4;
 	_feetPt.x = READ_LE_UINT16(pointsConfig + 0);
 	_feetPt.y = READ_LE_UINT16(pointsConfig + 2);
@@ -493,7 +493,7 @@ void Control::getCollisionRectAccurate(Common::Rect &collisionRect) {
 			-_position.x + _actor->_surfInfo._dimensions._width - 1,
 			-_position.y + _actor->_surfInfo._dimensions._height - 1);
 	} else {
-		collisionRect = Common::Rect(_unkPt.x, _unkPt.y, _pt.x, _pt.y);
+		collisionRect = Common::Rect(_bounds._topLeft.x, _bounds._topLeft.y, _bounds._bottomRight.x, _bounds._bottomRight.y);
 	}
 
 	if (_actor) {
@@ -514,7 +514,7 @@ void Control::getCollisionRectAccurate(Common::Rect &collisionRect) {
 }
 
 void Control::getCollisionRect(Common::Rect &collisionRect) {
-	collisionRect = Common::Rect(_unkPt.x, _unkPt.y, _pt.x, _pt.y);
+	collisionRect = Common::Rect(_bounds._topLeft.x, _bounds._topLeft.y, _bounds._bottomRight.x, _bounds._bottomRight.y);
 	if (_actor) {
 		if (_actor->_scale != 100) {
 			collisionRect.left = collisionRect.left * _actor->_scale / 100;
@@ -769,7 +769,6 @@ PointArray *Control::createPath(Common::Point destPt) {
 
 void Control::updateActorMovement(uint32 deltaTime) {
 	// TODO This needs some cleanup
-	// TODO Move while loop to caller
 
 	static const int16 kAngleTbl[] = {60, 0, 120, 0, 60, 0, 120, 0};
 	bool fastWalked = false;
@@ -1102,10 +1101,10 @@ void Controls::placeSequenceLessActor(uint32 objectId, Common::Point placePt, Wi
 	control->_flags = 0;
 	control->_priority = priority;
 	control->_objectId = objectId;
-	control->_unkPt.x = 0;
-	control->_unkPt.y = 0;
-	control->_pt.y = dimensions._height - 1;
-	control->_pt.x = dimensions._width - 1;
+	control->_bounds._topLeft.x = 0;
+	control->_bounds._topLeft.y = 0;
+	control->_bounds._bottomRight.x = dimensions._width - 1;
+	control->_bounds._bottomRight.y = dimensions._height - 1;
 	control->_feetPt.x = dimensions._width / 2;
 	control->_feetPt.y = dimensions._height / 2;
 	control->_position.x = 0;
@@ -1131,11 +1130,11 @@ void Controls::placeSequenceLessActor(uint32 objectId, Common::Point placePt, Wi
 void Controls::placeActorLessObject(uint32 objectId, Common::Point feetPt, Common::Point pt, int16 priority, uint flags) {
 	Control *control = newControl();
 	control->_flags = flags;
-	control->_unkPt = feetPt;
 	control->_feetPt = feetPt;
 	control->_priority = priority;
 	control->_objectId = objectId;
-	control->_pt = pt;
+	control->_bounds._topLeft = feetPt;
+	control->_bounds._bottomRight = pt;
 	control->_position.x = 0;
 	control->_position.y = 0;
 	control->_actorTypeId = 0;
@@ -1466,10 +1465,10 @@ uint32 Controls::newTempObjectId() {
 
 void Controls::destroyControlInternal(Control *control) {
 
-	if (!(control->_flags & 4) && control->_pauseCtr <= 0)
+	if ((_vm->getGameId() == kGameIdBBDOU || !(control->_flags & 4)) && control->_pauseCtr <= 0)
 		_vm->_dict->setObjectControl(control->_objectId, 0);
 
-	if (!(control->_flags & 4) && control->_objectId == Illusions::CURSOR_OBJECT_ID && control->_pauseCtr <= 0)
+	if ((_vm->getGameId() == kGameIdBBDOU || !(control->_flags & 4)) && control->_objectId == Illusions::CURSOR_OBJECT_ID && control->_pauseCtr <= 0)
 		_vm->setCursorControl(0);
 
 	if (control->_actor) {
@@ -1477,10 +1476,6 @@ void Controls::destroyControlInternal(Control *control) {
 			delete control->_actor->_pathNode;
 		if (!(control->_actor->_flags & Illusions::ACTOR_FLAG_200))
 			control->_actor->destroySurface();
-		/* TODO
-		if (control->_actor->_field2)
-			largeObj_sub_4061E0();
-		*/
 		delete control->_actor;
 		control->_actor = 0;
 	}
