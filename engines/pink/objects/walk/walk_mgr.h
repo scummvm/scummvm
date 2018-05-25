@@ -45,6 +45,9 @@ public:
 	double getLengthBetweenLocations(WalkLocation *first, WalkLocation *second);
 	void setCurrentWayPoint(WalkLocation *location);
 
+	void loadState(Archive &archive);
+	void saveState(Archive &archive);
+
 private:
 	struct Coordinates {
 		int x;
