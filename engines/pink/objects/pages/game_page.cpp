@@ -169,7 +169,7 @@ void GamePage::loadState(Archive &archive) {
 	uint size = archive.readDWORD();
 	_memFile = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
 	for (uint i = 0; i < size; ++i) {
-		_memFile->writeByte(_memFile->readByte());
+		_memFile->writeByte(archive.readByte());
 	}
 }
 
@@ -177,12 +177,15 @@ void GamePage::saveState(Archive &archive) {
 	if (this == _module->getPage()) {
 		saveStateToMem();
 		archive.writeDWORD(_memFile->size());
+		archive.getWriteStream()->write(_memFile->getData(), _memFile->size());
+		delete _memFile;
 	} else {
 		if (_memFile != nullptr) {
 			archive.writeDWORD(_memFile->size());
 			archive.getWriteStream()->write(_memFile->getData(), _memFile->size());
-		} else
+		} else {
 			archive.writeDWORD(0);
+		}
 	}
 }
 

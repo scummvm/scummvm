@@ -204,7 +204,7 @@ void InventoryMgr::loadState(Archive &archive) {
 	}
 
 	const Common::String currItemName = archive.readString();
-	if (!currItemName.empty()) {
+	if (currItemName.empty()) {
 		_item = nullptr;
 		_isClickedOnItem = 0;
 	} else {

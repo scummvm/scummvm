@@ -132,9 +132,7 @@ Actor::~Actor() {
 }
 
 void Actor::loadState(Archive &archive) {
-	Common::String actionName;
-	actionName = archive.readString();
-	_action = findAction(actionName);
+	_action = findAction(archive.readString());
 }
 
 void Actor::saveState(Archive &archive) {
