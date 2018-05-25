@@ -77,6 +77,10 @@ public:
 
 	bool isInteractingWith(SupportingActor *actor);
 
+	virtual void loadState(Archive &archive);
+
+	virtual void saveState(Archive &archive);
+
 protected:
 	virtual void updateCursor(Common::Point point);
 	void forceUpdateCursor();

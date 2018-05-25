@@ -312,6 +312,35 @@ bool LeadActor::isInteractingWith(SupportingActor *actor) {
 	return actor->isUseClickHandlers(_page->getModule()->getInventoryMgr()->getCurrentItem());
 }
 
+void LeadActor::loadState(Archive &archive) {
+	_state = (State) archive.readByte();
+	_nextState = (State) archive.readByte();
+	_stateCopy = (State) archive.readByte();
+	_isHaveItem = archive.readByte();
+	Common::String recepient = archive.readString();
+	if (!recepient.empty())
+		_recipient = (SupportingActor*) _page->findActor(recepient);
+	else
+		_recipient = nullptr;
+	_sequencer->loadState(archive);
+	_walkMgr->loadState(archive);
+
+	// load audioInfoMgr, PDAMgr
+}
+
+void LeadActor::saveState(Archive &archive) {
+	archive.writeByte(_state);
+	archive.writeByte(_nextState);
+	archive.writeByte(_stateCopy);
+	archive.writeByte(_isHaveItem);
+	if (_recipient)
+		archive.writeString(_recipient->getName());
+	else
+		archive.writeString(Common::String());
+	_sequencer->saveState(archive);
+	_walkMgr->saveState(archive);
+}
+
 void ParlSqPink::toConsole() {
 	debug("ParlSqPink: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
