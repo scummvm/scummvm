@@ -31,13 +31,13 @@ void Room::demon0Tick1() {
 }
 
 void Room::demon0Tick2() {
-	if (_vm->_awayMission.field33 == 1)
+	if (_vm->_awayMission.demon.talkedToPrelate)
 		return;
 	loadActorAnim(8, "prel", 120, 190, 0);
 }
 
 void Room::demon0Tick60() {
-	if (_vm->_awayMission.field33 == 1)
+	if (_vm->_awayMission.demon.talkedToPrelate)
 		return;
 	loadActorAnim2(8, "prelclap", 120, 190, 0);
 }
@@ -59,23 +59,23 @@ void Room::demon0Tick140() {
 		""
 	};
 
-	if (_vm->_awayMission.field38 == 1)
+	if (_vm->_awayMission.demon.mccoyMentionedFlora)
 		return;
 
 	showRoomSpecificText(text);
 
-	_vm->_awayMission.field38 = 1;
+	_vm->_awayMission.demon.mccoyMentionedFlora = true;
 }
 
 void Room::demon0TouchedWarp0() {
-	_vm->_awayMission.field3a = 1;
+	_vm->_awayMission.demon.enteredFrom = 1;
 	_vm->_awayMission.rdfStillDoDefaultAction = true;
 }
 
 void Room::demon0WalkToBottomDoor() {
 	_vm->_awayMission.transitioningIntoRoom = 1;
 	_rdfData[0xcd] = 1; // FIXME
-	_vm->_awayMission.field25[OBJECT_KIRK] = DIR_E;
+	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewman(OBJECT_KIRK, 243, 158, 1);
 }
 
@@ -95,7 +95,7 @@ void Room::demon0ReachedBottomDoor() {
 void Room::demon0WalkToTopDoor() {
 	_vm->_awayMission.transitioningIntoRoom = 1;
 	_rdfData[0xcc] = 1; // FIXME
-	_vm->_awayMission.field25[OBJECT_KIRK] = DIR_E;
+	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewman(OBJECT_KIRK, 157, 134, 2);
 }
 
@@ -164,11 +164,11 @@ void Room::demon0TalkToPrelate() {
 		""
 	};
 
-	if (_vm->_awayMission.field33 != 0)
+	if (_vm->_awayMission.demon.talkedToPrelate)
 		return;
 
 	_vm->_awayMission.missionScore += 3;
-	_vm->_awayMission.field33 = 1;
+	_vm->_awayMission.demon.talkedToPrelate = true;
 
 	const char **response = nullptr;
 
@@ -197,7 +197,7 @@ void Room::demon0TalkToPrelate() {
 
 	showRoomSpecificText(thirdResponse);
 
-	if (_vm->_awayMission.field29 != 0)
+	if (_vm->_awayMission.demon.wasRudeToPrelate)
 		showRoomSpecificText(badConclusion);
 	else
 		showRoomSpecificText(goodConclusion);
@@ -213,6 +213,7 @@ void Room::demon0LookAtPrelate() {
 }
 
 void Room::demon0UsePhaserOnSnow() {
+	// BUG: doesn't check if redshirt is dead.
 	const char *text[] = {
 		"Ensign Everts",
 		"#DEM0\\DEM0_039#Aw, Captain, please don't melt the snow. I've never seen it before.",
@@ -420,7 +421,7 @@ void Room::demon0TalkToRedshirt() {
 }
 
 void Room::demon0TalkToMcCoy() {
-	if (_vm->_awayMission.field33 == 1) {
+	if (_vm->_awayMission.demon.talkedToPrelate) {
 		const char *text1[] = {
 			"Capt. Kirk",
 			"#DEM0\\DEM0_011#You look rather cold, Bones.",
@@ -456,7 +457,7 @@ void Room::demon0TalkToMcCoy() {
 		};
 
 		showRoomSpecificText(text1);
-		if (_vm->_awayMission.field36 != 1) {
+		if (!_vm->_awayMission.demon.askedPrelateAboutSightings) {
 			demon0AskPrelateAboutSightings();
 		}
 	}
@@ -469,12 +470,12 @@ void Room::demon0TalkToSpock() {
 		""
 	};
 
-	if (_vm->_awayMission.field33 == 1) {
+	if (_vm->_awayMission.demon.talkedToPrelate) {
 		showRoomSpecificText(text1);
 	}
 	else {
 		showRoomSpecificText(text1);
-		if (_vm->_awayMission.field36 != 1)
+		if (!_vm->_awayMission.demon.askedPrelateAboutSightings)
 			demon0AskPrelateAboutSightings();
 	}
 }
@@ -494,7 +495,7 @@ void Room::demon0AskPrelateAboutSightings() {
 	showRoomSpecificText(text2);
 	showRoomSpecificText(text3);
 
-	_vm->_awayMission.field36 = 1;
+	_vm->_awayMission.demon.askedPrelateAboutSightings = true;
 }
 
 void Room::demon0UseSTricorderAnywhere() {
@@ -526,7 +527,7 @@ void Room::demon0UseMTricorderOnPrelate() {
 	loadActorAnim2(OBJECT_MCCOY, "mscans", -1, -1, 0);
 	playSoundEffectIndex(0x04);
 
-	if (_vm->_awayMission.field33 == 1) {
+	if (_vm->_awayMission.demon.talkedToPrelate) {
 		const char *text[] = {
 			"Dr. McCoy",
 			"#DEM0\\DEM0_018#His blood pressure's up a bit, but he believes he's telling the truth.",
@@ -552,11 +553,11 @@ void Room::demon0BadResponse() {
 		""
 	};
 
-	if (_vm->_awayMission.field29 != 0)
+	if (_vm->_awayMission.demon.wasRudeToPrelate)
 		return;
 
 	_vm->_awayMission.missionScore -= 3;
-	_vm->_awayMission.field29 = 1;
+	_vm->_awayMission.demon.wasRudeToPrelate = true;
 
 	showRoomSpecificText(text);
 }

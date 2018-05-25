@@ -657,10 +657,10 @@ void StarTrekEngine::initStandAnim(int actorIndex) {
 	const char *directions = "nsew";
 
 	if (actorIndex >= 0 && actorIndex <= 3) {
-		int8 dir = _awayMission.field25[actorIndex];
+		int8 dir = _awayMission.crewDirectionsAfterWalk[actorIndex];
 		if (dir != -1) {
 			actor->direction = directions[dir];
-			_awayMission.field25[actorIndex] = -1;
+			_awayMission.crewDirectionsAfterWalk[actorIndex] = -1;
 		}
 	}
 	// end of sub_239d2
@@ -972,7 +972,7 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
  */
 int StarTrekEngine::selectObjectForUseAction() {
 	while (true) {
-		if (!(_awayMission.field24 & (1 << OBJECT_KIRK)))
+		if (!(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
 			showInventoryIcons(false);
 
 		TrekEvent event;
@@ -1239,11 +1239,11 @@ bool StarTrekEngine::isObjectUnusable(int object, int action) {
 		return false;
 	if (object == OBJECT_REDSHIRT && _awayMission.redshirtDead)
 		return true;
-	if (object >= OBJECT_KIRK && object <= OBJECT_REDSHIRT && (_awayMission.field24 & (1 << object)))
+	if (object >= OBJECT_KIRK && object <= OBJECT_REDSHIRT && (_awayMission.crewDownBitset & (1 << object)))
 		return true;
-	if (object == OBJECT_IMTRICOR && (_awayMission.field24 & (1 << OBJECT_MCCOY)))
+	if (object == OBJECT_IMTRICOR && (_awayMission.crewDownBitset & (1 << OBJECT_MCCOY)))
 		return true;
-	if (object == OBJECT_ISTRICOR && (_awayMission.field24 & (1 << OBJECT_SPOCK)))
+	if (object == OBJECT_ISTRICOR && (_awayMission.crewDownBitset & (1 << OBJECT_SPOCK)))
 		return true;
 	return false;
 }
@@ -1267,6 +1267,51 @@ void StarTrekEngine::hideInventoryIcons() {
 		_gfx->delSprite(&_inventoryIconSprite);
 		_inventoryIconSprite.drawMode = 0;
 		_inventoryIconSprite.bitmap.reset();
+	}
+}
+
+/**
+ * When a crewman is collapsed, they get once a timer reaches 0.
+ */
+void StarTrekEngine::updateCrewmanGetupTimers() {
+	if (_awayMission.crewDownBitset == 0)
+		return;
+	for (int i = OBJECT_KIRK; i <= OBJECT_REDSHIRT; i++) {
+		Actor *actor = &_actorList[i];
+
+		if (!(_awayMission.crewDownBitset & (1 << i)))
+			continue;
+
+		_awayMission.crewGetupTimers[i]--;
+		if (_awayMission.crewGetupTimers[i] <= 0) {
+			Common::String anim = getCrewmanAnimFilename(i, "getu");
+			int8 dir = _awayMission.crewDirectionsAfterWalk[i];
+			char d;
+			if (dir == -1) {
+				d = actor->direction;
+			}
+			else {
+				const char *dirs = "nsew";
+				uint16 scale = getActorScaleAtPosition(actor->sprite.pos.y);
+				d = dirs[dir];
+
+				int16 xOffset = 0, yOffset = 0;
+				if (d == 'n') {
+					xOffset = -24;
+					yOffset = -8;
+				}
+				else if (d == 'w') {
+					xOffset = -35;
+					yOffset = -12;
+				}
+				actor->sprite.pos.x += (scale * xOffset) >> 8;
+				actor->sprite.pos.y += (scale * yOffset) >> 8;
+			}
+
+			anim += (char)d;
+			loadActorAnimWithRoomScaling(i, anim, actor->sprite.pos.x, actor->sprite.pos.y);
+			_awayMission.crewDownBitset &= ~(1 << i);
+		}
 	}
 }
 

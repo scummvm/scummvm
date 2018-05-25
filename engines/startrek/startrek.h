@@ -198,6 +198,7 @@ public:
 
 	bool isPointInPolygon(int16 *data, int16 x, int16 y);
 	void checkTouchedLoadingZone(int16 x, int16 y);
+	void updateAwayMissionTimers();
 	bool isPositionSolid(int16 x, int16 y);
 	void loadRoomIndex(int roomIndex, int spawnIndex);
 
@@ -241,6 +242,7 @@ public:
 	void updateMouseBitmap();
 	bool walkActiveObjectToHotspot();
 	bool isObjectUnusable(int objectIndex, int action);
+	void updateCrewmanGetupTimers();
 	void showInventoryIcons(bool showItem);
 	void hideInventoryIcons();
 	int showInventoryMenu(int x, int y, bool restoreMouse);
@@ -315,6 +317,7 @@ public:
 	void showSaveMenu();
 	void showLoadMenu();
 	void showQuitGamePrompt(int x, int y);
+	void showGameOverMenu();
 	void showTextConfigurationMenu(bool fromOptionMenu);
 
 	int loadTextDisplayMode();
