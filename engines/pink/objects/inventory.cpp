@@ -118,7 +118,7 @@ bool InventoryMgr::start(bool playOpening) {
 	_rightArrow = _lead->getPage()->findActor(kInventoryRightArrowActor);
 	_leftArrow = _lead->getPage()->findActor(kInventoryLeftArrowActor);
 
-	if (playOpening){
+	if (playOpening) {
 		_window->setAction(kOpenAction);
 		_state = kOpening;
 	}
@@ -193,6 +193,37 @@ void InventoryMgr::showNextItem(bool direction) {
 
 InventoryItem *InventoryMgr::getCurrentItem() {
 	return _item;
+}
+
+void InventoryMgr::loadState(Archive &archive) {
+	_state = (State) archive.readByte();
+	_isClickedOnItem = archive.readByte();
+
+	for (uint i = 0; i < _items.size(); ++i) {
+		_items[i]->_currentOwner = archive.readString();
+	}
+
+	const Common::String currItemName = archive.readString();
+	if (!currItemName.empty()) {
+		_item = nullptr;
+		_isClickedOnItem = 0;
+	} else {
+		_item = findInventoryItem(currItemName);
+	}
+}
+
+void InventoryMgr::saveState(Archive &archive) {
+	archive.writeByte(_state);
+	archive.writeByte(_isClickedOnItem);
+
+	for (uint i = 0; i < _items.size(); ++i) {
+		archive.writeString(_items[i]->_currentOwner);
+	}
+
+	if (_item)
+		archive.writeString(_item->_currentOwner);
+	else
+		archive.writeString(Common::String());
 }
 
 } // End of namespace Pink
