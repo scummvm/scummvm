@@ -143,4 +143,26 @@ void WalkMgr::end() {
 	 _leadActor->onWalkEnd();
 }
 
+void WalkMgr::loadState(Archive &archive) {
+	_isWalking = archive.readByte();
+	_current.name = archive.readString();
+	if (!_current.name.empty()) {
+		_current.coord = getLocationCoordinates(_current.name);
+	}
+	if (_isWalking) {
+		_next.name = archive.readString();
+		_destination = findLocation(archive.readString());
+		_next.coord = getLocationCoordinates(_next.name);
+	}
+}
+
+void WalkMgr::saveState(Archive &archive) {
+	archive.writeByte(_isWalking);
+	archive.writeString(_current.name);
+	if (_isWalking) {
+		archive.writeString(_next.name);
+		archive.writeString(_destination->getName());
+	}
+}
+
 } // End of namespace Pink
