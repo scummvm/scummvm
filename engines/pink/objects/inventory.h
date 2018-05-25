@@ -53,6 +53,9 @@ public:
 	virtual void deserialize(Archive &archive);
 	virtual void toConsole();
 
+	void loadState(Archive &archive);
+	void saveState(Archive &archive);
+
 	void update();
 	void onClick(Common::Point point);
 
