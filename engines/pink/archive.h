@@ -42,6 +42,9 @@ public:
 	Archive(Common::SeekableReadStream *stream);
 	Archive(Common::WriteStream *stream);
 
+	Common::SeekableReadStream *getReadStream() { return _readStream; }
+	Common::WriteStream *getWriteStream() { return _writeStream; };
+
 	void mapObject(Object *obj);
 
 	int readCount();
