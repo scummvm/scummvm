@@ -30,7 +30,7 @@ namespace Pink {
 template <typename T>
 class Array : public Common::Array<T>, public Object {
 public:
-	virtual void deserialize(Archive &archive) {
+	void deserialize(Archive &archive) {
 		uint size = archive.readCount();
 		this->resize(size);
 		for (uint i = 0; i < size; ++i) {
@@ -41,11 +41,31 @@ public:
 
 class StringArray : public Common::StringArray {
 public:
-	inline void deserialize(Archive &archive) {
+	void deserialize(Archive &archive) {
 		uint32 size = archive.readCount();
 		this->resize(size);
 		for (uint i = 0; i < size; ++i) {
 			this->data()[i] = archive.readString();
+		}
+	}
+};
+
+class StringMap : public Common::StringMap {
+public:
+	void serialize(Archive &archive) {
+		archive.writeWORD(size());
+		for (Common::StringMap::const_iterator it = begin(); it != end(); ++it) {
+			archive.writeString(it->_key);
+			archive.writeString(it->_value);
+		}
+	}
+
+	void deserialize(Archive &archive) {
+		uint size = archive.readWORD();
+		for (uint i = 0; i < size; ++i) {
+			Common::String key = archive.readString();
+			Common::String val = archive.readString();
+			setVal(key, val);
 		}
 	}
 };
