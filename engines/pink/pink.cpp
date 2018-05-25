@@ -88,10 +88,10 @@ Common::Error PinkEngine::init() {
 
 	_orb.loadGame(this);
 
-	if (ConfMan.hasKey("save_slot")) {
+	if (ConfMan.hasKey("save_slot"))
 		loadGameState(ConfMan.getInt("save_slot"));
-	}
-	else initModule(_modules[0]->getName(), "", nullptr);
+	else
+		initModule(_modules[0]->getName(), "", nullptr);
 
 	return Common::kNoError;
 }
@@ -287,8 +287,10 @@ bool PinkEngine::canSaveGameStateCurrently() {
 }
 
 bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
-	return f == kSupportsLoadingDuringRuntime ||
-		    f == kSupportsSavingDuringRuntime;
+	return
+			f == kSupportsRTL ||
+			f == kSupportsLoadingDuringRuntime ||
+			f == kSupportsSavingDuringRuntime;
 }
 
 void PinkEngine::pauseEngineIntern(bool pause) {
