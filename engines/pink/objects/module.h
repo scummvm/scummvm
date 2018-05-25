@@ -46,6 +46,9 @@ public:
 	Module(PinkEngine *game, const Common::String &name);
 	~Module();
 
+	void loadState(Archive &archive);
+	void saveState(Archive &archive);
+
 	void load(Archive &archive);
 	void init(bool isLoadingSave, const Common::String &pageName);
 	void changePage(const Common::String &pageName);
@@ -60,6 +63,8 @@ public:
 	bool checkValueOfVariable(Common::String &variable, Common::String &value);
 	void setVariable(Common::String &variable, Common::String &value);
 
+	GamePage *getPage() { return _page; };
+
 private:
 	GamePage *findPage(const Common::String &pageName) const;
 
@@ -67,7 +72,7 @@ private:
 	GamePage *_page;
 	Array<GamePage *> _pages;
 	InventoryMgr _invMgr;
-	Common::StringMap _variables;
+	StringMap _variables;
 };
 
 

@@ -41,6 +41,9 @@ public:
 	virtual void toConsole();
 	virtual void deserialize(Archive &archive);
 
+	void loadState(Archive &archive);
+	void saveState(Archive &archive);
+
 	virtual void load(Archive &archive);
 	void unload();
 	void loadManagers();
@@ -58,8 +61,9 @@ public:
 
 private:
 	bool initHandler();
-	void loadState();
-	void saveState();
+
+	void loadStateFromMem();
+	void saveStateToMem();
 
 	bool _isLoaded;
 	Common::MemoryReadWriteStream *_memFile;
@@ -68,7 +72,7 @@ private:
 	WalkMgr *_walkMgr;
 	Sequencer *_sequencer;
 	Array<HandlerStartPage *> _handlers;
-	Common::StringMap _variables;
+	StringMap _variables;
 };
 
 }
