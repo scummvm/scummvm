@@ -127,4 +127,17 @@ SequenceActorState *Sequencer::findSequenceActorState(const Common::String &name
 	return nullptr;
 }
 
+void Sequencer::loadState(Archive &archive) {
+	Sequence *sequence = findSequence(archive.readString());
+	authorSequence(sequence, 1);
+}
+
+void Sequencer::saveState(Archive &archive) {
+	Common::String sequenceName;
+	if (_context)
+		sequenceName = _context->_sequence->getName();
+	archive.writeString(sequenceName);
+	// add pokus specific
+}
+
 } // End of namespace Pink

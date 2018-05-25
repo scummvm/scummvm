@@ -54,7 +54,8 @@ public:
 	void restartSequence();
 	void skipToLastSubSequence();
 
-
+	void loadState(Archive &archive);
+	void saveState(Archive &archive);
 public:
 	void updateTimers();
 
