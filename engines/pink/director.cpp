@@ -139,4 +139,10 @@ Actor *Director::getActorByPoint(Common::Point point) {
 	return nullptr;
 }
 
+void Director::pause(bool pause) {
+	for (uint i = 0; i < _sprites.size() ; ++i) {
+		_sprites[i]->getDecoder()->pauseVideo(pause);
+	}
+}
+
 }
