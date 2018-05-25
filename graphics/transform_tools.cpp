@@ -22,12 +22,13 @@
 
 
 #include "graphics/transform_tools.h"
+#include "common/math.h"
 #include <math.h>
 
 namespace Graphics {
 
 FloatPoint TransformTools::transformPoint(FloatPoint point, const float rotate, const Common::Point &zoom, const bool mirrorX, const bool mirrorY) {
-	float rotateRad = rotate * M_PI / 180.0f;
+	float rotateRad = Common::deg2rad<float>(rotate);
 	float x = point.x;
 	float y = point.y;
 	x = (x * zoom.x) / kDefaultZoomX;
