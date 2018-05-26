@@ -195,9 +195,9 @@ void SettingsMenuScreen::open() {
 }
 
 void SettingsMenuScreen::close() {
-	StaticLocationScreen::close();
-	_soundManager.stop();
+	_soundManager.close();
 	ConfMan.flushToDisk();
+	StaticLocationScreen::close();
 }
 
 void SettingsMenuScreen::onMouseMove(const Common::Point &pos) {
@@ -354,6 +354,9 @@ bool VolumeWidget::isMouseInsideBg(const Common::Point &mousePos) const {
 SoundManager::SoundManager() : 
 		_currentSound(nullptr),
 		_isLopping(false) {
+	for (int i = 0; i < 3; ++i) {
+		_sounds[i] = nullptr;
+	}
 }
 
 void SoundManager::load() {
@@ -363,11 +366,20 @@ void SoundManager::load() {
 	}
 }
 
+void SoundManager::close() {
+	stop();
+	for (int i = 0; i < 3; ++i) {
+		_sounds[i] = nullptr;
+	}
+}
+
 void SoundManager::play(int index) {
 	stop();
 	_currentSound = _sounds[index];
-	_currentSound->play();
-	_isLopping = true;
+	if (_currentSound) {
+		_currentSound->play();
+		_isLopping = true;
+	}
 }
 
 void SoundManager::endLoop() {

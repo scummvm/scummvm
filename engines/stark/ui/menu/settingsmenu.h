@@ -43,6 +43,9 @@ public:
 	/** Load sounds **/
 	void load();
 
+	/** Close the sound manager and reset pointers **/
+	void close();
+
 	/** play a specific sound in a loop */
 	void play(int index);
 
