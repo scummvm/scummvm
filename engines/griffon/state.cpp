@@ -28,36 +28,35 @@
 
 char player_sav[256] = "data/player%i.sav";
 
-#define PRINT(A,B) 			\
-do {					\
-	char line[256];			\
-	sprintf(line, A "\n", B);	\
-	fputs(line, fp);		\
-} while(0)
+#define PRINT(A,B)          \
+	do {                    \
+		char line[256];         \
+		sprintf(line, A "\n", B);   \
+		fputs(line, fp);        \
+	} while(0)
 
-#define INPUT(A, B)			\
-do {					\
-	char line[256];			\
-	fgets(line, sizeof(line), fp);	\
-	sscanf(line, A, B);		\
-} while(0)
+#define INPUT(A, B)         \
+	do {                    \
+		char line[256];         \
+		fgets(line, sizeof(line), fp);  \
+		sscanf(line, A, B);     \
+	} while(0)
 
 // externs (to be removed later)
 extern PLAYERTYPE playera;
 extern int asecstart;
 
-int state_load(int slotnum)
-{
+int state_load(int slotnum) {
 	FILE *fp;
 	char line[256];
 
 	sprintf(line, player_sav, slotnum);
 
 	fp = fopen(line, "r");
-	if(fp) {
+	if (fp) {
 		INPUT("%i", &player.level);
 
-		if(player.level > 0) {
+		if (player.level > 0) {
 			INPUT("%i", &secstart);
 			INPUT("%s", line);
 
@@ -78,11 +77,11 @@ int state_load(int slotnum)
 			INPUT("%i", &player.sword);
 			INPUT("%i", &player.shield);
 			INPUT("%i", &player.armour);
-			for(int i = 0; i < 5; i++) {
+			for (int i = 0; i < 5; i++) {
 				INPUT("%i", &player.foundspell[i]);
 				INPUT("%f", &player.spellcharge[i]);
 			}
-			for(int a = 0; a < 5; a++) {
+			for (int a = 0; a < 5; a++) {
 				INPUT("%i", &player.inventory[a]);
 			}
 			INPUT("%f", &player.attackstrength);
@@ -90,22 +89,22 @@ int state_load(int slotnum)
 			INPUT("%i", &player.sworddamage);
 			INPUT("%i", &player.exp);
 			INPUT("%i", &player.nextlevel);
-			for(int a = 0; a <= 99; a++) {
-				for(int b = 0; b <= 9; b++) {
+			for (int a = 0; a <= 99; a++) {
+				for (int b = 0; b <= 9; b++) {
 					INPUT("%i", &scriptflag[a][b]);
 				}
 			}
 			INPUT("%i", &curmap);
 
-			for(int a = 0; a <= 999; a++) {
-				for(int b = 0; b <= 20; b++) {
-					for(int c = 0; c <= 14; c++) {
+			for (int a = 0; a <= 999; a++) {
+				for (int b = 0; b <= 20; b++) {
+					for (int c = 0; c <= 14; c++) {
 						INPUT("%i", &objmapf[a][b][c]);
 					}
 				}
 			}
 
-			for(int a = 0; a <= 200; a++) {
+			for (int a = 0; a <= 200; a++) {
 				INPUT("%i", &roomlocks[a]);
 			}
 
@@ -123,8 +122,7 @@ int state_load(int slotnum)
 }
 
 /* fill PLAYERTYPE playera; */
-int state_load_player(int slotnum)
-{
+int state_load_player(int slotnum) {
 	FILE *fp;
 	char line[256];
 
@@ -133,10 +131,10 @@ int state_load_player(int slotnum)
 	playera.level = 0;
 
 	fp = fopen(line, "r");
-	if(fp) {
+	if (fp) {
 		INPUT("%i", &playera.level);
 
-		if(playera.level > 0) {
+		if (playera.level > 0) {
 			INPUT("%i", &asecstart);
 			INPUT("%s", line);
 
@@ -157,11 +155,11 @@ int state_load_player(int slotnum)
 			INPUT("%i", &playera.sword);
 			INPUT("%i", &playera.shield);
 			INPUT("%i", &playera.armour);
-			for(int i = 0; i < 5; i++) {
+			for (int i = 0; i < 5; i++) {
 				INPUT("%i", &playera.foundspell[i]);
 				INPUT("%f", &playera.spellcharge[i]);
 			}
-			for(int a = 0; a < 5; a++) {
+			for (int a = 0; a < 5; a++) {
 				INPUT("%i", &playera.inventory[a]);
 			}
 			INPUT("%f", &playera.attackstrength);
@@ -181,18 +179,17 @@ int state_load_player(int slotnum)
 	return 0; // fail
 }
 
-int state_save(int slotnum)
-{
+int state_save(int slotnum) {
 	FILE *fp;
 	char line[256];
 
 	sprintf(line, player_sav, slotnum);
 
 	fp = fopen(line, "w");
-	if(fp) {
+	if (fp) {
 		PRINT("%i", player.level);
 
-		if(player.level > 0) {
+		if (player.level > 0) {
 			PRINT("%i", (secstart + secsingame));
 			PRINT("%s", "a");
 
@@ -213,11 +210,11 @@ int state_save(int slotnum)
 			PRINT("%i", player.sword);
 			PRINT("%i", player.shield);
 			PRINT("%i", player.armour);
-			for(int i = 0; i < 5; i++) {
+			for (int i = 0; i < 5; i++) {
 				PRINT("%i", player.foundspell[i]);
 				PRINT("%f", player.spellcharge[i]);
 			}
-			for(int a = 0; a < 5; a++) {
+			for (int a = 0; a < 5; a++) {
 				PRINT("%i", player.inventory[a]);
 			}
 			PRINT("%f", player.attackstrength);
@@ -225,22 +222,22 @@ int state_save(int slotnum)
 			PRINT("%i", player.sworddamage);
 			PRINT("%i", player.exp);
 			PRINT("%i", player.nextlevel);
-			for(int a = 0; a <= 99; a++) {
-				for(int b = 0; b <= 9; b++) {
+			for (int a = 0; a <= 99; a++) {
+				for (int b = 0; b <= 9; b++) {
 					PRINT("%i", scriptflag[a][b]);
 				}
 			}
 			PRINT("%i", curmap);
 
-			for(int a = 0; a <= 999; a++) {
-				for(int b = 0; b <= 20; b++) {
-					for(int c = 0; c <= 14; c++) {
+			for (int a = 0; a <= 999; a++) {
+				for (int b = 0; b <= 20; b++) {
+					for (int c = 0; c <= 14; c++) {
 						PRINT("%i", objmapf[a][b][c]);
 					}
 				}
 			}
 
-			for(int a = 0; a <= 200; a++) {
+			for (int a = 0; a <= 200; a++) {
 				PRINT("%i", roomlocks[a]);
 			}
 
