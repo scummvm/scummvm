@@ -428,13 +428,13 @@ public:
 	
 	Graphics *_gfx;
 	Sound *_sound;
+	SharedPtr<IWFile> _iwFile;
 
 private:
 	Common::RandomSource _randomSource;
 
 	Common::MacResManager *_macResFork;
 	SharedPtr<Room> _room;
-	SharedPtr<IWFile> _iwFile;
 };
 
 } // End of namespace StarTrek

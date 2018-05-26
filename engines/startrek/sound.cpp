@@ -212,9 +212,11 @@ void Sound::playSpeech(const Common::String &basename) {
 			error("Couldn't open '%s'", filename.c_str());
 
 		Audio::AudioStream *audioStream = Audio::makeVOCStream(readStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
-		if (audioQueue == nullptr)
-			audioQueue = Audio::makeQueuingAudioStream(audioStream->getRate(), audioStream->isStereo());
-		audioQueue->queueAudioStream(audioStream, DisposeAfterUse::YES);
+		if (audioStream != nullptr) {
+			if (audioQueue == nullptr)
+				audioQueue = Audio::makeQueuingAudioStream(audioStream->getRate(), audioStream->isStereo());
+			audioQueue->queueAudioStream(audioStream, DisposeAfterUse::YES);
+		}
 
 		name.erase(0,i+1);
 	}
@@ -222,9 +224,8 @@ void Sound::playSpeech(const Common::String &basename) {
 	if (audioQueue != nullptr) {
 		audioQueue->finish();
 		_vm->_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, audioQueue);
+		_playingSpeech = true;
 	}
-
-	_playingSpeech = true;
 }
 
 /**

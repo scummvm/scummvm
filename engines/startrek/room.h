@@ -49,6 +49,11 @@ const int RDF_WARP_ROOM_INDICES = 0x22;
 const int RDF_ROOM_ENTRY_POSITIONS = 0x2a;
 const int RDF_BEAM_IN_POSITIONS = 0xaa;
 
+const char SPEAKER_KIRK[] = "Capt. Kirk";
+const char SPEAKER_SPOCK[] = "Mr. Spock";
+const char SPEAKER_MCCOY[] = "Dr. McCoy";
+const char SPEAKER_EVERTS[] = "Ensign Everts";
+
 class Room {
 
 public:
@@ -101,6 +106,8 @@ private:
 	void giveItem(int item);                                                                   // Cmd 0x04
 	void loadRoomIndex(int roomIndex, int spawnIndex);                                         // Cmd 0x06
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam);// Cmd 0x08
+	void loadMapFile(const Common::String &name);                                              // Cmd 0x09
+	Common::Point getActorPos(int actorIndex);                                                 // Cmd 0x0d
 	void playSoundEffectIndex(int soundEffect);                                                // Cmd 0x0f
 	void playMidiMusicTracks(int startTrack, int loopTrack);                                   // Cmd 0x10
 	void showGameOverMenu();                                                                   // Cmd 0x12
@@ -204,6 +211,68 @@ public:
 	void demon1TalkToRedshirt();
 	void demon1TalkToUnconsciousCrewman();
 
+	// DEMON2
+	void demon2Tick1();
+	void demon2WalkToCave();
+	void demon2ReachedCave();
+	void demon2TouchedWarp1();
+	void demon2LookAtCave();
+	void demon2LookAtMountain();
+	void demon2LookAtBerries();
+	void demon2LookAtFern();
+	void demon2LookAtMoss();
+	void demon2LookAtLights();
+	void demon2LookAtAnything();
+	void demon2LookAtKirk();
+	void demon2LookAtSpock();
+	void demon2LookAtMcCoy();
+	void demon2LookAtRedshirt();
+	void demon2TalkToKirk();
+	void demon2TalkToSpock();
+	void demon2TalkToMcCoy();
+	void demon2TalkToRedshirt();
+	void demon2UsePhaserOnBerries();
+	void demon2UseSTricorderOnBerries();
+	void demon2UseSTricorderOnMoss();
+	void demon2UseSTricorderOnFern();
+	void demon2UseSTricorderOnCave();
+	void demon2UseMTricorderOnBerries();
+	void demon2GetBerries();
+	void demon2ReachedBerries();
+	void demon2PickedUpBerries();
+
+	// DEMON3
+	void demon3Tick1();
+	void demon3Timer0Expired();
+	void demon3Timer1Expired();
+	void demon3Timer3Expired();
+	void demon3FinishedAnimation1();
+	void demon3FinishedAnimation2();
+	void demon3FinishedWalking5();
+	void demon3McCoyInFiringPosition();
+	void demon3SpockInFiringPosition();
+	void demon3RedShirtInFiringPosition();
+	void demon3KirkInFiringPosition();
+	void demon3CrewmanInFiringPosition();
+	void demon3PullOutPhaserAndFireAtBoulder();
+	void demon3FireAtBoulder();
+	void demon3UsePhaserOnRedshirt();
+	void demon3UseStunPhaserOnBoulder();
+	void demon3UsePhaserOnBoulder1();
+	void demon3UsePhaserOnBoulder2();
+	void demon3UsePhaserOnBoulder3();
+	void demon3UsePhaserOnBoulder4();
+	void demon3BoulderCommon();
+	void demon3UseSTricorderOnMiner();
+	void demon3UseSTricorderOnPanel();
+	void demon3UseSTricorderOnBoulder();
+	void demon3UseMTricorderOnBoulder();
+	void demon3UseCrewmanOnPanel();
+	void demon3UseRedshirtOnPanel();
+	void demon3RedshirtReachedPanel();
+	void demon3RedshirtUsedPanel();
+	void demon3RedshirtElectrocuted();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {
@@ -213,6 +282,19 @@ private:
 			bool kirkShooting;
 			char d6[10];
 		} demon1;
+
+		struct {
+			bool shootingBoulder; // 0xca
+			bool boulder1Shot; // 0xcb
+			byte boulderBeingShot; // 0xcc
+			bool kirkInPosition; // 0xcd
+			bool redshirtInPosition; // 0xce
+			bool spockInPosition; // 0xcf
+			bool mccoyInPosition; // 0xd0
+			bool inFiringPosition; // 0xd1
+			bool kirkPhaserOut; // 0xd3
+			char boulderAnim[10]; // 0xd4
+		} demon3;
 	} _roomVar;
 };
 

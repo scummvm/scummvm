@@ -358,6 +358,7 @@ int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName
 
 	if (actorIndex == -1) {
 		// TODO
+		warning("loadActorAnim: actor == -1");
 	}
 	else
 		actor = &_actorList[actorIndex];

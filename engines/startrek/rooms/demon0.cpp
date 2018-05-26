@@ -54,7 +54,7 @@ void Room::demon0Tick100() {
 
 void Room::demon0Tick140() {
 	const char *text[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM0\\DEM0_016#Captain, the flora on this planet is very interesting. I wonder how useful it may be for medicinal purposes.",
 		""
 	};
@@ -114,7 +114,7 @@ void Room::demon0ReachedTopDoor() {
 
 void Room::demon0TalkToPrelate() {
 	const char *options1[] = {
-		"Capt. Kirk",
+		SPEAKER_KIRK,
 		"#DEM0\\DEM0_006#I'm Captain James T. Kirk of the U.S.S. Enterprise. We have received word that alien lifeforms are creating problems at your mining facilities at Idyll Mountain. Tell me more.",
 		"#DEM0\\DEM0_008#Most High Prelate Angiven, I am honored to meet you. I consider it my divine duty to assist you in any possible way with the spawn of the devil.",
 		"#DEM0\\DEM0_003#Been seeing ghosts and bogeymen eh? I find that a little hard to believe.",
@@ -131,7 +131,7 @@ void Room::demon0TalkToPrelate() {
 		""
 	};
 	const char *options2[] = {
-		"Capt. Kirk",
+		SPEAKER_KIRK,
 		"#DEM0\\DEM0_002#Aside from seeing demons, has any hard data been collected? Any evidence I could see?",
 		"#DEM0\\DEM0_005#Demons? Gates of Hell? This is the 23rd Century!",
 		""
@@ -142,7 +142,7 @@ void Room::demon0TalkToPrelate() {
 		""
 	};
 	const char *options3[] = {
-		"Capt. Kirk",
+		SPEAKER_KIRK,
 		"#DEM0\\DEM0_010#What can you tell me about the mine itself?",
 		"#DEM0\\DEM0_012#You're wasting the time of a starship capable of destroying this planet with campfire stories? No wonder you were dumped out here in the middle of nowhere.",
 		""
@@ -215,7 +215,7 @@ void Room::demon0LookAtPrelate() {
 void Room::demon0UsePhaserOnSnow() {
 	// BUG: doesn't check if redshirt is dead.
 	const char *text[] = {
-		"Ensign Everts",
+		SPEAKER_EVERTS,
 		"#DEM0\\DEM0_039#Aw, Captain, please don't melt the snow. I've never seen it before.",
 		""
 	};
@@ -224,7 +224,7 @@ void Room::demon0UsePhaserOnSnow() {
 
 void Room::demon0UsePhaserOnSign() {
 	const char *text[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM0\\DEM0_017#Quite the vandal aren't we, Jim?",
 		""
 	};
@@ -233,17 +233,17 @@ void Room::demon0UsePhaserOnSign() {
 
 void Room::demon0UsePhaserOnShelter() {
 	const char *text1[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM0\\DEM0_015#Burning down their house is not the best way to gain their confidence Jim!",
 		""
 	};
 	const char *text2[] = {
-		"Mr. Spock",
+		SPEAKER_SPOCK,
 		"#DEM0\\DEM0_013#Captain, Doctor McCoy is correct.",
 		""
 	};
 	const char *text3[] = {
-		"Ensign Everts",
+		SPEAKER_EVERTS,
 		"#DEM0\\DEM0_040#Is he always this trigger happy on ground missions?",
 		""
 	};
@@ -255,7 +255,7 @@ void Room::demon0UsePhaserOnShelter() {
 
 void Room::demon0UsePhaserOnPrelate() {
 	const char *text[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM0\\DEM0_020#Jim! Are you out of your mind?",
 		""
 	};
@@ -354,22 +354,22 @@ void Room::demon0LookAtShelter() {
 
 void Room::demon0TalkToKirk() {
 	const char *text1[] = {
-		"Capt. Kirk",
+		SPEAKER_KIRK,
 		"#DEM0\\DEM0_009#This planet's as beautiful as everyone says it is.",
 		""
 	};
 	const char *text2[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM0\\DEM0_027#The trees. The fresh air. The freezing cold...",
 		""
 	};
 	const char *text3[] = {
-		"Capt. Kirk",
+		SPEAKER_KIRK,
 		"#DEM0\\DEM0_004#C'mon Bones, the cold will improve your circulation.",
 		""
 	};
 	const char *text4[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM0\\DEM0_024#Some people get too much circulation!",
 		""
 	};
@@ -382,32 +382,32 @@ void Room::demon0TalkToKirk() {
 
 void Room::demon0TalkToRedshirt() {
 	const char *text1[] = {
-		"Ensign Everts",
+		SPEAKER_EVERTS,
 		"#DEM0\\DEM0_043#I've never seen snow like this before. This is great!",
 		""
 	};
 	const char *text2[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM0\\DEM0_026#You mean you've never built a snowman, ensign?",
 		""
 	};
 	const char *text3[] = {
-		"Ensign Everts",
+		SPEAKER_EVERTS,
 		"#DEM0\\DEM0_042#I've never even thrown a snowball. Do you think anyone would mind?",
 		""
 	};
 	const char *text4[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM0\\DEM0_025#Well...",
 		""
 	};
 	const char *text5[] = {
-		"Capt. Kirk",
+		SPEAKER_KIRK,
 		"#DEM0\\DEM0_007#Later Ensign. We have work to do.",
 		""
 	};
 	const char *text6[] = {
-		"Ensign Everts",
+		SPEAKER_EVERTS,
 		"#DEM0\\DEM0_044#Of course, sir.",
 		""
 	};
@@ -423,22 +423,22 @@ void Room::demon0TalkToRedshirt() {
 void Room::demon0TalkToMcCoy() {
 	if (_vm->_awayMission.demon.talkedToPrelate) {
 		const char *text1[] = {
-			"Capt. Kirk",
+			SPEAKER_KIRK,
 			"#DEM0\\DEM0_011#You look rather cold, Bones.",
 			""
 		};
 		const char *text2[] = {
-			"Dr. McCoy",
+			SPEAKER_MCCOY,
 			"#DEM0\\DEM0_023#I'm not cold, I'm freezing! And that damn transporter just had to set me down in the middle of a snow drift!",
 			""
 		};
 		const char *text3[] = {
-			"Mr. Spock",
+			SPEAKER_SPOCK,
 			"#DEM0\\DEM0_029#A centimeter of snow does not technically constitute a drift, Doctor.",
 			""
 		};
 		const char *text4[] = {
-			"Ensign Everts",
+			SPEAKER_EVERTS,
 			"#DEM0\\DEM0_041#And doctors say that patients complain too much!",
 			""
 		};
@@ -451,7 +451,7 @@ void Room::demon0TalkToMcCoy() {
 	}
 	else {
 		const char *text1[] = {
-			"Dr. McCoy",
+			SPEAKER_MCCOY,
 			"#DEM0\\DEM0_019#I don't know if the problem is real, the result of a new illness, or mass hysteria. But at the very least, there's an injured miner who needs my help.",
 			""
 		};
@@ -465,7 +465,7 @@ void Room::demon0TalkToMcCoy() {
 
 void Room::demon0TalkToSpock() {
 	const char *text1[] = {
-		"Mr. Spock",
+		SPEAKER_SPOCK,
 		"#DEM0\\DEM0_014#Captain, demons and supernatural creatures are, almost by definition, illogical. Yet it is evident these people believe what they have seen. Barring illness or mass hysteria, I agree that a real problem seems to exist.",
 		""
 	};
@@ -482,7 +482,7 @@ void Room::demon0TalkToSpock() {
 
 void Room::demon0AskPrelateAboutSightings() {
 	const char *text2[] = {
-		"Capt. Kirk",
+		SPEAKER_KIRK,
 		"#DEM0\\DEM0_001#Doctor, you need to investigate the possibility of disease, mental or physical, among these people, before we go chasing up the mountains. Prelate Angiven, may we see those who have encountered the demons?",
 		""
 	};
@@ -503,7 +503,7 @@ void Room::demon0UseSTricorderAnywhere() {
 	playSoundEffectIndex(0x04);
 
 	const char *text[] = {
-		"Mr. Spock",
+		SPEAKER_SPOCK,
 		"#DEM0\\DEM0_028#Captain, reading the rocks in this area, I find that this locality may have been disturbed in the distant past. Recent disturbances created by the colonists' construction and mining prevent me from discovering anything further.",
 		""
 	};
@@ -516,7 +516,7 @@ void Room::demon0UseMTricorderAnywhere() {
 	playSoundEffectIndex(0x04);
 
 	const char *text[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM0\\DEM0_021#Jim, I am not picking up any unusual life here, just native lifeforms and the settlers. The colonists are all human, except for the one Tellarite. If there are demons here, they don't register on my tricorder.",
 		""
 	};
@@ -529,7 +529,7 @@ void Room::demon0UseMTricorderOnPrelate() {
 
 	if (_vm->_awayMission.demon.talkedToPrelate) {
 		const char *text[] = {
-			"Dr. McCoy",
+			SPEAKER_MCCOY,
 			"#DEM0\\DEM0_018#His blood pressure's up a bit, but he believes he's telling the truth.",
 			""
 		};
@@ -537,7 +537,7 @@ void Room::demon0UseMTricorderOnPrelate() {
 	}
 	else {
 		const char *text[] = {
-			"Dr. McCoy",
+			SPEAKER_MCCOY,
 			"#DEM0\\DEM0_022#The man's in perfect health.",
 			""
 		};
