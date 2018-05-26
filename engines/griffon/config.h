@@ -34,8 +34,10 @@
  *
  */
 
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
+#ifndef GRIFFON_CONFIG_H
+#define GRIFFON_CONFIG_H
+
+namespace Griffon {
 
 typedef struct {
 	int scr_width;
@@ -56,4 +58,6 @@ extern char config_ini[];
 void config_load(CONFIG *config);
 void config_save(CONFIG *config);
 
-#endif // _CONFIG_H_
+} // end of namespace Griffon
+
+#endif

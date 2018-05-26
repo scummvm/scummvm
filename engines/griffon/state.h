@@ -34,8 +34,10 @@
  *
  */
 
-#ifndef _STATE_H_
-#define _STATE_H_
+#ifndef GRIFFON_STATE_H
+#define GRIFFON_STATE_H
+
+namespace Griffon {
 
 extern char player_sav[];
 
@@ -43,4 +45,6 @@ int state_load(int slotnum);
 int state_load_player(int slotnum);
 int state_save(int slotnum);
 
-#endif // _STATE_H_
+} // end of namespace Griffon
+
+#endif

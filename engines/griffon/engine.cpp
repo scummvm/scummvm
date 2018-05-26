@@ -34,20 +34,11 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <sys/stat.h>
+#include "griffon/griffon.h"
+#include "griffon/config.h"
+#include "griffon/state.h"
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
-#include <SDL/SDL_mixer.h>
-#include <SDL/SDL_rotozoom.h>
-
-#include "griffon.h"
-#include "config.h"
-#include "state.h"
+namespace Griffon {
 
 // memo
 /*
@@ -8204,3 +8195,5 @@ void sys_update() {
 	for (int i = 0; i <= 4; i++)
 		if (player.inventory[i] > 9) player.inventory[i] = 9;
 }
+
+} // end of namespace Griffon

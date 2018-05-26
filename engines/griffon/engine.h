@@ -34,8 +34,10 @@
  *
  */
 
-#ifndef _GRIFFON_H_
-#define _GRIFFON_H_
+#ifndef GRIFFON_ENGINE_H
+#define GRIFFON_ENGINE_H
+
+namespace Griffon {
 
 #define MAXNPC      32
 #define MAXFLOAT    32
@@ -270,4 +272,6 @@ void sys_LoadObjectDB();
 void sys_setupAudio();
 void sys_update();
 
-#endif // _GRIFFON_H_
+} // end of namespace Griffon
+
+#endif
