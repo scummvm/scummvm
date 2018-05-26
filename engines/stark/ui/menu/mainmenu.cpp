@@ -172,7 +172,7 @@ void MainMenuScreen::newGameHandler() {
 }
 
 void MainMenuScreen::loadHandler() {
-	StarkUserInterface->changeScreen(Screen::kScreenSaveLoadMenu);
+	StarkUserInterface->changeScreen(Screen::kScreenLoadMenu);
 }
 
 void MainMenuScreen::settingsHandler() {

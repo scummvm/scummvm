@@ -21,11 +21,13 @@
  */
 
 #include "engines/stark/ui/menu/saveloadmenu.h"
+#include "engines/stark/services/services.h"
+#include "engines/stark/services/userinterface.h"
 
 namespace Stark {
 
-SaveLoadMenuScreen::SaveLoadMenuScreen(Gfx::Driver *gfx, Cursor *cursor) :
-		StaticLocationScreen(gfx, cursor, "LoadSaveLocation", Screen::kScreenSaveLoadMenu) {
+SaveLoadMenuScreen::SaveLoadMenuScreen(Gfx::Driver *gfx, Cursor *cursor, Screen::Name screenName) :
+		StaticLocationScreen(gfx, cursor, "LoadSaveLocation", screenName) {
 }
 
 SaveLoadMenuScreen::~SaveLoadMenuScreen() {
@@ -40,14 +42,16 @@ void SaveLoadMenuScreen::open() {
 			nullptr));
 	
 	_widgets.push_back(new StaticLocationWidget(
-			"Cancel",
-			nullptr,
+			"back to index",
+			CLICK_HANDLER(SaveLoadMenuScreen, backHandler),
 			nullptr));
+	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
-			"back to index",
-			nullptr,
+			"Cancel",
+			CLICK_HANDLER(SaveLoadMenuScreen, backHandler),
 			nullptr));
+	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"SaveText",
@@ -63,12 +67,30 @@ void SaveLoadMenuScreen::open() {
 			"Back",
 			nullptr,
 			nullptr));
+	_widgets.back()->setupSounds(0, 1);
+	_widgets.back()->setTextColor(_textColorBlack);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Next",
 			nullptr,
 			nullptr));
+	_widgets.back()->setupSounds(0, 1);
+	_widgets.back()->setTextColor(_textColorBlack);
 	
+}
+
+void SaveLoadMenuScreen::backHandler() {
+	StarkUserInterface->backPrevScreen();
+}
+
+void SaveMenuScreen::open() {
+	SaveLoadMenuScreen::open();
+	_widgets[kWidgetLoadText]->setVisible(false);
+}
+
+void LoadMenuScreen::open() {
+	SaveLoadMenuScreen::open();
+	_widgets[kWidgetSaveText]->setVisible(false);
 }
 
 } // End of namespace Stark

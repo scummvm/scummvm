@@ -123,7 +123,9 @@ void DiaryIndexScreen::quitHandler() {
 
 void DiaryIndexScreen::loadHandler() {
 	// TODO: Implement the original load screen
+	StarkUserInterface->changeScreen(Screen::kScreenLoadMenu);
 
+	/*
 	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
 
 	g_engine->pauseEngine(true);
@@ -140,11 +142,14 @@ void DiaryIndexScreen::loadHandler() {
 			dialog.runModal();
 		}
 	}
+	*/
 }
 
 void DiaryIndexScreen::saveHandler() {
 	// TODO: Implement the original save screen
+	StarkUserInterface->changeScreen(Screen::kScreenSaveMenu);
 
+	/*
 	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
 
 	g_engine->pauseEngine(true);
@@ -160,7 +165,7 @@ void DiaryIndexScreen::saveHandler() {
 		}
 
 		StarkUserInterface->changeScreen(Screen::kScreenGame);
-	}
+	}*/
 }
 
 } // End of namespace Stark

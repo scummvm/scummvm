@@ -48,7 +48,8 @@ class DiaryIndexScreen;
 class GameScreen;
 class MainMenuScreen;
 class SettingsMenuScreen;
-class SaveLoadMenuScreen;
+class SaveMenuScreen;
+class LoadMenuScreen;
 class Cursor;
 class FMVScreen;
 
@@ -155,7 +156,8 @@ private:
 	DiaryIndexScreen *_diaryIndexScreen;
 	MainMenuScreen *_mainMenuScreen;
 	SettingsMenuScreen *_settingsMenuScreen;
-	SaveLoadMenuScreen *_saveLoadMenuScreen;
+	SaveMenuScreen *_saveMenuScreen;
+	LoadMenuScreen *_loadMenuScreen;
 
 	Screen *_currentScreen;
 	Common::Stack<Screen::Name> _prevScreenNameStack;

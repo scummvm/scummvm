@@ -32,10 +32,47 @@ namespace Stark {
  */
 class SaveLoadMenuScreen : public StaticLocationScreen {
 public:
-	SaveLoadMenuScreen(Gfx::Driver *gfx, Cursor *cursor);
+	SaveLoadMenuScreen(Gfx::Driver *gfx, Cursor *cursor, Screen::Name screenName);
 	virtual ~SaveLoadMenuScreen();
 
 	// StaticLocationScreen API
+	void open() override;
+
+protected:
+	enum WidgetIndex {
+		kWidgetSaveText = 3,
+		kWidgetLoadText = 4,
+	};
+
+private:
+	static const uint32 _textColorBlack = 0xFF000000;
+
+	void backHandler();
+};
+
+/**
+ * The save menu of the game
+ */
+class SaveMenuScreen : public SaveLoadMenuScreen {
+public:
+	SaveMenuScreen(Gfx::Driver *gfx, Cursor *cursor) : 
+			SaveLoadMenuScreen(gfx, cursor, Screen::kScreenSaveMenu) {}
+	virtual ~SaveMenuScreen() {}
+
+	// SaveLoadMenuScreen API
+	void open() override;
+};
+
+/**
+ * The load menu of the game
+ */
+class LoadMenuScreen : public SaveLoadMenuScreen {
+public:
+	LoadMenuScreen(Gfx::Driver *gfx, Cursor *cursor) : 
+			SaveLoadMenuScreen(gfx, cursor, Screen::kScreenLoadMenu) {}
+	virtual ~LoadMenuScreen() {}
+
+	// SaveLoadMenuScreen API
 	void open() override;
 };
 
