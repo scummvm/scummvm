@@ -493,6 +493,8 @@ void Graphics::drawAllSprites(bool updateScreen) {
 	// Redraw the background on every dirty rectangle
 	for (int i = 0; i < numDirtyRects; i++) {
 		Common::Rect &r = dirtyRects[i];
+		if (r.width() == 0 || r.height() == 0)
+			continue;
 
 		int offset = r.top * SCREEN_WIDTH + r.left;
 		_vm->_system->copyRectToScreen(_backgroundImage->pixels+offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());

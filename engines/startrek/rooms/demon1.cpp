@@ -216,7 +216,7 @@ void Room::demon1KirkShot() {
 
 void Room::demon1UsePhaserOnAnything() {
 	const char *text[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM1\\DEM1_011#The fire fight is over, Jim. I think you can put that away now.",
 		""
 	};
@@ -270,7 +270,7 @@ void Room::demon1KlingonDropsHand() {
 		return;
 
 	const char *rshirtText[] = {
-		"Ensign Everts",
+		SPEAKER_EVERTS,
 		"#DEM1\\DEM1_025#I guess they don't make Klingons like they used to, Sir.",
 		""
 	};
@@ -367,7 +367,7 @@ void Room::demon1Timer5Expired() {
 		""
 	};
 	const char *text2[] = {
-		"Capt. Kirk",
+		SPEAKER_KIRK,
 		"#DEM1\\DEM1_003#We're fine. Did you register any Disruptor fire?",
 		""
 	};
@@ -377,22 +377,22 @@ void Room::demon1Timer5Expired() {
 		""
 	};
 	const char *text4[] = {
-		"Capt. Kirk",
+		SPEAKER_KIRK,
 		"#DEM1\\DEM1_002#No just an idea, Kirk out.",
 		""
 	};
 	const char *text5[] = {
-		"Mr. Spock",
+		SPEAKER_SPOCK,
 		"#DEM1\\DEM1_020#Fascinating. I begin to suspect that we have stumbled upon something that the colonists would never have uncovered.",
 		""
 	};
 	const char *text6[] = {
-		"Capt. Kirk",
+		SPEAKER_KIRK,
 		"#DEM1\\DEM1_004#What is it, Spock?",
 		""
 	};
 	const char *text7[] = {
-		"Mr. Spock",
+		SPEAKER_SPOCK,
 		"#DEM1\\DEM1_021#I wish to gather further data before making a definite conclusion, Captain.",
 		""
 	};
@@ -409,7 +409,7 @@ void Room::demon1Timer5Expired() {
 
 void Room::demon1UseMTricorderOnKlingon() {
 	const char *text[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM1\\DEM1_012#This is definitely not a real klingon Jim.",
 		""
 	};
@@ -420,7 +420,7 @@ void Room::demon1UseMTricorderOnKlingon() {
 
 void Room::demon1UseSTricorderOnTulips() {
 	const char *text[] = {
-		"Mr. Spock",
+		SPEAKER_SPOCK,
 		"#DEM1\\DEM1_007#Khytellian tulips are a perennial flower that survive in almost any climate.",
 		""
 	};
@@ -431,7 +431,7 @@ void Room::demon1UseSTricorderOnTulips() {
 
 void Room::demon1UseSTricorderOnPods() {
 	const char *text[] = {
-		"Mr. Spock",
+		SPEAKER_SPOCK,
 		"#DEM1\\DEM1_008#The Brandzite pod is similar to terran milkweed except that the silk pods are in bright iridecent colors.",
 		""
 	};
@@ -442,7 +442,7 @@ void Room::demon1UseSTricorderOnPods() {
 
 void Room::demon1UseSTricorderOnCattails() {
 	const char *text[] = {
-		"Mr. Spock",
+		SPEAKER_SPOCK,
 		"#DEM1\\DEM1_005#Doctis Cattails are similar to their terran name sake except that they are known to cause hives if in contact with flesh for any amount of time.",
 		""
 	};
@@ -453,7 +453,7 @@ void Room::demon1UseSTricorderOnCattails() {
 
 void Room::demon1UseSTricorderOnFerns() {
 	const char *text[] = {
-		"Mr. Spock",
+		SPEAKER_SPOCK,
 		"#DEM1\\DEM1_006#Gindorian ferns are regarded as an intergalactic weed, Captain.",
 		""
 	};
@@ -464,7 +464,7 @@ void Room::demon1UseSTricorderOnFerns() {
 
 void Room::demon1UseSTricorderOnHand() {
 	const char *text[] = {
-		"Mr. Spock",
+		SPEAKER_SPOCK,
 		"#DEM1\\DEM1_017#This is a detached hand with some kind of circuitry in the palm, Captain.",
 		""
 	};
@@ -480,7 +480,7 @@ void Room::demon1UseSTricorderOnKlingon1() {
 
 	if (_roomVar.demon1.numKlingonsKilled == 3 && !_vm->_awayMission.demon.tookKlingonHand && _rdfData[0xcf] != 1) {
 		const char *text[] = {
-			"Mr. Spock",
+			SPEAKER_SPOCK,
 			"#DEM1\\DEM1_018#This is not a Klingon, Captain, not a real one. It is an organic construct -- an android-like robot. It looks like a Klingon, but the appearance is entirely superficial. There is something different about this particular construct. Come here, Captain, look at the hand.It seems to have been separated from the body. There is a wiring circuit in the middle of the palm.",
 			""
 		};
@@ -489,7 +489,7 @@ void Room::demon1UseSTricorderOnKlingon1() {
 	}
 	else {
 		const char *text[] = {
-			"Mr. Spock",
+			SPEAKER_SPOCK,
 			"#DEM1\\DEM1_019#This is not a Klingon, Captain, not a real one. It is an organic construct -- an android-like robot. It looks like a Klingon, but the appearance is entirely superficial.",
 			""
 		};
@@ -502,7 +502,7 @@ void Room::demon1UseSTricorderOnKlingon2Or3() {
 	playSoundEffectIndex(0x04);
 
 	const char *text[] = {
-		"Mr. Spock",
+		SPEAKER_SPOCK,
 		"#DEM1\\DEM1_019#This is not a Klingon, Captain, not a real one. It is an organic construct -- an android-like robot. It looks like a Klingon, but the appearance is entirely superficial.",
 		""
 	};
@@ -526,7 +526,7 @@ void Room::demon1UseMTricorderOnRedshirt() {
 
 void Room::demon1UseMTricorderOnCrewman() {
 	const char *text[] = {
-		"Dr. McCoy",
+		SPEAKER_MCCOY,
 		"#DEM1\\DEM1_009#He's only stunned. He'll be back up in a few seconds.",
 		""
 	};
@@ -741,7 +741,7 @@ void Room::demon1LookAtRedshirt() {
 
 void Room::demon1TalkToKirk() {
 	const char *text[] = {
-		"Capt. Kirk",
+		SPEAKER_KIRK,
 		"#DEM1\\DEM1_001#We were caught flat footed there. I don't want any more surprises to catch us off guard.",
 		""
 	};
@@ -756,22 +756,22 @@ void Room::demon1TalkToSpock() {
 		demon1TalkToUnconsciousCrewman();
 	else {
 		const char *text1[] = {
-			"Mr. Spock",
+			SPEAKER_SPOCK,
 			"#DEM1\\DEM1_022#Captain, I detect a recent avalanche, approximately 6.2 kilometers away, that occurred within the last three days. The mountain may be quite dangerous.",
 			""
 		};
 		const char *text2[] = {
-			"Dr. McCoy",
+			SPEAKER_MCCOY,
 			"#DEM1\\DEM1_013#Demons, Klingons, avalanches... What's next, the Wicked Witch of the West?",
 			""
 		};
 		const char *text3[] = {
-			"Mr. Spock",
+			SPEAKER_SPOCK,
 			"#DEM1\\DEM1_024#That is not logical, doctor.",
 			""
 		};
 		const char *text4[] = {
-			"Dr. McCoy",
+			SPEAKER_MCCOY,
 			"#DEM1\\DEM1_014#It wasn't supposed to be logical, you green blooded Vulcan! Why does everything have to be so damned logical?",
 			""
 		};
@@ -787,12 +787,12 @@ void Room::demon1TalkToMcCoy() {
 		demon1TalkToUnconsciousCrewman();
 	else {
 		const char *text1[] = {
-			"Dr. McCoy",
+			SPEAKER_MCCOY,
 			"#DEM1\\DEM1_015#Well, we've seen Klingons. Now all we need is a few Romulans...",
 			""
 		};
 		const char *text2[] = {
-			"Mr. Spock",
+			SPEAKER_SPOCK,
 			"#DEM1\\DEM1_023#Control your thoughts, Doctor. There is a high probability that something here is using our own memories against us.",
 			""
 		};
@@ -806,7 +806,7 @@ void Room::demon1TalkToRedshirt() {
 		demon1TalkToUnconsciousCrewman();
 	else {
 		const char *text[] = {
-			"Ensign Everts",
+			SPEAKER_EVERTS,
 			"#DEM1\\DEM1_026#I guess this isn't such a great planet after all.",
 			""
 		};

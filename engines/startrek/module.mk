@@ -19,7 +19,9 @@ MODULE_OBJS = \
 	startrek.o \
 	text.o \
 	rooms/demon0.o \
-	rooms/demon1.o
+	rooms/demon1.o \
+	rooms/demon2.o \
+	rooms/demon3.o
 	
 
 

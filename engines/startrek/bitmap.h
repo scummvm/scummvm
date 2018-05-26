@@ -9,10 +9,10 @@
 namespace StarTrek {
 
 struct Bitmap {
-	uint16 xoffset;
-	uint16 yoffset;
-	uint16 width;
-	uint16 height;
+	int16 xoffset;
+	int16 yoffset;
+	int16 width;
+	int16 height;
 	byte *pixels;
 
 	Bitmap(Common::SharedPtr<FileStream> stream);

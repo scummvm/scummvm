@@ -21,6 +21,7 @@
  */
 
 #include "startrek/filestream.h"
+#include "startrek/iwfile.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
 
@@ -43,6 +44,14 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 	else if (name == "DEMON1") {
 		_roomActionList = demon1ActionList;
 		_numRoomActions = sizeof(demon1ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "DEMON2") {
+		_roomActionList = demon2ActionList;
+		_numRoomActions = sizeof(demon2ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "DEMON3") {
+		_roomActionList = demon3ActionList;
+		_numRoomActions = sizeof(demon3ActionList) / sizeof(RoomAction);
 	}
 	else {
 		warning("Room \"%s\" unimplemented", name.c_str());
@@ -199,7 +208,7 @@ void Room::loadRoomIndex(int roomIndex, int spawnIndex) {
 }
 
 void Room::walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam) {
-	if (!(actorIndex >= OBJECT_KIRK && actorIndex < OBJECT_REDSHIRT))
+	if (!(actorIndex >= OBJECT_KIRK && actorIndex <= OBJECT_REDSHIRT))
 		error("Tried to walk a non PC");
 
 	Actor *actor = &_vm->_actorList[actorIndex];
@@ -210,6 +219,21 @@ void Room::walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finished
 		actor->triggerActionWhenAnimFinished = true;
 		actor->finishedAnimActionParam = finishedAnimActionParam;
 	}
+}
+
+/**
+ * Loads a pair of .map and .iw files to change the room's collisions and pathfinding.
+ */
+void Room::loadMapFile(const Common::String &name) {
+	_vm->_mapFilename = name;
+	_vm->_iwFile.reset();
+	_vm->_mapFile.reset();
+	_vm->_iwFile = SharedPtr<IWFile>(new IWFile(_vm, name + ".iw"));
+	_vm->_mapFile = _vm->loadFile(name + ".map");
+}
+
+Common::Point Room::getActorPos(int actorIndex) {
+	return _vm->_actorList[actorIndex].pos;
 }
 
 void Room::playSoundEffectIndex(int soundEffect) {
