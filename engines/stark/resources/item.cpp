@@ -43,6 +43,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/settings.h"
 
 namespace Stark {
 namespace Resources {
@@ -495,7 +496,14 @@ BonesMesh *GlobalItemTemplate::findBonesMesh() {
 	if (_meshIndex == -1) {
 		return nullptr;
 	} else {
-		return findChildWithIndex<BonesMesh>(_meshIndex);
+		BonesMesh *mesh = findChildWithIndex<BonesMesh>(_meshIndex);
+		if (mesh && !StarkSettings->getBoolSetting(Settings::kHighModel)) {
+			BonesMesh *lowMesh = findChildWithName<BonesMesh>(mesh->getName() + "_LO_RES");
+			if (lowMesh) {
+				mesh = lowMesh;
+			}
+		}
+		return mesh;
 	}
 }
 
@@ -615,7 +623,14 @@ BonesMesh *LevelItemTemplate::findBonesMesh() {
 	if (_meshIndex == -1) {
 		return _referencedItem->findBonesMesh();
 	} else {
-		return findChildWithIndex<BonesMesh>(_meshIndex);
+		BonesMesh *mesh = findChildWithIndex<BonesMesh>(_meshIndex);
+		if (mesh && !StarkSettings->getBoolSetting(Settings::kHighModel)) {
+			BonesMesh *lowMesh = findChildWithName<BonesMesh>(mesh->getName() + "_LO_RES");
+			if (lowMesh) {
+				mesh = lowMesh;
+			}
+		}
+		return mesh;
 	}
 }
 
@@ -928,6 +943,12 @@ BonesMesh *ModelItem::findBonesMesh() {
 			bonesMesh = _referencedItem->findBonesMesh();
 		} else {
 			bonesMesh = findChildWithIndex<BonesMesh>(_meshIndex);
+			if (bonesMesh && !StarkSettings->getBoolSetting(Settings::kHighModel)) {
+				BonesMesh *lowMesh = findChildWithName<BonesMesh>(bonesMesh->getName() + "_LO_RES");
+				if (lowMesh) {
+					bonesMesh = lowMesh;
+				}
+			}
 		}
 	}
 

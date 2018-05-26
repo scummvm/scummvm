@@ -236,6 +236,19 @@ Object *Object::findChildWithOrder(Type type, uint16 order, int subType) const {
 	return nullptr;
 }
 
+Object *Object::findChildWithName(Type type, const Common::String &name, int subType) const {
+	for (uint i = 0; i < _children.size(); ++i) {
+		if (_children[i]->getType() == type
+				&& (_children[i]->getSubType() == subType || subType == -1)
+				&& _children[i]->getName() == name) {
+			// Found a matching child
+			return _children[i];
+		}
+	}
+
+	return nullptr;
+}
+
 template<>
 Object *Object::cast<Object>(Object *resource) {
 	// No type check when asking for the abstract resource
