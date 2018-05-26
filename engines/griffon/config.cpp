@@ -34,15 +34,10 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <sys/stat.h>
 
-#include <SDL/SDL.h>
+#include "griffon/config.h"
 
-#include "config.h"
+namespace Griffon {
 
 CONFIG config = {
 	320, 240, 16, 0, 0, 0, 1, 127, 1, 127
@@ -138,3 +133,5 @@ void config_save(CONFIG *config) {
 		fclose(fp);
 	}
 }
+
+} // end of namespace Griffon

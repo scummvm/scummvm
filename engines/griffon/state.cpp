@@ -34,16 +34,10 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <sys/stat.h>
+#include "griffon/griffon.h"
+#include "griffon/state.h"
 
-#include <SDL/SDL.h>
-
-#include "griffon.h"
-#include "state.h"
+namespace Griffon {
 
 char player_sav[256] = "data/player%i.sav";
 
@@ -270,3 +264,5 @@ int state_save(int slotnum) {
 
 	return 0; // fail
 }
+
+} // end of namespace Griffon
