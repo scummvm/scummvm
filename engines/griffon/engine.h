@@ -18,182 +18,182 @@
 #ifndef _GRIFFON_H_
 #define _GRIFFON_H_
 
-#define MAXNPC		32
-#define MAXFLOAT	32
-#define MAXSPELL	32
+#define MAXNPC      32
+#define MAXFLOAT    32
+#define MAXSPELL    32
 
 // spells
-#define ice		0
-#define steel		1
-#define wood		2
-#define rock		3
-#define fire		4
+#define ice     0
+#define steel       1
+#define wood        2
+#define rock        3
+#define fire        4
 
 // inventory items
-#define INV_FLASK	0
-#define INV_DOUBLEFLASK	1
-#define INV_SHOCK	2
-#define INV_NORMALKEY	3
-#define INV_MASTERKEY	4
+#define INV_FLASK   0
+#define INV_DOUBLEFLASK 1
+#define INV_SHOCK   2
+#define INV_NORMALKEY   3
+#define INV_MASTERKEY   4
 
-#define sndbite		0
-#define sndcrystal	1
-#define snddoor		2
-#define sndenemyhit	3
-#define sndice		4
-#define sndlever	5
-#define sndlightning	6
-#define sndmetalhit	7
-#define sndpowerup	8
-#define sndrocks	9
-#define sndswordhit	10
-#define sndthrow	11
-#define sndchest	12
-#define sndfire		13
-#define sndbeep		14
+#define sndbite     0
+#define sndcrystal  1
+#define snddoor     2
+#define sndenemyhit 3
+#define sndice      4
+#define sndlever    5
+#define sndlightning    6
+#define sndmetalhit 7
+#define sndpowerup  8
+#define sndrocks    9
+#define sndswordhit 10
+#define sndthrow    11
+#define sndchest    12
+#define sndfire     13
+#define sndbeep     14
 
 typedef struct {
-	float	px;
-	float	py;
-	float	opx;
-	float	opy;
-	int	walkdir;
-	float	walkframe;
-	float	walkspd;
-	float	attackframe;
-	float	attackspd;
+	float   px;
+	float   py;
+	float   opx;
+	float   opy;
+	int walkdir;
+	float   walkframe;
+	float   walkspd;
+	float   attackframe;
+	float   attackspd;
 
-	int	hp;
-	int	maxhp;
-	float	hpflash;
-	int	hpflashb;
-	int	level;
-	int	maxlevel;
-	int	sword;
-	int	shield;
-	int	armour;
-	int	foundspell[5];
-	float	spellcharge[5];
-	int	inventory[5];
-	float	attackstrength;
-	float	spellstrength;
-	int	spelldamage;
-	int	sworddamage;
+	int hp;
+	int maxhp;
+	float   hpflash;
+	int hpflashb;
+	int level;
+	int maxlevel;
+	int sword;
+	int shield;
+	int armour;
+	int foundspell[5];
+	float   spellcharge[5];
+	int inventory[5];
+	float   attackstrength;
+	float   spellstrength;
+	int spelldamage;
+	int sworddamage;
 
-	int	exp;
-	int	nextlevel;
+	int exp;
+	int nextlevel;
 
-	int	pause;
+	int pause;
 
-	float	itemselshade;
-	int	ysort;
+	float   itemselshade;
+	int ysort;
 } PLAYERTYPE;
 
 typedef struct {
-	float	x;
-	float	y;
-	int	parentID;
-	int	isbase;
-	int	sprite;
-	int	bonelength;	// the 'bone' that connects the body sections
+	float   x;
+	float   y;
+	int parentID;
+	int isbase;
+	int sprite;
+	int bonelength; // the 'bone' that connects the body sections
 } BODYSECTIONTYPE;
 
 typedef struct {
-	float	x;
-	float	y;
-	int	spriteset;
-	int	x1;		// patrol area
-	int	y1;
-	int	x2;
-	int	y2;
-	int	attitude;
-	int	hp;
+	float   x;
+	float   y;
+	int spriteset;
+	int x1;     // patrol area
+	int y1;
+	int x2;
+	int y2;
+	int attitude;
+	int hp;
 
-	int	maxhp;
-	int	item1;
-	int	item2;
-	int	item3;
-	int	script;
-	float	frame;
-	float	frame2;		// end boss specific
-	int	cframe;
-	int	onmap;		// is this npc set to be genned in the mapfile
+	int maxhp;
+	int item1;
+	int item2;
+	int item3;
+	int script;
+	float   frame;
+	float   frame2;     // end boss specific
+	int cframe;
+	int onmap;      // is this npc set to be genned in the mapfile
 
-	int	ticks;
-	int	pause;
-	int	shake;
+	int ticks;
+	int pause;
+	int shake;
 
-	int	movementmode;
-	int	walkdir;
-	float	walkspd;
-	int	movingdir;
-	int	moving;
+	int movementmode;
+	int walkdir;
+	float   walkspd;
+	int movingdir;
+	int moving;
 
-	int	attacking;
-	float	attackframe;
-	int	cattackframe;
-	float	attackspd;
-	int	attackdelay;
-	int	attacknext;
-	int	attackattempt;
+	int attacking;
+	float   attackframe;
+	int cattackframe;
+	float   attackspd;
+	int attackdelay;
+	int attacknext;
+	int attackattempt;
 
-	int	spelldamage;
-	int	attackdamage;
+	int spelldamage;
+	int attackdamage;
 
 
 	// one wing and firehydra specific
 	BODYSECTIONTYPE bodysection[31];
-	float	swayangle;
-	float	swayspd;
-	float	headtargetx[4];
-	float	headtargety[4];
-	int	castpause;
+	float   swayangle;
+	float   swayspd;
+	float   headtargetx[4];
+	float   headtargety[4];
+	int castpause;
 
 	// firehydra specific
-	int	attacknext2[4];
-	int	attacking2[4];
-	int	attackframe2[4];
+	int attacknext2[4];
+	int attacking2[4];
+	int attackframe2[4];
 
 	// dragon2 specific
-	float	floating;
+	float   floating;
 } NPCTYPE;
 
 typedef struct {
-	int	spellnum;
-	float	homex;
-	float	homey;
-	float	enemyx;
-	float	enemyy;
+	int spellnum;
+	float   homex;
+	float   homey;
+	float   enemyx;
+	float   enemyy;
 
-	float	frame;
+	float   frame;
 
-	int	damagewho;	// 0 = npc, 1 = player
+	int damagewho;  // 0 = npc, 1 = player
 
 	// for earthslide
-	float	rocky[9];
-	int	rockimg[9];
-	int	rockdeflect[9];
+	float   rocky[9];
+	int rockimg[9];
+	int rockdeflect[9];
 
-	float	strength;
+	float   strength;
 
 	// fire
-	int	legalive[5];
+	int legalive[5];
 
 	// spell 6 specific
-	float	fireballs[7][4];	// x,y,targetx, targety
-	int	nfballs;
-	int	ballon[7];
+	float   fireballs[7][4];    // x,y,targetx, targety
+	int nfballs;
+	int ballon[7];
 
-	int	npc;
+	int npc;
 } SPELLTYPE;
 
 typedef struct {
-	int	x;	// xyloc on spriteimageset
-	int	y;
-	int	xofs;	// the actual place to paste the sprite in reference to the bodypart loc on screen
-	int	yofs;
-	int	w;	// w/h of the sprite in the imageset
-	int	h;
+	int x;  // xyloc on spriteimageset
+	int y;
+	int xofs;   // the actual place to paste the sprite in reference to the bodypart loc on screen
+	int yofs;
+	int w;  // w/h of the sprite in the imageset
+	int h;
 } ANIMSET2TYPE;
 
 extern PLAYERTYPE player;
