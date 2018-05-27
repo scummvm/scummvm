@@ -28,6 +28,7 @@
 #include "sludge/backdrop.h"
 #include "sludge/event.h"
 #include "sludge/floor.h"
+#include "sludge/function.h"
 #include "sludge/graphics.h"
 #include "sludge/language.h"
 #include "sludge/newfatal.h"

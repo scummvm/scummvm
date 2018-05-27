@@ -32,6 +32,7 @@
 #include "sludge/floor.h"
 #include "sludge/fonttext.h"
 #include "sludge/freeze.h"
+#include "sludge/function.h"
 #include "sludge/graphics.h"
 #include "sludge/language.h"
 #include "sludge/loadsave.h"
@@ -86,7 +87,7 @@ bool failSecurityCheck(const Common::String &fn) {
 	return false;
 }
 
-LoadedFunction *saverFunc;
+extern LoadedFunction *saverFunc;
 
 typedef BuiltReturn (*builtInSludgeFunc)(int numParams, LoadedFunction *fun);
 struct builtInFunctionData {

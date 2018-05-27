@@ -19,26 +19,52 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SLUDGER_H
-#define SLUDGER_H
+#ifndef SLUDGE_FUNCTION_H
+#define SLUDGE_FUNCTION_H
 
 #include "sludge/allfiles.h"
+#include "sludge/csludge.h"
+#include "sludge/variable.h"
 
 namespace Sludge {
 
-typedef struct _FILETIME {
-	uint32 dwLowDateTime;
-	uint32 dwHighDateTime;
-} FILETIME;
+struct Variable;
+struct VariableStack;
 
-bool initSludge(const Common::String &);
-void initSludge();
-void killSludge();
+struct LineOfCode {
+	SludgeCommand theCommand;
+	int32 param;
+};
 
-void displayBase();
-void sludgeDisplay();
+struct LoadedFunction {
+	int originalNumber;
+	LineOfCode *compiledLines;
+	int numLocals, timeLeft, numArgs;
+	Variable *localVars;
+	VariableStack *stack;
+	Variable reg;
+	uint runThisLine;
+	LoadedFunction *calledBy;
+	LoadedFunction *next;
+	bool returnSomething, isSpeech, unfreezable, cancelMe;
+	byte freezerLevel;
+};
 
-Common::File *openAndVerify(const Common::String &filename, char extra1, char extra2, const char *er, int &fileVersion);
+bool runSludge();
+
+int startNewFunctionNum(uint, uint, LoadedFunction *, VariableStack*&, bool = true);
+void restartFunction(LoadedFunction *fun);
+bool loadFunctionCode(LoadedFunction *newFunc);
+void killAllFunctions();
+
+void finishFunction(LoadedFunction *fun);
+void abortFunction(LoadedFunction *fun);
+
+void freezeSubs();
+void unfreezeSubs();
+void completeTimers();
+void killSpeechTimers();
+int cancelAFunction(int funcNum, LoadedFunction *myself, bool &killedMyself);
 
 } // End of namespace Sludge
 

@@ -30,6 +30,8 @@ struct FrozenStuffStruct;
 struct LoadedSpriteBank;
 struct ScreenRegion;
 
+class SludgeEngine;
+
 struct AnimFrame {
 	int frameNum, howMany;
 	int noise;

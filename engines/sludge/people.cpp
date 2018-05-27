@@ -22,6 +22,7 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/floor.h"
+#include "sludge/function.h"
 #include "sludge/graphics.h"
 #include "sludge/loadsave.h"
 #include "sludge/moreio.h"
