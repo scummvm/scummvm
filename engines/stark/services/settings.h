@@ -72,8 +72,6 @@ public:
 	bool hasLowResFMV() { return _hasLowRes; }
 
 private:
-	const static int _maxVolume = 256;
-
 	Audio::Mixer *_mixer;
 	bool _hasLowRes;
 

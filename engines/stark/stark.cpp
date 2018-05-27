@@ -73,8 +73,6 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_fontProvider(nullptr),
 		_settings(nullptr),
 		_lastClickTime(0) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
-
 	// Add the available debug channels
 	DebugMan.addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
 	DebugMan.addDebugChannel(kDebugXMG, "XMG", "Debug the loading of XMG images");

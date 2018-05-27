@@ -34,11 +34,11 @@ namespace Stark {
 Settings::Settings(Audio::Mixer *mixer) :
 		_mixer(mixer) {
 	// Initialize keys
-	_boolKey[kHighModel] = "high_model";
+	_boolKey[kHighModel] = "enable_high_resolution_models";
 	_boolKey[kSubtitle] = "subtitles";
-	_boolKey[kSpecialFX] = "specialfx";
-	_boolKey[kShadow] = "shadow";
-	_boolKey[kHighFMV] = "high_fmv";
+	_boolKey[kSpecialFX] = "enable_special_effects";
+	_boolKey[kShadow] = "enable_shadows";
+	_boolKey[kHighFMV] = "play_high_resolution_videos";
 	_boolKey[kTimeSkip] = "enable_time_skip";
 	_intKey[kVoice] = "speech_volume";
 	_intKey[kMusic] = "music_volume";
@@ -53,12 +53,9 @@ Settings::Settings(Audio::Mixer *mixer) :
 	ConfMan.registerDefault(_boolKey[kTimeSkip], false);
 
 	// Use the FunCom logo video to check low-resolution fmv
-	_hasLowRes = StarkArchiveLoader->getExternalFile("1402_lo_res.bbb", "Global/");
-
-	// Apply the volume
-	setIntSetting(kVoice, getIntSetting(kVoice));
-	setIntSetting(kMusic, getIntSetting(kMusic));
-	setIntSetting(kSfx, getIntSetting(kSfx));
+	Common::SeekableReadStream *lowResFMV = StarkArchiveLoader->getExternalFile("1402_lo_res.bbb", "Global/");
+	_hasLowRes = lowResFMV;
+	delete lowResFMV;
 }
 
 void Settings::setIntSetting(IntSettingIndex index, int value) {
@@ -76,8 +73,7 @@ void Settings::setIntSetting(IntSettingIndex index, int value) {
 			type = Audio::Mixer::kSFXSoundType;
 	}
 
-	bool flag = ConfMan.getBool("mute");
-	_mixer->setVolumeForSoundType(type, flag ? 0 : value);
+	_mixer->setVolumeForSoundType(type, value);
 }
 
 } // End of namespace Stark
