@@ -34,10 +34,10 @@ class VisualImageXMG;
 /**
  * Manager of test sound
  */
-class SoundManager {
+class TestSoundManager {
 public:
-	SoundManager();
-	~SoundManager() {}
+	TestSoundManager();
+	~TestSoundManager() {}
 
 	/** Load sounds **/
 	void load();
@@ -109,7 +109,7 @@ private:
 	static const uint32 _textColorHovered = 0xFF961E1E;
 	static const uint32 _textColorDefault = 0xFF000000;
 
-	SoundManager _soundManager;
+	TestSoundManager _soundManager;
 };
 
 /**
@@ -143,7 +143,7 @@ private:
 class VolumeWidget : public StaticLocationWidget {
 public:
 	VolumeWidget(const char *renderEntryName, Cursor *cursor,
-				 SoundManager &soundManager, int soundIndex, 
+				 TestSoundManager &soundManager, int soundIndex, 
 				 Settings::IntSettingIndex settingIndex,
 				 WidgetOnMouseMoveCallback *onMouseMoveCallback);
 	virtual ~VolumeWidget() {};
@@ -164,7 +164,7 @@ private:
 
 	Cursor *_cursor;
 
-	SoundManager &_soundManager;
+	TestSoundManager &_soundManager;
 	const int _soundIndex;
 
 	Common::Point _sliderPosition, _bgPosition;

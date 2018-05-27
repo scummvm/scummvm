@@ -275,7 +275,7 @@ bool CheckboxWidget::isMouseInsideCheckbox(const Common::Point &mousePos) const 
 }
 
 VolumeWidget::VolumeWidget(const char *renderEntryName, Cursor *cursor,
-						   SoundManager &soundManager, int soundIndex,
+						   TestSoundManager &soundManager, int soundIndex,
 						   Settings::IntSettingIndex settingIndex,
 						   WidgetOnMouseMoveCallback *onMouseMoveCallback) :
 		StaticLocationWidget(renderEntryName, nullptr, onMouseMoveCallback),
@@ -348,7 +348,7 @@ bool VolumeWidget::isMouseInsideBg(const Common::Point &mousePos) const {
 		   mousePos.y >= _bgPosition.y && mousePos.y <= _bgPosition.y + _bgHeight;
 }
 
-SoundManager::SoundManager() : 
+TestSoundManager::TestSoundManager() : 
 		_currentSound(nullptr),
 		_isLopping(false) {
 	for (int i = 0; i < 3; ++i) {
@@ -356,21 +356,21 @@ SoundManager::SoundManager() :
 	}
 }
 
-void SoundManager::load() {
+void TestSoundManager::load() {
 	for (int i = 0; i < 3; ++i) {
 		_sounds[i] = StarkStaticProvider->getLocationSound(i);
 		_sounds[i]->setLooping(false);
 	}
 }
 
-void SoundManager::close() {
+void TestSoundManager::close() {
 	stop();
 	for (int i = 0; i < 3; ++i) {
 		_sounds[i] = nullptr;
 	}
 }
 
-void SoundManager::play(int index) {
+void TestSoundManager::play(int index) {
 	stop();
 	_currentSound = _sounds[index];
 	if (_currentSound) {
@@ -379,11 +379,11 @@ void SoundManager::play(int index) {
 	}
 }
 
-void SoundManager::endLoop() {
+void TestSoundManager::endLoop() {
 	_isLopping = false;
 }
 
-void SoundManager::stop() {
+void TestSoundManager::stop() {
 	if (_currentSound) {
 		_currentSound->stop();
 		_currentSound = nullptr;
@@ -391,7 +391,7 @@ void SoundManager::stop() {
 	_isLopping = false;
 }
 
-void SoundManager::update() {
+void TestSoundManager::update() {
 	if (_currentSound && !_currentSound->isPlaying()) {
 		if (_isLopping) {
 			_currentSound->play();
