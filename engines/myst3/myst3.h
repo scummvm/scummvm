@@ -119,9 +119,8 @@ public:
 	uint32 getGameLocalizationType() const;
 	bool isWideScreenModEnabled() const;
 
-	bool canSaveGameStateCurrently() override; // Determines autosave saveability
+	bool canSaveGameStateCurrently() override;
 	bool canLoadGameStateCurrently() override;
-	bool canSaveCurrently() override; // Determines GMM saveability
 	void tryAutoSaving();
 	Common::Error loadGameState(int slot) override;
 	Common::Error loadGameState(Common::String fileName, TransitionType transition);

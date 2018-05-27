@@ -269,9 +269,10 @@ public:
 		data.syncWithSaveGame(s);
 
 		// Read and resize the thumbnail
-		Graphics::Surface *guiThumb = new Graphics::Surface();
-		guiThumb->create(kThumbnailWidth, kThumbnailHeight1, Texture::getRGBAPixelFormat());
-		data.resizeThumbnail(guiThumb);
+		Graphics::Surface *saveThumb = GameState::readThumbnail(saveFile);
+		Graphics::Surface *guiThumb = GameState::resizeThumbnail(saveThumb, kThumbnailWidth, kThumbnailHeight1);
+		saveThumb->free();
+		delete saveThumb;
 
 		// Set metadata
 		saveInfos.setThumbnail(guiThumb);

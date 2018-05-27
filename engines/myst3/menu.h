@@ -54,6 +54,9 @@ public:
 	Menu(Myst3Engine *vm);
 	virtual ~Menu();
 
+	/** Indicates if the player is currently in a menu node */
+	bool isOpen() const;
+
 	/**
 	 * Handle an event for the menu
 	 *
@@ -63,12 +66,18 @@ public:
 
 	void updateMainMenu(uint16 action);
 	void goToNode(uint16 node);
-	/*
-	*  Grab a screenshot save it to state and free memory
-	*/
-	void saveThumbnail();
-	bool getThumbnailValid();
-	void setThumbnailValid(bool value);
+
+	/**
+	 * Capture a save thumbnail
+	 */
+	Graphics::Surface *captureThumbnail();
+
+	/**
+	 * Get the current save thumbnail
+	 *
+	 * Only valid while the menu is open
+	 */
+	Graphics::Surface *borrowSaveThumbnail();
 
 	virtual void saveLoadAction(uint16 action, uint16 item) = 0;
 	virtual void setSaveLoadSpotItem(uint16 id, SpotItemFace *spotItem);
@@ -76,10 +85,10 @@ public:
 protected:
 	Myst3Engine *_vm;
 
+	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> _saveThumbnail;
+
 	SpotItemFace *_saveLoadSpotItem;
 	Common::String _saveLoadAgeName;
-
-	bool _thumbnailValid;
 
 	uint dialogIdFromType(DialogType type);
 	uint16 dialogConfirmValue();

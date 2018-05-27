@@ -78,7 +78,6 @@ GameState::StateData::StateData() {
 	saveYear = 0;
 	saveHour = 0;
 	saveMinute = 0;
-	autoSave = false;
 }
 
 GameState::GameState(const Common::Platform platform, Database *database):
@@ -474,38 +473,44 @@ void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 	s.syncAsUint16LE(saveYear, 149);
 	s.syncAsByte(saveHour, 149);
 	s.syncAsByte(saveMinute, 149);
-	s.syncAsByte(autoSave, 150);	
 	s.syncString(saveDescription, 149);
-
-#ifdef SCUMM_BIG_ENDIAN
-	Graphics::PixelFormat saveFormat = Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0);
-#else
-	Graphics::PixelFormat saveFormat = Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24);
-#endif
-
-	if (s.isLoading()) {
-		thumbnail = Common::SharedPtr<Graphics::Surface>(new Graphics::Surface(), Graphics::SurfaceDeleter());
-		thumbnail->create(kThumbnailWidth, kThumbnailHeight, saveFormat);
-
-		s.syncBytes((byte *)thumbnail->getPixels(), kThumbnailWidth * kThumbnailHeight * 4);
-
-		thumbnail->convertToInPlace(Texture::getRGBAPixelFormat());
-	} else {
-		assert(thumbnail->format == Texture::getRGBAPixelFormat());
-		assert(thumbnail && thumbnail->w == kThumbnailWidth && thumbnail->h == kThumbnailHeight);
-
-		Graphics::Surface *converted = thumbnail->convertTo(saveFormat);
-
-		s.syncBytes((byte *)converted->getPixels(), kThumbnailWidth * kThumbnailHeight * 4);
-
-		converted->free();
-		delete converted;
-	}
 }
 
-void GameState::StateData::resizeThumbnail(Graphics::Surface *small) const {
-	Graphics::Surface *big = thumbnail.get();
-	assert(small->format == big->format && big->format.bytesPerPixel == 4);
+const Graphics::PixelFormat GameState::getThumbnailSavePixelFormat() {
+#ifdef SCUMM_BIG_ENDIAN
+	return Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0);
+#else
+	return Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24);
+#endif
+}
+
+Graphics::Surface *GameState::readThumbnail(Common::ReadStream *inStream) {
+	Graphics::Surface *thumbnail = new Graphics::Surface();
+	thumbnail->create(kThumbnailWidth, kThumbnailHeight, getThumbnailSavePixelFormat());
+
+	inStream->read((byte *)thumbnail->getPixels(), kThumbnailWidth * kThumbnailHeight * 4);
+
+	thumbnail->convertToInPlace(Texture::getRGBAPixelFormat());
+
+	return thumbnail;
+}
+
+void GameState::writeThumbnail(Common::WriteStream *outStream, const Graphics::Surface *thumbnail) {
+	assert(thumbnail->format == Texture::getRGBAPixelFormat());
+	assert(thumbnail && thumbnail->w == kThumbnailWidth && thumbnail->h == kThumbnailHeight);
+
+	Graphics::Surface *converted = thumbnail->convertTo(getThumbnailSavePixelFormat());
+
+	outStream->write((byte *)converted->getPixels(), kThumbnailWidth * kThumbnailHeight * 4);
+
+	converted->free();
+	delete converted;
+}
+
+Graphics::Surface *GameState::resizeThumbnail(Graphics::Surface *big, uint width, uint height) {
+	assert(big->format.bytesPerPixel == 4);
+	Graphics::Surface *small = new Graphics::Surface();
+	small->create(width, height, big->format);
 
 	uint32 *dst = (uint32 *)small->getPixels();
 	for (uint i = 0; i < small->h; i++) {
@@ -518,6 +523,8 @@ void GameState::StateData::resizeThumbnail(Graphics::Surface *small) const {
 			*dst++ = *src;
 		}
 	}
+
+	return small;
 }
 
 void GameState::newGame() {
@@ -534,21 +541,7 @@ bool GameState::load(Common::InSaveFile *saveFile) {
 	return true;
 }
 
-bool GameState::isAutoSaveAllowed(Common::InSaveFile *saveFile) {
-	// Check if file exists
-	if (!saveFile) { // The autosave file doesn't exist or is corrupt
-		return true;
-	}
-
-	// Get autoSave value from saved file
-	StateData data;
-	Common::Serializer s = Common::Serializer(saveFile, 0);
-	data.syncWithSaveGame(s);
-
-	return data.autoSave; // The autosave file exists and is either an autosave or not
-}
-
-bool GameState::save(Common::OutSaveFile *saveFile, bool autosave) {
+bool GameState::save(Common::OutSaveFile *saveFile, const Common::String &description, const Graphics::Surface *thumbnail) {
 	Common::Serializer s = Common::Serializer(0, saveFile);
 
 	// Update save creation info
@@ -559,24 +552,14 @@ bool GameState::save(Common::OutSaveFile *saveFile, bool autosave) {
 	_data.saveDay = t.tm_mday;
 	_data.saveHour = t.tm_hour;
 	_data.saveMinute = t.tm_min;
-	_data.autoSave = autosave;
+	_data.saveDescription = description;
 
 	_data.gameRunning = false;
 	_data.syncWithSaveGame(s);
+	writeThumbnail(saveFile, thumbnail);
 	_data.gameRunning = true;
 
 	return true;
-}
-
-Graphics::Surface *GameState::getSaveThumbnail() const {
-	return _data.thumbnail.get();
-}
-
-void GameState::setSaveThumbnail(Graphics::Surface *thumb) {
-	if (_data.thumbnail.get() == thumb)
-		return;
-
-	_data.thumbnail = Common::SharedPtr<Graphics::Surface>(thumb, Graphics::SurfaceDeleter());
 }
 
 Common::String GameState::formatSaveTime() {

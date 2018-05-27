@@ -53,13 +53,7 @@ public:
 
 	void newGame();
 	bool load(Common::InSaveFile *saveFile);
-	bool save(Common::OutSaveFile *saveFile, bool autosave);
-
-	/*
-	* Autosaving will be enabled if The autosave file is an autosave or if The autosave file doesn't exist
-	* The autosave file name is version dependent (PC vs. Xbox)
-	*/
-	bool isAutoSaveAllowed(Common::InSaveFile *saveFile);
+	bool save(Common::OutSaveFile *saveFile, const Common::String &description, const Graphics::Surface *thumbnail);
 
 	int32 getVar(uint16 var);
 	void setVar(uint16 var, int32 value);
@@ -340,11 +334,7 @@ public:
 	void markNodeAsVisited(uint16 node, uint16 room, uint32 age);
 	bool isZipDestinationAvailable(uint16 node, uint16 room, uint32 age);
 
-	Graphics::Surface *getSaveThumbnail() const;
-	void setSaveThumbnail(Graphics::Surface *thumb);
 	Common::String formatSaveTime();
-	void setSaveDescription(const Common::String &description) { _data.saveDescription = description; }
-	const Common::String getSaveDescription() { return _data.saveDescription; }	
 
 	Common::Array<uint16> getInventory();
 	void updateInventory(const Common::Array<uint16> &items);
@@ -386,17 +376,17 @@ public:
 
 		uint8 saveHour;
 		uint8 saveMinute;
-		bool autoSave;
 
 		Common::String saveDescription;
 
-		Common::SharedPtr<Graphics::Surface> thumbnail;
-
 		StateData();
 		void syncWithSaveGame(Common::Serializer &s);
-		void resizeThumbnail(Graphics::Surface *small) const;
 	};
 
+	static const Graphics::PixelFormat getThumbnailSavePixelFormat();
+	static Graphics::Surface *readThumbnail(Common::ReadStream *inStream);
+	static void writeThumbnail(Common::WriteStream *outStream, const Graphics::Surface *thumbnail);
+	static Graphics::Surface *resizeThumbnail(Graphics::Surface *big, uint width, uint height);
 
 	static const uint kThumbnailWidth = 240;
 	static const uint kThumbnailHeight = 135;
@@ -405,7 +395,7 @@ private:
 	const Common::Platform _platform;
 	Database *_db;
 
-	static const uint32 kSaveVersion = 150;
+	static const uint32 kSaveVersion = 149;
 
 	StateData _data;
 

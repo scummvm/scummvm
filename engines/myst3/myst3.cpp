@@ -210,8 +210,6 @@ Common::Error Myst3Engine::run() {
 		drawFrame();
 	}
 
-	if (!_menu->getThumbnailValid())
-		_menu->saveThumbnail(); // Update thumbnail before saving
 	tryAutoSaving(); //Attempt to autosave before exiting
 	unloadNode();
 
@@ -434,7 +432,6 @@ void Myst3Engine::processInput(bool interactive) {
 	}
 
 	bool shouldInteractWithHoveredElement = false;
-	_menu->setThumbnailValid(false);
 
 	// Process events
 	Common::Event event;
@@ -543,7 +540,6 @@ void Myst3Engine::processInput(bool interactive) {
 	}
 
 	if (shouldPerformAutoSave(_lastSaveTime)) {
-		_menu->saveThumbnail(); // Update thumbnail before saving
 		tryAutoSaving();
 	}
 
@@ -1489,11 +1485,8 @@ void Myst3Engine::dragItem(uint16 statusVar, uint16 movie, uint16 frame, uint16 
 }
 
 bool Myst3Engine::canSaveGameStateCurrently() {
-	return canLoadGameStateCurrently() && !(_state->getLocationRoom() == 901 && _state->getMenuSavedAge()==0);
-}
-
-bool Myst3Engine::canSaveCurrently() {
-	return canLoadGameStateCurrently() && !(_state->getLocationRoom() == 901 && _state->getMenuSavedAge()==0);
+	bool inMenuWithNoGameLoaded = _state->getLocationRoom() == 901 && _state->getMenuSavedAge() == 0;
+	return canLoadGameStateCurrently() && !inMenuWithNoGameLoaded && _cursor->isVisible();
 }
 
 bool Myst3Engine::canLoadGameStateCurrently() {
@@ -1511,23 +1504,28 @@ void Myst3Engine::tryAutoSaving() {
 
 	_lastSaveTime = _system->getMillis();
 
+	// Get a thumbnail of the game screen
+	Common::DisposablePtr<Graphics::Surface, Graphics::SurfaceDeleter> thumbnail(nullptr, DisposeAfterUse::NO);
+	if (_menu->isOpen()) {
+		thumbnail.reset(_menu->borrowSaveThumbnail(), DisposeAfterUse::NO);
+	} else {
+		// Capture thumbnail before saving
+		thumbnail.reset(_menu->captureThumbnail(), DisposeAfterUse::YES);
+	}
+
+	// Open the save file
 	Common::String saveName = "Autosave";
-
-	Common::String fileName = Saves::buildName(saveName.c_str(),getPlatform());
-	Common::ScopedPtr<Common::InSaveFile> saveFile(getSaveFileManager()->openForLoading(fileName));
-
-	if (!_state->isAutoSaveAllowed(saveFile.get())) {
-		return; // Can't autosave ever, try again after the next autosave delay
+	Common::String fileName = Saves::buildName(saveName.c_str(), getPlatform());
+	Common::OutSaveFile *save = getSaveFileManager()->openForSaving(fileName);
+	if (!save) {
+		warning("Unable to open the autosave file: %s.", fileName.c_str());
 	}
 
 	// Save the state and the thumbnail
-	Common::OutSaveFile *save = getSaveFileManager()->openForSaving(fileName);
-	const Common::String prevSaveName = _state->getSaveDescription();
-	_state->setSaveDescription(saveName);
+	if (!_state->save(save, saveName, thumbnail.get())) {
+		warning("Unable to write the autosave to '%s'.", fileName.c_str());
+	}
 
-	if (!_state->save(save,true))
-		warning("Attempt to autosave has failed.");
-	_state->setSaveDescription(prevSaveName);
 	delete save;
 }
 
@@ -1550,6 +1548,8 @@ Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType
 
 	_inventory->loadFromState();
 
+	// Leave the load menu
+	_state->setViewType(kMenu);
 	_state->setLocationNextAge(_state->getMenuSavedAge());
 	_state->setLocationNextRoom(_state->getMenuSavedRoom());
 	_state->setLocationNextNode(_state->getMenuSavedNode());

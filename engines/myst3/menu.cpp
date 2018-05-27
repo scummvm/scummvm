@@ -209,8 +209,7 @@ int16 GamepadDialog::update() {
 
 Menu::Menu(Myst3Engine *vm) :
 		_vm(vm),
-		_saveLoadSpotItem(0),
-		_thumbnailValid(false) {
+		_saveLoadSpotItem(0) {
 }
 
 Menu::~Menu() {
@@ -296,21 +295,13 @@ void Menu::updateMainMenu(uint16 action) {
 	}
 }
 
-void Menu::saveThumbnail() {
-	// ... and capture the screen
+Graphics::Surface *Menu::captureThumbnail() {
 	Graphics::Surface *big = _vm->_gfx->getScreenshot();
-	Graphics::Surface *thumb = createThumbnail(big);
-	_vm->_state->setSaveThumbnail(thumb);
+	Graphics::Surface *thumbnail = createThumbnail(big);
 	big->free();
 	delete big;
-}
 
-bool Menu::getThumbnailValid() {
-	return _thumbnailValid;
-}
-
-void Menu::setThumbnailValid(bool valid) {
-	_thumbnailValid = valid;
+	return thumbnail;
 }
 
 void Menu::goToNode(uint16 node) {
@@ -320,8 +311,9 @@ void Menu::goToNode(uint16 node) {
 		_vm->_state->setMenuSavedRoom(_vm->_state->getLocationRoom());
 		_vm->_state->setMenuSavedNode(_vm->_state->getLocationNode());
 
-		saveThumbnail();
-		_thumbnailValid = true;
+		// ... and capture the screen
+		Graphics::Surface *thumbnail = captureThumbnail();
+		_saveThumbnail.reset(thumbnail);
 
 		// Reset some sound variables
 		if (_vm->_state->getLocationAge() == 6 && _vm->_state->getSoundEdannaUnk587() == 1 && _vm->_state->getSoundEdannaUnk1031()) {
@@ -448,6 +440,14 @@ void Menu::setSaveLoadSpotItem(uint16 id, SpotItemFace *spotItem) {
 	}
 }
 
+bool Menu::isOpen() const {
+	return _vm->_state->getLocationAge() == 9 && _vm->_state->getLocationRoom() == 901;
+}
+
+Graphics::Surface *Menu::borrowSaveThumbnail() {
+	return _saveThumbnail.get();
+}
+
 PagingMenu::PagingMenu(Myst3Engine *vm) :
 		Menu(vm),
 		_saveDrawCaret(false),
@@ -547,17 +547,20 @@ void PagingMenu::loadMenuSelect(uint16 item) {
 	}
 
 	// Extract the age to load from the savegame
-	GameState *gameState = new GameState(_vm->getPlatform(), _vm->_db);
-	gameState->load(saveFile);
+	GameState gameState = GameState(_vm->getPlatform(), _vm->_db);
+	gameState.load(saveFile);
 
 	// Update the age name
-	_saveLoadAgeName = getAgeLabel(gameState);
+	_saveLoadAgeName = getAgeLabel(&gameState);
 
 	// Update the save thumbnail
-	if (_saveLoadSpotItem)
-		_saveLoadSpotItem->updateData(gameState->getSaveThumbnail());
+	if (_saveLoadSpotItem) {
+		Graphics::Surface *thumbnail = GameState::readThumbnail(saveFile);
+		_saveLoadSpotItem->updateData(thumbnail);
+		thumbnail->free();
+		delete thumbnail;
+	}
 
-	delete gameState;
 	delete saveFile;
 }
 
@@ -581,9 +584,8 @@ void PagingMenu::saveMenuOpen() {
 	saveLoadUpdateVars();
 
 	// Update the thumbnail to display
-	Graphics::Surface *saveThumb = _vm->_state->getSaveThumbnail();
-	if (_saveLoadSpotItem && saveThumb)
-		_saveLoadSpotItem->updateData(saveThumb);
+	if (_saveLoadSpotItem && _saveThumbnail)
+		_saveLoadSpotItem->updateData(_saveThumbnail.get());
 }
 
 void PagingMenu::saveMenuSelect(uint16 item) {
@@ -627,8 +629,7 @@ void PagingMenu::saveMenuSave() {
 
 	// Save the state and the thumbnail
 	Common::OutSaveFile *save = _vm->getSaveFileManager()->openForSaving(fileName);
-	_vm->_state->setSaveDescription(_saveName);
-	_vm->_state->save(save,false);
+	_vm->_state->save(save, _saveName, _saveThumbnail.get());
 	delete save;
 
 	// Do next action
@@ -868,9 +869,10 @@ void AlbumMenu::loadSaves() {
 
 		if (_albumSpotItems.contains(i)) {
 			// Read and resize the thumbnail
-			Graphics::Surface *miniThumb = new Graphics::Surface();
-			miniThumb->create(kAlbumThumbnailWidth, kAlbumThumbnailHeight, Texture::getRGBAPixelFormat());
-			data.resizeThumbnail(miniThumb);
+			Graphics::Surface *saveThumb = GameState::readThumbnail(saveFile);
+			Graphics::Surface *miniThumb = GameState::resizeThumbnail(saveThumb, kAlbumThumbnailWidth, kAlbumThumbnailHeight);
+			saveThumb->free();
+			delete saveThumb;
 
 			SpotItemFace *spotItem = _albumSpotItems.getVal(i);
 			spotItem->updateData(miniThumb);
@@ -923,8 +925,12 @@ void AlbumMenu::loadMenuSelect() {
 	_saveLoadTime = gameState->formatSaveTime();
 
 	// Update the save thumbnail
-	if (_saveLoadSpotItem)
-		_saveLoadSpotItem->updateData(gameState->getSaveThumbnail());
+	if (_saveLoadSpotItem) {
+		Graphics::Surface *thumbnail = GameState::readThumbnail(saveFile);
+		_saveLoadSpotItem->updateData(thumbnail);
+		thumbnail->free();
+		delete thumbnail;
+	}
 
 	delete gameState;
 }
@@ -947,9 +953,8 @@ void AlbumMenu::saveMenuOpen() {
 	_saveLoadTime = "";
 
 	// Update the thumbnail to display
-	Graphics::Surface *saveThumb = _vm->_state->getSaveThumbnail();
-	if (_saveLoadSpotItem && saveThumb)
-		_saveLoadSpotItem->updateData(saveThumb);
+	if (_saveLoadSpotItem && _saveThumbnail)
+		_saveLoadSpotItem->updateData(_saveThumbnail.get());
 }
 
 void AlbumMenu::saveMenuSave() {
@@ -966,8 +971,7 @@ void AlbumMenu::saveMenuSave() {
 
 	// Save the state and the thumbnail
 	Common::OutSaveFile *save = _vm->getSaveFileManager()->openForSaving(fileName);
-	_vm->_state->setSaveDescription(saveName);
-	_vm->_state->save(save,false);
+	_vm->_state->save(save, saveName, _saveThumbnail.get());
 	delete save;
 
 	// Do next action
