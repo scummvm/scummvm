@@ -216,20 +216,23 @@ int Scripts::checkEvents() {
 		MazeObject &selectedObj = map._mobData._objects[intf._objNumber];
 
 		if (selectedObj._spriteId == (ccNum ? 15 : 16)) {
-			for (int idx = 0; idx < MIN((int)map._mobData._objects.size(), 16); ++idx) {
-				MazeObject &obj = map._mobData._objects[idx];
-				if (obj._spriteId == (ccNum ? 62 : 57)) {
+			// Treasure chests that were opened will be set to be in an open, empty state
+			for (uint idx = 0; idx < map._mobData._objectSprites.size(); ++idx) {
+				MonsterObjectData::SpriteResourceEntry &e = map._mobData._objectSprites[idx];
+				if (e._spriteId == (ccNum ? 57 : 62)) {
 					selectedObj._id = idx;
-					selectedObj._spriteId = ccNum ? 62 : 57;
+					selectedObj._spriteId = ccNum ? 57 : 62;
+					selectedObj._sprites = &e._sprites;
 					break;
 				}
 			}
 		} else if (selectedObj._spriteId == 73) {
-			for (int idx = 0; idx < MIN((int)map._mobData._objects.size(), 16); ++idx) {
-				MazeObject &obj = map._mobData._objects[idx];
-				if (obj._spriteId == 119) {
+			for (uint idx = 0; idx < map._mobData._objectSprites.size(); ++idx) {
+				MonsterObjectData::SpriteResourceEntry &e = map._mobData._objectSprites[idx];
+				if (e._spriteId == 119) {
 					selectedObj._id = idx;
 					selectedObj._spriteId = 119;
+					selectedObj._sprites = &e._sprites;
 					break;
 				}
 			}
