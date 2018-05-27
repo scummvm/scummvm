@@ -436,27 +436,7 @@ void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 }
 
 Common::String OSystem_SDL::getSystemLanguage() const {
-#if defined(USE_DETECTLANG) && !defined(_WIN32_WCE)
-#ifdef WIN32
-	// We can not use "setlocale" (at least not for MSVC builds), since it
-	// will return locales like: "English_USA.1252", thus we need a special
-	// way to determine the locale string for Win32.
-	char langName[9];
-	char ctryName[9];
-
-	const LCID languageIdentifier = GetUserDefaultUILanguage();
-
-	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
-		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
-		Common::String localeName = langName;
-		localeName += "_";
-		localeName += ctryName;
-
-		return localeName;
-	} else {
-		return ModularBackend::getSystemLanguage();
-	}
-#else // WIN32
+#if defined(USE_DETECTLANG) && !defined(WIN32)
 	// Activating current locale settings
 	const Common::String locale = setlocale(LC_ALL, "");
 
@@ -484,7 +464,6 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 
 		return Common::String(locale.c_str(), length);
 	}
-#endif // WIN32
 #else // USE_DETECTLANG
 	return ModularBackend::getSystemLanguage();
 #endif // USE_DETECTLANG
