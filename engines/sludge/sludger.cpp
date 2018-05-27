@@ -138,6 +138,7 @@ Common::File *openAndVerify(const Common::String &filename, char extra1, char ex
 }
 
 void initSludge() {
+	g_sludge->_timer.reset();
 	g_sludge->_languageMan->init();
 	g_sludge->_gfxMan->init();
 	g_sludge->_resMan->init();
@@ -161,7 +162,6 @@ void initSludge() {
 	numGlobals = 0;
 	launchResult = nullptr;
 
-	lastFramesPerSecond = -1;
 	allowAnyFilename = true;
 	noStack = nullptr;
 	numBIFNames = numUserFunc = 0;
@@ -243,7 +243,7 @@ bool initSludge(const Common::String &filename) {
 
 	int specialSettings = fp->readByte();
 	debugC(2, kSludgeDebugDataLoad, "specialSettings : %i", specialSettings);
-	g_sludge->_timer.setDesiredfps(1000 / fp->readByte());
+	g_sludge->_timer.setDesiredFPS(1000 / fp->readByte());
 
 	readString(fp);  // Unused - was used for registration purposes.
 
@@ -1032,8 +1032,5 @@ int startNewFunctionNum(uint funcNum, uint numParamsExpected,
 	restartFunction(newFunc);
 	return 1;
 }
-
-int lastFramesPerSecond = -1;
-int thisFramesPerSecond = -1;
 
 } // End of namespace Sludge

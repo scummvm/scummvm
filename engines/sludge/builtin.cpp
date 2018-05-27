@@ -56,7 +56,6 @@ namespace Sludge {
 
 Variable *launchResult = NULL;
 
-extern int lastFramesPerSecond;
 extern bool allowAnyFilename;
 extern VariableStack *noStack;
 extern StatusStuff  *nowStatus;
@@ -2403,7 +2402,7 @@ builtIn(_rem_launchWith) {
 
 builtIn(getFramesPerSecond) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, lastFramesPerSecond);
+	setVariable(fun->reg, SVT_INT, g_sludge->_timer.getLastFps());
 	return BR_CONTINUE;
 }
 

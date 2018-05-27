@@ -25,18 +25,28 @@
 namespace Sludge {
 
 class Timer {
-private:
-	int _desiredfps; // desired frames per second
-	uint32 _starttime, _endtime;
-	uint32 _desired_frame_time;
-
 public:
-	void setDesiredfps(int t) { _desiredfps = t; }
+	Timer();
+
+	void setDesiredFPS(int t) { _desiredFPS = t; }
+	void reset(void);
 	void init(void);
 	void initSpecial(int t);
 	void waitFrame(void);
 
-	Timer():_desiredfps(300), _starttime(0), _endtime(0), _desired_frame_time(0){}
+	int getLastFps() const { return _lastFPS; }
+
+private:
+	int _desiredFPS; // desired frames per second
+	uint32 _startTime, _endTime;
+	uint32 _desiredFrameTime;
+	uint32 _addNextTime;
+
+	// FPS stats
+	void updateFpsStats();
+	int _lastFPS;
+	int _thisFPS;
+	uint32 _lastSeconds;
 };
 
 } // End of namespace Sludge
