@@ -292,15 +292,12 @@ VolumeWidget::VolumeWidget(const char *renderEntryName, Cursor *cursor,
 	_sliderWidth = _sliderImage->getWidth();
 
 	// Set positions
-	// TODO: get the real position
-	Common::Point textPosition = getPosition();
-	_bgPosition.x = textPosition.x + 100; 
-	_bgPosition.y = textPosition.y;
+	_bgPosition.x = 313;
+	_bgPosition.y = 303 + _settingIndex * 51;
+	_sliderPosition.y = _bgPosition.y;
 
-	_minX = _bgPosition.x - _sliderWidth / 2;
-	_maxX = _bgPosition.x + _bgWidth - _sliderWidth / 2;
-
-	_sliderPosition.y = _bgPosition.y + (_bgHeight - _sliderImage->getHeight()) / 2;
+	_minX = _bgPosition.x;
+	_maxX = _bgPosition.x + _bgWidth - _sliderWidth;
 }
 
 void VolumeWidget::render() {
@@ -308,8 +305,8 @@ void VolumeWidget::render() {
 
 	_sliderPosition.x = volumeToX(StarkSettings->getIntSetting(_settingIndex));
 
-	_sliderImage->render(_sliderPosition, true);
-	_bgImage->render(_bgPosition, true);
+	_sliderImage->render(_sliderPosition, false);
+	_bgImage->render(_bgPosition, false);
 }
 
 bool VolumeWidget::isMouseInside(const Common::Point &mousePos) const {
