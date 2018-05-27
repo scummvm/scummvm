@@ -26,7 +26,6 @@
 #include "engines/stark/ui/menu/locationscreen.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/settings.h"
-#include "engines/advancedDetector.h"
 
 namespace Stark {
 
@@ -111,10 +110,6 @@ private:
 	static const uint32 _textColorDefault = 0xFF000000;
 
 	SoundManager _soundManager;
-
-	bool isDemo() {
-		return StarkGameDescription->flags & ADGF_DEMO;
-	}
 };
 
 /**

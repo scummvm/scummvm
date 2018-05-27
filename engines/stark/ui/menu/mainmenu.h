@@ -24,8 +24,6 @@
 #define STARK_UI_MENU_MAIN_MENU_H
 
 #include "engines/stark/ui/menu/locationscreen.h"
-#include "engines/stark/services/services.h"
-#include "engines/advancedDetector.h"
 
 namespace Stark {
 
@@ -58,10 +56,6 @@ private:
 	void creditsHandler();
 	void settingsHandler();
 	void quitHandler();
-
-	bool isDemo() {
-		return StarkGameDescription->flags & ADGF_DEMO;
-	}
 };
 
 } // End of namespace Stark

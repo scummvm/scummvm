@@ -25,6 +25,9 @@
 
 #include "common/config-manager.h"
 
+#include "engines/stark/services/services.h"
+#include "engines/advancedDetector.h"
+
 namespace Audio {
 class Mixer;
 }
@@ -52,6 +55,10 @@ public:
 		kMusic,
 		kSfx
 	};
+
+	static bool isDemo() {
+		return StarkGameDescription->flags & ADGF_DEMO;
+	}
 
 	explicit Settings(Audio::Mixer *mixer);
 	~Settings() {}

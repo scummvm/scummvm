@@ -24,6 +24,7 @@
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/global.h"
+#include "engines/stark/services/settings.h"
 
 #include "common/config-manager.h"
 
@@ -136,7 +137,7 @@ void MainMenuScreen::helpTextHandler(StaticLocationWidget &widget, const Common:
 }
 
 void MainMenuScreen::creditsHandler() {
-	if (!isDemo()) {
+	if (!StarkSettings->isDemo()) {
 		StarkUserInterface->requestFMVPlayback("0e02.bbb");
 	}
 }
@@ -157,7 +158,7 @@ void MainMenuScreen::newGameHandler() {
 		uint locationIndex = strtol(ConfMan.get("startup_location").c_str(), nullptr, 16);
 		StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
 	} else {
-		if (isDemo()) {
+		if (StarkSettings->isDemo()) {
 			StarkResourceProvider->requestLocationChange(0x4f, 0x00);
 		} else {
 			// Start us up at the house of all worlds

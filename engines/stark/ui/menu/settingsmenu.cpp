@@ -178,7 +178,7 @@ void SettingsMenuScreen::open() {
 			nullptr));
 	_widgets.back()->setVisible(false);
 
-	if (!isDemo()) {
+	if (!StarkSettings->isDemo()) {
 		_widgets.push_back(new CheckboxWidget(
 				"AllowFF",
 				StarkSettings->getBoolSetting(Settings::kTimeSkip),
