@@ -150,6 +150,14 @@ bool OSystem_Win32::openUrl(const Common::String &url) {
 	return true;
 }
 
+void OSystem_Win32::logMessage(LogMessageType::Type type, const char *message) {
+	OSystem_SDL::logMessage(type, message);
+
+#if defined( USE_WINDBG )
+	OutputDebugString(message);
+#endif
+}
+
 Common::String OSystem_Win32::getSystemLanguage() const {
 #if defined(USE_DETECTLANG) && defined(USE_TRANSLATION)
 	// We can not use "setlocale" (at least not for MSVC builds), since it
