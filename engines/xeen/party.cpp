@@ -1498,14 +1498,14 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 					sound.playFX(10);
 					intf.draw3d(true, false);
 					Common::String msg = Common::String::format(Res.PICKS_THE_LOCK, c._name.c_str());
-					ErrorScroll::show(g_vm, msg);
+					ErrorScroll::show(g_vm, msg, WT_NONFREEZED_WAIT);
 				} else {
 					sound.playFX(21);
 
 					obj._frame = 0;
 					scripts._animCounter = 0;
 					Common::String msg = Common::String::format(Res.UNABLE_TO_PICK_LOCK, c._name.c_str());
-					ErrorScroll::show(g_vm, msg);
+					ErrorScroll::show(g_vm, msg, WT_NONFREEZED_WAIT);
 
 					scripts._animCounter = 255;
 					return true;
