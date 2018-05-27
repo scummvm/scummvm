@@ -38,6 +38,8 @@ public:
 
 	virtual bool openUrl(const Common::String &url);
 
+	virtual Common::String getSystemLanguage() const;
+
 	virtual Common::String getScreenshotsPath();
 
 protected:
