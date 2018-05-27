@@ -143,7 +143,7 @@ float clouddeg = 0;
 int cloudson;
 
 // spell info
-SPELLTYPE spellinfo[MAXSPELL];
+SPELLTYPE spellinfo[kMaxSpell];
 
 // player info
 int movingup, movingdown, movingleft, movingright;
@@ -167,9 +167,9 @@ SDL_Surface *animsa[100];
 float playerattackofs[4][16][3];
 // [dir] [frame] [x,y ofs, completed(0/1)]
 
-float floattext[MAXFLOAT][4]; // [id] [framesleft, x, y, col]
-char *floatstri[MAXFLOAT];
-float  floaticon[MAXFLOAT][4]; // [id] [framesleft, x, y, ico]
+float floattext[kMaxFloat][4]; // [id] [framesleft, x, y, col]
+char *floatstri[kMaxFloat];
+float  floaticon[kMaxFloat][4]; // [id] [framesleft, x, y, ico]
 
 // special for animset2
 ANIMSET2TYPE animset2[7], animset9[7];
@@ -194,7 +194,7 @@ int triggers[10000][9];
 int triggerloc[320][240], ntriggers;
 
 // npc info
-NPCTYPE npcinfo[MAXNPC];
+NPCTYPE npcinfo[kMaxNPC];
 int lastnpc;
 
 // music info
@@ -214,8 +214,7 @@ int ysort[2401], lasty, firsty;
 
 int pmenu;
 
-#undef main
-int main() {
+int griffon_main() {
 	sys_initialize();
 	game_showlogos();
 	game_main();
@@ -422,7 +421,7 @@ static float RND() {
 }
 
 void game_addFloatIcon(int ico, float xloc, float yloc) {
-	for (int i = 0; i < MAXFLOAT; i++) {
+	for (int i = 0; i < kMaxFloat; i++) {
 		if (floaticon[i][0] == 0) {
 			floaticon[i][0] = 32;
 			floaticon[i][1] = xloc;
@@ -434,7 +433,7 @@ void game_addFloatIcon(int ico, float xloc, float yloc) {
 }
 
 void game_addFloatText(char *stri, float xloc, float yloc, int col) {
-	for (int i = 0; i < MAXFLOAT; i++) {
+	for (int i = 0; i < kMaxFloat; i++) {
 		if (floattext[i][0] == 0) {
 			floattext[i][0] = 32;
 			floattext[i][1] = xloc;
@@ -814,7 +813,7 @@ void game_attack() {
 void game_castspell(int spellnum, float homex, float homey, float enemyx, float enemyy, int damagewho) {
 	// spellnum 7 = sprite 6 spitfire
 
-	for (int i = 0; i < MAXSPELL; i++) {
+	for (int i = 0; i < kMaxSpell; i++) {
 		if (spellinfo[i].frame == 0) {
 			spellinfo[i].homex = homex;
 			spellinfo[i].homey = homey;
@@ -2123,7 +2122,7 @@ void game_drawhud() {
 
 	game_fillrect(videobuffer2, 0, 0, 320, 240, 0);
 
-	for (int i = 0; i < MAXFLOAT; i++) {
+	for (int i = 0; i < kMaxFloat; i++) {
 		if (floattext[i][0] > 0) {
 			int fc = (int)floattext[i][3];
 			int c = fc, c2 = 3;
@@ -3662,7 +3661,7 @@ void game_loadmap(int mapnum) {
 	if ((mapnum == 53 || mapnum == 57 || mapnum == 61 || mapnum == 65 || mapnum == 62) && scriptflag[60][0] > 0) mapnum = mapnum + 100;
 	if ((mapnum == 161 || mapnum == 162) && scriptflag[60][0] == 2) mapnum = mapnum + 100;
 
-	for (int i = 0; i < MAXSPELL; i++)
+	for (int i = 0; i < kMaxSpell; i++)
 		spellinfo[i].frame = 0;
 
 	roomlock = 0;
@@ -3853,7 +3852,7 @@ void game_loadmap(int mapnum) {
 	lastobj = 0;
 	lastnpc = 0;
 
-	for (int i = 0; i < MAXNPC; i++)
+	for (int i = 0; i < kMaxNPC; i++)
 		npcinfo[i].onmap = 0;
 
 	for (int x = 0; x <= 19; x++) {
@@ -3925,7 +3924,7 @@ void game_loadmap(int mapnum) {
 	printf("Reading %s\n", name);
 	fp = fopen(name, "r");
 
-	for (int i = 0; i < MAXNPC; i++) {
+	for (int i = 0; i < kMaxNPC; i++) {
 		INPUT("%i", &npcinfo[i].spriteset);
 		INPUT("%i", &npcinfo[i].x1);
 		INPUT("%i", &npcinfo[i].y1);
@@ -4649,7 +4648,7 @@ void game_processtrigger(int trignum) {
 		}
 	}
 
-	for (int i = 0; i < MAXFLOAT; i++) {
+	for (int i = 0; i < kMaxFloat; i++) {
 		floattext[i][0] = 0;
 		floaticon[i][0] = 0;
 	}
@@ -5084,7 +5083,7 @@ void game_swash() {
 }
 
 void game_theend() {
-	for (int i = 0; i < MAXFLOAT; i++) {
+	for (int i = 0; i < kMaxFloat; i++) {
 		floattext[i][0] = 0;
 		floaticon[i][0] = 0;
 	}
@@ -6431,7 +6430,7 @@ void game_updspells() {
 
 	float xloc = 0, yloc = 0, xst, yst, xdif, ydif;
 
-	for (int i = 0; i < MAXSPELL; i++) {
+	for (int i = 0; i < kMaxSpell; i++) {
 		if (spellinfo[i].frame > 0) {
 			int spellnum = spellinfo[i].spellnum;
 
@@ -7241,7 +7240,7 @@ void game_updspellsunder() {
 
 	if (forcepause == 1) return;
 
-	for (int i = 0; i < MAXSPELL; i++) {
+	for (int i = 0; i < kMaxSpell; i++) {
 		if (spellinfo[i].frame > 0) {
 			int spellnum = spellinfo[i].spellnum;
 
@@ -7517,68 +7516,12 @@ void game_updspellsunder() {
 	}
 }
 
-void sys_initpaths() {
-#ifdef __unix__
-	char line[256];
-	char *home = getenv("HOME");
-	if (!home) return;
-
-	sprintf(line, "%s/.griffon", home);
-	mkdir(line, 0777);
-
-	strcpy(config_ini, line);
-	strcat(config_ini, "/config.ini");
-
-	strcpy(player_sav, line);
-	strcat(player_sav, "/player%i.sav");
-#endif
-}
-
 void sys_initialize() {
 	int result;
 
-	sys_initpaths();
-
-	// init char *floatstri[MAXFLOAT]
-	for (int i = 0; i < MAXFLOAT; i++)
+	// init char *floatstri[kMaxFloat]
+	for (int i = 0; i < kMaxFloat; i++)
 		floatstri[i] = malloc(64); // 64 bytes each string (should be enough)
-
-	// set default values
-	config.scr_width = 320;
-	config.scr_height = 240;
-	config.scr_bpp = 32;
-	config.hwaccel = 0;
-	config.hwsurface = SDL_SWSURFACE;
-	config.fullscreen = 0;
-	config.music = 1;
-	config.effects = 1;
-	config.musicvol = 127;
-	config.effectsvol = 127;
-
-	config_load(&config);
-
-	printf("SCR_WIDTH: %i\n", config.scr_width);
-	printf("SCR_HEIGHT: %i\n", config.scr_height);
-	printf("SCR_BITS: %i\n", config.scr_bpp);
-
-	fullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
-
-	result = SDL_Init(SDL_INIT_EVERYTHING);
-	if (result) {
-		printf("Failed to init SDL\n");
-		exit(1);
-	}
-
-	atexit(SDL_Quit);
-
-	video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen); // SDL_FULLSCREEN
-	if (!video) {
-		printf("Failed to init Video\n");
-		exit(1);
-	}
-
-
-	SDL_WM_SetCaption("The Griffon Legend", NULL);
 
 	SDL_ShowCursor(SDL_DISABLE);
 
@@ -8097,7 +8040,7 @@ void sys_update() {
 		game_checkhit();
 	}
 
-	for (int i = 0; i < MAXFLOAT; i++) {
+	for (int i = 0; i < kMaxFloat; i++) {
 		if (floattext[i][0] > 0) {
 			spd = 0.5 * fpsr;
 			floattext[i][0] = floattext[i][0] - spd;

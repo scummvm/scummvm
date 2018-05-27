@@ -37,11 +37,13 @@
 #ifndef GRIFFON_ENGINE_H
 #define GRIFFON_ENGINE_H
 
+#include "graphics/transparent_surface.h"
+
 namespace Griffon {
 
-#define MAXNPC      32
-#define MAXFLOAT    32
-#define MAXSPELL    32
+#define kMaxNPC      32
+#define kMaxFloat    32
+#define kMaxSpell    32
 
 // spells
 #define ice     0
@@ -224,6 +226,8 @@ extern int objmapf[1000][21][15];
 extern int roomlocks[201];
 extern int secsingame, secstart;
 
+void griffon_main();
+
 void game_addFloatIcon(int ico, float xloc, float yloc);
 void game_addFloatText(char *stri, float xloc, float yloc, int col);
 void game_attack();
@@ -260,13 +264,13 @@ void game_updspells();
 void game_updspellsunder();
 
 void sys_initialize();
-void sys_line(SDL_Surface *buffer, int x1, int y1, int x2, int y2, int col);
+void sys_line(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col);
 void sys_LoadAnims();
 void sys_LoadFont();
 void sys_LoadItemImgs();
 void sys_LoadTiles();
 void sys_LoadTriggers();
-void sys_print(SDL_Surface *buffer, char *stri, int xloc, int yloc, int col);
+void sys_print(Graphics::TransparentSurface *buffer, char *stri, int xloc, int yloc, int col);
 void sys_progress(int w, int wm);
 void sys_LoadObjectDB();
 void sys_setupAudio();
