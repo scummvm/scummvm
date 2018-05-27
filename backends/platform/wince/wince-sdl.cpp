@@ -623,6 +623,25 @@ void OSystem_WINCE3::getTimeAndDate(TimeDate &t) const {
 	t.tm_wday   = systime.wDayOfWeek;
 }
 
+void OSystem_WINCE3::logMessage(LogMessageType::Type type, const char *message) {
+	OSystem_SDL::logMessage(type, message);
+
+#if defined( USE_WINDBG )
+	TCHAR buf_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, message, strlen(message) + 1, buf_unicode, sizeof(buf_unicode));
+	OutputDebugString(buf_unicode);
+
+	if (type == LogMessageType::kError) {
+#ifndef DEBUG
+		drawError(message);
+#else
+		int cmon_break_into_the_debugger_if_you_please = *(int *)(message + 1);	// bus error
+		printf("%d", cmon_break_into_the_debugger_if_you_please);			// don't optimize the int out
+#endif
+	}
+#endif
+}
+
 Common::String OSystem_WINCE3::getSystemLanguage() const {
 #ifdef USE_DETECTLANG
 	// We can not use "setlocale" (at least not for MSVC builds), since it
