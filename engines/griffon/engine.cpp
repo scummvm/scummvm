@@ -459,12 +459,15 @@ void game_attack() {
 		if (ly > 0) {
 			int o2 = 0; // ??
 			int o = objmap[lx][ly - 1];
-			if (ly > 1 && curmap == 58) o2 = objmap[lx][ly - 2];
-			if (ly > 1 && curmap == 54) o2 = objmap[lx][ly - 2];
+			if (ly > 1 && curmap == 58)
+				o2 = objmap[lx][ly - 2];
+			if (ly > 1 && curmap == 54)
+				o2 = objmap[lx][ly - 2];
 
 			// cst
 			if ((objectinfo[o][4] == 1 && (o == 0 || o > 4)) || (objectinfo[o2][4] == 0 && o2 == 10)) {
-				if (o2 == 10) o = 10;
+				if (o2 == 10)
+					o = 10;
 
 				int oscript = objectinfo[o][5];
 				if (oscript == 0 && player.inventory[INV_FLASK] < 9) {
@@ -478,7 +481,8 @@ void game_attack() {
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found Flask!");
 					itemticks = ticks + 215;
@@ -503,16 +507,20 @@ void game_attack() {
 
 					itemticks = ticks + 215;
 
-					if (curmap == 34) scriptflag[2][0] = 2;
-					if (curmap == 62) scriptflag[8][0] = 2;
-					if (curmap == 81) scriptflag[13][0] = 2;
+					if (curmap == 34)
+						scriptflag[2][0] = 2;
+					if (curmap == 62)
+						scriptflag[8][0] = 2;
+					if (curmap == 81)
+						scriptflag[13][0] = 2;
 
 					if (menabled == 1 && config.effects == 1) {
 						int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 					game_eventtext("Found the Temple Key!");
 					return;
 				}
@@ -528,7 +536,8 @@ void game_attack() {
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found the Infinite Crystal!");
 					itemticks = ticks + 215;
@@ -547,7 +556,8 @@ void game_attack() {
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found the Obsidian Shield!");
 					objmapf[4][1][2] = 1;
@@ -566,7 +576,8 @@ void game_attack() {
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 					game_eventtext("Found the Fidelis Sword!");
 					return;
 				}
@@ -588,7 +599,8 @@ void game_attack() {
 
 						objmapf[curmap][lx][ly - 1] = 1;
 
-						if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+						if (objectinfo[o][4] == 1)
+							objmap[lx][ly - 1] = 3;
 
 						game_eventtext("Found Key");
 						game_addFloatIcon(16, lx * 16, (ly - 1) * 16);
@@ -613,7 +625,8 @@ void game_attack() {
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found Mega Flask!");
 					itemticks = ticks + 215;
@@ -642,7 +655,8 @@ void game_attack() {
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found Mega Flask!");
 					itemticks = ticks + 215;
@@ -671,7 +685,8 @@ void game_attack() {
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found Lightning Bomb!");
 					itemticks = ticks + 215;
@@ -699,7 +714,8 @@ void game_attack() {
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 
 					game_eventtext("Found the Fidelis Mail!");
 					itemticks = ticks + 215;
@@ -754,7 +770,8 @@ void game_attack() {
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 					game_eventtext("Found the Blood Sword!");
 					objmapf[4][1][2] = 1;
 					return;
@@ -770,7 +787,8 @@ void game_attack() {
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 					game_eventtext("Found the Entropy Shield!");
 					objmapf[4][1][2] = 1;
 					return;
@@ -786,7 +804,8 @@ void game_attack() {
 						Mix_Volume(snd, config.effectsvol);
 					}
 
-					if (objectinfo[o][4] == 1) objmap[lx][ly - 1] = 3;
+					if (objectinfo[o][4] == 1)
+						objmap[lx][ly - 1] = 3;
 					game_eventtext("Found the Rubyscale Armour!");
 					objmapf[4][1][2] = 1;
 					return;
@@ -907,19 +926,25 @@ void game_checkhit() {
 				float ydif = player.py - npy;
 
 				float ps = player.sword;
-				if (ps > 1) ps = ps * 0.75;
+				if (ps > 1)
+					ps = ps * 0.75;
 				damage = (float)player.sworddamage * (1.0 + RND() * 1.0) * player.attackstrength / 100.0 * ps;
-				if (player.attackstrength == 100) damage = damage * 1.5;
+				if (player.attackstrength == 100)
+					damage = damage * 1.5;
 
 				int hit = 0;
 				if (player.walkdir == 0) {
-					if (abs(xdif) <= 8 && ydif >= 0 && ydif < 8) hit = 1;
+					if (abs(xdif) <= 8 && ydif >= 0 && ydif < 8)
+						hit = 1;
 				} else if (player.walkdir == 1) {
-					if (abs(xdif) <= 8 && ydif <= 0 && ydif > -8) hit = 1;
+					if (abs(xdif) <= 8 && ydif <= 0 && ydif > -8)
+						hit = 1;
 				} else if (player.walkdir == 2) {
-					if (abs(ydif) <= 8 && xdif >= -8 && xdif < 8) hit = 1;
+					if (abs(ydif) <= 8 && xdif >= -8 && xdif < 8)
+						hit = 1;
 				} else if (player.walkdir == 3) {
-					if (abs(ydif) <= 8 && xdif <= 8 && xdif > -8) hit = 1;
+					if (abs(ydif) <= 8 && xdif <= 8 && xdif > -8)
+						hit = 1;
 				}
 
 				if (hit == 1) {
@@ -966,7 +991,8 @@ void game_checkinputs() {
 	if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
 		case SDLK_ESCAPE:
-			if (itemticks < ticks) game_title(1);
+			if (itemticks < ticks)
+				game_title(1);
 			break;
 		case SDLK_RETURN:
 			if (keys[SDLK_LALT] || keys[SDLK_RALT]) {
@@ -993,7 +1019,8 @@ void game_checkinputs() {
 					int heal = 50;
 					int maxh = player.maxhp - player.hp;
 
-					if (heal > maxh) heal = maxh;
+					if (heal > maxh)
+						heal = maxh;
 
 					player.hp = player.hp + heal;
 
@@ -1018,7 +1045,8 @@ void game_checkinputs() {
 					int heal = 200;
 					int maxh = player.maxhp - player.hp;
 
-					if (heal > maxh) heal = maxh;
+					if (heal > maxh)
+						heal = maxh;
 
 					player.hp = player.hp + heal;
 
@@ -1161,10 +1189,14 @@ __exit_do:
 		movingdown = 0;
 		movingleft = 0;
 		movingright = 0;
-		if (keys[SDLK_UP]) movingup = 1;
-		if (keys[SDLK_DOWN]) movingdown = 1;
-		if (keys[SDLK_LEFT]) movingleft = 1;
-		if (keys[SDLK_RIGHT]) movingright = 1;
+		if (keys[SDLK_UP])
+			movingup = 1;
+		if (keys[SDLK_DOWN])
+			movingdown = 1;
+		if (keys[SDLK_LEFT])
+			movingleft = 1;
+		if (keys[SDLK_RIGHT])
+			movingright = 1;
 	} else {
 		movingup = 0;
 		movingdown = 0;
@@ -1177,10 +1209,14 @@ __exit_do:
 					int origin = curenemy;
 					do {
 						curenemy = curenemy - 1;
-						if (curenemy < 1) curenemy = lastnpc + nposts;
-						if (curenemy == origin) break;
-						if (curenemy <= lastnpc && npcinfo[curenemy].hp > 0) break;
-						if (curenemy > lastnpc) break;
+						if (curenemy < 1)
+							curenemy = lastnpc + nposts;
+						if (curenemy == origin)
+							break;
+						if (curenemy <= lastnpc && npcinfo[curenemy].hp > 0)
+							break;
+						if (curenemy > lastnpc)
+							break;
 					} while (1);
 					itemticks = ticks + ntickdelay;
 				}
@@ -1188,31 +1224,41 @@ __exit_do:
 					int origin = curenemy;
 					do {
 						curenemy = curenemy + 1;
-						if (curenemy > lastnpc + nposts) curenemy = 1;
-						if (curenemy == origin) break;
-						if (curenemy <= lastnpc && npcinfo[curenemy].hp > 0) break;
-						if (curenemy > lastnpc) break;
+						if (curenemy > lastnpc + nposts)
+							curenemy = 1;
+						if (curenemy == origin)
+							break;
+						if (curenemy <= lastnpc && npcinfo[curenemy].hp > 0)
+							break;
+						if (curenemy > lastnpc)
+							break;
 					} while (1);
 					itemticks = ticks + ntickdelay;
 				}
 
 
-				if (curenemy > lastnpc + nposts) curenemy = 1;
-				if (curenemy < 1) curenemy = lastnpc + nposts;
+				if (curenemy > lastnpc + nposts)
+					curenemy = 1;
+				if (curenemy < 1)
+					curenemy = lastnpc + nposts;
 			}
 		} else {
 			if (itemticks < ticks) {
 				if (keys[SDLK_UP]) {
 					curitem = curitem - 1;
 					itemticks = ticks + ntickdelay;
-					if (curitem == 4) curitem = 9;
-					if (curitem == -1) curitem = 4;
+					if (curitem == 4)
+						curitem = 9;
+					if (curitem == -1)
+						curitem = 4;
 				}
 				if (keys[SDLK_DOWN]) {
 					curitem = curitem + 1;
 					itemticks = ticks + ntickdelay;
-					if (curitem == 5) curitem = 0;
-					if (curitem == 10) curitem = 5;
+					if (curitem == 5)
+						curitem = 0;
+					if (curitem == 10)
+						curitem = 5;
 				}
 				if (keys[SDLK_LEFT]) {
 					curitem = curitem - 5;
@@ -1223,8 +1269,10 @@ __exit_do:
 					itemticks = ticks + ntickdelay;
 				}
 
-				if (curitem > 9) curitem = curitem - 10;
-				if (curitem < 0) curitem = curitem + 10;
+				if (curitem > 9)
+					curitem = curitem - 10;
+				if (curitem < 0)
+					curitem = curitem + 10;
 			}
 		}
 	}
@@ -1241,7 +1289,8 @@ void game_checktrigger() {
 
 	canusekey = 0;
 
-	if (triggerloc[lx][ly] > -1) game_processtrigger(triggerloc[lx][ly]);
+	if (triggerloc[lx][ly] > -1)
+		game_processtrigger(triggerloc[lx][ly]);
 }
 
 #ifdef OPENDINGUX
@@ -1335,8 +1384,10 @@ void game_configmenu() {
 
 			if (i == 15 || i == 17) {
 				int vol = (i == 15 ? config.musicvol : config.effectsvol) * 9 / 255;
-				if (vol < 0) vol = 0;
-				if (vol > 9) vol = 9;
+				if (vol < 0)
+					vol = 0;
+				if (vol > 9)
+					vol = 9;
 
 				strcpy(line, "[----------]");
 				line[vol + 1] = 'X';
@@ -1344,32 +1395,51 @@ void game_configmenu() {
 			}
 
 			int cl = 3;
-			if (i == 0 && config.scr_width == 320) cl = 0;
-			if (i == 1 && config.scr_width == 640) cl = 0;
-			if (i == 2 && config.scr_bpp == 16) cl = 0;
-			if (i == 3 && config.scr_bpp == 24) cl = 0;
-			if (i == 4 && config.scr_bpp == 32) cl = 0;
-			if (i == 6 && config.fullscreen != 0) cl = 0;
-			if (i == 7 && config.fullscreen == 0) cl = 0;
-			if (i == 9 && config.music == 1) cl = 0;
-			if (i == 10 && config.music == 0) cl = 0;
-			if (i == 12 && config.effects == 1) cl = 0;
-			if (i == 13 && config.effects == 0) cl = 0;
+			if (i == 0 && config.scr_width == 320)
+				cl = 0;
+			if (i == 1 && config.scr_width == 640)
+				cl = 0;
+			if (i == 2 && config.scr_bpp == 16)
+				cl = 0;
+			if (i == 3 && config.scr_bpp == 24)
+				cl = 0;
+			if (i == 4 && config.scr_bpp == 32)
+				cl = 0;
+			if (i == 6 && config.fullscreen != 0)
+				cl = 0;
+			if (i == 7 && config.fullscreen == 0)
+				cl = 0;
+			if (i == 9 && config.music == 1)
+				cl = 0;
+			if (i == 10 && config.music == 0)
+				cl = 0;
+			if (i == 12 && config.effects == 1)
+				cl = 0;
+			if (i == 13 && config.effects == 0)
+				cl = 0;
 
-			if (i > 18) cl = 0;
+			if (i > 18)
+				cl = 0;
 
 			sys_print(videobuffer, vr[i], 156 - 8 * strlen(vr[i]), sy + i * 8, 0);
 			sys_print(videobuffer, vl[i], 164, sy + i * 8, cl);
 		}
 
 		curselt = cursel;
-		if (cursel > 4) curselt = curselt + 1;
-		if (cursel > 6) curselt = curselt + 1;
-		if (cursel > 8) curselt = curselt + 1;
-		if (cursel > 10) curselt = curselt + 1;
-		if (cursel > 11) curselt = curselt + 1;
-		if (cursel > 12) curselt = curselt + 1;
-		if (cursel > 13) curselt = curselt + 1;
+		if (cursel > 4)
+			curselt = curselt + 1;
+		if (cursel > 6)
+			curselt = curselt + 1;
+		if (cursel > 8)
+			curselt = curselt + 1;
+		if (cursel > 10)
+			curselt = curselt + 1;
+		if (cursel > 11)
+			curselt = curselt + 1;
+		if (cursel > 12)
+			curselt = curselt + 1;
+		if (cursel > 13)
+			curselt = curselt + 1;
 
 		rc.x = 148 + 3 * cos(3.14159 * 2 * itemyloc / 16.0);
 		rc.y = sy + 8 * curselt - 4;
@@ -1379,8 +1449,10 @@ void game_configmenu() {
 		float yy = 255.0;
 		if (ticks < ticks1 + 1000) {
 			yy = 255.0 * ((float)(ticks - ticks1) / 1000.0);
-			if (yy < 0.0) yy = 0.0;
-			if (yy > 255.0) yy = 255.0;
+			if (yy < 0.0)
+				yy = 0.0;
+			if (yy > 255.0)
+				yy = 255.0;
 		}
 
 		SDL_SetAlpha(videobuffer, SDL_SRCALPHA, (int)yy);
@@ -1404,7 +1476,8 @@ void game_configmenu() {
 		}
 
 		itemyloc += 0.75 * fpsr;
-		while (itemyloc >= 16) itemyloc -= 16;
+		while (itemyloc >= 16)
+			itemyloc -= 16;
 
 		if (keypause < ticks) {
 			SDL_PollEvent(&event);
@@ -1413,18 +1486,21 @@ void game_configmenu() {
 			if (event.type == SDL_KEYDOWN) {
 				keypause = ticks + tickwait;
 
-				if (keys[SDLK_ESCAPE] || keys[SDLK_LALT]) break;
+				if (keys[SDLK_ESCAPE] || keys[SDLK_LALT])
+					break;
 
 				if (keys[SDLK_LEFT]) {
 					if (cursel == 11) {
 						config.musicvol = config.musicvol - 25;
-						if (config.musicvol < 0) config.musicvol = 0;
+						if (config.musicvol < 0)
+							config.musicvol = 0;
 
 						Mix_Volume(musicchannel, config.musicvol);
 						Mix_Volume(menuchannel, config.musicvol);
 					} else if (cursel == 12) {
 						config.effectsvol = config.effectsvol - 25;
-						if (config.effectsvol < 0) config.effectsvol = 0;
+						if (config.effectsvol < 0)
+							config.effectsvol = 0;
 
 						Mix_Volume(-1, config.effectsvol);
 						Mix_Volume(musicchannel, config.musicvol);
@@ -1439,13 +1515,15 @@ void game_configmenu() {
 				if (keys[SDLK_RIGHT]) {
 					if (cursel == 11) {
 						config.musicvol = config.musicvol + 25;
-						if (config.musicvol > 255) config.musicvol = 255;
+						if (config.musicvol > 255)
+							config.musicvol = 255;
 
 						Mix_Volume(musicchannel, config.musicvol);
 						Mix_Volume(menuchannel, config.musicvol);
 					} else if (cursel == 12) {
 						config.effectsvol = config.effectsvol + 25;
-						if (config.effectsvol > 255) config.effectsvol = 255;
+						if (config.effectsvol > 255)
+							config.effectsvol = 255;
 
 						Mix_Volume(-1, config.effectsvol);
 						Mix_Volume(musicchannel, config.musicvol);
@@ -1460,11 +1538,13 @@ void game_configmenu() {
 
 				if (keys[SDLK_UP]) {
 					cursel--;
-					if (cursel < MINCURSEL) cursel = 14;
+					if (cursel < MINCURSEL)
+						cursel = 14;
 				}
 				if (keys[SDLK_DOWN]) {
 					cursel++;
-					if (cursel > 14) cursel = MINCURSEL;
+					if (cursel > 14)
+						cursel = MINCURSEL;
 				}
 
 				if (keys[SDLK_LCTRL] || keys[SDLK_RETURN]) {
@@ -1498,8 +1578,10 @@ void game_configmenu() {
 						fullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
 
 						int b = 16;
-						if (cursel == 3) b = 24;
-						if (cursel == 4) b = 32;
+						if (cursel == 3)
+							b = 24;
+						if (cursel == 4)
+							b = 32;
 						video = SDL_SetVideoMode(config.scr_width, config.scr_height, b, fullscreen);
 						if (video == 0) {
 							video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
@@ -1572,7 +1654,8 @@ void game_configmenu() {
 		}
 
 		clouddeg += 0.01 * fpsr;
-		while (clouddeg >= 360) clouddeg = clouddeg - 360;
+		while (clouddeg >= 360)
+			clouddeg = clouddeg - 360;
 
 		SDL_Delay(10);
 	} while (1);
@@ -1596,7 +1679,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 	} else {
 		ratio = 0;
 		heal = 0;
-		if (damage < 0) heal = 1;
+		if (damage < 0)
+			heal = 1;
 		damage = abs(damage);
 
 		if (heal == 0) {
@@ -1606,13 +1690,15 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 			}
 
 			npcinfo[npcnum].hp -= damage;
-			if (npcinfo[npcnum].hp < 0) npcinfo[npcnum].hp = 0;
+			if (npcinfo[npcnum].hp < 0)
+				npcinfo[npcnum].hp = 0;
 
 			sprintf(line, "-%i", damage);
 			fcol = 1;
 		} else {
 			npcinfo[npcnum].hp += damage;
-			if (npcinfo[npcnum].hp > npcinfo[npcnum].maxhp) npcinfo[npcnum].hp = npcinfo[npcnum].maxhp;
+			if (npcinfo[npcnum].hp > npcinfo[npcnum].maxhp)
+				npcinfo[npcnum].hp = npcinfo[npcnum].maxhp;
 
 			sprintf(line, "+%i", damage);
 			fcol = 5;
@@ -1620,12 +1706,14 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 
 		npcinfo[npcnum].pause = ticks + 900;
 
-		if (spell == 0) player.attackstrength = ratio;
+		if (spell == 0)
+			player.attackstrength = ratio;
 	}
 
 	game_addFloatText(line, npcinfo[npcnum].x + 12 - 4 * strlen(line), npcinfo[npcnum].y + 16, fcol);
 
-	if (npcinfo[npcnum].spriteset == 12) game_castspell(9, npcinfo[npcnum].x, npcinfo[npcnum].y, player.px, player.py, npcnum);
+	if (npcinfo[npcnum].spriteset == 12)
+		game_castspell(9, npcinfo[npcnum].x, npcinfo[npcnum].y, player.px, player.py, npcnum);
 
 	// if enemy is killed
 	if (npcinfo[npcnum].hp == 0) {
@@ -1640,7 +1728,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (objmap[lx][ly] == -1) objmap[lx][ly] = 4;
+				if (objmap[lx][ly] == -1)
+					objmap[lx][ly] = 4;
 			}
 		}
 
@@ -1653,7 +1742,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (objmap[lx][ly] == -1) objmap[lx][ly] = 12;
+				if (objmap[lx][ly] == -1)
+					objmap[lx][ly] = 12;
 			}
 		}
 
@@ -1666,7 +1756,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (objmap[lx][ly] == -1) objmap[lx][ly] = 13;
+				if (objmap[lx][ly] == -1)
+					objmap[lx][ly] = 13;
 			}
 		}
 
@@ -1677,7 +1768,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 
 			alive = 0;
 			for (int i = 1; i <= lastnpc; i++) {
-				if (npcinfo[i].hp > 0) alive = 1;
+				if (npcinfo[i].hp > 0)
+					alive = 1;
 			}
 
 			if (alive == 0) {
@@ -1694,7 +1786,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (lx == cx && ly == cy) player.py = player.py + 16;
+				if (lx == cx && ly == cy)
+					player.py = player.py + 16;
 				SDL_FillRect(clipbg2, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 				scriptflag[2][0] = 1;
 			}
@@ -1707,7 +1800,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 
 			alive = 0;
 			for (int i = 1; i <= lastnpc; i++) {
-				if (npcinfo[i].hp > 0) alive = 1;
+				if (npcinfo[i].hp > 0)
+					alive = 1;
 			}
 
 			if (alive == 0) {
@@ -1724,7 +1818,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (lx == cx && ly == cy) player.py = player.py + 16;
+				if (lx == cx && ly == cy)
+					player.py = player.py + 16;
 				scriptflag[3][0] = 1;
 				SDL_FillRect(clipbg2, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 			}
@@ -1763,7 +1858,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 
 			alive = 0;
 			for (int i = 1; i <= lastnpc; i++) {
-				if (npcinfo[i].hp > 0) alive = 1;
+				if (npcinfo[i].hp > 0)
+					alive = 1;
 			}
 
 			if (alive == 0) {
@@ -1780,7 +1876,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (lx == cx && ly == cy) player.py = player.py + 16;
+				if (lx == cx && ly == cy)
+					player.py = player.py + 16;
 				scriptflag[5][0] = 1;
 				SDL_FillRect(clipbg2, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 			}
@@ -1794,7 +1891,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 
 			alive = 0;
 			for (int i = 1; i <= lastnpc; i++) {
-				if (npcinfo[i].hp > 0) alive = 1;
+				if (npcinfo[i].hp > 0)
+					alive = 1;
 			}
 
 			if (alive == 0) {
@@ -1811,7 +1909,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (lx == cx && ly == cy) player.py = player.py + 16;
+				if (lx == cx && ly == cy)
+					player.py = player.py + 16;
 				SDL_FillRect(clipbg2, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 				scriptflag[8][0] = 1;
 			}
@@ -1825,7 +1924,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 
 				alive = 0;
 				for (int i = 1; i <= lastnpc; i++) {
-					if (npcinfo[i].hp > 0) alive = 1;
+					if (npcinfo[i].hp > 0)
+						alive = 1;
 				}
 
 				if (alive == 0) {
@@ -1842,7 +1942,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 					lx = (int)npx / 16;
 					ly = (int)npy / 16;
 
-					if (lx == cx && ly == cy) player.py = player.py + 16;
+					if (lx == cx && ly == cy)
+						player.py = player.py + 16;
 					scriptflag[s][0] = 1;
 					SDL_FillRect(clipbg2, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 				}
@@ -1856,7 +1957,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 
 			alive = 0;
 			for (int i = 1; i <= lastnpc; i++) {
-				if (npcinfo[i].hp > 0) alive = 1;
+				if (npcinfo[i].hp > 0)
+					alive = 1;
 			}
 
 			if (alive == 0) {
@@ -1873,7 +1975,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (lx == cx && ly == cy) player.py = player.py + 16;
+				if (lx == cx && ly == cy)
+					player.py = player.py + 16;
 			}
 		}
 
@@ -1884,7 +1987,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 
 			alive = 0;
 			for (int i = 1; i <= lastnpc; i++) {
-				if (npcinfo[i].hp > 0) alive = 1;
+				if (npcinfo[i].hp > 0)
+					alive = 1;
 			}
 
 			if (alive == 0) {
@@ -1901,7 +2005,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (lx == cx && ly == cy) player.py = player.py + 16;
+				if (lx == cx && ly == cy)
+					player.py = player.py + 16;
 				scriptflag[12][0] = 1;
 				SDL_FillRect(clipbg2, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 			}
@@ -1914,7 +2019,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 
 			alive = 0;
 			for (int i = 1; i <= lastnpc; i++) {
-				if (npcinfo[i].hp > 0) alive = 1;
+				if (npcinfo[i].hp > 0)
+					alive = 1;
 			}
 
 			if (alive == 0) {
@@ -1931,7 +2037,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (lx == cx && ly == cy) player.py = player.py + 16;
+				if (lx == cx && ly == cy)
+					player.py = player.py + 16;
 				SDL_FillRect(clipbg2, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 				scriptflag[13][0] = 1;
 			}
@@ -1941,7 +2048,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 		if (npcinfo[npcnum].script == 15 && scriptflag[15][0] == 0) {
 			alive = 0;
 			for (int i = 1; i <= lastnpc; i++) {
-				if (npcinfo[i].hp > 0) alive = 1;
+				if (npcinfo[i].hp > 0)
+					alive = 1;
 			}
 
 			if (alive == 0) {
@@ -1961,7 +2069,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (lx == cx && ly == cy) player.py = player.py + 16;
+				if (lx == cx && ly == cy)
+					player.py = player.py + 16;
 				SDL_FillRect(clipbg2, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 				scriptflag[15][0] = 1;
 
@@ -1981,7 +2090,8 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (lx == cx && ly == cy) player.py = player.py + 16;
+				if (lx == cx && ly == cy)
+					player.py = player.py + 16;
 				SDL_FillRect(clipbg2, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 
 				scriptflag[16][0] = 1;
@@ -2002,13 +2112,15 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 				lx = (int)npx / 16;
 				ly = (int)npy / 16;
 
-				if (lx == cx && ly == cy) player.py = player.py + 16;
+				if (lx == cx && ly == cy)
+					player.py = player.py + 16;
 				SDL_FillRect(clipbg2, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 				scriptflag[17][0] = 1;
 			}
 		}
 
-		if (npcinfo[npcnum].script == 14) game_endofgame();
+		if (npcinfo[npcnum].script == 14)
+			game_endofgame();
 	}
 }
 
@@ -2016,10 +2128,12 @@ void game_damageplayer(int damage) {
 	char line[256];
 
 	player.hp -= damage;
-	if (player.hp < 0) player.hp = 0;
+	if (player.hp < 0)
+		player.hp = 0;
 
 	sprintf(line, "-%i", damage);
-	if (damage == 0) strcpy(line, "miss!");
+	if (damage == 0)
+		strcpy(line, "miss!");
 
 	game_addFloatText(line, player.px + 12 - 4 * strlen(line), player.py + 16, 4);
 
@@ -2048,8 +2162,10 @@ void game_drawanims(int Layer) {
 							int curtilex = c % 20;
 							int curtiley = (c - curtilex) / 20;
 
-							if (curmap == 58 && scriptflag[60][0] > 0) curtilex = 1;
-							if (curmap == 54 && scriptflag[60][0] > 1) curtilex = 1;
+							if (curmap == 58 && scriptflag[60][0] > 0)
+								curtilex = 1;
+							if (curmap == 54 && scriptflag[60][0] > 1)
+								curtilex = 1;
 							rcSrc.x = curtilex * 16;
 							rcSrc.y = curtiley * 16;
 							rcSrc.w = 16;
@@ -2090,11 +2206,13 @@ void game_drawanims(int Layer) {
 										for (int ff = 0; ff <= 5; ff++) {
 											int ffa = 20 * 5 - 1 + ff * 20;
 											int ffb = 20 * 5 + 4 + ff * 20;
-											if (curtile > ffa && curtile < ffb) pass = 0;
+											if (curtile > ffa && curtile < ffb)
+												pass = 0;
 										}
 									}
 
-									if (pass == 1) SDL_BlitSurface(tiles[curtilel], &rcSrc, videobuffer, &rcDest);
+									if (pass == 1)
+										SDL_BlitSurface(tiles[curtilel], &rcSrc, videobuffer, &rcDest);
 								}
 							}
 						}
@@ -2127,10 +2245,13 @@ void game_drawhud() {
 			int fc = (int)floattext[i][3];
 			int c = fc, c2 = 3;
 
-			if (fc == 4) c = 1;
-			else if (fc == 5) c = 0;
+			if (fc == 4)
+				c = 1;
+			else if (fc == 5)
+				c = 0;
 
-			if (fc == 1 || fc == 3) c2 = 2;
+			if (fc == 1 || fc == 3)
+				c2 = 2;
 
 			if (fc != 0) {
 				sys_print(videobuffer, floatstri[i], (int)(floattext[i][1]) + 0, (int)(floattext[i][2]) - 1, c2);
@@ -2150,7 +2271,8 @@ void game_drawhud() {
 			rcDest.x = ix;
 			rcDest.y = iy;
 
-			if (ico != 99) SDL_BlitSurface(itemimg[ico], NULL, videobuffer, &rcDest);
+			if (ico != 99)
+				SDL_BlitSurface(itemimg[ico], NULL, videobuffer, &rcDest);
 			if (ico == 99) {
 				SDL_SetAlpha(spellimg, SDL_SRCALPHA, (int)(RND() * 96) + 96);
 
@@ -2220,9 +2342,12 @@ void game_drawhud() {
 		rcDest.y = 46 + 77;
 
 		int amap = 0;
-		if (curmap > 46) amap = 2;
-		if (curmap > 67) amap = 3;
-		if (curmap > 5 && curmap < 42) amap = 1;
+		if (curmap > 46)
+			amap = 2;
+		if (curmap > 67)
+			amap = 3;
+		if (curmap > 5 && curmap < 42)
+			amap = 1;
 		SDL_BlitSurface(mapimg[amap], NULL, videobuffer, &rcDest);
 
 		ccc = SDL_MapRGB(videobuffer->format, 128 + 127 * sin(3.141592 * 2 * itemyloc / 16), 0, 0);
@@ -2244,7 +2369,8 @@ void game_drawhud() {
 		sys_print(videobuffer, line, sx, sy, player.hp <= player.maxhp * 0.25 ? (int)player.hpflash : 0);
 
 		sprintf(line, "Level : %i", player.level);
-		if (player.level == player.maxlevel) strcpy(line, "Level : MAX");
+		if (player.level == player.maxlevel)
+			strcpy(line, "Level : MAX");
 		sys_print(videobuffer, line, sx, sy + 8, 0);
 
 		// experience
@@ -2280,17 +2406,20 @@ void game_drawhud() {
 		rcSrc.y = 91;
 
 		int ss = (player.sword - 1) * 3;
-		if (player.sword == 3) ss = 18;
+		if (player.sword == 3)
+			ss = 18;
 		SDL_BlitSurface(itemimg[ss], NULL, videobuffer, &rcSrc);
 
 		rcSrc.x = rcSrc.x + 16;
 		ss = (player.shield - 1) * 3 + 1;
-		if (player.shield == 3) ss = 19;
+		if (player.shield == 3)
+			ss = 19;
 		SDL_BlitSurface(itemimg[ss], NULL, videobuffer, &rcSrc);
 
 		rcSrc.x = rcSrc.x + 16;
 		ss = (player.armour - 1) * 3 + 2;
-		if (player.armour == 3) ss = 20;
+		if (player.armour == 3)
+			ss = 20;
 		SDL_BlitSurface(itemimg[ss], NULL, videobuffer, &rcSrc);
 
 		for (int i = 0; i <= 4; i++) {
@@ -2298,11 +2427,16 @@ void game_drawhud() {
 			sy = 70 + i * 24;
 			rcSrc.x = sx;
 			rcSrc.y = sy;
-			if (i == 0) SDL_BlitSurface(itemimg[6], NULL, videobuffer, &rcSrc);
-			if (i == 1) SDL_BlitSurface(itemimg[12], NULL, videobuffer, &rcSrc);
-			if (i == 2) SDL_BlitSurface(itemimg[17], NULL, videobuffer, &rcSrc);
-			if (i == 3) SDL_BlitSurface(itemimg[16], NULL, videobuffer, &rcSrc);
-			if (i == 4) SDL_BlitSurface(itemimg[14], NULL, videobuffer, &rcSrc);
+			if (i == 0)
+				SDL_BlitSurface(itemimg[6], NULL, videobuffer, &rcSrc);
+			if (i == 1)
+				SDL_BlitSurface(itemimg[12], NULL, videobuffer, &rcSrc);
+			if (i == 2)
+				SDL_BlitSurface(itemimg[17], NULL, videobuffer, &rcSrc);
+			if (i == 3)
+				SDL_BlitSurface(itemimg[16], NULL, videobuffer, &rcSrc);
+			if (i == 4)
+				SDL_BlitSurface(itemimg[14], NULL, videobuffer, &rcSrc);
 
 			sprintf(line, "x%i", player.inventory[i]);
 			sys_print(videobuffer, line, sx + 17, sy + 7, 0);
