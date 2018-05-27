@@ -627,7 +627,7 @@ const int MONSTER_GRID_BITMASK[12] = {
 };
 
 const int INDOOR_OBJECT_X[2][12] = {
-	{ 5, -7, -112, 98, -8, -65, 49, -9, -34, 16, -58, 40 },
+	{ -5, -7, -112, 98, -8, -65, 49, -9, -34, 16, -58, 40 },
 	{ -35, -35, -142, 68, -35, -95, 19, -35, -62, -14, -98, 16 }
 };
 
@@ -1694,6 +1694,7 @@ const char *const SELECT_CLASS_BEFORE_SAVING =
 const char *const EXCHANGE_ATTR_WITH = "Exchange %s with...";
 
 const int NEW_CHAR_SKILLS[10] = { 1, 5, -1, -1, 4, 0, 0, -1, 6, 11 };
+const int NEW_CHAR_SKILLS_OFFSET[10] = { 0, 0, 0, 5, 0, 0, 0, 0, 0, 0 };
 const int NEW_CHAR_SKILLS_LEN[10] = { 11, 8, 0, 0, 12, 8, 8, 0, 9, 11 };
 const int NEW_CHAR_RACE_SKILLS[10] = { 14, -1, 17, 16, -1, 0, 0, 0, 0, 0 };
 
@@ -2255,6 +2256,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(SELECT_CLASS_BEFORE_SAVING);
 	file.syncString(EXCHANGE_ATTR_WITH);
 	file.syncNumbers((const int *)NEW_CHAR_SKILLS, 10);
+	file.syncNumbers((const int *)NEW_CHAR_SKILLS_OFFSET, 10);
 	file.syncNumbers((const int *)NEW_CHAR_SKILLS_LEN, 10);
 	file.syncNumbers((const int *)NEW_CHAR_RACE_SKILLS, 10);
 	file.syncNumbers((const int *)RACE_MAGIC_RESISTENCES, 5);

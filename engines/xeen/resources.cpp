@@ -340,6 +340,7 @@ void Resources::loadData() {
 	file.syncString(SELECT_CLASS_BEFORE_SAVING);
 	file.syncString(EXCHANGE_ATTR_WITH);
 	file.syncNumbers((int *)NEW_CHAR_SKILLS, 10);
+	file.syncNumbers((int *)NEW_CHAR_SKILLS_OFFSET, 10);
 	file.syncNumbers((int *)NEW_CHAR_SKILLS_LEN, 10);
 	file.syncNumbers((int *)NEW_CHAR_RACE_SKILLS, 10);
 	file.syncNumbers((int *)RACE_MAGIC_RESISTENCES, 5);
