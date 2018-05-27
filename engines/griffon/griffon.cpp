@@ -26,10 +26,12 @@
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "graphics/pixelformat.h"
 
 #include "engines/util.h"
 
 #include "griffon/griffon.h"
+#include "griffon/engine.h"
 
 namespace Griffon {
 
@@ -45,7 +47,9 @@ GriffonEngine::~GriffonEngine() {
 }
 
 Common::Error GriffonEngine::run() {
-	initGraphics(320, 200);
+	initGraphics(320, 240, new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+
+	griffon_main();
 
 	return Common::kNoError;
 }
