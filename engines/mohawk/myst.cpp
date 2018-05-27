@@ -78,12 +78,9 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_video = nullptr;
 	_gfx = nullptr;
 	_console = nullptr;
-	_scriptParser = nullptr;
 	_gameState = nullptr;
 	_optionsDialog = nullptr;
 	_rnd = nullptr;
-
-	_prevStack = nullptr;
 
 	_mouseClicked = false;
 	_mouseMoved = false;
@@ -103,10 +100,8 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete _video;
 	delete _sound;
 	delete _console;
-	delete _scriptParser;
 	delete _gameState;
 	delete _optionsDialog;
-	delete _prevStack;
 	delete _rnd;
 }
 
@@ -565,64 +560,60 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	if (linkSrcSound)
 		playSoundBlocking(linkSrcSound);
 
-	_card->leave();
-	_card.reset();
-
-	// Delete the previous stack and move the current stack to the previous one
-	// There's probably a better way to do this, but the script classes shouldn't
-	// take up much memory.
-	delete _prevStack;
-	_prevStack = _scriptParser;
+	if (_card) {
+		_card->leave();
+		_card.reset();
+	}
 
 	_curStack = stack;
 
 	switch (_curStack) {
 	case kChannelwoodStack:
 		_gameState->_globals.currentAge = kChannelwood;
-		_scriptParser = new MystStacks::Channelwood(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::Channelwood(this));
 		break;
 	case kCreditsStack:
-		_scriptParser = new MystStacks::Credits(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::Credits(this));
 		break;
 	case kDemoStack:
 		_gameState->_globals.currentAge = kSelenitic;
-		_scriptParser = new MystStacks::Demo(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::Demo(this));
 		break;
 	case kDniStack:
 		_gameState->_globals.currentAge = kDni;
-		_scriptParser = new MystStacks::Dni(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::Dni(this));
 		break;
 	case kIntroStack:
-		_scriptParser = new MystStacks::Intro(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::Intro(this));
 		break;
 	case kMakingOfStack:
-		_scriptParser = new MystStacks::MakingOf(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::MakingOf(this));
 		break;
 	case kMechanicalStack:
 		_gameState->_globals.currentAge = kMechanical;
-		_scriptParser = new MystStacks::Mechanical(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::Mechanical(this));
 		break;
 	case kMystStack:
 		_gameState->_globals.currentAge = kMystLibrary;
-		_scriptParser = new MystStacks::Myst(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::Myst(this));
 		break;
 	case kDemoPreviewStack:
-		_scriptParser = new MystStacks::Preview(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::Preview(this));
 		break;
 	case kSeleniticStack:
 		_gameState->_globals.currentAge = kSelenitic;
-		_scriptParser = new MystStacks::Selenitic(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::Selenitic(this));
 		break;
 	case kDemoSlidesStack:
 		_gameState->_globals.currentAge = kStoneship;
-		_scriptParser = new MystStacks::Slides(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::Slides(this));
 		break;
 	case kStoneshipStack:
 		_gameState->_globals.currentAge = kStoneship;
-		_scriptParser = new MystStacks::Stoneship(this);
+		_scriptParser = MystScriptParserPtr(new MystStacks::Stoneship(this));
 		break;
 	default:
-		error("Unknown Myst stack");
+		error("Unknown Myst stack %d", _curStack);
 	}
 
 	// If the array is empty, add a new one. Otherwise, delete the first

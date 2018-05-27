@@ -26,7 +26,6 @@
 #include "mohawk/console.h"
 #include "mohawk/mohawk.h"
 #include "mohawk/resource_cache.h"
-#include "mohawk/myst_scripts.h"
 #include "mohawk/video.h"
 
 #include "audio/mixer.h"
@@ -123,6 +122,7 @@ enum {
 };
 
 typedef Common::SharedPtr<MystCard> MystCardPtr;
+typedef Common::SharedPtr<MystScriptParser> MystScriptParserPtr;
 
 class MohawkEngine_Myst : public MohawkEngine {
 protected:
@@ -163,7 +163,7 @@ public:
 	MystSound *_sound;
 	MystGraphics *_gfx;
 	MystGameState *_gameState;
-	MystScriptParser *_scriptParser;
+	MystScriptParserPtr _scriptParser;
 	Common::RandomSource *_rnd;
 
 	MystArea *loadResource(Common::SeekableReadStream *rlstStream, MystArea *parent);
@@ -199,7 +199,6 @@ public:
 private:
 	MystConsole *_console;
 	MystOptionsDialog *_optionsDialog;
-	MystScriptParser *_prevStack;
 	ResourceCache _cache;
 
 	uint16 _curStack;

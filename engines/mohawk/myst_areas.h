@@ -24,6 +24,7 @@
 #define MYST_AREAS_H
 
 #include "mohawk/myst.h"
+#include "mohawk/myst_scripts.h"
 #include "mohawk/video.h"
 
 #include "common/rect.h"

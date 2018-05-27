@@ -32,6 +32,7 @@
 
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
+#include "mohawk/myst_scripts.h"
 #endif
 
 #ifdef ENABLE_RIVEN

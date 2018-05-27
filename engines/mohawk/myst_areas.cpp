@@ -147,7 +147,10 @@ MystAreaAction::MystAreaAction(MohawkEngine_Myst *vm, ResourceType type, Common:
 }
 
 void MystAreaAction::handleMouseUp() {
-	_vm->_scriptParser->runScript(_script, this);
+	// Keep a reference to the stack so it is not freed if a script switches to another stack
+	MystScriptParserPtr parser = _vm->_scriptParser;
+
+	parser->runScript(_script, this);
 }
 
 const Common::String MystAreaAction::describe() {
