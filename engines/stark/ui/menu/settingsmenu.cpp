@@ -178,20 +178,18 @@ void SettingsMenuScreen::open() {
 			nullptr));
 	_widgets.back()->setVisible(false);
 
-	if (!StarkSettings->isDemo()) {
-		_widgets.push_back(new CheckboxWidget(
-				"AllowFF",
-				StarkSettings->getBoolSetting(Settings::kTimeSkip),
-				CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kTimeSkip>),
-				MOVE_HANDLER(SettingsMenuScreen, textHandler<kAllowFF>)));
-		_widgets.back()->setupSounds(3, 4);
+	_widgets.push_back(new CheckboxWidget(
+			"AllowFF",
+			StarkSettings->getBoolSetting(Settings::kTimeSkip),
+			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kTimeSkip>),
+			MOVE_HANDLER(SettingsMenuScreen, textHandler<kAllowFF>)));
+	_widgets.back()->setupSounds(3, 4);
 		
-		_widgets.push_back(new StaticLocationWidget(
-				"AllowFFHelp",
-				nullptr,
-				nullptr));
-		_widgets.back()->setVisible(false);
-	}
+	_widgets.push_back(new StaticLocationWidget(
+			"AllowFFHelp",
+			nullptr,
+			nullptr));
+	_widgets.back()->setVisible(false);
 }
 
 void SettingsMenuScreen::close() {

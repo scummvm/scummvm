@@ -142,24 +142,27 @@ StaticLocationWidget::StaticLocationWidget(const char *renderEntryName, WidgetOn
 		_visible(true) {
 	Resources::Location *location = StarkStaticProvider->getLocation();
 
-	// TODO: Move to location ?
-	Gfx::RenderEntryArray renderEntries = location->listRenderEntries();
-	for (uint i = 0; i < renderEntries.size(); i++) {
-		if (renderEntries[i]->getName().equalsIgnoreCase(renderEntryName)) {
-			_renderEntry = renderEntries[i];
-			break;
+	if (renderEntryName) {
+		Gfx::RenderEntryArray renderEntries = location->listRenderEntries();
+		for (uint i = 0; i < renderEntries.size(); i++) {
+			if (renderEntries[i]->getName().equalsIgnoreCase(renderEntryName)) {
+				_renderEntry = renderEntries[i];
+				break;
+			}
+		}
+
+		if (_renderEntry == nullptr) {
+			debug("Unable to find render entry with name '%s' in location '%s'", renderEntryName, location->getName().c_str());
+		} else {
+			_item = _renderEntry->getOwner();
 		}
 	}
-
-	if (_renderEntry == nullptr) {
-		error("Unable to find render entry with name '%s' in location '%s'", renderEntryName, location->getName().c_str());
-	}
-
-	_item = _renderEntry->getOwner();
 }
 
 void StaticLocationWidget::render() {
-	_renderEntry->render();
+	if (_renderEntry) {
+		_renderEntry->render();
+	}
 }
 
 bool StaticLocationWidget::isVisible() const {
@@ -171,6 +174,8 @@ void StaticLocationWidget::setVisible(bool visible) {
 }
 
 bool StaticLocationWidget::isMouseInside(const Common::Point &mousePos) const {
+	if (!_renderEntry) return false;
+
 	Common::Point relativePosition;
 	return _renderEntry->containsPoint(mousePos, relativePosition);
 }
@@ -193,7 +198,9 @@ void StaticLocationWidget::onClick() {
 }
 
 void StaticLocationWidget::onGameLoop() {
-	_item->onGameLoop();
+	if (_item) {
+		_item->onGameLoop();
+	}
 }
 
 void StaticLocationWidget::onMouseEnter() {
@@ -219,6 +226,8 @@ void StaticLocationWidget::setupSounds(int16 enterSound, int16 clickSound) {
 }
 
 void StaticLocationWidget::setTextColor(uint32 textColor) {
+	if (!_renderEntry) return;
+
 	VisualText *text = _renderEntry->getText();
 	assert(text);
 
@@ -226,6 +235,8 @@ void StaticLocationWidget::setTextColor(uint32 textColor) {
 }
 
 void StaticLocationWidget::resetTextTexture() {
+	if (!_renderEntry) return;
+
 	VisualText *text = _renderEntry->getText();
 	if (text) {
 		text->resetTexture();
@@ -239,7 +250,11 @@ void StaticLocationWidget::onMouseMove(const Common::Point &mousePos) {
 }
 
 Common::Point StaticLocationWidget::getPosition() const {
-	return _renderEntry->getPosition();
+	if (_renderEntry) {
+		return _renderEntry->getPosition();
+	}
+
+	return Common::Point(0, 0);
 }
 
 StaticLocationWidget::~StaticLocationWidget() {
