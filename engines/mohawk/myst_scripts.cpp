@@ -23,6 +23,7 @@
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/myst_sound.h"
@@ -163,16 +164,16 @@ void MystScriptParser::overrideOpcode(uint16 op, const char *name, MystScriptPar
 	warning("Unable to find opcode %d to override with '%s'", op, name);
 }
 
-void MystScriptParser::runScript(MystScript script, MystArea *invokingResource) {
+void MystScriptParser::runScript(const MystScript &script, MystArea *invokingResource) {
 	_scriptNestingLevel++;
 
-	for (uint16 i = 0; i < script->size(); i++) {
-		MystScriptEntry &entry = (*script)[i];
+	for (uint16 i = 0; i < script.size(); i++) {
+		const MystScriptEntry &entry = script[i];
 
 		if (entry.type == kMystScriptNormal)
 			_invokingResource = invokingResource;
 		else
-			_invokingResource = _vm->_resources[entry.resourceId];
+			_invokingResource = _vm->getCard()->getResource<MystArea>(entry.resourceId);
 
 		runOpcode(entry.opcode, entry.var, entry.args);
 	}
@@ -233,13 +234,12 @@ MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, Myst
 	assert(stream);
 	assert(type != kMystScriptNone);
 
-	MystScript script = MystScript(new Common::Array<MystScriptEntry>());
-
 	uint16 opcodeCount = stream->readUint16LE();
-	script->resize(opcodeCount);
+
+	MystScript script(opcodeCount);
 
 	for (uint16 i = 0; i < opcodeCount; i++) {
-		MystScriptEntry &entry = (*script)[i];
+		MystScriptEntry &entry = script[i];
 		entry.type = type;
 
 		// Resource ID only exists in INIT and EXIT scripts
@@ -316,12 +316,12 @@ void MystScriptParser::NOP(uint16 var, const ArgumentsArray &args) {
 
 void MystScriptParser::o_toggleVar(uint16 var, const ArgumentsArray &args) {
 	toggleVar(var);
-	_vm->redrawArea(var);
+	_vm->getCard()->redrawArea(var);
 }
 
 void MystScriptParser::o_setVar(uint16 var, const ArgumentsArray &args) {
 	if (setVarValue(var, args[0]))
-		_vm->redrawArea(var);
+		_vm->getCard()->redrawArea(var);
 }
 
 void MystScriptParser::o_changeCardSwitch4(uint16 var, const ArgumentsArray &args) {
@@ -385,7 +385,7 @@ void MystScriptParser::o_takePage(uint16 var, const ArgumentsArray &args) {
 
 	if (oldPage != _globals.heldPage) {
 		_vm->_cursor->hideCursor();
-		_vm->redrawArea(var);
+		_vm->getCard()->redrawArea(var);
 
 		// Set new cursor
 		if (_globals.heldPage != kNoPage)
@@ -398,8 +398,8 @@ void MystScriptParser::o_takePage(uint16 var, const ArgumentsArray &args) {
 }
 
 void MystScriptParser::o_redrawCard(uint16 var, const ArgumentsArray &args) {
-	_vm->drawCardBackground();
-	_vm->drawResourceImages();
+	_vm->getCard()->drawBackground();
+	_vm->getCard()->drawResourceImages();
 	_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 }
 
@@ -464,7 +464,7 @@ void MystScriptParser::o_drawAreaState(uint16 var, const ArgumentsArray &args) {
 }
 
 void MystScriptParser::o_redrawAreaForVar(uint16 var, const ArgumentsArray &args) {
-	_vm->redrawArea(var);
+	_vm->getCard()->redrawArea(var);
 }
 
 void MystScriptParser::o_changeCardDirectional(uint16 var, const ArgumentsArray &args) {
@@ -483,7 +483,7 @@ void MystScriptParser::o_changeCardDirectional(uint16 var, const ArgumentsArray 
 // Opcode 18 then "pops" this stored CardId and returns to that card.
 
 void MystScriptParser::o_changeCardPush(uint16 var, const ArgumentsArray &args) {
-	_savedCardId = _vm->getCurCard();
+	_savedCardId = _vm->getCard()->getId();
 
 	uint16 cardId = args[0];
 	TransitionType transition = static_cast<TransitionType>(args[1]);
@@ -510,7 +510,7 @@ void MystScriptParser::o_enableAreas(uint16 var, const ArgumentsArray &args) {
 		if (args[i + 1] == 0xFFFF)
 			resource = _invokingResource;
 		else
-			resource = _vm->_resources[args[i + 1]];
+			resource = _vm->getCard()->getResource<MystArea>(args[i + 1]);
 
 		if (resource)
 			resource->setEnabled(true);
@@ -527,7 +527,7 @@ void MystScriptParser::o_disableAreas(uint16 var, const ArgumentsArray &args) {
 		if (args[i + 1] == 0xFFFF)
 			resource = _invokingResource;
 		else
-			resource = _vm->_resources[args[i + 1]];
+			resource = _vm->getCard()->getResource<MystArea>(args[i + 1]);
 
 		if (resource)
 			resource->setEnabled(false);
@@ -548,7 +548,7 @@ void MystScriptParser::o_toggleAreasActivation(uint16 var, const ArgumentsArray 
 		if (args[i + 1] == 0xFFFF)
 			resource = _invokingResource;
 		else
-			resource = _vm->_resources[args[i + 1]];
+			resource = _vm->getCard()->getResource<MystArea>(args[i + 1]);
 
 		if (resource)
 			resource->setEnabled(!resource->isEnabled());
@@ -804,8 +804,8 @@ void MystScriptParser::o_quit(uint16 var, const ArgumentsArray &args) {
 }
 
 void MystScriptParser::showMap() {
-	if (_vm->getCurCard() != getMap()) {
-		_savedMapCardId = _vm->getCurCard();
+	if (_vm->getCard()->getId() != getMap()) {
+		_savedMapCardId = _vm->getCard()->getId();
 		_vm->changeToCard(getMap(), kTransitionCopy);
 	}
 }

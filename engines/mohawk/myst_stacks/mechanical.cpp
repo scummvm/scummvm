@@ -23,6 +23,7 @@
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_state.h"
 #include "mohawk/myst_sound.h"
@@ -298,7 +299,7 @@ bool Mechanical::setVarValue(uint16 var, uint16 value) {
 }
 
 void Mechanical::o_throneEnablePassage(uint16 var, const ArgumentsArray &args) {
-	_vm->_resources[args[0]]->setEnabled(getVar(var));
+	_vm->getCard()->getResource<MystArea>(args[0])->setEnabled(getVar(var));
 }
 
 void Mechanical::o_birdCrankStart(uint16 var, const ArgumentsArray &args) {
@@ -407,7 +408,7 @@ void Mechanical::o_elevatorRotationStop(uint16 var, const ArgumentsArray &args) 
 			if (_elevatorRotationGearPosition > 12)
 				break;
 
-			_vm->redrawArea(12);
+			_vm->getCard()->redrawArea(12);
 			_vm->wait(100);
 		}
 
@@ -415,10 +416,10 @@ void Mechanical::o_elevatorRotationStop(uint16 var, const ArgumentsArray &args) 
 		_state.elevatorRotation = (_state.elevatorRotation + 1) % 10;
 
 		_vm->_sound->playEffect(_elevatorRotationSoundId);
-		_vm->redrawArea(11);
+		_vm->getCard()->redrawArea(11);
 	}
 
-	_vm->checkCursorHints();
+	_vm->refreshCursor();
 }
 
 void Mechanical::o_fortressRotationSpeedStart(uint16 var, const ArgumentsArray &args) {
@@ -455,7 +456,7 @@ void Mechanical::o_fortressRotationSpeedStop(uint16 var, const ArgumentsArray &a
 
 	_fortressRotationSpeed = 0;
 
-	_vm->checkCursorHints();
+	_vm->refreshCursor();
 }
 
 void Mechanical::o_fortressRotationBrakeStart(uint16 var, const ArgumentsArray &args) {
@@ -485,7 +486,7 @@ void Mechanical::o_fortressRotationBrakeStop(uint16 var, const ArgumentsArray &a
 	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 	lever->drawFrame(_fortressRotationBrake);
 
-	_vm->checkCursorHints();
+	_vm->refreshCursor();
 }
 
 void Mechanical::o_fortressSimulationSpeedStart(uint16 var, const ArgumentsArray &args) {
@@ -522,7 +523,7 @@ void Mechanical::o_fortressSimulationSpeedStop(uint16 var, const ArgumentsArray 
 
 	_fortressSimulationSpeed = 0;
 
-	_vm->checkCursorHints();
+	_vm->refreshCursor();
 }
 
 void Mechanical::o_fortressSimulationBrakeStart(uint16 var, const ArgumentsArray &args) {
@@ -552,7 +553,7 @@ void Mechanical::o_fortressSimulationBrakeStop(uint16 var, const ArgumentsArray 
 	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 	lever->drawFrame(_fortressSimulationBrake);
 
-	_vm->checkCursorHints();
+	_vm->refreshCursor();
 }
 
 void Mechanical::o_elevatorWindowMovie(uint16 var, const ArgumentsArray &args) {
@@ -664,32 +665,32 @@ void Mechanical::o_elevatorWaitTimeout(uint16 var, const ArgumentsArray &args) {
 
 void Mechanical::o_crystalEnterYellow(uint16 var, const ArgumentsArray &args) {
 	_crystalLit = 3;
-	_vm->redrawArea(20);
+	_vm->getCard()->redrawArea(20);
 }
 
 void Mechanical::o_crystalEnterGreen(uint16 var, const ArgumentsArray &args) {
 	_crystalLit = 1;
-	_vm->redrawArea(21);
+	_vm->getCard()->redrawArea(21);
 }
 
 void Mechanical::o_crystalEnterRed(uint16 var, const ArgumentsArray &args) {
 	_crystalLit = 2;
-	_vm->redrawArea(22);
+	_vm->getCard()->redrawArea(22);
 }
 
 void Mechanical::o_crystalLeaveYellow(uint16 var, const ArgumentsArray &args) {
 	_crystalLit = 0;
-	_vm->redrawArea(20);
+	_vm->getCard()->redrawArea(20);
 }
 
 void Mechanical::o_crystalLeaveGreen(uint16 var, const ArgumentsArray &args) {
 	_crystalLit = 0;
-	_vm->redrawArea(21);
+	_vm->getCard()->redrawArea(21);
 }
 
 void Mechanical::o_crystalLeaveRed(uint16 var, const ArgumentsArray &args) {
 	_crystalLit = 0;
-	_vm->redrawArea(22);
+	_vm->getCard()->redrawArea(22);
 }
 
 void Mechanical::o_throne_init(uint16 var, const ArgumentsArray &args) {
@@ -698,9 +699,9 @@ void Mechanical::o_throne_init(uint16 var, const ArgumentsArray &args) {
 }
 
 void Mechanical::o_fortressStaircase_init(uint16 var, const ArgumentsArray &args) {
-	_vm->_resources[args[0]]->setEnabled(!_state.staircaseState);
-	_vm->_resources[args[1]]->setEnabled(!_state.staircaseState);
-	_vm->_resources[args[2]]->setEnabled(_state.staircaseState);
+	_vm->getCard()->getResource<MystArea>(args[0])->setEnabled(!_state.staircaseState);
+	_vm->getCard()->getResource<MystArea>(args[1])->setEnabled(!_state.staircaseState);
+	_vm->getCard()->getResource<MystArea>(args[2])->setEnabled(_state.staircaseState);
 }
 
 void Mechanical::birdSing_run() {
@@ -724,7 +725,7 @@ void Mechanical::o_snakeBox_init(uint16 var, const ArgumentsArray &args) {
 }
 
 void Mechanical::elevatorRotation_run() {
-	_vm->redrawArea(12);
+	_vm->getCard()->redrawArea(12);
 
 	_elevatorRotationGearPosition += _elevatorRotationSpeed;
 
@@ -735,7 +736,7 @@ void Mechanical::elevatorRotation_run() {
 		_state.elevatorRotation = (_state.elevatorRotation + 1) % 10;
 
 		_vm->_sound->playEffect(_elevatorRotationSoundId);
-		_vm->redrawArea(11);
+		_vm->getCard()->redrawArea(11);
 		_vm->wait(100);
 	}
 }

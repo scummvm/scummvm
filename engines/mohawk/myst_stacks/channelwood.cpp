@@ -23,6 +23,7 @@
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_state.h"
 #include "mohawk/myst_sound.h"
@@ -409,7 +410,7 @@ void Channelwood::o_leverEndMove(uint16 var, const ArgumentsArray &args) {
 	if (soundId)
 		_vm->_sound->playEffect(soundId);
 
-	_vm->checkCursorHints();
+	_vm->refreshCursor();
 }
 
 void Channelwood::o_leverEndMoveResumeBackground(uint16 var, const ArgumentsArray &args) {
@@ -513,10 +514,10 @@ void Channelwood::o_valveHandleMoveStop(uint16 var, const ArgumentsArray &args) 
 		_vm->_sound->playEffect(soundId);
 
 	// Redraw valve
-	_vm->redrawArea(_valveVar);
+	_vm->getCard()->redrawArea(_valveVar);
 
 	// Restore cursor
-	_vm->checkCursorHints();
+	_vm->refreshCursor();
 }
 
 void Channelwood::o_valveHandleMove2(uint16 var, const ArgumentsArray &args) {
@@ -573,7 +574,7 @@ void Channelwood::o_hologramMonitor(uint16 var, const ArgumentsArray &args) {
 
 	if (_state.holoprojectorSelection != button || !_vm->_video->isVideoPlaying()) {
 		_state.holoprojectorSelection = button;
-		_vm->redrawArea(17);
+		_vm->getCard()->redrawArea(17);
 
 		_vm->_video->stopVideos();
 
@@ -605,8 +606,8 @@ void Channelwood::o_hologramMonitor(uint16 var, const ArgumentsArray &args) {
 
 void Channelwood::o_drawerOpen(uint16 var, const ArgumentsArray &args) {
 	_siriusDrawerState = 1;
-	_vm->redrawArea(18, false);
-	_vm->redrawArea(102, false);
+	_vm->getCard()->redrawArea(18, false);
+	_vm->getCard()->redrawArea(102, false);
 }
 
 void Channelwood::o_hologramTemple(uint16 var, const ArgumentsArray &args) {
@@ -635,7 +636,7 @@ void Channelwood::o_hologramTemple(uint16 var, const ArgumentsArray &args) {
 }
 
 void Channelwood::o_executeMouseUp(uint16 var, const ArgumentsArray &args) {
-	MystArea *resource = _vm->getViewResource<MystArea>(args[0]);
+	MystArea *resource = _vm->getCard()->getResource<MystArea>(args[0]);
 	resource->handleMouseUp();
 }
 

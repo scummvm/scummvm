@@ -32,6 +32,7 @@ ifdef ENABLE_MYST
 MODULE_OBJS += \
 	myst.o \
 	myst_areas.o \
+	myst_card.o \
 	myst_graphics.o \
 	myst_scripts.o \
 	myst_sound.o \

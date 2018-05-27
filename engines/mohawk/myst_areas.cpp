@@ -21,6 +21,7 @@
  */
 
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/myst_sound.h"
@@ -152,11 +153,11 @@ void MystAreaAction::handleMouseUp() {
 const Common::String MystAreaAction::describe() {
 	Common::String desc = MystArea::describe();
 
-	if (_script->size() != 0) {
+	if (!_script.empty()) {
 		desc += " ops:";
 
-		for (uint i = 0; i < _script->size(); i++)
-			desc += " " + _vm->_scriptParser->getOpcodeDesc((*_script)[i].opcode);
+		for (uint i = 0; i < _script.size(); i++)
+			desc += " " + _vm->_scriptParser->getOpcodeDesc(_script[i].opcode);
 	}
 
 	return desc;
@@ -419,7 +420,7 @@ void MystAreaImageSwitch::drawDataToScreen() {
 
 		// This special case means redraw background
 		if (imageToDraw == 0xFFFF)
-			imageToDraw = _vm->getCardBackgroundId();
+			imageToDraw = _vm->getCard()->getBackgroundImageId();
 
 		_vm->_gfx->copyImageSectionToBackBuffer(imageToDraw, _subImages[subImageId].rect, _rect);
 	}
@@ -448,7 +449,7 @@ void MystAreaImageSwitch::drawConditionalDataToScreen(uint16 state, bool update)
 
 		// This special case means redraw background
 		if (imageToDraw == 0xFFFF)
-			imageToDraw = _vm->getCardBackgroundId();
+			imageToDraw = _vm->getCard()->getBackgroundImageId();
 
 		// Draw to screen
 		if (update) {
@@ -542,7 +543,7 @@ void MystAreaSlider::restoreBackground() {
 	Common::Rect dest = boundingBox();
 	src.top = 332 - dest.bottom;
 	src.bottom = 332 - dest.top;
-	_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), src, dest);
+	_vm->_gfx->copyImageSectionToScreen(_vm->getCard()->getBackgroundImageId(), src, dest);
 }
 
 void MystAreaSlider::handleMouseDown() {

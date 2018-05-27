@@ -23,6 +23,7 @@
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_state.h"
 #include "mohawk/myst_sound.h"
@@ -426,8 +427,8 @@ void Stoneship::o_pumpTurnOff(uint16 var, const ArgumentsArray &args) {
 			warning("Incorrect pump state");
 		}
 
-		for (uint i = 0; i < _vm->_resources.size(); i++) {
-			MystArea *resource = _vm->_resources[i];
+		for (uint i = 0; i < _vm->getCard()->_resources.size(); i++) {
+			MystArea *resource = _vm->getCard()->_resources[i];
 			if (resource->hasType(kMystAreaImageSwitch) && resource->getImageSwitchVar() == buttonVar) {
 				static_cast<MystAreaImageSwitch *>(resource)->drawConditionalDataToScreen(0, true);
 				break;
@@ -438,7 +439,7 @@ void Stoneship::o_pumpTurnOff(uint16 var, const ArgumentsArray &args) {
 
 void Stoneship::o_brotherDoorOpen(uint16 var, const ArgumentsArray &args) {
 	_brotherDoorOpen = 1;
-	_vm->redrawArea(19, 0);
+	_vm->getCard()->redrawArea(19, 0);
 	animatedUpdate(args, 5);
 }
 
@@ -454,7 +455,7 @@ void Stoneship::o_cabinBookMovie(uint16 var, const ArgumentsArray &args) {
 }
 
 void Stoneship::o_drawerOpenSirius(uint16 var, const ArgumentsArray &args) {
-	MystAreaImageSwitch *drawer = _vm->getViewResource<MystAreaImageSwitch>(args[0]);
+	MystAreaImageSwitch *drawer = _vm->getCard()->getResource<MystAreaImageSwitch>(args[0]);
 
 	if (drawer->getImageSwitchVar() == 35) {
 		drawer->drawConditionalDataToScreen(getVar(102), 0);
@@ -496,7 +497,7 @@ void Stoneship::o_telescopeMove(uint16 var, const ArgumentsArray &args) {
 }
 
 void Stoneship::o_telescopeStop(uint16 var, const ArgumentsArray &args) {
-	_vm->checkCursorHints();
+	_vm->refreshCursor();
 }
 
 void Stoneship::o_generatorStart(uint16 var, const ArgumentsArray &args) {
@@ -589,7 +590,7 @@ void Stoneship::batteryDeplete_run() {
 }
 
 void Stoneship::o_drawerOpenAchenar(uint16 var, const ArgumentsArray &args) {
-	MystAreaImageSwitch *drawer = _vm->getViewResource<MystAreaImageSwitch>(args[0]);
+	MystAreaImageSwitch *drawer = _vm->getCard()->getResource<MystAreaImageSwitch>(args[0]);
 	drawer->drawConditionalDataToScreen(0, 0);
 	_vm->_gfx->runTransition(kTransitionTopToBottom, drawer->getRect(), 25, 5);
 }
@@ -644,7 +645,7 @@ void Stoneship::o_hologramSelectionMove(uint16 var, const ArgumentsArray &args) 
 }
 
 void Stoneship::o_hologramSelectionStop(uint16 var, const ArgumentsArray &args) {
-	_vm->checkCursorHints();
+	_vm->refreshCursor();
 }
 
 void Stoneship::o_compassButton(uint16 var, const ArgumentsArray &args) {
@@ -785,10 +786,10 @@ void Stoneship::o_drawerCloseOpened(uint16 var, const ArgumentsArray &args) {
 
 void Stoneship::drawerClose(uint16 drawer) {
 	_chestDrawersOpen = 0;
-	_vm->drawCardBackground();
-	_vm->drawResourceImages();
+	_vm->getCard()->drawBackground();
+	_vm->getCard()->drawResourceImages();
 
-	MystArea *res = _vm->_resources[drawer];
+	MystArea *res = _vm->getCard()->getResource<MystArea>(drawer);
 	_vm->_gfx->runTransition(kTransitionBottomToTop, res->getRect(), 25, 5);
 }
 
@@ -844,8 +845,8 @@ void Stoneship::batteryGauge_run() {
 		_batteryLastCharge = batteryCharge;
 
 		// Redraw card
-		_vm->drawCardBackground();
-		_vm->drawResourceImages();
+		_vm->getCard()->drawBackground();
+		_vm->getCard()->drawResourceImages();
 		_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 	}
 }
@@ -946,12 +947,12 @@ void Stoneship::o_achenarDrawers_init(uint16 var, const ArgumentsArray &args) {
 		uint16 count1 = args[0];
 		for (uint16 i = 0; i < count1; i++) {
 			debugC(kDebugScript, "Disable hotspot index %d", args[i + 1]);
-			_vm->setResourceEnabled(args[i + 1], false);
+			_vm->getCard()->setResourceEnabled(args[i + 1], false);
 		}
 		uint16 count2 = args[count1 + 1];
 		for (uint16 i = 0; i < count2; i++) {
 			debugC(kDebugScript, "Enable hotspot index %d", args[i + count1 + 2]);
-			_vm->setResourceEnabled(args[i + count1 + 2], true);
+			_vm->getCard()->setResourceEnabled(args[i + count1 + 2], true);
 		}
 	}
 }

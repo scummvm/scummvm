@@ -56,14 +56,14 @@ struct MystScriptEntry {
 	uint16 u1;
 };
 
-typedef Common::SharedPtr<Common::Array<MystScriptEntry> > MystScript;
+typedef Common::Array<MystScriptEntry> MystScript;
 
 class MystScriptParser {
 public:
 	explicit MystScriptParser(MohawkEngine_Myst *vm);
 	virtual ~MystScriptParser();
 
-	void runScript(MystScript script, MystArea *invokingResource = nullptr);
+	void runScript(const MystScript &script, MystArea *invokingResource = nullptr);
 	void runOpcode(uint16 op, uint16 var = 0, const ArgumentsArray &args = ArgumentsArray());
 	const Common::String getOpcodeDesc(uint16 op);
 	MystScript readScript(Common::SeekableReadStream *stream, MystScriptType type);
