@@ -30,12 +30,13 @@
 #include "sludge/fonttext.h"
 #include "sludge/floor.h"
 #include "sludge/graphics.h"
+#include "sludge/main_loop.h"
+#include "sludge/newfatal.h"
 #include "sludge/people.h"
 #include "sludge/region.h"
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
 #include "sludge/speech.h"
-#include "sludge/main_loop.h"
 
 namespace Sludge {
 
@@ -71,11 +72,9 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	launchNext = "";
 	loadNow = "";
 	gamePath = "";
-	bundleFolder = "";
-	fatalMessage = "";
-	fatalInfo = "Initialisation error! Something went wrong before we even got started!";
 
 	// Init managers
+	_fatalMan = new FatalMsgManager();
 	_peopleMan = new PeopleManager(this);
 	_resMan = new ResourceManager();
 	_languageMan = new LanguageManager();
@@ -134,6 +133,8 @@ SludgeEngine::~SludgeEngine() {
 	_peopleMan = nullptr;
 	delete _floorMan;
 	_floorMan = nullptr;
+	delete _fatalMan;
+	_fatalMan = nullptr;
 }
 
 Common::Error SludgeEngine::run() {
