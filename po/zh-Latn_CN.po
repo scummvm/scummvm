@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 18:43+0200\n"
+"POT-Creation-Date: 2018-05-28 21:58+0200\n"
 "PO-Revision-Date: 2018-04-18 10:18+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -530,8 +530,8 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "Ni Shifou Yao Chongzhi Suoyou de FluidSynth Shezhi?"
 
-#: gui/gui-manager.cpp:119 engines/unknown-game-dialog.cpp:72
-#: engines/unknown-game-dialog.cpp:84 backends/keymapper/remap-dialog.cpp:53
+#: gui/gui-manager.cpp:119 gui/unknown-game-dialog.cpp:74
+#: gui/unknown-game-dialog.cpp:86 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
@@ -1620,6 +1620,34 @@ msgstr "Fanjuchi Xuanranqi"
 msgid "Antialiased"
 msgstr "Fanjuchi"
 
+#: gui/unknown-game-dialog.cpp:50
+msgid ""
+"Use the button below to copy the required game information into your "
+"clipboard."
+msgstr ""
+
+#: gui/unknown-game-dialog.cpp:57
+msgid "You can also directly report your game to the Bug Tracker."
+msgstr ""
+
+#: gui/unknown-game-dialog.cpp:75 gui/unknown-game-dialog.cpp:91
+msgid "Copy to clipboard"
+msgstr ""
+
+#: gui/unknown-game-dialog.cpp:76 gui/unknown-game-dialog.cpp:105
+#, fuzzy
+msgid "Report game"
+msgstr "Huifu Youxi:"
+
+#: gui/unknown-game-dialog.cpp:149
+msgid ""
+"All necessary information about your game has been copied into the clipboard"
+msgstr ""
+
+#: gui/unknown-game-dialog.cpp:151
+msgid "Copying the game information to the clipboard has failed!"
+msgstr ""
+
 #: gui/updates-dialog.cpp:49
 msgid ""
 "ScummVM now supports automatic check for updates\n"
@@ -1956,34 +1984,6 @@ msgstr ""
 #: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Qiangzhi Qidong"
-
-#: engines/unknown-game-dialog.cpp:48
-msgid ""
-"Use the button below to copy the required game information into your "
-"clipboard."
-msgstr ""
-
-#: engines/unknown-game-dialog.cpp:55
-msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
-
-#: engines/unknown-game-dialog.cpp:73 engines/unknown-game-dialog.cpp:89
-msgid "Copy to clipboard"
-msgstr ""
-
-#: engines/unknown-game-dialog.cpp:74 engines/unknown-game-dialog.cpp:103
-#, fuzzy
-msgid "Report game"
-msgstr "Huifu Youxi:"
-
-#: engines/unknown-game-dialog.cpp:147
-msgid ""
-"All necessary information about your game has been copied into the clipboard"
-msgstr ""
-
-#: engines/unknown-game-dialog.cpp:149
-msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"

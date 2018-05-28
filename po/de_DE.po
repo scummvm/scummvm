@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 18:43+0200\n"
+"POT-Creation-Date: 2018-05-28 21:58+0200\n"
 "PO-Revision-Date: 2018-05-01 07:22+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -544,8 +544,8 @@ msgstr ""
 "Möchten Sie wirklich alle FluidSynth-Einstellungen auf ihre Standard-Werte "
 "zurücksetzen?"
 
-#: gui/gui-manager.cpp:119 engines/unknown-game-dialog.cpp:72
-#: engines/unknown-game-dialog.cpp:84 backends/keymapper/remap-dialog.cpp:53
+#: gui/gui-manager.cpp:119 gui/unknown-game-dialog.cpp:74
+#: gui/unknown-game-dialog.cpp:86 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
@@ -1643,6 +1643,36 @@ msgstr "Kantenglättung"
 msgid "Antialiased"
 msgstr "Kantenglättung"
 
+#: gui/unknown-game-dialog.cpp:50
+msgid ""
+"Use the button below to copy the required game information into your "
+"clipboard."
+msgstr ""
+"Verwenden Sie den untenstehenden Button, um die benötigten Informationen in "
+"die Zwischenablage zu kopieren."
+
+#: gui/unknown-game-dialog.cpp:57
+#, fuzzy
+msgid "You can also directly report your game to the Bug Tracker."
+msgstr "Sie können das Spiel auch direkt an unseren Bug-Tracker melden!"
+
+#: gui/unknown-game-dialog.cpp:75 gui/unknown-game-dialog.cpp:91
+msgid "Copy to clipboard"
+msgstr "In Zwischenablage kopieren"
+
+#: gui/unknown-game-dialog.cpp:76 gui/unknown-game-dialog.cpp:105
+msgid "Report game"
+msgstr "Spiel melden"
+
+#: gui/unknown-game-dialog.cpp:149
+msgid ""
+"All necessary information about your game has been copied into the clipboard"
+msgstr "Alle benötigten Informationen wurden in die Zwischenablage kopiert"
+
+#: gui/unknown-game-dialog.cpp:151
+msgid "Copying the game information to the clipboard has failed!"
+msgstr "Kopieren der Spielinformationen in die Zwischenablage fehlgeschlagen!"
+
 #: gui/updates-dialog.cpp:49
 msgid ""
 "ScummVM now supports automatic check for updates\n"
@@ -1985,36 +2015,6 @@ msgstr ""
 #: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Trotzdem starten"
-
-#: engines/unknown-game-dialog.cpp:48
-msgid ""
-"Use the button below to copy the required game information into your "
-"clipboard."
-msgstr ""
-"Verwenden Sie den untenstehenden Button, um die benötigten Informationen in "
-"die Zwischenablage zu kopieren."
-
-#: engines/unknown-game-dialog.cpp:55
-#, fuzzy
-msgid "You can also directly report your game to the Bug Tracker."
-msgstr "Sie können das Spiel auch direkt an unseren Bug-Tracker melden!"
-
-#: engines/unknown-game-dialog.cpp:73 engines/unknown-game-dialog.cpp:89
-msgid "Copy to clipboard"
-msgstr "In Zwischenablage kopieren"
-
-#: engines/unknown-game-dialog.cpp:74 engines/unknown-game-dialog.cpp:103
-msgid "Report game"
-msgstr "Spiel melden"
-
-#: engines/unknown-game-dialog.cpp:147
-msgid ""
-"All necessary information about your game has been copied into the clipboard"
-msgstr "Alle benötigten Informationen wurden in die Zwischenablage kopiert"
-
-#: engines/unknown-game-dialog.cpp:149
-msgid "Copying the game information to the clipboard has failed!"
-msgstr "Kopieren der Spielinformationen in die Zwischenablage fehlgeschlagen!"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"

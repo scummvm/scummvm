@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 18:43+0200\n"
+"POT-Creation-Date: 2018-05-28 21:58+0200\n"
 "PO-Revision-Date: 2018-05-07 19:16+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -537,8 +537,8 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "Haluatko varmasti palauttaa FluidSynth vakioasetukset?"
 
-#: gui/gui-manager.cpp:119 engines/unknown-game-dialog.cpp:72
-#: engines/unknown-game-dialog.cpp:84 backends/keymapper/remap-dialog.cpp:53
+#: gui/gui-manager.cpp:119 gui/unknown-game-dialog.cpp:74
+#: gui/unknown-game-dialog.cpp:86 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
@@ -1621,6 +1621,34 @@ msgstr "Antialiasoitu renderöijä"
 msgid "Antialiased"
 msgstr "Antialiasoitu"
 
+#: gui/unknown-game-dialog.cpp:50
+msgid ""
+"Use the button below to copy the required game information into your "
+"clipboard."
+msgstr "Käytä allaolevaa painiketta kopioidaksesi pelin tiedot leikepöydälle."
+
+#: gui/unknown-game-dialog.cpp:57
+#, fuzzy
+msgid "You can also directly report your game to the Bug Tracker."
+msgstr "Voit myös ilmoittaa pelisi suoraan Bug Trackeriin!"
+
+#: gui/unknown-game-dialog.cpp:75 gui/unknown-game-dialog.cpp:91
+msgid "Copy to clipboard"
+msgstr "Kopioi leikepöydälle"
+
+#: gui/unknown-game-dialog.cpp:76 gui/unknown-game-dialog.cpp:105
+msgid "Report game"
+msgstr "Tee ilmoitus pelistä"
+
+#: gui/unknown-game-dialog.cpp:149
+msgid ""
+"All necessary information about your game has been copied into the clipboard"
+msgstr "Tarpeelliset tiedot pelistäsi on kopioitu leikepöydälle"
+
+#: gui/unknown-game-dialog.cpp:151
+msgid "Copying the game information to the clipboard has failed!"
+msgstr "Pelin tietojen kopiointi leikepöydälle epäonnistui!"
+
 #: gui/updates-dialog.cpp:49
 msgid ""
 "ScummVM now supports automatic check for updates\n"
@@ -1957,34 +1985,6 @@ msgstr ""
 #: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Pelaa silti"
-
-#: engines/unknown-game-dialog.cpp:48
-msgid ""
-"Use the button below to copy the required game information into your "
-"clipboard."
-msgstr "Käytä allaolevaa painiketta kopioidaksesi pelin tiedot leikepöydälle."
-
-#: engines/unknown-game-dialog.cpp:55
-#, fuzzy
-msgid "You can also directly report your game to the Bug Tracker."
-msgstr "Voit myös ilmoittaa pelisi suoraan Bug Trackeriin!"
-
-#: engines/unknown-game-dialog.cpp:73 engines/unknown-game-dialog.cpp:89
-msgid "Copy to clipboard"
-msgstr "Kopioi leikepöydälle"
-
-#: engines/unknown-game-dialog.cpp:74 engines/unknown-game-dialog.cpp:103
-msgid "Report game"
-msgstr "Tee ilmoitus pelistä"
-
-#: engines/unknown-game-dialog.cpp:147
-msgid ""
-"All necessary information about your game has been copied into the clipboard"
-msgstr "Tarpeelliset tiedot pelistäsi on kopioitu leikepöydälle"
-
-#: engines/unknown-game-dialog.cpp:149
-msgid "Copying the game information to the clipboard has failed!"
-msgstr "Pelin tietojen kopiointi leikepöydälle epäonnistui!"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
