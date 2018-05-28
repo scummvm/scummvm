@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 21:58+0200\n"
+"POT-Creation-Date: 2018-05-28 23:22+0200\n"
 "PO-Revision-Date: 2018-05-07 19:16+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -537,11 +537,10 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "Haluatko varmasti palauttaa FluidSynth vakioasetukset?"
 
-#: gui/gui-manager.cpp:119 gui/unknown-game-dialog.cpp:74
-#: gui/unknown-game-dialog.cpp:86 backends/keymapper/remap-dialog.cpp:53
-#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
-#: engines/scumm/help.cpp:210
+#: gui/gui-manager.cpp:119 gui/unknown-game-dialog.cpp:48
+#: backends/keymapper/remap-dialog.cpp:53 engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
+#: engines/scumm/help.cpp:192 engines/scumm/help.cpp:210
 msgid "Close"
 msgstr "Sulje"
 
@@ -1621,31 +1620,31 @@ msgstr "Antialiasoitu renderöijä"
 msgid "Antialiased"
 msgstr "Antialiasoitu"
 
-#: gui/unknown-game-dialog.cpp:50
+#: gui/unknown-game-dialog.cpp:52
+msgid "Copy to clipboard"
+msgstr "Kopioi leikepöydälle"
+
+#: gui/unknown-game-dialog.cpp:67
+msgid "Report game"
+msgstr "Tee ilmoitus pelistä"
+
+#: gui/unknown-game-dialog.cpp:110
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr "Käytä allaolevaa painiketta kopioidaksesi pelin tiedot leikepöydälle."
 
-#: gui/unknown-game-dialog.cpp:57
+#: gui/unknown-game-dialog.cpp:117
 #, fuzzy
 msgid "You can also directly report your game to the Bug Tracker."
 msgstr "Voit myös ilmoittaa pelisi suoraan Bug Trackeriin!"
 
-#: gui/unknown-game-dialog.cpp:75 gui/unknown-game-dialog.cpp:91
-msgid "Copy to clipboard"
-msgstr "Kopioi leikepöydälle"
-
-#: gui/unknown-game-dialog.cpp:76 gui/unknown-game-dialog.cpp:105
-msgid "Report game"
-msgstr "Tee ilmoitus pelistä"
-
-#: gui/unknown-game-dialog.cpp:149
+#: gui/unknown-game-dialog.cpp:199
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr "Tarpeelliset tiedot pelistäsi on kopioitu leikepöydälle"
 
-#: gui/unknown-game-dialog.cpp:151
+#: gui/unknown-game-dialog.cpp:201
 msgid "Copying the game information to the clipboard has failed!"
 msgstr "Pelin tietojen kopiointi leikepöydälle epäonnistui!"
 

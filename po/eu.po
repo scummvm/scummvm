@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 21:58+0200\n"
+"POT-Creation-Date: 2018-05-28 23:22+0200\n"
 "PO-Revision-Date: 2018-04-18 10:12+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -530,11 +530,10 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "FluidSynth-en ezarpen guztiak berrezarri balio lehenetsietara?"
 
-#: gui/gui-manager.cpp:119 gui/unknown-game-dialog.cpp:74
-#: gui/unknown-game-dialog.cpp:86 backends/keymapper/remap-dialog.cpp:53
-#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
-#: engines/scumm/help.cpp:210
+#: gui/gui-manager.cpp:119 gui/unknown-game-dialog.cpp:48
+#: backends/keymapper/remap-dialog.cpp:53 engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
+#: engines/scumm/help.cpp:192 engines/scumm/help.cpp:210
 msgid "Close"
 msgstr "Itxi"
 
@@ -1627,31 +1626,31 @@ msgstr "Errendatzaile lausotua"
 msgid "Antialiased"
 msgstr "Lausotua"
 
-#: gui/unknown-game-dialog.cpp:50
+#: gui/unknown-game-dialog.cpp:52
+msgid "Copy to clipboard"
+msgstr ""
+
+#: gui/unknown-game-dialog.cpp:67
+#, fuzzy
+msgid "Report game"
+msgstr "Jokoa kargatu:"
+
+#: gui/unknown-game-dialog.cpp:110
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
 
-#: gui/unknown-game-dialog.cpp:57
+#: gui/unknown-game-dialog.cpp:117
 msgid "You can also directly report your game to the Bug Tracker."
 msgstr ""
 
-#: gui/unknown-game-dialog.cpp:75 gui/unknown-game-dialog.cpp:91
-msgid "Copy to clipboard"
-msgstr ""
-
-#: gui/unknown-game-dialog.cpp:76 gui/unknown-game-dialog.cpp:105
-#, fuzzy
-msgid "Report game"
-msgstr "Jokoa kargatu:"
-
-#: gui/unknown-game-dialog.cpp:149
+#: gui/unknown-game-dialog.cpp:199
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr ""
 
-#: gui/unknown-game-dialog.cpp:151
+#: gui/unknown-game-dialog.cpp:201
 msgid "Copying the game information to the clipboard has failed!"
 msgstr ""
 
