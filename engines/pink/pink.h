@@ -141,6 +141,7 @@ private:
 	const ADGameDescription _desc;
 };
 
+bool readSaveHeader(Common::InSaveFile &in, SaveStateDescriptor &desc);
 Common::String generateSaveName(int slot, const char *gameId);
 
 } // End of namespace Pink
