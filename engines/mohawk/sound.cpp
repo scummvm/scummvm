@@ -158,10 +158,15 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 	// The sound in the CD version of Riven is encoded in Intel DVI ADPCM
 	// The sound in the DVD version of Riven is encoded in MPEG-2 Layer II or Intel DVI ADPCM
 	if (dataChunk.encoding == kCodecRaw) {
-		byte flags = Audio::FLAG_UNSIGNED;
+		byte flags = 0;
 
 		if (dataChunk.channels == 2)
 			flags |= Audio::FLAG_STEREO;
+
+		if (dataChunk.bitsPerSample == 16)
+			flags |= Audio::FLAG_16BITS;
+		else
+			flags |= Audio::FLAG_UNSIGNED;
 
 		return Audio::makeRawStream(dataChunk.audioData, dataChunk.sampleRate, flags);
 	} else if (dataChunk.encoding == kCodecADPCM) {
