@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-05-28 23:22+0200\n"
 "PO-Revision-Date: 2018-05-28 21:34+0000\n"
-"Last-Translator: Purple T <zeonk@hotmail.com>\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -1654,11 +1654,10 @@ msgstr ""
 "presse-papiers."
 
 #: gui/unknown-game-dialog.cpp:117
-#, fuzzy
 msgid "You can also directly report your game to the Bug Tracker."
 msgstr ""
-"Vous pouvez également signaler directement votre jeu dans notre Tracker de "
-"Bogues !"
+"Vous pouvez également directement signaler votre jeu dans notre Tracker de "
+"Bogues."
 
 #: gui/unknown-game-dialog.cpp:199
 msgid ""
