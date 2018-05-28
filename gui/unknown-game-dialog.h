@@ -24,10 +24,12 @@
 #define GUI_UNKNOWN_GAME_DIALOG_H
 
 #include "gui/dialog.h"
-
+#include "common/array.h"
 #include "engines/game.h"
 
 namespace GUI {
+
+class StaticTextWidget;
 
 class UnknownGameDialog : public Dialog {
 public:
@@ -41,6 +43,7 @@ private:
 	Common::String generateBugtrackerURL();
 
 	const DetectionResults &_detectionResults;
+	Common::Array<GUI::StaticTextWidget *> _textWidgets;
 };
 
 } // End of namespace GUI

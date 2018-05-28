@@ -30,13 +30,15 @@
 #include "gui/message.h"
 #include "gui/ThemeEval.h"
 #include "gui/widgets/popup.h"
+#include "gui/widgets/scrollcontainer.h"
 
 namespace GUI {
 
 enum {
 	kCopyToClipboard = 'cpcl',
 	kOpenBugtrackerURL = 'ourl',
-	kClose = 'clse'
+	kClose = 'clse',
+	kScrollContainerReflow = 'SCRf'
 };
 
 UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
@@ -59,16 +61,22 @@ UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
 #endif
 
 	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
 
 	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
 	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
 
 	// Calculate the size the dialog needs
+	// We use a ScrollContainer to display the text, with a 2 * 8 pixels margin to the dialog border,
+	// the scrollbar, and 2 * 10 margin for the text in the container.
+	// We also keep 2 * 10 pixels between the screen border and the dialog.
+	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	Common::Array<Common::String> lines;
-	int maxlineWidth = g_gui.getFont().wordWrapText(reportTranslated, screenW - 2 * 20, lines);
+	int maxlineWidth = g_gui.getFont().wordWrapText(reportTranslated, screenW - 2 * 20 - 16 - scrollbarWidth, lines);
+
 	int lineCount = lines.size() + 1;
 
-	_h =  3 * kLineHeight + lineCount * kLineHeight;
+	_h = MIN(screenH - 20, lineCount * kLineHeight + kLineHeight + buttonHeight + 24);
 
 	// Buttons
 	int closeButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_("Close")) + 10);
@@ -80,7 +88,7 @@ UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl))
 		totalButtonWidth += 10 + openBugtrackerURLButtonWidth;
 
-	_w = MAX(MAX(maxlineWidth, 0), totalButtonWidth) + 20;
+	_w = MAX(MAX(maxlineWidth, 0) + 16 + scrollbarWidth, totalButtonWidth) + 20;
 
 	int buttonPos = _w - closeButtonWidth - 10;
 	new ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Close"), 0, kClose);
@@ -107,10 +115,14 @@ UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
 #endif
 
 	// Each line is represented by one static text item.
-	// TODO: Use a ScrollContainer widget instead of truncated text.
-	uint y = 10;
-	for (uint i = 0; i < lines.size(); i++) {
-		new StaticTextWidget(this, 10, y, _w, kLineHeight, lines[i], Graphics::kTextAlignLeft);
+	// Use a ScrollContainer for the report in case we have a lot of lines.
+	int containerHeight = _h - kLineHeight - buttonHeight - 8;
+	ScrollContainerWidget *container = new ScrollContainerWidget(this, 8, 8, _w - 16, containerHeight, kScrollContainerReflow);
+	container->setTarget(this);
+	uint y = 8;
+	for (uint i = 0; i < lines.size() ; i++) {
+		StaticTextWidget *widget = new StaticTextWidget(container, 10, y, _w - 36 - scrollbarWidth, kLineHeight, lines[i], Graphics::kTextAlignLeft);
+		_textWidgets.push_back(widget);
 		y += kLineHeight;
 	}
 }
@@ -159,6 +171,10 @@ void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 		break;
 	case kOpenBugtrackerURL:
 		g_system->openUrl(generateBugtrackerURL());
+		break;
+	case kScrollContainerReflow:
+		for (uint i = 0; i < _textWidgets.size() ; i++)
+			_textWidgets[i]->setVisible(true);
 		break;
 	}
 }
