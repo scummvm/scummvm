@@ -175,8 +175,6 @@ Common::String OSystem_Win32::getSystemLanguage() const {
 		localeName += ctryName;
 
 		return localeName;
-	} else {
-		return ModularBackend::getSystemLanguage();
 	}
 #endif // USE_DETECTLANG
 	// Falback to SDL implementation
