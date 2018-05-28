@@ -28,6 +28,7 @@
 #include "common/str.h"
 
 #include "startrek/startrek.h"
+#include "startrek/text.h"
 
 using Common::SharedPtr;
 
@@ -102,7 +103,10 @@ private:
 	void loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66); // Cmd 0x00
 	void loadActorStandAnim(int actorIndex);                                                   // Cmd 0x01
 	void loadActorAnim2(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66);// Cmd 0x02
-	int showRoomSpecificText(const char **textAddr);                                           // Cmd 0x03
+	int showRoomSpecificText(const char **textAddr); // (Deprecated, use function below)       // Cmd 0x03
+	int showText(const int *text);                                                             // Cmd 0x03
+	int showText(int speaker, int text);                                                       // Cmd 0x03
+	int showText(int text);                                                                    // Cmd 0x03
 	void giveItem(int item);                                                                   // Cmd 0x04
 	void loadRoomIndex(int roomIndex, int spawnIndex);                                         // Cmd 0x06
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam);// Cmd 0x08

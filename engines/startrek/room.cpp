@@ -160,8 +160,6 @@ void Room::loadActorAnim2(int actorIndex, Common::String anim, int16 x, int16 y,
 	loadActorAnim(actorIndex, anim, x, y, finishedAnimActionParam);
 }
 
-// TODO: replace "rdfOffset" with a pointer, so we no longer read from RDF files? (This
-// may be necessary to support other platforms; can't leave offsets hardcoded.)
 int Room::showRoomSpecificText(const char **array) {
 	Common::String speaker;
 	byte textColor;
@@ -189,6 +187,32 @@ int Room::showRoomSpecificText(const char **array) {
 		textColor = TEXTCOLOR_YELLOW;
 
 	return _vm->showText(&StarTrekEngine::readTextFromArray, (uintptr)array, 20, 20, textColor, true, false, false);
+}
+
+int Room::showText(const int *textIDs) {
+	int numIDs = 0;
+	while (textIDs[numIDs] != TX_BLANK)
+		numIDs++;
+
+	const char **text = (const char **)malloc(sizeof(const char *) * (numIDs + 1));
+	for (int i = 0; i <= numIDs; i++)
+		text[i] = g_gameStrings[textIDs[i]];
+	int retval = showRoomSpecificText(text);
+	free(text);
+
+	return retval;
+}
+
+int Room::showText(int speaker, int text) {
+	int textIDs[3];
+	textIDs[0] = speaker;
+	textIDs[1] = text;
+	textIDs[2] = TX_BLANK;
+	showText(textIDs);
+}
+
+int Room::showText(int text) {
+	showText(TX_NULL, text);
 }
 
 void Room::giveItem(int item) {

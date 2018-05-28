@@ -204,25 +204,13 @@ void Room::demon1KlingonFinishedAimingWeapon() {
 }
 
 void Room::demon1KirkShot() {
-	const char *text[] = {
-		nullptr,
-		"#DEM1\\DEM1N000#Captain Kirk is fatally shot by a Klingon, game over.",
-		""
-	};
-
-	showRoomSpecificText(text);
+	showText(TX_DEM1N000);
 	showGameOverMenu();
 }
 
 void Room::demon1UsePhaserOnAnything() {
-	const char *text[] = {
-		SPEAKER_MCCOY,
-		"#DEM1\\DEM1_011#The fire fight is over, Jim. I think you can put that away now.",
-		""
-	};
-
 	if (_roomVar.demon1.numKlingonsKilled == 3)
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_MCCOY, TX_DEM1_011);
 }
 
 void Room::demon1UsePhaserOnKlingon1() {
@@ -256,35 +244,20 @@ void Room::demon1ShootKlingon1() {
 }
 
 void Room::demon1KlingonDropsHand() {
-	const char *text[] = {
-		nullptr,
-		"#DEM1\\DEM1N020#You see a small explosion, and the Klingon's hand falls to the ground with a dull thud.",
-		""
-	};
 	loadActorAnim(13, "klghnd", 0x10b, 0x8e, 0);
 	_vm->_awayMission.transitioningIntoRoom = 0;
 	_vm->_awayMission.timers[1] = 0;
-	showRoomSpecificText(text);
+	showText(TX_DEM1N020);
 
 	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_REDSHIRT))
 		return;
 
-	const char *rshirtText[] = {
-		SPEAKER_EVERTS,
-		"#DEM1\\DEM1_025#I guess they don't make Klingons like they used to, Sir.",
-		""
-	};
-	showRoomSpecificText(rshirtText);
+	showText(TX_SPEAKER_EVERTS, TX_DEM1_025);
 
 	if (_roomVar.demon1.numKlingonsKilled == 3)
 		return;
 
-	const char *klingonText[] = {
-		"Klingon",
-		"#DEM1\\DEM1_F23#Federation Scum!",
-		""
-	};
-	showRoomSpecificText(klingonText);
+	showText(TX_SPEAKER_KLINGON, TX_DEM1_F23);
 
 	_vm->_awayMission.timers[1] = 1;
 }
@@ -361,116 +334,50 @@ void Room::demon1Timer5Expired() {
 	if (_vm->_awayMission.crewDownBitset != 0)
 		return;
 
-	const char *text1[] = {
-		"Lt. Uhura",
-		"#DEM1\\DEM1U077#Captain we registered Phaser fire and an unknown energy beam. Is everyone OK?",
-		""
-	};
-	const char *text2[] = {
-		SPEAKER_KIRK,
-		"#DEM1\\DEM1_003#We're fine. Did you register any Disruptor fire?",
-		""
-	};
-	const char *text3[] = {
-		"Lt. Uhura",
-		"#DEM1\\DEM1U078#No, Captain. Why, are Klingons down there?",
-		""
-	};
-	const char *text4[] = {
-		SPEAKER_KIRK,
-		"#DEM1\\DEM1_002#No just an idea, Kirk out.",
-		""
-	};
-	const char *text5[] = {
-		SPEAKER_SPOCK,
-		"#DEM1\\DEM1_020#Fascinating. I begin to suspect that we have stumbled upon something that the colonists would never have uncovered.",
-		""
-	};
-	const char *text6[] = {
-		SPEAKER_KIRK,
-		"#DEM1\\DEM1_004#What is it, Spock?",
-		""
-	};
-	const char *text7[] = {
-		SPEAKER_SPOCK,
-		"#DEM1\\DEM1_021#I wish to gather further data before making a definite conclusion, Captain.",
-		""
-	};
-
-	showRoomSpecificText(text1);
-	showRoomSpecificText(text2);
-	showRoomSpecificText(text3);
-	showRoomSpecificText(text4);
-	showRoomSpecificText(text5);
-	showRoomSpecificText(text6);
-	showRoomSpecificText(text7);
+	showText(TX_SPEAKER_UHURA, TX_DEM1U077);
+	showText(TX_SPEAKER_KIRK,  TX_DEM1_003);
+	showText(TX_SPEAKER_UHURA, TX_DEM1U078);
+	showText(TX_SPEAKER_KIRK,  TX_DEM1_002);
+	showText(TX_SPEAKER_SPOCK, TX_DEM1_020);
+	showText(TX_SPEAKER_KIRK,  TX_DEM1_004);
+	showText(TX_SPEAKER_SPOCK, TX_DEM1_021);
 }
 
 
 void Room::demon1UseMTricorderOnKlingon() {
-	const char *text[] = {
-		SPEAKER_MCCOY,
-		"#DEM1\\DEM1_012#This is definitely not a real klingon Jim.",
-		""
-	};
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_MCCOY, TX_DEM1_012);
 }
 
 void Room::demon1UseSTricorderOnTulips() {
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM1\\DEM1_007#Khytellian tulips are a perennial flower that survive in almost any climate.",
-		""
-	};
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM1_007);
 }
 
 void Room::demon1UseSTricorderOnPods() {
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM1\\DEM1_008#The Brandzite pod is similar to terran milkweed except that the silk pods are in bright iridecent colors.",
-		""
-	};
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM1_008);
 }
 
 void Room::demon1UseSTricorderOnCattails() {
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM1\\DEM1_005#Doctis Cattails are similar to their terran name sake except that they are known to cause hives if in contact with flesh for any amount of time.",
-		""
-	};
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM1_005);
 }
 
 void Room::demon1UseSTricorderOnFerns() {
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM1\\DEM1_006#Gindorian ferns are regarded as an intergalactic weed, Captain.",
-		""
-	};
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM1_006);
 }
 
 void Room::demon1UseSTricorderOnHand() {
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM1\\DEM1_017#This is a detached hand with some kind of circuitry in the palm, Captain.",
-		""
-	};
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM1_017);
 }
 
 void Room::demon1UseSTricorderOnKlingon1() {
@@ -479,34 +386,18 @@ void Room::demon1UseSTricorderOnKlingon1() {
 	playSoundEffectIndex(0x04);
 
 	if (_roomVar.demon1.numKlingonsKilled == 3 && !_vm->_awayMission.demon.tookKlingonHand && _rdfData[0xcf] != 1) {
-		const char *text[] = {
-			SPEAKER_SPOCK,
-			"#DEM1\\DEM1_018#This is not a Klingon, Captain, not a real one. It is an organic construct -- an android-like robot. It looks like a Klingon, but the appearance is entirely superficial. There is something different about this particular construct. Come here, Captain, look at the hand.It seems to have been separated from the body. There is a wiring circuit in the middle of the palm.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_SPOCK, TX_DEM1_018);
 		_rdfData[0xcf] = 1;
 	}
 	else {
-		const char *text[] = {
-			SPEAKER_SPOCK,
-			"#DEM1\\DEM1_019#This is not a Klingon, Captain, not a real one. It is an organic construct -- an android-like robot. It looks like a Klingon, but the appearance is entirely superficial.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_SPOCK, TX_DEM1_019);
 	}
 }
 
 void Room::demon1UseSTricorderOnKlingon2Or3() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM1\\DEM1_019#This is not a Klingon, Captain, not a real one. It is an organic construct -- an android-like robot. It looks like a Klingon, but the appearance is entirely superficial.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM1_019);
 }
 
 void Room::demon1UseMTricorderOnKirk() {
@@ -525,14 +416,9 @@ void Room::demon1UseMTricorderOnRedshirt() {
 }
 
 void Room::demon1UseMTricorderOnCrewman() {
-	const char *text[] = {
-		SPEAKER_MCCOY,
-		"#DEM1\\DEM1_009#He's only stunned. He'll be back up in a few seconds.",
-		""
-	};
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_MCCOY, TX_DEM1_009);
 }
 
 void Room::demon1GetHand() {
@@ -554,231 +440,98 @@ void Room::demon1PickedUpHand() {
 
 // Timer 4 expired
 void Room::demon1FinishedGettingHand() {
-	const char *text1[] = {
-		nullptr,
-		"#DEM1\\DEM1N005#You already took the hand from the Klingon.",
-		""
-	};
-	const char *text2[] = {
-		nullptr,
-		"#DEM1\\DEM1N007#You take the Klingon's detached hand.",
-		""
-	};
 
 	if (_vm->_awayMission.demon.tookKlingonHand)
-		showRoomSpecificText(text1);
+		showText(TX_DEM1N005);
 	else {
 		_vm->_awayMission.demon.tookKlingonHand = true;
 		giveItem(OBJECT_IHAND);
-		showRoomSpecificText(text2);
+		showText(TX_DEM1N007);
 	}
 }
 
 void Room::demon1LookAtKlingon() {
-	const char *text[] = {
-		nullptr,
-		"#DEM1\\DEM1N004#They look like Klingons.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM1N004);
 }
 
 void Room::demon1LookAtCattails() {
-	const char *text[] = {
-		nullptr,
-		"#DEM1\\DEM1N018#These are very beautiful Doctis Cattails.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM1N018);
 }
 
 void Room::demon1LookAtTulips() {
-	const char *text[] = {
-		nullptr,
-		"M1\\DEM1N010#A large patch of Khytellian Tulips.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM1N010);
 }
 
 void Room::demon1LookAtPods() {
-	const char *text[] = {
-		nullptr,
-		"#DEM1\\DEM1N019#These Brandzite Pods add a nice touch to the local flora.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM1N019);
 }
 
 void Room::demon1LookAtFerns() {
-	const char *text[] = {
-		nullptr,
-		"#DEM1\\DEM1N009#A Gindorian Fern.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM1N009);
 }
 
 void Room::demon1LookAtStream() {
-	const char *text[] = {
-		nullptr,
-		"#DEM1\\DEM1N011#A small stream flows down towards the forest.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM1N011);
 }
 
 void Room::demon1LookAtMine() {
-	const char *text[] = {
-		nullptr,
-		"#DEM1\\DEM1N021#You see the mine entrance ahead.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM1N021);
 }
 
 void Room::demon1LookAtMountain() {
-	const char *text[] = {
-		nullptr,
-		"#DEM1\\DEM1N016#Mt. Idyll rises above you.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM1N016);
 }
 
 void Room::demon1LookAtHand() {
-	const char *text[] = {
-		nullptr,
-		"#DEM1\\DEM1N023#It's the Klingon's detached hand!",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM1N023);
 }
 void Room::demon1LookAnywhere() {
-	const char *text[] = {
-		nullptr,
-		"#DEM1\\DEM1N017#The path is surrounded by some beautiful shrubbery.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM1N017);
 }
 
 void Room::demon1LookAtKirk() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_KIRK)) {
-		const char *text[] = {
-			nullptr,
-			"#DEM1\\DEM1N012#Captain Kirk is unconscious.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
-	else {
-		const char *text[] = {
-			nullptr,
-			"#DEM1\\DEM1N003#James Kirk, filled with a premonition of more dangers yet to come.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
+	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_KIRK))
+		showText(TX_DEM1N012);
+	else
+		showText(TX_DEM1N003);
 }
 
 void Room::demon1LookAtSpock() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_SPOCK)) {
-		const char *text[] = {
-			nullptr,
-			"#DEM1\\DEM1N015#Mr. Spock is unconscious.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
-	else {
-		const char *text[] = {
-			nullptr,
-			"#DEM1\\DEM1N008#Your Vulcan science officer seems to be lost in thought, but remains alert.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
+	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_SPOCK))
+		showText(TX_DEM1N015);
+	else
+		showText(TX_DEM1N008);
 }
 
 void Room::demon1LookAtMcCoy() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_MCCOY)) {
-		const char *text[] = {
-			nullptr,
-			"#DEM1\\DEM1N013#Dr. McCoy is unconscious.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
-	else {
-		const char *text[] = {
-			nullptr,
-			"#DEM1\\DEM1N001#Dr. McCoy, still hoping the cold winds that whip around Mount Idyll will soon die down.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
+	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_MCCOY))
+		showText(TX_DEM1N013);
+	else
+		showText(TX_DEM1N001);
 }
 
 void Room::demon1LookAtRedshirt() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_REDSHIRT)) {
-		const char *text[] = {
-			nullptr,
-			"#DEM1\\DEM1N014#Ensign Everts is unconscious.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
-	else {
-		const char *text[] = {
-			nullptr,
-			"#DEM1\\DEM1N002#Ensign Everts seems to be rattled by the attack of the Klingons.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
+	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_REDSHIRT))
+		showText(TX_DEM1N014);
+	else
+		showText(TX_DEM1N002);
 }
 
 void Room::demon1TalkToKirk() {
-	const char *text[] = {
-		SPEAKER_KIRK,
-		"#DEM1\\DEM1_001#We were caught flat footed there. I don't want any more surprises to catch us off guard.",
-		""
-	};
 	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_KIRK))
 		demon1TalkToUnconsciousCrewman();
 	else if (_roomVar.demon1.numKlingonsKilled == 3)
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_KIRK, TX_DEM1_001);
 }
 
 void Room::demon1TalkToSpock() {
 	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_SPOCK))
 		demon1TalkToUnconsciousCrewman();
 	else {
-		const char *text1[] = {
-			SPEAKER_SPOCK,
-			"#DEM1\\DEM1_022#Captain, I detect a recent avalanche, approximately 6.2 kilometers away, that occurred within the last three days. The mountain may be quite dangerous.",
-			""
-		};
-		const char *text2[] = {
-			SPEAKER_MCCOY,
-			"#DEM1\\DEM1_013#Demons, Klingons, avalanches... What's next, the Wicked Witch of the West?",
-			""
-		};
-		const char *text3[] = {
-			SPEAKER_SPOCK,
-			"#DEM1\\DEM1_024#That is not logical, doctor.",
-			""
-		};
-		const char *text4[] = {
-			SPEAKER_MCCOY,
-			"#DEM1\\DEM1_014#It wasn't supposed to be logical, you green blooded Vulcan! Why does everything have to be so damned logical?",
-			""
-		};
-		showRoomSpecificText(text1);
-		showRoomSpecificText(text2);
-		showRoomSpecificText(text3);
-		showRoomSpecificText(text4);
+		showText(TX_SPEAKER_SPOCK, TX_DEM1_022);
+		showText(TX_SPEAKER_MCCOY, TX_DEM1_013);
+		showText(TX_SPEAKER_SPOCK, TX_DEM1_024);
+		showText(TX_SPEAKER_MCCOY, TX_DEM1_014);
 	}
 }
 
@@ -786,32 +539,16 @@ void Room::demon1TalkToMcCoy() {
 	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_MCCOY))
 		demon1TalkToUnconsciousCrewman();
 	else {
-		const char *text1[] = {
-			SPEAKER_MCCOY,
-			"#DEM1\\DEM1_015#Well, we've seen Klingons. Now all we need is a few Romulans...",
-			""
-		};
-		const char *text2[] = {
-			SPEAKER_SPOCK,
-			"#DEM1\\DEM1_023#Control your thoughts, Doctor. There is a high probability that something here is using our own memories against us.",
-			""
-		};
-		showRoomSpecificText(text1);
-		showRoomSpecificText(text2);
+		showText(TX_SPEAKER_MCCOY, TX_DEM1_015);
+		showText(TX_SPEAKER_SPOCK, TX_DEM1_023);
 	}
 }
 
 void Room::demon1TalkToRedshirt() {
 	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_REDSHIRT))
 		demon1TalkToUnconsciousCrewman();
-	else {
-		const char *text[] = {
-			SPEAKER_EVERTS,
-			"#DEM1\\DEM1_026#I guess this isn't such a great planet after all.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
+	else
+		showText(TX_SPEAKER_EVERTS, TX_DEM1_026);
 }
 
 // FIXME: this doesn't happen in actual game? (does the event get blocked from higher up?)
