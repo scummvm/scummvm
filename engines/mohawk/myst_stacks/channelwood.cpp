@@ -38,7 +38,7 @@ namespace Mohawk {
 namespace MystStacks {
 
 Channelwood::Channelwood(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm),
+		MystScriptParser(vm, kChannelwoodStack),
 		_state(vm->_gameState->_channelwood),
 		_valveVar(0),
 		_siriusDrawerState(0),

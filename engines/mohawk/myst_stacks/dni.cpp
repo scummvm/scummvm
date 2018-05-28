@@ -34,7 +34,7 @@ namespace Mohawk {
 namespace MystStacks {
 
 Dni::Dni(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm),
+		MystScriptParser(vm, kDniStack),
 		_notSeenAtrus(true),
 		_atrusRunning(false),
 		_waitForLoop(false),

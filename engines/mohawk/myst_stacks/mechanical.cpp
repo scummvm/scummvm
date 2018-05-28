@@ -37,7 +37,7 @@ namespace Mohawk {
 namespace MystStacks {
 
 Mechanical::Mechanical(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm),
+		MystScriptParser(vm, kMechanicalStack),
 		_state(vm->_gameState->_mechanical) {
 	setupOpcodes();
 

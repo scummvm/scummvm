@@ -31,7 +31,7 @@ namespace Mohawk {
 namespace MystStacks {
 
 Demo::Demo(MohawkEngine_Myst *vm) :
-		Intro(vm),
+		Intro(vm, kDemoStack),
 		_returnToMenuRunning(false),
 		_returnToMenuStep(0),
 		_returnToMenuNextTime(0) {
@@ -86,7 +86,7 @@ void Demo::returnToMenu_run() {
 	if (time < _returnToMenuNextTime)
 		return;
 
-	switch (_returnToMenuStep){
+	switch (_returnToMenuStep) {
 	case 0:
 		_vm->_gfx->fadeToBlack();
 		_vm->changeToCard(2003, kNoTransition);

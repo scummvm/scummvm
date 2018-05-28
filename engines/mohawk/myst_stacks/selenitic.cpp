@@ -37,7 +37,7 @@ namespace Mohawk {
 namespace MystStacks {
 
 Selenitic::Selenitic(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm),
+		MystScriptParser(vm, kSeleniticStack),
 		_state(vm->_gameState->_selenitic) {
 	setupOpcodes();
 

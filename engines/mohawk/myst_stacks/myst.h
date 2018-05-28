@@ -37,7 +37,7 @@ namespace MystStacks {
 
 class Myst : public MystScriptParser {
 public:
-	explicit Myst(MohawkEngine_Myst *vm);
+	explicit Myst(MohawkEngine_Myst *vm, MystStack stackId = kMystStack);
 	~Myst() override;
 
 	void disablePersistentScripts() override;

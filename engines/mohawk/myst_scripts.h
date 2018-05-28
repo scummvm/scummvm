@@ -60,7 +60,7 @@ typedef Common::Array<MystScriptEntry> MystScript;
 
 class MystScriptParser {
 public:
-	explicit MystScriptParser(MohawkEngine_Myst *vm);
+	MystScriptParser(MohawkEngine_Myst *vm, MystStack stackId);
 	virtual ~MystScriptParser();
 
 	void runScript(const MystScript &script, MystArea *invokingResource = nullptr);
@@ -83,6 +83,7 @@ public:
 	virtual void toggleVar(uint16 var);
 	virtual bool setVarValue(uint16 var, uint16 value);
 
+	MystStack getStackId() const { return _stackId; }
 	virtual uint16 getMap() { return 0; }
 	void showMap();
 
@@ -166,7 +167,7 @@ protected:
 	int16 _tempVar; // Generic temp var used by the scripts
 	uint32 _startTime; // Generic start time used by the scripts
 
-	static const uint8 _stackMap[];
+	static const MystStack _stackMap[];
 	static const uint16 _startCard[];
 
 	void setupCommonOpcodes();
@@ -187,6 +188,8 @@ private:
 
 	MystArea *_invokingResource;
 	int32 _scriptNestingLevel;
+
+	const MystStack _stackId;
 
 	Common::String describeCommand(const MystOpcode &command, uint16 var, const ArgumentsArray &args);
 };

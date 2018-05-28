@@ -38,7 +38,7 @@ namespace Mohawk {
 namespace MystStacks {
 
 Stoneship::Stoneship(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm),
+		MystScriptParser(vm, kStoneshipStack),
 		_state(vm->_gameState->_stoneship) {
 	setupOpcodes();
 

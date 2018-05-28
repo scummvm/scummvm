@@ -34,7 +34,7 @@ namespace Mohawk {
 namespace MystStacks {
 
 Slides::Slides(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm) {
+		MystScriptParser(vm, kDemoSlidesStack) {
 	setupOpcodes();
 
 	_vm->_cursor->hideCursor();

@@ -49,7 +49,7 @@ void MystCard::enter() {
 	_vm->applySoundBlock(_soundBlock);
 
 	if (_flags & kMystZipDestination)
-		_vm->_gameState->addZipDest(_vm->getCurStack(), _id);
+		_vm->_gameState->addZipDest(_vm->_stack->getStackId(), _id);
 
 	// Run the entrance script (if present)
 	runInitScript();
@@ -184,7 +184,7 @@ void MystCard::loadView() {
 	// Precache Image Block data
 	if (!_conditionalImages.empty()) {
 		for (uint16 i = 0; i < _conditionalImages.size(); i++) {
-			uint16 value = _vm->_scriptParser->getVar(_conditionalImages[i].var);
+			uint16 value = _vm->_stack->getVar(_conditionalImages[i].var);
 			_vm->cachePreload(cacheImageType, _conditionalImages[i].values[value]);
 		}
 	} else {
@@ -195,7 +195,7 @@ void MystCard::loadView() {
 	if (_soundBlock.sound > 0)
 		_vm->cachePreload(ID_MSND, _soundBlock.sound);
 	else if (_soundBlock.sound == kMystSoundActionConditional) {
-		uint16 value = _vm->_scriptParser->getVar(_soundBlock.soundVar);
+		uint16 value = _vm->_stack->getVar(_soundBlock.soundVar);
 		if (_soundBlock.soundList[value].action > 0) {
 			_vm->cachePreload(ID_MSND, _soundBlock.soundList[value].action);
 		}
@@ -207,7 +207,7 @@ void MystCard::loadView() {
 		int16 id;
 		if (_scriptResources[i].type == kResourceSwitch) {
 			type = _scriptResources[i].switchResourceType;
-			uint16 value = _vm->_scriptParser->getVar(_scriptResources[i].switchVar);
+			uint16 value = _vm->_stack->getVar(_scriptResources[i].switchVar);
 			id = _scriptResources[i].switchResourceIds[value];
 		} else {
 			type = _scriptResources[i].type;
@@ -296,7 +296,7 @@ uint16 MystCard::getBackgroundImageId() {
 		imageToDraw = _mainImage;
 	else {
 		for (uint16 i = 0; i < _conditionalImages.size(); i++) {
-			uint16 varValue = _vm->_scriptParser->getVar(_conditionalImages[i].var);
+			uint16 varValue = _vm->_stack->getVar(_conditionalImages[i].var);
 			if (varValue < _conditionalImages[i].values.size())
 				imageToDraw = _conditionalImages[i].values[varValue];
 		}
@@ -318,10 +318,10 @@ void MystCard::runInitScript() {
 	debugC(kDebugINIT, "Running INIT script");
 
 	Common::SeekableReadStream *initStream = _vm->getResource(ID_INIT, _initScriptId);
-	MystScript script = _vm->_scriptParser->readScript(initStream, kMystScriptInit);
+	MystScript script = _vm->_stack->readScript(initStream, kMystScriptInit);
 	delete initStream;
 
-	_vm->_scriptParser->runScript(script);
+	_vm->_stack->runScript(script);
 }
 
 void MystCard::runExitScript() {
@@ -333,10 +333,10 @@ void MystCard::runExitScript() {
 	debugC(kDebugEXIT, "Running EXIT script");
 
 	Common::SeekableReadStream *exitStream = _vm->getResource(ID_EXIT, _exitScriptId);
-	MystScript script = _vm->_scriptParser->readScript(exitStream, kMystScriptExit);
+	MystScript script = _vm->_stack->readScript(exitStream, kMystScriptExit);
 	delete exitStream;
 
-	_vm->_scriptParser->runScript(script);
+	_vm->_stack->runScript(script);
 }
 
 void MystCard::drawResourceRects() {
@@ -406,7 +406,7 @@ int16 MystCard::getActiveResourceCursor() {
 	for (uint16 i = 0; i < _cursorHints.size(); i++) {
 		if (_activeResource && _resources[_cursorHints[i].id] == _activeResource && _activeResource->isEnabled()) {
 			if (_cursorHints[i].cursor == -1) {
-				uint16 var_value = _vm->_scriptParser->getVar(_cursorHints[i].variableHint.var);
+				uint16 var_value = _vm->_stack->getVar(_cursorHints[i].variableHint.var);
 
 				if (var_value >= _cursorHints[i].variableHint.values.size())
 					warning("Variable %d Out of Range in variable HINT Resource %d", _cursorHints[i].variableHint.var,

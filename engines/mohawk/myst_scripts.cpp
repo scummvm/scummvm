@@ -44,7 +44,7 @@ MystScriptEntry::MystScriptEntry() {
 	opcode = 0;
 }
 
-const uint8 MystScriptParser::_stackMap[11] = {
+const MystStack MystScriptParser::_stackMap[11] = {
 	kSeleniticStack,
 	kStoneshipStack,
 	kMystStack,
@@ -74,8 +74,9 @@ const uint16 MystScriptParser::_startCard[11] = {
 
 // NOTE: Credits Start Card is 10000
 
-MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) :
+MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm, MystStack stackId) :
 		_vm(vm),
+		_stackId(stackId),
 		_globals(vm->_gameState->_globals) {
 	setupCommonOpcodes();
 	_invokingResource = nullptr;

@@ -136,11 +136,10 @@ public:
 	Common::Array<uint16> getResourceIDList(uint32 type) const;
 	void cachePreload(uint32 tag, uint16 id);
 
-	void changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound);
+	void changeToStack(MystStack stackId, uint16 card, uint16 linkSrcSound, uint16 linkDstSound);
 	void changeToCard(uint16 card, TransitionType transition);
 	MystCard *getCard() { return _card.get(); };
 	MystCardPtr getCardPtr() { return _card; };
-	uint16 getCurStack() { return _curStack; }
 	void setMainCursor(uint16 cursor);
 	uint16 getMainCursor() { return _mainCursor; }
 	void refreshCursor();
@@ -163,7 +162,7 @@ public:
 	MystSound *_sound;
 	MystGraphics *_gfx;
 	MystGameState *_gameState;
-	MystScriptParserPtr _scriptParser;
+	MystScriptParserPtr _stack;
 	Common::RandomSource *_rnd;
 
 	MystArea *loadResource(Common::SeekableReadStream *rlstStream, MystArea *parent);
@@ -175,7 +174,7 @@ public:
 	VideoEntryPtr playMovie(const Common::String &name, MystStack stack);
 	VideoEntryPtr findVideo(const Common::String &name, MystStack stack);
 	void playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y);
-	void playFlybyMovie(uint16 stack, uint16 card);
+	void playFlybyMovie(MystStack stack, uint16 card);
 	void waitUntilMovieEnds(const VideoEntryPtr &video);
 
 	void playSoundBlocking(uint16 id);
@@ -201,7 +200,6 @@ private:
 	MystOptionsDialog *_optionsDialog;
 	ResourceCache _cache;
 
-	uint16 _curStack;
 	MystCardPtr _card;
 	uint32 _lastSaveTime;
 

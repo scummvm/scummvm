@@ -100,9 +100,9 @@ bool MystConsole::Cmd_Var(int argc, const char **argv) {
 	}
 
 	if (argc > 2)
-		_vm->_scriptParser->setVarValue((uint16)atoi(argv[1]), (uint16)atoi(argv[2]));
+		_vm->_stack->setVarValue((uint16)atoi(argv[1]), (uint16)atoi(argv[2]));
 
-	debugPrintf("%d = %d\n", (uint16)atoi(argv[1]), _vm->_scriptParser->getVar((uint16)atoi(argv[1])));
+	debugPrintf("%d = %d\n", (uint16)atoi(argv[1]), _vm->_stack->getVar((uint16)atoi(argv[1])));
 
 	return true;
 }
@@ -138,7 +138,7 @@ static const uint16 default_start_card[12] = {
 };
 
 bool MystConsole::Cmd_CurStack(int argc, const char **argv) {
-	debugPrintf("Current Stack: %s\n", mystStackNames[_vm->getCurStack()]);
+	debugPrintf("Current Stack: %s\n", mystStackNames[_vm->_stack->getStackId()]);
 	return true;
 }
 
@@ -178,7 +178,7 @@ bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 	else
 		card = default_start_card[stackNum - 1];
 
-	_vm->changeToStack(stackNum - 1, card, 0, 0);
+	_vm->changeToStack(static_cast<MystStack>(stackNum - 1), card, 0, 0);
 
 	return false;
 }
@@ -290,7 +290,7 @@ bool MystConsole::Cmd_DisableInitOpcodes(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_scriptParser->disablePersistentScripts();
+	_vm->_stack->disablePersistentScripts();
 
 	return true;
 }
@@ -331,9 +331,12 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 
 	// Go through all the ages, all the views and click random stuff
 	for (uint i = 0; i < ARRAYSIZE(mystStackNames); i++) {
-		if (i == 2 || i == 5 || i == 9 || i == 10) continue;
-		debug("Loading stack %s", mystStackNames[i]);
-		_vm->changeToStack(i, default_start_card[i], 0, 0);
+		MystStack stackId = static_cast<MystStack>(i);
+		if (stackId == kDemoStack || stackId == kMakingOfStack
+		    || stackId == kDemoSlidesStack || stackId == kDemoPreviewStack) continue;
+
+		debug("Loading stack %s", mystStackNames[stackId]);
+		_vm->changeToStack(stackId, default_start_card[stackId], 0, 0);
 
 		Common::Array<uint16> ids = _vm->getResourceIDList(ID_VIEW);
 		for (uint j = 0; j < ids.size(); j++) {
@@ -355,9 +358,9 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 
 			_vm->doFrame();
 
-			if (_vm->getCurStack() != i) {
+			if (_vm->_stack->getStackId() != stackId) {
 				// Clicking may have linked us to another age
-				_vm->changeToStack(i, default_start_card[i], 0, 0);
+				_vm->changeToStack(stackId, default_start_card[stackId], 0, 0);
 			}
 		}
 	}

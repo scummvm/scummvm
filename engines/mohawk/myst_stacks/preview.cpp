@@ -35,7 +35,7 @@ namespace Mohawk {
 namespace MystStacks {
 
 Preview::Preview(MohawkEngine_Myst *vm) :
-		Myst(vm) {
+		Myst(vm, kDemoPreviewStack) {
 	setupOpcodes();
 	_vm->_cursor->hideCursor();
 

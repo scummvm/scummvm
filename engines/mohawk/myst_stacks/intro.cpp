@@ -31,8 +31,8 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Intro::Intro(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm),
+Intro::Intro(MohawkEngine_Myst *vm, MystStack stackId) :
+		MystScriptParser(vm, stackId),
 		_introMoviesRunning(false),
 		_introStep(0),
 		_linkBookRunning(false),

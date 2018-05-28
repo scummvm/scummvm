@@ -37,8 +37,8 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Myst::Myst(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm),
+Myst::Myst(MohawkEngine_Myst *vm, MystStack stackId) :
+		MystScriptParser(vm, stackId),
 		_state(_vm->_gameState->_myst),
 		_towerRotationCenter(Common::Point(383, 124)) {
 	setupOpcodes();

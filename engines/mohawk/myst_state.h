@@ -113,8 +113,8 @@ public:
 	bool isAutoSaveAllowed();
 	static void deleteSave(int slot);
 
-	void addZipDest(uint16 stack, uint16 view);
-	bool isReachableZipDest(uint16 stack, uint16 view);
+	void addZipDest(MystStack stack, uint16 view);
+	bool isReachableZipDest(MystStack stack, uint16 view);
 
 	/* 8 Game Global Variables :
 	   0 = Unknown - Fixed at 2

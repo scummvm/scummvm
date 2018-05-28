@@ -532,7 +532,7 @@ void MystGameState::deleteSave(int slot) {
 	g_system->getSavefileManager()->removeSavefile(metadataFilename);
 }
 
-void MystGameState::addZipDest(uint16 stack, uint16 view) {
+void MystGameState::addZipDest(MystStack stack, uint16 view) {
 	ZipDests *zipDests = nullptr;
 
 	// The demo has no zip dest storage
@@ -576,7 +576,7 @@ void MystGameState::addZipDest(uint16 stack, uint16 view) {
 		(*zipDests)[firstEmpty] = view;
 }
 
-bool MystGameState::isReachableZipDest(uint16 stack, uint16 view) {
+bool MystGameState::isReachableZipDest(MystStack stack, uint16 view) {
 	// Zip mode enabled
 	if (!_globals.zipMode)
 		return false;

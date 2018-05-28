@@ -209,13 +209,13 @@ void MystOptionsDialog::open() {
 	_dropPageButton->setEnabled(canDropPage);
 
 	if (_showMapButton) {
-		bool canShowMap = _vm->isInteractive() && _vm->_scriptParser->getMap();
+		bool canShowMap = _vm->isInteractive() && _vm->_stack->getMap();
 		_showMapButton->setEnabled(canShowMap);
 	}
 
 	if (_returnToMenuButton) {
 		// Return to menu button is not enabled on the menu
-		bool canReturnToMenu = _vm->isInteractive() && _vm->getCurStack() != kDemoStack;
+		bool canReturnToMenu = _vm->isInteractive() && _vm->_stack->getStackId() != kDemoStack;
 		_returnToMenuButton->setEnabled(canReturnToMenu);
 	}
 
