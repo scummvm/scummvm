@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 23:22+0200\n"
+"POT-Creation-Date: 2018-05-28 23:37+0200\n"
 "PO-Revision-Date: 2018-05-07 19:16+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -1984,6 +1984,25 @@ msgstr ""
 #: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Pelaa silti"
+
+#: engines/game.cpp:158
+#, fuzzy, c-format
+msgid ""
+"The game in '%s' seems to be an unknown game variant.\n"
+"\n"
+"Please report the following data to the ScummVM team at %s along with the "
+"name of the game you tried to add and its version, language, etc.:"
+msgstr ""
+"Peli kansiossa \"%s\" näyttää olevan tuntematon %s pelimoottorin "
+"pelivariantti.\n"
+"Ole kiltti ja raportoi seuraavat tiedot ScummVM:n kehittäjille osoitteessa "
+"%s pelin nimen,\n"
+"version, kielen, yms. kera:"
+
+#: engines/game.cpp:162
+#, fuzzy, c-format
+msgid "Matched game IDs for the %s engine:"
+msgstr "Tarkastetut peli ID:t:"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
@@ -4689,21 +4708,6 @@ msgstr ""
 "Tämä pelitallennus käyttää versiota %u, mutta tämä pelimoottorin tuki on "
 "vain versioon %d asti. Tarvitset päivitetyn version tästä pelimoottorista "
 "käyttääksesi tätä pelitallennusta."
-
-#~ msgid ""
-#~ "The game in '%s' seems to be an unknown %s engine game variant.\n"
-#~ "\n"
-#~ "Please report the following data to the ScummVM team at %s along with the "
-#~ "name of the game you tried to add and its version, language, etc.:"
-#~ msgstr ""
-#~ "Peli kansiossa \"%s\" näyttää olevan tuntematon %s pelimoottorin "
-#~ "pelivariantti.\n"
-#~ "Ole kiltti ja raportoi seuraavat tiedot ScummVM:n kehittäjille "
-#~ "osoitteessa %s pelin nimen,\n"
-#~ "version, kielen, yms. kera:"
-
-#~ msgid "Matched game IDs:"
-#~ msgstr "Tarkastetut peli ID:t:"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""

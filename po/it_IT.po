@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 23:22+0200\n"
+"POT-Creation-Date: 2018-05-28 23:37+0200\n"
 "PO-Revision-Date: 2018-04-30 12:52+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -2002,6 +2002,25 @@ msgstr ""
 #: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Avvia comunque"
+
+#: engines/game.cpp:158
+#, fuzzy, c-format
+msgid ""
+"The game in '%s' seems to be an unknown game variant.\n"
+"\n"
+"Please report the following data to the ScummVM team at %s along with the "
+"name of the game you tried to add and its version, language, etc.:"
+msgstr ""
+"Il gioco in '%s' non è noto. Sembra essere una versione sconosciuta di un "
+"gioco che utilizza il motore '%s'.\n"
+"\n"
+"Per favore riporta i seguenti dati al team ScummVM a '%s' insieme al nome "
+"del gioco che hai provato ad aggiungere e alla sua versione, lingua, etc.:"
+
+#: engines/game.cpp:162
+#, fuzzy, c-format
+msgid "Matched game IDs for the %s engine:"
+msgstr "Identificatori di gioco corrispondenti:"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
@@ -4737,21 +4756,6 @@ msgstr ""
 "Il salvataggio utilizza la versione %u, ma questo motore supporta solo la "
 "versione %d o inferiori. Procurati una motore aggiornato per usare questo "
 "salvataggio."
-
-#~ msgid ""
-#~ "The game in '%s' seems to be an unknown %s engine game variant.\n"
-#~ "\n"
-#~ "Please report the following data to the ScummVM team at %s along with the "
-#~ "name of the game you tried to add and its version, language, etc.:"
-#~ msgstr ""
-#~ "Il gioco in '%s' non è noto. Sembra essere una versione sconosciuta di un "
-#~ "gioco che utilizza il motore '%s'.\n"
-#~ "\n"
-#~ "Per favore riporta i seguenti dati al team ScummVM a '%s' insieme al nome "
-#~ "del gioco che hai provato ad aggiungere e alla sua versione, lingua, etc.:"
-
-#~ msgid "Matched game IDs:"
-#~ msgstr "Identificatori di gioco corrispondenti:"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 23:22+0200\n"
+"POT-Creation-Date: 2018-05-28 23:37+0200\n"
 "PO-Revision-Date: 2018-04-18 10:09+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -1988,6 +1988,25 @@ msgstr ""
 #: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Pøesto spustit"
+
+#: engines/game.cpp:158
+#, fuzzy, c-format
+msgid ""
+"The game in '%s' seems to be an unknown game variant.\n"
+"\n"
+"Please report the following data to the ScummVM team at %s along with the "
+"name of the game you tried to add and its version, language, etc.:"
+msgstr ""
+"Hra nacházející se v '%s' pravdìpodobnì vyu¾ívá neznámou variantu jádra "
+"%s .\n"
+"\n"
+"Prosím pøepo¹lete následující data týmu ScummVM na %s spolu s názvem hry, "
+"kterou jste chtìli pøidat, a její verzí, jazykem, atd.:"
+
+#: engines/game.cpp:162
+#, fuzzy, c-format
+msgid "Matched game IDs for the %s engine:"
+msgstr "Shodné ID hry:"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
@@ -4682,21 +4701,6 @@ msgid ""
 msgstr ""
 "Tato ulo¾ená hra je z verze %u, ale nejvy¹¹í verze, které toto jádro "
 "podporuje, je %d. Abyste tuto hru naèetli, musíte získat novìj¹í verzi jádra."
-
-#~ msgid ""
-#~ "The game in '%s' seems to be an unknown %s engine game variant.\n"
-#~ "\n"
-#~ "Please report the following data to the ScummVM team at %s along with the "
-#~ "name of the game you tried to add and its version, language, etc.:"
-#~ msgstr ""
-#~ "Hra nacházející se v '%s' pravdìpodobnì vyu¾ívá neznámou variantu jádra "
-#~ "%s .\n"
-#~ "\n"
-#~ "Prosím pøepo¹lete následující data týmu ScummVM na %s spolu s názvem hry, "
-#~ "kterou jste chtìli pøidat, a její verzí, jazykem, atd.:"
-
-#~ msgid "Matched game IDs:"
-#~ msgstr "Shodné ID hry:"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení místo rozhraní ScummVM"

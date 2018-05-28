@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 23:22+0200\n"
+"POT-Creation-Date: 2018-05-28 23:37+0200\n"
 "PO-Revision-Date: 2018-05-28 18:11+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -1982,6 +1982,24 @@ msgstr ""
 #: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Indítás így is"
+
+#: engines/game.cpp:158
+#, fuzzy, c-format
+msgid ""
+"The game in '%s' seems to be an unknown game variant.\n"
+"\n"
+"Please report the following data to the ScummVM team at %s along with the "
+"name of the game you tried to add and its version, language, etc.:"
+msgstr ""
+"A (z) '%s'  játék egy ismeretlen %s motor játék változatnak tûnik.\n"
+"\n"
+"Kérjük, jelentse a következõ adatokat a ScummVM csapatnak %s a játék nevével "
+"együtt, amelyet megpróbált hozzáadni, és annak verzióját, nyelvét stb.:"
+
+#: engines/game.cpp:162
+#, fuzzy, c-format
+msgid "Matched game IDs for the %s engine:"
+msgstr "Egyezõ játékazonosítók:"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
@@ -4684,21 +4702,6 @@ msgstr ""
 "Ez a mentett állás %u verziót használ, de ez a motor csak %d verzió felettit "
 "támogat. Szükséged van a motor frissített verziójára, hogy használd a "
 "mentett játékállást."
-
-#~ msgid ""
-#~ "The game in '%s' seems to be an unknown %s engine game variant.\n"
-#~ "\n"
-#~ "Please report the following data to the ScummVM team at %s along with the "
-#~ "name of the game you tried to add and its version, language, etc.:"
-#~ msgstr ""
-#~ "A (z) '%s'  játék egy ismeretlen %s motor játék változatnak tûnik.\n"
-#~ "\n"
-#~ "Kérjük, jelentse a következõ adatokat a ScummVM csapatnak %s a játék "
-#~ "nevével együtt, amelyet megpróbált hozzáadni, és annak verzióját, nyelvét "
-#~ "stb.:"
-
-#~ msgid "Matched game IDs:"
-#~ msgstr "Egyezõ játékazonosítók:"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr "Használd az eredeti mentés/töltés képet a ScummVM felület helyett"

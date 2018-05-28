@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 23:22+0200\n"
+"POT-Creation-Date: 2018-05-28 23:37+0200\n"
 "PO-Revision-Date: 2018-04-30 13:02+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -1996,6 +1996,24 @@ msgstr ""
 #: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Evengoed starten"
+
+#: engines/game.cpp:158
+#, fuzzy, c-format
+msgid ""
+"The game in '%s' seems to be an unknown game variant.\n"
+"\n"
+"Please report the following data to the ScummVM team at %s along with the "
+"name of the game you tried to add and its version, language, etc.:"
+msgstr ""
+"Het spel in '%s' lijkt een onbekende spel variant van de %s engine te zijn.\n"
+"Rapporteer a.u.b. de volgende gegevens aan het ScummVM team op %s samen\n"
+"met de naam van het spel die u probeerde toe te voegen en zijn versie, taal, "
+"etc. :"
+
+#: engines/game.cpp:162
+#, fuzzy, c-format
+msgid "Matched game IDs for the %s engine:"
+msgstr "Matchende game IDs:"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
@@ -4722,21 +4740,6 @@ msgstr ""
 "Dit opgeslagen spel gebruikt versie %u, maar deze engine ondersteund alleen "
 "tot versie %d. U heeft een nieuwere versie van deze engine nodig om dit "
 "opgeslagen te gebruiken."
-
-#~ msgid ""
-#~ "The game in '%s' seems to be an unknown %s engine game variant.\n"
-#~ "\n"
-#~ "Please report the following data to the ScummVM team at %s along with the "
-#~ "name of the game you tried to add and its version, language, etc.:"
-#~ msgstr ""
-#~ "Het spel in '%s' lijkt een onbekende spel variant van de %s engine te "
-#~ "zijn.\n"
-#~ "Rapporteer a.u.b. de volgende gegevens aan het ScummVM team op %s samen\n"
-#~ "met de naam van het spel die u probeerde toe te voegen en zijn versie, "
-#~ "taal, etc. :"
-
-#~ msgid "Matched game IDs:"
-#~ msgstr "Matchende game IDs:"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""

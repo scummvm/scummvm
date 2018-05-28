@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 23:22+0200\n"
+"POT-Creation-Date: 2018-05-28 23:37+0200\n"
 "PO-Revision-Date: 2018-04-18 10:17+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1990,6 +1990,24 @@ msgstr ""
 #: engines/engine.cpp:524
 msgid "Start anyway"
 msgstr "Всё равно запустить"
+
+#: engines/game.cpp:158
+#, fuzzy, c-format
+msgid ""
+"The game in '%s' seems to be an unknown game variant.\n"
+"\n"
+"Please report the following data to the ScummVM team at %s along with the "
+"name of the game you tried to add and its version, language, etc.:"
+msgstr ""
+"Похоже, что игра в '%s' является неизвестной игрой на движке %s.\n"
+"\n"
+"Пожалуйста, сообщите команде ScummVM на %s следующие данные вместе с "
+"названием игры, её версией, языком и др.:"
+
+#: engines/game.cpp:162
+#, fuzzy, c-format
+msgid "Matched game IDs for the %s engine:"
+msgstr "Возможные ID игры:"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
@@ -4700,20 +4718,6 @@ msgstr ""
 "Этот файл сохранённой игры имеет версию %u, но движок поддерживает только "
 "версии не выше %d. Для использования этого файла необходима свежая версия "
 "движка."
-
-#~ msgid ""
-#~ "The game in '%s' seems to be an unknown %s engine game variant.\n"
-#~ "\n"
-#~ "Please report the following data to the ScummVM team at %s along with the "
-#~ "name of the game you tried to add and its version, language, etc.:"
-#~ msgstr ""
-#~ "Похоже, что игра в '%s' является неизвестной игрой на движке %s.\n"
-#~ "\n"
-#~ "Пожалуйста, сообщите команде ScummVM на %s следующие данные вместе с "
-#~ "названием игры, её версией, языком и др.:"
-
-#~ msgid "Matched game IDs:"
-#~ msgstr "Возможные ID игры:"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""
