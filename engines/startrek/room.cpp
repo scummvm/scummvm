@@ -53,6 +53,10 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 		_roomActionList = demon3ActionList;
 		_numRoomActions = sizeof(demon3ActionList) / sizeof(RoomAction);
 	}
+	else if (name == "DEMON4") {
+		_roomActionList = demon4ActionList;
+		_numRoomActions = sizeof(demon4ActionList) / sizeof(RoomAction);
+	}
 	else {
 		warning("Room \"%s\" unimplemented", name.c_str());
 		_numRoomActions = 0;
@@ -208,11 +212,11 @@ int Room::showText(int speaker, int text) {
 	textIDs[0] = speaker;
 	textIDs[1] = text;
 	textIDs[2] = TX_BLANK;
-	showText(textIDs);
+	return showText(textIDs);
 }
 
 int Room::showText(int text) {
-	showText(TX_NULL, text);
+	return showText(TX_NULL, text);
 }
 
 void Room::giveItem(int item) {

@@ -309,6 +309,41 @@ RoomAction demon3ActionList[] = {
 
 };
 
+RoomAction demon4ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::demon4Tick1 },
+	{ Action(ACTION_FINISHED_ANIMATION, 1, 0, 0), &Room::demon4FinishedAnimation1 },
+	{ Action(ACTION_FINISHED_ANIMATION, 2, 0, 0), &Room::demon4FinishedAnimation2 },
+	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0), &Room::demon4FinishedAnimation3 },
+
+	// TODO: everything
+
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 0x21, 0), &Room::demon4UsePhaserOnPanel },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 0x20, 0), &Room::demon4UsePhaserOnPattern },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, OBJECT_MCCOY, 0), &Room::demon4UsePhaserOnMccoy },
+
+	// TODO
+
+	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::demon4LookAtPattern },
+	{ Action(ACTION_LOOK, 8, 0, 0), &Room::demon4LookAtAlien },
+	{ Action(ACTION_LOOK, -1, 0, 0), &Room::demon4LookAnywhere },
+	{ Action(ACTION_LOOK, 0x22, 0, 0), &Room::demon4LookAtSecurityEquipment },
+	{ Action(ACTION_LOOK, 0x23, 0, 0), &Room::demon4LookAtFloor },
+
+	{ Action(ACTION_LOOK, OBJECT_KIRK, 0, 0), &Room::demon4LookAtKirk },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY, 0, 0), &Room::demon4LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK, 0, 0), &Room::demon4LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::demon4LookAtRedshirt },
+
+	{ Action(ACTION_LOOK, 10, 0, 0), &Room::demon4LookAtChamber },
+	{ Action(ACTION_LOOK, 0x21, 0, 0), &Room::demon4LookAtPanel },
+
+	{ Action(ACTION_USE, OBJECT_KIRK, 0x21, 0), &Room::demon4UseKirkOnPanel },
+	{ Action(ACTION_USE, OBJECT_SPOCK, 0x21, 0), &Room::demon4UseSpockOnPanel },
+	{ Action(ACTION_USE, OBJECT_MCCOY, 0x21, 0), &Room::demon4UseMccoyOnPanel },
+	{ Action(ACTION_USE, OBJECT_REDSHIRT, 0x21, 0), &Room::demon4UseRedshirtOnPanel },
+	{ Action(ACTION_FINISHED_WALKING, 3, 0, 0), &Room::demon4CrewmanReachedPanel },
+};
+
 }
 
 #endif

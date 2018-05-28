@@ -45,9 +45,9 @@ struct AwayMission {
 
 	// If a bit in "crewDownBitset" is set, the corresponding timer in "crewGetupTimers"
 	// begins counting down. When it reaches 0, they get up.
-	byte crewDownBitset;
+	byte crewDownBitset; // 0x24
 
-	int8 crewDirectionsAfterWalk[4]; // Sets an object's direction after they finish walking somewhere?
+	int8 crewDirectionsAfterWalk[4]; // 0x25: Sets an object's direction after they finish walking somewhere?
 
 	// Mission-specific variables
 	union {
@@ -71,15 +71,19 @@ struct AwayMission {
 			byte field41; // 0x41
 			bool foundMiner; // 0x43
 			bool field45; // 0x45
+			bool field47; // 0x47
 			bool warpsDisabled; // 0x48
 			bool boulder1Gone; // 0x49
 			bool boulder2Gone; // 0x4a
 			bool boulder3Gone; // 0x4b
 			bool boulder4Gone; // 0x4c
 			bool doorOpened; // 0x4d
+			bool field4e; // 0x4e
+			byte field4f; // 0x4f
 			bool gotBerries; // 0x50
 			bool madeHypoDytoxin; // 0x51
 			byte field56; // 0x56
+			bool foundAlienRoom; // 0x57
 		} demon;
 	};
 

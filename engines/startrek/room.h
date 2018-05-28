@@ -308,6 +308,32 @@ public:
 	void demon3LookAtPanel();
 	void demon3LookAtLight();
 
+	// DEMON4
+	void demon4Tick1();
+	void demon4FinishedAnimation1();
+	void demon4FinishedAnimation2();
+	void demon4FinishedAnimation3();
+	void demon4UsePhaserOnPanel();
+	void demon4UsePhaserOnPattern();
+	void demon4UsePhaserOnMccoy();
+	void demon4LookAtPattern();
+	void demon4LookAtAlien();
+	void demon4LookAnywhere();
+	void demon4LookAtSecurityEquipment();
+	void demon4LookAtFloor();
+	void demon4LookAtKirk();
+	void demon4LookAtMccoy();
+	void demon4LookAtSpock();
+	void demon4LookAtRedshirt();
+	void demon4LookAtChamber();
+	void demon4LookAtPanel();
+	void demon4UseKirkOnPanel();
+	void demon4UseSpockOnPanel();
+	void demon4UseMccoyOnPanel();
+	void demon4UseRedshirtOnPanel();
+	void demon4UseCrewmanOnPanel();
+	void demon4CrewmanReachedPanel();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {
@@ -331,6 +357,11 @@ private:
 			char boulderAnim[10]; // 0xd4
 			int16 usedPhaserOnDoor; // 0xd6
 		} demon3;
+
+		struct {
+			bool cb; // 0xcb
+			int16 crewmanUsingPanel; // 0xcf
+		} demon4;
 	} _roomVar;
 };
 
