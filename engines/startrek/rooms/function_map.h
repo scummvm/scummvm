@@ -282,6 +282,7 @@ RoomAction demon3ActionList[] = {
 	{ Action(ACTION_FINISHED_ANIMATION, 7, 0, 0), &Room::demon3McCoyFinishedHealingMiner },
 
 	{ Action(ACTION_GET, 13, 0, 0), &Room::demon3GetMiner },
+	{ Action(ACTION_TALK, 13, 0, 0), &Room::demon3TalkToMiner },
 
 	{ Action(ACTION_TALK, OBJECT_KIRK, 0, 0), &Room::demon3TalkToKirk },
 	{ Action(ACTION_TALK, OBJECT_SPOCK, 0, 0), &Room::demon3TalkToSpock },

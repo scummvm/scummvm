@@ -288,6 +288,7 @@ public:
 	void demon3McCoyReachedMiner();
 	void demon3McCoyFinishedHealingMiner();
 	void demon3GetMiner();
+	void demon3TalkToMiner();
 	void demon3TalkToKirk();
 	void demon3TalkToSpock();
 	void demon3TalkToMccoy();
