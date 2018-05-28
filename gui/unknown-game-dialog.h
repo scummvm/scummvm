@@ -20,11 +20,16 @@
  *
  */
 
+#ifndef GUI_UNKNOWN_GAME_DIALOG_H
+#define GUI_UNKNOWN_GAME_DIALOG_H
+
 #include "gui/dialog.h"
 
-#include "engines/metaengine.h"
+#include "engines/game.h"
 
-class UnknownGameDialog : public GUI::Dialog {
+namespace GUI {
+
+class UnknownGameDialog : public Dialog {
 public:
 	UnknownGameDialog(const DetectionResults &detectionResults);
 
@@ -37,3 +42,7 @@ private:
 
 	const DetectionResults &_detectionResults;
 };
+
+} // End of namespace GUI
+
+#endif

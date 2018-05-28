@@ -23,6 +23,7 @@ gui/saveload-dialog.cpp
 gui/storagewizarddialog.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
+gui/unknown-game-dialog.cpp
 gui/updates-dialog.cpp
 gui/widget.cpp
 
@@ -35,7 +36,6 @@ common/updates.cpp
 engines/advancedDetector.cpp
 engines/dialogs.cpp
 engines/engine.cpp
-engines/unknown-game-dialog.cpp
 
 audio/adlib.cpp
 audio/fmopl.cpp

@@ -6,8 +6,7 @@ MODULE_OBJS := \
 	engine.o \
 	game.o \
 	obsolete.o \
-	savestate.o \
-	unknown-game-dialog.o
+	savestate.o
 
 # Include common rules
 include $(srcdir)/rules.mk

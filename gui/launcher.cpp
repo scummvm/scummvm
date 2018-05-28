@@ -45,7 +45,7 @@
 #include "gui/EventRecorder.h"
 #endif
 #include "gui/saveload.h"
-#include "engines/unknown-game-dialog.h"
+#include "gui/unknown-game-dialog.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
 #include "gui/widgets/tab.h"

@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/unknown-game-dialog.h"
+#include "gui/unknown-game-dialog.h"
 
 #include "common/translation.h"
 #include "common/str-array.h"
@@ -30,6 +30,8 @@
 #include "gui/message.h"
 #include "gui/ThemeEval.h"
 #include "gui/widgets/popup.h"
+
+namespace GUI {
 
 enum {
 	kCopyToClipboard = 'cpcl',
@@ -81,12 +83,12 @@ UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
 	_w = MAX(MAX(maxlineWidth, 0), totalButtonWidth) + 20;
 
 	int buttonPos = _w - closeButtonWidth - 10;
-	new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Close"), 0, kClose);
+	new ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, _("Close"), 0, kClose);
 
 	// Check if we have clipboard functionality
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
 		buttonPos -= copyToClipboardButtonWidth + 5;
-		new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, copyToClipboardButtonWidth, buttonHeight, _("Copy to clipboard"), 0, kCopyToClipboard);
+		new ButtonWidget(this, buttonPos, _h - buttonHeight - 8, copyToClipboardButtonWidth, buttonHeight, _("Copy to clipboard"), 0, kCopyToClipboard);
 	}
 
 #if 0
@@ -100,7 +102,7 @@ UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
 	// Check if we have support for opening URLs
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
 		buttonPos -= openBugtrackerURLButtonWidth + 5;
-		new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, openBugtrackerURLButtonWidth, buttonHeight, _("Report game"), 0, kOpenBugtrackerURL);
+		new ButtonWidget(this, buttonPos, _h - buttonHeight - 8, openBugtrackerURLButtonWidth, buttonHeight, _("Report game"), 0, kOpenBugtrackerURL);
 	}
 #endif
 
@@ -108,7 +110,7 @@ UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
 	// TODO: Use a ScrollContainer widget instead of truncated text.
 	uint y = 10;
 	for (uint i = 0; i < lines.size(); i++) {
-		new GUI::StaticTextWidget(this, 10, y, _w, kLineHeight, lines[i], Graphics::kTextAlignLeft);
+		new StaticTextWidget(this, 10, y, _w, kLineHeight, lines[i], Graphics::kTextAlignLeft);
 		y += kLineHeight;
 	}
 }
@@ -116,7 +118,7 @@ UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
 void UnknownGameDialog::reflowLayout() {
 	_x = (g_system->getOverlayWidth() - _w) / 2;
 	_y = (g_system->getOverlayHeight() - _h) / 2;
-	GUI::Dialog::reflowLayout();
+	Dialog::reflowLayout();
 }
 
 Common::String UnknownGameDialog::generateBugtrackerURL() {
@@ -136,7 +138,7 @@ Common::String UnknownGameDialog::generateBugtrackerURL() {
 		report.c_str());
 }
 
-void UnknownGameDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
 	case kCopyToClipboard: {
 		// TODO: Remove the filesystem path from the report
@@ -160,3 +162,5 @@ void UnknownGameDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		break;
 	}
 }
+
+} // End of namespace GUI
