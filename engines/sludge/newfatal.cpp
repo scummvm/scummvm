@@ -24,6 +24,7 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/errors.h"
+#include "sludge/fileset.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
@@ -34,9 +35,6 @@ DECLARE_SINGLETON(Sludge::FatalMsgManager);
 }
 
 namespace Sludge {
-
-extern int numResourceNames /* = 0*/;
-extern Common::String *allResourceNames /*= ""*/;
 
 int inFatal(const Common::String &str) {
 	g_sludge->_soundMan->killSoundStuff();
@@ -73,8 +71,9 @@ void FatalMsgManager::setResourceForFatal(int n) {
 }
 
 int FatalMsgManager::fatal(const Common::String &str1) {
-	if (numResourceNames && _resourceForFatal != -1) {
-		Common::String r = resourceNameFromNum(_resourceForFatal);
+	ResourceManager *resMan = g_sludge->_resMan;
+	if (resMan->hasResourceNames() && _resourceForFatal != -1) {
+		Common::String r = resMan->resourceNameFromNum(_resourceForFatal);
 		Common::String newStr = _fatalInfo + "\nResource: " + r + "\n\n" + str1;
 		inFatal(newStr);
 	} else {
@@ -96,16 +95,6 @@ int fatal(const Common::String &str1, const Common::String &str2) {
 	Common::String newStr = str1 + " " + str2;
 	fatal(newStr);
 	return 0;
-}
-
-const Common::String resourceNameFromNum(int i) {
-	if (i == -1)
-		return NULL;
-	if (numResourceNames == 0)
-		return "RESOURCE";
-	if (i < numResourceNames)
-		return allResourceNames[i];
-	return "Unknown resource";
 }
 
 } // End of namespace Sludge

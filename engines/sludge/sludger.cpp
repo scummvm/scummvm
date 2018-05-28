@@ -60,8 +60,6 @@ extern Common::String *allBIFNames;
 extern int numUserFunc;
 extern Common::String *allUserFunc;
 
-int numResourceNames = 0;
-Common::String *allResourceNames = NULL;
 int selectedLanguage = 0;
 
 int gameVersion;
@@ -206,19 +204,9 @@ bool initSludge(const Common::String &filename) {
 			allUserFunc[fn].clear();
 			allUserFunc[fn] = readString(fp);
 		}
-		if (gameVersion >= VERSION(1, 3)) {
-			numResourceNames = fp->readUint16BE();
-			debugC(2, kSludgeDebugDataLoad, "numResourceNames %i",
-					numResourceNames);
-			allResourceNames = new Common::String[numResourceNames];
-			if (!checkNew(allResourceNames))
-				return false;
 
-			for (int fn = 0; fn < numResourceNames; fn++) {
-				allResourceNames[fn].clear();
-				allResourceNames[fn] = readString(fp);
-				debugC(2, kSludgeDebugDataLoad, "Resource %i: %s", fn, allResourceNames[fn].c_str());
-			}
+		if (gameVersion >= VERSION(1, 3)) {
+			g_sludge->_resMan->readResourceNames(fp);
 		}
 	}
 

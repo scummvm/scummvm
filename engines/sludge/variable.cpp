@@ -303,7 +303,7 @@ Common::String getTextFromAnyVar(const Variable &from) {
 		}
 
 		case SVT_FILE: {
-			return resourceNameFromNum(from.varData.intValue);
+			return g_sludge->_resMan->resourceNameFromNum(from.varData.intValue);
 		}
 
 		case SVT_OBJTYPE: {

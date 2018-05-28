@@ -66,7 +66,6 @@ inline void setResourceForFatal(int n) {
 
 int checkNew(const void *mem);
 int fatal(const Common::String &str1, const Common::String &str2);
-const Common::String resourceNameFromNum(int i);
 
 } // End of namespace Sludge
 
