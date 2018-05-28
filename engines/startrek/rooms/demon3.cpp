@@ -86,24 +86,14 @@ void Room::demon3Timer1Expired() {
 // Door just opened
 void Room::demon3Timer3Expired() {
 	if (_vm->_awayMission.demon.field3b) {
-		const char *text[] = {
-			nullptr,
-			"#DEM3\\DEM3N008#The hand's circuitry triggers a connection, and the door opens.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_DEM3N008);
 		loadActorAnim(14, "door", 0x82, 0xc, 0);
 		loadMapFile("demon3");
 		_vm->_awayMission.demon.doorOpened = true;
 		_vm->_awayMission.missionScore += 2;
 	}
 	else {
-		const char *text[] = {
-			nullptr,
-			"#DEM3\\DEM3N007#The fit is perfect, but something seems to be shorting out.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_DEM3N007);
 	}
 }
 
@@ -124,13 +114,7 @@ void Room::demon3FinishedAnimation2() {
 void Room::demon3FinishedWalking5() {
 	loadActorAnim2(OBJECT_MCCOY, "mscanw", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-
-	const char *text[] = {
-		SPEAKER_MCCOY,
-		"#DEM3\\DEM3_019#He's dead, Jim...",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_019);
 
 	_vm->_awayMission.transitioningIntoRoom = false;
 }
@@ -216,21 +200,11 @@ void Room::demon3FireAtBoulder() {
 void Room::demon3UsePhaserOnRedshirt() {
 	if (!_vm->_awayMission.redshirtDead)
 		return;
-	const char *text[] = {
-		SPEAKER_MCCOY,
-		"#DEM3\\DEM3_013#He's already dead, Jim. Isn't that good enough for you?",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_013);
 }
 
 void Room::demon3UseStunPhaserOnBoulder() {
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM3\\DEM3_007#Captain, the stun setting would be very ineffective on these boulders.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_007);
 }
 
 void Room::demon3UsePhaserOnBoulder1() {
@@ -265,12 +239,7 @@ void Room::demon3UsePhaserOnBoulder3() {
 		demon3BoulderCommon();
 	}
 	else {
-		const char *text[] = {
-			SPEAKER_SPOCK,
-			"#DEM3\\DEM3_006#Captain, the structure is extremely unstable. I would not recommend disturbing the lower section before the upper sections have been cleared.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_SPOCK, TX_DEM3_006);
 	}
 }
 
@@ -288,12 +257,7 @@ void Room::demon3UsePhaserOnBoulder4() {
 	else {
 		// BUGFIX: In the original, the audio didn't play, despite the file existing (and
 		// despite it being used for the boulder on the left).
-		const char *text[] = {
-			SPEAKER_SPOCK,
-			"#DEM3\\DEM3_006#Captain, the structure is extremely unstable. I would not recommend disturbing the lower section before the upper sections have been cleared.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_SPOCK, TX_DEM3_006);
 	}
 }
 
@@ -309,12 +273,7 @@ void Room::demon3BoulderCommon() {
 		demon3PullOutPhaserAndFireAtBoulder();
 	}
 	else {
-		const char *text[] = {
-			SPEAKER_KIRK,
-			"#DEM3\\DEM3_001#Assume firing positions.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_KIRK, TX_DEM3_001);
 
 		walkCrewman(OBJECT_KIRK, 0x79, 0xa0, 1);
 		walkCrewman(OBJECT_SPOCK, 0xae, 0xb4, 2);
@@ -330,23 +289,13 @@ void Room::demon3BoulderCommon() {
 void Room::demon3UseSTricorderOnMiner() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM3\\DEM3_008#I think Doctor McCoy would be better suited to deal with this.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_008);
 }
 
 void Room::demon3UseSTricorderOnPanel() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM3\\DEM3_009#It appears to be a security lock designed to open the door when the correct hand print is registered.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_009);
 }
 
 void Room::demon3UseSTricorderOnBoulder() {
@@ -354,12 +303,7 @@ void Room::demon3UseSTricorderOnBoulder() {
 		return;
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM3\\DEM3_010#Captain, there are several weak points in the cave-in's structure. Careful use of our phasers, from the top down, should be able to clear it.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_010);
 }
 
 void Room::demon3UseMTricorderOnBoulder() {
@@ -367,40 +311,24 @@ void Room::demon3UseMTricorderOnBoulder() {
 		return;
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	const char *text[] = {
-		SPEAKER_MCCOY,
-		"#DEM3\\DEM3_020#I'm picking up weak vital signs. If we don't dig him out soon, we're going to lose him!",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_020);
 }
 
 void Room::demon3UseCrewmanOnPanel() {
 	if (_vm->_awayMission.demon.numBouldersGone != 4 || _vm->_awayMission.redshirtDead)
 		return;
-	const char *text[] = {
-		SPEAKER_EVERTS,
-		"#DEM3\\DEM3_031#Sir, it may be dangerous. Let me try it.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_EVERTS, TX_DEM3_031);
 	demon3UseRedshirtOnPanel();
 }
 
 void Room::demon3UseRedshirtOnPanel() {
 	if (_vm->_awayMission.redshirtDead)
 		return;
-	if (_vm->_awayMission.demon.numBouldersGone != 4) {
-		const char *text[] = {
-			SPEAKER_EVERTS,
-			"#DEM3\\DEM3_030#Sir, I think we should clear the rest of the rocks before we check out the device.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
-	else {
+
+	if (_vm->_awayMission.demon.numBouldersGone != 4)
+		showText(TX_SPEAKER_EVERTS, TX_DEM3_030);
+	else
 		walkCrewman(OBJECT_REDSHIRT, 0xd8, 0x70, 8);
-	}
 }
 
 void Room::demon3RedshirtReachedPanel() {
@@ -414,12 +342,7 @@ void Room::demon3RedshirtUsedPanel() {
 	_vm->_awayMission.demon.field41++;
 	if (_vm->_awayMission.demon.field41 == 5) {
 		playVoc("EFX3");
-		const char *text[] = {
-			SPEAKER_EVERTS,
-			"#DEM3\\DEM3_A32#Aieeee!",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_EVERTS, TX_DEM3_A32);
 
 		loadActorAnim2(OBJECT_REDSHIRT, "rkille", -1, -1, 3);
 		playSoundEffectIndex(0x06);
@@ -427,84 +350,53 @@ void Room::demon3RedshirtUsedPanel() {
 		_vm->_awayMission.demon.field45 = true;
 	}
 	else {
-		const char *textTable[] = {
-			"#DEM3\\DEM3N005#Nothing happens.",
-			"#DEM3\\DEM3_033#I think I was shocked, sir.",
-			"#DEM3\\DEM3_035#That was definitely a mild shock.",
-			"#DEM3\\DEM3_034#Ouch, that hurt.",
+		const int textTable[] = {
+			TX_DEM3N005,
+			TX_DEM3_033,
+			TX_DEM3_035,
+			TX_DEM3_034,
 		};
 
-		const char *text[] = {
-			"SPEAKER_EVERTS",
-			nullptr,
-			""
+		int text[] = {
+			TX_SPEAKER_EVERTS,
+			TX_NULL,
+			TX_BLANK
 		};
 		text[1] = textTable[_vm->_awayMission.demon.field41 - 1];
-		showRoomSpecificText(text);
+		showText(text);
 		walkCrewman(OBJECT_REDSHIRT, 0xbe, 0x9b, 0);
 	}
 }
 
 void Room::demon3RedshirtElectrocuted() {
-	const char *text[] = {
-		SPEAKER_MCCOY,
-		"#DEM3\\DEM3_018#He's dead Jim.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_018);
 }
 
 void Room::demon3UseSTricorderOnDoor() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM3\\DEM3_012#Fascinating, Captain. This door is made of an unknown material. It is clearly built by an alien race we have no knowledge of.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_012);
 }
 
 void Room::demon3UseSTricorderOnAnything() {
 	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM3\\DEM3_027#Fascinating...  I'm registering low-intensity shielding unlike anything we've encountered before.  That kept this door -- and whatever is behind it -- hidden from the ship's sensors and earlier tricorder readings.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_027);
 }
 
 void Room::demon3UseMTricorderOnDoor() {
 	loadActorAnim2(OBJECT_SPOCK, "mscann", -1, -1, 0);
 	playSoundEffectIndex(0x04);
-	const char *text[] = {
-		SPEAKER_MCCOY,
-		"#DEM3\\DEM3_016#This is incredible, Jim. I'm picking up faint lifesign readings behind this door!",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_016);
 }
 
 void Room::demon3UsePhaserOnDoor() {
 	_roomVar.demon3.usedPhaserOnDoor++;
-	if (_roomVar.demon3.usedPhaserOnDoor == 1) {
-		const char *text[] = {
-			nullptr,
-			"#DEM3\\DEM3N009#There is no apparent effect.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
-	else if (_roomVar.demon3.usedPhaserOnDoor == 2) {
-		const char *text[] = {
-			SPEAKER_SPOCK,
-			"#DEM3\\DEM3_011#Captain, this course of action is ineffectual.",
-			""
-		};
-		showRoomSpecificText(text);
-	}
+
+	if (_roomVar.demon3.usedPhaserOnDoor == 1)
+		showText(TX_DEM3N009);
+	else if (_roomVar.demon3.usedPhaserOnDoor == 2)
+		showText(TX_SPEAKER_SPOCK, TX_DEM3_011);
 }
 
 void Room::demon3UseHandOnPanel() {
@@ -514,12 +406,7 @@ void Room::demon3UseHandOnPanel() {
 		walkCrewman(OBJECT_KIRK, 0xd8, 0x70, 7);
 	}
 	else {
-		const char *text[] = {
-			SPEAKER_SPOCK,
-			"#DEM3\\DEM3_005#Captain, I would strongly recommend clearing all the debris first.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_SPOCK, TX_DEM3_005);
 	}
 }
 
@@ -540,30 +427,16 @@ void Room::demon3UseMTricorderOnMiner() {
 	playSoundEffectIndex(0x04);
 
 	if (_vm->_awayMission.demon.minerDead) {
-		const char *text[] = {
-			SPEAKER_MCCOY,
-			"#DEM3\\DEM3_022#The miner is dead.",
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_022);
 	}
 	else {
-		const char *text[] = {
-			SPEAKER_MCCOY,
-			"#DEM3\\DEM3_023#This man is badly hurt, and suffering from shock and exposure as well.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_023);
 	}
 }
 
 void Room::demon3UseMedkitOnMiner() {
 	if (_vm->_awayMission.demon.healedMiner) {
-		const char *text[] = {
-			SPEAKER_MCCOY,
-			"#DEM3\\DEM3_015#I've done all I can. He just needs rest now.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_015);
 	}
 	else {
 		walkCrewman(OBJECT_MCCOY, 0xe6, 0x7b, 6);
@@ -578,20 +451,10 @@ void Room::demon3McCoyReachedMiner() {
 
 void Room::demon3McCoyFinishedHealingMiner() {
 	if (_vm->_awayMission.demon.minerDead) {
-		const char *text[] = {
-			SPEAKER_MCCOY,
-			"#DEM3\\DEM3_022#The miner is dead.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_022);
 	}
 	else {
-		const char *text[] = {
-			SPEAKER_MCCOY,
-			"#DEM3\\DEM3_021#It was a near thing, but he'll live.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_021);
 		_vm->_awayMission.demon.healedMiner = true;
 		loadActorAnim2(13, "drmine", 0xda, 0x6c, 0);
 		_vm->_awayMission.missionScore += 2;
@@ -600,72 +463,27 @@ void Room::demon3McCoyFinishedHealingMiner() {
 }
 
 void Room::demon3GetMiner() {
-	const char *text[] = {
-		SPEAKER_MCCOY,
-		"#DEM3\\DEM3_017#Dammit, Jim, I'm a doctor, not a bellhop. This man's too hurt to be moved.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_017);
 }
 
 void Room::demon3TalkToKirk() {
-	const char *text1[] = {
-		SPEAKER_KIRK,
-		"#DEM3\\DEM3_002#A gateway to an alien race. The wonders of the galaxy are endless, aren't they, Mr. Spock?",
-		""
-	};
-	const char *text2[] = {
-		SPEAKER_SPOCK,
-		"#DEM3\\DEM3_029#Indeed, Captain.",
-		""
-	};
-	const char *text3[] = {
-		SPEAKER_MCCOY,
-		"#DEM3\\DEM3_026#They can also be damned cold.",
-		""
-	};
-	showRoomSpecificText(text1);
-	showRoomSpecificText(text2);
-	showRoomSpecificText(text3);
+	showText(TX_SPEAKER_KIRK,  TX_DEM3_002);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_029);
+	showText(TX_SPEAKER_MCCOY, TX_DEM3_026);
 }
 
 void Room::demon3TalkToSpock() {
-	const char *text[] = {
-		SPEAKER_SPOCK,
-		"#DEM3\\DEM3_028#I recommend as thorough an analysis of this area as possible.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_SPEAKER_SPOCK, TX_DEM3_028);
 }
 
 void Room::demon3TalkToMccoy() {
 	if (_vm->_awayMission.redshirtDead) {
-		const char *text[] = {
-			SPEAKER_MCCOY,
-			"#DEM3\\DEM3_014#I'm sorry, Jim. Ensign Everts is beyond my help.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_014);
 	}
 	else {
-		const char *text1[] = {
-			SPEAKER_MCCOY,
-			"#DEM3\\DEM3_025#Jim, the next time you need medical help on a snowball...",
-			""
-		};
-		const char *text2[] = {
-			SPEAKER_KIRK,
-			"#DEM3\\DEM3_003#Bones..",
-			""
-		};
-		const char *text3[] = {
-			SPEAKER_MCCOY,
-			"#DEM3\\DEM3_024#I'll probably end up coming along.",
-			""
-		};
-		showRoomSpecificText(text1);
-		showRoomSpecificText(text2);
-		showRoomSpecificText(text3);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_025);
+		showText(TX_SPEAKER_KIRK,  TX_DEM3_003);
+		showText(TX_SPEAKER_MCCOY, TX_DEM3_024);
 
 	}
 }
@@ -673,176 +491,80 @@ void Room::demon3TalkToMccoy() {
 void Room::demon3TalkToRedshirt() {
 	// FIXME: this shouldn't work if he's dead. Should it check higher up whether that's
 	// the case?
-	const char *text1[] = {
-		SPEAKER_EVERTS,
-		"#DEM3\\DEM3_036#No sign of demons, Klingons, or other hostiles, Captain. I promise I'll let you know the instant something appears.",
-		""
-	};
-	const char *text2[] = {
-		SPEAKER_KIRK,
-		"#DEM3\\DEM3_004#Don't be too anxious, Ensign. We may want to talk with them.",
-		""
-	};
-	showRoomSpecificText(text1);
-	showRoomSpecificText(text2);
+	showText(TX_SPEAKER_EVERTS, TX_DEM3_036);
+	showText(TX_SPEAKER_KIRK,   TX_DEM3_004);
 }
 
 void Room::demon3LookAtKirk() {
-	const char *text[] = {
-		nullptr,
-		"#DEM3\\DEM3N004#James T. Kirk. Captain of the Enterprise.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM3N004);
 }
 
 void Room::demon3LookAtSpock() {
-	const char *text[] = {
-		nullptr,
-		"#DEM3\\DEM3N001#Commander Spock; curious about what lies ahead.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM3N001);
 }
 
 void Room::demon3LookAtMccoy() {
-	const char *text[] = {
-		nullptr,
-		"#DEM3\\DEM3N002#Doctor Leonard McCoy, glad that the cave provides some shelter from the breeze.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM3N002);
 }
 
 void Room::demon3LookAtRedshirt() {
 	if (_vm->_awayMission.redshirtDead) {
-		const char *text[] = {
-			nullptr,
-			"#DEM3\\DEM3N017#Ensign Everts lies dead, crushed by the boulder.",
-			""
-		};
-		showRoomSpecificText(text);
-		// NOTE: there's an alternate string that isn't used?
-		// "#DEM3\\DEM3N018#The crushed body of Ensign Everts reminds you of your poor command judgement.",
+		showText(TX_DEM3N017);
+		// NOTE: there's an alternate string that isn't used? (TX_DEM3N018)
 	}
 	else {
-		const char *text[] = {
-			nullptr,
-			"#DEM3\\DEM3N003#Ensign Everts, wary of more ambushes.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_DEM3N003);
 	}
 }
 
 void Room::demon3LookAnywhere() {
-	const char *text[] = {
-		nullptr,
-		"#DEM3\\DEM3N010#A cavern, deep in Mount Idyll.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM3N010);
 }
 
 void Room::demon3LookAtMiner() {
 	if (_vm->_awayMission.demon.healedMiner) {
-		const char *text[] = {
-			nullptr,
-			"#DEM3\\DEM3N000#Brother Kandrey is barely conscious, and is lying still, trying to regain his strength.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_DEM3N000);
 	}
 	else {
-		const char *text[] = {
-			nullptr,
-			"#DEM3\\DEM3N006#One of the Acolytes, who was trapped by the the rockfall.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_DEM3N006);
 	}
 }
 
 void Room::demon3LookAtBoulder1() {
-	const char *text[] = {
-		nullptr,
-		"#DEM3\\DEM3N011#A huge boulder sits upon a large pile of rubble.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM3N011);
 }
 
 void Room::demon3LookAtBoulder2() {
-	const char *text[] = {
-		nullptr,
-		"#DEM3\\DEM3N013#A large pile of rubble blocks what appears to be a large metallic structure.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM3N013);
 }
 
 void Room::demon3LookAtBoulder3() {
-	const char *text[] = {
-		nullptr,
-		"#DEM3\\DEM3N013#A large pile of rubble blocks what appears to be a large metallic structure.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM3N013);
 }
 
 void Room::demon3LookAtBoulder4() {
-	const char *text[] = {
-		nullptr,
-		"#DEM3\\DEM3N020#You notice what appears to be a man's arm sticking out from beneath the rubble.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM3N020);
 }
 
 void Room::demon3LookAtStructure() {
-	const char *text[] = {
-		nullptr,
-		"#DEM3\\DEM3N016#A structure built into the surrounding rock. It must have been buried here for millennia.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM3N016);
 }
 
 void Room::demon3LookAtDoor() {
 	if (_vm->_awayMission.demon.doorOpened) {
-		const char *text[] = {
-			nullptr,
-			"#DEM3\\DEM3N014#A long tunnel descends into the mountain.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_DEM3N014);
 	}
 	else {
-		const char *text[] = {
-			nullptr,
-			"#DEM3\\DEM3N012#A large metallic door is set in the structure.",
-			""
-		};
-		showRoomSpecificText(text);
+		showText(TX_DEM3N012);
 	}
 }
 
 void Room::demon3LookAtPanel() {
-	const char *text[] = {
-		nullptr,
-		"#DEM3\\DEM3N019#This looks like some of the hand security panels on the Enterprise.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM3N019);
 }
 
 void Room::demon3LookAtLight() {
-	const char *text[] = {
-		nullptr,
-		"#DEM3\\DEM3N015#A pulsing red light is set in the structure above the door.",
-		""
-	};
-	showRoomSpecificText(text);
+	showText(TX_DEM3N015);
 }
 
 }
