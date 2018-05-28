@@ -36,6 +36,7 @@ common/updates.cpp
 engines/advancedDetector.cpp
 engines/dialogs.cpp
 engines/engine.cpp
+engines/game.cpp
 
 audio/adlib.cpp
 audio/fmopl.cpp
