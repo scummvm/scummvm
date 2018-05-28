@@ -30,12 +30,16 @@
 namespace GUI {
 
 class StaticTextWidget;
+class ScrollContainerWidget;
+class ButtonWidget;
 
 class UnknownGameDialog : public Dialog {
 public:
 	UnknownGameDialog(const DetectionResults &detectionResults);
 
 private:
+	void rebuild();
+
 	// Dialog API
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 	void reflowLayout() override;
@@ -43,7 +47,11 @@ private:
 	Common::String generateBugtrackerURL();
 
 	const DetectionResults &_detectionResults;
-	Common::Array<GUI::StaticTextWidget *> _textWidgets;
+	ScrollContainerWidget *_textContainer;
+	Common::Array<StaticTextWidget *> _textWidgets;
+	ButtonWidget* _openBugTrackerUrlButton;
+	ButtonWidget* _copyToClipboardButton;
+	ButtonWidget* _closeButton;
 };
 
 } // End of namespace GUI
