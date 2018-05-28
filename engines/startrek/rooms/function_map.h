@@ -184,7 +184,7 @@ RoomAction demon2ActionList[] = {
 	{ Action(ACTION_LOOK, 0x24, 0, 0), &Room::demon2LookAtFern },
 	{ Action(ACTION_LOOK, 0x25, 0, 0), &Room::demon2LookAtMoss },
 	{ Action(ACTION_LOOK, 0x26, 0, 0), &Room::demon2LookAtLights },
-	{ Action(ACTION_LOOK, -1, 0, 0), &Room::demon2LookAtAnything },
+	{ Action(ACTION_LOOK, -1, 0, 0),   &Room::demon2LookAtAnything },
 
 	{ Action(ACTION_LOOK, OBJECT_KIRK, 0, 0), &Room::demon2LookAtKirk },
 	{ Action(ACTION_LOOK, OBJECT_SPOCK, 0, 0), &Room::demon2LookAtSpock },
@@ -260,6 +260,52 @@ RoomAction demon3ActionList[] = {
 	{ Action(ACTION_FINISHED_WALKING, 8, 0, 0), &Room::demon3RedshirtReachedPanel },
 	{ Action(ACTION_FINISHED_ANIMATION, 5, 0, 0), &Room::demon3RedshirtUsedPanel },
 	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0), &Room::demon3RedshirtElectrocuted },
+
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x21, 0), &Room::demon3UseSTricorderOnDoor },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, -1, 0), &Room::demon3UseSTricorderOnAnything },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 14, 0), &Room::demon3UseMTricorderOnDoor },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x21, 0), &Room::demon3UseMTricorderOnDoor },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x22, 0), &Room::demon3UseMTricorderOnDoor },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 14, 0), &Room::demon3UsePhaserOnDoor },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, 14, 0), &Room::demon3UsePhaserOnDoor },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 0x21, 0), &Room::demon3UsePhaserOnDoor },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, 0x21, 0), &Room::demon3UsePhaserOnDoor },
+
+	{ Action(ACTION_USE, OBJECT_IHAND, 0x20, 0), &Room::demon3UseHandOnPanel },
+	{ Action(ACTION_FINISHED_WALKING, 7, 0, 0), &Room::demon3KirkReachedHandPanel },
+	{ Action(ACTION_FINISHED_ANIMATION, 6, 0, 0), &Room::demon3KirkUsedHandPanel },
+
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 13, 0), &Room::demon3UseMTricorderOnMiner },
+	{ Action(ACTION_USE, OBJECT_MCCOY, 13, 0), &Room::demon3UseMedkitOnMiner },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, 13, 0), &Room::demon3UseMedkitOnMiner },
+	{ Action(ACTION_FINISHED_WALKING, 6, 0, 0), &Room::demon3McCoyReachedMiner },
+	{ Action(ACTION_FINISHED_ANIMATION, 7, 0, 0), &Room::demon3McCoyFinishedHealingMiner },
+
+	{ Action(ACTION_GET, 13, 0, 0), &Room::demon3GetMiner },
+
+	{ Action(ACTION_TALK, OBJECT_KIRK, 0, 0), &Room::demon3TalkToKirk },
+	{ Action(ACTION_TALK, OBJECT_SPOCK, 0, 0), &Room::demon3TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_MCCOY, 0, 0), &Room::demon3TalkToMccoy },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::demon3TalkToRedshirt },
+
+	{ Action(ACTION_LOOK, OBJECT_KIRK, 0, 0), &Room::demon3LookAtKirk },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK, 0, 0), &Room::demon3LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY, 0, 0), &Room::demon3LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::demon3LookAtRedshirt },
+
+	{ Action(ACTION_LOOK, -1, 0, 0), &Room::demon3LookAnywhere },
+	{ Action(ACTION_LOOK, 13, 0, 0), &Room::demon3LookAtMiner },
+	{ Action(ACTION_LOOK,  9, 0, 0), &Room::demon3LookAtBoulder1 },
+	{ Action(ACTION_LOOK, 10, 0, 0), &Room::demon3LookAtBoulder2 },
+	{ Action(ACTION_LOOK, 11, 0, 0), &Room::demon3LookAtBoulder3 },
+	{ Action(ACTION_LOOK, 12, 0, 0), &Room::demon3LookAtBoulder4 },
+	{ Action(ACTION_LOOK, 0x22, 0, 0), &Room::demon3LookAtStructure },
+	{ Action(ACTION_LOOK, 14, 0, 0), &Room::demon3LookAtDoor },
+	{ Action(ACTION_LOOK, 0x21, 0, 0), &Room::demon3LookAtDoor },
+	{ Action(ACTION_LOOK, 15, 0, 0), &Room::demon3LookAtPanel },
+	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::demon3LookAtPanel },
+	{ Action(ACTION_LOOK, 8, 0, 0), &Room::demon3LookAtLight },
+
 };
 
 }

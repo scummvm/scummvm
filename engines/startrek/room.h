@@ -272,6 +272,36 @@ public:
 	void demon3RedshirtReachedPanel();
 	void demon3RedshirtUsedPanel();
 	void demon3RedshirtElectrocuted();
+	void demon3UseSTricorderOnDoor();
+	void demon3UseSTricorderOnAnything();
+	void demon3UseMTricorderOnDoor();
+	void demon3UsePhaserOnDoor();
+	void demon3UseHandOnPanel();
+	void demon3KirkReachedHandPanel();
+	void demon3KirkUsedHandPanel();
+	void demon3UseMTricorderOnMiner();
+	void demon3UseMedkitOnMiner();
+	void demon3McCoyReachedMiner();
+	void demon3McCoyFinishedHealingMiner();
+	void demon3GetMiner();
+	void demon3TalkToKirk();
+	void demon3TalkToSpock();
+	void demon3TalkToMccoy();
+	void demon3TalkToRedshirt();
+	void demon3LookAtKirk();
+	void demon3LookAtSpock();
+	void demon3LookAtMccoy();
+	void demon3LookAtRedshirt();
+	void demon3LookAnywhere();
+	void demon3LookAtMiner();
+	void demon3LookAtBoulder1();
+	void demon3LookAtBoulder2();
+	void demon3LookAtBoulder3();
+	void demon3LookAtBoulder4();
+	void demon3LookAtStructure();
+	void demon3LookAtDoor();
+	void demon3LookAtPanel();
+	void demon3LookAtLight();
 
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
@@ -294,6 +324,7 @@ private:
 			bool inFiringPosition; // 0xd1
 			bool kirkPhaserOut; // 0xd3
 			char boulderAnim[10]; // 0xd4
+			int16 usedPhaserOnDoor; // 0xd6
 		} demon3;
 	} _roomVar;
 };
