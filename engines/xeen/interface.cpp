@@ -1510,7 +1510,7 @@ void Interface::doCombat() {
 			// FIXME: I've had a rare issue where the loop starts with a non-party _whosTurn. Unfortunately,
 			// I haven't been able to consistently replicate and diagnose the problem, so for now,
 			// I'm simply detecting if it happens and resetting the combat round
-			if (combat._whosTurn >= party._activeParty.size())
+			if (combat._whosTurn >= (int)party._activeParty.size())
 				goto new_round;
 
 			highlightChar(combat._whosTurn);
