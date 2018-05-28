@@ -38,8 +38,6 @@ class StaticTextWidget;
 class EditTextWidget;
 class SaveLoadChooser;
 
-Common::String addGameToConf(const GameDescriptor &result);
-
 class LauncherDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;

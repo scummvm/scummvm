@@ -959,9 +959,9 @@ public:
 	virtual const char *getOriginalCopyright() const;
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual GameList getSupportedGames() const;
-	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist, bool useUnknownGameDialog = false) const;
+	PlainGameList getSupportedGames() const override;
+	PlainGameDescriptor findGame(const char *gameid) const override;
+	virtual DetectedGames detectGames(const Common::FSList &fslist) const override;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
@@ -992,11 +992,11 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSubtitleOptions);
 }
 
-GameList ScummMetaEngine::getSupportedGames() const {
-	return GameList(gameDescriptions);
+PlainGameList ScummMetaEngine::getSupportedGames() const {
+	return PlainGameList(gameDescriptions);
 }
 
-GameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
+PlainGameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
 	return Engines::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
 
@@ -1026,29 +1026,26 @@ static Common::String generatePreferredTarget(const DetectorResult &x) {
 	return res;
 }
 
-GameList ScummMetaEngine::detectGames(const Common::FSList &fslist, bool /*useUnknownGameDialog*/) const {
-	GameList detectedGames;
+DetectedGames ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
+	DetectedGames detectedGames;
 	Common::List<DetectorResult> results;
-
 	::detectGames(fslist, results, 0);
 
 	for (Common::List<DetectorResult>::iterator
 	          x = results.begin(); x != results.end(); ++x) {
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
 		assert(g);
-		GameDescriptor dg(x->game.gameid, g->description, x->language, x->game.platform);
 
-		// Append additional information, if set, to the description.
-		dg.updateDesc(x->extra);
+		DetectedGame game = DetectedGame(x->game.gameid, g->description, x->language, x->game.platform, x->extra);
 
 		// Compute and set the preferred target name for this game.
 		// Based on generateComplexID() in advancedDetector.cpp.
-		dg["preferredtarget"] = generatePreferredTarget(*x);
+		game.preferredTarget = generatePreferredTarget(*x);
 
-		dg.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
-		dg.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
+		game.setGUIOptions(x->game.guioptions + MidiDriver::musicType2GUIO(x->game.midi));
+		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
 
-		detectedGames.push_back(dg);
+		detectedGames.push_back(game);
 	}
 
 	return detectedGames;

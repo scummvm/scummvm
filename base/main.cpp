@@ -128,13 +128,13 @@ static const Plugin *detectPlugin() {
 	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
 	printf("  Looking for a plugin supporting this gameid... ");
 
- 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
+	PlainGameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (plugin == 0) {
 		printf("failed\n");
 		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
 	} else {
-		printf("%s\n  Starting '%s'\n", plugin->getName(), game.description().c_str());
+		printf("%s\n  Starting '%s'\n", plugin->getName(), game.description);
 	}
 
 	return plugin;
@@ -210,7 +210,10 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	Common::String caption(ConfMan.get("description"));
 
 	if (caption.empty()) {
-		caption = EngineMan.findGame(ConfMan.get("gameid")).description();
+		PlainGameDescriptor game = EngineMan.findGame(ConfMan.get("gameid"));
+		if (game.description) {
+			caption = game.description;
+		}
 	}
 	if (caption.empty())
 		caption = ConfMan.getActiveDomainName(); // Use the domain (=target) name

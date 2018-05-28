@@ -100,10 +100,10 @@ public:
 	}
 
 	// for fall back detection
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
 
-const ADGameDescription *SludgeMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame SludgeMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	// reset fallback description
 	s_fallbackDesc.desc.gameId = "sludge";
 	s_fallbackDesc.desc.extra = "";
@@ -147,9 +147,19 @@ const ADGameDescription *SludgeMetaEngine::fallbackDetect(const FileMap &allFile
 		s_fallbackFileNameBuffer[50] = '\0';
 		s_fallbackDesc.desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
 
-		return (const ADGameDescription *)&s_fallbackDesc;
+		ADDetectedGame game;
+		game.desc = &s_fallbackDesc.desc;
+
+		FileProperties tmp;
+		if (getFileProperties(file->getParent(), allFiles, s_fallbackDesc.desc, fileName, tmp)) {
+			game.hasUnknownFiles = true;
+			game.matchedFiles[fileName] = tmp;
+		}
+
+		return game;
 	}
-	return 0;
+
+	return ADDetectedGame();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SLUDGE)

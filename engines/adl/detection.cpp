@@ -332,9 +332,9 @@ public:
 	int getMaximumSaveSlot() const { return 'O' - 'A'; }
 	SaveStateList listSaves(const char *target) const;
 	void removeSaveState(const char *target, int slot) const;
-	virtual ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, bool useUnknownGameDialog = false) const;
+	ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const override;
 
-	bool addFileProps(const FileMap &allFiles, Common::String fname, ADFilePropertiesMap &filePropsMap) const;
+	bool addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const;
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
 };
@@ -492,14 +492,14 @@ Common::Platform getPlatform(const AdlGameDescription &adlDesc) {
 	return adlDesc.desc.platform;
 }
 
-bool AdlMetaEngine::addFileProps(const FileMap &allFiles, Common::String fname, ADFilePropertiesMap &filePropsMap) const {
+bool AdlMetaEngine::addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const {
 	if (filePropsMap.contains(fname))
 		return true;
 
 	if (!allFiles.contains(fname))
 		return false;
 
-	ADFileProperties fileProps;
+	FileProperties fileProps;
 	fileProps.size = computeMD5(allFiles[fname], fileProps.md5, 16384);
 
 	if (fileProps.size != -1) {
@@ -511,42 +511,39 @@ bool AdlMetaEngine::addFileProps(const FileMap &allFiles, Common::String fname, 
 }
 
 // Based on AdvancedMetaEngine::detectGame
-ADGameDescList AdlMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, bool useUnknownGameDialog) const {
+ADDetectedGames AdlMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
 	// We run the file-based detector first and then add to the returned list
-	ADGameDescList matched = AdvancedMetaEngine::detectGame(parent, allFiles, language, platform, extra, useUnknownGameDialog);
+	ADDetectedGames matched = AdvancedMetaEngine::detectGame(parent, allFiles, language, platform, extra);
 
 	debug(3, "Starting disk image detection in dir '%s'", parent.getPath().c_str());
 
-	ADFilePropertiesMap filesProps;
-	ADGameIdList matchedGameIds;
+	FilePropertiesMap filesProps;
 	bool gotAnyMatchesWithAllFiles = false;
 
 	for (uint g = 0; gameDiskDescriptions[g].desc.gameId != 0; ++g) {
-		const ADGameDescription &desc = gameDiskDescriptions[g].desc;
+		ADDetectedGame game(&gameDiskDescriptions[g].desc);
 
 		// Skip games that don't meet the language/platform/extra criteria
-		if (language != Common::UNK_LANG && desc.language != Common::UNK_LANG) {
-			if (desc.language != language && !(language == Common::EN_ANY && (desc.flags & ADGF_ADDENGLISH)))
-			    continue;
+		if (language != Common::UNK_LANG && game.desc->language != Common::UNK_LANG) {
+			if (game.desc->language != language && !(language == Common::EN_ANY && (game.desc->flags & ADGF_ADDENGLISH)))
+				continue;
 		}
 
-		if (platform != Common::kPlatformUnknown && desc.platform != Common::kPlatformUnknown && desc.platform != platform)
+		if (platform != Common::kPlatformUnknown && game.desc->platform != Common::kPlatformUnknown && game.desc->platform != platform)
 			continue;
 
-		if ((_flags & kADFlagUseExtraAsHint) && !extra.empty() && desc.extra != extra)
+		if ((_flags & kADFlagUseExtraAsHint) && !extra.empty() && game.desc->extra != extra)
 			continue;
 
-		bool fileMissing = false;
 		bool allFilesPresent = true;
-		bool hashOrSizeMismatch = false;
 
-		for (uint f = 0;  desc.filesDescriptions[f].fileName; ++f) {
-			const ADGameFileDescription &fDesc = desc.filesDescriptions[f];
+		for (uint f = 0; game.desc->filesDescriptions[f].fileName; ++f) {
+			const ADGameFileDescription &fDesc = game.desc->filesDescriptions[f];
 			Common::String fileName;
 			bool foundDiskImage = false;
 
 			for (uint e = 0; e < ARRAYSIZE(diskImageExts); ++e) {
-				if (diskImageExts[e].platform == desc.platform) {
+				if (diskImageExts[e].platform == game.desc->platform) {
 					Common::String testFileName(fDesc.fileName);
 					testFileName += diskImageExts[e].extension;
 
@@ -563,49 +560,41 @@ ADGameDescList AdlMetaEngine::detectGame(const Common::FSNode &parent, const Fil
 			}
 
 			if (!foundDiskImage) {
-				fileMissing = true;
 				allFilesPresent = false;
 				break;
 			}
 
-			if (hashOrSizeMismatch)
+			game.matchedFiles[fileName] = filesProps[fileName];
+
+			if (game.hasUnknownFiles)
 				continue;
 
 			if (fDesc.md5 && fDesc.md5 != filesProps[fileName].md5) {
 				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fDesc.md5, filesProps[fileName].md5.c_str());
-				fileMissing = true;
-				hashOrSizeMismatch = true;
+				game.hasUnknownFiles = true;
 				continue;
 			}
 
 			if (fDesc.fileSize != -1 && fDesc.fileSize != filesProps[fileName].size) {
 				debug(3, "Size Mismatch. Skipping");
-				fileMissing = true;
-				hashOrSizeMismatch = true;
+				game.hasUnknownFiles = true;
 				continue;
 			}
 
 			debug(3, "Matched file: %s", fileName.c_str());
 		}
 
-		if (!fileMissing) {
-			debug(2, "Found game: %s (%s/%s) (%d)", desc.gameId, getPlatformDescription(desc.platform), getLanguageDescription(desc.language), g);
-			matched.push_back(&desc);
+		if (allFilesPresent && !game.hasUnknownFiles) {
+			debug(2, "Found game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
+			gotAnyMatchesWithAllFiles = true;
+			matched.push_back(game);
 		} else {
-			if (allFilesPresent) {
-				gotAnyMatchesWithAllFiles = true;
-				if (!matchedGameIds.size() || strcmp(matchedGameIds.back(), desc.gameId) != 0)
-					matchedGameIds.push_back(desc.gameId);
+			if (allFilesPresent && !gotAnyMatchesWithAllFiles) {
+				if (matched.empty() || strcmp(matched.back().desc->gameId, game.desc->gameId) != 0)
+					matched.push_back(game);
 			}
 
-			debug(5, "Skipping game: %s (%s/%s) (%d)", desc.gameId, getPlatformDescription(desc.platform), getLanguageDescription(desc.language), g);
-		}
-	}
-
-	// TODO: This could be improved to handle matched and unknown games together in a single directory
-	if (matched.empty()) {
-		if (!filesProps.empty() && gotAnyMatchesWithAllFiles) {
-			reportUnknown(parent, filesProps, matchedGameIds, useUnknownGameDialog);
+			debug(5, "Skipping game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
 		}
 	}
 

@@ -687,9 +687,9 @@ static void listGames() {
 
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		GameList list = (*iter)->get<MetaEngine>().getSupportedGames();
-		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
-			printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
+		PlainGameList list = (*iter)->get<MetaEngine>().getSupportedGames();
+		for (PlainGameList::iterator v = list.begin(); v != list.end(); ++v) {
+			printf("%-20s %s\n", v->gameId, v->description);
 		}
 	}
 }
@@ -714,10 +714,10 @@ static void listTargets() {
 			// FIXME: At this point, we should check for a "gameid" override
 			// to find the proper desc. In fact, the platform probably should
 			// be taken into account, too.
-			Common::String gameid(name);
-			GameDescriptor g = EngineMan.findGame(gameid);
-			if (g.description().size() > 0)
-				description = g.description();
+			const Common::String &gameid = name;
+			PlainGameDescriptor g = EngineMan.findGame(gameid);
+			if (g.description)
+				description = g.description;
 		}
 
 		targets.push_back(Common::String::format("%-20s %s", name.c_str(), description.c_str()));
@@ -770,7 +770,7 @@ static Common::Error listSaves(const Common::String &target) {
 
 		// Find the plugin that will handle the specified gameid
 		const Plugin *plugin = nullptr;
-		GameDescriptor game = EngineMan.findGame(gameid, &plugin);
+		EngineMan.findGame(gameid, &plugin);
 
 		if (!plugin) {
 			// If the target was specified, treat this as an error, and otherwise skip it.
@@ -854,61 +854,36 @@ static void listAudioDevices() {
 }
 
 /** Display all games in the given directory, or current directory if empty */
-static GameList getGameList(const Common::FSNode &dir) {
+static DetectedGames getGameList(const Common::FSNode &dir) {
 	Common::FSList files;
 
 	// Collect all files from directory
 	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
 		printf("Path %s does not exist or is not a directory.\n", dir.getPath().c_str());
-		return GameList();
+		return DetectedGames();
 	}
 
 	// detect Games
-	GameList candidates(EngineMan.detectGames(files));
-	Common::String dataPath = dir.getPath();
-	// add game data path
-	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
-		(*v)["path"] = dataPath;
-	}
-	return candidates;
-}
+	DetectionResults detectionResults = EngineMan.detectGames(files);
 
-static bool addGameToConf(const GameDescriptor &gd) {
-	const Common::String &domain = gd.preferredtarget();
-
-	// If game has already been added, don't add
-	if (ConfMan.hasGameDomain(domain))
-		return false;
-
-	// Add the name domain
-	ConfMan.addGameDomain(domain);
-
-	// Copy all non-empty key/value pairs into the new domain
-	for (GameDescriptor::const_iterator iter = gd.begin(); iter != gd.end(); ++iter) {
-		if (!iter->_value.empty() && iter->_key != "preferredtarget")
-			ConfMan.set(iter->_key, iter->_value, domain);
+	if (detectionResults.foundUnknownGames()) {
+		Common::String report = detectionResults.generateUnknownGameReport(false, 80);
+		g_system->logMessage(LogMessageType::kInfo, report.c_str());
 	}
 
-	// Display added game info
-	printf("Game Added: \n  GameID:   %s\n  Name:     %s\n  Language: %s\n  Platform: %s\n",
-			gd.gameid().c_str(),
-			gd.description().c_str(),
-			Common::getLanguageDescription(gd.language()),
-			Common::getPlatformDescription(gd.platform()));
-
-	return true;
+	return detectionResults.listRecognizedGames();
 }
 
-static GameList recListGames(const Common::FSNode &dir, const Common::String &gameId, bool recursive) {
-	GameList list = getGameList(dir);
+static DetectedGames recListGames(const Common::FSNode &dir, const Common::String &gameId, bool recursive) {
+	DetectedGames list = getGameList(dir);
 
 	if (recursive) {
 		Common::FSList files;
 		dir.getChildren(files, Common::FSNode::kListDirectoriesOnly);
 		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
-			GameList rec = recListGames(*file, gameId, recursive);
-			for (GameList::const_iterator game = rec.begin(); game != rec.end(); ++game) {
-				if (gameId.empty() || game->gameid().c_str() == gameId)
+			DetectedGames rec = recListGames(*file, gameId, recursive);
+			for (DetectedGames::const_iterator game = rec.begin(); game != rec.end(); ++game) {
+				if (gameId.empty() || game->gameId == gameId)
 					list.push_back(*game);
 			}
 		}
@@ -922,7 +897,7 @@ static Common::String detectGames(const Common::String &path, const Common::Stri
 	bool noPath = path.empty();
 	//Current directory
 	Common::FSNode dir(path);
-	GameList candidates = recListGames(dir, gameId, recursive);
+	DetectedGames candidates = recListGames(dir, gameId, recursive);
 
 	if (candidates.empty()) {
 		printf("WARNING: ScummVM could not find any game in %s\n", dir.getPath().c_str());
@@ -937,25 +912,34 @@ static Common::String detectGames(const Common::String &path, const Common::Stri
 	// TODO this is not especially pretty
 	printf("ID             Description                                                Full Path\n");
 	printf("-------------- ---------------------------------------------------------- ---------------------------------------------------------\n");
-	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
-		printf("%-14s %-58s %s\n", v->gameid().c_str(), v->description().c_str(), (*v)["path"].c_str());
+	for (DetectedGames::const_iterator v = candidates.begin(); v != candidates.end(); ++v) {
+		printf("%-14s %-58s %s\n", v->gameId.c_str(), v->description.c_str(), v->path.c_str());
 	}
 
-	return candidates[0].gameid();
+	return candidates[0].gameId;
 }
 
 static int recAddGames(const Common::FSNode &dir, const Common::String &game, bool recursive) {
 	int count = 0;
-	GameList list = getGameList(dir);
-	for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
-		if (v->gameid().c_str() != game && !game.empty()) {
-			printf("Found %s, only adding %s per --game option, ignoring...\n", v->gameid().c_str(), game.c_str());
-		} else if (!addGameToConf(*v)) {
-			// TODO Is it reall the case that !addGameToConf iff already added?
-			printf("Found %s, but has already been added, skipping\n", v->gameid().c_str());
+	DetectedGames list = getGameList(dir);
+	for (DetectedGames::const_iterator v = list.begin(); v != list.end(); ++v) {
+		if (v->gameId != game && !game.empty()) {
+			printf("Found %s, only adding %s per --game option, ignoring...\n", v->gameId.c_str(), game.c_str());
+		} else if (ConfMan.hasGameDomain(v->preferredTarget)) {
+			// TODO Better check for game already added?
+			printf("Found %s, but has already been added, skipping\n", v->gameId.c_str());
 		} else {
-			printf("Found %s, adding...\n", v->gameid().c_str());
+			Common::String target = EngineMan.createTargetForGame(*v);
 			count++;
+
+			// Display added game info
+			printf("Game Added: \n  Target:   %s\n  GameID:   %s\n  Name:     %s\n  Language: %s\n  Platform: %s\n",
+			       target.c_str(),
+			       v->gameId.c_str(),
+			       v->description.c_str(),
+			       Common::getLanguageDescription(v->language),
+			       Common::getPlatformDescription(v->platform)
+			);
 		}
 	}
 
@@ -1014,11 +998,13 @@ static void runDetectorTest() {
 			continue;
 		}
 
-		GameList candidates(EngineMan.detectGames(files));
+		DetectionResults detectionResults = EngineMan.detectGames(files);
+		DetectedGames candidates = detectionResults.listRecognizedGames();
+
 		bool gameidDiffers = false;
-		GameList::iterator x;
+		DetectedGames::const_iterator x;
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
-			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameid().c_str()) != 0);
+			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameId.c_str()) != 0);
 		}
 
 		if (candidates.empty()) {
@@ -1041,10 +1027,10 @@ static void runDetectorTest() {
 
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
 			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
-				   x->gameid().c_str(),
-				   x->description().c_str(),
-				   Common::getLanguageCode(x->language()),
-				   Common::getPlatformCode(x->platform()));
+				   x->gameId.c_str(),
+				   x->description.c_str(),
+				   Common::getLanguageDescription(x->language),
+				   Common::getPlatformDescription(x->platform));
 		}
 	}
 	int total = domains.size();
@@ -1092,24 +1078,26 @@ void upgradeTargets() {
 		Common::Platform plat = Common::parsePlatform(dom.getVal("platform"));
 		Common::String desc(dom.getVal("description"));
 
-		GameList candidates(EngineMan.detectGames(files));
-		GameDescriptor *g = 0;
+		DetectionResults detectionResults = EngineMan.detectGames(files);
+		DetectedGames candidates = detectionResults.listRecognizedGames();
+
+		DetectedGame *g = 0;
 
 		// We proceed as follows:
 		// * If detection failed to produce candidates, skip.
 		// * If there is a unique detector match, trust it.
 		// * If there are multiple match, run over them comparing gameid, language and platform.
 		//   If we end up with a unique match, use it. Otherwise, skip.
-		if (candidates.size() == 0) {
+		if (candidates.empty()) {
 			printf(" ... failed to detect game, skipping\n");
 			continue;
 		}
 		if (candidates.size() > 1) {
 			// Scan over all candidates, check if there is a unique match for gameid, language and platform
-			GameList::iterator x;
+			DetectedGames::iterator x;
 			int matchesFound = 0;
 			for (x = candidates.begin(); x != candidates.end(); ++x) {
-				if (x->gameid() == gameid && x->language() == lang && x->platform() == plat) {
+				if (x->gameId == gameid && x->language == lang && x->platform == plat) {
 					matchesFound++;
 					g = &(*x);
 				}
@@ -1127,27 +1115,27 @@ void upgradeTargets() {
 		// the target referred to by dom. We update several things
 
 		// Always set the gameid explicitly (in case of legacy targets)
-		dom["gameid"] = g->gameid();
+		dom["gameid"] = g->gameId;
 
 		// Always set the GUI options. The user should not modify them, and engines might
 		// gain more features over time, so we want to keep this list up-to-date.
-		if (g->contains("guioptions")) {
-			printf("  -> update guioptions to '%s'\n", (*g)["guioptions"].c_str());
-			dom["guioptions"] = (*g)["guioptions"];
+		if (!g->getGUIOptions().empty()) {
+			printf("  -> update guioptions to '%s'\n", g->getGUIOptions().c_str());
+			dom["guioptions"] = g->getGUIOptions();
 		} else if (dom.contains("guioptions")) {
 			dom.erase("guioptions");
 		}
 
 		// Update the language setting but only if none has been set yet.
-		if (lang == Common::UNK_LANG && g->language() != Common::UNK_LANG) {
-			printf("  -> set language to '%s'\n", Common::getLanguageCode(g->language()));
-			dom["language"] = (*g)["language"];
+		if (lang == Common::UNK_LANG && g->language != Common::UNK_LANG) {
+			printf("  -> set language to '%s'\n", Common::getLanguageCode(g->language));
+			dom["language"] = Common::getLanguageCode(g->language);
 		}
 
 		// Update the platform setting but only if none has been set yet.
-		if (plat == Common::kPlatformUnknown && g->platform() != Common::kPlatformUnknown) {
-			printf("  -> set platform to '%s'\n", Common::getPlatformCode(g->platform()));
-			dom["platform"] = (*g)["platform"];
+		if (plat == Common::kPlatformUnknown && g->platform != Common::kPlatformUnknown) {
+			printf("  -> set platform to '%s'\n", Common::getPlatformCode(g->platform));
+			dom["platform"] = Common::getPlatformCode(g->platform);
 		}
 
 		// TODO: We could also update the description. But not everybody will want that.
@@ -1156,8 +1144,8 @@ void upgradeTargets() {
 		// should only be updated if the user explicitly requests this.
 #if 0
 		if (desc != g->description()) {
-			printf("  -> update desc from '%s' to\n                      '%s' ?\n", desc.c_str(), g->description().c_str());
-			dom["description"] = (*g)["description"];
+			printf("  -> update desc from '%s' to\n                      '%s' ?\n", desc.c_str(), g->description.c_str());
+			dom["description"] = g->description;
 		}
 #endif
 	}
@@ -1254,8 +1242,8 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	// domain (i.e. a target) matching this argument, or alternatively
 	// whether there is a gameid matching that name.
 	if (!command.empty()) {
-		GameDescriptor gd = EngineMan.findGame(command);
-		if (ConfMan.hasGameDomain(command) || !gd.gameid().empty()) {
+		PlainGameDescriptor gd = EngineMan.findGame(command);
+		if (ConfMan.hasGameDomain(command) || gd.gameId) {
 			bool idCameFromCommandLine = false;
 
 			// WORKAROUND: Fix for bug #1719463: "DETECTOR: Launching

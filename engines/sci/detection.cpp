@@ -562,7 +562,7 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
@@ -590,7 +590,7 @@ Common::Language charToScummVMLanguage(const char c) {
 	}
 }
 
-const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	bool foundResMap = false;
 	bool foundRes000 = false;
 
@@ -647,7 +647,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 
 	// If these files aren't found, it can't be SCI
 	if (!foundResMap && !foundRes000)
-		return 0;
+		return ADDetectedGame();
 
 	ResourceManager resMan(true);
 	resMan.addAppropriateSourcesForDetection(fslist);
@@ -658,7 +658,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// Is SCI32 compiled in? If not, and this is a SCI32 game,
 	// stop here
 	if (getSciVersionForDetection() >= SCI_VERSION_2)
-		return 0;
+		return ADDetectedGame();
 #endif
 
 	ViewType gameViews = resMan.getViewType();
@@ -667,7 +667,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// Can't be SCI (or unsupported SCI views). Pinball Creep by Sierra also uses resource.map/resource.000 files
 	// but doesn't share SCI format at all
 	if (gameViews == kViewUnknown)
-		return 0;
+		return ADDetectedGame();
 
 	// Set the platform to Amiga if the game is using Amiga views
 	if (gameViews == kViewAmiga)
@@ -678,7 +678,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 
 	// If we don't have a game id, the game is not SCI
 	if (sierraGameId.empty())
-		return 0;
+		return ADDetectedGame();
 
 	Common::String gameId = convertSierraGameId(sierraGameId, &s_fallbackDesc.flags, resMan);
 	strncpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
@@ -753,7 +753,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 			s_fallbackDesc.extra = "CD";
 	}
 
-	return &s_fallbackDesc;
+	return ADDetectedGame(&s_fallbackDesc);
 }
 
 bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

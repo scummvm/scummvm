@@ -105,7 +105,7 @@ public:
 		_singleId = "saga";
 	}
 
-	virtual GameDescriptor findGame(const char *gameId) const {
+	PlainGameDescriptor findGame(const char *gameId) const override {
 		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 

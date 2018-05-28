@@ -22,6 +22,7 @@
 
 #include "base/plugins.h"
 
+#include "common/translation.h"
 #include "common/func.h"
 #include "common/debug.h"
 #include "common/config-manager.h"
@@ -457,13 +458,11 @@ DECLARE_SINGLETON(EngineManager);
  * For the uncached version, we first try to find the plugin using the gameId
  * and only if we can't find it there, we loop through the plugins.
  **/
-GameDescriptor EngineManager::findGame(const Common::String &gameName, const Plugin **plugin) const {
-	GameDescriptor result;
-
+PlainGameDescriptor EngineManager::findGame(const Common::String &gameName, const Plugin **plugin) const {
 	// First look for the game using the plugins in memory. This is critical
 	// for calls coming from inside games
-	result = findGameInLoadedPlugins(gameName, plugin);
-	if (!result.gameid().empty()) {
+	PlainGameDescriptor result = findGameInLoadedPlugins(gameName, plugin);
+	if (result.gameId) {
 		return result;
 	}
 
@@ -471,7 +470,7 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Plu
 	// by plugin
 	if (PluginMan.loadPluginFromGameId(gameName))  {
 		result = findGameInLoadedPlugins(gameName, plugin);
-		if (!result.gameid().empty()) {
+		if (result.gameId) {
 			return result;
 		}
 	}
@@ -480,7 +479,7 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Plu
 	PluginMan.loadFirstPlugin();
 	do {
 		result = findGameInLoadedPlugins(gameName, plugin);
-		if (!result.gameid().empty()) {
+		if (result.gameId) {
 			// Update with new plugin file name
 			PluginMan.updateConfigWithFileName(gameName);
 			break;
@@ -493,10 +492,9 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Plu
 /**
  * Find the game within the plugins loaded in memory
  **/
-GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin) const {
+PlainGameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin) const {
 	// Find the GameDescriptor for this target
 	const PluginList &plugins = getPlugins();
-	GameDescriptor result;
 
 	if (plugin)
 		*plugin = 0;
@@ -504,18 +502,20 @@ GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &game
 	PluginList::const_iterator iter;
 
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		result = (*iter)->get<MetaEngine>().findGame(gameName.c_str());
-		if (!result.gameid().empty()) {
+		PlainGameDescriptor pgd = (*iter)->get<MetaEngine>().findGame(gameName.c_str());
+		if (pgd.gameId) {
 			if (plugin)
 				*plugin = *iter;
-			return result;
+			return pgd;
 		}
 	}
-	return result;
+
+	return PlainGameDescriptor::empty();
 }
 
-GameList EngineManager::detectGames(const Common::FSList &fslist, bool useUnknownGameDialog) const {
-	GameList candidates;
+DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const {
+	DetectedGames candidates;
+	Common::String path = fslist.begin()->getParent().getPath();
 	PluginList plugins;
 	PluginList::const_iterator iter;
 	PluginManager::instance().loadFirstPlugin();
@@ -524,16 +524,75 @@ GameList EngineManager::detectGames(const Common::FSList &fslist, bool useUnknow
 		// Iterate over all known games and for each check if it might be
 		// the game in the presented directory.
 		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-			candidates.push_back((*iter)->get<MetaEngine>().detectGames(fslist, useUnknownGameDialog));
+			const MetaEngine &metaEngine = (*iter)->get<MetaEngine>();
+			DetectedGames engineCandidates = metaEngine.detectGames(fslist);
+
+			for (uint i = 0; i < engineCandidates.size(); i++) {
+				engineCandidates[i].engineName = metaEngine.getName();
+				engineCandidates[i].path = path;
+				candidates.push_back(engineCandidates[i]);
+			}
+
 		}
 	} while (PluginManager::instance().loadNextPlugin());
-	return candidates;
+
+	return DetectionResults(candidates);
 }
 
 const PluginList &EngineManager::getPlugins() const {
 	return PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
 }
 
+namespace {
+
+void addStringToConf(const Common::String &key, const Common::String &value, const Common::String &domain) {
+	if (!value.empty())
+		ConfMan.set(key, value, domain);
+}
+
+} // End of anonymous namespace
+
+Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
+	// The auto detector or the user made a choice.
+	// Pick a domain name which does not yet exist (after all, we
+	// are *adding* a game to the config, not replacing).
+	Common::String domain = game.preferredTarget;
+
+	assert(!domain.empty());
+	if (ConfMan.hasGameDomain(domain)) {
+		int suffixN = 1;
+		Common::String gameid(domain);
+
+		while (ConfMan.hasGameDomain(domain)) {
+			domain = gameid + Common::String::format("-%d", suffixN);
+			suffixN++;
+		}
+	}
+
+	// Add the name domain
+	ConfMan.addGameDomain(domain);
+
+	// Copy all non-empty relevant values into the new domain
+	addStringToConf("gameid", game.gameId, domain);
+	addStringToConf("description", game.description, domain);
+	addStringToConf("language", Common::getLanguageCode(game.language), domain);
+	addStringToConf("platform", Common::getPlatformCode(game.platform), domain);
+	addStringToConf("path", game.path, domain);
+	addStringToConf("extra", game.extra, domain);
+	addStringToConf("guioptions", game.getGUIOptions(), domain);
+
+	// TODO: Setting the description field here has the drawback
+	// that the user does never notice when we upgrade our descriptions.
+	// It might be nice to leave this field empty, and only set it to
+	// a value when the user edits the description string.
+	// However, at this point, that's impractical. Once we have a method
+	// to query all backends for the proper & full description of a given
+	// game target, we can change this (currently, you can only query
+	// for the generic gameid description; it's not possible to obtain
+	// a description which contains extended information like language, etc.).
+
+	return domain;
+}
 
 // Music plugins
 
