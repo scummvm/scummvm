@@ -36,6 +36,8 @@ enum GameStringIDs {
 
 	TX_SPEAKER_ANGIVEN,
 	TX_SPEAKER_SIGN,
+	TX_SPEAKER_KLINGON,
+	TX_SPEAKER_KANDREY,
 	TX_DEM0_016,
 	TX_DEM0_039,
 	TX_DEM0_017,
@@ -94,7 +96,6 @@ enum GameStringIDs {
 	TX_DEM0C001, // "C" = "Custom" (no ID originally assigned)
 
 
-	TX_SPEAKER_KLINGON,
 	TX_DEM1_011,
 	TX_DEM1N020,
 	TX_DEM1_025,
@@ -258,6 +259,8 @@ const char * const g_gameStrings[] = {
 
 	"Prel. Angiven",
 	"Sign",
+	"Klingon",
+	"Brother Kandrey",
 	"#DEM0\\DEM0_016#Captain, the flora on this planet is very interesting. I wonder how useful it may be for medicinal purposes.",
 	"#DEM0\\DEM0_039#Aw, Captain, please don't melt the snow. I've never seen it before.",
 	"#DEM0\\DEM0_017#Quite the vandal aren't we, Jim?",
@@ -316,7 +319,6 @@ const char * const g_gameStrings[] = {
 	"All mining equipment use this road.",
 
 
-	"Klingon",
 	"#DEM1\\DEM1_011#The fire fight is over, Jim. I think you can put that away now.",
 	"#DEM1\\DEM1N020#You see a small explosion, and the Klingon's hand falls to the ground with a dull thud.",
 	"#DEM1\\DEM1_025#I guess they don't make Klingons like they used to, Sir.",

@@ -466,6 +466,12 @@ void Room::demon3GetMiner() {
 	showText(TX_SPEAKER_MCCOY, TX_DEM3_017);
 }
 
+void Room::demon3TalkToMiner() {
+	if (!_vm->_awayMission.demon.healedMiner)
+		return;
+	showText(TX_SPEAKER_KANDREY, TX_DEM3_F21);
+}
+
 void Room::demon3TalkToKirk() {
 	showText(TX_SPEAKER_KIRK,  TX_DEM3_002);
 	showText(TX_SPEAKER_SPOCK, TX_DEM3_029);
