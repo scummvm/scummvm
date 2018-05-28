@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-20 15:18+0200\n"
+"POT-Creation-Date: 2018-05-28 18:43+0200\n"
 "PO-Revision-Date: 2018-04-18 10:17+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -57,7 +57,7 @@ msgstr "Вверх"
 
 #: gui/browser.cpp:76 gui/chooser.cpp:46 gui/editgamedialog.cpp:293
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
-#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:43 gui/massadd.cpp:95
+#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:43 gui/massadd.cpp:92
 #: gui/options.cpp:1678 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:445
@@ -81,7 +81,7 @@ msgstr "Выбрать"
 msgid "Select directory where to download game data"
 msgstr "Выберите директорию для скачивания данных игры"
 
-#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:471 gui/launcher.cpp:197
+#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:471 gui/launcher.cpp:198
 msgid "Select directory with game data"
 msgstr "Выберите директорию с файлами игры"
 
@@ -116,7 +116,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:310 gui/launcher.cpp:418 gui/launcher.cpp:477
+#: gui/launcher.cpp:311 gui/launcher.cpp:380 gui/launcher.cpp:440
 #: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:192
 #: backends/platform/wince/CEActionsPocket.cpp:326
@@ -129,7 +129,7 @@ msgstr "Да"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:310 gui/launcher.cpp:418 gui/launcher.cpp:477
+#: gui/launcher.cpp:311 gui/launcher.cpp:380 gui/launcher.cpp:440
 #: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:192
 #: backends/platform/wince/CEActionsPocket.cpp:326
@@ -140,7 +140,7 @@ msgstr "Да"
 msgid "No"
 msgstr "Нет"
 
-#: gui/downloaddialog.cpp:137 gui/launcher.cpp:569
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:532
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM не может открыть указанную директорию!"
 
@@ -153,8 +153,8 @@ msgstr ""
 "содержит файл с таким же именем."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:294
-#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:526
-#: gui/launcher.cpp:530 gui/massadd.cpp:92 gui/options.cpp:1680
+#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:489
+#: gui/launcher.cpp:493 gui/massadd.cpp:89 gui/options.cpp:1680
 #: gui/saveload-dialog.cpp:1122 engines/engine.cpp:443 engines/engine.cpp:454
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
@@ -540,8 +540,8 @@ msgstr ""
 "Вы действительно хотите сбросить все установки FluidSynth в значения по "
 "умолчанию?"
 
-#: gui/gui-manager.cpp:119 engines/unknown-game-dialog.cpp:73
-#: engines/unknown-game-dialog.cpp:85 backends/keymapper/remap-dialog.cpp:53
+#: gui/gui-manager.cpp:119 engines/unknown-game-dialog.cpp:72
+#: engines/unknown-game-dialog.cpp:84 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
@@ -552,15 +552,15 @@ msgstr "Закрыть"
 msgid "Mouse click"
 msgstr "Клик мышью"
 
-#: gui/gui-manager.cpp:126 base/main.cpp:341
+#: gui/gui-manager.cpp:126 base/main.cpp:344
 msgid "Display keyboard"
 msgstr "Показать клавиатуру"
 
-#: gui/gui-manager.cpp:130 base/main.cpp:345
+#: gui/gui-manager.cpp:130 base/main.cpp:348
 msgid "Remap keys"
 msgstr "Переназначить клавиши"
 
-#: gui/gui-manager.cpp:133 base/main.cpp:348 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:351 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Переключение на весь экран"
 
@@ -593,101 +593,101 @@ msgstr "Нажмите клавишу для назначения"
 msgid "Choose an action to map"
 msgstr "Выберите действие для назначения"
 
-#: gui/launcher.cpp:141 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:100
+#: gui/launcher.cpp:142 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:100
 msgid "~Q~uit"
 msgstr "~В~ыход"
 
-#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:112
+#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:112
 msgid "Quit ScummVM"
 msgstr "Завершить ScummVM"
 
-#: gui/launcher.cpp:142
+#: gui/launcher.cpp:143
 msgid "A~b~out..."
 msgstr "О п~р~ограмме..."
 
-#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:86
+#: gui/launcher.cpp:143 backends/platform/sdl/macosx/appmenu_osx.mm:86
 msgid "About ScummVM"
 msgstr "О программе ScummVM"
 
-#: gui/launcher.cpp:143
+#: gui/launcher.cpp:144
 msgid "~O~ptions..."
 msgstr "~Н~астройки..."
 
-#: gui/launcher.cpp:143
+#: gui/launcher.cpp:144
 msgid "Change global ScummVM options"
 msgstr "Изменить глобальные настройки ScummVM"
 
-#: gui/launcher.cpp:145
+#: gui/launcher.cpp:146
 msgid "~S~tart"
 msgstr "П~у~ск"
 
-#: gui/launcher.cpp:145
+#: gui/launcher.cpp:146
 msgid "Start selected game"
 msgstr "Запустить выбранную игру"
 
-#: gui/launcher.cpp:148
+#: gui/launcher.cpp:149
 msgid "~L~oad..."
 msgstr "~З~агрузить..."
 
-#: gui/launcher.cpp:148
+#: gui/launcher.cpp:149
 msgid "Load saved game for selected game"
 msgstr "Загрузить сохранение для выбранной игры"
 
-#: gui/launcher.cpp:153
+#: gui/launcher.cpp:154
 msgid "~A~dd Game..."
 msgstr "~Д~обавить игру..."
 
-#: gui/launcher.cpp:153 gui/launcher.cpp:160
+#: gui/launcher.cpp:154 gui/launcher.cpp:161
 msgid "Hold Shift for Mass Add"
 msgstr "Удерживайте клавишу Shift, чтобы добавить несколько игр"
 
-#: gui/launcher.cpp:155
+#: gui/launcher.cpp:156
 msgid "~E~dit Game..."
 msgstr "Н~а~стройки игры..."
 
-#: gui/launcher.cpp:155 gui/launcher.cpp:162
+#: gui/launcher.cpp:156 gui/launcher.cpp:163
 msgid "Change game options"
 msgstr "Изменить настройки игры"
 
-#: gui/launcher.cpp:157
+#: gui/launcher.cpp:158
 msgid "~R~emove Game"
 msgstr "~У~далить игру"
 
-#: gui/launcher.cpp:157 gui/launcher.cpp:164
+#: gui/launcher.cpp:158 gui/launcher.cpp:165
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Удалить игру из списка. Не удаляет игру с носителя"
 
-#: gui/launcher.cpp:160
+#: gui/launcher.cpp:161
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~Д~об. игру..."
 
-#: gui/launcher.cpp:162
+#: gui/launcher.cpp:163
 msgctxt "lowres"
 msgid "~E~dit Game..."
 msgstr "Н~а~с. игры..."
 
-#: gui/launcher.cpp:164
+#: gui/launcher.cpp:165
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~У~далить игру"
 
-#: gui/launcher.cpp:172
+#: gui/launcher.cpp:173
 msgid "Search in game list"
 msgstr "Поиск в списке игр"
 
-#: gui/launcher.cpp:176 gui/launcher.cpp:775
+#: gui/launcher.cpp:177 gui/launcher.cpp:745
 msgid "Search:"
 msgstr "Поиск:"
 
-#: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
+#: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:549
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Загрузить игру:"
 
-#: gui/launcher.cpp:200 engines/dialogs.cpp:115
+#: gui/launcher.cpp:201 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
@@ -697,7 +697,7 @@ msgstr "Загрузить игру:"
 msgid "Load"
 msgstr "Загрузить"
 
-#: gui/launcher.cpp:309
+#: gui/launcher.cpp:310
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -705,63 +705,63 @@ msgstr ""
 "Вы действительно хотите запустить детектор всех игр? Это потенциально может "
 "добавить большое количество игр."
 
-#: gui/launcher.cpp:368
+#: gui/launcher.cpp:369
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 "Эта директория пока не может быть использована. В неё сейчас загружаются "
 "данные!"
 
-#: gui/launcher.cpp:418
+#: gui/launcher.cpp:380
 msgid "Do you really want to remove this game configuration?"
 msgstr "Вы действительно хотите удалить настройки для этой игры?"
 
-#: gui/launcher.cpp:476
+#: gui/launcher.cpp:439
 msgid "Do you want to load saved game?"
 msgstr "Вы хотите загрузить игру?"
 
-#: gui/launcher.cpp:526
+#: gui/launcher.cpp:489
 msgid "This game does not support loading games from the launcher."
 msgstr "Эта игра не поддерживает загрузку сохранений через главное меню."
 
-#: gui/launcher.cpp:530
+#: gui/launcher.cpp:493
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM не может найти движок для запуска выбранной игры!"
 
-#: gui/launcher.cpp:581
+#: gui/launcher.cpp:554
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM не может найти игру в указанной директории!"
 
-#: gui/launcher.cpp:594
+#: gui/launcher.cpp:567
 msgid "Pick the game:"
 msgstr "Выберите игру:"
 
-#: gui/launcher.cpp:712
+#: gui/launcher.cpp:682
 msgid "Mass Add..."
 msgstr "Много игр..."
 
-#: gui/launcher.cpp:714
+#: gui/launcher.cpp:684
 msgid "Record..."
 msgstr "Запись..."
 
-#: gui/massadd.cpp:79 gui/massadd.cpp:82
+#: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
 msgstr "... ищу ..."
 
-#: gui/massadd.cpp:259
+#: gui/massadd.cpp:265
 msgid "Scan complete!"
 msgstr "Поиск закончен!"
 
-#: gui/massadd.cpp:262
+#: gui/massadd.cpp:268
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr "Найдено %d новых игр, пропущено %d ранее добавленных игр."
 
-#: gui/massadd.cpp:266
+#: gui/massadd.cpp:272
 #, c-format
 msgid "Scanned %d directories ..."
 msgstr "Просмотрено %d директорий ..."
 
-#: gui/massadd.cpp:269
+#: gui/massadd.cpp:275
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "Найдено %d новых игр, пропущено %d ранее добавленных игр ..."
@@ -1649,35 +1649,35 @@ msgstr "Продолжить"
 msgid "Clear value"
 msgstr "Очистить значение"
 
-#: base/main.cpp:254
+#: base/main.cpp:257
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Движок не поддерживает уровень отладки '%s'"
 
-#: base/main.cpp:328
+#: base/main.cpp:331
 msgid "Menu"
 msgstr "Меню"
 
-#: base/main.cpp:331 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:334 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Пропустить"
 
-#: base/main.cpp:334 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:337 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Пауза"
 
-#: base/main.cpp:337
+#: base/main.cpp:340
 msgid "Skip line"
 msgstr "Пропустить строку"
 
-#: base/main.cpp:548
+#: base/main.cpp:551
 msgid "Error running game:"
 msgstr "Ошибка запуска игры:"
 
-#: base/main.cpp:595
+#: base/main.cpp:598
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Не могу найти движок для запуска выбранной игры"
 
@@ -1787,23 +1787,6 @@ msgstr "Ежемесячно"
 #: common/updates.cpp:64
 msgid "<Bad value>"
 msgstr "<Неправильное значение>"
-
-#: engines/advancedDetector.cpp:331
-#, c-format
-msgid ""
-"The game in '%s' seems to be an unknown %s engine game variant.\n"
-"\n"
-"Please report the following data to the ScummVM team at %s along with the "
-"name of the game you tried to add and its version, language, etc.:"
-msgstr ""
-"Похоже, что игра в '%s' является неизвестной игрой на движке %s.\n"
-"\n"
-"Пожалуйста, сообщите команде ScummVM на %s следующие данные вместе с "
-"названием игры, её версией, языком и др.:"
-
-#: engines/advancedDetector.cpp:343
-msgid "Matched game IDs:"
-msgstr "Возможные ID игры:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -1988,24 +1971,24 @@ msgid ""
 msgstr ""
 
 #: engines/unknown-game-dialog.cpp:55
-msgid "You can also directly report your game to the Bug Tracker!"
+msgid "You can also directly report your game to the Bug Tracker."
 msgstr ""
 
-#: engines/unknown-game-dialog.cpp:74 engines/unknown-game-dialog.cpp:90
+#: engines/unknown-game-dialog.cpp:73 engines/unknown-game-dialog.cpp:89
 msgid "Copy to clipboard"
 msgstr ""
 
-#: engines/unknown-game-dialog.cpp:75 engines/unknown-game-dialog.cpp:104
+#: engines/unknown-game-dialog.cpp:74 engines/unknown-game-dialog.cpp:103
 #, fuzzy
 msgid "Report game"
 msgstr "Восстановить игру:"
 
-#: engines/unknown-game-dialog.cpp:144
+#: engines/unknown-game-dialog.cpp:147
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr ""
 
-#: engines/unknown-game-dialog.cpp:146
+#: engines/unknown-game-dialog.cpp:149
 msgid "Copying the game information to the clipboard has failed!"
 msgstr ""
 
@@ -3725,7 +3708,7 @@ msgstr ""
 "ошибки в ScummVM не возникают, поэтому рекомендуется удалить их из папки с "
 "игрой, чтобы предотвратить непредвиденные проблемы в дальнейшем."
 
-#: engines/scumm/detection.cpp:1126
+#: engines/scumm/detection.cpp:1123
 msgid ""
 "Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 "version (in particular, not a fan-made translation), please, report the\n"
@@ -3738,7 +3721,7 @@ msgstr ""
 "переводом), пожалуйста, сообщите команде ScummVM следующие\n"
 "данные вместе с именем игры, её версией, языком и т. д.:\n"
 
-#: engines/scumm/detection.cpp:1144
+#: engines/scumm/detection.cpp:1141
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -3747,11 +3730,11 @@ msgstr ""
 "Во избежание пиратства Lite-версия игры Putt-Putt Saves the Zoo для iOS\n"
 "не поддерживается. Полную версию игры можно купить в iTunes Store."
 
-#: engines/scumm/detection.cpp:1355
+#: engines/scumm/detection.cpp:1352
 msgid "Show Object Line"
 msgstr "Показывать строку объектов"
 
-#: engines/scumm/detection.cpp:1356
+#: engines/scumm/detection.cpp:1353
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Показывать названия объектов внизу экрана"
 
@@ -4718,6 +4701,20 @@ msgstr ""
 "Этот файл сохранённой игры имеет версию %u, но движок поддерживает только "
 "версии не выше %d. Для использования этого файла необходима свежая версия "
 "движка."
+
+#~ msgid ""
+#~ "The game in '%s' seems to be an unknown %s engine game variant.\n"
+#~ "\n"
+#~ "Please report the following data to the ScummVM team at %s along with the "
+#~ "name of the game you tried to add and its version, language, etc.:"
+#~ msgstr ""
+#~ "Похоже, что игра в '%s' является неизвестной игрой на движке %s.\n"
+#~ "\n"
+#~ "Пожалуйста, сообщите команде ScummVM на %s следующие данные вместе с "
+#~ "названием игры, её версией, языком и др.:"
+
+#~ msgid "Matched game IDs:"
+#~ msgstr "Возможные ID игры:"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""
