@@ -63,9 +63,11 @@ struct AwayMission {
 			bool mccoyMentionedFlora; // 0x38
 			byte numBouldersGone; // 0x39
 			byte enteredFrom; // 0x3a
-			bool field3c; // 0x3c
+			bool field3b; // 0x3b
+			bool healedMiner; // 0x3c
 			bool curedBrother; // 0x3d
 			bool knowAboutHypoDytoxin; // 0x3f
+			bool minerDead; // 0x40
 			byte field41; // 0x41
 			bool foundMiner; // 0x43
 			bool field45; // 0x45
@@ -74,7 +76,7 @@ struct AwayMission {
 			bool boulder2Gone; // 0x4a
 			bool boulder3Gone; // 0x4b
 			bool boulder4Gone; // 0x4c
-			bool doorRevealed; // 0x4d
+			bool doorOpened; // 0x4d
 			bool gotBerries; // 0x50
 			bool madeHypoDytoxin; // 0x51
 			byte field56; // 0x56
