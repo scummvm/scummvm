@@ -271,7 +271,8 @@ static int findGames(Game *games, int max, bool use_ini)
     }
 
     if (!use_ini) {
-      DetectedGames candidates = EngineMan.detectGames(files);
+      DetectionResults detectionResults = EngineMan.detectGames(files);
+      DetectedGames candidates = detectionResults.listRecognizedGames();
 
       for (DetectedGames::const_iterator ge = candidates.begin();
 	   ge != candidates.end(); ++ge)
