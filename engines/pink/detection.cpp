@@ -50,7 +50,7 @@ public:
 	virtual int getMaximumSaveSlot() const { return 99; }
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;
-	//virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
@@ -58,6 +58,10 @@ bool PinkMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 			(f == kSupportsListSaves) ||
 			(f == kSupportsDeleteSave) ||
+			(f == kSavesSupportMetaInfo) ||
+			(f == kSavesSupportThumbnail) ||
+			(f == kSavesSupportCreationDate) ||
+			(f == kSavesSupportPlayTime) ||
 			(f == kSupportsLoadingDuringStartup) ||
 			(f == kSimpleSavesNames);
 }
@@ -88,6 +92,20 @@ SaveStateList PinkMetaEngine::listSaves(const char *target) const {
 
 void PinkMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Pink::generateSaveName(slot, target));
+}
+
+SaveStateDescriptor PinkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(Pink::generateSaveName(slot, target)));
+
+	if (f) {
+		SaveStateDescriptor desc;
+		if (!Pink::readSaveHeader(*f.get(), desc))
+			return SaveStateDescriptor();
+
+		return desc;
+	}
+
+	return SaveStateDescriptor();
 }
 
 bool PinkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
