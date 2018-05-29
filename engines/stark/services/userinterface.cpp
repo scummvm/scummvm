@@ -37,6 +37,7 @@
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/menu/diaryindex.h"
 #include "engines/stark/ui/menu/mainmenu.h"
+#include "engines/stark/ui/menu/settingsmenu.h"
 #include "engines/stark/ui/world/inventorywindow.h"
 #include "engines/stark/ui/world/fmvscreen.h"
 #include "engines/stark/ui/world/gamescreen.h"
@@ -49,6 +50,7 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_cursor(nullptr),
 		_diaryIndexScreen(nullptr),
 		_mainMenuScreen(nullptr),
+		_settingsMenuScreen(nullptr),
 		_exitGame(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
@@ -67,6 +69,7 @@ UserInterface::~UserInterface() {
 	delete _diaryIndexScreen;
 	delete _cursor;
 	delete _mainMenuScreen;
+	delete _settingsMenuScreen;
 }
 
 void UserInterface::init() {
@@ -75,6 +78,7 @@ void UserInterface::init() {
 	_mainMenuScreen = new MainMenuScreen(_gfx, _cursor);
 	_gameScreen = new GameScreen(_gfx, _cursor);
 	_diaryIndexScreen = new DiaryIndexScreen(_gfx, _cursor);
+	_settingsMenuScreen = new SettingsMenuScreen(_gfx, _cursor);
 	_fmvScreen = new FMVScreen(_gfx, _cursor);
 
 	_prevScreenNameStack.push(Screen::kScreenMainMenu);
@@ -93,6 +97,11 @@ void UserInterface::update() {
 
 void UserInterface::handleMouseMove(const Common::Point &pos) {
 	_cursor->setMousePosition(pos);
+}
+
+void UserInterface::handleMouseUp() {
+	// Only the settings menu needs to handle this event
+	_settingsMenuScreen->handleMouseUp();
 }
 
 void UserInterface::handleClick() {
@@ -143,13 +152,7 @@ void UserInterface::changeScreen(Screen::Name screenName) {
 		return;
 	}
 
-	if (screenName == Screen::kScreenMainMenu) {
-		// MainMenuScreen will not request to go back
-		_prevScreenNameStack.clear();
-	} else {
-		_prevScreenNameStack.push(_currentScreen->getName());
-	}
-
+	_prevScreenNameStack.push(_currentScreen->getName());
 	_currentScreen->close();
 	_currentScreen = getScreenByName(screenName);
 	_currentScreen->open();
@@ -159,12 +162,21 @@ void UserInterface::backPrevScreen() {
 	// No need to check the stack since at least there will be a MainMenuScreen in it
 	// and MainMenuScreen will not request to go back
 	changeScreen(_prevScreenNameStack.pop());
+
+	// No need to push for going back
+	_prevScreenNameStack.pop();
 }
 
 void UserInterface::quitToMainMenu() {
 	changeScreen(Screen::kScreenGame);
 	StarkResourceProvider->shutdown();
 	changeScreen(Screen::kScreenMainMenu);
+	_prevScreenNameStack.clear();
+}
+
+void UserInterface::restoreScreenHistory() {
+	_prevScreenNameStack.clear();
+	_prevScreenNameStack.push(Screen::kScreenMainMenu);
 }
 
 Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
@@ -177,6 +189,8 @@ Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
 			return _gameScreen;
 		case Screen::kScreenMainMenu:
 			return _mainMenuScreen;
+		case Screen::kScreenSettingsMenu:
+			return _settingsMenuScreen;
 		default:
 			error("Unhandled screen name '%d'", screenName);
 	}

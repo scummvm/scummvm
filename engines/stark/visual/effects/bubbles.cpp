@@ -33,6 +33,7 @@
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 
 namespace Stark {
 
@@ -54,6 +55,9 @@ VisualEffectBubbles::~VisualEffectBubbles() {
 }
 
 void VisualEffectBubbles::render(const Common::Point &position) {
+	// Stop rendering if special effect is off
+	if (!StarkSettings->getBoolSetting(Settings::kSpecialFX)) return;
+
 	_timeRemainingUntilNextUpdate -= StarkGlobal->getMillisecondsPerGameloop();
 	if (_timeRemainingUntilNextUpdate <= 0) {
 		update();

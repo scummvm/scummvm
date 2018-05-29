@@ -24,8 +24,6 @@
 #define STARK_UI_MENU_MAIN_MENU_H
 
 #include "engines/stark/ui/menu/locationscreen.h"
-#include "engines/stark/services/services.h"
-#include "engines/advancedDetector.h"
 
 namespace Stark {
 
@@ -41,17 +39,23 @@ public:
 	void open() override;
 
 private:
-	template<uint N>
+	enum HelpTextIndex {
+		kNewGame = 7,
+		kContinue = 8,
+		kOption = 6,
+		kBox = 9,
+		kQuit = 10,
+		kCredits = 12
+	};
+
+	template<HelpTextIndex N>
 	void helpTextHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
 
 	void newGameHandler();
 	void loadHandler();
 	void creditsHandler();
+	void settingsHandler();
 	void quitHandler();
-
-	bool isDemo() {
-		return StarkGameDescription->flags & ADGF_DEMO;
-	}
 };
 
 } // End of namespace Stark

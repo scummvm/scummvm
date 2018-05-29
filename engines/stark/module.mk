@@ -79,6 +79,7 @@ MODULE_OBJS := \
 	services/stateprovider.o \
 	services/staticprovider.o \
 	services/userinterface.o \
+	services/settings.o \
 	stark.o \
 	tools/abstractsyntaxtree.o \
 	tools/block.o \
@@ -88,6 +89,7 @@ MODULE_OBJS := \
 	ui/menu/diaryindex.o \
 	ui/menu/locationscreen.o \
 	ui/menu/mainmenu.o \
+	ui/menu/settingsmenu.o \
 	ui/window.o \
 	ui/world/actionmenu.o \
 	ui/world/button.o \

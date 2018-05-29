@@ -62,7 +62,7 @@ void DiaryIndexScreen::open() {
 
 	_widgets.push_back(new StaticLocationWidget(
 			"Options",
-			nullptr,
+			CLICK_HANDLER(DiaryIndexScreen, settingsHandler),
 			MOVE_HANDLER(DiaryIndexScreen, widgetTextColorHandler)));
 
 	_widgets.push_back(new StaticLocationWidget(
@@ -107,6 +107,10 @@ void DiaryIndexScreen::widgetTextColorHandler(StaticLocationWidget &widget, cons
 		uint32 textColor = widget.isMouseInside(mousePos) ? _textColorHovered : _textColorDefault;
 		widget.setTextColor(textColor);
 	}
+}
+
+void DiaryIndexScreen::settingsHandler() {
+	StarkUserInterface->changeScreen(Screen::kScreenSettingsMenu);
 }
 
 void DiaryIndexScreen::backHandler() {

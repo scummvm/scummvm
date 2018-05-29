@@ -48,6 +48,7 @@ class ResourceProvider;
 class StaticProvider;
 class Scene;
 class UserInterface;
+class Settings;
 
 /**
  * Public services available as a singleton
@@ -67,6 +68,8 @@ public:
 		gameInterface = nullptr;
 		userInterface = nullptr;
 		fontProvider = nullptr;
+		gameDescription = nullptr;
+		settings = nullptr;
 	}
 
 	ArchiveLoader *archiveLoader;
@@ -82,6 +85,7 @@ public:
 	UserInterface *userInterface;
 	FontProvider *fontProvider;
 	const ADGameDescription *gameDescription;
+	Settings *settings;
 };
 
 /** Shortcuts for accessing the services. */
@@ -98,6 +102,7 @@ public:
 #define StarkUserInterface      StarkServices::instance().userInterface
 #define StarkFontProvider       StarkServices::instance().fontProvider
 #define StarkGameDescription    StarkServices::instance().gameDescription
+#define StarkSettings           StarkServices::instance().settings
 
 } // End of namespace Stark
 

@@ -48,7 +48,7 @@ class FMVScreen : public SingleWindowScreen {
 public:
 	FMVScreen(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~FMVScreen();
-	void play(const Common::String &name);
+	void play(Common::String name);
 	void stop();
 
 protected:

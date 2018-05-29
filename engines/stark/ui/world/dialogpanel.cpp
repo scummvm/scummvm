@@ -29,6 +29,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/dialogplayer.h"
+#include "engines/stark/services/settings.h"
 
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/world/clicktext.h"
@@ -150,7 +151,7 @@ void DialogPanel::onRender() {
 	}
 
 	// Draw subtitle if available
-	if (_subtitleVisual) {
+	if (_subtitleVisual && StarkSettings->getBoolSetting(Settings::kSubtitle)) {
 		_subtitleVisual->render(Common::Point(_optionsLeft, _optionsTop));
 	}
 }

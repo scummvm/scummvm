@@ -47,6 +47,7 @@ class Driver;
 class DiaryIndexScreen;
 class GameScreen;
 class MainMenuScreen;
+class SettingsMenuScreen;
 class Cursor;
 class FMVScreen;
 
@@ -62,6 +63,7 @@ public:
 	void update();
 	void render();
 	void handleMouseMove(const Common::Point &pos);
+	void handleMouseUp();
 	void handleClick();
 	void handleRightClick();
 	void handleDoubleClick();
@@ -90,6 +92,9 @@ public:
 
 	/** Back to the main menu screen and rest resources */
 	void quitToMainMenu();
+
+	/** Restore the screen travelling history to the initial state*/
+	void restoreScreenHistory();
 
 	/** Is the game screen currently displayed? */
 	bool isInGameScreen() const;
@@ -148,6 +153,7 @@ private:
 	FMVScreen *_fmvScreen;
 	DiaryIndexScreen *_diaryIndexScreen;
 	MainMenuScreen *_mainMenuScreen;
+	SettingsMenuScreen *_settingsMenuScreen;
 	Screen *_currentScreen;
 	Common::Stack<Screen::Name> _prevScreenNameStack;
 

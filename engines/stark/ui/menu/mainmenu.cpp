@@ -24,6 +24,7 @@
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/global.h"
+#include "engines/stark/services/settings.h"
 
 #include "common/config-manager.h"
 
@@ -52,31 +53,31 @@ void MainMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"NewGame",
 			CLICK_HANDLER(MainMenuScreen, newGameHandler),
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<7>)));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kNewGame>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Continue",
 			CLICK_HANDLER(MainMenuScreen, loadHandler),
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<8>)));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kContinue>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Options",
-			nullptr,
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<6>)));
+			CLICK_HANDLER(MainMenuScreen, settingsHandler),
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kOption>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Box",
 			nullptr,
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<9>)));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kBox>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Quit",
 			CLICK_HANDLER(MainMenuScreen, quitHandler),
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<10>)));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kQuit>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -112,7 +113,7 @@ void MainMenuScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"Credits",
 			CLICK_HANDLER(MainMenuScreen, creditsHandler),
-			MOVE_HANDLER(MainMenuScreen, helpTextHandler<12>)));
+			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kCredits>)));
 	_widgets.back()->setupSounds(0, 1);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -132,7 +133,7 @@ void MainMenuScreen::open() {
 			nullptr));
 }
 
-template<uint N>
+template<MainMenuScreen::HelpTextIndex N>
 void MainMenuScreen::helpTextHandler(StaticLocationWidget &widget, const Common::Point &mousePos) {
 	if (widget.isVisible()) {
 		_widgets[N]->setVisible(widget.isMouseInside(mousePos));
@@ -140,7 +141,7 @@ void MainMenuScreen::helpTextHandler(StaticLocationWidget &widget, const Common:
 }
 
 void MainMenuScreen::creditsHandler() {
-	if (!isDemo()) {
+	if (!StarkSettings->isDemo()) {
 		StarkUserInterface->requestFMVPlayback("0e02.bbb");
 	}
 }
@@ -161,7 +162,7 @@ void MainMenuScreen::newGameHandler() {
 		uint locationIndex = strtol(ConfMan.get("startup_location").c_str(), nullptr, 16);
 		StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
 	} else {
-		if (isDemo()) {
+		if (StarkSettings->isDemo()) {
 			StarkResourceProvider->requestLocationChange(0x4f, 0x00);
 		} else {
 			// Start us up at the house of all worlds
@@ -188,6 +189,10 @@ void MainMenuScreen::loadHandler() {
 			dialog.runModal();
 		}
 	}
+}
+
+void MainMenuScreen::settingsHandler() {
+	StarkUserInterface->changeScreen(Screen::kScreenSettingsMenu);
 }
 
 void MainMenuScreen::quitHandler() {

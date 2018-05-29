@@ -75,6 +75,9 @@ public:
 	void setSortKey(float sortKey);
 	void setClickable(bool clickable);
 
+	/** Gets the position */
+	Common::Point getPosition() const { return _position; }
+
 	/** Gets the owner-object */
 	Resources::ItemVisual *getOwner() const { return _owner; }
 

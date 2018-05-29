@@ -41,11 +41,13 @@ OpenGLSSurfaceRenderer::~OpenGLSSurfaceRenderer() {
 }
 
 void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point &dest) {
-	// Destination rectangle
+	render(texture, dest, texture->width(), texture->height());
+}
+
+void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point &dest, uint width, uint height) {
+	// Destination rectangle with given width and height
 	const float sLeft = dest.x;
 	const float sTop = dest.y;
-	const float sWidth = texture->width();
-	const float sHeight = texture->height();
 
 	_gfx->start2DMode();
 
@@ -53,9 +55,9 @@ void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point 
 	_shader->setUniform1f("fadeLevel", _fadeLevel);
 	_shader->setUniform("verOffsetXY", normalizeOriginalCoordinates(sLeft, sTop));
 	if (_noScalingOverride) {
-		_shader->setUniform("verSizeWH", normalizeCurrentCoordinates(sWidth, sHeight));
+		_shader->setUniform("verSizeWH", normalizeCurrentCoordinates(width, height));
 	} else {
-		_shader->setUniform("verSizeWH", normalizeOriginalCoordinates(sWidth, sHeight));
+		_shader->setUniform("verSizeWH", normalizeOriginalCoordinates(width, height));
 	}
 
 	texture->bind();

@@ -39,6 +39,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/staticprovider.h"
+#include "engines/stark/services/settings.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/framelimiter.h"
 
@@ -70,12 +71,8 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_diary(nullptr),
 		_userInterface(nullptr),
 		_fontProvider(nullptr),
+		_settings(nullptr),
 		_lastClickTime(0) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-
 	// Add the available debug channels
 	DebugMan.addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
 	DebugMan.addDebugChannel(kDebugXMG, "XMG", "Debug the loading of XMG images");
@@ -99,6 +96,7 @@ StarkEngine::~StarkEngine() {
 	delete _archiveLoader;
 	delete _userInterface;
 	delete _fontProvider;
+	delete _settings;
 
 	StarkServices::destroy();
 }
@@ -123,6 +121,7 @@ Common::Error StarkEngine::run() {
 	_diary = new Diary();
 	_gameInterface = new GameInterface();
 	_userInterface = new UserInterface(_gfx);
+	_settings = new Settings(_mixer);
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -139,6 +138,7 @@ Common::Error StarkEngine::run() {
 	services.userInterface = _userInterface;
 	services.fontProvider = _fontProvider;
 	services.gameDescription = _gameDescription;
+	services.settings = _settings;
 
 	// Load global resources
 	_staticProvider->init();
@@ -201,7 +201,7 @@ void StarkEngine::processEvents() {
 				if (!skipped) {
 					skipped = _userInterface->skipFMV();
 				}
-				if (!skipped) {
+				if (!skipped && StarkSettings->getBoolSetting(Settings::kTimeSkip)) {
 					_global->setFastForward();
 				}
 			} else if ((e.kbd.keycode == Common::KEYCODE_RETURN
@@ -211,7 +211,7 @@ void StarkEngine::processEvents() {
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
-			// Do nothing for now
+			_userInterface->handleMouseUp();
 		} else if (e.type == Common::EVENT_MOUSEMOVE) {
 			_userInterface->handleMouseMove(e.mouse);
 		} else if (e.type == Common::EVENT_LBUTTONDOWN) {
@@ -302,6 +302,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	_userInterface->clearLocationDependentState();
 	_userInterface->setInteractive(true);
 	_userInterface->changeScreen(Screen::kScreenGame);
+	_userInterface->restoreScreenHistory();
 
 	// Clear the previous world resources
 	_resourceProvider->shutdown();

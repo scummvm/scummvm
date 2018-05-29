@@ -31,6 +31,7 @@
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/settings.h"
 
 namespace Stark {
 
@@ -53,7 +54,12 @@ FMVScreen::~FMVScreen() {
 	delete _surfaceRenderer;
 }
 
-void FMVScreen::play(const Common::String &name) {
+void FMVScreen::play(Common::String name) {
+	if (!StarkSettings->getBoolSetting(Settings::kHighFMV) && StarkSettings->hasLowResFMV()) {
+		name.erase(name.size() - 4);
+		name += "_lo_res.bbb";
+	}
+
 	Common::SeekableReadStream *stream = StarkArchiveLoader->getExternalFile(name, "Global/");
 	if (!stream) {
 		warning("Could not open %s", name.c_str());
@@ -77,7 +83,8 @@ void FMVScreen::onRender() {
 		stop();
 	}
 
-	_surfaceRenderer->render(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight));
+	_surfaceRenderer->render(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight),
+			Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 }
 
 bool FMVScreen::isPlaying() {
