@@ -384,7 +384,7 @@ uint32 IllusionsEngine_BBDOU::getPrevScene() {
 }
 
 bool IllusionsEngine_BBDOU::isCursorObject(uint32 actorTypeId, uint32 objectId) {
-	return actorTypeId == 0x50001 && objectId == 0x40004;
+	return actorTypeId == 0x50001 && objectId == Illusions::CURSOR_OBJECT_ID;
 }
 
 void IllusionsEngine_BBDOU::setCursorControlRoutine(Control *control) {

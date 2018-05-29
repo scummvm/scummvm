@@ -25,6 +25,7 @@
 #include "illusions/fixedpoint.h"
 #include "illusions/resources/backgroundresource.h"
 #include "illusions/time.h"
+#include "illusions/actor.h"
 
 namespace Illusions {
 
@@ -85,10 +86,16 @@ void Camera::set(Common::Point &panPoint, WidthHeight &dimensions) {
 
 void Camera::panCenterObject(uint32 objectId, int16 panSpeed) {
 	Common::Point *actorPosition = _vm->getObjectActorPositionPtr(objectId);
-	if (_vm->getGameId() == kGameIdDuckman && objectId == 0x40004) {
-		_activeState._cameraMode = 2;
-		_activeState._trackingLimits.x = 156;
-		_activeState._trackingLimits.y = 96;
+	if (_vm->getGameId() == kGameIdDuckman) {
+		if(objectId == Illusions::CURSOR_OBJECT_ID) {
+			_activeState._cameraMode = 2;
+			_activeState._trackingLimits.x = 156;
+			_activeState._trackingLimits.y = 96;
+		} else {
+			_activeState._cameraMode = 1;
+			_activeState._trackingLimits.x = 4;
+			_activeState._trackingLimits.y = 4;
+		}
 	} else if (_vm->getGameId() == kGameIdBBDOU) {
 		_activeState._cameraMode = 1;
 		_activeState._trackingLimits = _centerObjectTrackingLimits;

@@ -85,8 +85,8 @@ void DuckmanDialogSystem::startDialog(int16 *choiceOfsPtr, uint32 actorTypeId, u
 	} else {
 		if (!_vm->_cursor._control) {
 			Common::Point pos = _vm->getNamedPointPosition(0x70001);
-			_vm->_controls->placeActor(0x50001, pos, 0x60001, 0x40004, 0);
-			_vm->_cursor._control = _vm->_dict->getObjectControl(0x40004);
+			_vm->_controls->placeActor(0x50001, pos, 0x60001, Illusions::CURSOR_OBJECT_ID, 0);
+			_vm->_cursor._control = _vm->_dict->getObjectControl(Illusions::CURSOR_OBJECT_ID);
 		}
 		_vm->_cursor._control->appearActor();
 		_vm->setCursorActorIndex(6, 1, 0);

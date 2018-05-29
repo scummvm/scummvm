@@ -39,14 +39,14 @@ CauseThread_Duckman::CauseThread_Duckman(IllusionsEngine_Duckman *vm, uint32 thr
 int CauseThread_Duckman::onUpdate() {
 	if (_flag) {
 		if (_vm->getCurrentScene() == _sceneId) {
-			Control *cursorCursor = _vm->getObjectControl(0x40004);
+			Control *cursorCursor = _vm->getObjectControl(Illusions::CURSOR_OBJECT_ID);
 			cursorCursor->appearActor();
 			_vm->_input->discardEvent(kEventLeftClick);
 		}
 		return kTSTerminate;
 	} else {
 		_sceneId = _vm->getCurrentScene();
-		Control *cursorCursor = _vm->getObjectControl(0x40004);
+		Control *cursorCursor = _vm->getObjectControl(Illusions::CURSOR_OBJECT_ID);
 		cursorCursor->disappearActor();
 		_vm->_input->discardEvent(kEventLeftClick);
 		_vm->startScriptThread(_triggerThreadId, _threadId);

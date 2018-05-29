@@ -215,7 +215,7 @@ bool BaseMenuSystem::calcMenuItemIndexAtPoint(Common::Point pt, uint &menuItemIn
 
 void BaseMenuSystem::setMousePos(Common::Point &mousePos) {
 	_vm->_input->setCursorPosition(mousePos);
-	Control *mouseCursor = _vm->getObjectControl(0x40004);
+	Control *mouseCursor = _vm->getObjectControl(Illusions::CURSOR_OBJECT_ID);
 	mouseCursor->_actor->_position = mousePos;
 }
 
@@ -332,7 +332,7 @@ void BaseMenuSystem::openMenu(BaseMenu *menu) {
 	_cursorInitialVisibleFlag = initMenuCursor();
 	_savedCursorPos = _vm->_input->getCursorPosition();
 	_savedGameState = getGameState();
-	Control *cursorControl = _vm->getObjectControl(0x40004);
+	Control *cursorControl = _vm->getObjectControl(Illusions::CURSOR_OBJECT_ID);
 	_savedCursorActorIndex = cursorControl->_actor->_actorIndex;
 	_savedCursorSequenceId = cursorControl->_actor->_sequenceId;
 	
@@ -358,7 +358,7 @@ void BaseMenuSystem::closeMenu() {
 	_vm->_screenText->removeText();
 	hideActorHoverBackground();
 	hideActorTextColorRect();
-	Control *mouseCursor = _vm->getObjectControl(0x40004);
+	Control *mouseCursor = _vm->getObjectControl(Illusions::CURSOR_OBJECT_ID);
 	setGameState(_savedGameState);
 	mouseCursor->_actor->_actorIndex = _savedCursorActorIndex;
 	mouseCursor->_actor->_position = _savedCursorPos;

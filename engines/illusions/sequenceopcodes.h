@@ -41,6 +41,7 @@ public:
 protected:
 	IllusionsEngine *_vm;
 	SequenceOpcode *_opcodes[256];
+	Common::String _opcodeNames[256];
 	void initOpcodes();
 	void freeOpcodes();
 

@@ -45,12 +45,14 @@ SequenceOpcodes::~SequenceOpcodes() {
 void SequenceOpcodes::execOpcode(Control *control, OpCall &opCall) {
 	if (!_opcodes[opCall._op])
 		error("SequenceOpcodes::execOpcode() Unimplemented opcode %d", opCall._op);
-	debug(3, "execOpcode(%d)", opCall._op);
+	debug(3, "execSequenceOpcode(%d) %s objectID: %08X", opCall._op, _opcodeNames[opCall._op].c_str(), control->_objectId);
 	(*_opcodes[opCall._op])(control, opCall);
 }
 
 typedef Common::Functor2Mem<Control*, OpCall&, void, SequenceOpcodes> SequenceOpcodeI;
-#define OPCODE(op, func) _opcodes[op] = new SequenceOpcodeI(this, &SequenceOpcodes::func);
+#define OPCODE(op, func) \
+	_opcodes[op] = new SequenceOpcodeI(this, &SequenceOpcodes::func); \
+	_opcodeNames[op] = #func;
 
 void SequenceOpcodes::initOpcodes() {
 	// First clear everything
