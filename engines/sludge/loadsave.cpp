@@ -56,6 +56,7 @@ namespace Sludge {
 // From elsewhere
 //----------------------------------------------------------------------
 
+extern LoadedFunction *saverFunc;					// In function.cpp
 extern LoadedFunction *allRunningFunctions;         // In sludger.cpp
 extern const char *typeName[];                      // In variable.cpp
 extern int numGlobals;                              // In sludger.cpp
@@ -335,6 +336,20 @@ LoadedFunction *loadFunction(Common::SeekableReadStream *stream) {
 //----------------------------------------------------------------------
 // Save everything
 //----------------------------------------------------------------------
+
+bool handleSaveLoad() {
+	if (!g_sludge->loadNow.empty()) {
+		if (g_sludge->loadNow[0] == ':') {
+			saveGame(g_sludge->loadNow.c_str() + 1);
+			setVariable(saverFunc->reg, SVT_INT, 1);
+		} else {
+			if (!loadGame(g_sludge->loadNow))
+				return false;
+		}
+		g_sludge->loadNow.clear();
+	}
+	return true;
+}
 
 bool saveGame(const Common::String &fname) {
 	Common::OutSaveFile *fp = g_system->getSavefileManager()->openForSaving(fname);

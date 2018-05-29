@@ -50,8 +50,7 @@ struct LoadedFunction {
 	byte freezerLevel;
 };
 
-bool runSludge();
-
+bool runAllFunctions();
 int startNewFunctionNum(uint, uint, LoadedFunction *, VariableStack*&, bool = true);
 void restartFunction(LoadedFunction *fun);
 bool loadFunctionCode(LoadedFunction *newFunc);

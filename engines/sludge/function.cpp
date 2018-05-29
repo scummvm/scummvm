@@ -702,7 +702,7 @@ int startNewFunctionNum(uint funcNum, uint numParamsExpected,
 	return 1;
 }
 
-bool runSludge() {
+bool runAllFunctions() {
 
 	LoadedFunction *thisFunction = allRunningFunctions;
 	LoadedFunction *nextFunction;
@@ -730,17 +730,6 @@ bool runSludge() {
 		}
 
 		thisFunction = nextFunction;
-	}
-
-	if (!g_sludge->loadNow.empty()) {
-		if (g_sludge->loadNow[0] == ':') {
-			saveGame(g_sludge->loadNow.c_str() + 1);
-			setVariable(saverFunc->reg, SVT_INT, 1);
-		} else {
-			if (!loadGame(g_sludge->loadNow))
-				return false;
-		}
-		g_sludge->loadNow.clear();
 	}
 
 	return true;

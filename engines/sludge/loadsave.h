@@ -28,6 +28,8 @@ struct LoadedFunction;
 struct Variable;
 struct VariableStack;
 
+bool handleSaveLoad();
+
 bool saveGame(const Common::String &fname);
 bool loadGame(const Common::String &fname);
 
