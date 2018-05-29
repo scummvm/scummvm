@@ -61,7 +61,7 @@ void Room::demon0TouchedWarp0() {
 }
 
 void Room::demon0WalkToBottomDoor() {
-	_vm->_awayMission.transitioningIntoRoom = 1;
+	_vm->_awayMission.disableInput = 1;
 	_rdfData[0xcd] = 1; // FIXME
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewman(OBJECT_KIRK, 243, 158, 1);
@@ -81,7 +81,7 @@ void Room::demon0ReachedBottomDoor() {
 }
 
 void Room::demon0WalkToTopDoor() {
-	_vm->_awayMission.transitioningIntoRoom = 1;
+	_vm->_awayMission.disableInput = 1;
 	_rdfData[0xcc] = 1; // FIXME
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewman(OBJECT_KIRK, 157, 134, 2);

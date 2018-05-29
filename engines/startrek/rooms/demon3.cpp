@@ -71,7 +71,7 @@ void Room::demon3Timer0Expired() {
 	_vm->_awayMission.timers[1] = 13;
 	_vm->_awayMission.demon.boulder1Gone = true;
 	_vm->_awayMission.demon.numBouldersGone++;
-	_vm->_awayMission.transitioningIntoRoom = true;
+	_vm->_awayMission.disableInput = true;
 	playMidiMusicTracks(2, -1);
 	playVoc("BOULDERK");
 }
@@ -116,7 +116,7 @@ void Room::demon3FinishedWalking5() {
 	playSoundEffectIndex(0x04);
 	showText(TX_SPEAKER_MCCOY, TX_DEM3_019);
 
-	_vm->_awayMission.transitioningIntoRoom = false;
+	_vm->_awayMission.disableInput = false;
 }
 
 void Room::demon3McCoyInFiringPosition() {
@@ -194,7 +194,7 @@ void Room::demon3FireAtBoulder() {
 	playSoundEffectIndex(0x06);
 	if (!_roomVar.demon3.boulder1Shot)
 		_vm->_awayMission.timers[0] = 1;
-	_vm->_awayMission.transitioningIntoRoom = false;
+	_vm->_awayMission.disableInput = false;
 }
 
 void Room::demon3UsePhaserOnRedshirt() {
@@ -262,7 +262,7 @@ void Room::demon3UsePhaserOnBoulder4() {
 }
 
 void Room::demon3BoulderCommon() {
-	_vm->_awayMission.transitioningIntoRoom = true;
+	_vm->_awayMission.disableInput = true;
 	Common::Point pos = getActorPos(OBJECT_KIRK);
 	if (!(pos.x == 0x79 && pos.y == 0xa0)) {
 		_roomVar.demon3.inFiringPosition = false;

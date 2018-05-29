@@ -71,7 +71,7 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	_roomIndex = roomIndex;
 
 	_roomFrameCounter = 0;
-	_awayMission.transitioningIntoRoom = 0;
+	_awayMission.disableInput = false;
 
 	_gfx->fadeoutScreen();
 	_sound->stopAllVocSounds();
@@ -130,7 +130,7 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 
 		_kirkActor->triggerActionWhenAnimFinished = true;
 		_kirkActor->finishedAnimActionParam = 0xff;
-		_awayMission.transitioningIntoRoom = 1;
+		_awayMission.disableInput = true;
 		_warpHotspotsActive = false;
 		break;
 	case 4: // Crew is beaming in.
@@ -142,7 +142,7 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 		}
 		_kirkActor->triggerActionWhenAnimFinished = true;
 		_kirkActor->finishedAnimActionParam = 0xff;
-		_awayMission.transitioningIntoRoom = 1;
+		_awayMission.disableInput = true;
 		playSoundEffectIndex(0x09);
 		_warpHotspotsActive = false;
 		break;
@@ -175,7 +175,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			break;
 
 		case TREKEVENT_LBUTTONDOWN:
-			if (_awayMission.transitioningIntoRoom != 0)
+			if (_awayMission.disableInput)
 				break;
 
 			switch (_awayMission.activeAction) {
@@ -317,7 +317,7 @@ checkShowInventory:
 			break;
 
 		case TREKEVENT_RBUTTONDOWN: // TODO: also triggered by key press?
-			if (_awayMission.transitioningIntoRoom)
+			if (_awayMission.disableInput)
 				break;
 			hideInventoryIcons();
 			playSoundEffectIndex(0x07);
@@ -396,7 +396,7 @@ void StarTrekEngine::handleAwayMissionAction() {
 	Action action = _actionQueue.pop();
 
 	if ((action.type == ACTION_FINISHED_ANIMATION || action.type == ACTION_FINISHED_WALKING) && action.b1 == 0xff) {
-		_awayMission.transitioningIntoRoom = 0;
+		_awayMission.disableInput = false;
 		_warpHotspotsActive = true;
 		return;
 	}

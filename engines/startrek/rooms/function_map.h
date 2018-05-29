@@ -344,6 +344,61 @@ RoomAction demon4ActionList[] = {
 	{ Action(ACTION_FINISHED_WALKING, 3, 0, 0), &Room::demon4CrewmanReachedPanel },
 };
 
+RoomAction demon5ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::demon5Tick1 },
+	{ Action(ACTION_WALK, 0x22, 0, 0), &Room::demon5WalkToDoor },
+	{ Action(ACTION_WALK, 12, 0, 0), &Room::demon5WalkToDoor },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0), &Room::demon5TouchedDoorOpenTrigger },
+	{ Action(ACTION_FINISHED_WALKING, 1, 0, 0), &Room::demon5DoorOpenedOrReachedDoor },
+	{ Action(ACTION_FINISHED_ANIMATION, 1, 0, 0), &Room::demon5DoorOpenedOrReachedDoor },
+
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x21, 0), &Room::demon5UseSTricorderOnCrate },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, -1, 0), &Room::demon5UsePhaserOnAnything },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, -1, 0), &Room::demon5UsePhaserOnAnything },
+
+	{ Action(ACTION_USE, OBJECT_IHAND, 11, 0), &Room::demon5UseHandOnStephen },
+	{ Action(ACTION_USE, OBJECT_IBERRY, 11, 0), &Room::demon5UseBerryOnStephen },
+	{ Action(ACTION_USE, OBJECT_IDETOXIN, 9, 0), &Room::demon5UseHypoDytoxinOnChub },
+	{ Action(ACTION_FINISHED_WALKING, 2, 0, 0), &Room::demon5MccoyReachedChub },
+	{ Action(ACTION_FINISHED_ANIMATION, 2, 0, 0), &Room::demon5MccoyHealedChub },
+
+	{ Action(ACTION_USE, OBJECT_IDETOXIN, -1, 0), &Room::demon5UseHypoDytoxinOnAnything },
+	{ Action(ACTION_USE, OBJECT_IBERRY, 9, 0), &Room::demon5UseBerryOnChub },
+
+	{ Action(ACTION_LOOK, 8, 0, 0), &Room::demon5LookAtRoberts },
+	{ Action(ACTION_LOOK, 10, 0, 0), &Room::demon5LookAtGrisnash },
+	{ Action(ACTION_LOOK, 11, 0, 0), &Room::demon5LookAtStephen },
+
+	{ Action(ACTION_LOOK, OBJECT_KIRK, 0, 0), &Room::demon5LookAtKirk },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK, 0, 0), &Room::demon5LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY, 0, 0), &Room::demon5LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::demon5LookAtRedshirt },
+
+	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::demon5LookAtMountain },
+	{ Action(ACTION_LOOK, 0x21, 0, 0), &Room::demon5LookAtCrate },
+	{ Action(ACTION_LOOK, -1, 0, 0), &Room::demon5LookAnywhere },
+	{ Action(ACTION_LOOK, 9, 0, 0), &Room::demon5LookAtChub },
+
+	{ Action(ACTION_TALK, 8, 0, 0), &Room::demon5TalkToRoberts },
+	{ Action(ACTION_TALK, 9, 0, 0), &Room::demon5TalkToChub },
+	{ Action(ACTION_TALK, 10, 0, 0), &Room::demon5TalkToGrisnash },
+	{ Action(ACTION_TALK, 11, 0, 0), &Room::demon5TalkToStephen },
+
+	{ Action(ACTION_TALK, OBJECT_KIRK, 0, 0), &Room::demon5TalkToKirk },
+	{ Action(ACTION_TALK, OBJECT_SPOCK, 0, 0), &Room::demon5TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::demon5TalkToRedshirt },
+	{ Action(ACTION_TALK, OBJECT_MCCOY, 0, 0), &Room::demon5TalkToMccoy },
+
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 8, 0), &Room::demon5UseMTricorderOnRoberts },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT,  9, 0), &Room::demon5UseMTricorderOnChub },
+	{ Action(ACTION_USE, OBJECT_MCCOY,    9, 0), &Room::demon5UseMTricorderOnChub },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 9, 0), &Room::demon5UseMTricorderOnChub },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 10, 0), &Room::demon5UseMTricorderOnGrisnash },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 11, 0), &Room::demon5UseMTricorderOnStephen },
+
+	{ Action(ACTION_GET, 0x21, 0, 0), &Room::demon5GetCrate },
+};
+
 }
 
 #endif

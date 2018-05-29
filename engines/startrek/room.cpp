@@ -57,6 +57,10 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 		_roomActionList = demon4ActionList;
 		_numRoomActions = sizeof(demon4ActionList) / sizeof(RoomAction);
 	}
+	else if (name == "DEMON5") {
+		_roomActionList = demon5ActionList;
+		_numRoomActions = sizeof(demon5ActionList) / sizeof(RoomAction);
+	}
 	else {
 		warning("Room \"%s\" unimplemented", name.c_str());
 		_numRoomActions = 0;
@@ -220,6 +224,7 @@ int Room::showText(int text) {
 }
 
 void Room::giveItem(int item) {
+	assert(item >= ITEMS_START && item < ITEMS_END);
 	_vm->_itemList[item - ITEMS_START].have = true;
 }
 
@@ -233,6 +238,11 @@ void Room::loadRoomIndex(int roomIndex, int spawnIndex) {
 	// FIXME: this could a bit dangerous since this is generally called from room-specific
 	// code, which isn't guaranteed to do nothing afterward. Original game would
 	// manipulate the stack to jump directly back to the start of "runAwayMission"...
+}
+
+void Room::loseItem(int item) {
+	assert(item >= ITEMS_START && item < ITEMS_END);
+	_vm->_itemList[item - ITEMS_START].have = false;
 }
 
 void Room::walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam) {

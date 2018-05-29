@@ -137,7 +137,7 @@ void Room::demon4UseCrewmanOnPanel() {
 		return;
 	walkCrewman(_roomVar.demon4.crewmanUsingPanel, 0xda, 0x83, 3);
 	_vm->_awayMission.crewDirectionsAfterWalk[_roomVar.demon4.crewmanUsingPanel] = DIR_N;
-	_vm->_awayMission.transitioningIntoRoom = true;
+	_vm->_awayMission.disableInput = true;
 }
 
 void Room::demon4CrewmanReachedPanel() {
