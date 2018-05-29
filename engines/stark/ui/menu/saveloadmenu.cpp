@@ -23,6 +23,19 @@
 #include "engines/stark/ui/menu/saveloadmenu.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/stateprovider.h"
+
+#include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/surfacerenderer.h"
+
+#include "engines/stark/stark.h"
+#include "engines/stark/savemetadata.h"
+
+#include "common/config-manager.h"
+#include "common/savefile.h"
+
+#include "gui/message.h"
 
 namespace Stark {
 
@@ -77,10 +90,19 @@ void SaveLoadMenuScreen::open() {
 	_widgets.back()->setupSounds(0, 1);
 	_widgets.back()->setTextColor(_textColorBlack);
 	
+	_widgets.push_back(new SaveDataWidget(
+			0, _gfx, this));
 }
 
 void SaveLoadMenuScreen::backHandler() {
 	StarkUserInterface->backPrevScreen();
+}
+
+void SaveLoadMenuScreen::checkError(Common::Error error) {
+	if (error.getCode() != Common::kNoError) {
+		GUI::MessageDialog dialog(error.getDesc());
+		dialog.runModal();
+	}
 }
 
 void SaveMenuScreen::open() {
@@ -91,6 +113,53 @@ void SaveMenuScreen::open() {
 void LoadMenuScreen::open() {
 	SaveLoadMenuScreen::open();
 	_widgets[kWidgetSaveText]->setVisible(false);
+}
+
+SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *screen) :
+		StaticLocationWidget(nullptr, nullptr, nullptr),
+		_slot(slot),
+		_screen(screen) {
+	_texture = gfx->createTexture();
+	_surfaceRenderer = gfx->createSurfaceRenderer();
+
+	Common::String filename = StarkEngine::formatSaveName(ConfMan.getActiveDomainName().c_str(), _slot);
+	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(filename);
+
+	if (save) {
+		// Obtain the thumbnail
+		SaveMetadata metadata;
+		StateReadStream stream(save);
+		Common::ErrorCode metadataErrorCode = metadata.read(&stream, filename);
+		if (metadataErrorCode != Common::kNoError) {
+			error("Unable to read save metadata with error code %d.", metadataErrorCode);
+		}
+
+		Graphics::Surface *thumb = metadata.readGameScreenThumbnail(&stream);
+		_texture->update(thumb);
+	}
+}
+
+SaveDataWidget::~SaveDataWidget() {
+	delete _texture;
+	delete _surfaceRenderer;
+}
+
+void SaveDataWidget::render() {
+	_surfaceRenderer->render(_texture, Common::Point(200, 200));
+}
+
+bool SaveDataWidget::isMouseInside(const Common::Point &mousePos) const {
+	return mousePos.x >= 200 && mousePos.x <= 200 + _texture->width() &&
+		   mousePos.y >= 200 && mousePos.y <= 200 + _texture->height();
+}
+
+void SaveDataWidget::onClick() {
+	StaticLocationWidget::onClick();
+	_screen->clickHandler(_slot);
+}
+
+void SaveDataWidget::onMouseMove(const Common::Point &mousePos) {
+	StaticLocationWidget::onMouseMove(mousePos);
 }
 
 } // End of namespace Stark

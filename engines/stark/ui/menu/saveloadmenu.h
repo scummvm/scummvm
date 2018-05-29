@@ -25,7 +25,16 @@
 
 #include "engines/stark/ui/menu/locationscreen.h"
 
+#include "common/error.h"
+#include "engines/engine.h"
+
 namespace Stark {
+
+namespace Gfx {
+class Texture;
+class SurfaceRenderer;	
+}
+
 
 /**
  * The base class of the save and load menu of the game
@@ -38,11 +47,19 @@ public:
 	// StaticLocationScreen API
 	void open() override;
 
+	void clickHandler(int slot) {
+		clickHandlerImpl(slot);
+	}
+
 protected:
+	static void checkError(Common::Error error);
+
 	enum WidgetIndex {
 		kWidgetSaveText = 3,
 		kWidgetLoadText = 4,
 	};
+
+	virtual void clickHandlerImpl(int slot) = 0;
 
 private:
 	static const uint32 _textColorBlack = 0xFF000000;
@@ -61,6 +78,11 @@ public:
 
 	// SaveLoadMenuScreen API
 	void open() override;
+
+protected:
+	void clickHandlerImpl(int slot) override {
+		checkError(g_engine->saveGameState(slot, "TestSave"));
+	}
 };
 
 /**
@@ -74,6 +96,32 @@ public:
 
 	// SaveLoadMenuScreen API
 	void open() override;
+
+protected:
+	void clickHandlerImpl(int slot) override {
+		checkError(g_engine->loadGameState(slot));
+	}
+};
+
+/**
+ * The widget of save data
+ */
+class SaveDataWidget : public StaticLocationWidget {
+public:
+	SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *screen);
+	~SaveDataWidget();
+
+	// StaticLocationWidget API
+	void render() override;
+	bool isMouseInside(const Common::Point &mousePos) const override;
+	void onClick() override;
+	void onMouseMove(const Common::Point &mousePos) override;
+
+private:
+	int _slot;
+	SaveLoadMenuScreen *_screen;
+	Gfx::Texture *_texture;
+	Gfx::SurfaceRenderer *_surfaceRenderer;
 };
 
 } // End of namespace Stark
