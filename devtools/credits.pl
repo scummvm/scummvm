@@ -137,15 +137,16 @@ sub html_entities_to_rtf {
 	$text =~ s/&oacute;/\\'97/g;
 	$text =~ s/&oslash;/\\'bf/g;
 	$text =~ s/&aring;/\\'8c/g;
-	# The following numerical values are octal!
+	# The following numerical values are decimal!
 	$text =~ s/&#322;/\\uc0\\u322 /g;
-	$text =~ s/&Scaron;/\\uc0\\u540 /g;
+	$text =~ s/&#347;/\\uc0\\u347 /g;
+	$text =~ s/&Scaron;/\\uc0\\u352 /g;
 
 	# Back to hex numbers
 	$text =~ s/&ntilde;/\\'96/g;
 
 	$text =~ s/&auml;/\\'8a/g;
-	$text =~ s/&euml;/\\'eb/g;
+	$text =~ s/&euml;/\\'91/g;
 	$text =~ s/&ouml;/\\'9a/g;
 	$text =~ s/&uuml;/\\'9f/g;
 
