@@ -141,7 +141,7 @@ void Room::demon2UseMTricorderOnBerries() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
 	playSoundEffectIndex(0x04);
 
-	if (_vm->_awayMission.demon.curedBrother)
+	if (_vm->_awayMission.demon.curedChub)
 		showText(TX_SPEAKER_MCCOY, TX_DEM2_013);
 	else if (_vm->_awayMission.demon.madeHypoDytoxin)
 		showText(TX_SPEAKER_MCCOY, TX_DEM2_009);

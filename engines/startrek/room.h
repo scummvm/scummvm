@@ -50,11 +50,6 @@ const int RDF_WARP_ROOM_INDICES = 0x22;
 const int RDF_ROOM_ENTRY_POSITIONS = 0x2a;
 const int RDF_BEAM_IN_POSITIONS = 0xaa;
 
-const char SPEAKER_KIRK[] = "Capt. Kirk";
-const char SPEAKER_SPOCK[] = "Mr. Spock";
-const char SPEAKER_MCCOY[] = "Dr. McCoy";
-const char SPEAKER_EVERTS[] = "Ensign Everts";
-
 class Room {
 
 public:
@@ -109,6 +104,7 @@ private:
 	int showText(int text);                                                                    // Cmd 0x03
 	void giveItem(int item);                                                                   // Cmd 0x04
 	void loadRoomIndex(int roomIndex, int spawnIndex);                                         // Cmd 0x06
+	void loseItem(int item);                                                                   // Cmd 0x07
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam);// Cmd 0x08
 	void loadMapFile(const Common::String &name);                                              // Cmd 0x09
 	Common::Point getActorPos(int actorIndex);                                                 // Cmd 0x0d
@@ -334,6 +330,46 @@ public:
 	void demon4UseCrewmanOnPanel();
 	void demon4CrewmanReachedPanel();
 
+	// DEMON5
+	void demon5Tick1();
+	void demon5WalkToDoor();
+	void demon5TouchedDoorOpenTrigger();
+	void demon5DoorOpenedOrReachedDoor();
+	void demon5UseSTricorderOnCrate();
+	void demon5UsePhaserOnAnything();
+	void demon5UseHandOnStephen();
+	void demon5UseBerryOnStephen();
+	void demon5UseHypoDytoxinOnChub();
+	void demon5MccoyReachedChub();
+	void demon5MccoyHealedChub();
+	void demon5UseHypoDytoxinOnAnything();
+	void demon5UseBerryOnChub();
+	void demon5LookAtRoberts();
+	void demon5LookAtGrisnash();
+	void demon5LookAtStephen();
+	void demon5LookAtKirk();
+	void demon5LookAtSpock();
+	void demon5LookAtMccoy();
+	void demon5LookAtRedshirt();
+	void demon5LookAtMountain();
+	void demon5LookAtCrate();
+	void demon5LookAnywhere();
+	void demon5LookAtChub();
+	void demon5TalkToRoberts();
+	void demon5TalkToChub();
+	void demon5TalkToGrisnash();
+	void demon5TalkToStephen();
+	void demon5TalkToKirk();
+	void demon5TalkToSpock();
+	void demon5TalkToRedshirt();
+	void demon5TalkToMccoy();
+	void demon5UseMTricorderOnRoberts();
+	void demon5UseMTricorderOnChub();
+	void demon5UseMTricorderOnGrisnash();
+	void demon5UseMTricorderOnStephen();
+	void demon5CheckCompletedStudy();
+	void demon5GetCrate();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {
@@ -362,6 +398,22 @@ private:
 			bool cb; // 0xcb
 			int16 crewmanUsingPanel; // 0xcf
 		} demon4;
+
+		struct {
+			bool scannedRoberts; // 0xca
+			bool scannedChub; // 0xcb
+			bool scannedGrisnash; // 0xcc
+			bool scannedStephen; // 0xcd
+			byte numScanned; // 0xce
+			byte numTalkedTo; // 0xcf
+			bool talkedToRoberts; // 0xd0
+			bool talkedToChub; // 0xd1
+			bool talkedToGrisnash; // 0xd2
+			bool talkedToStephen; // 0xd3
+			byte doorCounter; // 0xd4
+			bool movingToDoor; // 0xd5
+		} demon5;
+
 	} _roomVar;
 };
 

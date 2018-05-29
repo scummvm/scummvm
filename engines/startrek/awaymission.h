@@ -33,7 +33,7 @@ struct AwayMission {
 	int16 mouseY; // 0x12
 	int16 crewGetupTimers[4]; // 0x14
 	bool disableWalking; // 0x1c
-	byte transitioningIntoRoom; // 0x1d; Set while beaming in or walking into a room. Disables control?
+	byte disableInput; // 0x1d; Set while beaming in or walking into a room. Disables control?
 	bool redshirtDead; // 0x1e
 	byte activeAction; // 0x1f
 	byte activeObject;  // 0x20; The item that is going to be used on something
@@ -65,7 +65,8 @@ struct AwayMission {
 			byte enteredFrom; // 0x3a
 			bool field3b; // 0x3b
 			bool healedMiner; // 0x3c
-			bool curedBrother; // 0x3d
+			bool curedChub; // 0x3d
+			bool field3e; // 0x3e
 			bool knowAboutHypoDytoxin; // 0x3f
 			bool minerDead; // 0x40
 			byte field41; // 0x41

@@ -216,7 +216,7 @@ void Room::demon1UsePhaserOnAnything() {
 void Room::demon1UsePhaserOnKlingon1() {
 	if (_rdfData[0xca] != 0)
 		return;
-	_vm->_awayMission.transitioningIntoRoom = 1;
+	_vm->_awayMission.disableInput = 1;
 	_rdfData[0xca] = 1;
 
 	if (_roomVar.demon1.kirkShooting) {
@@ -245,7 +245,7 @@ void Room::demon1ShootKlingon1() {
 
 void Room::demon1KlingonDropsHand() {
 	loadActorAnim(13, "klghnd", 0x10b, 0x8e, 0);
-	_vm->_awayMission.transitioningIntoRoom = 0;
+	_vm->_awayMission.disableInput = 0;
 	_vm->_awayMission.timers[1] = 0;
 	showText(TX_DEM1N020);
 
@@ -265,7 +265,7 @@ void Room::demon1KlingonDropsHand() {
 void Room::demon1UsePhaserOnKlingon2() {
 	if (_rdfData[0xcb] != 0)
 		return;
-	_vm->_awayMission.transitioningIntoRoom = 1;
+	_vm->_awayMission.disableInput = 1;
 	_rdfData[0xcb] = 1;
 
 	if (_roomVar.demon1.kirkShooting) {
@@ -289,13 +289,13 @@ void Room::demon1ShootKlingon2() {
 	loadActorAnim(12, "s0ks2", 0, 0, 0);
 	playSoundEffectIndex(0x06);
 	loadActorAnim2(9, "klg2d", 0xaa, 0x7c, 0);
-	_vm->_awayMission.transitioningIntoRoom = 0;
+	_vm->_awayMission.disableInput = 0;
 }
 
 void Room::demon1UsePhaserOnKlingon3() {
 	if (_rdfData[0xcc] != 0)
 		return;
-	_vm->_awayMission.transitioningIntoRoom = 1;
+	_vm->_awayMission.disableInput = 1;
 	_rdfData[0xcc] = 1;
 
 	if (_roomVar.demon1.kirkShooting) {
@@ -319,7 +319,7 @@ void Room::demon1ShootKlingon3() {
 	loadActorAnim(12, "s0ks3", 0, 0, 0);
 	playSoundEffectIndex(0x06);
 	loadActorAnim2(10, "klg3d", 0, 0, 0);
-	_vm->_awayMission.transitioningIntoRoom = 0;
+	_vm->_awayMission.disableInput = 0;
 }
 
 // Timer 6 expired
