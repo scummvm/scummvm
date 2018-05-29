@@ -735,4 +735,66 @@ bool runAllFunctions() {
 	return true;
 }
 
+void saveFunction(LoadedFunction *fun, Common::WriteStream *stream) {
+	int a;
+	stream->writeUint16BE(fun->originalNumber);
+	if (fun->calledBy) {
+		stream->writeByte(1);
+		saveFunction(fun->calledBy, stream);
+	} else {
+		stream->writeByte(0);
+	}
+	stream->writeUint32LE(fun->timeLeft);
+	stream->writeUint16BE(fun->runThisLine);
+	stream->writeByte(fun->cancelMe);
+	stream->writeByte(fun->returnSomething);
+	stream->writeByte(fun->isSpeech);
+	saveVariable(&(fun->reg), stream);
+
+	if (fun->freezerLevel) {
+		fatal(ERROR_GAME_SAVE_FROZEN);
+	}
+	saveStack(fun->stack, stream);
+	for (a = 0; a < fun->numLocals; a++) {
+		saveVariable(&(fun->localVars[a]), stream);
+	}
+}
+
+LoadedFunction *loadFunction(Common::SeekableReadStream *stream) {
+	int a;
+
+	// Reserve memory...
+
+	LoadedFunction *buildFunc = new LoadedFunction;
+	if (!checkNew(buildFunc))
+		return NULL;
+
+	// See what it was called by and load if we need to...
+
+	buildFunc->originalNumber = stream->readUint16BE();
+	buildFunc->calledBy = NULL;
+	if (stream->readByte()) {
+		buildFunc->calledBy = loadFunction(stream);
+		if (!buildFunc->calledBy)
+			return NULL;
+	}
+
+	buildFunc->timeLeft = stream->readUint32LE();
+	buildFunc->runThisLine = stream->readUint16BE();
+	buildFunc->freezerLevel = 0;
+	buildFunc->cancelMe = stream->readByte();
+	buildFunc->returnSomething = stream->readByte();
+	buildFunc->isSpeech = stream->readByte();
+	loadVariable(&(buildFunc->reg), stream);
+	loadFunctionCode(buildFunc);
+
+	buildFunc->stack = loadStack(stream, NULL);
+
+	for (a = 0; a < buildFunc->numLocals; a++) {
+		loadVariable(&(buildFunc->localVars[a]), stream);
+	}
+
+	return buildFunc;
+}
+
 } // End of namespace Sludge

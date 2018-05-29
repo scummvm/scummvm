@@ -65,6 +65,9 @@ void completeTimers();
 void killSpeechTimers();
 int cancelAFunction(int funcNum, LoadedFunction *myself, bool &killedMyself);
 
+LoadedFunction *loadFunction(Common::SeekableReadStream *stream);
+void saveFunction(LoadedFunction *fun, Common::WriteStream *stream);
+
 } // End of namespace Sludge
 
 #endif

@@ -119,6 +119,16 @@ bool makeFastArrayFromStack(Variable &to, const StackHandler *stacky);
 bool makeFastArraySize(Variable &to, int size);
 Variable *fastArrayGetByIndex(FastArrayHandler *vS, uint theIndex);
 
+// load & save
+bool saveVariable(Variable *from, Common::WriteStream *stream);
+bool loadVariable(Variable *to, Common::SeekableReadStream *stream);
+
+void saveStack(VariableStack *vs, Common::WriteStream *stream);
+VariableStack *loadStack(Common::SeekableReadStream *stream, VariableStack **last);
+bool saveStackRef(StackHandler *vs, Common::WriteStream *stream);
+StackHandler *loadStackRef(Common::SeekableReadStream *stream);
+void clearStackLib();
+
 } // End of namespace Sludge
 
 #endif
