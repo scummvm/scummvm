@@ -83,7 +83,8 @@ void FMVScreen::onRender() {
 		stop();
 	}
 
-	_surfaceRenderer->render(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight), 640, 365);
+	_surfaceRenderer->render(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight),
+			Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 }
 
 bool FMVScreen::isPlaying() {

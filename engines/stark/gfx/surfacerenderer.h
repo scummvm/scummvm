@@ -46,7 +46,7 @@ public:
 	/**
 	 * Draw a 2D surface from the specified texture with given width and height
 	 */
-	virtual void render(const Texture *texture, const Common::Point &dest, const float width, const float height) = 0;
+	virtual void render(const Texture *texture, const Common::Point &dest, uint width, uint height) = 0;
 
 	/**
 	 * When this is set to true, the texture size is expected to be in current

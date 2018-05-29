@@ -44,7 +44,7 @@ void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point 
 	render(texture, dest, texture->width(), texture->height());
 }
 
-void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point &dest, const float width, const float height) {
+void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point &dest, uint width, uint height) {
 	// Destination rectangle with given width and height
 	const float sLeft = dest.x;
 	const float sTop = dest.y;

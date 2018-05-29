@@ -47,7 +47,7 @@ public:
 
 	// SurfaceRenderer API
 	void render(const Texture *texture, const Common::Point &dest) override;
-	void render(const Texture *texture, const Common::Point &dest, const float width, const float height) override;
+	void render(const Texture *texture, const Common::Point &dest, uint width, uint height) override;
 
 private:
 	Math::Vector2d normalizeOriginalCoordinates(float x, float y) const;
