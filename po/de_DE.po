@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-05-28 23:37+0200\n"
-"PO-Revision-Date: 2018-05-01 07:22+0000\n"
+"PO-Revision-Date: 2018-05-29 19:28+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1659,9 +1659,8 @@ msgstr ""
 "die Zwischenablage zu kopieren."
 
 #: gui/unknown-game-dialog.cpp:117
-#, fuzzy
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr "Sie können das Spiel auch direkt an unseren Bug-Tracker melden!"
+msgstr "Sie können das Spiel auch direkt an unseren Bug-Tracker melden."
 
 #: gui/unknown-game-dialog.cpp:199
 msgid ""
@@ -2016,7 +2015,7 @@ msgid "Start anyway"
 msgstr "Trotzdem starten"
 
 #: engines/game.cpp:158
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
 "\n"
@@ -2028,12 +2027,12 @@ msgstr ""
 "\n"
 "Bitte teilen Sie dem ScummVM-Team unter %s die folgenden Informationen "
 "zusammen mit dem Namen, der Version und der Sprache des Spiels, welches Sie "
-"hinzufügen möchten, mit:"
+"hinzufügen möchten, mit.:"
 
 #: engines/game.cpp:162
-#, fuzzy, c-format
+#, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr "Übereinstimmende Spiele-IDs:"
+msgstr "Übereinstimmende Spiele-IDs für die Engine %s:"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
