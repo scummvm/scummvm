@@ -58,6 +58,10 @@ enum ActorFlags {
 	ACTOR_FLAG_8000 = 0x8000
 };
 
+enum ControlObjectID {
+	CURSOR_OBJECT_ID = 0x40004
+};
+
 const uint kSubObjectsCount = 15;
 
 struct DefaultSequence {

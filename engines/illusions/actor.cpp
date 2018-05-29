@@ -222,7 +222,7 @@ void Control::pause() {
 
 	_vm->_dict->setObjectControl(_objectId, 0);
 
-	if (_objectId == 0x40004)
+	if (_objectId == Illusions::CURSOR_OBJECT_ID)
 		_vm->setCursorControl(0);
 
 	if (_actor && !(_actor->_flags & Illusions::ACTOR_FLAG_200))
@@ -234,7 +234,7 @@ void Control::unpause() {
 
 	_vm->_dict->setObjectControl(_objectId, this);
 
-	if (_objectId == 0x40004)
+	if (_objectId == Illusions::CURSOR_OBJECT_ID)
 		_vm->setCursorControl(this);
   
 	if (_actor && !(_actor->_flags & Illusions::ACTOR_FLAG_200)) {
@@ -253,7 +253,7 @@ void Control::appearActor() {
 	if (_vm->getGameId() == kGameIdDuckman) {
 		_flags |= 1;
 		_actor->_flags |= Illusions::ACTOR_FLAG_IS_VISIBLE;
-		if (_objectId == 0x40004) {
+		if (_objectId == Illusions::CURSOR_OBJECT_ID) {
 			if (_actor->_frameIndex) {
 				_actor->_flags |= Illusions::ACTOR_FLAG_2000;
 				_actor->_flags |= Illusions::ACTOR_FLAG_4000;
@@ -261,7 +261,7 @@ void Control::appearActor() {
 			_vm->_input->discardAllEvents();
 		}
 	} else {
-		if (_objectId == 0x40004) {
+		if (_objectId == Illusions::CURSOR_OBJECT_ID) {
 			_vm->showCursor();
 		} else {
 			if (_actor->_frameIndex || _actorTypeId == 0x50004)
@@ -282,7 +282,7 @@ void Control::disappearActor() {
 		_flags &= ~1;
 		_actor->_flags &= ~Illusions::ACTOR_FLAG_IS_VISIBLE;
 	} else {
-		if (_objectId == 0x40004) {
+		if (_objectId == Illusions::CURSOR_OBJECT_ID) {
 			_vm->hideCursor();
 		} else {
 			_actor->_flags &= ~Illusions::ACTOR_FLAG_IS_VISIBLE;
@@ -646,7 +646,7 @@ void Control::sequenceActor() {
 		//debug(1, "New frame %d", _actor->_newFrameIndex);
 		setActorFrameIndex(_actor->_newFrameIndex);
 		if (_vm->getGameId() == kGameIdBBDOU &&
-			!(_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE) && (_actor->_flags & Illusions::ACTOR_FLAG_1000) && (_objectId != 0x40004)) {
+			!(_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE) && (_actor->_flags & Illusions::ACTOR_FLAG_1000) && (_objectId != Illusions::CURSOR_OBJECT_ID)) {
 			appearActor();
 			_actor->_flags &= ~Illusions::ACTOR_FLAG_1000;
 		}
@@ -1105,6 +1105,9 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	if (_vm->isCursorObject(actorTypeId, objectId))
 		_vm->placeCursorControl(control, sequenceId);
 
+	// TODO HACK at least we should restrict this to the sequenceId
+	control->setActorIndex(1);
+
 	control->startSequenceActor(sequenceId, 2, notifyThreadId);
 }
 
@@ -1205,7 +1208,7 @@ void Controls::destroyActiveControls() {
 			destroyControlInternal(*it);
 			it = _controls.erase(it);
 		} else
-			++it;			
+			++it;
 	}
 }
 
@@ -1216,7 +1219,7 @@ void Controls::destroyControlsBySceneId(uint32 sceneId) {
 			destroyControlInternal(*it);
 			it = _controls.erase(it);
 		} else
-			++it;			
+			++it;
 	}
 }
 
@@ -1481,7 +1484,7 @@ void Controls::destroyControlInternal(Control *control) {
 	if (!(control->_flags & 4) && control->_pauseCtr <= 0)
 		_vm->_dict->setObjectControl(control->_objectId, 0);
 
-	if (!(control->_flags & 4) && control->_objectId == 0x40004 && control->_pauseCtr <= 0)
+	if (!(control->_flags & 4) && control->_objectId == Illusions::CURSOR_OBJECT_ID && control->_pauseCtr <= 0)
 		_vm->setCursorControl(0);
 
 	if (control->_actor) {

@@ -171,15 +171,15 @@ int DuckmanMenuSystem::convertRootMenuId(uint32 menuId) {
 
 bool DuckmanMenuSystem::initMenuCursor() {
 	bool cursorInitialVisibleFlag = false;
-	Control *cursorControl = _vm->getObjectControl(0x40004);
+	Control *cursorControl = _vm->getObjectControl(Illusions::CURSOR_OBJECT_ID);
 	if (cursorControl) {
 		if (cursorControl->_flags & 1)
 			cursorInitialVisibleFlag = false;
 		cursorControl->appearActor();
 	} else {
 		Common::Point pos = _vm->getNamedPointPosition(0x70001);
-		_vm->_controls->placeActor(0x50001, pos, 0x60001, 0x40004, 0);
-		cursorControl = _vm->getObjectControl(0x40004);
+		_vm->_controls->placeActor(0x50001, pos, 0x60001, Illusions::CURSOR_OBJECT_ID, 0);
+		cursorControl = _vm->getObjectControl(Illusions::CURSOR_OBJECT_ID);
 	}
 	return cursorInitialVisibleFlag;
 }
@@ -189,7 +189,7 @@ int DuckmanMenuSystem::getGameState() {
 }
 
 void DuckmanMenuSystem::setMenuCursorNum(int cursorNum) {
-	Control *mouseCursor = _vm->getObjectControl(0x40004);
+	Control *mouseCursor = _vm->getObjectControl(Illusions::CURSOR_OBJECT_ID);
 	_vm->setCursorActorIndex(5, cursorNum, 0);
 	mouseCursor->startSequenceActor(0x60001, 2, 0);
 }
