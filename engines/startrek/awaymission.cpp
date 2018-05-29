@@ -465,7 +465,7 @@ void StarTrekEngine::handleAwayMissionAction() {
 			int16 roomIndex = _room->readRdfWord(RDF_WARP_ROOM_INDICES + warpIndex * 2);
 			unloadRoom();
 			_sound->loadMusicFile("ground");
-			loadRoom(_missionName, 4); // FIXME
+			loadRoom(_missionName, roomIndex);
 			initAwayCrewPositions(warpIndex ^ 1);
 		}
 		break;
