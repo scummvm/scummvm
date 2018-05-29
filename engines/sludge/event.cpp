@@ -182,7 +182,6 @@ bool EventManager::handleInput() {
 		if (!checkNew(tempStack))
 			return false;
 
-		initVarNew(tempStack->thisVar);
 		ScreenRegion *overRegion = _vm->_regionMan->getOverRegion();
 		if (overRegion) {
 			setVariable(tempStack->thisVar, SVT_OBJTYPE, overRegion->thisType->objectNum);
@@ -321,7 +320,6 @@ bool EventManager::handleInput() {
 			VariableStack *tempStack = new VariableStack;
 			if (!checkNew(tempStack))
 				return false;
-			initVarNew(tempStack->thisVar);
 			makeTextVar(tempStack->thisVar, tempString);
 			tempStack->next = nullptr;
 			if (!startNewFunctionNum(_currentEvents->func[kSpace], 1, nullptr, tempStack))

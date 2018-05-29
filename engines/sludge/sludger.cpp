@@ -177,7 +177,6 @@ void killSludge() {
 bool initSludge(const Common::String &filename) {
 	initSludge();
 
-	int a = 0;
 	Common::File *fp = openAndVerify(filename, 'G', 'E', ERROR_BAD_HEADER, gameVersion);
 	if (!fp)
 		return false;
@@ -276,8 +275,6 @@ bool initSludge(const Common::String &filename) {
 	globalVars = new Variable[numGlobals];
 	if (!checkNew(globalVars))
 		return false;
-	for (a = 0; a < numGlobals; a++)
-		initVarNew(globalVars[a]);
 
 	// Get language selected by user
 	g_sludge->_resMan->setData(fp);

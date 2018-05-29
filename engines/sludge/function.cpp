@@ -661,9 +661,6 @@ bool loadFunctionCode(LoadedFunction *newFunc) {
 	newFunc->localVars = new Variable[newFunc->numLocals];
 	if (!checkNew(newFunc->localVars))
 		return false;
-	for (int a = 0; a < newFunc->numLocals; a++) {
-		initVarNew(newFunc->localVars[a]);
-	}
 
 	return true;
 }
@@ -700,7 +697,6 @@ int startNewFunctionNum(uint funcNum, uint numParamsExpected,
 	newFunc->freezerLevel = 0;
 	newFunc->runThisLine = 0;
 	newFunc->isSpeech = 0;
-	initVarNew(newFunc->reg);
 
 	restartFunction(newFunc);
 	return 1;

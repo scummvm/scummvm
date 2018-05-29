@@ -68,16 +68,17 @@ union VariableData {
 struct Variable {
 	VariableType varType;
 	VariableData varData;
+
+	Variable() {
+		varType = SVT_NULL;
+		varData.intValue = 0;
+	}
 };
 
 struct VariableStack {
 	Variable thisVar;
 	VariableStack *next;
 };
-
-// Initialisation
-
-#define initVarNew(thisVar)     thisVar.varType = SVT_NULL
 
 // Setting variables
 
@@ -94,7 +95,6 @@ char *createCString(const Common::String &s);
 // Misc.
 
 void unlinkVar(Variable &thisVar);
-Common::String getNumberedString(int value);
 Common::String getTextFromAnyVar(const Variable &from);
 struct Persona *getCostumeFromVar(Variable &thisVar);
 struct PersonaAnimation  *getAnimationFromVar(Variable &thisVar);

@@ -408,9 +408,6 @@ bool makeFastArraySize(Variable &to, int size) {
 	to.varData.fastArray->fastVariables = new Variable[size];
 	if (!checkNew(to.varData.fastArray->fastVariables))
 		return false;
-	for (int i = 0; i < size; i++) {
-		initVarNew(to.varData.fastArray->fastVariables[i]);
-	}
 	to.varData.fastArray->size = size;
 	to.varData.fastArray->timesUsed = 1;
 	return true;
