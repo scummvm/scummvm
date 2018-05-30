@@ -1639,7 +1639,7 @@ msgstr ""
 
 #: gui/unknown-game-dialog.cpp:117
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr "Je kan ook direct je spel in de Bug Tracker rapporteren!"
+msgstr "Je kan ook direct je spel in de Bug Tracker rapporteren."
 
 #: gui/unknown-game-dialog.cpp:199
 msgid ""
