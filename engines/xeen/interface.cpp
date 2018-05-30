@@ -163,6 +163,7 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceScene(vm),
 	_upDoorText = false;
 	_tillMove = 0;
 	Common::fill(&_charFX[0], &_charFX[MAX_ACTIVE_PARTY], 0);
+	_waitBounds = Common::Rect(8, 8, 224, 140);
 }
 
 void Interface::setup() {
