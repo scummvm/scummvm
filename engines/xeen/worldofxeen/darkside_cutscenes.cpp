@@ -74,6 +74,7 @@ bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 	g_vm->_files->_ccNum = true;
+	_subtitles.reset();
 
 	screen.loadPalette("dark.pal");
 	SpriteResource nwc[4] = {
@@ -169,6 +170,7 @@ bool DarkSideCutscenes::showDarkSideIntro(bool seenIntro) {
 
 	files._ccNum = true;
 	files.setGameCc(1);
+	_subtitles.reset();
 
 	if (showDarkSideTitle(seenIntro)) {
 		if (seenIntro) {
@@ -836,6 +838,7 @@ void DarkSideCutscenes::showDarkSideEnding(uint endingScore) {
 	Sound &sound = *g_vm->_sound;
 
 	files.setGameCc(1);
+	_subtitles.reset();
 	sound._musicSide = 1;
 	screen.fadeOut();
 

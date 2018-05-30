@@ -42,6 +42,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 	bool darkCc = files._ccNum;
 	files.setGameCc(0);
 	sound._musicSide = 0;
+	_subtitles.reset();
 
 	bool seenIntro = showCloudsTitle() && showCloudsIntroInner();
 
@@ -381,6 +382,7 @@ void CloudsCutscenes::showCloudsEnding(uint finalScore) {
 
 	bool darkCc = files._ccNum;
 	files.setGameCc(0);
+	_subtitles.reset();
 
 	_mirror.load("mirror.end");
 	_mirrBack.load("mirrback.end");
