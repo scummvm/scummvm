@@ -90,7 +90,6 @@ void newCostumeVariable(Variable &thisVar, struct Persona *i);
 void makeTextVar(Variable &thisVar, const Common::String &txt);
 void addVariablesInSecond(Variable &var1, Variable &var2);
 void compareVariablesInSecond(const Variable &var1, Variable &var2);
-char *createCString(const Common::String &s);
 
 // Misc.
 

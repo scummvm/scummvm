@@ -239,17 +239,6 @@ void compareVariablesInSecond(const Variable &var1, Variable &var2) {
 	setVariable(var2, SVT_INT, compareVars(var1, var2));
 }
 
-char *createCString(const Common::String &s) {
-	uint n = s.size() + 1;
-	char *res = new char[n];
-	if (!checkNew(res)) {
-		fatal("createCString : Unable to copy String");
-		return NULL;
-	}
-	memcpy(res, s.c_str(), n);
-	return res;
-}
-
 void makeTextVar(Variable &thisVar, const Common::String &txt) {
 	unlinkVar(thisVar);
 	thisVar.varType = SVT_STRING;

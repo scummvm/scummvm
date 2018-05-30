@@ -31,6 +31,8 @@ void writeString(Common::String s, Common::WriteStream *stream);
 Common::String encodeFilename(const Common::String &nameIn);
 Common::String decodeFilename(const Common::String &nameIn);
 
+char *createCString(const Common::String &s);
+
 } // End of namespace Sludge
 
 #endif
