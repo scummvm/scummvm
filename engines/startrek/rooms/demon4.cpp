@@ -35,7 +35,7 @@ void Room::demon4Tick1() {
 		loadActorAnim(8, "stpout2", 0x107, 0x92, 0);
 		_roomVar.demon4.cb = true;
 
-		if ((_vm->_awayMission.demon.field4f & 0x10) && !_vm->_awayMission.demon.field47)
+		if ((_vm->_awayMission.demon.itemsTakenFromCase & 0x10) && !_vm->_awayMission.demon.field47)
 			_vm->_awayMission.timers[6] = 20;
 	}
 

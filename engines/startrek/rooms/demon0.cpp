@@ -43,6 +43,9 @@ void Room::demon0Tick60() {
 }
 
 void Room::demon0Tick100() {
+	if (_vm->_awayMission.demon.talkedToPrelate || _vm->_awayMission.demon.prelateWelcomedCrew)
+		return;
+	_vm->_awayMission.demon.prelateWelcomedCrew = true;
 	showText(TX_SPEAKER_ANGIVEN, TX_DEM0_036);
 }
 

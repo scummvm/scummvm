@@ -85,7 +85,7 @@ void Room::demon3Timer1Expired() {
 
 // Door just opened
 void Room::demon3Timer3Expired() {
-	if (_vm->_awayMission.demon.field3b) {
+	if (_vm->_awayMission.demon.repairedHand) {
 		showText(TX_DEM3N008);
 		loadActorAnim(14, "door", 0x82, 0xc, 0);
 		loadMapFile("demon3");

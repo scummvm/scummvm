@@ -46,6 +46,7 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 		_font = new Font(_vm);
 
 	_numSprites = 0;
+	_pushedNumSprites = -1;
 
 	_palData = new byte[256 * 3];
 	_lutData = new byte[256 * 3];
@@ -160,7 +161,7 @@ void Graphics::decPaletteFadeLevel() {
 
 
 void Graphics::loadPri(const Common::String &priFile) {
-	SharedPtr<FileStream> priStream = _vm->loadFile(priFile);
+	SharedPtr<FileStream> priStream = _vm->loadFile(priFile + ".pri");
 	priStream->read(_priData, SCREEN_WIDTH * SCREEN_HEIGHT / 2);
 }
 
@@ -555,6 +556,15 @@ void Graphics::drawAllSprites(bool updateScreen) {
 }
 
 /**
+ * Sets "bitmapChanged" to true on all sprites before calling drawAllSprites.
+ */
+void Graphics::forceDrawAllSprites(bool updateScreen) {
+	for (int i = 0; i < _numSprites; i++)
+		_sprites[i]->bitmapChanged = true;
+	drawAllSprites(updateScreen);
+}
+
+/**
  * Returns the sprite at the given position (ignores mouse).
  */
 Sprite *Graphics::getSpriteAt(int16 x, int16 y) {
@@ -611,6 +621,24 @@ void Graphics::delSprite(Sprite *sprite) {
 	}
 
 	error("delSprite: sprite not in list");
+}
+
+void Graphics::pushSprites() {
+	if (_pushedNumSprites != -1)
+		error("Tried to push sprites more than once");
+	_pushedNumSprites = _numSprites;
+	memcpy(_pushedSprites, _sprites, sizeof(_sprites));
+
+	_numSprites = 0;
+}
+
+void Graphics::popSprites() {
+	if (_pushedNumSprites == -1)
+		error("Tried to pop sprites without a prior push");
+	_numSprites = _pushedNumSprites;
+	memcpy(_sprites, _pushedSprites, sizeof(_sprites));
+
+	_pushedNumSprites = -1;
 }
 
 

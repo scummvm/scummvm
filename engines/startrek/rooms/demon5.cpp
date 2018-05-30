@@ -62,12 +62,13 @@ void Room::demon5UseSTricorderOnCrate() {
 	showText(TX_SPEAKER_SPOCK, TX_DEM5_006);
 }
 
+// FIXME: should work when used on people as well, but doesn't
 void Room::demon5UsePhaserOnAnything() {
 	showText(TX_SPEAKER_SPOCK, TX_DEM5_007);
 }
 
 void Room::demon5UseHandOnStephen() {
-	if (_vm->_awayMission.demon.field3b)
+	if (_vm->_awayMission.demon.repairedHand)
 		showText(TX_SPEAKER_STEPHEN, TX_DEM5_036);
 	else
 		showText(TX_SPEAKER_STEPHEN, TX_DEM5_039);

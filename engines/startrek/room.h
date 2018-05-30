@@ -107,6 +107,7 @@ private:
 	void loseItem(int item);                                                                   // Cmd 0x07
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam);// Cmd 0x08
 	void loadMapFile(const Common::String &name);                                              // Cmd 0x09
+	// Command 0x0c: "demon6ShowCase"
 	Common::Point getActorPos(int actorIndex);                                                 // Cmd 0x0d
 	void playSoundEffectIndex(int soundEffect);                                                // Cmd 0x0f
 	void playMidiMusicTracks(int startTrack, int loopTrack);                                   // Cmd 0x10
@@ -370,6 +371,71 @@ public:
 	void demon5CheckCompletedStudy();
 	void demon5GetCrate();
 
+	// DEMON6
+	void demon6Tick1();
+	void demon6Tick30();
+	void demon6SpockReachedComputer();
+	void demon6WalkToDoor();
+	void demon6TouchedDoorOpenTrigger();
+	void demon6DoorOpenedOrReachedDoor();
+	void demon6UsePhaserOnStephen();
+	void demon6UsePhaserOnCase();
+	void demon6LookAtWorkspace();
+	void demon6LookAtCase();
+	void demon6LookAtTable();
+	void demon6LookAtMineral();
+	void demon6LookAtShells();
+	void demon6LookAtSkull();
+	void demon6LookAtMetal();
+	void demon6LookAtMeteor();
+	void demon6LookAtMountain();
+	void demon6LookAtSynthesizer();
+	void demon6LookAtKirk();
+	void demon6LookAtSpock();
+	void demon6LookAtMccoy();
+	void demon6LookAtRedshirt();
+	void demon6LookAtComputer();
+	void demon6LookAnywhere();
+	void demon6LookAtStephen();
+	void demon6TalkToMccoy();
+	void demon6TalkToSpock();
+	void demon6TalkToKirk();
+	void demon6TalkToRedshirt();
+	void demon6TalkToStephen();
+	void demon6UseBerryOnStephen();
+	void demon6UseBerryOnSynthesizer();
+	void demon6MccoyReachedSynthesizer();
+	void demon6FinishedMakingHypoDytoxin();
+	void demon6UseHandOnWorkspace();
+	void demon6SpockReachedWorkspace();
+	void demon6SpockFinishedRepairingHand();
+	void demon6UseAnythingOnWorkspace();
+	void demon6UseCrewmanOnCase();
+	void demon6UseKirkOnComputer();
+	void demon6UseMccoyOnComputer();
+	void demon6UseRedshirtOnComputer();
+	void demon6UseSpockOnComputer();
+	void demon6UseMineralOnStephen();
+	void demon6UseShellsOnStephen();
+	void demon6UseMeteorOnStephen();
+	void demon6UseSkullOnStephen();
+	void demon6UseMetalOnStephen();
+	void demon6ReturnItemToStephen(int item);
+	void demon6UseHandOnStephen();
+	void demon6UseMTricoderOnStephen();
+	void demon6UseSTricoderOnTable();
+	void demon6UseSTricoderOnComputer();
+	void demon6UseSTricoderOnMineral();
+	void demon6UseSTricoderOnShells();
+	void demon6UseSTricoderOnSkull();
+	void demon6UseSTricoderOnMetal();
+	void demon6UseSTricoderOnMeteor();
+	void demon6UseSTricoderOnCase();
+	void demon6UseSTricoderOnSynthesizer();
+	void demon6GetCase();
+	void demon6KirkReachedCase();
+	int demon6ShowCase(int visible);
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {
@@ -413,6 +479,14 @@ private:
 			byte doorCounter; // 0xd4
 			bool movingToDoor; // 0xd5
 		} demon5;
+
+		struct {
+			bool insultedStephenRecently; // 0xca
+			bool stephenInRoom; // 0xcb
+			bool caseOpened; // 0xcd
+			byte doorCounter; // 0xce
+			bool movingToDoor; // 0xcf
+		} demon6;
 
 	} _roomVar;
 };

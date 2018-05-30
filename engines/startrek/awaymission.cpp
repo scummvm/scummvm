@@ -79,7 +79,7 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	_screenName = _missionName + (char)(_roomIndex + '0');
 
 	_gfx->setBackgroundImage(_gfx->loadBitmap(_screenName));
-	_gfx->loadPri(_screenName + ".pri");
+	_gfx->loadPri(_screenName);
 	_gfx->loadPalette("palette");
 	_gfx->copyBackgroundScreen();
 
