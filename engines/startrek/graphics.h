@@ -76,11 +76,16 @@ public:
 	void drawSprite(const Sprite &sprite);
 	void drawSprite(const Sprite &sprite, const Common::Rect &rect);
 	void drawAllSprites(bool updateScreen=true);
+	void forceDrawAllSprites(bool updateScreen=true);
 	Sprite *getSpriteAt(int16 x, int16 y);
+	Sprite *getSpriteAt(Common::Point p) { return getSpriteAt(p.x, p.y); }
 
 	void addSprite(Sprite *sprite);
 	void delSprite(Sprite *sprite);
 	
+	// Save/load the current state of sprites. Can only push once for now.
+	void pushSprites();
+	void popSprites();
 
 	void copyBackgroundScreen();
 	void drawDirectToScreen(SharedPtr<Bitmap> bitmap);
@@ -104,6 +109,10 @@ private:
 
 	Sprite *_sprites[MAX_SPRITES];
 	int _numSprites;
+
+	// Analagous to above, used when pushing/popping
+	Sprite *_pushedSprites[MAX_SPRITES];
+	int _pushedNumSprites;
 
 	// Any changes to the mouse image are buffered until the next time "drawAllSprites" is
 	// called (since the original game treats it like a sprite).

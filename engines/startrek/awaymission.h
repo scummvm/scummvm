@@ -54,16 +54,19 @@ struct AwayMission {
 		// Demon World
 		struct {
 			bool wasRudeToPrelate; // 0x29
+			bool insultedStephen; // 0x2b
 			bool beatKlingons; // 0x2f
 			bool tookKlingonHand; // 0x31
 
 			bool talkedToPrelate; // 0x33
+			bool stephenWelcomedToStudy; // 0x34
+			bool prelateWelcomedCrew; // 0x35
 			bool askedPrelateAboutSightings; // 0x36
 			byte field37; // 0x37
 			bool mccoyMentionedFlora; // 0x38
 			byte numBouldersGone; // 0x39
 			byte enteredFrom; // 0x3a
-			bool field3b; // 0x3b
+			bool repairedHand; // 0x3b
 			bool healedMiner; // 0x3c
 			bool curedChub; // 0x3d
 			bool field3e; // 0x3e
@@ -80,9 +83,11 @@ struct AwayMission {
 			bool boulder4Gone; // 0x4c
 			bool doorOpened; // 0x4d
 			bool field4e; // 0x4e
-			byte field4f; // 0x4f
+			byte itemsTakenFromCase; // 0x4f
 			bool gotBerries; // 0x50
 			bool madeHypoDytoxin; // 0x51
+			bool gavePointsForDytoxin; // 0x54
+			bool lookedAtComputer; // 0x55
 			byte field56; // 0x56
 			bool foundAlienRoom; // 0x57
 		} demon;
