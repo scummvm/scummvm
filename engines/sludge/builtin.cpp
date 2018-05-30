@@ -205,7 +205,7 @@ builtIn(getMatchingFiles) {
 	UNUSEDALL
 	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
-	unlinkVar(fun->reg);
+	fun->reg.unlinkVar();
 
 	// Return value
 	fun->reg.varType = SVT_STACK;
@@ -498,7 +498,7 @@ builtIn(stringLength) {
 
 builtIn(newStack) {
 	UNUSEDALL
-	unlinkVar(fun->reg);
+	fun->reg.unlinkVar();
 
 	// Return value
 	fun->reg.varType = SVT_STACK;
@@ -2236,7 +2236,7 @@ builtIn(loadCustomData) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	unlinkVar(fun->reg);
+	fun->reg.unlinkVar();
 	fun->reg.varType = SVT_STACK;
 	fun->reg.varData.theStack = new StackHandler;
 	if (!checkNew(fun->reg.varData.theStack))
@@ -2311,7 +2311,7 @@ builtIn(getPixelColour) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	unlinkVar(fun->reg);
+	fun->reg.unlinkVar();
 	fun->reg.varType = SVT_STACK;
 	fun->reg.varData.theStack = new StackHandler;
 	if (!checkNew(fun->reg.varData.theStack))

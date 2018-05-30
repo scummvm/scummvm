@@ -100,9 +100,9 @@ void finishFunction(LoadedFunction *fun) {
 		fatal(ERROR_NON_EMPTY_STACK);
 	delete[] fun->compiledLines;
 	for (a = 0; a < fun->numLocals; a++)
-		unlinkVar(fun->localVars[a]);
+		fun->localVars[a].unlinkVar();
 	delete[] fun->localVars;
-	unlinkVar(fun->reg);
+	fun->reg.unlinkVar();
 	delete fun;
 	fun = NULL;
 }
@@ -115,9 +115,9 @@ void abortFunction(LoadedFunction *fun) {
 		trimStack(fun->stack);
 	delete []fun->compiledLines;
 	for (a = 0; a < fun->numLocals; a++)
-		unlinkVar(fun->localVars[a]);
+		fun->localVars[a].unlinkVar();
 	delete []fun->localVars;
-	unlinkVar(fun->reg);
+	fun->reg.unlinkVar();
 	if (fun->calledBy)
 		abortFunction(fun->calledBy);
 	delete fun;

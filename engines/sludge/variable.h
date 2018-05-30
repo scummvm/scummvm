@@ -73,6 +73,8 @@ struct Variable {
 		varType = SVT_NULL;
 		varData.intValue = 0;
 	}
+
+	void unlinkVar();
 };
 
 struct VariableStack {
@@ -93,7 +95,6 @@ void compareVariablesInSecond(const Variable &var1, Variable &var2);
 
 // Misc.
 
-void unlinkVar(Variable &thisVar);
 Common::String getTextFromAnyVar(const Variable &from);
 struct Persona *getCostumeFromVar(Variable &thisVar);
 struct PersonaAnimation  *getAnimationFromVar(Variable &thisVar);

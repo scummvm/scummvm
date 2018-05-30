@@ -257,7 +257,7 @@ bool loadGame(const Common::String &fname) {
 	}
 
 	for (int a = 0; a < numGlobals; a++) {
-		unlinkVar(globalVars[a]);
+		globalVars[a].unlinkVar();
 		loadVariable(&globalVars[a], fp);
 	}
 

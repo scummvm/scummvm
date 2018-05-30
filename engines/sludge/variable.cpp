@@ -38,36 +38,36 @@ const char *typeName[] = { "undefined", "number", "user function", "string",
 		"built-in function", "file", "stack", "object type", "animation",
 		"costume" };
 
-void unlinkVar(Variable &thisVar) {
-	switch (thisVar.varType) {
+void Variable::unlinkVar() {
+	switch (varType) {
 		case SVT_STRING:
-			delete []thisVar.varData.theString;
-			thisVar.varData.theString = NULL;
+			delete []varData.theString;
+			varData.theString = NULL;
 			break;
 
 		case SVT_STACK:
-			thisVar.varData.theStack->timesUsed--;
-			if (thisVar.varData.theStack->timesUsed <= 0) {
-				while (thisVar.varData.theStack->first)
-					trimStack(thisVar.varData.theStack->first);
-				delete thisVar.varData.theStack;
-				thisVar.varData.theStack = NULL;
+			varData.theStack->timesUsed--;
+			if (varData.theStack->timesUsed <= 0) {
+				while (varData.theStack->first)
+					trimStack(varData.theStack->first);
+				delete varData.theStack;
+				varData.theStack = NULL;
 			}
 			break;
 
 		case SVT_FASTARRAY:
-			thisVar.varData.fastArray->timesUsed--;
-			if (thisVar.varData.theStack->timesUsed <= 0) {
-				delete thisVar.varData.fastArray->fastVariables;
-				delete[] thisVar.varData.fastArray;
-				thisVar.varData.fastArray = NULL;
+			varData.fastArray->timesUsed--;
+			if (varData.theStack->timesUsed <= 0) {
+				delete varData.fastArray->fastVariables;
+				delete[] varData.fastArray;
+				varData.fastArray = NULL;
 			}
 			break;
 
 		case SVT_ANIM:
-			if (thisVar.varData.animHandler) {
-				delete thisVar.varData.animHandler;
-				thisVar.varData.animHandler = nullptr;
+			if (varData.animHandler) {
+				delete varData.animHandler;
+				varData.animHandler = nullptr;
 			}
 			break;
 
@@ -77,13 +77,13 @@ void unlinkVar(Variable &thisVar) {
 }
 
 void setVariable(Variable &thisVar, VariableType vT, int value) {
-	unlinkVar(thisVar);
+	thisVar.unlinkVar();
 	thisVar.varType = vT;
 	thisVar.varData.intValue = value;
 }
 
 void newAnimationVariable(Variable &thisVar, PersonaAnimation  *i) {
-	unlinkVar(thisVar);
+	thisVar.unlinkVar();
 	thisVar.varType = SVT_ANIM;
 	thisVar.varData.animHandler = i;
 }
@@ -100,7 +100,7 @@ PersonaAnimation *getAnimationFromVar(Variable &thisVar) {
 }
 
 void newCostumeVariable(Variable &thisVar, Persona *i) {
-	unlinkVar(thisVar);
+	thisVar.unlinkVar();
 	thisVar.varType = SVT_COSTUME;
 	thisVar.varData.costumeHandler = i;
 }
@@ -198,7 +198,7 @@ void addVariablesInSecond(Variable &var1, Variable &var2) {
 		Common::String string1 = getTextFromAnyVar(var1);
 		Common::String string2 = getTextFromAnyVar(var2);
 
-		unlinkVar(var2);
+		var2.unlinkVar();
 		var2.varData.theString = createCString(string1 + string2);
 		var2.varType = SVT_STRING;
 	}
@@ -240,7 +240,7 @@ void compareVariablesInSecond(const Variable &var1, Variable &var2) {
 }
 
 void makeTextVar(Variable &thisVar, const Common::String &txt) {
-	unlinkVar(thisVar);
+	thisVar.unlinkVar();
 	thisVar.varType = SVT_STRING;
 	thisVar.varData.theString = createCString(txt);
 }
@@ -376,7 +376,7 @@ bool copyMain(const Variable &from, Variable &to) {
 }
 
 bool copyVariable(const Variable &from, Variable &to) {
-	unlinkVar(to);
+	to.unlinkVar();
 	return copyMain(from, to);
 }
 
@@ -389,7 +389,7 @@ Variable *fastArrayGetByIndex(FastArrayHandler *vS, uint theIndex) {
 bool makeFastArraySize(Variable &to, int size) {
 	if (size < 0)
 		return fatal("Can't create a fast array with a negative number of elements!");
-	unlinkVar(to);
+	to.unlinkVar();
 	to.varType = SVT_FASTARRAY;
 	to.varData.fastArray = new FastArrayHandler;
 	if (!checkNew(to.varData.fastArray))
@@ -476,7 +476,7 @@ int deleteVarFromStack(const Variable &va, VariableStack *&thisStack, bool allOf
 		if (compareVars((*huntVar)->thisVar, va)) {
 			killMe = *huntVar;
 			*huntVar = killMe->next;
-			unlinkVar(killMe->thisVar);
+			killMe->thisVar.unlinkVar();
 			delete killMe;
 			if (!allOfEm)
 				return 1;
@@ -522,7 +522,7 @@ void trimStack(VariableStack *&stack) {
 	//debugC(2, kSludgeDebugStackMachine, "Variable %s was removed from stack", getTextFromAnyVar(killMe->thisVar));
 
 	// When calling this, we've ALWAYS checked that stack != NULL
-	unlinkVar(killMe->thisVar);
+	killMe->thisVar.unlinkVar();
 	delete killMe;
 }
 
