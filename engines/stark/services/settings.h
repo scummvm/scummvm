@@ -53,7 +53,8 @@ public:
 	enum IntSettingIndex {
 		kVoice,
 		kMusic,
-		kSfx
+		kSfx,
+		kSaveLoadPage
 	};
 
 	static bool isDemo() {
@@ -83,7 +84,7 @@ private:
 	bool _hasLowRes;
 
 	const char *_boolKey[6];
-	const char *_intKey[3];
+	const char *_intKey[4];
 };
 
 } // End of namespace Stark

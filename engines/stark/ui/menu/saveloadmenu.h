@@ -47,6 +47,7 @@ public:
 
 	// StaticLocationScreen API
 	void open() override;
+	void close() override;
 
 	/** Called when a save slot is selected */
 	virtual void onSlotSelected(int slot) = 0;
@@ -60,12 +61,23 @@ protected:
 	enum WidgetIndex {
 		kWidgetSaveText = 3,
 		kWidgetLoadText = 4,
+		kWidgetBack = 5,
+		kWidgetNext = 6
 	};
 
 private:
 	static const uint32 _textColorBlack = 0xFF000000;
 
+	int _page;
+
 	void backHandler();
+	
+	void prevPageHandler() { changePage(_page - 1); }
+	void nextPageHandler() { changePage(_page + 1); }
+
+	void removeSaveDataWidgets();
+	void loadSaveData(int page);
+	void changePage(int page);
 };
 
 /**

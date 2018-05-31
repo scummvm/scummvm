@@ -25,6 +25,7 @@
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/global.h"
+#include "engines/stark/services/settings.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
@@ -51,6 +52,8 @@ SaveLoadMenuScreen::~SaveLoadMenuScreen() {
 
 void SaveLoadMenuScreen::open() {
 	StaticLocationScreen::open();
+
+	_page = StarkSettings->getIntSetting(Settings::kSaveLoadPage);
 
 	_widgets.push_back(new StaticLocationWidget(
 			"loadsavebg",
@@ -81,37 +84,26 @@ void SaveLoadMenuScreen::open() {
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Back",
-			nullptr,
+			CLICK_HANDLER(SaveLoadMenuScreen, prevPageHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
 	_widgets.back()->setTextColor(_textColorBlack);
+	_widgets.back()->setVisible(_page > 0);
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Next",
-			nullptr,
+			CLICK_HANDLER(SaveLoadMenuScreen, nextPageHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
 	_widgets.back()->setTextColor(_textColorBlack);
-	
-	// TODO: Load the SaveDataWidget Properly
-	_widgets.push_back(new SaveDataWidget(
-			0, _gfx, this));
-	_widgets.push_back(new SaveDataWidget(
-			1, _gfx, this));
-	_widgets.push_back(new SaveDataWidget(
-			2, _gfx, this));
-	_widgets.push_back(new SaveDataWidget(
-			3, _gfx, this));
-	_widgets.push_back(new SaveDataWidget(
-			4, _gfx, this));
-	_widgets.push_back(new SaveDataWidget(
-			5, _gfx, this));
-	_widgets.push_back(new SaveDataWidget(
-			6, _gfx, this));
-	_widgets.push_back(new SaveDataWidget(
-			7, _gfx, this));
-	_widgets.push_back(new SaveDataWidget(
-			8, _gfx, this));
+	_widgets.back()->setVisible(_page < 10);
+
+	loadSaveData(_page);
+}
+
+void SaveLoadMenuScreen::close() {
+	ConfMan.flushToDisk();
+	StaticLocationScreen::close();
 }
 
 void SaveLoadMenuScreen::backHandler() {
@@ -123,6 +115,34 @@ void SaveLoadMenuScreen::checkError(Common::Error error) {
 		GUI::MessageDialog dialog(error.getDesc());
 		dialog.runModal();
 	}
+}
+
+void SaveLoadMenuScreen::removeSaveDataWidgets() {
+	assert(_widgets.size() == 16);
+
+	for (int i = 0; i < 9; ++i) {
+		delete _widgets.back();
+		_widgets.pop_back();
+	}
+}
+
+void SaveLoadMenuScreen::loadSaveData(int page) {
+	for (int i = 0; i < 9; ++i) {
+		_widgets.push_back(new SaveDataWidget(i + page * 9, _gfx, this));
+	}
+}
+
+void SaveLoadMenuScreen::changePage(int page) {
+	assert(page >= 0 && page <= 10);
+
+	removeSaveDataWidgets();
+	loadSaveData(page);
+
+	_widgets[kWidgetBack]->setVisible(page > 0);
+	_widgets[kWidgetNext]->setVisible(page < 10);
+
+	StarkSettings->setIntSetting(Settings::kSaveLoadPage, page);
+	_page = page;
 }
 
 void SaveMenuScreen::open() {
