@@ -25,6 +25,8 @@
 
 #include "engines/stark/ui/menu/locationscreen.h"
 
+#include "engines/stark/visual/text.h"
+
 #include "common/error.h"
 
 namespace Stark {
@@ -113,19 +115,23 @@ public:
 	bool isMouseInside(const Common::Point &mousePos) const override;
 	void onClick() override;
 	void onMouseMove(const Common::Point &mousePos) override;
+	void resetTextTexture() override;
 
 private:
 	static const uint32 _outlineColor = 0xFF961E1E;
+	static const uint32 _textColor = 0xFF3D485C;
 
 	int _slot;
 	SaveLoadMenuScreen *_screen;
 
-	Common::Point _position;
+	Common::Point _thumbPos, _textDescPos, _textTimePos;
 	int _thumbWidth, _thumbHeight;
 
 	Gfx::Texture *_texture;
 	Gfx::Texture *_outline;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
+
+	VisualText _textDesc, _textTime;
 
 	bool _isMouseHovered;
 };

@@ -24,6 +24,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/stateprovider.h"
+#include "engines/stark/services/global.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
@@ -92,8 +93,25 @@ void SaveLoadMenuScreen::open() {
 	_widgets.back()->setupSounds(0, 1);
 	_widgets.back()->setTextColor(_textColorBlack);
 	
+	// TODO: Load the SaveDataWidget Properly
+	_widgets.push_back(new SaveDataWidget(
+			0, _gfx, this));
 	_widgets.push_back(new SaveDataWidget(
 			1, _gfx, this));
+	_widgets.push_back(new SaveDataWidget(
+			2, _gfx, this));
+	_widgets.push_back(new SaveDataWidget(
+			3, _gfx, this));
+	_widgets.push_back(new SaveDataWidget(
+			4, _gfx, this));
+	_widgets.push_back(new SaveDataWidget(
+			5, _gfx, this));
+	_widgets.push_back(new SaveDataWidget(
+			6, _gfx, this));
+	_widgets.push_back(new SaveDataWidget(
+			7, _gfx, this));
+	_widgets.push_back(new SaveDataWidget(
+			8, _gfx, this));
 }
 
 void SaveLoadMenuScreen::backHandler() {
@@ -113,7 +131,16 @@ void SaveMenuScreen::open() {
 }
 
 void SaveMenuScreen::onSlotSelected(int slot) {
-	g_engine->saveGameState(slot, "TestSave");
+	int chapter = StarkGlobal->getCurrentChapter();
+
+	Common::String desc;
+	if (chapter == 0) {
+		desc = "Prologue";
+	} else {
+		desc = Common::String::format("Chapter %d", chapter);
+	}
+
+	g_engine->saveGameState(slot, desc);
 	StarkUserInterface->backPrevScreen();
 }
 
@@ -132,11 +159,13 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 		_screen(screen),
 		_thumbWidth(StarkUserInterface->kThumbnailWidth),
 		_thumbHeight(StarkUserInterface->kThumbnailHeight),
-		_isMouseHovered(false),
 		_texture(gfx->createTexture()),
 		_outline(gfx->createTexture()),
-		_surfaceRenderer(gfx->createSurfaceRenderer()) {
-	// Obtain the thumbnail
+		_surfaceRenderer(gfx->createSurfaceRenderer()),
+		_textDesc(gfx),
+		_textTime(gfx),
+		_isMouseHovered(false) {
+	// Load the corresponding save slot data
 	Common::String filename = StarkEngine::formatSaveName(ConfMan.getActiveDomainName().c_str(), _slot);
 	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(filename);
 	if (save) {
@@ -147,9 +176,21 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 			error("Unable to read save metadata with error code %d.", metadataErrorCode);
 		}
 
+		// Obtain the thumbnail
 		Graphics::Surface *thumb = metadata.readGameScreenThumbnail(&stream);
 		_texture->update(thumb);
 		delete thumb;
+
+		// Obtain the text
+		_textDesc.setText(metadata.description);
+		_textDesc.setColor(_textColor);
+		_textDesc.setFont(FontProvider::FontType::kCustomFont, 3);
+
+		_textTime.setText(Common::String::format("%02d:%02d:%02d %02d/%02d/%02d",
+				metadata.saveHour, metadata.saveMinute, metadata.saveSecond,
+				metadata.saveMonth, metadata.saveDay, metadata.saveYear % 100));
+		_textTime.setColor(_textColor);
+		_textTime.setFont(FontProvider::FontType::kCustomFont, 3);
 	} else {
 		setVisible(_screen->isSaveMenu());
 	}
@@ -166,8 +207,14 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 	_outline->update(&lineSurface);
 
 	// Set the position
-	_position.x = 200;
-	_position.y = 200;
+	_thumbPos.x = 41 + (_slot % 3) * (_thumbWidth + 39);
+	_thumbPos.y = 61 + (_slot % 9 / 3) * (_thumbHeight + 38);
+
+	_textDescPos.x = _thumbPos.x;
+	_textDescPos.y = _thumbPos.y + _thumbHeight + 2;
+
+	_textTimePos.x = _thumbPos.x;
+	_textTimePos.y = _textDescPos.y + 12;
 }
 
 SaveDataWidget::~SaveDataWidget() {
@@ -177,15 +224,17 @@ SaveDataWidget::~SaveDataWidget() {
 }
 
 void SaveDataWidget::render() {
-	_surfaceRenderer->render(_texture, _position);
+	_surfaceRenderer->render(_texture, _thumbPos);
+	_textDesc.render(_textDescPos);
+	_textTime.render(_textTimePos);
 	if (_isMouseHovered) {
-		_surfaceRenderer->render(_outline, _position);
+		_surfaceRenderer->render(_outline, _thumbPos);
 	}
 }
 
 bool SaveDataWidget::isMouseInside(const Common::Point &mousePos) const {
-	return mousePos.x >= _position.x && mousePos.x <= _position.x + _thumbWidth &&
-		   mousePos.y >= _position.y && mousePos.y <= _position.y + _thumbHeight;
+	return mousePos.x >= _thumbPos.x && mousePos.x <= _thumbPos.x + _thumbWidth &&
+		   mousePos.y >= _thumbPos.y && mousePos.y <= _thumbPos.y + _thumbHeight;
 }
 
 void SaveDataWidget::onClick() {
@@ -196,6 +245,12 @@ void SaveDataWidget::onClick() {
 void SaveDataWidget::onMouseMove(const Common::Point &mousePos) {
 	StaticLocationWidget::onMouseMove(mousePos);
 	_isMouseHovered = isMouseInside(mousePos);
+}
+
+void SaveDataWidget::resetTextTexture() {
+	StaticLocationWidget::resetTextTexture();
+	_textDesc.resetTexture();
+	_textTime.resetTexture();
 }
 
 } // End of namespace Stark

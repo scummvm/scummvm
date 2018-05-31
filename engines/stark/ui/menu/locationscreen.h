@@ -109,7 +109,7 @@ public:
 	void setTextColor(uint32 textColor);
 
 	/** For widget with no text visual, this function does nothing */
-	void resetTextTexture();
+	virtual void resetTextTexture();
 
 	/** Widgets must be visible to be rendered and interactive */
 	bool isVisible() const;

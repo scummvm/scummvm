@@ -50,6 +50,7 @@ public:
 
 	uint8 saveHour;
 	uint8 saveMinute;
+	uint8 saveSecond;
 
 	const Graphics::Surface *gameWindowThumbnail;
 
