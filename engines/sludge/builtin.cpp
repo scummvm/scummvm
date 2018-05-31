@@ -113,7 +113,7 @@ static BuiltReturn sayCore(int numParams, LoadedFunction *fun, bool sayIt) {
 			// fall through
 
 		case 2:
-			newText = getTextFromAnyVar(fun->stack->thisVar);
+			newText = fun->stack->thisVar.getTextFromAnyVar();
 			trimStack(fun->stack);
 			if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar))
 				return BR_ERROR;
@@ -197,13 +197,13 @@ builtIn(getMouseScreenY) {
 
 builtIn(getStatusText) {
 	UNUSEDALL
-	makeTextVar(fun->reg, statusBarText());
+	fun->reg.makeTextVar(statusBarText());
 	return BR_CONTINUE;
 }
 
 builtIn(getMatchingFiles) {
 	UNUSEDALL
-	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	fun->reg.unlinkVar();
 
@@ -227,7 +227,7 @@ builtIn(saveGame) {
 		fatal("Can't save game state while the engine is frozen");
 	}
 
-	g_sludge->loadNow = getTextFromAnyVar(fun->stack->thisVar);
+	g_sludge->loadNow = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 
 	Common::String aaaaa = encodeFilename(g_sludge->loadNow);
@@ -244,7 +244,7 @@ builtIn(saveGame) {
 
 builtIn(fileExists) {
 	UNUSEDALL
-	g_sludge->loadNow = getTextFromAnyVar(fun->stack->thisVar);
+	g_sludge->loadNow = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	Common::String aaaaa = encodeFilename(g_sludge->loadNow);
 	g_sludge->loadNow.clear();
@@ -273,7 +273,7 @@ builtIn(fileExists) {
 
 builtIn(loadGame) {
 	UNUSEDALL
-	Common::String aaaaa = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String aaaaa = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	g_sludge->loadNow.clear();
 	g_sludge->loadNow = encodeFilename(aaaaa);
@@ -462,7 +462,7 @@ builtIn(substring) {
 	if (!getValueType(start, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	wholeString = getTextFromAnyVar(fun->stack->thisVar);
+	wholeString = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 
 	UTF8Converter convert;
@@ -484,13 +484,13 @@ builtIn(substring) {
 
 	Common::String newString(wholeString.begin() + startoffset, wholeString.begin() + endoffset);
 
-	makeTextVar(fun->reg, newString);
+	fun->reg.makeTextVar(newString);
 	return BR_CONTINUE;
 }
 
 builtIn(stringLength) {
 	UNUSEDALL
-	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	fun->reg.setVariable(SVT_INT, g_sludge->_txtMan->stringLength(newText));
 	return BR_CONTINUE;
@@ -777,7 +777,7 @@ builtIn(setFont) {
 		return BR_ERROR;
 	//              newDebug ("  Height:", newHeight);
 	trimStack(fun->stack);
-	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	//              newDebug ("  Character supported:", newText);
 	trimStack(fun->stack);
 	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
@@ -792,7 +792,7 @@ builtIn(setFont) {
 
 builtIn(inFont) {
 	UNUSEDALL
-	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 
 	// Return value
@@ -802,7 +802,7 @@ builtIn(inFont) {
 
 builtIn(pasteString) {
 	UNUSEDALL
-	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	int y, x;
 	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
@@ -871,7 +871,7 @@ builtIn(costume) {
 
 builtIn(launch) {
 	UNUSEDALL
-	Common::String newTextA = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newTextA = fun->stack->thisVar.getTextFromAnyVar();
 
 	Common::String newText = encodeFilename(newTextA);
 
@@ -1293,7 +1293,7 @@ builtIn(getOverObject) {
 
 builtIn(rename) {
 	UNUSEDALL
-	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	int objT;
 	trimStack(fun->stack);
 	if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar))
@@ -1735,7 +1735,7 @@ builtIn(addStatus) {
 
 builtIn(statusText) {
 	UNUSEDALL
-	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	setStatusBar(newText);
 	return BR_CONTINUE;
@@ -1891,7 +1891,7 @@ builtIn(cancelSub) {
 
 builtIn(stringWidth) {
 	UNUSEDALL
-	Common::String theText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String theText = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 
 	// Return value
@@ -2067,7 +2067,7 @@ builtIn(fetchEvent) {
 builtIn(deleteFile) {
 	UNUSEDALL
 
-	Common::String namNormal = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String namNormal = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	Common::String nam = encodeFilename(namNormal);
 	namNormal.clear();
@@ -2083,14 +2083,14 @@ builtIn(renameFile) {
 	Common::String temp;
 
 	temp.clear();
-	temp = getTextFromAnyVar(fun->stack->thisVar);
+	temp = fun->stack->thisVar.getTextFromAnyVar();
 	Common::String newnam = encodeFilename(temp);
 	trimStack(fun->stack);
 	if (failSecurityCheck(newnam))
 		return BR_ERROR;
 	temp.clear();
 
-	temp = getTextFromAnyVar(fun->stack->thisVar);
+	temp = fun->stack->thisVar.getTextFromAnyVar();
 	Common::String nam = encodeFilename(temp);
 	trimStack(fun->stack);
 	if (failSecurityCheck(nam))
@@ -2114,7 +2114,7 @@ builtIn(cacheSound) {
 
 builtIn(burnString) {
 	UNUSEDALL
-	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	int y, x;
 	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
@@ -2207,7 +2207,7 @@ builtIn(getSoundCache) {
 builtIn(saveCustomData) {
 	UNUSEDALL
 	// saveCustomData (thisStack, fileName);
-	Common::String fileNameB = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String fileNameB = fun->stack->thisVar.getTextFromAnyVar();
 
 	Common::String fileName = encodeFilename(fileNameB);
 
@@ -2228,7 +2228,7 @@ builtIn(saveCustomData) {
 builtIn(loadCustomData) {
 	UNUSEDALL
 
-	Common::String newTextA = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String newTextA = fun->stack->thisVar.getTextFromAnyVar();
 
 	Common::String newText = encodeFilename(newTextA);
 
@@ -2378,7 +2378,7 @@ builtIn(_rem_launchWith) {
 	trimStack(fun->stack);
 
 	// To support some windows only games
-	Common::String filename = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String filename = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 
 	if (filename.hasSuffix(".exe")) {
@@ -2418,7 +2418,7 @@ builtIn(showThumbnail) {
 	trimStack(fun->stack);
 
 	// Encode the name!Encode the name!
-	Common::String aaaaa = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String aaaaa = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	Common::String file = encodeFilename(aaaaa);
 	g_sludge->_gfxMan->showThumbnail(file, x, y);
@@ -2490,7 +2490,7 @@ builtIn(_rem_registryGetString) {
 
 builtIn(quitWithFatalError) {
 	UNUSEDALL
-	Common::String mess = getTextFromAnyVar(fun->stack->thisVar);
+	Common::String mess = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	fatal(mess);
 	return BR_ERROR;

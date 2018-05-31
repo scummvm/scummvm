@@ -320,7 +320,7 @@ bool EventManager::handleInput() {
 			VariableStack *tempStack = new VariableStack;
 			if (!checkNew(tempStack))
 				return false;
-			makeTextVar(tempStack->thisVar, tempString);
+			tempStack->thisVar.makeTextVar(tempString);
 			tempStack->next = nullptr;
 			if (!startNewFunctionNum(_currentEvents->func[kSpace], 1, nullptr, tempStack))
 				return false;

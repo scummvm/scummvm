@@ -160,7 +160,7 @@ bool getSavedGamesStack(StackHandler *sH, const Common::String &ext) {
 	Common::StringArray::iterator it;
 	for (it = sa.begin(); it != sa.end(); ++it) {
 		(*it).erase((*it).size() - len, len);
-		makeTextVar(newName, (*it));
+		newName.makeTextVar((*it));
 		if (!addVarToStack(newName, sH->first))
 			return false;
 		if (sH->last == NULL)
@@ -195,8 +195,8 @@ void addVariablesInSecond(Variable &var1, Variable &var2) {
 	if (var1.varType == SVT_INT && var2.varType == SVT_INT) {
 		var2.varData.intValue += var1.varData.intValue;
 	} else {
-		Common::String string1 = getTextFromAnyVar(var1);
-		Common::String string2 = getTextFromAnyVar(var2);
+		Common::String string1 = var1.getTextFromAnyVar();
+		Common::String string2 = var2.getTextFromAnyVar();
 
 		var2.unlinkVar();
 		var2.varData.theString = createCString(string1 + string2);
@@ -239,30 +239,30 @@ void compareVariablesInSecond(const Variable &var1, Variable &var2) {
 	var2.setVariable(SVT_INT, compareVars(var1, var2));
 }
 
-void makeTextVar(Variable &thisVar, const Common::String &txt) {
-	thisVar.unlinkVar();
-	thisVar.varType = SVT_STRING;
-	thisVar.varData.theString = createCString(txt);
+void Variable::makeTextVar(const Common::String &txt) {
+	unlinkVar();
+	varType = SVT_STRING;
+	varData.theString = createCString(txt);
 }
 
-bool loadStringToVar(Variable &thisVar, int value) {
-	makeTextVar(thisVar, g_sludge->_resMan->getNumberedString(value));
-	return (bool)(thisVar.varData.theString != NULL);
+bool Variable::loadStringToVar(int value) {
+	makeTextVar(g_sludge->_resMan->getNumberedString(value));
+	return (bool)(varData.theString != NULL);
 }
 
-Common::String getTextFromAnyVar(const Variable &from) {
-	switch (from.varType) {
+Common::String Variable::getTextFromAnyVar() {
+	switch (varType) {
 		case SVT_STRING:
-			return from.varData.theString;
+			return varData.theString;
 
 		case SVT_FASTARRAY: {
 			Common::String builder = "FAST:";
 			Common::String builder2 = "";
 			Common::String grabText = "";
 
-			for (int i = 0; i < from.varData.fastArray->size; i++) {
+			for (int i = 0; i < varData.fastArray->size; i++) {
 				builder2 = builder + " ";
-				grabText = getTextFromAnyVar(from.varData.fastArray->fastVariables[i]);
+				grabText = varData.fastArray->fastVariables[i].getTextFromAnyVar();
 				builder.clear();
 				builder = builder2 + grabText;
 			}
@@ -274,11 +274,11 @@ Common::String getTextFromAnyVar(const Variable &from) {
 			Common::String builder2 = "";
 			Common::String grabText = "";
 
-			VariableStack *stacky = from.varData.theStack->first;
+			VariableStack *stacky = varData.theStack->first;
 
 			while (stacky) {
 				builder2 = builder + " ";
-				grabText = getTextFromAnyVar(stacky->thisVar);
+				grabText = stacky->thisVar.getTextFromAnyVar();
 				builder.clear();
 				builder = builder2 + grabText;
 				stacky = stacky->next;
@@ -287,16 +287,16 @@ Common::String getTextFromAnyVar(const Variable &from) {
 		}
 
 		case SVT_INT: {
-			Common::String buff = Common::String::format("%i", from.varData.intValue);
+			Common::String buff = Common::String::format("%i", varData.intValue);
 			return buff;
 		}
 
 		case SVT_FILE: {
-			return g_sludge->_resMan->resourceNameFromNum(from.varData.intValue);
+			return g_sludge->_resMan->resourceNameFromNum(varData.intValue);
 		}
 
 		case SVT_OBJTYPE: {
-			ObjectType *thisType = g_sludge->_objMan->findObjectType(from.varData.intValue);
+			ObjectType *thisType = g_sludge->_objMan->findObjectType(varData.intValue);
 			if (thisType)
 				return thisType->screenName;
 			break;
@@ -306,7 +306,7 @@ Common::String getTextFromAnyVar(const Variable &from) {
 			break;
 	}
 
-	return typeName[from.varType];
+	return typeName[varType];
 }
 
 bool getBoolean(const Variable &from) {

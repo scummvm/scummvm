@@ -84,6 +84,14 @@ struct Variable {
 	// Load & save
 	bool save(Common::WriteStream *stream);
 	bool load(Common::SeekableReadStream *stream);
+
+	// Text variable
+	void makeTextVar(const Common::String &txt);
+	bool loadStringToVar(int value);
+	Common::String getTextFromAnyVar();
+
+	// Get Text
+
 };
 
 struct VariableStack {
@@ -92,16 +100,13 @@ struct VariableStack {
 };
 
 // Setting variables
-bool loadStringToVar(Variable &thisVar, int value);
 void newAnimationVariable(Variable &thisVar, struct PersonaAnimation  *i);
 void newCostumeVariable(Variable &thisVar, struct Persona *i);
-void makeTextVar(Variable &thisVar, const Common::String &txt);
 void addVariablesInSecond(Variable &var1, Variable &var2);
 void compareVariablesInSecond(const Variable &var1, Variable &var2);
 
 // Misc.
 
-Common::String getTextFromAnyVar(const Variable &from);
 struct Persona *getCostumeFromVar(Variable &thisVar);
 struct PersonaAnimation  *getAnimationFromVar(Variable &thisVar);
 bool getBoolean(const Variable &from);

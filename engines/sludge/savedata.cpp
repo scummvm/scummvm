@@ -133,7 +133,7 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 			switch (i) {
 				case 0: {
 					Common::String g = readStringEncoded(fp);
-					makeTextVar(stringVar, g);
+					stringVar.makeTextVar(g);
 				}
 					break;
 
@@ -154,7 +154,7 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 			char *line = readTextPlain(fp);
 			if (!line)
 				break;
-			makeTextVar(stringVar, line);
+			stringVar.makeTextVar(line);
 		}
 
 		if (sH->first == NULL) {
@@ -218,7 +218,7 @@ bool CustomSaveHelper::stackToFile(const Common::String &filename, const Variabl
 					return false;
 			}
 		} else {
-			Common::String makeSureItsText = getTextFromAnyVar(hereWeAre -> thisVar);
+			Common::String makeSureItsText = hereWeAre->thisVar.getTextFromAnyVar();
 			if (makeSureItsText.empty())
 				break;
 			fp->writeString((makeSureItsText + "\n").c_str());

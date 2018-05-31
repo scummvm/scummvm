@@ -322,7 +322,7 @@ bool continueFunction(LoadedFunction *fun) {
 			break;
 
 		case SLU_LOAD_STRING:
-			if (!loadStringToVar(fun->reg, param)) {
+			if (!fun->reg.loadStringToVar(param)) {
 				return false;
 			}
 			break;
