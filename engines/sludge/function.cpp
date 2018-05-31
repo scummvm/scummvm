@@ -247,7 +247,7 @@ bool continueFunction(LoadedFunction *fun) {
 
 				case BR_CALLAFUNC: {
 					int i = fun->reg.varData.intValue;
-					setVariable(fun->reg, SVT_INT, 1);
+					fun->reg.setVariable(SVT_INT, 1);
 					pauseFunction(fun);
 					if (numBIFNames)
 						setFatalInfo(
@@ -278,15 +278,15 @@ bool continueFunction(LoadedFunction *fun) {
 			// These all grab things and shove 'em into the register
 
 		case SLU_LOAD_NULL:
-			setVariable(fun->reg, SVT_NULL, 0);
+			fun->reg.setVariable(SVT_NULL, 0);
 			break;
 
 		case SLU_LOAD_FILE:
-			setVariable(fun->reg, SVT_FILE, param);
+			fun->reg.setVariable(SVT_FILE, param);
 			break;
 
 		case SLU_LOAD_VALUE:
-			setVariable(fun->reg, SVT_INT, param);
+			fun->reg.setVariable(SVT_INT, param);
 			break;
 
 		case SLU_LOAD_LOCAL:
@@ -295,27 +295,27 @@ bool continueFunction(LoadedFunction *fun) {
 			break;
 
 		case SLU_AND:
-			setVariable(fun->reg, SVT_INT,
+			fun->reg.setVariable(SVT_INT,
 					getBoolean(fun->reg) && getBoolean(fun->stack->thisVar));
 			trimStack(fun->stack);
 			break;
 
 		case SLU_OR:
-			setVariable(fun->reg, SVT_INT,
+			fun->reg.setVariable(SVT_INT,
 					getBoolean(fun->reg) || getBoolean(fun->stack->thisVar));
 			trimStack(fun->stack);
 			break;
 
 		case SLU_LOAD_FUNC:
-			setVariable(fun->reg, SVT_FUNC, param);
+			fun->reg.setVariable(SVT_FUNC, param);
 			break;
 
 		case SLU_LOAD_BUILT:
-			setVariable(fun->reg, SVT_BUILT, param);
+			fun->reg.setVariable(SVT_BUILT, param);
 			break;
 
 		case SLU_LOAD_OBJTYPE:
-			setVariable(fun->reg, SVT_OBJTYPE, param);
+			fun->reg.setVariable(SVT_OBJTYPE, param);
 			break;
 
 		case SLU_UNREG:
@@ -333,7 +333,7 @@ bool continueFunction(LoadedFunction *fun) {
 			switch (fun->stack->thisVar.varType) {
 			case SVT_NULL:
 				if (com == SLU_INDEXGET) {
-					setVariable(fun->reg, SVT_NULL, 0);
+					fun->reg.setVariable(SVT_NULL, 0);
 					trimStack(fun->stack);
 				} else {
 					return fatal(ERROR_INCDEC_UNKNOWN);
@@ -360,21 +360,21 @@ bool continueFunction(LoadedFunction *fun) {
 					trimStack(fun->stack);
 
 					if (!grab) {
-						setVariable(fun->reg, SVT_NULL, 0);
+						fun->reg.setVariable(SVT_NULL, 0);
 					} else {
 						int kk;
 						switch (com) {
 						case SLU_INCREMENT_INDEX:
 							if (!getValueType(kk, SVT_INT, *grab))
 								return false;
-							setVariable(fun->reg, SVT_INT, kk);
+							fun->reg.setVariable(SVT_INT, kk);
 							grab->varData.intValue = kk + 1;
 							break;
 
 						case SLU_DECREMENT_INDEX:
 							if (!getValueType(kk, SVT_INT, *grab))
 								return false;
-							setVariable(fun->reg, SVT_INT, kk);
+							fun->reg.setVariable(SVT_INT, kk);
 							grab->varData.intValue = kk - 1;
 							break;
 
@@ -437,8 +437,8 @@ bool continueFunction(LoadedFunction *fun) {
 			int ii;
 			if (!getValueType(ii, SVT_INT, fun->localVars[param]))
 				return false;
-			setVariable(fun->reg, SVT_INT, ii);
-			setVariable(fun->localVars[param], SVT_INT, ii + 1);
+			fun->reg.setVariable(SVT_INT, ii);
+			fun->localVars[param].setVariable(SVT_INT, ii + 1);
 		}
 			break;
 
@@ -446,8 +446,8 @@ bool continueFunction(LoadedFunction *fun) {
 			int ii;
 			if (!getValueType(ii, SVT_INT, globalVars[param]))
 				return false;
-			setVariable(fun->reg, SVT_INT, ii);
-			setVariable(globalVars[param], SVT_INT, ii + 1);
+			fun->reg.setVariable(SVT_INT, ii);
+			globalVars[param].setVariable(SVT_INT, ii + 1);
 		}
 			break;
 
@@ -455,8 +455,8 @@ bool continueFunction(LoadedFunction *fun) {
 			int ii;
 			if (!getValueType(ii, SVT_INT, fun->localVars[param]))
 				return false;
-			setVariable(fun->reg, SVT_INT, ii);
-			setVariable(fun->localVars[param], SVT_INT, ii - 1);
+			fun->reg.setVariable(SVT_INT, ii);
+			fun->localVars[param].setVariable(SVT_INT, ii - 1);
 		}
 			break;
 
@@ -464,8 +464,8 @@ bool continueFunction(LoadedFunction *fun) {
 			int ii;
 			if (!getValueType(ii, SVT_INT, globalVars[param]))
 				return false;
-			setVariable(fun->reg, SVT_INT, ii);
-			setVariable(globalVars[param], SVT_INT, ii - 1);
+			fun->reg.setVariable(SVT_INT, ii);
+			globalVars[param].setVariable(SVT_INT, ii - 1);
 		}
 			break;
 
@@ -500,7 +500,7 @@ bool continueFunction(LoadedFunction *fun) {
 			break;
 
 		case SLU_NOT:
-			setVariable(fun->reg, SVT_INT, !getBoolean(fun->reg));
+			fun->reg.setVariable(SVT_INT, !getBoolean(fun->reg));
 			break;
 
 		case SLU_BR_ZERO:
@@ -519,7 +519,7 @@ bool continueFunction(LoadedFunction *fun) {
 			int i;
 			if (!getValueType(i, SVT_INT, fun->reg))
 				return false;
-			setVariable(fun->reg, SVT_INT, -i);
+			fun->reg.setVariable(SVT_INT, -i);
 		}
 			break;
 
@@ -565,42 +565,42 @@ bool continueFunction(LoadedFunction *fun) {
 
 					switch (com) {
 					case SLU_MULT:
-						setVariable(fun->reg, SVT_INT,
+						fun->reg.setVariable(SVT_INT,
 								firstValue * secondValue);
 						break;
 
 					case SLU_MINUS:
-						setVariable(fun->reg, SVT_INT,
+						fun->reg.setVariable(SVT_INT,
 								firstValue - secondValue);
 						break;
 
 					case SLU_MODULUS:
-						setVariable(fun->reg, SVT_INT,
+						fun->reg.setVariable(SVT_INT,
 								firstValue % secondValue);
 						break;
 
 					case SLU_DIVIDE:
-						setVariable(fun->reg, SVT_INT,
+						fun->reg.setVariable(SVT_INT,
 								firstValue / secondValue);
 						break;
 
 					case SLU_LESSTHAN:
-						setVariable(fun->reg, SVT_INT,
+						fun->reg.setVariable(SVT_INT,
 								firstValue < secondValue);
 						break;
 
 					case SLU_MORETHAN:
-						setVariable(fun->reg, SVT_INT,
+						fun->reg.setVariable(SVT_INT,
 								firstValue > secondValue);
 						break;
 
 					case SLU_LESS_EQUAL:
-						setVariable(fun->reg, SVT_INT,
+						fun->reg.setVariable(SVT_INT,
 								firstValue <= secondValue);
 						break;
 
 					case SLU_MORE_EQUAL:
-						setVariable(fun->reg, SVT_INT,
+						fun->reg.setVariable(SVT_INT,
 								firstValue >= secondValue);
 						break;
 

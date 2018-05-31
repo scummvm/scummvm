@@ -76,10 +76,10 @@ void Variable::unlinkVar() {
 	}
 }
 
-void setVariable(Variable &thisVar, VariableType vT, int value) {
-	thisVar.unlinkVar();
-	thisVar.varType = vT;
-	thisVar.varData.intValue = value;
+void Variable::setVariable(VariableType vT, int value) {
+	unlinkVar();
+	varType = vT;
+	varData.intValue = value;
 }
 
 void newAnimationVariable(Variable &thisVar, PersonaAnimation  *i) {
@@ -236,7 +236,7 @@ int compareVars(const Variable &var1, const Variable &var2) {
 }
 
 void compareVariablesInSecond(const Variable &var1, Variable &var2) {
-	setVariable(var2, SVT_INT, compareVars(var1, var2));
+	var2.setVariable(SVT_INT, compareVars(var1, var2));
 }
 
 void makeTextVar(Variable &thisVar, const Common::String &txt) {

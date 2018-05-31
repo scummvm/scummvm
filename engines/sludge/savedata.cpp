@@ -138,11 +138,11 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 					break;
 
 				case 1:
-					setVariable(stringVar, SVT_INT, fp->readUint32LE());
+					stringVar.setVariable(SVT_INT, fp->readUint32LE());
 					break;
 
 				case 2:
-					setVariable(stringVar, SVT_INT, fp->readByte());
+					stringVar.setVariable(SVT_INT, fp->readByte());
 					break;
 
 				default:

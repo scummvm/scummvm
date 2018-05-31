@@ -540,14 +540,14 @@ bool GraphicsManager::getRGBIntoStack(uint x, uint y, StackHandler *sH) {
 
 	byte *target = (byte *)_renderSurface.getBasePtr(x, y);
 
-	setVariable(newValue, SVT_INT, target[1]);
+	newValue.setVariable(SVT_INT, target[1]);
 	if (!addVarToStackQuick(newValue, sH->first)) return false;
 	sH->last = sH->first;
 
-	setVariable(newValue, SVT_INT, target[2]);
+	newValue.setVariable(SVT_INT, target[2]);
 	if (!addVarToStackQuick(newValue, sH->first)) return false;
 
-	setVariable(newValue, SVT_INT, target[3]);
+	newValue.setVariable(SVT_INT, target[3]);
 	if (!addVarToStackQuick(newValue, sH->first)) return false;
 
 	return true;

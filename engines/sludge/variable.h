@@ -75,6 +75,7 @@ struct Variable {
 	}
 
 	void unlinkVar();
+	void setVariable(VariableType vT, int value);
 };
 
 struct VariableStack {
@@ -84,7 +85,6 @@ struct VariableStack {
 
 // Setting variables
 
-void setVariable(Variable &thisVar, VariableType vT, int value);
 bool copyVariable(const Variable &from, Variable &to);
 bool loadStringToVar(Variable &thisVar, int value);
 void newAnimationVariable(Variable &thisVar, struct PersonaAnimation  *i);

@@ -159,7 +159,7 @@ builtIn(unfreeze) {
 
 builtIn(howFrozen) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, g_sludge->_gfxMan->howFrozen());
+	fun->reg.setVariable(SVT_INT, g_sludge->_gfxMan->howFrozen());
 	return BR_CONTINUE;
 }
 
@@ -173,25 +173,25 @@ builtIn(setCursor) {
 
 builtIn(getMouseX) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, g_sludge->_evtMan->mouseX() + g_sludge->_gfxMan->getCamX());
+	fun->reg.setVariable(SVT_INT, g_sludge->_evtMan->mouseX() + g_sludge->_gfxMan->getCamX());
 	return BR_CONTINUE;
 }
 
 builtIn(getMouseY) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, g_sludge->_evtMan->mouseY() + g_sludge->_gfxMan->getCamY());
+	fun->reg.setVariable(SVT_INT, g_sludge->_evtMan->mouseY() + g_sludge->_gfxMan->getCamY());
 	return BR_CONTINUE;
 }
 
 builtIn(getMouseScreenX) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, g_sludge->_evtMan->mouseX() * g_sludge->_gfxMan->getCamZoom());
+	fun->reg.setVariable(SVT_INT, g_sludge->_evtMan->mouseX() * g_sludge->_gfxMan->getCamZoom());
 	return BR_CONTINUE;
 }
 
 builtIn(getMouseScreenY) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, g_sludge->_evtMan->mouseY() * g_sludge->_gfxMan->getCamZoom());
+	fun->reg.setVariable(SVT_INT, g_sludge->_evtMan->mouseY() * g_sludge->_gfxMan->getCamZoom());
 	return BR_CONTINUE;
 }
 
@@ -237,7 +237,7 @@ builtIn(saveGame) {
 
 	g_sludge->loadNow = ":" + aaaaa;
 
-	setVariable(fun->reg, SVT_INT, 0);
+	fun->reg.setVariable(SVT_INT, 0);
 	saverFunc = fun;
 	return BR_KEEP_AND_PAUSE;
 }
@@ -267,7 +267,7 @@ builtIn(fileExists) {
 	}
 
 	// Return value
-	setVariable(fun->reg, SVT_INT, exist);
+	fun->reg.setVariable(SVT_INT, exist);
 	return BR_CONTINUE;
 }
 
@@ -492,7 +492,7 @@ builtIn(stringLength) {
 	UNUSEDALL
 	Common::String newText = getTextFromAnyVar(fun->stack->thisVar);
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, g_sludge->_txtMan->stringLength(newText));
+	fun->reg.setVariable(SVT_INT, g_sludge->_txtMan->stringLength(newText));
 	return BR_CONTINUE;
 }
 
@@ -527,13 +527,13 @@ builtIn(stackSize) {
 	switch (fun->stack->thisVar.varType) {
 		case SVT_STACK:
 			// Return value
-			setVariable(fun->reg, SVT_INT, stackSize(fun->stack->thisVar.varData.theStack));
+			fun->reg.setVariable(SVT_INT, stackSize(fun->stack->thisVar.varData.theStack));
 			trimStack(fun->stack);
 			return BR_CONTINUE;
 
 		case SVT_FASTARRAY:
 			// Return value
-			setVariable(fun->reg, SVT_INT, fun->stack->thisVar.varData.fastArray->size);
+			fun->reg.setVariable(SVT_INT, fun->stack->thisVar.varData.fastArray->size);
 			trimStack(fun->stack);
 			return BR_CONTINUE;
 
@@ -606,7 +606,7 @@ builtIn(deleteFromStack) {
 	}
 
 	// Return value
-	setVariable(fun->reg, SVT_INT, deleteVarFromStack(fun->stack->thisVar, fun->stack->next->thisVar.varData.theStack->first, false));
+	fun->reg.setVariable(SVT_INT, deleteVarFromStack(fun->stack->thisVar, fun->stack->next->thisVar.varData.theStack->first, false));
 
 	// Horrible hacking because 'last' value might now be wrong!
 	fun->stack->next->thisVar.varData.theStack->last = stackFindLast(fun->stack->next->thisVar.varData.theStack->first);
@@ -624,7 +624,7 @@ builtIn(deleteAllFromStack) {
 	}
 
 	// Return value
-	setVariable(fun->reg, SVT_INT, deleteVarFromStack(fun->stack->thisVar, fun->stack->next->thisVar.varData.theStack->first, true));
+	fun->reg.setVariable(SVT_INT, deleteVarFromStack(fun->stack->thisVar, fun->stack->next->thisVar.varData.theStack->first, true));
 
 	// Horrible hacking because 'last' value might now be wrong!
 	fun->stack->next->thisVar.varData.theStack->last = stackFindLast(fun->stack->next->thisVar.varData.theStack->first);
@@ -696,7 +696,7 @@ builtIn(random) {
 	trimStack(fun->stack);
 	if (num <= 0)
 		num = 1;
-	setVariable(fun->reg, SVT_INT, 0 /*rand() % num*/); //TODO:false value
+	fun->reg.setVariable(SVT_INT, 0 /*rand() % num*/); //TODO:false value
 	return BR_CONTINUE;
 }
 
@@ -754,7 +754,7 @@ builtIn(setBlankColour) {
 		return BR_ERROR;
 
 	g_sludge->_gfxMan->setBlankColor(red, green, blue);
-	setVariable(fun->reg, SVT_INT, 1);
+	fun->reg.setVariable(SVT_INT, 1);
 	return BR_CONTINUE;
 }
 
@@ -766,7 +766,7 @@ builtIn(setBurnColour) {
 		return BR_ERROR;
 
 	g_sludge->_gfxMan->setBurnColor(red, green, blue);
-	setVariable(fun->reg, SVT_INT, 1);
+	fun->reg.setVariable(SVT_INT, 1);
 	return BR_CONTINUE;
 }
 
@@ -796,7 +796,7 @@ builtIn(inFont) {
 	trimStack(fun->stack);
 
 	// Return value
-	setVariable(fun->reg, SVT_INT, g_sludge->_txtMan->isInFont(newText));
+	fun->reg.setVariable(SVT_INT, g_sludge->_txtMan->isInFont(newText));
 	return BR_CONTINUE;
 }
 
@@ -889,7 +889,7 @@ builtIn(launch) {
 		if (g_sludge->launchMe.empty())
 			return BR_ERROR;
 	}
-	setVariable(fun->reg, SVT_INT, 1);
+	fun->reg.setVariable(SVT_INT, 1);
 	launchResult = &fun->reg;
 
 	return BR_KEEP_AND_PAUSE;
@@ -929,10 +929,10 @@ builtIn(callEvent) {
 
 	// Return value
 	if (fNum) {
-		setVariable(fun->reg, SVT_FUNC, fNum);
+		fun->reg.setVariable(SVT_FUNC, fNum);
 		return BR_CALLAFUNC;
 	}
-	setVariable(fun->reg, SVT_INT, 0);
+	fun->reg.setVariable(SVT_INT, 0);
 	return BR_CONTINUE;
 }
 
@@ -954,13 +954,13 @@ builtIn(_rem_movieStart) {
 
 builtIn(_rem_movieAbort) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, 0);
+	fun->reg.setVariable(SVT_INT, 0);
 	return BR_CONTINUE;
 }
 
 builtIn(_rem_moviePlaying) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, 0);
+	fun->reg.setVariable(SVT_INT, 0);
 	return BR_CONTINUE;
 }
 
@@ -977,7 +977,7 @@ builtIn(playMovie) {
 
 	r = playMovie(fileNumber);
 
-	setVariable(fun->reg, SVT_INT, r);
+	fun->reg.setVariable(SVT_INT, r);
 
 	if (r && (!fun->next)) {
 		restartFunction(fun);
@@ -991,7 +991,7 @@ builtIn(stopMovie) {
 
 	stopMovie();
 
-	setVariable(fun->reg, SVT_INT, 0);
+	fun->reg.setVariable(SVT_INT, 0);
 	return BR_CONTINUE;
 }
 
@@ -1000,7 +1000,7 @@ builtIn(pauseMovie) {
 
 	pauseMovie();
 
-	setVariable(fun->reg, SVT_INT, 0);
+	fun->reg.setVariable(SVT_INT, 0);
 	return BR_CONTINUE;
 }
 
@@ -1231,11 +1231,11 @@ builtIn(setLightMap) {
 				trimStack(fun->stack);
 				if (!g_sludge->_gfxMan->loadLightMap(v))
 					return BR_ERROR;
-				setVariable(fun->reg, SVT_INT, 1);
+				fun->reg.setVariable(SVT_INT, 1);
 			} else {
 				trimStack(fun->stack);
 				g_sludge->_gfxMan->killLightMap();
-				setVariable(fun->reg, SVT_INT, 0);
+				fun->reg.setVariable(SVT_INT, 0);
 			}
 			break;
 
@@ -1267,9 +1267,9 @@ builtIn(somethingSpeaking) {
 	UNUSEDALL
 	int i = g_sludge->_speechMan->isThereAnySpeechGoingOn();
 	if (i == -1) {
-		setVariable(fun->reg, SVT_INT, 0);
+		fun->reg.setVariable(SVT_INT, 0);
 	} else {
-		setVariable(fun->reg, SVT_OBJTYPE, i);
+		fun->reg.setVariable(SVT_OBJTYPE, i);
 	}
 	return BR_CONTINUE;
 }
@@ -1284,10 +1284,10 @@ builtIn(getOverObject) {
 	UNUSEDALL
 	if (g_sludge->_regionMan->getOverRegion())
 		// Return value
-		setVariable(fun->reg, SVT_OBJTYPE, g_sludge->_regionMan->getOverRegion()->thisType->objectNum);
+		fun->reg.setVariable(SVT_OBJTYPE, g_sludge->_regionMan->getOverRegion()->thisType->objectNum);
 	else
 		// Return value
-		setVariable(fun->reg, SVT_INT, 0);
+		fun->reg.setVariable(SVT_INT, 0);
 	return BR_CONTINUE;
 }
 
@@ -1314,13 +1314,13 @@ builtIn(getObjectX) {
 
 	OnScreenPerson *pers = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (pers) {
-		setVariable(fun->reg, SVT_INT, pers->x);
+		fun->reg.setVariable(SVT_INT, pers->x);
 	} else {
 		ScreenRegion *la = g_sludge->_regionMan->getRegionForObject(objectNumber);
 		if (la) {
-			setVariable(fun->reg, SVT_INT, la->sX);
+			fun->reg.setVariable(SVT_INT, la->sX);
 		} else {
-			setVariable(fun->reg, SVT_INT, 0);
+			fun->reg.setVariable(SVT_INT, 0);
 		}
 	}
 	return BR_CONTINUE;
@@ -1335,13 +1335,13 @@ builtIn(getObjectY) {
 
 	OnScreenPerson *pers = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (pers) {
-		setVariable(fun->reg, SVT_INT, pers->y);
+		fun->reg.setVariable(SVT_INT, pers->y);
 	} else {
 		ScreenRegion *la = g_sludge->_regionMan->getRegionForObject(objectNumber);
 		if (la) {
-			setVariable(fun->reg, SVT_INT, la->sY);
+			fun->reg.setVariable(SVT_INT, la->sY);
 		} else {
-			setVariable(fun->reg, SVT_INT, 0);
+			fun->reg.setVariable(SVT_INT, 0);
 		}
 	}
 	return BR_CONTINUE;
@@ -1520,7 +1520,7 @@ builtIn(stopCharacter) {
 	trimStack(fun->stack);
 
 	// Return value
-	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->stopPerson(obj));
+	fun->reg.setVariable(SVT_INT, g_sludge->_peopleMan->stopPerson(obj));
 	return BR_CONTINUE;
 }
 
@@ -1543,9 +1543,9 @@ builtIn(pasteCharacter) {
 
 		int fNum = myAnim->frames[thisPerson->frameNum].frameNum;
 		g_sludge->_gfxMan->fixScaleSprite(thisPerson->x, thisPerson->y, myAnim->theSprites->bank.sprites[ABS(fNum)], myAnim->theSprites->bank.myPalette, thisPerson, 0, 0, fNum < 0);
-		setVariable(fun->reg, SVT_INT, 1);
+		fun->reg.setVariable(SVT_INT, 1);
 	} else {
-		setVariable(fun->reg, SVT_INT, 0);
+		fun->reg.setVariable(SVT_INT, 0);
 	}
 	return BR_CONTINUE;
 }
@@ -1561,7 +1561,7 @@ builtIn(animate) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_peopleMan->animatePerson(obj, pp);
-	setVariable(fun->reg, SVT_INT, pp->getTotalTime());
+	fun->reg.setVariable(SVT_INT, pp->getTotalTime());
 	return BR_CONTINUE;
 }
 
@@ -1588,7 +1588,7 @@ builtIn(floatCharacter) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->floatCharacter(di, obj));
+	fun->reg.setVariable(SVT_INT, g_sludge->_peopleMan->floatCharacter(di, obj));
 	return BR_CONTINUE;
 }
 
@@ -1601,7 +1601,7 @@ builtIn(setCharacterWalkSpeed) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->setCharacterWalkSpeed(di, obj));
+	fun->reg.setVariable(SVT_INT, g_sludge->_peopleMan->setCharacterWalkSpeed(di, obj));
 	return BR_CONTINUE;
 }
 
@@ -1614,7 +1614,7 @@ builtIn(turnCharacter) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->turnPersonToFace(obj, di));
+	fun->reg.setVariable(SVT_INT, g_sludge->_peopleMan->turnPersonToFace(obj, di));
 	return BR_CONTINUE;
 }
 
@@ -1627,7 +1627,7 @@ builtIn(setCharacterExtra) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->setPersonExtra(obj, di));
+	fun->reg.setVariable(SVT_INT, g_sludge->_peopleMan->setPersonExtra(obj, di));
 	return BR_CONTINUE;
 }
 
@@ -1895,7 +1895,7 @@ builtIn(stringWidth) {
 	trimStack(fun->stack);
 
 	// Return value
-	setVariable(fun->reg, SVT_INT, g_sludge->_txtMan->stringWidth(theText));
+	fun->reg.setVariable(SVT_INT, g_sludge->_txtMan->stringWidth(theText));
 	return BR_CONTINUE;
 }
 
@@ -1915,7 +1915,7 @@ builtIn(isScreenRegion) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, g_sludge->_regionMan->getRegionForObject(objectNumber) != NULL);
+	fun->reg.setVariable(SVT_INT, g_sludge->_regionMan->getRegionForObject(objectNumber) != NULL);
 	return BR_CONTINUE;
 }
 
@@ -1926,7 +1926,7 @@ builtIn(setSpeechSpeed) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_speechMan->setSpeechSpeed(number * 0.01);
-	setVariable(fun->reg, SVT_INT, 1);
+	fun->reg.setVariable(SVT_INT, 1);
 	return BR_CONTINUE;
 }
 
@@ -1937,7 +1937,7 @@ builtIn(setFontSpacing) {
 		return BR_ERROR;
 	g_sludge->_txtMan->setFontSpace(fontSpaceI);
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, 1);
+	fun->reg.setVariable(SVT_INT, 1);
 	return BR_CONTINUE;
 }
 
@@ -1950,7 +1950,7 @@ builtIn(transitionLevel) {
 
 	g_sludge->_gfxMan->setBrightnessLevel(brightnessLevel);
 
-	setVariable(fun->reg, SVT_INT, 1);
+	fun->reg.setVariable(SVT_INT, 1);
 	return BR_CONTINUE;
 }
 
@@ -1959,7 +1959,7 @@ builtIn(captureAllKeys) {
 	// This built-in function doesn't have any effect any more, we capture all keys by default
 	bool captureAllKeysDeprecated = getBoolean(fun->stack->thisVar);
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, captureAllKeysDeprecated);
+	fun->reg.setVariable(SVT_INT, captureAllKeysDeprecated);
 	return BR_CONTINUE;
 }
 
@@ -1978,10 +1978,10 @@ builtIn(spinCharacter) {
 		thisPerson->wantAngle = number;
 		thisPerson->spinning = true;
 		thisPerson->continueAfterWalking = fun;
-		setVariable(fun->reg, SVT_INT, 1);
+		fun->reg.setVariable(SVT_INT, 1);
 		return BR_PAUSE;
 	} else {
-		setVariable(fun->reg, SVT_INT, 0);
+		fun->reg.setVariable(SVT_INT, 0);
 		return BR_CONTINUE;
 	}
 }
@@ -1994,9 +1994,9 @@ builtIn(getCharacterDirection) {
 	trimStack(fun->stack);
 	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (thisPerson) {
-		setVariable(fun->reg, SVT_INT, thisPerson->direction);
+		fun->reg.setVariable(SVT_INT, thisPerson->direction);
 	} else {
-		setVariable(fun->reg, SVT_INT, 0);
+		fun->reg.setVariable(SVT_INT, 0);
 	}
 	return BR_CONTINUE;
 }
@@ -2008,7 +2008,7 @@ builtIn(isCharacter) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
-	setVariable(fun->reg, SVT_INT, thisPerson != NULL);
+	fun->reg.setVariable(SVT_INT, thisPerson != NULL);
 	return BR_CONTINUE;
 }
 
@@ -2021,9 +2021,9 @@ builtIn(normalCharacter) {
 	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (thisPerson) {
 		thisPerson->myAnim = thisPerson->myPersona->animation[thisPerson->direction];
-		setVariable(fun->reg, SVT_INT, 1);
+		fun->reg.setVariable(SVT_INT, 1);
 	} else {
-		setVariable(fun->reg, SVT_INT, 0);
+		fun->reg.setVariable(SVT_INT, 0);
 	}
 	return BR_CONTINUE;
 }
@@ -2036,9 +2036,9 @@ builtIn(isMoving) {
 	trimStack(fun->stack);
 	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (thisPerson) {
-		setVariable(fun->reg, SVT_INT, thisPerson->walking);
+		fun->reg.setVariable(SVT_INT, thisPerson->walking);
 	} else {
-		setVariable(fun->reg, SVT_INT, 0);
+		fun->reg.setVariable(SVT_INT, 0);
 	}
 	return BR_CONTINUE;
 }
@@ -2057,9 +2057,9 @@ builtIn(fetchEvent) {
 
 	// Return value
 	if (fNum) {
-		setVariable(fun->reg, SVT_FUNC, fNum);
+		fun->reg.setVariable(SVT_FUNC, fNum);
 	} else {
-		setVariable(fun->reg, SVT_INT, 0);
+		fun->reg.setVariable(SVT_INT, 0);
 	}
 	return BR_CONTINUE;
 }
@@ -2073,7 +2073,7 @@ builtIn(deleteFile) {
 	namNormal.clear();
 	if (failSecurityCheck(nam))
 		return BR_ERROR;
-	setVariable(fun->reg, SVT_INT, remove(nam.c_str()));
+	fun->reg.setVariable(SVT_INT, remove(nam.c_str()));
 
 	return BR_CONTINUE;
 }
@@ -2096,7 +2096,7 @@ builtIn(renameFile) {
 	if (failSecurityCheck(nam))
 		return BR_ERROR;
 
-	setVariable(fun->reg, SVT_INT, rename(nam.c_str(), newnam.c_str()));
+	fun->reg.setVariable(SVT_INT, rename(nam.c_str(), newnam.c_str()));
 
 	return BR_CONTINUE;
 }
@@ -2143,9 +2143,9 @@ builtIn(setCharacterSpinSpeed) {
 
 	if (thisPerson) {
 		thisPerson->spinSpeed = speed;
-		setVariable(fun->reg, SVT_INT, 1);
+		fun->reg.setVariable(SVT_INT, 1);
 	} else {
-		setVariable(fun->reg, SVT_INT, 0);
+		fun->reg.setVariable(SVT_INT, 0);
 	}
 	return BR_CONTINUE;
 }
@@ -2164,9 +2164,9 @@ builtIn(setCharacterAngleOffset) {
 
 	if (thisPerson) {
 		thisPerson->angleOffset = angle;
-		setVariable(fun->reg, SVT_INT, 1);
+		fun->reg.setVariable(SVT_INT, 1);
 	} else {
-		setVariable(fun->reg, SVT_INT, 0);
+		fun->reg.setVariable(SVT_INT, 0);
 	}
 	return BR_CONTINUE;
 }
@@ -2178,7 +2178,7 @@ builtIn(transitionMode) {
 		return BR_ERROR;
 	g_sludge->_gfxMan->setFadeMode(n);
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, 1);
+	fun->reg.setVariable(SVT_INT, 1);
 	return BR_CONTINUE;
 }
 
@@ -2186,7 +2186,7 @@ builtIn(transitionMode) {
 builtIn(_rem_updateDisplay) {
 	UNUSEDALL
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, true);
+	fun->reg.setVariable(SVT_INT, true);
 	return BR_CONTINUE;
 }
 
@@ -2256,7 +2256,7 @@ builtIn(setCustomEncoding) {
 		return BR_ERROR;
 	CustomSaveHelper::_saveEncoding = n;
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, 1);
+	fun->reg.setVariable(SVT_INT, 1);
 	return BR_CONTINUE;
 }
 
@@ -2289,7 +2289,7 @@ builtIn(parallaxAdd) {
 
 		if (!g_sludge->_gfxMan->loadParallax(v, wrapX, wrapY))
 			return BR_ERROR;
-		setVariable(fun->reg, SVT_INT, 1);
+		fun->reg.setVariable(SVT_INT, 1);
 	}
 	return BR_CONTINUE;
 }
@@ -2297,7 +2297,7 @@ builtIn(parallaxAdd) {
 builtIn(parallaxClear) {
 	UNUSEDALL
 	g_sludge->_gfxMan->killParallax();
-	setVariable(fun->reg, SVT_INT, 1);
+	fun->reg.setVariable(SVT_INT, 1);
 	return BR_CONTINUE;
 }
 
@@ -2358,16 +2358,16 @@ builtIn(getCharacterScale) {
 
 	OnScreenPerson *pers = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (pers) {
-		setVariable(fun->reg, SVT_INT, pers->scale * 100);
+		fun->reg.setVariable(SVT_INT, pers->scale * 100);
 	} else {
-		setVariable(fun->reg, SVT_INT, 0);
+		fun->reg.setVariable(SVT_INT, 0);
 	}
 	return BR_CONTINUE;
 }
 
 builtIn(getLanguageID) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, g_sludge->getLanguageID());
+	fun->reg.setVariable(SVT_INT, g_sludge->getLanguageID());
 	return BR_CONTINUE;
 }
 
@@ -2397,13 +2397,13 @@ builtIn(_rem_launchWith) {
 	}
 
 	g_sludge->launchNext.clear();
-	setVariable(fun->reg, SVT_INT, false);
+	fun->reg.setVariable(SVT_INT, false);
 	return BR_CONTINUE;
 }
 
 builtIn(getFramesPerSecond) {
 	UNUSEDALL
-	setVariable(fun->reg, SVT_INT, g_sludge->_timer.getLastFps());
+	fun->reg.setVariable(SVT_INT, g_sludge->_timer.getLastFps());
 	return BR_CONTINUE;
 }
 
@@ -2454,7 +2454,7 @@ builtIn(hasFlag) {
 	ObjectType *objT = g_sludge->_objMan->findObjectType(objNum);
 	if (!objT)
 		return BR_ERROR;
-	setVariable(fun->reg, SVT_INT, objT->flags & (1 << flagIndex));
+	fun->reg.setVariable(SVT_INT, objT->flags & (1 << flagIndex));
 	return BR_CONTINUE;
 }
 
@@ -2474,7 +2474,7 @@ builtIn(bodgeFilenames) {
 	bool lastValue = allowAnyFilename;
 	allowAnyFilename = getBoolean(fun->stack->thisVar);
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, lastValue);
+	fun->reg.setVariable(SVT_INT, lastValue);
 	return BR_CONTINUE;
 }
 
@@ -2483,7 +2483,7 @@ builtIn(_rem_registryGetString) {
 	UNUSEDALL
 	trimStack(fun->stack);
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, 0);
+	fun->reg.setVariable(SVT_INT, 0);
 
 	return BR_CONTINUE;
 }
@@ -2521,14 +2521,14 @@ builtIn(_rem_setMaximumAA) {
 builtIn(setBackgroundEffect) {
 	UNUSEDALL
 	bool done = blur_createSettings(numParams, fun->stack);
-	setVariable(fun->reg, SVT_INT, done ? 1 : 0);
+	fun->reg.setVariable(SVT_INT, done ? 1 : 0);
 	return BR_CONTINUE;
 }
 
 builtIn(doBackgroundEffect) {
 	UNUSEDALL
 	bool done = blurScreen();
-	setVariable(fun->reg, SVT_INT, done ? 1 : 0);
+	fun->reg.setVariable(SVT_INT, done ? 1 : 0);
 	return BR_CONTINUE;
 }
 

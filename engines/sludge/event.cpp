@@ -157,7 +157,7 @@ bool EventManager::handleInput() {
 		} else {
 			l = 1;
 
-			setVariable(*launchResult, SVT_INT, 0/*launch(launchMe) > 31*/); //TODO:false value
+			launchResult->setVariable(SVT_INT, 0/*launch(launchMe) > 31*/); //TODO:false value
 			_vm->launchMe.clear();
 			launchResult = nullptr;
 		}
@@ -184,9 +184,9 @@ bool EventManager::handleInput() {
 
 		ScreenRegion *overRegion = _vm->_regionMan->getOverRegion();
 		if (overRegion) {
-			setVariable(tempStack->thisVar, SVT_OBJTYPE, overRegion->thisType->objectNum);
+			tempStack->thisVar.setVariable(SVT_OBJTYPE, overRegion->thisType->objectNum);
 		} else {
-			setVariable(tempStack->thisVar, SVT_INT, 0);
+			tempStack->thisVar.setVariable(SVT_INT, 0);
 		}
 		tempStack->next = nullptr;
 		if (!startNewFunctionNum(_currentEvents->func[kFocus], 1, nullptr, tempStack))

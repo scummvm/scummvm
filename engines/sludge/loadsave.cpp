@@ -71,7 +71,7 @@ bool handleSaveLoad() {
 	if (!g_sludge->loadNow.empty()) {
 		if (g_sludge->loadNow[0] == ':') {
 			saveGame(g_sludge->loadNow.c_str() + 1);
-			setVariable(saverFunc->reg, SVT_INT, 1);
+			saverFunc->reg.setVariable(SVT_INT, 1);
 		} else {
 			if (!loadGame(g_sludge->loadNow))
 				return false;
