@@ -653,7 +653,6 @@ int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4
 			switch(event.type) {
 
 			case TREKEVENT_TICK: {
-			case TREKEVENT_MOUSEMOVE: // FIXME: actual game only uses TICK event here
 				Common::Point mousePos = _gfx->getMousePos();
 				int buttonIndex = getMenuButtonAt(_activeMenu->sprites, _activeMenu->numButtons, mousePos.x, mousePos.y);
 				if (buttonIndex != -1) {
@@ -676,11 +675,11 @@ int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4
 				}
 				// Not added: updating mouse position (scummvm handles that)
 
-				// sub_10492();
-				// sub_10A91();
+				// sub_10492(); // TODO
+				// updateActorAnimations(); // TODO: uncomment and fix animations under textboxes
 				_gfx->drawAllSprites();
-				// sub_10BE7();
-				// sub_2A4B1();
+				// sub_10BE7(); // TODO
+				_sound->checkLoopMusic();
 
 				if (_finishedPlayingSpeech != 0) {
 					_finishedPlayingSpeech = 0;
@@ -688,7 +687,7 @@ int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4
 						return TEXTBUTTON_SPEECH_DONE;
 					}
 				}
-				// sub_1E88C();
+				_gfx->incPaletteFadeLevel();
 				_frameIndex++;
 
 				if (ticksUntilClickingEnabled != 0 && _clockTicks >= tickWhenClickingEnabled)

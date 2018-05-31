@@ -236,17 +236,24 @@ void Room::loadRoomIndex(int roomIndex, int spawnIndex) {
 	if (_vm->_awayMission.crewDownBitset != 0)
 		return;
 
-	_vm->loadRoomIndex(roomIndex, spawnIndex);
+	_vm->_missionToLoad = _vm->_missionName;
+	_vm->_roomIndexToLoad = roomIndex;
+	_vm->_spawnIndexToLoad = spawnIndex;
 
-	// This room has now been deleted, don't do anything else here.
-	// FIXME: this could a bit dangerous since this is generally called from room-specific
-	// code, which isn't guaranteed to do nothing afterward. Original game would
-	// manipulate the stack to jump directly back to the start of "runAwayMission"...
+	// WORKAROUND: original game manipulates the stack to return directly to the start of
+	// "runAwayMission". Instead, we set some variables and the room will be changed
+	// later. (We wouldn't want to delete the room we're currently in...)
 }
 
 void Room::loseItem(int item) {
 	assert(item >= ITEMS_START && item < ITEMS_END);
 	_vm->_itemList[item - ITEMS_START].have = false;
+
+	if (_vm->_awayMission.activeAction == ACTION_USE && _vm->_awayMission.activeObject == item) {
+		_vm->_awayMission.activeAction = ACTION_WALK;
+		_vm->chooseMouseBitmapForAction(ACTION_WALK, false);
+		_vm->hideInventoryIcons();
+	}
 }
 
 void Room::walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam) {
@@ -284,6 +291,30 @@ void Room::playSoundEffectIndex(int soundEffect) {
 
 void Room::playMidiMusicTracks(int startTrack, int loopTrack) {
 	_vm->playMidiMusicTracks(startTrack, loopTrack);
+}
+
+void Room::endMission(int16 score, int16 arg1, int16 arg2) {
+	_vm->_awayMission.disableInput = true;
+
+	for (int i = 0; i < (_vm->_awayMission.redshirtDead ? 3 : 4); i++) {
+		Actor *actor = &_vm->_actorList[i];
+		Common::String anim = _vm->getCrewmanAnimFilename(i, "teled");
+		_vm->loadActorAnimWithRoomScaling(i, anim, actor->sprite.pos.x, actor->sprite.pos.y);
+	}
+
+	_vm->_kirkActor->animationString[0] = '\0';
+	_vm->_spockActor->animationString[0] = '\0';
+	_vm->_mccoyActor->animationString[0] = '\0';
+	_vm->_redshirtActor->animationString[0] = '\0';
+
+	playSoundEffectIndex(8);
+
+	while (_vm->_kirkActor->spriteDrawn)
+		_vm->handleAwayMissionEvents();
+
+	_vm->_awayMission.disableInput = false;
+
+	// TODO: game mode switch
 }
 
 void Room::showGameOverMenu() {

@@ -48,6 +48,13 @@ void Sprite::setBitmap(SharedPtr<Bitmap> b) {
 	bitmapChanged = true;
 }
 
+void Sprite::setXYAndPriority(int16 x, int16 y, int16 priority) {
+	pos.x = x;
+	pos.y = y;
+	drawPriority = priority;
+	bitmapChanged = true;
+}
+
 void Sprite::dontDrawNextFrame() {
 	field16 = true;
 	bitmapChanged = true;

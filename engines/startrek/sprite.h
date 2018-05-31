@@ -61,6 +61,7 @@ struct Sprite {
 	Sprite();
 
 	void setBitmap(SharedPtr<Bitmap> b);
+	void setXYAndPriority(int16 x, int16 y, int16 priority);
 	void dontDrawNextFrame();
 
 	Common::Rect getRect();

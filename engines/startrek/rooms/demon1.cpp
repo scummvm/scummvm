@@ -381,8 +381,10 @@ void Room::demon1UseSTricorderOnHand() {
 }
 
 void Room::demon1UseSTricorderOnKlingon1() {
-	// NOTE: it sets up the stack, but doesn't call the function...
-	//loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
+	// BUGFIX: Original game sets up the stack for this function call, but doesn't
+	// actually call the function...
+	loadActorAnim2(OBJECT_SPOCK, "sscann", -1, -1, 0);
+
 	playSoundEffectIndex(0x04);
 
 	if (_roomVar.demon1.numKlingonsKilled == 3 && !_vm->_awayMission.demon.tookKlingonHand && _rdfData[0xcf] != 1) {

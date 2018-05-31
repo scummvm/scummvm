@@ -103,6 +103,7 @@ private:
 	int showText(int speaker, int text);                                                       // Cmd 0x03
 	int showText(int text);                                                                    // Cmd 0x03
 	void giveItem(int item);                                                                   // Cmd 0x04
+	// Command 0x05: "demon4ShowSunPuzzle"
 	void loadRoomIndex(int roomIndex, int spawnIndex);                                         // Cmd 0x06
 	void loseItem(int item);                                                                   // Cmd 0x07
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam);// Cmd 0x08
@@ -111,6 +112,7 @@ private:
 	Common::Point getActorPos(int actorIndex);                                                 // Cmd 0x0d
 	void playSoundEffectIndex(int soundEffect);                                                // Cmd 0x0f
 	void playMidiMusicTracks(int startTrack, int loopTrack);                                   // Cmd 0x10
+	void endMission(int16 score, int16 arg2, int16 arg3);                                      // Cmd 0x11
 	void showGameOverMenu();                                                                   // Cmd 0x12
 	void playVoc(Common::String filename);                                                     // Cmd 0x15
 
@@ -310,9 +312,26 @@ public:
 	void demon4FinishedAnimation1();
 	void demon4FinishedAnimation2();
 	void demon4FinishedAnimation3();
+	void demon4Timer0Expired();
+	void demon4Timer1Expired();
+	void demon4CrewmanReachedBeamoutPosition();
+	void demon4Timer2Expired();
+	void demon4Timer3Expired();
+	void demon4Timer4Expired();
+	void demon4Timer5Expired();
+	void demon4Timer6Expired();
+	void demon4UsePhaserOnNauian();
+	void demon4UseMetalOnSecurityEquipment();
+	void demon4KirkReachedSecurityEquipment();
+	void demon4KirkFinishedUsingSecurityEquipment();
+	void demon4UseMetalOnNauian();
+	void demon4KirkReachedNauian();
+	void demon4UseSkullOnNauian();
+	void demon4KirkReachedNauianWithSkull();
 	void demon4UsePhaserOnPanel();
 	void demon4UsePhaserOnPattern();
 	void demon4UsePhaserOnMccoy();
+	void demon4TalkToNauian();
 	void demon4LookAtPattern();
 	void demon4LookAtAlien();
 	void demon4LookAnywhere();
@@ -330,6 +349,22 @@ public:
 	void demon4UseRedshirtOnPanel();
 	void demon4UseCrewmanOnPanel();
 	void demon4CrewmanReachedPanel();
+	bool demon4ShowSunPuzzle();
+	void demon4TalkToKirk();
+	void demon4TalkToMccoy();
+	void demon4TalkToSpock();
+	void demon4TalkToRedshirt();
+	void demon4UseSTricorderOnChamber();
+	void demon4UseSTricorderOnPattern();
+	void demon4UseMTricorderOnPattern();
+	void demon4UseSTricorderOnPanel();
+	void demon4UseMTricorderOnPanel();
+	void demon4UseSTricorderOnAnything();
+	void demon4UseMTricorderOnAnything();
+	void demon4UseSTricorderOnNauian();
+	void demon4UseMTricorderOnNauian();
+	void demon4UseSTricorderOnSecurityEquipment();
+	void demon4UseMTricorderOnSecurityEquipment();
 
 	// DEMON5
 	void demon5Tick1();
@@ -461,7 +496,11 @@ private:
 		} demon3;
 
 		struct {
-			bool cb; // 0xcb
+			bool triedToShootNauian; // 0xca
+			bool nauianEmerged; // 0xcb
+			bool disabledSecurity; // 0xcc
+			bool cd; // 0xcd
+			byte crewReadyToBeamOut; // 0xce
 			int16 crewmanUsingPanel; // 0xcf
 		} demon4;
 
