@@ -117,6 +117,10 @@ struct Variable {
 struct VariableStack {
 	Variable thisVar;
 	VariableStack *next;
+
+	// Variable getter & setter
+	bool stackSetByIndex(uint, const Variable &);
+	Variable *stackGetByIndex(uint);
 };
 
 // Stacky stuff
@@ -129,8 +133,6 @@ int deleteVarFromStack(const Variable &va, VariableStack *&thisStack,
 VariableStack *stackFindLast(VariableStack *hunt);
 bool copyStack(const Variable &from, Variable &to);
 int stackSize(const StackHandler *me);
-bool stackSetByIndex(VariableStack *, uint, const Variable &);
-Variable *stackGetByIndex(VariableStack *, uint);
 bool getSavedGamesStack(StackHandler *sH, const Common::String &ext);
 
 // load & save

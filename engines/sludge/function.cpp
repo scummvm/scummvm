@@ -351,7 +351,7 @@ bool continueFunction(LoadedFunction *fun) {
 					Variable *grab =
 							(fun->stack->thisVar.varType == SVT_FASTARRAY) ?
 									fun->stack->thisVar.varData.fastArray->fastArrayGetByIndex(ii) :
-									stackGetByIndex(fun->stack->thisVar.varData.theStack->first, ii);
+									fun->stack->thisVar.varData.theStack->first->stackGetByIndex(ii);
 
 					trimStack(fun->stack);
 
@@ -396,9 +396,7 @@ bool continueFunction(LoadedFunction *fun) {
 					int ii;
 					if (!fun->reg.getValueType(ii, SVT_INT))
 						return false;
-					if (!stackSetByIndex(
-							fun->stack->thisVar.varData.theStack->first, ii,
-							fun->stack->next->thisVar)) {
+					if (!fun->stack->thisVar.varData.theStack->first->stackSetByIndex(ii, fun->stack->next->thisVar)) {
 						return false;
 					}
 					trimStack(fun->stack);

@@ -448,7 +448,8 @@ bool addVarToStackQuick(Variable &va, VariableStack *&thisStack) {
 	return true;
 }
 
-bool stackSetByIndex(VariableStack *vS, uint theIndex, const Variable &va) {
+bool VariableStack::stackSetByIndex(uint theIndex, const Variable &va) {
+	VariableStack *vS = this;
 	while (theIndex--) {
 		vS = vS->next;
 		if (!vS)
@@ -457,7 +458,8 @@ bool stackSetByIndex(VariableStack *vS, uint theIndex, const Variable &va) {
 	return vS->thisVar.copyFrom(va);
 }
 
-Variable *stackGetByIndex(VariableStack *vS, uint theIndex) {
+Variable *VariableStack::stackGetByIndex(uint theIndex) {
+	VariableStack *vS = this;
 	while (theIndex--) {
 		vS = vS->next;
 		if (!vS) {
