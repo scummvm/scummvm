@@ -146,7 +146,17 @@ void LeadActor::start(bool isHandler) {
 		_state = kInDialog1;
 		_nextState = kReady;
 	}
-	forceUpdateCursor();
+
+	switch (_state) {
+	case kInventory:
+		_page->getModule()->getInventoryMgr()->start(0);
+		_page->pause();
+		break;
+	case kPDA:
+
+	default:
+		forceUpdateCursor();
+	}
 }
 
 void LeadActor::onMouseMove(Common::Point point) {
