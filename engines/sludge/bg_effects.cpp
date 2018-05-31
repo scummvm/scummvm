@@ -166,7 +166,7 @@ bool blur_createSettings(int numParams, VariableStack *&stack) {
 				error = "Third and subsequent parameters in setBackgroundEffect should be arrays";
 				break;
 			} else {
-				int w = stackSize(justToCheckSizes->thisVar.varData.theStack);
+				int w = justToCheckSizes->thisVar.varData.theStack->getStackSize();
 				if (a) {
 					if (w != width) {
 						error = "Arrays in setBackgroundEffect must be the same size";

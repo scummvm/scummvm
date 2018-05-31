@@ -527,7 +527,7 @@ builtIn(stackSize) {
 	switch (fun->stack->thisVar.varType) {
 		case SVT_STACK:
 			// Return value
-			fun->reg.setVariable(SVT_INT, stackSize(fun->stack->thisVar.varData.theStack));
+			fun->reg.setVariable(SVT_INT, fun->stack->thisVar.varData.theStack->getStackSize());
 			trimStack(fun->stack);
 			return BR_CONTINUE;
 

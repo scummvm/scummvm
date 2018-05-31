@@ -56,6 +56,8 @@ struct StackHandler {
 	struct VariableStack *first;
 	struct VariableStack *last;
 	int timesUsed;
+
+	int getStackSize() const;
 };
 
 union VariableData {
@@ -135,7 +137,6 @@ bool addVarToStack(const Variable &va, VariableStack *&thisStack);
 bool addVarToStackQuick(Variable &va, VariableStack *&thisStack);
 void trimStack(VariableStack *&stack);
 int deleteVarFromStack(const Variable &va, VariableStack *&thisStack, bool allOfEm = false);
-int stackSize(const StackHandler *me);
 bool getSavedGamesStack(StackHandler *sH, const Common::String &ext);
 
 // load & save

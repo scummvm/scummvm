@@ -134,9 +134,9 @@ Persona *Variable::getCostumeFromVar() {
 	return p;
 }
 
-int stackSize(const StackHandler *me) {
+int StackHandler::getStackSize() const {
 	int r = 0;
-	VariableStack *a = me->first;
+	VariableStack *a = first;
 	while (a) {
 		r++;
 		a = a->next;
@@ -403,7 +403,7 @@ bool Variable::makeFastArraySize(int size) {
 }
 
 bool Variable::makeFastArrayFromStack(const StackHandler *stacky) {
-	int size = stackSize(stacky);
+	int size = stacky->getStackSize();
 	if (!makeFastArraySize(size))
 		return false;
 
