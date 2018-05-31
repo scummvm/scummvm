@@ -82,20 +82,20 @@ void Variable::setVariable(VariableType vT, int value) {
 	varData.intValue = value;
 }
 
-void newAnimationVariable(Variable &thisVar, PersonaAnimation  *i) {
-	thisVar.unlinkVar();
-	thisVar.varType = SVT_ANIM;
-	thisVar.varData.animHandler = i;
+void Variable::makeAnimationVariable(PersonaAnimation  *i) {
+	unlinkVar();
+	varType = SVT_ANIM;
+	varData.animHandler = i;
 }
 
-PersonaAnimation *getAnimationFromVar(Variable &thisVar) {
-	if (thisVar.varType == SVT_ANIM)
-		return new PersonaAnimation(thisVar.varData.animHandler);
+PersonaAnimation *Variable::getAnimationFromVar() {
+	if (varType == SVT_ANIM)
+		return new PersonaAnimation(varData.animHandler);
 
-	if (thisVar.varType == SVT_INT && thisVar.varData.intValue == 0)
+	if (varType == SVT_INT && varData.intValue == 0)
 		return new PersonaAnimation();
 
-	fatal("Expecting an animation variable; found Variable of type", typeName[thisVar.varType]);
+	fatal("Expecting an animation variable; found Variable of type", typeName[varType]);
 	return NULL;
 }
 

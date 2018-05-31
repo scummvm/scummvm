@@ -165,7 +165,7 @@ builtIn(howFrozen) {
 
 builtIn(setCursor) {
 	UNUSEDALL
-	PersonaAnimation *aa = getAnimationFromVar(fun->stack->thisVar);
+	PersonaAnimation *aa = fun->stack->thisVar.getAnimationFromVar();
 	g_sludge->_cursorMan->pickAnimCursor(aa);
 	trimStack(fun->stack);
 	return BR_CONTINUE;
@@ -370,7 +370,7 @@ builtIn(pasteImage) {
 	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	PersonaAnimation *pp = getAnimationFromVar(fun->stack->thisVar);
+	PersonaAnimation *pp = fun->stack->thisVar.getAnimationFromVar();
 	trimStack(fun->stack);
 	if (pp == NULL)
 		return BR_CONTINUE;
@@ -840,7 +840,7 @@ builtIn(anim) {
 	ba->theSprites = sprBanky;
 
 	// Return value
-	newAnimationVariable(fun->reg, ba);
+	fun->reg.makeAnimationVariable(ba);
 
 	return BR_CONTINUE;
 }
@@ -860,7 +860,7 @@ builtIn(costume) {
 	if (!checkNew(newPersona->animation))
 		return BR_ERROR;
 	for (iii = numParams - 1; iii >= 0; iii--) {
-		newPersona->animation[iii] = getAnimationFromVar(fun->stack->thisVar);
+		newPersona->animation[iii] = fun->stack->thisVar.getAnimationFromVar();
 		trimStack(fun->stack);
 	}
 
@@ -1553,7 +1553,7 @@ builtIn(pasteCharacter) {
 builtIn(animate) {
 	UNUSEDALL
 	int obj;
-	PersonaAnimation *pp = getAnimationFromVar(fun->stack->thisVar);
+	PersonaAnimation *pp = fun->stack->thisVar.getAnimationFromVar();
 	if (pp == NULL)
 		return BR_ERROR;
 	trimStack(fun->stack);
