@@ -444,6 +444,10 @@ bool Menu::isOpen() const {
 	return _vm->_state->getLocationAge() == 9 && _vm->_state->getLocationRoom() == 901;
 }
 
+void Menu::generateSaveThumbnail() {
+	_saveThumbnail.reset(captureThumbnail());
+}
+
 Graphics::Surface *Menu::borrowSaveThumbnail() {
 	return _saveThumbnail.get();
 }
@@ -611,7 +615,7 @@ void PagingMenu::saveMenuSave() {
 		return;
 
 	Common::String fileName = _saveName;
-	if (!fileName.hasSuffix(".M3S") && !fileName.hasSuffix(".m3s"))
+	if (!fileName.hasSuffixIgnoreCase(".M3S"))
 		fileName += ".M3S";
 
 	// Check if file exists
@@ -761,7 +765,7 @@ void PagingMenu::loadMenuChangePage() {
 Common::String PagingMenu::prepareSaveNameForDisplay(const Common::String &name) {
 	Common::String display = name;
 	display.toUppercase();
-	if (display.hasSuffix(".M3S")) {
+	if (display.hasSuffixIgnoreCase(".M3S")) {
 		display.deleteLastChar();
 		display.deleteLastChar();
 		display.deleteLastChar();

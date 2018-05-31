@@ -73,6 +73,12 @@ public:
 	Graphics::Surface *captureThumbnail();
 
 	/**
+	 * Capture and save a thumbnail
+	 * thumbnail can be obtain from borrowSaveThumbnail()
+	 */
+	void generateSaveThumbnail();
+
+	/**
 	 * Get the current save thumbnail
 	 *
 	 * Only valid while the menu is open
