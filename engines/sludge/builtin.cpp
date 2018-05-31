@@ -107,7 +107,7 @@ static BuiltReturn sayCore(int numParams, LoadedFunction *fun, bool sayIt) {
 
 	switch (numParams) {
 		case 3:
-			if (!getValueType(fileNum, SVT_FILE, fun->stack->thisVar))
+			if (!fun->stack->thisVar.getValueType(fileNum, SVT_FILE))
 				return BR_ERROR;
 			trimStack(fun->stack);
 			// fall through
@@ -115,7 +115,7 @@ static BuiltReturn sayCore(int numParams, LoadedFunction *fun, bool sayIt) {
 		case 2:
 			newText = fun->stack->thisVar.getTextFromAnyVar();
 			trimStack(fun->stack);
-			if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar))
+			if (!fun->stack->thisVar.getValueType(objT, SVT_OBJTYPE))
 				return BR_ERROR;
 			trimStack(fun->stack);
 			p = g_sludge->_speechMan->wrapSpeech(newText, objT, fileNum, sayIt);
@@ -307,16 +307,16 @@ builtIn(blankScreen) {
 builtIn(blankArea) {
 	UNUSEDALL
 	int x1, y1, x2, y2;
-	if (!getValueType(y2, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y2, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x2, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x2, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(y1, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y1, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x1, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x1, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_gfxMan->blankScreen(x1, y1, x2, y2);
@@ -332,13 +332,13 @@ builtIn(darkBackground) {
 builtIn(addOverlay) {
 	UNUSEDALL
 	int fileNumber, xPos, yPos;
-	if (!getValueType(yPos, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(yPos, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(xPos, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(xPos, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_gfxMan->loadBackDrop(fileNumber, xPos, yPos);
@@ -348,13 +348,13 @@ builtIn(addOverlay) {
 builtIn(mixOverlay) {
 	UNUSEDALL
 	int fileNumber, xPos, yPos;
-	if (!getValueType(yPos, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(yPos, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(xPos, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(xPos, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_gfxMan->mixBackDrop(fileNumber, xPos, yPos);
@@ -364,10 +364,10 @@ builtIn(mixOverlay) {
 builtIn(pasteImage) {
 	UNUSEDALL
 	int x, y;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	PersonaAnimation *pp = fun->stack->thisVar.getAnimationFromVar();
@@ -385,10 +385,10 @@ builtIn(pasteImage) {
 builtIn(setSceneDimensions) {
 	UNUSEDALL
 	int x, y;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (g_sludge->_gfxMan->killResizeBackdrop(x, y)) {
@@ -402,10 +402,10 @@ builtIn(setSceneDimensions) {
 builtIn(aimCamera) {
 	UNUSEDALL
 	int cameraX, cameraY;
-	if (!getValueType(cameraY, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(cameraY, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(cameraX, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(cameraX, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -417,7 +417,7 @@ builtIn(aimCamera) {
 builtIn(zoomCamera) {
 	UNUSEDALL
 	int z;
-	if (!getValueType(z, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(z, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -456,10 +456,10 @@ builtIn(substring) {
 
 	//debugOut ("BUILTIN: substring\n");
 
-	if (!getValueType(length, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(length, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(start, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(start, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	wholeString = fun->stack->thisVar.getTextFromAnyVar();
@@ -690,7 +690,7 @@ builtIn(random) {
 	UNUSEDALL
 	int num;
 
-	if (!getValueType(num, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(num, SVT_INT))
 		return BR_ERROR;
 
 	trimStack(fun->stack);
@@ -701,13 +701,13 @@ builtIn(random) {
 }
 
 static bool getRGBParams(int &red, int &green, int &blue, LoadedFunction *fun) {
-	if (!getValueType(blue, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(blue, SVT_INT))
 		return false;
 	trimStack(fun->stack);
-	if (!getValueType(green, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(green, SVT_INT))
 		return false;
 	trimStack(fun->stack);
-	if (!getValueType(red, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(red, SVT_INT))
 		return false;
 	trimStack(fun->stack);
 	return true;
@@ -773,14 +773,14 @@ builtIn(setBurnColour) {
 builtIn(setFont) {
 	UNUSEDALL
 	int fileNumber, newHeight;
-	if (!getValueType(newHeight, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(newHeight, SVT_INT))
 		return BR_ERROR;
 	//              newDebug ("  Height:", newHeight);
 	trimStack(fun->stack);
 	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	//              newDebug ("  Character supported:", newText);
 	trimStack(fun->stack);
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
 		return BR_ERROR;
 	//              newDebug ("  File:", fileNumber);
 	trimStack(fun->stack);
@@ -805,10 +805,10 @@ builtIn(pasteString) {
 	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	int y, x;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (x == IN_THE_CENTRE)
@@ -829,7 +829,7 @@ builtIn(anim) {
 
 	// Only remaining paramter is the file number
 	int fileNumber;
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -898,7 +898,7 @@ builtIn(launch) {
 builtIn(pause) {
 	UNUSEDALL
 	int theTime;
-	if (!getValueType(theTime, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(theTime, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (theTime > 0) {
@@ -918,10 +918,10 @@ builtIn(completeTimers) {
 builtIn(callEvent) {
 	UNUSEDALL
 	int obj1, obj2;
-	if (!getValueType(obj2, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj2, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj1, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj1, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -971,7 +971,7 @@ builtIn(playMovie) {
 	if (movieIsPlaying)
 		return BR_PAUSE;
 
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -1010,13 +1010,13 @@ builtIn(pauseMovie) {
 builtIn(startMusic) {
 	UNUSEDALL
 	int fromTrack, musChan, fileNumber;
-	if (!getValueType(fromTrack, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(fromTrack, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(musChan, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(musChan, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (!g_sludge->_soundMan->playMOD(fileNumber, musChan, fromTrack))
@@ -1027,7 +1027,7 @@ builtIn(startMusic) {
 builtIn(stopMusic) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(v, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_soundMan->stopMOD(v);
@@ -1037,10 +1037,10 @@ builtIn(stopMusic) {
 builtIn(setMusicVolume) {
 	UNUSEDALL
 	int musChan, v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(v, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(musChan, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(musChan, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_soundMan->setMusicVolume(musChan, v);
@@ -1050,7 +1050,7 @@ builtIn(setMusicVolume) {
 builtIn(setDefaultMusicVolume) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(v, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_soundMan->setDefaultMusicVolume(v);
@@ -1060,7 +1060,7 @@ builtIn(setDefaultMusicVolume) {
 builtIn(playSound) {
 	UNUSEDALL
 	int fileNumber;
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (!g_sludge->_soundMan->startSound(fileNumber, false))
@@ -1076,7 +1076,7 @@ builtIn(loopSound) {
 		return BR_ERROR;
 	} else if (numParams < 2) {
 
-		if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+		if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
 			return BR_ERROR;
 		trimStack(fun->stack);
 		if (!g_sludge->_soundMan->startSound(fileNumber, true))
@@ -1091,12 +1091,12 @@ builtIn(loopSound) {
 
 		// Should we loop?
 		if (fun->stack->thisVar.varType != SVT_FILE) {
-			getValueType(doLoop, SVT_INT, fun->stack->thisVar);
+			fun->stack->thisVar.getValueType(doLoop, SVT_INT);
 			trimStack(fun->stack);
 			numParams--;
 		}
 		while (numParams) {
-			if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar)) {
+			if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE)) {
 				fatal("Illegal parameter given built-in function loopSound().");
 				return BR_ERROR;
 			}
@@ -1129,7 +1129,7 @@ builtIn(loopSound) {
 builtIn(stopSound) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(v, SVT_FILE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_soundMan->huntKillSound(v);
@@ -1139,7 +1139,7 @@ builtIn(stopSound) {
 builtIn(setDefaultSoundVolume) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(v, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_soundMan->setDefaultSoundVolume(v);
@@ -1149,10 +1149,10 @@ builtIn(setDefaultSoundVolume) {
 builtIn(setSoundVolume) {
 	UNUSEDALL
 	int musChan, v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(v, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(musChan, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(musChan, SVT_FILE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_soundMan->setSoundVolume(musChan, v);
@@ -1162,13 +1162,13 @@ builtIn(setSoundVolume) {
 builtIn(setSoundLoopPoints) {
 	UNUSEDALL
 	int musChan, theEnd, theStart;
-	if (!getValueType(theEnd, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(theEnd, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(theStart, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(theStart, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(musChan, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(musChan, SVT_FILE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_soundMan->setSoundLoop(musChan, theStart, theEnd);
@@ -1182,7 +1182,7 @@ builtIn(setFloor) {
 	UNUSEDALL
 	if (fun->stack->thisVar.varType == SVT_FILE) {
 		int v;
-		getValueType(v, SVT_FILE, fun->stack->thisVar);
+		fun->stack->thisVar.getValueType(v, SVT_FILE);
 		trimStack(fun->stack);
 		if (!g_sludge->_floorMan->setFloor(v))
 			return BR_ERROR;
@@ -1203,7 +1203,7 @@ builtIn(setZBuffer) {
 	UNUSEDALL
 	if (fun->stack->thisVar.varType == SVT_FILE) {
 		int v;
-		getValueType(v, SVT_FILE, fun->stack->thisVar);
+		fun->stack->thisVar.getValueType(v, SVT_FILE);
 		trimStack(fun->stack);
 		if (!g_sludge->_gfxMan->setZBuffer(v))
 			return BR_ERROR;
@@ -1218,7 +1218,7 @@ builtIn(setLightMap) {
 	UNUSEDALL
 	switch (numParams) {
 		case 2:
-			if (!getValueType(g_sludge->_gfxMan->_lightMapMode, SVT_INT, fun->stack->thisVar))
+			if (!fun->stack->thisVar.getValueType(g_sludge->_gfxMan->_lightMapMode, SVT_INT))
 				return BR_ERROR;
 			trimStack(fun->stack);
 			g_sludge->_gfxMan->_lightMapMode %= LIGHTMAPMODE_NUM;
@@ -1227,7 +1227,7 @@ builtIn(setLightMap) {
 		case 1:
 			if (fun->stack->thisVar.varType == SVT_FILE) {
 				int v;
-				getValueType(v, SVT_FILE, fun->stack->thisVar);
+				fun->stack->thisVar.getValueType(v, SVT_FILE);
 				trimStack(fun->stack);
 				if (!g_sludge->_gfxMan->loadLightMap(v))
 					return BR_ERROR;
@@ -1252,7 +1252,7 @@ builtIn(setLightMap) {
 builtIn(setSpeechMode) {
 	UNUSEDALL
 	int speechMode;
-	if (!getValueType(speechMode, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(speechMode, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (speechMode < 0 || speechMode > 2) {
@@ -1296,7 +1296,7 @@ builtIn(rename) {
 	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	int objT;
 	trimStack(fun->stack);
-	if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objT, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	ObjectType *o = g_sludge->_objMan->findObjectType(objT);
@@ -1308,7 +1308,7 @@ builtIn(rename) {
 builtIn(getObjectX) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -1329,7 +1329,7 @@ builtIn(getObjectX) {
 builtIn(getObjectY) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -1350,28 +1350,28 @@ builtIn(getObjectY) {
 builtIn(addScreenRegion) {
 	UNUSEDALL
 	int sX, sY, x1, y1, x2, y2, di, objectNumber;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(di, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(sY, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(sY, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(sX, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(sX, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(y2, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y2, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x2, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x2, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(y1, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y1, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x1, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x1, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (g_sludge->_regionMan->addScreenRegion(x1, y1, x2, y2, sX, sY, di, objectNumber))
@@ -1383,7 +1383,7 @@ builtIn(addScreenRegion) {
 builtIn(removeScreenRegion) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_regionMan->removeScreenRegion(objectNumber);
@@ -1412,13 +1412,13 @@ builtIn(addCharacter) {
 		return BR_ERROR;
 
 	trimStack(fun->stack);
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (g_sludge->_peopleMan->addPerson(x, y, objectNumber, p))
@@ -1429,7 +1429,7 @@ builtIn(addCharacter) {
 builtIn(hideCharacter) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_peopleMan->setShown(false, objectNumber);
@@ -1439,7 +1439,7 @@ builtIn(hideCharacter) {
 builtIn(showCharacter) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_peopleMan->setShown(true, objectNumber);
@@ -1456,10 +1456,10 @@ builtIn(removeAllCharacters) {
 builtIn(setCharacterDrawMode) {
 	UNUSEDALL
 	int obj, di;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(di, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_peopleMan->setDrawMode(di, obj);
@@ -1468,10 +1468,10 @@ builtIn(setCharacterDrawMode) {
 builtIn(setCharacterTransparency) {
 	UNUSEDALL
 	int obj, x;
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_peopleMan->setPersonTransparency(obj, x);
@@ -1480,19 +1480,19 @@ builtIn(setCharacterTransparency) {
 builtIn(setCharacterColourise) {
 	UNUSEDALL
 	int obj, r, g, b, mix;
-	if (!getValueType(mix, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(mix, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(b, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(b, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(g, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(g, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(r, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(r, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_peopleMan->setPersonColourise(obj, r, g, b, mix);
@@ -1502,10 +1502,10 @@ builtIn(setCharacterColourise) {
 builtIn(setScale) {
 	UNUSEDALL
 	int val1, val2;
-	if (!getValueType(val2, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(val2, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(val1, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(val1, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_peopleMan->setScale((int16)val1, (int16)val2);
@@ -1515,7 +1515,7 @@ builtIn(setScale) {
 builtIn(stopCharacter) {
 	UNUSEDALL
 	int obj;
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -1527,7 +1527,7 @@ builtIn(stopCharacter) {
 builtIn(pasteCharacter) {
 	UNUSEDALL
 	int obj;
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -1557,7 +1557,7 @@ builtIn(animate) {
 	if (pp == NULL)
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_peopleMan->animatePerson(obj, pp);
@@ -1572,7 +1572,7 @@ builtIn(setCostume) {
 	if (pp == NULL)
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_peopleMan->animatePerson(obj, pp);
@@ -1582,10 +1582,10 @@ builtIn(setCostume) {
 builtIn(floatCharacter) {
 	UNUSEDALL
 	int obj, di;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(di, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	fun->reg.setVariable(SVT_INT, g_sludge->_peopleMan->floatCharacter(di, obj));
@@ -1595,10 +1595,10 @@ builtIn(floatCharacter) {
 builtIn(setCharacterWalkSpeed) {
 	UNUSEDALL
 	int obj, di;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(di, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	fun->reg.setVariable(SVT_INT, g_sludge->_peopleMan->setCharacterWalkSpeed(di, obj));
@@ -1608,10 +1608,10 @@ builtIn(setCharacterWalkSpeed) {
 builtIn(turnCharacter) {
 	UNUSEDALL
 	int obj, di;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(di, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	fun->reg.setVariable(SVT_INT, g_sludge->_peopleMan->turnPersonToFace(obj, di));
@@ -1621,10 +1621,10 @@ builtIn(turnCharacter) {
 builtIn(setCharacterExtra) {
 	UNUSEDALL
 	int obj, di;
-	if (!getValueType(di, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(di, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	fun->reg.setVariable(SVT_INT, g_sludge->_peopleMan->setPersonExtra(obj, di));
@@ -1634,7 +1634,7 @@ builtIn(setCharacterExtra) {
 builtIn(removeCharacter) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_peopleMan->removeOneCharacter(objectNumber);
@@ -1646,13 +1646,13 @@ static BuiltReturn moveChr(int numParams, LoadedFunction *fun, bool force, bool 
 		case 3: {
 			int x, y, objectNumber;
 
-			if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+			if (!fun->stack->thisVar.getValueType(y, SVT_INT))
 				return BR_ERROR;
 			trimStack(fun->stack);
-			if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+			if (!fun->stack->thisVar.getValueType(x, SVT_INT))
 				return BR_ERROR;
 			trimStack(fun->stack);
-			if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+			if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 				return BR_ERROR;
 			trimStack(fun->stack);
 
@@ -1672,10 +1672,10 @@ static BuiltReturn moveChr(int numParams, LoadedFunction *fun, bool force, bool 
 			int toObj, objectNumber;
 			ScreenRegion*reggie;
 
-			if (!getValueType(toObj, SVT_OBJTYPE, fun->stack->thisVar))
+			if (!fun->stack->thisVar.getValueType(toObj, SVT_OBJTYPE))
 				return BR_ERROR;
 			trimStack(fun->stack);
-			if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+			if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 				return BR_ERROR;
 			trimStack(fun->stack);
 			reggie = g_sludge->_regionMan->getRegionForObject(toObj);
@@ -1744,7 +1744,7 @@ builtIn(statusText) {
 builtIn(lightStatus) {
 	UNUSEDALL
 	int val;
-	if (!getValueType(val, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(val, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	setLitStatus(val);
@@ -1754,10 +1754,10 @@ builtIn(lightStatus) {
 builtIn(positionStatus) {
 	UNUSEDALL
 	int x, y;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	positionStatus(x, y);
@@ -1767,7 +1767,7 @@ builtIn(positionStatus) {
 builtIn(alignStatus) {
 	UNUSEDALL
 	int val;
-	if (!getValueType(val, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(val, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	nowStatus->alignStatus = (int16)val;
@@ -1781,7 +1781,7 @@ static bool getFuncNumForCallback(int numParams, LoadedFunction *fun, int &funct
 			break;
 
 		case 1:
-			if (!getValueType(functionNum, SVT_FUNC, fun->stack->thisVar))
+			if (!fun->stack->thisVar.getValueType(functionNum, SVT_FUNC))
 				return false;
 			trimStack(fun->stack);
 			break;
@@ -1902,7 +1902,7 @@ builtIn(stringWidth) {
 builtIn(hardScroll) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(v, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_gfxMan->hardScroll(v);
@@ -1912,7 +1912,7 @@ builtIn(hardScroll) {
 builtIn(isScreenRegion) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	fun->reg.setVariable(SVT_INT, g_sludge->_regionMan->getRegionForObject(objectNumber) != NULL);
@@ -1922,7 +1922,7 @@ builtIn(isScreenRegion) {
 builtIn(setSpeechSpeed) {
 	UNUSEDALL
 	int number;
-	if (!getValueType(number, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(number, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_speechMan->setSpeechSpeed(number * 0.01);
@@ -1933,7 +1933,7 @@ builtIn(setSpeechSpeed) {
 builtIn(setFontSpacing) {
 	UNUSEDALL
 	int fontSpaceI;
-	if (!getValueType(fontSpaceI, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(fontSpaceI, SVT_INT))
 		return BR_ERROR;
 	g_sludge->_txtMan->setFontSpace(fontSpaceI);
 	trimStack(fun->stack);
@@ -1944,7 +1944,7 @@ builtIn(setFontSpacing) {
 builtIn(transitionLevel) {
 	UNUSEDALL
 	int brightnessLevel;
-	if (!getValueType(brightnessLevel, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(brightnessLevel, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -1957,7 +1957,7 @@ builtIn(transitionLevel) {
 builtIn(captureAllKeys) {
 	UNUSEDALL
 	// This built-in function doesn't have any effect any more, we capture all keys by default
-	bool captureAllKeysDeprecated = getBoolean(fun->stack->thisVar);
+	bool captureAllKeysDeprecated = fun->stack->thisVar.getBoolean();
 	trimStack(fun->stack);
 	fun->reg.setVariable(SVT_INT, captureAllKeysDeprecated);
 	return BR_CONTINUE;
@@ -1966,10 +1966,10 @@ builtIn(captureAllKeys) {
 builtIn(spinCharacter) {
 	UNUSEDALL
 	int number, objectNumber;
-	if (!getValueType(number, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(number, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -1989,7 +1989,7 @@ builtIn(spinCharacter) {
 builtIn(getCharacterDirection) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
@@ -2004,7 +2004,7 @@ builtIn(getCharacterDirection) {
 builtIn(isCharacter) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
@@ -2015,7 +2015,7 @@ builtIn(isCharacter) {
 builtIn(normalCharacter) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
@@ -2031,7 +2031,7 @@ builtIn(normalCharacter) {
 builtIn(isMoving) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
@@ -2046,10 +2046,10 @@ builtIn(isMoving) {
 builtIn(fetchEvent) {
 	UNUSEDALL
 	int obj1, obj2;
-	if (!getValueType(obj2, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj2, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(obj1, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(obj1, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -2104,7 +2104,7 @@ builtIn(renameFile) {
 builtIn(cacheSound) {
 	UNUSEDALL
 	int fileNumber;
-	if (!getValueType(fileNumber, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (g_sludge->_soundMan->cacheSound(fileNumber) == -1)
@@ -2117,10 +2117,10 @@ builtIn(burnString) {
 	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
 	int y, x;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (x == IN_THE_CENTRE)
@@ -2132,10 +2132,10 @@ builtIn(burnString) {
 builtIn(setCharacterSpinSpeed) {
 	UNUSEDALL
 	int speed, who;
-	if (!getValueType(speed, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(speed, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(who, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(who, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -2153,10 +2153,10 @@ builtIn(setCharacterSpinSpeed) {
 builtIn(setCharacterAngleOffset) {
 	UNUSEDALL
 	int angle, who;
-	if (!getValueType(angle, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(angle, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(who, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(who, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -2174,7 +2174,7 @@ builtIn(setCharacterAngleOffset) {
 builtIn(transitionMode) {
 	UNUSEDALL
 	int n;
-	if (!getValueType(n, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(n, SVT_INT))
 		return BR_ERROR;
 	g_sludge->_gfxMan->setFadeMode(n);
 	trimStack(fun->stack);
@@ -2252,7 +2252,7 @@ builtIn(loadCustomData) {
 builtIn(setCustomEncoding) {
 	UNUSEDALL
 	int n;
-	if (!getValueType(n, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(n, SVT_INT))
 		return BR_ERROR;
 	CustomSaveHelper::_saveEncoding = n;
 	trimStack(fun->stack);
@@ -2263,7 +2263,7 @@ builtIn(setCustomEncoding) {
 builtIn(freeSound) {
 	UNUSEDALL
 	int v;
-	if (!getValueType(v, SVT_FILE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(v, SVT_FILE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_soundMan->huntKillFreeSound(v);
@@ -2277,13 +2277,13 @@ builtIn(parallaxAdd) {
 		return BR_ERROR;
 	} else {
 		int wrapX, wrapY, v;
-		if (!getValueType(wrapY, SVT_INT, fun->stack->thisVar))
+		if (!fun->stack->thisVar.getValueType(wrapY, SVT_INT))
 			return BR_ERROR;
 		trimStack(fun->stack);
-		if (!getValueType(wrapX, SVT_INT, fun->stack->thisVar))
+		if (!fun->stack->thisVar.getValueType(wrapX, SVT_INT))
 			return BR_ERROR;
 		trimStack(fun->stack);
-		if (!getValueType(v, SVT_FILE, fun->stack->thisVar))
+		if (!fun->stack->thisVar.getValueType(v, SVT_FILE))
 			return BR_ERROR;
 		trimStack(fun->stack);
 
@@ -2304,10 +2304,10 @@ builtIn(parallaxClear) {
 builtIn(getPixelColour) {
 	UNUSEDALL
 	int x, y;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -2352,7 +2352,7 @@ builtIn(makeFastArray) {
 builtIn(getCharacterScale) {
 	UNUSEDALL
 	int objectNumber;
-	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objectNumber, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -2410,10 +2410,10 @@ builtIn(getFramesPerSecond) {
 builtIn(showThumbnail) {
 	UNUSEDALL
 	int x, y;
-	if (!getValueType(y, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(y, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(x, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(x, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 
@@ -2428,10 +2428,10 @@ builtIn(showThumbnail) {
 builtIn(setThumbnailSize) {
 	UNUSEDALL
 	int thumbHeight, thumbWidth;
-	if (!getValueType(thumbHeight, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(thumbHeight, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(thumbWidth, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(thumbWidth, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	if (!g_sludge->_gfxMan->setThumbnailSize(thumbWidth, thumbHeight)) {
@@ -2445,10 +2445,10 @@ builtIn(setThumbnailSize) {
 builtIn(hasFlag) {
 	UNUSEDALL
 	int objNum, flagIndex;
-	if (!getValueType(flagIndex, SVT_INT, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(flagIndex, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (!getValueType(objNum, SVT_OBJTYPE, fun->stack->thisVar))
+	if (!fun->stack->thisVar.getValueType(objNum, SVT_OBJTYPE))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	ObjectType *objT = g_sludge->_objMan->findObjectType(objNum);
@@ -2472,7 +2472,7 @@ builtIn(snapshotClear) {
 builtIn(bodgeFilenames) {
 	UNUSEDALL
 	bool lastValue = allowAnyFilename;
-	allowAnyFilename = getBoolean(fun->stack->thisVar);
+	allowAnyFilename = fun->stack->thisVar.getBoolean();
 	trimStack(fun->stack);
 	fun->reg.setVariable(SVT_INT, lastValue);
 	return BR_CONTINUE;

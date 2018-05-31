@@ -309,22 +309,22 @@ Common::String Variable::getTextFromAnyVar() const {
 	return typeName[varType];
 }
 
-bool getBoolean(const Variable &from) {
-	switch (from.varType) {
+bool Variable::getBoolean() const {
+	switch (varType) {
 		case SVT_NULL:
 			return false;
 
 		case SVT_INT:
-			return (bool)(from.varData.intValue != 0);
+			return (bool)(varData.intValue != 0);
 
 		case SVT_STACK:
-			return (bool)(from.varData.theStack->first != NULL);
+			return (bool)(varData.theStack->first != NULL);
 
 		case SVT_STRING:
-			return (bool)(from.varData.theString[0] != 0);
+			return (bool)(varData.theString[0] != 0);
 
 		case SVT_FASTARRAY:
-			return (bool)(from.varData.fastArray->size != 0);
+			return (bool)(varData.fastArray->size != 0);
 
 		default:
 			break;
@@ -500,18 +500,17 @@ VariableStack *stackFindLast(VariableStack *hunt) {
 	return hunt;
 }
 
-bool getValueType(int &toHere, VariableType vT, const Variable &v) {
-	//if (! v) return false;
-	if (v.varType != vT) {
+bool Variable::getValueType(int &toHere, VariableType vT) const {
+	if (varType != vT) {
 		Common::String e1 = "Can only perform specified operation on a value which is of type ";
 		e1 += typeName[vT];
 		Common::String e2 = "... value supplied was of type ";
-		e2 += typeName[v.varType];
+		e2 += typeName[varType];
 		fatal(e1, e2);
 
 		return false;
 	}
-	toHere = v.varData.intValue;
+	toHere = varData.intValue;
 	return true;
 }
 

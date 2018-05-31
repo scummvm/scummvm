@@ -296,13 +296,13 @@ bool continueFunction(LoadedFunction *fun) {
 
 		case SLU_AND:
 			fun->reg.setVariable(SVT_INT,
-					getBoolean(fun->reg) && getBoolean(fun->stack->thisVar));
+					fun->reg.getBoolean() && fun->stack->thisVar.getBoolean());
 			trimStack(fun->stack);
 			break;
 
 		case SLU_OR:
 			fun->reg.setVariable(SVT_INT,
-					getBoolean(fun->reg) || getBoolean(fun->stack->thisVar));
+					fun->reg.getBoolean() || fun->stack->thisVar.getBoolean());
 			trimStack(fun->stack);
 			break;
 
@@ -346,7 +346,7 @@ bool continueFunction(LoadedFunction *fun) {
 					return fatal(ERROR_INDEX_EMPTY);
 				} else {
 					int ii;
-					if (!getValueType(ii, SVT_INT, fun->reg))
+					if (!fun->reg.getValueType(ii, SVT_INT))
 						return false;
 					Variable *grab =
 							(fun->stack->thisVar.varType == SVT_FASTARRAY) ?
@@ -365,14 +365,14 @@ bool continueFunction(LoadedFunction *fun) {
 						int kk;
 						switch (com) {
 						case SLU_INCREMENT_INDEX:
-							if (!getValueType(kk, SVT_INT, *grab))
+							if (!grab->getValueType(kk, SVT_INT))
 								return false;
 							fun->reg.setVariable(SVT_INT, kk);
 							grab->varData.intValue = kk + 1;
 							break;
 
 						case SLU_DECREMENT_INDEX:
-							if (!getValueType(kk, SVT_INT, *grab))
+							if (!grab->getValueType(kk, SVT_INT))
 								return false;
 							fun->reg.setVariable(SVT_INT, kk);
 							grab->varData.intValue = kk - 1;
@@ -398,7 +398,7 @@ bool continueFunction(LoadedFunction *fun) {
 					return fatal(ERROR_INDEX_EMPTY);
 				} else {
 					int ii;
-					if (!getValueType(ii, SVT_INT, fun->reg))
+					if (!fun->reg.getValueType(ii, SVT_INT))
 						return false;
 					if (!stackSetByIndex(
 							fun->stack->thisVar.varData.theStack->first, ii,
@@ -412,7 +412,7 @@ bool continueFunction(LoadedFunction *fun) {
 
 			case SVT_FASTARRAY: {
 				int ii;
-				if (!getValueType(ii, SVT_INT, fun->reg))
+				if (!fun->reg.getValueType(ii, SVT_INT))
 					return false;
 				Variable *v = fastArrayGetByIndex(
 						fun->stack->thisVar.varData.fastArray, ii);
@@ -435,7 +435,7 @@ bool continueFunction(LoadedFunction *fun) {
 
 		case SLU_INCREMENT_LOCAL: {
 			int ii;
-			if (!getValueType(ii, SVT_INT, fun->localVars[param]))
+			if (!fun->localVars[param].getValueType(ii, SVT_INT))
 				return false;
 			fun->reg.setVariable(SVT_INT, ii);
 			fun->localVars[param].setVariable(SVT_INT, ii + 1);
@@ -444,7 +444,7 @@ bool continueFunction(LoadedFunction *fun) {
 
 		case SLU_INCREMENT_GLOBAL: {
 			int ii;
-			if (!getValueType(ii, SVT_INT, globalVars[param]))
+			if (!globalVars[param].getValueType(ii, SVT_INT))
 				return false;
 			fun->reg.setVariable(SVT_INT, ii);
 			globalVars[param].setVariable(SVT_INT, ii + 1);
@@ -453,7 +453,7 @@ bool continueFunction(LoadedFunction *fun) {
 
 		case SLU_DECREMENT_LOCAL: {
 			int ii;
-			if (!getValueType(ii, SVT_INT, fun->localVars[param]))
+			if (!fun->localVars[param].getValueType(ii, SVT_INT))
 				return false;
 			fun->reg.setVariable(SVT_INT, ii);
 			fun->localVars[param].setVariable(SVT_INT, ii - 1);
@@ -462,7 +462,7 @@ bool continueFunction(LoadedFunction *fun) {
 
 		case SLU_DECREMENT_GLOBAL: {
 			int ii;
-			if (!getValueType(ii, SVT_INT, globalVars[param]))
+			if (!globalVars[param].getValueType(ii, SVT_INT))
 				return false;
 			fun->reg.setVariable(SVT_INT, ii);
 			globalVars[param].setVariable(SVT_INT, ii - 1);
@@ -495,11 +495,11 @@ bool continueFunction(LoadedFunction *fun) {
 			break;
 
 		case SLU_NOT:
-			fun->reg.setVariable(SVT_INT, !getBoolean(fun->reg));
+			fun->reg.setVariable(SVT_INT, !fun->reg.getBoolean());
 			break;
 
 		case SLU_BR_ZERO:
-			if (!getBoolean(fun->reg)) {
+			if (!fun->reg.getBoolean()) {
 				advanceNow = false;
 				fun->runThisLine = param;
 			}
@@ -512,7 +512,7 @@ bool continueFunction(LoadedFunction *fun) {
 
 		case SLU_NEGATIVE: {
 			int i;
-			if (!getValueType(i, SVT_INT, fun->reg))
+			if (!fun->reg.getValueType(i, SVT_INT))
 				return false;
 			fun->reg.setVariable(SVT_INT, -i);
 		}
@@ -552,9 +552,9 @@ bool continueFunction(LoadedFunction *fun) {
 					break;
 
 				default:
-					if (!getValueType(firstValue, SVT_INT, fun->stack->thisVar))
+					if (!fun->stack->thisVar.getValueType(firstValue, SVT_INT))
 						return false;
-					if (!getValueType(secondValue, SVT_INT, fun->reg))
+					if (!fun->reg.getValueType(secondValue, SVT_INT))
 						return false;
 					trimStack(fun->stack);
 

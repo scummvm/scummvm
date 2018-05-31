@@ -88,7 +88,6 @@ struct Variable {
 	// Text variable
 	void makeTextVar(const Common::String &txt);
 	bool loadStringToVar(int value);
-	Common::String getTextFromAnyVar() const;
 
 	// Animation variable
 	void makeAnimationVariable(PersonaAnimation *i);
@@ -102,17 +101,17 @@ struct Variable {
 	void addVariablesInSecond(const Variable &other);
 	void compareVariablesInSecond(const Variable &other);
 	int compareVars(const Variable &other) const;
+
+	// General getters
+	Common::String getTextFromAnyVar() const;
+	bool getBoolean() const;
+	bool getValueType(int &toHere, VariableType vT) const;
 };
 
 struct VariableStack {
 	Variable thisVar;
 	VariableStack *next;
 };
-
-// Misc.
-
-bool getBoolean(const Variable &from);
-bool getValueType(int &toHere, VariableType vT, const Variable &v);
 
 // Stacky stuff
 
