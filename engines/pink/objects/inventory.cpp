@@ -221,7 +221,7 @@ void InventoryMgr::saveState(Archive &archive) {
 	}
 
 	if (_item)
-		archive.writeString(_item->_currentOwner);
+		archive.writeString(_item->getName());
 	else
 		archive.writeString(Common::String());
 }
