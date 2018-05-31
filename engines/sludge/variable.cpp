@@ -492,10 +492,8 @@ int deleteVarFromStack(const Variable &va, VariableStack *&thisStack, bool allOf
 }
 
 // Would be a LOT better just to keep this up to date in the above function... ah well
-VariableStack *stackFindLast(VariableStack *hunt) {
-	if (hunt == NULL)
-		return NULL;
-
+VariableStack *VariableStack::stackFindLast() {
+	VariableStack *hunt = this;
 	while (hunt->next)
 		hunt = hunt->next;
 

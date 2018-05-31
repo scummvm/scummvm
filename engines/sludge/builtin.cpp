@@ -609,7 +609,8 @@ builtIn(deleteFromStack) {
 	fun->reg.setVariable(SVT_INT, deleteVarFromStack(fun->stack->thisVar, fun->stack->next->thisVar.varData.theStack->first, false));
 
 	// Horrible hacking because 'last' value might now be wrong!
-	fun->stack->next->thisVar.varData.theStack->last = stackFindLast(fun->stack->next->thisVar.varData.theStack->first);
+	VariableStack *nextFirstStack = fun->stack->next->thisVar.varData.theStack->first;
+	fun->stack->next->thisVar.varData.theStack->last = (nextFirstStack == NULL) ? NULL : nextFirstStack->stackFindLast();
 
 	trimStack(fun->stack);
 	trimStack(fun->stack);
@@ -627,7 +628,8 @@ builtIn(deleteAllFromStack) {
 	fun->reg.setVariable(SVT_INT, deleteVarFromStack(fun->stack->thisVar, fun->stack->next->thisVar.varData.theStack->first, true));
 
 	// Horrible hacking because 'last' value might now be wrong!
-	fun->stack->next->thisVar.varData.theStack->last = stackFindLast(fun->stack->next->thisVar.varData.theStack->first);
+	VariableStack *nextFirstStack = fun->stack->next->thisVar.varData.theStack->first;
+	fun->stack->next->thisVar.varData.theStack->last = (nextFirstStack == NULL) ? NULL : nextFirstStack->stackFindLast();
 
 	trimStack(fun->stack);
 	trimStack(fun->stack);
