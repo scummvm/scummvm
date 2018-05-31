@@ -191,52 +191,52 @@ bool copyStack(const Variable &from, Variable &to) {
 	return true;
 }
 
-void addVariablesInSecond(Variable &var1, Variable &var2) {
-	if (var1.varType == SVT_INT && var2.varType == SVT_INT) {
-		var2.varData.intValue += var1.varData.intValue;
+void Variable::addVariablesInSecond(const Variable &other) {
+	if (other.varType == SVT_INT && varType == SVT_INT) {
+		varData.intValue += other.varData.intValue;
 	} else {
-		Common::String string1 = var1.getTextFromAnyVar();
-		Common::String string2 = var2.getTextFromAnyVar();
+		Common::String string1 = other.getTextFromAnyVar();
+		Common::String string2 = getTextFromAnyVar();
 
-		var2.unlinkVar();
-		var2.varData.theString = createCString(string1 + string2);
-		var2.varType = SVT_STRING;
+		unlinkVar();
+		varData.theString = createCString(string1 + string2);
+		varType = SVT_STRING;
 	}
 }
 
-int compareVars(const Variable &var1, const Variable &var2) {
+int Variable::compareVars(const Variable &other) const {
 	int re = 0;
-	if (var1.varType == var2.varType) {
-		switch (var1.varType) {
+	if (other.varType == varType) {
+		switch (other.varType) {
 			case SVT_NULL:
 				re = 1;
 				break;
 
 			case SVT_COSTUME:
-				re = (var1.varData.costumeHandler == var2.varData.costumeHandler);
+				re = (other.varData.costumeHandler == varData.costumeHandler);
 				break;
 
 			case SVT_ANIM:
-				re = (var1.varData.animHandler == var2.varData.animHandler);
+				re = (other.varData.animHandler == varData.animHandler);
 				break;
 
 			case SVT_STRING:
-				re = (strcmp(var1.varData.theString, var2.varData.theString) == 0);
+				re = (strcmp(other.varData.theString, varData.theString) == 0);
 				break;
 
 			case SVT_STACK:
-				re = (var1.varData.theStack == var2.varData.theStack);
+				re = (other.varData.theStack == varData.theStack);
 				break;
 
 			default:
-				re = (var1.varData.intValue == var2.varData.intValue);
+				re = (other.varData.intValue == varData.intValue);
 		}
 	}
 	return re;
 }
 
-void compareVariablesInSecond(const Variable &var1, Variable &var2) {
-	var2.setVariable(SVT_INT, compareVars(var1, var2));
+void Variable::compareVariablesInSecond(const Variable &other) {
+	setVariable(SVT_INT, compareVars(other));
 }
 
 void Variable::makeTextVar(const Common::String &txt) {
@@ -250,7 +250,7 @@ bool Variable::loadStringToVar(int value) {
 	return (bool)(varData.theString != NULL);
 }
 
-Common::String Variable::getTextFromAnyVar() {
+Common::String Variable::getTextFromAnyVar() const {
 	switch (varType) {
 		case SVT_STRING:
 			return varData.theString;
@@ -473,7 +473,7 @@ int deleteVarFromStack(const Variable &va, VariableStack *&thisStack, bool allOf
 	int reply = 0;
 
 	while (*huntVar) {
-		if (compareVars((*huntVar)->thisVar, va)) {
+		if (va.compareVars((*huntVar)->thisVar)) {
 			killMe = *huntVar;
 			*huntVar = killMe->next;
 			killMe->thisVar.unlinkVar();

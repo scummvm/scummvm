@@ -536,17 +536,17 @@ bool continueFunction(LoadedFunction *fun) {
 
 				switch (com) {
 				case SLU_PLUS:
-					addVariablesInSecond(fun->stack->thisVar, fun->reg);
+					fun->reg.addVariablesInSecond(fun->stack->thisVar);
 					trimStack(fun->stack);
 					break;
 
 				case SLU_EQUALS:
-					compareVariablesInSecond(fun->stack->thisVar, fun->reg);
+					fun->reg.compareVariablesInSecond(fun->stack->thisVar);
 					trimStack(fun->stack);
 					break;
 
 				case SLU_NOT_EQ:
-					compareVariablesInSecond(fun->stack->thisVar, fun->reg);
+					fun->reg.compareVariablesInSecond(fun->stack->thisVar);
 					trimStack(fun->stack);
 					fun->reg.varData.intValue = !fun->reg.varData.intValue;
 					break;
