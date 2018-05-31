@@ -184,13 +184,13 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 		// Obtain the text
 		_textDesc.setText(metadata.description);
 		_textDesc.setColor(_textColor);
-		_textDesc.setFont(FontProvider::FontType::kCustomFont, 3);
+		_textDesc.setFont(FontProvider::kCustomFont, 3);
 
 		_textTime.setText(Common::String::format("%02d:%02d:%02d %02d/%02d/%02d",
 				metadata.saveHour, metadata.saveMinute, metadata.saveSecond,
 				metadata.saveMonth, metadata.saveDay, metadata.saveYear % 100));
 		_textTime.setColor(_textColor);
-		_textTime.setFont(FontProvider::FontType::kCustomFont, 3);
+		_textTime.setFont(FontProvider::kCustomFont, 3);
 	} else {
 		setVisible(_screen->isSaveMenu());
 	}

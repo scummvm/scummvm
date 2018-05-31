@@ -61,8 +61,11 @@ void SaveMetadata::saveLoad(ResourceSerializer *s) {
 		s->syncAsUint16BE(saveYear);
 		s->syncAsByte(saveHour);
 		s->syncAsByte(saveMinute);
-		s->syncAsByte(saveSecond);
 		s->syncAsSint32LE(totalPlayTime);
+	}
+
+	if (version >= 10) {
+		s->syncAsByte(saveSecond);
 	}
 }
 
