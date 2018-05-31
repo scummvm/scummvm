@@ -77,6 +77,10 @@ struct Variable {
 	void unlinkVar();
 	void setVariable(VariableType vT, int value);
 
+	// Copy from another variable
+	bool copyFrom(const Variable &from);
+	bool copyMain(const Variable &from); // without variable unlink
+
 	// Load & save
 	bool save(Common::WriteStream *stream);
 	bool load(Common::SeekableReadStream *stream);
@@ -88,8 +92,6 @@ struct VariableStack {
 };
 
 // Setting variables
-
-bool copyVariable(const Variable &from, Variable &to);
 bool loadStringToVar(Variable &thisVar, int value);
 void newAnimationVariable(Variable &thisVar, struct PersonaAnimation  *i);
 void newCostumeVariable(Variable &thisVar, struct Persona *i);

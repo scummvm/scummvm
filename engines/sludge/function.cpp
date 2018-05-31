@@ -190,7 +190,7 @@ bool continueFunction(LoadedFunction *fun) {
 			if (fun->calledBy) {
 				LoadedFunction *returnTo = fun->calledBy;
 				if (fun->returnSomething)
-					copyVariable(fun->reg, returnTo->reg);
+					returnTo->reg.copyFrom(fun->reg);
 				finishFunction(fun);
 				fun = returnTo;
 				restartFunction(fun);
@@ -290,7 +290,7 @@ bool continueFunction(LoadedFunction *fun) {
 			break;
 
 		case SLU_LOAD_LOCAL:
-			if (!copyVariable(fun->localVars[param], fun->reg))
+			if (!fun->reg.copyFrom(fun->localVars[param]))
 				return false;
 			break;
 
@@ -379,7 +379,7 @@ bool continueFunction(LoadedFunction *fun) {
 							break;
 
 						default:
-							if (!copyVariable(*grab, fun->reg))
+							if (!fun->reg.copyFrom(*grab))
 								return false;
 						}
 					}
@@ -418,7 +418,7 @@ bool continueFunction(LoadedFunction *fun) {
 						fun->stack->thisVar.varData.fastArray, ii);
 				if (v == NULL)
 					return fatal("Not within bounds of fast array.");
-				if (!copyVariable(fun->stack->next->thisVar, *v))
+				if (!v->copyFrom(fun->stack->next->thisVar))
 					return false;
 				trimStack(fun->stack);
 				trimStack(fun->stack);
@@ -470,22 +470,17 @@ bool continueFunction(LoadedFunction *fun) {
 			break;
 
 		case SLU_SET_LOCAL:
-			if (!copyVariable(fun->reg, fun->localVars[param]))
+			if (!fun->localVars[param].copyFrom(fun->reg))
 				return false;
 			break;
 
 		case SLU_SET_GLOBAL:
-//			newDebug ("  Copying TO global variable", param);
-//			newDebug ("  Global type at the moment", globalVars[param].varType);
-			if (!copyVariable(fun->reg, globalVars[param]))
+			if (!globalVars[param].copyFrom(fun->reg))
 				return false;
-//			newDebug ("  New type", globalVars[param].varType);
 			break;
 
 		case SLU_LOAD_GLOBAL:
-//			newDebug ("  Copying FROM global variable", param);
-//			newDebug ("  Global type at the moment", globalVars[param].varType);
-			if (!copyVariable(globalVars[param], fun->reg))
+			if (!fun->reg.copyFrom(globalVars[param]))
 				return false;
 			break;
 
@@ -685,7 +680,7 @@ int startNewFunctionNum(uint funcNum, uint numParamsExpected,
 		if (vStack == NULL)
 			return fatal(
 					"Corrupted file!The stack's empty and there were still parameters expected");
-		copyVariable(vStack->thisVar, newFunc->localVars[numParamsExpected]);
+		newFunc->localVars[numParamsExpected].copyFrom(vStack->thisVar);
 		trimStack(vStack);
 	}
 

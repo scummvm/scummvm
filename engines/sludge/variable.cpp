@@ -332,37 +332,37 @@ bool getBoolean(const Variable &from) {
 	return true;
 }
 
-bool copyMain(const Variable &from, Variable &to) {
-	to.varType = from.varType;
-	switch (to.varType) {
+bool Variable::copyMain(const Variable &from) {
+	varType = from.varType;
+	switch (varType) {
 		case SVT_INT:
 		case SVT_FUNC:
 		case SVT_BUILT:
 		case SVT_FILE:
 		case SVT_OBJTYPE:
-			to.varData.intValue = from.varData.intValue;
+			varData.intValue = from.varData.intValue;
 			return true;
 
 		case SVT_FASTARRAY:
-			to.varData.fastArray = from.varData.fastArray;
-			to.varData.fastArray->timesUsed++;
+			varData.fastArray = from.varData.fastArray;
+			varData.fastArray->timesUsed++;
 			return true;
 
 		case SVT_STRING:
-			to.varData.theString = createCString(from.varData.theString);
-			return to.varData.theString ? true : false;
+			varData.theString = createCString(from.varData.theString);
+			return varData.theString ? true : false;
 
 		case SVT_STACK:
-			to.varData.theStack = from.varData.theStack;
-			to.varData.theStack->timesUsed++;
+			varData.theStack = from.varData.theStack;
+			varData.theStack->timesUsed++;
 			return true;
 
 		case SVT_COSTUME:
-			to.varData.costumeHandler = from.varData.costumeHandler;
+			varData.costumeHandler = from.varData.costumeHandler;
 			return true;
 
 		case SVT_ANIM:
-			to.varData.animHandler = new PersonaAnimation(from.varData.animHandler);
+			varData.animHandler = new PersonaAnimation(from.varData.animHandler);
 			return true;
 
 		case SVT_NULL:
@@ -375,9 +375,9 @@ bool copyMain(const Variable &from, Variable &to) {
 	return false;
 }
 
-bool copyVariable(const Variable &from, Variable &to) {
-	to.unlinkVar();
-	return copyMain(from, to);
+bool Variable::copyFrom(const Variable &from) {
+	unlinkVar();
+	return copyMain(from);
 }
 
 Variable *fastArrayGetByIndex(FastArrayHandler *vS, uint theIndex) {
@@ -412,7 +412,7 @@ bool makeFastArrayFromStack(Variable &to, const StackHandler *stacky) {
 	VariableStack *allV = stacky->first;
 	size = 0;
 	while (allV) {
-		copyMain(allV->thisVar, to.varData.fastArray->fastVariables[size]);
+		to.varData.fastArray->fastVariables[size].copyMain(allV->thisVar);
 		size++;
 		allV = allV->next;
 	}
@@ -424,7 +424,7 @@ bool addVarToStack(const Variable &va, VariableStack *&thisStack) {
 	if (!checkNew(newStack))
 		return false;
 
-	if (!copyMain(va, newStack->thisVar))
+	if (!newStack->thisVar.copyMain(va))
 		return false;
 	newStack->next = thisStack;
 	thisStack = newStack;
@@ -454,7 +454,7 @@ bool stackSetByIndex(VariableStack *vS, uint theIndex, const Variable &va) {
 		if (!vS)
 			return fatal("Index past end of stack.");
 	}
-	return copyVariable(va, vS->thisVar);
+	return vS->thisVar.copyFrom(va);
 }
 
 Variable *stackGetByIndex(VariableStack *vS, uint theIndex) {

@@ -443,7 +443,7 @@ builtIn(pickOne) {
 	// Return value
 	while (numParams--) {
 		if (i == numParams)
-			copyVariable(fun->stack->thisVar, fun->reg);
+			fun->reg.copyFrom(fun->stack->thisVar);
 		trimStack(fun->stack);
 	}
 	return BR_CONTINUE;
@@ -646,7 +646,7 @@ builtIn(popFromStack) {
 	}
 
 	// Return value
-	copyVariable(fun->stack->thisVar.varData.theStack->first->thisVar, fun->reg);
+	fun->reg.copyFrom(fun->stack->thisVar.varData.theStack->first->thisVar);
 	trimStack(fun->stack->thisVar.varData.theStack->first);
 	trimStack(fun->stack);
 	return BR_CONTINUE;
@@ -664,7 +664,7 @@ builtIn(peekStart) {
 	}
 
 	// Return value
-	copyVariable(fun->stack->thisVar.varData.theStack->first->thisVar, fun->reg);
+	fun->reg.copyFrom(fun->stack->thisVar.varData.theStack->first->thisVar);
 	trimStack(fun->stack);
 	return BR_CONTINUE;
 }
@@ -681,7 +681,7 @@ builtIn(peekEnd) {
 	}
 
 	// Return value
-	copyVariable(fun->stack->thisVar.varData.theStack->last->thisVar, fun->reg);
+	fun->reg.copyFrom(fun->stack->thisVar.varData.theStack->last->thisVar);
 	trimStack(fun->stack);
 	return BR_CONTINUE;
 }
