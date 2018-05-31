@@ -2329,7 +2329,7 @@ builtIn(makeFastArray) {
 	UNUSEDALL
 	switch (fun->stack->thisVar.varType) {
 		case SVT_STACK: {
-			bool success = makeFastArrayFromStack(fun->reg, fun->stack->thisVar.varData.theStack);
+			bool success = fun->reg.makeFastArrayFromStack(fun->stack->thisVar.varData.theStack);
 			trimStack(fun->stack);
 			return success ? BR_CONTINUE : BR_ERROR;
 		}
@@ -2338,7 +2338,7 @@ builtIn(makeFastArray) {
 		case SVT_INT: {
 			int i = fun->stack->thisVar.varData.intValue;
 			trimStack(fun->stack);
-			return makeFastArraySize(fun->reg, i) ? BR_CONTINUE : BR_ERROR;
+			return fun->reg.makeFastArraySize(i) ? BR_CONTINUE : BR_ERROR;
 		}
 			break;
 

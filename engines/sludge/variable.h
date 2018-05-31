@@ -97,6 +97,10 @@ struct Variable {
 	void makeCostumeVariable(Persona *i);
 	struct Persona *getCostumeFromVar();
 
+	// Fast array variable
+	bool makeFastArrayFromStack(const StackHandler *stacky);
+	bool makeFastArraySize(int size);
+
 	// Add variables
 	void addVariablesInSecond(const Variable &other);
 	void compareVariablesInSecond(const Variable &other);
@@ -127,8 +131,6 @@ bool stackSetByIndex(VariableStack *, uint, const Variable &);
 Variable *stackGetByIndex(VariableStack *, uint);
 bool getSavedGamesStack(StackHandler *sH, const Common::String &ext);
 
-bool makeFastArrayFromStack(Variable &to, const StackHandler *stacky);
-bool makeFastArraySize(Variable &to, int size);
 Variable *fastArrayGetByIndex(FastArrayHandler *vS, uint theIndex);
 
 // load & save

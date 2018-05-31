@@ -386,25 +386,25 @@ Variable *fastArrayGetByIndex(FastArrayHandler *vS, uint theIndex) {
 	return &vS->fastVariables[theIndex];
 }
 
-bool makeFastArraySize(Variable &to, int size) {
+bool Variable::makeFastArraySize(int size) {
 	if (size < 0)
 		return fatal("Can't create a fast array with a negative number of elements!");
-	to.unlinkVar();
-	to.varType = SVT_FASTARRAY;
-	to.varData.fastArray = new FastArrayHandler;
-	if (!checkNew(to.varData.fastArray))
+	unlinkVar();
+	varType = SVT_FASTARRAY;
+	varData.fastArray = new FastArrayHandler;
+	if (!checkNew(varData.fastArray))
 		return false;
-	to.varData.fastArray->fastVariables = new Variable[size];
-	if (!checkNew(to.varData.fastArray->fastVariables))
+	varData.fastArray->fastVariables = new Variable[size];
+	if (!checkNew(varData.fastArray->fastVariables))
 		return false;
-	to.varData.fastArray->size = size;
-	to.varData.fastArray->timesUsed = 1;
+	varData.fastArray->size = size;
+	varData.fastArray->timesUsed = 1;
 	return true;
 }
 
-bool makeFastArrayFromStack(Variable &to, const StackHandler *stacky) {
+bool Variable::makeFastArrayFromStack(const StackHandler *stacky) {
 	int size = stackSize(stacky);
-	if (!makeFastArraySize(to, size))
+	if (!makeFastArraySize(size))
 		return false;
 
 	// Now let's fill up the new array
@@ -412,7 +412,7 @@ bool makeFastArrayFromStack(Variable &to, const StackHandler *stacky) {
 	VariableStack *allV = stacky->first;
 	size = 0;
 	while (allV) {
-		to.varData.fastArray->fastVariables[size].copyMain(allV->thisVar);
+		varData.fastArray->fastVariables[size].copyMain(allV->thisVar);
 		size++;
 		allV = allV->next;
 	}
