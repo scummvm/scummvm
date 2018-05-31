@@ -144,8 +144,7 @@ int StackHandler::getStackSize() const {
 	return r;
 }
 
-bool getSavedGamesStack(StackHandler *sH, const Common::String &ext) {
-
+bool StackHandler::getSavedGamesStack(const Common::String &ext) {
 	// Make pattern
 	uint len = ext.size();
 	Common::String pattern = "*";
@@ -161,10 +160,10 @@ bool getSavedGamesStack(StackHandler *sH, const Common::String &ext) {
 	for (it = sa.begin(); it != sa.end(); ++it) {
 		(*it).erase((*it).size() - len, len);
 		newName.makeTextVar((*it));
-		if (!addVarToStack(newName, sH->first))
+		if (!addVarToStack(newName, first))
 			return false;
-		if (sH->last == NULL)
-			sH->last = sH->first;
+		if (last == NULL)
+			last = first;
 	}
 
 	return true;

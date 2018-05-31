@@ -215,7 +215,7 @@ builtIn(getMatchingFiles) {
 	fun->reg.varData.theStack->first = NULL;
 	fun->reg.varData.theStack->last = NULL;
 	fun->reg.varData.theStack->timesUsed = 1;
-	if (!getSavedGamesStack(fun->reg.varData.theStack, newText))
+	if (!fun->reg.varData.theStack->getSavedGamesStack(newText))
 		return BR_ERROR;
 	return BR_CONTINUE;
 }
