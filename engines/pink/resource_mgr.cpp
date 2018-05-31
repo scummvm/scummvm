@@ -38,7 +38,7 @@ ResourceMgr::~ResourceMgr() {
 	clear();
 }
 
-void ResourceMgr::init(PinkEngine *game, GamePage *page) {
+void ResourceMgr::init(PinkEngine *game, Page *page) {
 	OrbFile *orb = game->getOrb();
 	_game = game;
 

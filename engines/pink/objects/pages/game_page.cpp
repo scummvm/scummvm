@@ -119,10 +119,6 @@ void GamePage::loadManagers() {
 	}
 }
 
-PinkEngine *GamePage::getGame() {
-	return _resMgr.getGame();
-}
-
 Sequencer *GamePage::getSequencer() {
 	return _sequencer;
 }

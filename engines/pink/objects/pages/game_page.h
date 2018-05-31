@@ -30,8 +30,6 @@
 namespace Pink {
 
 class CursorMgr;
-class WalkMgr;
-class Sequencer;
 class HandlerStartPage;
 
 class GamePage : public Page {
@@ -49,7 +47,6 @@ public:
 	void loadManagers();
 	void init(bool isLoadingSave);
 
-	PinkEngine *getGame();
 	Sequencer *getSequencer();
 	WalkMgr *getWalkMgr();
 	Module *getModule() const;
