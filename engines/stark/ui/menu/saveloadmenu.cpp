@@ -93,7 +93,7 @@ void SaveLoadMenuScreen::open() {
 	_widgets.back()->setTextColor(_textColorBlack);
 	
 	_widgets.push_back(new SaveDataWidget(
-			0, _gfx, this));
+			1, _gfx, this));
 }
 
 void SaveLoadMenuScreen::backHandler() {
@@ -129,15 +129,17 @@ void LoadMenuScreen::onSlotSelected(int slot) {
 SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *screen) :
 		StaticLocationWidget(nullptr, nullptr, nullptr),
 		_slot(slot),
-		_screen(screen) {
-	_texture = gfx->createTexture();
-	_surfaceRenderer = gfx->createSurfaceRenderer();
-
+		_screen(screen),
+		_thumbWidth(StarkUserInterface->kThumbnailWidth),
+		_thumbHeight(StarkUserInterface->kThumbnailHeight),
+		_isMouseHovered(false),
+		_texture(gfx->createTexture()),
+		_outline(gfx->createTexture()),
+		_surfaceRenderer(gfx->createSurfaceRenderer()) {
+	// Obtain the thumbnail
 	Common::String filename = StarkEngine::formatSaveName(ConfMan.getActiveDomainName().c_str(), _slot);
 	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(filename);
-
 	if (save) {
-		// Obtain the thumbnail
 		SaveMetadata metadata;
 		StateReadStream stream(save);
 		Common::ErrorCode metadataErrorCode = metadata.read(&stream, filename);
@@ -147,23 +149,43 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 
 		Graphics::Surface *thumb = metadata.readGameScreenThumbnail(&stream);
 		_texture->update(thumb);
-
 		delete thumb;
+	} else {
+		setVisible(_screen->isSaveMenu());
 	}
+
+
+	// Create the outline texture
+	Graphics::Surface lineSurface;
+	lineSurface.create(_thumbWidth, _thumbHeight, Gfx::Driver::getRGBAPixelFormat());
+	lineSurface.drawThickLine(0, 0, _thumbWidth - 1, 0, 2, 2, _outlineColor);
+	lineSurface.drawThickLine(0, 0, 0, _thumbHeight - 1, 2, 2, _outlineColor);
+	lineSurface.drawThickLine(_thumbWidth - 2, 0, _thumbWidth - 2, _thumbHeight - 2, 2, 2, _outlineColor);
+	lineSurface.drawThickLine(0, _thumbHeight - 2, _thumbWidth - 2, _thumbHeight - 2, 2, 2, _outlineColor);
+
+	_outline->update(&lineSurface);
+
+	// Set the position
+	_position.x = 200;
+	_position.y = 200;
 }
 
 SaveDataWidget::~SaveDataWidget() {
 	delete _texture;
+	delete _outline;
 	delete _surfaceRenderer;
 }
 
 void SaveDataWidget::render() {
-	_surfaceRenderer->render(_texture, Common::Point(200, 200));
+	_surfaceRenderer->render(_texture, _position);
+	if (_isMouseHovered) {
+		_surfaceRenderer->render(_outline, _position);
+	}
 }
 
 bool SaveDataWidget::isMouseInside(const Common::Point &mousePos) const {
-	return mousePos.x >= 200 && mousePos.x <= 200 + _texture->width() &&
-		   mousePos.y >= 200 && mousePos.y <= 200 + _texture->height();
+	return mousePos.x >= _position.x && mousePos.x <= _position.x + _thumbWidth &&
+		   mousePos.y >= _position.y && mousePos.y <= _position.y + _thumbHeight;
 }
 
 void SaveDataWidget::onClick() {
@@ -173,6 +195,7 @@ void SaveDataWidget::onClick() {
 
 void SaveDataWidget::onMouseMove(const Common::Point &mousePos) {
 	StaticLocationWidget::onMouseMove(mousePos);
+	_isMouseHovered = isMouseInside(mousePos);
 }
 
 } // End of namespace Stark

@@ -46,7 +46,11 @@ public:
 	// StaticLocationScreen API
 	void open() override;
 
+	/** Called when a save slot is selected */
 	virtual void onSlotSelected(int slot) = 0;
+
+	/** Check whether the menu is used for saving */
+	virtual bool isSaveMenu() = 0;
 
 protected:
 	static void checkError(Common::Error error);
@@ -75,6 +79,8 @@ public:
 	void open() override;
 
 	void onSlotSelected(int slot) override;
+
+	bool isSaveMenu() override { return true; }
 };
 
 /**
@@ -90,6 +96,8 @@ public:
 	void open() override;
 
 	void onSlotSelected(int slot) override;
+
+	bool isSaveMenu() override { return false; }
 };
 
 /**
@@ -107,10 +115,19 @@ public:
 	void onMouseMove(const Common::Point &mousePos) override;
 
 private:
+	static const uint32 _outlineColor = 0xFF961E1E;
+
 	int _slot;
 	SaveLoadMenuScreen *_screen;
+
+	Common::Point _position;
+	int _thumbWidth, _thumbHeight;
+
 	Gfx::Texture *_texture;
+	Gfx::Texture *_outline;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
+
+	bool _isMouseHovered;
 };
 
 } // End of namespace Stark
