@@ -160,8 +160,11 @@ void Sound::playVoc(const Common::String &baseSoundName) {
 		playMacSoundEffect(baseSoundName);
 	else
 	*/
-	if (baseSoundName.size() == 8 && baseSoundName.hasSuffixIgnoreCase("loop"))
+	bool loop = false;
+	if (baseSoundName.size() == 8 && baseSoundName.hasSuffixIgnoreCase("loop")) {
 		_loopingAudioName = baseSoundName;
+		loop = true;
+	}
 
 	if (!_vm->_sfxEnabled || !_vm->_sfxWorking)
 		return;
@@ -182,7 +185,13 @@ void Sound::playVoc(const Common::String &baseSoundName) {
 			error("Couldn't open '%s'", soundName.c_str());
 
 		debugC(5, kDebugSound, "Playing sound effect '%s'", soundName.c_str());
-		Audio::AudioStream *audioStream = Audio::makeVOCStream(readStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+
+		Audio::RewindableAudioStream *srcStream = Audio::makeVOCStream(readStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+		Audio::AudioStream *audioStream;
+		if (loop)
+			audioStream = new Audio::LoopingAudioStream(srcStream, 0, DisposeAfterUse::YES);
+		else
+			audioStream = srcStream;
 		_vm->_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[i], audioStream);
 		return;
 	}
