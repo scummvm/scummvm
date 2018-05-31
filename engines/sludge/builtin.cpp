@@ -865,7 +865,7 @@ builtIn(costume) {
 	}
 
 	// Return value
-	newCostumeVariable(fun->reg, newPersona);
+	fun->reg.makeCostumeVariable(newPersona);
 	return BR_CONTINUE;
 }
 
@@ -1407,7 +1407,7 @@ builtIn(addCharacter) {
 	Persona *p;
 	int x, y, objectNumber;
 
-	p = getCostumeFromVar(fun->stack->thisVar);
+	p = fun->stack->thisVar.getCostumeFromVar();
 	if (p == NULL)
 		return BR_ERROR;
 
@@ -1568,7 +1568,7 @@ builtIn(animate) {
 builtIn(setCostume) {
 	UNUSEDALL
 	int obj;
-	Persona *pp = getCostumeFromVar(fun->stack->thisVar);
+	Persona *pp = fun->stack->thisVar.getCostumeFromVar();
 	if (pp == NULL)
 		return BR_ERROR;
 	trimStack(fun->stack);

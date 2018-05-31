@@ -99,16 +99,16 @@ PersonaAnimation *Variable::getAnimationFromVar() {
 	return NULL;
 }
 
-void newCostumeVariable(Variable &thisVar, Persona *i) {
-	thisVar.unlinkVar();
-	thisVar.varType = SVT_COSTUME;
-	thisVar.varData.costumeHandler = i;
+void Variable::makeCostumeVariable(Persona *i) {
+	unlinkVar();
+	varType = SVT_COSTUME;
+	varData.costumeHandler = i;
 }
 
-Persona *getCostumeFromVar(Variable &thisVar) {
+Persona *Variable::getCostumeFromVar() {
 	Persona *p = NULL;
 
-	switch (thisVar.varType) {
+	switch (varType) {
 		case SVT_ANIM:
 			p = new Persona;
 			if (!checkNew(p))
@@ -119,16 +119,16 @@ Persona *getCostumeFromVar(Variable &thisVar) {
 				return NULL;
 
 			for (int iii = 0; iii < 3; iii++)
-				p->animation[iii] = new PersonaAnimation(thisVar.varData.animHandler);
+				p->animation[iii] = new PersonaAnimation(varData.animHandler);
 
 			break;
 
 		case SVT_COSTUME:
-			return thisVar.varData.costumeHandler;
+			return varData.costumeHandler;
 			break;
 
 		default:
-			fatal("Expecting an animation variable; found Variable of type", typeName[thisVar.varType]);
+			fatal("Expecting an animation variable; found Variable of type", typeName[varType]);
 	}
 
 	return p;

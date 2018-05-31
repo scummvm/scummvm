@@ -91,8 +91,12 @@ struct Variable {
 	Common::String getTextFromAnyVar();
 
 	// Animation variable
-	void makeAnimationVariable(struct PersonaAnimation *i);
+	void makeAnimationVariable(PersonaAnimation *i);
 	struct PersonaAnimation *getAnimationFromVar();
+
+	// Custome variable
+	void makeCostumeVariable(Persona *i);
+	struct Persona *getCostumeFromVar();
 
 };
 
@@ -102,13 +106,11 @@ struct VariableStack {
 };
 
 // Setting variables
-void newCostumeVariable(Variable &thisVar, struct Persona *i);
 void addVariablesInSecond(Variable &var1, Variable &var2);
 void compareVariablesInSecond(const Variable &var1, Variable &var2);
 
 // Misc.
 
-struct Persona *getCostumeFromVar(Variable &thisVar);
 bool getBoolean(const Variable &from);
 bool getValueType(int &toHere, VariableType vT, const Variable &v);
 
