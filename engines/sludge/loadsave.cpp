@@ -132,7 +132,7 @@ bool saveGame(const Common::String &fname) {
 	}
 
 	for (int a = 0; a < numGlobals; a++) {
-		saveVariable(&globalVars[a], fp);
+		globalVars[a].save(fp);
 	}
 
 	g_sludge->_peopleMan->savePeople(fp);
@@ -258,7 +258,7 @@ bool loadGame(const Common::String &fname) {
 
 	for (int a = 0; a < numGlobals; a++) {
 		globalVars[a].unlinkVar();
-		loadVariable(&globalVars[a], fp);
+		globalVars[a].load(fp);
 	}
 
 	g_sludge->_peopleMan->loadPeople(fp);

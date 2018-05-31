@@ -749,14 +749,14 @@ void saveFunction(LoadedFunction *fun, Common::WriteStream *stream) {
 	stream->writeByte(fun->cancelMe);
 	stream->writeByte(fun->returnSomething);
 	stream->writeByte(fun->isSpeech);
-	saveVariable(&(fun->reg), stream);
+	fun->reg.save(stream);
 
 	if (fun->freezerLevel) {
 		fatal(ERROR_GAME_SAVE_FROZEN);
 	}
 	saveStack(fun->stack, stream);
 	for (a = 0; a < fun->numLocals; a++) {
-		saveVariable(&(fun->localVars[a]), stream);
+		fun->localVars[a].save(stream);
 	}
 }
 
@@ -785,13 +785,13 @@ LoadedFunction *loadFunction(Common::SeekableReadStream *stream) {
 	buildFunc->cancelMe = stream->readByte();
 	buildFunc->returnSomething = stream->readByte();
 	buildFunc->isSpeech = stream->readByte();
-	loadVariable(&(buildFunc->reg), stream);
+	buildFunc->reg.load(stream);
 	loadFunctionCode(buildFunc);
 
 	buildFunc->stack = loadStack(stream, NULL);
 
 	for (a = 0; a < buildFunc->numLocals; a++) {
-		loadVariable(&(buildFunc->localVars[a]), stream);
+		buildFunc->localVars[a].load(stream);
 	}
 
 	return buildFunc;

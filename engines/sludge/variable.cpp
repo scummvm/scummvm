@@ -554,7 +554,7 @@ void saveStack(VariableStack *vs, Common::WriteStream *stream) {
 	stream->writeUint16BE(elements);
 	search = vs;
 	for (a = 0; a < elements; a++) {
-		saveVariable(&search->thisVar, stream);
+		search->thisVar.save(stream);
 		search = search->next;
 	}
 }
@@ -569,7 +569,7 @@ VariableStack *loadStack(Common::SeekableReadStream *stream, VariableStack **las
 		VariableStack *nS = new VariableStack;
 		if (!checkNew(nS))
 			return NULL;
-		loadVariable(&(nS->thisVar), stream);
+		nS->thisVar.load(stream);
 		if (last && a == elements - 1) {
 			*last = nS;
 		}
@@ -656,72 +656,72 @@ StackHandler *loadStackRef(Common::SeekableReadStream *stream) {
 //----------------------------------------------------------------------
 // For saving and loading variables...
 //----------------------------------------------------------------------
-bool saveVariable(Variable *from, Common::WriteStream *stream) {
-	stream->writeByte(from->varType);
-	switch (from->varType) {
+bool Variable::save(Common::WriteStream *stream) {
+	stream->writeByte(varType);
+	switch (varType) {
 		case SVT_INT:
 		case SVT_FUNC:
 		case SVT_BUILT:
 		case SVT_FILE:
 		case SVT_OBJTYPE:
-			stream->writeUint32LE(from->varData.intValue);
+			stream->writeUint32LE(varData.intValue);
 			return true;
 
 		case SVT_STRING:
-			writeString(from->varData.theString, stream);
+			writeString(varData.theString, stream);
 			return true;
 
 		case SVT_STACK:
-			return saveStackRef(from->varData.theStack, stream);
+			return saveStackRef(varData.theStack, stream);
 
 		case SVT_COSTUME:
-			from->varData.costumeHandler->save(stream);
+			varData.costumeHandler->save(stream);
 			return false;
 
 		case SVT_ANIM:
-			from->varData.animHandler->save(stream);
+			varData.animHandler->save(stream);
 			return false;
 
 		case SVT_NULL:
 			return false;
 
 		default:
-			fatal("Can't save variables of this type:", (from->varType < SVT_NUM_TYPES) ? typeName[from->varType] : "bad ID");
+			fatal("Can't save variables of this type:", (varType < SVT_NUM_TYPES) ? typeName[varType] : "bad ID");
 	}
 	return true;
 }
 
-bool loadVariable(Variable *to, Common::SeekableReadStream *stream) {
-	to->varType = (VariableType)stream->readByte();
-	switch (to->varType) {
+bool Variable::load(Common::SeekableReadStream *stream) {
+	varType = (VariableType)stream->readByte();
+	switch (varType) {
 		case SVT_INT:
 		case SVT_FUNC:
 		case SVT_BUILT:
 		case SVT_FILE:
 		case SVT_OBJTYPE:
-			to->varData.intValue = stream->readUint32LE();
+			varData.intValue = stream->readUint32LE();
 			return true;
 
 		case SVT_STRING:
-			to->varData.theString = createCString(readString(stream));
+			varData.theString = createCString(readString(stream));
 			return true;
 
 		case SVT_STACK:
-			to->varData.theStack = loadStackRef(stream);
+			varData.theStack = loadStackRef(stream);
 			return true;
 
 		case SVT_COSTUME:
-			to->varData.costumeHandler = new Persona;
-			if (!checkNew(to->varData.costumeHandler))
+			varData.costumeHandler = new Persona;
+			if (!checkNew(varData.costumeHandler))
 				return false;
-			to->varData.costumeHandler->load(stream);
+			varData.costumeHandler->load(stream);
 			return true;
 
 		case SVT_ANIM:
-			to->varData.animHandler = new PersonaAnimation;
-			if (!checkNew(to->varData.animHandler))
+			varData.animHandler = new PersonaAnimation;
+			if (!checkNew(varData.animHandler))
 				return false;
-			to->varData.animHandler->load(stream);
+			varData.animHandler->load(stream);
 			return true;
 
 		default:

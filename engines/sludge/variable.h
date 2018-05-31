@@ -76,6 +76,10 @@ struct Variable {
 
 	void unlinkVar();
 	void setVariable(VariableType vT, int value);
+
+	// Load & save
+	bool save(Common::WriteStream *stream);
+	bool load(Common::SeekableReadStream *stream);
 };
 
 struct VariableStack {
@@ -120,9 +124,6 @@ bool makeFastArraySize(Variable &to, int size);
 Variable *fastArrayGetByIndex(FastArrayHandler *vS, uint theIndex);
 
 // load & save
-bool saveVariable(Variable *from, Common::WriteStream *stream);
-bool loadVariable(Variable *to, Common::SeekableReadStream *stream);
-
 void saveStack(VariableStack *vs, Common::WriteStream *stream);
 VariableStack *loadStack(Common::SeekableReadStream *stream, VariableStack **last);
 bool saveStackRef(StackHandler *vs, Common::WriteStream *stream);
