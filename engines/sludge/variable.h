@@ -48,6 +48,8 @@ struct FastArrayHandler {
 	struct Variable *fastVariables;
 	int size;
 	int timesUsed;
+
+	Variable *fastArrayGetByIndex(uint theIndex);
 };
 
 struct StackHandler {
@@ -130,8 +132,6 @@ int stackSize(const StackHandler *me);
 bool stackSetByIndex(VariableStack *, uint, const Variable &);
 Variable *stackGetByIndex(VariableStack *, uint);
 bool getSavedGamesStack(StackHandler *sH, const Common::String &ext);
-
-Variable *fastArrayGetByIndex(FastArrayHandler *vS, uint theIndex);
 
 // load & save
 void saveStack(VariableStack *vs, Common::WriteStream *stream);

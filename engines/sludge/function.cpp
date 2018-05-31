@@ -350,12 +350,8 @@ bool continueFunction(LoadedFunction *fun) {
 						return false;
 					Variable *grab =
 							(fun->stack->thisVar.varType == SVT_FASTARRAY) ?
-									fastArrayGetByIndex(
-											fun->stack->thisVar.varData.fastArray,
-											ii) :
-									stackGetByIndex(
-											fun->stack->thisVar.varData.theStack->first,
-											ii);
+									fun->stack->thisVar.varData.fastArray->fastArrayGetByIndex(ii) :
+									stackGetByIndex(fun->stack->thisVar.varData.theStack->first, ii);
 
 					trimStack(fun->stack);
 
@@ -414,8 +410,7 @@ bool continueFunction(LoadedFunction *fun) {
 				int ii;
 				if (!fun->reg.getValueType(ii, SVT_INT))
 					return false;
-				Variable *v = fastArrayGetByIndex(
-						fun->stack->thisVar.varData.fastArray, ii);
+				Variable *v = fun->stack->thisVar.varData.fastArray->fastArrayGetByIndex(ii);
 				if (v == NULL)
 					return fatal("Not within bounds of fast array.");
 				if (!v->copyFrom(fun->stack->next->thisVar))

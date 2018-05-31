@@ -380,10 +380,10 @@ bool Variable::copyFrom(const Variable &from) {
 	return copyMain(from);
 }
 
-Variable *fastArrayGetByIndex(FastArrayHandler *vS, uint theIndex) {
-	if ((int)theIndex >= vS->size)
+Variable *FastArrayHandler::fastArrayGetByIndex(uint theIndex) {
+	if ((int)theIndex >= size)
 		return NULL;
-	return &vS->fastVariables[theIndex];
+	return &fastVariables[theIndex];
 }
 
 bool Variable::makeFastArraySize(int size) {
