@@ -95,4 +95,8 @@ void Page::unpause() {
 	}
 }
 
+PinkEngine *Page::getGame() {
+	return _resMgr.getGame();
+}
+
 } // End of namespace Pink

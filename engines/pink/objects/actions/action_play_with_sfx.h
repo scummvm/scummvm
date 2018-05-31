@@ -46,7 +46,7 @@ private:
 };
 
 class Sound;
-class GamePage;
+class Page;
 
 class ActionSfx : public Object {
 public:
@@ -55,7 +55,7 @@ public:
 	virtual void deserialize(Archive &archive);
 	virtual void toConsole();
 
-	void play(GamePage *page);
+	void play(Page *page);
 	uint32 getFrame();
 	void end();
 

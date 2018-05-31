@@ -171,7 +171,7 @@ void PinkEngine::initModule(const Common::String &moduleName, const Common::Stri
 	}
 }
 
-void PinkEngine::changeScene(GamePage *page) {
+void PinkEngine::changeScene(Page *page) {
 	setCursor(kLoadingCursor);
 	if (!_nextModule.empty() && _nextModule.compareTo(_module->getName())) {
 		initModule(_nextModule, _nextPage, nullptr);

@@ -69,7 +69,7 @@ class Console;
 class Archive;
 class NamedObject;
 class Module;
-class GamePage;
+class Page;
 class LeadActor;
 
 enum {
@@ -97,7 +97,7 @@ public:
 
 	void load(Archive &archive);
 	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
-	void changeScene(GamePage *page);
+	void changeScene(Page *page);
 
 	OrbFile *getOrb()  { return &_orb; }
 	BroFile *getBro()  { return _bro; }

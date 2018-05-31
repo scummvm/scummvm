@@ -89,7 +89,7 @@ void ActionSfx::toConsole() {
 	debug("\t\tActionSfx: _sfx = %s, _volume = %u, _frame = %u", _sfxName.c_str(), _volume, _frame);
 }
 
-void ActionSfx::play(GamePage *page) {
+void ActionSfx::play(Page *page) {
 	if (!_sound)
 		_sound = page->loadSound(_sfxName);
 

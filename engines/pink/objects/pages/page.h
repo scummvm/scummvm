@@ -31,6 +31,8 @@ namespace Pink {
 class Archive;
 class Actor;
 class LeadActor;
+class WalkMgr;
+class Sequencer;
 
 class Page : public NamedObject {
 public:
@@ -47,6 +49,15 @@ public:
 	virtual void clear();
 	void pause();
 	void unpause();
+
+	PinkEngine *getGame();
+
+	virtual Sequencer *getSequencer() { return nullptr; };
+	virtual WalkMgr *getWalkMgr() { return nullptr;};
+	virtual Module *getModule() const { return nullptr; };
+
+	virtual bool checkValueOfVariable(const Common::String &variable, const Common::String &value) { return 0; };
+	virtual void setVariable(Common::String &variable, Common::String &value) {};
 
 protected:
 	void init();

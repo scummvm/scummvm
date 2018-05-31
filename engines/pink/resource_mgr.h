@@ -23,6 +23,8 @@
 #ifndef PINK_RESOURCE_MGR_H
 #define PINK_RESOURCE_MGR_H
 
+#include "common/scummsys.h"
+
 namespace Common {
 	class SafeSeekableSubReadStream;
 	class String;
@@ -30,7 +32,7 @@ namespace Common {
 
 namespace Pink {
 
-class GamePage;
+class Page;
 class PinkEngine;
 class OrbFile;
 class BroFile;
@@ -44,7 +46,7 @@ public:
 	ResourceMgr();
 	~ResourceMgr();
 
-	void init(PinkEngine *game, GamePage *page);
+	void init(PinkEngine *game, Page *page);
 	void clear();
 
 	//Common::String loadText(Common::String &name);

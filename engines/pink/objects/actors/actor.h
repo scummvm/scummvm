@@ -29,7 +29,7 @@
 
 namespace Pink {
 
-class GamePage;
+class Page;
 class Action;
 class Sequencer;
 class Director;
@@ -48,7 +48,7 @@ public:
 	virtual void toConsole();
 
 	Sequencer *getSequencer() const;
-	GamePage *getPage() const;
+	Page *getPage() const;
 	Action *getAction() const;
 
 	bool isPlaying();
@@ -60,6 +60,8 @@ public:
 	void setAction(const Common::String &name);
 	void setAction(Action *newAction);
 	void setAction(Action *newAction, bool unk);
+
+	void setPage(Page *page);
 
 	void loadState(Archive &archive);
 	void saveState(Archive &archive);
@@ -77,7 +79,7 @@ public:
 	virtual void unpause();
 
 protected:
-	GamePage *_page;
+	Page *_page;
 	Action *_action;
 	Array<Action *> _actions;
 	bool _isActionEnded;

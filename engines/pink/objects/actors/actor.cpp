@@ -31,7 +31,7 @@ namespace Pink {
 
 void Actor::deserialize(Archive &archive) {
 	NamedObject::deserialize(archive);
-	_page = static_cast<GamePage*>(archive.readObject());
+	_page = static_cast<Page*>(archive.readObject());
 	_actions.deserialize(archive);
 }
 
@@ -54,7 +54,7 @@ Action *Actor::findAction(const Common::String &name) {
 	return nullptr;
 }
 
-GamePage *Actor::getPage() const {
+Page *Actor::getPage() const {
 	return _page;
 }
 
@@ -97,7 +97,7 @@ void Actor::setAction(Action *newAction) {
 
 void Actor::setAction(Action *newAction, bool unk) {
 	if (unk) {
-		assert(0); // want to see this
+		//assert(0); // want to see this
 		_isActionEnded = 1;
 		_action = newAction;
 	} else {
@@ -156,6 +156,10 @@ void Actor::unpause() {
 
 void Actor::onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
 	cursorMgr->setCursor(kHoldingItemCursor, point, itemName);
+}
+
+void Actor::setPage(Page *page) {
+	_page = page;
 }
 
 } // End of namespace Pink
