@@ -572,6 +572,7 @@ Common::String TavernLocation::createLocationText(Character &ch) {
 }
 
 Character *TavernLocation::doOptions(Character *c) {
+	EventsManager &events = *g_vm->_events;
 	Interface &intf = *g_vm->_interface;
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
@@ -716,6 +717,15 @@ Character *TavernLocation::doOptions(Character *c) {
 		g_vm->_mode = MODE_INTERACTIVE7;
 		party.addTime(1440);
 		party._mazeId = 0;
+
+		// Say farewell
+		farewell();
+		while (sound.isSoundPlaying())
+			events.wait(1);
+
+		// Animate closing a scroll
+		doScroll(true, false);
+		sound.stopAllAudio();
 
 		// Show the party dialog
 		PartyDialog::show(g_vm);
