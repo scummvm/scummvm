@@ -32,6 +32,8 @@
 #include "engines/stark/stark.h"
 #include "engines/stark/savemetadata.h"
 
+#include "engines/engine.h"
+
 #include "common/config-manager.h"
 #include "common/savefile.h"
 
@@ -110,9 +112,18 @@ void SaveMenuScreen::open() {
 	_widgets[kWidgetLoadText]->setVisible(false);
 }
 
+void SaveMenuScreen::onSlotSelected(int slot) {
+	g_engine->saveGameState(slot, "TestSave");
+	StarkUserInterface->backPrevScreen();
+}
+
 void LoadMenuScreen::open() {
 	SaveLoadMenuScreen::open();
 	_widgets[kWidgetSaveText]->setVisible(false);
+}
+
+void LoadMenuScreen::onSlotSelected(int slot) {
+	g_engine->loadGameState(slot);
 }
 
 SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *screen) :
@@ -136,6 +147,8 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 
 		Graphics::Surface *thumb = metadata.readGameScreenThumbnail(&stream);
 		_texture->update(thumb);
+
+		delete thumb;
 	}
 }
 
@@ -155,7 +168,7 @@ bool SaveDataWidget::isMouseInside(const Common::Point &mousePos) const {
 
 void SaveDataWidget::onClick() {
 	StaticLocationWidget::onClick();
-	_screen->clickHandler(_slot);
+	_screen->onSlotSelected(_slot);
 }
 
 void SaveDataWidget::onMouseMove(const Common::Point &mousePos) {

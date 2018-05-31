@@ -336,7 +336,8 @@ Common::Error StarkEngine::loadGameState(int slot) {
 
 bool StarkEngine::canSaveGameStateCurrently() {
 	// Disallow saving when there is no level loaded or when a script is running
-	return _global->getLevel() && _userInterface->isInteractive();
+	// or when the save & load menu is currently displayed
+	return _global->getLevel() && _userInterface->isInteractive() && !_userInterface->isInSaveLoadMenuScreen();
 }
 
 Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {

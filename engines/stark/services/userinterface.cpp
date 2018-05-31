@@ -211,6 +211,11 @@ bool UserInterface::isInGameScreen() const {
 	return _currentScreen->getName() == Screen::kScreenGame;
 }
 
+bool UserInterface::isInSaveLoadMenuScreen() const {
+	Screen::Name name = _currentScreen->getName();
+	return name == Screen::kScreenSaveMenu || name == Screen::kScreenLoadMenu;
+}
+
 bool UserInterface::isInventoryOpen() const {
 	return _gameScreen->getInventoryWindow()->isVisible();
 }

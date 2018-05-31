@@ -26,7 +26,6 @@
 #include "engines/stark/ui/menu/locationscreen.h"
 
 #include "common/error.h"
-#include "engines/engine.h"
 
 namespace Stark {
 
@@ -47,9 +46,7 @@ public:
 	// StaticLocationScreen API
 	void open() override;
 
-	void clickHandler(int slot) {
-		clickHandlerImpl(slot);
-	}
+	virtual void onSlotSelected(int slot) = 0;
 
 protected:
 	static void checkError(Common::Error error);
@@ -58,8 +55,6 @@ protected:
 		kWidgetSaveText = 3,
 		kWidgetLoadText = 4,
 	};
-
-	virtual void clickHandlerImpl(int slot) = 0;
 
 private:
 	static const uint32 _textColorBlack = 0xFF000000;
@@ -79,10 +74,7 @@ public:
 	// SaveLoadMenuScreen API
 	void open() override;
 
-protected:
-	void clickHandlerImpl(int slot) override {
-		checkError(g_engine->saveGameState(slot, "TestSave"));
-	}
+	void onSlotSelected(int slot) override;
 };
 
 /**
@@ -97,10 +89,7 @@ public:
 	// SaveLoadMenuScreen API
 	void open() override;
 
-protected:
-	void clickHandlerImpl(int slot) override {
-		checkError(g_engine->loadGameState(slot));
-	}
+	void onSlotSelected(int slot) override;
 };
 
 /**

@@ -101,6 +101,9 @@ public:
 	/** Is the game screen currently displayed? */
 	bool isInGameScreen() const;
 
+	/** Is the save & load menu screen currently displayed? */
+	bool isInSaveLoadMenuScreen() const;
+
 	/** Is the inventory panel being displayed? */
 	bool isInventoryOpen() const;
 
