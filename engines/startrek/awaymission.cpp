@@ -38,6 +38,7 @@ void StarTrekEngine::initAwayMission() {
 	_sound->loadMusicFile("ground");
 
 	loadRoom(_missionToLoad, _roomIndexToLoad);
+	_roomIndexToLoad = -1;
 
 	// Load crew positions for beaming in
 	initAwayCrewPositions(4);
@@ -45,6 +46,14 @@ void StarTrekEngine::initAwayMission() {
 
 void StarTrekEngine::runAwayMission() {
 	while (true) {
+		// Original game manipulates the stack when the room changes to return execution
+		// to this point. Instead of doing that, just check if a variable is set.
+		if (_roomIndexToLoad != -1 && _spawnIndexToLoad != -1) {
+			loadRoomIndex(_roomIndexToLoad, _spawnIndexToLoad);
+			_roomIndexToLoad = -1;
+			_spawnIndexToLoad = -1;
+		}
+
 		handleAwayMissionEvents();
 
 		Common::Point mousePos = _gfx->getMousePos();

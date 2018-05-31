@@ -44,6 +44,7 @@ enum GameStringIDs {
 	TX_SPEAKER_CHUB,
 	TX_SPEAKER_ROBERTS,
 	TX_SPEAKER_GRISNASH,
+	TX_SPEAKER_NAUIAN,
 
 	TX_DEM0_001,
 	TX_DEM0_002,
@@ -482,6 +483,7 @@ const char * const g_gameStrings[] = {
 	"Brother Chub",
 	"Brother Roberts",
 	"Brother Grisnash",
+	"Nauian",
 
 	"#DEM0\\DEM0_001#Doctor, you need to investigate the possibility of disease, mental or physical, among these people, before we go chasing up the mountains. Prelate Angiven, may we see those who have encountered the demons?",
 	"#DEM0\\DEM0_002#Aside from seeing demons, has any hard data been collected? Any evidence I could see?",

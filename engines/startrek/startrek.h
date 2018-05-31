@@ -360,6 +360,7 @@ public:
 
 	Common::String _missionToLoad;
 	int _roomIndexToLoad;
+	int _spawnIndexToLoad;
 
 	Common::String _missionName;
 	int _roomIndex;

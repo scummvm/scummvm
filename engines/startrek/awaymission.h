@@ -55,6 +55,7 @@ struct AwayMission {
 		struct {
 			bool wasRudeToPrelate; // 0x29
 			bool insultedStephen; // 0x2b
+			bool field2d; // 0x2d
 			bool beatKlingons; // 0x2f
 			bool tookKlingonHand; // 0x31
 
@@ -75,17 +76,18 @@ struct AwayMission {
 			byte field41; // 0x41
 			bool foundMiner; // 0x43
 			bool field45; // 0x45
-			bool field47; // 0x47
+			bool gaveSkullToNauian; // 0x47
 			bool warpsDisabled; // 0x48
 			bool boulder1Gone; // 0x49
 			bool boulder2Gone; // 0x4a
 			bool boulder3Gone; // 0x4b
 			bool boulder4Gone; // 0x4c
 			bool doorOpened; // 0x4d
-			bool field4e; // 0x4e
+			bool solvedSunPuzzle; // 0x4e
 			byte itemsTakenFromCase; // 0x4f
 			bool gotBerries; // 0x50
 			bool madeHypoDytoxin; // 0x51
+			bool metNauian; // 0x53
 			bool gavePointsForDytoxin; // 0x54
 			bool lookedAtComputer; // 0x55
 			byte field56; // 0x56
@@ -93,7 +95,7 @@ struct AwayMission {
 		} demon;
 	};
 
-	int16 missionScore;
+	int16 missionScore; // 0x58
 };
 // Size: 0x129 bytes
 

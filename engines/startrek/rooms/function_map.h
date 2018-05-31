@@ -314,14 +314,31 @@ RoomAction demon4ActionList[] = {
 	{ Action(ACTION_FINISHED_ANIMATION, 1, 0, 0), &Room::demon4FinishedAnimation1 },
 	{ Action(ACTION_FINISHED_ANIMATION, 2, 0, 0), &Room::demon4FinishedAnimation2 },
 	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0), &Room::demon4FinishedAnimation3 },
+	{ Action(ACTION_TIMER_EXPIRED, 0, 0, 0), &Room::demon4Timer0Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::demon4Timer1Expired },
+	{ Action(ACTION_FINISHED_WALKING, 4, 0, 0), &Room::demon4CrewmanReachedBeamoutPosition },
+	{ Action(ACTION_TIMER_EXPIRED, 2, 0, 0), &Room::demon4Timer2Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 3, 0, 0), &Room::demon4Timer3Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 4, 0, 0), &Room::demon4Timer4Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 5, 0, 0), &Room::demon4Timer5Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 6, 0, 0), &Room::demon4Timer6Expired },
 
-	// TODO: everything
+	{ Action(ACTION_USE, OBJECT_IPHASERK, 8, 0), &Room::demon4UsePhaserOnNauian },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 8, 0), &Room::demon4UsePhaserOnNauian },
+	{ Action(ACTION_USE, OBJECT_IMETAL, 0x22, 0), &Room::demon4UseMetalOnSecurityEquipment },
+	{ Action(ACTION_FINISHED_WALKING, 5, 0, 0), &Room::demon4KirkReachedSecurityEquipment },
+	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::demon4KirkFinishedUsingSecurityEquipment },
+	{ Action(ACTION_USE, OBJECT_IMETAL, 8, 0), &Room::demon4UseMetalOnNauian },
+	{ Action(ACTION_FINISHED_WALKING, 1, 0, 0), &Room::demon4KirkReachedNauian },
+	{ Action(ACTION_USE, OBJECT_ISKULL, 8, 0), &Room::demon4UseSkullOnNauian },
+	{ Action(ACTION_FINISHED_WALKING, 2, 0, 0), &Room::demon4KirkReachedNauianWithSkull },
 
 	{ Action(ACTION_USE, OBJECT_IPHASERS, 0x21, 0), &Room::demon4UsePhaserOnPanel },
 	{ Action(ACTION_USE, OBJECT_IPHASERS, 0x20, 0), &Room::demon4UsePhaserOnPattern },
 	{ Action(ACTION_USE, OBJECT_IPHASERS, OBJECT_MCCOY, 0), &Room::demon4UsePhaserOnMccoy },
 
-	// TODO
+	{ Action(ACTION_FINISHED_ANIMATION, 5, 0, 0), &Room::demon4TalkToNauian },
+	{ Action(ACTION_TALK, 8, 0, 0), &Room::demon4TalkToNauian },
 
 	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::demon4LookAtPattern },
 	{ Action(ACTION_LOOK, 8, 0, 0), &Room::demon4LookAtAlien },
@@ -342,6 +359,23 @@ RoomAction demon4ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_MCCOY, 0x21, 0), &Room::demon4UseMccoyOnPanel },
 	{ Action(ACTION_USE, OBJECT_REDSHIRT, 0x21, 0), &Room::demon4UseRedshirtOnPanel },
 	{ Action(ACTION_FINISHED_WALKING, 3, 0, 0), &Room::demon4CrewmanReachedPanel },
+	{ Action(ACTION_TALK, OBJECT_KIRK, 0, 0), &Room::demon4TalkToKirk },
+	{ Action(ACTION_TALK, OBJECT_MCCOY, 0, 0), &Room::demon4TalkToMccoy },
+	{ Action(ACTION_TALK, OBJECT_SPOCK, 0, 0), &Room::demon4TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::demon4TalkToRedshirt },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 10, 0), &Room::demon4UseSTricorderOnChamber },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x20, 0), &Room::demon4UseSTricorderOnPattern },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x20, 0), &Room::demon4UseMTricorderOnPattern },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x21, 0), &Room::demon4UseSTricorderOnPanel },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x21, 0), &Room::demon4UseMTricorderOnPanel },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x23, 0), &Room::demon4UseSTricorderOnAnything },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, -1, 0), &Room::demon4UseSTricorderOnAnything },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x23, 0), &Room::demon4UseMTricorderOnAnything },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, -1, 0), &Room::demon4UseMTricorderOnAnything },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 8, 0), &Room::demon4UseSTricorderOnNauian },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 8, 0), &Room::demon4UseMTricorderOnNauian },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x22, 0), &Room::demon4UseSTricorderOnSecurityEquipment },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x22, 0), &Room::demon4UseMTricorderOnSecurityEquipment },
 };
 
 RoomAction demon5ActionList[] = {
