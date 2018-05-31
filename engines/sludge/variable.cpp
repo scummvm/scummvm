@@ -170,20 +170,20 @@ bool getSavedGamesStack(StackHandler *sH, const Common::String &ext) {
 	return true;
 }
 
-bool copyStack(const Variable &from, Variable &to) {
-	to.varType = SVT_STACK;
-	to.varData.theStack = new StackHandler;
-	if (!checkNew(to.varData.theStack))
+bool Variable::copyStack(const Variable &from) {
+	varType = SVT_STACK;
+	varData.theStack = new StackHandler;
+	if (!checkNew(varData.theStack))
 		return false;
-	to.varData.theStack->first = NULL;
-	to.varData.theStack->last = NULL;
-	to.varData.theStack->timesUsed = 1;
+	varData.theStack->first = NULL;
+	varData.theStack->last = NULL;
+	varData.theStack->timesUsed = 1;
 	VariableStack *a = from.varData.theStack->first;
 
 	while (a) {
-		addVarToStack(a->thisVar, to.varData.theStack->first);
-		if (to.varData.theStack->last == NULL) {
-			to.varData.theStack->last = to.varData.theStack->first;
+		addVarToStack(a->thisVar, varData.theStack->first);
+		if (varData.theStack->last == NULL) {
+			varData.theStack->last = varData.theStack->first;
 		}
 		a = a->next;
 	}

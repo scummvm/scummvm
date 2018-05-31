@@ -551,7 +551,7 @@ builtIn(copyStack) {
 		return BR_ERROR;
 	}
 	// Return value
-	if (!copyStack(fun->stack->thisVar, fun->reg))
+	if (!fun->reg.copyStack(fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
 	return BR_CONTINUE;

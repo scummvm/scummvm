@@ -103,6 +103,9 @@ struct Variable {
 	bool makeFastArrayFromStack(const StackHandler *stacky);
 	bool makeFastArraySize(int size);
 
+	// Stack variable
+	bool copyStack(const Variable &from);
+
 	// Add variables
 	void addVariablesInSecond(const Variable &other);
 	void compareVariablesInSecond(const Variable &other);
@@ -132,7 +135,6 @@ bool addVarToStack(const Variable &va, VariableStack *&thisStack);
 bool addVarToStackQuick(Variable &va, VariableStack *&thisStack);
 void trimStack(VariableStack *&stack);
 int deleteVarFromStack(const Variable &va, VariableStack *&thisStack, bool allOfEm = false);
-bool copyStack(const Variable &from, Variable &to);
 int stackSize(const StackHandler *me);
 bool getSavedGamesStack(StackHandler *sH, const Common::String &ext);
 
