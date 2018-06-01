@@ -150,7 +150,7 @@ void SaveMenuScreen::open() {
 	_widgets[kWidgetLoadText]->setVisible(false);
 }
 
-void SaveMenuScreen::onSlotSelected(int slot) {
+void SaveMenuScreen::onWidgetSelected(SaveDataWidget *widget) {
 	int chapter = StarkGlobal->getCurrentChapter() / 10;
 
 	Common::String desc;
@@ -160,7 +160,16 @@ void SaveMenuScreen::onSlotSelected(int slot) {
 		desc = Common::String::format("Chapter %d", chapter);
 	}
 
-	g_engine->saveGameState(slot, desc);
+	g_engine->saveGameState(widget->getSlot(), desc);
+
+	// Freeze the screen for a while to let the user notice the change
+	widget->loadSaveDataElements();
+	render();
+	g_system->updateScreen();
+	g_system->delayMillis(100);
+	render();
+	g_system->updateScreen();
+
 	StarkUserInterface->backPrevScreen();
 }
 
@@ -169,8 +178,8 @@ void LoadMenuScreen::open() {
 	_widgets[kWidgetSaveText]->setVisible(false);
 }
 
-void LoadMenuScreen::onSlotSelected(int slot) {
-	g_engine->loadGameState(slot);
+void LoadMenuScreen::onWidgetSelected(SaveDataWidget *widget) {
+	g_engine->loadGameState(widget->getSlot());
 }
 
 SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *screen) :
@@ -185,37 +194,14 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 		_textDesc(gfx),
 		_textTime(gfx),
 		_isMouseHovered(false) {
-	// Load the corresponding save slot data
-	Common::String filename = StarkEngine::formatSaveName(ConfMan.getActiveDomainName().c_str(), _slot);
-	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(filename);
-	if (save) {
-		SaveMetadata metadata;
-		StateReadStream stream(save);
-		Common::ErrorCode metadataErrorCode = metadata.read(&stream, filename);
-		if (metadataErrorCode != Common::kNoError) {
-			error("Unable to read save metadata with error code %d.", metadataErrorCode);
-		}
+	// Load from the save data
+	loadSaveDataElements();
 
-		// Obtain the thumbnail
-		Graphics::Surface *thumb = metadata.readGameScreenThumbnail(&stream);
-		_texture->update(thumb);
-		thumb->free();
-		delete thumb;
+	_textDesc.setColor(_textColor);
+	_textDesc.setFont(FontProvider::kCustomFont, 3);
 
-		// Obtain the text
-		_textDesc.setText(metadata.description);
-		_textDesc.setColor(_textColor);
-		_textDesc.setFont(FontProvider::kCustomFont, 3);
-
-		_textTime.setText(Common::String::format("%02d:%02d:%02d %02d/%02d/%02d",
-				metadata.saveHour, metadata.saveMinute, metadata.saveSecond,
-				metadata.saveMonth, metadata.saveDay, metadata.saveYear % 100));
-		_textTime.setColor(_textColor);
-		_textTime.setFont(FontProvider::kCustomFont, 3);
-	} else {
-		setVisible(_screen->isSaveMenu());
-	}
-
+	_textTime.setColor(_textColor);
+	_textTime.setFont(FontProvider::kCustomFont, 3);
 
 	// Create the outline texture
 	Graphics::Surface lineSurface;
@@ -226,6 +212,7 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 	lineSurface.drawThickLine(0, _thumbHeight - 2, _thumbWidth - 2, _thumbHeight - 2, 2, 2, _outlineColor);
 
 	_outline->update(&lineSurface);
+	lineSurface.free();
 
 	// Set the position
 	_thumbPos.x = 41 + (_slot % 3) * (_thumbWidth + 39);
@@ -260,7 +247,7 @@ bool SaveDataWidget::isMouseInside(const Common::Point &mousePos) const {
 
 void SaveDataWidget::onClick() {
 	StaticLocationWidget::onClick();
-	_screen->onSlotSelected(_slot);
+	_screen->onWidgetSelected(this);
 }
 
 void SaveDataWidget::onMouseMove(const Common::Point &mousePos) {
@@ -272,6 +259,33 @@ void SaveDataWidget::resetTextTexture() {
 	StaticLocationWidget::resetTextTexture();
 	_textDesc.resetTexture();
 	_textTime.resetTexture();
+}
+
+void SaveDataWidget::loadSaveDataElements() {
+	Common::String filename = StarkEngine::formatSaveName(ConfMan.getActiveDomainName().c_str(), _slot);
+	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(filename);
+	if (save) {
+		SaveMetadata metadata;
+		StateReadStream stream(save);
+		Common::ErrorCode metadataErrorCode = metadata.read(&stream, filename);
+		if (metadataErrorCode != Common::kNoError) {
+			error("Unable to read save metadata with error code %d.", metadataErrorCode);
+		}
+
+		// Obtain the thumbnail
+		Graphics::Surface *thumb = metadata.readGameScreenThumbnail(&stream);
+		_texture->update(thumb);
+		thumb->free();
+		delete thumb;
+
+		// Obtain the text
+		_textDesc.setText(metadata.description);
+		_textTime.setText(Common::String::format("%02d:%02d:%02d %02d/%02d/%02d",
+				metadata.saveHour, metadata.saveMinute, metadata.saveSecond,
+				metadata.saveMonth, metadata.saveDay, metadata.saveYear % 100));
+	} else {
+		setVisible(_screen->isSaveMenu());
+	}
 }
 
 } // End of namespace Stark

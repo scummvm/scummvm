@@ -36,6 +36,7 @@ class Texture;
 class SurfaceRenderer;	
 }
 
+class SaveDataWidget;
 
 /**
  * The base class of the save and load menu of the game
@@ -49,8 +50,8 @@ public:
 	void open() override;
 	void close() override;
 
-	/** Called when a save slot is selected */
-	virtual void onSlotSelected(int slot) = 0;
+	/** Called when a SaveDataWidget is selected */
+	virtual void onWidgetSelected(SaveDataWidget *widget) = 0;
 
 	/** Check whether the menu is used for saving */
 	virtual bool isSaveMenu() = 0;
@@ -92,7 +93,7 @@ public:
 	// SaveLoadMenuScreen API
 	void open() override;
 
-	void onSlotSelected(int slot) override;
+	void onWidgetSelected(SaveDataWidget *widget) override;
 
 	bool isSaveMenu() override { return true; }
 };
@@ -109,7 +110,7 @@ public:
 	// SaveLoadMenuScreen API
 	void open() override;
 
-	void onSlotSelected(int slot) override;
+	void onWidgetSelected(SaveDataWidget *widget) override;
 
 	bool isSaveMenu() override { return false; }
 };
@@ -128,6 +129,11 @@ public:
 	void onClick() override;
 	void onMouseMove(const Common::Point &mousePos) override;
 	void resetTextTexture() override;
+
+	int getSlot() { return _slot; }
+
+	/** Load the thumbnail and info from the save data */
+	void loadSaveDataElements();
 
 private:
 	static const uint32 _outlineColor = 0xFF961E1E;
