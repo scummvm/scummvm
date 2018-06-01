@@ -1033,6 +1033,7 @@ void Controls::placeBackgroundObject(BackgroundObject *backgroundObject) {
 	control->activateObject();
 	_controls.push_front(control);
 	_vm->_dict->setObjectControl(control->_objectId, control);
+	debug(0, "Added background control. objectId: %08X", control->_objectId);
 }
 
 void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequenceId, uint32 objectId, uint32 notifyThreadId) {

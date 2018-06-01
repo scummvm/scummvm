@@ -253,7 +253,7 @@ void SequenceOpcodes::opAppearForeignActor(Control *control, OpCall &opCall) {
 	ARG_INT16(foreignObjectNum);
 	Control *foreignControl = _vm->_dict->getObjectControl(foreignObjectNum | 0x40000);
 	if (!foreignControl) {
-		Common::Point pos = _vm->getNamedPointPosition(0x00070023);
+		Common::Point pos = _vm->getNamedPointPosition(0x00070023); // TODO Eric check this. duckman looks to be using 0x70001
 		_vm->_controls->placeActor(0x00050001, pos, 0x00060001, foreignObjectNum | 0x40000, 0);
 		foreignControl = _vm->_dict->getObjectControl(foreignObjectNum | 0x40000);
 	}

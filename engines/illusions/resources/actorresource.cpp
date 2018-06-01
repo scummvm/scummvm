@@ -123,7 +123,7 @@ void ActorResource::load(Resource *resource) {
 		_actorTypes.push_back(actorType);
 	}
 
-	// Load sequences	
+	// Load sequences
 	stream.seek(0x08);
 	uint sequencesCount = stream.readUint16LE();
 	stream.seek(0x14);
