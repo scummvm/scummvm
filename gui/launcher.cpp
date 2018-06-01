@@ -247,6 +247,8 @@ void LauncherDialog::close() {
 
 void LauncherDialog::updateListing() {
 	StringArray l;
+	ListWidget::ColorList colors;
+	ThemeEngine::FontColor color;
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
@@ -263,6 +265,7 @@ void LauncherDialog::updateListing() {
 
 		String gameid(iter->_value.getVal("gameid"));
 		String description(iter->_value.getVal("description"));
+		Common::FSNode path(iter->_value.getVal("path"));
 
 		if (gameid.empty())
 			gameid = iter->_key;
@@ -282,13 +285,25 @@ void LauncherDialog::updateListing() {
 
 			while (pos < size && (scumm_stricmp(description.c_str(), l[pos].c_str()) > 0))
 				pos++;
+
+			color = ThemeEngine::kFontColorNormal;
+			if (!path.isDirectory()) {
+				color = ThemeEngine::kFontColorAlternate;
+				// If more conditions which grey out entries are added we should consider
+				// enabling this so that it is easy to spot why a certain game entry cannot
+				// be started.
+
+				// description += Common::String::format(" (%s)", _("Not found"));
+			}
+
 			l.insert_at(pos, description);
+			colors.insert_at(pos, color);
 			_domains.insert_at(pos, iter->_key);
 		}
 	}
 
 	const int oldSel = _list->getSelected();
-	_list->setList(l);
+	_list->setList(l, &colors);
 	if (oldSel < (int)l.size())
 		_list->setSelected(oldSel);	// Restore the old selection
 	else if (oldSel != -1)
