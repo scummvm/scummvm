@@ -36,6 +36,7 @@
 #include "pink/director.h"
 #include "pink/file.h"
 #include "pink/utils.h"
+#include "pink/pda_mgr.h"
 
 /*
  *  This is the namespace of the Pink engine.
@@ -111,6 +112,8 @@ public:
 	void setVariable(Common::String &variable, Common::String &value);
 	bool checkValueOfVariable(Common::String &variable, Common::String &value);
 
+	PDAMgr &getPdaMgr();
+
 protected:
 	virtual void pauseEngineIntern(bool pause);
 
@@ -137,6 +140,7 @@ private:
 	Array<NamedObject *> _modules;
 
 	StringMap _variables;
+	PDAMgr _pdaMgr;
 
 	const ADGameDescription _desc;
 };

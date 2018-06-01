@@ -41,7 +41,7 @@ namespace Pink {
 Pink::PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 		: Engine(system), _console(nullptr), _rnd("pink"),
 		  _desc(*desc), _bro(nullptr), _module(nullptr),
-		  _director(_system) {
+		  _director(_system), _pdaMgr(this) {
 	debug("PinkEngine constructed");
 
 	DebugMan.addDebugChannel(kPinkDebugGeneral, "general", "General issues");
@@ -320,6 +320,10 @@ void PinkEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 	_director.pause(pause);
 	_system->showMouse(!pause);
+}
+
+PDAMgr &PinkEngine::getPdaMgr() {
+	return _pdaMgr;
 }
 
 Common::String generateSaveName(int slot, const char *gameId) {

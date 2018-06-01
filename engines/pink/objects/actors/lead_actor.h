@@ -81,6 +81,8 @@ public:
 
 	virtual void saveState(Archive &archive);
 
+	void loadPDA(const Common::String &pageName);
+
 protected:
 	virtual void updateCursor(Common::Point point);
 	void forceUpdateCursor();
