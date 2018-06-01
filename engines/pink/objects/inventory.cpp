@@ -152,6 +152,10 @@ void InventoryMgr::onClick(Common::Point point) {
 
 	Actor *actor = _lead->getPage()->getGame()->getDirector()->getActorByPoint(point);
 	if (actor == _itemActor || actor == _window) {
+		if (actor->getAction()->getName() == "WBook") {
+			_lead->loadPDA("TOC");
+			return;
+		}
 		_isClickedOnItem = true;
 		close();
 	} else if (actor == _leftArrow) {

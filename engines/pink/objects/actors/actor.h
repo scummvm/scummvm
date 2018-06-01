@@ -72,6 +72,7 @@ public:
 
 	virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
 	virtual void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
+	virtual void onClick() {};
 
 	virtual bool isClickable() { return 0; }
 

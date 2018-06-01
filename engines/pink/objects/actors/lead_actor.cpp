@@ -90,6 +90,7 @@ void LeadActor::update() {
 		getPage()->getModule()->getInventoryMgr()->update();
 		break;
 	case kPDA:
+		getPage()->getGame()->getPdaMgr().update();
 		break;
 	case kPlayingVideo:
 		_sequencer->update();
@@ -162,8 +163,7 @@ void LeadActor::start(bool isHandler) {
 void LeadActor::onMouseMove(Common::Point point) {
 	if (_state != kPDA)
 		updateCursor(point);
-	else
-		error("pda is not supported");
+	else _page->getGame()->getPdaMgr().onMouseMove(point);
 }
 
 void LeadActor::updateCursor(Common::Point point) {
@@ -229,7 +229,7 @@ void LeadActor::onLeftButtonClick(Common::Point point) {
 		break;
 	}
 	case kPDA:
-
+		_page->getGame()->getPdaMgr().onLeftButtonClick(point);
 		break;
 	case kInventory:
 		invMgr->onClick(point);
@@ -349,6 +349,21 @@ void LeadActor::saveState(Archive &archive) {
 		archive.writeString(Common::String());
 	_sequencer->saveState(archive);
 	_walkMgr->saveState(archive);
+}
+
+void LeadActor::loadPDA(const Common::String &pageName) {
+	if (_state != kPDA) {
+		if (_state == kMoving) {
+			_recipient = nullptr;
+			_nextState = kReady;
+		}
+		_state = kPDA;
+		if (_state != kInventory)
+			_page->pause();
+		_page->getGame()->getDirector()->clear();
+	}
+	_page->getGame()->getPdaMgr().setLead(this);
+	_page->getGame()->getPdaMgr().goToPage(pageName);
 }
 
 void ParlSqPink::toConsole() {
