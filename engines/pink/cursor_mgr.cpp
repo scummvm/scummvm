@@ -41,7 +41,7 @@ void CursorMgr::setCursor(uint index, Common::Point point, const Common::String 
 		return hideItem();
 	} else if (index != kHoldingItemCursor) {
 
-		if (index != kPDASecondCursor) {
+		if (index != kPDAClickableFirstFrameCursor) {
 			_game->setCursor(index);
 			_isPlayingAnimation = 0;
 			return hideItem();

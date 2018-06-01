@@ -231,13 +231,15 @@ bool PinkEngine::loadCursors() {
 		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilHoldingItemCursorID));
 	}
 
-	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDAFirstCursorID));
+	_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDADefaultCursorID));
 
-	if (isPokus)
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDASecondCursorID));
-	else
-		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilPDASecondCursorID));
-
+	if (isPokus) {
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDAClickableFirstFrameCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDAClickableSecondFrameCursorID));
+	} else {
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilPDAClickableFirstFrameCursorID));
+		_cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilPDAClickableSecondFrameCursorID));
+	}
 	return true;
 }
 

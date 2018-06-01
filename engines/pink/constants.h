@@ -85,7 +85,7 @@ enum {
 };
 
 enum {
-	kCursorsCount = 11
+	kCursorsCount = 12
 };
 
 enum {
@@ -98,8 +98,9 @@ enum {
 	kClickableSecondFrameCursor = 6,
 	kNotClickableCursor = 7,
 	kHoldingItemCursor = 8,
-	kPDAFirstCursor = 9,
-	kPDASecondCursor = 10
+	kPDADefaultCursor = 9,
+	kPDAClickableFirstFrameCursor = 10,
+	kPDAClickableSecondFrameCursor = 11
 };
 
 
@@ -114,8 +115,9 @@ enum {
 	kPokusClickableThirdCursorID = 145,
 	kPokusNotClickableCursorID = 140,
 	kPokusHoldingItemCursorID = 147,
-	kPokusPDAFirstCursorID = 141,
-	kPokusPDASecondCursorID = 144
+	kPokusPDADefaultCursorID = 141,
+	kPokusPDAClickableFirstFrameCursorID = 144,
+	kPokusPDAClickableSecondFrameCursorID = 146
 };
 
 // from Peril
@@ -124,7 +126,8 @@ enum {
 	kPerilClickableThirdCursorID = 140,
 	kPerilNotClickableCursorID = 139,
 	kPerilHoldingItemCursorID = 101,
-	kPerilPDASecondCursorID = 142
+	kPerilPDAClickableFirstFrameCursorID = 142,
+	kPerilPDAClickableSecondFrameCursorID = 143
 };
 
 enum {
