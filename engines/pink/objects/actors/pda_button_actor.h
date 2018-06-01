@@ -27,21 +27,35 @@
 
 namespace Pink {
 
+struct Command {
+	// commands in peril are different
+	/*enum PerilCommandType {Null, GoToPage, GoToPreviousPage, GoToDomain, GoToHelp,
+			NavigateToDomain, IncrementCountry, DecrementCountry, IncrementDomain,
+			DecrementDomain, Close, IncrementFrame, DecrementFrame};*/
+	enum CommandType {Null = 0, GoToPage = 1, Close = 2, Unk = 3};
+
+	CommandType type;
+	Common::String arg;
+};
+
 class PDAButtonActor : public Actor {
 public:
-	enum Command {Null = 0, GoToPage = 1, Close = 2, Unk = 4};
-
 	void deserialize(Archive &archive) override;
 	void toConsole() override;
 
+	void onClick();
+	void onMouseOver(Common::Point point, CursorMgr *mgr);
+
 private:
+	bool isActive();
+
+	Command _command;
+
 	int _x;
 	int _y;
 
 	bool _hideOnStop;
 	bool _opaque;
-
-	Command _command;
 };
 
 } // End of namespace Pink
