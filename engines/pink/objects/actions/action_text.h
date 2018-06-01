@@ -34,8 +34,13 @@ public:
 	void toConsole() override;
 
 private:
-	Common::String _text;
-	uint32 _bounds[4];
+	Common::String _fileName;
+
+	uint32 _xLeft;
+	uint32 _yTop;
+	uint32 _xRight;
+	uint32 _yBottom;
+
 	uint32 _centered;
 	uint32 _scrollBar;
 	uint32 _textColor;
