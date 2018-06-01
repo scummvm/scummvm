@@ -151,7 +151,7 @@ void SaveMenuScreen::open() {
 }
 
 void SaveMenuScreen::onSlotSelected(int slot) {
-	int chapter = StarkGlobal->getCurrentChapter();
+	int chapter = StarkGlobal->getCurrentChapter() / 10;
 
 	Common::String desc;
 	if (chapter == 0) {
@@ -199,6 +199,7 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 		// Obtain the thumbnail
 		Graphics::Surface *thumb = metadata.readGameScreenThumbnail(&stream);
 		_texture->update(thumb);
+		thumb->free();
 		delete thumb;
 
 		// Obtain the text
