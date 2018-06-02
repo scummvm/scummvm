@@ -90,12 +90,12 @@ namespace Griffon {
 */
 
 // system
-SDL_Surface *video, *videobuffer, *videobuffer2, *videobuffer3;
-SDL_Surface *titleimg, *titleimg2, *inventoryimg;
-SDL_Surface *logosimg, *theendimg;
+Graphics::TransparentSurface *video, *videobuffer, *videobuffer2, *videobuffer3;
+Graphics::TransparentSurface *titleimg, *titleimg2, *inventoryimg;
+Graphics::TransparentSurface *logosimg, *theendimg;
 SDL_Event event;
 
-SDL_Surface *mapbg, *clipbg, *clipbg2;
+Graphics::TransparentSurface *mapbg, *clipbg, *clipbg2;
 unsigned int clipsurround[4][4];
 int fullscreen;
 
@@ -104,9 +104,9 @@ float animspd;
 int rampdata[40][24];
 
 int curmap;
-SDL_Surface *fontchr[224][5]; // 256 - 32
-SDL_Surface *itemimg[21], *windowimg;
-SDL_Surface *spellimg;
+Graphics::TransparentSurface *fontchr[224][5]; // 256 - 32
+Graphics::TransparentSurface *itemimg[21], *windowimg;
+Graphics::TransparentSurface *spellimg;
 
 int itemselon, curitem, itemticks;
 float itemyloc;
@@ -120,7 +120,7 @@ float fp, fps, fpsr;
 int secsingame, secstart;
 
 extern char *story[48];
-SDL_Surface *mapimg[4];
+Graphics::TransparentSurface *mapimg[4];
 extern int invmap[4][7][13];
 extern char *story2[27];
 
@@ -130,7 +130,7 @@ SDL_Rect rcSrc, rcDest;
 int dontdrawover;   // used in map24 so that the candles dont draw over the boss, default set to 0
 
 // saveload info
-SDL_Surface *saveloadimg;
+Graphics::TransparentSurface *saveloadimg;
 
 
 // post info
@@ -138,7 +138,7 @@ float postinfo[21][3];
 int nposts;
 
 // cloud info
-SDL_Surface *cloudimg;
+Graphics::TransparentSurface *cloudimg;
 float clouddeg = 0;
 int cloudson;
 
@@ -153,16 +153,16 @@ PLAYERTYPE playera;
 int asecstart;
 
 // tile info
-SDL_Surface *tiles[4];
+Graphics::TransparentSurface *tiles[4];
 int tileinfo[3][40][24][3]; // maplayer, x, y, tiledata (tile, tilelayer)
 
 extern int elementmap[15][20];
 
 
 // animation info
-SDL_Surface *anims[100];
+Graphics::TransparentSurface *anims[100];
 // id number 0&1 = players
-SDL_Surface *animsa[100];
+Graphics::TransparentSurface *animsa[100];
 // attack anims
 float playerattackofs[4][16][3];
 // [dir] [frame] [x,y ofs, completed(0/1)]
@@ -1304,7 +1304,7 @@ void game_checktrigger() {
 #endif
 
 void game_configmenu() {
-	SDL_Surface *configwindow;
+	Graphics::TransparentSurface *configwindow;
 	SDL_Rect rc;
 	int cursel, curselt, ofullscreen;
 	int tickwait, keypause, ticks1;
