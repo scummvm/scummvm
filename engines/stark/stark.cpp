@@ -282,7 +282,7 @@ bool StarkEngine::hasFeature(EngineFeature f) const {
 }
 
 bool StarkEngine::canLoadGameStateCurrently() {
-	return true;
+	return !StarkUserInterface->isInSaveLoadMenuScreen();
 }
 
 Common::Error StarkEngine::loadGameState(int slot) {
