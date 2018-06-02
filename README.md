@@ -47,7 +47,7 @@ Escape From Monkey Island (PS2)  | Untested
 
 Game                             | Status
 -------------------------------- | -------------------------
-Myst III Exile                   | Completable with glitches
+Myst III Exile                   | Completable
 
 Specifics can be found at
 http://www.residualvm.org/compatibility/
