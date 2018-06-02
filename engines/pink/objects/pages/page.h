@@ -47,8 +47,7 @@ public:
 	CelDecoder *loadCel(Common::String &fileName);
 
 	virtual void clear();
-	void pause();
-	void unpause();
+	void pause(bool paused);
 
 	PinkEngine *getGame();
 

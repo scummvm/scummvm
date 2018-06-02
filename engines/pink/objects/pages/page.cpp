@@ -83,15 +83,9 @@ void Page::clear() {
 	_resMgr.clear();
 }
 
-void Page::pause() {
+void Page::pause(bool paused) {
 	for (uint i = 0; i < _actors.size(); ++i) {
-		_actors[i]->pause();
-	}
-}
-
-void Page::unpause() {
-	for (uint i = 0; i < _actors.size(); ++i) {
-		_actors[i]->unpause();
+		_actors[i]->pause(paused);
 	}
 }
 

@@ -44,9 +44,7 @@ public:
 
 	virtual bool initPalette(Director *director);
 
-	void pause() override;
-
-	void unpause() override;
+	void pause(bool paused) override;
 
 protected:
 	virtual void onStart() {};

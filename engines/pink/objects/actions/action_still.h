@@ -33,6 +33,7 @@ public:
 	virtual void toConsole();
 
 	virtual void end();
+	virtual void pause(bool paused) {}
 
 protected:
 	virtual void onStart();

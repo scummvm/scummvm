@@ -39,7 +39,7 @@ public:
 		}
 	}
 
-	void pause() {}
+	void pause(bool paused) override {}
 };
 
 } // End of namespace Pink
