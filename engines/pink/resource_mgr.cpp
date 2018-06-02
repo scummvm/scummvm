@@ -48,12 +48,35 @@ void ResourceMgr::init(PinkEngine *game, Page *page) {
 	_resDescTable = orb->getResDescTable(objDesc);
 }
 
+void ResourceMgr::clear() {
+	delete[] _resDescTable;
+	_resDescTable = nullptr;
+}
+
+CelDecoder *ResourceMgr::loadCEL(Common::String &name) {
+	CelDecoder *decoder = new CelDecoder();
+	decoder->loadStream(getResourceStream(name));
+	return decoder;
+}
+
 Sound *ResourceMgr::loadSound(Common::String &name) {
 	return new Sound(_game->_mixer, getResourceStream(name));
 }
 
+Common::String ResourceMgr::loadText(Common::String &name) {
+	Common::SeekableReadStream *stream = getResourceStream(name);
+	char *txt = new char[stream->size()];
+	Common::String str(txt, stream->size());
+	delete txt;
+	return str;
+}
+
 static int resDescComp(const void *a, const void *b) {
 	return scumm_stricmp((char *) a, (char *) b);
+}
+
+PinkEngine *ResourceMgr::getGame() const {
+	return _game;
 }
 
 Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(Common::String &name) {
@@ -69,22 +92,7 @@ Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(Common::String
 	stream->seek(desc->offset);
 
 	return new Common::SafeSeekableSubReadStream(stream, desc->offset,
-											 desc->offset + desc->size);
-}
-
-PinkEngine *ResourceMgr::getGame() const {
-	return _game;
-}
-
-CelDecoder *ResourceMgr::loadCEL(Common::String &name) {
-	CelDecoder *decoder = new CelDecoder();
-	decoder->loadStream(getResourceStream(name));
-	return decoder;
-}
-
-void ResourceMgr::clear() {
-	delete[] _resDescTable;
-	_resDescTable = nullptr;
+												 desc->offset + desc->size);
 }
 
 } // End of namespace Pink

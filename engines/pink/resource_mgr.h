@@ -47,11 +47,13 @@ public:
 	~ResourceMgr();
 
 	void init(PinkEngine *game, Page *page);
+
 	void clear();
 
-	//Common::String loadText(Common::String &name);
-	Sound *loadSound(Common::String &name);
 	CelDecoder *loadCEL(Common::String &name);
+	Sound *loadSound(Common::String &name);
+	Common::String loadText(Common::String &name);
+
 	PinkEngine *getGame() const;
 
 private:
