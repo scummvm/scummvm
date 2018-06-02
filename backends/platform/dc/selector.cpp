@@ -137,6 +137,7 @@ void draw_trans_quad(float x1, float y1, float x2, float y2,
 struct Game
 {
   char dir[256];
+  char engine_id[256];
   char filename_base[256];
   char text[256];
   Common::Language language;
@@ -233,6 +234,8 @@ static int findGames(Game *games, int max, bool use_ini)
       }
       if (curr_game < max) {
 	strcpy(games[curr_game].filename_base, (*i)._key.c_str());
+	strncpy(games[curr_game].engine_id, (*i)._value["engineid"].c_str(), 256);
+	games[curr_game].engine_id[255] = '\0';
 	strncpy(games[curr_game].dir, dirs[j].node.getPath().c_str(), 256);
 	games[curr_game].dir[255] = '\0';
 	games[curr_game].language = Common::UNK_LANG;
@@ -278,6 +281,7 @@ static int findGames(Game *games, int max, bool use_ini)
       for (DetectedGames::const_iterator ge = candidates.begin();
 	   ge != candidates.end(); ++ge)
 	if (curr_game < max) {
+	  strcpy(games[curr_game].engine_id, ge->engineId.c_str());
 	  strcpy(games[curr_game].filename_base, ge->gameId.c_str());
 	  strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
 	  games[curr_game].language = ge->language;
@@ -465,7 +469,7 @@ int gameMenu(Game *games, int num_games)
   }
 }
 
-bool selectGame(char *&ret, char *&dir_ret, Common::Language &lang_ret, Common::Platform &plf_ret, Icon &icon)
+bool selectGame(char *&engineId, char *&ret, char *&dir_ret, Common::Language &lang_ret, Common::Platform &plf_ret, Icon &icon)
 {
   Game *games = new Game[MAX_GAMES];
   int selected, num_games;
@@ -510,6 +514,7 @@ bool selectGame(char *&ret, char *&dir_ret, Common::Language &lang_ret, Common::
     chdir("/");
     dir_ret = the_game.dir;
 #endif
+    engineId = the_game.engine_id;
     ret = the_game.filename_base;
     lang_ret = the_game.language;
     plf_ret = the_game.platform;

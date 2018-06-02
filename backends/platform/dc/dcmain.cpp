@@ -365,28 +365,31 @@ int main()
 
 int DCLauncherDialog::runModal()
 {
-  char *base = NULL, *dir = NULL;
+  char *engineId = NULL, *gameId = NULL, *dir = NULL;
   Common::Language language = Common::UNK_LANG;
   Common::Platform platform = Common::kPlatformUnknown;
 
-  if (!selectGame(base, dir, language, platform, icon))
+  if (!selectGame(engineId, gameId, dir, language, platform, icon))
     g_system->quit();
 
   // Set the game path.
-  ConfMan.addGameDomain(base);
+  ConfMan.addGameDomain(gameId);
+  ConfMan.set("engineid", engineId, gameId);
+  ConfMan.set("gameid", gameId, gameId);
+
   if (dir != NULL)
-    ConfMan.set("path", dir, base);
+    ConfMan.set("path", dir, gameId);
 
   // Set the game language.
   if (language != Common::UNK_LANG)
-    ConfMan.set("language", Common::getLanguageCode(language), base);
+    ConfMan.set("language", Common::getLanguageCode(language), gameId);
 
   // Set the game platform.
   if (platform != Common::kPlatformUnknown)
-    ConfMan.set("platform", Common::getPlatformCode(platform), base);
+    ConfMan.set("platform", Common::getPlatformCode(platform), gameId);
 
   // Set the target.
-  ConfMan.setActiveDomain(base);
+  ConfMan.setActiveDomain(gameId);
 
   return 0;
 }

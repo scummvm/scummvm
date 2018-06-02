@@ -262,7 +262,7 @@ public:
 extern int handleInput(struct mapledev *pad,
 		       int &mouse_x, int &mouse_y,
 		       byte &shiftFlags, Interactive *inter = NULL);
-extern bool selectGame(char *&, char *&, Common::Language &, Common::Platform &, class Icon &);
+extern bool selectGame(char *&, char *&, char *&, Common::Language &, Common::Platform &, class Icon &);
 #ifdef DYNAMIC_MODULES
 extern bool selectPluginDir(Common::String &selection, const Common::FSNode &base);
 #endif
