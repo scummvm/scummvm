@@ -82,12 +82,8 @@ ActionCEL::~ActionCEL() {
 	end();
 }
 
-void ActionCEL::pause() {
-	_decoder->pauseVideo(1);
-}
-
-void ActionCEL::unpause() {
-	_decoder->pauseVideo(0);
+void ActionCEL::pause(bool paused) {
+	_decoder->pauseVideo(paused);
 }
 
 } // End of namespace Pink

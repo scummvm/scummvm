@@ -34,7 +34,7 @@ Sound::Sound(Audio::Mixer *mixer, Common::SafeSeekableSubReadStream *stream)
 	: _mixer(mixer), _fileStream(stream) {}
 
 Sound::~Sound() {
-	stop();
+	_mixer->stopHandle(_handle);
 	delete _fileStream;
 }
 
@@ -42,16 +42,8 @@ bool Sound::isPlaying() {
 	return _mixer->isSoundHandleActive(_handle);
 }
 
-void Sound::pause() {
-	_mixer->pauseHandle(_handle, true);
-}
-
-void Sound::resume() {
-	_mixer->pauseHandle(_handle, false);
-}
-
-void Sound::stop() {
-	_mixer->stopHandle(_handle);
+void Sound::pause(bool paused) {
+	_mixer->pauseHandle(_handle, paused);
 }
 
 void Sound::play(Audio::Mixer::SoundType type, int volume, bool isLoop) {

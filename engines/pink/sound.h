@@ -45,9 +45,7 @@ public:
 
 	bool isPlaying();
 
-	void pause();
-	void resume();
-	void stop();
+	void pause(bool paused);
 
 	uint32 getCurrentSample();
 	void setBalance(int8 balance);

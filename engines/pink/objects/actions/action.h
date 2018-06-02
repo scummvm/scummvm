@@ -42,8 +42,7 @@ public:
 
 	Actor *getActor() { return _actor; }
 
-	virtual void pause() {};
-	virtual void unpause() {};
+	virtual void pause(bool paused) {};
 
 protected:
 	Actor *_actor;

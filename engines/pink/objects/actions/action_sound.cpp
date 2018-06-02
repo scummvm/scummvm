@@ -85,14 +85,9 @@ void ActionSound::update() {
 		_actor->endAction();
 }
 
-void ActionSound::pause() {
+void ActionSound::pause(bool paused) {
 	if (_sound)
-		_sound->pause();
-}
-
-void ActionSound::unpause() {
-	if (_sound)
-		_sound->resume();
+		_sound->pause(paused);
 }
 
 } // End of namespace Pink

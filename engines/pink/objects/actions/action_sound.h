@@ -42,8 +42,7 @@ public:
 	virtual void end();
 	virtual void update();
 
-	void pause() override;
-	void unpause() override;
+	void pause(bool paused) override;
 
 private:
 	Sound *_sound;
