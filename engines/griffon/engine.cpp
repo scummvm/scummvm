@@ -852,7 +852,8 @@ void game_castspell(int spellnum, float homex, float homey, float enemyx, float 
 			spellinfo[i].frame = 32;
 			if (damagewho == 0) {
 				spellinfo[i].strength = player.spellstrength / 100;
-				if (player.spellstrength == 100) spellinfo[i].strength = 1.5;
+				if (player.spellstrength == 100)
+					spellinfo[i].strength = 1.5;
 			}
 
 			// set earthslide vars
@@ -986,7 +987,8 @@ void game_checkinputs() {
 		}
 	}
 
-	if (attacking == 1 || (forcepause == 1 && itemselon == 0)) return;
+	if (attacking == 1 || (forcepause == 1 && itemselon == 0))
+		return;
 
 	if (event.type == SDL_KEYDOWN) {
 		switch (event.key.keysym.sym) {
@@ -1010,7 +1012,8 @@ void game_checkinputs() {
 			break;
 
 		case SDLK_LCTRL:
-			if (itemselon == 0 && itemticks < ticks) game_attack();
+			if (itemselon == 0 && itemticks < ticks)
+				game_attack();
 
 			if (itemselon == 1 && itemticks < ticks) {
 				if (curitem == 0 && player.inventory[INV_FLASK] > 0) {
@@ -1637,7 +1640,8 @@ void game_configmenu() {
 						}
 					}
 
-					if (cursel == 10 && config.effects == 1) config.effects = 0;
+					if (cursel == 10 && config.effects == 1)
+						config.effects = 0;
 
 					if (cursel == 13) {
 						config_save(&config);
@@ -2499,8 +2503,10 @@ void game_drawnpcs(int mode) {
 	int fst = firsty;
 	int lst = lasty;
 
-	if (mode == 0) lst = player.ysort;
-	if (mode == 1) fst = player.ysort;
+	if (mode == 0)
+		lst = player.ysort;
+	if (mode == 1)
+		fst = player.ysort;
 
 	for (int yy = fst; yy <= lst; yy++) {
 
@@ -2579,7 +2585,8 @@ void game_drawnpcs(int mode) {
 					for (int f = 0; f <= 7; f++) {
 						int yp = 0;
 
-						if (f == 0 && (curmap == 53 || curmap == 57 || curmap == 61 || curmap == 65 || curmap == 56 || curmap > 66) && scriptflag[60][0] > 0) yp = 16;
+						if (f == 0 && (curmap == 53 || curmap == 57 || curmap == 61 || curmap == 65 || curmap == 56 || curmap > 66) && scriptflag[60][0] > 0)
+							yp = 16;
 						int s = npcinfo[i].bodysection[f].sprite;
 						rcSrc.x = animset9[s].x;
 						rcSrc.y = animset9[s].y + yp;
@@ -2664,7 +2671,8 @@ void game_drawnpcs(int mode) {
 							rcDest.y = npcinfo[i].bodysection[10 * ff].y - 8;
 
 							int x = 192 + ((int)(itemyloc + ff * 5) % 3) * 64;
-							if (x > 255) x = 255;
+							if (x > 255)
+								x = 255;
 							SDL_SetAlpha(spellimg, SDL_SRCALPHA, x);
 							SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
 							SDL_SetAlpha(spellimg, SDL_SRCALPHA, 255);
@@ -2679,7 +2687,8 @@ void game_drawnpcs(int mode) {
 								rcDest.y = npcinfo[i].bodysection[ff * 10 + f].y - 8 + (int)(RND() * 3) - 1;
 
 								x = 192 + f % 3 * 64;
-								if (x > 255) x = 255;
+								if (x > 255)
+									x = 255;
 								SDL_SetAlpha(spellimg, SDL_SRCALPHA, x);
 								SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
 								SDL_SetAlpha(spellimg, SDL_SRCALPHA, 255);
@@ -2791,7 +2800,8 @@ void game_drawnpcs(int mode) {
 				if (npcinfo[i].spriteset == 10) {
 					if (npcinfo[i].attacking == 0) {
 						npcinfo[i].floating = npcinfo[i].floating + 0.25 * fpsr;
-						while (npcinfo[i].floating >= 16) npcinfo[i].floating = npcinfo[i].floating - 16;
+						while (npcinfo[i].floating >= 16)
+							npcinfo[i].floating = npcinfo[i].floating - 16;
 
 						float frame = npcinfo[i].frame;
 						int cframe = npcinfo[i].cframe;
@@ -2801,8 +2811,10 @@ void game_drawnpcs(int mode) {
 							frame = frame - 16;
 
 						cframe = (int)(frame);
-						if (cframe > 16) cframe = 16 - 1;
-						if (cframe < 0) cframe = 0;
+						if (cframe > 16)
+							cframe = 16 - 1;
+						if (cframe < 0)
+							cframe = 0;
 
 						npcinfo[i].frame = frame;
 						npcinfo[i].cframe = cframe;
@@ -2828,7 +2840,8 @@ void game_drawnpcs(int mode) {
 						SDL_BlitSurface(anims[sprite], &rcSrc, videobuffer, &rcDest);
 					} else {
 						npcinfo[i].floating = npcinfo[i].floating + 0.25 * fpsr;
-						while (npcinfo[i].floating >= 16) npcinfo[i].floating = npcinfo[i].floating - 16;
+						while (npcinfo[i].floating >= 16)
+							npcinfo[i].floating = npcinfo[i].floating - 16;
 
 						int cframe = npcinfo[i].cattackframe;
 
@@ -2850,7 +2863,8 @@ void game_drawnpcs(int mode) {
 				if (npcinfo[i].spriteset == 11) {
 
 					npcinfo[i].floating = npcinfo[i].floating + .3 * fpsr;
-					while (npcinfo[i].floating >= 16) npcinfo[i].floating = npcinfo[i].floating - 16;
+					while (npcinfo[i].floating >= 16)
+						npcinfo[i].floating = npcinfo[i].floating - 16;
 
 
 					float frame = npcinfo[i].frame2;
@@ -2886,7 +2900,8 @@ void game_drawnpcs(int mode) {
 							rcSrc.h = 16;
 
 							float fr3 = frame - 3 + i2;
-							if (fr3 < 0) fr3 = fr3 + 16;
+							if (fr3 < 0)
+								fr3 = fr3 + 16;
 
 							rcDest.x = (float)(sx + 36 + ii * 8 - ii * cos(3.14159 * 2 * (fr3 - ii) / 16) * 2);
 							rcDest.y = (float)(sy + 16 + ii * sin(3.14159 * 2 * (fr3 - ii) / 16) * 3 - ii); //  * 4
@@ -2977,7 +2992,8 @@ void game_drawnpcs(int mode) {
 				// bat kitty
 				if (npcinfo[i].spriteset == 12) {
 					npcinfo[i].floating = npcinfo[i].floating + 1 * fpsr;
-					while (npcinfo[i].floating >= 16) npcinfo[i].floating = npcinfo[i].floating - 16;
+					while (npcinfo[i].floating >= 16)
+						npcinfo[i].floating = npcinfo[i].floating - 16;
 
 					float frame = npcinfo[i].frame;
 					int cframe = npcinfo[i].cframe;
@@ -2987,8 +3003,10 @@ void game_drawnpcs(int mode) {
 						frame = frame - 16;
 
 					cframe = (int)(frame);
-					if (cframe > 16) cframe = 16 - 1;
-					if (cframe < 0) cframe = 0;
+					if (cframe > 16)
+						cframe = 16 - 1;
+					if (cframe < 0)
+						cframe = 0;
 
 					npcinfo[i].frame = frame;
 					npcinfo[i].cframe = cframe;
@@ -3026,8 +3044,10 @@ void game_drawnpcs(int mode) {
 
 
 				int ww = 14 * npcinfo[i].hp / npcinfo[i].maxhp;
-				if (ww > 14) ww = 14;
-				if (ww < 1) ww = 1;
+				if (ww > 14)
+					ww = 14;
+				if (ww < 1)
+					ww = 1;
 
 				rcDest.w = ww;
 				rcDest.h = 2;
@@ -3037,8 +3057,10 @@ void game_drawnpcs(int mode) {
 
 				int pass = 1;
 
-				if (npcinfo[i].spriteset == 3) pass = 0;
-				if (pass == 1) game_drawover(npx, npy);
+				if (npcinfo[i].spriteset == 3)
+					pass = 0;
+				if (pass == 1)
+					game_drawover(npx, npy);
 
 			}
 		}
@@ -3086,11 +3108,13 @@ void game_drawover(int modx, int mody) {
 						for (int ff = 0; ff <= 5; ff++) {
 							int ffa = 20 * 5 - 1 + ff * 20;
 							int ffb = 20 * 5 + 4 + ff * 20;
-							if (curtile > ffa && curtile < ffb) pass = 0;
+							if (curtile > ffa && curtile < ffb)
+								pass = 0;
 						}
 					}
 
-					if (pass == 1) SDL_BlitSurface(tiles[curtilel], &rcSrc, videobuffer, &rcDest);
+					if (pass == 1)
+						SDL_BlitSurface(tiles[curtilel], &rcSrc, videobuffer, &rcDest);
 				}
 			}
 		}
@@ -3101,7 +3125,8 @@ void game_drawplayer() {
 	long ccc;
 
 	int f = 0;
-	if (player.armour == 3) f = 13;
+	if (player.armour == 3)
+		f = 13;
 
 	if (attacking == 0) {
 		rcSrc.x = (int)(player.walkframe / 4) * 24;
@@ -3133,7 +3158,8 @@ void game_drawplayer() {
 	ccc = SDL_MapRGB(videobuffer->format, 224, 224, 64);
 
 	int pass = 0;
-	if (player.hp <= player.maxhp * 0.25) pass = 1;
+	if (player.hp <= player.maxhp * 0.25)
+		pass = 1;
 
 	if (pass == 1) {
 		ccc = SDL_MapRGB(videobuffer->format, 255, 255, 255);
@@ -3141,7 +3167,8 @@ void game_drawplayer() {
 	}
 
 	int sss = 6;
-	if (player.foundspell[0]) sss = 8;
+	if (player.foundspell[0])
+		sss = 8;
 	int npx = player.px;
 	int npy = player.py;
 	rcDest.x = npx + 4;
@@ -3156,8 +3183,10 @@ void game_drawplayer() {
 
 
 	int ww = 14 * player.hp / player.maxhp;
-	if (ww > 14) ww = 14;
-	if (ww < 1) ww = 1;
+	if (ww > 14)
+		ww = 14;
+	if (ww < 1)
+		ww = 1;
 
 	rcDest.w = ww;
 	rcDest.h = 2;
@@ -3165,13 +3194,16 @@ void game_drawplayer() {
 	SDL_FillRect(videobuffer, &rcDest, ccc);
 
 	ccc = SDL_MapRGB(videobuffer->format, 0, 224, 64);
-	if (player.attackstrength == 100) ccc = SDL_MapRGB(videobuffer->format, 255, 128, 32);
+	if (player.attackstrength == 100)
+		ccc = SDL_MapRGB(videobuffer->format, 255, 128, 32);
 
 	ww = 14 * player.attackstrength / 100;
-	if (ww > 14) ww = 14;
+	if (ww > 14)
+		ww = 14;
 
 	int ww2 = 14 * player.spellstrength / 100;
-	if (ww2 > 14) ww2 = 14;
+	if (ww2 > 14)
+		ww2 = 14;
 
 	rcDest.w = ww;
 	rcDest.h = 2;
@@ -3180,7 +3212,8 @@ void game_drawplayer() {
 	SDL_FillRect(videobuffer, &rcDest, ccc);
 
 	ccc = SDL_MapRGB(videobuffer->format, 128, 0, 224);
-	if (player.spellstrength == 100) ccc = SDL_MapRGB(videobuffer->format, 224, 0, 0);
+	if (player.spellstrength == 100)
+		ccc = SDL_MapRGB(videobuffer->format, 224, 0, 0);
 
 	rcDest.w = ww2;
 	rcDest.h = 2;
@@ -3199,13 +3232,15 @@ void game_drawview() {
 	game_drawanims(0);
 
 	// ------dontdrawover = special case to make boss work right in room 24
-	if (dontdrawover == 1) game_drawanims(1);
+	if (dontdrawover == 1)
+		game_drawanims(1);
 	game_drawnpcs(0);
 
 	game_drawplayer();
 
 	game_drawnpcs(1);
-	if (dontdrawover == 0) game_drawanims(1);
+	if (dontdrawover == 0)
+		game_drawanims(1);
 
 	game_drawover((int)player.px, (int)player.py);
 
@@ -3251,17 +3286,21 @@ void game_endofgame() {
 
 	do {
 		ld = ld + 4 * fpsr;
-		if (ld > config.musicvol) ld = config.musicvol;
+		if (ld > config.musicvol)
+			ld = config.musicvol;
 		if (menabled == 1 && ldstop == 0) {
 			Mix_Volume(musicchannel, (int)ld);
-			if ((int)ld == config.musicvol) ldstop = 1;
+			if ((int)ld == config.musicvol)
+				ldstop = 1;
 		}
 
 		ya = 0;
 		if (ticks < ticks1 + 1500) {
 			ya = (255 * (ticks - ticks1)) / 1500;
-			if (ya < 0) ya = 0;
-			if (ya > 255) ya = 255;
+			if (ya < 0)
+				ya = 0;
+			if (ya > 255)
+				ya = 255;
 		} else {
 			break;
 		}
@@ -3316,14 +3355,17 @@ void game_endofgame() {
 				sys_print(videobuffer, story2[i], x, yy, 4);
 			}
 
-			if (yy < 10 && i == 25) break;
+			if (yy < 10 && i == 25)
+				break;
 		}
 
 		int ya = 255;
 		if (ticks < ticks1 + 1000) {
 			ya = 255 * (ticks - ticks1) / 1000;
-			if (ya < 0) ya = 0;
-			if (ya > 255) ya = 255;
+			if (ya < 0)
+				ya = 0;
+			if (ya > 255)
+				ya = 255;
 		}
 
 		SDL_SetAlpha(videobuffer, SDL_SRCALPHA, ya);
@@ -3347,17 +3389,22 @@ void game_endofgame() {
 		}
 
 		float add = 0.5 * fpsr;
-		if (add > 1) add = 1;
+		if (add > 1)
+			add = 1;
 		xofs = xofs + add;
-		if (xofs >= 320) xofs = xofs - 320;
+		if (xofs >= 320)
+			xofs = xofs - 320;
 
 		SDL_PollEvent(&event);
 		keys = SDL_GetKeyState(NULL);
 
-		if (event.type == SDL_KEYDOWN) spd = 1;
-		if (event.type == SDL_KEYUP) spd = 0.2;
+		if (event.type == SDL_KEYDOWN)
+			spd = 1;
+		if (event.type == SDL_KEYUP)
+			spd = 0.2;
 
-		if (keys[SDLK_ESCAPE] || keys[SDLK_LALT]) break;
+		if (keys[SDLK_ESCAPE] || keys[SDLK_LALT])
+			break;
 	} while (1);
 
 
@@ -3369,8 +3416,10 @@ void game_endofgame() {
 	do {
 		if (ticks < ticks1 + 1500) {
 			int y = 255 * (ticks - ticks1) / 1500;
-			if (y < 0) y = 0;
-			if (y > 255) y = 255;
+			if (y < 0)
+				y = 0;
+			if (y > 255)
+				y = 255;
 			else
 				break;
 		}
@@ -3412,8 +3461,10 @@ void game_endofgame() {
 		y = 255;
 		if (ticks < ticks1 + 1000) {
 			y = 255 * (ticks - ticks1) / 1000;
-			if (y < 0) y = 0;
-			if (y > 255) y = 255;
+			if (y < 0)
+				y = 0;
+			if (y > 255)
+				y = 255;
 		}
 
 		SDL_SetAlpha(videobuffer, SDL_SRCALPHA, y);
@@ -3439,7 +3490,8 @@ void game_endofgame() {
 		SDL_PollEvent(&event);
 		keys = SDL_GetKeyState(NULL);
 
-		if (event.type == SDL_KEYDOWN && keywait < ticks) break;
+		if (event.type == SDL_KEYDOWN && keywait < ticks)
+			break;
 
 	} while (1);
 
@@ -3469,18 +3521,22 @@ void game_eventtext(char *stri) {
 		SDL_PollEvent(&event);
 		keys = SDL_GetKeyState(NULL);
 
-		if (event.type == SDL_KEYDOWN && pauseticks < ticks) break;
+		if (event.type == SDL_KEYDOWN && pauseticks < ticks)
+			break;
 		SDL_BlitSurface(videobuffer2, NULL, videobuffer, NULL);
 
 		fr = 192;
 
-		if (pauseticks > ticks) fr = 192 * (ticks - bticks) / 500;
-		if (fr > 192) fr = 192;
+		if (pauseticks > ticks)
+			fr = 192 * (ticks - bticks) / 500;
+		if (fr > 192)
+			fr = 192;
 
 		SDL_SetAlpha(windowimg, SDL_SRCALPHA, fr);
 
 		SDL_BlitSurface(windowimg, NULL, videobuffer, NULL);
-		if (pauseticks < ticks) sys_print(videobuffer, stri, x, 15, 0);
+		if (pauseticks < ticks)
+			sys_print(videobuffer, stri, x, 15, 0);
 
 		SDL_SetAlpha(windowimg, SDL_SRCALPHA, 255);
 		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
@@ -3534,14 +3590,20 @@ void game_handlewalking() {
 	int ly = (int)npy / 16;
 
 	int ramp = rampdata[lx][ly];
-	if (ramp == 1 && movingup) spd = spd * 2;
-	if (ramp == 1 && movingdown) spd = spd * 2;
+	if (ramp == 1 && movingup)
+		spd = spd * 2;
+	if (ramp == 1 && movingdown)
+		spd = spd * 2;
 
-	if (ramp == 2 && movingleft) movingup = 1;
-	if (ramp == 2 && movingright) movingdown = 1;
+	if (ramp == 2 && movingleft)
+		movingup = 1;
+	if (ramp == 2 && movingright)
+		movingdown = 1;
 
-	if (ramp == 3 && movingright) movingup = 1;
-	if (ramp == 3 && movingleft) movingdown = 1;
+	if (ramp == 3 && movingright)
+		movingup = 1;
+	if (ramp == 3 && movingleft)
+		movingdown = 1;
 
 	for (int x = -1; x <= 1; x++) {
 		for (int y = -1; y <= 1; y++) {
@@ -3556,10 +3618,14 @@ void game_handlewalking() {
 		}
 	}
 
-	if (movingup) player.walkdir = 0;
-	if (movingdown) player.walkdir = 1;
-	if (movingleft) player.walkdir = 2;
-	if (movingright) player.walkdir = 3;
+	if (movingup)
+		player.walkdir = 0;
+	if (movingdown)
+		player.walkdir = 1;
+	if (movingleft)
+		player.walkdir = 2;
+	if (movingright)
+		player.walkdir = 3;
 
 	if (movingup && clipsurround[1][0] == 0) {
 		py = py - spd;
@@ -3626,10 +3692,14 @@ void game_handlewalking() {
 		}
 	}
 
-	if (px < -8) px = -8;
-	if (px > xmax) px = xmax;
-	if (py < -8) py = -8;
-	if (py > ymax) py = ymax;
+	if (px < -8)
+		px = -8;
+	if (px > xmax)
+		px = xmax;
+	if (py < -8)
+		py = -8;
+	if (py > ymax)
+		py = ymax;
 
 	int pass = 1;
 
@@ -3657,13 +3727,17 @@ void game_handlewalking() {
 				int ydif = player.py - npy;
 
 				if (player.walkdir == 0) {
-					if (abs(xdif) <= 8 && ydif > 0 && ydif < 8) npcinfo[i].y = npcinfo[i].y - spd;
+					if (abs(xdif) <= 8 && ydif > 0 && ydif < 8)
+						npcinfo[i].y = npcinfo[i].y - spd;
 				} else if (player.walkdir == 1) {
-					if (abs(xdif) <= 8 && ydif < 0 && ydif > -8) npcinfo[i].y = npcinfo[i].y + spd;
+					if (abs(xdif) <= 8 && ydif < 0 && ydif > -8)
+						npcinfo[i].y = npcinfo[i].y + spd;
 				} else if (player.walkdir == 2) {
-					if (abs(ydif) <= 8 && xdif > 0 && xdif < 8) npcinfo[i].x = npcinfo[i].x - spd;
+					if (abs(ydif) <= 8 && xdif > 0 && xdif < 8)
+						npcinfo[i].x = npcinfo[i].x - spd;
 				} else if (player.walkdir == 3) {
-					if (abs(ydif) <= 8 && xdif < 0 && xdif > -8) npcinfo[i].x = npcinfo[i].x + spd;
+					if (abs(ydif) <= 8 && xdif < 0 && xdif > -8)
+						npcinfo[i].x = npcinfo[i].x + spd;
 				}
 
 				npx = npcinfo[i].x;
@@ -3687,8 +3761,10 @@ void game_handlewalking() {
 	player.px = px;
 	player.py = py;
 
-	if (player.px != player.opx || player.py != player.opy) player.walkframe = player.walkframe + animspd * fpsr;
-	if (player.walkframe >= 16) player.walkframe = player.walkframe - 16;
+	if (player.px != player.opx || player.py != player.opy)
+		player.walkframe = player.walkframe + animspd * fpsr;
+	if (player.walkframe >= 16)
+		player.walkframe = player.walkframe - 16;
 
 	// walking over items to pickup :::
 	int o = objmap[lx][ly];
@@ -3730,7 +3806,8 @@ void game_handlewalking() {
 			game_addFloatIcon(17, lx * 16, ly * 16);
 
 			objmapf[curmap][lx][ly] = 1;
-			if (curmap == 41) scriptflag[9][1] = 1;
+			if (curmap == 41)
+				scriptflag[9][1] = 1;
 
 			if (menabled == 1 && config.effects == 1) {
 				int snd = Mix_PlayChannel(-1, sfx[sndpowerup], 0);
@@ -3777,23 +3854,36 @@ void game_loadmap(int mapnum) {
 
 	forcepause = 0;
 	cloudson = 0;
-	if (mapnum < 6) cloudson = 1;
-	if (mapnum > 41) cloudson = 1;
-	if (mapnum > 47) cloudson = 0;
-	if (mapnum == 52) cloudson = 1;
-	if (mapnum == 60) cloudson = 1;
-	if (mapnum == 50) cloudson = 1;
-	if (mapnum == 54) cloudson = 1;
-	if (mapnum == 58) cloudson = 1;
-	if (mapnum == 62) cloudson = 1;
-	if (mapnum == 83) cloudson = 1;
+	if (mapnum < 6)
+		cloudson = 1;
+	if (mapnum > 41)
+		cloudson = 1;
+	if (mapnum > 47)
+		cloudson = 0;
+	if (mapnum == 52)
+		cloudson = 1;
+	if (mapnum == 60)
+		cloudson = 1;
+	if (mapnum == 50)
+		cloudson = 1;
+	if (mapnum == 54)
+		cloudson = 1;
+	if (mapnum == 58)
+		cloudson = 1;
+	if (mapnum == 62)
+		cloudson = 1;
+	if (mapnum == 83)
+		cloudson = 1;
 
 	// -----------special case
 	dontdrawover = 0;
-	if (mapnum == 24) dontdrawover = 1;
+	if (mapnum == 24)
+		dontdrawover = 1;
 
-	if ((mapnum == 53 || mapnum == 57 || mapnum == 61 || mapnum == 65 || mapnum == 62) && scriptflag[60][0] > 0) mapnum = mapnum + 100;
-	if ((mapnum == 161 || mapnum == 162) && scriptflag[60][0] == 2) mapnum = mapnum + 100;
+	if ((mapnum == 53 || mapnum == 57 || mapnum == 61 || mapnum == 65 || mapnum == 62) && scriptflag[60][0] > 0)
+		mapnum = mapnum + 100;
+	if ((mapnum == 161 || mapnum == 162) && scriptflag[60][0] == 2)
+		mapnum = mapnum + 100;
 
 	for (int i = 0; i < kMaxSpell; i++)
 		spellinfo[i].frame = 0;
@@ -3926,7 +4016,8 @@ void game_loadmap(int mapnum) {
 			int clip = 0;
 			int npc = 0;
 
-			if (scriptflag[4][0] == 1 && x == 9 && y == 7) d = 99;
+			if (scriptflag[4][0] == 1 && x == 9 && y == 7)
+				d = 99;
 
 			if (d > 0) {
 				clip = d % 2;
@@ -3934,11 +4025,14 @@ void game_loadmap(int mapnum) {
 				npc = d % 2;
 				d = (d - npc) / 2;
 
-				if (d == 99 && x == 9 && y == 7) clip = 1;
+				if (d == 99 && x == 9 && y == 7)
+					clip = 1;
 
 				if (clip) {
-					if (d != 99) d = tempmap[6 * 40 + x][y];
-					if (d == 99) d = 1;
+					if (d != 99)
+						d = tempmap[6 * 40 + x][y];
+					if (d == 99)
+						d = 1;
 
 					int x1 = x * 8;
 					int y1 = y * 8;
@@ -4014,7 +4108,8 @@ void game_loadmap(int mapnum) {
 					objmap[x][y] = o;
 
 					if (objectinfo[o][0] > 1) {
-						if (o > lastobj) lastobj = o;
+						if (o > lastobj)
+							lastobj = o;
 					}
 
 					int x1 = x * 8;
@@ -4025,14 +4120,17 @@ void game_loadmap(int mapnum) {
 					rcDest.w = 8;
 					rcDest.h = 8;
 
-					if (objectinfo[o][4] == 1) SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
-					if (objectinfo[o][4] == 3) SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+					if (objectinfo[o][4] == 1)
+						SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+					if (objectinfo[o][4] == 3)
+						SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 				}
 			}
 			if (npc == 1) {
 				int o = tempmap[4 * 40 + x][y];
 
-				if (o > lastnpc) lastnpc = o;
+				if (o > lastnpc)
+					lastnpc = o;
 
 				npcinfo[o].x = x * 16 - 4;
 				npcinfo[o].y = y * 16 - 5;
@@ -4044,14 +4142,21 @@ void game_loadmap(int mapnum) {
 	}
 
 
-	if (curmap == 62 && scriptflag[8][0] > 0) lastnpc = 0;
-	if (curmap == 73 && scriptflag[12][0] > 0) lastnpc = 0;
-	if (curmap == 81 && scriptflag[13][0] > 0) lastnpc = 0;
+	if (curmap == 62 && scriptflag[8][0] > 0)
+		lastnpc = 0;
+	if (curmap == 73 && scriptflag[12][0] > 0)
+		lastnpc = 0;
+	if (curmap == 81 && scriptflag[13][0] > 0)
+		lastnpc = 0;
 
-	if (curmap == 73 && scriptflag[12][0] == 0) roomlock = 1;
-	if (curmap == 81 && scriptflag[13][0] == 0) roomlock = 1;
-	if (curmap == 83 && scriptflag[15][0] == 0) roomlock = 1;
-	if (curmap == 82) roomlock = 1;
+	if (curmap == 73 && scriptflag[12][0] == 0)
+		roomlock = 1;
+	if (curmap == 81 && scriptflag[13][0] == 0)
+		roomlock = 1;
+	if (curmap == 83 && scriptflag[15][0] == 0)
+		roomlock = 1;
+	if (curmap == 82)
+		roomlock = 1;
 
 	// read *.npc file
 	sprintf(name, "mapdb/%04i.npc", mapnum);
@@ -4081,7 +4186,8 @@ void game_loadmap(int mapnum) {
 
 			npcinfo[i].walkspd = 1;
 
-			if (RND() * 5 == 0) npcinfo[i].hp = 0;
+			if (RND() * 5 == 0)
+				npcinfo[i].hp = 0;
 		}
 
 		// onewing
@@ -4142,7 +4248,8 @@ void game_loadmap(int mapnum) {
 
 			npcinfo[i].walkspd = 1;
 
-			if (RND() * 5 == 0) npcinfo[i].hp = 0;
+			if (RND() * 5 == 0)
+				npcinfo[i].hp = 0;
 		}
 
 		// priest1
@@ -4155,7 +4262,8 @@ void game_loadmap(int mapnum) {
 
 			npcinfo[i].walkspd = 1;
 
-			if (RND() * 8 == 0) npcinfo[i].hp = 0;
+			if (RND() * 8 == 0)
+				npcinfo[i].hp = 0;
 		}
 
 		// yellow fire dragon
@@ -4168,7 +4276,8 @@ void game_loadmap(int mapnum) {
 
 			npcinfo[i].walkspd = 1;
 
-			if (RND() * 5 == 0) npcinfo[i].hp = 0;
+			if (RND() * 5 == 0)
+				npcinfo[i].hp = 0;
 		}
 
 		// twowing
@@ -4224,7 +4333,8 @@ void game_loadmap(int mapnum) {
 			npcinfo[i].floating = RND() * 16;
 		}
 
-		if (npcinfo[i].onmap == 0) npcinfo[i].hp = 0;
+		if (npcinfo[i].onmap == 0)
+			npcinfo[i].hp = 0;
 
 		npcinfo[i].maxhp = npcinfo[i].hp;
 
@@ -4335,7 +4445,8 @@ void game_loadmap(int mapnum) {
 		lx = (int)npx / 16;
 		ly = (int)npy / 16;
 
-		if (lx == cx && ly == cy) player.py = player.py + 16;
+		if (lx == cx && ly == cy)
+			player.py = player.py + 16;
 
 		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 	}
@@ -4358,7 +4469,8 @@ void game_loadmap(int mapnum) {
 		lx = (int)npx / 16;
 		ly = (int)npy / 16;
 
-		if (lx == cx && ly == cy) player.py = player.py + 16;
+		if (lx == cx && ly == cy)
+			player.py = player.py + 16;
 
 		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 	}
@@ -4381,7 +4493,8 @@ void game_loadmap(int mapnum) {
 		lx = (int)npx / 16;
 		ly = (int)npy / 16;
 
-		if (lx == cx && ly == cy) player.py = player.py + 16;
+		if (lx == cx && ly == cy)
+			player.py = player.py + 16;
 
 		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 	}
@@ -4404,7 +4517,8 @@ void game_loadmap(int mapnum) {
 		lx = (int)npx / 16;
 		ly = (int)npy / 16;
 
-		if (lx == cx && ly == cy) player.py = player.py + 16;
+		if (lx == cx && ly == cy)
+			player.py = player.py + 16;
 
 		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 	}
@@ -4427,7 +4541,8 @@ void game_loadmap(int mapnum) {
 		lx = (int)npx / 16;
 		ly = (int)npy / 16;
 
-		if (lx == cx && ly == cy) player.py = player.py + 16;
+		if (lx == cx && ly == cy)
+			player.py = player.py + 16;
 
 		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 	}
@@ -4450,7 +4565,8 @@ void game_loadmap(int mapnum) {
 		lx = (int)npx / 16;
 		ly = (int)npy / 16;
 
-		if (lx == cx && ly == cy) player.py = player.py + 16;
+		if (lx == cx && ly == cy)
+			player.py = player.py + 16;
 
 		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 	}
@@ -4474,7 +4590,8 @@ void game_loadmap(int mapnum) {
 		lx = (int)npx / 16;
 		ly = (int)npy / 16;
 
-		if (lx == cx && ly == cy) player.py = player.py + 16;
+		if (lx == cx && ly == cy)
+			player.py = player.py + 16;
 
 		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 	}
@@ -4496,7 +4613,8 @@ void game_loadmap(int mapnum) {
 		lx = (int)npx / 16;
 		ly = (int)npy / 16;
 
-		if (lx == cx && ly == cy) player.py = player.py + 16;
+		if (lx == cx && ly == cy)
+			player.py = player.py + 16;
 
 		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 	}
@@ -4518,7 +4636,8 @@ void game_loadmap(int mapnum) {
 		lx = (int)npx / 16;
 		ly = (int)npy / 16;
 
-		if (lx == cx && ly == cy) player.py = player.py + 16;
+		if (lx == cx && ly == cy)
+			player.py = player.py + 16;
 
 		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
 	}
@@ -4562,10 +4681,12 @@ void game_newgame() {
 		SDL_Rect rc;
 
 		ld += 4 * fpsr;
-		if ((int)ld > config.musicvol) ld = config.musicvol;
+		if ((int)ld > config.musicvol)
+			ld = config.musicvol;
 		if (menabled == 1 && ldstop == 0) {
 			Mix_Volume(musicchannel, (int)ld);
-			if ((int)ld == config.musicvol) ldstop = 1;
+			if ((int)ld == config.musicvol)
+				ldstop = 1;
 		}
 
 		rc.x = -xofs;
@@ -4592,7 +4713,8 @@ void game_newgame() {
 				sys_print(videobuffer, story[i], x, yy, 4);
 			}
 
-			if (yy < 10 && i == 47) goto __exit_do;
+			if (yy < 10 && i == 47)
+				goto __exit_do;
 		}
 
 		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
@@ -4612,15 +4734,19 @@ void game_newgame() {
 		}
 
 		add = 0.5 * fpsr;
-		if (add > 1) add = 1;
+		if (add > 1)
+			add = 1;
 		xofs += add;
-		if (xofs >= 320) xofs = xofs - 320;
+		if (xofs >= 320)
+			xofs = xofs - 320;
 
 		SDL_PollEvent(&event);
 		keys = SDL_GetKeyState(NULL);
 
-		if (event.type == SDL_KEYDOWN) cnt = 6;
-		if (keys[SDLK_ESCAPE] || keys[SDLK_LALT]) goto __exit_do;
+		if (event.type == SDL_KEYDOWN)
+			cnt = 6;
+		if (keys[SDLK_ESCAPE] || keys[SDLK_LALT])
+			goto __exit_do;
 
 		SDL_Delay(10);
 	} while (1);
@@ -4715,7 +4841,8 @@ void game_playgame() {
 		game_checktrigger();
 		game_checkinputs();
 
-		if (forcepause == 0) game_handlewalking();
+		if (forcepause == 0)
+			game_handlewalking();
 
 		game_updatey();
 		game_drawview();
@@ -4731,7 +4858,8 @@ void game_processtrigger(int trignum) {
 
 	trigtype = triggers[trignum][0];
 
-	if (roomlock == 1) return;
+	if (roomlock == 1)
+		return;
 	// map jump------------------------------
 	if (trigtype == 0) {
 		tx = triggers[trignum][1];
@@ -4740,7 +4868,8 @@ void game_processtrigger(int trignum) {
 		tjumpstyle = triggers[trignum][4];
 
 		if (roomlocks[tmap] > 0) {
-			if (saidlocked == 0) game_eventtext("Locked");
+			if (saidlocked == 0)
+				game_eventtext("Locked");
 			saidlocked = 1;
 			canusekey = 1;
 			locktype = roomlocks[tmap];
@@ -4749,7 +4878,8 @@ void game_processtrigger(int trignum) {
 		}
 
 		if (tmap == 1) {
-			if (saidjammed == 0) game_eventtext("Door Jammed!");
+			if (saidjammed == 0)
+				game_eventtext("Door Jammed!");
 			saidjammed = 1;
 			return;
 		}
@@ -4767,8 +4897,10 @@ void game_processtrigger(int trignum) {
 			player.py += (ty - tsy) * 16;
 
 			// HACKFIX
-			if (player.px < 0) player.px = 0;
-			if (player.py < 0) player.py = 0;
+			if (player.px < 0)
+				player.px = 0;
+			if (player.py < 0)
+				player.py = 0;
 
 			if (tmap > 0) {
 				if (menabled == 1 && config.effects == 1) {
@@ -4822,7 +4954,6 @@ void game_saveloadnew() {
 		SDL_BlitSurface(cloudimg, &rcDest, videobuffer, NULL);
 		SDL_SetAlpha(cloudimg, SDL_SRCALPHA, 64);
 
-
 		rcDest.x = 256;
 		rcDest.y = 192;
 		rcDest.w = 320;
@@ -4853,7 +4984,8 @@ void game_saveloadnew() {
 						return;
 					}
 					// NEW GAME
-					if (currow == 0 && curcol == 0) game_newgame();
+					if (currow == 0 && curcol == 0)
+						game_newgame();
 
 					// LOAD GAME
 					if (currow == 0 && curcol == 1) {
@@ -4907,7 +5039,8 @@ void game_saveloadnew() {
 				switch (event.key.keysym.sym) {
 				case SDLK_ESCAPE:
 				case SDLK_LALT:
-					if (lowerlock == 0) return;
+					if (lowerlock == 0)
+						return;
 					lowerlock = 0;
 					currow = 0;
 					tickpause = ticks + 125;
@@ -4915,7 +5048,8 @@ void game_saveloadnew() {
 				case SDLK_DOWN:
 					if (lowerlock == 1) {
 						currow = currow + 1;
-						if (currow == 5) currow = 1;
+						if (currow == 5)
+							currow = 1;
 						tickpause = ticks + 125;
 					}
 					break;
@@ -4923,7 +5057,8 @@ void game_saveloadnew() {
 				case SDLK_UP:
 					if (lowerlock == 1) {
 						currow = currow - 1;
-						if (currow == 0) currow = 4;
+						if (currow == 0)
+							currow = 4;
 						tickpause = ticks + 125;
 					}
 					break;
@@ -4931,7 +5066,8 @@ void game_saveloadnew() {
 				case SDLK_LEFT:
 					if (lowerlock == 0) {
 						curcol = curcol - 1;
-						if (curcol == -1) curcol = 3;
+						if (curcol == -1)
+							curcol = 3;
 						tickpause = ticks + 125;
 					}
 					break;
@@ -4939,7 +5075,8 @@ void game_saveloadnew() {
 				case SDLK_RIGHT:
 					if (lowerlock == 0) {
 						curcol = curcol + 1;
-						if (curcol == 4) curcol = 0;
+						if (curcol == 4)
+							curcol = 0;
 						tickpause = ticks + 125;
 					}
 					break;
@@ -4991,17 +5128,20 @@ void game_saveloadnew() {
 				rcSrc.y = sy + 1;
 
 				ss = (playera.sword - 1) * 3;
-				if (playera.sword == 3) ss = 18;
+				if (playera.sword == 3)
+					ss = 18;
 				SDL_BlitSurface(itemimg[ss], NULL, videobuffer, &rcSrc);
 
 				rcSrc.x = rcSrc.x + 16;
 				ss = (playera.shield - 1) * 3 + 1;
-				if (playera.shield == 3) ss = 19;
+				if (playera.shield == 3)
+					ss = 19;
 				SDL_BlitSurface(itemimg[ss], NULL, videobuffer, &rcSrc);
 
 				rcSrc.x = rcSrc.x + 16;
 				ss = (playera.armour - 1) * 3 + 2;
-				if (playera.armour == 3) ss = 20;
+				if (playera.armour == 3)
+					ss = 20;
 				SDL_BlitSurface(itemimg[ss], NULL, videobuffer, &rcSrc);
 
 				nx = rcSrc.x + 13 + 3 * 8;
@@ -5010,7 +5150,8 @@ void game_saveloadnew() {
 				if (playera.foundspell[0] == 1) {
 					for (int i = 0; i < 5; i++) {
 						rcSrc.x = rcSrc.x + 17;
-						if (playera.foundspell[i] == 1) SDL_BlitSurface(itemimg[7 + i], NULL, videobuffer, &rcSrc);
+						if (playera.foundspell[i] == 1)
+							SDL_BlitSurface(itemimg[7 + i], NULL, videobuffer, &rcSrc);
 					}
 				}
 			} else {
@@ -5023,10 +5164,14 @@ void game_saveloadnew() {
 
 		if (currow == 0) {
 			rcDest.y = 18;
-			if (curcol == 0) rcDest.x = 10;
-			if (curcol == 1) rcDest.x = 108;
-			if (curcol == 2) rcDest.x = 170;
-			if (curcol == 3) rcDest.x = 230;
+			if (curcol == 0)
+				rcDest.x = 10;
+			if (curcol == 1)
+				rcDest.x = 108;
+			if (curcol == 2)
+				rcDest.x = 170;
+			if (curcol == 3)
+				rcDest.x = 230;
 			rcDest.x = (float)(rcDest.x + 2 + 2 * sin(3.14159 * 2 * itemyloc / 16));
 		}
 
@@ -5040,8 +5185,10 @@ void game_saveloadnew() {
 
 		if (lowerlock == 1) {
 			rcDest.y = 18;
-			if (curcol == 1) rcDest.x = 108;
-			if (curcol == 2) rcDest.x = 170;
+			if (curcol == 1)
+				rcDest.x = 108;
+			if (curcol == 2)
+				rcDest.x = 170;
 			rcDest.x = rcDest.x; // + 2 + 2 * sin(-3.14159 * 2 * itemyloc / 16)
 
 			SDL_BlitSurface(itemimg[15], NULL, videobuffer, &rcDest);
@@ -5050,8 +5197,10 @@ void game_saveloadnew() {
 		yy = 255;
 		if (ticks < ticks1 + 1000) {
 			yy = 255 * (ticks - ticks1) / 1000;
-			if (yy < 0) yy = 0;
-			if (yy > 255) yy = 255;
+			if (yy < 0)
+				yy = 0;
+			if (yy > 255)
+				yy = 255;
 		}
 
 		SDL_SetAlpha(videobuffer, SDL_SRCALPHA, (int)yy);
@@ -5075,10 +5224,12 @@ void game_saveloadnew() {
 		}
 
 		clouddeg += 0.01 * fpsr;
-		while (clouddeg >= 360) clouddeg -= 360;
+		while (clouddeg >= 360)
+			clouddeg -= 360;
 
 		itemyloc += 0.6 * fpsr;
-		while (itemyloc >= 16) itemyloc -= 16;
+		while (itemyloc >= 16)
+			itemyloc -= 16;
 
 		SDL_Delay(10);
 	} while (1);
@@ -5099,14 +5250,18 @@ void game_showlogos() {
 		y = 255.0;
 		if (ticks < ticks1 + 1000) {
 			y = 255.0 * ((float)(ticks - ticks1) / 1000.0);
-			if (y < 0.0) y = 0.0;
-			if (y > 255.0) y = 255.0;
+			if (y < 0.0)
+				y = 0.0;
+			if (y > 255.0)
+				y = 255.0;
 		}
 
 		if (ticks > ticks1 + 3000) {
 			y = 255.0 - 255.0 * ((float)(ticks - ticks1 - 3000.0) / 1000.0);
-			if (y < 0.0) y = 0.0;
-			if (y > 255.0) y = 255.0;
+			if (y < 0.0)
+				y = 0.0;
+			if (y > 255.0)
+				y = 255.0;
 		}
 
 		SDL_FillRect(videobuffer, NULL, 0);
@@ -5134,7 +5289,8 @@ void game_showlogos() {
 		}
 
 		SDL_Delay(10);
-		if (ticks > ticks1 + 4000) break;
+		if (ticks > ticks1 + 4000)
+			break;
 	} while (1);
 }
 
@@ -5168,9 +5324,11 @@ void game_swash() {
 		}
 
 		clouddeg += 0.01 * fpsr;
-		while (clouddeg >= 360) clouddeg = clouddeg - 360;
+		while (clouddeg >= 360)
+			clouddeg = clouddeg - 360;
 
-		if (y > 10) break;
+		if (y > 10)
+			break;
 	} while (1);
 
 	y = 0;
@@ -5207,9 +5365,11 @@ void game_swash() {
 		}
 
 		clouddeg += 0.01 * fpsr;
-		while (clouddeg >= 360) clouddeg = clouddeg - 360;
+		while (clouddeg >= 360)
+			clouddeg = clouddeg - 360;
 
-		if (y > 10) break;
+		if (y > 10)
+			break;
 	} while (1);
 
 
@@ -5288,10 +5448,12 @@ void game_title(int mode) {
 		SDL_Rect rc;
 
 		ld += 4.0 * fpsr;
-		if (ld > config.musicvol) ld = config.musicvol;
+		if (ld > config.musicvol)
+			ld = config.musicvol;
 		if (menabled == 1 && ldstop == 0) {
 			Mix_Volume(menuchannel, (int)ld);
-			if ((int)ld == config.musicvol) ldstop = 1;
+			if ((int)ld == config.musicvol)
+				ldstop = 1;
 		}
 
 		rc.x = -xofs;
@@ -5316,8 +5478,10 @@ void game_title(int mode) {
 		sys_print(videobuffer, "options", x, y + 16, 4);
 		sys_print(videobuffer, "quit game", x, y + 32, 4);
 
-		if (mode == 1) sys_print(videobuffer, "return", x, y + 48, 4);
-		else sys_print(videobuffer, "(c) 2005 by Daniel 'Syn9' Kennedy", 28, 224, 4);
+		if (mode == 1)
+			sys_print(videobuffer, "return", x, y + 48, 4);
+		else
+			sys_print(videobuffer, "(c) 2005 by Daniel 'Syn9' Kennedy", 28, 224, 4);
 
 		rc.x = (float)(x - 16 - 4 * cos(3.14159 * 2 * itemyloc / 16));
 		rc.y = (float)(y - 4 + 16 * cursel);
@@ -5327,8 +5491,10 @@ void game_title(int mode) {
 		float yf = 255.0;
 		if (ticks < ticks1 + 1000) {
 			yf = 255.0 * ((float)(ticks - ticks1) / 1000.0);
-			if (y < 0.0) yf = 0.0;
-			if (y > 255.0) yf = 255.0;
+			if (y < 0.0)
+				yf = 0.0;
+			if (y > 255.0)
+				yf = 255.0;
 		}
 
 		SDL_SetAlpha(videobuffer, SDL_SRCALPHA, (int)yf);
@@ -5349,10 +5515,12 @@ void game_title(int mode) {
 		}
 
 		float add = 0.5 * fpsr;
-		if (add > 1) add = 1;
+		if (add > 1)
+			add = 1;
 
 		xofs = xofs + add;
-		if (xofs >= 320.0) xofs -= 320.0;
+		if (xofs >= 320.0)
+			xofs -= 320.0;
 
 		itemyloc += 0.75 * fpsr;
 
@@ -5367,13 +5535,16 @@ void game_title(int mode) {
 			if (event.type == SDL_KEYDOWN) {
 				keypause = ticks + 150;
 
-				if ((keys[SDLK_ESCAPE] || keys[SDLK_LALT]) && mode == 1) break;
+				if ((keys[SDLK_ESCAPE] || keys[SDLK_LALT]) && mode == 1)
+					break;
 				else if (keys[SDLK_UP]) {
 					cursel--;
-					if (cursel < 0) cursel = (mode == 1 ? 3 : 2);
+					if (cursel < 0)
+						cursel = (mode == 1 ? 3 : 2);
 				} else if (keys[SDLK_DOWN]) {
 					cursel++;
-					if (cursel >= (mode == 1 ? 4 : 3)) cursel = 0;
+					if (cursel >= (mode == 1 ? 4 : 3))
+						cursel = 0;
 				} else if (keys[SDLK_LCTRL] || keys[SDLK_RETURN]) {
 					if (cursel == 0) {
 						game_saveloadnew();
@@ -5387,7 +5558,9 @@ void game_title(int mode) {
 						ticks1 = ticks;
 					} else if (cursel == 2) {
 						exit(1);
-					} else if (cursel == 3) break;
+					} else if (cursel == 3) {
+						break;
+					}
 				}
 			}
 		}
@@ -5420,8 +5593,10 @@ void game_updanims() {
 				frame = frame - nframes;
 
 			cframe = (int)frame; // truncate fractional part
-			if (cframe > nframes) cframe = nframes - 1;
-			if (cframe < 0) cframe = 0;
+			if (cframe > nframes)
+				cframe = nframes - 1;
+			if (cframe < 0)
+				cframe = 0;
 
 			objectframe[i][0] = frame;
 			objectframe[i][1] = cframe;
@@ -5436,7 +5611,8 @@ void game_updatey() {
 		ysort[i] = -1;
 
 	ff = (int)(player.py * 10);
-	if (ff < 0) ff = 0; // HACKFIX or ysort[yy] may go out of bounds
+	if (ff < 0) // HACKFIX or ysort[yy] may go out of bounds
+		ff = 0;
 	player.ysort = ff;
 	ysort[ff] = 0;
 
@@ -5447,13 +5623,16 @@ void game_updatey() {
 		yy = (int)(npcinfo[i].y * 10);
 
 		do {
-			if (ysort[yy] == -1 || yy == 2400) break;
+			if (ysort[yy] == -1 || yy == 2400)
+				break;
 			yy = yy + 1;
 		} while (1);
 
 		ysort[yy] = i;
-		if (yy < firsty) firsty = yy;
-		if (yy > lasty) lasty = yy;
+		if (yy < firsty)
+			firsty = yy;
+		if (yy > lasty)
+			lasty = yy;
 	}
 }
 
@@ -5465,10 +5644,13 @@ void game_updmusic() {
 		// if(curmap > 5 && curmap < 42) iplaysound = macademy;
 		// if(curmap > 47) iplaysound = mgardens;
 		iplaysound = mgardens;
-		if (roomlock == 1) iplaysound = mboss;
+		if (roomlock == 1)
+			iplaysound = mboss;
 
-		if (iplaysound == mboss && pboss) iplaysound = NULL;
-		if (iplaysound == mgardens && pgardens) iplaysound = NULL;
+		if (iplaysound == mboss && pboss)
+			iplaysound = NULL;
+		if (iplaysound == mgardens && pgardens)
+			iplaysound = NULL;
 
 		if (iplaysound != NULL) {
 			Mix_HaltChannel(musicchannel);
@@ -5479,22 +5661,29 @@ void game_updmusic() {
 			pacademy = 0;
 			pcitadel = 0;
 
-			if (iplaysound == mboss) pboss = 1;
-			if (iplaysound == mgardens) pgardens = 1;
+			if (iplaysound == mboss)
+				pboss = 1;
+			if (iplaysound == mgardens)
+				pgardens = 1;
 
 			musicchannel = Mix_PlayChannel(-1, iplaysound, -1);
 			Mix_Volume(musicchannel, config.musicvol);
 		} else {
 			if (!Mix_Playing(musicchannel)) {
 				loopseta = loopseta + 1;
-				if (loopseta == 4) loopseta = 0;
+				if (loopseta == 4)
+					loopseta = 0;
 
 				if (pgardens == 1) {
 					Mix_HaltChannel(musicchannel);
-					if (pgardens == 1 && loopseta == 0) musicchannel = Mix_PlayChannel(-1, mgardens, 0);
-					if (pgardens == 1 && loopseta == 1) musicchannel = Mix_PlayChannel(-1, mgardens2, 0);
-					if (pgardens == 1 && loopseta == 2) musicchannel = Mix_PlayChannel(-1, mgardens3, 0);
-					if (pgardens == 1 && loopseta == 3) musicchannel = Mix_PlayChannel(-1, mgardens4, 0);
+					if (pgardens == 1 && loopseta == 0)
+						musicchannel = Mix_PlayChannel(-1, mgardens, 0);
+					if (pgardens == 1 && loopseta == 1)
+						musicchannel = Mix_PlayChannel(-1, mgardens2, 0);
+					if (pgardens == 1 && loopseta == 2)
+						musicchannel = Mix_PlayChannel(-1, mgardens3, 0);
+					if (pgardens == 1 && loopseta == 3)
+						musicchannel = Mix_PlayChannel(-1, mgardens4, 0);
 				}
 
 				Mix_Volume(musicchannel, config.musicvol);
@@ -5516,8 +5705,10 @@ void game_updnpcs() {
 		if (npcinfo[i].hp > 0) {
 			//  is npc walking
 			pass = 0;
-			if (npcinfo[i].attacking == 0) pass = 1;
-			if (npcinfo[i].spriteset == 5) pass = 1;
+			if (npcinfo[i].attacking == 0)
+				pass = 1;
+			if (npcinfo[i].spriteset == 5)
+				pass = 1;
 			if (pass == 1) {
 				int moveup = 0;
 				int movedown = 0;
@@ -5532,7 +5723,8 @@ void game_updnpcs() {
 
 				wspd = npcinfo[i].walkspd / 4;
 
-				if (npcinfo[i].spriteset == 10) wspd = wspd * 2;
+				if (npcinfo[i].spriteset == 10)
+					wspd = wspd * 2;
 				int wdir = npcinfo[i].walkdir;
 
 				int mode = npcinfo[i].movementmode;
@@ -5540,15 +5732,20 @@ void game_updnpcs() {
 				xdif = player.px - npx;
 				ydif = player.py - npy;
 
-				if (abs(xdif) < 4 * 16 && abs(ydif) < 4 * 16 && mode < 3) mode = 0;
-				if (npcinfo[i].hp < npcinfo[i].maxhp * 0.25) mode = 3;
+				if (abs(xdif) < 4 * 16 && abs(ydif) < 4 * 16 && mode < 3)
+					mode = 0;
+				if (npcinfo[i].hp < npcinfo[i].maxhp * 0.25)
+					mode = 3;
 
-				if (npcinfo[i].pause > ticks) mode = -1;
-				if (npcinfo[i].spriteset == 2 && npcinfo[i].castpause > ticks) mode = -1;
+				if (npcinfo[i].pause > ticks)
+					mode = -1;
+				if (npcinfo[i].spriteset == 2 && npcinfo[i].castpause > ticks)
+					mode = -1;
 
 				if (mode == 3) {
 					mode = 1;
-					if (abs(xdif) < 4 * 16 && abs(ydif) < 4 * 16) mode = 3;
+					if (abs(xdif) < 4 * 16 && abs(ydif) < 4 * 16)
+						mode = 3;
 				}
 
 				checkpass = 0;
@@ -5564,17 +5761,25 @@ void game_updnpcs() {
 					ydif = player.py - npy;
 
 					if (abs(xdif) > abs(ydif)) {
-						if (xdif < 4) wdir = 2;
-						if (xdif > -4) wdir = 3;
+						if (xdif < 4)
+							wdir = 2;
+						if (xdif > -4)
+							wdir = 3;
 					} else {
-						if (ydif < 4) wdir = 0;
-						if (ydif > -4) wdir = 1;
+						if (ydif < 4)
+							wdir = 0;
+						if (ydif > -4)
+							wdir = 1;
 					}
 
-					if (xdif < 4) moveleft = 1;
-					if (xdif > -4) moveright = 1;
-					if (ydif < 4) moveup = 1;
-					if (ydif > -4) movedown = 1;
+					if (xdif < 4)
+						moveleft = 1;
+					if (xdif > -4)
+						moveright = 1;
+					if (ydif < 4)
+						moveup = 1;
+					if (ydif > -4)
+						movedown = 1;
 				}
 				// *******************
 
@@ -5583,7 +5788,8 @@ void game_updnpcs() {
 
 					int movingdir = npcinfo[i].movingdir;
 
-					if (npcinfo[i].ticks > ticks + 100000) npcinfo[i].ticks = ticks;
+					if (npcinfo[i].ticks > ticks + 100000)
+						npcinfo[i].ticks = ticks;
 
 					if (npcinfo[i].ticks < ticks) {
 						npcinfo[i].ticks = ticks + 2000;
@@ -5633,17 +5839,25 @@ void game_updnpcs() {
 					ydif = player.py - npy;
 
 					if (abs(xdif) > abs(ydif)) {
-						if (xdif < 4) wdir = 3;
-						if (xdif > -4) wdir = 2;
+						if (xdif < 4)
+							wdir = 3;
+						if (xdif > -4)
+							wdir = 2;
 					} else {
-						if (ydif < 4) wdir = 1;
-						if (ydif > -4) wdir = 0;
+						if (ydif < 4)
+							wdir = 1;
+						if (ydif > -4)
+							wdir = 0;
 					}
 
-					if (xdif < 4) moveright = 1;
-					if (xdif > -4) moveleft = 1;
-					if (ydif < 4) movedown = 1;
-					if (ydif > -4) moveup = 1;
+					if (xdif < 4)
+						moveright = 1;
+					if (xdif > -4)
+						moveleft = 1;
+					if (ydif < 4)
+						movedown = 1;
+					if (ydif > -4)
+						moveup = 1;
 				}
 				// *******************
 
@@ -5656,10 +5870,12 @@ void game_updnpcs() {
 				float xp = (npx / 2 + 6);
 				float yp = (npy / 2 + 10);
 
-				if (npcinfo[i].spriteset == 10) wspd = wspd * 2;
+				if (npcinfo[i].spriteset == 10)
+					wspd = wspd * 2;
 
 				float ii = wspd * fpsr;
-				if (ii < 1) ii = 1;
+				if (ii < 1)
+					ii = 1;
 
 				SDL_LockSurface(clipbg);
 
@@ -5668,15 +5884,18 @@ void game_updnpcs() {
 					sy = yp - ii;
 					temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 					dq = *temp;
-					if (npcinfo[i].spriteset == 11) dq = 0;
+					if (npcinfo[i].spriteset == 11)
+						dq = 0;
 
-					if (dq == 0) movinup = 1;
+					if (dq == 0)
+						movinup = 1;
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp - ii;
 						temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 						dq = *temp;
-						if (npcinfo[i].spriteset == 11) dq = 0;
+						if (npcinfo[i].spriteset == 11)
+							dq = 0;
 						if (dq == 0) {
 							movinup = 1;
 							movinleft = 1;
@@ -5687,7 +5906,8 @@ void game_updnpcs() {
 						sy = yp - ii;
 						temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 						dq = *temp;
-						if (npcinfo[i].spriteset == 11) dq = 0;
+						if (npcinfo[i].spriteset == 11)
+							dq = 0;
 						if (dq == 0) {
 							movinup = 1;
 							movinright = 1;
@@ -5700,14 +5920,17 @@ void game_updnpcs() {
 					sy = yp + ii;
 					temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 					dq = *temp;
-					if (npcinfo[i].spriteset == 11) dq = 0;
-					if (dq == 0) movindown = 1;
+					if (npcinfo[i].spriteset == 11)
+						dq = 0;
+					if (dq == 0)
+						movindown = 1;
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp + ii;
 						temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 						dq = *temp;
-						if (npcinfo[i].spriteset == 11) dq = 0;
+						if (npcinfo[i].spriteset == 11)
+							dq = 0;
 						if (dq == 0) {
 							movindown = 1;
 							movinleft = 1;
@@ -5718,7 +5941,8 @@ void game_updnpcs() {
 						sy = yp + ii;
 						temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 						dq = *temp;
-						if (npcinfo[i].spriteset == 11) dq = 0;
+						if (npcinfo[i].spriteset == 11)
+							dq = 0;
 						if (dq == 0) {
 							movindown = 1;
 							movinright = 1;
@@ -5731,14 +5955,17 @@ void game_updnpcs() {
 					sy = yp;
 					temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 					dq = *temp;
-					if (npcinfo[i].spriteset == 11) dq = 0;
-					if (dq == 0) movinleft = 1;
+					if (npcinfo[i].spriteset == 11)
+						dq = 0;
+					if (dq == 0)
+						movinleft = 1;
 					if (dq > 0) {
 						sx = xp - ii;
 						sy = yp - ii;
 						temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 						dq = *temp;
-						if (npcinfo[i].spriteset == 11) dq = 0;
+						if (npcinfo[i].spriteset == 11)
+							dq = 0;
 						if (dq == 0) {
 							movinleft = 1;
 							movinup = 1;
@@ -5749,7 +5976,8 @@ void game_updnpcs() {
 						sy = yp + ii;
 						temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 						dq = *temp;
-						if (npcinfo[i].spriteset == 11) dq = 0;
+						if (npcinfo[i].spriteset == 11)
+							dq = 0;
 						if (dq == 0) {
 							movinleft = 1;
 							movindown = 1;
@@ -5762,14 +5990,17 @@ void game_updnpcs() {
 					sy = yp;
 					temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 					dq = *temp;
-					if (npcinfo[i].spriteset == 11) dq = 0;
-					if (dq == 0) movinright = 1;
+					if (npcinfo[i].spriteset == 11)
+						dq = 0;
+					if (dq == 0)
+						movinright = 1;
 					if (dq > 0) {
 						sx = xp + ii;
 						sy = yp - ii;
 						temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 						dq = *temp;
-						if (npcinfo[i].spriteset == 11) dq = 0;
+						if (npcinfo[i].spriteset == 11)
+							dq = 0;
 						if (dq == 0) {
 							movinright = 1;
 							movinup = 1;
@@ -5780,7 +6011,8 @@ void game_updnpcs() {
 						sy = yp + ii;
 						temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 						dq = *temp;
-						if (npcinfo[i].spriteset == 11) dq = 0;
+						if (npcinfo[i].spriteset == 11)
+							dq = 0;
 						if (dq == 0) {
 							movinright = 1;
 							movindown = 1;
@@ -5788,14 +6020,19 @@ void game_updnpcs() {
 					}
 				}
 
-				if (movinup) npy = npy - wspd * fpsr;
-				if (movindown) npy = npy + wspd * fpsr;
-				if (movinleft) npx = npx - wspd * fpsr;
-				if (movinright) npx = npx + wspd * fpsr;
+				if (movinup)
+					npy = npy - wspd * fpsr;
+				if (movindown)
+					npy = npy + wspd * fpsr;
+				if (movinleft)
+					npx = npx - wspd * fpsr;
+				if (movinright)
+					npx = npx + wspd * fpsr;
 
 				if (checkpass == 1) {
 					pass = 0;
-					if (npx >= npcinfo[i].x1 * 16 - 8 && npx <= npcinfo[i].x2 * 16 + 8 && npy >= npcinfo[i].y1 * 16 - 8 && npy <= npcinfo[i].y2 * 16 + 8) pass = 1;
+					if (npx >= npcinfo[i].x1 * 16 - 8 && npx <= npcinfo[i].x2 * 16 + 8 && npy >= npcinfo[i].y1 * 16 - 8 && npy <= npcinfo[i].y2 * 16 + 8)
+						pass = 1;
 					if (pass == 0) {
 						npx = onpx;
 						npy = onpy;
@@ -5805,7 +6042,8 @@ void game_updnpcs() {
 
 				float aspd = wspd;
 
-				if (npcinfo[i].spriteset == 10) aspd = wspd / 2;
+				if (npcinfo[i].spriteset == 10)
+					aspd = wspd / 2;
 
 				xp = (npx / 2 + 6);
 				yp = (npy / 2 + 10);
@@ -5823,13 +6061,16 @@ void game_updnpcs() {
 				int lx = (int)anpx / 16;
 				int ly = (int)anpy / 16;
 
-				if (triggerloc[lx][ly] > -1) bgc = 1;
-				if (npcinfo[i].spriteset == 11) bgc = 0;
+				if (triggerloc[lx][ly] > -1)
+					bgc = 1;
+				if (npcinfo[i].spriteset == 11)
+					bgc = 0;
 
 				int rst = 0;
 
 				if (npcinfo[i].spriteset == 11) {
-					if (npx < 40 || npx > 280 || npy < 36 || npy > 204) rst = 1;
+					if (npx < 40 || npx > 280 || npy < 36 || npy > 204)
+						rst = 1;
 				}
 
 				if (bgc > 0 || rst == 1) {
@@ -5843,7 +6084,8 @@ void game_updnpcs() {
 				npcinfo[i].walkdir = wdir;
 				npcinfo[i].moving = 0;
 
-				if (npx != onpx || npy != onpy) npcinfo[i].moving = 1;
+				if (npx != onpx || npy != onpy)
+					npcinfo[i].moving = 1;
 
 				if (npcinfo[i].moving == 1) {
 					float frame = npcinfo[i].frame;
@@ -5854,8 +6096,10 @@ void game_updnpcs() {
 						frame = frame - 16;
 
 					cframe = (int)(frame);
-					if (cframe > 16) cframe = 16 - 1;
-					if (cframe < 0) cframe = 0;
+					if (cframe > 16)
+						cframe = 16 - 1;
+					if (cframe < 0)
+						cframe = 0;
 
 					npcinfo[i].frame = frame;
 					npcinfo[i].cframe = cframe;
@@ -5924,7 +6168,8 @@ void game_updnpcs() {
 
 						// sway code
 						npcinfo[i].swayangle = npcinfo[i].swayangle + npcinfo[i].swayspd * fpsr;
-						if (npcinfo[i].swayangle >= 360) npcinfo[i].swayangle = npcinfo[i].swayangle - 360;
+						if (npcinfo[i].swayangle >= 360)
+							npcinfo[i].swayangle = npcinfo[i].swayangle - 360;
 
 						npcinfo[i].headtargetx[0] = npcinfo[i].x + (24 - npcinfo[i].swayspd / 2) * sin(3.14159 / 180 * npcinfo[i].swayangle) + 12;
 						npcinfo[i].headtargety[0] = npcinfo[i].y - 36 + 16 + 8 * sin(3.14159 * 2 / 180 * npcinfo[i].swayangle);
@@ -5987,7 +6232,8 @@ void game_updnpcs() {
 
 					// sway code
 					npcinfo[i].swayangle = npcinfo[i].swayangle + npcinfo[i].swayspd * fpsr;
-					if (npcinfo[i].swayangle >= 360) npcinfo[i].swayangle = npcinfo[i].swayangle - 360;
+					if (npcinfo[i].swayangle >= 360)
+						npcinfo[i].swayangle = npcinfo[i].swayangle - 360;
 
 					for (int ff = 0; ff <= 2; ff++) {
 						if (npcinfo[i].hp > 10 * ff * 20) {
@@ -6059,8 +6305,10 @@ void game_updnpcs() {
 						ydif = player.py - npy;
 
 						pass = 0;
-						if (abs(xdif) < 48 && abs(ydif) < 6) pass = 1;
-						if (abs(ydif) < 48 && abs(xdif) < 6) pass = 2;
+						if (abs(xdif) < 48 && abs(ydif) < 6)
+							pass = 1;
+						if (abs(ydif) < 48 && abs(xdif) < 6)
+							pass = 2;
 
 						if (pass > 0) {
 							npcinfo[i].attackattempt = ticks + 100;
@@ -6122,8 +6370,10 @@ void game_updnpcs() {
 						ydif = player.py - npy;
 
 						pass = 0;
-						if (abs(xdif) < 56 && abs(ydif) < 6) pass = 1;
-						if (abs(ydif) < 56 && abs(xdif) < 6) pass = 2;
+						if (abs(xdif) < 56 && abs(ydif) < 6)
+							pass = 1;
+						if (abs(ydif) < 56 && abs(xdif) < 6)
+							pass = 2;
 
 						if (pass > 0) {
 							npcinfo[i].attackattempt = ticks + 100;
@@ -6196,7 +6446,8 @@ void game_updnpcs() {
 
 						// sway code
 						npcinfo[i].swayangle = npcinfo[i].swayangle + npcinfo[i].swayspd * fpsr;
-						if (npcinfo[i].swayangle >= 360) npcinfo[i].swayangle = npcinfo[i].swayangle - 360;
+						if (npcinfo[i].swayangle >= 360)
+							npcinfo[i].swayangle = npcinfo[i].swayangle - 360;
 
 						npcinfo[i].headtargetx[0] = npcinfo[i].x + (24 - npcinfo[i].swayspd / 2) * sin(3.14159 / 180 * npcinfo[i].swayangle) + 12;
 						npcinfo[i].headtargety[0] = npcinfo[i].y - 36 + 16 + 8 * sin(3.14159 * 2 / 180 * npcinfo[i].swayangle);
@@ -6301,15 +6552,20 @@ void game_updnpcs() {
 			rcSrc.w = 3;
 			rcSrc.h = 3;
 
-			if (npcinfo[i].pause < ticks) SDL_FillRect(clipbg, &rcSrc, i);
+			if (npcinfo[i].pause < ticks)
+				SDL_FillRect(clipbg, &rcSrc, i);
 
 
 			pass = 0;
-			if (npcinfo[i].attacking == 1) pass = 1;
+			if (npcinfo[i].attacking == 1)
+				pass = 1;
 			if (npcinfo[i].spriteset == 5) {
-				if (npcinfo[i].attacking2[0] == 1) pass = 1;
-				if (npcinfo[i].attacking2[1] == 1) pass = 1;
-				if (npcinfo[i].attacking2[2] == 1) pass = 1;
+				if (npcinfo[i].attacking2[0] == 1)
+					pass = 1;
+				if (npcinfo[i].attacking2[1] == 1)
+					pass = 1;
+				if (npcinfo[i].attacking2[2] == 1)
+					pass = 1;
 			}
 
 			if (pass == 1) {
@@ -6339,7 +6595,8 @@ void game_updnpcs() {
 
 						damage = (float)npcinfo[i].attackdamage * (0.5 + RND() * 1.0);
 
-						if (player.hp > 0) game_damageplayer(damage);
+						if (player.hp > 0)
+							game_damageplayer(damage);
 					}
 				}
 
@@ -6387,7 +6644,8 @@ void game_updnpcs() {
 						// npcinfo[i].attackframe = 0
 						// npcinfo[i].attacking = 0
 						damage = (float)npcinfo[i].attackdamage * (1.0 + (RND() * 0.5));
-						if (player.hp > 0) game_damageplayer(damage);
+						if (player.hp > 0)
+							game_damageplayer(damage);
 					}
 				}
 
@@ -6438,7 +6696,8 @@ void game_updnpcs() {
 								// npcinfo[i].attackframe2(ff) = 0
 								// npcinfo[i].attacking2(ff) = 0
 								damage = (float)npcinfo[i].attackdamage * (1.0 + RND() * 0.5);
-								if (player.hp > 0) game_damageplayer(damage);
+								if (player.hp > 0)
+									game_damageplayer(damage);
 							}
 						}
 					}
@@ -6490,7 +6749,8 @@ void game_updnpcs() {
 						// npcinfo[i].attackframe = 0
 						// npcinfo[i].attacking = 0
 						damage = (float)npcinfo[i].attackdamage * (1.0 + RND() * 0.5);
-						if (player.hp > 0) game_damageplayer(damage);
+						if (player.hp > 0)
+							game_damageplayer(damage);
 					}
 				}
 
@@ -6519,7 +6779,8 @@ void game_updnpcs() {
 						// npcinfo[i].attackframe = 0
 						// npcinfo[i].attacking = 0
 						damage = (float)npcinfo[i].attackdamage * (0.5 + RND() * 1.0);
-						if (player.hp > 0) game_damageplayer(damage);
+						if (player.hp > 0)
+							game_damageplayer(damage);
 					}
 				}
 
@@ -6547,7 +6808,8 @@ void game_updnpcs() {
 						// npcinfo[i].attackframe = 0
 						// npcinfo[i].attacking = 0
 						damage = (float)npcinfo[i].attackdamage * (0.5 + RND() * 1.0);
-						if (player.hp > 0) game_damageplayer(damage);
+						if (player.hp > 0)
+							game_damageplayer(damage);
 					}
 				}
 			}
@@ -6604,8 +6866,10 @@ void game_updspells() {
 						if (fr >= f * 4 + 8) {
 							int fi = 0; // ??
 
-							if (f == 0 || f == 2) fi = 0;
-							if (f == 1 || f == 3) fi = 1;
+							if (f == 0 || f == 2)
+								fi = 0;
+							if (f == 1 || f == 3)
+								fi = 1;
 							rcSrc.x = 32 + fi * 16;
 							rcSrc.y = 80;
 							rcSrc.w = 16;
@@ -6711,7 +6975,8 @@ void game_updspells() {
 				SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
-				if (spellinfo[i].frame < 0) spellinfo[i].frame = 0;
+				if (spellinfo[i].frame < 0)
+					spellinfo[i].frame = 0;
 
 				if (spellinfo[i].damagewho == 0) {
 					for (int e = 1; e <= lastnpc; e++) {
@@ -6888,7 +7153,8 @@ void game_updspells() {
 				}
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
-				if (spellinfo[i].frame < 0) spellinfo[i].frame = 0;
+				if (spellinfo[i].frame < 0)
+					spellinfo[i].frame = 0;
 			}
 
 			// crystal
@@ -6906,8 +7172,10 @@ void game_updspells() {
 				rcDest.y = player.py + 16 - 48;
 
 				int f = 160;
-				if (fra < 8) f = 192 * fra / 8;
-				if (fra > 24) f = 192 * (1 - (fra - 24) / 8);
+				if (fra < 8)
+					f = 192 * fra / 8;
+				if (fra > 24)
+					f = 192 * (1 - (fra - 24) / 8);
 
 				SDL_SetAlpha(spellimg, SDL_SRCALPHA, f);
 				SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
@@ -6945,13 +7213,15 @@ void game_updspells() {
 										int curtiley = (curtile - curtilex) / 20;
 
 										int element = elementmap[curtiley][curtilex];
-										if (element > -1 && curtilel == 0) foundel[element + 1] = 1;
+										if (element > -1 && curtilel == 0)
+											foundel[element + 1] = 1;
 									}
 								}
 
 								int o = objmap[sx][sy];
 								if (o > -1) {
-									if (objectinfo[o][4] == 1) foundel[2] = 1;
+									if (objectinfo[o][4] == 1)
+										foundel[2] = 1;
 									if (o == 1 || o == 2) {
 										foundel[2] = 1;
 										foundel[4] = 1;
@@ -6968,10 +7238,14 @@ void game_updspells() {
 						if (foundel[f] == 1 && player.foundspell[f] == 0) {
 							player.foundspell[f] = 1;
 							player.spellcharge[f] = 0;
-							if (f == 1) strcpy(line, "Found... Water Essence");
-							if (f == 2) strcpy(line, "Found... Metal Essence");
-							if (f == 3) strcpy(line, "Found... Earth Essence");
-							if (f == 4) strcpy(line, "Found... Fire Essence");
+							if (f == 1)
+								strcpy(line, "Found... Water Essence");
+							if (f == 2)
+								strcpy(line, "Found... Metal Essence");
+							if (f == 3)
+								strcpy(line, "Found... Earth Essence");
+							if (f == 4)
+								strcpy(line, "Found... Fire Essence");
 							break;
 						}
 					}
@@ -7039,14 +7313,16 @@ void game_updspells() {
 							SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
 						}
 
-						if (xloc < -1 || yloc < -1 || xloc > 304 || yloc > 224) spellinfo[i].ballon[ff] = 0;
+						if (xloc < -1 || yloc < -1 || xloc > 304 || yloc > 224)
+							spellinfo[i].ballon[ff] = 0;
 					}
 
 					SDL_SetAlpha(spellimg, SDL_SRCALPHA, 255);
 				}
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
-				if (spellinfo[i].frame < 0) spellinfo[i].frame = 0;
+				if (spellinfo[i].frame < 0)
+					spellinfo[i].frame = 0;
 
 				if (spellinfo[i].damagewho == 1) {
 					for (int ff = 0; ff <= spellinfo[i].nfballs - 1; ff++) {
@@ -7060,7 +7336,8 @@ void game_updspells() {
 							if ((abs(xdif) < 8 && abs(ydif) < 8) && player.pause < ticks) {
 								float damage = npcinfo[spellinfo[i].npc].spelldamage * (1 + RND() * 0.5) / 3;
 
-								if (player.hp > 0) game_damageplayer(damage);
+								if (player.hp > 0)
+									game_damageplayer(damage);
 
 								if (menabled == 1 && config.effects == 1) {
 									int snd = Mix_PlayChannel(-1, sfx[sndfire], 0);
@@ -7091,14 +7368,18 @@ void game_updspells() {
 					for (int x = apx; x <= 319; x++) {
 						int rn = (int)(RND() * 3);
 
-						if (orn == 0) y = y - 1;
-						if (orn == 2) y = y + 1;
+						if (orn == 0)
+							y = y - 1;
+						if (orn == 2)
+							y = y + 1;
 
 						sys_line(videobuffer, x, y - 1, x, y + 2, cl1);
 						sys_line(videobuffer, x, y, x, y + 1, cl3);
 
-						if (rn == 0) sys_line(videobuffer, x, y + 1, x, y + 1, cl2);
-						if (rn == 2) sys_line(videobuffer, x, y, x, y, cl2);
+						if (rn == 0)
+							sys_line(videobuffer, x, y + 1, x, y + 1, cl2);
+						if (rn == 2)
+							sys_line(videobuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -7111,7 +7392,8 @@ void game_updspells() {
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
-									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) game_damagenpc(e, damage, 1);
+									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks)
+										game_damagenpc(e, damage, 1);
 								}
 							}
 						}
@@ -7144,14 +7426,18 @@ void game_updspells() {
 					for (int x = apx; x >= 0; x--) {
 						int rn = (int)(RND() * 3);
 
-						if (orn == 0) y = y - 1;
-						if (orn == 2) y = y + 1;
+						if (orn == 0)
+							y = y - 1;
+						if (orn == 2)
+							y = y + 1;
 
 						sys_line(videobuffer, x, y - 1, x, y + 2, cl1);
 						sys_line(videobuffer, x, y, x, y + 1, cl3);
 
-						if (rn == 0) sys_line(videobuffer, x, y + 1, x, y + 1, cl2);
-						if (rn == 2) sys_line(videobuffer, x, y, x, y, cl2);
+						if (rn == 0)
+							sys_line(videobuffer, x, y + 1, x, y + 1, cl2);
+						if (rn == 2)
+							sys_line(videobuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -7164,7 +7450,8 @@ void game_updspells() {
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
-									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) game_damagenpc(e, damage, 1);
+									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks)
+										game_damagenpc(e, damage, 1);
 								}
 							}
 						}
@@ -7197,14 +7484,18 @@ void game_updspells() {
 					for (int y = apy; y <= 239; y++) {
 						int rn = (int)(RND() * 3);
 
-						if (orn == 0) x = x - 1;
-						if (orn == 2) x = x + 1;
+						if (orn == 0)
+							x = x - 1;
+						if (orn == 2)
+							x = x + 1;
 
 						sys_line(videobuffer, x - 1, y, x + 2, y, cl1);
 						sys_line(videobuffer, x, y, x + 1, y, cl3);
 
-						if (rn == 0) sys_line(videobuffer, x + 1, y, x + 1, y, cl2);
-						if (rn == 2) sys_line(videobuffer, x, y, x, y, cl2);
+						if (rn == 0)
+							sys_line(videobuffer, x + 1, y, x + 1, y, cl2);
+						if (rn == 2)
+							sys_line(videobuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -7216,7 +7507,8 @@ void game_updspells() {
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
-									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) game_damagenpc(e, damage, 1);
+									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks)
+										game_damagenpc(e, damage, 1);
 								}
 							}
 						}
@@ -7249,14 +7541,18 @@ void game_updspells() {
 					for (int y = apy; y >= 0; y--) {
 						int rn = (int)(RND() * 3);
 
-						if (orn == 0) x = x - 1;
-						if (orn == 2) x = x + 1;
+						if (orn == 0)
+							x = x - 1;
+						if (orn == 2)
+							x = x + 1;
 
 						sys_line(videobuffer, x - 1, y, x + 2, y, cl1);
 						sys_line(videobuffer, x, y, x + 1, y, cl3);
 
-						if (rn == 0) sys_line(videobuffer, x + 1, y, x + 1, y, cl2);
-						if (rn == 2) sys_line(videobuffer, x, y, x, y, cl2);
+						if (rn == 0)
+							sys_line(videobuffer, x + 1, y, x + 1, y, cl2);
+						if (rn == 2)
+							sys_line(videobuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -7268,7 +7564,8 @@ void game_updspells() {
 								if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 									float damage = 30 * (1 + RND() * 0.5);
 
-									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) game_damagenpc(e, damage, 1);
+									if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks)
+										game_damagenpc(e, damage, 1);
 								}
 							}
 						}
@@ -7324,14 +7621,18 @@ void game_updspells() {
 						float xdif, ydif;
 						int rn = (int)(RND() * 3);
 
-						if (orn == 0) x = x - 1;
-						if (orn == 2) x = x + 1;
+						if (orn == 0)
+							x = x - 1;
+						if (orn == 2)
+							x = x + 1;
 
 						sys_line(videobuffer, x - 1, y, x + 2, y, cl1);
 						sys_line(videobuffer, x, y, x + 1, y, cl3);
 
-						if (rn == 0) sys_line(videobuffer, x + 1, y, x + 1, y, cl2);
-						if (rn == 2) sys_line(videobuffer, x, y, x, y, cl2);
+						if (rn == 0)
+							sys_line(videobuffer, x + 1, y, x + 1, y, cl2);
+						if (rn == 2)
+							sys_line(videobuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -7342,13 +7643,16 @@ void game_updspells() {
 
 							if ((abs(xdif) < 8 && abs(ydif) < 8) && player.pause < ticks) {
 								float damage = ((float)player.hp * 0.75) * (RND() * 0.5 + 0.5);
-								if (damage < 5) damage = 5;
+								if (damage < 5)
+									damage = 5;
 
 								if (npcinfo[spellinfo[i].npc].spriteset == 12) {
-									if (damage < 50) damage = 40 + (int)(RND() * 40);
+									if (damage < 50)
+										damage = 40 + (int)(RND() * 40);
 								}
 
-								if (player.hp > 0) game_damageplayer(damage);
+								if (player.hp > 0)
+									game_damageplayer(damage);
 							}
 						}
 					}
@@ -7372,7 +7676,8 @@ void game_updspellsunder() {
 
 	unsigned int dq, *temp;
 
-	if (forcepause == 1) return;
+	if (forcepause == 1)
+		return;
 
 	for (int i = 0; i < kMaxSpell; i++) {
 		if (spellinfo[i].frame > 0) {
@@ -7392,15 +7697,18 @@ void game_updspellsunder() {
 				rcDest.y = spellinfo[i].enemyy - 8;
 
 				int f = 160;
-				if (fra < 8) f = 160 * fra / 8;
-				if (fra > 24) f = 160 * (1 - (fra - 24) / 8);
+				if (fra < 8)
+					f = 160 * fra / 8;
+				if (fra > 24)
+					f = 160 * (1 - (fra - 24) / 8);
 
 				SDL_SetAlpha(spellimg, SDL_SRCALPHA, f);
 				SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
 				SDL_SetAlpha(spellimg, SDL_SRCALPHA, 255);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
-				if (spellinfo[i].frame < 0) spellinfo[i].frame = 0;
+				if (spellinfo[i].frame < 0)
+					spellinfo[i].frame = 0;
 
 
 				for (int f = 1; f <= lastnpc; f++) {
@@ -7409,7 +7717,8 @@ void game_updspellsunder() {
 
 					float dist = sqrt(xdif * xdif + ydif * ydif);
 
-					if (dist > 20) dist = 20;
+					if (dist > 20)
+						dist = 20;
 
 					if (dist > 5) {
 						float ratio = (1 - dist / 25);
@@ -7437,7 +7746,8 @@ void game_updspellsunder() {
 							temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 							dq = *temp;
 
-							if (dq == 0) xpass = 1;
+							if (dq == 0)
+								xpass = 1;
 
 
 							sx = (npcinfo[f].x / 2 + 6);
@@ -7445,7 +7755,8 @@ void game_updspellsunder() {
 							temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 							dq = *temp;
 
-							if (dq == 0) ypass = 1;
+							if (dq == 0)
+								ypass = 1;
 
 							if (ypass == 1) {
 								newx = npcinfo[f].x;
@@ -7469,10 +7780,12 @@ void game_updspellsunder() {
 
 				fr = fr * fr * (1 - cos(3.14159 / 4 + 3.14159 / 4 * fr / 32));
 
-				if (fr > 32) fr = 32;
+				if (fr > 32)
+					fr = 32;
 
 				float s = 8;
-				if (spellinfo[i].frame < 8) s = spellinfo[i].frame;
+				if (spellinfo[i].frame < 8)
+					s = spellinfo[i].frame;
 
 				int fra = (int)fr;
 
@@ -7501,7 +7814,8 @@ void game_updspellsunder() {
 								temp = clipbg->pixels + sy * clipbg->pitch + sx * clipbg->format->BytesPerPixel;
 								dq = *temp;
 
-								if (dq > 1000 && x > 4) spellinfo[i].legalive[f] = x;
+								if (dq > 1000 && x > 4)
+									spellinfo[i].legalive[f] = x;
 
 								if (spellinfo[i].damagewho == 0) {
 									for (int e = 1; e <= lastnpc; e++) {
@@ -7511,8 +7825,10 @@ void game_updspellsunder() {
 										if ((abs(xdif) < 8 && abs(ydif) < 8)) {
 											float damage = (float)player.spelldamage * (1.0 + RND() * 0.5) * (float)spellinfo[i].strength;
 
-											if (npcinfo[e].spriteset == 5) damage = -damage;
-											if (npcinfo[e].spriteset == 11) damage = -damage;
+											if (npcinfo[e].spriteset == 5)
+												damage = -damage;
+											if (npcinfo[e].spriteset == 11)
+												damage = -damage;
 											if (npcinfo[e].hp > 0 && npcinfo[e].pause < ticks) {
 												game_damagenpc(e, damage, 1);
 												if (menabled == 1 && config.effects == 1) {
@@ -7576,7 +7892,8 @@ void game_updspellsunder() {
 				SDL_SetAlpha(spellimg, SDL_SRCALPHA, 255);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
-				if (spellinfo[i].frame < 0) spellinfo[i].frame = 0;
+				if (spellinfo[i].frame < 0)
+					spellinfo[i].frame = 0;
 
 
 			}
@@ -7591,13 +7908,18 @@ void game_updspellsunder() {
 				for (int f = 0; f <= 7; f++) {
 					int alpha = 0;
 					float xx = 0;
-					if (fr > f * 2 && fr < f * 2 + 16) xx = fr - f * 2;
-					if (xx < 8) alpha = 255 * xx / 8;
-					if (xx > 8) alpha = 255 * (1 - (xx - 8) / 8);
+					if (fr > f * 2 && fr < f * 2 + 16)
+						xx = fr - f * 2;
+					if (xx < 8)
+						alpha = 255 * xx / 8;
+					if (xx > 8)
+						alpha = 255 * (1 - (xx - 8) / 8);
 					float yy = 16 * sin(3.141592 / 2 * xx / 16) - 8;
 
-					if (alpha < 0) alpha = 0;
-					if (alpha > 255) alpha = 255;
+					if (alpha < 0)
+						alpha = 0;
+					if (alpha > 255)
+						alpha = 255;
 
 					SDL_SetAlpha(spellimg, SDL_SRCALPHA, alpha);
 
@@ -7639,7 +7961,8 @@ void game_updspellsunder() {
 
 				SDL_SetAlpha(spellimg, SDL_SRCALPHA, 255);
 				spellinfo[i].frame = spellinfo[i].frame - 0.5 * fpsr;
-				if (spellinfo[i].frame < 0) spellinfo[i].frame = 0;
+				if (spellinfo[i].frame < 0)
+					spellinfo[i].frame = 0;
 
 				if (spellinfo[i].frame == 0) {
 					npcinfo[spellinfo[i].npc].attacking = 0;
@@ -8179,18 +8502,21 @@ void sys_update() {
 			spd = 0.5 * fpsr;
 			floattext[i][0] = floattext[i][0] - spd;
 			floattext[i][2] = floattext[i][2] - spd;
-			if (floattext[i][0] < 0) floattext[i][0] = 0;
+			if (floattext[i][0] < 0)
+				floattext[i][0] = 0;
 		}
 
 		if (floaticon[i][0] > 0) {
 			spd = 0.5 * fpsr;
 			floaticon[i][0] = floaticon[i][0] - spd;
 			floaticon[i][2] = floaticon[i][2] - spd;
-			if (floaticon[i][0] < 0) floaticon[i][0] = 0;
+			if (floaticon[i][0] < 0)
+				floaticon[i][0] = 0;
 		}
 	}
 
-	if (player.level == player.maxlevel) player.exp = 0;
+	if (player.level == player.maxlevel)
+		player.exp = 0;
 
 	if (player.exp >= player.nextlevel) {
 		player.level = player.level + 1;
@@ -8198,7 +8524,8 @@ void sys_update() {
 		player.exp = player.exp - player.nextlevel;
 		player.nextlevel = player.nextlevel * 3 / 2; // 1.5
 		player.maxhp = player.maxhp + player.level * 3;
-		if (player.maxhp > 999) player.maxhp = 999;
+		if (player.maxhp > 999)
+			player.maxhp = 999;
 		player.hp = player.maxhp;
 
 		player.sworddamage = player.level * 14 / 10;
@@ -8224,8 +8551,10 @@ void sys_update() {
 
 	if (forcepause == 0) {
 		for (int i = 0; i < 5; i++) {
-			if (player.foundspell[i] == 1) player.spellcharge[i] += 1 * player.level * 0.01 * fpsr;
-			if (player.spellcharge[i] > 100) player.spellcharge[i] = 100;
+			if (player.foundspell[i] == 1)
+				player.spellcharge[i] += 1 * player.level * 0.01 * fpsr;
+			if (player.spellcharge[i] > 100)
+				player.spellcharge[i] = 100;
 		}
 
 		if (player.foundspell[0]) {
@@ -8235,29 +8564,36 @@ void sys_update() {
 		player.attackstrength += (30 + 3 * (float)player.level) / 50 * fpsr;
 	}
 
-	if (player.attackstrength > 100) player.attackstrength = 100;
+	if (player.attackstrength > 100)
+		player.attackstrength = 100;
 
-	if (player.spellstrength > 100) player.spellstrength = 100;
+	if (player.spellstrength > 100)
+		player.spellstrength = 100;
 
 	itemyloc += 0.75 * fpsr;
-	while (itemyloc >= 16) itemyloc -= 16;
+	while (itemyloc >= 16)
+		itemyloc -= 16;
 
-	if (player.hp <= 0) game_theend();
+	if (player.hp <= 0)
+		game_theend();
 
 	if (roomlock == 1) {
 		roomlock = 0;
 		for (int i = 1; i <= lastnpc; i++)
-			if (npcinfo[i].hp > 0) roomlock = 1;
+			if (npcinfo[i].hp > 0)
+				roomlock = 1;
 	}
 
 	clouddeg += 0.1 * fpsr;
-	while (clouddeg >= 360) clouddeg = clouddeg - 360;
+	while (clouddeg >= 360)
+		clouddeg = clouddeg - 360;
 
 	player.hpflash = player.hpflash + 0.1 * fpsr;
 	if (player.hpflash >= 2) {
 		player.hpflash = 0;
 		player.hpflashb = player.hpflashb + 1;
-		if (player.hpflashb == 2) player.hpflashb = 0;
+		if (player.hpflashb == 2)
+			player.hpflashb = 0;
 		if (menabled == 1 && config.effects == 1 && player.hpflashb == 0 && player.hp < player.maxhp / 4) {
 			int snd = Mix_PlayChannel(-1, sfx[sndbeep], 0);
 			Mix_Volume(snd, config.effectsvol);
@@ -8266,11 +8602,14 @@ void sys_update() {
 
 	// cloudson = 0
 
-	if (itemselon == 1) player.itemselshade = player.itemselshade + 2 * fpsr;
-	if (player.itemselshade > 24) player.itemselshade = 24;
+	if (itemselon == 1)
+		player.itemselshade = player.itemselshade + 2 * fpsr;
+	if (player.itemselshade > 24)
+		player.itemselshade = 24;
 
 	for (int i = 0; i <= 4; i++)
-		if (player.inventory[i] > 9) player.inventory[i] = 9;
+		if (player.inventory[i] > 9)
+			player.inventory[i] = 9;
 }
 
 } // end of namespace Griffon
