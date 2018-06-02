@@ -41,6 +41,7 @@ class InventoryItem;
 class LeadActor : public Actor {
 public:
 	LeadActor();
+
 	enum State {
 		kReady = 0,
 		kMoving = 1,
@@ -52,83 +53,91 @@ public:
 		kUnk_Loading = 7// ????
 	};
 
+	void deserialize(Archive &archive) override;
 
-	virtual void deserialize(Archive &archive);
+	void toConsole() override;
 
-	virtual void toConsole();
+	void loadState(Archive &archive);
+	void saveState(Archive &archive);
 
-	void setNextExecutors (Common::String &nextModule, Common::String &nextPage);
 	virtual void init(bool unk);
 
-	State getState() const;
-
 	void start(bool isHandler);
+
 	void update();
-
-	void onKeyboardButtonClick(Common::KeyCode code);
-	void onLeftButtonClick(Common::Point point);
-	void onMouseMove(Common::Point point);
-	void onWalkEnd();
-	virtual void onClick();
-	void onInventoryClosed(bool isItemClicked);
-	virtual void onVariableSet() {};
-
-	virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
-
-	bool isInteractingWith(SupportingActor *actor);
-
-	virtual void loadState(Archive &archive);
-
-	virtual void saveState(Archive &archive);
 
 	void loadPDA(const Common::String &pageName);
 
+	void onKeyboardButtonClick(Common::KeyCode code);
+	void onLeftButtonClick(const Common::Point point);
+
+	void onMouseMove(const Common::Point point);
+
+	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
+
+	virtual void onClick();
+	virtual void onVariableSet();
+	void onInventoryClosed(bool isItemClicked);
+	void onWalkEnd();
+
+	bool isInteractingWith(Actor *actor);
+
+	void setNextExecutors (const Common::String &nextModule, const Common::String &nextPage);
+
+	State getState() const;
+
 protected:
-	virtual void updateCursor(Common::Point point);
 	void forceUpdateCursor();
 
-	virtual bool sendUseClickMessage(SupportingActor *actor);
-	bool sendLeftClickMessage(SupportingActor *actor);
+	virtual void updateCursor(const Common::Point point);
+
+	virtual bool sendUseClickMessage(Actor *actor);
+	bool sendLeftClickMessage(Actor *actor);
 
 	virtual WalkLocation *getWalkDestination();
+
+	Actor *_recipient;
+
+	CursorMgr *_cursorMgr;
+	WalkMgr *_walkMgr;
+	Sequencer *_sequencer;
 
 	State _state;
 	State _nextState;
 	State _stateCopy;
 
 	bool _isHaveItem;
-
-	SupportingActor *_recipient;
-
-	CursorMgr *_cursorMgr;
-	WalkMgr *_walkMgr;
-	Sequencer *_sequencer;
 };
 
 
 class ParlSqPink : public LeadActor {
 public:
-	virtual WalkLocation *getWalkDestination();
-	void toConsole();
+	void toConsole() override;
+
+protected:
+	WalkLocation *getWalkDestination() override;
 };
 
 class PubPink : public LeadActor {
 public:
 	PubPink();
 
-	void toConsole();
+	void toConsole() override;
 
-	virtual void onClick();
-	virtual void onVariableSet();
+	void onClick() override;
+	void onVariableSet() override;
+
+protected:
+	void updateCursor(Common::Point point) override;
+
+	bool sendUseClickMessage(Actor *actor) override;
+
+	WalkLocation *getWalkDestination() override;
 
 private:
-	int _round;
-
-	virtual bool sendUseClickMessage(SupportingActor *actor);
-	virtual void updateCursor(Common::Point point);
-	virtual WalkLocation *getWalkDestination();
-
 	bool playingMiniGame();
+
+	int _round;
 };
 
 

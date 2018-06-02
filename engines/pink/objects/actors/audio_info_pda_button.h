@@ -34,8 +34,8 @@ namespace Pink {
 
 class AudioInfoPDAButton : public Actor {
 public:
-	void toConsole() {
-		debug("CursorActor: _name = %s", _name.c_str());
+	void toConsole() override {
+		debug("AudioInfoPDAButton: _name = %s", _name.c_str());
 		for (uint i = 0; i < _actions.size(); ++i) {
 			_actions[i]->toConsole();
 		}

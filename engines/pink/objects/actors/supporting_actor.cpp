@@ -46,6 +46,14 @@ void SupportingActor::toConsole() {
 	_handlerMgr.toConsole();
 }
 
+bool SupportingActor::isLeftClickHandlers() {
+	return _handlerMgr.isLeftClickHandler(this);
+}
+
+bool SupportingActor::isUseClickHandlers(InventoryItem *item) {
+	return _handlerMgr.isUseClickHandler(this, item->getName());
+}
+
 void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 	if (isLeftClickHandlers()){
 		if (!_cursor.empty())
@@ -57,12 +65,11 @@ void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 		Actor::onMouseOver(point, mgr);
 }
 
-bool SupportingActor::isLeftClickHandlers() {
-	return _handlerMgr.isLeftClickHandler(this);
-}
-
-bool SupportingActor::isUseClickHandlers(InventoryItem *item) {
-	return _handlerMgr.isUseClickHandler(this, item->getName());
+void SupportingActor::onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+	Common::String item = itemName;
+	if (_handlerMgr.isUseClickHandler(this, itemName))
+		item += kClickable;
+	Actor::onHover(point, item, cursorMgr);
 }
 
 void SupportingActor::onTimerMessage() {
@@ -79,13 +86,6 @@ bool SupportingActor::onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) 
 
 const Common::String &SupportingActor::getLocation() const {
 	return _location;
-}
-
-void SupportingActor::onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
-	Common::String item = itemName;
-	if (_handlerMgr.isUseClickHandler(this, itemName))
-		item += kClickable;
-	Actor::onHover(point, item, cursorMgr);
 }
 
 } // End of namespace Pink

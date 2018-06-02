@@ -31,21 +31,22 @@ class Archive;
 
 class Object {
 public:
-	virtual ~Object() {};
-	virtual void load(Archive &) {};
-	virtual void store(Archive &) {};
-	virtual void deserialize(Archive &) {};
-	virtual void init() {}
-	virtual void toConsole() {};
+	virtual ~Object();
+
+	virtual void load(Archive &);
+	virtual void deserialize(Archive &);
+
+	virtual void init();
+
+	virtual void toConsole();
 };
 
 class NamedObject : public Object {
 public:
-	NamedObject() {};
+	NamedObject();
 	NamedObject(const Common::String &name);
 
 	void deserialize(Archive &archive);
-	void store(Archive &archive);
 
 	const Common::String &getName() const;
 
