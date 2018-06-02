@@ -39,6 +39,7 @@ void Bitmap::load(const Common::String &filename) {
 	int16 xs = f.readSint16LE();
 	int16 ys = f.readSint16LE();
 	create(xs, ys);
+	assert(f.size() == (xs * ys + 4));
 
 	Graphics::Surface s = getSubArea(Common::Rect(0, 0, xs, ys));
 

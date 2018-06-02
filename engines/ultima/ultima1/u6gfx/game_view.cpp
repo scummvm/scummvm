@@ -44,7 +44,7 @@ END_MESSAGE_MAP()
 
 GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
 	_info = nullptr;
-	_background.load("newmagic.bmp");
+	_background.load("paper.bmp");
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Climb(this);
 	_actions[2] = new Actions::Enter(this);

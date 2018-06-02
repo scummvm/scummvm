@@ -28,6 +28,7 @@ namespace Ultima {
 namespace Shared {
 
 void LZW::decompress(Common::ReadStream *source, Common::WriteStream *dest) {
+	int32 destSize = source->readUint32LE();
 	_source = source;
 	_currentByte = source->readByte();
 
@@ -89,6 +90,7 @@ void LZW::decompress(Common::ReadStream *source, Common::WriteStream *dest) {
 	}
 
 	delete[] copyBuf;
+	assert(dest->pos() == destSize);
 }
 
 uint16 LZW::getCode() {
