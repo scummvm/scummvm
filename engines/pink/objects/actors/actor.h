@@ -39,50 +39,57 @@ class InventoryMgr;
 
 class Actor : public NamedObject {
 public:
-	Actor()
-	 : _page(nullptr), _action(nullptr),
-		_isActionEnded(1) {};
+	Actor();
 	~Actor();
-	virtual void deserialize(Archive &archive);
 
-	virtual void toConsole();
+	void deserialize(Archive &archive) override;
 
-	Sequencer *getSequencer() const;
-	Page *getPage() const;
-	Action *getAction() const;
+	void loadState(Archive &archive);
+	void saveState(Archive &archive);
+
+	virtual void init(bool unk);
+	bool initPallete(Director *director);
+
+	void toConsole() override ;
 
 	bool isPlaying();
-	virtual void init(bool unk);
+	virtual void pause(bool paused);
+
 	void hide();
 	void endAction();
 
+	virtual bool isLeftClickHandlers();
+	virtual bool isUseClickHandlers(InventoryItem *item);
+
+	virtual void onMouseOver(const Common::Point point, CursorMgr *mgr);
+	virtual void onHover(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
+
+	virtual void onClick();
+
+	virtual void onTimerMessage();
+	virtual bool onLeftClickMessage();
+	virtual bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr);
+
 	Action *findAction(const Common::String &name);
+
+	Action *getAction() const;
+	Page *getPage() const;
+	Sequencer *getSequencer() const;
+
+	virtual const Common::String &getLocation() const;
+
 	void setAction(const Common::String &name);
 	void setAction(Action *newAction);
 	void setAction(Action *newAction, bool unk);
 
 	void setPage(Page *page);
 
-	void loadState(Archive &archive);
-	void saveState(Archive &archive);
-
-	bool initPallete(Director *director);
-
-	virtual void update() {};
-
-	virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
-	virtual void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
-	virtual void onClick() {};
-
-	virtual bool isClickable() { return 0; }
-
-	virtual void pause();
-	virtual void unpause();
-
 protected:
 	Page *_page;
+
 	Action *_action;
 	Array<Action *> _actions;
+
 	bool _isActionEnded;
 };
 

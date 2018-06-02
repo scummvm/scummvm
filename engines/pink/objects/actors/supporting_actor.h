@@ -33,26 +33,25 @@ class InventoryMgr;
 
 class SupportingActor : public Actor {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
+	virtual void deserialize(Archive &archive) override;
 
-	virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
+	virtual void toConsole() override;
 
-	virtual bool isClickable() { return 1; }
-	bool isLeftClickHandlers();
-	bool isUseClickHandlers(InventoryItem *item);
+	bool isLeftClickHandlers() override;
+	bool isUseClickHandlers(InventoryItem *item) override;
 
-	void onTimerMessage();
-	bool onLeftClickMessage();
-	bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr);
+	void onMouseOver(Common::Point point, CursorMgr *mgr) override;
+	void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override;
 
-	virtual void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
+	void onTimerMessage() override;
+	bool onLeftClickMessage() override;
+	bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) override;
 
-	const Common::String &getLocation() const;
-
+	const Common::String &getLocation() const override;
 
 private:
 	HandlerMgr _handlerMgr;
+
 	Common::String _location;
 	Common::String _pdaLink;
 	Common::String _cursor;

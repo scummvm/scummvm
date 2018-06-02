@@ -26,17 +26,27 @@
 
 namespace Pink {
 
-Pink::NamedObject::NamedObject(const Common::String &name)
+Object::~Object() {}
+
+void Object::load(Archive &) {}
+
+void Object::deserialize(Archive &) {}
+
+void Object::init() {}
+
+void Object::toConsole() {}
+
+NamedObject::NamedObject() {}
+
+NamedObject::NamedObject(const Common::String &name)
 		: _name(name) {}
 
-void Pink::NamedObject::deserialize(Archive &archive) {
+void NamedObject::deserialize(Archive &archive) {
 	_name = archive.readString();
 }
 
-const Common::String &Pink::NamedObject::getName() const {
+const Common::String &NamedObject::getName() const {
 	return _name;
 }
-
-void NamedObject::store(Archive &archive) {}
 
 } // End of namespace Pink

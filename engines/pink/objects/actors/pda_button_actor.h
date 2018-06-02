@@ -41,10 +41,12 @@ struct Command {
 class PDAButtonActor : public Actor {
 public:
 	void deserialize(Archive &archive) override;
+
 	void toConsole() override;
 
-	void onClick();
-	void onMouseOver(Common::Point point, CursorMgr *mgr);
+	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
+
+	void onClick() override;
 
 private:
 	bool isActive();
