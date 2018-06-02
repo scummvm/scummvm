@@ -32,17 +32,39 @@ SineTable::SineTable(int bitPrecision) {
 
 	_bitPrecision = bitPrecision;
 
-	int m = 1 << _bitPrecision;
-	double freq = 2 * M_PI / m;
-	_table = new float[m / 2];
+	_nPoints = 1 << _bitPrecision;
+	_radResolution = 2.0 * M_PI / _nPoints;
+	_refSize = _nPoints / 4;
+	_table = new float[_nPoints / 2];
 
-	// Table contains sin(2*pi*i/m) for 0<=i<m/4,
-	// followed by m/2<=i<3m/4
-	for (int i = 0; i < m / 4; i++)
-		_table[i] = sin(i * freq);
+	// Table contains sin(2*pi*i/_nPoints) for 0<=i<_nPoints/4,
+	// followed by _nPoints/2<=i<3_nPoints/4
+	for (int i = 0; i < _nPoints / 4; i++)
+		_table[i] = sin(i * _radResolution);
 
-	for (int i = 0; i < m / 4; i++)
-		_table[m / 4 + i] = -_table[i];
+	for (int i = 0; i < _nPoints / 4; i++)
+		_table[_nPoints / 4 + i] = -_table[i];
+
+}
+
+float SineTable::at(int index) const { 
+	assert((index >= 0) && (index < _nPoints));
+	if (index < _refSize)
+		// [0,pi/2)
+		return _table[index];
+	if (index == _refSize)
+		// pi/2
+		return 1.0f; // sin(pi/2) = 1.0	
+	if ((index > _refSize) && (index < 2 * _refSize))
+		// (pi/2,pi)
+		return _table[2 * _refSize - index];
+	if ((index >= 2 * _refSize) && (index < 3 * _refSize))
+		// [pi,3/2pi)
+		return -_table[index - 2 * _refSize];
+	if ((index > 3 * _refSize) && (index < _nPoints))
+		// (3/2pi,2pi)
+		return -_table[_nPoints - index];
+	return -1.0f; // sin(3pi/2) = -1.0
 }
 
 SineTable::~SineTable() {
