@@ -122,50 +122,11 @@ void DiaryIndexScreen::quitHandler() {
 }
 
 void DiaryIndexScreen::loadHandler() {
-	// TODO: Implement the original load screen
 	StarkUserInterface->changeScreen(Screen::kScreenLoadMenu);
-
-	/*
-	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
-
-	g_engine->pauseEngine(true);
-	int slot = slc.runModalWithCurrentTarget();
-	g_engine->pauseEngine(false);
-
-	if (slot >= 0) {
-		StarkUserInterface->changeScreen(Screen::kScreenGame);
-
-		Common::Error loadError = g_engine->loadGameState(slot);
-
-		if (loadError.getCode() != Common::kNoError) {
-			GUI::MessageDialog dialog(loadError.getDesc());
-			dialog.runModal();
-		}
-	}
-	*/
 }
 
 void DiaryIndexScreen::saveHandler() {
-	// TODO: Implement the original save screen
 	StarkUserInterface->changeScreen(Screen::kScreenSaveMenu);
-
-	/*
-	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
-
-	g_engine->pauseEngine(true);
-	int slot = slc.runModalWithCurrentTarget();
-	g_engine->pauseEngine(false);
-
-	if (slot >= 0) {
-		Common::Error loadError = g_engine->saveGameState(slot, slc.getResultString());
-
-		if (loadError.getCode() != Common::kNoError) {
-			GUI::MessageDialog dialog(loadError.getDesc());
-			dialog.runModal();
-		}
-
-		StarkUserInterface->changeScreen(Screen::kScreenGame);
-	}*/
 }
 
 } // End of namespace Stark

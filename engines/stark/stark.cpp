@@ -40,6 +40,7 @@
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/settings.h"
+#include "engines/stark/services/gamechapter.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/framelimiter.h"
 
@@ -72,6 +73,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_userInterface(nullptr),
 		_fontProvider(nullptr),
 		_settings(nullptr),
+		_gameChapter(nullptr),
 		_lastClickTime(0) {
 	// Add the available debug channels
 	DebugMan.addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
@@ -97,6 +99,7 @@ StarkEngine::~StarkEngine() {
 	delete _userInterface;
 	delete _fontProvider;
 	delete _settings;
+	delete _gameChapter;
 
 	StarkServices::destroy();
 }
@@ -122,6 +125,7 @@ Common::Error StarkEngine::run() {
 	_gameInterface = new GameInterface();
 	_userInterface = new UserInterface(_gfx);
 	_settings = new Settings(_mixer);
+	_gameChapter = new GameChapter();
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -139,6 +143,7 @@ Common::Error StarkEngine::run() {
 	services.fontProvider = _fontProvider;
 	services.gameDescription = _gameDescription;
 	services.settings = _settings;
+	services.gameChapter = _gameChapter;
 
 	// Load global resources
 	_staticProvider->init();

@@ -80,6 +80,7 @@ MODULE_OBJS := \
 	services/staticprovider.o \
 	services/userinterface.o \
 	services/settings.o \
+	services/gamechapter.o \
 	stark.o \
 	tools/abstractsyntaxtree.o \
 	tools/block.o \

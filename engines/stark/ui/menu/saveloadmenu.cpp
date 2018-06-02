@@ -26,6 +26,7 @@
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/settings.h"
+#include "engines/stark/services/gamechapter.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
@@ -151,16 +152,7 @@ void SaveMenuScreen::open() {
 }
 
 void SaveMenuScreen::onWidgetSelected(SaveDataWidget *widget) {
-	int chapter = StarkGlobal->getCurrentChapter() / 10;
-
-	Common::String desc;
-	if (chapter == 0) {
-		desc = "Prologue";
-	} else {
-		desc = Common::String::format("Chapter %d", chapter);
-	}
-
-	g_engine->saveGameState(widget->getSlot(), desc);
+	checkError(g_engine->saveGameState(widget->getSlot(), StarkGameChapter->getCurrentChapterTitle()));
 
 	// Freeze the screen for a while to let the user notice the change
 	widget->loadSaveDataElements();
@@ -179,7 +171,7 @@ void LoadMenuScreen::open() {
 }
 
 void LoadMenuScreen::onWidgetSelected(SaveDataWidget *widget) {
-	g_engine->loadGameState(widget->getSlot());
+	checkError(g_engine->loadGameState(widget->getSlot()));
 }
 
 SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *screen) :
