@@ -24,35 +24,40 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/global.h"
 
-#include "common/archive.h"
-#include "common/stream.h"
 #include "common/tokenizer.h"
-#include "common/debug.h"
+#include "common/ini-file.h"
 
 namespace Stark {
 
 GameChapter::GameChapter() {
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("chapters.ini");
-	if (!stream) {
-		error("Opening 'chapters.ini' failed");
+	Common::INIFile file;
+	if (!file.loadFromFile("chapters.ini")) {
+		error("Opening file 'chapters.ini' failed");
 		return;
 	}
 
-	Common::String line, title, subtitle;
+	Common::String section = file.getSections().front().name;
+	
+	int index = 0;
+	Common::String key = Common::String::format("%02d", index);
+	Common::String value;
 
-	// Assume that the formats of all chapters.ini are the same
-	stream->readLine();
-	while (!stream->eos()) {
+	while (file.hasKey(key, section)) {
+		file.getKey(key, section, value);
 		_chapterEntries.push_back(ChapterEntry());
 
-		line = stream->readLine();
-		Common::StringTokenizer tokens(line, "=:");
-
-		tokens.nextToken();
+		Common::StringTokenizer tokens(value, ":");
 		_chapterEntries.back().title = tokens.nextToken();
 		_chapterEntries.back().title.trim();
 		_chapterEntries.back().subtitle = tokens.nextToken();
 		_chapterEntries.back().subtitle.trim();
+
+		++index;
+		key = Common::String::format("%02d", index);
+	}
+
+	if (index < 15) {
+		error("File 'chapters.ini' is incomplete");
 	}
 }
 
