@@ -121,7 +121,7 @@ Common::Error StarkEngine::run() {
 	_diary = new Diary();
 	_gameInterface = new GameInterface();
 	_userInterface = new UserInterface(_gfx);
-	_settings = new Settings(_mixer);
+	_settings = new Settings(_mixer, _gameDescription);
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -137,7 +137,6 @@ Common::Error StarkEngine::run() {
 	services.gameInterface = _gameInterface;
 	services.userInterface = _userInterface;
 	services.fontProvider = _fontProvider;
-	services.gameDescription = _gameDescription;
 	services.settings = _settings;
 
 	// Load global resources

@@ -26,7 +26,8 @@
 #include "common/config-manager.h"
 
 #include "engines/stark/services/services.h"
-#include "engines/advancedDetector.h"
+
+struct ADGameDescription;
 
 namespace Audio {
 class Mixer;
@@ -56,12 +57,17 @@ public:
 		kSfx
 	};
 
-	static bool isDemo() {
-		return StarkGameDescription->flags & ADGF_DEMO;
-	}
-
-	explicit Settings(Audio::Mixer *mixer);
+	Settings(Audio::Mixer *mixer, const ADGameDescription *gd);
 	~Settings() {}
+
+	/**
+	 * Is this a demo version of the game?
+	 *
+	 * This is true either for 4-CD or 2-CD style demos
+	 */
+	bool isDemo() const {
+		return _isDemo;
+	}
 
 	/** Get the settings value */
 	bool getBoolSetting(BoolSettingIndex index) { return ConfMan.getBool(_boolKey[index]); }
@@ -81,6 +87,7 @@ public:
 private:
 	Audio::Mixer *_mixer;
 	bool _hasLowRes;
+	const bool _isDemo;
 
 	const char *_boolKey[6];
 	const char *_intKey[3];

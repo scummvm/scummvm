@@ -29,10 +29,13 @@
 
 #include "audio/mixer.h"
 
+#include "engines/advancedDetector.h"
+
 namespace Stark {
 
-Settings::Settings(Audio::Mixer *mixer) :
-		_mixer(mixer) {
+Settings::Settings(Audio::Mixer *mixer, const ADGameDescription *gd) :
+		_mixer(mixer),
+		_isDemo(gd->flags & ADGF_DEMO) {
 	// Initialize keys
 	_boolKey[kHighModel] = "enable_high_resolution_models";
 	_boolKey[kSubtitle] = "subtitles";

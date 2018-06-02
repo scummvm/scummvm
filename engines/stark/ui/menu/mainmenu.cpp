@@ -27,10 +27,12 @@
 #include "engines/stark/services/settings.h"
 
 #include "common/config-manager.h"
-
 #include "common/translation.h"
+
 #include "gui/saveload.h"
 #include "gui/message.h"
+
+#include "engines/engine.h"
 
 namespace Stark {
 
