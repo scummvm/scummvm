@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-06-03 13:49+0200\n"
-"PO-Revision-Date: 2018-06-03 13:12+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2018-06-03 13:14+0000\n"
+"Last-Translator: Donovan Watteau <tsoomi@gmail.com>\n"
 "Language-Team: French "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -4462,7 +4462,7 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
-"Support MIDI natif requière la mise à jour Roland de LucasArt,\n"
+"Support MIDI natif requière la mise à jour Roland de LucasArts,\n"
 "mais %s manque. Utilise AdLib à la place."
 
 #: engines/scumm/scumm.cpp:2740
@@ -4571,7 +4571,7 @@ msgstr ""
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr ""
-"La scène cinématique PSX '%s' ne peut pas être lu avec 256 couleurs ou moins"
+"La scène cinématique PSX '%s' ne peut pas être lue avec 256 couleurs ou moins"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
@@ -4661,7 +4661,7 @@ msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
-"Le fichier teenagent.dat est compressé et cet exécutable n'inclus pas zlib. "
+"Le fichier teenagent.dat est compressé et cet exécutable n'inclut pas zlib. "
 "Veuillez le décompresser."
 
 #: engines/tony/tony.cpp:258
