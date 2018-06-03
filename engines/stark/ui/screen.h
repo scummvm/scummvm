@@ -42,7 +42,8 @@ public:
 		kScreenDiaryIndex,
 		kScreenSettingsMenu,
 		kScreenSaveMenu,
-		kScreenLoadMenu
+		kScreenLoadMenu,
+		kScreenFMVMenu
 	};
 
 	explicit Screen(Name name) : _name(name) {};

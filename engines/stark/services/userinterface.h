@@ -50,6 +50,7 @@ class MainMenuScreen;
 class SettingsMenuScreen;
 class SaveMenuScreen;
 class LoadMenuScreen;
+class FMVMenuScreen;
 class Cursor;
 class FMVScreen;
 
@@ -161,7 +162,7 @@ private:
 	SettingsMenuScreen *_settingsMenuScreen;
 	SaveMenuScreen *_saveMenuScreen;
 	LoadMenuScreen *_loadMenuScreen;
-
+	FMVMenuScreen *_fmvMenuScreen;
 	Screen *_currentScreen;
 	Common::Stack<Screen::Name> _prevScreenNameStack;
 

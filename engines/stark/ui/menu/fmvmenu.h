@@ -20,37 +20,28 @@
  *
  */
 
-#ifndef STARK_UI_MENU_DIARY_INDEX_H
-#define STARK_UI_MENU_DIARY_INDEX_H
+#ifndef STARK_UI_MENU_FMV_MENU_H
+#define STARK_UI_MENU_FMV_MENU_H
 
 #include "engines/stark/ui/menu/locationscreen.h"
 
 namespace Stark {
 
 /**
- * The diary index is the in-game menu
+ * The video replay menu
  */
-class DiaryIndexScreen : public StaticLocationScreen {
+class FMVMenuScreen : public StaticLocationScreen {
 public:
-	DiaryIndexScreen(Gfx::Driver *gfx, Cursor *cursor);
-	virtual ~DiaryIndexScreen();
+	FMVMenuScreen(Gfx::Driver *gfx, Cursor *cursor);
+	virtual ~FMVMenuScreen();
 
 	// StaticLocationScreen API
 	void open() override;
 
 private:
-	void widgetTextColorHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
 	void backHandler();
-	void settingsHandler();
-	void fmvHandler();
-	void loadHandler();
-	void saveHandler();
-	void quitHandler();
-
-	static const uint32 _textColorHovered = 0xFF961E1E;
-	static const uint32 _textColorDefault = 0xFF000000;
 };
 
 } // End of namespace Stark
 
- #endif // STARK_UI_MENU_DIARY_INDEX_H
+#endif // STARK_UI_MENU_FMV_MENU_H

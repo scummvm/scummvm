@@ -72,7 +72,7 @@ void DiaryIndexScreen::open() {
 
 	_widgets.push_back(new StaticLocationWidget(
 			"Fmv",
-			nullptr,
+			CLICK_HANDLER(DiaryIndexScreen, fmvHandler),
 			MOVE_HANDLER(DiaryIndexScreen, widgetTextColorHandler)));
 
 	_widgets.push_back(new StaticLocationWidget(
@@ -111,6 +111,10 @@ void DiaryIndexScreen::widgetTextColorHandler(StaticLocationWidget &widget, cons
 
 void DiaryIndexScreen::settingsHandler() {
 	StarkUserInterface->changeScreen(Screen::kScreenSettingsMenu);
+}
+
+void DiaryIndexScreen::fmvHandler() {
+	StarkUserInterface->changeScreen(Screen::kScreenFMVMenu);
 }
 
 void DiaryIndexScreen::backHandler() {
