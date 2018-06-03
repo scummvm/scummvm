@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 23:37+0200\n"
+"POT-Creation-Date: 2018-06-03 13:49+0200\n"
 "PO-Revision-Date: 2018-04-18 10:10+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -551,15 +551,15 @@ msgstr "Cerrar"
 msgid "Mouse click"
 msgstr "Clic de ratón"
 
-#: gui/gui-manager.cpp:126 base/main.cpp:344
+#: gui/gui-manager.cpp:126 base/main.cpp:341
 msgid "Display keyboard"
 msgstr "Mostrar el teclado"
 
-#: gui/gui-manager.cpp:130 base/main.cpp:348
+#: gui/gui-manager.cpp:130 base/main.cpp:345
 msgid "Remap keys"
 msgstr "Asignar teclas"
 
-#: gui/gui-manager.cpp:133 base/main.cpp:351 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:348 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Activar/Desactivar pantalla completa"
 
@@ -1685,35 +1685,35 @@ msgstr "Aplicar"
 msgid "Clear value"
 msgstr "Eliminar valor"
 
-#: base/main.cpp:257
+#: base/main.cpp:254
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "El motor no es compatible con el nivel de debug '%s'"
 
-#: base/main.cpp:331
+#: base/main.cpp:328
 msgid "Menu"
 msgstr "Menú"
 
-#: base/main.cpp:334 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:331 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Saltar"
 
-#: base/main.cpp:337 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:334 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Pausar"
 
-#: base/main.cpp:340
+#: base/main.cpp:337
 msgid "Skip line"
 msgstr "Saltar frase"
 
-#: base/main.cpp:551
+#: base/main.cpp:548
 msgid "Error running game:"
 msgstr "Error al ejecutar el juego:"
 
-#: base/main.cpp:598
+#: base/main.cpp:595
 msgid "Could not find any engine capable of running the selected game"
 msgstr "No se ha podido encontrar ningún motor capaz de ejecutar el juego"
 

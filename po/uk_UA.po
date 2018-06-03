@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-05-28 23:37+0200\n"
+"POT-Creation-Date: 2018-06-03 13:49+0200\n"
 "PO-Revision-Date: 2018-04-18 10:18+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -554,15 +554,15 @@ msgstr "Закрити"
 msgid "Mouse click"
 msgstr "Клік мишкою"
 
-#: gui/gui-manager.cpp:126 base/main.cpp:344
+#: gui/gui-manager.cpp:126 base/main.cpp:341
 msgid "Display keyboard"
 msgstr "Показати клавіатуру"
 
-#: gui/gui-manager.cpp:130 base/main.cpp:348
+#: gui/gui-manager.cpp:130 base/main.cpp:345
 msgid "Remap keys"
 msgstr "Перепризначити клавіші"
 
-#: gui/gui-manager.cpp:133 base/main.cpp:351 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:348 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Перемкнути повноекранний режим"
 
@@ -1679,35 +1679,35 @@ msgstr "Продовжити"
 msgid "Clear value"
 msgstr "Очистити значення"
 
-#: base/main.cpp:257
+#: base/main.cpp:254
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Движок не підтримує рівень відладки '%s'"
 
-#: base/main.cpp:331
+#: base/main.cpp:328
 msgid "Menu"
 msgstr "Меню"
 
-#: base/main.cpp:334 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:331 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Пропустити"
 
-#: base/main.cpp:337 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:334 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Пауза"
 
-#: base/main.cpp:340
+#: base/main.cpp:337
 msgid "Skip line"
 msgstr "Пропустити рядок"
 
-#: base/main.cpp:551
+#: base/main.cpp:548
 msgid "Error running game:"
 msgstr "Помилка запуску гри:"
 
-#: base/main.cpp:598
+#: base/main.cpp:595
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Не можу знайти движок для запуску вибраної гри"
 
