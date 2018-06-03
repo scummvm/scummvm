@@ -193,13 +193,10 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 			dir.getPath().c_str()
 			);
 
-		// Autoadded is set only when no path was provided and
-		// the game is run from command line.
-		//
-		// Thus, we remove this garbage entry
-		//
-		// Fixes bug #1544799
-		if (ConfMan.hasKey("autoadded")) {
+		// If a temporary target failed to launch, remove it from the configuration manager
+		// so it not visible in the launcher.
+		// Temporary targets are created when starting games from the command line using the game id.
+		if (ConfMan.hasKey("id_came_from_command_line")) {
 			ConfMan.removeGameDomain(ConfMan.getActiveDomainName().c_str());
 		}
 

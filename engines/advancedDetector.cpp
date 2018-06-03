@@ -236,18 +236,6 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		path = ConfMan.get("path");
 	} else {
 		path = ".";
-
-		// This situation may happen only when game was
-		// launched from a command line with wrong target and
-		// no path was provided.
-		//
-		// A dummy entry will get created and will keep game path
-		// We mark this entry, so it will not be added to the
-		// config file.
-		//
-		// Fixes bug #1544799
-		ConfMan.setBool("autoadded", true);
-
 		warning("No path was provided. Assuming the data files are in the current directory");
 	}
 	Common::FSNode dir(path);
