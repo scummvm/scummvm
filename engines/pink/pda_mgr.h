@@ -36,14 +36,20 @@ class PDAPage;
 class PDAMgr {
 public:
 	PDAMgr(PinkEngine *game);
-	void update();
+
+	void loadState(Archive &archive);
+	void saveState(Archive &archive);
+
 	void execute(const Command &command);
 	void goToPage(const Common::String &pageName);
+
+	void update();
 
 	void onLeftButtonClick(Common::Point point);
 	void onMouseMove(Common::Point point);
 
 	PinkEngine *getGame() const;
+	const Common::String &getSavedPageName();
 
 	void setLead(LeadActor *lead);
 
@@ -56,6 +62,7 @@ private:
 	PDAPage *_page;
 	CursorMgr _cursorMgr;
 	Array<Actor *> _globalActors;
+	Common::String _savedPage;
 };
 
 } // End of namespace Pink

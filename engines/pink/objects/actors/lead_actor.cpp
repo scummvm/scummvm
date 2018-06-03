@@ -57,6 +57,7 @@ void LeadActor::loadState(Archive &archive) {
 	_state = (State) archive.readByte();
 	_nextState = (State) archive.readByte();
 	_stateCopy = (State) archive.readByte();
+	_stateBeforePDA = (State) archive.readByte();
 	_isHaveItem = archive.readByte();
 	Common::String recepient = archive.readString();
 	if (!recepient.empty())
@@ -65,14 +66,15 @@ void LeadActor::loadState(Archive &archive) {
 		_recipient = nullptr;
 	_sequencer->loadState(archive);
 	_walkMgr->loadState(archive);
-
-	// load audioInfoMgr, PDAMgr
+	_page->getGame()->getPdaMgr().loadState(archive);
+	// load audioInfoMgr
 }
 
 void LeadActor::saveState(Archive &archive) {
 	archive.writeByte(_state);
 	archive.writeByte(_nextState);
 	archive.writeByte(_stateCopy);
+	archive.writeByte(_stateBeforePDA);
 	archive.writeByte(_isHaveItem);
 	if (_recipient)
 		archive.writeString(_recipient->getName());
@@ -80,6 +82,7 @@ void LeadActor::saveState(Archive &archive) {
 		archive.writeString(Common::String());
 	_sequencer->saveState(archive);
 	_walkMgr->saveState(archive);
+	_page->getGame()->getPdaMgr().saveState(archive);
 }
 
 void LeadActor::init(bool unk) {
@@ -103,7 +106,12 @@ void LeadActor::start(bool isHandler) {
 		_page->pause(true);
 		break;
 	case kPDA:
-
+		if (_stateBeforePDA == kInventory) {
+			_page->getModule()->getInventoryMgr()->start(0);
+			_page->pause(true);
+		}
+		loadPDA(_page->getGame()->getPdaMgr().getSavedPageName());
+		break;
 	default:
 		forceUpdateCursor();
 	}
@@ -158,9 +166,8 @@ void LeadActor::loadPDA(const Common::String &pageName) {
 
 		_stateBeforePDA = _state;
 		_state = kPDA;
-
-		_page->getGame()->getDirector()->saveStage();
 	}
+	_page->getGame()->getDirector()->saveStage();
 	_page->getGame()->getPdaMgr().setLead(this);
 	_page->getGame()->getPdaMgr().goToPage(pageName);
 }
