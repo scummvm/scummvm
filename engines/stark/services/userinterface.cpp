@@ -272,6 +272,12 @@ void UserInterface::optionsOpen() {
 void UserInterface::saveGameScreenThumbnail() {
 	freeGameScreenThumbnail();
 
+	if (StarkGlobal->getLevel()) {
+		// Re-render the screen to exclude the cursor
+		StarkGfx->clearScreen();
+		_gameScreen->render();
+	}
+
 	Graphics::Surface *big = _gameScreen->getGameWindow()->getScreenshot();
 	assert(big->format.bytesPerPixel == 4);
 
