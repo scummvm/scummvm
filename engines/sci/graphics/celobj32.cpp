@@ -31,6 +31,8 @@
 #include "sci/graphics/text32.h"
 #include "sci/engine/workarounds.h"
 #include "sci/util.h"
+#include "graphics/larryScale.h"
+#include "common/config-manager.h"
 
 namespace Sci {
 #pragma mark CelScaler
@@ -154,6 +156,9 @@ struct SCALER_Scale {
 #endif
 	const byte *_row;
 	READER _reader;
+	// If _sourceBuffer is set, it contains the full (possibly scaled) source
+	// image and takes precedence over _reader.
+	Common::SharedPtr<Buffer> _sourceBuffer;
 	int16 _x;
 	static int16 _valuesX[kCelScalerTableSize];
 	static int16 _valuesY[kCelScalerTableSize];
@@ -167,7 +172,8 @@ struct SCALER_Scale {
 	// The maximum width of the scaled object may not be as wide as the source
 	// data it requires if downscaling, so just always make the reader
 	// decompress an entire line of source data when scaling
-	_reader(celObj, celObj._width) {
+	_reader(celObj, celObj._width),
+	_sourceBuffer() {
 #ifndef NDEBUG
 		assert(_minX <= _maxX);
 #endif
@@ -196,43 +202,98 @@ struct SCALER_Scale {
 
 		const CelScalerTable &table = CelObj::_scaler->getScalerTable(scaleX, scaleY);
 
-		if (g_sci->_gfxFrameout->getScriptWidth() == kLowResX) {
-			const int16 unscaledX = (scaledPosition.x / scaleX).toInt();
-			if (FLIP) {
-				const int lastIndex = celObj._width - 1;
-				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = lastIndex - (table.valuesX[x] - unscaledX);
-				}
-			} else {
-				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = table.valuesX[x] - unscaledX;
-				}
-			}
+		const bool useLarryScale = ConfMan.getBool("enable_larryscale");
+		if (useLarryScale) {
+			// LarryScale is an alternative, high-quality cel scaler implemented
+			// for ScummVM. Due to the nature of smooth upscaling, it does *not*
+			// respect the global scaling pattern. Instead, it simply scales the
+			// cel to the extent of targetRect.
 
-			const int16 unscaledY = (scaledPosition.y / scaleY).toInt();
+			class Copier: public Graphics::RowReader, public Graphics::RowWriter {
+				READER &_souceReader;
+				Buffer &_targetBuffer;
+			public:
+				Copier(READER& souceReader, Buffer& targetBuffer) :
+					_souceReader(souceReader),
+					_targetBuffer(targetBuffer) {}
+				const Graphics::LarryScaleColor* readRow(int y) {
+					return _souceReader.getRow(y);
+				}
+				void writeRow(int y, const Graphics::LarryScaleColor* row) {
+					memcpy(_targetBuffer.getBasePtr(0, y), row, _targetBuffer.w);
+				}
+			};
+
+			// Scale the cel using LarryScale and write it to _sourceBuffer
+			// scaledImageRect is not necessarily identical to targetRect
+			// because targetRect may be cropped to render only a segment.
+			Common::Rect scaledImageRect(
+				scaledPosition.x,
+				scaledPosition.y,
+				scaledPosition.x + (celObj._width * scaleX).toInt(),
+				scaledPosition.y + (celObj._height * scaleY).toInt());
+			_sourceBuffer = Common::SharedPtr<Buffer>(new Buffer(), Graphics::SurfaceDeleter());
+			_sourceBuffer->create(
+				scaledImageRect.width(), scaledImageRect.height(),
+				Graphics::PixelFormat::createFormatCLUT8());
+			Copier copier(_reader, *_sourceBuffer);
+			Graphics::larryScale(
+				celObj._width, celObj._height, celObj._skipColor, copier,
+				scaledImageRect.width(), scaledImageRect.height(), copier);
+
+			// Set _valuesX and _valuesY to reference the scaled image without additional scaling
+			for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+				const int16 unsafeValue = FLIP
+					? scaledImageRect.right - x - 1
+					: x - scaledImageRect.left;
+				_valuesX[x] = CLIP<int16>(unsafeValue, 0, scaledImageRect.width() - 1);
+			}
 			for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
-				_valuesY[y] = table.valuesY[y] - unscaledY;
+				const int16 unsafeValue = y - scaledImageRect.top;
+				_valuesY[y] = CLIP<int16>(unsafeValue, 0, scaledImageRect.height() - 1);
 			}
 		} else {
-			if (FLIP) {
-				const int lastIndex = celObj._width - 1;
-				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = lastIndex - table.valuesX[x - scaledPosition.x];
+			const bool useGlobalScaling = g_sci->_gfxFrameout->getScriptWidth() == kLowResX;
+			if (useGlobalScaling) {
+				const int16 unscaledX = (scaledPosition.x / scaleX).toInt();
+				if (FLIP) {
+					const int lastIndex = celObj._width - 1;
+					for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+						_valuesX[x] = lastIndex - (table.valuesX[x] - unscaledX);
+					}
+				} else {
+					for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+						_valuesX[x] = table.valuesX[x] - unscaledX;
+					}
+				}
+
+				const int16 unscaledY = (scaledPosition.y / scaleY).toInt();
+				for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
+					_valuesY[y] = table.valuesY[y] - unscaledY;
 				}
 			} else {
-				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = table.valuesX[x - scaledPosition.x];
+				if (FLIP) {
+					const int lastIndex = celObj._width - 1;
+					for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+						_valuesX[x] = lastIndex - table.valuesX[x - scaledPosition.x];
+					}
+				} else {
+					for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+						_valuesX[x] = table.valuesX[x - scaledPosition.x];
+					}
 				}
-			}
 
-			for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
-				_valuesY[y] = table.valuesY[y - scaledPosition.y];
+				for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
+					_valuesY[y] = table.valuesY[y - scaledPosition.y];
+				}
 			}
 		}
 	}
 
 	inline void setTarget(const int16 x, const int16 y) {
-		_row = _reader.getRow(_valuesY[y]);
+		_row = _sourceBuffer
+			? static_cast<const byte *>( _sourceBuffer->getBasePtr(0, _valuesY[y]))
+			: _reader.getRow(_valuesY[y]);
 		_x = x;
 		assert(_x >= _minX && _x <= _maxX);
 	}
