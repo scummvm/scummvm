@@ -29,14 +29,16 @@ namespace Pink {
 
 class ActionStill : public ActionCEL {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
+	void deserialize(Archive &archive) override;
 
-	virtual void end();
-	virtual void pause(bool paused) {}
+	void toConsole() override;
+
+	void end() override;
+
+	void pause(bool paused) override;
 
 protected:
-	virtual void onStart();
+	void onStart() override;
 
 	uint32 _startFrame;
 };

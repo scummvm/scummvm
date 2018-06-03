@@ -29,11 +29,14 @@ namespace Pink {
 
 class ActionLoop : public ActionPlay {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
-	virtual void update();
+	void deserialize(Archive &archive) override;
+
+	void toConsole() override;
+
+	void update() override;
+
 protected:
-	virtual void onStart();
+	void onStart() override;
 
 	enum Style {
 		kPingPong = 2,

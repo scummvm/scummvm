@@ -34,13 +34,29 @@ namespace Pink {
 ActionCEL::ActionCEL()
 	: _decoder(nullptr) {}
 
+ActionCEL::~ActionCEL() {
+	end();
+}
+
 void ActionCEL::deserialize(Archive &archive) {
 	Action::deserialize(archive);
 	_fileName = archive.readString();
 	_z = archive.readDWORD();
 }
 
-void ActionCEL::start(bool unk) {
+bool ActionCEL::initPalette(Director *director) {
+	if (!_decoder)
+		_decoder = _actor->getPage()->loadCel(_fileName);
+	if (_decoder->getCurFrame() == -1) {
+		_decoder->decodeNextFrame();
+		_decoder->rewind();
+	}
+	debug("%u", _decoder->isPaused());
+	director->setPallette(_decoder->getPalette());
+	return true;
+}
+
+void ActionCEL::start() {
 	if (!_decoder)
 		_decoder = _actor->getPage()->loadCel(_fileName);
 	_actor->getPage()->getGame()->getDirector()->addSprite(this);
@@ -54,23 +70,6 @@ void ActionCEL::end() {
 	_decoder = nullptr;
 }
 
-uint32 ActionCEL::getZ() {
-	return _z;
-}
-
-CelDecoder *ActionCEL::getDecoder() {
-	return _decoder;
-}
-
-bool ActionCEL::initPalette(Director *director) {
-	_decoder = _actor->getPage()->loadCel(_fileName);
-	_decoder->decodeNextFrame();
-	_decoder->rewind();
-	director->setPallette(_decoder->getPalette());
-
-	return 1;
-}
-
 void ActionCEL::update() {
 	if (_decoder->endOfVideo()) {
 		_decoder->stop();
@@ -78,12 +77,16 @@ void ActionCEL::update() {
 	}
 }
 
-ActionCEL::~ActionCEL() {
-	end();
-}
-
 void ActionCEL::pause(bool paused) {
 	_decoder->pauseVideo(paused);
+}
+
+uint32 ActionCEL::getZ() {
+	return _z;
+}
+
+CelDecoder *ActionCEL::getDecoder() {
+	return _decoder;
 }
 
 } // End of namespace Pink

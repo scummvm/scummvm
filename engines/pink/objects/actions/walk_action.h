@@ -29,9 +29,9 @@ namespace Pink {
 
 class WalkAction : public ActionCEL {
 public:
-	virtual void deserialize(Archive &archive);
+	void deserialize(Archive &archive) override;
 
-	virtual void toConsole();
+	void toConsole() override;
 
 protected:
 	void onStart() override;

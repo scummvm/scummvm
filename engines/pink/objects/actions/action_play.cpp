@@ -44,6 +44,17 @@ void ActionPlay::end() {
 	debug("ActionPlay %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
+void ActionPlay::update() {
+	if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) {
+		_decoder->stop();
+		_actor->endAction();
+	}
+}
+
+void ActionPlay::pause(bool paused) {
+	ActionCEL::pause(paused);
+}
+
 void ActionPlay::onStart() {
 	debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
 	_decoder->start();
@@ -51,13 +62,6 @@ void ActionPlay::onStart() {
 		_decoder->skipFrame();
 	}
 	_decoder->decodeNextFrame();
-}
-
-void ActionPlay::update() {
-	if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) {
-		_decoder->stop();
-		_actor->endAction();
-	}
 }
 
 } // End of namespace Pink

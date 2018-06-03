@@ -48,4 +48,12 @@ void ActionText::toConsole() {
 		  _name.c_str(), _fileName.c_str(), _xLeft, _yTop, _xRight, _yBottom, _centered, _scrollBar, _textColor, _backgroundColor);
 }
 
+void ActionText::start() {
+
+}
+
+void ActionText::end() {
+
+}
+
 } // End of namespace Pink

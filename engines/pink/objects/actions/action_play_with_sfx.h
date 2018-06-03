@@ -31,18 +31,22 @@ class ActionSfx;
 
 class ActionPlayWithSfx : public ActionPlay {
 public:
-	virtual ~ActionPlayWithSfx();
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
-	virtual void update();
+	~ActionPlayWithSfx() override;
+
+	void deserialize(Archive &archive) override;
+
+	void toConsole() override;
+
+	void update() override;
 
 protected:
-	virtual void onStart();
+	void onStart() override;
 
 private:
 	void updateSound();
-	uint32 _isLoop;
+
 	Array<ActionSfx *> _sfxArray;
+	uint32 _isLoop;
 };
 
 class Sound;
@@ -51,13 +55,16 @@ class Page;
 class ActionSfx : public Object {
 public:
 	ActionSfx();
-	virtual ~ActionSfx();
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
+	~ActionSfx() override;
+
+	void deserialize(Archive &archive) override;
+
+	void toConsole() override;
 
 	void play(Page *page);
-	uint32 getFrame();
 	void end();
+
+	uint32 getFrame();
 
 private:
 	Sound *_sound;
