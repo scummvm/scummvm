@@ -65,7 +65,7 @@ void HandlerTimerActions::handle(Actor *actor) {
 		uint index = rnd.getRandomNumber(_actions.size() - 1);
 		Action *action = actor->findAction(_actions[index]);
 		assert(action);
-		actor->setAction(action, 0);
+		actor->setAction(action);
 	}
 }
 
