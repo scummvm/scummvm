@@ -313,11 +313,26 @@ are included for debugging ResidualVM, this should not be necessary for
 normal play at all! However, the curious might like to know how to access
 these tool. Please use at your own risk!
 
+To enter the debug console, press Ctrl + d. Use the `help` command to display
+a list of the available commands. To exit, press Esc or type `exit` or `quit`.
+
+Commands common to all engines are:
+
+Command           | Description
+----------------- | -----------------------------------------------------------
+openlog           | Show the log of errors/warnings/information from the engine
+debuglevel        | List or change verbosity of debug output
+debugflag_list    | List the available debug flags and their status
+debugflag_enable  | Enable a given debugflag
+debugflag_disable | Disable a given debugflag
+md5               | Calculates MD5 checksum of a file
+md5mac            | Calculates MD5 checksum of a file (Mac format)
+
+
 ### 8.1. Debugging GrimE Games ###
 
 The development console can be used to debug both Grim Fandango and Escape From
-Monkey Island. To enter the debug console, press Ctrl + d. Use the `help`
-command to display a list of the available commands.
+Monkey Island.
 
 Some of the useful commands are:
 
@@ -325,7 +340,6 @@ Command       | Description
 ------------- | -----------------------------------------------------------
 jump          | Jump to a section of the game
 lua_do        | Execute a lua command
-openlog       | Show the log of errors/warnings/information from the engine
 set_renderer  | Select a renderer (software, OpenGL or OpenGL with shaders)
 
 The `jump` targets can be found at:
@@ -368,10 +382,7 @@ Note that these are only available after enabling debug-mode.
 
 ### 8.3. Debugging Myst III ###
 
-The debug console can be triggered using Ctrl + d. Use the `help` command to
-display a list of the available commands.
-
-The most useful commands are:
+The most useful debug console commands are:
 
 Command     | Description
 ----------- | ------------------------------------------------------------
@@ -382,13 +393,10 @@ var         | Display or alter the value of a variable from the game state
 
 ### 8.4. Debugging The Longest Journey ###
 
-The debug console can be triggered using Ctrl + d. Use the `help` command to
-display a list of the available commands.
-
-The most useful commands are:
+The debug console commands are:
 
 Command             | Description
-------------------- | ------------------------------------------------------------
+------------------- | --------------------------------------------------------
 changeChapter       | Change the current chapter
 changeKnowledge     | Change the value of some knowledge
 changeLocation      | Change the current location
@@ -408,7 +416,6 @@ listInventory       | List all inventory items in the game
 listLocations       | List all the locations in the game
 listScripts         | List all the scripts in current level
 location            | Display the current location
-openlog             | Show the log of errors/warnings/information from the engine
 testDecompiler      | Test decompilation of all the scripts in game
 
 
