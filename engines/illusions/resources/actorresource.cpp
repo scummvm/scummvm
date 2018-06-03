@@ -20,6 +20,7 @@
  *
  */
 
+#include "illusions/actor.h"
 #include "illusions/illusions.h"
 #include "illusions/resources/actorresource.h"
 #include "illusions/dictionary.h"
@@ -223,6 +224,9 @@ void ActorInstance::initActorTypes() {
 	for (uint i = 0; i < _actorResource->_sequences.size(); ++i) {
 		Sequence *sequence = &_actorResource->_sequences[i];
 		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
+		if (sequence->_sequenceId == 0x60101) {
+			_vm->_controls->placeActor(0x50023, Common::Point(0,0), sequence->_sequenceId, 0x400d7, 0);
+		}
 	}
 }
 
