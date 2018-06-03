@@ -31,16 +31,18 @@ class Sound;
 
 class ActionTalk : public ActionLoop {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
-	virtual void update();
+	void deserialize(Archive &archive) override;
 
-	virtual void end();
+	void toConsole() override;
+
+	void update() override;
+
+	void end() override;
 
 	void pause(bool paused) override;
 
 protected:
-	virtual void onStart();
+	void onStart() override;
 
 private:
 	Sound *_sound;

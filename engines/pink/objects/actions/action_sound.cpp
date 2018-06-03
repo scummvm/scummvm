@@ -51,7 +51,7 @@ void ActionSound::toConsole() {
 				  " _isBackground = %u", _name.c_str(), _fileName.c_str(), _volume, _isLoop, _isBackground);
 }
 
-void ActionSound::start(bool unk) {
+void ActionSound::start() {
 	assert(!_sound);
 	_sound = _actor->getPage()->loadSound(_fileName);
 

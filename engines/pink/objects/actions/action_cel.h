@@ -31,23 +31,26 @@ class CelDecoder;
 
 class ActionCEL : public Action {
 public:
+	ActionCEL();
 	~ActionCEL() override;
 
-	ActionCEL();
-	virtual void deserialize(Archive &archive);
-	virtual void start(bool unk);
-	virtual void end();
+	void deserialize(Archive &archive) override;
+
+	bool initPalette(Director *director) override;
+
+	void start() override;
+	void end() override;
+
 	virtual void update();
+
+	void pause(bool paused) override;
 
 	uint32 getZ();
 	CelDecoder *getDecoder();
 
-	virtual bool initPalette(Director *director);
-
-	void pause(bool paused) override;
-
 protected:
-	virtual void onStart() {};
+	virtual void onStart() = 0;
+
 	CelDecoder *_decoder;
 	Common::String _fileName;
 	uint32 _z;

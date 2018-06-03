@@ -29,13 +29,10 @@ namespace Pink {
 
 class ActionHide : public Action {
 public:
-	~ActionHide() override;
+	void toConsole() override;
 
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
-
-	virtual void start(bool unk);
-	virtual void end();
+	void start() override;
+	void end() override;
 };
 
 } //End of namespace Pink

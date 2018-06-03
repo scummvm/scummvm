@@ -28,6 +28,13 @@
 
 namespace Pink {
 
+ActionPlayWithSfx::~ActionPlayWithSfx() {
+	ActionPlay::end();
+	for (uint i = 0; i < _sfxArray.size(); ++i) {
+		delete _sfxArray[i];
+	}
+}
+
 void ActionPlayWithSfx::deserialize(Pink::Archive &archive) {
 	ActionPlay::deserialize(archive);
 	_isLoop = archive.readDWORD();
@@ -71,11 +78,11 @@ void ActionPlayWithSfx::updateSound() {
 	}
 }
 
-ActionPlayWithSfx::~ActionPlayWithSfx() {
-	ActionPlay::end();
-	for (uint i = 0; i < _sfxArray.size(); ++i) {
-		delete _sfxArray[i];
-	}
+ActionSfx::ActionSfx()
+		: _sound(nullptr) {}
+
+ActionSfx::~ActionSfx() {
+	end();
 }
 
 void ActionSfx::deserialize(Pink::Archive &archive) {
@@ -97,20 +104,13 @@ void ActionSfx::play(Page *page) {
 		_sound->play(Audio::Mixer::kSFXSoundType, _volume, 0);
 }
 
-ActionSfx::~ActionSfx() {
-	end();
+void ActionSfx::end() {
+	delete _sound;
+	_sound = nullptr;
 }
 
 uint32 ActionSfx::getFrame() {
 	return _frame;
-}
-
-ActionSfx::ActionSfx()
-	: _sound(nullptr) {}
-
-void ActionSfx::end() {
-	delete _sound;
-	_sound = nullptr;
 }
 
 } // End of namespace Pink

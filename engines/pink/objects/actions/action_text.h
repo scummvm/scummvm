@@ -33,6 +33,9 @@ public:
 
 	void toConsole() override;
 
+	void start() override;
+	void end() override;
+
 private:
 	Common::String _fileName;
 

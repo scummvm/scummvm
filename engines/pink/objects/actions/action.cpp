@@ -31,4 +31,14 @@ void Action::deserialize(Archive &archive) {
 	_actor = static_cast<Actor*>(archive.readObject());
 }
 
+bool Action::initPalette(Director *director) {
+	return false;
+}
+
+void Action::pause(bool paused) {}
+
+Actor *Action::getActor() const {
+	return _actor;
+}
+
 } // End of namespace Pink

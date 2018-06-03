@@ -40,12 +40,6 @@ void ActionTalk::toConsole() {
 		  _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style, _vox.c_str());
 }
 
-void ActionTalk::onStart() {
-	ActionPlay::onStart();
-	_sound = _actor->getPage()->loadSound(_vox);
-	_sound->play(Audio::Mixer::kSpeechSoundType, 100, 0);
-}
-
 void ActionTalk::update() {
 	ActionLoop::update();
 	if (!_sound->isPlaying()) {
@@ -64,6 +58,12 @@ void ActionTalk::pause(bool paused) {
 	ActionCEL::pause(paused);
 	if (_sound)
 		_sound->pause(paused);
+}
+
+void ActionTalk::onStart() {
+	ActionPlay::onStart();
+	_sound = _actor->getPage()->loadSound(_vox);
+	_sound->play(Audio::Mixer::kSpeechSoundType, 100, 0);
 }
 
 } // End of namespace Pink

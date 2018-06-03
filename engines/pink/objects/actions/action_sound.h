@@ -34,13 +34,14 @@ public:
 	ActionSound();
 	~ActionSound();
 
-	virtual void deserialize(Archive &archive);
+	void deserialize(Archive &archive) override;
 
-	virtual void toConsole();
+	void toConsole() override;
 
-	virtual void start(bool unk_startNow);
-	virtual void end();
-	virtual void update();
+	void start() override;
+	void end() override;
+
+	void update();
 
 	void pause(bool paused) override;
 

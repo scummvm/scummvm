@@ -44,6 +44,8 @@ void ActionStill::end() {
 	debug("ActionStill %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
+void ActionStill::pause(bool paused) {}
+
 void ActionStill::onStart() {
 	debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
 	for (uint i = 0; i < _startFrame; ++i) {

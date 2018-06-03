@@ -32,17 +32,16 @@ class Director;
 
 class Action : public NamedObject {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void start(bool unk) {};
-	virtual void end() {};
-	virtual void update() {};
-	virtual void toConsole() {};
+	virtual void deserialize(Archive &archive) override;
 
-	virtual bool initPalette(Director *director) { return 0; }
+	virtual bool initPalette(Director *director);
 
-	Actor *getActor() { return _actor; }
+	virtual void start() = 0;
+	virtual void end() = 0;
 
-	virtual void pause(bool paused) {};
+	virtual void pause(bool paused);
+
+	Actor *getActor() const;
 
 protected:
 	Actor *_actor;
