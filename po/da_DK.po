@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-03 13:49+0200\n"
+"POT-Creation-Date: 2018-06-03 18:41+0200\n"
 "PO-Revision-Date: 2018-04-18 10:10+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -2862,7 +2862,7 @@ msgstr "Vis scanlinjer"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
-#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:452
+#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:462
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
@@ -2870,7 +2870,7 @@ msgstr "Brug original gem/indlæs skærme"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
-#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
+#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:463
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM ones"
@@ -3549,18 +3549,27 @@ msgstr ""
 "Brug lineær interpolation ved opskalering af videoer, hvor det er muligt"
 
 #: engines/sci/detection.cpp:442
+#, fuzzy
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr "Brug højkvalitets video skalering"
+
+#: engines/sci/detection.cpp:443
+msgid "Use special cartoon scaler for drawing character sprites"
+msgstr ""
+
+#: engines/sci/detection.cpp:452
 msgid "Prefer digital sound effects"
 msgstr "Foretræk digitale lydeffekter"
 
-#: engines/sci/detection.cpp:443
+#: engines/sci/detection.cpp:453
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Foretræk digitale lydeffekter i stedet for syntetiserede"
 
-#: engines/sci/detection.cpp:462
+#: engines/sci/detection.cpp:472
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Brug IMF/Yamaha FB-01 til MIDI-udgang"
 
-#: engines/sci/detection.cpp:463
+#: engines/sci/detection.cpp:473
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -3568,42 +3577,42 @@ msgstr ""
 "Bruge et IBM Musik Feature-kort eller et Yamaha FB-01 FM synth modul til "
 "MIDI-udgang"
 
-#: engines/sci/detection.cpp:473
+#: engines/sci/detection.cpp:483
 msgid "Use CD audio"
 msgstr "Brug CD lyd"
 
-#: engines/sci/detection.cpp:474
+#: engines/sci/detection.cpp:484
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Brug cd-lyd i stedet for lyd fra spillet, hvis tilgængelige"
 
-#: engines/sci/detection.cpp:484
+#: engines/sci/detection.cpp:494
 msgid "Use Windows cursors"
 msgstr "Brug Windows markør"
 
-#: engines/sci/detection.cpp:485
+#: engines/sci/detection.cpp:495
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr "Brug Windows-markører (mindre og monokrome) i stedet for dem fra DOS"
 
-#: engines/sci/detection.cpp:495
+#: engines/sci/detection.cpp:505
 msgid "Use silver cursors"
 msgstr "Brug sølv markør"
 
-#: engines/sci/detection.cpp:496
+#: engines/sci/detection.cpp:506
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Brug det alternative sæt af sølv markører, i stedet for de normale gyldne"
 
-#: engines/sci/detection.cpp:506
+#: engines/sci/detection.cpp:516
 msgid "Enable content censoring"
 msgstr "Aktivér indholdscensurering"
 
-#: engines/sci/detection.cpp:507
+#: engines/sci/detection.cpp:517
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Aktivér spilets indbyggede valgfri indholdscensurering"
 
-#: engines/sci/detection.cpp:837 engines/sci/engine/kfile.cpp:481
+#: engines/sci/detection.cpp:847 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
 msgstr "(Autogem)"
 

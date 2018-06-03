@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-03 13:49+0200\n"
+"POT-Creation-Date: 2018-06-03 18:41+0200\n"
 "PO-Revision-Date: 2018-04-18 10:07+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -2865,7 +2865,7 @@ msgstr "Паказваць скан-лініі"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
-#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:452
+#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:462
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
@@ -2873,7 +2873,7 @@ msgstr "Выкарыстоўваць арыгінальныя экраны запісу/чытання гульні"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
-#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
+#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:463
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM ones"
@@ -3551,18 +3551,27 @@ msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr "Па магчымасці ужывае лінейную інтэрпаляцыю падчас маштабавання відэа"
 
 #: engines/sci/detection.cpp:442
+#, fuzzy
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr "Ужываць якаснае маштабаванне відэа"
+
+#: engines/sci/detection.cpp:443
+msgid "Use special cartoon scaler for drawing character sprites"
+msgstr ""
+
+#: engines/sci/detection.cpp:452
 msgid "Prefer digital sound effects"
 msgstr "Аддаваць перавагу лічбавым гукавым эфектам"
 
-#: engines/sci/detection.cpp:443
+#: engines/sci/detection.cpp:453
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Аддаваць перавагу лічбавым гукавым эфектам замест сінтэзаваных"
 
-#: engines/sci/detection.cpp:462
+#: engines/sci/detection.cpp:472
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Выкарыстоўваць IMF/Yamaha FB-01 для вываду MIDI"
 
-#: engines/sci/detection.cpp:463
+#: engines/sci/detection.cpp:473
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -3570,46 +3579,46 @@ msgstr ""
 "Выкарыстоўваць гукавую карту IBM Music Feature ці модуль сінтэзу Yamaha "
 "FB-01 FM для MIDI"
 
-#: engines/sci/detection.cpp:473
+#: engines/sci/detection.cpp:483
 msgid "Use CD audio"
 msgstr "Выкарыстоўваць CD-аўдыё"
 
-#: engines/sci/detection.cpp:474
+#: engines/sci/detection.cpp:484
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
 "Выкарыстоўваць гукавыя дарожкі з CD замест музыкі з файлаў гульні (калі "
 "даступна)"
 
-#: engines/sci/detection.cpp:484
+#: engines/sci/detection.cpp:494
 msgid "Use Windows cursors"
 msgstr "Выкарыстоўваць курсоры Windows"
 
-#: engines/sci/detection.cpp:485
+#: engines/sci/detection.cpp:495
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Выкарыстоўваць курсоры Windows (меншыя па памеры і аднакаляровыя) замест "
 "курсораў DOS"
 
-#: engines/sci/detection.cpp:495
+#: engines/sci/detection.cpp:505
 msgid "Use silver cursors"
 msgstr "Выкарыстоўваць срэбныя курсоры"
 
-#: engines/sci/detection.cpp:496
+#: engines/sci/detection.cpp:506
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Выкарыстоўваць альтэрнатыўны набор срэбных курсораў замест звычайных залатых"
 
-#: engines/sci/detection.cpp:506
+#: engines/sci/detection.cpp:516
 msgid "Enable content censoring"
 msgstr "Уключыць цэнзуру змесціва"
 
-#: engines/sci/detection.cpp:507
+#: engines/sci/detection.cpp:517
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Уключыць убудаванае неабавязковае цэнзураванне змесціва"
 
-#: engines/sci/detection.cpp:837 engines/sci/engine/kfile.cpp:481
+#: engines/sci/detection.cpp:847 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
 msgstr "(Аўтазахаванне)"
 
