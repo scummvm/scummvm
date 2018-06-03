@@ -253,7 +253,7 @@ void SequenceOpcodes::opAppearForeignActor(Control *control, OpCall &opCall) {
 	ARG_INT16(foreignObjectNum);
 	Control *foreignControl = _vm->_dict->getObjectControl(foreignObjectNum | 0x40000);
 	if (!foreignControl) {
-		Common::Point pos = _vm->getNamedPointPosition(0x00070023); // TODO Eric check this. duckman looks to be using 0x70001
+		Common::Point pos = _vm->getNamedPointPosition(_vm->getGameId() == kGameIdDuckman ? 0x00070001 : 0x00070023);
 		_vm->_controls->placeActor(0x00050001, pos, 0x00060001, foreignObjectNum | 0x40000, 0);
 		foreignControl = _vm->_dict->getObjectControl(foreignObjectNum | 0x40000);
 	}
@@ -396,20 +396,20 @@ void SequenceOpcodes::opStartScriptThread(Control *control, OpCall &opCall) {
 }
 
 void SequenceOpcodes::opPlaceSubActor(Control *control, OpCall &opCall) {
- 	ARG_INT16(linkIndex);
- 	ARG_UINT32(actorTypeId);
- 	ARG_UINT32(sequenceId);
- 	_vm->_controls->placeSubActor(control->_objectId, linkIndex, actorTypeId, sequenceId);
+	ARG_INT16(linkIndex);
+	ARG_UINT32(actorTypeId);
+	ARG_UINT32(sequenceId);
+	_vm->_controls->placeSubActor(control->_objectId, linkIndex, actorTypeId, sequenceId);
 }
 
 void SequenceOpcodes::opStartSubSequence(Control *control, OpCall &opCall) {
- 	ARG_INT16(linkIndex);
- 	ARG_UINT32(sequenceId);
+	ARG_INT16(linkIndex);
+	ARG_UINT32(sequenceId);
 	control->startSubSequence(linkIndex, sequenceId);
 }
 
 void SequenceOpcodes::opStopSubSequence(Control *control, OpCall &opCall) {
- 	ARG_INT16(linkIndex);
+	ARG_INT16(linkIndex);
 	control->stopSubSequence(linkIndex);
 }
 

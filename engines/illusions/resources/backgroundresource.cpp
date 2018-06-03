@@ -27,6 +27,7 @@
 #include "illusions/dictionary.h"
 #include "illusions/resources/actorresource.h"
 #include "illusions/screen.h"
+#include "illusions/sequenceopcodes.h"
 #include "common/str.h"
 
 namespace Illusions {
