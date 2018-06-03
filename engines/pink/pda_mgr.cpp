@@ -32,8 +32,15 @@ namespace Pink {
 PDAMgr::PDAMgr(Pink::PinkEngine *game)
 	: _game(game), _page(nullptr), _cursorMgr(game, nullptr) {}
 
-void PDAMgr::update() {
-	_cursorMgr.update();
+void PDAMgr::loadState(Archive &archive) {
+	_savedPage = archive.readString();
+}
+
+void PDAMgr::saveState(Archive &archive) {
+	if (_page)
+		archive.writeString(_page->getName());
+	else
+		archive.writeString("");
 }
 
 void PDAMgr::execute(const Command &command) {
@@ -47,10 +54,6 @@ void PDAMgr::execute(const Command &command) {
 	default:
 		break;
 	}
-}
-
-PinkEngine *PDAMgr::getGame() const {
-	return _game;
 }
 
 void PDAMgr::goToPage(const Common::String &pageName) {
@@ -69,6 +72,37 @@ void PDAMgr::goToPage(const Common::String &pageName) {
 	}
 
 	_cursorMgr.setPage(_page);
+}
+
+void PDAMgr::update() {
+	_cursorMgr.update();
+}
+
+void PDAMgr::onLeftButtonClick(Common::Point point) {
+	Actor *actor = _game->getDirector()->getActorByPoint(point);
+	if (actor)
+		actor->onClick();
+}
+
+void PDAMgr::onMouseMove(Common::Point point) {
+	Actor *actor = _game->getDirector()->getActorByPoint(point);
+	if (actor && dynamic_cast<PDAButtonActor*>(actor))
+		actor->onMouseOver(point, &_cursorMgr);
+	else _cursorMgr.setCursor(kPDADefaultCursor, point,Common::String());
+}
+
+
+PinkEngine *PDAMgr::getGame() const {
+	return _game;
+}
+
+const Common::String &PDAMgr::getSavedPageName() {
+	return _savedPage;
+}
+
+
+void PDAMgr::setLead(LeadActor *lead) {
+	_lead = lead;
 }
 
 void PDAMgr::close() {
@@ -92,23 +126,6 @@ void PDAMgr::loadGlobal() {
 	for (uint i = 0; i < _globalActors.size(); ++i) {
 		_globalActors[i]->init(0);
 	}
-}
-
-void PDAMgr::setLead(LeadActor *lead) {
-	_lead = lead;
-}
-
-void PDAMgr::onLeftButtonClick(Common::Point point) {
-	Actor *actor = _game->getDirector()->getActorByPoint(point);
-	if (actor)
-		actor->onClick();
-}
-
-void PDAMgr::onMouseMove(Common::Point point) {
-	Actor *actor = _game->getDirector()->getActorByPoint(point);
-	if (actor && dynamic_cast<PDAButtonActor*>(actor))
-		actor->onMouseOver(point, &_cursorMgr);
-	else _cursorMgr.setCursor(kPDADefaultCursor, point,Common::String());
 }
 
 } // End of namespace Pink
