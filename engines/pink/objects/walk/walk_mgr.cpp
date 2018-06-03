@@ -71,7 +71,7 @@ void WalkMgr::start(WalkLocation *destination) {
 		WalkShortestPath path(this);
 		WalkLocation *nextLocation = path.next(currentLocation, _destination);
 		initNextWayPoint(nextLocation);
-		_leadActor->setAction(getWalkAction(), 0);
+		_leadActor->setAction(getWalkAction());
 	}
 }
 
@@ -106,7 +106,7 @@ WalkMgr::Coordinates WalkMgr::getLocationCoordinates(const Common::String &locat
 	Coordinates coords;
 	ActionCEL *action  = static_cast<ActionCEL*>(_leadActor->findAction(locationName));
 
-	action->start(0);
+	action->start();
 	CelDecoder *decoder = action->getDecoder();
 
 	coords.x = decoder->getX() + decoder->getWidth() / 2;
@@ -132,7 +132,7 @@ void WalkMgr::update() {
 	WalkLocation *next = path.next(findLocation(_current.name), _destination);
 	if (next) {
 		initNextWayPoint(next);
-		_leadActor->setAction(getWalkAction(), 0);
+		_leadActor->setAction(getWalkAction());
 	} else
 		end();
 

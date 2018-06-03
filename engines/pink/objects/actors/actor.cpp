@@ -58,7 +58,7 @@ void Actor::saveState(Archive &archive) {
 	archive.writeString(actionName);
 }
 
-void Actor::init(bool unk) {
+void Actor::init(bool paused) {
 	if (!_action)
 		_action = findAction(kIdleAction);
 
@@ -66,7 +66,8 @@ void Actor::init(bool unk) {
 		_isActionEnded = 1;
 	} else {
 		_isActionEnded = 0;
-		_action->start(unk);
+		_action->start();
+		_action->pause(paused);
 	}
 }
 
@@ -168,7 +169,7 @@ void Actor::setAction(Action *newAction) {
 	_action = newAction;
 	if (newAction) {
 		_isActionEnded = 0;
-		_action->start(0);
+		_action->start();
 	}
 }
 
