@@ -637,3 +637,4 @@ inline void scalePixelTo1x2(
 		break;
 	}
 }
+
