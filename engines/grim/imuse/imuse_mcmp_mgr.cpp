@@ -106,7 +106,7 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 		last_block = _numCompItems - 1;
 
 	int32 blocks_final_size = 0x2000 * (1 + last_block - first_block);
-	*comp_final = new byte[blocks_final_size];
+	*comp_final = static_cast<byte *>(malloc(blocks_final_size));
 	final_size = 0;
 
 	for (i = first_block; i <= last_block; i++) {
