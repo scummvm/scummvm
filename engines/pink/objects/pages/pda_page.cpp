@@ -41,17 +41,6 @@ Array<Actor *> PDAPage::takeActors() {
 	return actorsCopy;
 }
 
-void PDAPage::init() {
-	for (uint i = 0; i < _actors.size(); ++i) {
-		if (_actors[i]->initPallete(_pdaMgr.getGame()->getDirector()))
-			break;
-	}
-
-	for (uint i = 0; i < _actors.size(); ++i) {
-		_actors[i]->init(0);
-	}
-}
-
 PDAPage::PDAPage(const Common::String &name, PDAMgr &pdaMgr)
 		: _pdaMgr(pdaMgr) {
 	_name = name;

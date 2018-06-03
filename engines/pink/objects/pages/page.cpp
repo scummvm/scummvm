@@ -21,6 +21,7 @@
  */
 
 #include "pink/director.h"
+#include "pink/pink.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/page.h"
 
@@ -63,11 +64,16 @@ void Page::toConsole() {
 }
 
 void Page::init() {
-	LeadActor::State state = _leadActor->getState();
-	bool unk = (state == LeadActor::kInventory || state == LeadActor::kPDA);
-
+	initPallete();
 	for (uint i = 0; i < _actors.size(); ++i) {
-		_actors[i]->init(unk);
+		_actors[i]->init(0);
+	}
+}
+
+void Page::initPallete() {
+	for (uint i = 0; i < _actors.size(); ++i) {
+		if (_actors[i]->initPallete(getGame()->getDirector()))
+			break;
 	}
 }
 
