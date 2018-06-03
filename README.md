@@ -306,10 +306,6 @@ ResidualVM is still a work in progress, which means that the save format might
 change between builds. While attempts are made to keep save file compatibility,
 this isn't always possible.
 
-### 7.3. In fullscreen mode, the picture is stretched! ###
-
-This is know issue, in future versions it will be resolved.
-
 
 ## 8. Debugging
 WARNING: This section contains information about the various tools that
