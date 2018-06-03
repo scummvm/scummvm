@@ -79,6 +79,7 @@ public:
 	virtual void onVariableSet();
 	void onInventoryClosed(bool isItemClicked);
 	void onWalkEnd();
+	void onPDAClose();
 
 	bool isInteractingWith(Actor *actor);
 
@@ -105,6 +106,7 @@ protected:
 	State _state;
 	State _nextState;
 	State _stateCopy;
+	State _stateBeforePDA;
 
 	bool _isHaveItem;
 };

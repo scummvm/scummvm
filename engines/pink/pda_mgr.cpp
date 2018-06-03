@@ -23,6 +23,7 @@
 #include "pink/pda_mgr.h"
 #include "pink/pink.h"
 #include "pink/objects/actors/pda_button_actor.h"
+#include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/pda_page.h"
 
 
@@ -79,7 +80,7 @@ void PDAMgr::close() {
 	delete _page;
 	_page = nullptr;
 
-	//_lead->onPDAClose();
+	_lead->onPDAClose();
 }
 
 void PDAMgr::loadGlobal() {

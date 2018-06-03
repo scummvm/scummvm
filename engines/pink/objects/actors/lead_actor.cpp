@@ -153,10 +153,13 @@ void LeadActor::loadPDA(const Common::String &pageName) {
 			_recipient = nullptr;
 			_nextState = kReady;
 		}
-		_state = kPDA;
 		if (_state != kInventory)
 			_page->pause(true);
-		_page->getGame()->getDirector()->clear();
+
+		_stateBeforePDA = _state;
+		_state = kPDA;
+
+		_page->getGame()->getDirector()->saveStage();
 	}
 	_page->getGame()->getPdaMgr().setLead(this);
 	_page->getGame()->getPdaMgr().goToPage(pageName);
@@ -294,6 +297,15 @@ void LeadActor::onWalkEnd() {
 		else
 			sendLeftClickMessage(_recipient);
 	}
+}
+
+void LeadActor::onPDAClose() {
+	_page->initPallete();
+	_page->getGame()->getDirector()->loadStage();
+
+	_state = _stateBeforePDA;
+	if (_state != kInventory)
+		_page->pause(0);
 }
 
 bool LeadActor::isInteractingWith(Actor *actor) {

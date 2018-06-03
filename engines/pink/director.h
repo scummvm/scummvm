@@ -53,12 +53,16 @@ public:
 
 	void pause(bool pause);
 
+	void saveStage();
+	void loadStage();
+
 	bool showBounds;
 
 private:
 	void drawSprite(ActionCEL *sprite);
 	OSystem *_system;
 	Common::Array<ActionCEL *> _sprites;
+	Common::Array<ActionCEL *> _savedSprites;
 	Common::Array<ActionSound *> _sounds;
 };
 
