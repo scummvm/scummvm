@@ -72,10 +72,10 @@ Console::~Console() {
 
 bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Extract all the files from a game archive.\n");
-		debugPrintf("The destination folder, named 'dump', must exist.\n");
+		debugPrintf("Extract all the files from a game archive\n");
+		debugPrintf("The destination folder, named 'dump', must exist in location ResidualVM was launched from\n");
 		debugPrintf("Usage :\n");
-		debugPrintf("dumpArchive [archive name]\n");
+		debugPrintf("dumpArchive [path to archive]\n");
 		return true;
 	}
 
@@ -415,9 +415,9 @@ bool Console::Cmd_ListInventory(int argc, const char **argv) {
 
 bool Console::Cmd_EnableInventoryItem(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Enable a specific inventory item.\n");
+		debugPrintf("Enable a specific inventory item. Use listInventory to get an id\n");
 		debugPrintf("Usage :\n");
-		debugPrintf("changeLocation [level] [location]\n");
+		debugPrintf("enableInventoryItem [id]\n");
 		return true;
 	}
 	StarkGlobal->enableInventoryItem(atoi(argv[1]));
@@ -472,7 +472,7 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 
 bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
 	if (argc != 3) {
-		debugPrintf("Change the current location.\n");
+		debugPrintf("Change the current location. Use listLocations to get ids\n");
 		debugPrintf("Usage :\n");
 		debugPrintf("changeLocation [level] [location]\n");
 		return true;
@@ -488,7 +488,7 @@ bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
 
 bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Change the current chapter.\n");
+		debugPrintf("Change the current chapter\n");
 		debugPrintf("Usage :\n");
 		debugPrintf("changeChapter [value]\n");
 		return true;
@@ -503,7 +503,7 @@ bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
 
 bool Console::Cmd_Location(int argc, const char **argv) {
 	if (argc != 1) {
-		debugPrintf("Display the current location.\n");
+		debugPrintf("Display the current location\n");
 		debugPrintf("Usage :\n");
 		debugPrintf("location\n");
 		return true;
@@ -518,7 +518,7 @@ bool Console::Cmd_Location(int argc, const char **argv) {
 
 bool Console::Cmd_Chapter(int argc, const char **argv) {
 	if (argc != 1) {
-		debugPrintf("Display the current chapter.\n");
+		debugPrintf("Display the current chapter\n");
 		debugPrintf("Usage :\n");
 		debugPrintf("chapter\n");
 		return true;
