@@ -40,6 +40,9 @@ public:
 	virtual void toConsole();
 
 	void load(Archive &archive);
+	void init();
+	void initPallete();
+
 	Actor *findActor(const Common::String &name);
 	LeadActor *getLeadActor();
 
@@ -51,15 +54,14 @@ public:
 
 	PinkEngine *getGame();
 
-	virtual Sequencer *getSequencer() { return nullptr; };
-	virtual WalkMgr *getWalkMgr() { return nullptr;};
-	virtual Module *getModule() const { return nullptr; };
+	virtual Sequencer *getSequencer() { return nullptr; }
+	virtual WalkMgr *getWalkMgr() { return nullptr; }
+	virtual Module *getModule() const { return nullptr; }
 
-	virtual bool checkValueOfVariable(const Common::String &variable, const Common::String &value) { return 0; };
-	virtual void setVariable(Common::String &variable, Common::String &value) {};
+	virtual bool checkValueOfVariable(const Common::String &variable, const Common::String &value) { return 0; }
+	virtual void setVariable(Common::String &variable, Common::String &value) {}
 
 protected:
-	void init();
 
 	Array<Actor *> _actors;
 	ResourceMgr _resMgr;

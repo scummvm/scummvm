@@ -73,16 +73,12 @@ void GamePage::init(bool isLoadingSave) {
 
 	toConsole();
 
-	for (uint j = 0; j < _actors.size(); ++j) {
-		if (_actors[j]->initPallete(_module->getGame()->getDirector()))
-			break;
-	}
+	initPallete();
 
 	LeadActor::State state = _leadActor->getState();
-	bool startNow = !(state == LeadActor::kInventory || state == LeadActor::kPDA);
-
+	bool paused = (state == LeadActor::kInventory || state == LeadActor::kPDA);
 	for (uint i = 0; i < _actors.size(); ++i) {
-		_actors[i]->init(startNow);
+		_actors[i]->init(paused);
 	}
 
 	bool isHandler = false;
