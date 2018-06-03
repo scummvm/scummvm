@@ -145,4 +145,15 @@ void Director::pause(bool pause) {
 	}
 }
 
+void Director::saveStage() {
+	_savedSprites = _sprites;
+	_sprites.clear();
+}
+
+void Director::loadStage() {
+	assert(_sprites.empty());
+	_sprites = _savedSprites;
+	_savedSprites.clear();
+}
+
 }

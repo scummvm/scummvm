@@ -29,13 +29,11 @@
 
 namespace Pink {
 
-CursorMgr::CursorMgr(PinkEngine *game, GamePage *page)
+CursorMgr::CursorMgr(PinkEngine *game, Page *page)
 		: _actor(nullptr), _page(page), _game(game),
 		  _isPlayingAnimation(0), _firstFrameIndex(0) {}
 
-CursorMgr::~CursorMgr() {}
-
-void CursorMgr::setCursor(uint index, Common::Point point, const Common::String &itemName) {
+void CursorMgr::setCursor(uint index, const Common::Point point, const Common::String &itemName) {
 	if (index == kClickableFirstFrameCursor) {
 		startAnimation(index);
 		return hideItem();
@@ -61,7 +59,7 @@ void CursorMgr::setCursor(uint index, Common::Point point, const Common::String 
 	assert(dynamic_cast<ActionCEL*>(action));
 
 	if (action != _actor->getAction()) {
-		_actor->setAction(action, 0);
+		_actor->setAction(action);
 		CelDecoder *decoder = static_cast<ActionCEL*>(action)->getDecoder();
 		decoder->setX(point.x);
 		decoder->setY(point.y);
@@ -85,7 +83,7 @@ void CursorMgr::update() {
 	}
 }
 
-void CursorMgr::setCursor(Common::String &cursorName, Common::Point point) {
+void CursorMgr::setCursor(const Common::String &cursorName, const Common::Point point) {
 	uint index;
 	if (cursorName == kCursorNameExitLeft)
 		index = kExitLeftCursor;
@@ -112,6 +110,10 @@ void CursorMgr::startAnimation(int index) {
 		_isSecondFrame = 0;
 		_game->setCursor(index);
 	}
+}
+
+void CursorMgr::setPage(Page *page) {
+	_page = page;
 }
 
 } // End of namespace Pink

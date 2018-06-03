@@ -33,24 +33,25 @@ namespace Pink {
 
 class Actor;
 class Action;
-class GamePage;
+class Page;
 class PinkEngine;
 
 class CursorMgr : public Object {
 public:
-	CursorMgr(PinkEngine *game, GamePage *page);
-	~CursorMgr();
+	CursorMgr(PinkEngine *game, Page *page);
 
 	void update();
-	void setCursor(uint index, Common::Point point, const Common::String &itemName);
-	void setCursor(Common::String &cursorName, Common::Point point);
+	void setCursor(uint index, const Common::Point point, const Common::String &itemName);
+	void setCursor(const Common::String &cursorName, const Common::Point point);
+
+	void setPage(Page *page);
 
 private:
 	void hideItem();
 	void startAnimation(int index);
 
 	Actor *_actor;
-	GamePage *_page;
+	Page *_page;
 	PinkEngine *_game;
 
 	uint _time;
