@@ -119,28 +119,28 @@ void SaveLoadMenuScreen::checkError(Common::Error error) {
 }
 
 void SaveLoadMenuScreen::removeSaveDataWidgets() {
-	assert(_widgets.size() == 16);
+	assert(_widgets.size() == 7 + _slotPerPage);
 
-	for (int i = 0; i < 9; ++i) {
+	for (int i = 0; i < _slotPerPage; ++i) {
 		delete _widgets.back();
 		_widgets.pop_back();
 	}
 }
 
 void SaveLoadMenuScreen::loadSaveData(int page) {
-	for (int i = 0; i < 9; ++i) {
-		_widgets.push_back(new SaveDataWidget(i + page * 9, _gfx, this));
+	for (int i = 0; i < _slotPerPage; ++i) {
+		_widgets.push_back(new SaveDataWidget(i + page * _slotPerPage, _gfx, this));
 	}
 }
 
 void SaveLoadMenuScreen::changePage(int page) {
-	assert(page >= 0 && page <= 10);
+	assert(page >= 0 && page <= _maxPage);
 
 	removeSaveDataWidgets();
 	loadSaveData(page);
 
 	_widgets[kWidgetBack]->setVisible(page > 0);
-	_widgets[kWidgetNext]->setVisible(page < 10);
+	_widgets[kWidgetNext]->setVisible(page < _maxPage);
 
 	StarkSettings->setIntSetting(Settings::kSaveLoadPage, page);
 	_page = page;
@@ -157,10 +157,10 @@ void SaveMenuScreen::onWidgetSelected(SaveDataWidget *widget) {
 	// Freeze the screen for a while to let the user notice the change
 	widget->loadSaveDataElements();
 	render();
-	g_system->updateScreen();
+	StarkGfx->flipBuffer();
 	g_system->delayMillis(100);
 	render();
-	g_system->updateScreen();
+	StarkGfx->flipBuffer();
 
 	StarkUserInterface->backPrevScreen();
 }
@@ -207,8 +207,8 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 	lineSurface.free();
 
 	// Set the position
-	_thumbPos.x = 41 + (_slot % 3) * (_thumbWidth + 39);
-	_thumbPos.y = 61 + (_slot % 9 / 3) * (_thumbHeight + 38);
+	_thumbPos.x = 41 + (_slot % _slotPerRow) * (_thumbWidth + 39);
+	_thumbPos.y = 61 + (_slot % _slotPerPage / _slotPerColumn) * (_thumbHeight + 38);
 
 	_textDescPos.x = _thumbPos.x;
 	_textDescPos.y = _thumbPos.y + _thumbHeight + 2;
@@ -265,10 +265,12 @@ void SaveDataWidget::loadSaveDataElements() {
 		}
 
 		// Obtain the thumbnail
-		Graphics::Surface *thumb = metadata.readGameScreenThumbnail(&stream);
-		_texture->update(thumb);
-		thumb->free();
-		delete thumb;
+		if (metadata.version >= 9) {
+			Graphics::Surface *thumb = metadata.readGameScreenThumbnail(&stream);
+			_texture->update(thumb);
+			thumb->free();
+			delete thumb;
+		}
 
 		// Obtain the text
 		_textDesc.setText(metadata.description);

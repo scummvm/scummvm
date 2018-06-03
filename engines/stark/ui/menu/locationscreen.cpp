@@ -187,7 +187,7 @@ void StaticLocationWidget::onClick() {
 		// Ensure the click sound is played completely
 		while (_soundMouseClick->isPlaying()) {
 			g_system->delayMillis(10);
-			g_system->updateScreen();
+			StarkGfx->flipBuffer();
 		}
 	}
 

@@ -94,7 +94,7 @@ void DiaryIndexScreen::open() {
 	_widgets.push_back(new StaticLocationWidget(
 			"Back",
 			CLICK_HANDLER(DiaryIndexScreen, backHandler),
-			MOVE_HANDLER(DiaryIndexScreen, widgetTextColorHandler)));
+			nullptr));
 
 	for (uint i = 1; i < _widgets.size(); i++) {
 		// The background image is intentionally ignored
