@@ -61,12 +61,14 @@ public:
 	void loadObject(Object *obj, ObjectDescription *objDesc);
 
 	ObjectDescription *getObjDesc(const char *name);
+
 	ResourceDescription *getResDescTable(ObjectDescription *objDesc);
 
 	uint32 getTimestamp();
 
 private:
 	void seekToObject(const char *name);
+
 	ObjectDescription *_table;
 	uint32 _timestamp;
 	uint32 _tableOffset;

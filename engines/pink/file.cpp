@@ -27,6 +27,24 @@
 
 namespace Pink {
 
+void ObjectDescription::load(Common::File &file) {
+	file.read(name, sizeof(name));
+
+	objectsOffset = file.readUint32LE();
+	objectsCount = file.readUint32LE();
+	resourcesOffset = file.readUint32LE();
+	resourcesCount = file.readUint32LE();
+}
+
+void ResourceDescription::load(Common::File &file) {
+	file.read(name, sizeof(name));
+
+	offset = file.readUint32LE();
+	size = file.readUint32LE();
+	inBro = (bool) file.readUint16LE();
+}
+
+
 OrbFile::OrbFile()
 	: File(), _timestamp(0),
 	  _tableOffset(0),
@@ -87,15 +105,6 @@ void OrbFile::loadObject(Object *obj, ObjectDescription *objDesc) {
 	obj->load(archive);
 }
 
-uint32 OrbFile::getTimestamp() {
-	return _timestamp;
-}
-
-void OrbFile::seekToObject(const char *name) {
-	ObjectDescription *desc = getObjDesc(name);
-	seek(desc->objectsOffset);
-}
-
 static int objDescComp(const void *a, const void *b) {
 	return scumm_stricmp((char *) a, (char *) b);
 }
@@ -117,6 +126,16 @@ ResourceDescription *OrbFile::getResDescTable(ObjectDescription *objDesc){
 	return table;
 }
 
+uint32 OrbFile::getTimestamp() {
+	return _timestamp;
+}
+
+void OrbFile::seekToObject(const char *name) {
+	ObjectDescription *desc = getObjDesc(name);
+	seek(desc->objectsOffset);
+}
+
+
 bool BroFile::open(const Common::String &name, uint32 orbTimestamp) {
 	if (!File::open(name) || readUint32BE() != 'BRO\0')
 		return false;
@@ -132,23 +151,6 @@ bool BroFile::open(const Common::String &name, uint32 orbTimestamp) {
 	uint32 timestamp = readUint32LE();
 
 	return timestamp == orbTimestamp;
-}
-
-void ObjectDescription::load(Common::File &file) {
-	file.read(name, sizeof(name));
-
-	objectsOffset = file.readUint32LE();
-	objectsCount = file.readUint32LE();
-	resourcesOffset = file.readUint32LE();
-	resourcesCount = file.readUint32LE();
-}
-
-void ResourceDescription::load(Common::File &file) {
-	file.read(name, sizeof(name));
-
-	offset = file.readUint32LE();
-	size = file.readUint32LE();
-	inBro = (bool) file.readUint16LE();
 }
 
 } // End of namespace Pink
