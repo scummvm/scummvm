@@ -247,8 +247,8 @@ void SaveDataWidget::onMouseMove(const Common::Point &mousePos) {
 	_isMouseHovered = isMouseInside(mousePos);
 }
 
-void SaveDataWidget::resetTextTexture() {
-	StaticLocationWidget::resetTextTexture();
+void SaveDataWidget::onScreenChanged() {
+	StaticLocationWidget::onScreenChanged();
 	_textDesc.resetTexture();
 	_textTime.resetTexture();
 }

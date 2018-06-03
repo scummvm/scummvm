@@ -98,6 +98,9 @@ public:
 	/** Called when the mouse's left button just gets up */
 	virtual void onMouseUp() {}
 
+	/** Called when the screen's resolution is changed */
+	virtual void onScreenChanged();
+
 	/** Lookup sounds in the static location for use when hovering / clicking the widget */
 	void setupSounds(int16 enterSound, int16 clickSound);
 
@@ -107,9 +110,6 @@ public:
 	 * Only applies for widget referring to a RenderEntry for a text visual
 	 */
 	void setTextColor(uint32 textColor);
-
-	/** For widget with no text visual, this function does nothing */
-	virtual void resetTextTexture();
 
 	/** Widgets must be visible to be rendered and interactive */
 	bool isVisible() const;

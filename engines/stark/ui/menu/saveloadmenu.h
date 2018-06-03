@@ -128,7 +128,7 @@ public:
 	bool isMouseInside(const Common::Point &mousePos) const override;
 	void onClick() override;
 	void onMouseMove(const Common::Point &mousePos) override;
-	void resetTextTexture() override;
+	void onScreenChanged() override;
 
 	int getSlot() { return _slot; }
 
