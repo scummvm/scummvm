@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-06-07 20:28+0200\n"
-"PO-Revision-Date: 2018-06-04 06:52+0000\n"
+"PO-Revision-Date: 2018-06-08 09:46+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1747,7 +1747,7 @@ msgstr "Farbmodus nicht unterstützt"
 
 #: common/error.cpp:46
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "Initialisierung des Audio-Gerätes fehlgeschlagen"
 
 #: common/error.cpp:49
 msgid "Read permission denied"
