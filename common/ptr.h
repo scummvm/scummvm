@@ -177,9 +177,9 @@ public:
 	 */
 	void reset() {
 		decRef();
-		_deletion = 0;
-		_refCount = 0;
-		_pointer = 0;
+		_deletion = nullptr;
+		_refCount = nullptr;
+		_pointer = nullptr;
 	}
 
 	template<class T2>
@@ -233,7 +233,7 @@ public:
 	typedef T *PointerType;
 	typedef T &ReferenceType;
 
-	explicit ScopedPtr(PointerType o = 0) : _pointer(o) {}
+	explicit ScopedPtr(PointerType o = nullptr) : _pointer(o) {}
 
 	ReferenceType operator*() const { return *_pointer; }
 	PointerType operator->() const { return _pointer; }
@@ -251,7 +251,7 @@ public:
 	/**
 	 * Resets the pointer with the new value. Old object will be destroyed
 	 */
-	void reset(PointerType o = 0) {
+	void reset(PointerType o = nullptr) {
 		D()(_pointer);
 		_pointer = o;
 	}
@@ -271,7 +271,7 @@ public:
 	 */
 	PointerType release() {
 		PointerType r = _pointer;
-		_pointer = 0;
+		_pointer = nullptr;
 		return r;
 	}
 
