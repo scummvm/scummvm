@@ -144,7 +144,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Cryo (C) Cryo Interactive";
+		return "Cryo Engine (C) Cryo Interactive";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
