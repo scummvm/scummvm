@@ -283,7 +283,7 @@ public:
 	/** Get the list of all engine plugins */
 	const PluginList &getPlugins() const;
 
-	/** Find a target */ // TODO: Expand on description
+	/** Find a target */
 	QualifiedGameDescriptor findTarget(const Common::String &target, const Plugin **plugin = NULL) const;
 
 	/**
