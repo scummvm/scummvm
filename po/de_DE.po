@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-06-03 18:41+0200\n"
-"PO-Revision-Date: 2018-05-30 14:00+0000\n"
+"PO-Revision-Date: 2018-06-04 06:52+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3593,13 +3593,13 @@ msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr "Verwende bilineare Filterung zur Skalierung von Videos, sofern möglich"
 
 #: engines/sci/detection.cpp:442
-#, fuzzy
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr "Qualitativ hochwertige Videoskalierung verwenden"
+msgstr "Qualitativ hochwertiges \"LarryScale\" cel-scaling verwenden"
 
 #: engines/sci/detection.cpp:443
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
+"Verwendet einen speziellen Cartoon-Scaler, um Character-Sprites darzustellen"
 
 #: engines/sci/detection.cpp:452
 msgid "Prefer digital sound effects"
