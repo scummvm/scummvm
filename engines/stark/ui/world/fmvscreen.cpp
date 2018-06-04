@@ -54,17 +54,31 @@ FMVScreen::~FMVScreen() {
 	delete _surfaceRenderer;
 }
 
-void FMVScreen::play(Common::String name) {
+void FMVScreen::play(const Common::String &name) {
+	Common::SeekableReadStream *stream = nullptr;
+
+	// Play the low-resolution video, if possible
 	if (!StarkSettings->getBoolSetting(Settings::kHighFMV) && StarkSettings->hasLowResFMV()) {
-		name.erase(name.size() - 4);
-		name += "_lo_res.bbb";
+		Common::String lowResName = name;
+		lowResName.erase(lowResName.size() - 4);
+		lowResName += "_lo_res.bbb";
+
+		stream = StarkArchiveLoader->getExternalFile(lowResName, "Global/");
+		if (!stream) {
+			debug("Could not open %s", lowResName.c_str());
+		}
 	}
 
-	Common::SeekableReadStream *stream = StarkArchiveLoader->getExternalFile(name, "Global/");
+	// Play the original video
+	if (!stream) {
+		stream = StarkArchiveLoader->getExternalFile(name, "Global/");
+	}
+
 	if (!stream) {
 		warning("Could not open %s", name.c_str());
 		return;
 	}
+
 	_decoder->loadStream(stream);
 	if (!_decoder->isVideoLoaded()) {
 		error("Could not open %s", name.c_str());

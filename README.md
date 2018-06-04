@@ -2,21 +2,22 @@ ResidualVM: A 3D game interpreter
 =================================
 
 
-  1. [ What is ResidualVM? ](#1-what-is-residualvm)
-  2. [ Current state       ](#2-current-state)
-  3. [ Running GrimE games ](#3-running-grime-games)
-  4. [ Running Myst III    ](#4-running-myst-iii)
-  5. [ Configuration       ](#5-configuration)
-  6. [ Troubleshooting     ](#6-troubleshooting-known-bugs-issues)
-  7. [ Debugging           ](#7-debugging)
-  8. [ Bug Reports         ](#8-bug-reports)
-  9. [ Contact             ](#9-contact)
+  1. [ What is ResidualVM?         ](#1-what-is-residualvm)
+  2. [ Current state               ](#2-current-state)
+  3. [ Running GrimE games         ](#3-running-grime-games)
+  4. [ Running Myst III            ](#4-running-myst-iii)
+  5. [ Running The Longest Journey ](#5-running-the-longest-journey)
+  6. [ Configuration               ](#6-configuration)
+  7. [ Troubleshooting             ](#7-troubleshooting-known-bugs-issues)
+  8. [ Debugging                   ](#8-debugging)
+  9. [ Bug Reports                 ](#9-bug-reports)
+ 10. [ Contact                     ](#10-contact)
 
 
 ## 1. What is ResidualVM?
 ResidualVM is a game engine reimplementation that allows you
-to play 3D adventure games such as Grim Fandango, Escape from Monkey Island
-and Myst III.
+to play 3D adventure games such as Grim Fandango, Escape from Monkey
+Island, Myst III and The Longest Journey.
 
 ResidualVM utilizes OpenGL for 3D graphics hardware acceleration.
 A software renderer is also included for machines without hardware OpenGL.
@@ -31,7 +32,7 @@ itself originally had a few unintentional ways to get the game stuck).
 ### 2.1. Which games does ResidualVM support? ###
 
 Currently ResidualVM supports Grim Fandango and Escape From Monkey Island,
-as well Myst III.
+as well Myst III and The Longest Journey.
 
 #### 2.1.1. GrimE-games support ####
 
@@ -47,7 +48,9 @@ Escape From Monkey Island (PS2)  | Untested
 
 Game                             | Status
 -------------------------------- | -------------------------
-Myst III Exile                   | Completable with glitches
+Myst III Exile                   | Completable
+The Longest Journey              | Untested
+The Longest Journey (demo)       | Untested
 
 Specifics can be found at
 http://www.residualvm.org/compatibility/
@@ -106,7 +109,6 @@ into one directory. Specifically, you'll need:
   * All of the m4b files from the DVD
   * The Videos, demos, jambalay, lucre, melee and monkey directores
 
-
 ### 3.2. Running the game ###
 
 1. Prepare the game directory as specified above
@@ -147,6 +149,7 @@ of the engine needs to be enabled using one of the following two options:
   * start residualvm with "--joystick" parameter
   * add "joystick\_num=0" to the "[residualvm]" section of the configuration file
     (see section 5.1. how to find the file)
+
 
 ## 4. Running Myst III
 
@@ -204,13 +207,56 @@ Ctrl + c   | Force Quit (from command-line)
 Ctrl + q   | Quit (ingame)
 
 
-## 5. Configuration
+## 5. Running The Longest Journey
+
+### 5.1. Required files ###
+
+You will need to copy the data files from your The Longest Journey CDs,
+DVD or digital distributiion into one directory. Specifically, you'll
+need:
+  * 1a—79 directories (4f only for demo version)
+  * global directory
+  * static directory
+  * fonts directory (not critical, but recommended – see below)
+  * x.xarc and all the .ini files
+
+Steam version and demo from Steam are missing the fonts folder. The
+required fonts can be copied over from demo version obtained from
+different sources or a GOG or retail version.
+
+The 2-CD and DVD versions have some of the data files packed in installer
+archives. The archives need to be unpacked before they can be used.
+
+### 5.2. Running the game ###
+
+1. Copy the necessary files to a folder on your Hard Drive
+2. Open ResidualVM
+3. Choose "Add Game"
+4. Select the folder you created in step 1
+5. Click Start
+
+### 5.3. Input controls ###
+
+The mouse is used to interact with objects and menu elements.
+
+Available keyboard shortcuts:
+
+Key         | Binding
+----------- | -------------------------------------------------------------------------------------------
+Escape      | Skip video sequence or current line of dialogue, skip time if *Time Skip* option is enabled
+Ctrl + F5   | ResidualVM Menu
+Ctrl + c    | Force Quit (from command-line)
+Ctrl + q    | Quit (ingame)
+Alt + enter | Switch between windowed-mode and fullscreen
+
+
+## 6. Configuration
 Currently, not all the settings for ResidualVM are available through the GUI,
 if you have problems with getting anything to work, first try to pass the
 settings from the command line, then, if that doesn't work, try to change your
 configuration file manually.
 
-### 5.1. Location of configuration file ###
+### 6.1. Location of configuration file ###
 
 By default, the configuration file is saved in, and loaded from:
 
@@ -222,7 +268,7 @@ Unix                 | ~/.residualvmrc
 Mac OS X             | ~/Library/Preferences/ResidualVM Preferences
 Others               | residualvm.ini in the current directory
 
-### 5.2. Interesting settings for GrimE games ###
+### 6.2. Interesting settings for GrimE games ###
 
 The following settings are currently available in the config-file,
 however some of them might not work with your current build. And
@@ -237,7 +283,7 @@ use_arb_shaders| [true/false]      | If true, and if you are using the OpenGL re
 fullscreen_res | [desktop/WWWxHHH] | If set to "desktop" (the default), ResidualVM will use your desktop resolution in fullscreen mode. If set to a resolution such as "640x480" or "1280x720", that resolution will be used.
 
 
-## 6. Troubleshooting, Known Bugs, Issues
+## 7. Troubleshooting, Known Bugs, Issues
 Grim Fandango had a few issues when it came out, and a few new and exciting
 issues when you try to run it on newer hardware. Some of these have been
 fixed in ResidualVM, but ResidualVM itself also has a few new issues that we
@@ -247,35 +293,46 @@ http://github.com/residualvm/residualvm/blob/master/KNOWN_BUGS
 Look below for help with these issues, and if you can't find help here, try
 either the forums at our homepage, or IRC: #residualvm at freenode.
 
-### 6.1. I played a bit, but can't start a new game! ###
+### 7.1. I played a bit, but can't start a new game! ###
 
 This is because the last save and visited scene is stored in your configuration
 file, either delete grim-fandango from the ResidualVM-menu, and re-add it, or
 go to your configuration file, and clean out the last-save and last-set entries.
 
-### 6.2. My Save Games don't work any more ###
+### 7.2. My Save Games don't work any more ###
 
 Did you recently update to a newer build of ResidualVM?
 ResidualVM is still a work in progress, which means that the save format might
 change between builds. While attempts are made to keep save file compatibility,
 this isn't always possible.
 
-### 6.3. In fullscreen mode, the picture is stretched! ###
 
-This is know issue, in future versions it will be resolved.
-
-
-## 7. Debugging
+## 8. Debugging
 WARNING: This section contains information about the various tools that
 are included for debugging ResidualVM, this should not be necessary for
 normal play at all! However, the curious might like to know how to access
 these tool. Please use at your own risk!
 
-### 7.1. Debugging GrimE Games ###
+To enter the debug console, press Ctrl + d. Use the `help` command to display
+a list of the available commands. To exit, press Esc or type `exit` or `quit`.
+
+Commands common to all engines are:
+
+Command           | Description
+----------------- | -----------------------------------------------------------
+openlog           | Show the log of errors/warnings/information from the engine
+debuglevel        | List or change verbosity of debug output
+debugflag_list    | List the available debug flags and their status
+debugflag_enable  | Enable a given debugflag
+debugflag_disable | Disable a given debugflag
+md5               | Calculates MD5 checksum of a file
+md5mac            | Calculates MD5 checksum of a file (Mac format)
+
+
+### 8.1. Debugging GrimE Games ###
 
 The development console can be used to debug both Grim Fandango and Escape From
-Monkey Island. To enter the debug console, press Ctrl + d. Use the `help`
-command to display a list of the available commands.
+Monkey Island.
 
 Some of the useful commands are:
 
@@ -283,14 +340,13 @@ Command       | Description
 ------------- | -----------------------------------------------------------
 jump          | Jump to a section of the game
 lua_do        | Execute a lua command
-openlog       | Show the log of errors/warnings/information from the engine
 set_renderer  | Select a renderer (software, OpenGL or OpenGL with shaders)
 
 The `jump` targets can be found at:
   * http://wiki.residualvm.org/index.php/Grim_Fandango_Debug_Mode#jump_targets
   * http://wiki.residualvm.org/index.php/Escape_From_Monkey_Island_Debug_Mode
 
-### 7.2. Debugging Grim Fandango ###
+### 8.2. Debugging Grim Fandango ###
 
 Grim Fandango also includes a built in debug mode. To enable debug-keys and
 debug-mode, you will have to add the following line to your configuration file
@@ -324,12 +380,9 @@ j          | Enter jump number
 
 Note that these are only available after enabling debug-mode.
 
-### 7.3. Debugging Myst III ###
+### 8.3. Debugging Myst III ###
 
-The debug console can be triggered using Ctrl + d. Use the `help` command to
-display a list of the available commands.
-
-The most useful commands are:
+The most useful debug console commands are:
 
 Command     | Description
 ----------- | ------------------------------------------------------------
@@ -338,12 +391,39 @@ infos       | Display the name of a node and show the associated scripts
 go          | Jump to a node
 var         | Display or alter the value of a variable from the game state
 
+### 8.4. Debugging The Longest Journey ###
 
-## 8. Bug Reports
+The debug console commands are:
+
+Command             | Description
+------------------- | --------------------------------------------------------
+changeChapter       | Change the current chapter
+changeKnowledge     | Change the value of some knowledge
+changeLocation      | Change the current location
+chapter             | Display the current chapter
+decompileScript     | Decompile a script
+dumpArchive         | Extract a game archive
+dumpGlobal          | Print the global level's resource sub-tree to stdout
+dumpKnowledge       | Print the current knowledge to stdout
+dumpLevel           | Print the current level's resource sub-tree to stdout
+dumpLocation        | Print the current location's resource sub-tree to stdout
+dumpRoot            | Print the resource tree root to stdout
+dumpStatic          | Print the static level's resource sub-tree to stdout
+enableInventoryItem | Enable a specific inventory item
+enableScript        | Enable or disable script
+forceScript         | Force the execution of a script
+listInventory       | List all inventory items in the game
+listLocations       | List all the locations in the game
+listScripts         | List all the scripts in current level
+location            | Display the current location
+testDecompiler      | Test decompilation of all the scripts in game
+
+
+## 9. Bug Reports
 ResidualVM still has a few bugs, many might already have been reported,
 but should you find a new one, don't hesitate to report it.
 
-### 8.1. How, and where do I report bugs? ###
+### 9.1. How, and where do I report bugs? ###
 
 You can report bugs at our github-issue-tracker:
 http://www.github.com/residualvm/residualvm/issues
@@ -359,7 +439,7 @@ Remember to always have the following information in your bug reports:
   * Preferably also a link to a save game right before the bug happened.
 
 
-## 9. Contact
+## 10. Contact
   * Homepage: http://www.residualvm.org/
   * Wiki: http://wiki.residualvm.org/
   * Forums: http://forums.residualvm.org/

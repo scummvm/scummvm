@@ -23,8 +23,9 @@
 #ifndef STARK_H
 #define STARK_H
 
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
+
+struct ADGameDescription;
 
 namespace Common {
 class RandomSource;
@@ -55,21 +56,21 @@ class GameChapter;
 class StarkEngine : public Engine {
 public:
 	StarkEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	virtual ~StarkEngine();
+	~StarkEngine() override;
 
 	/** Build a save file name for the specified target and slot */
 	static Common::String formatSaveName(const char *target, int slot);
 
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual GUI::Debugger *getDebugger() override { return (GUI::Debugger *)_console; }
+	Common::Error run() override;
+	GUI::Debugger *getDebugger() override { return (GUI::Debugger *)_console; }
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
-	virtual void pauseEngineIntern(bool pause) override;
+	void pauseEngineIntern(bool pause) override;
 
 private:
 	void mainLoop();
