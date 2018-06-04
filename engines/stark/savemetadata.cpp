@@ -41,6 +41,7 @@ SaveMetadata::SaveMetadata() :
 		saveDay(0),
 		saveHour(0),
 		saveMinute(0),
+		saveSecond(0),
 		gameWindowThumbnail(nullptr) {
 }
 
@@ -61,6 +62,10 @@ void SaveMetadata::saveLoad(ResourceSerializer *s) {
 		s->syncAsByte(saveHour);
 		s->syncAsByte(saveMinute);
 		s->syncAsSint32LE(totalPlayTime);
+	}
+
+	if (version >= 10) {
+		s->syncAsByte(saveSecond);
 	}
 }
 
@@ -111,6 +116,7 @@ void SaveMetadata::setSaveTime(const TimeDate &timeDate) {
 	saveYear = timeDate.tm_year + 1900;
 	saveHour = timeDate.tm_hour;
 	saveMinute = timeDate.tm_min;
+	saveSecond = timeDate.tm_sec;
 }
 
 void SaveMetadata::writeGameScreenThumbnail(Common::WriteStream *stream) {

@@ -46,6 +46,7 @@ Settings::Settings(Audio::Mixer *mixer, const ADGameDescription *gd) :
 	_intKey[kVoice] = "speech_volume";
 	_intKey[kMusic] = "music_volume";
 	_intKey[kSfx] = "sfx_volume";
+	_intKey[kSaveLoadPage] = "saveload_lastpage";
 
 	// Register default settings
 	ConfMan.registerDefault(_boolKey[kHighModel], true);
@@ -54,6 +55,7 @@ Settings::Settings(Audio::Mixer *mixer, const ADGameDescription *gd) :
 	ConfMan.registerDefault(_boolKey[kShadow], true);
 	ConfMan.registerDefault(_boolKey[kHighFMV], true);
 	ConfMan.registerDefault(_boolKey[kTimeSkip], false);
+	ConfMan.registerDefault(_intKey[kSaveLoadPage], 0);
 
 	// Use the FunCom logo video to check low-resolution fmv
 	Common::SeekableReadStream *lowResFMV = StarkArchiveLoader->getExternalFile("1402_lo_res.bbb", "Global/");
@@ -74,6 +76,9 @@ void Settings::setIntSetting(IntSettingIndex index, int value) {
 			break;
 		case kSfx:
 			type = Audio::Mixer::kSFXSoundType;
+			break;
+		default:
+			return;
 	}
 
 	_mixer->setVolumeForSoundType(type, value);

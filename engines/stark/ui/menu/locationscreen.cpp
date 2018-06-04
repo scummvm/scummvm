@@ -125,9 +125,8 @@ void StaticLocationScreen::onRender() {
 }
 
 void StaticLocationScreen::onScreenChanged() {
-	// Right now only focus on resetting the text texture
 	for (uint i = 0; i < _widgets.size(); i++) {
-		_widgets[i]->resetTextTexture();
+		_widgets[i]->onScreenChanged();
 	}
 }
 
@@ -188,7 +187,7 @@ void StaticLocationWidget::onClick() {
 		// Ensure the click sound is played completely
 		while (_soundMouseClick->isPlaying()) {
 			g_system->delayMillis(10);
-			g_system->updateScreen();
+			StarkGfx->flipBuffer();
 		}
 	}
 
@@ -234,7 +233,7 @@ void StaticLocationWidget::setTextColor(uint32 textColor) {
 	text->setColor(textColor);
 }
 
-void StaticLocationWidget::resetTextTexture() {
+void StaticLocationWidget::onScreenChanged() {
 	if (!_renderEntry) return;
 
 	VisualText *text = _renderEntry->getText();

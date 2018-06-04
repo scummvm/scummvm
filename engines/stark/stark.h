@@ -51,6 +51,7 @@ class StaticProvider;
 class ResourceProvider;
 class UserInterface;
 class Settings;
+class GameChapter;
 
 class StarkEngine : public Engine {
 public:
@@ -91,6 +92,8 @@ private:
 	ResourceProvider *_resourceProvider;
 	FontProvider *_fontProvider;
 	Settings *_settings;
+	GameChapter *_gameChapter;
+
 	Common::RandomSource *_randomSource;
 
 	const ADGameDescription *_gameDescription;

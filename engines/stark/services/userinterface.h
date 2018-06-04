@@ -48,6 +48,8 @@ class DiaryIndexScreen;
 class GameScreen;
 class MainMenuScreen;
 class SettingsMenuScreen;
+class SaveMenuScreen;
+class LoadMenuScreen;
 class Cursor;
 class FMVScreen;
 
@@ -98,6 +100,9 @@ public:
 
 	/** Is the game screen currently displayed? */
 	bool isInGameScreen() const;
+
+	/** Is the save & load menu screen currently displayed? */
+	bool isInSaveLoadMenuScreen() const;
 
 	/** Is the inventory panel being displayed? */
 	bool isInventoryOpen() const;
@@ -154,6 +159,9 @@ private:
 	DiaryIndexScreen *_diaryIndexScreen;
 	MainMenuScreen *_mainMenuScreen;
 	SettingsMenuScreen *_settingsMenuScreen;
+	SaveMenuScreen *_saveMenuScreen;
+	LoadMenuScreen *_loadMenuScreen;
+
 	Screen *_currentScreen;
 	Common::Stack<Screen::Name> _prevScreenNameStack;
 

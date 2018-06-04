@@ -40,6 +40,7 @@
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/settings.h"
+#include "engines/stark/services/gamechapter.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/framelimiter.h"
 
@@ -72,6 +73,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_userInterface(nullptr),
 		_fontProvider(nullptr),
 		_settings(nullptr),
+		_gameChapter(nullptr),
 		_lastClickTime(0) {
 	// Add the available debug channels
 	DebugMan.addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
@@ -97,6 +99,7 @@ StarkEngine::~StarkEngine() {
 	delete _userInterface;
 	delete _fontProvider;
 	delete _settings;
+	delete _gameChapter;
 
 	StarkServices::destroy();
 }
@@ -122,6 +125,7 @@ Common::Error StarkEngine::run() {
 	_gameInterface = new GameInterface();
 	_userInterface = new UserInterface(_gfx);
 	_settings = new Settings(_mixer, _gameDescription);
+	_gameChapter = new GameChapter();
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -138,6 +142,7 @@ Common::Error StarkEngine::run() {
 	services.userInterface = _userInterface;
 	services.fontProvider = _fontProvider;
 	services.settings = _settings;
+	services.gameChapter = _gameChapter;
 
 	// Load global resources
 	_staticProvider->init();
@@ -276,7 +281,7 @@ bool StarkEngine::hasFeature(EngineFeature f) const {
 }
 
 bool StarkEngine::canLoadGameStateCurrently() {
-	return true;
+	return !StarkUserInterface->isInSaveLoadMenuScreen();
 }
 
 Common::Error StarkEngine::loadGameState(int slot) {
@@ -335,7 +340,8 @@ Common::Error StarkEngine::loadGameState(int slot) {
 
 bool StarkEngine::canSaveGameStateCurrently() {
 	// Disallow saving when there is no level loaded or when a script is running
-	return _global->getLevel() && _userInterface->isInteractive();
+	// or when the save & load menu is currently displayed
+	return _global->getLevel() && _userInterface->isInteractive() && !_userInterface->isInSaveLoadMenuScreen();
 }
 
 Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {

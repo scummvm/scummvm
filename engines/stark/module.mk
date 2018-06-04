@@ -80,6 +80,7 @@ MODULE_OBJS := \
 	services/staticprovider.o \
 	services/userinterface.o \
 	services/settings.o \
+	services/gamechapter.o \
 	stark.o \
 	tools/abstractsyntaxtree.o \
 	tools/block.o \
@@ -90,6 +91,7 @@ MODULE_OBJS := \
 	ui/menu/locationscreen.o \
 	ui/menu/mainmenu.o \
 	ui/menu/settingsmenu.o \
+	ui/menu/saveloadmenu.o \
 	ui/window.o \
 	ui/world/actionmenu.o \
 	ui/world/button.o \

@@ -54,7 +54,8 @@ public:
 	enum IntSettingIndex {
 		kVoice,
 		kMusic,
-		kSfx
+		kSfx,
+		kSaveLoadPage
 	};
 
 	Settings(Audio::Mixer *mixer, const ADGameDescription *gd);
@@ -90,7 +91,7 @@ private:
 	const bool _isDemo;
 
 	const char *_boolKey[6];
-	const char *_intKey[3];
+	const char *_intKey[4];
 };
 
 } // End of namespace Stark

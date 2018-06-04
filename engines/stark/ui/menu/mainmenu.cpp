@@ -174,23 +174,7 @@ void MainMenuScreen::newGameHandler() {
 }
 
 void MainMenuScreen::loadHandler() {
-	// TODO: Link to the load menu
-	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
-
-	g_engine->pauseEngine(true);
-	int slot = slc.runModalWithCurrentTarget();
-	g_engine->pauseEngine(false);
-
-	if (slot >= 0) {
-		StarkUserInterface->changeScreen(Screen::kScreenGame);
-
-		Common::Error loadError = g_engine->loadGameState(slot);
-
-		if (loadError.getCode() != Common::kNoError) {
-			GUI::MessageDialog dialog(loadError.getDesc());
-			dialog.runModal();
-		}
-	}
+	StarkUserInterface->changeScreen(Screen::kScreenLoadMenu);
 }
 
 void MainMenuScreen::settingsHandler() {

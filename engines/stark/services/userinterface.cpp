@@ -38,6 +38,7 @@
 #include "engines/stark/ui/menu/diaryindex.h"
 #include "engines/stark/ui/menu/mainmenu.h"
 #include "engines/stark/ui/menu/settingsmenu.h"
+#include "engines/stark/ui/menu/saveloadmenu.h"
 #include "engines/stark/ui/world/inventorywindow.h"
 #include "engines/stark/ui/world/fmvscreen.h"
 #include "engines/stark/ui/world/gamescreen.h"
@@ -51,6 +52,8 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_diaryIndexScreen(nullptr),
 		_mainMenuScreen(nullptr),
 		_settingsMenuScreen(nullptr),
+		_saveMenuScreen(nullptr),
+		_loadMenuScreen(nullptr),
 		_exitGame(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
@@ -70,6 +73,8 @@ UserInterface::~UserInterface() {
 	delete _cursor;
 	delete _mainMenuScreen;
 	delete _settingsMenuScreen;
+	delete _saveMenuScreen;
+	delete _loadMenuScreen;
 }
 
 void UserInterface::init() {
@@ -79,6 +84,8 @@ void UserInterface::init() {
 	_gameScreen = new GameScreen(_gfx, _cursor);
 	_diaryIndexScreen = new DiaryIndexScreen(_gfx, _cursor);
 	_settingsMenuScreen = new SettingsMenuScreen(_gfx, _cursor);
+	_saveMenuScreen = new SaveMenuScreen(_gfx, _cursor);
+	_loadMenuScreen = new LoadMenuScreen(_gfx, _cursor);
 	_fmvScreen = new FMVScreen(_gfx, _cursor);
 
 	_prevScreenNameStack.push(Screen::kScreenMainMenu);
@@ -191,6 +198,10 @@ Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
 			return _mainMenuScreen;
 		case Screen::kScreenSettingsMenu:
 			return _settingsMenuScreen;
+		case Screen::kScreenSaveMenu:
+			return _saveMenuScreen;
+		case Screen::kScreenLoadMenu:
+			return _loadMenuScreen;
 		default:
 			error("Unhandled screen name '%d'", screenName);
 	}
@@ -198,6 +209,11 @@ Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
 
 bool UserInterface::isInGameScreen() const {
 	return _currentScreen->getName() == Screen::kScreenGame;
+}
+
+bool UserInterface::isInSaveLoadMenuScreen() const {
+	Screen::Name name = _currentScreen->getName();
+	return name == Screen::kScreenSaveMenu || name == Screen::kScreenLoadMenu;
 }
 
 bool UserInterface::isInventoryOpen() const {
@@ -255,6 +271,12 @@ void UserInterface::optionsOpen() {
 
 void UserInterface::saveGameScreenThumbnail() {
 	freeGameScreenThumbnail();
+
+	if (StarkGlobal->getLevel()) {
+		// Re-render the screen to exclude the cursor
+		StarkGfx->clearScreen();
+		_gameScreen->render();
+	}
 
 	Graphics::Surface *big = _gameScreen->getGameWindow()->getScreenshot();
 	assert(big->format.bytesPerPixel == 4);
