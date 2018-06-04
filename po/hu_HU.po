@@ -7,10 +7,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-06-07 20:28+0200\n"
-"PO-Revision-Date: 2018-06-04 04:13+0000\n"
+"PO-Revision-Date: 2018-06-08 02:32+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
-"Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/hu/>\n"
+"Language-Team: Hungarian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/hu/>\n"
 "Language: hu_HU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
@@ -1719,7 +1719,7 @@ msgstr "Nem támogatott színmód"
 
 #: common/error.cpp:46
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "Audió eszköz inicializálása sikertelen"
 
 #: common/error.cpp:49
 msgid "Read permission denied"
