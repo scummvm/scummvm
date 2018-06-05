@@ -29,10 +29,13 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/util.h"
+
+#include "gui/saveload-dialog.h"
 
 #include "engines/engine.h"
 
@@ -60,6 +63,32 @@ class Room;
 typedef String (StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
 
 
+const int SAVEGAME_DESCRIPTION_LEN = 30;
+
+struct SavegameMetadata {
+	uint32 version;
+	char description[SAVEGAME_DESCRIPTION_LEN + 1];
+
+	uint32 saveDate;
+	uint16 saveTime;
+	byte saveTimeSecs;
+	uint32 playTime;
+
+	::Graphics::Surface *thumbnail;
+
+	void setSaveTimeAndDate(TimeDate time) {
+		saveDate = ((time.tm_mday & 0xFF) << 24) | (((time.tm_mon + 1) & 0xFF) << 16) | ((time.tm_year + 1900) & 0xFFFF);
+		saveTime = ((time.tm_hour & 0xFF) << 8) | ((time.tm_min) & 0xFF);
+		saveTimeSecs = time.tm_sec & 0xFF;
+	}
+
+	int getDay() { return (saveDate >> 24) & 0xFF; }
+	int getMonth() { return (saveDate >> 16) & 0xFF; }
+	int getYear() { return saveDate & 0xFFFF; }
+	int getHour() { return (saveTime >> 8) & 0xFF; }
+	int getMinute() { return saveTime & 0xFF; }
+};
+
 
 const int MAX_MENUBUTTONS = 32;
 const int TEXTBOX_WIDTH = 26;
@@ -79,7 +108,8 @@ enum StarTrekGameFeatures {
 
 enum kDebugLevels {
 	kDebugSound =     1 << 0,
-	kDebugGraphics =  1 << 1
+	kDebugGraphics =  1 << 1,
+	kDebugSavegame =  2 << 1
 };
 
 enum GameMode {
@@ -209,6 +239,10 @@ private:
 	// Transporter room
 	void runTransportSequence(const Common::String &name);
 
+	// Bridge
+	void initBridge(bool b) {}; // TODO
+	void cleanupBridge() {}; // TODO
+
 public:
 	StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc);
 	virtual ~StarTrekEngine();
@@ -314,8 +348,6 @@ public:
 	void unloadMenuButtons();
 
 	void chooseMouseBitmapForAction(int action, bool withRedOutline);
-	void showSaveMenu();
-	void showLoadMenu();
 	void showQuitGamePrompt(int x, int y);
 	void showGameOverMenu();
 	void showTextConfigurationMenu(bool fromOptionMenu);
@@ -332,6 +364,18 @@ private:
 	SharedPtr<Menu> _activeMenu;
 	// Saved value of StarTrekEngine::_keyboardControlsMouse when menus are up
 	bool _keyboardControlsMouseOutsideMenu;
+
+	// saveload.cpp
+public:
+	bool showSaveMenu();
+	bool showLoadMenu();
+
+	bool saveGame(int slot, Common::String desc);
+	bool loadGame(int slot);
+
+	bool saveOrLoadGameData(Common::SeekableReadStream *in, Common::WriteStream *out, SavegameMetadata *meta);
+
+	Common::String getSavegameFilename(int slotId) const;
 
 	// Detection related functions
 public:
@@ -358,6 +402,9 @@ public:
 	int _gameMode;
 	int _lastGameMode;
 
+	// NOTE: this has a different meaning than the original game. When non-empty, a new
+	// room load is triggered, as opposed to original behaviour where this was only read
+	// when "loadRoom" was called.
 	Common::String _missionToLoad;
 	int _roomIndexToLoad;
 	int _spawnIndexToLoad;
@@ -437,6 +484,9 @@ private:
 	Common::MacResManager *_macResFork;
 	SharedPtr<Room> _room;
 };
+
+// Static function
+bool saveOrLoadMetadata(Common::SeekableReadStream *in, Common::WriteStream *out, SavegameMetadata *meta);
 
 } // End of namespace StarTrek
 

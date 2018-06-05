@@ -19,6 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "common/rect.h"
+#include "common/serializer.h"
+
 #include "startrek/common.h"
 
 namespace StarTrek {
@@ -30,6 +33,13 @@ Common::Rect getRectEncompassing(Common::Rect r1, Common::Rect r2) {
 	uint16 b = max(r1.bottom, r2.bottom);
 
 	return Common::Rect(l,t,r,b);
+}
+
+void serializeRect(Common::Rect rect, Common::Serializer &ser) {
+	ser.syncAsSint16LE(rect.left);
+	ser.syncAsSint16LE(rect.top);
+	ser.syncAsSint16LE(rect.right);
+	ser.syncAsSint16LE(rect.bottom);
 }
 
 }

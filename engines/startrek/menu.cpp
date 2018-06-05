@@ -818,14 +818,6 @@ void StarTrekEngine::chooseMouseBitmapForAction(int action, bool withRedOutline)
 	_gfx->setMouseBitmap(_gfx->loadBitmap(bitmapName));
 }
 
-void StarTrekEngine::showSaveMenu() {
-	// TODO
-}
-
-void StarTrekEngine::showLoadMenu() {
-	// TODO
-}
-
 void StarTrekEngine::showQuitGamePrompt(int x, int y) {
 	const char *options[] = {
 		"Quit Game",

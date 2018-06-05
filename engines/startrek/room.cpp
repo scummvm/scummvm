@@ -319,6 +319,7 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 
 void Room::showGameOverMenu() {
 	_vm->showGameOverMenu();
+	// TODO: shouldn't do this within a room
 }
 
 void Room::playVoc(Common::String filename) {

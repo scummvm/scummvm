@@ -74,11 +74,11 @@ enum Objects {
 
 
 struct Actor {
-	uint16 spriteDrawn;
-	char animationString3[16];
+	bool spriteDrawn;
+	char animFilename[16];
 	uint16 animType;
 	Sprite sprite;
-	char animationString4[10];
+	char bitmapFilename[10];
 	Fixed16 scale;
 	SharedPtr<FileStream> animFile;
 	uint16 numAnimFrames;
@@ -115,8 +115,10 @@ struct Actor {
 
 	uint16 field94;
 	uint16 field96;
-	char animationString[9];
-	uint8  fielda1;
+
+	char animationString[10];
+
+	// These might be part of "animationString"?
 	uint16 fielda2;
 	uint16 fielda4;
 	uint16 fielda6;

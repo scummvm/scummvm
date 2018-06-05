@@ -79,6 +79,12 @@ Sound::~Sound() {
 }
 
 
+void Sound::clearAllMidiSlots() {
+	for (int i=0; i<8; i++) {
+		clearMidiSlot(i);
+	}
+}
+
 /**
  * Plays a midi track as a sound effect (one of midi slots 1-7)
  */
@@ -124,6 +130,12 @@ void Sound::playMidiTrackInSlot(int slot, int track) {
 
 void Sound::loadMusicFile(const Common::String &baseSoundName) {
 	clearAllMidiSlots();
+
+	if (baseSoundName == _loadedMidiFilename)
+		return;
+
+	_loadedMidiFilename = baseSoundName;
+
 	/*
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
 		playAmigaSound(baseSoundName);
@@ -337,12 +349,6 @@ void Sound::clearMidiSlot(int slot) {
 	_midiSlots[slot].midiParser->stopPlaying();
 	_midiSlots[slot].midiParser->unloadMusic();
 	_midiSlots[slot].track = -1;
-}
-
-void Sound::clearAllMidiSlots() {
-	for (int i=0; i<8; i++) {
-		clearMidiSlot(i);
-	}
 }
 
 // Static callback method

@@ -23,6 +23,7 @@
 #ifndef STARTREK_ACTION_H
 #define STARTREK_ACTION_H
 
+#include "common/serializer.h"
 
 enum Acton {
 	ACTION_TICK = 0,
@@ -41,7 +42,7 @@ enum Acton {
 	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
 };
 
-struct Action {
+struct Action : Common::Serializable {
 	byte type;
 	byte b1;
 	byte b2;
@@ -78,6 +79,13 @@ struct Action {
 
 	uint32 toUint32() const {
 		return (type << 24) | (b1 << 16) | (b2 << 8) | (b3 << 0);
+	}
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) {
+		ser.syncAsByte(type);
+		ser.syncAsByte(b1);
+		ser.syncAsByte(b2);
+		ser.syncAsByte(b3);
 	}
 };
 
