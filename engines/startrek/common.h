@@ -22,7 +22,12 @@
 #ifndef STARTREK_COMMON_H
 #define STARTREK_COMMON_H
 
-#include "common/rect.h"
+#include "common/scummsys.h"
+
+namespace Common {
+class Rect;
+class Serializer;
+}
 
 namespace StarTrek {
 
@@ -33,6 +38,7 @@ template<class T>
 T max(T a, T b) { return a > b ? a : b; }
 
 Common::Rect getRectEncompassing(Common::Rect r1, Common::Rect r2);
+void serializeRect(Common::Rect rect, Common::Serializer &ser);
 
 
 // Fixed-point (16.16) number

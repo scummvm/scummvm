@@ -30,6 +30,7 @@
 
 #include "common/ptr.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "common/stream.h"
 
 using Common::SharedPtr;
@@ -41,7 +42,7 @@ namespace StarTrek {
 // the rectangle, but ScummVM rects are not. Functions from Trek have been adapted to use
 // ScummVM's rect format. Be wary of off-by-1 errors...
 
-struct Sprite {
+struct Sprite : Common::Serializable {
 	Common::Point pos;
 	uint16 drawPriority;
 	uint16 drawPriority2; // If two sprites' drawPriorities are equal, this is checked.
@@ -65,6 +66,9 @@ struct Sprite {
 	void dontDrawNextFrame();
 
 	Common::Rect getRect();
+
+	/// NOTE: even after calling this, "bitmap" must be reloaded by the caller.
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 }

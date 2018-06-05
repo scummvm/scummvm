@@ -20,6 +20,7 @@
  *
  */
 
+#include "startrek/common.h"
 #include "startrek/sprite.h"
 
 namespace StarTrek {
@@ -66,6 +67,26 @@ Common::Rect Sprite::getRect() {
 	Common::Rect rect(bitmap->width, bitmap->height);
 	rect.translate(pos.x - bitmap->xoffset, pos.y - bitmap->yoffset);
 	return rect;
+}
+
+void Sprite::saveLoadWithSerializer(Common::Serializer &ser) {
+	ser.syncAsSint16LE(pos.x);
+	ser.syncAsSint16LE(pos.y);
+	ser.syncAsUint16LE(drawPriority);
+	ser.syncAsUint16LE(drawPriority2);
+	ser.syncAsUint16LE(field8);
+	// Note: bitmap must be reloaded
+	ser.syncAsUint16LE(drawMode);
+	ser.syncAsUint16LE(textColor);
+	ser.syncAsUint16LE(bitmapChanged);
+	ser.syncAsUint16LE(rect2Valid);
+	ser.syncAsUint16LE(isOnScreen);
+	ser.syncAsUint16LE(field16);
+	serializeRect(lastDrawRect, ser);
+	serializeRect(drawRect, ser);
+	serializeRect(rectangle2, ser);
+	ser.syncAsSint16LE(drawX);
+	ser.syncAsSint16LE(drawY);
 }
 
 }

@@ -53,6 +53,7 @@ public:
 	Sound(StarTrekEngine *vm);
 	~Sound();
 	
+	void clearAllMidiSlots();
 	void playMidiTrack(int track);
 	void playMidiTrackInSlot(int slot, int track);
 	void loadMusicFile(const Common::String &baseSoundName);
@@ -71,13 +72,11 @@ private:
 	
 	void loadPCMusicFile(const Common::String &baseSoundName);
 	void clearMidiSlot(int slot);
-	void clearAllMidiSlots();
 	
 	// MIDI-Related Variables
 	MidiDriver *_midiDriver;
 	MidiPlaybackSlot _midiSlots[8]; // 0 is for music; 1-7 are for sfx
 	Common::List<MidiPlaybackSlot*> _midiSlotList; // Sorts midi slots by most recently used
-	int _loopingMidiTrack;
 
 	byte *loadedSoundData;
 	uint32 _midiDevice;	
@@ -89,6 +88,8 @@ private:
 
 public:
 	Common::String _loopingAudioName;
+	Common::String _loadedMidiFilename;
+	int _loopingMidiTrack;
 
 private:
 	// Driver callback

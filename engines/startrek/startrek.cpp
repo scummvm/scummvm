@@ -52,6 +52,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics");
+	DebugMan.addDebugChannel(kDebugSavegame, "savegame", "Savegames");
 
 	_gfx = nullptr;
 	_sound = nullptr;
@@ -474,8 +475,8 @@ void StarTrekEngine::updateActorAnimations() {
 					actor->animFile->read(animFrameFilename, 16);
 					sprite->setBitmap(loadAnimationFrame(animFrameFilename, actor->scale));
 
-					memset(actor->animationString4, 0, 10);
-					strncpy(actor->animationString4, animFrameFilename, 9);
+					memset(actor->bitmapFilename, 0, 10);
+					strncpy(actor->bitmapFilename, animFrameFilename, 9);
 
 					actor->animFile->seek(10 + actor->animFrame * 22, SEEK_SET);
 					uint16 xOffset = actor->animFile->readUint16();
@@ -588,7 +589,7 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 	Common::String animFilename = _animName;
 	if (_animName.hasPrefixIgnoreCase("stnd") /* && word_45d20 == -1 */) // TODO
 		animFilename += 'j';
-	memcpy(actor->animationString3, _animName.c_str(), sizeof(actor->animationString3));
+	memcpy(actor->animFilename, _animName.c_str(), sizeof(actor->animFilename));
 
 	actor->animType = 2;
 	actor->animFile = loadFile(animFilename + ".anm");
@@ -611,8 +612,8 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 		_gfx->addSprite(sprite);
 
 	sprite->setBitmap(loadAnimationFrame(firstFrameFilename, scale));
-	memset(actor->animationString4, 0, sizeof(char) * 10);
-	strncpy(actor->animationString4, firstFrameFilename, sizeof(char) * 9);
+	memset(actor->bitmapFilename, 0, sizeof(char) * 10);
+	strncpy(actor->bitmapFilename, firstFrameFilename, sizeof(char) * 9);
 
 	actor->scale = scale;
 
@@ -683,8 +684,8 @@ void StarTrekEngine::updateActorPositionWhileWalking(Actor *actor, int16 x, int1
 	Common::String animName = Common::String::format("%s%02d", actor->animationString2, actor->field92 & 7);
 	actor->sprite.setBitmap(loadAnimationFrame(animName, actor->scale));
 
-	memset(actor->animationString4, 0, 10);
-	strncpy(actor->animationString4, animName.c_str(), 9);
+	memset(actor->bitmapFilename, 0, 10);
+	strncpy(actor->bitmapFilename, animName.c_str(), 9);
 
 	Sprite *sprite = &actor->sprite;
 	sprite->drawPriority = _gfx->getPriValue(0, y);
