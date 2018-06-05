@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-06-03 18:41+0200\n"
-"PO-Revision-Date: 2018-06-03 14:49+0000\n"
+"PO-Revision-Date: 2018-06-05 19:32+0000\n"
 "Last-Translator: Donovan Watteau <tsoomi@gmail.com>\n"
-"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fr/>\n"
+"Language-Team: French "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -79,7 +79,7 @@ msgstr "Choisir"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr "Sélectionner le répertoire dans lequel télécharger les données du jeu"
+msgstr "Sélectionner le répertoire de téléchargement des données du jeu"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:471 gui/launcher.cpp:198
 msgid "Select directory with game data"
@@ -362,8 +362,7 @@ msgstr "Extra :"
 #: gui/editgamedialog.cpp:272 gui/editgamedialog.cpp:274
 #: gui/editgamedialog.cpp:275
 msgid "Specifies path to additional data used by the game"
-msgstr ""
-"Définie un chemin vers des données supplémentaires utilisées par le jeu"
+msgstr "Définit un chemin vers des données supplémentaires utilisées par le jeu"
 
 #: gui/editgamedialog.cpp:274 gui/options.cpp:1515
 msgctxt "lowres"
@@ -3690,7 +3689,7 @@ msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
-"Cette sauvegarde a été créé par une version différente du jeu et ne peut "
+"Cette sauvegarde a été créée par une version différente du jeu et ne peut "
 "être chargée"
 
 #: engines/sci/resource.cpp:822
