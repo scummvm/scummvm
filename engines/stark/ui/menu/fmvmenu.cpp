@@ -33,6 +33,7 @@ FMVMenuScreen::FMVMenuScreen(Gfx::Driver *gfx, Cursor *cursor) :
 }
 
 FMVMenuScreen::~FMVMenuScreen() {
+	freeFMVWidgets();
 }
 
 void FMVMenuScreen::open() {
@@ -67,18 +68,70 @@ void FMVMenuScreen::open() {
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
 
-	_widgets.push_back(new StaticLocationWidget(
-			"FormatRectangle",
-			nullptr,
-			nullptr));
+	_fmvWidgets.push_back(new FMVWidget(_gfx, 0));
+}
 
-	for (int i = 0; i < StarkDiary->countFMV(); ++i) {
-		debug("%s %s", StarkDiary->getFMVFilename(i).c_str(), StarkDiary->getFMVTitle(i).c_str());
+void FMVMenuScreen::close() {
+	freeFMVWidgets();
+	StaticLocationScreen::close();
+}
+
+void FMVMenuScreen::onMouseMove(const Common::Point &pos) {
+	StaticLocationScreen::onMouseMove(pos);
+	for (uint i = 0; i < _fmvWidgets.size(); ++i) {
+		_fmvWidgets[i]->onMouseMove(pos);
+	}
+}
+
+void FMVMenuScreen::onClick(const Common::Point &pos) {
+	StaticLocationScreen::onClick(pos);
+	for (uint i = 0; i < _fmvWidgets.size(); ++i) {
+		if (_fmvWidgets[i]->isMouseInside(pos)) {
+			_fmvWidgets[i]->onClick();
+			return;
+		}
+	}
+}
+
+void FMVMenuScreen::onRender() {
+	StaticLocationScreen::onRender();
+	for (uint i = 0; i < _fmvWidgets.size(); ++i) {
+		_fmvWidgets[i]->render();
 	}
 }
 
 void FMVMenuScreen::backHandler() {
 	StarkUserInterface->backPrevScreen();
+}
+
+void FMVMenuScreen::freeFMVWidgets() {
+	for (uint i = 0; i < _fmvWidgets.size(); ++i) {
+		delete _fmvWidgets[i];
+	}
+	_fmvWidgets.clear();
+}
+
+FMVWidget::FMVWidget(Gfx::Driver *gfx, int index) :
+		_filename(StarkDiary->getFMVFilename(index)),
+		_title(gfx) {
+	_title.setText(StarkDiary->getFMVTitle(index));
+	_title.setColor(0xFF000000);
+	_title.setFont(FontProvider::kCustomFont, 3);
+
+	Common::Rect rect = _title.getRect();
+	_width = rect.right - rect.left;
+
+	_position.x = 202;
+	_position.y = 61 + (index % _fmvPerPage) * 20;
+}
+
+void FMVWidget::onClick() {
+	StarkUserInterface->requestFMVPlayback(_filename);
+}
+
+bool FMVWidget::isMouseInside(const Common::Point &mousePos) const {
+	return mousePos.x >= _position.x && mousePos.x <= _position.x + _width &&
+		   mousePos.y >= _position.y && mousePos.y <= _position.y + _height;
 }
 
 } // End of namespace Stark

@@ -25,7 +25,11 @@
 
 #include "engines/stark/ui/menu/locationscreen.h"
 
+#include "engines/stark/visual/text.h"
+
 namespace Stark {
+
+class FMVWidget;
 
 /**
  * The video replay menu
@@ -37,9 +41,53 @@ public:
 
 	// StaticLocationScreen API
 	void open() override;
+	void close() override;
+
+protected:
+	// Window API
+	void onMouseMove(const Common::Point &pos) override;
+	void onClick(const Common::Point &pos) override;
+	void onRender() override;
 
 private:
+	Common::Array<FMVWidget *> _fmvWidgets;
+
 	void backHandler();
+
+	void freeFMVWidgets();
+};
+
+/**
+ * The widget for FMV entry, specifically built for FMVMenuScreen
+ */
+class FMVWidget {
+public:
+	FMVWidget(Gfx::Driver *gfx, int index);
+	~FMVWidget() {}
+
+	void render() { _title.render(_position); }
+
+	bool isMouseInside(const Common::Point &mousePos) const;
+
+	void onMouseMove(const Common::Point &mousePos) {
+		setTextColor(isMouseInside(mousePos) ? _textColorHovered : _textColorDefault);
+	}
+
+	void onClick();
+
+	void setTextColor(uint32 color) { _title.setColor(color); }
+
+private:
+	const static int _fmvPerPage = 18;
+	const static int _height = 16;
+	static const uint32 _textColorHovered = 0xFF961E1E;
+	static const uint32 _textColorDefault = 0xFF000000;
+
+	Common::String _filename;
+	VisualText _title;
+
+	int _width;
+	Common::Point _position;
 };
 
 } // End of namespace Stark
