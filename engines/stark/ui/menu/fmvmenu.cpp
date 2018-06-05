@@ -24,6 +24,7 @@
 
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/diary.h"
 
 namespace Stark {
 
@@ -70,6 +71,10 @@ void FMVMenuScreen::open() {
 			"FormatRectangle",
 			nullptr,
 			nullptr));
+
+	for (int i = 0; i < StarkDiary->countFMV(); ++i) {
+		debug("%s %s", StarkDiary->getFMVFilename(i).c_str(), StarkDiary->getFMVTitle(i).c_str());
+	}
 }
 
 void FMVMenuScreen::backHandler() {

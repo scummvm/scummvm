@@ -57,6 +57,11 @@ public:
 	/** Add a FMV entry to the list of movies available to play from the diary */
 	void addFMVEntry(const Common::String &filename, const Common::String &title, int gameDisc);
 
+	/** Get info of added FMV entries */
+	int countFMV() { return _fmvEntries.size(); }
+	Common::String &getFMVFilename(int index) { return _fmvEntries[index].filename; }
+	Common::String &getFMVTitle(int index) { return _fmvEntries[index].title; }
+
 	/** Start recording speech lines for a dialog */
 	void openDialog(const Common::String &title, const Common::String &characterName, int32 characterId);
 
