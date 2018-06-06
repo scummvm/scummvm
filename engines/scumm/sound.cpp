@@ -487,9 +487,7 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle) {
 	int num = 0, i;
 	int id = -1;
-#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
 	int size = 0;
-#endif
 	Common::ScopedPtr<ScummFile> file;
 
 	bool _sampleIsPCMS16BE44100 = false;
@@ -595,11 +593,6 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			if (mode == 2 && (_vm->_game.id == GID_INDY4) && (_vm->_language == Common::EN_ANY) && offset == 0x76ccbca) {
 				_sampleIsPCMS16BE44100 = true;
 				size = 86016; // size of speech sample
-			} else {
-#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
-				size = -1;
-#endif
-
 			}
 			offset += 8;
 		}
