@@ -42,6 +42,7 @@ public:
 	// StaticLocationScreen API
 	void open() override;
 	void close() override;
+	void onScreenChanged() override;
 
 protected:
 	// Window API
@@ -50,11 +51,25 @@ protected:
 	void onRender() override;
 
 private:
+	static const int _fmvPerPage = 18;
+
+	enum WidgetIndex {
+		kWidgetPrevious = 3,
+		kWidgetNext = 4
+	};
+
 	Common::Array<FMVWidget *> _fmvWidgets;
 
+	// Count from zero
+	int _page, _maxPage;
+
 	void backHandler();
+	void prevPageHandler() { changePage(_page - 1); }
+	void nextPageHandler() { changePage(_page + 1); }
 
 	void freeFMVWidgets();
+	void loadFMVWidgets(int page);
+	void changePage(int page);
 };
 
 /**
@@ -62,7 +77,7 @@ private:
  */
 class FMVWidget {
 public:
-	FMVWidget(Gfx::Driver *gfx, int index);
+	FMVWidget(Gfx::Driver *gfx, int fmvIndex);
 	~FMVWidget() {}
 
 	void render() { _title.render(_position); }
@@ -76,6 +91,8 @@ public:
 	void onClick();
 
 	void setTextColor(uint32 color) { _title.setColor(color); }
+
+	void onScreenChanged() { _title.resetTexture(); }
 
 private:
 	const static int _fmvPerPage = 18;

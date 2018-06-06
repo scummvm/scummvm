@@ -58,22 +58,30 @@ void FMVMenuScreen::open() {
 
 	_widgets.push_back(new StaticLocationWidget(
 			"PreviousPage",
-			nullptr,
+			CLICK_HANDLER(FMVMenuScreen, prevPageHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
 
 	_widgets.push_back(new StaticLocationWidget(
 			"NextPage",
-			nullptr,
+			CLICK_HANDLER(FMVMenuScreen, nextPageHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
 
-	_fmvWidgets.push_back(new FMVWidget(_gfx, 0));
+	_maxPage = StarkDiary->countFMV() / _fmvPerPage;
+	changePage(0);
 }
 
 void FMVMenuScreen::close() {
 	freeFMVWidgets();
 	StaticLocationScreen::close();
+}
+
+void FMVMenuScreen::onScreenChanged() {
+	StaticLocationScreen::onScreenChanged();
+	for (uint i = 0; i < _fmvWidgets.size(); ++i) {
+		_fmvWidgets[i]->onScreenChanged();
+	}
 }
 
 void FMVMenuScreen::onMouseMove(const Common::Point &pos) {
@@ -111,18 +119,40 @@ void FMVMenuScreen::freeFMVWidgets() {
 	_fmvWidgets.clear();
 }
 
-FMVWidget::FMVWidget(Gfx::Driver *gfx, int index) :
-		_filename(StarkDiary->getFMVFilename(index)),
+void FMVMenuScreen::loadFMVWidgets(int page) {
+	int start = page * _fmvPerPage;
+	int end = start + _fmvPerPage;
+	end = end < StarkDiary->countFMV() ? end : StarkDiary->countFMV();
+
+	for (int i = start; i < end; ++i) {
+		_fmvWidgets.push_back(new FMVWidget(_gfx, i));
+	}
+}
+
+void FMVMenuScreen::changePage(int page) {
+	assert(page >= 0 && page <= _maxPage);
+
+	freeFMVWidgets();
+	loadFMVWidgets(page);
+
+	_widgets[kWidgetPrevious]->setVisible(page > 0);
+	_widgets[kWidgetNext]->setVisible(page < _maxPage);
+
+	_page = page;
+}
+
+FMVWidget::FMVWidget(Gfx::Driver *gfx, int fmvIndex) :
+		_filename(StarkDiary->getFMVFilename(fmvIndex)),
 		_title(gfx) {
-	_title.setText(StarkDiary->getFMVTitle(index));
-	_title.setColor(0xFF000000);
+	_title.setText(StarkDiary->getFMVTitle(fmvIndex));
+	_title.setColor(_textColorDefault);
 	_title.setFont(FontProvider::kCustomFont, 3);
 
 	Common::Rect rect = _title.getRect();
 	_width = rect.right - rect.left;
 
 	_position.x = 202;
-	_position.y = 61 + (index % _fmvPerPage) * 20;
+	_position.y = 61 + (fmvIndex % _fmvPerPage) * 20;
 }
 
 void FMVWidget::onClick() {
