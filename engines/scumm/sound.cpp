@@ -492,6 +492,8 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #endif
 	Common::ScopedPtr<ScummFile> file;
 
+	bool _sampleIsPCMS16BE44100 = false;
+
 	if (_vm->_game.id == GID_CMI) {
 		_sfxMode |= mode;
 		return;
@@ -584,10 +586,22 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			size = result->compressed_size;
 #endif
 		} else {
-			offset += 8;
+			// WORKAROUND: Original Indy4 MONSTER.SOU bug
+			// The speech sample at VCTL offset 0x76ccbca ("Hey you!") which is used
+			// when Indy gets caught on the German submarine seems to not be a VOC
+			// but raw PCM s16be at (this is a guess) 44.1 kHz with a bogus VOC header.
+			// To work around this we skip the VOC header and decode the raw PCM data.
+			// Fixes Trac#10559
+			if (mode == 2 && (_vm->_game.id == GID_INDY4) && (_vm->_language == Common::EN_ANY) && offset == 0x76ccbca) {
+				_sampleIsPCMS16BE44100 = true;
+				size = 86016; // size of speech sample
+			} else {
 #if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
-			size = -1;
+				size = -1;
 #endif
+
+			}
+			offset += 8;
 		}
 
 		file.reset(new ScummFile());
@@ -650,7 +664,12 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #endif
 			break;
 		default:
-			input = Audio::makeVOCStream(file.release(), Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+			if (_sampleIsPCMS16BE44100) {
+				offset += 32; // size of VOC header
+				input = Audio::makeRawStream(new Common::SeekableSubReadStream(file.release(), offset, offset + size, DisposeAfterUse::YES), 44100, Audio::FLAG_16BITS, DisposeAfterUse::YES);
+			} else {
+				input = Audio::makeVOCStream(file.release(), Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+			}
 			break;
 		}
 
