@@ -24,6 +24,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented lipsync for v6 and v7+ games.
    - Improved Audio quality in Humongous Entertainment games by using the Miles AdLib driver.
    - Fixed possible stack overflows in The Dig and Full Throttle.
+   - Fixed original speech glitch on submarine in Indiana Jones and the Fate of Atlantis.
+     Users need to recompress their monster.sou using an up-to-date version of scummvm-tools
+     for this to take effect when using compressed audio.
 
  Tinsel:
    - Fix loading Discworld 1 savegames from the launcher where Rincewind had a held item
