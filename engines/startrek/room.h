@@ -471,6 +471,70 @@ public:
 	void demon6KirkReachedCase();
 	int demon6ShowCase(int visible);
 
+	// TUG0
+	void tug0Tick1();
+	void tug0LookAtEngineer();
+	void tug0GetEngineer();
+	void tug0LookAtControls();
+	void tug0UseSpockOnControls();
+	void tug0SpockReachedControlsToExamine();
+	void tug0SpockExaminedControls();
+	void tug0UseTransmogrifierWithoutBitOnControls();
+	void tug0UseTransmogrifierWithBitOnControls();
+	void tug0SpockReachedControlsWithTransmogrifier();
+	void tug0SpockFinishedUsingTransmogrifier();
+	void tug0TransporterScreenFullyLit();
+	void tug0UseWireScrapsOnControls();
+	void tug0UseWireOnControls();
+	void tug0SpockReachedControlsWithWire();
+	void tug0SpockFinishedUsingWire();
+	void tug0UseMedkitOnEngineer();
+	void tug0MccoyReachedEngineer();
+	void tug0MccoyHealedEngineer();
+	void tug0EngineerGotUp();
+	void tug0GetTransmogrifier();
+	void tug0KirkReachedToolbox();
+	void tug0KirkGotTransmogrifier();
+	void tug0LookAtToolbox();
+	void tug0UsePhaserOnWelder();
+	void tug0UseWelderOnWireScraps();
+	void tug0UseWelderOnMetalScraps();
+	void tug0UseCombBitOnTransmogrifier();
+	void tug0UseTransporter();
+	void tug0SpockReachedControlsToTransport();
+	void tug0SpockPreparedTransporter();
+	void tug0SpockReachedTransporter();
+	void tug0FinishedTransporting();
+	void tug0UseBombOnTransporter();
+	void tug0KirkReachedTransporter();
+	void tug0KirkPlacedBomb();
+	void tug0SpockReachedControlsForBomb();
+	void tug0SpockBeginsBeamingBomb();
+	void tug0SpockFinishesBeamingBomb();
+	void tug0BombExploded();
+	void tug0UseMTricorderOnControls();
+	void tug0UseSTricorderOnControls();
+	void tug0UseMTricorderOnEngineer();
+	void tug0MccoyReachedEngineerToScan();
+	void tug0MccoyFinishedScanningEngineer();
+	void tug0UseSTricorderOnEngineer();
+	void tug0WalkToDoor();
+	void tug0LookAtKirk();
+	void tug0LookAtSpock();
+	void tug0LookAtMccoy();
+	void tug0LookAtRedshirt();
+	void tug0LookAtTransporter();
+	void tug0LookAtDoor();
+	void tug0TalkToKirk();
+	void tug0TalkToMccoy();
+	void tug0TalkToSpock();
+	void tug0TalkToRedshirt();
+	void tug0TalkToEngineer();
+	void tug0UseCommunicator();
+	void tug0LookAnywhere();
+	void tug0UseSTricorderAnywhere();
+	void tug0UseMTricorderAnywhere();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {

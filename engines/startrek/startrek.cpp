@@ -80,7 +80,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_textboxVar6 = 0;
 	_textboxHasMultipleChoices = false;
 
-	_missionToLoad = "DEMON";
+	_missionToLoad = "TUG";
 	_roomIndexToLoad = 0;
 
 	for (int i = 0; i < NUM_OBJECTS; i++)
