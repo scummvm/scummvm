@@ -24,6 +24,7 @@
 #include "illusions/actor.h"
 #include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/menusystem_duckman.h"
+#include "illusions/resources/scriptresource.h"
 
 namespace Illusions {
 
@@ -83,6 +84,10 @@ BaseMenu *DuckmanMenuSystem::createMenuById(int menuId) {
 		return createSaveCompleteMenu();
 	case kDuckmanOptionsMenu:
 		return createOptionsMenu();
+	case kDuckmanDebugMenu:
+		return createDebugMenu();
+		case kDuckmanAddRemoveInventoryMenu:
+			return createAddRemoveInventoryMenu();
 	default:
 		error("DuckmanMenuSystem::createMenuById() Invalid menu id %d", menuId);
 	}
@@ -148,12 +153,64 @@ BaseMenu *DuckmanMenuSystem::createSaveCompleteMenu() {
 	return menu;
 }
 
+BaseMenu *DuckmanMenuSystem::createDebugMenu() {
+	BaseMenu *menu = new BaseMenu(this, 0x00120002, 0, 0, 0, 17, 1);
+	menu->addText("Debug Pause Menu");
+	menu->addText("-----------------");
+	menu->addMenuItem(new MenuItem("Return to Game", new MenuActionReturnChoice(this, 1)));
+	menu->addMenuItem(new MenuItem("Add/Remove Inventory", new MenuActionEnterMenu(this, kDuckmanAddRemoveInventoryMenu)));
+	return menu;
+}
+typedef struct InventoryMenuItem {
+	const char *name;
+	uint32 objectId;
+	uint32 sequenceId;
+	uint32 propertyId;
+} InventoryMenuItem;
+
+static const InventoryMenuItem kDebugInventoryItems[21] =
+{
+	{ "Pick-up Book", 262212, 393231, 917519 },
+	{ "Bucket and Squeegee", 262314, 393233, 917599 },
+	{ "Cardboard Cut Out", 262219, 393264, 917573 },
+	{ "Talking Doll", 262209, 393943, 917587 },
+	{ "Cookie Fortunes", 262263, 393266, 917520 },
+	{ "Garbage Can Lid", 262311, 393259, 917597 },
+	{ "Chewing Gum", 262210, 393267, 917522 },
+	{ "Ladder", 262155, 393258, 917598 },
+	{ "Disco Light", 262342, 393260, 917594 },
+	{ "Magazine Cover", 262185, 393261, 917517 },
+	{ "Matches", 262159, 393232, 917516 },
+	{ "Opera Lessons", 262293, 393731, 917600 },
+	{ "Pizza Card", 262239, 393262, 917526 },
+	{ "Toilet Plunger", 262282, 393257, 917555 },
+	{ "Black Velvet Poster", 262258, 393269, 917527 },
+	{ "Red Spray Paint", 262297, 393254, 917531 },
+	{ "Remote Control", 262161, 393255, 917595 },
+	{ "Sparkplug", 262294, 393256, 917532 },
+	{ "Tape Recorder", 262328, 393827, 917584 },
+	{ "Wacky Putty", 262228, 393559, 917537 },
+	{ "Wrench", 262175, 393422, 917530 }
+};
+
+BaseMenu *DuckmanMenuSystem::createAddRemoveInventoryMenu() {
+	BaseMenu *menu = new BaseMenu(this, 0x00120002, 0, 0, 0, 17, 1);
+	menu->addText("Add/Remove Inventory");
+	menu->addText("-----------------");
+	for(int i=0;i < 21;i++) {
+		menu->addMenuItem(new MenuItem(kDebugInventoryItems[i].name, new MenuActionInventoryAddRemove(this, _vm, i)));
+	}
+	return menu;
+}
+
 int DuckmanMenuSystem::convertRootMenuId(uint32 menuId) {
 	switch (menuId) {
 	case 0x180001:
 		return kDuckmanMainMenu;
 	case 0x180002:
 		return kDuckmanPauseMenu;
+	case 0x180004:
+		return kDuckmanDebugMenu;
 	case 0x180005:
 		return kDuckmanSaveCompleteMenu;
 	/*
@@ -196,6 +253,22 @@ void DuckmanMenuSystem::setMenuCursorNum(int cursorNum) {
 
 void DuckmanMenuSystem::setGameState(int gameState) {
 	_vm->_cursor._gameState = gameState;
+}
+
+MenuActionInventoryAddRemove::MenuActionInventoryAddRemove(BaseMenuSystem *menuSystem, IllusionsEngine_Duckman *vm, uint choiceIndex)
+		: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex), _vm(vm) {
+}
+
+void MenuActionInventoryAddRemove::execute() {
+	if (_vm->_scriptResource->_properties.get(kDebugInventoryItems[_choiceIndex].propertyId)) {
+		//TODO stop holding object in cursor.
+		_vm->_scriptResource->_properties.set(kDebugInventoryItems[_choiceIndex].propertyId, false);
+	} else {
+		_vm->startCursorHoldingObject(kDebugInventoryItems[_choiceIndex].objectId,
+									  kDebugInventoryItems[_choiceIndex].sequenceId);
+		_vm->_scriptResource->_properties.set(kDebugInventoryItems[_choiceIndex].propertyId, true);
+	}
+	_menuSystem->leaveMenu();
 }
 
 } // End of namespace Illusions

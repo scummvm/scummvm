@@ -89,7 +89,9 @@ public:
 	void setCursorPosition(Common::Point mousePos);
 	Common::Point getCursorDelta();
 	InputEvent& setInputEvent(uint evt, uint bitMask);
+	bool isCheatModeActive();
 protected:
+	uint _cheatCodeIndex;
 	uint _buttonStates, _newButtons, _buttonsDown;
 	uint _enabledButtons;
 	uint _newKeys;

@@ -261,10 +261,8 @@ void IllusionsEngine_Duckman::initInput() {
 	_input->setInputEvent(kEventDown, 0x80)
 		.addMouseButton(MOUSE_RIGHT_BUTTON)
 		.addKey(Common::KEYCODE_DOWN);
-#if 1 //TODO hide behind "gosanta" code
 	_input->setInputEvent(kEventF1, 0x100)
 		.addKey(Common::KEYCODE_F1);
-#endif
 }
 
 #define UPDATEFUNCTION(priority, sceneId, callback) \
@@ -288,7 +286,7 @@ int IllusionsEngine_Duckman::updateScript(uint flags) {
 	if (_screen->isDisplayOn() && !_screenPalette->isFaderActive() && _pauseCtr == 0) {
 		if (_input->pollEvent(kEventAbort)) {
 			startScriptThread(0x00020342, 0);
-		} else if (_input->pollEvent(kEventF1)) {
+		} else if (_input->isCheatModeActive() && _input->pollEvent(kEventF1)) {
 			startScriptThread(0x0002033F, 0);
 		}
 	}

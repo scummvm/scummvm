@@ -183,7 +183,7 @@ void ActorInstance::load(Resource *resource) {
 	_actorResource->load(resource);
 	_sceneId = resource->_sceneId;
 	_pauseCtr = 0;
-	initActorTypes();
+	initActorTypes(resource->_gameId);
 }
 
 void ActorInstance::unload() {
@@ -205,7 +205,7 @@ void ActorInstance::unpause() {
 		registerResources();
 }
 
-void ActorInstance::initActorTypes() {
+void ActorInstance::initActorTypes(int gameId) {
 	for (uint i = 0; i < _actorResource->_actorTypes.size(); ++i) {
 		ActorType *actorType = &_actorResource->_actorTypes[i];
 		ActorType *actorType2 = _vm->_dict->findActorType(actorType->_actorTypeId);
@@ -224,7 +224,8 @@ void ActorInstance::initActorTypes() {
 	for (uint i = 0; i < _actorResource->_sequences.size(); ++i) {
 		Sequence *sequence = &_actorResource->_sequences[i];
 		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
-		if (sequence->_sequenceId == 0x60101) {
+		if (gameId == kGameIdDuckman && sequence->_sequenceId == 0x60101) {
+			// TODO check that this is the correct location for this logic.
 			_vm->_controls->placeActor(0x50023, Common::Point(0,0), sequence->_sequenceId, 0x400d7, 0);
 		}
 	}

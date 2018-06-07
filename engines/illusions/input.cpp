@@ -81,6 +81,7 @@ uint InputEvent::handle(Common::KeyCode key, int mouseButton, bool down) {
 // Input
 
 const uint kAllButtons = 0xFFFF;
+static const char kCheatCode[] = "gosanta";
 
 Input::Input() {
 	_buttonStates = 0;
@@ -92,6 +93,7 @@ Input::Input() {
 	_cursorPos.y = 0;
 	_prevCursorPos.x = 0;
 	_prevCursorPos.y = 0;
+	_cheatCodeIndex = 0;
 }
 
 void Input::processEvent(Common::Event event) {
@@ -177,6 +179,14 @@ void Input::handleKey(Common::KeyCode key, int mouseButton, bool down) {
 	_buttonStates |= _newKeys;
 	_newKeys = 0;
 	_newButtons = ~prevButtonStates & _buttonStates;
+
+	if ( !down && !isCheatModeActive() ) {
+		if( _cheatCodeIndex < 7 && key == kCheatCode[_cheatCodeIndex] ) {
+			_cheatCodeIndex++;
+		} else {
+			_cheatCodeIndex = 0;
+		}
+	}
 }
 
 void Input::handleMouseButton(int mouseButton, bool down) {
@@ -209,6 +219,10 @@ void Input::setButtonState(uint bitMask) {
 
 void Input::discardButtons(uint bitMask) {
 	_buttonStates &= ~bitMask;
+}
+
+bool Input::isCheatModeActive() {
+	return _cheatCodeIndex == 7;
 }
 
 } // End of namespace Illusions

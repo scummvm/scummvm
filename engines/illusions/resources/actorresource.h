@@ -105,8 +105,8 @@ public:
 	int _pauseCtr;
 	ActorResource *_actorResource;
 protected:
-	void initActorTypes();
-	void registerResources();	
+	void initActorTypes(int gameId);
+	void registerResources();
 	void unregisterResources();	
 };
 
