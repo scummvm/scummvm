@@ -157,7 +157,7 @@ void Room::demon0TalkToPrelate() {
 	if (_vm->_awayMission.demon.talkedToPrelate)
 		return;
 
-	_vm->_awayMission.missionScore += 3;
+	_vm->_awayMission.demon.missionScore += 3;
 	_vm->_awayMission.demon.talkedToPrelate = true;
 
 	const int *response = nullptr;
@@ -330,7 +330,7 @@ void Room::demon0BadResponse() {
 	if (_vm->_awayMission.demon.wasRudeToPrelate)
 		return;
 
-	_vm->_awayMission.missionScore -= 3;
+	_vm->_awayMission.demon.missionScore -= 3;
 	_vm->_awayMission.demon.wasRudeToPrelate = true;
 
 	showText(TX_SPEAKER_ANGIVEN, TX_DEM0_033);

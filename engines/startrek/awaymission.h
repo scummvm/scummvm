@@ -92,10 +92,9 @@ struct AwayMission {
 			bool lookedAtComputer; // 0x55
 			byte field56; // 0x56
 			bool foundAlienRoom; // 0x57
+			int16 missionScore; // 0x58
 		} demon;
 	};
-
-	int16 missionScore; // 0x58
 };
 // Size: 0x129 bytes
 

@@ -139,7 +139,7 @@ void Room::demon6LookAtComputer() {
 	showText(TX_DEM6N006);
 	if (!_vm->_awayMission.demon.lookedAtComputer) {
 		_vm->_awayMission.demon.lookedAtComputer = true;
-		_vm->_awayMission.missionScore++;
+		_vm->_awayMission.demon.missionScore++;
 	}
 }
 
@@ -202,7 +202,7 @@ void Room::demon6FinishedMakingHypoDytoxin() {
 
 	if (!_vm->_awayMission.demon.gavePointsForDytoxin) {
 		_vm->_awayMission.demon.gavePointsForDytoxin = true;
-		_vm->_awayMission.missionScore++;
+		_vm->_awayMission.demon.missionScore++;
 	}
 }
 
@@ -224,7 +224,7 @@ void Room::demon6SpockReachedWorkspace() {
 void Room::demon6SpockFinishedRepairingHand() {
 	showText(TX_SPEAKER_SPOCK, TX_DEM6_024);
 	_vm->_awayMission.demon.repairedHand = true;
-	_vm->_awayMission.missionScore += 2;
+	_vm->_awayMission.demon.missionScore += 2;
 	loadActorStandAnim(OBJECT_SPOCK);
 	_vm->_awayMission.disableInput = false;
 }
