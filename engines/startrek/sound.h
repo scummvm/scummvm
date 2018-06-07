@@ -38,6 +38,27 @@ namespace StarTrek {
 class StarTrekEngine;
 
 
+// Sound effects for "playSoundEffectIndex" function
+enum SoundEffects {
+	SND_TRICORDER = 4,
+	SND_DOOR1 = 5,
+	SND_PHASSHOT = 6,
+	SND_07 = 7,
+	SND_TRANSDEM = 8,
+	SND_TRANSMAT = 9,
+	SND_TRANSENE = 0x0a,
+	SND_BLANK_0b = 0x0b,
+	SND_SELECTION = 0x10,
+	SND_BLANK_14 = 0x14,
+	SND_HAILING = 0x22,
+	SND_PHASSHOT_2 = 0x24,
+	SND_PHOTSHOT = 0x25,
+	SND_HITSHIEL = 0x26,
+	SND_27 = 0x27,
+	SND_REDALERT = 0x28,
+	SND_WARP = 0x29
+};
+
 // Max # of VOC files that can play at once
 const int MAX_SFX_PLAYING = 4;
 

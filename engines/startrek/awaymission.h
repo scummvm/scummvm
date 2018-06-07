@@ -94,6 +94,19 @@ struct AwayMission {
 			bool foundAlienRoom; // 0x57
 			int16 missionScore; // 0x58
 		} demon;
+
+		// Hijacked
+		struct {
+			int16 missionScore; // 0x29
+			int16 field2b; // 0x2b
+			int16 field2d; // 0x2d;
+			bool engineerConscious; // 0x30
+			bool gotTransmogrifier; // 0x43
+			bool transporterRepaired; // 0x44
+			bool spockExaminedTransporter; // 0x45
+			bool usedTransmogrifierOnTransporter; // 0x46
+			bool haveBomb; // 0x49
+		} tug;
 	};
 };
 // Size: 0x129 bytes
