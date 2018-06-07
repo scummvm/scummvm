@@ -32,6 +32,8 @@ enum {
 	kDuckmanLoadGameMenu,
 	kDuckmanOptionsMenu,
 	kDuckmanPauseMenu,
+	kDuckmanDebugMenu,
+	kDuckmanAddRemoveInventoryMenu,
 	kDuckmanQueryQuitMenu,
 	kDuckmanQueryRestartMenu,
 	kDuckmanSaveCompleteMenu,
@@ -60,11 +62,22 @@ public://protected:
 	BaseMenu *createQueryRestartMenu();
 	BaseMenu *createQueryQuitMenu();
 	BaseMenu *createSaveCompleteMenu();
+	BaseMenu *createDebugMenu();
+	BaseMenu *createAddRemoveInventoryMenu();
 	int convertRootMenuId(uint32 menuId);
 	virtual bool initMenuCursor();
 	virtual int getGameState();
 	virtual void setGameState(int gameState);
 	virtual void setMenuCursorNum(int cursorNum);
+};
+
+class MenuActionInventoryAddRemove : public BaseMenuAction {
+public:
+	MenuActionInventoryAddRemove(BaseMenuSystem *menuSystem, IllusionsEngine_Duckman *vm, uint choiceIndex);
+	virtual void execute();
+protected:
+	IllusionsEngine_Duckman *_vm;
+	int _choiceIndex;
 };
 
 } // End of namespace Illusions
