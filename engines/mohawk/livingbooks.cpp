@@ -170,6 +170,10 @@ MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {
 Common::Error MohawkEngine_LivingBooks::run() {
 	MohawkEngine::run();
 
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
+
 	_console = new LivingBooksConsole(this);
 	// Load the book info from the detected file
 	loadBookInfo(getBookInfoFileName());

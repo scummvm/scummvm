@@ -347,6 +347,10 @@ void MohawkEngine_Myst::playSoundBlocking(uint16 id) {
 Common::Error MohawkEngine_Myst::run() {
 	MohawkEngine::run();
 
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
+
 	_gfx = new MystGraphics(this);
 	_video = new VideoManager(this);
 	_sound = new MystSound(this);

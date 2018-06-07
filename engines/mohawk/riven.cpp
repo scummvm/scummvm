@@ -114,6 +114,10 @@ GUI::Debugger *MohawkEngine_Riven::getDebugger() {
 Common::Error MohawkEngine_Riven::run() {
 	MohawkEngine::run();
 
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
+
 	// Let's try to open the installer file (it holds extras.mhk)
 	// Though, we set a low priority to prefer the extracted version
 	if (_installerArchive.open("arcriven.z"))

@@ -35,9 +35,6 @@
 namespace Mohawk {
 
 MohawkEngine::MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc) {
-	if (!_mixer->isReady())
-		error ("Sound initialization failed");
-
 	// Setup mixer
 	syncSoundSettings();
 
