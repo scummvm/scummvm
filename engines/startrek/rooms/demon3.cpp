@@ -90,7 +90,7 @@ void Room::demon3Timer3Expired() {
 		loadActorAnim(14, "door", 0x82, 0xc, 0);
 		loadMapFile("demon3");
 		_vm->_awayMission.demon.doorOpened = true;
-		_vm->_awayMission.missionScore += 2;
+		_vm->_awayMission.demon.missionScore += 2;
 	}
 	else {
 		showText(TX_DEM3N007);
@@ -457,7 +457,7 @@ void Room::demon3McCoyFinishedHealingMiner() {
 		showText(TX_SPEAKER_MCCOY, TX_DEM3_021);
 		_vm->_awayMission.demon.healedMiner = true;
 		loadActorAnim2(13, "drmine", 0xda, 0x6c, 0);
-		_vm->_awayMission.missionScore += 2;
+		_vm->_awayMission.demon.missionScore += 2;
 		walkCrewman(OBJECT_MCCOY, 0x104, 0x96, 0);
 	}
 }

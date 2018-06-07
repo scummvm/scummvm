@@ -167,7 +167,7 @@ void Room::demon2PickedUpBerries() {
 	showText(TX_DEM2N013);
 	giveItem(OBJECT_IBERRY);
 	_vm->_awayMission.demon.gotBerries = true;
-	_vm->_awayMission.missionScore += 1;
+	_vm->_awayMission.demon.missionScore += 1;
 }
 
 }

@@ -435,7 +435,7 @@ void Room::demon1ReachedHand() {
 
 void Room::demon1PickedUpHand() {
 	loadActorStandAnim(13);
-	_vm->_awayMission.missionScore += 3;
+	_vm->_awayMission.demon.missionScore += 3;
 	loadActorStandAnim(OBJECT_KIRK);
 	_vm->_awayMission.timers[4] = 2;
 }

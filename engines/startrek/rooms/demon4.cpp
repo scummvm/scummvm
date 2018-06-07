@@ -77,7 +77,7 @@ void Room::demon4FinishedAnimation3() {
 	showText(TX_SPEAKER_SPOCK,  TX_DEM4_030);
 
 	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.missionScore += 5;
+	_vm->_awayMission.demon.missionScore += 5;
 	_vm->_awayMission.timers[1] = 20;
 }
 
@@ -109,11 +109,11 @@ void Room::demon4CrewmanReachedBeamoutPosition() {
 		return;
 
 	if (!_vm->_awayMission.demon.insultedStephen)
-		_vm->_awayMission.missionScore += 3;
+		_vm->_awayMission.demon.missionScore += 3;
 	if (!_vm->_awayMission.redshirtDead)
-		_vm->_awayMission.missionScore += 2;
+		_vm->_awayMission.demon.missionScore += 2;
 
-	endMission(_vm->_awayMission.missionScore, 0x24, 0);
+	endMission(_vm->_awayMission.demon.missionScore, 0x24, 0);
 }
 
 void Room::demon4Timer2Expired() {
@@ -175,7 +175,7 @@ void Room::demon4UseMetalOnNauian() {
 void Room::demon4KirkReachedNauian() {
 	loadActorAnim2(8, "usekey", 0x107, 0x8e, 3);
 	loseItem(OBJECT_IMETAL);
-	_vm->_awayMission.missionScore += 2;
+	_vm->_awayMission.demon.missionScore += 2;
 	_vm->_awayMission.demon.itemsTakenFromCase &= ~1;
 }
 
@@ -191,7 +191,7 @@ void Room::demon4KirkReachedNauianWithSkull() {
 
 	switch (choice) {
 	case 0:
-		_vm->_awayMission.missionScore++;
+		_vm->_awayMission.demon.missionScore++;
 		loadActorAnim2(8, "takesk", 0x107, 0x8e, 0);
 		loseItem(OBJECT_ISKULL);
 		_vm->_awayMission.demon.itemsTakenFromCase &= ~16; // BUG: skull reappears in case? Can abuse for infinite ponits?
@@ -277,7 +277,7 @@ void Room::demon4TalkToNauian() {
 			showText(TX_SPEAKER_SPOCK,  TX_DEM4_030);
 
 			_vm->_awayMission.disableInput = true;
-			_vm->_awayMission.missionScore += 5;
+			_vm->_awayMission.demon.missionScore += 5;
 			_vm->_awayMission.timers[1] = 20;
 		}
 		else {
@@ -365,7 +365,7 @@ void Room::demon4CrewmanReachedPanel() {
 	if (demon4ShowSunPuzzle()) {
 		_vm->_awayMission.demon.solvedSunPuzzle = true;
 		loadActorAnim(9, "ctrl", 0, 0, 0);
-		_vm->_awayMission.missionScore += 3;
+		_vm->_awayMission.demon.missionScore += 3;
 		_vm->_awayMission.timers[0] = 10;
 	}
 	else

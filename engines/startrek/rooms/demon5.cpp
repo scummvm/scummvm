@@ -95,7 +95,7 @@ void Room::demon5MccoyHealedChub() {
 	showText(TX_SPEAKER_CHUB, TX_DEM5L027);
 	loseItem(OBJECT_IDETOXIN);
 	_vm->_awayMission.demon.curedChub = true;
-	_vm->_awayMission.missionScore += 2;
+	_vm->_awayMission.demon.missionScore += 2;
 }
 
 void Room::demon5UseHypoDytoxinOnAnything() {
