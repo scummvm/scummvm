@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-03 18:41+0200\n"
+"POT-Creation-Date: 2018-06-07 20:28+0200\n"
 "PO-Revision-Date: 2018-06-04 06:52+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
-"Language-Team: German "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
+"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -686,7 +686,7 @@ msgid "Search:"
 msgstr "Suchen:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:549
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:553
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -696,7 +696,7 @@ msgstr "Spiel laden:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
-#: engines/mohawk/riven.cpp:549 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:553 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -1745,51 +1745,55 @@ msgstr "Spiel-ID nicht unterstützt"
 msgid "Unsupported color mode"
 msgstr "Farbmodus nicht unterstützt"
 
-#: common/error.cpp:47
+#: common/error.cpp:46
+msgid "Audio device initialization failed"
+msgstr ""
+
+#: common/error.cpp:49
 msgid "Read permission denied"
 msgstr "Lese-Berechtigung nicht vorhanden"
 
-#: common/error.cpp:49
+#: common/error.cpp:51
 msgid "Write permission denied"
 msgstr "Schreib-Berechtigung nicht vorhanden"
 
-#: common/error.cpp:52
+#: common/error.cpp:54
 msgid "Path does not exist"
 msgstr "Verzeichnis existiert nicht"
 
-#: common/error.cpp:54
+#: common/error.cpp:56
 msgid "Path not a directory"
 msgstr "Pfad ist kein Verzeichnis"
 
-#: common/error.cpp:56
+#: common/error.cpp:58
 msgid "Path not a file"
 msgstr "Pfad ist keine Datei"
 
-#: common/error.cpp:59
+#: common/error.cpp:61
 msgid "Cannot create file"
 msgstr "Kann Datei nicht erstellen"
 
-#: common/error.cpp:61
+#: common/error.cpp:63
 msgid "Reading data failed"
 msgstr "Daten konnten nicht gelesen werden"
 
-#: common/error.cpp:63
+#: common/error.cpp:65
 msgid "Writing data failed"
 msgstr "Daten konnten nicht geschrieben werden"
 
-#: common/error.cpp:66
+#: common/error.cpp:68
 msgid "Could not find suitable engine plugin"
 msgstr "Konnte kein passendes Engine-Plugin finden"
 
-#: common/error.cpp:68
+#: common/error.cpp:70
 msgid "Engine plugin does not support saved games"
 msgstr "Engine-Plugin unterstützt keine Spielstände"
 
-#: common/error.cpp:71
+#: common/error.cpp:73
 msgid "User canceled"
 msgstr "Abbruch durch Benutzer"
 
-#: common/error.cpp:75
+#: common/error.cpp:77
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
 
@@ -1876,7 +1880,7 @@ msgstr "Zur Spiele~l~iste"
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
-#: engines/mohawk/riven.cpp:561 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/riven.cpp:565 engines/neverhood/menumodule.cpp:880
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:658
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
@@ -1896,7 +1900,7 @@ msgstr "Speichern:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:106 engines/mohawk/riven.cpp:561
+#: engines/mohawk/dialogs.cpp:106 engines/mohawk/riven.cpp:565
 #: engines/neverhood/menumodule.cpp:880 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:659
 #: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
@@ -3382,11 +3386,11 @@ msgstr "Normal"
 msgid "Best"
 msgstr "Beste"
 
-#: engines/mohawk/mohawk.cpp:58
+#: engines/mohawk/mohawk.cpp:55
 msgid "The game is paused. Press any key to continue."
 msgstr "Das Spiel ist pausiert. Zum Weiterspielen beliebige Taste drücken."
 
-#: engines/mohawk/riven.cpp:150
+#: engines/mohawk/riven.cpp:154
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
@@ -3394,7 +3398,7 @@ msgstr ""
 "Ihnen fehlt eine Programmdatei von Riven. Die Windows-Programmdatei ist "
 "'riven.exe' oder 'rivendmo.exe'. "
 
-#: engines/mohawk/riven.cpp:151
+#: engines/mohawk/riven.cpp:155
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
@@ -3402,7 +3406,7 @@ msgstr ""
 "Die Installationsdatei 'arcriven.z' kann ebenfalls verwendet werden. "
 "Zusätzlich können Sie auch die Mac-Programmdatei 'Riven' verwenden."
 
-#: engines/mohawk/riven.cpp:162
+#: engines/mohawk/riven.cpp:166
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
@@ -3410,7 +3414,7 @@ msgstr ""
 "Die Datei 'extras.mhk' fehlt. Sie können auch die Installationsdatei "
 "'arcriven.z verwenden."
 
-#: engines/mohawk/riven.cpp:448
+#: engines/mohawk/riven.cpp:452
 msgid "You are missing the following required Riven data files:\n"
 msgstr "Ihnen fehlen die folgenden Spieldateien für Riven:\n"
 

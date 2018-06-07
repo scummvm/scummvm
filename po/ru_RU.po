@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-03 18:41+0200\n"
+"POT-Creation-Date: 2018-06-07 20:28+0200\n"
 "PO-Revision-Date: 2018-04-18 10:17+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -680,7 +680,7 @@ msgid "Search:"
 msgstr "Поиск:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:549
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:553
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -690,7 +690,7 @@ msgstr "Загрузить игру:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
-#: engines/mohawk/riven.cpp:549 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:553 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -1724,51 +1724,55 @@ msgstr "Game id не поддерживается"
 msgid "Unsupported color mode"
 msgstr "Неподдерживаемый режим цвета"
 
-#: common/error.cpp:47
+#: common/error.cpp:46
+msgid "Audio device initialization failed"
+msgstr ""
+
+#: common/error.cpp:49
 msgid "Read permission denied"
 msgstr "Недостаточно прав для чтения"
 
-#: common/error.cpp:49
+#: common/error.cpp:51
 msgid "Write permission denied"
 msgstr "Недостаточно прав для записи"
 
-#: common/error.cpp:52
+#: common/error.cpp:54
 msgid "Path does not exist"
 msgstr "Путь не найден"
 
-#: common/error.cpp:54
+#: common/error.cpp:56
 msgid "Path not a directory"
 msgstr "Путь не является директорией"
 
-#: common/error.cpp:56
+#: common/error.cpp:58
 msgid "Path not a file"
 msgstr "Путь не является файлом"
 
-#: common/error.cpp:59
+#: common/error.cpp:61
 msgid "Cannot create file"
 msgstr "Не могу создать файл"
 
-#: common/error.cpp:61
+#: common/error.cpp:63
 msgid "Reading data failed"
 msgstr "Ошибка чтения данных"
 
-#: common/error.cpp:63
+#: common/error.cpp:65
 msgid "Writing data failed"
 msgstr "Ошибка записи данных"
 
-#: common/error.cpp:66
+#: common/error.cpp:68
 msgid "Could not find suitable engine plugin"
 msgstr "Не могу найти подходящий плагин для движка"
 
-#: common/error.cpp:68
+#: common/error.cpp:70
 msgid "Engine plugin does not support saved games"
 msgstr "Движок не поддерживает сохранение игр"
 
-#: common/error.cpp:71
+#: common/error.cpp:73
 msgid "User canceled"
 msgstr "Прервано пользователем"
 
-#: common/error.cpp:75
+#: common/error.cpp:77
 msgid "Unknown error"
 msgstr "Неизвестная ошибка"
 
@@ -1855,7 +1859,7 @@ msgstr "~В~ главное меню"
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
-#: engines/mohawk/riven.cpp:561 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/riven.cpp:565 engines/neverhood/menumodule.cpp:880
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:658
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
@@ -1875,7 +1879,7 @@ msgstr "Сохранить игру:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:106 engines/mohawk/riven.cpp:561
+#: engines/mohawk/dialogs.cpp:106 engines/mohawk/riven.cpp:565
 #: engines/neverhood/menumodule.cpp:880 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:659
 #: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
@@ -3348,11 +3352,11 @@ msgstr "Обычные"
 msgid "Best"
 msgstr "Лучшие"
 
-#: engines/mohawk/mohawk.cpp:58
+#: engines/mohawk/mohawk.cpp:55
 msgid "The game is paused. Press any key to continue."
 msgstr "Игра приостановлена. Для продолжения нажмите любую кнопку."
 
-#: engines/mohawk/riven.cpp:150
+#: engines/mohawk/riven.cpp:154
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
@@ -3360,7 +3364,7 @@ msgstr ""
 "Не хватает исполняемого файла Riven. Windows-файл называется 'riven.exe' "
 "либо 'rivendmo.exe'. "
 
-#: engines/mohawk/riven.cpp:151
+#: engines/mohawk/riven.cpp:155
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
@@ -3368,7 +3372,7 @@ msgstr ""
 "Вместо него подойдёт файл установщика 'arcriven.z'. Также можно использовать "
 "исполняемый файл 'Riven' для Mac."
 
-#: engines/mohawk/riven.cpp:162
+#: engines/mohawk/riven.cpp:166
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
@@ -3376,7 +3380,7 @@ msgstr ""
 "Не хватает файла 'extras.mhk'. Вместо него можно использовать файл 'arcriven."
 "z'."
 
-#: engines/mohawk/riven.cpp:448
+#: engines/mohawk/riven.cpp:452
 msgid "You are missing the following required Riven data files:\n"
 msgstr "Не хватает следующих файлов игры Riven:\n"
 
