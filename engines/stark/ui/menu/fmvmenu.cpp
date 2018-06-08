@@ -25,11 +25,22 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/diary.h"
+#include "engines/stark/services/staticprovider.h"
+
+#include "engines/stark/resources/location.h"
+
+#include "engines/stark/visual/text.h"
 
 namespace Stark {
 
+// Hard-coded parameters in case cannot retrieve the format rectangle
+Common::Point FMVMenuScreen::_formatRectPos(202, 61);
+int FMVMenuScreen::_fontHeight(16);
+int FMVMenuScreen::_fmvPerPage(18);
+
 FMVMenuScreen::FMVMenuScreen(Gfx::Driver *gfx, Cursor *cursor) :
-		StaticLocationScreen(gfx, cursor, "DiaryFMV", Screen::kScreenFMVMenu) {
+		StaticLocationScreen(gfx, cursor, "DiaryFMV", Screen::kScreenFMVMenu),
+		_fmvWidgets() {
 }
 
 FMVMenuScreen::~FMVMenuScreen() {
@@ -67,6 +78,33 @@ void FMVMenuScreen::open() {
 			CLICK_HANDLER(FMVMenuScreen, nextPageHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
+
+	// Acquire data for FMVWidget from the format rectangle
+
+	int formatRectHeight = 379;
+
+	Resources::Location *location = StarkStaticProvider->getLocation();
+	Gfx::RenderEntryArray renderEntries = location->listRenderEntries();
+
+	Gfx::RenderEntry *formatRect(nullptr);
+	for (uint i = 0; i < renderEntries.size(); i++) {
+		if (renderEntries[i]->getName().equalsIgnoreCase("FormatRectangle")) {
+			formatRect = renderEntries[i];
+			break;
+		}
+	}
+
+	if (formatRect) {
+		_formatRectPos = formatRect->getPosition();
+		formatRectHeight = formatRect->getText()->getTargetHeight();
+
+		// The format rectangle contains one line,
+		// which can be used to retrieve the font's height
+		Common::Rect textRect = formatRect->getText()->getRect();
+		_fontHeight = textRect.bottom - textRect.top;
+
+		_fmvPerPage = formatRectHeight / (_fontHeight + 4);
+	}
 
 	_maxPage = StarkDiary->countFMV() / _fmvPerPage;
 	changePage(0);
@@ -151,8 +189,9 @@ FMVWidget::FMVWidget(Gfx::Driver *gfx, int fmvIndex) :
 	Common::Rect rect = _title.getRect();
 	_width = rect.right - rect.left;
 
-	_position.x = 202;
-	_position.y = 61 + (fmvIndex % _fmvPerPage) * 20;
+	_position.x = FMVMenuScreen::_formatRectPos.x;
+	_position.y = FMVMenuScreen::_formatRectPos.y + 
+	              (fmvIndex % FMVMenuScreen::_fmvPerPage) * (FMVMenuScreen::_fontHeight + 4);
 }
 
 void FMVWidget::onClick() {
@@ -161,7 +200,7 @@ void FMVWidget::onClick() {
 
 bool FMVWidget::isMouseInside(const Common::Point &mousePos) const {
 	return mousePos.x >= _position.x && mousePos.x <= _position.x + _width &&
-		   mousePos.y >= _position.y && mousePos.y <= _position.y + _height;
+		   mousePos.y >= _position.y && mousePos.y <= _position.y + FMVMenuScreen::_fontHeight;
 }
 
 } // End of namespace Stark

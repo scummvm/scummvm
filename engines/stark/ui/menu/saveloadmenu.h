@@ -43,6 +43,10 @@ class SaveDataWidget;
  */
 class SaveLoadMenuScreen : public StaticLocationScreen {
 public:
+	static const int _slotPerRow = 3;
+	static const int _slotPerColumn = 3;
+	static const int _slotPerPage = 9;
+
 	SaveLoadMenuScreen(Gfx::Driver *gfx, Cursor *cursor, Screen::Name screenName);
 	virtual ~SaveLoadMenuScreen();
 
@@ -68,7 +72,6 @@ protected:
 
 private:
 	static const uint32 _textColorBlack = 0xFF000000;
-	static const int _slotPerPage = 9;
 
 	// Start from zero
 	static const int _maxPage = 10;
@@ -142,9 +145,6 @@ public:
 private:
 	static const uint32 _outlineColor = 0xFF961E1E;
 	static const uint32 _textColor = 0xFF3D485C;
-	static const int _slotPerRow = 3;
-	static const int _slotPerColumn = 3;
-	static const int _slotPerPage = 9;
 
 	int _slot;
 	SaveLoadMenuScreen *_screen;

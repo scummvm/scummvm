@@ -56,6 +56,9 @@ public:
 	void setTargetHeight(uint32 height);
 	void setFont(FontProvider::FontType type, int32 customFontIndex = -1);
 
+	uint getTargetWidth() { return _targetWidth; }
+	uint getTargetHeight() { return _targetHeight; }
+
 	void render(const Common::Point &position);
 	void resetTexture();
 

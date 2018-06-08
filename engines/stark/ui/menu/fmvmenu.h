@@ -36,6 +36,10 @@ class FMVWidget;
  */
 class FMVMenuScreen : public StaticLocationScreen {
 public:
+	static Common::Point _formatRectPos;
+	static int _fontHeight;
+	static int _fmvPerPage;
+
 	FMVMenuScreen(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~FMVMenuScreen();
 
@@ -51,8 +55,6 @@ protected:
 	void onRender() override;
 
 private:
-	static const int _fmvPerPage = 18;
-
 	enum WidgetIndex {
 		kWidgetPrevious = 3,
 		kWidgetNext = 4
@@ -95,8 +97,6 @@ public:
 	void onScreenChanged() { _title.resetTexture(); }
 
 private:
-	const static int _fmvPerPage = 18;
-	const static int _height = 16;
 	static const uint32 _textColorHovered = 0xFF961E1E;
 	static const uint32 _textColorDefault = 0xFF000000;
 
