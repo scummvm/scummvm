@@ -84,8 +84,8 @@ BaseMenu *DuckmanMenuSystem::createMenuById(int menuId) {
 		return createSaveCompleteMenu();
 	case kDuckmanOptionsMenu:
 		return createOptionsMenu();
-	case kDuckmanDebugMenu:
-		return createDebugMenu();
+	case kDuckmanDebugPauseMenu:
+		return createDebugPauseMenu();
 		case kDuckmanAddRemoveInventoryMenu:
 			return createAddRemoveInventoryMenu();
 	default:
@@ -154,6 +154,14 @@ BaseMenu *DuckmanMenuSystem::createSaveCompleteMenu() {
 }
 
 BaseMenu *DuckmanMenuSystem::createDebugMenu() {
+	// TODO
+	BaseMenu *menu = new BaseMenu(this, 0x00120002, 0, 0, 0, 17, 1);
+	menu->addText("Debug Pause Menu");
+	menu->addText("-----------------");
+	return menu;
+}
+
+BaseMenu *DuckmanMenuSystem::createDebugPauseMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120002, 0, 0, 0, 17, 1);
 	menu->addText("Debug Pause Menu");
 	menu->addText("-----------------");
@@ -161,6 +169,7 @@ BaseMenu *DuckmanMenuSystem::createDebugMenu() {
 	menu->addMenuItem(new MenuItem("Add/Remove Inventory", new MenuActionEnterMenu(this, kDuckmanAddRemoveInventoryMenu)));
 	return menu;
 }
+
 typedef struct InventoryMenuItem {
 	const char *name;
 	uint32 objectId;
@@ -209,8 +218,10 @@ int DuckmanMenuSystem::convertRootMenuId(uint32 menuId) {
 		return kDuckmanMainMenu;
 	case 0x180002:
 		return kDuckmanPauseMenu;
-	case 0x180004:
+	case 0x180003:
 		return kDuckmanDebugMenu;
+	case 0x180004:
+		return kDuckmanDebugPauseMenu;
 	case 0x180005:
 		return kDuckmanSaveCompleteMenu;
 	/*
@@ -261,7 +272,9 @@ MenuActionInventoryAddRemove::MenuActionInventoryAddRemove(BaseMenuSystem *menuS
 
 void MenuActionInventoryAddRemove::execute() {
 	if (_vm->_scriptResource->_properties.get(kDebugInventoryItems[_choiceIndex].propertyId)) {
-		//TODO stop holding object in cursor.
+		if(_vm->_cursor._objectId == kDebugInventoryItems[_choiceIndex].objectId) {
+			_vm->stopCursorHoldingObject();
+		}
 		_vm->_scriptResource->_properties.set(kDebugInventoryItems[_choiceIndex].propertyId, false);
 	} else {
 		_vm->startCursorHoldingObject(kDebugInventoryItems[_choiceIndex].objectId,
