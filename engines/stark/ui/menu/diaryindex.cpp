@@ -77,7 +77,7 @@ void DiaryIndexScreen::open() {
 
 	_widgets.push_back(new StaticLocationWidget(
 			"Diary",
-			nullptr,
+			CLICK_HANDLER(DiaryIndexScreen, diaryHandler),
 			MOVE_HANDLER(DiaryIndexScreen, widgetTextColorHandler)));
 	_widgets.back()->setVisible(StarkDiary->isEnabled());
 
@@ -131,6 +131,10 @@ void DiaryIndexScreen::loadHandler() {
 
 void DiaryIndexScreen::saveHandler() {
 	StarkUserInterface->changeScreen(Screen::kScreenSaveMenu);
+}
+
+void DiaryIndexScreen::diaryHandler() {
+	StarkUserInterface->changeScreen(Screen::kScreenDiaryPages);
 }
 
 } // End of namespace Stark

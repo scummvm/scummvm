@@ -40,6 +40,7 @@
 #include "engines/stark/ui/menu/settingsmenu.h"
 #include "engines/stark/ui/menu/saveloadmenu.h"
 #include "engines/stark/ui/menu/fmvmenu.h"
+#include "engines/stark/ui/menu/diarypages.h"
 #include "engines/stark/ui/world/inventorywindow.h"
 #include "engines/stark/ui/world/fmvscreen.h"
 #include "engines/stark/ui/world/gamescreen.h"
@@ -56,6 +57,7 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_saveMenuScreen(nullptr),
 		_loadMenuScreen(nullptr),
 		_fmvMenuScreen(nullptr),
+		_diaryPagesScreen(nullptr),
 		_exitGame(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
@@ -78,6 +80,7 @@ UserInterface::~UserInterface() {
 	delete _saveMenuScreen;
 	delete _loadMenuScreen;
 	delete _fmvMenuScreen;
+	delete _diaryPagesScreen;
 }
 
 void UserInterface::init() {
@@ -90,6 +93,7 @@ void UserInterface::init() {
 	_saveMenuScreen = new SaveMenuScreen(_gfx, _cursor);
 	_loadMenuScreen = new LoadMenuScreen(_gfx, _cursor);
 	_fmvMenuScreen = new FMVMenuScreen(_gfx, _cursor);
+	_diaryPagesScreen = new DiaryPagesScreen(_gfx, _cursor);
 	_fmvScreen = new FMVScreen(_gfx, _cursor);
 
 	_prevScreenNameStack.push(Screen::kScreenMainMenu);
@@ -208,6 +212,8 @@ Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
 			return _loadMenuScreen;
 		case Screen::kScreenFMVMenu:
 			return _fmvMenuScreen;
+		case Screen::kScreenDiaryPages:
+			return _diaryPagesScreen;
 		default:
 			error("Unhandled screen name '%d'", screenName);
 	}
