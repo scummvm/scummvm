@@ -156,7 +156,7 @@ FMVWidget::FMVWidget(Gfx::Driver *gfx, int fmvIndex) :
 }
 
 void FMVWidget::onClick() {
-	StarkUserInterface->requestFMVPlayback(_filename);
+	StarkUserInterface->requestFMVPlayback(Common::String(_filename));
 }
 
 bool FMVWidget::isMouseInside(const Common::Point &mousePos) const {
