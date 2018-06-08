@@ -33,6 +33,7 @@ enum {
 	kDuckmanOptionsMenu,
 	kDuckmanPauseMenu,
 	kDuckmanDebugMenu,
+	kDuckmanDebugPauseMenu,
 	kDuckmanAddRemoveInventoryMenu,
 	kDuckmanQueryQuitMenu,
 	kDuckmanQueryRestartMenu,
@@ -63,6 +64,7 @@ public://protected:
 	BaseMenu *createQueryQuitMenu();
 	BaseMenu *createSaveCompleteMenu();
 	BaseMenu *createDebugMenu();
+	BaseMenu *createDebugPauseMenu();
 	BaseMenu *createAddRemoveInventoryMenu();
 	int convertRootMenuId(uint32 menuId);
 	virtual bool initMenuCursor();
