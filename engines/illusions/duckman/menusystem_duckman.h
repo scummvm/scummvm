@@ -71,6 +71,7 @@ public://protected:
 	virtual int getGameState();
 	virtual void setGameState(int gameState);
 	virtual void setMenuCursorNum(int cursorNum);
+	virtual void playSoundEffect(int sfxId);
 };
 
 class MenuActionInventoryAddRemove : public BaseMenuAction {

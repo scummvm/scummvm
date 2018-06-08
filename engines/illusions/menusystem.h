@@ -163,6 +163,7 @@ protected:
 	void hideActorTextColorRect();
 	
 	virtual BaseMenu *getMenuById(int menuId) = 0;
+	virtual void playSoundEffect(int sfxId) = 0;
 };
 
 /*
