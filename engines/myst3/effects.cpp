@@ -436,7 +436,7 @@ MagnetEffect::MagnetEffect(Myst3Engine *vm) :
 }
 
 MagnetEffect::~MagnetEffect() {
-
+	delete _shakeStrength;
 }
 
 MagnetEffect *MagnetEffect::create(Myst3Engine *vm, uint32 id) {
@@ -457,10 +457,8 @@ bool MagnetEffect::update() {
 		_lastSoundId = 0;
 		_vm->_state->setMagnetEffectUnk3(0);
 
-		if (_shakeStrength) {
-			delete _shakeStrength;
-			_shakeStrength = nullptr;
-		}
+		delete _shakeStrength;
+		_shakeStrength = nullptr;
 
 		return false;
 	}
@@ -473,10 +471,7 @@ bool MagnetEffect::update() {
 		if (!desc)
 			error("Magnet effect support file %d does not exist", _vm->_state->getMagnetEffectNode());
 
-		if (_shakeStrength) {
-			delete _shakeStrength;
-		}
-
+		delete _shakeStrength;
 		_shakeStrength = desc->getData();
 	}
 
@@ -534,9 +529,10 @@ void MagnetEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphic
 			uint8 maskValue = *maskPtr;
 
 			if (maskValue != 0) {
-				uint32 displacement = _verticalDisplacement[(maskValue + position) % 256];
+				int32 displacement = _verticalDisplacement[(maskValue + position) % 256];
+				int32 displacedY = CLIP<int32>(y + displacement, 0, src->h - 1);
 
-				uint32 srcValue1 = *(uint32 *) src->getBasePtr(x, y + displacement);
+				uint32 srcValue1 = *(uint32 *) src->getBasePtr(x, displacedY);
 				uint32 srcValue2 = *(uint32 *) src->getBasePtr(x, y);
 
 #ifdef SCUMM_BIG_ENDIAN
