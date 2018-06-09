@@ -37,6 +37,10 @@ bool Action::initPalette(Director *director) {
 
 void Action::pause(bool paused) {}
 
+Coordinates Action::getCoordinates() {
+	return Coordinates();
+}
+
 Actor *Action::getActor() const {
 	return _actor;
 }

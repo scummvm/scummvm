@@ -45,6 +45,8 @@ public:
 
 	void pause(bool paused) override;
 
+	Coordinates getCoordinates() override;
+
 	uint32 getZ();
 	CelDecoder *getDecoder();
 

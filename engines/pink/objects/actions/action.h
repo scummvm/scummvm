@@ -24,6 +24,7 @@
 #define PINK_ACTION_H
 
 #include "pink/objects/object.h"
+#include "pink/objects/walk/walk_mgr.h"
 
 namespace Pink {
 
@@ -41,6 +42,7 @@ public:
 
 	virtual void pause(bool paused);
 
+	virtual Coordinates getCoordinates();
 	Actor *getActor() const;
 
 protected:
