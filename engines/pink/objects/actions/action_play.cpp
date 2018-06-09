@@ -58,6 +58,7 @@ void ActionPlay::pause(bool paused) {
 void ActionPlay::onStart() {
 	debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
 	_decoder->start();
+	assert(_startFrame <= _decoder->getFrameCount());
 	for (uint i = 0; i < _startFrame; ++i) {
 		_decoder->skipFrame();
 	}
