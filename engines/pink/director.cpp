@@ -29,52 +29,33 @@
 #include "pink/objects/actions/action_cel.h"
 
 namespace Pink {
-Director::Director(OSystem *system)
-	: _system(system), showBounds(1) {}
+Director::Director()
+	: _surface(640, 480) {
+	_wndManager.setScreen(&_surface);
+}
 
-void Director::draw() {
-	_system->fillScreen(0);
+void Director::update() {
+	static uint32 time = g_system->getMillis();
+	static uint32 times = 0;
+
+	for (uint i = 0; i < _sounds.size(); ++i) {
+		_sounds[i]->update();
+	}
 	for (uint i = 0; i < _sprites.size(); ++i) {
-		drawSprite(_sprites[i]);
+		_sprites[i]->update();
 	}
-	_system->updateScreen();
-}
 
-void Director::drawSprite(ActionCEL *sprite) {
-	CelDecoder *decoder = sprite->getDecoder();
-	const Graphics::Surface *surface;
-	if (decoder->needsUpdate())
-		surface = decoder->decodeNextFrame();
-	else
-		surface = decoder->getCurrentFrame();
+	draw();
 
-	int h = surface->h;
-	if (surface->h + decoder->getY() > 480)
-		h = 480 - decoder->getY();
-	int w = surface->w;
-	if (surface->w + decoder->getX() > 640)
-		w = 640 - decoder->getX();
-
-	if (!showBounds) {
-		Graphics::Surface *screen = _system->lockScreen();
-
-		for (int y = 0; y < h; ++y) {
-			for (int x = 0; x < w; ++x) {
-				uint16 spritePixelColourIndex = *(byte*)surface->getBasePtr(x, y);
-				if (spritePixelColourIndex != decoder->getTransparentColourIndex()) {
-					*(byte *) screen->getBasePtr(decoder->getX() + x, decoder->getY() + y) = spritePixelColourIndex;
-				}
-			}
-		}
-		_system->unlockScreen();
+	times++;
+	if (g_system->getMillis() - time >= 1000) {
+		debug("FPS: %u ", times);
+		sum += times;
+		count++;
+		time = g_system->getMillis();
+		times = 0;
 	}
-	else
-		_system->copyRectToScreen(surface->getPixels(), surface->pitch,
-								   decoder->getX(), decoder->getY(),
-								   w, h);
-
 }
-
 
 void Director::addSprite(ActionCEL *sprite) {
 	_sprites.push_back(sprite);
@@ -86,6 +67,7 @@ void Director::addSprite(ActionCEL *sprite) {
 			break;
 	}
 	_sprites[i] = sprite;
+	_dirtyRects.push_back(sprite->getDecoder()->getRectangle());
 }
 
 void Director::removeSprite(ActionCEL *sprite) {
@@ -95,23 +77,7 @@ void Director::removeSprite(ActionCEL *sprite) {
 			break;
 		}
 	}
-}
-
-void Director::setPallette(const byte *pallete) {
-	_system->getPaletteManager()->setPalette(pallete, 0, 256);
-}
-
-void Director::update() {
-	for (uint i = 0; i < _sounds.size(); ++i) {
-		_sounds[i]->update();
-	}
-	for (uint i = 0; i < _sprites.size(); ++i) {
-		_sprites[i]->update();
-	}
-}
-
-void Director::addSound(ActionSound *sound) {
-	_sounds.push_back(sound);
+	_dirtyRects.push_back(sprite->getDecoder()->getRectangle());
 }
 
 void Director::removeSound(ActionSound *sound) {
@@ -122,26 +88,13 @@ void Director::removeSound(ActionSound *sound) {
 }
 
 void Director::clear() {
-	_sprites.clear();
-}
-
-Actor *Director::getActorByPoint(Common::Point point) {
-	for (int i = _sprites.size() - 1; i >= 0; --i) {
-		CelDecoder *decoder = _sprites[i]->getDecoder();
-		const Graphics::Surface *frame = decoder->getCurrentFrame();
-		Common::Rect &rect = decoder->getRectangle();
-		if (rect.contains(point) &&
-			*(byte*)frame->getBasePtr(point.x - rect.left, point.y - rect.top)
-			!= decoder->getTransparentColourIndex())
-			return _sprites[i]->getActor();
-	}
-
-	return nullptr;
+	_dirtyRects.push_back(Common::Rect(0, 0, 640, 480));
+	_sprites.resize(0);
 }
 
 void Director::pause(bool pause) {
 	for (uint i = 0; i < _sprites.size() ; ++i) {
-		_sprites[i]->getDecoder()->pauseVideo(pause);
+		_sprites[i]->pause(pause);
 	}
 }
 
@@ -154,6 +107,90 @@ void Director::loadStage() {
 	assert(_sprites.empty());
 	_sprites = _savedSprites;
 	_savedSprites.clear();
+}
+
+Actor *Director::getActorByPoint(const Common::Point point) {
+	for (int i = _sprites.size() - 1; i >= 0; --i) {
+		CelDecoder *decoder = _sprites[i]->getDecoder();
+		const Graphics::Surface *frame = decoder->getCurrentFrame();
+		const Common::Rect &rect = decoder->getRectangle();
+		byte spritePixel = *(const byte*) frame->getBasePtr(point.x - rect.left, point.y - rect.top);
+		if (rect.contains(point) && spritePixel != decoder->getTransparentColourIndex()) {
+			return _sprites[i]->getActor();
+		}
+	}
+
+	return nullptr;
+}
+
+void Director::draw() {
+	for (uint i = 0; i < _sprites.size(); ++i) {
+		if (_sprites[i]->getDecoder()->needsUpdate()) {
+			_sprites[i]->getDecoder()->decodeNextFrame();
+			addDirtyRects(_sprites[i]);
+		}
+	}
+
+	if (!_dirtyRects.empty()) {
+		mergeDirtyRects();
+
+		for (uint i = 0; i < _dirtyRects.size(); ++i) {
+			drawRect(_dirtyRects[i]);
+		}
+
+		_dirtyRects.resize(0);
+		_surface.update();
+	}
+	else
+		g_system->updateScreen();
+}
+
+void Director::mergeDirtyRects() {
+	Common::Array<Common::Rect>::iterator rOuter, rInner;
+	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
+		rInner = rOuter;
+		while (++rInner != _dirtyRects.end()) {
+			if ((*rOuter).intersects(*rInner)) {
+				// These two rectangles overlap, so merge them
+				rOuter->extend(*rInner);
+
+				// remove the inner rect from the list
+				_dirtyRects.erase(rInner);
+
+				// move back to beginning of list
+				rInner = rOuter;
+			}
+		}
+	}
+}
+
+void Director::addDirtyRects(ActionCEL *sprite) {
+	const Common::Rect spriteRect = sprite->getDecoder()->getRectangle();
+	const Common::List<Common::Rect> *dirtyRects = sprite->getDecoder()->getDirtyRects();
+	if (dirtyRects->size() > 100) {
+		_dirtyRects.push_back(spriteRect);
+	} else {
+		for (Common::List<Common::Rect>::const_iterator it = dirtyRects->begin(); it != dirtyRects->end(); ++it) {
+			Common::Rect dirtyRect = *it;
+			dirtyRect.translate(spriteRect.left, spriteRect.top);
+			_dirtyRects.push_back(dirtyRect);
+		}
+	}
+	sprite->getDecoder()->clearDirtyRects();
+}
+
+void Director::drawRect(const Common::Rect &rect) {
+	_surface.fillRect(rect, 0);
+	for (uint i = 0; i < _sprites.size(); ++i) {
+		const Common::Rect &spriteRect = _sprites[i]->getDecoder()->getRectangle();
+		Common::Rect interRect = rect.findIntersectingRect(spriteRect);
+		if (interRect.isEmpty())
+			continue;
+
+		Common::Rect srcRect(interRect);
+		srcRect.translate(-spriteRect.left, -spriteRect.top);
+		_surface.transBlitFrom(*_sprites[i]->getDecoder()->getCurrentFrame(), srcRect, interRect, _sprites[i]->getDecoder()->getTransparentColourIndex());
+	}
 }
 
 }

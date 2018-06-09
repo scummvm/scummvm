@@ -41,7 +41,7 @@ namespace Pink {
 Pink::PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 		: Engine(system), _console(nullptr), _rnd("pink"),
 		  _desc(*desc), _bro(nullptr), _module(nullptr),
-		  _director(_system), _pdaMgr(this) {
+		  _director(), _pdaMgr(this) {
 	debug("PinkEngine constructed");
 
 	DebugMan.addDebugChannel(kPinkDebugGeneral, "general", "General issues");
@@ -117,9 +117,6 @@ Common::Error Pink::PinkEngine::run() {
 				_actor->onLeftButtonClick(event.mouse);
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_d)
-					_director.showBounds = !_director.showBounds;
-				else
 					_actor->onKeyboardButtonClick(event.kbd.keycode);
 				break;
 				// don't know why it is used in original
@@ -132,8 +129,7 @@ Common::Error Pink::PinkEngine::run() {
 
 		_actor->update();
 		_director.update();
-		_director.draw();
-		_system->delayMillis(5);
+		_system->delayMillis(10);
 	}
 
 	return Common::kNoError;
