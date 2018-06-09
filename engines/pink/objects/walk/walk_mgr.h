@@ -25,12 +25,19 @@
 
 #include "pink/objects/object.h"
 #include "pink/objects/walk/walk_shortest_path.h"
+#include "pink/utils.h"
 
 namespace Pink {
 
 class WalkLocation;
 class LeadActor;
 class WalkAction;
+
+struct Coordinates {
+	int x;
+	int y;
+	int z;
+};
 
 class WalkMgr : public Object {
 public:
@@ -49,11 +56,6 @@ public:
 	void saveState(Archive &archive);
 
 private:
-	struct Coordinates {
-		int x;
-		int y;
-		int z;
-	};
 	struct WayPoint {
 		Common::String name;
 		Coordinates coord;

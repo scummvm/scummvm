@@ -102,20 +102,9 @@ double WalkMgr::getLengthBetweenLocations(WalkLocation *first, WalkLocation *sec
 				(secondCoord.y - firstCoord.y) * (secondCoord.y - firstCoord.y));
 }
 
-WalkMgr::Coordinates WalkMgr::getLocationCoordinates(const Common::String &locationName) {
-	Coordinates coords;
-	ActionCEL *action  = static_cast<ActionCEL*>(_leadActor->findAction(locationName));
-
-	action->start();
-	CelDecoder *decoder = action->getDecoder();
-
-	coords.x = decoder->getX() + decoder->getWidth() / 2;
-	coords.y = decoder->getY() + decoder->getHeight() / 2;
-	coords.z = action->getZ();
-
-	action->end();
-
-	return coords;
+Coordinates WalkMgr::getLocationCoordinates(const Common::String &locationName) {
+	Action *action  = _leadActor->findAction(locationName);
+	return action->getCoordinates();
 }
 
 void WalkMgr::setCurrentWayPoint(WalkLocation *location) {

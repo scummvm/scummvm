@@ -88,4 +88,16 @@ CelDecoder *ActionCEL::getDecoder() {
 	return _decoder;
 }
 
+Coordinates ActionCEL::getCoordinates() {
+	if (!_decoder)
+		_decoder = _actor->getPage()->loadCel(_fileName);
+
+	Coordinates coords;
+	coords.x = _decoder->getX() + _decoder->getWidth() / 2;
+	coords.y = _decoder->getY() + _decoder->getHeight() / 2;
+	coords.z = getZ();
+
+	return coords;
+}
+
 } // End of namespace Pink
