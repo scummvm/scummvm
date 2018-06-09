@@ -74,24 +74,28 @@ void ActionPlayWithSfx::updateSound() {
 
 	for (uint i = 0; i < _sfxArray.size(); ++i) {
 		if (_sfxArray[i]->getFrame() == _decoder->getCurFrame())
-			_sfxArray[i]->play(_actor->getPage());
+			_sfxArray[i]->play();
 	}
 }
 
 void ActionSfx::deserialize(Pink::Archive &archive) {
 	_frame = archive.readDWORD();
 	_volume = archive.readDWORD();
+	assert(_volume <= 100);
 	_sfxName = archive.readString();
-	archive.readObject(); // pointer of ActionPlayWithSfx
+	_sprite = (ActionPlayWithSfx*) archive.readObject();
 }
 
 void ActionSfx::toConsole() {
 	debug("\t\tActionSfx: _sfx = %s, _volume = %u, _frame = %u", _sfxName.c_str(), _volume, _frame);
 }
 
-void ActionSfx::play(Page *page) {
-	if (!_sound.isPlaying())
-		_sound.play(page->getResourceStream(_sfxName), Audio::Mixer::kSFXSoundType, _volume);
+void ActionSfx::play() {
+	Page *page = _sprite->getActor()->getPage();
+	if (!_sound.isPlaying()) {
+		int8 balance = (_sprite->getDecoder()->getX() * 396875 / 1000000) - 127;
+		_sound.play(page->getResourceStream(_sfxName), Audio::Mixer::kSFXSoundType, _volume, balance);
+	}
 }
 
 } // End of namespace Pink

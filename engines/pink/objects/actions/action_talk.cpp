@@ -60,7 +60,10 @@ void ActionTalk::pause(bool paused) {
 
 void ActionTalk::onStart() {
 	ActionPlay::onStart();
-	_sound.play(_actor->getPage()->getResourceStream(_vox), Audio::Mixer::kSpeechSoundType);
+	//sound balance is calculated different than in ActionSfx(probably a bug in original)
+	// 30.0 - x * -0.0625  disasm (0 - 100)
+	int8 balance = (_decoder->getX() * 396875 / 1000000) - 127;
+	_sound.play(_actor->getPage()->getResourceStream(_vox), Audio::Mixer::kSpeechSoundType, 100, balance);
 }
 
 } // End of namespace Pink
