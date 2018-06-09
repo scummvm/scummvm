@@ -259,31 +259,48 @@ Speech *Dialog::Reply::getCurrentSpeech() {
 }
 
 bool Dialog::Reply::checkCondition() const {
+	bool result;
+
 	switch (_conditionType) {
 		case kConditionTypeAlways:
-			return true;
+			result = true;
+			break;
 		case kConditionTypeNoOtherOptions:
-			return true; // Will be removed from to the options later if some other options are available
+			result = true; // Will be removed from to the options later if some other options are available
+			break;
 		case kConditionTypeHasItem: {
 			Item *item = _conditionReference.resolve<Item>();
-			return item->isEnabled();
+			result = item->isEnabled();
+			break;
 		}
 		case kConditionTypeCheckValue4:
 		case kConditionTypeCheckValue5: {
 			Knowledge *condition = _conditionReference.resolve<Knowledge>();
-			return condition->getBooleanValue();
+			result = condition->getBooleanValue();
+			break;
 		}
 		case kConditionTypeRunScriptCheckValue: {
 			Script *conditionScript = _conditionScriptReference.resolve<Script>();
 			conditionScript->execute(Resources::Script::kCallModeDialogAnswer);
 
 			Knowledge *condition = _conditionReference.resolve<Knowledge>();
-			return condition->getBooleanValue();
+			result = condition->getBooleanValue();
+			break;
 		}
 		default:
 			warning("Unimplemented dialog reply condition %d", _conditionType);
-			return true;
+			result = true;
+			break;
 	}
+
+	if (_conditionReversed && (_conditionType == kConditionTypeHasItem
+			|| _conditionType == kConditionTypeCheckValue4
+			|| _conditionType == kConditionTypeCheckValue5
+			|| _conditionType == kConditionTypeRunScriptCheckValue)) {
+		result = !result;
+	}
+
+	return result;
 }
 
 bool Dialog::Reply::isLastOnly() const {
