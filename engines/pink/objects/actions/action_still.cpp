@@ -48,6 +48,8 @@ void ActionStill::pause(bool paused) {}
 
 void ActionStill::onStart() {
 	debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
+	if (_startFrame >= _decoder->getFrameCount())
+		_startFrame = 0;
 	for (uint i = 0; i < _startFrame; ++i) {
 		_decoder->skipFrame();
 	}
