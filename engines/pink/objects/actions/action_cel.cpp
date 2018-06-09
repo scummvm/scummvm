@@ -59,9 +59,8 @@ bool ActionCEL::initPalette(Director *director) {
 void ActionCEL::start() {
 	if (!_decoder)
 		_decoder = _actor->getPage()->loadCel(_fileName);
-	_actor->getPage()->getGame()->getDirector()->addSprite(this);
-
 	this->onStart();
+	_actor->getPage()->getGame()->getDirector()->addSprite(this);
 }
 
 void ActionCEL::end() {

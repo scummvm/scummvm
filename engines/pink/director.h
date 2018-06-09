@@ -27,26 +27,27 @@
 #include "common/rect.h"
 #include "common/system.h"
 
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/screen.h"
+
 namespace Pink {
 
 class Actor;
 class ActionCEL;
 class ActionSound;
-class CelDecoder;
 
 class Director {
 public:
-	Director(OSystem *system);
-	Actor *getActorByPoint(Common::Point point);
+	Director();
 
-	void draw();
 	void update();
+
+	void setPallette(const byte *pallete) { g_system->getPaletteManager()->setPalette(pallete, 0, 256); }
 
 	void addSprite(ActionCEL *sprite);
 	void removeSprite(ActionCEL *sprite);
-	void setPallette(const byte *pallete);
 
-	void addSound(ActionSound* sound);
+	void addSound(ActionSound* sound) { _sounds.push_back(sound); };
 	void removeSound(ActionSound* sound);
 
 	void clear();
@@ -56,11 +57,22 @@ public:
 	void saveStage();
 	void loadStage();
 
-	bool showBounds;
+	Actor *getActorByPoint(const Common::Point point);
+
+	Graphics::MacWindowManager &getWndManager() { return _wndManager; };
+
+	uint32 count = 0;
+	uint32 sum = 0;
 
 private:
-	void drawSprite(ActionCEL *sprite);
-	OSystem *_system;
+	void draw();
+	void addDirtyRects(ActionCEL *sprite);
+	void mergeDirtyRects();
+	void drawRect(const Common::Rect &rect);
+
+	Graphics::Screen _surface;
+	Graphics::MacWindowManager _wndManager;
+	Common::Array<Common::Rect> _dirtyRects;
 	Common::Array<ActionCEL *> _sprites;
 	Common::Array<ActionCEL *> _savedSprites;
 	Common::Array<ActionSound *> _sounds;
