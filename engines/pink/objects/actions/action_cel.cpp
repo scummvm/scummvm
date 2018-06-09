@@ -64,6 +64,8 @@ void ActionCEL::start() {
 }
 
 void ActionCEL::end() {
+	if (!_decoder)
+		return;
 	_actor->getPage()->getGame()->getDirector()->removeSprite(this);
 	delete _decoder;
 	_decoder = nullptr;
