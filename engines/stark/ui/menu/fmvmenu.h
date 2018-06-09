@@ -100,7 +100,7 @@ private:
 	static const uint32 _textColorHovered = 0xFF961E1E;
 	static const uint32 _textColorDefault = 0xFF000000;
 
-	Common::String _filename;
+	const Common::String &_filename;
 	VisualText _title;
 
 	int _width;
