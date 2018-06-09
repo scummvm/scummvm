@@ -30,44 +30,22 @@
 
 namespace Pink {
 
-Sound::Sound(Audio::Mixer *mixer, Common::SafeSeekableSubReadStream *stream)
-	: _mixer(mixer), _fileStream(stream) {}
-
-Sound::~Sound() {
-	_mixer->stopHandle(_handle);
-	delete _fileStream;
-}
-
-bool Sound::isPlaying() {
-	return _mixer->isSoundHandleActive(_handle);
-}
-
-void Sound::pause(bool paused) {
-	_mixer->pauseHandle(_handle, paused);
-}
-
-void Sound::play(Audio::Mixer::SoundType type, int volume, bool isLoop) {
+void Sound::play(Common::SafeSeekableSubReadStream *stream, Audio::Mixer::SoundType type, byte volume, int8 balance, bool isLoop) {
 	// Vox files in pink have wave format.
 	// RIFF (little-endian) data, WAVE audio, Microsoft PCM, 8 bit, mono 22050 Hz
-	_mixer->stopHandle(_handle);
 
-	_fileStream->seek(0);
-	Audio::AudioStream *audioStream ;
-	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(_fileStream, DisposeAfterUse::NO);
-	if (isLoop) {
+	volume = ((int) volume * 255) / 100;
+	Audio::Mixer *mixer = g_system->getMixer();
+	mixer->stopHandle(_handle);
+
+	Audio::AudioStream *audioStream;
+	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(stream, DisposeAfterUse::NO);
+	if (isLoop)
 		audioStream = Audio::makeLoopingAudioStream(wavStream, 0, 0, 0);
-	} else
+	else
 		audioStream = wavStream;
 
-	_mixer->playStream(type, &_handle , audioStream, -1 , 50, 0, DisposeAfterUse::YES);
-}
-
-void Sound::setBalance(int8 balance) {
-	_mixer->setChannelBalance(_handle, balance);
-}
-
-uint32 Sound::getCurrentSample() {
-	return _mixer->getSoundElapsedTime(_handle) * kSampleRate / 1000;
+	mixer->playStream(type, &_handle , audioStream, -1, volume, balance, DisposeAfterUse::YES);
 }
 
 } // End of namespace Pink

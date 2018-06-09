@@ -78,13 +78,6 @@ void ActionPlayWithSfx::updateSound() {
 	}
 }
 
-ActionSfx::ActionSfx()
-		: _sound(nullptr) {}
-
-ActionSfx::~ActionSfx() {
-	end();
-}
-
 void ActionSfx::deserialize(Pink::Archive &archive) {
 	_frame = archive.readDWORD();
 	_volume = archive.readDWORD();
@@ -97,20 +90,8 @@ void ActionSfx::toConsole() {
 }
 
 void ActionSfx::play(Page *page) {
-	if (!_sound)
-		_sound = page->loadSound(_sfxName);
-
-	if (!_sound->isPlaying())
-		_sound->play(Audio::Mixer::kSFXSoundType, _volume, 0);
-}
-
-void ActionSfx::end() {
-	delete _sound;
-	_sound = nullptr;
-}
-
-uint32 ActionSfx::getFrame() {
-	return _frame;
+	if (!_sound.isPlaying())
+		_sound.play(page->getResourceStream(_sfxName), Audio::Mixer::kSFXSoundType, _volume);
 }
 
 } // End of namespace Pink

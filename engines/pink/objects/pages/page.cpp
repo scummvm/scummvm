@@ -47,10 +47,6 @@ Actor *Page::findActor(const Common::String &name) {
 	return nullptr;
 }
 
-Sound *Page::loadSound(Common::String &fileName) {
-	return _resMgr.loadSound(fileName);
-}
-
 
 CelDecoder *Page::loadCel(Common::String &fileName) {
 	return _resMgr.loadCEL(fileName);

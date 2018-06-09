@@ -46,7 +46,7 @@ public:
 	Actor *findActor(const Common::String &name);
 	LeadActor *getLeadActor();
 
-	Sound *loadSound(Common::String &fileName);
+	Common::SafeSeekableSubReadStream *getResourceStream(const Common::String &fileName) { return _resMgr.getResourceStream(fileName); }
 	CelDecoder *loadCel(Common::String &fileName);
 
 	virtual void clear();
