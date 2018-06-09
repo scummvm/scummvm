@@ -31,10 +31,7 @@
 
 namespace Pink {
 
-ActionSound::ActionSound()
-	: _sound(nullptr) {}
-
-ActionSound::~ActionSound(){
+ActionSound::~ActionSound() {
 	end();
 }
 
@@ -52,16 +49,12 @@ void ActionSound::toConsole() {
 }
 
 void ActionSound::start() {
-	assert(!_sound);
-	_sound = _actor->getPage()->loadSound(_fileName);
-
-	Audio::Mixer::SoundType soundType =  _isBackground ? Audio::Mixer::kMusicSoundType
-													   : Audio::Mixer::kSpeechSoundType;
+	Audio::Mixer::SoundType soundType =  _isBackground ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 
 	Director *director = _actor->getPage()->getGame()->getDirector();
 	director->addSound(this);
 
-	_sound->play(soundType, _volume, _isLoop);
+	_sound.play(_actor->getPage()->getResourceStream(_fileName), soundType, _volume, _isLoop);
 	if (_isLoop)
 		_actor->endAction();
 
@@ -69,25 +62,21 @@ void ActionSound::start() {
 }
 
 void ActionSound::end() {
-	if (_sound) {
-		debug("ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	_sound.stop();
+	debug("ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 
-		Director *director = _actor->getPage()->getGame()->getDirector();
-		director->removeSound(this);
+	Director *director = _actor->getPage()->getGame()->getDirector();
+	director->removeSound(this);
 
-		delete _sound;
-		_sound = nullptr;
-	}
 }
 
 void ActionSound::update() {
-	if (!_sound->isPlaying())
+	if (!_sound.isPlaying())
 		_actor->endAction();
 }
 
 void ActionSound::pause(bool paused) {
-	if (_sound)
-		_sound->pause(paused);
+	_sound.pause(paused);
 }
 
 } // End of namespace Pink

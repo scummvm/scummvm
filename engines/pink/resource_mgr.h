@@ -50,15 +50,14 @@ public:
 
 	void clear();
 
+	Common::SafeSeekableSubReadStream *getResourceStream(const Common::String &name);
+
 	CelDecoder *loadCEL(Common::String &name);
-	Sound *loadSound(Common::String &name);
 	Common::String loadText(Common::String &name);
 
 	PinkEngine *getGame() const;
 
 private:
-	Common::SafeSeekableSubReadStream *getResourceStream(Common::String &name);
-
 	PinkEngine *_game;
 	ResourceDescription *_resDescTable;
 	uint32 _resCount;

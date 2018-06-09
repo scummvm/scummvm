@@ -160,27 +160,25 @@ void SequenceAudio::start(int unk) {
 }
 
 void SequenceAudio::end() {
-	delete _sound;
-	_sound = nullptr;
+	_sound.stop();
 	Sequence::end();
 }
 
 void SequenceAudio::update() {
-	if (!_sound->isPlaying())
+	if (!_sound.isPlaying())
 		end();
-	else if (_sample <= _sound->getCurrentSample())
+	else if (_sample <= _sound.getCurrentSample())
 		start(0);
 }
 
 void SequenceAudio::init(int unk) {
 	_sample = 0;
-	_sound = _sequencer->_page->loadSound(_soundName);
-	_sound->play(Audio::Mixer::kMusicSoundType, 100, 0);
+	_sound.play(_sequencer->_page->getResourceStream(_soundName), Audio::Mixer::kMusicSoundType);
 	Sequence::init(unk);
 }
 
 void SequenceAudio::restart() {
-	_sound->play(Audio::Mixer::kMusicSoundType, 100, 0);
+	_sound.play(_sequencer->_page->getResourceStream(_soundName), Audio::Mixer::kMusicSoundType);
 	Sequence::restart();
 }
 

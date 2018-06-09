@@ -45,7 +45,7 @@ protected:
 	void onStart() override;
 
 private:
-	Sound *_sound;
+	Sound _sound;
 	Common::String _vox;
 };
 

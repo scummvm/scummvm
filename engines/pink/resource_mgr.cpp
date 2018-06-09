@@ -59,10 +59,6 @@ CelDecoder *ResourceMgr::loadCEL(Common::String &name) {
 	return decoder;
 }
 
-Sound *ResourceMgr::loadSound(Common::String &name) {
-	return new Sound(_game->_mixer, getResourceStream(name));
-}
-
 Common::String ResourceMgr::loadText(Common::String &name) {
 	Common::SeekableReadStream *stream = getResourceStream(name);
 	char *txt = new char[stream->size()];
@@ -79,7 +75,7 @@ PinkEngine *ResourceMgr::getGame() const {
 	return _game;
 }
 
-Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(Common::String &name) {
+Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(const Common::String &name) {
 	Common::SeekableReadStream *stream;
 
 	ResourceDescription *desc = (ResourceDescription*) bsearch(name.c_str(), _resDescTable, _resCount, sizeof(ResourceDescription), resDescComp);

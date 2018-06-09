@@ -23,6 +23,7 @@
 #ifndef PINK_SEQUENCE_H
 #define PINK_SEQUENCE_H
 
+#include "pink/sound.h"
 #include "pink/objects/object.h"
 
 namespace Pink {
@@ -79,7 +80,7 @@ public:
 
 private:
 	Common::String _soundName;
-	Sound *_sound;
+	Sound _sound;
 	uint _sample;
 };
 

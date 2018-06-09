@@ -25,35 +25,30 @@
 
 #include "audio/mixer.h"
 
-#include "common/stream.h"
-#include "common/substream.h"
+#include "common/system.h"
+
+namespace Common {
+	class SafeSeekableSubReadStream;
+}
 
 namespace Pink {
 
-/*TODO
-  from disasm foreground 100 %, background 80 %
-  dont know how to properly do it
-  may be use ConfMan
-*/
-
 class Sound {
 public:
-	Sound(Audio::Mixer *mixer, Common::SafeSeekableSubReadStream *stream);
-	~Sound();
+	~Sound() { stop(); }
 
-	void play(Audio::Mixer::SoundType type, int volume, bool isLoop);
+	void play(Common::SafeSeekableSubReadStream *stream, Audio::Mixer::SoundType type, byte volume = 100, int8 balance = 0, bool isLoop = false);
 
-	bool isPlaying();
+	bool isPlaying() { return g_system->getMixer()->isSoundHandleActive(_handle); }
 
-	void pause(bool paused);
+	void stop() { g_system->getMixer()->stopHandle(_handle); }
 
-	uint32 getCurrentSample();
-	void setBalance(int8 balance);
+	void pause(bool paused) { g_system->getMixer()->pauseHandle(_handle, paused); }
+
+	uint32 getCurrentSample() { return g_system->getMixer()->getSoundElapsedTime(_handle) * 22050 / 1000; }
 
 private:
-	Audio::Mixer *_mixer;
 	Audio::SoundHandle _handle;
-	Common::SafeSeekableSubReadStream *_fileStream;
 };
 
 } // End of namespace Pink

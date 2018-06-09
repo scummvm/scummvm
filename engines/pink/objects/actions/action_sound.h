@@ -24,16 +24,13 @@
 #define PINK_ACTION_SOUND_H
 
 #include "pink/objects/actions/action.h"
+#include "pink/sound.h"
 
 namespace Pink {
 
-class Sound;
-
 class ActionSound : public Action {
 public:
-	ActionSound();
-	~ActionSound();
-
+	~ActionSound() override;
 	void deserialize(Archive &archive) override;
 
 	void toConsole() override;
@@ -46,8 +43,8 @@ public:
 	void pause(bool paused) override;
 
 private:
-	Sound *_sound;
 	Common::String _fileName;
+	Sound _sound;
 	uint32 _volume;
 	bool _isLoop;
 	bool _isBackground;

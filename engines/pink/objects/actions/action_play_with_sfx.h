@@ -24,6 +24,7 @@
 #define PINK_ACTION_PLAY_WITH_SFX_H
 
 #include "pink/objects/actions/action_play.h"
+#include "pink/sound.h"
 
 namespace Pink {
 
@@ -49,26 +50,21 @@ private:
 	uint32 _isLoop;
 };
 
-class Sound;
 class Page;
 
 class ActionSfx : public Object {
 public:
-	ActionSfx();
-	~ActionSfx() override;
-
 	void deserialize(Archive &archive) override;
 
 	void toConsole() override;
 
 	void play(Page *page);
-	void end();
 
-	uint32 getFrame();
+	uint32 getFrame() { return _frame; }
 
 private:
-	Sound *_sound;
 	Common::String _sfxName;
+	Sound _sound;
 	uint32 _volume;
 	uint32 _frame;
 };
