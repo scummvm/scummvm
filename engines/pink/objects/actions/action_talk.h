@@ -45,8 +45,8 @@ protected:
 	void onStart() override;
 
 private:
-	Sound _sound;
 	Common::String _vox;
+	Sound _sound;
 };
 
 } // End of namespace Pink

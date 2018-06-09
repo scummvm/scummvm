@@ -58,11 +58,12 @@ public:
 
 	void toConsole() override;
 
-	void play(Page *page);
+	void play();
 
 	uint32 getFrame() { return _frame; }
 
 private:
+	ActionPlayWithSfx *_sprite;
 	Common::String _sfxName;
 	Sound _sound;
 	uint32 _volume;
