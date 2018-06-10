@@ -477,8 +477,8 @@ WalkLocation *PubPink::getWalkDestination() {
 }
 
 bool PubPink::playingMiniGame() {
-	return !_page->checkValueOfVariable(kFoodPuzzle, "TRUE") ||
-		   _page->checkValueOfVariable(kFoodPuzzle, kUndefined);
+	return !(_page->checkValueOfVariable(kFoodPuzzle, "TRUE") ||
+		   _page->checkValueOfVariable(kFoodPuzzle, kUndefined));
 }
 
 } // End of namespace Pink
