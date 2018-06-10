@@ -160,9 +160,11 @@ void GamePage::saveStateToMem() {
 
 void GamePage::loadState(Archive &archive) {
 	uint size = archive.readDWORD();
-	_memFile = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
-	for (uint i = 0; i < size; ++i) {
-		_memFile->writeByte(archive.readByte());
+	if (size) {
+		_memFile = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+		for (uint i = 0; i < size; ++i) {
+			_memFile->writeByte(archive.readByte());
+		}
 	}
 }
 
