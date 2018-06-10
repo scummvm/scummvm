@@ -69,9 +69,11 @@ public:
 	// That code is instead rewritten on a per-room basis.
 	bool actionHasCode(const Action &action);
 	bool handleAction(const Action &action);
+	bool handleAction(byte type, byte b1, byte b2, byte b3) { return handleAction(Action(type, b1, b2, b3)); };
 
 	// Same as above, but if any byte in the action is -1 (0xff), it matches any value.
 	bool handleActionWithBitmask(const Action &action);
+	bool handleActionWithBitmask(byte type, byte b1, byte b2, byte b3) { return handleActionWithBitmask(Action(type, b1, b2, b3)); };
 
 	uint16 getFirstHotspot() { return readRdfWord(0x12); }
 	uint16 getHotspotEnd()   { return readRdfWord(0x14); }

@@ -395,7 +395,7 @@ public:
 
 	// Misc
 	uint16 getRandomWord();
-	Common::String getItemDescription(int itemIndex);
+	Common::String getLoadedText(int itemIndex);
 
 
 public:

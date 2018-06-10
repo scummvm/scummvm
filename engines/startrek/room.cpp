@@ -122,7 +122,7 @@ bool Room::handleActionWithBitmask(const Action &action) {
 	int n = _numRoomActions;
 
 	while (n-- > 0) {
-		uint32 bitmask = action.getBitmask();
+		uint32 bitmask = roomActionPtr->action.getBitmask();
 		if ((action.toUint32() & bitmask) == (roomActionPtr->action.toUint32() & bitmask)) {
 			_vm->_awayMission.rdfStillDoDefaultAction = false;
 			(this->*(roomActionPtr->funcPtr))();
