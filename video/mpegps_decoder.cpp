@@ -486,6 +486,10 @@ bool MPEGPSDecoder::MPEGVideoTrack::sendPacket(Common::SeekableReadStream *packe
 
 	if (foundFrame) {
 		_curFrame++;
+		if (pts != 0xFFFFFFFF) {
+			Audio::Timestamp ptsTimestamp = Audio::Timestamp(pts / 90, 27000000);
+			framePeriod = ptsTimestamp.frameDiff(_nextFrameStartTime);
+		}
 		_nextFrameStartTime = _nextFrameStartTime.addFrames(framePeriod);
 	}
 #endif
