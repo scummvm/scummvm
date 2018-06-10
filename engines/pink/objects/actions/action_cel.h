@@ -47,8 +47,8 @@ public:
 
 	Coordinates getCoordinates() override;
 
-	uint32 getZ();
-	CelDecoder *getDecoder();
+	uint32 getZ() { return _z; }
+	CelDecoder *getDecoder() { return _decoder; }
 
 protected:
 	virtual void onStart() = 0;

@@ -47,11 +47,6 @@ Actor *Page::findActor(const Common::String &name) {
 	return nullptr;
 }
 
-
-CelDecoder *Page::loadCel(Common::String &fileName) {
-	return _resMgr.loadCEL(fileName);
-}
-
 void Page::toConsole() {
 	for (uint i = 0; i < _actors.size(); ++i) {
 		_actors[i]->toConsole();
@@ -72,10 +67,6 @@ void Page::initPallete() {
 	}
 }
 
-LeadActor *Page::getLeadActor() {
-	return _leadActor;
-}
-
 void Page::clear() {
 	for (uint i = 0; i < _actors.size(); ++i) {
 		delete _actors[i];
@@ -88,10 +79,6 @@ void Page::pause(bool paused) {
 	for (uint i = 0; i < _actors.size(); ++i) {
 		_actors[i]->pause(paused);
 	}
-}
-
-PinkEngine *Page::getGame() {
-	return _resMgr.getGame();
 }
 
 } // End of namespace Pink

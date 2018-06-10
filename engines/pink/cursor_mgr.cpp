@@ -99,7 +99,7 @@ void CursorMgr::setCursor(const Common::String &cursorName, const Common::Point 
 
 void CursorMgr::hideItem() {
 	if (_actor)
-		_actor->hide();
+		_actor->setAction(kHideAction);
 }
 
 void CursorMgr::startAnimation(int index) {
@@ -110,10 +110,6 @@ void CursorMgr::startAnimation(int index) {
 		_isSecondFrame = 0;
 		_game->setCursor(index);
 	}
-}
-
-void CursorMgr::setPage(Page *page) {
-	_page = page;
 }
 
 } // End of namespace Pink

@@ -86,29 +86,9 @@ void Actor::toConsole() {
 	}
 }
 
-bool Actor::isPlaying() {
-	return !_isActionEnded;
-}
-
 void Actor::pause(bool paused) {
 	if (_action)
 		_action->pause(paused);
-}
-
-void Actor::hide() {
-	setAction(kHideAction);
-}
-
-void Actor::endAction() {
-	_isActionEnded = 1;
-}
-
-bool Actor::isLeftClickHandlers() {
-	return false;
-}
-
-bool Actor::isUseClickHandlers(InventoryItem *item) {
-	return false;
 }
 
 void Actor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
@@ -119,18 +99,6 @@ void Actor::onHover(const Common::Point point, const Common::String &itemName, C
 	cursorMgr->setCursor(kHoldingItemCursor, point, itemName);
 }
 
-void Actor::onClick() {}
-
-void Actor::onTimerMessage() {}
-
-bool Actor::onLeftClickMessage() {
-	return false;
-}
-
-bool Actor::onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) {
-	return false;
-}
-
 Action *Actor::findAction(const Common::String &name) {
 	for (uint i = 0; i < _actions.size(); ++i) {
 		if (_actions[i]->getName() == name)
@@ -139,26 +107,9 @@ Action *Actor::findAction(const Common::String &name) {
 	return nullptr;
 }
 
-Action *Actor::getAction() const {
-	return _action;
-}
-
-Page *Actor::getPage() const {
-	return _page;
-}
-
-Sequencer *Actor::getSequencer() const {
-	return _page->getSequencer();
-}
-
 const Common::String &Actor::getLocation() const {
 	static const Common::String empty;
 	return empty;
-}
-
-void Actor::setAction(const Common::String &name) {
-	Action *newAction = findAction(name);
-	setAction(newAction);
 }
 
 void Actor::setAction(Action *newAction) {
@@ -181,10 +132,6 @@ void Actor::setAction(Action *newAction, bool unk) {
 	} else {
 		setAction(newAction);
 	}
-}
-
-void Actor::setPage(Page *page) {
-	_page = page;
 }
 
 } // End of namespace Pink

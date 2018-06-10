@@ -44,19 +44,19 @@ public:
 	void initPallete();
 
 	Actor *findActor(const Common::String &name);
-	LeadActor *getLeadActor();
+	LeadActor *getLeadActor() { return _leadActor; }
 
 	Common::SafeSeekableSubReadStream *getResourceStream(const Common::String &fileName) { return _resMgr.getResourceStream(fileName); }
-	CelDecoder *loadCel(Common::String &fileName);
+	CelDecoder *loadCel(Common::String &fileName) { return _resMgr.loadCEL(fileName); }
 
 	virtual void clear();
 	void pause(bool paused);
 
-	PinkEngine *getGame();
+	PinkEngine *getGame() { return _resMgr.getGame(); }
 
 	virtual Sequencer *getSequencer() { return nullptr; }
 	virtual WalkMgr *getWalkMgr() { return nullptr; }
-	virtual Module *getModule() const { return nullptr; }
+	virtual Module *getModule()  { return nullptr; }
 
 	virtual bool checkValueOfVariable(const Common::String &variable, const Common::String &value) { return 0; }
 	virtual void setVariable(Common::String &variable, Common::String &value) {}

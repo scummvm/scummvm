@@ -71,10 +71,6 @@ static int resDescComp(const void *a, const void *b) {
 	return scumm_stricmp((char *) a, (char *) b);
 }
 
-PinkEngine *ResourceMgr::getGame() const {
-	return _game;
-}
-
 Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(const Common::String &name) {
 	Common::SeekableReadStream *stream;
 

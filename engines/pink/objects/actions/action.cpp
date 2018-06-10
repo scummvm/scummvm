@@ -41,8 +41,5 @@ Coordinates Action::getCoordinates() {
 	return Coordinates();
 }
 
-Actor *Action::getActor() const {
-	return _actor;
-}
 
 } // End of namespace Pink

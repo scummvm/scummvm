@@ -95,7 +95,7 @@ void HandlerTimerSequences::toConsole() {
 
 void HandlerTimerSequences::handle(Actor *actor) {
 	Handler::handle(actor);
-	Sequencer *sequencer = actor->getSequencer();
+	Sequencer *sequencer = actor->getPage()->getSequencer();
 
 	assert(!_sequences.empty());
 

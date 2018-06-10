@@ -52,37 +52,35 @@ public:
 
 	void toConsole() override ;
 
-	bool isPlaying();
+	bool isPlaying() { return !_isActionEnded; }
 	virtual void pause(bool paused);
 
-	void hide();
-	void endAction();
+	void endAction() { _isActionEnded = true; }
 
-	virtual bool isLeftClickHandlers();
-	virtual bool isUseClickHandlers(InventoryItem *item);
+	virtual bool isLeftClickHandlers() { return false; }
+	virtual bool isUseClickHandlers(InventoryItem *item) { return false; }
 
 	virtual void onMouseOver(const Common::Point point, CursorMgr *mgr);
 	virtual void onHover(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
 
-	virtual void onClick();
+	virtual void onClick() {}
 
-	virtual void onTimerMessage();
-	virtual bool onLeftClickMessage();
-	virtual bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr);
+	virtual void onTimerMessage() {}
+	virtual bool onLeftClickMessage() { return false; }
+	virtual bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) { return false; }
 
 	Action *findAction(const Common::String &name);
 
-	Action *getAction() const;
-	Page *getPage() const;
-	Sequencer *getSequencer() const;
+	Action *getAction() const { return _action; }
+	Page *getPage() const { return _page; }
 
 	virtual const Common::String &getLocation() const;
 
-	void setAction(const Common::String &name);
+	void setAction(const Common::String &name) { setAction(findAction(name)); }
 	void setAction(Action *newAction);
 	void setAction(Action *newAction, bool unk);
 
-	void setPage(Page *page);
+	void setPage(Page *page) { _page = page;}
 
 protected:
 	Page *_page;

@@ -40,9 +40,9 @@ public:
 
 	virtual void toConsole();
 
-	Common::Array<SequenceItem *> &getItems();
+	Common::Array<SequenceItem *> &getItems() { return _items; }
 
-	void setContext(SequenceContext *context);
+	void setContext(SequenceContext *context) { _context = context; }
 	virtual void init(int unk);
 	virtual void start(int unk);
 	virtual void end();

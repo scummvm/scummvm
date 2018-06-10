@@ -284,8 +284,6 @@ void LeadActor::onClick() {
 	}
 }
 
-void LeadActor::onVariableSet() {}
-
 void LeadActor::onInventoryClosed(bool isItemClicked) {
 	_isHaveItem = isItemClicked;
 	_state = _stateCopy;
@@ -327,10 +325,6 @@ void LeadActor::setNextExecutors(const Common::String &nextModule, const Common:
 		_state = kPlayingVideo;
 		_page->getGame()->setNextExecutors(nextModule, nextPage);
 	}
-}
-
-LeadActor::State LeadActor::getState() const {
-	return _state;
 }
 
 void LeadActor::forceUpdateCursor() {

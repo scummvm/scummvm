@@ -37,21 +37,21 @@ class PDAMgr {
 public:
 	PDAMgr(PinkEngine *game);
 
-	void loadState(Archive &archive);
+	void loadState(Archive &archive) { _savedPage = archive.readString(); }
 	void saveState(Archive &archive);
 
 	void execute(const Command &command);
 	void goToPage(const Common::String &pageName);
 
-	void update();
+	void update() { _cursorMgr.update(); }
 
 	void onLeftButtonClick(Common::Point point);
 	void onMouseMove(Common::Point point);
 
-	PinkEngine *getGame() const;
-	const Common::String &getSavedPageName();
+	PinkEngine *getGame() const { return _game; }
+	const Common::String &getSavedPageName() { return _savedPage; }
 
-	void setLead(LeadActor *lead);
+	void setLead(LeadActor *lead) { _lead = lead; }
 
 private:
 	void close();

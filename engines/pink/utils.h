@@ -23,7 +23,7 @@
 #ifndef PINK_UTILS_H
 #define PINK_UTILS_H
 
-#include "pink/archive.h"
+#include "pink/objects/object.h"
 
 namespace Pink {
 

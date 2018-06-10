@@ -82,22 +82,10 @@ GamePage *Module::findPage(const Common::String &pageName) const {
 	return nullptr;
 }
 
-PinkEngine *Module::getGame() const {
-	return _game;
-}
-
 bool Module::checkValueOfVariable(Common::String &variable, Common::String &value) {
 	if (!_variables.contains(variable))
 		return value == kUndefined;
 	return _variables[variable] == value;
-}
-
-void Module::setVariable(Common::String &variable, Common::String &value) {
-	_variables[variable] = value;
-}
-
-InventoryMgr *Module::getInventoryMgr() {
-	return &_invMgr;
 }
 
 void Module::loadState(Archive &archive) {

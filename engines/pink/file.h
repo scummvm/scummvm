@@ -64,7 +64,7 @@ public:
 
 	ResourceDescription *getResDescTable(ObjectDescription *objDesc);
 
-	uint32 getTimestamp();
+	uint32 getTimestamp() { return _timestamp; }
 
 private:
 	void seekToObject(const char *name);

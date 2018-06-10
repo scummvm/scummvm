@@ -34,7 +34,7 @@ class SequenceActorState {
 public:
 	SequenceActorState(const Common::String &name);
 
-	const Common::String &getActor() const;
+	const Common::String &getActor() const { return _actorName; }
 	void check(int index, Sequence *sequence, bool unk);
 
 public:
@@ -49,10 +49,10 @@ class SequenceContext {
 public:
 	SequenceContext(Sequence *sequence, Sequencer* sequencer);
 
-	uint getNextItemIndex() const;
-	Sequence *getSequence() const;
+	uint getNextItemIndex() const { return _nextItemIndex; }
+	Sequence *getSequence() const { return _sequence; }
 
-	void setNextItemIndex(int index);
+	void setNextItemIndex(int index) { _nextItemIndex = index; }
 
 	void clearActionsFromActorStates();
 

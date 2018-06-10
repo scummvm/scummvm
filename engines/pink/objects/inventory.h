@@ -35,7 +35,7 @@ public:
 
 	virtual void toConsole();
 
-	Common::String &getCurrentOwner();
+	const Common::String &getCurrentOwner() { return _currentOwner; }
 
 	friend class InventoryMgr;
 private:
@@ -61,13 +61,13 @@ public:
 
 	bool start(bool playOpening);
 
-	void setLeadActor(LeadActor *lead);
+	void setLeadActor(LeadActor *lead) { _lead = lead; }
 	InventoryItem* findInventoryItem(const Common::String &name);
 
 	bool isPinkOwnsAnyItems();
 	void setItemOwner(const Common::String &owner, InventoryItem *item);
 
-	InventoryItem *getCurrentItem();
+	InventoryItem *getCurrentItem() { return _item; }
 
 private:
 	void close();
@@ -76,9 +76,6 @@ private:
 		kRight = 1
 	};
 	void showNextItem(bool direction);
-
-
-
 
 	LeadActor *_lead;
 	Actor *_window;

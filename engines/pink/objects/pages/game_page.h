@@ -47,9 +47,9 @@ public:
 	void loadManagers();
 	void init(bool isLoadingSave);
 
-	Sequencer *getSequencer();
-	WalkMgr *getWalkMgr();
-	Module *getModule() const;
+	Sequencer *getSequencer() { return _sequencer; }
+	WalkMgr *getWalkMgr() { return _walkMgr; }
+	Module *getModule() { return _module; }
 
 	bool checkValueOfVariable(const Common::String &variable, const Common::String &value);
 	void setVariable(Common::String &variable, Common::String &value);
