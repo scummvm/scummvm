@@ -39,7 +39,18 @@ public:
 	void open() override;
 
 private:
+	enum WidgetIndex {
+		kWidgetBack = 3,
+		kWidgetNext = 4
+	};
+
+	uint _page;
+
 	void backHandler();
+
+	void prevPageHandler() { changePage(_page - 1); }
+	void nextPageHandler() { changePage(_page + 1); }
+	void changePage(uint page);
 };
 
 /**

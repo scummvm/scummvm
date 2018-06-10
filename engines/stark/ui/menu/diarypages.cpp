@@ -35,7 +35,8 @@
 namespace Stark {
 
 DiaryPagesScreen::DiaryPagesScreen(Gfx::Driver *gfx, Cursor *cursor) :
-		StaticLocationScreen(gfx, cursor, "DiaryPages", Screen::kScreenDiaryPages) {
+		StaticLocationScreen(gfx, cursor, "DiaryPages", Screen::kScreenDiaryPages),
+		_page(0) {
 }
 
 DiaryPagesScreen::~DiaryPagesScreen() {
@@ -63,21 +64,36 @@ void DiaryPagesScreen::open() {
 
 	_widgets.push_back(new StaticLocationWidget(
 			"Back",
-			nullptr,
+			CLICK_HANDLER(DiaryPagesScreen, prevPageHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
 
 	_widgets.push_back(new StaticLocationWidget(
 			"Next",
-			nullptr,
+			CLICK_HANDLER(DiaryPagesScreen, nextPageHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
 
-	_widgets.push_back(new DiaryWidget(0));
+	_widgets.push_back(new DiaryWidget(_page));
+	_widgets[kWidgetBack]->setVisible(_page > 0);
+	_widgets[kWidgetNext]->setVisible(_page < StarkDiary->countDiary() - 1);
 }
 
 void DiaryPagesScreen::backHandler() {
 	StarkUserInterface->backPrevScreen();
+}
+
+void DiaryPagesScreen::changePage(uint page) {
+	assert(page < StarkDiary->countDiary());
+
+	delete _widgets.back();
+	_widgets.pop_back();
+	_widgets.push_back(new DiaryWidget(page));
+
+	_widgets[kWidgetBack]->setVisible(page > 0);
+	_widgets[kWidgetNext]->setVisible(page < StarkDiary->countDiary() - 1);
+
+	_page = page;
 }
 
 DiaryWidget::DiaryWidget(uint diaryIndex):
@@ -87,6 +103,9 @@ DiaryWidget::DiaryWidget(uint diaryIndex):
 
 	// Diary page layer contains only one item, the text
 	_renderEntry = layer->listRenderEntries()[0];
+
+	// RenderEntry need to be refreshed in case the screen resolution changed
+	onScreenChanged();
 }
 
 } // End of namespace Stark

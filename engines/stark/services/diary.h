@@ -63,7 +63,7 @@ public:
 	Common::String &getFMVTitle(uint index) { return _fmvEntries[index].title; }
 
 	/** Get info of added Diary entries */
-	int countDiary() { return _diaryEntries.size(); }
+	uint countDiary() { return _diaryEntries.size(); }
 	Common::String &getDiary(uint index) { return _diaryEntries[index]; };
 
 	/** Start recording speech lines for a dialog */
