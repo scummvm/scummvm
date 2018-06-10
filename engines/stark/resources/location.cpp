@@ -523,7 +523,7 @@ void Location::saveLoadCurrent(ResourceSerializer *serializer) {
 
 Layer *Location::getLayerByName(const Common::String &name) {
 	for (uint i = 0; i < _layers.size(); ++i) {
-		if (_layers[i]->getName() == name) {
+		if (_layers[i]->getName().equalsIgnoreCase(name)) {
 			return _layers[i];
 		}
 	}
