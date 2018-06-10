@@ -38,7 +38,7 @@ class FMVMenuScreen : public StaticLocationScreen {
 public:
 	static Common::Point _formatRectPos;
 	static int _fontHeight;
-	static int _fmvPerPage;
+	static uint _fmvPerPage;
 
 	FMVMenuScreen(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~FMVMenuScreen();
@@ -63,15 +63,15 @@ private:
 	Common::Array<FMVWidget *> _fmvWidgets;
 
 	// Count from zero
-	int _page, _maxPage;
+	uint _page, _maxPage;
 
 	void backHandler();
 	void prevPageHandler() { changePage(_page - 1); }
 	void nextPageHandler() { changePage(_page + 1); }
 
 	void freeFMVWidgets();
-	void loadFMVWidgets(int page);
-	void changePage(int page);
+	void loadFMVWidgets(uint page);
+	void changePage(uint page);
 };
 
 /**
@@ -79,7 +79,7 @@ private:
  */
 class FMVWidget {
 public:
-	FMVWidget(Gfx::Driver *gfx, int fmvIndex);
+	FMVWidget(Gfx::Driver *gfx, uint fmvIndex);
 	~FMVWidget() {}
 
 	void render() { _title.render(_position); }

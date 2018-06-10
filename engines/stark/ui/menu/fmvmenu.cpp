@@ -36,7 +36,7 @@ namespace Stark {
 // Hard-coded parameters in case cannot retrieve the format rectangle
 Common::Point FMVMenuScreen::_formatRectPos(202, 61);
 int FMVMenuScreen::_fontHeight(16);
-int FMVMenuScreen::_fmvPerPage(18);
+uint FMVMenuScreen::_fmvPerPage(18);
 
 FMVMenuScreen::FMVMenuScreen(Gfx::Driver *gfx, Cursor *cursor) :
 		StaticLocationScreen(gfx, cursor, "DiaryFMV", Screen::kScreenFMVMenu),
@@ -157,18 +157,18 @@ void FMVMenuScreen::freeFMVWidgets() {
 	_fmvWidgets.clear();
 }
 
-void FMVMenuScreen::loadFMVWidgets(int page) {
-	int start = page * _fmvPerPage;
-	int end = start + _fmvPerPage;
+void FMVMenuScreen::loadFMVWidgets(uint page) {
+	uint start = page * _fmvPerPage;
+	uint end = start + _fmvPerPage;
 	end = end < StarkDiary->countFMV() ? end : StarkDiary->countFMV();
 
-	for (int i = start; i < end; ++i) {
+	for (uint i = start; i < end; ++i) {
 		_fmvWidgets.push_back(new FMVWidget(_gfx, i));
 	}
 }
 
-void FMVMenuScreen::changePage(int page) {
-	assert(page >= 0 && page <= _maxPage);
+void FMVMenuScreen::changePage(uint page) {
+	assert(page <= _maxPage);
 
 	freeFMVWidgets();
 	loadFMVWidgets(page);
@@ -179,7 +179,7 @@ void FMVMenuScreen::changePage(int page) {
 	_page = page;
 }
 
-FMVWidget::FMVWidget(Gfx::Driver *gfx, int fmvIndex) :
+FMVWidget::FMVWidget(Gfx::Driver *gfx, uint fmvIndex) :
 		_filename(StarkDiary->getFMVFilename(fmvIndex)),
 		_title(gfx) {
 	_title.setText(StarkDiary->getFMVTitle(fmvIndex));
