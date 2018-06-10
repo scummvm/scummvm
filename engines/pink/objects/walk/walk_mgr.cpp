@@ -32,6 +32,12 @@ namespace Pink {
 WalkMgr::WalkMgr()
 	: _isWalking(false), _leadActor(nullptr) {}
 
+WalkMgr::~WalkMgr() {
+	for (uint i = 0; i < _locations.size(); ++i) {
+		delete _locations[i];
+	}
+}
+
 void WalkMgr::deserialize(Pink::Archive &archive) {
 	_leadActor = static_cast<LeadActor *>(archive.readObject());
 	_locations.deserialize(archive);

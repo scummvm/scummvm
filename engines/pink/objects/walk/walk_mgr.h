@@ -42,6 +42,7 @@ struct Coordinates {
 class WalkMgr : public Object {
 public:
 	WalkMgr();
+	~WalkMgr() override;
 	virtual void deserialize(Archive &archive);
 	void toConsole() override;
 

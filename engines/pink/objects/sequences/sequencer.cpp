@@ -40,6 +40,10 @@ Sequencer::~Sequencer() {
 	for (uint i = 0; i < _sequences.size(); ++i) {
 		delete _sequences[i];
 	}
+	for (uint i = 0; i < _timers.size(); ++i) {
+		delete _timers[i];
+	}
+	removeContext(_context);
 }
 
 void Sequencer::deserialize(Archive &archive) {
