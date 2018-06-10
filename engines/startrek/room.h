@@ -535,6 +535,54 @@ public:
 	void tug0UseSTricorderAnywhere();
 	void tug0UseMTricorderAnywhere();
 
+	// TUG1
+	void tug1Tick1();
+	void tug1UseSTricorderOnAnything();
+	void tug1LookAtBridgeDoor();
+	void tug1UseSTricorderOnBridgeDoor();
+	void tug1UsePhaserOnBridgeDoor();
+	void tug1KirkReachedFiringPosition();
+	void tug1KirkPulledOutPhaser();
+	void tug1KirkFinishedFiringPhaser();
+	void tug1TalkToSpock();
+	void tug1UseSTricorderOnJunkPile();
+	void tug1LookAtJunkPile();
+	void tug1GetJunkPile();
+	void tug1KirkReachedJunkPile();
+	void tug1KirkFinishedTakingJunkPile();
+	void tug1UsePhaserOnWelder();
+	void tug1UseWelderOnWireScraps();
+	void tug1UseWelderOnMetalScraps();
+	void tug1UseCombBitOnTransmogrifier();
+	void tug1UsePhaserWelderOnBridgeDoor();
+	void tug1UsePhaserWelderOnBridgeDoorInLeftSpot();
+	void tug1KirkReachedBridgeDoorWithWelder();
+	void tug1KirkFinishedUsingWelder();
+	void tug1KirkReachedBridgeDoorWithWelderInLeftSpot();
+	void tug1KirkFinishedUsingWelderInLeftSpot();
+	void tug1LookAnywhere();
+	void tug1LookAtMccoy();
+	void tug1LookAtSpock();
+	void tug1LookAtRedshirt();
+	void tug1TalkToMccoy();
+	void tug1TalkToRedshirt();
+	void tug1LookAtTerminal();
+	void tug1LookAtDebris();
+	void tug1LookAtBrigDoor();
+	void tug1UseSTricorderOnBrigDoor();
+	void tug1TalkToKirk();
+	void tug1UseCommunicator();
+	void tug1WalkToBridgeDoor();
+	void tug1KirkReachedBridgeDoor();
+	void tug1BridgeDoorOpened();
+	void tug1WalkToBrigDoor();
+	void tug1UseMTricorderAnywhere();
+	void tug1UseMTricorderOnBridgeDoor();
+	void tug1UseMTricorderOnBrigDoor();
+	void tug1UseSpockOnBridgeDoor();
+	void tug1UseRedshirtOnBridgeDoor();
+	void tug1UseMedkitOnBridgeDoor();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {

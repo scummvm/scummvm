@@ -101,10 +101,12 @@ struct AwayMission {
 			int16 field2b; // 0x2b
 			int16 field2d; // 0x2d;
 			bool engineerConscious; // 0x30
+			bool gotJunkPile; // 0x3f
 			bool gotTransmogrifier; // 0x43
 			bool transporterRepaired; // 0x44
 			bool spockExaminedTransporter; // 0x45
 			bool usedTransmogrifierOnTransporter; // 0x46
+			bool forceFieldDown; // 0x47
 			bool haveBomb; // 0x49
 		} tug;
 	};

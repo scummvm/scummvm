@@ -212,6 +212,10 @@ void Room::tug0UsePhaserOnWelder() {
 	loseItem(OBJECT_IPWE);
 	giveItem(OBJECT_IPWF);
 	showText(TX_TUG0N006);
+
+	// BUGFIX: this following line didn't exist, despite it existing in TUG1; meaning this
+	// was supposed to give points, but it only did in a specific room.
+	_vm->_awayMission.tug.missionScore += 3;
 }
 
 void Room::tug0UseWelderOnWireScraps() {
