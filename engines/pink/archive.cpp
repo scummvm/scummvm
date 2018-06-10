@@ -317,30 +317,6 @@ Common::String Archive::readString() {
 	return Common::String(buffer, len);
 }
 
-byte Archive::readByte() {
-	return _readStream->readByte();
-}
-
-uint32 Archive::readDWORD() {
-	return _readStream->readUint32LE();
-}
-
-uint16 Archive::readWORD() {
-	return _readStream->readUint16LE();
-}
-
-void Archive::writeByte(byte val) {
-	return _writeStream->writeByte(val);
-}
-
-void Archive::writeDWORD(uint32 val) {
-	_writeStream->writeUint32LE(val);
-}
-
-void Archive::writeWORD(uint16 val) {
-	_writeStream->writeUint16LE(val);
-}
-
 void Archive::writeString(const Common::String &string) {
 	_writeStream->writeByte(string.size());
 	_writeStream->write(string.c_str(), string.size());

@@ -42,22 +42,22 @@ public:
 	Archive(Common::SeekableReadStream *stream);
 	Archive(Common::WriteStream *stream);
 
-	Common::SeekableReadStream *getReadStream() { return _readStream; }
-	Common::WriteStream *getWriteStream() { return _writeStream; };
-
 	void mapObject(Object *obj);
 
 	int readCount();
-	byte readByte();
-	uint32 readDWORD();
-	uint16 readWORD();
+	byte readByte() { return _readStream->readByte(); }
+	uint32 readDWORD() { return _readStream->readUint32LE(); }
+	uint16 readWORD() { return _readStream->readUint16LE(); }
 
-	void writeByte(byte val);
-	void writeDWORD(uint32 val);
-	void writeWORD(uint16 val);
+	Common::String readString();
 
 	Object *readObject();
-	Common::String readString();
+
+	void write(const void *dataPtr, uint32 dataSize) { _writeStream->write(dataPtr, dataSize); }
+	void writeByte(byte val) { _writeStream->writeByte(val); }
+	void writeDWORD(uint32 val) { _writeStream->writeUint32LE(val); }
+	void writeWORD(uint16 val) { _writeStream->writeUint16LE(val); }
+
 	void writeString(const Common::String &string);
 
 private:
