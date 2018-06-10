@@ -521,5 +521,14 @@ void Location::saveLoadCurrent(ResourceSerializer *serializer) {
 	}
 }
 
+Layer *Location::getLayerByName(const Common::String &name) {
+	for (uint i = 0; i < _layers.size(); ++i) {
+		if (_layers[i]->getName() == name) {
+			return _layers[i];
+		}
+	}
+	return nullptr;
+}
+
 } // End of namespace Resources
 } // End of namespace Stark

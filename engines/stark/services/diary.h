@@ -62,6 +62,10 @@ public:
 	Common::String &getFMVFilename(uint index) { return _fmvEntries[index].filename; }
 	Common::String &getFMVTitle(uint index) { return _fmvEntries[index].title; }
 
+	/** Get info of added Diary entries */
+	int countDiary() { return _diaryEntries.size(); }
+	Common::String &getDiary(uint index) { return _diaryEntries[index]; };
+
 	/** Start recording speech lines for a dialog */
 	void openDialog(const Common::String &title, const Common::String &characterName, int32 characterId);
 

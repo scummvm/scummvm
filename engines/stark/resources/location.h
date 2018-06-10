@@ -133,6 +133,9 @@ public:
 	/** Setup a up / down floating movement for the 3d items in this location */
 	void floatScene(int32 periodMs, float amplitude, float offset);
 
+	/** Get the layer with a given name, return null when not found */
+	Layer *getLayerByName(const Common::String &name);
+
 protected:
 	void printData() override;
 

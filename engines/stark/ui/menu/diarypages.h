@@ -42,6 +42,15 @@ private:
 	void backHandler();
 };
 
+/**
+ * The widget displaying diary text
+ */
+class DiaryWidget : public StaticLocationWidget {
+public:
+	DiaryWidget(uint diaryIndex);
+	~DiaryWidget() {}
+};
+
 } // End of namespace Stark
 
 #endif // STARK_UI_MENU_DIARY_PAGES_H

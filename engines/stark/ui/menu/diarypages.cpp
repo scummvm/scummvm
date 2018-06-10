@@ -24,6 +24,13 @@
 
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/diary.h"
+#include "engines/stark/services/staticprovider.h"
+
+#include "engines/stark/resources/location.h"
+#include "engines/stark/resources/layer.h"
+
+#include "engines/stark/gfx/renderentry.h"
 
 namespace Stark {
 
@@ -65,10 +72,21 @@ void DiaryPagesScreen::open() {
 			nullptr,
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
+
+	_widgets.push_back(new DiaryWidget(0));
 }
 
 void DiaryPagesScreen::backHandler() {
 	StarkUserInterface->backPrevScreen();
+}
+
+DiaryWidget::DiaryWidget(uint diaryIndex):
+		StaticLocationWidget(nullptr, nullptr, nullptr) {
+	Resources::Location *location = StarkStaticProvider->getLocation();
+	Resources::Layer *layer = location->getLayerByName(StarkDiary->getDiary(diaryIndex));
+
+	// Diary page layer contains only one item, the text
+	_renderEntry = layer->listRenderEntries()[0];
 }
 
 } // End of namespace Stark
