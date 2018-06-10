@@ -37,11 +37,11 @@ void StarTrekEngine::initAwayMission() {
 	// sub_23a60(); // TODO
 	_sound->loadMusicFile("ground");
 
-	loadRoom(_missionToLoad, _roomIndexToLoad);
+	loadRoom(_missionToLoad, 1); // FIXME
 	_roomIndexToLoad = -1;
 
 	// Load crew positions for beaming in
-	initAwayCrewPositions(4);
+	initAwayCrewPositions(1);
 }
 
 void StarTrekEngine::runAwayMission() {
@@ -432,40 +432,133 @@ void StarTrekEngine::handleAwayMissionAction() {
 		}
 		break;
 
-	case ACTION_USE: // TODO
-		warning("Unhandled use action: %d %d %d", action.b1, action.b2, action.b3);
+	case ACTION_USE:
+		if (action.activeObject() != action.passiveObject()) {
+			switch (action.activeObject()) {
+			case OBJECT_KIRK:
+				if (!_room->handleAction(ACTION_WALK, action.passiveObject(), 0, 0)
+						&& !_room->handleAction(ACTION_GET, action.passiveObject(), 0, 0)) {
+					showTextbox("Capt. Kirk", getLoadedText(GROUNDTX_KIRK_USE), 20, 20, TEXTCOLOR_YELLOW, 0);
+				}
+				break;
+
+			case OBJECT_SPOCK:
+				if (!_room->handleAction(ACTION_USE, OBJECT_ISTRICOR, action.passiveObject(), 0)) {
+					// BUGFIX: Original game has just "Spock" instead of "Mr. Spock" as the
+					// speaker. That's inconsistent.
+					// Same applies to other parts of this function.
+					showTextbox("Mr. Spock", getLoadedText(GROUNDTX_SPOCK_USE), 20, 20, TEXTCOLOR_BLUE, 0);
+				}
+				break;
+
+			case OBJECT_MCCOY:
+				if (!_room->handleAction(ACTION_USE, OBJECT_IMEDKIT, action.passiveObject(), 0)
+						&& !_room->handleAction(ACTION_USE, OBJECT_IMTRICOR, action.passiveObject(), 0)) {
+					// BUGFIX: Original game has just "McCoy" instead of "Dr. McCoy".
+					showTextbox("Dr. McCoy", getLoadedText(GROUNDTX_MCCOY_USE), 20, 20, TEXTCOLOR_BLUE, 0);
+				}
+				break;
+
+			case OBJECT_REDSHIRT:
+				showTextbox(nullptr, getLoadedText(GROUNDTX_REDSHIRT_USE), 20, 20, TEXTCOLOR_YELLOW, 0);
+				break;
+
+			case OBJECT_IPHASERS:
+			case OBJECT_IPHASERK:
+				if (action.passiveObject() == OBJECT_SPOCK) {
+					int text = GROUNDTX_PHASER_ON_SPOCK + getRandomWord() % 8;
+					showTextbox("Dr. McCoy", getLoadedText(text), 20, 20, TEXTCOLOR_BLUE, 0);
+				}
+				else if (action.passiveObject() == OBJECT_MCCOY) {
+					int text = GROUNDTX_PHASER_ON_MCCOY + getRandomWord() % 8;
+					showTextbox("Mr. Spock", getLoadedText(text), 20, 20, TEXTCOLOR_BLUE, 0);
+				}
+				else if (action.passiveObject() == OBJECT_REDSHIRT) {
+					Common::String text = getLoadedText(GROUNDTX_PHASER_ON_REDSHIRT + getRandomWord() % 8);
+					// Replace audio filename with start of mission name (to load the
+					// audio for the crewman specific to the mission))
+					text.setChar(_missionName[0], 6);
+					text.setChar(_missionName[1], 7);
+					text.setChar(_missionName[2], 8);
+					showTextbox("Security Officer", text, 20, 20, TEXTCOLOR_RED, 0);
+					// TODO: replace "Security Officer" string with their actual name as
+					// an enhancement?
+				}
+				else if (!_room->handleActionWithBitmask(action)) {
+					int index = getRandomWord() % 7;
+					if (index & 1)
+						showTextbox("Dr. McCoy", getLoadedText(GROUNDTX_PHASER_ANYWHERE + index), 20, 20, TEXTCOLOR_BLUE, 0);
+					else
+						showTextbox("Mr. Spock", getLoadedText(GROUNDTX_PHASER_ANYWHERE + index), 20, 20, TEXTCOLOR_BLUE, 0);
+				}
+				break;
+
+			case OBJECT_ISTRICOR:
+				showTextbox("Mr. Spock", getLoadedText(GROUNDTX_SPOCK_SCAN), 20, 20, TEXTCOLOR_BLUE, 0);
+				break;
+
+			case OBJECT_IMTRICOR:
+				showTextbox("Dr. McCoy", getLoadedText(GROUNDTX_MCCOY_SCAN), 20, 20, TEXTCOLOR_BLUE, 0);
+				break;
+
+			case OBJECT_ICOMM:
+				if (!_room->handleAction(ACTION_USE, OBJECT_ICOMM, -1, 0))
+					showTextbox("Lt. Uhura", getLoadedText(GROUNDTX_USE_COMMUNICATOR), 20, 20, TEXTCOLOR_RED, 0);
+				break;
+
+			case OBJECT_IMEDKIT:
+				showTextbox("Dr. McCoy", getLoadedText(GROUNDTX_USE_MEDKIT), 20, 20, TEXTCOLOR_BLUE, 0);
+				break;
+
+			default:
+				if (!_room->handleActionWithBitmask(action.type, action.b1, action.b2, action.b3))
+					showTextbox("", getLoadedText(GROUNDTX_NOTHING_HAPPENS), 20, 20, TEXTCOLOR_YELLOW, 0);
+			}
+		}
 		break;
 
-	case ACTION_GET: // TODO
-		warning("Unhandled get action: %d %d %d", action.b1, action.b2, action.b3);
+	case ACTION_GET:
+		if (!_room->handleActionWithBitmask(action.type, action.b1, action.b2, action.b3))
+			showTextbox("", getLoadedText(GROUNDTX_FAIL_TO_OBTAIN_ANYTHING), 20, 20, TEXTCOLOR_YELLOW, 0);
 		break;
 
 	case ACTION_LOOK:
 		if (action.activeObject() >= ITEMS_START && action.activeObject() < ITEMS_END) {
 			int i = action.activeObject() - ITEMS_START;
-			Common::String text = getItemDescription(_itemList[i].textIndex);
+			Common::String text = getLoadedText(_itemList[i].textIndex);
 			showTextbox("", text, 20, 20, TEXTCOLOR_YELLOW, 0);
 		}
 		else if (action.activeObject() == OBJECT_KIRK)
-			showTextbox("", getItemDescription(0x49), 20, 20, TEXTCOLOR_YELLOW, 0);
+			showTextbox("", getLoadedText(GROUNDTX_LOOK_KIRK), 20, 20, TEXTCOLOR_YELLOW, 0);
 		else if (action.activeObject() == OBJECT_SPOCK)
-			showTextbox("", getItemDescription(0x4a), 20, 20, TEXTCOLOR_YELLOW, 0);
+			showTextbox("", getLoadedText(GROUNDTX_LOOK_SPOCK), 20, 20, TEXTCOLOR_YELLOW, 0);
 		else if (action.activeObject() == OBJECT_MCCOY)
-			showTextbox("", getItemDescription(0x4b), 20, 20, TEXTCOLOR_YELLOW, 0);
+			showTextbox("", getLoadedText(GROUNDTX_LOOK_MCCOY), 20, 20, TEXTCOLOR_YELLOW, 0);
 		else {
 			if (action.activeObject() == OBJECT_REDSHIRT)
-				showTextbox("", getItemDescription(0x4c), 20, 20, TEXTCOLOR_YELLOW, 0);
+				showTextbox("", getLoadedText(GROUNDTX_LOOK_REDSHIRT), 20, 20, TEXTCOLOR_YELLOW, 0);
 
 			// Show generic "nothing of note" text.
 			// BUG? This text is also shown after looking at the redshirt. However, his
 			// text is normally overridden on a per-mission basis, so perhaps this bug
 			// never manifests itself?
-			showTextbox("", getItemDescription(0x4d), 20, 20, TEXTCOLOR_YELLOW, 0);
+			showTextbox("", getLoadedText(GROUNDTX_LOOK_ANYWHERE), 20, 20, TEXTCOLOR_YELLOW, 0);
 		}
 		break;
 
-	case ACTION_TALK: // TODO
-		warning("Unhandled talk action: %d %d %d", action.b1, action.b2, action.b3);
+	case ACTION_TALK:
+		switch (action.activeObject()) {
+		case OBJECT_KIRK:
+		case OBJECT_SPOCK:
+		case OBJECT_MCCOY:
+		case OBJECT_REDSHIRT:
+			showTextbox("", getLoadedText(GROUNDTX_TALK_TO_CREWMAN), 20, 20, TEXTCOLOR_YELLOW, 0);
+			break;
+
+		default:
+			showTextbox("", getLoadedText(GROUNDTX_NO_RESPONSE), 20, 20, TEXTCOLOR_YELLOW, 0);
+			break;
+		}
 		break;
 
 	case ACTION_TOUCHED_WARP:

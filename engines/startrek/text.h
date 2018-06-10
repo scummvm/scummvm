@@ -25,6 +25,37 @@
 
 namespace StarTrek {
 
+// Text that's loaded from "GROUND.TXT". First 0x40 pieces of text are for items.
+enum GroundTextIDs {
+	// Generic "perform undefined action" text (ie. look at nothing, talk to wall)
+	GROUNDTX_LOOK_KIRK = 0x49,
+	GROUNDTX_LOOK_SPOCK = 0x4a,
+	GROUNDTX_LOOK_MCCOY = 0x4b,
+	GROUNDTX_LOOK_REDSHIRT = 0x4c,
+	GROUNDTX_LOOK_ANYWHERE = 0x4d,
+	GROUNDTX_TALK_TO_CREWMAN = 0x4e,
+	GROUNDTX_NO_RESPONSE = 0x4f,
+
+	GROUNDTX_KIRK_USE = 0x50,
+	GROUNDTX_SPOCK_USE = 0x51,
+	GROUNDTX_MCCOY_USE = 0x52,
+	GROUNDTX_REDSHIRT_USE = 0x53,
+	GROUNDTX_SPOCK_SCAN = 0x54,
+	GROUNDTX_MCCOY_SCAN = 0x55,
+	GROUNDTX_USE_MEDKIT = 0x56,
+
+	GROUNDTX_PHASER_ON_MCCOY = 0x57, // 8 variations
+	GROUNDTX_PHASER_ON_SPOCK = 0x5f, // 8 variations
+	GROUNDTX_PHASER_ON_REDSHIRT = 0x67, // 8 variations
+	GROUNDTX_PHASER_ANYWHERE = 0x6f, // 7 variations
+
+	GROUNDTX_USE_COMMUNICATOR = 0x76,
+	GROUNDTX_NOTHING_HAPPENS = 0x77,
+	GROUNDTX_FAIL_TO_OBTAIN_ANYTHING = 0x78
+};
+
+// Text that's hardcoded into "RDF" files, and copied into here for a sane referencing
+// scheme.
 enum GameStringIDs {
 	TX_NULL,
 	TX_BLANK,

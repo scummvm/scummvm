@@ -1851,7 +1851,7 @@ uint16 StarTrekEngine::getRandomWord() {
  * ".txt" files are just lists of strings. This traverses the file to get a particular
  * string index.
  */
-Common::String StarTrekEngine::getItemDescription(int itemIndex) {
+Common::String StarTrekEngine::getLoadedText(int itemIndex) {
 	SharedPtr<FileStream> txtFile = loadFile(_txtFilename + ".txt");
 
 	byte *data = txtFile->_data;
