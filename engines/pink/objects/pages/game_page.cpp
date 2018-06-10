@@ -172,13 +172,13 @@ void GamePage::saveState(Archive &archive) {
 	if (this == _module->getPage()) {
 		saveStateToMem();
 		archive.writeDWORD(_memFile->size());
-		archive.getWriteStream()->write(_memFile->getData(), _memFile->size());
+		archive.write(_memFile->getData(), _memFile->size());
 		delete _memFile;
 		_memFile = nullptr;
 	} else {
 		if (_memFile != nullptr) {
 			archive.writeDWORD(_memFile->size());
-			archive.getWriteStream()->write(_memFile->getData(), _memFile->size());
+			archive.write(_memFile->getData(), _memFile->size());
 		} else {
 			archive.writeDWORD(0);
 		}
