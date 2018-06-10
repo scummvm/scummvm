@@ -52,23 +52,26 @@ void ActionSound::toConsole() {
 void ActionSound::start() {
 	Audio::Mixer::SoundType soundType =  _isBackground ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 
-	Director *director = _actor->getPage()->getGame()->getDirector();
-	director->addSound(this);
-
-	_sound.play(_actor->getPage()->getResourceStream(_fileName), soundType, _volume, 0, _isLoop);
-	if (_isLoop)
+	Page *page = _actor->getPage();
+	if (!_isLoop) {
+		Director *director = page->getGame()->getDirector();
+		director->addSound(this);
+	} else
 		_actor->endAction();
+
+	_sound.play(page->getResourceStream(_fileName), soundType, _volume, 0, _isLoop);
 
 	debug("Actor %s has now ActionSound %s", _actor->getName().c_str(), _name.c_str());
 }
 
 void ActionSound::end() {
 	_sound.stop();
+	if (!_isLoop) {
+		Director *director = _actor->getPage()->getGame()->getDirector();
+		director->removeSound(this);
+	}
+
 	debug("ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
-
-	Director *director = _actor->getPage()->getGame()->getDirector();
-	director->removeSound(this);
-
 }
 
 void ActionSound::update() {
