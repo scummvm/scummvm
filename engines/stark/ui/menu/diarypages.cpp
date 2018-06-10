@@ -83,6 +83,7 @@ void DiaryPagesScreen::open() {
 
 void DiaryPagesScreen::close() {
 	StarkDiary->setPageIndex(_page);
+	StarkDiary->setDiaryAllRead();
 	StaticLocationScreen::close();
 }
 

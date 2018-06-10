@@ -51,6 +51,9 @@ public:
 	/** Does the diary contain entries that have not been read yet? */
 	bool hasUnreadEntries() const;
 
+	/** Mark all the diary entries read */
+	void setDiaryAllRead() { _hasUnreadEntries = false; }
+
 	/** Add an entry to the list of available diary pages */
 	void addDiaryEntry(const Common::String &name);
 
