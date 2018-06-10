@@ -39,7 +39,7 @@ void Sound::play(Common::SafeSeekableSubReadStream *stream, Audio::Mixer::SoundT
 	mixer->stopHandle(_handle);
 
 	Audio::AudioStream *audioStream;
-	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(stream, DisposeAfterUse::NO);
+	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 	if (isLoop)
 		audioStream = Audio::makeLoopingAudioStream(wavStream, 0, 0, 0);
 	else

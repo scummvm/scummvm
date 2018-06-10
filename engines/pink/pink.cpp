@@ -261,6 +261,7 @@ Common::Error PinkEngine::loadGameState(int slot) {
 	_nextPage = archive.readString();
 	initModule(archive.readString(), "", &archive);
 
+	delete in;
 	return Common::kNoError;
 }
 

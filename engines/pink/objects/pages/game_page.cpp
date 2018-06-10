@@ -36,6 +36,7 @@ GamePage::GamePage()
 
 GamePage::~GamePage() {
 	clear();
+	delete _memFile;
 }
 
 void GamePage::toConsole() {
