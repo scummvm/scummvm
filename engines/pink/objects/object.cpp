@@ -20,33 +20,14 @@
  *
  */
 
-#include "common/debug.h"
-
-#include "pink/archive.h"
+#include "pink/objects/object.h"
 
 namespace Pink {
-
-Object::~Object() {}
 
 void Object::load(Archive &) {}
 
 void Object::deserialize(Archive &) {}
 
-void Object::init() {}
-
 void Object::toConsole() {}
-
-NamedObject::NamedObject() {}
-
-NamedObject::NamedObject(const Common::String &name)
-		: _name(name) {}
-
-void NamedObject::deserialize(Archive &archive) {
-	_name = archive.readString();
-}
-
-const Common::String &NamedObject::getName() const {
-	return _name;
-}
 
 } // End of namespace Pink

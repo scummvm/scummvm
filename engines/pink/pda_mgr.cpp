@@ -26,15 +26,10 @@
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/pda_page.h"
 
-
 namespace Pink {
 
 PDAMgr::PDAMgr(Pink::PinkEngine *game)
 	: _game(game), _page(nullptr), _cursorMgr(game, nullptr) {}
-
-void PDAMgr::loadState(Archive &archive) {
-	_savedPage = archive.readString();
-}
 
 void PDAMgr::saveState(Archive &archive) {
 	if (_page)
@@ -74,10 +69,6 @@ void PDAMgr::goToPage(const Common::String &pageName) {
 	_cursorMgr.setPage(_page);
 }
 
-void PDAMgr::update() {
-	_cursorMgr.update();
-}
-
 void PDAMgr::onLeftButtonClick(Common::Point point) {
 	Actor *actor = _game->getDirector()->getActorByPoint(point);
 	if (actor)
@@ -89,20 +80,6 @@ void PDAMgr::onMouseMove(Common::Point point) {
 	if (actor && dynamic_cast<PDAButtonActor*>(actor))
 		actor->onMouseOver(point, &_cursorMgr);
 	else _cursorMgr.setCursor(kPDADefaultCursor, point,Common::String());
-}
-
-
-PinkEngine *PDAMgr::getGame() const {
-	return _game;
-}
-
-const Common::String &PDAMgr::getSavedPageName() {
-	return _savedPage;
-}
-
-
-void PDAMgr::setLead(LeadActor *lead) {
-	_lead = lead;
 }
 
 void PDAMgr::close() {

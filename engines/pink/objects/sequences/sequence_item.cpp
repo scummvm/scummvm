@@ -42,14 +42,6 @@ void SequenceItem::toConsole() {
 	debug("\t\t\t\tSequenceItem: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
-const Common::String &SequenceItem::getActor() const {
-	return _actor;
-}
-
-const Common::String &SequenceItem::getAction() const {
-	return _action;
-}
-
 bool SequenceItem::execute(int index, Sequence *sequence, bool unk2) {
 	Actor *actor;
 	Action *action;
@@ -86,10 +78,6 @@ void SequenceItemLeaderAudio::deserialize(Archive &archive) {
 
 void SequenceItemLeaderAudio::toConsole() {
 	debug("\t\t\t\tSequenceItemLeaderAudio: _actor=%s, _action=%s _sample=%d", _actor.c_str(), _action.c_str(), _sample);
-}
-
-uint32 SequenceItemLeaderAudio::getSample() {
-	return _sample;
 }
 
 bool SequenceItemDefaultAction::execute(int index, Sequence *sequence, bool unk2) {

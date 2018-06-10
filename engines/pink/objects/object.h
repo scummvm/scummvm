@@ -25,30 +25,28 @@
 
 #include "common/str.h"
 
-namespace Pink {
+#include "pink/archive.h"
 
-class Archive;
+namespace Pink {
 
 class Object {
 public:
-	virtual ~Object();
+	virtual ~Object() {};
 
 	virtual void load(Archive &);
 	virtual void deserialize(Archive &);
-
-	virtual void init();
-
 	virtual void toConsole();
 };
 
 class NamedObject : public Object {
 public:
-	NamedObject();
-	NamedObject(const Common::String &name);
+	NamedObject() {}
+	NamedObject(const Common::String &name)
+			: _name(name) {}
 
-	void deserialize(Archive &archive);
+	void deserialize(Archive &archive) { _name = archive.readString(); }
 
-	const Common::String &getName() const;
+	const Common::String &getName() const { return _name; }
 
 protected:
 	Common::String _name;

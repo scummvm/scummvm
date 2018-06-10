@@ -57,14 +57,6 @@ void Sequence::toConsole() {
 	}
 }
 
-Common::Array<SequenceItem*> &Sequence::getItems() {
-	return _items;
-}
-
-void Sequence::setContext(SequenceContext *context) {
-	_context = context;
-}
-
 void Sequence::init(int unk) {
 	assert(_items.size());
 	assert(dynamic_cast<SequenceItemLeader*>(_items[0])); // first item must always be a leader

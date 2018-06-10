@@ -43,7 +43,7 @@ public:
 	virtual void pause(bool paused);
 
 	virtual Coordinates getCoordinates();
-	Actor *getActor() const;
+	Actor *getActor() const { return _actor; }
 
 protected:
 	Actor *_actor;

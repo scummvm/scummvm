@@ -76,7 +76,7 @@ public:
 	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
 
 	virtual void onClick();
-	virtual void onVariableSet();
+	virtual void onVariableSet() {}
 	void onInventoryClosed(bool isItemClicked);
 	void onWalkEnd();
 	void onPDAClose();
@@ -85,7 +85,7 @@ public:
 
 	void setNextExecutors (const Common::String &nextModule, const Common::String &nextPage);
 
-	State getState() const;
+	State getState() const { return _state; }
 
 protected:
 	void forceUpdateCursor();

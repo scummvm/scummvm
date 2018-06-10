@@ -41,10 +41,6 @@ void Pink::InventoryItem::deserialize(Archive &archive) {
 	_currentOwner = _initialOwner;
 }
 
-Common::String &InventoryItem::getCurrentOwner() {
-	return _currentOwner;
-}
-
 void InventoryItem::toConsole() {
 	debug("\tInventoryItem: _initialOwner=%s _currentOwner=%s", _initialOwner.c_str(), _currentOwner.c_str());
 }
@@ -66,10 +62,6 @@ InventoryItem *InventoryMgr::findInventoryItem(const Common::String &name) {
 		}
 	}
 	return nullptr;
-}
-
-void InventoryMgr::setLeadActor(LeadActor *lead) {
-	_lead = lead;
 }
 
 void InventoryMgr::toConsole() {
@@ -193,10 +185,6 @@ void InventoryMgr::showNextItem(bool direction) {
 		_item = _items[index % _items.size()];
 		_itemActor->setAction(_item->getName());
 	}
-}
-
-InventoryItem *InventoryMgr::getCurrentItem() {
-	return _item;
 }
 
 void InventoryMgr::loadState(Archive &archive) {

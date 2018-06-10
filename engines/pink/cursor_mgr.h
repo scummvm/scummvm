@@ -44,7 +44,7 @@ public:
 	void setCursor(uint index, const Common::Point point, const Common::String &itemName);
 	void setCursor(const Common::String &cursorName, const Common::Point point);
 
-	void setPage(Page *page);
+	void setPage(Page *page) { _page = page; }
 
 private:
 	void hideItem();

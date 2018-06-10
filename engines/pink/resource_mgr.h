@@ -55,7 +55,7 @@ public:
 	CelDecoder *loadCEL(Common::String &name);
 	Common::String loadText(Common::String &name);
 
-	PinkEngine *getGame() const;
+	PinkEngine *getGame() const { return _game; }
 
 private:
 	PinkEngine *_game;

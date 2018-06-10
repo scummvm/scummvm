@@ -34,10 +34,6 @@ namespace Pink {
 SequenceActorState::SequenceActorState(const Common::String &name)
 		:_actorName(name), _index(0) {}
 
-const Common::String &SequenceActorState::getActor() const {
-	return _actorName;
-}
-
 void SequenceActorState::check(int index, Sequence *sequence, bool unk) {
 	Actor *actor = sequence->_sequencer->_page->findActor(_actorName);
 	debug("%s %s", _actorName.c_str(), _actionName.c_str());
@@ -71,22 +67,10 @@ SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
 	}
 }
 
-uint SequenceContext::getNextItemIndex() const {
-	return _nextItemIndex;
-}
-
-Sequence *SequenceContext::getSequence() const {
-	return _sequence;
-}
-
 void SequenceContext::clearActionsFromActorStates() {
 	for (uint i = 0; i < _states.size(); ++i) {
 		_states[i]._actionName.clear();
 	}
-}
-
-void SequenceContext::setNextItemIndex(int index) {
-	_nextItemIndex = index;
 }
 
 } // End of namespace Pink

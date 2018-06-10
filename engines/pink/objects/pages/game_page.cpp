@@ -116,14 +116,6 @@ void GamePage::loadManagers() {
 	}
 }
 
-Sequencer *GamePage::getSequencer() {
-	return _sequencer;
-}
-
-Module *GamePage::getModule() const {
-	return _module;
-}
-
 bool GamePage::checkValueOfVariable(const Common::String &variable, const Common::String &value) {
 	if (!_variables.contains(variable))
 		return value == kUndefined;
@@ -133,10 +125,6 @@ bool GamePage::checkValueOfVariable(const Common::String &variable, const Common
 void GamePage::setVariable(Common::String &variable, Common::String &value) {
 	_variables[variable] = value;
 	_leadActor->onVariableSet();
-}
-
-WalkMgr *GamePage::getWalkMgr() {
-	return _walkMgr;
 }
 
 void GamePage::loadStateFromMem() {

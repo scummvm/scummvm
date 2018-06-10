@@ -35,8 +35,8 @@ public:
 
 	virtual void toConsole();
 
-	const Common::String &getActor() const;
-	const Common::String &getAction() const;
+	const Common::String &getActor() const { return _actor; }
+	const Common::String &getAction() const { return _action; }
 
 	virtual bool execute(int index, Sequence *sequence, bool unk2);
 	virtual bool isLeader();
@@ -57,7 +57,7 @@ class SequenceItemLeaderAudio : public SequenceItemLeader {
 public:
 	virtual void deserialize(Archive &archive);
 	virtual void toConsole();
-	uint32 getSample();
+	uint32 getSample() { return _sample; }
 
 private:
 	uint32 _sample;
@@ -81,6 +81,6 @@ private
 };
  */
 
-}
+} // End of namespace Pink
 
 #endif

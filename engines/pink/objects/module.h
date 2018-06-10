@@ -57,13 +57,13 @@ public:
 	void onMouseMove();
 	void onKeyboardButtonClick();
 
-	PinkEngine *getGame() const;
-	InventoryMgr *getInventoryMgr();
+	PinkEngine *getGame() const { return _game; }
+	InventoryMgr *getInventoryMgr() { return &_invMgr; }
 
 	bool checkValueOfVariable(Common::String &variable, Common::String &value);
-	void setVariable(Common::String &variable, Common::String &value);
+	void setVariable(Common::String &variable, Common::String &value) { _variables[variable] = value; }
 
-	GamePage *getPage() { return _page; };
+	GamePage *getPage() { return _page; }
 
 private:
 	GamePage *findPage(const Common::String &pageName) const;

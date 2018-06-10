@@ -126,10 +126,6 @@ ResourceDescription *OrbFile::getResDescTable(ObjectDescription *objDesc){
 	return table;
 }
 
-uint32 OrbFile::getTimestamp() {
-	return _timestamp;
-}
-
 void OrbFile::seekToObject(const char *name) {
 	ObjectDescription *desc = getObjDesc(name);
 	seek(desc->objectsOffset);

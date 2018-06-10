@@ -82,14 +82,6 @@ void ActionCEL::pause(bool paused) {
 	_decoder->pauseVideo(paused);
 }
 
-uint32 ActionCEL::getZ() {
-	return _z;
-}
-
-CelDecoder *ActionCEL::getDecoder() {
-	return _decoder;
-}
-
 Coordinates ActionCEL::getCoordinates() {
 	if (!_decoder)
 		_decoder = _actor->getPage()->loadCel(_fileName);

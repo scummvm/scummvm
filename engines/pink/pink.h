@@ -104,15 +104,14 @@ public:
 	BroFile *getBro()  { return _bro; }
 	Common::RandomSource &getRnd() { return _rnd; };
 	Director *getDirector() { return &_director; }
+	PDAMgr &getPdaMgr() { return _pdaMgr; }
 
-	void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage);
+	void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage) { _nextModule = nextModule; _nextPage = nextPage; }
 	void setLeadActor(LeadActor *actor) { _actor = actor; };
 	void setCursor(uint cursorIndex);
 
-	void setVariable(Common::String &variable, Common::String &value);
+	void setVariable(Common::String &variable, Common::String &value) { _variables[variable] = value; }
 	bool checkValueOfVariable(Common::String &variable, Common::String &value);
-
-	PDAMgr &getPdaMgr();
 
 protected:
 	virtual void pauseEngineIntern(bool pause);

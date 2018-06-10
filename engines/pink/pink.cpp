@@ -177,11 +177,6 @@ void PinkEngine::changeScene(Page *page) {
 	}
 }
 
-void PinkEngine::setNextExecutors(const Common::String &nextModule, const Common::String &nextPage) {
-	_nextModule = nextModule;
-	_nextPage = nextPage;
-}
-
 void PinkEngine::loadModule(int index) {
 	Module *module = new Module(this, _modules[index]->getName());
 
@@ -195,10 +190,6 @@ bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &
 	if (!_variables.contains(variable))
 		return value == kUndefined;
 	return _variables[variable] == value;
-}
-
-void PinkEngine::setVariable(Common::String &variable, Common::String &value) {
-	_variables[variable] = value;
 }
 
 bool PinkEngine::loadCursors() {
@@ -317,10 +308,6 @@ void PinkEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 	_director.pause(pause);
 	_system->showMouse(!pause);
-}
-
-PDAMgr &PinkEngine::getPdaMgr() {
-	return _pdaMgr;
 }
 
 Common::String generateSaveName(int slot, const char *gameId) {

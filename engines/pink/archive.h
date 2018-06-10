@@ -27,8 +27,6 @@
 #include "common/str-array.h"
 #include "common/stream.h"
 
-#include "pink/objects/object.h"
-
 namespace Common {
 
 class File;
@@ -36,6 +34,8 @@ class File;
 }
 
 namespace Pink {
+
+class Object;
 
 class Archive {
 public:
