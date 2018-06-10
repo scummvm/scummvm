@@ -27,6 +27,7 @@ MODULE_OBJS = \
 	rooms/demon5.o \
 	rooms/demon6.o \
 	rooms/tug0.o \
+	rooms/tug1.o \
 	
 
 
