@@ -74,9 +74,16 @@ void DiaryPagesScreen::open() {
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
 
+	_page = StarkDiary->getPageIndex();
+
 	_widgets.push_back(new DiaryWidget(_page));
 	_widgets[kWidgetBack]->setVisible(_page > 0);
 	_widgets[kWidgetNext]->setVisible(_page < StarkDiary->countDiary() - 1);
+}
+
+void DiaryPagesScreen::close() {
+	StarkDiary->setPageIndex(_page);
+	StaticLocationScreen::close();
 }
 
 void DiaryPagesScreen::backHandler() {

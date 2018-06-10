@@ -54,6 +54,10 @@ public:
 	/** Add an entry to the list of available diary pages */
 	void addDiaryEntry(const Common::String &name);
 
+	/** Get and set the current diary page index */
+	uint32 getPageIndex() { return _pageIndex; };
+	void setPageIndex(uint32 pageIndex) { _pageIndex = pageIndex; }
+
 	/** Add a FMV entry to the list of movies available to play from the diary */
 	void addFMVEntry(const Common::String &filename, const Common::String &title, int gameDisc);
 

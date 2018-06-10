@@ -37,6 +37,7 @@ public:
 
 	// StaticLocationScreen API
 	void open() override;
+	void close() override;
 
 private:
 	enum WidgetIndex {
