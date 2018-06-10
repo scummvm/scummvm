@@ -55,7 +55,7 @@ void ActionSound::start() {
 	Director *director = _actor->getPage()->getGame()->getDirector();
 	director->addSound(this);
 
-	_sound.play(_actor->getPage()->getResourceStream(_fileName), soundType, _volume, _isLoop);
+	_sound.play(_actor->getPage()->getResourceStream(_fileName), soundType, _volume, 0, _isLoop);
 	if (_isLoop)
 		_actor->endAction();
 
