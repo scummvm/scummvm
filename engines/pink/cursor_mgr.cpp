@@ -60,14 +60,10 @@ void CursorMgr::setCursor(uint index, const Common::Point point, const Common::S
 
 	if (action != _actor->getAction()) {
 		_actor->setAction(action);
-		CelDecoder *decoder = static_cast<ActionCEL*>(action)->getDecoder();
-		decoder->setX(point.x);
-		decoder->setY(point.y);
-	} else {
-		CelDecoder *decoder = static_cast<ActionCEL*>(action)->getDecoder();
-		decoder->setX(point.x);
-		decoder->setY(point.y);
 	}
+
+	ActionCEL *sprite = static_cast<ActionCEL*>(action);
+	sprite->setCenter(point);
 
 }
 
