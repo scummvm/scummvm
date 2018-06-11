@@ -57,6 +57,8 @@ public:
 
 	void endAction() { _isActionEnded = true; }
 
+	virtual bool isCursor() { return false; }
+
 	virtual bool isLeftClickHandlers() { return false; }
 	virtual bool isUseClickHandlers(InventoryItem *item) { return false; }
 

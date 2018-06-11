@@ -27,6 +27,7 @@
 #include "pink/director.h"
 #include "pink/objects/actions/action_sound.h"
 #include "pink/objects/actions/action_cel.h"
+#include "pink/objects/actors/actor.h"
 
 namespace Pink {
 Director::Director()
@@ -111,6 +112,8 @@ void Director::loadStage() {
 
 Actor *Director::getActorByPoint(const Common::Point point) {
 	for (int i = _sprites.size() - 1; i >= 0; --i) {
+		if (_sprites[i]->getActor()->isCursor())
+			continue;
 		CelDecoder *decoder = _sprites[i]->getDecoder();
 		const Graphics::Surface *frame = decoder->getCurrentFrame();
 		const Common::Rect &rect = _sprites[i]->getBounds();
