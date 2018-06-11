@@ -36,10 +36,6 @@
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 
-#include "engines/engine.h"
-
-#include "audio/mixer.h"
-
 namespace Stark {
 
 GameScreen::GameScreen(Gfx::Driver *gfx, Cursor *cursor) :
@@ -146,7 +142,6 @@ void GameScreen::pauseGame(bool pause) {
 		StarkGlobal->getCurrent()->getLevel()->onEnginePause(pause);
 		StarkGlobal->getCurrent()->getLocation()->onEnginePause(pause);
 	}
-	g_engine->_mixer->pauseAll(pause);
 }
 
 } // End of namespace Stark

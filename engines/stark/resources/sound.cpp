@@ -251,5 +251,9 @@ void Sound::saveLoadCurrent(ResourceSerializer *serializer) {
 	}
 }
 
+void Sound::onEnginePause(bool pause) {
+	g_system->getMixer()->pauseHandle(_handle, pause);
+}
+
 } // End of namespace Resources
 } // End of namespace Stark

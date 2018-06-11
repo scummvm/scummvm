@@ -67,6 +67,7 @@ public:
 	void onPreDestroy() override;
 	void onGameLoop() override;
 	void saveLoadCurrent(ResourceSerializer *serializer) override;
+	void onEnginePause(bool pause) override;
 
 	/** Start playing the sound */
 	void play();
