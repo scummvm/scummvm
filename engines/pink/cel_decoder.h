@@ -31,17 +31,11 @@ class CelDecoder : public Video::FlicDecoder {
 public:
 	virtual bool loadStream(Common::SeekableReadStream *stream);
 
-	int32 getX();
-	int32 getY();
 	uint16 getTransparentColourIndex();
 
 	Common::Point getCenter();
-	Common::Rect &getRectangle();
 	const Graphics::Surface *getCurrentFrame();
 	void skipFrame();
-
-	void setX(int32 x);
-	void setY(int32 y);
 
 protected:
 	class CelVideoTrack : public FlicVideoTrack {
@@ -53,20 +47,24 @@ protected:
 		int32 getY() const;
 		uint16 getTransparentColourIndex();
 
+		// Hack. Pink needs so that Track needed an update after lastFrame delay ends
+		bool endOfTrack() const override { return getCurFrame() >= getFrameCount(); }
+
 		Common::Point getCenter();
-		Common::Rect &getRect();
 		const Graphics::Surface *getCurrentFrame();
 
 		void setX(int32 x);
 		void setY(int32 y);
 
 		void skipFrame();
+
+		bool rewind() override;
+
 	private:
 		const Graphics::Surface *decodeNextFrame();
 		void readPrefixChunk();
 
 		Common::Point _center;
-		Common::Rect _rect;
 		byte _transparentColourIndex;
 	};
 };

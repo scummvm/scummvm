@@ -50,32 +50,25 @@ void ActionPlayWithSfx::toConsole() {
 }
 
 void ActionPlayWithSfx::update() {
-	if ((_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) && _isLoop) {
-		_decoder->rewind();
-	} else if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) {
-		_decoder->stop();
-		_actor->endAction();
-	}
+	int currFrame = _decoder.getCurFrame();
+	if (_isLoop && currFrame == _stopFrame) {
+		assert(_stopFrame == _decoder.getFrameCount() - 1); // to use ring frame
+		assert(_startFrame == 0); // same
+		_decoder.rewind();
+		decodeNext();
+	} else
+ 		ActionPlay::update();
 
-	updateSound();
+	for (uint i = 0; i < _sfxArray.size(); ++i) {
+		if (_sfxArray[i]->getFrame() == currFrame)
+			_sfxArray[i]->play();
+	}
 }
 
 void ActionPlayWithSfx::onStart() {
 	ActionPlay::onStart();
-	if (_isLoop) {
+	if (_isLoop)
 		_actor->endAction();
-	}
-	updateSound();
-}
-
-void ActionPlayWithSfx::updateSound() {
-	if (!_actor->isPlaying() && !_isLoop)
-		return;
-
-	for (uint i = 0; i < _sfxArray.size(); ++i) {
-		if (_sfxArray[i]->getFrame() == _decoder->getCurFrame())
-			_sfxArray[i]->play();
-	}
 }
 
 void ActionSfx::deserialize(Pink::Archive &archive) {
@@ -93,7 +86,7 @@ void ActionSfx::toConsole() {
 void ActionSfx::play() {
 	Page *page = _sprite->getActor()->getPage();
 	if (!_sound.isPlaying()) {
-		int8 balance = (_sprite->getDecoder()->getX() * 396875 / 1000000) - 127;
+		int8 balance = (_sprite->getDecoder()->getCenter().x * 396875 / 1000000) - 127;
 		_sound.play(page->getResourceStream(_sfxName), Audio::Mixer::kSFXSoundType, _volume, balance);
 	}
 }

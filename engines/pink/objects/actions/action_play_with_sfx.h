@@ -44,8 +44,6 @@ protected:
 	void onStart() override;
 
 private:
-	void updateSound();
-
 	Array<ActionSfx *> _sfxArray;
 	uint32 _isLoop;
 };
@@ -60,14 +58,14 @@ public:
 
 	void play();
 
-	uint32 getFrame() { return _frame; }
+	int32 getFrame() { return _frame; }
 
 private:
 	ActionPlayWithSfx *_sprite;
 	Common::String _sfxName;
 	Sound _sound;
-	uint32 _volume;
-	uint32 _frame;
+	int32 _volume;
+	int32 _frame;
 };
 
 } // End of namespace Pink

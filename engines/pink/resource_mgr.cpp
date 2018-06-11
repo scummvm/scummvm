@@ -53,12 +53,6 @@ void ResourceMgr::clear() {
 	_resDescTable = nullptr;
 }
 
-CelDecoder *ResourceMgr::loadCEL(Common::String &name) {
-	CelDecoder *decoder = new CelDecoder();
-	decoder->loadStream(getResourceStream(name));
-	return decoder;
-}
-
 Common::String ResourceMgr::loadText(Common::String &name) {
 	Common::SeekableReadStream *stream = getResourceStream(name);
 	char *txt = new char[stream->size()];

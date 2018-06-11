@@ -21,6 +21,7 @@
  */
 
 #include "common/debug.h"
+#include "common/substream.h"
 
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
@@ -30,9 +31,6 @@
 #include "pink/objects/pages/game_page.h"
 
 namespace Pink {
-
-ActionCEL::ActionCEL()
-	: _decoder(nullptr) {}
 
 ActionCEL::~ActionCEL() {
 	end();
@@ -45,53 +43,79 @@ void ActionCEL::deserialize(Archive &archive) {
 }
 
 bool ActionCEL::initPalette(Director *director) {
-	if (!_decoder)
-		_decoder = _actor->getPage()->loadCel(_fileName);
-	if (_decoder->getCurFrame() == -1) {
-		_decoder->decodeNextFrame();
-		_decoder->rewind();
+	loadDecoder();
+	if (_decoder.getCurFrame() == -1) {
+		_decoder.decodeNextFrame();
+		_decoder.rewind();
 	}
-	debug("%u", _decoder->isPaused());
-	director->setPallette(_decoder->getPalette());
+	director->setPallette(_decoder.getPalette());
 	return true;
 }
 
 void ActionCEL::start() {
-	if (!_decoder)
-		_decoder = _actor->getPage()->loadCel(_fileName);
+	loadDecoder();
+
+	Common::Point point = _decoder.getCenter();
+	_bounds = Common::Rect::center(point.x, point.y, _decoder.getWidth(), _decoder.getHeight());
+
+	_decoder.start();
 	this->onStart();
 	_actor->getPage()->getGame()->getDirector()->addSprite(this);
 }
 
 void ActionCEL::end() {
-	if (!_decoder)
+	if (!_decoder.isVideoLoaded())
 		return;
-	_actor->getPage()->getGame()->getDirector()->removeSprite(this);
-	delete _decoder;
-	_decoder = nullptr;
-}
-
-void ActionCEL::update() {
-	if (_decoder->endOfVideo()) {
-		_decoder->stop();
-		_actor->endAction();
-	}
+	closeDecoder();
 }
 
 void ActionCEL::pause(bool paused) {
-	_decoder->pauseVideo(paused);
+	_decoder.pauseVideo(paused);
 }
 
 Coordinates ActionCEL::getCoordinates() {
-	if (!_decoder)
-		_decoder = _actor->getPage()->loadCel(_fileName);
+	loadDecoder();
 
 	Coordinates coords;
-	coords.x = _decoder->getX() + _decoder->getWidth() / 2;
-	coords.y = _decoder->getY() + _decoder->getHeight() / 2;
+	Common::Point point = _decoder.getCenter();
+	coords.x = point.x;
+	coords.y = point.y;
 	coords.z = getZ();
 
 	return coords;
+}
+
+void ActionCEL::loadDecoder() {
+	if (!_decoder.isVideoLoaded())
+		_decoder.loadStream(_actor->getPage()->getResourceStream(_fileName));
+}
+
+void ActionCEL::closeDecoder() {
+	_actor->getPage()->getGame()->getDirector()->removeSprite(this);
+	_decoder.close();
+}
+
+
+void ActionCEL::setFrame(uint frame) {
+	_decoder.rewind();
+
+	for (uint i = 0; i < frame; ++i) {
+		_decoder.skipFrame();
+	}
+
+	_decoder.clearDirtyRects();
+}
+
+void ActionCEL::decodeNext() {
+	_decoder.decodeNextFrame();
+	_actor->getPage()->getGame()->getDirector()->addDirtyRects(this);
+}
+
+
+void ActionCEL::setCenter(const Common::Point &center) {
+	_actor->getPage()->getGame()->getDirector()->addDirtyRect(_bounds);
+	_bounds = Common::Rect::center(center.x, center.y, _decoder.getWidth(), _decoder.getHeight());
+	_actor->getPage()->getGame()->getDirector()->addDirtyRect(_bounds);
 }
 
 } // End of namespace Pink

@@ -23,6 +23,7 @@
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
 #include "pink/objects/actions/walk_action.h"
+#include "pink/objects/actors/actor.h"
 
 namespace Pink {
 
@@ -38,7 +39,15 @@ void WalkAction::toConsole() {
 }
 
 void WalkAction::onStart() {
-	_decoder->start();
+	// not implemented
+}
+
+void WalkAction::update() {
+	ActionCEL::update();
+	if (_decoder.getCurFrame() < (int)_decoder.getFrameCount() - 1)
+		decodeNext();
+	else
+		_actor->endAction();
 }
 
 } // End of namespace Pink

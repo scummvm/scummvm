@@ -33,6 +33,8 @@ public:
 
 	void toConsole() override;
 
+	void update() override;
+
 protected:
 	void onStart() override;
 

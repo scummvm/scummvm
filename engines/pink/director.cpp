@@ -42,7 +42,8 @@ void Director::update() {
 		_sounds[i]->update();
 	}
 	for (uint i = 0; i < _sprites.size(); ++i) {
-		_sprites[i]->update();
+		if (_sprites[i]->needsUpdate())
+			_sprites[i]->update();
 	}
 
 	draw();
@@ -67,7 +68,6 @@ void Director::addSprite(ActionCEL *sprite) {
 			break;
 	}
 	_sprites[i] = sprite;
-	_dirtyRects.push_back(sprite->getDecoder()->getRectangle());
 }
 
 void Director::removeSprite(ActionCEL *sprite) {
@@ -77,7 +77,7 @@ void Director::removeSprite(ActionCEL *sprite) {
 			break;
 		}
 	}
-	_dirtyRects.push_back(sprite->getDecoder()->getRectangle());
+	_dirtyRects.push_back(sprite->getBounds());
 }
 
 void Director::removeSound(ActionSound *sound) {
@@ -113,7 +113,7 @@ Actor *Director::getActorByPoint(const Common::Point point) {
 	for (int i = _sprites.size() - 1; i >= 0; --i) {
 		CelDecoder *decoder = _sprites[i]->getDecoder();
 		const Graphics::Surface *frame = decoder->getCurrentFrame();
-		const Common::Rect &rect = decoder->getRectangle();
+		const Common::Rect &rect = _sprites[i]->getBounds();
 		if (rect.contains(point)) {
 			byte spritePixel = *(const byte*) frame->getBasePtr(point.x - rect.left, point.y - rect.top);
 			if (spritePixel != decoder->getTransparentColourIndex())
@@ -125,13 +125,6 @@ Actor *Director::getActorByPoint(const Common::Point point) {
 }
 
 void Director::draw() {
-	for (uint i = 0; i < _sprites.size(); ++i) {
-		if (_sprites[i]->getDecoder()->needsUpdate()) {
-			_sprites[i]->getDecoder()->decodeNextFrame();
-			addDirtyRects(_sprites[i]);
-		}
-	}
-
 	if (!_dirtyRects.empty()) {
 		mergeDirtyRects();
 
@@ -165,8 +158,12 @@ void Director::mergeDirtyRects() {
 	}
 }
 
+void Director::addDirtyRect(const Common::Rect &rect) {
+	_dirtyRects.push_back(rect);
+}
+
 void Director::addDirtyRects(ActionCEL *sprite) {
-	const Common::Rect spriteRect = sprite->getDecoder()->getRectangle();
+	const Common::Rect spriteRect = sprite->getBounds();
 	const Common::List<Common::Rect> *dirtyRects = sprite->getDecoder()->getDirtyRects();
 	if (dirtyRects->size() > 100) {
 		_dirtyRects.push_back(spriteRect);
@@ -183,7 +180,7 @@ void Director::addDirtyRects(ActionCEL *sprite) {
 void Director::drawRect(const Common::Rect &rect) {
 	_surface.fillRect(rect, 0);
 	for (uint i = 0; i < _sprites.size(); ++i) {
-		const Common::Rect &spriteRect = _sprites[i]->getDecoder()->getRectangle();
+		const Common::Rect &spriteRect = _sprites[i]->getBounds();
 		Common::Rect interRect = rect.findIntersectingRect(spriteRect);
 		if (interRect.isEmpty())
 			continue;

@@ -23,6 +23,7 @@
 #ifndef PINK_ACTION_CEL_H
 #define PINK_ACTION_CEL_H
 
+#include "pink/cel_decoder.h"
 #include "pink/objects/actions/action.h"
 
 namespace Pink {
@@ -31,7 +32,6 @@ class CelDecoder;
 
 class ActionCEL : public Action {
 public:
-	ActionCEL();
 	~ActionCEL() override;
 
 	void deserialize(Archive &archive) override;
@@ -41,20 +41,31 @@ public:
 	void start() override;
 	void end() override;
 
-	virtual void update();
+	bool needsUpdate() { return _decoder.needsUpdate(); }
+	virtual void update() {};
 
 	void pause(bool paused) override;
 
 	Coordinates getCoordinates() override;
 
+	const Common::Rect &getBounds() const { return _bounds; }
 	uint32 getZ() { return _z; }
-	CelDecoder *getDecoder() { return _decoder; }
+	CelDecoder *getDecoder() { return &_decoder; }
+
+	void setCenter(const Common::Point &center);
 
 protected:
 	virtual void onStart() = 0;
 
-	CelDecoder *_decoder;
+	void loadDecoder();
+	void closeDecoder();
+
+	void setFrame(uint frame);
+	void decodeNext();
+
+	CelDecoder _decoder;
 	Common::String _fileName;
+	Common::Rect _bounds;
 	uint32 _z;
 };
 
