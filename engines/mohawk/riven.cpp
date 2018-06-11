@@ -73,6 +73,9 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_inventory = nullptr;
 	_lastSaveTime = 0;
 
+	_prevCard = -1;
+	_prevStack = -1;
+
 	DebugMan.addDebugChannel(kRivenDebugScript, "Script", "Track Script Execution");
 	DebugMan.addDebugChannel(kRivenDebugPatches, "Patches", "Track Script Patching");
 
@@ -282,6 +285,32 @@ void MohawkEngine_Riven::doFrame() {
 					if (canSaveGameStateCurrently()) {
 						runSaveDialog();
 					}
+				}
+				break;
+			case Common::KEYCODE_ESCAPE:
+				if (!_scriptMan->hasQueuedScripts()) {
+					// Check if we haven't jumped to menu
+					if (_prevStack == -1) {
+						_prevStack = _stack->getId();
+						_prevCard = _card->getId();
+
+						// If we are already in menu, do not call again
+						if (_prevStack == kStackAspit && _prevCard == 1) {
+							_prevStack = -1;
+							_prevCard = -1;
+							break;
+						}
+
+						changeToStack(kStackAspit);
+						changeToCard(1);
+					} else {
+						changeToStack(_prevStack);
+						changeToCard(_prevCard);
+						_prevStack = -1;
+						_prevCard = -1;
+					}
+				} else {
+					_stack->onKeyPressed(event.kbd);
 				}
 				break;
 			default:
