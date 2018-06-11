@@ -1134,7 +1134,7 @@ bool StarTrekEngine::walkActiveObjectToHotspot() {
 	int objectIndex;
 	if (_awayMission.activeAction != ACTION_USE)
 		objectIndex = OBJECT_KIRK;
-	else if (_awayMission.activeObject >= OBJECT_KIRK && _awayMission.activeObject <= OBJECT_REDSHIRT)
+	else if (_awayMission.activeObject <= OBJECT_REDSHIRT)
 		objectIndex = _awayMission.activeObject;
 	else if (_awayMission.activeObject >= ITEMS_START && _awayMission.activeObject <= ITEMS_END) { // FIXME: "<= ITEMS_END" doesn't make sense?
 		if (_awayMission.activeObject == OBJECT_ISTRICOR)
