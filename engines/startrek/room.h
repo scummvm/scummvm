@@ -110,6 +110,7 @@ private:
 	void loseItem(int item);                                                                   // Cmd 0x07
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam);// Cmd 0x08
 	void loadMapFile(const Common::String &name);                                              // Cmd 0x09
+	void showBitmapFor5Ticks(const Common::String &bmpName, int priority);                     // Cmd 0x0a
 	// Command 0x0c: "demon6ShowCase"
 	Common::Point getActorPos(int actorIndex);                                                 // Cmd 0x0d
 	void playSoundEffectIndex(int soundEffect);                                                // Cmd 0x0f
@@ -117,6 +118,10 @@ private:
 	void endMission(int16 score, int16 arg2, int16 arg3);                                      // Cmd 0x11
 	void showGameOverMenu();                                                                   // Cmd 0x12
 	void playVoc(Common::String filename);                                                     // Cmd 0x15
+
+	// Helper functions for repetitive stuff
+	void spockScan(int direction, int text);
+	void mccoyScan(int direction, int text);
 
 	// Room-specific code
 public:
@@ -585,6 +590,88 @@ public:
 	void tug1UseRedshirtOnBridgeDoor();
 	void tug1UseMedkitOnBridgeDoor();
 
+	// TUG2
+	void tug2Tick1();
+	void tug2Tick60();
+	void tug2LookAtButton();
+	void tug2LookAtMccoy();
+	void tug2LookAtSpock();
+	void tug2LookAtRedshirt();
+	void tug2GetBomb();
+	void tug2KirkReachedBomb();
+	void tug2KirkGotBomb();
+	void tug2LookAtBomb();
+	void tug2LookAtGuard1();
+	void tug2LookAtGuard2();
+	void tug2LookAtWires();
+	void tug2UseSTricorderOnButton();
+	void tug2UseMccoyOnWires();
+	void tug2UseMccoyOnBomb();
+	void tug2UseRedshirtOnWires();
+	void tug2RedshirtReachedWires();
+	void tug2RedshirtDefusedBomb();
+	void tug2RedshirtReturnedToPosition();
+	void tug2UseKirkOnWires();
+	void tug2KirkReachedWires();
+	void tug2UseSpockOnWires();
+	void tug2SpockReachedWires();
+	void tug2SpockReturnedToPosition();
+	void tug2GetWires();
+	void tug2KirkReachedWiresToGet();
+	void tug2KirkGotWires();
+	void tug2UseKirkOnButton();
+	void tug2KirkReachedButton();
+	void tug2UseSpockOnButton();
+	void tug2SpockReachedButton();
+	void tug2UseMccoyOnButton();
+	void tug2MccoyReachedButton();
+	void tug2UseRedshirtOnButton();
+	void tug2RedshirtReachedButton();
+	void tug2TurnedOffForceField();
+	void tug2PrisonersDead();
+	void tug2PrisonersReleased();
+	void tug2UsePhaserOnBrig();
+	void tug2ElasiReadyPhaser();
+	void tug2CheckEndFirefight();
+	void tug2UseStunPhaserOnGuard1();
+	void tug2KirkShootGuard1();
+	void tug2UseStunPhaserOnGuard2();
+	void tug2KirkShootGuard2();
+	void tug2UseKillPhaserOnGuard1();
+	void tug2KirkKillGuard1();
+	void tug2UseKillPhaserOnGuard2();
+	void tug2KirkKillGuard2();
+	void tug2UsePhaserOnWelder();
+	void tug2UseWelderOnWireScraps();
+	void tug2UseWelderOnMetalScraps();
+	void tug2UseCombBitOnTransmogrifier();
+	void tug2ShotByElasi();
+	void tug2WalkToDoor();
+	void tug2LookAtDoor();
+	void tug2LookAtKirk();
+	void tug2TalkToKirk();
+	void tug2TalkToMccoy();
+	void tug2TalkToRedshirt();
+	void tug2TalkToSpock();
+	void tug2UseCommunicator();
+	void tug2DetermineElasiShooter();
+	void tug2Timer0Expired();
+	void tug2GuardShootsCrewman();
+	void tug2Timer2Expired();
+	void tug2UseSTricorderOnBomb();
+	void tug2UseMTricorderOnGuard1();
+	void tug2UseMTricorderOnGuard2();
+	void tug2TalkToGuard1();
+	void tug2TalkToGuard2();
+	void tug2UseMedkitOnBomb();
+	void tug2UseMedkitOnGuard1();
+	void tug2UseMedkitOnGuard2();
+	void tug2LookAnywhere();
+	void tug2TalkToBrig();
+	void tug2UseMTricorderOnBrig();
+	void tug2UseMTricorderOnOpenBrig();
+	void tug2UsePhaserAnywhere();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {
@@ -640,6 +727,13 @@ private:
 			byte doorCounter; // 0xce
 			bool movingToDoor; // 0xcf
 		} demon6;
+
+		struct {
+			byte shootingObject; // 0x1ec1
+			byte shootingTarget;
+			bool elasiPhaserOnKill;
+			byte _1ec4; // 0x1ec4
+		} tug2;
 
 	} _roomVar;
 };

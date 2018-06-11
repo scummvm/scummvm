@@ -51,7 +51,7 @@ struct AwayMission {
 
 	// Mission-specific variables
 	union {
-		// Demon World
+		// Demon World (TODO: label remaining generic variables)
 		struct {
 			bool wasRudeToPrelate; // 0x29
 			bool insultedStephen; // 0x2b
@@ -101,13 +101,27 @@ struct AwayMission {
 			int16 field2b; // 0x2b
 			int16 field2d; // 0x2d;
 			bool engineerConscious; // 0x30
+			byte field35; // 0x35
+			bool gotWires; // 0x37
 			bool gotJunkPile; // 0x3f
 			bool gotTransmogrifier; // 0x43
 			bool transporterRepaired; // 0x44
 			bool spockExaminedTransporter; // 0x45
 			bool usedTransmogrifierOnTransporter; // 0x46
-			bool forceFieldDown; // 0x47
+			bool bridgeForceFieldDown; // 0x47
+			bool savedPrisoners; // 0x48
 			bool haveBomb; // 0x49
+			bool field4a; // 0x4a
+			byte field4b; // 0x4b
+			byte guard1Status; // 0x4c
+			byte guard2Status; // 0x4d
+			byte field4e; // 0x4e
+			bool crewmanKilled[4]; // 0x4f
+			bool brigForceFieldDown; // 0x58
+			byte field59; // 0x59
+			byte field5b; // 0x5b
+			byte kirkPhaserDrawn; // 0x5d
+			bool talkedToBrigCrewman; // 0x5f
 		} tug;
 	};
 };

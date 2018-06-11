@@ -73,6 +73,10 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 		_roomActionList = tug1ActionList;
 		_numRoomActions = sizeof(tug1ActionList) / sizeof(RoomAction);
 	}
+	else if (name == "TUG2") {
+		_roomActionList = tug2ActionList;
+		_numRoomActions = sizeof(tug2ActionList) / sizeof(RoomAction);
+	}
 	else {
 		warning("Room \"%s\" unimplemented", name.c_str());
 		_numRoomActions = 0;
@@ -289,6 +293,32 @@ void Room::loadMapFile(const Common::String &name) {
 	_vm->_mapFile = _vm->loadFile(name + ".map");
 }
 
+void Room::showBitmapFor5Ticks(const Common::String &bmpName, int priority) {
+	if (priority < 0 || priority > 15)
+		priority = 5;
+
+	Sprite sprite;
+	_vm->_gfx->addSprite(&sprite);
+	sprite.setXYAndPriority(0, 0, priority);
+	sprite.setBitmap(_vm->_gfx->loadBitmap(bmpName));
+
+	_vm->_gfx->drawAllSprites();
+
+	TrekEvent event;
+	int ticks = 0;
+
+	while (ticks < 5) {
+		while (!_vm->popNextEvent(&event));
+
+		if (event.type == TREKEVENT_TICK)
+			ticks++;
+	}
+
+	sprite.dontDrawNextFrame();
+	_vm->_gfx->drawAllSprites();
+	_vm->_gfx->delSprite(&sprite);
+}
+
 Common::Point Room::getActorPos(int actorIndex) {
 	return _vm->_actorList[actorIndex].pos;
 }
@@ -332,6 +362,28 @@ void Room::showGameOverMenu() {
 
 void Room::playVoc(Common::String filename) {
 	_vm->_sound->playVoc(filename);
+}
+
+void Room::spockScan(int direction, int text) {
+	const char *dirs = "nsew";
+	Common::String anim = "sscan_";
+	anim.setChar(dirs[direction], 5);
+
+	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = direction;
+	loadActorAnim2(OBJECT_SPOCK, anim, -1, -1, 0);
+	playSoundEffectIndex(SND_TRICORDER);
+	showText(TX_SPEAKER_SPOCK, text);
+}
+
+void Room::mccoyScan(int direction, int text) {
+	const char *dirs = "nsew";
+	Common::String anim = "mscan_";
+	anim.setChar(dirs[direction], 5);
+
+	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = direction;
+	loadActorAnim2(OBJECT_MCCOY, anim, -1, -1, 0);
+	playSoundEffectIndex(SND_TRICORDER);
+	showText(TX_SPEAKER_MCCOY, text);
 }
 
 }
