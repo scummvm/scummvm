@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-06-07 20:28+0200\n"
-"PO-Revision-Date: 2018-04-14 20:40+0000\n"
+"PO-Revision-Date: 2018-06-11 20:25+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
-"Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/sv/>\n"
+"Language-Team: Swedish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
 "Language: sv_SE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1624,31 +1624,32 @@ msgstr "Antialiserad"
 
 #: gui/unknown-game-dialog.cpp:52
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Kopiera till urklipp"
 
 #: gui/unknown-game-dialog.cpp:67
-#, fuzzy
 msgid "Report game"
-msgstr "Ladda sparfil:"
+msgstr "Rapportera spelet"
 
 #: gui/unknown-game-dialog.cpp:110
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
+"Använd nedanstående knapp för att kopiera all relevant spelinformation till "
+"urklippet."
 
 #: gui/unknown-game-dialog.cpp:117
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "Du kan också rapportera spelet direkt till vårt felrapporteringssystem."
 
 #: gui/unknown-game-dialog.cpp:199
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "All relevant spelinformation har kopierats till urklippet"
 
 #: gui/unknown-game-dialog.cpp:201
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "Det gick inte att kopiera spelinformationen till urklippet!"
 
 #: gui/updates-dialog.cpp:49
 msgid ""
@@ -1726,7 +1727,7 @@ msgstr "Ej stött färgläge"
 
 #: common/error.cpp:46
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "Initialiseringen av ljudenheten misslyckades"
 
 #: common/error.cpp:49
 msgid "Read permission denied"
@@ -1995,22 +1996,22 @@ msgid "Start anyway"
 msgstr "Starta ändå"
 
 #: engines/game.cpp:158
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
 "\n"
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"Spelet i '%s' verkar vara en okänd variant av %s-motorn.\n"
+"Spelet i '%s' verkar vara en okänd variant.\n"
 "\n"
 "Rapportera informationen nedan till ScummVM-teamet på %s tillsammans med "
 "namnet på spelet du försökte lägga till och spelets version, språk, etc.:"
 
 #: engines/game.cpp:162
-#, fuzzy, c-format
+#, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr "Matchade spel-ID:"
+msgstr "Matchade spel-ID för motor %s:"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
@@ -3560,7 +3561,7 @@ msgstr "Använd högkvalitativ bildförstoring"
 
 #: engines/sci/detection.cpp:443
 msgid "Use special cartoon scaler for drawing character sprites"
-msgstr ""
+msgstr "Använd en speciell scaler för att rita figurer i tecknad stil"
 
 #: engines/sci/detection.cpp:452
 msgid "Prefer digital sound effects"
