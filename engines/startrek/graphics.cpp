@@ -51,6 +51,9 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	_palData = new byte[256 * 3];
 	_lutData = new byte[256 * 3];
 
+	memset(_palData, 0, 256 * 3);
+	memset(_lutData, 0, 256 * 3);
+
 	_paletteFadeLevel = 0;
 	_mouseLocked = false;
 	_mouseToBeShown = false;

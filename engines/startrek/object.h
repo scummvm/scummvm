@@ -122,6 +122,50 @@ struct Actor {
 	uint16 fielda2;
 	uint16 fielda4;
 	uint16 fielda6;
+
+public:
+	Actor() :
+		spriteDrawn(),
+		//animFilename[16],
+		animType(),
+		sprite(),
+		//bitmapFilename[10],
+		scale(),
+		animFile(),
+		numAnimFrames(),
+		animFrame(),
+		frameToStartNextAnim(),
+		pos(),
+		field60(),
+		field62(),
+		triggerActionWhenAnimFinished(),
+		finishedAnimActionParam(),
+		//animationString2[8](),
+		field70(),
+		field72(),
+		field74(),
+		field76(),
+		iwSrcPosition(),
+		iwDestPosition(),
+		granularPosX(),
+		granularPosY(),
+		speedX(),
+		speedY(),
+
+		dest(),
+		field90(),
+		field92(),
+
+		direction(),
+		field94(),
+		field96(),
+		//char animationString[10];
+
+		fielda2(),
+		fielda4(),
+		fielda6()
+		{}
+
 };
 
 }
