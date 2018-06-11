@@ -48,13 +48,16 @@ void ActionStill::pause(bool paused) {}
 
 void ActionStill::onStart() {
 	debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
-	if (_startFrame >= _decoder->getFrameCount())
+
+	if (_startFrame >= _decoder.getFrameCount())
 		_startFrame = 0;
-	for (uint i = 0; i < _startFrame; ++i) {
-		_decoder->skipFrame();
-	}
-	_decoder->decodeNextFrame();
-	_decoder->stop();
+
+	setFrame(_startFrame); // seek to frame before startFrame
+	decodeNext(); // decode startFrame
+
+	_decoder.pauseVideo(1); // pause so that decoder doesn't need updates.
+	assert(!_decoder.needsUpdate());
+
 	_actor->endAction();
 }
 

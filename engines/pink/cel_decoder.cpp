@@ -53,20 +53,6 @@ bool CelDecoder::loadStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-int32 CelDecoder::getX(){
-	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
-	if (!track)
-		return -1;
-	return track->getX();
-}
-
-int32 CelDecoder::getY() {
-	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
-	if (!track)
-		return -1;
-	return track->getY();
-}
-
 
 uint16 CelDecoder::getTransparentColourIndex() {
 	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
@@ -87,21 +73,6 @@ Common::Point CelDecoder::getCenter() {
 	if (!track)
 		return Common::Point(0, 0);
 	return track->getCenter();
-}
-
-Common::Rect &CelDecoder::getRectangle() {
-	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
-	return track->getRect();
-}
-
-void CelDecoder::setX(int32 x) {
-	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
-	track->setX(x);
-}
-
-void CelDecoder::setY(int32 y) {
-	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
-	track->setY(y);
 }
 
 void CelDecoder::skipFrame() {
@@ -139,7 +110,6 @@ void CelDecoder::CelVideoTrack::readPrefixChunk() {
 		_fileStream->skip(subchunkSize - 6);
 		break;
 	}
-	_rect = Common::Rect::center(_center.x, _center.y, _surface->w, _surface->h);
 }
 
 void CelDecoder::CelVideoTrack::readHeader() {
@@ -157,14 +127,6 @@ void CelDecoder::CelVideoTrack::readHeader() {
 	_fileStream->seek(_offsetFrame1);
 }
 
-int32 CelDecoder::CelVideoTrack::getX() const {
-	return (_center.x - getWidth() / 2) < 0 ? 0 : _center.x - getWidth() / 2;
-}
-
-int32 CelDecoder::CelVideoTrack::getY() const {
-	return (_center.y - getHeight() / 2) < 0 ? 0 : _center.y - getHeight() / 2;
-}
-
 uint16 CelDecoder::CelVideoTrack::getTransparentColourIndex() {
 	return _transparentColourIndex;
 }
@@ -175,10 +137,6 @@ const Graphics::Surface *CelDecoder::CelVideoTrack::getCurrentFrame() {
 
 Common::Point CelDecoder::CelVideoTrack::getCenter() {
 	return _center;
-}
-
-Common::Rect &CelDecoder::CelVideoTrack::getRect() {
-	return _rect;
 }
 
 #define FRAME_TYPE 0xF1FA
@@ -240,12 +198,20 @@ const Graphics::Surface *CelDecoder::CelVideoTrack::decodeNextFrame() {
 	return _surface;
 }
 
-void CelDecoder::CelVideoTrack::setX(int32 x) {
-	_center.x = x ;//+ getWidth() / 2;
-}
+bool CelDecoder::CelVideoTrack::rewind() {
+	// this method is overriden for 2 reasons:
+	// 1) bug in Flic rewind(curFrame)
+	// 2) I changed behaviour of endOfTrack
+	_nextFrameStartTime = 0;
 
-void CelDecoder::CelVideoTrack::setY(int32 y) {
-	_center.y = y;//+ getHeight() / 2;
+	if (getCurFrame() >= getFrameCount() - 1 && _fileStream->pos() < _fileStream->size())
+		_atRingFrame = true;
+	else
+		_fileStream->seek(_offsetFrame1);
+
+	_curFrame = -1;
+	_frameDelay = _startFrameDelay;
+	return true;
 }
 
 } // End of namepsace Pink

@@ -20,10 +20,13 @@
  *
  */
 
-#include "pink/archive.h"
+#include "common/random.h"
+
+#include "pink/pink.h"
 #include "pink/cel_decoder.h"
 #include "pink/objects/actions/action_loop.h"
 #include "pink/objects/actors/actor.h"
+#include "pink/objects/pages/page.h"
 
 namespace Pink {
 
@@ -34,10 +37,10 @@ void ActionLoop::deserialize(Archive &archive) {
 	style = archive.readWORD();
 	switch (style) {
 	case kPingPong:
-		_style = kPingPong;
+ 		_style = kPingPong;
 		break;
 	case kRandom:
-		_style = kRandom;
+		_style = kRandom; // haven't seen
 		break;
 	default:
 		_style = kForward;
@@ -51,18 +54,68 @@ void ActionLoop::toConsole() {
 }
 
 void ActionLoop::update() {
-	// for now it supports only forward loop animation
-	if (_style == kForward) {
-		if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) {
-			//debug("ACTION LOOP : NEXT ITERATION");
-			_decoder->rewind();
+	ActionCEL::update();
+	int frame = _decoder.getCurFrame();
+
+	if (!_inLoop) {
+		if (frame < _startFrame) {
+			decodeNext();
+			return;
 		}
+		else
+			_inLoop = true;
+	}
+
+	switch (_style) {
+	case kPingPong:
+		if (_forward) {
+			if (frame < _stopFrame) {
+				decodeNext();
+			} else {
+				_forward = false;
+				setFrame(_stopFrame - 1);
+				decodeNext();
+			}
+		}
+		else {
+			if (frame > _startFrame) {
+				setFrame(frame - 1);
+			} else {
+				_forward = true;
+			}
+			decodeNext();
+		}
+		break;
+	case kRandom: { // Not tested
+		Common::RandomSource &rnd = _actor->getPage()->getGame()->getRnd();
+		setFrame(rnd.getRandomNumberRng(_startFrame, _stopFrame));
+		break;
+	}
+	case kForward:
+		if (frame == _stopFrame) {
+			setFrame(_startFrame);
+		}
+		decodeNext();
+		break;
 	}
 }
 
 void ActionLoop::onStart() {
-	ActionPlay::onStart();
-	_actor->endAction();
+	if (_intro) {
+		uint startFrame = _startFrame;
+		_startFrame = 0;
+		ActionPlay::onStart();
+		_startFrame = startFrame;
+		_inLoop = false;
+	} else {
+		ActionPlay::onStart();
+		_inLoop = true;
+	}
+
+    if (!isTalk())
+		_actor->endAction();
+
+	_forward = true;
 }
 
 } // End of namespace Pink

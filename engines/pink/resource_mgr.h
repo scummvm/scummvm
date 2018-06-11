@@ -52,7 +52,6 @@ public:
 
 	Common::SafeSeekableSubReadStream *getResourceStream(const Common::String &name);
 
-	CelDecoder *loadCEL(Common::String &name);
 	Common::String loadText(Common::String &name);
 
 	PinkEngine *getGame() const { return _game; }

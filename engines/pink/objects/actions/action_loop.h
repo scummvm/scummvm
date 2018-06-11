@@ -37,14 +37,17 @@ public:
 
 protected:
 	void onStart() override;
+	virtual bool isTalk() { return false; }
 
 	enum Style {
 		kPingPong = 2,
 		kRandom = 3,
 		kForward = 4
 	};
-	uint _intro;
 	Style _style;
+	bool _intro;
+	bool _inLoop;
+	bool _forward;
 };
 
 } // End of namespace Pink

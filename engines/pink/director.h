@@ -47,6 +47,9 @@ public:
 	void addSprite(ActionCEL *sprite);
 	void removeSprite(ActionCEL *sprite);
 
+	void addDirtyRect(const Common::Rect &rect);
+	void addDirtyRects(ActionCEL *sprite);
+
 	void addSound(ActionSound* sound) { _sounds.push_back(sound); };
 	void removeSound(ActionSound* sound);
 
@@ -66,7 +69,6 @@ public:
 
 private:
 	void draw();
-	void addDirtyRects(ActionCEL *sprite);
 	void mergeDirtyRects();
 	void drawRect(const Common::Rect &rect);
 

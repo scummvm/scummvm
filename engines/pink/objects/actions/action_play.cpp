@@ -45,10 +45,11 @@ void ActionPlay::end() {
 }
 
 void ActionPlay::update() {
-	if (_decoder->endOfVideo() || _decoder->getCurFrame() == _stopFrame) {
-		_decoder->stop();
+	ActionCEL::update();
+	if (_decoder.getCurFrame() >= _stopFrame)
 		_actor->endAction();
-	}
+	else
+		decodeNext();
 }
 
 void ActionPlay::pause(bool paused) {
@@ -57,12 +58,11 @@ void ActionPlay::pause(bool paused) {
 
 void ActionPlay::onStart() {
 	debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
-	_decoder->start();
-	assert(_startFrame <= _decoder->getFrameCount());
-	for (uint i = 0; i < _startFrame; ++i) {
-		_decoder->skipFrame();
-	}
-	_decoder->decodeNextFrame();
+	if (_stopFrame == -1)
+		_stopFrame = _decoder.getFrameCount() - 1;
+	assert(_startFrame < _decoder.getFrameCount());
+	setFrame(_startFrame);
+	// doesn't need to decode startFrame here. Update method will decode
 }
 
 } // End of namespace Pink

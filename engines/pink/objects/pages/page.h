@@ -47,7 +47,6 @@ public:
 	LeadActor *getLeadActor() { return _leadActor; }
 
 	Common::SafeSeekableSubReadStream *getResourceStream(const Common::String &fileName) { return _resMgr.getResourceStream(fileName); }
-	CelDecoder *loadCel(Common::String &fileName) { return _resMgr.loadCEL(fileName); }
 
 	virtual void clear();
 	void pause(bool paused);
