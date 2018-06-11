@@ -114,7 +114,7 @@ void Preview::speechUpdateCue() {
 }
 
 void Preview::speech_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	// Update current speech sound cue
 	speechUpdateCue();

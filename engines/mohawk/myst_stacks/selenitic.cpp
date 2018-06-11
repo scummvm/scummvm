@@ -671,7 +671,7 @@ void Selenitic::soundReceiverLeftRight(uint direction) {
 
 	_soundReceiverDirection = direction;
 	_soundReceiverSpeed = kSoundReceiverSpeedSlow;
-	_soundReceiverStartTime = _vm->_system->getMillis();
+	_soundReceiverStartTime = _vm->getTotalPlayTime();
 
 	soundReceiverUpdate();
 }
@@ -950,7 +950,7 @@ void Selenitic::o_mazeRunnerLight_init(uint16 var, const ArgumentsArray &args) {
 void Selenitic::soundReceiver_run() {
 	if (_soundReceiverStartTime) {
 		if (_soundReceiverDirection) {
-			uint32 currentTime = _vm->_system->getMillis();
+			uint32 currentTime = _vm->getTotalPlayTime();
 
 			if (_soundReceiverSpeed == kSoundReceiverSpeedFast && currentTime > _soundReceiverStartTime + 500) {
 				soundReceiverIncreaseSpeed();

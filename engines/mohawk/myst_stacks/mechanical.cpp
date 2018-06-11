@@ -309,7 +309,7 @@ void Mechanical::o_birdCrankStart(uint16 var, const ArgumentsArray &args) {
 	_vm->_sound->playEffect(crankSoundId, true);
 
 	_birdSingEndTime = 0;
-	_birdCrankStartTime = _vm->_system->getMillis();
+	_birdCrankStartTime = _vm->getTotalPlayTime();
 
 	MystAreaVideo *crankMovie = static_cast<MystAreaVideo *>(crank->getSubResource(0));
 	crankMovie->playMovie();
@@ -324,7 +324,7 @@ void Mechanical::o_birdCrankStop(uint16 var, const ArgumentsArray &args) {
 	uint16 crankSoundId = crank->getList2(1);
 	_vm->_sound->playEffect(crankSoundId);
 
-	_birdSingEndTime = 2 * _vm->_system->getMillis() - _birdCrankStartTime;
+	_birdSingEndTime = 2 * _vm->getTotalPlayTime() - _birdCrankStartTime;
 	_birdSinging = true;
 
 	_bird->playMovie();
@@ -572,11 +572,11 @@ void Mechanical::o_elevatorGoMiddle(uint16 var, const ArgumentsArray &args) {
 	_elevatorTopCounter = 5;
 	_elevatorGoingMiddle = true;
 	_elevatorInCabin = true;
-	_elevatorNextTime = _vm->_system->getMillis() + 1000;
+	_elevatorNextTime = _vm->getTotalPlayTime() + 1000;
 }
 
 void Mechanical::elevatorGoMiddle_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 	if (_elevatorNextTime < time) {
 		_elevatorNextTime = time + 1000;
 		_elevatorTopCounter--;
@@ -706,7 +706,7 @@ void Mechanical::o_fortressStaircase_init(uint16 var, const ArgumentsArray &args
 
 void Mechanical::birdSing_run() {
 	// Used for Card 6220 (Sirrus' Mechanical Bird)
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 	if (_birdSingEndTime < time) {
 		_bird->pauseMovie(true);
 		_vm->_sound->stopEffect();

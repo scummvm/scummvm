@@ -81,7 +81,7 @@ void Demo::o_fadeToBlack(uint16 var, const ArgumentsArray &args) {
 }
 
 void Demo::returnToMenu_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (time < _returnToMenuNextTime)
 		return;
@@ -109,7 +109,7 @@ void Demo::returnToMenu_run() {
 
 void Demo::o_returnToMenu_init(uint16 var, const ArgumentsArray &args) {
 	// Used on Card 2001, 2002 and 2003
-	_returnToMenuNextTime = _vm->_system->getMillis() + 5000;
+	_returnToMenuNextTime = _vm->getTotalPlayTime() + 5000;
 	_returnToMenuRunning = true;
 }
 

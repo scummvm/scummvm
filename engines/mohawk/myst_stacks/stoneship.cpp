@@ -508,12 +508,12 @@ void Stoneship::o_generatorStart(uint16 var, const ArgumentsArray &args) {
 		_vm->_sound->playEffect(soundId);
 
 	if (_state.generatorDuration)
-		_state.generatorDuration -= _vm->_system->getMillis() - _state.generatorDepletionTime;
+		_state.generatorDuration -= _vm->getTotalPlayTime() - _state.generatorDepletionTime;
 
 	// Start charging the battery
 	_batteryDepleting = false;
 	_batteryCharging = true;
-	_batteryNextTime = _vm->_system->getMillis() + 1000;
+	_batteryNextTime = _vm->getTotalPlayTime() + 1000;
 
 	// Start handle movie
 	MystAreaVideo *movie = static_cast<MystAreaVideo *>(handle->getSubResource(0));
@@ -533,10 +533,10 @@ void Stoneship::o_generatorStop(uint16 var, const ArgumentsArray &args) {
 			_state.generatorDuration = 600000;
 
 		// Start depleting power
-		_state.generatorDepletionTime = _vm->_system->getMillis() + _state.generatorDuration;
+		_state.generatorDepletionTime = _vm->getTotalPlayTime() + _state.generatorDuration;
 		_state.generatorPowerAvailable = 1;
 		_batteryDepleting = true;
-		_batteryNextTime = _vm->_system->getMillis() + 60000;
+		_batteryNextTime = _vm->getTotalPlayTime() + 60000;
 	}
 
 	// Pause handle movie
@@ -550,7 +550,7 @@ void Stoneship::o_generatorStop(uint16 var, const ArgumentsArray &args) {
 }
 
 void Stoneship::chargeBattery_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (time > _batteryNextTime) {
 		_batteryNextTime = time + 1000;
@@ -559,7 +559,7 @@ void Stoneship::chargeBattery_run() {
 }
 
 uint16 Stoneship::batteryRemainingCharge() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (_state.generatorDepletionTime > time) {
 		return (_state.generatorDepletionTime - time) / 7500;
@@ -569,7 +569,7 @@ uint16 Stoneship::batteryRemainingCharge() {
 }
 
 void Stoneship::batteryDeplete_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (time > _batteryNextTime) {
 		if (_state.generatorDuration > 60000) {
@@ -828,7 +828,7 @@ void Stoneship::o_tunnelEnter_init(uint16 var, const ArgumentsArray &args) {
 	o_tunnel_init(var, args);
 
 	_tunnelRunning = true;
-	_tunnelNextTime = _vm->_system->getMillis() + 1500;
+	_tunnelNextTime = _vm->getTotalPlayTime() + 1500;
 }
 
 void Stoneship::o_batteryGauge_init(uint16 var, const ArgumentsArray &args) {
@@ -867,7 +867,7 @@ void Stoneship::o_tunnel_init(uint16 var, const ArgumentsArray &args) {
 }
 
 void Stoneship::tunnel_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (time > _tunnelNextTime) {
 		_tunnelNextTime = time + 1500;
@@ -904,11 +904,11 @@ void Stoneship::o_telescope_init(uint16 var, const ArgumentsArray &args) {
 
 	_telescopeRunning = true;
 	_telescopeLighthouseState = false;
-	_telescopeNexTime = _vm->_system->getMillis() + 1000;
+	_telescopeNexTime = _vm->getTotalPlayTime() + 1000;
 }
 
 void Stoneship::telescope_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (time > _telescopeNexTime) {
 

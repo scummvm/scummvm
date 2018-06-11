@@ -115,12 +115,12 @@ void Dni::o_handPage(uint16 var, const ArgumentsArray &args) {
 
 		_atrusLeft = true;
 		_waitForLoop = false;
-		_atrusLeftTime = _vm->_system->getMillis();
+		_atrusLeftTime = _vm->getTotalPlayTime();
 	}
 }
 
 void Dni::atrusLeft_run() {
-	if (_vm->_system->getMillis() > _atrusLeftTime + 63333) {
+	if (_vm->getTotalPlayTime() > _atrusLeftTime + 63333) {
 		_video = "atrus2";
 		_videoPos = Common::Point(215, 77);
 		VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
