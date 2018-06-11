@@ -39,6 +39,10 @@ public:
 			_actions[i]->toConsole();
 		}
 	}
+
+	bool isCursor() override {
+		return true;
+	}
 };
 
 } // End of namespace Pink
