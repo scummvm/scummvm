@@ -37,11 +37,11 @@ void StarTrekEngine::initAwayMission() {
 	// sub_23a60(); // TODO
 	_sound->loadMusicFile("ground");
 
-	loadRoom(_missionToLoad, 2); // FIXME
+	loadRoom(_missionToLoad, _roomIndexToLoad);
 	_roomIndexToLoad = -1;
 
 	// Load crew positions for beaming in
-	initAwayCrewPositions(3);
+	initAwayCrewPositions(4);
 }
 
 void StarTrekEngine::runAwayMission() {
