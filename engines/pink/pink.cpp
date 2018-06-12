@@ -90,6 +90,8 @@ Common::Error PinkEngine::init() {
 
 	_orb.loadGame(this);
 
+	syncSoundSettings();
+
 	if (ConfMan.hasKey("save_slot"))
 		loadGameState(ConfMan.getInt("save_slot"));
 	else
