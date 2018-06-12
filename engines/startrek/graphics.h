@@ -73,8 +73,9 @@ public:
 	SharedPtr<Bitmap> getMouseBitmap();
 	void warpMouse(int16 x, int16 y);
 
-	void drawSprite(const Sprite &sprite);
-	void drawSprite(const Sprite &sprite, const Common::Rect &rect);
+	void drawTextChar(::Graphics::Surface *surface, const Sprite &sprite, int x, int y, const Common::Rect &rect);
+	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface);
+	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect);
 	void drawAllSprites(bool updateScreen=true);
 	void forceDrawAllSprites(bool updateScreen=true);
 	Sprite *getSpriteAt(int16 x, int16 y);

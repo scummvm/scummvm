@@ -29,7 +29,10 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/macresman.h"
+
+#include "graphics/pixelformat.h"
 #include "graphics/surface.h"
+
 #include "engines/util.h"
 #include "video/qt_decoder.h"
 
@@ -104,7 +107,8 @@ Common::Error StarTrekEngine::run() {
 		assert(_macResFork->hasDataFork() && _macResFork->hasResFork());
 	}
 
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
+	const ::Graphics::PixelFormat format = ::Graphics::PixelFormat::createFormatCLUT8();
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, &format);
 	initializeEventsAndMouse();
 
 	_frameIndex = 0;

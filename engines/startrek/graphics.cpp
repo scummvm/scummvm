@@ -258,24 +258,22 @@ void Graphics::warpMouse(int16 x, int16 y) {
 	_mouseWarpY = y;
 }
 
-void Graphics::drawSprite(const Sprite &sprite) {
+void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface) {
 	int left = sprite.drawX;
 	int top = sprite.drawY;
 	int right = left + sprite.bitmap->width;
 	int bottom = top + sprite.bitmap->height;
-	drawSprite(sprite, Common::Rect(left, top, right, bottom));
+	drawSprite(sprite, surface, Common::Rect(left, top, right, bottom));
 }
 
 // rect is the portion of the sprite to update. It must be entirely contained within the
 // sprite's actual, full rectangle.
-void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
+void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect) {
 	Common::Rect spriteRect = Common::Rect(sprite.drawX, sprite.drawY,
 			sprite.drawX+sprite.bitmap->width, sprite.drawY+sprite.bitmap->height);
 
 	assert(_screenRect.contains(rect));
 	assert(spriteRect.contains(rect));
-
-	::Graphics::Surface *surface = _vm->_system->lockScreen();
 
 	byte *dest = (byte*)surface->getPixels() + rect.top*SCREEN_WIDTH + rect.left;
 
@@ -342,12 +340,14 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 		// The sprite's "bitmap" is not actually a bitmap, but instead the list of
 		// characters to display.
 
+		// Units of this rect are "characters" instead of pixels. This contains all
+		// characters to be drawn.
 		Common::Rect rectangle1;
 
 		rectangle1.left   = (rect.left   - sprite.drawX) / 8;
 		rectangle1.top    = (rect.top    - sprite.drawY) / 8;
-		rectangle1.right  = (rect.right  - sprite.drawX) / 8;
-		rectangle1.bottom = (rect.bottom - sprite.drawY) / 8;
+		rectangle1.right  = (rect.right  - sprite.drawX + 7) / 8;
+		rectangle1.bottom = (rect.bottom - sprite.drawY + 7) / 8;
 
 		int drawWidth = rectangle1.width();
 		int drawHeight = rectangle1.height();
@@ -402,8 +402,6 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 		error("drawSprite: draw mode %d invalid", sprite.drawMode);
 		break;
 	}
-
-	_vm->_system->unlockScreen();
 }
 
 /**
@@ -495,13 +493,17 @@ void Graphics::drawAllSprites(bool updateScreen) {
 	}
 
 	// Redraw the background on every dirty rectangle
+	const ::Graphics::PixelFormat format = ::Graphics::PixelFormat::createFormatCLUT8();
+	::Graphics::Surface surface;
+	surface.create(SCREEN_WIDTH, SCREEN_HEIGHT, format);
+
 	for (int i = 0; i < numDirtyRects; i++) {
 		Common::Rect &r = dirtyRects[i];
 		if (r.width() == 0 || r.height() == 0)
 			continue;
 
 		int offset = r.top * SCREEN_WIDTH + r.left;
-		_vm->_system->copyRectToScreen(_backgroundImage->pixels+offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
+		surface.copyRectToSurface(_backgroundImage->pixels + offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
 	}
 
 	// For each sprite, merge the rectangles that overlap with it and redraw the sprite.
@@ -525,12 +527,19 @@ void Graphics::drawAllSprites(bool updateScreen) {
 			}
 
 			if (mustRedrawSprite)
-				drawSprite(*spr, rect2);
+				drawSprite(*spr, &surface, rect2);
 		}
 
 		spr->field16 = false;
 		spr->bitmapChanged = false;
 		spr->lastDrawRect = spr->drawRect;
+	}
+
+	// Copy dirty rects to screen
+	for (int j = 0; j < numDirtyRects; j++) {
+		Common::Rect &r = dirtyRects[j];
+		int offset = r.left + r.top * SCREEN_WIDTH;
+		_vm->_system->copyRectToScreen((byte *)surface.getPixels() + offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
 	}
 
 	if (updateScreen) {
