@@ -43,7 +43,8 @@ void ActionTalk::toConsole() {
 void ActionTalk::update() {
 	ActionLoop::update();
 	if (!_sound.isPlaying()) {
-		_decoder.pauseVideo(1);
+		_decoder.setEndOfTrack();
+		assert(!_decoder.needsUpdate());
 		_actor->endAction();
 	}
 }
