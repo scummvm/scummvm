@@ -40,6 +40,10 @@ public:
 	}
 
 	void pause(bool paused) override {}
+
+	void init(bool paused) override {
+		Actor::init(0);
+	}
 };
 
 } // End of namespace Pink
