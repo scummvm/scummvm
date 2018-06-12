@@ -59,7 +59,7 @@ public:
 	void update();
 	void onClick(Common::Point point);
 
-	bool start(bool playOpening);
+	bool start(bool paused);
 
 	void setLeadActor(LeadActor *lead) { _lead = lead; }
 	InventoryItem* findInventoryItem(const Common::String &name);

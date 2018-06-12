@@ -381,9 +381,9 @@ Actor *LeadActor::getActorByPoint(const Common::Point point) {
 	return _page->getGame()->getDirector()->getActorByPoint(point);
 }
 
-void LeadActor::startInventory(bool fromSave) {
-	getInventoryMgr()->start(fromSave);
-	if (!fromSave) {
+void LeadActor::startInventory(bool paused) {
+	getInventoryMgr()->start(paused);
+	if (!paused) {
 		_isHaveItem = false;
 		_stateCopy = _state;
 		_state = kInventory;
