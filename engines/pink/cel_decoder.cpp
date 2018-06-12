@@ -209,7 +209,7 @@ bool CelDecoder::CelVideoTrack::rewind() {
 	// 2) I changed behaviour of endOfTrack
 	_nextFrameStartTime = 0;
 
-	if (getCurFrame() >= getFrameCount() - 1 && _fileStream->pos() < _fileStream->size())
+	if (_curFrame >= (int) _frameCount - 1 && _fileStream->pos() < _fileStream->size())
 		_atRingFrame = true;
 	else
 		_fileStream->seek(_offsetFrame1);
