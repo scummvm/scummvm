@@ -37,6 +37,8 @@ public:
 	const Graphics::Surface *getCurrentFrame();
 	void skipFrame();
 
+	void setEndOfTrack();
+
 protected:
 	class CelVideoTrack : public FlicVideoTrack {
 	public:
@@ -48,6 +50,7 @@ protected:
 		uint16 getTransparentColourIndex();
 
 		// Hack. Pink needs so that Track needed an update after lastFrame delay ends
+		void setEndOfTrack() { _curFrame = _frameCount; }
 		bool endOfTrack() const override { return getCurFrame() >= getFrameCount(); }
 
 		Common::Point getCenter();

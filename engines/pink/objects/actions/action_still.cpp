@@ -55,7 +55,7 @@ void ActionStill::onStart() {
 	setFrame(_startFrame); // seek to frame before startFrame
 	decodeNext(); // decode startFrame
 
-	_decoder.pauseVideo(1); // pause so that decoder doesn't need updates.
+	_decoder.setEndOfTrack();
 	assert(!_decoder.needsUpdate());
 
 	_actor->endAction();

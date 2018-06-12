@@ -46,8 +46,10 @@ void WalkAction::update() {
 	ActionCEL::update();
 	if (_decoder.getCurFrame() < (int)_decoder.getFrameCount() - 1)
 		decodeNext();
-	else
+	else {
+		_decoder.setEndOfTrack();
 		_actor->endAction();
+	}
 }
 
 } // End of namespace Pink

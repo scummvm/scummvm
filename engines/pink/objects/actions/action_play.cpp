@@ -46,8 +46,11 @@ void ActionPlay::end() {
 
 void ActionPlay::update() {
 	ActionCEL::update();
-	if (_decoder.getCurFrame() >= _stopFrame)
+	if (_decoder.getCurFrame() >= _stopFrame) {
+		_decoder.setEndOfTrack();
+		assert(!_decoder.needsUpdate());
 		_actor->endAction();
+	}
 	else
 		decodeNext();
 }
