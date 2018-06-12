@@ -98,7 +98,7 @@ void InventoryMgr::setItemOwner(const Common::String &owner, InventoryItem *item
 		_item = item;
 }
 
-bool InventoryMgr::start(bool playOpening) {
+bool InventoryMgr::start(bool paused) {
 	if (!_item) {
 		_item = findInventoryItem(_lead->getName());
 		if (!_item)
@@ -110,7 +110,7 @@ bool InventoryMgr::start(bool playOpening) {
 	_rightArrow = _lead->getPage()->findActor(kInventoryRightArrowActor);
 	_leftArrow = _lead->getPage()->findActor(kInventoryLeftArrowActor);
 
-	if (playOpening) {
+	if (!paused) {
 		_window->setAction(kOpenAction);
 		_state = kOpening;
 	}
