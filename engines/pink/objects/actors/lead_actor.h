@@ -79,7 +79,7 @@ public:
 	virtual void onClick();
 	virtual void onVariableSet() {}
 	void onInventoryClosed(bool isItemClicked);
-	void onWalkEnd();
+	void onWalkEnd(const Common::String &stopName);
 	void onPDAClose();
 
 	bool isInteractingWith(Actor *actor);
