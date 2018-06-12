@@ -1,10 +1,14 @@
-
 0.4.0 (YYYY-MM-DD)
 	New Games:
 	- ...
 
 	General:
 	- ...
+
+0.3.1 (2018-06-13)
+	Myst III changes:
+	- Fixed a rare crash when walking near the magnetic rings in Amateria (#1249)
+	- Fixed unresponsive controls for the holographic projectors in J'nanin (#1400)
 
 0.3.0 (2017-12-30)
 	General:
