@@ -102,6 +102,8 @@ protected:
 
 	void startInventory(bool fromSave);
 
+	void setReadyAfterWalk();
+
 	Actor *_recipient;
 
 	CursorMgr *_cursorMgr;

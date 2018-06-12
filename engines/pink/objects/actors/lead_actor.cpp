@@ -155,10 +155,8 @@ void LeadActor::update() {
 
 void LeadActor::loadPDA(const Common::String &pageName) {
 	if (_state != kPDA) {
-		if (_state == kMoving) {
-			_recipient = nullptr;
-			_nextState = kReady;
-		}
+		if (_state == kMoving)
+			setReadyAfterWalk();
 		if (_state != kInventory)
 			_page->pause(true);
 
@@ -268,10 +266,8 @@ void LeadActor::onClick() {
 		_nextState = (_state != kMoving) ?
 					 kUnk_Loading : kReady;
 	} else {
-		if (_state == kMoving) {
-			_recipient = nullptr;
-			_nextState = kReady;
-		}
+		if (_state == kMoving)
+			setReadyAfterWalk();
 		startInventory(0);
 	}
 }
@@ -389,6 +385,11 @@ void LeadActor::startInventory(bool fromSave) {
 		forceUpdateCursor();
 	}
 	_page->pause(true);
+}
+
+void LeadActor::setReadyAfterWalk() {
+	_recipient = nullptr;
+	_nextState = kReady;
 }
 
 void ParlSqPink::toConsole() {
