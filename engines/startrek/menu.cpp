@@ -676,7 +676,7 @@ int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4
 				// Not added: updating mouse position (scummvm handles that)
 
 				// sub_10492(); // TODO
-				// updateActorAnimations(); // TODO: uncomment and fix animations under textboxes
+				updateActorAnimations();
 				_gfx->drawAllSprites();
 				// sub_10BE7(); // TODO
 				_sound->checkLoopMusic();
