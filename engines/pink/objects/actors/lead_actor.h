@@ -70,6 +70,7 @@ public:
 
 	void onKeyboardButtonClick(Common::KeyCode code);
 	void onLeftButtonClick(const Common::Point point);
+	void onRightButtonClick(const Common::Point point);
 
 	void onMouseMove(const Common::Point point);
 
@@ -86,6 +87,8 @@ public:
 	void setNextExecutors (const Common::String &nextModule, const Common::String &nextPage);
 
 	State getState() const { return _state; }
+
+	Actor *getActorByPoint(const Common::Point point);
 
 protected:
 	void forceUpdateCursor();

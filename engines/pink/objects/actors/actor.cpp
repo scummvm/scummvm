@@ -134,4 +134,8 @@ void Actor::setAction(Action *newAction, bool unk) {
 	}
 }
 
+InventoryMgr *Actor::getInventoryMgr() const {
+	return _page->getModule()->getInventoryMgr();
+}
+
 } // End of namespace Pink
