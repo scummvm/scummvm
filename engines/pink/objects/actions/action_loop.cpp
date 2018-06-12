@@ -89,6 +89,7 @@ void ActionLoop::update() {
 	case kRandom: { // Not tested
 		Common::RandomSource &rnd = _actor->getPage()->getGame()->getRnd();
 		setFrame(rnd.getRandomNumberRng(_startFrame, _stopFrame));
+		decodeNext();
 		break;
 	}
 	case kForward:
