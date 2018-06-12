@@ -33,7 +33,7 @@ namespace Pink {
 class InventoryActor : public Actor {
 public:
 	void toConsole() override {
-		debug("CursorActor: _name = %s", _name.c_str());
+		debug("InventoryActor: _name = %s", _name.c_str());
 		for (uint i = 0; i < _actions.size(); ++i) {
 			_actions[i]->toConsole();
 		}
