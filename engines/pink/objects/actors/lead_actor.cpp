@@ -89,7 +89,7 @@ void LeadActor::init(bool unk) {
 	if (_state == kUnk_Loading)
 		_state = kReady;
 
-	_page->getModule()->getInventoryMgr()->setLeadActor(this);
+	getInventoryMgr()->setLeadActor(this);
 	_page->getGame()->setLeadActor(this);
 	Actor::init(unk);
 }
@@ -100,14 +100,15 @@ void LeadActor::start(bool isHandler) {
 		_nextState = kReady;
 	}
 
+	InventoryMgr *mgr = getInventoryMgr();
 	switch (_state) {
 	case kInventory:
-		_page->getModule()->getInventoryMgr()->start(0);
+		mgr->start(0);
 		_page->pause(true);
 		break;
 	case kPDA:
 		if (_stateBeforePDA == kInventory) {
-			_page->getModule()->getInventoryMgr()->start(0);
+			mgr->start(0);
 			_page->pause(true);
 		}
 		loadPDA(_page->getGame()->getPdaMgr().getSavedPageName());
@@ -136,7 +137,7 @@ void LeadActor::update() {
 		}
 		break;
 	case kInventory:
-		getPage()->getModule()->getInventoryMgr()->update();
+		getInventoryMgr()->update();
 		break;
 	case kPDA:
 		getPage()->getGame()->getPdaMgr().update();
@@ -213,12 +214,10 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
 }
 
 void LeadActor::onLeftButtonClick(const Common::Point point) {
-	InventoryMgr *invMgr = _page->getModule()->getInventoryMgr();
-
 	switch (_state) {
 	case kReady:
 	case kMoving: {
-		Actor *actor = _page->getGame()->getDirector()->getActorByPoint(point);
+		Actor *actor = getActorByPoint(point);
 
 		if (this == actor) {
 			onClick();
@@ -246,7 +245,7 @@ void LeadActor::onLeftButtonClick(const Common::Point point) {
 		_page->getGame()->getPdaMgr().onLeftButtonClick(point);
 		break;
 	case kInventory:
-		invMgr->onClick(point);
+		getInventoryMgr()->onClick(point);
 		break;
 	default:
 		break;
@@ -260,7 +259,7 @@ void LeadActor::onMouseMove(Common::Point point) {
 }
 
 void LeadActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
-	if (_page->getModule()->getInventoryMgr()->isPinkOwnsAnyItems())
+	if (getInventoryMgr()->isPinkOwnsAnyItems())
 		_cursorMgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
 	else
 		Actor::onMouseOver(point, mgr);
@@ -276,7 +275,7 @@ void LeadActor::onClick() {
 			_recipient = nullptr;
 			_nextState = kReady;
 		}
-		if (_page->getModule()->getInventoryMgr()->start(1)) {
+		if (getInventoryMgr()->start(1)) {
 			_stateCopy = _state;
 			_state = kInventory;
 			_page->pause(true);
@@ -317,7 +316,7 @@ bool LeadActor::isInteractingWith(Actor *actor) {
 	if (!_isHaveItem)
 		return actor->isLeftClickHandlers();
 
-	return actor->isUseClickHandlers(_page->getModule()->getInventoryMgr()->getCurrentItem());
+	return actor->isUseClickHandlers(getInventoryMgr()->getCurrentItem());
 }
 
 void LeadActor::setNextExecutors(const Common::String &nextModule, const Common::String &nextPage) {
@@ -336,9 +335,8 @@ void LeadActor::updateCursor(const Common::Point point) {
 	switch (_state) {
 	case kReady:
 	case kMoving: {
-		Director *director = _page->getGame()->getDirector();
-		Actor *actor = director->getActorByPoint(point);
-		InventoryItem *item = _page->getModule()->getInventoryMgr()->getCurrentItem();
+		Actor *actor = getActorByPoint(point);
+		InventoryItem *item = getInventoryMgr()->getCurrentItem();
 		if (_isHaveItem) {
 			if (actor) {
 				actor->onHover(point, item->getName(), _cursorMgr);
@@ -365,7 +363,7 @@ void LeadActor::updateCursor(const Common::Point point) {
 }
 
 bool LeadActor::sendUseClickMessage(Actor *actor) {
-	InventoryMgr *mgr = _page->getModule()->getInventoryMgr();
+	InventoryMgr *mgr = getInventoryMgr();
 	_nextState = _state != kPlayingVideo ? kReady : kPlayingVideo;
 	_state = kInDialog1;
 	InventoryItem *item = mgr->getCurrentItem();
@@ -383,6 +381,10 @@ bool LeadActor::sendLeftClickMessage(Actor *actor) {
 
 WalkLocation *LeadActor::getWalkDestination() {
 	return _walkMgr->findLocation(_recipient->getLocation());
+}
+
+Actor *LeadActor::getActorByPoint(const Common::Point point) {
+	return _page->getGame()->getDirector()->getActorByPoint(point);
 }
 
 void ParlSqPink::toConsole() {
@@ -421,9 +423,9 @@ void PubPink::onVariableSet() {
 
 void PubPink::updateCursor(const Common::Point point) {
 	if (playingMiniGame()) {
-		Actor *actor = _page->getGame()->getDirector()->getActorByPoint(point);
+		Actor *actor = getActorByPoint(point);
 		assert(actor);
-		if (_state == kReady && actor->isUseClickHandlers(_page->getModule()->getInventoryMgr()->getCurrentItem())) {
+		if (_state == kReady && actor->isUseClickHandlers(getInventoryMgr()->getCurrentItem())) {
 			_cursorMgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
 		} else
 			_cursorMgr->setCursor(kDefaultCursor, point, Common::String());

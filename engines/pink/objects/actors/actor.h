@@ -76,6 +76,8 @@ public:
 	Action *getAction() const { return _action; }
 	Page *getPage() const { return _page; }
 
+	InventoryMgr *getInventoryMgr() const;
+
 	virtual const Common::String &getLocation() const;
 
 	void setAction(const Common::String &name) { setAction(findAction(name)); }
