@@ -100,7 +100,8 @@ protected:
 
 	virtual WalkLocation *getWalkDestination();
 
-	void startInventory(bool fromSave);
+	void startInventory(bool paused);
+	bool startWalk();
 
 	void setReadyAfterWalk();
 
