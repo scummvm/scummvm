@@ -100,6 +100,8 @@ protected:
 
 	virtual WalkLocation *getWalkDestination();
 
+	void startInventory(bool fromSave);
+
 	Actor *_recipient;
 
 	CursorMgr *_cursorMgr;

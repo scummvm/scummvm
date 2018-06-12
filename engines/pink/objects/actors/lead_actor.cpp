@@ -103,14 +103,11 @@ void LeadActor::start(bool isHandler) {
 	InventoryMgr *mgr = getInventoryMgr();
 	switch (_state) {
 	case kInventory:
-		mgr->start(0);
-		_page->pause(true);
+		startInventory(1);
 		break;
 	case kPDA:
-		if (_stateBeforePDA == kInventory) {
-			mgr->start(0);
-			_page->pause(true);
-		}
+		if (_stateBeforePDA == kInventory)
+			startInventory(1);
 		loadPDA(_page->getGame()->getPdaMgr().getSavedPageName());
 		break;
 	default:
@@ -275,11 +272,7 @@ void LeadActor::onClick() {
 			_recipient = nullptr;
 			_nextState = kReady;
 		}
-		if (getInventoryMgr()->start(1)) {
-			_stateCopy = _state;
-			_state = kInventory;
-			_page->pause(true);
-		}
+		startInventory(0);
 	}
 }
 
@@ -385,6 +378,17 @@ WalkLocation *LeadActor::getWalkDestination() {
 
 Actor *LeadActor::getActorByPoint(const Common::Point point) {
 	return _page->getGame()->getDirector()->getActorByPoint(point);
+}
+
+void LeadActor::startInventory(bool fromSave) {
+	getInventoryMgr()->start(fromSave);
+	if (!fromSave) {
+		_isHaveItem = false;
+		_stateCopy = _state;
+		_state = kInventory;
+		forceUpdateCursor();
+	}
+	_page->pause(true);
 }
 
 void ParlSqPink::toConsole() {
