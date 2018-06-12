@@ -212,28 +212,20 @@ void LeadActor::onLeftButtonClick(const Common::Point point) {
 	switch (_state) {
 	case kReady:
 	case kMoving: {
-		Actor *actor = getActorByPoint(point);
+		Actor *clickedActor = getActorByPoint(point);
 
-		if (this == actor) {
+		if (this == clickedActor) {
 			onClick();
 			return;
 		}
 
-		_recipient = actor;
-		if (isInteractingWith(_recipient)) {
-			WalkLocation *location = getWalkDestination();
-			if (location) {
-				_state = kMoving;
-				_nextState = kInDialog1;
-				_walkMgr->start(location);
-			} else if (_state == kReady) {
-				if (_isHaveItem)
-					sendUseClickMessage(_recipient);
-				else
-					sendLeftClickMessage(_recipient);
-			}
+		_recipient = clickedActor;
+		if (isInteractingWith(clickedActor) && !startWalk()) {
+			if (_isHaveItem)
+				sendUseClickMessage(clickedActor);
+			else
+				sendLeftClickMessage(clickedActor);
 		}
-
 		break;
 	}
 	case kPDA:
@@ -390,6 +382,18 @@ void LeadActor::startInventory(bool paused) {
 		forceUpdateCursor();
 	}
 	_page->pause(true);
+}
+
+bool LeadActor::startWalk() {
+	WalkLocation *location = getWalkDestination();
+	if (location) {
+		_state = kMoving;
+		_nextState = kInDialog1;
+		_walkMgr->start(location);
+		return true;
+	}
+
+	return false;
 }
 
 void LeadActor::setReadyAfterWalk() {
