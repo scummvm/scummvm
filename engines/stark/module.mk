@@ -92,6 +92,7 @@ MODULE_OBJS := \
 	ui/menu/mainmenu.o \
 	ui/menu/settingsmenu.o \
 	ui/menu/saveloadmenu.o \
+	ui/menu/fmvmenu.o \
 	ui/window.o \
 	ui/world/actionmenu.o \
 	ui/world/button.o \

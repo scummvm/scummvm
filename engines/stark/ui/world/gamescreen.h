@@ -84,6 +84,7 @@ private:
 
 	typedef void (Window::*WindowHandler)();
 	void dispatchEvent(WindowHandler handler);
+	void pauseGame(bool pause);
 };
 
 } // End of namespace Stark

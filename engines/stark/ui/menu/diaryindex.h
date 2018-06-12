@@ -42,6 +42,7 @@ private:
 	void widgetTextColorHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
 	void backHandler();
 	void settingsHandler();
+	void fmvHandler();
 	void loadHandler();
 	void saveHandler();
 	void quitHandler();

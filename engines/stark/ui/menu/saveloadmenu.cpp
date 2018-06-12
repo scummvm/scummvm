@@ -207,8 +207,8 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 	lineSurface.free();
 
 	// Set the position
-	_thumbPos.x = 41 + (_slot % _slotPerRow) * (_thumbWidth + 39);
-	_thumbPos.y = 61 + (_slot % _slotPerPage / _slotPerColumn) * (_thumbHeight + 38);
+	_thumbPos.x = 41 + (_slot % SaveLoadMenuScreen::_slotPerRow) * (_thumbWidth + 39);
+	_thumbPos.y = 61 + (_slot % SaveLoadMenuScreen::_slotPerPage / SaveLoadMenuScreen::_slotPerColumn) * (_thumbHeight + 38);
 
 	_textDescPos.x = _thumbPos.x;
 	_textDescPos.y = _thumbPos.y + _thumbHeight + 2;
