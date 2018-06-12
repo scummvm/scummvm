@@ -177,10 +177,10 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
 	case kMoving:
 		switch (code) {
 		case Common::KEYCODE_ESCAPE:
-			// set unk variables
+			setReadyAfterWalk();
 			// Fall Through intended
 		case Common::KEYCODE_SPACE:
-			//skip walking animation
+			_walkMgr->skip();
 		default:
 			break;
 		}
@@ -280,7 +280,7 @@ void LeadActor::onInventoryClosed(bool isItemClicked) {
 	forceUpdateCursor();
 }
 
-void LeadActor::onWalkEnd() {
+void LeadActor::onWalkEnd(const Common::String &stopName) {
 	State oldNextState = _nextState;
 	_state = kReady;
 	_nextState = kUnk_Loading;
@@ -289,6 +289,11 @@ void LeadActor::onWalkEnd() {
 			sendUseClickMessage(_recipient);
 		else
 			sendLeftClickMessage(_recipient);
+	}
+	else {
+		Action *action = findAction(stopName);
+		assert(action);
+		setAction(action);
 	}
 }
 

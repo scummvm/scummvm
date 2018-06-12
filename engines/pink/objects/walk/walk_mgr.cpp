@@ -135,7 +135,7 @@ void WalkMgr::update() {
 
 void WalkMgr::end() {
 	_isWalking = false;
-	 _leadActor->onWalkEnd();
+	_leadActor->onWalkEnd(_destination->getName());
 }
 
 void WalkMgr::loadState(Archive &archive) {
@@ -158,6 +158,12 @@ void WalkMgr::saveState(Archive &archive) {
 		archive.writeString(_next.name);
 		archive.writeString(_destination->getName());
 	}
+}
+
+void WalkMgr::skip() {
+	initNextWayPoint(_destination);
+	_current = _next;
+	end();
 }
 
 } // End of namespace Pink

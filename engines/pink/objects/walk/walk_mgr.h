@@ -56,6 +56,8 @@ public:
 	void loadState(Archive &archive);
 	void saveState(Archive &archive);
 
+	void skip();
+
 private:
 	struct WayPoint {
 		Common::String name;
