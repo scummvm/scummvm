@@ -95,7 +95,6 @@ void ActionCEL::closeDecoder() {
 	_decoder.close();
 }
 
-
 void ActionCEL::setFrame(uint frame) {
 	_decoder.rewind();
 
@@ -104,13 +103,13 @@ void ActionCEL::setFrame(uint frame) {
 	}
 
 	_decoder.clearDirtyRects();
+	_actor->getPage()->getGame()->getDirector()->addDirtyRect(_bounds);
 }
 
 void ActionCEL::decodeNext() {
 	_decoder.decodeNextFrame();
 	_actor->getPage()->getGame()->getDirector()->addDirtyRects(this);
 }
-
 
 void ActionCEL::setCenter(const Common::Point &center) {
 	_actor->getPage()->getGame()->getDirector()->addDirtyRect(_bounds);
