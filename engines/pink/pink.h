@@ -83,21 +83,26 @@ public:
 	PinkEngine(OSystem *system, const ADGameDescription *desc);
 	~PinkEngine();
 
-	virtual Common::Error run();
+	Common::Error run() override;
 
-	virtual bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
-	virtual Common::Error loadGameState(int slot);
-	virtual bool canLoadGameStateCurrently();
+	virtual Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
 
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual bool canSaveGameStateCurrently();
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
 
-	bool isPeril();
+protected:
+	virtual void pauseEngineIntern(bool pause) override;
 
+public:
 	void load(Archive &archive);
-	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
-	void changeScene(Page *page);
+
+	void changeScene();
+
+	void setVariable(Common::String &variable, Common::String &value);
+	bool checkValueOfVariable(Common::String &variable, Common::String &value);
 
 	OrbFile *getOrb()  { return &_orb; }
 	BroFile *getBro()  { return _bro; }
@@ -109,18 +114,18 @@ public:
 	void setLeadActor(LeadActor *actor) { _actor = actor; };
 	void setCursor(uint cursorIndex);
 
-	void setVariable(Common::String &variable, Common::String &value) { _variables[variable] = value; }
-	bool checkValueOfVariable(Common::String &variable, Common::String &value);
-
-protected:
-	virtual void pauseEngineIntern(bool pause);
-
 private:
 	Common::Error init();
+
 	bool loadCursors();
 
-	void loadModule(int index);
+	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
+	void addModule(const Common::String &moduleName);
+	void removeModule();
 
+	bool isPeril();
+
+private:
 	Console *_console;
 	Common::RandomSource _rnd;
 	Common::Array<Graphics::WinCursorGroup *> _cursors;

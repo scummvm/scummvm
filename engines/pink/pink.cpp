@@ -20,8 +20,6 @@
  *
  */
 
-#include <graphics/thumbnail.h>
-#include <graphics/surface.h>
 #include "common/debug-channels.h"
 #include "common/winexe_pe.h"
 #include "common/config-manager.h"
@@ -29,6 +27,8 @@
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/thumbnail.h"
+#include "graphics/surface.h"
 
 #include "pink/pink.h"
 #include "pink/console.h"
@@ -86,7 +86,6 @@ Common::Error PinkEngine::init() {
 		return Common::kNoGameDataFoundError;
 
 	setCursor(kLoadingCursor);
-	_system->showMouse(1);
 
 	_orb.loadGame(this);
 
@@ -123,11 +122,8 @@ Common::Error Pink::PinkEngine::run() {
 					_actor->onRightButtonClick(event.mouse);
 				break;
 			case Common::EVENT_KEYDOWN:
-					_actor->onKeyboardButtonClick(event.kbd.keycode);
+				_actor->onKeyboardButtonClick(event.kbd.keycode);
 				break;
-				// don't know why it is used in original
-			case Common::EVENT_LBUTTONUP:
-			case Common::EVENT_RBUTTONDOWN:
 			default:
 				break;
 			}
@@ -148,48 +144,53 @@ void PinkEngine::load(Archive &archive) {
 }
 
 void PinkEngine::initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile) {
-	if (_module) {
-		for (uint i = 0; i < _modules.size(); ++i) {
-			if (_module == _modules[i]) {
-				_modules[i] = new ModuleProxy(_module->getName());
+	if (_module)
+		removeModule();
 
-				delete _module;
-				_module = nullptr;
+	addModule(moduleName);
+	if (saveFile)
+		_module->loadState(*saveFile);
 
-				break;
-			}
-		}
-	}
+	_module->init(saveFile ? kLoadingSave : kLoadingNewGame, pageName);
+}
+
+void PinkEngine::changeScene() {
+	setCursor(kLoadingCursor);
+	_director.clear();
+
+	if (!_nextModule.empty() && _nextModule != _module->getName())
+		initModule(_nextModule, _nextPage, nullptr);
+	else
+		_module->changePage(_nextPage);
+}
+
+void PinkEngine::addModule(const Common::String &moduleName) {
+	_module = new Module(this, moduleName);
+
+	_orb.loadObject(_module, _module->getName());
 
 	for (uint i = 0; i < _modules.size(); ++i) {
 		if (_modules[i]->getName() == moduleName) {
-			loadModule(i);
-			_module = static_cast<Module*>(_modules[i]);
-			if (saveFile)
-				_module->loadState(*saveFile);
-			_module->init( saveFile ? kLoadingSave : kLoadingNewGame, pageName);
+			delete _modules[i];
+			_modules[i] = _module;
 			break;
 		}
 	}
 }
 
-void PinkEngine::changeScene(Page *page) {
-	setCursor(kLoadingCursor);
-	if (!_nextModule.empty() && _nextModule.compareTo(_module->getName())) {
-		initModule(_nextModule, _nextPage, nullptr);
-	} else {
-		assert(!_nextPage.empty());
-		_module->changePage(_nextPage);
+void PinkEngine::removeModule() {
+	for (uint i = 0; i < _modules.size(); ++i) {
+		if (_module == _modules[i]) {
+			_modules[i] = new ModuleProxy(_module->getName());
+			delete _module;
+			_module = nullptr;
+			break;
+		}
 	}
 }
 
-void PinkEngine::loadModule(int index) {
-	Module *module = new Module(this, _modules[index]->getName());
-
-	_orb.loadObject(module, module->getName());
-
-	delete _modules[index];
-	_modules[index] = module;
+void PinkEngine::setVariable(Common::String &variable, Common::String &value) {
+	_variables[variable] = value;
 }
 
 bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &value) {
@@ -313,7 +314,6 @@ bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
 void PinkEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 	_director.pause(pause);
-	_system->showMouse(!pause);
 }
 
 bool PinkEngine::isPeril() {
