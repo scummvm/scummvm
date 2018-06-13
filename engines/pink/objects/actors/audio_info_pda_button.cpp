@@ -20,28 +20,31 @@
  *
  */
 
-#ifndef PINK_AUDIO_INFO_PDA_BUTTON_H
-#define PINK_AUDIO_INFO_PDA_BUTTON_H
-
-#include "common/debug.h"
-
-#include "pink/constants.h"
-#include "pink/cursor_mgr.h"
-#include "pink/objects/actions/action.h"
-#include "pink/objects/actors/actor.h"
+#include "pink/objects/actors/audio_info_pda_button.h"
+#include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/pages/page.h"
 
 namespace Pink {
 
-class AudioInfoPDAButton : public Actor {
-public:
-	void toConsole();
+void AudioInfoPDAButton::toConsole()  {
+	debug("AudioInfoPDAButton: _name = %s", _name.c_str());
+	for (uint i = 0; i < _actions.size(); ++i) {
+		_actions[i]->toConsole();
+	}
+}
 
-	void onMouseOver(Common::Point point, CursorMgr *mgr);
-	void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override;
+void AudioInfoPDAButton::onMouseOver(Common::Point point, CursorMgr *mgr)  {
+	mgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
+}
 
-	bool onLeftClickMessage() override;
-};
+void AudioInfoPDAButton::onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+	onMouseOver(point, cursorMgr);
+}
+
+bool AudioInfoPDAButton::onLeftClickMessage() {
+	AudioInfoMgr *audioInfoMgr = _page->getLeadActor()->getAudioInfoMgr();
+	audioInfoMgr->onLeftClick();
+	return true;
+}
 
 } // End of namespace Pink
-
-#endif

@@ -78,6 +78,8 @@ public:
 
 	InventoryMgr *getInventoryMgr() const;
 
+	virtual const Common::String &getPDALink() const;
+
 	virtual const Common::String &getLocation() const;
 
 	void setAction(const Common::String &name) { setAction(findAction(name)); }

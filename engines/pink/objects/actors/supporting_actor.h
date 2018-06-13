@@ -47,6 +47,7 @@ public:
 	bool onLeftClickMessage() override;
 	bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) override;
 
+	const Common::String &getPDALink() const override;
 	const Common::String &getLocation() const override;
 
 private:

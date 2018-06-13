@@ -27,6 +27,7 @@
 #include "common/keyboard.h"
 
 #include "pink/objects/actors/actor.h"
+#include "pink/audio_info_mgr.h"
 
 namespace Pink {
 
@@ -88,7 +89,11 @@ public:
 
 	State getState() const { return _state; }
 
+	AudioInfoMgr *getAudioInfoMgr() { return &_audioInfoMgr; }
+
 	Actor *getActorByPoint(const Common::Point point);
+
+	Actor *findActor(const Common::String &name);
 
 protected:
 	void forceUpdateCursor();
@@ -103,13 +108,15 @@ protected:
 	void startInventory(bool paused);
 	bool startWalk();
 
-	void setReadyAfterWalk();
+	void setNextStateReady();
 
 	Actor *_recipient;
 
 	CursorMgr *_cursorMgr;
 	WalkMgr *_walkMgr;
 	Sequencer *_sequencer;
+
+	AudioInfoMgr _audioInfoMgr;
 
 	State _state;
 	State _nextState;

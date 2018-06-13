@@ -74,7 +74,7 @@ Common::Error PinkEngine::init() {
 	const Common::String orbName = _desc.filesDescriptions[0].fileName;
 	const Common::String broName = _desc.filesDescriptions[1].fileName;
 
-	if (strcmp(_desc.gameId, kPeril) == 0)
+	if (isPeril())
 		_bro = new BroFile();
 	else
 		debug("This game doesn't need to use bro");
@@ -117,6 +117,10 @@ Common::Error Pink::PinkEngine::run() {
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_actor->onLeftButtonClick(event.mouse);
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				if (isPeril())
+					_actor->onRightButtonClick(event.mouse);
 				break;
 			case Common::EVENT_KEYDOWN:
 					_actor->onKeyboardButtonClick(event.kbd.keycode);
@@ -196,7 +200,7 @@ bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &
 
 bool PinkEngine::loadCursors() {
 	Common::PEResources exeResources;
-	bool isPokus = !strcmp(_desc.gameId, kPokus);
+	bool isPokus = !isPeril();
 	Common::String fileName = isPokus ? _desc.filesDescriptions[1].fileName : _desc.filesDescriptions[2].fileName;
 	if (!exeResources.loadFromEXE(fileName))
 		return false;
@@ -310,6 +314,10 @@ void PinkEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 	_director.pause(pause);
 	_system->showMouse(!pause);
+}
+
+bool PinkEngine::isPeril() {
+	return !strcmp(_desc.gameId, "peril");
 }
 
 Common::String generateSaveName(int slot, const char *gameId) {

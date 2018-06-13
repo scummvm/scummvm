@@ -138,4 +138,9 @@ InventoryMgr *Actor::getInventoryMgr() const {
 	return _page->getModule()->getInventoryMgr();
 }
 
+const Common::String &Actor::getPDALink() const {
+	static const Common::String empty;
+	return empty;
+}
+
 } // End of namespace Pink

@@ -20,28 +20,42 @@
  *
  */
 
-#ifndef PINK_AUDIO_INFO_PDA_BUTTON_H
-#define PINK_AUDIO_INFO_PDA_BUTTON_H
+#ifndef PINK_AUDIO_INFO_MGR_H
+#define PINK_AUDIO_INFO_MGR_H
 
-#include "common/debug.h"
-
-#include "pink/constants.h"
-#include "pink/cursor_mgr.h"
-#include "pink/objects/actions/action.h"
-#include "pink/objects/actors/actor.h"
+#include "common/str.h"
 
 namespace Pink {
 
-class AudioInfoPDAButton : public Actor {
+class Actor;
+class LeadActor;
+class Archive;
+
+class AudioInfoMgr {
 public:
-	void toConsole();
+	AudioInfoMgr(LeadActor *lead);
 
-	void onMouseOver(Common::Point point, CursorMgr *mgr);
-	void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override;
+	void loadState(Archive &archive);
+	void saveState(Archive &archive);
 
-	bool onLeftClickMessage() override;
+	void start(Actor *actor);
+	void stop();
+
+	void onLeftClick();
+
+private:
+	void playAudio();
+	void stopAudio();
+
+	void showPDAButton();
+	void hidePDAButton();
+
+private:
+	Common::String _aboutWhom;
+	LeadActor *_lead;
 };
 
 } // End of namespace Pink
+
 
 #endif
