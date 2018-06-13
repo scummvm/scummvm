@@ -56,7 +56,7 @@ void LeadActor::toConsole() {
 void LeadActor::loadState(Archive &archive) {
 	_state = (State) archive.readByte();
 	_nextState = (State) archive.readByte();
-	_stateCopy = (State) archive.readByte();
+	_stateBeforeInventory = (State) archive.readByte();
 	_stateBeforePDA = (State) archive.readByte();
 	_isHaveItem = archive.readByte();
 	Common::String recepient = archive.readString();
@@ -73,7 +73,7 @@ void LeadActor::loadState(Archive &archive) {
 void LeadActor::saveState(Archive &archive) {
 	archive.writeByte(_state);
 	archive.writeByte(_nextState);
-	archive.writeByte(_stateCopy);
+	archive.writeByte(_stateBeforeInventory);
 	archive.writeByte(_stateBeforePDA);
 	archive.writeByte(_isHaveItem);
 	if (_recipient)
@@ -86,7 +86,7 @@ void LeadActor::saveState(Archive &archive) {
 }
 
 void LeadActor::init(bool unk) {
-	if (_state == kUnk_Loading)
+	if (_state == kUndefined)
 		_state = kReady;
 
 	getInventoryMgr()->setLeadActor(this);
@@ -95,8 +95,8 @@ void LeadActor::init(bool unk) {
 }
 
 void LeadActor::start(bool isHandler) {
-	if (isHandler && _state != kPlayingVideo) {
-		_state = kInDialog1;
+	if (isHandler && _state != kPlayingExitSequence) {
+		_state = kPlayingSequence;
 		_nextState = kReady;
 	}
 
@@ -125,12 +125,11 @@ void LeadActor::update() {
 		_walkMgr->update();
 		_cursorMgr->update();
 		break;
-	case kInDialog1:
-	case kInDialog2:
+	case kPlayingSequence:
 		_sequencer->update();
 		if (!_sequencer->_context) {
 			_state = _nextState;
-			_nextState = kUnk_Loading;
+			_nextState = kUndefined;
 		}
 		break;
 	case kInventory:
@@ -139,14 +138,12 @@ void LeadActor::update() {
 	case kPDA:
 		getPage()->getGame()->getPdaMgr().update();
 		break;
-	case kPlayingVideo:
+	case kPlayingExitSequence:
 		_sequencer->update();
 		if (!_sequencer->_context) {
-			_state = kUnk_Loading;
-			_page->getGame()->changeScene(_page);
+			_state = kUndefined;
+			_page->getGame()->changeScene();
 		}
-		break;
-	case kUnk_Loading:
 		break;
 	default:
 		break;
@@ -156,7 +153,7 @@ void LeadActor::update() {
 void LeadActor::loadPDA(const Common::String &pageName) {
 	if (_state != kPDA) {
 		if (_state == kMoving)
-			setNextStateReady();
+			cancelInteraction();
 		if (_state != kInventory)
 			_page->pause(true);
 
@@ -177,7 +174,7 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
 	case kMoving:
 		switch (code) {
 		case Common::KEYCODE_ESCAPE:
-			setNextStateReady();
+			cancelInteraction();
 			// Fall Through intended
 		case Common::KEYCODE_SPACE:
 			_walkMgr->skip();
@@ -185,9 +182,8 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
 			break;
 		}
 		break;
-	case kInDialog1:
-	case kInDialog2:
-	case kPlayingVideo:
+	case kPlayingSequence:
+	case kPlayingExitSequence:
 		switch (code) {
 		case Common::KEYCODE_SPACE:
 		case Common::KEYCODE_RIGHT:
@@ -217,8 +213,7 @@ void LeadActor::onLeftButtonClick(const Common::Point point) {
 		if (this == clickedActor) {
 			_audioInfoMgr.stop();
 			onClick();
-		}
-		else if (isInteractingWith(clickedActor)) {
+		} else if (isInteractingWith(clickedActor)) {
 			_recipient = clickedActor;
 			if (!startWalk()) {
 				_audioInfoMgr.stop();
@@ -251,7 +246,7 @@ void LeadActor::onRightButtonClick(const Common::Point point) {
 		}
 
 		if (_state == kMoving)
-			setNextStateReady();
+			cancelInteraction();
 	}
 }
 
@@ -271,20 +266,20 @@ void LeadActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
 
 void LeadActor::onClick() {
 	if (_isHaveItem) {
+		assert(_state != kMoving);
 		_isHaveItem = false;
-		_nextState = (_state != kMoving) ?
-					 kUnk_Loading : kReady;
+		_nextState = kUndefined;
 	} else {
 		if (_state == kMoving)
-			setNextStateReady();
+			cancelInteraction();
 		startInventory(0);
 	}
 }
 
 void LeadActor::onInventoryClosed(bool isItemClicked) {
 	_isHaveItem = isItemClicked;
-	_state = _stateCopy;
-	_stateCopy = kUnk_Loading;
+	_state = _stateBeforeInventory;
+	_stateBeforeInventory = kUndefined;
 	_page->pause(false);
 	forceUpdateCursor();
 }
@@ -292,14 +287,13 @@ void LeadActor::onInventoryClosed(bool isItemClicked) {
 void LeadActor::onWalkEnd(const Common::String &stopName) {
 	State oldNextState = _nextState;
 	_state = kReady;
-	_nextState = kUnk_Loading;
-	if (_recipient && oldNextState == kInDialog1) {
+	_nextState = kUndefined;
+	if (_recipient && oldNextState == kPlayingSequence) {
 		if (_isHaveItem)
 			sendUseClickMessage(_recipient);
 		else
 			sendLeftClickMessage(_recipient);
-	}
-	else {
+	} else {  // on ESC button
 		Action *action = findAction(stopName);
 		assert(action);
 		setAction(action);
@@ -323,8 +317,8 @@ bool LeadActor::isInteractingWith(Actor *actor) {
 }
 
 void LeadActor::setNextExecutors(const Common::String &nextModule, const Common::String &nextPage) {
-	if (_state == kReady || _state == kMoving || _state == kInDialog1 || _state == kInventory || _state == kPDA) {
-		_state = kPlayingVideo;
+	if (_state == kReady || _state == kMoving || _state == kPlayingSequence || _state == kInventory || _state == kPDA) {
+		_state = kPlayingExitSequence;
 		_page->getGame()->setNextExecutors(nextModule, nextPage);
 	}
 }
@@ -351,9 +345,8 @@ void LeadActor::updateCursor(const Common::Point point) {
 			_cursorMgr->setCursor(kDefaultCursor, point, Common::String());
 		break;
 	}
-	case kInDialog1:
-	case kInDialog2:
-	case kPlayingVideo:
+	case kPlayingSequence:
+	case kPlayingExitSequence:
 		_cursorMgr->setCursor(kNotClickableCursor, point, Common::String());
 		break;
 	case kPDA:
@@ -367,8 +360,9 @@ void LeadActor::updateCursor(const Common::Point point) {
 
 bool LeadActor::sendUseClickMessage(Actor *actor) {
 	InventoryMgr *mgr = getInventoryMgr();
-	_nextState = _state != kPlayingVideo ? kReady : kPlayingVideo;
-	_state = kInDialog1;
+	assert(_state != kPlayingExitSequence);
+	_nextState = kReady;
+	_state = kPlayingSequence;
 	InventoryItem *item = mgr->getCurrentItem();
 	actor->onUseClickMessage(mgr->getCurrentItem(), mgr);
 	if (item->getCurrentOwner() != this->_name)
@@ -377,8 +371,9 @@ bool LeadActor::sendUseClickMessage(Actor *actor) {
 }
 
 bool LeadActor::sendLeftClickMessage(Actor *actor) {
-	_nextState = _state != kPlayingVideo ? kReady : kPlayingVideo;
-	_state = kInDialog1;
+	assert(_state != kPlayingExitSequence);
+	_nextState = kReady;
+	_state = kPlayingSequence;
 	return actor->onLeftClickMessage();
 }
 
@@ -396,7 +391,7 @@ void LeadActor::startInventory(bool paused) {
 
 	if (!paused) {
 		_isHaveItem = false;
-		_stateCopy = _state;
+		_stateBeforeInventory = _state;
 		_state = kInventory;
 		forceUpdateCursor();
 	}
@@ -407,7 +402,7 @@ bool LeadActor::startWalk() {
 	WalkLocation *location = getWalkDestination();
 	if (location) {
 		_state = kMoving;
-		_nextState = kInDialog1;
+		_nextState = kPlayingSequence;
 		_walkMgr->start(location);
 		return true;
 	}
@@ -415,7 +410,7 @@ bool LeadActor::startWalk() {
 	return false;
 }
 
-void LeadActor::setNextStateReady() {
+void LeadActor::cancelInteraction() {
 	_recipient = nullptr;
 	_nextState = kReady;
 }
@@ -432,7 +427,7 @@ void ParlSqPink::toConsole() {
 }
 
 WalkLocation *ParlSqPink::getWalkDestination() {
-	if (_recipient->getName() == kBoy && _page->checkValueOfVariable(kBoyBlocked, kUndefined))
+	if (_recipient->getName() == kBoy && _page->checkValueOfVariable(kBoyBlocked, "UNDEFINED"))
 		return _walkMgr->findLocation(kSirBaldley);
 
 	return LeadActor::getWalkDestination();
@@ -473,7 +468,7 @@ void PubPink::updateCursor(const Common::Point point) {
 bool PubPink::sendUseClickMessage(Actor *actor) {
    if (!LeadActor::sendUseClickMessage(actor) && playingMiniGame()) {
 	   _nextState = _state;
-	   _state = kInDialog1;
+	   _state = kPlayingSequence;
 
 	   const char *roundName;
 	   switch (_round++ % 3) {
@@ -511,7 +506,7 @@ WalkLocation *PubPink::getWalkDestination() {
 
 bool PubPink::playingMiniGame() {
 	return !(_page->checkValueOfVariable(kFoodPuzzle, "TRUE") ||
-		   _page->checkValueOfVariable(kFoodPuzzle, kUndefined));
+		   _page->checkValueOfVariable(kFoodPuzzle, "UNDEFINED"));
 }
 
 } // End of namespace Pink
