@@ -194,7 +194,10 @@ const Graphics::Surface *CelDecoder::CelVideoTrack::decodeNextFrame() {
 	if (_atRingFrame) {
 		// If we decoded the ring frame, seek to the second frame
 		_atRingFrame = false;
-		_fileStream->seek(_offsetFrame2);
+		if (_frameCount == 1) {
+			_fileStream->seek(_offsetFrame1);
+		} else
+			_fileStream->seek(_offsetFrame2);
 	}
 
 	if (_curFrame == 0)
