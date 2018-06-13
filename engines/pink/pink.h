@@ -57,11 +57,8 @@
  *      sequences by timer are broken (HandlerTimerSequences)
  *
  *  Known bugs:
- *      High CPU usage(no dirty rects)
  *      Walking sprites don't recalculate position
- *      Walking can't be skipped
- *      PDA doesn't work
- *
+ *      PDA is not usable
  */
 
 namespace Pink {
