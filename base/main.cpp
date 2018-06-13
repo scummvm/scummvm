@@ -171,7 +171,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	if (err.getCode() == Common::kNoError) {
 		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
 		// Set default values for all of the custom engine options
-		// Appareantly some engines query them in their constructor, thus we
+		// Apparently some engines query them in their constructor, thus we
 		// need to set this up before instance creation.
 		const ExtraGuiOptions engineOptions = metaEngine.getExtraGuiOptions(Common::String());
 		for (uint i = 0; i < engineOptions.size(); i++) {
