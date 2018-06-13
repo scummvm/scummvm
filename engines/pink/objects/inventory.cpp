@@ -99,11 +99,8 @@ void InventoryMgr::setItemOwner(const Common::String &owner, InventoryItem *item
 }
 
 bool InventoryMgr::start(bool paused) {
-	if (!_item) {
-		_item = findInventoryItem(_lead->getName());
-		if (!_item)
-			return false;
-	}
+	if (!isPinkOwnsAnyItems())
+		return false;
 
 	_window = _lead->getPage()->findActor(kInventoryWindowActor);
 	_itemActor = _lead->getPage()->findActor(kInventoryItemActor);

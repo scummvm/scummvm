@@ -391,7 +391,9 @@ Actor *LeadActor::getActorByPoint(const Common::Point point) {
 }
 
 void LeadActor::startInventory(bool paused) {
-	getInventoryMgr()->start(paused);
+	if (!getInventoryMgr()->start(paused))
+		return;
+
 	if (!paused) {
 		_isHaveItem = false;
 		_stateCopy = _state;
