@@ -52,9 +52,7 @@ void ActionPlayWithSfx::toConsole() {
 void ActionPlayWithSfx::update() {
 	int currFrame = _decoder.getCurFrame();
 	if (_isLoop && currFrame == _stopFrame) {
-		assert(_stopFrame == _decoder.getFrameCount() - 1); // to use ring frame
-		assert(_startFrame == 0); // same
-		_decoder.rewind();
+		setFrame(_startFrame);
 		decodeNext();
 	} else
  		ActionPlay::update();
