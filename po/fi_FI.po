@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-07 20:28+0200\n"
+"POT-Creation-Date: 2018-06-13 08:02+0200\n"
 "PO-Revision-Date: 2018-06-09 09:14+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
-"Language-Team: Finnish "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
+"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -589,7 +589,7 @@ msgstr "Paina haluamaasi nappia"
 msgid "Choose an action to map"
 msgstr "Valitse toiminto"
 
-#: gui/launcher.cpp:142 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:100
+#: gui/launcher.cpp:142 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:101
 msgid "~Q~uit"
 msgstr "~L~opeta"
 
@@ -677,7 +677,7 @@ msgid "Search:"
 msgstr "Etsi:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:553
+#: engines/mohawk/dialogs.cpp:106 engines/mohawk/riven.cpp:553
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -686,7 +686,7 @@ msgstr "Lataa peli:"
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
+#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:106
 #: engines/mohawk/riven.cpp:553 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
@@ -1820,11 +1820,11 @@ msgstr "<Huono arvo>"
 msgid "~R~esume"
 msgstr "~J~atka"
 
-#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:98
+#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:99
 msgid "~L~oad"
 msgstr "~L~ataa"
 
-#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:99
+#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:100
 msgid "~S~ave"
 msgstr "~T~allenna"
 
@@ -1855,7 +1855,7 @@ msgstr "Palaa p~e~livalitsimeen"
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
-#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
+#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:107
 #: engines/mohawk/riven.cpp:565 engines/neverhood/menumodule.cpp:880
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:658
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
@@ -1876,7 +1876,7 @@ msgstr "Tallenna peli:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:106 engines/mohawk/riven.cpp:565
+#: engines/mohawk/dialogs.cpp:107 engines/mohawk/riven.cpp:565
 #: engines/neverhood/menumodule.cpp:880 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:659
 #: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
@@ -1905,12 +1905,12 @@ msgstr ""
 "Pelitilan tallennus ep‰onnistui (%s)! Konsultoi README-tiedostoa saadaksesi "
 "lis‰tietoa ja ohjeita avun hankkimiseen."
 
-#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:102
+#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:103
 #: engines/tsage/dialogs.cpp:112
 msgid "~O~K"
 msgstr "~H~yv‰ksy"
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:103
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:104
 #: engines/tsage/dialogs.cpp:113
 msgid "~C~ancel"
 msgstr "~P~eruuta"
@@ -3297,48 +3297,48 @@ msgid "The Myst fly by movie was not played by the original engine."
 msgstr "Alkuper‰inen pelimoottori ei toistanut Myst fly by-videota."
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:183 engines/mohawk/dialogs.cpp:272
+#: engines/mohawk/dialogs.cpp:184 engines/mohawk/dialogs.cpp:273
 msgid "~Z~ip Mode Activated"
 msgstr "~Z~ip moodi valittu"
 
-#: engines/mohawk/dialogs.cpp:184
+#: engines/mohawk/dialogs.cpp:185
 msgid "~T~ransitions Enabled"
 msgstr "Siir~t~ym‰t p‰‰ll‰"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:186
+#: engines/mohawk/dialogs.cpp:187
 msgid "~D~rop Page"
 msgstr "Pu~d~ota sivu"
 
-#: engines/mohawk/dialogs.cpp:190
+#: engines/mohawk/dialogs.cpp:191
 msgid "Show ~M~ap"
 msgstr "N‰yt‰ ~K~artta"
 
-#: engines/mohawk/dialogs.cpp:196
+#: engines/mohawk/dialogs.cpp:197
 msgid "Main Men~u~"
 msgstr "P‰‰valikko ~u~"
 
-#: engines/mohawk/dialogs.cpp:273
+#: engines/mohawk/dialogs.cpp:274
 msgid "~W~ater Effect Enabled"
 msgstr "~V~esiefekti p‰‰ll‰"
 
-#: engines/mohawk/dialogs.cpp:275
+#: engines/mohawk/dialogs.cpp:276
 msgid "Transitions:"
 msgstr "Siirtym‰t:"
 
-#: engines/mohawk/dialogs.cpp:277
+#: engines/mohawk/dialogs.cpp:278
 msgid "Disabled"
 msgstr "Pois p‰‰lt‰"
 
-#: engines/mohawk/dialogs.cpp:278
+#: engines/mohawk/dialogs.cpp:279
 msgid "Fastest"
 msgstr "Nopein"
 
-#: engines/mohawk/dialogs.cpp:279
+#: engines/mohawk/dialogs.cpp:280
 msgid "Normal"
 msgstr "Normaali"
 
-#: engines/mohawk/dialogs.cpp:280
+#: engines/mohawk/dialogs.cpp:281
 msgid "Best"
 msgstr "Paras"
 
