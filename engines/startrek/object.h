@@ -164,7 +164,12 @@ public:
 		fielda2(),
 		fielda4(),
 		fielda6()
-		{}
+		{
+			memset(animFilename, 0, sizeof(animFilename));
+			memset(bitmapFilename, 0, sizeof(bitmapFilename));
+			memset(animationString2, 0, sizeof(animationString2));
+			memset(animationString, 0, sizeof(animationString));
+		}
 
 };
 
