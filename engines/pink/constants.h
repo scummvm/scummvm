@@ -156,8 +156,6 @@ static const char *kPinkGame = "PinkGame";
 static const char *kPokus = "pokus";
 static const char *kPeril = "peril";
 
-static const char *kUndefined = "UNDEFINED";
-
 static const char *kCloseAction = "Close";
 static const char *kIdleAction = "Idle";
 static const char *kOpenAction = "Open";

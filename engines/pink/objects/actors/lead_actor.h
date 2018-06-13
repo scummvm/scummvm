@@ -46,12 +46,12 @@ public:
 	enum State {
 		kReady = 0,
 		kMoving = 1,
-		kInDialog1 = 2, //???
+		kPlayingSequence = 2,
 		kInventory = 3,
 		kPDA = 4,
-		kInDialog2 = 5,//???
-		kPlayingVideo = 6, // ???
-		kUnk_Loading = 7// ????
+		kUnknown = 5, // never used
+		kPlayingExitSequence = 6,
+		kUndefined = 7
 	};
 
 	void deserialize(Archive &archive) override;
@@ -108,7 +108,7 @@ protected:
 	void startInventory(bool paused);
 	bool startWalk();
 
-	void setNextStateReady();
+	void cancelInteraction();
 
 	Actor *_recipient;
 
@@ -120,7 +120,7 @@ protected:
 
 	State _state;
 	State _nextState;
-	State _stateCopy;
+	State _stateBeforeInventory;
 	State _stateBeforePDA;
 
 	bool _isHaveItem;
