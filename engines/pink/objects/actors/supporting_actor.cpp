@@ -88,4 +88,8 @@ const Common::String &SupportingActor::getLocation() const {
 	return _location;
 }
 
+const Common::String &SupportingActor::getPDALink() const {
+	return _pdaLink;
+}
+
 } // End of namespace Pink

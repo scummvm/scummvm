@@ -36,7 +36,7 @@ namespace Pink {
 LeadActor::LeadActor()
 		: _state(kReady), _nextState(kReady), _isHaveItem(false),
 		  _recipient(nullptr), _cursorMgr(nullptr), _walkMgr(nullptr),
-		  _sequencer(nullptr) {}
+		  _sequencer(nullptr), _audioInfoMgr(this) {}
 
 void LeadActor::deserialize(Archive &archive) {
 	_state = kReady;
@@ -156,7 +156,7 @@ void LeadActor::update() {
 void LeadActor::loadPDA(const Common::String &pageName) {
 	if (_state != kPDA) {
 		if (_state == kMoving)
-			setReadyAfterWalk();
+			setNextStateReady();
 		if (_state != kInventory)
 			_page->pause(true);
 
@@ -177,7 +177,7 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
 	case kMoving:
 		switch (code) {
 		case Common::KEYCODE_ESCAPE:
-			setReadyAfterWalk();
+			setNextStateReady();
 			// Fall Through intended
 		case Common::KEYCODE_SPACE:
 			_walkMgr->skip();
@@ -215,17 +215,21 @@ void LeadActor::onLeftButtonClick(const Common::Point point) {
 		Actor *clickedActor = getActorByPoint(point);
 
 		if (this == clickedActor) {
+			_audioInfoMgr.stop();
 			onClick();
-			return;
 		}
+		else if (isInteractingWith(clickedActor)) {
+			_recipient = clickedActor;
+			if (!startWalk()) {
+				_audioInfoMgr.stop();
+				if (_isHaveItem)
+					sendUseClickMessage(clickedActor);
+				else
+					sendLeftClickMessage(clickedActor);
+			}
+		} else
+			clickedActor->onLeftClickMessage();
 
-		_recipient = clickedActor;
-		if (isInteractingWith(clickedActor) && !startWalk()) {
-			if (_isHaveItem)
-				sendUseClickMessage(clickedActor);
-			else
-				sendLeftClickMessage(clickedActor);
-		}
 		break;
 	}
 	case kPDA:
@@ -238,6 +242,19 @@ void LeadActor::onLeftButtonClick(const Common::Point point) {
 		break;
 	}
 }
+
+void LeadActor::onRightButtonClick(const Common::Point point) {
+	if (_state == kReady || _state == kMoving) {
+		Actor *clickedActor = getActorByPoint(point);
+		if (isInteractingWith(clickedActor)) {
+			_audioInfoMgr.start(clickedActor);
+		}
+
+		if (_state == kMoving)
+			setNextStateReady();
+	}
+}
+
 
 void LeadActor::onMouseMove(Common::Point point) {
 	if (_state != kPDA)
@@ -259,7 +276,7 @@ void LeadActor::onClick() {
 					 kUnk_Loading : kReady;
 	} else {
 		if (_state == kMoving)
-			setReadyAfterWalk();
+			setNextStateReady();
 		startInventory(0);
 	}
 }
@@ -396,9 +413,13 @@ bool LeadActor::startWalk() {
 	return false;
 }
 
-void LeadActor::setReadyAfterWalk() {
+void LeadActor::setNextStateReady() {
 	_recipient = nullptr;
 	_nextState = kReady;
+}
+
+Actor *LeadActor::findActor(const Common::String &name) {
+	return _page->findActor(name);
 }
 
 void ParlSqPink::toConsole() {

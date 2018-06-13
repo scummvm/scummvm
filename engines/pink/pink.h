@@ -96,6 +96,8 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual bool canSaveGameStateCurrently();
 
+	bool isPeril();
+
 	void load(Archive &archive);
 	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
 	void changeScene(Page *page);
