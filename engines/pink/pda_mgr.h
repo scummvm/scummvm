@@ -24,11 +24,12 @@
 #define PINK_PDA_MGR_H
 
 #include "pink/cursor_mgr.h"
-#include "utils.h"
+#include "pink/utils.h"
 
 namespace Pink {
 
 class PinkEngine;
+class Actor;
 class LeadActor;
 class Command;
 class PDAPage;

@@ -25,12 +25,11 @@
 
 #include "common/debug.h"
 
-#include "pink/objects/actions/action.h"
+#include "pink/objects/actions/action_cel.h"
 #include "pink/objects/actors/actor.h"
 
 namespace Pink {
 
-//same as actor
 class CursorActor : public Actor {
 public:
 	void toConsole() override {
@@ -42,6 +41,12 @@ public:
 
 	bool isCursor() override {
 		return true;
+	}
+
+	void setCursorItem(const Common::String &name, const Common::Point point) {
+		if (!_action || _action->getName() != name)
+			setAction(name);
+		static_cast<ActionCEL*>(_action)->setCenter(point);
 	}
 };
 

@@ -31,7 +31,7 @@
 
 namespace Pink {
 
-class Actor;
+class CursorActor;
 class Action;
 class Page;
 class PinkEngine;
@@ -47,16 +47,17 @@ public:
 	void setPage(Page *page) { _page = page; }
 
 private:
-	void hideItem();
-	void startAnimation(int index);
+	void startAnimation(uint index);
 
-	Actor *_actor;
+	void showItem(const Common::String &itemName, const Common::Point point);
+	void hideItem();
+
+private:
 	Page *_page;
 	PinkEngine *_game;
-
+	CursorActor *_actor;
 	uint _time;
 	uint _firstFrameIndex;
-
 	bool _isPlayingAnimation;
 	bool _isSecondFrame;
 };
