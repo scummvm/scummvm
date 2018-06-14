@@ -45,7 +45,7 @@ void ResourceMgr::init(PinkEngine *game, Page *page) {
 	ObjectDescription *objDesc = orb->getObjDesc(page->getName().c_str());
 	_resCount = objDesc->resourcesCount;
 	orb->loadObject(page, objDesc);
-	_resDescTable = orb->getResDescTable(objDesc);
+	_resDescTable = orb->createResDescTable(objDesc);
 }
 
 void ResourceMgr::clear() {

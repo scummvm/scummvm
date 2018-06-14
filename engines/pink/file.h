@@ -32,7 +32,7 @@ struct ObjectDescription {
 
 	char name[16];
 	uint32 objectsOffset;
-	uint32 objectsCount;
+	//uint32 objectsCount; never used
 	uint32 resourcesOffset;
 	uint32 resourcesCount;
 };
@@ -43,8 +43,7 @@ struct ResourceDescription {
 	char name[16];
 	uint32 offset;
 	uint32 size;
-	bool inBro; // in original it is short.
-	// Don't know what's better to use.(Perhaps no difference because of padding)
+	bool inBro;
 };
 
 class PinkEngine;
@@ -56,28 +55,28 @@ public:
 	virtual ~OrbFile();
 	virtual bool open(const Common::String &name);
 
+public:
 	void loadGame(PinkEngine *game);
 	void loadObject(Object *obj, const Common::String &name);
 	void loadObject(Object *obj, ObjectDescription *objDesc);
 
+	ResourceDescription *createResDescTable(ObjectDescription *objDesc);
+
 	ObjectDescription *getObjDesc(const char *name);
-
-	ResourceDescription *getResDescTable(ObjectDescription *objDesc);
-
 	uint32 getTimestamp() { return _timestamp; }
 
 private:
 	void seekToObject(const char *name);
 
+private:
 	ObjectDescription *_table;
-	uint32 _timestamp;
-	uint32 _tableOffset;
 	uint32 _tableSize;
+	uint32 _timestamp;
 };
 
 class BroFile : public Common::File {
 public:
-	virtual bool open(const Common::String &name, uint32 orbTimestamp);
+	bool open(const Common::String &name, uint32 orbTimestamp);
 };
 
 } // End of namespace Pink
