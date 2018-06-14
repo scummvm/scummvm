@@ -68,6 +68,8 @@ public:
 	void drawExtrasImage(uint16 id, const Common::Rect &dstRect);
 	void drawExtrasImageToScreen(uint16 id, const Common::Rect &rect);
 
+	void copySurfaceToScreen(Graphics::Surface *src, uint32 x, uint32 y);
+
 	/** Copy a rect from the system screen to the game screen */
 	void copySystemRectToScreen(const Common::Rect &rect);
 

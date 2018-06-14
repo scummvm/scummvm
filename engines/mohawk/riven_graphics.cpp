@@ -366,6 +366,26 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 	applyScreenUpdate();
 }
 
+void RivenGraphics::copySurfaceToScreen(Graphics::Surface *src, uint32 x, uint32 y) {
+	beginScreenUpdate();
+
+	int w = src->w;
+	int h = src->h;
+
+	// Clip the width to fit on the screen. Fixes some images.
+	if (x + w > 608)
+		w = 608 - x;
+
+	if (y + h > 436)
+		h = 346 - y;
+
+	for (uint16 i = 0; i < h; i++)
+		memcpy(_mainScreen->getBasePtr(x, i + y), src->getBasePtr(0, i), w * src->format.bytesPerPixel);
+
+	_dirtyScreen = true;
+	applyScreenUpdate();
+}
+
 void RivenGraphics::updateScreen() {
 	if (_dirtyScreen) {
 		// Copy to screen if there's no transition. Otherwise transition.

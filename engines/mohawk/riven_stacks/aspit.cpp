@@ -31,6 +31,10 @@
 
 #include "common/translation.h"
 
+#include "graphics/fonts/ttf.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+
 #include "gui/message.h"
 
 namespace Mohawk {
@@ -62,9 +66,52 @@ ASpit::ASpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(ASpit, xaexittomain);
 }
 
+static const char *menuItems[] = {
+	"SETUP",
+	"START NEW GAME",
+	"START SAVED GAME",
+	0
+};
+
 void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 	// The original game hides the start/setup buttons depending on an ini entry.
 	// It's safe to ignore this command.
+
+	warning("xastartupbtnhide");
+
+	Graphics::Surface surface;
+	surface.create(115, 200, _vm->_gfx->getBackScreen()->format);
+	surface.fillRect(Common::Rect(0, 0, 115, 200), 0);
+
+	Common::File file;
+
+	const char *fontname = "FreeSans.ttf";
+	int fontHeight = 11;
+	const Graphics::Font *font = nullptr;
+
+	if (file.open(fontname)) {
+		font = Graphics::loadTTFFont(file, fontHeight);
+	}
+
+	if (!font) {
+		warning("Cannot load font %s directly", fontname);
+		font = FontMan.getFontByName(fontname);
+	}
+
+	if (!font) {
+		warning("Cannot load font %s", fontname);
+
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	}
+
+	int y = 70;
+
+	for (const char **item = menuItems; *item; item++) {
+		font->drawString(&surface, *item, 0, y, surface.w, 0xffffff);
+		y += fontHeight * 2.5;
+	}
+
+	_vm->_gfx->copySurfaceToScreen(&surface, 485, 160);
 }
 
 void ASpit::xasetupcomplete(const ArgumentArray &args) {
