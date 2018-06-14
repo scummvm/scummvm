@@ -76,9 +76,14 @@ void DiaryPagesScreen::open() {
 
 	_page = StarkDiary->getPageIndex();
 
-	_widgets.push_back(new DiaryWidget(_page));
-	_widgets[kWidgetBack]->setVisible(_page > 0);
-	_widgets[kWidgetNext]->setVisible(_page < StarkDiary->countDiary() - 1);
+	if (StarkDiary->countDiary() > 0) {
+		_widgets.push_back(new DiaryWidget(_page));
+		_widgets[kWidgetBack]->setVisible(_page > 0);
+		_widgets[kWidgetNext]->setVisible(_page < StarkDiary->countDiary() - 1);
+	} else {
+		_widgets[kWidgetBack]->setVisible(false);
+		_widgets[kWidgetNext]->setVisible(false);
+	}
 }
 
 void DiaryPagesScreen::close() {
@@ -108,6 +113,11 @@ DiaryWidget::DiaryWidget(uint diaryIndex):
 		StaticLocationWidget(nullptr, nullptr, nullptr) {
 	Resources::Location *location = StarkStaticProvider->getLocation();
 	Resources::Layer *layer = location->getLayerByName(StarkDiary->getDiary(diaryIndex));
+
+	if (!layer) {
+		debug("Unable to retrieve diary in layer %s.", StarkDiary->getDiary(diaryIndex).c_str());
+		return;
+	}
 
 	// Diary page layer contains only one item, the text
 	_renderEntry = layer->listRenderEntries()[0];
