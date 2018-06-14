@@ -6,7 +6,7 @@ psp2vpk: $(EXECUTABLE)
 	mkdir -p psp2pkg/doc/
 	vita-elf-create $(EXECUTABLE) $(EXECUTABLE).velf
 	vita-make-fself -s -c $(EXECUTABLE).velf psp2pkg/eboot.bin
-	vita-mksfoex -s TITLE_ID=VSCU00001 "$(EXECUTABLE)" psp2pkg/sce_sys/param.sfo
+	vita-mksfoex -s TITLE_ID=VSCU00001 -d ATTRIBUTE2=12 "$(EXECUTABLE)" psp2pkg/sce_sys/param.sfo
 	cp $(srcdir)/dists/psp2/icon0.png psp2pkg/sce_sys/
 	cp $(srcdir)/dists/psp2/template.xml psp2pkg/sce_sys/livearea/contents/
 	cp $(srcdir)/dists/psp2/bg.png psp2pkg/sce_sys/livearea/contents/
