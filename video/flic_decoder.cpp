@@ -130,14 +130,13 @@ bool FlicDecoder::FlicVideoTrack::endOfTrack() const {
 }
 
 bool FlicDecoder::FlicVideoTrack::rewind() {
-	_curFrame = -1;
-	_nextFrameStartTime = 0;
-
-	if (endOfTrack() && _fileStream->pos() < _fileStream->size())
+	if (endOfTrack() && _fileStream->pos() < _fileStream->size() && _frameCount != 1)
 		_atRingFrame = true;
 	else
 		_fileStream->seek(_offsetFrame1);
 
+	_curFrame = -1;
+	_nextFrameStartTime = 0;
 	_frameDelay = _startFrameDelay;
 	return true;
 }
