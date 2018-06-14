@@ -20,12 +20,10 @@
  *
  */
 
-#include "pink/pink.h"
-#include "pink/cel_decoder.h"
 #include "pink/cursor_mgr.h"
-#include "pink/objects/actions/action_cel.h"
-#include "pink/objects/actors/actor.h"
-#include "pink/objects/pages/game_page.h"
+#include "pink/pink.h"
+#include "pink/objects/pages/page.h"
+#include "pink/objects/actors/cursor_actor.h"
 
 namespace Pink {
 
@@ -34,37 +32,23 @@ CursorMgr::CursorMgr(PinkEngine *game, Page *page)
 		  _isPlayingAnimation(0), _firstFrameIndex(0) {}
 
 void CursorMgr::setCursor(uint index, const Common::Point point, const Common::String &itemName) {
-	if (index == kClickableFirstFrameCursor) {
+	switch (index) {
+	case kClickableFirstFrameCursor:
+	case kPDAClickableFirstFrameCursor:
 		startAnimation(index);
-		return hideItem();
-	} else if (index != kHoldingItemCursor) {
-
-		if (index != kPDAClickableFirstFrameCursor) {
-			_game->setCursor(index);
-			_isPlayingAnimation = 0;
-			return hideItem();
-		}
-
 		hideItem();
-		return startAnimation(index);
+		break;
+	case kHoldingItemCursor:
+		_game->setCursor(index);
+		_isPlayingAnimation = false;
+		showItem(itemName, point);
+		break;
+	default:
+		_game->setCursor(index);
+		_isPlayingAnimation = false;
+		hideItem();
+		break;
 	}
-
-	_game->setCursor(index);
-	_isPlayingAnimation = 0;
-
-	_actor = _actor ? _actor : _page->findActor(kCursor);
-	assert(_actor);
-
-	Action *action = _actor->findAction(itemName);
-	assert(dynamic_cast<ActionCEL*>(action));
-
-	if (action != _actor->getAction()) {
-		_actor->setAction(action);
-	}
-
-	ActionCEL *sprite = static_cast<ActionCEL*>(action);
-	sprite->setCenter(point);
-
 }
 
 void CursorMgr::update() {
@@ -90,7 +74,7 @@ void CursorMgr::setCursor(const Common::String &cursorName, const Common::Point 
 	//else
 		//assert(0);
 
-	setCursor(index, point, Common::String());
+	setCursor(index, point, "");
 }
 
 void CursorMgr::hideItem() {
@@ -98,14 +82,21 @@ void CursorMgr::hideItem() {
 		_actor->setAction(kHideAction);
 }
 
-void CursorMgr::startAnimation(int index) {
-	if (!_isPlayingAnimation) {
-		_isPlayingAnimation = 1;
-		_time = _game->getTotalPlayTime();
-		_firstFrameIndex = index;
-		_isSecondFrame = 0;
-		_game->setCursor(index);
-	}
+void CursorMgr::startAnimation(uint index) {
+	if (_isPlayingAnimation)
+		return;
+
+	_game->setCursor(index);
+	_time = _game->getTotalPlayTime();
+	_firstFrameIndex = index;
+	_isPlayingAnimation = true;
+	_isSecondFrame = false;
+}
+
+void CursorMgr::showItem(const Common::String &itemName, const Common::Point point) {
+	if (!_actor)
+		_actor = static_cast<CursorActor*>(_page->findActor(kCursor));
+	_actor->setCursorItem(itemName, point);
 }
 
 } // End of namespace Pink
