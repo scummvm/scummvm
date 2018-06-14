@@ -481,7 +481,7 @@ void Room::tug2UseKillPhaserOnGuard1() {
 		else {
 			loadActorAnim2(OBJECT_KIRK, "kdrawe", -1, -1, 24);
 			_vm->_awayMission.tug.kirkPhaserDrawn = true;
-			_vm->_awayMission.tug.field4a = true;
+			_vm->_awayMission.tug.brigElasiPhasersOnKill = true;
 		}
 	}
 }
@@ -509,7 +509,7 @@ void Room::tug2UseKillPhaserOnGuard2() {
 		else {
 			loadActorAnim2(OBJECT_KIRK, "kdrawe", -1, -1, 25);
 			_vm->_awayMission.tug.kirkPhaserDrawn = true;
-			_vm->_awayMission.tug.field4a = true;
+			_vm->_awayMission.tug.brigElasiPhasersOnKill = true;
 		}
 	}
 }
@@ -624,7 +624,7 @@ void Room::tug2Timer0Expired() {
 		return;
 
 	_roomVar.tug2.elasiPhaserOnKill = 0;
-	if (_vm->_awayMission.tug.field4a)
+	if (_vm->_awayMission.tug.brigElasiPhasersOnKill)
 		_roomVar.tug2.elasiPhaserOnKill = 1;
 
 	switch (_vm->_awayMission.tug.field4b) {
@@ -659,14 +659,14 @@ void Room::tug2Timer0Expired() {
 	case 2:
 		// Guard shoots spock (or kirk)
 		_vm->_awayMission.tug.field4b++;
-		_roomVar.tug2._1ec4 = 0;
-		if (_vm->_awayMission.tug.field4a)
-			_roomVar.tug2._1ec4 = 1;
+		_roomVar.tug2.shootKirkOverride = false;
+		if (_vm->_awayMission.tug.brigElasiPhasersOnKill)
+			_roomVar.tug2.shootKirkOverride = true;
 		tug2DetermineElasiShooter();
-		if (_roomVar.tug2._1ec4 == 0)
-			_roomVar.tug2.shootingTarget = OBJECT_SPOCK;
-		else
+		if (_roomVar.tug2.shootKirkOverride)
 			_roomVar.tug2.shootingTarget = OBJECT_KIRK;
+		else
+			_roomVar.tug2.shootingTarget = OBJECT_SPOCK;
 		_vm->_awayMission.timers[0] = 60;
 		tug2GuardShootsCrewman();
 		break;
@@ -683,16 +683,16 @@ void Room::tug2Timer0Expired() {
 
 	case 4:
 		_vm->_awayMission.tug.field4b++;
-		if (_roomVar.tug2._1ec4 == 0) {
-			tug2DetermineElasiShooter();
-			_roomVar.tug2.shootingTarget = OBJECT_KIRK;
-			_vm->_awayMission.timers[2] = 40; // TODO
-			tug2GuardShootsCrewman();
-		}
-		else if (_roomVar.tug2._1ec4 == 1) {
+		if (_roomVar.tug2.shootKirkOverride) {
 			tug2DetermineElasiShooter();
 			_roomVar.tug2.shootingTarget = OBJECT_SPOCK;
 			_vm->_awayMission.timers[2] = 40;
+			tug2GuardShootsCrewman();
+		}
+		else if (_roomVar.tug2.shootKirkOverride) {
+			tug2DetermineElasiShooter();
+			_roomVar.tug2.shootingTarget = OBJECT_KIRK;
+			_vm->_awayMission.timers[2] = 40; // TODO
 			tug2GuardShootsCrewman();
 		}
 		break;

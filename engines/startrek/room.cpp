@@ -77,6 +77,10 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 		_roomActionList = tug2ActionList;
 		_numRoomActions = sizeof(tug2ActionList) / sizeof(RoomAction);
 	}
+	else if (name == "TUG3") {
+		_roomActionList = tug3ActionList;
+		_numRoomActions = sizeof(tug3ActionList) / sizeof(RoomAction);
+	}
 	else {
 		warning("Room \"%s\" unimplemented", name.c_str());
 		_numRoomActions = 0;

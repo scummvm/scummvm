@@ -650,7 +650,6 @@ RoomAction tug1ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_IMEDKIT, 0x20, 0), &Room::tug1UseMedkitOnBridgeDoor },
 	{ Action(ACTION_USE, OBJECT_IMEDKIT, 0x21, 0), &Room::tug1UseMedkitOnBridgeDoor },
 	{ Action(ACTION_USE, OBJECT_IMEDKIT, 0x22, 0), &Room::tug1UseMedkitOnBridgeDoor },
-
 };
 
 
@@ -743,6 +742,44 @@ RoomAction tug2ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x22, 0), &Room::tug2UseMTricorderOnOpenBrig },
 	{ Action(ACTION_USE, OBJECT_IPHASERS, -1, 0), &Room::tug2UsePhaserAnywhere },
 	{ Action(ACTION_USE, OBJECT_IPHASERK, -1, 0), &Room::tug2UsePhaserAnywhere },
+};
+
+
+RoomAction tug3ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::tug3Tick1 },
+	{ Action(ACTION_TICK, 40, 0, 0), &Room::tug3Tick40 },
+	{ Action(ACTION_LOOK, -1, 0, 0), &Room::tug3LookAnywhere },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, -1, 0), &Room::tug3UsePhaserAnywhere },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, -1, 0), &Room::tug3UsePhaserAnywhere },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 8, 0), &Room::tug3UseStunPhaserOnElasi1 },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 9, 0), &Room::tug3UseStunPhaserOnElasi2 },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 10, 0), &Room::tug3UseStunPhaserOnElasi3 },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 11, 0), &Room::tug3UseStunPhaserOnElasi4 },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, 8, 0), &Room::tug3UseKillPhaserOnElasi1 },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, 9, 0), &Room::tug3UseKillPhaserOnElasi2 },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, 10, 0), &Room::tug3UseKillPhaserOnElasi3 },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, 11, 0), &Room::tug3UseKillPhaserOnElasi4 },
+	{ Action(ACTION_FINISHED_ANIMATION, 12, 0, 0), &Room::tug3ElasiStunnedOrKilled },
+	{ Action(ACTION_TALK, 8, 0, 0), &Room::tug3TalkToElasi1 },
+	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0), &Room::tug3Elasi1DrewPhaser },
+	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::tug3Elasi1ShotConsole },
+	{ Action(ACTION_FINISHED_ANIMATION, 5, 0, 0), &Room::tug3Elasi1DrewPhaser2 },
+	{ Action(ACTION_FINISHED_ANIMATION, 6, 0, 0), &Room::tug3Elasi1ShotConsoleAndSurrenders },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY, 0, 0), &Room::tug3LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK, 0, 0), &Room::tug3LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::tug3LookAtRedshirt },
+	{ Action(ACTION_LOOK, 8, 0, 0), &Room::tug3LookAtElasi1 },
+	{ Action(ACTION_LOOK, 9, 0, 0), &Room::tug3LookAtElasi2 },
+	{ Action(ACTION_LOOK, 10, 0, 0), &Room::tug3LookAtElasi3 },
+	{ Action(ACTION_LOOK, 11, 0, 0), &Room::tug3LookAtElasi4 },
+	{ Action(ACTION_TALK, OBJECT_MCCOY, 0, 0), &Room::tug3TalkToMccoy },
+	{ Action(ACTION_TALK, OBJECT_SPOCK, 0, 0), &Room::tug3TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::tug3TalkToRedshirt },
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::tug3UseCommunicator },
+	{ Action(ACTION_TIMER_EXPIRED, 0, 0, 0), &Room::tug3Timer0Expired },
+	{ Action(ACTION_FINISHED_ANIMATION, 13, 0, 0), &Room::tug3AllCrewmenDead },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::tug3Timer1Expired },
+	{ Action(ACTION_FINISHED_ANIMATION, 7, 0, 0), &Room::tug3SecurityTeamBeamedIn },
 };
 
 }

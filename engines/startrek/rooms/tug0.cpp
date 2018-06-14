@@ -142,14 +142,19 @@ void Room::tug0SpockFinishedUsingWire() {
 
 	showText(TX_SPEAKER_KIRK,  TX_TUG0_010);
 	showText(TX_SPEAKER_MCCOY, TX_TUG0_022);
-	showText(TX_SPEAKER_KIRK,  TX_TUG0_002);
-	showText(TX_SPEAKER_CHRISTENSEN, TX_TUG0L009);
-	showText(TX_SPEAKER_CHRISTENSEN, TX_TUG0L008);
 
-	if (_vm->_awayMission.tug.haveBomb) {
-		showText(TX_SPEAKER_CHRISTENSEN, TX_TUG0L010);
-		showText(TX_SPEAKER_MCCOY,       TX_TUG0_021);
-		showText(TX_SPEAKER_SPOCK,       TX_TUG0_041);
+	// BUGFIX: check if the redshirt is dead.
+	if (!_vm->_awayMission.redshirtDead) {
+		showText(TX_SPEAKER_KIRK,  TX_TUG0_002);
+
+		showText(TX_SPEAKER_CHRISTENSEN, TX_TUG0L009);
+		showText(TX_SPEAKER_CHRISTENSEN, TX_TUG0L008);
+
+		if (_vm->_awayMission.tug.haveBomb) {
+			showText(TX_SPEAKER_CHRISTENSEN, TX_TUG0L010);
+			showText(TX_SPEAKER_MCCOY,       TX_TUG0_021);
+			showText(TX_SPEAKER_SPOCK,       TX_TUG0_041);
+		}
 	}
 }
 

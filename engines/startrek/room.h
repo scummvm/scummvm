@@ -672,6 +672,44 @@ public:
 	void tug2UseMTricorderOnOpenBrig();
 	void tug2UsePhaserAnywhere();
 
+	// TUG3
+	void tug3Tick1();
+	void tug3Tick40();
+	void tug3LookAnywhere();
+	void tug3ElasiSurrendered();
+	void tug3UsePhaserAnywhere();
+	void tug3ElasiDrawPhasers();
+	void tug3UseStunPhaserOnElasi1();
+	void tug3UseStunPhaserOnElasi2();
+	void tug3UseStunPhaserOnElasi3();
+	void tug3UseStunPhaserOnElasi4();
+	void tug3UseKillPhaserOnElasi1();
+	void tug3UseKillPhaserOnElasi2();
+	void tug3UseKillPhaserOnElasi3();
+	void tug3UseKillPhaserOnElasi4();
+	void tug3ElasiStunnedOrKilled();
+	void tug3TalkToElasi1();
+	void tug3Elasi1DrewPhaser();
+	void tug3Elasi1ShotConsole();
+	void tug3Elasi1DrewPhaser2();
+	void tug3Elasi1ShotConsoleAndSurrenders();
+	void tug3LookAtMccoy();
+	void tug3LookAtSpock();
+	void tug3LookAtRedshirt();
+	void tug3LookAtElasi1();
+	void tug3LookAtElasi2();
+	void tug3LookAtElasi3();
+	void tug3LookAtElasi4();
+	void tug3TalkToMccoy();
+	void tug3TalkToSpock();
+	void tug3TalkToRedshirt();
+	void tug3UseCommunicator();
+	void tug3Timer0Expired();
+	void tug3AllCrewmenDead();
+	void tug3Timer1Expired();
+	void tug3EndMission();
+	void tug3SecurityTeamBeamedIn();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {
@@ -732,7 +770,7 @@ private:
 			byte shootingObject; // 0x1ec1
 			byte shootingTarget;
 			bool elasiPhaserOnKill;
-			byte _1ec4; // 0x1ec4
+			byte shootKirkOverride; // 0x1ec4
 		} tug2;
 
 	} _roomVar;

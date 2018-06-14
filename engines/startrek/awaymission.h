@@ -99,10 +99,13 @@ struct AwayMission {
 		struct {
 			int16 missionScore; // 0x29
 			int16 field2b; // 0x2b
-			int16 field2d; // 0x2d;
+			int16 field2d; // 0x2d
 			bool engineerConscious; // 0x30
 			byte field35; // 0x35
 			bool gotWires; // 0x37
+			byte orbitalDecayCounter; // 0x3b
+			bool bridgeElasiDrewPhasers; // 0x3d
+			bool talkedToCereth; // 0x3e
 			bool gotJunkPile; // 0x3f
 			bool gotTransmogrifier; // 0x43
 			bool transporterRepaired; // 0x44
@@ -111,16 +114,27 @@ struct AwayMission {
 			bool bridgeForceFieldDown; // 0x47
 			bool savedPrisoners; // 0x48
 			bool haveBomb; // 0x49
-			bool field4a; // 0x4a
+			bool brigElasiPhasersOnKill; // 0x4a
 			byte field4b; // 0x4b
 			byte guard1Status; // 0x4c
 			byte guard2Status; // 0x4d
 			byte field4e; // 0x4e
-			bool crewmanKilled[4]; // 0x4f
+			byte crewmanKilled[4]; // 0x4f
+			byte bridgeElasi1Status; // 0x53
+			byte bridgeElasi2Status; // 0x54
+			byte bridgeElasi3Status; // 0x55
+			byte bridgeElasi4Status; // 0x56
 			bool brigForceFieldDown; // 0x58
 			byte field59; // 0x59
 			byte field5b; // 0x5b
+			bool elasiSurrendered; // 0x5c
 			byte kirkPhaserDrawn; // 0x5d
+
+			// 1: Decided to shoot them
+			// 2: Talked, and they surrendered immediately
+			// 3: They deorbited the ship (and perhps surrendered after)
+			byte bridgeWinMethod; // 0x5e
+
 			bool talkedToBrigCrewman; // 0x5f
 		} tug;
 	};
