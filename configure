@@ -1801,6 +1801,12 @@ riscos)
 		echo "Please set GCCSDK_INSTALL_ENV in your environment. export GCCSDK_INSTALL_ENV=<path to GCCSDK_INSTALL_ENV>"
 		exit 1
 	fi
+
+	if test -e "$GCCSDK_INSTALL_ENV/bin/tokenize"; then
+		add_line_to_config_mk "TOKENIZE := $GCCSDK_INSTALL_ENV/bin/tokenize"
+	elif `which tokenize >/dev/null 2>&1`; then
+		add_line_to_config_mk "TOKENIZE := tokenize"
+	fi
 	;;
 tizen)
 	if test -z "$TIZEN_ROOTSTRAP"; then
