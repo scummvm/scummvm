@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-13 08:02+0200\n"
+"POT-Creation-Date: 2018-06-14 21:08+0200\n"
 "PO-Revision-Date: 2018-06-11 20:27+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -681,9 +681,9 @@ msgid "Search:"
 msgstr "Cerca:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:106 engines/mohawk/riven.cpp:553
-#: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
-#: engines/wage/saveload.cpp:748
+#: engines/mohawk/dialogs.cpp:106 engines/mohawk/myst.cpp:818
+#: engines/mohawk/riven.cpp:553 engines/pegasus/pegasus.cpp:355
+#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Carica gioco:"
 
@@ -691,9 +691,10 @@ msgstr "Carica gioco:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:106
-#: engines/mohawk/riven.cpp:553 engines/parallaction/saveload.cpp:194
-#: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
-#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
+#: engines/mohawk/myst.cpp:818 engines/mohawk/riven.cpp:553
+#: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
+#: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
+#: engines/wage/saveload.cpp:748
 msgid "Load"
 msgstr "Carica"
 
@@ -1870,8 +1871,9 @@ msgstr "~V~ai a elenco giochi"
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:107
-#: engines/mohawk/riven.cpp:565 engines/neverhood/menumodule.cpp:880
-#: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:658
+#: engines/mohawk/myst.cpp:830 engines/mohawk/riven.cpp:565
+#: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
+#: engines/sci/engine/guest_additions.cpp:658
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -1890,9 +1892,10 @@ msgstr "Salva gioco:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:107 engines/mohawk/riven.cpp:565
-#: engines/neverhood/menumodule.cpp:880 engines/parallaction/saveload.cpp:209
-#: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:659
+#: engines/mohawk/dialogs.cpp:107 engines/mohawk/myst.cpp:830
+#: engines/mohawk/riven.cpp:565 engines/neverhood/menumodule.cpp:880
+#: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
+#: engines/sci/engine/guest_additions.cpp:659
 #: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
@@ -3318,48 +3321,48 @@ msgstr ""
 "originale del gioco."
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:184 engines/mohawk/dialogs.cpp:273
+#: engines/mohawk/dialogs.cpp:190 engines/mohawk/dialogs.cpp:282
 msgid "~Z~ip Mode Activated"
 msgstr "Modalità ~Z~ip attivata"
 
-#: engines/mohawk/dialogs.cpp:185
+#: engines/mohawk/dialogs.cpp:191
 msgid "~T~ransitions Enabled"
 msgstr "~T~ransizioni attive"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:187
+#: engines/mohawk/dialogs.cpp:193
 msgid "~D~rop Page"
 msgstr "~L~ascia pagina"
 
-#: engines/mohawk/dialogs.cpp:191
+#: engines/mohawk/dialogs.cpp:197
 msgid "Show ~M~ap"
 msgstr "Mostra ~M~appa"
 
-#: engines/mohawk/dialogs.cpp:197
+#: engines/mohawk/dialogs.cpp:203
 msgid "Main Men~u~"
 msgstr "~M~enu principale"
 
-#: engines/mohawk/dialogs.cpp:274
+#: engines/mohawk/dialogs.cpp:283
 msgid "~W~ater Effect Enabled"
 msgstr "~E~ffetto acqua attivo"
 
-#: engines/mohawk/dialogs.cpp:276
+#: engines/mohawk/dialogs.cpp:285
 msgid "Transitions:"
 msgstr "Transizioni:"
 
-#: engines/mohawk/dialogs.cpp:278
+#: engines/mohawk/dialogs.cpp:287
 msgid "Disabled"
 msgstr "Disattivato"
 
-#: engines/mohawk/dialogs.cpp:279
+#: engines/mohawk/dialogs.cpp:288
 msgid "Fastest"
 msgstr "II più veloce possibile"
 
-#: engines/mohawk/dialogs.cpp:280
+#: engines/mohawk/dialogs.cpp:289
 msgid "Normal"
 msgstr "Normale"
 
-#: engines/mohawk/dialogs.cpp:281
+#: engines/mohawk/dialogs.cpp:290
 msgid "Best"
 msgstr "Migliore"
 
