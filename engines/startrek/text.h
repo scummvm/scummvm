@@ -66,6 +66,8 @@ enum GameStringIDs {
 	TX_SPEAKER_MCCOY,
 	TX_SPEAKER_UHURA,
 	TX_SPEAKER_SCOTT,
+	TX_SPEAKER_SULU,
+	TX_SPEAKER_SHIPS_COMPUTER,
 
 	TX_SPEAKER_EVERTS,
 	TX_SPEAKER_ANGIVEN,
@@ -81,6 +83,8 @@ enum GameStringIDs {
 	TX_SPEAKER_CHRISTENSEN,
 	TX_SPEAKER_SIMPSON,
 	TX_SPEAKER_ELASI_GUARD,
+	TX_SPEAKER_ELASI_CLANSMAN,
+	TX_SPEAKER_ELASI_CERETH,
 	TX_SPEAKER_MASADA_CREWMAN,
 
 	TX_DEM0_001,
@@ -674,6 +678,41 @@ enum GameStringIDs {
 	TX_TUG2C001, // Custom
 
 
+	TX_COMPA180,
+	TX_COMPU181,
+	TX_COMPU182,
+	TX_TUG3_001,
+	TX_TUG3_002,
+	TX_TUG3_003,
+	TX_TUG3_004,
+	TX_TUG3_005,
+	TX_TUG3_006,
+	TX_TUG3_007,
+	TX_TUG3_008,
+	TX_TUG3_009,
+	TX_TUG3_011,
+	TX_TUG3_012,
+	TX_TUG3_013,
+	TX_TUG3_015,
+	TX_TUG3_F27,
+	TX_TUG3_S07,
+	TX_TUG3_S08,
+	TX_TUG3L003,
+	TX_TUG3L080,
+	TX_TUG3L081,
+	TX_TUG3L083,
+	TX_TUG3L084,
+	TX_TUG3N000,
+	TX_TUG3N001,
+	TX_TUG3N002,
+	TX_TUG3N003,
+	TX_TUG3N004,
+	TX_TUG3N005,
+	TX_TUG3N006,
+	TX_TUG3N007,
+	TX_TUG3N008,
+
+
 	TX_END
 };
 
@@ -687,6 +726,8 @@ const char * const g_gameStrings[] = {
 	"Dr. McCoy",
 	"Lt. Uhura",
 	"Mr. Scott",
+	"Mr. Sulu",
+	"Ship's Computer",
 
 	"Ensign Everts",
 	"Prel. Angiven",
@@ -702,6 +743,8 @@ const char * const g_gameStrings[] = {
 	"Lt. Christensen",
 	"Crewman Simpson",
 	"Elasi Guard",
+	"Elasi Clansman",
+	"Elasi Cereth",
 	"Masada Crewman",
 
 	"#DEM0\\DEM0_001#Doctor, you need to investigate the possibility of disease, mental or physical, among these people, before we go chasing up the mountains. Prelate Angiven, may we see those who have encountered the demons?",
@@ -1138,7 +1181,7 @@ const char * const g_gameStrings[] = {
 	"#TUG0\\TUG0_017#He will be all right, but we shouldn't move him.",
 	"#TUG0\\TUG0_018#He's not hurt badly. I can revive him.",
 	"#TUG0\\TUG0_019#I don't think he should be moved, Jim.",
-	"#TUG0\\TUG0_020#Well, at least I'm not picking up residue of any biologicalweapons.  The Elasi used some restraint if you can call it that.",
+	"#TUG0\\TUG0_020#Well, at least I'm not picking up residue of any biological weapons.  The Elasi used some restraint if you can call it that.",
 	"#TUG0\\TUG0_021#And any hostages on the bridge will be killed when the bomb goes off! No, Jim, that's inhuman!",
 	"#TUG0\\TUG0_022#I wouldn't go that far, Jim. But I do have to congratulate you, Mr. Spock. Now we can really risk shooting our atoms around the universe. Is this really necessary, Jim?",
 	"#TUG0\\TUG0_023#My God Jim, what have you done! You killed them all. You probably blew up the whole damn bridge.",
@@ -1194,7 +1237,7 @@ const char * const g_gameStrings[] = {
 	"#TUG1\\TUG1_004#Jim, I can only perform medical miracles not engineering ones.",
 	"#TUG1\\TUG1_005#Jim, I'm picking up 11 life forms in the brig. That accounts for over half the crew. I don't like what that indicates.",
 	"#TUG1\\TUG1_006#Nothing unusual is detected.",
-	"#TUG1\\TUG1_007#The force field is interfering too much to get an accurate reading, Jim",
+	"#TUG1\\TUG1_007#The force field is interfering too much to get an accurate reading, Jim.", // TYPO
 	"#TUG1\\TUG1_008#My daddy would have sent me to bed without supper if I'd done something like this.",
 	"#TUG1\\TUG1_009#Five phasers without power packs, a drained phaser welder, insulation and bits of wire, and droplets of cooled molten metal.",
 	"#TUG1\\TUG1_010#I don't think we can bring down that forcefield, Captain. If we could, though, it might be less risky than trying to transport onto the bridge.",
@@ -1293,6 +1336,41 @@ const char * const g_gameStrings[] = {
 	"#TUG2\\TUG2N037#He doesn't look to friendly.",
 	"#TUG2\\TUG2N106#Only the red beret of the elasi guard remains.",
 	"Snip...snip...snip.",
+
+
+	"#COMP\\COMPA180#Orbit Stabilized. Warning Cancelled.", // FIXME
+	"#COMP\\COMPU181#Warning. Orbital Decay is now irreversible. Abandon Ship. Abandon Ship.",
+	"#COMP\\COMPU182#Warning. Orbital decay detected. Warning.",
+	"#TUG3\\TUG3_001#Scotty, beam down a security team to the bridge.  We have regained control.",
+	"#TUG3\\TUG3_002#Check and mate, Elasi. Don't do anything foolish.",
+	"#TUG3\\TUG3_003#Freeze, don't even think about it.",
+	"#TUG3\\TUG3_004#It's over, Cereth. Surrender and I'll guarantee the lives of you and your crew.",
+	"#TUG3\\TUG3_005#Mr. Scott, beam us out of here.",
+	"#TUG3\\TUG3_006#Mr. Scott, get us out of here.",
+	"#TUG3\\TUG3_007#Mr. Sulu, we need some help over here.",
+	"#TUG3\\TUG3_008#Captain, I highly recommend returning to the Enterprise within the next 57.32 seconds.",
+	"#TUG3\\TUG3_009#Captain, I recommend that Mr. Sulu stabilize the Masada's orbit from the Enterprise.",
+	"#TUG3\\TUG3_011#I think we should return to the Enterprise before we burn up, Jim.",
+	"#TUG3\\TUG3_012#I'm a doctor, not a space jockey! Talk to Mr. Sulu about fixing our orbit!",
+	"#TUG3\\TUG3_013#Jim, that man is mad.",
+	"#TUG3\\TUG3_015#Aye, Captain, using prefix code override to stabilize Masada's orbit. Sulu out.",
+	"#TUG3\\TUG3_F27#Foolhardy words, Kirk. You have underestimated me at every turn.",
+	"#TUG3\\TUG3_S07#Aye, Captain.",
+	"#TUG3\\TUG3_S08#Aye, Captain.",
+	"#TUG3\\TUG3L003#I'm just a security officer, sir.",
+	"#TUG3\\TUG3L080#A blow struck for freedom, Captain. Now I surrender.",
+	"#TUG3\\TUG3L081#Bridge to brig, kill the hostages!",
+	"#TUG3\\TUG3L083#I still have a gambit or two left, my friend.",
+	"#TUG3\\TUG3L084#You are an honorable and worthy opponent, Kirk. I accept your offer.",
+	"#TUG3\\TUG3N000#Dr. McCoy appears a bit restless.",
+	"#TUG3\\TUG3N001#Lt. Christensen is carefully observing Elasi.",
+	"#TUG3\\TUG3N002#Spock is analyzing the surroundings.",
+	"#TUG3\\TUG3N003#The body of Elasi Cereth lies on the ground.",
+	"#TUG3\\TUG3N004#The body of the Elasi clanmember lies on the ground here.",
+	"#TUG3\\TUG3N005#The Elasi clanmember glares at the party.",
+	"#TUG3\\TUG3N006#The Masada goes down in a fireball over Beta Myamid, with you on it. Better luck next season.",
+	"#TUG3\\TUG3N007#This is a standard Starfleet bridge, perhaps not as impressive as the one on the Enterprise. There are quite a few pirates here.",
+	"#TUG3\\TUG3N008#You carefully eye the chief lieutenant of the Elasi Clan, Elasi Cereth.",
 };
 
 }
