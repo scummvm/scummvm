@@ -137,6 +137,19 @@ struct AwayMission {
 
 			bool talkedToBrigCrewman; // 0x5f
 		} tug;
+
+		// Love's Labor Jeopardized
+		struct {
+			bool alreadyStartedMission; // 0x29
+			bool knowAboutVirus; // 0x2a
+			bool field2c; // 0x2c
+			bool field2d; // 0x2d
+			byte field36; // 0x36
+			byte field37; // 0x37
+			bool spockAccessedConsole; // 0x49
+			bool mccoyAccessedConsole; // 0x4a
+			int16 missionScore; // 0x52
+		} love;
 	};
 };
 // Size: 0x129 bytes

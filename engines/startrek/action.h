@@ -35,7 +35,7 @@ enum Acton {
 	ACTION_TALK = 5,
 
 	ACTION_TOUCHED_WARP = 6,
-	ACTION_TOUCHED_HOTSPOT = 7, // Doors? (Or just hotspots activated by Kirk moving there?)
+	ACTION_TOUCHED_HOTSPOT = 7, // Second kind of "hotspot" only relevant when an object touches them
 	ACTION_TIMER_EXPIRED = 8,
 	ACTION_FINISHED_ANIMATION = 10,
 	ACTION_FINISHED_WALKING = 12,
