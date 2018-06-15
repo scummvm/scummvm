@@ -45,11 +45,14 @@ class MenuItem {
 public:
 	MenuItem(const Common::String text, BaseMenuAction *action);
 	~MenuItem();
-	void executeAction();
+	void executeAction(const Common::Point &point);
 	const Common::String& getText() const { return _text; }
+	void setText(const Common::String &text) { _text = text; }
+	const Common::Point& getMouseClickPoint() { return _mouseClickPoint; };
 protected:
 	Common::String _text;
 	BaseMenuAction *_action;
+	Common::Point _mouseClickPoint;
 };
 
 class BaseMenu {
@@ -98,12 +101,14 @@ public:
 	void closeMenu();
 	void handleClick(uint menuItemIndex, const Common::Point &mousePos);
 	uint drawMenuText(BaseMenu *menu);
+	void redrawMenuText(BaseMenu *menu);
 	void update(Control *cursorControl);
 	void setTimeOutDuration(uint32 duration, uint timeOutMenuChoiceIndex);
 	void setMenuCallerThreadId(uint32 menuCallerThreadId);
 	void setMenuChoiceOffsets(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset);
 	void setSavegameSlotNum(int slotNum);
 	void setSavegameDescription(Common::String desc);
+	bool calcMenuItemTextPositionAtPoint(Common::Point pt, int &offset);
 	virtual bool initMenuCursor() = 0;
 	virtual int getGameState() = 0;
 	virtual void setGameState(int gameState) = 0;

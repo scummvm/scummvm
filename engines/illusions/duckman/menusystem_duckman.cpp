@@ -110,12 +110,26 @@ BaseMenu *DuckmanMenuSystem::createOptionsMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 1);
 	menu->addText("              GAME OPTIONS             @@@@");
 	menu->addText("--------------------------------------");
-	menu->addMenuItem(new MenuItem("SFX Volume     @@{~~~~~~~~~~~~|~~~} @@@", new MenuActionReturnChoice(this, 21)));
-	menu->addMenuItem(new MenuItem("Music Volume  @@@{~~~~~~~~~~~~|~~~} @@@", new MenuActionReturnChoice(this, 21)));
-	menu->addMenuItem(new MenuItem("Speech Volume {~~~~~~~~~~~~|~~~} @@@", new MenuActionReturnChoice(this, 21)));
-	menu->addMenuItem(new MenuItem("Text Duration @@@{~~~~~~~~~~~~|~~~} @@@", new MenuActionReturnChoice(this, 21)));
-	menu->addMenuItem(new MenuItem("Restore Defaults                      @@", new MenuActionReturnChoice(this, 21)));
-	menu->addMenuItem(new MenuItem("Back                                       @@@", new MenuActionLeaveMenu(this)));
+	MenuActionUpdateSlider *action = new MenuActionUpdateSlider(this, menu);
+	MenuItem *menuItem = new MenuItem("SFX Volume     @@{~~~~~~~~~~~~|~~~} @@@", action);
+	action->setMenuItem(menuItem);
+	menu->addMenuItem(menuItem);
+
+	action = new MenuActionUpdateSlider(this, menu);
+	menuItem = new MenuItem("Music Volume  @@@{~~~~~~~~~~~~|~~~} @@@", action);
+	action->setMenuItem(menuItem);
+	menu->addMenuItem(menuItem);
+
+	action = new MenuActionUpdateSlider(this, menu);
+	menuItem = new MenuItem("Speech Volume {~~~~~~~~~~~~|~~~} @@@", action);
+	action->setMenuItem(menuItem);
+	menu->addMenuItem(menuItem);
+
+	action = new MenuActionUpdateSlider(this, menu);
+	menuItem = new MenuItem("Text Duration @@@{~~~~~~~~~~~~|~~~} @@@", action);
+	action->setMenuItem(menuItem);
+	menu->addMenuItem(menuItem);
+
 	return menu;
 }
 
@@ -282,6 +296,57 @@ void MenuActionInventoryAddRemove::execute() {
 		_vm->_scriptResource->_properties.set(kDebugInventoryItems[_choiceIndex].propertyId, true);
 	}
 	_menuSystem->leaveMenu();
+}
+
+MenuActionUpdateSlider::MenuActionUpdateSlider(BaseMenuSystem *menuSystem, BaseMenu *menu)
+			: BaseMenuAction(menuSystem), menu(menu) {
+	menuItem = NULL;
+}
+
+void MenuActionUpdateSlider::execute() {
+	assert(menuItem);
+	Common::String text = menuItem->getText();
+	Common::Point point = menuItem->getMouseClickPoint();
+	int offset = 0;
+	_menuSystem->calcMenuItemTextPositionAtPoint(point, offset);
+	int newSliderValue = calcNewSliderValue(text, offset);
+
+	debug(0, "item text: %s, (%d, %d), New slider value: %d", text.c_str(), point.x, point.y, newSliderValue);
+
+	menuItem->setText(text);
+	_menuSystem->redrawMenuText(menu);
+	// TODO update slider here set value callback.
+}
+
+int MenuActionUpdateSlider::calcNewSliderValue(Common::String &text, int newOffset) {
+	int newSliderValue = 0;
+	int start = 0;
+	int end = 0;
+	int currentPosition = 0;
+	for(int i = 0; i < text.size(); i++) {
+		switch (text[i]) {
+			case '{' : start = i; break;
+			case '}' : end = i; break;
+			case '|' : currentPosition = i; break;
+			default: break;
+		}
+	}
+
+	if (newOffset >= start && newOffset <= end) {
+		if (newOffset == start) {
+			newSliderValue = 0;
+		} else if (newOffset == end) {
+			newSliderValue = 15;
+		} else {
+			newSliderValue = newOffset - (start + 1);
+		}
+
+		text.setChar('~', currentPosition);
+		text.setChar('|', start + 1 + newSliderValue);
+
+		return newSliderValue;
+	}
+	return currentPosition - start - 1;
 }
 
 } // End of namespace Illusions

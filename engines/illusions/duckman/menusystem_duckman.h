@@ -82,6 +82,20 @@ protected:
 	int _choiceIndex;
 };
 
+class MenuActionUpdateSlider : public BaseMenuAction {
+public:
+	MenuActionUpdateSlider(BaseMenuSystem *menuSystem, BaseMenu *baseMenu);
+	void setMenuItem(MenuItem *newMmenuItem) {
+		menuItem = newMmenuItem;
+	}
+
+	virtual void execute();
+protected:
+	MenuItem *menuItem;
+	BaseMenu *menu;
+	int calcNewSliderValue(Common::String &text, int newOffset);
+};
+
 } // End of namespace Illusions
 
 #endif // ILLUSIONS_DUCKMAN_MENUSYSTEM_DUCKMAN_H

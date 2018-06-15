@@ -44,7 +44,8 @@ MenuItem::~MenuItem() {
 	delete _action;
 }
 
-void MenuItem::executeAction() {
+void MenuItem::executeAction(const Common::Point &point) {
+	_mouseClickPoint = point;
 	_action->execute();
 }
 
@@ -371,7 +372,7 @@ void BaseMenuSystem::closeMenu() {
 }
 
 void BaseMenuSystem::handleClick(uint menuItemIndex, const Common::Point &mousePos) {
-	debug(0, "BaseMenuSystem::handleClick() menuItemIndex: %d", menuItemIndex);
+	debug(0, "BaseMenuSystem::handleClick() menuItemIndex: %d click point: (%d, %d)", menuItemIndex, mousePos.x, mousePos.y);
 
 	if (menuItemIndex == 0) {
 	    playSoundEffect14();
@@ -379,7 +380,7 @@ void BaseMenuSystem::handleClick(uint menuItemIndex, const Common::Point &mouseP
 	}
 
 	MenuItem *menuItem = _activeMenu->getMenuItem(menuItemIndex - 1);
-	menuItem->executeAction();
+	menuItem->executeAction(mousePos);
 	
 }
 
@@ -542,6 +543,38 @@ void BaseMenuSystem::updateTimeOut(bool resetTimeOut) {
 		}
 	}
 
+}
+
+void BaseMenuSystem::redrawMenuText(BaseMenu *menu) {
+	_vm->_screenText->removeText();
+	drawMenuText(menu);
+}
+
+bool BaseMenuSystem::calcMenuItemTextPositionAtPoint(Common::Point pt, int &offset) {
+	uint menuItemIndex;
+	if(!calcMenuItemIndexAtPoint(pt, menuItemIndex)) {
+		return false;
+	}
+
+	WRect rect;
+
+	MenuItem *menuItem = _activeMenu->getMenuItem(menuItemIndex - 1);
+	calcMenuItemRect(menuItemIndex, rect);
+	int x = pt.x - rect._topLeft.x;
+	Common::String text = menuItem->getText();
+	FontResource *font = _vm->_dict->findFont(_activeMenu->_fontId);
+
+	uint curX = 0;
+	for (int i=0; i < text.size(); i++) {
+		int16 w = font->getCharInfo(text[i])->_width;
+		if (x >= curX && x <= curX + w) {
+			offset = i;
+			return true;
+		}
+		curX = curX + w;
+	}
+
+	return false;
 }
 
 // MenuTextBuilder
