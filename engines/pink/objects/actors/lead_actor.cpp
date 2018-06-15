@@ -301,7 +301,7 @@ void LeadActor::onWalkEnd(const Common::String &stopName) {
 }
 
 void LeadActor::onPDAClose() {
-	_page->initPallete();
+	_page->initPalette();
 	_page->getGame()->getDirector()->loadStage();
 
 	_state = _stateBeforePDA;

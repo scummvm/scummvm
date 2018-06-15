@@ -74,7 +74,7 @@ void GamePage::init(bool isLoadingSave) {
 
 	toConsole();
 
-	initPallete();
+	initPalette();
 
 	LeadActor::State state = _leadActor->getState();
 	bool paused = (state == LeadActor::kInventory || state == LeadActor::kPDA);
