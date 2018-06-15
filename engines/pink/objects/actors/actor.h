@@ -48,7 +48,7 @@ public:
 	void saveState(Archive &archive);
 
 	virtual void init(bool paused);
-	bool initPallete(Director *director);
+	bool initPalette(Director *director);
 
 	void toConsole() override ;
 

@@ -41,7 +41,7 @@ public:
 
 	void load(Archive &archive);
 	void init();
-	void initPallete();
+	void initPalette();
 
 	Actor *findActor(const Common::String &name);
 	LeadActor *getLeadActor() { return _leadActor; }

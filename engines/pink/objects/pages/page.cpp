@@ -54,15 +54,15 @@ void Page::toConsole() {
 }
 
 void Page::init() {
-	initPallete();
+	initPalette();
 	for (uint i = 0; i < _actors.size(); ++i) {
 		_actors[i]->init(0);
 	}
 }
 
-void Page::initPallete() {
+void Page::initPalette() {
 	for (uint i = 0; i < _actors.size(); ++i) {
-		if (_actors[i]->initPallete(getGame()->getDirector()))
+		if (_actors[i]->initPalette(getGame()->getDirector()))
 			break;
 	}
 }
