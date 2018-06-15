@@ -126,9 +126,9 @@ public:
 
 protected:
 	Common::Point getPosition() const;
+	Gfx::RenderEntry *_renderEntry;
 
 private:
-	Gfx::RenderEntry *_renderEntry;
 	Resources::ItemVisual *_item;
 	bool _visible;
 

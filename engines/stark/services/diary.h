@@ -51,8 +51,15 @@ public:
 	/** Does the diary contain entries that have not been read yet? */
 	bool hasUnreadEntries() const;
 
+	/** Mark all the diary entries read */
+	void setDiaryAllRead() { _hasUnreadEntries = false; }
+
 	/** Add an entry to the list of available diary pages */
 	void addDiaryEntry(const Common::String &name);
+
+	/** Get and set the current diary page index */
+	uint32 getPageIndex() const { return _pageIndex; };
+	void setPageIndex(uint32 pageIndex) { _pageIndex = pageIndex; }
 
 	/** Add a FMV entry to the list of movies available to play from the diary */
 	void addFMVEntry(const Common::String &filename, const Common::String &title, int gameDisc);
@@ -61,6 +68,10 @@ public:
 	uint countFMV() const { return _fmvEntries.size(); }
 	Common::String &getFMVFilename(uint index) { return _fmvEntries[index].filename; }
 	Common::String &getFMVTitle(uint index) { return _fmvEntries[index].title; }
+
+	/** Get info of added Diary entries */
+	uint countDiary() const { return _diaryEntries.size(); }
+	Common::String &getDiary(uint index) { return _diaryEntries[index]; }
 
 	/** Start recording speech lines for a dialog */
 	void openDialog(const Common::String &title, const Common::String &characterName, int32 characterId);

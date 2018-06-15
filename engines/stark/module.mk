@@ -93,6 +93,7 @@ MODULE_OBJS := \
 	ui/menu/settingsmenu.o \
 	ui/menu/saveloadmenu.o \
 	ui/menu/fmvmenu.o \
+	ui/menu/diarypages.o \
 	ui/window.o \
 	ui/world/actionmenu.o \
 	ui/world/button.o \
