@@ -1,3 +1,9 @@
+ifeq ($(shell echo a | iconv --to-code=RISCOS-LATIN1//TRANSLIT >/dev/null 2>&1; echo $$?),0)
+ENCODING=RISCOS-LATIN1//TRANSLIT
+else
+ENCODING=ISO-8859-1//TRANSLIT
+endif
+
 # Special target to create an RISC OS snapshot installation
 riscosdist: scummvm$(EXEEXT)
 	mkdir -p !ScummVM
@@ -24,5 +30,5 @@ endif
 ifdef TOKENIZE
 	$(TOKENIZE) dists/riscos/FindHelp,fd1 -out !ScummVM/FindHelp,ffb
 endif
-	cp $(DIST_FILES_DOCS) !ScummVM/docs
-	cp -r ${srcdir}/doc/* !ScummVM/docs
+	@$(foreach file, $(DIST_FILES_DOCS) $(srcdir)/doc/QuickStart, echo '   ' ICONV '  ' !ScummVM/docs/$(notdir $(file)),fff;iconv --to-code=$(ENCODING) $(file) > !ScummVM/docs/$(notdir $(file)),fff;)
+	@$(foreach lang, $(DIST_FILES_DOCS_languages), mkdir -p !ScummVM/docs/$(lang); $(foreach file, $(DIST_FILES_DOCS_$(lang)), echo '   ' ICONV '  ' !ScummVM/docs/$(lang)/$(notdir $(file)),fff;iconv --to-code=$(ENCODING) $(file) > !ScummVM/docs/$(lang)/$(notdir $(file)),fff;))
