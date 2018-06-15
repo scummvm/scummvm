@@ -97,7 +97,7 @@ BaseMenu *DuckmanMenuSystem::createMainMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 0);
 	menu->addMenuItem(new MenuItem("Start New Game", new MenuActionReturnChoice(this, 11)));
 	menu->addMenuItem(new MenuItem("Load Saved Game", new MenuActionLoadGame(this, 1)));
-	// TODO menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
+	menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
 	menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 12)));
 	return menu;
 }
@@ -170,7 +170,7 @@ BaseMenu *DuckmanMenuSystem::createSaveCompleteMenu() {
 BaseMenu *DuckmanMenuSystem::createDebugMenu() {
 	// TODO
 	BaseMenu *menu = new BaseMenu(this, 0x00120002, 0, 0, 0, 17, 1);
-	menu->addText("Debug Pause Menu");
+	menu->addText("Debug Menu");
 	menu->addText("-----------------");
 	return menu;
 }
@@ -181,6 +181,7 @@ BaseMenu *DuckmanMenuSystem::createDebugPauseMenu() {
 	menu->addText("-----------------");
 	menu->addMenuItem(new MenuItem("Return to Game", new MenuActionReturnChoice(this, 1)));
 	menu->addMenuItem(new MenuItem("Add/Remove Inventory", new MenuActionEnterMenu(this, kDuckmanAddRemoveInventoryMenu)));
+	// TODO quit to debug menu.
 	return menu;
 }
 
@@ -223,6 +224,7 @@ BaseMenu *DuckmanMenuSystem::createAddRemoveInventoryMenu() {
 	for(int i=0;i < 21;i++) {
 		menu->addMenuItem(new MenuItem(kDebugInventoryItems[i].name, new MenuActionInventoryAddRemove(this, _vm, i)));
 	}
+	menu->addMenuItem(new MenuItem("Back", new MenuActionLeaveMenu(this)));
 	return menu;
 }
 
@@ -278,6 +280,10 @@ void DuckmanMenuSystem::setMenuCursorNum(int cursorNum) {
 
 void DuckmanMenuSystem::setGameState(int gameState) {
 	_vm->_cursor._gameState = gameState;
+}
+
+void DuckmanMenuSystem::playSoundEffect(int sfxId) {
+	_vm->playSoundEffect(sfxId);
 }
 
 MenuActionInventoryAddRemove::MenuActionInventoryAddRemove(BaseMenuSystem *menuSystem, IllusionsEngine_Duckman *vm, uint choiceIndex)

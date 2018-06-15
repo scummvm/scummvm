@@ -101,11 +101,11 @@ BaseMenuSystem::~BaseMenuSystem() {
 }
 
 void BaseMenuSystem::playSoundEffect13() {
-	// TODO
+	playSoundEffect(13);
 }
 
 void BaseMenuSystem::playSoundEffect14() {
-	// TODO
+	playSoundEffect(14);
 }
 
 void BaseMenuSystem::selectMenuChoiceIndex(uint choiceIndex) {
