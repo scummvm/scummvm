@@ -744,7 +744,6 @@ RoomAction tug2ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_IPHASERK, -1, 0), &Room::tug2UsePhaserAnywhere },
 };
 
-
 RoomAction tug3ActionList[] = {
 	{ Action(ACTION_TICK, 1, 0, 0), &Room::tug3Tick1 },
 	{ Action(ACTION_TICK, 40, 0, 0), &Room::tug3Tick40 },
@@ -780,6 +779,48 @@ RoomAction tug3ActionList[] = {
 	{ Action(ACTION_FINISHED_ANIMATION, 13, 0, 0), &Room::tug3AllCrewmenDead },
 	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::tug3Timer1Expired },
 	{ Action(ACTION_FINISHED_ANIMATION, 7, 0, 0), &Room::tug3SecurityTeamBeamedIn },
+};
+
+
+RoomAction love0ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::love0Tick1 },
+	{ Action(ACTION_TICK, 10, 0, 0), &Room::love0Tick10 },
+	{ Action(ACTION_WALK, 0x21, 0, 0), &Room::love0WalkToDoor2 },
+	{ Action(ACTION_WALK, 9, 0, 0), &Room::love0WalkToDoor2 },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0), &Room::love0OpenDoor2 },
+	{ Action(ACTION_FINISHED_WALKING, 4, 0, 0), &Room::love0ReachedDoor2 },
+	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0), &Room::love0ReachedDoor2 },
+	{ Action(ACTION_WALK, 0x22, 0, 0), &Room::love0WalkToDoor1 },
+	{ Action(ACTION_WALK, 8, 0, 0), &Room::love0WalkToDoor1 },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 1, 0, 0), &Room::love0OpenDoor1 },
+	{ Action(ACTION_FINISHED_WALKING, 5, 0, 0), &Room::love0ReachedDoor1 },
+	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::love0ReachedDoor1 },
+	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::love0LookAtConsole },
+	{ Action(ACTION_LOOK, 0x23, 0, 0), &Room::love0LookAtViewscreen },
+	{ Action(ACTION_LOOK, -1, 0, 0), &Room::love0LookAnywhere },
+	{ Action(ACTION_LOOK, 8, 0, 0), &Room::love0LookAtDoor1 },
+	{ Action(ACTION_LOOK, 9, 0, 0), &Room::love0LookAtDoor2 },
+	{ Action(ACTION_LOOK, OBJECT_KIRK, 0, 0), &Room::love0LookAtKirk },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY, 0, 0), &Room::love0LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK, 0, 0), &Room::love0LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::love0LookAtRedshirt },
+	{ Action(ACTION_TALK, OBJECT_KIRK, 0, 0), &Room::love0TalkToKirk },
+	{ Action(ACTION_TALK, OBJECT_MCCOY, 0, 0), &Room::love0TalkToMccoy },
+	{ Action(ACTION_TALK, OBJECT_SPOCK, 0, 0), &Room::love0TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::love0TalkToRedshirt },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, -1, 0), &Room::love0UseMTricorderAnywhere },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x20, 0), &Room::love0UseSTricorderOnConsole },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, -1, 0), &Room::love0UseSTricorderAnywhere },
+	{ Action(ACTION_USE, OBJECT_KIRK, 0x20, 0), &Room::love0UseKirkOnConsole },
+	{ Action(ACTION_USE, OBJECT_REDSHIRT, 0x20, 0), &Room::love0UseRedshirtOnConsole },
+	{ Action(ACTION_USE, OBJECT_SPOCK, 0x20, 0), &Room::love0UseSpockOnConsole },
+	{ Action(ACTION_FINISHED_WALKING, 2, 0, 0), &Room::love0SpockReachedConsole },
+	{ Action(ACTION_FINISHED_ANIMATION, 5, 0, 0), &Room::love0SpockAccessedConsole },
+	{ Action(ACTION_USE, OBJECT_MCCOY, 0x20, 0), &Room::love0UseMccoyOnConsole },
+	{ Action(ACTION_FINISHED_WALKING, 3, 0, 0), &Room::love0MccoyReachedConsole },
+	{ Action(ACTION_FINISHED_ANIMATION, 6, 0, 0), &Room::love0MccoyAccessedConsole },
+	// TODO: there's a lot of "extra" stuff at the end of the file. I don't think it's
+	// unused, but I'm not sure how it's run.
 };
 
 }

@@ -113,6 +113,7 @@ private:
 	void showBitmapFor5Ticks(const Common::String &bmpName, int priority);                     // Cmd 0x0a
 	// Command 0x0c: "demon6ShowCase"
 	Common::Point getActorPos(int actorIndex);                                                 // Cmd 0x0d
+	int16 getRandomWordInRange(int start, int end);                                            // Cmd 0x0e
 	void playSoundEffectIndex(int soundEffect);                                                // Cmd 0x0f
 	void playMidiMusicTracks(int startTrack, int loopTrack);                                   // Cmd 0x10
 	void endMission(int16 score, int16 arg2, int16 arg3);                                      // Cmd 0x11
@@ -120,8 +121,8 @@ private:
 	void playVoc(Common::String filename);                                                     // Cmd 0x15
 
 	// Helper functions for repetitive stuff
-	void spockScan(int direction, int text);
-	void mccoyScan(int direction, int text);
+	void spockScan(int direction, int text, bool changeDirection = true);
+	void mccoyScan(int direction, int text, bool changeDirection = true);
 
 	// Room-specific code
 public:
@@ -710,6 +711,41 @@ public:
 	void tug3EndMission();
 	void tug3SecurityTeamBeamedIn();
 
+	// LOVE0
+	void love0Tick1();
+	void love0Tick10();
+	void love0WalkToDoor2();
+	void love0OpenDoor2();
+	void love0ReachedDoor2();
+	void love0WalkToDoor1();
+	void love0OpenDoor1();
+	void love0ReachedDoor1();
+	void love0LookAtConsole();
+	void love0LookAtViewscreen();
+	void love0LookAnywhere();
+	void love0LookAtDoor1();
+	void love0LookAtDoor2();
+	void love0LookAtKirk();
+	void love0LookAtMccoy();
+	void love0LookAtSpock();
+	void love0LookAtRedshirt();
+	void love0TalkToKirk();
+	void love0TalkToMccoy();
+	void love0TalkToSpock();
+	void love0TalkToRedshirt();
+	void love0UseMTricorderAnywhere();
+	void love0UseSTricorderOnConsole();
+	void love0UseSTricorderAnywhere();
+	void love0UseKirkOnConsole();
+	void love0UseRedshirtOnConsole();
+	void love0UseSpockOnConsole();
+	void love0SpockReachedConsole();
+	void love0SpockAccessedConsole();
+	void love0UseMccoyOnConsole();
+	void love0MccoyReachedConsole();
+	void love0MccoyAccessedConsole();
+	void love0InteractWithConsole();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {
@@ -772,6 +808,21 @@ private:
 			bool elasiPhaserOnKill;
 			byte shootKirkOverride; // 0x1ec4
 		} tug2;
+
+		struct {
+			bool heardSummaryOfVirus; // 0xda
+			byte door2OpenCounter; // 0xdc
+			byte door1OpenCounter; // 0xdd
+			byte _de; // 0xde
+
+			int16 consoleCrewman; // 0xe3
+			char consoleAnimation[10]; // 0xe5
+			int32 consoleSpeaker; // 0xe7
+			int32 consoleText; // 0xe9
+
+			byte _8ab; // 0x8ab
+			byte _8ac; // 0x8ac
+		} love0;
 
 	} _roomVar;
 };

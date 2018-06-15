@@ -81,6 +81,10 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 		_roomActionList = tug3ActionList;
 		_numRoomActions = sizeof(tug3ActionList) / sizeof(RoomAction);
 	}
+	else if (name == "LOVE0") {
+		_roomActionList = love0ActionList;
+		_numRoomActions = sizeof(love0ActionList) / sizeof(RoomAction);
+	}
 	else {
 		warning("Room \"%s\" unimplemented", name.c_str());
 		_numRoomActions = 0;
@@ -327,6 +331,13 @@ Common::Point Room::getActorPos(int actorIndex) {
 	return _vm->_actorList[actorIndex].pos;
 }
 
+/**
+ * Returns a word in range [start, end] (that's inclusive).
+ */
+int16 Room::getRandomWordInRange(int start, int end) {
+	return _vm->getRandomWord() % (end - start + 1) + start;
+}
+
 void Room::playSoundEffectIndex(int soundEffect) {
 	_vm->playSoundEffectIndex(soundEffect);
 }
@@ -368,23 +379,27 @@ void Room::playVoc(Common::String filename) {
 	_vm->_sound->playVoc(filename);
 }
 
-void Room::spockScan(int direction, int text) {
+void Room::spockScan(int direction, int text, bool changeDirection) {
 	const char *dirs = "nsew";
 	Common::String anim = "sscan_";
 	anim.setChar(dirs[direction], 5);
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = direction;
+	if (changeDirection) // Check whether he should turn back to original direction after scanning
+		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = direction;
+
 	loadActorAnim2(OBJECT_SPOCK, anim, -1, -1, 0);
 	playSoundEffectIndex(SND_TRICORDER);
 	showText(TX_SPEAKER_SPOCK, text);
 }
 
-void Room::mccoyScan(int direction, int text) {
+void Room::mccoyScan(int direction, int text, bool changeDirection) {
 	const char *dirs = "nsew";
 	Common::String anim = "mscan_";
 	anim.setChar(dirs[direction], 5);
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = direction;
+	if (changeDirection)
+		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = direction;
+
 	loadActorAnim2(OBJECT_MCCOY, anim, -1, -1, 0);
 	playSoundEffectIndex(SND_TRICORDER);
 	showText(TX_SPEAKER_MCCOY, text);
