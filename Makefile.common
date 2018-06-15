@@ -242,6 +242,16 @@ dist-src: \
 # Common files
 DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYRIGHT NEWS README)
 
+DIST_FILES_DOCS_languages=cz da de es fr it no-nb se
+DIST_FILES_DOCS_cz:=$(addprefix $(srcdir)/doc/cz/,PrectiMe)
+DIST_FILES_DOCS_da:=$(addprefix $(srcdir)/doc/da/,HurtigStart)
+DIST_FILES_DOCS_de:=$(addprefix $(srcdir)/doc/de/,LIESMICH NEUES Schnellstart)
+DIST_FILES_DOCS_es:=$(addprefix $(srcdir)/doc/es/,InicioRapido)
+DIST_FILES_DOCS_fr:=$(addprefix $(srcdir)/doc/fr/,DemarrageRapide)
+DIST_FILES_DOCS_it:=$(addprefix $(srcdir)/doc/it/,GuidaRapida)
+DIST_FILES_DOCS_no-nb:=$(addprefix $(srcdir)/doc/no-nb/,HurtigStart)
+DIST_FILES_DOCS_se:=$(addprefix $(srcdir)/doc/se/,LasMig Snabbstart)
+
 # Themes files
 DIST_FILES_THEMES=scummmodern.zip scummclassic.zip
 ifdef USE_TRANSLATION
