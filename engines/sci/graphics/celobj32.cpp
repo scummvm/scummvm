@@ -202,7 +202,7 @@ struct SCALER_Scale {
 
 		const CelScalerTable &table = CelObj::_scaler->getScalerTable(scaleX, scaleY);
 
-		const bool useLarryScale = ConfMan.getBool("enable_larryscale");
+		const bool useLarryScale = (g_sci->getGameId() == GID_LSL7) && ConfMan.getBool("enable_larryscale");
 		if (useLarryScale) {
 			// LarryScale is an alternative, high-quality cel scaler implemented
 			// for ScummVM. Due to the nature of smooth upscaling, it does *not*
