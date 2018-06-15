@@ -25,7 +25,7 @@
 #include "common/scummsys.h"
 
 namespace Common {
-class Rect;
+struct Rect;
 class Serializer;
 }
 

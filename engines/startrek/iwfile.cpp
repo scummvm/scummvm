@@ -63,7 +63,7 @@ int IWFile::getClosestKeyPosition(int16 x, int16 y) {
 
 	for (int i = 0; i < _numEntries; i++) {
 		sortedIndices[i].x = i;
-		sortedIndices[i].y = sqrt(_keyPositions[i].sqrDist(Common::Point(x, y)));
+		sortedIndices[i].y = (int16)sqrt((double)_keyPositions[i].sqrDist(Common::Point(x, y)));
 	}
 
 	sort(sortedIndices, sortedIndices + _numEntries, &iwSorter);
