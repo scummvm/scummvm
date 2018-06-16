@@ -114,7 +114,7 @@ void MidiPlayer::play(const Common::String &filename) {
 		_parser->setTrack(0);
 		_parser->setMidiDriver(this);
 		_parser->setTimerRate(_driver->getBaseTempo());
-		_isLooping = false;
+		_isLooping = true;
 		_isPlaying = true;
 	}
 	fd->close();
