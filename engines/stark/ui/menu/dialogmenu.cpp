@@ -25,11 +25,12 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/diary.h"
+#include "engines/stark/services/gamechapter.h"
 
 namespace Stark {
 
 DialogScreen::DialogScreen(Gfx::Driver *gfx, Cursor *cursor) :
-		StaticLocationScreen(gfx, cursor, "DiaryLog", Screen::kScreenDialog) {
+		StaticLocationScreen(gfx, cursor, "DiaryLog", Screen::kScreenDialog), temp(nullptr) {
 }
 
 DialogScreen::~DialogScreen() {
@@ -81,20 +82,35 @@ void DialogScreen::open() {
 	for (uint i = 1; i < _widgets.size(); ++i) {
 		_widgets[i]->setupSounds(0, 1);
 	}
-			
-	_widgets.push_back(new StaticLocationWidget(
-			"IndexFrame",
-			nullptr,
-			nullptr));
-			
-	_widgets.push_back(new StaticLocationWidget(
-			"LogFrame",
-			nullptr,
-			nullptr));
+
+	temp = new ChapterTitleText(_gfx, 0, Common::Point(200, 200));
+}
+
+void DialogScreen::onScreenChanged() {
+	StaticLocationScreen::onScreenChanged();
+	temp->onScreenChanged();
+}
+
+void DialogScreen::onRender() {
+	StaticLocationScreen::onRender();
+	temp->render();
 }
 
 void DialogScreen::backHandler() {
 	StarkUserInterface->backPrevScreen();
+}
+
+ChapterTitleText::ChapterTitleText(Gfx::Driver *gfx, uint chapter, const Common::Point &pos) :
+		_pos(pos), _text(gfx) {
+	Common::String text = Common::String::format(
+			"%s: %s",
+			StarkGameChapter->getChapterTitle(chapter).c_str(),
+			StarkGameChapter->getChapterSubtitle(chapter).c_str());
+	text.toUppercase();
+
+	_text.setText(text);
+	_text.setColor(_color);
+	_text.setFont(FontProvider::kCustomFont, 5);
 }
 
 } // End of namespace Stark

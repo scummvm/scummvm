@@ -25,8 +25,15 @@
 
 #include "engines/stark/ui/menu/locationscreen.h"
 
+#include "engines/stark/visual/text.h"
+
 namespace Stark {
 
+class ChapterTitleText;
+
+/**
+ * The coversation log menu
+ */
 class DialogScreen : public StaticLocationScreen {
 public:
 	DialogScreen(Gfx::Driver *gfx, Cursor *cursor);
@@ -34,9 +41,34 @@ public:
 
 	// StaticLocationScreen API
 	void open() override;
+	void onScreenChanged() override;
+
+protected:
+	// Window API
+	void onRender() override;
 
 private:
+	ChapterTitleText *temp;
+
 	void backHandler();
+};
+
+/**
+ * The chapter title displayed on the menu
+ */
+class ChapterTitleText {
+public:
+	ChapterTitleText(Gfx::Driver *gfx, uint chapter, const Common::Point &pos);
+	~ChapterTitleText() {}
+
+	void render() { _text.render(_pos); }
+	void onScreenChanged() { _text.resetTexture(); }
+
+private:
+	static const uint32 _color = 0xFF040568;
+
+	Common::Point _pos;
+	VisualText _text;
 };
 
 } // End of namespace Stark
