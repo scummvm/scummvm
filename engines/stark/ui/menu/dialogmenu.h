@@ -41,6 +41,7 @@ public:
 
 	// StaticLocationScreen API
 	void open() override;
+	void close() override;
 	void onScreenChanged() override;
 
 protected:
@@ -48,9 +49,27 @@ protected:
 	void onRender() override;
 
 private:
-	ChapterTitleText *temp;
+	static const uint _dialogWidgetOffset = 8;
+
+	enum WidgetIndex {
+		kWidgetIndexBack = 3,
+		kWidgetIndexNext = 4
+	};
+
+	Gfx::RenderEntry *_indexFrame, *_logFrame;
+	Common::Array<ChapterTitleText *> _chapterTitleTexts;
+	uint _startTitleIndex, _nextTitleIndex, _startLineIndex, _nextLineIndex;
+	uint _curMaxChapter;
+	Common::Array<uint> _prevTitleIndexStack;
+
+	void loadIndex();
 
 	void backHandler();
+	void nextIndexHandler();
+	void backIndexHandler();
+
+	void freeDialogWidgets();
+	void freeChapterTitleTexts();
 };
 
 /**
@@ -58,8 +77,11 @@ private:
  */
 class ChapterTitleText {
 public:
-	ChapterTitleText(Gfx::Driver *gfx, uint chapter, const Common::Point &pos);
+	ChapterTitleText(Gfx::Driver *gfx, uint chapter);
 	~ChapterTitleText() {}
+
+	void setPosition(const Common::Point &pos) { _pos = pos; }
+	uint getHeight() { return _text.getRect().bottom - _text.getRect().top; }
 
 	void render() { _text.render(_pos); }
 	void onScreenChanged() { _text.resetTexture(); }
@@ -76,14 +98,29 @@ private:
  */
 class DialogWidget : public StaticLocationWidget {
 public:
-	DialogWidget(uint logIndex, const Common::Point &pos);
-	~DialogWidget() {}
+	DialogWidget(Gfx::Driver *gfx, uint logIndex);
+	virtual ~DialogWidget() {}
+
+	void setPosition(const Common::Point &pos) { _pos = pos; }
+	uint getHeight() { return _height; }
+	uint getChapter() { return _chapter; }
 
 	// StaticLocationWidget API
+	void render() override { _text.render(_pos); }
+	bool isMouseInside(const Common::Point &mousePos) const override;
 	void onClick() override;
+	void onMouseMove(const Common::Point &mousePos) override {
+		_text.setColor(isMouseInside(mousePos) ? _textColorHovered : _textColorDefault);
+	}
+	void onScreenChanged() override;
 
 private:
-	uint _logIndex;
+	static const uint32 _textColorHovered = 0xFF961E1E;
+	static const uint32 _textColorDefault = 0xFF000000;
+
+	uint _logIndex, _chapter, _width, _height;
+	Common::Point _pos;
+	VisualText _text;
 };
 
 } // End of namespace Stark
