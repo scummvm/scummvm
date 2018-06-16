@@ -474,6 +474,7 @@ void BaseMenuSystem::update(Control *cursorControl) {
 		setMouseCursorToMenuItem(_hoveredMenuItemIndex);
 		_hoveredMenuItemIndex2 = _hoveredMenuItemIndex;
 		updateActorHoverBackground();
+		playSoundEffect(0xC);
 	} else if (_vm->_input->pollEvent(kEventDown)) {
 		// TODO handleDownKey();
 		if (_hoveredMenuItemIndex == _activeMenu->getMenuItemsCount()) {
@@ -484,6 +485,7 @@ void BaseMenuSystem::update(Control *cursorControl) {
 		setMouseCursorToMenuItem(_hoveredMenuItemIndex);
 		_hoveredMenuItemIndex2 = _hoveredMenuItemIndex;
 		updateActorHoverBackground();
+		playSoundEffect(0xC);
 	}
 	
 	updateTimeOut(resetTimeOut);

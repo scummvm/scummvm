@@ -350,11 +350,15 @@ void ScriptOpcodes_Duckman::opEnterDebugger(ScriptThread *scriptThread, OpCall &
 	// Used for debugging purposes in the original engine
 	// This is not supported and only reachable by code not implemented here!
 	//error("ScriptOpcodes_Duckman::opEnterDebugger() Debugger function called");
+	_vm->_controls->disappearActors();
+	// TODO more logic needed here
 }
 
 void ScriptOpcodes_Duckman::opLeaveDebugger(ScriptThread *scriptThread, OpCall &opCall) {
 	// See opEnterDebugger
 	//error("ScriptOpcodes_Duckman::opLeaveDebugger() Debugger function called");
+	_vm->_controls->appearActors();
+	// TODO more logic needed here
 }
 
 void ScriptOpcodes_Duckman::opDumpCurrentSceneFiles(ScriptThread *scriptThread, OpCall &opCall) {
