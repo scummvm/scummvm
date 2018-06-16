@@ -38,13 +38,17 @@ public:
 	GameChapter();
 	~GameChapter() {}
 
-	Common::String getCurrentChapterTitle() {
-		return _chapterEntries[getActualCurrentChapter()].title;
+	const Common::String &getChapterTitle(uint chapter) const {
+		return _chapterEntries[chapter / 10].title;
 	}
 
-	Common::String getCurrentChapterSubtitle() {
-		return _chapterEntries[getActualCurrentChapter()].subtitle;
+	const Common::String &getCurrentChapterTitle() const;
+
+	const Common::String &getChapterSubtitle(uint chapter) const {
+		return _chapterEntries[chapter / 10].subtitle;
 	}
+
+	const Common::String &getCurrentChapterSubtitle() const;
 
 private:
 	struct ChapterEntry {
@@ -53,8 +57,6 @@ private:
 	};
 
 	Common::Array<ChapterEntry> _chapterEntries;
-
-	int getActualCurrentChapter();
 };
 
 } // End of namespace Stark
