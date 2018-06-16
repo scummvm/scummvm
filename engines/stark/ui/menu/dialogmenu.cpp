@@ -27,6 +27,8 @@
 #include "engines/stark/services/diary.h"
 #include "engines/stark/services/gamechapter.h"
 
+#include "engines/stark/gfx/renderentry.h"
+
 namespace Stark {
 
 DialogScreen::DialogScreen(Gfx::Driver *gfx, Cursor *cursor) :
@@ -84,6 +86,7 @@ void DialogScreen::open() {
 	}
 
 	temp = new ChapterTitleText(_gfx, 0, Common::Point(200, 200));
+	_widgets.push_back(new DialogWidget(0, Common::Point(200, 300)));
 }
 
 void DialogScreen::onScreenChanged() {
@@ -111,6 +114,19 @@ ChapterTitleText::ChapterTitleText(Gfx::Driver *gfx, uint chapter, const Common:
 	_text.setText(text);
 	_text.setColor(_color);
 	_text.setFont(FontProvider::kCustomFont, 5);
+}
+
+DialogWidget::DialogWidget(uint logIndex, const Common::Point &pos) :
+		StaticLocationWidget("IndexFrame", nullptr, nullptr),
+		_logIndex(logIndex) {
+	const Diary::ConversationLog &dialog = StarkDiary->getDialog(_logIndex);
+	VisualText *text = _renderEntry->getText();
+	text->setText(dialog.title);
+	_renderEntry->setPosition(pos);
+}
+
+void DialogWidget::onClick() {
+	debug("Click %d", _logIndex);
 }
 
 } // End of namespace Stark

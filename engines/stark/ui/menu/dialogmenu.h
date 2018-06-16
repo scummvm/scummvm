@@ -71,6 +71,21 @@ private:
 	VisualText _text;
 };
 
+/**
+ * The dialog widget
+ */
+class DialogWidget : public StaticLocationWidget {
+public:
+	DialogWidget(uint logIndex, const Common::Point &pos);
+	~DialogWidget() {}
+
+	// StaticLocationWidget API
+	void onClick() override;
+
+private:
+	uint _logIndex;
+};
+
 } // End of namespace Stark
 
 #endif // STARK_UI_MENU_DIALOG_H
