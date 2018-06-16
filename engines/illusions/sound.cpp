@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "illusions/illusions.h"
 #include "illusions/sound.h"
 #include "audio/midiparser.h"
@@ -296,7 +297,7 @@ void SoundMan::stopCueingVoice() {
 }
 
 void SoundMan::startVoice(int16 volume, int16 pan) {
-	_voicePlayer->start(volume, pan);
+	_voicePlayer->start(calcAdjustedVolume("speech_volume", (uint8)volume), pan);
 }
 
 void SoundMan::stopVoice() {
@@ -323,7 +324,7 @@ void SoundMan::loadSound(uint32 soundEffectId, uint32 soundGroupId, bool looping
 void SoundMan::playSound(uint32 soundEffectId, int16 volume, int16 pan) {
 	Sound *sound = getSound(soundEffectId);
 	if (sound)
-		sound->play(volume, pan);
+		sound->play(calcAdjustedVolume("sfx_volume", (uint8)volume), pan);
 }
 
 void SoundMan::stopSound(uint32 soundEffectId) {
@@ -362,6 +363,36 @@ void SoundMan::stopMidiMusic() {
 
 void SoundMan::fadeMidiMusic(int16 finalVolume, int16 duration) {
 	_midiPlayer->fade(finalVolume, duration);
+}
+
+void SoundMan::setMusicVolume(uint8 volume) {
+	ConfMan.setInt("music_volume", volume);
+	_midiPlayer->syncVolume();
+}
+
+void SoundMan::setSfxVolume(uint8 volume) {
+	ConfMan.setInt("sfx_volume", volume);
+}
+
+void SoundMan::setSpeechVolume(uint8 volume) {
+	ConfMan.setInt("speech_volume", volume);
+}
+
+uint8 SoundMan::calcAdjustedVolume(const Common::String &volumeConfigKey, uint8 volume) {
+	uint8 masterVolume = (uint8)ConfMan.getInt(volumeConfigKey);
+	return (uint8)(((float)masterVolume/255) * (float)volume);
+}
+
+uint8 SoundMan::getMusicVolume() {
+	return (uint8)ConfMan.getInt("music_volume");
+}
+
+uint8 SoundMan::getSfxVolume() {
+	return (uint8)ConfMan.getInt("sfx_volume");
+}
+
+uint8 SoundMan::getSpeechVolume() {
+	return (uint8)ConfMan.getInt("speech_volume");
 }
 
 } // End of namespace Illusions

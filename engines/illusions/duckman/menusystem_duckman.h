@@ -27,7 +27,14 @@
 
 namespace Illusions {
 
-enum {
+	enum SliderActionType {
+		SFX,
+		MUSIC,
+		VOICE,
+		TEXT_DURATION
+	};
+
+	enum {
 	kDuckmanMainMenu,
 	kDuckmanLoadGameMenu,
 	kDuckmanOptionsMenu,
@@ -59,6 +66,7 @@ public://protected:
 	BaseMenu *createMainMenu();
 	BaseMenu *createLoadGameMenu();
 	BaseMenu *createOptionsMenu();
+	MenuItem *createOptionsSliderMenuItem(const Common::String &text, SliderActionType type, BaseMenu *baseMenu);
 	BaseMenu *createPauseMenu();
 	BaseMenu *createQueryRestartMenu();
 	BaseMenu *createQueryQuitMenu();
@@ -85,13 +93,15 @@ protected:
 
 class MenuActionUpdateSlider : public BaseMenuAction {
 public:
-	MenuActionUpdateSlider(BaseMenuSystem *menuSystem, BaseMenu *baseMenu);
+	MenuActionUpdateSlider(BaseMenuSystem *menuSystem, BaseMenu *baseMenu, SliderActionType type, IllusionsEngine_Duckman *vm);
 	void setMenuItem(MenuItem *newMmenuItem) {
 		menuItem = newMmenuItem;
 	}
 
 	virtual void execute();
 protected:
+	IllusionsEngine_Duckman *_vm;
+	SliderActionType _type;
 	MenuItem *menuItem;
 	BaseMenu *menu;
 	int calcNewSliderValue(Common::String &text, int newOffset);

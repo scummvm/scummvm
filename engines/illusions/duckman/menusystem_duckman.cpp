@@ -22,6 +22,7 @@
 
 #include "illusions/illusions.h"
 #include "illusions/actor.h"
+#include "illusions/sound.h"
 #include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/menusystem_duckman.h"
 #include "illusions/resources/scriptresource.h"
@@ -106,29 +107,34 @@ BaseMenu *DuckmanMenuSystem::createLoadGameMenu() {
 	return 0; // TODO
 }
 
+MenuItem *DuckmanMenuSystem::createOptionsSliderMenuItem(const Common::String &text, SliderActionType type, BaseMenu *baseMenu) {
+	int sliderValue = 0;
+	Common::String sliderText = "{~~~~~~~~~~~~~~~~}";
+	switch (type) {
+		case SFX : sliderValue = _vm->_soundMan->getSfxVolume()/(255/15); break;
+		case MUSIC : sliderValue = _vm->_soundMan->getMusicVolume()/(255/15); break;
+		case VOICE : sliderValue = _vm->_soundMan->getSpeechVolume()/(255/15); break;
+		case TEXT_DURATION : sliderValue = 128/(255/15); break; // TODO wire up text duration config
+		default: break;
+	}
+
+	sliderText.setChar('|', sliderValue + 1);
+
+	MenuActionUpdateSlider *action = new MenuActionUpdateSlider(this, baseMenu, type, _vm);
+	MenuItem *menuItem = new MenuItem(text + sliderText, action);
+	action->setMenuItem(menuItem);
+	return menuItem;
+}
+
 BaseMenu *DuckmanMenuSystem::createOptionsMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 6);
 	menu->addText("              GAME OPTIONS             @@@@");
 	menu->addText("--------------------------------------");
-	MenuActionUpdateSlider *action = new MenuActionUpdateSlider(this, menu);
-	MenuItem *menuItem = new MenuItem("SFX Volume     @@{~~~~~~~~~~~~|~~~} @@@", action);
-	action->setMenuItem(menuItem);
-	menu->addMenuItem(menuItem);
 
-	action = new MenuActionUpdateSlider(this, menu);
-	menuItem = new MenuItem("Music Volume  @@@{~~~~~~~~~~~~|~~~} @@@", action);
-	action->setMenuItem(menuItem);
-	menu->addMenuItem(menuItem);
-
-	action = new MenuActionUpdateSlider(this, menu);
-	menuItem = new MenuItem("Speech Volume {~~~~~~~~~~~~|~~~} @@@", action);
-	action->setMenuItem(menuItem);
-	menu->addMenuItem(menuItem);
-
-	action = new MenuActionUpdateSlider(this, menu);
-	menuItem = new MenuItem("Text Duration @@@{~~~~~~~~~~~~|~~~} @@@", action);
-	action->setMenuItem(menuItem);
-	menu->addMenuItem(menuItem);
+	menu->addMenuItem(createOptionsSliderMenuItem("SFX Volume     @@", SFX, menu));
+	menu->addMenuItem(createOptionsSliderMenuItem("Music Volume  @@@", MUSIC, menu));
+	menu->addMenuItem(createOptionsSliderMenuItem("Speech Volume ", VOICE, menu));
+	menu->addMenuItem(createOptionsSliderMenuItem("Text Duration @@@", TEXT_DURATION, menu));
 
 	menu->addMenuItem(new MenuItem("Restore Defaults", new MenuActionLeaveMenu(this)));
 
@@ -289,7 +295,7 @@ void DuckmanMenuSystem::playSoundEffect(int sfxId) {
 	_vm->playSoundEffect(sfxId);
 }
 
-MenuActionInventoryAddRemove::MenuActionInventoryAddRemove(BaseMenuSystem *menuSystem, IllusionsEngine_Duckman *vm, uint choiceIndex)
+	MenuActionInventoryAddRemove::MenuActionInventoryAddRemove(BaseMenuSystem *menuSystem, IllusionsEngine_Duckman *vm, uint choiceIndex)
 		: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex), _vm(vm) {
 }
 
@@ -307,8 +313,8 @@ void MenuActionInventoryAddRemove::execute() {
 	_menuSystem->leaveMenu();
 }
 
-MenuActionUpdateSlider::MenuActionUpdateSlider(BaseMenuSystem *menuSystem, BaseMenu *menu)
-			: BaseMenuAction(menuSystem), menu(menu) {
+MenuActionUpdateSlider::MenuActionUpdateSlider(BaseMenuSystem *menuSystem, BaseMenu *baseMenu, SliderActionType type, IllusionsEngine_Duckman *vm)
+			: BaseMenuAction(menuSystem), menu(baseMenu), _type(type), _vm(vm) {
 	menuItem = NULL;
 }
 
@@ -324,7 +330,14 @@ void MenuActionUpdateSlider::execute() {
 
 	menuItem->setText(text);
 	_menuSystem->redrawMenuText(menu);
-	// TODO update slider here set value callback.
+
+	switch(_type) {
+		case SFX : _vm->_soundMan->setSfxVolume(newSliderValue * (255/15)); break;
+		case MUSIC : _vm->_soundMan->setMusicVolume(newSliderValue * (255/15)); break;
+		case VOICE : _vm->_soundMan->setSpeechVolume(newSliderValue * (255/15)); break;
+		case TEXT_DURATION : break; // TODO
+		default: break;
+	}
 }
 
 int MenuActionUpdateSlider::calcNewSliderValue(Common::String &text, int newOffset) {
