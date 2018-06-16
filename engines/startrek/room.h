@@ -120,9 +120,12 @@ private:
 	void showGameOverMenu();                                                                   // Cmd 0x12
 	void playVoc(Common::String filename);                                                     // Cmd 0x15
 
-	// Helper functions for repetitive stuff
-	void spockScan(int direction, int text, bool changeDirection = true);
-	void mccoyScan(int direction, int text, bool changeDirection = true);
+	// Helper functions for repetitive stuff.
+
+	// If "changeDirection" is true, they remain facing that direction even after their
+	// animation is finished. The game is inconsistent about doing this.
+	void spockScan(int direction, int text, bool changeDirection);
+	void mccoyScan(int direction, int text, bool changeDirection);
 
 	// Room-specific code
 public:
