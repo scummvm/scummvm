@@ -107,7 +107,7 @@ BaseMenu *DuckmanMenuSystem::createLoadGameMenu() {
 }
 
 BaseMenu *DuckmanMenuSystem::createOptionsMenu() {
-	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 1);
+	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 6);
 	menu->addText("              GAME OPTIONS             @@@@");
 	menu->addText("--------------------------------------");
 	MenuActionUpdateSlider *action = new MenuActionUpdateSlider(this, menu);
@@ -130,6 +130,9 @@ BaseMenu *DuckmanMenuSystem::createOptionsMenu() {
 	action->setMenuItem(menuItem);
 	menu->addMenuItem(menuItem);
 
+	menu->addMenuItem(new MenuItem("Restore Defaults", new MenuActionLeaveMenu(this)));
+
+	menu->addMenuItem(new MenuItem("Back", new MenuActionLeaveMenu(this)));
 	return menu;
 }
 

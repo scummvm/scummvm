@@ -1305,7 +1305,7 @@ bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control *
 					foundControl = testControl;
 					foundPriority = testPriority;
 				}
-			}		
+			}
 		}
 	}
 
@@ -1503,5 +1503,50 @@ void Controls::destroyControlInternal(Control *control) {
 
 	delete control;
 }
+
+void Controls::disappearActors() {
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *control = *it;
+		if (control->_flags & 4 && control->_pauseCtr == 0) {
+			control->disappearActor();
+		}
+	}
+	Control *control = _vm->_dict->getObjectControl(0x40148);
+	if (control) {
+		control->disappearActor();
+	}
+}
+
+void Controls::appearActors() {
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *control = *it;
+		if (control->_flags & 4 && control->_pauseCtr == 0) {
+			control->appearActor();
+		}
+	}
+	Control *control = _vm->_dict->getObjectControl(0x40148);
+	if (control) {
+		control->appearActor();
+	}
+}
+
+void Controls::pauseActors(uint32 objectId) {
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *control = *it;
+		if (control->_actor && control->_objectId != objectId) {
+			control->_actor->pause();
+		}
+	}
+}
+
+void Controls::unpauseActors(uint32 objectId) {
+	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
+		Control *control = *it;
+		if (control->_actor && control->_objectId != objectId) {
+			control->_actor->unpause();
+		}
+	}
+}
+
 
 } // End of namespace Illusions

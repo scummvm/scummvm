@@ -276,6 +276,10 @@ public:
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
 	void actorControlRoutine(Control *control, uint32 deltaTime);
 	void dialogItemControlRoutine(Control *control, uint32 deltaTime);
+	void disappearActors();
+	void appearActors();
+	void pauseActors(uint32 objectId);
+	void unpauseActors(uint32 objectId);
 public:
 	typedef Common::List<Control*> Items;
 	typedef Items::iterator ItemsIterator;
