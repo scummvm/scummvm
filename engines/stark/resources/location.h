@@ -136,6 +136,9 @@ public:
 	/** Get the layer with a given name, return null when not found */
 	Layer *getLayerByName(const Common::String &name);
 
+	/** Get a render entry with a given name, return null when not found */
+	Gfx::RenderEntry *getRenderEntryByName(const Common::String &name);
+
 protected:
 	void printData() override;
 

@@ -84,15 +84,7 @@ void FMVMenuScreen::open() {
 	int formatRectHeight = 379;
 
 	Resources::Location *location = StarkStaticProvider->getLocation();
-	Gfx::RenderEntryArray renderEntries = location->listRenderEntries();
-
-	Gfx::RenderEntry *formatRect(nullptr);
-	for (uint i = 0; i < renderEntries.size(); i++) {
-		if (renderEntries[i]->getName().equalsIgnoreCase("FormatRectangle")) {
-			formatRect = renderEntries[i];
-			break;
-		}
-	}
+	Gfx::RenderEntry *formatRect = location->getRenderEntryByName("FormatRectangle");
 
 	if (formatRect) {
 		_formatRectPos = formatRect->getPosition();
