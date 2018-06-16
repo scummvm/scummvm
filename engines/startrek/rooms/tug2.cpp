@@ -188,7 +188,7 @@ void Room::tug2LookAtWires() {
 void Room::tug2UseSTricorderOnButton() {
 	if (_vm->_awayMission.tug.field35 != 0)
 		return;
-	spockScan(DIR_E, TX_TUG2_007);
+	spockScan(DIR_E, TX_TUG2_007, true);
 }
 
 void Room::tug2UseMccoyOnWires() {
@@ -783,18 +783,18 @@ void Room::tug2Timer2Expired() {
 }
 
 void Room::tug2UseSTricorderOnBomb() {
-	spockScan(DIR_E, TX_TUG2_004);
+	spockScan(DIR_E, TX_TUG2_004, true);
 }
 
 void Room::tug2UseMTricorderOnGuard1() {
 	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_STUNNED)
-		mccoyScan(DIR_E, TX_TUG2_016);
+		mccoyScan(DIR_E, TX_TUG2_016, true);
 }
 
 void Room::tug2UseMTricorderOnGuard2() {
 	// BUGFIX: original didn't play audio for this (despite being the same as above).
 	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_STUNNED)
-		mccoyScan(DIR_E, TX_TUG2_016);
+		mccoyScan(DIR_E, TX_TUG2_016, true);
 }
 
 void Room::tug2TalkToGuard1() {
@@ -855,19 +855,19 @@ void Room::tug2TalkToBrig() {
 	if (_vm->_awayMission.tug.brigForceFieldDown && _vm->_awayMission.tug.talkedToBrigCrewman)
 		showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_027);
 	else if (!_vm->_awayMission.tug.brigForceFieldDown)
-		mccoyScan(DIR_E, TX_TUG2_015);
+		mccoyScan(DIR_E, TX_TUG2_015, true);
 }
 
 void Room::tug2UseMTricorderOnBrig() {
 	if (_vm->_awayMission.tug.field35 == 6)
-		mccoyScan(DIR_E, TX_TUG2_019);
+		mccoyScan(DIR_E, TX_TUG2_019, true);
 	else if (!_vm->_awayMission.tug.brigForceFieldDown)
-		mccoyScan(DIR_E, TX_TUG2_015);
+		mccoyScan(DIR_E, TX_TUG2_015, true);
 }
 
 void Room::tug2UseMTricorderOnOpenBrig() {
 	if (_vm->_awayMission.tug.brigForceFieldDown)
-		mccoyScan(DIR_E, TX_TUG2_015);
+		mccoyScan(DIR_E, TX_TUG2_015, true);
 }
 
 void Room::tug2UsePhaserAnywhere() {
