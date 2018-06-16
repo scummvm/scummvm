@@ -746,6 +746,110 @@ public:
 	void love0MccoyAccessedConsole();
 	void love0InteractWithConsole();
 
+	// LOVE1
+	void love1Tick1();
+	void love1WalkToDoor3();
+	void love1OpenDoor3();
+	void love1ReachedDoor3();
+	void love1WalkToDoor1();
+	void love1OpenDoor1();
+	void love1ReachedDoor1();
+	void love1WalkToDoor2();
+	void love1OpenDoor2();
+	void love1ReachedDoor2();
+	void love1LookAtLaser();
+	void love1LookAtKirk();
+	void love1LookAtSpock();
+	void love1LookAtMccoy();
+	void love1LookAtRedshirt();
+	void love1LookAnywhere();
+	void love1LookAtNozzle();
+	void love1LookAtLadder();
+	void love1LookAtDoor1Or2();
+	void love1LookAtDoor3();
+	void love1LookAtDistillator();
+	void love1LookAtChamber();
+	void love1LookAtReplicator();
+	void love1LookAtFreezer();
+	void love1LookAtDishes();
+	void love1TalkToKirk();
+	void love1TalkToSpock();
+	void love1TalkToMccoy();
+	void love1TalkToRedshirt();
+	void love1UseMTricorderOnDishes();
+	void love1UseMTricorderAnywhere();
+	void love1UseSTricorderOnReplicator();
+	void love1UseSTricorderOnLaser();
+	void love1UseSTricorderOnFreezer();
+	void love1UseSTricorderAnywhere();
+	void love1UseSTricorderOnDishes();
+	void love1UseSTricorderOnDistillator();
+	void love1GetFreezer();
+	void love1KirkReachedFreezer();
+	void love1KirkGotVirusCulture();
+	void love1GetFromChamber();
+	void love1KirkReachedChamber();
+	void love1KirkGotCureSample();
+	void love1GetFromNozzle();
+	void love1KirkReachedNozzleToGet();
+	void love1KirkGotBottleFromNozzle();
+	void love1UseN2OOnNozzle();
+	void love1UseH2OOnNozzle();
+	void love1UseNH3OnNozzle();
+	void love1UseRLGOnNozzle();
+	void love1KirkReachedNozzleToPut();
+	void love1KirkPutBottleInNozzle();
+	void love1UseAnthingOnNozzle();
+	void love1UseSpockOnReplicator();
+	void love1UseRedshirtOnReplicator();
+	void love1UseMccoyOnReplicator();
+	void love1MccoyReachedReplicator();
+	void love1MccoyUsedReplicator();
+	void love1ChamberClosed();
+	void love1ChamberOpened();
+	void love1UseAnythingOnChamber();
+	void love1UseDishesOnChamber();
+	void love1KirkReachedChamberToPut();
+	void love1ChamberOpenedForDish();
+	void love1KirkPutDishInChamber();
+	void love1UseInsulationOnDistillator();
+	void love1KirkReachedDistillator();
+	void love1KirkGotPolyberylcarbonate();
+	void love1UseKirkOnFreezer();
+	void love1UseRedshirtOnFreezer();
+	void love1UseSpockOnFreezer();
+	void love1UseMccoyOnFreezer();
+	void love1CrewmanReachedFreezer();
+	void love1CrewmanOpenedOrClosedFreezer();
+	void love1UseAnythingOnFreezer();
+	void love1ReachedFreezerWithArbitraryItem();
+	void love1FinishedUsingArbitraryItemOnFreezer();
+	void love1UseAnythingOnReplicator();
+	void love1ReachedReplicatorWithArbitraryItem();
+	void love1FinishedUsingArbitraryItemOnReplicator();
+	void love1UseAnythingOnDistillator();
+	void love1ReachedDistillatorWithArbitraryItem();
+	void love1FinishedUsingArbitraryItemOnDistillator();
+	void love1UseKirkOnLadder();
+	void love1UseSpockOnLadder();
+	void love1UseMccoyOnLadder();
+	void love1UseRedshirtOnLadder();
+	void love1CrewmanReachedLadder();
+	void love1CrewmanDiedFromPhaser();
+	void love1TouchedHotspot0();
+
+	// LOVE2
+	void love2Tick1();
+
+	// LOVE3
+	void love3Tick1();
+
+	// LOVE4
+	void love4Tick1();
+
+	// LOVE5
+	void love5Tick1();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {
@@ -823,6 +927,22 @@ private:
 			byte _8ab; // 0x8ab
 			byte _8ac; // 0x8ac
 		} love0;
+
+		struct {
+			byte door3OpenCounter; // 0xcb
+			byte door1OpenCounter; // 0xcc
+			byte door2OpenCounter; // 0xcd
+			bool walkingToDoor; // 0xce
+			int32 dyingSpeaker; // 0xcf
+			int16 crewmanUsingFreezerRetX; // 0xd1
+			int16 crewmanUsingFreezerRetY; // 0xd3
+			int16 crewmanUsingDevice; // 0xd9
+			int16 itemInNozzle; // 0xdd
+			char bottleAnimation[10]; // 0xdf
+
+			byte _1d2a; // 0x1d2a
+			byte _1d2b; // 0x1d2b
+		} love1;
 
 	} _roomVar;
 };

@@ -91,7 +91,7 @@ void Room::love0OpenDoor1() {
 void Room::love0ReachedDoor1() {
 	_roomVar.love0.door1OpenCounter++;
 	if (_roomVar.love0.door1OpenCounter == 2)
-		loadRoomIndex(3, 1);
+		loadRoomIndex(1, 3);
 }
 
 void Room::love0LookAtConsole() {
