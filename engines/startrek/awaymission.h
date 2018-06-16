@@ -142,16 +142,32 @@ struct AwayMission {
 		struct {
 			bool alreadyStartedMission; // 0x29
 			bool knowAboutVirus; // 0x2a
+			bool field2b; // 0x2b
 			bool field2c; // 0x2c
 			bool field2d; // 0x2d
+			bool chamberHasCure; // 0x2e
+			bool freezerOpen; // 0x2f
+			bool chamberHasDish; // 0x30
+			byte bottleInNozzle; // 0x31
 			byte field36; // 0x36
 			byte field37; // 0x37
+			bool field41; // 0x41
 			bool spockAccessedConsole; // 0x49
 			bool mccoyAccessedConsole; // 0x4a
+			bool gotPolyberylcarbonate; // 0x4b
 			int16 missionScore; // 0x52
 		} love;
 	};
 };
 // Size: 0x129 bytes
+
+// Bottle types for Love's Labor Jeopardized
+enum BottleTypes {
+	BOTTLETYPE_NONE = 0,
+	BOTTLETYPE_N2O = 1,
+	BOTTLETYPE_NH3 = 2,
+	BOTTLETYPE_H2O = 3,
+	BOTTLETYPE_RLG = 4 // Romulan Laughing Gas
+};
 
 #endif

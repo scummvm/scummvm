@@ -31,6 +31,11 @@ MODULE_OBJS = \
 	rooms/tug2.o \
 	rooms/tug3.o \
 	rooms/love0.o \
+	rooms/love1.o \
+	rooms/love2.o \
+	rooms/love3.o \
+	rooms/love4.o \
+	rooms/love5.o \
 	
 
 
