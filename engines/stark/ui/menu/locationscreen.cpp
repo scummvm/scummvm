@@ -92,7 +92,7 @@ void StaticLocationScreen::onMouseMove(const Common::Point &pos) {
 	// The first widget is always the background. It is ignored below.
 
 	if (newHoveredWidget != _hoveredWidgetIndex) {
-		if (_hoveredWidgetIndex > 0) {
+		if (_hoveredWidgetIndex > 0 && _hoveredWidgetIndex < _widgets.size()) {
 			_widgets[_hoveredWidgetIndex]->onMouseLeave();
 		}
 
