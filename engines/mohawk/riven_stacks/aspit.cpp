@@ -116,6 +116,12 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 
 	for (uint i = 0; i < ARRAYSIZE(items); i++) {
 		RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(items[i].blstId);
+
+		if (!hotspot) {
+			warning("Missing hotspot %d", items[i].blstId);
+			continue;
+		}
+
 		Common::Rect hotspotRect = hotspot->getRect();
 
 		Graphics::Surface surface;
