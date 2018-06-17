@@ -327,4 +327,37 @@ void U32String::initWithCStr(const value_type *str, uint32 len) {
 	_str[len] = 0;
 }
 
+// This is a quick and dirty converter.
+//
+// More comprehensive one lives in wintermute/utils/convert_utf.cpp
+U32String convertUtf8ToUtf32(const String &str) {
+	// The String class, and therefore the Font class as well, assume one
+	// character is one byte, but in this case it's actually an UTF-8
+	// string with up to 4 bytes per character. To work around this,
+	// convert it to an U32String before drawing it, because our Font class
+	// can handle that.
+	Common::U32String u32str;
+	uint i = 0;
+	while (i < str.size()) {
+		uint32 chr = 0;
+		if ((str[i] & 0xF8) == 0xF0) {
+			chr |= (str[i++] & 0x07) << 18;
+			chr |= (str[i++] & 0x3F) << 12;
+			chr |= (str[i++] & 0x3F) << 6;
+			chr |= (str[i++] & 0x3F);
+		} else if ((str[i] & 0xF0) == 0xE0) {
+			chr |= (str[i++] & 0x0F) << 12;
+			chr |= (str[i++] & 0x3F) << 6;
+			chr |= (str[i++] & 0x3F);
+		} else if ((str[i] & 0xE0) == 0xC0) {
+			chr |= (str[i++] & 0x1F) << 6;
+			chr |= (str[i++] & 0x3F);
+		} else {
+			chr = (str[i++] & 0x7F);
+		}
+		u32str += chr;
+	}
+	return u32str;
+}
+
 } // End of namespace Common
