@@ -101,6 +101,28 @@ int16 RivenStack::getIdFromName(RivenNameResource nameResource, const Common::St
 	}
 }
 
+void RivenStack::registerName(RivenNameResource nameResource, uint16 nameId, const Common::String &name) {
+	switch (nameResource) {
+		case kVariableNames:
+			_varNames.registerName(nameId, name);
+			break;
+		case kExternalCommandNames:
+			_externalCommandNames.registerName(nameId, name);
+			break;
+		case kStackNames:
+			_stackNames.registerName(nameId, name);
+			break;
+		case kCardNames:
+			_cardNames.registerName(nameId, name);
+			break;
+		case kHotspotNames:
+			_hotspotNames.registerName(nameId, name);
+			break;
+		default:
+			error("Unknown name resource %d", nameResource);
+	}
+}
+
 void RivenStack::loadCardIdMap() {
 	Common::SeekableReadStream *rmapStream = _vm->getResource(ID_RMAP, 1);
 
@@ -507,6 +529,16 @@ int16 RivenNameList::getNameId(const Common::String &name) const {
 	}
 
 	return -1;
+}
+
+void RivenNameList::registerName(uint16 nameId, const Common::String &name) {
+	if (nameId >= _names.size()) {
+		_names.resize(nameId + 1);
+	}
+
+	_names[nameId] = name;
+
+	// We don't add the name to _index, getNameId does not work for names added this way
 }
 
 namespace RivenStacks {

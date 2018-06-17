@@ -64,13 +64,16 @@ ASpit::ASpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(ASpit, xaenablemenuintro);
 	REGISTER_COMMAND(ASpit, xademoquit);
 	REGISTER_COMMAND(ASpit, xaexittomain);
+
+	REGISTER_COMMAND(ASpit, xaSaveGame);
+	registerName(kExternalCommandNames, kExternalSaveGame, "xaSaveGame");
 }
 
 static const char *menuItems[] = {
 	"SETUP",
 	"START NEW GAME",
 	"START SAVED GAME",
-	0
+	"SAVE GAME"
 };
 
 void ASpit::xastartupbtnhide(const ArgumentArray &args) {
@@ -78,10 +81,6 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 	// It's safe to ignore this command.
 
 	warning("xastartupbtnhide");
-
-	Graphics::Surface surface;
-	surface.create(115, 200, _vm->_gfx->getBackScreen()->format);
-	surface.fillRect(Common::Rect(0, 0, 115, 200), 0);
 
 	Common::File file;
 
@@ -104,14 +103,31 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	}
 
-	int y = 70;
+	struct MenuItem {
+		uint16 blstId;
+	};
 
-	for (const char **item = menuItems; *item; item++) {
-		font->drawString(&surface, *item, 0, y, surface.w, 0xffffff);
-		y += fontHeight * 2.5;
+	MenuItem items[] = {
+		{ 22 },
+		{ 16 },
+		{ 23 },
+		{ 24 }
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(items); i++) {
+		RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(items[i].blstId);
+		Common::Rect hotspotRect = hotspot->getRect();
+
+		Graphics::Surface surface;
+		surface.create(hotspotRect.width(), hotspotRect.height(), _vm->_gfx->getBackScreen()->format);
+
+		uint32 textColor = surface.format.RGBToColor(164, 164, 164);
+
+		font->drawString(&surface, menuItems[i], 0, 0, surface.w, textColor);
+
+		_vm->_gfx->copySurfaceToScreen(&surface, hotspotRect.left, hotspotRect.top);
+		surface.free();
 	}
-
-	_vm->_gfx->copySurfaceToScreen(&surface, 485, 160);
 }
 
 void ASpit::xasetupcomplete(const ArgumentArray &args) {
@@ -322,6 +338,11 @@ void ASpit::xatrapbookopen(const ArgumentArray &args) {
 void ASpit::xarestoregame(const ArgumentArray &args) {
 	// Launch the load game dialog
 	_vm->runLoadDialog();
+}
+
+void ASpit::xaSaveGame(const ArgumentArray &args) {
+	// Launch the load game dialog
+	_vm->runSaveDialog();
 }
 
 void ASpit::xadisablemenureturn(const ArgumentArray &args) {

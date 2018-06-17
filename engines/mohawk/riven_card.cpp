@@ -25,6 +25,7 @@
 #include "mohawk/cursors.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_stack.h"
+#include "mohawk/riven_stacks/aspit.h"
 #include "mohawk/riven_video.h"
 
 #include "mohawk/resource.h"
@@ -81,6 +82,7 @@ void RivenCard::applyPatches(uint16 id) {
 	}
 
 	applyPropertiesPatch22118(globalId);
+	applyPropertiesPatchE2E(globalId);
 }
 
 void RivenCard::applyPropertiesPatch8EB7(uint32 globalId) {
@@ -387,6 +389,50 @@ void RivenCard::applyPropertiesPatch22118(uint32 globalId) {
 		loadScript += patchScript;
 
 		debugC(kRivenDebugPatches, "Applied incorrect steam sounds (2/2) to card %x", globalId);
+	}
+}
+
+void RivenCard::applyPropertiesPatchE2E(uint32 globalId) {
+	// The main menu in the Myst 25th anniversary version is patched to include new items:
+	//   - Save game
+	if (globalId == 0xE2E) {
+		uint16 patchData[] = {
+				24,               // blstId
+				0xFFFF,           // name
+				485,              // left
+				311,              // top
+				602,              // right
+				326,              // bottom
+				0,                // u0
+				kRivenMainCursor, // cursor
+				4,                // index
+				0xFFFF,           // transition offset
+				0,                // flags
+				2,                // script count
+
+				kMouseDownScript,                      // script type
+				1,                                     // command count
+				kRivenCommandRunExternal,              // command type
+				2,                                     // argument count
+				RivenStacks::ASpit::kExternalSaveGame, // external command name id
+				0,                                     // external argument count
+
+				kMouseInsideScript,        // script type
+				1,                         // command count
+				kRivenCommandChangeCursor, // command type
+				1,                         // argument count
+				kRivenOpenHandCursor       // cursor
+		};
+
+		// Script data is expected to be in big endian
+		for (uint i = 0; i < ARRAYSIZE(patchData); i++) {
+			patchData[i] = TO_BE_16(patchData[i]);
+		}
+
+		// Add the new hotspot to the existing ones
+		Common::MemoryReadStream patchStream((const byte *)(patchData), ARRAYSIZE(patchData) * sizeof(uint16));
+		RivenHotspot *newHotspot = new RivenHotspot(_vm, &patchStream);
+		_hotspots.push_back(newHotspot);
 	}
 }
 

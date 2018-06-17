@@ -192,6 +192,8 @@ private:
 	Common::Array<MLSTRecord> _movieList;
 	Common::Array<HotspotEnableRecord> _hotspotEnableList;
 	Common::Array<WaterEffectRecord> _waterEffectList;
+
+	void applyPropertiesPatchE2E(uint32 globalId);
 };
 
 struct MLSTRecord {

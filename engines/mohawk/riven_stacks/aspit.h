@@ -35,6 +35,10 @@ class ASpit : public RivenStack {
 public:
 	ASpit(MohawkEngine_Riven *vm);
 
+	enum PatchedExternalCommandNameId {
+		kExternalSaveGame = 20
+	};
+
 	// External commands - Main Menu
 	void xastartupbtnhide(const ArgumentArray &args);
 	void xasetupcomplete(const ArgumentArray &args);
@@ -58,6 +62,9 @@ public:
 
 	// External commands - DVD-specific
 	void xarestoregame(const ArgumentArray &args);
+
+	// External commands - ScummVM 25th anniversary specific
+	void xaSaveGame(const ArgumentArray &args);
 
 	// External commands - Demo-specific
 	void xadisablemenureturn(const ArgumentArray &args);
