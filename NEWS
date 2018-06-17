@@ -27,6 +27,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed original speech glitch on submarine in Indiana Jones and the Fate of Atlantis.
      Users need to recompress their monster.sou using an up-to-date version of scummvm-tools
      for this to take effect when using compressed audio.
+   - Fixed an issue in the wig maker room in the German version of SPY Fox 3: Operation Ozone
+     which makes the game completable.
 
  Tinsel:
    - Fix loading Discworld 1 savegames from the launcher where Rincewind had a held item
