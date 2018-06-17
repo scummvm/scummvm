@@ -27,6 +27,7 @@
 #include "engines/stark/services/diary.h"
 #include "engines/stark/services/gamechapter.h"
 #include "engines/stark/services/staticprovider.h"
+#include "engines/stark/services/global.h"
 
 #include "engines/stark/gfx/renderentry.h"
 
@@ -38,7 +39,7 @@ DialogScreen::DialogScreen(Gfx::Driver *gfx, Cursor *cursor) :
 		StaticLocationScreen(gfx, cursor, "DiaryLog", Screen::kScreenDialog),
 		_startTitleIndex(0), _nextTitleIndex(0),
 		_startLineIndex(0), _nextLineIndex(0),
-		_curMaxChapter(0),
+		_curMaxChapter(0), _curLogIndex(0),
 		_indexFrame(nullptr),
 		_logFrame(nullptr),
 		_chapterTitleTexts(),
@@ -70,12 +71,12 @@ void DialogScreen::open() {
 			
 	_widgets.push_back(new StaticLocationWidget(
 			"IndexBack",
-			CLICK_HANDLER(DialogScreen, backIndexHandler),
+			CLICK_HANDLER(DialogScreen, indexBackHandler),
 			nullptr));
 			
 	_widgets.push_back(new StaticLocationWidget(
 			"IndexNext",
-			CLICK_HANDLER(DialogScreen, nextIndexHandler),
+			CLICK_HANDLER(DialogScreen, indexNextHandler),
 			nullptr));
 			
 	_widgets.push_back(new StaticLocationWidget(
@@ -86,7 +87,7 @@ void DialogScreen::open() {
 			
 	_widgets.push_back(new StaticLocationWidget(
 			"Index",
-			nullptr,
+			CLICK_HANDLER(DialogScreen, backIndexHandler),
 			nullptr));
 	_widgets.back()->setVisible(false);
 			
@@ -110,6 +111,7 @@ void DialogScreen::open() {
 
 void DialogScreen::close() {
 	freeChapterTitleTexts();
+	freeDialogLineTexts();
 	_prevTitleIndexStack.clear();
 	StaticLocationScreen::close();
 }
@@ -119,6 +121,22 @@ void DialogScreen::onScreenChanged() {
 	for (uint i = 0; i < _chapterTitleTexts.size(); ++i) {
 		_chapterTitleTexts[i]->onScreenChanged();
 	}
+	for (uint i = 0; i < _dialogLineTexts.size(); ++i) {
+		_dialogLineTexts[i]->onScreenChanged();
+	}
+}
+
+void DialogScreen::onDialogClick(uint logIndex) {
+	freeLogTitleWidgets();
+	freeChapterTitleTexts();
+
+	_widgets[kWidgetIndexBack]->setVisible(false);
+	_widgets[kWidgetIndexNext]->setVisible(false);
+	_widgets[kWidgetIndex]->setVisible(true);
+
+	_nextLineIndex = 0;
+	_curLogIndex = logIndex;
+	loadDialog();
 }
 
 void DialogScreen::onRender() {
@@ -126,31 +144,33 @@ void DialogScreen::onRender() {
 	for (uint i = 0; i < _chapterTitleTexts.size(); ++i) {
 		_chapterTitleTexts[i]->render();
 	}
+	for (uint i = 0; i < _dialogLineTexts.size(); ++i) {
+		_dialogLineTexts[i]->render();
+	}
 }
 
 void DialogScreen::loadIndex() {
-	freeDialogWidgets();
+	freeLogTitleWidgets();
 	freeChapterTitleTexts();
 
-	_widgets[kWidgetIndexBack]->setVisible(_nextTitleIndex > 0);
 	_startTitleIndex = _nextTitleIndex;
 
 	Common::Point pos = _indexFrame->getPosition();
 	uint bottom = _indexFrame->getText()->getTargetHeight() + pos.y;
 	uint height;
 	ChapterTitleText *chapterTitleText;
-	DialogWidget *dialogWidget;
+	DialogTitleWidget *dialogTitleWidget;
 
 	_curMaxChapter = 99;
 	while (_nextTitleIndex < StarkDiary->countDialog()) {
 		height = 0;
 		chapterTitleText = nullptr;
 
-		dialogWidget = new DialogWidget(_gfx, _nextTitleIndex);
-		height += dialogWidget->getHeight();
+		dialogTitleWidget = new DialogTitleWidget(this, _gfx, _nextTitleIndex);
+		height += dialogTitleWidget->getHeight();
 
-		if (dialogWidget->getChapter() != _curMaxChapter) {
-			_curMaxChapter = dialogWidget->getChapter();
+		if (dialogTitleWidget->getChapter() != _curMaxChapter) {
+			_curMaxChapter = dialogTitleWidget->getChapter();
 			chapterTitleText = new ChapterTitleText(_gfx, _curMaxChapter);
 			height += chapterTitleText->getHeight() + 8;
 		}
@@ -164,38 +184,64 @@ void DialogScreen::loadIndex() {
 			chapterTitleText->setPosition(pos);
 			pos.y += chapterTitleText->getHeight() + 4;
 		}
-		dialogWidget->setPosition(pos);
-		pos.y += dialogWidget->getHeight() + 4;
+		dialogTitleWidget->setPosition(pos);
+		pos.y += dialogTitleWidget->getHeight() + 4;
 
-		_widgets.push_back(dialogWidget);
+		_widgets.push_back(dialogTitleWidget);
 		if (chapterTitleText) {
 			_chapterTitleTexts.push_back(chapterTitleText);
+		}
+
+		if (pos.y > bottom) {
+			break;
 		}
 
 		++_nextTitleIndex;
 	}
 
+	_widgets[kWidgetIndexBack]->setVisible(_startTitleIndex > 0);
 	_widgets[kWidgetIndexNext]->setVisible(_nextTitleIndex < StarkDiary->countDialog());
+}
+
+void DialogScreen::loadDialog() {
+	freeDialogLineTexts();
+
+	Common::Point pos = _logFrame->getPosition();
+	uint boxWidth = _logFrame->getText()->getTargetWidth();
+
+	_dialogLineTexts.push_back(new DialogLineText(_gfx, _curLogIndex, _nextLineIndex));
+	_dialogLineTexts.back()->setPosition(pos, boxWidth);
 }
 
 void DialogScreen::backHandler() {
 	StarkUserInterface->backPrevScreen();
 }
 
-void DialogScreen::nextIndexHandler() {
+void DialogScreen::indexNextHandler() {
 	_prevTitleIndexStack.push_back(_startTitleIndex);
 	loadIndex();
 }
 
-void DialogScreen::backIndexHandler() {
+void DialogScreen::indexBackHandler() {
 	_nextTitleIndex = _prevTitleIndexStack.back();
 	_prevTitleIndexStack.pop_back();
 	loadIndex();
 }
 
-void DialogScreen::freeDialogWidgets() {
+void DialogScreen::backIndexHandler() {
+	freeDialogLineTexts();
+
+	_widgets[kWidgetLogBack]->setVisible(false);
+	_widgets[kWidgetLogNext]->setVisible(false);
+	_widgets[kWidgetIndex]->setVisible(false);
+
+	_nextTitleIndex = _startTitleIndex;
+	loadIndex();
+}
+
+void DialogScreen::freeLogTitleWidgets() {
 	uint size = _widgets.size();
-	for (uint i = 0; i < size - _dialogWidgetOffset; ++i) {
+	for (uint i = 0; i < size - _dialogTitleWidgetOffset; ++i) {
 		delete _widgets.back();
 		_widgets.pop_back();
 	}
@@ -206,6 +252,13 @@ void DialogScreen::freeChapterTitleTexts() {
 		delete _chapterTitleTexts[i];
 	}
 	_chapterTitleTexts.clear();
+}
+
+void DialogScreen::freeDialogLineTexts() {
+	for (uint i = 0; i < _dialogLineTexts.size(); ++i) {
+		delete _dialogLineTexts[i];
+	}
+	_dialogLineTexts.clear();
 }
 
 ChapterTitleText::ChapterTitleText(Gfx::Driver *gfx, uint chapter) :
@@ -221,9 +274,44 @@ ChapterTitleText::ChapterTitleText(Gfx::Driver *gfx, uint chapter) :
 	_text.setFont(FontProvider::kCustomFont, 5);
 }
 
-DialogWidget::DialogWidget(Gfx::Driver *gfx, uint logIndex) :
+DialogLineText::DialogLineText(Gfx::Driver *gfx, uint logIndex, uint lineIndex) :
+		_namePos(), _linePos(),
+		_nameText(gfx), _lineText(gfx) {
+	Diary::ConversationLogLine logLine = StarkDiary->getDialog(logIndex).lines[lineIndex];
+
+	Common::String name = StarkGlobal->getCharacterName(logLine.characterId);
+	name.toUppercase();
+
+	uint color = name == "APRIL" ? _textColorApril : _textColorNormal;
+
+	_nameText.setText(name);
+	_nameText.setColor(color);
+	_nameText.setFont(FontProvider::kCustomFont, 5);
+
+	_lineText.setText(logLine.line);
+	_lineText.setColor(color);
+	_lineText.setFont(FontProvider::kCustomFont, 3);
+
+	Common::Rect rect = _nameText.getRect();
+	_nameWidth = rect.right - rect.left;
+	_nameHeight = rect.bottom - rect.top;
+
+	rect = _lineText.getRect();
+	_lineHeight = rect.bottom - rect.top;
+}
+
+void DialogLineText::setPosition(const Common::Point &pos, uint boxWidth) {
+	_namePos.x = pos.x + (boxWidth - _nameWidth) / 2;
+	_namePos.y = pos.y;
+
+	_linePos.x = pos.x;
+	_linePos.y = pos.y + _nameHeight + 4;
+}
+
+DialogTitleWidget::DialogTitleWidget(DialogScreen *screen, Gfx::Driver *gfx, uint logIndex) :
 		StaticLocationWidget(nullptr, nullptr, nullptr),
-		_logIndex(logIndex), _pos(), _text(gfx) {
+		_logIndex(logIndex), _pos(), _text(gfx),
+		_screen(screen) {
 	const Diary::ConversationLog &dialog = StarkDiary->getDialog(_logIndex);
 
 	_chapter = dialog.chapter;
@@ -237,16 +325,16 @@ DialogWidget::DialogWidget(Gfx::Driver *gfx, uint logIndex) :
 	_height = rect.bottom - rect.top;
 }
 
-bool DialogWidget::isMouseInside(const Common::Point &mousePos) const {
+bool DialogTitleWidget::isMouseInside(const Common::Point &mousePos) const {
 	return mousePos.x >= _pos.x && mousePos.x <= _pos.x + _width &&
 	       mousePos.y >= _pos.y && mousePos.y <= _pos.y + _height;
 }
 
-void DialogWidget::onClick() {
-	debug("Click %d", _logIndex);
+void DialogTitleWidget::onClick() {
+	_screen->onDialogClick(_logIndex);
 }
 
-void DialogWidget::onScreenChanged() {
+void DialogTitleWidget::onScreenChanged() {
 	_text.resetTexture();
 }
 

@@ -30,6 +30,7 @@
 namespace Stark {
 
 class ChapterTitleText;
+class DialogLineText;
 
 /**
  * The coversation log menu
@@ -44,32 +45,41 @@ public:
 	void close() override;
 	void onScreenChanged() override;
 
+	void onDialogClick(uint logIndex);
+
 protected:
 	// Window API
 	void onRender() override;
 
 private:
-	static const uint _dialogWidgetOffset = 8;
+	static const uint _dialogTitleWidgetOffset = 8;
 
 	enum WidgetIndex {
 		kWidgetIndexBack = 3,
-		kWidgetIndexNext = 4
+		kWidgetIndexNext = 4,
+		kWidgetLogBack = 5,
+		kWidgetIndex = 6,
+		kWidgetLogNext = 7
 	};
 
 	Gfx::RenderEntry *_indexFrame, *_logFrame;
-	Common::Array<ChapterTitleText *> _chapterTitleTexts;
 	uint _startTitleIndex, _nextTitleIndex, _startLineIndex, _nextLineIndex;
-	uint _curMaxChapter;
+	uint _curMaxChapter, _curLogIndex;
+	Common::Array<ChapterTitleText *> _chapterTitleTexts;
 	Common::Array<uint> _prevTitleIndexStack;
+	Common::Array<DialogLineText *> _dialogLineTexts;
 
 	void loadIndex();
+	void loadDialog();
 
 	void backHandler();
-	void nextIndexHandler();
+	void indexBackHandler();
+	void indexNextHandler();
 	void backIndexHandler();
 
-	void freeDialogWidgets();
+	void freeLogTitleWidgets();
 	void freeChapterTitleTexts();
+	void freeDialogLineTexts();
 };
 
 /**
@@ -94,12 +104,43 @@ private:
 };
 
 /**
+ * The dialog text displayed
+ */
+class DialogLineText {
+public:
+	DialogLineText(Gfx::Driver *gfx, uint logIndex, uint lineIndex);
+	~DialogLineText() {}
+
+	void setPosition(const Common::Point &pos, uint boxWidth);
+	uint getHeight() { return _nameHeight + _lineHeight + 4; }
+
+	void render() {
+		_nameText.render(_namePos);
+		_lineText.render(_linePos);
+	}
+
+	void onScreenChanged() {
+		_nameText.resetTexture();
+		_lineText.resetTexture();
+	}
+
+private:
+	static const uint32 _textColorApril = 0xFF040568;
+	static const uint32 _textColorNormal = 0xFF961E1E;
+
+	Common::Point _namePos, _linePos;
+	VisualText _nameText, _lineText;
+
+	uint _nameWidth, _nameHeight, _lineHeight;
+};
+
+/**
  * The dialog widget
  */
-class DialogWidget : public StaticLocationWidget {
+class DialogTitleWidget : public StaticLocationWidget {
 public:
-	DialogWidget(Gfx::Driver *gfx, uint logIndex);
-	virtual ~DialogWidget() {}
+	DialogTitleWidget(DialogScreen *screen, Gfx::Driver *gfx, uint logIndex);
+	virtual ~DialogTitleWidget() {}
 
 	void setPosition(const Common::Point &pos) { _pos = pos; }
 	uint getHeight() { return _height; }
@@ -118,9 +159,12 @@ private:
 	static const uint32 _textColorHovered = 0xFF961E1E;
 	static const uint32 _textColorDefault = 0xFF000000;
 
-	uint _logIndex, _chapter, _width, _height;
+	uint _logIndex, _chapter;
+	int _width, _height;
 	Common::Point _pos;
 	VisualText _text;
+
+	DialogScreen *_screen;
 };
 
 } // End of namespace Stark
