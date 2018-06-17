@@ -68,6 +68,7 @@ private:
 	Common::Array<ChapterTitleText *> _chapterTitleTexts;
 	Common::Array<uint> _prevTitleIndexStack;
 	Common::Array<DialogLineText *> _dialogLineTexts;
+	Common::Array<uint> _prevLineIndexStack;
 
 	void loadIndex();
 	void loadDialog();
@@ -75,7 +76,9 @@ private:
 	void backHandler();
 	void indexBackHandler();
 	void indexNextHandler();
+	void logBackHandler();
 	void backIndexHandler();
+	void logNextHandler();
 
 	void freeLogTitleWidgets();
 	void freeChapterTitleTexts();
@@ -108,10 +111,10 @@ private:
  */
 class DialogLineText {
 public:
-	DialogLineText(Gfx::Driver *gfx, uint logIndex, uint lineIndex);
+	DialogLineText(Gfx::Driver *gfx, uint logIndex, uint lineIndex, uint boxWidth);
 	~DialogLineText() {}
 
-	void setPosition(const Common::Point &pos, uint boxWidth);
+	void setPosition(const Common::Point &pos);
 	uint getHeight() { return _nameHeight + _lineHeight + 4; }
 
 	void render() {
@@ -131,7 +134,7 @@ private:
 	Common::Point _namePos, _linePos;
 	VisualText _nameText, _lineText;
 
-	uint _nameWidth, _nameHeight, _lineHeight;
+	uint _nameWidth, _nameHeight, _lineHeight, _boxWidth;
 };
 
 /**

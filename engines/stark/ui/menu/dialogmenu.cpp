@@ -43,12 +43,12 @@ DialogScreen::DialogScreen(Gfx::Driver *gfx, Cursor *cursor) :
 		_indexFrame(nullptr),
 		_logFrame(nullptr),
 		_chapterTitleTexts(),
-		_prevTitleIndexStack() {
+		_prevTitleIndexStack(),
+		_prevLineIndexStack() {
 }
 
 DialogScreen::~DialogScreen() {
 	freeChapterTitleTexts();
-	_prevTitleIndexStack.clear();
 }
 
 void DialogScreen::open() {
@@ -81,7 +81,7 @@ void DialogScreen::open() {
 			
 	_widgets.push_back(new StaticLocationWidget(
 			"LogBack",
-			nullptr,
+			CLICK_HANDLER(DialogScreen, logBackHandler),
 			nullptr));
 	_widgets.back()->setVisible(false);
 			
@@ -93,7 +93,7 @@ void DialogScreen::open() {
 			
 	_widgets.push_back(new StaticLocationWidget(
 			"LogNext",
-			nullptr,
+			CLICK_HANDLER(DialogScreen, logNextHandler),
 			nullptr));
 	_widgets.back()->setVisible(false);
 	
@@ -113,6 +113,7 @@ void DialogScreen::close() {
 	freeChapterTitleTexts();
 	freeDialogLineTexts();
 	_prevTitleIndexStack.clear();
+	_prevLineIndexStack.clear();
 	StaticLocationScreen::close();
 }
 
@@ -150,6 +151,8 @@ void DialogScreen::onRender() {
 }
 
 void DialogScreen::loadIndex() {
+	static const uint space = 4;
+
 	freeLogTitleWidgets();
 	freeChapterTitleTexts();
 
@@ -172,7 +175,7 @@ void DialogScreen::loadIndex() {
 		if (dialogTitleWidget->getChapter() != _curMaxChapter) {
 			_curMaxChapter = dialogTitleWidget->getChapter();
 			chapterTitleText = new ChapterTitleText(_gfx, _curMaxChapter);
-			height += chapterTitleText->getHeight() + 8;
+			height += chapterTitleText->getHeight() + 2 * space;
 		}
 
 		if (pos.y + height > bottom) {
@@ -180,23 +183,23 @@ void DialogScreen::loadIndex() {
 		}
 
 		if (chapterTitleText) {
-			pos.y += 4;
+			pos.y += space;
 			chapterTitleText->setPosition(pos);
-			pos.y += chapterTitleText->getHeight() + 4;
+			pos.y += chapterTitleText->getHeight() + space;
 		}
 		dialogTitleWidget->setPosition(pos);
-		pos.y += dialogTitleWidget->getHeight() + 4;
+		pos.y += dialogTitleWidget->getHeight() + space;
 
 		_widgets.push_back(dialogTitleWidget);
 		if (chapterTitleText) {
 			_chapterTitleTexts.push_back(chapterTitleText);
 		}
 
+		++_nextTitleIndex;
+
 		if (pos.y > bottom) {
 			break;
 		}
-
-		++_nextTitleIndex;
 	}
 
 	_widgets[kWidgetIndexBack]->setVisible(_startTitleIndex > 0);
@@ -204,22 +207,44 @@ void DialogScreen::loadIndex() {
 }
 
 void DialogScreen::loadDialog() {
+	static const uint space = 16;
+
 	freeDialogLineTexts();
+
+	_startLineIndex = _nextLineIndex;
 
 	Common::Point pos = _logFrame->getPosition();
 	uint boxWidth = _logFrame->getText()->getTargetWidth();
+	uint bottom = _logFrame->getText()->getTargetHeight() + pos.y;
+	uint height;
+	DialogLineText *dialogLineText;
 
-	_dialogLineTexts.push_back(new DialogLineText(_gfx, _curLogIndex, _nextLineIndex));
-	_dialogLineTexts.back()->setPosition(pos, boxWidth);
+	Diary::ConversationLog dialog = StarkDiary->getDialog(_curLogIndex);
+
+	while (_nextLineIndex < dialog.lines.size()) {
+		height = 0;
+
+		dialogLineText = new DialogLineText(_gfx, _curLogIndex, _nextLineIndex, boxWidth);
+		height = dialogLineText->getHeight();
+
+		if (pos.y + height + space > bottom) {
+			break;
+		}
+
+		dialogLineText->setPosition(pos);
+		_dialogLineTexts.push_back(dialogLineText);
+
+		pos.y += height + space;
+
+		++_nextLineIndex;
+	}
+
+	_widgets[kWidgetLogBack]->setVisible(_startLineIndex > 0);
+	_widgets[kWidgetLogNext]->setVisible(_nextLineIndex < dialog.lines.size());
 }
 
 void DialogScreen::backHandler() {
 	StarkUserInterface->backPrevScreen();
-}
-
-void DialogScreen::indexNextHandler() {
-	_prevTitleIndexStack.push_back(_startTitleIndex);
-	loadIndex();
 }
 
 void DialogScreen::indexBackHandler() {
@@ -228,8 +253,20 @@ void DialogScreen::indexBackHandler() {
 	loadIndex();
 }
 
+void DialogScreen::indexNextHandler() {
+	_prevTitleIndexStack.push_back(_startTitleIndex);
+	loadIndex();
+}
+
+void DialogScreen::logBackHandler() {
+	_nextLineIndex = _prevLineIndexStack.back();
+	_prevLineIndexStack.pop_back();
+	loadDialog();
+}
+
 void DialogScreen::backIndexHandler() {
 	freeDialogLineTexts();
+	_prevLineIndexStack.clear();
 
 	_widgets[kWidgetLogBack]->setVisible(false);
 	_widgets[kWidgetLogNext]->setVisible(false);
@@ -237,6 +274,11 @@ void DialogScreen::backIndexHandler() {
 
 	_nextTitleIndex = _startTitleIndex;
 	loadIndex();
+}
+
+void DialogScreen::logNextHandler() {
+	_prevLineIndexStack.push_back(_startLineIndex);
+	loadDialog();
 }
 
 void DialogScreen::freeLogTitleWidgets() {
@@ -274,8 +316,8 @@ ChapterTitleText::ChapterTitleText(Gfx::Driver *gfx, uint chapter) :
 	_text.setFont(FontProvider::kCustomFont, 5);
 }
 
-DialogLineText::DialogLineText(Gfx::Driver *gfx, uint logIndex, uint lineIndex) :
-		_namePos(), _linePos(),
+DialogLineText::DialogLineText(Gfx::Driver *gfx, uint logIndex, uint lineIndex, uint boxWidth) :
+		_namePos(), _linePos(), _boxWidth(boxWidth),
 		_nameText(gfx), _lineText(gfx) {
 	Diary::ConversationLogLine logLine = StarkDiary->getDialog(logIndex).lines[lineIndex];
 
@@ -288,6 +330,7 @@ DialogLineText::DialogLineText(Gfx::Driver *gfx, uint logIndex, uint lineIndex) 
 	_nameText.setColor(color);
 	_nameText.setFont(FontProvider::kCustomFont, 5);
 
+	_lineText.setTargetWidth(_boxWidth);
 	_lineText.setText(logLine.line);
 	_lineText.setColor(color);
 	_lineText.setFont(FontProvider::kCustomFont, 3);
@@ -300,12 +343,14 @@ DialogLineText::DialogLineText(Gfx::Driver *gfx, uint logIndex, uint lineIndex) 
 	_lineHeight = rect.bottom - rect.top;
 }
 
-void DialogLineText::setPosition(const Common::Point &pos, uint boxWidth) {
-	_namePos.x = pos.x + (boxWidth - _nameWidth) / 2;
+void DialogLineText::setPosition(const Common::Point &pos) {
+	static const uint space = 4;
+
+	_namePos.x = pos.x + (_boxWidth - _nameWidth) / 2;
 	_namePos.y = pos.y;
 
 	_linePos.x = pos.x;
-	_linePos.y = pos.y + _nameHeight + 4;
+	_linePos.y = pos.y + _nameHeight + space;
 }
 
 DialogTitleWidget::DialogTitleWidget(DialogScreen *screen, Gfx::Driver *gfx, uint logIndex) :
