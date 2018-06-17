@@ -55,6 +55,9 @@ public:
 
 
 public:
+	bool canAddContext(const Common::String name);
+
+
 	SequenceContext *_context;
 	Sequencer *_sequencer;
 	Array<SequenceItem *> _items;

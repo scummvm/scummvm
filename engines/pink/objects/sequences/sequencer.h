@@ -42,9 +42,11 @@ public:
 
 	virtual void deserialize(Archive &archive);
 	Sequence *findSequence(const Common::String &name);
-	SequenceActorState *findSequenceActorState(const Common::String &name);
+	SequenceActorState *findMainSequenceActorState(const Common::String &name);
+	SequenceActorState *findParralelSequenceActorState(const Common::String &name);
 
 	void authorSequence(Sequence *sequence, bool unk);
+	void authorParallelSequence(Sequence *seqeunce, bool unk);
 
 	void removeContext(SequenceContext *context);
 
@@ -56,11 +58,14 @@ public:
 
 	void loadState(Archive &archive);
 	void saveState(Archive &archive);
+
 public:
 	void updateTimers();
+	SequenceContext * isContextConflicts(SequenceContext *context);
+
 
 	SequenceContext *_context;
-	// context array
+	Common::Array<SequenceContext *> _parrallelContexts;
 	Array<Sequence *> _sequences;
 	Array<SeqTimer *> _timers;
 	Common::String _currentSequenceName;

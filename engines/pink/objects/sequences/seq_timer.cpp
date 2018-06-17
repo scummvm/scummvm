@@ -54,7 +54,8 @@ void SeqTimer::update() {
 
 	Actor *actor = _sequencer->_page->findActor(_actor);
 	assert(actor);
-	if (!_sequencer->findSequenceActorState(actor->getName())) {
+	if (!_sequencer->findMainSequenceActorState(actor->getName()) &&
+		!_sequencer->findParralelSequenceActorState(actor->getName())) {
 		actor->onTimerMessage();
 	}
 }

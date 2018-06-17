@@ -24,7 +24,7 @@
 
 #include "pink/archive.h"
 #include "pink/pink.h"
-#include "pink/objects/actors/actor.h"
+#include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/sequencer.h"
 #include "pink/objects/sequences/sequence.h"
@@ -60,18 +60,59 @@ Sequence *Sequencer::findSequence(const Common::String &name) {
 }
 
 void Sequencer::authorSequence(Sequence *sequence, bool unk) {
-	if (_context) {
-
-	}
+	assert(!_context);
 
 	if (sequence) {
-		_context = new SequenceContext(sequence, this);
-		//unload array of unknown objects
+		SequenceContext *context = new SequenceContext(sequence, this);
+
+		SequenceContext *confilct;
+		while(confilct = isContextConflicts(context))
+			confilct->_sequence->end();
+
+		_context = context;
 		_currentSequenceName = sequence->getName();
 		sequence->init(unk);
-	} else
-		_currentSequenceName.clear();
+	}
 }
+
+void Sequencer::authorParallelSequence(Sequence *seqeunce, bool unk) {
+	if (_context && _context->_sequence == seqeunce)
+		return;
+
+	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
+		if (_parrallelContexts[i]->_sequence == seqeunce)
+			return;
+	}
+
+	const Common::String leadName = _page->getLeadActor()->getName();
+
+	SequenceContext *context = new SequenceContext(seqeunce, this);
+
+	for (uint i = 0; i < context->_states.size(); ++i) {
+		if (context->_states[i].getActor() == leadName) {
+			delete context;
+			return;
+		}
+	}
+
+	for (uint i = 0; i < context->_states.size(); ++i) {
+		if (findMainSequenceActorState(context->_states[i].getActor())) {
+			delete context;
+			return;
+		}
+	}
+
+	for (uint i = 0; i < context->_states.size(); ++i) {
+		if (findParralelSequenceActorState(context->_states[i].getActor())) {
+			delete context;
+			return;
+		}
+	}
+
+	_parrallelContexts.push_back(context);
+	seqeunce->start(unk);
+}
+
 
 void Sequencer::toConsole() {
 	debug("Sequencer:");
@@ -86,12 +127,27 @@ void Sequencer::toConsole() {
 void Sequencer::update() {
 	if (_context)
 		_context->_sequence->update();
+
+	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
+		_parrallelContexts[i]->_sequence->update();
+	}
+
 	updateTimers();
 }
 
 void Sequencer::removeContext(SequenceContext *context) {
-	delete _context;
-	_context = nullptr;
+	if (context == _context) {
+		delete _context;
+		_context = nullptr;
+		return;
+	}
+
+	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
+		if (context == _parrallelContexts[i]->_sequence->_context) {
+			_parrallelContexts.remove_at(i);
+			break;
+		}
+	}
 }
 
 void Sequencer::skipSubSequence() {
@@ -119,7 +175,7 @@ void Sequencer::updateTimers() {
 	}
 }
 
-SequenceActorState *Sequencer::findSequenceActorState(const Common::String &name) {
+SequenceActorState *Sequencer::findMainSequenceActorState(const Common::String &name) {
 	if (!_context)
 		return nullptr;
 
@@ -130,6 +186,18 @@ SequenceActorState *Sequencer::findSequenceActorState(const Common::String &name
 
 	return nullptr;
 }
+
+SequenceActorState *Sequencer::findParralelSequenceActorState(const Common::String &name) {
+	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
+		for (uint j = 0; j < _parrallelContexts[i]->_states.size(); ++j) {
+			if (_parrallelContexts[i]->_states[j].getActor() == name)
+				return &_parrallelContexts[i]->_states[j];
+		}
+	}
+
+	return nullptr;
+}
+
 
 void Sequencer::loadState(Archive &archive) {
 	Sequence *sequence = findSequence(archive.readString());
@@ -142,6 +210,18 @@ void Sequencer::saveState(Archive &archive) {
 		sequenceName = _context->_sequence->getName();
 	archive.writeString(sequenceName);
 	// add pokus specific
+}
+
+SequenceContext * Sequencer::isContextConflicts(SequenceContext *context) {
+	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
+		for (uint j = 0; j < _parrallelContexts[i]->_states.size(); ++j) {
+			for (int k = 0; k < context->_states.size(); ++k) {
+				if (_parrallelContexts[i]->_states[j].getActor() == context->_states[k].getActor())
+					return _parrallelContexts[i];
+			}
+		}
+	}
+	return nullptr;
 }
 
 } // End of namespace Pink

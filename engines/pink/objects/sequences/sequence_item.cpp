@@ -51,8 +51,9 @@ bool SequenceItem::execute(int index, Sequence *sequence, bool unk2) {
 
 	actor->setAction(action, unk2);
 
-	SequenceActorState *state = sequence->_sequencer->findSequenceActorState(_actor);
-	state->_index = index;
+	SequenceActorState *state = sequence->_sequencer->findMainSequenceActorState(_actor);
+	if (state)
+		state->_index = index;
 	sequence->_context->_actor = isLeader() ? actor : sequence->_context->_actor;
 
 	return true;
@@ -81,7 +82,7 @@ void SequenceItemLeaderAudio::toConsole() {
 }
 
 bool SequenceItemDefaultAction::execute(int index, Sequence *sequence, bool unk2) {
-	SequenceActorState *state = sequence->_sequencer->findSequenceActorState(_actor);
+	SequenceActorState *state = sequence->_sequencer->findMainSequenceActorState(_actor);
 	state->_actionName = _action;
 	return true;
 }
