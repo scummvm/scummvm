@@ -515,7 +515,6 @@ PlainGameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String 
 
 DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const {
 	DetectedGames candidates;
-	Common::String path = fslist.begin()->getParent().getPath();
 	PluginList plugins;
 	PluginList::const_iterator iter;
 	PluginManager::instance().loadFirstPlugin();
@@ -529,7 +528,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 
 			for (uint i = 0; i < engineCandidates.size(); i++) {
 				engineCandidates[i].engineName = metaEngine.getName();
-				engineCandidates[i].path = path;
+				engineCandidates[i].path = fslist.begin()->getParent().getPath();
 				candidates.push_back(engineCandidates[i]);
 			}
 
