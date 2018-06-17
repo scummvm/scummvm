@@ -2,11 +2,13 @@ MODULE := engines/pink
 
 MODULE_OBJS = \
 	archive.o \
+	audio_info_mgr.o \
 	cel_decoder.o \
 	cursor_mgr.o \
 	detection.o \
 	director.o \
 	file.o \
+	pda_mgr.o \
 	pink.o \
 	resource_mgr.o \
 	sound.o \
@@ -27,14 +29,16 @@ MODULE_OBJS = \
 	objects/actions/action_text.o \
 	objects/actions/walk_action.o \
 	objects/actors/actor.o \
+	objects/actors/audio_info_pda_button.o \
 	objects/actors/lead_actor.o \
 	objects/actors/pda_button_actor.o \
 	objects/actors/supporting_actor.o \
 	objects/handlers/handler.o \
 	objects/handlers/handler_mgr.o \
 	objects/handlers/handler_timer.o \
-	objects/pages/page.o \
 	objects/pages/game_page.o \
+	objects/pages/page.o \
+	objects/pages/pda_page.o \
 	objects/sequences/seq_timer.o \
 	objects/sequences/sequence.o \
 	objects/sequences/sequence_context.o \
