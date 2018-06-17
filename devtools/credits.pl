@@ -668,6 +668,7 @@ begin_credits("Credits");
 				add_person("Alyssa Milburn", "fuzzie", "");
 				add_person("Eugene Sandulenko", "sev", "");
 				add_person("David Turner", "digitall", "");
+				add_person("David Fioramonti", "dafioram", "");
 			end_section();
 
 			begin_section("Mortevielle");

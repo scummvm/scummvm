@@ -218,6 +218,7 @@ static const char *credits[] = {
 "C0""Alyssa Milburn",
 "C0""Eugene Sandulenko",
 "C0""David Turner",
+"C0""David Fioramonti",
 "",
 "C1""Mortevielle",
 "A0""Arnaud Boutonne",
