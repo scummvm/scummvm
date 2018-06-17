@@ -486,11 +486,16 @@ bool MPEGPSDecoder::MPEGVideoTrack::sendPacket(Common::SeekableReadStream *packe
 
 	if (foundFrame) {
 		_curFrame++;
+
+		// If there is a presentation timestamp, use that for sync. Almost all
+		// packets with a presentation timestamp will have a found frame, so
+		// it is probably not worth the trouble worrying about when they don't.
+
 		if (pts != 0xFFFFFFFF) {
-			Audio::Timestamp ptsTimestamp = Audio::Timestamp(pts / 90, 27000000);
-			framePeriod = ptsTimestamp.frameDiff(_nextFrameStartTime);
+			_nextFrameStartTime = Audio::Timestamp(pts / 90, 27000000);
+		} else {
+			_nextFrameStartTime = _nextFrameStartTime.addFrames(framePeriod);
 		}
-		_nextFrameStartTime = _nextFrameStartTime.addFrames(framePeriod);
 	}
 #endif
 
