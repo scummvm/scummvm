@@ -69,11 +69,19 @@ ASpit::ASpit(MohawkEngine_Riven *vm) :
 	registerName(kExternalCommandNames, kExternalSaveGame, "xaSaveGame");
 }
 
-static const char *menuItems[] = {
-	"SETUP",
-	"START NEW GAME",
-	"START SAVED GAME",
-	"SAVE GAME"
+struct MenuItemText {
+	int language;
+	const char *items[4];
+} static const menuItems[] = {
+	{ Common::EN_ANY, { "SETUP",      "START NEW GAME", "START SAVED GAME",  "SAVE GAME" }  },
+	{ Common::DE_DEU, { "SETUP",      "SPIELEN",        "SPIELSTAND LADEN",  "SPIEL SPEICHERN" } },
+	{ Common::ES_ESP, { "IMAGEN",     "IR A RIVEN",     "CARGAR JUEGO",      "GUARDAR JUEGO" } },
+	{ Common::FR_FRA, { "CONFIG",     "JOUER RIVEN",    "CHARGEMENT DU JEU", "JEU SAUVEGARDER" } },
+	{ Common::IT_ITA, { "CONF.",      "GIOCA",          "CARICA GIOCO",      "SALVA IL GIOCO" } },
+	{ Common::RU_RUS, { "УСТАНОВКИ",  "СТАРТ",          "ПРОДОЛЖИТЬ ИГРУ",   "СОХРАНИТЬ ИГРУ" } },
+	{ Common::JA_JPN, { "SETUP",      "PLAY RIVEN",     "START SAVED GAME",  "SAVE GAME" } },
+	{ Common::PL_POL, { "USTAWIENIA", "GRAJ W RIVEN",   "ZAŁADUJ GRĘ",       "ZAPISZ GRĘ" } },
+	{ -1, { 0 } }
 };
 
 void ASpit::xastartupbtnhide(const ArgumentArray &args) {
@@ -103,6 +111,19 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	}
 
+	int lang = -1;
+	for (int i = 0; menuItems[i].language != -1; i++) {
+		if (menuItems[i].language == _vm->getLanguage()) {
+			lang = i;
+			break;
+		}
+	}
+
+	if (lang == -1) {
+		warning("Unsupported menu language, falling back to English");
+		lang = 0;
+	}
+
 	struct MenuItem {
 		uint16 blstId;
 	};
@@ -129,7 +150,9 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 
 		uint32 textColor = surface.format.RGBToColor(164, 164, 164);
 
-		font->drawString(&surface, menuItems[i], 0, 0, surface.w, textColor);
+		Common::U32String str = Common::convertUtf8ToUtf32(menuItems[lang].items[i]);
+
+		font->drawString(&surface, str, 0, 0, surface.w, textColor);
 
 		_vm->_gfx->copySurfaceToScreen(&surface, hotspotRect.left, hotspotRect.top);
 		surface.free();
