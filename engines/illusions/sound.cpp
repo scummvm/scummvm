@@ -368,14 +368,17 @@ void SoundMan::fadeMidiMusic(int16 finalVolume, int16 duration) {
 void SoundMan::setMusicVolume(uint8 volume) {
 	ConfMan.setInt("music_volume", volume);
 	_midiPlayer->syncVolume();
+	ConfMan.flushToDisk();
 }
 
 void SoundMan::setSfxVolume(uint8 volume) {
 	ConfMan.setInt("sfx_volume", volume);
+	ConfMan.flushToDisk();
 }
 
 void SoundMan::setSpeechVolume(uint8 volume) {
 	ConfMan.setInt("speech_volume", volume);
+	ConfMan.flushToDisk();
 }
 
 uint8 SoundMan::calcAdjustedVolume(const Common::String &volumeConfigKey, uint8 volume) {

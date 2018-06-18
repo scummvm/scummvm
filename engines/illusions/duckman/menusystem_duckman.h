@@ -49,8 +49,9 @@ namespace Illusions {
 };
 
 class IllusionsEngine_Duckman;
+class MenuActionUpdateSlider;
 
-class DuckmanMenuSystem : public BaseMenuSystem {
+	class DuckmanMenuSystem : public BaseMenuSystem {
 public:
 	DuckmanMenuSystem(IllusionsEngine_Duckman *vm);
 	~DuckmanMenuSystem();
@@ -66,7 +67,6 @@ public://protected:
 	BaseMenu *createMainMenu();
 	BaseMenu *createLoadGameMenu();
 	BaseMenu *createOptionsMenu();
-	MenuItem *createOptionsSliderMenuItem(const Common::String &text, SliderActionType type, BaseMenu *baseMenu);
 	BaseMenu *createPauseMenu();
 	BaseMenu *createQueryRestartMenu();
 	BaseMenu *createQueryQuitMenu();
@@ -80,7 +80,10 @@ public://protected:
 	virtual void setGameState(int gameState);
 	virtual void setMenuCursorNum(int cursorNum);
 	virtual void playSoundEffect(int sfxId);
-};
+private:
+	MenuItem *createOptionsSliderMenuItem(MenuActionUpdateSlider **action, const Common::String &text,
+										  SliderActionType type, BaseMenu *baseMenu);
+	};
 
 class MenuActionInventoryAddRemove : public BaseMenuAction {
 public:
@@ -94,17 +97,34 @@ protected:
 class MenuActionUpdateSlider : public BaseMenuAction {
 public:
 	MenuActionUpdateSlider(BaseMenuSystem *menuSystem, BaseMenu *baseMenu, SliderActionType type, IllusionsEngine_Duckman *vm);
-	void setMenuItem(MenuItem *newMmenuItem) {
-		menuItem = newMmenuItem;
+	void setMenuItem(MenuItem *menuItem) {
+		_menuItem = menuItem;
 	}
 
 	virtual void execute();
+	void setSliderValue(uint8 newValue);
 protected:
 	IllusionsEngine_Duckman *_vm;
 	SliderActionType _type;
-	MenuItem *menuItem;
+	MenuItem *_menuItem;
 	BaseMenu *menu;
-	int calcNewSliderValue(Common::String &text, int newOffset);
+	int calcNewSliderValue(int newOffset);
+};
+
+class MenuActionResetOptionSliders : public BaseMenuAction {
+public:
+	MenuActionResetOptionSliders(BaseMenuSystem *menuSystem,
+								 MenuActionUpdateSlider *sfxSlider,
+								 MenuActionUpdateSlider *musiclider,
+								 MenuActionUpdateSlider *speechSlider,
+								 MenuActionUpdateSlider *textDurationSlider
+	);
+	virtual void execute();
+protected:
+	MenuActionUpdateSlider *_sfxSlider;
+	MenuActionUpdateSlider *_musiclider;
+	MenuActionUpdateSlider *_speechSlider;
+	MenuActionUpdateSlider *_textDurationSlider;
 };
 
 } // End of namespace Illusions
