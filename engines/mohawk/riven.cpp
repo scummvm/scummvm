@@ -693,10 +693,6 @@ void MohawkEngine_Riven::setGameEnded() {
 
 void MohawkEngine_Riven::runOptionsDialog() {
 	runDialog(*_optionsDialog);
-	if (_optionsDialog->getLoadSlot() >= 0)
-		loadGameStateAndDisplayError(_optionsDialog->getLoadSlot());
-	if (_optionsDialog->getSaveSlot() >= 0)
-		saveGameStateAndDisplayError(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
 
 	if (hasGameEnded()) {
 		// Attempt to autosave before exiting

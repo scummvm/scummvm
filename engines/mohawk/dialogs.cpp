@@ -95,56 +95,12 @@ enum {
 
 MohawkOptionsDialog::MohawkOptionsDialog(MohawkEngine *vm) :
 		GUI::Dialog(0, 0, 360, 200),
-		_vm(vm), _loadSlot(-1), _saveSlot(-1) {
-	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), nullptr, kLoadCmd);
-	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), nullptr, kSaveCmd);
-	_quitButton = new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), nullptr, kQuitCmd);
-
+		_vm(vm) {
 	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), nullptr, GUI::kOKCmd);
 	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), nullptr, GUI::kCloseCmd);
-
-	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
-	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 }
 
 MohawkOptionsDialog::~MohawkOptionsDialog() {
-	delete _loadDialog;
-	delete _saveDialog;
-}
-
-void MohawkOptionsDialog::open() {
-	GUI::Dialog::open();
-
-	_loadSlot = -1;
-	_saveSlot = -1;
-	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
-	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
-}
-
-
-void MohawkOptionsDialog::save() {
-	_saveSlot = _saveDialog->runModalWithCurrentTarget();
-
-	if (_saveSlot >= 0) {
-		_saveDescription = _saveDialog->getResultString();
-		if (_saveDescription.empty()) {
-			// If the user was lazy and entered no save name, come up with a default name.
-			_saveDescription = _saveDialog->createDefaultSaveDescription(_saveSlot);
-		}
-
-		close();
-	}
-}
-
-void MohawkOptionsDialog::load() {
-	// Do not load the game state from insite the dialog loop to
-	// avoid mouse cursor glitches (see bug #7164). Instead store
-	// the slot to load and let the code exectuting the dialog do
-	// the load after the dialog finished running.
-	_loadSlot = _loadDialog->runModalWithCurrentTarget();
-
-	if (_loadSlot >= 0)
-		close();
 }
 
 void MohawkOptionsDialog::reflowLayout() {
@@ -161,12 +117,6 @@ void MohawkOptionsDialog::reflowLayout() {
 
 void MohawkOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-		case kLoadCmd:
-			load();
-			break;
-		case kSaveCmd:
-			save();
-			break;
 		case GUI::kCloseCmd:
 			close();
 			break;
@@ -184,7 +134,13 @@ MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) :
 		_vm(vm),
 		_canDropPage(false),
 		_canShowMap(false),
-		_canReturnToMenu(false) {
+		_canReturnToMenu(false),
+		_loadSlot(-1),
+		_saveSlot(-1) {
+
+	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), nullptr, kLoadCmd);
+	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), nullptr, kSaveCmd);
+	_quitButton = new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), nullptr, kQuitCmd);
 
 	// I18N: Option for fast scene switching
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
@@ -203,9 +159,14 @@ MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) :
 		_returnToMenuButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("Main Men~u~"), nullptr, kMenuCmd);
 	else
 		_returnToMenuButton = nullptr;
+
+	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 }
 
 MystOptionsDialog::~MystOptionsDialog() {
+	delete _loadDialog;
+	delete _saveDialog;
 }
 
 void MystOptionsDialog::open() {
@@ -235,10 +196,46 @@ void MystOptionsDialog::open() {
 		_saveButton->setVisible(false);
 		_quitButton->setVisible(false);
 	}
+
+	_loadSlot = -1;
+	_saveSlot = -1;
+	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
+	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
+}
+
+void MystOptionsDialog::save() {
+	_saveSlot = _saveDialog->runModalWithCurrentTarget();
+
+	if (_saveSlot >= 0) {
+		_saveDescription = _saveDialog->getResultString();
+		if (_saveDescription.empty()) {
+			// If the user was lazy and entered no save name, come up with a default name.
+			_saveDescription = _saveDialog->createDefaultSaveDescription(_saveSlot);
+		}
+
+		close();
+	}
+}
+
+void MystOptionsDialog::load() {
+	// Do not load the game state from insite the dialog loop to
+	// avoid mouse cursor glitches (see bug #7164). Instead store
+	// the slot to load and let the code exectuting the dialog do
+	// the load after the dialog finished running.
+	_loadSlot = _loadDialog->runModalWithCurrentTarget();
+
+	if (_loadSlot >= 0)
+		close();
 }
 
 void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
+	case kLoadCmd:
+		load();
+		break;
+	case kSaveCmd:
+		save();
+		break;
 	case kDropCmd:
 		setResult(kActionDropPage);
 		close();
@@ -287,10 +284,10 @@ RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) :
 		MohawkOptionsDialog(vm),
 		_vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
-	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 220, 15, _("~W~ater Effect Enabled"), nullptr, kWaterCmd);
+	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 35, 220, 15, _("~W~ater Effect Enabled"), nullptr, kWaterCmd);
 
-	_transitionModeCaption = new GUI::StaticTextWidget(this, 15, 50, 90, 20, _("Transitions:"), Graphics::kTextAlignRight);
-	_transitionModePopUp = new GUI::PopUpWidget(this, 115, 50, 120, 20);
+	_transitionModeCaption = new GUI::StaticTextWidget(this, 15, 60, 90, 20, _("Transitions:"), Graphics::kTextAlignRight);
+	_transitionModePopUp = new GUI::PopUpWidget(this, 115, 60, 120, 20);
 	_transitionModePopUp->appendEntry(_("Disabled"), kRivenTransitionModeDisabled);
 	_transitionModePopUp->appendEntry(_("Fastest"), kRivenTransitionModeFastest);
 	_transitionModePopUp->appendEntry(_("Normal"), kRivenTransitionModeNormal);
@@ -317,13 +314,6 @@ void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 		setResult(1);
 		close();
 		break;
-	case kQuitCmd: {
-		Common::Event eventQ;
-		eventQ.type = Common::EVENT_QUIT;
-		g_system->getEventManager()->pushEvent(eventQ);
-		close();
-		break;
-	}
 	default:
 		MohawkOptionsDialog::handleCommand(sender, cmd, data);
 	}

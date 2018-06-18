@@ -79,30 +79,11 @@ public:
 	explicit MohawkOptionsDialog(MohawkEngine *_vm);
 	~MohawkOptionsDialog() override;
 
-	void open() override;
 	void reflowLayout() override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	int getLoadSlot() const { return _loadSlot; }
-	int getSaveSlot() const { return _saveSlot; }
-	Common::String getSaveDescription() const { return _saveDescription; }
-
-protected:
+private:
 	MohawkEngine *_vm;
-
-	GUI::ButtonWidget    *_loadButton;
-	GUI::ButtonWidget    *_saveButton;
-	GUI::ButtonWidget    *_quitButton;
-
-	GUI::SaveLoadChooser *_loadDialog;
-	GUI::SaveLoadChooser *_saveDialog;
-
-	int _loadSlot;
-	int _saveSlot;
-	Common::String _saveDescription;
-
-	void save();
-	void load();
 };
 
 #endif
@@ -131,8 +112,26 @@ public:
 	void open() override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
+	int getLoadSlot() const { return _loadSlot; }
+	int getSaveSlot() const { return _saveSlot; }
+	Common::String getSaveDescription() const { return _saveDescription; }
+
 private:
+	void save();
+	void load();
+
 	MohawkEngine_Myst *_vm;
+
+	GUI::ButtonWidget    *_loadButton;
+	GUI::ButtonWidget    *_saveButton;
+	GUI::ButtonWidget    *_quitButton;
+
+	GUI::SaveLoadChooser *_loadDialog;
+	GUI::SaveLoadChooser *_saveDialog;
+
+	int _loadSlot;
+	int _saveSlot;
+	Common::String _saveDescription;
 
 	bool _canDropPage;
 	bool _canShowMap;
