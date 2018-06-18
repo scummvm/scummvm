@@ -39,6 +39,14 @@
 #define BLADERUNNER_DEBUG_CONSOLE 0
 #define BLADERUNNER_DEBUG_GAME 0
 
+#define SUBTITLES_SUPPORT   1
+#if SUBTITLES_SUPPORT
+#define SUBTITLES_EXTERNAL_FONT         1
+#define SUBTITLES_ENABLED_BY_DEFAULT    1
+#endif // SUBTITLES_SUPPORT
+#define BLADERUNNER_RESTORED_CONTENT_GAME 	1 // needed for checkbox setting for subtitles enable/disable
+#define RESTORED_CONTENT_EXTRA_FLAGS    	1 // needed for checkbox setting for subtitles enable/disable 
+
 namespace Common {
 struct Event;
 }
@@ -88,6 +96,9 @@ class Shape;
 class SliceAnimations;
 class SliceRenderer;
 class Spinner;
+#if SUBTITLES_SUPPORT
+class Subtitles;
+#endif
 class SuspectsDatabase;
 class TextResource;
 class Time;
@@ -128,12 +139,19 @@ public:
 	EndCredits         *_endCredits;
 	ESPER              *_esper;
 	GameFlags          *_gameFlags;
+	#if BLADERUNNER_RESTORED_CONTENT_GAME
+    // EDS flags
+	GameFlags          *_extraGameFlagsForRestoredContent;
+	#endif // BLADERUNNER_RESTORED_CONTENT_GAME
 	GameInfo           *_gameInfo;
 	ItemPickup         *_itemPickup;
 	Items              *_items;
 	KIA                *_kia;
 	Lights             *_lights;
 	Font               *_mainFont;
+	#if SUBTITLES_SUPPORT
+	Subtitles          *_subtitles;
+	#endif // SUBTITLES_SUPPORT
 	Mouse              *_mouse;
 	Music              *_music;
 	Obstacles          *_obstacles;

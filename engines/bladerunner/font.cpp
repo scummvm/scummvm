@@ -37,6 +37,48 @@ Font::~Font() {
 	close();
 }
 
+#if SUBTITLES_SUPPORT
+#if SUBTITLES_EXTERNAL_FONT
+// for external FON font file / subtitles support
+bool Font::openFromStream(Common::ScopedPtr<Common::SeekableReadStream> &stream, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color) {
+    reset();
+
+	_screenWidth = screenWidth;
+	_screenHeight = screenHeight;
+	_spacing1 = spacing1;
+	_spacing2 = spacing2;
+	_color = color;
+
+	if (!stream) {
+		return false;
+	}
+	_characterCount = stream->readUint32LE();
+    debug("Font's character count: %d", _characterCount);
+	_maxWidth = stream->readUint32LE();
+	_maxHeight = stream->readUint32LE();
+	_dataSize = stream->readUint32LE();
+	_data = new uint16[_dataSize];
+	if (!_data) {
+		debug("Font::open failed to allocate font buffer");
+		return false;
+	}
+
+	for (int i = 0; i < _characterCount; i++) {
+		_characters[i].x = stream->readUint32LE();
+		_characters[i].y = stream->readUint32LE();
+		_characters[i].width = stream->readUint32LE();
+		_characters[i].height = stream->readUint32LE();
+		_characters[i].dataOffset = stream->readUint32LE();
+		debug("char::%d character x: %d, y: %d, w: %d, h:%d, do: %d", i, _characters[i].x, _characters[i].y, _characters[i].width, _characters[i].height, _characters[i].dataOffset);
+	}
+	for (int i = 0; i < _dataSize; i++) {
+		_data[i] = stream->readUint16LE();
+	}
+	return true;
+}
+#endif // SUBTITLES_EXTERNAL_FONT
+#endif // SUBTITLES_SUPPORT
+
 bool Font::open(const Common::String &fileName, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color) {
 	reset();
 
@@ -68,6 +110,28 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 		_characters[i].width = stream->readUint32LE();
 		_characters[i].height = stream->readUint32LE();
 		_characters[i].dataOffset = stream->readUint32LE();
+		#if SUBTITLES_SUPPORT
+		#if !SUBTITLES_EXTERNAL_FONT
+		// special explicit alignment fixes for TAHOMA18 (INTERNAL) font
+		        if(fileName == "TAHOMA18.FON") {
+            // fix P -> i = 81 (ascii code 80  + 1)
+            if(i == 81 || i == 72 || i == 74 || i == 75  // P, G, I, J
+               || i == 46 // '-'
+            )
+                {
+                _characters[i].x = 0;// from 1
+            }
+            if(i == 81          // P
+                || i == 83 || i == 84  //  R, S,
+                || i == 86               // U
+                || i == 87 || i == 88 || i == 89 || i == 90 || i == 91 //  V, W, X, Y ,Z
+               ) {
+                _characters[i].y = 7;// from 6 // bring down a pixel
+            }
+        }
+		//debug("char::%d character x: %d, y: %d, w: %d, h:%d, do: %d", i, _characters[i].x, _characters[i].y, _characters[i].width, _characters[i].height, _characters[i].dataOffset);
+		#endif // SUBTITLES_EXTERNAL_FONT
+		#endif // SUBTITLES_SUPPORT
 	}
 	for (int i = 0; i < _dataSize; i++) {
 		_data[i] = stream->readUint16LE();
@@ -176,6 +240,21 @@ void Font::replaceColor(uint16 oldColor, uint16 newColor) {
 	}
 }
 
+#if SUBTITLES_SUPPORT
+void Font::setBlackColor() {
+    // to create a font that can be used as a shadow effect
+	if (!_data || !_dataSize) {
+		return;
+	}
+	for (int i = 0; i < _dataSize; i++) {
+        //debug("COLOR EXISTING: %d", _data[i]);
+        if(_data[i] != 32768) { // 0x8000 transparent
+            _data[i] = 0x0000; // black
+        }
+	}
+}
+#endif // SUBTITLES_SUPPORT
+
 void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int x, int y) const {
 	uint8 characterIndex = character + 1;
 	if (x < 0 || x >= _screenWidth || y < 0 || y >= _screenHeight || !_data || characterIndex >= _characterCount) {
@@ -192,6 +271,14 @@ void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int 
 
 	int endY = height + y - 1;
 	int currentY = y;
+	
+#if BLADERUNNER_RESTORED_CONTENT_GAME
+    // Temp Bug fix - Return if w h unnaturally big: -- the INTERNAL tahoma18 font is corrupted so it could cause crashes
+    if(width > 100 || height > 100) {
+        return;
+    }
+#endif
+	
 	while (currentY <= endY && currentY < _screenHeight) {
 		int currentX = x;
 		int endX = width + x - 1;

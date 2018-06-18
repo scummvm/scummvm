@@ -23,6 +23,9 @@
 #include "bladerunner/outtake.h"
 
 #include "bladerunner/bladerunner.h"
+#if SUBTITLES_SUPPORT
+#include "bladerunner/subtitles.h"
+#endif // SUBTITLES_SUPPORT
 #include "bladerunner/vqa_player.h"
 
 #include "common/debug.h"
@@ -43,8 +46,12 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	}
 
 	resName = resName + ".VQA";
-
-	VQAPlayer vqa_player(_vm, &_vm->_surfaceFront, resName);
+	
+#if SUBTITLES_SUPPORT
+    VQAPlayer vqa_player(_vm, &_vm->_surfaceBack); // fix for subtitles rendering properly
+#else
+	VQAPlayer vqa_player(_vm, &_vm->_surfaceFront); // original
+#endif // SUBTITLES_SUPPORT
 
 	vqa_player.open();
 
@@ -56,10 +63,17 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 				return;
 
 		int frame = vqa_player.update();
+		#if SUBTITLES_SUPPORT
+        blit(_vm->_surfaceBack, _vm->_surfaceFront); // new tha hack - helps to make subtitles disappear if the proper video is rendered in surface back and then pushed to the front surface
+        #endif // SUBTITLES_SUPPORT
 		if (frame == -3)
 			break;
 
 		if (frame >= 0) {
+			#if SUBTITLES_SUPPORT
+            _vm->_subtitles->getOuttakeSubsText(resName + ".TRE" , frame);
+			_vm->_subtitles->tickOuttakes(_vm->_surfaceFront);
+			#endif // SUBTITLES_SUPPORT
 			_vm->blitToScreen(_vm->_surfaceFront);
 		}
 

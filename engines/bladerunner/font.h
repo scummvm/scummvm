@@ -23,6 +23,10 @@
 #ifndef BLADERUNNER_FONT_H
 #define BLADERUNNER_FONT_H
 
+#include "bladerunner/bladerunner.h" // needed for definition of Common::ScopedPtr (subtitles font external font file support) -- and for the subtitles relevant macro defines
+#if SUBTITLES_SUPPORT
+#include "common/util.h"
+#endif
 #include "common/str.h"
 
 namespace Graphics {
@@ -61,11 +65,19 @@ public:
 	Font(BladeRunnerEngine *vm);
 	~Font();
 
+	#if SUBTITLES_SUPPORT
+	#if SUBTITLES_EXTERNAL_FONT
+	bool openFromStream(Common::ScopedPtr<Common::SeekableReadStream> &s, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color);
+	#endif // SUBTITLES_EXTERNAL_FONT
+    #endif // SUBTITLES_SUPPORT
 	bool open(const Common::String &fileName, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color);
 	void close();
 
 	void setSpacing(int spacing1, int spacing2);
 	void setColor(uint16 color);
+	#if SUBTITLES_SUPPORT
+	void setBlackColor(); // for subtitles
+    #endif
 
 	void draw(const Common::String &text, Graphics::Surface &surface, int x, int y) const;
 	void drawColor(const Common::String &text, Graphics::Surface &surface, int x, int y, uint16 color);
