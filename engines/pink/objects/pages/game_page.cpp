@@ -55,6 +55,7 @@ void GamePage::deserialize(Archive &archive) {
 }
 
 void GamePage::load(Archive &archive) {
+	debug("GamePage load started");
 	archive.mapObject(_cursorMgr);
 	archive.mapObject(_walkMgr);
 	archive.mapObject(_sequencer);
@@ -66,6 +67,7 @@ void GamePage::load(Archive &archive) {
 	_walkMgr->deserialize(archive);
 	_sequencer->deserialize(archive);
 	_handlers.deserialize(archive);
+	debug("GamePage load ended");
 }
 
 void GamePage::init(bool isLoadingSave) {
@@ -106,6 +108,7 @@ void GamePage::loadManagers() {
 	_walkMgr = new WalkMgr;
 	_sequencer = new Sequencer(this);
 
+	debug("ResMgr init");
 	_resMgr.init(_module->getGame(), this);
 
 	if (_memFile != nullptr) {

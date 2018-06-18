@@ -32,6 +32,7 @@ Page::~Page() {
 }
 
 void Page::load(Archive &archive) {
+	debug("Page load");
 	archive.mapObject(this);
 	NamedObject::deserialize(archive);
 	archive.readString(); //skip directory
