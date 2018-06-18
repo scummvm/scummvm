@@ -92,12 +92,14 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 	Common::File file;
 
 	const char *fontname = "FreeSans.ttf";
-	int fontHeight = 11;
 	const Graphics::Font *font = nullptr;
 
+#if defined(USE_FREETYPE2)
+	int fontHeight = 11;
 	if (file.open(fontname)) {
 		font = Graphics::loadTTFFont(file, fontHeight);
 	}
+#endif
 
 	if (!font) {
 		warning("Cannot load font %s directly", fontname);
