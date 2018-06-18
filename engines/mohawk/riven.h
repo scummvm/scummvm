@@ -151,6 +151,7 @@ public:
 	bool _activatedPLST;
 	bool _activatedSLST;
 	void delay(uint32 ms);
+	void runOptionsDialog();
 
 	// Save / Load
 	void runLoadDialog();

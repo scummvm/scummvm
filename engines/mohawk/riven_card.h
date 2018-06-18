@@ -158,6 +158,7 @@ private:
 	void applyPropertiesPatch22118(uint32 globalId);
 	void setCurrentCardVariable();
 
+	void moveHotspot(uint16 blstId, const Common::Rect &position);
 	void addMenuHotspot(uint16 blstId, const Common::Rect &position, uint16 index,
 	                    uint16 externalCommandNameId, const char *externalCommandName);
 
@@ -196,7 +197,6 @@ private:
 	Common::Array<MLSTRecord> _movieList;
 	Common::Array<HotspotEnableRecord> _hotspotEnableList;
 	Common::Array<WaterEffectRecord> _waterEffectList;
-
 };
 
 struct MLSTRecord {

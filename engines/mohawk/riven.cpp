@@ -243,19 +243,7 @@ void MohawkEngine_Riven::doFrame() {
 				pauseGame();
 				break;
 			case Common::KEYCODE_F5:
-				runDialog(*_optionsDialog);
-				if (_optionsDialog->getLoadSlot() >= 0)
-					loadGameStateAndDisplayError(_optionsDialog->getLoadSlot());
-				if (_optionsDialog->getSaveSlot() >= 0)
-					saveGameStateAndDisplayError(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
-
-				if (hasGameEnded()) {
-					// Attempt to autosave before exiting
-					tryAutoSaving();
-				}
-
-				_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
-				_card->initializeZipMode();
+				runOptionsDialog();
 				break;
 			case Common::KEYCODE_r:
 				// Return to the main menu in the demo on ctrl+r
@@ -701,6 +689,22 @@ bool MohawkEngine_Riven::hasGameEnded() const {
 
 void MohawkEngine_Riven::setGameEnded() {
 	_gameEnded = true;
+}
+
+void MohawkEngine_Riven::runOptionsDialog() {
+	runDialog(*_optionsDialog);
+	if (_optionsDialog->getLoadSlot() >= 0)
+		loadGameStateAndDisplayError(_optionsDialog->getLoadSlot());
+	if (_optionsDialog->getSaveSlot() >= 0)
+		saveGameStateAndDisplayError(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
+
+	if (hasGameEnded()) {
+		// Attempt to autosave before exiting
+		tryAutoSaving();
+	}
+
+	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
+	_card->initializeZipMode();
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

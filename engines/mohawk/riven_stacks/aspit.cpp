@@ -66,28 +66,28 @@ ASpit::ASpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(ASpit, xaexittomain);
 
 	REGISTER_COMMAND(ASpit, xaSaveGame);
+	REGISTER_COMMAND(ASpit, xaResumeGame);
+	REGISTER_COMMAND(ASpit, xaOptions);
 }
 
 struct MenuItemText {
 	int language;
-	const char *items[4];
+	const char *items[7];
 } static const menuItems[] = {
-	{ Common::EN_ANY, { "SETUP",      "START NEW GAME", "START SAVED GAME",  "SAVE GAME" }  },
-	{ Common::DE_DEU, { "SETUP",      "SPIELEN",        "SPIELSTAND LADEN",  "SPIEL SPEICHERN" } },
-	{ Common::ES_ESP, { "IMAGEN",     "IR A RIVEN",     "CARGAR JUEGO",      "GUARDAR JUEGO" } },
-	{ Common::FR_FRA, { "CONFIG",     "JOUER RIVEN",    "CHARGEMENT DU JEU", "JEU SAUVEGARDER" } },
-	{ Common::IT_ITA, { "CONF.",      "GIOCA",          "CARICA GIOCO",      "SALVA IL GIOCO" } },
-	{ Common::RU_RUS, { "УСТАНОВКИ",  "СТАРТ",          "ПРОДОЛЖИТЬ ИГРУ",   "СОХРАНИТЬ ИГРУ" } },
-	{ Common::JA_JPN, { "SETUP",      "PLAY RIVEN",     "START SAVED GAME",  "SAVE GAME" } },
-	{ Common::PL_POL, { "USTAWIENIA", "GRAJ W RIVEN",   "ZAŁADUJ GRĘ",       "ZAPISZ GRĘ" } },
+	{ Common::EN_ANY, { "SETUP",      "START NEW GAME", "START SAVED GAME",  "SAVE GAME",       "RESUME",  "OPTIONS",  "QUIT" } },
+	{ Common::DE_DEU, { "SETUP",      "SPIELEN",        "SPIELSTAND LADEN",  "SPIEL SPEICHERN", "RESUME",  "OPTIONS",  "QUIT" } },
+	{ Common::ES_ESP, { "IMAGEN",     "IR A RIVEN",     "CARGAR JUEGO",      "GUARDAR JUEGO",   "RESUME",  "OPTIONS",  "QUIT" } },
+	{ Common::FR_FRA, { "CONFIG",     "JOUER RIVEN",    "CHARGEMENT DU JEU", "JEU SAUVEGARDER", "RESUME",  "OPTIONS",  "QUIT" } },
+	{ Common::IT_ITA, { "CONF.",      "GIOCA",          "CARICA GIOCO",      "SALVA IL GIOCO",  "RESUME",  "OPTIONS",  "QUIT" } },
+	{ Common::RU_RUS, { "УСТАНОВКИ",  "СТАРТ",          "ПРОДОЛЖИТЬ ИГРУ",   "СОХРАНИТЬ ИГРУ",  "RESUME",  "OPTIONS",  "QUIT" } },
+	{ Common::JA_JPN, { "SETUP",      "PLAY RIVEN",     "START SAVED GAME",  "SAVE GAME",       "RESUME",  "OPTIONS",  "QUIT" } },
+	{ Common::PL_POL, { "USTAWIENIA", "GRAJ W RIVEN",   "ZAŁADUJ GRĘ",       "ZAPISZ GRĘ",      "RESUME",  "OPTIONS",  "QUIT" } },
 	{ -1, { 0 } }
 };
 
 void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 	// The original game hides the start/setup buttons depending on an ini entry.
 	// It's safe to ignore this command.
-
-	warning("xastartupbtnhide");
 
 	Common::File file;
 
@@ -131,7 +131,10 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 		{ 22 },
 		{ 16 },
 		{ 23 },
-		{ 24 }
+		{ 24 },
+		{ 25 },
+		{ 26 },
+		{ 27 }
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(items); i++) {
@@ -371,6 +374,14 @@ void ASpit::xarestoregame(const ArgumentArray &args) {
 void ASpit::xaSaveGame(const ArgumentArray &args) {
 	// Launch the load game dialog
 	_vm->runSaveDialog();
+}
+
+void ASpit::xaResumeGame(const ArgumentArray &args) {
+
+}
+
+void ASpit::xaOptions(const ArgumentArray &args) {
+	_vm->runOptionsDialog();
 }
 
 void ASpit::xadisablemenureturn(const ArgumentArray &args) {

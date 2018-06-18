@@ -37,7 +37,11 @@ public:
 
 	enum PatchedExternalCommandNameId {
 		kExternalSaveGame    = 20,
-		kExternalRestoreGame = 21
+		kExternalRestoreGame = 21,
+		kExternalResume      = 22,
+		kExternalOptions     = 23,
+		kExternalQuit        = 24
+
 	};
 
 	// External commands - Main Menu
@@ -66,6 +70,8 @@ public:
 
 	// External commands - ScummVM 25th anniversary specific
 	void xaSaveGame(const ArgumentArray &args);
+	void xaResumeGame(const ArgumentArray &args);
+	void xaOptions(const ArgumentArray &args);
 
 	// External commands - Demo-specific
 	void xadisablemenureturn(const ArgumentArray &args);

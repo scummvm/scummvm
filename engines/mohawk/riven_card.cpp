@@ -396,15 +396,31 @@ void RivenCard::applyPropertiesPatchE2E(uint32 globalId) {
 	// The main menu in the Myst 25th anniversary version is patched to include new items:
 	//   - Save game
 	if (globalId == 0xE2E) {
-		addMenuHotspot(23, Common::Rect(485, 283, 602, 300), 3, RivenStacks::ASpit::kExternalRestoreGame, "xarestoregame");
-		addMenuHotspot(24, Common::Rect(485, 311, 602, 326), 4, RivenStacks::ASpit::kExternalSaveGame,    "xaSaveGame");
+		moveHotspot(   22, Common::Rect(485, 175, 602, 190)); // Setup
+		moveHotspot(   16, Common::Rect(485, 201, 602, 216)); // New game
+		addMenuHotspot(23, Common::Rect(485, 227, 602, 242), 3, RivenStacks::ASpit::kExternalRestoreGame, "xarestoregame");
+		addMenuHotspot(24, Common::Rect(485, 256, 602, 271), 4, RivenStacks::ASpit::kExternalSaveGame,    "xaSaveGame");
+		addMenuHotspot(25, Common::Rect(485, 283, 602, 300), 5, RivenStacks::ASpit::kExternalResume,      "xaResumeGame");
+		addMenuHotspot(26, Common::Rect(485, 309, 602, 326), 6, RivenStacks::ASpit::kExternalOptions,     "xaOptions");
+		addMenuHotspot(27, Common::Rect(485, 335, 602, 352), 7, RivenStacks::ASpit::kExternalQuit,        "xademoquit");
 	}
+}
+
+void RivenCard::moveHotspot(uint16 blstId, const Common::Rect &position) {
+	RivenHotspot *hotspot = getHotspotByBlstId(blstId);
+	if (!hotspot) {
+		warning("Could not find hotspot with blstId %d", blstId);
+		return;
+	}
+
+	hotspot->setRect(position);
 }
 
 void RivenCard::addMenuHotspot(uint16 blstId, const Common::Rect &position, uint16 index,
                                uint16 externalCommandNameId, const char *externalCommandName) {
 	RivenHotspot *existingHotspot = getHotspotByBlstId(blstId);
 	if (existingHotspot) {
+		moveHotspot(blstId, position);
 		return; // Don't add the hotspot if it already exists
 	}
 
