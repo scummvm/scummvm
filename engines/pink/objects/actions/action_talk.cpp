@@ -61,9 +61,7 @@ void ActionTalk::pause(bool paused) {
 
 void ActionTalk::onStart() {
 	ActionLoop::onStart();
-	//sound balance is calculated different than in ActionSfx(probably a bug in original)
-	// 30.0 - x * -0.0625  disasm (0 - 100)
-	int8 balance = (_decoder.getCenter().x * 396875 / 1000000) - 127;
+	int8 balance = (_decoder.getCenter().x * 51 - 16160) / 320;
 	_sound.play(_actor->getPage()->getResourceStream(_vox), Audio::Mixer::kSpeechSoundType, 100, balance);
 }
 
