@@ -66,7 +66,6 @@ ASpit::ASpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(ASpit, xaexittomain);
 
 	REGISTER_COMMAND(ASpit, xaSaveGame);
-	registerName(kExternalCommandNames, kExternalSaveGame, "xaSaveGame");
 }
 
 struct MenuItemText {

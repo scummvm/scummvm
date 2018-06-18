@@ -396,44 +396,63 @@ void RivenCard::applyPropertiesPatchE2E(uint32 globalId) {
 	// The main menu in the Myst 25th anniversary version is patched to include new items:
 	//   - Save game
 	if (globalId == 0xE2E) {
-		uint16 patchData[] = {
-				24,               // blstId
-				0xFFFF,           // name
-				485,              // left
-				311,              // top
-				602,              // right
-				326,              // bottom
-				0,                // u0
-				kRivenMainCursor, // cursor
-				4,                // index
-				0xFFFF,           // transition offset
-				0,                // flags
-				2,                // script count
+		addMenuHotspot(23, Common::Rect(485, 283, 602, 300), 3, RivenStacks::ASpit::kExternalRestoreGame, "xarestoregame");
+		addMenuHotspot(24, Common::Rect(485, 311, 602, 326), 4, RivenStacks::ASpit::kExternalSaveGame,    "xaSaveGame");
+	}
+}
 
-				kMouseDownScript,                      // script type
-				1,                                     // command count
-				kRivenCommandRunExternal,              // command type
-				2,                                     // argument count
-				RivenStacks::ASpit::kExternalSaveGame, // external command name id
-				0,                                     // external argument count
+void RivenCard::addMenuHotspot(uint16 blstId, const Common::Rect &position, uint16 index,
+                               uint16 externalCommandNameId, const char *externalCommandName) {
+	RivenHotspot *existingHotspot = getHotspotByBlstId(blstId);
+	if (existingHotspot) {
+		return; // Don't add the hotspot if it already exists
+	}
 
-				kMouseInsideScript,        // script type
-				1,                         // command count
-				kRivenCommandChangeCursor, // command type
-				1,                         // argument count
-				kRivenOpenHandCursor       // cursor
+	// Add the external command id => name mapping if it is missing
+	int16 existingCommandNameId = _vm->getStack()->getIdFromName(kExternalCommandNames, externalCommandName);
+	if (existingCommandNameId < 0) {
+		_vm->getStack()->registerName(kExternalCommandNames, externalCommandNameId, externalCommandName);
+	} else {
+		externalCommandNameId = existingCommandNameId;
+	}
+
+	uint16 patchData[] = {
+			blstId,
+			0xFFFF,           // name
+			(uint16) position.left,
+			(uint16) position.top,
+			(uint16) position.right,
+			(uint16) position.bottom,
+			0,                // u0
+			kRivenMainCursor, // cursor
+			index,
+			0xFFFF,           // transition offset
+			0,                // flags
+			2,                // script count
+
+			kMouseDownScript,          // script type
+			1,                         // command count
+			kRivenCommandRunExternal,  // command type
+			2,                         // argument count
+			externalCommandNameId,
+			0,                         // external argument count
+
+			kMouseInsideScript,        // script type
+			1,                         // command count
+			kRivenCommandChangeCursor, // command type
+			1,                         // argument count
+			kRivenOpenHandCursor       // cursor
 		};
 
-		// Script data is expected to be in big endian
-		for (uint i = 0; i < ARRAYSIZE(patchData); i++) {
+	// Script data is expected to be in big endian
+	for (uint i = 0; i < ARRAYSIZE(patchData); i++) {
 			patchData[i] = TO_BE_16(patchData[i]);
 		}
 
-		// Add the new hotspot to the existing ones
-		Common::MemoryReadStream patchStream((const byte *)(patchData), ARRAYSIZE(patchData) * sizeof(uint16));
-		RivenHotspot *newHotspot = new RivenHotspot(_vm, &patchStream);
-		_hotspots.push_back(newHotspot);
-	}
+	// Add the new hotspot to the existing ones
+	Common::MemoryReadStream patchStream((const byte *)(patchData), ARRAYSIZE(patchData) * sizeof(uint16));
+	RivenHotspot *newHotspot = new RivenHotspot(_vm, &patchStream);
+	_hotspots.push_back(newHotspot);
 }
 
 void RivenCard::enter(bool unkMovies) {

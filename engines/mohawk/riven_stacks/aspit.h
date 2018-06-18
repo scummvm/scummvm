@@ -36,7 +36,8 @@ public:
 	ASpit(MohawkEngine_Riven *vm);
 
 	enum PatchedExternalCommandNameId {
-		kExternalSaveGame = 20
+		kExternalSaveGame    = 20,
+		kExternalRestoreGame = 21
 	};
 
 	// External commands - Main Menu
