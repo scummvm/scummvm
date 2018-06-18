@@ -88,6 +88,7 @@ Common::Error PinkEngine::init() {
 	setCursor(kLoadingCursor);
 
 	_orb.loadGame(this);
+	debug("Modules are loaded");
 
 	syncSoundSettings();
 
@@ -150,6 +151,8 @@ void PinkEngine::initModule(const Common::String &moduleName, const Common::Stri
 	addModule(moduleName);
 	if (saveFile)
 		_module->loadState(*saveFile);
+
+	debug("Module added");
 
 	_module->init(saveFile ? kLoadingSave : kLoadingNewGame, pageName);
 }
