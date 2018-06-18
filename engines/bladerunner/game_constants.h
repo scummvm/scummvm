@@ -547,6 +547,14 @@ enum Variables {
 	kVariableNextTvNews = 52
 };
 
+#if BLADERUNNER_RESTORED_CONTENT_GAME
+// Aux enum from added/ restored content
+// EDS Flags
+enum _extraGameFlagsForRestoredContent { 
+    kEDSFlagSubtitlesEnable = 1
+};
+#endif // BLADERUNNER_RESTORED_CONTENT_GAME
+
 enum Outtakes {
 	kOuttakeIntro = 0,
 	kOuttakeMovieA = 1,

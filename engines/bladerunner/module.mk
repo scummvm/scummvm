@@ -244,6 +244,7 @@ MODULE_OBJS = \
 	shape.o \
 	slice_animations.o \
 	slice_renderer.o \
+	subtitles.o \
 	suspects_database.o \
 	text_resource.o \
 	time.o \

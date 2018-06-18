@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_KIA_SECTION_SETTINGS_H
 #define BLADERUNNER_KIA_SECTION_SETTINGS_H
 
+#include "bladerunner/bladerunner.h" // to get the macro defines
 #include "bladerunner/ui/kia_section_base.h"
 
 namespace BladeRunner {
@@ -43,6 +44,11 @@ class KIASectionSettings : public KIASectionBase {
 	UISlider      *_speechVolume;
 	UISlider      *_gammaCorrection;
 	UICheckBox    *_directorsCut;
+#if BLADERUNNER_RESTORED_CONTENT_GAME
+    #if SUBTITLES_SUPPORT
+	UICheckBox    *_subtitlesEnable;
+	#endif
+#endif // BLADERUNNER_RESTORED_CONTENT_GAME	
 	UIImagePicker *_playerAgendaSelector;
 
 	int            _mouseX;

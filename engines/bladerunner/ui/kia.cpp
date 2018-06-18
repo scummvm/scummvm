@@ -53,6 +53,9 @@
 #include "bladerunner/ui/kia_shapes.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
+#if SUBTITLES_SUPPORT
+#include "bladerunner/subtitles.h"
+#endif // SUBTITLES_SUPPORT
 
 #include "common/str.h"
 #include "common/keyboard.h"
@@ -370,6 +373,10 @@ void KIA::tick() {
 		_buttons->drawTooltip(_vm->_surfaceFront, mouse.x, mouse.y);
 	}
 	_vm->_mouse->draw(_vm->_surfaceFront, mouse.x, mouse.y);
+
+#if SUBTITLES_SUPPORT
+    _vm->_subtitles->tick(_vm->_surfaceFront);
+#endif
 
 	_vm->blitToScreen(_vm->_surfaceFront);
 	_vm->_system->delayMillis(10);

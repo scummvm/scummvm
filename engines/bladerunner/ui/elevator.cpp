@@ -32,6 +32,9 @@
 #include "bladerunner/time.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
+#if SUBTITLES_SUPPORT
+#include "bladerunner/subtitles.h"
+#endif
 
 #include "common/rect.h"
 #include "common/str.h"
@@ -226,6 +229,9 @@ void Elevator::tick() {
 	_imagePicker->draw(_vm->_surfaceFront);
 	_vm->_mouse->draw(_vm->_surfaceFront, p.x, p.y);
 
+#if SUBTITLES_SUPPORT
+    _vm->_subtitles->tick(_vm->_surfaceFront);
+#endif
 	_vm->blitToScreen(_vm->_surfaceFront);
 	tickDescription();
 	_vm->_system->delayMillis(10);

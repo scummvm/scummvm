@@ -43,6 +43,50 @@ TextResource::~TextResource() {
 	delete[] _strings;
 }
 
+#if SUBTITLES_SUPPORT
+// for TRE subtitles support
+bool TextResource::openFromStream(Common::ScopedPtr<Common::SeekableReadStream> &s) {
+
+	if (!s) {
+		return false;
+	}
+
+	_count = s->readUint32LE();
+
+	_ids = new uint32[_count];
+	_offsets = new uint32[_count + 1];
+
+	for (uint32 i = 0; i != _count; ++i) {
+		_ids[i] = s->readUint32LE();
+	}
+
+	for (uint32 i = 0; i != _count + 1; ++i) {
+		_offsets[i] = s->readUint32LE();
+	}
+
+	uint32 stringsStart = s->pos() - 4;
+
+	for (uint32 i = 0; i != _count + 1; ++i) {
+		_offsets[i] -= stringsStart;
+	}
+
+	uint32 remain = s->size() - s->pos();
+	_strings = new char[remain];
+
+	assert(remain >= _offsets[_count]);
+
+	s->read(_strings, remain);
+#if BLADERUNNER_DEBUG_CONSOLE
+//	debug("\nRESOURCE:: from Stream\n----------------");
+//	for (uint32 i = 0; i != (uint32)_count; ++i) {
+//		debug("%3d: %s", _ids[i], getText(_ids[i]));
+//	}
+#endif
+
+	return true;
+}
+#endif
+
 bool TextResource::open(const Common::String &name) {
 	assert(name.size() <= 8);
 
@@ -79,9 +123,9 @@ bool TextResource::open(const Common::String &name) {
 	s->read(_strings, remain);
 
 #if BLADERUNNER_DEBUG_CONSOLE
-	debug("\n%s\n----------------", resName);
+	debug("\n%s\n----------------", resName.c_str());
 	for (uint32 i = 0; i != (uint32)_count; ++i) {
-		debug("%3d: %s", i, getText(i));
+		debug("%3d: %s", _ids[i], getText(_ids[i]));
 	}
 #endif
 
@@ -97,6 +141,20 @@ const char *TextResource::getText(uint32 id) const {
 
 	return "";
 }
+
+#if SUBTITLES_SUPPORT
+const char *TextResource::getOuttakeTextByFrame(uint32 frame) const {
+	for (uint32 i = 0; i != _count; ++i) {
+        //debug("Checking %d - so within: %d , %d", _ids[i], (0x0000FFFF & _ids[i]), ((_ids[i] >> 16) & 0x0000FFFF ) );
+		if ((frame >= (0x0000FFFF & _ids[i]) )   && (frame <  ((_ids[i] >> 16) & 0x0000FFFF ) )){
+            // we found an id with lower 16bits smaller or equal to our frame key
+            // and with higher 16 bits higher than the frame key
+			return _strings + _offsets[i];
+		}
+	}
+	return "";
+}
+#endif
 
 int TextResource::getCount() const {
 	return _count;
