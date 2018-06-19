@@ -50,8 +50,7 @@ void ActionPlay::update() {
 		_decoder.setEndOfTrack();
 		assert(!_decoder.needsUpdate());
 		_actor->endAction();
-	}
-	else
+	} else
 		decodeNext();
 }
 
@@ -61,8 +60,9 @@ void ActionPlay::pause(bool paused) {
 
 void ActionPlay::onStart() {
 	debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
-	if (_stopFrame == -1)
-		_stopFrame = _decoder.getFrameCount() - 1;
+	int frameCount = _decoder.getFrameCount();
+	if (_stopFrame == -1 || _stopFrame >= frameCount)
+		_stopFrame = frameCount - 1;
 	assert(_startFrame < _decoder.getFrameCount());
 	setFrame(_startFrame);
 	// doesn't need to decode startFrame here. Update method will decode
