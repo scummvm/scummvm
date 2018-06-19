@@ -35,7 +35,7 @@ namespace Pink {
 InventoryMgr::InventoryMgr()
 	: _lead(nullptr), _item(nullptr), _isClickedOnItem(false) {}
 
-void Pink::InventoryItem::deserialize(Archive &archive) {
+void InventoryItem::deserialize(Archive &archive) {
 	NamedObject::deserialize(archive);
 	_initialOwner = archive.readString();
 	_currentOwner = _initialOwner;
@@ -116,22 +116,27 @@ bool InventoryMgr::start(bool paused) {
 }
 
 void InventoryMgr::update() {
-	if (_state == kOpening && !_window->isPlaying()) {
+	if (_window->isPlaying())
+		return;
+
+	switch (_state) {
+	case kOpening:
 		_state = kReady;
 		_itemActor->setAction(_item->getName());
 		_window->setAction(kShowAction);
 		_leftArrow->setAction(kShowAction);
 		_rightArrow->setAction(kShowAction);
-	} else if (_state == kClosing && !_window->isPlaying()) {
+		break;
+	case kClosing:
 		_window->setAction(kIdleAction);
-
 		_lead->onInventoryClosed(_isClickedOnItem);
-
 		_state = kIdle;
-
 		_window = nullptr;
 		_itemActor = nullptr;
 		_isClickedOnItem = false;
+		break;
+	default:
+		break;
 	}
 }
 
