@@ -106,15 +106,18 @@ void Sequence::restart() {
 	start(0);
 }
 
-void Sequence::skipToLastSubSequence() {
-	if (_unk && _context->getNextItemIndex() < _items.size()) {
-		int i = _items.size() - 1;
-		while (i >= 0 && !_items[--i]->isLeader()) {};
-		assert(i >= 0);
-		_context->setNextItemIndex(i);
-		_context->clearActionsFromActorStates();
-		skipItemsTo(i);
-		start(0);
+void Sequence::skip() {
+	if (_context->getNextItemIndex() >= _items.size())
+		return;
+
+	for (int i = _items.size() - 1; i >= 0; --i) {
+		if (_items[i]->isLeader()) {
+			_context->setNextItemIndex(i);
+			_context->clearActionsFromActorStates();
+			skipItemsTo(i);
+			start(0);
+			break;
+		}
 	}
 }
 
@@ -174,7 +177,7 @@ void SequenceAudio::restart() {
 	Sequence::restart();
 }
 
-void SequenceAudio::skipToLastSubSequence() {
+void SequenceAudio::skip() {
 	end();
 }
 
