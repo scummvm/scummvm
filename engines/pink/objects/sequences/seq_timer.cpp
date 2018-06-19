@@ -53,8 +53,7 @@ void SeqTimer::update() {
 	_updatesToMessage = _range ? _period + rnd.getRandomNumber(_range) : _period;
 
 	Actor *actor = _sequencer->_page->findActor(_actor);
-	assert(actor);
-	if (!_sequencer->findMainSequenceActorState(actor->getName()) &&
+	if (actor && !_sequencer->findMainSequenceActorState(actor->getName()) &&
 		!_sequencer->findParralelSequenceActorState(actor->getName())) {
 		actor->onTimerMessage();
 	}
