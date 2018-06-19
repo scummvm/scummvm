@@ -178,14 +178,13 @@ void InventoryMgr::showNextItem(bool direction) {
 		}
 	}
 
-	uint i = 0;
-	do {
+	for (uint i = 0; i < _items.size(); ++i) {
 		index = (direction == kLeft) ? index - 1 : index + 1;
-	} while (_items[index % _items.size()]->getCurrentOwner() != _item->getCurrentOwner() && ++i < _items.size());
-
-	if (i != _items.size()) {
-		_item = _items[index % _items.size()];
-		_itemActor->setAction(_item->getName());
+		if (_items[index % _items.size()]->getCurrentOwner() == _item->getCurrentOwner()) {
+			_item = _items[index % _items.size()];
+			_itemActor->setAction(_item->getName());
+			break;
+		}
 	}
 }
 
