@@ -57,6 +57,13 @@ private:
 	void fortressRotation_run();
 	void fortressSimulation_run();
 
+	enum Direction {
+		kSouth = 0, // Starting Island with Myst linking book
+		kEast  = 1, // Island with right half of code
+		kNorth = 2, // Island with left half of code
+		kWest  = 3  // No island, just water
+	};
+
 	DECLARE_OPCODE(o_throneEnablePassage);
 	DECLARE_OPCODE(o_birdCrankStart);
 	DECLARE_OPCODE(o_birdCrankStop);
@@ -80,7 +87,7 @@ private:
 	DECLARE_OPCODE(o_elevatorWindowMovie);
 	DECLARE_OPCODE(o_elevatorGoMiddle);
 	DECLARE_OPCODE(o_elevatorTopMovie);
-	DECLARE_OPCODE(o_fortressRotationSetPosition);
+	DECLARE_OPCODE(o_fortressRotationSetPosition); // Rotator control button (above elevator) has been pressed
 	DECLARE_OPCODE(o_mystStaircaseMovie);
 	DECLARE_OPCODE(o_elevatorWaitTimeout);
 	DECLARE_OPCODE(o_crystalEnterYellow);
@@ -107,7 +114,7 @@ private:
 	bool _gearsWereRunning;
 	uint16 _fortressRotationSpeed; // 78
 	uint16 _fortressRotationBrake; // 80
-	uint16 _fortressPosition; // 82
+	Direction _fortressDirection; // 82
 	uint16 _fortressRotationSounds[4]; // 86 to 92
 	MystAreaVideo *_fortressRotationGears; // 172
 
