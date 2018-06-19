@@ -130,6 +130,7 @@ void LeadActor::update() {
 		if (!_sequencer->_context) {
 			_state = _nextState;
 			_nextState = kUndefined;
+			forceUpdateCursor();
 		}
 		break;
 	case kInventory:
@@ -367,6 +368,7 @@ bool LeadActor::sendUseClickMessage(Actor *actor) {
 	actor->onUseClickMessage(mgr->getCurrentItem(), mgr);
 	if (item->getCurrentOwner() != this->_name)
 		_isHaveItem = false;
+	 forceUpdateCursor();
 	 return true;
 }
 
@@ -374,7 +376,9 @@ bool LeadActor::sendLeftClickMessage(Actor *actor) {
 	assert(_state != kPlayingExitSequence);
 	_nextState = kReady;
 	_state = kPlayingSequence;
-	return actor->onLeftClickMessage();
+	actor->onLeftClickMessage();
+	forceUpdateCursor();
+	return true;
 }
 
 WalkLocation *LeadActor::getWalkDestination() {
