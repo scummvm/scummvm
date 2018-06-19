@@ -56,7 +56,7 @@ Mechanical::Mechanical(MohawkEngine_Myst *vm) :
 	_crystalLit = 0;
 
 	_mystStaircaseState = false;
-	_fortressPosition = 0;
+	_fortressDirection = kSouth;
 	_gearsWereRunning = false;
 
 	_fortressRotationShortMovieWorkaround = false;
@@ -183,9 +183,9 @@ uint16 Mechanical::getVar(uint16 var) {
 	case 4: // Myst Book Room Staircase State
 		return _mystStaircaseState;
 	case 5: // Fortress Position
-		return _fortressPosition;
+		return _fortressDirection;
 	case 6: // Fortress Position - Big Cog Visible Through Doorway
-		return _fortressPosition == 0;
+		return _fortressDirection == kSouth;
 	case 7: // Fortress Elevator Open
 		if (_state.elevatorRotation == 4)
 			return 1; // Open
@@ -645,7 +645,7 @@ void Mechanical::o_fortressRotationSetPosition(uint16 var, const ArgumentsArray 
 		moviePosition += 3600 * _fortressRotationShortMovieCount;
 	}
 
-	_fortressPosition = (moviePosition + 900) / 1800 % 4;
+	_fortressDirection = (moviePosition + 900) / 1800 % 4;
 
 	// Stop the gears video so that it does not play while the elevator is going up
 	_fortressRotationGears->getVideo()->stop();
@@ -803,17 +803,17 @@ void Mechanical::fortressRotation_run() {
 		_gearsWereRunning = true;
 	} else if (_gearsWereRunning) {
 		// The fortress has stopped. Set its new position
-		_fortressPosition = (moviePosition + 900) / 1800 % 4;
+		_fortressDirection = (moviePosition + 900) / 1800 % 4;
 
 		gears->setRate(0);
 
 		if (!_fortressRotationShortMovieWorkaround) {
-			gears->seek(Audio::Timestamp(0, 1800 * _fortressPosition, 600));
+			gears->seek(Audio::Timestamp(0, 1800 * _fortressDirection, 600));
 		} else {
-			gears->seek(Audio::Timestamp(0, 1800 * (_fortressPosition % 2), 600));
+			gears->seek(Audio::Timestamp(0, 1800 * (_fortressDirection % 2), 600));
 		}
 
-		_vm->playSoundBlocking(_fortressRotationSounds[_fortressPosition]);
+		_vm->playSoundBlocking(_fortressRotationSounds[_fortressDirection]);
 
 		_gearsWereRunning = false;
 	}
@@ -824,7 +824,7 @@ void Mechanical::o_fortressRotation_init(uint16 var, const ArgumentsArray &args)
 
 	VideoEntryPtr gears = _fortressRotationGears->playMovie();
 	gears->setLooping(true);
-	gears->seek(Audio::Timestamp(0, 1800 * _fortressPosition, 600));
+	gears->seek(Audio::Timestamp(0, 1800 * _fortressDirection, 600));
 	gears->setRate(0);
 
 	_fortressRotationSounds[0] = args[0];
