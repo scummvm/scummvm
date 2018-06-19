@@ -191,7 +191,7 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
 			_sequencer->skipSubSequence();
 			break;
 		case Common::KEYCODE_ESCAPE:
-			_sequencer->skipToLastSubSequence();
+			_sequencer->skipSequence();
 			break;
 		case Common::KEYCODE_LEFT:
 			_sequencer->restartSequence();

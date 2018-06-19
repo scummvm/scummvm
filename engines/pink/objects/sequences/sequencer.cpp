@@ -159,8 +159,9 @@ void Sequencer::restartSequence() {
 	_context->getSequence()->restart();
 }
 
-void Sequencer::skipToLastSubSequence() {
-	_context->getSequence()->skipToLastSubSequence();
+void Sequencer::skipSequence() {
+	if (_context->getSequence()->_unk)
+		_context->getSequence()->skip();
 }
 
 void Sequencer::updateTimers() {

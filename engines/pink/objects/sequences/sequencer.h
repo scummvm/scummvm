@@ -54,7 +54,7 @@ public:
 
 	void skipSubSequence();
 	void restartSequence();
-	void skipToLastSubSequence();
+	void skipSequence();
 
 	void loadState(Archive &archive);
 	void saveState(Archive &archive);
