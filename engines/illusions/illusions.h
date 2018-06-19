@@ -145,7 +145,8 @@ public:
 
 	uint32 _fontId;
 	int _field8;
-	uint32 _fieldA, _fieldE;
+	uint32 _fieldA;
+	uint32 _subtitleDuration;
 
 	WidthHeight _defaultTextDimensions;
 	Common::Point _defaultTextPosition;
@@ -183,6 +184,9 @@ public:
 	void setDefaultTextDimensions(WidthHeight &dimensions);
 	void getDefaultTextPosition(Common::Point &position);
 	void setDefaultTextPosition(Common::Point &position);
+
+	uint16 getSubtitleDuration();
+	void setSubtitleDuration(uint16 duration);
 
 	FramesList *findActorSequenceFrames(Sequence *sequence);
 
