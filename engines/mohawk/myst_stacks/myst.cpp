@@ -1858,7 +1858,7 @@ void Myst::o_observatoryGoButton(uint16 var, const ArgumentsArray &args) {
 		while (end > _vm->getTotalPlayTime()) {
 			_vm->wait(50);
 
-			observatoryUpdateVisualizer(_vm->_rnd->getRandomNumber(409), _vm->_rnd->getRandomNumber(409));
+			observatoryUpdateVisualizer(_vm->_rnd->getRandomNumber(406), _vm->_rnd->getRandomNumber(406));
 
 			_vm->redrawResource(_observatoryVisualizer);
 		}
