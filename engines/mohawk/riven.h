@@ -169,6 +169,11 @@ public:
 	 * End the game gracefully
 	 */
 	void setGameEnded();
+
+	// Main menu handling
+	void goToMainMenu();
+	void resumeFromMainMenu();
+	bool isGameStarted() const;
 };
 
 } // End of namespace Mohawk

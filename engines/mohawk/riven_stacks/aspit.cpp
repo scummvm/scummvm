@@ -127,16 +127,17 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 
 	struct MenuItem {
 		uint16 blstId;
+		bool requiresStartedGame;
 	};
 
 	MenuItem items[] = {
-		{ 22 },
-		{ 16 },
-		{ 23 },
-		{ 24 },
-		{ 25 },
-		{ 26 },
-		{ 27 }
+		{ 22, false }, // Setup
+		{ 16, false }, // New game
+		{ 23, false }, // Load game
+		{ 24, true  }, // Save game
+		{ 25, true  }, // Resume
+		{ 26, false }, // Options
+		{ 27, false }  // Quit
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(items); i++) {
@@ -147,12 +148,20 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 			continue;
 		}
 
+		bool enabled = !items[i].requiresStartedGame || _vm->isGameStarted();
+		hotspot->enable(enabled);
+
 		Common::Rect hotspotRect = hotspot->getRect();
 
 		Graphics::Surface surface;
 		surface.create(hotspotRect.width(), hotspotRect.height(), _vm->_gfx->getBackScreen()->format);
 
-		uint32 textColor = surface.format.RGBToColor(164, 164, 164);
+		uint32 textColor;
+		if (enabled) {
+			textColor = surface.format.RGBToColor(164, 164, 164);
+		} else {
+			textColor = surface.format.RGBToColor(96, 96, 96);
+		}
 
 		Common::U32String str = Common::convertUtf8ToUtf32(menuItems[lang].items[i]);
 
@@ -374,12 +383,11 @@ void ASpit::xarestoregame(const ArgumentArray &args) {
 }
 
 void ASpit::xaSaveGame(const ArgumentArray &args) {
-	// Launch the load game dialog
 	_vm->runSaveDialog();
 }
 
 void ASpit::xaResumeGame(const ArgumentArray &args) {
-
+	_vm->resumeFromMainMenu();
 }
 
 void ASpit::xaOptions(const ArgumentArray &args) {

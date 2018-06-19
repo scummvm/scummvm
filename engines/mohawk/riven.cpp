@@ -279,23 +279,9 @@ void MohawkEngine_Riven::doFrame() {
 				if (!_scriptMan->hasQueuedScripts()) {
 					// Check if we haven't jumped to menu
 					if (_prevStack == -1) {
-						_prevStack = _stack->getId();
-						_prevCard = _card->getId();
-
-						// If we are already in menu, do not call again
-						if (_prevStack == kStackAspit && _prevCard == 1) {
-							_prevStack = -1;
-							_prevCard = -1;
-							break;
-						}
-
-						changeToStack(kStackAspit);
-						changeToCard(1);
+						goToMainMenu();
 					} else {
-						changeToStack(_prevStack);
-						changeToCard(_prevCard);
-						_prevStack = -1;
-						_prevCard = -1;
+						resumeFromMainMenu();
 					}
 				} else {
 					_stack->onKeyPressed(event.kbd);
@@ -338,6 +324,34 @@ void MohawkEngine_Riven::doFrame() {
 
 	// Cut down on CPU usage
 	_system->delayMillis(10);
+}
+
+void MohawkEngine_Riven::goToMainMenu() {
+	_prevStack = _stack->getId();
+	_prevCard = _card->getId();
+
+	// If we are already in menu, do not call again
+	if (_prevStack == kStackAspit && _prevCard == 1) {
+		_prevStack = -1;
+		_prevCard = -1;
+		return;
+	}
+
+	changeToStack(kStackAspit);
+	changeToCard(1);
+}
+
+void MohawkEngine_Riven::resumeFromMainMenu() {
+	assert(_prevStack != -1);
+
+	changeToStack(_prevStack);
+	changeToCard(_prevCard);
+	_prevStack = -1;
+	_prevCard = -1;
+}
+
+bool MohawkEngine_Riven::isGameStarted() const {
+	return _stack->getId() != kStackAspit || _prevStack != -1;
 }
 
 void MohawkEngine_Riven::pauseEngineIntern(bool pause) {
@@ -597,7 +611,14 @@ void MohawkEngine_Riven::runSaveDialog() {
 }
 
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
-	return _saveLoad->loadGame(slot);
+	Common::Error loadError = _saveLoad->loadGame(slot);
+
+	if (loadError.getCode() == Common::kNoError) {
+		_prevStack = -1;
+		_prevCard = -1;
+	}
+
+	return loadError;
 }
 
 void MohawkEngine_Riven::loadGameStateAndDisplayError(int slot) {
