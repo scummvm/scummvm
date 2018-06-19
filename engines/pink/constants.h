@@ -85,22 +85,23 @@ enum {
 };
 
 enum {
-	kCursorsCount = 12
+	kCursorsCount = 13
 };
 
 enum {
 	kLoadingCursor = 0,
-	kExitForwardCursor = 1,
-	kExitLeftCursor = 2,
-	kExitRightCursor = 3,
-	kDefaultCursor = 4,
-	kClickableFirstFrameCursor = 5,
-	kClickableSecondFrameCursor = 6,
-	kNotClickableCursor = 7,
-	kHoldingItemCursor = 8,
-	kPDADefaultCursor = 9,
-	kPDAClickableFirstFrameCursor = 10,
-	kPDAClickableSecondFrameCursor = 11
+	kDefaultCursor = 1,
+	kClickableFirstFrameCursor = 2,
+	kClickableSecondFrameCursor = 3,
+	kNotClickableCursor = 4,
+	kHoldingItemCursor = 5,
+	kPDADefaultCursor = 6,
+	kPDAClickableFirstFrameCursor = 7,
+	kPDAClickableSecondFrameCursor = 8,
+	kExitLeftCursor = 9,
+	kExitRightCursor = 10,
+	kExitForwardCursor = 11,
+	kExitDownCursor = 12 // only in Hokus Pokus
 };
 
 
@@ -108,6 +109,7 @@ enum {
 enum {
 	kPokusLoadingCursorID = 135,
 	kPokusExitForwardCursorID = 138,
+	kPokusExitDownCursorID = 139,
 	kPokusExitLeftCursorID = 133,
 	kPokusExitRightCursorID = 134,
 	kPokusClickableFirstCursorID = 137,
@@ -172,6 +174,7 @@ static const char *kCursorNameExitUp = "ExitUp";
 static const char *kCursorNameExitLeft = "ExitLeft";
 static const char *kCursorNameExitRight = "ExitRight";
 static const char *kCursorNameExitForward = "ExitForward";
+static const char *kCursorNameExitBackWards = "ExitBackwards";
 
 static const char *kClickable = "Clickable";
 static const char *kCursor = "Cursor";
