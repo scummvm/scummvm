@@ -160,6 +160,7 @@ private:
 
 	int readNextPacketHeader(int32 &startCode, uint32 &pts, uint32 &dts);
 	int findNextStartCode(uint32 &size);
+	MPEGStream *getStream(uint32 startCode, Common::SeekableReadStream *packet);
 	uint32 readPTS(int c);
 
 	void parseProgramStreamMap(int length);

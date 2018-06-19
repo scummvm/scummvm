@@ -79,6 +79,82 @@ void MPEGPSDecoder::close() {
 	memset(_psmESType, 0, 256);
 }
 
+MPEGPSDecoder::MPEGStream *MPEGPSDecoder::getStream(uint32 startCode, Common::SeekableReadStream *packet) {
+	MPEGStream *stream = 0;
+
+	if (_streamMap.contains(startCode)) {
+		// We already found the stream
+		stream = _streamMap[startCode];
+	} else {
+		// We haven't seen this before
+
+		if (startCode == kStartCodePrivateStream1) {
+			PrivateStreamType streamType = detectPrivateStreamType(packet);
+			packet->seek(0);
+
+			// TODO: Handling of these types (as needed)
+			bool handled = false;
+			const char *typeName;
+
+			switch (streamType) {
+			case kPrivateStreamAC3: {
+				typeName = "AC-3";
+
+#ifdef USE_A52
+				handled = true;
+				AC3AudioTrack *ac3Track = new AC3AudioTrack(*packet, getSoundType());
+				stream = ac3Track;
+				_streamMap[startCode] = ac3Track;
+				addTrack(ac3Track);
+#endif
+				break;
+			}
+			case kPrivateStreamDTS:
+				typeName = "DTS";
+				break;
+			case kPrivateStreamDVDPCM:
+				typeName = "DVD PCM";
+				break;
+			case kPrivateStreamPS2Audio:
+				typeName = "PS2 Audio";
+				break;
+			default:
+				typeName = "Unknown";
+				break;
+			}
+
+			if (!handled) {
+				warning("Unhandled DVD private stream: %s", typeName);
+
+				// Make it 0 so we don't get the warning twice
+				_streamMap[startCode] = 0;
+			}
+		} else if (startCode >= 0x1E0 && startCode <= 0x1EF) {
+			// Video stream
+			// TODO: Multiple video streams
+			warning("Found extra video stream 0x%04X", startCode);
+			_streamMap[startCode] = 0;
+		} else if (startCode >= 0x1C0 && startCode <= 0x1DF) {
+#ifdef USE_MAD
+			// MPEG Audio stream
+			MPEGAudioTrack *audioTrack = new MPEGAudioTrack(*packet, getSoundType());
+			stream = audioTrack;
+			_streamMap[startCode] = audioTrack;
+			addTrack(audioTrack);
+#else
+			warning("Found audio stream 0x%04X, but no MAD support compiled in", startCode);
+			_streamMap[startCode] = 0;
+#endif
+		} else {
+			// Probably not relevant
+			debug(0, "Found unhandled MPEG-PS stream type 0x%04x", startCode);
+			_streamMap[startCode] = 0;
+		}
+	}
+
+	return stream;
+}
+
 void MPEGPSDecoder::readNextPacket() {
 	if (_stream->eos())
 		return;
@@ -96,78 +172,8 @@ void MPEGPSDecoder::readNextPacket() {
 			return;
 		}
 
-		MPEGStream *stream = 0;
 		Common::SeekableReadStream *packet = _stream->readStream(size);
-
-		if (_streamMap.contains(startCode)) {
-			// We already found the stream
-			stream = _streamMap[startCode];
-		} else {
-			// We haven't seen this before
-
-			if (startCode == kStartCodePrivateStream1) {
-				PrivateStreamType streamType = detectPrivateStreamType(packet);
-				packet->seek(0);
-
-				// TODO: Handling of these types (as needed)
-				bool handled = false;
-				const char *typeName;
-
-				switch (streamType) {
-				case kPrivateStreamAC3: {
-					typeName = "AC-3";
-
-#ifdef USE_A52
-					handled = true;
-					AC3AudioTrack *ac3Track = new AC3AudioTrack(*packet, getSoundType());
-					stream = ac3Track;
-					_streamMap[startCode] = ac3Track;
-					addTrack(ac3Track);
-#endif
-					break;
-				}
-				case kPrivateStreamDTS:
-					typeName = "DTS";
-					break;
-				case kPrivateStreamDVDPCM:
-					typeName = "DVD PCM";
-					break;
-				case kPrivateStreamPS2Audio:
-					typeName = "PS2 Audio";
-					break;
-				default:
-					typeName = "Unknown";
-					break;
-				}
-
-				if (!handled) {
-					warning("Unhandled DVD private stream: %s", typeName);
-
-					// Make it 0 so we don't get the warning twice
-					_streamMap[startCode] = 0;
-				}
-			} else if (startCode >= 0x1E0 && startCode <= 0x1EF) {
-				// Video stream
-				// TODO: Multiple video streams
-				warning("Found extra video stream 0x%04X", startCode);
-				_streamMap[startCode] = 0;
-			} else if (startCode >= 0x1C0 && startCode <= 0x1DF) {
-#ifdef USE_MAD
-				// MPEG Audio stream
-				MPEGAudioTrack *audioTrack = new MPEGAudioTrack(*packet, getSoundType());
-				stream = audioTrack;
-				_streamMap[startCode] = audioTrack;
-				addTrack(audioTrack);
-#else
-				warning("Found audio stream 0x%04X, but no MAD support compiled in", startCode);
-				_streamMap[startCode] = 0;
-#endif
-			} else {
-				// Probably not relevant
-				debug(0, "Found unhandled MPEG-PS stream type 0x%04x", startCode);
-				_streamMap[startCode] = 0;
-			}
-		}
+		MPEGStream *stream = getStream(startCode, packet);
 
 		if (stream) {
 			packet->seek(0);
