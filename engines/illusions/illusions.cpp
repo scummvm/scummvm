@@ -391,4 +391,14 @@ FramesList *IllusionsEngine::findActorSequenceFrames(Sequence *sequence) {
 	return _actorInstances->findSequenceFrames(sequence);
 }
 
+void IllusionsEngine::setSubtitleDuration(uint16 duration) {
+	_subtitleDuration = duration;
+	ConfMan.setInt("talkspeed", _subtitleDuration);
+	ConfMan.flushToDisk();
+}
+
+uint16 IllusionsEngine::getSubtitleDuration() {
+	return (uint16)_subtitleDuration;
+}
+
 } // End of namespace Illusions

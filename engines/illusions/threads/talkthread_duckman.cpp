@@ -56,7 +56,7 @@ TalkThread_Duckman::TalkThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threa
 	else
 		_status = 2;
 		
-	_durationMult = _vm->clipTextDuration(_vm->_fieldE);
+	_durationMult = _vm->clipTextDuration(_vm->_subtitleDuration);
 	_textDuration = _durationMult;
 	_defDurationMult = _vm->clipTextDuration(240);
 	

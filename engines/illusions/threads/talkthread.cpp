@@ -60,7 +60,7 @@ TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThrea
 	
 	_flags = 0x0E;
 	
-	_durationMult = _vm->clipTextDuration(_vm->_fieldE);
+	_durationMult = _vm->clipTextDuration(_vm->getSubtitleDuration());
 	_textDuration = _durationMult;
 	_defDurationMult = _vm->clipTextDuration(240);
 	_textStartTime = 0;

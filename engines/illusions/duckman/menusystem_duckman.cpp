@@ -111,10 +111,10 @@ MenuItem *DuckmanMenuSystem::createOptionsSliderMenuItem(MenuActionUpdateSlider 
 	int sliderValue = 0;
 	Common::String sliderText = "{~~~~~~~~~~~~~~~~}";
 	switch (type) {
-		case SFX : sliderValue = _vm->_soundMan->getSfxVolume()/(255/15); break;
-		case MUSIC : sliderValue = _vm->_soundMan->getMusicVolume()/(255/15); break;
-		case VOICE : sliderValue = _vm->_soundMan->getSpeechVolume()/(255/15); break;
-		case TEXT_DURATION : sliderValue = 128/(255/15); break; // TODO wire up text duration config
+		case SFX : sliderValue = _vm->_soundMan->getSfxVolume()/(256/15); break;
+		case MUSIC : sliderValue = _vm->_soundMan->getMusicVolume()/(256/15); break;
+		case VOICE : sliderValue = _vm->_soundMan->getSpeechVolume()/(256/15); break;
+		case TEXT_DURATION : sliderValue = _vm->getSubtitleDuration()/(256/15); break;
 		default: break;
 	}
 
@@ -381,10 +381,10 @@ void MenuActionUpdateSlider::setSliderValue(uint8 newValue) {
 	_menuSystem->redrawMenuText(menu);
 
 	switch(_type) {
-		case SFX : _vm->_soundMan->setSfxVolume(newValue * (255/15)); break;
-		case MUSIC : _vm->_soundMan->setMusicVolume(newValue * (255/15)); break;
-		case VOICE : _vm->_soundMan->setSpeechVolume(newValue * (255/15)); break;
-		case TEXT_DURATION : break; // TODO
+		case SFX : _vm->_soundMan->setSfxVolume(newValue * (256/15)); break;
+		case MUSIC : _vm->_soundMan->setMusicVolume(newValue * (256/15)); break;
+		case VOICE : _vm->_soundMan->setSpeechVolume(newValue * (256/15)); break;
+		case TEXT_DURATION : _vm->setSubtitleDuration(newValue * (256/15)); break;
 		default: break;
 	}
 }
