@@ -77,9 +77,10 @@ void PDAMgr::onLeftButtonClick(Common::Point point) {
 
 void PDAMgr::onMouseMove(Common::Point point) {
 	Actor *actor = _game->getDirector()->getActorByPoint(point);
-	if (actor && dynamic_cast<PDAButtonActor*>(actor))
+	if (actor && dynamic_cast<PDAButtonActor *>(actor))
 		actor->onMouseOver(point, &_cursorMgr);
-	else _cursorMgr.setCursor(kPDADefaultCursor, point,Common::String());
+	else
+		_cursorMgr.setCursor(kPDADefaultCursor, point,Common::String());
 }
 
 void PDAMgr::close() {

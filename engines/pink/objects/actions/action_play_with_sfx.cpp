@@ -74,7 +74,7 @@ void ActionSfx::deserialize(Pink::Archive &archive) {
 	_volume = archive.readDWORD();
 	assert(_volume <= 100);
 	_sfxName = archive.readString();
-	_sprite = (ActionPlayWithSfx*) archive.readObject();
+	_sprite = (ActionPlayWithSfx *)archive.readObject();
 }
 
 void ActionSfx::toConsole() {

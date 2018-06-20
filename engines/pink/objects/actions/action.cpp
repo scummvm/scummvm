@@ -28,7 +28,7 @@ namespace Pink {
 
 void Action::deserialize(Archive &archive) {
 	NamedObject::deserialize(archive);
-	_actor = static_cast<Actor*>(archive.readObject());
+	_actor = static_cast<Actor *>(archive.readObject());
 }
 
 bool Action::initPalette(Director *director) {

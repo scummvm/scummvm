@@ -62,7 +62,7 @@ public:
 	bool start(bool paused);
 
 	void setLeadActor(LeadActor *lead) { _lead = lead; }
-	InventoryItem* findInventoryItem(const Common::String &name);
+	InventoryItem *findInventoryItem(const Common::String &name);
 
 	bool isPinkOwnsAnyItems();
 	void setItemOwner(const Common::String &owner, InventoryItem *item);

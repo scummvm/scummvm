@@ -97,7 +97,7 @@ void CursorMgr::startAnimation(uint index) {
 
 void CursorMgr::showItem(const Common::String &itemName, const Common::Point point) {
 	if (!_actor)
-		_actor = static_cast<CursorActor*>(_page->findActor(kCursor));
+		_actor = static_cast<CursorActor *>(_page->findActor(kCursor));
 	_actor->setCursorItem(itemName, point);
 }
 

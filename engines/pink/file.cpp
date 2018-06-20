@@ -28,7 +28,7 @@ void ObjectDescription::load(Common::File &file) {
 	file.read(name, sizeof(name));
 
 	objectsOffset = file.readUint32LE();
-	/*objectsCount*/ file.readUint32LE();
+	/* objectsCount = */ file.readUint32LE();
 	resourcesOffset = file.readUint32LE();
 	resourcesCount = file.readUint32LE();
 }
@@ -80,7 +80,7 @@ bool OrbFile::open(const Common::String &name) {
 void OrbFile::loadGame(PinkEngine *game) {
 	seekToObject(kPinkGame);
 	Archive archive(this);
-	archive.mapObject(reinterpret_cast<Object*>(game)); // hack
+	archive.mapObject(reinterpret_cast<Object *>(game)); // hack
 	game->load(archive);
 }
 
@@ -97,11 +97,11 @@ void OrbFile::loadObject(Object *obj, ObjectDescription *objDesc) {
 }
 
 static int objDescComp(const void *a, const void *b) {
-	return scumm_stricmp((char *) a, (char *) b);
+	return scumm_stricmp((char *)a, (char *)b);
 }
 
 ObjectDescription *OrbFile::getObjDesc(const char *name) {
-	ObjectDescription *desc = (ObjectDescription*) bsearch(name, _table, _tableSize, sizeof(ObjectDescription), objDescComp);
+	ObjectDescription *desc = (ObjectDescription *)bsearch(name, _table, _tableSize, sizeof(ObjectDescription), objDescComp);
 	assert(desc != nullptr);
 	return desc;
 }

@@ -41,7 +41,7 @@ Actor::~Actor() {
 
 void Actor::deserialize(Archive &archive) {
 	NamedObject::deserialize(archive);
-	_page = static_cast<Page*>(archive.readObject());
+	_page = static_cast<Page *>(archive.readObject());
 	_actions.deserialize(archive);
 }
 

@@ -41,9 +41,9 @@ LeadActor::LeadActor()
 void LeadActor::deserialize(Archive &archive) {
 	_state = kReady;
 	Actor::deserialize(archive);
-	_cursorMgr = static_cast<CursorMgr*>(archive.readObject());
-	_walkMgr = static_cast<WalkMgr*>(archive.readObject());
-	_sequencer = static_cast<Sequencer*>(archive.readObject());
+	_cursorMgr = static_cast<CursorMgr *>(archive.readObject());
+	_walkMgr = static_cast<WalkMgr *>(archive.readObject());
+	_sequencer = static_cast<Sequencer *>(archive.readObject());
 }
 
 void LeadActor::toConsole() {
