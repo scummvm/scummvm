@@ -57,7 +57,7 @@ Common::String ResourceMgr::loadText(Common::String &name) {
 	Common::SeekableReadStream *stream = getResourceStream(name);
 	char *txt = new char[stream->size()];
 	Common::String str(txt, stream->size());
-	delete txt;
+	delete [] txt;
 	return str;
 }
 
