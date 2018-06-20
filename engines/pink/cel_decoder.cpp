@@ -86,7 +86,7 @@ void CelDecoder::setEndOfTrack() {
 }
 
 CelDecoder::CelVideoTrack::CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader)
-		: FlicVideoTrack(stream, frameCount, width, height, 1), _center(0,0), _transparentColourIndex(0) {
+		: FlicVideoTrack(stream, frameCount, width, height, 1), _center(0, 0), _transparentColourIndex(0) {
 	readHeader();
 }
 
@@ -170,7 +170,7 @@ void CelDecoder::CelVideoTrack::skipFrame() {
 	}
 
 	if (_curFrame == 0)
-		_transparentColourIndex = *(byte *)_surface->getBasePtr(0,0);
+		_transparentColourIndex = *(byte *)_surface->getBasePtr(0, 0);
 
 }
 
@@ -201,7 +201,7 @@ const Graphics::Surface *CelDecoder::CelVideoTrack::decodeNextFrame() {
 	}
 
 	if (_curFrame == 0)
-		_transparentColourIndex = *(byte *)_surface->getBasePtr(0,0);
+		_transparentColourIndex = *(byte *)_surface->getBasePtr(0, 0);
 
 	return _surface;
 }
