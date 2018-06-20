@@ -347,6 +347,10 @@ void Room::showBitmapFor5Ticks(const Common::String &bmpName, int priority) {
 	_vm->_gfx->delSprite(&sprite);
 }
 
+bool Room::haveItem(int item) {
+	return _vm->_itemList[item - 0x40].have;
+}
+
 Common::Point Room::getActorPos(int actorIndex) {
 	return _vm->_actorList[actorIndex].pos;
 }

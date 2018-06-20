@@ -112,6 +112,7 @@ private:
 	void loadMapFile(const Common::String &name);                                              // Cmd 0x09
 	void showBitmapFor5Ticks(const Common::String &bmpName, int priority);                     // Cmd 0x0a
 	// Command 0x0c: "demon6ShowCase"
+	bool haveItem(int item);                                                                   // Cmd 0x0b
 	Common::Point getActorPos(int actorIndex);                                                 // Cmd 0x0d
 	int16 getRandomWordInRange(int start, int end);                                            // Cmd 0x0e
 	void playSoundEffectIndex(int soundEffect);                                                // Cmd 0x0f
@@ -843,6 +844,97 @@ public:
 
 	// LOVE2
 	void love2Tick1();
+	void love2TouchedWarp1();
+	void love2Timer3Expired();
+	void love2WalkToDoor();
+	void love2TouchedHotspot0();
+	void love2DoorReachedOrOpened();
+	void love2LookAtCabinet();
+	void love2LookAtDoor();
+	void love2LookAtSynthesizer();
+	void love2LookAtAnywhere();
+	void love2LookAtAntigrav();
+	void love2LookAtMccoy();
+	void love2LookAtSpock();
+	void love2LookAtRedshirt();
+	void love2LookAtKirk();
+	void love2LookAtArdak();
+	void love2LookAtChamber();
+	void love2LookAtCan1();
+	void love2LookAtCan2();
+	void love2TalkToKirk();
+	void love2TalkToSpock();
+	void love2TalkToMccoy();
+	void love2TalkToRedshirt();
+	void love2UseMTricorderAnywhere();
+	void love2UseSTricorderAnywhere();
+	void love2UseKirkOnCabinet();
+	void love2UseSpockOnCabinet();
+	void love2UseMccoyOnCabinet();
+	void love2UseRedshirtOnCabinet();
+	void love2CrewmanReachedCabinet();
+	void love2CrewmanAccessedCabinet();
+	void love2CrewmanOpenedOrClosedCabinet();
+	void love2UseWrenchOnGasFeed();
+	void love2ReachedGasFeed();
+	void love2ChangedGasFeed();
+	void love2UseO2GasOnCanisterSlot();
+	void love2UseH2GasOnCanisterSlot();
+	void love2UseN2GasOnCanisterSlot();
+	void love2ReachedCanisterSlot();
+	void love2PutCanisterInSlot1();
+	void love2PutCanisterInSlot2();
+	void love2UseAntigravOnCanister1();
+	void love2ReachedCanisterSlot1ToGet();
+	void love2TookCanister1();
+	void love2UseAntigravOnCanister2();
+	void love2ReachedCanisterSlot2ToGet();
+	void love2TookCanister2();
+	void love2UseKirkOnSynthesizer();
+	void love2UseSpockOnSynthesizer();
+	void love2UseMccoyOnSynthesizer();
+	void love2UseRedshirtOnSynthesizer();
+	void love2CrewmanReachedSynthesizer();
+	void love2CrewmanUsedSynthesizer();
+	void love2SpockReachedGasFeeds();
+	void love2SpockEnabledGasFeeds();
+	void love2UseSynthesizer();
+	void love2SynthesizerDoorClosed();
+	void love2SynthesizerFinished();
+	void love2FinishedAnimation27();
+	void love2UsePolyberylcarbonateOnSynthesizerDoor();
+	void love2KirkReachedSynthesizerWithPolyberylcarbonate();
+	void love2SynthesizerDoorOpenedWithPolyberylcarbonate();
+	void love2PutPolyberylcarbonateInSynthesizer();
+	void love2UseDishesOnSynthesizerDoor();
+	void love2KirkReachedSynthesizerWithDishes();
+	void love2SynthesizerDoorOpenedWithDishes();
+	void love2PutDishesInSynthesizer();
+	void love2UseSampleOnSynthesizerDoor();
+	void love2KirkReachedSynthesizerWithSample();
+	void love2SynthesizerDoorOpenedWithSample();
+	void love2PutSampleInSynthesizer();
+	void love2UseAnythingOnSynthesizerDoor();
+	void love2UseAnythingOnSynthesizer();
+	void love2GetCanister();
+	void love2GetAntigrav();
+	void love2ReachedAntigrav();
+	void love2GotAntigrav();
+	void love2GetPolyberylcarbonate();
+	void love2ReachedPolyberylcarbonate();
+	void love2GotPolyberylcarbonate();
+	void love2GetDishes();
+	void love2ReachedDishes();
+	void love2GotDishes();
+	void love2GetSample();
+	void love2ReachedSample();
+	void love2GotSample();
+	void love2GetSynthesizerOutput();
+	void love2ReachedSynthesizerOutput();
+	void love2GotSynthesizerOutput();
+	void love2GetCure();
+	void love2ReachedCure();
+	void love2GotCure();
 
 	// LOVE3
 	void love3Tick1();
@@ -946,6 +1038,21 @@ private:
 			byte _1d2a; // 0x1d2a
 			byte _1d2b; // 0x1d2b
 		} love1;
+
+		struct {
+			byte canisterType; // 0xca
+			byte cb; // 0xcb
+			bool walkingToDoor; // 0xcc
+			byte doorOpenCounter; // 0xcd
+			int16 canisterItem; // 0xce
+			char canisterAnim[10]; // 0xd0
+			int16 d2; // 0xd2
+			char d6[10]; // 0xd6
+			char d8[10]; // 0xd8
+			byte _2966; // 0x2966
+			byte _2967; // 0x2967
+		} love2;
+
 
 	} _roomVar;
 };
