@@ -32,10 +32,18 @@ static const PlainGameDescriptor pinkGames[] = {
 
 #include "detection_tables.h"
 
+static const char *directoryGlobs[] = {
+	"install",
+	nullptr
+};
+
+
 class PinkMetaEngine : public AdvancedMetaEngine {
 public:
 	PinkMetaEngine() : AdvancedMetaEngine(Pink::gameDescriptions, sizeof(ADGameDescription), pinkGames) {
 		_gameIds = pinkGames;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	virtual const char *getName() const {

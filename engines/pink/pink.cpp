@@ -49,6 +49,9 @@ Pink::PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kPinkDebugLoadingResources, "loading_resources", "Loading resources data");
 	DebugMan.addDebugChannel(kPinkDebugGraphics, "graphics", "Graphics handling");
 	DebugMan.addDebugChannel(kPinkDebugSound, "sound", "Sound processing");
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 }
 
 Pink::PinkEngine::~PinkEngine() {
