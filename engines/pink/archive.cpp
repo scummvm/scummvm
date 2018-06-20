@@ -259,7 +259,7 @@ Object *Archive::parseObject(bool &isCopyReturned) {
 	if (obTag == 0x0000) {
 		return nullptr;
 	} else if (obTag == 0xffff) {
-		int schema = _readStream->readUint16LE();
+		/* int schema = */_readStream->readUint16LE();
 
 		int size = _readStream->readUint16LE();
 		_readStream->read(className, size);
