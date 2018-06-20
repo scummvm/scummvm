@@ -31,7 +31,6 @@ namespace Pink {
 class PinkEngine;
 class Actor;
 class LeadActor;
-class Command;
 class PDAPage;
 
 struct Command;
