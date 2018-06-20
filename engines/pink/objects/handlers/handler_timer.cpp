@@ -106,7 +106,7 @@ void HandlerTimerSequences::handle(Actor *actor) {
 
 	assert(sequence);
 
- 	sequencer->authorParallelSequence(sequence, 0);
+	sequencer->authorParallelSequence(sequence, 0);
 }
 
 } // End of namespace Pink

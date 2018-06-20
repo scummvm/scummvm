@@ -471,32 +471,32 @@ void PubPink::updateCursor(const Common::Point point) {
 }
 
 bool PubPink::sendUseClickMessage(Actor *actor) {
-   if (!LeadActor::sendUseClickMessage(actor) && playingMiniGame()) {
-	   _nextState = _state;
-	   _state = kPlayingSequence;
+	if (!LeadActor::sendUseClickMessage(actor) && playingMiniGame()) {
+		_nextState = _state;
+		_state = kPlayingSequence;
 
-	   const char *roundName;
-	   switch (_round++ % 3) {
-	   case 0:
-		   roundName = kFirstRound;
-		   break;
-	   case 1:
-		   roundName = kSecondRound;
-		   break;
-	   case 2:
-		   roundName = kThirdRound;
-		   break;
-	   default:
-		   roundName = nullptr;
-		   assert(0);
-	   }
-	   _sequencer->authorSequence(_sequencer->findSequence(roundName), 0);
-   }
+		const char *roundName;
+		switch (_round++ % 3) {
+			case 0:
+			roundName = kFirstRound;
+			break;
+			case 1:
+			roundName = kSecondRound;
+			break;
+			case 2:
+			roundName = kThirdRound;
+			break;
+			default:
+			roundName = nullptr;
+			assert(0);
+		}
+		_sequencer->authorSequence(_sequencer->findSequence(roundName), 0);
+	}
 
-   if (playingMiniGame())
-	   _isHaveItem = true;
+	if (playingMiniGame())
+	_isHaveItem = true;
 
-   return true;
+	return true;
 }
 
 WalkLocation *PubPink::getWalkDestination() {
@@ -511,7 +511,7 @@ WalkLocation *PubPink::getWalkDestination() {
 
 bool PubPink::playingMiniGame() {
 	return !(_page->checkValueOfVariable(kFoodPuzzle, "TRUE") ||
-		   _page->checkValueOfVariable(kFoodPuzzle, "UNDEFINED"));
+			_page->checkValueOfVariable(kFoodPuzzle, "UNDEFINED"));
 }
 
 } // End of namespace Pink

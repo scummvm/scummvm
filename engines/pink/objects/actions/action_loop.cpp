@@ -37,7 +37,7 @@ void ActionLoop::deserialize(Archive &archive) {
 	style = archive.readWORD();
 	switch (style) {
 	case kPingPong:
- 		_style = kPingPong;
+		_style = kPingPong;
 		break;
 	case kRandom:
 		_style = kRandom; // haven't seen
@@ -113,7 +113,7 @@ void ActionLoop::onStart() {
 		_inLoop = true;
 	}
 
-    if (!isTalk())
+	if (!isTalk())
 		_actor->endAction();
 
 	_forward = true;
