@@ -31,7 +31,8 @@ class Sequence;
 class SequenceContext;
 class GamePage;
 class SeqTimer;
-class SequenceActorState;
+
+struct SequenceActorState;
 
 class Sequencer : public Object {
 public:
