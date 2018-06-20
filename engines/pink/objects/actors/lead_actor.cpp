@@ -325,7 +325,9 @@ void LeadActor::setNextExecutors(const Common::String &nextModule, const Common:
 }
 
 void LeadActor::forceUpdateCursor() {
-	const Common::Point point = _page->getGame()->getEventManager()->getMousePos();
+	PinkEngine *vm =_page->getGame();
+	vm->getDirector()->update(); // we have actions, that should be drawn to properly update cursor
+	const Common::Point point = vm->getEventManager()->getMousePos();
 	updateCursor(point);
 }
 
