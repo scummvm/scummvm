@@ -61,8 +61,7 @@ void ActionLoop::update() {
 		if (frame < _startFrame) {
 			decodeNext();
 			return;
-		}
-		else
+		} else
 			_inLoop = true;
 	}
 
@@ -76,8 +75,7 @@ void ActionLoop::update() {
 				setFrame(_stopFrame - 1);
 				decodeNext();
 			}
-		}
-		else {
+		} else {
 			if (frame > _startFrame) {
 				setFrame(frame - 1);
 			} else {
