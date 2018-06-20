@@ -251,7 +251,7 @@ void LeadActor::onRightButtonClick(const Common::Point point) {
 }
 
 
-void LeadActor::onMouseMove(Common::Point point) {
+void LeadActor::onMouseMove(const Common::Point point) {
 	if (_state != kPDA)
 		updateCursor(point);
 	else

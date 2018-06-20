@@ -36,8 +36,8 @@ class AudioInfoPDAButton : public Actor {
 public:
 	void toConsole();
 
-	void onMouseOver(Common::Point point, CursorMgr *mgr);
-	void onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override;
+	void onMouseOver(const Common::Point point, CursorMgr *mgr);
+	void onHover(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override;
 
 	bool onLeftClickMessage() override;
 };
