@@ -36,6 +36,7 @@ const LanguageDescription g_languages[] = {
 	{    "gb", "en_GB", "English (GB)", EN_GRB },
 	{    "us", "en_US", "English (US)", EN_USA },
 	{    "et", "et_EE", "Estonian", ET_EST },
+	{    "fi", "fi_FI", "Finnish", FI_FIN },
 	{    "fr", "fr_FR", "French", FR_FRA },
 	{    "de", "de_DE", "German", DE_DEU },
 	{    "gr", "el_GR", "Greek", GR_GRE },
