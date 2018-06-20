@@ -44,17 +44,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// Russian
+	// French
 	{
 		"peril",
 		0,
 		{
-			{"PPTP.ORB", NULL, "4802bace9cd89a73eb915a075b230646", 635322616},
-			{"PPTP.BRO", NULL, "87539dbbb34bafbe223c751a60254505", 8945466},
-			{"PPTP.EXE", NULL, "739259d239acdc0304f904016e775fb3", 742912},
+			{"PPTP.ORB", NULL, "fd641b5735fbe41d14db698ece29d2b1", 607185037},
+			{"PPTP.BRO", NULL, "634d344ab9aaf7c919ef2d330327c908", 8945466},
+			{"PPTP.EXE", NULL, "c2f2f717f33a234b257143a9f2baa18d", 598528},
 			AD_LISTEND
 		},
-		Common::RU_RUS,
+		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
@@ -76,6 +76,22 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Russian
+	{
+		"peril",
+		0,
+		{
+			{"PPTP.ORB", NULL, "4802bace9cd89a73eb915a075b230646", 635322616},
+			{"PPTP.BRO", NULL, "87539dbbb34bafbe223c751a60254505", 8945466},
+			{"PPTP.EXE", NULL, "739259d239acdc0304f904016e775fb3", 742912},
+			AD_LISTEND
+		},
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
 	// English, Version 1.0
 	{
 		"pokus",
@@ -91,16 +107,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// Russian
+	// French
 	{
 		"pokus",
 		0,
 		{
-			{"HPP.orb", NULL, "1e5155c2219b3baea599563e02596ce5", 526369062},
-			{"hpp.exe", NULL, "32a5937f69dfce9f159b7be358cbd008", 699904},
+			{"HPP.orb", NULL, "d5af74262276f0ffef6605ea0db861d2", 492220293},
+			{"hpp.exe", NULL, "418f2f126903c51f9979c76c22d03e53", 707072},
 			AD_LISTEND
 		},
-		Common::RU_RUS,
+		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
@@ -116,6 +132,21 @@ static const ADGameDescription gameDescriptions[] = {
 			AD_LISTEND
 		},
 		Common::HE_ISR,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Russian
+	{
+		"pokus",
+		0,
+		{
+			{"HPP.orb", NULL, "1e5155c2219b3baea599563e02596ce5", 526369062},
+			{"hpp.exe", NULL, "32a5937f69dfce9f159b7be358cbd008", 699904},
+			AD_LISTEND
+		},
+		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
