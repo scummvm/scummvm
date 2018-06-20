@@ -58,7 +58,7 @@ SequenceContext::SequenceContext(Sequence *sequence)
 			}
 		}
 		if (!found) {
-			debug(items[i]->getActor().c_str());
+			debug("%s", items[i]->getActor().c_str());
 			_states.push_back(SequenceActorState(items[i]->getActor()));
 		}
 	}
