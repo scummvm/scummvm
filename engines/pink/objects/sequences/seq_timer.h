@@ -32,9 +32,11 @@ class Sequencer;
 class SeqTimer : public Object {
 public:
 	SeqTimer();
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
-	virtual void update();
+
+	void deserialize(Archive &archive) override;
+	void toConsole() override;
+
+	void update();
 
 private:
 	Common::String _actor;

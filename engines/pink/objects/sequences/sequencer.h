@@ -38,38 +38,38 @@ public:
 	Sequencer(GamePage *page);
 	~Sequencer();
 
-	virtual void toConsole();
+	void toConsole() override;
+	void deserialize(Archive &archive) override;
 
-	virtual void deserialize(Archive &archive);
-	Sequence *findSequence(const Common::String &name);
-	SequenceActorState *findMainSequenceActorState(const Common::String &name);
-	SequenceActorState *findParralelSequenceActorState(const Common::String &name);
+public:
+	void loadState(Archive &archive);
+	void saveState(Archive &archive);
 
-	void authorSequence(Sequence *sequence, bool unk);
-	void authorParallelSequence(Sequence *seqeunce, bool unk);
-
-	void removeContext(SequenceContext *context);
-
+	bool isPlaying() { return _context != nullptr; }
 	void update();
+
+	void authorSequence(Sequence *sequence, bool loadingSave);
+	void authorParallelSequence(Sequence *seqeunce, bool loadingSave);
 
 	void skipSubSequence();
 	void restartSequence();
 	void skipSequence();
 
-	void loadState(Archive &archive);
-	void saveState(Archive &archive);
+	void removeContext(SequenceContext *context);
 
-public:
-	void updateTimers();
-	SequenceContext * isContextConflicts(SequenceContext *context);
+	SequenceContext *findConfilictingContextWith(SequenceContext *context);
 
+	Sequence *findSequence(const Common::String &name);
+	SequenceActorState *findState(const Common::String &name);
 
+	GamePage *getPage() const { return _page; }
+
+private:
 	SequenceContext *_context;
+	GamePage *_page;
 	Common::Array<SequenceContext *> _parrallelContexts;
 	Array<Sequence *> _sequences;
 	Array<SeqTimer *> _timers;
-	Common::String _currentSequenceName;
-	GamePage *_page;
 	uint _time;
 };
 

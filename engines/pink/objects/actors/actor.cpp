@@ -124,9 +124,8 @@ void Actor::setAction(Action *newAction) {
 	}
 }
 
-void Actor::setAction(Action *newAction, bool unk) {
-	if (unk) {
-		//assert(0); // want to see this
+void Actor::setAction(Action *newAction, bool loadingSave) {
+	if (loadingSave) {
 		_isActionEnded = 1;
 		_action = newAction;
 	} else {

@@ -50,7 +50,7 @@ public:
 	virtual void init(bool paused);
 	bool initPalette(Director *director);
 
-	void toConsole() override ;
+	void toConsole() override;
 
 	bool isPlaying() { return !_isActionEnded; }
 	virtual void pause(bool paused);
@@ -84,7 +84,7 @@ public:
 
 	void setAction(const Common::String &name) { setAction(findAction(name)); }
 	void setAction(Action *newAction);
-	void setAction(Action *newAction, bool unk);
+	void setAction(Action *newAction, bool loadingSave);
 
 	void setPage(Page *page) { _page = page;}
 
