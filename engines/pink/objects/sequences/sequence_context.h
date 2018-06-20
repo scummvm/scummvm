@@ -31,14 +31,14 @@ class Sequence;
 class Sequencer;
 
 struct SequenceActorState {
-	SequenceActorState(const Common::String actorName)
-			: actor(actorName), segment(0) {}
+	SequenceActorState(const Common::String actor)
+			: actorName(actor), _segment(0) {}
 
 	void execute(uint segment, Sequence *sequence, bool loadingSave) const;
 
-	Common::String actor;
-	Common::String defaultAction;
-	uint segment;
+	Common::String actorName;
+	Common::String defaultActionName;
+	uint _segment;
 };
 
 class Actor;

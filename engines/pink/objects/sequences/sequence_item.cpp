@@ -53,7 +53,7 @@ bool SequenceItem::execute(uint segment, Sequence *sequence, bool loadingSave) {
 	SequenceContext *context = sequence->getContext();
 	SequenceActorState *state = context->findState(_actor);
 	if (state)
-		state->segment = segment;
+		state->_segment = segment;
 	if (isLeader())
 		context->setActor(actor);
 	return true;
@@ -84,7 +84,7 @@ void SequenceItemLeaderAudio::toConsole() {
 bool SequenceItemDefaultAction::execute(uint segment, Sequence *sequence, bool loadingSave) {
 	SequenceActorState *state = sequence->getContext()->findState(_actor);
 	if (state)
-		state->defaultAction = _action;
+		state->defaultActionName = _action;
 	return true;
 }
 
