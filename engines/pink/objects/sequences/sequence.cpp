@@ -45,7 +45,7 @@ Sequence::~Sequence() {
 
 void Sequence::deserialize(Archive &archive) {
 	NamedObject::deserialize(archive);
-	_sequencer = static_cast<Sequencer*>(archive.readObject());
+	_sequencer = static_cast<Sequencer *>(archive.readObject());
 	_items.deserialize(archive);
 }
 
@@ -144,7 +144,7 @@ void SequenceAudio::start(bool loadingSave) {
 	Sequence::start(loadingSave);
 	uint index = _context->getNextItemIndex();
 	if (index < _items.size()) {
-		SequenceItemLeaderAudio* leaderAudio = (SequenceItemLeaderAudio*) _items[index];
+		SequenceItemLeaderAudio *leaderAudio = (SequenceItemLeaderAudio *) _items[index];
 		_sample = leaderAudio->getSample();
 	}
 }

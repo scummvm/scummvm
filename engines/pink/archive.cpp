@@ -104,7 +104,7 @@ static const struct RuntimeClass {
 		{"WalkLocation", kWalkLocation}
 };
 
-static Object* createObject(int objectId) {
+static Object *createObject(int objectId) {
 	switch (objectId) {
 	case kActionHide:
 		return new ActionHide;
@@ -303,7 +303,7 @@ static int runtimeClassCmp(const void *key, const void *elem) {
 }
 
 uint Archive::findObjectId(const char *name) {
-	RuntimeClass *found = (RuntimeClass*) bsearch(name, classMap, sizeof(classMap) / sizeof(RuntimeClass) , sizeof(RuntimeClass), runtimeClassCmp);
+	RuntimeClass *found = (RuntimeClass *)bsearch(name, classMap, sizeof(classMap) / sizeof(RuntimeClass) , sizeof(RuntimeClass), runtimeClassCmp);
 
 	if (!found)
 		error("Class %s is not in class Map", name);

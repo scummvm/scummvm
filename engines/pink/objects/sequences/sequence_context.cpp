@@ -46,7 +46,7 @@ SequenceContext::SequenceContext(Sequence *sequence)
 		  _segment(1), _actor(nullptr)
 {
 	sequence->setContext(this);
-	Common::Array<SequenceItem*> &items = sequence->getItems();
+	Common::Array<SequenceItem *> &items = sequence->getItems();
 	debug("SequenceContext for %s", _sequence->getName().c_str());
 
 	for (uint i = 0; i < items.size(); ++i) {

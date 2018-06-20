@@ -68,7 +68,7 @@ static int resDescComp(const void *a, const void *b) {
 Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(const Common::String &name) {
 	Common::SeekableReadStream *stream;
 
-	ResourceDescription *desc = (ResourceDescription*) bsearch(name.c_str(), _resDescTable, _resCount, sizeof(ResourceDescription), resDescComp);
+	ResourceDescription *desc = (ResourceDescription *)bsearch(name.c_str(), _resDescTable, _resCount, sizeof(ResourceDescription), resDescComp);
 
 	if (desc->inBro)
 		stream = _game->getBro();

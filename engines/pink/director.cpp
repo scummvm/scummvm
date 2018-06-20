@@ -107,7 +107,7 @@ Actor *Director::getActorByPoint(const Common::Point point) {
 		const Graphics::Surface *frame = decoder->getCurrentFrame();
 		const Common::Rect &rect = _sprites[i]->getBounds();
 		if (rect.contains(point)) {
-			byte spritePixel = *(const byte*) frame->getBasePtr(point.x - rect.left, point.y - rect.top);
+			byte spritePixel = *(const byte *)frame->getBasePtr(point.x - rect.left, point.y - rect.top);
 			if (spritePixel != decoder->getTransparentColourIndex())
 				return _sprites[i]->getActor();
 		}

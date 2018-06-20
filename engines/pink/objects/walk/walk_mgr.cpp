@@ -98,7 +98,7 @@ WalkAction *WalkMgr::getWalkAction() {
 
 	Action *action = _leadActor->findAction(walkActionName);
 
-	return static_cast<WalkAction*>(action);
+	return static_cast<WalkAction *>(action);
 }
 
 double WalkMgr::getLengthBetweenLocations(WalkLocation *first, WalkLocation *second) {

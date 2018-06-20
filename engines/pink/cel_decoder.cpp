@@ -55,33 +55,33 @@ bool CelDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 
 uint16 CelDecoder::getTransparentColourIndex() {
-	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+	CelVideoTrack *track = (CelVideoTrack *)getTrack(0);
 	if (!track)
 		return 0;
 	return track->getTransparentColourIndex();
 }
 
 const Graphics::Surface *CelDecoder::getCurrentFrame() {
-	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+	CelVideoTrack *track = (CelVideoTrack *)getTrack(0);
 	if (!track)
 		return 0;
 	return track->getCurrentFrame();
 }
 
 Common::Point CelDecoder::getCenter() {
-	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+	CelVideoTrack *track = (CelVideoTrack *)getTrack(0);
 	if (!track)
 		return Common::Point(0, 0);
 	return track->getCenter();
 }
 
 void CelDecoder::skipFrame() {
-	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+	CelVideoTrack *track = (CelVideoTrack *)getTrack(0);
 	track->skipFrame();
 }
 
 void CelDecoder::setEndOfTrack() {
-	CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+	CelVideoTrack *track = (CelVideoTrack *)getTrack(0);
 	track->setEndOfTrack();
 }
 
@@ -170,7 +170,7 @@ void CelDecoder::CelVideoTrack::skipFrame() {
 	}
 
 	if (_curFrame == 0)
-		_transparentColourIndex = *(byte*)_surface->getBasePtr(0,0);
+		_transparentColourIndex = *(byte *)_surface->getBasePtr(0,0);
 
 }
 
@@ -201,7 +201,7 @@ const Graphics::Surface *CelDecoder::CelVideoTrack::decodeNextFrame() {
 	}
 
 	if (_curFrame == 0)
-		_transparentColourIndex = *(byte*)_surface->getBasePtr(0,0);
+		_transparentColourIndex = *(byte *)_surface->getBasePtr(0,0);
 
 	return _surface;
 }

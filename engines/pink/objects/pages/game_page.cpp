@@ -50,8 +50,8 @@ void GamePage::toConsole() {
 
 void GamePage::deserialize(Archive &archive) {
 	Page::deserialize(archive);
-	_module = static_cast<Module*>(archive.readObject());
-	assert(dynamic_cast<Module*>(_module) != 0);
+	_module = static_cast<Module *>(archive.readObject());
+	assert(dynamic_cast<Module *>(_module) != 0);
 }
 
 void GamePage::load(Archive &archive) {
@@ -62,7 +62,7 @@ void GamePage::load(Archive &archive) {
 
 	Page::load(archive);
 
-	_leadActor = static_cast<LeadActor*>(archive.readObject());
+	_leadActor = static_cast<LeadActor *>(archive.readObject());
 
 	_walkMgr->deserialize(archive);
 	_sequencer->deserialize(archive);
@@ -131,7 +131,7 @@ void GamePage::setVariable(Common::String &variable, Common::String &value) {
 }
 
 void GamePage::loadStateFromMem() {
-	Archive archive(static_cast<Common::SeekableReadStream*>(_memFile));
+	Archive archive(static_cast<Common::SeekableReadStream *>(_memFile));
 	_variables.deserialize(archive);
 
 	for (uint i = 0; i < _actors.size(); ++i) {
@@ -141,7 +141,7 @@ void GamePage::loadStateFromMem() {
 
 void GamePage::saveStateToMem() {
 	_memFile = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
-	Archive archive(static_cast<Common::WriteStream*>(_memFile));
+	Archive archive(static_cast<Common::WriteStream *>(_memFile));
 	_variables.serialize(archive);
 
 	for (uint i = 0; i < _actors.size(); ++i) {

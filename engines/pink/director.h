@@ -50,8 +50,8 @@ public:
 	void addDirtyRect(const Common::Rect &rect);
 	void addDirtyRects(ActionCEL *sprite);
 
-	void addSound(ActionSound* sound) { _sounds.push_back(sound); };
-	void removeSound(ActionSound* sound);
+	void addSound(ActionSound *sound) { _sounds.push_back(sound); };
+	void removeSound(ActionSound *sound);
 
 	void clear();
 

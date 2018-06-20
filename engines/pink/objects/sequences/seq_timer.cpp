@@ -38,7 +38,7 @@ void SeqTimer::deserialize(Archive &archive) {
 	_actor = archive.readString();
 	_period = archive.readDWORD();
 	_range = archive.readDWORD();
-	_sequencer = static_cast<Sequencer*>(archive.readObject());
+	_sequencer = static_cast<Sequencer *>(archive.readObject());
 }
 
 void SeqTimer::toConsole() {
