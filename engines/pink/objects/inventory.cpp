@@ -87,7 +87,7 @@ bool InventoryMgr::isPinkOwnsAnyItems() {
 
 void InventoryMgr::setItemOwner(const Common::String &owner, InventoryItem *item) {
 	if (owner == item->getCurrentOwner())
-	   return;
+		return;
 
 	if (item == _item && _lead->getName() != owner)
 		_item = nullptr;

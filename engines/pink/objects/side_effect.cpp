@@ -89,7 +89,7 @@ void SideEffectGameVariable::toConsole() {
 }
 
 void SideEffectModuleVariable::execute(Actor *actor) {
-   actor->getPage()->getModule()->setVariable(_name, _value);
+	actor->getPage()->getModule()->setVariable(_name, _value);
 }
 
 void SideEffectModuleVariable::toConsole() {

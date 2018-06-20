@@ -63,7 +63,7 @@ Sequence *Sequencer::findSequence(const Common::String &name) {
 }
 
 void Sequencer::authorSequence(Sequence *sequence, bool loadingSave) {
- 	if (_context)
+	if (_context)
 		_context->getSequence()->forceEnd();
 
 	if (sequence) {
