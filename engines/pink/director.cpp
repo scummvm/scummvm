@@ -126,8 +126,7 @@ void Director::draw() {
 
 		_dirtyRects.resize(0);
 		_surface.update();
-	}
-	else
+	} else
 		g_system->updateScreen();
 }
 

@@ -60,8 +60,7 @@ void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 			mgr->setCursor(_cursor, point);
 		else
 			mgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
-	}
-	else
+	} else
 		Actor::onMouseOver(point, mgr);
 }
 
