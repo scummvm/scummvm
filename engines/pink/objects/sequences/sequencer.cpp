@@ -159,6 +159,12 @@ void Sequencer::skipSequence() {
 void Sequencer::loadState(Archive &archive) {
 	Sequence *sequence = findSequence(archive.readString());
 	authorSequence(sequence, 1);
+
+	uint size = archive.readWORD();
+	for (uint i = 0; i < size; ++i) {
+		sequence = findSequence(archive.readString());
+		authorParallelSequence(sequence, 1);
+	}
 }
 
 void Sequencer::saveState(Archive &archive) {
@@ -166,7 +172,11 @@ void Sequencer::saveState(Archive &archive) {
 	if (_context)
 		sequenceName = _context->getSequence()->getName();
 	archive.writeString(sequenceName);
-	// add pokus specific
+
+	archive.writeWORD(_parrallelContexts.size());
+	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
+		archive.writeString(_parrallelContexts[i]->getSequence()->getName());
+	}
 }
 
 SequenceContext *Sequencer::findConfilictingContextWith(SequenceContext *context) {
