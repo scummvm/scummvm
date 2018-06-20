@@ -32,9 +32,9 @@
 namespace Pink {
 
 void SequenceActorState::execute(uint segment, Sequence *sequence, bool loadingSave) const {
-	Actor *actor = sequence->getSequencer()->getPage()->findActor(this->actor);
-	if (actor && this->segment != segment && !defaultAction.empty()) {
-		Action *action = actor->findAction(defaultAction);
+	Actor *actor = sequence->getSequencer()->getPage()->findActor(this->actorName);
+	if (actor && _segment != segment && !defaultActionName.empty()) {
+		Action *action = actor->findAction(defaultActionName);
 		if (action && actor->getAction() != action) {
 			actor->setAction(action, loadingSave);
 		}
@@ -52,7 +52,7 @@ SequenceContext::SequenceContext(Sequence *sequence)
 	for (uint i = 0; i < items.size(); ++i) {
 		bool found = 0;
 		for (uint j = 0; j < _states.size(); ++j) {
-			if (items[i]->getActor() == _states[j].actor) {
+			if (items[i]->getActor() == _states[j].actorName) {
 				found = 1;
 				break;
 			}
@@ -76,13 +76,13 @@ void SequenceContext::execute(uint nextItemIndex, bool loadingSave) {
 
 void SequenceContext::clearDefaultActions() {
 	for (uint i = 0; i < _states.size(); ++i) {
-		_states[i].defaultAction.clear();
+		_states[i].defaultActionName.clear();
 	}
 }
 
 SequenceActorState *SequenceContext::findState(const Common::String &actor) {
 	for (uint i = 0; i < _states.size(); ++i) {
-		if (_states[i].actor == actor)
+		if (_states[i].actorName == actor)
 			return &_states[i];
 	}
 	return nullptr;
@@ -90,7 +90,7 @@ SequenceActorState *SequenceContext::findState(const Common::String &actor) {
 
 bool SequenceContext::isConflictsWith(SequenceContext *context) {
 	for (uint i = 0; i < _states.size(); ++i) {
-		if (context->findState(_states[i].actor))
+		if (context->findState(_states[i].actorName))
 			return true;
 	}
 	return false;
