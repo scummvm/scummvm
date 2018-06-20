@@ -51,7 +51,7 @@ OrbFile::~OrbFile() {
 }
 
 bool OrbFile::open(const Common::String &name) {
-	if (!File::open(name) || readUint32BE() != 'ORB\0')
+	if (!File::open(name) || readUint32BE() != MKTAG('O', 'R', 'B', '\0'))
 		return false;
 
 	uint16 minor = readUint16LE();
@@ -123,7 +123,7 @@ void OrbFile::seekToObject(const char *name) {
 }
 
 bool BroFile::open(const Common::String &name) {
-	if (!File::open(name) || readUint32BE() != 'BRO\0')
+	if (!File::open(name) || readUint32BE() != MKTAG('B', 'R', 'O', '\0'))
 		return false;
 
 	uint16 minor = readUint16LE();
