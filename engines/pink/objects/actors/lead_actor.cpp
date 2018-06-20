@@ -100,7 +100,6 @@ void LeadActor::start(bool isHandler) {
 		_nextState = kReady;
 	}
 
-	InventoryMgr *mgr = getInventoryMgr();
 	switch (_state) {
 	case kInventory:
 		startInventory(1);
