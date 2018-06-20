@@ -34,7 +34,7 @@
 namespace Pink {
 
 Sequence::Sequence()
-		: _unk(0), _context(nullptr),
+		: _canBeSkipped(0), _context(nullptr),
 		  _sequencer(nullptr) {}
 
 Sequence::~Sequence() {
@@ -57,52 +57,42 @@ void Sequence::toConsole() {
 	}
 }
 
-void Sequence::init(int unk) {
-	assert(_items.size());
-	assert(dynamic_cast<SequenceItemLeader*>(_items[0])); // first item must always be a leader
-	start(unk);
-}
-
-void Sequence::start(int unk) {
-	if (_context->_nextItemIndex >= _items.size() ||
-		!_items[_context->_nextItemIndex]->execute(_context->_index, this, unk)) {
+void Sequence::start(bool loadingSave) {
+	uint nextItemIndex = _context->getNextItemIndex();
+	if (nextItemIndex >= _items.size() ||
+		!_items[nextItemIndex]->execute(_context->getSegment(), this, loadingSave)) {
 		debug("Sequence %s ended", _name.c_str());
 		end();
 		return;
 	}
 
-	uint i;
-	for (i = _context->_nextItemIndex + 1; i <_items.size(); ++i){
-		if (_items[i]->isLeader())
+	uint i = nextItemIndex + 1;
+	while (i < _items.size()) {
+		if (_items[i]->isLeader()) {
 			break;
-		_items[i]->execute(_context->_index, this, unk);
+		}
+		_items[i++]->execute(_context->getSegment(), this, loadingSave);
 	}
-	_context->_nextItemIndex = i;
 
-
-	Common::Array<SequenceActorState> &states = _context->_states;
-	for (uint j = 0; j < states.size(); ++j) {
-		states[j].check(_context->_index, this, unk);
-	}
-	_context->_index++;
+	_context->execute(i, loadingSave);
 }
 
 void Sequence::update() {
-	if (!_context->_actor->isPlaying()) {
+	if (!_context->getActor()->isPlaying()) {
 		debug("Sequence step ended");
 		start(0);
 	}
 }
 
 void Sequence::end() {
-	_context->_actor = 0;
-	_unk = 1;
+	_context->setActor(nullptr);
+	_canBeSkipped = 1;
 	_sequencer->removeContext(_context);
 }
 
 void Sequence::restart() {
 	_context->setNextItemIndex(0);
-	_context->clearActionsFromActorStates();
+	_context->clearDefaultActions();
 	start(0);
 }
 
@@ -113,23 +103,28 @@ void Sequence::skip() {
 	for (int i = _items.size() - 1; i >= 0; --i) {
 		if (_items[i]->isLeader()) {
 			_context->setNextItemIndex(i);
-			_context->clearActionsFromActorStates();
-			skipItemsTo(i);
+			_context->clearDefaultActions();
+			for (int j = 0; j < i; ++j) {
+				_items[j]->skip(this);
+			}
 			start(0);
 			break;
 		}
 	}
 }
 
-void Sequence::skipItemsTo(int index) {
-	for (int i = 0; i < index; ++i) {
-		_items[i]->skip(this);
-	}
+void Sequence::skipSubSequence() {
+	if (_context->getNextItemIndex() < _items.size())
+		this->start(0);
 }
 
-void Sequence::skipSubSequence() {
-	if (_context->getNextItemIndex() < _context->getSequence()->getItems().size())
-		_context->getSequence()->start(0);
+void Sequence::forceEnd() {
+	skip();
+	end();
+}
+
+void Sequence::init(bool loadingSave) {
+	start(loadingSave);
 }
 
 void SequenceAudio::deserialize(Archive &archive) {
@@ -145,8 +140,8 @@ void SequenceAudio::toConsole() {
 	}
 }
 
-void SequenceAudio::start(int unk) {
-	Sequence::start(unk);
+void SequenceAudio::start(bool loadingSave) {
+	Sequence::start(loadingSave);
 	uint index = _context->getNextItemIndex();
 	if (index < _items.size()) {
 		SequenceItemLeaderAudio* leaderAudio = (SequenceItemLeaderAudio*) _items[index];
@@ -166,14 +161,15 @@ void SequenceAudio::update() {
 		start(0);
 }
 
-void SequenceAudio::init(int unk) {
+void SequenceAudio::init(bool loadingSave) {
 	_sample = 0;
-	_sound.play(_sequencer->_page->getResourceStream(_soundName), Audio::Mixer::kMusicSoundType);
-	Sequence::init(unk);
+	_sound.play(_sequencer->getPage()->getResourceStream(_soundName), Audio::Mixer::kMusicSoundType);
+	start(loadingSave);
 }
 
 void SequenceAudio::restart() {
-	_sound.play(_sequencer->_page->getResourceStream(_soundName), Audio::Mixer::kMusicSoundType);
+	_sample = 0;
+	_sound.play(_sequencer->getPage()->getResourceStream(_soundName), Audio::Mixer::kMusicSoundType);
 	Sequence::restart();
 }
 

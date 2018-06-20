@@ -43,7 +43,10 @@ Sequencer::~Sequencer() {
 	for (uint i = 0; i < _timers.size(); ++i) {
 		delete _timers[i];
 	}
-	removeContext(_context);
+	delete _context;
+	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
+		delete _parrallelContexts[i];
+	}
 }
 
 void Sequencer::deserialize(Archive &archive) {
@@ -59,58 +62,39 @@ Sequence *Sequencer::findSequence(const Common::String &name) {
 	return nullptr;
 }
 
-void Sequencer::authorSequence(Sequence *sequence, bool unk) {
-	assert(!_context);
+void Sequencer::authorSequence(Sequence *sequence, bool loadingSave) {
+ 	if (_context)
+		_context->getSequence()->forceEnd();
 
 	if (sequence) {
-		SequenceContext *context = new SequenceContext(sequence, this);
+		SequenceContext *context = new SequenceContext(sequence);
 
 		SequenceContext *confilct;
-		while(confilct = isContextConflicts(context))
-			confilct->_sequence->end();
+		while(confilct = findConfilictingContextWith(context))
+			confilct->getSequence()->forceEnd();
 
 		_context = context;
-		_currentSequenceName = sequence->getName();
-		sequence->init(unk);
+		sequence->init(loadingSave);
 	}
 }
 
-void Sequencer::authorParallelSequence(Sequence *seqeunce, bool unk) {
-	if (_context && _context->_sequence == seqeunce)
+void Sequencer::authorParallelSequence(Sequence *seqeunce, bool loadingSave) {
+	if (_context && _context->getSequence() == seqeunce)
 		return;
 
 	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		if (_parrallelContexts[i]->_sequence == seqeunce)
+		if (_parrallelContexts[i]->getSequence() == seqeunce)
 			return;
 	}
 
 	const Common::String leadName = _page->getLeadActor()->getName();
+	SequenceContext *context = new SequenceContext(seqeunce);
 
-	SequenceContext *context = new SequenceContext(seqeunce, this);
-
-	for (uint i = 0; i < context->_states.size(); ++i) {
-		if (context->_states[i].getActor() == leadName) {
-			delete context;
-			return;
-		}
-	}
-
-	for (uint i = 0; i < context->_states.size(); ++i) {
-		if (findMainSequenceActorState(context->_states[i].getActor())) {
-			delete context;
-			return;
-		}
-	}
-
-	for (uint i = 0; i < context->_states.size(); ++i) {
-		if (findParralelSequenceActorState(context->_states[i].getActor())) {
-			delete context;
-			return;
-		}
-	}
-
-	_parrallelContexts.push_back(context);
-	seqeunce->start(unk);
+	if (!context->findState(leadName) && !findConfilictingContextWith(context)) {
+		_parrallelContexts.push_back(context);
+		seqeunce->init(loadingSave);
+	} else
+		delete context;
 }
 
 
@@ -126,13 +110,19 @@ void Sequencer::toConsole() {
 
 void Sequencer::update() {
 	if (_context)
-		_context->_sequence->update();
+		_context->getSequence()->update();
 
 	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		_parrallelContexts[i]->_sequence->update();
+		_parrallelContexts[i]->getSequence()->update();
 	}
 
-	updateTimers();
+	uint time = _page->getGame()->getTotalPlayTime();
+	if (time - _time > kTimersUpdateTime) {
+		_time = time;
+		for (uint i = 0; i < _timers.size(); ++i) {
+			_timers[i]->update();
+		}
+	}
 }
 
 void Sequencer::removeContext(SequenceContext *context) {
@@ -143,7 +133,8 @@ void Sequencer::removeContext(SequenceContext *context) {
 	}
 
 	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		if (context == _parrallelContexts[i]->_sequence->_context) {
+		if (context == _parrallelContexts[i]) {
+			delete _parrallelContexts[i];
 			_parrallelContexts.remove_at(i);
 			break;
 		}
@@ -156,49 +147,14 @@ void Sequencer::skipSubSequence() {
 }
 
 void Sequencer::restartSequence() {
-	_context->getSequence()->restart();
+	if (_context)
+		_context->getSequence()->restart();
 }
 
 void Sequencer::skipSequence() {
-	if (_context->getSequence()->_unk)
+	if (_context && _context->getSequence()->isSkippingAllowed())
 		_context->getSequence()->skip();
 }
-
-void Sequencer::updateTimers() {
-	uint time = _page->getGame()->getTotalPlayTime();
-	if (time - _time <= kTimersUpdateTime) {
-		return;
-	}
-
-	_time = time;
-	for (uint i = 0; i < _timers.size(); ++i) {
-		_timers[i]->update();
-	}
-}
-
-SequenceActorState *Sequencer::findMainSequenceActorState(const Common::String &name) {
-	if (!_context)
-		return nullptr;
-
-	for (uint i = 0; i < _context->_states.size(); ++i) {
-	   if (_context->_states[i].getActor() == name)
-		   return &_context->_states[i];
-	}
-
-	return nullptr;
-}
-
-SequenceActorState *Sequencer::findParralelSequenceActorState(const Common::String &name) {
-	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		for (uint j = 0; j < _parrallelContexts[i]->_states.size(); ++j) {
-			if (_parrallelContexts[i]->_states[j].getActor() == name)
-				return &_parrallelContexts[i]->_states[j];
-		}
-	}
-
-	return nullptr;
-}
-
 
 void Sequencer::loadState(Archive &archive) {
 	Sequence *sequence = findSequence(archive.readString());
@@ -208,21 +164,33 @@ void Sequencer::loadState(Archive &archive) {
 void Sequencer::saveState(Archive &archive) {
 	Common::String sequenceName;
 	if (_context)
-		sequenceName = _context->_sequence->getName();
+		sequenceName = _context->getSequence()->getName();
 	archive.writeString(sequenceName);
 	// add pokus specific
 }
 
-SequenceContext * Sequencer::isContextConflicts(SequenceContext *context) {
+SequenceContext *Sequencer::findConfilictingContextWith(SequenceContext *context) {
+	if (_context && _context->isConflictsWith(context)) {
+		return _context;
+	}
 	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		for (uint j = 0; j < _parrallelContexts[i]->_states.size(); ++j) {
-			for (int k = 0; k < context->_states.size(); ++k) {
-				if (_parrallelContexts[i]->_states[j].getActor() == context->_states[k].getActor())
-					return _parrallelContexts[i];
-			}
-		}
+		if (_parrallelContexts[i]->isConflictsWith(context))
+			return _parrallelContexts[i];
 	}
 	return nullptr;
+}
+
+SequenceActorState *Sequencer::findState(const Common::String &name) {
+	SequenceActorState *state = nullptr;
+	if (_context && (state = _context->findState(name)))
+		return state;
+
+	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
+		state = _parrallelContexts[i]->findState(name);
+		if (state)
+			break;
+	}
+	return state;
 }
 
 } // End of namespace Pink

@@ -35,51 +35,55 @@ class SequenceContext;
 class Sequence : public NamedObject {
 public:
 	Sequence();
-	virtual ~Sequence();
-	virtual void deserialize(Archive &archive);
+	~Sequence();
 
-	virtual void toConsole();
+	void deserialize(Archive &archive) override ;
+	void toConsole() override;
 
+public:
+	virtual void init(bool loadingSave);
+
+	virtual void start(bool loadingSave);
+	virtual void end();
+	virtual void restart();
+
+	void forceEnd();
+
+	virtual void update();
+
+	virtual void skipSubSequence();
+	virtual void skip();
+
+	void allowSkipping() { _canBeSkipped = true; }
+	bool isSkippingAllowed() { return _canBeSkipped; }
+
+	SequenceContext *getContext() const { return _context; }
+	Sequencer *getSequencer() const { return _sequencer; }
 	Common::Array<SequenceItem *> &getItems() { return _items; }
 
 	void setContext(SequenceContext *context) { _context = context; }
-	virtual void init(int unk);
-	virtual void start(int unk);
-	virtual void end();
 
-	virtual void update();
-	virtual void restart();
-	virtual void skipSubSequence();
-	virtual void skip();
-	void skipItemsTo(int index);
-
-
-public:
-	bool canAddContext(const Common::String name);
-
-
+protected:
 	SequenceContext *_context;
 	Sequencer *_sequencer;
 	Array<SequenceItem *> _items;
-	int _unk;
+	bool _canBeSkipped;
 };
-
-class Sound;
 
 class SequenceAudio : public Sequence {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
+	void deserialize(Archive &archive) override;
+	void toConsole() override;
 
-	virtual void init(int unk);
-	virtual void start(int unk);
-	virtual void end();
+	void init(bool loadingSave) override;
+	void start(bool loadingSave) override;
+	void end() override;
 
-	virtual void update();
-	virtual void restart();
+	void update() override;
+	void restart() override;
 
-	virtual void skipSubSequence() {};
-	virtual void skip();
+	void skipSubSequence() override {}
+	void skip() override;
 
 private:
 	Common::String _soundName;

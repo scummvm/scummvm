@@ -31,16 +31,15 @@ class Sequence;
 
 class SequenceItem : public Object {
 public:
-	virtual void deserialize(Archive &archive);
+	void deserialize(Archive &archive) override;
 
-	virtual void toConsole();
+	void toConsole() override;
 
-	const Common::String &getActor() const { return _actor; }
-	const Common::String &getAction() const { return _action; }
-
-	virtual bool execute(int index, Sequence *sequence, bool unk2);
+	virtual bool execute(uint segment, Sequence *sequence, bool loadingSave);
 	virtual bool isLeader();
 	virtual void skip(Sequence *sequence) {};
+
+	const Common::String &getActor() const { return _actor; }
 
 protected:
 	Common::String _actor;
@@ -49,14 +48,15 @@ protected:
 
 class SequenceItemLeader : public SequenceItem {
 public:
-	virtual void toConsole();
-	virtual bool isLeader();
+	void toConsole() override;
+	bool isLeader() override;
 };
 
 class SequenceItemLeaderAudio : public SequenceItemLeader {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
+	void deserialize(Archive &archive) override;
+	void toConsole() override;
+
 	uint32 getSample() { return _sample; }
 
 private:
@@ -65,21 +65,11 @@ private:
 
 class SequenceItemDefaultAction : public SequenceItem {
 public:
-	virtual bool execute(int index, Sequence *sequence, bool unk2);
-	virtual void skip(Sequence *sequence);
+	void toConsole() override;
 
-	virtual void toConsole();
+	bool execute(uint segment, Sequence *sequence, bool loadingSave) override;
+	void skip(Sequence *sequence) override;
 };
-
-/* not used in games but is implemented in engine
-class SequenceItemSideEffects : public SequenceItemDefaultAction {
-public:
-	virtual void deserialize(Archive &archive);
-	virtual bool execute(int unk, Sequence *sequence, bool unk2);
-private
-	Common::Array<SideEffect*> _sideEffects
-};
- */
 
 } // End of namespace Pink
 

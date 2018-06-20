@@ -127,7 +127,7 @@ void LeadActor::update() {
 		break;
 	case kPlayingSequence:
 		_sequencer->update();
-		if (!_sequencer->_context) {
+		if (!_sequencer->isPlaying()) {
 			_state = _nextState;
 			_nextState = kUndefined;
 			forceUpdateCursor();
@@ -141,7 +141,7 @@ void LeadActor::update() {
 		break;
 	case kPlayingExitSequence:
 		_sequencer->update();
-		if (!_sequencer->_context) {
+		if (!_sequencer->isPlaying()) {
 			_state = kUndefined;
 			_page->getGame()->changeScene();
 		}

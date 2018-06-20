@@ -87,7 +87,7 @@ void HandlerSequences::handle(Actor *actor) {
 }
 
 void HandlerStartPage::execute(Sequence *sequence) {
-	sequence->_unk = 1;
+	sequence->allowSkipping();
 }
 
 void HandlerStartPage::toConsole() {

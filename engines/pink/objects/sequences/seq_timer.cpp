@@ -46,15 +46,15 @@ void SeqTimer::toConsole() {
 }
 
 void SeqTimer::update() {
-	Common::RandomSource &rnd = _sequencer->_page->getGame()->getRnd();
+	Page *page = _sequencer->getPage();
+	Common::RandomSource &rnd = page->getGame()->getRnd();
 	if (_updatesToMessage--)
 		return;
 
 	_updatesToMessage = _range ? _period + rnd.getRandomNumber(_range) : _period;
 
-	Actor *actor = _sequencer->_page->findActor(_actor);
-	if (actor && !_sequencer->findMainSequenceActorState(actor->getName()) &&
-		!_sequencer->findParralelSequenceActorState(actor->getName())) {
+	Actor *actor = page->findActor(_actor);
+	if (actor && !_sequencer->findState(_actor)) {
 		actor->onTimerMessage();
 	}
 }

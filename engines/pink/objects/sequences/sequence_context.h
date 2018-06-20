@@ -30,39 +30,45 @@ namespace Pink {
 class Sequence;
 class Sequencer;
 
-class SequenceActorState {
-public:
-	SequenceActorState(const Common::String &name);
+struct SequenceActorState {
+	SequenceActorState(const Common::String actorName)
+			: actor(actorName), segment(0) {}
 
-	const Common::String &getActor() const { return _actorName; }
-	void check(int index, Sequence *sequence, bool unk);
+	void execute(uint segment, Sequence *sequence, bool loadingSave) const;
 
-public:
-	Common::String _actorName;
-	Common::String _actionName;
-	int _index;
+	Common::String actor;
+	Common::String defaultAction;
+	uint segment;
 };
 
 class Actor;
 
 class SequenceContext {
 public:
-	SequenceContext(Sequence *sequence, Sequencer* sequencer);
+	SequenceContext(Sequence *sequence);
 
-	uint getNextItemIndex() const { return _nextItemIndex; }
+	void execute(uint nextItemIndex, bool loadingSave);
+
+	bool isConflictsWith(SequenceContext *context);
+
+	void clearDefaultActions();
+
+	SequenceActorState *findState(const Common::String &actor);
+
 	Sequence *getSequence() const { return _sequence; }
+	Actor *getActor() const { return _actor; }
+	uint getNextItemIndex() const { return _nextItemIndex; }
+	uint getSegment() const { return _segment; }
 
-	void setNextItemIndex(int index) { _nextItemIndex = index; }
+	void setActor(Actor *actor) { _actor = actor; }
+	void setNextItemIndex(uint index) { _nextItemIndex = index; }
 
-	void clearActionsFromActorStates();
-
-public:
+private:
 	Sequence *_sequence;
-	Sequencer *_sequencer;
-	uint _nextItemIndex;
 	Actor *_actor;
 	Common::Array<SequenceActorState> _states;
-	int _index;
+	uint _nextItemIndex;
+	uint _segment;
 };
 
 }

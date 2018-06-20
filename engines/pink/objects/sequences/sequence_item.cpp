@@ -42,20 +42,20 @@ void SequenceItem::toConsole() {
 	debug("\t\t\t\tSequenceItem: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
-bool SequenceItem::execute(int index, Sequence *sequence, bool unk2) {
-	Actor *actor;
+bool SequenceItem::execute(uint segment, Sequence *sequence, bool loadingSave) {
+	Actor *actor = sequence->getSequencer()->getPage()->findActor(_actor);
 	Action *action;
-	if (!(actor = sequence->_sequencer->_page->findActor(_actor)) ||
-		!(action = actor->findAction(_action)))
+	if (!actor || !(action = actor->findAction(_action)))
 		return false;
 
-	actor->setAction(action, unk2);
+	actor->setAction(action, loadingSave);
 
-	SequenceActorState *state = sequence->_sequencer->findMainSequenceActorState(_actor);
+	SequenceContext *context = sequence->getContext();
+	SequenceActorState *state = context->findState(_actor);
 	if (state)
-		state->_index = index;
-	sequence->_context->_actor = isLeader() ? actor : sequence->_context->_actor;
-
+		state->segment = segment;
+	if (isLeader())
+		context->setActor(actor);
 	return true;
 }
 
@@ -81,9 +81,10 @@ void SequenceItemLeaderAudio::toConsole() {
 	debug("\t\t\t\tSequenceItemLeaderAudio: _actor=%s, _action=%s _sample=%d", _actor.c_str(), _action.c_str(), _sample);
 }
 
-bool SequenceItemDefaultAction::execute(int index, Sequence *sequence, bool unk2) {
-	SequenceActorState *state = sequence->_sequencer->findMainSequenceActorState(_actor);
-	state->_actionName = _action;
+bool SequenceItemDefaultAction::execute(uint segment, Sequence *sequence, bool loadingSave) {
+	SequenceActorState *state = sequence->getContext()->findState(_actor);
+	if (state)
+		state->defaultAction = _action;
 	return true;
 }
 

@@ -31,22 +31,19 @@
 
 namespace Pink {
 
-SequenceActorState::SequenceActorState(const Common::String &name)
-		:_actorName(name), _index(0) {}
-
-void SequenceActorState::check(int index, Sequence *sequence, bool unk) {
-	Actor *actor = sequence->_sequencer->_page->findActor(_actorName);
-	debug("%s %s", _actorName.c_str(), _actionName.c_str());
-	if (_index != index && !_actionName.empty()) {
-		Action *action = actor->findAction(_actionName);
-		if (actor->getAction() != action)
-			actor->setAction(action, unk);
+void SequenceActorState::execute(uint segment, Sequence *sequence, bool loadingSave) const {
+	Actor *actor = sequence->getSequencer()->getPage()->findActor(this->actor);
+	if (actor && this->segment != segment && !defaultAction.empty()) {
+		Action *action = actor->findAction(defaultAction);
+		if (action && actor->getAction() != action) {
+			actor->setAction(action, loadingSave);
+		}
 	}
 }
 
-SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
-		: _sequence(sequence), _sequencer(sequencer),
-		  _nextItemIndex(0), _index(1), _actor(nullptr)
+SequenceContext::SequenceContext(Sequence *sequence)
+		: _sequence(sequence), _nextItemIndex(0),
+		  _segment(1), _actor(nullptr)
 {
 	sequence->setContext(this);
 	Common::Array<SequenceItem*> &items = sequence->getItems();
@@ -55,7 +52,7 @@ SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
 	for (uint i = 0; i < items.size(); ++i) {
 		bool found = 0;
 		for (uint j = 0; j < _states.size(); ++j) {
-			if (items[i]->getActor() == _states[j].getActor()) {
+			if (items[i]->getActor() == _states[j].actor) {
 				found = 1;
 				break;
 			}
@@ -67,10 +64,36 @@ SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
 	}
 }
 
-void SequenceContext::clearActionsFromActorStates() {
-	for (uint i = 0; i < _states.size(); ++i) {
-		_states[i]._actionName.clear();
+void SequenceContext::execute(uint nextItemIndex, bool loadingSave) {
+	for (uint j = 0; j < _states.size(); ++j) {
+		_states[j].execute(_segment, _sequence, loadingSave);
 	}
+
+	_nextItemIndex = nextItemIndex;
+	_segment++;
+}
+
+
+void SequenceContext::clearDefaultActions() {
+	for (uint i = 0; i < _states.size(); ++i) {
+		_states[i].defaultAction.clear();
+	}
+}
+
+SequenceActorState *SequenceContext::findState(const Common::String &actor) {
+	for (uint i = 0; i < _states.size(); ++i) {
+		if (_states[i].actor == actor)
+			return &_states[i];
+	}
+	return nullptr;
+}
+
+bool SequenceContext::isConflictsWith(SequenceContext *context) {
+	for (uint i = 0; i < _states.size(); ++i) {
+		if (context->findState(_states[i].actor))
+			return true;
+	}
+	return false;
 }
 
 } // End of namespace Pink
