@@ -68,6 +68,8 @@ public:
 	Font& getSystemFont();
 	Font& getSpeechFont();
 
+	static uint8 colorFromString(const char *colorStr);
+
 private:
 	bool loadGameData(bool partB);
 	void runActiveCommand();

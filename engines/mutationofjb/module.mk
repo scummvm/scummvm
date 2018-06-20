@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	commands/changecommand.o \
 	commands/command.o \
 	commands/conditionalcommand.o \
+	commands/definestructcommand.o \
 	commands/endblockcommand.o \
 	commands/gotocommand.o \
 	commands/ifcommand.o \

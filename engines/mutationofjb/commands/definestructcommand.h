@@ -20,47 +20,22 @@
  *
  */
 
-#include "mutationofjb/widgets/conversationwidget.h"
-#include "mutationofjb/game.h"
+#include "mutationofjb/commands/seqcommand.h"
 #include "mutationofjb/gamedata.h"
-#include "mutationofjb/gui.h"
-#include "mutationofjb/font.h"
 
 namespace MutationOfJB {
 
-enum {
-	CONVERSATION_LINES_X = 5,
-	CONVERSATION_LINES_Y = 151,
-	CONVERSATION_LINE_HEIGHT = 12
+class DefineStructCommandParser : public SeqCommandParser {
+public:
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
-ConversationWidget::ConversationWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &surface) :
-	Widget(gui, area),
-	_surface(surface) {}
-
-
-void ConversationWidget::setLine(int lineNo, const Common::String &str) {
-	if (lineNo >= CONVERSATION_LINES) {
-		return;
-	}
-
-	_lines[lineNo] = str;
-	markDirty();
+class DefineStructCommand : public SeqCommand {
+public:
+	DefineStructCommand(const ConversationInfo& convInfo) : _conversationInfo(convInfo) {}
+	virtual Command::ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	virtual Common::String debugString() const override;
+private:
+	ConversationInfo _conversationInfo;
+};
 }
-
-void ConversationWidget::_draw(Graphics::ManagedSurface &surface) {
-	surface.blitFrom(_surface, Common::Point(_area.left, _area.top));
-
-	for (int i = 0; i < CONVERSATION_LINES; ++i) {
-		Common::String &line = _lines[i];
-		if (line.empty()) {
-			continue;
-		}
-
-		// TODO: Active line should be WHITE.
-		_gui.getGame().getSystemFont().drawString(line, LIGHTGRAY, CONVERSATION_LINES_X, CONVERSATION_LINES_Y + i * CONVERSATION_LINE_HEIGHT, surface);
-	}
-}
-
-}
-

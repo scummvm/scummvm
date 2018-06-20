@@ -200,4 +200,29 @@ Font& Game::getSpeechFont() {
 	return _speechFont;
 }
 
+uint8 Game::colorFromString(const char *colorStr) {
+	struct {
+		const char *str;
+		uint8 color;
+	} colors[] = {
+		{"white", WHITE},
+		{"dakrgray", DARKGRAY},
+		{"lightgray", LIGHTGRAY},
+		{"green", GREEN},
+		{"orange", ORANGE},
+		{"darkblue", DARKBLUE},
+		{"lightblue", LIGHTBLUE},
+		{"brown", BROWN}
+	};
+
+	for (int i = 0; i < ARRAYSIZE(colors); ++i) {
+		if (strcmp(colors[i].str, colorStr) == 0) {
+			return colors[i].color;
+		}
+	}
+
+	warning(_("Color not found"));
+	return 0x00;
+}
+
 }
