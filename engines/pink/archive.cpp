@@ -104,110 +104,110 @@ static const struct RuntimeClass {
 		{"WalkLocation", kWalkLocation}
 };
 
-static Object* createObject(int objectId){
-	switch (objectId){
-		case kActionHide:
-			return new ActionHide;
-		case kActionLoop:
-			return new ActionLoop;
-		case kActionPlay:
-			return new ActionPlay;
-		case kActionPlayWithSfx:
-			return new ActionPlayWithSfx;
-		case kActionSfx:
-			return new ActionSfx;
-		case kActionSound:
-			return new ActionSound;
-		case kActionStill:
-			return new ActionStill;
-		case kActionTalk:
-			return new ActionTalk;
-		case kActionText:
-			return new ActionText;
-		case kActor:
-			return new Actor;
-		case kAudioInfoPDAButton:
-			return new AudioInfoPDAButton;
-		case kConditionGameVariable:
-			return new ConditionGameVariable;
-		case kConditionInventoryItemOwner:
-			return new ConditionInventoryItemOwner;
-		case kConditionModuleVariable:
-			return new ConditionModuleVariable;
-		case kConditionNotInventoryItemOwner:
-			return new ConditionNotInventoryItemOwner;
-		case kConditionNotModuleVariable:
-			return new ConditionNotModuleVariable;
-		case kConditionNotPageVariable:
-			return new ConditionNotPageVariable;
-		case kConditionPageVariable:
-			return new ConditionPageVariable;
-		case kCursorActor:
-			return new CursorActor;
-		case kGamePage:
-			return new GamePage;
-		case kHandlerLeftClick:
-			return new HandlerLeftClick;
-		case kHandlerStartPage:
-			return new HandlerStartPage;
-		case kHandlerTimer:
-		case kHandlerTimerActions:
-			return new HandlerTimerActions; // hack for Peril, but behavior is correct
-		case kHandlerTimerSequences:
-			return new HandlerTimerSequences;
-		case kHandlerUseClick:
-			return new HandlerUseClick;
-		case kInventoryActor:
-			return new InventoryActor;
-		case kInventoryItem:
-			return new InventoryItem;
-		case kLeadActor:
-			return new LeadActor;
-		case kModuleProxy:
-			return new ModuleProxy;
-		case kPDAButtonActor:
-			return new PDAButtonActor;
-		case kParlSqPink:
-			return new ParlSqPink;
-		case kPubPink:
-			return new PubPink;
-		case kSeqTimer:
-			return new SeqTimer;
-		case kSequence:
-			return new Sequence;
-		case kSequenceAudio:
-			return new SequenceAudio;
-		case kSequenceItem:
-			return new SequenceItem;
-		case kSequenceItemDefaultAction:
-			return new SequenceItemDefaultAction;
-		case kSequenceItemLeader:
-			return new SequenceItemLeader;
-		case kSequenceItemLeaderAudio:
-			return new SequenceItemLeaderAudio;
-		case kSideEffectExit:
-			return new SideEffectExit;
-		case kSideEffectGameVariable:
-			return new SideEffectGameVariable;
-		case kSideEffectInventoryItemOwner:
-			return new SideEffectInventoryItemOwner;
-		case kSideEffectLocation:
-			return new SideEffectLocation;
-		case kSideEffectModuleVariable:
-			return new SideEffectModuleVariable;
-		case kSideEffectPageVariable:
-			return new SideEffectPageVariable;
-		case kSideEffectRandomPageVariable:
-			return new SideEffectRandomPageVariable;
-		case kSupportingActor:
-			return new SupportingActor;
-		case kWalkAction:
-			return new WalkAction;
-		case kWalkLocation:
-			return new WalkLocation;
-		default:
-			error("Unknown object id");
-			return nullptr;
+static Object* createObject(int objectId) {
+	switch (objectId) {
+	case kActionHide:
+		return new ActionHide;
+	case kActionLoop:
+		return new ActionLoop;
+	case kActionPlay:
+		return new ActionPlay;
+	case kActionPlayWithSfx:
+		return new ActionPlayWithSfx;
+	case kActionSfx:
+		return new ActionSfx;
+	case kActionSound:
+		return new ActionSound;
+	case kActionStill:
+		return new ActionStill;
+	case kActionTalk:
+		return new ActionTalk;
+	case kActionText:
+		return new ActionText;
+	case kActor:
+		return new Actor;
+	case kAudioInfoPDAButton:
+		return new AudioInfoPDAButton;
+	case kConditionGameVariable:
+		return new ConditionGameVariable;
+	case kConditionInventoryItemOwner:
+		return new ConditionInventoryItemOwner;
+	case kConditionModuleVariable:
+		return new ConditionModuleVariable;
+	case kConditionNotInventoryItemOwner:
+		return new ConditionNotInventoryItemOwner;
+	case kConditionNotModuleVariable:
+		return new ConditionNotModuleVariable;
+	case kConditionNotPageVariable:
+		return new ConditionNotPageVariable;
+	case kConditionPageVariable:
+		return new ConditionPageVariable;
+	case kCursorActor:
+		return new CursorActor;
+	case kGamePage:
+		return new GamePage;
+	case kHandlerLeftClick:
+		return new HandlerLeftClick;
+	case kHandlerStartPage:
+		return new HandlerStartPage;
+	case kHandlerTimer:
+	case kHandlerTimerActions:
+		return new HandlerTimerActions; // hack for Peril, but behavior is correct
+	case kHandlerTimerSequences:
+		return new HandlerTimerSequences;
+	case kHandlerUseClick:
+		return new HandlerUseClick;
+	case kInventoryActor:
+		return new InventoryActor;
+	case kInventoryItem:
+		return new InventoryItem;
+	case kLeadActor:
+		return new LeadActor;
+	case kModuleProxy:
+		return new ModuleProxy;
+	case kPDAButtonActor:
+		return new PDAButtonActor;
+	case kParlSqPink:
+		return new ParlSqPink;
+	case kPubPink:
+		return new PubPink;
+	case kSeqTimer:
+		return new SeqTimer;
+	case kSequence:
+		return new Sequence;
+	case kSequenceAudio:
+		return new SequenceAudio;
+	case kSequenceItem:
+		return new SequenceItem;
+	case kSequenceItemDefaultAction:
+		return new SequenceItemDefaultAction;
+	case kSequenceItemLeader:
+		return new SequenceItemLeader;
+	case kSequenceItemLeaderAudio:
+		return new SequenceItemLeaderAudio;
+	case kSideEffectExit:
+		return new SideEffectExit;
+	case kSideEffectGameVariable:
+		return new SideEffectGameVariable;
+	case kSideEffectInventoryItemOwner:
+		return new SideEffectInventoryItemOwner;
+	case kSideEffectLocation:
+		return new SideEffectLocation;
+	case kSideEffectModuleVariable:
+		return new SideEffectModuleVariable;
+	case kSideEffectPageVariable:
+		return new SideEffectPageVariable;
+	case kSideEffectRandomPageVariable:
+		return new SideEffectRandomPageVariable;
+	case kSupportingActor:
+		return new SupportingActor;
+	case kWalkAction:
+		return new WalkAction;
+	case kWalkLocation:
+		return new WalkLocation;
+	default:
+		error("Unknown object id");
+		return nullptr;
 	}
 }
 

@@ -100,13 +100,13 @@ static int objDescComp(const void *a, const void *b) {
 	return scumm_stricmp((char *) a, (char *) b);
 }
 
-ObjectDescription *OrbFile::getObjDesc(const char *name){
+ObjectDescription *OrbFile::getObjDesc(const char *name) {
 	ObjectDescription *desc = (ObjectDescription*) bsearch(name, _table, _tableSize, sizeof(ObjectDescription), objDescComp);
 	assert(desc != nullptr);
 	return desc;
 }
 
-ResourceDescription *OrbFile::createResDescTable(ObjectDescription *objDesc){
+ResourceDescription *OrbFile::createResDescTable(ObjectDescription *objDesc) {
 	ResourceDescription *table = new ResourceDescription[objDesc->resourcesCount];
 	seek(objDesc->resourcesOffset);
 
