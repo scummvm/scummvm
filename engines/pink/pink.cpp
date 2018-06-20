@@ -253,6 +253,7 @@ void PinkEngine::setCursor(uint cursorIndex) {
 	_system->setCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
 	_system->setMouseCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
 							cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
+	_system->updateScreen();
 }
 
 Common::Error PinkEngine::loadGameState(int slot) {
