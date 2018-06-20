@@ -36,27 +36,16 @@ Director::Director()
 }
 
 void Director::update() {
-	static uint32 time = g_system->getMillis();
-	static uint32 times = 0;
-
 	for (uint i = 0; i < _sounds.size(); ++i) {
 		_sounds[i]->update();
 	}
+
 	for (uint i = 0; i < _sprites.size(); ++i) {
 		if (_sprites[i]->needsUpdate())
 			_sprites[i]->update();
 	}
 
 	draw();
-
-	times++;
-	if (g_system->getMillis() - time >= 1000) {
-		debug("FPS: %u ", times);
-		sum += times;
-		count++;
-		time = g_system->getMillis();
-		times = 0;
-	}
 }
 
 void Director::addSprite(ActionCEL *sprite) {

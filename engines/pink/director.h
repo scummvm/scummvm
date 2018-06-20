@@ -64,14 +64,12 @@ public:
 
 	Graphics::MacWindowManager &getWndManager() { return _wndManager; };
 
-	uint32 count = 0;
-	uint32 sum = 0;
-
 private:
 	void draw();
 	void mergeDirtyRects();
 	void drawRect(const Common::Rect &rect);
 
+private:
 	Graphics::Screen _surface;
 	Graphics::MacWindowManager _wndManager;
 	Common::Array<Common::Rect> _dirtyRects;
