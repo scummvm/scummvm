@@ -23,7 +23,7 @@
 #ifndef PINK_PDA_PAGE_H
 #define PINK_PDA_PAGE_H
 
-#include "page.h"
+#include "pink/objects/pages/page.h"
 
 namespace Pink {
 
