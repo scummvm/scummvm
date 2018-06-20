@@ -43,6 +43,23 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
+
+	// Russian
+	{
+		"peril",
+		0,
+		{
+			{"PPTP.ORB", NULL, "4802bace9cd89a73eb915a075b230646", 635322616},
+			{"PPTP.BRO", NULL, "87539dbbb34bafbe223c751a60254505", 8945466},
+			{"PPTP.EXE", NULL, "739259d239acdc0304f904016e775fb3", 742912},
+			AD_LISTEND
+		},
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
 	// English, Version 1.0
 	{
 		"pokus",
@@ -57,6 +74,22 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
+
+	// Russian
+	{
+		"pokus",
+		0,
+		{
+			{"HPP.orb", NULL, "1e5155c2219b3baea599563e02596ce5", 526369062},
+			{"hpp.exe", NULL, "32a5937f69dfce9f159b7be358cbd008", 699904},
+			AD_LISTEND
+		},
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
 	AD_TABLE_END_MARKER
 };
 
