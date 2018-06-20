@@ -25,6 +25,8 @@
 
 #include "common/serializer.h"
 
+namespace StarTrek {
+
 enum Acton {
 	ACTION_TICK = 0,
 
@@ -49,11 +51,11 @@ struct Action : Common::Serializable {
 	byte b3;
 
 	Action() {}
-	Action(byte _type, byte _b1, byte _b2, byte _b3)
-		: type(_type),
-		b1(_b1),
-		b2(_b2),
-		b3(_b3) {}
+	Action(int _type, int _b1, int _b2, int _b3)
+		: type((byte)_type),
+		b1((byte)_b1),
+		b2((byte)_b2),
+		b3((byte)_b3) {}
 
 
 	// ACTION_USE, ACTION_GET, ACTION_LOOK, ACTION_TALK
@@ -88,5 +90,7 @@ struct Action : Common::Serializable {
 		ser.syncAsByte(b3);
 	}
 };
+
+}
 
 #endif
