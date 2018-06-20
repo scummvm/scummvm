@@ -122,7 +122,7 @@ void OrbFile::seekToObject(const char *name) {
 	seek(desc->objectsOffset);
 }
 
-bool BroFile::open(const Common::String &name, uint32 orbTimestamp) {
+bool BroFile::open(const Common::String &name) {
 	if (!File::open(name) || readUint32BE() != 'BRO\0')
 		return false;
 
@@ -132,9 +132,9 @@ bool BroFile::open(const Common::String &name, uint32 orbTimestamp) {
 	if (major != kBroMajorVersion || minor != kBroMinorVersion)
 		return false;
 
-	uint32 timestamp = readUint32LE();
+	_timestamp = readUint32LE();
 
-	return timestamp == orbTimestamp;
+	return true;
 }
 
 } // End of namespace Pink
