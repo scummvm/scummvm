@@ -34,6 +34,8 @@ class LeadActor;
 class Command;
 class PDAPage;
 
+struct Command;
+
 class PDAMgr {
 public:
 	PDAMgr(PinkEngine *game);
