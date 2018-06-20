@@ -95,7 +95,7 @@ void Actor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
 	mgr->setCursor(kDefaultCursor, point, Common::String());
 }
 
-void Actor::onHover(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+void Actor::onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
 	cursorMgr->setCursor(kHoldingItemCursor, point, itemName);
 }
 

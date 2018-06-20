@@ -63,7 +63,7 @@ public:
 	virtual bool isUseClickHandlers(InventoryItem *item) { return false; }
 
 	virtual void onMouseOver(const Common::Point point, CursorMgr *mgr);
-	virtual void onHover(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
+	virtual void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
 
 	virtual void onClick() {}
 

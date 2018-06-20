@@ -41,7 +41,7 @@ public:
 	bool isUseClickHandlers(InventoryItem *item) override;
 
 	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
-	void onHover(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override;
+	void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override;
 
 	void onTimerMessage() override;
 	bool onLeftClickMessage() override;

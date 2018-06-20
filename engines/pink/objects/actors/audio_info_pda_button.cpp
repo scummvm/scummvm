@@ -37,7 +37,7 @@ void AudioInfoPDAButton::onMouseOver(const Common::Point point, CursorMgr *mgr) 
 	mgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
 }
 
-void AudioInfoPDAButton::onHover(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+void AudioInfoPDAButton::onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
 	onMouseOver(point, cursorMgr);
 }
 

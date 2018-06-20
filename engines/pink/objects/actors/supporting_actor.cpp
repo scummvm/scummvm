@@ -64,11 +64,11 @@ void SupportingActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
 		Actor::onMouseOver(point, mgr);
 }
 
-void SupportingActor::onHover(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+void SupportingActor::onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
 	Common::String item = itemName;
 	if (_handlerMgr.isUseClickHandler(this, itemName))
 		item += kClickable;
-	Actor::onHover(point, item, cursorMgr);
+	cursorMgr->setCursor(kHoldingItemCursor, point, item);
 }
 
 void SupportingActor::onTimerMessage() {
