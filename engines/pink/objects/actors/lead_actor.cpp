@@ -367,8 +367,8 @@ bool LeadActor::sendUseClickMessage(Actor *actor) {
 	actor->onUseClickMessage(mgr->getCurrentItem(), mgr);
 	if (item->getCurrentOwner() != this->_name)
 		_isHaveItem = false;
-	 forceUpdateCursor();
-	 return true;
+	forceUpdateCursor();
+	return true;
 }
 
 bool LeadActor::sendLeftClickMessage(Actor *actor) {
