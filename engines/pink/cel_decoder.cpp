@@ -95,11 +95,11 @@ CelDecoder::CelVideoTrack::CelVideoTrack(Common::SeekableReadStream *stream, uin
 
 void CelDecoder::CelVideoTrack::readPrefixChunk() {
 	_fileStream->seek(0x80);
-	uint32 chunkSize = _fileStream->readUint32LE();
+	/* uint32 chunkSize = */_fileStream->readUint32LE();
 	uint16 chunkType = _fileStream->readUint16LE();
 	if (chunkType != PREFIX_TYPE)
 		return;
-	uint32 offset = 6;
+	//uint32 offset = 6;
 
 	uint32 subchunkSize = _fileStream->readUint32LE();
 	uint16 subchunkType = _fileStream->readUint16LE();
