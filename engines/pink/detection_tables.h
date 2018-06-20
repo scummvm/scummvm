@@ -28,34 +28,36 @@
 namespace Pink {
 
 static const ADGameDescription gameDescriptions[] = {
+	// English, Version 1.0
+	{
+		"peril",
+		0,
 		{
-			"peril",
-			0,
-			{
-				{"PPTP.ORB", NULL, "223d0114d443904d8949263d512859da", 618203600},
-				{"PPTP.BRO", NULL, "bbbc78c0525694b32157570e2ec29784", 8945466},
-				{"PPTP.EXE", NULL, "82460a604723ed5697fc87cddf9dbeed", 594432},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-			GUIO1(GUIO_NONE)
+			{"PPTP.ORB", NULL, "223d0114d443904d8949263d512859da", 618203600},
+			{"PPTP.BRO", NULL, "bbbc78c0525694b32157570e2ec29784", 8945466},
+			{"PPTP.EXE", NULL, "82460a604723ed5697fc87cddf9dbeed", 594432},
+			AD_LISTEND
 		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+	// English, Version 1.0
+	{
+		"pokus",
+		0,
 		{
-			"pokus",
-			0,
-			{
-				{"HPP.orb", NULL, "f480597a78ab70c2021b4141fe44a512", 503443586},
-				{"hpp.exe", NULL, "05c321e75dd51e40f00c6d85cf9f2b34", 697856},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-			GUIO1(GUIO_NONE)
+			{"HPP.orb", NULL, "f480597a78ab70c2021b4141fe44a512", 503443586},
+			{"hpp.exe", NULL, "05c321e75dd51e40f00c6d85cf9f2b34", 697856},
+			AD_LISTEND
 		},
-		AD_TABLE_END_MARKER
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+	AD_TABLE_END_MARKER
 };
 
 } // End of namespace Pink
