@@ -145,7 +145,7 @@ public:
 	void onVariableSet() override;
 
 protected:
-	void updateCursor(Common::Point point) override;
+	void updateCursor(const Common::Point point) override;
 
 	bool sendUseClickMessage(Actor *actor) override;
 

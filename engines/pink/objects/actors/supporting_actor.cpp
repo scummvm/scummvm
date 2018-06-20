@@ -54,7 +54,7 @@ bool SupportingActor::isUseClickHandlers(InventoryItem *item) {
 	return _handlerMgr.isUseClickHandler(this, item->getName());
 }
 
-void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
+void SupportingActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
 	if (isLeftClickHandlers()) {
 		if (!_cursor.empty())
 			mgr->setCursor(_cursor, point);
@@ -64,7 +64,7 @@ void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 		Actor::onMouseOver(point, mgr);
 }
 
-void SupportingActor::onHover(Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+void SupportingActor::onHover(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
 	Common::String item = itemName;
 	if (_handlerMgr.isUseClickHandler(this, itemName))
 		item += kClickable;
