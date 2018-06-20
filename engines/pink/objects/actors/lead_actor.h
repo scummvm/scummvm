@@ -75,6 +75,7 @@ public:
 
 	void onMouseMove(const Common::Point point);
 
+	void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, Pink::CursorMgr *cursorMgr) override;
 	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
 
 	virtual void onClick();

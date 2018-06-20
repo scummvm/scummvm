@@ -250,12 +250,15 @@ void LeadActor::onRightButtonClick(const Common::Point point) {
 	}
 }
 
-
 void LeadActor::onMouseMove(const Common::Point point) {
 	if (_state != kPDA)
 		updateCursor(point);
 	else
 		_page->getGame()->getPdaMgr().onMouseMove(point);
+}
+
+void LeadActor::onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) {
+	_cursorMgr->setCursor(kHoldingItemCursor, point, itemName + kClickable);
 }
 
 void LeadActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
@@ -339,7 +342,7 @@ void LeadActor::updateCursor(const Common::Point point) {
 		InventoryItem *item = getInventoryMgr()->getCurrentItem();
 		if (_isHaveItem) {
 			if (actor) {
-				actor->onHover(point, item->getName(), _cursorMgr);
+				actor->onMouseOverWithItem(point, item->getName(), _cursorMgr);
 			} else
 				_cursorMgr->setCursor(kHoldingItemCursor, point, item->getName());
 		} else if (actor)
