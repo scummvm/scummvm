@@ -74,7 +74,7 @@ WalkLocation *WalkShortestPath::build() {
 }
 
 WalkLocation *WalkShortestPath::getNearestNeighbor(WalkLocation *location) {
-	for(uint i = 0; i < _visited.size(); ++i){
+	for(uint i = 0; i < _visited.size(); ++i) {
 		if (_visited[i] == location)
 			return _nearestNeigbor[i];
 	}

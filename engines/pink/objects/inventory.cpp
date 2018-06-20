@@ -76,7 +76,7 @@ bool InventoryMgr::isPinkOwnsAnyItems() {
 		return true;
 
 	for (uint i = 0; i < _items.size(); ++i) {
-		if (_items[i]->getCurrentOwner() == _lead->getName()){
+		if (_items[i]->getCurrentOwner() == _lead->getName()) {
 			_item = _items[i];
 			return true;
 		}

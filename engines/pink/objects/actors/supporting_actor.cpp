@@ -55,7 +55,7 @@ bool SupportingActor::isUseClickHandlers(InventoryItem *item) {
 }
 
 void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
-	if (isLeftClickHandlers()){
+	if (isLeftClickHandlers()) {
 		if (!_cursor.empty())
 			mgr->setCursor(_cursor, point);
 		else

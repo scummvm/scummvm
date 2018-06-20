@@ -55,7 +55,7 @@ bool HandlerMgr::isLeftClickHandler(Actor *actor) {
 	return false;
 }
 
-bool HandlerMgr::isUseClickHandler(Actor *actor, const Common::String &itemName){
+bool HandlerMgr::isUseClickHandler(Actor *actor, const Common::String &itemName) {
 	for (uint i = 0; i < _useClickHandlers.size(); ++i) {
 		if (itemName == _useClickHandlers[i]->getInventoryItem() &&
 			_useClickHandlers[i]->isSuitable(actor))

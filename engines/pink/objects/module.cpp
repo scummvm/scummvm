@@ -41,7 +41,7 @@ Module::~Module() {
 	}
 }
 
-void Module::load(Archive &archive){
+void Module::load(Archive &archive) {
 	archive.mapObject(this);
 	NamedObject::deserialize(archive);
 
