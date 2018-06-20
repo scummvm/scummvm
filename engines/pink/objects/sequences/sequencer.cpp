@@ -70,7 +70,7 @@ void Sequencer::authorSequence(Sequence *sequence, bool loadingSave) {
 		SequenceContext *context = new SequenceContext(sequence);
 
 		SequenceContext *confilct;
-		while(confilct = findConfilictingContextWith(context))
+		while((confilct = findConfilictingContextWith(context)) != nullptr)
 			confilct->getSequence()->forceEnd();
 
 		_context = context;
