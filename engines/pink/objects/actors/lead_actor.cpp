@@ -254,7 +254,8 @@ void LeadActor::onRightButtonClick(const Common::Point point) {
 void LeadActor::onMouseMove(Common::Point point) {
 	if (_state != kPDA)
 		updateCursor(point);
-	else _page->getGame()->getPdaMgr().onMouseMove(point);
+	else
+		_page->getGame()->getPdaMgr().onMouseMove(point);
 }
 
 void LeadActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
@@ -464,8 +465,9 @@ void PubPink::updateCursor(const Common::Point point) {
 			_cursorMgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
 		} else
 			_cursorMgr->setCursor(kDefaultCursor, point, Common::String());
+	} else {
+		LeadActor::updateCursor(point);
 	}
-	else LeadActor::updateCursor(point);
 }
 
 bool PubPink::sendUseClickMessage(Actor *actor) {
