@@ -189,7 +189,7 @@ void InventoryMgr::showNextItem(bool direction) {
 }
 
 void InventoryMgr::loadState(Archive &archive) {
-	_state = (State) archive.readByte();
+	_state = (State)archive.readByte();
 	_isClickedOnItem = archive.readByte();
 
 	for (uint i = 0; i < _items.size(); ++i) {

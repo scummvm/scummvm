@@ -38,7 +38,7 @@ void ResourceDescription::load(Common::File &file) {
 
 	offset = file.readUint32LE();
 	size = file.readUint32LE();
-	inBro = (bool) file.readUint16LE();
+	inBro = (bool)file.readUint16LE();
 }
 
 OrbFile::OrbFile()
