@@ -149,12 +149,18 @@ struct AwayMission {
 			bool freezerOpen; // 0x2f
 			bool chamberHasDish; // 0x30
 			byte bottleInNozzle; // 0x31
-			byte field36; // 0x36
-			byte field37; // 0x37
+			bool cabinetOpen; // 0x32
+			bool gasFeedOn; // 0x33
+			byte synthesizerProduct; // 0x34
+			byte field35; // 0x35
+			byte canister1; // 0x36
+			byte canister2; // 0x37
 			bool field41; // 0x41
 			bool spockAccessedConsole; // 0x49
 			bool mccoyAccessedConsole; // 0x4a
 			bool gotPolyberylcarbonate; // 0x4b
+			bool gotTLDH; // 0x4c (Got romulan laughing gas)
+			bool gotCure; // 0x4f
 			int16 missionScore; // 0x52
 		} love;
 	};
@@ -168,6 +174,14 @@ enum BottleTypes {
 	BOTTLETYPE_NH3 = 2,
 	BOTTLETYPE_H2O = 3,
 	BOTTLETYPE_RLG = 4 // Romulan Laughing Gas
+};
+
+// Canister types for Love's Labor Jeopardized
+enum CanisterTypes {
+	CANTYPE_NONE = 0,
+	CANTYPE_O2 = 1,
+	CANTYPE_H2 = 2,
+	CANTYPE_N2 = 3
 };
 
 #endif

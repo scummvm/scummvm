@@ -34,8 +34,8 @@ namespace StarTrek {
 
 void Room::love0Tick1() {
 	if (!_vm->_awayMission.love.alreadyStartedMission) {
-		_vm->_awayMission.love.field36 = 1;
-		_vm->_awayMission.love.field37 = 2;
+		_vm->_awayMission.love.canister1 = CANTYPE_O2;
+		_vm->_awayMission.love.canister2 = CANTYPE_H2;
 		_vm->_awayMission.love.alreadyStartedMission = true;
 		playVoc("LOV0LOOP"); // FIXME: no audio after first entry?
 	}
