@@ -161,6 +161,23 @@ struct Scene {
 	bool loadFromStream(Common::ReadStream &stream);
 };
 
+struct ConversationInfo {
+	struct Item {
+		uint8 _question;
+		uint8 _response;
+		uint8 _nextLineIndex;
+	};
+
+	struct Line {
+		Common::Array<Item> _items;
+	};
+
+	Common::Array<Line> _lines;
+	uint8 _context;
+	uint8 _objectId;
+	uint8 _color;
+};
+
 struct GameData {
 public:
 	GameData();
@@ -175,8 +192,20 @@ public:
 	bool _partB;
 	Inventory _inventory;
 	Common::String _currentAPK;
+	ConversationInfo _conversationInfo;
 private:
 	Scene _scenes[45];
+};
+
+enum Colors {
+	WHITE = 0xC6,
+	DARKGRAY = 0xC2,
+	LIGHTGRAY = 0xC4,
+	GREEN = 0xC8,
+	ORANGE = 0xCA,
+	DARKBLUE = 0xD6,
+	LIGHTBLUE = 0xDA,
+	BROWN = 0xDC
 };
 
 }
