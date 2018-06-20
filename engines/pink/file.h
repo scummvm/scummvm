@@ -52,8 +52,8 @@ class Object;
 class OrbFile : public Common::File {
 public:
 	OrbFile();
-	virtual ~OrbFile();
-	virtual bool open(const Common::String &name);
+	~OrbFile();
+	bool open(const Common::String &name) override;
 
 public:
 	void loadGame(PinkEngine *game);
@@ -76,7 +76,11 @@ private:
 
 class BroFile : public Common::File {
 public:
-	bool open(const Common::String &name, uint32 orbTimestamp);
+	bool open(const Common::String &name);
+	uint32 getTimestamp() { return _timestamp; }
+
+private:
+	uint32 _timestamp;
 };
 
 } // End of namespace Pink

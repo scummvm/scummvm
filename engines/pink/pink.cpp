@@ -79,7 +79,7 @@ Common::Error PinkEngine::init() {
 	else
 		debug("This game doesn't need to use bro");
 
-	if (!_orb.open(orbName) || (_bro && !_bro->open(broName, _orb.getTimestamp())))
+	if (!_orb.open(orbName) || (_bro && !_bro->open(broName) && _orb.getTimestamp() == _bro->getTimestamp()))
 		return Common::kNoGameDataFoundError;
 
 	if (!loadCursors())
