@@ -32,8 +32,8 @@ void PDAButtonActor::deserialize(Archive &archive) {
 	Actor::deserialize(archive);
 	_x = archive.readDWORD();
 	_y = archive.readDWORD();
-	_hideOnStop = (bool) archive.readDWORD();
-	_opaque = (bool) archive.readDWORD();
+	_hideOnStop = (bool)archive.readDWORD();
+	_opaque = (bool)archive.readDWORD();
 
 	int type = archive.readDWORD();
 	assert(type != 0);
@@ -43,7 +43,7 @@ void PDAButtonActor::deserialize(Archive &archive) {
 
 void PDAButtonActor::toConsole() {
 	debug("PDAButtonActor: _name = %s, _x = %u _y = %u _hideOnStop = %u, _opaque = %u, _commandType = %u, _arg = %s",
-		  _name.c_str(), _x, _y, _hideOnStop, _opaque, (int) _command.type, _command.arg.c_str());
+		  _name.c_str(), _x, _y, _hideOnStop, _opaque, (int)_command.type, _command.arg.c_str());
 }
 
 void PDAButtonActor::onClick() {

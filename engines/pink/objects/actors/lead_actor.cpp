@@ -54,10 +54,10 @@ void LeadActor::toConsole() {
 }
 
 void LeadActor::loadState(Archive &archive) {
-	_state = (State) archive.readByte();
-	_nextState = (State) archive.readByte();
-	_stateBeforeInventory = (State) archive.readByte();
-	_stateBeforePDA = (State) archive.readByte();
+	_state = (State)archive.readByte();
+	_nextState = (State)archive.readByte();
+	_stateBeforeInventory = (State)archive.readByte();
+	_stateBeforePDA = (State)archive.readByte();
 	_isHaveItem = archive.readByte();
 	Common::String recepient = archive.readString();
 	if (!recepient.empty())

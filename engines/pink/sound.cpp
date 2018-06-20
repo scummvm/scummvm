@@ -34,7 +34,7 @@ void Sound::play(Common::SafeSeekableSubReadStream *stream, Audio::Mixer::SoundT
 	// Vox files in pink have wave format.
 	// RIFF (little-endian) data, WAVE audio, Microsoft PCM, 8 bit, mono 22050 Hz
 
-	volume = ((int) volume * 255) / 100;
+	volume = ((int)volume * 255) / 100;
 	Audio::Mixer *mixer = g_system->getMixer();
 	mixer->stopHandle(_handle);
 

@@ -62,7 +62,7 @@ Common::String ResourceMgr::loadText(Common::String &name) {
 }
 
 static int resDescComp(const void *a, const void *b) {
-	return scumm_stricmp((char *) a, (char *) b);
+	return scumm_stricmp((char *)a, (char *)b);
 }
 
 Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(const Common::String &name) {
