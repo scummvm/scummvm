@@ -80,7 +80,7 @@ void PDAMgr::onMouseMove(Common::Point point) {
 	if (actor && dynamic_cast<PDAButtonActor *>(actor))
 		actor->onMouseOver(point, &_cursorMgr);
 	else
-		_cursorMgr.setCursor(kPDADefaultCursor, point,Common::String());
+		_cursorMgr.setCursor(kPDADefaultCursor, point, Common::String());
 }
 
 void PDAMgr::close() {
