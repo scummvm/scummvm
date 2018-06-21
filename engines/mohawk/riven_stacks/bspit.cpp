@@ -286,12 +286,6 @@ void BSpit::checkYtramCatch(bool playSound) {
 		return;
 	}
 
-	// Increment the movie per catch (max = 3)
-	uint32 &ytramMovie = _vm->_vars["bytram"];
-	ytramMovie++;
-	if (ytramMovie > 3)
-		ytramMovie = 3;
-
 	// Reset variables
 	_vm->_vars["bytrapped"] = 1;
 	_vm->_vars["bbait"] = 0;
@@ -335,27 +329,22 @@ void BSpit::xbait(const ArgumentArray &args) {
 
 void BSpit::xbfreeytram(const ArgumentArray &args) {
 	// Play a random Ytram movie after freeing it
-	uint16 mlstId;
 
-	switch (_vm->_vars["bytram"]) {
-		case 1:
-			mlstId = 11;
-			break;
-		case 2:
-			mlstId = 12;
-			break;
-		default:
-			// The original did rand(13, 14)
-			mlstId = _vm->_rnd->getRandomNumberRng(13, 15);
-			break;
-	}
+	// The original had the first two catches be 11 and 12 for the first
+	// video and then had all subsequent catches be rand(13, 14).
+	// Don't do 15 because 20 (15 + 5) has a graphical bug
 
-	// Play the video
+	// Previously, it used switch (_vm->_vars["bytram"]).
+	// _vars["bytram"] stores the number of catches
+	// Now it is just done randomly for all catches	
+	uint16 mlstId = _vm->_rnd->getRandomNumberRng(11, 14);
+
+	// Play the video (the trap opening)
 	_vm->getCard()->playMovie(mlstId);
 	RivenVideo *first = _vm->_video->openSlot(11);
 	first->playBlocking();
 
-	// Now play the second movie
+	// Now play the second movie (the Ytram moving)
 	_vm->getCard()->playMovie(mlstId + 5);
 	RivenVideo *second = _vm->_video->openSlot(12);
 	second->playBlocking();
