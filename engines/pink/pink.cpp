@@ -126,7 +126,12 @@ Common::Error Pink::PinkEngine::run() {
 					_actor->onRightButtonClick(event.mouse);
 				break;
 			case Common::EVENT_KEYDOWN:
-				_actor->onKeyboardButtonClick(event.kbd.keycode);
+				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
+					_console->attach();
+					_console->onFrame();
+				} else {
+					_actor->onKeyboardButtonClick(event.kbd.keycode);
+				}
 				break;
 			default:
 				break;

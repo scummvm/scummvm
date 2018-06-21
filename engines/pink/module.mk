@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	archive.o \
 	audio_info_mgr.o \
 	cel_decoder.o \
+	console.o \
 	cursor_mgr.o \
 	detection.o \
 	director.o \
