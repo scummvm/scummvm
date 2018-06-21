@@ -24,6 +24,7 @@
 #include "pink/pink.h"
 #include "pink/objects/module.h"
 #include "pink/objects/pages/game_page.h"
+#include "pink/objects/actors/lead_actor.h"
 
 namespace Pink {
 
@@ -43,6 +44,9 @@ Console::Console(PinkEngine *vm)
 
 	registerCmd("listPageVars", WRAP_METHOD(Console, Cmd_ListPageVars));
 	registerCmd("setPageVar", WRAP_METHOD(Console, Cmd_SetPageVar));
+
+	registerCmd("listItems", WRAP_METHOD(Console, Cmd_ListItems));
+	registerCmd("addItem", WRAP_METHOD(Console, Cmd_addItem));
 }
 
 bool Console::Cmd_ListModules(int argc, const char **argv) {
@@ -145,6 +149,25 @@ bool Console::Cmd_SetPageVar(int argc, const char **argv) {
 		return true;
 	}
 	_vm->_module->_page->_variables[argv[1]] = argv[2];
+	return true;
+}
+
+bool Console::Cmd_ListItems(int argc, const char **argv) {
+	const Common::Array<InventoryItem*> &items = _vm->_module->_invMgr._items;
+	for (uint i = 0; i < items.size(); ++i) {
+		debugPrintf("%s\n", items[i]->getName().c_str());
+	}
+	return true;
+}
+
+bool Console::Cmd_addItem(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s item\n", argv[0]);
+		return true;
+	}
+	InventoryMgr *inv = &_vm->_module->_invMgr;
+	LeadActor *actor = _vm->_actor;
+	inv->setItemOwner(actor->getName(), inv->findInventoryItem(argv[1]));
 	return true;
 }
 

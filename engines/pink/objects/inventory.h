@@ -69,6 +69,8 @@ public:
 
 	InventoryItem *getCurrentItem() { return _item; }
 
+	friend class Console;
+
 private:
 	void close();
 	enum Direction {
