@@ -50,7 +50,7 @@ Console::Console(PinkEngine *vm)
 }
 
 bool Console::Cmd_ListModules(int argc, const char **argv) {
-	const Array<NamedObject*> modules = _vm->_modules;
+	const Array<NamedObject *> modules = _vm->_modules;
 	for (uint i = 0; i < modules.size(); ++i) {
 		debugPrintf("%d.%s\n", i, modules[i]->getName().c_str());
 	}
@@ -63,7 +63,7 @@ bool Console::Cmd_GoToModule(int argc, const char **argv) {
 		debugPrintf("Module may not work properly because of Game vars\n");
 		return true;
 	}
-	const Array<NamedObject*> modules = _vm->_modules;
+	const Array<NamedObject *> modules = _vm->_modules;
 	for (uint i = 0; i < modules.size(); ++i) {
 		if (modules[i]->getName() == argv[1]) {
 			_vm->initModule(argv[1], "", nullptr);
@@ -153,7 +153,7 @@ bool Console::Cmd_SetPageVar(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ListItems(int argc, const char **argv) {
-	const Common::Array<InventoryItem*> &items = _vm->_module->_invMgr._items;
+	const Common::Array<InventoryItem *> &items = _vm->_module->_invMgr._items;
 	for (uint i = 0; i < items.size(); ++i) {
 		debugPrintf("%s\n", items[i]->getName().c_str());
 	}
