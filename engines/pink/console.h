@@ -39,6 +39,9 @@ private:
 	bool Cmd_ListModules(int argc, const char **argv);
 	bool Cmd_GoToModule(int argc, const char **argv);
 
+	bool Cmd_ListGameVars(int argc, const char **argv);
+	bool Cmd_SetGameVar(int argc, const char **argv);
+
 private:
 	PinkEngine *_vm;
 };
