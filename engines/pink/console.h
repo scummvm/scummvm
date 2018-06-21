@@ -51,6 +51,9 @@ private:
 	bool Cmd_ListPageVars(int argc, const char **argv);
 	bool Cmd_SetPageVar(int argc, const char **argv);
 
+	bool Cmd_ListItems(int argc, const char **argv);
+	bool Cmd_addItem(int argc, const char **argv);
+
 private:
 	PinkEngine *_vm;
 };
