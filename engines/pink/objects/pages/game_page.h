@@ -56,6 +56,8 @@ public:
 
 	virtual void clear();
 
+	friend class Console;
+
 private:
 	bool initHandler();
 
