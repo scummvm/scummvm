@@ -65,7 +65,8 @@ public:
 	~RivenSaveLoad();
 
 	Common::Error loadGame(const int slot);
-	Common::Error saveGame(const int slot, const Common::String &description, bool autoSave);
+	Common::Error saveGame(const int slot, const Common::String &description,
+	                       const Graphics::Surface *thumbnail, bool autoSave);
 	bool isAutoSaveAllowed();
 	static void deleteSave(const int slot);
 
@@ -80,7 +81,7 @@ private:
 
 	Common::MemoryWriteStreamDynamic *genNAMESection();
 	Common::MemoryWriteStreamDynamic *genMETASection(const Common::String &desc, bool autoSave) const;
-	Common::MemoryWriteStreamDynamic *genTHMBSection() const;
+	Common::MemoryWriteStreamDynamic *genTHMBSection(const Graphics::Surface *thumbnail) const;
 	Common::MemoryWriteStreamDynamic *genVARSSection();
 	Common::MemoryWriteStreamDynamic *genVERSSection();
 	Common::MemoryWriteStreamDynamic *genZIPSSection();

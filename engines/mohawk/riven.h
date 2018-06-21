@@ -31,6 +31,8 @@
 #include "common/random.h"
 #include "common/rect.h"
 
+#include "graphics/surface.h"
+
 namespace Mohawk {
 
 struct MohawkGameDescription;
@@ -122,6 +124,7 @@ private:
 
 	int _menuSavedCard;
 	int _menuSavedStack;
+	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> _menuTumbnail;
 
 	bool _gameEnded;
 	uint32 _lastSaveTime;

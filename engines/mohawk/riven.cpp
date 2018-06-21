@@ -26,6 +26,7 @@
 #include "common/keyboard.h"
 #include "common/translation.h"
 #include "common/system.h"
+#include "graphics/scaler.h"
 #include "gui/saveload.h"
 #include "gui/message.h"
 
@@ -337,6 +338,9 @@ void MohawkEngine_Riven::goToMainMenu() {
 		return;
 	}
 
+	_menuTumbnail.reset(new Graphics::Surface());
+	createThumbnailFromScreen(_menuTumbnail.get());
+
 	changeToStack(kStackAspit);
 	changeToCard(1);
 }
@@ -348,6 +352,7 @@ void MohawkEngine_Riven::resumeFromMainMenu() {
 	changeToCard(_menuSavedCard);
 	_menuSavedStack = -1;
 	_menuSavedCard = -1;
+	_menuTumbnail.reset();
 }
 
 bool MohawkEngine_Riven::isGameStarted() const {
@@ -584,11 +589,14 @@ void MohawkEngine_Riven::startNewGame() {
 	// Clear all the state data
 	_menuSavedStack = -1;
 	_menuSavedCard = -1;
+	_menuTumbnail.reset();
 
 	_vars.clear();
 	initVars();
 
 	_zipModeData.clear();
+
+	setTotalPlayTime(0);
 }
 
 void MohawkEngine_Riven::runLoadDialog() {
@@ -627,6 +635,7 @@ Common::Error MohawkEngine_Riven::loadGameState(int slot) {
 	if (loadError.getCode() == Common::kNoError) {
 		_menuSavedStack = -1;
 		_menuSavedCard = -1;
+		_menuTumbnail.reset();
 	}
 
 	return loadError;
@@ -649,7 +658,8 @@ Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &
 		_vars["CurrentCardID"] = _menuSavedCard;
 	}
 
-	Common::Error error = _saveLoad->saveGame(slot, desc, false);
+	const Graphics::Surface *thumbnail = _menuSavedStack != -1 ? _menuTumbnail.get() : nullptr;
+	Common::Error error = _saveLoad->saveGame(slot, desc, thumbnail, false);
 
 	if (_menuSavedStack != -1) {
 		_vars["CurrentStackID"] = 1;
@@ -681,7 +691,8 @@ void MohawkEngine_Riven::tryAutoSaving() {
 		return; // Can't autosave ever, try again after the next autosave delay
 	}
 
-	Common::Error saveError = _saveLoad->saveGame(RivenSaveLoad::kAutoSaveSlot, "Autosave", true);
+	const Graphics::Surface *thumbnail = _menuSavedStack != -1 ? _menuTumbnail.get() : nullptr;
+	Common::Error saveError = _saveLoad->saveGame(RivenSaveLoad::kAutoSaveSlot, "Autosave", thumbnail, true);
 	if (saveError.getCode() != Common::kNoError)
 		warning("Attempt to autosave has failed.");
 }

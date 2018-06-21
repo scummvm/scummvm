@@ -413,10 +413,14 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genZIPSSection() {
 	return stream;
 }
 
-Common::MemoryWriteStreamDynamic *RivenSaveLoad::genTHMBSection() const {
+Common::MemoryWriteStreamDynamic *RivenSaveLoad::genTHMBSection(const Graphics::Surface *thumbnail) const {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
-	Graphics::saveThumbnail(*stream);
+	if (thumbnail) {
+		Graphics::saveThumbnail(*stream, *thumbnail);
+	} else {
+		Graphics::saveThumbnail(*stream);
+	}
 
 	return stream;
 }
@@ -442,7 +446,8 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genMETASection(const Common::St
 	return stream;
 }
 
-Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &description, bool autoSave) {
+Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &description,
+                                      const Graphics::Surface *thumbnail, bool autoSave) {
 	// NOTE: This code is designed to only output a Mohawk archive
 	// for a Riven saved game. It's hardcoded to do this because
 	// (as of right now) this is the only place in the engine
@@ -460,7 +465,7 @@ Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &desc
 
 	Common::MemoryWriteStreamDynamic *metaSection = genMETASection(description, autoSave);
 	Common::MemoryWriteStreamDynamic *nameSection = genNAMESection();
-	Common::MemoryWriteStreamDynamic *thmbSection = genTHMBSection();
+	Common::MemoryWriteStreamDynamic *thmbSection = genTHMBSection(thumbnail);
 	Common::MemoryWriteStreamDynamic *varsSection = genVARSSection();
 	Common::MemoryWriteStreamDynamic *versSection = genVERSSection();
 	Common::MemoryWriteStreamDynamic *zipsSection = genZIPSSection();
