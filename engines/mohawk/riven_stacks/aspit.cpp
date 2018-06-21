@@ -68,6 +68,7 @@ ASpit::ASpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(ASpit, xaSaveGame);
 	REGISTER_COMMAND(ASpit, xaResumeGame);
 	REGISTER_COMMAND(ASpit, xaOptions);
+	REGISTER_COMMAND(ASpit, xaNewGame);
 }
 
 struct MenuItemText {
@@ -392,6 +393,21 @@ void ASpit::xaResumeGame(const ArgumentArray &args) {
 
 void ASpit::xaOptions(const ArgumentArray &args) {
 	_vm->runOptionsDialog();
+}
+
+void ASpit::xaNewGame(const ArgumentArray &args) {
+	_vm->startNewGame();
+
+	RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(2,
+	                  kRivenCommandTransition,  1, kRivenTransitionBlend,
+	                  kRivenCommandChangeCard,  1, 2);
+
+	script->addCommand(RivenCommandPtr(new RivenStackChangeCommand(_vm, 0, 0x6E9A, false)));
+
+	script += _vm->_scriptMan->createScriptFromData(1,
+	                  kRivenCommandStopSound,   1, 2);
+
+	_vm->_scriptMan->runScript(script, false);
 }
 
 void ASpit::xadisablemenureturn(const ArgumentArray &args) {

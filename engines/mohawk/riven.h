@@ -175,6 +175,7 @@ public:
 	void goToMainMenu();
 	void resumeFromMainMenu();
 	bool isGameStarted() const;
+	void startNewGame();
 };
 
 } // End of namespace Mohawk

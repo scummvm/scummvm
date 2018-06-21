@@ -403,6 +403,7 @@ void RivenCard::applyPropertiesPatchE2E(uint32 globalId) {
 		addMenuHotspot(25, Common::Rect(485, 283, 602, 300), 5, RivenStacks::ASpit::kExternalResume,      "xaResumeGame");
 		addMenuHotspot(26, Common::Rect(485, 309, 602, 326), 6, RivenStacks::ASpit::kExternalOptions,     "xaOptions");
 		addMenuHotspot(27, Common::Rect(485, 335, 602, 352), 7, RivenStacks::ASpit::kExternalQuit,        "xademoquit");
+		_vm->getStack()->registerName(kExternalCommandNames,    RivenStacks::ASpit::kExternalNewGame,     "xaNewGame");
 	}
 }
 

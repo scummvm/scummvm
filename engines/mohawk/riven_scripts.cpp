@@ -27,6 +27,7 @@
 #include "mohawk/riven_scripts.h"
 #include "mohawk/riven_sound.h"
 #include "mohawk/riven_stack.h"
+#include "mohawk/riven_stacks/aspit.h"
 #include "mohawk/riven_video.h"
 #include "common/memstream.h"
 
@@ -361,6 +362,19 @@ void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, 
 		}
 
 		debugC(kRivenDebugPatches, "Applied incorrect steam sounds (1/2) to card %x", cardGlobalId);
+	}
+
+	// Override the main menu new game script to call an external command.
+	// This way we can reset all the state when starting a new game while a game is already started.
+	if (cardGlobalId == 0xE2E && scriptType == kMouseDownScript && hotspotId == 16) {
+		shouldApplyPatches = true;
+		_commands.clear();
+
+		RivenSimpleCommand::ArgumentArray arguments;
+		arguments.push_back(RivenStacks::ASpit::kExternalNewGame);
+		arguments.push_back(0);
+		_commands.push_back(RivenCommandPtr(new RivenSimpleCommand(vm, kRivenCommandRunExternal, arguments)));
+		debugC(kRivenDebugPatches, "Applied override new game script patch to card %x", cardGlobalId);
 	}
 
 	if (shouldApplyPatches) {

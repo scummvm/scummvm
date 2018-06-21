@@ -580,6 +580,17 @@ void MohawkEngine_Riven::delay(uint32 ms) {
 	}
 }
 
+void MohawkEngine_Riven::startNewGame() {
+	// Clear all the state data
+	_menuSavedStack = -1;
+	_menuSavedCard = -1;
+
+	_vars.clear();
+	initVars();
+
+	_zipModeData.clear();
+}
+
 void MohawkEngine_Riven::runLoadDialog() {
 	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
 

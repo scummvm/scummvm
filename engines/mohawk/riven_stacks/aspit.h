@@ -40,7 +40,8 @@ public:
 		kExternalRestoreGame = 21,
 		kExternalResume      = 22,
 		kExternalOptions     = 23,
-		kExternalQuit        = 24
+		kExternalQuit        = 24,
+		kExternalNewGame     = 25
 
 	};
 
@@ -72,6 +73,7 @@ public:
 	void xaSaveGame(const ArgumentArray &args);
 	void xaResumeGame(const ArgumentArray &args);
 	void xaOptions(const ArgumentArray &args);
+	void xaNewGame(const ArgumentArray &args);
 
 	// External commands - Demo-specific
 	void xadisablemenureturn(const ArgumentArray &args);
