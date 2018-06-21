@@ -93,6 +93,8 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	bool canSaveGameStateCurrently() override;
 
+	friend class Console;
+
 protected:
 	virtual void pauseEngineIntern(bool pause) override;
 

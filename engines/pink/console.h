@@ -31,9 +31,16 @@ class PinkEngine;
 
 class Console : public GUI::Debugger {
 public:
-	Console(PinkEngine *vm) {}
+	Console(PinkEngine *vm);
 
 	virtual ~Console(void) {}
+
+private:
+	bool Cmd_ListModules(int argc, const char **argv);
+	bool Cmd_GoToModule(int argc, const char **argv);
+
+private:
+	PinkEngine *_vm;
 };
 
 } // End of namespace Pink
