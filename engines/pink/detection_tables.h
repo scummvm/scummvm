@@ -92,6 +92,22 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Polish
+	{
+		"peril",
+		0,
+		{
+			{"PPTP.ORB", NULL, "3b987bb529e131b92c3eb912871dedbd", 644839372},
+			{"PPTP.BRO", NULL, "138a84d0c6ea00066aff488c91cb1973", 8945466},
+			{"PPTP.EXE", NULL, "409d7dbc33c5cbfb3457468755d33691", 594432},
+			AD_LISTEND
+		},
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Portuguese
 	{
 		"peril",
