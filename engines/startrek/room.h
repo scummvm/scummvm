@@ -938,6 +938,42 @@ public:
 
 	// LOVE3
 	void love3Tick1();
+	void love3Tick80();
+	void love3TouchedWarp1();
+	void love3Timer3Expired();
+	void love3LookAtServicePanel();
+	void love3LookAtMonitor();
+	void love3LookAtWrench();
+	void love3LookAtKirk();
+	void love3LookAtMccoy();
+	void love3LookAtSpock();
+	void love3LookAtRedshirt();
+	void love3LookAnywhere();
+	void love3LookAtShaft();
+	void love3LookAtPanel();
+	void love3LookAtGasTank();
+	void love3LookAtTurbines();
+	void love3TalkToKirk();
+	void love3TalkToSpock();
+	void love3TalkToMccoy();
+	void love3TalkToRedshirt();
+	void love3UseMTricorderAnywhere();
+	void love3UseSTricorderOnTurbines();
+	void love3UseSTricorderOnInsulation();
+	void love3UseSTricorderAnywhere();
+	void love3UseKirkOnServicePanel();
+	void love3UseSpockOnServicePanel();
+	void love3UseMccoyOnServicePanel();
+	void love3UseRedshirtOnServicePanel();
+	void love3CrewmanReachedServicePanel();
+	void love3OpenedOrClosedServicePanel();
+	void love3UseWrenchOnGasTank();
+	void love3ReachedGasTankToUnscrew();
+	void love3ScrewedOrUnscrewedGasTank();
+	void love3UseWrenchOnO2OrH2Gas();
+	void love3UseWrenchOnN2Gas();
+	void love3ReachedGasTankToPutDown();
+	void love3PutN2TankBack();
 
 	// LOVE4
 	void love4Tick1();
@@ -1052,6 +1088,12 @@ private:
 			byte _2966; // 0x2966
 			byte _2967; // 0x2967
 		} love2;
+
+		struct {
+			byte activeCrewman;
+			byte _188e; // 0x188e
+			byte _188f; // 0x188f
+		} love3;
 
 
 	} _roomVar;

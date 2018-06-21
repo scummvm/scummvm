@@ -142,7 +142,7 @@ struct AwayMission {
 		struct {
 			bool alreadyStartedMission; // 0x29
 			bool knowAboutVirus; // 0x2a
-			bool field2b; // 0x2b
+			bool putLaughingGasInVent; // 0x2b
 			bool field2c; // 0x2c
 			bool field2d; // 0x2d
 			bool chamberHasCure; // 0x2e
@@ -155,6 +155,13 @@ struct AwayMission {
 			byte field35; // 0x35
 			byte canister1; // 0x36
 			byte canister2; // 0x37
+			bool servicePanelOpen; // 0x38
+			bool gasTankUnscrewed; // 0x39
+			bool wrenchTaken; // 0x3a
+			bool tookN2TankFromServicePanel; // 0x3b
+			bool grateRemoved; // 0x3d
+			bool field3e; // 0x3e
+			bool field3f; // 0x3f
 			bool field41; // 0x41
 			bool spockAccessedConsole; // 0x49
 			bool mccoyAccessedConsole; // 0x4a
