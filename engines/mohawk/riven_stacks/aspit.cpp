@@ -379,6 +379,11 @@ void ASpit::xatrapbookopen(const ArgumentArray &args) {
 }
 
 void ASpit::xarestoregame(const ArgumentArray &args) {
+	if (!showConfirmationDialog(_("Are you sure you want to load a saved game? All unsaved progress will be lost."),
+	                            _("Load game"), _("Cancel"))) {
+		return;
+	}
+
 	// Launch the load game dialog
 	_vm->runLoadDialog();
 }
@@ -396,6 +401,11 @@ void ASpit::xaOptions(const ArgumentArray &args) {
 }
 
 void ASpit::xaNewGame(const ArgumentArray &args) {
+	if (!showConfirmationDialog(_("Are you sure you want to start a new game? All unsaved progress will be lost."),
+	                            _("New game"), _("Cancel"))) {
+		return;
+	}
+
 	_vm->startNewGame();
 
 	RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(2,
@@ -408,6 +418,16 @@ void ASpit::xaNewGame(const ArgumentArray &args) {
 	                  kRivenCommandStopSound,   1, 2);
 
 	_vm->_scriptMan->runScript(script, false);
+}
+
+bool ASpit::showConfirmationDialog(const char *message, const char *confirmButton, const char *cancelButton) {
+	if (!_vm->isGameStarted()) {
+		return true;
+	}
+
+	GUI::MessageDialog dialog(message, confirmButton, cancelButton);
+
+	return dialog.runModal() !=0;
 }
 
 void ASpit::xadisablemenureturn(const ArgumentArray &args) {
@@ -465,6 +485,11 @@ void ASpit::xaenablemenuintro(const ArgumentArray &args) {
 }
 
 void ASpit::xademoquit(const ArgumentArray &args) {
+	if (!showConfirmationDialog(_("Are you sure you want to quit? All unsaved progress will be lost."), _("Quit"),
+	                            _("Cancel"))) {
+		return;
+	}
+
 	// Exactly as it says on the tin. In the demo, this function quits.
 	_vm->setGameEnded();
 }

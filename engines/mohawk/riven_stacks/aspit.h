@@ -89,6 +89,7 @@ private:
 
 	void cathBookDrawPage(uint32 page);
 
+	bool showConfirmationDialog(const char *message, const char *confirmButton, const char *cancelButton);
 };
 
 } // End of namespace RivenStacks
