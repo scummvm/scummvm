@@ -145,9 +145,9 @@ static const ADGameDescription gameDescriptions[] = {
 		"peril",
 		0,
 		{
-			{"PPTP.ORB", NULL, "e44d6d3f28cbf0d93492db60634e5362", 633843917},
-			{"PPTP.BRO", NULL, "06acd9ae0413a0d8538afaf5350422b1", 8945466},
-			{"PPTP.EXE", NULL, "3fdbf4c39b76820ca26224d8bebe00a8", 594944},
+			{"PPTP.ORB", NULL, "eadbc52f4c43b85edb7cc493b4149ba0", 633843917},
+			{"PPTP.BRO", NULL, "e0e479418f7ace8735d824cfdabe851d", 8945466},
+			{"PPTP.EXE", NULL, "52db4fa96604a2d2026140a26a5e69e2", 594944},
 			AD_LISTEND
 		},
 		Common::SE_SWE,
@@ -266,8 +266,8 @@ static const ADGameDescription gameDescriptions[] = {
 		"pokus",
 		0,
 		{
-			{"HPP.orb", NULL, "aa2e58de49c73f66f1d8f1bbbe163a9c", 500103742},
-			{"hpp.exe", NULL, "672a99b8b6788c1c80ad01733a4e6720", 673280},
+			{"HPP.orb", NULL, "7b7909414d93f847ff0c023a06ae1f7e", 500103742},
+			{"hpp.exe", NULL, "ba40c8ecfa36f2d21fdd8d8c14d4b09c", 673280},
 			AD_LISTEND
 		},
 		Common::SE_SWE,
