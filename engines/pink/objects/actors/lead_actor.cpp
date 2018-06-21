@@ -209,6 +209,8 @@ void LeadActor::onLeftButtonClick(const Common::Point point) {
 	case kReady:
 	case kMoving: {
 		Actor *clickedActor = getActorByPoint(point);
+		if (!clickedActor)
+			return;
 
 		if (this == clickedActor) {
 			_audioInfoMgr.stop();
@@ -241,7 +243,7 @@ void LeadActor::onLeftButtonClick(const Common::Point point) {
 void LeadActor::onRightButtonClick(const Common::Point point) {
 	if (_state == kReady || _state == kMoving) {
 		Actor *clickedActor = getActorByPoint(point);
-		if (isInteractingWith(clickedActor)) {
+		if (clickedActor && isInteractingWith(clickedActor)) {
 			_audioInfoMgr.start(clickedActor);
 		}
 
