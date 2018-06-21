@@ -120,7 +120,8 @@ private:
 	RivenCard *_card;
 	RivenStack *_stack;
 
-	int _prevCard, _prevStack;
+	int _menuSavedCard;
+	int _menuSavedStack;
 
 	bool _gameEnded;
 	uint32 _lastSaveTime;
