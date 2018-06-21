@@ -65,6 +65,8 @@ public:
 
 	GamePage *getPage() { return _page; }
 
+	friend class Console;
+
 private:
 	GamePage *findPage(const Common::String &pageName) const;
 
