@@ -45,7 +45,7 @@ public:
 
 	void pause(bool paused) { g_system->getMixer()->pauseHandle(_handle, paused); }
 
-	uint32 getCurrentSample() { return g_system->getMixer()->getSoundElapsedTime(_handle) * 22050 / 1000; }
+	uint64 getCurrentSample() { return (uint64)g_system->getMixer()->getSoundElapsedTime(_handle) * 22050 / 1000; }
 
 private:
 	Audio::SoundHandle _handle;
