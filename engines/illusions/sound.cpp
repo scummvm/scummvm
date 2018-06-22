@@ -365,34 +365,37 @@ void SoundMan::fadeMidiMusic(int16 finalVolume, int16 duration) {
 	_midiPlayer->fade(finalVolume, duration);
 }
 
-void SoundMan::setMusicVolume(uint8 volume) {
+void SoundMan::setMusicVolume(uint16 volume) {
 	ConfMan.setInt("music_volume", volume);
 	_midiPlayer->syncVolume();
+	ConfMan.flushToDisk();
 }
 
-void SoundMan::setSfxVolume(uint8 volume) {
+void SoundMan::setSfxVolume(uint16 volume) {
 	ConfMan.setInt("sfx_volume", volume);
+	ConfMan.flushToDisk();
 }
 
-void SoundMan::setSpeechVolume(uint8 volume) {
+void SoundMan::setSpeechVolume(uint16 volume) {
 	ConfMan.setInt("speech_volume", volume);
+	ConfMan.flushToDisk();
 }
 
-uint8 SoundMan::calcAdjustedVolume(const Common::String &volumeConfigKey, uint8 volume) {
-	uint8 masterVolume = (uint8)ConfMan.getInt(volumeConfigKey);
-	return (uint8)(((float)masterVolume/255) * (float)volume);
+uint16 SoundMan::calcAdjustedVolume(const Common::String &volumeConfigKey, uint16 volume) {
+	uint16 masterVolume = (uint16)ConfMan.getInt(volumeConfigKey);
+	return (uint16)(((float)masterVolume/256) * (float)volume);
 }
 
-uint8 SoundMan::getMusicVolume() {
-	return (uint8)ConfMan.getInt("music_volume");
+uint16 SoundMan::getMusicVolume() {
+	return (uint16)ConfMan.getInt("music_volume");
 }
 
-uint8 SoundMan::getSfxVolume() {
-	return (uint8)ConfMan.getInt("sfx_volume");
+uint16 SoundMan::getSfxVolume() {
+	return (uint16)ConfMan.getInt("sfx_volume");
 }
 
-uint8 SoundMan::getSpeechVolume() {
-	return (uint8)ConfMan.getInt("speech_volume");
+uint16 SoundMan::getSpeechVolume() {
+	return (uint16)ConfMan.getInt("speech_volume");
 }
 
 } // End of namespace Illusions

@@ -142,8 +142,11 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_doScriptThreadInit = false;
 	_field8 = 1;
 	_fieldA = 0;
-	_fieldE = 240;
-	
+
+	ConfMan.registerDefault("talkspeed", 240);
+	_subtitleDuration = (uint16)ConfMan.getInt("talkspeed");
+	debug(0, "talkspeed: %d", _subtitleDuration);
+
 	_globalSceneId = 0x00010003;
 
 	_savedInventoryActorIndex = 0;

@@ -649,6 +649,11 @@ begin_credits("Credits");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
 
+			begin_section("Illusions");
+				add_person("Benjamin Haisch", "john_doe", "");
+				add_person("Eric Fry", "yuv422", "");
+			end_section();
+
 			begin_section("Kyra");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
 				add_person("Oystein Eftevaag", "vinterstum", "");

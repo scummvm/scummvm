@@ -117,13 +117,13 @@ public:
 	void stopMidiMusic();
 	void fadeMidiMusic(int16 finalVolume, int16 duration);
 
-	uint8 getMusicVolume();
-	uint8 getSfxVolume();
-	uint8 getSpeechVolume();
+	uint16 getMusicVolume();
+	uint16 getSfxVolume();
+	uint16 getSpeechVolume();
 
-	void setMusicVolume(uint8 volume);
-	void setSfxVolume(uint8 volume);
-	void setSpeechVolume(uint8 volume);
+	void setMusicVolume(uint16 volume);
+	void setSfxVolume(uint16 volume);
+	void setSpeechVolume(uint16 volume);
 
 	bool cueVoice(const char *voiceName);
 	void stopCueingVoice();
@@ -148,7 +148,7 @@ protected:
 	VoicePlayer *_voicePlayer;
 	SoundList _sounds;
 	Sound *getSound(uint32 soundEffectId);
-	uint8 calcAdjustedVolume(const Common::String &volumeConfigKey, uint8 volume);
+	uint16 calcAdjustedVolume(const Common::String &volumeConfigKey, uint16 volume);
 };
 
 } // End of namespace Illusions
