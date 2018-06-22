@@ -557,9 +557,49 @@ bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
 	uint levelIndex = strtol(argv[1] , nullptr, 16);
 	uint locationIndex = strtol(argv[2] , nullptr, 16);
 
-	StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
+	bool isIndicesValid = true;
 
-	return false;
+	// Temporarily replace the global archive loader
+	ArchiveLoader *archiveLoader = new ArchiveLoader();
+	ArchiveLoader *gameArchiveLoader = StarkArchiveLoader;
+	StarkArchiveLoader = archiveLoader;
+
+	archiveLoader->load("x.xarc");
+	Resources::Root *root = archiveLoader->useRoot<Resources::Root>("x.xarc");
+
+	// Assert the level index
+	Resources::Level *level = root->findChildWithIndex<Resources::Level>(levelIndex);
+	if (!level) {
+		debugPrintf("Invalid level index %d, only %d indices available\n", levelIndex,
+				root->listChildren<Resources::Level>().size());
+		isIndicesValid = false;
+	}
+
+	// Load locations archives
+	Common::String levelArchive = archiveLoader->buildArchiveName(level);
+	archiveLoader->load(levelArchive);
+	level = archiveLoader->useRoot<Resources::Level>(levelArchive);
+
+	// Assert the location index
+	Resources::Location *location = level->findChildWithIndex<Resources::Location>(locationIndex);
+	if (!location) {
+		debugPrintf("Invalid location index %d, only %d indices available\n", locationIndex,
+				level->listChildren<Resources::Location>().size());
+		isIndicesValid = false;
+	}
+
+	// Restore the global archive loader
+	archiveLoader->returnRoot(levelArchive);
+	archiveLoader->unloadUnused();
+	StarkArchiveLoader = gameArchiveLoader;
+	delete archiveLoader;
+
+	if (isIndicesValid) {
+		StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
+		return false;
+	}
+
+	return true;
 }
 
 bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
