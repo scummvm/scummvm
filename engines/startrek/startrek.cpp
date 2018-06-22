@@ -459,7 +459,12 @@ void StarTrekEngine::updateActorAnimations() {
 					if (nextAnimFrame == actor->numAnimFrames - 1) {
 						actor->field62++;
 						if (actor->triggerActionWhenAnimFinished) {
-							addAction(Action(ACTION_FINISHED_ANIMATION, actor->finishedAnimActionParam, 0, 0));
+							if (actor->finishedAnimCallback != nullptr) {
+								addAction(Action(ACTION_CALLBACK, actor->finishedAnimCallback));
+								actor->finishedAnimCallback = nullptr;
+							}
+							else
+								addAction(Action(ACTION_FINISHED_ANIMATION, actor->finishedAnimActionParam, 0, 0));
 						}
 					}
 				}
@@ -530,7 +535,12 @@ void StarTrekEngine::updateActorAnimations() {
 				if (actor->iwSrcPosition == -1) {
 					if (actor->triggerActionWhenAnimFinished) {
 						actor->triggerActionWhenAnimFinished = false;
-						addAction(Action(ACTION_FINISHED_WALKING, actor->finishedAnimActionParam & 0xff, 0, 0));
+						if (actor->finishedAnimCallback != nullptr) {
+							addAction(Action(ACTION_CALLBACK, actor->finishedAnimCallback));
+							actor->finishedAnimCallback = nullptr;
+						}
+						else
+							addAction(Action(ACTION_FINISHED_WALKING, actor->finishedAnimActionParam & 0xff, 0, 0));
 					}
 
 					actor->sprite.bitmap.reset();
@@ -1855,13 +1865,13 @@ uint16 StarTrekEngine::getRandomWord() {
  * ".txt" files are just lists of strings. This traverses the file to get a particular
  * string index.
  */
-Common::String StarTrekEngine::getLoadedText(int itemIndex) {
+Common::String StarTrekEngine::getLoadedText(int textIndex) {
 	SharedPtr<FileStream> txtFile = loadFile(_txtFilename + ".txt");
 
 	byte *data = txtFile->_data;
-	while (itemIndex != 0) {
+	while (textIndex != 0) {
 		while (*(data++) != '\0');
-		itemIndex--;
+		textIndex--;
 	}
 
 	return (char *)data;

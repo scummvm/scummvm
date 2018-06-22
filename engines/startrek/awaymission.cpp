@@ -61,8 +61,8 @@ void StarTrekEngine::runAwayMission() {
 		_awayMission.mouseY = mousePos.y;
 
 		assert(_actionQueue.size() <= 16);
-		if (!_actionQueue.empty()) {
-			// sub_200e7();
+		while (!_actionQueue.empty()) {
+			// sub_200e7(); // TODO
 			// sub_20118();
 			handleAwayMissionAction();
 		}
@@ -570,6 +570,12 @@ void StarTrekEngine::handleAwayMissionAction() {
 			loadRoom(_missionName, roomIndex);
 			initAwayCrewPositions(warpIndex ^ 1);
 		}
+		break;
+
+	case ACTION_CALLBACK:
+		// Custom action for ScummVM; calls a function in the Room class. Useful for
+		// simplifying chains of calls.
+		(_room.get()->*(action.roomFuncPtr))();
 		break;
 	}
 }

@@ -1090,17 +1090,53 @@ RoomAction love3ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_KIRK, 8, 0), &Room::love3UseKirkOnServicePanel },
 	{ Action(ACTION_USE, OBJECT_SPOCK, 8, 0), &Room::love3UseSpockOnServicePanel },
 	{ Action(ACTION_USE, OBJECT_MCCOY, 8, 0), &Room::love3UseMccoyOnServicePanel },
+
 	{ Action(ACTION_USE, OBJECT_REDSHIRT, 8, 0), &Room::love3UseRedshirtOnServicePanel },
 	{ Action(ACTION_FINISHED_WALKING, 1, 0, 0), &Room::love3CrewmanReachedServicePanel },
 	{ Action(ACTION_FINISHED_ANIMATION, 1, 0, 0), &Room::love3OpenedOrClosedServicePanel },
+
 	{ Action(ACTION_USE, OBJECT_IWRENCH, 12, 0), &Room::love3UseWrenchOnGasTank },
 	{ Action(ACTION_FINISHED_WALKING, 2, 0, 0), &Room::love3ReachedGasTankToUnscrew },
 	{ Action(ACTION_FINISHED_ANIMATION, 2, 0, 0), &Room::love3ScrewedOrUnscrewedGasTank },
+
 	{ Action(ACTION_USE, OBJECT_IWRENCH, OBJECT_IO2GAS, 0), &Room::love3UseWrenchOnO2OrH2Gas },
 	{ Action(ACTION_USE, OBJECT_IWRENCH, OBJECT_IH2GAS, 0), &Room::love3UseWrenchOnO2OrH2Gas },
+
 	{ Action(ACTION_USE, OBJECT_IWRENCH, OBJECT_IN2GAS, 0), &Room::love3UseWrenchOnN2Gas },
 	{ Action(ACTION_FINISHED_WALKING, 15, 0, 0), &Room::love3ReachedGasTankToPutDown },
 	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0), &Room::love3PutN2TankBack },
+
+	{ Action(ACTION_USE, OBJECT_IWRENCH, 0x20, 0), &Room::love3UseWrenchOnEngineeringPanel },
+	{ Action(ACTION_FINISHED_WALKING, 3, 0, 0), &Room::love3ReachedEngineeringPanel },
+	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::love3OpenedEngineeringPanel },
+
+	{ Action(ACTION_USE, OBJECT_IWRENCH, 0x21, 0), &Room::love3UseWrenchOnMonitor },
+
+	{ Action(ACTION_USE, OBJECT_IH2O, 0x21, 0), &Room::love3UseWaterOnMonitor },
+
+	{ Action(ACTION_USE, OBJECT_KIRK, 0x20, 0), &Room::love3UseCrewmanOnEngineeringPanelOrGrate },
+	{ Action(ACTION_USE, OBJECT_SPOCK, 0x20, 0), &Room::love3UseCrewmanOnEngineeringPanelOrGrate },
+	{ Action(ACTION_USE, OBJECT_MCCOY, 0x20, 0), &Room::love3UseCrewmanOnEngineeringPanelOrGrate },
+	{ Action(ACTION_USE, OBJECT_REDSHIRT, 0x20, 0), &Room::love3UseCrewmanOnEngineeringPanelOrGrate },
+	{ Action(ACTION_USE, OBJECT_KIRK, 11, 0), &Room::love3UseCrewmanOnEngineeringPanelOrGrate },
+	{ Action(ACTION_USE, OBJECT_SPOCK, 11, 0), &Room::love3UseCrewmanOnEngineeringPanelOrGrate },
+	{ Action(ACTION_USE, OBJECT_MCCOY, 11, 0), &Room::love3UseCrewmanOnEngineeringPanelOrGrate },
+	{ Action(ACTION_USE, OBJECT_REDSHIRT, 11, 0), &Room::love3UseCrewmanOnEngineeringPanelOrGrate },
+
+	{ Action(ACTION_USE, OBJECT_IWRENCH, 11, 0), &Room::love3UseWrenchOnGrate },
+	{ Action(ACTION_USE, OBJECT_KIRK, 0x22, 0), &Room::love3UseCrewmanOnShaft },
+	{ Action(ACTION_USE, OBJECT_SPOCK, 0x22, 0), &Room::love3UseCrewmanOnShaft },
+	{ Action(ACTION_USE, OBJECT_MCCOY, 0x22, 0), &Room::love3UseCrewmanOnShaft },
+	{ Action(ACTION_USE, OBJECT_REDSHIRT, 0x22, 0), &Room::love3UseCrewmanOnShaft },
+	{ Action(ACTION_USE, OBJECT_IH2O, 0x22, 0), &Room::love3UseWaterOnShaft },
+	{ Action(ACTION_USE, OBJECT_IN2O, 0x22, 0), &Room::love3UseNitrousOxideOnShaft },
+	{ Action(ACTION_USE, OBJECT_INH3, 0x22, 0), &Room::love3UseAmmoniaOnShaft },
+	{ Action(ACTION_USE, OBJECT_IRLG, 0x22, 0), &Room::love3UseRomulanLaughingGasOnShaft },
+	{ Action(ACTION_GET, 10, 0, 0), &Room::love3GetWrench },
+	{ Action(ACTION_GET, 12, 0, 0), &Room::love3GetGasTank },
+	{ Action(ACTION_USE, OBJECT_IANTIGRA, 12, 0), &Room::love3UseAntigravOnGasTank },
+	{ Action(ACTION_GET, 9, 0, 0), &Room::love3GetInsulation },
+	// TODO: common code
 };
 
 RoomAction love4ActionList[] = {

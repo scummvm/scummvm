@@ -142,7 +142,7 @@ struct AwayMission {
 		struct {
 			bool alreadyStartedMission; // 0x29
 			bool knowAboutVirus; // 0x2a
-			bool putLaughingGasInVent; // 0x2b
+			bool romulansUnconsciousFromLaughingGas; // 0x2b
 			bool field2c; // 0x2c
 			bool field2d; // 0x2d
 			bool chamberHasCure; // 0x2e
@@ -159,14 +159,17 @@ struct AwayMission {
 			bool gasTankUnscrewed; // 0x39
 			bool wrenchTaken; // 0x3a
 			bool tookN2TankFromServicePanel; // 0x3b
+			bool field3c; // 0x3c
 			bool grateRemoved; // 0x3d
-			bool field3e; // 0x3e
+			bool insulationOnGround; // 0x3e
 			bool field3f; // 0x3f
-			bool field41; // 0x41
+			bool romulansUnconsciousFromVirus; // 0x41
 			bool spockAccessedConsole; // 0x49
 			bool mccoyAccessedConsole; // 0x4a
 			bool gotPolyberylcarbonate; // 0x4b
 			bool gotTLDH; // 0x4c (Got romulan laughing gas)
+			bool gotPointsForOpeningGrate; // 0x4d
+			bool gotPointsForGassingRomulans; // 0x4e
 			bool gotCure; // 0x4f
 			int16 missionScore; // 0x52
 		} love;

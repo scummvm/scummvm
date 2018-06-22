@@ -27,6 +27,8 @@
 
 namespace StarTrek {
 
+class Room;
+
 enum Acton {
 	ACTION_TICK = 0,
 
@@ -41,7 +43,9 @@ enum Acton {
 	ACTION_TIMER_EXPIRED = 8,
 	ACTION_FINISHED_ANIMATION = 10,
 	ACTION_FINISHED_WALKING = 12,
-	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
+	ACTION_OPTIONS = 13, // Not really an action, but selectable from action menu
+
+	ACTION_CALLBACK = 255 // Custom action in ScummVM; calls a function in the Room class
 };
 
 struct Action : Common::Serializable {
@@ -50,12 +54,18 @@ struct Action : Common::Serializable {
 	byte b2;
 	byte b3;
 
+	void (Room::*roomFuncPtr)();
+
 	Action() {}
 	Action(int _type, int _b1, int _b2, int _b3)
 		: type((byte)_type),
 		b1((byte)_b1),
 		b2((byte)_b2),
 		b3((byte)_b3) {}
+
+	Action(int _type, void (Room::*funcPtr)())
+		: type((byte)_type),
+		roomFuncPtr(funcPtr) {}
 
 
 	// ACTION_USE, ACTION_GET, ACTION_LOOK, ACTION_TALK

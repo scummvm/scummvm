@@ -98,6 +98,7 @@ private:
 
 	// Interface for room-specific code
 	void loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66); // Cmd 0x00
+	void loadActorAnimC(int actorIndex, Common::String anim, int16 x, int16 y, void (Room::*funcPtr)());// Cmd 0x00
 	void loadActorStandAnim(int actorIndex);                                                   // Cmd 0x01
 	void loadActorAnim2(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66);// Cmd 0x02
 	int showRoomSpecificText(const char **textAddr); // (Deprecated, use function below)       // Cmd 0x03
@@ -109,6 +110,7 @@ private:
 	void loadRoomIndex(int roomIndex, int spawnIndex);                                         // Cmd 0x06
 	void loseItem(int item);                                                                   // Cmd 0x07
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam);// Cmd 0x08
+	void walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*funcPtr)());      // Cmd 0x08
 	void loadMapFile(const Common::String &name);                                              // Cmd 0x09
 	void showBitmapFor5Ticks(const Common::String &bmpName, int priority);                     // Cmd 0x0a
 	// Command 0x0c: "demon6ShowCase"
@@ -974,6 +976,41 @@ public:
 	void love3UseWrenchOnN2Gas();
 	void love3ReachedGasTankToPutDown();
 	void love3PutN2TankBack();
+	void love3UseWrenchOnEngineeringPanel();
+	void love3ReachedEngineeringPanel();
+	void love3OpenedEngineeringPanel();
+	void love3UseWrenchOnMonitor();
+	void love3UseWaterOnMonitor();
+	void love3ReachedMonitorToUseWater();
+	void love3PouredWaterOnMonitor();
+	void love3UseCrewmanOnEngineeringPanelOrGrate();
+	void love3UseWrenchOnGrate();
+	void love3ReachedGateWithWrench();
+	void love3OpenedOrClosedGrate();
+	void love3UseCrewmanOnShaft();
+	void love3UseWaterOnShaft();
+	void love3ReachedShaftUsingWater();
+	void love3PouredWaterDownShaft();
+	void love3UseNitrousOxideOnShaft();
+	void love3ReachedShaftUsingNitrousOxide();
+	void love3PouredNitrousOxideDownShaft();
+	void love3UseAmmoniaOnShaft();
+	void love3ReachedShaftUsingAmmonia();
+	void love3PouredAmmoniaDownShaft();
+	void love3UseRomulanLaughingGasOnShaft();
+	void love3ReachedShaftUsingRomulanLaughingGas();
+	void love3PouredRomulanLaughingGasDownShaft();
+	void love3GetWrench();
+	void love3ReachedWrenchToGet();
+	void love3PickedUpWrench();
+	void love3GetGasTank();
+	void love3ReachedGasTankToGet();
+	void love3UseAntigravOnGasTank();
+	void love3ReachedGasTankUsingAntigrav();
+	void love3PickedUpGasTank();
+	void love3GetInsulation();
+	void love3ReachedInsulationToGet();
+	void love3PickedUpInsulation();
 
 	// LOVE4
 	void love4Tick1();
