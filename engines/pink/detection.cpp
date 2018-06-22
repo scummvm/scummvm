@@ -88,7 +88,8 @@ SaveStateList PinkMetaEngine::listSaves(const char *target) const {
 			if (in) {
 				SaveStateDescriptor desc;
 				desc.setSaveSlot(slotNum);
-				saveList.push_back(desc);
+				if (Pink::readSaveHeader(*in.get(), desc))
+					saveList.push_back(desc);
 			}
 		}
 	}
