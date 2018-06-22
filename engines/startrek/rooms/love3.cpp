@@ -61,7 +61,6 @@ void Room::love3Tick1() {
 		_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
 	if (_vm->_awayMission.love.field2d)
 		_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
-
 	_vm->_awayMission.timers[2] = 200;
 
 	_roomVar.love3._188e = 0xb4;
@@ -69,7 +68,7 @@ void Room::love3Tick1() {
 }
 
 void Room::love3Tick80() {
-	if (!_vm->_awayMission.love.field3f && haveItem(OBJECT_IRLG)) {
+	if (!_vm->_awayMission.love.visitedRoomWithRomulans && haveItem(OBJECT_IRLG)) {
 		showText(TX_SPEAKER_MCCOY, TX_LOV3_010);
 		showText(TX_SPEAKER_SPOCK, TX_LOV3_020);
 	}
@@ -145,9 +144,9 @@ void Room::love3TalkToKirk() {
 }
 
 void Room::love3TalkToSpock() {
-	if (_vm->_awayMission.love.field3f)
+	if (_vm->_awayMission.love.visitedRoomWithRomulans)
 		showText(TX_SPEAKER_SPOCK, TX_LOV3_003);
-	if (_vm->_awayMission.love.romulansUnconsciousFromLaughingGas)
+	else if (_vm->_awayMission.love.romulansUnconsciousFromLaughingGas)
 		showText(TX_SPEAKER_SPOCK, TX_LOV3_017);
 	else if (haveItem(OBJECT_IRLG))
 		showText(TX_SPEAKER_SPOCK, TX_LOV3_004);

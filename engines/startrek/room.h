@@ -97,10 +97,10 @@ private:
 
 
 	// Interface for room-specific code
-	void loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66); // Cmd 0x00
+	void loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66 = 0); // Cmd 0x00
 	void loadActorAnimC(int actorIndex, Common::String anim, int16 x, int16 y, void (Room::*funcPtr)());// Cmd 0x00
 	void loadActorStandAnim(int actorIndex);                                                   // Cmd 0x01
-	void loadActorAnim2(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66);// Cmd 0x02
+	void loadActorAnim2(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66 = 0);// Cmd 0x02
 	int showRoomSpecificText(const char **textAddr); // (Deprecated, use function below)       // Cmd 0x03
 	int showText(const int *text);                                                             // Cmd 0x03
 	int showText(int speaker, int text);                                                       // Cmd 0x03
@@ -1014,6 +1014,42 @@ public:
 
 	// LOVE4
 	void love4Tick1();
+	void love4Tick10();
+	void love4WalkToDoor();
+	void love4TouchedHotspot0();
+	void love4DoorOpenedOrReached();
+	void love4UseKirkOnLadder();
+	void love4ReachedLadder();
+	void love4UseStunPhaserOnRomulan();
+	void love4LookAnywhere();
+	void love4LookAtLadder();
+	void love4LookAtDoor();
+	void love4LookAtKirk();
+	void love4LookAtMccoy();
+	void love4LookAtSpock();
+	void love4LookAtRedshirt();
+	void love4LookAtRomulan();
+	void love4TalkToKirk();
+	void love4TalkToMccoy();
+	void love4TalkToRedshirt();
+	void love4TalkToSpock();
+	void love4TalkToRomulan();
+	void love4UseMTricorderOnRomulan();
+	void love4UseMTricorderAnywhere();
+	void love4UseSTricorderAnywhere();
+	void love4UseCureOnRomulan();
+	void love4MccoyReachedRomulan4();
+	void love4MccoyCuredRomulan4();
+	void love4MccoyReachedRomulan3();
+	void love4MccoyCuredRomulan3();
+	void love4MccoyReachedRomulan2();
+	void love4MccoyCuredRomulan2();
+	void love4MccoyReachedRomulan1();
+	void love4MccoyCuredRomulan1();
+	void love4UseWaterOnRomulan();
+	void love4UseMedkitOnRomulan();
+	void love4UseCureSampleOnRomulan();
+	void love4UseAnythingOnRomulan();
 
 	// LOVE5
 	void love5Tick1();
@@ -1131,6 +1167,12 @@ private:
 			byte _188e; // 0x188e
 			byte _188f; // 0x188f
 		} love3;
+
+		struct {
+			bool gaveWaterToRomulans; // 0xca
+			byte doorOpenCounter; // 0xcb
+			bool walkingToDoor; // 0xcc
+		} love4;
 
 
 	} _roomVar;
