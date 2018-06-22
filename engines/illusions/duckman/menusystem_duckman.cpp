@@ -161,7 +161,12 @@ BaseMenu *DuckmanMenuSystem::createPauseMenu() {
 }
 
 BaseMenu *DuckmanMenuSystem::createQueryRestartMenu() {
-	return 0; // TODO
+	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 2);
+	menu->addText("Do you really want to restart?");
+	menu->addText("-----------------------------------");
+	menu->addMenuItem(new MenuItem("Yes, let's try again", new MenuActionReturnChoice(this, getQueryConfirmationChoiceIndex())));
+	menu->addMenuItem(new MenuItem("No, just kidding", new MenuActionLeaveMenu(this)));
+	return menu;
 }
 
 BaseMenu *DuckmanMenuSystem::createQueryQuitMenu() {
