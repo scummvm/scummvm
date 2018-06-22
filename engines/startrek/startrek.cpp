@@ -84,7 +84,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_textboxHasMultipleChoices = false;
 
 	_missionToLoad = "LOVE";
-	_roomIndexToLoad = 4;
+	_roomIndexToLoad = 0;
 
 	for (int i = 0; i < NUM_OBJECTS; i++)
 		_itemList[i] = g_itemList[i];

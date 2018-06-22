@@ -165,6 +165,9 @@ struct AwayMission {
 			bool visitedRoomWithRomulans; // 0x3f
 			bool romulansCured; // 0x40
 			bool romulansUnconsciousFromVirus; // 0x41
+			bool freedMarcusAndCheever; // 0x42
+			bool preaxCured; // 0x43
+			bool spockCured; // 0x46
 			bool spockAccessedConsole; // 0x49
 			bool mccoyAccessedConsole; // 0x4a
 			bool gotPolyberylcarbonate; // 0x4b
@@ -172,6 +175,7 @@ struct AwayMission {
 			bool gotPointsForOpeningGrate; // 0x4d
 			bool gotPointsForGassingRomulans; // 0x4e
 			bool gotCure; // 0x4f
+			bool gotPointsForHydratingPreax; // 0x50
 			bool gotPointsForHydratingRomulans; // 0x51
 			int16 missionScore; // 0x52
 		} love;

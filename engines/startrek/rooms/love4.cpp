@@ -261,9 +261,10 @@ void Room::love4UseWaterOnRomulan() {
 	}
 
 	// Note the following unused block of code, an alternative implementation of the
-	// function? If they succumbed to the virus from taking too long, McCoy doesn't let
-	// you hydrate them, saying it's dangerous. Otherwise, the romulans get up even
-	// without receiving the cure. (At least the narration says they do.)
+	// function, resembling the version in love5. If they succumbed to the virus from
+	// taking too long, McCoy doesn't let you hydrate them, saying it's dangerous.
+	// Otherwise, the romulans get up even without receiving the cure. (At least the
+	// narration says they do.)
 	// These events don't make too much sense, probably cut in the original release, but
 	// they did get voice acted anyway.
 	if (false) {

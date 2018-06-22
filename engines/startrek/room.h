@@ -109,7 +109,7 @@ private:
 	// Command 0x05: "demon4ShowSunPuzzle"
 	void loadRoomIndex(int roomIndex, int spawnIndex);                                         // Cmd 0x06
 	void loseItem(int item);                                                                   // Cmd 0x07
-	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam);// Cmd 0x08
+	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam = 0);// Cmd 0x08
 	void walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*funcPtr)());      // Cmd 0x08
 	void loadMapFile(const Common::String &name);                                              // Cmd 0x09
 	void showBitmapFor5Ticks(const Common::String &bmpName, int priority);                     // Cmd 0x0a
@@ -1053,6 +1053,47 @@ public:
 
 	// LOVE5
 	void love5Tick1();
+	void love5TouchedWarp1();
+	void love5Timer4Expired();
+	void love5UseStunPhaserOnPreax();
+	void love5LookAtKirk();
+	void love5LookAtSpock();
+	void love5LookAtMccoy();
+	void love5LookAtRedshirt();
+	void love5LookAnywhere();
+	void love5LookAtDevice();
+	void love5LookAtConsole();
+	void love5LookAtDrMarcus();
+	void love5LookAtDrCheever();
+	void love5LookAtPreax();
+	void love5TalkToPreax();
+	void love5MccoyReachedSpockToCure();
+	void love5MccoyCuredSpock();
+	void love5EndMission();
+	void love5CrewmanReachedBeamoutPosition();
+	void love5TalkToDrMarcus();
+	void love5TalkToDrCheever();
+	void love5TalkToKirk();
+	void love5TalkToSpock();
+	void love5TalkToMccoy();
+	void love5TalkToRedshirt();
+	void love5UseSTricorderAnywhere();
+	void love5UseSTricorderOnDevice();
+	void love5UseMTricorderOnMarcusOrCheever();
+	void love5UseMTricorderOnPreax();
+	void love5UseMedkitOnPreax();
+	void love5UseWaterOnPreax();
+	void love5UseCureSampleOnPreax();
+	void love5UseCureOnPreax();
+	void love5ReachedPreaxUsingCure();
+	void love5CuredPreax();
+	void love5UseAnythingOnPreax();
+	void love5UseKirkOnMarcusOrCheever();
+	void love5KirkReachedCheever();
+	void love5KirkUntiedCheever();
+	void love5KirkReachedMarcus();
+	void love5KirkUntiedMarcus();
+	void love5MarcusStoodUp();
 
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
@@ -1173,6 +1214,10 @@ private:
 			byte doorOpenCounter; // 0xcb
 			bool walkingToDoor; // 0xcc
 		} love4;
+
+		struct {
+			byte numCrewmenReadyToBeamOut; // 0xcb
+		} love5;
 
 
 	} _roomVar;
