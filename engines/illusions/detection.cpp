@@ -67,6 +67,19 @@ static const IllusionsGameDescription gameDescriptions[] = {
 		kGameIdDuckman
 	},
 
+	{
+		{
+			"duckman",
+			0,
+			AD_ENTRY1s("duckman.gam", "64d16922ffb46b746fc2c12a14d75bcc", 29779968),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameIdDuckman
+	},
+
 	{AD_TABLE_END_MARKER, 0}
 };
 
