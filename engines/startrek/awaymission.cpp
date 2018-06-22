@@ -41,7 +41,7 @@ void StarTrekEngine::initAwayMission() {
 	_roomIndexToLoad = -1;
 
 	// Load crew positions for beaming in
-	initAwayCrewPositions(0);
+	initAwayCrewPositions(4);
 }
 
 void StarTrekEngine::runAwayMission() {

@@ -1150,6 +1150,7 @@ RoomAction love4ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_IPHASERS, 10, 0), &Room::love4UseStunPhaserOnRomulan },
 	{ Action(ACTION_USE, OBJECT_IPHASERS, 11, 0), &Room::love4UseStunPhaserOnRomulan },
 	{ Action(ACTION_USE, OBJECT_IPHASERS, 12, 0), &Room::love4UseStunPhaserOnRomulan },
+	// NOTE: nothing for OBJECT_IPHASERK. There's an unused audio file which might fit.
 	{ Action(ACTION_LOOK, -1, 0, 0), &Room::love4LookAnywhere },
 	{ Action(ACTION_LOOK, 0x21, 0, 0), &Room::love4LookAtLadder },
 	{ Action(ACTION_LOOK, 8, 0, 0), &Room::love4LookAtDoor },
@@ -1195,10 +1196,45 @@ RoomAction love4ActionList[] = {
 	{ Action(ACTION_USE, -1, 10, 0), &Room::love4UseAnythingOnRomulan },
 	{ Action(ACTION_USE, -1, 11, 0), &Room::love4UseAnythingOnRomulan },
 	{ Action(ACTION_USE, -1, 12, 0), &Room::love4UseAnythingOnRomulan },
+	// TODO: common code
 };
 
 RoomAction love5ActionList[] = {
 	{ Action(ACTION_TICK, 1, 0, 0), &Room::love5Tick1 },
+	{ Action(ACTION_TOUCHED_WARP, 1, 0, 0), &Room::love5TouchedWarp1 },
+	{ Action(ACTION_TIMER_EXPIRED, 4, 0, 0), &Room::love5Timer4Expired },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 9, 0), &Room::love5UseStunPhaserOnPreax },
+	// NOTE: nothing for OBJECT_IPHASERK. There's an unused audio file which might fit.
+	{ Action(ACTION_LOOK, OBJECT_KIRK, 0, 0), &Room::love5LookAtKirk },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK, 0, 0), &Room::love5LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY, 0, 0), &Room::love5LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::love5LookAtRedshirt },
+	{ Action(ACTION_LOOK, -1, 0, 0), &Room::love5LookAnywhere },
+	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::love5LookAtDevice },
+	{ Action(ACTION_LOOK, 0x21, 0, 0), &Room::love5LookAtConsole },
+	{ Action(ACTION_LOOK, 10, 0, 0), &Room::love5LookAtDrMarcus },
+	{ Action(ACTION_LOOK, 11, 0, 0), &Room::love5LookAtDrCheever },
+	{ Action(ACTION_LOOK, 9, 0, 0), &Room::love5LookAtPreax },
+	{ Action(ACTION_TALK, 9, 0, 0), &Room::love5TalkToPreax },
+	{ Action(ACTION_TALK, 10, 0, 0), &Room::love5TalkToDrMarcus },
+	{ Action(ACTION_TALK, 11, 0, 0), &Room::love5TalkToDrCheever },
+	{ Action(ACTION_TALK, OBJECT_KIRK, 0, 0), &Room::love5TalkToKirk },
+	{ Action(ACTION_TALK, OBJECT_SPOCK, 0, 0), &Room::love5TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_MCCOY, 0, 0), &Room::love5TalkToMccoy },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::love5TalkToRedshirt },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, -1, 0), &Room::love5UseSTricorderAnywhere },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x20, 0), &Room::love5UseSTricorderOnDevice },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 10, 0), &Room::love5UseMTricorderOnMarcusOrCheever },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 11, 0), &Room::love5UseMTricorderOnMarcusOrCheever },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 9, 0), &Room::love5UseMTricorderOnPreax },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, 9, 0), &Room::love5UseMedkitOnPreax },
+	{ Action(ACTION_USE, OBJECT_IH2O, 9, 0), &Room::love5UseWaterOnPreax },
+	{ Action(ACTION_USE, OBJECT_ISAMPLE, 9, 0), &Room::love5UseCureSampleOnPreax },
+	{ Action(ACTION_USE, OBJECT_ICURE, 9, 0), &Room::love5UseCureOnPreax },
+	{ Action(ACTION_USE, -1, 9, 0), &Room::love5UseAnythingOnPreax },
+	{ Action(ACTION_USE, OBJECT_KIRK, 10, 0), &Room::love5UseKirkOnMarcusOrCheever },
+	{ Action(ACTION_USE, OBJECT_KIRK, 11, 0), &Room::love5UseKirkOnMarcusOrCheever },
+	// TODO: common code
 };
 
 
