@@ -33,6 +33,7 @@ namespace StarTrek {
 
 class StarTrekEngine;
 class FileStream;
+class Room;
 
 
 // Objects 0-31 are "actors" that are drawn to the screen, are animated, etc.
@@ -87,8 +88,17 @@ struct Actor {
 	Common::Point pos;
 	uint16 field60;
 	uint16 field62;
+
+	// When an object finished walking somewhere or finishes an animation, if
+	// "triggerActionWhenAnimFinished" is true, it will create an action of type
+	// "ACTION_FINISHED_WALKING" or "ACTION_FINISHED_ANIMATION", with the integer value
+	// "finishedAnimActionParam".
+	// To make things simpler, it can also use a callback to a function in the Room class,
+	// if "finishedAnimCallback" is non-null.
 	bool triggerActionWhenAnimFinished;
 	uint16 finishedAnimActionParam;
+	void (Room::*finishedAnimCallback)();
+
 	char animationString2[8];
 	uint16 field70;
 	uint16 field72;
@@ -140,6 +150,7 @@ public:
 		field62(),
 		triggerActionWhenAnimFinished(),
 		finishedAnimActionParam(),
+		finishedAnimCallback(),
 		//animationString2[8](),
 		field70(),
 		field72(),

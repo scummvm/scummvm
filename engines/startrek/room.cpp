@@ -190,6 +190,29 @@ void Room::loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, 
 	if (finishedAnimActionParam != 0) {
 		actor->triggerActionWhenAnimFinished = true;
 		actor->finishedAnimActionParam = finishedAnimActionParam;
+		actor->finishedAnimCallback = nullptr;
+	}
+}
+
+// Same as above, but accepts a callback for when the animation finished (instead of an
+// integer for an action)
+void Room::loadActorAnimC(int actorIndex, Common::String anim, int16 x, int16 y, void (Room::*funcPtr)()) {
+	Actor *actor = &_vm->_actorList[actorIndex];
+
+	if (x == -1 || y == -1) {
+		x = actor->sprite.pos.x;
+		y = actor->sprite.pos.y;
+	}
+
+	if (actorIndex >= 0 && actorIndex < SCALED_ACTORS_END)
+		_vm->loadActorAnimWithRoomScaling(actorIndex, anim, x, y);
+	else
+		_vm->loadActorAnim(actorIndex, anim, x, y, 256);
+
+	if (funcPtr != nullptr) {
+		actor->triggerActionWhenAnimFinished = true;
+		actor->finishedAnimActionParam = 0;
+		actor->finishedAnimCallback = funcPtr;
 	}
 }
 
@@ -307,6 +330,24 @@ void Room::walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finished
 	if (success && finishedAnimActionParam != 0) {
 		actor->triggerActionWhenAnimFinished = true;
 		actor->finishedAnimActionParam = finishedAnimActionParam;
+		actor->finishedAnimCallback = nullptr;
+	}
+}
+
+// Same as above, but with a function callback instead of an integer value to generate an
+// action
+void Room::walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*funcPtr)()) {
+	if (!(actorIndex >= OBJECT_KIRK && actorIndex <= OBJECT_REDSHIRT))
+		error("Tried to walk a non PC");
+
+	Actor *actor = &_vm->_actorList[actorIndex];
+	Common::String anim = _vm->getCrewmanAnimFilename(actorIndex, "walk");
+	bool success = _vm->actorWalkToPosition(actorIndex, anim, actor->pos.x, actor->pos.y, destX, destY);
+
+	if (success && funcPtr != nullptr) {
+		actor->triggerActionWhenAnimFinished = true;
+		actor->finishedAnimActionParam = 0;
+		actor->finishedAnimCallback = funcPtr;
 	}
 }
 

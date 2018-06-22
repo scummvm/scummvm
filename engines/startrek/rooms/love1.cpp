@@ -624,7 +624,7 @@ void Room::love1CrewmanReachedLadder() {
 		TX_SPEAKER_FERRIS
 	};
 
-	if (_vm->_awayMission.love.putLaughingGasInVent || _vm->_awayMission.love.field41) // Romulans unconscious
+	if (_vm->_awayMission.love.romulansUnconsciousFromLaughingGas || _vm->_awayMission.love.romulansUnconsciousFromVirus) // Romulans unconscious
 		loadRoomIndex(4, 3);
 	else { // Romulans still conscious, they shoot you
 		loadActorAnim(OBJECT_PHASERSHOT, "s3r2s2", 0xf3, 0x89, 0);
@@ -650,7 +650,7 @@ void Room::love1CrewmanDiedFromPhaser() {
 
 // Romulans fire a "warning shot" when you go to the right part of the room.
 void Room::love1TouchedHotspot0() {
-	if (_vm->_awayMission.love.putLaughingGasInVent || _vm->_awayMission.love.field41)
+	if (_vm->_awayMission.love.romulansUnconsciousFromLaughingGas || _vm->_awayMission.love.romulansUnconsciousFromVirus)
 		return;
 	loadActorAnim(OBJECT_PHASERSHOT, "s3r2s1", 0xf3, 0x89, 0);
 	playSoundEffectIndex(SND_PHASSHOT);

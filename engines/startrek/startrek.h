@@ -395,7 +395,7 @@ public:
 
 	// Misc
 	uint16 getRandomWord();
-	Common::String getLoadedText(int itemIndex);
+	Common::String getLoadedText(int textIndex);
 
 
 public:
@@ -448,6 +448,8 @@ public:
 	Common::Point _objectWalkPosition;
 
 	// Actions to perform after a crewman finishes walking to a position.
+	// Room-specific code can specify that a specific action of type
+	// "ACTION_FINISHED_WALKING" occurs after moving a crewman somewhere.
 	Action _actionOnWalkCompletion[MAX_BUFFERED_WALK_ACTIONS];
 	bool _actionOnWalkCompletionInUse[MAX_BUFFERED_WALK_ACTIONS];
 
