@@ -683,7 +683,7 @@ void ScriptOpcodes_Duckman::opQuitGame(ScriptThread *scriptThread, OpCall &opCal
 void ScriptOpcodes_Duckman::opResetGame(ScriptThread *scriptThread, OpCall &opCall) {
 	_vm->reset();
 	_vm->_input->activateButton(0xFFFF);
-	// TODO _vm->stopMusic();
+	_vm->_soundMan->stopMidiMusic();
 	// TODO _vm->_gameStates->clear();
 }
 

@@ -131,6 +131,7 @@ Common::Error IllusionsEngine::loadGameState(int slot) {
 	if (!loadgame(fileName))
 		return Common::kReadingFailed;
 	_resumeFromSavegameRequested = true;
+	_savegameSlotNum = slot;
 	return Common::kNoError;
 }
 
