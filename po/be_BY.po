@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-14 21:08+0200\n"
+"POT-Creation-Date: 2018-06-23 14:50+0200\n"
 "PO-Revision-Date: 2018-04-18 10:07+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -63,7 +63,7 @@ msgstr "Уверх"
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:445
 #: gui/saveload-dialog.cpp:727 gui/saveload-dialog.cpp:1121
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: engines/engine.cpp:524 backends/events/default/default-events.cpp:190
+#: engines/engine.cpp:525 backends/events/default/default-events.cpp:190
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
@@ -154,7 +154,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:294
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:489
 #: gui/launcher.cpp:493 gui/massadd.cpp:89 gui/options.cpp:1680
-#: gui/saveload-dialog.cpp:1122 engines/engine.cpp:443 engines/engine.cpp:454
+#: gui/saveload-dialog.cpp:1122 engines/engine.cpp:444 engines/engine.cpp:455
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
@@ -1922,27 +1922,27 @@ msgstr "~А~дмена"
 msgid "~K~eys"
 msgstr "~К~лавішы"
 
-#: engines/engine.cpp:315
+#: engines/engine.cpp:316
 msgid "Could not initialize color format."
 msgstr "Не магу ініцыялізаваць фармат колеру."
 
-#: engines/engine.cpp:323
+#: engines/engine.cpp:324
 msgid "Could not switch to video mode: '"
 msgstr "Не атрымалася пераключыць відэарэжым: '"
 
-#: engines/engine.cpp:332
+#: engines/engine.cpp:333
 msgid "Could not apply aspect ratio setting."
 msgstr "Не атрымалася выкарыстаць карэкцыю суадносін бакоў."
 
-#: engines/engine.cpp:337
+#: engines/engine.cpp:338
 msgid "Could not apply fullscreen setting."
 msgstr "Не магу ўжыць поўнаэкранны рэжым."
 
-#: engines/engine.cpp:342
+#: engines/engine.cpp:343
 msgid "Could not apply filtering setting."
 msgstr "Не магу ўжыць налады фільтрацыі."
 
-#: engines/engine.cpp:439
+#: engines/engine.cpp:440
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1956,7 +1956,7 @@ msgstr ""
 "на жорсткі дыск. Падрабязнасці можна знайсці ў\n"
 "файле README."
 
-#: engines/engine.cpp:450
+#: engines/engine.cpp:451
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1971,7 +1971,7 @@ msgstr ""
 "з'явіцца музыка. Падрабязнасці можна знайсці ў\n"
 "файле README."
 
-#: engines/engine.cpp:508
+#: engines/engine.cpp:509
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -1980,7 +1980,7 @@ msgstr ""
 "Не атрымалася загрузіць гульню (%s)! Звярніцеся да файла README за "
 "падрабязнасцямі і ўказаннямі да атрымання далейшай дапамогі."
 
-#: engines/engine.cpp:521
+#: engines/engine.cpp:522
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -1990,7 +1990,7 @@ msgstr ""
 "за ўсё, не будзе працаваць стабільна, і захаванні гульняў могуць не "
 "працаваць у будучых версіях ScummVM."
 
-#: engines/engine.cpp:524
+#: engines/engine.cpp:525
 msgid "Start anyway"
 msgstr "Усё адно запусціць"
 

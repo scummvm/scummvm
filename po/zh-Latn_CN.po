@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-14 21:08+0200\n"
+"POT-Creation-Date: 2018-06-23 14:50+0200\n"
 "PO-Revision-Date: 2018-04-18 10:18+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -63,7 +63,7 @@ msgstr "ShangYiJi"
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:445
 #: gui/saveload-dialog.cpp:727 gui/saveload-dialog.cpp:1121
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: engines/engine.cpp:524 backends/events/default/default-events.cpp:190
+#: engines/engine.cpp:525 backends/events/default/default-events.cpp:190
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
@@ -152,7 +152,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:294
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:489
 #: gui/launcher.cpp:493 gui/massadd.cpp:89 gui/options.cpp:1680
-#: gui/saveload-dialog.cpp:1122 engines/engine.cpp:443 engines/engine.cpp:454
+#: gui/saveload-dialog.cpp:1122 engines/engine.cpp:444 engines/engine.cpp:455
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
@@ -1919,28 +1919,28 @@ msgstr "~C~Quxiao"
 msgid "~K~eys"
 msgstr "~K~Guanjianzi"
 
-#: engines/engine.cpp:315
+#: engines/engine.cpp:316
 msgid "Could not initialize color format."
 msgstr "Wufa Chushihua Secai Geshi."
 
-#: engines/engine.cpp:323
+#: engines/engine.cpp:324
 msgid "Could not switch to video mode: '"
 msgstr "Wufa Qiehuandao Shipin Moshi: '"
 
-#: engines/engine.cpp:332
+#: engines/engine.cpp:333
 msgid "Could not apply aspect ratio setting."
 msgstr "Wufa Shezhi Bili Xuanxiang."
 
-#: engines/engine.cpp:337
+#: engines/engine.cpp:338
 msgid "Could not apply fullscreen setting."
 msgstr "Wufa Shezhi Quanping Xuanxiang."
 
-#: engines/engine.cpp:342
+#: engines/engine.cpp:343
 #, fuzzy
 msgid "Could not apply filtering setting."
 msgstr "Wufa Shezhi Quanping Xuanxiang"
 
-#: engines/engine.cpp:439
+#: engines/engine.cpp:440
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1954,7 +1954,7 @@ msgstr ""
 "Kaobei Dao Yingpan Zhong Lai Yunxing.\n"
 "Chakan README Huode Gengduo Xinxi."
 
-#: engines/engine.cpp:450
+#: engines/engine.cpp:451
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1968,7 +1968,7 @@ msgstr ""
 "Bofang.\n"
 "Juti Xinxi Qing Chakan README."
 
-#: engines/engine.cpp:508
+#: engines/engine.cpp:509
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -1977,7 +1977,7 @@ msgstr ""
 "Cundang Zairu Shibai (%s)! Qing Chayue README Huode Bangzhu XInxi Yiji "
 "Gengduo Bangzhu."
 
-#: engines/engine.cpp:521
+#: engines/engine.cpp:522
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -1987,7 +1987,7 @@ msgstr ""
 "Yunxing Youkeneng Buwending, Renhe Cundang Youkeneng zai Yihou de ScummVM "
 "Banben Bu Keyong."
 
-#: engines/engine.cpp:524
+#: engines/engine.cpp:525
 msgid "Start anyway"
 msgstr "Qiangzhi Qidong"
 
