@@ -46,10 +46,20 @@ MystSound::~MystSound() {
 }
 
 Audio::RewindableAudioStream *MystSound::makeAudioStream(uint16 id, CueList *cueList) {
-	if (_vm->getFeatures() & GF_ME)
-		return Audio::makeWAVStream(_vm->getResource(ID_MSND, convertMystID(id)), DisposeAfterUse::YES);
-	else
-		return makeMohawkWaveStream(_vm->getResource(ID_MSND, id), cueList);
+	Common::SeekableReadStream *stream = nullptr;
+	Audio::RewindableAudioStream *rwSteam = nullptr;
+
+	if (_vm->getFeatures() & GF_ME) {
+		stream = _vm->getResource(ID_MSND, convertMystID(id));
+		if (stream)
+			rwSteam = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	}
+	else {
+		stream = _vm->getResource(ID_MSND, id);
+		if (stream)
+			rwSteam = makeMohawkWaveStream(stream, cueList);
+	}
+	return rwSteam;
 }
 
 void MystSound::playEffect(uint16 id, bool loop) {

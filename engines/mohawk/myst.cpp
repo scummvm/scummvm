@@ -115,7 +115,9 @@ Common::SeekableReadStream *MohawkEngine_Myst::getResource(uint32 tag, uint16 id
 			return ret;
 		}
 
-	error("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
+	// Not all missing resources are fatal, let the caller determine that
+	warning("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
+	return nullptr;
 }
 
 Common::Array<uint16> MohawkEngine_Myst::getResourceIDList(uint32 type) const {
