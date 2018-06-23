@@ -1632,6 +1632,17 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 
 		case AKC_Jump:
 			curpos = GUW(2);
+
+			// WORKAROUND for bug #3813: In the German version of Spy Fox Ozone the the hair dresser room 21
+			// contains a costume animation 352 of an LED ticker with a jump to an erroneous position 846.
+			// To prevent an undefined 'uSweat token' the animation is reset to its start.
+			if (_game.id == GID_HEGAME && _language == Common::DE_DEU && _currentRoom == 21 && a->_costume == 352) {
+				if (curpos == 846) {
+			                curpos = a->_cost.start[chan];
+
+					warning("spyozon: resetting erroneous costume animation");
+				}
+			}
 			break;
 
 		case AKC_Return:
