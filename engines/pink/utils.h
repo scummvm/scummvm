@@ -31,7 +31,7 @@ template <typename T>
 class Array : public Common::Array<T>, public Object {
 public:
 	void deserialize(Archive &archive) {
-		uint size = archive.readCount();
+		uint size = archive.readWORD();
 		this->resize(size);
 		for (uint i = 0; i < size; ++i) {
 			this->data()[i] = reinterpret_cast<T>(archive.readObject()); // dynamic_cast needs to know complete type
@@ -42,7 +42,7 @@ public:
 class StringArray : public Common::StringArray {
 public:
 	void deserialize(Archive &archive) {
-		uint32 size = archive.readCount();
+		uint32 size = archive.readWORD();
 		this->resize(size);
 		for (uint i = 0; i < size; ++i) {
 			this->data()[i] = archive.readString();
