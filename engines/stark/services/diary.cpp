@@ -38,6 +38,7 @@ Diary::~Diary() {}
 void Diary::clear() {
 	_diaryEntries.clear();
 	_fmvEntries.clear();
+	_conversationEntries.clear();
 	_hasUnreadEntries = false;
 	_pageIndex = 0;
 }
