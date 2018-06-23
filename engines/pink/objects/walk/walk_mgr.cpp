@@ -24,7 +24,6 @@
 #include "pink/cel_decoder.h"
 #include "pink/objects/actions/walk_action.h"
 #include "pink/objects/actors/lead_actor.h"
-#include "pink/objects/walk/walk_mgr.h"
 #include "pink/objects/walk/walk_location.h"
 
 namespace Pink {

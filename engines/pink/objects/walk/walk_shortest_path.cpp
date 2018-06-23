@@ -22,7 +22,6 @@
 
 #include "pink/objects/walk/walk_location.h"
 #include "pink/objects/walk/walk_mgr.h"
-#include "pink/objects/walk/walk_shortest_path.h"
 
 namespace Pink {
 
