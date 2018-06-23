@@ -277,7 +277,7 @@ void MohawkEngine_Riven::doFrame() {
 				}
 				break;
 			case Common::KEYCODE_ESCAPE:
-				if (!_scriptMan->hasQueuedScripts()) {
+				if (!_scriptMan->hasQueuedScripts() && getFeatures() & GF_25TH) {
 					// Check if we haven't jumped to menu
 					if (_menuSavedStack == -1) {
 						goToMainMenu();

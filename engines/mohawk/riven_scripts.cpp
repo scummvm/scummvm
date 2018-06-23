@@ -366,7 +366,8 @@ void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, 
 
 	// Override the main menu new game script to call an external command.
 	// This way we can reset all the state when starting a new game while a game is already started.
-	if (cardGlobalId == 0xE2E && scriptType == kMouseDownScript && hotspotId == 16) {
+	if (cardGlobalId == 0xE2E && scriptType == kMouseDownScript && hotspotId == 16
+			&& (vm->getFeatures() & GF_25TH)) {
 		shouldApplyPatches = true;
 		_commands.clear();
 

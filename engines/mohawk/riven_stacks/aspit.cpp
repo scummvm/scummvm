@@ -90,6 +90,9 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 	// The original game hides the start/setup buttons depending on an ini entry.
 	// It's safe to ignore this command.
 
+	if (!(_vm->getFeatures() & GF_25TH))
+		return;
+
 	Common::File file;
 
 	const char *fontname;

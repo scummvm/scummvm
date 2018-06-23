@@ -657,7 +657,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD,
+		GF_DVD | GF_25TH,
 		0,
 	},
 
@@ -678,7 +678,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD,
+		GF_DVD | GF_25TH,
 		0,
 	},
 
@@ -699,7 +699,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD,
+		GF_DVD | GF_25TH,
 		0,
 	},
 
@@ -720,7 +720,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD,
+		GF_DVD | GF_25TH,
 		0,
 	},
 
@@ -741,7 +741,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD,
+		GF_DVD | GF_25TH,
 		0,
 	},
 
@@ -762,7 +762,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD,
+		GF_DVD | GF_25TH,
 		0,
 	},
 
@@ -783,7 +783,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD,
+		GF_DVD | GF_25TH,
 		0,
 	},
 
@@ -804,7 +804,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD,
+		GF_DVD | GF_25TH,
 		0,
 	},
 

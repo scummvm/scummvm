@@ -393,6 +393,9 @@ void RivenCard::applyPropertiesPatch22118(uint32 globalId) {
 }
 
 void RivenCard::applyPropertiesPatchE2E(uint32 globalId) {
+	if (!(_vm->getFeatures() & GF_25TH))
+		return;
+
 	// The main menu in the Myst 25th anniversary version is patched to include new items:
 	//   - Save game
 	if (globalId == 0xE2E) {
