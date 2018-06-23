@@ -44,7 +44,6 @@ public:
 
 	void mapObject(Object *obj);
 
-	int readCount();
 	byte readByte() { return _readStream->readByte(); }
 	uint32 readDWORD() { return _readStream->readUint32LE(); }
 	uint16 readWORD() { return _readStream->readUint16LE(); }

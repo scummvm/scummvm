@@ -228,17 +228,6 @@ void Archive::mapObject(Object *obj) {
 	_objectIdMap.push_back(0);
 }
 
-int Archive::readCount() {
-	int count = _readStream->readUint16LE();
-
-	if (count == 0xffff) {
-		assert(0);
-		count = _readStream->readUint32LE();
-	}
-
-	return count;
-}
-
 Object *Archive::readObject() {
 	bool isCopyReturned;
 	Object *res = parseObject(isCopyReturned);
