@@ -561,6 +561,15 @@ void MystScriptParser::o_toggleAreasActivation(uint16 var, const ArgumentsArray 
 void MystScriptParser::o_playSound(uint16 var, const ArgumentsArray &args) {
 	uint16 soundId = args[0];
 
+	// WORKAROUND: In the Myst age, when in front of the cabin coming from the left
+	// with the door open, when trying to go left, a script tries to play a sound
+	// with id 4197. That sound does not exist in the game archives. However, when
+	// going right another script plays a door closing sound with id 4191.
+	// Here, we replace the incorrect sound id with a proper one.
+	if (soundId == 4197) {
+		soundId = 4191;
+	}
+
 	_vm->_sound->playEffect(soundId);
 }
 
