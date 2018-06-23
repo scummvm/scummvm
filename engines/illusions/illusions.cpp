@@ -83,6 +83,7 @@ IllusionsEngine::IllusionsEngine(OSystem *syst, const IllusionsGameDescription *
 	
 	_isSaveAllowed = true; // TODO
 	_resumeFromSavegameRequested = false;
+	_savegameSlotNum = -1;
 	_savegameSceneId = 0;
 	_savegameThreadId = 0;
 	_nextTempThreadId = 0;
