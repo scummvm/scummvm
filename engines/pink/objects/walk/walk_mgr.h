@@ -23,6 +23,8 @@
 #ifndef PINK_WALK_MGR_H
 #define PINK_WALK_MGR_H
 
+#include "common/rect.h"
+
 #include "pink/objects/object.h"
 #include "pink/objects/walk/walk_shortest_path.h"
 #include "pink/utils.h"
@@ -34,8 +36,7 @@ class LeadActor;
 class WalkAction;
 
 struct Coordinates {
-	int x;
-	int y;
+	Common::Point point;
 	int z;
 };
 
@@ -58,10 +59,13 @@ public:
 
 	void skip();
 
+	const Coordinates &getStartCoords() { return _current.coords; }
+	const Coordinates &getEndCoords() { return _next.coords; }
+
 private:
 	struct WayPoint {
 		Common::String name;
-		Coordinates coord;
+		Coordinates coords;
 	};
 
 	Coordinates getLocationCoordinates(const Common::String &locationName);

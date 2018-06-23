@@ -35,10 +35,19 @@ public:
 
 	void update() override;
 
+	void setWalkMgr(WalkMgr *mgr) { _mgr = mgr; }
+	void setType(bool horizontal) { _horizontal = horizontal; }
+
 protected:
 	void onStart() override;
 
 private:
+	WalkMgr *_mgr;
+	Common::Point _start;
+	Common::Point _end;
+	uint _curFrame;
+	uint _frameCount;
+	bool _horizontal;
 	bool _toCalcFramePositions;
 };
 
