@@ -69,12 +69,14 @@ void CursorMgr::setCursor(const Common::String &cursorName, const Common::Point 
 		index = kExitLeftCursor;
 	else if (cursorName == kCursorNameExitRight)
 		index = kExitRightCursor;
-	else if (cursorName == kCursorNameExitForward || cursorName == kCursorNameExitUp)
+	else if (cursorName == kCursorNameExitForward || cursorName == kCursorNameExitUp || cursorName == "Exit")
 		index = kExitForwardCursor;
 	else if (cursorName == kCursorNameExitBackWards)
 		index = kExitDownCursor;
-	else
-		error("%s UNKNOWN CURSOR", cursorName.c_str());
+	else {
+		warning("%s UNKNOWN CURSOR", cursorName.c_str());
+		index = kExitForwardCursor;
+	}
 
 	setCursor(index, point, "");
 }
