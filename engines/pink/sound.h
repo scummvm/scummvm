@@ -24,6 +24,7 @@
 #define PINK_SOUND_H
 
 #include "audio/mixer.h"
+#include "audio/timestamp.h"
 
 #include "common/system.h"
 
@@ -45,7 +46,7 @@ public:
 
 	void pause(bool paused) { g_system->getMixer()->pauseHandle(_handle, paused); }
 
-	uint64 getCurrentSample() { return (uint64)g_system->getMixer()->getSoundElapsedTime(_handle) * 22050 / 1000; }
+	uint32 getCurrentSample() { return g_system->getMixer()->getElapsedTime(_handle).totalNumberOfFrames(); }
 
 private:
 	Audio::SoundHandle _handle;
