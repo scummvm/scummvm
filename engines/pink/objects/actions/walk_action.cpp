@@ -39,16 +39,54 @@ void WalkAction::toConsole() {
 }
 
 void WalkAction::onStart() {
-	// not implemented
+	if (_toCalcFramePositions) {
+		_start = _mgr->getStartCoords().point;
+		_end = _mgr->getEndCoords().point;
+
+		if (!_horizontal) {
+			_end.y = getCoordinates().point.y;
+			_start.y = _end.y;
+			_frameCount = _decoder.getFrameCount();
+		}
+		else {
+			_frameCount = (uint) abs(3 * (_start.x - _end.x) / (int)_z);
+			if (!_frameCount)
+				_frameCount = 1;
+		}
+		setCenter(_start);
+		_curFrame = 0;
+	}
 }
 
 void WalkAction::update() {
-	ActionCEL::update();
-	if (_decoder.getCurFrame() < (int)_decoder.getFrameCount() - 1)
-		decodeNext();
-	else {
-		_decoder.setEndOfTrack();
-		_actor->endAction();
+	if (_toCalcFramePositions) {
+		if (_curFrame < _frameCount)
+			_curFrame++;
+		const double k = _curFrame / (double) _frameCount;
+		Common::Point newCenter;
+		newCenter.x = (_end.x - _start.x) * k + _start.x;
+		if (_horizontal) {
+			newCenter.y = (_end.y - _start.y) * k + _start.y;
+		} else {
+			newCenter.y = getCoordinates().point.y;
+		}
+		if (_decoder.getCurFrame() < (int)_decoder.getFrameCount() - 1)
+			decodeNext();
+		else {
+			setFrame(0);
+		}
+		setCenter(newCenter);
+		if (_curFrame >= _frameCount - 1) {
+			_decoder.setEndOfTrack();
+			_actor->endAction();
+		}
+	} else {
+		if (_decoder.getCurFrame() < (int)_decoder.getFrameCount() - 1)
+			decodeNext();
+		else {
+			_decoder.setEndOfTrack();
+			_actor->endAction();
+		}
 	}
 }
 

@@ -64,7 +64,7 @@ void WalkMgr::start(WalkLocation *destination) {
 
 	if (_current.name.empty()) {
 		_current.name = _locations[0]->getName();
-		_current.coord = getLocationCoordinates(_locations[0]->getName());
+		_current.coords = getLocationCoordinates(_locations[0]->getName());
 	}
 
 	_destination = destination;
@@ -83,29 +83,34 @@ void WalkMgr::start(WalkLocation *destination) {
 
 void WalkMgr::initNextWayPoint(WalkLocation *location) {
 	_next.name = location->getName();
-	_next.coord = getLocationCoordinates(location->getName());
+	_next.coords = getLocationCoordinates(location->getName());
 }
 
 WalkAction *WalkMgr::getWalkAction() {
 	Common::String walkActionName;
-	if (_current.coord.z == _next.coord.z) {
-		if (_next.coord.x > _current.coord.x) {
-			walkActionName = Common::String::format("%dRight", _current.coord.z);
+	bool horizontal = false;
+	if (_current.coords.z == _next.coords.z) {
+		if (_next.coords.point.x > _current.coords.point.x) {
+			walkActionName = Common::String::format("%dRight", _current.coords.z);
 		} else
-			walkActionName = Common::String::format("%dLeft", _next.coord.z);
+			walkActionName = Common::String::format("%dLeft", _next.coords.z);
+		horizontal = true;
 	} else
-		walkActionName = Common::String::format("%dTo%d", _current.coord.z, _next.coord.z);
+		walkActionName = Common::String::format("%dTo%d", _current.coords.z, _next.coords.z);
 
-	Action *action = _leadActor->findAction(walkActionName);
-
-	return static_cast<WalkAction *>(action);
+	WalkAction *action = (WalkAction *) _leadActor->findAction(walkActionName);
+	if (action) {
+		action->setWalkMgr(this);
+		action->setType(horizontal);
+	}
+	return action;
 }
 
 double WalkMgr::getLengthBetweenLocations(WalkLocation *first, WalkLocation *second) {
 	Coordinates firstCoord = getLocationCoordinates(first->getName());
 	Coordinates secondCoord = getLocationCoordinates(second->getName());
-	return sqrt((secondCoord.x - firstCoord.x) * (secondCoord.x - firstCoord.x) +
-				(secondCoord.y - firstCoord.y) * (secondCoord.y - firstCoord.y));
+	return sqrt((secondCoord.point.x - firstCoord.point.x) * (secondCoord.point.x - firstCoord.point.x) +
+				(secondCoord.point.y - firstCoord.point.y) * (secondCoord.point.y - firstCoord.point.y));
 }
 
 Coordinates WalkMgr::getLocationCoordinates(const Common::String &locationName) {
@@ -115,7 +120,7 @@ Coordinates WalkMgr::getLocationCoordinates(const Common::String &locationName) 
 
 void WalkMgr::setCurrentWayPoint(WalkLocation *location) {
 	_current.name = location->getName();
-	_current.coord = getLocationCoordinates(_current.name);
+	_current.coords = getLocationCoordinates(_current.name);
 }
 
 void WalkMgr::update() {
@@ -142,12 +147,12 @@ void WalkMgr::loadState(Archive &archive) {
 	_isWalking = archive.readByte();
 	_current.name = archive.readString();
 	if (!_current.name.empty()) {
-		_current.coord = getLocationCoordinates(_current.name);
+		_current.coords = getLocationCoordinates(_current.name);
 	}
 	if (_isWalking) {
 		_next.name = archive.readString();
 		_destination = findLocation(archive.readString());
-		_next.coord = getLocationCoordinates(_next.name);
+		_next.coords = getLocationCoordinates(_next.name);
 	}
 }
 

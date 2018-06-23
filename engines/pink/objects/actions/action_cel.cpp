@@ -77,9 +77,7 @@ Coordinates ActionCEL::getCoordinates() {
 	loadDecoder();
 
 	Coordinates coords;
-	Common::Point point = _decoder.getCenter();
-	coords.x = point.x;
-	coords.y = point.y;
+	coords.point = _decoder.getCenter();
 	coords.z = getZ();
 
 	return coords;
