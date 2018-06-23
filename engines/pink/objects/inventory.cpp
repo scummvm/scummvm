@@ -91,11 +91,10 @@ void InventoryMgr::setItemOwner(const Common::String &owner, InventoryItem *item
 
 	if (item == _item && _lead->getName() != owner)
 		_item = nullptr;
+	else if (_lead->getName() == owner)
+		_item = item;
 
 	item->_currentOwner = owner;
-
-	if (_lead->getName() == owner)
-		_item = item;
 }
 
 bool InventoryMgr::start(bool paused) {
