@@ -34,7 +34,6 @@
 #include "pink/console.h"
 #include "pink/objects/module.h"
 #include "pink/objects/actors/lead_actor.h"
-#include "pink/objects/sequences/sequencer.h"
 
 namespace Pink {
 

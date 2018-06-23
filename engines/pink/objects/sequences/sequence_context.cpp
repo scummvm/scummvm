@@ -26,7 +26,6 @@
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/sequence.h"
 #include "pink/objects/sequences/sequence_context.h"
-#include "pink/objects/sequences/sequence_item.h"
 #include "pink/objects/sequences/sequencer.h"
 
 namespace Pink {
