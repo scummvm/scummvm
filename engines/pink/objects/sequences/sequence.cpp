@@ -28,7 +28,6 @@
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/sequence.h"
 #include "pink/objects/sequences/sequence_context.h"
-#include "pink/objects/sequences/sequence_item.h"
 #include "pink/objects/sequences/sequencer.h"
 
 namespace Pink {
@@ -144,8 +143,9 @@ void SequenceAudio::start(bool loadingSave) {
 	Sequence::start(loadingSave);
 	uint index = _context->getNextItemIndex();
 	if (index < _items.size()) {
-		SequenceItemLeaderAudio *leaderAudio = (SequenceItemLeaderAudio *)_items[index];
-		_sample = leaderAudio->getSample();
+		_leader = (SequenceItemLeaderAudio *)_items[index];
+	} else {
+		_leader = nullptr;
 	}
 }
 
@@ -157,18 +157,18 @@ void SequenceAudio::end() {
 void SequenceAudio::update() {
 	if (!_sound.isPlaying())
 		end();
-	else if (_sample <= _sound.getCurrentSample())
+	else if (_leader && _leader->getSample() <= _sound.getCurrentSample())
 		start(0);
 }
 
 void SequenceAudio::init(bool loadingSave) {
-	_sample = 0;
+	_leader = nullptr;
 	_sound.play(_sequencer->getPage()->getResourceStream(_soundName), Audio::Mixer::kMusicSoundType);
 	start(loadingSave);
 }
 
 void SequenceAudio::restart() {
-	_sample = 0;
+	_leader = nullptr;
 	_sound.play(_sequencer->getPage()->getResourceStream(_soundName), Audio::Mixer::kMusicSoundType);
 	Sequence::restart();
 }

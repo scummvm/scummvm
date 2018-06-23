@@ -24,7 +24,7 @@
 #define PINK_SEQUENCE_H
 
 #include "pink/sound.h"
-#include "pink/objects/object.h"
+#include "pink/objects/sequences/sequence_item.h"
 
 namespace Pink {
 
@@ -86,9 +86,9 @@ public:
 	void skip() override;
 
 private:
+	SequenceItemLeaderAudio *_leader;
 	Common::String _soundName;
 	Sound _sound;
-	uint32 _sample;
 };
 
 } // End of namespace Pink
