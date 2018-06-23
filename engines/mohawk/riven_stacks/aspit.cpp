@@ -75,14 +75,14 @@ struct MenuItemText {
 	int language;
 	const char *items[7];
 } static const menuItems[] = {
-	{ Common::EN_ANY, { "SETUP",      "START NEW GAME", "START SAVED GAME",  "SAVE GAME",       "RESUME",     "OPTIONS",  "QUIT" } },
-	{ Common::DE_DEU, { "SETUP",      "SPIELEN",        "SPIELSTAND LADEN",  "SPIEL SPEICHERN", "FORTSETZEN", "OPTIONEN", "AUSFAHRT" } },
-	{ Common::ES_ESP, { "IMAGEN",     "IR A RIVEN",     "CARGAR JUEGO",      "GUARDAR JUEGO",   "CONTINUAR",  "OPCIONES", "SALIDA" } },
-	{ Common::FR_FRA, { "CONFIG",     "JOUER RIVEN",    "CHARGEMENT DU JEU", "JEU SAUVEGARDER", "CONTINUER",  "OPTIONS",  "SORTIE" } },
-	{ Common::IT_ITA, { "CONF.",      "GIOCA",          "CARICA GIOCO",      "SALVA IL GIOCO",  "SEGUITARE",  "OPZIONI",  "USCITA" } },
-	{ Common::RU_RUS, { "УСТАНОВКИ",  "СТАРТ",          "ПРОДОЛЖИТЬ ИГРУ",   "СОХРАНИТЬ ИГРУ",  "ПРОДОЛЖИТЬ", "ОПЦИИ",    "ВЫЙТИ" } },
-	{ Common::JA_JPN, { "SETUP",      "PLAY RIVEN",     "START SAVED GAME",  "SAVE GAME",       "RESUME",     "OPTIONS",  "QUIT" } },
-	{ Common::PL_POL, { "USTAWIENIA", "GRAJ W RIVEN",   "ZAŁADUJ GRĘ",       "ZAPISZ GRĘ",      "POWRÓT",     "OPCJE",    "WYJŚCIE" } },
+	{ Common::EN_ANY, { "SETUP",      "START NEW GAME", "START SAVED GAME",     "SAVE GAME",       "RESUME",     "OPTIONS",  "QUIT" } },
+	{ Common::DE_DEU, { "SETUP",      "SPIELEN",        "SPIELSTAND LADEN",     "SPIEL SPEICHERN", "FORTSETZEN", "OPTIONEN", "AUSFAHRT" } },
+	{ Common::ES_ESP, { "IMAGEN",     "IR A RIVEN",     "CARGAR JUEGO",         "GUARDAR JUEGO",   "CONTINUAR",  "OPCIONES", "SALIDA" } },
+	{ Common::FR_FRA, { "CONFIG",     "JOUER RIVEN",    "CHARGEMENT DU JEU",    "JEU SAUVEGARDER", "CONTINUER",  "OPTIONS",  "SORTIE" } },
+	{ Common::IT_ITA, { "CONF.",      "GIOCA",          "CARICA GIOCO",         "SALVA IL GIOCO",  "SEGUITARE",  "OPZIONI",  "USCITA" } },
+	{ Common::RU_RUS, { "УСТАНОВКИ",  "СТАРТ",          "ПРОДОЛЖИТЬ ИГРУ",      "СОХРАНИТЬ ИГРУ",  "ПРОДОЛЖИТЬ", "ОПЦИИ",    "ВЫЙТИ" } },
+	{ Common::JA_JPN, { "セットアップ", "RIVENを演奏する",  "保存したゲームを開始する", "ゲームを保存する",  "持続する",     "オプション","やめる" } },
+	{ Common::PL_POL, { "USTAWIENIA", "GRAJ W RIVEN",   "ZAŁADUJ GRĘ",          "ZAPISZ GRĘ",      "POWRÓT",     "OPCJE",    "WYJŚCIE" } },
 	{ -1, { 0 } }
 };
 
@@ -92,8 +92,14 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 
 	Common::File file;
 
-	const char *fontname = "FreeSans.ttf";
+	const char *fontname;
 	const Graphics::Font *font = nullptr;
+
+	if (_vm->getLanguage() != Common::JA_JPN)
+		fontname = "FreeSans.ttf";
+	else
+		fontname = "mplus-2c-regular.ttf";
+
 
 #if defined(USE_FREETYPE2)
 	int fontHeight = 11;
