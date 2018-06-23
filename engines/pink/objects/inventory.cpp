@@ -140,13 +140,13 @@ void InventoryMgr::update() {
 	}
 }
 
-void InventoryMgr::onClick(Common::Point point) {
+void InventoryMgr::onClick(const Common::Point point) {
 	if (_state != kReady)
 		return;
 
 	Actor *actor = _lead->getActorByPoint(point);
 	if (actor == _itemActor || actor == _window) {
-		if (actor->getAction()->getName() == "WBook") {
+		if (_itemActor->getAction()->getName() == "WBook") {
 			_lead->loadPDA("TOC");
 			return;
 		}
