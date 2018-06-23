@@ -54,11 +54,11 @@
  *
  *  Pokus game status:
  *      Fully Playable*
- *      sequences by timer are broken (HandlerTimerSequences)
  *
  *  Known bugs:
  *      Walking sprites don't recalculate position
  *      PDA is not usable
+ *      missing menu
  */
 
 namespace Pink {
