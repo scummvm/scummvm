@@ -45,8 +45,6 @@ protected:
 		CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader = false);
 		virtual void readHeader();
 
-		int32 getX() const;
-		int32 getY() const;
 		uint16 getTransparentColourIndex();
 
 		// Hack. Pink needs so that Track needed an update after lastFrame delay ends
@@ -55,9 +53,6 @@ protected:
 
 		Common::Point getCenter();
 		const Graphics::Surface *getCurrentFrame();
-
-		void setX(int32 x);
-		void setY(int32 y);
 
 		void skipFrame();
 
