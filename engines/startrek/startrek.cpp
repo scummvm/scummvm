@@ -459,12 +459,7 @@ void StarTrekEngine::updateActorAnimations() {
 					if (nextAnimFrame == actor->numAnimFrames - 1) {
 						actor->field62++;
 						if (actor->triggerActionWhenAnimFinished) {
-							if (actor->finishedAnimCallback != nullptr) {
-								addAction(Action(ACTION_CALLBACK, actor->finishedAnimCallback));
-								actor->finishedAnimCallback = nullptr;
-							}
-							else
-								addAction(Action(ACTION_FINISHED_ANIMATION, actor->finishedAnimActionParam, 0, 0));
+							addAction(Action(ACTION_FINISHED_ANIMATION, actor->finishedAnimActionParam, 0, 0));
 						}
 					}
 				}
@@ -535,12 +530,7 @@ void StarTrekEngine::updateActorAnimations() {
 				if (actor->iwSrcPosition == -1) {
 					if (actor->triggerActionWhenAnimFinished) {
 						actor->triggerActionWhenAnimFinished = false;
-						if (actor->finishedAnimCallback != nullptr) {
-							addAction(Action(ACTION_CALLBACK, actor->finishedAnimCallback));
-							actor->finishedAnimCallback = nullptr;
-						}
-						else
-							addAction(Action(ACTION_FINISHED_WALKING, actor->finishedAnimActionParam & 0xff, 0, 0));
+						addAction(Action(ACTION_FINISHED_WALKING, actor->finishedAnimActionParam & 0xff, 0, 0));
 					}
 
 					actor->sprite.bitmap.reset();

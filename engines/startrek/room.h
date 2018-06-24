@@ -96,6 +96,8 @@ private:
 	int _numRoomActions;
 
 
+	int findFunctionPointer(int action, void (Room::*funcPtr)());
+
 	// Interface for room-specific code
 	void loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66 = 0); // Cmd 0x00
 	void loadActorAnimC(int actorIndex, Common::String anim, int16 x, int16 y, void (Room::*funcPtr)());// Cmd 0x00

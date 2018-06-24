@@ -172,6 +172,23 @@ Common::Point Room::getBeamInPosition(int crewmanIndex) {
 }
 
 
+// For actions of type ACTION_FINISHED_ANIMATION or ACTION_FINISHED_WALKING, this takes
+// a function pointer and returns the index corresponding to that callback.
+// Creates a fatal error on failure.
+int Room::findFunctionPointer(int action, void (Room::*funcPtr)()) {
+	assert(action == ACTION_FINISHED_ANIMATION || action == ACTION_FINISHED_WALKING);
+
+	for (int i = 0; i < _numRoomActions; i++) {
+		if (_roomActionList[i].action.type == action && _roomActionList[i].funcPtr == funcPtr)
+			return _roomActionList[i].action.b1;
+	}
+
+	if (action == ACTION_FINISHED_ANIMATION)
+		error("Couldn't find FINISHED_ANIMATION function pointer");
+	else
+		error("Couldn't find FINISHED_WALKING function pointer");
+}
+
 // Interface for room-specific code
 
 void Room::loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, uint16 finishedAnimActionParam) {
@@ -190,7 +207,6 @@ void Room::loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, 
 	if (finishedAnimActionParam != 0) {
 		actor->triggerActionWhenAnimFinished = true;
 		actor->finishedAnimActionParam = finishedAnimActionParam;
-		actor->finishedAnimCallback = nullptr;
 	}
 }
 
@@ -211,8 +227,7 @@ void Room::loadActorAnimC(int actorIndex, Common::String anim, int16 x, int16 y,
 
 	if (funcPtr != nullptr) {
 		actor->triggerActionWhenAnimFinished = true;
-		actor->finishedAnimActionParam = 0;
-		actor->finishedAnimCallback = funcPtr;
+		actor->finishedAnimActionParam = findFunctionPointer(ACTION_FINISHED_ANIMATION, funcPtr);
 	}
 }
 
@@ -330,7 +345,6 @@ void Room::walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finished
 	if (success && finishedAnimActionParam != 0) {
 		actor->triggerActionWhenAnimFinished = true;
 		actor->finishedAnimActionParam = finishedAnimActionParam;
-		actor->finishedAnimCallback = nullptr;
 	}
 }
 
@@ -347,7 +361,7 @@ void Room::walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*f
 	if (success && funcPtr != nullptr) {
 		actor->triggerActionWhenAnimFinished = true;
 		actor->finishedAnimActionParam = 0;
-		actor->finishedAnimCallback = funcPtr;
+		actor->finishedAnimActionParam = findFunctionPointer(ACTION_FINISHED_WALKING, funcPtr);
 	}
 }
 

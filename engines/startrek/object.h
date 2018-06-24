@@ -93,11 +93,8 @@ struct Actor {
 	// "triggerActionWhenAnimFinished" is true, it will create an action of type
 	// "ACTION_FINISHED_WALKING" or "ACTION_FINISHED_ANIMATION", with the integer value
 	// "finishedAnimActionParam".
-	// To make things simpler, it can also use a callback to a function in the Room class,
-	// if "finishedAnimCallback" is non-null.
 	bool triggerActionWhenAnimFinished;
 	uint16 finishedAnimActionParam;
-	void (Room::*finishedAnimCallback)();
 
 	char animationString2[8];
 	uint16 field70;
@@ -150,7 +147,6 @@ public:
 		field62(),
 		triggerActionWhenAnimFinished(),
 		finishedAnimActionParam(),
-		finishedAnimCallback(),
 		//animationString2[8](),
 		field70(),
 		field72(),

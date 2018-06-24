@@ -1113,6 +1113,8 @@ RoomAction love3ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_IWRENCH, 0x21, 0), &Room::love3UseWrenchOnMonitor },
 
 	{ Action(ACTION_USE, OBJECT_IH2O, 0x21, 0), &Room::love3UseWaterOnMonitor },
+	{ Action(ACTION_FINISHED_WALKING, 14, 0, 0), &Room::love3ReachedMonitorToUseWater },
+	{ Action(ACTION_FINISHED_ANIMATION, 6, 0, 0), &Room::love3PouredWaterOnMonitor },
 
 	{ Action(ACTION_USE, OBJECT_KIRK, 0x20, 0), &Room::love3UseCrewmanOnEngineeringPanelOrGrate },
 	{ Action(ACTION_USE, OBJECT_SPOCK, 0x20, 0), &Room::love3UseCrewmanOnEngineeringPanelOrGrate },
@@ -1124,28 +1126,59 @@ RoomAction love3ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_REDSHIRT, 11, 0), &Room::love3UseCrewmanOnEngineeringPanelOrGrate },
 
 	{ Action(ACTION_USE, OBJECT_IWRENCH, 11, 0), &Room::love3UseWrenchOnGrate },
+	{ Action(ACTION_FINISHED_WALKING, 4, 0, 0), &Room::love3ReachedGateWithWrench },
+	{ Action(ACTION_FINISHED_ANIMATION, 7, 0, 0), &Room::love3OpenedOrClosedGrate },
+
 	{ Action(ACTION_USE, OBJECT_KIRK, 0x22, 0), &Room::love3UseCrewmanOnShaft },
 	{ Action(ACTION_USE, OBJECT_SPOCK, 0x22, 0), &Room::love3UseCrewmanOnShaft },
 	{ Action(ACTION_USE, OBJECT_MCCOY, 0x22, 0), &Room::love3UseCrewmanOnShaft },
 	{ Action(ACTION_USE, OBJECT_REDSHIRT, 0x22, 0), &Room::love3UseCrewmanOnShaft },
+
 	{ Action(ACTION_USE, OBJECT_IH2O, 0x22, 0), &Room::love3UseWaterOnShaft },
+	{ Action(ACTION_FINISHED_WALKING, 5, 0, 0), &Room::love3ReachedShaftUsingWater },
+	{ Action(ACTION_FINISHED_ANIMATION, 8, 0, 0), &Room::love3PouredWaterDownShaft },
+
 	{ Action(ACTION_USE, OBJECT_IN2O, 0x22, 0), &Room::love3UseNitrousOxideOnShaft },
+	{ Action(ACTION_FINISHED_WALKING, 6, 0, 0), &Room::love3ReachedShaftUsingNitrousOxide },
+	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::love3PouredNitrousOxideDownShaft },
+
 	{ Action(ACTION_USE, OBJECT_INH3, 0x22, 0), &Room::love3UseAmmoniaOnShaft },
+	{ Action(ACTION_FINISHED_WALKING, 7, 0, 0), &Room::love3ReachedShaftUsingAmmonia },
+	{ Action(ACTION_FINISHED_ANIMATION, 10, 0, 0), &Room::love3PouredAmmoniaDownShaft },
+
 	{ Action(ACTION_USE, OBJECT_IRLG, 0x22, 0), &Room::love3UseRomulanLaughingGasOnShaft },
+	{ Action(ACTION_FINISHED_WALKING, 8, 0, 0), &Room::love3ReachedShaftUsingRomulanLaughingGas },
+	{ Action(ACTION_FINISHED_ANIMATION, 11, 0, 0), &Room::love3PouredRomulanLaughingGasDownShaft },
+
 	{ Action(ACTION_GET, 10, 0, 0), &Room::love3GetWrench },
+	{ Action(ACTION_FINISHED_WALKING, 9, 0, 0), &Room::love3ReachedWrenchToGet },
+	{ Action(ACTION_FINISHED_ANIMATION, 12, 0, 0), &Room::love3PickedUpWrench },
+
 	{ Action(ACTION_GET, 12, 0, 0), &Room::love3GetGasTank },
+	{ Action(ACTION_FINISHED_WALKING, 10, 0, 0), &Room::love3ReachedGasTankToGet },
+
 	{ Action(ACTION_USE, OBJECT_IANTIGRA, 12, 0), &Room::love3UseAntigravOnGasTank },
+	{ Action(ACTION_FINISHED_WALKING, 11, 0, 0), &Room::love3ReachedGasTankUsingAntigrav },
+	{ Action(ACTION_FINISHED_ANIMATION, 13, 0, 0), &Room::love3PickedUpGasTank },
+
 	{ Action(ACTION_GET, 9, 0, 0), &Room::love3GetInsulation },
+	{ Action(ACTION_FINISHED_WALKING, 12, 0, 0), &Room::love3ReachedInsulationToGet },
+	{ Action(ACTION_FINISHED_ANIMATION, 14, 0, 0), &Room::love3PickedUpInsulation },
 	// TODO: common code
 };
 
 RoomAction love4ActionList[] = {
 	{ Action(ACTION_TICK, 1, 0, 0), &Room::love4Tick1 },
 	{ Action(ACTION_TICK, 10, 0, 0), &Room::love4Tick10 },
+
 	{ Action(ACTION_WALK, 8, 0, 0), &Room::love4WalkToDoor },
 	{ Action(ACTION_WALK, 0x20, 0, 0), &Room::love4WalkToDoor },
 	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0), &Room::love4TouchedHotspot0 },
+	{ Action(ACTION_FINISHED_WALKING, 1, 0, 0), &Room::love4DoorOpenedOrReached },
+	{ Action(ACTION_FINISHED_ANIMATION, 1, 0, 0), &Room::love4DoorOpenedOrReached },
+
 	{ Action(ACTION_USE, OBJECT_KIRK, 0x21, 0), &Room::love4UseKirkOnLadder },
+	{ Action(ACTION_FINISHED_WALKING, 2, 0, 0), &Room::love4ReachedLadder },
 	{ Action(ACTION_USE, OBJECT_IPHASERS,  9, 0), &Room::love4UseStunPhaserOnRomulan },
 	{ Action(ACTION_USE, OBJECT_IPHASERS, 10, 0), &Room::love4UseStunPhaserOnRomulan },
 	{ Action(ACTION_USE, OBJECT_IPHASERS, 11, 0), &Room::love4UseStunPhaserOnRomulan },
@@ -1176,10 +1209,20 @@ RoomAction love4ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_IMTRICOR, 12, 0), &Room::love4UseMTricorderOnRomulan },
 	{ Action(ACTION_USE, OBJECT_IMTRICOR, -1, 0), &Room::love4UseMTricorderAnywhere },
 	{ Action(ACTION_USE, OBJECT_ISTRICOR, -1, 0), &Room::love4UseSTricorderAnywhere },
+
 	{ Action(ACTION_USE, OBJECT_ICURE,  9, 0), &Room::love4UseCureOnRomulan },
 	{ Action(ACTION_USE, OBJECT_ICURE, 10, 0), &Room::love4UseCureOnRomulan },
 	{ Action(ACTION_USE, OBJECT_ICURE, 11, 0), &Room::love4UseCureOnRomulan },
 	{ Action(ACTION_USE, OBJECT_ICURE, 12, 0), &Room::love4UseCureOnRomulan },
+	{ Action(ACTION_FINISHED_WALKING,   3, 0, 0), &Room::love4MccoyReachedRomulan4 },
+	{ Action(ACTION_FINISHED_ANIMATION, 2, 0, 0), &Room::love4MccoyCuredRomulan4 },
+	{ Action(ACTION_FINISHED_WALKING,   4, 0, 0), &Room::love4MccoyReachedRomulan3 },
+	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0), &Room::love4MccoyCuredRomulan3 },
+	{ Action(ACTION_FINISHED_WALKING,   5, 0, 0), &Room::love4MccoyReachedRomulan2 },
+	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::love4MccoyCuredRomulan2 },
+	{ Action(ACTION_FINISHED_WALKING,   6, 0, 0), &Room::love4MccoyReachedRomulan1 },
+	{ Action(ACTION_FINISHED_ANIMATION, 5, 0, 0), &Room::love4MccoyCuredRomulan1 },
+
 	{ Action(ACTION_USE, OBJECT_IH2O,   9, 0), &Room::love4UseWaterOnRomulan },
 	{ Action(ACTION_USE, OBJECT_IH2O,  10, 0), &Room::love4UseWaterOnRomulan },
 	{ Action(ACTION_USE, OBJECT_IH2O,  11, 0), &Room::love4UseWaterOnRomulan },
@@ -1216,6 +1259,9 @@ RoomAction love5ActionList[] = {
 	{ Action(ACTION_LOOK, 11, 0, 0), &Room::love5LookAtDrCheever },
 	{ Action(ACTION_LOOK, 9, 0, 0), &Room::love5LookAtPreax },
 	{ Action(ACTION_TALK, 9, 0, 0), &Room::love5TalkToPreax },
+	{ Action(ACTION_FINISHED_WALKING, 5, 0, 0), &Room::love5MccoyReachedSpockToCure },
+	{ Action(ACTION_FINISHED_ANIMATION, 6, 0, 0), &Room::love5MccoyCuredSpock },
+	{ Action(ACTION_FINISHED_WALKING, 6, 0, 0), &Room::love5CrewmanReachedBeamoutPosition },
 	{ Action(ACTION_TALK, 10, 0, 0), &Room::love5TalkToDrMarcus },
 	{ Action(ACTION_TALK, 11, 0, 0), &Room::love5TalkToDrCheever },
 	{ Action(ACTION_TALK, OBJECT_KIRK, 0, 0), &Room::love5TalkToKirk },
@@ -1231,9 +1277,16 @@ RoomAction love5ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_IH2O, 9, 0), &Room::love5UseWaterOnPreax },
 	{ Action(ACTION_USE, OBJECT_ISAMPLE, 9, 0), &Room::love5UseCureSampleOnPreax },
 	{ Action(ACTION_USE, OBJECT_ICURE, 9, 0), &Room::love5UseCureOnPreax },
+	{ Action(ACTION_FINISHED_WALKING, 4, 0, 0), &Room::love5ReachedPreaxUsingCure },
+	{ Action(ACTION_FINISHED_ANIMATION, 5, 0, 0), &Room::love5CuredPreax },
 	{ Action(ACTION_USE, -1, 9, 0), &Room::love5UseAnythingOnPreax },
 	{ Action(ACTION_USE, OBJECT_KIRK, 10, 0), &Room::love5UseKirkOnMarcusOrCheever },
 	{ Action(ACTION_USE, OBJECT_KIRK, 11, 0), &Room::love5UseKirkOnMarcusOrCheever },
+	{ Action(ACTION_FINISHED_WALKING,   1, 0, 0), &Room::love5KirkReachedCheever },
+	{ Action(ACTION_FINISHED_ANIMATION, 2, 0, 0), &Room::love5KirkUntiedCheever },
+	{ Action(ACTION_FINISHED_WALKING,   2, 0, 0), &Room::love5KirkReachedMarcus },
+	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0), &Room::love5KirkUntiedMarcus },
+	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::love5MarcusStoodUp },
 	// TODO: common code
 };
 
