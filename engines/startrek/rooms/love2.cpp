@@ -33,7 +33,7 @@
 #define OBJECT_ANTIGRAV 14
 #define OBJECT_SYNTHESIZER_OUTPUT 15
 #define OBJECT_POLYBERYLCARBONATE 16
-#define OBJECT_DISHES 17
+#define OBJECT_VIRUSSAMPLE 17
 #define OBJECT_CURESAMPLE 18
 #define OBJECT_CURE 19
 
@@ -104,39 +104,39 @@ void Room::love2Tick1() {
 	bool valid = true;
 
 	switch (_vm->_awayMission.love.field35) {
-	case 1:
+	case SYNTHITEM_PBC:
 		strcpy(_roomVar.love2.d6, "pbcanm");
-		_roomVar.love2.d2 = 0x10;
+		_roomVar.love2.d2 = OBJECT_POLYBERYLCARBONATE;
 		break;
-	case 2:
+	case SYNTHITEM_VIRUS_SAMPLE:
 		strcpy(_roomVar.love2.d6, "dishes");
-		_roomVar.love2.d2 = 0x11;
+		_roomVar.love2.d2 = OBJECT_VIRUSSAMPLE;
 		break;
-	case 3:
+	case SYNTHITEM_CURE_SAMPLE:
 		strcpy(_roomVar.love2.d6, "dishes");
-		_roomVar.love2.d2 = 0x12;
+		_roomVar.love2.d2 = OBJECT_CURESAMPLE;
 		break;
-	case 9:
+	case SYNTHITEM_BOTTLE:
 		switch (_vm->_awayMission.love.synthesizerProduct) {
 		case 1:
 			strcpy(_roomVar.love2.d8, "btle1");
-			_roomVar.love2.d2 = 0x0f;
+			_roomVar.love2.d2 = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		case 2:
 			strcpy(_roomVar.love2.d8, "btle2");
-			_roomVar.love2.d2 = 0x0f;
+			_roomVar.love2.d2 = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		case 3:
 			strcpy(_roomVar.love2.d8, "btle3");
-			_roomVar.love2.d2 = 0x0f;
+			_roomVar.love2.d2 = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		case 4:
 			strcpy(_roomVar.love2.d8, "btle4");
-			_roomVar.love2.d2 = 0x0f;
+			_roomVar.love2.d2 = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		default:
 			strcpy(_roomVar.love2.d8, "cure");
-			_roomVar.love2.d2 = 0x13;
+			_roomVar.love2.d2 = OBJECT_CURE;
 			break;
 		}
 		break;
@@ -360,8 +360,7 @@ void Room::love2ChangedGasFeed() {
 		_vm->_awayMission.love.gasFeedOn = false;
 		loadActorAnim2(OBJECT_GAS_FEED, "s3r3v2", 0xac, 0x75, 0);
 		showText(TX_LOV2N007);
-	}
-	else {
+	} else {
 		_vm->_awayMission.love.gasFeedOn = true;
 		loadActorAnim2(OBJECT_GAS_FEED, "s3r3v1", 0xac, 0x75, 0);
 		showText(TX_LOV2N008);
@@ -428,7 +427,7 @@ void Room::love2ReachedCanisterSlot1ToGet() {
 	else {
 		loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 15);
 		// BUGFIX: original game only played this for canister 2
-		playVoc("SEPLBAT");
+		playVoc("SE3PLBAT");
 	}
 }
 
@@ -448,6 +447,8 @@ void Room::love2TookCanister1() {
 		giveItem(OBJECT_IN2GAS);
 		break;
 	}
+
+	_vm->_awayMission.love.canister1 = CANTYPE_NONE;
 }
 
 void Room::love2UseAntigravOnCanister2() {
@@ -459,7 +460,7 @@ void Room::love2ReachedCanisterSlot2ToGet() {
 		showText(TX_SPEAKER_SPOCK, TX_LOV2_025);
 	else {
 		loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 16);
-		playVoc("SEPLBAT");
+		playVoc("SE3PLBAT");
 	}
 }
 
@@ -479,6 +480,8 @@ void Room::love2TookCanister2() {
 		giveItem(OBJECT_IN2GAS);
 		break;
 	}
+
+	_vm->_awayMission.love.canister2 = CANTYPE_NONE;
 }
 
 void Room::love2UseKirkOnSynthesizer() {
@@ -509,17 +512,14 @@ void Room::love2CrewmanReachedSynthesizer() {
 void Room::love2CrewmanUsedSynthesizer() {
 	if (_vm->_awayMission.love.gasFeedOn) {
 		love2UseSynthesizer();
-	}
-	else {
+	} else {
 		if (_roomVar.love2.cb == 3) {
 			if (haveItem(OBJECT_IWRENCH)) {
 				showText(TX_SPEAKER_SPOCK, TX_LOV2_005);
 				walkCrewman(OBJECT_SPOCK, 0xa8, 0xb7, 16);
-			}
-			else
+			} else
 				showText(TX_SPEAKER_SPOCK, TX_LOV2_006);
-		}
-		else {
+		} else {
 			_roomVar.love2.cb++;
 			showText(TX_LOV2N012);
 		}
@@ -541,30 +541,130 @@ void Room::love2SpockEnabledGasFeeds() {
 	love2UseSynthesizer();
 }
 
+// Synthesizer takes the input and produces some output
 void Room::love2UseSynthesizer() {
 	if (_vm->_awayMission.love.canister1 != 0) {
 		if (_vm->_awayMission.love.canister2 != 0) {
-			// TODO
-			loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3);
-			playSoundEffectIndex(SND_DOOR1);
-		}
-		else {
+			int c1 = _vm->_awayMission.love.canister1;
+			int c2 = _vm->_awayMission.love.canister2;
+			if (c1 > c2) {
+				int tmp = c1;
+				c1 = c2;
+				c2 = tmp;
+			}
+
+			if (c1 == CANTYPE_O2 && c2 == CANTYPE_H2) {
+				switch (_vm->_awayMission.love.field35) {
+				case SYNTHITEM_PBC: // Romulan Laughing Gas
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", -1, -1, 27); // -> love2ClosedSynthesizerDoorMakingRLG
+					playSoundEffectIndex(SND_DOOR1);
+					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
+					break;
+
+				case SYNTHITEM_VIRUS_SAMPLE: // Wet goo
+					showText(TX_LOV2N051);
+					showText(TX_SPEAKER_KIRK, TX_LOV2_002);
+					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
+					goto closeSynthesizerDoor;
+
+				case SYNTHITEM_CURE_SAMPLE: // Wet goo
+wetGooFailure:
+					showText(TX_LOV2N050);
+					showText(TX_SPEAKER_MCCOY, TX_LOV2_021);
+					loadActorStandAnim(OBJECT_CURESAMPLE);
+					goto closeSynthesizerDoor;
+
+				case SYNTHITEM_BOTTLE: // Nothing happens
+bottleFailure:
+					showText(TX_SPEAKER_SPOCK, TX_LOV2_028);
+					break;
+
+				case SYNTHITEM_NONE: // Water
+				default:
+					_vm->_awayMission.love.synthesizerProduct = BOTTLETYPE_H2O;
+					strcpy(_roomVar.love2.d8, "btle3");
+produceBottle:
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
+					playSoundEffectIndex(SND_DOOR1);
+					break;
+
+closeSynthesizerDoor:
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(SND_DOOR1);
+					_vm->_awayMission.love.field35 = 0;
+					break;
+				}
+			} else if (c1 == CANTYPE_H2 && c2 == CANTYPE_N2) {
+				switch (_vm->_awayMission.love.field35) {
+				case SYNTHITEM_PBC: // Inert matter
+inertMatterFailure:
+					showText(TX_LOV2N049);
+					showText(TX_SPEAKER_SPOCK, TX_LOV2_039); // BUGFIX: original didn't play audio
+					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
+					goto closeSynthesizerDoor;
+
+				case SYNTHITEM_VIRUS_SAMPLE: // Colorless goo (with useful information about virus in ammonia)
+					showText(TX_LOV2N048);
+					showText(TX_SPEAKER_SPOCK, TX_LOV2_034); // BUGFIX: original didn't play audio
+					showText(TX_SPEAKER_MCCOY, TX_LOV2_023);
+					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
+					goto closeSynthesizerDoor;
+
+				case SYNTHITEM_CURE_SAMPLE: // Cure
+					loadActorStandAnim(OBJECT_CURESAMPLE);
+					loadActorAnim2(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 8); // -> love2ClosedSynthesizerDoorMakingCure
+					playSoundEffectIndex(SND_DOOR1);
+					break;
+
+				case SYNTHITEM_BOTTLE: // Nothing happens
+					goto bottleFailure;
+
+				case SYNTHITEM_NONE: // Ammonia
+				default:
+					_vm->_awayMission.love.synthesizerProduct = BOTTLETYPE_NH3;
+					strcpy(_roomVar.love2.d8, "btle2");
+					goto produceBottle;
+				}
+			} else if (c1 == CANTYPE_O2 && c2 == CANTYPE_N2) {
+				switch (_vm->_awayMission.love.field35) {
+				case SYNTHITEM_PBC: // Inert matter
+					goto inertMatterFailure;
+
+				case SYNTHITEM_VIRUS_SAMPLE: // Wet goo
+					showText(TX_LOV2N047);
+					showText(TX_SPEAKER_MCCOY, TX_LOV2_017);
+					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
+					goto closeSynthesizerDoor;
+
+				case SYNTHITEM_CURE_SAMPLE: // Wet goo
+					goto wetGooFailure;
+
+				case SYNTHITEM_BOTTLE: // Nothing happens
+					goto bottleFailure;
+
+				case SYNTHITEM_NONE: // Laughing gas
+				default:
+					_vm->_awayMission.love.synthesizerProduct = BOTTLETYPE_N2O;
+					strcpy(_roomVar.love2.d8, "btle1");
+					goto produceBottle;
+				}
+			}
+		} else {
 			playVoc("EFX24");
 			showText(TX_LOV2N005);
 			showText(TX_SPEAKER_MCCOY, TX_LOV2_010);
 		}
-	}
-	else {
+	} else {
 		playVoc("EFX24");
-		showText(TX_SPEAKER_SPOCK, TX_LOV2N005);
+		showText(TX_LOV2N005);
 		showText(TX_SPEAKER_SPOCK, TX_LOV2_024);
 	}
 }
 
 void Room::love2SynthesizerDoorClosed() {
 	playVoc("LD1SCAN");
-	loadActorAnim(OBJECT_SYNTHESIZER_OUTPUT, _roomVar.love2.d8, 0x8a, 0x8d, 4);
-	_vm->_awayMission.love.field35 = 9;
+	loadActorAnim(OBJECT_SYNTHESIZER_OUTPUT, _roomVar.love2.d8, 0x8a, 0x8d, 4); // -> love2SynthesizerFinished
+	_vm->_awayMission.love.field35 = SYNTHITEM_BOTTLE;
 }
 
 // Final product of synthesizer is produced
@@ -602,12 +702,25 @@ void Room::love2SynthesizerFinished() {
 	}
 }
 
-void Room::love2FinishedAnimation27() {
-	// TODO: better name
+void Room::love2ClosedSynthesizerDoorMakingRLG() {
 	_vm->_awayMission.love.synthesizerProduct = BOTTLETYPE_RLG;
 	strcpy(_roomVar.love2.d8, "btle4");
-	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3);
+	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
 	playSoundEffectIndex(SND_DOOR1);
+}
+
+// Synthesizer door closed, using N2 + O2 on cure sample
+void Room::love2ClosedSynthesizerDoorMakingCure() {
+	loadActorAnim2(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 9); // -> love2CureStartedSynthesizing
+}
+
+void Room::love2CureStartedSynthesizing() {
+	loadActorAnim(OBJECT_CURE, "cure", 0x8a, 0x8b, 10); // -> love2CureSynthesized
+}
+
+void Room::love2CureSynthesized() {
+	showText(TX_LOV2N046);
+	showText(TX_SPEAKER_MCCOY, TX_LOV2_020);
 }
 
 
@@ -633,17 +746,17 @@ void Room::love2SynthesizerDoorOpenedWithPolyberylcarbonate() {
 void Room::love2PutPolyberylcarbonateInSynthesizer() {
 	loadActorAnim(OBJECT_POLYBERYLCARBONATE, "pbcanm", 0x8a, 0x8b, 0);
 	loseItem(OBJECT_IPBC);
-	_vm->_awayMission.love.field35 = 1;
+	_vm->_awayMission.love.field35 = SYNTHITEM_PBC;
 }
 
 
 // Put dish (virus sample) in synthesizer
-void Room::love2UseDishesOnSynthesizerDoor() {
+void Room::love2UseVirusSampleOnSynthesizerDoor() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 7);
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
-void Room::love2KirkReachedSynthesizerWithDishes() {
+void Room::love2KirkReachedSynthesizerWithVirusSample() {
 	if (_vm->_awayMission.love.field35 != 0)
 		showText(TX_LOV2N025);
 	else {
@@ -652,24 +765,24 @@ void Room::love2KirkReachedSynthesizerWithDishes() {
 	}
 }
 
-void Room::love2SynthesizerDoorOpenedWithDishes() {
+void Room::love2SynthesizerDoorOpenedWithVirusSample() {
 	loadActorAnim2(OBJECT_KIRK, "kusemn", -1, -1, 20);
 }
 
-void Room::love2PutDishesInSynthesizer() {
-	loadActorAnim(OBJECT_DISHES, "dishes", 0x8a, 0x8b, 0);
+void Room::love2PutVirusSampleInSynthesizer() {
+	loadActorAnim(OBJECT_VIRUSSAMPLE, "dishes", 0x8a, 0x8b, 0);
 	loseItem(OBJECT_IDISHES);
-	_vm->_awayMission.love.field35 = 2;
+	_vm->_awayMission.love.field35 = SYNTHITEM_VIRUS_SAMPLE;
 }
 
 
 // Put cure sample in synthesizer
-void Room::love2UseSampleOnSynthesizerDoor() {
+void Room::love2UseCureSampleOnSynthesizerDoor() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 8);
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
-void Room::love2KirkReachedSynthesizerWithSample() {
+void Room::love2KirkReachedSynthesizerWithCureSample() {
 	if (_vm->_awayMission.love.field35 != 0)
 		showText(TX_LOV2N025); // BUGFIX: original didn't play audio
 	else {
@@ -678,14 +791,14 @@ void Room::love2KirkReachedSynthesizerWithSample() {
 	}
 }
 
-void Room::love2SynthesizerDoorOpenedWithSample() {
+void Room::love2SynthesizerDoorOpenedWithCureSample() {
 	loadActorAnim2(OBJECT_KIRK, "kusemn", -1, -1, 21);
 }
 
-void Room::love2PutSampleInSynthesizer() {
+void Room::love2PutCureSampleInSynthesizer() {
 	loadActorAnim(OBJECT_CURESAMPLE, "dishes", 0x8a, 0x8b, 0);
 	loseItem(OBJECT_ISAMPLE);
-	_vm->_awayMission.love.field35 = 3;
+	_vm->_awayMission.love.field35 = SYNTHITEM_CURE_SAMPLE;
 }
 
 
@@ -753,8 +866,8 @@ void Room::love2ReachedDishes() {
 }
 
 void Room::love2GotDishes() {
-	loadActorStandAnim(OBJECT_DISHES);
-	showText(TX_LOV2N036);
+	loadActorStandAnim(OBJECT_VIRUSSAMPLE);
+	showText(TX_LOV2N036); // FIXME: text doesn't match audio
 	giveItem(OBJECT_IDISHES);
 	_vm->_awayMission.love.field35 = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);

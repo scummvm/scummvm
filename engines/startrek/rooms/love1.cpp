@@ -307,8 +307,11 @@ void Room::love1KirkGotCureSample() {
 	if (_vm->_awayMission.love.chamberHasCure) {
 		giveItem(OBJECT_ISAMPLE);
 		showText(TX_LOV1N035);
-	}
-	else {
+
+		 // BUGFIX: after removing the cure, unset this variable.
+		 // Otherwise, any normal dish inserted afterward automagically becomes a cure.
+		_vm->_awayMission.love.chamberHasCure = false;
+	} else {
 		giveItem(OBJECT_IDISHES);
 		showText(TX_LOV1N006);
 	}
@@ -420,12 +423,10 @@ void Room::love1MccoyReachedReplicator() {
 	if (_vm->_awayMission.love.bottleInNozzle == BOTTLETYPE_NONE) {
 		showText(TX_SPEAKER_MCCOY, TX_LOV1_021);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
-	}
-	else if (!_vm->_awayMission.love.chamberHasDish) {
+	} else if (!_vm->_awayMission.love.chamberHasDish) {
 		showText(TX_SPEAKER_MCCOY, TX_LOV1_015);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
-	}
-	else
+	} else
 		loadActorAnim2(OBJECT_MCCOY, "musehn", -1, -1, 13);
 }
 
@@ -435,8 +436,7 @@ void Room::love1MccoyUsedReplicator() {
 		loadActorAnim2(OBJECT_CHAMBER, "s3r2d6", 0xb4, 0x75, 7);
 		playSoundEffectIndex(SND_DOOR1);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_MCCOY, TX_LOV1_019);
 		walkCrewman(OBJECT_MCCOY, 0xbf, 0x98, 0);
 	}
@@ -641,8 +641,7 @@ void Room::love1CrewmanDiedFromPhaser() {
 		_vm->_awayMission.disableInput = false;
 		showText(TX_SPEAKER_FERRIS, TX_LOV1_024);
 		_vm->_awayMission.redshirtDead = true;
-	}
-	else {
+	} else {
 		showText(_roomVar.love1.dyingSpeaker, TX_LOV1_025);
 		showGameOverMenu();
 	}

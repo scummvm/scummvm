@@ -200,4 +200,13 @@ enum CanisterTypes {
 	CANTYPE_N2 = 3
 };
 
+// Synthesizer contents for Love's Labor Jeopardized (values for field35)
+enum SynthesizerContent {
+	SYNTHITEM_NONE = 0,
+	SYNTHITEM_PBC = 1,
+	SYNTHITEM_VIRUS_SAMPLE = 2,
+	SYNTHITEM_CURE_SAMPLE = 3,
+	SYNTHITEM_BOTTLE = 9 // Contents of bottle determined by "synthesizerProduct" variable
+};
+
 #endif
