@@ -117,6 +117,10 @@ void Room::love3LookAnywhere() {
 }
 
 void Room::love3LookAtShaft() {
+	showText(TX_LOV3NA21);
+}
+
+void Room::love3LookAtGrate() {
 	showText(TX_LOV3N019);
 }
 

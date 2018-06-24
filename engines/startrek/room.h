@@ -958,6 +958,7 @@ public:
 	void love3LookAtRedshirt();
 	void love3LookAnywhere();
 	void love3LookAtShaft();
+	void love3LookAtGrate();
 	void love3LookAtPanel();
 	void love3LookAtGasTank();
 	void love3LookAtTurbines();

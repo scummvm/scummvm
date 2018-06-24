@@ -1838,9 +1838,9 @@ const char * const g_gameStrings[] = {
 	"#COMP\\COMPA191#Exit Database",
 	"#COMP\\COMPA193#TLTDH Gas",
 	"#COMP\\COMPU186#Ammonia: a colorless pungent compound NH3, a common byproduct of metabolism in carbon-based lifeforms. Liquid or gaseous at 1 atm. Compounds widely used in agricultural, medical and industrial applications.",
-	"#COMP\\COMPU187#Di-hydrogen Oxide: a colorless, tasteless, nonflammable compound HO- water. Liquid, solid, or gaseous at 1 atm. Temperature scales defined in most humanoid cultures by state-shift of pure water.",
+	"#COMP\\COMPU187#Di-hydrogen Oxide: a colorless, tasteless, nonflammable compound HO- water. Liquid, solid, or gaseous at 1 atm. Temperature scales defined in most humanoid cultures by state-shift of pure water.",
 	"#COMP\\COMPU188#Dr. Marcus' Log, Supplemental: Continued testing of the Oroborus Virus confirms its potential harmful effects on Romulan/Vulcan humanoids. As soon as the spill has been cleaned up, we will sterilize both labs and purge the circulation system to make sure no traces of the virus will remain viable. Then all research files must be erased -- we must leave no chance that this terrible accident will ever be repeated.",
-	"#COMP\\COMPU189#Nitrous Oxide: a colorless nonflammable compound NO, gaseous at 1 atm and temperatures within the human norm. Early anesthetic among humans, in whom it produces laughter, feelings of exhiliration, euphoria; sometimes leading to unconsciousness.",
+	"#COMP\\COMPU189#Nitrous Oxide: a colorless nonflammable compound NO, gaseous at 1 atm and temperatures within the human norm. Early anesthetic among humans, in whom it produces laughter, feelings of exhiliration, euphoria; sometimes leading to unconsciousness.",
 	"#COMP\\COMPU190#Oroborus virus: Atypical growth patterns for L-Type virus. Opportunistic pneumococcal mimic affecting Romulo-Vulcan genotype. Etiology: contact or airborne vector with alveoli microcollapse involvement immediately upon exposure. Tissue dehydration follows pneumal flooding. Mortality: 0.6 in 1.0 stardates, 1.0 within 2.0 stardates Treatment: none. Named for the mythic worldsnake that swallows its own tail.",
 	"#COMP\\COMPU192#Please select subject file...",
 	"#COMP\\COMPU193#TLTDH gas: The chemical compound tantalum bi-lithium thalo-dihydroxide. Colorless, odorless, nonflammable gaseous at 1 atm and temperatures within the human norm. Early anesthetic among Vulcans and Romulans, in whom it produces laughter, feelings of exhiliration, euphoria; sometimes leading to unconsciousness. In post-industrial/pre-spaceflight era, a social problem evolved when crude TLTDH became popular to \"cook up\" from non-conductive tantalo-lithial compounds commonly used as electrical insulation.",
@@ -2009,9 +2009,9 @@ const char * const g_gameStrings[] = {
 	"#LOV2\\LOV2_043#I hope you don't want me to swab the deck with that, Captain.",
 	"#LOV2\\LOV2N000#You already have the ?.",
 	"#LOV2\\LOV2N001#A door.",
-	"#LOV2\\LOV2N002#A gas tank marked 'H2'.", // TYPO
-	"#LOV2\\LOV2N003#A gas tank marked 'N2',", // TYPO
-	"#LOV2\\LOV2N004#A gas tank marked 'O2'.", // TYPO
+	"#LOV2\\LOV2N002#A gas tank marked 'H'.",
+	"#LOV2\\LOV2N003#A gas tank marked 'N',",
+	"#LOV2\\LOV2N004#A gas tank marked 'O'.",
 	"#LOV2\\LOV2N005#A loud hissing fills the room.",
 	"#LOV2\\LOV2N006#A small field-effect anti-gravity unit, useful for moving things too heavy to lift and carry by muscle alone.",
 	"#LOV2\\LOV2N007#Gas feed is off.",
@@ -2088,7 +2088,7 @@ const char * const g_gameStrings[] = {
 	"#LOV3\\LOV3N003#Kirk is looking closely at the equipment.",
 	"#LOV3\\LOV3N004#Lt. Ferris is carefully watching the hallway",
 	"#LOV3\\LOV3N005#McCoy is fidgeting around.",
-	"#LOV3\\LOV3N006#N gas tank.", // FIXME: N2 (with superscript)
+	"#LOV3\\LOV3N006#N gas tank.",
 	"#LOV3\\LOV3N007#The tank is too heavy to move by muscle alone.",
 	"#LOV3\\LOV3N008#Spock is analyzing the surroundings.",
 	"#LOV3\\LOV3N009#The air vent becomes wet.",
@@ -2104,7 +2104,7 @@ const char * const g_gameStrings[] = {
 	"#LOV3\\LOV3N019#This is a screen and filter for the ventilation shaft.",
 	"#LOV3\\LOV3N020#The panel closes.",
 	"#LOV3\\LOV3N021#The panel is open. You see vast quantities of dust and stripped insulation from wiring repairs made to the console in the past.",
-	"#LOV3\\LOV3N022#The panel opens. You see a gas tank labeled N, with its feed lines running deeper into the wall.", // FIXME: N2 (with superscript)
+	"#LOV3\\LOV3N022#The panel opens. You see a gas tank labeled N, with its feed lines running deeper into the wall.",
 	"#LOV3\\LOV3N023#The panel opens.",
 	"#LOV3\\LOV3N024#This is the engineering room. All appears normal.",
 	"#LOV3\\LOV3N025#This vent is currently closed.",

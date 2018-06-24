@@ -1127,6 +1127,7 @@ RoomAction love3ActionList[] = {
 	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::love3LookAtRedshirt },
 	{ Action(ACTION_LOOK, -1, 0, 0), &Room::love3LookAnywhere },
 	{ Action(ACTION_LOOK, 0x22, 0, 0), &Room::love3LookAtShaft },
+	{ Action(ACTION_LOOK, 11, 0, 0), &Room::love3LookAtGrate },
 	{ Action(ACTION_LOOK, 9, 0, 0), &Room::love3LookAtPanel },
 	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::love3LookAtPanel },
 	{ Action(ACTION_LOOK, 12, 0, 0), &Room::love3LookAtGasTank },
@@ -1142,7 +1143,6 @@ RoomAction love3ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_KIRK, 8, 0), &Room::love3UseKirkOnServicePanel },
 	{ Action(ACTION_USE, OBJECT_SPOCK, 8, 0), &Room::love3UseSpockOnServicePanel },
 	{ Action(ACTION_USE, OBJECT_MCCOY, 8, 0), &Room::love3UseMccoyOnServicePanel },
-
 	{ Action(ACTION_USE, OBJECT_REDSHIRT, 8, 0), &Room::love3UseRedshirtOnServicePanel },
 	{ Action(ACTION_FINISHED_WALKING, 1, 0, 0), &Room::love3CrewmanReachedServicePanel },
 	{ Action(ACTION_FINISHED_ANIMATION, 1, 0, 0), &Room::love3OpenedOrClosedServicePanel },
