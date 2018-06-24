@@ -46,6 +46,9 @@
 	[self setAutocorrectionType:UITextAutocorrectionTypeNo];
 	[self setAutocapitalizationType:UITextAutocapitalizationTypeNone];
 	[self setEnablesReturnKeyAutomatically:NO];
+	UITextInputAssistantItem* item = [self inputAssistantItem];
+	item.leadingBarButtonGroups = @[];
+	item.trailingBarButtonGroups = @[];
 
 	return self;
 }
@@ -61,6 +64,31 @@
 	inputView = [[TextInputHandler alloc] initWithKeyboard:self];
 	inputView.delegate = self;
 	return self;
+}
+
+- (NSArray *)keyCommands {
+	UIKeyCommand *upArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags: 0 action: @selector(upArrow:)];
+	UIKeyCommand *downArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputDownArrow modifierFlags: 0 action: @selector(downArrow:)];
+	UIKeyCommand *leftArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputLeftArrow modifierFlags: 0 action: @selector(leftArrow:)];
+	UIKeyCommand *rightArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputRightArrow modifierFlags: 0 action: @selector(rightArrow:)];
+	return [[NSArray alloc] initWithObjects: upArrow, downArrow, leftArrow, rightArrow, nil];
+}
+
+- (void) upArrow: (UIKeyCommand *) keyCommand {
+//	[self resignFirstResponder];
+	[softKeyboard handleKeyPress:273];
+}
+
+- (void) downArrow: (UIKeyCommand *) keyCommand {
+	[softKeyboard handleKeyPress:274];
+}
+
+- (void) leftArrow: (UIKeyCommand *) keyCommand {
+	[softKeyboard handleKeyPress:276];
+}
+
+- (void) rightArrow: (UIKeyCommand *) keyCommand {
+	[softKeyboard handleKeyPress:275];
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
