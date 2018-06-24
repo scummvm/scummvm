@@ -56,8 +56,7 @@
  *      Fully Playable*
  *
  *  Known bugs:
- *      Walking sprites don't recalculate position
- *      PDA is not usable
+ *      PDA is not usable(ActionText and Peril Commands are not implemented)
  *      missing menu
  */
 
