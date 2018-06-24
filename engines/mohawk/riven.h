@@ -111,6 +111,7 @@ private:
 	// Datafiles
 	MohawkArchive *_extrasFile; // We need a separate handle for the extra data
 	const char **listExpectedDatafiles() const;
+	Common::String getLanguageDatafile(char prefix) const;
 	bool checkDatafiles();
 
 	RivenConsole *_console;

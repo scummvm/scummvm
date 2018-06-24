@@ -396,6 +396,16 @@ void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 	// Get the prefix character for the destination stack
 	char prefix = RivenStacks::getName(stackId)[0];
 
+	// Load the localization override file if any
+	Common::String languageDatafile = getLanguageDatafile(prefix);
+	if (!languageDatafile.empty()) {
+		MohawkArchive *mhk = new MohawkArchive();
+		if (mhk->openFile(languageDatafile))
+			_mhk.push_back(mhk);
+		else
+			delete mhk;
+	}
+
 	// Load files that start with the prefix
 	const char **datafiles = listExpectedDatafiles();
 	for (int i = 0; datafiles[i] != nullptr; i++) {
@@ -490,6 +500,41 @@ bool MohawkEngine_Riven::checkDatafiles() {
 	GUIErrorMessage(message);
 
 	return false;
+}
+
+Common::String MohawkEngine_Riven::getLanguageDatafile(char prefix) const {
+	const char *language = nullptr;
+	switch (getLanguage()) {
+	case Common::FR_FRA:
+		language = "french";
+		break;
+	case Common::DE_DEU:
+		language = "german";
+		break;
+	case Common::IT_ITA:
+		language = "italian";
+		break;
+	case Common::JA_JPN:
+		language = "japanese";
+		break;
+	case Common::PL_POL:
+		language = "polish";
+		break;
+	case Common::RU_RUS:
+		language = "russian";
+		break;
+	case Common::ES_ESP:
+		language = "spanish";
+		break;
+	default:
+		break;
+	}
+
+	if (!language) {
+		return "";
+	}
+
+	return Common::String::format("%c_data_%s.mhk", prefix, language);
 }
 
 RivenStack *MohawkEngine_Riven::constructStackById(uint16 id) {
