@@ -467,11 +467,11 @@ void StarTrekEngine::handleAwayMissionAction() {
 			case OBJECT_IPHASERK:
 				if (action.passiveObject() == OBJECT_SPOCK) {
 					int text = GROUNDTX_PHASER_ON_SPOCK + getRandomWord() % 8;
-					showTextbox("Dr. McCoy", getLoadedText(text), 20, 20, TEXTCOLOR_BLUE, 0);
+					showTextbox("Mr. Spock", getLoadedText(text), 20, 20, TEXTCOLOR_BLUE, 0);
 				}
 				else if (action.passiveObject() == OBJECT_MCCOY) {
 					int text = GROUNDTX_PHASER_ON_MCCOY + getRandomWord() % 8;
-					showTextbox("Mr. Spock", getLoadedText(text), 20, 20, TEXTCOLOR_BLUE, 0);
+					showTextbox("Dr. McCoy", getLoadedText(text), 20, 20, TEXTCOLOR_BLUE, 0);
 				}
 				else if (action.passiveObject() == OBJECT_REDSHIRT) {
 					Common::String text = getLoadedText(GROUNDTX_PHASER_ON_REDSHIRT + getRandomWord() % 8);
