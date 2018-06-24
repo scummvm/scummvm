@@ -815,7 +815,11 @@ void Mechanical::o_fortressRotation_init(uint16 var, const ArgumentsArray &args)
 
 	VideoEntryPtr gears = _fortressRotationGears->playMovie();
 	gears->setLooping(true);
-	gears->seek(Audio::Timestamp(0, 1800 * _fortressDirection, 600));
+	if (!_fortressRotationShortMovieWorkaround) {
+		gears->seek(Audio::Timestamp(0, 1800 * _fortressDirection, 600));
+	} else {
+		gears->seek(Audio::Timestamp(0, 1800 * (_fortressDirection % 2), 600));
+	}
 	gears->setRate(0);
 
 	_fortressRotationSounds[0] = args[0];
@@ -837,8 +841,6 @@ void Mechanical::o_fortressRotation_init(uint16 var, const ArgumentsArray &args)
 	uint32 movieDuration = gears->getDuration().convertToFramerate(600).totalNumberOfFrames();
 	if (movieDuration == 3680) {
 		_fortressRotationShortMovieWorkaround = true;
-		_fortressRotationShortMovieCount = 0;
-		_fortressRotationShortMovieLast = 0;
 	}
 
 	_fortressRotationRunning = true;
