@@ -726,7 +726,7 @@ void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::St
 }
 
 void MohawkEngine_Riven::tryAutoSaving() {
-	if (!canSaveGameStateCurrently()) {
+	if (!canSaveGameStateCurrently() || !isGameStarted()) {
 		return; // Can't save right now, try again on the next frame
 	}
 
