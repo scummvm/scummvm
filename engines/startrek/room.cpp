@@ -279,7 +279,7 @@ int Room::showRoomSpecificText(const char **array) {
 	return _vm->showText(&StarTrekEngine::readTextFromArray, (uintptr)array, 20, 20, textColor, true, false, false);
 }
 
-int Room::showText(const int *textIDs) {
+int Room::showText(const TextRef *textIDs) {
 	int numIDs = 0;
 	while (textIDs[numIDs] != TX_BLANK)
 		numIDs++;
@@ -293,7 +293,7 @@ int Room::showText(const int *textIDs) {
 	return retval;
 }
 
-int Room::showText(int speaker, int text) {
+int Room::showText(TextRef speaker, TextRef text) {
 	int textIDs[3];
 	textIDs[0] = speaker;
 	textIDs[1] = text;
@@ -301,7 +301,7 @@ int Room::showText(int speaker, int text) {
 	return showText(textIDs);
 }
 
-int Room::showText(int text) {
+int Room::showText(TextRef text) {
 	return showText(TX_NULL, text);
 }
 
@@ -458,7 +458,7 @@ void Room::playVoc(Common::String filename) {
 	_vm->_sound->playVoc(filename);
 }
 
-void Room::spockScan(int direction, int text, bool changeDirection) {
+void Room::spockScan(int direction, TextRef text, bool changeDirection) {
 	const char *dirs = "nsew";
 	Common::String anim = "sscan_";
 	anim.setChar(dirs[direction], 5);
@@ -471,7 +471,7 @@ void Room::spockScan(int direction, int text, bool changeDirection) {
 	showText(TX_SPEAKER_SPOCK, text);
 }
 
-void Room::mccoyScan(int direction, int text, bool changeDirection) {
+void Room::mccoyScan(int direction, TextRef text, bool changeDirection) {
 	const char *dirs = "nsew";
 	Common::String anim = "mscan_";
 	anim.setChar(dirs[direction], 5);

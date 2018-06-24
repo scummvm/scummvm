@@ -36,6 +36,7 @@ MODULE_OBJS = \
 	rooms/love3.o \
 	rooms/love4.o \
 	rooms/love5.o \
+	rooms/lovea.o \
 	
 
 

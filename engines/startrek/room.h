@@ -104,9 +104,9 @@ private:
 	void loadActorStandAnim(int actorIndex);                                                   // Cmd 0x01
 	void loadActorAnim2(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66 = 0);// Cmd 0x02
 	int showRoomSpecificText(const char **textAddr); // (Deprecated, use function below)       // Cmd 0x03
-	int showText(const int *text);                                                             // Cmd 0x03
-	int showText(int speaker, int text);                                                       // Cmd 0x03
-	int showText(int text);                                                                    // Cmd 0x03
+	int showText(const TextRef *text);                                                             // Cmd 0x03
+	int showText(TextRef speaker, TextRef text);                                                       // Cmd 0x03
+	int showText(TextRef text);                                                                    // Cmd 0x03
 	void giveItem(int item);                                                                   // Cmd 0x04
 	// Command 0x05: "demon4ShowSunPuzzle"
 	void loadRoomIndex(int roomIndex, int spawnIndex);                                         // Cmd 0x06
@@ -129,8 +129,8 @@ private:
 
 	// If "changeDirection" is true, they remain facing that direction even after their
 	// animation is finished. The game is inconsistent about doing this.
-	void spockScan(int direction, int text, bool changeDirection);
-	void mccoyScan(int direction, int text, bool changeDirection);
+	void spockScan(int direction, TextRef text, bool changeDirection);
+	void mccoyScan(int direction, TextRef text, bool changeDirection);
 
 	// Room-specific code
 public:
@@ -753,6 +753,7 @@ public:
 	void love0MccoyReachedConsole();
 	void love0MccoyAccessedConsole();
 	void love0InteractWithConsole();
+	void love0GetDoorOrConsole();
 
 	// LOVE1
 	void love1Tick1();
@@ -1100,6 +1101,22 @@ public:
 	void love5KirkUntiedMarcus();
 	void love5MarcusStoodUp();
 
+	// LOVEA (common code)
+	void loveaTimer0Expired();
+	void loveaTimer1Expired();
+	void loveaUseMedkitOnSpock();
+	void loveaUseCureSampleOnSpock();
+	void loveaUseCureOnSpock();
+	void loveaSpockOrMccoyInPositionToUseCure();
+	void loveaFinishedCuringSpock();
+	void loveaTimer2Expired();
+	void loveaUseMTricorderOnSpock();
+	void loveaUseMTricorderOnHuman();
+	void loveaUseRomulanLaughingGas();
+	void loveaUseHumanLaughingGas();
+	void loveaUseAmmonia();
+	void loveaUseCommunicator();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {
@@ -1163,66 +1180,48 @@ private:
 			byte shootKirkOverride; // 0x1ec4
 		} tug2;
 
-		struct {
-			bool heardSummaryOfVirus; // 0xda
-			byte door2OpenCounter; // 0xdc
-			byte door1OpenCounter; // 0xdd
-			byte _de; // 0xde
 
+		struct {
+			// love0
+			bool heardSummaryOfVirus; // 0xda
 			int16 consoleCrewman; // 0xe3
 			char consoleAnimation[10]; // 0xe5
-			int32 consoleSpeaker; // 0xe7
-			int32 consoleText; // 0xe9
+			TextRef consoleSpeaker; // 0xe7
+			TextRef consoleText; // 0xe9
 
-			byte _8ab; // 0x8ab
-			byte _8ac; // 0x8ac
-		} love0;
-
-		struct {
-			byte door3OpenCounter; // 0xcb
-			byte door1OpenCounter; // 0xcc
-			byte door2OpenCounter; // 0xcd
-			bool walkingToDoor; // 0xce
-			int32 dyingSpeaker; // 0xcf
+			// love1
+			TextRef dyingSpeaker; // 0xcf
 			int16 crewmanUsingFreezerRetX; // 0xd1
 			int16 crewmanUsingFreezerRetY; // 0xd3
 			int16 crewmanUsingDevice; // 0xd9
 			int16 itemInNozzle; // 0xdd
 			char bottleAnimation[10]; // 0xdf
 
-			byte _1d2a; // 0x1d2a
-			byte _1d2b; // 0x1d2b
-		} love1;
-
-		struct {
+			// love2
 			byte canisterType; // 0xca
 			byte cb; // 0xcb
-			bool walkingToDoor; // 0xcc
-			byte doorOpenCounter; // 0xcd
 			int16 canisterItem; // 0xce
 			char canisterAnim[10]; // 0xd0
-			int16 d2; // 0xd2
-			char d6[10]; // 0xd6
-			char d8[10]; // 0xd8
-			byte _2966; // 0x2966
-			byte _2967; // 0x2967
-		} love2;
+			int16 chamberObject; // 0xd2
+			char chamberInputAnim[10]; // 0xd6
+			char chamberOutputAnim[10]; // 0xd8
 
-		struct {
+			// love3
 			byte activeCrewman;
-			byte _188e; // 0x188e
-			byte _188f; // 0x188f
-		} love3;
 
-		struct {
+			// love4
 			bool gaveWaterToRomulans; // 0xca
-			byte doorOpenCounter; // 0xcb
-			bool walkingToDoor; // 0xcc
-		} love4;
 
-		struct {
+			// love5
 			byte numCrewmenReadyToBeamOut; // 0xcb
-		} love5;
+
+			// common
+			byte walkingToDoor;
+			byte doorOpenCounter;
+			byte spockAndMccoyReadyToUseCure;
+			byte cmnXPosToCureSpock;
+			byte cmnYPosToCureSpock;
+		} love;
 
 
 	} _roomVar;

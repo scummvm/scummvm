@@ -40,16 +40,16 @@ void Room::love0Tick1() {
 		playVoc("LOV0LOOP"); // FIXME: no audio after first entry?
 	}
 
-	if (_vm->_awayMission.love.field2c)
+	if (_vm->_awayMission.love.releasedHumanLaughingGas)
 		_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
-	if (_vm->_awayMission.love.field2d)
+	if (_vm->_awayMission.love.releasedRomulanLaughingGas)
 		_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
 	_vm->_awayMission.timers[2] = 200;
 
 	loadActorAnim(OBJECT_DOOR2, "s3r0d2a", 0xe6, 0x80, 0);
 	loadActorAnim(OBJECT_DOOR1, "s3r0d1a", 0x123, 0x8d, 0);
-	_roomVar.love0._8ab = 0xf4;
-	_roomVar.love0._8ac = 0x8f;
+	_roomVar.love.cmnXPosToCureSpock = 0xf4;
+	_roomVar.love.cmnYPosToCureSpock = 0x8f;
 }
 
 void Room::love0Tick10() {
@@ -57,40 +57,40 @@ void Room::love0Tick10() {
 
 void Room::love0WalkToDoor2() {
 	_vm->_awayMission.disableInput = true;
-	_roomVar.love0._de = 2;
+	_roomVar.love.walkingToDoor = 2;
 	walkCrewman(OBJECT_KIRK, 0xe6, 0x81, 4);
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
 void Room::love0OpenDoor2() {
-	if (_roomVar.love0._de == 2) {
+	if (_roomVar.love.walkingToDoor == 2) {
 		loadActorAnim(OBJECT_DOOR2, "s3r0d2", 0xe6, 0x80, 3);
 		playSoundEffectIndex(SND_DOOR1);
 	}
 }
 
 void Room::love0ReachedDoor2() {
-	_roomVar.love0.door2OpenCounter++;
-	if (_roomVar.love0.door2OpenCounter == 2)
+	_roomVar.love.doorOpenCounter++;
+	if (_roomVar.love.doorOpenCounter == 2)
 		loadRoomIndex(2, 1);
 }
 
 void Room::love0WalkToDoor1() {
 	_vm->_awayMission.disableInput = true;
-	_roomVar.love0._de = 1;
+	_roomVar.love.walkingToDoor = 1;
 	walkCrewman(OBJECT_KIRK, 0x125, 0x8d, 5);
 }
 
 void Room::love0OpenDoor1() {
-	if (_roomVar.love0._de == 1) {
+	if (_roomVar.love.walkingToDoor == 1) {
 		loadActorAnim(OBJECT_DOOR1, "s3r0d1", 0x123, 0x8d, 4);
 		playSoundEffectIndex(SND_DOOR1);
 	}
 }
 
 void Room::love0ReachedDoor1() {
-	_roomVar.love0.door1OpenCounter++;
-	if (_roomVar.love0.door1OpenCounter == 2)
+	_roomVar.love.doorOpenCounter++;
+	if (_roomVar.love.doorOpenCounter == 2)
 		loadRoomIndex(1, 3);
 }
 
@@ -171,12 +171,12 @@ void Room::love0UseRedshirtOnConsole() {
 }
 
 void Room::love0UseSpockOnConsole() {
-	_roomVar.love0.consoleCrewman = OBJECT_SPOCK;
-	_roomVar.love0.consoleSpeaker = TX_SPEAKER_SPOCK;
-	_roomVar.love0.consoleText = TX_LOV0_005;
-	strcpy(_roomVar.love0.consoleAnimation, "susemn");
+	_roomVar.love.consoleCrewman = OBJECT_SPOCK;
+	_roomVar.love.consoleSpeaker = TX_SPEAKER_SPOCK;
+	_roomVar.love.consoleText = TX_LOV0_005;
+	strcpy(_roomVar.love.consoleAnimation, "susemn");
 
-	walkCrewman(_roomVar.love0.consoleCrewman, 0x9a, 0x9a, 2);
+	walkCrewman(_roomVar.love.consoleCrewman, 0x9a, 0x9a, 2);
 	if (!_vm->_awayMission.love.spockAccessedConsole) {
 		_vm->_awayMission.love.spockAccessedConsole = true;
 		_vm->_awayMission.love.missionScore += 4;
@@ -184,7 +184,7 @@ void Room::love0UseSpockOnConsole() {
 }
 
 void Room::love0SpockReachedConsole() {
-	loadActorAnim2(_roomVar.love0.consoleCrewman, _roomVar.love0.consoleAnimation, -1, -1, 5);
+	loadActorAnim2(_roomVar.love.consoleCrewman, _roomVar.love.consoleAnimation, -1, -1, 5);
 }
 
 void Room::love0SpockAccessedConsole() {
@@ -193,8 +193,8 @@ void Room::love0SpockAccessedConsole() {
 		love0InteractWithConsole();
 	else {
 		showText(TX_SPEAKER_COMPUTER, TX_COMPU188);
-		showText(_roomVar.love0.consoleSpeaker, _roomVar.love0.consoleText);
-		_roomVar.love0.heardSummaryOfVirus = true;
+		showText(_roomVar.love.consoleSpeaker, _roomVar.love.consoleText);
+		_roomVar.love.heardSummaryOfVirus = true;
 	}
 }
 
@@ -216,9 +216,9 @@ void Room::love0MccoyAccessedConsole() {
 	if (_vm->_awayMission.love.knowAboutVirus)
 		love0InteractWithConsole();
 	else {
-		if (!_roomVar.love0.heardSummaryOfVirus) {
+		if (!_roomVar.love.heardSummaryOfVirus) {
 			showText(TX_SPEAKER_COMPUTER, TX_COMPU188);
-			_roomVar.love0.heardSummaryOfVirus = true;
+			_roomVar.love.heardSummaryOfVirus = true;
 		}
 		showText(TX_SPEAKER_MCCOY, TX_LOV0_024);
 		showText(TX_SPEAKER_SPOCK, TX_LOV0_035);
@@ -269,6 +269,17 @@ void Room::love0InteractWithConsole() {
 			break;
 		}
 	}
+}
+
+void Room::love0GetDoorOrConsole() {
+	// BUGFIX: There was a problem with "get door 1" where it would execute a bit of
+	// non-code before reaching where it was supposed to be. Not sure if it had any actual
+	// effect.
+	showText(TX_LOV0N001);
+
+	// NOTE: There is an unused block of code that's jumped over in the "get door 2"
+	// function. (Spock says "that's not logical".)
+	//showText(TX_SPEAKER_SPOCK, TX_LOV0_030);
 }
 
 }

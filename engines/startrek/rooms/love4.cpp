@@ -49,13 +49,16 @@ void Room::love4Tick1() {
 		loadActorAnim2(OBJECT_ROMULAN_4, "s3r5r4a", 0x12a, 0xaa, 0);
 	}
 
-	if (_vm->_awayMission.love.field2c)
+	if (_vm->_awayMission.love.releasedHumanLaughingGas)
 		_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
-	if (_vm->_awayMission.love.field2d)
+	if (_vm->_awayMission.love.releasedRomulanLaughingGas)
 		_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
 	_vm->_awayMission.timers[2] = 200;
 
 	loadActorAnim(OBJECT_DOOR, "s3r5d1a", 0x90, 0x99, 0);
+
+	_roomVar.love.cmnXPosToCureSpock = 0x6b;
+	_roomVar.love.cmnYPosToCureSpock = 0xb2;
 }
 
 void Room::love4Tick10() {
@@ -67,21 +70,21 @@ void Room::love4Tick10() {
 
 void Room::love4WalkToDoor() {
 	_vm->_awayMission.disableInput = true;
-	_roomVar.love4.walkingToDoor = true;
+	_roomVar.love.walkingToDoor = true;
 	walkCrewmanC(OBJECT_KIRK, 0x91, 0x9c, &Room::love4DoorOpenedOrReached);
 }
 
 // Triggers the door opening
 void Room::love4TouchedHotspot0() {
-	if (_roomVar.love4.walkingToDoor) {
+	if (_roomVar.love.walkingToDoor) {
 		loadActorAnimC(OBJECT_DOOR, "s3r5d1", 0x90, 0x99, &Room::love4DoorOpenedOrReached);
 		playSoundEffectIndex(SND_DOOR1);
 	}
 }
 
 void Room::love4DoorOpenedOrReached() {
-	_roomVar.love4.doorOpenCounter++;
-	if (_roomVar.love4.doorOpenCounter == 2)
+	_roomVar.love.doorOpenCounter++;
+	if (_roomVar.love.doorOpenCounter == 2)
 		loadRoomIndex(5, 1);
 }
 
@@ -232,7 +235,7 @@ void Room::love4MccoyCuredRomulan1() {
 	loadActorAnim2(OBJECT_ROMULAN_1, "s3r5r1", 0x36, 0xb3, 0);
 
 	showText(TX_LOV4N005);
-	if (!_roomVar.love4.gaveWaterToRomulans)
+	if (!_roomVar.love.gaveWaterToRomulans)
 		showText(TX_LOV4_023);
 
 	_vm->_awayMission.disableInput = false;
@@ -246,7 +249,7 @@ void Room::love4UseWaterOnRomulan() {
 	if (!_vm->_awayMission.love.romulansCured)
 		showText(TX_SPEAKER_MCCOY, TX_LOV4_009);
 	else {
-		_roomVar.love4.gaveWaterToRomulans = true;
+		_roomVar.love.gaveWaterToRomulans = true;
 		if (_vm->_awayMission.love.romulansCured) {
 			showText(TX_LOV4N013);
 			showText(TX_SPEAKER_MCCOY, TX_LOV4_026);

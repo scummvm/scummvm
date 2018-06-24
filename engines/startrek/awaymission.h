@@ -143,8 +143,8 @@ struct AwayMission {
 			bool alreadyStartedMission; // 0x29
 			bool knowAboutVirus; // 0x2a
 			bool romulansUnconsciousFromLaughingGas; // 0x2b
-			bool field2c; // 0x2c
-			bool field2d; // 0x2d
+			bool releasedHumanLaughingGas; // 0x2c
+			bool releasedRomulanLaughingGas; // 0x2d
 			bool chamberHasCure; // 0x2e
 			bool freezerOpen; // 0x2f
 			bool chamberHasDish; // 0x30
@@ -167,7 +167,10 @@ struct AwayMission {
 			bool romulansUnconsciousFromVirus; // 0x41
 			bool freedMarcusAndCheever; // 0x42
 			bool preaxCured; // 0x43
+			byte spockInfectionCounter; // 0x45: When this reached 100, Spock dies.
 			bool spockCured; // 0x46
+			bool contactedEnterpriseBeforeCure; // 0x47
+			bool contactedEnterpriseAfterCure; // 0x48
 			bool spockAccessedConsole; // 0x49
 			bool mccoyAccessedConsole; // 0x4a
 			bool gotPolyberylcarbonate; // 0x4b
