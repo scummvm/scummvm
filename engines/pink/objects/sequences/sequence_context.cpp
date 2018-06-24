@@ -87,7 +87,7 @@ SequenceActorState *SequenceContext::findState(const Common::String &actor) {
 	return nullptr;
 }
 
-bool SequenceContext::isConflictsWith(SequenceContext *context) {
+bool SequenceContext::isConflictingWith(SequenceContext *context) {
 	for (uint i = 0; i < _states.size(); ++i) {
 		if (context->findState(_states[i].actorName))
 			return true;

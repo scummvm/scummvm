@@ -180,11 +180,11 @@ void Sequencer::saveState(Archive &archive) {
 }
 
 SequenceContext *Sequencer::findConfilictingContextWith(SequenceContext *context) {
-	if (_context && _context->isConflictsWith(context)) {
+	if (_context && _context->isConflictingWith(context)) {
 		return _context;
 	}
 	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		if (_parrallelContexts[i]->isConflictsWith(context))
+		if (_parrallelContexts[i]->isConflictingWith(context))
 			return _parrallelContexts[i];
 	}
 	return nullptr;
