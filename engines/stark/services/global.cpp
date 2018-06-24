@@ -70,7 +70,7 @@ void Global::enableInventoryItem(int32 num) {
 	if (num >= 0 && num <= inventoryItems.size()) {
 		inventoryItems[num]->setEnabled(true);
 	} else {
-		// Assume that only being called by the debug console will cause the cheking failed
+		// Assume that only being called by the debug console will cause the checking failed
 		g_engine->getDebugger()->debugPrintf("Invalid index %d, only %d indices available\n", num, inventoryItems.size());
 	}
 }
