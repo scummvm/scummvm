@@ -23,6 +23,10 @@
 #ifndef STARTREK_TEXT_H
 #define STARTREK_TEXT_H
 
+
+// In this file, the TYPO tag is used when a typo is fixed in a piece of text, or when
+// text is changed to match the audio.
+
 namespace StarTrek {
 
 // Text that's loaded from "GROUND.TXT". First 0x40 pieces of text are for items.
@@ -2044,8 +2048,8 @@ const char * const g_gameStrings[] = {
 	"#LOV2\\LOV2N033#You have synthesized one liter of Romulan Laughing Gas.",
 	"#LOV2\\LOV2N034#You install the gas tank to the synthesizer's feed lines.",
 	"#LOV2\\LOV2N035#You install the gas tank to the synthesizer's feed lines.",
-	"#LOV2\\LOV2N036#Oroborus virus culture taken.",
-	"#LOV2\\LOV2N037#Oroborus virus cure sample taken.",
+	"#LOV2\\LOV2N036#You retrieve the Oroborus virus culture.", // TYPO
+	"#LOV2\\LOV2N037#You retrieve the Oroborus virus cure sample.", // TYPO
 	"#LOV2\\LOV2N038#You take a one litre container of TLTDH gas.",
 	"#LOV2\\LOV2N039#You take a one litre container of Ammonia.",
 	"#LOV2\\LOV2N040#You take a one litre container of Nitrous Oxide.",

@@ -1009,24 +1009,24 @@ RoomAction love2ActionList[] = {
 	{ Action(ACTION_FINISHED_ANIMATION, 18, 0, 0), &Room::love2SpockEnabledGasFeeds },
 	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0), &Room::love2SynthesizerDoorClosed },
 	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::love2SynthesizerFinished },
-	{ Action(ACTION_FINISHED_ANIMATION, 27, 0, 0), &Room::love2FinishedAnimation27 },
-
-	// TODO: more
-
+	{ Action(ACTION_FINISHED_ANIMATION, 27, 0, 0), &Room::love2ClosedSynthesizerDoorMakingRLG },
+	{ Action(ACTION_FINISHED_ANIMATION, 8, 0, 0), &Room::love2ClosedSynthesizerDoorMakingCure },
+	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::love2CureStartedSynthesizing },
+	{ Action(ACTION_FINISHED_ANIMATION, 10, 0, 0), &Room::love2CureSynthesized },
 	{ Action(ACTION_USE, OBJECT_IPBC, 9, 0), &Room::love2UsePolyberylcarbonateOnSynthesizerDoor },
 	{ Action(ACTION_FINISHED_WALKING, 6, 0, 0), &Room::love2KirkReachedSynthesizerWithPolyberylcarbonate },
 	{ Action(ACTION_FINISHED_ANIMATION, 5, 0, 0), &Room::love2SynthesizerDoorOpenedWithPolyberylcarbonate },
 	{ Action(ACTION_FINISHED_ANIMATION, 19, 0, 0), &Room::love2PutPolyberylcarbonateInSynthesizer },
 
-	{ Action(ACTION_USE, OBJECT_IDISHES, 9, 0), &Room::love2UseDishesOnSynthesizerDoor },
-	{ Action(ACTION_FINISHED_WALKING, 7, 0, 0), &Room::love2KirkReachedSynthesizerWithDishes },
-	{ Action(ACTION_FINISHED_ANIMATION, 6, 0, 0), &Room::love2SynthesizerDoorOpenedWithDishes },
-	{ Action(ACTION_FINISHED_ANIMATION, 20, 0, 0), &Room::love2PutDishesInSynthesizer },
+	{ Action(ACTION_USE, OBJECT_IDISHES, 9, 0), &Room::love2UseVirusSampleOnSynthesizerDoor },
+	{ Action(ACTION_FINISHED_WALKING, 7, 0, 0), &Room::love2KirkReachedSynthesizerWithVirusSample },
+	{ Action(ACTION_FINISHED_ANIMATION, 6, 0, 0), &Room::love2SynthesizerDoorOpenedWithVirusSample },
+	{ Action(ACTION_FINISHED_ANIMATION, 20, 0, 0), &Room::love2PutVirusSampleInSynthesizer },
 
-	{ Action(ACTION_USE, OBJECT_ISAMPLE, 9, 0), &Room::love2UseSampleOnSynthesizerDoor },
-	{ Action(ACTION_FINISHED_WALKING, 8, 0, 0), &Room::love2KirkReachedSynthesizerWithSample },
-	{ Action(ACTION_FINISHED_ANIMATION, 7, 0, 0), &Room::love2SynthesizerDoorOpenedWithSample },
-	{ Action(ACTION_FINISHED_ANIMATION, 21, 0, 0), &Room::love2PutSampleInSynthesizer },
+	{ Action(ACTION_USE, OBJECT_ISAMPLE, 9, 0), &Room::love2UseCureSampleOnSynthesizerDoor },
+	{ Action(ACTION_FINISHED_WALKING, 8, 0, 0), &Room::love2KirkReachedSynthesizerWithCureSample },
+	{ Action(ACTION_FINISHED_ANIMATION, 7, 0, 0), &Room::love2SynthesizerDoorOpenedWithCureSample },
+	{ Action(ACTION_FINISHED_ANIMATION, 21, 0, 0), &Room::love2PutCureSampleInSynthesizer },
 
 	{ Action(ACTION_USE, -1, 9, 0), &Room::love2UseAnythingOnSynthesizerDoor },
 	{ Action(ACTION_USE, -1, 0x20, 0), &Room::love2UseAnythingOnSynthesizer },

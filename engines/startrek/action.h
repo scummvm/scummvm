@@ -54,6 +54,8 @@ struct Action : Common::Serializable {
 	byte b2;
 	byte b3;
 
+	// Only used with ACTION_CALLBACK.
+	// TODO: Fix serialization. Can this even be serialized?
 	void (Room::*roomFuncPtr)();
 
 	Action() {}
