@@ -571,12 +571,6 @@ void StarTrekEngine::handleAwayMissionAction() {
 			initAwayCrewPositions(warpIndex ^ 1);
 		}
 		break;
-
-	case ACTION_CALLBACK:
-		// Custom action for ScummVM; calls a function in the Room class. Useful for
-		// simplifying chains of calls.
-		(_room.get()->*(action.roomFuncPtr))();
-		break;
 	}
 }
 
