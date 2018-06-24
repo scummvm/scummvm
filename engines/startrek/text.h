@@ -29,6 +29,8 @@
 
 namespace StarTrek {
 
+typedef int32 TextRef;
+
 // Text that's loaded from "GROUND.TXT". First 0x40 pieces of text are for items.
 enum GroundTextIDs {
 	// Generic "perform undefined action" text (ie. look at nothing, talk to wall)
@@ -805,20 +807,6 @@ enum GameStringIDs {
 	TX_LOV0N007,
 	TX_LOV0N008,
 	TX_LOV0N009,
-	TX_LOVA_100,
-	TX_LOVA_F01,
-	TX_LOVA_F02,
-	TX_LOVA_F03,
-	TX_LOVA_F04,
-	TX_LOVA_F07,
-	TX_LOVA_F08,
-	TX_LOVA_F10,
-	TX_LOVA_F54,
-	TX_LOVA_F55,
-	TX_MUD2_040,
-	TX_MUD4_018,
-	TX_spokcoff,
-	TX_VENA_F41,
 
 
 	TX_LOV1_001,
@@ -1155,6 +1143,22 @@ enum GameStringIDs {
 	TX_LOV5N017,
 	TX_LOV5N018,
 	TX_LOV5C001, // Custom
+
+
+	TX_LOVA_100,
+	TX_LOVA_F01,
+	TX_LOVA_F02,
+	TX_LOVA_F03,
+	TX_LOVA_F04,
+	TX_LOVA_F07,
+	TX_LOVA_F08,
+	TX_LOVA_F10,
+	TX_LOVA_F54,
+	TX_LOVA_F55,
+	TX_MUD2_040,
+	TX_MUD4_018,
+	TX_SPOKCOFF,
+	TX_VENA_F41,
 
 
 	TX_END
@@ -1905,20 +1909,6 @@ const char * const g_gameStrings[] = {
 	"#LOV0\\LOV0N007#This is a heavily secured door, leading to another section of the station. Its access code has been breached.",
 	"#LOV0\\LOV0N008#This is a standard door, leading to another room on this deck.",
 	"#LOV0\\LOV0N009#You are on the bridge of the ARK7.",
-	"#LOVA\\LOVA_100#He's dead, Jim.",
-	"#LOVA\\LOVA_F01#He's been cured of the Oroborus virus.",
-	"#LOVA\\LOVA_F02#I'm picking up some kind of virus. I can't identify it without more information.",
-	"#LOVA\\LOVA_F03#He's infected with the virus, Jim.",
-	"#LOVA\\LOVA_F04#The virus affects the Romulan-Vulcan genotype, Jim.",
-	"#LOVA\\LOVA_F07#All lifesigns are normal.",
-	"#LOVA\\LOVA_F08#It's what I was afraid of, Jim. I think spock is getting worse.",
-	"#LOVA\\LOVA_F10#He has weak vital signs.",
-	"#LOVA\\LOVA_F54#The virus has spread to me, Captain.Isuggestyouconcentrateyoureffortsonthe",
-	"#LOVA\\LOVA_F55#Jim, we need to sysnthesize more to make the serum before we can use it.",
-	"#MUD2\\MUD2_040#You look troubled, Captain.",
-	"#MUD4\\MUD4_018#Kirk to Enterprise ... Kirk to Enterprise.",
-	"#sfx\\spokcoff#cough... cough...",
-	"#VENA\\VENA_F41#Kirk out.",
 
 
 	"#LOV1\\LOV1_001#When you are finished admiring all the equipment Bones, maybe you can help us figure out what's going on here.",
@@ -2255,6 +2245,22 @@ const char * const g_gameStrings[] = {
 	"#LOV5\\LOV5N017#The Romulan Preax weakly regains conscienceness, reaching for his weapon.",
 	"#LOV5\\LOV5N018#The Romulan Preax drinks thirstily and empties the container.",
 	"(Raises an eyebrow).", // NOTE: no corresponding audio
+
+
+	"#LOVA\\LOVA_100#He's dead, Jim.",
+	"#LOVA\\LOVA_F01#He's been cured of the Oroborus virus.",
+	"#LOVA\\LOVA_F02#I'm picking up some kind of virus. I can't identify it without more information.",
+	"#LOVA\\LOVA_F03#He's infected with the virus, Jim.",
+	"#LOVA\\LOVA_F04#The virus affects the Romulan-Vulcan genotype, Jim.",
+	"#LOVA\\LOVA_F07#All lifesigns are normal.",
+	"#LOVA\\LOVA_F08#It's what I was afraid of, Jim. I think Spock is getting worse.", // TYPO
+	"#LOVA\\LOVA_F10#He has weak vital signs.",
+	"#LOVA\\LOVA_F54#The virus has spread to me, Captain. I suggest you concentrate your efforts on the problem.",
+	"#LOVA\\LOVA_F55#Jim, we need to synthesize more to make the serum before we can use it.", // TYPO
+	"#MUD2\\MUD2_040#You look troubled, Captain.",
+	"#MUD4\\MUD4_018#Kirk to Enterprise ... Kirk to Enterprise.",
+	"#sfx\\spokcoff#cough... cough...",
+	"#VENA\\VENA_F41#Kirk out.",
 };
 
 }

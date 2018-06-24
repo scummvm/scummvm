@@ -105,38 +105,38 @@ void Room::love2Tick1() {
 
 	switch (_vm->_awayMission.love.field35) {
 	case SYNTHITEM_PBC:
-		strcpy(_roomVar.love2.d6, "pbcanm");
-		_roomVar.love2.d2 = OBJECT_POLYBERYLCARBONATE;
+		strcpy(_roomVar.love.chamberInputAnim, "pbcanm");
+		_roomVar.love.chamberObject = OBJECT_POLYBERYLCARBONATE;
 		break;
 	case SYNTHITEM_VIRUS_SAMPLE:
-		strcpy(_roomVar.love2.d6, "dishes");
-		_roomVar.love2.d2 = OBJECT_VIRUSSAMPLE;
+		strcpy(_roomVar.love.chamberInputAnim, "dishes");
+		_roomVar.love.chamberObject = OBJECT_VIRUSSAMPLE;
 		break;
 	case SYNTHITEM_CURE_SAMPLE:
-		strcpy(_roomVar.love2.d6, "dishes");
-		_roomVar.love2.d2 = OBJECT_CURESAMPLE;
+		strcpy(_roomVar.love.chamberInputAnim, "dishes");
+		_roomVar.love.chamberObject = OBJECT_CURESAMPLE;
 		break;
 	case SYNTHITEM_BOTTLE:
 		switch (_vm->_awayMission.love.synthesizerProduct) {
 		case 1:
-			strcpy(_roomVar.love2.d8, "btle1");
-			_roomVar.love2.d2 = OBJECT_SYNTHESIZER_OUTPUT;
+			strcpy(_roomVar.love.chamberOutputAnim, "btle1");
+			_roomVar.love.chamberObject = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		case 2:
-			strcpy(_roomVar.love2.d8, "btle2");
-			_roomVar.love2.d2 = OBJECT_SYNTHESIZER_OUTPUT;
+			strcpy(_roomVar.love.chamberOutputAnim, "btle2");
+			_roomVar.love.chamberObject = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		case 3:
-			strcpy(_roomVar.love2.d8, "btle3");
-			_roomVar.love2.d2 = OBJECT_SYNTHESIZER_OUTPUT;
+			strcpy(_roomVar.love.chamberOutputAnim, "btle3");
+			_roomVar.love.chamberObject = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		case 4:
-			strcpy(_roomVar.love2.d8, "btle4");
-			_roomVar.love2.d2 = OBJECT_SYNTHESIZER_OUTPUT;
+			strcpy(_roomVar.love.chamberOutputAnim, "btle4");
+			_roomVar.love.chamberObject = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		default:
-			strcpy(_roomVar.love2.d8, "cure");
-			_roomVar.love2.d2 = OBJECT_CURE;
+			strcpy(_roomVar.love.chamberOutputAnim, "cure");
+			_roomVar.love.chamberObject = OBJECT_CURE;
 			break;
 		}
 		break;
@@ -147,21 +147,21 @@ void Room::love2Tick1() {
 
 	if (valid) {
 		if (_vm->_awayMission.love.field35 == 9)
-			loadActorAnim2(_roomVar.love2.d2, _roomVar.love2.d8, 0x8a, 0x8b, 0);
+			loadActorAnim2(_roomVar.love.chamberObject, _roomVar.love.chamberOutputAnim, 0x8a, 0x8b, 0);
 		else
-			loadActorAnim2(_roomVar.love2.d2, _roomVar.love2.d6, 0x8a, 0x8b, 0);
+			loadActorAnim2(_roomVar.love.chamberObject, _roomVar.love.chamberInputAnim, 0x8a, 0x8b, 0);
 	}
 
-	if (_vm->_awayMission.love.field2c)
+	if (_vm->_awayMission.love.releasedHumanLaughingGas)
 		_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
-	if (_vm->_awayMission.love.field2d)
+	if (_vm->_awayMission.love.releasedRomulanLaughingGas)
 		_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
 	_vm->_awayMission.timers[2] = 200;
 
 	loadActorAnim(OBJECT_DOOR, "s3r3d3a", 0x12a, 0xb5, 0);
 
-	_roomVar.love2._2966 = 0xc9;
-	_roomVar.love2._2967 = 0xb7;
+	_roomVar.love.cmnXPosToCureSpock = 0xc9;
+	_roomVar.love.cmnYPosToCureSpock = 0xb7;
 }
 
 void Room::love2TouchedWarp1() {
@@ -176,21 +176,21 @@ void Room::love2Timer3Expired() {
 
 void Room::love2WalkToDoor() {
 	_vm->_awayMission.disableInput = true;
-	_roomVar.love2.walkingToDoor = true;
+	_roomVar.love.walkingToDoor = true;
 	walkCrewman(OBJECT_KIRK, 0x127, 0xba, 14);
 }
 
 // Triggers door opening
 void Room::love2TouchedHotspot0() {
-	if (_roomVar.love2.walkingToDoor) {
+	if (_roomVar.love.walkingToDoor) {
 		loadActorAnim(OBJECT_DOOR, "s3r3d3", 0x12a, 0xb5, 1);
 		playSoundEffectIndex(SND_DOOR1);
 	}
 }
 
 void Room::love2DoorReachedOrOpened() {
-	_roomVar.love2.doorOpenCounter++;
-	if (_roomVar.love2.doorOpenCounter == 2)
+	_roomVar.love.doorOpenCounter++;
+	if (_roomVar.love.doorOpenCounter == 2)
 		loadRoomIndex(1, 1);
 }
 
@@ -303,28 +303,28 @@ void Room::love2UseSTricorderAnywhere() {
 }
 
 void Room::love2UseKirkOnCabinet() {
-	_roomVar.love2.d2 = OBJECT_KIRK;
+	_roomVar.love.chamberObject = OBJECT_KIRK;
 	walkCrewman(OBJECT_KIRK, 0x2b, 0xbb, 12);
 }
 
 void Room::love2UseSpockOnCabinet() {
-	_roomVar.love2.d2 = OBJECT_SPOCK;
+	_roomVar.love.chamberObject = OBJECT_SPOCK;
 	walkCrewman(OBJECT_SPOCK, 0x2b, 0xbb, 12);
 }
 
 void Room::love2UseMccoyOnCabinet() {
-	_roomVar.love2.d2 = OBJECT_MCCOY;
+	_roomVar.love.chamberObject = OBJECT_MCCOY;
 	walkCrewman(OBJECT_MCCOY, 0x2b, 0xbb, 12);
 }
 
 void Room::love2UseRedshirtOnCabinet() {
-	_roomVar.love2.d2 = OBJECT_REDSHIRT;
+	_roomVar.love.chamberObject = OBJECT_REDSHIRT;
 	walkCrewman(OBJECT_REDSHIRT, 0x2b, 0xbb, 12);
 }
 
 void Room::love2CrewmanReachedCabinet() {
-	Common::String anim = _vm->getCrewmanAnimFilename(_roomVar.love2.d2, "usehw");
-	loadActorAnim2(_roomVar.love2.d2, anim, -1, -1, 11);
+	Common::String anim = _vm->getCrewmanAnimFilename(_roomVar.love.chamberObject, "usehw");
+	loadActorAnim2(_roomVar.love.chamberObject, anim, -1, -1, 11);
 }
 
 void Room::love2CrewmanAccessedCabinet() {
@@ -368,23 +368,23 @@ void Room::love2ChangedGasFeed() {
 }
 
 void Room::love2UseO2GasOnCanisterSlot() {
-	_roomVar.love2.canisterType = CANTYPE_O2;
-	strcpy(_roomVar.love2.canisterAnim, "o2can");
-	_roomVar.love2.canisterItem = OBJECT_IO2GAS;
+	_roomVar.love.canisterType = CANTYPE_O2;
+	strcpy(_roomVar.love.canisterAnim, "o2can");
+	_roomVar.love.canisterItem = OBJECT_IO2GAS;
 	walkCrewman(OBJECT_KIRK, 0xa8, 0xb7, 3);
 }
 
 void Room::love2UseH2GasOnCanisterSlot() {
-	_roomVar.love2.canisterType = CANTYPE_H2;
-	strcpy(_roomVar.love2.canisterAnim, "h2can");
-	_roomVar.love2.canisterItem = OBJECT_IH2GAS;
+	_roomVar.love.canisterType = CANTYPE_H2;
+	strcpy(_roomVar.love.canisterAnim, "h2can");
+	_roomVar.love.canisterItem = OBJECT_IH2GAS;
 	walkCrewman(OBJECT_KIRK, 0xa8, 0xb7, 3);
 }
 
 void Room::love2UseN2GasOnCanisterSlot() {
-	_roomVar.love2.canisterType = CANTYPE_N2;
-	strcpy(_roomVar.love2.canisterAnim, "n2can");
-	_roomVar.love2.canisterItem = OBJECT_IN2GAS;
+	_roomVar.love.canisterType = CANTYPE_N2;
+	strcpy(_roomVar.love.canisterAnim, "n2can");
+	_roomVar.love.canisterItem = OBJECT_IN2GAS;
 	walkCrewman(OBJECT_KIRK, 0xa8, 0xb7, 3);
 }
 
@@ -403,18 +403,18 @@ void Room::love2ReachedCanisterSlot() {
 
 void Room::love2PutCanisterInSlot1() {
 	playVoc("SE6FOOD");
-	loadActorAnim(OBJECT_CAN1, _roomVar.love2.canisterAnim, 0xa7, 0xae, 0);
-	_vm->_awayMission.love.canister1 = _roomVar.love2.canisterType;
+	loadActorAnim(OBJECT_CAN1, _roomVar.love.canisterAnim, 0xa7, 0xae, 0);
+	_vm->_awayMission.love.canister1 = _roomVar.love.canisterType;
 	showText(TX_LOV2N034);
-	loseItem(_roomVar.love2.canisterItem);
+	loseItem(_roomVar.love.canisterItem);
 }
 
 void Room::love2PutCanisterInSlot2() {
 	playVoc("SE6FOOD");
-	loadActorAnim(OBJECT_CAN2, _roomVar.love2.canisterAnim, 0xb1, 0xaf, 0);
-	_vm->_awayMission.love.canister2 = _roomVar.love2.canisterType;
+	loadActorAnim(OBJECT_CAN2, _roomVar.love.canisterAnim, 0xb1, 0xaf, 0);
+	_vm->_awayMission.love.canister2 = _roomVar.love.canisterType;
 	showText(TX_LOV2N035);
-	loseItem(_roomVar.love2.canisterItem);
+	loseItem(_roomVar.love.canisterItem);
 }
 
 void Room::love2UseAntigravOnCanister1() {
@@ -485,42 +485,42 @@ void Room::love2TookCanister2() {
 }
 
 void Room::love2UseKirkOnSynthesizer() {
-	_roomVar.love2.d2 = OBJECT_KIRK;
-	walkCrewman(_roomVar.love2.d2, 0x46, 0xae, 13);
+	_roomVar.love.chamberObject = OBJECT_KIRK;
+	walkCrewman(_roomVar.love.chamberObject, 0x46, 0xae, 13);
 }
 
 void Room::love2UseSpockOnSynthesizer() {
-	_roomVar.love2.d2 = OBJECT_SPOCK;
-	walkCrewman(_roomVar.love2.d2, 0x46, 0xae, 13);
+	_roomVar.love.chamberObject = OBJECT_SPOCK;
+	walkCrewman(_roomVar.love.chamberObject, 0x46, 0xae, 13);
 }
 
 void Room::love2UseMccoyOnSynthesizer() {
-	_roomVar.love2.d2 = OBJECT_MCCOY;
-	walkCrewman(_roomVar.love2.d2, 0x46, 0xae, 13);
+	_roomVar.love.chamberObject = OBJECT_MCCOY;
+	walkCrewman(_roomVar.love.chamberObject, 0x46, 0xae, 13);
 }
 
 void Room::love2UseRedshirtOnSynthesizer() {
-	_roomVar.love2.d2 = OBJECT_REDSHIRT;
-	walkCrewman(_roomVar.love2.d2, 0x46, 0xae, 13);
+	_roomVar.love.chamberObject = OBJECT_REDSHIRT;
+	walkCrewman(_roomVar.love.chamberObject, 0x46, 0xae, 13);
 }
 
 void Room::love2CrewmanReachedSynthesizer() {
-	Common::String anim = _vm->getCrewmanAnimFilename(_roomVar.love2.d2, "usemn");
-	loadActorAnim2(_roomVar.love2.d2, anim, -1, -1, 17);
+	Common::String anim = _vm->getCrewmanAnimFilename(_roomVar.love.chamberObject, "usemn");
+	loadActorAnim2(_roomVar.love.chamberObject, anim, -1, -1, 17);
 }
 
 void Room::love2CrewmanUsedSynthesizer() {
 	if (_vm->_awayMission.love.gasFeedOn) {
 		love2UseSynthesizer();
 	} else {
-		if (_roomVar.love2.cb == 3) {
+		if (_roomVar.love.cb == 3) {
 			if (haveItem(OBJECT_IWRENCH)) {
 				showText(TX_SPEAKER_SPOCK, TX_LOV2_005);
 				walkCrewman(OBJECT_SPOCK, 0xa8, 0xb7, 16);
 			} else
 				showText(TX_SPEAKER_SPOCK, TX_LOV2_006);
 		} else {
-			_roomVar.love2.cb++;
+			_roomVar.love.cb++;
 			showText(TX_LOV2N012);
 		}
 	}
@@ -582,7 +582,7 @@ bottleFailure:
 				case SYNTHITEM_NONE: // Water
 				default:
 					_vm->_awayMission.love.synthesizerProduct = BOTTLETYPE_H2O;
-					strcpy(_roomVar.love2.d8, "btle3");
+					strcpy(_roomVar.love.chamberOutputAnim, "btle3");
 produceBottle:
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
 					playSoundEffectIndex(SND_DOOR1);
@@ -622,7 +622,7 @@ inertMatterFailure:
 				case SYNTHITEM_NONE: // Ammonia
 				default:
 					_vm->_awayMission.love.synthesizerProduct = BOTTLETYPE_NH3;
-					strcpy(_roomVar.love2.d8, "btle2");
+					strcpy(_roomVar.love.chamberOutputAnim, "btle2");
 					goto produceBottle;
 				}
 			} else if (c1 == CANTYPE_O2 && c2 == CANTYPE_N2) {
@@ -645,7 +645,7 @@ inertMatterFailure:
 				case SYNTHITEM_NONE: // Laughing gas
 				default:
 					_vm->_awayMission.love.synthesizerProduct = BOTTLETYPE_N2O;
-					strcpy(_roomVar.love2.d8, "btle1");
+					strcpy(_roomVar.love.chamberOutputAnim, "btle1");
 					goto produceBottle;
 				}
 			}
@@ -663,7 +663,7 @@ inertMatterFailure:
 
 void Room::love2SynthesizerDoorClosed() {
 	playVoc("LD1SCAN");
-	loadActorAnim(OBJECT_SYNTHESIZER_OUTPUT, _roomVar.love2.d8, 0x8a, 0x8d, 4); // -> love2SynthesizerFinished
+	loadActorAnim(OBJECT_SYNTHESIZER_OUTPUT, _roomVar.love.chamberOutputAnim, 0x8a, 0x8d, 4); // -> love2SynthesizerFinished
 	_vm->_awayMission.love.field35 = SYNTHITEM_BOTTLE;
 }
 
@@ -704,7 +704,7 @@ void Room::love2SynthesizerFinished() {
 
 void Room::love2ClosedSynthesizerDoorMakingRLG() {
 	_vm->_awayMission.love.synthesizerProduct = BOTTLETYPE_RLG;
-	strcpy(_roomVar.love2.d8, "btle4");
+	strcpy(_roomVar.love.chamberOutputAnim, "btle4");
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
 	playSoundEffectIndex(SND_DOOR1);
 }

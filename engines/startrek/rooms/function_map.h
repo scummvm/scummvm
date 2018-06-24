@@ -819,8 +819,27 @@ RoomAction love0ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_MCCOY, 0x20, 0), &Room::love0UseMccoyOnConsole },
 	{ Action(ACTION_FINISHED_WALKING, 3, 0, 0), &Room::love0MccoyReachedConsole },
 	{ Action(ACTION_FINISHED_ANIMATION, 6, 0, 0), &Room::love0MccoyAccessedConsole },
-	// TODO: there's a lot of "extra" stuff at the end of the file. I don't think it's
-	// unused, but I'm not sure how it's run.
+	{ Action(ACTION_GET,    8, 0, 0), &Room::love0GetDoorOrConsole },
+	{ Action(ACTION_GET,    9, 0, 0), &Room::love0GetDoorOrConsole },
+	{ Action(ACTION_GET, 0x20, 0, 0), &Room::love0GetDoorOrConsole },
+
+	// Common code
+	{ Action(ACTION_TIMER_EXPIRED, 0, 0, 0), &Room::loveaTimer0Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::loveaTimer1Expired },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, OBJECT_SPOCK, 0), &Room::loveaUseMedkitOnSpock },
+	{ Action(ACTION_USE, OBJECT_ISAMPLE, OBJECT_SPOCK, 0), &Room::loveaUseCureSampleOnSpock },
+	{ Action(ACTION_USE, OBJECT_ICURE, OBJECT_SPOCK, 0), &Room::loveaUseCureOnSpock },
+	{ Action(ACTION_FINISHED_WALKING,   99, 0, 0), &Room::loveaSpockOrMccoyInPositionToUseCure },
+	{ Action(ACTION_FINISHED_ANIMATION, 99, 0, 0), &Room::loveaFinishedCuringSpock },
+	{ Action(ACTION_TIMER_EXPIRED, 2, 0, 0), &Room::loveaTimer2Expired },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0), &Room::loveaUseMTricorderOnSpock },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IRLG, -1, 0), &Room::loveaUseRomulanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_IN2O, -1, 0), &Room::loveaUseHumanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_INH3, -1, 0), &Room::loveaUseAmmonia },
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::loveaUseCommunicator },
 };
 
 RoomAction love1ActionList[] = {
@@ -941,7 +960,24 @@ RoomAction love1ActionList[] = {
 	{ Action(ACTION_FINISHED_WALKING, 1, 0, 0), &Room::love1CrewmanReachedLadder },
 	{ Action(ACTION_FINISHED_ANIMATION, 6, 0, 0), &Room::love1CrewmanDiedFromPhaser },
 	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0), &Room::love1TouchedHotspot0 },
-	// TODO: common code
+
+	// Common code
+	{ Action(ACTION_TIMER_EXPIRED, 0, 0, 0), &Room::loveaTimer0Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::loveaTimer1Expired },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, OBJECT_SPOCK, 0), &Room::loveaUseMedkitOnSpock },
+	{ Action(ACTION_USE, OBJECT_ISAMPLE, OBJECT_SPOCK, 0), &Room::loveaUseCureSampleOnSpock },
+	{ Action(ACTION_USE, OBJECT_ICURE, OBJECT_SPOCK, 0), &Room::loveaUseCureOnSpock },
+	{ Action(ACTION_FINISHED_WALKING,   99, 0, 0), &Room::loveaSpockOrMccoyInPositionToUseCure },
+	{ Action(ACTION_FINISHED_ANIMATION, 99, 0, 0), &Room::loveaFinishedCuringSpock },
+	{ Action(ACTION_TIMER_EXPIRED, 2, 0, 0), &Room::loveaTimer2Expired },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0), &Room::loveaUseMTricorderOnSpock },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IRLG, -1, 0), &Room::loveaUseRomulanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_IN2O, -1, 0), &Room::loveaUseHumanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_INH3, -1, 0), &Room::loveaUseAmmonia },
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::loveaUseCommunicator },
 };
 
 RoomAction love2ActionList[] = {
@@ -1058,7 +1094,23 @@ RoomAction love2ActionList[] = {
 	{ Action(ACTION_FINISHED_WALKING, 11, 0, 0), &Room::love2ReachedCure },
 	{ Action(ACTION_FINISHED_ANIMATION, 24, 0, 0), &Room::love2GotCure },
 
-	// TODO: common code
+	// Common code
+	{ Action(ACTION_TIMER_EXPIRED, 0, 0, 0), &Room::loveaTimer0Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::loveaTimer1Expired },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, OBJECT_SPOCK, 0), &Room::loveaUseMedkitOnSpock },
+	{ Action(ACTION_USE, OBJECT_ISAMPLE, OBJECT_SPOCK, 0), &Room::loveaUseCureSampleOnSpock },
+	{ Action(ACTION_USE, OBJECT_ICURE, OBJECT_SPOCK, 0), &Room::loveaUseCureOnSpock },
+	{ Action(ACTION_FINISHED_WALKING,   99, 0, 0), &Room::loveaSpockOrMccoyInPositionToUseCure },
+	{ Action(ACTION_FINISHED_ANIMATION, 99, 0, 0), &Room::loveaFinishedCuringSpock },
+	{ Action(ACTION_TIMER_EXPIRED, 2, 0, 0), &Room::loveaTimer2Expired },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0), &Room::loveaUseMTricorderOnSpock },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IRLG, -1, 0), &Room::loveaUseRomulanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_IN2O, -1, 0), &Room::loveaUseHumanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_INH3, -1, 0), &Room::loveaUseAmmonia },
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::loveaUseCommunicator },
 };
 
 RoomAction love3ActionList[] = {
@@ -1164,7 +1216,24 @@ RoomAction love3ActionList[] = {
 	{ Action(ACTION_GET, 9, 0, 0), &Room::love3GetInsulation },
 	{ Action(ACTION_FINISHED_WALKING, 12, 0, 0), &Room::love3ReachedInsulationToGet },
 	{ Action(ACTION_FINISHED_ANIMATION, 14, 0, 0), &Room::love3PickedUpInsulation },
-	// TODO: common code
+
+	// Common code
+	{ Action(ACTION_TIMER_EXPIRED, 0, 0, 0), &Room::loveaTimer0Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::loveaTimer1Expired },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, OBJECT_SPOCK, 0), &Room::loveaUseMedkitOnSpock },
+	{ Action(ACTION_USE, OBJECT_ISAMPLE, OBJECT_SPOCK, 0), &Room::loveaUseCureSampleOnSpock },
+	{ Action(ACTION_USE, OBJECT_ICURE, OBJECT_SPOCK, 0), &Room::loveaUseCureOnSpock },
+	{ Action(ACTION_FINISHED_WALKING,   99, 0, 0), &Room::loveaSpockOrMccoyInPositionToUseCure },
+	{ Action(ACTION_FINISHED_ANIMATION, 99, 0, 0), &Room::loveaFinishedCuringSpock },
+	{ Action(ACTION_TIMER_EXPIRED, 2, 0, 0), &Room::loveaTimer2Expired },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0), &Room::loveaUseMTricorderOnSpock },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IRLG, -1, 0), &Room::loveaUseRomulanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_IN2O, -1, 0), &Room::loveaUseHumanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_INH3, -1, 0), &Room::loveaUseAmmonia },
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::loveaUseCommunicator },
 };
 
 RoomAction love4ActionList[] = {
@@ -1239,7 +1308,24 @@ RoomAction love4ActionList[] = {
 	{ Action(ACTION_USE, -1, 10, 0), &Room::love4UseAnythingOnRomulan },
 	{ Action(ACTION_USE, -1, 11, 0), &Room::love4UseAnythingOnRomulan },
 	{ Action(ACTION_USE, -1, 12, 0), &Room::love4UseAnythingOnRomulan },
-	// TODO: common code
+
+	// Common code
+	{ Action(ACTION_TIMER_EXPIRED, 0, 0, 0), &Room::loveaTimer0Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::loveaTimer1Expired },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, OBJECT_SPOCK, 0), &Room::loveaUseMedkitOnSpock },
+	{ Action(ACTION_USE, OBJECT_ISAMPLE, OBJECT_SPOCK, 0), &Room::loveaUseCureSampleOnSpock },
+	{ Action(ACTION_USE, OBJECT_ICURE, OBJECT_SPOCK, 0), &Room::loveaUseCureOnSpock },
+	{ Action(ACTION_FINISHED_WALKING,   99, 0, 0), &Room::loveaSpockOrMccoyInPositionToUseCure },
+	{ Action(ACTION_FINISHED_ANIMATION, 99, 0, 0), &Room::loveaFinishedCuringSpock },
+	{ Action(ACTION_TIMER_EXPIRED, 2, 0, 0), &Room::loveaTimer2Expired },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0), &Room::loveaUseMTricorderOnSpock },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IRLG, -1, 0), &Room::loveaUseRomulanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_IN2O, -1, 0), &Room::loveaUseHumanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_INH3, -1, 0), &Room::loveaUseAmmonia },
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::loveaUseCommunicator },
 };
 
 RoomAction love5ActionList[] = {
@@ -1287,7 +1373,24 @@ RoomAction love5ActionList[] = {
 	{ Action(ACTION_FINISHED_WALKING,   2, 0, 0), &Room::love5KirkReachedMarcus },
 	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0), &Room::love5KirkUntiedMarcus },
 	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::love5MarcusStoodUp },
-	// TODO: common code
+
+	// Common code
+	{ Action(ACTION_TIMER_EXPIRED, 0, 0, 0), &Room::loveaTimer0Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::loveaTimer1Expired },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, OBJECT_SPOCK, 0), &Room::loveaUseMedkitOnSpock },
+	{ Action(ACTION_USE, OBJECT_ISAMPLE, OBJECT_SPOCK, 0), &Room::loveaUseCureSampleOnSpock },
+	{ Action(ACTION_USE, OBJECT_ICURE, OBJECT_SPOCK, 0), &Room::loveaUseCureOnSpock },
+	{ Action(ACTION_FINISHED_WALKING,   99, 0, 0), &Room::loveaSpockOrMccoyInPositionToUseCure },
+	{ Action(ACTION_FINISHED_ANIMATION, 99, 0, 0), &Room::loveaFinishedCuringSpock },
+	{ Action(ACTION_TIMER_EXPIRED, 2, 0, 0), &Room::loveaTimer2Expired },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0), &Room::loveaUseMTricorderOnSpock },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0), &Room::loveaUseMTricorderOnHuman },
+	{ Action(ACTION_USE, OBJECT_IRLG, -1, 0), &Room::loveaUseRomulanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_IN2O, -1, 0), &Room::loveaUseHumanLaughingGas },
+	{ Action(ACTION_USE, OBJECT_INH3, -1, 0), &Room::loveaUseAmmonia },
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::loveaUseCommunicator },
 };
 
 

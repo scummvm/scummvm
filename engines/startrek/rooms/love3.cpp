@@ -57,14 +57,14 @@ void Room::love3Tick1() {
 	else
 		loadActorAnim(OBJECT_SERVICE_PANEL, "s3r4d2", 1, 0, 0);
 
-	if (_vm->_awayMission.love.field2c)
+	if (_vm->_awayMission.love.releasedHumanLaughingGas)
 		_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
-	if (_vm->_awayMission.love.field2d)
+	if (_vm->_awayMission.love.releasedRomulanLaughingGas)
 		_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
 	_vm->_awayMission.timers[2] = 200;
 
-	_roomVar.love3._188e = 0xb4;
-	_roomVar.love3._188f = 0xb7;
+	_roomVar.love.cmnXPosToCureSpock = 0xb4;
+	_roomVar.love.cmnYPosToCureSpock = 0xb7;
 }
 
 void Room::love3Tick80() {
@@ -183,28 +183,28 @@ void Room::love3UseSTricorderAnywhere() {
 }
 
 void Room::love3UseKirkOnServicePanel() {
-	_roomVar.love3.activeCrewman = OBJECT_KIRK;
-	walkCrewman(_roomVar.love3.activeCrewman, 0x104, 0xae, 1);
+	_roomVar.love.activeCrewman = OBJECT_KIRK;
+	walkCrewman(_roomVar.love.activeCrewman, 0x104, 0xae, 1);
 }
 
 void Room::love3UseSpockOnServicePanel() {
-	_roomVar.love3.activeCrewman = OBJECT_SPOCK;
-	walkCrewman(_roomVar.love3.activeCrewman, 0x104, 0xae, 1);
+	_roomVar.love.activeCrewman = OBJECT_SPOCK;
+	walkCrewman(_roomVar.love.activeCrewman, 0x104, 0xae, 1);
 }
 
 void Room::love3UseMccoyOnServicePanel() {
-	_roomVar.love3.activeCrewman = OBJECT_MCCOY;
-	walkCrewman(_roomVar.love3.activeCrewman, 0x104, 0xae, 1);
+	_roomVar.love.activeCrewman = OBJECT_MCCOY;
+	walkCrewman(_roomVar.love.activeCrewman, 0x104, 0xae, 1);
 }
 
 void Room::love3UseRedshirtOnServicePanel() {
-	_roomVar.love3.activeCrewman = OBJECT_REDSHIRT;
-	walkCrewman(_roomVar.love3.activeCrewman, 0x104, 0xae, 1);
+	_roomVar.love.activeCrewman = OBJECT_REDSHIRT;
+	walkCrewman(_roomVar.love.activeCrewman, 0x104, 0xae, 1);
 }
 
 void Room::love3CrewmanReachedServicePanel() {
-	Common::String anim = _vm->getCrewmanAnimFilename(_roomVar.love3.activeCrewman, "usehe");
-	loadActorAnim2(_roomVar.love3.activeCrewman, anim, -1, -1, 1);
+	Common::String anim = _vm->getCrewmanAnimFilename(_roomVar.love.activeCrewman, "usehe");
+	loadActorAnim2(_roomVar.love.activeCrewman, anim, -1, -1, 1);
 }
 
 void Room::love3OpenedOrClosedServicePanel() {

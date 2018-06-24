@@ -51,9 +51,9 @@ void Room::love5Tick1() {
 	else
 		loadActorAnim(OBJECT_PREAX, "s3r6r2", 0x116, 0xba);
 
-	if (_vm->_awayMission.love.field2c)
+	if (_vm->_awayMission.love.releasedHumanLaughingGas)
 		_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
-	if (_vm->_awayMission.love.field2d)
+	if (_vm->_awayMission.love.releasedRomulanLaughingGas)
 		_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
 	_vm->_awayMission.timers[2] = 200;
 }
@@ -232,13 +232,13 @@ void Room::love5EndMission() {
 	if (!_vm->_awayMission.redshirtDead) {
 		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_S;
 		walkCrewmanC(OBJECT_REDSHIRT, 0x69, 0xae, &Room::love5CrewmanReachedBeamoutPosition);
-		_roomVar.love5.numCrewmenReadyToBeamOut--;
+		_roomVar.love.numCrewmenReadyToBeamOut--;
 	}
 }
 
 void Room::love5CrewmanReachedBeamoutPosition() {
-	_roomVar.love5.numCrewmenReadyToBeamOut++;
-	if (_roomVar.love5.numCrewmenReadyToBeamOut == 3) {
+	_roomVar.love.numCrewmenReadyToBeamOut++;
+	if (_roomVar.love.numCrewmenReadyToBeamOut == 3) {
 		_vm->_awayMission.love.missionScore += 17;
 		endMission(_vm->_awayMission.love.missionScore, 0x2c, 0);
 	}
