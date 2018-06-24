@@ -32,6 +32,7 @@
 #include "engines/stark/gfx/renderentry.h"
 
 #include "engines/stark/resources/location.h"
+#include "engines/stark/resources/item.h"
 
 namespace Stark {
 
@@ -151,7 +152,7 @@ void DialogScreen::onRender() {
 }
 
 void DialogScreen::loadIndex() {
-	static const uint space = 4;
+	static const int space = 4;
 
 	freeLogTitleWidgets();
 	freeChapterTitleTexts();
@@ -159,8 +160,8 @@ void DialogScreen::loadIndex() {
 	_startTitleIndex = _nextTitleIndex;
 
 	Common::Point pos = _indexFrame->getPosition();
-	uint bottom = _indexFrame->getText()->getTargetHeight() + pos.y;
-	uint height;
+	int bottom = _indexFrame->getText()->getTargetHeight() + pos.y;
+	int height;
 	ChapterTitleText *chapterTitleText;
 	DialogTitleWidget *dialogTitleWidget;
 
@@ -179,6 +180,8 @@ void DialogScreen::loadIndex() {
 		}
 
 		if (pos.y + height > bottom) {
+			delete dialogTitleWidget;
+			delete chapterTitleText;
 			break;
 		}
 
@@ -207,16 +210,16 @@ void DialogScreen::loadIndex() {
 }
 
 void DialogScreen::loadDialog() {
-	static const uint space = 16;
+	static const int space = 16;
 
 	freeDialogLineTexts();
 
 	_startLineIndex = _nextLineIndex;
 
 	Common::Point pos = _logFrame->getPosition();
-	uint boxWidth = _logFrame->getText()->getTargetWidth();
-	uint bottom = _logFrame->getText()->getTargetHeight() + pos.y;
-	uint height;
+	int boxWidth = _logFrame->getText()->getTargetWidth();
+	int bottom = _logFrame->getText()->getTargetHeight() + pos.y;
+	int height;
 	DialogLineText *dialogLineText;
 
 	Diary::ConversationLog dialog = StarkDiary->getDialog(_curLogIndex);
@@ -228,6 +231,7 @@ void DialogScreen::loadDialog() {
 		height = dialogLineText->getHeight();
 
 		if (pos.y + height + space > bottom) {
+			delete dialogLineText;
 			break;
 		}
 
@@ -324,7 +328,7 @@ DialogLineText::DialogLineText(Gfx::Driver *gfx, uint logIndex, uint lineIndex, 
 	Common::String name = StarkGlobal->getCharacterName(logLine.characterId);
 	name.toUppercase();
 
-	uint color = name == "APRIL" ? _textColorApril : _textColorNormal;
+	uint color = logLine.characterId == StarkGlobal->getApril()->getCharacterIndex() ? _textColorApril : _textColorNormal;
 
 	_nameText.setText(name);
 	_nameText.setColor(color);

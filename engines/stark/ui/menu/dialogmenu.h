@@ -33,7 +33,7 @@ class ChapterTitleText;
 class DialogLineText;
 
 /**
- * The coversation log menu
+ * The conversation log menu
  */
 class DialogScreen : public StaticLocationScreen {
 public:
