@@ -637,16 +637,7 @@ void Mechanical::o_elevatorTopMovie(uint16 var, const ArgumentsArray &args) {
 }
 
 void Mechanical::o_fortressRotationSetPosition(uint16 var, const ArgumentsArray &args) {
-	VideoEntryPtr gears = _fortressRotationGears->getVideo();
-	uint32 moviePosition = Audio::Timestamp(gears->getTime(), 600).totalNumberOfFrames();
-
-	// Myst ME short movie workaround, explained in o_fortressRotation_init
-	if (_fortressRotationShortMovieWorkaround) {
-		moviePosition += 3600 * _fortressRotationShortMovieCount;
-	}
-
-	_fortressDirection = (moviePosition + 900) / 1800 % 4;
-
+	// The fortress direction is already set in fortressRotation_run() so we don't do it here
 	// Stop the gears video so that it does not play while the elevator is going up
 	_fortressRotationGears->getVideo()->stop();
 }
