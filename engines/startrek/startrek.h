@@ -92,6 +92,7 @@ struct SavegameMetadata {
 
 const int MAX_MENUBUTTONS = 32;
 const int TEXTBOX_WIDTH = 26;
+const int TEXT_CHARS_PER_LINE = TEXTBOX_WIDTH - 2;
 const int MAX_TEXTBOX_LINES = 12;
 
 const int MAX_BUFFERED_WALK_ACTIONS = 32;
@@ -312,6 +313,7 @@ private:
 public:
 	const char *getNextTextLine(const char *text, char *line, int lineWidth);
 
+	String centerTextboxHeader(String headerText);
 	void getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex);
 	String readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput);
 	String readTextFromBuffer(int choiceIndex, uintptr data, String *headerTextOutput);
@@ -332,6 +334,7 @@ public:
 	String readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
 
 	String readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput);
+	String readTextFromArrayWithChoices(int choiceIndex, uintptr data, String *headerTextOutput);
 
 	// menu.cpp
 public:

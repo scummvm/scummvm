@@ -254,7 +254,7 @@ int Room::showRoomSpecificText(const char **array) {
 	Common::String speaker;
 	byte textColor;
 
-	if (array[0] != nullptr && array[0][0] != '\0') { // TODO
+	if (array[0] != nullptr && array[0][0] != '\0') {
 		speaker = Common::String(array[0]);
 		if (speaker.equalsIgnoreCase("Capt. Kirk"))
 			textColor = TEXTCOLOR_YELLOW;
@@ -276,7 +276,7 @@ int Room::showRoomSpecificText(const char **array) {
 	else
 		textColor = TEXTCOLOR_YELLOW;
 
-	return _vm->showText(&StarTrekEngine::readTextFromArray, (uintptr)array, 20, 20, textColor, true, false, false);
+	return _vm->showText(&StarTrekEngine::readTextFromArrayWithChoices, (uintptr)array, 20, 20, textColor, true, false, false);
 }
 
 int Room::showText(const TextRef *textIDs) {

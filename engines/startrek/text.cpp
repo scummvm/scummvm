@@ -48,7 +48,7 @@ const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, 
 
 		if (c == '\n') {
 			*lineOutput = '\0';
-			return text+1;
+			return text + 1;
 		}
 
 		if (c == ' ') {
@@ -59,8 +59,7 @@ const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, 
 		if (c == '\r') {
 			text++;
 			charIndex--;
-		}
-		else {
+		} else {
 			text++;
 			*(lineOutput++) = c;
 		}
@@ -82,7 +81,20 @@ const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, 
 
 	// In the middle of a word; must go back to the start of it
 	*lastSpaceOutput = '\0';
-	return lastSpaceInput+1;
+	return lastSpaceInput + 1;
+}
+
+String StarTrekEngine::centerTextboxHeader(String headerText) {
+	char text[TEXT_CHARS_PER_LINE + 1];
+	memset(text, ' ', sizeof(text));
+	text[TEXT_CHARS_PER_LINE] = '\0';
+
+	int strlen = headerText.size();
+	strlen = min(strlen, TEXT_CHARS_PER_LINE);
+
+	memcpy(text + (TEXT_CHARS_PER_LINE - strlen) / 2, headerText.c_str(), strlen);
+
+	return Common::String(text);
 }
 
 void StarTrekEngine::getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex) {
@@ -91,23 +103,20 @@ void StarTrekEngine::getTextboxHeader(String *headerTextOutput, String speakerTe
 	if (choiceIndex != 0)
 		header += String::format(" choice %d", choiceIndex);
 
-	if (header.size() > TEXTBOX_WIDTH-2)
-		header.erase(TEXTBOX_WIDTH-2);
-	while (header.size() < TEXTBOX_WIDTH-2)
-		header += ' ';
-
-	*headerTextOutput = header;
+	*headerTextOutput = centerTextboxHeader(speakerText);
 }
 
 /**
  * Text getter for showText which reads from an rdf file.
+ * Not really used, since it would require hardcoding text locations in RDF files.
+ * "readTextFromArrayWithChoices" replaces this.
  */
 String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput) {
 	SharedPtr<Room> room = getRoom();
 
 	int rdfVar = (size_t)data;
 
-	uint16 textOffset = room->readRdfWord(rdfVar + (choiceIndex+1)*2);
+	uint16 textOffset = room->readRdfWord(rdfVar + (choiceIndex + 1) * 2);
 
 	if (textOffset == 0)
 		return "";
@@ -118,8 +127,8 @@ String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *he
 			*headerTextOutput = "";
 		else {
 			char *speakerText = (char*)&room->_rdfData[speakerOffset];
-			if (room->readRdfWord(rdfVar+4) != 0) // Check if there's more than one option
-				getTextboxHeader(headerTextOutput, speakerText, choiceIndex+1);
+			if (room->readRdfWord(rdfVar + 4) != 0) // Check if there's more than one option
+				getTextboxHeader(headerTextOutput, speakerText, choiceIndex + 1);
 			else
 				getTextboxHeader(headerTextOutput, speakerText, 0);
 		}
@@ -132,10 +141,8 @@ String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *he
  * Shows text with the given header and main text.
  */
 void StarTrekEngine::showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines) {
-	if (!headerText.empty()) {
-		while (headerText.size() < TEXTBOX_WIDTH - 2)
-			headerText += ' ';
-	}
+	if (!headerText.empty())
+		headerText = centerTextboxHeader(headerText);
 
 	int actionParam = (maxTextLines < 0 ? 0 : maxTextLines);
 
@@ -262,8 +269,7 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 		_gfx->delSprite(&textboxSprite);
 
 		// TODO
-	}
-	else {
+	} else {
 		loadMenuButtons("textbtns", xoffset + 0x96, yoffset - 0x11);
 
 		Common::Point oldMousePos = _gfx->getMousePos();
@@ -373,8 +379,7 @@ readjustScroll:
 				choiceIndex--;
 				if (!loopChoices && choiceIndex == 0) {
 					disableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
-				}
-				else {
+				} else {
 					if (choiceIndex < 0)
 						choiceIndex = numChoices-1;
 				}
@@ -386,8 +391,7 @@ readjustScroll:
 				choiceIndex++;
 				if (!loopChoices && choiceIndex == numChoices-1) {
 					disableMenuButtons(1 << TEXTBUTTON_NEXTCHOICE);
-				}
-				else {
+				} else {
 					choiceIndex %= numChoices;
 				}
 				goto reloadText;
@@ -397,8 +401,7 @@ reloadText:
 				lineFormattedText = readLineFormattedText(textGetter, var, choiceIndex, textBitmap, numTextboxLines, &numTextLines);
 				if (numTextLines <= numTextboxLines) {
 					setVisibleMenuButtons((1 << TEXTBUTTON_CONFIRM) | (1 << TEXTBUTTON_PREVCHOICE) | (1 << TEXTBUTTON_NEXTCHOICE));
-				}
-				else {
+				} else {
 					setVisibleMenuButtons((1 << TEXTBUTTON_CONFIRM) | (1 << TEXTBUTTON_SCROLLUP) | (1 << TEXTBUTTON_SCROLLDOWN)| (1 << TEXTBUTTON_PREVCHOICE) | (1 << TEXTBUTTON_NEXTCHOICE));
 				}
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
@@ -563,19 +566,19 @@ void StarTrekEngine::drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines
 		numTextLines = numTextboxLines;
 
 	if (withHeader)
-		dest += TEXTBOX_WIDTH*2; // Start of 4th row
+		dest += TEXTBOX_WIDTH * 2; // Start of 4th row
 
 	int lineIndex = 0;
 	while (lineIndex != numTextLines) {
-		memcpy(dest, text, TEXTBOX_WIDTH-2);
-		text += TEXTBOX_WIDTH-2;
+		memcpy(dest, text, TEXTBOX_WIDTH - 2);
+		text += TEXTBOX_WIDTH - 2;
 		dest += TEXTBOX_WIDTH;
 		lineIndex++;
 	}
 
 	// Fill all remaining blank lines
 	while (lineIndex != numTextboxLines) {
-		memset(dest, ' ', TEXTBOX_WIDTH-2);
+		memset(dest, ' ', TEXTBOX_WIDTH - 2);
 		dest += TEXTBOX_WIDTH;
 		lineIndex++;
 	}
@@ -590,12 +593,10 @@ String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr 
 		text = playTextAudio(text);
 		if (oldSize != text.size())
 			_textboxHasMultipleChoices = true;
-	}
-	else if ((_textDisplayMode == TEXTDISPLAY_WAIT || _textDisplayMode == TEXTDISPLAY_SUBTITLES)
+	} else if ((_textDisplayMode == TEXTDISPLAY_WAIT || _textDisplayMode == TEXTDISPLAY_SUBTITLES)
 			&& _sfxEnabled && _sfxWorking) {
 		text = playTextAudio(text);
-	}
-	else {
+	} else {
 		text = skipTextAudioPrompt(text);
 	}
 
@@ -607,11 +608,10 @@ String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr 
 		String lineFormattedText = putTextIntoLines(text);
 		drawMainText(textBitmap, *numTextLines, numTextboxLines, lineFormattedText, hasHeader);
 
-		memcpy(textBitmap->pixels+TEXTBOX_WIDTH+1, headerText.c_str(), headerText.size());
+		memcpy(textBitmap->pixels + TEXTBOX_WIDTH + 1, headerText.c_str(), headerText.size());
 
 		return lineFormattedText;
-	}
-	else
+	} else
 		return nullptr;
 
 	/* Barebones implementation
@@ -638,20 +638,43 @@ String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr 
  * Last element in the array must be an empty string.
  */
 String StarTrekEngine::readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput) {
-	const char **textArray = (const char**)data;
+	const char **textArray = (const char **)data;
 
 	const char *headerText = textArray[0];
-	const char *mainText = textArray[choiceIndex+1];
+	const char *mainText = textArray[choiceIndex + 1];
 
 	if (*mainText == '\0')
 		return Common::String(); // Technically should be nullptr...
 
 	if (headerText == nullptr)
 		*headerTextOutput = "";
-	else {
-		*headerTextOutput = headerText;
-		while (headerTextOutput->size() < TEXTBOX_WIDTH-2)
-			*headerTextOutput += ' ';
+	else
+		*headerTextOutput = centerTextboxHeader(headerText);
+	return String(mainText);
+}
+
+/**
+ * Similar to above, but shows the choice index when multiple choices are present.
+ * Effectively replaces the "readTextFromRdf" function.
+ */
+String StarTrekEngine::readTextFromArrayWithChoices(int choiceIndex, uintptr data, String *headerTextOutput) {
+	const char **textArray = (const char **)data;
+
+	const char *headerText = textArray[0];
+	const char *mainText = textArray[choiceIndex + 1];
+
+	if (*mainText == '\0')
+		return Common::String(); // Technically should be nullptr...
+
+	if (headerTextOutput != nullptr) {
+		if (headerText == nullptr || headerText[0] == '\0')
+			*headerTextOutput = "";
+		else {
+			if (textArray[2] != nullptr && textArray[2][0] != '\0') // More than one choice
+				getTextboxHeader(headerTextOutput, headerText, choiceIndex + 1);
+			else
+				getTextboxHeader(headerTextOutput, headerText, 0);
+		}
 	}
 	return String(mainText);
 }
