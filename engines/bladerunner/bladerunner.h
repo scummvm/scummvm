@@ -26,7 +26,9 @@
 #include "bladerunner/archive.h"
 
 #include "common/array.h"
+#include "common/cosinetables.h"
 #include "common/random.h"
+#include "common/sinetables.h"
 #include "common/stream.h"
 
 #include "engines/engine.h"
@@ -174,6 +176,9 @@ public:
 	Common::RandomSource _rnd;
 
 	Debugger *_debugger;
+
+	Common::CosineTable *_cosTable1024;
+	Common::SineTable   *_sinTable1024;
 
 	bool _isWalkingInterruptible;
 	bool _interruptWalking;

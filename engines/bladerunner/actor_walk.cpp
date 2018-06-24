@@ -194,10 +194,8 @@ bool ActorWalk::tick(int actorId, float stepDistance, bool inWalkLoop) {
 		}
 	}
 
-	float angle_rad = _facing / 512.0 * M_PI;
-
-	_current.x += stepDistance * sinf(angle_rad);
-	_current.z -= stepDistance * cosf(angle_rad);
+	_current.x += stepDistance * _vm->_sinTable1024->at(_facing);
+	_current.z -= stepDistance * _vm->_cosTable1024->at(_facing);
 	_current.y = _vm->_scene->_set->getAltitudeAtXZ(_current.x, _current.z, &walkboxFound);
 
 	return false;
@@ -309,8 +307,8 @@ bool ActorWalk::findNearestEmptyPosition(int actorId, const Vector3 &destination
 	out.z = 0.0f;
 
 	for (int facing = 0; facing < 1024; facing += 128) {
-		x = destination.x + sin_1024(facing) * dist;
-		z = destination.z - cos_1024(facing) * dist;
+		x = destination.x + _vm->_sinTable1024->at(facing) * dist;
+		z = destination.z - _vm->_cosTable1024->at(facing) * dist;
 		float distanceBetweenActorAndDestination = distance(x, z, _vm->_actors[actorId]->getX(), _vm->_actors[actorId]->getZ());
 
 		if (minDistance == -1.0f || minDistance > distanceBetweenActorAndDestination) {
@@ -323,15 +321,15 @@ bool ActorWalk::findNearestEmptyPosition(int actorId, const Vector3 &destination
 	int facingRight = facingToMinDistance;
 	int facing = -1024;
 	while (facing < 0) {
-		x = destination.x + sin_1024(facingRight) * dist;
-		z = destination.z - cos_1024(facingRight) * dist;
+		x = destination.x + _vm->_sinTable1024->at(facingRight) * dist;
+		z = destination.z - _vm->_cosTable1024->at(facingRight) * dist;
 
 		if (!_vm->_sceneObjects->existsOnXZ(actorId + kSceneObjectOffsetActors, x, z, true, true) && _vm->_scene->_set->findWalkbox(x, z) >= 0) {
 			break;
 		}
 
-		x = destination.x + sin_1024(facingLeft) * dist;
-		z = destination.z - cos_1024(facingLeft) * dist;
+		x = destination.x + _vm->_sinTable1024->at(facingLeft)  * dist;
+		z = destination.z - _vm->_cosTable1024->at(facingLeft) * dist;
 
 		if (!_vm->_sceneObjects->existsOnXZ(actorId + kSceneObjectOffsetActors, x, z, true, true) && _vm->_scene->_set->findWalkbox(x, z) >= 0) {
 			break;
