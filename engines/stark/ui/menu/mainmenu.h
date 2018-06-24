@@ -58,6 +58,18 @@ private:
 	void quitHandler();
 };
 
+/**
+ * The version info text
+ */
+class VersionInfoText : public StaticLocationWidget {
+public:
+	VersionInfoText();
+	virtual ~VersionInfoText() {}
+
+private:
+	static const int _copyrightSymbol = -87, _posX = 16, _posY = 419;
+};
+
 } // End of namespace Stark
 
 #endif // STARK_UI_MENU_MAIN_MENU_H

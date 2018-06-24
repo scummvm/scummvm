@@ -27,12 +27,9 @@
 #include "engines/stark/services/settings.h"
 
 #include "common/config-manager.h"
-#include "common/translation.h"
 
-#include "gui/saveload.h"
-#include "gui/message.h"
-
-#include "engines/engine.h"
+#include "engines/stark/gfx/renderentry.h"
+#include "engines/stark/visual/text.h"
 
 namespace Stark {
 
@@ -124,15 +121,7 @@ void MainMenuScreen::open() {
 			nullptr));
 	_widgets.back()->setVisible(false);
 	
-	_widgets.push_back(new StaticLocationWidget(
-			"VERSION INFO",
-			nullptr,
-			nullptr));
-	
-	_widgets.push_back(new StaticLocationWidget(
-			"VERSION INFO REALLY",
-			nullptr,
-			nullptr));
+	_widgets.push_back(new VersionInfoText());
 }
 
 template<MainMenuScreen::HelpTextIndex N>
@@ -183,6 +172,13 @@ void MainMenuScreen::settingsHandler() {
 
 void MainMenuScreen::quitHandler() {
 	StarkUserInterface->notifyShouldExit();
+}
+
+VersionInfoText::VersionInfoText() :
+		StaticLocationWidget("VERSION INFO REALLY", nullptr, nullptr) {
+	Common::String text = _copyrightSymbol + Common::String("1999 Funcom");
+	_renderEntry->getText()->setText(text);
+	_renderEntry->setPosition(Common::Point(_posX, _posY));
 }
 
 } // End of namespace Stark
