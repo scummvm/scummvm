@@ -347,7 +347,7 @@ public:
 	void setVisibleMenuButtons(uint32 bits);
 	void disableMenuButtons(uint32 bits);
 	void enableMenuButtons(uint32 bits);
-	int handleMenuEvents(uint32 ticksUntilClickingEnabled, bool arg4);
+	int handleMenuEvents(uint32 ticksUntilClickingEnabled, bool inTextbox);
 	void unloadMenuButtons();
 
 	void chooseMouseBitmapForAction(int action, bool withRedOutline);
