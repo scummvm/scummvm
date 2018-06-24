@@ -291,12 +291,11 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 
 		disableMenuButtons(1 << TEXTBUTTON_SCROLLUP); // Disable scroll up
 
-		if (ticksUntilClickingEnabled == 0) { // Disable done button
+		if (ticksUntilClickingEnabled != 0) // Disable done button
 			disableMenuButtons(1 << TEXTBUTTON_CONFIRM);
-		}
-		if (!loopChoices) { // Disable prev button
+
+		if (!loopChoices) // Disable prev button
 			disableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
-		}
 
 		bool doneShowingText = false;
 
@@ -304,9 +303,8 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 		while (!doneShowingText) {
 			int textboxReturnCode = handleMenuEvents(ticksUntilClickingEnabled, true);
 
-			if (ticksUntilClickingEnabled == 0) {
+			if (ticksUntilClickingEnabled != 0)
 				enableMenuButtons(1 << TEXTBUTTON_CONFIRM);
-			}
 
 			switch(textboxReturnCode) {
 
