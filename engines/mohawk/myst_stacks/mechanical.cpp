@@ -815,15 +815,6 @@ void Mechanical::o_fortressRotation_init(uint16 var, const ArgumentsArray &args)
 
 	VideoEntryPtr gears = _fortressRotationGears->playMovie();
 	gears->setLooping(true);
-	gears->seek(Audio::Timestamp(0, 1800 * _fortressDirection, 600));
-	gears->setRate(0);
-
-	_fortressRotationSounds[0] = args[0];
-	_fortressRotationSounds[1] = args[1];
-	_fortressRotationSounds[2] = args[2];
-	_fortressRotationSounds[3] = args[3];
-
-	_fortressRotationBrake = 0;
 
 	// WORKAROUND for the tower rotation bug in Myst ME.
 	// The original engine only allowed to visit two out of the three small islands,
@@ -835,11 +826,24 @@ void Mechanical::o_fortressRotation_init(uint16 var, const ArgumentsArray &args)
 	// looped and adding that time to the current movie position.
 	// Hence allowing the fortress position to be properly computed.
 	uint32 movieDuration = gears->getDuration().convertToFramerate(600).totalNumberOfFrames();
-	if (movieDuration == 3680) {
-		_fortressRotationShortMovieWorkaround = true;
-		_fortressRotationShortMovieCount = 0;
-		_fortressRotationShortMovieLast = 0;
+	_fortressRotationShortMovieWorkaround = movieDuration == 3680;
+
+	if (!_fortressRotationShortMovieWorkaround) {
+		gears->seek(Audio::Timestamp(0, 1800 * _fortressDirection, 600));
+	} else {
+		_fortressRotationShortMovieLast = 1800 * (_fortressDirection % 2);
+		_fortressRotationShortMovieCount = _fortressDirection >= 2 ? 1 : 0;
+		gears->seek(Audio::Timestamp(0, _fortressRotationShortMovieLast, 600));
 	}
+
+	gears->setRate(0);
+
+	_fortressRotationSounds[0] = args[0];
+	_fortressRotationSounds[1] = args[1];
+	_fortressRotationSounds[2] = args[2];
+	_fortressRotationSounds[3] = args[3];
+
+	_fortressRotationBrake = 0;
 
 	_fortressRotationRunning = true;
 	_gearsWereRunning = false;
