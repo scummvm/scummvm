@@ -49,7 +49,7 @@ public:
 
 	void execute(uint nextItemIndex, bool loadingSave);
 
-	bool isConflictsWith(SequenceContext *context);
+	bool isConflictingWith(SequenceContext *context);
 
 	void clearDefaultActions();
 
