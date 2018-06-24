@@ -83,6 +83,7 @@ private:
 	void freeLogTitleWidgets();
 	void freeChapterTitleTexts();
 	void freeDialogLineTexts();
+	void freeResources();
 };
 
 /**

@@ -49,7 +49,7 @@ DialogScreen::DialogScreen(Gfx::Driver *gfx, Cursor *cursor) :
 }
 
 DialogScreen::~DialogScreen() {
-	freeChapterTitleTexts();
+	freeResources();
 }
 
 void DialogScreen::open() {
@@ -111,11 +111,15 @@ void DialogScreen::open() {
 }
 
 void DialogScreen::close() {
+	freeResources();
+	StaticLocationScreen::close();
+}
+
+void DialogScreen::freeResources() {
 	freeChapterTitleTexts();
 	freeDialogLineTexts();
 	_prevTitleIndexStack.clear();
 	_prevLineIndexStack.clear();
-	StaticLocationScreen::close();
 }
 
 void DialogScreen::onScreenChanged() {
