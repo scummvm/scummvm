@@ -720,6 +720,14 @@ uint getSizeNextPOT(uint size) {
 		screenHeight = MAX(_renderBufferWidth, _renderBufferHeight);
 	}
 
+	if (_keyboardView == nil) {
+		_keyboardView = [[SoftKeyboard alloc] initWithFrame:CGRectZero];
+		[_keyboardView setInputDelegate:self];
+		[self addSubview:[_keyboardView inputView]];
+		[self addSubview: _keyboardView];
+		[_keyboardView showKeyboard];
+	}
+
 	glBindRenderbuffer(GL_RENDERBUFFER, _viewRenderbuffer); printOpenGLError();
 
 	[self clearColorBuffer];
@@ -761,8 +769,6 @@ uint getSizeNextPOT(uint size) {
 			yOffset = (screenHeight - rectHeight) / 2;
 		}
 
-		[_keyboardView hideKeyboard];
-
 		//printf("Rect: %i, %i, %i, %i\n", xOffset, yOffset, rectWidth, rectHeight);
 		_gameScreenRect = CGRectMake(xOffset, yOffset, rectWidth, rectHeight);
 		overlayPortraitRatio = 1.0f;
@@ -772,15 +778,6 @@ uint getSizeNextPOT(uint size) {
 		//printf("Making rect (%u, %u)\n", screenWidth, height);
 		_gameScreenRect = CGRectMake(0, 0, screenWidth, height);
 
-		CGRect keyFrame = CGRectMake(0.0f, 0.0f, 0.0f, 0.0f);
-		if (_keyboardView == nil) {
-			_keyboardView = [[SoftKeyboard alloc] initWithFrame:keyFrame];
-			[_keyboardView setInputDelegate:self];
-			[self addSubview:[_keyboardView inputView]];
-			[self addSubview: _keyboardView];
-		}
-
-		[_keyboardView showKeyboard];
 		overlayPortraitRatio = (_videoContext.overlayHeight * ratio) / _videoContext.overlayWidth;
 	}
 	_overlayRect = CGRectMake(0, 0, screenWidth, screenHeight * overlayPortraitRatio);
@@ -981,7 +978,11 @@ uint getSizeNextPOT(uint size) {
 }
 
 - (void)handleKeyPress:(unichar)c {
-	[self addEvent:InternalEvent(kInputKeyPressed, c, 0)];
+	if (c == '`') {
+		[self addEvent:InternalEvent(kInputKeyPressed, '\E', 0)];
+	} else {
+		[self addEvent:InternalEvent(kInputKeyPressed, c, 0)];
+	}
 }
 
 - (void)applicationSuspend {
