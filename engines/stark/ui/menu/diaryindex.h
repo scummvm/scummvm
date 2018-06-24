@@ -46,6 +46,7 @@ private:
 	void loadHandler();
 	void saveHandler();
 	void diaryHandler();
+	void dialogHandler();
 	void quitHandler();
 
 	static const uint32 _textColorHovered = 0xFF961E1E;

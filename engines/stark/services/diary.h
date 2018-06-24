@@ -42,6 +42,24 @@ class ResourceSerializer;
  */
 class Diary {
 public:
+	struct ConversationLogLine {
+		Common::String line;
+		int32 characterId;
+
+		ConversationLogLine();
+	};
+
+	struct ConversationLog {
+		Common::String title;
+		Common::String characterName;
+		int32 characterId;
+		int32 chapter;
+		bool dialogActive;
+		Common::Array<ConversationLogLine> lines;
+
+		ConversationLog();
+	};
+
 	Diary();
 	virtual ~Diary();
 
@@ -66,12 +84,16 @@ public:
 
 	/** Get info of added FMV entries */
 	uint countFMV() const { return _fmvEntries.size(); }
-	Common::String &getFMVFilename(uint index) { return _fmvEntries[index].filename; }
-	Common::String &getFMVTitle(uint index) { return _fmvEntries[index].title; }
+	const Common::String &getFMVFilename(uint index) const { return _fmvEntries[index].filename; }
+	const Common::String &getFMVTitle(uint index) const { return _fmvEntries[index].title; }
 
 	/** Get info of added Diary entries */
 	uint countDiary() const { return _diaryEntries.size(); }
-	Common::String &getDiary(uint index) { return _diaryEntries[index]; }
+	const Common::String &getDiary(uint index) const { return _diaryEntries[index]; }
+
+	/** Get added Dialog entries */
+	uint countDialog() const { return _conversationEntries.size(); }
+	const ConversationLog &getDialog(uint index) const { return _conversationEntries[index]; }
 
 	/** Start recording speech lines for a dialog */
 	void openDialog(const Common::String &title, const Common::String &characterName, int32 characterId);
@@ -96,24 +118,6 @@ private:
 		Common::String filename;
 		Common::String title;
 		int gameDisc;
-	};
-
-	struct ConversationLogLine {
-		Common::String line;
-		int32 characterId;
-
-		ConversationLogLine();
-	};
-
-	struct ConversationLog {
-		Common::String title;
-		Common::String characterName;
-		int32 characterId;
-		int32 chapter;
-		bool dialogActive;
-		Common::Array<ConversationLogLine> lines;
-
-		ConversationLog();
 	};
 
 	bool hasFMVEntry(const Common::String &filename) const;

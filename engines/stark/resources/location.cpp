@@ -530,5 +530,15 @@ Layer *Location::getLayerByName(const Common::String &name) {
 	return nullptr;
 }
 
+Gfx::RenderEntry *Location::getRenderEntryByName(const Common::String &name) {
+	Gfx::RenderEntryArray renderEntries = listRenderEntries();
+	for (uint i = 0; i < renderEntries.size(); ++i) {
+		if (renderEntries[i]->getName().equalsIgnoreCase(name)) {
+			return renderEntries[i];
+		}
+	}
+	return nullptr;
+}
+
 } // End of namespace Resources
 } // End of namespace Stark

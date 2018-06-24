@@ -92,7 +92,7 @@ void StaticLocationScreen::onMouseMove(const Common::Point &pos) {
 	// The first widget is always the background. It is ignored below.
 
 	if (newHoveredWidget != _hoveredWidgetIndex) {
-		if (_hoveredWidgetIndex > 0) {
+		if (_hoveredWidgetIndex > 0 && _hoveredWidgetIndex < _widgets.size()) {
 			_widgets[_hoveredWidgetIndex]->onMouseLeave();
 		}
 
@@ -139,16 +139,9 @@ StaticLocationWidget::StaticLocationWidget(const char *renderEntryName, WidgetOn
 		_soundMouseEnter(nullptr),
 		_soundMouseClick(nullptr),
 		_visible(true) {
-	Resources::Location *location = StarkStaticProvider->getLocation();
-
 	if (renderEntryName) {
-		Gfx::RenderEntryArray renderEntries = location->listRenderEntries();
-		for (uint i = 0; i < renderEntries.size(); i++) {
-			if (renderEntries[i]->getName().equalsIgnoreCase(renderEntryName)) {
-				_renderEntry = renderEntries[i];
-				break;
-			}
-		}
+		Resources::Location *location = StarkStaticProvider->getLocation();
+		_renderEntry = location->getRenderEntryByName(renderEntryName);
 
 		if (_renderEntry == nullptr) {
 			debug("Unable to find render entry with name '%s' in location '%s'", renderEntryName, location->getName().c_str());

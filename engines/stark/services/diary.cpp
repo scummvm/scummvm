@@ -169,6 +169,6 @@ Diary::ConversationLog::ConversationLog() :
 
 Diary::ConversationLogLine::ConversationLogLine() :
 		characterId(0) {
-
 }
+
 } // End of namespace Stark

@@ -27,6 +27,9 @@
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/knowledgeset.h"
 
+#include "gui/debugger.h"
+#include "engines/engine.h"
+
 namespace Stark {
 
 Global::Global() :
@@ -52,18 +55,24 @@ void Global::setCurrentChapter(int32 value) {
 }
 
 void Global::printInventory(bool printAll) {
+	// Assume that this function is only called by the debug console
 	Common::Array<Resources::Item*> inventoryItems = _inventory->listChildren<Resources::Item>(Resources::Item::kItemInventory);
 	Common::Array<Resources::Item*>::iterator it = inventoryItems.begin();
 	for (int i = 0; it != inventoryItems.end(); ++it, i++) {
 		if (printAll || (*it)->isEnabled()) {
-			warning("Item %d: %s", i, (*it)->getName().c_str());
+			g_engine->getDebugger()->debugPrintf("Item %d: %s\n", i, (*it)->getName().c_str());
 		}
 	}
 }
 
 void Global::enableInventoryItem(int32 num) {
 	Common::Array<Resources::Item*> inventoryItems = _inventory->listChildren<Resources::Item>(Resources::Item::kItemInventory);
-	inventoryItems[num]->setEnabled(true);
+	if (num >= 0 && num <= inventoryItems.size()) {
+		inventoryItems[num]->setEnabled(true);
+	} else {
+		// Assume that only being called by the debug console will cause the cheking failed
+		g_engine->getDebugger()->debugPrintf("Invalid index %d, only %d indices available\n", num, inventoryItems.size());
+	}
 }
 
 Common::String Global::getCharacterName(int32 id) {
