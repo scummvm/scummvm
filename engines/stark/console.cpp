@@ -116,55 +116,32 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 }
 
 bool Console::Cmd_DumpRoot(int argc, const char **argv) {
-	Resources::Root *root = StarkGlobal->getRoot();
-	if (root) {
-		root->print();
-	} else {
-		debugPrintf("The global root has not been loaded\n");
-	}
+	StarkGlobal->getRoot()->print();
 
 	return true;
 }
 
 bool Console::Cmd_DumpGlobal(int argc, const char **argv) {
-	Resources::Level *level = StarkGlobal->getLevel();
-	if (level) {
-		level->print();
-	} else {
-		debugPrintf("The global level has not been loaded\n");
-	}
+	StarkGlobal->getLevel()->print();
 
 	return true;
 }
 
 bool Console::Cmd_DumpStatic(int argc, const char **argv) {
-	// Static resources are initialized in the beginning of the running
 	StarkStaticProvider->getLevel()->print();
 
 	return true;
 }
 
 bool Console::Cmd_DumpLevel(int argc, const char **argv) {
-	Current *current = StarkGlobal->getCurrent();
-	if (current) {
-		current->getLevel()->print();
-	} else {
-		debugPrintf("Game levels have not been loaded\n");
-	}
+	StarkGlobal->getCurrent()->getLevel()->print();
 
 	return true;
 }
 
 bool Console::Cmd_DumpKnowledge(int argc, const char **argv) {
-	Current *current = StarkGlobal->getCurrent();
-
-	if (!current) {
-		debugPrintf("Game levels have not been loaded\n");
-		return true;
-	}
-
-	Resources::Level *level = current->getLevel();
-	Resources::Location *location = current->getLocation();
+	Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
+	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
 	Common::Array<Resources::Knowledge *> knowledge = level->listChildrenRecursive<Resources::Knowledge>();
 	knowledge.insert_at(knowledge.size(), location->listChildrenRecursive<Resources::Knowledge>());
 	Common::Array<Resources::Knowledge *>::iterator it;
@@ -175,13 +152,6 @@ bool Console::Cmd_DumpKnowledge(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ChangeKnowledge(int argc, const char **argv) {
-	Current *current = StarkGlobal->getCurrent();
-
-	if (!current) {
-		debugPrintf("Game levels have not been loaded\n");
-		return true;
-	}
-
 	uint index = 0;
 	char type = 0;
 
@@ -189,8 +159,8 @@ bool Console::Cmd_ChangeKnowledge(int argc, const char **argv) {
 		index = atoi(argv[1]);
 		type = argv[2][0];
 		if (type == 'b' || type == 'i') {
-			Resources::Level *level = current->getLevel();
-			Resources::Location *location = current->getLocation();
+			Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
+			Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
 			Common::Array<Resources::Knowledge *> knowledgeArr = level->listChildrenRecursive<Resources::Knowledge>();
 			knowledgeArr.insert_at(knowledgeArr.size(), location->listChildrenRecursive<Resources::Knowledge>());
 			if (index < knowledgeArr.size() ) {
@@ -230,12 +200,6 @@ Common::Array<Resources::Script *> Console::listAllLocationScripts() const {
 }
 
 bool Console::Cmd_ListScripts(int argc, const char **argv) {
-	Current *current = StarkGlobal->getCurrent();
-	if (!current) {
-		debugPrintf("Game levels have not been loaded\n");
-		return true;
-	}
-
 	Common::Array<Resources::Script *> scripts = listAllLocationScripts();
 
 	for (uint i = 0; i < scripts.size(); i++) {
@@ -260,12 +224,6 @@ bool Console::Cmd_ListScripts(int argc, const char **argv) {
 }
 
 bool Console::Cmd_EnableScript(int argc, const char **argv) {
-	Current *current = StarkGlobal->getCurrent();
-	if (!current) {
-		debugPrintf("Game levels have not been loaded\n");
-		return true;
-	}
-
 	uint index = 0;
 
 	if (argc >= 2) {
@@ -295,12 +253,6 @@ bool Console::Cmd_EnableScript(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ForceScript(int argc, const char **argv) {
-	Current *current = StarkGlobal->getCurrent();
-	if (!current) {
-		debugPrintf("Game levels have not been loaded\n");
-		return true;
-	}
-
 	uint index = 0;
 
 	if (argc >= 2) {
@@ -327,12 +279,6 @@ bool Console::Cmd_ForceScript(int argc, const char **argv) {
 }
 
 bool Console::Cmd_DecompileScript(int argc, const char **argv) {
-	Current *current = StarkGlobal->getCurrent();
-	if (!current) {
-		debugPrintf("Game levels have not been loaded\n");
-		return true;
-	}
-
 	if (argc >= 2) {
 		uint index = atoi(argv[1]);
 
@@ -454,44 +400,27 @@ void Console::decompileScriptChildren(Resources::Object *level) {
 bool Console::Cmd_DumpLocation(int argc, const char **argv) {
 	if (StarkStaticProvider->isStaticLocation()) {
 		StarkStaticProvider->getLocation()->print();
-		return true;
-	}
-
-	Current *current = StarkGlobal->getCurrent();
-	if (current) {
-		current->getLocation()->print();
 	} else {
-		debugPrintf("Locations have not been loaded\n");
+		StarkGlobal->getCurrent()->getLocation()->print();
 	}
 
 	return true;
 }
 
 bool Console::Cmd_ListInventory(int argc, const char **argv) {
-	if (StarkGlobal->getInventory()) {
-		StarkGlobal->printInventory(argc != 2);
-	} else {
-		debugPrintf("The inventory has not been loaded\n");
-	}
+	StarkGlobal->printInventory(argc != 2);
 
 	return true;
 }
 
 bool Console::Cmd_EnableInventoryItem(int argc, const char **argv) {
-	if (!StarkGlobal->getInventory()) {
-		debugPrintf("The inventory has not been loaded\n");
-		return true;
-	}
-
 	if (argc != 2) {
 		debugPrintf("Enable a specific inventory item. Use listInventory to get an id\n");
 		debugPrintf("Usage :\n");
 		debugPrintf("enableInventoryItem [id]\n");
 		return true;
 	}
-
 	StarkGlobal->enableInventoryItem(atoi(argv[1]));
-
 	return true;
 }
 
@@ -542,11 +471,6 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
-	if (!StarkGlobal->getRoot()) {
-		debugPrintf("The global root has not been loaded\n");
-		return true;
-	}
-
 	if (argc != 3) {
 		debugPrintf("Change the current location. Use listLocations to get ids\n");
 		debugPrintf("Usage :\n");
@@ -557,57 +481,12 @@ bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
 	uint levelIndex = strtol(argv[1] , nullptr, 16);
 	uint locationIndex = strtol(argv[2] , nullptr, 16);
 
-	bool isIndicesValid = true;
+	StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
 
-	// Temporarily replace the global archive loader
-	ArchiveLoader *archiveLoader = new ArchiveLoader();
-	ArchiveLoader *gameArchiveLoader = StarkArchiveLoader;
-	StarkArchiveLoader = archiveLoader;
-
-	archiveLoader->load("x.xarc");
-	Resources::Root *root = archiveLoader->useRoot<Resources::Root>("x.xarc");
-
-	// Assert the level index
-	Resources::Level *level = root->findChildWithIndex<Resources::Level>(levelIndex);
-	if (!level) {
-		debugPrintf("Invalid level index %d, only %d indices available\n", levelIndex,
-				root->listChildren<Resources::Level>().size());
-		isIndicesValid = false;
-	}
-
-	// Load locations archives
-	Common::String levelArchive = archiveLoader->buildArchiveName(level);
-	archiveLoader->load(levelArchive);
-	level = archiveLoader->useRoot<Resources::Level>(levelArchive);
-
-	// Assert the location index
-	Resources::Location *location = level->findChildWithIndex<Resources::Location>(locationIndex);
-	if (!location) {
-		debugPrintf("Invalid location index %d, only %d indices available\n", locationIndex,
-				level->listChildren<Resources::Location>().size());
-		isIndicesValid = false;
-	}
-
-	// Restore the global archive loader
-	archiveLoader->returnRoot(levelArchive);
-	archiveLoader->unloadUnused();
-	StarkArchiveLoader = gameArchiveLoader;
-	delete archiveLoader;
-
-	if (isIndicesValid) {
-		StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
-		return false;
-	}
-
-	return true;
+	return false;
 }
 
 bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
-	if (!StarkGlobal->getLevel()) {
-		debugPrintf("The global level has not been loaded\n");
-		return true;
-	}
-
 	if (argc != 2) {
 		debugPrintf("Change the current chapter\n");
 		debugPrintf("Usage :\n");
@@ -623,13 +502,6 @@ bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Location(int argc, const char **argv) {
-	Current *current = StarkGlobal->getCurrent();
-
-	if (!current) {
-		debugPrintf("Game levels have not been loaded\n");
-		return true;
-	}
-
 	if (argc != 1) {
 		debugPrintf("Display the current location\n");
 		debugPrintf("Usage :\n");
@@ -637,17 +509,14 @@ bool Console::Cmd_Location(int argc, const char **argv) {
 		return true;
 	}
 
+	Current *current = StarkGlobal->getCurrent();
+
 	debugPrintf("location: %02x %02x\n", current->getLevel()->getIndex(), current->getLocation()->getIndex());
 
 	return true;
 }
 
 bool Console::Cmd_Chapter(int argc, const char **argv) {
-	if (!StarkGlobal->getLevel()) {
-		debugPrintf("The global level has not been loaded\n");
-		return true;
-	}
-
 	if (argc != 1) {
 		debugPrintf("Display the current chapter\n");
 		debugPrintf("Usage :\n");

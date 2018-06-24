@@ -61,12 +61,10 @@ public:
 	/** Build a save file name for the specified target and slot */
 	static Common::String formatSaveName(const char *target, int slot);
 
-	// Engine API
-	GUI::Debugger *getDebugger() override { return (GUI::Debugger *)_console; }
-
 protected:
 	// Engine APIs
 	Common::Error run() override;
+	GUI::Debugger *getDebugger() override { return (GUI::Debugger *)_console; }
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
