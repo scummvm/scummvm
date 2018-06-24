@@ -622,9 +622,8 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 					positionChange.z = positionChange.z * _actorSpeed.z;
 				}
 
-				float angle = _facing * (M_PI / 512.0f);
-				float sinx = sin(angle);
-				float cosx = cos(angle);
+				float sinx = _vm->_sinTable1024->at(_facing);
+				float cosx = _vm->_cosTable1024->at(_facing);
 
 				float originalX = _position.x;
 				float originalY = _position.y;
@@ -1183,8 +1182,8 @@ bool Actor::walkFindU1(const Vector3 &startPosition, const Vector3 &targetPositi
 	int facing2 = facing;
 	int facing3 = 0;
 	while (true) {
-		float rotatedX = targetPosition.x + size * sin_1024(facing);
-		float rotatedZ = targetPosition.z - size * cos_1024(facing);
+		float rotatedX = targetPosition.x + size * _vm->_sinTable1024->at(facing);
+		float rotatedZ = targetPosition.z - size * _vm->_cosTable1024->at(facing);
 
 		if (!_walkInfo->isXYZEmpty(rotatedX, targetPosition.y, rotatedZ, _id)) {
 			if (_vm->_scene->_set->findWalkbox(rotatedX, rotatedZ) >= 0) {
@@ -1201,8 +1200,8 @@ bool Actor::walkFindU1(const Vector3 &startPosition, const Vector3 &targetPositi
 			facing3 += 20;
 		}
 
-		rotatedX = size * sin_1024(facing2) + targetPosition.x;
-		rotatedZ = size * cos_1024(facing2) + targetPosition.z;
+		rotatedX = size * _vm->_sinTable1024->at(facing2) + targetPosition.x;
+		rotatedZ = size * _vm->_cosTable1024->at(facing2) + targetPosition.z;
 
 		if (!_walkInfo->isXYZEmpty(rotatedX, targetPosition.y, rotatedZ, _id)) {
 			if (_vm->_scene->_set->findWalkbox(rotatedX, rotatedZ) >= 0) {

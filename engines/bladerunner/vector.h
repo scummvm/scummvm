@@ -148,14 +148,6 @@ inline float distance(const Vector3 &v1, const Vector3 &v2) {
 	return distance(v1.x, v1.z, v2.x, v2.z);
 }
 
-inline float cos_1024(int angle1024) {
-	return cos(angle1024 * (M_PI / 512.0f));
-}
-
-inline float sin_1024(int angle1024) {
-	return sin(angle1024 * (M_PI / 512.0f));
-}
-
 inline bool lineIntersection(Vector2 a1, Vector2 a2, Vector2 b1, Vector2 b2, Vector2 *intersection) {
 	Vector2 s1(a2.x - a1.x, a2.y - a1.y);
 	Vector2 s2(b2.x - b1.x, b2.y - b1.y);
