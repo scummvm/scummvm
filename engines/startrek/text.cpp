@@ -207,7 +207,7 @@ String StarTrekEngine::playTextAudio(const String &str) {
 
 /**
  * @param rclickCancelsChoice   If true, right-clicks return "-1" as choice instead of
- *                              whetever was selected.
+ *                              whatever was selected.
  */
 int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, bool rclickCancelsChoice) {
 	int16 tmpTextDisplayMode = _textDisplayMode;

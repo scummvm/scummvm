@@ -542,6 +542,8 @@ void Graphics::drawAllSprites(bool updateScreen) {
 		_vm->_system->copyRectToScreen((byte *)surface.getPixels() + offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
 	}
 
+	surface.free();
+
 	if (updateScreen) {
 		// Check if there are any pending updates to the mouse.
 		if (_mouseBitmap != _mouseBitmapLastFrame) {
