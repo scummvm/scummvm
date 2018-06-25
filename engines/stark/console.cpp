@@ -29,6 +29,8 @@
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/root.h"
 #include "engines/stark/resources/script.h"
+#include "engines/stark/resources/knowledgeset.h"
+#include "engines/stark/resources/item.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
@@ -468,17 +470,29 @@ bool Console::Cmd_DumpLocation(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ListInventory(int argc, const char **argv) {
-	if (StarkGlobal->getInventory()) {
-		StarkGlobal->printInventory(argc != 2);
-	} else {
+	Resources::KnowledgeSet *inventory = StarkGlobal->getInventory();
+
+	if (!inventory) {
 		debugPrintf("The inventory has not been loaded\n");
+		return true;
+	}
+
+	bool printAll = argc != 2;
+	Common::Array<Resources::Item*> inventoryItems = inventory->listChildren<Resources::Item>(Resources::Item::kItemInventory);
+	Common::Array<Resources::Item*>::iterator it = inventoryItems.begin();
+	for (int i = 0; it != inventoryItems.end(); ++it, i++) {
+		if (printAll || (*it)->isEnabled()) {
+			debugPrintf("Item %d: %s\n", i, (*it)->getName().c_str());
+		}
 	}
 
 	return true;
 }
 
 bool Console::Cmd_EnableInventoryItem(int argc, const char **argv) {
-	if (!StarkGlobal->getInventory()) {
+	Resources::KnowledgeSet *inventory = StarkGlobal->getInventory();
+
+	if (!inventory) {
 		debugPrintf("The inventory has not been loaded\n");
 		return true;
 	}
@@ -490,7 +504,13 @@ bool Console::Cmd_EnableInventoryItem(int argc, const char **argv) {
 		return true;
 	}
 
-	StarkGlobal->enableInventoryItem(atoi(argv[1]));
+	uint num = atoi(argv[1]);
+	Common::Array<Resources::Item*> inventoryItems = inventory->listChildren<Resources::Item>(Resources::Item::kItemInventory);
+	if (num < inventoryItems.size()) {
+		inventoryItems[num]->setEnabled(true);
+	} else {
+		debugPrintf("Invalid index %d, only %d indices available\n", num, inventoryItems.size());
+	}
 
 	return true;
 }
