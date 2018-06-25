@@ -328,9 +328,9 @@ void Room::love1GetFromNozzle() {
 
 void Room::love1KirkReachedNozzleToGet() {
 	if (_vm->_awayMission.love.bottleInNozzle == 0)
-		loadActorAnim2(OBJECT_KIRK, "kusemn", -1, -1, 11);
-	else
 		showText(TX_LOV1N011);
+	else
+		loadActorAnim2(OBJECT_KIRK, "kusemn", -1, -1, 11);
 }
 
 void Room::love1KirkGotBottleFromNozzle() {
@@ -463,7 +463,7 @@ void Room::love1UseDishesOnChamber() {
 
 void Room::love1KirkReachedChamberToPut() {
 	if (_vm->_awayMission.love.chamberHasDish)
-		showText(TX_LOV1_014); // TODO: test
+		showText(TX_SPEAKER_MCCOY, TX_LOV1_014); // TODO: test
 	else {
 		loadActorAnim(OBJECT_CHAMBER, "s3r2d5", 0xb4, 0x75, 1);
 		playSoundEffectIndex(SND_DOOR1);

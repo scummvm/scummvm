@@ -148,6 +148,7 @@ void Room::loveaFinishedCuringSpock() {
 	showText(TX_SPEAKER_SPOCK, TX_LOV5_038);
 	showText(TX_SPEAKER_MCCOY, TX_LOV5_027);
 	showText(TX_SPEAKER_SPOCK, TX_LOV5C001);
+	_vm->_awayMission.love.spockCured = true;
 }
 
 
