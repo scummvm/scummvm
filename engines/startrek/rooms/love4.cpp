@@ -236,7 +236,7 @@ void Room::love4MccoyCuredRomulan1() {
 
 	showText(TX_LOV4N005);
 	if (!_roomVar.love.gaveWaterToRomulans)
-		showText(TX_LOV4_023);
+		showText(TX_SPEAKER_MCCOY, TX_LOV4_023);
 
 	_vm->_awayMission.disableInput = false;
 }

@@ -355,7 +355,7 @@ checkSelectedAction:
 			}
 			else if (_awayMission.activeAction == ACTION_LOOK)
 				showInventoryIcons(false);
-			else if (_awayMission.activeAction == ACTION_USE && (_awayMission.crewDownBitset & 1) == 0)
+			else if (_awayMission.activeAction == ACTION_USE && (_awayMission.crewDownBitset & (1 << OBJECT_KIRK)) == 0)
 				showInventoryIcons(true);
 			break;
 
@@ -411,7 +411,6 @@ checkSelectedAction:
 				hideInventoryIcons();
 				_awayMission.activeAction = ACTION_LOOK;
 				goto checkSelectedAction;
-
 
 			default:
 				break;
