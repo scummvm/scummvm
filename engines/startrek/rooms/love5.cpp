@@ -56,6 +56,9 @@ void Room::love5Tick1() {
 	if (_vm->_awayMission.love.releasedRomulanLaughingGas)
 		_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
 	_vm->_awayMission.timers[2] = 200;
+
+	_roomVar.love.cmnXPosToCureSpock = 0x89;
+	_roomVar.love.cmnXPosToCureSpock = 0xb9;
 }
 
 void Room::love5TouchedWarp1() {
