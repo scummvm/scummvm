@@ -1238,7 +1238,7 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 }
 
 /**
- * Return true if an object is unselectable with use?
+ * Return true if an object is unselectable with the given action?
  */
 bool StarTrekEngine::isObjectUnusable(int object, int action) {
 	if (action == ACTION_LOOK)
