@@ -164,6 +164,7 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 
 void StarTrekEngine::handleAwayMissionEvents() {
 	TrekEvent event;
+	int clickedObject = -1;
 
 	if (popNextEvent(&event)) {
 		switch (event.type) {
@@ -184,6 +185,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			break;
 
 		case TREKEVENT_LBUTTONDOWN:
+lclick:
 			if (_awayMission.disableInput)
 				break;
 
@@ -196,7 +198,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				_mccoyActor->sprite.drawMode = 1;
 				_redshirtActor->sprite.drawMode = 1;
 
-				int clickedObject = findObjectAt(_gfx->getMousePos());
+				clickedObject = findObjectAt(_gfx->getMousePos());
 
 				_kirkActor->sprite.drawMode = 0;
 				_spockActor->sprite.drawMode = 0;
@@ -223,12 +225,13 @@ void StarTrekEngine::handleAwayMissionEvents() {
 					break;
 				}
 
-				int clickedObject = findObjectAt(_gfx->getMousePos());
+				clickedObject = findObjectAt(_gfx->getMousePos());
 				hideInventoryIcons();
 
 				if (clickedObject == OBJECT_INVENTORY_ICON) {
 					clickedObject = showInventoryMenu(50, 50, false);
 
+useInventory:
 					// -1 means "clicked on something unknown"; -2 means "clicked on
 					// nothing". In the case of the inventory, either one clicks on an
 					// inventory item, or no action is performed.
@@ -295,12 +298,13 @@ checkShowInventory:
 			case ACTION_GET:
 			case ACTION_LOOK:
 			case ACTION_TALK: {
-				int clickedObject = findObjectAt(_gfx->getMousePos());
-				// if (!sub_23611(clickedObject, _awayMission.activeAction)) // TODO
-				{
+				clickedObject = findObjectAt(_gfx->getMousePos());
+				if (!isObjectUnusable(clickedObject, _awayMission.activeAction)) {
 					hideInventoryIcons();
+
 					if (clickedObject == OBJECT_INVENTORY_ICON) {
 						clickedObject = showInventoryMenu(50, 50, false);
+lookInventory:
 						if (clickedObject == -1)
 							clickedObject = -2;
 					}
@@ -325,14 +329,17 @@ checkShowInventory:
 		case TREKEVENT_MOUSEMOVE:
 			break;
 
-		case TREKEVENT_RBUTTONDOWN: // TODO: also triggered by key press?
+		case TREKEVENT_RBUTTONDOWN:
+rclick:
 			if (_awayMission.disableInput)
 				break;
 			hideInventoryIcons();
 			playSoundEffectIndex(0x07);
 			_awayMission.activeAction = showActionMenu();
+
+checkSelectedAction:
 			if (_awayMission.activeAction == ACTION_USE) {
-				int16 clickedObject = selectObjectForUseAction();
+				clickedObject = selectObjectForUseAction();
 				if (clickedObject == -1)
 					break;
 				else
@@ -352,7 +359,63 @@ checkShowInventory:
 				showInventoryIcons(true);
 			break;
 
-		case TREKEVENT_KEYDOWN: // TODO
+		case TREKEVENT_KEYDOWN:
+			if (_awayMission.disableInput)
+				break;
+
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
+			case Common::KEYCODE_SPACE:
+			case Common::KEYCODE_F2:
+				goto rclick;
+
+			case Common::KEYCODE_w:
+				hideInventoryIcons();
+				_awayMission.activeAction = ACTION_WALK;
+				break;
+
+			case Common::KEYCODE_t:
+				hideInventoryIcons();
+				_awayMission.activeAction = ACTION_TALK;
+				goto checkSelectedAction;
+
+			case Common::KEYCODE_u:
+				hideInventoryIcons();
+				_awayMission.activeAction = ACTION_USE;
+				goto checkSelectedAction;
+
+			case Common::KEYCODE_i:
+				if (_awayMission.activeAction == ACTION_USE) {
+					hideInventoryIcons();
+					clickedObject = showInventoryMenu(50, 50, true);
+					goto useInventory;
+				}
+				else if (_awayMission.activeAction == ACTION_LOOK) {
+					hideInventoryIcons();
+					clickedObject = showInventoryMenu(50, 50, true);
+					goto lookInventory;
+				}
+				break;
+
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+			case Common::KEYCODE_F1:
+				goto lclick;
+
+			case Common::KEYCODE_g:
+				hideInventoryIcons();
+				_awayMission.activeAction = ACTION_GET;
+				goto checkSelectedAction;
+
+			case Common::KEYCODE_l:
+				hideInventoryIcons();
+				_awayMission.activeAction = ACTION_LOOK;
+				goto checkSelectedAction;
+
+
+			default:
+				break;
+			}
 			break;
 
 		default:
