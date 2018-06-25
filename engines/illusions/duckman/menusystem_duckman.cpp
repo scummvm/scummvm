@@ -87,8 +87,10 @@ BaseMenu *DuckmanMenuSystem::createMenuById(int menuId) {
 		return createOptionsMenu();
 	case kDuckmanDebugPauseMenu:
 		return createDebugPauseMenu();
-		case kDuckmanAddRemoveInventoryMenu:
-			return createAddRemoveInventoryMenu();
+	case kDuckmanAddRemoveInventoryMenu:
+		return createAddRemoveInventoryMenu();
+	case kDuckmanLoadGameFailedMenu:
+		return createLoadGameFailedMenu();
 	default:
 		error("DuckmanMenuSystem::createMenuById() Invalid menu id %d", menuId);
 	}
@@ -106,6 +108,15 @@ BaseMenu *DuckmanMenuSystem::createMainMenu() {
 BaseMenu *DuckmanMenuSystem::createLoadGameMenu() {
 	return 0; // TODO
 }
+
+BaseMenu *DuckmanMenuSystem::createLoadGameFailedMenu() {
+	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 0);
+	menu->addText("Load Game Failed");
+	menu->addText("-------------------");
+	menu->addMenuItem(new MenuItem("Continue", new MenuActionReturnChoice(this, 1)));
+	return menu;
+}
+
 
 MenuItem *DuckmanMenuSystem::createOptionsSliderMenuItem(MenuActionUpdateSlider **action, const Common::String &text, SliderActionType type, BaseMenu *baseMenu) {
 	int sliderValue = 0;
@@ -261,8 +272,10 @@ int DuckmanMenuSystem::convertRootMenuId(uint32 menuId) {
 		return kDuckmanSaveCompleteMenu;
 	/*
 	case 0x180006: // save game failed menu
-	case 0x180007: // load game failed menu
 	*/
+	case 0x180007: // load game failed menu
+		return kDuckmanLoadGameFailedMenu;
+
 	/* TODO CHECKME Another pause menu?
 	case 0x180008:
 		menuData = &g_menuDataPause;

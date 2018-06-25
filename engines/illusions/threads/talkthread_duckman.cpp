@@ -206,7 +206,7 @@ int TalkThread_Duckman::onUpdate() {
 void TalkThread_Duckman::onPause() {
 	if (_status == 5) {
 		if (!(_flags & 4)) {
-			// TODO audvocPauseVoice();
+			_vm->_soundMan->pauseVoice(true);
 		}
 		if (!(_flags & 8))
 			_textDurationElapsed = getDurationElapsed(_textStartTime, _textEndTime);
@@ -220,7 +220,7 @@ void TalkThread_Duckman::onUnpause() {
 			_vm->_soundMan->cueVoice((char*)talkEntry->_voiceName);
 	} else if (_status == 5) {
 		if (!(_flags & 4)) {
-			// TODO audvocUnpauseVoice();
+			_vm->_soundMan->pauseVoice(false);
 		}
 		if (!(_flags & 8)) {
 			_textStartTime = getCurrentTime();

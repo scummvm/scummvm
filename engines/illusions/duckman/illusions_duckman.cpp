@@ -1238,6 +1238,10 @@ void IllusionsEngine_Duckman::playTriggerCauseSound(uint32 verbId, uint32 object
 }
 
 bool IllusionsEngine_Duckman::loadSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
+	if (_savegameSlotNum < 0) {
+		return false; // TODO need to handle reset from new game (without exising savegame).
+	}
+
 	const char *fileName = getSavegameFilename(_savegameSlotNum);
 	bool success = loadgame(fileName);
 	if (success)

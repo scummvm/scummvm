@@ -76,6 +76,7 @@ public:
 	bool cue(const char *voiceName);
 	void stopCueing();
 	void start(int16 volume, int16 pan);
+	void pause(bool paused);
 	void stop();
 	bool isPlaying();
 	bool isEnabled();
@@ -129,6 +130,7 @@ public:
 	void stopCueingVoice();
 	void startVoice(int16 volume, int16 pan);
 	void stopVoice();
+	void pauseVoice(bool paused);
 	bool isVoicePlaying();
 	bool isVoiceEnabled();
 	bool isVoiceCued();
