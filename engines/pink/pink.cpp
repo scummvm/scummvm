@@ -341,9 +341,7 @@ Common::String generateSaveName(int slot, const char *gameId) {
 }
 
 bool readSaveHeader(Common::InSaveFile &in, SaveStateDescriptor &desc) {
-	char pink[4];
-	in.read(&pink, 4);
-	if (strcmp(pink, "pink"))
+	if (in.readUint32BE() != MKTAG('p', 'i', 'n', 'k'))
 		return false;
 
 	const Common::String description = in.readPascalString();
