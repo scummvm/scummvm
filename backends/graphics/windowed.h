@@ -120,8 +120,11 @@ protected:
 		x = CLIP<int>(x, sourceX, sourceMaxX);
 		y = CLIP<int>(y, sourceY, sourceMaxY);
 
-		return Common::Point(((x - sourceX) * targetWidth + sourceWidth / 2) / sourceWidth,
-		                     ((y - sourceY) * targetHeight + sourceHeight / 2) / sourceHeight);
+		int virtualX = ((x - sourceX) * targetWidth + sourceWidth / 2) / sourceWidth;
+		int virtualY = ((y - sourceY) * targetHeight + sourceHeight / 2) / sourceHeight;
+
+		return Common::Point(CLIP<int>(virtualX, 0, targetWidth - 1),
+				             CLIP<int>(virtualY, 0, targetHeight - 1));
 	}
 
 	/**
