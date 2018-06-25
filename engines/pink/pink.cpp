@@ -261,7 +261,7 @@ void PinkEngine::setCursor(uint cursorIndex) {
 }
 
 Common::Error PinkEngine::loadGameState(int slot) {
-	Common::SeekableReadStream *in = _saveFileMan->openForLoading(generateSaveName(slot, _desc.gameId));
+	Common::SeekableReadStream *in = _saveFileMan->openForLoading(generateSaveName(slot, _targetName.c_str()));
 	if (!in)
 		return Common::kNoGameDataFoundError;
 
@@ -284,7 +284,7 @@ bool PinkEngine::canLoadGameStateCurrently() {
 }
 
 Common::Error PinkEngine::saveGameState(int slot, const Common::String &desc) {
-	Common::OutSaveFile *out = _saveFileMan->openForSaving(generateSaveName(slot, _desc.gameId));
+	Common::OutSaveFile *out = _saveFileMan->openForSaving(generateSaveName(slot, _targetName.c_str()));
 	if (!out)
 		return Common::kUnknownError;
 
