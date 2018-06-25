@@ -37,6 +37,7 @@ namespace Illusions {
 	enum {
 	kDuckmanMainMenu,
 	kDuckmanLoadGameMenu,
+	kDuckmanLoadGameFailedMenu,
 	kDuckmanOptionsMenu,
 	kDuckmanPauseMenu,
 	kDuckmanDebugMenu,
@@ -66,6 +67,7 @@ public://protected:
 	BaseMenu *createMenuById(int menuId);
 	BaseMenu *createMainMenu();
 	BaseMenu *createLoadGameMenu();
+	BaseMenu *createLoadGameFailedMenu();
 	BaseMenu *createOptionsMenu();
 	BaseMenu *createPauseMenu();
 	BaseMenu *createQueryRestartMenu();

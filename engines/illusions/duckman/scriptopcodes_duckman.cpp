@@ -672,7 +672,6 @@ void ScriptOpcodes_Duckman::opDisplayMenu(ScriptThread *scriptThread, OpCall &op
 }
 
 void ScriptOpcodes_Duckman::opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall) {
-	//_vm->_menuChoiceOfs = 156; // DEBUG Chose "Start game"
 	opCall._deltaOfs += _vm->_menuChoiceOfs;
 }
 

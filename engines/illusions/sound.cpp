@@ -211,6 +211,12 @@ bool VoicePlayer::isCued() {
 	return _voiceStatus == 2;
 }
 
+void VoicePlayer::pause(bool paused) {
+	if(isPlaying()) {
+		g_system->getMixer()->pauseHandle(_soundHandle, paused);
+	}
+}
+
 // Sound
 
 Sound::Sound(uint32 soundEffectId, uint32 soundGroupId, bool looping)
@@ -302,6 +308,10 @@ void SoundMan::startVoice(int16 volume, int16 pan) {
 
 void SoundMan::stopVoice() {
 	_voicePlayer->stop();
+}
+
+void SoundMan::pauseVoice(bool paused) {
+	_voicePlayer->pause(paused);
 }
 
 bool SoundMan::isVoicePlaying() {
