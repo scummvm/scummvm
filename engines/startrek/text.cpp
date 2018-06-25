@@ -103,7 +103,7 @@ void StarTrekEngine::getTextboxHeader(String *headerTextOutput, String speakerTe
 	if (choiceIndex != 0)
 		header += String::format(" choice %d", choiceIndex);
 
-	*headerTextOutput = centerTextboxHeader(speakerText);
+	*headerTextOutput = centerTextboxHeader(header);
 }
 
 /**
