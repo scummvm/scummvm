@@ -33,11 +33,13 @@
 namespace StarTrek {
 
 void Room::love0Tick1() {
+	// BUGFIX: moved this out of the if statement below.
+	playVoc("LOV0LOOP");
+
 	if (!_vm->_awayMission.love.alreadyStartedMission) {
 		_vm->_awayMission.love.canister1 = CANTYPE_O2;
 		_vm->_awayMission.love.canister2 = CANTYPE_H2;
 		_vm->_awayMission.love.alreadyStartedMission = true;
-		playVoc("LOV0LOOP"); // FIXME: no audio after first entry?
 	}
 
 	if (_vm->_awayMission.love.releasedHumanLaughingGas)
@@ -48,6 +50,7 @@ void Room::love0Tick1() {
 
 	loadActorAnim(OBJECT_DOOR2, "s3r0d2a", 0xe6, 0x80, 0);
 	loadActorAnim(OBJECT_DOOR1, "s3r0d1a", 0x123, 0x8d, 0);
+
 	_roomVar.love.cmnXPosToCureSpock = 0xf4;
 	_roomVar.love.cmnYPosToCureSpock = 0x8f;
 }
