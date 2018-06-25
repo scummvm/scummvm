@@ -47,7 +47,6 @@ enum {
 
 MPEGPSDecoder::MPEGPSDecoder() {
 	_stream = 0;
-	memset(_psmESType, 0, 256);
 }
 
 MPEGPSDecoder::~MPEGPSDecoder() {
@@ -75,8 +74,6 @@ void MPEGPSDecoder::close() {
 	_stream = 0;
 
 	_streamMap.clear();
-
-	memset(_psmESType, 0, 256);
 }
 
 MPEGPSDecoder::MPEGStream *MPEGPSDecoder::getStream(uint32 startCode, Common::SeekableReadStream *packet) {
@@ -376,12 +373,9 @@ void MPEGPSDecoder::parseProgramStreamMap(int length) {
 	int esMapLength = _stream->readUint16BE();
 
 	while (esMapLength >= 4) {
-		byte type = _stream->readByte();
-		byte esID = _stream->readByte();
+		_stream->readByte(); // type
+		_stream->readByte(); // esID
 		uint16 esInfoLength = _stream->readUint16BE();
-
-		// Remember mapping from stream id to stream type
-		_psmESType[esID] = type;
 
 		// Skip program stream info
 		_stream->skip(esInfoLength);
