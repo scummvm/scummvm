@@ -503,38 +503,19 @@ bool MohawkEngine_Riven::checkDatafiles() {
 }
 
 Common::String MohawkEngine_Riven::getLanguageDatafile(char prefix) const {
-	const char *language = nullptr;
-	switch (getLanguage()) {
-	case Common::FR_FRA:
-		language = "french";
-		break;
-	case Common::DE_DEU:
-		language = "german";
-		break;
-	case Common::IT_ITA:
-		language = "italian";
-		break;
-	case Common::JA_JPN:
-		language = "japanese";
-		break;
-	case Common::PL_POL:
-		language = "polish";
-		break;
-	case Common::RU_RUS:
-		language = "russian";
-		break;
-	case Common::ES_ESP:
-		language = "spanish";
-		break;
-	default:
-		break;
-	}
+	if (!(getFeatures() & GF_25TH) || getLanguage() == Common::EN_ANY)
+		return "";
 
-	if (!language) {
+	if (!Common::String(_gameDescription->desc.filesDescriptions[1].fileName).hasPrefix("a_data_")) {
+		warning("Malformed 25th Anniversary Riven entry");
+
 		return "";
 	}
 
-	return Common::String::format("%c_data_%s.mhk", prefix, language);
+	const char *fname = _gameDescription->desc.filesDescriptions[1].fileName;
+	Common::String language(&fname[7], strlen(fname) - 7 - 4);
+
+	return Common::String::format("%c_data_%s.mhk", prefix, language.c_str());
 }
 
 RivenStack *MohawkEngine_Riven::constructStackById(uint16 id) {

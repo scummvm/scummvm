@@ -46,14 +46,6 @@
 
 namespace Mohawk {
 
-struct MohawkGameDescription {
-	ADGameDescription desc;
-
-	uint8 gameType;
-	uint32 features;
-	const char *appName;
-};
-
 const char* MohawkEngine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
