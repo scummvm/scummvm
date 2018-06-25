@@ -554,52 +554,19 @@ bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
 		return true;
 	}
 
+	// Assert indices
+	Common::String xarcFileName = Common::String::format("%s/%s/%s.xarc", argv[1], argv[2], argv[2]);
+	if (!Common::File::exists(xarcFileName)) {
+		debugPrintf("Invalid location indices %s %s\n", argv[1], argv[2]);
+		return true;
+	}
+
 	uint levelIndex = strtol(argv[1] , nullptr, 16);
 	uint locationIndex = strtol(argv[2] , nullptr, 16);
 
-	bool isIndicesValid = true;
+	StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
 
-	// Temporarily replace the global archive loader
-	ArchiveLoader *archiveLoader = new ArchiveLoader();
-	ArchiveLoader *gameArchiveLoader = StarkArchiveLoader;
-	StarkArchiveLoader = archiveLoader;
-
-	archiveLoader->load("x.xarc");
-	Resources::Root *root = archiveLoader->useRoot<Resources::Root>("x.xarc");
-
-	// Assert the level index
-	Resources::Level *level = root->findChildWithIndex<Resources::Level>(levelIndex);
-	if (!level) {
-		debugPrintf("Invalid level index %d, only %d indices available\n", levelIndex,
-				root->listChildren<Resources::Level>().size());
-		isIndicesValid = false;
-	}
-
-	// Load locations archives
-	Common::String levelArchive = archiveLoader->buildArchiveName(level);
-	archiveLoader->load(levelArchive);
-	level = archiveLoader->useRoot<Resources::Level>(levelArchive);
-
-	// Assert the location index
-	Resources::Location *location = level->findChildWithIndex<Resources::Location>(locationIndex);
-	if (!location) {
-		debugPrintf("Invalid location index %d, only %d indices available\n", locationIndex,
-				level->listChildren<Resources::Location>().size());
-		isIndicesValid = false;
-	}
-
-	// Restore the global archive loader
-	archiveLoader->returnRoot(levelArchive);
-	archiveLoader->unloadUnused();
-	StarkArchiveLoader = gameArchiveLoader;
-	delete archiveLoader;
-
-	if (isIndicesValid) {
-		StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
-		return false;
-	}
-
-	return true;
+	return false;
 }
 
 bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
