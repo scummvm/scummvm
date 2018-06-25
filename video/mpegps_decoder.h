@@ -164,7 +164,6 @@ private:
 	uint32 readPTS(int c);
 
 	void parseProgramStreamMap(int length);
-	byte _psmESType[256];
 
 	// A map from stream types to stream handlers
 	typedef Common::HashMap<int, MPEGStream *> StreamMap;
