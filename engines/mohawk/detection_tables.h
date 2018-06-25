@@ -647,8 +647,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 				// in the 25th anniversary edition, all the files sit in the same
 				// package. All the detection entries need to have the same amount
 				// of files to show in the detection results.
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", -1},
-				{ "a_data_french.mhk", 0, "ad7547ed7159a97be98a005f62862f85", -1},
+				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
+				{ "a_data_french.mhk", 0, "ad7547ed7159a97be98a005f62862f85", 7088579 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -668,8 +668,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"riven",
 			"25th Anniversary",
 			{
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", -1},
-				{ "a_data_french.mhk", 0, "ad7547ed7159a97be98a005f62862f85", -1},
+				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
+				{ "a_data_french.mhk", 0, "ad7547ed7159a97be98a005f62862f85", 7088579 },
 				AD_LISTEND
 			},
 			Common::FR_FRA,
@@ -689,8 +689,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"riven",
 			"25th Anniversary",
 			{
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", -1},
-				{ "a_data_german.mhk", 0, "5ebd301bd4bf6fd7667c4a46eebf6532", -1},
+				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
+				{ "a_data_german.mhk", 0, "5ebd301bd4bf6fd7667c4a46eebf6532", 7098655 },
 				AD_LISTEND
 			},
 			Common::DE_DEU,
@@ -710,8 +710,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"riven",
 			"25th Anniversary",
 			{
-				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", -1},
-				{ "a_data_italian.mhk", 0, "9d53b178510ce90f10b32ad3ca967d38", -1},
+				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
+				{ "a_data_italian.mhk", 0, "9d53b178510ce90f10b32ad3ca967d38", 6677740 },
 				AD_LISTEND
 			},
 			Common::IT_ITA,
@@ -731,8 +731,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"riven",
 			"25th Anniversary",
 			{
-				{ "a_data.mhk",          0, "08fcaa5d5a2a01d7a5a6960f497212fe", -1},
-				{ "a_data_japanese.mhk", 0, "bf43cf8af21fefc5a02881f7cfb68f52", -1},
+				{ "a_data.mhk",          0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
+				{ "a_data_japanese.mhk", 0, "bf43cf8af21fefc5a02881f7cfb68f52", 7237370 },
 				AD_LISTEND
 			},
 			Common::JA_JPN,
@@ -752,8 +752,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"riven",
 			"25th Anniversary",
 			{
-				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", -1},
-				{ "a_data_polish.mhk", 0, "5c7cd4b1a1a4c63cc670485816b0b5ec", -1},
+				{ "a_data.mhk",        0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
+				{ "a_data_polish.mhk", 0, "5c7cd4b1a1a4c63cc670485816b0b5ec", 14588293 },
 				AD_LISTEND
 			},
 			Common::PL_POL,
@@ -773,8 +773,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"riven",
 			"25th Anniversary",
 			{
-				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", -1},
-				{ "a_data_russian.mhk", 0, "76e12906637f5274bb6af8ab42871c25", -1},
+				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
+				{ "a_data_russian.mhk", 0, "76e12906637f5274bb6af8ab42871c25", 14349136 },
 				AD_LISTEND
 			},
 			Common::RU_RUS,
@@ -794,8 +794,8 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"riven",
 			"25th Anniversary",
 			{
-				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", -1},
-				{ "a_data_spanish.mhk", 0, "6226a3e1748e64962971b2f6536ef283", -1},
+				{ "a_data.mhk",         0, "08fcaa5d5a2a01d7a5a6960f497212fe", 10218888 },
+				{ "a_data_spanish.mhk", 0, "6226a3e1748e64962971b2f6536ef283", 8133297 },
 				AD_LISTEND
 			},
 			Common::ES_ESP,
