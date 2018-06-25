@@ -705,7 +705,7 @@ void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 
 /**
  * Updates any nonzero away mission timers, and invokes ACTION_TIMER_EXPIRED when any one
- * reached 0.
+ * reaches 0.
  */
 void StarTrekEngine::updateAwayMissionTimers() {
 	for (int i = 0; i < 8; i++) {

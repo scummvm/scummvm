@@ -418,7 +418,6 @@ exitMenu:
 			case Common::KEYCODE_SPACE:
 			case Common::KEYCODE_F2: // Exit menu without selecting anything
 				goto exitMenu;
-				goto exitMenu;
 
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
