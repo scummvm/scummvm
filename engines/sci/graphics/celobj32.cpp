@@ -33,6 +33,7 @@
 #include "sci/util.h"
 #include "graphics/larryScale.h"
 #include "common/config-manager.h"
+#include "common/gui_options.h"
 
 namespace Sci {
 #pragma mark CelScaler
@@ -202,7 +203,7 @@ struct SCALER_Scale {
 
 		const CelScalerTable &table = CelObj::_scaler->getScalerTable(scaleX, scaleY);
 
-		const bool useLarryScale = (g_sci->getGameId() == GID_LSL7) && ConfMan.getBool("enable_larryscale");
+		const bool useLarryScale = Common::checkGameGUIOption(GAMEOPTION_LARRYSCALE, ConfMan.get("guioptions")) && ConfMan.getBool("enable_larryscale");
 		if (useLarryScale) {
 			// LarryScale is an alternative, high-quality cel scaler implemented
 			// for ScummVM. Due to the nature of smooth upscaling, it does *not*
