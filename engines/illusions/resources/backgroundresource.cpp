@@ -468,9 +468,9 @@ void BackgroundInstance::initSurface() {
 		_surfaces[i] = _vm->_screen->allocSurface(bgInfo->_surfInfo);
 		drawTiles(_surfaces[i], bgInfo->_tileMap, bgInfo->_tilePixels);
 #if 0
-		if(_bgRes->_pathWalkRectsCount > 0) {
+		if (_bgRes->_pathWalkRectsCount > 0) {
 			PathLines *pl = _bgRes->_pathWalkRects->_rects;
-			for(int j=0;j < pl->size(); j++) {
+			for (int j=0; j < pl->size(); j++) {
 				PathLine pathLine = (*pl)[j];
 				debug(0, "walk path rect line[%d]. (%d,%d)->(%d,%d)", j, pathLine.p0.x, pathLine.p0.y, pathLine.p1.x, pathLine.p1.y);
 				_surfaces[i]->drawLine(pathLine.p0.x, pathLine.p0.y, pathLine.p1.x, pathLine.p1.y, 5);

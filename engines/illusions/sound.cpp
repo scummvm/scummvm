@@ -212,7 +212,7 @@ bool VoicePlayer::isCued() {
 }
 
 void VoicePlayer::pause(bool paused) {
-	if(isPlaying()) {
+	if (isPlaying()) {
 		g_system->getMixer()->pauseHandle(_soundHandle, paused);
 	}
 }

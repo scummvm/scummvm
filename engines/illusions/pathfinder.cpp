@@ -139,10 +139,10 @@ void PathFinder::findValidDestPt(Common::Point &destPt) {
 	for (uint i = 0; i < _walkRects->size(); ++i) {
 		PathLine currRect = (*_walkRects)[i];
 		//TODO fix this hack. Used here to get xmas tree scene to work.
-		if(currRect.p1.x > _screenRect.p1.x) {
+		if (currRect.p1.x > _screenRect.p1.x) {
 			currRect.p1.x = _screenRect.p1.x;
 		}
-		if(currRect.p0.x < _screenRect.p0.x) {
+		if (currRect.p0.x < _screenRect.p0.x) {
 			currRect.p0.x = _screenRect.p0.x;
 		}
 		WidthHeight rectDimensions = calcRectDimensions(currRect);

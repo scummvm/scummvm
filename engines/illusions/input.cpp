@@ -180,8 +180,8 @@ void Input::handleKey(Common::KeyCode key, int mouseButton, bool down) {
 	_newKeys = 0;
 	_newButtons = ~prevButtonStates & _buttonStates;
 
-	if ( !down && !isCheatModeActive() ) {
-		if( _cheatCodeIndex < 7 && key == kCheatCode[_cheatCodeIndex] ) {
+	if ( !down && !isCheatModeActive()) {
+		if ( _cheatCodeIndex < 7 && key == kCheatCode[_cheatCodeIndex]) {
 			_cheatCodeIndex++;
 		} else {
 			_cheatCodeIndex = 0;
