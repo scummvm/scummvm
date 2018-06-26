@@ -26,10 +26,12 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/settings.h"
 
-#include "common/config-manager.h"
-
 #include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/visual/text.h"
+
+#include "engines/stark/scene.h"
+
+#include "common/config-manager.h"
 
 namespace Stark {
 
@@ -69,7 +71,7 @@ void MainMenuScreen::open() {
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Box",
-			nullptr,
+			CLICK_HANDLER(MainMenuScreen, boxHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kBox>)));
 	_widgets.back()->setupSounds(0, 1);
 	
@@ -168,6 +170,15 @@ void MainMenuScreen::loadHandler() {
 
 void MainMenuScreen::settingsHandler() {
 	StarkUserInterface->changeScreen(Screen::kScreenSettingsMenu);
+}
+
+void MainMenuScreen::boxHandler() {
+	if (!StarkSettings->isDemo()) {
+		StarkUserInterface->changeScreen(kScreenGame);
+		StarkResourceProvider->initGlobal();
+		StarkScene->setFadeLevel(1.0f);
+		StarkResourceProvider->requestLocationChange(0x7c, 0x00);
+	}
 }
 
 void MainMenuScreen::quitHandler() {

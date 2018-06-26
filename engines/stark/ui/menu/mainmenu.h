@@ -55,6 +55,7 @@ private:
 	void loadHandler();
 	void creditsHandler();
 	void settingsHandler();
+	void boxHandler();
 	void quitHandler();
 };
 
