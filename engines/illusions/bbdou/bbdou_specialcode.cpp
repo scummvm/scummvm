@@ -60,7 +60,7 @@ CauseThread_BBDOU::CauseThread_BBDOU(IllusionsEngine_BBDOU *vm, uint32 threadId,
 	_sceneId(sceneId), _verbId(verbId), _objectId2(objectId2), _objectId(objectId) {
 	_type = kTTSpecialThread;
 }
-		
+
 void CauseThread_BBDOU::onNotify() {
 	_bbdou->_cursor->_data._causeThreadId1 = 0;
 	terminate();

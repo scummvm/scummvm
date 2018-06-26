@@ -771,9 +771,6 @@ PointArray *Control::createPath(Common::Point destPt) {
 	PathFinder pathFinder;
 	WidthHeight bgDimensions = _vm->_backgroundInstances->getMasterBgDimensions();
 	PointArray *path = pathFinder.findPath(_vm->_camera, _actor->_position, destPt, walkPoints, walkRects, bgDimensions);
-	for (uint i = 0; i < path->size(); ++i) {
-		//debug(0, "Path(%d) (%d, %d)", i, (*path)[i].x, (*path)[i].y);
-	}
 	return path;
 }
 
@@ -784,143 +781,140 @@ void Control::updateActorMovement(uint32 deltaTime) {
 	static const int16 kAngleTbl[] = {60, 0, 120, 0, 60, 0, 120, 0};
 	bool fastWalked = false;
 
-	while (1) {
+	do {
 
-	if (!fastWalked && _vm->testMainActorFastWalk(this)) {
-		fastWalked = true;
-		disappearActor();
-		_actor->_flags |= Illusions::ACTOR_FLAG_8000;
-		_actor->_seqCodeIp = 0;
-		deltaTime = 2;
-	}
-
-	if (_vm->testMainActorCollision(this))
-		break;
-
-	Common::Point prevPt;
-	if (_actor->_pathPointIndex == 0) {
-		if (_actor->_pathInitialPosFlag) {
-			_actor->_pathCtrX = 0;
-			_actor->_pathInitialPos = _actor->_position;
-			_actor->_pathInitialPosFlag = false;
-		}
-		prevPt = _actor->_pathInitialPos;
-	} else {
-		prevPt = (*_actor->_pathNode)[_actor->_pathPointIndex - 1];
-	}
-
-	Common::Point currPt = (*_actor->_pathNode)[_actor->_pathPointIndex];
-
-	int16 deltaX = currPt.x - prevPt.x;
-	int16 deltaY = currPt.y - prevPt.y;
-
-	if (!_actor->_pathFlag50) {
-
-		// TODO Move to own function
-		FP16 angle;
-		if (currPt.x == prevPt.x) {
-			if (prevPt.y >= currPt.y)
-				angle = fixedMul(-0x5A0000, 0x478);
-			else
-				angle = fixedMul(0x5A0000, 0x478);
-		} else {
-			angle = fixedAtan(fixedDiv(deltaY << 16, deltaX << 16));
-		}
-		_actor->_pathAngle = angle;
-
-		// TODO Move to own function
-		int16 v13 = (fixedTrunc(fixedMul(angle, 0x394BB8)) + 360) % 360;
-		if (deltaX >= 0)
-			v13 += 180;
-		v13 = (v13 + 90) % 360;
-		int16 v15 = kAngleTbl[0] / -2;
-		uint newFacing = 1;
-		for (uint i = 0; i < 8; ++i) {
-			v15 += kAngleTbl[i];
-			if (v13 < v15) {
-				newFacing = 1 << i;
-				break;
-			}
-		}
-		if (newFacing != _actor->_facing) {
-			refreshSequenceCode();
-			faceActor(newFacing);
+		if (!fastWalked && _vm->testMainActorFastWalk(this)) {
+			fastWalked = true;
+			disappearActor();
+			_actor->_flags |= Illusions::ACTOR_FLAG_8000;
+			_actor->_seqCodeIp = 0;
+			deltaTime = 2;
 		}
 
-		_actor->_pathFlag50 = true;
-
-	}
-
-	FP16 deltaX24, deltaY24;
-
-	if (_actor->_flags & Illusions::ACTOR_FLAG_400) {
-
-		FP16 v20 = fixedMul((deltaTime + _actor->_pathCtrX) << 16, _actor->_pathCtrY << 16);
-		FP16 v21 = fixedDiv(v20, 100 << 16);
-		FP16 v22 = fixedMul(v21, _actor->_scale << 16);
-		FP16 v23 = fixedDiv(v22, 100 << 16);
-		_actor->_seqCodeValue1 = 100 * _actor->_pathCtrY * deltaTime / 100;
-		if (v23) {
-			FP16 prevDistance = fixedDistance(prevPt.x << 16, prevPt.y << 16, _actor->_posXShl, _actor->_posYShl);
-			FP16 distance = prevDistance + v23;
-			if (prevPt.x > currPt.x)
-				distance = -distance;
-			deltaX24 = fixedMul(fixedCos(_actor->_pathAngle), distance);
-			deltaY24 = fixedMul(fixedSin(_actor->_pathAngle), distance);
-		} else {
-			deltaX24 = _actor->_posXShl - (prevPt.x << 16);
-			deltaY24 = _actor->_posYShl - (prevPt.y << 16);
-		}
-	} else {
-		if (100 * (int)deltaTime <= _actor->_seqCodeValue2)
+		if (_vm->testMainActorCollision(this))
 			break;
-		deltaX24 = deltaX << 16;
-		deltaY24 = deltaY << 16;
-	}
 
-	if (ABS(deltaX24) < ABS(deltaX << 16) ||
-		ABS(deltaY24) < ABS(deltaY << 16)) {
-		FP16 newX = (prevPt.x << 16) + deltaX24;
-		FP16 newY = (prevPt.y << 16) + deltaY24;
-		if (newX == _actor->_posXShl &&	newY == _actor->_posYShl) {
-			_actor->_pathCtrX += deltaTime;
+		Common::Point prevPt;
+		if (_actor->_pathPointIndex == 0) {
+			if (_actor->_pathInitialPosFlag) {
+				_actor->_pathCtrX = 0;
+				_actor->_pathInitialPos = _actor->_position;
+				_actor->_pathInitialPosFlag = false;
+			}
+			prevPt = _actor->_pathInitialPos;
 		} else {
-			_actor->_pathCtrX = 0;
-			_actor->_posXShl = newX;
-			_actor->_posYShl = newY;
-			_actor->_position.x = fixedTrunc(_actor->_posXShl);
-			_actor->_position.y = fixedTrunc(_actor->_posYShl);
+			prevPt = (*_actor->_pathNode)[_actor->_pathPointIndex - 1];
 		}
-	} else {
-		_actor->_position = currPt;
-		_actor->_posXShl = _actor->_position.x << 16;
-		_actor->_posYShl = _actor->_position.y << 16;
-		--_actor->_pathPointsCount;
-		++_actor->_pathPointIndex;
-		++_actor->_pathPoints;
-		_actor->_pathInitialPosFlag = true;
-		if (_actor->_pathPointsCount == 0) {
-			if (_actor->_flags & Illusions::ACTOR_FLAG_400) {
-				delete _actor->_pathNode;
-				_actor->_flags &= ~Illusions::ACTOR_FLAG_400;
+
+		Common::Point currPt = (*_actor->_pathNode)[_actor->_pathPointIndex];
+
+		int16 deltaX = currPt.x - prevPt.x;
+		int16 deltaY = currPt.y - prevPt.y;
+
+		if (!_actor->_pathFlag50) {
+
+			// TODO Move to own function
+			FixedPoint16 angle;
+			if (currPt.x == prevPt.x) {
+				if (prevPt.y >= currPt.y)
+					angle = fixedMul(-0x5A0000, 0x478);
+				else
+					angle = fixedMul(0x5A0000, 0x478);
+			} else {
+				angle = fixedAtan(fixedDiv(deltaY << 16, deltaX << 16));
 			}
-			_actor->_pathNode = 0;
-			_actor->_pathPoints = 0;
-			_actor->_pathPointsCount = 0;
-			_actor->_pathPointIndex = 0;
-			if (_actor->_notifyId3C) {
-				_vm->notifyThreadId(_actor->_notifyId3C);
-				_actor->_walkCallerThreadId1 = 0;
+			_actor->_pathAngle = angle;
+
+			// TODO Move to own function
+			int16 v13 = (fixedTrunc(fixedMul(angle, 0x394BB8)) + 360) % 360; // 0x394BB8 is 180 / pi
+			if (deltaX >= 0)
+				v13 += 180;
+			v13 = (v13 + 90) % 360;
+			int16 v15 = kAngleTbl[0] / -2;
+			uint newFacing = 1;
+			for (uint i = 0; i < 8; ++i) {
+				v15 += kAngleTbl[i];
+				if (v13 < v15) {
+					newFacing = 1 << i;
+					break;
+				}
 			}
-			fastWalked = false;
+			if (newFacing != _actor->_facing) {
+				refreshSequenceCode();
+				faceActor(newFacing);
+			}
+
+			_actor->_pathFlag50 = true;
+
 		}
-		_actor->_pathFlag50 = false;
-	}
 
-	if (!fastWalked)
-		break;
+		FixedPoint16 deltaX24, deltaY24;
 
-	}
+		if (_actor->_flags & Illusions::ACTOR_FLAG_400) {
+
+			FixedPoint16 v20 = fixedMul((deltaTime + _actor->_pathCtrX) << 16, _actor->_pathCtrY << 16);
+			FixedPoint16 v21 = fixedDiv(v20, 100 << 16);
+			FixedPoint16 v22 = fixedMul(v21, _actor->_scale << 16);
+			FixedPoint16 v23 = fixedDiv(v22, 100 << 16);
+			_actor->_seqCodeValue1 = 100 * _actor->_pathCtrY * deltaTime / 100;
+			if (v23) {
+				FixedPoint16 prevDistance = fixedDistance(prevPt.x << 16, prevPt.y << 16, _actor->_posXShl, _actor->_posYShl);
+				FixedPoint16 distance = prevDistance + v23;
+				if (prevPt.x > currPt.x)
+					distance = -distance;
+				deltaX24 = fixedMul(fixedCos(_actor->_pathAngle), distance);
+				deltaY24 = fixedMul(fixedSin(_actor->_pathAngle), distance);
+			} else {
+				deltaX24 = _actor->_posXShl - (prevPt.x << 16);
+				deltaY24 = _actor->_posYShl - (prevPt.y << 16);
+			}
+		} else {
+			if (100 * (int)deltaTime <= _actor->_seqCodeValue2)
+				break;
+			deltaX24 = deltaX << 16;
+			deltaY24 = deltaY << 16;
+		}
+
+		if (ABS(deltaX24) < ABS(deltaX << 16) ||
+			ABS(deltaY24) < ABS(deltaY << 16)) {
+			FixedPoint16 newX = (prevPt.x << 16) + deltaX24;
+			FixedPoint16 newY = (prevPt.y << 16) + deltaY24;
+			if (newX == _actor->_posXShl &&	newY == _actor->_posYShl) {
+				_actor->_pathCtrX += deltaTime;
+			} else {
+				_actor->_pathCtrX = 0;
+				_actor->_posXShl = newX;
+				_actor->_posYShl = newY;
+				_actor->_position.x = fixedTrunc(_actor->_posXShl);
+				_actor->_position.y = fixedTrunc(_actor->_posYShl);
+			}
+		} else {
+			_actor->_position = currPt;
+			_actor->_posXShl = _actor->_position.x << 16;
+			_actor->_posYShl = _actor->_position.y << 16;
+			--_actor->_pathPointsCount;
+			++_actor->_pathPointIndex;
+			++_actor->_pathPoints;
+			_actor->_pathInitialPosFlag = true;
+			if (_actor->_pathPointsCount == 0) {
+				if (_actor->_flags & Illusions::ACTOR_FLAG_400) {
+					delete _actor->_pathNode;
+					_actor->_flags &= ~Illusions::ACTOR_FLAG_400;
+				}
+				_actor->_pathNode = 0;
+				_actor->_pathPoints = 0;
+				_actor->_pathPointsCount = 0;
+				_actor->_pathPointIndex = 0;
+				if (_actor->_notifyId3C) {
+					_vm->notifyThreadId(_actor->_notifyId3C);
+					_actor->_walkCallerThreadId1 = 0;
+				}
+				fastWalked = false;
+			}
+			_actor->_pathFlag50 = false;
+		}
+
+	} while (fastWalked);
 
 }
 

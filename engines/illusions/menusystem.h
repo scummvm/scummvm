@@ -116,57 +116,57 @@ public:
 protected:
 	IllusionsEngine *_vm;
 	MenuStack _menuStack;
-	
+
 	uint32 _menuCallerThreadId;
-    bool _isTimeOutEnabled;
-    bool _isTimeOutReached;
-    uint32 _timeOutDuration;
-    uint _timeOutMenuChoiceIndex;
-    uint32 _timeOutStartTime;
-    uint32 _timeOutEndTime;
-	
+	bool _isTimeOutEnabled;
+	bool _isTimeOutReached;
+	uint32 _timeOutDuration;
+	uint _timeOutMenuChoiceIndex;
+	uint32 _timeOutStartTime;
+	uint32 _timeOutEndTime;
+
 	Common::Point _savedCursorPos;
 	bool _cursorInitialVisibleFlag;
 	int _savedGameState;
 	int _savedCursorActorIndex;
 	int _savedCursorSequenceId;
-	
+
 	bool _isActive;
-	
+
 	MenuChoiceOffsets _menuChoiceOffsets;
 	int16 *_menuChoiceOffset;
-	
+
 	uint _queryConfirmationChoiceIndex;
-	
+
 	uint _field54;
 	uint _menuLinesCount;
 	uint _menuItemCount;
-	
+
 	uint _hoveredMenuItemIndex;
 	uint _hoveredMenuItemIndex2;
 	uint _hoveredMenuItemIndex3;
 
 	BaseMenu *_activeMenu;
 	void setMouseCursorToMenuItem(int menuItemIndex);
-	
+
 	void calcMenuItemRect(uint menuItemIndex, WRect &rect);
 	bool calcMenuItemMousePos(uint menuItemIndex, Common::Point &pt);
 	bool calcMenuItemIndexAtPoint(Common::Point pt, uint &menuItemIndex);
 	void setMousePos(Common::Point &mousePos);
-	
+
 	void activateMenu(BaseMenu *menu);
-	
+
 	void updateTimeOut(bool resetTimeOut);
-	
+
 	void initActorHoverBackground();
 	void placeActorHoverBackground();
 	void updateActorHoverBackground();
 	void hideActorHoverBackground();
-	
+
 	void initActorTextColorRect();
 	void placeActorTextColorRect();
 	void hideActorTextColorRect();
-	
+
 	virtual BaseMenu *getMenuById(int menuId) = 0;
 	virtual void playSoundEffect(int sfxId) = 0;
 };

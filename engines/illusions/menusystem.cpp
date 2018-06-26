@@ -262,12 +262,12 @@ void BaseMenuSystem::placeActorHoverBackground() {
 
 	WidthHeight frameDimensions;
 	v0->getActorFrameDimensions(frameDimensions);
-	
+
 	FontResource *font = _vm->_dict->findFont(_activeMenu->_fontId);
 	int charHeight = font->getCharHeight() + font->getLineIncr();
 	if (frameDimensions._height < charHeight)
 		charHeight = frameDimensions._height;
-		
+
 	v0->drawActorRect(Common::Rect(textInfoDimensions._width - 1, charHeight), _activeMenu->_fieldE);
 
 	updateActorHoverBackground();
@@ -375,8 +375,8 @@ void BaseMenuSystem::handleClick(uint menuItemIndex, const Common::Point &mouseP
 	debug(0, "BaseMenuSystem::handleClick() menuItemIndex: %d click point: (%d, %d)", menuItemIndex, mousePos.x, mousePos.y);
 
 	if (menuItemIndex == 0) {
-	    playSoundEffect14();
-	    return;
+		playSoundEffect14();
+		return;
 	}
 
 	MenuItem *menuItem = _activeMenu->getMenuItem(menuItemIndex - 1);
@@ -434,7 +434,7 @@ uint BaseMenuSystem::drawMenuText(BaseMenu *menu) {
 }
 
 void BaseMenuSystem::update(Control *cursorControl) {
-    Common::Point mousePos = _vm->_input->getCursorPosition();
+	Common::Point mousePos = _vm->_input->getCursorPosition();
 	setMousePos(mousePos);
 	
 	uint newHoveredMenuItemIndex;
@@ -518,7 +518,7 @@ void BaseMenuSystem::setSavegameSlotNum(int slotNum) {
 }
 
 void BaseMenuSystem::setSavegameDescription(Common::String desc) {
-    _vm->_savegameDescription = desc;
+	_vm->_savegameDescription = desc;
 }
 
 void BaseMenuSystem::updateTimeOut(bool resetTimeOut) {
@@ -672,27 +672,28 @@ void MenuActionLoadGame::execute() {
 
 // MenuActionSaveGame
 
-	MenuActionSaveGame::MenuActionSaveGame(BaseMenuSystem *menuSystem, uint choiceIndex)
-			: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex) {
+MenuActionSaveGame::MenuActionSaveGame(BaseMenuSystem *menuSystem, uint choiceIndex)
+		: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex) {
+}
+
+void MenuActionSaveGame::execute() {
+	const Plugin *plugin = NULL;
+	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
+	GUI::SaveLoadChooser *dialog;
+	Common::String desc;
+	int slot;
+
+	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	desc = dialog->getResultString().c_str();
+
+	delete dialog;
+
+	if (slot >= 0) {
+		_menuSystem->setSavegameSlotNum(slot);
+		_menuSystem->setSavegameDescription(desc);
+		_menuSystem->selectMenuChoiceIndex(_choiceIndex);
 	}
+}
 
-	void MenuActionSaveGame::execute() {
-		const Plugin *plugin = NULL;
-		EngineMan.findGame(ConfMan.get("gameid"), &plugin);
-		GUI::SaveLoadChooser *dialog;
-		Common::String desc;
-		int slot;
-
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
-        desc = dialog->getResultString().c_str();
-
-        delete dialog;
-
-        if (slot >= 0) {
-            _menuSystem->setSavegameSlotNum(slot);
-            _menuSystem->setSavegameDescription(desc);
-			_menuSystem->selectMenuChoiceIndex(_choiceIndex);
-		}
-	}
 } // End of namespace Illusions

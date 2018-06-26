@@ -488,11 +488,11 @@ void Camera::recalcPan(uint32 currTime) {
 	if (_activeState._panSpeed == 0) {
 		_activeState._time2E = 0;
 	} else {
-		FP16 x1 = _activeState._currPan2.x << 16;
-		FP16 y1 = _activeState._currPan2.y << 16;
-		FP16 x2 = _activeState._panTargetPoint.x << 16;
-		FP16 y2 = _activeState._panTargetPoint.y << 16;
-		FP16 distance = fixedDistance(x1, y1, x2, y2);
+		FixedPoint16 x1 = _activeState._currPan2.x << 16;
+		FixedPoint16 y1 = _activeState._currPan2.y << 16;
+		FixedPoint16 x2 = _activeState._panTargetPoint.x << 16;
+		FixedPoint16 y2 = _activeState._panTargetPoint.y << 16;
+		FixedPoint16 distance = fixedDistance(x1, y1, x2, y2);
 		_activeState._time2E = 60 * fixedTrunc(distance) / _activeState._panSpeed;
 	}
 

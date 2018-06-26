@@ -94,7 +94,7 @@ public:
 
 class ActorInstance : public ResourceInstance {
 public:
-	ActorInstance(IllusionsEngine *vm);              
+	ActorInstance(IllusionsEngine *vm);
 	virtual void load(Resource *resource);
 	virtual void unload();
 	virtual void pause();
