@@ -163,6 +163,7 @@ public:
 	void runSaveDialog();
 	void tryAutoSaving();
 	void loadGameStateAndDisplayError(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc, bool autosave);
 	void saveGameStateAndDisplayError(int slot, const Common::String &desc);
 
 	/**

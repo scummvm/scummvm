@@ -679,13 +679,17 @@ void MohawkEngine_Riven::loadGameStateAndDisplayError(int slot) {
 }
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
+	return saveGameState(slot, desc, false);
+}
+
+Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc, bool autosave) {
 	if (_menuSavedStack != -1) {
 		_vars["CurrentStackID"] = _menuSavedStack;
 		_vars["CurrentCardID"] = _menuSavedCard;
 	}
 
 	const Graphics::Surface *thumbnail = _menuSavedStack != -1 ? _menuTumbnail.get() : nullptr;
-	Common::Error error = _saveLoad->saveGame(slot, desc, thumbnail, false);
+	Common::Error error = _saveLoad->saveGame(slot, desc, thumbnail, autosave);
 
 	if (_menuSavedStack != -1) {
 		_vars["CurrentStackID"] = 1;
@@ -717,8 +721,7 @@ void MohawkEngine_Riven::tryAutoSaving() {
 		return; // Can't autosave ever, try again after the next autosave delay
 	}
 
-	const Graphics::Surface *thumbnail = _menuSavedStack != -1 ? _menuTumbnail.get() : nullptr;
-	Common::Error saveError = _saveLoad->saveGame(RivenSaveLoad::kAutoSaveSlot, "Autosave", thumbnail, true);
+	Common::Error saveError = saveGameState(RivenSaveLoad::kAutoSaveSlot, "Autosave", true);
 	if (saveError.getCode() != Common::kNoError)
 		warning("Attempt to autosave has failed.");
 }
