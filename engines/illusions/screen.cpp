@@ -272,7 +272,7 @@ void ScreenPalette::shiftPalette(int16 fromIndex, int16 toIndex) {
 		r = _mainPalette[3 * toIndex + 0];
 		g = _mainPalette[3 * toIndex + 1];
 		b = _mainPalette[3 * toIndex + 2];
-		for (int16 i = toIndex + 1; i < fromIndex; +i) { //TODO fix this. +i
+		for (int16 i = toIndex + 1; i < fromIndex; ++i) {
 			byte *dst = &_mainPalette[3 * i];
 			byte *src = &_mainPalette[3 * (i + 1)];
 			dst[0] = src[0];
