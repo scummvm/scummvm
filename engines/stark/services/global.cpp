@@ -51,21 +51,6 @@ void Global::setCurrentChapter(int32 value) {
 	chapter->setIntegerValue(value);
 }
 
-void Global::printInventory(bool printAll) {
-	Common::Array<Resources::Item*> inventoryItems = _inventory->listChildren<Resources::Item>(Resources::Item::kItemInventory);
-	Common::Array<Resources::Item*>::iterator it = inventoryItems.begin();
-	for (int i = 0; it != inventoryItems.end(); ++it, i++) {
-		if (printAll || (*it)->isEnabled()) {
-			warning("Item %d: %s", i, (*it)->getName().c_str());
-		}
-	}
-}
-
-void Global::enableInventoryItem(int32 num) {
-	Common::Array<Resources::Item*> inventoryItems = _inventory->listChildren<Resources::Item>(Resources::Item::kItemInventory);
-	inventoryItems[num]->setEnabled(true);
-}
-
 Common::String Global::getCharacterName(int32 id) {
 	Resources::KnowledgeSet *characters = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kPersons);
 	Resources::Knowledge *character = characters->findChildWithIndex<Resources::Knowledge>(id);

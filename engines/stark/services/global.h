@@ -100,8 +100,6 @@ public:
 	int32 getCurrentChapter();
 
 	/** Temporary HACK to allow us to query the inventory */
-	void printInventory(bool printAll);
-	void enableInventoryItem(int32 num);
 	bool hasInventoryItem(const Common::String &itemName) const;
 
 	/** Change the current chapter */
