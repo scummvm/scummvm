@@ -237,7 +237,7 @@ monkey	The Secret of Monkey Island
 	71523b539491527d9860f4407faf0411	7607	en	DOS	Demo	EGA Demo	-	Fingolfin
 	771bc18ec6f93837b839c992b211904b	-1	de	DOS	Demo	EGA Demo	-	khalek
 	54a936ad06161ff7bfefcb96200f7bff	7617	en	Amiga	VGA	Demo	-	khalek
-	c0c9de81fb965e6cbe77f6e5631ca705	9135	en	DOS	SE Talkie	Unofficial SE Talkie v1.02	rootfather
+	c0c9de81fb965e6cbe77f6e5631ca705	9135	en	DOS	SE Talkie	Unofficial SE Talkie v1.02	lotharsm
 
 pass	Passport to Adventure
 	e6cd81b25ab1453a8a6d3482118c391e	7857	en	DOS	-	-	v1.0 9/14/90	Fingolfin
@@ -270,7 +270,7 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 	430bc518017b6fac046f58bab6baad5d	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Antti Leimi, Andrea Petrucci
 
 	387a544b8b10b26912d8413bab63a853	-1	en	DOS	-	Demo	non-interactive	khalek
-	f4d20ab4ce19743a646cb48bd93aee72	10835	en	DOS	SE Talkie	Unofficial SE Talkie v0.2	rootfather
+	f4d20ab4ce19743a646cb48bd93aee72	10835	en	DOS	SE Talkie	Unofficial SE Talkie v0.2	lotharsm
 
 atlantis	Indiana Jones and the Fate of Atlantis
 	3a03dab514e4038df192d8a8de469788	-1	en	Amiga	Floppy	Floppy	-	dhewg

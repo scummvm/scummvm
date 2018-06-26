@@ -97,7 +97,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	{
 		{
-			// Masters of the Elements - English (from rootfather)
+			// Masters of the Elements - English (from lotharsm)
 			// Developed by IJsfontein, published by Tivola
 			// File version of MVM.EXE is 6.0.2.32
 			// The game disc is a hybrid CD-ROM containing both the Windows and the Macintosh release.
@@ -119,7 +119,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	{
 		{
-			// Masters of the Elements - English (from rootfather)
+			// Masters of the Elements - English (from lotharsm)
 
 			"melements", "",
 			{
@@ -138,7 +138,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	{
 		{
-			// Masters of the Elements - German (from rootfather)
+			// Masters of the Elements - German (from lotharsm)
 			// Released in Germany as "Meister Zufall und die Herrscher der Elemente"
 			// Developed by IJsfontein, published by Tivola
 			// File version of MVM.EXE is 6.0.2.32
@@ -161,7 +161,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	{
 		{
-			// Masters of the Elements - German (from rootfather)
+			// Masters of the Elements - German (from lotharsm)
 
 			"melements", "",
 			{
