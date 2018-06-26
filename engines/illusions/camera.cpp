@@ -87,7 +87,7 @@ void Camera::set(Common::Point &panPoint, WidthHeight &dimensions) {
 void Camera::panCenterObject(uint32 objectId, int16 panSpeed) {
 	Common::Point *actorPosition = _vm->getObjectActorPositionPtr(objectId);
 	if (_vm->getGameId() == kGameIdDuckman) {
-		if(objectId == Illusions::CURSOR_OBJECT_ID) {
+		if (objectId == Illusions::CURSOR_OBJECT_ID) {
 			_activeState._cameraMode = 2;
 			_activeState._trackingLimits.x = 156;
 			_activeState._trackingLimits.y = 96;

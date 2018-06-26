@@ -554,7 +554,7 @@ void BaseMenuSystem::redrawMenuText(BaseMenu *menu) {
 
 bool BaseMenuSystem::calcMenuItemTextPositionAtPoint(Common::Point pt, int &offset) {
 	uint menuItemIndex;
-	if(!calcMenuItemIndexAtPoint(pt, menuItemIndex)) {
+	if (!calcMenuItemIndexAtPoint(pt, menuItemIndex)) {
 		return false;
 	}
 

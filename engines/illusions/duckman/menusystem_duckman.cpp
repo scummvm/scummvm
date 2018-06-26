@@ -251,7 +251,7 @@ BaseMenu *DuckmanMenuSystem::createAddRemoveInventoryMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120002, 0, 0, 0, 17, 1);
 	menu->addText("Add/Remove Inventory");
 	menu->addText("-----------------");
-	for(int i=0;i < 21;i++) {
+	for (int i = 0; i < 21; i++) {
 		menu->addMenuItem(new MenuItem(kDebugInventoryItems[i].name, new MenuActionInventoryAddRemove(this, _vm, i)));
 	}
 	menu->addMenuItem(new MenuItem("Back", new MenuActionLeaveMenu(this)));
@@ -318,13 +318,13 @@ void DuckmanMenuSystem::playSoundEffect(int sfxId) {
 	_vm->playSoundEffect(sfxId);
 }
 
-	MenuActionInventoryAddRemove::MenuActionInventoryAddRemove(BaseMenuSystem *menuSystem, IllusionsEngine_Duckman *vm, uint choiceIndex)
-		: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex), _vm(vm) {
+MenuActionInventoryAddRemove::MenuActionInventoryAddRemove(BaseMenuSystem *menuSystem, IllusionsEngine_Duckman *vm, uint choiceIndex)
+	: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex), _vm(vm) {
 }
 
 void MenuActionInventoryAddRemove::execute() {
 	if (_vm->_scriptResource->_properties.get(kDebugInventoryItems[_choiceIndex].propertyId)) {
-		if(_vm->_cursor._objectId == kDebugInventoryItems[_choiceIndex].objectId) {
+		if (_vm->_cursor._objectId == kDebugInventoryItems[_choiceIndex].objectId) {
 			_vm->stopCursorHoldingObject();
 		}
 		_vm->_scriptResource->_properties.set(kDebugInventoryItems[_choiceIndex].propertyId, false);
@@ -360,7 +360,7 @@ int MenuActionUpdateSlider::calcNewSliderValue(int newOffset) {
 	int start = 0;
 	int end = 0;
 	int currentPosition = 0;
-	for(int i = 0; i < text.size(); i++) {
+	for (int i = 0; i < text.size(); i++) {
 		switch (text[i]) {
 			case '{' : start = i; break;
 			case '}' : end = i; break;
@@ -385,7 +385,7 @@ int MenuActionUpdateSlider::calcNewSliderValue(int newOffset) {
 void MenuActionUpdateSlider::setSliderValue(uint8 newValue) {
 	int start = 0;
 	Common::String text = _menuItem->getText();
-	for(int i = 0; i < text.size(); i++) {
+	for (int i = 0; i < text.size(); i++) {
 		switch (text[i]) {
 			case '{' : start = i; break;
 			case '|' : text.setChar('~', i); break;
