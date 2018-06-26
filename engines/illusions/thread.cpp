@@ -307,11 +307,11 @@ void ThreadList::killThread(uint32 threadId) {
 
 	if (!threadId)
 		return;
-	
+
 	Thread *thread = findThread(threadId);
 	if (!thread)
 		return;
-		
+
 	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
 		Thread *childThread = *it;
 		if (childThread->_callingThreadId == threadId)

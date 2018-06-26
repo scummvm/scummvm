@@ -55,11 +55,11 @@ TalkThread_Duckman::TalkThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threa
 		_status = 1;
 	else
 		_status = 2;
-		
+
 	_durationMult = _vm->clipTextDuration(_vm->_subtitleDuration);
 	_textDuration = _durationMult;
 	_defDurationMult = _vm->clipTextDuration(240);
-	
+
 	_sceneId = _vm->getCurrentScene();
 
 }
@@ -101,14 +101,14 @@ int TalkThread_Duckman::onUpdate() {
 		if (_objectId == 0 || _durationMult == 0)
 			_flags |= 8;
 		_status = 3;
-		// Fallthrough to status 3 
+		// Fallthrough to status 3
 
 	case 3:
 		if (!(_flags & 4) && !_vm->_soundMan->isVoiceCued())
 			return kTSYield;
 		_status = 4;
 		// Fallthrough to status 4
-		
+
 	case 4:
 		if (!(_flags & 8) ) {
 			uint32 actorTypeId = _vm->getObjectActorTypeId(_objectId);
@@ -196,7 +196,7 @@ int TalkThread_Duckman::onUpdate() {
 			_flags |= 2;
 		}
 		return kTSTerminate;
-		
+
 	}
 
 	return kTSTerminate;

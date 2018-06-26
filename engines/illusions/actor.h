@@ -110,7 +110,7 @@ public:
 	IllusionsEngine *_vm;
 	byte _drawFlags;
 	uint _spriteFlags;
-	
+
 	int _pauseCtr;
 	uint _flags;
 
@@ -119,50 +119,50 @@ public:
 	int16 _newFrameIndex;
 	SurfInfo _surfInfo;
 	Graphics::Surface *_surface;
-	
+
 	FramesList *_frames;
 	NamedPoints *_namedPoints;
-	
+
 	ScaleLayer *_scaleLayer;
 	PriorityLayer *_priorityLayer;
 	RegionLayer *_regionLayer;
 	PathWalkPoints *_pathWalkPoints;
 	PathWalkRects *_pathWalkRects;
-	
+
 	uint _seqStackCount;
 	int16 _seqStack[5];
-	
+
 	Common::Point _position;
 	Common::Point _position2;
 	uint _facing;
 	int _regionIndex;
-	
+
 	uint32 _fontId;
 	int16 _actorIndex;
-	
+
 	DefaultSequences _defaultSequences;
 
 	uint32 _parentObjectId;
 	int _linkIndex;
 	int _linkIndex2;
 	uint32 _subobjects[kSubObjectsCount];
-	
+
 	uint32 _notifyThreadId1;
 	uint32 _notifyId3C;
 
 	uint32 _notifyThreadId2;
 	byte *_entryTblPtr;
-	
+
 	int _surfaceTextFlag;
-	
+
 	ActorControlRoutine *_controlRoutine;
-	
+
 	uint32 _sequenceId;
 	int _seqCodeValue2;
 	byte *_seqCodeIp;
 	int _seqCodeValue1;
 	int _seqCodeValue3;
-	
+
 	int _pathCtrX, _pathCtrY;
 	int _pathAngle;
 	int32 _posXShl, _posYShl;

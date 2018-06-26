@@ -50,7 +50,7 @@ void BbdouCursor::init(uint32 objectId, uint32 progResKeywordId) {
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	// TODO? control->_actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, BbdouCursor>(this, &BbdouCursor::actorControlRoutine1));
 	control->_flags |= 8;
-	
+
 	_data._mode = 1;
 	_data._mode2 = 0;
 	_data._verbId1 = 0x1B0000;
@@ -75,7 +75,7 @@ void BbdouCursor::init(uint32 objectId, uint32 progResKeywordId) {
 	_data._verbState._objectIds[1] = 0;
 	_data._verbState._index = 0;
 	_data._verbState._flag56 = false;
-	
+
 	resetActiveVerbs();
 
 	control->setActorIndexTo1();
@@ -128,7 +128,7 @@ void BbdouCursor::reset(uint32 objectId) {
 
 	_bbdou->hideVerbBubble(control->_objectId, &_data._verbState);
 	// TODO? control->_actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, BbdouCursor>(this, &BbdouCursor::cursorInteractControlRoutine));
-	
+
 }
 
 void BbdouCursor::addCursorSequenceId(uint32 objectId, uint32 sequenceId) {

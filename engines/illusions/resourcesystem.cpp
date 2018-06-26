@@ -89,14 +89,14 @@ void ResourceSystem::loadResource(uint32 resId, uint32 sceneId, uint32 threadId)
 		debug(1, "ResourceSystem::loadResource() kRlfLoadFile");
 		resource->loadData(_vm->_resReader);
 	}
-	
+
 	resourceLoader->load(resource);
-	
+
 	if (resourceLoader->isFlag(kRlfFreeDataAfterLoad)) {
 		debug(1, "ResourceSystem::loadResource() kRlfFreeDataAfterLoad");
 		resource->unloadData();
 	}
-	
+
 	resource->_loaded = true;
 
 	_resources.push_back(resource);
@@ -105,7 +105,7 @@ void ResourceSystem::loadResource(uint32 resId, uint32 sceneId, uint32 threadId)
 
 void ResourceSystem::unloadResourceById(uint32 resId) {
 	Resource *resource = getResource(resId);
-	if (resource) 
+	if (resource)
 		unloadResource(resource);
 }
 

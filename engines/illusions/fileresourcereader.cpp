@@ -30,7 +30,7 @@ namespace Illusions {
 
 byte *ResourceReaderFileReader::readResource(uint32 sceneId, uint32 resId, uint32 &dataSize) {
 	debug("ResourceReaderFileReader::readResource(%08X, %08X)", sceneId, resId);
-	
+
 	Common::String filename = buildResourceFilename(resId);
 	Common::File fd;
 	if (!fd.open(filename))

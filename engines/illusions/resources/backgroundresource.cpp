@@ -223,10 +223,10 @@ BackgroundResource::~BackgroundResource() {
 
 void BackgroundResource::load(byte *data, uint32 dataSize) {
 	Common::MemoryReadStream stream(data, dataSize, DisposeAfterUse::NO);
-	
+
 	stream.seek(8);
 	_paletteIndex = stream.readUint16LE();
-	
+
 	// Load background pixels
 	stream.seek(0x0A);
 	_bgInfosCount = stream.readUint16LE();
@@ -295,7 +295,7 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 		stream.seek(backgroundObjectsOffs + i * 12);
 		_backgroundObjects[i].load(data, stream);
 	}
-	
+
 	// Load path walk points
 	stream.seek(0x0E);
 	_pathWalkPointsCount = stream.readUint16LE();
@@ -392,11 +392,11 @@ void BackgroundInstance::load(Resource *resource) {
 	_bgRes = backgroundResource;
 	_sceneId = resource->_sceneId;
 	initSurface();
-	
+
 	// Insert background objects
 	for (uint i = 0; i < backgroundResource->_backgroundObjectsCount; ++i)
 		_vm->_controls->placeBackgroundObject(&backgroundResource->_backgroundObjects[i]);
-		
+
 	registerResources();
 
 	// TODO camera_fadeClear();
@@ -451,13 +451,13 @@ void BackgroundInstance::registerResources() {
 		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
 	}
 }
-	
+
 void BackgroundInstance::unregisterResources() {
 	for (uint i = 0; i < _bgRes->_regionSequencesCount; ++i) {
 		Sequence *sequence = &_bgRes->_regionSequences[i];
 		_vm->_dict->removeSequence(sequence->_sequenceId);
 	}
-}	
+}
 
 void BackgroundInstance::initSurface() {
 	for (uint i = 0; i < kMaxBackgroundItemSurfaces; ++i)

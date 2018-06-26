@@ -98,14 +98,14 @@ private:
 	const IllusionsGameDescription *_gameDescription;
 	Graphics::PixelFormat _pixelFormat;
 public:
-	
+
 	Common::RandomSource *_random;
 	Dictionary *_dict;
 	ResourceSystem *_resSys;
 	BaseResourceReader *_resReader;
 	UpdateFunctions *_updateFunctions;
 	GameState *_gameState;
-	
+
 	void updateEvents();
 
 	Screen *_screen;
@@ -121,7 +121,7 @@ public:
 	SpecialCode *_specialCode;
 	ThreadList *_threads;
 	SoundMan *_soundMan;
-	
+
 	uint32 _nextTempThreadId;
 	bool _doScriptThreadInit;
 	ScriptStack *_stack;
@@ -199,7 +199,7 @@ public:
 	virtual Control *getObjectControl(uint32 objectId) = 0;
 	virtual Common::Point getNamedPointPosition(uint32 namedPointId) = 0;
 	virtual uint32 getPriorityFromBase(int16 priority) = 0;
-	virtual uint32 getPrevScene() = 0;	
+	virtual uint32 getPrevScene() = 0;
 	virtual uint32 getCurrentScene() = 0;
 	virtual bool isCursorObject(uint32 actorTypeId, uint32 objectId) = 0;
 	virtual void setCursorControlRoutine(Control *control) = 0;
@@ -211,7 +211,7 @@ public:
 	virtual uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 		uint32 value8, uint32 valueC, uint32 value10) = 0;
 	virtual void resumeFromSavegame(uint32 callingThreadId) = 0;
-		
+
 	// Savegame API
 
 	enum kReadSaveHeaderError {

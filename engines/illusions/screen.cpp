@@ -75,7 +75,7 @@ SpriteDrawQueue::~SpriteDrawQueue() {
 bool SpriteDrawQueue::draw(SpriteDrawQueueItem *item) {
 
 	// Check if the sprite has finished decompressing
-	if (item->_kind != 0 && (*item->_drawFlags & 1)) {		
+	if (item->_kind != 0 && (*item->_drawFlags & 1)) {
 		insert(item, item->_priority);
 		return false;
 	}
@@ -83,11 +83,11 @@ bool SpriteDrawQueue::draw(SpriteDrawQueueItem *item) {
 	if (!_screen->isDisplayOn()) {
 		if (item->_drawFlags)
 			*item->_drawFlags &= ~4;
-		return true;			
-	}	
+		return true;
+	}
 
 	Common::Rect srcRect, dstRect;
-	
+
 	// Check if the sprite is on-screen
 	if (!calcItemRect(item, srcRect, dstRect))
 		return true;
@@ -172,12 +172,12 @@ bool SpriteDrawQueue::calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcR
 	srcRect.top = 0;
 	srcRect.right = item->_dimensions._width;
 	srcRect.bottom = item->_dimensions._height;
-	
+
 	dstRect.left = item->_drawPosition.x - item->_scale * item->_controlPosition.x / 100;
 	dstRect.top = item->_drawPosition.y - item->_scale * item->_controlPosition.y / 100;
 	dstRect.right = item->_drawPosition.x + item->_scale * (item->_dimensions._width - item->_controlPosition.x) / 100;
 	dstRect.bottom = item->_drawPosition.y + item->_scale * (item->_dimensions._height - item->_controlPosition.y) / 100;
-	
+
 	if (_screen->_isScreenOffsetActive) {
 		dstRect.left += _screen->_screenOffsetPt.x;
 		dstRect.right += _screen->_screenOffsetPt.x;
@@ -392,7 +392,7 @@ Screen::~Screen() {
 Graphics::Surface *Screen::allocSurface(int16 width, int16 height) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(width, height, _vm->_system->getScreenFormat());
-	return surface; 
+	return surface;
 }
 
 Graphics::Surface *Screen::allocSurface(SurfInfo &surfInfo) {
@@ -457,7 +457,7 @@ void Screen8Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 	int processedSize = 0;
 	int xincr, x, xstart;
 	int yincr, y;
-	
+
 	*item->_drawFlags &= ~1;
 
 	// Safeguard
@@ -468,7 +468,7 @@ void Screen8Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 			item->_surface->w, item->_surface->h);
 		return;
 	}
-	
+
 	if (item->_flags & 1) {
 		x = xstart = item->_dimensions._width - 1;
 		xincr = -1;
@@ -577,7 +577,7 @@ void Screen8Bit::drawSurfaceUnscaled(int16 destX, int16 destY, Graphics::Surface
 				else
 					*dst = pixel;
 			}
-			++dst;				
+			++dst;
 		}
 	}
 }
@@ -599,7 +599,7 @@ void Screen8Bit::drawSurfaceScaled(Common::Rect &dstRect, Graphics::Surface *sur
 		skipX = (dstWidth < srcWidth) ? 0 : dstWidth / (2*srcWidth) + 1;
 		w -= skipX;
 		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcY);
-		byte *dstRow = dst; 
+		byte *dstRow = dst;
 		while (w-- > 0) {
 			const byte pixel = *src;
 			if (pixel != 0) {
@@ -646,7 +646,7 @@ void Screen16Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 	int processedSize = 0;
 	int xincr, x, xstart;
 	int yincr, y;
-	
+
 	*item->_drawFlags &= ~1;
 
 	// Safeguard
@@ -657,7 +657,7 @@ void Screen16Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 			item->_surface->w, item->_surface->h);
 		return;
 	}
-	
+
 	if (item->_flags & 1) {
 		x = xstart = item->_dimensions._width - 1;
 		xincr = -1;
@@ -673,9 +673,9 @@ void Screen16Bit::decompressSprite(SpriteDecompressQueueItem *item) {
 		y = 0;
 		yincr = 1;
 	}
-	
+
 	byte *dst = (byte*)dstSurface->getBasePtr(x, y);
-	
+
 	while (processedSize < dstSize) {
 		int16 op = READ_LE_UINT16(src);
 		src += 2;
@@ -858,7 +858,7 @@ void Screen16Bit::drawSurface21(Common::Rect &dstRect, Graphics::Surface *surfac
 		skipX = (dstWidth < srcWidth) ? 0 : dstWidth / (2*srcWidth) + 1;
 		w -= skipX;
 		byte *src = (byte*)surface->getBasePtr(srcRect.left, srcY);
-		byte *dstRow = dst; 
+		byte *dstRow = dst;
 		while (w-- > 0) {
 			uint16 pixel = READ_LE_UINT16(src);
 			if (pixel != _colorKey1)

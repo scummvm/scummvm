@@ -76,11 +76,11 @@ char *debugW2I(byte *wstr) {
 
 IllusionsEngine::IllusionsEngine(OSystem *syst, const IllusionsGameDescription *gd) :
 	Engine(syst), _gameDescription(gd) {
-	
+
 	_random = new Common::RandomSource("illusions");
 
 	_rerunThreads = false;
-	
+
 	_isSaveAllowed = true; // TODO
 	_resumeFromSavegameRequested = false;
 	_savegameSlotNum = -1;
@@ -167,7 +167,7 @@ int IllusionsEngine::updateGraphics(uint flags) {
 	Common::Point panPoint(0, 0);
 
 	uint32 currTime = getCurrentTime();
-	
+
 	_camera->update(currTime);
 	updateFader();
 

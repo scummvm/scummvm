@@ -131,7 +131,7 @@ void DuckmanDialogSystem::updateDialogState() {
 
 	Control *currOverlappedControl = _vm->_cursor._currOverlappedControl;
 	Control *newOverlappedControl;
-	
+
 	if (_vm->_controls->getDialogItemAtPos(_vm->_cursor._control, mousePos, &newOverlappedControl)) {
 		if (currOverlappedControl != newOverlappedControl) {
 			newOverlappedControl->setActorIndex(2);

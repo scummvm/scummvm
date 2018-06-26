@@ -202,11 +202,11 @@ void ScriptOpcodes_Duckman::opStartTimerThread(ScriptThread *scriptThread, OpCal
 	ARG_INT16(maxDuration);
 	if (maxDuration)
 		duration += _vm->getRandom(maxDuration);
-		
+
 	//duration = 1;//DEBUG Speeds up things
 	//duration = 5;
 	//debug("duration: %d", duration);
-		
+
 	if (isAbortable)
 		_vm->startAbortableTimerThread(duration, opCall._callerThreadId);
 	else
@@ -284,9 +284,9 @@ void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &op
 	ARG_UINT32(sceneId);
 	ARG_UINT32(threadId);
 	_vm->_input->discardAllEvents();
-	
+
 	debug(1, "changeScene(%08X, %08X)", sceneId, threadId);
-	
+
 	//DEBUG
 #if 0
 	if (dsceneId) {
@@ -295,7 +295,7 @@ void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &op
 		dsceneId = 0;
 	}
 #endif
-	
+
 	if (_vm->_scriptResource->_properties.get(31)) {
 		_vm->changeScene(0x10002, 0x20001, opCall._callerThreadId);
 	} else {
@@ -584,10 +584,10 @@ void ScriptOpcodes_Duckman::opPlayVideo(ScriptThread *scriptThread, OpCall &opCa
 	ARG_UINT32(objectId);
 	// NOTE This has no attached objectId or priority
 	_vm->playVideo(0, objectId, 0, opCall._threadId);
-	
+
 	//DEBUG Resume calling thread, later done by the video player
 	_vm->notifyThreadId(opCall._threadId);
-	
+
 }
 
 void ScriptOpcodes_Duckman::opRunSpecialCode(ScriptThread *scriptThread, OpCall &opCall) {
@@ -653,7 +653,7 @@ void ScriptOpcodes_Duckman::opDisplayMenu(ScriptThread *scriptThread, OpCall &op
 	ARG_INT16(timeOutDuration);
 	ARG_UINT32(menuId);
 	ARG_UINT32(timeOutMenuChoiceIndex);
-	
+
 	MenuChoiceOffsets menuChoiceOffsets;
 
 	// Load menu choices from the stack
@@ -661,11 +661,11 @@ void ScriptOpcodes_Duckman::opDisplayMenu(ScriptThread *scriptThread, OpCall &op
 		int16 choiceOffs = _vm->_stack->pop();
 		menuChoiceOffsets.push_back(choiceOffs);
 	} while (_vm->_stack->pop() == 0);
-	
-	_vm->_menuSystem->runMenu(menuChoiceOffsets, &_vm->_menuChoiceOfs, 
+
+	_vm->_menuSystem->runMenu(menuChoiceOffsets, &_vm->_menuChoiceOfs,
 		menuId, timeOutDuration, timeOutMenuChoiceIndex,
 		opCall._callerThreadId);
-	
+
 	//DEBUG Resume calling thread, later done by the video player
 	//_vm->notifyThreadId(opCall._callerThreadId);
 
@@ -713,7 +713,7 @@ void ScriptOpcodes_Duckman::opActivateButton(ScriptThread *scriptThread, OpCall 
 }
 
 void ScriptOpcodes_Duckman::opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(index);	
+	ARG_INT16(index);
 	byte value = _vm->_scriptResource->_blockCounters.get(index) + 1;
 	if (value <= 63)
 		_vm->_scriptResource->_blockCounters.set(index, value);
@@ -778,8 +778,8 @@ void ScriptOpcodes_Duckman::opGetProperty(ScriptThread *scriptThread, OpCall &op
 }
 
 void ScriptOpcodes_Duckman::opCompareBlockCounter(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(index);	
-	ARG_INT16(compareOp);	
+	ARG_INT16(index);
+	ARG_INT16(compareOp);
 	ARG_INT16(rvalue);
 	int16 lvalue = _vm->_scriptResource->_blockCounters.get(index);
 	bool compareResult = false;

@@ -41,7 +41,7 @@ protected:
 	IllusionsEngine_Duckman *_vm;
 
 	// Opcodes
-	
+
 	void opNop(ScriptThread *scriptThread, OpCall &opCall);
 	void opSuspend(ScriptThread *scriptThread, OpCall &opCall);
 	void opYield(ScriptThread *scriptThread, OpCall &opCall);
@@ -129,8 +129,8 @@ protected:
 	void opSetBlockCounter118(ScriptThread *scriptThread, OpCall &opCall);
 	void opDebug126(ScriptThread *scriptThread, OpCall &opCall);
 	void opDebug127(ScriptThread *scriptThread, OpCall &opCall);
-	
-#if 0	
+
+#if 0
 	void opStartTempScriptThread(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetThreadSceneId(ScriptThread *scriptThread, OpCall &opCall);
 	void opEndTalkThreads(ScriptThread *scriptThread, OpCall &opCall);
@@ -157,7 +157,7 @@ protected:
 	void opSetFontId(ScriptThread *scriptThread, OpCall &opCall);
 	void opAddMenuKey(ScriptThread *scriptThread, OpCall &opCall);
 	void opChangeSceneAll(ScriptThread *scriptThread, OpCall &opCall);
-#endif	
+#endif
 };
 
 } // End of namespace Illusions

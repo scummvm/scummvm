@@ -57,9 +57,9 @@ TalkThread::TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThrea
 		_status = 2;
 	else
 		_status = 3;
-	
+
 	_flags = 0x0E;
-	
+
 	_durationMult = _vm->clipTextDuration(_vm->getSubtitleDuration());
 	_textDuration = _durationMult;
 	_defDurationMult = _vm->clipTextDuration(240);
@@ -135,7 +135,7 @@ int TalkThread::onUpdate() {
 			return kTSYield;
 		_status = 5;
 		// Fallthrough to status 5
-		
+
 	case 5:
 		if (!(_flags & 8))
 			refreshText();
@@ -239,7 +239,7 @@ if (true) {
 		return kTSTerminate;
 
 	}
-	
+
 	return kTSTerminate;
 
 }

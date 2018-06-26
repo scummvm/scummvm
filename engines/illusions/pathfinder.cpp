@@ -43,7 +43,7 @@ PointArray *PathFinder::findPathInternal(Common::Point sourcePt, Common::Point d
 	PointArray *foundPath = new PointArray();
 	line.p0 = sourcePt;
 	line.p1 = destPt;
-	
+
 	if (_walkRects && _walkPoints && isLineBlocked(line)) {
 		Common::Point nextStartPt = sourcePt, outPt;
 
@@ -325,7 +325,7 @@ int PathFinder::calcLineStatus(PathLine &sourceLine, PathLine &destRect, Common:
 		(delta2 <= 0 && (delta3 > 0 || delta2 > delta3)) ||
 		(delta2 > 0 && (delta3 < 0 || delta2 < delta3)))
 		return 3;
-	
+
 	if (!outPoint)
 		return 1;
 
@@ -335,7 +335,7 @@ int PathFinder::calcLineStatus(PathLine &sourceLine, PathLine &destRect, Common:
 	int v15 = sourceDeltaX * delta1, v18 = sourceDeltaY * delta1;
 	int v16 = 0;
 	int v17 = 0;
-	
+
 	if ((v15 >= 0 && delta2 >= 0) || (v15 < 0 && delta2 < 0)) {
 		v16 = delta2 / 2;
 		v17 = delta2 / 2;
@@ -345,12 +345,12 @@ int PathFinder::calcLineStatus(PathLine &sourceLine, PathLine &destRect, Common:
 	}
 
 	outPoint->x = sourceLine.p0.x + (v15 + v16) / delta2;
-	
+
 	if ((v18 >= 0 && delta2 < 0) || (v18 < 0 && delta2 >= 0))
 		v17 = -v17;
 
 	outPoint->y = sourceLine.p0.y + (v18 + v17) / delta2;
-	
+
 	return 1;
 }
 

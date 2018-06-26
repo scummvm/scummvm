@@ -175,7 +175,7 @@ void BaseMenuSystem::setMouseCursorToMenuItem(int menuItemIndex) {
 void BaseMenuSystem::calcMenuItemRect(uint menuItemIndex, WRect &rect) {
 	FontResource *font = _vm->_dict->findFont(_activeMenu->_fontId);
 	int charHeight = font->getCharHeight() + font->getLineIncr();
-	
+
 	_vm->_screenText->getTextInfoPosition(rect._topLeft);
 	if (_activeMenu->_backgroundColor) {
 		rect._topLeft.y += 4;
@@ -203,7 +203,7 @@ bool BaseMenuSystem::calcMenuItemMousePos(uint menuItemIndex, Common::Point &pt)
 bool BaseMenuSystem::calcMenuItemIndexAtPoint(Common::Point pt, uint &menuItemIndex) {
 	WRect rect;
 	calcMenuItemRect(1, rect);
-	
+
 	uint index = _hoveredMenuItemIndex3 + (pt.y - rect._topLeft.y) / (rect._bottomRight.y - rect._topLeft.y);
 
 	if (pt.y < rect._topLeft.y || pt.x < rect._topLeft.x || pt.x > rect._bottomRight.x ||
@@ -248,12 +248,12 @@ void BaseMenuSystem::initActorHoverBackground() {
 	}
 	placeActorHoverBackground();
 	v0->appearActor();
-}	
+}
 
 void BaseMenuSystem::placeActorHoverBackground() {
 	Control *v0 = _vm->getObjectControl(0x4013E);
 	v0->fillActor(0);
-	
+
 	WidthHeight textInfoDimensions;
 	_vm->_screenText->getTextInfoDimensions(textInfoDimensions);
 
@@ -303,12 +303,12 @@ void BaseMenuSystem::initActorTextColorRect() {
 void BaseMenuSystem::placeActorTextColorRect() {
 	Control *v0 = _vm->getObjectControl(0x40143);
 	v0->fillActor(0);
-	
+
 	Common::Point textInfoPosition;
 	WidthHeight textInfoDimensions;
 	_vm->_screenText->getTextInfoPosition(textInfoPosition);
 	_vm->_screenText->getTextInfoDimensions(textInfoDimensions);
-	
+
 	if (_activeMenu->_backgroundColor && _activeMenu->_borderColor != _activeMenu->_backgroundColor) {
 		textInfoDimensions._width -= 2;
 		textInfoDimensions._height -= 6;
@@ -316,7 +316,7 @@ void BaseMenuSystem::placeActorTextColorRect() {
 
 	v0->setActorPosition(textInfoPosition);
 	v0->drawActorRect(Common::Rect(textInfoDimensions._width - 1, textInfoDimensions._height - 1), _activeMenu->_textColor);
-	
+
 }
 
 void BaseMenuSystem::hideActorTextColorRect() {
@@ -326,23 +326,23 @@ void BaseMenuSystem::hideActorTextColorRect() {
 }
 
 void BaseMenuSystem::openMenu(BaseMenu *menu) {
-	
+
 	_isActive = true;
 	_menuStack.clear();
-	
+
 	_cursorInitialVisibleFlag = initMenuCursor();
 	_savedCursorPos = _vm->_input->getCursorPosition();
 	_savedGameState = getGameState();
 	Control *cursorControl = _vm->getObjectControl(Illusions::CURSOR_OBJECT_ID);
 	_savedCursorActorIndex = cursorControl->_actor->_actorIndex;
 	_savedCursorSequenceId = cursorControl->_actor->_sequenceId;
-	
+
 	setMenuCursorNum(1);
-	
+
 	setGameState(4);
-	
+
 	activateMenu(menu);
-	
+
 	_hoveredMenuItemIndex = _hoveredMenuItemIndex3;
 	_hoveredMenuItemIndex2 = _hoveredMenuItemIndex3;
 	setMouseCursorToMenuItem(_hoveredMenuItemIndex);
@@ -381,13 +381,13 @@ void BaseMenuSystem::handleClick(uint menuItemIndex, const Common::Point &mouseP
 
 	MenuItem *menuItem = _activeMenu->getMenuItem(menuItemIndex - 1);
 	menuItem->executeAction(mousePos);
-	
+
 }
 
 uint BaseMenuSystem::drawMenuText(BaseMenu *menu) {
 	MenuTextBuilder *menuTextBuilder = new MenuTextBuilder();
 	uint lineCount = 0;
-	
+
 	for (uint i = 0; i < menu->getHeaderLinesCount(); ++i) {
 		menuTextBuilder->appendString(menu->getHeaderLine(i));
 		menuTextBuilder->appendNewLine();
@@ -399,7 +399,7 @@ uint BaseMenuSystem::drawMenuText(BaseMenu *menu) {
 			menuTextBuilder->appendNewLine();
 		++lineCount;
 	}
-	
+
 	menuTextBuilder->finalize();
 
 	uint16 *text = menuTextBuilder->getText();
@@ -414,11 +414,11 @@ uint BaseMenuSystem::drawMenuText(BaseMenu *menu) {
 	uint flags = TEXT_FLAG_LEFT_ALIGN;
 	if (menu->_backgroundColor != menu->_borderColor)
 		flags |= TEXT_FLAG_BORDER_DECORATION;
-		
+
 	WidthHeight dimensions;
 	dimensions._width = 300;
 	dimensions._height = 180;
-	
+
 	uint16 *outTextPtr;
 	if (!_vm->_screenText->insertText(text, menu->_fontId, dimensions, textPt, flags, menu->_backgroundColor, menu->_borderColor, 0xFF, 0xFF, 0xFF, outTextPtr)) {
 		--lineCount;
@@ -436,10 +436,10 @@ uint BaseMenuSystem::drawMenuText(BaseMenu *menu) {
 void BaseMenuSystem::update(Control *cursorControl) {
 	Common::Point mousePos = _vm->_input->getCursorPosition();
 	setMousePos(mousePos);
-	
+
 	uint newHoveredMenuItemIndex;
 	bool resetTimeOut = false;
-	
+
 	if (calcMenuItemIndexAtPoint(mousePos, newHoveredMenuItemIndex)) {
 		if (newHoveredMenuItemIndex != _hoveredMenuItemIndex) {
 			if (_hoveredMenuItemIndex == 0)
@@ -487,7 +487,7 @@ void BaseMenuSystem::update(Control *cursorControl) {
 		updateActorHoverBackground();
 		playSoundEffect(0xC);
 	}
-	
+
 	updateTimeOut(resetTimeOut);
 }
 
@@ -534,7 +534,7 @@ void BaseMenuSystem::updateTimeOut(bool resetTimeOut) {
 	} else if (!_isTimeOutReached) {
 		_isTimeOutReached = true;
 	}
-	
+
 	if (!_isTimeOutReached) {
 		if (resetTimeOut) {
 			_timeOutStartTime = getCurrentTime();

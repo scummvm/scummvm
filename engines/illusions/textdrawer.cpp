@@ -127,7 +127,7 @@ bool TextDrawer::wrapTextIntern(int16 x, int16 y, int16 maxWidth, int16 maxHeigh
 				currWordWidth = 0;
 			}
 		}
-		
+
 		while (lineBreak) {
 
 			currLineWidth -= _font->_widthC;
@@ -143,7 +143,7 @@ bool TextDrawer::wrapTextIntern(int16 x, int16 y, int16 maxWidth, int16 maxHeigh
 				} else {
 					textPosX = x;
 				}
-				
+
 				_textLines.push_back(TextLine(lineStartText, currLineLen, textPosX, textPosY));
 
 				if (*currText == 13) {
@@ -187,7 +187,7 @@ bool TextDrawer::wrapTextIntern(int16 x, int16 y, int16 maxWidth, int16 maxHeigh
 		}
 
 	}
-	
+
 	_dimensions->_width = maxLineWidth;
 	_dimensions->_height = textPosY - _font->_lineIncr;
 

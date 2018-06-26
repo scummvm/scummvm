@@ -492,7 +492,7 @@ void BbdouSpecialCode::playSoundEffect(int soundIndex) {
 		0x900C1, 2,
 		      0, 3,
 		0x900C0, 4,
-		0x900C2, 5, 
+		0x900C2, 5,
 		      0, 6
 	};
 	uint32 soundEffectId = kSoundEffectIds[2 * soundIndex];
@@ -535,11 +535,11 @@ Common::Point BbdouSpecialCode::getBackgroundCursorPos(Common::Point cursorPos) 
 
 void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, uint32 holdingObjectId,
 	VerbState *verbState, uint32 progResKeywordId) {
-	
+
 	Common::Rect collisionRect;
 	Control *overlappedControl, *control2, *control3;
 	Common::Point bubbleSourcePt(320, 240), bubbleDestPt, currPan;
-	
+
 	overlappedControl = _vm->_dict->getObjectControl(overlappedObjectId);
 	overlappedControl->getCollisionRect(collisionRect);
 
@@ -564,7 +564,7 @@ void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, ui
 	verbState->_objectIds[0] = _bubble->addItem(0, 0x6005A);
 	verbState->_objectIds[1] = _bubble->addItem(0, 0x6005A);
 	verbState->_index = 0;
-	
+
 	int value = _objectInteractModeMap.getObjectInteractMode(overlappedControl->_objectId);
 	if (holdingObjectId) {
 		verbState->_verbId = 0x1B0003;
@@ -575,15 +575,15 @@ void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, ui
 	} else {
 		verbState->_verbId = 0x1B0002;
 	}
-	
+
 	uint32 sequenceId = kStruct10s[verbState->_verbId & 0xFFFF]._sequenceId2;
 	_bubble->show();
-	
+
 	control3 = _vm->_dict->getObjectControl(verbState->_objectIds[0]);
 	control3->startSequenceActor(sequenceId, 2, 0);
 	control3->appearActor();
 	control3->deactivateObject();
-	
+
 	verbState->_isBubbleVisible = true;
 	_vm->_input->discardAllEvents();
 
@@ -633,7 +633,7 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 		cursorPos = getBackgroundCursorPos(cursorPos);
 		bool foundOverlapped = false;
 		Control *overlappedControl = 0;
-		
+
 		if (cursorData._flags & 1) {
 			foundOverlapped = false;
 		} else if (_vm->getCurrentScene() == 0x1000D) {
@@ -643,7 +643,7 @@ void BbdouSpecialCode::cursorInteractControlRoutine(Control *cursorControl, uint
 			foundOverlapped = _vm->_controls->getOverlappedObject(cursorControl, cursorPos,
 				&overlappedControl, cursorData._verbState._minPriority);
 		}
-		
+
 		if (foundOverlapped) {
 			if (overlappedControl->_objectId != cursorData._currOverlappedObjectId) {
 				if (cursorData._verbState._isBubbleVisible)
@@ -954,10 +954,10 @@ bool BbdouSpecialCode::testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 
 	static const uint32 kVerbIdsHE[] = {0x001B0003, 0x001B0001, 0};
 	static const uint32 kVerbIdsH9[] = {0x001B0003, 0};
 	static const uint32 kVerbIdsH8[] = {0x001B0003, 0x001B0001, 0};
-	
+
 	const uint32 *verbIds;
 	int interactMode = _objectInteractModeMap.getObjectInteractMode(overlappedObjectId);
-  
+
 	if (holdingObjectId) {
 		if (interactMode == 9)
 			verbIds = kVerbIdsH9;
@@ -973,7 +973,7 @@ bool BbdouSpecialCode::testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 
 		else
 			verbIds = kVerbIdsEE;
 	}
-	
+
 	for (; *verbIds; ++verbIds)
 		if (*verbIds == verbId)
 			return true;
@@ -1019,7 +1019,7 @@ bool BbdouSpecialCode::runCause(Control *cursorControl, CursorData &cursorData,
 	uint32 sceneId = _vm->getCurrentScene();
 	uint32 outVerbId, outObjectId2, outObjectId;
 	bool success = false;
-	
+
 	if (getCause(_vm->getCurrentScene(), verbId, objectId2, objectId, outVerbId, outObjectId2, outObjectId)) {
 		sceneId = _vm->getCurrentScene();
 		success = true;
@@ -1027,7 +1027,7 @@ bool BbdouSpecialCode::runCause(Control *cursorControl, CursorData &cursorData,
 		sceneId = 0x10003;
 		success = true;
 	}
-	
+
 	if (!success)
 		return false;
 
@@ -1042,7 +1042,7 @@ bool BbdouSpecialCode::runCause(Control *cursorControl, CursorData &cursorData,
 
 	if (soundIndex)
 		playSoundEffect(soundIndex);
-	
+
 	cursorData._causeThreadId1 = _vm->causeTrigger(sceneId, outVerbId, outObjectId2, outObjectId, threadId);
 	cursorData._causeThreadId2 = cursorData._causeThreadId1;
 

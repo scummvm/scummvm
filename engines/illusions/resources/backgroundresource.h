@@ -150,7 +150,7 @@ public:
 
 	uint _bgInfosCount;
 	BgInfo *_bgInfos;
-	
+
 	uint _priorityLayersCount;
 	PriorityLayer *_priorityLayers;
 
@@ -173,7 +173,7 @@ public:
 	PathWalkRects *_pathWalkRects;
 
 	NamedPoints _namedPoints;
-	
+
 	uint _palettesCount;
 	Palette *_palettes;
 
@@ -197,8 +197,8 @@ public:
 	Graphics::Surface *_surfaces[kMaxBackgroundItemSurfaces];
 	CameraState _savedCameraState;
 	byte *_savedPalette;
-	void registerResources();	
-	void unregisterResources();	
+	void registerResources();
+	void unregisterResources();
 	void initSurface();
 	void freeSurface();
 	void drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels);

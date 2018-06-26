@@ -89,7 +89,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "voice");
 
 	_dict = new Dictionary();
-	
+
 	_resReader = new ResourceReaderGamArchive("duckman.gam");
 
 	_resSys = new ResourceSystem(this);
@@ -106,7 +106,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_screen = new Screen8Bit(this, 320, 200);
 	_screenPalette = new ScreenPalette(this);
 	_screenText = new ScreenText(this);
-	_input = new Input();	
+	_input = new Input();
 	_actorInstances = new ActorInstanceList(this);
 	_backgroundInstances = new BackgroundInstanceList(this);
 	_camera = new Camera(this);
@@ -119,7 +119,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 	_gameState = new Duckman_GameState(this);
 
 	_fader = new Fader();
-	
+
 	_dialogSys = new DuckmanDialogSystem(this);
 
 	_screen->setColorKey1(0);
@@ -130,7 +130,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 	_scriptOpcodes = new ScriptOpcodes_Duckman(this);
 	_stack = new ScriptStack();
-	
+
 	// TODO Move to own class
 	_resGetCtr = 0;
 	_unpauseControlActorFlag = false;
@@ -230,9 +230,9 @@ Common::Error IllusionsEngine_Duckman::run() {
 	delete _resSys;
 	delete _resReader;
 	delete _dict;
-	
+
 	debug("Ok");
-	
+
 	return Common::kNoError;
 }
 
@@ -1015,7 +1015,7 @@ void IllusionsEngine_Duckman::updateGameState2() {
 	Control *overlappedControl;
 
 	_cursor._control->_actor->_position = cursorPos;
-	
+
 	foundOverlapped = _controls->getOverlappedObject(_cursor._control, convMousePos, &overlappedControl, 0);
 
 	if (cursorPos.y < 8 && !_camera->isAtPanLimit(1)) {
@@ -1188,7 +1188,7 @@ uint32 IllusionsEngine_Duckman::runTriggerCause(uint32 verbId, uint32 objectId2,
 
 	if (!getTriggerCause(verbId, objectId2, objectId, triggerThreadId))
 		return 0;
-		
+
 	playTriggerCauseSound(verbId, objectId2, objectId);
 
 	uint32 tempThreadId = newTempThreadId();

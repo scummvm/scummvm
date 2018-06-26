@@ -166,7 +166,7 @@ SaveStateDescriptor IllusionsMetaEngine::querySaveMetaInfos(const char *target, 
 		Illusions::IllusionsEngine::kReadSaveHeaderError error;
 		error = Illusions::IllusionsEngine::readSaveHeader(in, true, header);
 		delete in;
-		if (error == Illusions::IllusionsEngine::kRSHENoError) {		
+		if (error == Illusions::IllusionsEngine::kRSHENoError) {
 			SaveStateDescriptor desc(slot, header.description);
 			// Slot 0 is used for the "Continue" save
 			desc.setDeletableFlag(slot != 0);

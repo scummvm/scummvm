@@ -154,7 +154,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	_screen = new Screen16Bit(this, 640, 480);
 	_screenPalette = new NullScreenPalette();
 	_screenText = new ScreenText(this);
-	_input = new Input();	
+	_input = new Input();
 	_actorInstances = new ActorInstanceList(this);
 	_backgroundInstances = new BackgroundInstanceList(this);
 	_camera = new Camera(this);
@@ -176,7 +176,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 
 	_scriptOpcodes = new ScriptOpcodes_BBDOU(this);
 	_stack = new ScriptStack();
-	
+
 	// TODO Move to own class
 	_resGetCtr = 0;
 	_unpauseControlActorFlag = false;
@@ -291,7 +291,7 @@ int IllusionsEngine_BBDOU::updateScript(uint flags) {
 
 bool IllusionsEngine_BBDOU::causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId) {
 	uint32 codeOffs;
-	return 
+	return
 		_triggerFunctions->find(sceneId, verbId, objectId2, objectId) ||
 		findTriggerCause(sceneId, verbId, objectId2, objectId, codeOffs);
 }

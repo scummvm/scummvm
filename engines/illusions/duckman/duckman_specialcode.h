@@ -42,7 +42,7 @@ public:
 	~DuckmanSpecialCode();
 	virtual void init();
 	virtual void run(uint32 specialCodeId, OpCall &opCall);
-public:	
+public:
 	typedef Common::HashMap<uint32, SpecialCodeFunction*> SpecialCodeMap;
 	typedef SpecialCodeMap::iterator SpecialCodeMapIterator;
 
