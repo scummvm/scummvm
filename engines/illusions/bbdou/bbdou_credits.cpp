@@ -53,7 +53,7 @@ void BbdouCredits::stop() {
 
 void BbdouCredits::drawNextLine() {
 	uint leftIndex, rightIndex;
-	
+
 	if (!readNextLine(leftIndex, rightIndex)) {
 		_vm->_scriptResource->_properties.set(_endSignalPropertyId, true);
 		return;
@@ -81,13 +81,13 @@ void BbdouCredits::drawNextLine() {
 void charToWChar(const char *text, uint16 *wtext, uint size) {
 	while (*text != 0 && size > 1) {
 		*wtext++ = (byte)*text++;
-		/*		
+		/*
 		byte c = (byte)*text++;
 		if (c > 127) c = 32;
 		*wtext = c;
-		debug("%04X", *wtext);		
+		debug("%04X", *wtext);
 		++wtext;
-		*/		
+		*/
 		--size;
 	}
 	*wtext++ = 0;
@@ -99,7 +99,7 @@ void BbdouCredits::drawTextToControl(uint32 objectId, const char *text, uint ali
 
 	// TODO Extract to Actor class
 	Control *control = _vm->getObjectControl(objectId);
-	FontResource *font = _vm->_dict->findFont(_currFontId); 
+	FontResource *font = _vm->_dict->findFont(_currFontId);
 	TextDrawer textDrawer;
 	WidthHeight dimensions;
 	uint16 *outText;
@@ -116,7 +116,7 @@ bool BbdouCredits::readNextLine(uint &leftIndex, uint &rightIndex) {
 	int textLines = 0;
 	leftIndex = 0;
 	rightIndex = 0;
-	
+
 	do {
 		uint lineIndex = _currLineIndex++;
 		const char *text = getText(lineIndex);
@@ -147,7 +147,7 @@ bool BbdouCredits::readNextLine(uint &leftIndex, uint &rightIndex) {
 			}
 		}
 	} while (!done);
-	
+
 	return textLines > 0;
 }
 

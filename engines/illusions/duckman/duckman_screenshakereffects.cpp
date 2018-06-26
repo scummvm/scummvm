@@ -36,8 +36,8 @@ static const ScreenShakeEffect kShakerEffect0 = {
 };
 
 static const ScreenShakerPoint kShakerPoints1[] = {
-	{-4, -5}, {4,  5}, {-3, -4}, {3, 4}, {-2, -3}, {2, 3}, {-1, -2}, 
-	{ 1,  2}, {0, -1} 
+	{-4, -5}, {4,  5}, {-3, -4}, {3, 4}, {-2, -3}, {2, 3}, {-1, -2},
+	{ 1,  2}, {0, -1}
 };
 
 static const ScreenShakeEffect kShakerEffect1 = {

@@ -132,7 +132,7 @@ void Camera::panToPoint(Common::Point pt, int16 panSpeed, uint32 panNotifyId) {
 
 	_activeState._panTargetPoint = getPtOffset(pt);
 	clipPanTargetPoint();
-	
+
 	if (panSpeed) {
 		_activeState._cameraMode = 5;
 		_activeState._panSpeed = panSpeed;
@@ -269,7 +269,7 @@ void Camera::update(uint32 currTime) {
 		updateMode3(currTime);
 		break;
 	}
-	
+
 	if (_activeState._cameraMode != 6) {
 
 		if (!isPanFinished() &&	updatePan(currTime)) {
@@ -389,7 +389,7 @@ void Camera::updateMode1(uint32 currTime) {
 		_activeState._panStartTime = _activeState._time28;
 		recalcPan(oldPanTime);
 	}
-	
+
 }
 
 void Camera::updateMode2(uint32 currTime) {
@@ -451,7 +451,7 @@ void Camera::updateMode3(uint32 currTime) {
 		recalcPan(currTime);
 		_activeState._cameraMode = 4;
 	}
-	
+
 }
 
 bool Camera::updatePan(uint32 currTime) {

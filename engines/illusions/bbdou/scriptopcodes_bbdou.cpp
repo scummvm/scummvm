@@ -100,7 +100,7 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 	OPCODE(45, opSetProperty);
 	OPCODE(46, opPlaceActor);
 	OPCODE(47, opFaceActor);
-	OPCODE(48, opFaceActorToObject);	
+	OPCODE(48, opFaceActorToObject);
 	OPCODE(49, opStartSequenceActor);
 	// 50 unused
 	OPCODE(51, opStartMoveActor);
@@ -219,9 +219,9 @@ void ScriptOpcodes_BBDOU::opStartTimerThread(ScriptThread *scriptThread, OpCall 
 	ARG_INT16(maxDuration);
 	if (maxDuration)
 		duration += _vm->getRandom(maxDuration);
-		
+
 //duration = 1;//DEBUG Speeds up things
-		
+
 	if (isAbortable)
 		_vm->startAbortableTimerThread(duration, opCall._threadId);
 	else
@@ -332,7 +332,7 @@ void ScriptOpcodes_BBDOU::opChangeScene(ScriptThread *scriptThread, OpCall &opCa
 		threadId = dthreadId;
 		dsceneId = 0;
 	}
-	
+
 	// NOTE Skipped checking for stalled resources
 	_vm->_input->discardAllEvents();
 	_vm->_prevSceneId = _vm->getCurrentScene();
@@ -381,13 +381,13 @@ void ScriptOpcodes_BBDOU::opExitCloseUpScene(ScriptThread *scriptThread, OpCall 
 }
 
 void ScriptOpcodes_BBDOU::opPanCenterObject(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(speed);	
+	ARG_INT16(speed);
 	ARG_UINT32(objectId);
 	_vm->_camera->panCenterObject(objectId, speed);
 }
 
 void ScriptOpcodes_BBDOU::opPanToObject(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(speed);	
+	ARG_INT16(speed);
 	ARG_UINT32(objectId);
 	Control *control = _vm->_dict->getObjectControl(objectId);
 	Common::Point pos = control->getActorPosition();
@@ -395,16 +395,16 @@ void ScriptOpcodes_BBDOU::opPanToObject(ScriptThread *scriptThread, OpCall &opCa
 }
 
 void ScriptOpcodes_BBDOU::opPanToNamedPoint(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(speed);	
+	ARG_INT16(speed);
 	ARG_UINT32(namedPointId);
 	Common::Point pos = _vm->getNamedPointPosition(namedPointId);
 	_vm->_camera->panToPoint(pos, speed, opCall._threadId);
 }
 
 void ScriptOpcodes_BBDOU::opPanToPoint(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(speed);	
-	ARG_INT16(x);	
-	ARG_INT16(y);	
+	ARG_INT16(speed);
+	ARG_INT16(x);
+	ARG_INT16(y);
 	_vm->_camera->panToPoint(Common::Point(x, y), speed, opCall._threadId);
 }
 
@@ -432,7 +432,7 @@ void ScriptOpcodes_BBDOU::opSetCameraBoundsToMasterBg(ScriptThread *scriptThread
 }
 
 void ScriptOpcodes_BBDOU::opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(index);	
+	ARG_INT16(index);
 	byte value = _vm->_scriptResource->_blockCounters.get(index) + 1;
 	if (value <= 63)
 		_vm->_scriptResource->_blockCounters.set(index, value);
@@ -444,8 +444,8 @@ void ScriptOpcodes_BBDOU::opClearBlockCounter(ScriptThread *scriptThread, OpCall
 }
 
 void ScriptOpcodes_BBDOU::opSetProperty(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(value);	
-	ARG_UINT32(propertyId);	
+	ARG_INT16(value);
+	ARG_UINT32(propertyId);
 	_vm->_scriptResource->_properties.set(propertyId, value != 0);
 }
 
@@ -521,7 +521,7 @@ void ScriptOpcodes_BBDOU::opSetActorPosition(ScriptThread *scriptThread, OpCall 
 }
 
 void ScriptOpcodes_BBDOU::opStartTalkThread(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(duration);	
+	ARG_INT16(duration);
 	ARG_UINT32(objectId);
 	ARG_UINT32(talkId);
 	ARG_UINT32(sequenceId1);
@@ -749,8 +749,8 @@ void ScriptOpcodes_BBDOU::opGetProperty(ScriptThread *scriptThread, OpCall &opCa
 }
 
 void ScriptOpcodes_BBDOU::opCompareBlockCounter(ScriptThread *scriptThread, OpCall &opCall) {
-	ARG_INT16(index);	
-	ARG_INT16(compareOp);	
+	ARG_INT16(index);
+	ARG_INT16(compareOp);
 	ARG_INT16(rvalue);
 	int16 lvalue = _vm->_scriptResource->_blockCounters.get(index);
 	bool compareResult = false;
@@ -793,19 +793,19 @@ void ScriptOpcodes_BBDOU::opPlayVideo(ScriptThread *scriptThread, OpCall &opCall
 	ARG_UINT32(videoId);
 	ARG_UINT32(priority);
 	// TODO _vm->playVideo(videoId, objectId, value, opCall._threadId);
-	
+
 	//DEBUG Resume calling thread, later done by the video player
 	_vm->notifyThreadId(opCall._callerThreadId);
-	
+
 }
 
 void ScriptOpcodes_BBDOU::opStackPop(ScriptThread *scriptThread, OpCall &opCall) {
-	_vm->_stack->pop(); 
+	_vm->_stack->pop();
 }
 
 void ScriptOpcodes_BBDOU::opStackDup(ScriptThread *scriptThread, OpCall &opCall) {
 	int16 value = _vm->_stack->peek();
-	_vm->_stack->push(value); 
+	_vm->_stack->push(value);
 }
 
 void ScriptOpcodes_BBDOU::opLoadSpecialCodeModule(ScriptThread *scriptThread, OpCall &opCall) {

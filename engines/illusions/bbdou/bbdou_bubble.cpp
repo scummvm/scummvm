@@ -101,7 +101,7 @@ void BbdouBubble::addItem0(uint32 sequenceId1, uint32 sequenceId2, uint32 progRe
 }
 
 void BbdouBubble::show() {
-	
+
 	if (_prevItem0) {
 		hide();
 	}
@@ -110,14 +110,14 @@ void BbdouBubble::show() {
 	_currItem0 = 0;
 
 	calcBubbles(_pt1, _pt2);
-	
+
 	Control *control = _vm->_dict->getObjectControl(_prevItem0->_objectId);
 	control->setActorPosition(_pt2);
 	control->startSequenceActor(0x60057, 2, 0);
 	control->startSequenceActor(_prevItem0->_sequenceId1, 2, 0);
 	control->appearActor();
 	control->deactivateObject();
-	
+
 	for (uint i = 0; i < 32; ++i) {
 		if (_items[i]._enabled == 1) {
 			Control *subControl = _vm->_dict->getObjectControl(_items[i]._objectId);
@@ -125,7 +125,7 @@ void BbdouBubble::show() {
 			subControl->startSequenceActor(_items[i]._sequenceId, 2, 0);
 		}
 	}
-	
+
 }
 
 void BbdouBubble::hide() {
@@ -156,7 +156,7 @@ void BbdouBubble::setup(int16 minCount, Common::Point pt1, Common::Point pt2, ui
 		if (item0->_count < maxCount && item0->_count >= minCount &&
 			(!progResKeywordId || item0->_progResKeywordId == progResKeywordId)) {
 			maxCount = item0->_count;
-			_currItem0 = item0; 
+			_currItem0 = item0;
 		}
 	}
 	_pt1 = pt1;
@@ -204,7 +204,7 @@ void BbdouBubble::calcBubbles(Common::Point &pt1, Common::Point &pt2) {
 
 	for (int i = 0; i < kSequenceIdsCount; ++i)
 		sequenceCounters[i] = 0;
-	
+
 	if (pt2.y >= pt1.y) {
 		swapY = true;
 		if (pt1.x == pt2.x)

@@ -118,7 +118,7 @@ public:
 	BbdouCursor *_cursor;
 	BbdouBubble *_bubble;
 	BbdouInventory *_inventory;
-	
+
 	BbdouCredits *_credits;
 
 	// Salad
@@ -130,7 +130,7 @@ public:
 	uint _shooterObjectIdIndex;
 
 	BbdouFoodCtl *_foodCtl;
-	
+
 	ObjectInteractModeMap _objectInteractModeMap;
 
 	// Special code interface functions

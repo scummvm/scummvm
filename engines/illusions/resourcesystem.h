@@ -91,14 +91,14 @@ public:
 	~ResourceSystem();
 
 	void addResourceLoader(uint32 resTypeId, BaseResourceLoader *resourceLoader);
-	
+
 	// TODO Handle threadId in caller as well as pausing of timer
 	void loadResource(uint32 resId, uint32 sceneId, uint32 threadId);
 	void unloadResourceById(uint32 resId);
 	void unloadResourcesBySceneId(uint32 sceneId);
 	void unloadSceneResources(uint32 sceneId1, uint32 sceneId2);
 	Resource *getResource(uint32 resId);
-	
+
 protected:
 	typedef Common::HashMap<uint32, BaseResourceLoader*> ResourceLoadersMap;
 	typedef ResourceLoadersMap::iterator ResourceLoadersMapIterator;
@@ -143,7 +143,7 @@ protected:
 	};
 
 	void unloadResource(Resource *resource);
-	
+
 };
 
 } // End of namespace Illusions

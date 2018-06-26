@@ -54,7 +54,7 @@ protected:
 	bool findValidDestLine(Common::Point &destPt);
 	void findValidDestPt(Common::Point &destPt);
 	WidthHeight calcRectDimensions(PathLine &rect);
-	void adjustRectDimensions(WidthHeight &dimensions);	
+	void adjustRectDimensions(WidthHeight &dimensions);
 	void swapDimensions(WidthHeight &dimensions);
 	void clipLineToBg(Common::Point &destPt, WidthHeight &rectDimensions, PathLine &outDestLine);
 	void findDeltaPt(Common::Point pt, Common::Point &outDeltaPt);

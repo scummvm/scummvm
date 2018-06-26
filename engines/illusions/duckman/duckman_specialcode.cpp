@@ -49,7 +49,7 @@ DuckmanSpecialCode::DuckmanSpecialCode(IllusionsEngine_Duckman *vm)
 	_propertyTimers = new PropertyTimers(_vm);
 	_inventory = new DuckmanInventory(_vm);
 	_credits = new DuckmanCredits(_vm);
-	
+
 	_wasCursorHoldingElvisPoster = false;
 	_counter = 0;
 	_savedTempMasterSfxVolume = 16;
@@ -189,7 +189,7 @@ void DuckmanSpecialCode::spcUpdateTeleporterPosition(OpCall &opCall) {
 	int16 deltaX = 0;
 	int16 deltaY = 0;
 	uint32 sequenceId = 0;
-	
+
 	Control *control = _vm->getObjectControl(0x400C0);
 	switch (direction) {
 	case 1:
@@ -219,7 +219,7 @@ void DuckmanSpecialCode::spcUpdateTeleporterPosition(OpCall &opCall) {
 	default:
 		break;
 	}
-	
+
 	if (sequenceId) {
 		control->startSequenceActor(sequenceId, 2, opCall._threadId);
 		_teleporterPosition.x += deltaX;

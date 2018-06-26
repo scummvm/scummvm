@@ -111,7 +111,7 @@ void ActorResource::load(Resource *resource) {
 
 	_totalSize = stream.readUint32LE();
 
-	// Load actor types	
+	// Load actor types
 	stream.seek(0x06);
 	uint actorTypesCount = stream.readUint16LE();
 	stream.seek(0x10);
@@ -137,7 +137,7 @@ void ActorResource::load(Resource *resource) {
 		_sequences.push_back(sequence);
 	}
 
-	// Load frames	
+	// Load frames
 	stream.seek(0x0A);
 	uint framesCount = stream.readUint16LE();
 	stream.seek(0x18);
@@ -149,7 +149,7 @@ void ActorResource::load(Resource *resource) {
 		frame.load(data, stream);
 		_frames.push_back(frame);
 	}
-	
+
 	// Load named points
 	if (resource->_gameId == kGameIdBBDOU) {
 		// The count isn't stored explicitly so calculate it
@@ -157,7 +157,7 @@ void ActorResource::load(Resource *resource) {
 		stream.seek(0x20);
 		_namedPoints.load(namedPointsCount, stream);
 	}
-	
+
 	debug(1, "ActorResource(%08X) framesCount: %d", resource->_resId, framesCount);
 }
 
@@ -240,7 +240,7 @@ void ActorInstance::registerResources() {
 		Sequence *sequence = &_actorResource->_sequences[i];
 		_vm->_dict->addSequence(sequence->_sequenceId, sequence);
 	}
-}	
+}
 
 void ActorInstance::unregisterResources() {
 	for (uint i = 0; i < _actorResource->_actorTypes.size(); ++i)

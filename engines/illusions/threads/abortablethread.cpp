@@ -31,7 +31,7 @@ namespace Illusions {
 
 AbortableThread::AbortableThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 	uint32 scriptThreadId, byte *scriptCodeIp)
-	: Thread(vm, threadId, callingThreadId, notifyFlags), _scriptThreadId(scriptThreadId), 
+	: Thread(vm, threadId, callingThreadId, notifyFlags), _scriptThreadId(scriptThreadId),
 	_scriptCodeIp(scriptCodeIp), _status(1) {
 	_type = kTTAbortableThread;
 	_sceneId = _vm->getCurrentScene();

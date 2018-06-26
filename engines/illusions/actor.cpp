@@ -95,7 +95,7 @@ Actor::Actor(IllusionsEngine *vm)
 	_seqCodeValue1 = 0;
 	_seqCodeValue2 = 600;
 	_seqCodeValue3 = 0;
-	
+
 	_notifyId3C = 0;
 
 	_controlRoutine = 0;
@@ -236,7 +236,7 @@ void Control::unpause() {
 
 	if (_objectId == Illusions::CURSOR_OBJECT_ID)
 		_vm->setCursorControl(this);
-  
+
 	if (_actor && !(_actor->_flags & Illusions::ACTOR_FLAG_200)) {
 		SurfInfo surfInfo;
 		ActorType *actorType = _vm->_dict->findActorType(_actorTypeId);
@@ -619,7 +619,7 @@ void Control::sequenceActor() {
 
 	opCall._result = 0;
 	_actor->_seqCodeValue3 -= _actor->_seqCodeValue1;
-	
+
 	while (_actor->_seqCodeValue3 <= 0 && !sequenceFinished) {
 		bool breakInner = false;
 		while (!breakInner) {
@@ -652,12 +652,12 @@ void Control::sequenceActor() {
 		}
 		//debug(1, "New frame OK");
 	}
-	
+
 	if (sequenceFinished) {
 		//debug(1, "Sequence has finished");
 		_actor->_seqCodeIp = 0;
 	}
-	
+
 }
 
 void Control::setActorIndex(int actorIndex) {
@@ -958,7 +958,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	_actor->_notifyId3C = 0;
 	_actor->_walkCallerThreadId1 = 0;
 	_actor->_entryTblPtr = 0;
-	
+
 	Sequence *sequence = _vm->_dict->findSequence(sequenceId);
 
 	if (!sequence && _vm->getGameId() == kGameIdDuckman) {
@@ -970,7 +970,7 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 
 	_actor->_seqCodeIp = sequence->_sequenceCode;
 	_actor->_frames = _vm->findActorSequenceFrames(sequence);
-	
+
 	_actor->_seqCodeValue3 = 0;
 	_actor->_seqCodeValue1 = 0;
 
@@ -981,12 +981,12 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 	}
 
 	_actor->initSequenceStack();
-	
+
 	if (_vm->getGameId() == kGameIdBBDOU)
 		stopSequenceActor();
-	
+
 	_actor->_linkIndex2 = 0;
-	
+
 	if (entryTblPtr) {
 		_actor->_flags |= Illusions::ACTOR_FLAG_80;
 		_actor->_entryTblPtr = entryTblPtr;
@@ -1034,7 +1034,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 	Control *control = newControl();
 	Actor *actor = newActor();
 	ActorType *actorType = _vm->_dict->findActorType(actorTypeId);
-	
+
 	control->_objectId = objectId;
 	control->_flags = actorType->_flags;
 	control->_priority = actorType->_priority;
@@ -1044,7 +1044,7 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 
 	if (_vm->isCursorObject(actorTypeId, objectId))
 		_vm->setCursorControlRoutine(control);
-		
+
 	if (actorType->_surfInfo._dimensions._width > 0 || actorType->_surfInfo._dimensions._height > 0) {
 		actor->createSurface(actorType->_surfInfo);
 	} else {
@@ -1074,19 +1074,19 @@ void Controls::placeActor(uint32 actorTypeId, Common::Point placePt, uint32 sequ
 		actor->_pathWalkRects = bgRes->getPathWalkRects(actorType->_pathWalkRectIndex - 1);
 		actor->_flags |= Illusions::ACTOR_FLAG_HAS_WALK_RECTS;
 	}
-	
+
 	if (actorType->_priorityLayerIndex) {
 		actor->_priorityLayer = bgRes->getPriorityLayer(actorType->_priorityLayerIndex - 1);
 		actor->_flags |= Illusions::ACTOR_FLAG_PRIORITY;
 	}
-	
+
 	if (actorType->_regionLayerIndex) {
 		actor->_regionLayer = bgRes->getRegionLayer(actorType->_regionLayerIndex - 1);
 		actor->_flags |= Illusions::ACTOR_FLAG_REGION;
 	}
-	
+
 	actor->_pathCtrY = 140;
-	
+
 	_controls.push_front(control);
 	_vm->_dict->setObjectControl(objectId, control);
 

@@ -29,7 +29,7 @@ namespace Illusions {
 void WidthHeight::load(Common::SeekableReadStream &stream) {
 	_width = stream.readSint16LE();
 	_height = stream.readSint16LE();
-	
+
 	debug(5, "WidthHeight::load() _width: %d; _height: %d",
 		_width, _height);
 }
@@ -39,7 +39,7 @@ void WidthHeight::load(Common::SeekableReadStream &stream) {
 void SurfInfo::load(Common::SeekableReadStream &stream) {
 	_pixelSize = stream.readUint32LE();
 	_dimensions.load(stream);
-	
+
 	debug(5, "SurfInfo::load() _pixelSize: %d",
 		_pixelSize);
 }

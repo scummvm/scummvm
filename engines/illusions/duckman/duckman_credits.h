@@ -41,7 +41,7 @@ public:
 	DuckmanCredits(IllusionsEngine_Duckman *vm);
 	~DuckmanCredits();
 	void start();
-public:	
+public:
 	typedef Common::Array<CreditsItem> CreditsItems;
 	IllusionsEngine_Duckman *_vm;
 	uint32 _lastUpdateTicks;

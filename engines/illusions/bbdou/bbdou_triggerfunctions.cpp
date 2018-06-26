@@ -76,7 +76,7 @@ TriggerFunctions::ItemsIterator TriggerFunctions::findInternal(uint32 sceneId, u
 			triggerFunction->_objectId2 == objectId2 && triggerFunction->_objectId == objectId)
 			break;
 	}
-	return it;		
+	return it;
 }
 
 } // End of namespace Illusions

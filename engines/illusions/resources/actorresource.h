@@ -107,7 +107,7 @@ public:
 protected:
 	void initActorTypes(int gameId);
 	void registerResources();
-	void unregisterResources();	
+	void unregisterResources();
 };
 
 class ActorInstanceList {

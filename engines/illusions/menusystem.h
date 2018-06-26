@@ -176,7 +176,7 @@ protected:
 
 */
 
-class MenuTextBuilder {	
+class MenuTextBuilder {
 public:
 	MenuTextBuilder();
 	void appendString(const Common::String &value);

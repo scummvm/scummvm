@@ -54,9 +54,9 @@ protected:
 	Common::Point _offsPt;
 	uint _textFlags;
 	Graphics::Surface *_surface;
-	
+
 	Common::Array<TextLine> _textLines;
-	
+
 	bool textHasChar(uint16 c);
 	int16 getSpaceWidth();
 	int16 getCharWidth(uint16 c);

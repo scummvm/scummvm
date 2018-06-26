@@ -92,7 +92,7 @@ bool IllusionsEngine::savegame(const char *filename, const char *description) {
 	out->writeUint32LE(saveTime);
 	out->writeUint32LE(playTime);
 	// Header end
-	
+
 	_gameState->write(out);
 
 	out->finalize();

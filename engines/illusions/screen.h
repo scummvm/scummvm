@@ -92,7 +92,7 @@ protected:
 		}
 	};
 	Screen *_screen;
-	SpriteDrawQueueList _queue;	
+	SpriteDrawQueueList _queue;
 	void insert(SpriteDrawQueueItem *item, uint32 priority);
 	bool calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcRect, Common::Rect &dstRect);
 };

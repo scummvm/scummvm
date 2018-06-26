@@ -42,7 +42,7 @@ public:
 	void startDialog(int16 *choiceOfsPtr, uint32 actorTypeId, uint32 callerThreadId);
 	void updateDialogState();
 public:
-	IllusionsEngine_Duckman *_vm;	
+	IllusionsEngine_Duckman *_vm;
 	Common::Array<DialogItem> _dialogItems;
 };
 

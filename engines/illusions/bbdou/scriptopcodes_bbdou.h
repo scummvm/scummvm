@@ -71,7 +71,7 @@ protected:
 	void opPanToPoint(ScriptThread *scriptThread, OpCall &opCall);
 	void opPanStop(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetDisplay(ScriptThread *scriptThread, OpCall &opCall);
-	void opSetCameraBounds(ScriptThread *scriptThread, OpCall &opCall);	
+	void opSetCameraBounds(ScriptThread *scriptThread, OpCall &opCall);
 	void opSetCameraBoundsToMasterBg(ScriptThread *scriptThread, OpCall &opCall);
 	void opIncBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
 	void opClearBlockCounter(ScriptThread *scriptThread, OpCall &opCall);
@@ -134,7 +134,7 @@ protected:
 	void opSetFontId(ScriptThread *scriptThread, OpCall &opCall);
 	void opAddMenuKey(ScriptThread *scriptThread, OpCall &opCall);
 	void opChangeSceneAll(ScriptThread *scriptThread, OpCall &opCall);
-	
+
 };
 
 } // End of namespace Illusions

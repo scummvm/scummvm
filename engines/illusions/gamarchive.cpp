@@ -49,20 +49,20 @@ void GamArchive::loadDictionary() {
 	_groupCount = _fd->readUint32LE();
 	_groups = new GamGroupEntry[_groupCount];
 	uint32 *groupOffsets = new uint32[_groupCount];
-	
+
 	for (uint i = 0; i < _groupCount; ++i) {
 		_groups[i]._id = _fd->readUint32LE();
 		groupOffsets[i] = _fd->readUint32LE();
 	}
-	
+
 	for (uint i = 0; i < _groupCount; ++i) {
 		_fd->seek(groupOffsets[i]);
 		uint32 fileCount = _fd->readUint32LE();
 		_groups[i]._fileCount = fileCount;
 		_groups[i]._files = new GamFileEntry[fileCount];
-		
+
 		debug(8, "Group %08X, fileCount: %d", _groups[i]._id, _groups[i]._fileCount);
-		
+
 		for (uint j = 0; j < fileCount; ++j) {
 			_groups[i]._files[j]._id = _fd->readUint32LE();
 			_groups[i]._files[j]._fileOffset = _fd->readUint32LE();

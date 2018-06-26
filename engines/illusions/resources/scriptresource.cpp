@@ -155,7 +155,7 @@ void TriggerCause::load(Common::SeekableReadStream &stream) {
 	_verbId = stream.readUint32LE();
 	_objectId2 = stream.readUint32LE();
 	_codeOffs = stream.readUint32LE();
-	
+
 	debug(2, "TriggerCause::load() _verbId: %08X; _objectId2: %08X; _codeOffs: %08X",
 		_verbId, _objectId2, _codeOffs);
 }
@@ -283,10 +283,10 @@ void ScriptResource::load(Resource *resource) {
 	_dataSize = resource->_dataSize;
 
 	Common::MemoryReadStream stream(_data, _dataSize, DisposeAfterUse::NO);
-	
+
 	uint32 objectMapOffs = 0, sceneInfosOffs = 0;
 	_objectMapCount = 0;
-	
+
 	if (resource->_gameId == kGameIdBBDOU) {
 		sceneInfosOffs = 0x18;
 	} else if (resource->_gameId == kGameIdDuckman) {
@@ -294,7 +294,7 @@ void ScriptResource::load(Resource *resource) {
 			_soundIds[i] = stream.readUint32LE();
 		sceneInfosOffs = 0x8C;
 	}
-	
+
 	stream.skip(4); // Skip unused
 
 	// Read item counts
@@ -313,17 +313,17 @@ void ScriptResource::load(Resource *resource) {
 	if (resource->_gameId == kGameIdDuckman)
 		objectMapOffs = stream.readUint32LE(); //TODO Is this needed for BBDOU?
 	uint32 codeTblOffs = stream.readUint32LE();
-	
+
 	debug(2, "ScriptResource::load() propertiesCount: %d; blockCountersCount: %d; _codeCount: %d; _sceneInfosCount: %d; _objectMapCount: %d",
 		propertiesCount, blockCountersCount, _codeCount, _sceneInfosCount, _objectMapCount);
 	debug(2, "ScriptResource::load() propertiesOffs: %08X; blockCountersOffs: %08X; codeTblOffs: %08X; objectMapOffs: %08X",
 		propertiesOffs, blockCountersOffs, codeTblOffs, objectMapOffs);
 	// Init properties
 	_properties.init(propertiesCount, _data + propertiesOffs);
-	
+
 	// Init blockcounters
 	_blockCounters.init(blockCountersCount, _data + blockCountersOffs);
-	
+
 	_codeOffsets = new uint32[_codeCount];
 	stream.seek(codeTblOffs);
 	for (uint i = 0; i < _codeCount; ++i)
@@ -336,7 +336,7 @@ void ScriptResource::load(Resource *resource) {
 		stream.seek(sceneInfoOffs);
 		_sceneInfos[i].load(_data, stream);
 	}
-	
+
 	if (_objectMapCount > 0) {
 		_objectMap = new uint32[_objectMapCount];
 		stream.seek(objectMapOffs);
@@ -345,7 +345,7 @@ void ScriptResource::load(Resource *resource) {
 			stream.skip(4);
 		}
 	}
-	
+
 	if (resource->_gameId == kGameIdDuckman) {
 		stream.seek(0x6C);
 		_mainActorObjectId = stream.readUint32LE();
@@ -353,7 +353,7 @@ void ScriptResource::load(Resource *resource) {
 		stream.seek(0);
 		_mainActorObjectId = stream.readUint32LE();
 	}
-	
+
 	if (resource->_gameId == kGameIdDuckman)
 		fixupSceneInfosDuckman();
 

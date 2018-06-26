@@ -101,13 +101,13 @@ bool ScreenText::refreshScreenText(FontResource *font, WidthHeight dimensions, C
 
 bool ScreenText::insertText(uint16 *text, uint32 fontId, WidthHeight dimensions, Common::Point offsPt, uint flags,
 	uint16 backgroundColor, uint16 borderColor, byte colorR, byte colorG, byte colorB, uint16 *&outTextPtr) {
-	
+
 	if (!_screenTexts.empty()) {
 		ScreenTextEntry *screenText = _screenTexts.back();
 		screenText->_info._position = _position;
 		freeTextSurface();
 	}
-	
+
 	ScreenTextEntry *screenText = new ScreenTextEntry();
 	screenText->_info._fontId = fontId;
 	screenText->_info._dimensions = dimensions;
@@ -169,13 +169,13 @@ void ScreenText::removeText() {
 }
 
 void ScreenText::clearText() {
-	
+
 	if (!_screenTexts.empty()) {
 		ScreenTextEntry *screenText = _screenTexts.back();
 		screenText->_info._position = _position;
 		freeTextSurface();
 	}
-	
+
 	ScreenTextEntry *screenText = new ScreenTextEntry();
 	screenText->_info._fontId = 0;
 	_screenTexts.push_back(screenText);

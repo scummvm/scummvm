@@ -61,7 +61,7 @@ public:
 protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
-public:	
+public:
 	ScriptMan *_scriptMan;
 	TriggerFunctions *_triggerFunctions;
 	Cursor *_cursor;
@@ -94,8 +94,8 @@ public:
 	Common::Point getNamedPointPosition(uint32 namedPointId);
 	uint32 getPriorityFromBase(int16 priority);
 	uint32 getCurrentScene();
-	uint32 getPrevScene();	
-	
+	uint32 getPrevScene();
+
 	bool isCursorObject(uint32 actorTypeId, uint32 objectId);
 	void setCursorControlRoutine(Control *control);
 	void placeCursorControl(Control *control, uint32 sequenceId);
@@ -117,7 +117,7 @@ public:
 	uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 		uint32 value8, uint32 valueC, uint32 value10);
 	void resumeFromSavegame(uint32 callingThreadId);
-	
+
 	void newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		byte *scriptCodeIp, uint32 value8, uint32 valueC, uint32 value10);
 	uint32 newTimerThread(uint32 duration, uint32 callingThreadId, bool isAbortable);
@@ -135,7 +135,7 @@ public:
 	void setSceneIdThreadId(uint32 theSceneId, uint32 theThreadId);
 	bool findTriggerCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs);
 	void reset();
-	
+
 };
 
 } // End of namespace Illusions

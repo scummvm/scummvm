@@ -40,5 +40,5 @@ ResourceReaderGamArchive::~ResourceReaderGamArchive() {
 byte *ResourceReaderGamArchive::readResource(uint32 sceneId, uint32 resId, uint32 &dataSize) {
 	return _gamArchive->readResource(sceneId, resId, dataSize);
 }
-	
+
 } // End of namespace Illusions

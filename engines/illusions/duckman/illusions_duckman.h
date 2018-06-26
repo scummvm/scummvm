@@ -94,16 +94,16 @@ public:
 
 	Cursor_Duckman _cursor;
 	Control *_currWalkOverlappedControl;
-	
+
 	DuckmanDialogSystem *_dialogSys;
 
 	int _savedInventoryActorIndex;
 
 	ScreenShaker *_screenShaker;
 	DuckmanMenuSystem *_menuSystem;
-	
+
 	void initInput();
-	
+
 	void initUpdateFunctions();
 	int updateScript(uint flags);
 
@@ -156,7 +156,7 @@ public:
 	uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
 		uint32 value8, uint32 valueC, uint32 value10);
 	void resumeFromSavegame(uint32 callingThreadId);
-	
+
 	void newScriptThread(uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		byte *scriptCodeIp);
 	uint32 newTimerThread(uint32 duration, uint32 callingThreadId, bool isAbortable);
@@ -180,9 +180,9 @@ public:
 	void setSceneIdThreadId(uint32 theSceneId, uint32 theThreadId);
 	bool findTriggerCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &codeOffs);
 	void reset();
-	
+
 	uint32 getObjectActorTypeId(uint32 objectId);
-	
+
 	Common::Point convertMousePos(Common::Point mousePos);
 	void startCursorSequence();
 	int getCursorActorIndex();
@@ -191,7 +191,7 @@ public:
 	bool getTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId, uint32 &outThreadId);
 	uint32 runTriggerCause(uint32 verbId, uint32 objectId2, uint32 objectId);
 	void playTriggerCauseSound(uint32 verbId, uint32 objectId2, uint32 objectId);
-	
+
 	bool loadSavegameFromScript(int16 slotNum, uint32 callingThreadId);
 	bool saveSavegameFromScript(int16 slotNum, uint32 callingThreadId);
 	void activateSavegame(uint32 callingThreadId);

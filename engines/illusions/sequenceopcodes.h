@@ -51,7 +51,7 @@ protected:
 	void opEndSequence(Control *control, OpCall &opCall);
 	void opIncFrameDelay(Control *control, OpCall &opCall);
 	void opSetRandomFrameDelay(Control *control, OpCall &opCall);
-	void opSetFrameSpeed(Control *control, OpCall &opCall);	
+	void opSetFrameSpeed(Control *control, OpCall &opCall);
 	void opJump(Control *control, OpCall &opCall);
 	void opJumpRandom(Control *control, OpCall &opCall);
 	void opGotoSequence(Control *control, OpCall &opCall);
