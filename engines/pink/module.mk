@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	pda_mgr.o \
 	pink.o \
 	resource_mgr.o \
+	saveload.o \
 	sound.o \
 	objects/object.o \
 	objects/module.o \
