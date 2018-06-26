@@ -33,7 +33,7 @@
 
 static const PlainGameDescriptor illusionsGames[] = {
 	{ "illusions", "Illusions engine game" },
-	{ "bbdou", "Beavis and Butthead Do U" },
+	{ "bbdou", "Beavis and Butt-head Do U" },
 	{ "duckman", "Duckman" },
 	{ 0, 0 }
 };
@@ -48,7 +48,7 @@ static const IllusionsGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("000D0001.scr", "d0c846d5dccc5607a482c7dcbdf06973", 601980),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 			GUIO0()
 		},
 		kGameIdBBDOU
@@ -61,7 +61,7 @@ static const IllusionsGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("duckman.gam", "172c0514f3793041718159cf9cf9935f", 29560832),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO0()
 		},
 		kGameIdDuckman
@@ -74,7 +74,7 @@ static const IllusionsGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("duckman.gam", "64d16922ffb46b746fc2c12a14d75bcc", 29779968),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO0()
 		},
 		kGameIdDuckman
