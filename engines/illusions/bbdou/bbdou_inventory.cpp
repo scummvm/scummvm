@@ -290,9 +290,8 @@ void BbdouInventory::clear() {
 
 void BbdouInventory::cause0x1B0001(TriggerFunction *triggerFunction, uint32 callingThreadId) {
 	// TODO
-	debug("cause0x1B0001");
 	uint32 foundSceneId, foundVerbId, foundObjectId2, foundObjectId;
-	bool found;
+	bool found = false;
 	InventoryBag *inventoryBag = getInventoryBag(_activeInventorySceneId);
 	InventorySlot *inventorySlot = inventoryBag->getInventorySlot(triggerFunction->_objectId);
 	uint32 objectId = inventorySlot->_inventoryItem->_objectId;
