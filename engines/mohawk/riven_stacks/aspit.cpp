@@ -98,14 +98,17 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 	const char *fontname;
 	const Graphics::Font *font = nullptr;
 
-	if (_vm->getLanguage() != Common::JA_JPN)
+	int fontHeight;
+	if (_vm->getLanguage() != Common::JA_JPN) {
 		fontname = "FreeSans.ttf";
-	else
+		fontHeight = 12;
+	} else {
 		fontname = "mplus-2c-regular.ttf";
+		fontHeight = 11;
+	}
 
 
 #if defined(USE_FREETYPE2)
-	int fontHeight = 11;
 	if (file.open(fontname)) {
 		font = Graphics::loadTTFFont(file, fontHeight);
 	}
