@@ -7,6 +7,7 @@ addons:
   apt:
     packages:
     - g++ make
+    - cmake ninja-build
     - libsdl2-dev
     - libsdl2-net-dev
     - libcurl4-openssl-dev
@@ -25,8 +26,14 @@ addons:
 
 before_install:
   - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'osx' ]; then brew update; fi"
-  - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'osx' ]; then brew install sdl2 sdl2_net libvorbis flac mad theora faad2 libmpeg2; fi"
+  - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'osx' ]; then brew install cmake ninja sdl2 sdl2_net libvorbis flac mad theora faad2 libmpeg2; fi"
+  # HACK: The version of libsdl2-dev available on Trusty does not include sdl2-config.cmake, so we add it ourselves.
+  - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'linux' ]; then (mkdir -p /usr/lib/x86_64-linux-gnu/cmake/SDL2; wget https://hg.libsdl.org/SDL/raw-file/58425859a4e5/sdl2-config.cmake.in -O - | sed -e 's/@prefix@/\/usr/g' -e 's/@exec_prefix@/${prefix}/g' -e 's/@libdir@/${prefix}\/lib\/x86_64-linux-gnu/g' -e 's/@includedir@/${prefix}\/include/g' -e 's/@SDL_RLD_FLAGS@//g' -e 's/@SDL_LIBS@/-lSDL2/g' > /usr/lib/x86_64-linux-gnu/cmake/SDL2/sdl2-config.cmake;) fi"
 
+env:
+  matrix:
+    - BUILD_SYSTEM=configure
+    - BUILD_SYSTEM=cmake
 
 branches:
  only:
@@ -42,10 +49,15 @@ os:
 dist: trusty
 
 script:
-  - ./configure --enable-all-engines
-  - make -j 2
-  - make test
-  - make devtools
+  - "if [ ${BUILD_SYSTEM:-'configure'} = 'configure' ]; then ./configure --enable-all-engines; fi"
+  - "if [ ${BUILD_SYSTEM:-'configure'} = 'configure' ]; then make -j 2; fi"
+  - "if [ ${BUILD_SYSTEM:-'configure'} = 'configure' ]; then make test; fi"
+  - "if [ ${BUILD_SYSTEM:-'configure'} = 'configure' ]; then make devtools; fi"
+  - "if [ ${BUILD_SYSTEM:-'configure'} = 'cmake' ]; then (cd devtools/create_project/cmake; cmake -G 'Ninja' .; ninja); fi"
+  - "if [ ${BUILD_SYSTEM:-'configure'} = 'cmake' ]; then ./devtools/create_project/cmake/create_project . --cmake --enable-all-engines --enable-faad --enable-mpeg2; fi"
+  - "if [ ${BUILD_SYSTEM:-'configure'} = 'cmake' ]; then cmake -G 'Ninja' .; fi"
+  - "if [ ${BUILD_SYSTEM:-'configure'} = 'cmake' ]; then ninja; fi"
+
 
 notifications:
   irc:
