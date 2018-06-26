@@ -156,6 +156,21 @@ static const StarTrekGameDescription gameDescriptions[] = {
 	{
 		{
 			"st25",
+			"",
+			AD_ENTRY1("Star Trek Data", "d95eb00532b7082d53862c906c7ac3dc"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO0()
+		},
+		GType_ST25,
+		0,
+		0,
+	},
+	
+	{
+		{
+			"st25",
 			"Demo",
 			AD_ENTRY1("data.001", "f68126e7e36ce6286c4c8575f8b594f5"),
 			Common::EN_ANY,
