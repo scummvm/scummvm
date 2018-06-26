@@ -100,6 +100,7 @@ private:
 	private:
 		bool _endOfTrack;
 		int _curFrame;
+		uint32 _framePts;
 		Audio::Timestamp _nextFrameStartTime;
 		Graphics::Surface *_surface;
 

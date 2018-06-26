@@ -440,6 +440,7 @@ MPEGPSDecoder::MPEGVideoTrack::MPEGVideoTrack(Common::SeekableReadStream *firstP
 	_surface = 0;
 	_endOfTrack = false;
 	_curFrame = -1;
+	_framePts = 0xFFFFFFFF;
 	_nextFrameStartTime = Audio::Timestamp(0, 27000000); // 27 MHz timer
 
 	findDimensions(firstPacket, format);
@@ -481,21 +482,27 @@ const Graphics::Surface *MPEGPSDecoder::MPEGVideoTrack::decodeNextFrame() {
 
 bool MPEGPSDecoder::MPEGVideoTrack::sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts) {
 #ifdef USE_MPEG2
+	if (pts != 0xFFFFFFFF) {
+		_framePts = pts;
+	}
+
 	uint32 framePeriod;
 	bool foundFrame = _mpegDecoder->decodePacket(*packet, framePeriod, _surface);
 
 	if (foundFrame) {
 		_curFrame++;
 
-		// If there is a presentation timestamp, use that for sync. Almost all
-		// packets with a presentation timestamp will have a found frame, so
-		// it is probably not worth the trouble worrying about when they don't.
+		// If there has been a timestamp since the previous frame, use that for
+		// syncing. Usually it will be the timestamp from the current packet,
+		// but it might not be.
 
-		if (pts != 0xFFFFFFFF) {
-			_nextFrameStartTime = Audio::Timestamp(pts / 90, 27000000);
+		if (_framePts != 0xFFFFFFFF) {
+			_nextFrameStartTime = Audio::Timestamp(_framePts / 90, 27000000);
 		} else {
 			_nextFrameStartTime = _nextFrameStartTime.addFrames(framePeriod);
 		}
+
+		_framePts = 0xFFFFFFFF;
 	}
 #endif
 
