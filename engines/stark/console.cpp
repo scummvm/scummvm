@@ -477,13 +477,10 @@ bool Console::Cmd_ListInventory(int argc, const char **argv) {
 		return true;
 	}
 
-	bool printAll = argc != 2;
 	Common::Array<Resources::Item*> inventoryItems = inventory->listChildren<Resources::Item>(Resources::Item::kItemInventory);
 	Common::Array<Resources::Item*>::iterator it = inventoryItems.begin();
 	for (int i = 0; it != inventoryItems.end(); ++it, i++) {
-		if (printAll || (*it)->isEnabled()) {
-			debugPrintf("Item %d: %s\n", i, (*it)->getName().c_str());
-		}
+		debugPrintf("Item %d: %s%s\n", i, (*it)->getName().c_str(), (*it)->isEnabled() ? " (enabled)" : "");
 	}
 
 	return true;
@@ -577,7 +574,7 @@ bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
 	// Assert indices
 	Common::String xarcFileName = Common::String::format("%s/%s/%s.xarc", argv[1], argv[2], argv[2]);
 	if (!Common::File::exists(xarcFileName)) {
-		debugPrintf("Invalid location indices %s %s\n", argv[1], argv[2]);
+		debugPrintf("Invalid location %s %s. Use listLocations to get correct indices\n", argv[1], argv[2]);
 		return true;
 	}
 

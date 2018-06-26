@@ -27,9 +27,6 @@
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/knowledgeset.h"
 
-#include "gui/debugger.h"
-#include "engines/engine.h"
-
 namespace Stark {
 
 Global::Global() :
