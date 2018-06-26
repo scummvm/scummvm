@@ -61,11 +61,11 @@ public:
 
 class SoundGroupInstance : public ResourceInstance {
 public:
-	SoundGroupInstance(IllusionsEngine *vm);              
+	SoundGroupInstance(IllusionsEngine *vm);
 	virtual void load(Resource *resource);
 	virtual void unload();
 public:
-	IllusionsEngine *_vm;	
+	IllusionsEngine *_vm;
 	SoundGroupResource *_soundGroupResource;
 	uint32 _resId;
 };

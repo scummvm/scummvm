@@ -168,7 +168,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 
 	_screen->setColorKey1(0xF81F);
 
-    initInput();
+	initInput();
 
 	initUpdateFunctions();
 
@@ -188,10 +188,10 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	ConfMan.registerDefault("talkspeed", 240);
 	_subtitleDuration = (uint16)ConfMan.getInt("talkspeed");
 
-	_globalSceneId = 0x00010003;	
-	
+	_globalSceneId = 0x00010003;
+
 	setDefaultTextCoords();
-	
+
 	_resSys->loadResource(0x000D0001, 0, 0);
 
 	_doScriptThreadInit = false;
@@ -214,7 +214,7 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _stack;
 	delete _scriptOpcodes;
 
-    delete _soundMan;
+	delete _soundMan;
 	delete _updateFunctions;
 	delete _threads;
 	delete _triggerFunctions;
@@ -230,9 +230,9 @@ Common::Error IllusionsEngine_BBDOU::run() {
 	delete _resSys;
 	delete _resReader;
 	delete _dict;
-	
+
 	debug("Ok");
-	
+
 	return Common::kNoError;
 }
 

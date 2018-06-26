@@ -25,23 +25,23 @@
 
 namespace Illusions {
 
-FP16 floatToFixed(float value) {
+FixedPoint16 floatToFixed(float value) {
 	return value * 65536.0;
 }
 
-float fixedToFloat(FP16 value) {
+float fixedToFloat(FixedPoint16 value) {
 	return value / 65536.0;
 }
 
-FP16 fixedMul(FP16 a, FP16 b) {
+FixedPoint16 fixedMul(FixedPoint16 a, FixedPoint16 b) {
 	return ((float)a * b) / 65536.0;
 }
 
-FP16 fixedDiv(FP16 a, FP16 b) {
+FixedPoint16 fixedDiv(FixedPoint16 a, FixedPoint16 b) {
 	return ((float)a / b) * 65536.0;
 }
 
-int16 fixedTrunc(FP16 value) {
+int16 fixedTrunc(FixedPoint16 value) {
 	// CHECKME Not sure if this correct
 	int16 result = (value >> 16) & 0xFFFF;
 	if ((value & 0xFFFF) >= 0x8000)
@@ -49,7 +49,7 @@ int16 fixedTrunc(FP16 value) {
 	return result;
 }
 
-FP16 fixedDistance(FP16 x1, FP16 y1, FP16 x2, FP16 y2) {
+FixedPoint16 fixedDistance(FixedPoint16 x1, FixedPoint16 y1, FixedPoint16 x2, FixedPoint16 y2) {
 	float xd = fixedToFloat(x1) - fixedToFloat(x2);
 	float yd = fixedToFloat(y1) - fixedToFloat(y2);
 	if (xd != 0.0 || yd != 0.0)
@@ -57,16 +57,16 @@ FP16 fixedDistance(FP16 x1, FP16 y1, FP16 x2, FP16 y2) {
 	return 0;
 }
 
-FP16 fixedAtan(FP16 value) {
+FixedPoint16 fixedAtan(FixedPoint16 value) {
 	//return floatToFixed(atan2(1.0, fixedToFloat(value)));
 	return floatToFixed(atan(fixedToFloat(value)));
 }
 
-FP16 fixedCos(FP16 value) {
+FixedPoint16 fixedCos(FixedPoint16 value) {
 	return floatToFixed(cos(fixedToFloat(value)));
 }
 
-FP16 fixedSin(FP16 value) {
+FixedPoint16 fixedSin(FixedPoint16 value) {
 	return floatToFixed(sin(fixedToFloat(value)));
 }
 

@@ -213,7 +213,7 @@ Common::Error IllusionsEngine_Duckman::run() {
 
 	delete _fader;
 
-    delete _gameState;
+	delete _gameState;
 	delete _menuSystem;
 	delete _soundMan;
 	delete _updateFunctions;

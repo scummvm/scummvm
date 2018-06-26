@@ -141,11 +141,11 @@ public:
 
 class ScriptInstance : public ResourceInstance {
 public:
-	ScriptInstance(IllusionsEngine *vm);              
+	ScriptInstance(IllusionsEngine *vm);
 	virtual void load(Resource *resource);
 	virtual void unload();
 public:
-	IllusionsEngine *_vm;	
+	IllusionsEngine *_vm;
 };
 
 } // End of namespace Illusions

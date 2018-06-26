@@ -30,8 +30,8 @@ namespace Illusions {
 void MidiGroupResourceLoader::load(Resource *resource) {
 	debug(1, "MidiGroupResourceLoader::load() Loading midi group %08X...", resource->_resId);
 
-    // TODO
-	
+	// TODO
+
 }
 
 bool MidiGroupResourceLoader::isFlag(int flag) {

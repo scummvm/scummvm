@@ -87,20 +87,20 @@ public:
 	void removeActorType(uint32 id);
 	ActorType *findActorType(uint32 id);
 
-    void addFont(uint32 id, FontResource *fontResource);
+	void addFont(uint32 id, FontResource *fontResource);
 	void removeFont(uint32 id);
 	FontResource *findFont(uint32 id);
 
-    void addSequence(uint32 id, Sequence *sequence);
+	void addSequence(uint32 id, Sequence *sequence);
 	void removeSequence(uint32 id);
 	Sequence *findSequence(uint32 id);
 
-    void addTalkEntry(uint32 id, TalkEntry *talkEntry);
+	void addTalkEntry(uint32 id, TalkEntry *talkEntry);
 	void removeTalkEntry(uint32 id);
 	TalkEntry *findTalkEntry(uint32 id);
 
-    void setObjectControl(uint32 objectId, Control *control);
-    Control *getObjectControl(uint32 objectId);
+	void setObjectControl(uint32 objectId, Control *control);
+	Control *getObjectControl(uint32 objectId);
 
 protected:
 	DictionaryHashMap<ActorType> _actorTypes;

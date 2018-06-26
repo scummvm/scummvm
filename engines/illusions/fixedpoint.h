@@ -27,17 +27,17 @@
 
 namespace Illusions {
 
-typedef int32 FP16;
+typedef int32 FixedPoint16;
 
-FP16 floatToFixed(float value);
-float fixedToFloat(FP16 value);
-FP16 fixedMul(FP16 a, FP16 b);
-FP16 fixedDiv(FP16 a, FP16 b);
-int16 fixedTrunc(FP16 value);
-FP16 fixedDistance(FP16 x1, FP16 y1, FP16 x2, FP16 y2);
-FP16 fixedAtan(FP16 value);
-FP16 fixedCos(FP16 value);
-FP16 fixedSin(FP16 value);
+FixedPoint16 floatToFixed(float value);
+float fixedToFloat(FixedPoint16 value);
+FixedPoint16 fixedMul(FixedPoint16 a, FixedPoint16 b);
+FixedPoint16 fixedDiv(FixedPoint16 a, FixedPoint16 b);
+int16 fixedTrunc(FixedPoint16 value);
+FixedPoint16 fixedDistance(FixedPoint16 x1, FixedPoint16 y1, FixedPoint16 x2, FixedPoint16 y2);
+FixedPoint16 fixedAtan(FixedPoint16 value);
+FixedPoint16 fixedCos(FixedPoint16 value);
+FixedPoint16 fixedSin(FixedPoint16 value);
 
 } // End of namespace Illusions
 
