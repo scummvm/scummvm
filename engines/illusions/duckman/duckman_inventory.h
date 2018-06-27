@@ -37,9 +37,6 @@ struct DMInventorySlot {
 struct DMInventoryItem {
 	uint32 _objectId;
 	uint32 _propertyId;
-	DMInventoryItem() : _objectId(0) {}
-	DMInventoryItem(uint32 objectId, uint32 propertyId)
-		: _objectId(objectId), _propertyId(propertyId) {}
 };
 
 class DuckmanInventory {
@@ -49,7 +46,7 @@ public:
 public:
 	IllusionsEngine_Duckman *_vm;
 	Common::Array<DMInventorySlot> _inventorySlots;
-	Common::Array<DMInventoryItem> _inventoyItems;
+	Common::Array<DMInventoryItem> _inventoryItems;
 	void initInventory();
 	void openInventory();
 	void addInventoryItem(uint32 objectId);

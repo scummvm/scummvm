@@ -120,7 +120,7 @@ BaseMenu *DuckmanMenuSystem::createLoadGameFailedMenu() {
 
 MenuItem *DuckmanMenuSystem::createOptionsSliderMenuItem(MenuActionUpdateSlider **action, const Common::String &text, SliderActionType type, BaseMenu *baseMenu) {
 	int sliderValue = 0;
-	Common::String sliderText = "{~~~~~~~~~~~~~~~~}";
+	char sliderText[] = "{~~~~~~~~~~~~~~~~}";
 	switch (type) {
 		case SFX : sliderValue = _vm->_soundMan->getSfxVolume()/(256/15); break;
 		case MUSIC : sliderValue = _vm->_soundMan->getMusicVolume()/(256/15); break;
@@ -129,7 +129,7 @@ MenuItem *DuckmanMenuSystem::createOptionsSliderMenuItem(MenuActionUpdateSlider 
 		default: break;
 	}
 
-	sliderText.setChar('|', sliderValue + 1);
+	sliderText[sliderValue + 1] = '|';
 
 	*action = new MenuActionUpdateSlider(this, baseMenu, type, _vm);
 	MenuItem *menuItem = new MenuItem(text + sliderText, *action);
