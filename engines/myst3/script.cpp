@@ -20,16 +20,18 @@
  *
  */
 
-#include "engines/myst3/myst3.h"
 #include "engines/myst3/script.h"
-#include "engines/myst3/hotspot.h"
-#include "engines/myst3/state.h"
+
+#include "engines/myst3/ambient.h"
 #include "engines/myst3/cursor.h"
+#include "engines/myst3/database.h"
+#include "engines/myst3/hotspot.h"
 #include "engines/myst3/inventory.h"
+#include "engines/myst3/myst3.h"
 #include "engines/myst3/puzzles.h"
 #include "engines/myst3/scene.h"
 #include "engines/myst3/sound.h"
-#include "engines/myst3/ambient.h"
+#include "engines/myst3/state.h"
 
 #include "common/events.h"
 
@@ -2454,7 +2456,7 @@ void Script::runScriptWithVar(Context &c, const Opcode &cmd) {
 void Script::runCommonScript(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Run common script %d", cmd.op, cmd.args[0]);
 
-	_vm->runScriptsFromNode(cmd.args[0], 101, 1);
+	_vm->runScriptsFromNode(cmd.args[0], kRoomShared, 1);
 }
 
 void Script::runCommonScriptWithVar(Context &c, const Opcode &cmd) {
@@ -2462,7 +2464,7 @@ void Script::runCommonScriptWithVar(Context &c, const Opcode &cmd) {
 
 	_vm->_state->setVar(26, cmd.args[1]);
 
-	_vm->runScriptsFromNode(cmd.args[0], 101, 1);
+	_vm->runScriptsFromNode(cmd.args[0], kRoomShared, 1);
 }
 
 void Script::runPuzzle1(Context &c, const Opcode &cmd) {
