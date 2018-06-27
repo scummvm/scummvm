@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-23 14:50+0200\n"
+"POT-Creation-Date: 2018-06-27 22:48+0200\n"
 "PO-Revision-Date: 2018-04-18 10:19+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -115,7 +115,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:311 gui/launcher.cpp:380 gui/launcher.cpp:440
+#: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
 #: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:192
 #: backends/platform/wince/CEActionsPocket.cpp:326
@@ -128,7 +128,7 @@ msgstr "Ναι"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:311 gui/launcher.cpp:380 gui/launcher.cpp:440
+#: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
 #: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:192
 #: backends/platform/wince/CEActionsPocket.cpp:326
@@ -139,7 +139,7 @@ msgstr "Ναι"
 msgid "No"
 msgstr "Όχι"
 
-#: gui/downloaddialog.cpp:137 gui/launcher.cpp:532
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:547
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "Το ScummVM δε μπόρεσε να ανοίξει το καθορισμένο φάκελο!"
 
@@ -152,8 +152,8 @@ msgstr ""
 "φάκελος έχει ένα αρχείο με το ίδιο όνομα."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:294
-#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:489
-#: gui/launcher.cpp:493 gui/massadd.cpp:89 gui/options.cpp:1680
+#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:504
+#: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1680
 #: gui/saveload-dialog.cpp:1122 engines/engine.cpp:444 engines/engine.cpp:455
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
@@ -682,7 +682,7 @@ msgstr "~Α~φαίρ. Παιχν"
 msgid "Search in game list"
 msgstr "Αναζήτηση στη λίστα παιχνιδιών"
 
-#: gui/launcher.cpp:177 gui/launcher.cpp:745
+#: gui/launcher.cpp:177 gui/launcher.cpp:760
 msgid "Search:"
 msgstr "Αναζήτηση:"
 
@@ -704,7 +704,7 @@ msgstr "Φόρτωση παιχνιδιού:"
 msgid "Load"
 msgstr "Φόρτωση"
 
-#: gui/launcher.cpp:310
+#: gui/launcher.cpp:325
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -712,44 +712,44 @@ msgstr ""
 "Θέλετε πραγματικά να τρέξετε τον μαζικό ανιχνευτή παιχνιδιών; Αυτό θα "
 "μπορούσε ενδεχομένως να προσθέσει ένα τεράστιο αριθμό παιχνιδιών."
 
-#: gui/launcher.cpp:369
+#: gui/launcher.cpp:384
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 "Αυτός ο φάκελος δε μπορεί να χρησιμοποιηθεί ακόμη, γίνεται μεταφόρτωση σε "
 "αυτόν!"
 
-#: gui/launcher.cpp:380
+#: gui/launcher.cpp:395
 msgid "Do you really want to remove this game configuration?"
 msgstr "Θέλετε πραγματικά να σβήσετε τις ρυθμίσεις αυτού του παιχνιδιού;"
 
-#: gui/launcher.cpp:439
+#: gui/launcher.cpp:454
 msgid "Do you want to load saved game?"
 msgstr "Θέλετε να φορτώσετε το αποθηκευμένο παιχνίδι;"
 
-#: gui/launcher.cpp:489
+#: gui/launcher.cpp:504
 msgid "This game does not support loading games from the launcher."
 msgstr "Αυτό το παιχνίδι δεν υποστηρίζει φόρτωση παιχνιδιών από τον προωθητή."
 
-#: gui/launcher.cpp:493
+#: gui/launcher.cpp:508
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "Το ScummVM δε μπόρεσε να βρεί κάποια μηχανή ικανή να εκτελέσει το επιλεγμένο "
 "παιχνίδι!"
 
-#: gui/launcher.cpp:554
+#: gui/launcher.cpp:569
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr ""
 "Το ScummVM δε μπόρεσε να βρεί κάποιο παιχνίδι στον προκαθορισμένο φάκελο!"
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:582
 msgid "Pick the game:"
 msgstr "Διαλέξτε το παιχνίδι:"
 
-#: gui/launcher.cpp:682
+#: gui/launcher.cpp:697
 msgid "Mass Add..."
 msgstr "Μαζική Προσθήκη..."
 
-#: gui/launcher.cpp:684
+#: gui/launcher.cpp:699
 msgid "Record..."
 msgstr "Εγγραφή..."
 

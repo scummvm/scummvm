@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-23 14:50+0200\n"
+"POT-Creation-Date: 2018-06-27 22:48+0200\n"
 "PO-Revision-Date: 2018-04-18 14:10+0000\n"
 "Last-Translator: Fred Almeida <fred_pj@hotmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -116,7 +116,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:311 gui/launcher.cpp:380 gui/launcher.cpp:440
+#: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
 #: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:192
 #: backends/platform/wince/CEActionsPocket.cpp:326
@@ -129,7 +129,7 @@ msgstr "Sim"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:311 gui/launcher.cpp:380 gui/launcher.cpp:440
+#: gui/launcher.cpp:326 gui/launcher.cpp:395 gui/launcher.cpp:455
 #: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:192
 #: backends/platform/wince/CEActionsPocket.cpp:326
@@ -140,7 +140,7 @@ msgstr "Sim"
 msgid "No"
 msgstr "Não"
 
-#: gui/downloaddialog.cpp:137 gui/launcher.cpp:532
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:547
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM não conseguiu abrir a directoria especificada!"
 
@@ -153,8 +153,8 @@ msgstr ""
 "especificada possui um arquivo com o mesmo nome."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:294
-#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:489
-#: gui/launcher.cpp:493 gui/massadd.cpp:89 gui/options.cpp:1680
+#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:504
+#: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1680
 #: gui/saveload-dialog.cpp:1122 engines/engine.cpp:444 engines/engine.cpp:455
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
@@ -679,7 +679,7 @@ msgstr "~R~emover Jogo"
 msgid "Search in game list"
 msgstr "Pesquisar na lista de jogos"
 
-#: gui/launcher.cpp:177 gui/launcher.cpp:745
+#: gui/launcher.cpp:177 gui/launcher.cpp:760
 msgid "Search:"
 msgstr "Pesquisar:"
 
@@ -701,7 +701,7 @@ msgstr "Carregar jogo:"
 msgid "Load"
 msgstr "Carregar"
 
-#: gui/launcher.cpp:310
+#: gui/launcher.cpp:325
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -709,44 +709,44 @@ msgstr ""
 "Deseja mesmo executar o detector de adição em massa? Tal poderá, "
 "potencialmente, adicionar um elevado número de jogos."
 
-#: gui/launcher.cpp:369
+#: gui/launcher.cpp:384
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 "De momento, esta directoria não pode ser utilizada, existe uma descarga em "
 "curso!"
 
-#: gui/launcher.cpp:380
+#: gui/launcher.cpp:395
 msgid "Do you really want to remove this game configuration?"
 msgstr "Deseja mesmo remover a configuração deste jogo?"
 
-#: gui/launcher.cpp:439
+#: gui/launcher.cpp:454
 msgid "Do you want to load saved game?"
 msgstr "Deseja carregar o jogo salvo?"
 
-#: gui/launcher.cpp:489
+#: gui/launcher.cpp:504
 msgid "This game does not support loading games from the launcher."
 msgstr "Este jogo não permite carregar jogos a partir do menu principal."
 
-#: gui/launcher.cpp:493
+#: gui/launcher.cpp:508
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "O ScummVM não conseguiu encontrar nenhum motor de jogo capaz de correr o "
 "jogo seleccionado!"
 
-#: gui/launcher.cpp:554
+#: gui/launcher.cpp:569
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr ""
 "O ScummVM não conseguiu encontrar nenhum jogo na directoria especificada!"
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:582
 msgid "Pick the game:"
 msgstr "Escolha o jogo:"
 
-#: gui/launcher.cpp:682
+#: gui/launcher.cpp:697
 msgid "Mass Add..."
 msgstr "Adição em Massa..."
 
-#: gui/launcher.cpp:684
+#: gui/launcher.cpp:699
 msgid "Record..."
 msgstr "Gravar..."
 
