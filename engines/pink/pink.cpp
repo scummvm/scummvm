@@ -270,9 +270,9 @@ bool PinkEngine::canSaveGameStateCurrently() {
 
 bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
 	return
-			f == kSupportsRTL ||
-			f == kSupportsLoadingDuringRuntime ||
-			f == kSupportsSavingDuringRuntime;
+		f == kSupportsRTL ||
+		f == kSupportsLoadingDuringRuntime ||
+		f == kSupportsSavingDuringRuntime;
 }
 
 void PinkEngine::pauseEngineIntern(bool pause) {
