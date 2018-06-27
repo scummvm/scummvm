@@ -261,7 +261,7 @@ Object *Archive::parseObject(bool &isCopyReturned) {
 		_objectMap.push_back(res);
 		_objectIdMap.push_back(objectId);
 
-		_objectMap.push_back(res); // Basically a hack, but behavior is all correct
+		_objectMap.push_back(res); // Basically a hack, but behavior is all correct. MFC uses one array for pointers and ids
 		_objectIdMap.push_back(objectId);
 
 		isCopyReturned = false;
