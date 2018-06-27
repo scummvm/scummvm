@@ -100,7 +100,29 @@ enum GameStringIDs {
 	TX_SPEAKER_CHEEVER,
 	TX_SPEAKER_PREAX,
 
+	TX_BRIDU146,
+
 	TX_G_024,
+
+	TX_GENER004,
+
+	TX_COMPA180,
+	TX_COMPA186,
+	TX_COMPA187,
+	TX_COMPA189,
+	TX_COMPA190,
+	TX_COMPA191,
+	TX_COMPA193,
+	TX_COMPU181,
+	TX_COMPU182,
+	TX_COMPU186,
+	TX_COMPU187,
+	TX_COMPU188,
+	TX_COMPU189,
+	TX_COMPU190,
+	TX_COMPU192,
+	TX_COMPU193,
+
 
 	TX_DEM0_001,
 	TX_DEM0_002,
@@ -585,7 +607,6 @@ enum GameStringIDs {
 	TX_TUG0N014,
 
 
-	TX_SIN3_012,
 	TX_TUG1_001,
 	TX_TUG1_002,
 	TX_TUG1_003,
@@ -693,9 +714,6 @@ enum GameStringIDs {
 	TX_TUG2C001, // Custom
 
 
-	TX_COMPA180,
-	TX_COMPU181,
-	TX_COMPU182,
 	TX_TUG3_001,
 	TX_TUG3_002,
 	TX_TUG3_003,
@@ -728,21 +746,6 @@ enum GameStringIDs {
 	TX_TUG3N008,
 
 
-	TX_BRIDU146,
-	TX_COMPA186,
-	TX_COMPA187,
-	TX_COMPA189,
-	TX_COMPA190,
-	TX_COMPA191,
-	TX_COMPA193,
-	TX_COMPU186,
-	TX_COMPU187,
-	TX_COMPU188,
-	TX_COMPU189,
-	TX_COMPU190,
-	TX_COMPU192,
-	TX_COMPU193,
-	TX_GENER004,
 	TX_LOV0_001,
 	TX_LOV0_002,
 	TX_LOV0_003,
@@ -1155,10 +1158,21 @@ enum GameStringIDs {
 	TX_LOVA_F10,
 	TX_LOVA_F54,
 	TX_LOVA_F55,
+
+
 	TX_MUD2_040,
+
+
 	TX_MUD4_018,
-	TX_SPOKCOFF,
+
+
+	TX_SIN3_012,
+
+
 	TX_VENA_F41,
+
+
+	TX_SPOKCOFF,
 
 
 	TX_END
@@ -1202,7 +1216,29 @@ const char * const g_gameStrings[] = {
 	"Dr. Cheever",
 	"Preax",
 
+	"#BRID\\BRIDU146#Nothing to report, Captain.",
+
 	"#GENE\\G_024#Fascinating.",
+
+	"#GENE\\GENER004#Game Over",
+
+	"#COMP\\COMPA180#Orbit Stabilized. Warning Cancelled.",
+	"#COMP\\COMPA186#Ammonia",
+	"#COMP\\COMPA187#Di-hydrogen Oxide",
+	"#COMP\\COMPA189#Nitrous Oxide",
+	"#COMP\\COMPA190#Oroborus Virus",
+	"#COMP\\COMPA191#Exit Database",
+	"#COMP\\COMPA193#TLTDH Gas",
+	"#COMP\\COMPU181#Warning. Orbital Decay is now irreversible. Abandon Ship. Abandon Ship.",
+	"#COMP\\COMPU182#Warning. Orbital decay detected. Warning.",
+	"#COMP\\COMPU186#Ammonia: a colorless pungent compound NH3, a common byproduct of metabolism in carbon-based lifeforms. Liquid or gaseous at 1 atm. Compounds widely used in agricultural, medical and industrial applications.",
+	"#COMP\\COMPU187#Di-hydrogen Oxide: a colorless, tasteless, nonflammable compound HO- water. Liquid, solid, or gaseous at 1 atm. Temperature scales defined in most humanoid cultures by state-shift of pure water.",
+	"#COMP\\COMPU188#Dr. Marcus' Log, Supplemental: Continued testing of the Oroborus Virus confirms its potential harmful effects on Romulan/Vulcan humanoids. As soon as the spill has been cleaned up, we will sterilize both labs and purge the circulation system to make sure no traces of the virus will remain viable. Then all research files must be erased -- we must leave no chance that this terrible accident will ever be repeated.",
+	"#COMP\\COMPU189#Nitrous Oxide: a colorless nonflammable compound NO, gaseous at 1 atm and temperatures within the human norm. Early anesthetic among humans, in whom it produces laughter, feelings of exhiliration, euphoria; sometimes leading to unconsciousness.",
+	"#COMP\\COMPU190#Oroborus virus: Atypical growth patterns for L-Type virus. Opportunistic pneumococcal mimic affecting Romulo-Vulcan genotype. Etiology: contact or airborne vector with alveoli microcollapse involvement immediately upon exposure. Tissue dehydration follows pneumal flooding. Mortality: 0.6 in 1.0 stardates, 1.0 within 2.0 stardates Treatment: none. Named for the mythic worldsnake that swallows its own tail.",
+	"#COMP\\COMPU192#Please select subject file...",
+	"#COMP\\COMPU193#TLTDH gas: The chemical compound tantalum bi-lithium thalo-dihydroxide. Colorless, odorless, nonflammable gaseous at 1 atm and temperatures within the human norm. Early anesthetic among Vulcans and Romulans, in whom it produces laughter, feelings of exhiliration, euphoria; sometimes leading to unconsciousness. In post-industrial/pre-spaceflight era, a social problem evolved when crude TLTDH became popular to \"cook up\" from non-conductive tantalo-lithial compounds commonly used as electrical insulation.",
+
 
 	"#DEM0\\DEM0_001#Doctor, you need to investigate the possibility of disease, mental or physical, among these people, before we go chasing up the mountains. Prelate Angiven, may we see those who have encountered the demons?",
 	"#DEM0\\DEM0_002#Aside from seeing demons, has any hard data been collected? Any evidence I could see?",
@@ -1687,7 +1723,6 @@ const char * const g_gameStrings[] = {
 	"#TUG0\\TUG0N014#This man was obviously the transporter engineer. He is unconscious, but alive.",
 
 
-	"#SIN3\\SIN3_012#Can't say I like the decor.", // FIXME
 	"#TUG1\\TUG1_001#This is a mess now, isn't it?",
 	"#TUG1\\TUG1_002#A forcefield of unusual configurations has been erected in front of the doorway which leads into the bridge. I don't think it would be healthy to approach too closely, Captain.",
 	"#TUG1\\TUG1_003#I'm getting life readings both on the bridge and in the brig, Jim.",
@@ -1795,9 +1830,6 @@ const char * const g_gameStrings[] = {
 	"Snip...snip...snip.",
 
 
-	"#COMP\\COMPA180#Orbit Stabilized. Warning Cancelled.", // FIXME
-	"#COMP\\COMPU181#Warning. Orbital Decay is now irreversible. Abandon Ship. Abandon Ship.",
-	"#COMP\\COMPU182#Warning. Orbital decay detected. Warning.",
 	"#TUG3\\TUG3_001#Scotty, beam down a security team to the bridge.  We have regained control.",
 	"#TUG3\\TUG3_002#Check and mate, Elasi. Don't do anything foolish.",
 	"#TUG3\\TUG3_003#Freeze, don't even think about it.",
@@ -1830,21 +1862,6 @@ const char * const g_gameStrings[] = {
 	"#TUG3\\TUG3N008#You carefully eye the chief lieutenant of the Elasi Clan, Elasi Cereth.",
 
 
-	"#BRID\\BRIDU146#Nothing to report, Captain.",
-	"#COMP\\COMPA186#Ammonia",
-	"#COMP\\COMPA187#Di-hydrogen Oxide",
-	"#COMP\\COMPA189#Nitrous Oxide",
-	"#COMP\\COMPA190#Oroborus Virus",
-	"#COMP\\COMPA191#Exit Database",
-	"#COMP\\COMPA193#TLTDH Gas",
-	"#COMP\\COMPU186#Ammonia: a colorless pungent compound NH3, a common byproduct of metabolism in carbon-based lifeforms. Liquid or gaseous at 1 atm. Compounds widely used in agricultural, medical and industrial applications.",
-	"#COMP\\COMPU187#Di-hydrogen Oxide: a colorless, tasteless, nonflammable compound HO- water. Liquid, solid, or gaseous at 1 atm. Temperature scales defined in most humanoid cultures by state-shift of pure water.",
-	"#COMP\\COMPU188#Dr. Marcus' Log, Supplemental: Continued testing of the Oroborus Virus confirms its potential harmful effects on Romulan/Vulcan humanoids. As soon as the spill has been cleaned up, we will sterilize both labs and purge the circulation system to make sure no traces of the virus will remain viable. Then all research files must be erased -- we must leave no chance that this terrible accident will ever be repeated.",
-	"#COMP\\COMPU189#Nitrous Oxide: a colorless nonflammable compound NO, gaseous at 1 atm and temperatures within the human norm. Early anesthetic among humans, in whom it produces laughter, feelings of exhiliration, euphoria; sometimes leading to unconsciousness.",
-	"#COMP\\COMPU190#Oroborus virus: Atypical growth patterns for L-Type virus. Opportunistic pneumococcal mimic affecting Romulo-Vulcan genotype. Etiology: contact or airborne vector with alveoli microcollapse involvement immediately upon exposure. Tissue dehydration follows pneumal flooding. Mortality: 0.6 in 1.0 stardates, 1.0 within 2.0 stardates Treatment: none. Named for the mythic worldsnake that swallows its own tail.",
-	"#COMP\\COMPU192#Please select subject file...",
-	"#COMP\\COMPU193#TLTDH gas: The chemical compound tantalum bi-lithium thalo-dihydroxide. Colorless, odorless, nonflammable gaseous at 1 atm and temperatures within the human norm. Early anesthetic among Vulcans and Romulans, in whom it produces laughter, feelings of exhiliration, euphoria; sometimes leading to unconsciousness. In post-industrial/pre-spaceflight era, a social problem evolved when crude TLTDH became popular to \"cook up\" from non-conductive tantalo-lithial compounds commonly used as electrical insulation.",
-	"#GENE\\GENER004#Game Over",
 	"#LOV0\\LOV0_001#A medical data file is attached --  your bailiwick, Bones.",
 	"#LOV0\\LOV0_002#Spock, check out the station's computer and see what you can dig up.",
 	"#LOV0\\LOV0_003#Strange that the bridge is empty. Stay sharp everyone. The station's computer system might give us some answers.",
@@ -2257,10 +2274,21 @@ const char * const g_gameStrings[] = {
 	"#LOVA\\LOVA_F10#He has weak vital signs.",
 	"#LOVA\\LOVA_F54#The virus has spread to me, Captain. I suggest you concentrate your efforts on the problem.",
 	"#LOVA\\LOVA_F55#Jim, we need to synthesize more to make the serum before we can use it.", // TYPO
+
+
 	"#MUD2\\MUD2_040#You look troubled, Captain.",
+
+
 	"#MUD4\\MUD4_018#Kirk to Enterprise ... Kirk to Enterprise.",
-	"#sfx\\spokcoff#cough... cough...",
+
+
+	"#SIN3\\SIN3_012#Can't say I like the decor.",
+
+
 	"#VENA\\VENA_F41#Kirk out.",
+
+
+	"#sfx\\spokcoff#cough... cough...",
 };
 
 }
