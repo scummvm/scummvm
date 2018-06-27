@@ -86,7 +86,7 @@ public:
 
 	bool isInteractingWith(Actor *actor);
 
-	void setNextExecutors (const Common::String &nextModule, const Common::String &nextPage);
+	void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage);
 
 	State getState() const { return _state; }
 

@@ -51,56 +51,56 @@ static const struct RuntimeClass {
 	const char *name;
 	int id;
 } classMap[] = {
-		{"ActionHide", kActionHide},
-		{"ActionLoop", kActionLoop},
-		{"ActionPlay", kActionPlay},
-		{"ActionPlayWithSfx", kActionPlayWithSfx},
-		{"ActionSfx", kActionSfx},
-		{"ActionSound", kActionSound},
-		{"ActionStill", kActionStill},
-		{"ActionTalk", kActionTalk},
-		{"ActionText", kActionText},
-		{"Actor", kActor},
-		{"AudioInfoPDAButton", kAudioInfoPDAButton},
-		{"ConditionGameVariable", kConditionGameVariable},
-		{"ConditionInventoryItemOwner", kConditionInventoryItemOwner},
-		{"ConditionModuleVariable", kConditionModuleVariable},
-		{"ConditionNotInventoryItemOwner", kConditionNotInventoryItemOwner},
-		{"ConditionNotModuleVariable", kConditionNotModuleVariable},
-		{"ConditionNotPageVariable", kConditionNotPageVariable},
-		{"ConditionPageVariable", kConditionPageVariable},
-		{"CursorActor", kCursorActor},
-		{"GamePage", kGamePage},
-		{"HandlerLeftClick", kHandlerLeftClick},
-		{"HandlerStartPage", kHandlerStartPage},
-		{"HandlerTimer", kHandlerTimer},
-		{"HandlerTimerActions", kHandlerTimerActions},
-		{"HandlerTimerSequences", kHandlerTimerSequences},
-		{"HandlerUseClick", kHandlerUseClick},
-		{"InventoryActor", kInventoryActor},
-		{"InventoryItem", kInventoryItem},
-		{"LeadActor", kLeadActor},
-		{"ModuleProxy", kModuleProxy},
-		{"PDAButtonActor", kPDAButtonActor},
-		{"ParlSqPink", kParlSqPink},
-		{"PubPink", kPubPink},
-		{"SeqTimer", kSeqTimer},
-		{"Sequence", kSequence},
-		{"SequenceAudio", kSequenceAudio},
-		{"SequenceItem", kSequenceItem},
-		{"SequenceItemDefaultAction", kSequenceItemDefaultAction},
-		{"SequenceItemLeader", kSequenceItemLeader},
-		{"SequenceItemLeaderAudio", kSequenceItemLeaderAudio},
-		{"SideEffectExit", kSideEffectExit},
-		{"SideEffectGameVariable", kSideEffectGameVariable},
-		{"SideEffectInventoryItemOwner", kSideEffectInventoryItemOwner},
-		{"SideEffectLocation", kSideEffectLocation},
-		{"SideEffectModuleVariable", kSideEffectModuleVariable},
-		{"SideEffectPageVariable", kSideEffectPageVariable},
-		{"SideEffectRandomPageVariable", kSideEffectRandomPageVariable},
-		{"SupportingActor", kSupportingActor},
-		{"WalkAction", kWalkAction},
-		{"WalkLocation", kWalkLocation}
+	{"ActionHide", kActionHide},
+	{"ActionLoop", kActionLoop},
+	{"ActionPlay", kActionPlay},
+	{"ActionPlayWithSfx", kActionPlayWithSfx},
+	{"ActionSfx", kActionSfx},
+	{"ActionSound", kActionSound},
+	{"ActionStill", kActionStill},
+	{"ActionTalk", kActionTalk},
+	{"ActionText", kActionText},
+	{"Actor", kActor},
+	{"AudioInfoPDAButton", kAudioInfoPDAButton},
+	{"ConditionGameVariable", kConditionGameVariable},
+	{"ConditionInventoryItemOwner", kConditionInventoryItemOwner},
+	{"ConditionModuleVariable", kConditionModuleVariable},
+	{"ConditionNotInventoryItemOwner", kConditionNotInventoryItemOwner},
+	{"ConditionNotModuleVariable", kConditionNotModuleVariable},
+	{"ConditionNotPageVariable", kConditionNotPageVariable},
+	{"ConditionPageVariable", kConditionPageVariable},
+	{"CursorActor", kCursorActor},
+	{"GamePage", kGamePage},
+	{"HandlerLeftClick", kHandlerLeftClick},
+	{"HandlerStartPage", kHandlerStartPage},
+	{"HandlerTimer", kHandlerTimer},
+	{"HandlerTimerActions", kHandlerTimerActions},
+	{"HandlerTimerSequences", kHandlerTimerSequences},
+	{"HandlerUseClick", kHandlerUseClick},
+	{"InventoryActor", kInventoryActor},
+	{"InventoryItem", kInventoryItem},
+	{"LeadActor", kLeadActor},
+	{"ModuleProxy", kModuleProxy},
+	{"PDAButtonActor", kPDAButtonActor},
+	{"ParlSqPink", kParlSqPink},
+	{"PubPink", kPubPink},
+	{"SeqTimer", kSeqTimer},
+	{"Sequence", kSequence},
+	{"SequenceAudio", kSequenceAudio},
+	{"SequenceItem", kSequenceItem},
+	{"SequenceItemDefaultAction", kSequenceItemDefaultAction},
+	{"SequenceItemLeader", kSequenceItemLeader},
+	{"SequenceItemLeaderAudio", kSequenceItemLeaderAudio},
+	{"SideEffectExit", kSideEffectExit},
+	{"SideEffectGameVariable", kSideEffectGameVariable},
+	{"SideEffectInventoryItemOwner", kSideEffectInventoryItemOwner},
+	{"SideEffectLocation", kSideEffectLocation},
+	{"SideEffectModuleVariable", kSideEffectModuleVariable},
+	{"SideEffectPageVariable", kSideEffectPageVariable},
+	{"SideEffectRandomPageVariable", kSideEffectRandomPageVariable},
+	{"SupportingActor", kSupportingActor},
+	{"WalkAction", kWalkAction},
+	{"WalkLocation", kWalkLocation}
 };
 
 static Object *createObject(int objectId) {
@@ -266,12 +266,10 @@ Object *Archive::parseObject(bool &isCopyReturned) {
 
 		isCopyReturned = false;
 	} else if ((obTag & 0x8000) == 0) {
-
 		res = _objectMap[obTag];
 
 		isCopyReturned = true;
 	} else {
-
 		obTag &= ~0x8000;
 
 		objectId = _objectIdMap[obTag];
@@ -287,11 +285,11 @@ Object *Archive::parseObject(bool &isCopyReturned) {
 }
 
 static int runtimeClassCmp(const void *key, const void *elem) {
-	return strcmp((const char *) key, *(const char **) elem);
+	return strcmp((const char *)key, *(const char **)elem);
 }
 
 uint Archive::findObjectId(const char *name) {
-	RuntimeClass *found = (RuntimeClass *)bsearch(name, classMap, sizeof(classMap) / sizeof(RuntimeClass) , sizeof(RuntimeClass), runtimeClassCmp);
+	RuntimeClass *found = (RuntimeClass *)bsearch(name, classMap, sizeof(classMap) / sizeof(RuntimeClass), sizeof(RuntimeClass), runtimeClassCmp);
 
 	if (!found)
 		error("Class %s is not in class Map", name);

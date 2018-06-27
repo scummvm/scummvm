@@ -483,16 +483,16 @@ bool PubPink::sendUseClickMessage(Actor *actor) {
 
 		const char *roundName;
 		switch (_round++ % 3) {
-			case 0:
+		case 0:
 			roundName = kFirstRound;
 			break;
-			case 1:
+		case 1:
 			roundName = kSecondRound;
 			break;
-			case 2:
+		case 2:
 			roundName = kThirdRound;
 			break;
-			default:
+		default:
 			roundName = nullptr;
 			assert(0);
 		}
@@ -500,7 +500,7 @@ bool PubPink::sendUseClickMessage(Actor *actor) {
 	}
 
 	if (playingMiniGame())
-	_isHaveItem = true;
+		_isHaveItem = true;
 
 	return true;
 }
