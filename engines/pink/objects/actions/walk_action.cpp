@@ -49,7 +49,7 @@ void WalkAction::onStart() {
 			_frameCount = _decoder.getFrameCount();
 		}
 		else {
-			_frameCount = (uint) abs(3 * (_start.x - _end.x) / (int)_z);
+			_frameCount = (uint)abs(3 * (_start.x - _end.x) / (int)_z);
 			if (!_frameCount)
 				_frameCount = 1;
 		}
