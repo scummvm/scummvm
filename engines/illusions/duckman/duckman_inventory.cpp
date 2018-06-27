@@ -40,48 +40,40 @@ DuckmanInventory::DuckmanInventory(IllusionsEngine_Duckman *vm)
 DuckmanInventory::~DuckmanInventory() {
 }
 
+static const struct DMInventoryItem kInventoryItems[21] = {
+	{0x40011, 0xE005B},
+	{0x40099, 0xE001B},
+	{0x4000F, 0xE000C},
+	{0x40042, 0xE0012},
+	{0x40044, 0xE000F},
+	{0x40029, 0xE000D},
+	{0x400A7, 0xE005D},
+	{0x40096, 0xE001C},
+	{0x40077, 0xE0010},
+	{0x4008A, 0xE0033},
+	{0x4004B, 0xE0045},
+	{0x40054, 0xE0021},
+	{0x400C6, 0xE005A},
+	{0x4000B, 0xE005E},
+	{0x4005F, 0xE0016},
+	{0x40072, 0xE0017},
+	{0x400AA, 0xE005F},
+	{0x400B8, 0xE0050},
+	{0x4001F, 0xE001A},
+	{0x40095, 0xE0060},
+	{0x40041, 0xE0053}
+};
+
 void DuckmanInventory::initInventory() {
-	_inventorySlots.push_back(DMInventorySlot( 64,  52));
-	_inventorySlots.push_back(DMInventorySlot(112,  52));
-	_inventorySlots.push_back(DMInventorySlot(160,  52));
-	_inventorySlots.push_back(DMInventorySlot(208,  52));
-	_inventorySlots.push_back(DMInventorySlot(255,  52));
-	_inventorySlots.push_back(DMInventorySlot( 64,  84));
-	_inventorySlots.push_back(DMInventorySlot(112,  84));
-	_inventorySlots.push_back(DMInventorySlot(160,  84));
-	_inventorySlots.push_back(DMInventorySlot(208,  84));
-	_inventorySlots.push_back(DMInventorySlot(255,  84));
-	_inventorySlots.push_back(DMInventorySlot( 64, 116));
-	_inventorySlots.push_back(DMInventorySlot(112, 116));
-	_inventorySlots.push_back(DMInventorySlot(160, 116));
-	_inventorySlots.push_back(DMInventorySlot(208, 116));
-	_inventorySlots.push_back(DMInventorySlot(255, 116));
-	_inventorySlots.push_back(DMInventorySlot( 64, 148));
-	_inventorySlots.push_back(DMInventorySlot(112, 148));
-	_inventorySlots.push_back(DMInventorySlot(160, 148));
-	_inventorySlots.push_back(DMInventorySlot(208, 148));
-	_inventorySlots.push_back(DMInventorySlot(255, 148));
-	_inventoyItems.push_back(DMInventoryItem(0x40011, 0xE005B));
-	_inventoyItems.push_back(DMInventoryItem(0x40099, 0xE001B));
-	_inventoyItems.push_back(DMInventoryItem(0x4000F, 0xE000C));
-	_inventoyItems.push_back(DMInventoryItem(0x40042, 0xE0012));
-	_inventoyItems.push_back(DMInventoryItem(0x40044, 0xE000F));
-	_inventoyItems.push_back(DMInventoryItem(0x40029, 0xE000D));
-	_inventoyItems.push_back(DMInventoryItem(0x400A7, 0xE005D));
-	_inventoyItems.push_back(DMInventoryItem(0x40096, 0xE001C));
-	_inventoyItems.push_back(DMInventoryItem(0x40077, 0xE0010));
-	_inventoyItems.push_back(DMInventoryItem(0x4008A, 0xE0033));
-	_inventoyItems.push_back(DMInventoryItem(0x4004B, 0xE0045));
-	_inventoyItems.push_back(DMInventoryItem(0x40054, 0xE0021));
-	_inventoyItems.push_back(DMInventoryItem(0x400C6, 0xE005A));
-	_inventoyItems.push_back(DMInventoryItem(0x4000B, 0xE005E));
-	_inventoyItems.push_back(DMInventoryItem(0x4005F, 0xE0016));
-	_inventoyItems.push_back(DMInventoryItem(0x40072, 0xE0017));
-	_inventoyItems.push_back(DMInventoryItem(0x400AA, 0xE005F));
-	_inventoyItems.push_back(DMInventoryItem(0x400B8, 0xE0050));
-	_inventoyItems.push_back(DMInventoryItem(0x4001F, 0xE001A));
-	_inventoyItems.push_back(DMInventoryItem(0x40095, 0xE0060));
-	_inventoyItems.push_back(DMInventoryItem(0x40041, 0xE0053));
+	for (int y = 0; y < 4; y++) {
+		for (int x = 0; x < 5; x++) {
+			_inventorySlots.push_back(DMInventorySlot( 64 + x * 48,  52 + y * 32));
+		}
+	}
+
+	for (int i = 0; i < 21; i++) {
+		_inventoryItems.push_back(kInventoryItems[i]);
+	}
 }
 
 void DuckmanInventory::openInventory() {
@@ -95,8 +87,8 @@ void DuckmanInventory::openInventory() {
 		}
 	}
 
-	for (uint i = 0; i < _inventoyItems.size(); ++i) {
-		DMInventoryItem *inventoryItem = &_inventoyItems[i];
+	for (uint i = 0; i < _inventoryItems.size(); ++i) {
+		DMInventoryItem *inventoryItem = &_inventoryItems[i];
 		if (_vm->_scriptResource->_properties.get(inventoryItem->_propertyId)) {
 			DMInventorySlot *inventorySlot = findInventorySlot(inventoryItem->_objectId);
 			if (inventorySlot) {
@@ -155,9 +147,9 @@ DMInventorySlot *DuckmanInventory::findInventorySlot(uint32 objectId) {
 }
 
 DMInventoryItem *DuckmanInventory::findInventoryItem(uint32 objectId) {
-	for (uint i = 0; i < _inventoyItems.size(); ++i)
-		if (_inventoyItems[i]._objectId == objectId)
-			return &_inventoyItems[i];
+	for (uint i = 0; i < _inventoryItems.size(); ++i)
+		if (_inventoryItems[i]._objectId == objectId)
+			return &_inventoryItems[i];
 	return 0;
 }
 
