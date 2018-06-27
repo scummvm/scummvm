@@ -53,7 +53,7 @@ Common::Error PinkEngine::saveGameState(int slot, const Common::String &desc) {
 
 	Archive archive(out);
 
-	out->write("pink", 4);
+	out->writeUint32BE(MKTAG('p', 'i', 'n', 'k'));
 	archive.writeString(desc);
 
 	TimeDate curTime;
