@@ -676,8 +676,6 @@ void ScriptOpcodes_BBDOU::opDisplayMenu(ScriptThread *scriptThread, OpCall &opCa
 }
 
 void ScriptOpcodes_BBDOU::opSwitchMenuChoice(ScriptThread *scriptThread, OpCall &opCall) {
-_vm->_menuChoiceOfs = 88; // DEBUG Chose "Start game"
-
 	opCall._deltaOfs += _vm->_menuChoiceOfs;
 }
 

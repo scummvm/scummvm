@@ -257,7 +257,7 @@ void BaseMenuSystem::placeActorHoverBackground() {
 	WidthHeight textInfoDimensions;
 	_vm->_screenText->getTextInfoDimensions(textInfoDimensions);
 
-	if ( _activeMenu->_backgroundColor && _activeMenu->_borderColor != _activeMenu->_backgroundColor)
+	if (_activeMenu->_backgroundColor && _activeMenu->_borderColor != _activeMenu->_backgroundColor)
 		textInfoDimensions._width -= 6;
 
 	WidthHeight frameDimensions;
@@ -567,7 +567,7 @@ bool BaseMenuSystem::calcMenuItemTextPositionAtPoint(Common::Point pt, int &offs
 	FontResource *font = _vm->_dict->findFont(_activeMenu->_fontId);
 
 	uint curX = 0;
-	for (int i=0; i < text.size(); i++) {
+	for (int i = 0; i < text.size(); i++) {
 		int16 w = font->getCharInfo(text[i])->_width;
 		if (x >= curX && x <= curX + w) {
 			offset = i;
