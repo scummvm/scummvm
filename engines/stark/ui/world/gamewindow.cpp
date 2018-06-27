@@ -41,6 +41,8 @@
 #include "engines/stark/ui/world/actionmenu.h"
 #include "engines/stark/ui/world/inventorywindow.h"
 
+#include "engines/stark/visual/text.h"
+
 namespace Stark {
 
 GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu, InventoryWindow *inventory) :
@@ -236,6 +238,27 @@ void GameWindow::reset() {
 	_objectUnderCursor = nullptr;
 	_objectRelativePosition.x = 0;
 	_objectRelativePosition.y = 0;
+}
+
+void GameWindow::onScreenChanged() {
+	// May be called when resources have not been loaded
+	if (!StarkGlobal->getCurrent()) {
+		return;
+	}
+
+	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
+	_renderEntries = location->listRenderEntries();
+
+	VisualText *text = nullptr;
+	Gfx::RenderEntryArray::iterator element = _renderEntries.begin();
+	while (element != _renderEntries.end()) {
+		text = (*element)->getText();
+		if (text) {
+			text->resetTexture();
+		}
+
+		element++;
+	}
 }
 
 } // End of namespace Stark

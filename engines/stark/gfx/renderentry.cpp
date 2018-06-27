@@ -194,10 +194,16 @@ bool RenderEntry::intersectRay(const Math::Ray &ray) const {
 }
 
 VisualImageXMG *RenderEntry::getImage() const {
+	if (!_visual) {
+		return nullptr;
+	}
 	return _visual->get<VisualImageXMG>();
 }
 
 VisualText *RenderEntry::getText() const {
+	if (!_visual) {
+		return nullptr;
+	}
 	return _visual->get<VisualText>();
 }
 

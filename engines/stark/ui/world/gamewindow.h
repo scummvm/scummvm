@@ -45,6 +45,9 @@ public:
 	/** Clear the location dependent state */
 	void reset();
 
+	/** Update when the screen resolution has changed */
+	void onScreenChanged();
+
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
