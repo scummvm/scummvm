@@ -72,8 +72,10 @@ void DuckmanSpecialCode::init() {
 	SPECIAL(0x00160003, spcResetChinesePuzzle);
 	SPECIAL(0x00160004, spcAddChinesePuzzleAnswer);
 	SPECIAL(0x00160005, spcOpenInventory);
+
 	SPECIAL(0x00160007, spcPutBackInventoryItem);
 	SPECIAL(0x00160008, spcClearInventorySlot);
+
 	SPECIAL(0x0016000A, spcAddPropertyTimer);
 	SPECIAL(0x0016000B, spcSetPropertyTimer);
 	SPECIAL(0x0016000C, spcRemovePropertyTimer);

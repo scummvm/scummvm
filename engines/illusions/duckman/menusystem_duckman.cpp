@@ -222,8 +222,7 @@ typedef struct InventoryMenuItem {
 	uint32 propertyId;
 } InventoryMenuItem;
 
-static const InventoryMenuItem kDebugInventoryItems[21] =
-{
+static const InventoryMenuItem kDebugInventoryItems[21] = {
 	{ "Pick-up Book", 262212, 393231, 917519 },
 	{ "Bucket and Squeegee", 262314, 393233, 917599 },
 	{ "Cardboard Cut Out", 262219, 393264, 917573 },
@@ -398,7 +397,7 @@ void MenuActionUpdateSlider::setSliderValue(uint8 newValue) {
 	_menuItem->setText(text);
 	_menuSystem->redrawMenuText(menu);
 
-	switch(_type) {
+	switch (_type) {
 		case SFX : _vm->_soundMan->setSfxVolume(newValue * (256/15)); break;
 		case MUSIC : _vm->_soundMan->setMusicVolume(newValue * (256/15)); break;
 		case VOICE : _vm->_soundMan->setSpeechVolume(newValue * (256/15)); break;
