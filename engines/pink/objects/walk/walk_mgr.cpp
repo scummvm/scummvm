@@ -97,7 +97,7 @@ WalkAction *WalkMgr::getWalkAction() {
 	} else
 		walkActionName = Common::String::format("%dTo%d", _current.coords.z, _next.coords.z);
 
-	WalkAction *action = (WalkAction *) _leadActor->findAction(walkActionName);
+	WalkAction *action = (WalkAction *)_leadActor->findAction(walkActionName);
 	if (action) {
 		action->setWalkMgr(this);
 		action->setType(horizontal);
