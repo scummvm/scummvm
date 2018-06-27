@@ -565,7 +565,7 @@ bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
 	}
 
 	if (argc != 3) {
-		debugPrintf("Change the current location. Use listLocations to get ids\n");
+		debugPrintf("Change the current location. Use listLocations to get indices\n");
 		debugPrintf("Usage :\n");
 		debugPrintf("changeLocation [level] [location]\n");
 		return true;
