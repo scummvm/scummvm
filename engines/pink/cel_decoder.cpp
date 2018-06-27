@@ -117,6 +117,9 @@ void CelDecoder::CelVideoTrack::readPrefixChunk() {
 	}
 }
 
+#undef PREFIX_TYPE
+#undef CEL_DATA
+
 void CelDecoder::CelVideoTrack::readHeader() {
 	_fileStream->readUint16LE();
 
@@ -205,6 +208,8 @@ const Graphics::Surface *CelDecoder::CelVideoTrack::decodeNextFrame() {
 
 	return _surface;
 }
+
+#undef FRAME_TYPE
 
 bool CelDecoder::CelVideoTrack::rewind() {
 	// this method is overriden for 2 reasons:
