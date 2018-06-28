@@ -42,19 +42,19 @@ struct CursorData {
 };
 
 static const CursorData availableCursors[] = {
-	{ 1000,  8,  8, 0.25, 0.00 },
-	{ 1001,  8,  8, 0.50, 0.50 },
-	{ 1002,  8,  8, 0.50, 0.50 },
+	{ 1000,  8,  8, 0.25, 0.00 }, // Default cursor
+	{ 1001,  8,  8, 0.50, 0.50 }, // On top of inventory item
+	{ 1002,  8,  8, 0.50, 0.50 }, // Drag cursor
 	{ 1003,  1,  5, 0.50, 0.50 },
 	{ 1004, 14,  5, 0.50, 0.50 },
 	{ 1005, 16, 14, 0.50, 0.50 },
 	{ 1006, 16, 14, 0.50, 0.50 },
 	{ 1007,  8,  8, 0.55, 0.55 },
-	{ 1000,  8,  8, 0.25, 0.00 },
+	{ 1000,  8,  8, 0.25, 0.00 }, // Default cursor
 	{ 1001,  8,  8, 0.50, 0.50 },
 	{ 1011, 16, 16, 0.50, 0.50 },
 	{ 1000,  6,  1, 0.50, 0.50 },
-	{ 1000,  8,  8, 0.00, 0.25 }
+	{ 1000,  8,  8, 0.00, 0.25 }  // Invisible cursor
 };
 
 Cursor::Cursor(Myst3Engine *vm) :
@@ -131,7 +131,7 @@ Cursor::~Cursor() {
 }
 
 void Cursor::changeCursor(uint32 index) {
-	if (index > 12)
+	if (index >= ARRAYSIZE(availableCursors))
 		return;
 
 	if (_vm->getPlatform() == Common::kPlatformXbox) {
