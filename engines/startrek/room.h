@@ -95,18 +95,20 @@ private:
 	RoomAction *_roomActionList;
 	int _numRoomActions;
 
+	int _roomIndex; // ie. for DEMON2, this is 2
+
 
 	int findFunctionPointer(int action, void (Room::*funcPtr)());
 
 	// Interface for room-specific code
-	void loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66 = 0); // Cmd 0x00
+	void loadActorAnim(int actorIndex, Common::String anim, int16 x = -1, int16 y = -1, uint16 field66 = 0); // Cmd 0x00
 	void loadActorAnimC(int actorIndex, Common::String anim, int16 x, int16 y, void (Room::*funcPtr)());// Cmd 0x00
 	void loadActorStandAnim(int actorIndex);                                                   // Cmd 0x01
-	void loadActorAnim2(int actorIndex, Common::String anim, int16 x, int16 y, uint16 field66 = 0);// Cmd 0x02
+	void loadActorAnim2(int actorIndex, Common::String anim, int16 x = -1, int16 y = -1, uint16 field66 = 0);// Cmd 0x02
 	int showRoomSpecificText(const char **textAddr); // (Deprecated, use function below)       // Cmd 0x03
-	int showText(const TextRef *text);                                                             // Cmd 0x03
-	int showText(TextRef speaker, TextRef text);                                                       // Cmd 0x03
-	int showText(TextRef text);                                                                    // Cmd 0x03
+	int showText(const TextRef *text);                                                         // Cmd 0x03
+	int showText(TextRef speaker, TextRef text);                                               // Cmd 0x03
+	int showText(TextRef text);                                                                // Cmd 0x03
 	void giveItem(int item);                                                                   // Cmd 0x04
 	// Command 0x05: "demon4ShowSunPuzzle"
 	void loadRoomIndex(int roomIndex, int spawnIndex);                                         // Cmd 0x06
@@ -1163,6 +1165,46 @@ public:
 
 	// MUDD1
 	void mudd1Tick1();
+	void mudd1Timer1Expired();
+	void mudd1UseCommunicator();
+	void mudd1UseSpockOnBlueButton();
+	void mudd1SpockReachedBlueButton();
+	void mudd1SpockPressedBlueButton();
+	void mudd1CraneFinishedMoving();
+	void mudd1UseSpockOnYellowButton();
+	void mudd1SpockReachedYellowButton();
+	void mudd1SpockPressedYellowButton();
+	void mudd1UseSpockOnRedButton();
+	void mudd1SpockReachedRedButton();
+	void mudd1SpockPressedRedButton();
+	void mudd1GetTorpedo();
+	void mudd1UseSTricorderOnTorpedo();
+	void mudd1UseSTricorderOnTorpedoLauncher();
+	void mudd1UseSTricorderOnButton();
+	void mudd1UseSTricorderOnCrane();
+	void mudd1UseMedkitAnywhere();
+	void mudd1LookAnywhere();
+	void mudd1LookAtTorpedo();
+	void mudd1LookAtFallenTorpedo();
+	void mudd1LookAtTorpedoLauncher();
+	void mudd1LookAtKirk();
+	void mudd1LookAtSpock();
+	void mudd1LookAtMccoy();
+	void mudd1LookAtRedshirt();
+	void mudd1LookAtCrane();
+	void mudd1LookAtRedButton();
+	void mudd1LookAtBlueButton();
+	void mudd1LookAtYellowButton();
+	void mudd1TalkToKirk();
+	void mudd1TalkToSpock();
+	void mudd1TalkToMccoy();
+	void mudd1TalkToRedshirt();
+	void mudd1WalkToSouthDoor();
+	void mudd1TouchedHotspot2();
+	void mudd1WalkToNorthDoor();
+	void mudd1TouchedHotspot1();
+	void mudd1WalkToWestDoor();
+	void mudd1TouchedHotspot0();
 
 	// MUDD2
 	void mudd2Tick1();
@@ -1175,6 +1217,8 @@ public:
 
 	// MUDD5
 	void mudd5Tick1();
+
+	// MUDDA
 
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
@@ -1283,8 +1327,8 @@ private:
 		} love;
 
 		struct {
-			// mudd0
-			bool walkingToDoor; // 0x22a9
+			// common
+			byte walkingToDoor;
 		} mudd;
 
 

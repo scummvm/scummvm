@@ -1413,10 +1413,13 @@ RoomAction mudd0ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x20, 0), &Room::mudd0UseSTricorderOnMemoryDiskBox },
 	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x22, 0), &Room::mudd0UseSTricorderOnDegrimerBox },
 	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x21, 0), &Room::mudd0UseMTricorderOnLense },
+
+	// TODO: move these to common code
 	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
 	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
 	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
 	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
+
 	{ Action(ACTION_GET, 0x21, 0, 0), &Room::mudd0GetLense },
 	{ Action(ACTION_GET, 0x20, 0, 0), &Room::mudd0GetMemoryDisk },
 	{ Action(ACTION_GET, 0x22, 0, 0), &Room::mudd0GetDegrimer },
@@ -1442,7 +1445,64 @@ RoomAction mudd0ActionList[] = {
 
 RoomAction mudd1ActionList[] = {
 	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd1Tick1 },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::mudd1Timer1Expired },
+
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0),    &Room::mudd1UseCommunicator },
+	{ Action(ACTION_USE, OBJECT_SPOCK, 0x23, 0),  &Room::mudd1UseSpockOnBlueButton },
+	{ Action(ACTION_FINISHED_WALKING, 1, 0, 0),   &Room::mudd1SpockReachedBlueButton },
+	{ Action(ACTION_FINISHED_ANIMATION, 1, 0, 0), &Room::mudd1SpockPressedBlueButton },
+	{ Action(ACTION_FINISHED_ANIMATION, 2, 0, 0), &Room::mudd1CraneFinishedMoving },
+	{ Action(ACTION_USE, OBJECT_SPOCK, 0x24, 0),  &Room::mudd1UseSpockOnYellowButton },
+	{ Action(ACTION_FINISHED_WALKING, 2, 0, 0),   &Room::mudd1SpockReachedYellowButton },
+	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0), &Room::mudd1SpockPressedYellowButton },
+	{ Action(ACTION_USE, OBJECT_SPOCK, 0x25, 0),  &Room::mudd1UseSpockOnRedButton },
+	{ Action(ACTION_FINISHED_WALKING, 3, 0, 0),   &Room::mudd1SpockReachedRedButton },
+	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::mudd1SpockPressedRedButton },
+
+	// Common code
+	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
+	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
+	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
+
+	{ Action(ACTION_GET, 9,    0, 0), &Room::mudd1GetTorpedo },
+	{ Action(ACTION_GET, 0x21, 0, 0), &Room::mudd1GetTorpedo },
+	{ Action(ACTION_GET, 0x20, 0, 0), &Room::mudd1GetTorpedo },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x21, 0), &Room::mudd1UseSTricorderOnTorpedo },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 9,    0), &Room::mudd1UseSTricorderOnTorpedo },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x20, 0), &Room::mudd1UseSTricorderOnTorpedo },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x22, 0), &Room::mudd1UseSTricorderOnTorpedoLauncher },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x25, 0), &Room::mudd1UseSTricorderOnButton },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x23, 0), &Room::mudd1UseSTricorderOnButton },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x24, 0), &Room::mudd1UseSTricorderOnButton },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 8, 0),    &Room::mudd1UseSTricorderOnCrane },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, -1, 0),   &Room::mudd1UseMedkitAnywhere },
+	{ Action(ACTION_LOOK, -1,   0, 0), &Room::mudd1LookAnywhere },
+	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::mudd1LookAtTorpedo },
+	{ Action(ACTION_LOOK, 9,    0, 0), &Room::mudd1LookAtTorpedo },
+	{ Action(ACTION_LOOK, 0x21, 0, 0), &Room::mudd1LookAtFallenTorpedo },
+	{ Action(ACTION_LOOK, 0x22, 0, 0), &Room::mudd1LookAtTorpedoLauncher },
+	{ Action(ACTION_LOOK, OBJECT_KIRK,     0, 0), &Room::mudd1LookAtKirk },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK,    0, 0), &Room::mudd1LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY,    0, 0), &Room::mudd1LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::mudd1LookAtRedshirt },
+	{ Action(ACTION_LOOK, 8,    0, 0), &Room::mudd1LookAtCrane },
+	{ Action(ACTION_LOOK, 0x25, 0, 0), &Room::mudd1LookAtRedButton },
+	{ Action(ACTION_LOOK, 0x23, 0, 0), &Room::mudd1LookAtBlueButton },
+	{ Action(ACTION_LOOK, 0x24, 0, 0), &Room::mudd1LookAtYellowButton },
+	{ Action(ACTION_TALK, OBJECT_KIRK,     0, 0), &Room::mudd1TalkToKirk },
+	{ Action(ACTION_TALK, OBJECT_SPOCK,    0, 0), &Room::mudd1TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_MCCOY,    0, 0), &Room::mudd1TalkToMccoy },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::mudd1TalkToRedshirt },
+	{ Action(ACTION_WALK, 0x28, 0, 0), &Room::mudd1WalkToSouthDoor },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 2, 0, 0), &Room::mudd1TouchedHotspot2 },
+	{ Action(ACTION_WALK, 0x27, 0, 0), &Room::mudd1WalkToNorthDoor },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 1, 0, 0), &Room::mudd1TouchedHotspot1 },
+	{ Action(ACTION_WALK, 0x26, 0, 0), &Room::mudd1WalkToWestDoor },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0), &Room::mudd1TouchedHotspot0 },
+	// TODO: remainder? something about losing atmosphere?
 };
+
 RoomAction mudd2ActionList[] = {
 	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd2Tick1 },
 };
