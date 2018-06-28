@@ -156,7 +156,7 @@ void Room::mudd1SpockPressedRedButton() {
 	const int choices[] = {
 		TX_SPEAKER_KIRK,
 		TX_MUD1_004,
-        TX_MUD1_003,
+		TX_MUD1_003,
 		TX_MUD1_007,
 		TX_BLANK
 	};
@@ -313,7 +313,7 @@ void Room::mudd1WalkToWestDoor() {
 	walkCrewman(OBJECT_KIRK, 0x35, 0x71);
 }
 
-void Room::mudd1TouchedHotspot0() {
+void Room::mudd1TouchedHotspot0() { // Trigger door at west of room
 	if (_roomVar.mudd.walkingToDoor == 2) {
 		playVoc("SMADOOR3");
 		loadActorAnim(OBJECT_WEST_DOOR, "s4wbd2", 0x37, 0x73);

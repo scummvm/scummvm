@@ -1207,7 +1207,53 @@ public:
 	void mudd1TouchedHotspot0();
 
 	// MUDD2
+	void mudd2WalkToNorthDoor();
+	void mudd2TouchedHotspot0();
+	void mudd2WalkToSouthDoor();
+	void mudd2TouchedHotspot1();
 	void mudd2Tick1();
+	void mudd2Timer1Expired();
+	void mudd2UseSTricorderAnywhere();
+	void mudd2UseSpockOnCapsules();
+	void mudd2GetCapsules();
+	void mudd2MccoyReachedCapsules();
+	void mudd2MccoyPickedUpCapsules();
+	void mudd2UseCommunicator();
+	void mudd2LookAtCapsules();
+	void mudd2UseMTricorderOnCapsules();
+	void mudd2UseCapsuleOnControlPanel();
+	void mudd2MccoyReachedControlPanel();
+	void mudd2MccoyPutCapsuleInControlPanel();
+	void mudd2UseKirkOnBed();
+	void mudd2KirkReachedBed();
+	void mudd2MuddNoticedKirk();
+	void mudd2MuddDroppedCapsule();
+	void mudd2UsePhaserOnMudd();
+	void mudd2UseSpockOnMudd();
+	void mudd2SpockReachedMudd();
+	void mudd2SpockPinchedMudd();
+	void mudd2UseKirkOnMudd();
+	void mudd2UseRedshirtOnMudd();
+	void mudd2RedshirtReachedMudd();
+	void mudd2Timer2Expired();
+	void mudd2MuddFinishedPushingRedshirt();
+	void mudd2RedshirtPushedAway();
+	void mudd2UseMTricorderOnMudd();
+	void mudd2UseMedkitOnMudd();
+	void mudd2MccoyReachedMudd();
+	void mudd2MccoyCuredMudd();
+	void mudd2LookAtKirk();
+	void mudd2LookAtSpock();
+	void mudd2LookAtMccoy();
+	void mudd2LookAtRedshirt();
+	void mudd2LookAtMudd();
+	void mudd2LookAtControlPanel();
+	void mudd2LookAtBed();
+	void mudd2TalkToKirk();
+	void mudd2TalkToSpock();
+	void mudd2TalkToMccoy();
+	void mudd2TalkToRedshirt();
+	void mudd2TalkToMudd();
 
 	// MUDD3
 	void mudd3Tick1();
