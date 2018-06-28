@@ -175,7 +175,7 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
 		switch (code) {
 		case Common::KEYCODE_ESCAPE:
 			cancelInteraction();
-			// Fall Through intended
+			// fall through
 		case Common::KEYCODE_SPACE:
 			_walkMgr->skip();
 		default:
