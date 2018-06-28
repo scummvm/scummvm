@@ -420,7 +420,7 @@ Command               | Description
 `enableInventoryItem` | Enable a specific inventory item
 `enableScript`        | Enable or disable script
 `forceScript`         | Force the execution of a script
-`listInventory`       | List all inventory items in the game
+`listInventoryItems`  | List all inventory items in the game
 `listLocations`       | List all the locations in the game
 `listScripts`         | List all the scripts in current level
 `location`            | Display the current location

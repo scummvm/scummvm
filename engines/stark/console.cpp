@@ -59,7 +59,7 @@ Console::Console() :
 	registerCmd("forceScript",          WRAP_METHOD(Console, Cmd_ForceScript));
 	registerCmd("decompileScript",      WRAP_METHOD(Console, Cmd_DecompileScript));
 	registerCmd("testDecompiler",       WRAP_METHOD(Console, Cmd_TestDecompiler));
-	registerCmd("listInventory",        WRAP_METHOD(Console, Cmd_ListInventory));
+	registerCmd("listInventoryItems",   WRAP_METHOD(Console, Cmd_ListInventoryItems));
 	registerCmd("listLocations",        WRAP_METHOD(Console, Cmd_ListLocations));
 	registerCmd("location",             WRAP_METHOD(Console, Cmd_Location));
 	registerCmd("chapter",              WRAP_METHOD(Console, Cmd_Chapter));
@@ -495,7 +495,7 @@ bool Console::Cmd_EnableInventoryItem(int argc, const char **argv) {
 	}
 
 	if (argc != 2) {
-		debugPrintf("Enable a specific inventory item. Use listInventory to get an id\n");
+		debugPrintf("Enable a specific inventory item. Use listInventoryItems to get an id\n");
 		debugPrintf("Usage :\n");
 		debugPrintf("enableInventoryItem [id]\n");
 		return true;
