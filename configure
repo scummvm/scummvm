@@ -2364,9 +2364,6 @@ case $_host_os in
 		append_var DEFINES "-DSWITCH -D__SWITCH__"
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-fdata-sections"
-		#append_var CXXFLAGS "-ffast-math"
-		#append_var CXXFLAGS "-fomit-frame-pointer"
-		#append_var CXXFLAGS "-fno-strict-aliasing"
 		append_var CXXFLAGS "-fPIE"
 		append_var CXXFLAGS "-I$DEVKITPRO/libnx/include"
 		append_var CXXFLAGS "-I$DEVKITPRO/portlibs/switch/include"
@@ -2374,7 +2371,6 @@ case $_host_os in
 		add_line_to_config_mk 'SWITCH = 1'
 		if test "$_debug_build" = yes; then
 			append_var DEFINES "-D__SWITCH_DEBUG__"
-			append_var LIBS	"-lnxlink_print"
 		else
 			_optimization_level=-O3
 		fi
