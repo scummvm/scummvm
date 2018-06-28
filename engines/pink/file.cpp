@@ -97,7 +97,7 @@ void OrbFile::loadObject(Object *obj, ObjectDescription *objDesc) {
 }
 
 static int objDescComp(const void *a, const void *b) {
-	return scumm_stricmp((char *)a, (char *)b);
+	return scumm_stricmp((const char *)a, (const char *)b);
 }
 
 ObjectDescription *OrbFile::getObjDesc(const char *name) {
