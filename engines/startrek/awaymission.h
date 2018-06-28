@@ -33,7 +33,12 @@ struct AwayMission {
 	int16 mouseY; // 0x12
 	int16 crewGetupTimers[4]; // 0x14
 	bool disableWalking; // 0x1c
-	byte disableInput; // 0x1d; Set while beaming in or walking into a room. Disables control?
+
+	// 0 / false: input enabled
+	// 1 / true:  input disabled, turns back on after walking or beaming into a room
+	// 2:         input disabled, doesn't turn back on after walking or beaming into room
+	byte disableInput; // 0x1d
+
 	bool redshirtDead; // 0x1e
 	byte activeAction; // 0x1f
 	byte activeObject;  // 0x20; The item that is going to be used on something
@@ -182,6 +187,20 @@ struct AwayMission {
 			bool gotPointsForHydratingRomulans; // 0x51
 			int16 missionScore; // 0x52
 		} love;
+
+		struct {
+			byte field29; // 0x29
+
+			// True if you've combined the lense + degrimer and fired it off, discovering
+			// it's a weapon
+			bool discoveredLenseAndDegrimerFunction; // 0x3c
+			bool gotMemoryDisk; // 0x48
+			bool gotLense; // 0x49
+			bool gotDegrimer; // 0x4a
+
+			bool enteredRoom0ForFirstTime; // 0x54
+			int16 missionScore; // 0x5a
+		} mudd;
 	};
 };
 // Size: 0x129 bytes

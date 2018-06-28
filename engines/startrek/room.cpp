@@ -105,6 +105,30 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 		_roomActionList = love5ActionList;
 		_numRoomActions = sizeof(love5ActionList) / sizeof(RoomAction);
 	}
+	else if (name == "MUDD0") {
+		_roomActionList = mudd0ActionList;
+		_numRoomActions = sizeof(mudd0ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "MUDD1") {
+		_roomActionList = mudd1ActionList;
+		_numRoomActions = sizeof(mudd1ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "MUDD2") {
+		_roomActionList = mudd2ActionList;
+		_numRoomActions = sizeof(mudd2ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "MUDD3") {
+		_roomActionList = mudd3ActionList;
+		_numRoomActions = sizeof(mudd3ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "MUDD4") {
+		_roomActionList = mudd4ActionList;
+		_numRoomActions = sizeof(mudd4ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "MUDD5") {
+		_roomActionList = mudd5ActionList;
+		_numRoomActions = sizeof(mudd5ActionList) / sizeof(RoomAction);
+	}
 	else {
 		warning("Room \"%s\" unimplemented", name.c_str());
 		_numRoomActions = 0;

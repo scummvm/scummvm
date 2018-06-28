@@ -120,7 +120,7 @@ private:
 	Common::Point getActorPos(int actorIndex);                                                 // Cmd 0x0d
 	int16 getRandomWordInRange(int start, int end);                                            // Cmd 0x0e
 	void playSoundEffectIndex(int soundEffect);                                                // Cmd 0x0f
-	void playMidiMusicTracks(int startTrack, int loopTrack);                                   // Cmd 0x10
+	void playMidiMusicTracks(int startTrack, int loopTrack = -1);                              // Cmd 0x10
 	void endMission(int16 score, int16 arg2, int16 arg3);                                      // Cmd 0x11
 	void showGameOverMenu();                                                                   // Cmd 0x12
 	void playVoc(Common::String filename);                                                     // Cmd 0x15
@@ -1118,6 +1118,64 @@ public:
 	void loveaUseAmmonia();
 	void loveaUseCommunicator();
 
+
+	// MUDD0
+	void mudd0Tick1();
+	void mudd0Tick50();
+	void mudd0Tick60();
+	void mudd0UsePhaserOnMudd();
+	void mudd0UseCommunicator();
+	void mudd0LookAtFoodBox();
+	void mudd0LookAtComponentBox();
+	void mudd0LookAnywhere();
+	void mudd0LookAtMemoryDiskBox();
+	void mudd0LookAtDegrimerBox();
+	void mudd0LookAtLense();
+	void mudd0UseSTricorderAnywhere();
+	void mudd0UseMTricorderAnywhere();
+	void mudd0UseSTricorderOnMemoryDiskBox();
+	void mudd0UseSTricorderOnDegrimerBox();
+	void mudd0UseMTricorderOnLense();
+	void mudd0UseLenseOnDegrimer();
+	void mudd0UseAlienDevice();
+	void mudd0FiredAlienDevice();
+	void mudd0UseDegrimer();
+	void mudd0GetLense();
+	void mudd0GetMemoryDisk();
+	void mudd0GetDegrimer();
+	void mudd0PickedUpLense();
+	void mudd0PickedUpItem();
+	void mudd0WalkToSouthDoor();
+	void mudd0TouchedHotspot1();
+	void mudd0WalkToNorthDoor();
+	void mudd0TouchedHotspot0();
+	void mudd0UseMedkit();
+	void mudd0LookAtKirk();
+	void mudd0LookAtSpock();
+	void mudd0LookAtMccoy();
+	void mudd0LookAtRedshirt();
+	void mudd0LookAtMudd();
+	void mudd0TalkToKirk();
+	void mudd0TalkToSpock();
+	void mudd0TalkToMccoy();
+	void mudd0TalkToRedshirt();
+	void mudd0TalkToMudd();
+
+	// MUDD1
+	void mudd1Tick1();
+
+	// MUDD2
+	void mudd2Tick1();
+
+	// MUDD3
+	void mudd3Tick1();
+
+	// MUDD4
+	void mudd4Tick1();
+
+	// MUDD5
+	void mudd5Tick1();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {
@@ -1223,6 +1281,11 @@ private:
 			byte cmnXPosToCureSpock;
 			byte cmnYPosToCureSpock;
 		} love;
+
+		struct {
+			// mudd0
+			bool walkingToDoor; // 0x22a9
+		} mudd;
 
 
 	} _roomVar;

@@ -28,6 +28,8 @@
 
 namespace StarTrek {
 
+// FIXME: calling a constructor in global scope not allowed in scummvm?
+
 RoomAction demon0ActionList[] = {
 	{ Action(ACTION_TICK, 1, 0, 0), &Room::demon0Tick1 },
 	{ Action(ACTION_TICK, 2, 0, 0), &Room::demon0Tick2 },
@@ -1393,6 +1395,66 @@ RoomAction love5ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::loveaUseCommunicator },
 };
 
+RoomAction mudd0ActionList[] = {
+	{ Action(ACTION_TICK,  1, 0, 0), &Room::mudd0Tick1 },
+	{ Action(ACTION_TICK, 50, 0, 0), &Room::mudd0Tick50 },
+	{ Action(ACTION_TICK, 60, 0, 0), &Room::mudd0Tick60 },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 8, 0), &Room::mudd0UsePhaserOnMudd },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, 8, 0), &Room::mudd0UsePhaserOnMudd },
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::mudd0UseCommunicator },
+	{ Action(ACTION_LOOK, 0x23, 0, 0), &Room::mudd0LookAtFoodBox },
+	{ Action(ACTION_LOOK, 0x24, 0, 0), &Room::mudd0LookAtComponentBox },
+	{ Action(ACTION_LOOK, -1,   0, 0), &Room::mudd0LookAnywhere },
+	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::mudd0LookAtMemoryDiskBox },
+	{ Action(ACTION_LOOK, 0x22, 0, 0), &Room::mudd0LookAtDegrimerBox },
+	{ Action(ACTION_LOOK, 0x21, 0, 0), &Room::mudd0LookAtLense },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, -1, 0), &Room::mudd0UseSTricorderAnywhere },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, -1, 0), &Room::mudd0UseMTricorderAnywhere },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x20, 0), &Room::mudd0UseSTricorderOnMemoryDiskBox },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x22, 0), &Room::mudd0UseSTricorderOnDegrimerBox },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x21, 0), &Room::mudd0UseMTricorderOnLense },
+	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
+	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
+	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
+	{ Action(ACTION_GET, 0x21, 0, 0), &Room::mudd0GetLense },
+	{ Action(ACTION_GET, 0x20, 0, 0), &Room::mudd0GetMemoryDisk },
+	{ Action(ACTION_GET, 0x22, 0, 0), &Room::mudd0GetDegrimer },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::mudd0PickedUpLense },
+	{ Action(ACTION_FINISHED_ANIMATION, 1, 0, 0), &Room::mudd0PickedUpItem },
+	{ Action(ACTION_WALK, 0x26, 0, 0), &Room::mudd0WalkToSouthDoor },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 1, 0, 0), &Room::mudd0TouchedHotspot1 },
+	{ Action(ACTION_WALK, 0x25, 0, 0), &Room::mudd0WalkToNorthDoor },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0), &Room::mudd0TouchedHotspot0 },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, -1, 0), &Room::mudd0UseMedkit },
+	{ Action(ACTION_LOOK, OBJECT_KIRK,     0, 0), &Room::mudd0LookAtKirk },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK,    0, 0), &Room::mudd0LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY,    0, 0), &Room::mudd0LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::mudd0LookAtRedshirt },
+	{ Action(ACTION_LOOK, 8,               0, 0), &Room::mudd0LookAtMudd },
+	{ Action(ACTION_TALK, OBJECT_KIRK,     0, 0), &Room::mudd0TalkToKirk },
+	{ Action(ACTION_TALK, OBJECT_SPOCK,    0, 0), &Room::mudd0TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_MCCOY,    0, 0), &Room::mudd0TalkToMccoy },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::mudd0TalkToRedshirt },
+	{ Action(ACTION_TALK, 8,               0, 0), &Room::mudd0TalkToMudd },
+	// TODO: remainder? something about losing atmosphere?
+};
+
+RoomAction mudd1ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd1Tick1 },
+};
+RoomAction mudd2ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd2Tick1 },
+};
+RoomAction mudd3ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd3Tick1 },
+};
+RoomAction mudd4ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd4Tick1 },
+};
+RoomAction mudd5ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd5Tick1 },
+};
 
 }
 
