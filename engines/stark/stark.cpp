@@ -247,6 +247,11 @@ void StarkEngine::updateDisplayScene() {
 	// Clear the screen
 	_gfx->clearScreen();
 
+	// Quit to main menu screen, if needed
+	if (_userInterface->hasQuitToMainMenuRequest()) {
+		_userInterface->performQuitToMainMenu();
+	}
+
 	// Only update the world resources when on the game screen
 	if (_userInterface->isInGameScreen()) {
 		int frames = 0;

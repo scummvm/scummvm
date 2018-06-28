@@ -96,7 +96,9 @@ public:
 	void backPrevScreen();
 
 	/** Back to the main menu screen and rest resources */
-	void quitToMainMenu();
+	void requestQuitToMainMenu() { _quitToMainMenu = true; }
+	bool hasQuitToMainMenuRequest() { return _quitToMainMenu; }
+	void performQuitToMainMenu();
 
 	/** Restore the screen travelling history to the initial state*/
 	void restoreScreenHistory();
@@ -173,6 +175,7 @@ private:
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;
 	bool _exitGame;
+	bool _quitToMainMenu;
 
 	bool _interactive;
 	bool _interactionAttemptDenied;
