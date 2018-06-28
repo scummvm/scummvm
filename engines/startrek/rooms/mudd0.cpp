@@ -165,7 +165,7 @@ void Room::mudd0UseLenseOnDegrimer() {
 
 	_vm->_awayMission.mudd.missionScore++;
 	showText(TX_MUD0N011);
-	// Identical (?) audio files: TX_MUD0N011, TX_MUD1N013, TX_MUD2N010
+	// Identical (?) audio files: TX_MUD0N011, TX_MUD1N013, TX_MUD2N010, TX_MUD3N016
 }
 
 
@@ -174,6 +174,7 @@ void Room::mudd0UseAlienDevice() {
 		9,  // MUDD0
 		13, // MUDD1
 		11, // MUDD2
+		11, // MUDD3
 	};
 
 	_vm->_awayMission.disableInput = true;
@@ -191,13 +192,13 @@ void Room::mudd0FiredAlienDevice() {
 		_vm->_awayMission.mudd.discoveredLenseAndDegrimerFunction = true;
 		_vm->_awayMission.mudd.missionScore += 5;
 		showText(TX_SPEAKER_KIRK, TX_MUD0_002);
-		// Identical (?) audio files: TX_MUD0_002, TX_MUD1_002
+		// Identical (?) audio files: TX_MUD0_002, TX_MUD1_002, TX_MUD2_002
 	}
 }
 
 
 void Room::mudd0UseDegrimer() {
-	// Identical (?) audio files: TX_MUD0N002, TX_MUD1N004, TX_MUD2N001...
+	// Identical (?) audio files: TX_MUD0N002, TX_MUD1N004, TX_MUD2N001, TX_MUD3N001...
 	showText(TX_MUD0N002);
 }
 

@@ -192,20 +192,29 @@ struct AwayMission {
 			byte field29; // 0x29
 			bool torpedoLoaded; // 0x33
 			bool knowAboutTorpedo; // 0x34
-			bool field36; // 0x36
+			bool discoveredBase3System; // 0x35
+			bool translatedAlienLanguage; // 0x36
+			bool databaseDestroyed; // 0x37
+			bool muddInDatabaseRoom; // 0x38
 			bool muddDroppedCapsule; // 0x39
+			bool computerDataErased; // 0x3a
+			bool gaveMuddDatabaseAccess; // 0x3b
 
 			// True if you've combined the lense + degrimer and fired it off, discovering
 			// it's a weapon
 			bool discoveredLenseAndDegrimerFunction; // 0x3c
 			byte torpedoStatus; // 0x3d
-			bool field3f; // 0x3f
+			bool muddCurrentlyInsane; // 0x3f
+			bool muddVisitedDatabaseRoom; // 0x40
+			bool accessedAlienDatabase; // 0x41
+			bool tookRepairToolFromDatabaseRoom; // 0x42
+			bool gotPointsForDownloadingData; // 0x43
 			bool gotMemoryDisk; // 0x48
 			bool gotLense; // 0x49
 			bool gotDegrimer; // 0x4a
-			bool field4c; // 0x4c
+			bool putCapsuleInMedicalMachine; // 0x4c
 			bool muddUnconscious; // 0x4d
-			byte field4e; // 0x4e
+			byte muddState; // 0x4e
 			bool muddInhaledGas; // 0x4f
 
 			bool enteredRoom0ForFirstTime; // 0x54
