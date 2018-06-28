@@ -57,7 +57,7 @@ private:
 	 * Convert a resource name to it's equivalent hash key
 	 */
 	uint16 convertNameToId(const Common::String &resourceName);
-	
+
 	/**
 	 * Loads an index from the file
 	 */

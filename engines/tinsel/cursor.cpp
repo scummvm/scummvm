@@ -375,6 +375,10 @@ void SetAuxCursor(SCNHANDLE hFilm) {
 
 	DelAuxCursor();		// Get rid of previous
 
+	// WORKAROUND: There's no palette when loading a DW1 savegame with a held item, so exit if so
+	if (!BgPal())
+		return;
+
 	GetCursorXY(&x, &y, false);	// Note: also waits for cursor to appear
 
 	pim = GetImageFromFilm(hFilm, 0, &pfr, &pmi, &pfilm);// Get pointer to image

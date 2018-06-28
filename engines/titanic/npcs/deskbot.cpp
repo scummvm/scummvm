@@ -301,7 +301,7 @@ bool CDeskbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 
 	CTurnOff turnOff;
 	CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
-	 
+
 	if (g_language == Common::DE_DEU) {
 		switch (msg->_dialogueId) {
 		case 41701:

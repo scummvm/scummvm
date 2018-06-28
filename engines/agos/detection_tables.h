@@ -2401,6 +2401,156 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 2 - Russian Fan with MT-32 hack (25th Anniversary Edition)
+	{
+		{
+			"simon2",
+			"25th Anniversary Edition",
+
+			{
+	{ "gsptr30",        GAME_BASEFILE, "e26d162e573587f4601b88701292212c", 58851 },
+	{ "icon.dat",       GAME_ICONFILE, "72096a62d36e6034ea9fecc13b2dbdab", 18089 },
+	{ "simon2.gme",     GAME_GMEFILE, "f1727b15b3e389f0248363d890751ee7", 19695662 },
+	{ "stripped.txt",   GAME_STRFILE, "e229f84d46fa83f99b4a7115679f3fb6", 171 },
+	{ "tbllist",        GAME_TBLFILE, "2082f8d02075e590300478853a91ffd9", 513 },
+	{ NULL, 0, NULL, 0}
+			},
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 2 - Polish with MT-32 hack (25th Anniversary Edition)
+	{
+		{
+			"simon2",
+			"25th Anniversary Edition",
+
+			{
+	{ "gsptr30",		GAME_BASEFILE,	"657fd873f5d0637097ee02315b447e6f", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
+	{ "simon2.gme",		GAME_GMEFILE,	"212fa5638a76869537d092d4e76524c0", 20037221},
+	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", -1},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::PL_POL,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_WAVSFX
+	},
+
+	// Simon the Sorcerer 2 - Hebrew with MT-32 hack (25th Anniversary Edition)
+	{
+		{
+			"simon2",
+			"25th Anniversary Edition",
+
+			{
+	{ "gsptr30",		GAME_BASEFILE,	"952a2b1be23c3c609ba8d988a9a1627d", 53366},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+	{ "simon2.gme",		GAME_GMEFILE,	"40ac2d4763d97a9268023dc6db17e2ce", 20017302},
+	{ "stripped.txt",	GAME_STRFILE,	"de9dbc24158660e153483fa0cf6c3172", 171},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_WAVSFX
+	},
+
+	// Simon the Sorcerer 2 - Italian with MT-32 hack (25th Anniversary Edition)
+	{
+		{
+			"simon2",
+			"25th Anniversary Edition",
+
+			{
+	{ "gsptr30",		GAME_BASEFILE,	"3e11d400bea0638f360a724687005cd1", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
+	{ "simon2.gme",		GAME_GMEFILE,	"510d012bcc5775a8513923163ffe4458", 20066490},
+	{ "stripped.txt",	GAME_STRFILE,	"bea6843fb9f3b2144fcb146d62db0b9a", -1},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_WAVSFX
+	},
+
+	// Simon the Sorcerer 2 - Czech with MT-32 hack (25th Anniversary Edition)
+	{
+		{
+			"simon2",
+			"25th Anniversary Edition",
+
+			{
+	{ "gsptr30",		GAME_BASEFILE,	"eb8217f9ec4628d12ca606033146c48c", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
+	{ "simon2.gme",		GAME_GMEFILE,	"50188f9fde0d063c824476972936a52f", 20054555},
+	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", -1},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::CZ_CZE,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_WAVSFX
+	},
+
+	// Simon the Sorcerer 2 - Spanish with MT-32 hack (25th Anniversary Edition)
+	{
+		{
+			"simon2",
+			"25th Anniversary Edition",
+
+			{
+	{ "gsptr30",		GAME_BASEFILE,	"268dc322aa73bcf27bb016b8e8ceb889", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", -1},
+	{ "simon2.gme",		GAME_GMEFILE,	"2b997db3c677fb3d2174c73ba2cc53e1", 20049608},
+	{ "stripped.txt",	GAME_STRFILE,	"d13753796bd81bf313a2449f34d8b112", -1},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE | GF_WAVSFX
+	},
+
 #ifdef ENABLE_AGOS2
 	// The Feeble Files - English DOS Demo
 	{

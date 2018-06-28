@@ -32,6 +32,7 @@
 
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
+#include "mohawk/myst_scripts.h"
 #endif
 
 #ifdef ENABLE_RIVEN
@@ -178,7 +179,13 @@ void MohawkOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, 
 
 #ifdef ENABLE_MYST
 
-MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : MohawkOptionsDialog(vm), _vm(vm) {
+MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) :
+		MohawkOptionsDialog(vm),
+		_vm(vm),
+		_canDropPage(false),
+		_canShowMap(false),
+		_canReturnToMenu(false) {
+
 	// I18N: Option for fast scene switching
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
 	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 220, 15, _("~T~ransitions Enabled"), nullptr, kTransCmd);
@@ -204,16 +211,16 @@ MystOptionsDialog::~MystOptionsDialog() {
 void MystOptionsDialog::open() {
 	MohawkOptionsDialog::open();
 
-	_dropPageButton->setEnabled(_vm->_gameState->_globals.heldPage != 0);
+	_dropPageButton->setEnabled(_canDropPage);
 
-	if (_showMapButton)
-		_showMapButton->setEnabled(_vm->_scriptParser &&
-				_vm->_scriptParser->getMap());
+	if (_showMapButton) {
+		_showMapButton->setEnabled(_canShowMap);
+	}
 
-	// Return to menu button is not enabled on the menu
-	if (_returnToMenuButton)
-		_returnToMenuButton->setEnabled(_vm->_scriptParser &&
-				_vm->getCurStack() != kDemoStack);
+	if (_returnToMenuButton) {
+		// Return to menu button is not enabled on the menu
+		_returnToMenuButton->setEnabled(_canReturnToMenu);
+	}
 
 	// Zip mode is disabled in the demo
 	if (_vm->getFeatures() & GF_DEMO)
@@ -226,37 +233,43 @@ void MystOptionsDialog::open() {
 void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kDropCmd:
-		_vm->_needsPageDrop = true;
+		setResult(kActionDropPage);
 		close();
 		break;
 	case kMapCmd:
-		_vm->_needsShowMap = true;
+		setResult(kActionShowMap);
 		close();
 		break;
 	case kMenuCmd:
-		_vm->_needsShowDemoMenu = true;
+		setResult(kActionGoToMenu);
 		close();
 		break;
 	case kQuitCmd: {
-		if (_vm->getGameType() != GType_MAKINGOF) {
-			_vm->_needsShowCredits = true;
-		} else {
-			Common::Event eventQ;
-			eventQ.type = Common::EVENT_QUIT;
-			g_system->getEventManager()->pushEvent(eventQ);
-		}
+		setResult(kActionShowCredits);
 		close();
 	}
 		break;
 	case GUI::kOKCmd:
 		_vm->_gameState->_globals.zipMode = _zipModeCheckbox->getState();
 		_vm->_gameState->_globals.transitions = _transitionsCheckbox->getState();
-		setResult(1);
+		setResult(kActionNone);
 		close();
 		break;
 	default:
 		MohawkOptionsDialog::handleCommand(sender, cmd, data);
 	}
+}
+
+void MystOptionsDialog::setCanDropPage(bool canDropPage) {
+	_canDropPage = canDropPage;
+}
+
+void MystOptionsDialog::setCanShowMap(bool canShowMap) {
+	_canShowMap = canShowMap;
+}
+
+void MystOptionsDialog::setCanReturnToMenu(bool canReturnToMenu) {
+	_canReturnToMenu = canReturnToMenu;
 }
 
 #endif

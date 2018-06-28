@@ -173,7 +173,7 @@ public:
 	byte read(int a);
 
 	void writeReg(int r, int v);
-	
+
 	bool isStereo() const { return true; }
 
 protected:

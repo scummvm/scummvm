@@ -278,7 +278,7 @@ private:
 	 * Moves the position of an object
 	 */
 	bool cmdMoveObj(ParamsIterator &params);
-	
+
 	/**
 	 * Take or give amounts from various character or party figures
 	 */
@@ -319,13 +319,13 @@ private:
 	 * Gives up to three different item/amounts to various character and/or party properties
 	 */
 	bool cmdGiveMulti(ParamsIterator &params);
-	
+
 	/**
 	 * Prompts the user to enter a word for passwords or mirror
 	 * teleport destinations
 	 */
 	bool cmdConfirmWord(ParamsIterator &params);
-	
+
 	/**
 	 * Deals damage to a character
 	 */
@@ -544,6 +544,11 @@ private:
 	 * Displays a message
 	 */
 	void display(bool justifyFlag, int var46);
+
+	/**
+	 * Convert a CD time from the World of Xeen playCD opcodes to ScummVM CD frame number (which is at 75Hz)
+	 */
+	uint convertCDTime(uint srcTime);
 public:
 	int _animCounter;
 	bool _eventSkipped;

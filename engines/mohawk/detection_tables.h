@@ -53,7 +53,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	// Myst
 	// English Windows 3.11, v1.0.1
-	// From rootfather
+	// From lotharsm
 	{
 		{
 			"myst",
@@ -500,6 +500,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst
+	// Version 1.1 (DVD, Pressing code rvd 2811 ab, RVD8AB-BI RVD2811AB)
+	// From wouwehand in #10519
+	{
+		{
+			"riven",
+			"DVD",
+			AD_ENTRY1("a_Data.MHK", "3370cd9a9696814365a2b7fd7a7b726e"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_RIVEN
+		},
+		GType_RIVEN,
+		GF_DVD,
+		0,
+	},
+
+	// Riven: The Sequel to Myst
 	// Version 1.0 (DVD, From "Myst: Die Trilogie")
 	// From DrMcCoy
 	{
@@ -597,127 +615,6 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_CSTIME,
 		GF_DEMO,
-		0
-	},
-
-
-	{
-		{
-			"zoombini",
-			"",
-			AD_ENTRY1("ZOOMBINI.MHK", "98b758fec55104c096cfd129048be9a6"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ZOOMBINI,
-		GF_HASMIDI,
-		0
-	},
-
-	{
-		{
-			"zoombini",
-			"",
-			AD_ENTRY1("ZOOMBINI.MHK", "0672f65c40dd065840c896e41c13f980"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ZOOMBINI,
-		GF_HASMIDI,
-		0
-	},
-
-	{
-		{
-			"zoombini",
-			"v2.0",
-			AD_ENTRY1("ZOOMBINI.MHK", "506b1122ffa740e2566cf0b583d24478"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ZOOMBINI,
-		GF_HASMIDI,
-		0
-	},
-
-	{
-		{
-			"zoombini",
-			"",
-			AD_ENTRY1("ZOOMBINI.MHK", "6ae0bdf791266b1fe3d4fabbf44c3faa"),
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ZOOMBINI,
-		GF_HASMIDI,
-		0
-	},
-
-	{
-		{
-			"zoombini",
-			"",
-			AD_ENTRY1("ZOOMBINI.MHK", "8231e58525143ccf6e8b747df34b139f"),
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_ZOOMBINI,
-		GF_HASMIDI,
-		0
-	},
-
-	{
-		{
-			"csworld",
-			"v3.0",
-			AD_ENTRY1("C2K.MHK", "605fe88380848031bbd0ff84ade6fe40"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_CSWORLD,
-		0,
-		0
-	},
-
-	{
-		{
-			"csworld",
-			"v3.5",
-			AD_ENTRY1("C2K.MHK", "d4857aeb0f5e2e0c4ac556aa74f38c23"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_CSWORLD,
-		0,
-		0
-	},
-
-	{
-		{
-			"csamtrak",
-			"",
-			AD_ENTRY1("AMTRAK.MHK", "2f95301f0bb950d555bb7b0e3b1b7eb1"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_CSAMTRAK,
-		0,
 		0
 	},
 
@@ -935,52 +832,6 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
-			"jamesmath",
-			"",
-			AD_ENTRY1("BRODER.MHK", "007299da8b2c6e8ec1cde9598c243024"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_JAMESMATH,
-		GF_HASMIDI,
-		0
-	},
-
-	// This is in the NEWDATA folder, so I assume it's a newer version ;)
-	{
-		{
-			"jamesmath",
-			"",
-			AD_ENTRY1("BRODER.MHK", "53c000938a50dca92860fd9b546dd276"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_JAMESMATH,
-		GF_HASMIDI,
-		0
-	},
-
-	{
-		{
-			"treehouse",
-			"",
-			AD_ENTRY1("MAINROOM.MHK", "12f51894d7f838af639ea9bf1bc8f45b"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_TREEHOUSE,
-		GF_HASMIDI,
-		0
-	},
-
-	{
-		{
 			"greeneggs",
 			"",
 			AD_ENTRY1("GREEN.LB", "5df8438138186f89e71299d7b4f88d06"),
@@ -1083,54 +934,6 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV2,
 		GF_DEMO,
-		0
-	},
-
-	{
-		{
-			"1stdegree",
-			"",
-			AD_ENTRY1("AL236_1.MHK", "3ba145492a7b8b4dee0ef4222c5639c3"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_1STDEGREE,
-		GF_HASMIDI,
-		0
-	},
-
-	// In The 1st Degree
-	// French Windows
-	// From Strangerke
-	{
-		{
-			"1stdegree",
-			"",
-			AD_ENTRY1("AL236_1.MHK", "0e0c70b1b702b6ddca61a1192ada1282"),
-			Common::FR_FRA,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_1STDEGREE,
-		GF_HASMIDI,
-		0
-	},
-
-	{
-		{
-			"csusa",
-			"",
-			AD_ENTRY1("USAC2K.MHK", "b8c9d3a2586f62bce3a48b50d7a700e9"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_CSUSA,
-		0,
 		0
 	},
 

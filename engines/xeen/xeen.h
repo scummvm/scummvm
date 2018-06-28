@@ -78,7 +78,7 @@ enum XeenDebugChannels {
 enum Mode {
 	MODE_FF = -1,
 	MODE_STARTUP = 0,
-	MODE_1 = 1,
+	MODE_INTERACTIVE = 1,
 	MODE_COMBAT = 2,
 	MODE_3 = 3,
 	MODE_4 = 4,
@@ -86,11 +86,11 @@ enum Mode {
 	MODE_6 = 6,
 	MODE_7 = 7,
 	MODE_8 = 8,
-	MODE_RECORD_EVENTS = 9,
+	MODE_SCRIPT_IN_PROGRESS = 9,
 	MODE_CHARACTER_INFO = 10,
-	MODE_12 = 12,
+	MODE_INTERACTIVE2 = 12,
 	MODE_DIALOG_123 = 13,
-	MODE_17 = 17,
+	MODE_INTERACTIVE7 = 17,
 	MODE_86 = 86
 };
 
@@ -112,8 +112,9 @@ class XeenEngine : public Engine {
 	 */
 	struct ExtendedOptions {
 		bool _showItemCosts;
+		bool _durableArmor;
 
-		ExtendedOptions() : _showItemCosts(false) {}
+		ExtendedOptions() : _showItemCosts(false), _durableArmor(false) {}
 	};
 private:
 	const XeenGameDescription *_gameDescription;
@@ -210,6 +211,7 @@ public:
 	uint16 getVersion() const;
 	uint32 getGameID() const;
 	uint32 getGameFeatures() const;
+	bool getIsCD() const;
 
 	int getRandomNumber(int maxNumber);
 

@@ -43,6 +43,7 @@ namespace Video {
  *
  * Video decoder used in engines:
  *  - chewy
+ *  - prince
  *  - tucker
  */
 class FlicDecoder : public VideoDecoder {

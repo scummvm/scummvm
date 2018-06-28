@@ -106,7 +106,7 @@ public:
 
 		for (uint idx = 0; idx < count; ++idx) {
 			// Validate the class start header
-			if (!file->IsClassStart())
+			if (!file->isClassStart())
 				error("Unexpected class end");
 
 			// Get item's class name and use it to instantiate an item
@@ -120,7 +120,7 @@ public:
 			Common::List<T *>::push_back(newItem);
 
 			// Validate the class end footer
-			if (file->IsClassStart())
+			if (file->isClassStart())
 				error("Unexpected class start");
 		}
 	}

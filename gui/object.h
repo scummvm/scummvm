@@ -95,6 +95,11 @@ public:
 		return (x >= _x && x < (_x + _w) && (y >= _y) && (y < _y + _h));
 	}
 
+	/**
+	 * Returns the clipping rect to be used when drawing the children widgets of this object
+	 */
+	virtual Common::Rect getClipRect() const;
+
 protected:
 	virtual void	releaseFocus() = 0;
 };

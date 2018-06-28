@@ -143,7 +143,7 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 			break;
 
 		case Graphics::DrawStep::kVectorAlignCenter:
-			in_y = area.top + (area.height() / 2) - (in_h / 2) + ((step.padding.top + step.padding.bottom ) / 2) ;
+			in_y = area.top + (area.height() / 2) - (in_h / 2) + ((step.padding.top + step.padding.bottom ) / 2);
 			break;
 
 		case Graphics::DrawStep::kVectorAlignTop:

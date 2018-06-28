@@ -99,7 +99,7 @@ bool MemoryReadStream::seek(int32 offs, int whence) {
 
 	// Reset end-of-stream flag on a successful seek
 	_eos = false;
-	return true;	// FIXME: STREAM REWRITE
+	return true; // FIXME: STREAM REWRITE
 }
 
 bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {
@@ -124,7 +124,7 @@ bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {
 	// Post-Condition
 	assert(_pos <= _size);
 
-	return true;	// FIXME: STREAM REWRITE
+	return true; // FIXME: STREAM REWRITE
 }
 
 #pragma mark -
@@ -135,7 +135,7 @@ enum {
 };
 
 char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
-	assert(buf != 0 && bufSize > 1);
+	assert(buf != nullptr && bufSize > 1);
 	char *p = buf;
 	size_t len = 0;
 	char c = 0;
@@ -143,7 +143,7 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 	// If end-of-file occurs before any characters are read, return NULL
 	// and the buffer contents remain unchanged.
 	if (eos() || err()) {
-		return 0;
+		return nullptr;
 	}
 
 	// Loop as long as there is still free space in the buffer,
@@ -155,7 +155,7 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 			// If end-of-file occurs before any characters are read, return
 			// NULL and the buffer contents remain unchanged.
 			if (len == 0)
-				return 0;
+				return nullptr;
 
 			break;
 		}
@@ -163,7 +163,7 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 		// If an error occurs, return NULL and the buffer contents
 		// are indeterminate.
 		if (err())
-			return 0;
+			return nullptr;
 
 		// Check for CR or CR/LF
 		// * DOS and Windows use CRLF line breaks
@@ -174,7 +174,7 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 			c = readByte();
 
 			if (err()) {
-				return 0; // error: the buffer contents are indeterminate
+				return nullptr; // error: the buffer contents are indeterminate
 			}
 			if (eos()) {
 				// The CR was the last character in the file.
@@ -382,7 +382,7 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 ReadStream *wrapBufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream) {
 	if (parentStream)
 		return new BufferedReadStream(parentStream, bufSize, disposeParentStream);
-	return 0;
+	return nullptr;
 }
 
 #pragma mark -
@@ -413,7 +413,7 @@ BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *paren
 bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	// If it is a "local" seek, we may get away with "seeking" around
 	// in the buffer only.
-	_eos = false;	// seeking always cancels EOS
+	_eos = false; // seeking always cancels EOS
 
 	int relOffset = 0;
 	switch (whence) {
@@ -459,7 +459,7 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 SeekableReadStream *wrapBufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream) {
 	if (parentStream)
 		return new BufferedSeekableReadStream(parentStream, bufSize, disposeParentStream);
-	return 0;
+	return nullptr;
 }
 
 #pragma mark -
@@ -543,7 +543,7 @@ public:
 WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize) {
 	if (parentStream)
 		return new BufferedWriteStream(parentStream, bufSize);
-	return 0;
+	return nullptr;
 }
 
 } // End of namespace Common

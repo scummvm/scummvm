@@ -499,7 +499,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 	int16 dX = x - (_dsX1 << 3);
 	int16 dY = y;
 	int16 dW = _dsX2 - _dsX1;
-	uint8 pixelsPerByte = *src++ ;
+	uint8 pixelsPerByte = *src++;
 
 	uint16 dH = *src++;
 	uint16 width = (*src++) << 3;
@@ -1211,7 +1211,7 @@ void Screen_EoB::createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, ui
 
 			if (t <= v && (ii == rootColor || ii != i)) {
 				v = t;
-				col = ii ;
+				col = ii;
 			}
 		}
 		*dst++ = col;

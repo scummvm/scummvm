@@ -121,6 +121,7 @@ private:
 	RivenStack *_stack;
 
 	bool _gameEnded;
+	uint32 _lastSaveTime;
 
 	// Variables
 	void initVars();
@@ -152,6 +153,7 @@ public:
 	// Save / Load
 	void runLoadDialog();
 	void runSaveDialog();
+	void tryAutoSaving();
 	void loadGameStateAndDisplayError(int slot);
 	void saveGameStateAndDisplayError(int slot, const Common::String &desc);
 

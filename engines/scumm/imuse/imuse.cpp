@@ -1236,11 +1236,8 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d,
 		if (trig->id == id && trig->sound == sound && trig->command[0] == a)
 			break;
 
-		uint16 diff;
-		if (trig->expire <= _snm_trigger_index)
-			diff = _snm_trigger_index - trig->expire;
-		else
-			diff = 0x10000 - trig->expire + _snm_trigger_index;
+		// The wraparound if trig->expire > _snm_trigger_index is intentional
+		uint16 diff = _snm_trigger_index - trig->expire;
 
 		if (!oldest_ptr || oldest_trigger < diff) {
 			oldest_ptr = trig;

@@ -627,7 +627,7 @@ const int MONSTER_GRID_BITMASK[12] = {
 };
 
 const int INDOOR_OBJECT_X[2][12] = {
-	{ 5, -7, -112, 98, -8, -65, 49, -9, -34, 16, -58, 40 },
+	{ -5, -7, -112, 98, -8, -65, 49, -9, -34, 16, -58, 40 },
 	{ -35, -35, -142, 68, -35, -95, 19, -35, -62, -14, -98, 16 }
 };
 
@@ -1041,6 +1041,12 @@ const int DARK_SPELL_RANGES[12][2] = {
 	{ 0, 20 }, { 16, 35 }, { 27, 37 }, { 29, 39 },
 	{ 0, 17 }, { 14, 34 }, { 26, 37 }, { 29, 39 },
 	{ 0, 20 }, { 16, 35 }, { 27, 37 }, { 29, 39 }
+};
+
+const int SWORDS_SPELL_RANGES[12][2] = {
+	{ 0, 20 },{ 16, 35 },{ 27, 39 },{ 29, 39 },
+	{ 0, 17 },{ 14, 34 },{ 26, 39 },{ 29, 39 },
+	{ 0, 20 },{ 16, 35 },{ 27, 39 },{ 29, 39 }
 };
 
 const int CLOUDS_GUILD_SPELLS[5][20] = {
@@ -1598,6 +1604,7 @@ const char *const QUESTS_DIALOG_TEXT =
 	"\t289Exit";
 const char *const CLOUDS_OF_XEEN_LINE = "\b \b*-- \f04Clouds of Xeen\fd --";
 const char *const DARKSIDE_OF_XEEN_LINE = "\b \b*-- \f04Darkside of Xeen\fd --";
+const char *const SWORDS_OF_XEEN_LINE = "\b \b*-- \f04Swords of Xeen\fd --";
 
 const char *const NO_QUEST_ITEMS =
 	"\r\x3""c\v000	000Quest Items\x3l\x2\n"
@@ -1687,6 +1694,7 @@ const char *const SELECT_CLASS_BEFORE_SAVING =
 const char *const EXCHANGE_ATTR_WITH = "Exchange %s with...";
 
 const int NEW_CHAR_SKILLS[10] = { 1, 5, -1, -1, 4, 0, 0, -1, 6, 11 };
+const int NEW_CHAR_SKILLS_OFFSET[10] = { 0, 0, 0, 5, 0, 0, 0, 0, 0, 0 };
 const int NEW_CHAR_SKILLS_LEN[10] = { 11, 8, 0, 0, 12, 8, 8, 0, 9, 11 };
 const int NEW_CHAR_RACE_SKILLS[10] = { 14, -1, 17, 16, -1, 0, 0, 0, 0, 0 };
 
@@ -1782,8 +1790,18 @@ const char *const TOWN_PORTAL =
 	"To which Town (1-5)\n"
 	"\n";
 
-const int TOWN_MAP_NUMBERS[2][5] = {
-	{ 28, 29, 30, 31, 32 }, { 29, 31, 33, 35, 37 }
+const char *const TOWN_PORTAL_SWORDS =
+	"\x3""cTown Portal\x3l\n"
+	"\n"
+	"\t0101. %s\n"
+	"\t0102. %s\n"
+	"\t0103. %s\x3""c\n"
+	"\n"
+	"To which Town (1-3)\n"
+	"\n";
+
+const int TOWN_MAP_NUMBERS[3][5] = {
+	{ 28, 29, 30, 31, 32 }, { 29, 31, 33, 35, 37 }, { 53, 92, 63, 0, 0 }
 };
 
 const char *const MONSTER_DETAILS =
@@ -1925,6 +1943,38 @@ const char *const DIFFICULTY_TEXT = "\v000\t000\x3""cSelect Game Preference";
 const char *const SAVE_OFF_LIMITS = "\x3""c\v002\t000The Gods of Game Restoration deem this area off limits!\n"
 	"Sorry, no saving in this maze.";
 
+const char *const CLOUDS_INTRO1 = "\f00\v082\t040\x3"
+	"cKing Burlock\v190\t040Peasants\v082\t247"
+	"Lord Xeen\v190\t258Xeen's Pet\v179\t150Crodo";
+
+const char *const DARKSIDE_ENDING1 = "\n\x3" "cCongratulations\n"
+	"\n"
+	"Your Final Score is:\n"
+	"\n"
+	"%010lu\n"
+	"\x3" "l\n"
+	"Please send this score to the Ancient's Headquarters "
+	"where you'll be added to the Hall of Legends!\n"
+	"\n"
+	"Ancient's Headquarters\n"
+	"New World Computing, Inc.\n"
+	"P.O. Box 4302\n"
+	"Hollywood, CA 90078";
+
+const char *const DARKSIDE_ENDING2 = "\n"
+	"Adventurers,\n"
+	"\n"
+	"I will save your game in Castleview.\n"
+	"\n"
+	"The World of Xeen still needs you!\n"
+	"\n"
+	"Load your game afterwards and come visit me in the "
+	"Great Pyramid for further instructions";
+
+const char *const PHAROAH_ENDING_TEXT1 = "\fd\v001\t001%s\x3" "c\t000\v180Press a Key!\x3" "l";
+const char *const PHAROAH_ENDING_TEXT2 = "\f04\v000\t000%s\x3" "c\t000\v180Press a Key!\x3" "l\fd";
+
+
 void writeConstants(CCArchive &cc) {
 	Common::MemFile file;
 	file.syncString(CLOUDS_CREDITS);
@@ -2051,6 +2101,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncNumbers2D((const int *)CLOUDS_GUILD_SPELLS, 5, 20);
 	file.syncNumbers2D((const int *)DARK_SPELL_OFFSETS, 3, 39);
 	file.syncNumbers2D((const int *)DARK_SPELL_RANGES, 12, 2);
+	file.syncNumbers2D((const int *)SWORDS_SPELL_RANGES, 12, 2);
 	file.syncNumbers((const int *)SPELL_GEM_COST, 77);
 	file.syncString(NOT_A_SPELL_CASTER);
 	file.syncString(SPELLS_LEARNED_ALL);
@@ -2180,6 +2231,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(QUESTS_DIALOG_TEXT);
 	file.syncString(CLOUDS_OF_XEEN_LINE);
 	file.syncString(DARKSIDE_OF_XEEN_LINE);
+	file.syncString(SWORDS_OF_XEEN_LINE);
 	file.syncString(NO_QUEST_ITEMS);
 	file.syncString(NO_CURRENT_QUESTS);
 	file.syncString(NO_AUTO_NOTES);
@@ -2204,6 +2256,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(SELECT_CLASS_BEFORE_SAVING);
 	file.syncString(EXCHANGE_ATTR_WITH);
 	file.syncNumbers((const int *)NEW_CHAR_SKILLS, 10);
+	file.syncNumbers((const int *)NEW_CHAR_SKILLS_OFFSET, 10);
 	file.syncNumbers((const int *)NEW_CHAR_SKILLS_LEN, 10);
 	file.syncNumbers((const int *)NEW_CHAR_RACE_SKILLS, 10);
 	file.syncNumbers((const int *)RACE_MAGIC_RESISTENCES, 5);
@@ -2229,7 +2282,8 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(LLOYDS_BEACON);
 	file.syncString(HOW_MANY_SQUARES);
 	file.syncString(TOWN_PORTAL);
-	file.syncNumbers2D((const int *)TOWN_MAP_NUMBERS, 2, 5);
+	file.syncString(TOWN_PORTAL_SWORDS);
+	file.syncNumbers2D((const int *)TOWN_MAP_NUMBERS, 3, 5);
 	file.syncString(MONSTER_DETAILS);
 	file.syncStrings(MONSTER_SPECIAL_ATTACKS, 23);
 	file.syncString(IDENTIFY_MONSTERS);
@@ -2264,6 +2318,11 @@ void writeConstants(CCArchive &cc) {
 	file.syncStrings2D((const char *const *)MUSIC_FILES2, 6, 7);
 	file.syncString(DIFFICULTY_TEXT);
 	file.syncString(SAVE_OFF_LIMITS);
+	file.syncString(CLOUDS_INTRO1);
+	file.syncString(DARKSIDE_ENDING1);
+	file.syncString(DARKSIDE_ENDING2);
+	file.syncString(PHAROAH_ENDING_TEXT1);
+	file.syncString(PHAROAH_ENDING_TEXT2);
 
 	cc.add("CONSTANTS", file);
 }

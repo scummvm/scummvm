@@ -388,7 +388,7 @@ void SimpleFile::writeIndent(uint indent) const {
 		write("\t", 1);
 }
 
-bool SimpleFile::IsClassStart() {
+bool SimpleFile::isClassStart() {
 	char c;
 
 	do {

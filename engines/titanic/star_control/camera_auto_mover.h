@@ -62,17 +62,17 @@ public:
 
 	/**
 	 * Clear src and dest orientation and set some default values for other fields
-	 */	
+	 */
 	void clear();
 
 	/**
 	 * Setup a transition to from one position to another
-	 */		
+	 */
 	void setPath(const FVector &srcV, const FVector &destV);
 
 	/**
 	 * Applys speeds to the mover. More than one application is usually done for several transitions
-	 */	
+	 */
 	virtual MoverState move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) { return DONE_MOVING; }
 	/**
 	 * Given a distance to cover, determines a bunch of speeds for a gradual transition

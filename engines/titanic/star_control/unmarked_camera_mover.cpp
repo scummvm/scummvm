@@ -48,7 +48,7 @@ void CUnmarkedCameraMover::moveTo(const FVector &srcV, const FVector &destV, con
 void CUnmarkedCameraMover::transitionBetweenOrientations(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {
 	if (isLocked())
 		decLockCount();
-	
+
 	FVector vector1 = v1;
 	FVector vector2 = v2;
 	FPose matrix1 = vector2.getFrameTransform(vector1);

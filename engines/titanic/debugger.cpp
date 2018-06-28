@@ -357,7 +357,7 @@ bool Debugger::cmdFrame(int argc, const char **argv) {
 	if (argc == 3) {
 		CGameObject *obj = dynamic_cast<CGameObject *>(
 			g_vm->_window->_project->findByName(argv[1]));
-		
+
 		if (obj) {
 			obj->loadFrame(strToInt(argv[2]));
 			return false;

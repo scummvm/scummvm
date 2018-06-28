@@ -78,7 +78,7 @@ void CCameraAutoMover::calcSpeeds(int val1, int val2, float distance) {
 	_field40 = nMoverTransitions-1;
 	_field48 = nMoverTransitions-1;
 	_field3C = (double)val2 * _field38;
-	
+
 	// Calculate the speeds for a graduated movement between stars
 	double base = 0.0, total = 0.0, power = 4.0, baseInc = 0.03125;
 	for (int idx = nMoverTransitions - 1; idx >= 0; --idx) {
@@ -86,7 +86,7 @@ void CCameraAutoMover::calcSpeeds(int val1, int val2, float distance) {
 		total += _speeds[idx];
 		base += baseInc;
 	}
-	
+
 	for (int idx = 0; idx < nMoverTransitions; ++idx) {
 		_speeds[idx] = _speeds[idx] * _field3C / total;
 	}

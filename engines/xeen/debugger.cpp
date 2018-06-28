@@ -170,7 +170,7 @@ bool Debugger::cmdMap(int argc, const char **argv) {
 		int mapId = strToInt(argv[1]);
 		int x = argc < 3 ? 8 : strToInt(argv[2]);
 		int y = argc < 4 ? 8 : strToInt(argv[3]);
-		
+
 		if (argc == 5)
 			map._loadCcNum = strToInt(argv[4]);
 		map.load(mapId);

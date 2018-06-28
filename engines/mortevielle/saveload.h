@@ -33,6 +33,7 @@
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
+#include "engines/savestate.h"
 
 #define SAVEGAME_VERSION 1
 

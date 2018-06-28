@@ -352,6 +352,11 @@ public:
 	void save(Common::WriteStream &s);
 
 	/**
+	 * Load the character roster and party
+	 */
+	void loadParty();
+
+	/**
 	 * Sets a new resource entry
 	 */
 	void replaceEntry(uint16 id, const byte *data, size_t size);

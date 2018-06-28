@@ -497,7 +497,7 @@ GuildLocation::GuildLocation() : BaseLocation(GUILD) {
 	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
 	addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_s);
 	addButton(Common::Rect(234, 84, 308, 92), 0);
-	g_vm->_mode = MODE_17;
+	g_vm->_mode = MODE_INTERACTIVE7;
 
 	_vocName = _ccNum ? "parrot1.voc" : "guild10.voc";
 }
@@ -560,7 +560,7 @@ TavernLocation::TavernLocation() : BaseLocation(TAVERN) {
 	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_f);
 	addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_t);
 	addButton(Common::Rect(234, 84, 308, 92), Common::KEYCODE_r);
-	g_vm->_mode = MODE_17;
+	g_vm->_mode = MODE_INTERACTIVE7;
 
 	_vocName = _ccNum ? "hello1.voc" : "hello.voc";
 }
@@ -572,6 +572,7 @@ Common::String TavernLocation::createLocationText(Character &ch) {
 }
 
 Character *TavernLocation::doOptions(Character *c) {
+	EventsManager &events = *g_vm->_events;
 	Interface &intf = *g_vm->_interface;
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
@@ -713,9 +714,18 @@ Character *TavernLocation::doOptions(Character *c) {
 			party._activeParty[idx]._xeenSide = map._loadCcNum;
 		}
 
-		g_vm->_mode = MODE_17;
+		g_vm->_mode = MODE_INTERACTIVE7;
 		party.addTime(1440);
 		party._mazeId = 0;
+
+		// Say farewell
+		farewell();
+		while (sound.isSoundPlaying())
+			events.wait(1);
+
+		// Animate closing a scroll
+		doScroll(true, false);
+		sound.stopAllAudio();
 
 		// Show the party dialog
 		PartyDialog::show(g_vm);
@@ -1146,7 +1156,7 @@ int ArenaLocation::show() {
 		int count = party._activeParty[0]._awards[WARZONE_AWARD];
 		int suffixNum = (count < 10) ? count : 0;
 		Common::String msg = Common::String::format(format.c_str(), count, SUFFIXES[suffixNum]);
-	
+
 		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, msg, 1);
 
 		map.load(28);
@@ -1383,7 +1393,7 @@ int ReaperCutscene::show() {
 			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sprites1.draw(0, 0, Common::Point(REAPER_X1[_ccNum][idx], REAPER_Y1[_ccNum][idx]), 0, idx);
-			
+
 			if (_ccNum) {
 				sprites1.draw(0, 1, Common::Point(REAPER_X2[idx], REAPER_Y1[1][idx]), 0, idx);
 				sprites1.draw(0, party._isNight ? 3 : 2, Common::Point(REAPER_X3[idx], REAPER_Y1[1][idx]), 0, idx);
@@ -1447,6 +1457,15 @@ void ReaperCutscene::getNewLocation() {
 			}
 			break;
 
+		case 16:
+			if (party._questItems[41]) {
+				_mazeId = 61;
+				_mazePos = Common::Point(7, 12);
+				_mazeDir = DIR_SOUTH;
+				_keyFound = true;
+			}
+			break;
+
 		case 23:
 			if (party._questItems[42]) {
 				_mazeId = 65;
@@ -1471,7 +1490,7 @@ void ReaperCutscene::getNewLocation() {
 	} else {
 		switch (party._mazeId) {
 		case 7:
-			if (party._questItems[30]) {
+			if (party._questItems[46]) {
 				map._loadCcNum = 1;
 				_mazeId = 113;
 				_mazePos = Common::Point(7, 4);
@@ -1490,7 +1509,7 @@ void ReaperCutscene::getNewLocation() {
 			break;
 
 		case 13:
-			if (party._questItems[29]) {
+			if (party._questItems[45]) {
 				map._loadCcNum = 1;
 				_mazeId = 117;
 				_mazePos = Common::Point(7, 4);
@@ -1583,7 +1602,7 @@ int GolemCutscene::show() {
 		if (!_ccNum)
 			sprites2[0].draw(0, 2, Common::Point(idx + g_vm->getRandomNumber(9) - 5,
 				g_vm->getRandomNumber(9) - 5), SPRFLAG_800);
-		
+
 		if (!_ccNum && !sound.isSoundPlaying())
 			sound.playSound("ogre.voc");
 
@@ -1956,7 +1975,30 @@ exit:
 void DwarfCutscene::getNewLocation() {
 	Party &party = *g_vm->_party;
 
-	if (_ccNum) {
+	if (g_vm->getGameID() == GType_Swords) {
+		switch (party._mazeId) {
+		case 1:
+			if (party._questItems[0]) {
+				_mazeId = 53;
+				_mazePos = Common::Point(8, 1);
+				_mazeDir = DIR_NORTH;
+				_keyFound = true;
+			}
+			break;
+
+		case 7:
+			if (party._questItems[1]) {
+				_mazeId = 92;
+				_mazePos = Common::Point(8, 1);
+				_mazeDir = DIR_NORTH;
+				_keyFound = true;
+			}
+			break;
+
+		default:
+			break;
+		}
+	} else if (_ccNum) {
 		switch (party._mazeId) {
 		case 4:
 			if (party._questItems[35]) {
@@ -2069,7 +2111,7 @@ int SphinxCutscene::show() {
 	// Save background
 	Graphics::ManagedSurface bgSurface;
 	bgSurface.copyFrom(screen);
-	
+
 	for (int idx = 8; idx >= 0; --idx) {
 		events.updateGameCounter();
 		screen.blitFrom(bgSurface);
@@ -2231,9 +2273,12 @@ int PyramidLocation::show() {
 LocationManager::LocationManager() : _location(nullptr) {
 }
 
-int LocationManager::doAction(LocationAction actionId) {
+int LocationManager::doAction(int actionId) {
+	LocationAction action = (g_vm->getGameID() == GType_Swords && actionId > 13 && actionId < 18) ?
+		BLACKSMITH : (LocationAction)actionId;
+
 	// Create the desired location
-	switch (actionId) {
+	switch (action) {
 	case BANK:
 		_location = new Locations::BankLocation();
 		break;

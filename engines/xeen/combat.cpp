@@ -633,12 +633,12 @@ void Combat::monstersAttack() {
 
 	_monstersAttacking = false;
 
-	if (_vm->_mode != MODE_SLEEPING) {
+	if (_vm->_mode == MODE_SLEEPING) {
 		for (uint charNum = 0; charNum < party._activeParty.size(); ++charNum) {
 			Condition condition = party._activeParty[charNum].worstCondition();
 
-			if (condition != ASLEEP && (condition < PARALYZED || condition == NO_CONDITION)) {
-				_vm->_mode = MODE_1;
+			if (condition == DEPRESSED || condition == CONFUSED || condition == NO_CONDITION) {
+				_vm->_mode = MODE_INTERACTIVE;
 				break;
 			}
 		}
@@ -716,7 +716,10 @@ void Combat::moveMonster(int monsterId, const Common::Point &moveDelta) {
 	MazeMonster &monster = map._mobData._monsters[monsterId];
 	Common::Point newPos = monster._position + moveDelta;
 
-	assert((uint)newPos.x < 32 && (uint)newPos.y < 32);
+	// FIXME: Monster moved outside mapping area. Which shouldn't happen, so ignore the move if it does
+	if ((uint)newPos.x >= 32 || (uint)newPos.y >= 32)
+		return;
+
 	if (_monsterMap[newPos.y][newPos.x] < 3 && monster._damageType == DT_PHYSICAL && _moveMonsters) {
 		// Adjust monster's position
 		++_monsterMap[newPos.y][newPos.x];
@@ -890,7 +893,7 @@ void Combat::doMonsterTurn(int monsterId) {
 
 			if (ableChars.size() == 0) {
 				party._dead = true;
-				_vm->_mode = MODE_1;
+				_vm->_mode = MODE_INTERACTIVE;
 				return;
 			}
 
@@ -1057,7 +1060,7 @@ void Combat::setSpeedTable() {
 	bool hasSpeed = _whosSpeed != -1;
 	int oldSpeed = hasSpeed && _whosSpeed < (int)_speedTable.size() ? _speedTable[_whosSpeed] : 0;
 
-	// Set up speeds for party membres
+	// Set up speeds for party members
 	int maxSpeed = 0;
 	for (uint charNum = 0; charNum < _combatParty.size(); ++charNum) {
 		Character &c = *_combatParty[charNum];
@@ -1452,9 +1455,9 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			intf.draw3d(true);
 
 			sound.stopSound();
-			File powVoc(Common::String::format("pow%d.voc",
-				POW_WEAPON_VOCS[_attackWeaponId]));
-			sound.playFX(60 + POW_WEAPON_VOCS[_attackWeaponId]);
+			int powNum = (_attackWeaponId > XEEN_SLAYER_SWORD) ? 0 : POW_WEAPON_VOCS[_attackWeaponId];
+			File powVoc(Common::String::format("pow%d.voc", powNum));
+			sound.playFX(60 + powNum);
 			sound.playSound(powVoc, 1);
 
 			if (monster._hp > damage) {
@@ -1474,7 +1477,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 				party._gameFlags[0][11] = true;
 			if (_monster2Attack == 8 && party._mazeId == 78) {
 				party._gameFlags[0][60] = true;
-				party._questFlags[0][23] = false;
+				party._questFlags[23] = false;
 
 				for (uint idx = 0; idx < party._activeParty.size(); ++idx)
 					party._activeParty[idx].setAward(42, true);
@@ -1487,8 +1490,8 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		giveExperience(monsterData._experience);
 
 		if (party._mazeId != 85) {
-			party._treasure._gold = monsterData._gold;
-			party._treasure._gems = monsterData._gems;
+			party._treasure._gold += monsterData._gold;
+			party._treasure._gems += monsterData._gems;
 
 			if (!ccNum && monster._spriteId == 89) {
 				// Xeen's Scepter of Temporal Distortion
@@ -2095,7 +2098,7 @@ void Combat::reset() {
 	clearShooting();
 	setupCombatParty();
 
-	_combatMode = COMBATMODE_1;
+	_combatMode = COMBATMODE_INTERACTIVE;
 	_monster2Attack = -1;
 }
 

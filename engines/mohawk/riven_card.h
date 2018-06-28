@@ -152,6 +152,9 @@ private:
 	void loadCardHotspotEnableList(uint16 id);
 	void loadCardWaterEffectList(uint16 id);
 	void applyPatches(uint16 id);
+	void applyPropertiesPatch8EB7(uint32 globalId);
+	void applyPropertiesPatch2E76(uint32 globalId);
+	void applyPropertiesPatch22118(uint32 globalId);
 	void setCurrentCardVariable();
 
 	RivenScriptPtr getScript(uint16 scriptType) const;

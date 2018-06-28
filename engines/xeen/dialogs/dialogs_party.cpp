@@ -45,6 +45,7 @@ void PartyDialog::show(XeenEngine *vm) {
 
 void PartyDialog::execute() {
 	EventsManager &events = *_vm->_events;
+	FileManager &files = *_vm->_files;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -54,11 +55,12 @@ void PartyDialog::execute() {
 	bool modeFlag = false;
 	int startingChar = 0;
 
+	sound.playSong(files._ccNum ? "newbrigh.m" : "inn.m");
 	loadButtons();
 	setupBackground();
 
 	while (!_vm->shouldExit()) {
-		_vm->_mode = MODE_1;
+		_vm->_mode = MODE_INTERACTIVE;
 
 		// Build up a list of available characters in the Roster that are on the
 		// same side of Xeen as the player is currently on

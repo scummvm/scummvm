@@ -95,7 +95,7 @@ protected:
 	}
 };
 
-EditGameDialog::EditGameDialog(const String &domain, const String &desc)
+EditGameDialog::EditGameDialog(const String &domain)
 	: OptionsDialog(domain, "GameOptions") {
 	// Retrieve all game specific options.
 	const Plugin *plugin = nullptr;
@@ -106,7 +106,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 		gameId = domain;
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
-	EngineMan.findGame(gameId, &plugin);
+	PlainGameDescriptor pgd = EngineMan.findGame(gameId, &plugin);
 	if (plugin) {
 		_engineOptions = plugin->get<MetaEngine>().getExtraGuiOptions(domain);
 	} else {
@@ -120,8 +120,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.empty() && !desc.empty()) {
-		description = desc;
+	if (description.empty() && pgd.description) {
+		description = pgd.description;
 	}
 
 	// GUI:  Add tab widget
@@ -384,35 +384,35 @@ void EditGameDialog::open() {
 
 void EditGameDialog::apply() {
 	ConfMan.set("description", _descriptionWidget->getEditString(), _domain);
-	
+
 	Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
 	if (lang < 0)
 		ConfMan.removeKey("language", _domain);
 	else
 		ConfMan.set("language", Common::getLanguageCode(lang), _domain);
-	
+
 	String gamePath(_gamePathWidget->getLabel());
 	if (!gamePath.empty())
 		ConfMan.set("path", gamePath, _domain);
-	
+
 	String extraPath(_extraPathWidget->getLabel());
 	if (!extraPath.empty() && (extraPath != _c("None", "path")))
 		ConfMan.set("extrapath", extraPath, _domain);
 	else
 		ConfMan.removeKey("extrapath", _domain);
-	
+
 	String savePath(_savePathWidget->getLabel());
 	if (!savePath.empty() && (savePath != _("Default")))
 		ConfMan.set("savepath", savePath, _domain);
 	else
 		ConfMan.removeKey("savepath", _domain);
-	
+
 	Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
 	if (platform < 0)
 		ConfMan.removeKey("platform", _domain);
 	else
 		ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
-	
+
 	// Set the state of engine-specific checkboxes
 	for (uint i = 0; i < _engineOptions.size(); i++) {
 		ConfMan.setBool(_engineOptions[i].configOption, _engineCheckboxes[i]->getState(), _domain);

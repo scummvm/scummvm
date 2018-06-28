@@ -34,7 +34,7 @@ namespace Mohawk {
 namespace MystStacks {
 
 Slides::Slides(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm) {
+		MystScriptParser(vm, kDemoSlidesStack) {
 	setupOpcodes();
 
 	_vm->_cursor->hideCursor();
@@ -62,7 +62,7 @@ void Slides::disablePersistentScripts() {
 void Slides::runPersistentScripts() {
 	if (_cardSwapEnabled) {
 		// Used on Cards...
-		if (_vm->_system->getMillis() > _nextCardTime) {
+		if (_vm->getTotalPlayTime() > _nextCardTime) {
 			_vm->_gfx->fadeToBlack();
 			_vm->changeToCard(_nextCardID, kNoTransition);
 			_vm->_gfx->fadeFromBlack();
@@ -78,7 +78,7 @@ void Slides::o_returnToMenu(uint16 var, const ArgumentsArray &args) {
 void Slides::o_setCardSwap(uint16 var, const ArgumentsArray &args) {
 	_nextCardID = args[0];
 
-	_nextCardTime = _vm->_system->getMillis() + 5000;
+	_nextCardTime = _vm->getTotalPlayTime() + 5000;
 	_cardSwapEnabled = true;
 }
 

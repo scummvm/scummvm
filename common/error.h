@@ -46,6 +46,7 @@ enum ErrorCode {
 	kNoGameDataFoundError,		///< Engine initialization: No game data was found in the specified location
 	kUnsupportedGameidError,	///< Engine initialization: Gameid not supported by this (Meta)Engine
 	kUnsupportedColorMode,		///< Engine initialization: Engine does not support backend's color mode
+	kAudioDeviceInitFailed,		///< Engine initialization: Audio device initialization failed
 
 	kReadPermissionDenied,		///< Unable to read data due to missing read permission
 	kWritePermissionDenied,		///< Unable to write data due to missing write permission

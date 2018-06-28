@@ -23,25 +23,46 @@
 #ifndef LILLIPUT_SOUND_H
 #define LILLIPUT_SOUND_H
 
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/midiplayer.h"
+#include "audio/mixer.h"
+
 namespace Lilliput {
 
 class LilliputEngine;
 
-class LilliputSound {
+class LilliputSound: public Audio::MidiPlayer {
 public:
 	LilliputSound(LilliputEngine *vm);
 	~LilliputSound();
 
-	void contentFct0();
-	void contentFct1();
-	void contentFct2(int var1, Common::Point var2, Common::Point var3, Common::Point var4);
-	void contentFct3(Common::Point pos);
-	void contentFct4();
-	void contentFct5();
-	void contentFct6();
+	void init();
+	void refresh();
+	void play(int var1, Common::Point var2, Common::Point var3, Common::Point var4);
+	void stop(Common::Point pos);
+	void toggleOnOff();
+	void update();
+	void remove();
 
 private:
 	LilliputEngine *_vm;
+
+	int _fileNumb;
+	byte **_unpackedFiles;
+	uint16 *_unpackedSizes;
+	bool _isGM;
+
+	uint32 decode(const byte *src, byte *dst, uint32 len, uint32 start);
+	byte readByte(const byte *data, uint32 offset);
+
+	void loadMusic(Common::String filename);
+	void playMusic(int var1);
+
+	virtual void send(uint32 b);
+	virtual void sendToChannel(byte channel, uint32 b);
 };
 
 } // End of namespace Lilliput

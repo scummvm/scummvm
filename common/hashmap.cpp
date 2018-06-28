@@ -95,10 +95,10 @@ void updateHashCollisionStats(int collisions, int dummyHits, int lookups, int ar
 		g_size / g_totalHashmaps, g_max_size,
 		g_capacity / g_totalHashmaps, g_max_capacity);
 	debug("  %d less than %d; %d less than %d; %d less than %d; %d less than %d",
-			g_stats[0], 2*8/3,
-			g_stats[1],2*16/3,
-			g_stats[2],2*32/3,
-			g_stats[3],2*64/3);
+		g_stats[0], 2 *  8 / 3,
+		g_stats[1], 2 * 16 / 3,
+		g_stats[2], 2 * 32 / 3,
+		g_stats[3], 2 * 64 / 3);
 
 	// TODO:
 	// * Should record the maximal size of the map during its lifetime, not that at its death

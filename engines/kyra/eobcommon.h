@@ -885,7 +885,7 @@ protected:
 	void inflictMonsterDamage(EoBMonsterInPlay *m, int damage, bool giveExperience);
 	void calcAndInflictMonsterDamage(EoBMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect);
 	void calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect);
-	int calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int damageType) ;
+	int calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int damageType);
 	void inflictCharacterDamage(int charIndex, int damage);
 
 	bool characterAttackHitTest(int charIndex, int monsterIndex, int item, int attackType);

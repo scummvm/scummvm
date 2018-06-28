@@ -40,8 +40,7 @@ namespace OPL {
 namespace Xeen {
 
 enum MusicCommand {
-	STOP_SONG = 0, RESTART_SONG = 1, SET_VOLUME = 0x100,
-	GET_STATUS = 0xFFE0
+	STOP_SONG = 0, RESTART_SONG = 1, SET_VOLUME = 0x100, GET_STATUS = 0xFFE0
 };
 
 class SoundDriver;
@@ -170,7 +169,7 @@ public:
 	/**
 	 * Executes special music command
 	 */
-	virtual int songCommand(uint commandId, byte volume = 0);
+	virtual int songCommand(uint commandId, byte musicVolume = 0, byte sfxVolume = 0);
 
 	/**
 	 * Returns whether music is currently playing
@@ -200,7 +199,7 @@ private:
 	int _field180;
 	int _field181;
 	int _field182;
-	int _volume;
+	int _musicVolume, _sfxVolume;
 private:
 	/**
 	 * Initializes the state of the Adlib OPL driver
@@ -246,7 +245,7 @@ private:
 	/**
 	 * Starts playing an instrument
 	 */
-	void playInstrument(byte channelNum, const byte *data);
+	void playInstrument(byte channelNum, const byte *data, byte volume);
 protected:
 	virtual bool musSetInstrument(const byte *&srcP, byte param);
 	virtual bool musSetPitchWheel(const byte *&srcP, byte param);
@@ -301,7 +300,7 @@ public:
 	/**
 	 * Executes special music command
 	 */
-	virtual int songCommand(uint commandId, byte volume = 0);
+	virtual int songCommand(uint commandId, byte musicVolume = 0, byte sfxVolume = 0);
 };
 
 } // End of namespace Xeen

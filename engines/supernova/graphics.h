@@ -36,10 +36,10 @@ struct Surface;
 
 namespace Supernova {
 
-class MSNImageDecoder : public Image::ImageDecoder {
+class MSNImage : public Image::ImageDecoder {
 public:
-	MSNImageDecoder();
-	virtual ~MSNImageDecoder();
+	MSNImage();
+	virtual ~MSNImage();
 
 	virtual void destroy();
 	virtual bool loadStream(Common::SeekableReadStream &stream);

@@ -71,6 +71,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_optionsDialog = nullptr;
 	_card = nullptr;
 	_inventory = nullptr;
+	_lastSaveTime = 0;
 
 	DebugMan.addDebugChannel(kRivenDebugScript, "Script", "Track Script Execution");
 	DebugMan.addDebugChannel(kRivenDebugPatches, "Patches", "Track Script Patching");
@@ -112,6 +113,10 @@ GUI::Debugger *MohawkEngine_Riven::getDebugger() {
 
 Common::Error MohawkEngine_Riven::run() {
 	MohawkEngine::run();
+
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
 
 	// Let's try to open the installer file (it holds extras.mhk)
 	// Though, we set a low priority to prefer the extracted version
@@ -240,6 +245,12 @@ void MohawkEngine_Riven::doFrame() {
 					loadGameStateAndDisplayError(_optionsDialog->getLoadSlot());
 				if (_optionsDialog->getSaveSlot() >= 0)
 					saveGameStateAndDisplayError(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
+
+				if (hasGameEnded()) {
+					// Attempt to autosave before exiting
+					tryAutoSaving();
+				}
+
 				_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
 				_card->initializeZipMode();
 				break;
@@ -281,6 +292,11 @@ void MohawkEngine_Riven::doFrame() {
 				break;
 			}
 			break;
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+			// Attempt to autosave before exiting
+			tryAutoSaving();
+			break;
 		default:
 			break;
 		}
@@ -292,6 +308,10 @@ void MohawkEngine_Riven::doFrame() {
 		// Don't run queued scripts if we are calling from a queued script
 		// otherwise infinite looping will happen.
 		_scriptMan->runQueuedScripts();
+	}
+
+	if (shouldPerformAutoSave(_lastSaveTime)) {
+		tryAutoSaving();
 	}
 
 	_inventory->onFrame();
@@ -575,7 +595,7 @@ void MohawkEngine_Riven::loadGameStateAndDisplayError(int slot) {
 }
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
-	return _saveLoad->saveGame(slot, desc);
+	return _saveLoad->saveGame(slot, desc, false);
 }
 
 void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::String &desc) {
@@ -588,6 +608,23 @@ void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::St
 		dialog.runModal();
 	}
 }
+
+void MohawkEngine_Riven::tryAutoSaving() {
+	if (!canSaveGameStateCurrently()) {
+		return; // Can't save right now, try again on the next frame
+	}
+
+	_lastSaveTime = _system->getMillis();
+
+	if (!_saveLoad->isAutoSaveAllowed()) {
+		return; // Can't autosave ever, try again after the next autosave delay
+	}
+
+	Common::Error saveError = _saveLoad->saveGame(RivenSaveLoad::kAutoSaveSlot, "Autosave", true);
+	if (saveError.getCode() != Common::kNoError)
+		warning("Attempt to autosave has failed.");
+}
+
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
 	Common::String cardName = getStack()->getName(kCardNames, cardNameId);

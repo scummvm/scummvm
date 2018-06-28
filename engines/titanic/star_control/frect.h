@@ -41,7 +41,7 @@ public:
 	 * Returns true if the rects equal
 	 */
 	bool operator==(const FRect &p) const;
-	
+
 	/**
 	 * Returns true if the rects are not equal
 	 */

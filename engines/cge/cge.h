@@ -56,7 +56,7 @@ class Walk;
 class Text;
 class Talk;
 
-#define kSavegameVersion 2
+#define kSavegameVersion 3
 #define kSavegameStrSize 11
 #define kPocketX    174
 #define kPocketY    176
@@ -99,8 +99,9 @@ struct SavegameHeader {
 	uint8 version;
 	Common::String saveName;
 	Graphics::Surface *thumbnail;
-	int saveYear, saveMonth, saveDay;
-	int saveHour, saveMinutes;
+	int16 saveYear, saveMonth, saveDay;
+	int16 saveHour, saveMinutes;
+	uint32 playTime;
 };
 
 extern const char *savegameStr;

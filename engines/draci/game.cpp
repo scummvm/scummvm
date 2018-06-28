@@ -1594,7 +1594,7 @@ Game::~Game() {
 	delete[] _items;
 }
 
-void Game::DoSync(Common::Serializer &s, uint8 saveVersion) {
+void Game::synchronize(Common::Serializer &s, uint8 saveVersion) {
 	s.syncAsUint16LE(_currentRoom._roomNum);
 
 	for (uint i = 0; i < _info._numObjects; ++i) {

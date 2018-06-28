@@ -35,7 +35,7 @@ namespace Mohawk {
 namespace MystStacks {
 
 Preview::Preview(MohawkEngine_Myst *vm) :
-		Myst(vm) {
+		Myst(vm, kDemoPreviewStack) {
 	setupOpcodes();
 	_vm->_cursor->hideCursor();
 
@@ -93,7 +93,7 @@ void Preview::o_stayHere(uint16 var, const ArgumentsArray &args) {
 void Preview::o_speechStop(uint16 var, const ArgumentsArray &args) {
 	_vm->_sound->stopSpeech();
 	_speechRunning = false;
-	_globals.currentAge = 2;
+	_globals.currentAge = kMystLibrary;
 }
 
 void Preview::speechUpdateCue() {
@@ -114,7 +114,7 @@ void Preview::speechUpdateCue() {
 }
 
 void Preview::speech_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	// Update current speech sound cue
 	speechUpdateCue();
@@ -205,7 +205,7 @@ void Preview::speech_run() {
 		_vm->changeToCard(4329, kTransitionDissolve);
 
 		_speechRunning = false;
-		_globals.currentAge = 2;
+		_globals.currentAge = kMystLibrary;
 
 		_vm->_cursor->showCursor();
 		break;

@@ -203,11 +203,7 @@ void ScrollBarWidget::drawWidget() {
 		state = ThemeEngine::kScrollbarStateSlider;
 	}
 
-	Common::Rect clipRect = getBossClipRect();
-	//scrollbar is not a usual child of ScrollContainerWidget, so it gets this special treatment
-	if (dynamic_cast<ScrollContainerWidget *>(_boss))
-		clipRect.right += _w;
-	g_gui.theme()->drawScrollbarClip(Common::Rect(_x, _y, _x+_w, _y+_h), clipRect, _sliderPos, _sliderHeight, state, _state);
+	g_gui.theme()->drawScrollbar(Common::Rect(_x, _y, _x + _w, _y + _h), _sliderPos, _sliderHeight, state);
 }
 
 } // End of namespace GUI

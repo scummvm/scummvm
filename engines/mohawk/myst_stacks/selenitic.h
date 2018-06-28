@@ -74,6 +74,14 @@ private:
 	DECLARE_OPCODE(o_mazeRunnerRight_init);
 	DECLARE_OPCODE(o_mazeRunnerLeft_init);
 
+	enum SoundReceiverSpeed {
+		kSoundReceiverSpeedStill  = 0,
+		kSoundReceiverSpeedSlow   = 1,
+		kSoundReceiverSpeedNormal = 5,   // The original has this at 10
+		kSoundReceiverSpeedFast   = 10,  // The original has this at 50 too fast!
+		kSoundReceiverSpeedFaster = 13   // The original has this at 100, way too fast!
+	};
+
 	void soundReceiver_run();
 
 	MystGameState::Selenitic &_state;
@@ -84,7 +92,7 @@ private:
 	MystAreaImageSwitch *_soundReceiverCurrentSource; // 112
 	uint16 *_soundReceiverPosition; // 116
 	uint16 _soundReceiverDirection; // 120
-	uint16 _soundReceiverSpeed; // 122
+	SoundReceiverSpeed _soundReceiverSpeed; // 122
 	uint32 _soundReceiverStartTime; //124
 	uint _soundReceiverNearBlinkCounter;
 	MystAreaImageSwitch *_soundReceiverViewer; // 128

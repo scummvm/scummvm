@@ -36,6 +36,7 @@
 #ifdef ENABLE_MYST
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/myst_sound.h"
@@ -88,7 +89,7 @@ bool MystConsole::Cmd_ChangeCard(int argc, const char **argv) {
 }
 
 bool MystConsole::Cmd_CurCard(int argc, const char **argv) {
-	debugPrintf("Current Card: %d\n", _vm->getCurCard());
+	debugPrintf("Current Card: %d\n", _vm->getCard()->getId());
 	return true;
 }
 
@@ -99,9 +100,9 @@ bool MystConsole::Cmd_Var(int argc, const char **argv) {
 	}
 
 	if (argc > 2)
-		_vm->_scriptParser->setVarValue((uint16)atoi(argv[1]), (uint16)atoi(argv[2]));
+		_vm->_stack->setVarValue((uint16)atoi(argv[1]), (uint16)atoi(argv[2]));
 
-	debugPrintf("%d = %d\n", (uint16)atoi(argv[1]), _vm->_scriptParser->getVar((uint16)atoi(argv[1])));
+	debugPrintf("%d = %d\n", (uint16)atoi(argv[1]), _vm->_stack->getVar((uint16)atoi(argv[1])));
 
 	return true;
 }
@@ -137,7 +138,7 @@ static const uint16 default_start_card[12] = {
 };
 
 bool MystConsole::Cmd_CurStack(int argc, const char **argv) {
-	debugPrintf("Current Stack: %s\n", mystStackNames[_vm->getCurStack()]);
+	debugPrintf("Current Stack: %s\n", mystStackNames[_vm->_stack->getStackId()]);
 	return true;
 }
 
@@ -177,7 +178,7 @@ bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 	else
 		card = default_start_card[stackNum - 1];
 
-	_vm->changeToStack(stackNum - 1, card, 0, 0);
+	_vm->changeToStack(static_cast<MystStack>(stackNum - 1), card, 0, 0);
 
 	return false;
 }
@@ -210,8 +211,8 @@ bool MystConsole::Cmd_DrawRect(int argc, const char **argv) {
 		_vm->_gfx->drawRect(Common::Rect((uint16)atoi(argv[1]), (uint16)atoi(argv[2]), (uint16)atoi(argv[3]), (uint16)atoi(argv[4])), kRectEnabled);
 	} else if (argc == 2) {
 		uint16 resourceId = (uint16)atoi(argv[1]);
-		if (resourceId < _vm->_resources.size())
-			_vm->_resources[resourceId]->drawBoundingRect();
+		if (resourceId < _vm->getCard()->_resources.size())
+			_vm->getCard()->_resources[resourceId]->drawBoundingRect();
 	}
 
 	return false;
@@ -223,7 +224,7 @@ bool MystConsole::Cmd_SetResourceEnable(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->setResourceEnabled((uint16)atoi(argv[1]), atoi(argv[2]) == 1);
+	_vm->getCard()->setResourceEnabled((uint16)atoi(argv[1]), atoi(argv[2]) == 1);
 	return true;
 }
 
@@ -289,7 +290,7 @@ bool MystConsole::Cmd_DisableInitOpcodes(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_scriptParser->disablePersistentScripts();
+	_vm->_stack->disablePersistentScripts();
 
 	return true;
 }
@@ -316,10 +317,10 @@ bool MystConsole::Cmd_Cache(int argc, const char **argv) {
 }
 
 bool MystConsole::Cmd_Resources(int argc, const char **argv) {
-	debugPrintf("Resources in card %d:\n", _vm->getCurCard());
+	debugPrintf("Resources in card %d:\n", _vm->getCard()->getId());
 
-	for (uint i = 0; i < _vm->_resources.size(); i++) {
-		debugPrintf("#%2d %s\n", i, _vm->_resources[i]->describe().c_str());
+	for (uint i = 0; i < _vm->getCard()->_resources.size(); i++) {
+		debugPrintf("#%2d %s\n", i, _vm->getCard()->_resources[i]->describe().c_str());
 	}
 
 	return true;
@@ -330,9 +331,12 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 
 	// Go through all the ages, all the views and click random stuff
 	for (uint i = 0; i < ARRAYSIZE(mystStackNames); i++) {
-		if (i == 2 || i == 5 || i == 9 || i == 10) continue;
-		debug("Loading stack %s", mystStackNames[i]);
-		_vm->changeToStack(i, default_start_card[i], 0, 0);
+		MystStack stackId = static_cast<MystStack>(i);
+		if (stackId == kDemoStack || stackId == kMakingOfStack
+		    || stackId == kDemoSlidesStack || stackId == kDemoPreviewStack) continue;
+
+		debug("Loading stack %s", mystStackNames[stackId]);
+		_vm->changeToStack(stackId, default_start_card[stackId], 0, 0);
 
 		Common::Array<uint16> ids = _vm->getResourceIDList(ID_VIEW);
 		for (uint j = 0; j < ids.size(); j++) {
@@ -343,17 +347,20 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 
 			_vm->doFrame();
 
-			int16 resIndex = _vm->_rnd->getRandomNumber(_vm->_resources.size()) - 1;
-			if (resIndex >= 0 && _vm->_resources[resIndex]->isEnabled()) {
-				_vm->_resources[resIndex]->handleMouseDown();
-				_vm->_resources[resIndex]->handleMouseUp();
+			{
+				MystCardPtr card = _vm->getCardPtr();
+				int16 resIndex = _vm->_rnd->getRandomNumber(card->_resources.size()) - 1;
+				if (resIndex >= 0 && _vm->getCard()->_resources[resIndex]->isEnabled()) {
+					card->_resources[resIndex]->handleMouseDown();
+					card->_resources[resIndex]->handleMouseUp();
+				}
 			}
 
 			_vm->doFrame();
 
-			if (_vm->getCurStack() != i) {
+			if (_vm->_stack->getStackId() != stackId) {
 				// Clicking may have linked us to another age
-				_vm->changeToStack(i, default_start_card[i], 0, 0);
+				_vm->changeToStack(stackId, default_start_card[stackId], 0, 0);
 			}
 		}
 	}

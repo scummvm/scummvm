@@ -21,5 +21,8 @@ ifdef DYNAMIC_MODULES
 endif
 	mkdir -p !ScummVM/docs
 	cp ${srcdir}/dists/riscos/!Help,feb !ScummVM/!Help,feb
+ifdef TOKENIZE
+	$(TOKENIZE) dists/riscos/FindHelp,fd1 -out !ScummVM/FindHelp,ffb
+endif
 	cp $(DIST_FILES_DOCS) !ScummVM/docs
 	cp -r ${srcdir}/doc/* !ScummVM/docs

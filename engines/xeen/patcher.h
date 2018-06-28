@@ -31,6 +31,11 @@ private:
 	 * Patches incorrect script lines
 	 */
 	void patchScripts();
+
+	/**
+	 * Patches incorrect map objects
+	 */
+	void patchObjects();
 public:
 	/**
 	 * Constructor

@@ -163,6 +163,7 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceScene(vm),
 	_upDoorText = false;
 	_tillMove = 0;
 	Common::fill(&_charFX[0], &_charFX[MAX_ACTIVE_PARTY], 0);
+	_waitBounds = Common::Rect(8, 8, 224, 140);
 }
 
 void Interface::setup() {
@@ -209,7 +210,7 @@ void Interface::mainIconsPrint() {
 	Windows &windows = *_vm->_windows;
 	windows[38].close();
 	windows[12].close();
-	
+
 	res._globalSprites.draw(0, 7, Common::Point(232, 74));
 	drawButtons(&windows[0]);
 	windows[34].update();
@@ -464,6 +465,13 @@ void Interface::perform() {
 		}
 		break;
 
+	case (Common::KBD_CTRL << 16) | Common::KEYCODE_DOWN:
+		party._mazeDirection = (Direction)((int)party._mazeDirection ^ 2);
+		_flipSky = !_flipSky;
+		_isAnimReset = true;
+		stepTime();
+		break;
+
 	case Common::KEYCODE_F1:
 	case Common::KEYCODE_F2:
 	case Common::KEYCODE_F3:
@@ -559,7 +567,7 @@ void Interface::perform() {
 
 			if (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1
 					|| combat._attackMonsters[2] != -1) {
-				if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING)
+				if ((_vm->_mode == MODE_INTERACTIVE || _vm->_mode == MODE_SLEEPING)
 						&& !combat._monstersAttacking && !_charsShooting) {
 					doCombat();
 				}
@@ -654,7 +662,7 @@ void Interface::doStepCode() {
 		break;
 	}
 
-	if (_vm->_files->_ccNum && party._gameFlags[1][118]) {
+	if (_vm->getGameID() != GType_Swords && _vm->_files->_ccNum && party._gameFlags[1][118]) {
 		_falling = FALL_NONE;
 	} else {
 		if (_falling != FALL_NONE)
@@ -894,8 +902,14 @@ bool Interface::checkMoveDirection(int key) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	Direction dir = party._mazeDirection;
 
+	// If intangibility is turned on in the debugger, allow any movement
+	if (debugger._intangible)
+		return true;
+
+	// For strafing or moving backwards, temporarily move to face the direction being checked,
+	// since the call to getCell will the adjacent cell details in the direction being faced
+	Direction dir = party._mazeDirection;
 	switch (key) {
 	case (Common::KBD_CTRL << 16) | Common::KEYCODE_LEFT:
 		party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? DIR_WEST :
@@ -912,14 +926,14 @@ bool Interface::checkMoveDirection(int key) {
 		break;
 	}
 
+	// Get next facing tile information
 	map.getCell(7);
+
 	int startSurfaceId = map._currentSurfaceId;
 	int surfaceId;
 
-	if (debugger._intangible)
-		return true;
-
 	if (map._isOutdoors) {
+		// Reset direction back to original facing, if it was changed for strafing checks
 		party._mazeDirection = dir;
 
 		switch (map._currentWall) {
@@ -966,13 +980,14 @@ bool Interface::checkMoveDirection(int key) {
 		}
 	} else {
 		surfaceId = map.getCell(2);
+
+		// Reset direction back to original facing, if it was changed for strafing checks
+		party._mazeDirection = dir;
+
 		if (surfaceId >= map.mazeData()._difficulties._wallNoPass) {
-			party._mazeDirection = dir;
 			sound.playFX(46);
 			return false;
 		} else {
-			party._mazeDirection = dir;
-
 			if (startSurfaceId != SURFTYPE_SWAMP || party.checkSkill(SWIMMING) ||
 					party._walkOnWaterActive) {
 				if (_buttonValue == Common::KEYCODE_UP && _wo[107]) {
@@ -999,7 +1014,7 @@ void Interface::rest() {
 	map.cellFlagLookup(party._mazePosition);
 
 	if ((map._currentCantRest || (map.mazeData()._mazeFlags & RESTRICTION_REST))
-			&& _vm->_mode != MODE_12) {
+			&& _vm->_mode != MODE_INTERACTIVE2) {
 		ErrorScroll::show(_vm, Res.TOO_DANGEROUS_TO_REST, WT_NONFREEZED_WAIT);
 	} else {
 		// Check whether any character is in danger of dying
@@ -1025,14 +1040,14 @@ void Interface::rest() {
 		Mode oldMode = _vm->_mode;
 		_vm->_mode = MODE_SLEEPING;
 
-		if (oldMode == MODE_12) {
+		if (oldMode == MODE_INTERACTIVE2) {
 			party.changeTime(8 * 60);
 		} else {
 			for (int idx = 0; idx < 10; ++idx) {
 				chargeStep();
 				draw3d(true);
 
-				if (_vm->_mode == MODE_1) {
+				if (_vm->_mode == MODE_INTERACTIVE) {
 					_vm->_mode = oldMode;
 					return;
 				}
@@ -1069,6 +1084,10 @@ void Interface::rest() {
 					c._conditions[UNCONSCIOUS] = 0;
 					c._currentHp = c.getMaxHP();
 					c._currentSp = c.getMaxSP();
+
+					// WORKAROUND: Resting curing weakness only originally worked due to a bug in changeTime
+					// resetting WEAK if party wasn't drunk. With that resolved, we have to reset WEAK here
+					c._conditions[WEAK] = 0;
 				}
 			}
 		}
@@ -1190,7 +1209,7 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 	_flipUIFrame = (_flipUIFrame + 1) % 4;
 	if (_flipUIFrame == 0)
 		_flipWater = !_flipWater;
-	if (_tillMove && (_vm->_mode == MODE_1 || _vm->_mode == MODE_COMBAT) &&
+	if (_tillMove && (_vm->_mode == MODE_INTERACTIVE || _vm->_mode == MODE_COMBAT) &&
 		!combat._monstersAttacking && combat._moveMonsters) {
 		if (--_tillMove == 0)
 			combat.moveMonsters();
@@ -1226,7 +1245,7 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 
 	if (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1
 			|| combat._attackMonsters[2] != -1) {
-		if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING) &&
+		if ((_vm->_mode == MODE_INTERACTIVE || _vm->_mode == MODE_SLEEPING) &&
 				!combat._monstersAttacking && !_charsShooting && combat._moveMonsters) {
 			doCombat();
 			if (scripts._eventSkipped)
@@ -1358,7 +1377,7 @@ void Interface::assembleBorder() {
 
 	_face2UIFrame = (_face2UIFrame + 1) % 4 + 12;
 	if (_face2State == 0)
-		_face2UIFrame += 252;
+		_face2UIFrame -= 3;
 	else if (_face2State == 2)
 		_face2UIFrame = 8;
 
@@ -1423,8 +1442,7 @@ void Interface::assembleBorder() {
 	// Draw direction character if direction sense is active
 	if (_vm->_party->checkSkill(DIRECTION_SENSE) && !_vm->_noDirectionSense) {
 		const char *dirText = Res.DIRECTION_TEXT_UPPER[_vm->_party->_mazeDirection];
-		Common::String msg = Common::String::format(
-			"\002""08\003""c\013""139\011""116%c\014""d\001", *dirText);
+		Common::String msg = Common::String::format("\x2\f08\x3""c\v139\t116%c\fd\x1", *dirText);
 		windows[0].writeString(msg);
 	}
 
@@ -1443,6 +1461,7 @@ void Interface::doCombat() {
 	Windows &windows = *_vm->_windows;
 	bool upDoorText = _upDoorText;
 	bool reloadMap = false;
+	int index = 0;
 
 	_upDoorText = false;
 	combat._combatMode = COMBATMODE_2;
@@ -1487,7 +1506,13 @@ void Interface::doCombat() {
 		w.open();
 		bool breakFlag = false;
 
-		while (!_vm->shouldExit() && !breakFlag) {
+		while (!_vm->shouldExit() && !breakFlag && !party._dead && _vm->_mode == MODE_COMBAT) {
+			// FIXME: I've had a rare issue where the loop starts with a non-party _whosTurn. Unfortunately,
+			// I haven't been able to consistently replicate and diagnose the problem, so for now,
+			// I'm simply detecting if it happens and resetting the combat round
+			if (combat._whosTurn >= (int)party._activeParty.size())
+				goto new_round;
+
 			highlightChar(combat._whosTurn);
 			combat.setSpeedTable();
 
@@ -1498,7 +1523,7 @@ void Interface::doCombat() {
 			w.update();
 
 			// Wait for keypress
-			int index = 0;
+			index = 0;
 			do {
 				events.updateGameCounter();
 				draw3d(true);
@@ -1589,7 +1614,7 @@ void Interface::doCombat() {
 				combat.run();
 				nextChar();
 
-				if (_vm->_mode == MODE_1) {
+				if (_vm->_mode == MODE_INTERACTIVE) {
 					party._treasure._gems = 0;
 					party._treasure._gold = 0;
 					party._treasure._hasItems = false;
@@ -1644,6 +1669,7 @@ void Interface::doCombat() {
 
 			// Handling for if the combat turn is complete
 			if (combat.allHaveGone()) {
+new_round:
 				Common::fill(&combat._charsGone[0], &combat._charsGone[PARTY_AND_MONSTERS], false);
 				combat.clearBlocked();
 				combat.setSpeedTable();
@@ -1676,11 +1702,9 @@ void Interface::doCombat() {
 			}
 
 			party.checkPartyDead();
-			if (party._dead || _vm->_mode != MODE_COMBAT)
-				break;
 		}
 
-		_vm->_mode = MODE_1;
+		_vm->_mode = MODE_INTERACTIVE;
 		if (combat._partyRan && (combat._attackMonsters[0] != -1 ||
 				combat._attackMonsters[1] != -1 || combat._attackMonsters[2] != -1)) {
 			party.checkPartyDead();
@@ -1701,7 +1725,7 @@ exit:
 		_vm->_mode = MODE_COMBAT;
 		draw3d(true);
 		party.giveTreasure();
-		_vm->_mode = MODE_1;
+		_vm->_mode = MODE_INTERACTIVE;
 		party._stepped = true;
 		unhighlightChar();
 
@@ -1730,7 +1754,7 @@ exit:
 		}
 	}
 
-	combat._combatMode = COMBATMODE_1;
+	combat._combatMode = COMBATMODE_INTERACTIVE;
 }
 
 void Interface::nextChar() {
@@ -1741,7 +1765,7 @@ void Interface::nextChar() {
 		return;
 	if ((combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1 &&
 		combat._attackMonsters[2] == -1) || combat._combatParty.size() == 0) {
-		_vm->_mode = MODE_1;
+		_vm->_mode = MODE_INTERACTIVE;
 		return;
 	}
 
@@ -1751,7 +1775,7 @@ void Interface::nextChar() {
 		// Check if party is dead
 		party.checkPartyDead();
 		if (party._dead) {
-			_vm->_mode = MODE_1;
+			_vm->_mode = MODE_INTERACTIVE;
 			break;
 		}
 

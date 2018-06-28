@@ -20,29 +20,56 @@
  *
  */
 
-#ifndef XEEN_WORLDOFXEEN_RESOURCES_H
-#define XEEN_WORLDOFXEEN_RESOURCES_H
+#ifndef BLADERUNNER_RECT_H
+#define BLADERUNNER_RECT_H
 
-#include "xeen/resources.h"
+#include "common/debug.h"
+#include "common/types.h"
+#include "common/util.h"
 
-namespace Xeen {
-namespace WorldOfXeen {
+namespace BladeRunner {
 
-#ifdef Res
-#undef Res
-#endif
-#define Res (*(WorldOfXeenResources *)g_resources)
+struct Rect {
+	float x0;
+	float y0;
+	float x1;
+	float y1;
 
-class WorldOfXeenResources : public Resources {
-public:
-	static const char *const CLOUDS_INTRO1;
-	static const char *const DARKSIDE_ENDING1;
-	static const char *const DARKSIDE_ENDING2;
-	static const char *const PHAROAH_ENDING_TEXT1;
-	static const char *const PHAROAH_ENDING_TEXT2;
+	Rect()
+		: x0(0.0f), y0(0.0f), x1(0.0f), y1(0.0f)
+	{}
+	Rect(float x0, float y0, float x1, float y1)
+		: x0(x0), y0(y0), x1(x1), y1(y1)
+	{}
+
+	void expand(float d) {
+		x0 -= d;
+		y0 -= d;
+		x1 += d;
+		y1 += d;
+	}
+
+	void trunc_2_decimals() {
+		x0 = truncf(x0 * 100.0f) / 100.0f;
+		y0 = truncf(y0 * 100.0f) / 100.0f;
+		x1 = truncf(x1 * 100.0f) / 100.0f;
+		y1 = truncf(y1 * 100.0f) / 100.0f;
+	}
 };
 
-} // End of namespace WorldOfXeen
-} // End of namespace Xeen
+inline bool overlaps(const Rect &a, const Rect &b) {
+	return !(a.y1 < b.y0 || a.y0 > b.y1 || a.x0 > b.x1 || a.x1 < b.x0);
+}
 
-#endif	/* XEEN_RESOURCES_H */
+inline Rect merge(const Rect &a, const Rect &b) {
+	Rect c;
+	c.x0 = MIN(a.x0, b.x0);
+	c.y0 = MIN(a.y0, b.y0);
+	c.x1 = MAX(a.x1, b.x1);
+	c.y1 = MAX(a.y1, b.y1);
+	return c;
+}
+
+} // End of namespace BladeRunner
+
+#endif

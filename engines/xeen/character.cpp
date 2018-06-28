@@ -196,7 +196,7 @@ void Character::synchronize(Common::Serializer &s) {
 	// upper nibble of the first 64 bytes. Except for award 9, which was a full
 	// byte counter counting the number of times the warzone was awarded
 	for (int idx = 0; idx < 64; ++idx) {
-		byte b = (idx == WARZONE_AWARD) ? _awards[idx] :			
+		byte b = (idx == WARZONE_AWARD) ? _awards[idx] :
 			(_awards[idx] ? 0x1 : 0) | (_awards[idx + 64] ? 0x10 : 0);
 		s.syncAsByte(b);
 		if (s.isLoading()) {
@@ -872,7 +872,20 @@ bool Character::guildMember() const {
 	FileManager &files = *g_vm->_files;
 	Party &party = *g_vm->_party;
 
-	if (files._ccNum) {
+	if (g_vm->getGameID() == GType_Swords) {
+		switch (party._mazeId) {
+		case 49:
+			return true;
+		case 53:
+			return hasAward(83);
+		case 63:
+			return hasAward(85);
+		case 92:
+			return hasAward(84);
+		default:
+			return hasAward(87);
+		}
+	} else if (files._ccNum) {
 		switch (party._mazeId) {
 		case 29:
 			return hasAward(CASTLEVIEW_GUILD_MEMBER);
@@ -955,6 +968,7 @@ int Character::getNumAwards() const {
 ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 	XeenEngine *vm = Party::_vm;
 	Scripts &scripts = *vm->_scripts;
+	int itemOffset = vm->getGameID() == GType_Swords ? 6 : 0;
 
 	if (!p1)
 		return CATEGORY_WEAPON;
@@ -967,18 +981,18 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 
 	// Randomly pick a category and item Id
 	if (p3 == 12) {
-		if (scripts._itemType < 35) {
+		if (scripts._itemType < (35 + itemOffset)) {
 			category = CATEGORY_WEAPON;
 			itemId = scripts._itemType;
-		} else if (scripts._itemType < 49) {
+		} else if (scripts._itemType < (49 + itemOffset)) {
 			category = CATEGORY_ARMOR;
-			itemId = scripts._itemType - 35;
-		} else if (scripts._itemType < 60) {
+			itemId = scripts._itemType - (35 + itemOffset);
+		} else if (scripts._itemType < (60 + itemOffset)) {
 			category = CATEGORY_ACCESSORY;
-			itemId = scripts._itemType - 49;
+			itemId = scripts._itemType - (49 + itemOffset);
 		} else {
 			category = CATEGORY_MISC;
-			itemId = scripts._itemType - 60;
+			itemId = scripts._itemType - (60 + itemOffset);
 		}
 	} else {
 		switch (p3) {
@@ -1222,7 +1236,7 @@ void Character::subtractHitPoints(int amount) {
 
 	// Subtract the given HP amount
 	_currentHp -= amount;
-	bool breakFlag = _currentHp <= -10;
+	bool breakFlag = _currentHp <= (g_vm->_extOptions._durableArmor ? -80 : -10);
 	assert(_currentHp < 65000);
 
 	if (_currentHp < 1) {

@@ -161,8 +161,10 @@ void SceneScript::initializeScene() {
 }
 
 void SceneScript::sceneLoaded() {
+	_vm->_sceneIsLoading = true;
 	_inScriptCounter++;
 	_currentScript->SceneLoaded();
+	_vm->_sceneIsLoading = false;
 	_inScriptCounter--;
 }
 

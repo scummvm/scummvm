@@ -67,7 +67,6 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 	Party &party = *vm->_party;
 	Windows &windows = *_vm->_windows;
 	PendingEvent event;
-	const Common::Rect WAIT_BOUNDS(8, 8, 224, 140);
 	_buttonValue = 0;
 
 	if (events.getEvent(event)) {
@@ -94,7 +93,7 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 				}
 			}
 
-			if (!_buttonValue && WAIT_BOUNDS.contains(pt)) {
+			if (!_buttonValue && _waitBounds.contains(pt)) {
 				_buttonValue = Common::KEYCODE_SPACE;
 				return true;
 			}

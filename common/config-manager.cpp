@@ -52,7 +52,7 @@ char const *const ConfigManager::kCloudDomain = "cloud";
 #pragma mark -
 
 
-ConfigManager::ConfigManager() : _activeDomain(0) {
+ConfigManager::ConfigManager() : _activeDomain(nullptr) {
 }
 
 void ConfigManager::defragment() {
@@ -85,7 +85,7 @@ void ConfigManager::loadDefaultConfigFile() {
 	// Open the default config file
 	assert(g_system);
 	SeekableReadStream *stream = g_system->createConfigReadStream();
-	_filename.clear();  // clear the filename to indicate that we are using the default config file
+	_filename.clear(); // clear the filename to indicate that we are using the default config file
 
 	// ... load it, if available ...
 	if (stream) {
@@ -321,7 +321,7 @@ void ConfigManager::flushToDisk() {
 
 void ConfigManager::writeDomain(WriteStream &stream, const String &name, const Domain &domain) {
 	if (domain.empty())
-		return;     // Don't bother writing empty domains.
+		return; // Don't bother writing empty domains.
 
 	// WORKAROUND: Fix for bug #1972625 "ALL: On-the-fly targets are
 	// written to the config file": Do not save domains that came from
@@ -386,7 +386,7 @@ const ConfigManager::Domain *ConfigManager::getDomain(const String &domName) con
 	if (_miscDomains.contains(domName))
 		return &_miscDomains[domName];
 
-	return 0;
+	return nullptr;
 }
 
 ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
@@ -410,7 +410,7 @@ ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
 	if (_miscDomains.contains(domName))
 		return &_miscDomains[domName];
 
-	return 0;
+	return nullptr;
 }
 
 
@@ -620,7 +620,7 @@ void ConfigManager::registerDefault(const String &key, bool value) {
 
 void ConfigManager::setActiveDomain(const String &domName) {
 	if (domName.empty()) {
-		_activeDomain = 0;
+		_activeDomain = nullptr;
 	} else {
 		assert(isValidDomainName(domName));
 		_activeDomain = &_gameDomains[domName];
@@ -654,7 +654,7 @@ void ConfigManager::removeGameDomain(const String &domName) {
 	assert(isValidDomainName(domName));
 	if (domName == _activeDomainName) {
 		_activeDomainName.clear();
-		_activeDomain = 0;
+		_activeDomain = nullptr;
 	}
 	_gameDomains.erase(domName);
 }

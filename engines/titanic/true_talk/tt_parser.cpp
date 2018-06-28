@@ -960,7 +960,7 @@ int TTparser::considerRequests(TTword *word) {
 				case WC_ABSTRACT:
 					if (word->_id != 300) {
 						status = processModifiers(3, word);
-					} else if (!_conceptP->findByWordClass(WC_THING)) {
+					} else if (!_conceptP || !_conceptP->findByWordClass(WC_THING)) {
 						status = processModifiers(3, word);
 					} else {
 						word->_id = atoi(word->_text.c_str());
@@ -1760,7 +1760,7 @@ void TTparser::preprocessGerman(TTstring &line) {
 			continue;
 
 		const char *wordEndP = p + _replacements4[idx].size();
-		
+
 		for (int sIdx = 0; sIdx < 12; ++sIdx) {
 			const char *suffixP = SUFFIXES[sIdx];
 			if (!strncmp(wordEndP, suffixP, strlen(suffixP))) {

@@ -77,6 +77,7 @@ private:
 protected:
 	Common::Array<UIButton> _buttons;
 	Common::StringArray _textStrings;
+	Common::Rect _waitBounds;
 	int _buttonValue;
 
 	bool checkEvents(XeenEngine *vm);

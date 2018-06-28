@@ -37,6 +37,14 @@ public:
 	Vector2(float ax, float ay) : x(ax), y(ay) {}
 };
 
+inline bool operator==(const Vector2 &a, const Vector2 &b) {
+	return a.x == b.x && a.y == b.y;
+}
+
+inline bool operator!=(const Vector2 &a, const Vector2 &b) {
+	return !(a == b);
+}
+
 class Vector3 {
 public:
 	float x;
@@ -130,6 +138,10 @@ inline float distance(float x1, float z1, float x2, float z2) {
 		frac_part = 0.0;
 
 	return int_part + frac_part;
+}
+
+inline float distance(const Vector2 &v1, const Vector2 &v2) {
+	return distance(v1.x, v1.y, v2.x, v2.y);
 }
 
 inline float distance(const Vector3 &v1, const Vector3 &v2) {

@@ -184,7 +184,7 @@ protected:
 		_size = new_len;
 	}
 public:
-	explicit MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _ptr(0), _data(0), _pos(0), _disposeMemory(disposeMemory) {}
+	explicit MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _ptr(nullptr), _data(nullptr), _pos(0), _disposeMemory(disposeMemory) {}
 
 	~MemoryWriteStreamDynamic() {
 		if (_disposeMemory)
@@ -247,7 +247,7 @@ private:
 		}
 	}
 public:
-	explicit MemoryReadWriteStream(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _data(0), _writePos(0), _readPos(0), _pos(0), _length(0), _disposeMemory(disposeMemory), _eos(false) {}
+	explicit MemoryReadWriteStream(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _data(nullptr), _writePos(0), _readPos(0), _pos(0), _length(0), _disposeMemory(disposeMemory), _eos(false) {}
 
 	~MemoryReadWriteStream() {
 		if (_disposeMemory)
@@ -289,8 +289,8 @@ public:
 		return dataSize;
 	}
 
-	int32 pos() const { return _pos - _length; } //'read' position in the stream
-	int32 size() const { return _size; } //that's also 'write' position in the stream, as it's append-only
+	int32 pos() const { return _pos - _length; } // 'read' position in the stream
+	int32 size() const { return _size; } // that's also 'write' position in the stream, as it's append-only
 	bool seek(int32, int) { return false; }
 	bool eos() const { return _eos; }
 	void clearErr() { _eos = false; }

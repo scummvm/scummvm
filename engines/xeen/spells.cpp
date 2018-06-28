@@ -428,52 +428,7 @@ void Spells::deadlySwarm() {
 }
 
 void Spells::detectMonster() {
-	EventsManager &events = *_vm->_events;
-	Interface &intf = *_vm->_interface;
-	Map &map = *_vm->_map;
-	Party &party = *_vm->_party;
-	Sound &sound = *_vm->_sound;
-	Windows &windows = *_vm->_windows;
-	Window &w = windows[19];
-	int ccNum = _vm->_files->_ccNum;
-	int grid[7][7];
-
-	SpriteResource sprites(ccNum ? "detectmn.icn" : "detctmon.icn");
-	Common::fill(&grid[0][0], &grid[6][6], 0);
-
-	w.open();
-	w.writeString(Res.DETECT_MONSTERS);
-	sprites.draw(w, 0, Common::Point(243, 80));
-
-	for (int yDiff = 3; yDiff >= -3; --yDiff) {
-		for (int xDiff = -3; xDiff <= 3; ++xDiff) {
-			for (uint monIndex = 0; monIndex < map._mobData._monsters.size(); ++monIndex) {
-				MazeMonster &monster = map._mobData._monsters[monIndex];
-				Common::Point pt = party._mazePosition + Common::Point(xDiff, yDiff);
-				if (monster._position == pt) {
-					int &gridEntry = grid[yDiff + 3][xDiff + 3];
-					if (++gridEntry > 3)
-						gridEntry = 3;
-
-					sprites.draw(w, gridEntry, Common::Point(xDiff * 9 + 244,
-						yDiff * 7 + 81));
-				}
-			}
-		}
-	}
-
-	sprites.draw(w, party._mazeDirection + 1, Common::Point(270, 101));
-	sound.playFX(20);
-	w.update();
-
-	do {
-		events.updateGameCounter();
-		intf.draw3d(true);
-
-		events.wait(1, false);
-	} while (!events.isKeyMousePressed());
-
-	w.close();
+	DetectMonsters::show(_vm);
 }
 
 void Spells::divineIntervention() {
@@ -1150,7 +1105,7 @@ void Spells::superShelter() {
 		spellFailed();
 	} else {
 		Mode oldMode = _vm->_mode;
-		_vm->_mode = MODE_12;
+		_vm->_mode = MODE_INTERACTIVE2;
 		sound.playFX(30);
 		intf.rest();
 		_vm->_mode = oldMode;
@@ -1250,9 +1205,14 @@ void Spells::townPortal() {
 	sound.playFX(51);
 	map._loadCcNum = map._sideTownPortal;
 	_vm->_files->_ccNum = map._sideTownPortal > 0;
-	map.load(Res.TOWN_MAP_NUMBERS[map._sideTownPortal][townNumber - 1]);
 
-	if (!_vm->_files->_ccNum) {
+	int arrIndex = _vm->getGameID() == GType_Swords ? 2 : map._sideTownPortal;
+	map.load(Res.TOWN_MAP_NUMBERS[arrIndex][townNumber - 1]);
+
+	if (_vm->getGameID() == GType_Swords) {
+		party._mazePosition = Common::Point(8, 3);
+		party._mazeDirection = DIR_NORTH;
+	} else if (!_vm->_files->_ccNum) {
 		party.moveToRunLocation();
 	} else {
 		switch (townNumber) {

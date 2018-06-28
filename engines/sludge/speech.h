@@ -30,13 +30,14 @@ struct ObjectType;
 
 struct SpeechLine {
 	Common::String textLine;
-	SpeechLine *next;
 	int x;
 };
 
+typedef Common::List<SpeechLine *> SpeechLineList;
+
 struct SpeechStruct {
 	OnScreenPerson *currentTalker;
-	SpeechLine *allSpeech;
+	SpeechLineList allSpeech;
 	int speechY, lastFile, lookWhosTalking;
 	SpritePalette talkCol;
 };
@@ -60,6 +61,7 @@ public:
 	void setObjFontColour(ObjectType *t);
 	void setSpeechSpeed(float speed) { _speechSpeed = speed; }
 	float getSpeechSpeed() { return _speechSpeed; }
+	void setSpeechMode(int speechMode) { _speechMode = speechMode; }
 
 	// load & save
 	void save(Common::WriteStream *stream);

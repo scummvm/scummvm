@@ -48,7 +48,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_monitoredAttr[1] = 1;
 	_monitoredAttr[2] = 2;
 	_monitoredAttr[3] = 3;
-	_savedBuffer215Ptr = NULL;
+	_barAttrPtr = NULL;
 	_word1825E = Common::Point(0, 0);
 
 	for (int i = 0; i < 20; i++) {
@@ -77,6 +77,11 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 
 	for (int i = 0; i < 1600; i++)
 		_interactions[i] = 0;
+
+	_heroismLevel = 0;
+	_talkingCharacter = -1;
+	_byte16F05_ScriptHandler = 0;
+	_word18821 = 0;
 }
 
 LilliputScript::~LilliputScript() {
@@ -368,10 +373,10 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_changeCurrentCharacterSprite();
 		break;
 	case 0x29:
-		OC_sub17E99();
+		OC_getList();
 		break;
 	case 0x2A:
-		OC_sub17EC5();
+		OC_setList();
 		break;
 	case 0x2B:
 		OC_setCharacterDirectionTowardsPos();
@@ -652,8 +657,8 @@ static const OpCode opCodes2[] = {
 /* 0x26 */	{ "OC_setCurrentCharacterPos", 2, kImmediateValue, kgetPosFromScript, kNone, kNone, kNone },
 /* 0x27 */	{ "OC_setCurrentCharacterBehavior", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x28 */	{ "OC_changeCurrentCharacterSprite", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x29 */	{ "OC_sub17E99", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
-/* 0x2a */	{ "OC_sub17EC5", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
+/* 0x29 */	{ "OC_getList", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
+/* 0x2a */	{ "OC_setList", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
 /* 0x2b */	{ "OC_setCharacterDirectionTowardsPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 /* 0x2c */	{ "OC_turnCharacterTowardsAnother", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x2d */	{ "OC_setSeek", 1, kGetValue1, kNone, kNone, kNone, kNone },
@@ -1057,7 +1062,7 @@ void LilliputScript::setSequence(int charIdx, int8 seqIdx) {
 	assert(charIdx < 40);
 	_characterLastSequence[charIdx] = seqIdx;
 
-	byte *buf = _vm->_rulesChunk1;
+	byte *buf = _vm->_sequencesArr;
 	if (seqIdx != 0) {
 		int count = 0;
 		while (count < seqIdx) {
@@ -1217,7 +1222,7 @@ void LilliputScript::listAllTexts() {
 		int index = _vm->_packedStringIndex[i];
 		int variantCount = 0;
 		while (_vm->_packedStrings[index + variantCount] == 0x5B)
-			++variantCount ;
+			++variantCount;
 		/*
 		int it = 0;
 		if (variantCount != 0) {
@@ -1226,8 +1231,7 @@ void LilliputScript::listAllTexts() {
 				warning("Text 0x%x variant %d : %s", i, j, _vm->_displayStringBuf);
 				do {
 					++it;
-				}
-				while (_vm->_packedStrings[index + variantCount + it] != 0x5B);
+				} while (_vm->_packedStrings[index + variantCount + it] != 0x5B);
 			}
 		} else {*/
 			decodePackedText(&_vm->_packedStrings[index + variantCount]);
@@ -1254,9 +1258,9 @@ void LilliputScript::startSpeech(int speechId) {
 		int tmpVal = _vm->_rnd->getRandomNumber(count);
 		if (tmpVal != 0) {
 			for (int j = 0; j < tmpVal; j++) {
-				do
+				do {
 					++i;
-				while (_vm->_packedStrings[index + count + i] != ']');
+				} while (_vm->_packedStrings[index + count + i] != ']');
 				++i;
 			}
 		}
@@ -1328,7 +1332,7 @@ Common::Point LilliputScript::getPosFromScript() {
 	case 0xF8: {
 		int8 index = curWord & 0xFF;
 		assert((index >= 0) && (index < 40));
-		return _vm->_rulesBuffer12Pos3[index];
+		return _vm->_keyPos[index];
 		}
 	case 0xF7: {
 		int8 index = _vm->_currentCharacterAttributes[6];
@@ -1513,36 +1517,29 @@ byte LilliputScript::OC_CompareCharacterVariables() {
 	return compareValues(var1, operation, var2);
 }
 
-// TODO Rename function to "Check if character pos in rectangle"
+// TODO Rename function to "Check if current script character pos is in enclosure"
 byte LilliputScript::OC_compareCoords_1() {
 	debugC(1, kDebugScript, "OC_compareCoords_1()");
 
 	int index = _currScript->readUint16LE();
 	assert(index < 40);
 
-	MinMax xMinMax = _vm->_rectXMinMax[index];
-	MinMax yMinMax = _vm->_rectYMinMax[index];
-	Common::Point var1 = _vm->_currentScriptCharacterPos;
+	if (_vm->_enclosureRect[index].contains(_vm->_currentScriptCharacterPos))
+		return 1;
 
-	if ((var1.x < xMinMax.min) || (var1.x > xMinMax.max) || (var1.y < yMinMax.min) || (var1.y > yMinMax.max))
-		return 0;
-
-	return 1;
+	return 0;
 }
 
-// TODO Rename function to "Check if character pos in rectangle"
+// TODO Rename function to "Check if given character pos is in enclosure"
 byte LilliputScript::OC_compareCoords_2() {
 	debugC(1, kDebugScript, "OC_compareCoords_2()");
 
-	int16 index = getValue1();
-	Common::Point var1 = _characterTilePos[index];
-	index = _currScript->readUint16LE();
-	MinMax xMinMax = _vm->_rectXMinMax[index];
-	MinMax yMinMax = _vm->_rectYMinMax[index];
+	int16 idx1 = getValue1();
+	int16 idx2 = _currScript->readUint16LE();
 
-	if ((var1.x < xMinMax.min) || (var1.x > xMinMax.max) || (var1.y < yMinMax.min) || (var1.y > yMinMax.max))
-		return 0;
-	return 1;
+	if (_vm->_enclosureRect[idx2].contains(_characterTilePos[idx1]))
+		return 1;
+	return 0;
 }
 
 byte LilliputScript::OC_CompareDistanceFromCharacterToPositionWith() {
@@ -2286,7 +2283,7 @@ void LilliputScript::OC_DisableCharacter() {
 
 void LilliputScript::OC_saveAndQuit() {
 	warning("TODO: OC_saveAndQuit");
-	_vm->_soundHandler->contentFct6(); // Kill music
+	_vm->_soundHandler->remove(); // Kill music
 	// TODO: Save game
 	_vm->_shouldQuit = true;
 }
@@ -2571,8 +2568,8 @@ byte *LilliputScript::getCurrentCharacterVarFromScript() {
 	return &_vm->_currentCharacterAttributes[index];
 }
 
-void LilliputScript::OC_sub17E99() {
-	debugC(1, kDebugScript, "OC_sub17E99()");
+void LilliputScript::OC_getList() {
+	debugC(1, kDebugScript, "OC_getList()");
 
 	byte *compBuf = getCurrentCharacterVarFromScript();
 	uint16 oper = _currScript->readUint16LE();
@@ -2580,25 +2577,25 @@ void LilliputScript::OC_sub17E99() {
 
 	byte *buf = getCurrentCharacterVarFromScript();
 	byte var1 = buf[0];
-	byte var3 = _vm->_rulesChunk11[var1 + _vm->_rulesChunk10[index]];
+	byte var3 = _vm->_listArr[var1 + _vm->_listIndex[index]];
 
 	computeOperation(compBuf, oper, var3);
 }
 
-void LilliputScript::OC_sub17EC5() {
-	debugC(1, kDebugScriptTBC, "OC_sub17EC5()");
+void LilliputScript::OC_setList() {
+	debugC(1, kDebugScript, "OC_setList()");
 
 	int indexChunk10 = _currScript->readUint16LE();
 
 	byte *compBuf = getCurrentCharacterVarFromScript();
-	int indexChunk11 = _vm->_rulesChunk10[indexChunk10] + compBuf[0];
+	int indexChunk11 = _vm->_listIndex[indexChunk10] + compBuf[0];
 
 	uint16 oper = _currScript->readUint16LE();
 
 	byte *tmpBuf = getCurrentCharacterVarFromScript();
 	int16 var3 = tmpBuf[0];
 
-	computeOperation(&_vm->_rulesChunk11[indexChunk11], oper, var3);
+	computeOperation(&_vm->_listArr[indexChunk11], oper, var3);
 }
 
 Common::Point LilliputScript::getCharacterTilePos(int index) {
@@ -3213,7 +3210,7 @@ void LilliputScript::OC_initGameAreaDisplay() {
 	OC_PaletteFadeIn();
 	_vm->_refreshScreenFlag = false;
 
-	_vm->_soundHandler->contentFct5();
+	_vm->_soundHandler->update();
 }
 
 void LilliputScript::OC_displayCharacterStatBar() {
@@ -3244,7 +3241,7 @@ void LilliputScript::OC_initSmallAnim() {
 void LilliputScript::OC_setCharacterHeroismBar() {
 	debugC(1, kDebugScript, "OC_setCharacterHeroismBar()");
 
-	_savedBuffer215Ptr = getCharacterAttributesPtr();
+	_barAttrPtr = getCharacterAttributesPtr();
 	_heroismBarX = _currScript->readUint16LE();
 	_heroismBarBottomY = _currScript->readUint16LE();
 }
@@ -3291,7 +3288,7 @@ void LilliputScript::OC_playObjectSound() {
 	Common::Point var4 = Common::Point(0xFF, index & 0xFF);
 	int soundId = (_currScript->readUint16LE() & 0xFF);
 
-	_vm->_soundHandler->contentFct2(soundId, _viewportPos, _characterTilePos[index], var4);
+	_vm->_soundHandler->play(soundId, _viewportPos, _characterTilePos[index], var4);
 }
 
 void LilliputScript::OC_startLocationSound() {
@@ -3302,7 +3299,7 @@ void LilliputScript::OC_startLocationSound() {
 	Common::Point var2 = _viewportPos;
 	int var1 = (_currScript->readUint16LE() & 0xFF);
 
-	_vm->_soundHandler->contentFct2(var1, var2, var3, var4);
+	_vm->_soundHandler->play(var1, var2, var3, var4);
 }
 
 void LilliputScript::OC_stopObjectSound() {
@@ -3310,7 +3307,7 @@ void LilliputScript::OC_stopObjectSound() {
 
 	Common::Point var4 = Common::Point(-1, getValue1() & 0xFF);
 
-	_vm->_soundHandler->contentFct3(var4); // Stop Sound
+	_vm->_soundHandler->stop(var4); // Stop Sound
 }
 
 void LilliputScript::OC_stopLocationSound() {
@@ -3318,13 +3315,13 @@ void LilliputScript::OC_stopLocationSound() {
 
 	Common::Point var4 = getPosFromScript();
 
-	_vm->_soundHandler->contentFct3(var4);
+	_vm->_soundHandler->stop(var4);
 }
 
 void LilliputScript::OC_toggleSound() {
 	debugC(1, kDebugScript, "OC_toggleSound()");
 
-	_vm->_soundHandler->contentFct4();
+	_vm->_soundHandler->toggleOnOff();
 }
 
 void LilliputScript::OC_playMusic() {
@@ -3336,13 +3333,13 @@ void LilliputScript::OC_playMusic() {
 	warning("OC_playMusic: unknown value for var3");
 	Common::Point var3 = Common::Point(-1, -1);
 
-	_vm->_soundHandler->contentFct2(var1, var2, var3, var4);
+	_vm->_soundHandler->play(var1, var2, var3, var4);
 }
 
 void LilliputScript::OC_stopMusic() {
 	debugC(1, kDebugScript, "OC_stopMusic()");
 
-	_vm->_soundHandler->contentFct6();
+	_vm->_soundHandler->remove();
 }
 
 void LilliputScript::OC_setCharacterMapColor() {

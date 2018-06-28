@@ -48,6 +48,8 @@ public:
 
 	virtual bool containsWidget(Widget *) const;
 
+	Common::Rect getClipRect() const override;
+
 protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.

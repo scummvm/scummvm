@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	ThemeLayout.o \
 	ThemeParser.o \
 	Tooltip.o \
+	unknown-game-dialog.o \
 	animation/Animation.o \
 	animation/RepeatAnimationWrapper.o \
 	animation/SequenceAnimationComposite.o \

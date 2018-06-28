@@ -220,11 +220,52 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_bufferIsoChars = NULL;
 	_bufferIsoMap = NULL;
 	_bufferCubegfx = NULL;
+
+	_sequencesArr = nullptr;
+	_packedStringIndex = nullptr;
+	_packedStringNumb = 0;
+	_packedStrings = nullptr;
+	_initScript = nullptr;
+	_initScriptSize = 0;
+	_menuScript = nullptr;
+	_menuScriptSize = 0;
+	_arrayGameScriptIndex = nullptr;
+	_gameScriptIndexSize = 0;
+	_arrayGameScripts = nullptr;
+	_listNumb = 0;
+	_listIndex = nullptr;
+	_listArr = nullptr;
+	_rectNumb = 0;
+	for (int i = 0; i < 40; ++i)
+		_enclosureRect[i] = Common::Rect(0, 0, 0, 0);
+
+	_interfaceHotspotNumb = 0;
+	for (int i = 0; i < 20; ++i)
+		_keyboardMapping[i] = Common::KEYCODE_DOLLAR;
+
+	_mainSurface = nullptr;
+	_smallAnimsFrameIndex = 0;
+	_keyDelay = 0;
+	_int8Timer = 0;
+	_keyboard_nextIndex = 0;
+	_keyboard_oldIndex = 0;
+	_normalCursor = nullptr;
+	_greenCursor = nullptr;
+	_word10800_ERULES = 0;
+	_currentDisplayCharacter = 0;
+
+	_shouldQuit = false;
+	_eventMan = nullptr;
+	_lastTime = 0;
+	_gameType = kGameTypeNone;
+	_platform = Common::kPlatformUnknown;
 }
 
 LilliputEngine::~LilliputEngine() {
 	DebugMan.clearAllDebugChannels();
 	delete _console;
+	delete _soundHandler;
+	delete _scriptHandler;
 	delete _rnd;
 }
 
@@ -253,7 +294,7 @@ void LilliputEngine::update() {
 }
 
 void LilliputEngine::newInt8() {
-	_soundHandler->contentFct1();
+	_soundHandler->refresh();
 
 	if (_byte12A05 != 0)
 		--_byte12A05;
@@ -674,7 +715,7 @@ void LilliputEngine::prepareGameArea() {
 		for (int posX = 0; posX < 8; posX++) {
 			if (map[1] != 0xFF) {
 				int var1 = map[1];
-				if ((_rulesChunk9[var1] & 128) != 0)
+				if ((_cubeFlags[var1] & 128) != 0)
 					var1 += _animationTick;
 				displayIsometricBlock(_savedSurfaceGameArea1, var1, posX, posY, 1 << 8);
 			}
@@ -682,7 +723,7 @@ void LilliputEngine::prepareGameArea() {
 
 			if (map[2] != 0xFF) {
 				int var1 = map[2];
-				if ((_rulesChunk9[var1] & 128) != 0)
+				if ((_cubeFlags[var1] & 128) != 0)
 					var1 += _animationTick;
 				displayIsometricBlock(_savedSurfaceGameArea1, var1, posX, posY, 2 << 8);
 			}
@@ -1129,19 +1170,29 @@ void LilliputEngine::scrollToViewportCharacterTarget() {
 	Common::Point newPos = _scriptHandler->_viewportPos;
 
 	if (tileX >= 1) {
-		if (tileX > 6)
-			newPos.x = CLIP(newPos.x + 4, 0, 56);
-	} else
-		newPos.x = CLIP(newPos.x - 4, 0, 56);
+		if (tileX > 6){
+			newPos.x += 4;
+			if (newPos.x > 56)
+				newPos.x = 56;
+		}
+	} else {
+		newPos.x -= 4;
+		if (newPos.x < 0)
+			newPos.x = 0;
+	}
 
 	if ((tileY < 1) && (newPos.y < 4))
 		newPos.y = 0;
-	else if (tileY >= 1)
-		newPos.y = CLIP(newPos.y + 4, 0, 56);
-	else
-		// CHECKME: not clipped?
-		newPos.y -= 4;
+	else {
+		if (tileY < 1)
+			newPos.y -= 4;
 
+		if (tileY > 6) {
+			newPos.y += 4;
+			if (newPos.y >= 56)
+				newPos.y = 56;
+		}
+	}
 	viewportScrollTo(newPos);
 }
 
@@ -1182,7 +1233,7 @@ void LilliputEngine::viewportScrollTo(Common::Point goalPos) {
 			dy = 0;
 	} while ((dx != 0) || (dy != 0));
 
-	_soundHandler->contentFct5();
+	_soundHandler->update();
 }
 
 void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
@@ -1195,7 +1246,7 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 
 	if (buf[1] != 0xFF) {
 		int tmpIndex = buf[1];
-		if ((_rulesChunk9[tmpIndex] & 16) == 0)
+		if ((_cubeFlags[tmpIndex] & 16) == 0)
 			++_byte16552;
 	}
 
@@ -1346,36 +1397,39 @@ void LilliputEngine::homeInPathFinding(int index) {
 
 	if (enclosureSrc == -1) {
 		int tmpVal = checkOuterEnclosure(_characterTargetPos[index]);
-		_characterSubTargetPos[index] = _portalPos[tmpVal];
+		if (tmpVal == -1)
+			warning("homeInPathFinding: Unexpected negative index");
+		else
+			_characterSubTargetPos[index] = _portalPos[tmpVal];
 		return;
 	}
 
 	if ((enclosureDst != -1) &&
-		(_characterTargetPos[index].x >= _rectXMinMax[enclosureSrc].min) &&
-		(_characterTargetPos[index].x <= _rectXMinMax[enclosureSrc].max) &&
-		(_characterTargetPos[index].y >= _rectYMinMax[enclosureSrc].min) &&
-		(_characterTargetPos[index].y <= _rectYMinMax[enclosureSrc].max)) {
+		(_characterTargetPos[index].x >= _enclosureRect[enclosureSrc].left) &&
+		(_characterTargetPos[index].x <= _enclosureRect[enclosureSrc].right) &&
+		(_characterTargetPos[index].y >= _enclosureRect[enclosureSrc].top) &&
+		(_characterTargetPos[index].y <= _enclosureRect[enclosureSrc].bottom)) {
 		_characterSubTargetPos[index] = _portalPos[enclosureDst];
 		return;
 	}
 
 	_characterSubTargetPos[index] = _portalPos[enclosureSrc];
 
-	if (_rectXMinMax[enclosureSrc].min != _rectXMinMax[enclosureSrc].max) {
-		if (_portalPos[enclosureSrc].x == _rectXMinMax[enclosureSrc].min) {
+	if (_enclosureRect[enclosureSrc].left != _enclosureRect[enclosureSrc].right) {
+		if (_portalPos[enclosureSrc].x == _enclosureRect[enclosureSrc].left) {
 			_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x - 1, _portalPos[enclosureSrc].y);
 			return;
 		}
 
-		if (_portalPos[enclosureSrc].x == _rectXMinMax[enclosureSrc].max) {
+		if (_portalPos[enclosureSrc].x == _enclosureRect[enclosureSrc].right) {
 			_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x + 1, _portalPos[enclosureSrc].y);
 			return;
 		}
 
-		if (_rectYMinMax[enclosureSrc].min != _rectYMinMax[enclosureSrc].max) {
-			if (_portalPos[enclosureSrc].y == _rectYMinMax[enclosureSrc].min)
+		if (_enclosureRect[enclosureSrc].bottom != _enclosureRect[enclosureSrc].top) {
+			if (_portalPos[enclosureSrc].y == _enclosureRect[enclosureSrc].top)
 				_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x, _portalPos[enclosureSrc].y - 1);
-			else // CHECKME: Should be a check on y == max
+			else // CHECKME: Should be a check on y == bottom
 				_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x, _portalPos[enclosureSrc].y + 1);
 
 			return;
@@ -1422,7 +1476,7 @@ void LilliputEngine::homeInChooseDirection(int index) {
 			}
 
 			int tmpVal = ((_characterMobility[index] & 7) ^ 7);
-			retVal = _rulesChunk9[_bufferIsoMap[mapIndex + mapIndexDiff]];
+			retVal = _cubeFlags[_bufferIsoMap[mapIndex + mapIndexDiff]];
 			tmpVal &= retVal;
 			if (tmpVal == 0)
 				continue;
@@ -1453,18 +1507,14 @@ byte LilliputEngine::homeInAvoidDeadEnds(int indexb, int indexs) {
 
 	Common::Point tmpPos = Common::Point(_curCharacterTilePos.x + constDirX[indexb], _curCharacterTilePos.y + constDirY[indexb]);
 
-	int16 var2 = checkEnclosure(tmpPos);
-	if (var2 == -1)
+	int16 idx = checkEnclosure(tmpPos);
+	if (idx == -1)
 		return 1;
 
-	tmpPos = _curCharacterTilePos;
-
-	if ((tmpPos.x >= _rectXMinMax[var2].min) && (tmpPos.x <= _rectXMinMax[var2].max) && (tmpPos.y >= _rectYMinMax[var2].min) && (tmpPos.y <= _rectYMinMax[var2].max))
+	if ((tmpPos.x >= _enclosureRect[idx].left) && (tmpPos.x <= _enclosureRect[idx].right) && (tmpPos.y >= _enclosureRect[idx].top) && (tmpPos.y <= _enclosureRect[idx].bottom))
 		return 0;
 
-	tmpPos = _characterSubTargetPos[indexs];
-
-	if ((tmpPos.x >= _rectXMinMax[var2].min) && (tmpPos.x <= _rectXMinMax[var2].max) && (tmpPos.y >= _rectYMinMax[var2].min) && (tmpPos.y <= _rectYMinMax[var2].max))
+	if ((tmpPos.x >= _enclosureRect[idx].left) && (tmpPos.x <= _enclosureRect[idx].right) && (tmpPos.y >= _enclosureRect[idx].top) && (tmpPos.y <= _enclosureRect[idx].bottom))
 		return 0;
 
 	return 1;
@@ -1473,8 +1523,8 @@ byte LilliputEngine::homeInAvoidDeadEnds(int indexb, int indexs) {
 int16 LilliputEngine::checkEnclosure(Common::Point pos) {
 	debugC(2, kDebugEngine, "checkEnclosure(%d, %d)", pos.x, pos.y);
 
-	for (int i = 0; i < _rectNumb; i++) {
-		if ((pos.x >= _rectXMinMax[i].min) && (pos.x <= _rectXMinMax[i].max) && (pos.y >= _rectYMinMax[i].min) && (pos.y <= _rectYMinMax[i].max))
+	for (int i = 0; i < _rectNumb; ++i) {
+		if ((pos.x >= _enclosureRect[i].left) && (pos.x <= _enclosureRect[i].right) && (pos.y >= _enclosureRect[i].top) && (pos.y <= _enclosureRect[i].bottom))
 			return i;
 	}
 	return -1;
@@ -1483,8 +1533,8 @@ int16 LilliputEngine::checkEnclosure(Common::Point pos) {
 int16 LilliputEngine::checkOuterEnclosure(Common::Point pos) {
 	debugC(2, kDebugEngine, "checkOuterEnclosure(%d, %d)", pos.x, pos.y);
 
-	for (int i = _rectNumb - 1; i >= 0 ; i--) {
-		if ((pos.x >= _rectXMinMax[i].min) && (pos.x <= _rectXMinMax[i].max) && (pos.y >= _rectYMinMax[i].min) && (pos.y <= _rectYMinMax[i].max))
+	for (int i = _rectNumb - 1; i >= 0 ; --i) {
+		if ((pos.x >= _enclosureRect[i].left) && (pos.x <= _enclosureRect[i].right) && (pos.y >= _enclosureRect[i].top) && (pos.y <= _enclosureRect[i].bottom))
 			return i;
 	}
 	return -1;
@@ -1664,7 +1714,7 @@ byte LilliputEngine::sequenceSound(int index, Common::Point var1) {
 	debugC(2, kDebugEngine, "sequenceSound(%d, %d - %d)", index, var1.x, var1.y);
 
 	int param4x = ((index | 0xFF00) >> 8);
-	_soundHandler->contentFct2(var1.y, _scriptHandler->_viewportPos, 
+	_soundHandler->play(var1.y, _scriptHandler->_viewportPos, 
 		_scriptHandler->_characterTilePos[index], Common::Point(param4x, 0));
 	return kSeqRepeat;
 }
@@ -2118,7 +2168,7 @@ void LilliputEngine::checkCollision(int index, Common::Point pos, int direction)
 	var1 &= 7;
 	var1 ^= 7;
 
-	if ((var1 & _rulesChunk9[_bufferIsoMap[mapIndex]]) != 0)
+	if ((var1 & _cubeFlags[_bufferIsoMap[mapIndex]]) != 0)
 		return;
 
 	_characterPos[index] = pos;
@@ -2147,7 +2197,7 @@ void LilliputEngine::signalDispatcher(byte type, byte index, int var4) {
 }
 
 void LilliputEngine::sendMessageToCharacter(byte index, int var4) {
-	debugC(2, kDebugEngine, "sub17264(%d, %d)", index, var4);
+	debugC(2, kDebugEngine, "sendMessageToCharacter(%d, %d)", index, var4);
 
 	if (_characterSignals[index] != -1) {
 		_signalArr[index] = var4;
@@ -2208,10 +2258,10 @@ void LilliputEngine::checkInterfaceActivationDelay() {
 void LilliputEngine::displayHeroismIndicator() {
 	debugC(2, kDebugEngine, "displayHeroismIndicator()");
 
-	if (_scriptHandler->_savedBuffer215Ptr == NULL)
+	if (_scriptHandler->_barAttrPtr == NULL)
 		return;
 
-	int var1 = (_scriptHandler->_savedBuffer215Ptr[0] * 25) >> 8;
+	int var1 = (_scriptHandler->_barAttrPtr[0] * 25) >> 8;
 
 	if (var1 == _scriptHandler->_heroismLevel)
 		return;
@@ -2230,7 +2280,6 @@ void LilliputEngine::displayHeroismIndicator() {
 
 	var2 = _scriptHandler->_heroismLevel & 0xFF;
 	if (var2 != 0) {
-//		sub16064(var1, _scriptHandler->_byte15FFA);
 		for (int i = 0; i < (var2 << 2); i++) {
 			((byte *)_mainSurface->getPixels())[index] = var1;
 			((byte *)_mainSurface->getPixels())[index + 1] = var1;
@@ -2240,7 +2289,6 @@ void LilliputEngine::displayHeroismIndicator() {
 	}
 
 	if (25 - _scriptHandler->_heroismLevel != 0) {
-//		sub16064(23, 25 - _scriptHandler->_byte15FFA);
 		var2 = (25 - _scriptHandler->_heroismLevel) << 2;
 		for (int i = 0; i < var2; i++) {
 			((byte *)_mainSurface->getPixels())[index] = 23;
@@ -2419,13 +2467,13 @@ void LilliputEngine::loadRules() {
 
 	_word10800_ERULES = f.readUint16LE();
 
-	// Chunk 1
+	// Chunk 1 : Sequences
 	int size = f.readUint16LE();
-	_rulesChunk1 = (byte *)malloc(sizeof(byte) * size);
+	_sequencesArr = (byte *)malloc(sizeof(byte) * size);
 	for (int i = 0; i < size; ++i)
-		_rulesChunk1[i] = f.readByte();
+		_sequencesArr[i] = f.readByte();
 
-	// Chunk 2
+	// Chunk 2 : Characters
 	_numCharacters = (f.readUint16LE() & 0xFF);
 	assert(_numCharacters <= 40);
 
@@ -2500,25 +2548,25 @@ void LilliputEngine::loadRules() {
 	for (int i = 0; i < curWord; ++i)
 		_arrayGameScripts[i] = f.readByte();
 
-	// Chunk 9
+	// Chunk 9 : Cube flags
 	for (int i = 0; i < 60; i++)
-		_rulesChunk9[i] = f.readByte();
+		_cubeFlags[i] = f.readByte();
 
-	// Chunk 10 & 11
-	_rulesChunk10_size = f.readByte();
-	assert(_rulesChunk10_size <= 20);
+	// Chunk 10 & 11 : Lists
+	_listNumb = f.readByte();
+	assert(_listNumb <= 20);
 
-	if (_rulesChunk10_size != 0) {
-		_rulesChunk10 = (int16 *)malloc(sizeof(int16) * _rulesChunk10_size);
+	if (_listNumb != 0) {
+		_listIndex = (int16 *)malloc(sizeof(int16) * _listNumb);
 		int totalSize = 0;
-		for (int i = 0; i < _rulesChunk10_size; ++i) {
-			_rulesChunk10[i] = totalSize;
+		for (int i = 0; i < _listNumb; ++i) {
+			_listIndex[i] = totalSize;
 			totalSize += f.readByte();
 		}
 		if (totalSize != 0) {
-			_rulesChunk11 = (byte *)malloc(sizeof(byte) * totalSize);
+			_listArr = (byte *)malloc(sizeof(byte) * totalSize);
 			for (int i = 0; i < totalSize; i++)
-				_rulesChunk11[i] = f.readByte();
+				_listArr[i] = f.readByte();
 		}
 	}
 
@@ -2527,14 +2575,14 @@ void LilliputEngine::loadRules() {
 	assert((_rectNumb >= 0) && (_rectNumb <= 40));
 
 	for (int i = 0; i < _rectNumb; i++) {
-		_rectXMinMax[i].max = (int16)f.readByte();
-		_rectXMinMax[i].min = (int16)f.readByte();
-		_rectYMinMax[i].max = (int16)f.readByte();
-		_rectYMinMax[i].min = (int16)f.readByte();
+		_enclosureRect[i].right = (int16)f.readByte();
+		_enclosureRect[i].left = (int16)f.readByte();
+		_enclosureRect[i].bottom = (int16)f.readByte();
+		_enclosureRect[i].top = (int16)f.readByte();
 
 		int16 tmpValY = (int16)f.readByte();
 		int16 tmpValX = (int16)f.readByte();
-		_rulesBuffer12Pos3[i] = Common::Point(tmpValX, tmpValY);
+		_keyPos[i] = Common::Point(tmpValX, tmpValY);
 
 		tmpValY = (int16)f.readByte();
 		tmpValX = (int16)f.readByte();
@@ -2586,13 +2634,13 @@ void LilliputEngine::fixPaletteEntries(uint8 *palette, int num) {
 	debugC(1, kDebugEngine, "fixPaletteEntries(palette, %d)", num);
 	// Color values are coded on 6bits (for old 6bits DAC)
 	for (int32 i = 0; i < num * 3; i++) {
-		int32 a = palette[i];
-		assert(a < 64);
+		int32 col = palette[i];
+		assert(col < 64);
 
-		a = (a << 2) | (a >> 4);
-		if (a > 255)
-			a = 255;
-		palette[i] = a;
+		col = (col << 2) | (col >> 4);
+		if (col > 255)
+			col = 255;
+		palette[i] = col;
 	}
 }
 
@@ -2719,8 +2767,9 @@ Common::Error LilliputEngine::run() {
 
 	// Setup mixer
 	syncSoundSettings();
-	//TODO: Init sound/music player
+	_soundHandler->init();
 
+	// Init palette
 	initPalette();
 
 	// Load files. In the original, the size was hardcoded

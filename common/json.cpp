@@ -76,17 +76,17 @@ JSON::JSON() {}
 JSONValue *JSON::parse(const char *data) {
 	// Skip any preceding whitespace, end of data = no JSON = fail
 	if (!skipWhitespace(&data))
-		return NULL;
+		return nullptr;
 
 	// We need the start of a value here now...
 	JSONValue *value = JSONValue::parse(&data);
-	if (value == NULL)
-		return NULL;
+	if (value == nullptr)
+		return nullptr;
 
 	// Can be white space now and should be at the end of the string then...
 	if (skipWhitespace(&data)) {
 		delete value;
-		return NULL;
+		return nullptr;
 	}
 
 	// We're now at the end of the string
@@ -103,7 +103,7 @@ JSONValue *JSON::parse(const char *data) {
 * @return String Returns a JSON encoded string representation of the given value
 */
 String JSON::stringify(const JSONValue *value) {
-	if (value != NULL)
+	if (value != nullptr)
 		return value->stringify();
 	else
 		return "";
@@ -276,7 +276,7 @@ JSONValue *JSONValue::parse(const char **data) {
 	if (**data == '"') {
 		String str;
 		if (!JSON::extractString(&(++(*data)), str))
-			return NULL;
+			return nullptr;
 		else
 			return new JSONValue(str);
 	}
@@ -310,7 +310,7 @@ JSONValue *JSONValue::parse(const char **data) {
 		else if (**data >= '1' && **data <= '9')
 			number = integer = JSON::parseInt(data);
 		else
-			return NULL;
+			return nullptr;
 
 		// Could be a decimal now...
 		if (**data == '.') {
@@ -318,7 +318,7 @@ JSONValue *JSONValue::parse(const char **data) {
 
 			// Not get any digits?
 			if (!(**data >= '0' && **data <= '9'))
-				return NULL;
+				return nullptr;
 
 			// Find the decimal and sort the decimal place out
 			// Use ParseDecimal as ParseInt won't work with decimals less than 0.1
@@ -343,7 +343,7 @@ JSONValue *JSONValue::parse(const char **data) {
 
 			// Not get any digits?
 			if (!(**data >= '0' && **data <= '9'))
-				return NULL;
+				return nullptr;
 
 			// Sort the expo out
 			double expo = JSON::parseInt(data);
@@ -371,7 +371,7 @@ JSONValue *JSONValue::parse(const char **data) {
 			// Whitespace at the start?
 			if (!JSON::skipWhitespace(data)) {
 				FREE_OBJECT(object);
-				return NULL;
+				return nullptr;
 			}
 
 			// Special case - empty object
@@ -384,32 +384,32 @@ JSONValue *JSONValue::parse(const char **data) {
 			String name;
 			if (!JSON::extractString(&(++(*data)), name)) {
 				FREE_OBJECT(object);
-				return NULL;
+				return nullptr;
 			}
 
 			// More whitespace?
 			if (!JSON::skipWhitespace(data)) {
 				FREE_OBJECT(object);
-				return NULL;
+				return nullptr;
 			}
 
 			// Need a : now
 			if (*((*data)++) != ':') {
 				FREE_OBJECT(object);
-				return NULL;
+				return nullptr;
 			}
 
 			// More whitespace?
 			if (!JSON::skipWhitespace(data)) {
 				FREE_OBJECT(object);
-				return NULL;
+				return nullptr;
 			}
 
 			// The value is here
 			JSONValue *value = parse(data);
-			if (value == NULL) {
+			if (value == nullptr) {
 				FREE_OBJECT(object);
-				return NULL;
+				return nullptr;
 			}
 
 			// Add the name:value
@@ -420,7 +420,7 @@ JSONValue *JSONValue::parse(const char **data) {
 			// More whitespace?
 			if (!JSON::skipWhitespace(data)) {
 				FREE_OBJECT(object);
-				return NULL;
+				return nullptr;
 			}
 
 			// End of object?
@@ -432,7 +432,7 @@ JSONValue *JSONValue::parse(const char **data) {
 			// Want a , now
 			if (**data != ',') {
 				FREE_OBJECT(object);
-				return NULL;
+				return nullptr;
 			}
 
 			(*data)++;
@@ -440,7 +440,7 @@ JSONValue *JSONValue::parse(const char **data) {
 
 		// Only here if we ran out of data
 		FREE_OBJECT(object);
-		return NULL;
+		return nullptr;
 	}
 
 	// An array?
@@ -453,7 +453,7 @@ JSONValue *JSONValue::parse(const char **data) {
 			// Whitespace at the start?
 			if (!JSON::skipWhitespace(data)) {
 				FREE_ARRAY(array);
-				return NULL;
+				return nullptr;
 			}
 
 			// Special case - empty array
@@ -464,9 +464,9 @@ JSONValue *JSONValue::parse(const char **data) {
 
 			// Get the value
 			JSONValue *value = parse(data);
-			if (value == NULL) {
+			if (value == nullptr) {
 				FREE_ARRAY(array);
-				return NULL;
+				return nullptr;
 			}
 
 			// Add the value
@@ -475,7 +475,7 @@ JSONValue *JSONValue::parse(const char **data) {
 			// More whitespace?
 			if (!JSON::skipWhitespace(data)) {
 				FREE_ARRAY(array);
-				return NULL;
+				return nullptr;
 			}
 
 			// End of array?
@@ -487,7 +487,7 @@ JSONValue *JSONValue::parse(const char **data) {
 			// Want a , now
 			if (**data != ',') {
 				FREE_ARRAY(array);
-				return NULL;
+				return nullptr;
 			}
 
 			(*data)++;
@@ -495,12 +495,12 @@ JSONValue *JSONValue::parse(const char **data) {
 
 		// Only here if we ran out of data
 		FREE_ARRAY(array);
-		return NULL;
+		return nullptr;
 	}
 
 	// Ran out of possibilites, it's bad!
 	else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -871,7 +871,7 @@ JSONValue *JSONValue::child(std::size_t index) {
 	if (index < _arrayValue->size()) {
 		return (*_arrayValue)[index];
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -905,7 +905,7 @@ JSONValue *JSONValue::child(const char *name) {
 	if (it != _objectValue->end()) {
 		return it->_value;
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 

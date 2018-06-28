@@ -50,7 +50,7 @@ public:
 		kUpdateIntervalNotSupported = 0,
 		kUpdateIntervalOneDay       = 86400,
 		kUpdateIntervalOneWeek      = 604800,
-		kUpdateIntervalOneMonth     = 2628000   // average seconds per month (60*60*24*365)/12
+		kUpdateIntervalOneMonth     = 2628000 // average seconds per month (60*60*24*365)/12
 	};
 
 	UpdateManager() {}

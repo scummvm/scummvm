@@ -1370,7 +1370,8 @@ int ToucheEngine::getStringWidth(int num) const {
 		debug("stringwidth: %s", str);
 		debugN("raw:");
 		const char *p = str;
-		while (*p) debugN(" %02X", (unsigned char)*p++);
+		while (*p)
+			debugN(" %02X", (unsigned char)*p++);
 		debugN("\n");
 	}
 	return Graphics::getStringWidth16(str);

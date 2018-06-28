@@ -19,14 +19,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SLUDGE_TRANSITION_H
-#define SLUDGE_TRANSITION_H
 
-namespace Sludge {
+#ifndef GUI_UNKNOWN_GAME_DIALOG_H
+#define GUI_UNKNOWN_GAME_DIALOG_H
 
-void fixBrightness();
-void resetRandW();
+#include "gui/dialog.h"
+#include "common/array.h"
+#include "engines/game.h"
 
-} // End of namespace Sludge
+namespace GUI {
+
+class StaticTextWidget;
+class ScrollContainerWidget;
+class ButtonWidget;
+
+class UnknownGameDialog : public Dialog {
+public:
+	UnknownGameDialog(const DetectionResults &detectionResults);
+
+private:
+	void rebuild();
+
+	// Dialog API
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void reflowLayout() override;
+
+	Common::String generateBugtrackerURL();
+
+	const DetectionResults &_detectionResults;
+	ScrollContainerWidget *_textContainer;
+	Common::Array<StaticTextWidget *> _textWidgets;
+	ButtonWidget* _openBugTrackerUrlButton;
+	ButtonWidget* _copyToClipboardButton;
+	ButtonWidget* _closeButton;
+};
+
+} // End of namespace GUI
 
 #endif

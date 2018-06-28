@@ -187,7 +187,7 @@ void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			Delay(2500);
 			Actor_Says(kActorEarlyQ, 290, 3);
 			sub_401DB0();
-			//return true;			
+			//return true;
 			break;
 		case 213:
 			Actor_Clue_Acquire(kActorMcCoy, kClueDektorasDressingRoom, 0, kActorEarlyQ);

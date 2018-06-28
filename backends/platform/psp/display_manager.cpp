@@ -332,7 +332,7 @@ bool DisplayManager::setGraphicsMode(const char *name) {
 	int i = 0;
 
 	while (_supportedModes[i].name) {
-		if (!strcmpi(_supportedModes[i].name, name)) {
+		if (!scumm_stricmp(_supportedModes[i].name, name)) {
 			setGraphicsMode(_supportedModes[i].id);
 			return true;
 		}

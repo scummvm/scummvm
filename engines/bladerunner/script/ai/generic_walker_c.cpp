@@ -331,9 +331,8 @@ bool AIScriptGenericWalkerC::prepareWalker() {
 		} else {
 			model = Random_Query(0, 5);
 		}
-	}
 	// Here is probably bug in original code, because it not using kVariableGenericWalkerBModel but kVariableGenericWalkerCModel
-	while (model == Global_Variable_Query(kVariableGenericWalkerAModel) || model == Global_Variable_Query(kVariableGenericWalkerBModel));
+	} while (model == Global_Variable_Query(kVariableGenericWalkerAModel) || model == Global_Variable_Query(kVariableGenericWalkerBModel));
 
 
 	Global_Variable_Set(kVariableGenericWalkerCModel, model);

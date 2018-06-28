@@ -1474,7 +1474,6 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 }
 
 byte OPL::read(int port) {
-	port = 0;
 	return 0;
 }
 

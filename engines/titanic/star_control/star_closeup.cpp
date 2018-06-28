@@ -69,9 +69,9 @@ bool CStarCloseup::setup2(int val1, int val2) {
 	const int VALUES1[] = { 0x800, 0xC00, 0x1000, 0x1400, 0x1800 };
 	const int VALUES2[] = {
 		0xF95BCD, 0xA505A0, 0xFFAD43, 0x98F4EB, 0xF3EFA5, 0,
-		0xFFFFFF, 0x81EEF5, 0x5FFD3, 0x4EE4FA, 0x11C3FF, 0x28F3F4, 
-		0x36FCF2, 0x29F1FD, 0x29BCFD, 0x98E3F4, 0xBBF3D9, 0x8198F5, 
-		0x5BE4F9, 0x0D6E2, 0x74EEF6, 0x68DEF8 
+		0xFFFFFF, 0x81EEF5, 0x5FFD3, 0x4EE4FA, 0x11C3FF, 0x28F3F4,
+		0x36FCF2, 0x29F1FD, 0x29BCFD, 0x98E3F4, 0xBBF3D9, 0x8198F5,
+		0x5BE4F9, 0x0D6E2, 0x74EEF6, 0x68DEF8
 	};
 
 	Entry *e = &_entries[0];
@@ -174,7 +174,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 				e->_pixel2 = (val >> 8) & 0xff;
 				e->_pixel3 = (val >> 16) & 0xff;
 				e->_field8 = g_vm->getRandomNumber(3) + 3;
-				
+
 				e->_fieldC = g_vm->getRandomNumber(255);
 				e->_field10 = FACTOR * (float)g_vm->getRandomNumber(15);
 				e->_field14 = ((float)g_vm->getRandomNumber(0xfffffffe)
@@ -293,7 +293,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			}
 
 			switch (starColor) {
-			case WHITE: 
+			case WHITE:
 				surfaceArea->setMode(SA_SOLID);
 				surfaceArea->_pixel = MKTAG_BE(entryP->_pixel1, entryP->_pixel2,
 					entryP->_pixel3, 0);
@@ -424,7 +424,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 				surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
 					grid2._position._x, grid2._position._y));
 			}
-		}		
+		}
 		break;
 	case PINK:
 		surfaceArea->setMode(SA_SOLID);

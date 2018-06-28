@@ -32,8 +32,6 @@
 #include "saga/scene.h"
 #include "saga/sndres.h"
 
-#include "engines/advancedDetector.h"
-
 namespace Saga {
 
 #ifdef ENABLE_IHNM

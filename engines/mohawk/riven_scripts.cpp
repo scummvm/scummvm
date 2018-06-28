@@ -345,6 +345,24 @@ void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, 
 		debugC(kRivenDebugPatches, "Applied invalid card change during screen update (2/2) to card %x", cardGlobalId);
 	}
 
+	// First part of the patch to fix the invalid steam sounds
+	// when looking at the Boiler island bridge from Temple island.
+	// The second part is in the card patches.
+	if (cardGlobalId == 0x22118 && scriptType == kCardLoadScript) {
+		shouldApplyPatches = true;
+
+		// Remove all the activateSLST calls.
+		// Fixed calls will be added back in the second part of the patch.
+		for (uint i = 0; i < _commands.size(); i++) {
+			if (_commands[i]->getType() == kRivenCommandActivateSLST) {
+				_commands.remove_at(i);
+				break;
+			}
+		}
+
+		debugC(kRivenDebugPatches, "Applied incorrect steam sounds (1/2) to card %x", cardGlobalId);
+	}
+
 	if (shouldApplyPatches) {
 		for (uint i = 0; i < _commands.size(); i++) {
 			_commands[i]->applyCardPatches(cardGlobalId, scriptType, hotspotId);

@@ -177,9 +177,13 @@ Common::Error SavesManager::loadGameState(int slot) {
 		uint fileSize = saveFile->readUint32LE();
 
 		if (archives[idx]) {
-			Common::SeekableSubReadStream arcStream(saveFile, saveFile->pos(),
-				saveFile->pos() + fileSize);
-			archives[idx]->load(arcStream);
+			if (fileSize) {
+				Common::SeekableSubReadStream arcStream(saveFile, saveFile->pos(),
+					saveFile->pos() + fileSize);
+				archives[idx]->load(arcStream);
+			} else {
+				archives[idx]->reset((idx == 1) ? File::_darkCc : File::_xeenCc);
+			}
 		} else {
 			assert(!fileSize);
 		}
@@ -188,8 +192,12 @@ Common::Error SavesManager::loadGameState(int slot) {
 	// Read in miscellaneous
 	files.load(*saveFile);
 
+	// Load the character roster and party
+	File::_currentSave->loadParty();
+
 	// Reset any combat information from the previous game
 	combat.reset();
+	party._treasure.reset();
 
 	// Load the new map
 	map.clearMaze();
@@ -227,6 +235,9 @@ void SavesManager::newGame() {
 		File::_darkSave : File::_xeenSave;
 	assert(File::_currentSave);
 
+	// Load the character roster and party
+	File::_currentSave->loadParty();
+
 	// Set any final initial values
 	Party &party = *g_vm->_party;
 	party.resetBlacksmithWares();
@@ -261,7 +272,7 @@ bool SavesManager::loadGame() {
 
 bool SavesManager::saveGame() {
 	Map &map = *g_vm->_map;
-	
+
 	if (map.mazeData()._mazeFlags & RESTRICTION_SAVE) {
 		ErrorScroll::show(g_vm, Res.SAVE_OFF_LIMITS, WT_NONFREEZED_WAIT);
 		return false;

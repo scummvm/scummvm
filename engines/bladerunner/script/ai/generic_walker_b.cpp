@@ -330,8 +330,7 @@ bool AIScriptGenericWalkerB::prepareWalker() {
 		} else {
 			model = Random_Query(0, 5);
 		}
-	}
-	while (model == Global_Variable_Query(kVariableGenericWalkerAModel) || model == Global_Variable_Query(kVariableGenericWalkerCModel));
+	} while (model == Global_Variable_Query(kVariableGenericWalkerAModel) || model == Global_Variable_Query(kVariableGenericWalkerCModel));
 
 	Global_Variable_Set(kVariableGenericWalkerBModel, model);
 	Game_Flag_Set(kFlagGenericWalkerWaiting);

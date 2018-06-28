@@ -45,7 +45,7 @@ void SpeechManager::init() {
 	_speech = new SpeechStruct;
 	if (checkNew(_speech)) {
 		_speech->currentTalker = NULL;
-		_speech->allSpeech = NULL;
+		_speech->allSpeech.clear();
 		_speech->speechY = 0;
 		_speech->lastFile = -1;
 	}
@@ -61,16 +61,16 @@ void SpeechManager::kill() {
 	}
 
 	if (_speech->currentTalker) {
-		makeSilent(*(_speech->currentTalker));
-		_speech->currentTalker = NULL;
+		_speech->currentTalker->makeSilent();
+		_speech->currentTalker = nullptr;
 	}
 
-	SpeechLine *killMe;
-	while (_speech->allSpeech) {
-		killMe = _speech->allSpeech;
-		_speech->allSpeech = _speech->allSpeech->next;
+	for (SpeechLineList::iterator it = _speech->allSpeech.begin(); it != _speech->allSpeech.end(); ++it) {
+		SpeechLine *killMe = *it;
 		delete killMe;
+		killMe = nullptr;
 	}
+	_speech->allSpeech.clear();
 }
 
 void SpeechManager::setObjFontColour(ObjectType *t) {
@@ -82,14 +82,16 @@ void SpeechManager::addSpeechLine(const Common::String &theLine, int x, int &off
 	int halfWidth = (g_sludge->_txtMan->stringWidth(theLine) >> 1) / cameraZoom;
 	int xx1 = x - (halfWidth);
 	int xx2 = x + (halfWidth);
+
+	// Create new speech line
 	SpeechLine *newLine = new SpeechLine;
 	checkNew(newLine);
-
-	newLine->next = _speech->allSpeech;
 	newLine->textLine.clear();
 	newLine->textLine = theLine;
 	newLine->x = xx1;
-	_speech->allSpeech = newLine;
+	_speech->allSpeech.push_front(newLine);
+
+	// Calculate offset
 	if ((xx1 < 5) && (offset < (5 - xx1))) {
 		offset = 5 - xx1;
 	} else if ((xx2 >= ((float) g_system->getWidth() / cameraZoom) - 5)
@@ -99,7 +101,7 @@ void SpeechManager::addSpeechLine(const Common::String &theLine, int x, int &off
 }
 
 int SpeechManager::isThereAnySpeechGoingOn() {
-	return _speech->allSpeech ? _speech->lookWhosTalking : -1;
+	return _speech->allSpeech.empty() ? -1 : _speech->lookWhosTalking;
 }
 
 int SpeechManager::getLastSpeechSound() {
@@ -158,10 +160,8 @@ int SpeechManager::wrapSpeechXY(const Common::String &theText, int x, int y, int
 				+ (float) (g_system->getHeight() - fontHeight / 3) / cameraZoom;
 
 	if (offset) {
-		SpeechLine *viewLine = _speech->allSpeech;
-		while (viewLine) {
-			viewLine->x += offset;
-			viewLine = viewLine->next;
+		for (SpeechLineList::iterator it = _speech->allSpeech.begin(); it != _speech->allSpeech.end(); ++it) {
+			(*it)->x += offset;
 		}
 	}
 	return speechTime;
@@ -176,7 +176,7 @@ int SpeechManager::wrapSpeechPerson(const Common::String &theText, OnScreenPerso
 					- thePerson.thisType->speechGap,
 			thePerson.thisType->wrapSpeech, sampleFile);
 	if (animPerson) {
-		makeTalker(thePerson);
+		thePerson.makeTalker();
 		_speech->currentTalker = &thePerson;
 	}
 	return i;
@@ -188,12 +188,12 @@ int SpeechManager::wrapSpeech(const Common::String &theText, int objT, int sampl
 	int cameraY = g_sludge->_gfxMan->getCamY();
 
 	_speech->lookWhosTalking = objT;
-	OnScreenPerson *thisPerson = findPerson(objT);
+	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objT);
 	if (thisPerson) {
 		setObjFontColour(thisPerson->thisType);
 		i = wrapSpeechPerson(theText, *thisPerson, sampleFile, animPerson);
 	} else {
-		ScreenRegion *thisRegion = getRegionForObject(objT);
+		ScreenRegion *thisRegion = g_sludge->_regionMan->getRegionForObject(objT);
 		if (thisRegion) {
 			setObjFontColour(thisRegion->thisType);
 			i = wrapSpeechXY(theText,
@@ -214,19 +214,14 @@ void SpeechManager::display() {
 	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
 	int fontHeight = g_sludge->_txtMan->getFontHeight();
 	int viewY = _speech->speechY;
-	SpeechLine *viewLine = _speech->allSpeech;
-	while (viewLine) {
-		g_sludge->_txtMan->pasteString(viewLine->textLine, viewLine->x, viewY, _speech->talkCol);
+	for (SpeechLineList::iterator it = _speech->allSpeech.begin(); it != _speech->allSpeech.end(); ++it) {
+		g_sludge->_txtMan->pasteString((*it)->textLine, (*it)->x, viewY, _speech->talkCol);
 		viewY -= fontHeight / cameraZoom;
-		viewLine = viewLine->next;
 	}
 }
 
 void SpeechManager::save(Common::WriteStream *stream) {
 	stream->writeByte(_speechMode);
-
-	SpeechLine *viewLine = _speech->allSpeech;
-
 	stream->writeByte(_speech->talkCol.originalRed);
 	stream->writeByte(_speech->talkCol.originalGreen);
 	stream->writeByte(_speech->talkCol.originalBlue);
@@ -246,11 +241,10 @@ void SpeechManager::save(Common::WriteStream *stream) {
 	}
 
 	// Write what's being said
-	while (viewLine) {
+	for (SpeechLineList::iterator it = _speech->allSpeech.begin(); it != _speech->allSpeech.end(); ++it) {
 		stream->writeByte(1);
-		writeString(viewLine->textLine, stream);
-		stream->writeUint16BE(viewLine->x);
-		viewLine = viewLine->next;
+		writeString((*it)->textLine, stream);
+		stream->writeUint16BE((*it)->x);
 	}
 	stream->writeByte(0);
 }
@@ -274,24 +268,20 @@ bool SpeechManager::load(Common::SeekableReadStream *stream) {
 	_speech->lookWhosTalking = stream->readUint16BE();
 
 	if (stream->readByte()) {
-		_speech->currentTalker = findPerson(stream->readUint16BE());
+		_speech->currentTalker = g_sludge->_peopleMan->findPerson(stream->readUint16BE());
 	} else {
 		_speech->currentTalker = NULL;
 	}
 
 	// Read what's being said
-	SpeechLine **viewLine = &_speech->allSpeech;
-	SpeechLine *newOne;
 	_speech->lastFile = -1;
 	while (stream->readByte()) {
-		newOne = new SpeechLine;
+		SpeechLine *newOne = new SpeechLine;
 		if (!checkNew(newOne))
 			return false;
 		newOne->textLine = readString(stream);
 		newOne->x = stream->readUint16BE();
-		newOne->next = NULL;
-		(*viewLine) = newOne;
-		viewLine = &(newOne->next);
+		_speech->allSpeech.push_back(newOne);
 	}
 	return true;
 }

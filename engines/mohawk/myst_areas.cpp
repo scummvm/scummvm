@@ -21,6 +21,7 @@
  */
 
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/myst_sound.h"
@@ -93,8 +94,8 @@ void MystArea::handleMouseUp() {
 		break;
 	}
 
-	_vm->_scriptParser->setInvokingResource(this);
-	_vm->_scriptParser->runOpcode(opcode, 0);
+	_vm->_stack->setInvokingResource(this);
+	_vm->_stack->runOpcode(opcode, 0);
 }
 
 bool MystArea::canBecomeActive() {
@@ -103,7 +104,7 @@ bool MystArea::canBecomeActive() {
 
 bool MystArea::unreachableZipDest() {
 	return (_flags & kMystZipModeEnableFlag)
-			&& !_vm->_gameState->isReachableZipDest(_vm->getCurStack() , _dest);
+			&& !_vm->_gameState->isReachableZipDest(_vm->_stack->getStackId() , _dest);
 }
 
 bool MystArea::isEnabled() {
@@ -142,21 +143,24 @@ MystAreaAction::MystAreaAction(MohawkEngine_Myst *vm, ResourceType type, Common:
 		MystArea(vm, type, rlstStream, parent) {
 	debugC(kDebugResource, "\tResource Type 5 Script:");
 
-	_script = vm->_scriptParser->readScript(rlstStream, kMystScriptNormal);
+	_script = vm->_stack->readScript(rlstStream, kMystScriptNormal);
 }
 
 void MystAreaAction::handleMouseUp() {
-	_vm->_scriptParser->runScript(_script, this);
+	// Keep a reference to the stack so it is not freed if a script switches to another stack
+	MystScriptParserPtr stack = _vm->_stack;
+
+	stack->runScript(_script, this);
 }
 
 const Common::String MystAreaAction::describe() {
 	Common::String desc = MystArea::describe();
 
-	if (_script->size() != 0) {
+	if (!_script.empty()) {
 		desc += " ops:";
 
-		for (uint i = 0; i < _script->size(); i++)
-			desc += " " + _vm->_scriptParser->getOpcodeDesc((*_script)[i].opcode);
+		for (uint i = 0; i < _script.size(); i++)
+			desc += " " + _vm->_stack->getOpcodeDesc(_script[i].opcode);
 	}
 
 	return desc;
@@ -316,7 +320,7 @@ void MystAreaActionSwitch::doSwitch(AreaHandler handler) {
 		else if (_subResources.size() != 0)
 			warning("Action switch resource with _numSubResources of %d, but no control variable", _subResources.size());
 	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_actionSwitchVar);
+		uint16 varValue = _vm->_stack->getVar(_actionSwitchVar);
 
 		if (_subResources.size() == 1 && varValue != 0)
 			(_subResources[0]->*handler)();
@@ -400,7 +404,7 @@ void MystAreaImageSwitch::drawDataToScreen() {
 		} else if (_subImages.size() != 0)
 			warning("Image Switch resource with _numSubImages of %d, but no control variable", _subImages.size());
 	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_imageSwitchVar);
+		uint16 varValue = _vm->_stack->getVar(_imageSwitchVar);
 
 		if (_subImages.size() == 1 && varValue != 0) {
 			subImageId = 0;
@@ -419,7 +423,7 @@ void MystAreaImageSwitch::drawDataToScreen() {
 
 		// This special case means redraw background
 		if (imageToDraw == 0xFFFF)
-			imageToDraw = _vm->getCardBackgroundId();
+			imageToDraw = _vm->getCard()->getBackgroundImageId();
 
 		_vm->_gfx->copyImageSectionToBackBuffer(imageToDraw, _subImages[subImageId].rect, _rect);
 	}
@@ -448,7 +452,7 @@ void MystAreaImageSwitch::drawConditionalDataToScreen(uint16 state, bool update)
 
 		// This special case means redraw background
 		if (imageToDraw == 0xFFFF)
-			imageToDraw = _vm->getCardBackgroundId();
+			imageToDraw = _vm->getCard()->getBackgroundImageId();
 
 		// Draw to screen
 		if (update) {
@@ -542,7 +546,7 @@ void MystAreaSlider::restoreBackground() {
 	Common::Rect dest = boundingBox();
 	src.top = 332 - dest.bottom;
 	src.bottom = 332 - dest.top;
-	_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), src, dest);
+	_vm->_gfx->copyImageSectionToScreen(_vm->getCard()->getBackgroundImageId(), src, dest);
 }
 
 void MystAreaSlider::handleMouseDown() {
@@ -582,7 +586,7 @@ void MystAreaSlider::handleMouseUp() {
 			value = _pos.x;
 	}
 
-	_vm->_scriptParser->setVarValue(_imageSwitchVar, value);
+	_vm->_stack->setVarValue(_imageSwitchVar, value);
 
 	MystAreaDrag::handleMouseUp();
 }
@@ -710,32 +714,32 @@ void MystAreaDrag::handleMouseDown() {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	setPositionClipping(mouse, _pos);
 
-	_vm->_scriptParser->setInvokingResource(this);
-	_vm->_scriptParser->runOpcode(_mouseDownOpcode, _imageSwitchVar);
+	_vm->_stack->setInvokingResource(this);
+	_vm->_stack->runOpcode(_mouseDownOpcode, _imageSwitchVar);
 }
 
 void MystAreaDrag::handleMouseUp() {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	setPositionClipping(mouse, _pos);
 
-	_vm->_scriptParser->setInvokingResource(this);
-	_vm->_scriptParser->runOpcode(_mouseUpOpcode, _imageSwitchVar);
+	_vm->_stack->setInvokingResource(this);
+	_vm->_stack->runOpcode(_mouseUpOpcode, _imageSwitchVar);
 }
 
 void MystAreaDrag::handleMouseDrag() {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	setPositionClipping(mouse, _pos);
 
-	_vm->_scriptParser->setInvokingResource(this);
-	_vm->_scriptParser->runOpcode(_mouseDragOpcode, _imageSwitchVar);
+	_vm->_stack->setInvokingResource(this);
+	_vm->_stack->runOpcode(_mouseDragOpcode, _imageSwitchVar);
 }
 
 const Common::String MystAreaDrag::describe() {
 	return Common::String::format("%s down: %s drag: %s up: %s",
 			MystAreaImageSwitch::describe().c_str(),
-			_vm->_scriptParser->getOpcodeDesc(_mouseDownOpcode).c_str(),
-			_vm->_scriptParser->getOpcodeDesc(_mouseDragOpcode).c_str(),
-			_vm->_scriptParser->getOpcodeDesc(_mouseUpOpcode).c_str());
+			_vm->_stack->getOpcodeDesc(_mouseDownOpcode).c_str(),
+			_vm->_stack->getOpcodeDesc(_mouseDragOpcode).c_str(),
+			_vm->_stack->getOpcodeDesc(_mouseUpOpcode).c_str());
 }
 
 void MystAreaDrag::setPositionClipping(const Common::Point &mouse, Common::Point &dest) {
@@ -832,13 +836,13 @@ MystAreaHover::MystAreaHover(MohawkEngine_Myst *vm, ResourceType type, Common::S
 void MystAreaHover::handleMouseEnter() {
 	// Pass along the enter opcode to the script parser
 	// The variable to use is stored in the dest field
-	_vm->_scriptParser->runOpcode(_enterOpcode, _dest);
+	_vm->_stack->runOpcode(_enterOpcode, _dest);
 }
 
 void MystAreaHover::handleMouseLeave() {
 	// Pass along the leave opcode (with no parameters) to the script parser
 	// The variable to use is stored in the dest field
-	_vm->_scriptParser->runOpcode(_leaveOpcode, _dest);
+	_vm->_stack->runOpcode(_leaveOpcode, _dest);
 }
 
 void MystAreaHover::handleMouseUp() {
@@ -850,8 +854,8 @@ void MystAreaHover::handleMouseUp() {
 const Common::String MystAreaHover::describe() {
 	return Common::String::format("%s enter: %s leave: %s",
 			MystArea::describe().c_str(),
-			_vm->_scriptParser->getOpcodeDesc(_enterOpcode).c_str(),
-			_vm->_scriptParser->getOpcodeDesc(_leaveOpcode).c_str());
+			_vm->_stack->getOpcodeDesc(_enterOpcode).c_str(),
+			_vm->_stack->getOpcodeDesc(_leaveOpcode).c_str());
 }
 
 } // End of namespace Mohawk

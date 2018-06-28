@@ -57,6 +57,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 
 	_viewSceneObjects = false;
 	_viewActorsOnly = false;
+	_viewObstacles = false;
 	_viewUI = false;
 	_viewZBuffer = false;
 
@@ -107,8 +108,8 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 
 bool Debugger::cmdDraw(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Enables debug rendering of scene objects, ui elements, zbuffer or disables debug rendering.\n");
-		debugPrintf("Usage: %s (obj | actors | ui | zbuf | reset)\n", argv[0]);
+		debugPrintf("Enables debug rendering of scene objects, obstacles, ui elements, zbuffer or disables debug rendering.\n");
+		debugPrintf("Usage: %s (obj | actors | obstacles | ui | zbuf | reset)\n", argv[0]);
 		return true;
 	}
 
@@ -120,6 +121,9 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		_viewSceneObjects = !_viewSceneObjects;
 		_viewActorsOnly = _viewSceneObjects;
 		debugPrintf("Drawing scene actors = %i\n", _viewSceneObjects);
+	} else if (arg == "obstacles") {
+		_viewObstacles = !_viewObstacles;
+		debugPrintf("Drawing obstacles = %i\n", _viewObstacles);
 	} else if (arg == "ui") {
 		_viewUI = !_viewUI;
 		debugPrintf("Drawing UI elements = %i\n", _viewUI);

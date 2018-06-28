@@ -24,7 +24,6 @@
 #include "xeen/xeen.h"
 #include "xeen/worldofxeen/darkside_cutscenes.h"
 #include "xeen/worldofxeen/worldofxeen.h"
-#include "xeen/worldofxeen/worldofxeen_resources.h"
 
 #define WAIT(TIME) if (_subtitles.wait(TIME)) return false
 
@@ -75,6 +74,7 @@ bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 	g_vm->_files->_ccNum = true;
+	_subtitles.reset();
 
 	screen.loadPalette("dark.pal");
 	SpriteResource nwc[4] = {
@@ -105,7 +105,7 @@ bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 		// Render the next frame
 		screen.vertMerge(0);
 		nwc[nwcIndex].draw(0, nwcFrame);
-	
+
 		switch (idx) {
 		case 17:
 			sound.playSound(voc[0]);
@@ -129,7 +129,7 @@ bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 	for (int idx = 0; idx < 42 && !g_vm->shouldExit(); ++idx) {
 		screen.vertMerge(SCREEN_HEIGHT);
 		nwc[3].draw(0, idx);
-	
+
 		switch (idx) {
 		case 3:
 			sound.playFX(40);
@@ -170,6 +170,7 @@ bool DarkSideCutscenes::showDarkSideIntro(bool seenIntro) {
 
 	files._ccNum = true;
 	files.setGameCc(1);
+	_subtitles.reset();
 
 	if (showDarkSideTitle(seenIntro)) {
 		if (seenIntro) {
@@ -809,7 +810,7 @@ bool DarkSideCutscenes::showWorldOfXeenLogo() {
 		for (int idx = 0; idx < 21; ++idx) {
 			screen.restoreBackground();
 			wfire[6].draw(0, idx, Common::Point(0, 45));
-			
+
 			switch (idx) {
 			case 0:
 			case 11:
@@ -837,6 +838,7 @@ void DarkSideCutscenes::showDarkSideEnding(uint endingScore) {
 	Sound &sound = *g_vm->_sound;
 
 	files.setGameCc(1);
+	_subtitles.reset();
 	sound._musicSide = 1;
 	screen.fadeOut();
 
@@ -1285,7 +1287,7 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 	screen.horizMerge(0);
 	sc16.draw(0, 0, Common::Point(7, 29));
 	_subtitles.show();
-	sound.playSound("fail1.voc");
+	sound.playVoice("fail1.voc", 2);
 
 	for (int idx = 0; idx < 5; ++idx) {
 		screen.horizMerge(0);
@@ -1689,21 +1691,25 @@ void DarkSideCutscenes::showDarkSideScore(uint endingScore) {
 
 	sound.stopAllAudio();
 
-	if (g_vm->shouldExit()) {
+	if (!g_vm->shouldExit()) {
 		sound.playSong("outday3.m");
 
 		Common::String str = Common::String::format(Res.DARKSIDE_ENDING1, endingScore);
 		showPharaohEndText(str.c_str(), Res.DARKSIDE_ENDING2);
 
+		g_vm->_mode = MODE_INTERACTIVE;
 		if (!g_vm->shouldExit())
 			saves.saveGame();
 	}
 }
 
 bool DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, const char *msg3) {
+	Windows &windows = *g_vm->_windows;
 	_ball.load("ball.int");
 	_claw.load("claw.int");
 	_dragon1.load("dragon1.int");
+
+	windows[39].setBounds(Common::Rect(12, 8, 162, 198));
 	bool result = showPharaohEndTextInner(msg1, msg2, msg3);
 
 	_ball.clear();

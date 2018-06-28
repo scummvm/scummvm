@@ -240,7 +240,7 @@ public:
 	int CLOUDS_GUILD_SPELLS[5][20];
 	int DARK_SPELL_OFFSETS[3][39];
 	int DARK_SPELL_RANGES[12][2];
-	int SPELL_LEVEL_OFFSETS[3][39];
+	int SWORDS_SPELL_RANGES[12][2];
 	int SPELL_GEM_COST[77];
 	const char *NOT_A_SPELL_CASTER;
 	const char *SPELLS_LEARNED_ALL;
@@ -370,6 +370,7 @@ public:
 	const char *QUESTS_DIALOG_TEXT;
 	const char *CLOUDS_OF_XEEN_LINE;
 	const char *DARKSIDE_OF_XEEN_LINE;
+	const char *SWORDS_OF_XEEN_LINE;
 	const char *NO_QUEST_ITEMS;
 	const char *NO_CURRENT_QUESTS;
 	const char *NO_AUTO_NOTES;
@@ -394,6 +395,7 @@ public:
 	const char *SELECT_CLASS_BEFORE_SAVING;
 	const char *EXCHANGE_ATTR_WITH;
 	int NEW_CHAR_SKILLS[10];
+	int NEW_CHAR_SKILLS_OFFSET[10];
 	int NEW_CHAR_SKILLS_LEN[10];
 	int NEW_CHAR_RACE_SKILLS[10];
 	int RACE_MAGIC_RESISTENCES[5];
@@ -419,7 +421,8 @@ public:
 	const char *LLOYDS_BEACON;
 	const char *HOW_MANY_SQUARES;
 	const char *TOWN_PORTAL;
-	int TOWN_MAP_NUMBERS[2][5];
+	const char *TOWN_PORTAL_SWORDS;
+	int TOWN_MAP_NUMBERS[3][5];
 	const char *MONSTER_DETAILS;
 	const char *MONSTER_SPECIAL_ATTACKS[23];
 	const char *IDENTIFY_MONSTERS;
@@ -454,6 +457,11 @@ public:
 	const char *MUSIC_FILES2[6][7];
 	const char *DIFFICULTY_TEXT;
 	const char *SAVE_OFF_LIMITS;
+	const char *CLOUDS_INTRO1;
+	const char *DARKSIDE_ENDING1;
+	const char *DARKSIDE_ENDING2;
+	const char *PHAROAH_ENDING_TEXT1;
+	const char *PHAROAH_ENDING_TEXT2;
 public:
 	/**
 	 * Constructor

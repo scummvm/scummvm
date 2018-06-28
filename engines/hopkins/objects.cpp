@@ -2761,9 +2761,9 @@ void ObjectsManager::handleSpecialGames() {
 			break;
 
 		_vm->_globals->_disableInventFl = true;
-		do
+		do {
 			_vm->_events->refreshScreenAndEvents();
-		while (getBobAnimDataIdx(8) != 3);
+		} while (getBobAnimDataIdx(8) != 3);
 		_vm->_globals->_introSpeechOffFl = true;
 		_vm->_talkMan->startAnimatedCharacterDialogue("GM3.PE2");
 		stopBobAnimation(8);

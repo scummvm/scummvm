@@ -39,12 +39,12 @@ class ScreenEffects {
 public:
 	struct Entry {
 		Color256 palette[16];
-		uint16   x;
-		uint16   y;
-		uint16   width;
-		uint16   height;
-		uint16   z;
-		uint8   *data;
+		uint16  x;
+		uint16  y;
+		uint16  width;
+		uint16  height;
+		uint16  z;
+		uint8  *data;
 	};
 
 	BladeRunnerEngine *_vm;
@@ -58,7 +58,7 @@ public:
 	~ScreenEffects();
 
 	void readVqa(Common::SeekableReadStream *stream);
-	void getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z) const ;
+	void getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z) const;
 
 	//TODO
 	//bool isAffectingArea(int x, int y, int width, int height, int unk);

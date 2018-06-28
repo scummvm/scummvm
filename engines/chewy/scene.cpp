@@ -138,7 +138,7 @@ void Scene::change(uint scene) {
 	_curScene = scene;
 	_vm->_cursor->setCursor(0);
 	_vm->_cursor->showCursor();
-	
+
 	loadSceneInfo();
 	draw();
 }
@@ -320,14 +320,14 @@ void Scene::loadSceneInfo() {
 	_sceneInfo->roomInfo.picNum = indexFile.readByte();
 	_sceneInfo->roomInfo.autoMoveCount = indexFile.readByte();
 	_sceneInfo->roomInfo.loadTaf = indexFile.readByte();
-	
+
 	_sceneInfo->roomInfo.tafName = "";
 	for (int i = 0; i < 14; i++)
 		_sceneInfo->roomInfo.tafName += indexFile.readByte();
 
 	_sceneInfo->roomInfo.zoomFactor = indexFile.readByte();
 	indexFile.readByte();	// padding
-	
+
 	for (int i = 0; i < MAX_AUTOMOVE; i++) {
 		_sceneInfo->autoMove[i].x = indexFile.readSint16LE();
 		_sceneInfo->autoMove[i].y = indexFile.readSint16LE();

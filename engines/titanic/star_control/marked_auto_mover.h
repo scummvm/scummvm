@@ -46,7 +46,7 @@ public:
 
 	/**
 	 * Applys speeds to the mover. More than one application is usually done for several transitions
-	 */		
+	 */
 	virtual MoverState move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
 };
 

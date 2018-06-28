@@ -120,9 +120,9 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	if (_vm->_globals->_introSpeechOffFl) {
 		int idx = 1;
 		int answer;
-		do
+		do {
 			answer = dialogAnswer(idx++, false);
-		while (answer != -1);
+		} while (answer != -1);
 	}
 	clearCharacterAnim();
 	_vm->_globals->_introSpeechOffFl = false;
@@ -208,9 +208,9 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	if (_vm->_globals->_introSpeechOffFl) {
 		int idx = 1;
 		int answer;
-		do
+		do {
 			answer = dialogAnswer(idx++, true);
-		while (answer != -1);
+		} while (answer != -1);
 	}
 
 	_characterBuffer = _vm->_globals->freeMemory(_characterBuffer);
@@ -879,9 +879,9 @@ void TalkManager::handleForestAnswser(int zone, int verb) {
 		_vm->_objectsMan->setBobAnimation(6);
 		_vm->_soundMan->playSample(1);
 		_vm->_objectsMan->showSpecialActionAnimation(_vm->_objectsMan->_forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
-		do
+		do {
 			_vm->_events->refreshScreenAndEvents();
-		while (_vm->_objectsMan->getBobAnimDataIdx(6) < 12);
+		} while (_vm->_objectsMan->getBobAnimDataIdx(6) < 12);
 		_vm->_objectsMan->stopBobAnimation(6);
 		_vm->_objectsMan->setBobAnimation(8);
 
@@ -927,9 +927,9 @@ void TalkManager::handleForestAnswser(int zone, int verb) {
 		_vm->_objectsMan->setBobAnimation(5);
 		_vm->_soundMan->playSample(1);
 		_vm->_objectsMan->showSpecialActionAnimation(_vm->_objectsMan->_forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
-		do
+		do {
 			_vm->_events->refreshScreenAndEvents();
-		while (_vm->_objectsMan->getBobAnimDataIdx(5) < 12);
+		} while (_vm->_objectsMan->getBobAnimDataIdx(5) < 12);
 		_vm->_objectsMan->stopBobAnimation(5);
 		_vm->_objectsMan->setBobAnimation(7);
 		switch (_vm->_globals->_screenId) {

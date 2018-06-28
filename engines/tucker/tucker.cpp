@@ -1979,7 +1979,12 @@ void TuckerEngine::redrawPanelItems() {
 			sz = 19200;
 			break;
 		case kPanelTypeLoadSavePlayQuit:
-			src = _panelGfxBuf + 16320;
+			// The following offset does not match disassembly on purpose to fix a
+			// "glitch" in the original game.
+			// This ensures that the background image ends up in the same place as
+			// in the case of kPanelTypeLoadSaveSavegame.
+			// This fixes Trac#10496.
+			src = _panelGfxBuf + 16000;
 			dst = _itemsGfxBuf;
 			sz = 19200;
 			memcpy(dst, src, sz);

@@ -24,7 +24,6 @@
 #include "xeen/resources.h"
 #include "xeen/files.h"
 #include "xeen/xeen.h"
-#include "xeen/worldofxeen/worldofxeen_resources.h"
 
 namespace Xeen {
 
@@ -33,7 +32,7 @@ Resources *g_resources;
 Resources::Resources() {
 	g_resources = this;
 	g_vm->_files->setGameCc(1);
-	
+
 	_globalSprites.load("global.icn");
 	if (g_vm->getGameID() == GType_Swords)
 		_logoSprites.load("logo.int");
@@ -186,6 +185,7 @@ void Resources::loadData() {
 	file.syncNumbers2D((int *)CLOUDS_GUILD_SPELLS, 5, 20);
 	file.syncNumbers2D((int *)DARK_SPELL_OFFSETS, 3, 39);
 	file.syncNumbers2D((int *)DARK_SPELL_RANGES, 12, 2);
+	file.syncNumbers2D((int *)SWORDS_SPELL_RANGES, 12, 2);
 	file.syncNumbers((int *)SPELL_GEM_COST, 77);
 	file.syncString(NOT_A_SPELL_CASTER);
 	file.syncString(SPELLS_LEARNED_ALL);
@@ -315,6 +315,7 @@ void Resources::loadData() {
 	file.syncString(QUESTS_DIALOG_TEXT);
 	file.syncString(CLOUDS_OF_XEEN_LINE);
 	file.syncString(DARKSIDE_OF_XEEN_LINE);
+	file.syncString(SWORDS_OF_XEEN_LINE);
 	file.syncString(NO_QUEST_ITEMS);
 	file.syncString(NO_CURRENT_QUESTS);
 	file.syncString(NO_AUTO_NOTES);
@@ -339,6 +340,7 @@ void Resources::loadData() {
 	file.syncString(SELECT_CLASS_BEFORE_SAVING);
 	file.syncString(EXCHANGE_ATTR_WITH);
 	file.syncNumbers((int *)NEW_CHAR_SKILLS, 10);
+	file.syncNumbers((int *)NEW_CHAR_SKILLS_OFFSET, 10);
 	file.syncNumbers((int *)NEW_CHAR_SKILLS_LEN, 10);
 	file.syncNumbers((int *)NEW_CHAR_RACE_SKILLS, 10);
 	file.syncNumbers((int *)RACE_MAGIC_RESISTENCES, 5);
@@ -364,7 +366,8 @@ void Resources::loadData() {
 	file.syncString(LLOYDS_BEACON);
 	file.syncString(HOW_MANY_SQUARES);
 	file.syncString(TOWN_PORTAL);
-	file.syncNumbers2D((int *)TOWN_MAP_NUMBERS, 2, 5);
+	file.syncString(TOWN_PORTAL_SWORDS);
+	file.syncNumbers2D((int *)TOWN_MAP_NUMBERS, 3, 5);
 	file.syncString(MONSTER_DETAILS);
 	file.syncStrings(MONSTER_SPECIAL_ATTACKS, 23);
 	file.syncString(IDENTIFY_MONSTERS);
@@ -399,6 +402,11 @@ void Resources::loadData() {
 	file.syncStrings2D(&MUSIC_FILES2[0][0], 6, 7);
 	file.syncString(DIFFICULTY_TEXT);
 	file.syncString(SAVE_OFF_LIMITS);
+	file.syncString(CLOUDS_INTRO1);
+	file.syncString(DARKSIDE_ENDING1);
+	file.syncString(DARKSIDE_ENDING2);
+	file.syncString(PHAROAH_ENDING_TEXT1);
+	file.syncString(PHAROAH_ENDING_TEXT2);
 }
 
 } // End of namespace Xeen

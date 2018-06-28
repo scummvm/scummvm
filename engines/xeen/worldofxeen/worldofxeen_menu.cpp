@@ -41,7 +41,10 @@ void MainMenuContainer::show() {
 		menu = new DarkSideMainMenuContainer();
 		break;
 	case GType_WorldOfXeen:
-		menu = new WorldOfXeenMainMenuContainer();
+		if (g_vm->getIsCD())
+			menu = new WorldOfXeenCDMainMenuContainer();
+		else
+			menu = new WorldOfXeenMainMenuContainer();
 		break;
 	default:
 		error("Invalid game");
@@ -51,10 +54,20 @@ void MainMenuContainer::show() {
 	delete menu;
 }
 
-MainMenuContainer::MainMenuContainer(const Common::String &spritesName, uint frameCount) :
-		_frameCount(frameCount), _animateCtr(0), _dialog(nullptr) {
+MainMenuContainer::MainMenuContainer(const char *spritesName1, const char *spritesName2, const char *spritesName3) :
+		_animateCtr(0), _dialog(nullptr) {
 	g_vm->_files->setGameCc(g_vm->getGameID() == GType_Clouds ? 0 : 1);
-	_backgroundSprites.load(spritesName);
+
+	_backgroundSprites.resize(1 + (spritesName2 ? 1 : 0) + (spritesName3 ? 1 : 0));
+	_backgroundSprites[0].load(spritesName1);
+	if (spritesName2)
+		_backgroundSprites[1].load(spritesName2);
+	if (spritesName3)
+		_backgroundSprites[2].load(spritesName3);
+
+	_frameCount = 0;
+	for (uint idx = 0; idx < _backgroundSprites.size(); ++idx)
+		_frameCount += _backgroundSprites[idx].size();
 }
 
 MainMenuContainer::~MainMenuContainer() {
@@ -67,7 +80,17 @@ MainMenuContainer::~MainMenuContainer() {
 void MainMenuContainer::draw() {
 	g_vm->_screen->restoreBackground();
 	_animateCtr = (_animateCtr + 1) % _frameCount;
-	_backgroundSprites.draw(0, _animateCtr);
+
+	// Draw the next background frame
+	uint frameNum = _animateCtr;
+	for (uint idx = 0; idx < _backgroundSprites.size(); ++idx) {
+		if (frameNum < _backgroundSprites[idx].size()) {
+			_backgroundSprites[idx].draw(0, frameNum);
+			return;
+		} else {
+			frameNum -= _backgroundSprites[idx].size();
+		}
+	}
 }
 
 void MainMenuContainer::execute() {
@@ -97,7 +120,7 @@ void MainMenuContainer::execute() {
 
 		// Check for events
 		events.updateGameCounter();
-		
+
 		if (events.wait(4, true)) {
 			if (_dialog) {
 				// There's a dialog active, so let it handle the event
@@ -123,7 +146,7 @@ void MainMenuContainer::execute() {
 
 /*------------------------------------------------------------------------*/
 
-CloudsMainMenuContainer::CloudsMainMenuContainer() : MainMenuContainer("intro.vga", 9) {
+CloudsMainMenuContainer::CloudsMainMenuContainer() : MainMenuContainer("intro.vga") {
 }
 
 void CloudsMainMenuContainer::display() {
@@ -148,7 +171,7 @@ void CloudsMainMenuContainer::showMenuDialog() {
 
 /*------------------------------------------------------------------------*/
 
-DarkSideMainMenuContainer::DarkSideMainMenuContainer() : MainMenuContainer("title2a.int", 10) {
+DarkSideMainMenuContainer::DarkSideMainMenuContainer() : MainMenuContainer("title2a.int") {
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 	screen.loadPalette("dark.pal");
@@ -184,7 +207,7 @@ void DarkSideMainMenuContainer::showMenuDialog() {
 
 /*------------------------------------------------------------------------*/
 
-WorldOfXeenMainMenuContainer::WorldOfXeenMainMenuContainer() : MainMenuContainer("world.int", 5) {
+WorldOfXeenMainMenuContainer::WorldOfXeenMainMenuContainer() : MainMenuContainer("world.int") {
 }
 
 void WorldOfXeenMainMenuContainer::display() {
@@ -209,7 +232,33 @@ void WorldOfXeenMainMenuContainer::showMenuDialog() {
 
 /*------------------------------------------------------------------------*/
 
+WorldOfXeenCDMainMenuContainer::WorldOfXeenCDMainMenuContainer() : MainMenuContainer("world0.int", "world1.int", "world2.int") {
+}
+
+void WorldOfXeenCDMainMenuContainer::display() {
+	FileManager &files = *g_vm->_files;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+
+	sound._musicSide = 1;
+	files.setGameCc(1);
+
+	screen.loadPalette("dark.pal");
+	screen.loadBackground("world.raw");
+	screen.saveBackground();
+
+	if (!sound.isMusicPlaying())
+		sound.playSong("newbrigh.m");
+}
+
+void WorldOfXeenCDMainMenuContainer::showMenuDialog() {
+	setOwner(new WorldMenuDialog(this));
+}
+
+/*------------------------------------------------------------------------*/
+
 bool MainMenuDialog::handleEvents() {
+	FileManager &files = *g_vm->_files;
 	checkEvents(g_vm);
 	int difficulty;
 
@@ -226,14 +275,18 @@ bool MainMenuDialog::handleEvents() {
 		g_vm->_gameMode = GMODE_PLAY_GAME;
 		break;
 
-	case Common::KEYCODE_l:
+	case Common::KEYCODE_l: {
 		// Load existing game
+		int ccNum = files._ccNum;
 		g_vm->_saves->newGame();
-		if (!g_vm->_saves->loadGame())
+		if (!g_vm->_saves->loadGame()) {
+			files.setGameCc(ccNum);
 			return true;
+		}
 
 		g_vm->_gameMode = GMODE_PLAY_GAME;
 		break;
+	}
 
 	case Common::KEYCODE_c:
 	case Common::KEYCODE_v:
@@ -284,7 +337,7 @@ void CloudsMenuDialog::loadButtons() {
 void CloudsMenuDialog::draw() {
 	Windows &windows = *g_vm->_windows;
 	Window &w = windows[GAME_WINDOW];
-	
+
 	w.frame();
 	w.writeString(Common::String::format(Res.OPTIONS_MENU, Res.GAME_NAMES[0], g_vm->_gameWon[0] ? 117 : 92, 1992));
 	drawButtons(&w);
@@ -531,7 +584,7 @@ void OtherOptionsDialog::draw() {
 
 	w.frame();
 	w.writeString(Common::String::format(Res.OPTIONS_MENU,
-		Res.GAME_NAMES[g_vm->getGameID() == GType_WorldOfXeen ? 2 : 1], 
+		Res.GAME_NAMES[g_vm->getGameID() == GType_WorldOfXeen ? 2 : 1],
 		w.getBounds().height() - 33, 1993));
 	drawButtons(&w);
 }

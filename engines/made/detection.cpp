@@ -535,7 +535,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 
 };
 
@@ -557,7 +557,7 @@ bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	return gd != 0;
 }
 
-const ADGameDescription *MadeMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame MadeMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	Made::g_fallbackDesc.desc.language = Common::UNK_LANG;
 	Made::g_fallbackDesc.desc.platform = Common::kPlatformDOS;
@@ -569,7 +569,7 @@ const ADGameDescription *MadeMetaEngine::fallbackDetect(const FileMap &allFiles,
 	Made::g_fallbackDesc.version = 3;
 
 	//return (const ADGameDescription *)&Made::g_fallbackDesc;
-	return NULL;
+	return ADDetectedGame();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADE)

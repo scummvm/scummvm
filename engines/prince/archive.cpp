@@ -55,8 +55,8 @@ bool PtcArchive::open(const Common::String &filename) {
 	uint32 fileTableOffset = _stream->readUint32LE() ^ 0x4D4F4B2D; // MOK-
 	uint32 fileTableSize = _stream->readUint32LE() ^ 0x534F4654; // SOFT
 
-	//debug("fileTableOffset : %08X", fileTableOffset);
-	//debug("fileTableSize: %08X", fileTableSize);
+	debug(8, "fileTableOffset : %08X", fileTableOffset);
+	debug(8, "fileTableSize: %08X", fileTableSize);
 
 	_stream->seek(fileTableOffset);
 
@@ -70,7 +70,7 @@ bool PtcArchive::open(const Common::String &filename) {
 		Common::String name = (const char*)fileItem;
 		item._offset = READ_LE_UINT32(fileItem + 24);
 		item._size = READ_LE_UINT32(fileItem + 28);
-		//debug("%12s %8X %d", name.c_str(), item._offset, item._size);
+		debug(8, "%12s %8X %d", name.c_str(), item._offset, item._size);
 		_items[name] = item;
 	}
 
@@ -135,6 +135,8 @@ Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::
 		return 0;
 	}
 
+	debug(8, "PtcArchive::createReadStreamForMember(%s)", name.c_str());
+
 	const FileEntry &entryHeader = _items[name];
 
 	if (entryHeader._size < 4)
@@ -156,9 +158,9 @@ Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::
 		free(buffer);
 		size = decompLen;
 		buffer = decompData;
-	}
 
-	//debug("PtcArchive::createReadStreamForMember name %s", name.c_str());
+		debug(8, "PtcArchive::createReadStreamForMember: decompressed %d to %d bytes", entryHeader._size, decompLen);
+	}
 
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }

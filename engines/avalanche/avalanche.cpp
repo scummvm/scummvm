@@ -57,7 +57,6 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_help = nullptr;
 	_highscore = nullptr;
 
-	_platform = gd->desc.platform;
 	initVariables();
 }
 
@@ -177,10 +176,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 
 GUI::Debugger *AvalancheEngine::getDebugger() {
 	return _console;
-}
-
-Common::Platform AvalancheEngine::getPlatform() const {
-	return _platform;
 }
 
 bool AvalancheEngine::hasFeature(EngineFeature f) const {

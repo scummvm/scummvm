@@ -31,8 +31,8 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Intro::Intro(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm),
+Intro::Intro(MohawkEngine_Myst *vm, MystStack stackId) :
+		MystScriptParser(vm, stackId),
 		_introMoviesRunning(false),
 		_introStep(0),
 		_linkBookRunning(false),
@@ -71,7 +71,7 @@ void Intro::runPersistentScripts() {
 uint16 Intro::getVar(uint16 var) {
 	switch(var) {
 	case 0:
-		if (_globals.currentAge == 9 || _globals.currentAge == 10)
+		if (_globals.currentAge == kSirrusEnding || _globals.currentAge == kAchenarEnding)
 			return 2;
 		else
 			return _globals.currentAge;

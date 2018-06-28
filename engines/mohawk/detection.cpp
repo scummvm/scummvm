@@ -116,19 +116,12 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"myst", "Myst"},
 	{"makingofmyst", "The Making of Myst"},
 	{"riven", "Riven: The Sequel to Myst"},
-	{"zoombini", "Logical Journey of the Zoombinis"},
 	{"cstime", "Where in Time is Carmen Sandiego?"},
-	{"csworld", "Where in the World is Carmen Sandiego?"},
-	{"csamtrak", "Where in America is Carmen Sandiego? (The Great Amtrak Train Adventure)"},
 	{"carmentq", "Carmen Sandiego's ThinkQuick Challenge"},
 	{"carmentqc", "Carmen Sandiego's ThinkQuick Challenge Custom Question Creator"},
 	{"maggiesfa", "Maggie's Farmyard Adventure"},
-	{"jamesmath", "James Discovers/Explores Math"},
-	{"treehouse", "The Treehouse"},
 	{"greeneggs", "Green Eggs and Ham"},
 	{"seussabc", "Dr Seuss's ABC"},
-	{"1stdegree", "In the 1st Degree"},
-	{"csusa", "Where in the USA is Carmen Sandiego?"},
 	{"tortoise", "Aesop's Fables: The Tortoise and the Hare"},
 	{"arthur", "Arthur's Teacher Trouble"},
 	{"grandma", "Just Grandma and Me"},
@@ -184,7 +177,7 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
 		return detectGameFilebased(allFiles, fslist, Mohawk::fileBased);
 	}
 
@@ -340,15 +333,6 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 			warning("CSTime support not compiled in");
 			return false;
 #endif
-		case Mohawk::GType_ZOOMBINI:
-		case Mohawk::GType_CSWORLD:
-		case Mohawk::GType_CSAMTRAK:
-		case Mohawk::GType_JAMESMATH:
-		case Mohawk::GType_TREEHOUSE:
-		case Mohawk::GType_1STDEGREE:
-		case Mohawk::GType_CSUSA:
-			warning("Unsupported Mohawk Engine");
-			return false;
 		default:
 			error("Unknown Mohawk Engine");
 		}

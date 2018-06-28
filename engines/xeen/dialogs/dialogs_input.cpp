@@ -84,7 +84,7 @@ Common::KeyState Input::waitForKey(const Common::String &msg) {
 	intf._tillMove = 0;
 
 	bool flag = !_vm->_startupWindowActive && !windows[25]._enabled
-		&& _vm->_mode != MODE_FF && _vm->_mode != MODE_17;
+		&& _vm->_mode != MODE_FF && _vm->_mode != MODE_INTERACTIVE7;
 
 	PendingEvent pe;
 	while (!_vm->shouldExit()) {
@@ -216,7 +216,7 @@ int NumericInput::execute(int maxLength, int maxWidth) {
 /*------------------------------------------------------------------------*/
 
 int Choose123::show(XeenEngine *vm, uint numOptions) {
-	assert(numOptions <= 3);
+	assert(numOptions <= 9);
 	Choose123 *dlg = new Choose123(vm);
 	int result = dlg->execute(numOptions);
 	delete dlg;
@@ -262,7 +262,7 @@ int Choose123::execute(uint numOptions) {
 			result = 0;
 		} else if (_buttonValue >= Common::KEYCODE_1 && _buttonValue < (Common::KEYCODE_1 + (int)numOptions)) {
 			_buttonValue -= Common::KEYCODE_0;
-			result = (_buttonValue == numOptions) ? 0 : _buttonValue;
+			result = (_buttonValue == (int)numOptions) ? 0 : _buttonValue;
 		}
 	}
 

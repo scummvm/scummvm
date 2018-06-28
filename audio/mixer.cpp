@@ -471,10 +471,7 @@ void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
 	assert(0 <= (int)type && (int)type < ARRAYSIZE(_soundTypeSettings));
 
 	// Check range
-	if (volume > kMaxMixerVolume)
-		volume = kMaxMixerVolume;
-	else if (volume < 0)
-		volume = 0;
+	volume = CLIP<int>(volume, 0, kMaxMixerVolume);
 
 	// TODO: Maybe we should do logarithmic (not linear) volume
 	// scaling? See also Player_V2::setMasterVolume

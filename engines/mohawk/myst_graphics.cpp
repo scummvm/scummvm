@@ -231,6 +231,15 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	MohawkSurface *mhkSurface = findImage(image);
 	Graphics::Surface *surface = mhkSurface->getSurface();
 
+	if (image == 2258 && _vm->getFeatures() & GF_ME) {
+		// In Myst ME, the image for the open red page brother door
+		// when the special lights are on does not have the correct width.
+		// We work around this issue by tweaking the destination rectangle
+		// so it renders at the correct position.
+		// The original executable does the same hack.
+		dest.left += 49;
+	}
+
 	// Make sure the image is bottom aligned in the dest rect
 	dest.top = dest.bottom - MIN<int>(surface->h, dest.height());
 

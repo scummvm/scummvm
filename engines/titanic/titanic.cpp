@@ -190,7 +190,7 @@ void TitanicEngine::setRoomNames() {
 bool TitanicEngine::canLoadGameStateCurrently() {
 	CGameManager *gameManager = _window->_gameManager;
 	CScreenManager *screenMan = CScreenManager::_screenManagerPtr;
-	
+
 	if (!gameManager)
 		// Allow loading from copyright screen and continue dialogs
 		return true;

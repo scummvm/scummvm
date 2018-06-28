@@ -25,6 +25,7 @@
 
 #include "xeen/xeen.h"
 #include "xeen/dialogs/dialogs.h"
+#include "common/array.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
@@ -35,7 +36,7 @@ class MainMenuContainer {
 private:
 	uint _animateCtr;
 	uint _frameCount;
-	SpriteResource _backgroundSprites;
+	Common::Array<SpriteResource> _backgroundSprites;
 	MenuContainerDialog *_dialog;
 protected:
 	/**
@@ -61,7 +62,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MainMenuContainer(const Common::String &spritesName, uint frameCount);
+	MainMenuContainer(const char *spritesName1, const char *spritesName2 = nullptr, const char *spritesName3 = nullptr);
 
 	/**
 	 * Destructor
@@ -126,6 +127,21 @@ protected:
 	virtual void showMenuDialog();
 public:
 	WorldOfXeenMainMenuContainer();
+};
+
+class WorldOfXeenCDMainMenuContainer : public MainMenuContainer {
+protected:
+	/**
+	 * Called when the menu screen is first shown
+	 */
+	virtual void display();
+
+	/**
+	* Shows the main menu dialog
+	*/
+	virtual void showMenuDialog();
+public:
+	WorldOfXeenCDMainMenuContainer();
 };
 
 class MenuContainerDialog : public ButtonContainer {

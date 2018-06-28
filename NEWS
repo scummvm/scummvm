@@ -24,6 +24,20 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented lipsync for v6 and v7+ games.
    - Improved Audio quality in Humongous Entertainment games by using the Miles AdLib driver.
    - Fixed possible stack overflows in The Dig and Full Throttle.
+   - Fixed original speech glitch on submarine in Indiana Jones and the Fate of Atlantis.
+     Users need to recompress their monster.sou using an up-to-date version of scummvm-tools
+     for this to take effect when using compressed audio.
+   - Fixed an issue in the wig maker room in the German version of SPY Fox 3: Operation Ozone
+     which makes the game completable.
+
+ Tinsel:
+   - Fix loading Discworld 1 savegames from the launcher where Rincewind had a held item
+   - Script patch for hang in Discworld 1 GRA using items on Temple big hammer
+   - In Discworld 1, Held items being released that were never in the Luggage or Rincewind's inventory
+     will now be automatically dropped into the Luggage rather than being lost
+
+ Titanic:
+    - Fixed bug in entering floor numbers numerically that could crash the game
 
  Tucker:
    - Fixed multiple graphic issues in Bud Tucker in Double Trouble.
@@ -601,16 +615,16 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added FluidSynth settings dialog, mainly for reverb and chorus settings.
    - Fixed crash on certain Smacker movies.
 
-  Cine:
+ Cine:
    - Improved audio support for Amiga and AtariST versions of Future Wars.
      Now music fades out slowly instead of stopping immediately. Sound
      effects are now properly panned, when requested by the game.
 
-  CGE:
+ CGE:
    - Soltys contains a puzzle requiring the ALT key to be pressed while clicking
      on an object. This puzzle has been disabled on devices not using this key.
 
-  Drascula:
+ Drascula:
    - Resolved multiple UI issues with the original save/load screen.
    - Added advanced savegame functionality, including savegame timestamps and
      thumbnails and the ability to load and delete savegames from the launcher.
@@ -620,7 +634,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      save screen, if the user has selected to use the ScummVM save/load
      dialogs.
 
-  Dreamweb:
+ Dreamweb:
    - Now that the game is freeware, there is a small extra help text showing
      the available commands in the in-game terminals when the player uses the
      'help' command. Previously, players needed to consult the manual for the
@@ -628,18 +642,18 @@ For a more comprehensive changelog of the latest experimental code, see:
      protection, this extra line can be toggled by the ScummVM copy protection
      command line option.
 
-  Groovie:
+ Groovie:
    - Simplified the movie speed options, and added a custom option for The 7th
      Guest. Movie options are now "normal" and "fast", with the latter changing
      the movie speed in T7G to match the faster movie speed of the iOS version.
      The game entry might need to be readded in the launcher for the new setting
      to appear.
 
-  SAGA:
+ SAGA:
    - Added music support for the Macintosh version of I Have No Mouth and, I
      Must Scream.
 
-  SCUMM:
+ SCUMM:
    - Implemented Monkey Island 2 Macintosh's audio driver. Now we properly
      support its sample based audio output. The same output is also used for
      the m68k Macintosh version of Indiana Jones and the Fate of Atlantis.
@@ -983,7 +997,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed 16bit mouse cursors on HE games.
 
 1.2.1 (2010-12-19)
- General
+ General:
    - Added Hungarian translation.
    - Added Brazilian Portuguese translation.
 

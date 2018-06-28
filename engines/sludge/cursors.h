@@ -53,7 +53,7 @@ public:
 private:
 	SludgeEngine *_vm;
 
-	PersonaAnimation  *_mouseCursorAnim;
+	PersonaAnimation *_mouseCursorAnim;
 	int _mouseCursorFrameNum;
 	int _mouseCursorCountUp;
 };

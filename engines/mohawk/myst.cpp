@@ -26,9 +26,12 @@
 #include "common/translation.h"
 #include "common/textconsole.h"
 
+#include "gui/saveload.h"
+
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/myst_sound.h"
@@ -70,34 +73,20 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_currentCursor = 0;
 	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
-	_curStack = 0;
-	_curCard = 0;
-
-	_hoverResource = nullptr;
-	_activeResource = nullptr;
-	_clickedResource = nullptr;
+	_lastSaveTime = 0;
 
 	_sound = nullptr;
 	_video = nullptr;
 	_gfx = nullptr;
 	_console = nullptr;
-	_scriptParser = nullptr;
 	_gameState = nullptr;
 	_optionsDialog = nullptr;
 	_rnd = nullptr;
 
-	_prevStack = nullptr;
-
 	_mouseClicked = false;
 	_mouseMoved = false;
 	_escapePressed = false;
-	_interactive = true;
-	_runExitScript = true;
-
-	_needsPageDrop = false;
-	_needsShowCredits = false;
-	_needsShowDemoMenu = false;
-	_needsShowMap = false;
+	_waitingOnBlockingOperation = false;
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
@@ -107,14 +96,9 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete _video;
 	delete _sound;
 	delete _console;
-	delete _scriptParser;
 	delete _gameState;
 	delete _optionsDialog;
-	delete _prevStack;
 	delete _rnd;
-
-	for (uint32 i = 0; i < _resources.size(); i++)
-		delete _resources[i];
 }
 
 // Uses cached data objects in preference to disk access
@@ -132,7 +116,6 @@ Common::SeekableReadStream *MohawkEngine_Myst::getResource(uint32 tag, uint16 id
 		}
 
 	error("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
-	return nullptr;
 }
 
 Common::Array<uint16> MohawkEngine_Myst::getResourceIDList(uint32 type) const {
@@ -262,7 +245,9 @@ void MohawkEngine_Myst::playMovieBlocking(const Common::String &name, MystStack 
 	waitUntilMovieEnds(video);
 }
 
-void MohawkEngine_Myst::playFlybyMovie(uint16 stack, uint16 card) {
+void MohawkEngine_Myst::playFlybyMovie(MystStack stack, uint16 card) {
+	static const uint16 kMasterpieceOnly = 0xFFFF;
+
 	// Play Flyby Entry Movie on Masterpiece Edition.
 	const char *flyby = nullptr;
 
@@ -310,7 +295,7 @@ void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
 	if (!video)
 		return;
 
-	_interactive = false;
+	_waitingOnBlockingOperation = true;
 
 	// Sanity check
 	if (video->isLooping())
@@ -328,21 +313,25 @@ void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
 
 	// Ensure it's removed
 	_video->removeEntry(video);
-	_interactive = true;
+	_waitingOnBlockingOperation = false;
 }
 
 void MohawkEngine_Myst::playSoundBlocking(uint16 id) {
-	_interactive = false;
+	_waitingOnBlockingOperation = true;
 	_sound->playEffect(id);
 
 	while (_sound->isEffectPlaying() && !shouldQuit()) {
 		doFrame();
 	}
-	_interactive = true;
+	_waitingOnBlockingOperation = false;
 }
 
 Common::Error MohawkEngine_Myst::run() {
 	MohawkEngine::run();
+
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
 
 	_gfx = new MystGraphics(this);
 	_video = new VideoManager(this);
@@ -389,10 +378,14 @@ Common::Error MohawkEngine_Myst::run() {
 void MohawkEngine_Myst::doFrame() {
 	// Update any background videos
 	_video->updateMovies();
-	if (!_scriptParser->isScriptRunning() && _interactive) {
-		_interactive = false;
-		_scriptParser->runPersistentScripts();
-		_interactive = true;
+	if (isInteractive()) {
+		_waitingOnBlockingOperation = true;
+		_stack->runPersistentScripts();
+		_waitingOnBlockingOperation = false;
+	}
+
+	if (shouldPerformAutoSave(_lastSaveTime)) {
+		tryAutoSaving();
 	}
 
 	Common::Event event;
@@ -419,40 +412,24 @@ void MohawkEngine_Myst::doFrame() {
 						pauseGame();
 						break;
 					case Common::KEYCODE_F5:
-						_needsPageDrop = false;
-						_needsShowMap = false;
-						_needsShowDemoMenu = false;
-						_needsShowCredits = false;
-
-						runDialog(*_optionsDialog);
-						if (_optionsDialog->getLoadSlot() >= 0)
-							loadGameState(_optionsDialog->getLoadSlot());
-						if (_optionsDialog->getSaveSlot() >= 0)
-							saveGameState(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
-
-						if (_needsPageDrop) {
-							dropPage();
-							_needsPageDrop = false;
-						}
-
-						if (_needsShowMap) {
-							_scriptParser->showMap();
-							_needsShowMap = false;
-						}
-
-						if (_needsShowDemoMenu) {
-							changeToStack(kDemoStack, 2002, 0, 0);
-							_needsShowDemoMenu = false;
-						}
-
-						if (_needsShowCredits) {
-							_cursor->hideCursor();
-							changeToStack(kCreditsStack, 10000, 0, 0);
-							_needsShowCredits = false;
-						}
+						runOptionsDialog();
 						break;
 					case Common::KEYCODE_ESCAPE:
 						_escapePressed = true;
+						break;
+					case Common::KEYCODE_o:
+						if (event.kbd.flags & Common::KBD_CTRL) {
+							if (canLoadGameStateCurrently()) {
+								runLoadDialog();
+							}
+						}
+						break;
+					case Common::KEYCODE_s:
+						if (event.kbd.flags & Common::KBD_CTRL) {
+							if (canSaveGameStateCurrently()) {
+								runSaveDialog();
+							}
+						}
 						break;
 					default:
 						break;
@@ -467,14 +444,27 @@ void MohawkEngine_Myst::doFrame() {
 						break;
 				}
 				break;
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RTL:
+				// Attempt to autosave before exiting
+				tryAutoSaving();
+				break;
 			default:
 				break;
 		}
 	}
 
-	if (!_scriptParser->isScriptRunning() && _interactive) {
-		updateActiveResource();
-		checkCurrentResource();
+	if (isInteractive()) {
+		Common::Point mousePos = _system->getEventManager()->getMousePos();
+
+		// Keep a reference to the card so it is not freed if a script switches to another card
+		MystCardPtr card = _card;
+		card->updateActiveResource(mousePos);
+		card->updateResourcesForInput(mousePos, _mouseClicked, _mouseMoved);
+
+		refreshCursor();
+
+		_mouseMoved = false;
 	}
 
 	_system->updateScreen();
@@ -483,8 +473,43 @@ void MohawkEngine_Myst::doFrame() {
 	_system->delayMillis(10);
 }
 
+void MohawkEngine_Myst::runOptionsDialog() {
+	_optionsDialog->setCanDropPage(isInteractive() && _gameState->_globals.heldPage != kNoPage);
+	_optionsDialog->setCanShowMap(isInteractive() && _stack->getMap());
+	_optionsDialog->setCanReturnToMenu(isInteractive() && _stack->getStackId() != kDemoStack);
+
+	switch (runDialog(*_optionsDialog)) {
+	case MystOptionsDialog::kActionDropPage:
+		dropPage();
+		break;
+	case MystOptionsDialog::kActionShowMap:
+		_stack->showMap();
+		break;
+	case MystOptionsDialog::kActionGoToMenu:
+		changeToStack(kDemoStack, 2002, 0, 0);
+		break;
+	case MystOptionsDialog::kActionShowCredits:
+		if (isInteractive() && getGameType() != GType_MAKINGOF) {
+			_cursor->hideCursor();
+			changeToStack(kCreditsStack, 10000, 0, 0);
+		} else {
+			// Showing the credits in the middle of a script is not possible
+			// because it unloads the previous age, removing data needed by the
+			// rest of the script. Instead we just quit without showing the credits.
+			quitGame();
+		}
+		break;
+	default:
+		if (_optionsDialog->getLoadSlot() >= 0)
+			loadGameState(_optionsDialog->getLoadSlot());
+		if (_optionsDialog->getSaveSlot() >= 0)
+			saveGameState(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
+		break;
+	}
+}
+
 bool MohawkEngine_Myst::wait(uint32 duration, bool skippable) {
-	_interactive = false;
+	_waitingOnBlockingOperation = true;
 	uint32 end = getTotalPlayTime() + duration;
 
 	do {
@@ -496,7 +521,7 @@ bool MohawkEngine_Myst::wait(uint32 duration, bool skippable) {
 		}
 	} while (getTotalPlayTime() < end && !shouldQuit());
 
-	_interactive = true;
+	_waitingOnBlockingOperation = false;
 	return false;
 }
 
@@ -513,8 +538,8 @@ void MohawkEngine_Myst::pauseEngineIntern(bool pause) {
 	}
 }
 
-void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound) {
-	debug(2, "changeToStack(%d)", stack);
+void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 linkSrcSound, uint16 linkDstSound) {
+	debug(2, "changeToStack(%d)", stackId);
 
 	// Fill screen with black and empty cursor
 	_cursor->setCursor(0);
@@ -526,8 +551,8 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	// In Myst ME, play a fullscreen flyby movie, except when loading saves.
 	// Also play a flyby when first linking to Myst.
 	if (getFeatures() & GF_ME
-			&& (_curStack != kIntroStack || (stack == kMystStack && card == 4134))) {
-		playFlybyMovie(stack, card);
+			&& ((_stack && _stack->getStackId() != kIntroStack) || (stackId == kMystStack && card == 4134))) {
+		playFlybyMovie(stackId, card);
 	}
 
 	_sound->stopBackground();
@@ -540,61 +565,58 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	if (linkSrcSound)
 		playSoundBlocking(linkSrcSound);
 
-	// Delete the previous stack and move the current stack to the previous one
-	// There's probably a better way to do this, but the script classes shouldn't
-	// take up much memory.
-	delete _prevStack;
-	_prevStack = _scriptParser;
+	if (_card) {
+		_card->leave();
+		_card.reset();
+	}
 
-	_curStack = stack;
-
-	switch (_curStack) {
+	switch (stackId) {
 	case kChannelwoodStack:
-		_gameState->_globals.currentAge = 4;
-		_scriptParser = new MystStacks::Channelwood(this);
+		_gameState->_globals.currentAge = kChannelwood;
+		_stack = MystScriptParserPtr(new MystStacks::Channelwood(this));
 		break;
 	case kCreditsStack:
-		_scriptParser = new MystStacks::Credits(this);
+		_stack = MystScriptParserPtr(new MystStacks::Credits(this));
 		break;
 	case kDemoStack:
-		_gameState->_globals.currentAge = 0;
-		_scriptParser = new MystStacks::Demo(this);
+		_gameState->_globals.currentAge = kSelenitic;
+		_stack = MystScriptParserPtr(new MystStacks::Demo(this));
 		break;
 	case kDniStack:
-		_gameState->_globals.currentAge = 6;
-		_scriptParser = new MystStacks::Dni(this);
+		_gameState->_globals.currentAge = kDni;
+		_stack = MystScriptParserPtr(new MystStacks::Dni(this));
 		break;
 	case kIntroStack:
-		_scriptParser = new MystStacks::Intro(this);
+		_stack = MystScriptParserPtr(new MystStacks::Intro(this));
 		break;
 	case kMakingOfStack:
-		_scriptParser = new MystStacks::MakingOf(this);
+		_stack = MystScriptParserPtr(new MystStacks::MakingOf(this));
 		break;
 	case kMechanicalStack:
-		_gameState->_globals.currentAge = 3;
-		_scriptParser = new MystStacks::Mechanical(this);
+		_gameState->_globals.currentAge = kMechanical;
+		_stack = MystScriptParserPtr(new MystStacks::Mechanical(this));
 		break;
 	case kMystStack:
-		_gameState->_globals.currentAge = 2;
-		_scriptParser = new MystStacks::Myst(this);
+		_gameState->_globals.currentAge = kMystLibrary;
+		_stack = MystScriptParserPtr(new MystStacks::Myst(this));
 		break;
 	case kDemoPreviewStack:
-		_scriptParser = new MystStacks::Preview(this);
+		_stack = MystScriptParserPtr(new MystStacks::Preview(this));
 		break;
 	case kSeleniticStack:
-		_gameState->_globals.currentAge = 0;
-		_scriptParser = new MystStacks::Selenitic(this);
+		_gameState->_globals.currentAge = kSelenitic;
+		_stack = MystScriptParserPtr(new MystStacks::Selenitic(this));
 		break;
 	case kDemoSlidesStack:
-		_gameState->_globals.currentAge = 1;
-		_scriptParser = new MystStacks::Slides(this);
+		_gameState->_globals.currentAge = kStoneship;
+		_stack = MystScriptParserPtr(new MystStacks::Slides(this));
 		break;
 	case kStoneshipStack:
-		_gameState->_globals.currentAge = 1;
-		_scriptParser = new MystStacks::Stoneship(this);
+		_gameState->_globals.currentAge = kStoneship;
+		_stack = MystScriptParserPtr(new MystStacks::Stoneship(this));
 		break;
 	default:
-		error("Unknown Myst stack");
+		error("Unknown Myst stack %d", stackId);
 	}
 
 	// If the array is empty, add a new one. Otherwise, delete the first
@@ -606,10 +628,8 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		_mhk[0] = new MohawkArchive();
 	}
 
-	if (!_mhk[0]->openFile(mystFiles[_curStack]))
-		error("Could not open %s", mystFiles[_curStack]);
-
-	_runExitScript = false;
+	if (!_mhk[0]->openFile(mystFiles[stackId]))
+		error("Could not open %s", mystFiles[stackId]);
 
 	// Clear the resource cache and the image cache
 	_cache.clear();
@@ -621,40 +641,12 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		playSoundBlocking(linkDstSound);
 }
 
-uint16 MohawkEngine_Myst::getCardBackgroundId() {
-	uint16 imageToDraw = 0;
-
-	if (_view.conditionalImages.size() == 0)
-		imageToDraw = _view.mainImage;
-	else {
-		for (uint16 i = 0; i < _view.conditionalImages.size(); i++) {
-			uint16 varValue = _scriptParser->getVar(_view.conditionalImages[i].var);
-			if (varValue < _view.conditionalImages[i].values.size())
-				imageToDraw = _view.conditionalImages[i].values[varValue];
-		}
-	}
-
-	return imageToDraw;
-}
-
-void MohawkEngine_Myst::drawCardBackground() {
-	_gfx->copyImageToBackBuffer(getCardBackgroundId(), Common::Rect(0, 0, 544, 332));
-}
-
 void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	debug(2, "changeToCard(%d)", card);
 
-	_scriptParser->disablePersistentScripts();
+	_stack->disablePersistentScripts();
 
 	_video->stopVideos();
-
-	// Run exit script from last card (if present)
-	if (_runExitScript)
-		runExitScript();
-
-	_runExitScript = true;
-
-	unloadCard();
 
 	// Clear the resource cache and image cache
 	_cache.clear();
@@ -663,34 +655,17 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	_mouseClicked = false;
 	_mouseMoved = false;
 	_escapePressed = false;
-	_curCard = card;
 
-	// Load a bunch of stuff
-	loadCard();
-	loadResources();
-	loadCursorHints();
+	if (_card) {
+		_card->leave();
+	}
 
-	// Handle images
-	drawCardBackground();
-
-	// Handle sound
-	applySoundBlock(_view.soundBlock);
-
-	if (_view.flags & kMystZipDestination)
-		_gameState->addZipDest(_curStack, card);
-
-	// Run the entrance script (if present)
-	runInitScript();
-
-	// Update the images of each area too
-	drawResourceImages();
-
-	for (uint16 i = 0; i < _resources.size(); i++)
-		_resources[i]->handleCardChange();
+	_card = MystCardPtr(new MystCard(this, card));
+	_card->enter();
 
 	// The demo resets the cursor at each card change except when in the library
 	if (getFeatures() & GF_DEMO
-			&& _gameState->_globals.currentAge != 2) {
+			&& _gameState->_globals.currentAge != kMystLibrary) {
 		_cursor->setDefaultCursor();
 	}
 
@@ -705,310 +680,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 
 	// Debug: Show resource rects
 	if (_showResourceRects)
-		drawResourceRects();
-}
-
-void MohawkEngine_Myst::drawResourceRects() {
-	for (uint16 i = 0; i < _resources.size(); i++) {
-		_resources[i]->getRect().debugPrint(0);
-		_resources[i]->drawBoundingRect();
-	}
-}
-
-void MohawkEngine_Myst::updateActiveResource() {
-	const Common::Point &mouse = _system->getEventManager()->getMousePos();
-
-	_activeResource = nullptr;
-	for (uint16 i = 0; i < _resources.size(); i++) {
-		if (_resources[i]->contains(mouse) && _resources[i]->canBecomeActive()) {
-			_activeResource = _resources[i];
-			break;
-		}
-	}
-}
-
-void MohawkEngine_Myst::checkCurrentResource() {
-	const Common::Point &mouse = _system->getEventManager()->getMousePos();
-
-	// Tell previous resource the mouse is no longer hovering it
-	if (_hoverResource && !_hoverResource->contains(mouse)) {
-		_hoverResource->handleMouseLeave();
-		_hoverResource = nullptr;
-	}
-
-	for (uint16 i = 0; i < _resources.size(); i++) {
-		if (_resources[i]->contains(mouse) && _resources[i]->hasType(kMystAreaHover)
-			&& _hoverResource != _resources[i]) {
-			_hoverResource = static_cast<MystAreaHover *>(_resources[i]);
-			_hoverResource->handleMouseEnter();
-		}
-	}
-
-	if (!_mouseClicked && _clickedResource) {
-		if (_clickedResource->isEnabled()) {
-			_clickedResource->handleMouseUp();
-		}
-		_clickedResource = nullptr;
-	} else if (_mouseMoved && _clickedResource) {
-		if (_clickedResource->isEnabled()) {
-			_clickedResource->handleMouseDrag();
-		}
-	} else if (_mouseClicked && !_clickedResource) {
-		if (_activeResource && _activeResource->isEnabled()) {
-			_clickedResource = _activeResource;
-			_clickedResource->handleMouseDown();
-		}
-	}
-
-	_mouseMoved = false;
-
-	checkCursorHints();
-}
-
-MystArea *MohawkEngine_Myst::forceUpdateClickedResource() {
-	updateActiveResource();
-
-	_clickedResource = _activeResource;
-
-	return _clickedResource;
-}
-
-void MohawkEngine_Myst::loadCard() {
-	debugC(kDebugView, "Loading Card View: %d", _curCard);
-
-	Common::SeekableReadStream *viewStream = getResource(ID_VIEW, _curCard);
-
-	// Card Flags
-	_view.flags = viewStream->readUint16LE();
-	debugC(kDebugView, "Flags: 0x%04X", _view.flags);
-
-	// The Image Block (Reminiscent of Riven PLST resources)
-	uint16 conditionalImageCount = viewStream->readUint16LE();
-	debugC(kDebugView, "Conditional Image Count: %d", conditionalImageCount);
-	if (conditionalImageCount != 0) {
-		for (uint16 i = 0; i < conditionalImageCount; i++) {
-			MystCondition conditionalImage;
-
-			debugC(kDebugView, "\tImage %d:", i);
-			conditionalImage.var = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\tVar: %d", conditionalImage.var);
-			uint16 numStates = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\tNumber of States: %d", numStates);
-			for (uint16 j = 0; j < numStates; j++) {
-				conditionalImage.values.push_back(viewStream->readUint16LE());
-				debugC(kDebugView, "\t\tState %d -> Value %d", j, conditionalImage.values[j]);
-			}
-
-			_view.conditionalImages.push_back(conditionalImage);
-		}
-		_view.mainImage = 0;
-	} else {
-		_view.mainImage = viewStream->readUint16LE();
-		debugC(kDebugView, "Main Image: %d", _view.mainImage);
-	}
-
-	// The Sound Block (Reminiscent of Riven SLST resources)
-	_view.soundBlock = readSoundBlock(viewStream);
-
-	// Resources that scripts can call upon
-	uint16 scriptResCount = viewStream->readUint16LE();
-	debugC(kDebugView, "Script Resource Count: %d", scriptResCount);
-	for (uint16 i = 0; i < scriptResCount; i++) {
-		MystView::ScriptResource scriptResource;
-
-		debugC(kDebugView, "\tResource %d:", i);
-		scriptResource.type = (MystView::ScriptResourceType) viewStream->readUint16LE();
-		debugC(kDebugView, "\t\t Type: %d", scriptResource.type);
-
-		switch (scriptResource.type) {
-		case MystView::kResourceImage:
-			debugC(kDebugView, "\t\t\t\t= Image");
-			break;
-		case MystView::kResourceSound:
-			debugC(kDebugView, "\t\t\t\t= Sound");
-			break;
-		case MystView::kResourceSwitch:
-			debugC(kDebugView, "\t\t\t\t= Resource Switch");
-			break;
-		case MystView::kResourceImageNoCache:
-			debugC(kDebugView, "\t\t\t\t= Image - Caching disabled");
-			break;
-		case MystView::kResourceSoundNoCache:
-			debugC(kDebugView, "\t\t\t\t= Sound - Caching disabled");
-			break;
-		default:
-			debugC(kDebugView, "\t\t\t\t= Unknown");
-			warning("Unknown script resource type '%d' in card '%d'", scriptResource.type, _curCard);
-			break;
-		}
-
-		if (scriptResource.type == MystView::kResourceSwitch) {
-			scriptResource.switchVar = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\t Var: %d", scriptResource.switchVar);
-			uint16 count = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\t Resource List Count: %d", count);
-			scriptResource.switchResourceType = (MystView::ScriptResourceType) viewStream->readUint16LE();
-			debugC(kDebugView, "\t\t u0: %d", scriptResource.switchResourceType);
-
-			for (uint16 j = 0; j < count; j++) {
-				scriptResource.switchResourceIds.push_back(viewStream->readSint16LE());
-				debugC(kDebugView, "\t\t Resource List %d: %d", j, scriptResource.switchResourceIds[j]);
-			}
-		} else {
-			scriptResource.id = viewStream->readUint16LE();
-			debugC(kDebugView, "\t\t Id: %d", scriptResource.id);
-		}
-
-		_view.scriptResources.push_back(scriptResource);
-	}
-
-	// Identifiers for other resources. 0 if non existent. There is always an RLST.
-	_view.rlst = viewStream->readUint16LE();
-	if (!_view.rlst)
-		error("RLST Index missing");
-
-	_view.hint = viewStream->readUint16LE();
-	_view.init = viewStream->readUint16LE();
-	_view.exit = viewStream->readUint16LE();
-
-	delete viewStream;
-
-	// Precache Card Resources
-	uint32 cacheImageType;
-	if (getFeatures() & GF_ME)
-		cacheImageType = ID_PICT;
-	else
-		cacheImageType = ID_WDIB;
-
-	// Precache Image Block data
-	if (_view.conditionalImages.size() != 0) {
-		for (uint16 i = 0; i < _view.conditionalImages.size(); i++) {
-			uint16 value = _scriptParser->getVar(_view.conditionalImages[i].var);
-			cachePreload(cacheImageType, _view.conditionalImages[i].values[value]);
-		}
-	} else {
-		cachePreload(cacheImageType, _view.mainImage);
-	}
-
-	// Precache Sound Block data
-	if (_view.soundBlock.sound > 0)
-		cachePreload(ID_MSND, _view.soundBlock.sound);
-	else if (_view.soundBlock.sound == kMystSoundActionConditional) {
-		uint16 value = _scriptParser->getVar(_view.soundBlock.soundVar);
-		if (_view.soundBlock.soundList[value].action > 0) {
-			cachePreload(ID_MSND, _view.soundBlock.soundList[value].action);
-		}
-	}
-
-	// Precache Script Resources
-	for (uint16 i = 0; i < _view.scriptResources.size(); i++) {
-		MystView::ScriptResourceType type;
-		int16 id;
-		if (_view.scriptResources[i].type == MystView::kResourceSwitch) {
-			type = _view.scriptResources[i].switchResourceType;
-			uint16 value = _scriptParser->getVar(_view.scriptResources[i].switchVar);
-			id = _view.scriptResources[i].switchResourceIds[value];
-		} else {
-			type = _view.scriptResources[i].type;
-			id = _view.scriptResources[i].id;
-		}
-
-		if (id < 0) continue;
-
-		switch (type) {
-		case MystView::kResourceImage:
-			cachePreload(cacheImageType, id);
-			break;
-		case MystView::kResourceSound:
-			cachePreload(ID_MSND, id);
-			break;
-		default:
-			// The other resource types should not be cached
-			break;
-		}
-	}
-}
-
-void MohawkEngine_Myst::unloadCard() {
-	_view.conditionalImages.clear();
-	_view.soundBlock.soundList.clear();
-	_view.scriptResources.clear();
-	_hoverResource = nullptr;
-	_activeResource = nullptr;
-	_clickedResource = nullptr;
-}
-
-void MohawkEngine_Myst::runInitScript() {
-	if (!_view.init) {
-		debugC(kDebugINIT, "No INIT Present");
-		return;
-	}
-
-	debugC(kDebugINIT, "Running INIT script");
-
-	Common::SeekableReadStream *initStream = getResource(ID_INIT, _view.init);
-	MystScript script = _scriptParser->readScript(initStream, kMystScriptInit);
-	delete initStream;
-
-	_scriptParser->runScript(script);
-}
-
-void MohawkEngine_Myst::runExitScript() {
-	if (!_view.exit) {
-		debugC(kDebugEXIT, "No EXIT Present");
-		return;
-	}
-
-	debugC(kDebugEXIT, "Running EXIT script");
-
-	Common::SeekableReadStream *exitStream = getResource(ID_EXIT, _view.exit);
-	MystScript script = _scriptParser->readScript(exitStream, kMystScriptExit);
-	delete exitStream;
-
-	_scriptParser->runScript(script);
-}
-
-void MohawkEngine_Myst::loadCursorHints() {
-	_cursorHints.clear();
-
-	if (!_view.hint) {
-		debugC(kDebugHint, "No HINT Present");
-		return;
-	}
-
-	debugC(kDebugHint, "Loading Cursor Hints:");
-
-	Common::SeekableReadStream *hintStream = getResource(ID_HINT, _curCard);
-	uint16 cursorHintCount = hintStream->readUint16LE();
-	debugC(kDebugHint, "Cursor Hint Count: %d", cursorHintCount);
-
-	for (uint16 i = 0; i < cursorHintCount; i++) {
-		MystCursorHint hint;
-
-		debugC(kDebugHint, "Cursor Hint %d:", i);
-		hint.id = hintStream->readUint16LE();
-		debugC(kDebugHint, "\tId: %d", hint.id);
-		hint.cursor = hintStream->readSint16LE();
-		debugC(kDebugHint, "\tCursor: %d", hint.cursor);
-
-		if (hint.cursor == -1) {
-			debugC(kDebugHint, "\tConditional Cursor Hints:");
-			hint.variableHint.var = hintStream->readUint16LE();
-			debugC(kDebugHint, "\tVar: %d", hint.variableHint.var);
-			uint16 numStates = hintStream->readUint16LE();
-			debugC(kDebugHint, "\tNumber of States: %d", numStates);
-			for (uint16 j = 0; j < numStates; j++) {
-				hint.variableHint.values.push_back(hintStream->readUint16LE());
-				debugC(kDebugHint, "\t\t State %d: Cursor %d", j, hint.variableHint.values[j]);
-			}
-		} else {
-			hint.variableHint.var = 0;
-		}
-
-		_cursorHints.push_back(hint);
-	}
-
-	delete hintStream;
+		_card->drawResourceRects();
 }
 
 void MohawkEngine_Myst::setMainCursor(uint16 cursor) {
@@ -1016,68 +688,20 @@ void MohawkEngine_Myst::setMainCursor(uint16 cursor) {
 	_cursor->setCursor(_currentCursor);
 }
 
-void MohawkEngine_Myst::checkCursorHints() {
-	if (!_view.hint) {
-		// Default to the main cursor when no hints are present
-		if (_currentCursor != _mainCursor) {
-			_currentCursor = _mainCursor;
-			_cursor->setCursor(_currentCursor);
-		}
-		return;
+void MohawkEngine_Myst::refreshCursor() {
+	int16 cursor = _card->getActiveResourceCursor();
+	if (cursor == -1) {
+		cursor = _mainCursor;
 	}
 
-	// Check all the cursor hints to see if we're in a hotspot that contains a hint.
-	for (uint16 i = 0; i < _cursorHints.size(); i++)
-		if (_activeResource && _resources[_cursorHints[i].id] == _activeResource && _activeResource->isEnabled()) {
-			if (_cursorHints[i].cursor == -1) {
-				uint16 var_value = _scriptParser->getVar(_cursorHints[i].variableHint.var);
-
-				if (var_value >= _cursorHints[i].variableHint.values.size())
-					warning("Variable %d Out of Range in variable HINT Resource %d", _cursorHints[i].variableHint.var, i);
-				else {
-					_currentCursor = _cursorHints[i].variableHint.values[var_value];
-					if (_currentCursor == 0)
-						_currentCursor = _mainCursor;
-					_cursor->setCursor(_currentCursor);
-				}
-			} else if (_currentCursor != _cursorHints[i].cursor) {
-				if (_cursorHints[i].cursor == 0)
-					_currentCursor = _mainCursor;
-				else
-					_currentCursor = _cursorHints[i].cursor;
-
-				_cursor->setCursor(_currentCursor);
-			}
-			return;
-		}
-
-	if (_currentCursor != _mainCursor) {
-		_currentCursor = _mainCursor;
-		_cursor->setCursor(_currentCursor);
+	if (cursor != _currentCursor) {
+		_currentCursor = cursor;
+		_cursor->setCursor(cursor);
 	}
-}
-
-void MohawkEngine_Myst::setResourceEnabled(uint16 resourceId, bool enable) {
-	if (resourceId < _resources.size()) {
-		_resources[resourceId]->setEnabled(enable);
-	} else
-		warning("Attempt to change unknown resource enable state");
-}
-
-void MohawkEngine_Myst::drawResourceImages() {
-	for (uint16 i = 0; i < _resources.size(); i++)
-		if (_resources[i]->isDrawSubimages())
-			_resources[i]->drawDataToScreen();
 }
 
 void MohawkEngine_Myst::redrawResource(MystAreaImageSwitch *resource, bool update) {
-	resource->drawConditionalDataToScreen(_scriptParser->getVar(resource->getImageSwitchVar()), update);
-}
-
-void MohawkEngine_Myst::redrawArea(uint16 var, bool update) {
-	for (uint16 i = 0; i < _resources.size(); i++)
-		if (_resources[i]->hasType(kMystAreaImageSwitch) && _resources[i]->getImageSwitchVar() == var)
-			redrawResource(static_cast<MystAreaImageSwitch *>(_resources[i]), update);
+	resource->drawConditionalDataToScreen(_stack->getVar(resource->getImageSwitchVar()), update);
 }
 
 MystArea *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream, MystArea *parent) {
@@ -1120,29 +744,6 @@ MystArea *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream
 	return resource;
 }
 
-void MohawkEngine_Myst::loadResources() {
-	for (uint32 i = 0; i < _resources.size(); i++)
-		delete _resources[i];
-
-	_resources.clear();
-
-	if (!_view.rlst) {
-		debugC(kDebugResource, "No RLST present");
-		return;
-	}
-
-	Common::SeekableReadStream *rlstStream = getResource(ID_RLST, _view.rlst);
-	uint16 resourceCount = rlstStream->readUint16LE();
-	debugC(kDebugResource, "RLST Resource Count: %d", resourceCount);
-
-	for (uint16 i = 0; i < resourceCount; i++) {
-		debugC(kDebugResource, "Resource #%d:", i);
-		_resources.push_back(loadResource(rlstStream, nullptr));
-	}
-
-	delete rlstStream;
-}
-
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {
 	if (_gameState->load(slot))
 		return Common::kNoError;
@@ -1151,20 +752,38 @@ Common::Error MohawkEngine_Myst::loadGameState(int slot) {
 }
 
 Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &desc) {
-	return _gameState->save(slot, desc) ? Common::kNoError : Common::kUnknownError;
+	return _gameState->save(slot, desc, false) ? Common::kNoError : Common::kUnknownError;
+}
+
+void MohawkEngine_Myst::tryAutoSaving() {
+	if (!canSaveGameStateCurrently()) {
+		return; // Can't save right now, try again on the next frame
+	}
+
+	_lastSaveTime = _system->getMillis();
+
+	if (!_gameState->isAutoSaveAllowed()) {
+		return; // Can't autosave ever, try again after the next autosave delay
+	}
+
+	if (!_gameState->save(MystGameState::kAutoSaveSlot, "Autosave", true))
+		warning("Attempt to autosave has failed.");
 }
 
 bool MohawkEngine_Myst::hasGameSaveSupport() const {
 	return !(getFeatures() & GF_DEMO) && getGameType() != GType_MAKINGOF;
 }
 
+bool MohawkEngine_Myst::isInteractive() {
+	return !_stack->isScriptRunning() && !_waitingOnBlockingOperation;
+}
+
 bool MohawkEngine_Myst::canLoadGameStateCurrently() {
-	if (_scriptParser->isScriptRunning() || !_interactive) {
+	if (!isInteractive()) {
 		return false;
 	}
 
-	if (_clickedResource) {
-		// Can't save while dragging resources
+	if (_card->isDraggingResource()) {
 		return false;
 	}
 
@@ -1182,7 +801,7 @@ bool MohawkEngine_Myst::canSaveGameStateCurrently() {
 	}
 
 	// There's a limited number of stacks the game can save in
-	switch (_curStack) {
+	switch (_stack->getStackId()) {
 	case kChannelwoodStack:
 	case kDniStack:
 	case kMechanicalStack:
@@ -1190,14 +809,44 @@ bool MohawkEngine_Myst::canSaveGameStateCurrently() {
 	case kSeleniticStack:
 	case kStoneshipStack:
 		return true;
+	default:
+		return false;
 	}
+}
 
-	return false;
+void MohawkEngine_Myst::runLoadDialog() {
+	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
+
+	pauseEngine(true);
+	int slot = slc.runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	if (slot >= 0) {
+		loadGameState(slot);
+	}
+}
+
+void MohawkEngine_Myst::runSaveDialog() {
+	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
+
+	pauseEngine(true);
+	int slot = slc.runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	if (slot >= 0) {
+		Common::String result(slc.getResultString());
+		if (result.empty()) {
+			// If the user was lazy and entered no save name, come up with a default name.
+			result = slc.createDefaultSaveDescription(slot);
+		}
+
+		saveGameState(slot, result);
+	}
 }
 
 void MohawkEngine_Myst::dropPage() {
-	uint16 page = _gameState->_globals.heldPage;
-	bool whitePage = page == 13;
+	HeldPage page = _gameState->_globals.heldPage;
+	bool whitePage = page == kWhitePage;
 	bool bluePage = page - 1 < 6;
 	bool redPage = page - 7 < 6;
 
@@ -1205,33 +854,33 @@ void MohawkEngine_Myst::dropPage() {
 	_sound->playEffect(800);
 
 	// Drop page
-	_gameState->_globals.heldPage = 0;
+	_gameState->_globals.heldPage = kNoPage;
 
 	// Redraw page area
-	if (whitePage && _gameState->_globals.currentAge == 2) {
-		_scriptParser->toggleVar(41);
-		redrawArea(41);
+	if (whitePage && _gameState->_globals.currentAge == kMystLibrary) {
+		_stack->toggleVar(41);
+		_card->redrawArea(41);
 	} else if (bluePage) {
-		if (page == 6) {
-			if (_gameState->_globals.currentAge == 2)
-				redrawArea(24);
+		if (page == kBlueFirePlacePage) {
+			if (_gameState->_globals.currentAge == kMystLibrary)
+				_card->redrawArea(24);
 		} else {
-			redrawArea(103);
+			_card->redrawArea(103);
 		}
 	} else if (redPage) {
-		if (page == 12) {
-			if (_gameState->_globals.currentAge == 2)
-				redrawArea(25);
-		} else if (page == 10) {
-			if (_gameState->_globals.currentAge == 1)
-				redrawArea(35);
+		if (page == kRedFirePlacePage) {
+			if (_gameState->_globals.currentAge == kMystLibrary)
+				_card->redrawArea(25);
+		} else if (page == kRedStoneshipPage) {
+			if (_gameState->_globals.currentAge == kStoneship)
+				_card->redrawArea(35);
 		} else {
-			redrawArea(102);
+			_card->redrawArea(102);
 		}
 	}
 
 	setMainCursor(kDefaultMystCursor);
-	checkCursorHints();
+	refreshCursor();
 }
 
 MystSoundBlock MohawkEngine_Myst::readSoundBlock(Common::ReadStream *stream) const {
@@ -1272,7 +921,7 @@ MystSoundBlock MohawkEngine_Myst::readSoundBlock(Common::ReadStream *stream) con
 			soundBlock.soundList.push_back(sound);
 		}
 	} else {
-		error("Unknown sound control value '%d' in card '%d'", soundBlock.sound, _curCard);
+		error("Unknown sound control value '%d' in card '%d'", soundBlock.sound, _card->getId());
 	}
 
 	return soundBlock;
@@ -1283,7 +932,7 @@ void MohawkEngine_Myst::applySoundBlock(const MystSoundBlock &block) {
 	uint16 soundActionVolume = 0;
 
 	if (block.sound == kMystSoundActionConditional) {
-		uint16 soundVarValue = _scriptParser->getVar(block.soundVar);
+		uint16 soundVarValue = _stack->getVar(block.soundVar);
 		if (soundVarValue >= block.soundList.size())
 			warning("Conditional sound variable outside range");
 		else {

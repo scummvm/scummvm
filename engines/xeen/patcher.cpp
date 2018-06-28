@@ -35,24 +35,29 @@ struct ScriptEntry {
 	const byte *_data;
 };
 
-const byte MAP54_LINE8[] = { 8, 10, 10, DIR_EAST, 8, OP_MoveWallObj, 20, 100, 100 };
+const byte DS_MAP54_LINE8[] = { 8, 10, 10, DIR_EAST, 8, OP_MoveWallObj, 20, 100, 100 };
+const byte SW_MAP53_LINE8[] = { 5, 14, 6, DIR_EAST, 8, OP_Exit };
+const byte DS_MAP116[] = { 9, 10, 6, 4, 2, OP_TakeOrGive, 0, 0, 103, 127 };
 
-#define SCRIPT_PATCHES_COUNT 1
+#define SCRIPT_PATCHES_COUNT 3
 static const ScriptEntry SCRIPT_PATCHES[] = {
-	{ GType_DarkSide, 54, MAP54_LINE8 }
+	{ GType_DarkSide, 54, DS_MAP54_LINE8 },	// Fix curtain on level 2 of Ellinger's Tower
+	{ GType_Swords, 53, SW_MAP53_LINE8 },	// Fix chest in Hart having gems, but saying "Nothing Here"
+	{ GType_DarkSide, 116, DS_MAP116 }		// Fix statue in Dark Tower setting invalid world flag
 };
 
 /*------------------------------------------------------------------------*/
 
 void Patcher::patch() {
 	patchScripts();
+	patchObjects();
 }
 
 void Patcher::patchScripts() {
 	FileManager &files = *g_vm->_files;
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
-	
+
 	uint gameId = g_vm->getGameID();
 	if (gameId == GType_WorldOfXeen)
 		gameId = files._ccNum ? GType_DarkSide : GType_Clouds;
@@ -61,7 +66,7 @@ void Patcher::patchScripts() {
 		const ScriptEntry &se = SCRIPT_PATCHES[patchIdx];
 		if (se._gameId != gameId || se._mapId != party._mazeId)
 			continue;
-		
+
 		MazeEvent evt;
 		Common::MemoryReadStream memStream(se._data, se._data[0] + 1);
 		Common::Serializer s(&memStream, nullptr);
@@ -78,6 +83,18 @@ void Patcher::patchScripts() {
 			map._events.push_back(evt);
 		else
 			map._events[idx] = evt;
+	}
+}
+
+void Patcher::patchObjects() {
+	FileManager &files = *g_vm->_files;
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+
+	if ((g_vm->getGameID() == GType_Clouds || (g_vm->getGameID() == GType_WorldOfXeen && !files._ccNum)) &&
+			party._mazeId == 24) {
+		// Remove floating statue in the distance off SE corner of Clouds of Xeen map
+		map._mobData._objects[15]._position = Common::Point(-128, -128);
 	}
 }
 

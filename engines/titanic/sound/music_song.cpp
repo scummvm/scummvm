@@ -127,7 +127,7 @@ bool CSongParser::parse(CValuePair &r) {
 		} else if (_currentChar == '^') {
 			if (_flag)
 				break;
-			
+
 			_flag = true;
 			r._data = 0x7FFFFFFF;
 			r._length = _field10;
@@ -176,7 +176,7 @@ bool CSongParser::parse(CValuePair &r) {
 			FETCH_CHAR;
 		}
 	}
-	
+
 	if (!_flag)
 		return false;
 

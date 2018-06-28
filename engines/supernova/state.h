@@ -23,9 +23,11 @@
 #ifndef SUPERNOVA_STATE_H
 #define SUPERNOVA_STATE_H
 
+#include "common/events.h"
 #include "common/rect.h"
 #include "common/keyboard.h"
 #include "supernova/rooms.h"
+#include "supernova/sound.h"
 
 namespace Supernova {
 
@@ -63,8 +65,9 @@ struct GameState {
 
 class Inventory {
 public:
-	Inventory(int &inventoryScroll)
+	Inventory(Object *nullObject, int &inventoryScroll)
 		: _numObjects(0)
+		, _nullObject(nullObject)
 		, _inventoryScroll(inventoryScroll)
 	{}
 
@@ -72,11 +75,12 @@ public:
 	void remove(Object &obj);
 	void clear();
 	Object *get(int index) const;
-	Object *get(ObjectID id) const;
+	Object *get(ObjectId id) const;
 	int getSize() const { return _numObjects; }
 
 private:
 	Object *_inventory[kMaxCarry];
+	Object *_nullObject;
 	int &_inventoryScroll;
 	int _numObjects;
 };
@@ -121,18 +125,20 @@ private:
 
 class GameManager {
 public:
-	GameManager(SupernovaEngine *vm);
+	GameManager(SupernovaEngine *vm, Sound *sound);
 	~GameManager();
 
+	void updateEvents();
 	void processInput(Common::KeyState &state);
 	void processInput();
 	void executeRoom();
 	bool serialize(Common::WriteStream *out);
 	bool deserialize(Common::ReadStream *in, int version);
 
-	static StringID guiCommands[];
-	static StringID guiStatusCommands[];
+	static StringId guiCommands[];
+	static StringId guiStatusCommands[];
 	SupernovaEngine *_vm;
+	Sound *_sound;
 	Common::KeyState _key;
 	Common::EventType _mouseClickType;
 	bool _mouseClicked;
@@ -150,13 +156,13 @@ public:
 	bool _animationEnabled;
 	byte _roomBrightness;
 	Action _inputVerb;
+	Object _nullObject;
 	Object *_currentInputObject;
 	Object *_inputObject[2];
-	bool _waitEvent;
 	int32 _oldTime;
 	uint _timePaused;
 	bool _timerPaused;
-	int32 _timer1;
+	int32 _messageDuration;
 	int32 _animationTimer;
 	int _inventoryScroll;
 	int _exitList[25];
@@ -166,11 +172,13 @@ public:
 	// Dialog
 	int _currentSentence;
 	int _sentenceNumber[6];
-	StringID _texts[6];
+	StringId _texts[6];
 	byte _rows[6];
 	byte _rowsStart[6];
 
 	void takeObject(Object &obj);
+	void setObjectNull(Object *&obj);
+	bool isNullObject(Object *obj);
 
 	void initState();
 	void initRooms();
@@ -184,8 +192,7 @@ public:
 	Common::EventType getMouseInput();
 	uint16 getKeyInput(bool blockForPrintChar = false);
 	void getInput();
-	void mouseInput3();
-	void wait2(int ticks);
+	void wait(int ticks);
 	void waitOnInput(int ticks);
 	bool waitOnInput(int ticks, Common::KeyCode &keycode);
 	void turnOff();
@@ -203,7 +210,7 @@ public:
 	void drawStatus();
 	void drawCommandBox();
 	void drawInventory();
-	void changeRoom(RoomID id);
+	void changeRoom(RoomId id);
 	void resetInputState();
 	void handleInput();
 	void handleTime();
@@ -211,12 +218,12 @@ public:
 	void loadTime();
 	void saveTime();
 	void setAnimationTimer(int ticks);
-	void dead(StringID messageId);
-	int  dialog(int num, byte rowLength[6], StringID text[6], int number);
+	void dead(StringId messageId);
+	int  dialog(int num, byte rowLength[6], StringId text[6], int number);
 	void sentence(int number, bool brightness);
-	void say(StringID textId);
+	void say(StringId textId);
 	void say(const char *text);
-	void reply(StringID textId, int aus1, int aus2);
+	void reply(StringId textId, int aus1, int aus2);
 	void reply(const char *text, int aus1, int aus2);
 	void mousePosDialog(int x, int y);
 	void shot(int a, int b);

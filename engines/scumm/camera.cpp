@@ -25,6 +25,8 @@
 #include "scumm/charset.h"
 #include "scumm/scumm_v7.h"
 
+#include "common/util.h"
+
 namespace Scumm {
 
 void ScummEngine::setCameraAtEx(int at) {
@@ -85,17 +87,8 @@ void ScummEngine::setCameraFollows(Actor *a, bool setCamera) {
 }
 
 void ScummEngine::clampCameraPos(Common::Point *pt) {
-	if (pt->x < VAR(VAR_CAMERA_MIN_X))
-		pt->x = (short) VAR(VAR_CAMERA_MIN_X);
-
-	if (pt->x > VAR(VAR_CAMERA_MAX_X))
-		pt->x = (short) VAR(VAR_CAMERA_MAX_X);
-
-	if (pt->y < VAR(VAR_CAMERA_MIN_Y))
-		pt->y = (short) VAR(VAR_CAMERA_MIN_Y);
-
-	if (pt->y > VAR(VAR_CAMERA_MAX_Y))
-		pt->y = (short) VAR(VAR_CAMERA_MAX_Y);
+	pt->x = CLIP<short>(pt->x, VAR(VAR_CAMERA_MIN_X), VAR(VAR_CAMERA_MAX_X));
+	pt->y = CLIP<short>(pt->y, VAR(VAR_CAMERA_MIN_Y), VAR(VAR_CAMERA_MAX_Y));
 }
 
 void ScummEngine::moveCamera() {

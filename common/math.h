@@ -107,12 +107,46 @@ inline int intLog2(uint32 v) {
 }
 #endif
 
-inline float rad2deg(float rad) {
-	return rad * 180.0f / (float)M_PI;
+// Convert radians to degrees
+// Input and Output type can be different
+// Upconvert everything to floats
+template<class InputT, class OutputT> 
+inline OutputT rad2deg(InputT rad) {
+	return (OutputT)( (float)rad * (float)57.2957795130823); // 180.0/M_PI = 57.2957795130823
 }
 
-inline float deg2rad(float deg) {
-	return deg * (float)M_PI / 180.0f;
+// Handle the case differently when the input type is double
+template<class OutputT> 
+inline OutputT rad2deg(double rad) {
+	return (OutputT)( rad * 57.2957795130823);
+}
+
+// Convert radians to degrees
+// Input and Output type are the same
+template<class T> 
+inline T rad2deg(T rad) {
+	return rad2deg<T,T>(rad);
+}
+
+// Convert degrees to radians
+// Input and Output type can be different
+// Upconvert everything to floats
+template<class InputT, class OutputT> 
+inline OutputT deg2rad(InputT deg) {
+	return (OutputT)( (float)deg * (float)0.0174532925199433); // M_PI/180.0 = 0.0174532925199433
+}
+
+// Handle the case differently when the input type is double
+template<class OutputT> 
+inline OutputT deg2rad(double deg) {
+	return (OutputT)( deg * 0.0174532925199433);
+}
+
+// Convert degrees to radians
+// Input and Output type are the same
+template<class T> 
+inline T deg2rad(T deg) {
+	return deg2rad<T,T>(deg);
 }
 
 } // End of namespace Common

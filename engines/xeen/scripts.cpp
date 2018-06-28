@@ -21,6 +21,8 @@
  */
 
 #include "common/config-manager.h"
+#include "common/textconsole.h"
+#include "backends/audiocd/audiocd.h"
 #include "xeen/scripts.h"
 #include "xeen/dialogs/dialogs_copy_protection.h"
 #include "xeen/dialogs/dialogs_input.h"
@@ -186,7 +188,7 @@ int Scripts::checkEvents() {
 				if (event._position == _currentPos && event._line == _lineNum &&
 						(party._mazeDirection | _currentPos.x | _currentPos.y)) {
 					if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
-						_vm->_mode = MODE_RECORD_EVENTS;
+						_vm->_mode = MODE_SCRIPT_IN_PROGRESS;
 						_scriptExecuted = true;
 						doOpcode(event);
 						break;
@@ -214,20 +216,23 @@ int Scripts::checkEvents() {
 		MazeObject &selectedObj = map._mobData._objects[intf._objNumber];
 
 		if (selectedObj._spriteId == (ccNum ? 15 : 16)) {
-			for (int idx = 0; idx < MIN((int)map._mobData._objects.size(), 16); ++idx) {
-				MazeObject &obj = map._mobData._objects[idx];
-				if (obj._spriteId == (ccNum ? 62 : 57)) {
+			// Treasure chests that were opened will be set to be in an open, empty state
+			for (uint idx = 0; idx < map._mobData._objectSprites.size(); ++idx) {
+				MonsterObjectData::SpriteResourceEntry &e = map._mobData._objectSprites[idx];
+				if (e._spriteId == (ccNum ? 57 : 62)) {
 					selectedObj._id = idx;
-					selectedObj._spriteId = ccNum ? 62 : 57;
+					selectedObj._spriteId = ccNum ? 57 : 62;
+					selectedObj._sprites = &e._sprites;
 					break;
 				}
 			}
 		} else if (selectedObj._spriteId == 73) {
-			for (int idx = 0; idx < MIN((int)map._mobData._objects.size(), 16); ++idx) {
-				MazeObject &obj = map._mobData._objects[idx];
-				if (obj._spriteId == 119) {
+			for (uint idx = 0; idx < map._mobData._objectSprites.size(); ++idx) {
+				MonsterObjectData::SpriteResourceEntry &e = map._mobData._objectSprites[idx];
+				if (e._spriteId == 119) {
 					selectedObj._id = idx;
 					selectedObj._spriteId = 119;
+					selectedObj._sprites = &e._sprites;
 					break;
 				}
 			}
@@ -237,6 +242,13 @@ int Scripts::checkEvents() {
 	_animCounter = 0;
 	_vm->_mode = oldMode;
 	windows.closeAll();
+
+	if (g_vm->getIsCD() && g_system->getAudioCDManager()->isPlaying())
+		// Stop any playing voice
+		g_system->getAudioCDManager()->stop();
+
+	if (g_vm->shouldExit())
+		return g_vm->_gameMode;
 
 	if (_scriptExecuted)
 		intf.clearEvents();
@@ -470,7 +482,7 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 	Sound &sound = *_vm->_sound;
 
 	windows.closeAll();
-	
+
 	bool restartFlag = _event->_opcode == OP_TeleportAndContinue;
 	int mapId = params.readByte();
 	Common::Point pt;
@@ -854,7 +866,7 @@ bool Scripts::cmdSpawn(ParamsIterator &params) {
 }
 
 bool Scripts::cmdDoTownEvent(ParamsIterator &params) {
-	_scriptResult = _vm->_locations->doAction((LocationAction)params.readByte());
+	_scriptResult = _vm->_locations->doAction(params.readByte());
 	_vm->_party->_stepped = true;
 	_refreshIcons = true;
 
@@ -1048,11 +1060,16 @@ bool Scripts::cmdCallEvent(ParamsIterator &params) {
 }
 
 bool Scripts::cmdReturn(ParamsIterator &params) {
-	StackEntry se = _stack.pop();
-	_currentPos = se;
-	_lineNum = se.line;
+	if (_stack.empty()) {
+		// WORKAROUND: Some scripts in Swords of Xeen use cmdReturn as a substitute for cmdExit
+		return cmdExit(params);
+	} else {
+		StackEntry se = _stack.pop();
+		_currentPos = se;
+		_lineNum = se.line;
 
-	return true;
+		return true;
+	}
 }
 
 bool Scripts::cmdSetVar(ParamsIterator &params) {
@@ -1246,24 +1263,25 @@ bool Scripts::cmdSelectRandomChar(ParamsIterator &params) {
 
 bool Scripts::cmdGiveEnchanted(ParamsIterator &params) {
 	Party &party = *_vm->_party;
+	int itemOffset = _vm->getGameID() == GType_Swords ? 6 : 0;
 	XeenItem *item;
 	int invIndex;
 	int id = params.readByte();
 
 	// Get category of item to add
 	ItemCategory cat = CATEGORY_WEAPON;
-	if (id < 35) {
-	} else if (id < 49) {
+	if (id < (35 + itemOffset)) {
+	} else if (id < (49 + itemOffset)) {
 		cat = CATEGORY_ARMOR;
-		id -= 35;
-	} else if (id < 60) {
+		id -= 35 + itemOffset;
+	} else if (id < (60 + itemOffset)) {
 		cat = CATEGORY_ACCESSORY;
-		id -= 49;
-	} else if (id < 82) {
+		id -= 49 + itemOffset;
+	} else if (id < (82 + itemOffset)) {
 		cat = CATEGORY_MISC;
-		id -= 60;
+		id -= 60 + itemOffset;
 	} else {
-		party._questItems[id - 82]++;
+		party._questItems[id - (82 + itemOffset)]++;
 	}
 
 	// Check for an empty slot
@@ -1457,13 +1475,36 @@ bool Scripts::cmdFlipWorld(ParamsIterator &params) {
 	return true;
 }
 
-bool Scripts::cmdPlayCD(ParamsIterator &params) { error("TODO"); }
+bool Scripts::cmdPlayCD(ParamsIterator &params) {
+	int trackNum = params.readByte();
+	int start = params.readUint16LE();
+	int finish = params.readUint16LE();
+	debugC(3, kDebugScripts, "cmdPlayCD Track=%d start=%d finish=%d", trackNum, start, finish);
+
+	if (_vm->_files->_ccNum && trackNum < 31)
+		trackNum += 30;
+	assert(trackNum <= 60);
+
+	start = convertCDTime(start);
+	finish = convertCDTime(finish);
+
+	g_system->getAudioCDManager()->play(trackNum, 1, start, finish - start, false, Audio::Mixer::kSpeechSoundType);
+	return true;
+}
+
+#define CD_FRAME_RATE 75
+uint Scripts::convertCDTime(uint srcTime) {
+	// Times are encoded as MMSSCC - MM=Minutes, SS=Seconds, CC=Centiseconds (1/100th second)
+	uint mins = srcTime / 10000;
+	uint csec = srcTime % 10000;
+	return (mins * 6000 + csec) * CD_FRAME_RATE / 100;
+}
 
 void Scripts::doCloudsEnding() {
 	g_vm->_party->_cloudsCompleted = true;
 	doEnding("ENDGAME");
 
-	g_vm->_mode = MODE_1;
+	g_vm->_mode = MODE_INTERACTIVE;
 	g_vm->_saves->saveGame();
 
 	g_vm->_gameMode = GMODE_MENU;
@@ -1562,9 +1603,8 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 18:
 		// Condition
-		assert(val < 16);
-		if (!ps->_conditions[val] && !(val & 0x10))
-			v = val;
+		assert(val <= NO_CONDITION);
+		v = (ps->_conditions[val] || val == NO_CONDITION) ? val : 0xffffffff;
 		break;
 	case 19: {
 		// Can player cast a given spell
@@ -1583,42 +1623,44 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	}
 	case 20:
-		if (files._ccNum)
+		assert(val < 256);
+		if (files._ccNum && _vm->getGameID() != GType_Swords)
 			val += 256;
-		assert(val < 512);
 		v = party._gameFlags[val / 256][val % 256] ? val : 0xffffffff;
 		break;
-	case 21:
+	case 21: {
 		// Scans inventories for given item number
+		uint itemOffset = _vm->getGameID() == GType_Swords ? 6 : 0;
 		v = 0xFFFFFFFF;
-		if (val < 82) {
-			for (int idx = 0; idx < 9; ++idx) {
-				if (val == 35) {
+		if (val < (82 + itemOffset)) {
+			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+				if (val < (35 + itemOffset)) {
 					if (ps->_weapons[idx]._id == val) {
 						v = val;
 						break;
 					}
-				} else if (val < 49) {
+				} else if (val < (49 + itemOffset)) {
 					if (ps->_armor[idx]._id == (val - 35)) {
 						v = val;
 						break;
 					}
-				} else if (val < 60) {
-					if (ps->_accessories[idx]._id == (val - 49)) {
+				} else if (val < (60 + itemOffset)) {
+					if (ps->_accessories[idx]._id == (val - (49 + itemOffset))) {
 						v = val;
 						break;
 					}
 				} else {
-					if (ps->_misc[idx]._id == (val - 60)) {
+					if (ps->_misc[idx]._id == (val - (60 + itemOffset))) {
 						v = val;
 						break;
 					}
 				}
 			}
-		} else if (party._questItems[val - 82]) {
+		} else if (party._questItems[val - (82 + itemOffset)]) {
 			v = val;
 		}
 		break;
+	}
 	case 25:
 		// Returns number of minutes elapsed in the day (0-1440)
 		v = party._minutes;
@@ -1775,16 +1817,16 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		v = ps->_ACTemp;
 		break;
 	case 78:
-		// Test whether current Hp is equal to or exceeds the max HP
-		v = ps->_currentHp >= ps->getMaxHP() ? 1 : 0;
+		// Test whether current Hp exceeds max HP or not
+		v = ps->_currentHp <= ps->getMaxHP() ? 1 : 0;
 		break;
 	case 79:
 		// Test for Wizard Eye being active
 		v = party._wizardEyeActive ? 1 : 0;
 		break;
 	case 81:
-		// Test whether current Sp is equal to or exceeds the max SP
-		v = ps->_currentSp >= ps->getMaxSP() ? 1 : 0;
+		// Test whether current Sp exceeds the max SP or not
+		v = ps->_currentSp <= ps->getMaxSP() ? 1 : 0;
 		break;
 	case 84:
 		// Current facing direction
@@ -1826,7 +1868,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 104:
 		// Get value of quest flag
-		v = party._questFlags[files._ccNum][val] ? val : 0xffffffff;
+		v = party._questFlags[(_vm->getGameID() == GType_Swords ? 0 : files._ccNum * 30) + val] ? val : 0xffffffff;
 		break;
 	case 105:
 		// Test number of Megacredits in party. Only used by King's Engineer in Castle Burlock

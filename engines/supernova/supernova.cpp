@@ -20,7 +20,6 @@
  *
  */
 
-#include "audio/mods/protracker.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -42,35 +41,13 @@
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
 
+#include "supernova/resman.h"
+#include "supernova/screen.h"
+#include "supernova/sound.h"
 #include "supernova/supernova.h"
 #include "supernova/state.h"
 
 namespace Supernova {
-
-const AudioInfo audioInfo[kAudioNumSamples] = {
-	{44,     0,    -1},
-	{45,     0,    -1},
-	{46,     0,  2510},
-	{46,  2510,  4020},
-	{46,  4020,    -1},
-	{47,     0, 24010},
-	{47, 24010,    -1},
-	{48,     0,  2510},
-	{48,  2510, 10520},
-	{48, 10520, 13530},
-	{48, 13530,    -1},
-	{50,     0, 12786},
-	{50, 12786,    -1},
-	{51,     0,    -1},
-	{53,     0,    -1},
-	{54,     0,  8010},
-	{54,  8010, 24020},
-	{54, 24020, 30030},
-	{54, 30030, 31040},
-	{54, 31040,    -1}
-};
-
-const Object Object::nullObject;
 
 ObjectType operator|(ObjectType a, ObjectType b) {
 	return static_cast<ObjectType>(+a | +b);
@@ -98,74 +75,37 @@ ObjectType &operator^=(ObjectType &a, ObjectType b) {
 
 SupernovaEngine::SupernovaEngine(OSystem *syst)
 	: Engine(syst)
-	, _console(NULL)
-	, _gm(NULL)
-	, _currentImage(NULL)
-	, _soundMusicIntro(NULL)
-	, _soundMusicOutro(NULL)
-	, _rnd("supernova")
-	, _brightness(255)
-	, _menuBrightness(255)
+	, _console(nullptr)
+	, _gm(nullptr)
+	, _sound(nullptr)
+	, _resMan(nullptr)
+	, _screen(nullptr)
 	, _delay(33)
 	, _textSpeed(kTextSpeed[2])
-	, _screenWidth(320)
-	, _screenHeight(200)
-	, _messageDisplayed(false)
 	, _allowLoadGame(true)
-	, _allowSaveGame(true)
-{
-//	const Common::FSNode gameDataDir(ConfMan.get("path"));
-//	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
-
+	, _allowSaveGame(true) {
 	if (ConfMan.hasKey("textspeed"))
 		_textSpeed = ConfMan.getInt("textspeed");
 
-	// setup engine specific debug channels
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "Supernova general debug channel");
 }
 
 SupernovaEngine::~SupernovaEngine() {
 	DebugMan.clearAllDebugChannels();
 
-	delete _currentImage;
 	delete _console;
 	delete _gm;
-	delete _soundMusicIntro;
-	delete _soundMusicOutro;
+	delete _sound;
+	delete _resMan;
+	delete _screen;
 }
 
 Common::Error SupernovaEngine::run() {
-	Graphics::ModeList modes;
-	modes.push_back(Graphics::Mode(320, 200));
-	modes.push_back(Graphics::Mode(640, 480));
-	initGraphicsModes(modes);
-	initGraphics(_screenWidth, _screenHeight);
-
-	Common::Error status = loadGameStrings();
-	if (status.getCode() != Common::kNoError)
-		return status;
-
-	_gm = new GameManager(this);
-	_console = new Console(this, _gm);
-
-	initData();
-	initPalette();
-
-	CursorMan.replaceCursor(_mouseNormal, 16, 16, 0, 0, kColorCursorTransparent);
-	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
-	CursorMan.showMouse(true);
-
-	setTotalPlayTime(0);
-
-	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot >= 0) {
-		if (loadGameState(saveSlot).getCode() != Common::kNoError)
-			error("Failed to load save game from slot %i", saveSlot);
-	}
+	init();
 
 	while (!shouldQuit()) {
 		uint32 start = _system->getMillis();
-		updateEvents();
+		_gm->updateEvents();
 		_gm->executeRoom();
 		_console->onFrame();
 		_system->updateScreen();
@@ -174,89 +114,34 @@ Common::Error SupernovaEngine::run() {
 			_system->delayMillis(end);
 	}
 
-	stopSound();
+	_mixer->stopAll();
 
 	return Common::kNoError;
 }
 
-void SupernovaEngine::updateEvents() {
-	_gm->handleTime();
-	if (_gm->_animationEnabled && !_messageDisplayed && _gm->_animationTimer == 0)
-		_gm->_currentRoom->animation();
+void SupernovaEngine::init() {
+	Graphics::ModeList modes;
+	modes.push_back(Graphics::Mode(320, 200));
+	modes.push_back(Graphics::Mode(640, 480));
+	initGraphicsModes(modes);
+	initGraphics(320, 200);
 
-	if (_gm->_state._eventCallback != kNoFn && _gm->_state._time >= _gm->_state._eventTime) {
-		_allowLoadGame = false;
-		_allowSaveGame = false;
-		_gm->_state._eventTime = kMaxTimerValue;
-		EventFunction fn = _gm->_state._eventCallback;
-		_gm->_state._eventCallback = kNoFn;
-		switch (fn) {
-		case kNoFn:
-			break;
-		case kSupernovaFn:
-			_gm->supernovaEvent();
-			break;
-		case kGuardReturnedFn:
-			_gm->guardReturnedEvent();
-			break;
-		case kGuardWalkFn:
-			_gm->guardWalkEvent();
-			break;
-		case kTaxiFn:
-			_gm->taxiEvent();
-			break;
-		case kSearchStartFn:
-			_gm->searchStartEvent();
-			break;
-		}
-		_allowLoadGame = true;
-		_allowSaveGame = true;
-		return;
-	}
+	Common::Error status = loadGameStrings();
+	if (status.getCode() != Common::kNoError)
+		error("Failed reading game strings");
 
-	if (_gm->_state._alarmOn && _gm->_state._timeAlarm <= _gm->_state._time) {
-		_gm->_state._alarmOn = false;
-		_gm->alarm();
-		return;
-	}
+	_resMan = new ResourceManager();
+	_sound = new Sound(_mixer, _resMan);
+	_gm = new GameManager(this, _sound);
+	_screen = new Screen(this, _gm, _resMan);
+	_console = new Console(this, _gm);
 
-	_gm->_mouseClicked = false;
-	_gm->_keyPressed = false;
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			_gm->_keyPressed = true;
-			if (event.kbd.keycode == Common::KEYCODE_d &&
-				(event.kbd.flags & Common::KBD_CTRL)) {
-				_console->attach();
-			}
-			if (event.kbd.keycode == Common::KEYCODE_x &&
-				(event.kbd.flags & Common::KBD_CTRL)) {
-				// TODO: Draw exit box
-			}
+	setTotalPlayTime(0);
 
-			_gm->processInput(event.kbd);
-			break;
-
-		case Common::EVENT_LBUTTONUP:
-			// fallthrough
-		case Common::EVENT_RBUTTONUP:
-			if (_gm->_currentRoom->getId() != INTRO && _mixer->isSoundHandleActive(_soundHandle))
-				return;
-			_gm->_mouseClicked = true;
-			// fallthrough
-		case Common::EVENT_MOUSEMOVE:
-			_gm->_mouseClickType = event.type;
-			_gm->_mouseX = event.mouse.x;
-			_gm->_mouseY = event.mouse.y;
-			if (_gm->_guiEnabled)
-				_gm->processInput();
-			break;
-
-		default:
-			break;
-		}
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot >= 0) {
+		if (loadGameState(saveSlot).getCode() != Common::kNoError)
+			error("Failed to load save game from slot %i", saveSlot);
 	}
 }
 
@@ -337,440 +222,133 @@ Common::Error SupernovaEngine::loadGameStrings() {
 	return Common::kReadingFailed;
 }
 
-void SupernovaEngine::initData() {
-	// Sound
-	// Note:
-	//   - samples start with a header of 6 bytes: 01 SS SS 00 AD 00
-	//     where SS SS (LE uint16) is the size of the sound sample + 2
-	//   - samples end with a footer of 4 bytes: 00 00
-	// Skip those in the buffer
-	Common::File file;
-
-	for (int i = 0; i < kAudioNumSamples; ++i) {
-		if (!file.open(Common::String::format("msn_data.%03d", audioInfo[i]._filenumber))) {
-			error("File %s could not be read!", file.getName());
-		}
-
-		if (audioInfo[i]._offsetEnd == -1) {
-			file.seek(0, SEEK_END);
-			_soundSamples[i]._length = file.pos() - audioInfo[i]._offsetStart - 10;
-		} else {
-			_soundSamples[i]._length = audioInfo[i]._offsetEnd - audioInfo[i]._offsetStart - 10;
-		}
-		_soundSamples[i]._buffer = new byte[_soundSamples[i]._length];
-		file.seek(audioInfo[i]._offsetStart + 6);
-		file.read(_soundSamples[i]._buffer, _soundSamples[i]._length);
-		file.close();
-	}
-
-	_soundMusicIntro = convertToMod("msn_data.049");
-	_soundMusicOutro = convertToMod("msn_data.052");
-
-	// Cursor
-	const uint16 *bufferNormal = reinterpret_cast<const uint16 *>(mouseNormal);
-	const uint16 *bufferWait = reinterpret_cast<const uint16 *>(mouseWait);
-	for (uint i = 0; i < sizeof(mouseNormal) / 4; ++i) {
-		for (uint bit = 0; bit < 16; ++bit) {
-			uint mask = 0x8000 >> bit;
-			uint bitIndex = i * 16 + bit;
-
-			_mouseNormal[bitIndex] = (READ_LE_UINT16(bufferNormal + i) & mask) ? kColorCursorTransparent : kColorBlack;
-			if (READ_LE_UINT16(bufferNormal + i + 16) & mask)
-				_mouseNormal[bitIndex] = kColorLightRed;
-			_mouseWait[bitIndex] = (READ_LE_UINT16(bufferWait + i) & mask) ? kColorCursorTransparent : kColorBlack;
-			if (READ_LE_UINT16(bufferWait + i + 16) & mask)
-				_mouseWait[bitIndex] = kColorLightRed;
-		}
-	}
+const Common::String &SupernovaEngine::getGameString(int idx) const {
+	if (idx < 0 || idx >= (int)_gameStrings.size())
+		return _nullString;
+	return _gameStrings[idx];
 }
 
-void SupernovaEngine::initPalette() {
-	_system->getPaletteManager()->setPalette(initVGAPalette, 0, 256);
-}
-
-void SupernovaEngine::playSound(AudioIndex sample) {
-	if (sample > kAudioNumSamples - 1)
+void SupernovaEngine::setGameString(int idx, const Common::String &string) {
+	if (idx < 0)
 		return;
-
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(
-				_soundSamples[sample]._buffer, _soundSamples[sample]._length,
-				11931, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
-	stopSound();
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, audioStream);
+	while ((int)_gameStrings.size() <= idx)
+		_gameStrings.push_back(Common::String());
+	_gameStrings[idx] = string;
 }
 
-void SupernovaEngine::stopSound() {
-	if (_mixer->isSoundHandleActive(_soundHandle))
-		_mixer->stopHandle(_soundHandle);
+void SupernovaEngine::playSound(AudioId sample) {
+	_sound->play(sample);
 }
 
-void SupernovaEngine::playSoundMod(int filenumber)
-{
-	Audio::AudioStream *audioStream;
-	if (filenumber == 49)
-		audioStream = Audio::makeProtrackerStream(_soundMusicIntro);
-	else if (filenumber == 52)
-		audioStream = Audio::makeProtrackerStream(_soundMusicOutro);
-	else
-		return;
-
-	stopSound();
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audioStream,
-					   -1, Audio::Mixer::kMaxChannelVolume, 0);
-}
-
-void SupernovaEngine::renderImageSection(int section) {
-	// Note: inverting means we are removing the section. So we should get the rect for that
-	// section but draw the background (section 0) instead.
-	bool invert = false;
-	if (section > 128) {
-		section -= 128;
-		invert = true;
-	}
-	if (!_currentImage || section > _currentImage->_numSections - 1)
-		return;
-
-	Common::Rect sectionRect(_currentImage->_section[section].x1,
-							 _currentImage->_section[section].y1,
-							 _currentImage->_section[section].x2 + 1,
-							 _currentImage->_section[section].y2 + 1) ;
-	if (_currentImage->_filenumber == 1 || _currentImage->_filenumber == 2) {
-		sectionRect.setWidth(640);
-		sectionRect.setHeight(480);
-		if (_screenWidth != 640) {
-			_screenWidth = 640;
-			_screenHeight = 480;
-			initGraphics(_screenWidth, _screenHeight);
-		}
-	} else {
-		if (_screenWidth != 320) {
-			_screenWidth = 320;
-			_screenHeight = 200;
-			initGraphics(_screenWidth, _screenHeight);
-		}
-	}
-
-	uint offset = 0;
-	int pitch = sectionRect.width();
-	if (invert) {
-		pitch = _currentImage->_pitch;
-		offset = _currentImage->_section[section].y1 * pitch + _currentImage->_section[section].x1;
-		section = 0;
-	}
-
-	_system->copyRectToScreen(static_cast<const byte *>(_currentImage->_sectionSurfaces[section]->getPixels()) + offset,
-							  pitch,
-							  sectionRect.left, sectionRect.top,
-							  sectionRect.width(), sectionRect.height());
+void SupernovaEngine::playSound(MusicId index) {
+	_sound->play(index);
 }
 
 void SupernovaEngine::renderImage(int section) {
-	if (!_currentImage)
-		return;
-
-	bool sectionVisible = true;
-
-	if (section > 128) {
-		sectionVisible = false;
-		section -= 128;
-	}
-
-	_gm->_currentRoom->setSectionVisible(section, sectionVisible);
-
-	do {
-		if (sectionVisible)
-			renderImageSection(section);
-		else
-			renderImageSection(section + 128);
-		section = _currentImage->_section[section].next;
-	} while (section != 0);
+	_screen->renderImage(section);
 }
 
 bool SupernovaEngine::setCurrentImage(int filenumber) {
-	if (_currentImage && _currentImage->_filenumber == filenumber)
-		return true;
-
-	delete _currentImage;
-	_currentImage = new MSNImageDecoder();
-	if (!_currentImage->init(filenumber)) {
-		delete _currentImage;
-		_currentImage = NULL;
-		return false;
-	}
-
-	_system->getPaletteManager()->setPalette(_currentImage->getPalette(), 16, 239);
-	paletteBrightness();
-	return true;
+	return _screen->setCurrentImage(filenumber);
 }
 
 void SupernovaEngine::saveScreen(int x, int y, int width, int height) {
-	_screenBuffer.push(x, y, width, height);
+	_screen->saveScreen(x, y, width, height);
 }
 void SupernovaEngine::saveScreen(const GuiElement &guiElement) {
-	saveScreen(guiElement.left, guiElement.top, guiElement.width(), guiElement.height());
+	_screen->saveScreen(guiElement);
 }
 
 void SupernovaEngine::restoreScreen() {
-	_screenBuffer.restore();
+	_screen->restoreScreen();
 }
 
 void SupernovaEngine::renderRoom(Room &room) {
-	if (room.getId() == INTRO)
-		return;
-
-	if (setCurrentImage(room.getFileNumber())) {
-		for (int i = 0; i < _currentImage->_numSections; ++i) {
-			int section = i;
-			if (room.isSectionVisible(section)) {
-				do {
-					renderImageSection(section);
-					section = _currentImage->_section[section].next;
-				} while (section != 0);
-			}
-		}
-	}
-}
-
-int SupernovaEngine::textWidth(const uint16 key) {
-	char text[2];
-	text[0] = key & 0xFF;
-	text[1] = 0;
-	return textWidth(text);
-}
-
-int SupernovaEngine::textWidth(const char *text) {
-	int charWidth = 0;
-	while (*text != '\0') {
-		byte c = *text++;
-		if (c < 32) {
-			continue;
-		} else if (c == 225) {
-			c = 35;
-		}
-
-		for (uint i = 0; i < 5; ++i) {
-			if (font[c - 32][i] == 0xff) {
-				break;
-			}
-			++charWidth;
-		}
-		++charWidth;
-	}
-
-	return charWidth;
+	_screen->renderRoom(room);
 }
 
 void SupernovaEngine::renderMessage(const char *text, MessagePosition position) {
-	Common::String t(text);
-	char *row[20];
-	Common::String::iterator p = t.begin();
-	uint numRows = 0;
-	int rowWidthMax = 0;
-	int x = 0;
-	int y = 0;
-	byte textColor = 0;
+	_screen->renderMessage(text, position);
+}
 
-	while (*p != '\0') {
-		row[numRows] = p;
-		++numRows;
-		while ((*p != '\0') && (*p != '|')) {
-			++p;
-		}
-		if (*p == '|') {
-			*p = '\0';
-			++p;
-		}
-	}
-	for (uint i = 0; i < numRows; ++i) {
-		int rowWidth = textWidth(row[i]);
-		if (rowWidth > rowWidthMax)
-			rowWidthMax = rowWidth;
-	}
+void SupernovaEngine::renderMessage(const Common::String &text, MessagePosition position) {
+	_screen->renderMessage(text, position);
+}
 
-	switch (position) {
-	case kMessageNormal:
-		x = 160 - rowWidthMax / 2;
-		textColor = kColorWhite99;
-		break;
-	case kMessageTop:
-		x = 160 - rowWidthMax / 2;
-		textColor = kColorLightYellow;
-		break;
-	case kMessageCenter:
-		x = 160 - rowWidthMax / 2;
-		textColor = kColorLightRed;
-		break;
-	case kMessageLeft:
-		x = 3;
-		textColor = kColorLightYellow;
-		break;
-	case kMessageRight:
-		x = 317 - rowWidthMax;
-		textColor = kColorLightGreen;
-		break;
-	}
-
-	if (position == kMessageNormal) {
-		y = 70 - ((numRows * 9) / 2);
-	} else if (position == kMessageTop) {
-		y = 5;
-	} else {
-		y = 142;
-	}
-
-	int message_columns = x - 3;
-	int message_rows = y - 3;
-	int message_width = rowWidthMax + 6;
-	int message_height = numRows * 9 + 5;
-	saveScreen(message_columns, message_rows, message_width, message_height);
-	renderBox(message_columns, message_rows, message_width, message_height, kColorWhite35);
-	for (uint i = 0; i < numRows; ++i) {
-		renderText(row[i], x, y, textColor);
-		y += 9;
-	}
-
-	_messageDisplayed = true;
-	_gm->_timer1 = (Common::strnlen(text, 512) + 20) * _textSpeed / 10;
+void SupernovaEngine::renderMessage(StringId stringId, MessagePosition position, Common::String var1, Common::String var2) {
+	_screen->renderMessage(stringId, position, var1, var2);
 }
 
 void SupernovaEngine::removeMessage() {
-	if (_messageDisplayed) {
-		restoreScreen();
-		_messageDisplayed = false;
-	}
-}
-
-void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
-	Graphics::Surface *screen = _system->lockScreen();
-	byte *cursor = static_cast<byte *>(screen->getBasePtr(x, y));
-	const byte *basePtr = cursor;
-
-	byte c;
-	while ((c = *text++) != '\0') {
-		if (c < 32) {
-			continue;
-		} else if (c == 225) {
-			c = 128;
-		}
-
-		for (uint i = 0; i < 5; ++i) {
-			if (font[c - 32][i] == 0xff) {
-				break;
-			}
-
-			byte *ascentLine = cursor;
-			for (byte j = font[c - 32][i]; j != 0; j >>= 1) {
-				if (j & 1) {
-					*cursor = color;
-				}
-				cursor += kScreenWidth;
-			}
-			cursor = ++ascentLine;
-		}
-		++cursor;
-	}
-	_system->unlockScreen();
-
-	uint numChars = cursor - basePtr;
-	uint absPosition = y * kScreenWidth + x + numChars;
-	_textCursorX = absPosition % kScreenWidth;
-	_textCursorY = absPosition / kScreenWidth;
-	_textColor = color;
-}
-
-void SupernovaEngine::renderText(const uint16 character, int x, int y, byte color) {
-	char text[2];
-	text[0] = character & 0xFF;
-	text[1] = 0;
-	renderText(text, x, y, color);
-}
-
-void SupernovaEngine::renderText(const char *text) {
-	renderText(text, _textCursorX, _textCursorY, _textColor);
+	_screen->removeMessage();
 }
 
 void SupernovaEngine::renderText(const uint16 character) {
-	char text[2];
-	text[0] = character & 0xFF;
-	text[1] = 0;
-	renderText(text, _textCursorX, _textCursorY, _textColor);
+	_screen->renderText(character);
 }
+
+void SupernovaEngine::renderText(const char *text) {
+	_screen->renderText(text);
+}
+
+void SupernovaEngine::renderText(const Common::String &text) {
+	_screen->renderText(text);
+}
+
+void SupernovaEngine::renderText(StringId stringId) {
+	_screen->renderText(stringId);
+}
+
 void SupernovaEngine::renderText(const GuiElement &guiElement) {
-	renderText(guiElement.getText(), guiElement.getTextPos().x,
-			   guiElement.getTextPos().y, guiElement.getTextColor());
+	_screen->renderText(guiElement);
+}
+
+void SupernovaEngine::renderText(const uint16 character, int x, int y, byte color) {
+	_screen->renderText(character, x, y, color);
+}
+
+void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
+	_screen->renderText(text, x, y, color);
+}
+
+void SupernovaEngine::renderText(const Common::String &text, int x, int y, byte color) {
+	_screen->renderText(text, x, y, color);
+}
+
+void SupernovaEngine::renderText(StringId stringId, int x, int y, byte color) {
+	_screen->renderText(stringId, x, y, color);
 }
 
 void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color) {
-	Graphics::Surface *screen = _system->lockScreen();
-	screen->fillRect(Common::Rect(x, y, x + width, y + height), color);
-	_system->unlockScreen();
+	_screen->renderBox(x, y, width, height, color);
 }
 
 void SupernovaEngine::renderBox(const GuiElement &guiElement) {
-	renderBox(guiElement.left, guiElement.top, guiElement.width(),
-			  guiElement.height(), guiElement.getBackgroundColor());
+	_screen->renderBox(guiElement);
 }
 void SupernovaEngine::paletteBrightness() {
-	byte palette[768];
-
-	_system->getPaletteManager()->grabPalette(palette, 0, 255);
-	for (uint i = 0; i < 48; ++i) {
-		palette[i] = (initVGAPalette[i] * _menuBrightness) >> 8;
-	}
-	for (uint i = 0; i < 717; ++i) {
-		const byte *imagePalette;
-		if (_currentImage && _currentImage->getPalette()) {
-			imagePalette = _currentImage->getPalette();
-		} else {
-			imagePalette = palette + 48;
-		}
-		palette[i + 48] = (imagePalette[i] * _brightness) >> 8;
-	}
-	_system->getPaletteManager()->setPalette(palette, 0, 255);
+	_screen->paletteBrightness();
 }
 
 void SupernovaEngine::paletteFadeOut() {
-	while (_menuBrightness > 10) {
-		_menuBrightness -= 10;
-		if (_brightness > _menuBrightness)
-			_brightness = _menuBrightness;
-		paletteBrightness();
-		_system->updateScreen();
-		_system->delayMillis(_delay);
-	}
-	_menuBrightness = 0;
-	_brightness = 0;
-	paletteBrightness();
-	_system->updateScreen();
+	_screen->paletteFadeOut();
 }
 
 void SupernovaEngine::paletteFadeIn() {
-	while (_menuBrightness < 245) {
-		if (_brightness < _gm->_roomBrightness)
-			_brightness += 10;
-		_menuBrightness += 10;
-		paletteBrightness();
-		_system->updateScreen();
-		_system->delayMillis(_delay);
-	}
-	_menuBrightness = 255;
-	_brightness = _gm->_roomBrightness;
-	paletteBrightness();
-	_system->updateScreen();
+	_screen->paletteFadeIn();
 }
 
 void SupernovaEngine::setColor63(byte value) {
-	byte color[3] = {value, value, value};
-	_system->getPaletteManager()->setPalette(color, 63, 1);
+	_screen->setColor63(value);
 }
 
 void SupernovaEngine::setTextSpeed() {
-	const Common::String& textSpeedString = getGameString(kStringTextSpeed);
-	int stringWidth = textWidth(textSpeedString);
-	int textX = (320 - stringWidth) / 2;
+	const Common::String &textSpeedString = getGameString(kStringTextSpeed);
+	int stringWidth = Screen::textWidth(textSpeedString);
+	int textX = (kScreenWidth - stringWidth) / 2;
 	int textY = 100;
 	stringWidth += 4;
-	int boxX = stringWidth > 110 ? (320 - stringWidth) / 2 : 105;
+	int boxX = stringWidth > 110 ? (kScreenWidth - stringWidth) / 2 : 105;
 	int boxY = 97;
 	int boxWidth = stringWidth > 110 ? stringWidth : 110;
 	int boxHeight = 27;
@@ -878,191 +456,6 @@ bool SupernovaEngine::quitGameDialog() {
 	return quit;
 }
 
-Common::MemoryReadStream *SupernovaEngine::convertToMod(const char *filename, int version) {
-	// MSN format
-	struct {
-		uint16 seg;
-		uint16 start;
-		uint16 end;
-		uint16 loopStart;
-		uint16 loopEnd;
-		char volume;
-		char dummy[5];
-	} instr2[22];
-	int nbInstr2; // 22 for version1, 15 for version 2
-	int16 songLength;
-	char arrangement[128];
-	int16 patternNumber;
-	int32 note2[28][64][4];
-
-	nbInstr2 = ((version == 1) ? 22 : 15);
-
-	Common::File msnFile;
-	msnFile.open(filename);
-	if (!msnFile.isOpen()) {
-		warning("Data file '%s' not found", msnFile.getName());
-		return NULL;
-	}
-
-	for (int i = 0 ; i < nbInstr2 ; ++i) {
-		instr2[i].seg = msnFile.readUint16LE();
-		instr2[i].start = msnFile.readUint16LE();
-		instr2[i].end = msnFile.readUint16LE();
-		instr2[i].loopStart = msnFile.readUint16LE();
-		instr2[i].loopEnd = msnFile.readUint16LE();
-		instr2[i].volume = msnFile.readByte();
-		msnFile.read(instr2[i].dummy, 5);
-	}
-	songLength = msnFile.readSint16LE();
-	msnFile.read(arrangement, 128);
-	patternNumber = msnFile.readSint16LE();
-	for (int p = 0 ; p < patternNumber ; ++p) {
-		for (int n = 0 ; n < 64 ; ++n) {
-			for (int k = 0 ; k < 4 ; ++k) {
-				note2[p][n][k] = msnFile.readSint32LE();
-			}
-		}
-	}
-
-	/* MOD format */
-	struct {
-		char iname[22];
-		uint16 length;
-		char finetune;
-		char volume;
-		uint16 loopStart;
-		uint16 loopLength;
-	} instr[31];
-	int32 note[28][64][4];
-
-	// We can't recover some MOD effects since several of them are mapped to 0.
-	// Assume the MSN effect of value 0 is Arpeggio (MOD effect of value 0).
-	const char invConvEff[8] = {0, 1, 2, 3, 10, 12, 13 ,15};
-
-	// Reminder from convertToMsn
-	// 31 30 29 28 27 26 25 24 - 23 22 21 20 19 18 17 16 - 15 14 13 12 11 10 09 08 - 07 06 05 04 03 02 01 00
-	//  h  h  h  h  g  g  g  g    f  f  f  f  e  e  e  e    d  d  d  d  c  c  c  c    b  b  b  b  a  a  a  a
-	//
-	// MSN:
-	//  hhhh             (4 bits) Cleared to 0
-	//  dddd c           (5 bits) Sample index   | after mapping through convInstr
-	//        ccc        (3 bits) Effect type    | after mapping through convEff
-	//  bbbb aaaa        (8 bits) Effect value   | unmodified
-	//  gggg ffff eeee  (12 bits) Sample period  | unmodified
-	//
-	// MS2:
-	//  hhhh             (4 bits) Cleared to 0
-	//  dddd             (4 bits) Sample index   | after mapping through convInstr
-	//  cccc             (4 bits) Effect type    | unmodified
-	//  bbbb aaaa        (8 bits) Effect value   | unmodified
-	//  gggg ffff eeee  (12 bits) Sample period  | transformed (0xE000 / p) - 256
-	//
-	// MOD:
-	//  hhhh dddd        (8 bits) Sample index
-	//  cccc             (4 bits) Effect type for this channel/division
-	//  bbbb aaaa        (8 bits) Effect value
-	//  gggg ffff eeee  (12 bits) Sample period
-
-	// Can we recover the instruments mapping? I don't think so as part of the original instrument index is cleared.
-	// And it doesn't really matter as long as we are consistent.
-	// However we need to make sure 31 (or 15 in MS2) is mapped to 0 in MOD.
-	// We just add 1 to all other values, and this means a 1 <-> 1 mapping for the instruments
-	for (int p = 0; p < patternNumber; ++p) {
-		for (int n = 0; n < 64; ++n) {
-			for (int k = 0; k < 4; ++k) {
-				int32* l = &(note[p][n][k]);
-				*l = note2[p][n][k];
-				int32 i = 0;
-				if (nbInstr2 == 22) { // version 1
-					i = ((*l & 0xF800) >> 11);
-					int32 e = ((*l & 0x0700) >> 8);
-					int32 e1 = invConvEff[e];
-					*l &= 0x0FFF00FF;
-					*l |= (e1 << 8);
-				} else { // version 2
-					int32 h = (*l >> 16);
-					i = ((*l & 0xF000) >> 12);
-					*l &= 0x00000FFF;
-					if (h)
-						h = 0xE000 / (h + 256);
-					*l |= (h << 16);
-					if (i == 15)
-						i = 31;
-				}
-
-				// Add back index in note
-				if (i != 31) {
-					++i;
-					*l |= ((i & 0x0F) << 12);
-					*l |= ((i & 0xF0) << 24);
-				}
-			}
-		}
-	}
-
-	for (int i = 0; i < 31; ++i) {
-		// iname is not stored in the mod file. Just set it to 'instrument#'
-		// finetune is not stored either. Assume 0.
-		memset(instr[i].iname, 0, 22);
-		sprintf(instr[i].iname, "instrument%d", i+1);
-		instr[i].length = 0;
-		instr[i].finetune = 0;
-		instr[i].volume = 0;
-		instr[i].loopStart = 0;
-		instr[i].loopLength = 0;
-
-		if (i < nbInstr2) {
-			instr[i].length = ((instr2[i].end - instr2[i].start) >> 1);
-			instr[i].loopStart = ((instr2[i].loopStart - instr2[i].start) >> 1);
-			instr[i].loopLength = (( instr2[i].loopEnd - instr2[i].loopStart) >> 1);
-			instr[i].volume = instr2[i].volume;
-		}
-	}
-
-	// The ciaaSpeed is kind of useless and not present in the MSN file.
-	// Traditionally 0x78 in SoundTracker. Was used in NoiseTracker as a restart point.
-	// ProTracker uses 0x7F. FastTracker uses it as a restart point, whereas ScreamTracker 3 uses 0x7F like ProTracker.
-	// You can use this to roughly detect which tracker made a MOD, and detection gets more accurate for more obscure MOD types.
-	char ciaaSpeed = 0x7F;
-
-	// The mark cannot be recovered either. Since we have 4 channels and 31 instrument it can be either ID='M.K.' or ID='4CHN'.
-	// Assume 'M.K.'
-	const char mark[4] = { 'M', '.', 'K', '.' };
-
-	Common::MemoryWriteStreamDynamic buffer(DisposeAfterUse::NO);
-
-	buffer.write(msnFile.getName(), 19);
-	buffer.writeByte(0);
-
-	for (int i = 0 ; i < 31 ; ++i) {
-		buffer.write(instr[i].iname, 22);
-		buffer.writeUint16BE(instr[i].length);
-		buffer.writeByte(instr[i].finetune);
-		buffer.writeByte(instr[i].volume);
-		buffer.writeUint16BE(instr[i].loopStart);
-		buffer.writeUint16BE(instr[i].loopLength);
-	}
-	buffer.writeByte((char)songLength);
-	buffer.writeByte(ciaaSpeed);
-	buffer.write(arrangement, 128);
-	buffer.write(mark, 4);
-
-	for (int p = 0 ; p < patternNumber ; ++p) {
-		for (int n = 0 ; n < 64 ; ++n) {
-			for (int k = 0 ; k < 4 ; ++k) {
-//				buffer.writeUint32BE(*((uint32*)(note[p][n]+k)));
-				buffer.writeSint32BE(note[p][n][k]);
-			}
-		}
-	}
-
-	uint nb;
-	char buf[4096];
-	while ((nb = msnFile.read(buf, 4096)) > 0)
-		buffer.write(buf, nb);
-
-	return new Common::MemoryReadStream(buffer.getData(), buffer.size(), DisposeAfterUse::YES);
-}
 
 bool SupernovaEngine::canLoadGameStateCurrently() {
 	return _allowLoadGame;
@@ -1117,10 +510,11 @@ bool SupernovaEngine::loadGame(int slot) {
 	_gm->deserialize(savefile, saveVersion);
 
 	if (saveVersion >= 5) {
-		_menuBrightness = savefile->readByte();
-		_brightness = savefile->readByte();
+		_screen->setGuiBrightness(savefile->readByte());
+		_screen->setViewportBrightness(savefile->readByte());
 	} else {
-		_menuBrightness = _brightness = 255;
+		_screen->setGuiBrightness(255);
+		_screen->setViewportBrightness(255);
 	}
 
 	delete savefile;
@@ -1153,8 +547,8 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 	Graphics::saveThumbnail(*savefile);
 	_gm->serialize(savefile);
 
-	savefile->writeByte(_menuBrightness);
-	savefile->writeByte(_brightness);
+	savefile->writeByte(_screen->getGuiBrightness());
+	savefile->writeByte(_screen->getViewportBrightness());
 
 	savefile->finalize();
 	delete savefile;
@@ -1169,59 +563,5 @@ void SupernovaEngine::errorTempSave(bool saving) {
 	error("Unrecoverable error");
 }
 
-ScreenBufferStack::ScreenBufferStack()
-	: _last(_buffer) {
-}
-
-void ScreenBufferStack::push(int x, int y, int width, int height) {
-	if (_last == ARRAYEND(_buffer))
-		return;
-
-	Graphics::Surface* screenSurface = g_system->lockScreen();
-
-	if (x < 0) {
-		width += x;
-		x = 0;
-	}
-	if (x + width > screenSurface->w)
-		width = screenSurface->w - x;
-
-	if (y < 0) {
-		height += y;
-		y = 0;
-	}
-	if (y + height > screenSurface->h)
-		height = screenSurface->h - y;
-
-	_last->_pixels = new byte[width * height];
-	byte *pixels = _last->_pixels;
-	const byte *screen = static_cast<const byte *>(screenSurface->getBasePtr(x, y));
-	for (int i = 0; i < height; ++i) {
-		Common::copy(screen, screen + width, pixels);
-		screen += screenSurface->pitch;
-		pixels += width;
-	}
-	g_system->unlockScreen();
-
-	_last->_x = x;
-	_last->_y = y;
-	_last->_width = width;
-	_last->_height = height;
-
-	++_last;
-}
-
-void ScreenBufferStack::restore() {
-	if (_last == _buffer)
-		return;
-
-	--_last;
-	g_system->lockScreen()->copyRectToSurface(
-				_last->_pixels, _last->_width, _last->_x, _last->_y,
-				_last->_width, _last->_height);
-	g_system->unlockScreen();
-
-	delete[] _last->_pixels;
-}
 
 }

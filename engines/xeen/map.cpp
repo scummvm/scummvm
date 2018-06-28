@@ -608,7 +608,6 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_sideObjects = 0;
 	_sideMonsters = 0;
 	_sidePictures = 0;
-	_sideMusic = 0;
 	_isOutdoors = false;
 	_mazeDataIndex = 0;
 	_currentSteppedOn = false;
@@ -713,7 +712,7 @@ void Map::load(int mapId) {
 	}
 
 	// Load any events for the new map
-	loadEvents(mapId);
+	loadEvents(mapId, _loadCcNum);
 
 	// Iterate through loading the given maze as well as the two successive
 	// mazes in each of the four cardinal directions
@@ -879,8 +878,7 @@ void Map::load(int mapId) {
 		const int MUS_INDEXES[] = { 1, 2, 3, 4, 3, 5 };
 		Common::String musName;
 
-		_sideMusic = ccNum;
-		if (ccNum) {
+		if (files._ccNum) {
 			int randIndex = _vm->getRandomNumber(6);
 			musName = Res.MUSIC_FILES2[MUS_INDEXES[_mazeData->_wallKind]][randIndex];
 		} else {
@@ -1069,11 +1067,11 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 	}
 }
 
-void Map::loadEvents(int mapId) {
+void Map::loadEvents(int mapId, int ccNum) {
 	// Load events
 	Common::String filename = Common::String::format("maze%c%03d.evt",
 		(mapId >= 100) ? 'x' : '0', mapId);
-	File fEvents(filename);
+	File fEvents(filename, ccNum);
 	XeenSerializer sEvents(&fEvents, nullptr);
 	_events.synchronize(sEvents);
 	fEvents.close();
@@ -1081,7 +1079,7 @@ void Map::loadEvents(int mapId) {
 	// Load text data
 	filename = Common::String::format("aaze%c%03d.txt",
 		(mapId >= 100) ? 'x' : '0', mapId);
-	File fText(filename);
+	File fText(filename, ccNum);
 	_events._text.clear();
 	while (fText.pos() < fText.size())
 		_events._text.push_back(fText.readString());

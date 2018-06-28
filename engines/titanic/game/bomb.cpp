@@ -374,7 +374,7 @@ bool CBomb::TimerMsg(CTimerMsg *msg) {
 		addTimer(0, 100, 0);
 		return true;
 	}
-		
+
 	if (msg->_actionVal == 0) {
 		addTimer(1, 1000, 0);
 	} else {
@@ -459,7 +459,7 @@ bool CBomb::TimerMsg(CTimerMsg *msg) {
 		--_countdown;
 		addTimer(0, 1000, 0);
 	}
-	
+
 	return true;
 }
 

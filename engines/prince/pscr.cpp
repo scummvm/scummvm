@@ -24,6 +24,7 @@
 #include "common/stream.h"
 
 #include "prince/pscr.h"
+#include "prince/resource.h"
 
 namespace Prince {
 
@@ -64,6 +65,8 @@ bool PScr::loadFromStream(Common::SeekableReadStream &stream) {
 	const Common::String pscrStreamName = Common::String::format("PS%02d", file);
 	Common::SeekableReadStream *pscrStream = SearchMan.createReadStreamForMember(pscrStreamName);
 	if (pscrStream != nullptr) {
+		pscrStream = Resource::getDecompressedStream(pscrStream);
+
 		loadSurface(*pscrStream);
 	}
 	delete pscrStream;

@@ -823,8 +823,8 @@ void FliesEffect::initFlies(uint16 count) {
 }
 
 void FliesEffect::initFlyRandomPosition(uint index) {
-	int posX = _vm->_rnd->getRandomNumber(_gameRect.right - 3);
-	int posY = _vm->_rnd->getRandomNumber(_gameRect.bottom - 3);
+	int posX = _vm->_rnd->getRandomNumber(_gameRect.right - 4);
+	int posY = _vm->_rnd->getRandomNumber(_gameRect.bottom - 4);
 
 	if (posY < 100) {
 		posY = 100;

@@ -389,7 +389,8 @@ int CreateCharacterDialog::newCharDetails(Race race, Sex sex, int classId,
 
 	// Set up default skill for the race, if any
 	if (Res.NEW_CHAR_RACE_SKILLS[race] != -1) {
-		raceSkillStr = Res.SKILL_NAMES[Res.NEW_CHAR_RACE_SKILLS[race]];
+		const char *skillP = Res.SKILL_NAMES[Res.NEW_CHAR_RACE_SKILLS[race]];
+		raceSkillStr = Common::String(skillP + Res.NEW_CHAR_SKILLS_OFFSET[race]);
 	}
 
 	// Set up color to use for each skill string to be displayed, based
@@ -554,7 +555,7 @@ int CreateCharacterDialog::exchangeAttribute(int srcAttr) {
 			break;
 
 		int destAttr = getAttribFromKeycode(_buttonValue);
-		
+
 		if (destAttr != -1 && srcAttr != destAttr) {
 			result = destAttr;
 			break;

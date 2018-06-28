@@ -195,7 +195,7 @@ void CProjectItem::loadGame(int slotId) {
 
 	// Load the contents in
 	CProjectItem *newProject = loadData(&file);
-	file.IsClassStart();
+	file.isClassStart();
 	getGameManager()->load(&file);
 
 	file.close();
@@ -250,7 +250,7 @@ void CProjectItem::clear() {
 }
 
 CProjectItem *CProjectItem::loadData(SimpleFile *file) {
-	if (!file->IsClassStart())
+	if (!file->isClassStart())
 		return nullptr;
 
 	CProjectItem *root = nullptr;
@@ -291,8 +291,8 @@ CProjectItem *CProjectItem::loadData(SimpleFile *file) {
 			item->load(file);
 		}
 
-		file->IsClassStart();
-	} while (file->IsClassStart());
+		file->isClassStart();
+	} while (file->isClassStart());
 
 	return root;
 }
@@ -495,7 +495,7 @@ SaveStateList CProjectItem::getSavegameList(const Common::String &target) {
 	return saveList;
 }
 
-bool CProjectItem::readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header, bool skipThumbnail) {
+WARN_UNUSED_RESULT bool CProjectItem::readSavegameHeader(SimpleFile *file, TitanicSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
 	header._thumbnail = nullptr;
 	header._totalFrames = 0;

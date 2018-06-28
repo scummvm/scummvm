@@ -35,8 +35,8 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GAMEOPTION_SHOW_ITEM_COSTS)
+			ADGF_TESTING,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_WorldOfXeen,
 		0
@@ -54,8 +54,8 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GAMEOPTION_SHOW_ITEM_COSTS)
+			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_WorldOfXeen,
 		0
@@ -65,7 +65,7 @@ static const XeenGameDescription gameDescriptions[] = {
 		// World of Xeen (2 CD talkie version)
 		{
 			"worldofxeen",
-			nullptr,
+			"CD",
 			{
 				{"xeen.cc", 0, "964078c53f649937ce9a1a3596ce3d9f", 13438429},
 				{"dark.cc", 0, "7f755ce39ea614fa6adb016f8bfc6e43", 11288403},
@@ -73,8 +73,8 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GAMEOPTION_SHOW_ITEM_COSTS)
+			ADGF_TESTING | ADGF_CD,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_WorldOfXeen,
 		0
@@ -91,8 +91,8 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GAMEOPTION_SHOW_ITEM_COSTS)
+			ADGF_TESTING,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_Clouds,
 		0
@@ -109,15 +109,15 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GAMEOPTION_SHOW_ITEM_COSTS)
+			ADGF_TESTING,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_DarkSide,
 		0
 	},
 
 	{
-		// Swords of Xeen (GOG)
+		// Swords of Xeen
 		{
 			"swordsofxeen",
 			nullptr,
@@ -127,8 +127,8 @@ static const XeenGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GAMEOPTION_SHOW_ITEM_COSTS)
+			ADGF_TESTING,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_Swords,
 		0

@@ -70,13 +70,13 @@ static const ChewyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
-	
+
 	{
 		// Chewy - ESC von F5 - German
 		// Master version 1.1 (CHEWY.EXE - offset 0x8AB28)
 		// The source CD-ROM has the Matrix code SONOPRESS R-7885 B
 		// The disc contains several demos and files from 1996
-		// Provided by rootfather
+		// Provided by lotharsm
 		{
 			"chewy",
 			0,
@@ -87,13 +87,13 @@ static const ChewyGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
-	
+
 	{
 		// Chewy - ESC von F5 - German
 		// Master version 1.0 (CHEWY.EXE - offset 0x8AB10)
 		// The source CD-ROM has the Matrix code SONOPRESS M-2742 A
 		// CD-ROM has the label "CHEWY_V1_0"
-		// Provided by rootfather
+		// Provided by lotharsm
 		{
 			"chewy",
 			0,

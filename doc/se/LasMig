@@ -1,7 +1,7 @@
 ScummVM LÄS MIG
 ------------------------------------------------------------------------
 
-För ytterligare information, kompatibilitetslistor, donationsdetaljer, den senaste programversionen, utvecklingsrapporter med mera, var god besök ScummVM:s hemsida på http://www.scummvm.org/
+För ytterligare information, kompatibilitetslistor, donationsdetaljer, den senaste programversionen, utvecklingsrapporter med mera, var god besök ScummVM:s hemsida på https://www.scummvm.org/
 
 Innehåll:
 ---------
@@ -83,7 +83,7 @@ VIKTIGT: Den här korta guiden förutsätter att du använder ScummVM på svensk
 
 För de otåliga följer här instruktioner för att köra igång ScummVM i fem enkla steg.
 
-1. Ladda hem ScummVM från http://www.scummvm.org/downloads.php och installera programmet.
+1. Ladda hem ScummVM från https://www.scummvm.org/downloads/ och installera programmet.
 
 2. Skapa en filkatalog på din hårddisk och kopiera spelets datafiler från dess ursprungliga plats till den nya katalogen. Upprepa det här steget för varje spel du vill spela (det är bättre att använda separata kataloger för vaje spel).
 
@@ -115,7 +115,7 @@ Det enklaste sättet att kontakta ScummVM-teamet är att skicka in bugg-rapporte
 ---- ----------------------
 För att rapportera en bugg måste du skapa ett konto hos SourceForge och följa “Bug Tracker”-länken från våran hemsida. Var god se till att buggen kan reproduceras med säkerhet och att den fortfarande är aktiv i den senaste git/Daily build-versionen. Se även till att kontrollera att felet inte redan rapporterats genom att läsa listan av kända fel för spelet på våran kompatibilitetssida:
 
-  http://www.scummvm.org/compatibility_stable.php
+  https://www.scummvm.org/compatibility/
 
 Var god rapportera inte buggar för spel som inte är möjliga att avklara enligt “Supported Games”-avdelningen, eller i kompatibilitetslistan. Vi vet redan att dessa spel är buggiga.
 
@@ -408,7 +408,7 @@ För PlayStation-versionerna kan du dumpa originalfilmerna från CD:n. Dumpa var
 
 Vissa nyutgåvor av spelen, tillika PlayStation-versionen, har inga Smacker videos. Revolution Software har varit goda nog att skapa nykodade filmscener som kan laddas hem från våran hemsida:
 
-  http://www.scummvm.org/downloads.php
+  https://www.scummvm.org/downloads/
 
 Dessa filmscener är tillgängliga i DXA-format med FLAC-ljud. Kvaliteten är densamma som i originalversionerna av spelet tack vare ickedestruktiv komprimering. För att se dessa filmscener krävs en version av ScummVM som kompilerats med stöd för både FLAC och zlib.
 
@@ -1724,9 +1724,9 @@ För en uppdaterad överblick för hur man kompilerar ScummVM på diverse plattf
 
 Om du kompilerar för Windows, Linux eller Mac OS X behöver du SDL-1.2.2 eller senare (äldre versioner kan fungera, men stöds inte) och ett stött kompileringsprogram. Flera kompileringsprogram inklusive GCC, mingw och senare versioner av Microsoft Visual C++ stöds. Om du vill använda MP3-komprimerade CD-spår eller .SOU-filer måste du installera MAD-biblioteket; på samma sätt behöver du de nödvändiga biblioteken för Ogg Vorbis och FLAC-komprimerat ljud. För komprimerade spardata krävs zlib.
 
-Vissa delar av ScummVM, speciellt skalningsfilter, har optimerade versioner skrivna i assembler-kod. Om du vill använda dem måste du installera nasm-assemblern (se http://nasm.sf.net). Märk att vi för tillfället endast har optimerade versioner för x86 MMX och att de inte kan kompileras med andra processorer.
+Vissa delar av ScummVM, speciellt skalningsfilter, har optimerade versioner skrivna i assembler-kod. Om du vill använda dem måste du installera nasm-assemblern (se https://nasm.us/). Märk att vi för tillfället endast har optimerade versioner för x86 MMX och att de inte kan kompileras med andra processorer.
 
-På Win9x/NT/XP kan du definiera USE_WINDBG och lägga till WinDbg för att visa debug-meddelanden (se http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
+På Windows kan du definiera USE_WINDBG och lägga till WinDbg för att visa debug-meddelanden (se https://docs.microsoft.com/sv-se/windows-hardware/drivers/debugger/index).
 
   GCC och MinGW32:
     * Skriv "./configure"
@@ -1756,7 +1756,7 @@ På Win9x/NT/XP kan du definiera USE_WINDBG och lägga till WinDbg för att visa
     * SDL-utvecklingspaketet för OS X som finns tillgängligt på SLD:s hemsida
       är INTE lämpligt. Du behöver istället en unix-artad kompilation av SDL.
       Ett sätt att få tag i en sådan är att installera SDL via Fink
-      (http://fink.sf.net). Annars kan du kompilera SDL manuellt från källkoden
+      (http://www.finkproject.org/). Annars kan du kompilera SDL manuellt från källkoden
       med unix build-systemet (configure && make).
     * Skriv "./configure" i ScummVM-katalogen.
     * Du kan nu skriva ”make” för att skapa en kommandorad-binary.

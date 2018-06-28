@@ -61,6 +61,10 @@ Common::Platform XeenEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
+bool XeenEngine::getIsCD() const {
+	return getFeatures() & ADGF_CD;
+}
+
 } // End of namespace Xeen
 
 static const PlainGameDescriptor XeenGames[] = {
@@ -73,6 +77,7 @@ static const PlainGameDescriptor XeenGames[] = {
 };
 
 #define GAMEOPTION_SHOW_ITEM_COSTS	GUIO_GAMEOPTIONS1
+#define GAMEOPTION_DURABLE_ARMOR	GUIO_GAMEOPTIONS2
 
 #include "xeen/detection_tables.h"
 
@@ -84,6 +89,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Show item costs in standard inventory mode"),
 			_s("Shows item costs in standard inventory mode, allowing the value of items to be compared"),
 			"ShowItemCosts",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_DURABLE_ARMOR,
+		{
+			_s("More durable armor"),
+			_s("Armor won't break until character is at -80HP, rather than merely -10HP"),
+			"DurableArmor",
 			false
 		}
 	},
@@ -166,7 +181,7 @@ SaveStateList XeenMetaEngine::listSaves(const char *target) const {
 		const char *ext = strrchr(file->c_str(), '.');
 		int slot = ext ? atoi(ext + 1) : -1;
 
-		if (slot >= 0 && slot < MAX_SAVES) {
+		if (slot >= 0 && slot <= MAX_SAVES) {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {

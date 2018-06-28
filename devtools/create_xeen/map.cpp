@@ -125,7 +125,7 @@ void writeMazeName(CCArchive &cc) {
 	memset(mazeName, 0, 33);
 	strcpy(mazeName, "ScummVM");
 	f.write(mazeName, 33);
-	
+
 	cc.add("xeenx255.txt", f);
 }
 
@@ -134,7 +134,7 @@ void writeMazeName(CCArchive &cc) {
  */
 void writeMazeEvents(CCArchive &cc) {
 	Common::MemFile f;
-	
+
 	// Mirror events
 	const byte MIRROR_EVENTS[32] = {
 		6,	7, 0, 2, 0,	40,		1,				// Play VOC: "Where to?"
@@ -143,7 +143,7 @@ void writeMazeEvents(CCArchive &cc) {
 		8,	7, 0, 2, 3, 7,		0, 0, 0			// Teleport and exit
 	};
 	f.write(MIRROR_EVENTS, 32);
-	
+
 	// Bench 1 events
 	const byte BENCH1_EVENTS[32] = {
 		10,  7, 8, 0, 0,  5,	1, 2, 3, 1, 2,	// NPC

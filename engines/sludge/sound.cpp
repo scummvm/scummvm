@@ -402,7 +402,7 @@ bool SoundManager::getSoundCacheStack(StackHandler *sH) {
 
 	for (int a = 0; a < MAX_SAMPLES; a++) {
 		if (_soundCache[a].fileLoaded != -1) {
-			setVariable(newFileHandle, SVT_FILE, _soundCache[a].fileLoaded);
+			newFileHandle.setVariable(SVT_FILE, _soundCache[a].fileLoaded);
 			if (!addVarToStackQuick(newFileHandle, sH->first))
 				return false;
 			if (sH->last == NULL)

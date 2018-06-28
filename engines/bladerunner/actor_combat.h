@@ -66,7 +66,7 @@ public:
 	void combatOff();
 
 	void tick();
-	
+
 	void hitAttempt();
 
 	void save(SaveFileWriteStream &f);

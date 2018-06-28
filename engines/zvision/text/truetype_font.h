@@ -75,8 +75,6 @@ public:
 	int getCharWidth(byte chr);
 	int getKerningOffset(byte left, byte right);
 
-	Common::U32String convertUtf8ToUtf32(const Common::String &str);
-
 	void drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color);
 
 	void drawString(Graphics::Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft);

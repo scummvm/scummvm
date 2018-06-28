@@ -29,7 +29,7 @@
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
-	
+
 	// Create our OSystem instance
 	g_system = new OSystem_RISCOS();
 	assert(g_system);

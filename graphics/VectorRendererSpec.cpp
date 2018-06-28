@@ -419,7 +419,7 @@ inline frac_t fp_sqroot(uint32 x) {
 		x--; px -= pitch; \
 	} \
 	a2 = (T >> 8); \
-	a1 = ~a2;   \
+	a1 = ~a2; \
 } while (0)
 
 
@@ -2680,7 +2680,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 		int gradient = (dx << 8) / (dy + 0x100);
 		int interx = (x1 << 8) + gradient;
 #else
-		double gradient = dx / (dy+1);
+		double gradient = dx / (dy + 1);
 		double interx = x1 + gradient;
 #endif
 
@@ -2846,7 +2846,7 @@ drawTriangleVertAlgClip(int x1, int y1, int w, int h, bool inverted, PixelType c
 				break;
 			case kFillForeground:
 			case kFillBackground:
-				colorFillClip<PixelType>(ptr_right + 1, ptr_left, color, x_right+1, y_right, _clippingArea);
+				colorFillClip<PixelType>(ptr_right + 1, ptr_left, color, x_right + 1, y_right, _clippingArea);
 				blendPixelPtrClip(ptr_right, color, rfpart(intery), x_right, y_right);
 				blendPixelPtrClip(ptr_left, color, rfpart(intery), x_left, y_left);
 				break;
@@ -2905,7 +2905,7 @@ drawTriangleVertAlgClip(int x1, int y1, int w, int h, bool inverted, PixelType c
 				break;
 			case kFillForeground:
 			case kFillBackground:
-				colorFillClip<PixelType>(ptr_right + 1, ptr_left, color, x_right+1, y_right, _clippingArea);
+				colorFillClip<PixelType>(ptr_right + 1, ptr_left, color, x_right + 1, y_right, _clippingArea);
 				blendPixelPtrClip(ptr_right, color, rfpart(interx), x_right, y_right);
 				blendPixelPtrClip(ptr_left, color, rfpart(interx), x_left, y_left);
 				break;
@@ -2953,7 +2953,7 @@ drawTriangleVertAlgClip(int x1, int y1, int w, int h, bool inverted, PixelType c
 			break;
 		case kFillForeground:
 		case kFillBackground:
-			colorFillClip<PixelType>(ptr_right + 1, ptr_left, color, x_right+1, y_right, _clippingArea);
+			colorFillClip<PixelType>(ptr_right + 1, ptr_left, color, x_right + 1, y_right, _clippingArea);
 			blendPixelPtrClip(ptr_right, color, rfpart(interx), x_right, y_right);
 			blendPixelPtrClip(ptr_left, color, rfpart(interx), x_left, y_left);
 			break;
@@ -3061,10 +3061,10 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 		BE_RESET();
 		r--;
 
-		int alphaStep_tr = ((alpha_t - alpha_r)/(y+1));
-		int alphaStep_br = ((alpha_r - alpha_b)/(y+1));
-		int alphaStep_bl = ((alpha_b - alpha_l)/(y+1));
-		int alphaStep_tl = ((alpha_l - alpha_t)/(y+1));
+		int alphaStep_tr = ((alpha_t - alpha_r) / (y + 1));
+		int alphaStep_br = ((alpha_r - alpha_b) / (y + 1));
+		int alphaStep_bl = ((alpha_b - alpha_l) / (y + 1));
+		int alphaStep_tl = ((alpha_l - alpha_t) / (y + 1));
 
 		// Avoid blending the last pixels twice, since we have an alpha
 		while (x++ < (y - 2)) {
@@ -3970,10 +3970,10 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 		px = pitch * x;
 		py = 0;
 
-		int alphaStep_tr = ((alpha_t - alpha_r)/(x+1));
-		int alphaStep_br = ((alpha_r - alpha_b)/(x+1));
-		int alphaStep_bl = ((alpha_b - alpha_l)/(x+1));
-		int alphaStep_tl = ((alpha_l - alpha_t)/(x+1));
+		int alphaStep_tr = ((alpha_t - alpha_r) / (x + 1));
+		int alphaStep_br = ((alpha_r - alpha_b) / (x + 1));
+		int alphaStep_bl = ((alpha_b - alpha_l) / (x + 1));
+		int alphaStep_tl = ((alpha_l - alpha_t) / (x + 1));
 
 		while (x > y++) {
 			WU_ALGORITHM();

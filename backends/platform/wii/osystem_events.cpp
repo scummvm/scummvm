@@ -228,7 +228,7 @@ bool OSystem_Wii::pollKeyboard(Common::Event &event) {
 	keyboard_event kbdEvent;
 
 	s32 res = KEYBOARD_GetEvent(&kbdEvent);
-	
+
 	if (!res)
 		return false;
 

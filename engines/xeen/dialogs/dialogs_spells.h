@@ -168,6 +168,15 @@ public:
 	static void show(XeenEngine *vm);
 };
 
+class DetectMonsters : public ButtonContainer {
+private:
+	DetectMonsters(XeenEngine *vm) : ButtonContainer(vm) {}
+
+	void execute();
+public:
+	static void show(XeenEngine *vm);
+};
+
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_SPELLS_H */

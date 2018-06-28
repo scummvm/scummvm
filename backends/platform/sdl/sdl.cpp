@@ -22,17 +22,12 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
-#endif
-
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "gui/EventRecorder.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "backends/saves/default/default-saves.h"
 
@@ -411,51 +406,10 @@ void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {
 	// Then log into file (via the logger)
 	if (_logger)
 		_logger->print(message);
-
-	// Finally, some Windows / WinCE specific logging code.
-#if defined( USE_WINDBG )
-#if defined( _WIN32_WCE )
-	TCHAR buf_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, message, strlen(message) + 1, buf_unicode, sizeof(buf_unicode));
-	OutputDebugString(buf_unicode);
-
-	if (type == LogMessageType::kError) {
-#ifndef DEBUG
-		drawError(message);
-#else
-		int cmon_break_into_the_debugger_if_you_please = *(int *)(message + 1);	// bus error
-		printf("%d", cmon_break_into_the_debugger_if_you_please);			// don't optimize the int out
-#endif
-	}
-
-#else
-	OutputDebugString(message);
-#endif
-#endif
 }
 
 Common::String OSystem_SDL::getSystemLanguage() const {
-#if defined(USE_DETECTLANG) && !defined(_WIN32_WCE)
-#ifdef WIN32
-	// We can not use "setlocale" (at least not for MSVC builds), since it
-	// will return locales like: "English_USA.1252", thus we need a special
-	// way to determine the locale string for Win32.
-	char langName[9];
-	char ctryName[9];
-
-	const LCID languageIdentifier = GetUserDefaultUILanguage();
-
-	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
-		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
-		Common::String localeName = langName;
-		localeName += "_";
-		localeName += ctryName;
-
-		return localeName;
-	} else {
-		return ModularBackend::getSystemLanguage();
-	}
-#else // WIN32
+#if defined(USE_DETECTLANG) && !defined(WIN32)
 	// Activating current locale settings
 	const Common::String locale = setlocale(LC_ALL, "");
 
@@ -483,7 +437,6 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 
 		return Common::String(locale.c_str(), length);
 	}
-#endif // WIN32
 #else // USE_DETECTLANG
 	return ModularBackend::getSystemLanguage();
 #endif // USE_DETECTLANG
@@ -502,14 +455,43 @@ Common::String OSystem_SDL::getTextFromClipboard() {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	char *text = SDL_GetClipboardText();
+	// The string returned by SDL is in UTF-8. Convert to the
+	// current TranslationManager encoding or ISO-8859-1.
+#ifdef USE_TRANSLATION
+	char *conv_text = SDL_iconv_string(TransMan.getCurrentCharset().c_str(), "UTF-8", text, SDL_strlen(text) + 1);
+#else
+	char *conv_text = SDL_iconv_string("ISO-8859-1", "UTF-8", text, SDL_strlen(text) + 1);
+#endif
+	if (conv_text) {
+		SDL_free(text);
+		text = conv_text;
+	}
 	Common::String strText = text;
 	SDL_free(text);
 
-	// FIXME: The string returned by SDL is in UTF-8, it is not clear
-	// what encoding should be used for the returned string.
 	return strText;
 #else
 	return "";
+#endif
+}
+
+bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// The encoding we need to use is UTF-8. Assume we currently have the
+	// current TranslationManager encoding or ISO-8859-1.
+#ifdef USE_TRANSLATION
+	char *utf8_text = SDL_iconv_string("UTF-8", TransMan.getCurrentCharset().c_str(), text.c_str(), text.size() + 1);
+#else
+	char *utf8_text = SDL_iconv_string("UTF-8", "ISO-8859-1", text.c_str(), text.size() + 1);
+#endif
+	if (utf8_text) {
+		int status = SDL_SetClipboardText(utf8_text);
+		SDL_free(utf8_text);
+		return status == 0;
+	}
+	return SDL_SetClipboardText(text.c_str()) == 0;
+#else
+	return false;
 #endif
 }
 

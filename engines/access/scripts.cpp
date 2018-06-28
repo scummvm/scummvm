@@ -152,7 +152,7 @@ void Scripts::searchForSequence() {
 	_data->seek(0);
 	int sequenceId;
 	do {
-		while (_data->readByte() != SCRIPT_START_BYTE) ;
+		while (_data->readByte() != SCRIPT_START_BYTE) {}
 		sequenceId = _data->readUint16LE();
 	} while (sequenceId != _sequence);
 }

@@ -448,9 +448,9 @@ void DialogsManager::showInventory() {
 				_vm->_script->_tempObjectFl = false;
 
 				if (_vm->_soundMan->_voiceOffFl) {
-					do
+					do {
 						_vm->_events->refreshScreenAndEvents();
-					while (!_vm->_globals->_exitId && _vm->_events->getMouseButton() != 1);
+					} while (!_vm->_globals->_exitId && _vm->_events->getMouseButton() != 1);
 					_vm->_fontMan->hideText(9);
 				}
 				if (_vm->_globals->_exitId) {

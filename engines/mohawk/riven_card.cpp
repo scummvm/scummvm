@@ -72,8 +72,18 @@ void RivenCard::loadCardResource(uint16 id) {
 void RivenCard::applyPatches(uint16 id) {
 	uint32 globalId = _vm->getStack()->getCardGlobalId(id);
 
-	// Apply properties patches
+	applyPropertiesPatch8EB7(globalId);
+	applyPropertiesPatch2E76(globalId);
 
+	// Apply script patches
+	for (uint i = 0; i < _scripts.size(); i++) {
+		_scripts[i].script->applyCardPatches(_vm, globalId, _scripts[i].type, 0xFFFF);
+	}
+
+	applyPropertiesPatch22118(globalId);
+}
+
+void RivenCard::applyPropertiesPatch8EB7(uint32 globalId) {
 	// On Jungle Island on the back side of the "beetle" gate, the forward hotspot
 	// is always enabled, preventing keyboard navigation from automatically opening
 	// the gate.
@@ -138,7 +148,9 @@ void RivenCard::applyPatches(uint16 id) {
 
 		debugC(kRivenDebugPatches, "Applied fix always enabled forward hotspot in card %x", globalId);
 	}
+}
 
+void RivenCard::applyPropertiesPatch2E76(uint32 globalId) {
 	// In Gehn's office, after having encountered him once before and coming back
 	// with the trap book, the draw update script of card 1 tries to switch to
 	// card 2 while still loading card 1. Switching cards is not allowed during
@@ -179,7 +191,7 @@ void RivenCard::applyPatches(uint16 id) {
 	//       activatePLST(6);
 	//       break;
 	//   }
-	// break;
+	//   break;
 	// case 2:
 	//   activatePLST(5);
 	//   break;
@@ -243,10 +255,138 @@ void RivenCard::applyPatches(uint16 id) {
 		debugC(kRivenDebugPatches, "Applied invalid card change during screen update (1/2) to card %x", globalId);
 		// The second part of this patch is in the script patches
 	}
+}
 
-	// Apply script patches
-	for (uint i = 0; i < _scripts.size(); i++) {
-		_scripts[i].script->applyCardPatches(_vm, globalId, _scripts[i].type, 0xFFFF);
+void RivenCard::applyPropertiesPatch22118(uint32 globalId) {
+	// On Temple Island, near the steam valve closest to the bridge to Boiler island,
+	// the background sound on the view offering a view to the bridge does
+	// not properly reflect the valve's position.
+	//
+	// The sound is always that of steam going through the pipe when the bridge is
+	// down. When the valve points up, the sound should be that of steam escaping
+	// through the top of the pipe.
+	//
+	// Script before patch:
+	// == Script 0 ==
+	// type: CardLoad
+	// switch (bbigbridge) {
+	//   case 0:
+	//     switch (tbookvalve) {
+	//       case 0:
+	//         activatePLST(2);
+	//         activateSLST(1);
+	//         break;
+	//     }
+	//     break;
+	// }
+	// switch (bbigbridge) {
+	//   case 0:
+	//     switch (tbookvalve) {
+	//       case 1:
+	//         activatePLST(2);
+	//         activateSLST(2);
+	//         break;
+	//     }
+	//     break;
+	// }
+	// switch (bbigbridge) {
+	//   case 1:
+	//     switch (tbookvalve) {
+	//       case 0:
+	//         activatePLST(1);
+	//         activateSLST(2);
+	//         break;
+	//     }
+	//     break;
+	// }
+	// switch (bbigbridge) {
+	//   case 1:
+	//     switch (tbookvalve) {
+	//       case 1:
+	//         activatePLST(1);
+	//         activateSLST(2);
+	//         break;
+	//     }
+	//     break;
+	// }
+	//
+	//
+	// Script after patch:
+	// == Script 0 ==
+	// type: CardLoad
+	// switch (bbigbridge) {
+	//   case 0:
+	//     switch (tbookvalve) {
+	//       case 0:
+	//         activatePLST(2);
+	//         break;
+	//     }
+	//     break;
+	// }
+	// switch (bbigbridge) {
+	//   case 0:
+	//     switch (tbookvalve) {
+	//       case 1:
+	//         activatePLST(2);
+	//         break;
+	//     }
+	//     break;
+	// }
+	// switch (bbigbridge) {
+	//   case 1:
+	//     switch (tbookvalve) {
+	//       case 0:
+	//         activatePLST(1);
+	//         break;
+	//     }
+	//     break;
+	// }
+	// switch (bbigbridge) {
+	//   case 1:
+	//     switch (tbookvalve) {
+	//       case 1:
+	//         activatePLST(1);
+	//         break;
+	//     }
+	//     break;
+	// }
+	// switch (tbookvalve) {
+	//   case 0:
+	//     activateSLST(1);
+	//     break;
+	//   case 1:
+	//     activateSLST(2);
+	//     break;
+	// }
+	if (globalId == 0x22118) {
+		uint16 tBookValveVariable = _vm->getStack()->getIdFromName(kVariableNames, "tbookvalve");
+		uint16 patchData[] = {
+				1, // Command count in script
+				kRivenCommandSwitch,
+				2, // Unused
+				tBookValveVariable,
+				2, // Branches count
+
+				0, // tbookvalve == 0 branch (steam escaping at the top of the pipe)
+				1, // Command count in sub-script
+				kRivenCommandActivateSLST,
+				1, // Argument count
+				1, // Steam leaking sound id
+
+				1, // tbookvalve == 1 branch (steam going to the left pipe)
+				1, // Command count in sub-script
+				kRivenCommandActivateSLST,
+				1, // Argument count
+				2, // Steam in pipe sound id
+		};
+
+		RivenScriptPtr patchScript = _vm->_scriptMan->readScriptFromData(patchData, ARRAYSIZE(patchData));
+
+		// Append the patch to the existing script
+		RivenScriptPtr loadScript = getScript(kCardLoadScript);
+		loadScript += patchScript;
+
+		debugC(kRivenDebugPatches, "Applied incorrect steam sounds (2/2) to card %x", globalId);
 	}
 }
 

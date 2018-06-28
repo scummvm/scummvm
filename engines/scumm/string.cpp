@@ -98,7 +98,7 @@ void ScummEngine::debugMessage(const byte *msg) {
 		if (_game.id == GID_SAMNMAX)
 			channel = VAR(VAR_V6_SOUNDMODE);
 
-		 if (channel != 2)
+		if (channel != 2)
 			_sound->talkSound(a, b, 1, channel);
 	}
 }

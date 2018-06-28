@@ -34,6 +34,7 @@
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/debugger.h"
+#include "engines/wintermute/game_description.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_engine.h"
 
@@ -42,6 +43,8 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/debugger/debugger_controller.h"
+
+#include "gui/message.h"
 
 namespace Wintermute {
 
@@ -109,7 +112,11 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 Common::Error WintermuteEngine::run() {
 	// Initialize graphics using following:
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	initGraphics(800, 600, &format);
+	if (_gameDescription->adDesc.flags & GF_LOWSPEC_ASSETS) {
+		initGraphics(320, 240, &format);
+	} else {
+		initGraphics(800, 600, &format);
+	}
 	if (g_system->getScreenFormat() != format) {
 		error("Wintermute currently REQUIRES 32bpp");
 	}
@@ -138,6 +145,18 @@ Common::Error WintermuteEngine::run() {
 
 int WintermuteEngine::init() {
 	BaseEngine::createInstance(_targetName, _gameDescription->adDesc.gameId, _gameDescription->adDesc.language, _gameDescription->targetExecutable);
+
+	// check dependencies for games with high resolution assets
+	#if not defined(USE_PNG) || not defined(USE_JPEG) || not defined(USE_VORBIS)
+		if (!(_gameDescription->adDesc.flags & GF_LOWSPEC_ASSETS)) {
+			GUI::MessageDialog dialog("This game requires PNG, JPEG and Vorbis support.");
+			dialog.runModal();
+			delete _game;
+			_game = nullptr;
+			return false;
+		}
+	#endif
+
 	_game = new AdGame(_targetName);
 	if (!_game) {
 		return 1;

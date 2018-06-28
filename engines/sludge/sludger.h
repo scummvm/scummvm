@@ -22,12 +22,7 @@
 #ifndef SLUDGER_H
 #define SLUDGER_H
 
-#include "common/file.h"
-
 #include "sludge/allfiles.h"
-#include "sludge/variable.h"
-#include "sludge/csludge.h"
-#include "sludge/language.h"
 
 namespace Sludge {
 
@@ -36,51 +31,14 @@ typedef struct _FILETIME {
 	uint32 dwHighDateTime;
 } FILETIME;
 
-struct Variable;
-struct VariableStack;
-
-struct LineOfCode {
-	sludgeCommand theCommand;
-	int32 param;
-};
-
-struct LoadedFunction {
-	int originalNumber;
-	LineOfCode *compiledLines;
-	int numLocals, timeLeft, numArgs;
-	Variable *localVars;
-	VariableStack *stack;
-	Variable reg;
-	uint runThisLine;
-	LoadedFunction *calledBy;
-	LoadedFunction *next;
-	bool returnSomething, isSpeech, unfreezable, cancelMe;
-	byte freezerLevel;
-};
-
 bool initSludge(const Common::String &);
-bool runSludge();
-
 void initSludge();
 void killSludge();
 
 void displayBase();
 void sludgeDisplay();
-int startNewFunctionNum(uint, uint, LoadedFunction *, VariableStack*&, bool = true);
-bool handleInput();
-void restartFunction(LoadedFunction *fun);
-bool loadFunctionCode(LoadedFunction *newFunc);
-void killAllFunctions();
 
-void finishFunction(LoadedFunction *fun);
-void abortFunction(LoadedFunction *fun);
 Common::File *openAndVerify(const Common::String &filename, char extra1, char extra2, const char *er, int &fileVersion);
-
-void freezeSubs();
-void unfreezeSubs();
-void completeTimers();
-void killSpeechTimers();
-int cancelAFunction(int funcNum, LoadedFunction *myself, bool &killedMyself);
 
 } // End of namespace Sludge
 

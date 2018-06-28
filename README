@@ -3,7 +3,7 @@ ScummVM README
 
 For more information, compatibility lists, details on donating, the latest
 release, progress reports and more, please visit the ScummVM home page
-at: <http://www.scummvm.org/>
+at: <https://www.scummvm.org/>
 
 
 Table of Contents:
@@ -33,22 +33,23 @@ Table of Contents:
  * 3.12 Inherit the Earth: Quest for the Orb notes
  * 3.13 Maniac Mansion Apple II/NES notes
  * 3.14 Mickey's Space Adventure notes
- * 3.15 Myst notes
- * 3.16 Nippon Safes Inc. Amiga notes
- * 3.17 Quest for Glory notes
- * 3.18 Riven notes
- * 3.19 Simon the Sorcerer notes
- * 3.20 Starship Titanic notes
- * 3.21 The Curse of Monkey Island notes
- * 3.22 The Feeble Files notes
- * 3.23 The Legend of Kyrandia notes
- * 3.24 Troll's Tale notes
- * 3.25 Winnie the Pooh notes
- * 3.26 Sierra AGI games: Predictive Input Dialog notes
- * 3.27 Sierra SCI games: Simultaneous speech and subtitles
- * 3.28 Zork games notes
- * 3.29 Commodore64 games notes
- * 3.30 Macintosh games notes
+ * 3.15 Might and Magic Xeen games notes
+ * 3.16 Myst notes
+ * 3.17 Nippon Safes Inc. Amiga notes
+ * 3.18 Quest for Glory notes
+ * 3.19 Riven notes
+ * 3.20 Simon the Sorcerer notes
+ * 3.21 Starship Titanic notes
+ * 3.22 The Curse of Monkey Island notes
+ * 3.23 The Feeble Files notes
+ * 3.24 The Legend of Kyrandia notes
+ * 3.25 Troll's Tale notes
+ * 3.26 Winnie the Pooh notes
+ * 3.27 Sierra AGI games: Predictive Input Dialog notes
+ * 3.28 Sierra SCI games: Simultaneous speech and subtitles
+ * 3.29 Zork games notes
+ * 3.30 Commodore64 games notes
+ * 3.31 Macintosh games notes
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -66,7 +67,7 @@ Table of Contents:
  * 7.3 MT-32 emulation
  * 7.4 MIDI emulation
  * 7.5 Native MIDI support
- * 7.5.1 Using MIDI options to customize Native MIDI output
+ * * 7.5.1 Using MIDI options to customize Native MIDI output
  * 7.6 UNIX native, ALSA and dmedia sequencer support
  * * 7.6.1 ALSA sequencer [UNIX ONLY]
  * * 7.6.2 IRIX dmedia sequencer [UNIX ONLY]
@@ -143,7 +144,7 @@ patch!
 For the impatient among you, here is how to get ScummVM running in five
 simple steps.
 
-1. Download ScummVM from <http://www.scummvm.org/downloads.php> and
+1. Download ScummVM from <https://www.scummvm.org/downloads/> and
 install it.
 
 2. Create a directory on your hard drive and copy the game datafiles
@@ -174,7 +175,7 @@ subdirectories for supported games.
 ---- ------
 We've compiled a list of F.A.Q. at:
 
-  <http://www.scummvm.org/faq/>
+  <https://www.scummvm.org/faq/>
 
 
 2.0) Contact:
@@ -194,7 +195,7 @@ reproducible, and still occurs in the latest git/Daily build version.
 Also check the known problems list (below) and the compatibility list
 on our website for that game, to ensure the issue is not already known:
 
-  <http://scummvm.org/compatibility/>
+  <https://www.scummvm.org/compatibility/>
 
 Please do not report bugs for games that are not listed as being
 completeable in the 'Supported Games' section, or compatibility list. We
@@ -222,7 +223,7 @@ At the moment the following games have been reported to work, and should
 be playable to the end:
 A more detailed compatibility list of the supported games can be found here:
 
-  <http://www.scummvm.org/compatibility/>)
+  <https://www.scummvm.org/compatibility/>
 
 LucasArts (SCUMM) Games:
      Maniac Mansion                              [maniac]
@@ -544,13 +545,17 @@ ScummVM will skip copy protection in the following games:
       -- bypassed with kind permission from Wyrmkeep Entertainment,
          since it was bypassed in all CD releases of the game.
   * Loom (EGA DOS)
+  * Lure of the Temptress
   * Maniac Mansion
+  * Might and Magic: World of Xeen
   * Monkey Island 2: LeChuck's Revenge
+  * Rex Nebular and The Cosmic Gender Bender
   * Simon the Sorcerer 1 (Floppy version)
   * Simon the Sorcerer 2 (Floppy version)
       -- bypassed with kind permission from Adventure Soft,
          since it was bypassed in all CD releases of the game.
   * The Secret of Monkey Island (VGA)
+  * Voyeur
   * Waxworks
   * Zak McKracken and the Alien Mindbenders
 
@@ -730,7 +735,7 @@ Some re-releases of the games, as well as the PlayStation version, do
 not have Smacker videos. Revolution Software has kindly allowed us to
 provide re-encoded cutscenes for download on our website:
 
-  <http://www.scummvm.org/downloads.php>
+  <https://www.scummvm.org/downloads/>
 
 These cutscenes are provided in DXA format with FLAC audio. Their
 quality is equal to the original games due to the use of lossless
@@ -920,15 +925,50 @@ game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
 
-3.15) Myst game notes:
+3.15 Might and Magic Xeen games notes:
+--------------------------------------
+To properly play the World of Xeen CD Talkie using original discs,
+use LAME or some other encoder to rip the cd audio tracks to files,
+either mp3 or ogg. Whichever you choose, the tracks of the first CD
+should be named from track02 to track31, whereas the second CD's
+audio tracks should be encoded and renamed as track32 through to track60.
+
+For the GOG Might and Magic 4-5 installation, install the game to your
+computer, and do the following steps:
+* The game1.inst (CUE) and game1.gog (BIN) file from the game folder is a 
+CD image. Use software like Virtual CloneDrive to mount it as a drive.
+Linux and MacOS users can use bchunk to convert it to an ISO.
+* Copy all the .cc files from the subfolder in the mounted drive to a new
+empty game folder that you create for the game.
+* Copy all the music/*.ogg files from the GOG installation to your game
+folder. You'll then need to rename all of them from xeen??.ogg to track??.ogg
+* You should then be able to point ScummVM to this new game folder, and the
+CD talkie version should be detected.
+
+Savegames from either Clouds or Darkside of Xeen games can be transferred
+across to World of Xeen (that combines both games) simply by setting up
+and detecting World of Xeen (either by manually combining the two games
+or using the GOG World of Xeen installer), and then renaming the savegames
+to use the World of Xeen savegame format, by default 'worldofxeen.*'
+
+The Xeen engine also offers two custom options in the Engine tab for the
+games in the ScummVM launcher. They are:
+* To change the threshold armor breaks at for characters from -10HP to -80HP
+* To show values for inventory items, even outside of the blacksmith,
+allowing the relative strength/value of armor and weapons to be compared.
+
+3.16) Myst game notes:
 ----- ----------------
 Left Click: Move/action
 Space: Pause the game
 Esc: Skip cutscene
 F5: Menu
 
+Myst will autosave to slot 0 if no save or an autosave is present in
+slot 0.
 
-3.16) Nippon Safes Inc. Amiga notes:
+
+3.17) Nippon Safes Inc. Amiga notes:
 ----- ------------------------------
 For this game, you will need disk0, , global.table, pointer and
 it (en, fr, ge for the international version).
@@ -937,7 +977,7 @@ In addition, you will need to rename disk image 2 to disk1,
 disk image 3 to disk2, disk image 4 to disk3 and disk image 5 to disk4.
 
 
-3.17) Quest for Glory notes:
+3.18) Quest for Glory notes:
 ----- ----------------------
 It is possible to import characters, beginning with Quest for Glory II,
 from past games to future games and continue from the stats earned
@@ -961,7 +1001,7 @@ file won't get listed on the import screen.
 Example: qfg2-thief.sav
 
 
-3.18) Riven game notes:
+3.19) Riven game notes:
 ----- -----------------
 Left Click: Move/action
 Arrow Keys: Movement
@@ -973,15 +1013,18 @@ F5: Menu
 Ctrl-o: Load game
 Ctrl-s: Save game
 
+Riven will autosave to slot 0 if no save or an autosave is present in
+slot 0.
 
-3.19) Simon the Sorcerer games notes:
+
+3.20) Simon the Sorcerer games notes:
 ----- -------------------------------
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD, you
 will find the Windows version in the main directory of the CD and the
 DOS version in the DOS directory of the CD.
 
 
-3.20) Starship Titanic game notes:
+3.21) Starship Titanic game notes:
 ----------------------------------
 Basic Movements:
 Left Click: Move action
@@ -1024,7 +1067,7 @@ Ctrl + C: Open up the developer's cheat room
 Ctrl + D: Open up the ScummVM Debugger
 
 
-3.21) The Curse of Monkey Island notes:
+3.22) The Curse of Monkey Island notes:
 ----- ---------------------------------
 For this game, you will need the comi.la0, comi.la1 and comi.la2 files.
 The comi.la0 file can be found on either CD, but since they are
@@ -1036,7 +1079,7 @@ two CDs. Some of the files appear on both CDs, but again they're
 identical.
 
 
-3.22) The Feeble Files notes:
+3.23) The Feeble Files notes:
 ----- -----------------------
 Amiga/Macintosh:
 You need to install a small pack of cutscenes that are missing in both
@@ -1044,7 +1087,7 @@ of these versions of The Feeble Files.
 It's called "The Feeble Files - Omni TV and epilogue cutscenes for the
 Amiga and Macintosh versions" and you can get it here:
 
-  <http://www.scummvm.org/games/#feeble>
+  <https://www.scummvm.org/games/#feeble>
 
 Windows:
 If you have the Windows version of The Feeble Files, there are several
@@ -1063,7 +1106,7 @@ Rename voices.wav on CD3 to voices3.wav
 Rename voices.wav on CD4 to voices4.wav
 
 
-3.23) The Legend of Kyrandia notes:
+3.24) The Legend of Kyrandia notes:
 ----- -----------------------------
 To run The Legend of Kyrandia under ScummVM you need the 'kyra.dat'
 file. The file should always be included in official ScummVM packages.
@@ -1074,14 +1117,14 @@ thus you only need to grab it in case ScummVM complains about the file
 being missing.
 
 
-3.24) Troll's Tale notes:
+3.25) Troll's Tale notes:
 ----- -------------------
 The original game came in a PC booter disk, therefore it is necessary to
 dump the contents of that disk in an image file and name it "troll.img"
 to be able to play the game under ScummVM.
 
 
-3.25) Winnie the Pooh notes:
+3.26) Winnie the Pooh notes:
 ----- ----------------------
 It is possible to import saved games from the original interpreter of the
 game into ScummVM.
@@ -1096,7 +1139,7 @@ game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
 
-3.26) Sierra AGI games: Predictive Input Dialog:
+3.27) Sierra AGI games: Predictive Input Dialog:
 ----- ------------------------------------------
 The Predictive Input Dialog is a ScummVM aid for running AGI engine
 games (which notoriously require command line input) on devices with
@@ -1150,7 +1193,7 @@ naturally mapping the functionality to the numeric keypad. Also, the
 dialog's buttons can be navigated with the arrow and the enter keys.
 
 
-3.27) Sierra SCI games: Simultaneous speech and subtitles:
+3.28) Sierra SCI games: Simultaneous speech and subtitles:
 ----- ----------------------------------------------------
 Certain CD versions of Sierra SCI games had both speech and text
 resources. Some have an option to toggle between the two, but there are
@@ -1240,7 +1283,7 @@ Torin's Passage CD:
     to zero.
 
 
-3.28) Zork games notes:
+3.29) Zork games notes:
 ----- -----------------
 To run the supported Zork games (Zork Nemesis: The Forbidden Lands
 and Zork: Grand Inquisitor) you need to copy some (extra) data to its
@@ -1258,7 +1301,7 @@ Alternatively, download the GNU FreeFont TTF package
 ttf files from the sfd directory into your ScummVM extras directory,
 though at the time of writing these fonts cause some text rendering issues.
 Download the subtitles patch
-<http://www.thezorklibrary.com/installguides/znpatch.zip> and unzip
+<https://www.thezorklibrary.com/installguides/znpatch.zip> and unzip
 the addon directory into the game root directory
 
 GoG version
@@ -1292,7 +1335,7 @@ Zork: Grand Inquisitor
 All versions
 
 Download the Liberation(tm) fonts package
-<https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
+<https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
 and unpack all the ttf files into your ScummVM extras directory.
 Alternatively, download the GNU FreeFont TTF package
 <https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> and unzip all the
@@ -1317,7 +1360,7 @@ subtitle.zfs
 From CD1, copy the zassets1 directory into the game root directory
 From CD2, copy the zassets2 directory into the game root directory
 It's recommended to apply patch 1.2
-<http://www.thezorklibrary.com/installguides/Zpatch.exe>, but you may
+<https://www.thezorklibrary.com/installguides/Zpatch.exe>, but you may
 have to install the game normally for that, as the patch has its own installer.
 
 DVD version
@@ -1337,7 +1380,7 @@ Copy the zassetsc directory into the game root directory
 Copy the zassetse directory into the game root directory
 
 
-3.29) Commodore64 games notes:
+3.30) Commodore64 games notes:
 ----- ------------------------
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
 playable. Simply name the D64 disks "maniac1.d64" and "maniac2.d64"
@@ -1351,7 +1394,7 @@ to Commodore64. We recommend using the much simpler approach described
 in the previous paragraph.
 
 
-3.30) Macintosh games notes:
+3.31) Macintosh games notes:
 ----- ----------------------
 All LucasArts SCUMM based adventures, except COMI, also exist in versions
 for the Macintosh. ScummVM can use most (all?) of them, however, in some
@@ -1460,19 +1503,20 @@ arguments -- see the next section.
   -h, --help               Display a brief help text and exit
   -z, --list-games         Display list of supported games and exit
   -t, --list-targets       Display list of configured targets and exit
-  --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified
+  --list-saves             Display a list of saved games for the target specified
+                           with --game=TARGET, or all targets if none is specified
   -a, --add                Add all games from current or specified directory.
                            If --game=ID is passed only the game with id ID is
                            added. See also --detect.
-                           Use --path=PATH before -a, --add to specify a directory.
+                           Use --path=PATH to specify a directory.
   --detect                 Display a list of games with their ID from current or
                            specified directory without adding it to the config.
-                           Use --path=PATH before --detect to specify a directory.
+                           Use --path=PATH to specify a directory.
   --game=ID                In combination with --add or --detect only adds or attempts to
                            detect the game with id ID.
   --auto-detect            Display a list of games from current or specified directory
-                           and start the first one. Use --path=PATH before --auto-detect
-                           to specify a directory.
+                           and start the first one. Use --path=PATH to specify
+                           a directory.
   --recursive              In combination with --add or --detect recurse down all
                            subdirectories
   --console                Enable the console window (default: enabled) (Windows only)
@@ -1947,11 +1991,24 @@ saved games from the old default location, to the new default location.
 
 6.1) Autosaves:
 ---- ----------
-For some games (namely "Beneath a Steel Sky", "Flight of the Amazon
-Queen", all AGI games, and all SCUMM games), ScummVM will by default
-automatically save the current state every five minutes (adjustable via
-the "autosave_period" config setting). For the AGI and SCUMM engines, it
-will save in Slot 0. For the SCUMM engine, this saved game can then be
+For some games ScummVM will by default automatically save the current state
+every five minutes (adjustable via the "autosave_period" config setting).
+The default autosave slot for many engines is slot 0.
+
+The games/engines listed below have autosave support.
+
+AGI games
+Beneath a Steel Sky
+Bud Tucker in Double Trouble
+COMPOSER games
+Flight of the Amazon Queen
+Myst
+Riven
+SCUMM games
+The Legend of Kyrandia I (slot 999)
+ZVISION games
+
+For the SCUMM engine, this saved game can then be
 loaded again via Ctrl-0, or the F5 menu.
 
 
@@ -2006,9 +2063,10 @@ Where 'xxx' is exact the saved game slot (i.e., 001) under ScummVM
 --list-saves:
 
    This switch may be used to display a list of the current saved games
-   of the specified target game and their corresponding save slots.
+   of the specified target game and their corresponding save slots. If no
+   target is specified, it lists saved games for all known target.
 
-   Usage: --list-saves=[TARGET], where [TARGET] is the target game.
+   Usage: --list-saves --game=[TARGET], where [TARGET] is the target game.
 
    Engines which currently support --list-saves are:
 
@@ -2856,12 +2914,12 @@ compressed sound. For compressed save states, zlib is required.
 
 Some parts of ScummVM, particularly scalers, have highly optimized
 versions written in assembler. If you wish to use this option, you will
-need to install nasm assembler (see <http://www.nasm.us/>). Note that
+need to install nasm assembler (see <https://www.nasm.us/>). Note that
 we currently only have x86 MMX optimized versions, and they will not
 compile on other processors.
 
-On Win9x/NT/XP, you can define USE_WINDBG and attach WinDbg to browse
-debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.aspx>).
+On Windows, you can define USE_WINDBG and attach WinDbg to browse
+debug messages (see <https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/index>).
 
 
    Windows:
@@ -2952,11 +3010,11 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
 ----- -------
 Please refer to our extensive Credits list at:
 
-  <http://www.scummvm.org/credits>
+  <https://www.scummvm.org/credits/>
 
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
 The ScummVM team.
-<http://www.scummvm.org/>
+<https://www.scummvm.org/>
 ------------------------------------------------------------------------

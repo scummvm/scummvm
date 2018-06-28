@@ -33,6 +33,8 @@ lib*.a
 /.settings
 /.autotools
 /Icon.*
+/scummvm-conf.cpp
+/tmp_*.cpp
 
 /build
 /staging
@@ -127,18 +129,22 @@ project.xcworkspace
 /devtools/convbdf
 /devtools/md5table
 /devtools/make-scumm-fontdata
+/devtools/create_access/create_access
+/devtools/create_cryo/create_cryo_dat
 /devtools/create_drascula/create_drascula
 /devtools/create_hugo/create_hugo
 /devtools/create_kyradat/create_kyradat
 /devtools/create_lure/create_lure
-/devtools/create_mads/create_mads
 /devtools/create_mortdat/create_mortdat
 /devtools/create_neverhood/create_neverhood
 /devtools/create_project/create_project
+/devtools/create_supernova/create_supernova
 /devtools/create_teenagent/create_teenagent
+/devtools/create_titanic/create_titanic
 /devtools/create_tony/create_tony
 /devtools/create_toon/create_toon
 /devtools/create_translations/create_translations
+/devtools/create_xeen/create_xeen
 /devtools/extract_mort/extract_mort
 /devtools/qtable/qtable
 /devtools/skycpt/skycpt

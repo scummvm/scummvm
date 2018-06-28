@@ -490,8 +490,7 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 			y2 += kLineHeight;
 			y += kLineHeight;
 			++i;
-		}
-		while (i < lastLineVisible);
+		} while (i < lastLineVisible);
 	}
 
 	// draw scroll up button

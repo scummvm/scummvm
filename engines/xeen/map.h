@@ -322,7 +322,6 @@ public:
 	};
 private:
 	XeenEngine *_vm;
-	Common::Array<SpriteResourceEntry> _objectSprites;
 	Common::Array<SpriteResourceEntry> _monsterSprites;
 	Common::Array<SpriteResourceEntry> _monsterAttackSprites;
 	Common::Array<SpriteResourceEntry> _wallItemSprites;
@@ -330,6 +329,7 @@ public:
 	Common::Array<MazeObject> _objects;
 	Common::Array<MazeMonster> _monsters;
 	Common::Array<MazeWallItem> _wallItems;
+	Common::Array<SpriteResourceEntry> _objectSprites;
 public:
 	MonsterObjectData(XeenEngine *vm);
 
@@ -407,13 +407,12 @@ private:
 	int _sidePictures;
 	int _sideObjects;
 	int _sideMonsters;
-	int _sideMusic;
 	int _mazeDataIndex;
 
 	/**
 	 * Load the events for a new map
 	 */
-	void loadEvents(int mapId);
+	void loadEvents(int mapId, int ccNum);
 
 	/**
 	 * Save the events for a map

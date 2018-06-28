@@ -41,10 +41,6 @@
 
 namespace Sludge {
 
-extern OnScreenPerson *allPeople;
-extern ScreenRegion *allScreenRegions;
-extern ScreenRegion *overRegion;
-
 void GraphicsManager::freezeGraphics() {
 
 	int w = _winWidth;
@@ -87,18 +83,14 @@ bool GraphicsManager::freeze() {
 	_backdropSurface.copyFrom(_freezeSurface);
 	_backdropExists = true;
 
-	newFreezer->allPeople = allPeople;
-	allPeople = NULL;
+	_vm->_peopleMan->freeze(newFreezer);
 
-	StatusStuff  *newStatusStuff = new StatusStuff ;
+	StatusStuff *newStatusStuff = new StatusStuff;
 	if (!checkNew(newStatusStuff))
 		return false;
 	newFreezer->frozenStatus = copyStatusBarStuff(newStatusStuff);
 
-	newFreezer->allScreenRegions = allScreenRegions;
-	allScreenRegions = NULL;
-	overRegion = NULL;
-
+	_vm->_regionMan->freeze(newFreezer);
 	_vm->_cursorMan->freeze(newFreezer);
 	_vm->_speechMan->freeze(newFreezer);
 	_vm->_evtMan->freeze(newFreezer);
@@ -136,11 +128,8 @@ void GraphicsManager::unfreeze(bool killImage) {
 	_vm->_evtMan->mouseX() = (int)(_vm->_evtMan->mouseX() / _cameraZoom);
 	_vm->_evtMan->mouseY() = (int)(_vm->_evtMan->mouseY() / _cameraZoom);
 
-	killAllPeople();
-	allPeople = _frozenStuff->allPeople;
-
-	killAllRegions();
-	allScreenRegions = _frozenStuff->allScreenRegions;
+	g_sludge->_peopleMan->resotre(_frozenStuff);
+	g_sludge->_regionMan->resotre(_frozenStuff);
 
 	killLightMap();
 
@@ -171,7 +160,6 @@ void GraphicsManager::unfreeze(bool killImage) {
 	_vm->_speechMan->restore(_frozenStuff);
 
 	_frozenStuff = _frozenStuff->next;
-	overRegion = NULL;
 
 	// free current frozen screen struct
 	if (killMe->backdropSurface.getPixels())

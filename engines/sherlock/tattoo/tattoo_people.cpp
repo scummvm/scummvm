@@ -39,7 +39,7 @@ struct AdjustWalk {
 	int _xAdjust;
 	int _flipXAdjust;
 	int _yAdjust;
-} ;
+};
 
 static const AdjustWalk ADJUST_WALKS[NUM_ADJUSTED_WALKS] = {
 	{ "TUPRIGHT", -7, -19, 6 },

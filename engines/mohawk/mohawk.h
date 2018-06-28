@@ -49,14 +49,7 @@ enum MohawkGameType {
 	GType_MYST,
 	GType_MAKINGOF,
 	GType_RIVEN,
-	GType_ZOOMBINI,
 	GType_CSTIME,
-	GType_CSWORLD,
-	GType_CSAMTRAK,
-	GType_JAMESMATH,
-	GType_TREEHOUSE,
-	GType_1STDEGREE,
-	GType_CSUSA,
 	GType_LIVINGBOOKSV1,
 	GType_LIVINGBOOKSV2,
 	GType_LIVINGBOOKSV3,
@@ -68,8 +61,7 @@ enum MohawkGameFeatures {
 	GF_ME =      (1 << 0),	// Myst Masterpiece Edition
 	GF_DVD =     (1 << 1),
 	GF_DEMO =    (1 << 2),
-	GF_HASMIDI = (1 << 3),
-	GF_LB_10   = (1 << 4)   // very early Living Books 1.0 games
+	GF_LB_10   = (1 << 3)   // very early Living Books 1.0 games
 };
 
 struct MohawkGameDescription;

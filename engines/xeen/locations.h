@@ -364,7 +364,7 @@ public:
 	/**
 	 * Show a given location, and return any result
 	 */
-	int doAction(LocationAction actionId);
+	int doAction(int actionId);
 
 	/**
 	 * Returns true if a town location (bank, blacksmith, etc.) is currently active

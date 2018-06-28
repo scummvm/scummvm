@@ -979,7 +979,7 @@ int GnapEngine::playSoundC() {
 
 	if (!_timers[_soundTimerIndexC]) {
 		_timers[_soundTimerIndexC] = getRandom(50) + 150;
-		soundId = kSoundIdsC[getRandom(7)] ;
+		soundId = kSoundIdsC[getRandom(7)];
 		playSound(soundId | 0x10000, false);
 	}
 	return soundId;

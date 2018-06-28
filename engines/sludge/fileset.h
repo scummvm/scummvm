@@ -44,14 +44,22 @@ public:
 	bool openObjectSlice(int num);
 	Common::String getNumberedString(int value);
 
+	// Access control flag
 	bool startAccess();
 	void finishAccess();
+
+	// Resource names
+	void readResourceNames(Common::SeekableReadStream *readStream);
+	const Common::String resourceNameFromNum(int i);
+	bool hasResourceNames() { return !_allResourceNames.empty(); }
 
 private:
 	bool _sliceBusy;
 	Common::File *_bigDataFile;
 	uint32 _startOfDataIndex, _startOfTextIndex, _startOfSubIndex, _startOfObjectIndex;
 	int32 _startIndex;
+
+	Common::Array<Common::String> _allResourceNames;
 
 private:
 	static uint32 _cp1250ToUTF32[128];

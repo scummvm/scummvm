@@ -155,11 +155,7 @@ static Game the_game;
 
 static bool isIcon(const Common::FSNode &entry)
 {
-  int l = entry.getDisplayName().size();
-  if (l>4 && !strcasecmp(entry.getDisplayName().c_str()+l-4, ".ICO"))
-    return true;
-  else
-    return false;
+	return entry.getDisplayName().hasSuffixIgnoreCase(".ICO");
 }
 
 static bool loadIcon(Game &game, Dir *dirs, int num_dirs)
@@ -203,7 +199,7 @@ static bool uniqueGame(const char *base, const char *dir,
 	  this is a workaround for the detector bug in toon... */
 	sameOrSubdir(dir, games->dir) &&
 	/*!strcmp(dir, games->dir) &&*/
-	!stricmp(base, games->filename_base) &&
+	!scumm_stricmp(base, games->filename_base) &&
 	lang == games->language &&
 	plf == games->platform)
       return false;
@@ -275,21 +271,22 @@ static int findGames(Game *games, int max, bool use_ini)
     }
 
     if (!use_ini) {
-      GameList candidates = EngineMan.detectGames(files);
+      DetectionResults detectionResults = EngineMan.detectGames(files);
+      DetectedGames candidates = detectionResults.listRecognizedGames();
 
-      for (GameList::const_iterator ge = candidates.begin();
+      for (DetectedGames::const_iterator ge = candidates.begin();
 	   ge != candidates.end(); ++ge)
 	if (curr_game < max) {
-	  strcpy(games[curr_game].filename_base, ge->gameid().c_str());
+	  strcpy(games[curr_game].filename_base, ge->gameId.c_str());
 	  strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
-	  games[curr_game].language = ge->language();
-	  games[curr_game].platform = ge->platform();
+	  games[curr_game].language = ge->language;
+	  games[curr_game].platform = ge->platform;
 	  if (uniqueGame(games[curr_game].filename_base,
 			 games[curr_game].dir,
 			 games[curr_game].language,
 			 games[curr_game].platform, games, curr_game)) {
 
-	    strcpy(games[curr_game].text, ge->description().c_str());
+	    strcpy(games[curr_game].text, ge->description.c_str());
 #if 0
 	    printf("Registered game <%s> (l:%d p:%d) in <%s> <%s> because of <%s> <*>\n",
 		   games[curr_game].text,

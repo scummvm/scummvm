@@ -106,7 +106,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 bool CChickenDispensor::MovieEndMsg(CMovieEndMsg *msg) {
 	int movieFrame = msg->_endFrame;
-	
+
 	if (movieFrame == 16) {
 		// Dispensed a chicken
 		_cursorId = CURSOR_HAND;

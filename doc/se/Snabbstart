@@ -1,6 +1,6 @@
 Det här dokumentet är en ofullständig översättning av den engelska README-filen. Det sistnämnda dokumentet innehåller mer information så om du inte kan hitta vad du behöver här (och pratar lite engelska), ta en titt i den engelska README-filen.
 
-För ytterligare information, kompatibilitetslistor, donationsdetaljer, den senaste programversionen, utvecklingsrapporter med mera, var god besök ScummVM:s hemsida på http://www.scummvm.org/
+För ytterligare information, kompatibilitetslistor, donationsdetaljer, den senaste programversionen, utvecklingsrapporter med mera, var god besök ScummVM:s hemsida på https://www.scummvm.org/
 
 Innehåll:
 ---------
@@ -33,7 +33,7 @@ VIKTIGT: Den här korta guiden förutsätter att du använder ScummVM på svensk
 
 För de otåliga följer här instruktioner för att köra igång ScummVM i fem enkla steg.
 
-1. Ladda hem ScummVM från http://www.scummvm.org/downloads.php och installera programmet.
+1. Ladda hem ScummVM från https://www.scummvm.org/downloads/ och installera programmet.
 
 2. Skapa en filkatalog på din hårddisk och kopiera spelets datafiler från dess ursprungliga plats till den nya katalogen. Upprepa det här steget för varje spel du vill spela (det är bättre att använda separata kataloger för vaje spel).
 
@@ -63,7 +63,7 @@ Det enklaste sättet att kontakta ScummVM-teamet är att skicka in bugg-rapporte
 ---- ----------------------
 För att rapportera en bugg måste du skapa ett konto hos SourceForge och följa Bug Tracker-länken från våran hemsida. Var god se till att buggen kan reproduceras med säkerhet och att den fortfarande är aktiv i den senaste git/Daily build-versionen. Se även till att kontrollera att felet inte redan rapporterats genom att läsa listan av kända fel för spelet på våran kompatibilitetssida:
 
-  http://www.scummvm.org/compatibility_stable.php
+  https://www.scummvm.org/compatibility/
 
 Var god rapportera inte buggar för spel som inte är möjliga att avklara enligt Supported Games-avdelningen, eller i kompatibilitetslistan. Vi vet redan att dessa spel är buggiga.
 

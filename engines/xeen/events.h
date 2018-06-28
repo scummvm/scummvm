@@ -32,6 +32,7 @@ namespace Xeen {
 
 #define GAME_FRAME_RATE (1000 / 50)
 #define GAME_FRAME_TIME 50
+#define SCREEN_UPDATE_TIME 10
 #define MAX_PENDING_EVENTS 5
 
 class XeenEngine;
@@ -61,6 +62,7 @@ private:
 	XeenEngine *_vm;
 	uint32 _frameCounter;
 	uint32 _priorFrameCounterTime;
+	uint32 _priorScreenRefreshTime;
 	uint32 _gameCounter;
 	uint32 _gameCounters[6];
 	uint32 _playTime;

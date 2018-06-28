@@ -137,7 +137,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					spells._lastCaster = _buttonValue;
 					intf.highlightChar(_buttonValue);
 
-					if (_vm->_mode == MODE_17) {
+					if (_vm->_mode == MODE_INTERACTIVE7) {
 						windows[10].writeString(Common::String::format(Res.GUILD_OPTIONS,
 							XeenEngine::printMil(party._gold).c_str(), Res.GUILD_TEXT, c->_name.c_str()));
 					} else {
@@ -283,7 +283,23 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 
 	if ((mode & 0x7f) == 0) {
 		if (category != SPELLCAT_INVALID) {
-			if (party._mazeId == 49 || party._mazeId == 37) {
+			if (_vm->getGameID() == GType_Swords && party._mazeId == 49) {
+				for (int spellId = 0; spellId < 10; ++spellId) {
+					int idx = 0;
+					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] !=
+						Res.DARK_SPELL_OFFSETS[category][spellId])
+						++idx;
+
+					if (idx < SPELLS_PER_CLASS) {
+						if (!c->_spells[idx] || (mode & 0x80)) {
+							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
+							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
+								spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
+								idx, spellId));
+						}
+					}
+				}
+			} else if (party._mazeId == 49 || party._mazeId == 37) {
 				for (uint spellId = 0; spellId < TOTAL_SPELLS; ++spellId) {
 					int idx = 0;
 					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] != (int)spellId)
@@ -300,11 +316,32 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 					}
 				}
 			} else if (ccNum) {
-				int groupIndex = (party._mazeId - 29) / 2;
-				for (int spellId = Res.DARK_SPELL_RANGES[groupIndex][0];
-						spellId < Res.DARK_SPELL_RANGES[groupIndex][1]; ++spellId) {
+				const int *RANGE;
+
+				if (_vm->getGameID() == GType_Swords) {
+					// Set subset of spells to sell in each Swords of Xeen guild
+					int groupIndex;
+					switch (party._mazeId) {
+					case 92:
+						groupIndex = 1;
+						break;
+					case 63:
+						groupIndex = 2;
+						break;
+					case 53:
+					default:
+						groupIndex = 0;
+						break;
+					}
+					RANGE = Res.SWORDS_SPELL_RANGES[category * 4 + groupIndex];
+				} else {
+					int groupIndex = (party._mazeId - 29) / 2;
+					RANGE = Res.DARK_SPELL_RANGES[category * 4 + groupIndex];
+				}
+
+				for (int spellId = RANGE[0]; spellId < RANGE[1]; ++spellId) {
 					int idx = 0;
-					while (idx <= SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] ==
+					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] !=
 							Res.DARK_SPELL_OFFSETS[category][spellId])
 						++idx;
 
@@ -880,20 +917,35 @@ int TownPortal::execute() {
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_FF;
 
-	// Build up a lsit of the names of the towns on the current side of Xeen
-	for (int idx = 0; idx < 5; ++idx) {
-		Common::String txtName = Common::String::format("%s%04d.txt", map._sideTownPortal ? "dark" : "xeen",
-			Res.TOWN_MAP_NUMBERS[map._sideTownPortal][idx]);
-		File f(txtName, 1);
-		townNames[idx] = f.readString();
-		f.close();
+	w.open();
+
+	if (_vm->getGameID() == GType_Swords) {
+		// Build up a lsit of the names of the towns on the current side of Xeen
+		for (int idx = 0; idx < 3; ++idx) {
+			Common::String txtName = Common::String::format("%s%04d.txt", "dark", Res.TOWN_MAP_NUMBERS[2][idx]);
+			File f(txtName, 1);
+			townNames[idx] = f.readString();
+			f.close();
+		}
+
+		w.writeString(Common::String::format(Res.TOWN_PORTAL_SWORDS, townNames[0].c_str(), townNames[1].c_str(),
+			townNames[2].c_str()));
+	} else {
+		// Build up a lsit of the names of the towns on the current side of Xeen
+		for (int idx = 0; idx < 5; ++idx) {
+			Common::String txtName = Common::String::format("%s%04d.txt", map._sideTownPortal ? "dark" : "xeen",
+				Res.TOWN_MAP_NUMBERS[map._sideTownPortal][idx]);
+			File f(txtName, 1);
+			townNames[idx] = f.readString();
+			f.close();
+		}
+
+		w.writeString(Common::String::format(Res.TOWN_PORTAL,
+			townNames[0].c_str(), townNames[1].c_str(), townNames[2].c_str(),
+			townNames[3].c_str(), townNames[4].c_str()
+		));
 	}
 
-	w.open();
-	w.writeString(Common::String::format(Res.TOWN_PORTAL,
-		townNames[0].c_str(), townNames[1].c_str(), townNames[2].c_str(),
-		townNames[3].c_str(), townNames[4].c_str()
-	));
 	w.update();
 
 	// Get the town number
@@ -902,7 +954,7 @@ int TownPortal::execute() {
 	do {
 		int result = Input::show(_vm, &w, num, 1, 160, true);
 		townNumber = !result ? 0 : atoi(num.c_str());
-	} while (townNumber > 5);
+	} while (townNumber > (_vm->getGameID() == GType_Swords ? 3 : 5));
 
 	w.close();
 	_vm->_mode = oldMode;
@@ -957,6 +1009,64 @@ void IdentifyMonster::execute() {
 
 		events.wait(1, false);
 	} while (!events.isKeyMousePressed());
+
+	w.close();
+}
+
+
+/*------------------------------------------------------------------------*/
+
+void DetectMonsters::show(XeenEngine *vm) {
+	DetectMonsters *dlg = new DetectMonsters(vm);
+	dlg->execute();
+	delete dlg;
+}
+
+void DetectMonsters::execute() {
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Resources &res = *_vm->_resources;
+	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[19];
+	int ccNum = _vm->_files->_ccNum;
+	int grid[7][7];
+
+	SpriteResource sprites(ccNum ? "detectmn.icn" : "detctmon.icn");
+	Common::fill(&grid[0][0], &grid[6][6], 0);
+
+	w.open();
+	w.writeString(Res.DETECT_MONSTERS);
+	sprites.draw(w, 0, Common::Point(243, 80));
+
+	for (int yDiff = 3; yDiff >= -3; --yDiff) {
+		for (int xDiff = -3; xDiff <= 3; ++xDiff) {
+			for (uint monIndex = 0; monIndex < map._mobData._monsters.size(); ++monIndex) {
+				MazeMonster &monster = map._mobData._monsters[monIndex];
+				Common::Point pt = party._mazePosition + Common::Point(xDiff, yDiff);
+				if (monster._position == pt) {
+					int &gridEntry = grid[yDiff + 3][xDiff + 3];
+					if (++gridEntry > 3)
+						gridEntry = 3;
+
+					sprites.draw(w, gridEntry, Common::Point(271 + xDiff * 9, 102 - yDiff * 7));
+				}
+			}
+		}
+	}
+
+	res._globalSprites.draw(w, party._mazeDirection + 1, Common::Point(270, 101));
+	sound.playFX(20);
+	w.update();
+
+	while (!g_vm->shouldExit() && !events.isKeyMousePressed()) {
+		events.updateGameCounter();
+		intf.draw3d(true);
+
+		events.wait(1, false);
+	}
 
 	w.close();
 }

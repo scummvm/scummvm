@@ -151,7 +151,7 @@ void PopUpDialog::drawDialog(DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
 	// Draw the menu border
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0);
 
 	/*if (_twoColumns)
 		g_gui.vLine(_x + _w / 2, _y, _y + _h - 2, g_gui._color);*/
@@ -367,10 +367,10 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 	if (name.size() == 0) {
 		// Draw a separator
-		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x+w, y+kLineHeight));
+		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x + w, y + kLineHeight));
 	} else {
 		g_gui.theme()->drawText(
-			Common::Rect(x+1, y+2, x+w, y+2+kLineHeight),
+			Common::Rect(x + 1, y + 2, x + w, y + 2 + kLineHeight),
 			name, hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
 			Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding
 		);
@@ -478,10 +478,7 @@ void PopUpWidget::drawWidget() {
 	Common::String sel;
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
-	g_gui.theme()->drawPopUpWidgetClip(
-		Common::Rect(_x, _y, _x + _w, _y + _h), getBossClipRect(),
-		sel, _leftPadding, _state, Graphics::kTextAlignLeft
-	);
+	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, _leftPadding, _state);
 }
 
 } // End of namespace GUI

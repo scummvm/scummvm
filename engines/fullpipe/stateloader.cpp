@@ -22,21 +22,19 @@
 
 #include "fullpipe/fullpipe.h"
 
+#include "fullpipe/constants.h"
+#include "fullpipe/gameloader.h"
+#include "fullpipe/interaction.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/statics.h"
+
 #include "common/file.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/memstream.h"
 
 #include "graphics/thumbnail.h"
-
-#include "fullpipe/objects.h"
-#include "fullpipe/gameloader.h"
-#include "fullpipe/scene.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/interaction.h"
-#include "fullpipe/gameloader.h"
-
-#include "fullpipe/constants.h"
 
 namespace Fullpipe {
 

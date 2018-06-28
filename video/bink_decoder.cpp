@@ -559,7 +559,7 @@ void BinkDecoder::BinkVideoTrack::mergeHuffmanSymbols(VideoFrame &video, byte *d
 }
 
 void BinkDecoder::BinkVideoTrack::initBundles() {
-	uint32 bw     = (_surface.w  + 7) >> 3;
+	uint32 bw     = (_surface.w + 7) >> 3;
 	uint32 bh     = (_surface.h + 7) >> 3;
 	uint32 blocks = bw * bh;
 
