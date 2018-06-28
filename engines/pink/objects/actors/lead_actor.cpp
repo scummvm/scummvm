@@ -66,7 +66,7 @@ void LeadActor::loadState(Archive &archive) {
 	_sequencer->loadState(archive);
 	_walkMgr->loadState(archive);
 	_page->getGame()->getPdaMgr().loadState(archive);
-	// load audioInfoMgr
+	_audioInfoMgr.loadState(archive);
 }
 
 void LeadActor::saveState(Archive &archive) {
@@ -82,6 +82,7 @@ void LeadActor::saveState(Archive &archive) {
 	_sequencer->saveState(archive);
 	_walkMgr->saveState(archive);
 	_page->getGame()->getPdaMgr().saveState(archive);
+	_audioInfoMgr.saveState(archive);
 }
 
 void LeadActor::init(bool unk) {
