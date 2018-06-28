@@ -469,7 +469,7 @@ bool Console::Cmd_DumpLocation(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_ListInventory(int argc, const char **argv) {
+bool Console::Cmd_ListInventoryItems(int argc, const char **argv) {
 	Resources::KnowledgeSet *inventory = StarkGlobal->getInventory();
 
 	if (!inventory) {
