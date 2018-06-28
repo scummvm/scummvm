@@ -531,10 +531,7 @@ void BbdouSpecialCode::setCursorControlRoutine(uint32 objectId, int num) {
 }
 
 Common::Point BbdouSpecialCode::getBackgroundCursorPos(Common::Point cursorPos) {
-	Common::Point pt = _vm->_camera->getScreenOffset();
-	pt.x += cursorPos.x;
-	pt.y += cursorPos.y;
-	return pt;
+	return _vm->_camera->getScreenOffset() + cursorPos;
 }
 
 void BbdouSpecialCode::showBubble(uint32 objectId, uint32 overlappedObjectId, uint32 holdingObjectId,

@@ -74,7 +74,7 @@ int TalkThread_Duckman::onUpdate() {
 		if (_vm->checkActiveTalkThreads())
 			return kTSYield;
 		_status = 3;
-		// Fallthrough to status 2
+		// fall through
 
 	case 2:
 		talkEntry = getTalkResourceEntry(_talkId);
@@ -101,13 +101,13 @@ int TalkThread_Duckman::onUpdate() {
 		if (_objectId == 0 || _durationMult == 0)
 			_flags |= 8;
 		_status = 3;
-		// Fallthrough to status 3
+		// fall through
 
 	case 3:
 		if (!(_flags & 4) && !_vm->_soundMan->isVoiceCued())
 			return kTSYield;
 		_status = 4;
-		// Fallthrough to status 4
+		// fall through
 
 	case 4:
 		if (!(_flags & 8) ) {

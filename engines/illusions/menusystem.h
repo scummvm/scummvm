@@ -171,11 +171,6 @@ protected:
 	virtual void playSoundEffect(int sfxId) = 0;
 };
 
-/*
-
-
-*/
-
 class MenuTextBuilder {
 public:
 	MenuTextBuilder();

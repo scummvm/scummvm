@@ -983,10 +983,7 @@ uint32 IllusionsEngine_Duckman::getObjectActorTypeId(uint32 objectId) {
 }
 
 Common::Point IllusionsEngine_Duckman::convertMousePos(Common::Point mousePos) {
-	Common::Point screenOffsPt = _camera->getScreenOffset();
-	mousePos.x += screenOffsPt.x;
-	mousePos.y += screenOffsPt.y;
-	return mousePos;
+	return mousePos + _camera->getScreenOffset();
 }
 
 void IllusionsEngine_Duckman::startCursorSequence() {
