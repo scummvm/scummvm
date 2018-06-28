@@ -533,8 +533,9 @@ void Screen8Bit::drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, 
 }
 
 void Screen8Bit::drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
-	for (uint i = 0; i < count; ++i)
+	for (uint i = 0; i < count; ++i) {
 		x += font->_widthC + drawChar(font, surface, x, y, *text++);
+	}
 }
 
 void Screen8Bit::fillSurface(Graphics::Surface *surface, byte color) {
@@ -553,9 +554,10 @@ int16 Screen8Bit::drawChar(FontResource *font, Graphics::Surface *surface, int16
 	byte *dst = (byte*)surface->getBasePtr(x, y);
 	byte *pixels = charInfo->_pixels;
 	for (int16 yc = 0; yc < font->_charHeight; ++yc) {
-		for (int16 xc = 0; xc < charWidth; ++xc)
+		for (int16 xc = 0; xc < charWidth; ++xc) {
 			if (pixels[xc])
 				dst[xc] = pixels[xc];
+		}
 		dst += surface->pitch;
 		pixels += charWidth;
 	}
@@ -731,8 +733,9 @@ void Screen16Bit::drawSurface(Common::Rect &dstRect, Graphics::Surface *surface,
 }
 
 void Screen16Bit::drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) {
-	for (uint i = 0; i < count; ++i)
+	for (uint i = 0; i < count; ++i) {
 		x += font->_widthC + drawChar(font, surface, x, y, *text++);
+	}
 }
 
 void Screen16Bit::fillSurface(Graphics::Surface *surface, byte color) {

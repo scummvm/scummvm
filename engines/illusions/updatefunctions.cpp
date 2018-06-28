@@ -35,8 +35,9 @@ UpdateFunctions::UpdateFunctions() {
 
 UpdateFunctions::~UpdateFunctions() {
 	// Free update functions
-	for (UpdateFunctionListIterator it = _updateFunctions.begin(); it != _updateFunctions.end(); ++it)
+	for (UpdateFunctionListIterator it = _updateFunctions.begin(); it != _updateFunctions.end(); ++it) {
 		delete *it;
+	}
 }
 
 void UpdateFunctions::add(int priority, uint32 sceneId, UpdateFunctionCallback *callback) {
@@ -51,8 +52,9 @@ void UpdateFunctions::add(int priority, uint32 sceneId, UpdateFunctionCallback *
 
 void UpdateFunctions::update() {
 	// Avoid running updates multiple times in the current time slice
-	while (_lastTimerUpdateTime == getCurrentTime())
+	while (_lastTimerUpdateTime == getCurrentTime()) {
 		g_system->delayMillis(10); // CHECKME Timer resolution
+	}
 	_lastTimerUpdateTime = getCurrentTime();
 	UpdateFunctionListIterator it = _updateFunctions.begin();
 	while (it != _updateFunctions.end()) {
@@ -72,9 +74,10 @@ void UpdateFunctions::update() {
 }
 
 void UpdateFunctions::terminateByScene(uint32 sceneId) {
-	for (UpdateFunctionListIterator it = _updateFunctions.begin(); it != _updateFunctions.end(); ++it)
+	for (UpdateFunctionListIterator it = _updateFunctions.begin(); it != _updateFunctions.end(); ++it) {
 		if ((*it)->_sceneId == sceneId)
 			(*it)->terminate();
+	}
 }
 
 } // End of namespace Illusions

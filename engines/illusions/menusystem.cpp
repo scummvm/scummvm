@@ -59,8 +59,9 @@ BaseMenu::BaseMenu(BaseMenuSystem *menuSystem, uint32 fontId, byte backgroundCol
 }
 
 BaseMenu::~BaseMenu() {
-	for (MenuItems::iterator it = _menuItems.begin(); it != _menuItems.end(); ++it)
+	for (MenuItems::iterator it = _menuItems.begin(); it != _menuItems.end(); ++it) {
 		delete *it;
+	}
 }
 
 void BaseMenu::addText(const Common::String text) {
@@ -585,8 +586,9 @@ MenuTextBuilder::MenuTextBuilder() : _pos(0) {
 }
 
 void MenuTextBuilder::appendString(const Common::String &value) {
-	for (uint i = 0; i < value.size(); ++i)
+	for (uint i = 0; i < value.size(); ++i) {
 		_text[_pos++] = value[i];
+	}
 }
 
 void MenuTextBuilder::appendNewLine() {

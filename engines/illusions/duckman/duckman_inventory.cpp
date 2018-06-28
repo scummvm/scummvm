@@ -112,9 +112,10 @@ void DuckmanInventory::addInventoryItem(uint32 objectId) {
 }
 
 void DuckmanInventory::clearInventorySlot(uint32 objectId) {
-	for (uint i = 0; i < _inventorySlots.size(); ++i)
+	for (uint i = 0; i < _inventorySlots.size(); ++i) {
 		if (_inventorySlots[i]._objectId == objectId)
 			_inventorySlots[i]._objectId = 0;
+	}
 }
 
 void DuckmanInventory::putBackInventoryItem() {
@@ -140,16 +141,18 @@ void DuckmanInventory::putBackInventoryItem() {
 }
 
 DMInventorySlot *DuckmanInventory::findInventorySlot(uint32 objectId) {
-	for (uint i = 0; i < _inventorySlots.size(); ++i)
+	for (uint i = 0; i < _inventorySlots.size(); ++i) {
 		if (_inventorySlots[i]._objectId == objectId)
 			return &_inventorySlots[i];
+	}
 	return 0;
 }
 
 DMInventoryItem *DuckmanInventory::findInventoryItem(uint32 objectId) {
-	for (uint i = 0; i < _inventoryItems.size(); ++i)
+	for (uint i = 0; i < _inventoryItems.size(); ++i) {
 		if (_inventoryItems[i]._objectId == objectId)
 			return &_inventoryItems[i];
+	}
 	return 0;
 }
 

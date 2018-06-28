@@ -132,18 +132,20 @@ void BbdouCursor::reset(uint32 objectId) {
 }
 
 void BbdouCursor::addCursorSequenceId(uint32 objectId, uint32 sequenceId) {
-	for (uint i = 0; i < kMaxCursorSequences; ++i)
+	for (uint i = 0; i < kMaxCursorSequences; ++i) {
 		if (_cursorSequences[i]._objectId == 0) {
 			_cursorSequences[i]._objectId = objectId;
 			_cursorSequences[i]._sequenceId = sequenceId;
 			break;
 		}
+	}
 }
 
 uint32 BbdouCursor::findCursorSequenceId(uint32 objectId) {
-	for (uint i = 0; i < kMaxCursorSequences; ++i)
+	for (uint i = 0; i < kMaxCursorSequences; ++i) {
 		if (_cursorSequences[i]._objectId == objectId)
 			return _cursorSequences[i]._sequenceId;
+	}
 	return 0;
 }
 
@@ -332,8 +334,9 @@ bool BbdouCursor::getTrackingCursorSequenceId(Control *control, uint32 &outSeque
 }
 
 void BbdouCursor::resetActiveVerbs() {
-	for (uint i = 0; i < 32; ++i)
+	for (uint i = 0; i < 32; ++i) {
 		_data._verbState._verbActive[i] = false;
+	}
 	if (_data._verbState._cursorState == 1) {
 		_data._verbState._verbActive[1] = true;
 		_data._verbState._verbActive[2] = true;

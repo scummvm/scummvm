@@ -39,8 +39,9 @@ IllusionsEngine::kReadSaveHeaderError IllusionsEngine::readSaveHeader(Common::Se
 
 	byte descriptionLen = in->readByte();
 	header.description = "";
-	while (descriptionLen--)
+	while (descriptionLen--) {
 		header.description += (char)in->readByte();
+	}
 
 	if (loadThumbnail) {
 		Graphics::loadThumbnail(*in, header.thumbnail);

@@ -142,16 +142,18 @@ void TalkInstanceList::removeTalkInstance(TalkInstance *talkInstance) {
 }
 
 TalkInstance *TalkInstanceList::findTalkItem(uint32 talkId) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
 		if ((*it)->_talkId == talkId)
 			return (*it);
+	}
 	return 0;
 }
 
 TalkInstance *TalkInstanceList::findTalkItemBySceneId(uint32 sceneId) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
 		if ((*it)->_sceneId == sceneId)
 			return (*it);
+	}
 	return 0;
 }
 

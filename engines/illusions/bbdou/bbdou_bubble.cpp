@@ -63,8 +63,9 @@ void BbdouBubble::init() {
 	_objectId1414 = 0x4005B;
 	_objectId1418 = 0x4005C;
 
-	for (uint i = 0; i < 32; ++i)
+	for (uint i = 0; i < 32; ++i) {
 		_objectIds[i] = kObjectIds3[i];
+	}
 
 	for (uint i = 0; i < 32; ++i) {
 		_items[i]._objectId = kObjectIds2[i];
@@ -92,8 +93,9 @@ void BbdouBubble::addItem0(uint32 sequenceId1, uint32 sequenceId2, uint32 progRe
 	item0._progResKeywordId = progResKeywordId;
 	item0._baseNamedPointId = namedPointId;
 	item0._count = count;
-	for (int16 i = 0; i < count; ++i)
+	for (int16 i = 0; i < count; ++i) {
 		item0._namedPointIds[i] = FROM_LE_32(namedPointIds[i]);
+	}
 	item0._objectId = 0;
 	item0._pt.x = 0;
 	item0._pt.y = 0;
@@ -148,8 +150,9 @@ void BbdouBubble::hide() {
 }
 
 void BbdouBubble::setup(int16 minCount, Common::Point pt1, Common::Point pt2, uint32 progResKeywordId) {
-	for (uint i = 0; i < 32; ++i)
+	for (uint i = 0; i < 32; ++i) {
 		_items[i]._enabled = 0;
+	}
 	int16 maxCount = 32;
 	for (uint i = 0; i < _item0s.size(); ++i) {
 		Item0 *item0 = &_item0s[i];
@@ -202,8 +205,9 @@ void BbdouBubble::calcBubbles(Common::Point &pt1, Common::Point &pt2) {
 		control->startSequenceActor(0x00060056, 2, 0);
 	}
 
-	for (int i = 0; i < kSequenceIdsCount; ++i)
+	for (int i = 0; i < kSequenceIdsCount; ++i) {
 		sequenceCounters[i] = 0;
+	}
 
 	if (pt2.y >= pt1.y) {
 		swapY = true;
@@ -231,8 +235,9 @@ void BbdouBubble::calcBubbles(Common::Point &pt1, Common::Point &pt2) {
 	int pointsCount = (int)(arcLength / kDistanceBetweenPoints);
 	float partAngle = ABS(kDistanceBetweenPoints / radius);
 
-	for (int i = 0; i < pointsCount; ++i)
+	for (int i = 0; i < pointsCount; ++i) {
 		++sequenceCounters[kIndexTbl[i % kSequenceIdsCount]];
+	}
 
 	if (!swapY) {
 		if (pt2.y < pt1.y) {

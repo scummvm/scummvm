@@ -135,8 +135,9 @@ bool ScreenText::insertText(uint16 *text, uint32 fontId, WidthHeight dimensions,
 	_vm->_screenPalette->setPaletteEntry(font->getColorIndex(), screenText->_info._colorR, screenText->_info._colorG, screenText->_info._colorB);
 
 	uint16 *textPart = screenText->_text;
-	while (text != outTextPtr)
+	while (text != outTextPtr) {
 		*textPart++ = *text++;
+	}
 	*textPart = 0;
 
 	updateTextInfoPosition(Common::Point(160, 100));

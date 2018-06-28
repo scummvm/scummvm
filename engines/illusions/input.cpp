@@ -173,8 +173,9 @@ InputEvent& Input::setInputEvent(uint evt, uint bitMask) {
 }
 
 void Input::handleKey(Common::KeyCode key, int mouseButton, bool down) {
-	for (uint i = 0; i < kEventMax; ++i)
+	for (uint i = 0; i < kEventMax; ++i) {
 		_newKeys |= _inputEvents[i].handle(key, mouseButton, down);
+	}
 	uint prevButtonStates = _buttonStates;
 	_buttonStates |= _newKeys;
 	_newKeys = 0;

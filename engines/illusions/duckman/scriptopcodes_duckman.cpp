@@ -57,8 +57,9 @@ typedef Common::Functor2Mem<ScriptThread*, OpCall&, void, ScriptOpcodes_Duckman>
 
 void ScriptOpcodes_Duckman::initOpcodes() {
 	// First clear everything
-	for (uint i = 0; i < 256; ++i)
+	for (uint i = 0; i < 256; ++i) {
 		_opcodes[i] = 0;
+	}
 	// Register opcodes
 	OPCODE(1, opNop);
 	OPCODE(2, opSuspend);
@@ -164,8 +165,9 @@ void ScriptOpcodes_Duckman::initOpcodes() {
 #undef OPCODE
 
 void ScriptOpcodes_Duckman::freeOpcodes() {
-	for (uint i = 0; i < 256; ++i)
+	for (uint i = 0; i < 256; ++i) {
 		delete _opcodes[i];
+	}
 }
 
 // Opcodes

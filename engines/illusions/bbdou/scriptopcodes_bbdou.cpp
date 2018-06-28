@@ -54,8 +54,9 @@ typedef Common::Functor2Mem<ScriptThread*, OpCall&, void, ScriptOpcodes_BBDOU> S
 
 void ScriptOpcodes_BBDOU::initOpcodes() {
 	// First clear everything
-	for (uint i = 0; i < 256; ++i)
+	for (uint i = 0; i < 256; ++i) {
 		_opcodes[i] = 0;
+	}
 	// Register opcodes
 	OPCODE(2, opSuspend);
 	OPCODE(3, opYield);
@@ -177,8 +178,9 @@ void ScriptOpcodes_BBDOU::initOpcodes() {
 #undef OPCODE
 
 void ScriptOpcodes_BBDOU::freeOpcodes() {
-	for (uint i = 0; i < 256; ++i)
+	for (uint i = 0; i < 256; ++i) {
 		delete _opcodes[i];
+	}
 }
 
 // Opcodes

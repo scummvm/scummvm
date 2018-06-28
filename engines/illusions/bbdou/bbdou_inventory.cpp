@@ -59,11 +59,12 @@ void InventoryBag::registerInventorySlot(uint32 namedPointId) {
 bool InventoryBag::addInventoryItem(InventoryItem *inventoryItem, InventorySlot *inventorySlot) {
 	// NOTE Skipped support for multiple items per slot, not used in BBDOU
 	if (!inventorySlot) {
-		for (InventorySlotsIterator it = _inventorySlots.begin(); it != _inventorySlots.end(); ++it)
+		for (InventorySlotsIterator it = _inventorySlots.begin(); it != _inventorySlots.end(); ++it) {
 			if (!(*it)->_inventoryItem) {
 				inventorySlot = *it;
 				break;
 			}
+		}
 	}
 	if (inventorySlot) {
 		inventorySlot->_inventoryItem = inventoryItem;
@@ -73,9 +74,10 @@ bool InventoryBag::addInventoryItem(InventoryItem *inventoryItem, InventorySlot 
 }
 
 void InventoryBag::removeInventoryItem(InventoryItem *inventoryItem) {
-	for (InventorySlotsIterator it = _inventorySlots.begin(); it != _inventorySlots.end(); ++it)
+	for (InventorySlotsIterator it = _inventorySlots.begin(); it != _inventorySlots.end(); ++it) {
 		if ((*it)->_inventoryItem && (*it)->_inventoryItem->_objectId == inventoryItem->_objectId)
 			(*it)->_inventoryItem = 0;
+	}
 }
 
 bool InventoryBag::hasInventoryItem(uint32 objectId) {
@@ -111,9 +113,10 @@ void InventoryBag::clear() {
 }
 
 InventorySlot *InventoryBag::getInventorySlot(uint32 objectId) {
-	for (uint i = 0; i < _inventorySlots.size(); ++i)
+	for (uint i = 0; i < _inventorySlots.size(); ++i) {
 		if (_inventorySlots[i]->_objectId == objectId)
 			return _inventorySlots[i];
+	}
 	return 0;
 }
 
@@ -159,9 +162,10 @@ void BbdouInventory::addInventoryItem(uint32 objectId) {
 	bool assigned = inventoryItem->_assigned;
 	inventoryItem->_assigned = true;
 	if (!assigned && !inventoryItem->_flag) {
-		for (uint i = 0; i < _inventoryBags.size(); ++i)
+		for (uint i = 0; i < _inventoryBags.size(); ++i) {
 			if (!_inventoryBags[i]->addInventoryItem(inventoryItem, 0))
 				inventoryItem->_assigned = false;
+		}
 	}
 	if (_activeInventorySceneId)
 		refresh();
@@ -181,10 +185,11 @@ void BbdouInventory::removeInventoryItem(uint32 objectId) {
 }
 
 bool BbdouInventory::hasInventoryItem(uint32 objectId) {
-	for (uint i = 0; i < _inventoryItems.size(); ++i)
+	for (uint i = 0; i < _inventoryItems.size(); ++i) {
 		if (_inventoryItems[i]->_objectId == objectId &&
 			_inventoryItems[i]->_assigned)
 			return true;
+	}
 	return false;
 }
 
@@ -234,16 +239,18 @@ void BbdouInventory::close() {
 }
 
 InventoryBag *BbdouInventory::getInventoryBag(uint32 sceneId) {
-	for (uint i = 0; i < _inventoryBags.size(); ++i)
+	for (uint i = 0; i < _inventoryBags.size(); ++i) {
 		if (_inventoryBags[i]->_sceneId == sceneId)
 			return _inventoryBags[i];
+	}
 	return 0;
 }
 
 InventoryItem *BbdouInventory::getInventoryItem(uint32 objectId) {
-	for (uint i = 0; i < _inventoryItems.size(); ++i)
+	for (uint i = 0; i < _inventoryItems.size(); ++i) {
 		if (_inventoryItems[i]->_objectId == objectId)
 			return _inventoryItems[i];
+	}
 	return 0;
 }
 
@@ -266,8 +273,9 @@ void BbdouInventory::refresh() {
 }
 
 void BbdouInventory::buildItems(InventoryBag *inventoryBag) {
-	for (InventoryItemsIterator it = _inventoryItems.begin(); it != _inventoryItems.end(); ++it)
+	for (InventoryItemsIterator it = _inventoryItems.begin(); it != _inventoryItems.end(); ++it) {
 		(*it)->_timesPresent = 0;
+	}
 	inventoryBag->buildItems();
 	for (InventoryItemsIterator it = _inventoryItems.begin(); it != _inventoryItems.end(); ++it) {
 		InventoryItem *inventoryItem = *it;
@@ -284,8 +292,9 @@ void BbdouInventory::clear() {
 		inventoryItem->_assigned = false;
 		inventoryItem->_flag = false;
 	}
-	for (uint i = 0; i < _inventoryBags.size(); ++i)
+	for (uint i = 0; i < _inventoryBags.size(); ++i) {
 		_inventoryBags[i]->clear();
+	}
 }
 
 void BbdouInventory::cause0x1B0001(TriggerFunction *triggerFunction, uint32 callingThreadId) {

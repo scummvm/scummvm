@@ -104,9 +104,10 @@ void FontResource::load(Resource *resource) {
 }
 
 CharInfo *FontResource::getCharInfo(uint16 c) {
-	for (uint i = 0; i < _charRangesCount; ++i)
+	for (uint i = 0; i < _charRangesCount; ++i) {
 		if (_charRanges[i].containsChar(c))
 			return _charRanges[i].getCharInfo(c);
+	}
 	return 0;
 }
 

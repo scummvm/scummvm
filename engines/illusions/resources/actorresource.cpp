@@ -162,9 +162,10 @@ void ActorResource::load(Resource *resource) {
 }
 
 bool ActorResource::containsSequence(Sequence *sequence) {
-	for (uint i = 0; i < _sequences.size(); ++i)
+	for (uint i = 0; i < _sequences.size(); ++i) {
 		if (sequence == &_sequences[i])
 			return true;
+	}
 	return false;
 }
 
@@ -243,10 +244,12 @@ void ActorInstance::registerResources() {
 }
 
 void ActorInstance::unregisterResources() {
-	for (uint i = 0; i < _actorResource->_actorTypes.size(); ++i)
+	for (uint i = 0; i < _actorResource->_actorTypes.size(); ++i) {
 		_vm->_dict->removeActorType(_actorResource->_actorTypes[i]._actorTypeId);
-	for (uint i = 0; i < _actorResource->_sequences.size(); ++i)
+	}
+	for (uint i = 0; i < _actorResource->_sequences.size(); ++i) {
 		_vm->_dict->removeSequence(_actorResource->_sequences[i]._sequenceId);
+	}
 }
 
 // ActorInstanceList
@@ -270,15 +273,17 @@ void ActorInstanceList::removeActorInstance(ActorInstance *actorInstance) {
 }
 
 void ActorInstanceList::pauseBySceneId(uint32 sceneId) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
 		if ((*it)->_sceneId == sceneId)
 			(*it)->pause();
+	}
 }
 
 void ActorInstanceList::unpauseBySceneId(uint32 sceneId) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
 		if ((*it)->_sceneId == sceneId)
 			(*it)->unpause();
+	}
 }
 
 FramesList *ActorInstanceList::findSequenceFrames(Sequence *sequence) {
@@ -291,9 +296,10 @@ FramesList *ActorInstanceList::findSequenceFrames(Sequence *sequence) {
 }
 
 ActorInstance *ActorInstanceList::findActorByResource(ActorResource *actorResource) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
 		if ((*it)->_actorResource == actorResource)
 			return (*it);
+	}
 	return 0;
 }
 

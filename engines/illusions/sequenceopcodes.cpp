@@ -56,8 +56,9 @@ typedef Common::Functor2Mem<Control*, OpCall&, void, SequenceOpcodes> SequenceOp
 
 void SequenceOpcodes::initOpcodes() {
 	// First clear everything
-	for (uint i = 0; i < 256; ++i)
+	for (uint i = 0; i < 256; ++i) {
 		_opcodes[i] = 0;
+	}
 	// Register opcodes
 	OPCODE(1, opYield);
 	OPCODE(2, opSetFrameIndex);
@@ -111,8 +112,9 @@ void SequenceOpcodes::initOpcodes() {
 #undef OPCODE
 
 void SequenceOpcodes::freeOpcodes() {
-	for (uint i = 0; i < 256; ++i)
+	for (uint i = 0; i < 256; ++i) {
 		delete _opcodes[i];
+	}
 }
 
 // Opcodes
