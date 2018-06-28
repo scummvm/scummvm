@@ -153,45 +153,45 @@ enum {
 	kSampleRate = 22050
 };
 
-static const char *kPinkGame = "PinkGame";
+static const char * const kPinkGame = "PinkGame";
 
-static const char *kPokus = "pokus";
-static const char *kPeril = "peril";
+static const char * const kPokus = "pokus";
+static const char * const kPeril = "peril";
 
-static const char *kCloseAction = "Close";
-static const char *kIdleAction = "Idle";
-static const char *kOpenAction = "Open";
-static const char *kPlayAction = "Play";
-static const char *kShowAction = "Show";
-static const char *kHideAction = "Hide";
+static const char * const kCloseAction = "Close";
+static const char * const kIdleAction = "Idle";
+static const char * const kOpenAction = "Open";
+static const char * const kPlayAction = "Play";
+static const char * const kShowAction = "Show";
+static const char * const kHideAction = "Hide";
 
-static const char *kInventoryWindowActor = "InventoryWindow";
-static const char *kInventoryItemActor = "InventoryItem";
-static const char *kInventoryRightArrowActor = "InventoryRightArrow";
-static const char *kInventoryLeftArrowActor = "InventoryLeftArrow";
+static const char * const kInventoryWindowActor = "InventoryWindow";
+static const char * const kInventoryItemActor = "InventoryItem";
+static const char * const kInventoryRightArrowActor = "InventoryRightArrow";
+static const char * const kInventoryLeftArrowActor = "InventoryLeftArrow";
 
-static const char *kCursorNameExitUp = "ExitUp";
-static const char *kCursorNameExitLeft = "ExitLeft";
-static const char *kCursorNameExitRight = "ExitRight";
-static const char *kCursorNameExitForward = "ExitForward";
-static const char *kCursorNameExitBackWards = "ExitBackwards";
+static const char * const kCursorNameExitUp = "ExitUp";
+static const char * const kCursorNameExitLeft = "ExitLeft";
+static const char * const kCursorNameExitRight = "ExitRight";
+static const char * const kCursorNameExitForward = "ExitForward";
+static const char * const kCursorNameExitBackWards = "ExitBackwards";
 
-static const char *kClickable = "Clickable";
-static const char *kCursor = "Cursor";
+static const char * const kClickable = "Clickable";
+static const char * const kCursor = "Cursor";
 
-static const char *kFoodPuzzle = "FoodPuzzle";
-static const char *kJackson = "Jackson";
-static const char *kBolted = "Bolted";
-static const char *kDrunkLocation = "DrunkLocation";
-static const char *kDrunk = "Drunk";
+static const char * const kFoodPuzzle = "FoodPuzzle";
+static const char * const kJackson = "Jackson";
+static const char * const kBolted = "Bolted";
+static const char * const kDrunkLocation = "DrunkLocation";
+static const char * const kDrunk = "Drunk";
 
-static const char *kFirstRound = "15.1";
-static const char *kSecondRound = "15.2";
-static const char *kThirdRound = "15.3";
+static const char * const kFirstRound = "15.1";
+static const char * const kSecondRound = "15.2";
+static const char * const kThirdRound = "15.3";
 
-static const char *kBoy = "Boy";
-static const char *kSirBaldley = "SirBaldley";
-static const char *kBoyBlocked = "BoyBlocked";
+static const char * const kBoy = "Boy";
+static const char * const kSirBaldley = "SirBaldley";
+static const char * const kBoyBlocked = "BoyBlocked";
 
 } // End of namespace Pink
 
