@@ -36,6 +36,8 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 	_rdfData = new byte[size];
 	rdfFile->read(_rdfData, size);
 
+	_roomIndex = name.lastChar() - '0';
+
 	// Find room-specific code table
 	if (name == "DEMON0") {
 		_roomActionList = demon0ActionList;

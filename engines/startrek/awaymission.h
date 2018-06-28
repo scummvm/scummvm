@@ -190,15 +190,22 @@ struct AwayMission {
 
 		struct {
 			byte field29; // 0x29
+			bool torpedoLoaded; // 0x33
+			bool knowAboutTorpedo; // 0x34
 
 			// True if you've combined the lense + degrimer and fired it off, discovering
 			// it's a weapon
 			bool discoveredLenseAndDegrimerFunction; // 0x3c
+			byte torpedoStatus; // 0x3d
 			bool gotMemoryDisk; // 0x48
 			bool gotLense; // 0x49
 			bool gotDegrimer; // 0x4a
 
 			bool enteredRoom0ForFirstTime; // 0x54
+			bool gotPointsForLoadingTorpedo; // 0x55
+			bool gotPointsForPressingRedButton; // 0x56
+			bool enteredRoom1ForFirstTime; // 0x58
+			bool field58; // 0x58
 			int16 missionScore; // 0x5a
 		} mudd;
 	};
