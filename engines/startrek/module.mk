@@ -37,6 +37,12 @@ MODULE_OBJS = \
 	rooms/love4.o \
 	rooms/love5.o \
 	rooms/lovea.o \
+	rooms/mudd0.o \
+	rooms/mudd1.o \
+	rooms/mudd2.o \
+	rooms/mudd3.o \
+	rooms/mudd4.o \
+	rooms/mudd5.o \
 	
 
 

@@ -467,7 +467,9 @@ void StarTrekEngine::handleAwayMissionAction() {
 	Action action = _actionQueue.pop();
 
 	if ((action.type == ACTION_FINISHED_ANIMATION || action.type == ACTION_FINISHED_WALKING) && action.b1 == 0xff) {
-		_awayMission.disableInput = false;
+		// Just finished walking or beaming into a room
+		if (_awayMission.disableInput == 1)
+			_awayMission.disableInput = false;
 		_warpHotspotsActive = true;
 		return;
 	}

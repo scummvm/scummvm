@@ -100,6 +100,9 @@ enum GameStringIDs {
 	TX_SPEAKER_CHEEVER,
 	TX_SPEAKER_PREAX,
 
+	TX_SPEAKER_BUCHERT,
+	TX_SPEAKER_MUDD,
+
 	TX_BRIDU146,
 
 	TX_G_024,
@@ -1160,6 +1163,69 @@ enum GameStringIDs {
 	TX_LOVA_F55,
 
 
+	TX_MUD0_001,
+	TX_MUD0_002,
+	TX_MUD0_003,
+	TX_MUD0_004,
+	TX_MUD0_005,
+	TX_MUD0_006,
+	TX_MUD0_007,
+	TX_MUD0_008,
+	TX_MUD0_009,
+	TX_MUD0_010,
+	TX_MUD0_011,
+	TX_MUD0_012,
+	TX_MUD0_013,
+	TX_MUD0_014,
+	TX_MUD0_015,
+	TX_MUD0_016,
+	TX_MUD0_017,
+	TX_MUD0_018,
+	TX_MUD0_019,
+	TX_MUD0_020,
+	TX_MUD0_021,
+	TX_MUD0_022,
+	TX_MUD0_023,
+	TX_MUD0_024,
+	TX_MUD0_025,
+	TX_MUD0_026,
+	TX_MUD0_027,
+	TX_MUD0_028,
+	TX_MUD0_029,
+	TX_MUD0_030,
+	TX_MUD0_031,
+	TX_MUD0_032,
+	TX_MUD0_033,
+	TX_MUD0_034,
+	TX_MUD0_035,
+	TX_MUD0_036,
+	TX_MUD0_037,
+	TX_MUD0_038,
+	TX_MUD0_039,
+	TX_MUD0_040,
+	TX_MUD0_041,
+	TX_MUD0N000,
+	TX_MUD0N001,
+	TX_MUD0N002,
+	TX_MUD0N003,
+	TX_MUD0N004,
+	TX_MUD0N005,
+	TX_MUD0N006,
+	TX_MUD0N007,
+	TX_MUD0N008,
+	TX_MUD0N009,
+	TX_MUD0N010,
+	TX_MUD0N011,
+	TX_MUD0N012,
+	TX_MUD0N013,
+	TX_MUD0N014,
+	TX_MUD0N015,
+	TX_MUD0N016,
+	TX_MUD0N017,
+	// UNUSED
+	TX_MUD0N019,
+
+
 	TX_MUD2_040,
 
 
@@ -1173,6 +1239,7 @@ enum GameStringIDs {
 
 
 	TX_SPOKCOFF,
+	TX_STATICU1,
 
 
 	TX_END
@@ -1215,6 +1282,9 @@ const char * const g_gameStrings[] = {
 	"Dr. Marcus",
 	"Dr. Cheever",
 	"Preax",
+
+	"Lt. Buchert",
+	"Harry Mudd",
 
 	"#BRID\\BRIDU146#Nothing to report, Captain.",
 
@@ -2276,6 +2346,68 @@ const char * const g_gameStrings[] = {
 	"#LOVA\\LOVA_F55#Jim, we need to synthesize more to make the serum before we can use it.", // TYPO
 
 
+	"#MUD0\\MUD0_001#Kirk to Enterprise...",
+	"#MUD0\\MUD0_002#Well! Now I think we know why the Elasi pirates were so interested in finding out where Mudd was getting these!",
+	"#MUD0\\MUD0_003#Bones, Federation law is clear on this. Federation law protects everyone, even Harry Mudd. ",
+	"#MUD0\\MUD0_004#Don't push your luck, Harry. ",
+	"#MUD0\\MUD0_005#Harry, as official representatives of the Federation, and of Starfleet, we recognize your rights to legitimate salvage.  Need I say more?  ",
+	"#MUD0\\MUD0_006#I see, Harry. Well, we'll look around here while the Enterprise remains close by.",
+	"#MUD0\\MUD0_007#It was a rhetorical question, Harry. ",
+	"#MUD0\\MUD0_008#No Lieutenant, that was Horatio Jones, but Harry Mudd is worse.",
+	"#MUD0\\MUD0_009#Well, you're terrible trouble to me, Harry. Tell me what this is all about.",
+	"#MUD0\\MUD0_010#Why do I have the feeling that I am about to have a bad day? ",
+	"#MUD0\\MUD0_011#Everyone is healthy, Jim, there's no need for the medical kit here.",
+	"#MUD0\\MUD0_012#These lenses were definitely not made to correct the aliens' vision. Mudd might've been able to sell these among humans as magnifiers, but these people must have had another use for them.",
+	"#MUD0\\MUD0_013#These lenses are finely made magnifiers, but I can't help but wonder if that's what the aliens really used them for. ",
+	"#MUD0\\MUD0_014#About as much as the Klingons are devoted to pacifism... ",
+	"#MUD0\\MUD0_015#For once Spock, I couldn't have said it better myself. ",
+	"#MUD0\\MUD0_016#Jim? You can't seriously be thinking of helping Mudd after all he's done. ",
+	"#MUD0\\MUD0_017#Then something went wrong, right?",
+	"#MUD0\\MUD0_018#Life support down to 25%, Captain.",
+	"#MUD0\\MUD0_019#Life support down to 50%, Captain.",
+	"#MUD0\\MUD0_020#Life support down to 75%, Captain.",
+	"#MUD0\\MUD0_021#These are computer memory transfer media, probably designed for use with the alien computer system.",
+	"#MUD0\\MUD0_022#Given the past record of Harry Mudd, Captain, I strongly recommend that you do not trust him. ",
+	"#MUD0\\MUD0_023#I am. Your record is that of a greedy, amoral, sociopathic fraud who preys upon human emotion, most notably, gullibility. ", // TYPO (gullability)
+	"#MUD0\\MUD0_024#There was the time that you tried to commandeer the Enterprise to sell wives to miners, and then there was the time you stole the Enterprise to exchange us for androids who were holding you prisoner... ",
+	"#MUD0\\MUD0_025#Kirk, after all we've been through you wouldn't shoot me would you?",
+	"#MUD0\\MUD0_026#Actually no, Doctor, not then. I'd started offering a few other little items I found -- Mudd's Limited coffee substitute -- a great little specialty item; lenses to a firm packaging BuildYerOwn telescope kits; a collection of novelty paints -- things like that.  All of a sudden, the Elasi pirates are asking for me in every quadrant, and wanting to know where I'm getting my goods!",
+	"#MUD0\\MUD0_027#And we all know how devoted I am to Federation law. ",
+	"#MUD0\\MUD0_028#I happened upon this ship not long ago, and dutifully registered it as salvage, mind you!  In the hold here, I discovered one of these devices -- in that box over there. When I tried one on a wall, it floated off the grease and dirt -- perfect for cleaning, near as I could see. I peddled a few of these Mudd's Miracle De-Grimers and everything was going perfectly well.",
+	"#MUD0\\MUD0_029#I understand perfectly, Captain -- Carry on, Captain.",
+	"#MUD0\\MUD0_030#It's a system that cost a gambler his life, boy. He crawled up to me and whispered it with his dying breath, and it can be yours for a mere... 200 credits. ",
+	"#MUD0\\MUD0_031#Kirk! Now that we're together... ",
+	"#MUD0\\MUD0_032#Kirk, my friend! When have I ever given you the slightest bit of trouble? ",
+	"#MUD0\\MUD0_033#Look around all you like, Captain, but I'll be keeping an eye on you.  I've registered this derelict as my salvage, and I don't want you running off with all my prizes! ",
+	"#MUD0\\MUD0_034#Mr. Spock! Whatever gave you that impression! I thought Vulcans were supposed to be logical. ",
+	"#MUD0\\MUD0_035#Perhaps there have been a few minor misunderstandings... ",
+	"#MUD0\\MUD0_036#Starfleet! You're all the same. No sense of adventure! ",
+	"#MUD0\\MUD0_037#Welcome, Captain Kirk! So glad you're here. The Elasi have been terrible trouble to me.",
+	"#MUD0\\MUD0_038#Why I've never been so insulted in all my life! ",
+	"#MUD0\\MUD0_039#Didn't Mudd bring those tribbles on board the Enterprise?",
+	"#MUD0\\MUD0_040#So you say you know how to break the gambling machines on Curalon IV? ",
+	"#MUD0\\MUD0_041#Sorry Mr. Mudd. My mother didn't raise any fools in her family. ",
+	"#MUD0\\MUD0N000#A small energy device with a flanged opening at the front, about the size of one's thumbnail.",
+	"#MUD0\\MUD0N001#Dr. McCoy looks like he would like to violate the Hippocratic Oath on Harry Mudd, but you know he won't. ",
+	"#MUD0\\MUD0N002#Dust and grease lifts off the surface, leaving this item clean as new.",
+	"#MUD0\\MUD0N003#Harcourt Fenton Mudd. Of course, he's going to be honest and fair with you... ",
+	"#MUD0\\MUD0N004#James T. Kirk looks rather exasperated right now. ",
+	"#MUD0\\MUD0N005#Lieutenant Buchert is standing around, watching everyone else converse with Harry Mudd. ",
+	"#MUD0\\MUD0N006#Life support fails completely and you fall unconscious.",
+	"#MUD0\\MUD0N007#Mr. Spock is as close to annoyed as a Vulcan can get. ",
+	"#MUD0\\MUD0N008#Odd-looking contraptions small enough to hold in one hand.",
+	"#MUD0\\MUD0N009#The atmosphere in the ship has dropped below the level needed to sustain life. You drop to unconsciousness and slowly die.",
+	"#MUD0\\MUD0N010#There are shiny, multi-sided, spherical objects in this box.",
+	"#MUD0\\MUD0N011#These two things fit together like they were made for each other.",
+	"#MUD0\\MUD0N012#This container holds bricks of what might have been preprocessed food -- a long time ago.",
+	"#MUD0\\MUD0N013#This container holds small mechanical components unfamiliar to you.",
+	"#MUD0\\MUD0N014#This lense, about the size of one's thumbnail, magnifies like a fine optical glass.  ",
+	"#MUD0\\MUD0N015#This storage bay is stockpiled with all manner of goods.",
+	"#MUD0\\MUD0N016#You already have that.",
+	"#MUD0\\MUD0N017#You can't take that.",
+	"#MUD0\\MUD0N019#This place is cluttered with stored goods of every sort. It would take an army of workers weeks to examine every container and determine what is inside.",
+
+
 	"#MUD2\\MUD2_040#You look troubled, Captain.",
 
 
@@ -2289,6 +2421,7 @@ const char * const g_gameStrings[] = {
 
 
 	"#sfx\\spokcoff#cough... cough...",
+	"#SFX\\STATICU1#Ent... neu ... trans...",
 };
 
 }
