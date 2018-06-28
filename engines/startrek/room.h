@@ -1257,6 +1257,40 @@ public:
 
 	// MUDD3
 	void mudd3Tick1();
+	void mudd3UseCommunicator();
+	void mudd3LookAtScreen();
+	void mudd3UseSTricorderOnScreen();
+	void mudd3UseKirkOnScreen();
+	void mudd3UseSpockOnSphere();
+	void mudd3Timer3Expired();
+	void mudd3UseMccoyOnSphere();
+	void mudd3UseRedshirtOnSphere();
+	void mudd3UseMTricorderOnSphere();
+	void mudd3UseSTricorderOnSphere();
+	void mudd3ReadyToHookUpTricorders();
+	void mudd3Timer1Expired();
+	void mudd3Timer2Expired();
+	void mudd3Timer4Expired();
+	void mudd3UseMemoryDiskOnSphere();
+	void mudd3GetRepairTool();
+	void mudd3ReachedRepairTool();
+	void mudd3PickedUpRepairTool();
+	void mudd3LookAtSphere();
+	void mudd3WalkToNorthDoor();
+	void mudd3TouchedHotspot0();
+	void mudd3WalkToEastDoor();
+	void mudd3TouchedHotspot1();
+	void mudd3LookAtKirk();
+	void mudd3LookAtSpock();
+	void mudd3LookAtMccoy();
+	void mudd3LookAtRedshirt();
+	void mudd3LookAtMudd();
+	void mudd3TalkToKirk();
+	void mudd3TalkToSpock();
+	void mudd3TalkToMccoy();
+	void mudd3TalkToRedshirt();
+	void mudd3TalkToMudd();
+	void mudd3UseMedkit();
 
 	// MUDD4
 	void mudd4Tick1();
@@ -1373,6 +1407,10 @@ private:
 		} love;
 
 		struct {
+			// mudd3
+			bool suggestedUsingTricorders; // 0xca
+			bool tricordersUnavailable; // 0xcb
+
 			// common
 			byte walkingToDoor;
 		} mudd;

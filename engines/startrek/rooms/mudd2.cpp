@@ -69,9 +69,9 @@ void Room::mudd2Tick1() {
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_W;
 	_vm->_awayMission.mudd.muddDroppedCapsule = false;
 
-	if (_vm->_awayMission.mudd.field4e == 0) {
-		_vm->_awayMission.mudd.field4e = 0;
-	} else if (_vm->_awayMission.mudd.field4e == 2) {
+	if (_vm->_awayMission.mudd.muddState == 0) {
+		_vm->_awayMission.mudd.muddState = 0;
+	} else if (_vm->_awayMission.mudd.muddState == 2) {
 		_vm->_awayMission.mudd.muddDroppedCapsule = true;
 		if (!_vm->_awayMission.mudd.muddUnconscious) {
 			_vm->_awayMission.mudd.muddUnconscious = false;
@@ -80,16 +80,16 @@ void Room::mudd2Tick1() {
 		} else {
 			loadActorAnim2(OBJECT_MUDD, "s4sbob", 0x9f, 0xba);
 		}
-	} else if (_vm->_awayMission.mudd.field3f) {
-		_vm->_awayMission.mudd.field4e = 0;
-	} else if (_vm->_awayMission.mudd.field4e == 1) {
+	} else if (_vm->_awayMission.mudd.muddCurrentlyInsane) {
+		_vm->_awayMission.mudd.muddState = 0;
+	} else if (_vm->_awayMission.mudd.muddState == 1) {
 		playMidiMusicTracks(3);
 		loadActorAnim2(OBJECT_MUDD, "s4sbhw", 0x99, 0xbf);
 		_vm->_awayMission.disableInput = 2;
 		_vm->_awayMission.mudd.muddInhaledGas = true;
 		_vm->_awayMission.timers[1] = 70;
-		_vm->_awayMission.mudd.field4e = 2;
-		_vm->_awayMission.mudd.field3f = true;
+		_vm->_awayMission.mudd.muddState = 2;
+		_vm->_awayMission.mudd.muddCurrentlyInsane = true;
 	}
 }
 
@@ -107,7 +107,7 @@ void Room::mudd2UseSpockOnCapsules() {
 
 void Room::mudd2GetCapsules() {
 	if (!_vm->_awayMission.mudd.muddInhaledGas || _vm->_awayMission.mudd.muddUnconscious) {
-		if (!_vm->_awayMission.mudd.field36)
+		if (!_vm->_awayMission.mudd.translatedAlienLanguage)
 			showText(TX_SPEAKER_MCCOY, TX_MUD2_024);
 		else
 			walkCrewmanC(OBJECT_MCCOY, 0x9f, 0xbf, &Room::mudd2MccoyReachedCapsules);
@@ -149,7 +149,7 @@ void Room::mudd2UseCapsuleOnControlPanel() {
 }
 
 void Room::mudd2MccoyReachedControlPanel() {
-	if (_vm->_awayMission.mudd.field36)
+	if (_vm->_awayMission.mudd.translatedAlienLanguage)
 		showText(TX_SPEAKER_MCCOY, TX_MUD2_014);
 	else
 		loadActorAnimC(OBJECT_MCCOY, "musehn", -1, -1, &Room::mudd2MccoyPutCapsuleInControlPanel);
@@ -164,15 +164,17 @@ void Room::mudd2MccoyPutCapsuleInControlPanel() {
 	if (_vm->_awayMission.mudd.muddUnconscious)
 		showText(TX_SPEAKER_MCCOY, TX_MUD2_034);
 
+	_vm->_awayMission.mudd.putCapsuleInMedicalMachine = true;
+
 	loseItem(OBJECT_ICAPSULE);
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_W;
 	walkCrewman(OBJECT_MCCOY, 0xfe, 0xb2);
 }
 
 void Room::mudd2UseKirkOnBed() {
-	if (!_vm->_awayMission.mudd.field4c && !_vm->_awayMission.mudd.field36) {
+	if (!_vm->_awayMission.mudd.putCapsuleInMedicalMachine && !_vm->_awayMission.mudd.translatedAlienLanguage) {
 		walkCrewmanC(OBJECT_KIRK, 0xd7, 0xbd, &Room::mudd2KirkReachedBed);
-	} else if (_vm->_awayMission.mudd.field36) {
+	} else if (_vm->_awayMission.mudd.translatedAlienLanguage) {
 		walkCrewman(OBJECT_KIRK, 0xd7, 0xbd, 7); // BUG(?): no continuation?
 	}
 }
@@ -293,9 +295,9 @@ void Room::mudd2UseMedkitOnMudd() {
 	if (!_vm->_awayMission.mudd.muddInhaledGas)
 		return;
 	else if (_vm->_awayMission.mudd.muddUnconscious) {
-		if (!_vm->_awayMission.mudd.field36)
+		if (!_vm->_awayMission.mudd.translatedAlienLanguage)
 			showText(TX_SPEAKER_MCCOY, TX_MUD2_015);
-		else if (!_vm->_awayMission.mudd.field4c)
+		else if (!_vm->_awayMission.mudd.putCapsuleInMedicalMachine)
 			showText(TX_SPEAKER_MCCOY, TX_MUD2_021);
 		else
 			walkCrewmanC(OBJECT_MCCOY, 0xde, 0xaf, &Room::mudd2MccoyReachedMudd);
@@ -310,8 +312,8 @@ void Room::mudd2MccoyReachedMudd() {
 }
 
 void Room::mudd2MccoyCuredMudd() {
-	_vm->_awayMission.mudd.field3f = false;
-	_vm->_awayMission.mudd.field4e = 3;
+	_vm->_awayMission.mudd.muddCurrentlyInsane = false;
+	_vm->_awayMission.mudd.muddState = 3;
 	_vm->_awayMission.mudd.muddDroppedCapsule = false;
 	_vm->_awayMission.mudd.muddInhaledGas = false;
 
