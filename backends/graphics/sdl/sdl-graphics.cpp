@@ -244,7 +244,11 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 	// resized the game window), or when the launcher is visible (since a user
 	// may change the scaler, which should reset the window size)
 	if (!_window->getSDLWindow() || _lastFlags != flags || _overlayVisible || _allowWindowSizeReset) {
+#ifdef __SWITCH__
+		const bool fullscreen = (flags & SDL_WINDOW_FULLSCREEN) != 0;
+#else
 		const bool fullscreen = (flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FULLSCREEN_DESKTOP)) != 0;
+#endif
 		if (!fullscreen) {
 			if (_hintedWidth) {
 				width = _hintedWidth;

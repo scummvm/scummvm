@@ -29,7 +29,11 @@
 #include "icons/scummvm.xpm"
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+#ifdef __SWITCH__
+static const uint32 fullscreenMask = SDL_WINDOW_FULLSCREEN;
+#else
 static const uint32 fullscreenMask = SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_FULLSCREEN;
+#endif
 #endif
 
 SdlWindow::SdlWindow()

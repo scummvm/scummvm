@@ -50,6 +50,12 @@ MODULE_OBJS += \
 	psp2/psp2.o
 endif
 
+ifdef SWITCH
+MODULE_OBJS += \
+	switch/switch-main.o \
+	switch/switch.o
+endif
+
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
 OBJS := $(MODULE_OBJS) $(OBJS)

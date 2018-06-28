@@ -2702,7 +2702,11 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 
 	uint32 createWindowFlags = SDL_WINDOW_RESIZABLE;
 	if ((flags & SDL_FULLSCREEN) != 0) {
+#ifdef __SWITCH__
+		createWindowFlags |= SDL_WINDOW_FULLSCREEN;
+#else
 		createWindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
 	}
 
 	if (!createOrUpdateWindow(width, height, createWindowFlags)) {
