@@ -165,17 +165,23 @@ void Room::mudd0UseLenseOnDegrimer() {
 
 	_vm->_awayMission.mudd.missionScore++;
 	showText(TX_MUD0N011);
-	// Identical (?) audio files: TX_MUD0N011, TX_MUD1N013
+	// Identical (?) audio files: TX_MUD0N011, TX_MUD1N013, TX_MUD2N010
 }
 
 
 void Room::mudd0UseAlienDevice() {
+	const int deviceObjectIndices[] = {
+		9,  // MUDD0
+		13, // MUDD1
+		11, // MUDD2
+	};
+
 	_vm->_awayMission.disableInput = true;
 
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
 	Common::Point pos = getActorPos(OBJECT_KIRK);
-	loadActorAnimC(OBJECT_ALIENDV, "s4cbxp", pos.x, 10, &Room::mudd0FiredAlienDevice);
+	loadActorAnimC(deviceObjectIndices[_roomIndex], "s4cbxp", pos.x, 10, &Room::mudd0FiredAlienDevice);
 	playVoc("EXPLO3");
 }
 
@@ -191,7 +197,7 @@ void Room::mudd0FiredAlienDevice() {
 
 
 void Room::mudd0UseDegrimer() {
-	// Identical (?) audio files: TX_MUD0N002, TX_MUD1N004, ...
+	// Identical (?) audio files: TX_MUD0N002, TX_MUD1N004, TX_MUD2N001...
 	showText(TX_MUD0N002);
 }
 

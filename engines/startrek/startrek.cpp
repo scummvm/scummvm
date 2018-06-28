@@ -84,7 +84,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_textboxHasMultipleChoices = false;
 
 	_missionToLoad = "MUDD";
-	_roomIndexToLoad = 1;
+	_roomIndexToLoad = 2;
 
 	for (int i = 0; i < NUM_OBJECTS; i++)
 		_itemList[i] = g_itemList[i];

@@ -1460,10 +1460,10 @@ RoomAction mudd1ActionList[] = {
 	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::mudd1SpockPressedRedButton },
 
 	// Common code
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
 	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
 	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
 	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
-	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
 
 	{ Action(ACTION_GET, 9,    0, 0), &Room::mudd1GetTorpedo },
 	{ Action(ACTION_GET, 0x21, 0, 0), &Room::mudd1GetTorpedo },
@@ -1504,8 +1504,69 @@ RoomAction mudd1ActionList[] = {
 };
 
 RoomAction mudd2ActionList[] = {
+	{ Action(ACTION_WALK, 0x21, 0, 0), &Room::mudd2WalkToNorthDoor },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0), &Room::mudd2TouchedHotspot0 },
+	{ Action(ACTION_WALK, 0x22, 0, 0), &Room::mudd2WalkToSouthDoor },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 1, 0, 0), &Room::mudd2TouchedHotspot1 },
 	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd2Tick1 },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0), &Room::mudd2Timer1Expired },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, -1,   0), &Room::mudd2UseSTricorderAnywhere },
+	{ Action(ACTION_USE, OBJECT_SPOCK,    0x20, 0), &Room::mudd2UseSpockOnCapsules },
+	{ Action(ACTION_GET, 0x20, 0, 0), &Room::mudd2GetCapsules },
+	{ Action(ACTION_FINISHED_WALKING,   12, 0, 0), &Room::mudd2MccoyReachedCapsules },
+	{ Action(ACTION_FINISHED_ANIMATION, 13, 0, 0), &Room::mudd2MccoyPickedUpCapsules },
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::mudd2UseCommunicator },
+
+	// Common code
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
+	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
+	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
+	{ Action(ACTION_FINISHED_ANIMATION, 18, 0, 0), &Room::mudd0FiredAlienDevice },
+
+	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::mudd2LookAtCapsules },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x20, 0), &Room::mudd2UseMTricorderOnCapsules },
+	{ Action(ACTION_USE, OBJECT_ICAPSULE, 0x23, 0), &Room::mudd2UseCapsuleOnControlPanel },
+	{ Action(ACTION_FINISHED_WALKING,   15, 0, 0),  &Room::mudd2MccoyReachedControlPanel },
+	{ Action(ACTION_FINISHED_ANIMATION, 15, 0, 0),  &Room::mudd2MccoyPutCapsuleInControlPanel },
+	{ Action(ACTION_USE, OBJECT_KIRK, 0x24, 0),     &Room::mudd2UseKirkOnBed },
+	{ Action(ACTION_USE, OBJECT_KIRK, 0x25, 0),     &Room::mudd2UseKirkOnBed },
+	{ Action(ACTION_FINISHED_WALKING, 6, 0, 0),     &Room::mudd2KirkReachedBed },
+	{ Action(ACTION_FINISHED_ANIMATION, 1, 0, 0),   &Room::mudd2MuddNoticedKirk },
+	{ Action(ACTION_FINISHED_ANIMATION, 2, 0, 0),   &Room::mudd2MuddDroppedCapsule },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 8, 0),    &Room::mudd2UsePhaserOnMudd },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, 8, 0),    &Room::mudd2UsePhaserOnMudd },
+
+	{ Action(ACTION_USE, OBJECT_SPOCK, 8, 0),       &Room::mudd2UseSpockOnMudd },
+	{ Action(ACTION_FINISHED_WALKING, 4, 0, 0),     &Room::mudd2SpockReachedMudd },
+	{ Action(ACTION_FINISHED_ANIMATION, 5, 0, 0),   &Room::mudd2SpockPinchedMudd },
+	{ Action(ACTION_USE, OBJECT_KIRK, 8, 0),        &Room::mudd2UseKirkOnMudd },
+
+	{ Action(ACTION_USE, OBJECT_REDSHIRT, 8, 0),    &Room::mudd2UseRedshirtOnMudd },
+	{ Action(ACTION_FINISHED_WALKING, 16, 0, 0),    &Room::mudd2RedshirtReachedMudd },
+	{ Action(ACTION_TIMER_EXPIRED, 2, 0, 0),        &Room::mudd2Timer2Expired },
+	{ Action(ACTION_FINISHED_ANIMATION, 17, 0, 0),  &Room::mudd2MuddFinishedPushingRedshirt },
+	{ Action(ACTION_FINISHED_ANIMATION, 16, 0, 0),  &Room::mudd2RedshirtPushedAway },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR, 8, 0),    &Room::mudd2UseMTricorderOnMudd },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, 8, 0),     &Room::mudd2UseMedkitOnMudd },
+	{ Action(ACTION_USE, OBJECT_MCCOY, 8, 0),       &Room::mudd2UseMedkitOnMudd },
+	{ Action(ACTION_FINISHED_WALKING, 10, 0, 0),    &Room::mudd2MccoyReachedMudd },
+	{ Action(ACTION_FINISHED_ANIMATION, 11, 0, 0),  &Room::mudd2MccoyCuredMudd },
+	{ Action(ACTION_LOOK, OBJECT_KIRK,     0, 0), &Room::mudd2LookAtKirk },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK,    0, 0), &Room::mudd2LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY,    0, 0), &Room::mudd2LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::mudd2LookAtRedshirt },
+	{ Action(ACTION_LOOK, 8,    0, 0), &Room::mudd2LookAtMudd },
+	{ Action(ACTION_LOOK, 0x23, 0, 0), &Room::mudd2LookAtControlPanel },
+	{ Action(ACTION_LOOK, 0x25, 0, 0), &Room::mudd2LookAtBed },
+	{ Action(ACTION_LOOK, 0x24, 0, 0), &Room::mudd2LookAtBed },
+	{ Action(ACTION_TALK, OBJECT_KIRK,     0, 0), &Room::mudd2TalkToKirk },
+	{ Action(ACTION_TALK, OBJECT_SPOCK,    0, 0), &Room::mudd2TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_MCCOY,    0, 0), &Room::mudd2TalkToMccoy },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::mudd2TalkToRedshirt },
+	{ Action(ACTION_TALK, 8,               0, 0), &Room::mudd2TalkToMudd },
+	// TODO: remainder? something about losing atmosphere?
 };
+
 RoomAction mudd3ActionList[] = {
 	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd3Tick1 },
 };
