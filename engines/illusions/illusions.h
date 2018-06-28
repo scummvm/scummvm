@@ -244,7 +244,7 @@ public:
 	const char *getSavegameFilename(int num);
 	bool existsSavegame(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
-	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
+	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
 
 };
 

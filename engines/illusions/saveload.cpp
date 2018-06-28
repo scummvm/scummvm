@@ -31,7 +31,7 @@ namespace Illusions {
 
 #define ILLUSIONS_SAVEGAME_VERSION 0
 
-IllusionsEngine::kReadSaveHeaderError IllusionsEngine::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
+IllusionsEngine::kReadSaveHeaderError IllusionsEngine::readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail) {
 
 	header.version = in->readUint32LE();
 	if (header.version > ILLUSIONS_SAVEGAME_VERSION)
@@ -43,10 +43,8 @@ IllusionsEngine::kReadSaveHeaderError IllusionsEngine::readSaveHeader(Common::Se
 		header.description += (char)in->readByte();
 	}
 
-	if (loadThumbnail) {
-		Graphics::loadThumbnail(*in, header.thumbnail);
-	} else {
-		Graphics::skipThumbnail(*in);
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
+		return kRSHEIoError;
 	}
 
 	// Not used yet, reserved for future usage
@@ -110,7 +108,7 @@ bool IllusionsEngine::loadgame(const char *filename) {
 
 	SaveHeader header;
 
-	kReadSaveHeaderError errorCode = readSaveHeader(in, false, header);
+	kReadSaveHeaderError errorCode = readSaveHeader(in, header);
 
 	if (errorCode != kRSHENoError) {
 		warning("Error loading savegame '%s'", filename);

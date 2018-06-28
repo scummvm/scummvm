@@ -147,7 +147,7 @@ SaveStateList IllusionsMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				if (Illusions::IllusionsEngine::readSaveHeader(in, false, header) == Illusions::IllusionsEngine::kRSHENoError) {
+				if (Illusions::IllusionsEngine::readSaveHeader(in, header) == Illusions::IllusionsEngine::kRSHENoError) {
 					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
 				}
 				delete in;
@@ -164,7 +164,7 @@ SaveStateDescriptor IllusionsMetaEngine::querySaveMetaInfos(const char *target, 
 	if (in) {
 		Illusions::IllusionsEngine::SaveHeader header;
 		Illusions::IllusionsEngine::kReadSaveHeaderError error;
-		error = Illusions::IllusionsEngine::readSaveHeader(in, true, header);
+		error = Illusions::IllusionsEngine::readSaveHeader(in, header, false);
 		delete in;
 		if (error == Illusions::IllusionsEngine::kRSHENoError) {
 			SaveStateDescriptor desc(slot, header.description);
