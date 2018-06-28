@@ -32,8 +32,9 @@ ScriptStack::ScriptStack() {
 }
 
 void ScriptStack::clear() {
-	for (uint i = 0; i < 256; ++i)
+	for (uint i = 0; i < 256; ++i) {
 		_stack[i] = (int16)0xEEEE;
+	}
 	_stackPos = 256;
 }
 

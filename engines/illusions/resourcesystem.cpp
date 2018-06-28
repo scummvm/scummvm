@@ -66,8 +66,9 @@ ResourceSystem::ResourceSystem(IllusionsEngine *vm)
 
 ResourceSystem::~ResourceSystem() {
 	// Delete all registered resource loaders
-	for (ResourceLoadersMapIterator it = _resourceLoaders.begin(); it != _resourceLoaders.end(); ++it)
+	for (ResourceLoadersMapIterator it = _resourceLoaders.begin(); it != _resourceLoaders.end(); ++it) {
 		delete (*it)._value;
+	}
 }
 
 void ResourceSystem::addResourceLoader(uint32 resTypeId, BaseResourceLoader *resourceLoader) {

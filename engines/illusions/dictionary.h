@@ -44,8 +44,9 @@ protected:
 public:
 
 	~DictionaryHashMap() {
-		for (MapIterator it = _map.begin(); it != _map.end(); ++it)
+		for (MapIterator it = _map.begin(); it != _map.end(); ++it) {
 			delete it->_value;
+		}
 	}
 
 	void add(uint32 id, T *value) {

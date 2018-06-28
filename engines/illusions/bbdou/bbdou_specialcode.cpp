@@ -101,8 +101,9 @@ void RadarMicrophoneThread::addZone(uint32 threadId) {
 }
 
 void RadarMicrophoneThread::initZones() {
-	for (uint i = 0; i < _zonesCount; ++i)
+	for (uint i = 0; i < _zonesCount; ++i) {
 		_zones[i]._x = (i + 1) * 640 / _zonesCount;
+	}
 	_zones[_zonesCount]._x = 640;
 	_currZoneIndex = 0;
 }
@@ -114,17 +115,19 @@ ObjectInteractModeMap::ObjectInteractModeMap() {
 
 void ObjectInteractModeMap::setObjectInteractMode(uint32 objectId, int value) {
 	ObjectInteractMode *objectInteractMode = 0;
-	for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
+	for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i) {
 		if (_objectVerbs[i]._objectId == objectId) {
 			objectInteractMode = &_objectVerbs[i];
 			break;
 		}
+	}
 	if (!objectInteractMode) {
-		for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
+		for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i) {
 			if (_objectVerbs[i]._objectId == 0) {
 				objectInteractMode = &_objectVerbs[i];
 				break;
 			}
+		}
 	}
 	if (value != 11) {
 		objectInteractMode->_objectId = objectId;
@@ -136,9 +139,10 @@ void ObjectInteractModeMap::setObjectInteractMode(uint32 objectId, int value) {
 }
 
 int ObjectInteractModeMap::getObjectInteractMode(uint32 objectId) {
-	for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i)
+	for (uint i = 0; i < ARRAYSIZE(_objectVerbs); ++i) {
 		if (_objectVerbs[i]._objectId == objectId)
 			return _objectVerbs[i]._interactMode;
+	}
 	return 11;
 }
 
@@ -974,9 +978,10 @@ bool BbdouSpecialCode::testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 
 			verbIds = kVerbIdsEE;
 	}
 
-	for (; *verbIds; ++verbIds)
+	for (; *verbIds; ++verbIds) {
 		if (*verbIds == verbId)
 			return true;
+	}
 	return false;
 }
 

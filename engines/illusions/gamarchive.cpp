@@ -75,16 +75,18 @@ void GamArchive::loadDictionary() {
 }
 
 const GamGroupEntry *GamArchive::getGroupEntry(uint32 sceneId) {
-	for (uint i = 0; i < _groupCount; ++i)
+	for (uint i = 0; i < _groupCount; ++i) {
 		if (_groups[i]._id == sceneId)
 			return &_groups[i];
+	}
 	return 0;
 }
 
 const GamFileEntry *GamArchive::getFileEntry(const GamGroupEntry *groupEntry, uint32 resId) {
-	for (uint i = 0; i < groupEntry->_fileCount; ++i)
+	for (uint i = 0; i < groupEntry->_fileCount; ++i) {
 		if (groupEntry->_files[i]._id == resId)
 			return &groupEntry->_files[i];
+	}
 	return 0;
 }
 

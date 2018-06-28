@@ -152,8 +152,9 @@ void ThreadList::updateThreads() {
 				it = _threads.erase(it);
 			} else {
 				int status = kTSRun;
-				while (!thread->_terminated && status != kTSTerminate && status != kTSYield)
+				while (!thread->_terminated && status != kTSTerminate && status != kTSYield) {
 					status = thread->update();
+				}
 				++it;
 			}
 		}
@@ -165,9 +166,10 @@ void ThreadList::updateThreads() {
 }
 
 Thread *ThreadList::findThread(uint32 threadId) {
-	for (Iterator it = _threads.begin(); it != _threads.end(); ++it)
+	for (Iterator it = _threads.begin(); it != _threads.end(); ++it) {
 		if ((*it)->_threadId == threadId && !(*it)->_terminated)
 			return (*it);
+	}
 	return 0;
 }
 

@@ -113,9 +113,10 @@ uint32 ActiveScenes::getCurrentScene() {
 }
 
 bool ActiveScenes::isSceneActive(uint32 sceneId) {
-	for (uint i = 0; i < _stack.size(); ++i)
+	for (uint i = 0; i < _stack.size(); ++i) {
 		if (_stack[i]._sceneId == sceneId && _stack[i]._pauseCtr <= 0)
 			return true;
+	}
 	return false;
 }
 
@@ -493,8 +494,9 @@ void IllusionsEngine_BBDOU::newScriptThread(uint32 threadId, uint32 callingThrea
 		scriptThread->pause();
 	if (_doScriptThreadInit) {
 		int updateResult = kTSRun;
-		while (scriptThread->_pauseCtr <= 0 && updateResult != kTSTerminate && updateResult != kTSYield)
+		while (scriptThread->_pauseCtr <= 0 && updateResult != kTSTerminate && updateResult != kTSYield) {
 			updateResult = scriptThread->update();
+		}
 	}
 }
 

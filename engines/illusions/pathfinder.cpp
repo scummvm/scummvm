@@ -82,9 +82,10 @@ PointArray *PathFinder::findPathInternal(Common::Point sourcePt, Common::Point d
 }
 
 bool PathFinder::isLineBlocked(PathLine &line) {
-	for (uint i = 0; i < _walkRects->size(); ++i)
+	for (uint i = 0; i < _walkRects->size(); ++i) {
 		if (calcLineStatus(line, (*_walkRects)[i], 0) != 3)
 			return true;
+	}
 	return false;
 }
 

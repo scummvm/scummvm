@@ -56,13 +56,15 @@ void DuckmanMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menu
 }
 
 void DuckmanMenuSystem::clearMenus() {
-	for (int i = 0; i < kDuckmanLastMenuIndex; ++i)
+	for (int i = 0; i < kDuckmanLastMenuIndex; ++i) {
 		_menus[i] = 0;
+	}
 }
 
 void DuckmanMenuSystem::freeMenus() {
-	for (int i = 0; i < kDuckmanLastMenuIndex; ++i)
+	for (int i = 0; i < kDuckmanLastMenuIndex; ++i) {
 		delete _menus[i];
+	}
 }
 
 BaseMenu *DuckmanMenuSystem::getMenuById(int menuId) {

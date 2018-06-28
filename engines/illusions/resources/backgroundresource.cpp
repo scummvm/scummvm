@@ -281,8 +281,9 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 	stream.seek(0x48);
 	uint32 regionSequencesOffs = stream.readUint32LE();
 	stream.seek(regionSequencesOffs);
-	for (uint i = 0; i < _regionSequencesCount; ++i)
+	for (uint i = 0; i < _regionSequencesCount; ++i) {
 		_regionSequences[i].load(data, stream);
+	}
 
 	// Load background objects
 	stream.seek(0x1C);
@@ -344,8 +345,9 @@ void BackgroundResource::load(byte *data, uint32 dataSize) {
 
 int BackgroundResource::findMasterBgIndex() {
 	int index = 1;
-	while (!(_bgInfos[index - 1]._flags & 1)) //TODO check if this is correct
+	while (!(_bgInfos[index - 1]._flags & 1)) { // TODO check if this is correct
 		++index;
+	}
 	return index;
 }
 
@@ -394,8 +396,9 @@ void BackgroundInstance::load(Resource *resource) {
 	initSurface();
 
 	// Insert background objects
-	for (uint i = 0; i < backgroundResource->_backgroundObjectsCount; ++i)
+	for (uint i = 0; i < backgroundResource->_backgroundObjectsCount; ++i) {
 		_vm->_controls->placeBackgroundObject(&backgroundResource->_backgroundObjects[i]);
+	}
 
 	registerResources();
 
@@ -460,8 +463,9 @@ void BackgroundInstance::unregisterResources() {
 }
 
 void BackgroundInstance::initSurface() {
-	for (uint i = 0; i < kMaxBackgroundItemSurfaces; ++i)
+	for (uint i = 0; i < kMaxBackgroundItemSurfaces; ++i) {
 		_surfaces[i] = 0;
+	}
 	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i) {
 		BgInfo *bgInfo = &_bgRes->_bgInfos[i];
 		_panPoints[i] = bgInfo->_panPoint;
@@ -481,12 +485,13 @@ void BackgroundInstance::initSurface() {
 }
 
 void BackgroundInstance::freeSurface() {
-	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i)
+	for (uint i = 0; i < _bgRes->_bgInfosCount; ++i) {
 		if (_surfaces[i]) {
 			_surfaces[i]->free();
 			delete _surfaces[i];
 			_surfaces[i] = 0;
 		}
+	}
 }
 
 void BackgroundInstance::drawTiles(Graphics::Surface *surface, TileMap &tileMap, byte *tilePixels) {
@@ -572,28 +577,32 @@ void BackgroundInstanceList::removeBackgroundInstance(BackgroundInstance *backgr
 }
 
 void BackgroundInstanceList::pauseBySceneId(uint32 sceneId) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
 		if ((*it)->_sceneId == sceneId)
 			(*it)->pause();
+	}
 }
 
 void BackgroundInstanceList::unpauseBySceneId(uint32 sceneId) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
 		if ((*it)->_sceneId == sceneId)
 			(*it)->unpause();
+	}
 }
 
 BackgroundInstance *BackgroundInstanceList::findActiveBackgroundInstance() {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
 		if ((*it)->_pauseCtr == 0)
 			return (*it);
+	}
 	return 0;
 }
 
 BackgroundInstance *BackgroundInstanceList::findBackgroundByResource(BackgroundResource *backgroundResource) {
-	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it)
+	for (ItemsIterator it = _items.begin(); it != _items.end(); ++it) {
 		if ((*it)->_bgRes == backgroundResource)
 			return (*it);
+	}
 	return 0;
 }
 

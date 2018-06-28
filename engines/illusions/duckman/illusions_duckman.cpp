@@ -881,8 +881,9 @@ bool IllusionsEngine_Duckman::loadScene(uint32 sceneId) {
 	uint resourcesCount;
 	uint32 *resources;
 	sceneInfo->getResources(resourcesCount, resources);
-	for (uint i = 0; i < resourcesCount; ++i)
+	for (uint i = 0; i < resourcesCount; ++i) {
 		_resSys->loadResource(resources[i], sceneId, 0);
+	}
 	return true;
 }
 

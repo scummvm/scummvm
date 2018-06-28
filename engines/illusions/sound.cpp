@@ -356,9 +356,10 @@ void SoundMan::unloadSounds(uint32 soundGroupId) {
 }
 
 Sound *SoundMan::getSound(uint32 soundEffectId) {
-	for (SoundListIterator it = _sounds.begin(); it != _sounds.end(); ++it)
+	for (SoundListIterator it = _sounds.begin(); it != _sounds.end(); ++it) {
 		if ((*it)->_soundEffectId == soundEffectId)
 			return *it;
+	}
 	return 0;
 }
 

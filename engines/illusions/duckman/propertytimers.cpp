@@ -73,11 +73,12 @@ void PropertyTimers::removePropertyTimer(uint32 propertyId) {
 }
 
 bool PropertyTimers::findPropertyTimer(uint32 propertyId, PropertyTimer *&propertyTimer) {
-	for (uint i = 0; i < kPropertyTimersCount; ++i)
+	for (uint i = 0; i < kPropertyTimersCount; ++i) {
 		if (_propertyTimers[i]._propertyId == propertyId) {
 			propertyTimer = &_propertyTimers[i];
 			return true;
 		}
+	}
 	return false;
 }
 

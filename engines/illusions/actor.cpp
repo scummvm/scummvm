@@ -84,8 +84,9 @@ Actor::Actor(IllusionsEngine *vm)
 	_parentObjectId = 0;
 	_linkIndex = 0;
 	_linkIndex2 = 0;
-	for (uint i = 0; i < kSubObjectsCount; ++i)
+	for (uint i = 0; i < kSubObjectsCount; ++i) {
 		_subobjects[i] = 0;
+	}
 	_notifyThreadId1 = 0;
 	_notifyThreadId2 = 0;
 	_surfaceTextFlag = 0;
@@ -231,7 +232,6 @@ void Control::pause() {
 }
 
 void Control::unpause() {
-
 	_vm->_dict->setObjectControl(_objectId, this);
 
 	if (_objectId == Illusions::CURSOR_OBJECT_ID)
@@ -246,7 +246,6 @@ void Control::unpause() {
 			surfInfo = _actor->_surfInfo;
 		_actor->createSurface(surfInfo);
 	}
-
 }
 
 void Control::appearActor() {
@@ -264,15 +263,17 @@ void Control::appearActor() {
 		if (_objectId == Illusions::CURSOR_OBJECT_ID) {
 			_vm->showCursor();
 		} else {
-			if (_actor->_frameIndex || _actorTypeId == 0x50004)
+			if (_actor->_frameIndex || _actorTypeId == 0x50004) {
 				_actor->_flags |= Illusions::ACTOR_FLAG_IS_VISIBLE;
-			else
+			} else {
 				_actor->_flags |= Illusions::ACTOR_FLAG_1000;
-			for (uint i = 0; i < kSubObjectsCount; ++i)
+			}
+			for (uint i = 0; i < kSubObjectsCount; ++i) {
 				if (_actor->_subobjects[i]) {
 					Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 					subControl->appearActor();
 				}
+			}
 		}
 	}
 }
@@ -287,11 +288,12 @@ void Control::disappearActor() {
 		} else {
 			_actor->_flags &= ~Illusions::ACTOR_FLAG_IS_VISIBLE;
 			_actor->_flags &= ~Illusions::ACTOR_FLAG_1000;
-			for (uint i = 0; i < kSubObjectsCount; ++i)
+			for (uint i = 0; i < kSubObjectsCount; ++i) {
 				if (_actor->_subobjects[i]) {
 					Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 					subControl->disappearActor();
 				}
+			}
 		}
 	}
 }
@@ -303,22 +305,24 @@ bool Control::isActorVisible() {
 void Control::activateObject() {
 	_flags |= 1;
 	if (_actor) {
-		for (uint i = 0; i < kSubObjectsCount; ++i)
+		for (uint i = 0; i < kSubObjectsCount; ++i) {
 			if (_actor->_subobjects[i]) {
 				Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 				subControl->activateObject();
 			}
+		}
 	}
 }
 
 void Control::deactivateObject() {
 	_flags &= ~1;
 	if (_actor) {
-		for (uint i = 0; i < kSubObjectsCount; ++i)
+		for (uint i = 0; i < kSubObjectsCount; ++i) {
 			if (_actor->_subobjects[i]) {
 				Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 				subControl->deactivateObject();
 			}
+		}
 	}
 }
 
@@ -354,20 +358,22 @@ Common::Point Control::getActorPosition() {
 
 void Control::setActorScale(int scale) {
 	_actor->_scale = scale;
-	for (uint i = 0; i < kSubObjectsCount; ++i)
+	for (uint i = 0; i < kSubObjectsCount; ++i) {
 		if (_actor->_subobjects[i]) {
 			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 			subControl->setActorScale(scale);
 		}
+	}
 }
 
 void Control::faceActor(uint facing) {
 	_actor->_facing = facing;
-	for (uint i = 0; i < kSubObjectsCount; ++i)
+	for (uint i = 0; i < kSubObjectsCount; ++i) {
 		if (_actor->_subobjects[i]) {
 			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 			subControl->faceActor(facing);
 		}
+	}
 }
 
 void Control::linkToObject(uint32 parentObjectId, uint32 linkedObjectValue) {
@@ -385,13 +391,14 @@ void Control::clearNotifyThreadId1() {
 }
 
 void Control::clearNotifyThreadId2() {
-	for (uint i = 0; i < kSubObjectsCount; ++i)
+	for (uint i = 0; i < kSubObjectsCount; ++i) {
 		if (_actor->_subobjects[i]) {
 			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 			subControl->_actor->_flags &= ~Illusions::ACTOR_FLAG_80;
 			subControl->_actor->_entryTblPtr = 0;
 			subControl->_actor->_notifyThreadId2 = 0;
 		}
+	}
 	_actor->_flags &= ~Illusions::ACTOR_FLAG_80;
 	_actor->_entryTblPtr = 0;
 	_actor->_notifyThreadId2 = 0;
@@ -583,11 +590,12 @@ void Control::stopSequenceActor() {
 			_actor->_flags |= Illusions::ACTOR_FLAG_1000;
 		}
 	}
-	for (uint i = 0; i < kSubObjectsCount; ++i)
+	for (uint i = 0; i < kSubObjectsCount; ++i) {
 		if (_actor->_subobjects[i]) {
 			Control *subControl = _vm->_dict->getObjectControl(_actor->_subobjects[i]);
 			subControl->stopSequenceActor();
 		}
+	}
 }
 
 void Control::startTalkActor(uint32 sequenceId, byte *entryTblPtr, uint32 threadId) {

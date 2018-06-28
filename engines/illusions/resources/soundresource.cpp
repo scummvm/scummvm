@@ -73,8 +73,9 @@ void SoundGroupResource::load(byte *data, uint32 dataSize) {
 	debug(1, "_soundEffectsCount: %d; soundEffectsOffs: %08X", _soundEffectsCount, soundEffectsOffs);
 	_soundEffects = new SoundEffect[_soundEffectsCount];
 	stream.seek(soundEffectsOffs);
-	for (uint i = 0; i < _soundEffectsCount; ++i)
+	for (uint i = 0; i < _soundEffectsCount; ++i) {
 		_soundEffects[i].load(stream);
+	}
 
 }
 
