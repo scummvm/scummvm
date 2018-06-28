@@ -30,7 +30,7 @@ PointArray *PathFinder::findPath(Camera *camera, Common::Point sourcePt, Common:
 	PointArray *walkPoints, PathLines *walkRects, WidthHeight bgDimensions) {
 	Common::Point cameraPt = camera->getScreenOffset();
 	_screenRect.p0 = cameraPt;
-	_screenRect.p1.x = cameraPt.x + 320; //TODO fix me get screen dimentions here.
+	_screenRect.p1.x = cameraPt.x + 320; //TODO fix me get screen dimensions here.
 	_screenRect.p1.y = cameraPt.y + 200;
 	_walkPoints = walkPoints;
 	_walkRects = walkRects;

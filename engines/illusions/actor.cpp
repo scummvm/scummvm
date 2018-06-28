@@ -618,7 +618,6 @@ void Control::startTalkActor(uint32 sequenceId, byte *entryTblPtr, uint32 thread
 }
 
 void Control::sequenceActor() {
-
 	if (_actor->_pauseCtr > 0)
 		return;
 
@@ -665,7 +664,6 @@ void Control::sequenceActor() {
 		//debug(1, "Sequence has finished");
 		_actor->_seqCodeIp = 0;
 	}
-
 }
 
 void Control::setActorIndex(int actorIndex) {

@@ -76,8 +76,7 @@ void NamedPoints::load(uint count, Common::SeekableReadStream &stream) {
 void loadPoint(Common::SeekableReadStream &stream, Common::Point &pt) {
 	pt.x = stream.readSint16LE();
 	pt.y = stream.readSint16LE();
-	debug(0, "loadPoint() x: %d; y: %d",
-		pt.x, pt.y);
+	debug(0, "loadPoint() x: %d; y: %d", pt.x, pt.y);
 }
 
 } // End of namespace Illusions

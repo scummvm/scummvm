@@ -52,7 +52,7 @@ int16 fixedTrunc(FixedPoint16 value) {
 FixedPoint16 fixedDistance(FixedPoint16 x1, FixedPoint16 y1, FixedPoint16 x2, FixedPoint16 y2) {
 	float xd = fixedToFloat(x1) - fixedToFloat(x2);
 	float yd = fixedToFloat(y1) - fixedToFloat(y2);
-	if (xd != 0.0 || yd != 0.0)
+	if (xd != 0.0f || yd != 0.0f)
 		return floatToFixed(sqrt(xd * xd + yd * yd));
 	return 0;
 }

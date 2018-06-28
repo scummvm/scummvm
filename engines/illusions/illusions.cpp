@@ -242,7 +242,7 @@ int IllusionsEngine::convertPanXCoord(int16 x) {
 	int16 diff = x - _camera->getCurrentPan().x;
 	int16 absX = ABS(diff);
 	int newX = 0;
-	if ( absX < 160) {
+	if (absX < 160) {
 		newX = (diff << 7) / 320;
 	} else if (diff < 0) {
 		newX = -64;

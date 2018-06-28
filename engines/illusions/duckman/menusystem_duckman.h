@@ -27,14 +27,14 @@
 
 namespace Illusions {
 
-	enum SliderActionType {
-		SFX,
-		MUSIC,
-		VOICE,
-		TEXT_DURATION
-	};
+enum SliderActionType {
+	SFX,
+	MUSIC,
+	VOICE,
+	TEXT_DURATION
+};
 
-	enum {
+enum {
 	kDuckmanMainMenu,
 	kDuckmanLoadGameMenu,
 	kDuckmanLoadGameFailedMenu,
@@ -52,7 +52,7 @@ namespace Illusions {
 class IllusionsEngine_Duckman;
 class MenuActionUpdateSlider;
 
-	class DuckmanMenuSystem : public BaseMenuSystem {
+class DuckmanMenuSystem : public BaseMenuSystem {
 public:
 	DuckmanMenuSystem(IllusionsEngine_Duckman *vm);
 	~DuckmanMenuSystem();
