@@ -165,7 +165,7 @@ void Room::mudd1SpockPressedRedButton() {
 
 	switch (choice) {
 	case 0:
-		_vm->_awayMission.mudd.torpedoStatus = false;
+		_vm->_awayMission.mudd.torpedoStatus = 0;
 
 		// ENHANCEMENT: Original text was just "(Spock raises eyebrow)" without any audio.
 		// This changes it to a narration to make it flow better.
@@ -177,7 +177,7 @@ void Room::mudd1SpockPressedRedButton() {
 		// fall through
 
 	case 2:
-		_vm->_awayMission.mudd.torpedoStatus = true;
+		_vm->_awayMission.mudd.torpedoStatus = 1;
 		showText(TX_SPEAKER_UHURA, TX_STATICU1);
 		break;
 	}

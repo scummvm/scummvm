@@ -36,6 +36,9 @@
 
 namespace StarTrek {
 
+// BUG-ish: trying to scan the sphere while someone is behind it causes it to scan that
+// object instead.
+
 void Room::mudd3Tick1() {
 	playVoc("MUD3LOOP");
 
@@ -45,7 +48,7 @@ void Room::mudd3Tick1() {
 		loadActorAnim(OBJECT_9, "s4lbpb", 0xa2, 0x9f);
 
 		// FIXME: is this supposed to be in this if statement?
-		if (!_vm->_awayMission.mudd.tookRepairToolFromDatabaseRoom)
+		if (!_vm->_awayMission.mudd.tookRepairTool)
 			loadActorAnim(OBJECT_REPAIR_TOOL, "s4lbdv", 0xb7, 0xa8);
 	}
 
@@ -292,7 +295,7 @@ void Room::mudd3UseMemoryDiskOnSphere() {
 
 
 void Room::mudd3GetRepairTool() {
-	if (_vm->_awayMission.mudd.tookRepairToolFromDatabaseRoom)
+	if (_vm->_awayMission.mudd.tookRepairTool)
 		showText(TX_MUD3N018); // NOTE: unused, since the object disappears, can't be selected again
 	else {
 		_vm->_awayMission.disableInput = true;
@@ -309,7 +312,7 @@ void Room::mudd3ReachedRepairTool() {
 void Room::mudd3PickedUpRepairTool() {
 	_vm->_awayMission.disableInput = false;
 	loadActorStandAnim(OBJECT_REPAIR_TOOL);
-	_vm->_awayMission.mudd.tookRepairToolFromDatabaseRoom = true;
+	_vm->_awayMission.mudd.tookRepairTool = true;
 	_vm->_awayMission.mudd.missionScore++;
 	giveItem(OBJECT_IDOOVER);
 }
