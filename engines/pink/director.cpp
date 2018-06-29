@@ -82,9 +82,9 @@ void Director::clear() {
 	_sprites.resize(0);
 }
 
-void Director::pause(bool pause) {
+void Director::pause(bool pause_) {
 	for (uint i = 0; i < _sprites.size() ; ++i) {
-		_sprites[i]->pause(pause);
+		_sprites[i]->pause(pause_);
 	}
 }
 
