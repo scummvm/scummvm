@@ -90,11 +90,12 @@ void Director::pause(bool pause_) {
 
 void Director::saveStage() {
 	_savedSprites = _sprites;
-	_sprites.clear();
+	clear();
 }
 
 void Director::loadStage() {
 	assert(_sprites.empty());
+	_dirtyRects.push_back(Common::Rect(0, 0, 640, 480));
 	_sprites = _savedSprites;
 	_savedSprites.clear();
 }
