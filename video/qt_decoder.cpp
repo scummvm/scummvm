@@ -326,8 +326,12 @@ bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requested
 			break;
 
 	// If we did reach the end of the track, break out
-	if (atLastEdit())
+	if (atLastEdit()) {
+		// Call setReverse to set the position to the last frame of the last edit
+		if (_reversed)
+			setReverse(true);
 		return true;
+	}
 
 	// If this track is in an empty edit, position us at the next non-empty
 	// edit. There's nothing else to do after this.
@@ -344,8 +348,12 @@ bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requested
 	enterNewEditList(false);
 
 	// One extra check for the end of a track
-	if (atLastEdit())
+	if (atLastEdit()) {
+		// Call setReverse to set the position to the last frame of the last edit
+		if (_reversed)
+			setReverse(true);
 		return true;
+	}
 
 	// Now we're in the edit and need to figure out what frame we need
 	Audio::Timestamp time = requestedTime.convertToFramerate(_parent->timeScale);
