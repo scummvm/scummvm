@@ -478,28 +478,7 @@ void PubPink::updateCursor(const Common::Point point) {
 }
 
 bool PubPink::sendUseClickMessage(Actor *actor) {
-	if (!LeadActor::sendUseClickMessage(actor) && playingMiniGame()) {
-		_nextState = _state;
-		_state = kPlayingSequence;
-
-		const char *roundName;
-		switch (_round++ % 3) {
-		case 0:
-			roundName = kFirstRound;
-			break;
-		case 1:
-			roundName = kSecondRound;
-			break;
-		case 2:
-			roundName = kThirdRound;
-			break;
-		default:
-			roundName = nullptr;
-			assert(0);
-		}
-		_sequencer->authorSequence(_sequencer->findSequence(roundName), 0);
-	}
-
+	LeadActor::sendUseClickMessage(actor);
 	if (playingMiniGame())
 		_isHaveItem = true;
 
