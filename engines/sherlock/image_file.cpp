@@ -93,11 +93,11 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 		}
 
 		// Load data for frame and decompress it
-		byte *data = new byte[frame._size + 4];
-		stream.read(data, frame._size);
-		Common::fill(data + frame._size, data + frame._size + 4, 0);
-		frame.decompressFrame(data, IS_ROSE_TATTOO);
-		delete[] data;
+		byte *data1 = new byte[frame._size + 4];
+		stream.read(data1, frame._size);
+		Common::fill(data1 + frame._size, data1 + frame._size + 4, 0);
+		frame.decompressFrame(data1, IS_ROSE_TATTOO);
+		delete[] data1;
 
 		push_back(frame);
 	}
