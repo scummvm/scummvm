@@ -1378,6 +1378,11 @@ public:
 	void muddaUseAlienDevice();
 	void muddaFiredAlienDevice();
 	void muddaUseDegrimer();
+	void muddaTick();
+	void muddaKirkReachedDeathPosition();
+	void muddaSpockReachedDeathPosition();
+	void muddaMccoyReachedDeathPosition();
+	void muddaRedshirtReachedDeathPosition();
 
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.

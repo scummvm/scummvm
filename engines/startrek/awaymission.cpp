@@ -635,6 +635,10 @@ void StarTrekEngine::handleAwayMissionAction() {
 			initAwayCrewPositions(warpIndex ^ 1);
 		}
 		break;
+
+	default:
+		_room->handleActionWithBitmask(action);
+		break;
 	}
 }
 

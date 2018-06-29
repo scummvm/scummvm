@@ -475,9 +475,9 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 	// TODO: game mode switch
 }
 
-void Room::showGameOverMenu() {
+void Room::showGameOverMenu() { // TODO: takes an optional parameter?
 	_vm->showGameOverMenu();
-	// TODO: shouldn't do this within a room
+	// TODO: finish. Shouldn't do this within a room due to deletion of current room?
 }
 
 void Room::playVoc(Common::String filename) {

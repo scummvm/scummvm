@@ -1731,6 +1731,13 @@ RoomAction mudd5ActionList[] = {
 	{ Action(ACTION_TALK, OBJECT_MCCOY, 0, 0),    &Room::mudd5TalkToMccoy },
 	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::mudd5TalkToRedshirt },
 	{ Action(ACTION_USE, OBJECT_IMEDKIT, -1, 0),  &Room::mudd5UseMedkit },
+
+	// Common code (countdown for losing atmosphere when life support malfunctioning)
+	{ Action(ACTION_TICK, -1, -1, -1),           &Room::muddaTick },
+	{ Action(ACTION_FINISHED_WALKING, 9, 0, 0),  &Room::muddaKirkReachedDeathPosition },
+	{ Action(ACTION_FINISHED_WALKING, 10, 0, 0), &Room::muddaSpockReachedDeathPosition },
+	{ Action(ACTION_FINISHED_WALKING, 11, 0, 0), &Room::muddaMccoyReachedDeathPosition },
+	{ Action(ACTION_FINISHED_WALKING, 12, 0, 0), &Room::muddaRedshirtReachedDeathPosition },
 };
 
 }
