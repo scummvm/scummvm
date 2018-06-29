@@ -1615,7 +1615,81 @@ RoomAction mudd3ActionList[] = {
 
 RoomAction mudd4ActionList[] = {
 	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd4Tick1 },
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0),      &Room::mudd4UseCommunicator },
+	{ Action(ACTION_TIMER_EXPIRED, 2, 0, 0),        &Room::mudd4Timer2Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 3, 0, 0),        &Room::mudd4Timer3Expired },
+	{ Action(ACTION_USE, OBJECT_SPOCK, 0x21, 0),    &Room::mudd4UseSpockOnLeftConsole },
+	{ Action(ACTION_USE, OBJECT_SPOCK, 0x22, 0),    &Room::mudd4UseSpockOnLeftConsole },
+	{ Action(ACTION_USE, OBJECT_SPOCK, 0x23, 0),    &Room::mudd4UseSpockOnRightConsole },
+	{ Action(ACTION_FINISHED_WALKING, 1, 0, 0),     &Room::mudd4SpockReachedChair },
+	{ Action(ACTION_FINISHED_ANIMATION, 1, 0, 0),   &Room::mudd4SpockSatInChair },
+	{ Action(ACTION_FINISHED_ANIMATION, 2, 0, 0),   &Room::mudd4SpockUsedSensors },
+	{ Action(ACTION_FINISHED_ANIMATION, 3, 0, 0),   &Room::mudd4SpockUsedEngineering },
+	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0),   &Room::mudd4SpockUsedNavigation },
+	{ Action(ACTION_FINISHED_WALKING, 3, 0, 0),     &Room::mudd4FinishedWalking3 },
+	{ Action(ACTION_USE, OBJECT_KIRK, 0x21, 0),     &Room::mudd4UseKirkOnRightConsole },
+	{ Action(ACTION_USE, OBJECT_KIRK, 0x23, 0),     &Room::mudd4UseKirkOnRightConsole },
+	{ Action(ACTION_USE, OBJECT_KIRK, 0x22, 0),     &Room::mudd4UseKirkOnLeftConsole },
+	{ Action(ACTION_FINISHED_WALKING, 2, 0, 0),     &Room::mudd4KirkReachedRightConsole },
+	{ Action(ACTION_FINISHED_ANIMATION, 5, 0, 0),   &Room::mudd4KirkSatInChair },
+	{ Action(ACTION_FINISHED_ANIMATION, 6, 0, 0),   &Room::mudd4KirkUsedViewScreen },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0),        &Room::mudd4Timer1Expired },
+	{ Action(ACTION_FINISHED_ANIMATION, 7, 0, 0),   &Room::mudd4KirkUsedCommunications },
+	{ Action(ACTION_FINISHED_WALKING, 4, 0, 0),     &Room::mudd4KirkReachedPositionToTalkToMudd },
+	{ Action(ACTION_USE, OBJECT_MCCOY, 0x21, 0),    &Room::mudd4UseMccoyOnConsole },
+	{ Action(ACTION_USE, OBJECT_MCCOY, 0x22, 0),    &Room::mudd4UseMccoyOnConsole },
+	{ Action(ACTION_USE, OBJECT_MCCOY, 0x23, 0),    &Room::mudd4UseMccoyOnConsole },
+	{ Action(ACTION_USE, OBJECT_REDSHIRT, 0x21, 0), &Room::mudd4UseRedshirtOnConsole },
+	{ Action(ACTION_USE, OBJECT_REDSHIRT, 0x22, 0), &Room::mudd4UseRedshirtOnConsole },
+	{ Action(ACTION_USE, OBJECT_REDSHIRT, 0x23, 0), &Room::mudd4UseRedshirtOnConsole },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 10, 0),   &Room::mudd4UseSTricorderOnRepairTool },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x21, 0), &Room::mudd4UseSTricorderOnConsole },
+
+	// ENHANCEMENT: Allow scanning the console to work when scanning the specific stations
+	// as well
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x22, 0), &Room::mudd4UseSTricorderOnConsole },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x23, 0), &Room::mudd4UseSTricorderOnConsole },
+
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x20, 0), &Room::mudd4UseSTricorderOnViewscreen },
+
+	// ENHANCEMENT: Allow scanning the viewscreen when it's on, not just when off
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 8, 0),    &Room::mudd4UseSTricorderOnViewscreen },
+
+	// Common code
+	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
+	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
+	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
+
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, -1, 0),   &Room::mudd4UseMedkit },
+	{ Action(ACTION_GET, 10, 0, 0),                &Room::mudd4GetRepairTool },
+	{ Action(ACTION_FINISHED_WALKING, 5, 0, 0),    &Room::mudd4ReachedRepairTool },
+	{ Action(ACTION_FINISHED_ANIMATION, 10, 0, 0), &Room::mudd4PickedUpRepairTool },
+
+	{ Action(ACTION_LOOK, 0x21, 0, 0), &Room::mudd4LookAtConsole },
+	// ENHANCEMENT: Allow look action work with the specific stations as well
+	{ Action(ACTION_LOOK, 0x22, 0, 0), &Room::mudd4LookAtConsole },
+	{ Action(ACTION_LOOK, 0x23, 0, 0), &Room::mudd4LookAtConsole },
+
+	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::mudd4LookAtViewscreen },
+	// ENHANCEMENT: Allow look action work when viewscreen is on, not just when off
+	{ Action(ACTION_LOOK, 8, 0, 0),    &Room::mudd4LookAtViewscreen },
+
+	{ Action(ACTION_LOOK, OBJECT_KIRK, 0, 0),     &Room::mudd4LookAtKirk },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK, 0, 0),    &Room::mudd4LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY, 0, 0),    &Room::mudd4LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::mudd4LookAtRedshirt },
+	{ Action(ACTION_LOOK, 10, 0, 0),              &Room::mudd4LookAtRepairTool },
+	{ Action(ACTION_TALK, OBJECT_KIRK, 0, 0),     &Room::mudd4TalkToKirk },
+	{ Action(ACTION_TALK, OBJECT_SPOCK, 0, 0),    &Room::mudd4TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_MCCOY, 0, 0),    &Room::mudd4TalkToMccoy },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::mudd4TalkToRedshirt },
+	{ Action(ACTION_WALK, 0x24, 0, 0),            &Room::mudd4WalkToEastDoor },
+	{ Action(ACTION_WALK, 0x25, 0, 0),            &Room::mudd4WalkToWestDoor },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0),    &Room::mudd4TouchedHotspot0 },
+	// TODO: remainder? something about losing atmosphere?
 };
+
 RoomAction mudd5ActionList[] = {
 	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd5Tick1 },
 };

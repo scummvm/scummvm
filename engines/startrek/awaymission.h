@@ -203,12 +203,14 @@ struct AwayMission {
 			// True if you've combined the lense + degrimer and fired it off, discovering
 			// it's a weapon
 			bool discoveredLenseAndDegrimerFunction; // 0x3c
-			byte torpedoStatus; // 0x3d
+			int16 torpedoStatus; // 0x3d
 			bool muddCurrentlyInsane; // 0x3f
 			bool muddVisitedDatabaseRoom; // 0x40
 			bool accessedAlienDatabase; // 0x41
-			bool tookRepairToolFromDatabaseRoom; // 0x42
+			bool tookRepairTool; // 0x42
 			bool gotPointsForDownloadingData; // 0x43
+			bool contactedEnterpriseFirstTime; // 0x44
+			bool viewScreenEnabled; // 0x45
 			bool gotMemoryDisk; // 0x48
 			bool gotLense; // 0x49
 			bool gotDegrimer; // 0x4a
@@ -220,6 +222,7 @@ struct AwayMission {
 			bool enteredRoom0ForFirstTime; // 0x54
 			bool gotPointsForLoadingTorpedo; // 0x55
 			bool gotPointsForPressingRedButton; // 0x56
+			bool gotPointsForEnablingViewscreen; // 0x57
 			bool enteredRoom1ForFirstTime; // 0x58
 			bool field58; // 0x58
 			int16 missionScore; // 0x5a

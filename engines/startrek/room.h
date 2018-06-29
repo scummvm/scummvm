@@ -1294,6 +1294,53 @@ public:
 
 	// MUDD4
 	void mudd4Tick1();
+	void mudd4UseCommunicator();
+	void mudd4Timer2Expired();
+	void mudd4Timer3Expired();
+	void mudd4UseSpockOnLeftConsole();
+	void mudd4UseSpockOnRightConsole();
+	void mudd4UseSpockOnConsole();
+	void mudd4SpockReachedChair();
+	void mudd4SpockSatInChair();
+	void mudd4ShowLeftConsoleMenu();
+	void mudd4SpockUsedSensors();
+	void mudd4SpockUsedEngineering();
+	void mudd4SpockUsedNavigation();
+	void mudd4FinishedWalking3();
+	void mudd4UseKirkOnRightConsole();
+	void mudd4UseKirkOnLeftConsole();
+	void mudd4UseKirkOnConsole();
+	void mudd4KirkReachedRightConsole();
+	void mudd4KirkSatInChair();
+	void mudd4ShowRightConsoleMenu();
+	void mudd4KirkUsedViewScreen();
+	void mudd4Timer1Expired();
+	void mudd4KirkUsedCommunications();
+	void mudd4TalkWithMuddAtMissionEnd();
+	void mudd4KirkReachedPositionToTalkToMudd();
+	void mudd4UseMccoyOnConsole();
+	void mudd4UseRedshirtOnConsole();
+	void mudd4UseSTricorderOnRepairTool();
+	void mudd4UseSTricorderOnConsole();
+	void mudd4UseSTricorderOnViewscreen();
+	void mudd4UseMedkit();
+	void mudd4GetRepairTool();
+	void mudd4ReachedRepairTool();
+	void mudd4PickedUpRepairTool();
+	void mudd4LookAtConsole();
+	void mudd4LookAtViewscreen();
+	void mudd4LookAtKirk();
+	void mudd4LookAtSpock();
+	void mudd4LookAtMccoy();
+	void mudd4LookAtRedshirt();
+	void mudd4LookAtRepairTool();
+	void mudd4TalkToKirk();
+	void mudd4TalkToSpock();
+	void mudd4TalkToMccoy();
+	void mudd4TalkToRedshirt();
+	void mudd4WalkToEastDoor();
+	void mudd4WalkToWestDoor();
+	void mudd4TouchedHotspot0();
 
 	// MUDD5
 	void mudd5Tick1();
@@ -1410,6 +1457,10 @@ private:
 			// mudd3
 			bool suggestedUsingTricorders; // 0xca
 			bool tricordersUnavailable; // 0xcb
+
+			// mudd4
+			bool usingLeftConsole; // 0xca
+			bool kirkUsingRightConsole; // 0xcb
 
 			// common
 			byte walkingToDoor;
