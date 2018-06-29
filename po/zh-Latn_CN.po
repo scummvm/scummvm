@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-29 13:20+0200\n"
+"POT-Creation-Date: 2018-06-29 13:32+0200\n"
 "PO-Revision-Date: 2018-04-18 10:18+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -69,6 +69,9 @@ msgstr "ShangYiJi"
 #: engines/mohawk/myst_stacks/menu.cpp:256
 #: engines/mohawk/myst_stacks/menu.cpp:273
 #: engines/mohawk/myst_stacks/menu.cpp:291
+#: engines/mohawk/riven_stacks/aspit.cpp:395
+#: engines/mohawk/riven_stacks/aspit.cpp:417
+#: engines/mohawk/riven_stacks/aspit.cpp:501
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:887
 msgid "Cancel"
@@ -585,7 +588,7 @@ msgstr "Anxia Anjian lai Guanlian"
 msgid "Choose an action to map"
 msgstr "Xuanze yao Yingshe de Xingwei"
 
-#: gui/launcher.cpp:142 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:101
+#: gui/launcher.cpp:142 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:143
 msgid "~Q~uit"
 msgstr "~Q~Tuichu"
 
@@ -673,8 +676,8 @@ msgid "Search:"
 msgstr "Sousuo:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:106 engines/mohawk/myst.cpp:884
-#: engines/mohawk/riven.cpp:553 engines/pegasus/pegasus.cpp:355
+#: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:884
+#: engines/mohawk/riven.cpp:629 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Jiazai Youxi:"
@@ -682,8 +685,8 @@ msgstr "Jiazai Youxi:"
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:106
-#: engines/mohawk/myst.cpp:884 engines/mohawk/riven.cpp:553
+#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:163
+#: engines/mohawk/myst.cpp:884 engines/mohawk/riven.cpp:629
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
@@ -1821,11 +1824,11 @@ msgstr "Qingchu Zhi"
 msgid "~R~esume"
 msgstr "~R~Jixu"
 
-#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:99
+#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:141
 msgid "~L~oad"
 msgstr "~L~Zairu"
 
-#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:100
+#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:142
 msgid "~S~ave"
 msgstr "~S~Baocun"
 
@@ -1856,8 +1859,8 @@ msgstr "~R~Fanhui Qidongqi"
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
-#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:107
-#: engines/mohawk/myst.cpp:896 engines/mohawk/riven.cpp:565
+#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:164
+#: engines/mohawk/myst.cpp:896 engines/mohawk/riven.cpp:641
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:658
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
@@ -1878,8 +1881,8 @@ msgstr "Baocun Youxi:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:107 engines/mohawk/myst.cpp:896
-#: engines/mohawk/riven.cpp:565 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/dialogs.cpp:164 engines/mohawk/myst.cpp:896
+#: engines/mohawk/riven.cpp:641 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:659
 #: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
@@ -1908,12 +1911,12 @@ msgstr ""
 "Cundang Baocun Shibai (%s)! Qing Chayue README Huode Jiben Xinxi, Yiji "
 "Gengduo Xinxi"
 
-#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:103
+#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:99
 #: engines/tsage/dialogs.cpp:112
 msgid "~O~K"
 msgstr "~O~Queding"
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:104
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:100
 #: engines/tsage/dialogs.cpp:113
 msgid "~C~ancel"
 msgstr "~C~Quxiao"
@@ -2165,7 +2168,8 @@ msgstr "Nin Zhende Yao Tuichu Ma?"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: engines/mohawk/myst_stacks/menu.cpp:290 engines/scumm/dialogs.cpp:188
+#: engines/mohawk/myst_stacks/menu.cpp:290
+#: engines/mohawk/riven_stacks/aspit.cpp:500 engines/scumm/dialogs.cpp:188
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Tuichu"
@@ -3295,62 +3299,62 @@ msgstr ""
 msgid "Naughty game mode"
 msgstr ""
 
-#: engines/mohawk/detection.cpp:162
+#: engines/mohawk/detection.cpp:154
 msgid "Play the Myst fly by movie"
 msgstr ""
 
-#: engines/mohawk/detection.cpp:163
+#: engines/mohawk/detection.cpp:155
 msgid "The Myst fly by movie was not played by the original engine."
 msgstr ""
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:190 engines/mohawk/dialogs.cpp:289
+#: engines/mohawk/dialogs.cpp:146 engines/mohawk/dialogs.cpp:286
 msgid "~Z~ip Mode Activated"
 msgstr "~Z~Yasuo Moshi Qidong"
 
-#: engines/mohawk/dialogs.cpp:191
+#: engines/mohawk/dialogs.cpp:147
 msgid "~T~ransitions Enabled"
 msgstr "~T~Qiyong Zhuanyi"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:193
+#: engines/mohawk/dialogs.cpp:149
 msgid "~D~rop Page"
 msgstr "~D~shanchu Yemian"
 
-#: engines/mohawk/dialogs.cpp:197
+#: engines/mohawk/dialogs.cpp:153
 #, fuzzy
 msgid "Show ~M~ap"
 msgstr "~S~Xianshi Ditu"
 
-#: engines/mohawk/dialogs.cpp:203
+#: engines/mohawk/dialogs.cpp:159
 #, fuzzy
 msgid "Main Men~u~"
 msgstr "~M~Zhucaidan"
 
-#: engines/mohawk/dialogs.cpp:290
+#: engines/mohawk/dialogs.cpp:287
 msgid "~W~ater Effect Enabled"
 msgstr "~W~Qiyong Shuimian Xiaoguo"
 
-#: engines/mohawk/dialogs.cpp:292
+#: engines/mohawk/dialogs.cpp:289
 #, fuzzy
 msgid "Transitions:"
 msgstr "~T~Qiyong Zhuanyi"
 
-#: engines/mohawk/dialogs.cpp:294
+#: engines/mohawk/dialogs.cpp:291
 #, fuzzy
 msgid "Disabled"
 msgstr "Jinyong GFX"
 
-#: engines/mohawk/dialogs.cpp:295
+#: engines/mohawk/dialogs.cpp:292
 #, fuzzy
 msgid "Fastest"
 msgstr "Kuaisu Moshi"
 
-#: engines/mohawk/dialogs.cpp:296
+#: engines/mohawk/dialogs.cpp:293
 msgid "Normal"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:297
+#: engines/mohawk/dialogs.cpp:294
 msgid "Best"
 msgstr ""
 
@@ -3360,60 +3364,65 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Youxi Zanting. An Kongge Yi jixu."
 
 #: engines/mohawk/myst_stacks/menu.cpp:255
+#: engines/mohawk/riven_stacks/aspit.cpp:394
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:256
+#: engines/mohawk/riven_stacks/aspit.cpp:395
 #, fuzzy
 msgid "Load game"
 msgstr "Jiazai Youxi:"
 
 #: engines/mohawk/myst_stacks/menu.cpp:272
+#: engines/mohawk/riven_stacks/aspit.cpp:416
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:273
+#: engines/mohawk/riven_stacks/aspit.cpp:417
 #, fuzzy
 msgid "New game"
 msgstr "Xinjian Cundang"
 
 #: engines/mohawk/myst_stacks/menu.cpp:290
+#: engines/mohawk/riven_stacks/aspit.cpp:500
 #, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgstr "   Nin Queding Tuichu ma ?   "
 
-#: engines/mohawk/riven.cpp:154
+#: engines/mohawk/riven.cpp:158
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
 
-#: engines/mohawk/riven.cpp:155
+#: engines/mohawk/riven.cpp:159
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
 
-#: engines/mohawk/riven.cpp:166
+#: engines/mohawk/riven.cpp:170
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
 
-#: engines/mohawk/riven.cpp:452
+#: engines/mohawk/riven.cpp:498
 msgid "You are missing the following required Riven data files:\n"
 msgstr ""
 
-#: engines/mohawk/riven_stack.cpp:182
+#: engines/mohawk/riven_stack.cpp:204
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
 
-#: engines/mohawk/riven_stacks/aspit.cpp:309
+#: engines/mohawk/riven_stacks/aspit.cpp:474
 msgid ""
 "At this point, the Riven Demo would\n"
 "ask if you would like to open a web browser\n"

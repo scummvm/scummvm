@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-29 13:20+0200\n"
+"POT-Creation-Date: 2018-06-29 13:32+0200\n"
 "PO-Revision-Date: 2018-06-08 02:32+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -69,6 +69,9 @@ msgstr "Feljebb"
 #: engines/mohawk/myst_stacks/menu.cpp:256
 #: engines/mohawk/myst_stacks/menu.cpp:273
 #: engines/mohawk/myst_stacks/menu.cpp:291
+#: engines/mohawk/riven_stacks/aspit.cpp:395
+#: engines/mohawk/riven_stacks/aspit.cpp:417
+#: engines/mohawk/riven_stacks/aspit.cpp:501
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:887
 msgid "Cancel"
@@ -592,7 +595,7 @@ msgstr "Nyomj egy billentyût a társításhoz"
 msgid "Choose an action to map"
 msgstr "Válassz mûveletet a kiosztáshoz"
 
-#: gui/launcher.cpp:142 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:101
+#: gui/launcher.cpp:142 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:143
 msgid "~Q~uit"
 msgstr "Kilépés"
 
@@ -680,8 +683,8 @@ msgid "Search:"
 msgstr "Keresés:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:106 engines/mohawk/myst.cpp:884
-#: engines/mohawk/riven.cpp:553 engines/pegasus/pegasus.cpp:355
+#: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:884
+#: engines/mohawk/riven.cpp:629 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Játék betöltése:"
@@ -689,8 +692,8 @@ msgstr "Játék betöltése:"
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:106
-#: engines/mohawk/myst.cpp:884 engines/mohawk/riven.cpp:553
+#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:163
+#: engines/mohawk/myst.cpp:884 engines/mohawk/riven.cpp:629
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
@@ -1820,11 +1823,11 @@ msgstr "<Rossz érték>"
 msgid "~R~esume"
 msgstr "Folytatás"
 
-#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:99
+#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:141
 msgid "~L~oad"
 msgstr "~B~etöltés"
 
-#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:100
+#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:142
 msgid "~S~ave"
 msgstr "Mentés"
 
@@ -1855,8 +1858,8 @@ msgstr "Visszatérés az indítóba"
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
-#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:107
-#: engines/mohawk/myst.cpp:896 engines/mohawk/riven.cpp:565
+#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:164
+#: engines/mohawk/myst.cpp:896 engines/mohawk/riven.cpp:641
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:658
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
@@ -1877,8 +1880,8 @@ msgstr "Játék mentése:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:107 engines/mohawk/myst.cpp:896
-#: engines/mohawk/riven.cpp:565 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/dialogs.cpp:164 engines/mohawk/myst.cpp:896
+#: engines/mohawk/riven.cpp:641 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:659
 #: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
@@ -1907,12 +1910,12 @@ msgstr ""
 "A (%s)! játék mentése nem sikerült. Kérlek olvasd el a README-t az alap "
 "információkról és az utasításokat, hogy hogyan segíthetsz a késõbbiekben.."
 
-#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:103
+#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:99
 #: engines/tsage/dialogs.cpp:112
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:104
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:100
 #: engines/tsage/dialogs.cpp:113
 msgid "~C~ancel"
 msgstr "~M~égse"
@@ -2167,7 +2170,8 @@ msgstr "Biztos hogy ki akarsz lépni ?"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: engines/mohawk/myst_stacks/menu.cpp:290 engines/scumm/dialogs.cpp:188
+#: engines/mohawk/myst_stacks/menu.cpp:290
+#: engines/mohawk/riven_stacks/aspit.cpp:500 engines/scumm/dialogs.cpp:188
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Kilépés"
@@ -3288,57 +3292,57 @@ msgstr "Animált játék felület"
 msgid "Naughty game mode"
 msgstr "Pajkos játékmód"
 
-#: engines/mohawk/detection.cpp:162
+#: engines/mohawk/detection.cpp:154
 msgid "Play the Myst fly by movie"
 msgstr "Myst bevezetõ film lejátszása"
 
-#: engines/mohawk/detection.cpp:163
+#: engines/mohawk/detection.cpp:155
 msgid "The Myst fly by movie was not played by the original engine."
 msgstr "A Myst bevezetõ filmet nem játszotta le az eredeti motor."
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:190 engines/mohawk/dialogs.cpp:289
+#: engines/mohawk/dialogs.cpp:146 engines/mohawk/dialogs.cpp:286
 msgid "~Z~ip Mode Activated"
 msgstr "~Z~ip Mód aktiválva"
 
-#: engines/mohawk/dialogs.cpp:191
+#: engines/mohawk/dialogs.cpp:147
 msgid "~T~ransitions Enabled"
 msgstr "~Á~tmenetek engedélyezve"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:193
+#: engines/mohawk/dialogs.cpp:149
 msgid "~D~rop Page"
 msgstr "Oldal~D~obás"
 
-#: engines/mohawk/dialogs.cpp:197
+#: engines/mohawk/dialogs.cpp:153
 msgid "Show ~M~ap"
 msgstr "~M~ Térkép nézet"
 
-#: engines/mohawk/dialogs.cpp:203
+#: engines/mohawk/dialogs.cpp:159
 msgid "Main Men~u~"
 msgstr "Fõ Menü ~u~"
 
-#: engines/mohawk/dialogs.cpp:290
+#: engines/mohawk/dialogs.cpp:287
 msgid "~W~ater Effect Enabled"
 msgstr "Vízeffektus engedélyezve"
 
-#: engines/mohawk/dialogs.cpp:292
+#: engines/mohawk/dialogs.cpp:289
 msgid "Transitions:"
 msgstr "Átmenetek:"
 
-#: engines/mohawk/dialogs.cpp:294
+#: engines/mohawk/dialogs.cpp:291
 msgid "Disabled"
 msgstr "Letiltva"
 
-#: engines/mohawk/dialogs.cpp:295
+#: engines/mohawk/dialogs.cpp:292
 msgid "Fastest"
 msgstr "Leggyorsabb"
 
-#: engines/mohawk/dialogs.cpp:296
+#: engines/mohawk/dialogs.cpp:293
 msgid "Normal"
 msgstr "Normál"
 
-#: engines/mohawk/dialogs.cpp:297
+#: engines/mohawk/dialogs.cpp:294
 msgid "Best"
 msgstr "Legjobb"
 
@@ -3347,32 +3351,37 @@ msgid "The game is paused. Press any key to continue."
 msgstr "A játék szünetel. Nyomj egy gombot a folytatáshoz."
 
 #: engines/mohawk/myst_stacks/menu.cpp:255
+#: engines/mohawk/riven_stacks/aspit.cpp:394
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:256
+#: engines/mohawk/riven_stacks/aspit.cpp:395
 #, fuzzy
 msgid "Load game"
 msgstr "Játék betöltése:"
 
 #: engines/mohawk/myst_stacks/menu.cpp:272
+#: engines/mohawk/riven_stacks/aspit.cpp:416
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:273
+#: engines/mohawk/riven_stacks/aspit.cpp:417
 #, fuzzy
 msgid "New game"
 msgstr "Új Mentés"
 
 #: engines/mohawk/myst_stacks/menu.cpp:290
+#: engines/mohawk/riven_stacks/aspit.cpp:500
 #, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgstr "   Biztos hogy ki akarsz lépni ?   "
 
-#: engines/mohawk/riven.cpp:154
+#: engines/mohawk/riven.cpp:158
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
@@ -3380,7 +3389,7 @@ msgstr ""
 "Hiányzik a Riven futtatható állomány. A Windows fájlok neve 'riven.exe' vagy "
 "'rivendmo.exe'. "
 
-#: engines/mohawk/riven.cpp:155
+#: engines/mohawk/riven.cpp:159
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
@@ -3388,18 +3397,18 @@ msgstr ""
 "Az 'arcriven.z' telepítõ fájl is használható. Ezen felül használható még a "
 "'Riven' Mac indítófájl."
 
-#: engines/mohawk/riven.cpp:166
+#: engines/mohawk/riven.cpp:170
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
 "Hiányzik az 'extras.mhk'. A telepítõ 'arcriven.z' fájlja is használható még."
 
-#: engines/mohawk/riven.cpp:452
+#: engines/mohawk/riven.cpp:498
 msgid "You are missing the following required Riven data files:\n"
 msgstr "A következõ szükséges Riven adatfájlok hiányoznak:\n"
 
-#: engines/mohawk/riven_stack.cpp:182
+#: engines/mohawk/riven_stack.cpp:204
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
@@ -3407,7 +3416,7 @@ msgstr ""
 "Kutatás ezen a ponton túl csak a játék teljes verziójával\n"
 "elérhetõ."
 
-#: engines/mohawk/riven_stacks/aspit.cpp:309
+#: engines/mohawk/riven_stacks/aspit.cpp:474
 msgid ""
 "At this point, the Riven Demo would\n"
 "ask if you would like to open a web browser\n"
