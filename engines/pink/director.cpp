@@ -80,6 +80,7 @@ void Director::removeSound(ActionSound *sound) {
 void Director::clear() {
 	_dirtyRects.push_back(Common::Rect(0, 0, 640, 480));
 	_sprites.resize(0);
+	draw();
 }
 
 void Director::pause(bool pause_) {
