@@ -460,8 +460,7 @@ Math::Vector3d Command::getObjectPosition(const ResourceReference &targetRef, in
 }
 
 Command *Command::opGameEnd() {
-	// TODO: Display the main menu instead of exiting
-	StarkUserInterface->notifyShouldExit();
+	StarkUserInterface->requestQuitToMainMenu();
 
 	return nextCommand();
 }
