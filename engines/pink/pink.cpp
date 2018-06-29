@@ -205,7 +205,7 @@ void PinkEngine::setVariable(Common::String &variable, Common::String &value) {
 
 bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &value) {
 	if (!_variables.contains(variable))
-		return value == "UNDEFINED";
+		return value == kUndefinedValue;
 	return _variables[variable] == value;
 }
 
@@ -281,7 +281,7 @@ void PinkEngine::pauseEngineIntern(bool pause) {
 }
 
 bool PinkEngine::isPeril() {
-	return !strcmp(_desc.gameId, "peril");
+	return !strcmp(_desc.gameId, kPeril);
 }
 
 }

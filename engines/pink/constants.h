@@ -170,6 +170,10 @@ static const char * const kInventoryItemActor = "InventoryItem";
 static const char * const kInventoryRightArrowActor = "InventoryRightArrow";
 static const char * const kInventoryLeftArrowActor = "InventoryLeftArrow";
 
+static const char * const kAudioInfoActor = "AudioInfo";
+static const char * const kPdaButtonActor = "PDAButton";
+
+static const char * const kCursorNameExit = "Exit";
 static const char * const kCursorNameExitUp = "ExitUp";
 static const char * const kCursorNameExitLeft = "ExitLeft";
 static const char * const kCursorNameExitRight = "ExitRight";
@@ -192,6 +196,9 @@ static const char * const kThirdRound = "15.3";
 static const char * const kBoy = "Boy";
 static const char * const kSirBaldley = "SirBaldley";
 static const char * const kBoyBlocked = "BoyBlocked";
+
+static const char * const kUndefinedValue = "UNDEFINED";
+static const char * const kTrueValue = "TRUE";
 
 } // End of namespace Pink
 

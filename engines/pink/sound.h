@@ -28,6 +28,8 @@
 
 #include "common/system.h"
 
+#include "pink/constants.h"
+
 namespace Common {
 	class SafeSeekableSubReadStream;
 }
@@ -46,7 +48,7 @@ public:
 
 	void pause(bool paused) { g_system->getMixer()->pauseHandle(_handle, paused); }
 
-	uint64 getCurrentSample() { return (uint64)g_system->getMixer()->getElapsedTime(_handle).msecs() * 22050 / 1000; }
+	uint64 getCurrentSample() { return (uint64)g_system->getMixer()->getElapsedTime(_handle).msecs() * kSampleRate / 1000; }
 
 private:
 	Audio::SoundHandle _handle;

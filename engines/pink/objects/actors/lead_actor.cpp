@@ -436,7 +436,7 @@ void ParlSqPink::toConsole() {
 }
 
 WalkLocation *ParlSqPink::getWalkDestination() {
-	if (_recipient->getName() == kBoy && _page->checkValueOfVariable(kBoyBlocked, "UNDEFINED"))
+	if (_recipient->getName() == kBoy && _page->checkValueOfVariable(kBoyBlocked, kUndefinedValue))
 		return _walkMgr->findLocation(kSirBaldley);
 
 	return LeadActor::getWalkDestination();
@@ -492,8 +492,8 @@ WalkLocation *PubPink::getWalkDestination() {
 }
 
 bool PubPink::playingMiniGame() {
-	return !(_page->checkValueOfVariable(kFoodPuzzle, "TRUE") ||
-			_page->checkValueOfVariable(kFoodPuzzle, "UNDEFINED"));
+	return !(_page->checkValueOfVariable(kFoodPuzzle, kTrueValue) ||
+			_page->checkValueOfVariable(kFoodPuzzle, kUndefinedValue));
 }
 
 } // End of namespace Pink

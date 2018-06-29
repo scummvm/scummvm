@@ -69,7 +69,7 @@ void CursorMgr::setCursor(const Common::String &cursorName, const Common::Point 
 		index = kExitLeftCursor;
 	else if (cursorName == kCursorNameExitRight)
 		index = kExitRightCursor;
-	else if (cursorName == kCursorNameExitForward || cursorName == kCursorNameExitUp || cursorName == "Exit")
+	else if (cursorName == kCursorNameExitForward || cursorName == kCursorNameExitUp || cursorName == kCursorNameExit)
 		index = kExitForwardCursor;
 	else if (cursorName == kCursorNameExitBackWards)
 		index = kExitDownCursor;

@@ -22,6 +22,7 @@
 
 #include "pink/audio_info_mgr.h"
 #include "pink/archive.h"
+#include "pink/constants.h"
 #include "pink/objects/actors/lead_actor.h"
 
 namespace Pink {
@@ -62,27 +63,27 @@ void AudioInfoMgr::onLeftClick() {
 }
 
 void AudioInfoMgr::playAudio() {
-	Actor *audioInfo = _lead->findActor("AudioInfo");
+	Actor *audioInfo = _lead->findActor(kAudioInfoActor);
 	assert(audioInfo);
 	audioInfo->setAction(_aboutWhom);
 }
 
 void AudioInfoMgr::stopAudio() {
-	Actor *audioInfo = _lead->findActor("AudioInfo");
+	Actor *audioInfo = _lead->findActor(kAudioInfoActor);
 	assert(audioInfo);
-	audioInfo->setAction("Idle");
+	audioInfo->setAction(kIdleAction);
 }
 
 void AudioInfoMgr::showPDAButton() {
-	Actor *pdaButton = _lead->findActor("PDAButton");
+	Actor *pdaButton = _lead->findActor(kPdaButtonActor);
 	assert(pdaButton);
-	pdaButton->setAction("Show");
+	pdaButton->setAction(kShowAction);
 }
 
 void AudioInfoMgr::hidePDAButton() {
-	Actor *pdaButton = _lead->findActor("PDAButton");
+	Actor *pdaButton = _lead->findActor(kPdaButtonActor);
 	assert(pdaButton);
-	pdaButton->setAction("Hide");
+	pdaButton->setAction(kHideAction);
 }
 
 } // End of namespace Pink
