@@ -33,8 +33,7 @@
 int main(int argc, char *argv[]) {
 
 #ifdef __SWITCH_DEBUG__
-	//consoleDebugInit(debugDevice_SVC);
-	//stdout = stderr;
+	socketInitializeDefault();
 	nxlinkStdio();
 #endif
 
@@ -54,6 +53,10 @@ int main(int argc, char *argv[]) {
 
 	// Free OSystem
 	delete (OSystem_SWITCH *)g_system;
+
+#ifdef __SWITCH_DEBUG__
+	socketExit();
+#endif
 
 	return res;
 }

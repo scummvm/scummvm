@@ -2365,7 +2365,6 @@ case $_host_os in
 		append_var CXXFLAGS "-march=armv8-a -mtune=cortex-a57 -mtp=hard"
 		append_var CXXFLAGS "-fpic -pie"
 		append_var CXXFLAGS "-ffunction-sections"
-		#append_var CXXFLAGS "-ffast-math -funsafe-math-optimizations"
 		append_var CXXFLAGS "-I$DEVKITPRO/libnx/include"
 		append_var CXXFLAGS "-I$DEVKITPRO/portlibs/switch/include"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/switch/lib"
@@ -2373,7 +2372,7 @@ case $_host_os in
 		if test "$_debug_build" = yes; then
 			append_var DEFINES "-D__SWITCH_DEBUG__"
 		else
-			_optimization_level=-O3
+			_optimization_level=-O2
 		fi
 		;;
 	amigaos*)

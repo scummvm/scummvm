@@ -26,22 +26,11 @@
 #include <sys/stat.h>
 #include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "common/debug-channels.h"
 #include "backends/platform/sdl/switch/switch.h"
 #include "backends/events/switchsdl/switchsdl-events.h"
 #include "backends/saves/posix/posix-saves.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
-
-int access(const char *pathname, int mode) {
-
-	struct stat sb;
-	if (stat(pathname, &sb) == -1) {
-		return -1;
-	}
-
-	return 0;
-}
 
 OSystem_SWITCH::OSystem_SWITCH(Common::String baseConfigName)
 	: _baseConfigName(baseConfigName) {
@@ -109,7 +98,6 @@ bool OSystem_SWITCH::hasFeature(Feature f) {
 }
 
 void OSystem_SWITCH::logMessage(LogMessageType::Type type, const char *message) {
-	
 	printf("%s\n", message);
 }
 
@@ -121,4 +109,3 @@ Common::WriteStream *OSystem_SWITCH::createLogFile() {
 	Common::FSNode file("scummvm.log");
 	return file.createWriteStream();
 }
-
