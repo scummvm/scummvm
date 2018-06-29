@@ -60,7 +60,7 @@ public:
 	void loadState(Archive &archive);
 	void saveState(Archive &archive);
 
-	virtual void init(bool unk);
+	virtual void init(bool paused);
 
 	void start(bool isHandler);
 

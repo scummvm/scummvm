@@ -85,13 +85,13 @@ void LeadActor::saveState(Archive &archive) {
 	_audioInfoMgr.saveState(archive);
 }
 
-void LeadActor::init(bool unk) {
+void LeadActor::init(bool paused) {
 	if (_state == kUndefined)
 		_state = kReady;
 
 	getInventoryMgr()->setLeadActor(this);
 	_page->getGame()->setLeadActor(this);
-	Actor::init(unk);
+	Actor::init(paused);
 }
 
 void LeadActor::start(bool isHandler) {
