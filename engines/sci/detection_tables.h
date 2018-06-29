@@ -2730,9 +2730,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #undef GUIO_LSL6HIRES
 
-#define GUIO_LSL7_DEMO GUIO3(GUIO_NOASPECT, \
+#define GUIO_LSL7_DEMO GUIO4(GUIO_NOASPECT, \
                              GUIO_NOMIDI, \
-                             GUIO_NOLAUNCHLOAD)
+                             GUIO_NOLAUNCHLOAD, \
+                             GAMEOPTION_LARRYSCALE)
 #define GUIO_LSL7      GUIO6(GUIO_NOASPECT, \
                              GUIO_NOMIDI, \
                              GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
