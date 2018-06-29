@@ -113,7 +113,7 @@ int ActorClues::getModifier(int actorId, int otherActorId, int clueId) {
 	modifier2 = 0;
 	modifier3 = _vm->_aiScripts->callGetFriendlinessModifierIfGetsClue(otherActorId, actorId, clueId);
 
-	for (uint i = 0; i < _vm->_gameInfo->getActorCount(); i++) {
+	for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 		if (i != actorId && i != otherActorId) {
 			modifier2 += (friendliness - 50) * _vm->_aiScripts->callGetFriendlinessModifierIfGetsClue(i, otherActorId, clueId) / 100;
 		}
