@@ -50,6 +50,12 @@ void PDAMgr::execute(const Command &command) {
 	case Command::kGoToPage:
 		goToPage(command.arg);
 		break;
+	case Command::kGoToPreviousPage: {
+		assert(_previousPages.size() >= 2);
+		_previousPages.pop();
+		goToPage(_previousPages.pop());
+		break;
+	}
 	case Command::kClose:
 		close();
 		break;
@@ -75,6 +81,8 @@ void PDAMgr::goToPage(const Common::String &pageName) {
 	}
 
 	_cursorMgr.setPage(_page);
+
+	_previousPages.push(_page->getName());
 }
 
 void PDAMgr::onLeftButtonClick(Common::Point point) {

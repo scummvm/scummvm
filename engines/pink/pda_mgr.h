@@ -68,6 +68,7 @@ private:
 	CursorMgr _cursorMgr;
 	Array<Actor *> _globalActors;
 	Common::String _savedPage;
+	Common::Stack<Common::String> _previousPages;
 };
 
 } // End of namespace Pink
