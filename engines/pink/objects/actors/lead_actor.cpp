@@ -111,6 +111,7 @@ void LeadActor::start(bool isHandler) {
 		break;
 	default:
 		forceUpdateCursor();
+		break;
 	}
 }
 
@@ -178,6 +179,7 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
 			// fall through
 		case Common::KEYCODE_SPACE:
 			_walkMgr->skip();
+			break;
 		default:
 			break;
 		}
