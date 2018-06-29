@@ -36,8 +36,22 @@ void PDAButtonActor::deserialize(Archive &archive) {
 	_opaque = (bool)archive.readDWORD();
 
 	int type = archive.readDWORD();
-	assert(type != 0);
-	_command.type = (Command::CommandType) type;
+	assert(type != 0 && type != Command::kIncrementFrame && type != Command::kDecrementFrame);
+	if (_page->getGame()->isPeril()) {
+		_command.type = (Command::CommandType) type;
+	} else {
+		switch (type) {
+		case 1:
+			_command.type = Command::kGoToPage;
+			break;
+		case 2:
+			_command.type = Command::kClose;
+			break;
+		default:
+			_command.type = Command::kNull;
+			break;
+		}
+	}
 	_command.arg = archive.readString();
 }
 
@@ -53,7 +67,7 @@ void PDAButtonActor::onLeftClickMessage() {
 }
 
 void PDAButtonActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
-	if (_command.type == Command::Unk || !isActive())
+	if (_command.type == Command::kNull || !isActive())
 		mgr->setCursor(kPDADefaultCursor, point, Common::String());
 	else
 		mgr->setCursor(kPDAClickableFirstFrameCursor, point, Common::String());

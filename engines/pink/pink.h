@@ -102,6 +102,8 @@ public:
 
 	void changeScene();
 
+	bool isPeril();
+
 	void setVariable(Common::String &variable, Common::String &value);
 	bool checkValueOfVariable(Common::String &variable, Common::String &value);
 
@@ -123,8 +125,6 @@ private:
 	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
 	void addModule(const Common::String &moduleName);
 	void removeModule();
-
-	bool isPeril();
 
 private:
 	Console *_console;

@@ -40,10 +40,10 @@ void PDAMgr::saveState(Archive &archive) {
 
 void PDAMgr::execute(const Command &command) {
 	switch (command.type) {
-	case Command::GoToPage:
+	case Command::kGoToPage:
 		goToPage(command.arg);
 		break;
-	case Command::Close:
+	case Command::kClose:
 		close();
 		break;
 	default:

@@ -28,11 +28,21 @@
 namespace Pink {
 
 struct Command {
-	// commands in peril are different
-	/*enum PerilCommandType {Null, GoToPage, GoToPreviousPage, GoToDomain, GoToHelp,
-			NavigateToDomain, IncrementCountry, DecrementCountry, IncrementDomain,
-			DecrementDomain, Close, IncrementFrame, DecrementFrame};*/
-	enum CommandType {Null = 0, GoToPage = 1, Close = 2, Unk = 3};
+	enum CommandType {
+		kGoToPage = 1,
+		kGoToPreviousPage,
+		kGoToDomain,
+		kGoToHelp, // won't be supported
+		kNavigateToDomain,
+		kIncrementCountry,
+		kDecrementCountry,
+		kIncrementDomain,
+		kDecrementDomain,
+		kClose,
+		kIncrementFrame, // not used
+		kDecrementFrame, // not used
+		kNull
+	};
 
 	CommandType type;
 	Common::String arg;
