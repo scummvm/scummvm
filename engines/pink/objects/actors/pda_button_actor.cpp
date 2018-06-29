@@ -25,6 +25,7 @@
 #include "pink/pink.h"
 #include "pink/objects/pages/page.h"
 #include "pink/objects/actors/pda_button_actor.h"
+#include "pink/objects/actions/action.h"
 
 namespace Pink {
 
@@ -74,7 +75,7 @@ void PDAButtonActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
 }
 
 bool PDAButtonActor::isActive() {
-	return _name != "Inactive";
+	return _action && _action->getName() != "Inactive";
 }
 
 } // End of namespace Pink
