@@ -53,7 +53,7 @@ queen.tbl              FILE    "dists/engine-data/queen.tbl"
 #if ENABLE_SKY        == STATIC_PLUGIN
 sky.cpt                FILE    "dists/engine-data/sky.cpt"
 #endif
-#if RNABLE_SUPERNOVA  == STATIC_PLUGIN
+#if ENABLE_SUPERNOVA  == STATIC_PLUGIN
 supernova.dat          FILE    "dists/engine-data/supernova.dat"
 #endif
 #if ENABLE_TEENAGENT  == STATIC_PLUGIN
