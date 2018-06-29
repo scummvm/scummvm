@@ -31,6 +31,13 @@ namespace Pink {
 PDAMgr::PDAMgr(Pink::PinkEngine *game)
 	: _game(game), _page(nullptr), _cursorMgr(game, nullptr) {}
 
+PDAMgr::~PDAMgr() {
+	for (uint i = 0; i < _globalActors.size(); ++i) {
+		delete _globalActors[i];
+	}
+	delete _page;
+}
+
 void PDAMgr::saveState(Archive &archive) {
 	if (_page)
 		archive.writeString(_page->getName());
@@ -57,8 +64,9 @@ void PDAMgr::goToPage(const Common::String &pageName) {
 
 	loadGlobal();
 
+	PDAPage *newPage = new PDAPage(PDAPage::create(pageName, *this));
 	delete _page;
-	_page = new PDAPage(PDAPage::create(pageName, *this));
+	_page = newPage;
 
 	_page->init();
 

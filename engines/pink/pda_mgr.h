@@ -23,6 +23,8 @@
 #ifndef PINK_PDA_MGR_H
 #define PINK_PDA_MGR_H
 
+#include "common/stack.h"
+
 #include "pink/cursor_mgr.h"
 #include "pink/utils.h"
 
@@ -38,6 +40,7 @@ struct Command;
 class PDAMgr {
 public:
 	PDAMgr(PinkEngine *game);
+	~PDAMgr();
 
 	void loadState(Archive &archive) { _savedPage = archive.readString(); }
 	void saveState(Archive &archive);
