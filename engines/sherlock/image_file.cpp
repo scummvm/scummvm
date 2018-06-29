@@ -376,14 +376,14 @@ void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream) {
 
 		//
 		// Load data for frame and decompress it
-		byte *data = new byte[celDataSize];
-		stream.read(data, celDataSize);
+		byte *data_ = new byte[celDataSize];
+		stream.read(data_, celDataSize);
 		streamLeft -= celDataSize;
 
 		// always 16 bits per pixel (RGB555)
-		decompress3DOCelFrame(frame, data, celDataSize, 16, NULL);
+		decompress3DOCelFrame(frame, data_, celDataSize, 16, NULL);
 
-		delete[] data;
+		delete[] data_;
 
 		push_back(frame);
 	}
