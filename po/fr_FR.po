@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-27 22:48+0200\n"
+"POT-Creation-Date: 2018-06-29 13:20+0200\n"
 "PO-Revision-Date: 2018-06-05 19:36+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -66,6 +66,9 @@ msgstr "Remonter"
 #: engines/engine.cpp:525 backends/events/default/default-events.cpp:190
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
+#: engines/mohawk/myst_stacks/menu.cpp:256
+#: engines/mohawk/myst_stacks/menu.cpp:273
+#: engines/mohawk/myst_stacks/menu.cpp:291
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:887
 msgid "Cancel"
@@ -683,7 +686,7 @@ msgid "Search:"
 msgstr "Filtre :"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:106 engines/mohawk/myst.cpp:818
+#: engines/mohawk/dialogs.cpp:106 engines/mohawk/myst.cpp:884
 #: engines/mohawk/riven.cpp:553 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -693,7 +696,7 @@ msgstr "Charger le jeu :"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:106
-#: engines/mohawk/myst.cpp:818 engines/mohawk/riven.cpp:553
+#: engines/mohawk/myst.cpp:884 engines/mohawk/riven.cpp:553
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
@@ -1880,7 +1883,7 @@ msgstr "Retour au ~L~anceur"
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:107
-#: engines/mohawk/myst.cpp:830 engines/mohawk/riven.cpp:565
+#: engines/mohawk/myst.cpp:896 engines/mohawk/riven.cpp:565
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:658
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
@@ -1901,7 +1904,7 @@ msgstr "Sauvegarde :"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:107 engines/mohawk/myst.cpp:830
+#: engines/mohawk/dialogs.cpp:107 engines/mohawk/myst.cpp:896
 #: engines/mohawk/riven.cpp:565 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:659
@@ -2194,8 +2197,8 @@ msgstr "Voulez-vous vraiment quitter ?"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: engines/scumm/dialogs.cpp:188 engines/scumm/help.cpp:83
-#: engines/scumm/help.cpp:85
+#: engines/mohawk/myst_stacks/menu.cpp:290 engines/scumm/dialogs.cpp:188
+#: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Quitter"
 
@@ -3332,7 +3335,7 @@ msgid "The Myst fly by movie was not played by the original engine."
 msgstr "La vidéo du survol de Myst n'était pas jouée par le moteur originel."
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:190 engines/mohawk/dialogs.cpp:282
+#: engines/mohawk/dialogs.cpp:190 engines/mohawk/dialogs.cpp:289
 msgid "~Z~ip Mode Activated"
 msgstr "Mode ~Z~ip Activé"
 
@@ -3353,33 +3356,59 @@ msgstr "Afficher la ~C~arte"
 msgid "Main Men~u~"
 msgstr "~M~enu Principal"
 
-#: engines/mohawk/dialogs.cpp:283
+#: engines/mohawk/dialogs.cpp:290
 msgid "~W~ater Effect Enabled"
 msgstr "~E~ffets de l'Eau Activés"
 
-#: engines/mohawk/dialogs.cpp:285
+#: engines/mohawk/dialogs.cpp:292
 msgid "Transitions:"
 msgstr "Transitions :"
 
-#: engines/mohawk/dialogs.cpp:287
+#: engines/mohawk/dialogs.cpp:294
 msgid "Disabled"
 msgstr "Désactivé"
 
-#: engines/mohawk/dialogs.cpp:288
+#: engines/mohawk/dialogs.cpp:295
 msgid "Fastest"
 msgstr "Rapide"
 
-#: engines/mohawk/dialogs.cpp:289
+#: engines/mohawk/dialogs.cpp:296
 msgid "Normal"
 msgstr "Normal"
 
-#: engines/mohawk/dialogs.cpp:290
+#: engines/mohawk/dialogs.cpp:297
 msgid "Best"
 msgstr "Meilleur"
 
 #: engines/mohawk/mohawk.cpp:55
 msgid "The game is paused. Press any key to continue."
 msgstr "Jeu en pause. Appuyer sur une touche pour Reprendre."
+
+#: engines/mohawk/myst_stacks/menu.cpp:255
+msgid ""
+"Are you sure you want to load a saved game? All unsaved progress will be "
+"lost."
+msgstr ""
+
+#: engines/mohawk/myst_stacks/menu.cpp:256
+#, fuzzy
+msgid "Load game"
+msgstr "Charger le jeu :"
+
+#: engines/mohawk/myst_stacks/menu.cpp:272
+msgid ""
+"Are you sure you want to start a new game? All unsaved progress will be lost."
+msgstr ""
+
+#: engines/mohawk/myst_stacks/menu.cpp:273
+#, fuzzy
+msgid "New game"
+msgstr "Nouvelle Sauvegarde"
+
+#: engines/mohawk/myst_stacks/menu.cpp:290
+#, fuzzy
+msgid "Are you sure you want to quit? All unsaved progress will be lost."
+msgstr "   Voulez-vous vraiment quitter ?   "
 
 #: engines/mohawk/riven.cpp:154
 msgid ""
