@@ -83,7 +83,7 @@ Common::String generateSaveName(int slot, const char *gameId) {
 	return Common::String::format("%s.s%02d", gameId, slot);
 }
 
-bool readSaveHeader(Common::InSaveFile &in, SaveStateDescriptor &desc) {
+WARN_UNUSED_RESULT bool readSaveHeader(Common::InSaveFile &in, SaveStateDescriptor &desc, bool skipThumbnail) {
 	if (in.readUint32BE() != MKTAG('p', 'i', 'n', 'k'))
 		return false;
 
@@ -91,11 +91,9 @@ bool readSaveHeader(Common::InSaveFile &in, SaveStateDescriptor &desc) {
 	uint32 date = in.readUint32LE();
 	uint16 time = in.readUint16LE();
 	uint32 playTime = in.readUint32LE();
-	if (!Graphics::checkThumbnailHeader(in))
-		return false;
 
-	Graphics::Surface *thumbnail;
-	if (!Graphics::loadThumbnail(in, thumbnail))
+	Graphics::Surface *thumbnail = nullptr;
+	if (!Graphics::loadThumbnail(in, thumbnail, skipThumbnail))
 		return false;
 
 	int day = (date >> 24) & 0xFF;

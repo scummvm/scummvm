@@ -108,7 +108,7 @@ SaveStateDescriptor PinkMetaEngine::querySaveMetaInfos(const char *target, int s
 
 	if (f) {
 		SaveStateDescriptor desc;
-		if (!Pink::readSaveHeader(*f.get(), desc))
+		if (!Pink::readSaveHeader(*f.get(), desc, false))
 			return SaveStateDescriptor();
 
 		return desc;
