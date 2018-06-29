@@ -30,6 +30,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed an issue in the wig maker room in the German version of SPY Fox 3: Operation Ozone
      which makes the game completable.
 
+ SKY:
+   - Added workaround for original game bug to improve intro and not cut off images which exist
+     as fullscreen (320x200px) in the game data files.
+
  Tinsel:
    - Fix loading Discworld 1 savegames from the launcher where Rincewind had a held item
    - Script patch for hang in Discworld 1 GRA using items on Temple big hammer

@@ -96,9 +96,9 @@ Screen::~Screen() {
 	free(_scrollScreen);
 }
 
-void Screen::clearScreen() {
+void Screen::clearScreen(bool fullscreen) {
 	memset(_currentScreen, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
-	_system->copyRectToScreen(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+	_system->copyRectToScreen(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, fullscreen ? FULL_SCREEN_HEIGHT : GAME_SCREEN_HEIGHT);
 	_system->updateScreen();
 }
 
@@ -146,21 +146,23 @@ void Screen::setPalette(uint16 fileNum) {
 		warning("Screen::setPalette: can't load file nr. %d",fileNum);
 }
 
-void Screen::showScreen(uint16 fileNum) {
+  void Screen::showScreen(uint16 fileNum, bool fullscreen) {
 	// This is only used for static images in the floppy and cd intro
 	free(_currentScreen);
 	_currentScreen = _skyDisk->loadFile(fileNum);
-	// make sure the last 8 lines are forced to black.
-	memset(_currentScreen + GAME_SCREEN_HEIGHT * GAME_SCREEN_WIDTH, 0, (FULL_SCREEN_HEIGHT - GAME_SCREEN_HEIGHT) * GAME_SCREEN_WIDTH);
+	if (!fullscreen) {
+		// make sure the last 8 lines are forced to black.
+		memset(_currentScreen + GAME_SCREEN_HEIGHT * GAME_SCREEN_WIDTH, 0, (FULL_SCREEN_HEIGHT - GAME_SCREEN_HEIGHT) * GAME_SCREEN_WIDTH);
+	}
 
 	if (_currentScreen)
-		showScreen(_currentScreen);
+		showScreen(_currentScreen, fullscreen);
 	else
 		warning("Screen::showScreen: can't load file nr. %d",fileNum);
 }
 
-void Screen::showScreen(uint8 *pScreen) {
-	_system->copyRectToScreen(pScreen, 320, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+void Screen::showScreen(uint8 *pScreen, bool fullscreen) {
+	_system->copyRectToScreen(pScreen, 320, 0, 0, GAME_SCREEN_WIDTH, fullscreen ? FULL_SCREEN_HEIGHT : GAME_SCREEN_HEIGHT);
 	_system->updateScreen();
 }
 
