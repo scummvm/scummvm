@@ -607,9 +607,10 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 	actor->animFile->seek(16, SEEK_SET);
 	actor->frameToStartNextAnim = actor->animFile->readUint16() + _frameIndex;
 
-	char firstFrameFilename[10];
+	char firstFrameFilename[11];
 	actor->animFile->seek(0, SEEK_SET);
 	actor->animFile->read(firstFrameFilename, 10);
+	firstFrameFilename[10] = '\0';
 
 	Sprite *sprite = &actor->sprite;
 	if (addSprite)
