@@ -155,13 +155,11 @@ enum {
 
 static const char * const kPinkGame = "PinkGame";
 
-static const char * const kPokus = "pokus";
 static const char * const kPeril = "peril";
 
 static const char * const kCloseAction = "Close";
 static const char * const kIdleAction = "Idle";
 static const char * const kOpenAction = "Open";
-static const char * const kPlayAction = "Play";
 static const char * const kShowAction = "Show";
 static const char * const kHideAction = "Hide";
 
@@ -188,10 +186,6 @@ static const char * const kJackson = "Jackson";
 static const char * const kBolted = "Bolted";
 static const char * const kDrunkLocation = "DrunkLocation";
 static const char * const kDrunk = "Drunk";
-
-static const char * const kFirstRound = "15.1";
-static const char * const kSecondRound = "15.2";
-static const char * const kThirdRound = "15.3";
 
 static const char * const kBoy = "Boy";
 static const char * const kSirBaldley = "SirBaldley";
