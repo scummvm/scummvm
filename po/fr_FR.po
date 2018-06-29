@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-06-29 13:32+0200\n"
-"PO-Revision-Date: 2018-06-29 19:48+0000\n"
-"Last-Translator: Purple T <zeonk@hotmail.com>\n"
+"PO-Revision-Date: 2018-06-29 19:51+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -3394,30 +3394,32 @@ msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
+"Voulez-vous vraiment charger une sauvegarde ? Tous les progrès non "
+"sauvegardés seront perdus."
 
 #: engines/mohawk/myst_stacks/menu.cpp:256
 #: engines/mohawk/riven_stacks/aspit.cpp:395
-#, fuzzy
 msgid "Load game"
-msgstr "Charger le jeu :"
+msgstr "Charger le jeu"
 
 #: engines/mohawk/myst_stacks/menu.cpp:272
 #: engines/mohawk/riven_stacks/aspit.cpp:416
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
+"Voulez-vous vraiment commencer une nouvelle partie ? Tous les progrès non "
+"sauvegardés seront perdus."
 
 #: engines/mohawk/myst_stacks/menu.cpp:273
 #: engines/mohawk/riven_stacks/aspit.cpp:417
-#, fuzzy
 msgid "New game"
-msgstr "Nouvelle Sauvegarde"
+msgstr "Nouvelle partie"
 
 #: engines/mohawk/myst_stacks/menu.cpp:290
 #: engines/mohawk/riven_stacks/aspit.cpp:500
-#, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "   Voulez-vous vraiment quitter ?   "
+msgstr ""
+"Voulez-vous vraiment quitter ? Les progrès non sauvegardés seront perdus."
 
 #: engines/mohawk/riven.cpp:158
 msgid ""
