@@ -2102,11 +2102,11 @@ echo $_no_undefined_var_template
 
 echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
 if `which $_host_alias-strings >/dev/null 2>&1`; then
-_strings=$_host_alias-strings
-echo yes >> "$TMPLOG"
+	_strings=$_host_alias-strings
+	echo yes >> "$TMPLOG"
 else
-_strings=strings
-echo no >> "$TMPLOG"
+	_strings=strings
+	echo no >> "$TMPLOG"
 fi
 
 #
