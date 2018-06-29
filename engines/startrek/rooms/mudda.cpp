@@ -107,4 +107,69 @@ void Room::muddaUseDegrimer() {
 	showText(text[_roomIndex]);
 }
 
+void Room::muddaTick() {
+	assert(_roomIndex >= 0 && _roomIndex <= 5);
+
+	const Common::Point deathPositions[][4] = {
+		{ Common::Point(0xbb, 0x8d), Common::Point(0xd0, 0x89), Common::Point(0xaa, 0x85), Common::Point(0xbf, 0x83) },
+		{ Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1) },
+		{ Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1) },
+		{ Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1) },
+		{ Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1) },
+		{ Common::Point(0x8b, 0xac), Common::Point(0x6f, 0x99), Common::Point(-1, -1), Common::Point(-1, -1) },
+	};
+
+	const TextRef deathText[] = {
+		TX_MUD0N006, 0, 0, 0, TX_MUD5N105
+	};
+
+	// This is implemented somewhat differently in each room.
+	// MUDD0:
+
+	//const int TIMER_LENGTH = 27000;
+	const int TIMER_LENGTH = 60; // FIXME
+
+	if (_vm->_awayMission.mudd.lifeSupportMalfunctioning) {
+		if (!_vm->_awayMission.mudd.startedLifeSupportTimer) {
+			_vm->_awayMission.mudd.startedLifeSupportTimer = true;
+			_vm->_awayMission.mudd.lifeSupportTimer = TIMER_LENGTH;
+		}
+		_vm->_awayMission.mudd.lifeSupportTimer--;
+
+		if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.25)) {
+			showText(TX_SPEAKER_SPOCK, TX_MUD0_018);
+		} else if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.5)) {
+			showText(TX_SPEAKER_SPOCK, TX_MUD0_019);
+		} else if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.75)) {
+			showText(TX_SPEAKER_SPOCK, TX_MUD0_020);
+		} else if (_vm->_awayMission.mudd.lifeSupportTimer == 1) {
+			_vm->_awayMission.disableInput = true;
+			for (int i = OBJECT_KIRK; i <= OBJECT_REDSHIRT; i++) {
+				if (deathPositions[_roomIndex][i].x != -1)
+					walkCrewman(i, deathPositions[_roomIndex][i].x, deathPositions[_roomIndex][i].y, 9 + i);
+			}
+			showText(deathText[_roomIndex]);
+			showGameOverMenu();
+		}
+	}
+}
+
+void Room::muddaKirkReachedDeathPosition() {
+	loadActorAnim2(OBJECT_KIRK, "kgetdw");
+}
+
+void Room::muddaSpockReachedDeathPosition() {
+	loadActorAnim2(OBJECT_SPOCK, "sgetds");
+}
+
+void Room::muddaMccoyReachedDeathPosition() {
+	loadActorAnim2(OBJECT_MCCOY, "sgetdn");
+}
+
+void Room::muddaRedshirtReachedDeathPosition() {
+	loadActorAnim2(OBJECT_REDSHIRT, "rgetde");
+	// NOTE: there's code to check if he's the last one down... not really implemented
+	// properly
+}
+
 }

@@ -221,7 +221,8 @@ struct AwayMission {
 			bool muddUnconscious; // 0x4d
 			byte muddState; // 0x4e
 			bool muddInhaledGas; // 0x4f
-
+			int16 lifeSupportTimer; // 0x50
+			bool startedLifeSupportTimer; // 0x52
 			bool enteredRoom0ForFirstTime; // 0x54
 			bool gotPointsForLoadingTorpedo; // 0x55
 			bool gotPointsForPressingRedButton; // 0x56
