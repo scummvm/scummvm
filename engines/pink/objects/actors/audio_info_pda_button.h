@@ -39,7 +39,7 @@ public:
 	void onMouseOver(const Common::Point point, CursorMgr *mgr);
 	void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override;
 
-	bool onLeftClickMessage() override;
+	void onLeftClickMessage() override;
 };
 
 } // End of namespace Pink

@@ -41,10 +41,9 @@ void AudioInfoPDAButton::onMouseOverWithItem(const Common::Point point, const Co
 	onMouseOver(point, cursorMgr);
 }
 
-bool AudioInfoPDAButton::onLeftClickMessage() {
+void AudioInfoPDAButton::onLeftClickMessage() {
 	AudioInfoMgr *audioInfoMgr = _page->getLeadActor()->getAudioInfoMgr();
 	audioInfoMgr->onLeftClick();
-	return true;
 }
 
 } // End of namespace Pink

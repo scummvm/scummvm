@@ -101,8 +101,8 @@ protected:
 
 	virtual void updateCursor(const Common::Point point);
 
-	virtual bool sendUseClickMessage(Actor *actor);
-	bool sendLeftClickMessage(Actor *actor);
+	virtual void sendUseClickMessage(Actor *actor);
+	void sendLeftClickMessage(Actor *actor);
 
 	virtual WalkLocation *getWalkDestination();
 
@@ -148,7 +148,7 @@ public:
 protected:
 	void updateCursor(const Common::Point point) override;
 
-	bool sendUseClickMessage(Actor *actor) override;
+	void sendUseClickMessage(Actor *actor) override;
 
 	WalkLocation *getWalkDestination() override;
 

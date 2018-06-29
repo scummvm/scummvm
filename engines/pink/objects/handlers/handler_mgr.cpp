@@ -72,24 +72,18 @@ void HandlerMgr::onTimerMessage(Actor *actor) {
 		handler->handle(actor);
 }
 
-bool HandlerMgr::onLeftClickMessage(Actor *actor) {
+void HandlerMgr::onLeftClickMessage(Actor *actor) {
 	Handler *handler = findSuitableHandlerLeftClick(actor);
-	if (handler) {
-		handler->handle(actor);
-		return true;
-	}
-	return false;
+	assert(handler);
+	handler->handle(actor);
 }
 
-bool HandlerMgr::onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr) {
+void HandlerMgr::onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr) {
 	HandlerUseClick *handler = findSuitableHandlerUseClick(actor, item);
-	if (handler) {
-		if (!handler->getRecepient().empty())
-			mgr->setItemOwner(handler->getRecepient(), item);
-		handler->handle(actor);
-		return true;
-	}
-	return false;
+	assert(handler);
+	if (!handler->getRecepient().empty())
+		mgr->setItemOwner(handler->getRecepient(), item);
+	handler->handle(actor);
 }
 
 Handler *HandlerMgr::findSuitableHandlerTimer(Actor *actor) {

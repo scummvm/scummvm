@@ -44,8 +44,8 @@ public:
 	void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr) override;
 
 	void onTimerMessage() override;
-	bool onLeftClickMessage() override;
-	bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) override;
+	void onLeftClickMessage() override;
+	void onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) override;
 
 	const Common::String &getPDALink() const override;
 	const Common::String &getLocation() const override;

@@ -68,8 +68,8 @@ public:
 	virtual void onClick() {}
 
 	virtual void onTimerMessage() {}
-	virtual bool onLeftClickMessage() { return false; }
-	virtual bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) { return false; }
+	virtual void onLeftClickMessage() {}
+	virtual void onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) {}
 
 	Action *findAction(const Common::String &name);
 

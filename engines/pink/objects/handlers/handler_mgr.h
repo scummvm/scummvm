@@ -48,8 +48,8 @@ public:
 	bool isUseClickHandler(Actor *actor, const Common::String &itemName);
 
 	void onTimerMessage(Actor *actor);
-	bool onLeftClickMessage(Actor *actor);
-	bool onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr);
+	void onLeftClickMessage(Actor *actor);
+	void onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr);
 
 private:
 	Handler *findSuitableHandlerTimer(Actor *actor);

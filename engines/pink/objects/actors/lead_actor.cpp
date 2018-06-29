@@ -366,7 +366,7 @@ void LeadActor::updateCursor(const Common::Point point) {
 	}
 }
 
-bool LeadActor::sendUseClickMessage(Actor *actor) {
+void LeadActor::sendUseClickMessage(Actor *actor) {
 	InventoryMgr *mgr = getInventoryMgr();
 	assert(_state != kPlayingExitSequence);
 	_nextState = kReady;
@@ -376,16 +376,14 @@ bool LeadActor::sendUseClickMessage(Actor *actor) {
 	if (item->getCurrentOwner() != this->_name)
 		_isHaveItem = false;
 	forceUpdateCursor();
-	return true;
 }
 
-bool LeadActor::sendLeftClickMessage(Actor *actor) {
+void LeadActor::sendLeftClickMessage(Actor *actor) {
 	assert(_state != kPlayingExitSequence);
 	_nextState = kReady;
 	_state = kPlayingSequence;
 	actor->onLeftClickMessage();
 	forceUpdateCursor();
-	return true;
 }
 
 WalkLocation *LeadActor::getWalkDestination() {
@@ -477,12 +475,10 @@ void PubPink::updateCursor(const Common::Point point) {
 	}
 }
 
-bool PubPink::sendUseClickMessage(Actor *actor) {
+void PubPink::sendUseClickMessage(Actor *actor) {
 	LeadActor::sendUseClickMessage(actor);
 	if (playingMiniGame())
 		_isHaveItem = true;
-
-	return true;
 }
 
 WalkLocation *PubPink::getWalkDestination() {
