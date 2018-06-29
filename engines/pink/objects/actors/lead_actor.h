@@ -49,7 +49,6 @@ public:
 		kPlayingSequence = 2,
 		kInventory = 3,
 		kPDA = 4,
-		kUnknown = 5, // never used
 		kPlayingExitSequence = 6,
 		kUndefined = 7
 	};
