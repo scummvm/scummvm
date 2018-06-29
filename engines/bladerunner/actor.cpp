@@ -888,7 +888,7 @@ void Actor::setFriendlinessToOther(int otherActorId, int friendliness) {
 
 bool Actor::checkFriendlinessAndHonesty(int otherActorId) {
 	int honestyDiff = 2 * _friendlinessToOther[otherActorId] - _honesty;
-	int friendlinessRange;
+	uint friendlinessRange;
 
 	if (honestyDiff > 30) {
 		friendlinessRange = 100;
@@ -1137,7 +1137,7 @@ void Actor::copyClues(int actorId) {
 
 void Actor::acquireCluesByRelations() {
 	if (_setId >= 0 && _setId != kSetFreeSlotG && _setId != _vm->_actors[0]->_setId) {
-		for (int i = 0; i < _vm->_gameInfo->getActorCount(); i++) {
+		for (uint i = 0; i < _vm->_gameInfo->getActorCount(); i++) {
 			if (i != _id && _vm->_actors[i]->_setId == _setId && i && _id
 					&& checkFriendlinessAndHonesty(i)
 					&& _vm->_actors[i]->checkFriendlinessAndHonesty(_id)) {

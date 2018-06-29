@@ -113,7 +113,7 @@ int ActorClues::getModifier(int actorId, int otherActorId, int clueId) {
 	modifier2 = 0;
 	modifier3 = _vm->_aiScripts->callGetFriendlinessModifierIfGetsClue(otherActorId, actorId, clueId);
 
-	for (int i = 0; i < _vm->_gameInfo->getActorCount(); i++) {
+	for (uint i = 0; i < _vm->_gameInfo->getActorCount(); i++) {
 		if (i != actorId && i != otherActorId) {
 			modifier2 += (friendliness - 50) * _vm->_aiScripts->callGetFriendlinessModifierIfGetsClue(i, otherActorId, clueId) / 100;
 		}
@@ -157,7 +157,7 @@ void ActorClues::acquireCluesByRelations(int actorId, int otherActorId) {
 		Actor *actor = _vm->_actors[actorId];
 		Actor *otherActor = _vm->_actors[otherActorId];
 
-		int avgParameters = (otherActor->getHonesty() + otherActor->getIntelligence() + actor->getFriendlinessToOther(otherActorId)) / 3;
+		uint avgParameters = (otherActor->getHonesty() + otherActor->getIntelligence() + actor->getFriendlinessToOther(otherActorId)) / 3;
 		int clue1count = avgParameters * count1 / 100;
 
 		if (avgParameters >= 50 && !clue1count && count1 == 1) {

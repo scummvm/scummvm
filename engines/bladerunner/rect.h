@@ -38,8 +38,8 @@ struct Rect {
 	Rect()
 		: x0(0.0f), y0(0.0f), x1(0.0f), y1(0.0f)
 	{}
-	Rect(float x0, float y0, float x1, float y1)
-		: x0(x0), y0(y0), x1(x1), y1(y1)
+	Rect(float x0_, float y0_, float x1_, float y1_)
+		: x0(x0_), y0(y0_), x1(x1_), y1(y1_)
 	{}
 
 	void expand(float d) {
