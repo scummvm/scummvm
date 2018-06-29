@@ -1137,7 +1137,7 @@ void Actor::copyClues(int actorId) {
 
 void Actor::acquireCluesByRelations() {
 	if (_setId >= 0 && _setId != kSetFreeSlotG && _setId != _vm->_actors[0]->_setId) {
-		for (uint i = 0; i < _vm->_gameInfo->getActorCount(); i++) {
+		for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 			if (i != _id && _vm->_actors[i]->_setId == _setId && i && _id
 					&& checkFriendlinessAndHonesty(i)
 					&& _vm->_actors[i]->checkFriendlinessAndHonesty(_id)) {
