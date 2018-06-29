@@ -173,7 +173,7 @@ void MainMenuScreen::settingsHandler() {
 }
 
 void MainMenuScreen::boxHandler() {
-	if (!StarkSettings->isDemo()) {
+	if (!StarkSettings->isDemo() && StarkSettings->hasBookOfSecrets()) {
 		StarkUserInterface->changeScreen(kScreenGame);
 		StarkResourceProvider->initGlobal();
 		StarkScene->setFadeLevel(1.0f);
