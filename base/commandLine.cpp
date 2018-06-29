@@ -270,7 +270,7 @@ void registerDefaults() {
 #endif
 
 	// Miscellaneous
-	ConfMan.registerDefault("joystick_num", -1);
+	ConfMan.registerDefault("joystick_num", 0);
 	ConfMan.registerDefault("confirm_exit", false);
 	ConfMan.registerDefault("disable_sdl_parachute", false);
 
