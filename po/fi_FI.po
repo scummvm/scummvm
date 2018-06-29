@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-06-29 13:32+0200\n"
-"PO-Revision-Date: 2018-06-09 09:14+0000\n"
-"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"PO-Revision-Date: 2018-06-29 14:31+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3361,31 +3361,30 @@ msgstr "Pause. Paina mitä tahansa nappia jatkaaksesi."
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
-msgstr ""
+msgstr "Haluatko varmasti ladata pelin? Menetät tallentamattoman edistymisesi."
 
 #: engines/mohawk/myst_stacks/menu.cpp:256
 #: engines/mohawk/riven_stacks/aspit.cpp:395
-#, fuzzy
 msgid "Load game"
-msgstr "Lataa peli:"
+msgstr "Lataa peli"
 
 #: engines/mohawk/myst_stacks/menu.cpp:272
 #: engines/mohawk/riven_stacks/aspit.cpp:416
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
+"Haluatko varmasti aloittaa uuden pelin? Menetät tallentamattoman "
+"edistymisesi."
 
 #: engines/mohawk/myst_stacks/menu.cpp:273
 #: engines/mohawk/riven_stacks/aspit.cpp:417
-#, fuzzy
 msgid "New game"
-msgstr "Uusi pelitallennus"
+msgstr "Uusi peli"
 
 #: engines/mohawk/myst_stacks/menu.cpp:290
 #: engines/mohawk/riven_stacks/aspit.cpp:500
-#, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "   Haluatko varmasti lopettaa?   "
+msgstr "Haluatko varmasti lopettaa? Menetät tallentamattoman edistymisesi."
 
 #: engines/mohawk/riven.cpp:158
 msgid ""
