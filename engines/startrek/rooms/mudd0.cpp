@@ -158,55 +158,6 @@ void Room::mudd0UseMTricorderOnLense() {
 		mccoyScan(DIR_E, TX_MUD0_013, true);
 }
 
-void Room::mudd0UseLenseOnDegrimer() {
-	giveItem(OBJECT_IALIENDV);
-	loseItem(OBJECT_IDEGRIME);
-	loseItem(OBJECT_ILENSES);
-
-	_vm->_awayMission.mudd.missionScore++;
-	showText(TX_MUD0N011);
-	// TODO: Identical (?) audio files: TX_MUD0N011, TX_MUD1N013, TX_MUD2N010, TX_MUD3N016,
-	// TX_MUD4009, TX_MUD5N009
-}
-
-
-void Room::mudd0UseAlienDevice() {
-	const int deviceObjectIndices[] = {
-		9,  // MUDD0
-		13, // MUDD1
-		11, // MUDD2
-		11, // MUDD3
-		9,  // MUDD4
-		11  // MUDD5
-	};
-
-	_vm->_awayMission.disableInput = true;
-
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
-	loadActorStandAnim(OBJECT_KIRK);
-	Common::Point pos = getActorPos(OBJECT_KIRK);
-	loadActorAnimC(deviceObjectIndices[_roomIndex], "s4cbxp", pos.x, 10, &Room::mudd0FiredAlienDevice);
-	playVoc("EXPLO3");
-}
-
-void Room::mudd0FiredAlienDevice() {
-	_vm->_awayMission.disableInput = false;
-	if (!_vm->_awayMission.mudd.discoveredLenseAndDegrimerFunction) {
-		_vm->_awayMission.mudd.discoveredLenseAndDegrimerFunction = true;
-		_vm->_awayMission.mudd.missionScore += 5; // BUGFIX: didn't happen if done in MUDD5
-		showText(TX_SPEAKER_KIRK, TX_MUD0_002);
-		// TODO: Identical (?) audio files: TX_MUD0_002, TX_MUD1_002, TX_MUD2_002
-	}
-}
-
-
-void Room::mudd0UseDegrimer() {
-	// TODO: Identical (?) audio files: TX_MUD0N002, TX_MUD1N004, TX_MUD2N001,
-	// TX_MUD3N001, TX_MUD4N002, TX_MUD5_001
-	showText(TX_MUD0N002);
-}
-
-
 void Room::mudd0GetLense() {
 	if (_vm->_awayMission.mudd.gotLense)
 		showText(TX_MUD0N016);
