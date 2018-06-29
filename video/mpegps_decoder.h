@@ -25,6 +25,7 @@
 
 #include "common/inttypes.h"
 #include "common/hashmap.h"
+#include "common/queue.h"
 #include "graphics/surface.h"
 #include "video/video_decoder.h"
 
@@ -64,6 +65,39 @@ protected:
 	bool useAudioSync() const { return false; }
 
 private:
+	class MPEGPSDemuxer {
+	public:
+		MPEGPSDemuxer();
+		~MPEGPSDemuxer();
+
+		bool loadStream(Common::SeekableReadStream *stream);
+		void close();
+
+		Common::SeekableReadStream *getFirstVideoPacket(int32 &startCode, uint32 &pts, uint32 &dts);
+		Common::SeekableReadStream *getNextPacket(uint32 currentTime, int32 &startCode, uint32 &pts, uint32 &dts);
+
+	private:
+		class Packet {
+		public:
+			Packet(Common::SeekableReadStream *stream, int32 startCode, uint32 pts, uint32 dts) : _stream(stream), _startCode(startCode), _pts(pts), _dts(dts) {}
+
+			Common::SeekableReadStream *_stream;
+			int32 _startCode;
+			uint32 _pts;
+			uint32 _dts;
+		};
+		bool queueNextPacket();
+		bool fillQueues();
+		int readNextPacketHeader(int32 &startCode, uint32 &pts, uint32 &dts);
+		int findNextStartCode(uint32 &size);
+		uint32 readPTS(int c);
+		void parseProgramStreamMap(int length);
+
+		Common::SeekableReadStream *_stream;
+		Common::Queue<Packet> _videoQueue;
+		Common::Queue<Packet> _audioQueue;
+	};
+
 	// Base class for handling MPEG streams
 	class MPEGStream {
 	public:
@@ -74,7 +108,7 @@ private:
 			kStreamTypeAudio
 		};
 
-		virtual bool sendPacket(Common::SeekableReadStream *firstPacket, uint32 pts, uint32 dts) = 0;
+		virtual bool sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts) = 0;
 		virtual StreamType getStreamType() const = 0;
 	};
 
@@ -158,19 +192,13 @@ private:
 	PrivateStreamType detectPrivateStreamType(Common::SeekableReadStream *packet);
 
 	bool addFirstVideoTrack();
-
-	int readNextPacketHeader(int32 &startCode, uint32 &pts, uint32 &dts);
-	int findNextStartCode(uint32 &size);
 	MPEGStream *getStream(uint32 startCode, Common::SeekableReadStream *packet);
-	uint32 readPTS(int c);
 
-	void parseProgramStreamMap(int length);
+	MPEGPSDemuxer *_demuxer;
 
 	// A map from stream types to stream handlers
 	typedef Common::HashMap<int, MPEGStream *> StreamMap;
 	StreamMap _streamMap;
-
-	Common::SeekableReadStream *_stream;
 };
 
 } // End of namespace Video

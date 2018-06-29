@@ -36,6 +36,11 @@
 
 namespace Video {
 
+// --------------------------------------------------------------------------
+// Decoder - This is the part that takes a packet and figures out what to do
+// with it.
+// --------------------------------------------------------------------------
+
 enum {
 	kStartCodePack = 0x1BA,
 	kStartCodeSystemHeader = 0x1BB,
@@ -46,33 +51,33 @@ enum {
 };
 
 MPEGPSDecoder::MPEGPSDecoder() {
-	_stream = 0;
+	_demuxer = new MPEGPSDemuxer();
 }
 
 MPEGPSDecoder::~MPEGPSDecoder() {
 	close();
+	delete _demuxer;
 }
 
 bool MPEGPSDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
-	_stream = stream;
+	if (!_demuxer->loadStream(stream)) {
+		close();
+		return false;
+	}
 
 	if (!addFirstVideoTrack()) {
 		close();
 		return false;
 	}
 
-	_stream->seek(0);
 	return true;
 }
 
 void MPEGPSDecoder::close() {
 	VideoDecoder::close();
-
-	delete _stream;
-	_stream = 0;
-
+	_demuxer->close();
 	_streamMap.clear();
 }
 
@@ -153,15 +158,12 @@ MPEGPSDecoder::MPEGStream *MPEGPSDecoder::getStream(uint32 startCode, Common::Se
 }
 
 void MPEGPSDecoder::readNextPacket() {
-	if (_stream->eos())
-		return;
-
 	for (;;) {
 		int32 startCode;
 		uint32 pts, dts;
-		int size = readNextPacketHeader(startCode, pts, dts);
+		Common::SeekableReadStream *packet = _demuxer->getNextPacket(getTime(), startCode, pts, dts);
 
-		if (size < 0) {
+		if (!packet) {
 			// End of stream
 			for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++)
 				if ((*it)->getTrackType() == Track::kTrackTypeVideo)
@@ -169,7 +171,6 @@ void MPEGPSDecoder::readNextPacket() {
 			return;
 		}
 
-		Common::SeekableReadStream *packet = _stream->readStream(size);
 		MPEGStream *stream = getStream(startCode, packet);
 
 		if (stream) {
@@ -185,30 +186,190 @@ void MPEGPSDecoder::readNextPacket() {
 	}
 }
 
-#define MAX_SYNC_SIZE 100000
+bool MPEGPSDecoder::addFirstVideoTrack() {
+	int32 startCode;
+	uint32 pts, dts;
+	Common::SeekableReadStream *packet = _demuxer->getFirstVideoPacket(startCode, pts, dts);
 
-int MPEGPSDecoder::findNextStartCode(uint32 &size) {
-	size = MAX_SYNC_SIZE;
-	int32 state = 0xFF;
+	if (!packet)
+		return false;
 
-	while (size > 0) {
-		byte v = _stream->readByte();
+	// Video stream
+	// Can be MPEG-1/2 or MPEG-4/h.264. We'll assume the former and
+	// I hope we never need the latter.
+	MPEGVideoTrack *track = new MPEGVideoTrack(packet, getDefaultHighColorFormat());
+	addTrack(track);
+	_streamMap[startCode] = track;
 
-		if (_stream->eos())
-			return -1;
-
-		size--;
-
-		if (state == 0x1)
-			return ((state << 8) | v) & 0xFFFFFF;
-
-		state = ((state << 8) | v) & 0xFFFFFF;
-	}
-
-	return -1;
+	return true;
 }
 
-int MPEGPSDecoder::readNextPacketHeader(int32 &startCode, uint32 &pts, uint32 &dts) {
+MPEGPSDecoder::PrivateStreamType MPEGPSDecoder::detectPrivateStreamType(Common::SeekableReadStream *packet) {
+	uint32 dvdCode = packet->readUint32LE();
+	if (packet->eos())
+		return kPrivateStreamUnknown;
+
+	uint32 ps2Header = packet->readUint32BE();
+	if (!packet->eos() && ps2Header == MKTAG('S', 'S', 'h', 'd'))
+		return kPrivateStreamPS2Audio;
+
+	switch (dvdCode & 0xE0) {
+	case 0x80:
+		if ((dvdCode & 0xF8) == 0x88)
+			return kPrivateStreamDTS;
+
+		return kPrivateStreamAC3;
+	case 0xA0:
+		return kPrivateStreamDVDPCM;
+	}
+
+	return kPrivateStreamUnknown;
+}
+
+// --------------------------------------------------------------------------
+// Demuxer - This is the part that reads packets from the stream and delivers
+// them to the decoder.
+//
+// It will buffer a number of packets in advance, because otherwise it may
+// not encounter any audio packets until it's far too late to decode them.
+// Before I added this, there would be 9 or 10 frames of video before the
+// first audio packet, even though the timestamp indicated that the audio
+// should start slightly before the video.
+// --------------------------------------------------------------------------
+
+#define PREBUFFERED_PACKETS 150
+#define AUDIO_THRESHOLD     100
+
+MPEGPSDecoder::MPEGPSDemuxer::MPEGPSDemuxer() {
+	_stream = 0;
+}
+
+MPEGPSDecoder::MPEGPSDemuxer::~MPEGPSDemuxer() {
+	close();
+}
+
+bool MPEGPSDecoder::MPEGPSDemuxer::loadStream(Common::SeekableReadStream *stream) {
+	close();
+
+	_stream = stream;
+
+	int queuedPackets = 0;
+	while (queueNextPacket() && queuedPackets < PREBUFFERED_PACKETS) {
+		queuedPackets++;
+	}
+
+	return true;
+}
+
+void MPEGPSDecoder::MPEGPSDemuxer::close() {
+	delete _stream;
+	_stream = 0;
+
+	while (!_audioQueue.empty()) {
+		Packet packet = _audioQueue.pop();
+		delete packet._stream;
+	}
+
+	while (!_videoQueue.empty()) {
+		Packet packet = _videoQueue.pop();
+		delete packet._stream;
+	}
+}
+
+Common::SeekableReadStream *MPEGPSDecoder::MPEGPSDemuxer::getFirstVideoPacket(int32 &startCode, uint32 &pts, uint32 &dts) {
+	if (_videoQueue.empty())
+		return nullptr;
+	Packet packet = _videoQueue.front();
+	startCode = packet._startCode;
+	pts = packet._pts;
+	dts = packet._dts;
+	return packet._stream;
+}
+
+Common::SeekableReadStream *MPEGPSDecoder::MPEGPSDemuxer::getNextPacket(uint32 currentTime, int32 &startCode, uint32 &pts, uint32 &dts) {
+	queueNextPacket();
+
+	// The idea here is to prioritize the delivery of audio packets,
+	// because when the decoder wants a frame it will keep asking until it
+	// gets a frame. There is nothing like that in the decoder to ensure
+	// speedy delivery of audio.
+
+	if (!_audioQueue.empty()) {
+		Packet packet = _audioQueue.front();
+		bool usePacket = false;
+
+		if (packet._pts == 0xFFFFFFFF) {
+			// No timestamp? Use it just in case. This could be a 
+			// bad idea, but in my tests all audio packets have a
+			// time stamp.
+			usePacket = true;
+		} else {
+			uint32 packetTime = packet._pts / 90;
+			if (packetTime <= currentTime || packetTime - currentTime < AUDIO_THRESHOLD || _videoQueue.empty()) {
+				// The packet is overdue, or will be soon.
+				//
+				// TODO: We should pad or trim the first audio
+				// packet based on the timestamp to get the
+				// audio to start at the exact desired time.
+				// But for some reason it seems to work well
+				// enough anyway. For now.
+				usePacket = true;
+			}
+		}
+
+		if (usePacket) {
+			_audioQueue.pop();
+			startCode = packet._startCode;
+			pts = packet._pts;
+			dts = packet._dts;
+			return packet._stream;
+		}
+	}
+
+	if (!_videoQueue.empty()) {
+		Packet packet = _videoQueue.pop();
+		startCode = packet._startCode;
+		pts = packet._pts;
+		dts = packet._dts;
+		return packet._stream;
+	}
+
+	return nullptr;
+}
+
+bool MPEGPSDecoder::MPEGPSDemuxer::queueNextPacket() {
+	if (_stream->eos())
+		return false;
+
+	for (;;) {
+		int32 startCode;
+		uint32 pts, dts;
+		int size = readNextPacketHeader(startCode, pts, dts);
+
+		if (size < 0) {
+			// End of stream
+			return false;
+		}
+
+		Common::SeekableReadStream *stream = _stream->readStream(size);
+
+		if (startCode == kStartCodePrivateStream1 || (startCode >= 0x1C0 && startCode <= 0x1DF)) {
+			// Audio packet
+			_audioQueue.push(Packet(stream, startCode, pts, dts));
+			return true;
+		}
+
+		if (startCode >= 0x1E0 && startCode <= 0x1EF) {
+			// Video packet
+			_videoQueue.push(Packet(stream, startCode, pts, dts));
+			return true;
+		}
+
+		delete _stream;
+	}
+}
+
+int MPEGPSDecoder::MPEGPSDemuxer::readNextPacketHeader(int32 &startCode, uint32 &pts, uint32 &dts) {
 	for (;;) {
 		uint32 size;
 		startCode = findNextStartCode(size);
@@ -354,7 +515,30 @@ int MPEGPSDecoder::readNextPacketHeader(int32 &startCode, uint32 &pts, uint32 &d
 	}
 }
 
-uint32 MPEGPSDecoder::readPTS(int c) {
+#define MAX_SYNC_SIZE 100000
+
+int MPEGPSDecoder::MPEGPSDemuxer::findNextStartCode(uint32 &size) {
+	size = MAX_SYNC_SIZE;
+	int32 state = 0xFF;
+
+	while (size > 0) {
+		byte v = _stream->readByte();
+
+		if (_stream->eos())
+			return -1;
+
+		size--;
+
+		if (state == 0x1)
+			return ((state << 8) | v) & 0xFFFFFF;
+
+		state = ((state << 8) | v) & 0xFFFFFF;
+	}
+
+	return -1;
+}
+
+uint32 MPEGPSDecoder::MPEGPSDemuxer::readPTS(int c) {
 	byte buf[5];
 
 	buf[0] = (c < 0) ? _stream->readByte() : c;
@@ -363,7 +547,7 @@ uint32 MPEGPSDecoder::readPTS(int c) {
 	return ((buf[0] & 0x0E) << 29) | ((READ_BE_UINT16(buf + 1) >> 1) << 15) | (READ_BE_UINT16(buf + 3) >> 1);
 }
 
-void MPEGPSDecoder::parseProgramStreamMap(int length) {
+void MPEGPSDecoder::MPEGPSDemuxer::parseProgramStreamMap(int length) {
 	_stream->readByte();
 	_stream->readByte();
 
@@ -386,55 +570,9 @@ void MPEGPSDecoder::parseProgramStreamMap(int length) {
 	_stream->readUint32BE(); // CRC32
 }
 
-bool MPEGPSDecoder::addFirstVideoTrack() {
-	for (;;) {
-		int32 startCode;
-		uint32 pts, dts;
-		int size = readNextPacketHeader(startCode, pts, dts);
-
-		// End of stream? We failed
-		if (size < 0)
-			return false;
-
-		if (startCode >= 0x1E0 && startCode <= 0x1EF) {
-			// Video stream
-			// Can be MPEG-1/2 or MPEG-4/h.264. We'll assume the former and
-			// I hope we never need the latter.
-			Common::SeekableReadStream *firstPacket = _stream->readStream(size);
-			MPEGVideoTrack *track = new MPEGVideoTrack(firstPacket, getDefaultHighColorFormat());
-			addTrack(track);
-			_streamMap[startCode] = track;
-			delete firstPacket;
-			break;
-		}
-
-		_stream->skip(size);
-	}
-
-	return true;
-}
-
-MPEGPSDecoder::PrivateStreamType MPEGPSDecoder::detectPrivateStreamType(Common::SeekableReadStream *packet) {
-	uint32 dvdCode = packet->readUint32LE();
-	if (packet->eos())
-		return kPrivateStreamUnknown;
-
-	uint32 ps2Header = packet->readUint32BE();
-	if (!packet->eos() && ps2Header == MKTAG('S', 'S', 'h', 'd'))
-		return kPrivateStreamPS2Audio;
-
-	switch (dvdCode & 0xE0) {
-	case 0x80:
-		if ((dvdCode & 0xF8) == 0x88)
-			return kPrivateStreamDTS;
-
-		return kPrivateStreamAC3;
-	case 0xA0:
-		return kPrivateStreamDVDPCM;
-	}
-
-	return kPrivateStreamUnknown;
-}
+// --------------------------------------------------------------------------
+// Video track
+// --------------------------------------------------------------------------
 
 MPEGPSDecoder::MPEGVideoTrack::MPEGVideoTrack(Common::SeekableReadStream *firstPacket, const Graphics::PixelFormat &format) {
 	_surface = 0;
@@ -535,6 +673,10 @@ void MPEGPSDecoder::MPEGVideoTrack::findDimensions(Common::SeekableReadStream *f
 
 	firstPacket->seek(0);
 }
+
+// --------------------------------------------------------------------------
+// Audio track
+// --------------------------------------------------------------------------
 
 #ifdef USE_MAD
 
