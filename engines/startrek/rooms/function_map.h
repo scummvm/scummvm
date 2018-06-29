@@ -1415,10 +1415,10 @@ RoomAction mudd0ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x21, 0), &Room::mudd0UseMTricorderOnLense },
 
 	// Common code (next 4 lines)
-	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
-	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
-	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
-	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
+	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::muddaUseLenseOnDegrimer },
+	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::muddaUseAlienDevice },
+	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::muddaFiredAlienDevice },
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::muddaUseDegrimer },
 
 	{ Action(ACTION_GET, 0x21, 0, 0), &Room::mudd0GetLense },
 	{ Action(ACTION_GET, 0x20, 0, 0), &Room::mudd0GetMemoryDisk },
@@ -1460,10 +1460,10 @@ RoomAction mudd1ActionList[] = {
 	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::mudd1SpockPressedRedButton },
 
 	// Common code (next 4 lines)
-	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
-	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
-	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
-	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::muddaUseDegrimer },
+	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::muddaUseLenseOnDegrimer },
+	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::muddaUseAlienDevice },
+	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::muddaFiredAlienDevice },
 
 	{ Action(ACTION_GET, 9,    0, 0), &Room::mudd1GetTorpedo },
 	{ Action(ACTION_GET, 0x21, 0, 0), &Room::mudd1GetTorpedo },
@@ -1518,10 +1518,10 @@ RoomAction mudd2ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::mudd2UseCommunicator },
 
 	// Common code (next 4 lines)
-	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
-	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
-	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
-	{ Action(ACTION_FINISHED_ANIMATION, 18, 0, 0), &Room::mudd0FiredAlienDevice },
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::muddaUseDegrimer },
+	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::muddaUseLenseOnDegrimer },
+	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::muddaUseAlienDevice },
+	{ Action(ACTION_FINISHED_ANIMATION, 18, 0, 0), &Room::muddaFiredAlienDevice },
 
 	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::mudd2LookAtCapsules },
 	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x20, 0), &Room::mudd2UseMTricorderOnCapsules },
@@ -1586,10 +1586,10 @@ RoomAction mudd3ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_IDISKS, 0x21, 0),   &Room::mudd3UseMemoryDiskOnSphere },
 
 	// Common code (next 4 lines)
-	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
-	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
-	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
-	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::muddaUseDegrimer },
+	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::muddaUseLenseOnDegrimer },
+	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::muddaUseAlienDevice },
+	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::muddaFiredAlienDevice },
 
 	{ Action(ACTION_GET, 13, 0, 0), &Room::mudd3GetRepairTool },
 	{ Action(ACTION_FINISHED_WALKING, 3, 0, 0),   &Room::mudd3ReachedRepairTool },
@@ -1656,10 +1656,10 @@ RoomAction mudd4ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_ISTRICOR, 8, 0),    &Room::mudd4UseSTricorderOnViewscreen },
 
 	// Common code (next 4 lines)
-	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
-	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
-	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
-	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
+	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::muddaUseLenseOnDegrimer },
+	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::muddaUseAlienDevice },
+	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::muddaFiredAlienDevice },
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::muddaUseDegrimer },
 
 	{ Action(ACTION_USE, OBJECT_IMEDKIT, -1, 0),   &Room::mudd4UseMedkit },
 	{ Action(ACTION_GET, 10, 0, 0),                &Room::mudd4GetRepairTool },
@@ -1710,10 +1710,10 @@ RoomAction mudd5ActionList[] = {
 	{ Action(ACTION_TIMER_EXPIRED, 3, 0, 0),        &Room::mudd5KirkTimer3Expired },
 
 	// Common code (next 4 lines)
-	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
-	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
-	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
-	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
+	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::muddaUseLenseOnDegrimer },
+	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::muddaUseAlienDevice },
+	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::muddaFiredAlienDevice },
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::muddaUseDegrimer },
 
 	{ Action(ACTION_LOOK, 0x20, 0, 0),         &Room::mudd5LookAtHatch },
 	{ Action(ACTION_LOOK, 9,    0, 0),         &Room::mudd5LookAtLifeSupportGenerator },

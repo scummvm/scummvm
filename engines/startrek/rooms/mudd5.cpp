@@ -61,7 +61,7 @@ void Room::mudd5Tick1() {
 }
 
 void Room::mudd5Timer1Expired() { // Mudd enters room through hatch
-	const int choices[] = {
+	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
 		TX_MUD5_006,
 		TX_MUD5_010,

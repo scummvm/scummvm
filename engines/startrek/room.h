@@ -1138,10 +1138,6 @@ public:
 	void mudd0UseSTricorderOnMemoryDiskBox();
 	void mudd0UseSTricorderOnDegrimerBox();
 	void mudd0UseMTricorderOnLense();
-	void mudd0UseLenseOnDegrimer();
-	void mudd0UseAlienDevice();
-	void mudd0FiredAlienDevice();
-	void mudd0UseDegrimer();
 	void mudd0GetLense();
 	void mudd0GetMemoryDisk();
 	void mudd0GetDegrimer();
@@ -1378,6 +1374,10 @@ public:
 	void mudd5UseMedkit();
 
 	// MUDDA
+	void muddaUseLenseOnDegrimer();
+	void muddaUseAlienDevice();
+	void muddaFiredAlienDevice();
+	void muddaUseDegrimer();
 
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.

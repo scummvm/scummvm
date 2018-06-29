@@ -43,6 +43,7 @@ MODULE_OBJS = \
 	rooms/mudd3.o \
 	rooms/mudd4.o \
 	rooms/mudd5.o \
+	rooms/mudda.o \
 	
 
 
