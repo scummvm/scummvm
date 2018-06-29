@@ -56,6 +56,9 @@ void PDAMgr::execute(const Command &command) {
 		goToPage(_previousPages.pop());
 		break;
 	}
+	case Command::kGoToHelp:
+		warning("Command GoToHelp is not supported and won't be");
+		break;
 	case Command::kClose:
 		close();
 		break;
