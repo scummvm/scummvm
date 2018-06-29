@@ -214,7 +214,7 @@ void LeadActor::onLeftButtonClick(const Common::Point point) {
 
 		if (this == clickedActor) {
 			_audioInfoMgr.stop();
-			onClick();
+			onLeftClickMessage();
 		} else if (clickedActor->isSupporting()) {
 			if (isInteractingWith(clickedActor)) {
 				_recipient = clickedActor;
@@ -272,7 +272,7 @@ void LeadActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
 		Actor::onMouseOver(point, mgr);
 }
 
-void LeadActor::onClick() {
+void LeadActor::onLeftClickMessage() {
 	if (_isHaveItem) {
 		assert(_state != kMoving);
 		_isHaveItem = false;
@@ -454,9 +454,9 @@ void PubPink::toConsole() {
 	}
 }
 
-void PubPink::onClick() {
+void PubPink::onLeftClickMessage() {
 	if (!playingMiniGame())
-		LeadActor::onClick();
+		LeadActor::onLeftClickMessage();
 }
 
 void PubPink::onVariableSet() {

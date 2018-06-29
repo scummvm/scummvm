@@ -66,8 +66,6 @@ public:
 	virtual void onMouseOver(const Common::Point point, CursorMgr *mgr);
 	virtual void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, CursorMgr *cursorMgr);
 
-	virtual void onClick() {}
-
 	virtual void onTimerMessage() {}
 	virtual void onLeftClickMessage() {}
 	virtual void onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) {}

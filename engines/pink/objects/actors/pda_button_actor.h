@@ -46,7 +46,7 @@ public:
 
 	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
 
-	void onClick() override;
+	void onLeftClickMessage() override;
 
 private:
 	bool isActive();

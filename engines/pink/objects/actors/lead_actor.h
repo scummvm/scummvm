@@ -77,7 +77,7 @@ public:
 	void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, Pink::CursorMgr *cursorMgr) override;
 	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
 
-	virtual void onClick();
+	virtual void onLeftClickMessage() override;
 	virtual void onVariableSet() {}
 	void onInventoryClosed(bool isItemClicked);
 	void onWalkEnd(const Common::String &stopName);
@@ -141,7 +141,7 @@ public:
 
 	void toConsole() override;
 
-	void onClick() override;
+	void onLeftClickMessage() override;
 	void onVariableSet() override;
 
 protected:

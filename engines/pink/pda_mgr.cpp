@@ -72,7 +72,7 @@ void PDAMgr::goToPage(const Common::String &pageName) {
 void PDAMgr::onLeftButtonClick(Common::Point point) {
 	Actor *actor = _game->getDirector()->getActorByPoint(point);
 	if (actor)
-		actor->onClick();
+		actor->onLeftClickMessage();
 }
 
 void PDAMgr::onMouseMove(Common::Point point) {

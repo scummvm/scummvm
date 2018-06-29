@@ -46,7 +46,7 @@ void PDAButtonActor::toConsole() {
 		  _name.c_str(), _x, _y, _hideOnStop, _opaque, (int)_command.type, _command.arg.c_str());
 }
 
-void PDAButtonActor::onClick() {
+void PDAButtonActor::onLeftClickMessage() {
 	if (isActive()) {
 		_page->getGame()->getPdaMgr().execute(_command);
 	}
