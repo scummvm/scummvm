@@ -247,8 +247,8 @@ void GuiElement::setColor(int bgColor, int textColor, int bgColorHighlighted, in
 	_textColorHighlighted = textColorHightlighted;
 }
 
-void GuiElement::setHighlight(bool isHighlighted) {
-	if (isHighlighted) {
+void GuiElement::setHighlight(bool isHighlighted_) {
+	if (isHighlighted_) {
 		_bgColor = _bgColorHighlighted;
 		_textColor = _textColorHighlighted;
 	} else {
