@@ -57,6 +57,7 @@ public:
 
 	void endAction() { _isActionEnded = true; }
 
+	virtual bool isSupporting() { return false; }
 	virtual bool isCursor() { return false; }
 
 	virtual bool isLeftClickHandlers() { return false; }

@@ -215,14 +215,16 @@ void LeadActor::onLeftButtonClick(const Common::Point point) {
 		if (this == clickedActor) {
 			_audioInfoMgr.stop();
 			onClick();
-		} else if (isInteractingWith(clickedActor)) {
-			_recipient = clickedActor;
-			if (!startWalk()) {
-				_audioInfoMgr.stop();
-				if (_isHaveItem)
-					sendUseClickMessage(clickedActor);
-				else
-					sendLeftClickMessage(clickedActor);
+		} else if (clickedActor->isSupporting()) {
+			if (isInteractingWith(clickedActor)) {
+				_recipient = clickedActor;
+				if (!startWalk()) {
+					_audioInfoMgr.stop();
+					if (_isHaveItem)
+						sendUseClickMessage(clickedActor);
+					else
+						sendLeftClickMessage(clickedActor);
+				}
 			}
 		} else
 			clickedActor->onLeftClickMessage();

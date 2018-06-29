@@ -37,6 +37,8 @@ public:
 
 	virtual void toConsole() override;
 
+	bool isSupporting() override { return true; }
+
 	bool isLeftClickHandlers() override;
 	bool isUseClickHandlers(InventoryItem *item) override;
 
