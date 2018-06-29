@@ -139,6 +139,9 @@ public:
 	/** Get a render entry with a given name, return null when not found */
 	Gfx::RenderEntry *getRenderEntryByName(const Common::String &name);
 
+	/** Obtain the list of all the inner layers */
+	Common::Array<Layer *> listLayers() { return _layers; }
+
 protected:
 	void printData() override;
 

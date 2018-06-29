@@ -30,6 +30,7 @@
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/location.h"
+#include "engines/stark/resources/layer.h"
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
@@ -246,18 +247,18 @@ void GameWindow::onScreenChanged() {
 		return;
 	}
 
-	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
-	_renderEntries = location->listRenderEntries();
+	Common::Array<Resources::Layer *> layers = StarkGlobal->getCurrent()->getLocation()->listLayers();
 
 	VisualText *text = nullptr;
-	Gfx::RenderEntryArray::iterator element = _renderEntries.begin();
-	while (element != _renderEntries.end()) {
-		text = (*element)->getText();
-		if (text) {
-			text->resetTexture();
+	Gfx::RenderEntryArray renderEntries;
+	for (uint i = 0; i < layers.size(); ++i) {
+		renderEntries = layers[i]->listRenderEntries();
+		for (uint j = 0; j < renderEntries.size(); ++j) {
+			text = renderEntries[j]->getText();
+			if (text) {
+				text->resetTexture();
+			}
 		}
-
-		element++;
 	}
 }
 
