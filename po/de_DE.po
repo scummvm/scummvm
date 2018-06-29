@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-06-29 13:20+0200\n"
-"PO-Revision-Date: 2018-06-11 19:35+0000\n"
-"Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"PO-Revision-Date: 2018-06-29 11:29+0000\n"
+"Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3400,26 +3400,29 @@ msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
+"Sind Sie sicher, dass Sie ein gespeichertes Spiel laden möchten? Jeder nicht "
+"gespeicherte Fortschritt geht dabei verloren."
 
 #: engines/mohawk/myst_stacks/menu.cpp:256
-#, fuzzy
 msgid "Load game"
-msgstr "Spiel laden:"
+msgstr "Spiel laden"
 
 #: engines/mohawk/myst_stacks/menu.cpp:272
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
+"Sind Sie sicher, dass Sie ein neues Spiel starten möchten? Jeder nicht "
+"gespeicherte Fortschritt geht dabei verloren."
 
 #: engines/mohawk/myst_stacks/menu.cpp:273
-#, fuzzy
 msgid "New game"
-msgstr "Neuer Spielstand"
+msgstr "Neues Spiel"
 
 #: engines/mohawk/myst_stacks/menu.cpp:290
-#, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "   Möchten Sie wirklich beenden?   "
+msgstr ""
+"Möchten Sie das Spiel wirklich beenden? Jeder nicht gespeicherte Fortschritt "
+"geht dabei verloren."
 
 #: engines/mohawk/riven.cpp:154
 msgid ""
