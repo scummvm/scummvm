@@ -1414,7 +1414,7 @@ RoomAction mudd0ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x22, 0), &Room::mudd0UseSTricorderOnDegrimerBox },
 	{ Action(ACTION_USE, OBJECT_IMTRICOR, 0x21, 0), &Room::mudd0UseMTricorderOnLense },
 
-	// TODO: move these to common code
+	// Common code (next 4 lines)
 	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
 	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
 	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
@@ -1459,7 +1459,7 @@ RoomAction mudd1ActionList[] = {
 	{ Action(ACTION_FINISHED_WALKING, 3, 0, 0),   &Room::mudd1SpockReachedRedButton },
 	{ Action(ACTION_FINISHED_ANIMATION, 4, 0, 0), &Room::mudd1SpockPressedRedButton },
 
-	// Common code
+	// Common code (next 4 lines)
 	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
 	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
 	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
@@ -1517,7 +1517,7 @@ RoomAction mudd2ActionList[] = {
 	{ Action(ACTION_FINISHED_ANIMATION, 13, 0, 0), &Room::mudd2MccoyPickedUpCapsules },
 	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::mudd2UseCommunicator },
 
-	// Common code
+	// Common code (next 4 lines)
 	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
 	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
 	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
@@ -1585,7 +1585,7 @@ RoomAction mudd3ActionList[] = {
 	{ Action(ACTION_TIMER_EXPIRED, 4, 0, 0),        &Room::mudd3Timer4Expired },
 	{ Action(ACTION_USE, OBJECT_IDISKS, 0x21, 0),   &Room::mudd3UseMemoryDiskOnSphere },
 
-	// Common code
+	// Common code (next 4 lines)
 	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
 	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
 	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
@@ -1655,7 +1655,7 @@ RoomAction mudd4ActionList[] = {
 	// ENHANCEMENT: Allow scanning the viewscreen when it's on, not just when off
 	{ Action(ACTION_USE, OBJECT_ISTRICOR, 8, 0),    &Room::mudd4UseSTricorderOnViewscreen },
 
-	// Common code
+	// Common code (next 4 lines)
 	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
 	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
 	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
@@ -1692,6 +1692,45 @@ RoomAction mudd4ActionList[] = {
 
 RoomAction mudd5ActionList[] = {
 	{ Action(ACTION_TICK, 1, 0, 0), &Room::mudd5Tick1 },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0),        &Room::mudd5Timer1Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 2, 0, 0),        &Room::mudd5Timer2Expired },
+	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0),      &Room::mudd5UseCommunicator },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, -1, 0),   &Room::mudd5UseSTricorderAnywhere },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x21, 0), &Room::mudd5UseSTricorderOnEngine },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x22, 0), &Room::mudd5UseSTricorderOnCrane },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 0x20, 0), &Room::mudd5UseSTricorderOnHatch },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, 9,    0), &Room::mudd5UseSTricorderOnLifeSupportGenerator },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 0x20, 0), &Room::mudd5UseStunPhaserOnHatch },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, 0x20, 0), &Room::mudd5UseKillPhaserOnHatch },
+	{ Action(ACTION_USE, -1,              9,    0), &Room::mudd5UseAnythingOnLifeSupportGenerator },
+	{ Action(ACTION_USE, OBJECT_IDOOVER,  9,    0), &Room::mudd5UseDooverOnLifeSupportGenerator },
+	{ Action(ACTION_FINISHED_WALKING, 2, 0, 0),     &Room::mudd5KirkReachedLifeSupportGenerator },
+	{ Action(ACTION_TIMER_EXPIRED, 4, 0, 0),        &Room::mudd5KirkTimer4Expired },
+	{ Action(ACTION_FINISHED_ANIMATION, 2, 0, 0),   &Room::mudd5KirkRepairedLifeSupportGenerator },
+	{ Action(ACTION_TIMER_EXPIRED, 3, 0, 0),        &Room::mudd5KirkTimer3Expired },
+
+	// Common code (next 4 lines)
+	{ Action(ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0), &Room::mudd0UseLenseOnDegrimer },
+	{ Action(ACTION_USE, OBJECT_IALIENDV, -1, 0), &Room::mudd0UseAlienDevice },
+	{ Action(ACTION_FINISHED_ANIMATION, 9, 0, 0), &Room::mudd0FiredAlienDevice },
+	{ Action(ACTION_USE, OBJECT_IDEGRIME, -1, 0), &Room::mudd0UseDegrimer },
+
+	{ Action(ACTION_LOOK, 0x20, 0, 0),         &Room::mudd5LookAtHatch },
+	{ Action(ACTION_LOOK, 9,    0, 0),         &Room::mudd5LookAtLifeSupportGenerator },
+	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0), &Room::mudd5TouchedHotspot0 },
+	{ Action(ACTION_WALK, 0x22, 0, 0),         &Room::mudd5WalkToDoor },
+	{ Action(ACTION_LOOK, OBJECT_KIRK, 0, 0),     &Room::mudd5LookAtKirk },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK, 0, 0),    &Room::mudd5LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY, 0, 0),    &Room::mudd5LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::mudd5LookAtRedshirt },
+	{ Action(ACTION_LOOK, 0x22, 0, 0),            &Room::mudd5LookAtDoor },
+	{ Action(ACTION_LOOK, 0x23, 0, 0),            &Room::mudd5LookAtCrane },
+	{ Action(ACTION_LOOK, 0x21, 0, 0),            &Room::mudd5LookAtEngine },
+	{ Action(ACTION_TALK, OBJECT_KIRK, 0, 0),     &Room::mudd5TalkToKirk },
+	{ Action(ACTION_TALK, OBJECT_SPOCK, 0, 0),    &Room::mudd5TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_MCCOY, 0, 0),    &Room::mudd5TalkToMccoy },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::mudd5TalkToRedshirt },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, -1, 0),  &Room::mudd5UseMedkit },
 };
 
 }

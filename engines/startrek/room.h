@@ -1344,6 +1344,38 @@ public:
 
 	// MUDD5
 	void mudd5Tick1();
+	void mudd5Timer1Expired();
+	void mudd5Timer2Expired();
+	void mudd5UseCommunicator();
+	void mudd5UseSTricorderAnywhere();
+	void mudd5UseSTricorderOnEngine();
+	void mudd5UseSTricorderOnCrane();
+	void mudd5UseSTricorderOnHatch();
+	void mudd5UseSTricorderOnLifeSupportGenerator();
+	void mudd5UseStunPhaserOnHatch();
+	void mudd5UseKillPhaserOnHatch();
+	void mudd5UseAnythingOnLifeSupportGenerator();
+	void mudd5UseDooverOnLifeSupportGenerator();
+	void mudd5KirkReachedLifeSupportGenerator();
+	void mudd5KirkTimer4Expired();
+	void mudd5KirkRepairedLifeSupportGenerator();
+	void mudd5KirkTimer3Expired();
+	void mudd5LookAtHatch();
+	void mudd5LookAtLifeSupportGenerator();
+	void mudd5TouchedHotspot0();
+	void mudd5WalkToDoor();
+	void mudd5LookAtKirk();
+	void mudd5LookAtSpock();
+	void mudd5LookAtMccoy();
+	void mudd5LookAtRedshirt();
+	void mudd5LookAtDoor();
+	void mudd5LookAtCrane();
+	void mudd5LookAtEngine();
+	void mudd5TalkToKirk();
+	void mudd5TalkToSpock();
+	void mudd5TalkToMccoy();
+	void mudd5TalkToRedshirt();
+	void mudd5UseMedkit();
 
 	// MUDDA
 
