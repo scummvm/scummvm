@@ -138,9 +138,13 @@ public:
 	void onScreenChanged() override;
 
 	int getSlot() { return _slot; }
+	Common::String getName() { return _name; }
 
 	/** Load the thumbnail and info from the save data */
 	void loadSaveDataElements();
+
+	/** Check whether the save slot has data */
+	bool hasSave() { return _hasSave; }
 
 private:
 	static const uint32 _outlineColor = 0xFF961E1E;
@@ -159,6 +163,9 @@ private:
 	VisualText _textDesc, _textTime;
 
 	bool _isMouseHovered;
+	bool _hasSave;
+
+	Common::String _name;
 };
 
 } // End of namespace Stark
