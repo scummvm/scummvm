@@ -32,8 +32,8 @@ namespace Pink {
 static const char * const g_countries[] = {"BRI", "EGY", "BHU", "AUS", "IND", "CHI"};
 static const char * const g_domains[] = {"NAT", "CLO", "HIS", "REL", "PLA", "ART", "FOO", "PEO"};
 
-PDAMgr::PDAMgr(Pink::PinkEngine *game)
-	: _game(game), _page(nullptr), _globalPage(nullptr),
+PDAMgr::PDAMgr(PinkEngine *game)
+	: _game(game), _lead(nullptr), _page(nullptr), _globalPage(nullptr),
 	_cursorMgr(game, nullptr), _countryIndex(0), _domainIndex(0),
 	_iteration(0), _handFrame(0), _leftHandAction(kLeft1) {}
 

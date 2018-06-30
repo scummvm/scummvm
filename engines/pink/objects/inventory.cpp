@@ -33,7 +33,9 @@
 namespace Pink {
 
 InventoryMgr::InventoryMgr()
-	: _lead(nullptr), _item(nullptr), _isClickedOnItem(false) {}
+	: _lead(nullptr), _window(nullptr), _itemActor(nullptr),
+	_rightArrow(nullptr), _leftArrow(nullptr), _state(kIdle),
+	_isClickedOnItem(false) {}
 
 void InventoryItem::deserialize(Archive &archive) {
 	NamedObject::deserialize(archive);

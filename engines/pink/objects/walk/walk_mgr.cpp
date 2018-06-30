@@ -29,7 +29,8 @@
 namespace Pink {
 
 WalkMgr::WalkMgr()
-	: _isWalking(false), _leadActor(nullptr) {}
+	: _isWalking(false), _leadActor(nullptr),
+	_destination(nullptr) {}
 
 WalkMgr::~WalkMgr() {
 	for (uint i = 0; i < _locations.size(); ++i) {

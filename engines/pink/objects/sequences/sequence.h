@@ -72,6 +72,9 @@ protected:
 
 class SequenceAudio : public Sequence {
 public:
+	SequenceAudio()
+		: _leader(nullptr) {}
+
 	void deserialize(Archive &archive) override;
 	void toConsole() override;
 

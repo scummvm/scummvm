@@ -32,6 +32,8 @@ class ActionSfx;
 
 class ActionPlayWithSfx : public ActionPlay {
 public:
+	ActionPlayWithSfx()
+		: _isLoop(false) {}
 	~ActionPlayWithSfx() override;
 
 	void deserialize(Archive &archive) override;
@@ -45,7 +47,7 @@ protected:
 
 private:
 	Array<ActionSfx *> _sfxArray;
-	uint32 _isLoop;
+	bool _isLoop;
 };
 
 class Page;

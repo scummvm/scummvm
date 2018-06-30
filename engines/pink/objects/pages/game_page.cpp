@@ -31,8 +31,8 @@
 namespace Pink {
 
 GamePage::GamePage()
-		: _cursorMgr(nullptr), _walkMgr(nullptr), _sequencer(nullptr),
-		  _isLoaded(false), _memFile(nullptr) {}
+	: _module(nullptr), _cursorMgr(nullptr), _walkMgr(nullptr),
+	_sequencer(nullptr), _isLoaded(false), _memFile(nullptr)  {}
 
 GamePage::~GamePage() {
 	clear();

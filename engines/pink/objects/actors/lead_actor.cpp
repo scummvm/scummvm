@@ -33,9 +33,10 @@
 namespace Pink {
 
 LeadActor::LeadActor()
-		: _state(kReady), _nextState(kReady), _isHaveItem(false),
-		  _recipient(nullptr), _cursorMgr(nullptr), _walkMgr(nullptr),
-		  _sequencer(nullptr), _audioInfoMgr(this) {}
+	: _state(kReady), _nextState(kUndefined), _stateBeforeInventory(kUndefined),
+	_stateBeforePDA(kUndefined), _isHaveItem(false), _recipient(nullptr),
+	_cursorMgr(nullptr), _walkMgr(nullptr), _sequencer(nullptr),
+	_audioInfoMgr(this) {}
 
 void LeadActor::deserialize(Archive &archive) {
 	_state = kReady;

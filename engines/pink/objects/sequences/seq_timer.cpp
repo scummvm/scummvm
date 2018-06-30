@@ -32,7 +32,8 @@
 namespace Pink {
 
 SeqTimer::SeqTimer()
-		: _updatesToMessage(0) {}
+	: _sequencer(nullptr), _updatesToMessage(0), _period(0),
+	_range(0) {}
 
 void SeqTimer::deserialize(Archive &archive) {
 	_actor = archive.readString();

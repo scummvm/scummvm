@@ -76,6 +76,7 @@ private:
 
 class BroFile : public Common::File {
 public:
+	BroFile() : _timestamp(0) {}
 	bool open(const Common::String &name);
 	uint32 getTimestamp() { return _timestamp; }
 

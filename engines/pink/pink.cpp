@@ -37,10 +37,10 @@
 
 namespace Pink {
 
-Pink::PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
-		: Engine(system), _console(nullptr), _rnd("pink"),
-		  _desc(*desc), _bro(nullptr), _module(nullptr),
-		  _director(), _pdaMgr(this) {
+PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
+	: Engine(system), _console(nullptr), _rnd("pink"),
+	_desc(*desc), _bro(nullptr), _actor(nullptr),
+	_module(nullptr), _director(), _pdaMgr(this) {
 	debug("PinkEngine constructed");
 
 	DebugMan.addDebugChannel(kPinkDebugGeneral, "general", "General issues");
@@ -53,7 +53,7 @@ Pink::PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 }
 
-Pink::PinkEngine::~PinkEngine() {
+PinkEngine::~PinkEngine() {
 	delete _console;
 	delete _bro;
 	for (uint i = 0; i < _modules.size(); ++i) {
