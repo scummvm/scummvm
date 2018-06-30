@@ -48,6 +48,7 @@ class Scene;
 class UserInterface;
 class Settings;
 class GameChapter;
+class GameMessage;
 
 /**
  * Public services available as a singleton
@@ -69,6 +70,7 @@ public:
 		fontProvider = nullptr;
 		settings = nullptr;
 		gameChapter = nullptr;
+		gameMessage = nullptr;
 	}
 
 	ArchiveLoader *archiveLoader;
@@ -85,6 +87,7 @@ public:
 	FontProvider *fontProvider;
 	Settings *settings;
 	GameChapter *gameChapter;
+	GameMessage *gameMessage;
 };
 
 /** Shortcuts for accessing the services. */
@@ -102,6 +105,7 @@ public:
 #define StarkFontProvider       StarkServices::instance().fontProvider
 #define StarkSettings           StarkServices::instance().settings
 #define StarkGameChapter        StarkServices::instance().gameChapter
+#define StarkGameMessage        StarkServices::instance().gameMessage
 
 } // End of namespace Stark
 

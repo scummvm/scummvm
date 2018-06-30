@@ -52,6 +52,7 @@ class ResourceProvider;
 class UserInterface;
 class Settings;
 class GameChapter;
+class GameMessage;
 
 class StarkEngine : public Engine {
 public:
@@ -93,6 +94,7 @@ private:
 	FontProvider *_fontProvider;
 	Settings *_settings;
 	GameChapter *_gameChapter;
+	GameMessage *_gameMessage;
 
 	Common::RandomSource *_randomSource;
 
