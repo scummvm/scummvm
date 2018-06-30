@@ -34,6 +34,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/gamemessage.h"
 
 #include "engines/stark/visual/image.h"
 
@@ -132,8 +133,9 @@ void TopMenu::onClick(const Common::Point &pos) {
 	}
 
 	if (_exitButton->containsPoint(pos)) {
-		// TODO: Confirmation dialog
-		StarkUserInterface->requestQuitToMainMenu();
+		if (StarkGameMessage->alert(GameMessage::kQuitGamePrompt)) {
+			StarkUserInterface->requestQuitToMainMenu();
+		}
 	}
 
 	if (_inventoryButton->containsPoint(pos)) {

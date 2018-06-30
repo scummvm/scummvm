@@ -26,6 +26,8 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/diary.h"
 #include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/gamemessage.h"
+
 #include "engines/stark/ui/cursor.h"
 
 #include "common/translation.h"
@@ -122,7 +124,9 @@ void DiaryIndexScreen::backHandler() {
 }
 
 void DiaryIndexScreen::quitHandler() {
-	StarkUserInterface->requestQuitToMainMenu();
+	if (StarkGameMessage->alert(GameMessage::kQuitGamePrompt)) {
+		StarkUserInterface->requestQuitToMainMenu();
+	}
 }
 
 void DiaryIndexScreen::loadHandler() {
