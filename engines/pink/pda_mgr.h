@@ -51,6 +51,7 @@ public:
 	void update() { _cursorMgr.update(); }
 
 	void onLeftButtonClick(Common::Point point);
+	void onLeftButtonUp(Common::Point point);
 	void onMouseMove(Common::Point point);
 
 	PinkEngine *getGame() const { return _game; }

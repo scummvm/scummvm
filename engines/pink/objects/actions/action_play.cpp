@@ -64,7 +64,7 @@ void ActionPlay::onStart() {
 	if (_stopFrame == -1 || _stopFrame >= frameCount)
 		_stopFrame = frameCount - 1;
 	assert(_startFrame < _decoder.getFrameCount());
-	setFrame(_startFrame);
+	ActionCEL::setFrame(_startFrame);
 	// doesn't need to decode startFrame here. Update method will decode
 }
 

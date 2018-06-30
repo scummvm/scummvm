@@ -71,12 +71,12 @@ void ActionLoop::update() {
 				decodeNext();
 			} else {
 				_forward = false;
-				setFrame(_stopFrame - 1);
+				ActionCEL::setFrame(_stopFrame - 1);
 				decodeNext();
 			}
 		} else {
 			if (frame > (int)_startFrame) {
-				setFrame(frame - 1);
+				ActionCEL::setFrame(frame - 1);
 			} else {
 				_forward = true;
 			}
@@ -85,13 +85,13 @@ void ActionLoop::update() {
 		break;
 	case kRandom: {
 		Common::RandomSource &rnd = _actor->getPage()->getGame()->getRnd();
-		setFrame(rnd.getRandomNumberRng(_startFrame, _stopFrame));
+		ActionCEL::setFrame(rnd.getRandomNumberRng(_startFrame, _stopFrame));
 		decodeNext();
 		break;
 	}
 	case kForward:
 		if (frame == _stopFrame) {
-			setFrame(_startFrame);
+			ActionCEL::setFrame(_startFrame);
 		}
 		decodeNext();
 		break;

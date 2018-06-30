@@ -120,6 +120,8 @@ Common::Error Pink::PinkEngine::run() {
 			case Common::EVENT_LBUTTONDOWN:
 				_actor->onLeftButtonClick(event.mouse);
 				break;
+			case Common::EVENT_LBUTTONUP:
+				_actor->onLeftButtonUp(event.mouse);
 			case Common::EVENT_RBUTTONDOWN:
 				if (isPeril())
 					_actor->onRightButtonClick(event.mouse);

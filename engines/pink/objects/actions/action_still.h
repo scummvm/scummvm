@@ -37,6 +37,8 @@ public:
 
 	void pause(bool paused) override;
 
+	void setFrame(uint frame);
+
 protected:
 	void onStart() override;
 

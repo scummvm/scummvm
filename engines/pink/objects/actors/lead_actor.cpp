@@ -244,6 +244,11 @@ void LeadActor::onLeftButtonClick(const Common::Point point) {
 	}
 }
 
+void LeadActor::onLeftButtonUp(const Common::Point point) {
+	if (_state == kPDA)
+		_page->getGame()->getPdaMgr().onLeftButtonUp(point);
+}
+
 void LeadActor::onRightButtonClick(const Common::Point point) {
 	if (_state == kReady || _state == kMoving) {
 		Actor *clickedActor = getActorByPoint(point);

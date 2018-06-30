@@ -208,6 +208,9 @@ static const char * const kNavigatePage = "NAVIGATE";
 
 static const char * const kSfx = "SFX";
 
+static const char * const kRightHand = "RightHand";
+static const char * const kLeftHand = "LeftHand";
+
 } // End of namespace Pink
 
 #endif

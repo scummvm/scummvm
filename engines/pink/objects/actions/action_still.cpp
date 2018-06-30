@@ -52,13 +52,17 @@ void ActionStill::onStart() {
 	if (_startFrame >= _decoder.getFrameCount())
 		_startFrame = 0;
 
-	setFrame(_startFrame); // seek to frame before startFrame
-	decodeNext(); // decode startFrame
+	setFrame(_startFrame);
 
 	_decoder.setEndOfTrack();
 	assert(!_decoder.needsUpdate());
 
 	_actor->endAction();
+}
+
+void ActionStill::setFrame(uint frame) {
+	ActionCEL::setFrame(frame);
+	decodeNext();
 }
 
 } // End of namespace Pink

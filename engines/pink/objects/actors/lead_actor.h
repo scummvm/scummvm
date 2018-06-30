@@ -70,6 +70,7 @@ public:
 
 	void onKeyboardButtonClick(Common::KeyCode code);
 	void onLeftButtonClick(const Common::Point point);
+	void onLeftButtonUp(const Common::Point point);
 	void onRightButtonClick(const Common::Point point);
 
 	void onMouseMove(const Common::Point point);
