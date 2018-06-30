@@ -198,11 +198,15 @@ static const char * const kTrueValue = "TRUE";
 static const char * const kCountryWheel = "CountryWheel";
 static const char * const kDomainWheel = "DomainWheel";
 
+static const char * const kLocator = "Locator";
+
 static const char * const kPreviousPageButton = "PreviousPageButton";
 static const char * const kDomainButton = "DomainButton";
 static const char * const kNavigatorButton = "NavigatorButton";
 
 static const char * const kNavigatePage = "NAVIGATE";
+
+static const char * const kSfx = "SFX";
 
 } // End of namespace Pink
 

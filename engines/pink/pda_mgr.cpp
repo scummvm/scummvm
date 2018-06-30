@@ -55,17 +55,37 @@ void PDAMgr::execute(const Command &command) {
 	case Command::kGoToPage:
 		goToPage(command.arg);
 		break;
-	case Command::kGoToPreviousPage: {
+	case Command::kGoToPreviousPage:
 		assert(_previousPages.size() >= 2);
 		_previousPages.pop();
 		goToPage(_previousPages.pop());
 		break;
-	}
 	case Command::kGoToDomain:
 		goToPage(Common::String::format("%.6s", _page->getName().c_str()));
 		break;
 	case Command::kGoToHelp:
 		warning("Command GoToHelp is not supported and won't be");
+		break;
+	case Command::kNavigateToDomain:
+		goToPage(Common::String(g_countries[_countryIndex]) += g_domains[_domainIndex]);
+		break;
+	case Command::kIncrementCountry:
+		_countryIndex = (_countryIndex + 1) % 6;
+		updateWheels(1);
+		updateLocator();
+		break;
+	case Command::kDecrementCountry:
+		_countryIndex = (_countryIndex + 5) % 6;
+		updateWheels(1);
+		updateLocator();
+		break;
+	case Command::kIncrementDomain:
+		_domainIndex = (_domainIndex + 1) % 8;
+		updateWheels(1);
+		break;
+	case Command::kDecrementDomain:
+		_domainIndex = (_domainIndex + 6) % 8;
+		updateWheels(1);
 		break;
 	case Command::kClose:
 		close();
@@ -157,7 +177,7 @@ void PDAMgr::initPerilButtons() {
 		else
 			domainButton->setAction(kIdleAction);
 	}
-
+	updateLocator();
 }
 
 Actor *PDAMgr::findGlobalActor(const Common::String &actorName) {
@@ -168,9 +188,22 @@ Actor *PDAMgr::findGlobalActor(const Common::String &actorName) {
 	return nullptr;
 }
 
-void PDAMgr::updateWheels() {
-	_page->findActor(kCountryWheel)->setAction(g_countries[_countryIndex]);
-	_page->findActor(kDomainWheel)->setAction(g_domains[_domainIndex]);
+void PDAMgr::updateWheels(bool playSfx) {
+	Actor *wheel = _page->findActor(kCountryWheel);
+	if (playSfx && wheel->getAction()->getName() != g_countries[_countryIndex]) {
+		wheel->setAction(Common::String(g_countries[_countryIndex]) + kSfx);
+		dynamic_cast<ActionCEL*>(wheel->getAction())->update();
+		dynamic_cast<ActionCEL*>(wheel->getAction())->update(); // hack
+	}
+	wheel->setAction(g_countries[_countryIndex]);
+
+	wheel = _page->findActor(kDomainWheel);
+	if (playSfx && wheel->getAction()->getName() != g_domains[_domainIndex]) {
+		wheel->setAction(Common::String(g_domains[_domainIndex]) + kSfx);
+		dynamic_cast<ActionCEL*>(wheel->getAction())->update();
+		dynamic_cast<ActionCEL*>(wheel->getAction())->update(); // hack
+	}
+	wheel->setAction(g_domains[_domainIndex]);
 }
 
 bool PDAMgr::isNavigate(const Common::String &name) {
@@ -179,6 +212,12 @@ bool PDAMgr::isNavigate(const Common::String &name) {
 
 bool PDAMgr::isDomain(const Common::String &name) {
 	return name.size() == 6;
+}
+
+void PDAMgr::updateLocator() {
+	Actor *locator = findGlobalActor(kLocator);
+	if (locator)
+		locator->setAction(g_countries[_countryIndex]);
 }
 
 } // End of namespace Pink

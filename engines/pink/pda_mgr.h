@@ -64,7 +64,8 @@ private:
 
 	void initPerilButtons();
 
-	void updateWheels();
+	void updateWheels(bool playSfx = 0);
+	void updateLocator();
 
 	Actor *findGlobalActor(const Common::String &actorName);
 
