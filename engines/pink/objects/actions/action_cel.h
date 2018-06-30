@@ -59,8 +59,6 @@ public:
 protected:
 	virtual void onStart() = 0;
 
-	void closeDecoder();
-
 	void setFrame(uint frame);
 	void decodeNext();
 

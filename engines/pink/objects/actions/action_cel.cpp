@@ -64,9 +64,7 @@ void ActionCEL::start() {
 }
 
 void ActionCEL::end() {
-	if (!_decoder.isVideoLoaded())
-		return;
-	closeDecoder();
+	_actor->getPage()->getGame()->getDirector()->removeSprite(this);
 }
 
 void ActionCEL::pause(bool paused) {
@@ -86,11 +84,6 @@ Coordinates ActionCEL::getCoordinates() {
 void ActionCEL::loadDecoder() {
 	if (!_decoder.isVideoLoaded())
 		_decoder.loadStream(_actor->getPage()->getResourceStream(_fileName));
-}
-
-void ActionCEL::closeDecoder() {
-	_actor->getPage()->getGame()->getDirector()->removeSprite(this);
-	_decoder.close();
 }
 
 void ActionCEL::setFrame(uint frame) {

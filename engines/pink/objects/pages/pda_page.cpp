@@ -39,6 +39,7 @@ Array<Actor *> PDAPage::takeActors() {
 		_actors[i]->preloadSprites();
 	}
 	Array<Actor *> actorsCopy = _actors;
+	_actors.clear();
 	return actorsCopy;
 }
 
