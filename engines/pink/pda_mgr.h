@@ -67,8 +67,6 @@ private:
 	void updateWheels(bool playSfx = 0);
 	void updateLocator();
 
-	Actor *findGlobalActor(const Common::String &actorName);
-
 	static bool isNavigate(const Common::String &name);
 	static bool isDomain(const Common::String &name);
 
@@ -76,8 +74,8 @@ private:
 	PinkEngine *_game;
 	LeadActor *_lead;
 	PDAPage *_page;
+	PDAPage *_globalPage;
 	CursorMgr _cursorMgr;
-	Array<Actor *> _globalActors;
 	Common::String _savedPage;
 	Common::Stack<Common::String> _previousPages;
 	uint _countryIndex;

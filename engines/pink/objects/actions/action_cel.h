@@ -38,8 +38,6 @@ public:
 
 	bool initPalette(Director *director) override;
 
-	void loadDecoder();
-
 	void start() override;
 	void end() override;
 
@@ -61,6 +59,8 @@ protected:
 
 	void setFrame(uint frame);
 	void decodeNext();
+
+	void loadDecoder();
 
 	CelDecoder _decoder;
 	Common::String _fileName;

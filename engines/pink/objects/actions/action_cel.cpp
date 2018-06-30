@@ -65,6 +65,7 @@ void ActionCEL::start() {
 
 void ActionCEL::end() {
 	_actor->getPage()->getGame()->getDirector()->removeSprite(this);
+	_decoder.close();
 }
 
 void ActionCEL::pause(bool paused) {

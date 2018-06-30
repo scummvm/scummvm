@@ -33,13 +33,11 @@ static const char * const g_countries[] = {"BRI", "EGY", "BHU", "AUS", "IND", "C
 static const char * const g_domains[] = {"NAT", "CLO", "HIS", "REL", "PLA", "ART", "FOO", "PEO"};
 
 PDAMgr::PDAMgr(Pink::PinkEngine *game)
-	: _game(game), _page(nullptr), _cursorMgr(game, nullptr),
-	_countryIndex(0), _domainIndex(0) {}
+	: _game(game), _page(nullptr), _globalPage(nullptr),
+	_cursorMgr(game, nullptr), _countryIndex(0), _domainIndex(0) {}
 
 PDAMgr::~PDAMgr() {
-	for (uint i = 0; i < _globalActors.size(); ++i) {
-		delete _globalActors[i];
-	}
+	delete _globalPage;
 	delete _page;
 }
 
@@ -107,10 +105,6 @@ void PDAMgr::goToPage(const Common::String &pageName) {
 
 	_page->init();
 
-	for (uint i = 0; i < _globalActors.size(); ++i) {
-		_globalActors[i]->setPage(_page);
-	}
-
 	_previousPages.push(_page->getName());
 
 	if (_game->isPeril())
@@ -135,37 +129,31 @@ void PDAMgr::onMouseMove(Common::Point point) {
 }
 
 void PDAMgr::close() {
-	for (uint i = 0; i < _globalActors.size(); ++i) {
-		delete _globalActors[i];
-	}
-	_globalActors.clear();
-
+	delete _globalPage;
 	delete _page;
+	_globalPage = nullptr;
 	_page = nullptr;
 
 	_lead->onPDAClose();
 }
 
 void PDAMgr::loadGlobal() {
-	if (!_globalActors.empty())
+	if (_globalPage)
 		return;
 
-	PDAPage globalPage = PDAPage::create("GLOBAL", *this);
-	_globalActors = globalPage.takeActors();
-	for (uint i = 0; i < _globalActors.size(); ++i) {
-		_globalActors[i]->init(0);
-	}
+	_globalPage = new PDAPage(PDAPage::create("GLOBAL", *this));
+	_globalPage->init();
 }
 
 void PDAMgr::initPerilButtons() {
-	Actor *prevPageButton = findGlobalActor(kPreviousPageButton);
+	Actor *prevPageButton = _globalPage->findActor(kPreviousPageButton);
 	if (_previousPages.size() < 2)
 		prevPageButton->setAction(kInactiveAction);
 	else
 		prevPageButton->setAction(kIdleAction);
 
-	Actor *navigatorButton = findGlobalActor(kNavigatorButton);
-	Actor *domainButton = findGlobalActor(kDomainButton);
+	Actor *navigatorButton = _globalPage->findActor(kNavigatorButton);
+	Actor *domainButton = _globalPage->findActor(kDomainButton);
 	if (isNavigate(_page->getName())) {
 		navigatorButton->setAction(kInactiveAction);
 		domainButton->setAction(kInactiveAction);
@@ -178,14 +166,6 @@ void PDAMgr::initPerilButtons() {
 			domainButton->setAction(kIdleAction);
 	}
 	updateLocator();
-}
-
-Actor *PDAMgr::findGlobalActor(const Common::String &actorName) {
-	for (uint i = 0; i < _globalActors.size(); ++i) {
-		if (_globalActors[i]->getName() == actorName)
-			return _globalActors[i];
-	}
-	return nullptr;
 }
 
 void PDAMgr::updateWheels(bool playSfx) {
@@ -215,7 +195,7 @@ bool PDAMgr::isDomain(const Common::String &name) {
 }
 
 void PDAMgr::updateLocator() {
-	Actor *locator = findGlobalActor(kLocator);
+	Actor *locator = _globalPage->findActor(kLocator);
 	if (locator)
 		locator->setAction(g_countries[_countryIndex]);
 }

@@ -32,7 +32,6 @@ class PDAMgr;
 class PDAPage : public Page {
 public:
 	static PDAPage create(const Common::String &pageName, PDAMgr &pdaMgr);
-	Array<Actor *> takeActors();
 
 private:
 	PDAPage(const Common::String &name) { _name = name; }
