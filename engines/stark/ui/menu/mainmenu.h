@@ -68,7 +68,8 @@ public:
 	virtual ~VersionInfoText() {}
 
 private:
-	static const int _copyrightSymbol = -87, _posX = 16, _posY = 419;
+	static const char _copyrightSymbol = char(0xA9);
+	static const int _posX = 16, _posY = 419;
 };
 
 } // End of namespace Stark

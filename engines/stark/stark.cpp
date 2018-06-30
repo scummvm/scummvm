@@ -176,6 +176,10 @@ void StarkEngine::mainLoop() {
 			break;
 		}
 
+		if (_userInterface->hasQuitToMainMenuRequest()) {
+			_userInterface->performQuitToMainMenu();
+		}
+
 		if (_resourceProvider->hasLocationChangeRequest()) {
 			_global->setNormalSpeed();
 			_resourceProvider->performLocationChange();
@@ -246,11 +250,6 @@ void StarkEngine::updateDisplayScene() {
 
 	// Clear the screen
 	_gfx->clearScreen();
-
-	// Quit to main menu screen, if needed
-	if (_userInterface->hasQuitToMainMenuRequest()) {
-		_userInterface->performQuitToMainMenu();
-	}
 
 	// Only update the world resources when on the game screen
 	if (_userInterface->isInGameScreen()) {
