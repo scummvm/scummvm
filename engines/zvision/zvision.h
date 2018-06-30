@@ -92,6 +92,10 @@ enum ZVisionGameId {
 	GID_GRANDINQUISITOR = 2
 };
 
+enum ZVisionFeatures {
+	GF_DVD = (1 << 0) // ZGI DVD version
+};
+
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
