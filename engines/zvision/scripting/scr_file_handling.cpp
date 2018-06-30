@@ -222,6 +222,28 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 			entry.argumentIsAKey = false;
 		}
 
+		// WORKAROUND for a script bug in Zork: Grand Inquisitor. If the
+		// fire timer is killed (e.g. by the inventory screen) with less
+		// than 10 units left, it will get stuck and never time out. We
+		// work around that by changing the condition from "greater than
+		// 10" to "greater than 0 but not 2 (the magic time-out value)".
+		//
+		// I have a sneaking suspicion that there may be other timer
+		// glitches like this, but this one makes the game unplayable
+		// and is easy to trigger.
+		if (_engine->getGameId() == GID_GRANDINQUISITOR && key == 17162) {
+			Puzzle::CriteriaEntry entry0;
+			entry0.key = 17161; // pe_fire
+			entry0.criteriaOperator = Puzzle::GREATER_THAN;
+			entry0.argumentIsAKey = false;
+			entry0.argument = 0;
+
+			criteriaList.back().push_back(entry0);
+
+			entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
+			entry.argument = 2;
+		}
+
 		criteriaList.back().push_back(entry);
 
 		line = stream.readLine();
