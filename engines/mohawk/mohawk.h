@@ -26,7 +26,6 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
 class OSystem;
@@ -66,18 +65,11 @@ enum MohawkGameFeatures {
 	GF_LB_10 = (1 << 4)  // very early Living Books 1.0 games
 };
 
+struct MohawkGameDescription;
 class Sound;
 class PauseDialog;
 class Archive;
 class CursorManager;
-
-struct MohawkGameDescription {
-	ADGameDescription desc;
-
-	uint8 gameType;
-	uint32 features;
-	const char *appName;
-};
 
 class MohawkEngine : public ::Engine {
 protected:

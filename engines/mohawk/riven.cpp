@@ -506,14 +506,10 @@ Common::String MohawkEngine_Riven::getLanguageDatafile(char prefix) const {
 	if (!(getFeatures() & GF_25TH) || getLanguage() == Common::EN_ANY)
 		return "";
 
-	if (!Common::String(_gameDescription->desc.filesDescriptions[1].fileName).hasPrefix("a_data_")) {
-		warning("Malformed 25th Anniversary Riven entry");
-
+	Common::String language = getDatafileLanguageName();
+	if (language.empty()) {
 		return "";
 	}
-
-	const char *fname = _gameDescription->desc.filesDescriptions[1].fileName;
-	Common::String language(&fname[7], strlen(fname) - 7 - 4);
 
 	return Common::String::format("%c_data_%s.mhk", prefix, language.c_str());
 }

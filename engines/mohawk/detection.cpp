@@ -46,6 +46,14 @@
 
 namespace Mohawk {
 
+struct MohawkGameDescription {
+	ADGameDescription desc;
+
+	uint8 gameType;
+	uint32 features;
+	const char *appName;
+};
+
 const char* MohawkEngine::getGameId() const {
 	return _gameDescription->desc.gameId;
 }
@@ -97,6 +105,23 @@ bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
 		MohawkEngine::hasFeature(f)
 		|| (f == kSupportsLoadingDuringRuntime)
 		|| (f == kSupportsSavingDuringRuntime);
+}
+
+Common::String MohawkEngine_Riven::getDatafileLanguageName() const {
+	const ADGameFileDescription *fileDesc;
+	for (fileDesc = _gameDescription->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
+		if (Common::String(fileDesc->fileName).hasPrefix("a_data_")) {
+			break;
+		}
+	}
+
+	if (!fileDesc->fileName) {
+		warning("Malformed 25th Anniversary Riven entry");
+
+		return "";
+	}
+
+	return Common::String(&fileDesc->fileName[7], strlen(fileDesc->fileName) - 7 - 4);
 }
 
 #endif
