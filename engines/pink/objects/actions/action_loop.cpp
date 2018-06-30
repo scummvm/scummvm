@@ -54,7 +54,6 @@ void ActionLoop::toConsole() {
 }
 
 void ActionLoop::update() {
-	ActionCEL::update();
 	uint frame = _decoder.getCurFrame();
 
 	if (!_inLoop) {
