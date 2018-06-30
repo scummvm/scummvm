@@ -54,10 +54,10 @@ void ActionLoop::toConsole() {
 }
 
 void ActionLoop::update() {
-	uint frame = _decoder.getCurFrame();
+	int frame = _decoder.getCurFrame();
 
 	if (!_inLoop) {
-		if (frame < _startFrame) {
+		if (frame < (int)_startFrame) {
 			decodeNext();
 			return;
 		} else
@@ -67,7 +67,7 @@ void ActionLoop::update() {
 	switch (_style) {
 	case kPingPong:
 		if (_forward) {
-			if (frame < (uint)_stopFrame) {
+			if (frame < _stopFrame) {
 				decodeNext();
 			} else {
 				_forward = false;
@@ -75,7 +75,7 @@ void ActionLoop::update() {
 				decodeNext();
 			}
 		} else {
-			if (frame > _startFrame) {
+			if (frame > (int)_startFrame) {
 				setFrame(frame - 1);
 			} else {
 				_forward = true;
@@ -90,7 +90,7 @@ void ActionLoop::update() {
 		break;
 	}
 	case kForward:
-		if (frame == (uint)_stopFrame) {
+		if (frame == _stopFrame) {
 			setFrame(_startFrame);
 		}
 		decodeNext();
