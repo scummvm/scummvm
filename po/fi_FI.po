@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-06-29 13:32+0200\n"
+"POT-Creation-Date: 2018-06-30 21:57+0200\n"
 "PO-Revision-Date: 2018-06-29 14:31+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
+"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -684,7 +684,7 @@ msgstr "Etsi:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:884
-#: engines/mohawk/riven.cpp:629 engines/pegasus/pegasus.cpp:355
+#: engines/mohawk/riven.cpp:625 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Lataa peli:"
@@ -693,7 +693,7 @@ msgstr "Lataa peli:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:163
-#: engines/mohawk/myst.cpp:884 engines/mohawk/riven.cpp:629
+#: engines/mohawk/myst.cpp:884 engines/mohawk/riven.cpp:625
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
@@ -1863,7 +1863,7 @@ msgstr "Palaa p~e~livalitsimeen"
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:164
-#: engines/mohawk/myst.cpp:896 engines/mohawk/riven.cpp:641
+#: engines/mohawk/myst.cpp:896 engines/mohawk/riven.cpp:637
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:658
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
@@ -1885,7 +1885,7 @@ msgstr "Tallenna peli:"
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:164 engines/mohawk/myst.cpp:896
-#: engines/mohawk/riven.cpp:641 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/riven.cpp:637 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:659
 #: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
@@ -3298,11 +3298,11 @@ msgstr "Animoitu pelikäyttöliittymä"
 msgid "Naughty game mode"
 msgstr "Tuhma pelitila"
 
-#: engines/mohawk/detection.cpp:154
+#: engines/mohawk/detection.cpp:179
 msgid "Play the Myst fly by movie"
 msgstr "Soita Myst fly by-video"
 
-#: engines/mohawk/detection.cpp:155
+#: engines/mohawk/detection.cpp:180
 msgid "The Myst fly by movie was not played by the original engine."
 msgstr "Alkuperäinen pelimoottori ei toistanut Myst fly by-videota."
 
