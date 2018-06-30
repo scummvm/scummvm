@@ -211,6 +211,11 @@ static const char * const kSfx = "SFX";
 static const char * const kRightHand = "RightHand";
 static const char * const kLeftHand = "LeftHand";
 
+static const char * const kLeft1Name = "Left1";
+static const char * const kLeft2Name = "Left2";
+static const char * const kLeft3Name = "Left3";
+static const char * const kLeft4Name = "Left4";
+
 } // End of namespace Pink
 
 #endif

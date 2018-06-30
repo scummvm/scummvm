@@ -65,4 +65,9 @@ void ActionStill::setFrame(uint frame) {
 	decodeNext();
 }
 
+void ActionStill::nextFrameLooped() {
+	assert(_decoder.getCurFrame() != -1);
+	setFrame((_decoder.getCurFrame() + 1) % _decoder.getFrameCount());
+}
+
 } // End of namespace Pink

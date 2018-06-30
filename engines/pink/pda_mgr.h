@@ -79,8 +79,16 @@ private:
 	CursorMgr _cursorMgr;
 	Common::String _savedPage;
 	Common::Stack<Common::String> _previousPages;
-	uint _countryIndex;
-	uint _domainIndex;
+	uint16 _countryIndex;
+	uint16 _domainIndex;
+	uint16 _iteration;
+	uint16 _handFrame;
+	enum LeftHandAction {
+		kLeft1,
+		kLeft2,
+		kLeft3,
+		kLeft4
+	} _leftHandAction;
 };
 
 } // End of namespace Pink

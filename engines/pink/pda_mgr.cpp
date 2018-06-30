@@ -34,7 +34,8 @@ static const char * const g_domains[] = {"NAT", "CLO", "HIS", "REL", "PLA", "ART
 
 PDAMgr::PDAMgr(Pink::PinkEngine *game)
 	: _game(game), _page(nullptr), _globalPage(nullptr),
-	_cursorMgr(game, nullptr), _countryIndex(0), _domainIndex(0) {}
+	_cursorMgr(game, nullptr), _countryIndex(0), _domainIndex(0),
+	_iteration(0), _handFrame(0), _leftHandAction(kLeft1) {}
 
 PDAMgr::~PDAMgr() {
 	delete _globalPage;
@@ -111,7 +112,6 @@ void PDAMgr::goToPage(const Common::String &pageName) {
 		initPerilButtons();
 
 	_cursorMgr.setPage(_page);
-
 }
 
 void PDAMgr::onLeftButtonClick(Common::Point point) {
@@ -135,6 +135,39 @@ void PDAMgr::onMouseMove(Common::Point point) {
 		actor->onMouseOver(point, &_cursorMgr);
 	else
 		_cursorMgr.setCursor(kPDADefaultCursor, point, Common::String());
+
+	if (!_game->isPeril())
+		return;
+
+	float k = (float)point.x / (480 - point.y);
+	Actor *leftHand = _globalPage->findActor(kLeftHand);
+	if (k > 0.5) {
+		if (k > 1) {
+			if (k > 1.5 && _leftHandAction != kLeft4) {
+				leftHand->setAction(kLeft4Name);
+				static_cast<ActionStill*>(leftHand->getAction())->setFrame(_handFrame + 1);
+				_leftHandAction = kLeft4;
+			} else if (_leftHandAction != kLeft3) {
+				leftHand->setAction(kLeft3Name);
+				static_cast<ActionStill*>(leftHand->getAction())->setFrame(_handFrame + 1);
+				_leftHandAction = kLeft3;
+			}
+		} else if (_leftHandAction != kLeft2) {
+			leftHand->setAction(kLeft2Name);
+			static_cast<ActionStill*>(leftHand->getAction())->setFrame(_handFrame + 1);
+			_leftHandAction = kLeft2;
+		}
+	} else if (_leftHandAction != kLeft1) {
+		leftHand->setAction(kLeft1Name);
+		static_cast<ActionStill*>(leftHand->getAction())->setFrame(_handFrame + 1);
+		_leftHandAction = kLeft1;
+	}
+
+	if (_iteration == 0) {
+		_handFrame = (_handFrame + 1) % 4;
+		static_cast<ActionStill*>(leftHand->getAction())->nextFrameLooped();
+	}
+	_iteration = (_iteration + 1) % 4;
 }
 
 void PDAMgr::close() {

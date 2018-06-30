@@ -39,6 +39,8 @@ public:
 
 	void setFrame(uint frame);
 
+	void nextFrameLooped();
+
 protected:
 	void onStart() override;
 

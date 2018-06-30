@@ -57,8 +57,8 @@ public:
 protected:
 	virtual void onStart() = 0;
 
-	void setFrame(uint frame);
 	void decodeNext();
+	void setFrame(uint frame);
 
 	void loadDecoder();
 
