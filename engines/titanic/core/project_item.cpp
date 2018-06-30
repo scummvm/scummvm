@@ -189,7 +189,8 @@ void CProjectItem::loadGame(int slotId) {
 
 	// Load the savegame header in
 	TitanicSavegameHeader header;
-	readSavegameHeader(&file, header);
+	if (!readSavegameHeader(&file, header))
+		error("Failed to read save game header");
 
 	g_vm->_events->setTotalPlayTicks(header._totalFrames);
 
