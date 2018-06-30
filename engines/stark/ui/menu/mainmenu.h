@@ -55,7 +55,21 @@ private:
 	void loadHandler();
 	void creditsHandler();
 	void settingsHandler();
+	void boxHandler();
 	void quitHandler();
+};
+
+/**
+ * The version info text
+ */
+class VersionInfoText : public StaticLocationWidget {
+public:
+	VersionInfoText();
+	virtual ~VersionInfoText() {}
+
+private:
+	static const char _copyrightSymbol = char(0xA9);
+	static const int _posX = 16, _posY = 419;
 };
 
 } // End of namespace Stark

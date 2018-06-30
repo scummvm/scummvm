@@ -26,13 +26,12 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/settings.h"
 
+#include "engines/stark/gfx/renderentry.h"
+#include "engines/stark/visual/text.h"
+
+#include "engines/stark/scene.h"
+
 #include "common/config-manager.h"
-#include "common/translation.h"
-
-#include "gui/saveload.h"
-#include "gui/message.h"
-
-#include "engines/engine.h"
 
 namespace Stark {
 
@@ -72,7 +71,7 @@ void MainMenuScreen::open() {
 	
 	_widgets.push_back(new StaticLocationWidget(
 			"Box",
-			nullptr,
+			CLICK_HANDLER(MainMenuScreen, boxHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kBox>)));
 	_widgets.back()->setupSounds(0, 1);
 	
@@ -124,15 +123,7 @@ void MainMenuScreen::open() {
 			nullptr));
 	_widgets.back()->setVisible(false);
 	
-	_widgets.push_back(new StaticLocationWidget(
-			"VERSION INFO",
-			nullptr,
-			nullptr));
-	
-	_widgets.push_back(new StaticLocationWidget(
-			"VERSION INFO REALLY",
-			nullptr,
-			nullptr));
+	_widgets.push_back(new VersionInfoText());
 }
 
 template<MainMenuScreen::HelpTextIndex N>
@@ -181,8 +172,23 @@ void MainMenuScreen::settingsHandler() {
 	StarkUserInterface->changeScreen(Screen::kScreenSettingsMenu);
 }
 
+void MainMenuScreen::boxHandler() {
+	if (!StarkSettings->isDemo() && StarkSettings->hasBookOfSecrets()) {
+		StarkUserInterface->changeScreen(kScreenGame);
+		StarkResourceProvider->initGlobal();
+		StarkResourceProvider->requestLocationChange(0x7c, 0x00);
+	}
+}
+
 void MainMenuScreen::quitHandler() {
 	StarkUserInterface->notifyShouldExit();
+}
+
+VersionInfoText::VersionInfoText() :
+		StaticLocationWidget("VERSION INFO REALLY", nullptr, nullptr) {
+	Common::String text = _copyrightSymbol + Common::String("1999 Funcom");
+	_renderEntry->getText()->setText(text);
+	_renderEntry->setPosition(Common::Point(_posX, _posY));
 }
 
 } // End of namespace Stark

@@ -122,7 +122,7 @@ void DiaryIndexScreen::backHandler() {
 }
 
 void DiaryIndexScreen::quitHandler() {
-	StarkUserInterface->quitToMainMenu();
+	StarkUserInterface->requestQuitToMainMenu();
 }
 
 void DiaryIndexScreen::loadHandler() {

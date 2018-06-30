@@ -36,7 +36,7 @@ Scene::Scene(Gfx::Driver *gfx) :
 		_fov(45.0),
 		_nearClipPlane(100.0),
 		_farClipPlane(64000.0),
-		_fadeLevel(0.0),
+		_fadeLevel(1.0),
 		_floatOffset(0.0) {
 }
 

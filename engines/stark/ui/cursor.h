@@ -52,6 +52,9 @@ public:
 	/** Make cycle the cursor's brightness */
 	void setFading(bool fading);
 
+	/** Update when the screen resolution has changed */
+	void onScreenChanged();
+
 	Common::Point getMousePosition(bool unscaled = false) const;
 
 	enum CursorType {

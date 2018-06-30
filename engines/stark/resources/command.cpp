@@ -61,6 +61,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/settings.h"
 
 #include "common/random.h"
 
@@ -460,8 +461,7 @@ Math::Vector3d Command::getObjectPosition(const ResourceReference &targetRef, in
 }
 
 Command *Command::opGameEnd() {
-	// TODO: Display the main menu instead of exiting
-	StarkUserInterface->notifyShouldExit();
+	StarkUserInterface->requestQuitToMainMenu();
 
 	return nextCommand();
 }
@@ -483,7 +483,7 @@ Command *Command::opFloatScene(int32 periodMs, int32 amplitudeIn, int32 offsetIn
 }
 
 Command *Command::opBookOfSecretsOpen() {
-	warning("(TODO: Implement) opBookOfSecretsOpen()");
+	StarkSettings->enableBookOfSecrets();
 
 	return nextCommand();
 }

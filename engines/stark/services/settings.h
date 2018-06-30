@@ -85,6 +85,15 @@ public:
 	/** Check whether low-resolution fmv is available */
 	bool hasLowResFMV() { return _hasLowRes; }
 
+	/** Enable the book of secrets */
+	void enableBookOfSecrets() { 
+		ConfMan.setBool("xoBfOsterceS", true);
+		ConfMan.flushToDisk();
+	}
+
+	/** Check whether the book of secrets is enabled */
+	bool hasBookOfSecrets() { return ConfMan.hasKey("xoBfOsterceS"); }
+
 private:
 	Audio::Mixer *_mixer;
 	bool _hasLowRes;

@@ -122,8 +122,10 @@ void GameScreen::dispatchEvent(WindowHandler handler) {
 }
 
 void GameScreen::onScreenChanged() {
+	_cursor->onScreenChanged();
 	_dialogPanel->onScreenChanged();
 	_topMenu->onScreenChanged();
+	_gameWindow->onScreenChanged();
 }
 
 void GameScreen::notifyInventoryItemEnabled(uint16 itemIndex) {

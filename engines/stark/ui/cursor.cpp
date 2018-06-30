@@ -76,6 +76,12 @@ void Cursor::setFading(bool fading) {
 	_fading = fading;
 }
 
+void Cursor::onScreenChanged() {
+	if (_mouseText) {
+		_mouseText->resetTexture();
+	}
+}
+
 void Cursor::updateFadeLevel() {
 	if (_fading) {
 		if (_fadeLevelIncreasing) {

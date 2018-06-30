@@ -61,6 +61,7 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_diaryPagesScreen(nullptr),
 		_dialogScreen(nullptr),
 		_exitGame(false),
+		_quitToMainMenu(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
 		_interactive(true),
@@ -186,11 +187,14 @@ void UserInterface::backPrevScreen() {
 	_prevScreenNameStack.pop();
 }
 
-void UserInterface::quitToMainMenu() {
+void UserInterface::performQuitToMainMenu() {
+	assert(_quitToMainMenu);
+
 	changeScreen(Screen::kScreenGame);
 	StarkResourceProvider->shutdown();
 	changeScreen(Screen::kScreenMainMenu);
 	_prevScreenNameStack.clear();
+	_quitToMainMenu = false;
 }
 
 void UserInterface::restoreScreenHistory() {

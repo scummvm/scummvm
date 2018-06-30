@@ -30,6 +30,7 @@
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/location.h"
+#include "engines/stark/resources/layer.h"
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
@@ -40,6 +41,8 @@
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/world/actionmenu.h"
 #include "engines/stark/ui/world/inventorywindow.h"
+
+#include "engines/stark/visual/text.h"
 
 namespace Stark {
 
@@ -236,6 +239,25 @@ void GameWindow::reset() {
 	_objectUnderCursor = nullptr;
 	_objectRelativePosition.x = 0;
 	_objectRelativePosition.y = 0;
+}
+
+void GameWindow::onScreenChanged() {
+	// May be called when resources have not been loaded
+	if (!StarkGlobal->getCurrent()) {
+		return;
+	}
+
+	Common::Array<Resources::Layer *> layers = StarkGlobal->getCurrent()->getLocation()->listLayers();
+
+	for (uint i = 0; i < layers.size(); ++i) {
+		Gfx::RenderEntryArray renderEntries = layers[i]->listRenderEntries();
+		for (uint j = 0; j < renderEntries.size(); ++j) {
+			VisualText *text = renderEntries[j]->getText();
+			if (text) {
+				text->resetTexture();
+			}
+		}
+	}
 }
 
 } // End of namespace Stark
