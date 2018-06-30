@@ -451,9 +451,6 @@ WalkLocation *ParlSqPink::getWalkDestination() {
 	return LeadActor::getWalkDestination();
 }
 
-PubPink::PubPink() :
-		LeadActor(), _round(0) {}
-
 void PubPink::toConsole() {
 	debug("PubPink: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {

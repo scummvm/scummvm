@@ -138,8 +138,6 @@ protected:
 
 class PubPink : public LeadActor {
 public:
-	PubPink();
-
 	void toConsole() override;
 
 	void onLeftClickMessage() override;
