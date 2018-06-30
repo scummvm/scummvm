@@ -27,9 +27,8 @@
 
 namespace Pink {
 
-
 PDAPage PDAPage::create(const Common::String &pageName, PDAMgr &pdaMgr) {
-	PDAPage page(pageName, pdaMgr);
+	PDAPage page(pageName);
 	page._name = pageName;
 	page._resMgr.init(pdaMgr.getGame(), &page);
 	return page;
@@ -41,11 +40,6 @@ Array<Actor *> PDAPage::takeActors() {
 	}
 	Array<Actor *> actorsCopy = _actors;
 	return actorsCopy;
-}
-
-PDAPage::PDAPage(const Common::String &name, PDAMgr &pdaMgr)
-		: _pdaMgr(pdaMgr) {
-	_name = name;
 }
 
 } // End of namespace Pink

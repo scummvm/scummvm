@@ -35,8 +35,7 @@ public:
 	Array<Actor *> takeActors();
 
 private:
-	PDAPage(const Common::String &name, PDAMgr &pdaMgr);
-	PDAMgr &_pdaMgr;
+	PDAPage(const Common::String &name) { _name = name; }
 };
 
 } // End of namespace Pink
