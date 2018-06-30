@@ -154,8 +154,6 @@ protected:
 
 private:
 	bool playingMiniGame();
-
-	int _round;
 };
 
 
