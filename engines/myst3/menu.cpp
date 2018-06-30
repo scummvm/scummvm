@@ -151,11 +151,15 @@ int16 ButtonsDialog::update() {
 				}
 			}
 		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-			return _frameToDisplay;
+			if (_frameToDisplay > 0) {
+				return _frameToDisplay;
+			} else {
+				_vm->_sound->playEffect(697, 5);
+			}
 		} else if (event.type == Common::EVENT_KEYDOWN) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				return -1;
+				return _buttonCount;
 			default:
 				break;
 			}
