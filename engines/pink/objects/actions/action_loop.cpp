@@ -40,7 +40,7 @@ void ActionLoop::deserialize(Archive &archive) {
 		_style = kPingPong;
 		break;
 	case kRandom:
-		_style = kRandom; // haven't seen
+		_style = kRandom;
 		break;
 	default:
 		_style = kForward;
@@ -83,7 +83,7 @@ void ActionLoop::update() {
 			decodeNext();
 		}
 		break;
-	case kRandom: { // Not tested
+	case kRandom: {
 		Common::RandomSource &rnd = _actor->getPage()->getGame()->getRnd();
 		setFrame(rnd.getRandomNumberRng(_startFrame, _stopFrame));
 		decodeNext();
