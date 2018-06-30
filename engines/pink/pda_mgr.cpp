@@ -82,7 +82,7 @@ void PDAMgr::execute(const Command &command) {
 		updateWheels(1);
 		break;
 	case Command::kDecrementDomain:
-		_domainIndex = (_domainIndex + 6) % 8;
+		_domainIndex = (_domainIndex + 7) % 8;
 		updateWheels(1);
 		break;
 	case Command::kClose:
