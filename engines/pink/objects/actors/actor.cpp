@@ -22,7 +22,7 @@
 
 #include "pink/constants.h"
 #include "pink/cursor_mgr.h"
-#include "pink/objects/actions/action.h"
+#include "pink/objects/actions/action_cel.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/game_page.h"
@@ -77,6 +77,14 @@ bool Actor::initPalette(Director *director) {
 			return true;
 	}
 	return false;
+}
+
+void Actor::preloadSprites() {
+	for (uint i = 0; i < _actions.size(); ++i) {
+		ActionCEL *cel = dynamic_cast<ActionCEL*>(_actions[i]);
+		if (cel)
+			cel->loadDecoder();
+	}
 }
 
 void Actor::toConsole() {

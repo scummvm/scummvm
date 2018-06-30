@@ -38,6 +38,8 @@ public:
 
 	bool initPalette(Director *director) override;
 
+	void loadDecoder();
+
 	void start() override;
 	void end() override;
 
@@ -57,7 +59,6 @@ public:
 protected:
 	virtual void onStart() = 0;
 
-	void loadDecoder();
 	void closeDecoder();
 
 	void setFrame(uint frame);

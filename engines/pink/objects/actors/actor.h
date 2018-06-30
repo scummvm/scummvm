@@ -50,6 +50,8 @@ public:
 	virtual void init(bool paused);
 	bool initPalette(Director *director);
 
+	void preloadSprites();
+
 	void toConsole() override;
 
 	bool isPlaying() { return !_isActionEnded; }

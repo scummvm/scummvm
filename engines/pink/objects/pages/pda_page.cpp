@@ -36,8 +36,10 @@ PDAPage PDAPage::create(const Common::String &pageName, PDAMgr &pdaMgr) {
 }
 
 Array<Actor *> PDAPage::takeActors() {
+	for (uint i = 0; i < _actors.size(); ++i) {
+		_actors[i]->preloadSprites();
+	}
 	Array<Actor *> actorsCopy = _actors;
-	_actors.clear();
 	return actorsCopy;
 }
 
