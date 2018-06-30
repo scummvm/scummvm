@@ -24,6 +24,7 @@
 #include "audio/decoders/voc.h"
 #include "common/config-manager.h"
 #include "xeen/sound.h"
+#include "xeen/sound_driver_adlib.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
@@ -31,7 +32,7 @@ namespace Xeen {
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _fxOn(true), _musicOn(true), _subtitles(false),
 		_songData(nullptr), _effectsData(nullptr), _musicSide(0), _musicPercent(100),
 		_musicVolume(0), _sfxVolume(0) {
-	_SoundDriver = new AdlibSoundDriver();
+	_SoundDriver = new SoundDriverAdlib();
 }
 
 Sound::~Sound() {

@@ -53,6 +53,7 @@ MODULE_OBJS := \
 	scripts.o \
 	sound.o \
 	sound_driver.o \
+	sound_driver_adlib.o \
 	spells.o \
 	sprites.o \
 	subtitles.o \
