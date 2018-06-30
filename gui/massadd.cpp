@@ -209,8 +209,8 @@ void MassAddDialog::handleTickle() {
 
 			// Check for existing config entries for this path/gameid/lang/platform combination
 			if (_pathToTargets.contains(path)) {
-				const char *resultPlatformCode = Common::getPlatformCode(result.platform);
-				const char *resultLanguageCode = Common::getLanguageCode(result.language);
+				Common::String resultPlatformCode = Common::getPlatformCode(result.platform);
+				Common::String resultLanguageCode = Common::getLanguageCode(result.language);
 
 				bool duplicate = false;
 				const StringArray &targets = _pathToTargets[path];
