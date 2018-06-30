@@ -249,12 +249,10 @@ void GameWindow::onScreenChanged() {
 
 	Common::Array<Resources::Layer *> layers = StarkGlobal->getCurrent()->getLocation()->listLayers();
 
-	VisualText *text = nullptr;
-	Gfx::RenderEntryArray renderEntries;
 	for (uint i = 0; i < layers.size(); ++i) {
-		renderEntries = layers[i]->listRenderEntries();
+		Gfx::RenderEntryArray renderEntries = layers[i]->listRenderEntries();
 		for (uint j = 0; j < renderEntries.size(); ++j) {
-			text = renderEntries[j]->getText();
+			VisualText *text = renderEntries[j]->getText();
 			if (text) {
 				text->resetTexture();
 			}
