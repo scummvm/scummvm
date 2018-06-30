@@ -172,7 +172,6 @@ void PDAMgr::updateWheels(bool playSfx) {
 	Actor *wheel = _page->findActor(kCountryWheel);
 	if (playSfx && wheel->getAction()->getName() != g_countries[_countryIndex]) {
 		wheel->setAction(Common::String(g_countries[_countryIndex]) + kSfx);
-		dynamic_cast<ActionCEL*>(wheel->getAction())->update();
 		dynamic_cast<ActionCEL*>(wheel->getAction())->update(); // hack
 	}
 	wheel->setAction(g_countries[_countryIndex]);
@@ -180,7 +179,6 @@ void PDAMgr::updateWheels(bool playSfx) {
 	wheel = _page->findActor(kDomainWheel);
 	if (playSfx && wheel->getAction()->getName() != g_domains[_domainIndex]) {
 		wheel->setAction(Common::String(g_domains[_domainIndex]) + kSfx);
-		dynamic_cast<ActionCEL*>(wheel->getAction())->update();
 		dynamic_cast<ActionCEL*>(wheel->getAction())->update(); // hack
 	}
 	wheel->setAction(g_domains[_domainIndex]);

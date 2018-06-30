@@ -57,6 +57,7 @@ void ActionPlayWithSfx::update() {
 	} else
 		ActionPlay::update();
 
+	currFrame++;
 	for (uint i = 0; i < _sfxArray.size(); ++i) {
 		if (_sfxArray[i]->getFrame() == currFrame)
 			_sfxArray[i]->play();
