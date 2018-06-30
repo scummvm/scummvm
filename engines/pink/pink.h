@@ -56,7 +56,7 @@
  *      Fully Playable*
  *
  *  Known bugs:
- *      PDA is not usable(ActionText and Peril Commands are not implemented)
+ *      PDA is not usable(ActionText is not implemented)
  *      missing menu
  */
 
