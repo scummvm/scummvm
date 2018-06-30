@@ -79,14 +79,6 @@ bool Actor::initPalette(Director *director) {
 	return false;
 }
 
-void Actor::preloadSprites() {
-	for (uint i = 0; i < _actions.size(); ++i) {
-		ActionCEL *cel = dynamic_cast<ActionCEL*>(_actions[i]);
-		if (cel)
-			cel->loadDecoder();
-	}
-}
-
 void Actor::toConsole() {
 	debug("Actor: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
