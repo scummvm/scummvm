@@ -59,11 +59,8 @@ public:
 
 	/** Acquire a message text by a given key */
 	Common::String getTextByKey(TextKey key) {
-		if (_texts.contains(key)) {
-			return _texts[key];
-		} else {
-			return getDefaultText(key);
-		}
+		// TODO: Use texts read from language.ini
+		return getDefaultText(key);
 	}
 
 private:
