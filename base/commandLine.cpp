@@ -763,22 +763,15 @@ static void listGames() {
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
 
-	Common::Array<Common::String> games;
-
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngine &metaengine = (*iter)->get<MetaEngine>();
 
 		PlainGameList list = metaengine.getSupportedGames();
 		for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
-			games.push_back(Common::String::format("%-30s %s", buildQualifiedGameName(metaengine.getEngineId(), v->gameId).c_str(), v->description));
+			printf("%-30s %s\n", buildQualifiedGameName(metaengine.getEngineId(), v->gameId).c_str(), v->description);
 		}
 	}
-
-	Common::sort(games.begin(), games.end());
-
-	for (Common::Array<Common::String>::const_iterator i = games.begin(), end = games.end(); i != end; ++i)
-		printf("%s\n", i->c_str());
 }
 
 /** List all supported engines, i.e. all loaded plugins. */
@@ -786,18 +779,11 @@ static void listEngines() {
 	printf("Engine ID       Engine Name                                           \n"
 	       "--------------- ------------------------------------------------------\n");
 
-	Common::Array<Common::String> engines;
-
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngine &metaEngine = (*iter)->get<MetaEngine>();
-		engines.push_back(Common::String::format("%-15s %s", metaEngine.getEngineId(), metaEngine.getName()));
+		printf("%-15s %s\n", metaEngine.getEngineId(), metaEngine.getName());
 	}
-
-	Common::sort(engines.begin(), engines.end());
-
-	for (Common::Array<Common::String>::const_iterator i = engines.begin(), end = engines.end(); i != end; ++i)
-		printf("%s\n", i->c_str());
 }
 
 /** List all targets which are configured in the config file. */
