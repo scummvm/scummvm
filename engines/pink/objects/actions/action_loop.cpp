@@ -68,7 +68,7 @@ void ActionLoop::update() {
 	switch (_style) {
 	case kPingPong:
 		if (_forward) {
-			if (frame < _stopFrame) {
+			if (frame < (uint)_stopFrame) {
 				decodeNext();
 			} else {
 				_forward = false;
@@ -91,7 +91,7 @@ void ActionLoop::update() {
 		break;
 	}
 	case kForward:
-		if (frame == _stopFrame) {
+		if (frame == (uint)_stopFrame) {
 			setFrame(_startFrame);
 		}
 		decodeNext();
