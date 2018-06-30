@@ -95,6 +95,23 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 			// Fixes bug #6803.
 			if (_engine->getGameId() == GID_NEMESIS && puzzle->key == 19398)
 				puzzle->resultActions.push_back(new ActionAssign(_engine, 11, "19397, 0"));
+
+			// WORKAROUND for bug #10604. If the player is looking at the
+			// cigar box when Antharia Jack returns to examine the lamp,
+			// pp1f_video_flag remains 1. Later, when the player returns
+			// to pick up the lantern, the game will try to play the
+			// cutscene again, but since that script has already been
+			// run the player gets stuck in a dark room instead. We have
+			// to add the assignment action to the front, or it won't be
+			// reached because changing the location terminates the script.
+			//
+			// Fixing it this way only keeps the bug from happening. It
+			// will not repair old savegames.
+			//
+			// Note that the bug only affects the DVD version. The CD
+			// version doesn't have a separate room for the cutscene.
+			else if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & GF_DVD) && puzzle->key == 10836)
+				puzzle->resultActions.push_front(new ActionAssign(_engine, 11, "10803, 0"));
 		} else if (line.matchString("flags {", true)) {
 			setStateFlag(puzzle->key, parseFlags(stream));
 		}
