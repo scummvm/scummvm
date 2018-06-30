@@ -59,9 +59,16 @@ GameMessage::GameMessage() :
 		}
 	}
 
-	// Pre-process some of the text
-	_texts[kYes].deleteChar(0);
-	_texts[kNo].deleteChar(0);
+	// Pre-process some of the texts
+	if (_texts.contains(kYes)) {
+		_texts[kYes].deleteChar(0);
+	}
+	if (_texts.contains(kNo)) {
+		_texts[kNo].deleteChar(0);
+	}
+	if (_texts.contains(kOverwriteSave)) {
+		Common::replace(_texts[kOverwriteSave], "\\n", "\n");
+	}
 }
 
 bool GameMessage::alert(const Common::String &msg, TextKey leftBtnMsg, TextKey rightBtnMsg) {
