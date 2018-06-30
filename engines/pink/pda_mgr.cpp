@@ -25,11 +25,16 @@
 #include "pink/objects/actors/pda_button_actor.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/pda_page.h"
+#include "pink/objects/actions/action_cel.h"
 
 namespace Pink {
 
+static const char * const g_countries[] = {"BRI", "EGY", "BHU", "AUS", "IND", "CHI"};
+static const char * const g_domains[] = {"NAT", "CLO", "HIS", "REL", "PLA", "ART", "FOO", "PEO"};
+
 PDAMgr::PDAMgr(Pink::PinkEngine *game)
-	: _game(game), _page(nullptr), _cursorMgr(game, nullptr) {}
+	: _game(game), _page(nullptr), _cursorMgr(game, nullptr),
+	_countryIndex(0), _domainIndex(0) {}
 
 PDAMgr::~PDAMgr() {
 	for (uint i = 0; i < _globalActors.size(); ++i) {
@@ -86,9 +91,13 @@ void PDAMgr::goToPage(const Common::String &pageName) {
 		_globalActors[i]->setPage(_page);
 	}
 
+	_previousPages.push(_page->getName());
+
+	if (_game->isPeril())
+		initPerilButtons();
+
 	_cursorMgr.setPage(_page);
 
-	_previousPages.push(_page->getName());
 }
 
 void PDAMgr::onLeftButtonClick(Common::Point point) {
@@ -126,6 +135,50 @@ void PDAMgr::loadGlobal() {
 	for (uint i = 0; i < _globalActors.size(); ++i) {
 		_globalActors[i]->init(0);
 	}
+}
+
+void PDAMgr::initPerilButtons() {
+	Actor *prevPageButton = findGlobalActor(kPreviousPageButton);
+	if (_previousPages.size() < 2)
+		prevPageButton->setAction(kInactiveAction);
+	else
+		prevPageButton->setAction(kIdleAction);
+
+	Actor *navigatorButton = findGlobalActor(kNavigatorButton);
+	Actor *domainButton = findGlobalActor(kDomainButton);
+	if (isNavigate(_page->getName())) {
+		navigatorButton->setAction(kInactiveAction);
+		domainButton->setAction(kInactiveAction);
+		updateWheels();
+	} else {
+		navigatorButton->setAction(kIdleAction);
+		if (isDomain(_page->getName()))
+			domainButton->setAction(kInactiveAction);
+		else
+			domainButton->setAction(kIdleAction);
+	}
+
+}
+
+Actor *PDAMgr::findGlobalActor(const Common::String &actorName) {
+	for (uint i = 0; i < _globalActors.size(); ++i) {
+		if (_globalActors[i]->getName() == actorName)
+			return _globalActors[i];
+	}
+	return nullptr;
+}
+
+void PDAMgr::updateWheels() {
+	_page->findActor(kCountryWheel)->setAction(g_countries[_countryIndex]);
+	_page->findActor(kDomainWheel)->setAction(g_domains[_domainIndex]);
+}
+
+bool PDAMgr::isNavigate(const Common::String &name) {
+	return !name.compareToIgnoreCase(kNavigatePage);
+}
+
+bool PDAMgr::isDomain(const Common::String &name) {
+	return name.size() == 6;
 }
 
 } // End of namespace Pink

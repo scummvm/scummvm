@@ -62,6 +62,16 @@ private:
 	void close();
 	void loadGlobal();
 
+	void initPerilButtons();
+
+	void updateWheels();
+
+	Actor *findGlobalActor(const Common::String &actorName);
+
+	static bool isNavigate(const Common::String &name);
+	static bool isDomain(const Common::String &name);
+
+private:
 	PinkEngine *_game;
 	LeadActor *_lead;
 	PDAPage *_page;
@@ -69,6 +79,8 @@ private:
 	Array<Actor *> _globalActors;
 	Common::String _savedPage;
 	Common::Stack<Common::String> _previousPages;
+	uint _countryIndex;
+	uint _domainIndex;
 };
 
 } // End of namespace Pink

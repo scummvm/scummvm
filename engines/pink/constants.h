@@ -162,6 +162,7 @@ static const char * const kIdleAction = "Idle";
 static const char * const kOpenAction = "Open";
 static const char * const kShowAction = "Show";
 static const char * const kHideAction = "Hide";
+static const char * const kInactiveAction = "Inactive";
 
 static const char * const kInventoryWindowActor = "InventoryWindow";
 static const char * const kInventoryItemActor = "InventoryItem";
@@ -193,6 +194,15 @@ static const char * const kBoyBlocked = "BoyBlocked";
 
 static const char * const kUndefinedValue = "UNDEFINED";
 static const char * const kTrueValue = "TRUE";
+
+static const char * const kCountryWheel = "CountryWheel";
+static const char * const kDomainWheel = "DomainWheel";
+
+static const char * const kPreviousPageButton = "PreviousPageButton";
+static const char * const kDomainButton = "DomainButton";
+static const char * const kNavigatorButton = "NavigatorButton";
+
+static const char * const kNavigatePage = "NAVIGATE";
 
 } // End of namespace Pink
 
