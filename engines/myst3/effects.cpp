@@ -20,6 +20,7 @@
  *
  */
 
+#include "engines/myst3/database.h"
 #include "engines/myst3/effects.h"
 #include "engines/myst3/gfx.h"
 #include "engines/myst3/myst3.h"
@@ -690,7 +691,7 @@ ShieldEffect *ShieldEffect::create(Myst3Engine *vm, uint32 id) {
 	uint32 node = vm->_state->getLocationNode();
 
 	// This effect can only be found on Narayan cube nodes
-	if (room != 801 || node >= 100)
+	if (room != kRoomNarayan || node >= 100)
 		return nullptr;
 
 	ShieldEffect *s = new ShieldEffect(vm);

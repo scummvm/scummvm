@@ -193,11 +193,11 @@ Common::Error Myst3Engine::run() {
 	} else {
 		if (getPlatform() == Common::kPlatformXbox) {
 			// Play the logo videos
-			loadNode(1, kLogo, 11);
+			loadNode(kNodeLogoPlay, kLogo, 11);
 		}
 
 		// Game init script, loads the menu
-		loadNode(1, kRoomShared, 1);
+		loadNode(kNodeSharedInit, kRoomShared, 1);
 	}
 
 	while (!shouldQuit()) {
@@ -505,7 +505,7 @@ void Myst3Engine::processInput(bool interactive) {
 				// Open main menu
 				if (_cursor->isVisible() && interactive) {
 					if (_state->getLocationRoom() != kRoomMenu)
-						_menu->goToNode(100);
+						_menu->goToNode(kNodeMenuMain);
 				}
 				break;
 			case Common::KEYCODE_d:
@@ -564,7 +564,7 @@ void Myst3Engine::processInput(bool interactive) {
 		_inputEscapePressedNotConsumed = false;
 		if (_cursor->isVisible() && _state->hasVarMenuEscapePressed()) {
 			if (_state->getLocationRoom() != kRoomMenu)
-				_menu->goToNode(100);
+				_menu->goToNode(kNodeMenuMain);
 			else
 				_state->setMenuEscapePressed(1);
 		}
@@ -792,7 +792,7 @@ void Myst3Engine::drawTransition(TransitionType transitionType) {
 
 void Myst3Engine::goToNode(uint16 nodeID, TransitionType transitionType) {
 	uint16 node = _state->getLocationNextNode();
-	if (node == 0)
+	if (!node)
 		node = nodeID;
 
 	uint16 room = _state->getLocationNextRoom();
@@ -1715,7 +1715,7 @@ void Myst3Engine::playMovieGoToNode(uint16 movie, uint16 node) {
 	uint16 room = _state->getLocationNextRoom();
 	uint16 age = _state->getLocationNextAge();
 
-	if (_state->getLocationNextNode() != 0) {
+	if (_state->getLocationNextNode()) {
 		node = _state->getLocationNextNode();
 	}
 

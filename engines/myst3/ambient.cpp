@@ -63,7 +63,7 @@ void Ambient::loadNode(uint32 node, uint32 room, uint32 age) {
 	_sounds.clear();
 	_cueSheet.reset();
 
-	if (node == 0)
+	if (!node)
 		node = _vm->_state->getLocationNode();
 
 	_vm->_state->setAmbiantPreviousFadeOutDelay(_vm->_state->getAmbiantFadeOutDelay());

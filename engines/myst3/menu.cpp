@@ -234,10 +234,10 @@ void Menu::updateMainMenu(uint16 action) {
 				// Go to save screen
 				_vm->_state->setMenuSaveBack(1);
 				_vm->_state->setMenuSaveAction(6);
-				goToNode(300);
+				goToNode(kNodeMenuSaveGame);
 			} else if (choice == dialogConfirmValue()) {
 				// New game
-				goToNode(98);
+				goToNode(kNodeMenuNewGame);
 			}
 		}
 		break;
@@ -254,11 +254,11 @@ void Menu::updateMainMenu(uint16 action) {
 				// Go to save screen
 				_vm->_state->setMenuSaveBack(1);
 				_vm->_state->setMenuSaveAction(3);
-				goToNode(300);
+				goToNode(kNodeMenuSaveGame);
 			} else if (choice == dialogConfirmValue()) {
 				// Load game screen
 				_vm->_state->setMenuLoadBack(1);
-				goToNode(200);
+				goToNode(kNodeMenuLoadGame);
 			}
 		}
 		break;
@@ -266,7 +266,7 @@ void Menu::updateMainMenu(uint16 action) {
 		// Go to save screen
 		_vm->_state->setMenuSaveBack(1);
 		_vm->_state->setMenuSaveAction(1);
-		goToNode(300);
+		goToNode(kNodeMenuSaveGame);
 		break;
 	case 4:
 		// Settings
@@ -286,7 +286,7 @@ void Menu::updateMainMenu(uint16 action) {
 				// Go to save screen
 				_vm->_state->setMenuSaveBack(1);
 				_vm->_state->setMenuSaveAction(5);
-				goToNode(300);
+				goToNode(kNodeMenuSaveGame);
 			} else if (choice == dialogConfirmValue()) {
 				// Quit
 				_vm->quitGame();
@@ -666,13 +666,13 @@ void PagingMenu::saveLoadErase() {
 	saveLoadUpdateVars();
 
 	// Load menu specific
-	if (node == 200 && _saveLoadSpotItem) {
+	if (node == kNodeMenuLoadGame && _saveLoadSpotItem) {
 		_saveLoadSpotItem->clear();
 		_saveLoadAgeName.clear();
 	}
 
 	// Save menu specific
-	if (node == 300)
+	if (node == kNodeMenuSaveGame)
 		_vm->_state->setMenuSaveLoadSelectedItem(7);
 }
 
@@ -681,7 +681,7 @@ void PagingMenu::draw() {
 	uint16 room = _vm->_state->getLocationRoom();
 	uint16 age = _vm->_state->getLocationAge();
 
-	if (room != kRoomMenu || !(node == 200 || node == 300))
+	if (room != kRoomMenu || !(node == kNodeMenuLoadGame || node == kNodeMenuSaveGame))
 		return;
 
 	int16 page = _vm->_state->getMenuSaveLoadCurrentPage();
@@ -705,7 +705,7 @@ void PagingMenu::draw() {
 	}
 
 	// Save screen specific
-	if (node == 300) {
+	if (node == kNodeMenuSaveGame) {
 		uint16 item = _vm->_state->getMenuSaveLoadSelectedItem();
 		Common::String display = prepareSaveNameForDisplay(_saveName);
 
@@ -731,7 +731,7 @@ bool PagingMenu::handleInput(const Common::KeyState &e) {
 	uint16 room = _vm->_state->getLocationRoom();
 	uint16 item = _vm->_state->getMenuSaveLoadSelectedItem();
 
-	if (room != kRoomMenu || node != 300 || item != 7)
+	if (room != kRoomMenu || node != kNodeMenuSaveGame || item != 7)
 		return false;
 
 	Common::String display = prepareSaveNameForDisplay(_saveName);
@@ -794,7 +794,7 @@ void AlbumMenu::draw() {
 	uint16 room = _vm->_state->getLocationRoom();
 
 	// Load and save menus only
-	if (room != kRoomMenu || !(node == 200 || node == 300))
+	if (room != kRoomMenu || !(node == kNodeMenuLoadGame || node == kNodeMenuSaveGame))
 		return;
 
 	if (!_saveLoadAgeName.empty()) {
@@ -903,7 +903,7 @@ void AlbumMenu::loadMenuSelect() {
 	uint16 room = _vm->_state->getLocationRoom();
 
 	// Details are only updated on the load menu
-	if (room != kRoomMenu || node != 200)
+	if (room != kRoomMenu || node != kNodeMenuLoadGame)
 		return;
 
 	int32 selectedSave = _vm->_state->getMenuSelectedSave();
