@@ -69,6 +69,10 @@ public:
 	virtual const GraphicsMode *getSupportedShaders() const override;
 	virtual int getShader() const override;
 	virtual bool setShader(int id) override;
+	virtual const GraphicsMode *getSupportedStretchModes() const override;
+	virtual int getDefaultStretchMode() const override;
+	virtual bool setStretchMode(int mode) override;
+	virtual int getStretchMode() const override;
 	virtual void resetGraphicsScale() override;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override;

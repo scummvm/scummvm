@@ -607,6 +607,56 @@ public:
 	virtual int getShader() const { return 0; }
 
 	/**
+	 * Retrieve a list of all stretch modes supported by this backend.
+	 * It is completely up to the backend maintainer to decide what is
+	 * appropriate here and what not.
+	 * The list is terminated by an all-zero entry.
+	 * @return a list of supported stretch modes
+	 */
+	virtual const GraphicsMode *getSupportedStretchModes() const {
+		static const GraphicsMode noStretchModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
+		return noStretchModes;
+	}
+
+	/**
+	 * Return the ID of the 'default' stretch mode. What exactly this means
+	 * is up to the backend. This mode is set by the client code when no user
+	 * overrides are present (i.e. if no custom stretch mode is selected via
+	 * the command line or a config file).
+	 *
+	 * @return the ID of the 'default' graphics mode
+	 */
+	virtual int getDefaultStretchMode() const { return 0; }
+
+	/**
+	 * Switch to the specified stretch mode. If switching to the new mode
+	 * failed, this method returns false.
+	 *
+	 * @param mode	the ID of the new graphics mode
+	 * @return true if the switch was successful, false otherwise
+	 */
+	virtual bool setStretchMode(int mode) { return false; }
+
+	/**
+	 * Switch to the stretch mode with the given name. If 'name' is unknown,
+	 * or if switching to the new mode failed, this method returns false.
+	 *
+	 * @param name	the name of the new stretch mode
+	 * @return true if the switch was successful, false otherwise
+	 * @note This is implemented via the setStretchMode(int) method, as well
+	 *       as getSupportedStretchModes() and getDefaultStretchMode().
+	 *       In particular, backends do not have to overload this!
+	 */
+	bool setStretchMode(const char *name);
+
+	/**
+	 * Determine which stretch mode is currently active.
+	 * @return the ID of the active stretch mode
+	 */
+	virtual int getStretchMode() const { return 0; }
+
+
+	/**
 	 * Set the size and color format of the virtual screen. Typical sizes include:
 	 *  - 320x200 (e.g. for most SCUMM games, and Simon)
 	 *  - 320x240 (e.g. for FM-TOWN SCUMM games)
@@ -695,7 +745,8 @@ public:
 		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switching the GFX graphics mode (setGraphicsMode) */
 		kTransactionSizeChangeFailed = (1 << 3),	/**< Failed switching the screen dimensions (initSize) */
 		kTransactionFormatNotSupported = (1 << 4),	/**< Failed setting the color format */
-		kTransactionFilteringFailed = (1 << 5)		/**< Failed setting the filtering mode */
+		kTransactionFilteringFailed = (1 << 5),		/**< Failed setting the filtering mode */
+		kTransactionStretchModeSwitchFailed = (1 << 6)	/**< Failed setting the stretch mode */
 	};
 
 	/**

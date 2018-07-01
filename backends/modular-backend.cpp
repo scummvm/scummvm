@@ -93,6 +93,22 @@ int ModularBackend::getShader() const {
 	return _graphicsManager->getShader();
 }
 
+const OSystem::GraphicsMode *ModularBackend::getSupportedStretchModes() const {
+	return _graphicsManager->getSupportedStretchModes();
+}
+
+int ModularBackend::getDefaultStretchMode() const {
+	return _graphicsManager->getDefaultStretchMode();
+}
+
+bool ModularBackend::setStretchMode(int mode) {
+	return _graphicsManager->setStretchMode(mode);
+}
+
+int ModularBackend::getStretchMode() const {
+	return _graphicsManager->getStretchMode();
+}
+
 void ModularBackend::resetGraphicsScale() {
 	_graphicsManager->resetGraphicsScale();
 }
