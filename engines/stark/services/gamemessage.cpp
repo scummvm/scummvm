@@ -40,7 +40,7 @@ GameMessage::GameMessage() :
 	Common::String line;
 	while (!tmp.eos() && !tmp.err()) {
 		line = tmp.readLine();
-		if (line.size() > 0 && line[0] == '-' && line[1] == '-') {
+		if (line.size() > 2 && line[0] == '-' && line[1] == '-') {
 			break;
 		}
 	}
@@ -61,10 +61,10 @@ GameMessage::GameMessage() :
 
 	// Pre-process some of the texts
 	if (_texts.contains(kYes)) {
-		_texts[kYes].deleteChar(0);
+		Common::replace(_texts[kYes], "&", "");
 	}
 	if (_texts.contains(kNo)) {
-		_texts[kNo].deleteChar(0);
+		Common::replace(_texts[kNo], "&", "");
 	}
 	if (_texts.contains(kOverwriteSave)) {
 		Common::replace(_texts[kOverwriteSave], "\\n", "\n");
