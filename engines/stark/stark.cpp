@@ -243,6 +243,12 @@ void StarkEngine::processEvents() {
 						_userInterface->requestQuitToMainMenu();
 					}
 				}
+			} else if ((e.kbd.keycode == Common::KEYCODE_x
+					|| e.kbd.keycode == Common::KEYCODE_q)
+					&& e.kbd.hasFlags(Common::KBD_ALT)) {
+				if (_userInterface->confirm(GameMessage::kQuitPrompt)) {
+					_userInterface->notifyShouldExit();
+				}
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
