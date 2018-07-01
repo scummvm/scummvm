@@ -1342,8 +1342,10 @@ enum GameStringIDs {
 	TX_MUD2N011,
 
 
+	// MISSING
 	TX_MUD3_002,
 	TX_MUD3_003,
+	// MISSING
 	TX_MUD3_005,
 	TX_MUD3_006,
 	TX_MUD3_007,
@@ -2334,7 +2336,7 @@ const char * const g_gameStrings[] = {
 	"#LOV0\\LOV0_050#This is how I want to feel all the time!",
 	"#LOV0\\LOV0_101#Fascinating. I am experiencing an urge to laugh.",
 	"#LOV0\\LOV0_102#I am a Vulcan. I must resist these unchecked emotions.",
-	"#LOV0\\LOV0_103#Logic...What happened to my logic?",
+	"#LOV0\\LOV0_103#Logic... What happened to my logic?", // TYPO
 	"#LOV0\\LOV0_104#Jim, is this how you feel on shore leave?",
 	"#LOV0\\LOV0_105#I remember my mother trying to tell me jokes when I was a child. Now, I finally understand them.",
 	"#LOV0\\LOV0_106#Romulan laughing gas. My father would never approve.",
@@ -2821,7 +2823,7 @@ const char * const g_gameStrings[] = {
 	"#MUD2\\MUD2_011#Sorry if I was bothering you. I was just silently cursing the day I met Harry Mudd. ",
 	"#MUD2\\MUD2_012#All yours now, Doctor McCoy.",
 	"#MUD2\\MUD2_013#He's showing definite signs of hallucination and a marked increase in adrenalin. I would recommend extreme caution in handling him.",
-	"#MUD2\\MUD2_014#I feel sure that these would have been used here, but I don't understand enough of how the aliens thought, to make it work.",
+	"#MUD2\\MUD2_014#I feel sure that these would have been used here, but I don't understand enough of the alien's thinking to make it work.", // TYPO
 	"#MUD2\\MUD2_015#I need to understand more about the aliens before I can make this bed and its instrumentation function.",
 	"#MUD2\\MUD2_016#I'm not fast enough to get him with a tranquilizer hypo, Jim!",
 	"#MUD2\\MUD2_018#Jim, these look like the capsules we might use in a hypo.  I wouldn't recommend experimenting with them, though. Alien physiology or not, you can never be sure what unusual chemicals will do to the human body.",
@@ -2883,18 +2885,18 @@ const char * const g_gameStrings[] = {
 	"#MUD3\\MUD3_008#But their essence, their souls -- are gone, Spock.",
 	"#MUD3\\MUD3_009#Get away from that this instant, Harry, or I'll shoot you where you stand.",
 	"#MUD3\\MUD3_010#Help yourself, Harry. Knowledge is for everyone.",
-	"#MUD3\\MUD3_011#It would be nice to think after all the stunts that Harry has pulled that he would do something right for a change. ",
+	"#MUD3\\MUD3_011#It would be nice to think that after all the stunts that Harry has pulled, that he would do something right for a change. ", // TYPO
 	"#MUD3\\MUD3_012#Spock, we're talking about Harry Mudd. He was probably trying to download it so he could sell it to the highest bidder.",
 	"#MUD3\\MUD3_013#Teeny bit clumsy? Mudd, you're a disgrace to the entire human race! ",
 	"#MUD3\\MUD3_014#This technology is unbelievable, Mr. Spock. I've never seen anything like it. ",
-	"#MUD3\\MUD3_015#With the Enterprise out of range, that's not an option, Mr. Spock.What else can you do?",
+	"#MUD3\\MUD3_015#With the Enterprise out of range, that's not an option, Mr. Spock. What else can you do?", // TYPO
 	"#MUD3\\MUD3_016#You better believe it, lieutenant. ",
 	"#MUD3\\MUD3_017#Apparently an information data screen, something like the display readers on the Enterprise.",
 	"#MUD3\\MUD3_018#Both our tricorders are now working on basic processing of the aliens' computer data system.  The tricorders are not the equal of the Universal Translator, but we should be able to retrieve basic information and get an insight into their culture and lifesystems. I don't believe we could have gotten even this far, had we not deduced their fixation on base-6 mathematics and esthetics.",
 	"#MUD3\\MUD3_019#Captain, it was not logical to allow Harry Mudd to get within one hundred meters of this room. ",
 	"#MUD3\\MUD3_020#Everyone is healthy, Jim, there's no need for the medical kit here.",
 	"#MUD3\\MUD3_021#Not my area of expertise, I'm afraid.",
-	"#MUD3\\MUD3_022#That would be quite a find, Jim. This is an alien race unknown to us, and they were certain to have knowledge new to us.",
+	"#MUD3\\MUD3_022#That would be quite a find, Jim. This is an alien race unknown to us, and they are certain to have knowledge new to us.", // TYPO
 	"#MUD3\\MUD3_023#This equipment's way out of my league, Jim. ",
 	"#MUD3\\MUD3_024#And instead, he wiped the memory. That knowledge was priceless!",
 	"#MUD3\\MUD3_025#If you're incapable of emotion, how do you know what \"awe\" is, Spock? ",
@@ -2921,7 +2923,7 @@ const char * const g_gameStrings[] = {
 	"#MUD3\\MUD3_047#I believe if Dr. McCoy and I conjoin our two tricorders, we may be able to process enough sample data to get a basic understanding of the aliens' computer system. This will completely tie up both our tricorders for an extended amount of time, however.",
 	"#MUD3\\MUD3_048#I believe, Captain, that the basic functions of the ship remain, even now.  This is the library module -- the art, history, and cultural memory of the aliens are gone, but the mechanical necessities of sick bay, engineering, and sensors continue to work.",
 	"#MUD3\\MUD3_049#I have found an entry on an experimental long-range weapon booster, recently installed, named the Whyos weapon. It does not alter the power of the primary weapons systems, but it does increase the range at which those weapons are effective.",
-	"#MUD3\\MUD3_050#I'm recieving data now, Captain. Most internal and external functions are controlled from the bridge. These include Engineering, Navigation, Communications, and Sensors. Weapons functions are controlled from the weapons room.",
+	"#MUD3\\MUD3_050#I'm receiving data now, Captain. Most internal and external functions are controlled from the bridge. These include Engineering, Navigation, Communications, and Sensors. Weapons functions are controlled from the weapons room.", // TYPO
 	"#MUD3\\MUD3_051#Illogical, Captain.  This race has been extinct for millenia.",
 	"#MUD3\\MUD3_052#It appears our good friend Harry Mudd has crashed the main computers. I doubt if it was a very easy thing to manage.",
 	"#MUD3\\MUD3_053#It should be no surprise that physiology affects mind and behavior. I would say a six-fingered, six-eyed people would naturally develop their sciences and arts around base-six numerical systems, just as I observed on the bridge.",

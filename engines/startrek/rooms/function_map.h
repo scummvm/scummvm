@@ -1091,7 +1091,6 @@ RoomAction love2ActionList[] = {
 	{ Action(ACTION_FINISHED_WALKING, 10, 0, 0), &Room::love2ReachedSynthesizerOutput },
 	{ Action(ACTION_FINISHED_ANIMATION, 23, 0, 0), &Room::love2GotSynthesizerOutput },
 
-	// TODO: test these
 	{ Action(ACTION_GET, 19, 0, 0), &Room::love2GetCure },
 	{ Action(ACTION_FINISHED_WALKING, 11, 0, 0), &Room::love2ReachedCure },
 	{ Action(ACTION_FINISHED_ANIMATION, 24, 0, 0), &Room::love2GotCure },

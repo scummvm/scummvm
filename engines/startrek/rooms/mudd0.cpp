@@ -34,29 +34,24 @@
 #define HOTSPOT_DOOR 0x25
 #define HOTSPOT_BOTTOM_OF_ROOM 0x26
 
-// BUG: Mudd is sometimes present when he shouldn't be.
+// BUG-ish: Sometimes when looking at Mudd, Kirk walks toward him, but not always. Does
+// this happen in original?
 
 namespace StarTrek {
 
 void Room::mudd0Tick1() {
 	playVoc("MUD0LOOP");
 
-	// ENHANCEMENT: Only disable input when Mudd showing Mudd cutscene (avoids a long,
-	// pointless delay when entering the room otherwise)
-	if (!_vm->_awayMission.mudd.enteredRoom0ForFirstTime)
-		_vm->_awayMission.disableInput = 2;
-
-	loadActorAnim(OBJECT_MUDD, "s4cbhr", 0xa2, 0xa9, 0);
-
-	// Floppy version's code.
-	/*
-	if (_vm->_awayMission.mudd.field29 == 0)
-		_vm->_awayMission.mudd.field29 = 2;
+    // NOTE: Using the floppy version's code here; Mudd disappears from this room after
+    // the first meeting. Fixes an issue where Mudd appears in the first room when he's
+    // supposed to be in the medbay.
+    // TODO: verify this matches with floppy version's code
+	if (_vm->_awayMission.mudd.muddFirstRoomState != 0)
+		_vm->_awayMission.mudd.muddFirstRoomState = 2;
 	else {
-		_vm->_awayMission.mudd.field1d = 2;
+		_vm->_awayMission.disableInput = 2;
 		loadActorAnim(OBJECT_MUDD, "s4cbhr", 0xa2, 0xa9, 0);
 	}
-	*/
 }
 
 void Room::mudd0Tick50() {
@@ -67,11 +62,11 @@ void Room::mudd0Tick50() {
 }
 
 void Room::mudd0Tick60() {
-	if (_vm->_awayMission.mudd.field29 == 0) {
+	if (_vm->_awayMission.mudd.muddFirstRoomState == 0) {
 		// ENHANCEMENT: Move this into if statement (related to above enhancement)
 		_vm->_awayMission.disableInput = false;
 
-		_vm->_awayMission.mudd.field29++;
+		_vm->_awayMission.mudd.muddFirstRoomState++;
 
 		showText(TX_SPEAKER_MUDD,  TX_MUD0_037);
 		showText(TX_SPEAKER_KIRK,  TX_MUD0_009);
@@ -261,7 +256,7 @@ void Room::mudd0LookAtMudd() {
 }
 
 void Room::mudd0TalkToKirk() {
-	if (_vm->_awayMission.mudd.field29 == 2)
+	if (_vm->_awayMission.mudd.muddFirstRoomState == 2)
 		showText(TX_SPEAKER_KIRK, TX_MUD0_010);
 	else {
 		showText(TX_SPEAKER_KIRK, TX_MUD0_010);
@@ -271,7 +266,7 @@ void Room::mudd0TalkToKirk() {
 }
 
 void Room::mudd0TalkToSpock() {
-	if (_vm->_awayMission.mudd.field29 == 2)
+	if (_vm->_awayMission.mudd.muddFirstRoomState == 2)
 		showText(TX_SPEAKER_SPOCK, TX_MUD0_022);
 	else {
 		showText(TX_SPEAKER_SPOCK, TX_MUD0_022);
@@ -283,7 +278,7 @@ void Room::mudd0TalkToSpock() {
 }
 
 void Room::mudd0TalkToMccoy() {
-	if (_vm->_awayMission.mudd.field29 == 2)
+	if (_vm->_awayMission.mudd.muddFirstRoomState == 2)
 		showText(TX_SPEAKER_MCCOY, TX_MUD0_016);
 	else {
 		showText(TX_SPEAKER_MCCOY, TX_MUD0_016);
@@ -294,15 +289,15 @@ void Room::mudd0TalkToMccoy() {
 }
 
 void Room::mudd0TalkToRedshirt() {
-	if (_vm->_awayMission.mudd.field29 == 2)
-		showText(TX_SPEAKER_BUCHERT, TX_MUD0_016);
+	if (_vm->_awayMission.mudd.muddFirstRoomState == 2) {
+		showText(TX_SPEAKER_BUCHERT, TX_MUD0_039);
+		showText(TX_SPEAKER_KIRK,    TX_MUD0_008);
+    }
 	else {
 		showText(TX_SPEAKER_BUCHERT, TX_MUD0_040);
 		showText(TX_SPEAKER_MUDD,    TX_MUD0_030);
 		showText(TX_SPEAKER_BUCHERT, TX_MUD0_041);
 		showText(TX_SPEAKER_MUDD,    TX_MUD0_036);
-		showText(TX_SPEAKER_BUCHERT, TX_MUD0_039);
-		showText(TX_SPEAKER_KIRK,    TX_MUD0_008);
 	}
 }
 

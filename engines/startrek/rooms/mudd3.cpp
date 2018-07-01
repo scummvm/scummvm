@@ -54,7 +54,7 @@ void Room::mudd3Tick1() {
 
 	_vm->_awayMission.mudd.muddInDatabaseRoom = false;
 
-	if (!_vm->_awayMission.mudd.muddVisitedDatabaseRoom && _vm->_awayMission.mudd.translatedAlienLanguage && !_vm->_awayMission.mudd.muddCurrentlyInsane) {
+	if (!_vm->_awayMission.mudd.muddVisitedDatabaseRoom && _vm->_awayMission.mudd.translatedAlienLanguage && !_vm->_awayMission.mudd.muddUnavailable) {
 		_vm->_awayMission.mudd.muddVisitedDatabaseRoom = true;
 		loadActorAnim(OBJECT_MUDD, "s4lbhs", 0xa2, 0x9f);
 		playMidiMusicTracks(3);
@@ -69,10 +69,12 @@ void Room::mudd3UseCommunicator() {
 }
 
 void Room::mudd3LookAtScreen() {
-	if (_vm->_awayMission.mudd.translatedAlienLanguage) // FIXME: flipped conditions?
-		showText(TX_MUD3N017);
-	else
+	// BUGFIX: the condition was flipped in the original; the more "vague" description
+	// should be shown before the alien language is understood.
+	if (_vm->_awayMission.mudd.translatedAlienLanguage)
 		showText(TX_SPEAKER_SPOCK, TX_MUD3_038);
+	else
+		showText(TX_MUD3N017);
 }
 
 void Room::mudd3UseSTricorderOnScreen() {
@@ -94,7 +96,7 @@ void Room::mudd3UseSpockOnSphere() {
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_S;
 	loadActorStandAnim(OBJECT_SPOCK);
 
-	if (_vm->_awayMission.mudd.computerDataErased) {
+	if (_vm->_awayMission.mudd.computerDataErasedOrDestroyed) {
 		if (!_vm->_awayMission.mudd.databaseDestroyed) {
 			showText(TX_MUD3N000);
 			showText(TX_SPEAKER_SPOCK, TX_MUD3_052);
@@ -254,14 +256,22 @@ void Room::mudd3Timer2Expired() {
 		TX_BLANK
 	};
 
-	_vm->_awayMission.mudd.computerDataErased = true;
+	_vm->_awayMission.mudd.computerDataErasedOrDestroyed = true;
 
 	showText(TX_SPEAKER_MUDD, TX_MUD3_065);
 	int choice = showText(choices);
 
-	if (choice == 0) { // Allow him to access the database
+	if (choice == 0) { // Allow him to access the database (he ends up erasing it)
 		showText(TX_SPEAKER_MUDD, TX_MUD3_066);
-		_vm->_awayMission.mudd.gaveMuddDatabaseAccess = true;
+		_vm->_awayMission.mudd.muddErasedDatabase = true;
+
+		// ENHANCEMENT: Add a few lines to make it clear that Mudd erased the databanks.
+		// Otherwise, the end of the mission when you confront Mudd doesn't make sense
+		// unless the player happened to try accessing the database again. Also, if you
+		// talk to the crew, they berate him for no apparent reason if this isn't clear.
+		showText(TX_MUD3N000);
+		showText(TX_SPEAKER_MCCOY, TX_MUD3_031);
+
 	} else { // Don't allow it (he destroys it by accident)
 		showText(TX_SPEAKER_MUDD, TX_MUD3_064);
 		_vm->_awayMission.timers[4] = 98;
@@ -281,9 +291,13 @@ void Room::mudd3Timer4Expired() {
 }
 
 void Room::mudd3UseMemoryDiskOnSphere() {
+	// ENHANCEMENT: Turn to face south
+	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
+	loadActorStandAnim(OBJECT_KIRK);
+
 	if (_vm->_awayMission.mudd.databaseDestroyed)
 		showText(TX_MUD3N014);
-	else if (_vm->_awayMission.mudd.translatedAlienLanguage && !_vm->_awayMission.mudd.gaveMuddDatabaseAccess) {
+	else if (_vm->_awayMission.mudd.translatedAlienLanguage && !_vm->_awayMission.mudd.muddErasedDatabase) {
 		showText(TX_MUD3N020);
 		if (!_vm->_awayMission.mudd.gotPointsForDownloadingData) {
 			_vm->_awayMission.mudd.missionScore += 3;
@@ -419,7 +433,9 @@ void Room::mudd3TalkToRedshirt() {
 }
 
 void Room::mudd3TalkToMudd() {
-	if (_vm->_awayMission.mudd.databaseDestroyed) {
+	// ENHANCEMENT: the 2nd part of the if condition is new; whether he physically
+	// destroys the database or does through software, he should give this reaction.
+	if (_vm->_awayMission.mudd.databaseDestroyed || _vm->_awayMission.mudd.muddErasedDatabase) {
 		showText(TX_SPEAKER_MUDD,    TX_MUD3_060);
 		showText(TX_SPEAKER_MCCOY,   TX_MUD3_029);
 		showText(TX_SPEAKER_MUDD,    TX_MUD3_061);

@@ -51,11 +51,11 @@ void Room::mudd4UseCommunicator() {
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
-void Room::mudd4Timer2Expired() { // TODO: better name
+void Room::mudd4Timer2Expired() {
 	playSoundEffectIndex(SND_07);
 }
 
-void Room::mudd4Timer3Expired() { // TODO: better name
+void Room::mudd4Timer3Expired() {
 	playSoundEffectIndex(SND_TRANSENE);
 }
 
@@ -331,7 +331,7 @@ void Room::mudd4KirkUsedCommunications() {
 }
 
 void Room::mudd4TalkWithMuddAtMissionEnd() {
-	if (_vm->_awayMission.mudd.muddCurrentlyInsane)
+	if (_vm->_awayMission.mudd.muddUnavailable)
 		return;
 	else {
 		_vm->_awayMission.disableInput = true;
@@ -356,7 +356,7 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 	_vm->_awayMission.disableInput = false;
 
 	if (_vm->_awayMission.mudd.discoveredLenseAndDegrimerFunction
-			|| _vm->_awayMission.mudd.gaveMuddDatabaseAccess
+			|| _vm->_awayMission.mudd.muddErasedDatabase
 			|| _vm->_awayMission.mudd.databaseDestroyed
 			|| !_vm->_awayMission.mudd.accessedAlienDatabase) { // NOTE: why this last line? Test this...
 		const int choices[] = {
@@ -381,18 +381,20 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 			endMission(_vm->_awayMission.mudd.missionScore, 0x1b, _vm->_awayMission.mudd.torpedoStatus);
 		} else {
 			// Threaten to arrest Mudd.
-			if (_vm->_awayMission.mudd.gaveMuddDatabaseAccess || _vm->_awayMission.mudd.databaseDestroyed)
+			if (_vm->_awayMission.mudd.muddErasedDatabase || _vm->_awayMission.mudd.databaseDestroyed)
 				showText(TX_SPEAKER_KIRK, TX_MUD4_034);
 			if (_vm->_awayMission.mudd.discoveredLenseAndDegrimerFunction)
 				showText(TX_SPEAKER_KIRK, TX_MUD4_037);
 
 			showText(TX_SPEAKER_KIRK, TX_MUD4_026);
 
-			if (_vm->_awayMission.mudd.gaveMuddDatabaseAccess && _vm->_awayMission.mudd.databaseDestroyed) {
+			if (_vm->_awayMission.mudd.muddErasedDatabase && _vm->_awayMission.mudd.databaseDestroyed) {
+				// Mudd offers to copy the lost data to the enterprise computer. You don't
+				// get any points for this outcome.
+
 				// NOTE: This combination is probably impossible, making this unused?
 				// (Either you give Mudd access to the database, or he destroys it.)
 
-				// Mudd offers to copy the lost data to the enterprise computer.
 				showText(TX_SPEAKER_MUDD,  TX_MUD4_071);
 				showText(TX_SPEAKER_KIRK,  TX_MUD4_036);
 				showText(TX_SPEAKER_SPOCK, TX_MUD4_029);
