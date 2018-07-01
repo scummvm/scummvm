@@ -159,6 +159,9 @@ public:
 	bool confirm(const Common::String &msg);
 	bool confirm(GameMessage::TextKey key);
 
+	/** Directly open or close a screen */
+	void toggleScreen(Screen::Name screenName);
+
 	static const uint kThumbnailWidth = 160;
 	static const uint kThumbnailHeight = 92;
 	static const uint kThumbnailSize = kThumbnailWidth * kThumbnailHeight * 4;

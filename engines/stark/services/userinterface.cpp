@@ -370,4 +370,19 @@ bool UserInterface::confirm(GameMessage::TextKey key) {
 	return confirm(msg);
 }
 
+void UserInterface::toggleScreen(Screen::Name screenName) {
+	Screen::Name currentName = _currentScreen->getName();
+
+	if (currentName == screenName
+			|| (currentName == Screen::kScreenSaveMenu && screenName == Screen::kScreenLoadMenu)
+			|| (currentName == Screen::kScreenLoadMenu && screenName == Screen::kScreenSaveMenu)) {
+		backPrevScreen();
+	} else if (currentName == Screen::kScreenGame 
+			|| currentName == Screen::kScreenDiaryIndex
+			|| (currentName == Screen::kScreenMainMenu && screenName == Screen::kScreenLoadMenu)
+			|| (currentName == Screen::kScreenMainMenu && screenName == Screen::kScreenSettingsMenu)) {
+		changeScreen(screenName);
+	}
+}
+
 } // End of namespace Stark

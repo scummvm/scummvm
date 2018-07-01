@@ -221,6 +221,22 @@ void StarkEngine::processEvents() {
 					|| e.kbd.keycode == Common::KEYCODE_KP_ENTER)
 					&& e.kbd.hasFlags(Common::KBD_ALT)) {
 				_gfx->toggleFullscreen();
+			} else if (e.kbd.keycode == Common::KEYCODE_F1) {
+				_userInterface->toggleScreen(Screen::kScreenDiaryIndex);
+			} else if (e.kbd.keycode == Common::KEYCODE_F2) {
+				_userInterface->toggleScreen(Screen::kScreenSaveMenu);
+			} else if (e.kbd.keycode == Common::KEYCODE_F3) {
+				_userInterface->toggleScreen(Screen::kScreenLoadMenu);
+			} else if (e.kbd.keycode == Common::KEYCODE_F4) {
+				_userInterface->toggleScreen(Screen::kScreenDialog);
+			} else if (e.kbd.keycode == Common::KEYCODE_F5) {
+				if (_diary->isEnabled()) {
+					_userInterface->toggleScreen(Screen::kScreenDiaryPages);
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_F6) {
+				_userInterface->toggleScreen(Screen::kScreenFMVMenu);
+			} else if (e.kbd.keycode == Common::KEYCODE_F7) {
+				_userInterface->toggleScreen(Screen::kScreenSettingsMenu);
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
