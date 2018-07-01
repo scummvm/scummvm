@@ -45,8 +45,6 @@ void Room::muddaUseLenseOnDegrimer() {
 
 	_vm->_awayMission.mudd.missionScore++;
 	showText(text[_roomIndex]);
-	// TODO: Identical (?) audio files: TX_MUD0N011, TX_MUD1N013, TX_MUD2N010, TX_MUD3N016,
-	// TX_MUD4009, TX_MUD5N009
 }
 
 
@@ -108,26 +106,40 @@ void Room::muddaUseDegrimer() {
 }
 
 void Room::muddaTick() {
+	// This function deals with the atmosphere running out when the life support generator
+	// is malfunctioning.
+	// NOTE: This has been changed a bit; in the original, they would just walk to
+	// a position and stay standing, though the code indicates they were supposed to
+	// collapse after walking.
+	// To simplify things, and since it makes more sense, now they'll just collapse on the
+	// spot instead.
+
 	assert(_roomIndex >= 0 && _roomIndex <= 5);
 
+	/*
+	// Unused: The positions to they originally walked to before collapsing.
 	const Common::Point deathPositions[][4] = {
 		{ Common::Point(0xbb, 0x8d), Common::Point(0xd0, 0x89), Common::Point(0xaa, 0x85), Common::Point(0xbf, 0x83) },
-		{ Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1) },
-		{ Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1) },
-		{ Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1) },
-		{ Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1), Common::Point(-1, -1) },
+		{ Common::Point(0xaa, 0xa5), Common::Point(0x83, 0xac), Common::Point(-1, -1), Common::Point(-1, -1) },
+		{ Common::Point(0x108, 0xbb), Common::Point(0x118, 0xc4), Common::Point(0xfe, 0xb2), Common::Point(0x117, 0xae) },
+		{ Common::Point(0xf1, 0x95), Common::Point(0xcd, 0x87), Common::Point(0xec, 0x84), Common::Point(0x110, 0xa6) },
+		{ Common::Point(0x8b, 0xb6), Common::Point(0x69, 0xb7), Common::Point(-1, -1), Common::Point(-1, -1) },
 		{ Common::Point(0x8b, 0xac), Common::Point(0x6f, 0x99), Common::Point(-1, -1), Common::Point(-1, -1) },
 	};
+	*/
 
-	const TextRef deathText[] = {
-		TX_MUD0N006, 0, 0, 0, TX_MUD5N105
+	const TextRef deathText[] = { // All of these audio files are identical, but there's one for each room.
+		TX_MUD0N006, TX_MUD1N007, TX_MUD2N005, TX_MUD3N008, TX_MUD4N005, TX_MUD5N105
 	};
 
-	// This is implemented somewhat differently in each room.
-	// MUDD0:
+	// UNUSED: something similar to "deathText" which would also fit in this situation.
+	/*
+	const TextRef deathText2[] = { // All of these audio files are identical, but there's one for each room.
+		TX_MUD0N009, TX_MUD1N010, TX_MUD2N009, TX_MUD3N013, TX_MUD4N007, TX_MUD5N007
+	};
+	*/
 
-	//const int TIMER_LENGTH = 27000;
-	const int TIMER_LENGTH = 60; // FIXME
+	const int TIMER_LENGTH = 27000;
 
 	if (_vm->_awayMission.mudd.lifeSupportMalfunctioning) {
 		if (!_vm->_awayMission.mudd.startedLifeSupportTimer) {
@@ -136,40 +148,37 @@ void Room::muddaTick() {
 		}
 		_vm->_awayMission.mudd.lifeSupportTimer--;
 
-		if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.25)) {
+		// BUGFIX: the warnings at 75%, 50%, and 25% were only voiced in MUDD0.
+		if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.25))
 			showText(TX_SPEAKER_SPOCK, TX_MUD0_018);
-		} else if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.5)) {
+		else if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.5))
 			showText(TX_SPEAKER_SPOCK, TX_MUD0_019);
-		} else if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.75)) {
+		else if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.75))
 			showText(TX_SPEAKER_SPOCK, TX_MUD0_020);
-		} else if (_vm->_awayMission.mudd.lifeSupportTimer == 1) {
+		else if (_vm->_awayMission.mudd.lifeSupportTimer == 1) {
 			_vm->_awayMission.disableInput = true;
+
+			// In each room, the crewmen collapse in a different directions.
+			// NOTE: "kgetdn" (kirk, north) doesn't work properly; files in the animation
+			// are missing. It's replaced with 'e' (east) in MUDD1, MUDD3, MUDD5. Only
+			// applies to Kirk, others seem fine...
+			// TODO: check if this is the case across all versions...
+			const char *directions[] = {
+				"weseee", // KIRK
+				"sewene", // SPOCK
+				"nsesss", // MCCOY
+				"ewesww", // REDSHIRT
+			};
+
 			for (int i = OBJECT_KIRK; i <= OBJECT_REDSHIRT; i++) {
-				if (deathPositions[_roomIndex][i].x != -1)
-					walkCrewman(i, deathPositions[_roomIndex][i].x, deathPositions[_roomIndex][i].y, 9 + i);
+				Common::String anim = _vm->getCrewmanAnimFilename(i, "getd");
+				anim += directions[i][_roomIndex];
+				loadActorAnim2(i, anim);
 			}
 			showText(deathText[_roomIndex]);
 			showGameOverMenu();
 		}
 	}
-}
-
-void Room::muddaKirkReachedDeathPosition() {
-	loadActorAnim2(OBJECT_KIRK, "kgetdw");
-}
-
-void Room::muddaSpockReachedDeathPosition() {
-	loadActorAnim2(OBJECT_SPOCK, "sgetds");
-}
-
-void Room::muddaMccoyReachedDeathPosition() {
-	loadActorAnim2(OBJECT_MCCOY, "sgetdn");
-}
-
-void Room::muddaRedshirtReachedDeathPosition() {
-	loadActorAnim2(OBJECT_REDSHIRT, "rgetde");
-	// NOTE: there's code to check if he's the last one down... not really implemented
-	// properly
 }
 
 }

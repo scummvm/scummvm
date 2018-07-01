@@ -1393,6 +1393,9 @@ RoomAction love5ActionList[] = {
 	{ Action(ACTION_USE, OBJECT_IN2O, -1, 0), &Room::loveaUseHumanLaughingGas },
 	{ Action(ACTION_USE, OBJECT_INH3, -1, 0), &Room::loveaUseAmmonia },
 	{ Action(ACTION_USE, OBJECT_ICOMM, -1, 0), &Room::loveaUseCommunicator },
+
+	// Common code (countdown for losing atmosphere when life support malfunctioning)
+	{ Action(ACTION_TICK, -1, -1, -1),           &Room::muddaTick },
 };
 
 RoomAction mudd0ActionList[] = {
@@ -1440,7 +1443,9 @@ RoomAction mudd0ActionList[] = {
 	{ Action(ACTION_TALK, OBJECT_MCCOY,    0, 0), &Room::mudd0TalkToMccoy },
 	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::mudd0TalkToRedshirt },
 	{ Action(ACTION_TALK, 8,               0, 0), &Room::mudd0TalkToMudd },
-	// TODO: remainder? something about losing atmosphere?
+
+	// Common code (countdown for losing atmosphere when life support malfunctioning)
+	{ Action(ACTION_TICK, -1, -1, -1),           &Room::muddaTick },
 };
 
 RoomAction mudd1ActionList[] = {
@@ -1500,7 +1505,9 @@ RoomAction mudd1ActionList[] = {
 	{ Action(ACTION_TOUCHED_HOTSPOT, 1, 0, 0), &Room::mudd1TouchedHotspot1 },
 	{ Action(ACTION_WALK, 0x26, 0, 0), &Room::mudd1WalkToWestDoor },
 	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0), &Room::mudd1TouchedHotspot0 },
-	// TODO: remainder? something about losing atmosphere?
+
+	// Common code (countdown for losing atmosphere when life support malfunctioning)
+	{ Action(ACTION_TICK, -1, -1, -1),           &Room::muddaTick },
 };
 
 RoomAction mudd2ActionList[] = {
@@ -1564,7 +1571,9 @@ RoomAction mudd2ActionList[] = {
 	{ Action(ACTION_TALK, OBJECT_MCCOY,    0, 0), &Room::mudd2TalkToMccoy },
 	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::mudd2TalkToRedshirt },
 	{ Action(ACTION_TALK, 8,               0, 0), &Room::mudd2TalkToMudd },
-	// TODO: remainder? something about losing atmosphere?
+
+	// Common code (countdown for losing atmosphere when life support malfunctioning)
+	{ Action(ACTION_TICK, -1, -1, -1),           &Room::muddaTick },
 };
 
 RoomAction mudd3ActionList[] = {
@@ -1610,7 +1619,9 @@ RoomAction mudd3ActionList[] = {
 	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::mudd3TalkToRedshirt },
 	{ Action(ACTION_TALK, 8,               0, 0), &Room::mudd3TalkToMudd },
 	{ Action(ACTION_USE, OBJECT_IMEDKIT,  -1, 0), &Room::mudd3UseMedkit },
-	// TODO: remainder? something about losing atmosphere?
+
+	// Common code (countdown for losing atmosphere when life support malfunctioning)
+	{ Action(ACTION_TICK, -1, -1, -1),           &Room::muddaTick },
 };
 
 RoomAction mudd4ActionList[] = {
@@ -1687,7 +1698,9 @@ RoomAction mudd4ActionList[] = {
 	{ Action(ACTION_WALK, 0x24, 0, 0),            &Room::mudd4WalkToEastDoor },
 	{ Action(ACTION_WALK, 0x25, 0, 0),            &Room::mudd4WalkToWestDoor },
 	{ Action(ACTION_TOUCHED_HOTSPOT, 0, 0, 0),    &Room::mudd4TouchedHotspot0 },
-	// TODO: remainder? something about losing atmosphere?
+
+	// Common code (countdown for losing atmosphere when life support malfunctioning)
+	{ Action(ACTION_TICK, -1, -1, -1),           &Room::muddaTick },
 };
 
 RoomAction mudd5ActionList[] = {
@@ -1734,10 +1747,6 @@ RoomAction mudd5ActionList[] = {
 
 	// Common code (countdown for losing atmosphere when life support malfunctioning)
 	{ Action(ACTION_TICK, -1, -1, -1),           &Room::muddaTick },
-	{ Action(ACTION_FINISHED_WALKING, 9, 0, 0),  &Room::muddaKirkReachedDeathPosition },
-	{ Action(ACTION_FINISHED_WALKING, 10, 0, 0), &Room::muddaSpockReachedDeathPosition },
-	{ Action(ACTION_FINISHED_WALKING, 11, 0, 0), &Room::muddaMccoyReachedDeathPosition },
-	{ Action(ACTION_FINISHED_WALKING, 12, 0, 0), &Room::muddaRedshirtReachedDeathPosition },
 };
 
 }

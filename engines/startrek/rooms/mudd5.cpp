@@ -48,7 +48,7 @@ void Room::mudd5Tick1() {
 		loadActorAnim(OBJECT_LIFE_SUPPORT_GENERATOR, "s4eplo", GENERATOR_X, GENERATOR_Y);
 		_vm->_awayMission.mudd.numTimesEnteredRoom5++;
 		// BUG: this event can become permanently unavailable? (test)
-		if (true || _vm->_awayMission.mudd.numTimesEnteredRoom5 == 2 && !_vm->_awayMission.mudd.muddCurrentlyInsane && !_vm->_awayMission.mudd.repairedLifeSupportGenerator) { // FIXME
+		if (_vm->_awayMission.mudd.numTimesEnteredRoom5 == 2 && !_vm->_awayMission.mudd.muddCurrentlyInsane && !_vm->_awayMission.mudd.repairedLifeSupportGenerator) {
 			_vm->_awayMission.mudd.muddCurrentlyInsane = true;
 			_vm->_awayMission.mudd.numTimesEnteredRoom5 = 1;
 			_vm->_awayMission.disableInput = 2;

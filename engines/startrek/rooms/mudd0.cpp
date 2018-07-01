@@ -41,7 +41,11 @@ namespace StarTrek {
 void Room::mudd0Tick1() {
 	playVoc("MUD0LOOP");
 
-	_vm->_awayMission.disableInput = 2;
+	// ENHANCEMENT: Only disable input when Mudd showing Mudd cutscene (avoids a long,
+	// pointless delay when entering the room otherwise)
+	if (!_vm->_awayMission.mudd.enteredRoom0ForFirstTime)
+		_vm->_awayMission.disableInput = 2;
+
 	loadActorAnim(OBJECT_MUDD, "s4cbhr", 0xa2, 0xa9, 0);
 
 	// Floppy version's code.
@@ -63,9 +67,10 @@ void Room::mudd0Tick50() {
 }
 
 void Room::mudd0Tick60() {
-	_vm->_awayMission.disableInput = false;
-
 	if (_vm->_awayMission.mudd.field29 == 0) {
+		// ENHANCEMENT: Move this into if statement (related to above enhancement)
+		_vm->_awayMission.disableInput = false;
+
 		_vm->_awayMission.mudd.field29++;
 
 		showText(TX_SPEAKER_MUDD,  TX_MUD0_037);
