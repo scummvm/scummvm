@@ -47,6 +47,8 @@
 #include "engines/stark/ui/world/gamescreen.h"
 #include "engines/stark/ui/world/gamewindow.h"
 
+#include "gui/message.h"
+
 namespace Stark {
 
 UserInterface::UserInterface(Gfx::Driver *gfx) :
@@ -348,6 +350,24 @@ void UserInterface::notifyInventoryItemEnabled(uint16 itemIndex) {
 
 void UserInterface::notifyDiaryEntryEnabled() {
 	_gameScreen->notifyDiaryEntryEnabled();
+}
+
+bool UserInterface::confirm(const Common::String &msg,
+		const Common::String &leftBtnMsg, const Common::String &rightBtnMsg) {
+	// TODO: Implement the original dialog
+	GUI::MessageDialog dialog(msg, leftBtnMsg.c_str(), rightBtnMsg.c_str());
+	return dialog.runModal() == GUI::kMessageOK;
+}
+
+bool UserInterface::confirm(const Common::String &msg) {
+	Common::String textYes = StarkGameMessage->getTextByKey(GameMessage::kYes);
+	Common::String textNo = StarkGameMessage->getTextByKey(GameMessage::kNo);
+	return confirm(msg, textYes, textNo);
+}
+
+bool UserInterface::confirm(GameMessage::TextKey key) {
+	Common::String msg = StarkGameMessage->getTextByKey(key);
+	return confirm(msg);
 }
 
 } // End of namespace Stark

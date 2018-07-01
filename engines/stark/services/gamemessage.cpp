@@ -71,12 +71,6 @@ GameMessage::GameMessage() :
 	}
 }
 
-bool GameMessage::alert(const Common::String &msg, TextKey leftBtnMsg, TextKey rightBtnMsg) {
-	// TODO: Build the original game's confirmation dialog
-	GUI::MessageDialog alert(msg, getTextByKey(leftBtnMsg).c_str(), getTextByKey(rightBtnMsg).c_str());
-	return alert.runModal() == GUI::kMessageOK;
-}
-
 Common::String GameMessage::getDefaultText(TextKey key) {
 	switch(key) {
 		case kOverwriteSave:

@@ -182,7 +182,7 @@ void MainMenuScreen::boxHandler() {
 }
 
 void MainMenuScreen::quitHandler() {
-	if (StarkGameMessage->alert(GameMessage::kQuitPrompt)) {
+	if (StarkUserInterface->confirm(GameMessage::kQuitPrompt)) {
 		StarkUserInterface->notifyShouldExit();
 	}
 }

@@ -157,8 +157,8 @@ void SaveMenuScreen::onWidgetSelected(SaveDataWidget *widget) {
 	if (widget->hasSave()) {
 		Common::String format = StarkGameMessage->getTextByKey(GameMessage::kOverwriteSave);
 		Common::String prompt = Common::String::format(format.c_str(), widget->getName().c_str());
-		
-		if (!StarkGameMessage->alert(prompt)) {
+
+		if (!StarkUserInterface->confirm(prompt)) {
 			return;
 		}
 	}
@@ -182,7 +182,7 @@ void LoadMenuScreen::open() {
 }
 
 void LoadMenuScreen::onWidgetSelected(SaveDataWidget *widget) {
-	if (!StarkGlobal->getCurrent() || StarkGameMessage->alert(GameMessage::kEndAndLoad)) {
+	if (!StarkGlobal->getCurrent() || StarkUserInterface->confirm(GameMessage::kEndAndLoad)) {
 		checkError(g_engine->loadGameState(widget->getSlot()));
 	}
 }

@@ -50,13 +50,6 @@ public:
 		kNo = 359
 	};
 
-	/** Show a message dialog, return true when the left button is pressed, and false for the right */
-	bool alert(const Common::String &msg, TextKey leftBtnMsg = kYes, TextKey rightBtnMsg = kNo);
-
-	bool alert(TextKey msg, TextKey leftBtnMsg = kYes, TextKey rightBtnMsg = kNo) {
-		return alert(getTextByKey(msg), leftBtnMsg, rightBtnMsg);
-	}
-
 	/** Acquire a message text by a given key */
 	Common::String getTextByKey(TextKey key) {
 		/** Currently using texts from the language.ini is disabled

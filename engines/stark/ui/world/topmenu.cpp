@@ -137,7 +137,7 @@ void TopMenu::onClick(const Common::Point &pos) {
 	}
 
 	if (_exitButton->containsPoint(pos)) {
-		if (StarkGameMessage->alert(GameMessage::kQuitGamePrompt)) {
+		if (StarkUserInterface->confirm(GameMessage::kQuitGamePrompt)) {
 			StarkUserInterface->requestQuitToMainMenu();
 		}
 	}
