@@ -240,6 +240,10 @@ bool UserInterface::isInSaveLoadMenuScreen() const {
 	return name == Screen::kScreenSaveMenu || name == Screen::kScreenLoadMenu;
 }
 
+bool UserInterface::isInDiaryIndexScreen() const {
+	return _currentScreen->getName() == Screen::kScreenDiaryIndex;
+}
+
 bool UserInterface::isInventoryOpen() const {
 	return _gameScreen->getInventoryWindow()->isVisible();
 }

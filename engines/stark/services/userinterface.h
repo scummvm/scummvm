@@ -111,6 +111,9 @@ public:
 	/** Is the save & load menu screen currently displayed? */
 	bool isInSaveLoadMenuScreen() const;
 
+	/** Is the diary index screen currently displayed? */
+	bool isInDiaryIndexScreen() const;
+
 	/** Is the inventory panel being displayed? */
 	bool isInventoryOpen() const;
 

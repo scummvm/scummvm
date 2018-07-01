@@ -237,6 +237,12 @@ void StarkEngine::processEvents() {
 				_userInterface->toggleScreen(Screen::kScreenFMVMenu);
 			} else if (e.kbd.keycode == Common::KEYCODE_F7) {
 				_userInterface->toggleScreen(Screen::kScreenSettingsMenu);
+			} else if (e.kbd.keycode == Common::KEYCODE_F10) {
+				if (_userInterface->isInGameScreen() || _userInterface->isInDiaryIndexScreen()) {
+					if (_userInterface->confirm(GameMessage::kQuitGamePrompt)) {
+						_userInterface->requestQuitToMainMenu();
+					}
+				}
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
