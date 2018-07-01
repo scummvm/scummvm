@@ -218,6 +218,7 @@ void OpenGLSdlGraphicsManager::deactivateManager() {
 bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
+	case OSystem::kFeatureStretchMode:
 	case OSystem::kFeatureIconifyWindow:
 		return true;
 

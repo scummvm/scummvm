@@ -329,6 +329,15 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 		dialog.runModal();
 	}
 
+	if (gfxError & OSystem::kTransactionStretchModeSwitchFailed) {
+		Common::String message = _("Could not switch to stretch mode: '");
+		message += ConfMan.get("stretch_mode");
+		message += "'.";
+
+		GUI::MessageDialog dialog(message);
+		dialog.runModal();
+	}
+
 	if (gfxError & OSystem::kTransactionAspectRatioFailed) {
 		GUI::MessageDialog dialog(_("Could not apply aspect ratio setting."));
 		dialog.runModal();
