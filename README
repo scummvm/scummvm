@@ -1527,6 +1527,7 @@ arguments -- see the next section.
   -f, --fullscreen         Force full-screen mode
   -F, --no-fullscreen      Force windowed mode
   -g, --gfx-mode=MODE      Select graphics scaler (see also section 5.3)
+  --stretch-mode=MODE      Select stretch mode (center, integral, fit, stretch)
   --filtering              Force filtered graphics mode
   --no-filtering           Force unfiltered graphics mode
 
