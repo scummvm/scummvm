@@ -201,6 +201,7 @@ void PDAMgr::initPerilButtons() {
 		domainButton->setAction(kInactiveAction);
 		updateWheels();
 	} else {
+		calculateIndexes();
 		navigatorButton->setAction(kIdleAction);
 		if (isDomain(_page->getName()))
 			domainButton->setAction(kInactiveAction);
@@ -238,6 +239,27 @@ void PDAMgr::updateLocator() {
 	Actor *locator = _globalPage->findActor(kLocator);
 	if (locator)
 		locator->setAction(g_countries[_countryIndex]);
+}
+
+void PDAMgr::calculateIndexes() {
+	Common::String country = Common::String::format("%.3s", _page->getName().c_str());
+	for (uint i = 0; i < 6; ++i) {
+		if (country == g_countries[i]) {
+			_countryIndex = i;
+			break;
+		}
+	}
+
+	Common::String domain = _page->getName();
+	domain.erase(0, 3);
+	if (domain.size() >= 4)
+		domain.erase(3);
+	for (uint i = 0; i < 8; ++i) {
+		if (domain == g_domains[i]) {
+			_domainIndex = i;
+			break;
+		}
+	}
 }
 
 } // End of namespace Pink

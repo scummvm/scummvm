@@ -68,6 +68,8 @@ private:
 	void updateWheels(bool playSfx = 0);
 	void updateLocator();
 
+	void calculateIndexes();
+
 	static bool isNavigate(const Common::String &name);
 	static bool isDomain(const Common::String &name);
 
