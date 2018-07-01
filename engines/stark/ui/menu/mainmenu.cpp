@@ -185,7 +185,7 @@ void MainMenuScreen::quitHandler() {
 }
 
 VersionInfoText::VersionInfoText() :
-		StaticLocationWidget("VERSION INFO REALLY", nullptr, nullptr) {
+		StaticLocationWidget("VERSION INFO", nullptr, nullptr) {
 	Common::String text = _copyrightSymbol + Common::String("1999 Funcom");
 	_renderEntry->getText()->setText(text);
 	_renderEntry->setPosition(Common::Point(_posX, _posY));

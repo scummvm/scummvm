@@ -144,7 +144,9 @@ StaticLocationWidget::StaticLocationWidget(const char *renderEntryName, WidgetOn
 		_renderEntry = location->getRenderEntryByName(renderEntryName);
 
 		if (_renderEntry == nullptr) {
-			debug("Unable to find render entry with name '%s' in location '%s'", renderEntryName, location->getName().c_str());
+			debug("Widget disabled: unable to find render entry with name '%s' in location '%s'",
+					renderEntryName, location->getName().c_str());
+			setVisible(false);
 		} else {
 			_item = _renderEntry->getOwner();
 		}
