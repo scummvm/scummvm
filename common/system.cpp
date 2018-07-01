@@ -121,6 +121,27 @@ bool OSystem::setGraphicsMode(const char *name) {
 	return false;
 }
 
+bool OSystem::setStretchMode(const char *name) {
+	if (!name)
+		return false;
+
+	// Special case for the 'default' filter
+	if (!scumm_stricmp(name, "default")) {
+		return setStretchMode(getDefaultStretchMode());
+	}
+
+	const GraphicsMode *sm = getSupportedStretchModes();
+
+	while (sm->name) {
+		if (!scumm_stricmp(sm->name, name)) {
+			return setStretchMode(sm->id);
+		}
+		sm++;
+	}
+
+	return false;
+}
+
 void OSystem::fatalError() {
 	quit();
 	exit(1);
