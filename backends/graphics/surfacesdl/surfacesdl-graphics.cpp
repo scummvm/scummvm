@@ -256,6 +256,7 @@ bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFilteringMode) ||
+		(f == OSystem::kFeatureStretchMode) ||
 #endif
 		(f == OSystem::kFeatureCursorPalette) ||
 		(f == OSystem::kFeatureIconifyWindow);

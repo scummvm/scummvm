@@ -154,6 +154,8 @@ void OptionsDialog::init() {
 	_gfxPopUpDesc = 0;
 	_renderModePopUp = 0;
 	_renderModePopUpDesc = 0;
+	_stretchPopUp = 0;
+	_stretchPopUpDesc = 0;
 	_fullscreenCheckbox = 0;
 	_filteringCheckbox = 0;
 	_aspectCheckbox = 0;
@@ -283,6 +285,25 @@ void OptionsDialog::build() {
 					sel = p->id;
 			}
 			_renderModePopUp->setSelectedTag(sel);
+		}
+
+		_stretchPopUp->setSelected(0);
+
+		if (g_system->hasFeature(OSystem::kFeatureStretchMode)) {
+			if (ConfMan.hasKey("stretch_mode", _domain)) {
+				const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
+				Common::String stretchMode(ConfMan.get("stretch_mode", _domain));
+				int stretchCount = 1;
+				while (sm->name) {
+					stretchCount++;
+					if (scumm_stricmp(sm->name, stretchMode.c_str()) == 0)
+						_stretchPopUp->setSelected(stretchCount);
+					sm++;
+				}
+			}
+		} else {
+			_stretchPopUpDesc->setVisible(false);
+			_stretchPopUp->setVisible(false);
 		}
 
 #ifdef GUI_ONLY_FULLSCREEN
@@ -470,6 +491,23 @@ void OptionsDialog::apply() {
 
 			if ((int32)_renderModePopUp->getSelectedTag() >= 0)
 				ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
+
+			isSet = false;
+			if ((int32)_stretchPopUp->getSelectedTag() >= 0) {
+				const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
+				while (sm->name) {
+					if (sm->id == (int)_stretchPopUp->getSelectedTag()) {
+						if (ConfMan.get("stretch_mode", _domain) != sm->name)
+							graphicsModeChanged = true;
+						ConfMan.set("stretch_mode", sm->name, _domain);
+						isSet = true;
+						break;
+					}
+					sm++;
+				}
+			}
+			if (!isSet)
+				ConfMan.removeKey("stretch_mode", _domain);
 		} else {
 			ConfMan.removeKey("fullscreen", _domain);
 			ConfMan.removeKey("filtering", _domain);
@@ -484,6 +522,8 @@ void OptionsDialog::apply() {
 		g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
 
+		if (ConfMan.hasKey("stretch_mode"))
+			g_system->setStretchMode(ConfMan.get("stretch_mode", _domain).c_str());
 		if (ConfMan.hasKey("aspect_ratio"))
 			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
 		if (ConfMan.hasKey("fullscreen"))
@@ -519,7 +559,20 @@ void OptionsDialog::apply() {
 					gm++;
 				}
 				message += "\n";
-				message += _("the video mode could not be changed.");
+				message += _("the video mode could not be changed");
+			}
+
+			if (gfxError & OSystem::kTransactionStretchModeSwitchFailed) {
+				const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
+				while (sm->name) {
+					if (sm->id == g_system->getStretchMode()) {
+						ConfMan.set("stretch_mode", sm->name, _domain);
+						break;
+					}
+					sm++;
+				}
+				message += "\n";
+				message += _("the stretch mode could not be changed");
 			}
 
 			if (gfxError & OSystem::kTransactionAspectRatioFailed) {
@@ -805,6 +858,8 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_gfxPopUp->setEnabled(enabled);
 	_renderModePopUpDesc->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
+	_stretchPopUpDesc->setEnabled(enabled);
+	_stretchPopUp->setEnabled(enabled);
 	_filteringCheckbox->setEnabled(enabled);
 #ifndef GUI_ENABLE_KEYSDIALOG
 #ifndef GUI_ONLY_FULLSCREEN
@@ -1012,6 +1067,18 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		Common::String renderGuiOption = Common::renderMode2GUIO(rm->id);
 		if ((_domain == Common::ConfigManager::kApplicationDomain) || (_domain != Common::ConfigManager::kApplicationDomain && !renderingTypeDefined) || (_guioptions.contains(renderGuiOption)))
 			_renderModePopUp->appendEntry(_c(rm->description, context), rm->id);
+	}
+
+	// The Stretch mode popup
+	const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
+	_stretchPopUpDesc = new StaticTextWidget(boss, prefix + "grStretchModePopupDesc", _("Stretch mode:"));
+	_stretchPopUp = new PopUpWidget(boss, prefix + "grStretchModePopup");
+
+	_stretchPopUp->appendEntry(_("<default>"));
+	_stretchPopUp->appendEntry("");
+	while (sm->name) {
+		_stretchPopUp->appendEntry(_c(sm->description, context), sm->id);
+		sm++;
 	}
 
 	// Fullscreen checkbox

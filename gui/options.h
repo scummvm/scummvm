@@ -138,6 +138,8 @@ private:
 	bool _enableGraphicSettings;
 	StaticTextWidget *_gfxPopUpDesc;
 	PopUpWidget *_gfxPopUp;
+	StaticTextWidget *_stretchPopUpDesc;
+	PopUpWidget *_stretchPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_filteringCheckbox;
 	CheckboxWidget *_aspectCheckbox;
