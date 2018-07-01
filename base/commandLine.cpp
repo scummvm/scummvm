@@ -93,6 +93,7 @@ static const char HELP_STRING[] =
 	"  -g, --gfx-mode=MODE      Select graphics scaler (1x,2x,3x,2xsai,super2xsai,\n"
 	"                           supereagle,advmame2x,advmame3x,hq2x,hq3x,tv2x,\n"
 	"                           dotmatrix)\n"
+	"  --stretch-mode=MODE      Select stretch mode (center, integral, fit, stretch)"
 	"  --filtering              Force filtered graphics mode\n"
 	"  --no-filtering           Force unfiltered graphics mode\n"
 	"  --gui-theme=THEME        Select GUI theme\n"
@@ -213,6 +214,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("gfx_mode", "normal");
 	ConfMan.registerDefault("render_mode", "default");
 	ConfMan.registerDefault("desired_screen_aspect_ratio", "auto");
+	ConfMan.registerDefault("stretch_mode", "default");
 
 	// Sound & Music
 	ConfMan.registerDefault("music_volume", 192);
@@ -507,6 +509,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION('g', "gfx-mode")
+			END_OPTION
+
+			DO_LONG_OPTION("stretch-mode")
 			END_OPTION
 
 			DO_OPTION_INT('m', "music-volume")
