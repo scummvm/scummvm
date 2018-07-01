@@ -192,8 +192,8 @@ public:
 	// Miscellaneous
 	uint16 getComboDigit(uint32 correctCombo, uint32 digit);
 	void runDemoBoundaryDialog();
-	void runEndGame(uint16 videoCode, uint32 delay);
-	void runCredits(uint16 video, uint32 delay);
+	void runEndGame(uint16 videoCode, uint32 delay, uint32 videoFrameCountOverride);
+	void runCredits(uint16 video, uint32 delay, uint32 videoFrameCountOverride);
 
 	void pageTurn(RivenTransition transition);
 	bool keepTurningPages();
