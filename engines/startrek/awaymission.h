@@ -189,23 +189,27 @@ struct AwayMission {
 		} love;
 
 		struct {
-			byte field29; // 0x29
+			// 0: Haven't entered first room yet
+			// 1: Have entered first room once
+			// 2: Mudd is gone from first room
+			byte muddFirstRoomState; // 0x29
+
 			bool torpedoLoaded; // 0x33
 			bool knowAboutTorpedo; // 0x34
 			bool discoveredBase3System; // 0x35
 			bool translatedAlienLanguage; // 0x36
 			bool databaseDestroyed; // 0x37
 			bool muddInDatabaseRoom; // 0x38
-			bool muddDroppedCapsule; // 0x39
-			bool computerDataErased; // 0x3a
-			bool gaveMuddDatabaseAccess; // 0x3b
+			bool muddCurrentlyInsane; // 0x39
+			bool computerDataErasedOrDestroyed; // 0x3a
+			bool muddErasedDatabase; // 0x3b
 
 			// True if you've combined the lense + degrimer and fired it off, discovering
 			// it's a weapon
 			bool discoveredLenseAndDegrimerFunction; // 0x3c
 
 			int16 torpedoStatus; // 0x3d
-			bool muddCurrentlyInsane; // 0x3f (TODO: rename)
+			bool muddUnavailable; // 0x3f
 			bool muddVisitedDatabaseRoom; // 0x40
 			bool accessedAlienDatabase; // 0x41
 			bool tookRepairTool; // 0x42
@@ -219,8 +223,14 @@ struct AwayMission {
 			bool gotDegrimer; // 0x4a
 			bool putCapsuleInMedicalMachine; // 0x4c
 			bool muddUnconscious; // 0x4d
-			byte muddState; // 0x4e
-			bool muddInhaledGas; // 0x4f
+
+			// 0: haven't entered room yet
+			// 1: will go insane next time room is entered (if he's available)
+			// 2: currently insane (or unconscious)
+			// 3: cured
+			byte muddInsanityState; // 0x4e
+
+			bool muddInhaledGas; // 0x4f (mostly the same as "muddCurrentlyInsane"?)
 			int16 lifeSupportTimer; // 0x50
 			bool startedLifeSupportTimer; // 0x52
 			bool enteredRoom0ForFirstTime; // 0x54

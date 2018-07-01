@@ -67,12 +67,12 @@ void Room::mudd2Tick1() {
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_W;
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_W;
-	_vm->_awayMission.mudd.muddDroppedCapsule = false;
+	_vm->_awayMission.mudd.muddCurrentlyInsane = false;
 
-	if (_vm->_awayMission.mudd.muddState == 0) {
-		_vm->_awayMission.mudd.muddState = 0;
-	} else if (_vm->_awayMission.mudd.muddState == 2) {
-		_vm->_awayMission.mudd.muddDroppedCapsule = true;
+	if (_vm->_awayMission.mudd.muddInsanityState == 0) { // First time entering room
+		_vm->_awayMission.mudd.muddInsanityState = 1;
+	} else if (_vm->_awayMission.mudd.muddInsanityState == 2) { // Currently insane
+		_vm->_awayMission.mudd.muddCurrentlyInsane = true;
 		if (!_vm->_awayMission.mudd.muddUnconscious) {
 			_vm->_awayMission.mudd.muddUnconscious = false;
 			loadActorAnim2(OBJECT_MUDD, "s4sbhn", 0x9f, 0xbf);
@@ -80,16 +80,16 @@ void Room::mudd2Tick1() {
 		} else {
 			loadActorAnim2(OBJECT_MUDD, "s4sbob", 0x9f, 0xba);
 		}
-	} else if (_vm->_awayMission.mudd.muddCurrentlyInsane) {
-		_vm->_awayMission.mudd.muddState = 0;
-	} else if (_vm->_awayMission.mudd.muddState == 1) {
+	} else if (_vm->_awayMission.mudd.muddUnavailable) {
+		_vm->_awayMission.mudd.muddInsanityState = 1;
+	} else if (_vm->_awayMission.mudd.muddInsanityState == 1) { // Second time entering room, start cutscene
 		playMidiMusicTracks(3);
 		loadActorAnim2(OBJECT_MUDD, "s4sbhw", 0x99, 0xbf);
 		_vm->_awayMission.disableInput = 2;
 		_vm->_awayMission.mudd.muddInhaledGas = true;
 		_vm->_awayMission.timers[1] = 70;
-		_vm->_awayMission.mudd.muddState = 2;
-		_vm->_awayMission.mudd.muddCurrentlyInsane = true;
+		_vm->_awayMission.mudd.muddInsanityState = 2;
+		_vm->_awayMission.mudd.muddUnavailable = true;
 	}
 }
 
@@ -150,9 +150,9 @@ void Room::mudd2UseCapsuleOnControlPanel() {
 
 void Room::mudd2MccoyReachedControlPanel() {
 	if (_vm->_awayMission.mudd.translatedAlienLanguage)
-		showText(TX_SPEAKER_MCCOY, TX_MUD2_014);
-	else
 		loadActorAnimC(OBJECT_MCCOY, "musehn", -1, -1, &Room::mudd2MccoyPutCapsuleInControlPanel);
+	else // NOTE: Unused, since you can't get capsules without translating the language first
+		showText(TX_SPEAKER_MCCOY, TX_MUD2_014);
 }
 
 void Room::mudd2MccoyPutCapsuleInControlPanel() {
@@ -195,7 +195,7 @@ void Room::mudd2MuddNoticedKirk() {
 void Room::mudd2MuddDroppedCapsule() {
 	loadActorAnim2(OBJECT_MUDD, "s4sbhn", 0x9f, 0xbf, 3); // NOTE: no callback from this
 	loadActorAnim2(OBJECT_CAPSULE, "s4sbvp", 0x93, 0xc3);
-	_vm->_awayMission.mudd.muddDroppedCapsule = true;
+	_vm->_awayMission.mudd.muddCurrentlyInsane = true;
 
 	showText(TX_SPEAKER_MCCOY, TX_MUD2_032);
 	showText(TX_SPEAKER_MUDD,  TX_MUD2_049);
@@ -312,9 +312,9 @@ void Room::mudd2MccoyReachedMudd() {
 }
 
 void Room::mudd2MccoyCuredMudd() {
+	_vm->_awayMission.mudd.muddUnavailable = false;
+	_vm->_awayMission.mudd.muddInsanityState = 3;
 	_vm->_awayMission.mudd.muddCurrentlyInsane = false;
-	_vm->_awayMission.mudd.muddState = 3;
-	_vm->_awayMission.mudd.muddDroppedCapsule = false;
 	_vm->_awayMission.mudd.muddInhaledGas = false;
 
 	showText(TX_SPEAKER_MCCOY, TX_MUD2_033);
@@ -352,9 +352,10 @@ void Room::mudd2LookAtBed() {
 	showText(TX_MUD2N007);
 }
 
-// FIXME: The conditions in the below functions seem wrong.
 void Room::mudd2TalkToKirk() {
-	if (!_vm->_awayMission.mudd.muddDroppedCapsule || _vm->_awayMission.mudd.muddInhaledGas || _vm->_awayMission.mudd.muddUnconscious)
+	// BUGFIX: second condition in if statement changed to "must be false" instead of
+	// "must be true". (Same applies to below talk functions.)
+	if (!_vm->_awayMission.mudd.muddCurrentlyInsane || !_vm->_awayMission.mudd.muddInhaledGas || _vm->_awayMission.mudd.muddUnconscious)
 		showText(TX_SPEAKER_KIRK, TX_MUD2_010);
 	else {
 		showText(TX_SPEAKER_KIRK,  TX_MUD2_005);
@@ -364,7 +365,7 @@ void Room::mudd2TalkToKirk() {
 }
 
 void Room::mudd2TalkToSpock() {
-	if (!_vm->_awayMission.mudd.muddDroppedCapsule || _vm->_awayMission.mudd.muddInhaledGas || _vm->_awayMission.mudd.muddUnconscious) {
+	if (!_vm->_awayMission.mudd.muddCurrentlyInsane || !_vm->_awayMission.mudd.muddInhaledGas || _vm->_awayMission.mudd.muddUnconscious) {
 		showText(TX_SPEAKER_SPOCK, TX_MUD2_040);
 		showText(TX_SPEAKER_KIRK,  TX_MUD2_011);
 	} else {
@@ -373,7 +374,7 @@ void Room::mudd2TalkToSpock() {
 }
 
 void Room::mudd2TalkToMccoy() {
-	if (!_vm->_awayMission.mudd.muddDroppedCapsule || _vm->_awayMission.mudd.muddInhaledGas || _vm->_awayMission.mudd.muddUnconscious) {
+	if (!_vm->_awayMission.mudd.muddCurrentlyInsane || !_vm->_awayMission.mudd.muddInhaledGas || _vm->_awayMission.mudd.muddUnconscious) {
 		showText(TX_SPEAKER_MCCOY, TX_MUD2_025);
 		showText(TX_SPEAKER_KIRK,  TX_MUD2_007);
 	} else {
@@ -382,23 +383,23 @@ void Room::mudd2TalkToMccoy() {
 }
 
 void Room::mudd2TalkToRedshirt() {
-	if (!_vm->_awayMission.mudd.muddDroppedCapsule || _vm->_awayMission.mudd.muddInhaledGas || _vm->_awayMission.mudd.muddUnconscious) {
+	if (!_vm->_awayMission.mudd.muddCurrentlyInsane || !_vm->_awayMission.mudd.muddInhaledGas || _vm->_awayMission.mudd.muddUnconscious) {
 		showText(TX_SPEAKER_BUCHERT, TX_MUD2_054);
 		showText(TX_SPEAKER_KIRK,    TX_MUD2_008);
 	} else {
 		showText(TX_SPEAKER_BUCHERT, TX_MUD2_055);
 		showText(TX_SPEAKER_KIRK,    TX_MUD2_003);
-		showText(TX_SPEAKER_MCCOY,   TX_MUD2_048);
+		showText(TX_SPEAKER_MCCOY,   TX_MUD2_036);
 	}
 }
 
 void Room::mudd2TalkToMudd() {
-	if (!_vm->_awayMission.mudd.muddDroppedCapsule || _vm->_awayMission.mudd.muddUnconscious)
+	if (!_vm->_awayMission.mudd.muddCurrentlyInsane || !_vm->_awayMission.mudd.muddInhaledGas || _vm->_awayMission.mudd.muddUnconscious)
 		return;
 	else if (_vm->_awayMission.mudd.muddInhaledGas) {
 		showText(TX_SPEAKER_MUDD, TX_MUD2_048);
 		showText(TX_SPEAKER_MCCOY, TX_MUD2_028);
-	} else {
+	} else { // NOTE: Unused (assumes harry is in a normal state, which doesn't happen here)
 		showText(TX_SPEAKER_MUDD, TX_MUD2_047);
 		showText(TX_SPEAKER_KIRK, TX_MUD2_006);
 	}

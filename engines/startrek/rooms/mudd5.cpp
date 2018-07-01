@@ -48,8 +48,8 @@ void Room::mudd5Tick1() {
 		loadActorAnim(OBJECT_LIFE_SUPPORT_GENERATOR, "s4eplo", GENERATOR_X, GENERATOR_Y);
 		_vm->_awayMission.mudd.numTimesEnteredRoom5++;
 		// BUG: this event can become permanently unavailable? (test)
-		if (_vm->_awayMission.mudd.numTimesEnteredRoom5 == 2 && !_vm->_awayMission.mudd.muddCurrentlyInsane && !_vm->_awayMission.mudd.repairedLifeSupportGenerator) {
-			_vm->_awayMission.mudd.muddCurrentlyInsane = true;
+		if (_vm->_awayMission.mudd.numTimesEnteredRoom5 == 2 && !_vm->_awayMission.mudd.muddUnavailable && !_vm->_awayMission.mudd.repairedLifeSupportGenerator) {
+			_vm->_awayMission.mudd.muddUnavailable = true;
 			_vm->_awayMission.mudd.numTimesEnteredRoom5 = 1;
 			_vm->_awayMission.disableInput = 2;
 			playMidiMusicTracks(3);
@@ -154,7 +154,7 @@ void Room::mudd5KirkRepairedLifeSupportGenerator() {
 	showText(TX_SPEAKER_SPOCK, TX_MUD5_028);
 
 	_vm->_awayMission.mudd.lifeSupportMalfunctioning = false;
-	_vm->_awayMission.mudd.muddCurrentlyInsane = false;
+	_vm->_awayMission.mudd.muddUnavailable = false;
 	playMidiMusicTracks(3);
 	loadActorAnim(OBJECT_MUDD, "s4ephh", 0x0e, 0xa7);
 	_vm->_awayMission.disableInput = true;
