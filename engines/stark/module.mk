@@ -81,6 +81,7 @@ MODULE_OBJS := \
 	services/userinterface.o \
 	services/settings.o \
 	services/gamechapter.o \
+	services/gamemessage.o \
 	stark.o \
 	tools/abstractsyntaxtree.o \
 	tools/block.o \

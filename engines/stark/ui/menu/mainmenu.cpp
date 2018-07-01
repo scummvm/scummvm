@@ -25,6 +25,7 @@
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/settings.h"
+#include "engines/stark/services/gamemessage.h"
 
 #include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/visual/text.h"
@@ -181,7 +182,9 @@ void MainMenuScreen::boxHandler() {
 }
 
 void MainMenuScreen::quitHandler() {
-	StarkUserInterface->notifyShouldExit();
+	if (StarkUserInterface->confirm(GameMessage::kQuitPrompt)) {
+		StarkUserInterface->notifyShouldExit();
+	}
 }
 
 VersionInfoText::VersionInfoText() :

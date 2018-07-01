@@ -21,12 +21,14 @@
  */
 
 #include "engines/stark/ui/menu/saveloadmenu.h"
+
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/settings.h"
 #include "engines/stark/services/gamechapter.h"
+#include "engines/stark/services/gamemessage.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
@@ -152,6 +154,15 @@ void SaveMenuScreen::open() {
 }
 
 void SaveMenuScreen::onWidgetSelected(SaveDataWidget *widget) {
+	if (widget->hasSave()) {
+		Common::String format = StarkGameMessage->getTextByKey(GameMessage::kOverwriteSave);
+		Common::String prompt = Common::String::format(format.c_str(), widget->getName().c_str());
+
+		if (!StarkUserInterface->confirm(prompt)) {
+			return;
+		}
+	}
+
 	checkError(g_engine->saveGameState(widget->getSlot(), StarkGameChapter->getCurrentChapterTitle()));
 
 	// Freeze the screen for a while to let the user notice the change
@@ -171,7 +182,9 @@ void LoadMenuScreen::open() {
 }
 
 void LoadMenuScreen::onWidgetSelected(SaveDataWidget *widget) {
-	checkError(g_engine->loadGameState(widget->getSlot()));
+	if (!StarkGlobal->getCurrent() || StarkUserInterface->confirm(GameMessage::kEndAndLoad)) {
+		checkError(g_engine->loadGameState(widget->getSlot()));
+	}
 }
 
 SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *screen) :
@@ -185,7 +198,9 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 		_surfaceRenderer(gfx->createSurfaceRenderer()),
 		_textDesc(gfx),
 		_textTime(gfx),
-		_isMouseHovered(false) {
+		_isMouseHovered(false),
+		_hasSave(false),
+		_name() {
 	// Load from the save data
 	loadSaveDataElements();
 
@@ -257,6 +272,8 @@ void SaveDataWidget::loadSaveDataElements() {
 	Common::String filename = StarkEngine::formatSaveName(ConfMan.getActiveDomainName().c_str(), _slot);
 	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(filename);
 	if (save) {
+		_hasSave = true;
+
 		SaveMetadata metadata;
 		StateReadStream stream(save);
 		Common::ErrorCode metadataErrorCode = metadata.read(&stream, filename);
@@ -273,11 +290,16 @@ void SaveDataWidget::loadSaveDataElements() {
 		}
 
 		// Obtain the text
-		_textDesc.setText(metadata.description);
-		_textTime.setText(Common::String::format("%02d:%02d:%02d %02d/%02d/%02d",
+		Common::String desc = metadata.description;
+		Common::String time = Common::String::format("%02d:%02d:%02d %02d/%02d/%02d",
 				metadata.saveHour, metadata.saveMinute, metadata.saveSecond,
-				metadata.saveMonth, metadata.saveDay, metadata.saveYear % 100));
+				metadata.saveMonth, metadata.saveDay, metadata.saveYear % 100);
+
+		_textDesc.setText(desc);
+		_textTime.setText(time);
+		_name = desc + " " + time;
 	} else {
+		_hasSave = false;
 		setVisible(_screen->isSaveMenu());
 	}
 }

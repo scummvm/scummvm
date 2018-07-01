@@ -34,6 +34,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/gamemessage.h"
 
 #include "engines/stark/visual/image.h"
 
@@ -49,9 +50,13 @@ TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kTopBorderHeight);
 	_visible = true;
 
-	_inventoryButton = new Button("Inventory", StaticProvider::kInventory, Common::Point(32, 2), Button::kAlignLeft, Common::Point(64, 20));
-	_optionsButton = new Button("Options", StaticProvider::kDiaryNormal, Common::Point(560, 2), Button::kAlignRight, Common::Point(560, 20));
-	_exitButton = new Button("Quit", StaticProvider::kQuit, Common::Point(608, 2), Button::kAlignRight, Common::Point(608, 20));
+	Common::String inventoryText = StarkGameMessage->getTextByKey(GameMessage::kInventory);
+	Common::String optionsText = StarkGameMessage->getTextByKey(GameMessage::kOptions);
+	Common::String quitText = StarkGameMessage->getTextByKey(GameMessage::kQuit);
+
+	_inventoryButton = new Button(inventoryText, StaticProvider::kInventory, Common::Point(32, 2), Button::kAlignLeft, Common::Point(64, 20));
+	_optionsButton = new Button(optionsText, StaticProvider::kDiaryNormal, Common::Point(560, 2), Button::kAlignRight, Common::Point(560, 20));
+	_exitButton = new Button(quitText, StaticProvider::kQuit, Common::Point(608, 2), Button::kAlignRight, Common::Point(608, 20));
 
 	_inventoryNewItemSound = StarkStaticProvider->getUISound(StaticProvider::kInventoryNewItem);
 }
@@ -132,8 +137,9 @@ void TopMenu::onClick(const Common::Point &pos) {
 	}
 
 	if (_exitButton->containsPoint(pos)) {
-		// TODO: Confirmation dialog
-		StarkUserInterface->requestQuitToMainMenu();
+		if (StarkUserInterface->confirm(GameMessage::kQuitGamePrompt)) {
+			StarkUserInterface->requestQuitToMainMenu();
+		}
 	}
 
 	if (_inventoryButton->containsPoint(pos)) {

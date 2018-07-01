@@ -25,6 +25,8 @@
 
 #include "engines/stark/ui/screen.h"
 
+#include "engines/stark/services/gamemessage.h"
+
 #include "common/rect.h"
 #include "common/str-array.h"
 #include "common/stack.h"
@@ -151,6 +153,11 @@ public:
 
 	/** Get the currently stored game screen thumbnail, returns nullptr if there is not thumbnail stored */
 	const Graphics::Surface *getGameWindowThumbnail() const;
+
+	/** Display a message dialog, return true when the left button is pressed, and false for the right button */
+	bool confirm(const Common::String &msg, const Common::String &leftBtnMsg, const Common::String &rightBtnMsg);
+	bool confirm(const Common::String &msg);
+	bool confirm(GameMessage::TextKey key);
 
 	static const uint kThumbnailWidth = 160;
 	static const uint kThumbnailHeight = 92;
