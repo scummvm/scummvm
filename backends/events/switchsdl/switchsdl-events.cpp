@@ -35,7 +35,7 @@
 
 #include "math.h"
 
-SWITCHEventSource::SWITCHEventSource() {
+SwitchEventSource::SwitchEventSource() {
 	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
 		for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 			_finger[port][i].id = -1;
@@ -50,12 +50,12 @@ SWITCHEventSource::SWITCHEventSource() {
 	}
 }
 
-bool SWITCHEventSource::pollEvent(Common::Event &event) {
+bool SwitchEventSource::pollEvent(Common::Event &event) {
 	finishSimulatedMouseClicks();
 	return SdlEventSource::pollEvent(event);
 }
 
-void SWITCHEventSource::preprocessEvents(SDL_Event *event) {
+void SwitchEventSource::preprocessEvents(SDL_Event *event) {
 
 	// Supported touch gestures:
 	// left mouse click: single finger short tap
@@ -89,7 +89,7 @@ void SWITCHEventSource::preprocessEvents(SDL_Event *event) {
 	}
 }
 
-void SWITCHEventSource::preprocessFingerDown(SDL_Event *event) {
+void SwitchEventSource::preprocessFingerDown(SDL_Event *event) {
 	// front (0) or back (1) panel
 	SDL_TouchID port = event->tfinger.touchId;
 	// id (for multitouch)
@@ -125,7 +125,7 @@ void SWITCHEventSource::preprocessFingerDown(SDL_Event *event) {
 	}
 }
 
-void SWITCHEventSource::preprocessFingerUp(SDL_Event *event) {
+void SwitchEventSource::preprocessFingerUp(SDL_Event *event) {
 	// front (0) or back (1) panel
 	SDL_TouchID port = event->tfinger.touchId;
 	// id (for multitouch)
@@ -196,7 +196,7 @@ void SWITCHEventSource::preprocessFingerUp(SDL_Event *event) {
 	}
 }
 
-void SWITCHEventSource::preprocessFingerMotion(SDL_Event *event) {
+void SwitchEventSource::preprocessFingerMotion(SDL_Event *event) {
 	// front (0) or back (1) panel
 	SDL_TouchID port = event->tfinger.touchId;
 	// id (for multitouch)
@@ -359,7 +359,7 @@ void SWITCHEventSource::preprocessFingerMotion(SDL_Event *event) {
 	}
 }
 
-void SWITCHEventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
+void SwitchEventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
 	int screenH = _km.y_max;
 	int screenW = _km.x_max;
 
@@ -431,7 +431,7 @@ void SWITCHEventSource::convertTouchXYToGameXY(float touchX, float touchY, int *
 	}
 }
 
-void SWITCHEventSource::finishSimulatedMouseClicks() {
+void SwitchEventSource::finishSimulatedMouseClicks() {
 	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
 		for (int i = 0; i < 2; i++) {
 			if (_simulatedClickStartTime[port][i] != 0) {

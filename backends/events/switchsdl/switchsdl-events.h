@@ -32,9 +32,9 @@
 /**
  * SDL Events manager for the SWITCH.
  */
-class SWITCHEventSource : public SdlEventSource {
+class SwitchEventSource : public SdlEventSource {
 public:
-	SWITCHEventSource();
+	SwitchEventSource();
 	bool pollEvent(Common::Event &event) override;
 protected:
 	void preprocessEvents(SDL_Event *event) override;

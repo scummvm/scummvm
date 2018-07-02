@@ -80,7 +80,7 @@ void OSystem_SWITCH::initBackend() {
 
 	// Event source
 	if (_eventSource == 0) {
-		_eventSource = new SWITCHEventSource();
+		_eventSource = new SwitchEventSource();
 	}
 
 	// Invoke parent implementation of this method
