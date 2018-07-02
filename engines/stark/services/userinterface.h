@@ -174,6 +174,10 @@ public:
 	void cycleBackInventory() { cycleInventory(1); }
 	void cycleForwardInventory() { cycleInventory(-1); }
 
+	/** Scroll the inventory up or down */
+	void scrollInventoryUp();
+	void scrollInventoryDown();
+
 	static const uint kThumbnailWidth = 160;
 	static const uint kThumbnailHeight = 92;
 	static const uint kThumbnailSize = kThumbnailWidth * kThumbnailHeight * 4;

@@ -426,4 +426,12 @@ void UserInterface::cycleInventory(int step) {
 	selectInventoryItem(nextItem);
 }
 
+void UserInterface::scrollInventoryUp() {
+	_gameScreen->getInventoryWindow()->scrollUp();
+}
+
+void UserInterface::scrollInventoryDown() {
+	_gameScreen->getInventoryWindow()->scrollDown();
+}
+
 } // End of namespace Stark

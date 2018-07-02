@@ -276,6 +276,22 @@ void StarkEngine::processEvents() {
 				if (_userInterface->isInGameScreen()) {
 					pauseEngine(true);
 				}
+			} else if (e.kbd.keycode == Common::KEYCODE_PAGEUP) {
+				if (_userInterface->isInventoryOpen()) {
+					_userInterface->scrollInventoryUp();
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_UP) {
+				if (_userInterface->isInventoryOpen()) {
+					_userInterface->scrollInventoryUp();
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_PAGEDOWN) {
+				if (_userInterface->isInventoryOpen()) {
+					_userInterface->scrollInventoryDown();
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_DOWN) {
+				if (_userInterface->isInventoryOpen()) {
+					_userInterface->scrollInventoryDown();
+				}
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {

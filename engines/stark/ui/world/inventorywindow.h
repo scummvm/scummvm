@@ -53,6 +53,10 @@ public:
 	/** Clear the location dependent state */
 	void reset();
 
+	/** Scroll the inventory */
+	void scrollDown();
+	void scrollUp();
+
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
@@ -63,8 +67,6 @@ protected:
 	Common::Rect getSlotRect(uint32 slot) const;
 	Common::Rect getItemRect(uint32 slot, VisualImageXMG *image) const;
 	bool isSlotVisible(uint32 slot) const;
-	void scrollDown();
-	void scrollUp();
 	bool canScrollUp() const;
 	bool canScrollDown() const;
 	void drawScrollArrows() const;
