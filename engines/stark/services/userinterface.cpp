@@ -48,6 +48,9 @@
 #include "engines/stark/ui/world/gamescreen.h"
 #include "engines/stark/ui/world/gamewindow.h"
 
+#include "engines/stark/resources/knowledgeset.h"
+#include "engines/stark/resources/item.h"
+
 #include "gui/message.h"
 
 namespace Stark {
@@ -394,6 +397,33 @@ void UserInterface::toggleScreen(Screen::Name screenName) {
 void UserInterface::performToggleSubtitle() {
 	StarkSettings->flipSetting(Settings::kSubtitle);
 	_toggleSubtitle = false;
+}
+
+void UserInterface::cycleInventory(int step) {
+	Resources::KnowledgeSet *inventory = StarkGlobal->getInventory();
+	Common::Array<Resources::Item *> inventoryItems = inventory->listChildren<Resources::Item>(Resources::Item::kItemInventory);
+
+	int16 curItem = getSelectedInventoryItem();
+	int16 nextItem = curItem + step;
+
+	while (true) {
+		// Boundary cases
+		if (nextItem < -1) {
+			nextItem = inventoryItems.size() - 1;
+		}
+		if (nextItem > 0 && uint(nextItem) >= inventoryItems.size()) {
+			nextItem = -1;
+		}
+
+		// Item None, Hand, Eye, Mouth are skipped
+		if (nextItem < 0 || (inventoryItems[nextItem]->isEnabled() && nextItem > 3)) {
+			break;
+		}
+
+		nextItem += step;
+	}
+
+	selectInventoryItem(nextItem);
 }
 
 } // End of namespace Stark

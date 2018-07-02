@@ -170,12 +170,18 @@ public:
 	bool hasToggleSubtitleRequest() { return _toggleSubtitle; }
 	void performToggleSubtitle();
 
+	/** Cycle back or forward through inventory cursor items */
+	void cycleBackInventory() { cycleInventory(1); }
+	void cycleForwardInventory() { cycleInventory(-1); }
+
 	static const uint kThumbnailWidth = 160;
 	static const uint kThumbnailHeight = 92;
 	static const uint kThumbnailSize = kThumbnailWidth * kThumbnailHeight * 4;
 
 private:
 	Screen *getScreenByName(Screen::Name screenName) const;
+
+	void cycleInventory(int step);
 
 	GameScreen *_gameScreen;
 	FMVScreen *_fmvScreen;

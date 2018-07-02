@@ -245,6 +245,14 @@ void StarkEngine::processEvents() {
 						_userInterface->requestQuitToMainMenu();
 					}
 				}
+			} else if (e.kbd.keycode == Common::KEYCODE_a) {
+				if (_userInterface->isInGameScreen()) {
+					_userInterface->cycleBackInventory();
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_s) {
+				if (_userInterface->isInGameScreen()) {
+					_userInterface->cycleForwardInventory();
+				}
 			} else if (e.kbd.keycode == Common::KEYCODE_i) {
 				if (_userInterface->isInGameScreen()) {
 					_userInterface->inventoryOpen(!_userInterface->isInventoryOpen());
