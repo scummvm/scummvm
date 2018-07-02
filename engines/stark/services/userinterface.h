@@ -165,6 +165,11 @@ public:
 	/** Directly open or close a screen */
 	void toggleScreen(Screen::Name screenName);
 
+	/** Toggle subtitles on and off */
+	void requestToggleSubtitle() { _toggleSubtitle = !_toggleSubtitle; }
+	bool hasToggleSubtitleRequest() { return _toggleSubtitle; }
+	void performToggleSubtitle();
+
 	static const uint kThumbnailWidth = 160;
 	static const uint kThumbnailHeight = 92;
 	static const uint kThumbnailSize = kThumbnailWidth * kThumbnailHeight * 4;
@@ -192,6 +197,8 @@ private:
 
 	bool _interactive;
 	bool _interactionAttemptDenied;
+
+	bool _toggleSubtitle;
 
 	Graphics::Surface *_gameWindowThumbnail;
 };

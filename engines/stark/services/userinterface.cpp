@@ -33,6 +33,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/resourceprovider.h"
+#include "engines/stark/services/settings.h"
 
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/menu/diaryindex.h"
@@ -64,6 +65,7 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_dialogScreen(nullptr),
 		_exitGame(false),
 		_quitToMainMenu(false),
+		_toggleSubtitle(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
 		_interactive(true),
@@ -387,6 +389,11 @@ void UserInterface::toggleScreen(Screen::Name screenName) {
 			|| (currentName == Screen::kScreenMainMenu && screenName == Screen::kScreenSettingsMenu)) {
 		changeScreen(screenName);
 	}
+}
+
+void UserInterface::performToggleSubtitle() {
+	StarkSettings->flipSetting(Settings::kSubtitle);
+	_toggleSubtitle = false;
 }
 
 } // End of namespace Stark

@@ -30,6 +30,7 @@
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/settings.h"
+#include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/world/clicktext.h"
@@ -125,6 +126,11 @@ void DialogPanel::onRender() {
 		_currentSpeech = nullptr;
 
 		clearSubtitleVisual();
+
+		// Toggle subtitles on and off when requested
+		if (StarkUserInterface->hasToggleSubtitleRequest()) {
+			StarkUserInterface->performToggleSubtitle();
+		}
 	}
 
 	// Update the dialog engine
