@@ -279,7 +279,7 @@
 //
 // Determine the host endianess and whether memory alignment is required.
 //
-#if !defined(HAVE_CONFIG_H)
+#if !defined(HAVE_CONFIG_H) && !defined(SCUMM_LITTLE_ENDIAN) && !defined(SCUMM_BIG_ENDIAN)
 
 	#if defined(__DC__) || \
 		  defined(__DS__) || \
