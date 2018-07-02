@@ -319,8 +319,7 @@ void Menu::introMovies_run() {
 	switch (_introStep) {
 		case 0:
 			_introStep = 1;
-			video = _vm->playMovie("broder", kIntroStack);
-			video->center();
+			video = _vm->playMovieFullscreen("broder", kIntroStack);
 			break;
 		case 1:
 			if (!_vm->_video->isVideoPlaying())
@@ -328,8 +327,7 @@ void Menu::introMovies_run() {
 			break;
 		case 2:
 			_introStep = 3;
-			video = _vm->playMovie("cyanlogo", kIntroStack);
-			video->center();
+			video = _vm->playMovieFullscreen("cyanlogo", kIntroStack);
 			break;
 		case 3:
 			if (!_vm->_video->isVideoPlaying())

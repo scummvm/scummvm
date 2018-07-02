@@ -168,6 +168,7 @@ public:
 	bool getCacheState() { return _cache.enabled; }
 
 	VideoEntryPtr playMovie(const Common::String &name, MystStack stack);
+	VideoEntryPtr playMovieFullscreen(const Common::String &name, MystStack stack);
 	VideoEntryPtr findVideo(const Common::String &name, MystStack stack);
 	void playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y);
 	void playFlybyMovie(MystStack stack, uint16 card);

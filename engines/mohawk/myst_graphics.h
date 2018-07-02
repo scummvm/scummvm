@@ -54,6 +54,7 @@ public:
 	void drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color);
 	void fadeToBlack();
 	void fadeFromBlack();
+	void clearScreen();
 
 	void clearScreenPalette();
 	void setPaletteToScreen();

@@ -230,6 +230,15 @@ VideoEntryPtr MohawkEngine_Myst::playMovie(const Common::String &name, MystStack
 	return video;
 }
 
+VideoEntryPtr MohawkEngine_Myst::playMovieFullscreen(const Common::String &name, MystStack stack) {
+	_gfx->clearScreen();
+
+	VideoEntryPtr video = playMovie(name, stack);
+	video->center();
+	return video;
+}
+
+
 VideoEntryPtr MohawkEngine_Myst::findVideo(const Common::String &name, MystStack stack) {
 	Common::String filename = wrapMovieFilename(name, stack);
 	return _video->findVideo(filename);
@@ -280,14 +289,13 @@ void MohawkEngine_Myst::playFlybyMovie(MystStack stack, uint16 card) {
 		return;
 	}
 
+	_gfx->clearScreen();
+
 	Common::String filename = wrapMovieFilename(flyby, kMasterpieceOnly);
 	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
 	if (!video) {
 		error("Failed to open the '%s' movie", filename.c_str());
 	}
-
-	// Clear screen
-	_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
 
 	video->center();
 	waitUntilMovieEnds(video);
@@ -606,10 +614,7 @@ void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 lin
 
 	_sound->stopBackground();
 
-	if (getFeatures() & GF_ME)
-		_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
-	else
-		_gfx->clearScreenPalette();
+	_gfx->clearScreen();
 
 	if (linkSrcSound)
 		playSoundBlocking(linkSrcSound);
