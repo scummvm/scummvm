@@ -101,7 +101,7 @@ int TalkThread::onUpdate() {
 		if (_vm->checkActiveTalkThreads())
 			return kTSYield;
 		_status = 3;
-		// Fallthrough to status 3
+		// fall through
 
 	case 3:
 		talkEntry = getTalkResourceEntry(_talkId);
@@ -128,13 +128,13 @@ int TalkThread::onUpdate() {
 		if (_objectId == 0 || _durationMult == 0)
 			_flags |= 8;
 		_status = 4;
-		// Fallthrough to status 4
+		// fall through
 
 	case 4:
 		if (!(_flags & 4) && !_vm->_soundMan->isVoiceCued())
 			return kTSYield;
 		_status = 5;
-		// Fallthrough to status 5
+		// fall through
 
 	case 5:
 		if (!(_flags & 8))
