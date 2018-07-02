@@ -1694,8 +1694,8 @@ bool BladeRunnerEngine::isSubtitlesEnabled() {
 }
 
 void BladeRunnerEngine::setSubtitlesEnabled(bool newVal) {
-	_subtitlesEnabled = newVal;
 	ConfMan.setBool("subtitles", newVal);
+	syncSoundSettings();
 }
 
 Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::String &name) {
