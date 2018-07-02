@@ -255,10 +255,16 @@ void Player_Towns_v1::startSound(int sound) {
 		velocity = velocity ? velocity >> 2 : ptr[14] >> 1;
 		uint16 len = READ_LE_UINT16(ptr) + 2;
 		playPcmTrack(sound, ptr + 6, velocity, 64, note ? note : (len > 50 ? ptr[50] : 60), READ_LE_UINT16(ptr + 10));
-
-		// WORKAROUND for bug #1873 INDY3 FMTOWNS: Music in Venice is distorted
-		// The resource for sound 40 accidently sets the sound type to 255 instead of 1.
 	} else if (type == 1 || (_vm->_game.id == GID_INDY3 && sound == 40)) {
+		// WORKAROUND: Indy 3 FMTOWNS: No/distorted music in Venice
+		// The Venice music does not exist as CD audio and the original doesn't feature music
+		// in this scene. It does, however, exist as Euphony track albeit with an odd sound
+		// type (255 instead of 1).
+		// It doesn't sound great but we'll enable it to have music at all in this scene.
+		// See Trac#1873 and Trac#10561.
+		//
+		// TODO: Check if playback of this can be improved somehow (maybe there's something else
+		// off with the data for which we can add a workaround?).
 		playEuphonyTrack(sound, ptr + 6);
 
 	} else if (type == 2) {
