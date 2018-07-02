@@ -60,9 +60,7 @@
 #include "bladerunner/shape.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
-#if SUBTITLES_SUPPORT
 #include "bladerunner/subtitles.h"
-#endif // SUBTITLES_SUPPORT
 #include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
@@ -100,6 +98,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 
 	_vqaIsPlaying = false;
 	_vqaStopIsRequested = false;
+	_subtitlesEnabled = false;
 
 	_playerLosesControlCounter = 0;
 
@@ -184,9 +183,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_scores                  = nullptr;
 	_elevator                = nullptr;
 	_mainFont                = nullptr;
-	#if SUBTITLES_SUPPORT
 	_subtitles               = nullptr;
-	#endif // SUBTITLES_SUPPORT
 	_esper                   = nullptr;
 	_vk                      = nullptr;
 	_policeMaze              = nullptr;
@@ -406,20 +403,11 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_gameFlags = new GameFlags();
 	_gameFlags->setFlagCount(_gameInfo->getFlagCount());
-	
-	#if BLADERUNNER_RESTORED_CONTENT_GAME
-    // EDS flags
-	_extraGameFlagsForRestoredContent = new GameFlags(); //aux flags - custom
-	_extraGameFlagsForRestoredContent->setFlagCount(RESTORED_CONTENT_EXTRA_FLAGS + 1); // aux flags - custom // +1 since we don't assign something to 0 enum value
-	#if SUBTITLES_SUPPORT
-    #if SUBTITLES_ENABLED_BY_DEFAULT
-	// subtitles enable by default:
-	_extraGameFlagsForRestoredContent->set(kEDSFlagSubtitlesEnable);
-	#else
-	_extraGameFlagsForRestoredContent->reset(kEDSFlagSubtitlesEnable);
-	#endif // SUBTITLES_ENABLED_BY_DEFAULT
-	#endif // SUBTITLES_SUPPORT
-    #endif // BLADERUNNER_RESTORED_CONTENT_GAME
+
+	// Assign default values to the ScummVM configuration manager, in case settings are missing
+	ConfMan.registerDefault("subtitles", "true");
+	// get value from the ScummVM configuration manager
+	_subtitlesEnabled = ConfMan.getBool("subtitles");
 
 	_items = new Items(this);
 
@@ -515,10 +503,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_mainFont = new Font(this);
 	_mainFont->open("KIA6PT.FON", 640, 480, -1, 0, 0x252D);
 	_mainFont->setSpacing(1, 0);
-	
-#if SUBTITLES_SUPPORT
+
 	_subtitles = new Subtitles(this);
-#endif // SUBTITLES_SUPPORT
 
 	for (int i = 0; i != 43; ++i) {
 		Shape *shape = new Shape(this);
@@ -692,13 +678,11 @@ void BladeRunnerEngine::shutdown() {
 		_mainFont = nullptr;
 	}
 
-#if SUBTITLES_SUPPORT
-	if(_subtitles) {
-        delete _subtitles;
-        _subtitles = nullptr;
+	if (_subtitles) {
+		delete _subtitles;
+		_subtitles = nullptr;
 	}
-#endif // SUBTITLES_SUPPORT//
-	
+
 	delete _items;
 	_items = nullptr;
 
@@ -968,9 +952,9 @@ void BladeRunnerEngine::gameTick() {
 			if (_debugger->_viewObstacles) {
 				_obstacles->draw();
 			}
-			#if SUBTITLES_SUPPORT
+
 			_subtitles->tick(_surfaceFront);
-            #endif // SUBTITLES_SUPPORT
+
 			blitToScreen(_surfaceFront);
 			_system->delayMillis(10);
 		}
@@ -1697,6 +1681,21 @@ bool BladeRunnerEngine::isArchiveOpen(const Common::String &name) const {
 	}
 
 	return false;
+}
+
+void BladeRunnerEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_subtitlesEnabled = ConfMan.getBool("subtitles");
+}
+
+bool BladeRunnerEngine::isSubtitlesEnabled() {
+	return _subtitlesEnabled;
+}
+
+void BladeRunnerEngine::setSubtitlesEnabled(bool newVal) {
+	_subtitlesEnabled = newVal;
+	ConfMan.setBool("subtitles", newVal);
 }
 
 Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::String &name) {

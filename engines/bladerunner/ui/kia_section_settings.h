@@ -44,11 +44,7 @@ class KIASectionSettings : public KIASectionBase {
 	UISlider      *_speechVolume;
 	UISlider      *_gammaCorrection;
 	UICheckBox    *_directorsCut;
-#if BLADERUNNER_RESTORED_CONTENT_GAME
-    #if SUBTITLES_SUPPORT
 	UICheckBox    *_subtitlesEnable;
-	#endif
-#endif // BLADERUNNER_RESTORED_CONTENT_GAME	
 	UIImagePicker *_playerAgendaSelector;
 
 	int            _mouseX;

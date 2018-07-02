@@ -39,13 +39,7 @@
 #define BLADERUNNER_DEBUG_CONSOLE 0
 #define BLADERUNNER_DEBUG_GAME 0
 
-#define SUBTITLES_SUPPORT   1
-#if SUBTITLES_SUPPORT
-#define SUBTITLES_EXTERNAL_FONT         1
-#define SUBTITLES_ENABLED_BY_DEFAULT    1
-#endif // SUBTITLES_SUPPORT
-#define BLADERUNNER_RESTORED_CONTENT_GAME 	1 // needed for checkbox setting for subtitles enable/disable
-#define RESTORED_CONTENT_EXTRA_FLAGS    	1 // needed for checkbox setting for subtitles enable/disable 
+#define BLADERUNNER_SUBTITLES_EXTERNAL_FONT         1
 
 namespace Common {
 struct Event;
@@ -96,9 +90,7 @@ class Shape;
 class SliceAnimations;
 class SliceRenderer;
 class Spinner;
-#if SUBTITLES_SUPPORT
 class Subtitles;
-#endif
 class SuspectsDatabase;
 class TextResource;
 class Time;
@@ -139,19 +131,13 @@ public:
 	EndCredits         *_endCredits;
 	ESPER              *_esper;
 	GameFlags          *_gameFlags;
-	#if BLADERUNNER_RESTORED_CONTENT_GAME
-    // EDS flags
-	GameFlags          *_extraGameFlagsForRestoredContent;
-	#endif // BLADERUNNER_RESTORED_CONTENT_GAME
 	GameInfo           *_gameInfo;
 	ItemPickup         *_itemPickup;
 	Items              *_items;
 	KIA                *_kia;
 	Lights             *_lights;
 	Font               *_mainFont;
-	#if SUBTITLES_SUPPORT
 	Subtitles          *_subtitles;
-	#endif // SUBTITLES_SUPPORT
 	Mouse              *_mouse;
 	Music              *_music;
 	Obstacles          *_obstacles;
@@ -209,6 +195,7 @@ public:
 	bool _sceneIsLoading;
 	bool _vqaIsPlaying;
 	bool _vqaStopIsRequested;
+	bool _subtitlesEnabled; // tracks the state of whether subtitles are enabled or disabled from ScummVM GUI option or KIA checkbox (the states are synched)
 
 	int _walkSoundId;
 	int _walkSoundVolume;
@@ -285,6 +272,11 @@ public:
 	bool openArchive(const Common::String &name);
 	bool closeArchive(const Common::String &name);
 	bool isArchiveOpen(const Common::String &name) const;
+
+	void syncSoundSettings();
+	bool isSubtitlesEnabled();
+	void setSubtitlesEnabled(bool newVal);
+
 
 	Common::SeekableReadStream *getResourceStream(const Common::String &name);
 

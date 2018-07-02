@@ -24,7 +24,6 @@
 #define BLADERUNNER_SUBTITLES_H
 
 #include "bladerunner/bladerunner.h"
-#if SUBTITLES_SUPPORT
 
 #include "common/str.h"
 #include "graphics/surface.h"
@@ -58,9 +57,9 @@ class Subtitles {
 
 	TextResource    *_vqaSubsTextResourceEntries[kMaxTextResourceEntries];
 	Font            *_subsFont;
-#if !SUBTITLES_EXTERNAL_FONT
+#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	Font            *_subsBgFont; // needed for internal font to be used as a shadow effect and make subtitles more legible in certain situations
-#endif // SUBTITLES_EXTERNAL_FONT
+#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 
 	bool                 _isVisible;
 	Common::String       _currentSubtitleTextFull;
@@ -74,9 +73,9 @@ class Subtitles {
 	Common::File *_gameSubsFdEntries[kMaxTextResourceEntries];      // an array of pointers to TRE FILEs
 	bool _gameSubsFdEntriesFound[kMaxTextResourceEntries];          // false if a TRE file did not open successfully
 	bool _subsFontsLoaded;                                          // false if external fonts did not load, or internal fonts (fore and background) did not load
-#if SUBTITLES_EXTERNAL_FONT
+#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	Common::File *_gameSubsFontsFd;                                 // the file for the external FONT for subtitles
-#endif // SUBTITLES_EXTERNAL_FONT
+#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 
 public:
 	Subtitles(BladeRunnerEngine *vm);
@@ -102,13 +101,13 @@ private:
 	bool loadGameSubsText(int subTreIdx);                           // populate a GAME SUBS TextResource with subtitles
 	//
 	//
-#if SUBTITLES_EXTERNAL_FONT
+#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	Common::SeekableReadStream *createReadStreamForSubFonts();
 	bool openSubsFontFile();
 	void closeSubsFontFile();
 	bool isOpenSubsFontFile()  const;          //
 	bool loadSubsFont();        // create a the font object from a FON file (external)
-#endif // SUBTITLES_EXTERNAL_FONT
+#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 
 
 	void draw(Graphics::Surface &s);
@@ -123,6 +122,5 @@ private:
 };
 
 } // End of namespace BladeRunner
-#endif
 
-#endif
+#endif // BLADERUNNER_SUBTITLES_H

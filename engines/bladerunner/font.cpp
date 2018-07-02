@@ -37,11 +37,10 @@ Font::~Font() {
 	close();
 }
 
-#if SUBTITLES_SUPPORT
-#if SUBTITLES_EXTERNAL_FONT
+#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 // for external FON font file / subtitles support
 bool Font::openFromStream(Common::ScopedPtr<Common::SeekableReadStream> &stream, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color) {
-    reset();
+	reset();
 
 	_screenWidth = screenWidth;
 	_screenHeight = screenHeight;
@@ -53,7 +52,7 @@ bool Font::openFromStream(Common::ScopedPtr<Common::SeekableReadStream> &stream,
 		return false;
 	}
 	_characterCount = stream->readUint32LE();
-    debug("Font's character count: %d", _characterCount);
+	debug("Font's character count: %d", _characterCount);
 	_maxWidth = stream->readUint32LE();
 	_maxHeight = stream->readUint32LE();
 	_dataSize = stream->readUint32LE();
@@ -76,8 +75,7 @@ bool Font::openFromStream(Common::ScopedPtr<Common::SeekableReadStream> &stream,
 	}
 	return true;
 }
-#endif // SUBTITLES_EXTERNAL_FONT
-#endif // SUBTITLES_SUPPORT
+#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 
 bool Font::open(const Common::String &fileName, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color) {
 	reset();
@@ -110,28 +108,23 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 		_characters[i].width = stream->readUint32LE();
 		_characters[i].height = stream->readUint32LE();
 		_characters[i].dataOffset = stream->readUint32LE();
-		#if SUBTITLES_SUPPORT
-		#if !SUBTITLES_EXTERNAL_FONT
+		#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 		// special explicit alignment fixes for TAHOMA18 (INTERNAL) font
-		        if(fileName == "TAHOMA18.FON") {
-            // fix P -> i = 81 (ascii code 80  + 1)
-            if(i == 81 || i == 72 || i == 74 || i == 75  // P, G, I, J
-               || i == 46 // '-'
-            )
-                {
-                _characters[i].x = 0;// from 1
-            }
-            if(i == 81          // P
-                || i == 83 || i == 84  //  R, S,
-                || i == 86               // U
-                || i == 87 || i == 88 || i == 89 || i == 90 || i == 91 //  V, W, X, Y ,Z
-               ) {
-                _characters[i].y = 7;// from 6 // bring down a pixel
-            }
-        }
+		if (fileName == "TAHOMA18.FON") {
+			// fix P -> i = 81 (ascii code 80  + 1)
+			if (i == 81 || i == 72 || i == 74 || i == 75	// P, G, I, J
+				|| i == 46) {								// '-'
+				_characters[i].x = 0;						// original value was 1
+			}
+			if (i == 81														// P
+				|| i == 83 || i == 84										// R, S,
+				|| i == 86													// U
+				|| i == 87 || i == 88 || i == 89 || i == 90 || i == 91) {	// V, W, X, Y ,Z
+				_characters[i].y = 7;						// original value was 6 -- bring them down for one (1) pixel
+			}
+		}
 		//debug("char::%d character x: %d, y: %d, w: %d, h:%d, do: %d", i, _characters[i].x, _characters[i].y, _characters[i].width, _characters[i].height, _characters[i].dataOffset);
-		#endif // SUBTITLES_EXTERNAL_FONT
-		#endif // SUBTITLES_SUPPORT
+		#endif // !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	}
 	for (int i = 0; i < _dataSize; i++) {
 		_data[i] = stream->readUint16LE();
@@ -240,20 +233,21 @@ void Font::replaceColor(uint16 oldColor, uint16 newColor) {
 	}
 }
 
-#if SUBTITLES_SUPPORT
+#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+// This was needed as a hack for using a duplicate of the font to act as shadow effect for the glyphs
+// Mainly needed for the internal font, since an external font can have shadow already drawn for the glyphs
 void Font::setBlackColor() {
-    // to create a font that can be used as a shadow effect
 	if (!_data || !_dataSize) {
 		return;
 	}
 	for (int i = 0; i < _dataSize; i++) {
-        //debug("COLOR EXISTING: %d", _data[i]);
-        if(_data[i] != 32768) { // 0x8000 transparent
-            _data[i] = 0x0000; // black
-        }
+		//debug("COLOR EXISTING: %d", _data[i]);
+		if (_data[i] != 32768) { 	// 0x8000 is transparent
+			_data[i] = 0x0000; 		// black
+		}
 	}
 }
-#endif // SUBTITLES_SUPPORT
+#endif // !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 
 void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int x, int y) const {
 	uint8 characterIndex = character + 1;
@@ -271,14 +265,18 @@ void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int 
 
 	int endY = height + y - 1;
 	int currentY = y;
-	
-#if BLADERUNNER_RESTORED_CONTENT_GAME
-    // Temp Bug fix - Return if w h unnaturally big: -- the INTERNAL tahoma18 font is corrupted so it could cause crashes
-    if(width > 100 || height > 100) {
-        return;
-    }
-#endif
-	
+
+	// FIXME/TODO
+	// This width and height check were added as a temporary bug fix -- a sanity check which is only needed for the internal TAHOMA18.FON font.
+	// That font's glyph properties table is corrupted - the start of the file states that there are 0xF7 (=247) entries in the char properties table
+	// but that table get corrupted past the 176th entry. The image data glyph part of the FON file also only covers the 176 entries.
+	// So the following if clause-check will return here if the width and height values are unnaturally big.
+	// The bug only affects debug cases where all character glyph need to be displayed...
+	// ...or potential custom dialogue / translations that reference characters that are not within the range of Ascii values for the normal Latin characters.
+	if (width > 100 || height > 100) {
+		return;
+	}
+
 	while (currentY <= endY && currentY < _screenHeight) {
 		int currentX = x;
 		int endX = width + x - 1;

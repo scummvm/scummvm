@@ -41,9 +41,7 @@
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/time.h"
-#if SUBTITLES_SUPPORT
 #include "bladerunner/subtitles.h"
-#endif // SUBTITLES_SUPPORT
 #include "bladerunner/waypoints.h"
 #include "bladerunner/zbuffer.h"
 
@@ -555,11 +553,11 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 		needsUpdate = true;
 		timeLeft = 0;
 	}
-#if SUBTITLES_SUPPORT
-	if(!isSpeeching()) {
-	    _vm->_subtitles->hide();
+
+	if (!isSpeeching()) {
+		_vm->_subtitles->hide();
 	}
-#endif // SUBTITLES_SUPPORT
+
 	if (needsUpdate) {
 		int newAnimation = 0, newFrame = 0;
 		_vm->_aiScripts->updateAnimation(_id, &newAnimation, &newFrame);
@@ -1099,18 +1097,14 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 		balance = CLIP<int>(balance, -127, 127);
 	}
 
-#if SUBTITLES_SUPPORT
-    _vm->_subtitles->getInGameSubsText(_id, sentenceId);
-    _vm->_subtitles->show();
-#endif // SUBTITLES_SUPPORT
-	
+	_vm->_subtitles->getInGameSubsText(_id, sentenceId);
+	_vm->_subtitles->show();
+
 	_vm->_audioSpeech->playSpeech(name, balance);
 }
 
 void Actor::speechStop() {
-#if SUBTITLES_SUPPORT
-    _vm->_subtitles->hide();
-#endif // SUBTITLES_SUPPORT	
+	_vm->_subtitles->hide();
 	_vm->_audioSpeech->stopSpeech();
 }
 
