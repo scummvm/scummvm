@@ -23,10 +23,8 @@
 #ifndef BLADERUNNER_TEXT_RESOURCE_H
 #define BLADERUNNER_TEXT_RESOURCE_H
 
-#include "bladerunner/bladerunner.h" // needed for definition of Common::ScopedPtr (subtitles font external font file support) -- and for the subtitles relevant macro defines
-#if SUBTITLES_SUPPORT
+#include "bladerunner/bladerunner.h" // needed for definition of Common::ScopedPtr (subtitles font external font file support)
 #include "common/util.h"
-#endif
 #include "common/str.h"
 
 namespace BladeRunner {
@@ -47,14 +45,10 @@ public:
 	~TextResource();
 
 	bool open(const Common::String &name);
-	#if SUBTITLES_SUPPORT
 	bool openFromStream(Common::ScopedPtr<Common::SeekableReadStream> &s);
-    #endif
-	
+
 	const char *getText(uint32 id) const;
-	#if SUBTITLES_SUPPORT
 	const char *getOuttakeTextByFrame(uint32 frame) const;
-    #endif
 	int getCount() const;
 };
 

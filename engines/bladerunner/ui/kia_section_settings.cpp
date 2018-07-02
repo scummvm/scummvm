@@ -55,14 +55,8 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 	_ambientSoundVolume   = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 210, 460, 220), 101, 0);
 	_speechVolume         = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 235, 460, 245), 101, 0);
 	_gammaCorrection      = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 260, 460, 270), 101, 0);
-#if BLADERUNNER_RESTORED_CONTENT_GAME
 	_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 270, 374), 0, false);
-    #if SUBTITLES_SUPPORT
-	_subtitlesEnable       = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(291, 364, 360, 374), 0, false);
-	#endif // SUBTITLES_SUPPORT
-#else
-	_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 460, 374), 0, false); // original
-#endif // BLADERUNNER_RESTORED_CONTENT_GAME
+	_subtitlesEnable = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(291, 364, 360, 374), 0, false);
 	_playerAgendaSelector = new UIImagePicker(_vm, 5);
 
 	_uiContainer->add(_musicVolume);
@@ -71,11 +65,7 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 	_uiContainer->add(_speechVolume);
 	_uiContainer->add(_gammaCorrection);
 	_uiContainer->add(_directorsCut);
-#if BLADERUNNER_RESTORED_CONTENT_GAME
-    #if SUBTITLES_SUPPORT
 	_uiContainer->add(_subtitlesEnable);
-	#endif // SUBTITLES_SUPPORT
-#endif // BLADERUNNER_RESTORED_CONTENT_GAME	
 
 	_learyPos = 0;
 }
@@ -88,11 +78,7 @@ KIASectionSettings::~KIASectionSettings() {
 	delete _speechVolume;
 	delete _gammaCorrection;
 	delete _directorsCut;
-#if BLADERUNNER_RESTORED_CONTENT_GAME
-    #if SUBTITLES_SUPPORT
 	delete _subtitlesEnable;
-	#endif // SUBTITLES_SUPPORT
-#endif // BLADERUNNER_RESTORED_CONTENT_GAME	
 	delete _playerAgendaSelector;
 }
 
@@ -108,11 +94,7 @@ void KIASectionSettings::open() {
 	_playerAgendaSelector->activate(mouseInCallback, nullptr, nullptr, mouseUpCallback, this);
 
 	_directorsCut->enable();
-#if BLADERUNNER_RESTORED_CONTENT_GAME
-    #if SUBTITLES_SUPPORT
 	_subtitlesEnable->enable();
-	#endif // SUBTITLES_SUPPORT
-#endif // BLADERUNNER_RESTORED_CONTENT_GAME
 }
 
 void KIASectionSettings::close() {
@@ -126,11 +108,8 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	_speechVolume->setValue(_vm->_audioSpeech->getVolume());
 	_gammaCorrection->setValue(100.0f);
 	_directorsCut->setChecked(_vm->_gameFlags->query(kFlagDirectorsCut));
-#if BLADERUNNER_RESTORED_CONTENT_GAME
-    #if SUBTITLES_SUPPORT
-	_subtitlesEnable->setChecked(_vm->_extraGameFlagsForRestoredContent->query(kEDSFlagSubtitlesEnable));
-	#endif // SUBTITLES_SUPPORT
-#endif // BLADERUNNER_RESTORED_CONTENT_GAME	
+
+	_subtitlesEnable->setChecked(_vm->isSubtitlesEnabled());
 
 	const char *textConversationChoices = _vm->_textOptions->getText(0);
 	const char *textMusic = _vm->_textOptions->getText(2);
@@ -143,11 +122,8 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	const char *textDark = _vm->_textOptions->getText(14);
 	const char *textLight = _vm->_textOptions->getText(15);
 	const char *textDesignersCut = _vm->_textOptions->getText(18);
-#if BLADERUNNER_RESTORED_CONTENT_GAME
-    #if SUBTITLES_SUPPORT
+	// TODO REPLACE THIS STRING LITERAL MAYBE WITH A TEXT RESOURCE ITEM?
     const char *textSubtitles = "Subtitles";
-    #endif // SUBTITLES_SUPPORT
-#endif // BLADERUNNER_RESTORED_CONTENT_GAME
 
 	int posConversationChoices = 320 - _vm->_mainFont->getTextWidth(textConversationChoices) / 2;
 	int posMusic = 320 - _vm->_mainFont->getTextWidth(textMusic) / 2;
@@ -184,11 +160,7 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	_vm->_mainFont->drawColor(textLight, surface, 462, 261, 0x6EEE);
 
 	_vm->_mainFont->drawColor(textDesignersCut, surface, 192, 365, 0x7751);
-#if BLADERUNNER_RESTORED_CONTENT_GAME
-    #if SUBTITLES_SUPPORT
 	_vm->_mainFont->drawColor(textSubtitles, surface, 303, 365, 0x7751);
-	#endif // SUBTITLES_SUPPORT
-#endif // BLADERUNNER_RESTORED_CONTENT_GAME
 
 	_playerAgendaSelector->drawTooltip(surface, _mouseX, _mouseY);
 }
@@ -264,17 +236,9 @@ void KIASectionSettings::checkBoxCallback(void *callbackData, void *source) {
 			self->_vm->_gameFlags->reset(kFlagDirectorsCut);
 		}
 	}
-	#if BLADERUNNER_RESTORED_CONTENT_GAME
-    #if SUBTITLES_SUPPORT
 	else if (source == self->_subtitlesEnable) {
-		if (self->_subtitlesEnable->_isChecked) {
-			self->_vm->_extraGameFlagsForRestoredContent->set(kEDSFlagSubtitlesEnable);
-		} else {
-			self->_vm->_extraGameFlagsForRestoredContent->reset(kEDSFlagSubtitlesEnable);
-		}
+		self->_vm->setSubtitlesEnabled(self->_subtitlesEnable->_isChecked);
 	}
-	#endif // SUBTITLES_SUPPORT
-	#endif // BLADERUNNER_RESTORED_CONTENT_GAME
 }
 
 void KIASectionSettings::mouseInCallback(int buttonId, void *callbackData) {

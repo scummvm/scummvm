@@ -22,13 +22,10 @@
 
 #include "bladerunner/subtitles.h"
 
-#if SUBTITLES_SUPPORT
-
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/audio_speech.h"
-//#include "bladerunner/script/scene_script.h" // for Game_Flag_Query declaration (actually script.h, but this seems to be included in other source files instead)
 #include "bladerunner/game_flags.h" // for Game_Flag_Query declaration (actually script.h, but this seems to be included in other source files instead)
 #include "bladerunner/game_constants.h" // for EDS flags - for subtitle checkbox flag state
 #include "common/debug.h"
@@ -68,7 +65,7 @@ namespace BladeRunner {
  * DONE - OK - CHECK what happens in VQA when no corresponding TRE subs file?
  */
 
-#if SUBTITLES_EXTERNAL_FONT
+#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 const Common::String Subtitles::SUBTITLES_FONT_FILENAME = "SUBTITLES.FON";
 #else
 const Common::String Subtitles::SUBTITLES_FONT_FILENAME = "TAHOMA18.FON";
@@ -120,13 +117,13 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
 		_gameSubsFdEntries[i] = nullptr;
 		_vqaSubsTextResourceEntries[i] = nullptr;
 	}
-#if SUBTITLES_EXTERNAL_FONT
+#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	_gameSubsFontsFd = nullptr;
 	_subsFont = nullptr;
 #else
 	_subsFont = nullptr;
 	_subsBgFont = nullptr;
-#endif // SUBTITLES_EXTERNAL_FONT
+#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	reset();
 	// Done - Subtitles Reset
 	//
@@ -147,7 +144,7 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
 	// Done - Loading text resources
 	//
 	// Initializing/Loading Subtitles' Fonts
-#if SUBTITLES_EXTERNAL_FONT
+#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	// Open external fonts file (FON file) and load fonts
 	_gameSubsFontsFd = new Common::File();
 	_subsFont = new Font(_vm);
@@ -172,7 +169,7 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
 	} else {
 		_subsFontsLoaded = false;
 	}
-#endif // SUBTITLES_EXTERNAL_FONT
+#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	//Done - Initializing/Loading Subtitles' Fonts
 	//
 	// calculate the Screen Y position of the subtitle lines
@@ -205,7 +202,7 @@ Subtitles::~Subtitles() {
 			_gameSubsFdEntries[i] = nullptr;
 		}
 	}
-#if SUBTITLES_EXTERNAL_FONT
+#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	if (_subsFont != nullptr) {
 		_subsFont->close();
 		delete _subsFont;
@@ -229,7 +226,7 @@ Subtitles::~Subtitles() {
 		delete _subsBgFont;
 		_subsBgFont = nullptr;
 	}
-#endif // SUBTITLES_EXTERNAL_FONT
+#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 }
 
 /**
@@ -334,7 +331,7 @@ Common::SeekableReadStream *Subtitles::createReadStreamForGameSubs(int subTreIdx
 	return new Common::SafeSeekableSubReadStream(_gameSubsFdEntries[subTreIdx], 0, _gameSubsFdEntries[subTreIdx]->size(), DisposeAfterUse::YES); // TODO changed to YES from NO is this ok?
 }
 
-#if SUBTITLES_EXTERNAL_FONT
+#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 //
 // EXTERN FONT MANAGEMENT - Font Open/ Create Read Stream / Load / Close methods
 //
@@ -414,7 +411,7 @@ bool Subtitles::loadSubsFont() {
 //
 // END OF EXTERNAL FONT MANAGEMENT
 //
-#endif // SUBTITLES_EXTERNAL_FONT
+#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 
 /**
 * Get the active subtitle text by searching with actor ID and speech ID
@@ -517,11 +514,9 @@ void Subtitles::tickOuttakes(Graphics::Surface &s) {
 	} else {
 		_vm->_subtitles->show();
 	}
-#if BLADERUNNER_RESTORED_CONTENT_GAME
-	if (!_vm->_extraGameFlagsForRestoredContent->query(kEDSFlagSubtitlesEnable)) {
+	if (!_vm->isSubtitlesEnabled()) {
 		return;
 	}
-#endif
 	if (!_isVisible) { // keep it as a separate if
 		return;
 	}
@@ -534,13 +529,10 @@ void Subtitles::tickOuttakes(Graphics::Surface &s) {
 void Subtitles::tick(Graphics::Surface &s) {
 	if (!_vm->_audioSpeech->isPlaying()) {
 		_vm->_subtitles->hide(); // TODO might need a better system. Don't call it always.
-
 	}
-#if BLADERUNNER_RESTORED_CONTENT_GAME
-	if (!_vm->_extraGameFlagsForRestoredContent->query(kEDSFlagSubtitlesEnable)) {
+	if (!_vm->isSubtitlesEnabled()) {
 		return;
 	}
-#endif
 	if (!_isVisible)  { // keep it as a separate if
 		return;
 	}
@@ -559,7 +551,7 @@ void Subtitles::draw(Graphics::Surface &s) {
 		_subtitlesQuoteChanged = false;
 	}
 
-#if SUBTITLES_EXTERNAL_FONT
+#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	for (int i = 0; i < _currentSubtitleLines; ++i) {
 		_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i]);
 	}
@@ -576,7 +568,7 @@ void Subtitles::draw(Graphics::Surface &s) {
 		}
 		_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i],  _subtitleLineScreenY[i]);
 	}
-#endif // SUBTITLES_EXTERNAL_FONT
+#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 }
 
 /**
@@ -745,7 +737,7 @@ void Subtitles::reset() {
 		}
 	}
 
-#if SUBTITLES_EXTERNAL_FONT
+#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	if (_subsFont != nullptr) {
 		_subsFont->close();
 		delete _subsFont;
@@ -770,9 +762,9 @@ void Subtitles::reset() {
 		delete _subsBgFont;
 		_subsBgFont = nullptr;
 	}
-#endif // SUBTITLES_EXTERNAL_FONT
+#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	_subsFontsLoaded = false;
 }
 
 } // End of namespace BladeRunner
-#endif
+

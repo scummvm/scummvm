@@ -38,9 +38,7 @@
 #include "bladerunner/time.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
-#if SUBTITLES_SUPPORT
 #include "bladerunner/subtitles.h"
-#endif
 
 #include "common/rect.h"
 #include "common/str.h"
@@ -233,9 +231,7 @@ void ESPER::tick() {
 	drawMouse(_vm->_surfaceFront);
 
 	tickSound();
-#if SUBTITLES_SUPPORT
-    _vm->_subtitles->tick(_vm->_surfaceFront);
-#endif
+	_vm->_subtitles->tick(_vm->_surfaceFront);
 	_vm->blitToScreen(_vm->_surfaceFront);
 
 	// TODO: implement 60hz lock for smoother experience
