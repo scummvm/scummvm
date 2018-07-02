@@ -178,6 +178,17 @@ public:
 	void scrollInventoryUp();
 	void scrollInventoryDown();
 
+	/** Scroll the dialog options up or down */
+	void scrollDialogUp();
+	void scrollDialogDown();
+
+	/** Focus on the next or previous dialog option */
+	void focusNextDialogOption();
+	void focusPrevDialogOption();
+
+	/** Select the focused dialog option */
+	void selectFocusedDialogOption();
+
 	static const uint kThumbnailWidth = 160;
 	static const uint kThumbnailHeight = 92;
 	static const uint kThumbnailSize = kThumbnailWidth * kThumbnailHeight * 4;

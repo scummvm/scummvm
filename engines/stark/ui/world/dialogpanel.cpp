@@ -46,7 +46,8 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 		_currentSpeech(nullptr),
 		_scrollUpArrowVisible(false),
 		_scrollDownArrowVisible(false),
-		_firstVisibleOption(0) {
+		_firstVisibleOption(0),
+		_focusedOption(0) {
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kBottomBorderHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight + Gfx::Driver::kGameViewportHeight);
 
@@ -180,25 +181,44 @@ void DialogPanel::updateDialogOptions() {
 	clearOptions();
 
 	_firstVisibleOption = 0;
+	_focusedOption = 0;
 	Common::Array<DialogPlayer::Option> options = StarkDialogPlayer->listOptions();
 
 	for (uint i = 0; i < options.size(); i++) {
 		_options.push_back(new ClickText(options[i]._caption, _aprilColor));
 	}
+
+	if (!_options.empty()) {
+		_options[_focusedOption]->setActive();
+	}
 }
 
 void DialogPanel::onMouseMove(const Common::Point &pos) {
+	static Common::Point prevPos;
+
+	// Mouse Move event will always exists. Specifically handled here.
+	if (pos == prevPos && !_options.empty()) {
+		_cursor->setCursorType(_options[_focusedOption]->containsPoint(pos) ?
+				Cursor::kActive : Cursor::kDefault);
+		return;
+	}
+	prevPos = pos;
+
 	if (_subtitleVisual) {
 		_cursor->setCursorType(Cursor::kDefault);
 	} else if (!_options.empty()) {
-		for (uint i = _firstVisibleOption; i < _options.size(); i++) {
-			_options[i]->handleMouseMove(pos);
+		for (uint i = 0; i < _optionsNum; ++i) {
+			uint optionIndex = _firstVisibleOption + i;
+			if (optionIndex < _options.size() && _options[optionIndex]->containsPoint(pos)) {
+				_options[_focusedOption]->setPassive();
+				_options[optionIndex]->setActive();
+				_focusedOption = optionIndex;
+				_cursor->setCursorType(Cursor::kActive);
+				return;
+			}
 		}
 
-		int hoveredOption = getHoveredOption(pos);
-		if (hoveredOption >= 0) {
-			_cursor->setCursorType(Cursor::kActive);
-		} else if (_scrollUpArrowVisible && _scrollUpArrowRect.contains(pos)) {
+		if (_scrollUpArrowVisible && _scrollUpArrowRect.contains(pos)) {
 			_cursor->setCursorType(Cursor::kActive);
 		} else if (_scrollDownArrowVisible && _scrollDownArrowRect.contains(pos)) {
 			_cursor->setCursorType(Cursor::kActive);
@@ -211,19 +231,17 @@ void DialogPanel::onMouseMove(const Common::Point &pos) {
 }
 
 void DialogPanel::onClick(const Common::Point &pos) {
-	if (!_options.empty() && _options.size() > 0) {
-		int hoveredOption = getHoveredOption(pos);
-		if (hoveredOption >= 0) {
-			StarkDialogPlayer->selectOption(hoveredOption);
-			clearOptions();
+	if (!_options.empty()) {
+		if (_options[_focusedOption]->containsPoint(pos)) {
+			selectFocusedOption();
 		}
 
 		if (_scrollUpArrowVisible && _scrollUpArrowRect.contains(pos)) {
-			scrollOptions(-3);
+			scrollUp();
 		}
 
 		if (_scrollDownArrowVisible && _scrollDownArrowRect.contains(pos)) {
-			scrollOptions(3);
+			scrollDown();
 		}
 	}
 }
@@ -243,18 +261,62 @@ void DialogPanel::reset() {
 	StarkDialogPlayer->reset();
 }
 
-int DialogPanel::getHoveredOption(const Common::Point &pos) {
-	for (uint i = _firstVisibleOption; i < _options.size(); i++) {
-		if (_options[i]->containsPoint(pos)) {
-			return i;
-		}
+void DialogPanel::scrollUp() {
+	if (!_scrollUpArrowVisible) return;
+
+	uint step = _optionsNum - 1;
+	_firstVisibleOption = CLIP<int32>(_firstVisibleOption - step , 0, _options.size() - _optionsNum);
+
+	_options[_focusedOption]->setPassive();
+
+	_focusedOption = _firstVisibleOption + step;
+	if (_focusedOption >= _options.size()) {
+		_focusedOption = _options.size() - 1;
 	}
 
-	return -1;
+	_options[_focusedOption]->setActive();
 }
 
-void DialogPanel::scrollOptions(int increment) {
-	_firstVisibleOption = CLIP<int32>(_firstVisibleOption + increment, 0, _options.size() - 3);
+void DialogPanel::scrollDown() {
+	if (!_scrollDownArrowVisible) return;
+
+	uint step = _optionsNum - 1;
+	_firstVisibleOption = CLIP<int32>(_firstVisibleOption + step , 0, _options.size() - _optionsNum);
+
+	_options[_focusedOption]->setPassive();
+	_focusedOption = _firstVisibleOption;
+	_options[_focusedOption]->setActive();
+}
+
+void DialogPanel::focusNextOption() {
+	if (_options.empty() || _focusedOption == _options.size() - 1) return;
+
+	_options[_focusedOption]->setPassive();
+	++_focusedOption;
+	_options[_focusedOption]->setActive();
+
+	if (_focusedOption - _firstVisibleOption == _optionsNum) {
+		++_firstVisibleOption;
+	}
+}
+
+void DialogPanel::focusPrevOption() {
+	if (_options.empty() || _focusedOption == 0) return;
+
+	_options[_focusedOption]->setPassive();
+	--_focusedOption;
+	_options[_focusedOption]->setActive();
+
+	if (_focusedOption < _firstVisibleOption) {
+		--_firstVisibleOption;
+	}
+}
+
+void DialogPanel::selectFocusedOption() {
+	if (_currentSpeech) return;
+
+	StarkDialogPlayer->selectOption(_focusedOption);
+	clearOptions();
 }
 
 void DialogPanel::onScreenChanged() {

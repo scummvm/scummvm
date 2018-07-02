@@ -47,6 +47,7 @@
 #include "engines/stark/ui/world/fmvscreen.h"
 #include "engines/stark/ui/world/gamescreen.h"
 #include "engines/stark/ui/world/gamewindow.h"
+#include "engines/stark/ui/world/dialogpanel.h"
 
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/item.h"
@@ -432,6 +433,26 @@ void UserInterface::scrollInventoryUp() {
 
 void UserInterface::scrollInventoryDown() {
 	_gameScreen->getInventoryWindow()->scrollDown();
+}
+
+void UserInterface::scrollDialogUp() {
+	_gameScreen->getDialogPanel()->scrollUp();
+}
+
+void UserInterface::scrollDialogDown() {
+	_gameScreen->getDialogPanel()->scrollDown();
+}
+
+void UserInterface::focusNextDialogOption() {
+	_gameScreen->getDialogPanel()->focusNextOption();
+}
+
+void UserInterface::focusPrevDialogOption() {
+	_gameScreen->getDialogPanel()->focusPrevOption();
+}
+
+void UserInterface::selectFocusedDialogOption() {
+	_gameScreen->getDialogPanel()->selectFocusedOption();
 }
 
 } // End of namespace Stark

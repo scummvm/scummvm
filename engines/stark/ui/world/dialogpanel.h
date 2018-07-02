@@ -52,6 +52,17 @@ public:
 	/** The screen resolution changed, rebuild the text textures accordingly */
 	void onScreenChanged();
 
+	/** Scroll up and down the panel */
+	void scrollUp();
+	void scrollDown();
+
+	/** Select the next or previous option */
+	void focusNextOption();
+	void focusPrevOption();
+
+	/** Select the focused option */
+	void selectFocusedOption();
+
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
@@ -63,8 +74,6 @@ private:
 	void clearSubtitleVisual();
 	void updateDialogOptions();
 	void clearOptions();
-	int getHoveredOption(const Common::Point &pos);
-	void scrollOptions(int increment);
 	void renderOptions();
 	void renderScrollArrows() const;
 
@@ -83,7 +92,7 @@ private:
 	Resources::Speech *_currentSpeech;
 	void abortCurrentSpeech();
 
-	uint32 _firstVisibleOption;
+	uint32 _firstVisibleOption, _focusedOption;
 	Common::Array<ClickText*> _options;
 
 	static const uint32 _aprilColor = 0xFF00C0FF;
@@ -91,6 +100,7 @@ private:
 	static const uint32 _optionsTop = 4;
 	static const uint32 _optionsLeft = 30;
 	static const uint32 _optionsHeight = 71;
+	static const uint32 _optionsNum = 4;
 };
 
 } // End of namespace Stark

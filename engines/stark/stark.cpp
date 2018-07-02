@@ -227,9 +227,12 @@ void StarkEngine::processEvents() {
 					_global->setFastForward();
 				}
 			} else if ((e.kbd.keycode == Common::KEYCODE_RETURN
-					|| e.kbd.keycode == Common::KEYCODE_KP_ENTER)
-					&& e.kbd.hasFlags(Common::KBD_ALT)) {
-				_gfx->toggleFullscreen();
+					|| e.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
+				if (e.kbd.hasFlags(Common::KBD_ALT)) {
+					_gfx->toggleFullscreen();
+				} else {
+					_userInterface->selectFocusedDialogOption();
+				}
 			} else if (e.kbd.keycode == Common::KEYCODE_F1) {
 				_userInterface->toggleScreen(Screen::kScreenDiaryIndex);
 			} else if (e.kbd.keycode == Common::KEYCODE_F2) {
@@ -277,20 +280,36 @@ void StarkEngine::processEvents() {
 					pauseEngine(true);
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_PAGEUP) {
-				if (_userInterface->isInventoryOpen()) {
-					_userInterface->scrollInventoryUp();
+				if (_userInterface->isInGameScreen()) {
+					if (_userInterface->isInventoryOpen()) {
+						_userInterface->scrollInventoryUp();
+					} else {
+						_userInterface->scrollDialogUp();
+					}
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_UP) {
-				if (_userInterface->isInventoryOpen()) {
-					_userInterface->scrollInventoryUp();
+				if (_userInterface->isInGameScreen()) {
+					if (_userInterface->isInventoryOpen()) {
+						_userInterface->scrollInventoryUp();
+					} else {
+						_userInterface->focusPrevDialogOption();
+					}
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_PAGEDOWN) {
-				if (_userInterface->isInventoryOpen()) {
-					_userInterface->scrollInventoryDown();
+				if (_userInterface->isInGameScreen()) {
+					if (_userInterface->isInventoryOpen()) {
+						_userInterface->scrollInventoryDown();
+					} else {
+						_userInterface->scrollDialogDown();
+					}
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_DOWN) {
-				if (_userInterface->isInventoryOpen()) {
-					_userInterface->scrollInventoryDown();
+				if (_userInterface->isInGameScreen()) {
+					if (_userInterface->isInventoryOpen()) {
+						_userInterface->scrollInventoryDown();
+					} else {
+						_userInterface->focusNextDialogOption();
+					}
 				}
 			}
 
