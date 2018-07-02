@@ -202,6 +202,15 @@ void StarkEngine::processEvents() {
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
 		// Handle any buttons, keys and joystick operations
+
+		if (isPaused()) {
+			// Only pressing key P to resume the game is allowed when the game is paused
+			if (e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_p) {
+				pauseEngine(false);
+			}
+			continue;
+		} 
+
 		if (e.type == Common::EVENT_KEYDOWN) {
 			if (e.kbd.keycode == Common::KEYCODE_d) {
 				if (e.kbd.flags & Common::KBD_CTRL) {
@@ -263,6 +272,10 @@ void StarkEngine::processEvents() {
 				if (_userInterface->confirm(GameMessage::kQuitPrompt)) {
 					_userInterface->notifyShouldExit();
 				}
+			} else if (e.kbd.keycode == Common::KEYCODE_p) {
+				if (_userInterface->isInGameScreen()) {
+					pauseEngine(true);
+				}
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
@@ -299,7 +312,7 @@ void StarkEngine::updateDisplayScene() {
 	_gfx->clearScreen();
 
 	// Only update the world resources when on the game screen
-	if (_userInterface->isInGameScreen()) {
+	if (_userInterface->isInGameScreen() && !isPaused()) {
 		int frames = 0;
 		do {
 			// Update the game resources
