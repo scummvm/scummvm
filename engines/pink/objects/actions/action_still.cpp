@@ -66,7 +66,7 @@ void ActionStill::setFrame(uint frame) {
 }
 
 void ActionStill::nextFrameLooped() {
-	assert(_decoder.getCurFrame() != -1);
+	assert(_decoder.getFrameCount() != 0);
 	setFrame((_decoder.getCurFrame() + 1) % _decoder.getFrameCount());
 }
 
