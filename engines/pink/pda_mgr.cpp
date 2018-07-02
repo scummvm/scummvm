@@ -25,7 +25,7 @@
 #include "pink/objects/actors/pda_button_actor.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/pda_page.h"
-#include "pink/objects/actions/action_still.h"
+#include "pink/objects/actions/action_play_with_sfx.h"
 
 namespace Pink {
 
@@ -215,14 +215,14 @@ void PDAMgr::updateWheels(bool playSfx) {
 	Actor *wheel = _page->findActor(kCountryWheel);
 	if (playSfx && wheel->getAction()->getName() != g_countries[_countryIndex]) {
 		wheel->setAction(Common::String(g_countries[_countryIndex]) + kSfx);
-		dynamic_cast<ActionCEL*>(wheel->getAction())->update(); // hack
+		static_cast<ActionPlayWithSfx*>(wheel->getAction())->update(); // hack
 	}
 	wheel->setAction(g_countries[_countryIndex]);
 
 	wheel = _page->findActor(kDomainWheel);
 	if (playSfx && wheel->getAction()->getName() != g_domains[_domainIndex]) {
 		wheel->setAction(Common::String(g_domains[_domainIndex]) + kSfx);
-		dynamic_cast<ActionCEL*>(wheel->getAction())->update(); // hack
+		static_cast<ActionPlayWithSfx*>(wheel->getAction())->update(); // hack
 	}
 	wheel->setAction(g_domains[_domainIndex]);
 }
