@@ -1546,6 +1546,7 @@ void Controls::unpauseActors(uint32 objectId) {
 			control->_actor->unpause();
 		}
 	}
+	_vm->_unpauseControlActorFlag = true;
 }
 
 
