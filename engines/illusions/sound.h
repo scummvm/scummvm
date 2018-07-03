@@ -25,9 +25,10 @@
 
 #include "illusions/graphics.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
 #include "audio/midiplayer.h"
 #include "audio/mixer.h"
-#include "audio/decoders/wave.h"
+#include "common/array.h"
 #include "common/list.h"
 
 namespace Illusions {
@@ -50,23 +51,26 @@ protected:
 class MidiPlayer : public Audio::MidiPlayer {
 public:
 	MidiPlayer();
-
-	void pause(bool p);
-	void play(const Common::String &filename);
-	void fade(int16 finalVolume, int16 duration);
-
-	// The following line prevents compiler warnings about hiding the pause()
-	// method from the parent class.
-	// FIXME: Maybe the pause(bool p) method should be removed and the
-	// pause/resume methods of the parent class be used instead?
-	virtual void pause() { Audio::MidiPlayer::pause(); }
-
-	// Overload Audio::MidiPlayer method
+	~MidiPlayer();
+	bool play(uint32 musicId);
+	void stop();
+	bool isIdle() const { return _isIdle; }
+protected:
+	bool _isIdle;
+	bool _isPlaying;
+	bool _isCurrentlyPlaying;
+	bool _isLooped;
+	uint32 _loopedMusicId;
+	uint32 _queuedMusicId;
+	uint32 _loadedMusicId;
+	byte *_data;
+	uint _dataSize;
+	bool _isGM;
+	void sysMidiPlay(uint32 musicId);
+	void sysMidiStop();
+	virtual void send(uint32 b);
 	virtual void sendToChannel(byte channel, uint32 b);
-	virtual void onTimer();
-
-private:
-	bool _paused;
+	virtual void endOfTrack();
 };
 
 class VoicePlayer {
@@ -116,7 +120,7 @@ public:
 
 	void playMidiMusic(uint32 musicId);
 	void stopMidiMusic();
-	void fadeMidiMusic(int16 finalVolume, int16 duration);
+	void clearMidiMusicQueue();
 
 	uint16 getMusicVolume();
 	uint16 getSfxVolume();
@@ -149,7 +153,9 @@ protected:
 	MidiPlayer *_midiPlayer;
 	VoicePlayer *_voicePlayer;
 	SoundList _sounds;
+	Common::Array<uint32> _midiMusicQueue;
 	Sound *getSound(uint32 soundEffectId);
+	void updateMidi();
 	uint16 calcAdjustedVolume(const Common::String &volumeConfigKey, uint16 volume);
 };
 

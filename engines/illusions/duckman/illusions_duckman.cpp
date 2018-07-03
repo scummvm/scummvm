@@ -390,6 +390,18 @@ void IllusionsEngine_Duckman::updateFader() {
 	}
 }
 
+void IllusionsEngine_Duckman::clearFader() {
+	_fader->_active = false;
+	_fader->_currValue = 255;
+	_fader->_minValue = 255;
+	_fader->_maxValue = 255;
+	_fader->_firstIndex = 1;
+	_fader->_lastIndex = 256;
+	_fader->_startTime = 0;
+	_fader->_duration = 0;
+	_fader->_notifyThreadId = 0;
+}
+
 void IllusionsEngine_Duckman::pauseFader() {
 	_fader->_paused = true;
 	_fader->_startTime = getCurrentTime() - _fader->_startTime;

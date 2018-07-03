@@ -67,8 +67,10 @@ public:
 		if (it != _map.end()) {
 			list = it->_value;
 			list->pop_back();
-			if (list->empty())
+			if (list->empty()) {
 				_map.erase(id);
+				delete list;
+			}
 		}
 	}
 

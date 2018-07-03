@@ -640,7 +640,7 @@ void ScriptOpcodes_Duckman::opStopMidiMusic(ScriptThread *scriptThread, OpCall &
 void ScriptOpcodes_Duckman::opFadeMidiMusic(ScriptThread *scriptThread, OpCall &opCall) {
 	ARG_INT16(duration);
 	ARG_INT16(finalVolume);
-	_vm->_soundMan->fadeMidiMusic(finalVolume, duration);
+	//FIXME _vm->_soundMan->fadeMidiMusic(finalVolume, duration);
 }
 
 void ScriptOpcodes_Duckman::opAddMenuChoice(ScriptThread *scriptThread, OpCall &opCall) {

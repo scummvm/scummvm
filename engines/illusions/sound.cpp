@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "illusions/illusions.h"
 #include "illusions/sound.h"
+#include "audio/mididrv.h"
 #include "audio/midiparser.h"
 
 namespace Illusions {
@@ -76,68 +77,125 @@ bool MusicPlayer::isPlaying() {
 
 // MidiPlayer
 
-MidiPlayer::MidiPlayer() {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
-	_paused = false;
+MidiPlayer::MidiPlayer()
+	: _isIdle(true), _isPlaying(false), _isCurrentlyPlaying(false), _isLooped(false),
+	_loopedMusicId(0), _queuedMusicId(0), _loadedMusicId(0),
+	_data(0), _dataSize(0) {
 
+	_data = 0;
+	_dataSize = 0;
+	_isGM = false;
+
+	MidiPlayer::createDriver();
 
 	int ret = _driver->open();
 	if (ret == 0) {
-		_driver->sendGMReset();
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
 
 		_driver->setTimerCallback(this, &timerCallback);
 	}
 }
 
-void MidiPlayer::play(const Common::String &filename) {
-	Common::StackLock lock(_mutex);
+MidiPlayer::~MidiPlayer() {
+	sysMidiStop();
+}
 
-	stop();
+bool MidiPlayer::play(uint32 musicId) {
+	debug("MidiPlayer::play(%08X)", musicId);
+	bool isMusicLooping = true; // TODO Use actual flag
 
-	Common::File *fd = new Common::File();
-	if (!fd->open(filename)) {
-		delete fd;
-		error("MidiPlayer::play() Could not load %s", filename.c_str());
+	if (!_isIdle)
+		return false;
+
+	if (_isPlaying) {
+		if (isMusicLooping) {
+			_loopedMusicId = musicId;
+		} else {
+			_queuedMusicId = musicId;
+			_isIdle = false;
+		}
+		return true;
 	}
 
-	uint32 size = (uint32)fd->size();
-	_midiData = (uint8 *)malloc(size);
+	if (_isCurrentlyPlaying && _loopedMusicId == musicId)
+		return true;
 
-	if (_midiData) {
-		fd->read(_midiData, size);
+	sysMidiStop();
 
-		syncVolume();	// FIXME: syncVolume calls setVolume which in turn also locks the mutex! ugh
-
-		_parser = MidiParser::createParser_SMF();
-		_parser->loadMusic(_midiData, size);
-		_parser->setTrack(0);
-		_parser->setMidiDriver(this);
-		_parser->setTimerRate(_driver->getBaseTempo());
-		_isLooping = true;
+    _isLooped = isMusicLooping;
+    if (_isLooped) {
+		_loopedMusicId = musicId;
+    } else {
 		_isPlaying = true;
 	}
-	fd->close();
-	delete fd;
+
+	sysMidiPlay(musicId);
+
+	_isCurrentlyPlaying = true;
+
+	return true;
 }
 
-void MidiPlayer::pause(bool p) {
-	_paused = p;
-
-	for (int i = 0; i < kNumChannels; ++i) {
-		if (_channelsTable[i]) {
-			_channelsTable[i]->volume(_paused ? 0 : _channelsVolume[i] * _masterVolume / 255);
-		}
-	}
+void MidiPlayer::stop() {
+	sysMidiStop();
+	_isIdle = true;
+	_isPlaying = false;
+	_isCurrentlyPlaying = false;
+	_loopedMusicId = 0;
+	_queuedMusicId = 0;
 }
 
-void MidiPlayer::onTimer() {
+void MidiPlayer::sysMidiPlay(uint32 musicId) {
 	Common::StackLock lock(_mutex);
 
-	if (!_paused && _isPlaying && _parser) {
-		_parser->onTimer();
+	Common::String filename = Common::String::format("%08x.mid", musicId);
+	debug(0, "MidiPlayer::sysMidiPlay() %s", filename.c_str());
+
+	Common::File fd;
+	if (!fd.open(filename)) {
+		error("MidiPlayer::sysMidiPlay() Could not open %s", filename.c_str());
 	}
+
+	_dataSize = fd.size();
+	_data = new byte[_dataSize];
+	fd.read(_data, _dataSize);
+
+	_isGM = true;
+	_loadedMusicId = musicId;
+
+	MidiParser *parser = MidiParser::createParser_SMF();
+	if (parser->loadMusic(_data, _dataSize)) {
+		parser->setTrack(0);
+		parser->setMidiDriver(this);
+		parser->setTimerRate(_driver->getBaseTempo());
+		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+
+		_parser = parser;
+
+		syncVolume();
+
+		Audio::MidiPlayer::_isLooping = _isLooped;
+		Audio::MidiPlayer::_isPlaying = true;
+	}
+}
+
+void MidiPlayer::sysMidiStop() {
+	Audio::MidiPlayer::stop();
+	delete[] _data;
+	_data = 0;
+	_dataSize = 0;
+	_loadedMusicId = 0;
+}
+
+void MidiPlayer::send(uint32 b) {
+	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
+		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
+	}
+
+	Audio::MidiPlayer::send(b);
 }
 
 void MidiPlayer::sendToChannel(byte channel, uint32 b) {
@@ -153,9 +211,20 @@ void MidiPlayer::sendToChannel(byte channel, uint32 b) {
 		_channelsTable[channel]->send(b);
 }
 
-void MidiPlayer::fade(int16 finalVolume, int16 duration) {
-	//TODO fade here.
-	debug(0, "Fade midi. finalVolume: %d, duration: %d", finalVolume, duration);
+void MidiPlayer::endOfTrack() {
+	uint32 nextMusicId = _queuedMusicId;
+	if (nextMusicId == 0)
+		nextMusicId = _loopedMusicId;
+
+	if (_isLooped && _loadedMusicId == nextMusicId) {
+		Audio::MidiPlayer::endOfTrack();
+		return;
+	}
+
+	sysMidiStop();
+	_queuedMusicId = 0;
+	_isIdle = true;
+	play(nextMusicId);
 }
 
 // VoicePlayer
@@ -279,6 +348,7 @@ SoundMan::~SoundMan() {
 }
 
 void SoundMan::update() {
+	updateMidi();
 	// TODO voc_testCued();
 	if (_musicNotifyThreadId && !_musicPlayer->isPlaying())
 		_vm->notifyThreadId(_musicNotifyThreadId);
@@ -292,6 +362,20 @@ void SoundMan::playMusic(uint32 musicId, int16 type, int16 volume, int16 pan, ui
 
 void SoundMan::stopMusic() {
 	_musicPlayer->stop();
+}
+
+void SoundMan::playMidiMusic(uint32 musicId) {
+	if (!_midiPlayer->play(musicId)) {
+		_midiMusicQueue.push_back(musicId);
+	}
+}
+
+void SoundMan::stopMidiMusic() {
+	_midiPlayer->stop();
+}
+
+void SoundMan::clearMidiMusicQueue() {
+	_midiMusicQueue.clear();
 }
 
 bool SoundMan::cueVoice(const char *voiceName) {
@@ -363,17 +447,13 @@ Sound *SoundMan::getSound(uint32 soundEffectId) {
 	return 0;
 }
 
-void SoundMan::playMidiMusic(uint32 musicId) {
-	Common::String filename = Common::String::format("%08x.MID", musicId);
-	_midiPlayer->play(filename);
-}
-
-void SoundMan::stopMidiMusic() {
-	_midiPlayer->stop();
-}
-
-void SoundMan::fadeMidiMusic(int16 finalVolume, int16 duration) {
-	_midiPlayer->fade(finalVolume, duration);
+void SoundMan::updateMidi() {
+	if (_midiPlayer->isIdle() & !_midiMusicQueue.empty()) {
+		uint32 musicId = _midiMusicQueue.front();
+		_midiMusicQueue.remove_at(0);
+		_midiPlayer->play(musicId);
+	}
+	// TODO Update music volume fading
 }
 
 void SoundMan::setMusicVolume(uint16 volume) {
@@ -408,5 +488,4 @@ uint16 SoundMan::getSfxVolume() {
 uint16 SoundMan::getSpeechVolume() {
 	return (uint16)ConfMan.getInt("speech_volume");
 }
-
 } // End of namespace Illusions
