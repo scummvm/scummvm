@@ -1380,6 +1380,53 @@ public:
 	void muddaUseDegrimer();
 	void muddaTick();
 
+	// FEATHER0
+	void feather0Tick1();
+	void feather0Tick60();
+	void feather0TalkToQuetzecoatl();
+	void feather0Timer0Expired();
+	void feather0Timer1Expired();
+	void feather0UsePhaserOnQuetzecoatl();
+	void feather0UsePhaserOnMccoy();
+	void feather0UseMedkit();
+	void feather0LookAtQuetzecoatl();
+	void feather0LookAtMoon();
+	void feather0LookAtLog();
+	void feather0LookAtHut();
+	void feather0LookAnywhere();
+	void feather0LookAtEyes();
+	void feather0LookAtTree();
+	void feather0LookAtMccoy();
+	void feather0LookAtSpock();
+	void feather0LookAtRedshirt();
+	void feather0TalkToMccoy();
+	void feather0TalkToSpock();
+	void feather0TalkToRedshirt();
+	void feather0UseSTricorderOnQuetzecoatl();
+	void feather0UseSTricorderAnywhere();
+	void feather0UseMTricorderOnQuetzecoatl();
+
+	// FEATHER1
+	void feather1Tick1();
+
+	// FEATHER2
+	void feather2Tick1();
+
+	// FEATHER3
+	void feather3Tick1();
+
+	// FEATHER4
+	void feather4Tick1();
+
+	// FEATHER5
+	void feather5Tick1();
+
+	// FEATHER6
+	void feather6Tick1();
+
+	// FEATHER7
+	void feather7Tick1();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {

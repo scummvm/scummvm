@@ -131,6 +131,38 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 		_roomActionList = mudd5ActionList;
 		_numRoomActions = sizeof(mudd5ActionList) / sizeof(RoomAction);
 	}
+	else if (name == "FEATHER0") {
+		_roomActionList = feather0ActionList;
+		_numRoomActions = sizeof(feather0ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "FEATHER1") {
+		_roomActionList = feather1ActionList;
+		_numRoomActions = sizeof(feather1ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "FEATHER2") {
+		_roomActionList = feather2ActionList;
+		_numRoomActions = sizeof(feather2ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "FEATHER3") {
+		_roomActionList = feather3ActionList;
+		_numRoomActions = sizeof(feather3ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "FEATHER4") {
+		_roomActionList = feather4ActionList;
+		_numRoomActions = sizeof(feather4ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "FEATHER5") {
+		_roomActionList = feather5ActionList;
+		_numRoomActions = sizeof(feather5ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "FEATHER6") {
+		_roomActionList = feather6ActionList;
+		_numRoomActions = sizeof(feather6ActionList) / sizeof(RoomAction);
+	}
+	else if (name == "FEATHER7") {
+		_roomActionList = feather7ActionList;
+		_numRoomActions = sizeof(feather7ActionList) / sizeof(RoomAction);
+	}
 	else {
 		warning("Room \"%s\" unimplemented", name.c_str());
 		_numRoomActions = 0;
