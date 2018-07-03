@@ -406,6 +406,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS CD - Russian (Compressed Freeware Release v1.0)
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1c", "908d04940d40537d32c50a8429cd8631", 51222412),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_ALT_INTRO)
+		},
+	},
+
 	// TODO: Freeware Release for Spanish DOS CD is missing.
 #if 0
 	// DOS CD - Spanish (Compressed Freeware Release v1.0)
