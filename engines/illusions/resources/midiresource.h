@@ -40,6 +40,33 @@ protected:
 	IllusionsEngine *_vm;
 };
 
+struct MidiMusic {
+	uint32 _musicId;
+	bool _looping;
+	void load(Common::SeekableReadStream &stream);
+};
+
+class MidiGroupResource {
+public:
+	MidiGroupResource();
+	~MidiGroupResource();
+	void load(byte *data, uint32 dataSize);
+public:
+	uint _midiMusicCount;
+	MidiMusic *_midiMusic;
+};
+
+class MidiGroupInstance : public ResourceInstance {
+public:
+	MidiGroupInstance(IllusionsEngine *vm);
+	virtual void load(Resource *resource);
+	virtual void unload();
+public:
+	IllusionsEngine *_vm;	
+	MidiGroupResource *_midiGroupResource;
+	uint32 _resId;
+};
+
 } // End of namespace Illusions
 
 #endif // ILLUSIONS_SOUNDRESOURCE_H

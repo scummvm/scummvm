@@ -48,6 +48,7 @@ protected:
 	WidthHeight _bgDimensions;
 	byte *_pathBytes;
 	PointArray *findPathInternal(Common::Point sourcePt, Common::Point destPt);
+	void postProcess(Common::Point sourcePt, PointArray *foundPath);
 	bool isLineBlocked(PathLine &line);
 	int calcLineDistance(PathLine &line);
 	bool findClosestPt(Common::Point &sourcePt, Common::Point &closestPt, Common::Point &destPt);

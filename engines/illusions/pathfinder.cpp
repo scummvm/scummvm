@@ -73,12 +73,25 @@ PointArray *PathFinder::findPathInternal(Common::Point sourcePt, Common::Point d
 		}
 
 		free(_pathBytes);
-		// TODO postProcess(sourcePt, foundPath);
+		postProcess(sourcePt, foundPath);
 
 	} else {
 		foundPath->push_back(destPt);
 	}
 	return foundPath;
+}
+
+void PathFinder::postProcess(Common::Point sourcePt, PointArray *foundPath) {
+	// For each three points A, B and C, removes B if the line between A and C is not blocked
+    for (uint index = 0; index + 2 < foundPath->size(); ++index) {
+		PathLine line;
+		line.p0 = index == 0 ? sourcePt : (*foundPath)[index - 1];
+		line.p1 = (*foundPath)[index + 1];
+		if (!isLineBlocked(line)) {
+			debug("remove point");
+			foundPath->remove_at(index);
+		}
+    }
 }
 
 bool PathFinder::isLineBlocked(PathLine &line) {

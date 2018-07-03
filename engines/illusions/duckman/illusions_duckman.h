@@ -113,6 +113,7 @@ public:
 
 	void startFader(int duration, int minValue, int maxValue, int firstIndex, int lastIndex, uint32 threadId);
 	void updateFader();
+	void clearFader();
 	void pauseFader();
 	void unpauseFader();
 
