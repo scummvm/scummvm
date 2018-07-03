@@ -44,6 +44,14 @@ MODULE_OBJS = \
 	rooms/mudd4.o \
 	rooms/mudd5.o \
 	rooms/mudda.o \
+	rooms/feather0.o \
+	rooms/feather1.o \
+	rooms/feather2.o \
+	rooms/feather3.o \
+	rooms/feather4.o \
+	rooms/feather5.o \
+	rooms/feather6.o \
+	rooms/feather7.o \
 	
 
 

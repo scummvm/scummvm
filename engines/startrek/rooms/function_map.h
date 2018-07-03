@@ -1748,6 +1748,71 @@ RoomAction mudd5ActionList[] = {
 	{ Action(ACTION_TICK, -1, -1, -1),           &Room::muddaTick },
 };
 
+RoomAction feather0ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0),  &Room::feather0Tick1 },
+	{ Action(ACTION_TICK, 60, 0, 0), &Room::feather0Tick60 },
+	{ Action(ACTION_TALK, 8, 0, 0),  &Room::feather0TalkToQuetzecoatl },
+	{ Action(ACTION_TIMER_EXPIRED, 0, 0, 0),                &Room::feather0Timer0Expired },
+	{ Action(ACTION_TIMER_EXPIRED, 1, 0, 0),                &Room::feather0Timer1Expired },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, 8,            0), &Room::feather0UsePhaserOnQuetzecoatl },
+	{ Action(ACTION_USE, OBJECT_IPHASERK, 8,            0), &Room::feather0UsePhaserOnQuetzecoatl },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, OBJECT_MCCOY, 0), &Room::feather0UsePhaserOnMccoy },
+	{ Action(ACTION_USE, OBJECT_IPHASERS, OBJECT_MCCOY, 0), &Room::feather0UsePhaserOnMccoy },
+	{ Action(ACTION_USE, OBJECT_IMEDKIT, -1,            0), &Room::feather0UseMedkit },
+	{ Action(ACTION_LOOK, 8,    0, 0), &Room::feather0LookAtQuetzecoatl },
+	{ Action(ACTION_LOOK, 0x20, 0, 0), &Room::feather0LookAtMoon },
+	{ Action(ACTION_LOOK, 0x21, 0, 0), &Room::feather0LookAtLog },
+	{ Action(ACTION_LOOK, 0x22, 0, 0), &Room::feather0LookAtHut },
+	{ Action(ACTION_LOOK, -1,   0, 0), &Room::feather0LookAnywhere },
+	{ Action(ACTION_LOOK, 0x23, 0, 0), &Room::feather0LookAtEyes },
+	{ Action(ACTION_LOOK, 0x24, 0, 0), &Room::feather0LookAtEyes },
+	{ Action(ACTION_LOOK, 0x25, 0, 0), &Room::feather0LookAtEyes },
+	{ Action(ACTION_LOOK, 0x26, 0, 0), &Room::feather0LookAtEyes },
+	{ Action(ACTION_LOOK, 0x27, 0, 0), &Room::feather0LookAtEyes },
+	{ Action(ACTION_LOOK, 0x28, 0, 0), &Room::feather0LookAtEyes },
+	{ Action(ACTION_LOOK, 0x29, 0, 0), &Room::feather0LookAtEyes },
+	{ Action(ACTION_LOOK, 0x2a, 0, 0), &Room::feather0LookAtEyes },
+	{ Action(ACTION_LOOK, 0x2b, 0, 0), &Room::feather0LookAtEyes },
+	{ Action(ACTION_LOOK, 0x2c, 0, 0), &Room::feather0LookAtTree },
+	{ Action(ACTION_LOOK, OBJECT_MCCOY,    0, 0), &Room::feather0LookAtMccoy },
+	{ Action(ACTION_LOOK, OBJECT_SPOCK,    0, 0), &Room::feather0LookAtSpock },
+	{ Action(ACTION_LOOK, OBJECT_REDSHIRT, 0, 0), &Room::feather0LookAtRedshirt },
+	{ Action(ACTION_TALK, OBJECT_MCCOY,    0, 0), &Room::feather0TalkToMccoy },
+	{ Action(ACTION_TALK, OBJECT_SPOCK,    0, 0), &Room::feather0TalkToSpock },
+	{ Action(ACTION_TALK, OBJECT_REDSHIRT, 0, 0), &Room::feather0TalkToRedshirt },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR,  8, 0), &Room::feather0UseSTricorderOnQuetzecoatl },
+	{ Action(ACTION_USE, OBJECT_ISTRICOR, -1, 0), &Room::feather0UseSTricorderAnywhere },
+	{ Action(ACTION_USE, OBJECT_IMTRICOR,  8, 0), &Room::feather0UseMTricorderOnQuetzecoatl },
+};
+
+RoomAction feather1ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::feather1Tick1 },
+};
+
+RoomAction feather2ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::feather2Tick1 },
+};
+
+RoomAction feather3ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::feather3Tick1 },
+};
+
+RoomAction feather4ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::feather4Tick1 },
+};
+
+RoomAction feather5ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::feather5Tick1 },
+};
+
+RoomAction feather6ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::feather6Tick1 },
+};
+
+RoomAction feather7ActionList[] = {
+	{ Action(ACTION_TICK, 1, 0, 0), &Room::feather7Tick1 },
+};
+
 }
 
 #endif
