@@ -189,6 +189,9 @@ public:
 	/** Select the focused dialog option */
 	void selectFocusedDialogOption();
 
+	/** Directly select a dialog option by index */
+	void selectDialogOptionByIndex(uint index);
+
 	static const uint kThumbnailWidth = 160;
 	static const uint kThumbnailHeight = 92;
 	static const uint kThumbnailSize = kThumbnailWidth * kThumbnailHeight * 4;

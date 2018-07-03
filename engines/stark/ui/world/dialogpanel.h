@@ -63,6 +63,9 @@ public:
 	/** Select the focused option */
 	void selectFocusedOption();
 
+	/** Select an option by index */
+	void selectOption(uint index);
+
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;

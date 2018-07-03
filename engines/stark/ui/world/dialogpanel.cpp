@@ -319,6 +319,13 @@ void DialogPanel::selectFocusedOption() {
 	clearOptions();
 }
 
+void DialogPanel::selectOption(uint index) {
+	if (_currentSpeech || _options.size() <= index) return;
+
+	StarkDialogPlayer->selectOption(index);
+	clearOptions();
+}
+
 void DialogPanel::onScreenChanged() {
 	if (_currentSpeech) {
 		updateSubtitleVisual();

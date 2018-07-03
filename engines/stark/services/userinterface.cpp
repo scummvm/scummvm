@@ -455,4 +455,8 @@ void UserInterface::selectFocusedDialogOption() {
 	_gameScreen->getDialogPanel()->selectFocusedOption();
 }
 
+void UserInterface::selectDialogOptionByIndex(uint index) {
+	_gameScreen->getDialogPanel()->selectOption(index);
+}
+
 } // End of namespace Stark

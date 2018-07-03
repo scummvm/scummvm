@@ -311,6 +311,10 @@ void StarkEngine::processEvents() {
 						_userInterface->focusNextDialogOption();
 					}
 				}
+			} else if (e.kbd.keycode >= Common::KEYCODE_1 && e.kbd.keycode <= Common::KEYCODE_9) {
+				if (_userInterface->isInGameScreen()) {
+					_userInterface->selectDialogOptionByIndex(e.kbd.keycode - Common::KEYCODE_1);
+				}
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
