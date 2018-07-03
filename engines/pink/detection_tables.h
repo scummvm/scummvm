@@ -28,6 +28,22 @@
 namespace Pink {
 
 static const ADGameDescription gameDescriptions[] = {
+	// Deutsch
+	{
+		"peril",
+		0,
+		{
+			{"PPTP.ORB", 0, "4ee8514f7303dea1949d7fc72ff65d8c", 609695309},
+			{"PPTP.BRO", 0, "755dffcf7cb47af0f26f6c5e78d8dc78", 8945466},
+			{"PPTP.EXE", 0, "4b46220a25cab0a1b61c047543d513fb", 596992},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
 	// English, Version 1.0
 	{
 		"peril",
