@@ -146,8 +146,8 @@ int TalkThread::onUpdate() {
 		if (!(_flags & 4)) {
 			int16 panX = 0;
 			if (_namedPointId) {
-				// TODO pt.x = (unsigned int)artcntrlGetNamedPointPosition((Point)_namedPointId);
-				// TODO panX = convertPanXCoord(pt.x);
+				Common::Point pt = _vm->getNamedPointPosition(_namedPointId);
+				panX = _vm->convertPanXCoord(pt.x);
 			}
 			_vm->_soundMan->startVoice(255, panX);
 		}
