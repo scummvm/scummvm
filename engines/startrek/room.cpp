@@ -137,7 +137,7 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 	}
 	else if (name == "FEATHER1") {
 		_roomActionList = feather1ActionList;
-		_numRoomActions = sizeof(feather1ActionList) / sizeof(RoomAction);
+		_numRoomActions = feather1NumActions;
 	}
 	else if (name == "FEATHER2") {
 		_roomActionList = feather2ActionList;
@@ -180,7 +180,7 @@ uint16 Room::readRdfWord(int offset) {
 }
 
 bool Room::actionHasCode(const Action &action) {
-	RoomAction *roomActionPtr = _roomActionList;
+	const RoomAction *roomActionPtr = _roomActionList;
 	int n = _numRoomActions;
 
 	while (n-- > 0) {
@@ -192,7 +192,7 @@ bool Room::actionHasCode(const Action &action) {
 }
 
 bool Room::handleAction(const Action &action) {
-	RoomAction *roomActionPtr = _roomActionList;
+	const RoomAction *roomActionPtr = _roomActionList;
 	int n = _numRoomActions;
 
 	while (n-- > 0) {
@@ -208,7 +208,7 @@ bool Room::handleAction(const Action &action) {
 }
 
 bool Room::handleActionWithBitmask(const Action &action) {
-	RoomAction *roomActionPtr = _roomActionList;
+	const RoomAction *roomActionPtr = _roomActionList;
 	int n = _numRoomActions;
 
 	while (n-- > 0) {
@@ -225,10 +225,14 @@ bool Room::handleActionWithBitmask(const Action &action) {
 }
 
 Common::Point Room::getBeamInPosition(int crewmanIndex) {
-	int base = 0xaa + crewmanIndex * 4;
+	int base = RDF_BEAM_IN_POSITIONS + crewmanIndex * 4;
 	return Common::Point(readRdfWord(base), readRdfWord(base + 2));
 }
 
+Common::Point Room::getSpawnPosition(int crewmanIndex) {
+	int base = RDF_SPAWN_POSITIONS + crewmanIndex * 4;
+	return Common::Point(readRdfWord(base), readRdfWord(base + 2));
+}
 
 // For actions of type ACTION_FINISHED_ANIMATION or ACTION_FINISHED_WALKING, this takes
 // a function pointer and returns the index corresponding to that callback.

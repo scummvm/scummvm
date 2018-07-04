@@ -120,7 +120,7 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 	memset(_awayMission.crewDirectionsAfterWalk, 0xff, 4);
 
 	switch (warpEntryIndex) {
-	case 0: // 0-3: Read warp positions from RDF file
+	case 0: // 0-3: Crew spawns in a spot and walks to a spot.
 	case 1:
 	case 2:
 	case 3:
@@ -155,9 +155,19 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 		playSoundEffectIndex(0x09);
 		_warpHotspotsActive = false;
 		break;
-	case 5:
+	case 5: // Crew spawns in directly at a position.
+		for (int i = 0; i < (_awayMission.redshirtDead ? 3 : 4); i++) {
+			Common::String animFilename = getCrewmanAnimFilename(i, "stnds");
+			Common::Point warpPos = _room->getSpawnPosition(i);
+			loadActorAnimWithRoomScaling(i, animFilename, warpPos.x, warpPos.y);
+		}
+		_warpHotspotsActive = true;
 		break;
 	case 6:
+		error("initAwayCrewPositions(6) unimplemented");
+		break;
+	default:
+		warning("Invalid parameter (%d) to initAwayCrewPositions", warpEntryIndex);
 		break;
 	}
 }
