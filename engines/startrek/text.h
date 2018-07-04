@@ -1723,6 +1723,27 @@ enum GameStringIDs {
 	TX_FEA1N022,
 
 
+	TX_FEA2_001,
+	TX_FEA2_002,
+	TX_FEA2_003,
+	TX_FEA2_004,
+	TX_FEA2_005,
+	TX_FEA2_006,
+	TX_FEA2_007,
+	TX_FEA2_008,
+	TX_FEA2_009,
+	TX_FEA2_010,
+	TX_FEA2N000,
+	TX_FEA2N001,
+	TX_FEA2N002,
+	TX_FEA2N003,
+	TX_FEA2N004,
+	TX_FEA2N005,
+	TX_FEA2N006,
+	TX_FEA2N007,
+	TX_FEA2N008,
+
+
 	TX_SIN3_012,
 
 
@@ -3382,6 +3403,28 @@ const char * const g_gameStrings[] = {
 	"#FEA1\\FEA1N020#You are in a deep pit. It is a long, hard climb to the top.",
 	"#FEA1\\FEA1N021#You cannot reach it from where you are.",
 	"#FEA1\\FEA1N022#You pick up some rocks from the pile.",
+
+
+	"#FEA2\\FEA2_001#Everyone is healthy, Jim, there's no need for the medical kit here.",
+	"#FEA2\\FEA2_002#Nothing interesting in this neck of the woods, Jim.",
+	"#FEA2\\FEA2_003#They're dead, Jim.",
+	"#FEA2\\FEA2_004#This jungle is sure lush, Jim. Speaking of lush, I could use a nice saurian brandy about now.",
+	"#FEA2\\FEA2_005#Really? Tell me more about your childhood Lieutenant...",
+	"#FEA2\\FEA2_006#Fascinating. Our communicators have apparently been rendered ineffective.",
+	"#FEA2\\FEA2_007#I am reading a life form to the west. It appears to be humanoid.",
+	"#FEA2\\FEA2_008#Staying in this overgrown region could prove quite dangerous. I suggest we continue, Captain.",
+	"#FEA2\\FEA2_009#I feel like someone is watching us, Captain.",
+	"#FEA2\\FEA2_010#You know, I always wanted to go swinging on a vine through a jungle. Just like in some old books I read when I was a kid.",
+	"#FEA2\\FEA2N000#A vine hangs from the trees.",
+	"#FEA2\\FEA2N001#Feral red eyes glare out of the dark at you.",
+	"#FEA2\\FEA2N002#Kirk is wondering what he said that made Quetzecoatl so angry...",
+	"#FEA2\\FEA2N003#Lt. Stragey appears fascinated by the vines hanging from the trees.",
+	"#FEA2\\FEA2N004#McCoy is filled with premonitions of injury and death. Why else would they have brought him along?",
+	"#FEA2\\FEA2N005#Spock is examining the surrounding terrain for signs of danger. Anything else would be illogical.",
+	"#FEA2\\FEA2N006#This great tree has been in this jungle for centuries.",
+	"#FEA2\\FEA2N007#Trees to the left of you! Trees to the right of you! Into the valley of trees raced the landing party!",
+	"#FEA2\\FEA2N008#You are in a densely vegetated area. The overgrowth blocks your view in all directions.",
+
 
 
 	"#SIN3\\SIN3_012#Can't say I like the decor.",

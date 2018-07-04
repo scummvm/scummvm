@@ -1500,6 +1500,24 @@ public:
 
 	// FEATHER2
 	void feather2Tick1();
+	void feather2UseCommunicator();
+	void feather2UsePhaser();
+	void feather2UseSTricorderAnywhere();
+	void feather2UseMTricorderAnywhere();
+	void feather2TalkToMccoy();
+	void feather2TalkToSpock();
+	void feather2TalkToRedshirt();
+	void feather2LookAtVines();
+	void feather2UseMedkit();
+	void feather2WalkToLeftExit();
+	void feather2LookAtEyes();
+	void feather2LookAtBigTree();
+	void feather2LookAtTrees();
+	void feather2LookAnywhere();
+	void feather2LookAtKirk();
+	void feather2LookAtSpock();
+	void feather2LookAtMccoy();
+	void feather2LookAtRedshirt();
 
 	// FEATHER3
 	void feather3Tick1();

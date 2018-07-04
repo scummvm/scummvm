@@ -29,7 +29,7 @@ namespace StarTrek {
 
 class Room;
 
-enum Acton { // TODO: rename
+enum ActionTypes {
 	ACTION_TICK = 0,
 
 	ACTION_WALK = 1, // Actions 1-5 are directly usable on away missions.
@@ -41,8 +41,16 @@ enum Acton { // TODO: rename
 	ACTION_TOUCHED_WARP = 6,
 	ACTION_TOUCHED_HOTSPOT = 7, // Second kind of "hotspot" only relevant when an object touches them
 	ACTION_TIMER_EXPIRED = 8,
+
+	ACTION_DONE_ANIM = 10,
+	ACTION_DONE_WALK = 12,
+
+	// TODO: Remove these two as redundant.
+	// They're only here because I don't want to mess up the spacing in function_map.h by
+	// find/replacing the old name.
 	ACTION_FINISHED_ANIMATION = 10,
 	ACTION_FINISHED_WALKING = 12,
+
 	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
 };
 
