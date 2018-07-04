@@ -1165,7 +1165,7 @@ private:
 	const SoundSequenceData *_soundSeqData;
 	uint8 *_offscreenBuffer;
 	int _updateScreenWidth;
-	int _updateScreenPicture;
+	bool _updateScreenPicture;
 	int _updateScreenCounter;
 	int _updateScreenIndex;
 	int _frameCounter;
