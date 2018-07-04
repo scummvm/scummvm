@@ -286,45 +286,6 @@ bool IllusionsEngine::calcPointDirection(Common::Point &srcPt, Common::Point &ds
 	return facing != 0;
 }
 
-void IllusionsEngine::playVideo(uint32 videoId, uint32 objectId, uint32 priority, uint32 threadId) {
-	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
-	Common::String filename = Common::String::format("%08X.AVI", objectId);
-	if (!videoDecoder->loadFile(filename)) {
-		delete videoDecoder;
-		warning("Unable to open video %s", filename.c_str());
-		return;
-	}
-
-	videoDecoder->start();
-
-	bool skipVideo = false;
-
-	while (!shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
-		if (videoDecoder->needsUpdate()) {
-			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
-			if (videoDecoder->hasDirtyPalette()) {
-				const byte *palette = videoDecoder->getPalette();
-				_system->getPaletteManager()->setPalette(palette, 0, 256);
-			}
-
-			if (frame) {
-				_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
-				_system->updateScreen();
-			}
-		}
-
-		Common::Event event;
-		while (_eventMan->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_SPACE) ||
-				event.type == Common::EVENT_LBUTTONUP)
-				skipVideo = true;
-		}
-	}
-
-	videoDecoder->close();
-	delete videoDecoder;
-}
-
 bool IllusionsEngine::isSoundActive() {
 	// TODO
 	return true;
