@@ -137,7 +137,8 @@ void Actor::createSurface(SurfInfo &surfInfo) {
 			}
 			_flags |= Illusions::ACTOR_FLAG_4000;
 		}
-		else {
+	} else {
+		if (_frameIndex) {
 			_flags |= Illusions::ACTOR_FLAG_2000;
 			_flags |= Illusions::ACTOR_FLAG_4000;
 		}
@@ -209,7 +210,7 @@ Control::~Control() {
 
 void Control::pause() {
 
-	if (_vm->getGameId() == kGameIdBBDOU || !(_flags & Illusions::ACTOR_FLAG_SCALED)) {
+	if (_vm->getGameId() == kGameIdBBDOU || !(_flags & 4)) {
 		_vm->_dict->setObjectControl(_objectId, 0);
 		if (_objectId == Illusions::CURSOR_OBJECT_ID)
 			_vm->setCursorControl(0);
@@ -222,7 +223,7 @@ void Control::pause() {
 
 void Control::unpause() {
 
-	if (_vm->getGameId() == kGameIdBBDOU || !(_flags & Illusions::ACTOR_FLAG_SCALED)) {
+	if (_vm->getGameId() == kGameIdBBDOU || !(_flags & 4)) {
 		_vm->_dict->setObjectControl(_objectId, this);
 		if (_objectId == Illusions::CURSOR_OBJECT_ID)
 			_vm->setCursorControl(this);
