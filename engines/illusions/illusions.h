@@ -169,7 +169,6 @@ public:
 	int getRandom(int max);
 	int convertPanXCoord(int16 x);
 	bool calcPointDirection(Common::Point &srcPt, Common::Point &dstPt, uint &facing);
-	void playVideo(uint32 videoId, uint32 objectId, uint32 value, uint32 threadId);
 	bool isSoundActive();
 
 	virtual void updateFader() {};
