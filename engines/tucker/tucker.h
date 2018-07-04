@@ -387,7 +387,7 @@ public:
 private:
 
 	int _compressedSoundType;
-	int _compressedSoundFlags;
+	uint16 _compressedSoundFlags;
 	Common::File _fCompressedSound;
 };
 
