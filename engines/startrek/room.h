@@ -1569,6 +1569,28 @@ public:
 
 	// FEATHER4
 	void feather4Tick1();
+	void feather4UseCommunicator();
+	void feather4UsePhaser();
+	void feather4UseSTricorderOnLight();
+	void feather4UseSTricorderOnMushroom();
+	void feather4UseSTricorderOnBush();
+	void feather4UseSTricorderAnywhere();
+	void feather4UseMTricorderOnLight();
+	void feather4UseMTricorderOnMushroom();
+	void feather4UseMTricorderAnywhere();
+	void feather4UseMedkitAnywhere();
+	void feather4TalkToMccoy();
+	void feather4TalkToSpock();
+	void feather4TalkToRedshirt();
+	void feather4LookAtEyes();
+	void feather4LookAnywhere();
+	void feather4LookAtMushroom();
+	void feather4LookAtBush();
+	void feather4LookAtLight();
+	void feather4LookAtKirk();
+	void feather4LookAtSpock();
+	void feather4LookAtMccoy();
+	void feather4LookAtRedshirt();
 
 	// FEATHER5
 	void feather5Tick1();
