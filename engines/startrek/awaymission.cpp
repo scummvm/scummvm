@@ -189,7 +189,7 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			updateAwayMissionTimers();
 			_frameIndex++;
 			_roomFrameCounter++;
-			addAction(Action(ACTION_TICK, _roomFrameCounter & 0xff, (_roomFrameCounter >> 8) & 0xff, 0));
+			addAction(ACTION_TICK, _roomFrameCounter & 0xff, (_roomFrameCounter >> 8) & 0xff, 0);
 			if (_roomFrameCounter >= 2)
 				_gfx->incPaletteFadeLevel();
 			break;
@@ -258,16 +258,16 @@ useInventory:
 
 				if (clickedObject == -2)
 					goto checkAddAction;
-				if (_room->actionHasCode(Action(ACTION_USE, _awayMission.activeObject, _awayMission.passiveObject, 0)))
+				if (_room->actionHasCode(ACTION_USE, _awayMission.activeObject, _awayMission.passiveObject, 0))
 					goto checkAddAction;
 				if (_awayMission.activeObject == OBJECT_MCCOY) {
-					if (_room->actionHasCode(Action(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0)))
+					if (_room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
 						goto checkAddAction;
-					if (_room->actionHasCode(Action(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0)))
+					if (_room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
 						goto checkAddAction;
 				}
 				else if (_awayMission.activeObject == OBJECT_SPOCK) {
-					if (_room->actionHasCode(Action(ACTION_USE, OBJECT_ISTRICOR, _awayMission.passiveObject, 0)))
+					if (_room->actionHasCode(ACTION_USE, OBJECT_ISTRICOR, _awayMission.passiveObject, 0))
 						goto checkAddAction;
 				}
 
@@ -277,7 +277,7 @@ useInventory:
 					if (_awayMission.passiveObject == OBJECT_ICOMM) {
 						if (walkActiveObjectToHotspot())
 							break;
-						addAction(Action(ACTION_USE, OBJECT_ICOMM, 0, 0));
+						addAction(ACTION_USE, OBJECT_ICOMM, 0, 0);
 						_sound->playVoc("commun30");
 						if (_awayMission.activeObject <= OBJECT_REDSHIRT) {
 							goto checkShowInventory;
@@ -296,7 +296,7 @@ checkAddAction:
 				if (!walkActiveObjectToHotspot())
 				{
 					if (clickedObject != -2)
-						addAction(Action(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0));
+						addAction(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0);
 
 checkShowInventory:
 					if (!(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
@@ -325,7 +325,7 @@ lookInventory:
 						break;
 
 					if (clickedObject != -2)
-						addAction(Action(_awayMission.activeAction, _awayMission.activeObject, 0, 0));
+						addAction(_awayMission.activeAction, _awayMission.activeObject, 0, 0);
 
 					if (_awayMission.activeAction == ACTION_LOOK && !(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
 						showInventoryIcons(false);
@@ -358,7 +358,7 @@ checkSelectedAction:
 			if (_awayMission.activeAction == ACTION_USE
 					&& _awayMission.activeObject == OBJECT_ICOMM && (_awayMission.crewDownBitset & (1 << OBJECT_KIRK)) == 0) {
 				if (!walkActiveObjectToHotspot()) {
-					addAction(Action(_awayMission.activeAction, _awayMission.activeObject, 0, 0));
+					addAction(_awayMission.activeAction, _awayMission.activeObject, 0, 0);
 					_sound->playVoc("communic");
 					_awayMission.activeAction = ACTION_WALK;
 				}
@@ -471,6 +471,11 @@ void StarTrekEngine::addAction(const Action &action) {
 	if (action.type != ACTION_TICK)
 		debug("Action %d: %x, %x, %x", action.type, action.b1, action.b2, action.b3);
 	_actionQueue.push(action);
+}
+
+void StarTrekEngine::addAction(byte type, byte b1, byte b2, byte b3) {
+	const Action a = {type, b1, b2, b3};
+	addAction(a);
 }
 
 void StarTrekEngine::handleAwayMissionAction() {
@@ -689,7 +694,7 @@ void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 			uint16 var = _room->readRdfWord(offset);
 			if (_activeDoorWarpHotspot != var) {
 				_activeDoorWarpHotspot = var;
-				addAction(Action(ACTION_TOUCHED_HOTSPOT, var & 0xff, 0, 0));
+				addAction(ACTION_TOUCHED_HOTSPOT, var & 0xff, 0, 0);
 			}
 			return;
 		}
@@ -707,7 +712,7 @@ void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 				uint16 var = _room->readRdfWord(offset);
 				if (_activeWarpHotspot != var) {
 					_activeWarpHotspot = var;
-					addAction(Action(ACTION_TOUCHED_WARP, var & 0xff, 0, 0));
+					addAction(ACTION_TOUCHED_WARP, var & 0xff, 0, 0);
 				}
 				return;
 			}

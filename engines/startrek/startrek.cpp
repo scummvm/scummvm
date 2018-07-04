@@ -459,7 +459,7 @@ void StarTrekEngine::updateActorAnimations() {
 					if (nextAnimFrame == actor->numAnimFrames - 1) {
 						actor->field62++;
 						if (actor->triggerActionWhenAnimFinished) {
-							addAction(Action(ACTION_FINISHED_ANIMATION, actor->finishedAnimActionParam, 0, 0));
+							addAction(ACTION_FINISHED_ANIMATION, actor->finishedAnimActionParam, 0, 0);
 						}
 					}
 				}
@@ -530,7 +530,7 @@ void StarTrekEngine::updateActorAnimations() {
 				if (actor->iwSrcPosition == -1) {
 					if (actor->triggerActionWhenAnimFinished) {
 						actor->triggerActionWhenAnimFinished = false;
-						addAction(Action(ACTION_FINISHED_WALKING, actor->finishedAnimActionParam & 0xff, 0, 0));
+						addAction(ACTION_FINISHED_WALKING, actor->finishedAnimActionParam & 0xff, 0, 0);
 					}
 
 					actor->sprite.bitmap.reset();
@@ -1056,15 +1056,15 @@ int StarTrekEngine::selectObjectForUseAction() {
 				return clickedObject;
 			else if (isObjectUnusable(OBJECT_KIRK, ACTION_USE))
 				continue;
-			else if (_room->actionHasCode(Action(ACTION_USE, OBJECT_KIRK, clickedObject, 0))
-					|| _room->actionHasCode(Action(ACTION_GET, clickedObject, 0, 0))
-					|| _room->actionHasCode(Action(ACTION_WALK, clickedObject, 0, 0))) {
+			else if (_room->actionHasCode(ACTION_USE, OBJECT_KIRK, clickedObject, 0)
+					|| _room->actionHasCode(ACTION_GET, clickedObject, 0, 0)
+					|| _room->actionHasCode(ACTION_WALK, clickedObject, 0, 0)) {
 				_awayMission.activeObject = OBJECT_KIRK;
 				_awayMission.passiveObject = clickedObject;
 				_awayMission.activeAction = ACTION_USE;
 				clickedObject = OBJECT_KIRK;
 				if (!walkActiveObjectToHotspot())
-					addAction(Action(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0));
+					addAction(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0);
 				return clickedObject;
 			}
 			else
@@ -1160,7 +1160,7 @@ bool StarTrekEngine::walkActiveObjectToHotspot() {
 	else {
 		// If this action has code defined for it in this room, buffer the action to be
 		// done after the object finished walking there.
-		Action action(_awayMission.activeAction, _awayMission.activeObject, 0, 0);
+		Action action = {_awayMission.activeAction, _awayMission.activeObject, 0, 0};
 		if (_awayMission.activeAction == ACTION_USE)
 			action.b2 = _awayMission.passiveObject;
 

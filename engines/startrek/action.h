@@ -29,7 +29,7 @@ namespace StarTrek {
 
 class Room;
 
-enum Acton {
+enum Acton { // TODO: rename
 	ACTION_TICK = 0,
 
 	ACTION_WALK = 1, // Actions 1-5 are directly usable on away missions.
@@ -46,19 +46,11 @@ enum Acton {
 	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
 };
 
-struct Action : Common::Serializable {
+struct Action {
 	byte type;
 	byte b1;
 	byte b2;
 	byte b3;
-
-	Action() {}
-	Action(int _type, int _b1, int _b2, int _b3)
-		: type((byte)_type),
-		b1((byte)_b1),
-		b2((byte)_b2),
-		b3((byte)_b3) {}
-
 
 	// ACTION_USE, ACTION_GET, ACTION_LOOK, ACTION_TALK
 	byte activeObject() { return b1; }
@@ -85,7 +77,7 @@ struct Action : Common::Serializable {
 		return (type << 24) | (b1 << 16) | (b2 << 8) | (b3 << 0);
 	}
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser) {
+	void saveLoadWithSerializer(Common::Serializer &ser) {
 		ser.syncAsByte(type);
 		ser.syncAsByte(b1);
 		ser.syncAsByte(b2);
