@@ -297,7 +297,7 @@ void SequenceOpcodes::opSetPathCtrY(Control *control, OpCall &opCall) {
 }
 
 void SequenceOpcodes::opDisablePathWalkPoints(Control *control, OpCall &opCall) {
-	control->_actor->_flags &= ~2;
+	control->_actor->_flags &= ~Illusions::ACTOR_FLAG_HAS_WALK_POINTS;
 }
 
 void SequenceOpcodes::opSetPathWalkPoints(Control *control, OpCall &opCall) {
