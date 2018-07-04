@@ -1782,12 +1782,8 @@ RoomAction feather0ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR,  8, 0}, &Room::feather0UseMTricorderOnQuetzecoatl },
 };
 
-extern const RoomAction feather1ActionList[], feather2ActionList[];
-extern const int        feather1NumActions,   feather2NumActions;
-
-RoomAction feather3ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::feather3Tick1 },
-};
+extern const RoomAction feather1ActionList[], feather2ActionList[], feather3ActionList[];
+extern const int        feather1NumActions,   feather2NumActions,   feather3NumActions;
 
 RoomAction feather4ActionList[] = {
 	{ {ACTION_TICK, 1, 0, 0}, &Room::feather4Tick1 },
