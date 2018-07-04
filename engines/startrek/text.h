@@ -1803,6 +1803,30 @@ enum GameStringIDs {
 	TX_FEA3N012,
 
 
+	TX_FEA4_001,
+	TX_FEA4_002,
+	TX_FEA4_003,
+	TX_FEA4_004,
+	TX_FEA4_005,
+	TX_FEA4_006,
+	TX_FEA4_007,
+	TX_FEA4_008,
+	TX_FEA4_009,
+	TX_FEA4_010,
+	TX_FEA4_011,
+	TX_FEA4_012,
+	TX_FEA4_013,
+	TX_FEA4N000,
+	TX_FEA4N001,
+	TX_FEA4N002,
+	TX_FEA4N003,
+	TX_FEA4N004,
+	TX_FEA4N005,
+	TX_FEA4N006,
+	TX_FEA4N007,
+	TX_FEA4N008,
+
+
 	TX_SIN3_012,
 
 
@@ -3542,6 +3566,29 @@ const char * const g_gameStrings[] = {
 	"#FEA3\\FEA3N011#You see a jewel encrusted, gold colored knife.",
 	"#FEA3\\FEA3N012#Your security officer looks at you for orders and, perhaps, inspiration.",
 
+
+	"#FEA4\\FEA4_001#A swarm of fireflies, Jim.",
+	"#FEA4\\FEA4_002#Everyone is healthy, Jim, there's no need for the medical kit here.",
+	"#FEA4\\FEA4_003#I would strongly recommend against touching these, Jim. They are highly toxic.",
+	"#FEA4\\FEA4_004#It's getting a little cool out here. Keep warm. I don't want a bunch of sick crewmen when we get back to the ship. If we ever do get back to the ship.",
+	"#FEA4\\FEA4_005#Still out, Jim.",
+	"#FEA4\\FEA4_006#You're looking a little pale, Jim.",
+	"#FEA4\\FEA4_007#Fascinating. The trees are able to grow very close together in this forest, Captain.",
+	"#FEA4\\FEA4_008#I am reading a life form to the west, Captain.",
+	"#FEA4\\FEA4_009#It vaguely resembles the Terran Spanish Bayonette. The edges of the leaf are razor sharp and secrete a poisonous resin.",
+	"#FEA4\\FEA4_010#Small colonies of bio-luminescent insects, Captain.",
+	"#FEA4\\FEA4_011#They are not currently operational, Captain.",
+	"#FEA4\\FEA4_012#Tralxacian mushrooms. Their spores are highly toxic and are released if they are disturbed.",
+	"#FEA4\\FEA4_013#Does every planetside mission have this much adventure, Captain? Mind you, I can't say Mr. Quetzecoatl is making a very good impression on me...",
+	"#FEA4\\FEA4N000#A large fern fans the pathway.",
+	"#FEA4\\FEA4N001#Below this rock is a large growth of mushrooms.",
+	"#FEA4\\FEA4N002#Familiar glowing spheres light the path.",
+	"#FEA4\\FEA4N003#Feral red eyes glare out of the dark at you.",
+	"#FEA4\\FEA4N004#James T. Kirk realizes that every step increases their danger.",
+	"#FEA4\\FEA4N005#Lt. Stragey smiles as he strolls down the path.",
+	"#FEA4\\FEA4N006#McCoy doesn't want to be bothered right now.",
+	"#FEA4\\FEA4N007#Mr. Spock analyzes the surroundings.",
+	"#FEA4\\FEA4N008#You are in a dark forest. You can hear the flow of water to the northwest.",
 
 
 	"#SIN3\\SIN3_012#Can't say I like the decor.",

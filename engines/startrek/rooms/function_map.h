@@ -28,8 +28,6 @@
 
 namespace StarTrek {
 
-// FIXME: calling a constructor in global scope not allowed in scummvm?
-
 RoomAction demon0ActionList[] = {
 	{ {ACTION_TICK, 1, 0, 0}, &Room::demon0Tick1 },
 	{ {ACTION_TICK, 2, 0, 0}, &Room::demon0Tick2 },
@@ -1782,12 +1780,8 @@ RoomAction feather0ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR,  8, 0}, &Room::feather0UseMTricorderOnQuetzecoatl },
 };
 
-extern const RoomAction feather1ActionList[], feather2ActionList[], feather3ActionList[];
-extern const int        feather1NumActions,   feather2NumActions,   feather3NumActions;
-
-RoomAction feather4ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::feather4Tick1 },
-};
+extern const RoomAction feather1ActionList[], feather2ActionList[], feather3ActionList[], feather4ActionList[];
+extern const int        feather1NumActions,   feather2NumActions,   feather3NumActions,   feather4NumActions;
 
 RoomAction feather5ActionList[] = {
 	{ {ACTION_TICK, 1, 0, 0}, &Room::feather5Tick1 },
