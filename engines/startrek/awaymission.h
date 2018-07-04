@@ -241,6 +241,18 @@ struct AwayMission {
 			bool repairedLifeSupportGenerator; // 0x59
 			int16 missionScore; // 0x5a
 		} mudd;
+
+		struct {
+			// 0: initial state
+			// 1: one rock thrown at it
+			// 2: two rocks thrown at it (low enough to climb up)
+			byte vineState; // 0x2a
+
+			bool gotRock; // 0x2b
+			bool gotSnake; // 0x2c
+			bool holeBlocked; // 0x31
+			int16 missionScore; // 0x36
+		} feather;
 	};
 };
 // Size: 0x129 bytes

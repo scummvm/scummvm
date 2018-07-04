@@ -49,6 +49,7 @@ struct RoomAction {
 const int RDF_WARP_ROOM_INDICES = 0x22;
 const int RDF_ROOM_ENTRY_POSITIONS = 0x2a;
 const int RDF_BEAM_IN_POSITIONS = 0xaa;
+const int RDF_SPAWN_POSITIONS = 0xba;
 
 class Room {
 
@@ -85,6 +86,10 @@ public:
 	uint16 getDoorPolygonEndOffset()   { return readRdfWord(0x1c); }
 
 	Common::Point getBeamInPosition(int crewmanIndex);
+	// This is analagous to above, but instead of beaming in, they just appear in a spot.
+	// Used sparingly, ie. in feather's serpent when appearing in cave after Quetzecoatl
+	// warps the crew.
+	Common::Point getSpawnPosition(int crewmanIndex);
 
 public:
 	byte *_rdfData;
@@ -92,7 +97,7 @@ public:
 private:
 	StarTrekEngine *_vm;
 
-	RoomAction *_roomActionList;
+	const RoomAction *_roomActionList;
 	int _numRoomActions;
 
 	int _roomIndex; // ie. for DEMON2, this is 2
@@ -131,8 +136,8 @@ private:
 
 	// If "changeDirection" is true, they remain facing that direction even after their
 	// animation is finished. The game is inconsistent about doing this.
-	void spockScan(int direction, TextRef text, bool changeDirection);
-	void mccoyScan(int direction, TextRef text, bool changeDirection);
+	void spockScan(int direction, TextRef text, bool changeDirection = false);
+	void mccoyScan(int direction, TextRef text, bool changeDirection = false);
 
 	// Room-specific code
 public:
@@ -1408,6 +1413,88 @@ public:
 
 	// FEATHER1
 	void feather1Tick1();
+	void feather1Tick45();
+	void feather1Tick85();
+	void feather1Tick95();
+	void feather1QuetzecoatlDisappeared();
+	void feather1GetRightVine();
+	void feather1GetLeftVine();
+	void feather1GetRocks();
+	void feather1ReachedRocks();
+	void feather1PickedUpRocks();
+	void feather1GetSnake();
+	void feather1ReachedSnake();
+	void feather1Timer1Expired();
+	void feather1Timer2Expired();
+	void feather1PickedUpSnake();
+	void feather1Timer0Expired();
+	void feather1UseCommunicator();
+	void feather1UseRockOnHole();
+	void feather1ReachedHole();
+	void feather1Timer3Expired();
+	void feather1PutRockInHole();
+	void feather1UseSnakeOnLeftVine();
+	void feather1UseSnakeOnSpock();
+	void feather1UseSnakeOnKirk();
+	void feather1UseSnakeOnMccoy();
+	void feather1UseSnakeOnRedshirt();
+	void feather1UseRockOnSnake();
+	void feather1UseSpockOnSnake();
+	void feather1UseMccoyOnSnake();
+	void feather1UseRedshirtOnSnake();
+	void feather1UseSpockOnHole();
+	void feather1UseMccoyOnHole();
+	void feather1UseRedshirtOnHole();
+	void feather1UseRockOnMoss();
+	void feather1UseRockOnSpock();
+	void feather1UseRockOnMccoy();
+	void feather1UseRockOnRedshirt();
+	void feather1UseSpockOnMoss();
+	void feather1UseMccoyOnMoss();
+	void feather1UseRedshirtOnMoss();
+	void feather1UseRockOnLeftVine();
+	void feather1ReadyToThrowRock1();
+	void feather1ThrewRock1();
+	void feather1ReadyToThrowRock2();
+	void feather1ThrewRock2();
+	void feather1UseSpockOnVine();
+	void feather1UseMccoyOnVine();
+	void feather1UseRedshirtOnVine();
+	void feather1UseKirkOnVine();
+	void feather1CrewmanClimbVine();
+	void feather1ReachedVineToClimbUp();
+	void feather1ClimbedUpVine();
+	void feather1ReachedVineToClimbDown();
+	void feather1ClimbedDownVine();
+	void feather1UsePhaser();
+	void feather1UseSTricorderOnRightVine();
+	void feather1UseSTricorderOnSnake();
+	void feather1UseSTricorderOnMoss();
+	void feather1UseSTricorderOnHole();
+	void feather1UseSTricorderAnywhere();
+	void feather1UseSTricorderOnRocks();
+	void feather1UseMTricorderOnVine();
+	void feather1UseMTricorderOnMoss();
+	void feather1UseMTricorderOnHole();
+	void feather1UseMTricorderOnSnake();
+	void feather1UseMedkit();
+	void feather1TalkToMccoy();
+	void feather1TalkToSpock();
+	void feather1TalkToRedshirt();
+	void feather1WalkToExit();
+	void feather1LookAnywhere();
+	void feather1LookAtSnake();
+	void feather1LookAtRightVine();
+	void feather1LookAtHole();
+	void feather1LookAtMoss();
+	void feather1LookAtRocks();
+	void feather1LookAtLight();
+	void feather1LookAtEyes();
+	void feather1LookAtKirk();
+	void feather1LookAtSpock();
+	void feather1LookAtMccoy();
+	void feather1LookAtRedshirt();
+	void feather1LookAtLeftVine();
 
 	// FEATHER2
 	void feather2Tick1();
@@ -1545,6 +1632,18 @@ private:
 			// common
 			byte walkingToDoor;
 		} mudd;
+
+		struct {
+			// feather1
+			byte snakeInHole; // 0xca
+			bool scannedSnake; // 0xcb
+			bool crewEscaped[4]; // 0xcc
+			byte kirkEscaped; // 0xcc
+			byte spockEscaped; // 0xcd
+			byte mccoyEscaped; // 0xce
+			byte cf; // 0xcf
+			byte crewmanClimbingVine;
+		} feather;
 
 
 	} _roomVar;
