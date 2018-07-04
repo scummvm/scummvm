@@ -1392,9 +1392,6 @@ RoomAction love5ActionList[] = {
 	{ {ACTION_USE, OBJECT_IN2O, 0xff, 0}, &Room::loveaUseHumanLaughingGas },
 	{ {ACTION_USE, OBJECT_INH3, 0xff, 0}, &Room::loveaUseAmmonia },
 	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::loveaUseCommunicator },
-
-	// Common code (countdown for losing atmosphere when life support malfunctioning)
-	{ {ACTION_TICK, 0xff, 0xff, 0xff},           &Room::muddaTick },
 };
 
 RoomAction mudd0ActionList[] = {
