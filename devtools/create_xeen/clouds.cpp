@@ -69,12 +69,14 @@ void writeCloudsData(CCArchive &cc, const char *darkName) {
 		Common::MemFile animInfo = darkCc.getMember("clouds.dat");
 		Common::MemFile monsters = darkCc.getMember("xeen.mon");
 		Common::MemFile wallPics = darkCc.getMember("xeenpic.dat");
+		Common::MemFile mirror = darkCc.getMember("xeenmirr.txt");
 
 		cc.add("mae.cld", mae);
 		cc.add("spells.cld", spells);
 		cc.add("animinfo.cld", animInfo);
 		cc.add("monsters.cld", monsters);
 		cc.add("wallpics.cld", wallPics);
+		cc.add("xeenmirr.txt", mirror);
 
 		Common::MemFile mapNames;
 		for (int idx = 0; idx < 86; ++idx)
