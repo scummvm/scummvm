@@ -1914,6 +1914,14 @@ fi
 
 if test "$have_clang" = yes; then
 	add_line_to_config_mk 'HAVE_CLANG = 1'
+	_clang_major=`gcc_get_define __clang_major__`
+	#_clang_minor=`gcc_get_define __clang_minor__`
+
+	# clang 6.0 enables -Wpragma-pack which warns when leaving an included file
+	# which changes the current alignment.
+	# Our common/pack-{start,end}.h trigger this and it cannot easily and portably
+	# be disabled inside pack-{start,end}.h so we disable it globally for now.
+	test "$_clang_major" -ge 6 && append_var CXXFLAGS "-Wno-pragma-pack"
 
 	# clang does accept all gcc options we use, so we keep have_gcc
 fi
