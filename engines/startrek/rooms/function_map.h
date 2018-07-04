@@ -82,8 +82,8 @@ RoomAction demon0ActionList[] = {
 	{ {ACTION_TALK, OBJECT_MCCOY,    0, 0}, &Room::demon0TalkToMcCoy },
 	{ {ACTION_TALK, OBJECT_SPOCK,    0, 0}, &Room::demon0TalkToSpock },
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::demon0UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_IMTRICOR, -1, 0}, &Room::demon0UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::demon0UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::demon0UseMTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 8, 0}, &Room::demon0UseMTricorderOnPrelate },
 };
 
@@ -103,8 +103,8 @@ RoomAction demon1ActionList[] = {
 	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0}, &Room::demon1KlingonFinishedAimingWeapon },
 	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::demon1KirkShot },
 
-	{ {ACTION_USE, OBJECT_IPHASERK, -1, 0}, &Room::demon1UsePhaserOnAnything },
-	{ {ACTION_USE, OBJECT_IPHASERS, -1, 0}, &Room::demon1UsePhaserOnAnything },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::demon1UsePhaserOnAnything },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::demon1UsePhaserOnAnything },
 
 	{ {ACTION_USE, OBJECT_IPHASERK, 8, 0}, &Room::demon1UsePhaserOnKlingon1 },
 	{ {ACTION_USE, OBJECT_IPHASERS, 8, 0}, &Room::demon1UsePhaserOnKlingon1 },
@@ -160,7 +160,7 @@ RoomAction demon1ActionList[] = {
 	{ {ACTION_LOOK, 0x25, 0, 0}, &Room::demon1LookAtMine },
 	{ {ACTION_LOOK, 0x26, 0, 0}, &Room::demon1LookAtMountain },
 	{ {ACTION_LOOK, 13, 0, 0}, &Room::demon1LookAtHand },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::demon1LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::demon1LookAnywhere },
 	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::demon1LookAtKirk },
 	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::demon1LookAtSpock },
 	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::demon1LookAtMcCoy },
@@ -186,7 +186,7 @@ RoomAction demon2ActionList[] = {
 	{ {ACTION_LOOK, 0x24, 0, 0}, &Room::demon2LookAtFern },
 	{ {ACTION_LOOK, 0x25, 0, 0}, &Room::demon2LookAtMoss },
 	{ {ACTION_LOOK, 0x26, 0, 0}, &Room::demon2LookAtLights },
-	{ {ACTION_LOOK, -1, 0, 0},   &Room::demon2LookAtAnything },
+	{ {ACTION_LOOK, 0xff, 0, 0},   &Room::demon2LookAtAnything },
 
 	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::demon2LookAtKirk },
 	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::demon2LookAtSpock },
@@ -264,7 +264,7 @@ RoomAction demon3ActionList[] = {
 	{ {ACTION_FINISHED_ANIMATION, 3, 0, 0}, &Room::demon3RedshirtElectrocuted },
 
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::demon3UseSTricorderOnDoor },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::demon3UseSTricorderOnAnything },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::demon3UseSTricorderOnAnything },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 14, 0}, &Room::demon3UseMTricorderOnDoor },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 0x21, 0}, &Room::demon3UseMTricorderOnDoor },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 0x22, 0}, &Room::demon3UseMTricorderOnDoor },
@@ -296,7 +296,7 @@ RoomAction demon3ActionList[] = {
 	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::demon3LookAtMccoy },
 	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::demon3LookAtRedshirt },
 
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::demon3LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::demon3LookAnywhere },
 	{ {ACTION_LOOK, 13, 0, 0}, &Room::demon3LookAtMiner },
 	{ {ACTION_LOOK,  9, 0, 0}, &Room::demon3LookAtBoulder1 },
 	{ {ACTION_LOOK, 10, 0, 0}, &Room::demon3LookAtBoulder2 },
@@ -344,7 +344,7 @@ RoomAction demon4ActionList[] = {
 
 	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::demon4LookAtPattern },
 	{ {ACTION_LOOK, 8, 0, 0}, &Room::demon4LookAtAlien },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::demon4LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::demon4LookAnywhere },
 	{ {ACTION_LOOK, 0x22, 0, 0}, &Room::demon4LookAtSecurityEquipment },
 	{ {ACTION_LOOK, 0x23, 0, 0}, &Room::demon4LookAtFloor },
 
@@ -371,9 +371,9 @@ RoomAction demon4ActionList[] = {
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::demon4UseSTricorderOnPanel },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 0x21, 0}, &Room::demon4UseMTricorderOnPanel },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x23, 0}, &Room::demon4UseSTricorderOnAnything },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::demon4UseSTricorderOnAnything },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::demon4UseSTricorderOnAnything },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 0x23, 0}, &Room::demon4UseMTricorderOnAnything },
-	{ {ACTION_USE, OBJECT_IMTRICOR, -1, 0}, &Room::demon4UseMTricorderOnAnything },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::demon4UseMTricorderOnAnything },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 8, 0}, &Room::demon4UseSTricorderOnNauian },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 8, 0}, &Room::demon4UseMTricorderOnNauian },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x22, 0}, &Room::demon4UseSTricorderOnSecurityEquipment },
@@ -389,8 +389,8 @@ RoomAction demon5ActionList[] = {
 	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::demon5DoorOpenedOrReachedDoor },
 
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::demon5UseSTricorderOnCrate },
-	{ {ACTION_USE, OBJECT_IPHASERK, -1, 0}, &Room::demon5UsePhaserOnAnything },
-	{ {ACTION_USE, OBJECT_IPHASERS, -1, 0}, &Room::demon5UsePhaserOnAnything },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::demon5UsePhaserOnAnything },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::demon5UsePhaserOnAnything },
 
 	{ {ACTION_USE, OBJECT_IHAND, 11, 0}, &Room::demon5UseHandOnStephen },
 	{ {ACTION_USE, OBJECT_IBERRY, 11, 0}, &Room::demon5UseBerryOnStephen },
@@ -398,7 +398,7 @@ RoomAction demon5ActionList[] = {
 	{ {ACTION_FINISHED_WALKING, 2, 0, 0}, &Room::demon5MccoyReachedChub },
 	{ {ACTION_FINISHED_ANIMATION, 2, 0, 0}, &Room::demon5MccoyHealedChub },
 
-	{ {ACTION_USE, OBJECT_IDETOXIN, -1, 0}, &Room::demon5UseHypoDytoxinOnAnything },
+	{ {ACTION_USE, OBJECT_IDETOXIN, 0xff, 0}, &Room::demon5UseHypoDytoxinOnAnything },
 	{ {ACTION_USE, OBJECT_IBERRY, 9, 0}, &Room::demon5UseBerryOnChub },
 
 	{ {ACTION_LOOK, 8, 0, 0}, &Room::demon5LookAtRoberts },
@@ -412,7 +412,7 @@ RoomAction demon5ActionList[] = {
 
 	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::demon5LookAtMountain },
 	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::demon5LookAtCrate },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::demon5LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::demon5LookAnywhere },
 	{ {ACTION_LOOK, 9, 0, 0}, &Room::demon5LookAtChub },
 
 	{ {ACTION_TALK, 8, 0, 0}, &Room::demon5TalkToRoberts },
@@ -465,7 +465,7 @@ RoomAction demon6ActionList[] = {
 	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::demon6LookAtRedshirt },
 	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::demon6LookAtComputer },
 	{ {ACTION_LOOK, 9, 0, 0}, &Room::demon6LookAtComputer },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::demon6LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::demon6LookAnywhere },
 	{ {ACTION_LOOK, 8, 0, 0}, &Room::demon6LookAtStephen },
 
 	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::demon6TalkToMccoy },
@@ -480,7 +480,7 @@ RoomAction demon6ActionList[] = {
 	{ {ACTION_USE, OBJECT_IHAND, 0x22, 0}, &Room::demon6UseHandOnWorkspace },
 	{ {ACTION_FINISHED_WALKING, 2, 0, 0}, &Room::demon6SpockReachedWorkspace },
 	{ {ACTION_FINISHED_ANIMATION, 3, 0, 0}, &Room::demon6SpockFinishedRepairingHand },
-	{ {ACTION_USE, -1, 0x22, 0}, &Room::demon6UseAnythingOnWorkspace },
+	{ {ACTION_USE, 0xff, 0x22, 0}, &Room::demon6UseAnythingOnWorkspace },
 	{ {ACTION_USE, OBJECT_KIRK, 0x20, 0}, &Room::demon6UseCrewmanOnCase },
 	{ {ACTION_USE, OBJECT_MCCOY, 0x20, 0}, &Room::demon6UseCrewmanOnCase },
 	{ {ACTION_USE, OBJECT_SPOCK, 0x20, 0}, &Room::demon6UseCrewmanOnCase },
@@ -586,15 +586,15 @@ RoomAction tug0ActionList[] = {
 	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::tug0TalkToRedshirt },
 	{ {ACTION_TALK, 8, 0, 0}, &Room::tug0TalkToEngineer },
 	{ {ACTION_USE, OBJECT_ICOMM, 0, 0}, &Room::tug0UseCommunicator },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::tug0LookAnywhere },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::tug0UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_IMTRICOR, -1, 0}, &Room::tug0UseMTricorderAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::tug0LookAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::tug0UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::tug0UseMTricorderAnywhere },
 };
 
 
 RoomAction tug1ActionList[] = {
 	{ {ACTION_TICK, 1, 0, 0}, &Room::tug1Tick1 },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::tug1UseSTricorderOnAnything },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::tug1UseSTricorderOnAnything },
 	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::tug1LookAtBridgeDoor },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::tug1UseSTricorderOnBridgeDoor },
 	{ {ACTION_USE, OBJECT_IPHASERS, 0x21, 0}, &Room::tug1UsePhaserOnBridgeDoor },
@@ -622,7 +622,7 @@ RoomAction tug1ActionList[] = {
 	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0}, &Room::tug1KirkFinishedUsingWelder },
 	{ {ACTION_FINISHED_WALKING, 8, 0, 0}, &Room::tug1KirkReachedBridgeDoorWithWelderInLeftSpot },
 	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::tug1KirkFinishedUsingWelderInLeftSpot },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::tug1LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::tug1LookAnywhere },
 	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::tug1LookAtMccoy },
 	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::tug1LookAtSpock },
 	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::tug1LookAtRedshirt },
@@ -633,12 +633,12 @@ RoomAction tug1ActionList[] = {
 	{ {ACTION_LOOK, 0x25, 0, 0}, &Room::tug1LookAtBrigDoor },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x25, 0}, &Room::tug1UseSTricorderOnBrigDoor },
 	{ {ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::tug1TalkToKirk },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0}, &Room::tug1UseCommunicator },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::tug1UseCommunicator },
 	{ {ACTION_WALK, 0x21, 0, 0}, &Room::tug1WalkToBridgeDoor },
 	{ {ACTION_FINISHED_WALKING, 10, 0, 0}, &Room::tug1KirkReachedBridgeDoor },
 	{ {ACTION_FINISHED_ANIMATION, 11, 0, 0}, &Room::tug1BridgeDoorOpened },
 	{ {ACTION_WALK, 0x25, 0, 0}, &Room::tug1WalkToBrigDoor },
-	{ {ACTION_USE, OBJECT_IMTRICOR, -1, 0}, &Room::tug1UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::tug1UseMTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 0x21, 0}, &Room::tug1UseMTricorderOnBridgeDoor },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 0x20, 0}, &Room::tug1UseMTricorderOnBridgeDoor },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 0x22, 0}, &Room::tug1UseMTricorderOnBridgeDoor },
@@ -738,20 +738,20 @@ RoomAction tug2ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMEDKIT, 9, 0}, &Room::tug2UseMedkitOnGuard2 },
 	{ {ACTION_LOOK, 10, 0, 0}, &Room::tug2LookAnywhere },
 	{ {ACTION_LOOK, 0x22, 0, 0}, &Room::tug2LookAnywhere },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::tug2LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::tug2LookAnywhere },
 	{ {ACTION_TALK, 10, 0, 0}, &Room::tug2TalkToBrig },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 10, 0}, &Room::tug2UseMTricorderOnBrig },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 0x22, 0}, &Room::tug2UseMTricorderOnOpenBrig },
-	{ {ACTION_USE, OBJECT_IPHASERS, -1, 0}, &Room::tug2UsePhaserAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERK, -1, 0}, &Room::tug2UsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::tug2UsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::tug2UsePhaserAnywhere },
 };
 
 RoomAction tug3ActionList[] = {
 	{ {ACTION_TICK, 1, 0, 0}, &Room::tug3Tick1 },
 	{ {ACTION_TICK, 40, 0, 0}, &Room::tug3Tick40 },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::tug3LookAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERS, -1, 0}, &Room::tug3UsePhaserAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERK, -1, 0}, &Room::tug3UsePhaserAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::tug3LookAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::tug3UsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::tug3UsePhaserAnywhere },
 	{ {ACTION_USE, OBJECT_IPHASERS, 8, 0}, &Room::tug3UseStunPhaserOnElasi1 },
 	{ {ACTION_USE, OBJECT_IPHASERS, 9, 0}, &Room::tug3UseStunPhaserOnElasi2 },
 	{ {ACTION_USE, OBJECT_IPHASERS, 10, 0}, &Room::tug3UseStunPhaserOnElasi3 },
@@ -776,7 +776,7 @@ RoomAction tug3ActionList[] = {
 	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::tug3TalkToMccoy },
 	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::tug3TalkToSpock },
 	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::tug3TalkToRedshirt },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0}, &Room::tug3UseCommunicator },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::tug3UseCommunicator },
 	{ {ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::tug3Timer0Expired },
 	{ {ACTION_FINISHED_ANIMATION, 13, 0, 0}, &Room::tug3AllCrewmenDead },
 	{ {ACTION_TIMER_EXPIRED, 1, 0, 0}, &Room::tug3Timer1Expired },
@@ -799,7 +799,7 @@ RoomAction love0ActionList[] = {
 	{ {ACTION_FINISHED_ANIMATION, 4, 0, 0}, &Room::love0ReachedDoor1 },
 	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::love0LookAtConsole },
 	{ {ACTION_LOOK, 0x23, 0, 0}, &Room::love0LookAtViewscreen },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::love0LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::love0LookAnywhere },
 	{ {ACTION_LOOK, 8, 0, 0}, &Room::love0LookAtDoor1 },
 	{ {ACTION_LOOK, 9, 0, 0}, &Room::love0LookAtDoor2 },
 	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::love0LookAtKirk },
@@ -810,9 +810,9 @@ RoomAction love0ActionList[] = {
 	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::love0TalkToMccoy },
 	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::love0TalkToSpock },
 	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::love0TalkToRedshirt },
-	{ {ACTION_USE, OBJECT_IMTRICOR, -1, 0}, &Room::love0UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::love0UseMTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0}, &Room::love0UseSTricorderOnConsole },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::love0UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::love0UseSTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_KIRK, 0x20, 0}, &Room::love0UseKirkOnConsole },
 	{ {ACTION_USE, OBJECT_REDSHIRT, 0x20, 0}, &Room::love0UseRedshirtOnConsole },
 	{ {ACTION_USE, OBJECT_SPOCK, 0x20, 0}, &Room::love0UseSpockOnConsole },
@@ -838,10 +838,10 @@ RoomAction love0ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::loveaUseMTricorderOnHuman },
-	{ {ACTION_USE, OBJECT_IRLG, -1, 0}, &Room::loveaUseRomulanLaughingGas },
-	{ {ACTION_USE, OBJECT_IN2O, -1, 0}, &Room::loveaUseHumanLaughingGas },
-	{ {ACTION_USE, OBJECT_INH3, -1, 0}, &Room::loveaUseAmmonia },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0}, &Room::loveaUseCommunicator },
+	{ {ACTION_USE, OBJECT_IRLG, 0xff, 0}, &Room::loveaUseRomulanLaughingGas },
+	{ {ACTION_USE, OBJECT_IN2O, 0xff, 0}, &Room::loveaUseHumanLaughingGas },
+	{ {ACTION_USE, OBJECT_INH3, 0xff, 0}, &Room::loveaUseAmmonia },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::loveaUseCommunicator },
 };
 
 RoomAction love1ActionList[] = {
@@ -870,7 +870,7 @@ RoomAction love1ActionList[] = {
 	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::love1LookAtSpock },
 	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::love1LookAtMccoy },
 	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::love1LookAtRedshirt },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::love1LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::love1LookAnywhere },
 	{ {ACTION_LOOK, 15, 0, 0}, &Room::love1LookAtNozzle },
 	{ {ACTION_LOOK, 0x24, 0, 0}, &Room::love1LookAtNozzle },
 	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::love1LookAtLadder },
@@ -889,13 +889,13 @@ RoomAction love1ActionList[] = {
 	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::love1TalkToMccoy },
 	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::love1TalkToRedshirt },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_IDISHES, 0}, &Room::love1UseMTricorderOnDishes },
-	{ {ACTION_USE, OBJECT_IMTRICOR, -1, 0}, &Room::love1UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::love1UseMTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x23, 0}, &Room::love1UseSTricorderOnReplicator },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 12, 0}, &Room::love1UseSTricorderOnReplicator },
 	{ {ACTION_USE, OBJECT_SPOCK, 0x25, 0}, &Room::love1UseSTricorderOnLaser },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x25, 0}, &Room::love1UseSTricorderOnLaser },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x22, 0}, &Room::love1UseSTricorderOnFreezer },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::love1UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::love1UseSTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_IDISHES, 0}, &Room::love1UseSTricorderOnDishes },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::love1UseSTricorderOnDistillator },
 	{ {ACTION_GET, 11, 0, 0}, &Room::love1GetFreezer },
@@ -917,7 +917,7 @@ RoomAction love1ActionList[] = {
 	{ {ACTION_USE, OBJECT_IRLG, 0x24, 0}, &Room::love1UseRLGOnNozzle },
 	{ {ACTION_FINISHED_WALKING, 3, 0, 0}, &Room::love1KirkReachedNozzleToPut },
 	{ {ACTION_FINISHED_ANIMATION, 12, 0, 0}, &Room::love1KirkPutBottleInNozzle },
-	{ {ACTION_USE, -1, 0x24, 0}, &Room::love1UseAnthingOnNozzle },
+	{ {ACTION_USE, 0xff, 0x24, 0}, &Room::love1UseAnthingOnNozzle },
 	{ {ACTION_USE, OBJECT_SPOCK, 0x23, 0}, &Room::love1UseSpockOnReplicator },
 	{ {ACTION_USE, OBJECT_REDSHIRT, 0x23, 0}, &Room::love1UseRedshirtOnReplicator },
 	{ {ACTION_USE, OBJECT_MCCOY, 14, 0}, &Room::love1UseMccoyOnReplicator },
@@ -927,7 +927,7 @@ RoomAction love1ActionList[] = {
 	{ {ACTION_FINISHED_ANIMATION, 13, 0, 0}, &Room::love1MccoyUsedReplicator },
 	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0}, &Room::love1ChamberClosed },
 	{ {ACTION_FINISHED_ANIMATION, 8, 0, 0}, &Room::love1ChamberOpened },
-	{ {ACTION_USE, -1, 12, 0}, &Room::love1UseAnythingOnChamber },
+	{ {ACTION_USE, 0xff, 12, 0}, &Room::love1UseAnythingOnChamber },
 	{ {ACTION_USE, OBJECT_IDISHES, 12, 0}, &Room::love1UseDishesOnChamber },
 	{ {ACTION_USE, OBJECT_IDISHES, 0x23, 0}, &Room::love1UseDishesOnChamber },
 	{ {ACTION_FINISHED_WALKING, 5, 0, 0}, &Room::love1KirkReachedChamberToPut },
@@ -946,13 +946,13 @@ RoomAction love1ActionList[] = {
 	{ {ACTION_USE, OBJECT_MCCOY, 11, 0}, &Room::love1UseMccoyOnFreezer },
 	{ {ACTION_FINISHED_WALKING, 7, 0, 0}, &Room::love1CrewmanReachedFreezer },
 	{ {ACTION_FINISHED_ANIMATION, 16, 0, 0}, &Room::love1CrewmanOpenedOrClosedFreezer },
-	{ {ACTION_USE, -1, 0x22, 0}, &Room::love1UseAnythingOnFreezer },
+	{ {ACTION_USE, 0xff, 0x22, 0}, &Room::love1UseAnythingOnFreezer },
 	{ {ACTION_FINISHED_WALKING, 11, 0, 0}, &Room::love1ReachedFreezerWithArbitraryItem },
 	{ {ACTION_FINISHED_ANIMATION, 17, 0, 0}, &Room::love1FinishedUsingArbitraryItemOnFreezer },
-	{ {ACTION_USE, -1, 0x23, 0}, &Room::love1UseAnythingOnReplicator },
+	{ {ACTION_USE, 0xff, 0x23, 0}, &Room::love1UseAnythingOnReplicator },
 	{ {ACTION_FINISHED_WALKING, 12, 0, 0}, &Room::love1ReachedReplicatorWithArbitraryItem },
 	{ {ACTION_FINISHED_ANIMATION, 18, 0, 0}, &Room::love1FinishedUsingArbitraryItemOnReplicator },
-	{ {ACTION_USE, -1, 0x21, 0}, &Room::love1UseAnythingOnDistillator },
+	{ {ACTION_USE, 0xff, 0x21, 0}, &Room::love1UseAnythingOnDistillator },
 	{ {ACTION_FINISHED_WALKING, 13, 0, 0}, &Room::love1ReachedDistillatorWithArbitraryItem },
 	{ {ACTION_FINISHED_ANIMATION, 19, 0, 0}, &Room::love1FinishedUsingArbitraryItemOnDistillator },
 	{ {ACTION_USE, OBJECT_KIRK, 0x20, 0}, &Room::love1UseKirkOnLadder },
@@ -976,10 +976,10 @@ RoomAction love1ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::loveaUseMTricorderOnHuman },
-	{ {ACTION_USE, OBJECT_IRLG, -1, 0}, &Room::loveaUseRomulanLaughingGas },
-	{ {ACTION_USE, OBJECT_IN2O, -1, 0}, &Room::loveaUseHumanLaughingGas },
-	{ {ACTION_USE, OBJECT_INH3, -1, 0}, &Room::loveaUseAmmonia },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0}, &Room::loveaUseCommunicator },
+	{ {ACTION_USE, OBJECT_IRLG, 0xff, 0}, &Room::loveaUseRomulanLaughingGas },
+	{ {ACTION_USE, OBJECT_IN2O, 0xff, 0}, &Room::loveaUseHumanLaughingGas },
+	{ {ACTION_USE, OBJECT_INH3, 0xff, 0}, &Room::loveaUseAmmonia },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::loveaUseCommunicator },
 };
 
 RoomAction love2ActionList[] = {
@@ -994,7 +994,7 @@ RoomAction love2ActionList[] = {
 	{ {ACTION_LOOK, 8, 0, 0}, &Room::love2LookAtCabinet },
 	{ {ACTION_LOOK, 10, 0, 0}, &Room::love2LookAtDoor },
 	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::love2LookAtSynthesizer },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::love2LookAtAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::love2LookAtAnywhere },
 	{ {ACTION_LOOK, 14, 0, 0}, &Room::love2LookAtAntigrav },
 	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::love2LookAtMccoy },
 	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::love2LookAtSpock },
@@ -1013,8 +1013,8 @@ RoomAction love2ActionList[] = {
 	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::love2TalkToSpock },
 	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::love2TalkToMccoy },
 	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::love2TalkToRedshirt },
-	{ {ACTION_USE, OBJECT_IMTRICOR, -1, 0}, &Room::love2UseMTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::love2UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::love2UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::love2UseSTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_KIRK, 8, 0}, &Room::love2UseKirkOnCabinet },
 	{ {ACTION_USE, OBJECT_SPOCK, 8, 0}, &Room::love2UseSpockOnCabinet },
 	{ {ACTION_USE, OBJECT_MCCOY, 8, 0}, &Room::love2UseMccoyOnCabinet },
@@ -1066,8 +1066,8 @@ RoomAction love2ActionList[] = {
 	{ {ACTION_FINISHED_ANIMATION, 7, 0, 0}, &Room::love2SynthesizerDoorOpenedWithCureSample },
 	{ {ACTION_FINISHED_ANIMATION, 21, 0, 0}, &Room::love2PutCureSampleInSynthesizer },
 
-	{ {ACTION_USE, -1, 9, 0}, &Room::love2UseAnythingOnSynthesizerDoor },
-	{ {ACTION_USE, -1, 0x20, 0}, &Room::love2UseAnythingOnSynthesizer },
+	{ {ACTION_USE, 0xff, 9, 0}, &Room::love2UseAnythingOnSynthesizerDoor },
+	{ {ACTION_USE, 0xff, 0x20, 0}, &Room::love2UseAnythingOnSynthesizer },
 	{ {ACTION_GET, 13, 0, 0}, &Room::love2GetCanister },
 	{ {ACTION_GET, 12, 0, 0}, &Room::love2GetCanister },
 
@@ -1108,10 +1108,10 @@ RoomAction love2ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::loveaUseMTricorderOnHuman },
-	{ {ACTION_USE, OBJECT_IRLG, -1, 0}, &Room::loveaUseRomulanLaughingGas },
-	{ {ACTION_USE, OBJECT_IN2O, -1, 0}, &Room::loveaUseHumanLaughingGas },
-	{ {ACTION_USE, OBJECT_INH3, -1, 0}, &Room::loveaUseAmmonia },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0}, &Room::loveaUseCommunicator },
+	{ {ACTION_USE, OBJECT_IRLG, 0xff, 0}, &Room::loveaUseRomulanLaughingGas },
+	{ {ACTION_USE, OBJECT_IN2O, 0xff, 0}, &Room::loveaUseHumanLaughingGas },
+	{ {ACTION_USE, OBJECT_INH3, 0xff, 0}, &Room::loveaUseAmmonia },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::loveaUseCommunicator },
 };
 
 RoomAction love3ActionList[] = {
@@ -1126,7 +1126,7 @@ RoomAction love3ActionList[] = {
 	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::love3LookAtMccoy },
 	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::love3LookAtSpock },
 	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::love3LookAtRedshirt },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::love3LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::love3LookAnywhere },
 	{ {ACTION_LOOK, 0x22, 0, 0}, &Room::love3LookAtShaft },
 	{ {ACTION_LOOK, 11, 0, 0}, &Room::love3LookAtGrate },
 	{ {ACTION_LOOK, 9, 0, 0}, &Room::love3LookAtPanel },
@@ -1137,10 +1137,10 @@ RoomAction love3ActionList[] = {
 	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::love3TalkToSpock },
 	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::love3TalkToMccoy },
 	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::love3TalkToRedshirt },
-	{ {ACTION_USE, OBJECT_IMTRICOR, -1, 0}, &Room::love3UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::love3UseMTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x23, 0}, &Room::love3UseSTricorderOnTurbines },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 9, 0}, &Room::love3UseSTricorderOnInsulation },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::love3UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::love3UseSTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_KIRK, 8, 0}, &Room::love3UseKirkOnServicePanel },
 	{ {ACTION_USE, OBJECT_SPOCK, 8, 0}, &Room::love3UseSpockOnServicePanel },
 	{ {ACTION_USE, OBJECT_MCCOY, 8, 0}, &Room::love3UseMccoyOnServicePanel },
@@ -1231,10 +1231,10 @@ RoomAction love3ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::loveaUseMTricorderOnHuman },
-	{ {ACTION_USE, OBJECT_IRLG, -1, 0}, &Room::loveaUseRomulanLaughingGas },
-	{ {ACTION_USE, OBJECT_IN2O, -1, 0}, &Room::loveaUseHumanLaughingGas },
-	{ {ACTION_USE, OBJECT_INH3, -1, 0}, &Room::loveaUseAmmonia },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0}, &Room::loveaUseCommunicator },
+	{ {ACTION_USE, OBJECT_IRLG, 0xff, 0}, &Room::loveaUseRomulanLaughingGas },
+	{ {ACTION_USE, OBJECT_IN2O, 0xff, 0}, &Room::loveaUseHumanLaughingGas },
+	{ {ACTION_USE, OBJECT_INH3, 0xff, 0}, &Room::loveaUseAmmonia },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::loveaUseCommunicator },
 };
 
 RoomAction love4ActionList[] = {
@@ -1254,7 +1254,7 @@ RoomAction love4ActionList[] = {
 	{ {ACTION_USE, OBJECT_IPHASERS, 11, 0}, &Room::love4UseStunPhaserOnRomulan },
 	{ {ACTION_USE, OBJECT_IPHASERS, 12, 0}, &Room::love4UseStunPhaserOnRomulan },
 	// NOTE: nothing for OBJECT_IPHASERK. There's an unused audio file which might fit.
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::love4LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::love4LookAnywhere },
 	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::love4LookAtLadder },
 	{ {ACTION_LOOK, 8, 0, 0}, &Room::love4LookAtDoor },
 	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::love4LookAtKirk },
@@ -1277,8 +1277,8 @@ RoomAction love4ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, 10, 0}, &Room::love4UseMTricorderOnRomulan },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 11, 0}, &Room::love4UseMTricorderOnRomulan },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 12, 0}, &Room::love4UseMTricorderOnRomulan },
-	{ {ACTION_USE, OBJECT_IMTRICOR, -1, 0}, &Room::love4UseMTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::love4UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::love4UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::love4UseSTricorderAnywhere },
 
 	{ {ACTION_USE, OBJECT_ICURE,  9, 0}, &Room::love4UseCureOnRomulan },
 	{ {ACTION_USE, OBJECT_ICURE, 10, 0}, &Room::love4UseCureOnRomulan },
@@ -1305,10 +1305,10 @@ RoomAction love4ActionList[] = {
 	{ {ACTION_USE, OBJECT_ISAMPLE, 10, 0}, &Room::love4UseCureSampleOnRomulan },
 	{ {ACTION_USE, OBJECT_ISAMPLE, 11, 0}, &Room::love4UseCureSampleOnRomulan },
 	{ {ACTION_USE, OBJECT_ISAMPLE, 12, 0}, &Room::love4UseCureSampleOnRomulan },
-	{ {ACTION_USE, -1,  9, 0}, &Room::love4UseAnythingOnRomulan },
-	{ {ACTION_USE, -1, 10, 0}, &Room::love4UseAnythingOnRomulan },
-	{ {ACTION_USE, -1, 11, 0}, &Room::love4UseAnythingOnRomulan },
-	{ {ACTION_USE, -1, 12, 0}, &Room::love4UseAnythingOnRomulan },
+	{ {ACTION_USE, 0xff,  9, 0}, &Room::love4UseAnythingOnRomulan },
+	{ {ACTION_USE, 0xff, 10, 0}, &Room::love4UseAnythingOnRomulan },
+	{ {ACTION_USE, 0xff, 11, 0}, &Room::love4UseAnythingOnRomulan },
+	{ {ACTION_USE, 0xff, 12, 0}, &Room::love4UseAnythingOnRomulan },
 
 	// Common code
 	{ {ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::loveaTimer0Expired },
@@ -1323,10 +1323,10 @@ RoomAction love4ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::loveaUseMTricorderOnHuman },
-	{ {ACTION_USE, OBJECT_IRLG, -1, 0}, &Room::loveaUseRomulanLaughingGas },
-	{ {ACTION_USE, OBJECT_IN2O, -1, 0}, &Room::loveaUseHumanLaughingGas },
-	{ {ACTION_USE, OBJECT_INH3, -1, 0}, &Room::loveaUseAmmonia },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0}, &Room::loveaUseCommunicator },
+	{ {ACTION_USE, OBJECT_IRLG, 0xff, 0}, &Room::loveaUseRomulanLaughingGas },
+	{ {ACTION_USE, OBJECT_IN2O, 0xff, 0}, &Room::loveaUseHumanLaughingGas },
+	{ {ACTION_USE, OBJECT_INH3, 0xff, 0}, &Room::loveaUseAmmonia },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::loveaUseCommunicator },
 };
 
 RoomAction love5ActionList[] = {
@@ -1339,7 +1339,7 @@ RoomAction love5ActionList[] = {
 	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::love5LookAtSpock },
 	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::love5LookAtMccoy },
 	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::love5LookAtRedshirt },
-	{ {ACTION_LOOK, -1, 0, 0}, &Room::love5LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::love5LookAnywhere },
 	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::love5LookAtDevice },
 	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::love5LookAtConsole },
 	{ {ACTION_LOOK, 10, 0, 0}, &Room::love5LookAtDrMarcus },
@@ -1355,7 +1355,7 @@ RoomAction love5ActionList[] = {
 	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::love5TalkToSpock },
 	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::love5TalkToMccoy },
 	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::love5TalkToRedshirt },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::love5UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::love5UseSTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0}, &Room::love5UseSTricorderOnDevice },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 10, 0}, &Room::love5UseMTricorderOnMarcusOrCheever },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 11, 0}, &Room::love5UseMTricorderOnMarcusOrCheever },
@@ -1366,7 +1366,7 @@ RoomAction love5ActionList[] = {
 	{ {ACTION_USE, OBJECT_ICURE, 9, 0}, &Room::love5UseCureOnPreax },
 	{ {ACTION_FINISHED_WALKING, 4, 0, 0}, &Room::love5ReachedPreaxUsingCure },
 	{ {ACTION_FINISHED_ANIMATION, 5, 0, 0}, &Room::love5CuredPreax },
-	{ {ACTION_USE, -1, 9, 0}, &Room::love5UseAnythingOnPreax },
+	{ {ACTION_USE, 0xff, 9, 0}, &Room::love5UseAnythingOnPreax },
 	{ {ACTION_USE, OBJECT_KIRK, 10, 0}, &Room::love5UseKirkOnMarcusOrCheever },
 	{ {ACTION_USE, OBJECT_KIRK, 11, 0}, &Room::love5UseKirkOnMarcusOrCheever },
 	{ {ACTION_FINISHED_WALKING,   1, 0, 0}, &Room::love5KirkReachedCheever },
@@ -1388,13 +1388,13 @@ RoomAction love5ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0}, &Room::loveaUseMTricorderOnHuman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::loveaUseMTricorderOnHuman },
-	{ {ACTION_USE, OBJECT_IRLG, -1, 0}, &Room::loveaUseRomulanLaughingGas },
-	{ {ACTION_USE, OBJECT_IN2O, -1, 0}, &Room::loveaUseHumanLaughingGas },
-	{ {ACTION_USE, OBJECT_INH3, -1, 0}, &Room::loveaUseAmmonia },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0}, &Room::loveaUseCommunicator },
+	{ {ACTION_USE, OBJECT_IRLG, 0xff, 0}, &Room::loveaUseRomulanLaughingGas },
+	{ {ACTION_USE, OBJECT_IN2O, 0xff, 0}, &Room::loveaUseHumanLaughingGas },
+	{ {ACTION_USE, OBJECT_INH3, 0xff, 0}, &Room::loveaUseAmmonia },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::loveaUseCommunicator },
 
 	// Common code (countdown for losing atmosphere when life support malfunctioning)
-	{ {ACTION_TICK, -1, -1, -1},           &Room::muddaTick },
+	{ {ACTION_TICK, 0xff, 0xff, 0xff},           &Room::muddaTick },
 };
 
 RoomAction mudd0ActionList[] = {
@@ -1403,24 +1403,24 @@ RoomAction mudd0ActionList[] = {
 	{ {ACTION_TICK, 60, 0, 0}, &Room::mudd0Tick60 },
 	{ {ACTION_USE, OBJECT_IPHASERS, 8, 0}, &Room::mudd0UsePhaserOnMudd },
 	{ {ACTION_USE, OBJECT_IPHASERK, 8, 0}, &Room::mudd0UsePhaserOnMudd },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0}, &Room::mudd0UseCommunicator },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::mudd0UseCommunicator },
 	{ {ACTION_LOOK, 0x23, 0, 0}, &Room::mudd0LookAtFoodBox },
 	{ {ACTION_LOOK, 0x24, 0, 0}, &Room::mudd0LookAtComponentBox },
-	{ {ACTION_LOOK, -1,   0, 0}, &Room::mudd0LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::mudd0LookAnywhere },
 	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::mudd0LookAtMemoryDiskBox },
 	{ {ACTION_LOOK, 0x22, 0, 0}, &Room::mudd0LookAtDegrimerBox },
 	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::mudd0LookAtLense },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::mudd0UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_IMTRICOR, -1, 0}, &Room::mudd0UseMTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::mudd0UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_IMTRICOR, 0xff, 0}, &Room::mudd0UseMTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0}, &Room::mudd0UseSTricorderOnMemoryDiskBox },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x22, 0}, &Room::mudd0UseSTricorderOnDegrimerBox },
 	{ {ACTION_USE, OBJECT_IMTRICOR, 0x21, 0}, &Room::mudd0UseMTricorderOnLense },
 
 	// Common code (next 4 lines)
 	{ {ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0}, &Room::muddaUseLenseOnDegrimer },
-	{ {ACTION_USE, OBJECT_IALIENDV, -1, 0}, &Room::muddaUseAlienDevice },
+	{ {ACTION_USE, OBJECT_IALIENDV, 0xff, 0}, &Room::muddaUseAlienDevice },
 	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::muddaFiredAlienDevice },
-	{ {ACTION_USE, OBJECT_IDEGRIME, -1, 0}, &Room::muddaUseDegrimer },
+	{ {ACTION_USE, OBJECT_IDEGRIME, 0xff, 0}, &Room::muddaUseDegrimer },
 
 	{ {ACTION_GET, 0x21, 0, 0}, &Room::mudd0GetLense },
 	{ {ACTION_GET, 0x20, 0, 0}, &Room::mudd0GetMemoryDisk },
@@ -1431,7 +1431,7 @@ RoomAction mudd0ActionList[] = {
 	{ {ACTION_TOUCHED_HOTSPOT, 1, 0, 0}, &Room::mudd0TouchedHotspot1 },
 	{ {ACTION_WALK, 0x25, 0, 0}, &Room::mudd0WalkToNorthDoor },
 	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::mudd0TouchedHotspot0 },
-	{ {ACTION_USE, OBJECT_IMEDKIT, -1, 0}, &Room::mudd0UseMedkit },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0}, &Room::mudd0UseMedkit },
 	{ {ACTION_LOOK, OBJECT_KIRK,     0, 0}, &Room::mudd0LookAtKirk },
 	{ {ACTION_LOOK, OBJECT_SPOCK,    0, 0}, &Room::mudd0LookAtSpock },
 	{ {ACTION_LOOK, OBJECT_MCCOY,    0, 0}, &Room::mudd0LookAtMccoy },
@@ -1444,14 +1444,14 @@ RoomAction mudd0ActionList[] = {
 	{ {ACTION_TALK, 8,               0, 0}, &Room::mudd0TalkToMudd },
 
 	// Common code (countdown for losing atmosphere when life support malfunctioning)
-	{ {ACTION_TICK, -1, -1, -1},           &Room::muddaTick },
+	{ {ACTION_TICK, 0xff, 0xff, 0xff},           &Room::muddaTick },
 };
 
 RoomAction mudd1ActionList[] = {
 	{ {ACTION_TICK, 1, 0, 0}, &Room::mudd1Tick1 },
 	{ {ACTION_TIMER_EXPIRED, 1, 0, 0}, &Room::mudd1Timer1Expired },
 
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0},    &Room::mudd1UseCommunicator },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0},    &Room::mudd1UseCommunicator },
 	{ {ACTION_USE, OBJECT_SPOCK, 0x23, 0},  &Room::mudd1UseSpockOnBlueButton },
 	{ {ACTION_FINISHED_WALKING, 1, 0, 0},   &Room::mudd1SpockReachedBlueButton },
 	{ {ACTION_FINISHED_ANIMATION, 1, 0, 0}, &Room::mudd1SpockPressedBlueButton },
@@ -1464,9 +1464,9 @@ RoomAction mudd1ActionList[] = {
 	{ {ACTION_FINISHED_ANIMATION, 4, 0, 0}, &Room::mudd1SpockPressedRedButton },
 
 	// Common code (next 4 lines)
-	{ {ACTION_USE, OBJECT_IDEGRIME, -1, 0}, &Room::muddaUseDegrimer },
+	{ {ACTION_USE, OBJECT_IDEGRIME, 0xff, 0}, &Room::muddaUseDegrimer },
 	{ {ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0}, &Room::muddaUseLenseOnDegrimer },
-	{ {ACTION_USE, OBJECT_IALIENDV, -1, 0}, &Room::muddaUseAlienDevice },
+	{ {ACTION_USE, OBJECT_IALIENDV, 0xff, 0}, &Room::muddaUseAlienDevice },
 	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::muddaFiredAlienDevice },
 
 	{ {ACTION_GET, 9,    0, 0}, &Room::mudd1GetTorpedo },
@@ -1480,8 +1480,8 @@ RoomAction mudd1ActionList[] = {
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x23, 0}, &Room::mudd1UseSTricorderOnButton },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x24, 0}, &Room::mudd1UseSTricorderOnButton },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 8, 0},    &Room::mudd1UseSTricorderOnCrane },
-	{ {ACTION_USE, OBJECT_IMEDKIT, -1, 0},   &Room::mudd1UseMedkitAnywhere },
-	{ {ACTION_LOOK, -1,   0, 0}, &Room::mudd1LookAnywhere },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},  &Room::mudd1UseMedkitAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::mudd1LookAnywhere },
 	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::mudd1LookAtTorpedo },
 	{ {ACTION_LOOK, 9,    0, 0}, &Room::mudd1LookAtTorpedo },
 	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::mudd1LookAtFallenTorpedo },
@@ -1506,7 +1506,7 @@ RoomAction mudd1ActionList[] = {
 	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::mudd1TouchedHotspot0 },
 
 	// Common code (countdown for losing atmosphere when life support malfunctioning)
-	{ {ACTION_TICK, -1, -1, -1},           &Room::muddaTick },
+	{ {ACTION_TICK, 0xff, 0xff, 0xff},           &Room::muddaTick },
 };
 
 RoomAction mudd2ActionList[] = {
@@ -1516,17 +1516,17 @@ RoomAction mudd2ActionList[] = {
 	{ {ACTION_TOUCHED_HOTSPOT, 1, 0, 0}, &Room::mudd2TouchedHotspot1 },
 	{ {ACTION_TICK, 1, 0, 0}, &Room::mudd2Tick1 },
 	{ {ACTION_TIMER_EXPIRED, 1, 0, 0}, &Room::mudd2Timer1Expired },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1,   0}, &Room::mudd2UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff,   0}, &Room::mudd2UseSTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_SPOCK,    0x20, 0}, &Room::mudd2UseSpockOnCapsules },
 	{ {ACTION_GET, 0x20, 0, 0}, &Room::mudd2GetCapsules },
 	{ {ACTION_FINISHED_WALKING,   12, 0, 0}, &Room::mudd2MccoyReachedCapsules },
 	{ {ACTION_FINISHED_ANIMATION, 13, 0, 0}, &Room::mudd2MccoyPickedUpCapsules },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0}, &Room::mudd2UseCommunicator },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::mudd2UseCommunicator },
 
 	// Common code (next 4 lines)
-	{ {ACTION_USE, OBJECT_IDEGRIME, -1, 0}, &Room::muddaUseDegrimer },
+	{ {ACTION_USE, OBJECT_IDEGRIME, 0xff, 0}, &Room::muddaUseDegrimer },
 	{ {ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0}, &Room::muddaUseLenseOnDegrimer },
-	{ {ACTION_USE, OBJECT_IALIENDV, -1, 0}, &Room::muddaUseAlienDevice },
+	{ {ACTION_USE, OBJECT_IALIENDV, 0xff, 0}, &Room::muddaUseAlienDevice },
 	{ {ACTION_FINISHED_ANIMATION, 18, 0, 0}, &Room::muddaFiredAlienDevice },
 
 	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::mudd2LookAtCapsules },
@@ -1572,12 +1572,12 @@ RoomAction mudd2ActionList[] = {
 	{ {ACTION_TALK, 8,               0, 0}, &Room::mudd2TalkToMudd },
 
 	// Common code (countdown for losing atmosphere when life support malfunctioning)
-	{ {ACTION_TICK, -1, -1, -1},           &Room::muddaTick },
+	{ {ACTION_TICK, 0xff, 0xff, 0xff},           &Room::muddaTick },
 };
 
 RoomAction mudd3ActionList[] = {
 	{ {ACTION_TICK, 1, 0, 0}, &Room::mudd3Tick1 },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0},      &Room::mudd3UseCommunicator },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0},    &Room::mudd3UseCommunicator },
 	{ {ACTION_LOOK, 0x20, 0, 0},              &Room::mudd3LookAtScreen },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0}, &Room::mudd3UseSTricorderOnScreen },
 	{ {ACTION_USE, OBJECT_KIRK, 0x20, 0},     &Room::mudd3UseKirkOnScreen },
@@ -1594,9 +1594,9 @@ RoomAction mudd3ActionList[] = {
 	{ {ACTION_USE, OBJECT_IDISKS, 0x21, 0},   &Room::mudd3UseMemoryDiskOnSphere },
 
 	// Common code (next 4 lines)
-	{ {ACTION_USE, OBJECT_IDEGRIME, -1, 0}, &Room::muddaUseDegrimer },
+	{ {ACTION_USE, OBJECT_IDEGRIME, 0xff, 0}, &Room::muddaUseDegrimer },
 	{ {ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0}, &Room::muddaUseLenseOnDegrimer },
-	{ {ACTION_USE, OBJECT_IALIENDV, -1, 0}, &Room::muddaUseAlienDevice },
+	{ {ACTION_USE, OBJECT_IALIENDV, 0xff, 0}, &Room::muddaUseAlienDevice },
 	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::muddaFiredAlienDevice },
 
 	{ {ACTION_GET, 13, 0, 0}, &Room::mudd3GetRepairTool },
@@ -1617,15 +1617,15 @@ RoomAction mudd3ActionList[] = {
 	{ {ACTION_TALK, OBJECT_MCCOY,    0, 0}, &Room::mudd3TalkToMccoy },
 	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::mudd3TalkToRedshirt },
 	{ {ACTION_TALK, 8,               0, 0}, &Room::mudd3TalkToMudd },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  -1, 0}, &Room::mudd3UseMedkit },
+	{ {ACTION_USE, OBJECT_IMEDKIT,  0xff, 0}, &Room::mudd3UseMedkit },
 
 	// Common code (countdown for losing atmosphere when life support malfunctioning)
-	{ {ACTION_TICK, -1, -1, -1},           &Room::muddaTick },
+	{ {ACTION_TICK, 0xff, 0xff, 0xff},           &Room::muddaTick },
 };
 
 RoomAction mudd4ActionList[] = {
 	{ {ACTION_TICK, 1, 0, 0}, &Room::mudd4Tick1 },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0},      &Room::mudd4UseCommunicator },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0},    &Room::mudd4UseCommunicator },
 	{ {ACTION_TIMER_EXPIRED, 2, 0, 0},        &Room::mudd4Timer2Expired },
 	{ {ACTION_TIMER_EXPIRED, 3, 0, 0},        &Room::mudd4Timer3Expired },
 	{ {ACTION_USE, OBJECT_SPOCK, 0x21, 0},    &Room::mudd4UseSpockOnLeftConsole },
@@ -1667,11 +1667,11 @@ RoomAction mudd4ActionList[] = {
 
 	// Common code (next 4 lines)
 	{ {ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0}, &Room::muddaUseLenseOnDegrimer },
-	{ {ACTION_USE, OBJECT_IALIENDV, -1, 0}, &Room::muddaUseAlienDevice },
+	{ {ACTION_USE, OBJECT_IALIENDV, 0xff, 0}, &Room::muddaUseAlienDevice },
 	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::muddaFiredAlienDevice },
-	{ {ACTION_USE, OBJECT_IDEGRIME, -1, 0}, &Room::muddaUseDegrimer },
+	{ {ACTION_USE, OBJECT_IDEGRIME, 0xff, 0}, &Room::muddaUseDegrimer },
 
-	{ {ACTION_USE, OBJECT_IMEDKIT, -1, 0},   &Room::mudd4UseMedkit },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},   &Room::mudd4UseMedkit },
 	{ {ACTION_GET, 10, 0, 0},                &Room::mudd4GetRepairTool },
 	{ {ACTION_FINISHED_WALKING, 5, 0, 0},    &Room::mudd4ReachedRepairTool },
 	{ {ACTION_FINISHED_ANIMATION, 10, 0, 0}, &Room::mudd4PickedUpRepairTool },
@@ -1699,22 +1699,22 @@ RoomAction mudd4ActionList[] = {
 	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0},    &Room::mudd4TouchedHotspot0 },
 
 	// Common code (countdown for losing atmosphere when life support malfunctioning)
-	{ {ACTION_TICK, -1, -1, -1},           &Room::muddaTick },
+	{ {ACTION_TICK, 0xff, 0xff, 0xff},           &Room::muddaTick },
 };
 
 RoomAction mudd5ActionList[] = {
 	{ {ACTION_TICK, 1, 0, 0}, &Room::mudd5Tick1 },
 	{ {ACTION_TIMER_EXPIRED, 1, 0, 0},        &Room::mudd5Timer1Expired },
 	{ {ACTION_TIMER_EXPIRED, 2, 0, 0},        &Room::mudd5Timer2Expired },
-	{ {ACTION_USE, OBJECT_ICOMM, -1, 0},      &Room::mudd5UseCommunicator },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0},   &Room::mudd5UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0},      &Room::mudd5UseCommunicator },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0},   &Room::mudd5UseSTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x21, 0}, &Room::mudd5UseSTricorderOnEngine },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x22, 0}, &Room::mudd5UseSTricorderOnCrane },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0x20, 0}, &Room::mudd5UseSTricorderOnHatch },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 9,    0}, &Room::mudd5UseSTricorderOnLifeSupportGenerator },
 	{ {ACTION_USE, OBJECT_IPHASERS, 0x20, 0}, &Room::mudd5UseStunPhaserOnHatch },
 	{ {ACTION_USE, OBJECT_IPHASERK, 0x20, 0}, &Room::mudd5UseKillPhaserOnHatch },
-	{ {ACTION_USE, -1,              9,    0}, &Room::mudd5UseAnythingOnLifeSupportGenerator },
+	{ {ACTION_USE, 0xff,            9,    0}, &Room::mudd5UseAnythingOnLifeSupportGenerator },
 	{ {ACTION_USE, OBJECT_IDOOVER,  9,    0}, &Room::mudd5UseDooverOnLifeSupportGenerator },
 	{ {ACTION_FINISHED_WALKING, 2, 0, 0},     &Room::mudd5KirkReachedLifeSupportGenerator },
 	{ {ACTION_TIMER_EXPIRED, 4, 0, 0},        &Room::mudd5KirkTimer4Expired },
@@ -1723,9 +1723,9 @@ RoomAction mudd5ActionList[] = {
 
 	// Common code (next 4 lines)
 	{ {ACTION_USE, OBJECT_ILENSES, OBJECT_IDEGRIME, 0}, &Room::muddaUseLenseOnDegrimer },
-	{ {ACTION_USE, OBJECT_IALIENDV, -1, 0}, &Room::muddaUseAlienDevice },
+	{ {ACTION_USE, OBJECT_IALIENDV, 0xff, 0}, &Room::muddaUseAlienDevice },
 	{ {ACTION_FINISHED_ANIMATION, 9, 0, 0}, &Room::muddaFiredAlienDevice },
-	{ {ACTION_USE, OBJECT_IDEGRIME, -1, 0}, &Room::muddaUseDegrimer },
+	{ {ACTION_USE, OBJECT_IDEGRIME, 0xff, 0}, &Room::muddaUseDegrimer },
 
 	{ {ACTION_LOOK, 0x20, 0, 0},         &Room::mudd5LookAtHatch },
 	{ {ACTION_LOOK, 9,    0, 0},         &Room::mudd5LookAtLifeSupportGenerator },
@@ -1742,10 +1742,10 @@ RoomAction mudd5ActionList[] = {
 	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0},    &Room::mudd5TalkToSpock },
 	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0},    &Room::mudd5TalkToMccoy },
 	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::mudd5TalkToRedshirt },
-	{ {ACTION_USE, OBJECT_IMEDKIT, -1, 0},  &Room::mudd5UseMedkit },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},  &Room::mudd5UseMedkit },
 
 	// Common code (countdown for losing atmosphere when life support malfunctioning)
-	{ {ACTION_TICK, -1, -1, -1},           &Room::muddaTick },
+	{ {ACTION_TICK, 0xff, 0xff, 0xff},           &Room::muddaTick },
 };
 
 RoomAction feather0ActionList[] = {
@@ -1758,12 +1758,12 @@ RoomAction feather0ActionList[] = {
 	{ {ACTION_USE, OBJECT_IPHASERK, 8,            0}, &Room::feather0UsePhaserOnQuetzecoatl },
 	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_MCCOY, 0}, &Room::feather0UsePhaserOnMccoy },
 	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_MCCOY, 0}, &Room::feather0UsePhaserOnMccoy },
-	{ {ACTION_USE, OBJECT_IMEDKIT, -1,            0}, &Room::feather0UseMedkit },
+	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff,          0}, &Room::feather0UseMedkit },
 	{ {ACTION_LOOK, 8,    0, 0}, &Room::feather0LookAtQuetzecoatl },
 	{ {ACTION_LOOK, 0x20, 0, 0}, &Room::feather0LookAtMoon },
 	{ {ACTION_LOOK, 0x21, 0, 0}, &Room::feather0LookAtLog },
 	{ {ACTION_LOOK, 0x22, 0, 0}, &Room::feather0LookAtHut },
-	{ {ACTION_LOOK, -1,   0, 0}, &Room::feather0LookAnywhere },
+	{ {ACTION_LOOK, 0xff, 0, 0}, &Room::feather0LookAnywhere },
 	{ {ACTION_LOOK, 0x23, 0, 0}, &Room::feather0LookAtEyes },
 	{ {ACTION_LOOK, 0x24, 0, 0}, &Room::feather0LookAtEyes },
 	{ {ACTION_LOOK, 0x25, 0, 0}, &Room::feather0LookAtEyes },
@@ -1781,7 +1781,7 @@ RoomAction feather0ActionList[] = {
 	{ {ACTION_TALK, OBJECT_SPOCK,    0, 0}, &Room::feather0TalkToSpock },
 	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::feather0TalkToRedshirt },
 	{ {ACTION_USE, OBJECT_ISTRICOR,  8, 0}, &Room::feather0UseSTricorderOnQuetzecoatl },
-	{ {ACTION_USE, OBJECT_ISTRICOR, -1, 0}, &Room::feather0UseSTricorderAnywhere },
+	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::feather0UseSTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_IMTRICOR,  8, 0}, &Room::feather0UseMTricorderOnQuetzecoatl },
 };
 
