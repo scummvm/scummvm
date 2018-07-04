@@ -1144,7 +1144,7 @@ void TuckerEngine::updateCursor() {
 			moveUpInventoryObjects();
 	}
 	if (_leftMouseButtonPressed && _mouseClick == 0) {
-		_fadedPanel = 0;
+		_fadedPanel = false;
 		_mouseClick = 1;
 		clearItemsGfx();
 		drawInfoString();
