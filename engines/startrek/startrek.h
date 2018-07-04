@@ -223,7 +223,7 @@ public:
 	int loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y);
 	uint16 getActorScaleAtPosition(int16 y);
 	void addAction(const Action &action);
-	void addAction(byte b1, byte b2, byte b3, byte b4) { addAction(Action(b1, b2, b3, b4)); }
+	void addAction(byte type, byte b1, byte b2, byte b3);
 	bool checkItemInteractionExists(int action, int activeItem, int passiveItem, int16 arg6);
 	void handleAwayMissionAction();
 

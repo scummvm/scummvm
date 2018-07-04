@@ -161,7 +161,7 @@ void StarTrekEngine::showTextbox(String headerText, const String &mainText, int 
 	showText(&StarTrekEngine::readTextFromArray, (uintptr)strings, xoffset, yoffset, textColor, false, maxTextLines, false);
 
 	if (actionParam != 0)
-		addAction(Action(ACTION_TALK, actionParam, 0, 0));
+		addAction(ACTION_TALK, actionParam, 0, 0);
 }
 
 String StarTrekEngine::skipTextAudioPrompt(const String &str) {

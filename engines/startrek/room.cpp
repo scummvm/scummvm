@@ -191,6 +191,11 @@ bool Room::actionHasCode(const Action &action) {
 	return false;
 }
 
+bool Room::actionHasCode(byte type, byte b1, byte b2, byte b3) {
+	const Action a = {type, b1, b2, b3};
+	return actionHasCode(a);
+}
+
 bool Room::handleAction(const Action &action) {
 	const RoomAction *roomActionPtr = _roomActionList;
 	int n = _numRoomActions;
@@ -205,6 +210,11 @@ bool Room::handleAction(const Action &action) {
 		roomActionPtr++;
 	}
 	return false;
+}
+
+bool Room::handleAction(byte type, byte b1, byte b2, byte b3) {
+	const Action a = {type, b1, b2, b3};
+	return handleAction(a);
 }
 
 bool Room::handleActionWithBitmask(const Action &action) {
@@ -222,6 +232,11 @@ bool Room::handleActionWithBitmask(const Action &action) {
 		roomActionPtr++;
 	}
 	return false;
+}
+
+bool Room::handleActionWithBitmask(byte type, byte b1, byte b2, byte b3) {
+	Action a = {type, b1, b2, b3};
+	return handleActionWithBitmask(a);
 }
 
 Common::Point Room::getBeamInPosition(int crewmanIndex) {
