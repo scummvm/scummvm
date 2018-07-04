@@ -1521,6 +1521,51 @@ public:
 
 	// FEATHER3
 	void feather3Tick1();
+	void feather3Tick40();
+	void feather3TouchedHotspot0();
+	void feather3UseSpockOnTlaoxac();
+	void feather3UseMccoyOnTlaoxac();
+	void feather3UseRedshirtOnTlaoxac();
+	void feather3UseCrewmanOnLeftExit();
+	void feather3UseCommunicator();
+	void feather3UseSnakeOnKirk();
+	void feather3UseSnakeOnSpock();
+	void feather3UseSnakeOnRedshirt();
+	void feather3KirkReachedRedshirtWithSnake();
+	void feather3UseSnakeOnMccoy();
+	void feather3UseSnakeOnTlaoxac();
+	void feather3UseKnifeOnSpock();
+	void feather3UseKnifeOnMccoy();
+	void feather3UseKnifeOnRedshirt();
+	void feather3UseRockOnTlaoxac();
+	void feather3KirkReachedPositionToThrowRock();
+	void feather3Timer4Expired();
+	void feather3Timer2Expired();
+	void feather3Timer3Expired();
+	void feather3TlaoxacKnockedOutFromRockThrow();
+	void feather3UsePhaser();
+	void feather3TalkToMccoy();
+	void feather3TalkToSpock();
+	void feather3TalkToRedshirt();
+	void feather3TalkToTlaoxac();
+	void feather3TlaoxacKilledRedshirt();
+	void feather3UseMTricorderOnTlaoxac();
+	void feather3UseMedkitOnTlaoxac();
+	void feather3UseMedkitOnRedshirt();
+	void feather3UseMedkitAnywhere();
+	void feather3UseMTricorderOnLight();
+	void feather3UseSTricorderOnLight();
+	void feather3UseSTricorderAnywhere();
+	void feather3GetKnife();
+	void feather3ReachedKnife();
+	void feather3Timer1Expired();
+	void feather3PickedUpKnife();
+	void feather3LookAtSpock();
+	void feather3LookAtRedshirt();
+	void feather3LookAtTlaoxac();
+	void feather3LookAtLight();
+	void feather3LookAtMccoy();
+	void feather3LookAtKnife();
 
 	// FEATHER4
 	void feather4Tick1();
@@ -1658,11 +1703,11 @@ private:
 			byte snakeInHole; // 0xca
 			bool scannedSnake; // 0xcb
 			bool crewEscaped[4]; // 0xcc
-			byte kirkEscaped; // 0xcc
-			byte spockEscaped; // 0xcd
-			byte mccoyEscaped; // 0xce
-			byte cf; // 0xcf
 			byte crewmanClimbingVine;
+
+			// feather2
+			bool showedSnakeToTlaoxac; // 0xca
+			bool tlaoxacUnconscious; // 0xcb
 		} feather;
 
 
