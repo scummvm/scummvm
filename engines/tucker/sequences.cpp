@@ -143,7 +143,7 @@ void TuckerEngine::handleCreditsSequence() {
 					filename = "loc78.pcx";
 					break;
 				}
-				if (filename != "")
+				if (!filename.empty())
 					loadImage(filename.c_str(), _quadBackgroundGfxBuf, 2);
 			}
 			_spritesCount = _creditsSequenceSpriteCounts[num];
