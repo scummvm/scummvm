@@ -466,7 +466,7 @@ protected:
 	void waitForTimer(int ticksCount);
 	void parseEvents();
 	void updateCursorPos(int x, int y);
-	void setCursorStyle(CursorStyle num);
+	void setCursorStyle(CursorStyle style);
 	void setCursorState(CursorState state);
 	void showCursor(bool visible);
 	void setupNewLocation();
