@@ -32,7 +32,7 @@
 
 static const PlainGameDescriptor tuckerGames[] = {
 	{ "tucker", "Bud Tucker in Double Trouble" },
-	{ 0, 0 }
+	{ nullptr,  nullptr }
 };
 
 static const ADGameDescription tuckerGameDescriptions[] = {
@@ -146,7 +146,7 @@ public:
 		if (desc) {
 			*engine = new Tucker::TuckerEngine(syst, desc->language, desc->flags);
 		}
-		return desc != 0;
+		return desc != nullptr;
 	}
 
 	virtual ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {

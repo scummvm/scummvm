@@ -376,10 +376,10 @@ void TuckerEngine::mainLoop() {
 		_infoBarBuf[getPositionForLine(kVerbPrepositionWith, _infoBarBuf)] = 'c';
 	}
 
-	_data5Buf = loadFile("data5.c", 0);
-	_bgTextBuf = loadFile("bgtext.c", 0);
-	_charNameBuf = loadFile("charname.c", 0);
-	_csDataBuf = loadFile("csdata.c", 0);
+	_data5Buf    = loadFile("data5.c", nullptr);
+	_bgTextBuf   = loadFile("bgtext.c", nullptr);
+	_charNameBuf = loadFile("charname.c", nullptr);
+	_csDataBuf   = loadFile("csdata.c", nullptr);
 	_csDataSize = _fileLoadSize;
 
 	_currentSaveLoadGameState = 1;
@@ -3213,7 +3213,7 @@ static const struct {
 	{ "wfx", kCode_wfx },
 	{ "xhr", kCode_xhr },
 	{ "xhm", kCode_xhm },
-	{ 0, 0 }
+	{ nullptr, 0 }
 };
 
 int TuckerEngine::readTableInstructionCode(int *index) {

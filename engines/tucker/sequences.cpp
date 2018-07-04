@@ -228,7 +228,7 @@ void TuckerEngine::handleNewPartSequence() {
 	default:
 		break;
 	}
-	_sprC02Table[1] = loadFile(filename.c_str(), 0);
+	_sprC02Table[1] = loadFile(filename.c_str(), nullptr);
 	startSpeechSound(9000, 60);
 	_fadePaletteCounter = 0;
 	do {
@@ -517,7 +517,7 @@ void AnimationSequencePlayer::mainLoop() {
 		{ 13, 2, &AnimationSequencePlayer::loadIntroSeq13_14, &AnimationSequencePlayer::playIntroSeq13_14 },
 		{ 15, 2, &AnimationSequencePlayer::loadIntroSeq15_16, &AnimationSequencePlayer::playIntroSeq15_16 },
 		{ 27, 2, &AnimationSequencePlayer::loadIntroSeq27_28, &AnimationSequencePlayer::playIntroSeq27_28 },
-		{  1, 0, 0, 0 }
+		{  1, 0, nullptr,                                     nullptr                                     }
 	};
 	static const SequenceUpdateFunc _gameSeqUpdateFuncs[] = {
 		{ 17, 1, &AnimationSequencePlayer::loadIntroSeq17_18, &AnimationSequencePlayer::playIntroSeq17_18 },
@@ -525,7 +525,7 @@ void AnimationSequencePlayer::mainLoop() {
 		{  3, 2, &AnimationSequencePlayer::loadIntroSeq3_4,   &AnimationSequencePlayer::playIntroSeq3_4   },
 		{  9, 2, &AnimationSequencePlayer::loadIntroSeq9_10,  &AnimationSequencePlayer::playIntroSeq9_10  },
 		{ 21, 2, &AnimationSequencePlayer::loadIntroSeq21_22, &AnimationSequencePlayer::playIntroSeq21_22 },
-		{  1, 0, 0, 0 }
+		{  1, 0, nullptr,                                     nullptr                                     }
 	};
 	switch (_seqNum) {
 	case kFirstAnimationSequenceDemo:
@@ -632,7 +632,7 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 void AnimationSequencePlayer::loadSounds(int num) {
 	if (_soundSeqDataList[num].musicVolume != 0) {
 		Audio::AudioStream *s;
-		if ((s = loadSound(_soundSeqDataList[num].musicIndex, kAnimationSoundType8BitsRAW)) != 0) {
+		if ((s = loadSound(_soundSeqDataList[num].musicIndex, kAnimationSoundType8BitsRAW)) != nullptr) {
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_soundSeqDataList[num].musicVolume));
 		}
 	}
@@ -642,17 +642,17 @@ void AnimationSequencePlayer::loadSounds(int num) {
 }
 
 void AnimationSequencePlayer::updateSounds() {
-	Audio::RewindableAudioStream *s = 0;
+	Audio::RewindableAudioStream *s = nullptr;
 	const SoundSequenceData *p = &_soundSeqData[_soundSeqDataIndex];
 	while (_soundSeqDataIndex < _soundSeqDataCount && p->timestamp <= _frameCounter) {
 		switch (p->opcode) {
 		case 0:
-			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 1:
-			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], Audio::makeLoopingAudioStream(s, 0),
 				                        -1, scaleMixerVolume(p->volume));
 			}
@@ -665,18 +665,18 @@ void AnimationSequencePlayer::updateSounds() {
 			break;
 		case 4:
 			_mixer->stopHandle(_musicHandle);
-			if ((s = loadSound(p->num, kAnimationSoundType8BitsRAW)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundType8BitsRAW)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 5:
-			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 6:
 			_mixer->stopHandle(_musicHandle);
-			if ((s = loadSound(p->num, kAnimationSoundType16BitsRAW)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundType16BitsRAW)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
@@ -810,7 +810,7 @@ void AnimationSequencePlayer::playIntroSeq19_20() {
 	// The intro credits animation. This uses 2 animations: the foreground one, which
 	// is the actual intro credits, and the background one, which is an animation of
 	// cogs, and is being replayed when an intro credit appears
-	const ::Graphics::Surface *surface = 0;
+	const ::Graphics::Surface *surface = nullptr;
 
 	if (_flicPlayer[0].getCurFrame() >= 115) {
 		surface = _flicPlayer[1].decodeNextFrame();
