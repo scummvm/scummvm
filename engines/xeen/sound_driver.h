@@ -65,10 +65,11 @@ protected:
 		int _freqChange;
 		int _freqCtr;
 		byte _volume;
-		byte _scalingValue;
+		byte _totalLevel;
+		bool _isFx;
 		uint _frequency;
 		Channel() : _changeFrequency(false), _freqCtr(0), _freqCtrChange(0),
-			_freqChange(0), _volume(0), _scalingValue(0), _frequency(0) {}
+			_freqChange(0), _volume(0), _totalLevel(0), _frequency(0), _isFx(false) {}
 	};
 private:
 	static const CommandFn FX_COMMANDS[16];

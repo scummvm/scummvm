@@ -99,7 +99,12 @@ private:
 	/**
 	 * Starts playing an instrument
 	 */
-	void playInstrument(byte channelNum, const byte *data, byte volume);
+	void playInstrument(byte channelNum, const byte *data, bool isFx);
+
+	/**
+	 * Calculates the scaling/volume level to output based on sfx or music master volume
+	 */
+	byte calculateLevel(byte level, bool isFx);
 protected:
 	virtual bool musSetInstrument(const byte *&srcP, byte param);
 	virtual bool musSetPitchWheel(const byte *&srcP, byte param);

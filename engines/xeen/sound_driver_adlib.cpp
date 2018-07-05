@@ -207,31 +207,37 @@ uint SoundDriverAdlib::calcFrequency(byte note) {
 }
 
 void SoundDriverAdlib::setOutputLevel(byte channelNum, uint level) {
-	write(0x40 + OPERATOR2_INDEXES[channelNum], level |
-		(_channels[channelNum]._scalingValue & 0xC0));
+	Channel &c = _channels[channelNum];
+	write(0x40 + OPERATOR2_INDEXES[channelNum], calculateLevel(level, c._isFx) | (c._totalLevel & 0xC0));
 }
 
-void SoundDriverAdlib::playInstrument(byte channelNum, const byte *data, byte volume) {
+void SoundDriverAdlib::playInstrument(byte channelNum, const byte *data, bool isFx) {
 	byte op1 = OPERATOR1_INDEXES[channelNum];
 	byte op2 = OPERATOR2_INDEXES[channelNum];
+	int totalLevel;
+
 	debugC(2, kDebugSound, "---START-playInstrument - %d", channelNum);
+	_channels[channelNum]._isFx = isFx;
 	write(0x20 + op1, *data++);
-	write(0x40 + op1, *data++);
+
+	totalLevel = *data++;
+	write(0x40 + op1, calculateLevel(totalLevel, isFx));
+
 	write(0x60 + op1, *data++);
 	write(0x80 + op1, *data++);
 	write(0xE0 + op1, *data++);
 	write(0x20 + op2, *data++);
 
-	int scalingVal = *data++;
-	_channels[channelNum]._scalingValue = scalingVal;
-	scalingVal += (127 - volume) / 2;
+	totalLevel = *data++;
+	_channels[channelNum]._totalLevel = totalLevel;
 
-	if (scalingVal > 63) {
-		scalingVal = 63;
+	if (totalLevel > 63) {
+		totalLevel = 63;
 		if (_field180)
-			scalingVal = (scalingVal & 0xC0) | _field182;
+			totalLevel = (totalLevel & 0xC0) | _field182;
 	}
-	write(0x40 + op2, scalingVal);
+
+	write(0x40 + op2, calculateLevel(totalLevel, isFx));
 
 	write(0x60 + op2, *data++);
 	write(0x80 + op2, *data++);
@@ -318,7 +324,7 @@ bool SoundDriverAdlib::musPlayInstrument(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "musPlayInstrument %d, %d", param, instrument);
 
 	if (param < 7)
-		playInstrument(param, _musInstrumentPtrs[instrument], _musicVolume);
+		playInstrument(param, _musInstrumentPtrs[instrument], false);
 
 	return false;
 }
@@ -416,9 +422,18 @@ bool SoundDriverAdlib::fxPlayInstrument(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxPlayInstrument %d, %d", param, instrument);
 
 	if (!_exclude7 || param != 7)
-		playInstrument(param, _fxInstrumentPtrs[instrument], _sfxVolume);
+		playInstrument(param, _fxInstrumentPtrs[instrument], true);
 
 	return false;
+}
+
+byte SoundDriverAdlib::calculateLevel(byte level, bool isFx) {
+	uint volume = isFx ? _sfxVolume : _musicVolume;
+	uint scaling = level & 0xc0;
+	uint totalLevel = 0x3f - (level & 0x3f);
+	totalLevel = totalLevel * volume / 255;
+
+	return scaling | (0x3f - totalLevel);
 }
 
 } // End of namespace Xeen
