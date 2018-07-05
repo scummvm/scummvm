@@ -517,7 +517,7 @@ void Graphics::drawAllSprites(bool updateScreen) {
 			for (int j = 0; j < numDirtyRects; j++) {
 				Common::Rect rect1 = spr->drawRect.findIntersectingRect(dirtyRects[j]);
 
-				if (!rect1.isEmpty()) {
+				if (rect1.width() != 0 && rect1.height() != 0) {
 					if (mustRedrawSprite)
 						rect2 = getRectEncompassing(rect1, rect2);
 					else
@@ -538,6 +538,9 @@ void Graphics::drawAllSprites(bool updateScreen) {
 	// Copy dirty rects to screen
 	for (int j = 0; j < numDirtyRects; j++) {
 		Common::Rect &r = dirtyRects[j];
+		if (r.width() == 0 || r.height() == 0)
+			continue;
+
 		int offset = r.left + r.top * SCREEN_WIDTH;
 		_vm->_system->copyRectToScreen((byte *)surface.getPixels() + offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
 	}
