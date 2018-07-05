@@ -73,13 +73,15 @@ Common::Error PinkEngine::init() {
 
 	_console = new Console(this);
 
-	const Common::String orbName = _desc.filesDescriptions[0].fileName;
-	const Common::String broName = _desc.filesDescriptions[1].fileName;
-
-	if (isPeril())
-		_bro = new BroFile();
-	else
-		debug("This game doesn't need to use bro");
+	Common::String orbName;
+	Common::String broName;
+	if (isPeril()) {
+		orbName = "PPTP.ORB";
+		broName = "PPTP.BRO";
+		_bro = new BroFile;
+	} else {
+		orbName = "HPP.ORB";
+	}
 
 	if (!_orb.open(orbName) || (_bro && !_bro->open(broName) && _orb.getTimestamp() == _bro->getTimestamp()))
 		return Common::kNoGameDataFoundError;
@@ -215,7 +217,7 @@ bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &
 bool PinkEngine::loadCursors() {
 	Common::PEResources exeResources;
 	bool isPokus = !isPeril();
-	Common::String fileName = isPokus ? _desc.filesDescriptions[1].fileName : _desc.filesDescriptions[2].fileName;
+	Common::String fileName = isPokus ? "hpp.exe" : "pptp.exe";
 	if (!exeResources.loadFromEXE(fileName))
 		return false;
 
