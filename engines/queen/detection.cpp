@@ -131,6 +131,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS Interview Demo - Russian
+	{
+		{
+			"queen",
+			"Interview",
+			AD_ENTRY1s("queen.1c", "246dd55f475c9ea6524c556227fd0383", 1889658),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOSPEECH)
+		},
+	},
+
 	// PCGAMES DOS Demo - English
 	{
 		{
