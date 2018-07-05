@@ -102,6 +102,12 @@ protected:
 	 * @param ccMode	Optional cc file number to explicitly use
 	 */
 	void loadStrings(const Common::String &name, int ccMode);
+
+	/**
+	 * Sets the wait bounds, the area where clicking with the mouse generates
+	 * the equivalent of a space bar press, to the main interface area
+	 */
+	void setWaitBounds();
 public:
 	ButtonContainer(XeenEngine *vm) : Cutscenes(vm), _buttonValue(0) {}
 

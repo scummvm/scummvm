@@ -33,7 +33,7 @@ enum MessageWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1,
 
 class MessageDialog : public ButtonContainer {
 private:
-	MessageDialog(XeenEngine *vm) : ButtonContainer(vm) {}
+	MessageDialog(XeenEngine *vm) : ButtonContainer(vm) { setWaitBounds(); }
 
 	void execute(const Common::String &msg, MessageWaitType waitType);
 public:
@@ -49,7 +49,7 @@ public:
 
 class CantCast: public ButtonContainer {
 private:
-	CantCast(XeenEngine *vm) : ButtonContainer(vm) {}
+	CantCast(XeenEngine *vm) : ButtonContainer(vm) { setWaitBounds(); }
 
 	void execute(int spellId, int componentNum);
 public:

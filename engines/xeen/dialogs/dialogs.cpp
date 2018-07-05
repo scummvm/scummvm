@@ -185,6 +185,10 @@ void ButtonContainer::loadStrings(const Common::String &name, int ccMode) {
 	f.close();
 }
 
+void ButtonContainer::setWaitBounds() {
+	_waitBounds = Common::Rect(8, 8, 224, 140);
+}
+
 /*------------------------------------------------------------------------*/
 
 void SettingsBaseDialog::showContents(SpriteResource &title1, bool waitFlag) {

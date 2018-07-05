@@ -344,7 +344,7 @@ class LocationMessage : public Locations::BaseLocation {
 private:
 	SpriteResource _iconSprites;
 
-	LocationMessage() : Locations::BaseLocation(NO_ACTION) {}
+	LocationMessage() : Locations::BaseLocation(NO_ACTION) { setWaitBounds(); }
 
 	bool execute(int portrait, const Common::String &name,
 		const Common::String &text, int confirm);
