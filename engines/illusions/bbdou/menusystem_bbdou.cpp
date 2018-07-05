@@ -55,13 +55,15 @@ void BBDOUMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuCh
 }
 
 void BBDOUMenuSystem::clearMenus() {
-	for (int i = 0; i < kBBDOULastMenuIndex; ++i)
+	for (int i = 0; i < kBBDOULastMenuIndex; ++i) {
 		_menus[i] = 0;
+	}
 }
 
 void BBDOUMenuSystem::freeMenus() {
-	for (int i = 0; i < kBBDOULastMenuIndex; ++i)
+	for (int i = 0; i < kBBDOULastMenuIndex; ++i) {
 		delete _menus[i];
+	}
 }
 
 BaseMenu *BBDOUMenuSystem::getMenuById(int menuId) {

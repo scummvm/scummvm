@@ -69,8 +69,9 @@ void MidiGroupResource::load(byte *data, uint32 dataSize) {
 	debug("_midiMusicCount: %d; midiMusicOffs: %08X", _midiMusicCount, midiMusicOffs);
 	_midiMusic = new MidiMusic[_midiMusicCount];
 	stream.seek(midiMusicOffs);
-	for (uint i = 0; i < _midiMusicCount; ++i)
+	for (uint i = 0; i < _midiMusicCount; ++i) {
 		_midiMusic[i].load(stream);
+	}
 
 }
 
