@@ -253,9 +253,11 @@ struct AwayMission {
 			bool tookKnife; // 0x2d
 			bool field2e; // 0x2e
 			byte numRocksThrownAtTlaoxac; // 0x2f
+			bool gotFern; // 0x30
 			bool holeBlocked; // 0x31
 			bool tlaoxacTestPassed; // 0x32
 			bool knockedOutTlaoxac; // 0x33
+			bool waterMonsterRetreated; // 0x34
 			bool showedSnakeToTlaoxac; // 0x35
 			int16 missionScore; // 0x36
 		} feather;

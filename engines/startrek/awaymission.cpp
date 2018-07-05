@@ -613,16 +613,14 @@ void StarTrekEngine::handleAwayMissionAction() {
 			showTextbox("", getLoadedText(GROUNDTX_LOOK_SPOCK), 20, 20, TEXTCOLOR_YELLOW, 0);
 		else if (action.activeObject() == OBJECT_MCCOY)
 			showTextbox("", getLoadedText(GROUNDTX_LOOK_MCCOY), 20, 20, TEXTCOLOR_YELLOW, 0);
-		else {
-			if (action.activeObject() == OBJECT_REDSHIRT)
-				showTextbox("", getLoadedText(GROUNDTX_LOOK_REDSHIRT), 20, 20, TEXTCOLOR_YELLOW, 0);
-
+		else if (action.activeObject() == OBJECT_REDSHIRT)
+			showTextbox("", getLoadedText(GROUNDTX_LOOK_REDSHIRT), 20, 20, TEXTCOLOR_YELLOW, 0);
+		else
 			// Show generic "nothing of note" text.
-			// BUG? This text is also shown after looking at the redshirt. However, his
-			// text is normally overridden on a per-mission basis, so perhaps this bug
-			// never manifests itself?
+			// BUGFIX: originally this was shown after the redshirt's text as well.
+			// Though, the original game may not have used this default implementation
+			// anywhere...
 			showTextbox("", getLoadedText(GROUNDTX_LOOK_ANYWHERE), 20, 20, TEXTCOLOR_YELLOW, 0);
-		}
 		break;
 
 	case ACTION_TALK:

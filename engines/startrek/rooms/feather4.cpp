@@ -24,7 +24,7 @@
 
 #define HOTSPOT_EYES     0x20
 #define HOTSPOT_MUSHROOM 0x21
-#define HOTSPOT_BUSH     0x22
+#define HOTSPOT_FERN     0x22
 #define HOTSPOT_LIGHT_1  0x23
 #define HOTSPOT_LIGHT_2  0x24
 #define HOTSPOT_LIGHT_3  0x25
@@ -40,7 +40,7 @@ extern const RoomAction feather4ActionList[] = {
 	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_LIGHT_2, 0}, &Room::feather4UseSTricorderOnLight },
 	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_LIGHT_3, 0}, &Room::feather4UseSTricorderOnLight },
 	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_MUSHROOM, 0},&Room::feather4UseSTricorderOnMushroom },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_BUSH, 0},    &Room::feather4UseSTricorderOnBush },
+	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_FERN, 0},    &Room::feather4UseSTricorderOnFern },
 	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff, 0},            &Room::feather4UseSTricorderAnywhere },
 	{ {ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_LIGHT_1, 0}, &Room::feather4UseMTricorderOnLight },
 	{ {ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_LIGHT_2, 0}, &Room::feather4UseMTricorderOnLight },
@@ -54,7 +54,7 @@ extern const RoomAction feather4ActionList[] = {
 	{ {ACTION_LOOK, HOTSPOT_EYES, 0, 0},     &Room::feather4LookAtEyes },
 	{ {ACTION_LOOK, 0xff, 0, 0},             &Room::feather4LookAnywhere },
 	{ {ACTION_LOOK, HOTSPOT_MUSHROOM, 0, 0}, &Room::feather4LookAtMushroom },
-	{ {ACTION_LOOK, HOTSPOT_BUSH, 0, 0},     &Room::feather4LookAtBush },
+	{ {ACTION_LOOK, HOTSPOT_FERN, 0, 0},     &Room::feather4LookAtFern },
 	{ {ACTION_LOOK, HOTSPOT_LIGHT_1, 0, 0},  &Room::feather4LookAtLight },
 	{ {ACTION_LOOK, HOTSPOT_LIGHT_2, 0, 0},  &Room::feather4LookAtLight },
 	{ {ACTION_LOOK, HOTSPOT_LIGHT_3, 0, 0},  &Room::feather4LookAtLight },
@@ -88,7 +88,7 @@ void Room::feather4UseSTricorderOnMushroom() {
 	spockScan(DIR_W, TX_FEA4_012);
 }
 
-void Room::feather4UseSTricorderOnBush() {
+void Room::feather4UseSTricorderOnFern() {
 	spockScan(DIR_W, TX_FEA4_009);
 }
 
@@ -136,7 +136,7 @@ void Room::feather4LookAtMushroom() {
 	showText(TX_FEA4N001);
 }
 
-void Room::feather4LookAtBush() {
+void Room::feather4LookAtFern() {
 	showText(TX_FEA4N000);
 }
 

@@ -153,7 +153,7 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 	}
 	else if (name == "FEATHER5") {
 		_roomActionList = feather5ActionList;
-		_numRoomActions = sizeof(feather5ActionList) / sizeof(RoomAction);
+		_numRoomActions = feather5NumActions;
 	}
 	else if (name == "FEATHER6") {
 		_roomActionList = feather6ActionList;

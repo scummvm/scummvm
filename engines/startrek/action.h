@@ -42,6 +42,11 @@ enum ActionTypes {
 	ACTION_TOUCHED_HOTSPOT = 7, // Second kind of "hotspot" only relevant when an object touches them
 	ACTION_TIMER_EXPIRED = 8,
 
+	ACTION_DONE_ANIM = 10,
+	ACTION_DONE_WALK = 12,
+
+	// TODO: remove these as redundant. They only still exist so I don't need to redo the
+	// manual spacing in the room action lists.
 	ACTION_FINISHED_ANIMATION = 10,
 	ACTION_FINISHED_WALKING = 12,
 
