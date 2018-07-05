@@ -1782,10 +1782,8 @@ RoomAction feather0ActionList[] = {
 
 extern const RoomAction feather1ActionList[], feather2ActionList[], feather3ActionList[], feather4ActionList[];
 extern const int        feather1NumActions,   feather2NumActions,   feather3NumActions,   feather4NumActions;
-
-RoomAction feather5ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::feather5Tick1 },
-};
+extern const RoomAction feather5ActionList[];
+extern const int        feather5NumActions;
 
 RoomAction feather6ActionList[] = {
 	{ {ACTION_TICK, 1, 0, 0}, &Room::feather6Tick1 },
