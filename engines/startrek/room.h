@@ -1716,6 +1716,58 @@ public:
 	void feather7KirkSatDown();
 	void feather7ReadyToBeamOut();
 
+
+	// TRIAL0
+	void trial0Tick1();
+	void trial0Tick40();
+	void trial0Timer0Expired();
+	void trial0WalkToRoomCenter();
+	void trial0ReachedRoomCenter();
+	void trial0LookAtWindow();
+	void trial0LookAtVlict();
+	void trial0LookAtGuard();
+	void trial0LookAtBench();
+	void trial0LookAtSeal();
+	void trial0LookAtKirk();
+	void trial0LookAtSpock();
+	void trial0LookAtMccoy();
+	void trial0LookAtRedshirt();
+	void trial0LookAtQuetzecoatl();
+	void trial0TalkToVlict();
+	void trial0TalkToGuard();
+	void trial0TalkToQuetzecoatl();
+	void trial0TalkToMccoy();
+	void trial0TalkToSpock();
+	void trial0TalkToRedshirt();
+	void trial0UsePhaserOrRock();
+	void trial0UseSnakeOnVlict();
+	void trial0UseSnakeOnGuard();
+	void trial0UseMTricorderOnQuetzecoatl();
+	void trial0UseMTricorderOnVlict();
+	void trial0UseMTricorderAnywhere();
+	void trial0UseSTricorderOnWindow();
+	void trial0UseSTricorderAnywhere();
+	void trial0UseCommunicator();
+	void trial0UseCrewmanOnKlingon();
+	void trial0UseMccoyOnVlict();
+	void trial0UseMccoyOnGuard();
+	void trial0UseMedkitAnywhere();
+
+	// TRIAL1
+	void trial1Tick1();
+
+	// TRIAL2
+	void trial2Tick1();
+
+	// TRIAL3
+	void trial3Tick1();
+
+	// TRIAL4
+	void trial4Tick1();
+
+	// TRIAL5
+	void trial5Tick1();
+
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {

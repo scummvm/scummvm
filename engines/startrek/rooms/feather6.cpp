@@ -203,6 +203,7 @@ void Room::feather6UseKnifeAnywhere() {
 }
 
 void Room::feather6UseKnifeOnMccoy() {
+	// BUG: Stragey could be dead...
 	showText(TX_SPEAKER_STRAGEY, TX_FEA6_039); // BUGFIX: Speaker is Stragey (not Spock)
 }
 
