@@ -1708,6 +1708,13 @@ public:
 
 	// FEATHER7
 	void feather7Tick1();
+	void feather7Tick40();
+	void feather7KirkReachedSeat();
+	void feather7SpockReachedSeat();
+	void feather7MccoyReachedSeat();
+	void feather7QuetzecoatlReachedSeat();
+	void feather7KirkSatDown();
+	void feather7ReadyToBeamOut();
 
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
@@ -1841,6 +1848,9 @@ private:
 
 			// feather6
 			bool usedRockOnCrystalsOnce;
+
+			// feather7
+			bool insultedQuetzecoatl;
 		} feather;
 
 
