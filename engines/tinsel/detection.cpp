@@ -113,6 +113,7 @@ bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSimpleSavesNames) ||
 		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportPlayTime) ||
 		(f == kSavesSupportCreationDate);
 }
 
@@ -134,16 +135,7 @@ bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
 
 SaveStateDescriptor TinselMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName;
-	if (slot < 0)
-		return SaveStateDescriptor();
-	else if (slot < 10)
-		fileName = Common::String::format("%s.00%d", target, slot);
-	else if (slot < 100)
-		fileName = Common::String::format("%s.0%d", target, slot);
-	else if (slot < 1000)
-		fileName = Common::String::format("%s.%d", target, slot);
-	else
-		warning("Too many slots!");
+	fileName = Common::String::format("%s.%03u", target, slot);
 
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -153,7 +145,7 @@ SaveStateDescriptor TinselMetaEngine::querySaveMetaInfos(const char *target, int
 
 	file->readUint32LE();		// skip id
 	file->readUint32LE();		// skip size
-	file->readUint32LE();		// skip version
+	uint32 ver = file->readUint32LE();
 	char saveDesc[Tinsel::SG_DESC_LEN];
 	file->read(saveDesc, sizeof(saveDesc));
 
@@ -165,9 +157,16 @@ SaveStateDescriptor TinselMetaEngine::querySaveMetaInfos(const char *target, int
 	int8 tm_mday = file->readSByte();
 	int8 tm_hour = file->readSByte();
 	int8 tm_min = file->readSByte();
-	
+	file->readSByte(); // skip secs
+
 	desc.setSaveDate(1900+tm_year, tm_mon, tm_mday);
 	desc.setSaveTime(tm_hour, tm_min);
+
+	if (ver >= 3) {
+		uint32 playTime = file->readUint32LE(); // playTime in seconds
+		desc.setPlayTime(playTime);
+	}
+
 	delete file;
 	return desc;
 }
