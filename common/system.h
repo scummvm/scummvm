@@ -190,9 +190,21 @@ protected:
 	 */
 	FilesystemFactory *_fsFactory;
 
+private:
+	/**
+	 * Indicate if initBackend() has been called.
+	 */
+	bool _backendInitialized;
+
 	//@}
 
 public:
+
+	/**
+	 *
+	 * Destoy this OSystem instance.
+	 */
+	void destroy();
 
 	/**
 	 * The following method is called once, from main.cpp, after all
@@ -203,6 +215,13 @@ public:
 	 *       implementation.
 	 */
 	virtual void initBackend();
+
+	/**
+	 * Return false if initBackend() has not yet been called and true otherwise.
+	 * Some functionalities such as mutexes cannot be used until the backend
+	 * is initialized.
+	 */
+	bool backendInitialized() const { return _backendInitialized; }
 
 	/**
 	 * Allows the backend to perform engine specific init.
