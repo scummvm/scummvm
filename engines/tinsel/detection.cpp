@@ -102,6 +102,7 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual void removeSaveState(const char *target, int slot) const;
 };
 
@@ -110,7 +111,10 @@ bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
-		(f == kSimpleSavesNames);
+		(f == kSimpleSavesNames) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate);
 }
 
 bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
@@ -127,6 +131,46 @@ bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsRTL) ||
 #endif
 		(f == kSupportsLoadingDuringRuntime);
+}
+
+SaveStateDescriptor TinselMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String fileName;
+	if (slot < 0)
+		return SaveStateDescriptor();
+	else if (slot < 10)
+		fileName = Common::String::format("%s.00%d", target, slot);
+	else if (slot < 100)
+		fileName = Common::String::format("%s.0%d", target, slot);
+	else if (slot < 1000)
+		fileName = Common::String::format("%s.%d", target, slot);
+	else
+		warning("Too many slots!");
+
+	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (!file) {
+		return SaveStateDescriptor();
+	}
+
+	file->readUint32LE();		// skip id
+	file->readUint32LE();		// skip size
+	file->readUint32LE();		// skip version
+	char saveDesc[Tinsel::SG_DESC_LEN];
+	file->read(saveDesc, sizeof(saveDesc));
+
+	saveDesc[Tinsel::SG_DESC_LEN - 1] = 0;
+	SaveStateDescriptor desc(slot, saveDesc);
+
+	int8 tm_year = file->readUint16LE();
+	int8 tm_mon = file->readSByte();
+	int8 tm_mday = file->readSByte();
+	int8 tm_hour = file->readSByte();
+	int8 tm_min = file->readSByte();
+	
+	desc.setSaveDate(1900+tm_year, tm_mon, tm_mday);
+	desc.setSaveTime(tm_hour, tm_min);
+	delete file;
+	return desc;
 }
 
 namespace Tinsel {
