@@ -161,7 +161,7 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 	}
 	else if (name == "FEATHER7") {
 		_roomActionList = feather7ActionList;
-		_numRoomActions = sizeof(feather7ActionList) / sizeof(RoomAction);
+		_numRoomActions = feather7NumActions;
 	}
 	else {
 		warning("Room \"%s\" unimplemented", name.c_str());
