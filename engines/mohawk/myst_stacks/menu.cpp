@@ -139,7 +139,8 @@ void Menu::o_menuInit(uint16 var, const ArgumentsArray &args) {
 		MystAreaImageSwitch *image  = _vm->getCard()->getResource<MystAreaImageSwitch>(2 * i + 0);
 		MystAreaHover       *hover  = _vm->getCard()->getResource<MystAreaHover>      (2 * i + 1);
 
-		drawButtonImages(buttonCaptions[i], image, buttons[i].align, buttons[i].highlightedIndex, buttons[i].disabledIndex);
+		Common::U32String str = Common::convertUtf8ToUtf32(buttonCaptions[i]);
+		drawButtonImages(str, image, buttons[i].align, buttons[i].highlightedIndex, buttons[i].disabledIndex);
 		hover->setRect(image->getRect());
 	}
 }
@@ -172,18 +173,40 @@ const char **Menu::getButtonCaptions() const {
 		"OPTIONEN"
 	};
 
+	static const char *buttonCaptionsSpanish[] = {
+		"JUEGO NUEVO",
+		"CARGAR JUEGO",
+		"GUARDAR JUEGO",
+		"CONTINUAR",
+		"SALIR",
+		"OPCIONES"
+	};
+
+	static const char *buttonCaptionsPolish[] = {
+		"NOWA GRA",
+		"ZAŁADUJ GRĘ",
+		"ZAPISZ GRĘ",
+		"POWRÓT",
+		"WYJŚCIE",
+		"OPCJE"
+	};
+
 	switch (_vm->getLanguage()) {
 		case Common::FR_FRA:
 			return buttonCaptionsFrench;
 		case Common::DE_DEU:
 			return buttonCaptionsGerman;
+		case Common::ES_ESP:
+			return buttonCaptionsSpanish;
+		case Common::PL_POL:
+			return buttonCaptionsPolish;
 		case Common::EN_ANY:
 		default:
 			return buttonCaptionsEnglish;
 	}
 }
 
-void Menu::drawButtonImages(const char *text, MystAreaImageSwitch *area, Graphics::TextAlign align, uint16 highlightedIndex, uint16 disabledIndex) const {
+void Menu::drawButtonImages(const Common::U32String &text, MystAreaImageSwitch *area, Graphics::TextAlign align, uint16 highlightedIndex, uint16 disabledIndex) const {
 	Common::Rect backgroundRect = area->getRect();
 	Common::Rect textBoundingBox = _vm->_gfx->getTextBoundingBox(text, backgroundRect, align);
 
@@ -203,7 +226,12 @@ void Menu::drawButtonImages(const char *text, MystAreaImageSwitch *area, Graphic
 	area->setSubImageRect(0, Common::Rect(backgroundRect.left, idle.rect.top, backgroundRect.right, idle.rect.bottom));
 
 	// Align the text to the top of the destination rectangles
-	int16 deltaY = backgroundRect.top - textBoundingBox.top;
+	int16 deltaY;
+	if (_vm->getLanguage() == Common::PL_POL) {
+		deltaY = -2;
+	} else {
+		deltaY = backgroundRect.top - textBoundingBox.top;
+	}
 
 	if (highlightedIndex) {
 		replaceButtonSubImageWithText(text, align, area, highlightedIndex, backgroundRect, deltaY, 215, 216, 219);
@@ -217,7 +245,7 @@ void Menu::drawButtonImages(const char *text, MystAreaImageSwitch *area, Graphic
 	_vm->_gfx->drawText(cardBackground, text, backgroundRect, 181, 184, 189, align, deltaY);
 }
 
-void Menu::replaceButtonSubImageWithText(const char *text, const Graphics::TextAlign &align, MystAreaImageSwitch *area,
+void Menu::replaceButtonSubImageWithText(const Common::U32String &text, const Graphics::TextAlign &align, MystAreaImageSwitch *area,
                                          uint16 subimageIndex, const Common::Rect &backgroundRect, int16 deltaY,
                                          uint8 r, uint8 g, uint8 b) const {
 	uint16 cardBackground = _vm->getCard()->getBackgroundImageId();

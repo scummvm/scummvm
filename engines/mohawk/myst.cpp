@@ -120,7 +120,13 @@ Common::SeekableReadStream *MohawkEngine_Myst::getResource(uint32 tag, uint16 id
 }
 
 Common::Array<uint16> MohawkEngine_Myst::getResourceIDList(uint32 type) const {
-	return _mhk[0]->getResourceIDList(type);
+	Common::Array<uint16> ids;
+
+	for (uint i = 0; i < _mhk.size(); i++) {
+		ids.push_back(_mhk[i]->getResourceIDList(type));
+	}
+
+	return ids;
 }
 
 void MohawkEngine_Myst::cachePreload(uint32 tag, uint16 id) {
@@ -153,19 +159,19 @@ void MohawkEngine_Myst::cachePreload(uint32 tag, uint16 id) {
 }
 
 static const char *mystFiles[] = {
-	"channel.dat",
-	"credits.dat",
-	"demo.dat",
-	"dunny.dat",
-	"intro.dat",
-	"making.dat",
-	"mechan.dat",
-	"myst.dat",
-	"selen.dat",
-	"slides.dat",
-	"sneak.dat",
-	"stone.dat",
-	"menu.dat"
+	"channel",
+	"credits",
+	"demo",
+	"dunny",
+	"intro",
+	"making",
+	"mechan",
+	"myst",
+	"selen",
+	"slides",
+	"sneak",
+	"stone",
+	"menu"
 };
 
 // Myst Hardcoded Movie Paths
@@ -219,8 +225,23 @@ Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieN
 	return Common::String("qtw/") + prefix + movieName + ".mov";
 }
 
+Common::String MohawkEngine_Myst::selectLocalizedMovieFilename(const Common::String &movieName) {
+	Common::String language;
+	if (getFeatures() & GF_LANGUAGE_FILES) {
+		language = getDatafileLanguageName("myst_");
+	}
+
+	Common::String localizedMovieName = Common::String::format("%s/%s", language.c_str(), movieName.c_str());
+	if (!language.empty() && SearchMan.hasFile(localizedMovieName)) {
+		return localizedMovieName;
+	} else {
+		return movieName;
+	}
+}
+
 VideoEntryPtr MohawkEngine_Myst::playMovie(const Common::String &name, MystStack stack) {
 	Common::String filename = wrapMovieFilename(name, stack);
+	filename = selectLocalizedMovieFilename(filename);
 	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
 
 	if (!video) {
@@ -241,11 +262,13 @@ VideoEntryPtr MohawkEngine_Myst::playMovieFullscreen(const Common::String &name,
 
 VideoEntryPtr MohawkEngine_Myst::findVideo(const Common::String &name, MystStack stack) {
 	Common::String filename = wrapMovieFilename(name, stack);
+	filename = selectLocalizedMovieFilename(filename);
 	return _video->findVideo(filename);
 }
 
 void MohawkEngine_Myst::playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y) {
 	Common::String filename = wrapMovieFilename(name, stack);
+	filename = selectLocalizedMovieFilename(filename);
 	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
 	if (!video) {
 		error("Failed to open the '%s' movie", filename.c_str());
@@ -355,11 +378,6 @@ Common::Error MohawkEngine_Myst::run() {
 	// Cursor is visible by default
 	_cursor->showCursor();
 
-	_mhk.resize(3);
-	_mhk[0] = new MohawkArchive();
-	_mhk[1] = new MohawkArchive();
-	_mhk[2] = new MohawkArchive();
-
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && hasGameSaveSupport()) {
 		int saveSlot = ConfMan.getInt("save_slot");
@@ -377,21 +395,62 @@ Common::Error MohawkEngine_Myst::run() {
 			changeToStack(kIntroStack, 1, 0, 0);
 	}
 
-	// Load Help System (Masterpiece Edition Only)
-	if (getFeatures() & GF_ME) {
-		if (!_mhk[1]->openFile("help.dat"))
-			error("Could not load help.dat");
-	}
-	if (getFeatures() & GF_25TH) {
-		if (!_mhk[2]->openFile("menu.dat"))
-			error("Could not load menu.dat");
-	}
-
 	while (!shouldQuit()) {
 		doFrame();
 	}
 
 	return Common::kNoError;
+}
+
+void MohawkEngine_Myst::loadStackArchives(MystStack stackId) {
+	for (uint i = 0; i < _mhk.size(); i++) {
+		delete _mhk[i];
+	}
+	_mhk.clear();
+
+	Common::String language;
+	if (getFeatures() & GF_LANGUAGE_FILES) {
+		language = getDatafileLanguageName("myst_");
+	}
+
+	if (!language.empty()) {
+		loadArchive(mystFiles[stackId], language.c_str(), false);
+	}
+
+	loadArchive(mystFiles[stackId], nullptr, true);
+
+	if (getFeatures() & GF_ME) {
+		if (!language.empty()) {
+			loadArchive("help", language.c_str(), false);
+		}
+
+		loadArchive("help", nullptr, true);
+	}
+
+	if (getFeatures() & GF_25TH) {
+		loadArchive("menu", nullptr, true);
+	}
+}
+
+void MohawkEngine_Myst::loadArchive(const char *archiveName, const char *language, bool mandatory) {
+	Common::String filename;
+	if (language) {
+		filename = Common::String::format("%s_%s.dat", archiveName, language);
+	} else {
+		filename = Common::String::format("%s.dat", archiveName);
+	}
+
+	Archive *archive = new MohawkArchive();
+	if (!archive->openFile(filename)) {
+		delete archive;
+		if (mandatory) {
+			error("Could not open %s", filename.c_str());
+		} else {
+			return;
+		}
+	}
+
+	_mhk.push_back(archive);
 }
 
 void MohawkEngine_Myst::doFrame() {
@@ -676,13 +735,7 @@ void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 lin
 		error("Unknown Myst stack %d", stackId);
 	}
 
-	// If the array is empty, add a new one. Otherwise, delete the first
-	// entry which is the stack file (the second, if there, is the help file).
-	delete _mhk[0];
-	_mhk[0] = new MohawkArchive();
-
-	if (!_mhk[0]->openFile(mystFiles[stackId]))
-		error("Could not open %s", mystFiles[stackId]);
+	loadStackArchives(stackId);
 
 	// Clear the resource cache and the image cache
 	_cache.clear();

@@ -406,30 +406,8 @@ void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 	char prefix = RivenStacks::getName(stackId)[0];
 
 	// Load the localization override file if any
-	Common::String languageDatafile = getLanguageDatafile(prefix);
-	if (!languageDatafile.empty()) {
-		MohawkArchive *mhk = new MohawkArchive();
-		if (mhk->openFile(languageDatafile)) {
-
-			if (stackId == kStackOspit && getLanguage() != Common::EN_ANY && getLanguage() != Common::RU_RUS) {
-				// WORKAROUND: The international CD versions were repacked for the 25th anniversary release
-				// so they share the same resources as the English DVD version. The resource IDs for the DVD
-				// version resources have a delta of 1 in their numbering when compared the the CD version
-				// resources for Gehn's office. Unfortunately this delta was not compensated when repacking
-				// the archives. We need to do it here at run time...
-				mhk->offsetResourceIDs(ID_TBMP, 196, 1);
-			} else if (stackId == kStackJspit && getLanguage() != Common::EN_ANY && getLanguage() != Common::RU_RUS) {
-				// WORKAROUND: Same thing with Gehn's imager in the School in Jungle Island.
-				mhk->offsetResourceIDs(ID_TMOV, 342, -2);
-			} else if (stackId == kStackGspit && getLanguage() == Common::PL_POL) {
-				// WORKAROUND: Same thing for the advertisement easter egg on Garden Island.
-				mhk->offsetResourceIDs(ID_TMOV, 148, 2);
-			}
-
-			_mhk.push_back(mhk);
-		}
-		else
-			delete mhk;
+	if (getFeatures() & GF_LANGUAGE_FILES) {
+		loadLanguageDatafile(prefix, stackId);
 	}
 
 	// Load files that start with the prefix
@@ -532,16 +510,36 @@ bool MohawkEngine_Riven::checkDatafiles() {
 	return false;
 }
 
-Common::String MohawkEngine_Riven::getLanguageDatafile(char prefix) const {
-	if (!(getFeatures() & GF_25TH) || getLanguage() == Common::EN_ANY)
-		return "";
-
-	Common::String language = getDatafileLanguageName();
+void MohawkEngine_Riven::loadLanguageDatafile(char prefix, uint16 stackId) {
+	Common::String language = getDatafileLanguageName("a_data_");
 	if (language.empty()) {
-		return "";
+		return;
 	}
 
-	return Common::String::format("%c_data_%s.mhk", prefix, language.c_str());
+	Common::String languageDatafile = Common::String::format("%c_data_%s.mhk", prefix, language.c_str());
+
+	MohawkArchive *mhk = new MohawkArchive();
+	if (mhk->openFile(languageDatafile)) {
+
+		if (stackId == kStackOspit && getLanguage() != Common::EN_ANY && getLanguage() != Common::RU_RUS) {
+			// WORKAROUND: The international CD versions were repacked for the 25th anniversary release
+			// so they share the same resources as the English DVD version. The resource IDs for the DVD
+			// version resources have a delta of 1 in their numbering when compared the the CD version
+			// resources for Gehn's office. Unfortunately this delta was not compensated when repacking
+			// the archives. We need to do it here at run time...
+			mhk->offsetResourceIDs(ID_TBMP, 196, 1);
+		} else if (stackId == kStackJspit && getLanguage() != Common::EN_ANY && getLanguage() != Common::RU_RUS) {
+			// WORKAROUND: Same thing with Gehn's imager in the School in Jungle Island.
+			mhk->offsetResourceIDs(ID_TMOV, 342, -2);
+		} else if (stackId == kStackGspit && getLanguage() == Common::PL_POL) {
+			// WORKAROUND: Same thing for the advertisement easter egg on Garden Island.
+			mhk->offsetResourceIDs(ID_TMOV, 148, 2);
+		}
+
+		_mhk.push_back(mhk);
+	} else {
+		delete mhk;
+	}
 }
 
 RivenStack *MohawkEngine_Riven::constructStackById(uint16 id) {

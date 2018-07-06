@@ -196,6 +196,7 @@ MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, ResourceType type, Common::S
 		_videoFile.deleteLastChar();
 
 	_videoFile = convertMystVideoName(_videoFile);
+	_videoFile = _vm->selectLocalizedMovieFilename(_videoFile);
 
 	// Position values require modulus 10000 to keep in sane range.
 	_left = rlstStream->readSint16LE() % 10000;

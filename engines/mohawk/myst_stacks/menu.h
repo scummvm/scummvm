@@ -82,8 +82,8 @@ private:
 
 	bool showConfirmationDialog(const char *message, const char *confirmButton, const char *cancelButton);
 
-	void drawButtonImages(const char *text, MystAreaImageSwitch *area, Graphics::TextAlign align, uint16 highlightedIndex, uint16 disabledIndex) const;
-	void replaceButtonSubImageWithText(const char *text, const Graphics::TextAlign &align, MystAreaImageSwitch *area,
+	void drawButtonImages(const Common::U32String &text, MystAreaImageSwitch *area, Graphics::TextAlign align, uint16 highlightedIndex, uint16 disabledIndex) const;
+	void replaceButtonSubImageWithText(const Common::U32String &text, const Graphics::TextAlign &align, MystAreaImageSwitch *area,
 	                                   uint16 subimageIndex, const Common::Rect &backgroundRect, int16 deltaY,
 	                                   uint8 r, uint8 g, uint8 b) const;
 	const char **getButtonCaptions() const;

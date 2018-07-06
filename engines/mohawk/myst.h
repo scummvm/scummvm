@@ -173,6 +173,7 @@ public:
 	void playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y);
 	void playFlybyMovie(MystStack stack);
 	void waitUntilMovieEnds(const VideoEntryPtr &video);
+	Common::String selectLocalizedMovieFilename(const Common::String &movieName);
 
 	void playSoundBlocking(uint16 id);
 
@@ -217,6 +218,9 @@ private:
 	void dropPage();
 
 	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
+
+	void loadStackArchives(MystStack stackId);
+	void loadArchive(const char *archiveName, const char *language, bool mandatory);
 
 	// Input
 	bool _mouseClicked;

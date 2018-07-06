@@ -87,6 +87,24 @@ bool MohawkEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsRTL);
 }
 
+Common::String MohawkEngine::getDatafileLanguageName(const char *prefix) const {
+	const ADGameFileDescription *fileDesc;
+	for (fileDesc = _gameDescription->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
+		if (Common::String(fileDesc->fileName).hasPrefix(prefix)) {
+			break;
+		}
+	}
+
+	if (!fileDesc->fileName) {
+		warning("Malformed detection entry");
+
+		return "";
+	}
+
+	size_t prefixLength = strlen(prefix);
+	return Common::String(&fileDesc->fileName[prefixLength], strlen(fileDesc->fileName) - prefixLength - 4);
+}
+
 #ifdef ENABLE_MYST
 
 bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
@@ -105,23 +123,6 @@ bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
 		MohawkEngine::hasFeature(f)
 		|| (f == kSupportsLoadingDuringRuntime)
 		|| (f == kSupportsSavingDuringRuntime);
-}
-
-Common::String MohawkEngine_Riven::getDatafileLanguageName() const {
-	const ADGameFileDescription *fileDesc;
-	for (fileDesc = _gameDescription->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
-		if (Common::String(fileDesc->fileName).hasPrefix("a_data_")) {
-			break;
-		}
-	}
-
-	if (!fileDesc->fileName) {
-		warning("Malformed 25th Anniversary Riven entry");
-
-		return "";
-	}
-
-	return Common::String(&fileDesc->fileName[7], strlen(fileDesc->fileName) - 7 - 4);
 }
 
 #endif

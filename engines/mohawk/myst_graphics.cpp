@@ -69,9 +69,16 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) :
 	if (_vm->getFeatures() & GF_25TH) {
 		const char *menuFontName = "NotoSans-ExtraBold.ttf";
 #ifdef USE_FREETYPE2
+		int fontSize;
+		if (_vm->getLanguage() == Common::PL_POL) {
+			fontSize = 11; // The Polish diacritics need significantly more space, so we use a smaller font
+		} else {
+			fontSize = 16;
+		}
+
 		Common::SeekableReadStream *fontStream = SearchMan.createReadStreamForMember(menuFontName);
 		if (fontStream) {
-			_menuFont = Graphics::loadTTFFont(*fontStream, 16);
+			_menuFont = Graphics::loadTTFFont(*fontStream, fontSize);
 			delete fontStream;
 		} else
 #endif
@@ -850,15 +857,15 @@ Graphics::Surface *MystGraphics::getThumbnailForMainMenu() const {
 	return _mainMenuBackupScreenThumbnail.get();
 }
 
-void MystGraphics::drawText(uint16 image, const char *text, const Common::Rect &dest, uint8 r, uint8 g, uint8 b, Graphics::TextAlign align, int16 deltaY) {
+void MystGraphics::drawText(uint16 image, const Common::U32String &text, const Common::Rect &dest, uint8 r, uint8 g, uint8 b, Graphics::TextAlign align, int16 deltaY) {
 	MohawkSurface *mhkSurface = findImage(image);
 	Graphics::Surface *surface = mhkSurface->getSurface();
 
 	const Graphics::Font *font = getMenuFont();
-	font->drawString(surface, text, dest.left, dest.top + deltaY, dest.width(), surface->format.RGBToColor(r, g, b), align, 0, false);
+	font->drawString(surface, text, dest.left, dest.top + deltaY, dest.width(), surface->format.RGBToColor(r, g, b), align);
 }
 
-Common::Rect MystGraphics::getTextBoundingBox(const char *text, const Common::Rect &dest, Graphics::TextAlign align) {
+Common::Rect MystGraphics::getTextBoundingBox(const Common::U32String &text, const Common::Rect &dest, Graphics::TextAlign align) {
 	const Graphics::Font *font = getMenuFont();
 	return font->getBoundingBox(text, dest.left, dest.top, dest.width(), align);
 }

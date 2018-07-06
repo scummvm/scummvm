@@ -40,7 +40,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"",
-			AD_ENTRY1("MYST.DAT", "ae3258c9c90128d274aa6a790b3ad181"),
+			AD_ENTRY1("myst.dat", "ae3258c9c90128d274aa6a790b3ad181"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -58,7 +58,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"",
-			AD_ENTRY1("MYST.DAT", "4beb3366ed3f3b9bfb6e81a14a43bdcc"),
+			AD_ENTRY1("myst.dat", "4beb3366ed3f3b9bfb6e81a14a43bdcc"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -76,7 +76,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"",
-			AD_ENTRY1("MYST.DAT", "0e4b6fcbd2419d4371365314fb7443f8"),
+			AD_ENTRY1("myst.dat", "0e4b6fcbd2419d4371365314fb7443f8"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -112,7 +112,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"",
-			AD_ENTRY1("MYST.DAT", "4beb3366ed3f3b9bfb6e81a14a43bdcc"),
+			AD_ENTRY1("myst.dat", "4beb3366ed3f3b9bfb6e81a14a43bdcc"),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -130,7 +130,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"",
-			AD_ENTRY1("MYST.DAT", "e0937cca1ab125e48e30dc3cd5046ddf"),
+			AD_ENTRY1("myst.dat", "e0937cca1ab125e48e30dc3cd5046ddf"),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -148,7 +148,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"",
-			AD_ENTRY1("MYST.DAT", "f7e7d7ca69934f1351b5acd4fe4d44c2"),
+			AD_ENTRY1("myst.dat", "f7e7d7ca69934f1351b5acd4fe4d44c2"),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -166,7 +166,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"",
-			AD_ENTRY1("MYST.DAT", "a5795ce1751fc42525e4f9a1859181d5"),
+			AD_ENTRY1("myst.dat", "a5795ce1751fc42525e4f9a1859181d5"),
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -184,7 +184,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"",
-			AD_ENTRY1("MYST.DAT", "032c88e3b7e8db4ca475e7b7db9a66bb"),
+			AD_ENTRY1("myst.dat", "032c88e3b7e8db4ca475e7b7db9a66bb"),
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -202,7 +202,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"",
-			AD_ENTRY1("MYST.DAT", "d631d42567a941c67c78f2e491f4ea58"),
+			AD_ENTRY1("myst.dat", "d631d42567a941c67c78f2e491f4ea58"),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -219,7 +219,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"",
-			AD_ENTRY1("MYST.DAT", "196384f87e8bcb51731bce8416ab6a07"),
+			AD_ENTRY1("myst.dat", "196384f87e8bcb51731bce8416ab6a07"),
 			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -237,7 +237,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"makingofmyst",
 			"",
-			AD_ENTRY1("MAKING.DAT", "f6387e8f0f7b8a3e42c95294315d6a0e"),
+			AD_ENTRY1("making.dat", "f6387e8f0f7b8a3e42c95294315d6a0e"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -255,7 +255,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"makingofmyst",
 			"",
-			AD_ENTRY1("MAKING.DAT", "03ff62607e64419ab2b6ebf7b7bcdf63"),
+			AD_ENTRY1("making.dat", "03ff62607e64419ab2b6ebf7b7bcdf63"),
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -273,7 +273,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"Masterpiece Edition",
-			AD_ENTRY1("MYST.DAT", "c4cae9f143b5947262e6cb2397e1617e"),
+			AD_ENTRY1("myst.dat", "c4cae9f143b5947262e6cb2397e1617e"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -291,7 +291,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"Masterpiece Edition",
-			AD_ENTRY1("MYST.DAT", "f88e0ace66dbca78eebdaaa1d3314ceb"),
+			AD_ENTRY1("myst.dat", "f88e0ace66dbca78eebdaaa1d3314ceb"),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -309,7 +309,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"Masterpiece Edition",
-			AD_ENTRY1("MYST.DAT", "aea81633b2d2ae498f09072fb87263b6"),
+			AD_ENTRY1("myst.dat", "aea81633b2d2ae498f09072fb87263b6"),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -327,7 +327,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		{
 			"myst",
 			"Masterpiece Edition",
-			AD_ENTRY1("MYST.DAT", "4a05771b60f4a69869838d01e85c9e80"),
+			AD_ENTRY1("myst.dat", "4a05771b60f4a69869838d01e85c9e80"),
 			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -339,15 +339,14 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst Masterpiece Edition - 25th Anniversary
-	// English Windows
-	// Created by the ScummVM team
+	// English Windows - Created by the ScummVM team
 	{
 		{
 			"myst",
 			"Masterpiece Edition - 25th Anniversary",
 			{
-				{"MYST.DAT", 0, "c4cae9f143b5947262e6cb2397e1617e", -1},
-				{"MENU.DAT", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
+				{"myst.dat", 0, "c4cae9f143b5947262e6cb2397e1617e", -1},
+				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -361,15 +360,14 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst Masterpiece Edition - 25th Anniversary
-	// French Windows
-	// Created by the ScummVM team
+	// French Windows - Repacked by the ScummVM team
 	{
 		{
 			"myst",
 			"Masterpiece Edition - 25th Anniversary",
 			{
-				{"MYST.DAT", 0, "aea81633b2d2ae498f09072fb87263b6", -1},
-				{"MENU.DAT", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
+				{"myst_french.dat", 0, "7c8230be50ffcac588e7db8788ad7614", -1},
+				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
 				AD_LISTEND
 			},
 			Common::FR_FRA,
@@ -378,20 +376,19 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_MYST_ME
 		},
 		GType_MYST,
-		GF_ME | GF_25TH,
+		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
 		0,
 	},
 
 	// Myst Masterpiece Edition - 25th Anniversary
-	// German Windows
-	// Created by the ScummVM team
+	// German Windows - Repacked by the ScummVM team
 	{
 		{
 			"myst",
-			"Masterpiece Edition",
+			"Masterpiece Edition - 25th Anniversary",
 			{
-				{"MYST.DAT", 0, "f88e0ace66dbca78eebdaaa1d3314ceb", -1},
-				{"MENU.DAT", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
+				{"myst_german.dat", 0, "3952554439960b22a360e8e006dfed58", -1},
+				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
 				AD_LISTEND
 			},
 			Common::DE_DEU,
@@ -400,7 +397,49 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_MYST_ME
 		},
 		GType_MYST,
-		GF_ME,
+		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
+		0,
+	},
+
+	// Myst Masterpiece Edition - 25th Anniversary
+	// Polish Windows - Repacked by the ScummVM team
+	{
+		{
+			"myst",
+			"Masterpiece Edition - 25th Anniversary",
+			{
+				{"myst_polish.dat", 0, "9ca82ff26fcbfacf40e4164523a50854", -1},
+				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
+				AD_LISTEND
+			},
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST_ME
+		},
+		GType_MYST,
+		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
+		0,
+	},
+
+	// Myst Masterpiece Edition - 25th Anniversary
+	// Spanish Windows - Repacked by the ScummVM team
+	{
+		{
+			"myst",
+			"Masterpiece Edition - 25th Anniversary",
+			{
+				{"myst_spanish.dat", 0, "822ed3c0de912c10b877dcd2cc078493", -1},
+				{"menu.dat", 0, "7dc23051084f79b1c2bccc84cdec0503", -1},
+				AD_LISTEND
+			},
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST_ME
+		},
+		GType_MYST,
+		GF_ME | GF_25TH | GF_LANGUAGE_FILES,
 		0,
 	},
 
@@ -678,7 +717,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD | GF_25TH,
+		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
 		0,
 	},
 
@@ -699,7 +738,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD | GF_25TH,
+		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
 		0,
 	},
 
@@ -720,7 +759,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD | GF_25TH,
+		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
 		0,
 	},
 
@@ -741,7 +780,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD | GF_25TH,
+		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
 		0,
 	},
 
@@ -762,7 +801,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD | GF_25TH,
+		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
 		0,
 	},
 
@@ -783,7 +822,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD | GF_25TH,
+		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
 		0,
 	},
 
@@ -804,7 +843,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUI_OPTIONS_RIVEN
 		},
 		GType_RIVEN,
-		GF_DVD | GF_25TH,
+		GF_DVD | GF_25TH | GF_LANGUAGE_FILES,
 		0,
 	},
 
@@ -2940,9 +2979,9 @@ static const MohawkGameDescription fallbackDescs[] = {
 };
 
 static const ADFileBasedFallback fileBased[] = {
-	{ &fallbackDescs[0].desc,  { "MYST.DAT", 0 } },
-	{ &fallbackDescs[1].desc,  { "MAKING.DAT", 0 } },
-	{ &fallbackDescs[2].desc,  { "MYST.DAT", "Help.dat", 0 } },	// Help system doesn't exist in original
+	{ &fallbackDescs[0].desc,  { "myst.dat", 0 } },
+	{ &fallbackDescs[1].desc,  { "making.dat", 0 } },
+	{ &fallbackDescs[2].desc,  { "myst.dat", "help.dat", 0 } },	// Help system doesn't exist in original
 	{ &fallbackDescs[3].desc,  { "a_Data.MHK", 0 } },
 	{ &fallbackDescs[4].desc,  { "a_Data.MHK", "t_Data1.MHK" , 0 } },
 	{ 0, { 0 } }
