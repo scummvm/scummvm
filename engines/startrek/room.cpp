@@ -27,6 +27,22 @@
 
 #include "rooms/function_map.h"
 
+// TODO: Delete this macro, replacing it with the next one.
+// New "[roomName]NumActions" variables need to be made before that.
+#define ADD_ROOM_OLD(ROOM) {\
+	if (name.equalsIgnoreCase(#ROOM)) {\
+		_roomActionList = ROOM##ActionList;\
+		_numRoomActions = sizeof(ROOM##ActionList) / sizeof(RoomAction);\
+	}\
+}
+
+#define ADD_ROOM(ROOM) {\
+	if (name.equalsIgnoreCase(#ROOM)) {\
+		_roomActionList = ROOM##ActionList;\
+		_numRoomActions = ROOM##NumActions;\
+	}\
+}
+
 namespace StarTrek {
 
 Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
@@ -38,132 +54,41 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 
 	_roomIndex = name.lastChar() - '0';
 
-	// Find room-specific code table
-	if (name == "DEMON0") {
-		_roomActionList = demon0ActionList;
-		_numRoomActions = sizeof(demon0ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "DEMON1") {
-		_roomActionList = demon1ActionList;
-		_numRoomActions = sizeof(demon1ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "DEMON2") {
-		_roomActionList = demon2ActionList;
-		_numRoomActions = sizeof(demon2ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "DEMON3") {
-		_roomActionList = demon3ActionList;
-		_numRoomActions = sizeof(demon3ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "DEMON4") {
-		_roomActionList = demon4ActionList;
-		_numRoomActions = sizeof(demon4ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "DEMON5") {
-		_roomActionList = demon5ActionList;
-		_numRoomActions = sizeof(demon5ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "DEMON6") {
-		_roomActionList = demon6ActionList;
-		_numRoomActions = sizeof(demon6ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "TUG0") {
-		_roomActionList = tug0ActionList;
-		_numRoomActions = sizeof(tug0ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "TUG1") {
-		_roomActionList = tug1ActionList;
-		_numRoomActions = sizeof(tug1ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "TUG2") {
-		_roomActionList = tug2ActionList;
-		_numRoomActions = sizeof(tug2ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "TUG3") {
-		_roomActionList = tug3ActionList;
-		_numRoomActions = sizeof(tug3ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "LOVE0") {
-		_roomActionList = love0ActionList;
-		_numRoomActions = sizeof(love0ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "LOVE1") {
-		_roomActionList = love1ActionList;
-		_numRoomActions = sizeof(love1ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "LOVE2") {
-		_roomActionList = love2ActionList;
-		_numRoomActions = sizeof(love2ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "LOVE3") {
-		_roomActionList = love3ActionList;
-		_numRoomActions = sizeof(love3ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "LOVE4") {
-		_roomActionList = love4ActionList;
-		_numRoomActions = sizeof(love4ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "LOVE5") {
-		_roomActionList = love5ActionList;
-		_numRoomActions = sizeof(love5ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "MUDD0") {
-		_roomActionList = mudd0ActionList;
-		_numRoomActions = sizeof(mudd0ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "MUDD1") {
-		_roomActionList = mudd1ActionList;
-		_numRoomActions = sizeof(mudd1ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "MUDD2") {
-		_roomActionList = mudd2ActionList;
-		_numRoomActions = sizeof(mudd2ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "MUDD3") {
-		_roomActionList = mudd3ActionList;
-		_numRoomActions = sizeof(mudd3ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "MUDD4") {
-		_roomActionList = mudd4ActionList;
-		_numRoomActions = sizeof(mudd4ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "MUDD5") {
-		_roomActionList = mudd5ActionList;
-		_numRoomActions = sizeof(mudd5ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "FEATHER0") {
-		_roomActionList = feather0ActionList;
-		_numRoomActions = sizeof(feather0ActionList) / sizeof(RoomAction);
-	}
-	else if (name == "FEATHER1") {
-		_roomActionList = feather1ActionList;
-		_numRoomActions = feather1NumActions;
-	}
-	else if (name == "FEATHER2") {
-		_roomActionList = feather2ActionList;
-		_numRoomActions = feather2NumActions;
-	}
-	else if (name == "FEATHER3") {
-		_roomActionList = feather3ActionList;
-		_numRoomActions = feather3NumActions;
-	}
-	else if (name == "FEATHER4") {
-		_roomActionList = feather4ActionList;
-		_numRoomActions = feather4NumActions;
-	}
-	else if (name == "FEATHER5") {
-		_roomActionList = feather5ActionList;
-		_numRoomActions = feather5NumActions;
-	}
-	else if (name == "FEATHER6") {
-		_roomActionList = feather6ActionList;
-		_numRoomActions = feather6NumActions;
-	}
-	else if (name == "FEATHER7") {
-		_roomActionList = feather7ActionList;
-		_numRoomActions = feather7NumActions;
-	}
-	else {
+	_roomActionList = nullptr;
+
+	ADD_ROOM_OLD(demon0);
+	ADD_ROOM_OLD(demon1);
+	ADD_ROOM_OLD(demon2);
+	ADD_ROOM_OLD(demon3);
+	ADD_ROOM_OLD(demon4);
+	ADD_ROOM_OLD(demon5);
+	ADD_ROOM_OLD(demon6);
+	ADD_ROOM_OLD(tug0);
+	ADD_ROOM_OLD(tug1);
+	ADD_ROOM_OLD(tug2);
+	ADD_ROOM_OLD(tug3);
+	ADD_ROOM_OLD(love0);
+	ADD_ROOM_OLD(love1);
+	ADD_ROOM_OLD(love2);
+	ADD_ROOM_OLD(love3);
+	ADD_ROOM_OLD(love4);
+	ADD_ROOM_OLD(love5);
+	ADD_ROOM_OLD(mudd0);
+	ADD_ROOM_OLD(mudd1);
+	ADD_ROOM_OLD(mudd2);
+	ADD_ROOM_OLD(mudd3);
+	ADD_ROOM_OLD(mudd4);
+	ADD_ROOM_OLD(mudd5);
+	ADD_ROOM_OLD(feather0);
+	ADD_ROOM(feather1);
+	ADD_ROOM(feather2);
+	ADD_ROOM(feather3);
+	ADD_ROOM(feather4);
+	ADD_ROOM(feather5);
+	ADD_ROOM(feather6);
+	ADD_ROOM(feather7);
+
+	if (_roomActionList == nullptr) {
 		warning("Room \"%s\" unimplemented", name.c_str());
 		_numRoomActions = 0;
 	}
