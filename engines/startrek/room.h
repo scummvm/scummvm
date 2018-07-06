@@ -1655,6 +1655,56 @@ public:
 
 	// FEATHER6
 	void feather6Tick1();
+	void feather6TouchedHotspot0();
+	void feather6UseSpockOnCrystals();
+	void feather6UseMccoyOnCrystals();
+	void feather6UseRedshirtOnCrystals();
+	void feather6UseRockOnStalactites();
+	void feather6ReachedPositionToThrowRock();
+	void feather6DoneThrowingRock();
+	void feather6KirkDiedFromStalactites();
+	void feather6UseRockOnCrystals();
+	void feather6ReachedCrystalsWithRock();
+	void feather6Tick();
+	void feather6HitCrystalsWithRockFirstTime();
+	void feather6HitCrystalsWithRockSecondTime();
+	void feather6UseRockOnStalagmites();
+	void feather6UseRockAnywhere();
+	void feather6UseKnifeOnStalagmites();
+	void feather6UseKnifeAnywhere();
+	void feather6UseKnifeOnMccoy();
+	void feather6UseKnifeOnSpock();
+	void feather6UseKnifeOnRedshirt();
+	void feather6UseCrystalAnywhere();
+	void feather6UseSnakeAnywhere();
+	void feather6UseMedkitAnywhere();
+	void feather6UsePhaser();
+	void feather6LookAtEastExit();
+	void feather6LookAnywhere();
+	void feather6LookAtRocks();
+	void feather6LookAtStalagmites();
+	void feather6LookAtCrystals();
+	void feather6LookAtKirk();
+	void feather6LookAtSpock();
+	void feather6LookAtMccoy();
+	void feather6LookAtRedshirt();
+	void feather6LookAtStalactites();
+	void feather6TalkToMccoy();
+	void feather6TalkToRedshirt();
+	void feather6TalkToSpock();
+	void feather6UseMTricorderOnEastExit();
+	void feather6UseMTricorderOnRocks();
+	void feather6UseSTricorderOnEastExit();
+	void feather6UseSTricorderAnywhere();
+	void feather6UseSTricorderOnRocks();
+	void feather6UseSTricorderOnCrystals();
+	void feather6UseSTricorderOnStalactites();
+	void feather6UseSTricorderOnStalagmites();
+	void feather6GetCrystals();
+	void feather6UseKnifeOnCrystals();
+	void feather6ReachedCrystalsWithKnife();
+	void feather6DoneCuttingCrystals();
+	void feather6Timer4Expired();
 
 	// FEATHER7
 	void feather7Tick1();
@@ -1788,6 +1838,9 @@ private:
 			// feather2
 			bool showedSnakeToTlaoxac; // 0xca
 			bool tlaoxacUnconscious; // 0xcb
+
+			// feather6
+			bool usedRockOnCrystalsOnce;
 		} feather;
 
 
