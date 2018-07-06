@@ -243,6 +243,7 @@ struct AwayMission {
 		} mudd;
 
 		struct {
+			bool diedFromStalactites; // 0x29
 			// 0: initial state
 			// 1: one rock thrown at it
 			// 2: two rocks thrown at it (low enough to climb up)
