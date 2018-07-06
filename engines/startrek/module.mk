@@ -52,6 +52,12 @@ MODULE_OBJS = \
 	rooms/feather5.o \
 	rooms/feather6.o \
 	rooms/feather7.o \
+	rooms/trial0.o \
+	rooms/trial1.o \
+	rooms/trial2.o \
+	rooms/trial3.o \
+	rooms/trial4.o \
+	rooms/trial5.o \
 	
 
 

@@ -1785,6 +1785,11 @@ extern const int        feather1NumActions,   feather2NumActions,   feather3NumA
 extern const RoomAction feather5ActionList[], feather6ActionList[], feather7ActionList[];
 extern const int        feather5NumActions,   feather6NumActions,   feather7NumActions;
 
+extern const RoomAction trial0ActionList[], trial1ActionList[], trial2ActionList[], trial3ActionList[];
+extern const int        trial0NumActions,   trial1NumActions,   trial2NumActions,   trial3NumActions;
+extern const RoomAction trial4ActionList[], trial5ActionList[];
+extern const int        trial4NumActions,   trial5NumActions;
+
 }
 
 #endif

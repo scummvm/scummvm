@@ -262,6 +262,12 @@ struct AwayMission {
 			bool showedSnakeToTlaoxac; // 0x35
 			int16 missionScore; // 0x36
 		} feather;
+
+		struct {
+			int16 field29; // 0x29
+			int16 field2b; // 0x2b
+			int16 missionScore; // 0x5f
+		} trial;
 	};
 };
 // Size: 0x129 bytes
