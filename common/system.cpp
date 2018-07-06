@@ -49,6 +49,7 @@ OSystem::OSystem() {
 	_updateManager = nullptr;
 #endif
 	_fsFactory = nullptr;
+	_backendInitialized = false;
 }
 
 OSystem::~OSystem() {
@@ -98,6 +99,13 @@ void OSystem::initBackend() {
 	// set it.
 // 	if (!_fsFactory)
 // 		error("Backend failed to instantiate fs factory");
+
+	_backendInitialized = true;
+}
+
+void OSystem::destroy() {
+	_backendInitialized = false;
+	delete this;
 }
 
 bool OSystem::setGraphicsMode(const char *name) {
