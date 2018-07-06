@@ -1894,6 +1894,7 @@ enum GameStringIDs {
 	TX_FEA6_007,
 	TX_FEA6_008,
 	TX_FEA6_009,
+	// MISSING
 	TX_FEA6_011,
 	TX_FEA6_012,
 	TX_FEA6_013,
@@ -1933,7 +1934,7 @@ enum GameStringIDs {
 	TX_FEA6N003,
 	TX_FEA6N004,
 	TX_FEA6N005,
-	TX_FEA6N006,
+	TX_FEA6N006, // UNUSED
 	TX_FEA6N007,
 	TX_FEA6N008,
 	TX_FEA6N009,
@@ -1945,9 +1946,10 @@ enum GameStringIDs {
 	TX_FEA6N015,
 	TX_FEA6N016,
 	TX_FEA6N017,
+	// MISSING
 	TX_FEA6N020,
-	TX_FEA6N028,
-	TX_FEA6N029,
+	TX_FEA6N028, // UNUSED
+	TX_FEA6N029, // UNUSED
 
 
 	TX_SIN3_012,
@@ -3781,13 +3783,13 @@ const char * const g_gameStrings[] = {
 	"#FEA6\\FEA6_009#Damn it Jim, I'm a surgeon not a geologist.",
 	"#FEA6\\FEA6_011#Everyone is healthy, Jim, there's no need for the medical kit here.",
 	"#FEA6\\FEA6_012#It would appear that our tentacled friend wants dessert. You can't go back that way, unless you enjoy being eaten.",
-	"#FEA6\\FEA6_013#I've lost any appetite I may have had for squid, Jim",
+	"#FEA6\\FEA6_013#I've lost any appetite I may have had for squid, Jim.", // TYPO
 	"#FEA6\\FEA6_014#Jim! Going back across that river would be insane.",
 	"#FEA6\\FEA6_015#Well, they're not organic. What did you think they were, calcified tribbles?",
 	"#FEA6\\FEA6_016#Captains and security officers. They don't realize how fragile the human body can be.",
-	"#FEA6\\FEA6_017#Well isn't that just great!",
+	"#FEA6\\FEA6_017#Well isn't this just great!", // TYPO
 	"#FEA6\\FEA6_018#Fascinating. These rocks are limestone, but contain an unusually high content of heavy metals. There are dilithium crystals here, but in a very raw form.",
-	"#FEA6\\FEA6_019#I fail to see any logic in that action, Captain It may also cause stalactites to fall.",
+	"#FEA6\\FEA6_019#I fail to see any logic in that action, Captain. It may also cause stalactites to fall.", // TYPO
 	"#FEA6\\FEA6_020#I would suggest using something to pry that loose, Captain.",
 	"#FEA6\\FEA6_021#It is unwise to use a rock here, Captain.",
 	"#FEA6\\FEA6_022#My tricorder indicates unusual energy patterns in this direction, Captain.",
@@ -3812,7 +3814,7 @@ const char * const g_gameStrings[] = {
 	"#FEA6\\FEA6_041#If we ever get back to Earth, one hundred credits says I'll beat you.",
 	"#FEA6\\FEA6_042#Reminds me of some spelunking I did on Hades IV. Ever do any climbing, Captain?",
 	"#FEA6\\FEA6_043#Sure we do. That's the challenge.",
-	"#FEA6\\FEA6N000#A stalagtite breaks loose and falls. You are mortally injured and die.",
+	"#FEA6\\FEA6N000#A stalagtite breaks through and falls. You are mortally injured and die.", // TYPO
 	"#FEA6\\FEA6N001#An interesting, but useless, manuever.",
 	"#FEA6\\FEA6N002#As usual, Dr. McCoy looks annoyed by the mission. ",
 	"#FEA6\\FEA6N003#Darkness, leading into the unknown.",
@@ -3828,7 +3830,7 @@ const char * const g_gameStrings[] = {
 	"#FEA6\\FEA6N013#Stalagmites rise from the floor of the cave.",
 	"#FEA6\\FEA6N014#They appear to be ordinary rocks. Spock's tricorder might say otherwise.",
 	"#FEA6\\FEA6N015#This is one place where dilithium crystals don't seem to be very useful.",
-	"#FEA6\\FEA6N016#This is the way that you entered the cave. If you leave this way, the tentacled creature that attack you will probably try to get a second course for its dinner.",
+	"#FEA6\\FEA6N016#This is the way that you entered the cave. If you leave this way, the tentacled creature that attacked you will probably try to get a second course for its dinner.", // TYPO
 	"#FEA6\\FEA6N017#You have one dilithium crystal, in raw form.",
 	"#FEA6\\FEA6N020#You will need something to pry it loose.",
 	"#FEA6\\FEA6N028#You manage to pry loose one dilithium crystal.",
