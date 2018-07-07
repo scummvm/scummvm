@@ -197,10 +197,10 @@ void Room::trial0ReachedRoomCenter() {
 		playMidiMusicTracks(2, -1);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_049);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_044);
-		_vm->_awayMission.trial.missionScore = 0;
+		_vm->_awayMission.trial.field5f = 0;
 
 		// FIXME: Are these parameters in the right order?
-		endMission(_vm->_awayMission.trial.field29, _vm->_awayMission.trial.field2b, 0);
+		endMission(_vm->_awayMission.trial.missionScore, _vm->_awayMission.trial.field2b, 0);
 	}
 }
 
@@ -279,10 +279,12 @@ void Room::trial0UsePhaserOrRock() {
 }
 
 void Room::trial0UseSnakeOnVlict() {
+	// Unused, since the snake item doesn't carry over to the courtroom
 	showText(TX_SPEAKER_VLICT, TX_TRI4_076);
 }
 
 void Room::trial0UseSnakeOnGuard() {
+	// Unused, since the snake item doesn't carry over to the courtroom
 	showText(TX_SPEAKER_KLINGON_GUARD, TX_TRI0_F24);
 }
 

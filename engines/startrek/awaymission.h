@@ -264,9 +264,22 @@ struct AwayMission {
 		} feather;
 
 		struct {
-			int16 field29; // 0x29
+			int16 missionScore; // 0x29
 			int16 field2b; // 0x2b
-			int16 missionScore; // 0x5f
+			bool entityDefeated; // 0x31: Used iron rod on the energy being
+			bool doorOpen; // 0x32
+			bool scannedLock; // 0x33
+
+			// 0: Don't know the door code yet
+			// 2: Will just open the door when the keypad is used
+			// 5: Will activate the unknown program when the keypad is used
+			byte doorCodeBehaviour; // 0x34
+
+			bool forceFieldDown; // 0x5d
+			bool uhuraAnalyzedCode; // 0x5e
+			int16 field5f; // 0x5f
+			bool gotPointsForGettingRod; // 0x61
+			bool gotPointsForCoatingRodWithIron; // 0x62
 		} trial;
 	};
 };

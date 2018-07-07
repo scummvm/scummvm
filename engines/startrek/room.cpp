@@ -466,6 +466,10 @@ void Room::playVoc(Common::String filename) {
 	_vm->_sound->playVoc(filename);
 }
 
+void Room::stopAllVocSounds() {
+	_vm->_sound->stopAllVocSounds();
+}
+
 void Room::spockScan(int direction, TextRef text, bool changeDirection) {
 	const char *dirs = "nsew";
 	Common::String anim = "sscan_";
