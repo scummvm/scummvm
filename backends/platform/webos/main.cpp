@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 	int res = scummvm_main(argc, argv);
 
 	// Free OSystem
-	delete (OSystem_SDL_WebOS *)g_system;
+	g_system->destroy();
 
 	return res;
 }

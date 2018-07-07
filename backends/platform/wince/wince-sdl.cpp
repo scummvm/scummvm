@@ -237,7 +237,7 @@ int SDL_main(int argc, char **argv) {
 		res = scummvm_main(argc, argv);
 
 		// Free OSystem
-		delete(OSystem_WINCE3 *)g_system;
+		g_system->destroy();
 #if !defined(DEBUG) && !defined(__GNUC__)
 	}
 	__except(handleException(GetExceptionInformation())) {
