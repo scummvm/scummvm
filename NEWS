@@ -2,6 +2,13 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 2.1.0 (2018-??-??)
+ New games:
+   - Might and Magic IV - Clouds of Xeen.
+   - Might and Magic V - Darkside of Xeen.
+   - Might and Magic - World of Xeen.
+   - Might and Magic - World of Xeen 2 CD Talkie.
+   - Might and Magic - Swords of Xeen.
+
  General:
    - Improved GUI rendering and overall GUI performance.
    - Fixed incorrect cursor movement when it's controlled using the keyboard.
