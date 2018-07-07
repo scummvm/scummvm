@@ -105,6 +105,7 @@ void OSystem::initBackend() {
 
 void OSystem::destroy() {
 	_backendInitialized = false;
+	Common::String::releaseMemoryPoolMutex();
 	delete this;
 }
 
