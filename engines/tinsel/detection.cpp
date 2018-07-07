@@ -113,7 +113,6 @@ bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSimpleSavesNames) ||
 		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate);
 }
 
