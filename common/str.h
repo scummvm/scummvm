@@ -47,6 +47,8 @@ class String {
 public:
 	static const uint32 npos = 0xFFFFFFFF;
 
+	static void releaseMemoryPoolMutex();
+
 	typedef char          value_type;
 	/**
 	 * Unsigned version of the underlying type. This can be used to cast
