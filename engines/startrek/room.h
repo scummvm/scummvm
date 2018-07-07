@@ -133,6 +133,7 @@ private:
 	void endMission(int16 score, int16 arg2, int16 arg3);                                      // Cmd 0x11
 	void showGameOverMenu();                                                                   // Cmd 0x12
 	void playVoc(Common::String filename);                                                     // Cmd 0x15
+	void stopAllVocSounds();                                                                   // Cmd 0x17
 
 	// Helper functions for repetitive stuff.
 
@@ -1755,6 +1756,89 @@ public:
 
 	// TRIAL1
 	void trial1Tick1();
+	void trial1Tick50();
+	void trial1DoorOpened();
+	void trial1TouchedHotspot0();
+	void trial1KirkDied();
+	void trial1TouchedHotspot1();
+	void trial1GetRod();
+	void trial1ReachedRod();
+	void trial1PickedUpRod();
+	void trial1LookAtKirk();
+	void trial1LookAtSpock();
+	void trial1LookAtMccoy();
+	void trial1LookAtRedshirt();
+	void trial1LookAtWall();
+	void trial1LookAtFloor();
+	void trial1LookAtRods();
+	void trial1LookAtDoor();
+	void trial1LookAtLock();
+	void trial1LookAtEntity();
+	void trial1LookAtMoltenRock();
+	void trial1TalkToKirk();
+	void trial1TalkToSpock();
+	void trial1TalkToMccoy();
+	void trial1TalkToRedshirt();
+	void trial1TalkToEntity();
+	void trial1UsePhaserOnCrewman();
+	void trial1UsePhaserOnEntity();
+	void trial1UsePhaserOnWall();
+	void trial1UseStunPhaserOnFloor();
+	void trial1ReachedFloorToUseStunPhaser();
+	void trial1DoneShootingFloorWithStunPhaser();
+	void trial1UseKillPhaserOnFloor();
+	void trial1ReachedFloorToUseKillPhaser();
+	void trial1DoneShootingFloorWithKillPhaser();
+	void trial1UsePhaserOnRod();
+	void trial1UsePhaserOnDoor();
+	void trial1UsePhaserOnLock();
+	void trial1UseMTricorderOnKirk();
+	void trial1UseMTricorderOnSpock();
+	void trial1UseMTricorderOnMccoy();
+	void trial1UseMTricorderOnRedshirt();
+	void trial1UseMTricorderOnEntity();
+	void trial1UseSTricorderOnWall();
+	void trial1UseSTricorderOnEntity();
+	void trial1UseSTricorderOnRods();
+	void trial1UseSTricorderOnFloor();
+	void trial1UseSTricorderOnDoor();
+	void trial1UseSTricorderOnLock();
+	void trial1UseCommunicator();
+	void trial1UseMccoyOnEntity();
+	void trial1UseMccoyOnLock();
+	void trial1UseMccoyOnFloor();
+	void trial1UseSpockOnEntity();
+	void trial1UseSpockOnLock();
+	void trial1SpockReachedKeypad();
+	void trial1SpockUsedKeypad();
+	void trial1SpockReachedKeypadWithExtraProgram();
+	void trial1SpockUsedKeypadWithExtraProgram();
+	void trial1UseSpockOnFloor();
+	void trial1UseRedshirtOnEntity();
+	void trial1UseRedshirtOnLock();
+	void trial1RedshirtReachedKeypad();
+	void trial1RedshirtUsedKeypad();
+	void trial1RedshirtReachedKeypadWithExtraProgram();
+	void trial1RedshirtUsedKeypadWithExtraProgram();
+	void trial1UseRedshirtOnFloor();
+	void trial1UseRodOnMccoy();
+	void trial1UseRodOnSpock();
+	void trial1UseRodOnRedshirt();
+	void trial1UseRodOnFloorOrWall();
+	void trial1UseWoodRodOnEntity();
+	void trial1ReachedPositionToThrowWoodRod();
+	void trial1DoneThrowingWoodRod();
+	void trial1UseWoodRodOnLock();
+	void trial1UseWoodRodOnMoltenRock();
+	void trial1ReachedMoltenRock();
+	void trial1DoneCoatingWoodRod();
+	void trial1UseIronRodOnEntity();
+	void trial1ReachedPositionToThrowIronRod();
+	void trial1DoneThrowingIronRod();
+	void trial1UseIronRodOnLock();
+	void trial1GetThrownIronRod();
+	void trial1WalkToDoor();
+	void trial1UseMedkit();
 
 	// TRIAL2
 	void trial2Tick1();
