@@ -1921,7 +1921,17 @@ if test "$have_clang" = yes; then
 	# which changes the current alignment.
 	# Our common/pack-{start,end}.h trigger this and it cannot easily and portably
 	# be disabled inside pack-{start,end}.h so we disable it globally for now.
-	test "$_clang_major" -ge 6 && append_var CXXFLAGS "-Wno-pragma-pack"
+
+	# But macOS clang is numbered according to the OS version, so exclude it
+
+	case $_host_os in
+		darwin*)
+			# Leave it as is
+		;;
+		*)
+			test "$_clang_major" -ge 6 append_var CXXFLAGS "-Wno-pragma-pack"
+		;;
+	esac
 
 	# clang does accept all gcc options we use, so we keep have_gcc
 fi
