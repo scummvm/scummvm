@@ -2098,7 +2098,7 @@ enum GameStringIDs {
 	TX_TRI1_027,
 	// UNUSED
 	TX_TRI1_029,
-	TX_TRI1_030,
+	TX_TRI1_030, // UNUSED
 	TX_TRI1_031,
 	TX_TRI1_032,
 	TX_TRI1_033,
@@ -4189,7 +4189,7 @@ const char * const g_gameStrings[] = {
 	"#TRI1\\TRI1_022#One Male Human, average physical condition.",
 	"#TRI1\\TRI1_023#He's a Male Human, excellent physical condition.",
 	"#TRI1\\TRI1_024#Male Human, good physical condition.",
-	"#TRI1\\TRI1_025#Male Human-Vulcan hybrid. Excellent physical condition.",
+	"#TRI1\\TRI1_025#One male Human-Vulcan hybrid. Excellent physical condition.", // TYPO
 	"#TRI1\\TRI1_026#Nobody needs healing, Jim, but you will if they harm my patient.",
 	"#TRI1\\TRI1_027#Ouch!",
 	"#TRI1\\TRI1_029#This is not in my field of expertise.",
@@ -4211,7 +4211,7 @@ const char * const g_gameStrings[] = {
 	"#TRI1\\TRI1_045#As I suspected, Captain. The creature is in stasis. It should awaken in 3.48 days.",
 	"#TRI1\\TRI1_046#Captain, I have calculated the odds of surviving this at...",
 	"#TRI1\\TRI1_047#Not much is known about Hrakkour, Ensign. This would appear to be some sort of a mining installation; that creature might be a native lifeform.",
-	"#TRI1\\TRI1_048#Captain, my instructor at the Academy always told me that if you don't know what you're going to do with a phaser, you shouldn't draw it.",
+	"#TRI1\\TRI1_048#Captain, my instructor at the Academy always told me that if you don't know what you're going to do with your phaser, you shouldn't draw it.", // TYPO
 	"#TRI1\\TRI1_049#Do you want me to arrest it, interrogate it, or beat it up, Captain?",
 	"#TRI1\\TRI1_050#I refuse, Captain, on the grounds that it might eliminate me.",
 	"#TRI1\\TRI1_051#I refuse, Captain, on the grounds that it might eliminate me.",
