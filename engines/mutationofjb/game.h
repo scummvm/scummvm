@@ -24,9 +24,10 @@
 #define MUTATIONOFJB_GAME_H
 
 #include "common/scummsys.h"
-#include "mutationofjb/script.h"
-#include "mutationofjb/font.h"
+#include "mutationofjb/assets.h"
 #include "mutationofjb/gui.h"
+#include "mutationofjb/script.h"
+#include "mutationofjb/tasks/taskmanager.h"
 
 namespace Common {
 class String;
@@ -65,10 +66,10 @@ public:
 	ActionInfo::Action getCurrentAction() const;
 	void setCurrentAction(ActionInfo::Action);
 
-	Font& getSystemFont();
-	Font& getSpeechFont();
-
 	static uint8 colorFromString(const char *colorStr);
+
+	TaskManager& getTaskManager();
+	Assets &getAssets();
 
 private:
 	bool loadGameData(bool partB);
@@ -88,8 +89,8 @@ private:
 
 	ScriptExecutionContext _scriptExecCtx;
 
-	SystemFont _systemFont;
-	SpeechFont _speechFont;
+	TaskManager _taskManager;
+	Assets _assets;
 };
 
 }

@@ -20,17 +20,38 @@
  *
  */
 
-#ifndef MUTATIONOFJB_UTIL_H
-#define MUTATIONOFJB_UTIL_H
+#ifndef MUTATIONOFJB_CONVERSATIONLINELIST_H
+#define MUTATIONOFJB_CONVERSATIONLINELIST_H
 
-namespace Common {
-class String;
-}
+#include "common/str.h"
+#include "common/array.h"
 
 namespace MutationOfJB {
 
-void reportFileMissingError(const char *fileName);
-Common::String toUpperCP895(const Common::String &str);
+class ConversationLineList {
+public:
+	struct Speech {
+		Common::String _text;
+		Common::String _voiceFile;
+
+		bool isRepeating() const { return _text.firstChar() == '*'; }
+		bool isFirstSpeaker() const { return _text.firstChar() == '~'; }
+		bool isSecondSpeaker() const { return _text.firstChar() == '`'; }
+	};
+
+	struct Line {
+		Common::Array<Speech> _speeches;
+		Common::String _extra;
+	};
+
+	ConversationLineList(const Common::String &fileName);
+	const Line *getLine(uint index) const;
+
+private:
+	bool parseFile(const Common::String &fileName);
+
+	Common::Array<Line> _lines;
+};
 
 }
 

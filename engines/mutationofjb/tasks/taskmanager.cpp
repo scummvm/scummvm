@@ -20,18 +20,28 @@
  *
  */
 
-#ifndef MUTATIONOFJB_UTIL_H
-#define MUTATIONOFJB_UTIL_H
-
-namespace Common {
-class String;
-}
+#include "mutationofjb/tasks/taskmanager.h"
+#include "mutationofjb/tasks/task.h"
 
 namespace MutationOfJB {
 
-void reportFileMissingError(const char *fileName);
-Common::String toUpperCP895(const Common::String &str);
-
+void TaskManager::addTask(Task *task) {
+	_tasks.push_back(task);
+	task->setTaskManager(this);
+	task->start();
 }
 
-#endif
+void TaskManager::removeTask(Task *task) {
+	Tasks::iterator it = Common::find(_tasks.begin(), _tasks.end(), task);
+	if (it != _tasks.end()) {
+		_tasks.erase(it);
+	}
+}
+
+void TaskManager::update() {
+	for (Tasks::const_iterator it = _tasks.begin(); it != _tasks.end(); ++it) {
+		(*it)->update();
+	}
+}
+
+}

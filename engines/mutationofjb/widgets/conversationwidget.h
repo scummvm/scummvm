@@ -28,21 +28,32 @@
 
 namespace MutationOfJB {
 
+class ConversationWidget;
+
+class ConversationWidgetCallback {
+public:
+	virtual ~ConversationWidgetCallback() {}
+	virtual void onResponseClicked(ConversationWidget *, int response) = 0;
+};
+
 class ConversationWidget : public Widget {
 public:
 	enum { CONVERSATION_LINES = 4 };
 
 	ConversationWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &surface);
+	void setCallback(ConversationWidgetCallback *callback) { _callback = callback; }
 
 	void setLine(int lineNo, const Common::String &str);
 
+	virtual void handleEvent(const Common::Event &event) override;
+
 protected:
-	void _draw(Graphics::ManagedSurface &surface);
+	virtual void _draw(Graphics::ManagedSurface &surface) override;
 
 private:
-
 	Graphics::Surface _surface;
 	Common::String _lines[CONVERSATION_LINES];
+	ConversationWidgetCallback *_callback;
 };
 
 }

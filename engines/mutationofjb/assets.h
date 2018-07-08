@@ -20,17 +20,33 @@
  *
  */
 
-#ifndef MUTATIONOFJB_UTIL_H
-#define MUTATIONOFJB_UTIL_H
+#ifndef MUTATIONOFJB_ASSETS_H
+#define MUTATIONOFJB_ASSETS_H
 
-namespace Common {
-class String;
-}
+#include "mutationofjb/font.h"
+#include "mutationofjb/conversationlinelist.h"
 
 namespace MutationOfJB {
 
-void reportFileMissingError(const char *fileName);
-Common::String toUpperCP895(const Common::String &str);
+class Game;
+
+class Assets {
+public:
+	Assets(Game &game);
+
+	Font& getSystemFont();
+	Font& getSpeechFont();
+
+	ConversationLineList& getToSayList();
+	ConversationLineList& getResponseList();
+
+private:
+	Game &_game;
+	SystemFont _systemFont;
+	SpeechFont _speechFont;
+	ConversationLineList _toSayList;
+	ConversationLineList _responseList;
+};
 
 }
 

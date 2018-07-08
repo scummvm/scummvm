@@ -20,18 +20,37 @@
  *
  */
 
-#ifndef MUTATIONOFJB_UTIL_H
-#define MUTATIONOFJB_UTIL_H
-
-namespace Common {
-class String;
-}
+#include "common/scummsys.h"
 
 namespace MutationOfJB {
 
-void reportFileMissingError(const char *fileName);
-Common::String toUpperCP895(const Common::String &str);
+class TaskManager;
+
+class Task {
+public:
+	enum State {
+		IDLE,
+		RUNNING,
+		FINISHED
+	};
+
+	Task() : _taskManager(nullptr) {}
+	virtual ~Task() {}
+
+	virtual void start() = 0;
+	virtual void update() = 0;
+
+	void setTaskManager(TaskManager *taskMan) { _taskManager = taskMan; }
+	TaskManager *getTaskManager() { return _taskManager; }
+
+	State getState() const { return _state; }
+
+protected:
+	void setState(State state) { _state = state; }
+
+private:
+	TaskManager *_taskManager;
+	State _state;
+};
 
 }
-
-#endif

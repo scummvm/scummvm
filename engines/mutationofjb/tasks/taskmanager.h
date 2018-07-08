@@ -20,17 +20,31 @@
  *
  */
 
-#ifndef MUTATIONOFJB_UTIL_H
-#define MUTATIONOFJB_UTIL_H
+#ifndef MUTATIONOFJB_TASKMANAGER_H
+#define MUTATIONOFJB_TASKMANAGER_H
 
-namespace Common {
-class String;
-}
+#include "common/array.h"
 
 namespace MutationOfJB {
 
-void reportFileMissingError(const char *fileName);
-Common::String toUpperCP895(const Common::String &str);
+class Game;
+class Task;
+
+class TaskManager {
+public:
+	TaskManager(Game &game) : _game(game) {}
+
+	void addTask(Task *task);
+	void removeTask(Task *task);
+	void update();
+
+	Game &getGame() { return _game; }
+
+private:
+	typedef Common::Array<Task *> Tasks;
+	Tasks _tasks;
+	Game &_game;
+};
 
 }
 

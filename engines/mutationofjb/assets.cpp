@@ -20,18 +20,26 @@
  *
  */
 
-#ifndef MUTATIONOFJB_UTIL_H
-#define MUTATIONOFJB_UTIL_H
-
-namespace Common {
-class String;
-}
+#include "mutationofjb/assets.h"
 
 namespace MutationOfJB {
 
-void reportFileMissingError(const char *fileName);
-Common::String toUpperCP895(const Common::String &str);
+Assets::Assets(Game &game) : _game(game), _toSayList("tosay.ger"), _responseList("response.ger") {}
 
+Font& Assets::getSystemFont() {
+	return _systemFont;
 }
 
-#endif
+Font& Assets::getSpeechFont() {
+	return _speechFont;
+}
+
+ConversationLineList &Assets::getToSayList() {
+	return _toSayList;
+}
+
+ConversationLineList &Assets::getResponseList() {
+	return _responseList;
+}
+
+}
