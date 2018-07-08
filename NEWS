@@ -19,9 +19,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a bug that leads to enormous memory consumption in scene 22.
 
  MOHAWK:
-   - Fixed clicking through the books in the library in Myst 1.0.
-   - Fixed video playback if videos are skipped in Riven.
+   - Fixed numerous crashes, graphics glitches, and sound imperfections.
+   - Fixed crash from observator random position going out of bounds in Myst.
+   - Fixed crashes associated with opening the map in interactive cases in Myst.
+   - Fixed crash when Jungle Island fireflies go out of bounds in Riven.
+   - Fixed missing end credits for Polish version in Riven.
+   - Improved usability for various puzzles.
    - Added support for keyboard shortcuts for loading and saving as documented in the game manual.
+   - Added autosave to slot 0.
 
  SCI:
    - Fixed crash in Police Quest IV: Open Season.
