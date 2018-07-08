@@ -45,6 +45,7 @@ public:
 	Director();
 
 	void update();
+	bool processEvent(Common::Event &event);
 
 	void setPallette(const byte *pallete) { g_system->getPaletteManager()->setPalette(pallete, 0, 256); }
 

@@ -112,6 +112,9 @@ Common::Error Pink::PinkEngine::run() {
 	while (!shouldQuit()) {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
+			if (_director.processEvent(event))
+				continue;
+
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RTL:

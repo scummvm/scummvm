@@ -81,7 +81,7 @@ Director::Director()
 	_wm.setScreen(&_surface);
 	_wm.setMode(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu);
 	_wm.setMenuHotzone(Common::Rect(0, 0, 640, 23));
-	_wm.setMenuDelay(250);
+	_wm.setMenuDelay(250000);
 
 	_menu = _wm.addMenu();
 	_menu->addStaticMenus(menuSubItems);
@@ -100,6 +100,10 @@ void Director::update() {
 	_wm.draw();
 
 	draw();
+}
+
+bool Director::processEvent(Common::Event &event) {
+	return _wm.processEvent(event);
 }
 
 void Director::addSprite(ActionCEL *sprite) {
