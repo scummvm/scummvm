@@ -2090,7 +2090,7 @@ esac
 
 # If possible, we want to use -Wglobal-constructors
 # However, not all compilers support that, so check whether the active one does.
-echocheck "whether -Wglobal-constructors work"
+echocheck "whether C++ compiler accepts -Wglobal-constructors"
 cat > $TMPC << EOF
 int main() { return 0; }
 EOF
@@ -2107,7 +2107,7 @@ echo $_global_constructors
 # change the way we instantiate the singleton classes as done in PR #967.
 # Note: we check the -Wundefined-var-template as gcc does not error out on unknown
 # -Wno-xxx flags.
-echocheck "whether -Wno-undefined-var-template work"
+echocheck "whether C++ compiler accepts -Wno-undefined-var-template"
 cat > $TMPC << EOF
 int main() { return 0; }
 EOF
