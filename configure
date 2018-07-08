@@ -167,6 +167,7 @@ _build_hq_scalers=yes
 _enable_prof=no
 _global_constructors=no
 _no_undefined_var_template=no
+_no_pragma_pack=no
 _bink=yes
 _cloud=auto
 # Default vkeybd/keymapper/eventrec options
@@ -1914,24 +1915,6 @@ fi
 
 if test "$have_clang" = yes; then
 	add_line_to_config_mk 'HAVE_CLANG = 1'
-	_clang_major=`gcc_get_define __clang_major__`
-	#_clang_minor=`gcc_get_define __clang_minor__`
-
-	# clang 6.0 enables -Wpragma-pack which warns when leaving an included file
-	# which changes the current alignment.
-	# Our common/pack-{start,end}.h trigger this and it cannot easily and portably
-	# be disabled inside pack-{start,end}.h so we disable it globally for now.
-
-	# But macOS clang is numbered according to the OS version, so exclude it
-
-	case $_host_os in
-		darwin*)
-			# Leave it as is
-		;;
-		*)
-			test "$_clang_major" -ge 6 append_var CXXFLAGS "-Wno-pragma-pack"
-		;;
-	esac
 
 	# clang does accept all gcc options we use, so we keep have_gcc
 fi
@@ -2117,6 +2100,20 @@ if test "$_no_undefined_var_template" = yes; then
 	append_var CXXFLAGS "-Wno-undefined-var-template"
 fi
 echo $_no_undefined_var_template
+
+# Vanilla clang 6 enables the new -Wpragma-pack which warns when leaving an
+# included file which changes the current alignment.
+# As our common/pack-{start,end}.h trigger this we disable this warning.
+# Because there is no correlation between the version reported by Apple Xcode
+# clang and vanilla clang we cannot rely on the __clang_major__/clang_minor__
+# macros.
+# Note: as above, we check for -Wpragma-pack as not all compilers error out on
+# unknown -Wno-xxx flags.
+echocheck "whether C++ compiler accepts -Wno-pragma-pack"
+echo "int main() { return 0; }" >$TMPC
+cc_check -Wpragma-pack -Werror && _no_pragma_pack=yes
+test "$_no_pragma_pack" = yes && append_var CXXFLAGS "-Wno-pragma-pack"
+echo $_no_pragma_pack
 
 echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
 if `which $_host_alias-strings >/dev/null 2>&1`; then
