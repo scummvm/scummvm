@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-07-08 17:55+0200\n"
-"PO-Revision-Date: 2018-06-29 11:29+0000\n"
+"PO-Revision-Date: 2018-07-08 16:19+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -827,9 +827,8 @@ msgid "Failed to apply some of the graphic options changes:"
 msgstr "Folgende Grafikoptionen konnten nicht geändert werden:"
 
 #: gui/options.cpp:562
-#, fuzzy
 msgid "the video mode could not be changed"
-msgstr "Grafikmodus konnte nicht geändert werden."
+msgstr "der Videomodus konnte nicht geändert werden"
 
 #: gui/options.cpp:575
 #, fuzzy
