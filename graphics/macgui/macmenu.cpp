@@ -90,6 +90,12 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 	_bbox.bottom = kMenuHeight;
 
 	_menuActivated = false;
+
+	if (_wm->_mode & kWMModeAutohideMenu)
+		_isVisible = false;
+	else
+		_isVisible = true;
+
 	_activeItem = -1;
 	_activeSubItem = -1;
 
@@ -344,6 +350,9 @@ static void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int
 bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 	Common::Rect r(_bbox);
 
+	if (!_isVisible)
+		return false;
+
 	if (!_contentIsDirty && !forceRedraw)
 		return false;
 
@@ -466,6 +475,9 @@ void MacMenu::renderSubmenu(MacMenuItem *menu) {
 }
 
 bool MacMenu::processEvent(Common::Event &event) {
+	if (!_isVisible)
+		return false;
+
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		return keyEvent(event);

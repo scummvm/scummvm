@@ -65,6 +65,9 @@ public:
 	void setActive(bool active) { _menuActivated = active; }
 	bool hasAllFocus() { return _menuActivated; }
 
+	bool isVisible() { return _isVisible; }
+	void setVisible(bool visible) { _isVisible = visible; }
+
 	Common::Rect _bbox;
 
 private:
@@ -90,6 +93,7 @@ private:
 	const Font *_font;
 
 	bool _menuActivated;
+	bool _isVisible;
 
 	int _activeItem;
 	int _activeSubItem;

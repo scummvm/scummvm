@@ -23,6 +23,7 @@
 #include "common/events.h"
 #include "common/list.h"
 #include "common/system.h"
+#include "common/timer.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
@@ -144,6 +145,8 @@ static const byte macCursorCrossBar[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+static void menuTimerHandler(void *refCon);
+
 MacWindowManager::MacWindowManager() {
 	_screen = 0;
 	_lastId = 0;
@@ -153,6 +156,7 @@ MacWindowManager::MacWindowManager() {
 
 	_menu = 0;
 	_menuDelay = 0;
+	_menuTimerActive = false;
 
 	_fullRefresh = true;
 
@@ -174,6 +178,8 @@ MacWindowManager::~MacWindowManager() {
 		delete _windows[i];
 
 	delete _fontMan;
+
+	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
 }
 
 MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
@@ -208,6 +214,13 @@ MacMenu *MacWindowManager::addMenu() {
 	_windows.push_back(_menu);
 
 	return _menu;
+}
+
+void MacWindowManager::activateMenu() {
+	if (!_menu)
+		return;
+
+	_menu->setVisible(true);
 }
 
 void MacWindowManager::setActive(int id) {
@@ -306,21 +319,47 @@ void MacWindowManager::draw() {
 	_fullRefresh = false;
 }
 
+static void menuTimerHandler(void *refCon) {
+	MacWindowManager *wm = (MacWindowManager *)refCon;
+
+	if (wm->_menuHotzone.contains(wm->_lastMousePos))
+		wm->activateMenu();
+
+	wm->_menuTimerActive = false;
+
+	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
+}
+
 bool MacWindowManager::processEvent(Common::Event &event) {
+	if (event.type == Common::EVENT_MOUSEMOVE)
+		_lastMousePos = event.mouse;
+
+	if (_menu && !_menu->isVisible()) {
+		if ((_mode & kWMModeAutohideMenu) && event.type == Common::EVENT_MOUSEMOVE) {
+			if (!_menuTimerActive && _menuHotzone.contains(event.mouse)) {
+				_menuTimerActive = true;
+
+				g_system->getTimerManager()->installTimerProc(&menuTimerHandler, _menuDelay, this, "menuWindowCursor");
+			}
+		}
+	}
+
 	// Menu gets events first for shortcuts and menu bar
 	if (_menu && _menu->processEvent(event))
 		return true;
 
-	if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
-			((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
-		if (_cursorIsArrow) {
-			CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
-			_cursorIsArrow = false;
-		}
-	} else {
-		if (_cursorIsArrow == false) {
-			CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
-			_cursorIsArrow = true;
+	if (_activeWindow != -1) {
+		if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
+				((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
+			if (_cursorIsArrow) {
+				CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
+				_cursorIsArrow = false;
+			}
+		} else {
+			if (_cursorIsArrow == false) {
+				CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
+				_cursorIsArrow = true;
+			}
 		}
 	}
 

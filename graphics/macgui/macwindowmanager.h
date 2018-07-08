@@ -140,6 +140,8 @@ public:
 	 */
 	MacMenu *addMenu();
 
+	void activateMenu();
+
 	/**
 	 * Set hot zone where menu appears (works only with autohide menu)
 	 */
@@ -208,6 +210,12 @@ public:
 
 public:
 	MacFontManager *_fontMan;
+	uint32 _mode;
+
+	Common::Point _lastMousePos;
+	Common::Rect _menuHotzone;
+
+	bool _menuTimerActive;
 
 private:
 	void drawDesktop();
@@ -218,8 +226,6 @@ private:
 
 private:
 	ManagedSurface *_screen;
-
-	uint32 _mode;
 
 	Common::List<BaseMacWindow *> _windowStack;
 	Common::Array<BaseMacWindow *> _windows;
@@ -235,7 +241,6 @@ private:
 	MacPatterns _patterns;
 
 	MacMenu *_menu;
-	Common::Rect _menuHotzone;
 	uint32 _menuDelay;
 
 	bool _cursorIsArrow;
