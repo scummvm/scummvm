@@ -724,6 +724,7 @@ public:
 	void intro3Text(uint16 nextReelPointer);
 
 	void monks2text();
+	void monks2ShowText(uint8 textIndex, uint8 x, uint8 y);
 	void textForEnd();
 	void textForMonkHelper(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount);
 	void textForMonk();
