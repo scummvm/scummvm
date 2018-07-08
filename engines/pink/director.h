@@ -30,6 +30,10 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/screen.h"
 
+namespace Graphics {
+	class MacMenu;
+}
+
 namespace Pink {
 
 class Actor;
@@ -62,7 +66,7 @@ public:
 
 	Actor *getActorByPoint(const Common::Point point);
 
-	Graphics::MacWindowManager &getWndManager() { return _wndManager; };
+	Graphics::MacWindowManager &getWndManager() { return _wm; };
 
 private:
 	void draw();
@@ -71,7 +75,8 @@ private:
 
 private:
 	Graphics::Screen _surface;
-	Graphics::MacWindowManager _wndManager;
+	Graphics::MacWindowManager _wm;
+	Graphics::MacMenu *_menu;
 	Common::Array<Common::Rect> _dirtyRects;
 	Common::Array<ActionCEL *> _sprites;
 	Common::Array<ActionCEL *> _savedSprites;

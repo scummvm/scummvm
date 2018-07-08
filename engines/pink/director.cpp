@@ -29,10 +29,62 @@
 #include "pink/objects/actions/action_cel.h"
 #include "pink/objects/actors/actor.h"
 
+#include "graphics/macgui/macmenu.h"
+
 namespace Pink {
+
+enum {
+	kMenuHighLevel = -1,
+	kMenuAbout = 0,
+	kMenuGame = 1,
+	kMenuBOK = 2,
+	kMenuOnline = 3,
+	kMenuHelp = 4
+};
+
+enum {
+	kMenuActionAbout,
+	kMenuActionNewGame,
+	kMenuActionOpenSavedGame,
+	kMenuActionSaveGame,
+	kMenuActionSaveGameAs,
+	kMenuActionSongs,
+	kMenuActionSoundPreferences,
+	kMenuActionPause,
+	kMenuActionExit
+};
+
+static const Graphics::MacMenuData menuSubItems[] = {
+	{ kMenuHighLevel, "Game",	0, 0, false },
+	{ kMenuHighLevel, "Book of Knowledge",	0, 0, false },
+	{ kMenuHighLevel, "Online",	0, 0, false },
+	{ kMenuHighLevel, "Help",	0, 0, false },
+
+	{ kMenuGame, "New Game",	kMenuActionNewGame, 'N', false },
+	{ kMenuGame, "Open Saved Game...",	kMenuActionOpenSavedGame, 'O', false },
+	{ kMenuGame, "Save Game",	kMenuActionSaveGame, 'S', false },
+	{ kMenuGame, "Save Game As...",	kMenuActionSaveGameAs, 0, false },
+	{ kMenuGame, NULL,			0, 0, false },
+	{ kMenuGame, "Songs",	kMenuActionSongs, 0, false },
+	{ kMenuGame, NULL,			0, 0, false },
+	{ kMenuGame, "Sound Preferences...",	kMenuActionSoundPreferences, 0, false },
+	{ kMenuGame, NULL,			0, 0, false },
+	{ kMenuGame, "Pause",	kMenuActionPause, 'P', false },
+	{ kMenuGame, "Exit",	kMenuActionExit, 'N', false },
+
+	{ 0, NULL,			0, 0, false }
+};
+
+
 Director::Director()
 	: _surface(640, 480) {
-	_wndManager.setScreen(&_surface);
+	_wm.setScreen(&_surface);
+	_wm.setMode(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu);
+	_wm.setMenuHotzone(Common::Rect(0, 0, 640, 23));
+	_wm.setMenuDelay(250);
+
+	_menu = _wm.addMenu();
+	_menu->addStaticMenus(menuSubItems);
 }
 
 void Director::update() {
@@ -44,6 +96,8 @@ void Director::update() {
 		if (_sprites[i]->needsUpdate())
 			_sprites[i]->update();
 	}
+
+	_wm.draw();
 
 	draw();
 }
