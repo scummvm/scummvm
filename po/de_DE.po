@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-07-08 17:55+0200\n"
-"PO-Revision-Date: 2018-07-08 17:27+0000\n"
+"PO-Revision-Date: 2018-07-08 17:28+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
@@ -832,7 +832,7 @@ msgstr "der Videomodus konnte nicht geändert werden"
 
 #: gui/options.cpp:575
 msgid "the stretch mode could not be changed"
-msgstr "der Darstellungsmodus konnte nicht geändert werden"
+msgstr "der Skaliermodus konnte nicht geändert werden"
 
 #: gui/options.cpp:581
 msgid "the aspect ratio setting could not be changed"
@@ -916,7 +916,7 @@ msgstr "Spezielle Dithering-Methoden unterstützt von manchen Spielen"
 
 #: gui/options.cpp:1074
 msgid "Stretch mode:"
-msgstr "Darstellungsmodus:"
+msgstr "Skaliermodus:"
 
 #: gui/options.cpp:1085 backends/graphics/openglsdl/openglsdl-graphics.cpp:637
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
@@ -1970,7 +1970,7 @@ msgstr "Konnte nicht zu Grafikmodus wechseln: \""
 
 #: engines/engine.cpp:333
 msgid "Could not switch to stretch mode: '"
-msgstr "Fehler beim Wechsel in Darstellungsmodus: '"
+msgstr "Fehler beim Wechsel in Skaliermodus: '"
 
 #: engines/engine.cpp:342
 msgid "Could not apply aspect ratio setting."
@@ -2359,7 +2359,7 @@ msgstr "Bilineare Filterung deaktiviert"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:825
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2577
 msgid "Stretch mode"
-msgstr "Skalierungsmodus"
+msgstr "Skaliermodus"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
