@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-08 17:55+0200\n"
+"POT-Creation-Date: 2018-07-08 23:20+0200\n"
 "PO-Revision-Date: 2018-04-18 10:18+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -914,7 +914,7 @@ msgid "Stretch mode:"
 msgstr ""
 
 #: gui/options.cpp:1085 backends/graphics/openglsdl/openglsdl-graphics.cpp:637
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2696
 msgid "Fullscreen mode"
 msgstr "Повноекранний режим"
 
@@ -2308,7 +2308,7 @@ msgid "Stretch to window"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:639
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2694
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2698
 msgid "Windowed mode"
 msgstr "Віконний режим"
 
@@ -2318,27 +2318,27 @@ msgid "Resolution: %dx%d"
 msgstr "Розгалуження %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2521
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
 msgid "Enabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін увімкнено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:776
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
 msgid "Disabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін вимкнено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2545
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Filtering enabled"
 msgstr "Фільтрування увімкнено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2547
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2551
 msgid "Filtering disabled"
 msgstr "Фільтрування вимкнено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:825
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2577
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2581
 msgid "Stretch mode"
 msgstr ""
 
@@ -2353,7 +2353,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без збільшення"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2639
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2643
 msgid "Active graphics filter:"
 msgstr "Поточний графічний фільтр:"
 

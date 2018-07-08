@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-08 17:55+0200\n"
+"POT-Creation-Date: 2018-07-08 23:20+0200\n"
 "PO-Revision-Date: 2018-04-18 14:10+0000\n"
 "Last-Translator: Fred Almeida <fred_pj@hotmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -926,7 +926,7 @@ msgid "Stretch mode:"
 msgstr ""
 
 #: gui/options.cpp:1085 backends/graphics/openglsdl/openglsdl-graphics.cpp:637
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2696
 msgid "Fullscreen mode"
 msgstr "Modo de ecrã inteiro"
 
@@ -2258,7 +2258,7 @@ msgid "Stretch to window"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:639
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2694
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2698
 msgid "Windowed mode"
 msgstr ""
 
@@ -2268,27 +2268,27 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2521
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
 msgid "Enabled aspect ratio correction"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:776
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
 msgid "Disabled aspect ratio correction"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2545
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Filtering enabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2547
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2551
 msgid "Filtering disabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:825
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2577
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2581
 msgid "Stretch mode"
 msgstr ""
 
@@ -2303,7 +2303,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2639
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2643
 msgid "Active graphics filter:"
 msgstr ""
 

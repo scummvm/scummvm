@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-08 17:55+0200\n"
+"POT-Creation-Date: 2018-07-08 23:20+0200\n"
 "PO-Revision-Date: 2018-04-18 10:09+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -911,7 +911,7 @@ msgid "Stretch mode:"
 msgstr ""
 
 #: gui/options.cpp:1085 backends/graphics/openglsdl/openglsdl-graphics.cpp:637
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2696
 msgid "Fullscreen mode"
 msgstr "Re¾im celé obrazovky"
 
@@ -2306,7 +2306,7 @@ msgid "Stretch to window"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:639
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2694
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2698
 msgid "Windowed mode"
 msgstr "Re¾im do okna"
 
@@ -2316,27 +2316,27 @@ msgid "Resolution: %dx%d"
 msgstr "Rozli¹ení: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2521
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
 msgid "Enabled aspect ratio correction"
 msgstr "Povolena korekce pomìru stran"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:776
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
 msgid "Disabled aspect ratio correction"
 msgstr "Zakázána korekce pomìru stran"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2545
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Filtering enabled"
 msgstr "Filtrování povoleno"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2547
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2551
 msgid "Filtering disabled"
 msgstr "Filtrování zakázáno"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:825
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2577
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2581
 msgid "Stretch mode"
 msgstr ""
 
@@ -2351,7 +2351,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normální (bez zmìny velikosti)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2639
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2643
 msgid "Active graphics filter:"
 msgstr "Aktivní grafický filtr:"
 
