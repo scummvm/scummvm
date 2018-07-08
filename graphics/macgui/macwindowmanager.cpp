@@ -149,7 +149,10 @@ MacWindowManager::MacWindowManager() {
 	_lastId = 0;
 	_activeWindow = -1;
 
+	_mode = kWMModeNone;
+
 	_menu = 0;
+	_menuDelay = 0;
 
 	_fullRefresh = true;
 
@@ -279,7 +282,7 @@ void MacWindowManager::draw() {
 
 	removeMarked();
 
-	if (_fullRefresh)
+	if (_fullRefresh && !(_mode & kWMModeNoDesktop))
 		drawDesktop();
 
 	for (Common::List<BaseMacWindow *>::const_iterator it = _windowStack.begin(); it != _windowStack.end(); it++) {

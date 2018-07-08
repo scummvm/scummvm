@@ -55,6 +55,13 @@ enum {
 	kPatternLightGray = 5,
 	kPatternDarkGray = 6
 };
+
+enum {
+	kWMModeNone         = 0,
+	kWMModeNoDesktop    = (1 << 0),
+	kWMModeAutohideMenu = (1 << 1)
+};
+
 }
 using namespace MacGUIConstants;
 
@@ -132,6 +139,16 @@ public:
 	 * @return Pointer to a new empty menu.
 	 */
 	MacMenu *addMenu();
+
+	/**
+	 * Set hot zone where menu appears (works only with autohide menu)
+	 */
+	void setMenuHotzone(const Common::Rect &rect) { _menuHotzone = rect; }
+
+	/**
+	 * Set delay in milliseconds when menu appears (works only with autohide menu)
+	 */
+	void setMenuDelay(int delay) { _menuDelay = delay; }
 	/**
 	 * Set the desired window state to active.
 	 * @param id ID of the window that has to be set to active.
@@ -187,6 +204,8 @@ public:
 	void pushWatchCursor();
 	void popCursor();
 
+	void setMode(uint32 mode) { _mode = mode; }
+
 public:
 	MacFontManager *_fontMan;
 
@@ -199,6 +218,8 @@ private:
 
 private:
 	ManagedSurface *_screen;
+
+	uint32 _mode;
 
 	Common::List<BaseMacWindow *> _windowStack;
 	Common::Array<BaseMacWindow *> _windows;
@@ -214,6 +235,8 @@ private:
 	MacPatterns _patterns;
 
 	MacMenu *_menu;
+	Common::Rect _menuHotzone;
+	uint32 _menuDelay;
 
 	bool _cursorIsArrow;
 };
