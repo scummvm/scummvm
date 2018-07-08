@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-07-08 17:55+0200\n"
-"PO-Revision-Date: 2018-06-29 19:51+0000\n"
+"PO-Revision-Date: 2018-07-08 17:31+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
-"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fr/>\n"
+"Language-Team: French "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -825,14 +825,12 @@ msgid "Failed to apply some of the graphic options changes:"
 msgstr "Certaines options graphiques n'ont pu être changées :"
 
 #: gui/options.cpp:562
-#, fuzzy
 msgid "the video mode could not be changed"
-msgstr "le mode vidéo n'a pu être changé."
+msgstr "le mode vidéo n'a pu être changé"
 
 #: gui/options.cpp:575
-#, fuzzy
 msgid "the stretch mode could not be changed"
-msgstr "le mode vidéo n'a pu être changé."
+msgstr "le mode d'étirement n'a pu être changé"
 
 #: gui/options.cpp:581
 msgid "the aspect ratio setting could not be changed"
@@ -916,7 +914,7 @@ msgstr "Mode spécial de tramage supporté par certains jeux"
 
 #: gui/options.cpp:1074
 msgid "Stretch mode:"
-msgstr ""
+msgstr "Mode d'étirement :"
 
 #: gui/options.cpp:1085 backends/graphics/openglsdl/openglsdl-graphics.cpp:637
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
@@ -1971,9 +1969,8 @@ msgid "Could not switch to video mode: '"
 msgstr "Impossible de changer le mode vidéo à: '"
 
 #: engines/engine.cpp:333
-#, fuzzy
 msgid "Could not switch to stretch mode: '"
-msgstr "Impossible de changer le mode vidéo à: '"
+msgstr "Impossible de changer le mode d'étirement à : '"
 
 #: engines/engine.cpp:342
 msgid "Could not apply aspect ratio setting."
@@ -2307,24 +2304,23 @@ msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:272
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
-#, fuzzy
 msgid "Center"
-msgstr "Entrer"
+msgstr "Centrer"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:273
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "Mise à l'échelle des pixels"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:274
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Fit to window"
-msgstr ""
+msgstr "Adapter à la fenêtre"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:275
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:79
 msgid "Stretch to window"
-msgstr ""
+msgstr "Étirer pour remplir la fenêtre"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:639
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2694
@@ -2359,7 +2355,7 @@ msgstr "Filtrage Désactivé"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:825
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2577
 msgid "Stretch mode"
-msgstr ""
+msgstr "Mode d'étirement"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
