@@ -20,18 +20,26 @@
  *
  */
 
-#ifndef MUTATIONOFJB_UTIL_H
-#define MUTATIONOFJB_UTIL_H
-
-namespace Common {
-class String;
-}
+#include "mutationofjb/tasks/task.h"
+#include "mutationofjb/gamedata.h"
+#include "mutationofjb/widgets/conversationwidget.h"
 
 namespace MutationOfJB {
 
-void reportFileMissingError(const char *fileName);
-Common::String toUpperCP895(const Common::String &str);
+class ConversationTask : public Task, public ConversationWidgetCallback {
+public:
+	ConversationTask(const ConversationInfo& convInfo) : _convInfo(convInfo), _currentLine(0) {}
+	virtual ~ConversationTask() {}
+
+	virtual void start() override;
+	virtual void update() override;
+
+	virtual void onResponseClicked(ConversationWidget *, int response) override;
+private:
+	void updateWidget();
+
+	const ConversationInfo &_convInfo;
+	uint _currentLine;
+};
 
 }
-
-#endif

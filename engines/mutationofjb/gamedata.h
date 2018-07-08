@@ -168,8 +168,9 @@ struct ConversationInfo {
 		uint8 _nextLineIndex;
 	};
 
+	typedef Common::Array<Item> Items;
 	struct Line {
-		Common::Array<Item> _items;
+		Items _items;
 	};
 
 	Common::Array<Line> _lines;

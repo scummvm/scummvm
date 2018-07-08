@@ -20,12 +20,17 @@ MODULE_OBJS := \
 	commands/renamecommand.o \
 	commands/saycommand.o \
 	commands/seqcommand.o \
+	commands/talkcommand.o \
+	tasks/conversationtask.o \
+	tasks/taskmanager.o \
 	widgets/buttonwidget.o \
 	widgets/conversationwidget.o \
 	widgets/imagewidget.o \
 	widgets/inventorywidget.o \
 	widgets/widget.o \
 	animationdecoder.o \
+	assets.o \
+	conversationlinelist.o \
 	debug.o \
 	detection.o \
 	encryptedfile.o \

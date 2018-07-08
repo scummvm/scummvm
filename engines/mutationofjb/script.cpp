@@ -44,6 +44,7 @@
 #include "mutationofjb/commands/newroomcommand.h"
 #include "mutationofjb/commands/renamecommand.h"
 #include "mutationofjb/commands/definestructcommand.h"
+#include "mutationofjb/commands/talkcommand.h"
 #include "mutationofjb/game.h"
 
 namespace MutationOfJB {
@@ -62,6 +63,7 @@ static CommandParser **getParsers() {
 		new ChangeSceneCommandParser,
 		new DefineStructCommandParser,
 		new SayCommandParser,
+		new TalkCommandParser,
 		new AddItemCommandParser,
 		new RemoveItemCommandParser,
 		new RemoveAllItemsCommandParser,

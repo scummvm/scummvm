@@ -33,7 +33,7 @@ class ScriptParseContext;
 
 class IfItemCommandParser : public ConditionalCommandParser {
 public:
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class IfItemCommand : public ConditionalCommand {

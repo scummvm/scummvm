@@ -25,6 +25,7 @@
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/gui.h"
 #include "mutationofjb/font.h"
+#include "common/events.h"
 
 namespace MutationOfJB {
 
@@ -36,7 +37,8 @@ enum {
 
 ConversationWidget::ConversationWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &surface) :
 	Widget(gui, area),
-	_surface(surface) {}
+	_surface(surface),
+	_callback(nullptr) {}
 
 
 void ConversationWidget::setLine(int lineNo, const Common::String &str) {
@@ -58,7 +60,28 @@ void ConversationWidget::_draw(Graphics::ManagedSurface &surface) {
 		}
 
 		// TODO: Active line should be WHITE.
-		_gui.getGame().getSystemFont().drawString(line, LIGHTGRAY, CONVERSATION_LINES_X, CONVERSATION_LINES_Y + i * CONVERSATION_LINE_HEIGHT, surface);
+		_gui.getGame().getAssets().getSystemFont().drawString(line, LIGHTGRAY, CONVERSATION_LINES_X, CONVERSATION_LINES_Y + i * CONVERSATION_LINE_HEIGHT, surface);
+	}
+}
+
+void ConversationWidget::handleEvent(const Common::Event &event) {
+	switch(event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+	{
+		const int16 x = event.mouse.x;
+		const int16 y = event.mouse.y;
+		if (_area.contains(x, y)) {
+			if (_callback) {
+				int lineNum = (y - CONVERSATION_LINES_Y) / CONVERSATION_LINE_HEIGHT;
+				if (!_lines[lineNum].empty()) {
+					_callback->onResponseClicked(this, lineNum);
+				}
+			}
+		}
+		break;
+	}
+	default:
+		break;
 	}
 }
 

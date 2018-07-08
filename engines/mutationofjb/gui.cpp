@@ -132,19 +132,25 @@ bool Gui::init() {
 
 void Gui::markDirty() {
 	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
-		(*it)->markDirty();
+		if ((*it)->isVisible()) {
+			(*it)->markDirty();
+		}
 	}
 }
 
 void Gui::handleEvent(const Common::Event &event) {
 	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
-		(*it)->handleEvent(event);
+		if ((*it)->isVisible()) {
+			(*it)->handleEvent(event);
+		}
 	}
 }
 
 void Gui::update() {
 	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
-		(*it)->update(*_screen);
+		if ((*it)->isVisible()) {
+			(*it)->update(*_screen);
+		}
 	}
 }
 

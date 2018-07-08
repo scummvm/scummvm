@@ -20,17 +20,37 @@
  *
  */
 
-#ifndef MUTATIONOFJB_UTIL_H
-#define MUTATIONOFJB_UTIL_H
+#ifndef MUTATIONOFJB_TALKCOMMAND_H
+#define MUTATIONOFJB_TALKCOMMAND_H
 
-namespace Common {
-class String;
-}
+#include "mutationofjb/commands/seqcommand.h"
+#include "common/scummsys.h"
 
 namespace MutationOfJB {
 
-void reportFileMissingError(const char *fileName);
-Common::String toUpperCP895(const Common::String &str);
+class ConversationTask;
+
+class TalkCommandParser : public SeqCommandParser {
+public:
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+};
+
+class TalkCommand : public SeqCommand {
+public:
+	enum Mode {
+		NORMAL_MODE,
+		RAY_AND_BUTTLEG_MODE,
+		CARNIVAL_TICKET_SELLER_MODE
+	};
+
+	TalkCommand(Mode mode) : _mode(mode), _task(nullptr) {}
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	virtual Common::String debugString() const;
+
+private:
+	Mode _mode;
+	ConversationTask *_task;
+};
 
 }
 

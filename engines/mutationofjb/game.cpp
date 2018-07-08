@@ -39,7 +39,9 @@ Game::Game(MutationOfJBEngine *vm)
 	_delayedLocalScript(nullptr),
 	_gui(*this, _vm->getScreen()),
 	_scriptExecCtx(*this),
-	_currentAction(ActionInfo::Walk) {
+	_currentAction(ActionInfo::Walk),
+	_taskManager(*this),
+	_assets(*this) {
 
 	_gameData = new GameData;
 	loadGameData(false);
@@ -192,14 +194,6 @@ void Game::setCurrentAction(ActionInfo::Action action) {
 	_currentAction = action;
 }
 
-Font& Game::getSystemFont() {
-	return _systemFont;
-}
-
-Font& Game::getSpeechFont() {
-	return _speechFont;
-}
-
 uint8 Game::colorFromString(const char *colorStr) {
 	struct {
 		const char *str;
@@ -223,6 +217,14 @@ uint8 Game::colorFromString(const char *colorStr) {
 
 	warning(_("Color not found"));
 	return 0x00;
+}
+
+TaskManager& Game::getTaskManager() {
+	return _taskManager;
+}
+
+Assets& Game::getAssets() {
+	return _assets;
 }
 
 }
