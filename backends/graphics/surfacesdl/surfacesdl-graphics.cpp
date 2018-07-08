@@ -335,9 +335,9 @@ void SurfaceSdlGraphicsManager::beginGFXTransaction() {
 
 	_transactionDetails.needHotswap = false;
 	_transactionDetails.needUpdatescreen = false;
-	_transactionDetails.needDisplayResize = false;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+	_transactionDetails.needDisplayResize = false;
 	_transactionDetails.needTextureUpdate = false;
 #endif
 #ifdef USE_RGB_COLOR
@@ -448,8 +448,10 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			// To fix this issue we update the screen change count right here.
 			_screenChangeCount++;
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 			if (_transactionDetails.needDisplayResize)
 				recalculateDisplayAreas();
+#endif
 			if (_transactionDetails.needUpdatescreen)
 				internUpdateScreen();
 		}
@@ -463,8 +465,10 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 #endif
 	} else if (_transactionDetails.needUpdatescreen) {
 		setGraphicsModeIntern();
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_transactionDetails.needDisplayResize)
 			recalculateDisplayAreas();
+#endif
 		internUpdateScreen();
 	}
 
