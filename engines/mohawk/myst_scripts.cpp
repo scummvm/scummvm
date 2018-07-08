@@ -634,6 +634,17 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 var, const ArgumentsArray 
 	debugC(kDebugScript, "\tdstRect.bottom: %d", dstRect.bottom);
 
 	_vm->_gfx->copyImageSectionToBackBuffer(imageId, srcRect, dstRect);
+
+	// WORKAROUND: When hitting the switch of the torture chamber in Achenar's
+	// hidden room on the Mechanical Age, the game calls this opcode multiple
+	// times in a row with different images without waiting in between.
+	// As a result the images are not shown since the screen is only
+	// updated once per frame. The original engine misbehaves as well.
+	// Here we artificially introduce a delay after each image to allow
+	// them to be visible for a few frames.
+	if (_vm->getCard()->getId() == 6009) {
+		_vm->wait(100);
+	}
 }
 
 void MystScriptParser::o_changeBackgroundSound(uint16 var, const ArgumentsArray &args) {
