@@ -52,12 +52,14 @@ public:
 	void removeAllItems();
 	void renameItem(const Common::String &oldName, const Common::String &newName);
 
-	void rotateItemsRight(uint n);
-	void rotateItemsLeft(uint n);
+	void scrollLeft();
+	void scrollRight();
 
 	void setObserver(InventoryObserver *observer);
 
 private:
+	void rotateItemsRight(uint n);
+	void rotateItemsLeft(uint n);
 	void reverseItems(uint from, uint to);
 
 	Items _items;

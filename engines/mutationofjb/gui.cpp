@@ -251,6 +251,10 @@ void Gui::onButtonClicked(ButtonWidget *button) {
 	if (buttonId <= BUTTON_PICKUP) {
 		const ActionInfo::Action actions[] = {ActionInfo::Walk, ActionInfo::Talk, ActionInfo::Look, ActionInfo::Use, ActionInfo::PickUp};
 		_game.setCurrentAction(actions[buttonId]);
+	} else if (buttonId == BUTTON_SCROLL_LEFT) {
+		_game.getGameData().getInventory().scrollLeft();
+	} else if (buttonId == BUTTON_SCROLL_RIGHT) {
+		_game.getGameData().getInventory().scrollRight();
 	}
 }
 

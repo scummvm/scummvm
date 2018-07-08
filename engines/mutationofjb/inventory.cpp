@@ -81,6 +81,18 @@ void Inventory::renameItem(const Common::String &oldName, const Common::String &
 	}
 }
 
+void Inventory::scrollLeft() {
+	if (_items.size() > VISIBLE_ITEMS) {
+		rotateItemsRight(1);
+	}
+}
+
+void Inventory::scrollRight() {
+	if (_items.size() > VISIBLE_ITEMS) {
+		rotateItemsLeft(1);
+	}
+}
+
 void Inventory::rotateItemsRight(uint n) {
 	if (_items.size() < 2) {
 		return;
@@ -121,7 +133,7 @@ void Inventory::reverseItems(uint from, uint to) {
 
 	const uint size = to - from + 1;
 	for (uint i = 0; i < size / 2; ++i) {
-		SWAP(_items[i], _items[size - i - 1]);
+		SWAP(_items[from + i], _items[to - i]);
 	}
 }
 
