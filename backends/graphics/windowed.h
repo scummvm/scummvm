@@ -94,8 +94,11 @@ protected:
 			error("convertVirtualToWindow called without a valid draw rect");
 		}
 
-		return Common::Point(targetX + (x * targetWidth + sourceWidth / 2) / sourceWidth,
-		                     targetY + (y * targetHeight + sourceHeight / 2) / sourceHeight);
+		int windowX = targetX + (x * targetWidth + sourceWidth / 2) / sourceWidth;
+		int windowY = targetY + (y * targetHeight + sourceHeight / 2) / sourceHeight;
+
+		return Common::Point(CLIP<int>(windowX, targetX, targetX + targetWidth - 1),
+		                     CLIP<int>(windowY, targetY, targetY + targetHeight - 1));
 	}
 
 	/**
@@ -124,7 +127,7 @@ protected:
 		int virtualY = ((y - sourceY) * targetHeight + sourceHeight / 2) / sourceHeight;
 
 		return Common::Point(CLIP<int>(virtualX, 0, targetWidth - 1),
-				             CLIP<int>(virtualY, 0, targetHeight - 1));
+		                     CLIP<int>(virtualY, 0, targetHeight - 1));
 	}
 
 	/**
