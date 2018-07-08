@@ -1942,7 +1942,7 @@ msgstr "Videómód nincs átállítva: '"
 
 #: engines/engine.cpp:333
 msgid "Could not switch to stretch mode: '"
-msgstr "Nem tudtam váltani nyújtás módba:"
+msgstr "Nem tudtam váltani nyújtás módba: '"
 
 #: engines/engine.cpp:342
 msgid "Could not apply aspect ratio setting."
