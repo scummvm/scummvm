@@ -2025,6 +2025,10 @@ void Myst::o_boilerIncreasePressureStop(uint16 var, const ArgumentsArray &args) 
 	_boilerPressureIncreasing = false;
 	_state.treeLastMoveTime = _vm->getTotalPlayTime();
 
+	while (_vm->_sound->isEffectPlaying()) {
+		_vm->doFrame();
+	}
+
 	if (_state.cabinPilotLightLit == 1) {
 		if (_state.cabinValvePosition > 0)
 			_vm->_sound->playBackground(8098, 49152);
@@ -2095,6 +2099,10 @@ void Myst::o_boilerDecreasePressureStop(uint16 var, const ArgumentsArray &args) 
 	_treeStopped = false;
 	_boilerPressureDecreasing = false;
 	_state.treeLastMoveTime = _vm->getTotalPlayTime();
+
+	while (_vm->_sound->isEffectPlaying()) {
+		_vm->doFrame();
+	}
 
 	if (_state.cabinPilotLightLit == 1) {
 		if (_state.cabinValvePosition > 0)
