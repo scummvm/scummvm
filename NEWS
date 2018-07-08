@@ -19,9 +19,19 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a bug that leads to enormous memory consumption in scene 22.
 
  MOHAWK:
-   - Fixed clicking through the books in the library in Myst 1.0.
-   - Fixed video playback if videos are skipped in Riven.
-   - Added support for keyboard shortcuts for loading and saving as documented in the game manual.
+   - Added a main menu for the 25th anniversary release of Myst ME.
+   - Repurposed the landing menu as a main menu for the 25th anniversary
+     release of Riven.
+   - Added autosave to slot 0 to Myst and Riven.
+   - Added keyboard shortcuts for loading and saving as documented in the game
+     manual to Myst and Riven.
+   - Fixed a crash caused by the observatory viewer random position going out
+     of bounds in Myst.
+   - Fixed a crash caused by Jungle Island flies going out of bounds in Riven.
+   - Fixed missing end credits for the Polish version in Riven.
+   - Improved usability for some puzzles in Myst and Riven.
+   - Fixed various crashes, graphics glitches, and sound imperfections in Myst
+     and Riven.
 
  SCI:
    - Fixed crash in Police Quest IV: Open Season.
