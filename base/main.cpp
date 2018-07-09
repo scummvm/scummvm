@@ -265,8 +265,8 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	system.engineInit();
 
     // Tell Discord what game we're running
-  #if defined(USE_DISCORD)
-    // TODO: UpdateDiscord with the caption and game id
+  #if defined(USE_DISCORD)	
+	Discord::UpdateDiscordPresence(caption, ConfMan.get("gameid"));
   #endif
   
 	// Run the engine
@@ -274,7 +274,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 
   // Shutdown Discord
   #if defined(USE_DISCORD)
-    // TODO: Shutdown here
+	Discord::Shutdown();
   #endif
 
 	// Inform backend that the engine finished
@@ -511,7 +511,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #endif
 
 #if defined(USE_DISCORD)
-  //TODO: Initialize Discord integration here
+	Discord::Init();
 #endif
 
 	// Unless a game was specified, show the launcher dialog

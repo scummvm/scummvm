@@ -1038,6 +1038,7 @@ const Feature s_features[] = {
 	{"fluidsynth",  "USE_FLUIDSYNTH", "libfluidsynth",    true, "FluidSynth support" },
 	{   "libcurl",     "USE_LIBCURL", "libcurl",          true, "libcurl support" },
 	{    "sdlnet",     "USE_SDL_NET", "SDL_net",          true, "SDL_net support" },
+  {   "discord",     "USE_DISCORD", "discord-rpc",      true, "Discord integration support" },
 
 	// Feature flags
 	{            "bink",             "USE_BINK",         "", true,  "Bink video support" },
@@ -1051,7 +1052,6 @@ const Feature s_features[] = {
 	{        "opengles",             "USE_GLES",         "", true,  "forced OpenGL ES mode" },
 	{         "taskbar",          "USE_TASKBAR",         "", true,  "Taskbar integration support" },
 	{           "cloud",            "USE_CLOUD",         "", true,  "Cloud integration support" },
-  {          "discord",         "USE_DISCORD",         "", true,  "Discord integration support" },
 	{     "translation",      "USE_TRANSLATION",         "", true,  "Translation support" },
 	{          "vkeybd",        "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
 	{       "keymapper",     "ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
