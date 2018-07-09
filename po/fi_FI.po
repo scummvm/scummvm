@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-07-08 23:20+0200\n"
-"PO-Revision-Date: 2018-06-29 14:31+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"PO-Revision-Date: 2018-07-09 15:40+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -819,14 +819,12 @@ msgid "Failed to apply some of the graphic options changes:"
 msgstr "Joitain grafiikka-asetuksia ei saatu asetettua:"
 
 #: gui/options.cpp:562
-#, fuzzy
 msgid "the video mode could not be changed"
-msgstr "videotilaa ei voitu vaihtaa."
+msgstr "videotilaa ei voitu vaihtaa"
 
 #: gui/options.cpp:575
-#, fuzzy
 msgid "the stretch mode could not be changed"
-msgstr "videotilaa ei voitu vaihtaa."
+msgstr "venytystilaa ei voitu vaihtaa"
 
 #: gui/options.cpp:581
 msgid "the aspect ratio setting could not be changed"
@@ -909,7 +907,7 @@ msgstr "Erityiset dithering asetukset joita jotkut pelit tukevat"
 
 #: gui/options.cpp:1074
 msgid "Stretch mode:"
-msgstr ""
+msgstr "Venytystila:"
 
 #: gui/options.cpp:1085 backends/graphics/openglsdl/openglsdl-graphics.cpp:637
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2696
@@ -1947,9 +1945,8 @@ msgid "Could not switch to video mode: '"
 msgstr "Videotilan vaihto ei onnistunut:'"
 
 #: engines/engine.cpp:333
-#, fuzzy
 msgid "Could not switch to stretch mode: '"
-msgstr "Videotilan vaihto ei onnistunut:'"
+msgstr "Venytystilan vaihto ei onnistunut:'"
 
 #: engines/engine.cpp:342
 msgid "Could not apply aspect ratio setting."
@@ -2280,24 +2277,23 @@ msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:272
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
-#, fuzzy
 msgid "Center"
-msgstr "Enter"
+msgstr "Keskitetty"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:273
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "Pikselintarkka skaalaus"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:274
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Fit to window"
-msgstr ""
+msgstr "Sovita ikkunaan"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:275
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:79
 msgid "Stretch to window"
-msgstr ""
+msgstr "Venyt‰ ikkunaan"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:639
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2698
@@ -2332,7 +2328,7 @@ msgstr "Suodatus pois p‰‰lt‰"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:825
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2581
 msgid "Stretch mode"
-msgstr ""
+msgstr "Venytystila"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
