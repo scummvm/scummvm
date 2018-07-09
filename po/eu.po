@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-08 23:20+0200\n"
+"POT-Creation-Date: 2018-07-09 22:31+0200\n"
 "PO-Revision-Date: 2018-04-18 10:12+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -61,7 +61,7 @@ msgstr "Joan gora"
 #: gui/options.cpp:1745 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:445
-#: gui/saveload-dialog.cpp:727 gui/saveload-dialog.cpp:1121
+#: gui/saveload-dialog.cpp:740 gui/saveload-dialog.cpp:1134
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
 #: engines/engine.cpp:534 backends/events/default/default-events.cpp:190
 #: backends/events/default/default-events.cpp:212
@@ -158,7 +158,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:294
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:504
 #: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1747
-#: gui/saveload-dialog.cpp:1122 engines/engine.cpp:453 engines/engine.cpp:464
+#: gui/saveload-dialog.cpp:1135 engines/engine.cpp:453 engines/engine.cpp:464
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
@@ -1487,15 +1487,15 @@ msgstr "Zerrenda ikuspegia"
 msgid "Grid view"
 msgstr "Sareta ikuspegia"
 
-#: gui/saveload-dialog.cpp:378 gui/saveload-dialog.cpp:532
+#: gui/saveload-dialog.cpp:378 gui/saveload-dialog.cpp:545
 msgid "No date saved"
 msgstr "Ez dago datarik gordeta"
 
-#: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:533
+#: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:546
 msgid "No time saved"
 msgstr "Ez dago ordurik gordeta"
 
-#: gui/saveload-dialog.cpp:380 gui/saveload-dialog.cpp:534
+#: gui/saveload-dialog.cpp:380 gui/saveload-dialog.cpp:547
 msgid "No playtime saved"
 msgstr "Ez dago denborarik gordeta"
 
@@ -1503,44 +1503,44 @@ msgstr "Ez dago denborarik gordeta"
 msgid "Do you really want to delete this saved game?"
 msgstr "Ezabatu partida gorde hau?"
 
-#: gui/saveload-dialog.cpp:558 gui/saveload-dialog.cpp:1070
+#: gui/saveload-dialog.cpp:571 gui/saveload-dialog.cpp:1083
 msgid "Date: "
 msgstr "Data: "
 
-#: gui/saveload-dialog.cpp:562 gui/saveload-dialog.cpp:1076
+#: gui/saveload-dialog.cpp:575 gui/saveload-dialog.cpp:1089
 msgid "Time: "
 msgstr "Ordua: "
 
-#: gui/saveload-dialog.cpp:568 gui/saveload-dialog.cpp:1084
+#: gui/saveload-dialog.cpp:581 gui/saveload-dialog.cpp:1097
 msgid "Playtime: "
 msgstr "Denbora: "
 
-#: gui/saveload-dialog.cpp:581 gui/saveload-dialog.cpp:669
+#: gui/saveload-dialog.cpp:594 gui/saveload-dialog.cpp:682
 #, fuzzy
 msgid "Untitled saved game"
 msgstr "Titulurik gabeko joko gordea"
 
-#: gui/saveload-dialog.cpp:728
+#: gui/saveload-dialog.cpp:741
 msgid "Next"
 msgstr "Aurr."
 
-#: gui/saveload-dialog.cpp:731
+#: gui/saveload-dialog.cpp:744
 msgid "Prev"
 msgstr "Hurr."
 
-#: gui/saveload-dialog.cpp:934
+#: gui/saveload-dialog.cpp:947
 msgid "New Save"
 msgstr "Gorde"
 
-#: gui/saveload-dialog.cpp:934
+#: gui/saveload-dialog.cpp:947
 msgid "Create a new saved game"
 msgstr "Sortu joko gorde berria"
 
-#: gui/saveload-dialog.cpp:1063
+#: gui/saveload-dialog.cpp:1076
 msgid "Name: "
 msgstr "Izena: "
 
-#: gui/saveload-dialog.cpp:1141
+#: gui/saveload-dialog.cpp:1154
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Sartu deskribapena %d zirrikiturako:"
