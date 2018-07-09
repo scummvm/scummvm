@@ -1051,6 +1051,7 @@ const Feature s_features[] = {
 	{        "opengles",             "USE_GLES",         "", true,  "forced OpenGL ES mode" },
 	{         "taskbar",          "USE_TASKBAR",         "", true,  "Taskbar integration support" },
 	{           "cloud",            "USE_CLOUD",         "", true,  "Cloud integration support" },
+  {          "discord",         "USE_DISCORD",         "", true,  "Discord integration support" },
 	{     "translation",      "USE_TRANSLATION",         "", true,  "Translation support" },
 	{          "vkeybd",        "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
 	{       "keymapper",     "ENABLE_KEYMAPPER",         "", false, "Keymapper support"},

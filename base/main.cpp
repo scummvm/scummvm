@@ -77,6 +77,10 @@
 #endif
 #endif
 
+#ifdef USE_DISCORD
+#include "backends/discord/discord.h"
+#endif
+
 #if defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
 #elif defined(__DC__)
@@ -260,8 +264,18 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	// Inform backend that the engine is about to be run
 	system.engineInit();
 
+    // Tell Discord what game we're running
+  #if defined(USE_DISCORD)
+    // TODO: UpdateDiscord with the caption and game id
+  #endif
+  
 	// Run the engine
 	Common::Error result = engine->run();
+
+  // Shutdown Discord
+  #if defined(USE_DISCORD)
+    // TODO: Shutdown here
+  #endif
 
 	// Inform backend that the engine finished
 	system.engineDone();
@@ -494,6 +508,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	CloudMan.init();
 	CloudMan.syncSaves();
+#endif
+
+#if defined(USE_DISCORD)
+  //TODO: Initialize Discord integration here
 #endif
 
 	// Unless a game was specified, show the launcher dialog

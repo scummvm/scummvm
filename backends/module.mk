@@ -58,6 +58,11 @@ MODULE_OBJS += \
 endif
 endif
 
+ifdef USE_DISCORD
+MODULE_OBJS += \
+	discord/discord.o
+endif
+
 ifdef USE_LIBCURL
 MODULE_OBJS += \
 	networking/curl/connectionmanager.o \

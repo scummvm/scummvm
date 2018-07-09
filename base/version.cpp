@@ -155,6 +155,10 @@ const char *gScummVMFeatures = ""
 	"virtual keyboard "
 #endif
 
+#if defined(USE_DISCORD)
+  "discord "
+#endif
+
 #ifdef USE_CLOUD
 	"cloud ("
 #ifdef USE_LIBCURL
