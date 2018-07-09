@@ -117,9 +117,8 @@ static const XeenGameDescription gameDescriptions[] = {
 		0
 	},
 
-
 	{
-		// Clouds of Xeen (GOG German)
+		// Clouds of Xeen (GOG, Bestseller Games Magazine #6 German)
 		{
 			"cloudsofxeen",
 			nullptr,
