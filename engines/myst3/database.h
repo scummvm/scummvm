@@ -220,6 +220,9 @@ public:
 
 	int16 getGameLanguageCode() const;
 
+	/** Check if the scripts for two rooms are identical */
+	bool areRoomsScriptsEqual(uint32 roomID1, uint32 ageID1, uint32 roomID2, uint32 ageID2, ScriptType scriptType);
+
 private:
 	struct RoomKeyHash {
 		uint operator()(const RoomKey &v) const {
@@ -244,7 +247,7 @@ private:
 	Common::HashMap<uint32, int16> _roomZipBitIndex;
 
 	// 'myst3.dat' cached data
-	static const uint kDatVersion = 2;
+	static const uint kDatVersion = 3;
 	Common::SeekableReadStream *_datFile;
 	Common::Array<RoomScripts> _roomScriptsIndex;
 	int32 _roomScriptsStartOffset;

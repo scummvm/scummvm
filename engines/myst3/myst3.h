@@ -225,6 +225,7 @@ private:
 	uint32 _lastSaveTime;
 
 	uint32 _backgroundSoundScriptLastRoomId;
+	uint32 _backgroundSoundScriptLastAgeId;
 
 	/**
 	 * When the widescreen mode is active, the user can manually hide

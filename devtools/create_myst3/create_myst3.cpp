@@ -44,7 +44,7 @@ void copyData(Common::File &temp, Common::File &target);
 
 void writeSoundNames(const char *string, Common::File &target, uint offset);
 
-static const uint kVersion = 2;
+static const uint kVersion = 3;
 
 RoomScripts roomScripts[] = {
 		{ "ATIX", kNodeScripts, 571168, 324, 0 },
@@ -272,13 +272,27 @@ void writeScriptData(const char *sourceFilename, Common::File &target, RoomScrip
 	}
 
 	for (uint i = 0; i < scriptCount; i++) {
-		source.seek(scripts[i].sourceOffset);
-		scripts[i].targetOffset = target.pos();
+		// Search if a copy of the same script was already written to the .dat file
+		int alreadyCopiedIndex = -1;
+		for (uint j = 0; j < i; j++) {
+			if (scripts[i].sourceOffset == scripts[j].sourceOffset) {
+				alreadyCopiedIndex = j;
+			}
+		}
 
-		byte *buffer = new byte[scripts[i].size];
-		source.read(buffer, scripts[i].size);
-		target.write(buffer, scripts[i].size);
-		delete[] buffer;
+		if (alreadyCopiedIndex != -1) {
+			// Already copied, just point to the previously copied data
+			scripts[i].targetOffset = scripts[alreadyCopiedIndex].targetOffset;
+		} else {
+			// Make a new copy
+			source.seek(scripts[i].sourceOffset);
+			scripts[i].targetOffset = target.pos();
+
+			byte *buffer = new byte[scripts[i].size];
+			source.read(buffer, scripts[i].size);
+			target.write(buffer, scripts[i].size);
+			delete[] buffer;
+		}
 	}
 
 	source.close();
@@ -300,7 +314,7 @@ int main(int argc, char *argv[]) {
 		printf("Where [exe folder] contains the following files:\n");
 		printf("- M3_EN_127.exe: English v1.27 Window binary from the DVD release\n");
 		printf("- M3_FR_122.exe: French v1.22 Window binary from the update patch\n");
-		printf("- M3_FR_122.exe: English v1.22 Window binary from the update patch\n");
+		printf("- M3_EN_122.exe: English v1.22 Window binary from the update patch\n");
 		printf("- M3_XBOX_PAL.xbe: PAL XBox binary\n");
 		printf("- M3_XBOX_NTSC.xbe: NTSC XBox binary\n");
 		return -1;

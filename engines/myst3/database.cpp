@@ -605,7 +605,7 @@ const RoomData *Database::findRoomData(uint32 roomID, uint32 ageID) const {
 		}
 	}
 
-	error("No room with ID %d", roomID);
+	error("No room with ID %d in age %d", roomID, ageID);
 }
 
 Common::Array<NodePtr> Database::readRoomScripts(const RoomData *room) const {
@@ -825,6 +825,27 @@ Common::SeekableReadStream *Database::getRoomScriptStream(const char *room, Scri
 	}
 
 	return nullptr;
+}
+
+bool Database::areRoomsScriptsEqual(uint32 roomID1, uint32 ageID1, uint32 roomID2, uint32 ageID2, ScriptType scriptType) {
+	const RoomData *data1 = findRoomData(roomID1, ageID1);
+	const RoomData *data2 = findRoomData(roomID2, ageID2);
+
+	int32 startOffset1 = -1;
+	int32 startOffset2 = -1;
+	for (uint i = 0; i < _roomScriptsIndex.size(); i++) {
+		if (_roomScriptsIndex[i].room.equalsIgnoreCase(data1->name)
+		    && _roomScriptsIndex[i].type == scriptType) {
+			startOffset1 = _roomScriptsStartOffset + _roomScriptsIndex[i].offset;
+		}
+
+		if (_roomScriptsIndex[i].room.equalsIgnoreCase(data2->name)
+		    && _roomScriptsIndex[i].type == scriptType) {
+			startOffset2 = _roomScriptsStartOffset + _roomScriptsIndex[i].offset;
+		}
+	}
+
+	return startOffset1 == startOffset2;
 }
 
 int16 Database::getGameLanguageCode() const {

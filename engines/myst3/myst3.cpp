@@ -73,7 +73,9 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_inputEscapePressedNotConsumed(false),
 		_interactive(false), _lastSaveTime(0),
 		_menuAction(0), _projectorBackground(0),
-		_shakeEffect(0), _rotationEffect(0), _backgroundSoundScriptLastRoomId(0),
+		_shakeEffect(0), _rotationEffect(0),
+		_backgroundSoundScriptLastRoomId(0),
+		_backgroundSoundScriptLastAgeId(0),
 		_transition(0), _frameLimiter(0), _inventoryManualHide(false) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
@@ -990,23 +992,34 @@ void Myst3Engine::runBackgroundSoundScriptsFromNode(uint16 nodeID, uint32 roomID
 
 	if (!nodeData) return;
 
-	// Stop previous music when changing room
-	if (_backgroundSoundScriptLastRoomId != roomID) {
-		if (_backgroundSoundScriptLastRoomId != 0
-				&& _backgroundSoundScriptLastRoomId != kRoomMenu
-				&& _backgroundSoundScriptLastRoomId != kRoomJournals
-				&& roomID != 0 && roomID != kRoomMenu && roomID != kRoomJournals) {
+	if (_backgroundSoundScriptLastRoomId != roomID || _backgroundSoundScriptLastAgeId != ageID) {
+		bool sameScript;
+		if (   _backgroundSoundScriptLastRoomId != 0 && roomID != 0
+		    && _backgroundSoundScriptLastAgeId  != 0 && ageID  != 0) {
+			sameScript = _db->areRoomsScriptsEqual(_backgroundSoundScriptLastRoomId, _backgroundSoundScriptLastAgeId,
+			                                       roomID, ageID, kScriptTypeBackgroundSound);
+		} else {
+			sameScript = false;
+		}
+
+		// Stop previous music when the music script changes
+		if (!sameScript
+		    && _backgroundSoundScriptLastRoomId != kRoomMenu
+		    && _backgroundSoundScriptLastRoomId != kRoomJournals
+		    && roomID != kRoomMenu
+		    && roomID != kRoomJournals) {
+
 			_sound->stopMusic(_state->getSoundScriptFadeOutDelay());
 
-			if (nodeData->backgroundSoundScripts.size() != 0) {
+			if (!nodeData->backgroundSoundScripts.empty()) {
 				_state->setSoundScriptsPaused(1);
 				_state->setSoundScriptsTimer(0);
 			}
 		}
 
 		_backgroundSoundScriptLastRoomId = roomID;
+		_backgroundSoundScriptLastAgeId  = ageID;
 	}
-
 
 	for (uint j = 0; j < nodeData->backgroundSoundScripts.size(); j++) {
 		if (_state->evaluate(nodeData->backgroundSoundScripts[j].condition)) {
