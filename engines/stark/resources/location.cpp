@@ -540,5 +540,18 @@ Gfx::RenderEntry *Location::getRenderEntryByName(const Common::String &name) {
 	return nullptr;
 }
 
+Common::Array<Common::Point> Location::listExitPositions() {
+	Common::Array<Item *> items = listChildrenRecursive<Item>();
+	Common::Array<Common::Point> positions;
+
+	Common::Array<Item *>::iterator element = items.begin();
+	while (element != items.end()) {
+		positions.push_back((*element)->listExitPositions());
+		++element;
+	}
+
+	return positions;
+}
+
 } // End of namespace Resources
 } // End of namespace Stark

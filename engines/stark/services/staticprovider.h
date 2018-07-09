@@ -62,6 +62,9 @@ public:
 		kVolume = 14,
 		kDiaryNormal = 15,
 		kInventory = 16,
+		kExitArrow = 17,
+		kExitArrowLeft = 18,
+		kExitArrowRight = 19,
 		kTextBackgroundActive = 20,
 		kTextBackgroundPassive = 21,
 		kDiaryTabbed = 22

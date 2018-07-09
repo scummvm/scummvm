@@ -65,6 +65,8 @@ protected:
 	Common::Point _objectRelativePosition;
 
 	Gfx::FadeRenderer *_fadeRenderer;
+
+	VisualImageXMG *_exitArrow, *_exitArrowLeft, *_exitArrowRight;
 };
 
 } // End of namespace Stark

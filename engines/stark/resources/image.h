@@ -66,6 +66,10 @@ public:
 
 	/** Get the pat-table index for a given point */
 	int indexForPoint(const Common::Point &point) const;
+
+	/** Get the hotspot position for a given index of a pat-table */
+	Common::Point getHotspotPosition(uint index) const;
+
 protected:
 	void printData() override;
 	bool isPointInPolygon(const Polygon &polygon, const Common::Point &point) const;

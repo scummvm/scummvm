@@ -142,6 +142,9 @@ public:
 	/** Obtain the list of all the inner layers */
 	Common::Array<Layer *> listLayers() { return _layers; }
 
+	/** List all the exit positions */
+	Common::Array<Common::Point> listExitPositions();
+
 protected:
 	void printData() override;
 

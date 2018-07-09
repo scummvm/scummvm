@@ -118,7 +118,12 @@ public:
 	/** Set the currently active anim hierachy */
 	virtual void setAnimHierarchy(AnimHierarchy *animHierarchy) = 0;
 
+	/** List all the exit positions */
+	virtual Common::Array<Common::Point> listExitPositions();
+
 protected:
+	static const int32 _exitAction = 7;
+
 	void printData() override;
 
 	bool _enabled;
@@ -190,6 +195,9 @@ public:
 protected:
 	// Resource API
 	void printData() override;
+
+	/** Implemented version used in FloorPositionedImageItem and ImageItem */
+	Common::Array<Common::Point> listExitPositionsImpl();
 
 	Visual *getVisual();
 
@@ -389,6 +397,7 @@ public:
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
+	Common::Array<Common::Point> listExitPositions() override;
 
 	// ItemVisual API
 	void setPosition2D(const Common::Point &position) override;
@@ -469,6 +478,7 @@ public:
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
+	Common::Array<Common::Point> listExitPositions() override;
 
 	// ItemVisual API
 	void setPosition2D(const Common::Point &position) override;

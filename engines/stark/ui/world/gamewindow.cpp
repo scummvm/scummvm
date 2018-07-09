@@ -43,6 +43,7 @@
 #include "engines/stark/ui/world/inventorywindow.h"
 
 #include "engines/stark/visual/text.h"
+#include "engines/stark/visual/image.h"
 
 namespace Stark {
 
@@ -56,6 +57,15 @@ GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu,
 	_visible = true;
 
 	_fadeRenderer = _gfx->createFadeRenderer();
+
+	_exitArrow = StarkStaticProvider->getUIElement(StaticProvider::kExitArrow);
+	_exitArrow->setHotSpot(Common::Point(_exitArrow->getWidth(), 0));
+
+	_exitArrowLeft = StarkStaticProvider->getUIElement(StaticProvider::kExitArrowLeft);
+	_exitArrowLeft->setHotSpot(Common::Point(_exitArrowLeft->getWidth(), 0));
+
+	_exitArrowRight = StarkStaticProvider->getUIElement(StaticProvider::kExitArrowRight);
+	_exitArrowRight->setHotSpot(Common::Point(_exitArrowRight->getWidth(), 0));
 }
 
 GameWindow::~GameWindow() {
@@ -77,6 +87,26 @@ void GameWindow::onRender() {
 		// Go for the next one
 		element++;
 	}
+
+	
+	Common::Array<Common::Point> exitPositions = StarkGameInterface->listExitPositions();
+	for (uint i = 0; i < exitPositions.size(); ++i) {
+		Common::Point pos = exitPositions[i];
+		VisualImageXMG *exitImage = nullptr;
+
+		if (pos.x < 0) {
+			pos.x = 0;
+			exitImage = _exitArrowLeft;
+		} else if (pos.x > Gfx::Driver::kGameViewportWidth) {
+			pos.x = Gfx::Driver::kGameViewportWidth;
+			exitImage = _exitArrowRight;
+		} else {
+			exitImage = _exitArrow;
+		}
+
+		exitImage->render(pos, true);
+	}
+	
 
 	float fadeLevel = StarkScene->getFadeLevel();
 	if ((1.0f - fadeLevel) > 0.00001f) {
