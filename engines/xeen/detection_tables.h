@@ -173,6 +173,25 @@ static const XeenGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Dark Side of Xeen (Bestseller Games Magazine #8 German)
+		{
+			"darksideofxeen",
+			nullptr,
+			{
+				{ "dark.cc", 0, "84a86bbbc5f2fe96c0b0325485ed8203", 11173657},
+				{ "intro.cc", 0, "e47a7ab0223cf32b2d87eed91d024c35", 8899953},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+		},
+		GType_DarkSide,
+		0
+	},
+
+	{
 		// Swords of Xeen
 		{
 			"swordsofxeen",
