@@ -1842,6 +1842,54 @@ public:
 
 	// TRIAL2
 	void trial2Tick1();
+	void trial2Tick60();
+	void trial2TouchedHotspot0();
+	void trial2LookAtKirk();
+	void trial2LookAtSpock();
+	void trial2LookAtMccoy();
+	void trial2LookAtRedshirt();
+	void trial2LookAtInsignia();
+	void trial2LookAtGlob();
+	void trial2LookAtWall();
+	void trial2LookAtDoor();
+	void trial2TalkToKirk();
+	void trial2TalkToSpock();
+	void trial2TalkToMccoy();
+	void trial2TalkToRedshirt();
+	void trial2TalkToGlob();
+	void trial2UsePhaserOnWall();
+
+	void trial2UsePhaserOnGlob(int object, bool phaserOnKill);
+	void trial2ReachedPositionToShootGlob();
+	void trial2DrewPhaserToShootGlob();
+	void trial2GlobDoneExploding();
+	void trial2GlobDoneSplitting();
+	void trial2KirkDied();
+
+	void trial2UseStunPhaserOnGlob();
+	void trial2UseKillPhaserOnGlob();
+	void trial2UseStunPhaserOnSplitGlob1();
+	void trial2UseKillPhaserOnSplitGlob1();
+	void trial2UseStunPhaserOnSplitGlob2();
+	void trial2UseKillPhaserOnSplitGlob2();
+
+	void trial2UseMTricorderOnKirk();
+	void trial2UseMTricorderOnSpock();
+	void trial2UseMTricorderOnMccoy();
+	void trial2UseMTricorderOnRedshirt();
+	void trial2UseMTricorderOnGlob();
+	void trial2UseSTricorderOnWall();
+	void trial2UseSTricorderAnywhere();
+	void trial2UseSTricorderOnGlob();
+	void trial2UseCommunicator();
+	void trial2UseMccoyOnGlob();
+	void trial2UseMccoyOnWall();
+	void trial2UseSpockOnGlob();
+	void trial2UseSpockOnWall();
+	void trial2UseRedshirtOnGlob();
+	void trial2UseRedshirtOnWall();
+	void trial2WalkToDoor();
+	void trial2UseMedkitAnywhere();
 
 	// TRIAL3
 	void trial3Tick1();
@@ -1989,6 +2037,11 @@ private:
 			bool insultedQuetzecoatl;
 		} feather;
 
+		struct {
+			// trial2
+			byte globBeingShot;
+			bool phaserOnKill;
+		} trial;
 
 	} _roomVar;
 };

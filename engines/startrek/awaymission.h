@@ -275,11 +275,16 @@ struct AwayMission {
 			// 5: Will activate the unknown program when the keypad is used
 			byte doorCodeBehaviour; // 0x34
 
+			bool globSplitInTwo; // 0x35
+			bool globDefeated; // 0x36
+			byte globEnergyLevels[3]; // 0x37
+			bool enteredGlobRoom; // 0x5c
 			bool forceFieldDown; // 0x5d
 			bool uhuraAnalyzedCode; // 0x5e
 			int16 field5f; // 0x5f
 			bool gotPointsForGettingRod; // 0x61
 			bool gotPointsForCoatingRodWithIron; // 0x62
+			bool gotPointsForScanningGlob; // 0x64
 		} trial;
 	};
 };
