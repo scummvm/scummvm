@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-09 22:31+0200\n"
+"POT-Creation-Date: 2018-07-10 19:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -671,7 +671,7 @@ msgstr ""
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:889
-#: engines/mohawk/riven.cpp:625 engines/pegasus/pegasus.cpp:355
+#: engines/mohawk/riven.cpp:636 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr ""
@@ -680,7 +680,7 @@ msgstr ""
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:163
-#: engines/mohawk/myst.cpp:889 engines/mohawk/riven.cpp:625
+#: engines/mohawk/myst.cpp:889 engines/mohawk/riven.cpp:636
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
@@ -1830,7 +1830,7 @@ msgstr ""
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:164
-#: engines/mohawk/myst.cpp:901 engines/mohawk/riven.cpp:637
+#: engines/mohawk/myst.cpp:901 engines/mohawk/riven.cpp:648
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:658 engines/sci/engine/kfile.cpp:1054
 #: engines/sherlock/scalpel/scalpel.cpp:1250
@@ -1852,7 +1852,7 @@ msgstr ""
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:164 engines/mohawk/myst.cpp:901
-#: engines/mohawk/riven.cpp:637 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/riven.cpp:648 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:659 engines/sci/engine/kfile.cpp:1054
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
@@ -3318,7 +3318,7 @@ msgid ""
 "works."
 msgstr ""
 
-#: engines/mohawk/riven.cpp:498
+#: engines/mohawk/riven.cpp:509
 msgid "You are missing the following required Riven data files:\n"
 msgstr ""
 
