@@ -1949,6 +1949,7 @@ public:
 
 	// TRIAL4
 	void trial4Tick1();
+	void trial4Tick60();
 
 	// TRIAL5
 	void trial5Tick1();
