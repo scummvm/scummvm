@@ -2247,6 +2247,7 @@ enum GameStringIDs {
 	TX_TRI3_028,
 	TX_TRI3_029,
 	TX_TRI3_030,
+	// UNUSED (031 -> 036; voice substitute for Uhura)
 	TX_TRI3_103,
 	TX_TRI3_104,
 	TX_TRI3_107,
@@ -2260,8 +2261,10 @@ enum GameStringIDs {
 	TX_TRI3N007,
 	TX_TRI3U067,
 	TX_TRI3U080,
+	// UNUSED (U081)
 	TX_TRI3U084,
 	TX_TRI3U089,
+	// UNUSED (U090)
 	TX_TRI3U099,
 
 
@@ -4418,10 +4421,10 @@ const char * const g_gameStrings[] = {
 	"#TRI3\\TRI3_010#Damn it Jim, I'm a Doctor, not a structural Engineer!",
 	"#TRI3\\TRI3_011#He's out like a light, Jim. There are hibernating Arcturian sloth-tigers that will get up more quickly than this guy.",
 	"#TRI3\\TRI3_012#I believe that you have seniority, Jim.",
-	"#TRI3\\TRI3_013#He's a Male Human, average physical condition.",
-	"#TRI3\\TRI3_014#Male Human, excellent physical condition.",
-	"#TRI3\\TRI3_015#Male Human, good physical condition.",
-	"#TRI3\\TRI3_016#Male Human-Vulcan hybrid. Excellent physical condition.",
+	"#TRI3\\TRI3_013#One Male Human, average physical condition.", // TYPO
+	"#TRI3\\TRI3_014#He's a Male Human, excellent physical condition.", // TYPO
+	"#TRI3\\TRI3_015#Male Human, good physical condition.", // TYPO
+	"#TRI3\\TRI3_016#One Male Human-Vulcan hybrid. Excellent physical condition.", // TYPO
 	"#TRI3\\TRI3_017#Nobody needs healing, Jim, but you will if they harm my patient.",
 	"#TRI3\\TRI3_018#Well, maybe I've been too hard on you, Jim. I'm sorry.",
 	"#TRI3\\TRI3_019#Easy! Are you out of your mind?",
@@ -4449,7 +4452,7 @@ const char * const g_gameStrings[] = {
 	"#TRI3\\TRI3N007#The wall of this corridor.",
 	"#TRI3\\TRI3U067#Captain, we're still working on breaching the force field. We will let you know when we're ready to beam you out.",
 	"#TRI3\\TRI3U080#Affirmative, sir.",
-	"#TRI3\\TRI3U084#Captain, our sensors have picked up phaser fire! Are you all right? Captain, come in please!",
+	"#TRI3\\TRI3U084#Captain, our sensors have picked up phaser fire! Are you all right? Captain, please come in!", // TYPO
 	"#TRI3\\TRI3U089#Do you wish to be beamed up now Captain?",
 	"#TRI3\\TRI3U099#Mr. Scott has found a way to breach the force field!",
 
