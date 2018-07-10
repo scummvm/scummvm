@@ -2302,6 +2302,7 @@ enum GameStringIDs {
 	TX_TRI4_032,
 	TX_TRI4_033,
 	TX_TRI4_034,
+	// UNUSED (035)
 	TX_TRI4_036,
 	TX_TRI4_037,
 	TX_TRI4_038,
@@ -4533,7 +4534,7 @@ const char * const g_gameStrings[] = {
 
 	"#TRI4\\TRI4_001#Admiral, one day the weaklings are going to surprise the Hell out of you.",
 	"#TRI4\\TRI4_002#Do Klingons believe in ghosts?",
-	"#TRI4\\TRI4_003#I didn't want it to end like this.",
+	"#TRI4\\TRI4_003#I don't want it to end like this.", // TYPO
 	"#TRI4\\TRI4_004#I don't really give a damn.",
 	"#TRI4\\TRI4_005#I won't let you. I chal...",
 	"#TRI4\\TRI4_006#I'm sorry we couldn't do more.",
@@ -4550,11 +4551,11 @@ const char * const g_gameStrings[] = {
 	"#TRI4\\TRI4_017#What!",
 	"#TRI4\\TRI4_018#As we say on Earth, Vlict, nature beat me to it.",
 	"#TRI4\\TRI4_019#Did you listen to anything he said? One day, in spite of people like you, the Klingons will know peace. I hope I live to see that day.",
-	"#TRI4\\TRI4_020#Farewell my friend. Vlict, if you respect honor, you will make it a quick, painless death.",
+	"#TRI4\\TRI4_020#Farewell my friend. Vlict, if you respect honor, you will make it quick and painless.", // TYPO
 	"#TRI4\\TRI4_021#He knows more about courage than you or your Empire will ever know.",
 	"#TRI4\\TRI4_022#Honor? Give me a break, Vlict! You were trying to kill us!",
 	"#TRI4\\TRI4_023#How can a liar like you even say the word \"honor\" without blushing?",
-	"#TRI4\\TRI4_024#How can you call him a traitor without giving him a fair trail!",
+	"#TRI4\\TRI4_024#How can you call him a traitor without giving him a fair trial!", // TYPO
 	"#TRI4\\TRI4_025#I do not know if you are a praying man, Vlict. If I were you, I would not want to meet me again.",
 	"#TRI4\\TRI4_026#If you kill him, the Empire will learn that you betrayed them by destroying Hrakkour.",
 	"#TRI4\\TRI4_027#Isn't it time that we stopped playing games, Vlict?",
@@ -4568,7 +4569,7 @@ const char * const g_gameStrings[] = {
 	"#TRI4\\TRI4_036#Jim! You can't let him do this!",
 	"#TRI4\\TRI4_037#You never had any intention of letting Quetzecoatl live!",
 	"#TRI4\\TRI4_038#He is correct, Captain.",
-	"#TRI4\\TRI4_039#I believe that the use of guile, to do what an enemy does not expect, is considered very honorable by the Klingons.",
+	"#TRI4\\TRI4_039#I believe that the use of guile, to do what the enemy does not expect, is considered very honorable by the Klingons.", // TYPO
 	"#TRI4\\TRI4_040#As do I. My only regret is that I did not get to know you better. If only a part of what you are is because you learned from the mistakes of my acolytes, my work was not in vain.",
 	"#TRI4\\TRI4_041#But before I die, I believe that Klingon law allows me to make a public statement.",
 	"#TRI4\\TRI4_042#Captain, I do not see any successful resolution to this, except with my death. Dying to prevent conflict would give it meaning.",
@@ -4586,7 +4587,7 @@ const char * const g_gameStrings[] = {
 	"#TRI4\\TRI4_054#A coward's attitude. He shames this soil.",
 	"#TRI4\\TRI4_055#As judge, I determine what is fair and what is unfair, Kirk! The trial is at an end. The verdict is guilty.",
 	"#TRI4\\TRI4_056#As long as the Federation continues to foster such weaklings, the triumph of the Klingon Empire is assured.",
-	"#TRI4\\TRI4_057#Do not threaten me, Kirk! If you expect the Empire will believe you instead of me, you are greatly mistaken.",
+	"#TRI4\\TRI4_057#Do not threaten me, Kirk! If you expect the Empire to believe you instead of me, you are greatly mistaken.", // TYPO
 	"#TRI4\\TRI4_058#Do you think that you can make a fool of me, Kirk!",
 	"#TRI4\\TRI4_059#Go back to your Federation, Kirk!",
 	"#TRI4\\TRI4_060#How dare you lecture me on points of honor! I, the most decorated warrior in the entire empire! I, who took the dishonored trash of my homeworld and destroyed it with a fist of steel!",
