@@ -315,8 +315,10 @@ void DialogPanel::focusPrevOption() {
 void DialogPanel::selectFocusedOption() {
 	if (_currentSpeech) return;
 
-	StarkDialogPlayer->selectOption(_focusedOption);
-	clearOptions();
+	if (_options.size() > 0) {
+		StarkDialogPlayer->selectOption(_focusedOption);
+		clearOptions();
+	}
 }
 
 void DialogPanel::selectOption(uint index) {

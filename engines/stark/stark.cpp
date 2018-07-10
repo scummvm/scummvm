@@ -230,7 +230,7 @@ void StarkEngine::processEvents() {
 					|| e.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
 				if (e.kbd.hasFlags(Common::KBD_ALT)) {
 					_gfx->toggleFullscreen();
-				} else {
+				} else if (_userInterface->isInGameScreen()){
 					_userInterface->selectFocusedDialogOption();
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_F1) {
@@ -250,7 +250,9 @@ void StarkEngine::processEvents() {
 			} else if (e.kbd.keycode == Common::KEYCODE_F7) {
 				_userInterface->toggleScreen(Screen::kScreenSettingsMenu);
 			} else if (e.kbd.keycode == Common::KEYCODE_F9) {
-				_userInterface->requestToggleSubtitle();
+				if (_userInterface->isInGameScreen()) {
+					_userInterface->requestToggleSubtitle();
+				}
 			} else if (e.kbd.keycode == Common::KEYCODE_F10) {
 				if (_userInterface->isInGameScreen() || _userInterface->isInDiaryIndexScreen()) {
 					if (_userInterface->confirm(GameMessage::kQuitGamePrompt)) {
