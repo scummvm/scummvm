@@ -90,7 +90,12 @@ enum MidiTracks {
 	MIDITRACK_25,
 	MIDITRACK_26,
 	MIDITRACK_27,
-	MIDITRACK_28
+	MIDITRACK_28,
+	MIDITRACK_29,
+	MIDITRACK_30,
+	MIDITRACK_31,
+	MIDITRACK_32,
+	MIDITRACK_33
 };
 
 // Max # of VOC files that can play at once

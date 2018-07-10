@@ -278,6 +278,16 @@ struct AwayMission {
 			bool globSplitInTwo; // 0x35
 			bool globDefeated; // 0x36
 			byte globEnergyLevels[3]; // 0x37
+			bool enteredTrial3FirstTime; // 0x3a
+			byte klingonShootIndex; // 0x3b
+			byte shotKlingons; // 0x3c
+
+			// 0: Hasn't appeared yet
+			// 21: Is conscious
+			// 22: Is stunned
+			// 23: Is dead
+			int16 shotKlingonState; // 0x3d
+
 			bool enteredGlobRoom; // 0x5c
 			bool forceFieldDown; // 0x5d
 			bool uhuraAnalyzedCode; // 0x5e
@@ -285,6 +295,8 @@ struct AwayMission {
 			bool gotPointsForGettingRod; // 0x61
 			bool gotPointsForCoatingRodWithIron; // 0x62
 			bool gotPointsForScanningGlob; // 0x64
+
+			bool gotPointsForBeamingOut;
 		} trial;
 	};
 };
