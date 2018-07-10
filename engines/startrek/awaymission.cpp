@@ -515,7 +515,8 @@ void StarTrekEngine::handleAwayMissionAction() {
 		if (action.activeObject() != action.passiveObject()) {
 			switch (action.activeObject()) {
 			case OBJECT_KIRK:
-				if (!_room->handleAction(ACTION_WALK, action.passiveObject(), 0, 0)
+				// BUGFIX: Don't allow the "use" action to bypass the "disableWalking" variable
+				if (!(!_awayMission.disableWalking && _room->handleAction(ACTION_WALK, action.passiveObject(), 0, 0))
 						&& !_room->handleAction(ACTION_GET, action.passiveObject(), 0, 0)) {
 					showTextbox("Capt. Kirk", getLoadedText(GROUNDTX_KIRK_USE), 20, 20, TEXTCOLOR_YELLOW, 0);
 				}
