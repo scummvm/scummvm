@@ -51,7 +51,8 @@ GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu,
 		Window(gfx, cursor),
 	_actionMenu(actionMenu),
 	_inventory(inventory),
-	_objectUnderCursor(nullptr) {
+	_objectUnderCursor(nullptr),
+	_displayExit(false) {
 	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight);
 	_visible = true;
@@ -86,26 +87,26 @@ void GameWindow::onRender() {
 		element++;
 	}
 
-	
-	Common::Array<Common::Point> exitPositions = StarkGameInterface->listExitPositions();
+	if (_displayExit) {
+		Common::Array<Common::Point> exitPositions = StarkGameInterface->listExitPositions();
 
-	for (uint i = 0; i < exitPositions.size(); ++i) {
-		Common::Point pos = exitPositions[i];
-		VisualImageXMG *exitImage = nullptr;
+		for (uint i = 0; i < exitPositions.size(); ++i) {
+			Common::Point pos = exitPositions[i];
+			VisualImageXMG *exitImage = nullptr;
 
-		if (pos.x < _exitLeftBoundary) {
-			pos.x = _exitLeftBoundary;
-			exitImage = _exitArrowLeft;
-		} else if (pos.x > _exitRightBoundary) {
-			pos.x = _exitRightBoundary;
-			exitImage = _exitArrowRight;
-		} else {
-			exitImage = _exitArrow;
+			if (pos.x < _exitLeftBoundary) {
+				pos.x = _exitLeftBoundary;
+				exitImage = _exitArrowLeft;
+			} else if (pos.x > _exitRightBoundary) {
+				pos.x = _exitRightBoundary;
+				exitImage = _exitArrowRight;
+			} else {
+				exitImage = _exitArrow;
+			}
+
+			exitImage->render(pos, false);
 		}
-
-		exitImage->render(pos, false);
 	}
-	
 
 	float fadeLevel = StarkScene->getFadeLevel();
 	if ((1.0f - fadeLevel) > 0.00001f) {

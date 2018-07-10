@@ -269,6 +269,11 @@ void StarkEngine::processEvents() {
 				if (_userInterface->isInGameScreen()) {
 					_userInterface->inventoryOpen(!_userInterface->isInventoryOpen());
 				}
+			} else if (e.kbd.keycode == Common::KEYCODE_x
+					&& !e.kbd.hasFlags(Common::KBD_ALT)) {
+				if (_userInterface->isInGameScreen()) {
+					_userInterface->toggleExitDisplay();
+				}
 			} else if ((e.kbd.keycode == Common::KEYCODE_x
 					|| e.kbd.keycode == Common::KEYCODE_q)
 					&& e.kbd.hasFlags(Common::KBD_ALT)) {

@@ -48,6 +48,9 @@ public:
 	/** Update when the screen resolution has changed */
 	void onScreenChanged();
 
+	/** Toggle the display of exit locations */
+	void toggleExitDisplay() { _displayExit = !_displayExit; }
+
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
@@ -68,6 +71,8 @@ protected:
 
 	VisualImageXMG *_exitArrow, *_exitArrowLeft, *_exitArrowRight;
 	int _exitLeftBoundary, _exitRightBoundary;
+
+	bool _displayExit;
 };
 
 } // End of namespace Stark

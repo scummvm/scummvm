@@ -459,4 +459,8 @@ void UserInterface::selectDialogOptionByIndex(uint index) {
 	_gameScreen->getDialogPanel()->selectOption(index);
 }
 
+void UserInterface::toggleExitDisplay() {
+	_gameScreen->getGameWindow()->toggleExitDisplay();
+}
+
 } // End of namespace Stark
