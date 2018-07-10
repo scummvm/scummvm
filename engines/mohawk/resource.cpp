@@ -154,6 +154,25 @@ Common::Array<uint16> Archive::getResourceIDList(uint32 type) const {
 	return idList;
 }
 
+void Archive::offsetResourceIDs(uint32 type, uint16 startId, int16 increment) {
+	if (!_types.contains(type)) {
+		return;
+	}
+
+	const ResourceMap &oldResMap = _types[type];
+	ResourceMap newResMap;
+
+	for (ResourceMap::const_iterator it = oldResMap.begin(); it != oldResMap.end(); it++) {
+		if (it->_key >= startId) {
+			newResMap[it->_key + increment] = it->_value;
+		} else {
+			newResMap[it->_key] = it->_value;
+		}
+	}
+
+	_types[type] = newResMap;
+}
+
 // Mohawk Archive code
 
 struct FileTableEntry {

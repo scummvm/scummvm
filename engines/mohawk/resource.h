@@ -145,6 +145,8 @@ public:
 	Common::Array<uint32> getResourceTypeList() const;
 	Common::Array<uint16> getResourceIDList(uint32 type) const;
 
+	/** Offset the resource ids for a resource type by the specified amount */
+	void offsetResourceIDs(uint32 type, uint16 startId, int16 increment);
 protected:
 	Common::SeekableReadStream *_stream;
 
