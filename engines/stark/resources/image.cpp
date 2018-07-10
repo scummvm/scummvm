@@ -157,17 +157,14 @@ Common::Point Image::getHotspotPosition(uint index) const {
 	int right = polygon[0].x, top = polygon[0].y;
 
 	for (uint i = 1; i < polygon.size(); ++i) {
-		if (polygon[i].x > right) {
-			right = polygon[i].x;
-		}
+		right += polygon[i].x;
 		if (polygon[i].y < top) {
 			top = polygon[i].y;
 		}
 	}
 
-	if (right < 0) {
-		right = 0;
-	}
+	right /= polygon.size();
+	
 	if (top < 0) {
 		top = 0;
 	}

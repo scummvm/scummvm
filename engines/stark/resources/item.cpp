@@ -405,17 +405,14 @@ Common::Array<Common::Point> ItemVisual::listExitPositionsImpl() {
 	Common::Array<Common::Point> positions;
 	Common::Point invalidPosition(-1, -1);
 
-	Common::Array<PATTable *>::iterator element = pattables.begin();
-	while (element != pattables.end()) {
-		if ((*element)->getDefaultAction() == _exitAction) {
-			Common::Point hotspot = getAnim()->getHotspotPosition((*element)->getIndex());
+	for (uint i = 0; i < pattables.size(); ++i) {
+		if (pattables[i]->getDefaultAction() == _exitAction) {
+			Common::Point hotspot = getAnim()->getHotspotPosition(i);
 			if (hotspot != invalidPosition) {
 				hotspot += _renderEntry->getPosition();
 				positions.push_back(hotspot);
 			}
 		}
-
-		++element;
 	}
 
 	return positions;
