@@ -1056,7 +1056,7 @@ void Interface::rest() {
 			party.changeTime(map._isOutdoors ? 380 : 470);
 		}
 
-		if (_vm->getRandomNumber(1, 20) == 1)
+		if (_vm->getGameID() != GType_Clouds && _vm->getRandomNumber(1, 20) == 1)
 			_vm->dream();
 
 		party.resetTemps();
