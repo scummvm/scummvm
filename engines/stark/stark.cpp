@@ -249,6 +249,8 @@ void StarkEngine::processEvents() {
 				_userInterface->toggleScreen(Screen::kScreenFMVMenu);
 			} else if (e.kbd.keycode == Common::KEYCODE_F7) {
 				_userInterface->toggleScreen(Screen::kScreenSettingsMenu);
+			} else if (e.kbd.keycode == Common::KEYCODE_F8) {
+				warning("TODO: Implement the screenshot saving to local game directory");
 			} else if (e.kbd.keycode == Common::KEYCODE_F9) {
 				if (_userInterface->isInGameScreen()) {
 					_userInterface->requestToggleSubtitle();
