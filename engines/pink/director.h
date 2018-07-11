@@ -62,6 +62,8 @@ public:
 
 	void pause(bool pause);
 
+	bool isMenuActive();
+
 	void saveStage();
 	void loadStage();
 

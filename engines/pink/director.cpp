@@ -88,6 +88,12 @@ Director::Director()
 }
 
 void Director::update() {
+	if (isMenuActive()) {
+		_wm.draw();
+		draw();
+		return;
+	}
+
 	for (uint i = 0; i < _sounds.size(); ++i) {
 		_sounds[i]->update();
 	}
@@ -104,6 +110,10 @@ void Director::update() {
 
 bool Director::processEvent(Common::Event &event) {
 	return _wm.processEvent(event);
+}
+
+bool Director::isMenuActive() {
+	return _wm.isMenuActive();
 }
 
 void Director::addSprite(ActionCEL *sprite) {

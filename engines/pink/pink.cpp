@@ -147,7 +147,9 @@ Common::Error Pink::PinkEngine::run() {
 			}
 		}
 
-		_actor->update();
+		if (!_director->isMenuActive())
+			_actor->update();
+
 		_director->update();
 		_system->delayMillis(10);
 	}
