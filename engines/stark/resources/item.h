@@ -122,8 +122,6 @@ public:
 	virtual Common::Array<Common::Point> listExitPositions();
 
 protected:
-	static const int32 _exitAction = 7;
-
 	void printData() override;
 
 	bool _enabled;

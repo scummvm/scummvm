@@ -406,7 +406,7 @@ Common::Array<Common::Point> ItemVisual::listExitPositionsImpl() {
 	Common::Point invalidPosition(-1, -1);
 
 	for (uint i = 0; i < pattables.size(); ++i) {
-		if (pattables[i]->getDefaultAction() == _exitAction) {
+		if (pattables[i]->getDefaultAction() == PATTable::kActionExit) {
 			Common::Point hotspot = getAnim()->getHotspotPosition(i);
 			if (hotspot != invalidPosition) {
 				hotspot += _renderEntry->getPosition();
