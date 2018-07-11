@@ -236,7 +236,9 @@ void StarkEngine::processEvents() {
 			} else if (e.kbd.keycode == Common::KEYCODE_F1) {
 				_userInterface->toggleScreen(Screen::kScreenDiaryIndex);
 			} else if (e.kbd.keycode == Common::KEYCODE_F2) {
-				_userInterface->toggleScreen(Screen::kScreenSaveMenu);
+				if (_userInterface->isInSaveLoadMenuScreen() || canSaveGameStateCurrently()) {
+					_userInterface->toggleScreen(Screen::kScreenSaveMenu);
+				}
 			} else if (e.kbd.keycode == Common::KEYCODE_F3) {
 				_userInterface->toggleScreen(Screen::kScreenLoadMenu);
 			} else if (e.kbd.keycode == Common::KEYCODE_F4) {
