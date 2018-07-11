@@ -172,6 +172,8 @@ void MacMenu::addStaticMenus(const MacMenuData *data) {
 
 		_items[m->menunum]->subitems.push_back(new MacMenuSubItem(m->title, m->action, 0, m->shortcut, m->enabled));
 	}
+
+	calcDimensions();
 }
 
 int MacMenu::addMenuItem(const char *name) {
