@@ -480,7 +480,9 @@ void Room::spockScan(int direction, TextRef text, bool changeDirection) {
 
 	loadActorAnim2(OBJECT_SPOCK, anim, -1, -1, 0);
 	playSoundEffectIndex(SND_TRICORDER);
-	showText(TX_SPEAKER_SPOCK, text);
+
+	if (text != -1)
+		showText(TX_SPEAKER_SPOCK, text);
 }
 
 void Room::mccoyScan(int direction, TextRef text, bool changeDirection) {
@@ -493,7 +495,9 @@ void Room::mccoyScan(int direction, TextRef text, bool changeDirection) {
 
 	loadActorAnim2(OBJECT_MCCOY, anim, -1, -1, 0);
 	playSoundEffectIndex(SND_TRICORDER);
-	showText(TX_SPEAKER_MCCOY, text);
+
+	if (text != -1)
+		showText(TX_SPEAKER_MCCOY, text);
 }
 
 }
