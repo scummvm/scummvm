@@ -116,6 +116,13 @@ bool Director::isMenuActive() {
 	return _wm.isMenuActive();
 }
 
+void Director::setPalette(const byte *palette) {
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+	_wm.passPalette(palette, 256);
+}
+
+
 void Director::addSprite(ActionCEL *sprite) {
 	_sprites.push_back(sprite);
 	int i;
