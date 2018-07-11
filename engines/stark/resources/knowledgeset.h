@@ -71,6 +71,9 @@ public:
 	/** Get a cursor style visual for an inventory item */
 	Visual *getInventoryItemVisual(uint16 itemIndex);
 
+	/** Get the index of a neighbor inventory item of a selected item, return -1 in corner case */
+	int16 getNeighborInventoryItem(int16 selectedItem, bool forward);
+
 protected:
 	void printData() override;
 

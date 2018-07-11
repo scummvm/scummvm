@@ -104,5 +104,24 @@ Visual *KnowledgeSet::getInventoryItemVisual(uint16 itemIndex) {
 	return item->getCursorVisual();
 }
 
+int16 KnowledgeSet::getNeighborInventoryItem(int16 selectedIndex, bool forward) {
+	if (selectedIndex < 0) {
+		return forward ? _inventoryItemOrder.front() : _inventoryItemOrder.back();
+	}
+
+	for (uint i = 0; i < _inventoryItemOrder.size(); ++i) {
+		if (_inventoryItemOrder[i] == selectedIndex) {
+			if ((i == 0 && !forward) || (i == _inventoryItemOrder.size() - 1 && forward)) {
+				return -1;
+			} else {
+				i += forward ? 1 : -1;
+				return _inventoryItemOrder[i];
+			}
+		}
+	}
+
+	return -1;
+}
+
 } // End of namespace Resources
 } // End of namespace Stark

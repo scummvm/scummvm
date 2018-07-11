@@ -171,8 +171,8 @@ public:
 	void performToggleSubtitle();
 
 	/** Cycle back or forward through inventory cursor items */
-	void cycleBackInventory() { cycleInventory(1); }
-	void cycleForwardInventory() { cycleInventory(-1); }
+	void cycleBackInventory() { cycleInventory(false); }
+	void cycleForwardInventory() { cycleInventory(true); }
 
 	/** Scroll the inventory up or down */
 	void scrollInventoryUp();
@@ -202,7 +202,7 @@ public:
 private:
 	Screen *getScreenByName(Screen::Name screenName) const;
 
-	void cycleInventory(int step);
+	void cycleInventory(bool forward);
 
 	GameScreen *_gameScreen;
 	FMVScreen *_fmvScreen;
