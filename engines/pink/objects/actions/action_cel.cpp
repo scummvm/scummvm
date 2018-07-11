@@ -48,7 +48,7 @@ bool ActionCEL::initPalette(Director *director) {
 		_decoder.decodeNextFrame();
 		_decoder.rewind();
 	}
-	director->setPallette(_decoder.getPalette());
+	director->setPalette(_decoder.getPalette());
 	return true;
 }
 

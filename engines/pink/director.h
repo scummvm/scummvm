@@ -47,7 +47,7 @@ public:
 	void update();
 	bool processEvent(Common::Event &event);
 
-	void setPallette(const byte *pallete) { g_system->getPaletteManager()->setPalette(pallete, 0, 256); }
+	void setPalette(const byte *palette) { g_system->getPaletteManager()->setPalette(palette, 0, 256); }
 
 	void addSprite(ActionCEL *sprite);
 	void removeSprite(ActionCEL *sprite);
