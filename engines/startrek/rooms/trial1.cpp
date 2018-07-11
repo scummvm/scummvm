@@ -437,7 +437,7 @@ void Room::trial1UseCommunicator() {
 		int choice = showText(choices);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
-			_vm->_awayMission.trial.field5f = 1;
+			_vm->_awayMission.trial.missionEndMethod = 1;
 			endMission(1, 1, 1);
 		} else if (choice == 1) { // "Beam us to Vlict's position"
 			showText(TX_SPEAKER_UHURA, TX_TRI1U080);

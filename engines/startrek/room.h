@@ -1953,6 +1953,85 @@ public:
 
 	// TRIAL5
 	void trial5Tick1();
+	void trial5Tick60();
+	void trial5VlictAppeared();
+	void trial5WalkToInterface();
+	void trial5ReachedInterface();
+	void trial5GetGem(int16 item, int16 object);
+	void trial5ReachedGem();
+	void trial5PickedUpGem();
+	void trial5GetRedGem1();
+	void trial5GetRedGem2();
+	void trial5GetRedGem3();
+	void trial5GetGreenGem1();
+	void trial5GetGreenGem2();
+	void trial5GetGreenGem3();
+	void trial5GetBlueGem1();
+	void trial5GetBlueGem2();
+	void trial5GetBlueGem3();
+	void trial5LookAtKirk();
+	void trial5LookAtSpock();
+	void trial5LookAtMccoy();
+	void trial5LookAtRedshirt();
+	void trial5LookAtBeam();
+	void trial5LookAtInterface();
+	void trial5UseSTricorderOnInterface();
+	void trial5UseMTricorderOnInterface();
+	void trial5LookAtRedGem1();
+	void trial5LookAtRedGem2();
+	void trial5LookAtRedGem3();
+	void trial5LookAtGreenGem1();
+	void trial5LookAtGreenGem2();
+	void trial5LookAtGreenGem3();
+	void trial5LookAtBlueGem1();
+	void trial5LookAtBlueGem2();
+	void trial5LookAtBlueGem3();
+	void trial5LookAtHole();
+	void trial5TalkToKirk();
+	void trial5TalkToSpock();
+	void trial5TalkToMccoy();
+	void trial5TalkToRedshirt();
+	void trial5UsePhaser();
+	void trial5UseMTricorderAnywhere();
+	void trial5UseSTricorderAnywhere();
+	void trial5UseCommunicator();
+	void trial5UseGemOnHole(int16 item, int16 object, int16 hole);
+	void trial5ReachedHoleToPutGem();
+	void trial5ActivateLightOfWar();
+	void trial5ActivateLightOfKnowledge();
+	void trial5ActivateLightOfTravel();
+	void trial5RestrictedCombination1();
+	void trial5RestrictedCombination2();
+	void trial5DestinationNoLongerExists();
+	void trial5CrewmanBeamedOut();
+	void trial5UseRedGem1OnHole1();
+	void trial5UseRedGem2OnHole1();
+	void trial5UseRedGem3OnHole1();
+	void trial5UseGreenGem1OnHole1();
+	void trial5UseGreenGem2OnHole1();
+	void trial5UseGreenGem3OnHole1();
+	void trial5UseBlueGem1OnHole1();
+	void trial5UseBlueGem2OnHole1();
+	void trial5UseBlueGem3OnHole1();
+	void trial5UseRedGem1OnHole2();
+	void trial5UseRedGem2OnHole2();
+	void trial5UseRedGem3OnHole2();
+	void trial5UseGreenGem1OnHole2();
+	void trial5UseGreenGem2OnHole2();
+	void trial5UseGreenGem3OnHole2();
+	void trial5UseBlueGem1OnHole2();
+	void trial5UseBlueGem2OnHole2();
+	void trial5UseBlueGem3OnHole2();
+	void trial5UseRedGem1OnHole3();
+	void trial5UseRedGem2OnHole3();
+	void trial5UseRedGem3OnHole3();
+	void trial5UseGreenGem1OnHole3();
+	void trial5UseGreenGem2OnHole3();
+	void trial5UseGreenGem3OnHole3();
+	void trial5UseBlueGem1OnHole3();
+	void trial5UseBlueGem2OnHole3();
+	void trial5UseBlueGem3OnHole3();
+	void trial5UseMedkitAnywhere();
 
 private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
@@ -2095,6 +2174,11 @@ private:
 			// trial2
 			byte globBeingShot;
 			bool phaserOnKill;
+
+			// trial5
+			int16 itemToUse; // 0x1386
+			int16 objectToUse; // 0x1388
+			int16 hole;
 		} trial;
 
 	} _roomVar;

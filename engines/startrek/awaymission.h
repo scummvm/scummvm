@@ -288,12 +288,23 @@ struct AwayMission {
 			// 23: Is dead
 			int16 shotKlingonState; // 0x3d
 
+			bool neuralInterfaceActive; // 0x43
+			int16 holeContents[3]; // 0x44 (Holes to put gems in for TRIAL5)
+
 			bool enteredGlobRoom; // 0x5c
 			bool forceFieldDown; // 0x5d
 			bool uhuraAnalyzedCode; // 0x5e
-			int16 field5f; // 0x5f
+
+			// 0: Gave up in court, letting Quetzecoatl die
+			// 1: Beamed to enterprise after calling Uhura
+			// 2: Lost the court battle after beaming back to the courtroom
+			// 3: Quetzecoatl goes free and Vlict doesn't die
+			// 4: Quetzecoatl goes free and Vlict dies
+			int16 missionEndMethod; // 0x5f
+
 			bool gotPointsForGettingRod; // 0x61
 			bool gotPointsForCoatingRodWithIron; // 0x62
+			bool gotPointsForActivatingInterface; // 0x63
 			bool gotPointsForScanningGlob; // 0x64
 
 			bool gotPointsForBeamingOut;

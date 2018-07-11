@@ -381,7 +381,8 @@ void Room::trial3UseSTricorderOnExit() {
 void Room::trial3UseMTricorderOnKlingon() {
 	if (_vm->_awayMission.trial.shotKlingonState == 22) { // Unconscious
 		mccoyScan(DIR_S, TX_TRI3_011);
-		showText(TX_SPEAKER_BENNIE, TX_TRI3_028);
+		if (!_vm->_awayMission.redshirtDead) // BUGFIX: Check if redshirt is dead
+			showText(TX_SPEAKER_BENNIE, TX_TRI3_028);
 	}
 }
 
@@ -397,7 +398,7 @@ void Room::trial3UseCommunicator() {
 		int choice = showText(choices);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
-			_vm->_awayMission.trial.field5f = 1;
+			_vm->_awayMission.trial.missionEndMethod = 1;
 			endMission(_vm->_awayMission.trial.missionScore, _vm->_awayMission.trial.field2b, 1); // FIXME: inconsistent
 		} else if (choice == 1) { // "Beam us to Vlict's position"
 			trial3BeamToVlict();

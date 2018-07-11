@@ -197,7 +197,7 @@ void Room::trial0ReachedRoomCenter() {
 		playMidiMusicTracks(2, -1);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_049);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_044);
-		_vm->_awayMission.trial.field5f = 0;
+		_vm->_awayMission.trial.missionEndMethod = 0;
 
 		// FIXME: Are these parameters in the right order?
 		endMission(_vm->_awayMission.trial.missionScore, _vm->_awayMission.trial.field2b, 0);
