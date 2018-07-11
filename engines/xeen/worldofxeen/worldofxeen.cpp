@@ -119,6 +119,10 @@ void WorldOfXeenEngine::death() {
 }
 
 void WorldOfXeenEngine::dream() {
+	if (g_vm->getGameID() == GType_Clouds)
+		// Dreams only available for Dark Side & World
+		return;
+
 	Windows &windows = *_windows;
 	Graphics::ManagedSurface savedBg;
 
