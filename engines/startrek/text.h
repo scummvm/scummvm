@@ -4731,14 +4731,14 @@ const char * const g_gameStrings[] = {
 	"#TRI5\\TRI5_035#Not primed for neural interlink.",
 	"#TRI5\\TRI5_036#Alien vessels scanned.",
 	"#TRI5\\TRI5_037#Integrator now active",
-	"#TRI5\\TRI5_038#Telepathic entry codes required for greater than level One functions. Neural interlink at the integrator, and use the main index code of my light",
+	"#TRI5\\TRI5_038#Telepathic entry codes required for greater than level One functions. Neural interlink at the integrator, and use the main index code of my light.", // TYPO
 	"#TRI5\\TRI5_039#That combination is restricted to higher order functions. Neural interlink required.",
 	"#TRI5\\TRI5_040#This is Bialbi, High Mentalic of Hrakkour. For defense, use the light of war. For information, use my light. For transportation, use the light of travel. Sequences are keyed by combinations of crystals.",
 	"#TRI5\\TRI5_041#To use any light, the first crystal must correspond to the color of the light.",
 	"#TRI5\\TRI5_042#Force field blocks trans-system transport. Transport aborted. Use defense systems to eliminate alien vessels.",
 	"#TRI5\\TRI5_043#That destination no longer exists. Transport abandoned.",
 	"#TRI5\\TRI5_044#There is damage in the archive section due to a recent neutrino burst. Transport aborted.",
-	"#TRI5\\TRI5_045#There is no battle site at present at which to transport you.",
+	"#TRI5\\TRI5_045#There is no battle site at present to which to transport you.", // TYPO
 	"#TRI5\\TRI5_046#We can transport you only in proximity of nearest humanoid life. Transport imminent.",
 	"#TRI5\\TRI5_047#Alien vessels scanned.",
 	"#TRI5\\TRI5_048#Breach of protocol. Alien invasion imminent. Internal security activated.",
@@ -4746,7 +4746,7 @@ const char * const g_gameStrings[] = {
 	"#TRI5\\TRI5_050#Planetary defenses revived. All alien vessels in orbit destroyed.",
 	"#TRI5\\TRI5_051#I guess I should've taken a few more science courses at the Academy.",
 	"#TRI5\\TRI5_052#What is this place?",
-	"#TRI5\\TRI5N002#A platform emitting a beam light.",
+	"#TRI5\\TRI5N002#A platform emitting a beam of light.", // TYPO
 	"#TRI5\\TRI5N004#A strange yellow light.",
 	"#TRI5\\TRI5N005#James T. Kirk, hero of the galaxy!",
 	"#TRI5\\TRI5N006#Openings on the platform. Place something in these holes?",
@@ -4759,12 +4759,12 @@ const char * const g_gameStrings[] = {
 	"#TRI5\\TRI5N013#This large gem appears to be a ruby of unusual size. This is obviously artificial.",
 	"#TRI5\\TRI5N014#This large gem appears to be a ruby of unusual size. This is obviously artificial.",
 	"#TRI5\\TRI5N015#This large gem appears to be a ruby of unusual size. This is obviously artificial.",
-	"#TRI5\\TRI5N016#This large gem appears to be a saphire of unusual size. This is obviously artificial.",
-	"#TRI5\\TRI5N017#This large gem appears to be a saphire of unusual size. This is obviously artificial.",
-	"#TRI5\\TRI5N018#This large gem appears to be a saphire of unusual size. This is obviously artificial.",
-	"#TRI5\\TRI5N019#This large gem appears to be a emerald of unusual size. This is obviously artificial.",
-	"#TRI5\\TRI5N020#This large gem appears to be a emerald of unusual size. This is obviously artificial.",
-	"#TRI5\\TRI5N021#This large gem appears to be a emerald of unusual size. This is obviously artificial.",
+	"#TRI5\\TRI5N016#This large gem appears to be a sapphire of unusual size. This is obviously artificial.", // TYPO
+	"#TRI5\\TRI5N017#This large gem appears to be a sapphire of unusual size. This is obviously artificial.", // TYPO
+	"#TRI5\\TRI5N018#This large gem appears to be a sapphire of unusual size. This is obviously artificial.", // TYPO
+	"#TRI5\\TRI5N019#This large gem appears to be an emerald of unusual size. This is obviously artificial.", // TYPO
+	"#TRI5\\TRI5N020#This large gem appears to be an emerald of unusual size. This is obviously artificial.", // TYPO
+	"#TRI5\\TRI5N021#This large gem appears to be an emerald of unusual size. This is obviously artificial.", // TYPO
 
 
 	"#SIN3\\SIN3_012#Can't say I like the decor.",
