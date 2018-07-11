@@ -69,7 +69,7 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_dialogScreen(nullptr),
 		_exitGame(false),
 		_quitToMainMenu(false),
-		_toggleSubtitle(false),
+		_shouldToggleSubtitle(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
 		_interactive(true),
@@ -397,7 +397,7 @@ void UserInterface::toggleScreen(Screen::Name screenName) {
 
 void UserInterface::performToggleSubtitle() {
 	StarkSettings->flipSetting(Settings::kSubtitle);
-	_toggleSubtitle = false;
+	_shouldToggleSubtitle = false;
 }
 
 void UserInterface::cycleInventory(bool forward) {

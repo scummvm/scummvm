@@ -166,8 +166,8 @@ public:
 	void toggleScreen(Screen::Name screenName);
 
 	/** Toggle subtitles on and off */
-	void requestToggleSubtitle() { _toggleSubtitle = !_toggleSubtitle; }
-	bool hasToggleSubtitleRequest() { return _toggleSubtitle; }
+	void requestToggleSubtitle() { _shouldToggleSubtitle = !_shouldToggleSubtitle; }
+	bool hasToggleSubtitleRequest() { return _shouldToggleSubtitle; }
 	void performToggleSubtitle();
 
 	/** Cycle back or forward through inventory cursor items */
@@ -225,7 +225,7 @@ private:
 	bool _interactive;
 	bool _interactionAttemptDenied;
 
-	bool _toggleSubtitle;
+	bool _shouldToggleSubtitle;
 
 	Graphics::Surface *_gameWindowThumbnail;
 };
