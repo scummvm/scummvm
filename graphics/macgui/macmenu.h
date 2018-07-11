@@ -66,7 +66,7 @@ public:
 	bool hasAllFocus() { return _menuActivated; }
 
 	bool isVisible() { return _isVisible; }
-	void setVisible(bool visible) { _isVisible = visible; }
+	void setVisible(bool visible) { _isVisible = visible; _contentIsDirty = true; }
 
 	Common::Rect _bbox;
 

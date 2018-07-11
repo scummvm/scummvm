@@ -549,9 +549,12 @@ bool MacMenu::mouseClick(int x, int y) {
 }
 
 bool MacMenu::mouseMove(int x, int y) {
-	if (_menuActivated)
+	if (_menuActivated) {
 		if (mouseClick(x, y))
 			return true;
+	} else if ((_wm->_mode & kWMModeAutohideMenu) && !_bbox.contains(x, y)) {
+		_isVisible = false;
+	}
 
 	return false;
 }
