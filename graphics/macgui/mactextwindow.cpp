@@ -70,7 +70,7 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 	_cursorRect = new Common::Rect(0, 0, 1, kCursorHeight);
 
 	_cursorSurface = new ManagedSurface(1, kCursorHeight);
-	_cursorSurface->fillRect(*_cursorRect, kColorBlack);
+	_cursorSurface->fillRect(*_cursorRect, _wm->_colorBlack);
 
 	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
 }
@@ -131,7 +131,7 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	if (_borderIsDirty || forceRedraw) {
 		drawBorder();
 
-		_composeSurface.clear(kColorWhite);
+		_composeSurface.clear(_wm->_colorWhite);
 	}
 
 	if (_inputIsDirty || forceRedraw) {
@@ -209,10 +209,10 @@ void MacTextWindow::drawSelection() {
 		byte *ptr = (byte *)_composeSurface.getBasePtr(x1 + kConWOverlap - 2, y + kConWOverlap - 2);
 
 		for (int x = x1; x < x2; x++, ptr++)
-			if (*ptr == kColorBlack)
-				*ptr = kColorWhite;
+			if (*ptr == _wm->_colorBlack)
+				*ptr = _wm->_colorWhite;
 			else
-				*ptr = kColorBlack;
+				*ptr = _wm->_colorBlack;
 	}
 }
 

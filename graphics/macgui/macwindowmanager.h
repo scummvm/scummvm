@@ -83,7 +83,7 @@ struct MacPlotData {
 	int thickness;
 	uint bgColor;
 
-	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t, uint bg = kColorWhite) :
+	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t, uint bg) :
 		surface(s), patterns(p), fillType(f), thickness(t), bgColor(bg) {
 	}
 };
@@ -210,6 +210,8 @@ public:
 
 	void setMode(uint32 mode) { _mode = mode; }
 
+	void passPalette(const byte *palette, uint size);
+
 public:
 	MacFontManager *_fontMan;
 	uint32 _mode;
@@ -218,6 +220,8 @@ public:
 	Common::Rect _menuHotzone;
 
 	bool _menuTimerActive;
+
+	int _colorBlack, _colorWhite;
 
 private:
 	void drawDesktop();

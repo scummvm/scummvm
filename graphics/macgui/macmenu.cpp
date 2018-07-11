@@ -362,17 +362,17 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 	_screen.clear(kColorGreen);
 
-	drawFilledRoundRect(&_screen, r, kDesktopArc, kColorWhite);
+	drawFilledRoundRect(&_screen, r, kDesktopArc, _wm->_colorWhite);
 	r.top = 7;
-	_screen.fillRect(r, kColorWhite);
+	_screen.fillRect(r, _wm->_colorWhite);
 	r.top = kMenuHeight - 1;
 	r.bottom++;
 	_screen.fillRect(r, kColorGreen);
 	r.bottom--;
-	_screen.fillRect(r, kColorBlack);
+	_screen.fillRect(r, _wm->_colorBlack);
 
 	for (uint i = 0; i < _items.size(); i++) {
-		int color = kColorBlack;
+		int color = _wm->_colorBlack;
 		MacMenuItem *it = _items[i];
 
 		if ((uint)_activeItem == i) {
@@ -382,8 +382,8 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 			hbox.right += 3;
 			hbox.bottom += 1;
 
-			_screen.fillRect(hbox, kColorBlack);
-			color = kColorWhite;
+			_screen.fillRect(hbox, _wm->_colorBlack);
+			color = _wm->_colorWhite;
 
 			if (!it->subitems.empty())
 				renderSubmenu(it);
@@ -405,12 +405,12 @@ void MacMenu::renderSubmenu(MacMenuItem *menu) {
 	if (r->width() == 0 || r->height() == 0)
 		return;
 
-	_screen.fillRect(*r, kColorWhite);
-	_screen.frameRect(*r, kColorBlack);
-	_screen.vLine(r->right, r->top + 3, r->bottom + 1, kColorBlack);
-	_screen.vLine(r->right + 1, r->top + 3, r->bottom + 1, kColorBlack);
-	_screen.hLine(r->left + 3, r->bottom, r->right + 1, kColorBlack);
-	_screen.hLine(r->left + 3, r->bottom + 1, r->right + 1, kColorBlack);
+	_screen.fillRect(*r, _wm->_colorWhite);
+	_screen.frameRect(*r, _wm->_colorBlack);
+	_screen.vLine(r->right, r->top + 3, r->bottom + 1, _wm->_colorBlack);
+	_screen.vLine(r->right + 1, r->top + 3, r->bottom + 1, _wm->_colorBlack);
+	_screen.hLine(r->left + 3, r->bottom, r->right + 1, _wm->_colorBlack);
+	_screen.hLine(r->left + 3, r->bottom + 1, r->right + 1, _wm->_colorBlack);
 
 	int x = r->left + kMenuDropdownPadding;
 	int y = r->top + 1;
@@ -419,12 +419,12 @@ void MacMenu::renderSubmenu(MacMenuItem *menu) {
 		Common::String acceleratorText(getAcceleratorString(menu->subitems[i], ""));
 		int accelX = r->right - 25;
 
-		int color = kColorBlack;
+		int color = _wm->_colorBlack;
 		if (i == (uint)_activeSubItem && !text.empty() && menu->subitems[i]->enabled) {
-			color = kColorWhite;
+			color = _wm->_colorWhite;
 			Common::Rect trect(r->left, y - (_wm->_fontMan->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
-			_screen.fillRect(trect, kColorBlack);
+			_screen.fillRect(trect, _wm->_colorBlack);
 		}
 
 		if (!text.empty()) {
@@ -464,7 +464,7 @@ void MacMenu::renderSubmenu(MacMenuItem *menu) {
 			bool flip = r->left & 2;
 			byte *ptr = (byte *)_screen.getBasePtr(r->left + 1, y + kMenuDropdownItemHeight / 2);
 			for (int xx = r->left + 1; xx <= r->right - 1; xx++, ptr++) {
-				*ptr = flip ? kColorBlack : kColorWhite;
+				*ptr = flip ? _wm->_colorBlack : _wm->_colorWhite;
 				flip = !flip;
 			}
 		}

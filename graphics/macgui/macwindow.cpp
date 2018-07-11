@@ -159,13 +159,15 @@ const int arrowPixels[ARROW_H][ARROW_W] = {
 		{0,1,1,1,1,1,1,1,1,1,1,0},
 		{1,1,1,1,1,1,1,1,1,1,1,1}};
 
+int localColorWhite, localColorBlack;
+
 static void drawPixelInverted(int x, int y, int color, void *data) {
 	ManagedSurface *surface = (ManagedSurface *)data;
 
 	if (x >= 0 && x < surface->w && y >= 0 && y < surface->h) {
 		byte *p = (byte *)surface->getBasePtr(x, y);
 
-		*p = *p == kColorWhite ? kColorBlack : kColorWhite;
+		*p = *p == localColorWhite ? localColorBlack : localColorWhite;
 	}
 }
 
@@ -234,26 +236,26 @@ void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 	drawBox(g, x + width - size + 1, y + size,              size - 4,             height - 2 * size - 1);
 
 	if (active) {
-		fillRect(g, x + size, y + 5,           width - 2 * size - 1, 8, kColorBlack);
-		fillRect(g, x + size, y + height - 13, width - 2 * size - 1, 8, kColorBlack);
-		fillRect(g, x + 5,    y + size,        8,                    height - 2 * size - 1, kColorBlack);
+		fillRect(g, x + size, y + 5,           width - 2 * size - 1, 8, _wm->_colorBlack);
+		fillRect(g, x + size, y + height - 13, width - 2 * size - 1, 8, _wm->_colorBlack);
+		fillRect(g, x + 5,    y + size,        8,                    height - 2 * size - 1, _wm->_colorBlack);
 		if (!scrollable) {
-			fillRect(g, x + width - 13, y + size, 8, height - 2 * size - 1, kColorBlack);
+			fillRect(g, x + width - 13, y + size, 8, height - 2 * size - 1, _wm->_colorBlack);
 		} else {
 			int x1 = x + width - 15;
 			int y1 = y + size + 1;
 
 			for (int yy = 0; yy < ARROW_H; yy++) {
 				for (int xx = 0; xx < ARROW_W; xx++)
-					g->hLine(x1 + xx, y1 + yy, x1 + xx, (arrowPixels[yy][xx] != 0 ? kColorBlack : kColorWhite));
+					g->hLine(x1 + xx, y1 + yy, x1 + xx, (arrowPixels[yy][xx] != 0 ? _wm->_colorBlack : _wm->_colorWhite));
 			}
 
-			fillRect(g, x + width - 13, y + size + ARROW_H, 8, height - 2 * size - 1 - ARROW_H * 2, kColorBlack);
+			fillRect(g, x + width - 13, y + size + ARROW_H, 8, height - 2 * size - 1 - ARROW_H * 2, _wm->_colorBlack);
 
 			y1 += height - 2 * size - ARROW_H - 2;
 			for (int yy = 0; yy < ARROW_H; yy++) {
 				for (int xx = 0; xx < ARROW_W; xx++)
-					g->hLine(x1 + xx, y1 + yy, x1 + xx, (arrowPixels[ARROW_H - yy - 1][xx] != 0 ? kColorBlack : kColorWhite));
+					g->hLine(x1 + xx, y1 + yy, x1 + xx, (arrowPixels[ARROW_H - yy - 1][xx] != 0 ? _wm->_colorBlack : _wm->_colorWhite));
 			}
 
 			if (_highlightedPart == kBorderScrollUp || _highlightedPart == kBorderScrollDown) {
@@ -263,12 +265,15 @@ void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 				int ry2 = ry1 + _dims.height() * _scrollSize;
 				Common::Rect rr(rx1, ry1, rx2, ry2);
 
-				Graphics::drawFilledRect(rr, kColorBlack, drawPixelInverted, g);
+				localColorWhite = _wm->_colorWhite;
+				localColorBlack = _wm->_colorBlack;
+
+				Graphics::drawFilledRect(rr, _wm->_colorBlack, drawPixelInverted, g);
 			}
 		}
 		if (closeable) {
 			if (_highlightedPart == kBorderCloseButton) {
-				fillRect(g, x + 6, y + 6, 6, 6, kColorBlack);
+				fillRect(g, x + 6, y + 6, 6, 6, _wm->_colorBlack);
 			} else {
 				drawBox(g, x + 5, y + 5, 7, 7);
 			}
@@ -284,7 +289,7 @@ void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 		if (w > maxWidth)
 			w = maxWidth;
 		drawBox(g, x + (width - w) / 2, y, w, size);
-		font->drawString(g, _title, x + (width - w) / 2 + 5, y + yOff, w, kColorBlack);
+		font->drawString(g, _title, x + (width - w) / 2 + 5, y + yOff, w, _wm->_colorBlack);
 	}
 }
 
@@ -294,9 +299,9 @@ void MacWindow::drawPattern() {
 		for (int x = 0; x < _surface.w; x++) {
 			byte *dst = (byte *)_surface.getBasePtr(x, y);
 			if (pat[y % 8] & (1 << (7 - (x % 8))))
-				*dst = kColorBlack;
+				*dst = _wm->_colorBlack;
 			else
-				*dst = kColorWhite;
+				*dst = _wm->_colorWhite;
 		}
 	}
 }
@@ -350,8 +355,8 @@ void MacWindow::setCloseable(bool closeable) {
 void MacWindow::drawBox(ManagedSurface *g, int x, int y, int w, int h) {
 	Common::Rect r(x, y, x + w + 1, y + h + 1);
 
-	g->fillRect(r, kColorWhite);
-	g->frameRect(r, kColorBlack);
+	g->fillRect(r, _wm->_colorWhite);
+	g->frameRect(r, _wm->_colorBlack);
 }
 
 void MacWindow::fillRect(ManagedSurface *g, int x, int y, int w, int h, int color) {

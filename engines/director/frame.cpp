@@ -700,7 +700,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		break;
 	case kTypeButton: {
 			_rect = Common::Rect(x, y, x + width, y + height + 3);
-			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1);
+			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1, Graphics::kColorWhite);
 			Graphics::drawRoundRect(_rect, 4, 0, false, Graphics::macDrawPixel, &pd);
 			addDrawRect(spriteId, _rect);
 		}

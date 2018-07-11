@@ -158,6 +158,9 @@ MacWindowManager::MacWindowManager() {
 	_menuDelay = 0;
 	_menuTimerActive = false;
 
+	_colorBlack = 0;
+	_colorWhite = 2;
+
 	_fullRefresh = true;
 
 	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
@@ -290,9 +293,9 @@ void macDrawPixel(int x, int y, int color, void *data) {
 void MacWindowManager::drawDesktop() {
 	Common::Rect r(_screen->getBounds());
 
-	MacPlotData pd(_screen, &_patterns, kPatternCheckers, 1);
+	MacPlotData pd(_screen, &_patterns, kPatternCheckers, 1, _colorWhite);
 
-	Graphics::drawRoundRect(r, kDesktopArc, kColorBlack, true, macDrawPixel, &pd);
+	Graphics::drawRoundRect(r, kDesktopArc, _colorBlack, true, macDrawPixel, &pd);
 
 	g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
 }
@@ -450,5 +453,53 @@ void MacWindowManager::popCursor() {
 	CursorMan.popCursor();
 }
 
+///////////////////
+// Palette stuff
+///////////////////
+void MacWindowManager::passPalette(const byte *pal, uint size) {
+	const byte *p = pal;
+
+	_colorWhite = -1;
+	_colorBlack = -1;
+
+	// Search pure white and black colors
+	for (uint i = 0; i < size; i++) {
+		if (_colorWhite == -1 && p[0] == 0xff && p[1] == 0xff && p[2] == 0xff)
+			_colorWhite = i;
+
+
+		if (_colorBlack == -1 && p[0] == 0x00 && p[1] == 0x00 && p[2] == 0x00)
+			_colorBlack = i;
+
+		p += 3;
+	}
+
+	if (_colorWhite != -1 && _colorBlack != -1)
+		return;
+
+	// We did not find some color. Let's find closest approximations
+	float darkest = 1000.0f, brightest = -1.0f;
+	int di = -1, bi = -1;
+	p = pal;
+
+	for (uint i = 0; i < size; i++) {
+		float gray = p[0] * 0.3f + p[1] * 0.59f + p[2] * 0.11f;
+
+		if (darkest > gray) {
+			darkest = gray;
+			di = i;
+		}
+
+		if (brightest < gray) {
+			brightest = gray;
+			bi = i;
+		}
+
+		p += 3;
+	}
+
+	_colorWhite = brightest;
+	_colorBlack = darkest;
+}
 
 } // End of namespace Graphics
