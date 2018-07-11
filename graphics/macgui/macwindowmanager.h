@@ -142,6 +142,8 @@ public:
 
 	void activateMenu();
 
+	bool isMenuActive();
+
 	/**
 	 * Set hot zone where menu appears (works only with autohide menu)
 	 */

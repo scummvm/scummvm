@@ -223,6 +223,13 @@ void MacWindowManager::activateMenu() {
 	_menu->setVisible(true);
 }
 
+bool MacWindowManager::isMenuActive() {
+	if (!_menu)
+		return false;
+
+	return _menu->isVisible();
+}
+
 void MacWindowManager::setActive(int id) {
 	if (_activeWindow == id)
 		return;
