@@ -23,6 +23,7 @@
 #include "pink/archive.h"
 #include "pink/cursor_mgr.h"
 #include "pink/pink.h"
+#include "pink/director.h"
 #include "pink/objects/actions/action.h"
 #include "pink/objects/actors/supporting_actor.h"
 #include "pink/objects/actors/lead_actor.h"

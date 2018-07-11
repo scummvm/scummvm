@@ -32,6 +32,7 @@
 
 #include "pink/pink.h"
 #include "pink/console.h"
+#include "pink/director.h"
 #include "pink/objects/module.h"
 #include "pink/objects/actors/lead_actor.h"
 
@@ -40,7 +41,7 @@ namespace Pink {
 PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	: Engine(system), _console(nullptr), _rnd("pink"),
 	_desc(*desc), _bro(nullptr), _actor(nullptr),
-	_module(nullptr), _director(), _pdaMgr(this) {
+	_module(nullptr), _director(nullptr), _pdaMgr(this) {
 	debug("PinkEngine constructed");
 
 	DebugMan.addDebugChannel(kPinkDebugGeneral, "general", "General issues");
@@ -72,6 +73,7 @@ Common::Error PinkEngine::init() {
 	initGraphics(640, 480);
 
 	_console = new Console(this);
+	_director = new Director();
 
 	Common::String orbName;
 	Common::String broName;
@@ -112,7 +114,7 @@ Common::Error Pink::PinkEngine::run() {
 	while (!shouldQuit()) {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
-			if (_director.processEvent(event))
+			if (_director->processEvent(event))
 				continue;
 
 			switch (event.type) {
@@ -146,7 +148,7 @@ Common::Error Pink::PinkEngine::run() {
 		}
 
 		_actor->update();
-		_director.update();
+		_director->update();
 		_system->delayMillis(10);
 	}
 
@@ -174,7 +176,7 @@ void PinkEngine::initModule(const Common::String &moduleName, const Common::Stri
 
 void PinkEngine::changeScene() {
 	setCursor(kLoadingCursor);
-	_director.clear();
+	_director->clear();
 
 	if (!_nextModule.empty() && _nextModule != _module->getName())
 		initModule(_nextModule, _nextPage, nullptr);
@@ -285,7 +287,7 @@ bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
 
 void PinkEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
-	_director.pause(pause);
+	_director->pause(pause);
 }
 
 bool PinkEngine::isPeril() {

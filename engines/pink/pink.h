@@ -33,7 +33,6 @@
 #include "gui/debugger.h"
 
 #include "pink/constants.h"
-#include "pink/director.h"
 #include "pink/file.h"
 #include "pink/utils.h"
 #include "pink/pda_mgr.h"
@@ -63,6 +62,7 @@
 namespace Pink {
 
 class Console;
+class Director;
 class Archive;
 class NamedObject;
 class Module;
@@ -110,7 +110,7 @@ public:
 	OrbFile *getOrb()  { return &_orb; }
 	BroFile *getBro()  { return _bro; }
 	Common::RandomSource &getRnd() { return _rnd; };
-	Director *getDirector() { return &_director; }
+	Director *getDirector() { return _director; }
 	PDAMgr &getPdaMgr() { return _pdaMgr; }
 
 	void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage) { _nextModule = nextModule; _nextPage = nextPage; }
@@ -137,7 +137,7 @@ private:
 	OrbFile  _orb;
 	BroFile *_bro;
 
-	Director _director;
+	Director *_director;
 	LeadActor *_actor;
 
 	Module *_module;
