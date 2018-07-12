@@ -502,7 +502,7 @@ private:
 	void handleTrialWarning();
 };
 
-WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header, bool skipThumbnail = true);
+WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header, bool skipThumbnail = false);
 
 } // End of namespace Lab
 

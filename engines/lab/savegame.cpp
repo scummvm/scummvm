@@ -98,10 +98,11 @@ WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeade
 	header._descr.setDescription(saveName);
 
 	// Get the thumbnail
-	Graphics::Surface *thumbnail;
+	Graphics::Surface *thumbnail = nullptr;
 	if (!Graphics::loadThumbnail(*in, thumbnail, skipThumbnail)) {
 		return false;
 	}
+
 	header._descr.setThumbnail(thumbnail);
 
 	uint32 saveDate = in->readUint32BE();
