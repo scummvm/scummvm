@@ -369,6 +369,12 @@ void MohawkEngine_Riven::pauseEngineIntern(bool pause) {
 		_video->pauseVideos();
 	} else {
 		_video->resumeVideos();
+
+		if (_stack) {
+			// The mouse may have moved while the game was paused,
+			// the mouse cursor needs to be updated.
+			_stack->onMouseMove(_eventMan->getMousePos());
+		}
 	}
 }
 
@@ -444,6 +450,10 @@ void MohawkEngine_Riven::changeToStack(uint16 stackId) {
 
 	delete _stack;
 	_stack = constructStackById(stackId);
+
+	// Set the mouse position to the correct value so the mouse
+	// cursor can be computed accurately when loading a card.
+	_stack->onMouseMove(getEventManager()->getMousePos());
 }
 
 const char **MohawkEngine_Riven::listExpectedDatafiles() const {
