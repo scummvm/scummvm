@@ -121,11 +121,11 @@ public:
 	bool isEGA() const { return (getFeatures() & GF_EGA) != 0; }
 
 	virtual Common::Error loadGameState(int slot) {
-		return loadGame(slot) ? Common::kReadingFailed : Common::kNoError;
+		return loadGame(slot) ? Common::kNoError : Common::kReadingFailed;
 	}
 	virtual Common::Error saveGameState(int slot, const Common::String &desc) {
 		Common::String s(desc);
-		return saveGame(slot, s) ? Common::kReadingFailed : Common::kNoError;
+		return saveGame(slot, s) ? Common::kNoError : Common::kReadingFailed;
 	}
 	virtual bool canLoadGameStateCurrently() {
 		return _saveLoadAllowed && !Fights.isFighting();
