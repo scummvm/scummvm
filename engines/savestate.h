@@ -177,6 +177,14 @@ public:
 	 */
 	const Common::String &getPlayTime() const { return _playTime; }
 
+	/**
+	 * Returns the time the game was played before the save state was created
+	 * in milliseconds.
+	 *
+	 * It defaults to 0.
+	 */
+	uint32 getPlayTimeMSecs() const { return _playTimeMSecs; }
+
 private:
 	/**
 	 * The saveslot id, as it would be passed to the "-x" command line switch.
@@ -218,6 +226,12 @@ private:
 	 * save state was created.
 	 */
 	Common::String _playTime;
+
+	/**
+	 * The time the game was played before the save state was created
+	 * in milliseconds.
+	 */
+	uint32 _playTimeMSecs;
 
 	/**
 	 * The thumbnail of the save state.
