@@ -387,7 +387,8 @@ private:
  */
 class RivenStackChangeCommand : public RivenCommand {
 public:
-	RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId, bool byStackId);
+	RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId,
+		                        bool byStackId, bool byStackCardId);
 
 	static RivenStackChangeCommand *createFromStream(MohawkEngine_Riven *vm, Common::ReadStream *stream);
 	virtual ~RivenStackChangeCommand();
@@ -401,6 +402,7 @@ private:
 	uint16 _stackId;
 	uint32 _cardId;
 	bool _byStackId; // Otherwise by stack name id
+	bool _byStackCardId; // Otherwise by global card id
 };
 
 /**

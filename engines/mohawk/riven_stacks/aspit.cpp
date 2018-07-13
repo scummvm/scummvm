@@ -424,7 +424,7 @@ void ASpit::xaNewGame(const ArgumentArray &args) {
 	                  kRivenCommandTransition,  1, kRivenTransitionBlend,
 	                  kRivenCommandChangeCard,  1, 2);
 
-	script->addCommand(RivenCommandPtr(new RivenStackChangeCommand(_vm, 0, 0x6E9A, false)));
+	script->addCommand(RivenCommandPtr(new RivenStackChangeCommand(_vm, 0, 0x6E9A, false, false)));
 
 	script += _vm->_scriptMan->createScriptFromData(1,
 	                  kRivenCommandStopSound,   1, 2);

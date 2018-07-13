@@ -918,11 +918,13 @@ void RivenSwitchCommand::applyCardPatches(uint32 globalId, int scriptType, uint1
 	}
 }
 
-RivenStackChangeCommand::RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId, bool byStackId) :
+RivenStackChangeCommand::RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId,
+                                                 bool byStackId, bool byStackCardId) :
 		RivenCommand(vm),
 		_stackId(stackId),
 		_cardId(globalCardId),
-		_byStackId(byStackId) {
+		_byStackId(byStackId),
+		_byStackCardId(byStackCardId) {
 
 }
 
@@ -935,7 +937,7 @@ RivenStackChangeCommand *RivenStackChangeCommand::createFromStream(MohawkEngine_
 	uint16 stackId = stream->readUint16BE();
 	uint32 globalCardId = stream->readUint32BE();
 
-	return new RivenStackChangeCommand(vm, stackId, globalCardId, false);
+	return new RivenStackChangeCommand(vm, stackId, globalCardId, false, false);
 }
 
 void RivenStackChangeCommand::execute() {
@@ -954,7 +956,14 @@ void RivenStackChangeCommand::execute() {
 	}
 
 	_vm->changeToStack(stackID);
-	uint16 cardID = _vm->getStack()->getCardStackId(_cardId);
+
+	uint16 cardID;
+	if (_byStackCardId) {
+		cardID = _cardId;
+	} else {
+		cardID = _vm->getStack()->getCardStackId(_cardId);
+	}
+
 	_vm->changeToCard(cardID);
 }
 

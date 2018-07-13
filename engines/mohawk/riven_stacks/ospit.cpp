@@ -51,7 +51,7 @@ void OSpit::xorollcredittime(const ArgumentArray &args) {
 	// we should be using the Tay end game sequences.
 	if (_vm->_vars["returnstackid"] == kStackRspit) {
 		RivenScriptPtr script = _vm->_scriptMan->createScriptWithCommand(
-				new RivenStackChangeCommand(_vm, kStackRspit, 0x3338, true));
+				new RivenStackChangeCommand(_vm, kStackRspit, 0x3338, true, false));
 		_vm->_scriptMan->runScript(script, false);
 		return;
 	}

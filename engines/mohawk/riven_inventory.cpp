@@ -167,7 +167,7 @@ void RivenInventory::backFromItemScript() const {
 	uint32 backCardId = _vm->_vars["returncardid"];
 
 	// Return to where we were before entering the book
-	RivenCommand *back = new RivenStackChangeCommand(_vm, backStackId, backCardId, true);
+	RivenCommand *back = new RivenStackChangeCommand(_vm, backStackId, backCardId, true, false);
 	RivenScriptPtr backScript = _vm->_scriptMan->createScriptWithCommand(back);
 	_vm->_scriptMan->runScript(backScript, true);
 }

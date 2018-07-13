@@ -341,15 +341,18 @@ void MohawkEngine_Riven::goToMainMenu() {
 	_menuTumbnail.reset(new Graphics::Surface());
 	createThumbnailFromScreen(_menuTumbnail.get());
 
-	changeToStack(kStackAspit);
-	changeToCard(1);
+	RivenCommand *go = new RivenStackChangeCommand(this, kStackAspit, 1, true, true);
+	RivenScriptPtr goScript = _scriptMan->createScriptWithCommand(go);
+	_scriptMan->runScript(goScript, true);
 }
 
 void MohawkEngine_Riven::resumeFromMainMenu() {
 	assert(_menuSavedStack != -1);
 
-	changeToStack(_menuSavedStack);
-	changeToCard(_menuSavedCard);
+	RivenCommand *resume = new RivenStackChangeCommand(this, _menuSavedStack, _menuSavedCard, true, true);
+	RivenScriptPtr resumeScript = _scriptMan->createScriptWithCommand(resume);
+	_scriptMan->runScript(resumeScript, true);
+
 	_menuSavedStack = -1;
 	_menuSavedCard = -1;
 	_menuTumbnail.reset();
