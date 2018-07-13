@@ -41,6 +41,7 @@ Common::Error PinkEngine::loadGameState(int slot) {
 	_nextModule = archive.readString();
 	_nextPage = archive.readString();
 	initModule(archive.readString(), "", &archive);
+	setTotalPlayTime(desc.getPlayTimeMSecs());
 
 	delete in;
 	return Common::kNoError;
