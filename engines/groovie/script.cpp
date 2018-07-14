@@ -26,7 +26,6 @@
 #include "groovie/cell.h"
 #include "groovie/cursor.h"
 #include "groovie/graphics.h"
-#include "groovie/groovie.h"
 #include "groovie/music.h"
 #include "groovie/player.h"
 #include "groovie/resource.h"
@@ -172,7 +171,7 @@ bool Script::loadScript(Common::String filename) {
 
 void Script::directGameLoad(int slot) {
 	// Reject invalid slots
-	if (slot < 0 || slot > 9) {
+	if (slot < 0 || slot > MAX_SAVES - 1) {
 		return;
 	}
 
@@ -395,6 +394,17 @@ void Script::loadgame(uint slot) {
 
 	// Hide the mouse cursor
 	_vm->_grvCursorMan->show(false);
+}
+
+void Script::directGameSave(int slot, const Common::String &desc) {
+	if (slot < 0 || slot > MAX_SAVES - 1) {
+		return;
+	}
+	const char *saveName = desc.c_str();
+	for (int i = 0; i < 15; i++) {
+		_variables[i] = saveName[i] - 0x30;
+	}
+	savegame(slot);
 }
 
 void Script::savegame(uint slot) {
@@ -1368,7 +1378,7 @@ void Script::o_checkvalidsaves() {
 	debugC(1, kDebugScript, "CHECKVALIDSAVES");
 
 	// Reset the array of valid saves and the savegame names cache
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < MAX_SAVES; i++) {
 		setVariable(i, 0);
 		_saveNames[i] = "E M P T Y";
 	}
