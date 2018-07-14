@@ -23,6 +23,7 @@
 #ifndef MUTATIONOFJB_GAME_H
 #define MUTATIONOFJB_GAME_H
 
+#include "common/random.h"
 #include "common/scummsys.h"
 #include "mutationofjb/assets.h"
 #include "mutationofjb/gui.h"
@@ -47,6 +48,7 @@ class Bitmap;
 class Game {
 public:
 	Game(MutationOfJBEngine *vm);
+	Common::RandomSource &getRandomSource();
 	GameData &getGameData();
 	Room &getRoom();
 	Script *getGlobalScript() const;
@@ -68,7 +70,7 @@ public:
 
 	static uint8 colorFromString(const char *colorStr);
 
-	TaskManager& getTaskManager();
+	TaskManager &getTaskManager();
 	Assets &getAssets();
 
 	Graphics::Screen &getScreen();
@@ -80,6 +82,7 @@ private:
 	Script *changeSceneLoadScript(uint8 sceneId, bool partB);
 
 	MutationOfJBEngine *_vm;
+	Common::RandomSource _randomSource;
 
 	GameData *_gameData;
 	Script *_globalScript;

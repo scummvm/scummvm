@@ -56,7 +56,7 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 	}
 
 	const char firstChar = line.firstChar();
-	if (firstChar != '#' && firstChar != '=' && firstChar != '-') {
+	if (firstChar != '#' && firstChar != '=' && firstChar != '-' && firstChar != '\\') {
 		return false;
 	}
 

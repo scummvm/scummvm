@@ -30,6 +30,7 @@
 #include "mutationofjb/commands/seqcommand.h"
 #include "mutationofjb/commands/conditionalcommand.h"
 #include "mutationofjb/commands/callmacrocommand.h"
+#include "mutationofjb/commands/randomcommand.h"
 #include "common/debug-channels.h"
 #include "common/translation.h"
 #include "common/scummsys.h"
@@ -152,6 +153,14 @@ void Console::showCommands(Command *command, int indentLevel) {
 			command = nullptr;
 		} else if (CallMacroCommand* const callMacroCmd = dynamic_cast<CallMacroCommand *>(command)) {
 			command = callMacroCmd->getReturnCommand();
+		} else if (RandomCommand* const randomCmd = dynamic_cast<RandomCommand *>(command)) {
+			const RandomCommand::Choices &choices = randomCmd->getChoices();
+			for (RandomCommand::Choices::size_type i = 0; i < choices.size(); ++i) {
+				showIndent(indentLevel + 1);
+				debugPrintf("CASE %u\n", i);
+				showCommands(choices[i], indentLevel + 2);
+			}
+			command = nullptr;
 		} else {
 			command = nullptr;
 		}

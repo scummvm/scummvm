@@ -45,6 +45,7 @@
 #include "mutationofjb/commands/renamecommand.h"
 #include "mutationofjb/commands/definestructcommand.h"
 #include "mutationofjb/commands/talkcommand.h"
+#include "mutationofjb/commands/randomcommand.h"
 #include "mutationofjb/game.h"
 
 namespace MutationOfJB {
@@ -71,6 +72,8 @@ static CommandParser **getParsers() {
 		new NewRoomCommandParser,
 		new GotoCommandParser,
 		new LabelCommandParser,
+		new RandomCommandParser,
+		new RandomBlockStartParser,
 		nullptr
 	};
 
@@ -81,7 +84,8 @@ static CommandParser **getParsers() {
 ScriptParseContext::ScriptParseContext(Common::SeekableReadStream &stream) :
 	_stream(stream),
 	_currentCommand(nullptr),
-	_lastCommand(nullptr)
+	_lastCommand(nullptr),
+	_pendingRandomCommand(nullptr)
 {}
 
 bool ScriptParseContext::readLine(Common::String &line) {
