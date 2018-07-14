@@ -218,14 +218,7 @@ void StarkEngine::processEvents() {
 					_console->onFrame();
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				// Quick-hack for now.
-				bool skipped = _gameInterface->skipCurrentSpeeches();
-				if (!skipped) {
-					skipped = _userInterface->skipFMV();
-				}
-				if (!skipped && StarkSettings->getBoolSetting(Settings::kTimeSkip)) {
-					_global->setFastForward();
-				}
+				_userInterface->handleEscape();
 			} else if ((e.kbd.keycode == Common::KEYCODE_RETURN
 					|| e.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
 				if (e.kbd.hasFlags(Common::KBD_ALT)) {

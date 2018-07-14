@@ -144,6 +144,23 @@ void UserInterface::handleDoubleClick() {
 	_currentScreen->handleDoubleClick();
 }
 
+void UserInterface::handleEscape() {
+	bool handled = false;
+
+	handled = StarkGameInterface->skipCurrentSpeeches();
+	if (!handled) {
+		handled = skipFMV();
+	}
+	if (!handled) {
+		Screen::Name curScreenName = _currentScreen->getName();
+		if (curScreenName != Screen::kScreenGame && curScreenName != Screen::kScreenMainMenu) {
+			backPrevScreen();
+		} else if (StarkSettings->getBoolSetting(Settings::kTimeSkip)) {
+			StarkGlobal->setFastForward();
+		}
+	}
+}
+
 void UserInterface::inventoryOpen(bool open) {
 	// Make the inventory update its contents.
 	if (open) {
