@@ -47,7 +47,8 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 		_scrollUpArrowVisible(false),
 		_scrollDownArrowVisible(false),
 		_firstVisibleOption(0),
-		_focusedOption(0) {
+		_focusedOption(0),
+		_acceptIdleMousePos(false) {
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kBottomBorderHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight + Gfx::Driver::kGameViewportHeight);
 
@@ -190,35 +191,32 @@ void DialogPanel::updateDialogOptions() {
 
 	if (!_options.empty()) {
 		_options[_focusedOption]->setActive();
+		_acceptIdleMousePos = true;
 	}
 }
 
 void DialogPanel::onMouseMove(const Common::Point &pos) {
 	static Common::Point prevPos;
 
-	// Mouse Move event will always exists. Specifically handled here.
-	if (pos == prevPos && !_options.empty()) {
-		_cursor->setCursorType(_options[_focusedOption]->containsPoint(pos) ?
-				Cursor::kActive : Cursor::kDefault);
-		return;
-	}
-	prevPos = pos;
-
 	if (_subtitleVisual) {
 		_cursor->setCursorType(Cursor::kDefault);
 	} else if (!_options.empty()) {
-		for (uint i = 0; i < _optionsNum; ++i) {
-			uint optionIndex = _firstVisibleOption + i;
-			if (optionIndex < _options.size() && _options[optionIndex]->containsPoint(pos)) {
-				_options[_focusedOption]->setPassive();
-				_options[optionIndex]->setActive();
-				_focusedOption = optionIndex;
-				_cursor->setCursorType(Cursor::kActive);
-				return;
+		if (pos != prevPos || _acceptIdleMousePos) {
+			for (uint i = 0; i < _optionsNum; ++i) {
+				uint optionIndex = _firstVisibleOption + i;
+				if (optionIndex < _options.size() && _options[optionIndex]->containsPoint(pos)) {
+					_options[_focusedOption]->setPassive();
+					_options[optionIndex]->setActive();
+					_focusedOption = optionIndex;
+					_cursor->setCursorType(Cursor::kActive);
+					_acceptIdleMousePos = false;
+				}
 			}
 		}
-
-		if (_scrollUpArrowVisible && _scrollUpArrowRect.contains(pos)) {
+		
+		if (_options[_focusedOption]->containsPoint(pos)) {
+			_cursor->setCursorType(Cursor::kActive);
+		} else if (_scrollUpArrowVisible && _scrollUpArrowRect.contains(pos)) {
 			_cursor->setCursorType(Cursor::kActive);
 		} else if (_scrollDownArrowVisible && _scrollDownArrowRect.contains(pos)) {
 			_cursor->setCursorType(Cursor::kActive);
@@ -228,6 +226,8 @@ void DialogPanel::onMouseMove(const Common::Point &pos) {
 	} else {
 		_cursor->setCursorType(Cursor::kDefault);
 	}
+
+	prevPos = pos;
 }
 
 void DialogPanel::onClick(const Common::Point &pos) {

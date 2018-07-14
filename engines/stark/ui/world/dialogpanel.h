@@ -97,6 +97,7 @@ private:
 
 	uint32 _firstVisibleOption, _focusedOption;
 	Common::Array<ClickText*> _options;
+	bool _acceptIdleMousePos;
 
 	static const uint32 _aprilColor = 0xFF00C0FF;
 	static const uint32 _otherColor = 0xFF4040FF;
