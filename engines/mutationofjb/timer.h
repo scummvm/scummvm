@@ -20,40 +20,31 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ROOM_H
-#define MUTATIONOFJB_ROOM_H
-
 #include "common/scummsys.h"
-#include "common/array.h"
-#include "graphics/surface.h"
-#include "graphics/managed_surface.h"
-
-namespace Graphics {
-class Screen;
-}
 
 namespace MutationOfJB {
 
-class EncryptedFile;
-class Game;
-
-class Room {
+class Timer {
 public:
-	friend class RoomAnimationDecoderCallback;
-	friend class GuiAnimationDecoderCallback;
+	Timer(uint32 millis);
 
-	Room(Game *game, Graphics::Screen *screen);
-	bool load(uint8 roomNumber, bool roomB);
-	void drawObjectAnimation(uint8 objectId, int animOffset);
-	void redraw();
+	void start();
+
+	bool isFnished() const;
+	bool isRunning() const;
+
+	void update();
+
 private:
-	Game *_game;
-	Graphics::Screen *_screen;
-	Graphics::ManagedSurface _background;
-	Common::Array<Graphics::Surface> _surfaces;
-	Common::Array<int> _objectsStart;
+	enum State {
+		IDLE,
+		RUNNING,
+		FINISHED
+	};
+
+	uint32 _millis;
+	uint32 _startTime;
+	State _state;
 };
 
 }
-
-#endif

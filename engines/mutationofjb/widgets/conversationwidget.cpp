@@ -41,26 +41,35 @@ ConversationWidget::ConversationWidget(Gui &gui, const Common::Rect &area, const
 	_callback(nullptr) {}
 
 
-void ConversationWidget::setLine(int lineNo, const Common::String &str) {
-	if (lineNo >= CONVERSATION_LINES) {
+void ConversationWidget::setChoice(int choiceNo, const Common::String &str, uint32 data) {
+	if (choiceNo >= CONVERSATION_MAX_CHOICES) {
 		return;
 	}
 
-	_lines[lineNo] = str;
+	_choices[choiceNo]._str = str;
+	_choices[choiceNo]._data = data;
+	markDirty();
+}
+
+void ConversationWidget::clearChoices() {
+	for (int i = 0; i < CONVERSATION_MAX_CHOICES; ++i) {
+		_choices[i]._str.clear();
+		_choices[i]._data = 0;
+	}
 	markDirty();
 }
 
 void ConversationWidget::_draw(Graphics::ManagedSurface &surface) {
 	surface.blitFrom(_surface, Common::Point(_area.left, _area.top));
 
-	for (int i = 0; i < CONVERSATION_LINES; ++i) {
-		Common::String &line = _lines[i];
-		if (line.empty()) {
+	for (int i = 0; i < CONVERSATION_MAX_CHOICES; ++i) {
+		Common::String &str = _choices[i]._str;
+		if (str.empty()) {
 			continue;
 		}
 
 		// TODO: Active line should be WHITE.
-		_gui.getGame().getAssets().getSystemFont().drawString(line, LIGHTGRAY, CONVERSATION_LINES_X, CONVERSATION_LINES_Y + i * CONVERSATION_LINE_HEIGHT, surface);
+		_gui.getGame().getAssets().getSystemFont().drawString(str, LIGHTGRAY, CONVERSATION_LINES_X, CONVERSATION_LINES_Y + i * CONVERSATION_LINE_HEIGHT, surface);
 	}
 }
 
@@ -72,9 +81,9 @@ void ConversationWidget::handleEvent(const Common::Event &event) {
 		const int16 y = event.mouse.y;
 		if (_area.contains(x, y)) {
 			if (_callback) {
-				int lineNum = (y - CONVERSATION_LINES_Y) / CONVERSATION_LINE_HEIGHT;
-				if (!_lines[lineNum].empty()) {
-					_callback->onResponseClicked(this, lineNum);
+				int choiceNo = (y - CONVERSATION_LINES_Y) / CONVERSATION_LINE_HEIGHT;
+				if (!_choices[choiceNo]._str.empty()) {
+					_callback->onChoiceClicked(this, choiceNo, _choices[choiceNo]._data);
 				}
 			}
 		}

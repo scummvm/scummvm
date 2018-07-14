@@ -21,9 +21,12 @@
  */
 
 #include "mutationofjb/commands/talkcommand.h"
-#include "mutationofjb/tasks/conversationtask.h"
-#include "mutationofjb/script.h"
+
 #include "mutationofjb/game.h"
+#include "mutationofjb/script.h"
+#include "mutationofjb/tasks/conversationtask.h"
+#include "mutationofjb/tasks/taskmanager.h"
+
 #include "common/str.h"
 
 namespace MutationOfJB {
@@ -53,7 +56,7 @@ bool TalkCommandParser::parse(const Common::String &line, ScriptParseContext &, 
 
 Command::ExecuteResult TalkCommand::execute(ScriptExecutionContext &scriptExeCtx) {
 	if (!_task) {
-		_task = new ConversationTask(scriptExeCtx.getGame().getGameData()._conversationInfo);
+		_task = new ConversationTask(scriptExeCtx.getGameData()._currentScene, scriptExeCtx.getGame().getGameData()._conversationInfo);
 		scriptExeCtx.getGame().getTaskManager().addTask(_task);
 	}
 

@@ -20,40 +20,36 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ROOM_H
-#define MUTATIONOFJB_ROOM_H
+#include "mutationofjb/tasks/saytask.h"
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "graphics/surface.h"
+#include "mutationofjb/tasks/taskmanager.h"
+#include "mutationofjb/assets.h"
+#include "mutationofjb/game.h"
+#include "mutationofjb/gamedata.h"
+#include "mutationofjb/room.h"
+
 #include "graphics/managed_surface.h"
-
-namespace Graphics {
-class Screen;
-}
+#include "graphics/screen.h"
 
 namespace MutationOfJB {
 
-class EncryptedFile;
-class Game;
+SayTask::SayTask(const Common::String &toSay, uint8 color) : _toSay(toSay), _color(color), _timer(1000) {}
 
-class Room {
-public:
-	friend class RoomAnimationDecoderCallback;
-	friend class GuiAnimationDecoderCallback;
+void SayTask::start() {
 
-	Room(Game *game, Graphics::Screen *screen);
-	bool load(uint8 roomNumber, bool roomB);
-	void drawObjectAnimation(uint8 objectId, int animOffset);
-	void redraw();
-private:
-	Game *_game;
-	Graphics::Screen *_screen;
-	Graphics::ManagedSurface _background;
-	Common::Array<Graphics::Surface> _surfaces;
-	Common::Array<int> _objectsStart;
-};
-
+	getTaskManager()->getGame().getAssets().getSpeechFont().drawString(_toSay, _color, 0, 0, getTaskManager()->getGame().getScreen());
+	_timer.start();
+	setState(RUNNING);
 }
 
-#endif
+void SayTask::update() {
+	_timer.update();
+
+	if (_timer.isFnished()) {
+		getTaskManager()->getGame().getRoom().redraw(); // TODO: Only redraw the area occupied by the text.
+		setState(FINISHED);
+		return;
+	}
+}
+
+}

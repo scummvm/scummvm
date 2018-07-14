@@ -121,6 +121,22 @@ struct Bitmap {
 	bool loadFromStream(Common::ReadStream &stream);
 };
 
+struct ExhaustedChoice {
+	/*
+		1 bit - context
+		3 bits - choice index
+		4 bits - choice list index
+	*/
+	uint8 _encodedData;
+
+	uint8 getContext() const { return (_encodedData >> 7) & 0x1; }
+	uint8 getChoiceIndex() const { return (_encodedData >> 4) & 0x7; }
+	uint8 getChoiceListIndex() const { return _encodedData & 0xF; }
+
+	ExhaustedChoice() : _encodedData(0) {}
+	ExhaustedChoice(uint8 context, uint8 choiceIndex, uint8 choiceListIndex) :
+		_encodedData(((context & 0x1) << 7) | ((choiceIndex & 0x7) << 4) | (choiceListIndex & 0xF)) {}
+};
 
 struct Scene {
 	Door *getDoor(uint8 objectId);
@@ -134,6 +150,9 @@ struct Scene {
 	Door *findDoor(int16 x, int16 y, int *index = nullptr);
 	Static *findStatic(int16 x, int16 y, int *index = nullptr);
 	Bitmap *findBitmap(int16 x, int16 y, int *index = nullptr);
+
+	void addExhaustedChoice(uint8 context, uint8 choiceIndex, uint8 choiceIndexList);
+	bool isChoiceExhausted(uint8 context, uint8 choiceIndex, uint8 choiceIndexList) const;
 
 	uint8 _startup;
 	uint8 _unknown001;
@@ -156,14 +175,17 @@ struct Scene {
 	uint8 _palRotStart;
 	uint8 _palRotEnd;
 	uint8 _palRotPeriod;
-	uint8 _unknown38A[80];
+
+	/* Points to the first free item in exhausted choices list. */
+	uint8 _exhaustedChoiceNext;
+	ExhaustedChoice _exhaustedChoices[79];
 
 	bool loadFromStream(Common::ReadStream &stream);
 };
 
 struct ConversationInfo {
 	struct Item {
-		uint8 _question;
+		uint8 _choice;
 		uint8 _response;
 		uint8 _nextLineIndex;
 	};

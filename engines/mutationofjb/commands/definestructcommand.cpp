@@ -56,7 +56,7 @@ bool DefineStructCommandParser::parse(const Common::String &line, ScriptParseCon
 
 		for (int j = 0; j < 5; ++j) {
 			ConversationInfo::Item convItem;
-			convItem._question = atoi(linePtr);
+			convItem._choice = atoi(linePtr);
 			linePtr += 6;
 			convItem._response = atoi(linePtr);
 			linePtr += 6;

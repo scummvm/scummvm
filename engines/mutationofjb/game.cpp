@@ -100,7 +100,9 @@ Script *Game::changeSceneLoadScript(uint8 sceneId, bool partB) {
 	_gameData->_lastScene = _gameData->_currentScene;
 	_gameData->_currentScene = sceneId;
 	_gameData->_partB = partB;
+
 	_room->load(_gameData->_currentScene, partB);
+	_room->redraw();
 
 	EncryptedFile scriptFile;
 	Common::String fileName = Common::String::format("scrn%d%s.atn", sceneId, partB ? "b" : "");
@@ -180,6 +182,7 @@ void Game::update() {
 	}
 
 	_gui.update();
+	_taskManager.update();
 }
 
 Gui &Game::getGui() {
@@ -225,6 +228,11 @@ TaskManager& Game::getTaskManager() {
 
 Assets& Game::getAssets() {
 	return _assets;
+}
+
+Graphics::Screen &Game::getScreen()
+{
+	return *_vm->getScreen();
 }
 
 }

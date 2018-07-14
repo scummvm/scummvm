@@ -40,7 +40,9 @@ void TaskManager::removeTask(Task *task) {
 
 void TaskManager::update() {
 	for (Tasks::const_iterator it = _tasks.begin(); it != _tasks.end(); ++it) {
-		(*it)->update();
+		if ((*it)->getState() == Task::RUNNING) {
+			(*it)->update();
+		}
 	}
 }
 

@@ -20,40 +20,25 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ROOM_H
-#define MUTATIONOFJB_ROOM_H
+#include "mutationofjb/tasks/task.h"
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "graphics/surface.h"
-#include "graphics/managed_surface.h"
+#include "mutationofjb/timer.h"
 
-namespace Graphics {
-class Screen;
-}
+#include "common/str.h"
 
 namespace MutationOfJB {
 
-class EncryptedFile;
-class Game;
-
-class Room {
+class SayTask : public Task {
 public:
-	friend class RoomAnimationDecoderCallback;
-	friend class GuiAnimationDecoderCallback;
+	SayTask(const Common::String &toSay, uint8 color);
 
-	Room(Game *game, Graphics::Screen *screen);
-	bool load(uint8 roomNumber, bool roomB);
-	void drawObjectAnimation(uint8 objectId, int animOffset);
-	void redraw();
+	virtual void start() override;
+	virtual void update() override;
+
 private:
-	Game *_game;
-	Graphics::Screen *_screen;
-	Graphics::ManagedSurface _background;
-	Common::Array<Graphics::Surface> _surfaces;
-	Common::Array<int> _objectsStart;
+	Common::String _toSay;
+	uint8 _color;
+	Timer _timer;
 };
 
 }
-
-#endif
