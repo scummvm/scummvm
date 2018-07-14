@@ -80,6 +80,9 @@ private:
 	void renderOptions();
 	void renderScrollArrows() const;
 
+	void updateFirstVisibleOption();
+	void updateLastVisibleOption();
+
 	VisualImageXMG *_passiveBackGroundTexture;
 	VisualImageXMG *_activeBackGroundTexture;
 	VisualImageXMG *_scrollUpArrowImage;
@@ -95,7 +98,8 @@ private:
 	Resources::Speech *_currentSpeech;
 	void abortCurrentSpeech();
 
-	uint32 _firstVisibleOption, _focusedOption;
+	uint32 _firstVisibleOption, _lastVisibleOption;
+	uint32 _focusedOption;
 	Common::Array<ClickText*> _options;
 	bool _acceptIdleMousePos;
 
@@ -104,7 +108,6 @@ private:
 	static const uint32 _optionsTop = 4;
 	static const uint32 _optionsLeft = 30;
 	static const uint32 _optionsHeight = 71;
-	static const uint32 _optionsNum = 4;
 };
 
 } // End of namespace Stark

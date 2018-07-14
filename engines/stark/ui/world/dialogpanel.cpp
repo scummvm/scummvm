@@ -47,6 +47,7 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 		_scrollUpArrowVisible(false),
 		_scrollDownArrowVisible(false),
 		_firstVisibleOption(0),
+		_lastVisibleOption(0),
 		_focusedOption(0),
 		_acceptIdleMousePos(false) {
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kBottomBorderHeight);
@@ -93,23 +94,17 @@ void DialogPanel::clearOptions() {
 
 void DialogPanel::renderOptions() {
 	uint32 pos = _optionsTop;
-	uint32 visibleOptions = 0;
-	for (uint i = _firstVisibleOption; i < _options.size(); i++) {
+	for (uint i = _firstVisibleOption; i <= _lastVisibleOption; ++i) {
 		_options[i]->setPosition(Common::Point(_optionsLeft, pos));
 		_options[i]->render();
 
 		_dialogOptionBullet->render(Common::Point(_optionsLeft - 13, pos + 3), false);
 
-		visibleOptions++;
-
 		pos += _options[i]->getHeight();
-		if (pos >= _optionsHeight) {
-			break;
-		}
 	}
 
 	_scrollUpArrowVisible = _firstVisibleOption > 0;
-	_scrollDownArrowVisible = _firstVisibleOption + visibleOptions < _options.size();
+	_scrollDownArrowVisible = _lastVisibleOption < _options.size() - 1;
 }
 
 void DialogPanel::renderScrollArrows() const {
@@ -182,6 +177,7 @@ void DialogPanel::updateDialogOptions() {
 	clearOptions();
 
 	_firstVisibleOption = 0;
+	_lastVisibleOption = 0;
 	_focusedOption = 0;
 	Common::Array<DialogPlayer::Option> options = StarkDialogPlayer->listOptions();
 
@@ -190,6 +186,7 @@ void DialogPanel::updateDialogOptions() {
 	}
 
 	if (!_options.empty()) {
+		updateLastVisibleOption();
 		_options[_focusedOption]->setActive();
 		_acceptIdleMousePos = true;
 	}
@@ -202,14 +199,17 @@ void DialogPanel::onMouseMove(const Common::Point &pos) {
 		_cursor->setCursorType(Cursor::kDefault);
 	} else if (!_options.empty()) {
 		if (pos != prevPos || _acceptIdleMousePos) {
-			for (uint i = 0; i < _optionsNum; ++i) {
-				uint optionIndex = _firstVisibleOption + i;
-				if (optionIndex < _options.size() && _options[optionIndex]->containsPoint(pos)) {
+			for (uint i = _firstVisibleOption; i <= _lastVisibleOption; ++i) {
+				if (_options[i]->containsPoint(pos)) {
 					_options[_focusedOption]->setPassive();
-					_options[optionIndex]->setActive();
-					_focusedOption = optionIndex;
+					_focusedOption = i;
+					_options[_focusedOption]->setActive();
+
 					_cursor->setCursorType(Cursor::kActive);
 					_acceptIdleMousePos = false;
+
+					prevPos = pos;
+					return;
 				}
 			}
 		}
@@ -264,24 +264,19 @@ void DialogPanel::reset() {
 void DialogPanel::scrollUp() {
 	if (!_scrollUpArrowVisible) return;
 
-	uint step = _optionsNum - 1;
-	_firstVisibleOption = CLIP<int32>(_firstVisibleOption - step , 0, _options.size() - _optionsNum);
+	_lastVisibleOption = _firstVisibleOption;
+	updateFirstVisibleOption();
 
 	_options[_focusedOption]->setPassive();
-
-	_focusedOption = _firstVisibleOption + step;
-	if (_focusedOption >= _options.size()) {
-		_focusedOption = _options.size() - 1;
-	}
-
+	_focusedOption = _lastVisibleOption;
 	_options[_focusedOption]->setActive();
 }
 
 void DialogPanel::scrollDown() {
 	if (!_scrollDownArrowVisible) return;
 
-	uint step = _optionsNum - 1;
-	_firstVisibleOption = CLIP<int32>(_firstVisibleOption + step , 0, _options.size() - _optionsNum);
+	_firstVisibleOption = _lastVisibleOption;
+	updateLastVisibleOption();
 
 	_options[_focusedOption]->setPassive();
 	_focusedOption = _firstVisibleOption;
@@ -295,8 +290,9 @@ void DialogPanel::focusNextOption() {
 	++_focusedOption;
 	_options[_focusedOption]->setActive();
 
-	if (_focusedOption - _firstVisibleOption == _optionsNum) {
-		++_firstVisibleOption;
+	if (_focusedOption > _lastVisibleOption) {
+		_lastVisibleOption = _focusedOption;
+		updateFirstVisibleOption();
 	}
 }
 
@@ -308,7 +304,8 @@ void DialogPanel::focusPrevOption() {
 	_options[_focusedOption]->setActive();
 
 	if (_focusedOption < _firstVisibleOption) {
-		--_firstVisibleOption;
+		_firstVisibleOption = _focusedOption;
+		updateLastVisibleOption();
 	}
 }
 
@@ -333,6 +330,40 @@ void DialogPanel::onScreenChanged() {
 		updateSubtitleVisual();
 	} else {
 		updateDialogOptions();
+	}
+}
+
+void DialogPanel::updateFirstVisibleOption() {
+	_firstVisibleOption = _lastVisibleOption;
+	uint32 height = _optionsTop + _options[_lastVisibleOption]->getHeight();
+
+	while (height < _optionsHeight && _firstVisibleOption > 0) {
+		--_firstVisibleOption;
+		height += _options[_firstVisibleOption]->getHeight();
+	}
+
+	if (_firstVisibleOption == 0) {
+		while (height < _optionsHeight && _lastVisibleOption < _options.size() - 1) {
+			++_lastVisibleOption;
+			height += _options[_lastVisibleOption]->getHeight();
+		}
+	}
+}
+
+void DialogPanel::updateLastVisibleOption() {
+	_lastVisibleOption = _firstVisibleOption;
+	uint32 height = _optionsTop + _options[_firstVisibleOption]->getHeight();
+
+	while (height < _optionsHeight && _lastVisibleOption < _options.size() - 1) {
+		++_lastVisibleOption;
+		height += _options[_lastVisibleOption]->getHeight();
+	}
+
+	if (_lastVisibleOption == _options.size() - 1) {
+		while (height < _optionsHeight && _firstVisibleOption > 0) {
+			--_firstVisibleOption;
+			height += _options[_firstVisibleOption - 1]->getHeight();
+		}
 	}
 }
 
