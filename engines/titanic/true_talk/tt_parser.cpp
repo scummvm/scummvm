@@ -533,6 +533,13 @@ int TTparser::findFrames(TTsentence *sentence) {
 		status = checkForAction();
 	}
 
+	if (_nodesP) {
+		// This shouldn't ever happen
+		warning("Parser had left-over processing nodes");
+		while (_nodesP)
+			removeNode(_nodesP);
+	}
+
 	delete line;
 	return status;
 }
