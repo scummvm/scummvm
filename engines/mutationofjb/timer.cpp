@@ -20,40 +20,37 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ROOM_H
-#define MUTATIONOFJB_ROOM_H
+#include "mutationofjb/timer.h"
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "graphics/surface.h"
-#include "graphics/managed_surface.h"
-
-namespace Graphics {
-class Screen;
-}
+#include "common/system.h"
 
 namespace MutationOfJB {
 
-class EncryptedFile;
-class Game;
-
-class Room {
-public:
-	friend class RoomAnimationDecoderCallback;
-	friend class GuiAnimationDecoderCallback;
-
-	Room(Game *game, Graphics::Screen *screen);
-	bool load(uint8 roomNumber, bool roomB);
-	void drawObjectAnimation(uint8 objectId, int animOffset);
-	void redraw();
-private:
-	Game *_game;
-	Graphics::Screen *_screen;
-	Graphics::ManagedSurface _background;
-	Common::Array<Graphics::Surface> _surfaces;
-	Common::Array<int> _objectsStart;
-};
-
+Timer::Timer(uint32 millis) : _millis(millis), _startTime(0), _state(IDLE) {
 }
 
-#endif
+void Timer::start() {
+	_startTime = g_system->getMillis();
+	_state = RUNNING;
+}
+
+bool Timer::isFnished() const {
+	return _state == FINISHED;
+}
+
+bool Timer::isRunning() const {
+	return _state == RUNNING;
+}
+
+void Timer::update() {
+	if (_state != RUNNING) {
+		return;
+	}
+
+	uint32 currentTime = g_system->getMillis();
+	if (currentTime - _startTime >= _millis) {
+		_state = FINISHED;
+	}
+}
+
+}

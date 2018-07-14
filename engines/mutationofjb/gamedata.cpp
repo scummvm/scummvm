@@ -136,7 +136,11 @@ bool Scene::loadFromStream(Common::ReadStream &stream) {
 	_palRotStart = stream.readByte();
 	_palRotEnd = stream.readByte();
 	_palRotPeriod = stream.readByte();
-	stream.read(_unknown38A, 80);
+	_exhaustedChoiceNext = stream.readByte();
+
+	for (i = 0; i < 79; ++i) {
+		_exhaustedChoices[i]._encodedData = stream.readByte();
+	}
 
 	return true;
 }
@@ -220,6 +224,22 @@ Bitmap *Scene::findBitmap(int16 x, int16 y, int *index) {
 	}
 
 	return nullptr;
+}
+
+void Scene::addExhaustedChoice(uint8 context, uint8 choiceIndex, uint8 choiceIndexList) {
+	_exhaustedChoices[_exhaustedChoiceNext - 1] = ExhaustedChoice(context, choiceIndex, choiceIndexList);
+	_exhaustedChoiceNext++;
+}
+
+bool Scene::isChoiceExhausted(uint8 context, uint8 choiceIndex, uint8 choiceListIndex) const {
+	for (uint i = 0; i < _exhaustedChoiceNext - 1; ++i) {
+		const ExhaustedChoice &choice = _exhaustedChoices[i];
+		if (choice.getContext() == context && choice.getChoiceIndex() == choiceIndex && choice.getChoiceListIndex() == choiceListIndex) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 

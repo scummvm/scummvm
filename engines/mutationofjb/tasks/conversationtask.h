@@ -26,20 +26,37 @@
 
 namespace MutationOfJB {
 
+class SayTask;
+
 class ConversationTask : public Task, public ConversationWidgetCallback {
 public:
-	ConversationTask(const ConversationInfo& convInfo) : _convInfo(convInfo), _currentLine(0) {}
+	ConversationTask(uint8 sceneId, const ConversationInfo& convInfo) : _sceneId(sceneId), _convInfo(convInfo), _currentLineIndex(0), _currentItem(nullptr), _sayTask(nullptr), _substate(IDLE), _haveChoices(false) {}
 	virtual ~ConversationTask() {}
 
 	virtual void start() override;
 	virtual void update() override;
 
-	virtual void onResponseClicked(ConversationWidget *, int response) override;
+	virtual void onChoiceClicked(ConversationWidget *, int response, uint32 data) override;
 private:
-	void updateWidget();
+	void showChoicesOrPick();
+	const ConversationInfo::Line *getCurrentLine() const;
+	void finish();
 
+	uint8 _sceneId;
 	const ConversationInfo &_convInfo;
-	uint _currentLine;
+	uint _currentLineIndex;
+	const ConversationInfo::Item *_currentItem;
+	SayTask* _sayTask;
+
+	enum Substate {
+		IDLE,
+		SAYING_CHOICE,
+		SAYING_RESPONSE,
+		SAYING_NO_CHOICES
+	};
+
+	Substate _substate;
+	bool _haveChoices;
 };
 
 }

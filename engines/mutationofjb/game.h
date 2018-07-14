@@ -71,6 +71,8 @@ public:
 	TaskManager& getTaskManager();
 	Assets &getAssets();
 
+	Graphics::Screen &getScreen();
+
 private:
 	bool loadGameData(bool partB);
 	void runActiveCommand();

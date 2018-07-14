@@ -33,17 +33,18 @@ class ConversationWidget;
 class ConversationWidgetCallback {
 public:
 	virtual ~ConversationWidgetCallback() {}
-	virtual void onResponseClicked(ConversationWidget *, int response) = 0;
+	virtual void onChoiceClicked(ConversationWidget *, int choiceNo, uint32 data) = 0;
 };
 
 class ConversationWidget : public Widget {
 public:
-	enum { CONVERSATION_LINES = 4 };
+	enum { CONVERSATION_MAX_CHOICES = 4 };
 
 	ConversationWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &surface);
 	void setCallback(ConversationWidgetCallback *callback) { _callback = callback; }
 
-	void setLine(int lineNo, const Common::String &str);
+	void setChoice(int choiceNo, const Common::String &str, uint32 data = 0);
+	void clearChoices();
 
 	virtual void handleEvent(const Common::Event &event) override;
 
@@ -52,7 +53,10 @@ protected:
 
 private:
 	Graphics::Surface _surface;
-	Common::String _lines[CONVERSATION_LINES];
+	struct ChoiceInfo {
+		Common::String _str;
+		uint32 _data;
+	} _choices[CONVERSATION_MAX_CHOICES];
 	ConversationWidgetCallback *_callback;
 };
 

@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	commands/seqcommand.o \
 	commands/talkcommand.o \
 	tasks/conversationtask.o \
+	tasks/saytask.o \
 	tasks/taskmanager.o \
 	widgets/buttonwidget.o \
 	widgets/conversationwidget.o \
@@ -42,6 +43,7 @@ MODULE_OBJS := \
 	mutationofjb.o \
 	room.o \
 	script.o \
+	timer.o \
 	util.o
 
 # This module can be built as a plugin

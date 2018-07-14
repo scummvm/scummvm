@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef MUTATIONOFJB_TASK_H
+#define MUTATIONOFJB_TASK_H
+
 #include "common/scummsys.h"
 
 namespace MutationOfJB {
@@ -54,3 +57,5 @@ private:
 };
 
 }
+
+#endif

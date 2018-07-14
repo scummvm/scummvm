@@ -21,16 +21,24 @@
  */
 
 #include "mutationofjb/room.h"
+
 #include "mutationofjb/animationdecoder.h"
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/util.h"
+
 #include "common/str.h"
 #include "common/translation.h"
+
 #include "graphics/screen.h"
 
 namespace MutationOfJB {
+
+enum {
+	GAME_AREA_WIDTH = 320,
+	GAME_AREA_HEIGHT = 139
+};
 
 class RoomAnimationDecoderCallback : public AnimationDecoderCallback {
 public:
@@ -47,9 +55,11 @@ void RoomAnimationDecoderCallback::onPaletteUpdated(byte palette[PALETTE_SIZE]) 
 
 void RoomAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surface) {
 	if (frameNo == 0) {
-		Common::Rect rect(0, 0, 320, 139);
+		Common::Rect rect(0, 0, GAME_AREA_WIDTH, GAME_AREA_HEIGHT);
 		if (_room._game->isCurrentSceneMap()) {
 			rect = Common::Rect(0, 0, 320, 200);
+		} else {
+			_room._background.blitFrom(surface, rect, Common::Point(0, 0));
 		}
 		_room._screen->blitFrom(surface, rect, Common::Point(0, 0));
 	}
@@ -78,10 +88,11 @@ void RoomAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surfa
 	}
 }
 
-Room::Room(Game *game, Graphics::Screen *screen) : _game(game), _screen(screen) {}
+Room::Room(Game *game, Graphics::Screen *screen) : _game(game), _screen(screen), _background(GAME_AREA_WIDTH, GAME_AREA_HEIGHT) {}
 
 bool Room::load(uint8 roomNumber, bool roomB) {
 	_objectsStart.clear();
+	_surfaces.clear(); // TODO: Fix memory leak.
 
 	Scene *const scene = _game->getGameData().getCurrentScene();
 	if (scene) {
@@ -118,7 +129,23 @@ void Room::drawObjectAnimation(uint8 objectId, int animOffset) {
 
 	const int startFrame = _objectsStart[objectId - 1];
 	const int animFrame = startFrame + animOffset;
+	// TODO: Threshold.
 	_screen->blitFrom(_surfaces[animFrame], Common::Point(object->_x, object->_y));
+}
+
+void Room::redraw() {
+	if (!_game->isCurrentSceneMap()) {
+		Common::Rect rect(0, 0, GAME_AREA_WIDTH, GAME_AREA_HEIGHT);
+		_screen->blitFrom(_background.rawSurface(), rect, Common::Point(0, 0));
+
+		Scene *const currentScene = _game->getGameData().getCurrentScene();
+		for (int i = 0; i < currentScene->getNoObjects(); ++i) {
+			Object *const obj = currentScene->getObject(i + 1);
+			if (obj->_AC) {
+				drawObjectAnimation(i + 1, 0);
+			}
+		}
+	}
 }
 
 }
