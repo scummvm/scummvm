@@ -77,6 +77,11 @@ private:
 	TTconcept *_currentConceptP;
 private:
 	/**
+	 * Clear the parser
+	 */
+	void clear();
+
+	/**
 	 * Load the data for a given array resource
 	 */
 	void loadArray(StringArray &arr, const CString &name);
