@@ -36,6 +36,7 @@ namespace MutationOfJB {
 
 Game::Game(MutationOfJBEngine *vm)
 	: _vm(vm),
+	_randomSource("mutationofjb"),
 	_delayedLocalScript(nullptr),
 	_gui(*this, _vm->getScreen()),
 	_scriptExecCtx(*this),
@@ -58,6 +59,10 @@ Game::Game(MutationOfJBEngine *vm)
 	_gui.init();
 
 	changeScene(13, false); // Initial scene.
+}
+
+Common::RandomSource &Game::getRandomSource() {
+	return _randomSource;
 }
 
 GameData &Game::getGameData() {
@@ -222,11 +227,11 @@ uint8 Game::colorFromString(const char *colorStr) {
 	return 0x00;
 }
 
-TaskManager& Game::getTaskManager() {
+TaskManager &Game::getTaskManager() {
 	return _taskManager;
 }
 
-Assets& Game::getAssets() {
+Assets &Game::getAssets() {
 	return _assets;
 }
 

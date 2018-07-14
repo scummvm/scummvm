@@ -43,6 +43,7 @@ class GameData;
 class GotoCommand;
 class ConditionalCommand;
 class Script;
+class RandomCommand;
 typedef Common::Array<Command *> Commands;
 
 
@@ -91,6 +92,8 @@ public:
 
 	typedef Common::HashMap<Common::String, GotoCommands> PendingGotoMap;
 	PendingGotoMap _pendingGotos;
+
+	RandomCommand *_pendingRandomCommand;
 
 	ActionInfos _actionInfos;
 	Macros _macros;
