@@ -61,34 +61,38 @@ bool AnimationDecoder::decode(AnimationDecoderCallback *callback) {
 
 		// Subrecords.
 		if (recordId == 0xF1FA) {
-			for (int i = 0; i < subrecords; ++i) {
-				int32 filePos = file.pos();
+			if (subrecords == 0) {
+				callback->onFrame(frameNo, _surface); // Empty record, frame identical to the previous one.
+			} else {
+				for (int i = 0; i < subrecords; ++i) {
+					int32 filePos = file.pos();
 
-				const uint32 subLength = file.readUint32LE();
-				const uint16 type = file.readUint16LE();
+					const uint32 subLength = file.readUint32LE();
+					const uint16 type = file.readUint16LE();
 
-				if (type == 0x0B) {
-					loadPalette(file);
-					if (callback) {
-						callback->onPaletteUpdated(_palette);
+					if (type == 0x0B) {
+						loadPalette(file);
+						if (callback) {
+							callback->onPaletteUpdated(_palette);
+						}
+					} else if (type == 0x0F) {
+						loadFullFrame(file, subLength - 6);
+						if (callback) {
+							callback->onFrame(frameNo, _surface);
+						}
+					} else if (type == 0x0C) {
+						loadDiffFrame(file, subLength - 6);
+						if (callback) {
+							callback->onFrame(frameNo, _surface);
+						}
+					} else {
+						debug(_("Unsupported record type %02X."), type);
+						file.seek(subLength - 6, SEEK_CUR);
 					}
-				} else if (type == 0x0F) {
-					loadFullFrame(file, subLength - 6);
-					if (callback) {
-						callback->onFrame(frameNo, _surface);
-					}
-				} else if (type == 0x0C) {
-					loadDiffFrame(file, subLength - 6);
-					if (callback) {
-						callback->onFrame(frameNo, _surface);
-					}
-				} else {
-					debug(_("Unsupported record type %02X."), type);
-					file.seek(subLength - 6, SEEK_CUR);
+
+					// Makes decoding more robust, because for some reason records might have extra data at the end.
+					file.seek(filePos + subLength, SEEK_SET);
 				}
-
-				// Makes decoding more robust, because for some reason records might have extra data at the end.
-				file.seek(filePos + subLength, SEEK_SET);
 			}
 			frameNo++;
 		} else {
