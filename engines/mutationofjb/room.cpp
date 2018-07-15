@@ -137,13 +137,13 @@ void Room::redraw() {
 	if (!_game->isCurrentSceneMap()) {
 		Common::Rect rect(0, 0, GAME_AREA_WIDTH, GAME_AREA_HEIGHT);
 		_screen->blitFrom(_background.rawSurface(), rect, Common::Point(0, 0));
+	}
 
-		Scene *const currentScene = _game->getGameData().getCurrentScene();
-		for (int i = 0; i < currentScene->getNoObjects(); ++i) {
-			Object *const obj = currentScene->getObject(i + 1);
-			if (obj->_AC) {
-				drawObjectAnimation(i + 1, 0);
-			}
+	Scene *const currentScene = _game->getGameData().getCurrentScene();
+	for (int i = 0; i < currentScene->getNoObjects(); ++i) {
+		Object *const obj = currentScene->getObject(i + 1);
+		if (obj->_AC) {
+			drawObjectAnimation(i + 1, 0);
 		}
 	}
 }
