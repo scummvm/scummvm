@@ -41,16 +41,26 @@ class Game;
 
 class MutationOfJBEngine : public Engine {
 public:
+	enum CursorState {
+		CURSOR_OFF,
+		CURSOR_IDLE,
+		CURSOR_ACTIVE
+	};
+
 	MutationOfJBEngine(OSystem *syst);
 	~MutationOfJBEngine();
 
 	virtual Common::Error run();
 	Graphics::Screen *getScreen() const;
 	Game &getGame();
+	void setCursorState(CursorState cursorState);
+	void updateCursor();
 
 private:
 	bool loadGameData(bool partB);
 	void setupCursor();
+	void updateCursorHitTest(int16 x, int16 y);
+	void updateCursorPalette();
 	void handleNormalScene(const Common::Event &event);
 	void handleMapScene(const Common::Event &event);
 
@@ -58,6 +68,8 @@ private:
 	Graphics::Screen *_screen;
 	Game *_game;
 	uint8 _mapObjectId;
+
+	CursorState _cursorState;
 };
 
 
