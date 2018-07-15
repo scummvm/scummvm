@@ -57,8 +57,6 @@ Game::Game(MutationOfJBEngine *vm)
 	_room = new Room(this, _vm->getScreen());
 
 	_gui.init();
-
-	changeScene(13, false); // Initial scene.
 }
 
 Common::RandomSource &Game::getRandomSource() {
@@ -125,6 +123,8 @@ Script *Game::changeSceneLoadScript(uint8 sceneId, bool partB) {
 	Script *localScript = new Script;
 	localScript->loadFromStream(scriptFile);
 	scriptFile.close();
+
+	_vm->updateCursor();
 
 	return localScript;
 }
