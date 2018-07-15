@@ -74,8 +74,13 @@ bool RandomBlockStartParser::parse(const Common::String &line, ScriptParseContex
 }
 
 void RandomBlockStartParser::transition(ScriptParseContext &parseCtx, Command *, Command *newCommand, CommandParser *) {
-	if (newCommand && parseCtx._pendingRandomCommand) {
-		parseCtx._pendingRandomCommand->_choices.push_back(newCommand);
+	RandomCommand *randomCommand = parseCtx._pendingRandomCommand;
+	if (newCommand && randomCommand) {
+		randomCommand->_choices.push_back(newCommand);
+
+		if (randomCommand->_choices.size() == randomCommand->_numChoices) {
+			parseCtx._pendingRandomCommand = nullptr;
+		}
 	}
 }
 
