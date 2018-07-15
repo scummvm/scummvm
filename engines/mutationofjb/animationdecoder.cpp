@@ -62,7 +62,9 @@ bool AnimationDecoder::decode(AnimationDecoderCallback *callback) {
 		// Subrecords.
 		if (recordId == 0xF1FA) {
 			if (subrecords == 0) {
-				callback->onFrame(frameNo, _surface); // Empty record, frame identical to the previous one.
+				if (callback) {
+					callback->onFrame(frameNo, _surface); // Empty record, frame identical to the previous one.
+				}
 			} else {
 				for (int i = 0; i < subrecords; ++i) {
 					int32 filePos = file.pos();
