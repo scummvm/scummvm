@@ -189,6 +189,23 @@ Command *ScriptExecutionContext::getMacro(const Common::String &name) const {
 	return cmd;
 }
 
+Command *ScriptExecutionContext::getExtra(const Common::String &name) const {
+	Command *cmd = nullptr;
+
+	Script *const localScript = _localScriptOverride ? _localScriptOverride : _game.getLocalScript();
+	Script *const globalScript = _game.getGlobalScript();
+
+	if (localScript) {
+		cmd = localScript->getExtra(name);
+	}
+
+	if (!cmd && globalScript) {
+		cmd = globalScript->getExtra(name);
+	}
+
+	return cmd;
+}
+
 bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 	destroy();
 
@@ -236,6 +253,7 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 
 	_macros = parseCtx._macros;
 	_startups = parseCtx._startups;
+	_extras = parseCtx._extras;
 
 	return true;
 }
@@ -279,6 +297,15 @@ const Startups &Script::getStartups() const {
 Command *Script::getStartup(uint8 startupId) const {
 	Startups::const_iterator it = _startups.find(startupId);
 	if (it == _startups.end()) {
+		return nullptr;
+	}
+
+	return it->_value;
+}
+
+Command *Script::getExtra(const Common::String &name) const {
+	Extras::const_iterator it = _extras.find(name);
+	if (it == _extras.end()) {
 		return nullptr;
 	}
 

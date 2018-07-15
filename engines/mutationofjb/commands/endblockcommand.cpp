@@ -35,6 +35,7 @@
 	("#U " | "-U ") <object1> [<object2>]
 	("#ELSE" | "-ELSE") [<tag>]
 	"#MACRO " <name>
+	"#EXTRA" <name>
 
 	If a line starts with '#', '=', '-', it is treated as the end of a section.
 	However, at the same time it can also start a new section depending on what follows.
@@ -46,6 +47,8 @@
 	#ELSE is used by conditional commands (see comments for IfCommand and others).
 
 	#MACRO starts a new macro. Global script can call macros from local script and vice versa.
+
+	#EXTRA defines an "extra" section. This is called from dialog responses ("TALK TO HIM" command).
 */
 
 namespace MutationOfJB {
@@ -119,6 +122,9 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 		const uint8 startupId = atoi(line.c_str() + 9);
 		IdAndCommand ic = {startupId, command};
 		_foundStartups.push_back(ic);
+	} else if (line.size() >= 7 && line.hasPrefix("#EXTRA")) {
+		NameAndCommand nc = {line.c_str() + 6, command};
+		_foundExtras.push_back(nc);
 	}
 
 	if (firstChar == '#') {
@@ -183,6 +189,23 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *ol
 			}
 		}
 	}
+	if (!_foundExtras.empty()) {
+		if (newCommand) {
+			for (NameAndCommandArray::iterator it = _foundExtras.begin(); it != _foundExtras.end();) {
+				if (it->_command != oldCommand) {
+					it++;
+					continue;
+				}
+
+				if (!parseCtx._extras.contains(it->_name)) {
+					parseCtx._extras[it->_name] = newCommand;
+				} else {
+					warning(_("Extra '%s' already exists"), it->_name.c_str());
+				}
+				it = _foundExtras.erase(it);
+			}
+		}
+	}
 
 	if (newCommandParser != this) {
 		if (!_pendingActionInfos.empty()) {
@@ -208,9 +231,13 @@ void EndBlockCommandParser::finish(ScriptParseContext &) {
 	if (!_foundStartups.empty()) {
 		debug("Problem: Found startups from end block parser is not empty!");
 	}
+	if (!_foundExtras.empty()) {
+		debug("Problem: Found extras from end block parser is not empty!");
+	}
 	_pendingActionInfos.clear();
 	_foundMacros.clear();
 	_foundStartups.clear();
+	_foundExtras.clear();
 }
 
 Command::ExecuteResult EndBlockCommand::execute(ScriptExecutionContext &scriptExecCtx) {

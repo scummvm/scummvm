@@ -27,10 +27,11 @@
 namespace MutationOfJB {
 
 class SayTask;
+class ScriptExecutionContext;
 
 class ConversationTask : public Task, public ConversationWidgetCallback {
 public:
-	ConversationTask(uint8 sceneId, const ConversationInfo& convInfo) : _sceneId(sceneId), _convInfo(convInfo), _currentLineIndex(0), _currentItem(nullptr), _sayTask(nullptr), _substate(IDLE), _haveChoices(false) {}
+	ConversationTask(uint8 sceneId, const ConversationInfo& convInfo) : _sceneId(sceneId), _convInfo(convInfo), _currentLineIndex(0), _currentItem(nullptr), _sayTask(nullptr), _substate(IDLE), _haveChoices(false), _innerExecCtx(nullptr) {}
 	virtual ~ConversationTask() {}
 
 	virtual void start() override;
@@ -41,6 +42,8 @@ private:
 	void showChoicesOrPick();
 	const ConversationInfo::Line *getCurrentLine() const;
 	void finish();
+	void startExtra();
+	void gotoNextLine();
 
 	uint8 _sceneId;
 	const ConversationInfo &_convInfo;
@@ -52,11 +55,13 @@ private:
 		IDLE,
 		SAYING_CHOICE,
 		SAYING_RESPONSE,
-		SAYING_NO_CHOICES
+		SAYING_NO_CHOICES,
+		RUNNING_EXTRA
 	};
 
 	Substate _substate;
 	bool _haveChoices;
+	ScriptExecutionContext *_innerExecCtx;
 };
 
 }

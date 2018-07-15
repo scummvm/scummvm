@@ -27,10 +27,13 @@
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/gui.h"
+#include "mutationofjb/script.h"
 #include "mutationofjb/tasks/saytask.h"
 #include "mutationofjb/tasks/taskmanager.h"
 #include "mutationofjb/util.h"
 #include "mutationofjb/widgets/conversationwidget.h"
+
+#include "common/translation.h"
 
 namespace MutationOfJB {
 
@@ -69,17 +72,27 @@ void ConversationTask::update() {
 				break;
 			}
 			case SAYING_RESPONSE: {
-				if (_currentItem->_nextLineIndex == 0) {
-					finish();
-				} else {
-					_currentLineIndex = _currentItem->_nextLineIndex - 1;
-					showChoicesOrPick();
+				startExtra();
+
+				if (_substate != RUNNING_EXTRA)
+				{
+					gotoNextLine();
 				}
 				break;
 			}
 			default:
 				break;
 			}
+		}
+	}
+
+	if (_innerExecCtx) {
+		Command::ExecuteResult res = _innerExecCtx->runActiveCommand();
+		if (res == Command::Finished) {
+			delete _innerExecCtx;
+			_innerExecCtx = nullptr;
+
+			gotoNextLine();
 		}
 	}
 }
@@ -201,6 +214,37 @@ void ConversationTask::finish() {
 	ConversationWidget &widget = game.getGui().getConversationWidget();
 	widget.setVisible(false);
 	game.getGui().markDirty(); // TODO: Handle automatically when changing visibility.
+}
+
+void ConversationTask::startExtra() {
+	const ConversationLineList& responseList = getTaskManager()->getGame().getAssets().getResponseList();
+	const ConversationLineList::Line *const line = responseList.getLine(_currentItem->_response);
+	if (!line->_extra.empty()) {
+		_innerExecCtx = new ScriptExecutionContext(getTaskManager()->getGame());
+		Command *const extraCmd = _innerExecCtx->getExtra(line->_extra);
+		if (extraCmd) {
+			Command::ExecuteResult res = _innerExecCtx->startCommand(extraCmd);
+			if (res == Command::InProgress) {
+				_substate = RUNNING_EXTRA;
+			} else {
+				delete _innerExecCtx;
+				_innerExecCtx = nullptr;
+			}
+		} else {
+			warning(_("Extra '%s' not found"), line->_extra.c_str());
+			delete _innerExecCtx;
+			_innerExecCtx = nullptr;
+		}
+	}
+}
+
+void ConversationTask::gotoNextLine() {
+	if (_currentItem->_nextLineIndex == 0) {
+		finish();
+	} else {
+		_currentLineIndex = _currentItem->_nextLineIndex - 1;
+		showChoicesOrPick();
+	}
 }
 
 }
