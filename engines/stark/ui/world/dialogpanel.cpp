@@ -65,7 +65,7 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 	_scrollUpArrowRect.translate(0, _optionsTop);
 
 	_scrollDownArrowRect = Common::Rect(_scrollDownArrowImage->getWidth(), _scrollDownArrowImage->getHeight());
-	_scrollDownArrowRect.translate(0, _optionsTop + _optionsHeight - _scrollDownArrowImage->getHeight());
+	_scrollDownArrowRect.translate(0, _optionsTop + _optionsHeight - _scrollDownArrowImage->getHeight() - 9);
 }
 
 DialogPanel::~DialogPanel() {
@@ -337,15 +337,23 @@ void DialogPanel::updateFirstVisibleOption() {
 	_firstVisibleOption = _lastVisibleOption;
 	uint32 height = _optionsTop + _options[_lastVisibleOption]->getHeight();
 
-	while (height < _optionsHeight && _firstVisibleOption > 0) {
-		--_firstVisibleOption;
-		height += _options[_firstVisibleOption]->getHeight();
+	while (_firstVisibleOption > 0) {
+		height += _options[_firstVisibleOption - 1]->getHeight();
+		if (height <= _optionsHeight) {
+			--_firstVisibleOption;
+		} else {
+			break;
+		}
 	}
 
 	if (_firstVisibleOption == 0) {
-		while (height < _optionsHeight && _lastVisibleOption < _options.size() - 1) {
-			++_lastVisibleOption;
-			height += _options[_lastVisibleOption]->getHeight();
+		while (_lastVisibleOption < _options.size() - 1) {
+			height += _options[_lastVisibleOption + 1]->getHeight();
+			if (height <= _optionsHeight) {
+				++_lastVisibleOption;
+			} else {
+				break;
+			}
 		}
 	}
 }
@@ -354,15 +362,23 @@ void DialogPanel::updateLastVisibleOption() {
 	_lastVisibleOption = _firstVisibleOption;
 	uint32 height = _optionsTop + _options[_firstVisibleOption]->getHeight();
 
-	while (height < _optionsHeight && _lastVisibleOption < _options.size() - 1) {
-		++_lastVisibleOption;
-		height += _options[_lastVisibleOption]->getHeight();
+	while (_lastVisibleOption < _options.size() - 1) {
+		height += _options[_lastVisibleOption + 1]->getHeight();
+		if (height <= _optionsHeight) {
+			++_lastVisibleOption;
+		} else {
+			break;
+		}
 	}
 
 	if (_lastVisibleOption == _options.size() - 1) {
-		while (height < _optionsHeight && _firstVisibleOption > 0) {
-			--_firstVisibleOption;
+		while (_firstVisibleOption > 0) {
 			height += _options[_firstVisibleOption - 1]->getHeight();
+			if (height <= _optionsHeight) {
+				--_firstVisibleOption;
+			} else {
+				break;
+			}
 		}
 	}
 }

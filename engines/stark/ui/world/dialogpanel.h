@@ -107,7 +107,7 @@ private:
 	static const uint32 _otherColor = 0xFF4040FF;
 	static const uint32 _optionsTop = 4;
 	static const uint32 _optionsLeft = 30;
-	static const uint32 _optionsHeight = 71;
+	static const uint32 _optionsHeight = 80;
 };
 
 } // End of namespace Stark
