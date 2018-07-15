@@ -56,8 +56,8 @@ bool ConversationLineList::parseFile(const Common::String &fileName) {
 
 		Common::String::iterator endIt = Common::find(lineStr.begin(), lineStr.end(), '|');
 		if (endIt != lineStr.end()) {
-			Common::String extra = lineStr + endIt;
-			if (*endIt == 'X') {
+			endIt++;
+			if (endIt != lineStr.end() && *endIt == 'X') {
 				line._extra = Common::String(endIt + 1, lineStr.end()); // Skip 'X' char.
 			}
 		}

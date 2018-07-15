@@ -202,6 +202,7 @@ Common::Error MutationOfJBEngine::run() {
 					_game->setCurrentAction(ActionInfo::PickUp);
 					break;
 				}
+				break;
 			}
 			default:
 				break;

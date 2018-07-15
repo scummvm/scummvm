@@ -56,6 +56,7 @@ private:
 	typedef Common::Array<IdAndCommand> IdAndCommandArray;
 	NameAndCommandArray _foundMacros;
 	IdAndCommandArray _foundStartups;
+	NameAndCommandArray _foundExtras;
 };
 
 class EndBlockCommand : public Command {

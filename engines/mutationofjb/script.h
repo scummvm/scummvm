@@ -67,6 +67,7 @@ typedef Common::Array<ActionInfo> ActionInfos;
 typedef Common::Array<GotoCommand *> GotoCommands;
 typedef Common::HashMap<Common::String, Command *> Macros;
 typedef Common::HashMap<uint8, Command *> Startups;
+typedef Common::HashMap<Common::String, Command *> Extras;
 
 class ScriptParseContext {
 public:
@@ -98,6 +99,7 @@ public:
 	ActionInfos _actionInfos;
 	Macros _macros;
 	Startups _startups;
+	Extras _extras;
 
 private:
 };
@@ -116,6 +118,7 @@ public:
 	Game &getGame();
 	GameData &getGameData();
 	Command *getMacro(const Common::String &name) const;
+	Command *getExtra(const Common::String &name) const;
 
 private:
 	Game &_game;
@@ -135,6 +138,7 @@ public:
 	const Startups &getStartups() const;
 	Command *getMacro(const Common::String &name) const;
 	Command *getStartup(uint8 startupId) const;
+	Command *getExtra(const Common::String &name) const;
 
 private:
 	void destroy();
@@ -142,6 +146,7 @@ private:
 	ActionInfos _actionInfos[5];
 	Macros _macros;
 	Startups _startups;
+	Extras _extras;
 };
 
 }
