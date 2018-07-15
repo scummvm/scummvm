@@ -282,6 +282,7 @@ void StarkEngine::processEvents() {
 			} else if (e.kbd.keycode == Common::KEYCODE_p) {
 				if (_userInterface->isInGameScreen()) {
 					pauseEngine(true);
+					debug("The game is paused");
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_PAGEUP) {
 				if (_userInterface->isInGameScreen()) {
