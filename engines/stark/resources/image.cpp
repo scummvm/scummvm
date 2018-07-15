@@ -153,7 +153,7 @@ Common::Point Image::getHotspotPosition(uint index) const {
 
 	Polygon polygon = _polygons[index];
 
-	// Return the top-right point as the hotspot
+	// Return the top-middle point as the hotspot
 	int right = polygon[0].x, top = polygon[0].y;
 
 	for (uint i = 1; i < polygon.size(); ++i) {
