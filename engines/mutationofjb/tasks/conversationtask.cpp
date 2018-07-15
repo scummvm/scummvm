@@ -102,11 +102,16 @@ void ConversationTask::onChoiceClicked(ConversationWidget *convWidget, int, uint
 	convWidget->clearChoices();
 
 	const ConversationLineList& toSayList = getTaskManager()->getGame().getAssets().getToSayList();
-	_sayTask = new SayTask(toSayList.getLine(item._choice)->_speeches[0]._text, _convInfo._color);
+	const ConversationLineList::Speech &speech = toSayList.getLine(item._choice)->_speeches[0];
+
+	_sayTask = new SayTask(speech._text, _convInfo._color);
 	getTaskManager()->addTask(_sayTask);
 	_substate = SAYING_CHOICE;
 	_currentItem = &item;
-	getTaskManager()->getGame().getGameData().getCurrentScene()->addExhaustedChoice(_convInfo._context, data + 1, _currentLineIndex + 1);
+
+	if (!speech.isRepeating()) {
+		getTaskManager()->getGame().getGameData().getCurrentScene()->addExhaustedChoice(_convInfo._context, data + 1, _currentLineIndex + 1);
+	}
 }
 
 void ConversationTask::showChoicesOrPick() {
@@ -122,8 +127,10 @@ void ConversationTask::showChoicesOrPick() {
 		Collect valid "to say" choices (not exhausted and not empty).
 		Collect valid responses (not exhausted and not empty).
 		If there are at least two visible choices, we show them.
-		If there is just one visible choice, pick it automatically.
+		If there is just one visible choice, pick it automatically ONLY if this is not the first choice in this conversation.
+		Otherwise we don't start the conversation.
 		If there are no visible choices, automatically pick first valid response.
+		If nothing above applies, don't start the conversation.
 	*/
 
 	const ConversationInfo::Line *const currentLine = getCurrentLine();
@@ -164,7 +171,7 @@ void ConversationTask::showChoicesOrPick() {
 		_currentItem = nullptr;
 
 		_haveChoices = true;
-	} else if (itemsWithValidChoices.size() == 1) {
+	} else if (itemsWithValidChoices.size() == 1 && _haveChoices) {
 		const ConversationLineList& toSayList = game.getAssets().getToSayList();
 		const ConversationInfo::Item &item = currentLine->_items[itemsWithValidChoices.front()];
 		const ConversationLineList::Line *const line = toSayList.getLine(item._choice);
@@ -174,10 +181,12 @@ void ConversationTask::showChoicesOrPick() {
 		_substate = SAYING_CHOICE;
 		_currentItem = &item;
 
-		game.getGameData().getCurrentScene()->addExhaustedChoice(_convInfo._context, itemsWithValidChoices.front() + 1, _currentLineIndex + 1);
+		if (!line->_speeches[0].isRepeating()) {
+			game.getGameData().getCurrentScene()->addExhaustedChoice(_convInfo._context, itemsWithValidChoices.front() + 1, _currentLineIndex + 1);
+		}
 
 		_haveChoices = true;
-	} else if (!itemsWithValidResponses.empty()) {
+	} else if (!itemsWithValidResponses.empty() && _haveChoices) {
 		const ConversationLineList& responseList = game.getAssets().getResponseList();
 		const ConversationInfo::Item &item = currentLine->_items[itemsWithValidResponses.front()];
 		const ConversationLineList::Line *const line = responseList.getLine(item._response);
@@ -188,7 +197,7 @@ void ConversationTask::showChoicesOrPick() {
 		_currentItem = &item;
 
 		_haveChoices = true;
-	} else if (!itemsWithValidNext.empty()) {
+	} else if (!itemsWithValidNext.empty() && _haveChoices) {
 		_currentLineIndex = currentLine->_items[itemsWithValidNext.front()]._nextLineIndex - 1;
 		showChoicesOrPick();
 	} else {
