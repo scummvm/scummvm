@@ -65,6 +65,9 @@ private:
 
 	unsigned int _simulatedClickStartTime[SCE_TOUCH_PORT_MAX_NUM][2]; // initiation time of last simulated left or right click (zero if no click)
 
+	int _hiresDX; // keep track of slow, sub-pixel, finger motion across multiple frames
+	int _hiresDY;
+
 	void preprocessFingerDown(SDL_Event *event);
 	void preprocessFingerUp(SDL_Event *event);
 	void preprocessFingerMotion(SDL_Event *event);

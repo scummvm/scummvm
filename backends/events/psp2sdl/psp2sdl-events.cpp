@@ -50,6 +50,9 @@ PSP2EventSource::PSP2EventSource() {
 			_simulatedClickStartTime[port][i] = 0;
 		}
 	}
+
+	_hiresDX = 0;
+	_hiresDY = 0;
 }
 
 bool PSP2EventSource::pollEvent(Common::Event &event) {
@@ -260,11 +263,15 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 			}
 
 			// convert touch events to relative mouse pointer events
-			// Whenever an SDL_event involving the mouse is processed,
-			// _km.x/y are truncated from subpixel precision to regular pixel precision.
-			// Therefore, there's no need here to deal with subpixel precision in _km.x/y.
-			x = (_km.x / MULTIPLIER + (event->tfinger.dx * 1.25 * speedFactor * _km.x_max));
-			y = (_km.y / MULTIPLIER + (event->tfinger.dy * 1.25 * speedFactor * _km.y_max));
+			// track sub-pixel relative finger motion using the MULTIPLIER
+			_hiresDX += (event->tfinger.dx * 1.25 * speedFactor * _km.x_max * MULTIPLIER);
+			_hiresDY += (event->tfinger.dy * 1.25 * speedFactor * _km.y_max * MULTIPLIER);
+			int xRel = _hiresDX / MULTIPLIER;
+			int yRel = _hiresDY / MULTIPLIER;
+			x = (_km.x / MULTIPLIER) + xRel;
+			y = (_km.y / MULTIPLIER) + yRel;
+			_hiresDX %= MULTIPLIER;
+			_hiresDY %= MULTIPLIER;
 		}
 
 		if (x > _km.x_max) {
