@@ -964,16 +964,16 @@ namespace Common {
 DECLARE_SINGLETON(ScalerManager);
 }
 
-const ScalerPlugin::List &ScalerManager::getPlugins() const {
-	return (const ScalerPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_SCALER);
+const PluginList &ScalerManager::getPlugins() const {
+	return PluginManager::instance().getPlugins(PLUGIN_TYPE_SCALER);
 }
 
 uint ScalerManager::getMaxExtraPixels() const {
 	uint maxPixels = 0;
-	ScalerPlugin::List plugins = getPlugins();
-	ScalerPlugin::List::iterator i = plugins.begin();
+	PluginList plugins = getPlugins();
+	PluginList::iterator i = plugins.begin();
 	for (; i != plugins.end(); ++i) {
-		uint n = (**i)->extraPixels();
+		uint n = (*i)->get<ScalerPluginObject>().extraPixels();
 		if (n > maxPixels) {
 			maxPixels = n;
 		}
