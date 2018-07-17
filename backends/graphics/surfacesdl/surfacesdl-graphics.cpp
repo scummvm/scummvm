@@ -2122,8 +2122,8 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 }
 
 void SurfaceSdlGraphicsManager::blitCursor() {
-	const uint w = _mouseCurState.w;
-	const uint h = _mouseCurState.h;
+	const int w = _mouseCurState.w;
+	const int h = _mouseCurState.h;
 
 	if (!w || !h || !_mouseOrigSurface) {
 		return;
@@ -2237,12 +2237,12 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * i;
 		for (uint j = 0; j < w + _maxExtraPixels * 2; j++) {
 			*(uint16 *)dstPtr = kMouseColorKey;
-			dstPtr += _cursorFormat.bytesPerPixel;
+			dstPtr += _mouseOrigSurface->format->BytesPerPixel;
 		}
 	}
 
 	// Draw from [_maxExtraPixels,_maxExtraPixels] since scalers will read past boudaries
-	dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _cursorFormat.bytesPerPixel;
+	dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel;
 
 	SDL_Color *palette;
 
@@ -2251,8 +2251,8 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	else
 		palette = _cursorPalette;
 
-	for (uint i = 0; i < h; i++) {
-		for (uint j = 0; j < w; j++) {
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
 			if (_cursorFormat.bytesPerPixel == 2) {
 				color = *(const uint16 *)srcPtr;
 				if (color != _mouseKeyColor) {
@@ -2260,7 +2260,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 					_cursorFormat.colorToRGB(color, r, g, b);
 					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format, r, g, b);
 				}
-				dstPtr += _cursorFormat.bytesPerPixel;
+				dstPtr += _mouseOrigSurface->format->BytesPerPixel;
 				srcPtr += _cursorFormat.bytesPerPixel;
 			} else {
 				color = *srcPtr;
@@ -2272,7 +2272,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 				srcPtr++;
 			}
 		}
-		dstPtr += _mouseOrigSurface->pitch - w * _cursorFormat.bytesPerPixel;
+		dstPtr += _mouseOrigSurface->pitch - w * _mouseOrigSurface->format->BytesPerPixel;
 	}
 
 	if (sizeChanged || !_mouseSurface) {
@@ -2304,7 +2304,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		if (_scalerPlugin->canDrawCursor()) {
 #endif
             _scalerPlugin->scale(
-                    (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _cursorFormat.bytesPerPixel,
+                    (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
                     _mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
                     _mouseCurState.w, _mouseCurState.h, 0, 0);
 #ifdef USE_SCALERS
@@ -2312,14 +2312,14 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 			int tmpFactor = _normalPlugin->getFactor();
 			_normalPlugin->setFactor(_videoMode.scaleFactor);
 			_normalPlugin->scale(
-				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _cursorFormat.bytesPerPixel,
+				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
 				_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 				_mouseCurState.w, _mouseCurState.h, 0, 0);
 			_normalPlugin->setFactor(tmpFactor);
 		}
 	} else {
         blitSurface(
-                (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _cursorFormat.bytesPerPixel,
+                (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
                 _mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 			_mouseCurState.w * 2, _mouseCurState.h);
 	}
