@@ -42,6 +42,17 @@ uint16 FileStream::readUint16() {
 	return w;
 }
 
+uint32 FileStream::readUint32() {
+	assert(_pos + 4 <= size());
+	uint32 w;
+	if (_bigEndian)
+		w = _data[_pos + 3] | (_data[_pos + 2] << 8) | (_data[_pos + 1] << 16) | (_data[_pos] << 24);
+	else
+		w = _data[_pos] | (_data[_pos + 1] << 8) | (_data[_pos + 2] << 16) | (_data[_pos + 3] << 24);
+	_pos += 4;
+	return w;
+}
+
 // SeekableReadStream functions
 
 int32 FileStream::pos() const {

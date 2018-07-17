@@ -30,8 +30,19 @@ Bitmap::Bitmap(SharedPtr<FileStream> stream) {
 	width = stream->readUint16();
 	height = stream->readUint16();
 
-	pixels = new byte[width*height];
-	stream->read(pixels, width*height);
+	pixelsArraySize = width * height;
+	pixels = new byte[pixelsArraySize];
+	stream->read(pixels, width * height);
+}
+
+Bitmap::Bitmap(const Bitmap &bitmap) {
+	xoffset = bitmap.xoffset;
+	yoffset = bitmap.yoffset;
+	width = bitmap.width;
+	height = bitmap.height;
+	pixelsArraySize = bitmap.pixelsArraySize;
+	pixels = new byte[pixelsArraySize];
+	memcpy(pixels, bitmap.pixels, pixelsArraySize);
 }
 
 Bitmap::Bitmap(int w, int h) : width(w), height(h), xoffset(0), yoffset(0) {
@@ -39,7 +50,8 @@ Bitmap::Bitmap(int w, int h) : width(w), height(h), xoffset(0), yoffset(0) {
 }
 
 Bitmap::~Bitmap() {
-	delete[] pixels;
+	if (pixels != nullptr)
+		delete[] pixels;
 }
 
 
@@ -49,7 +61,14 @@ TextBitmap::TextBitmap(int w, int h) {
 	// Width and Height are the total dimensions. Since each character takes 8 pixels in
 	// each dimension, the "pixels" array (which actually stores character indices) must
 	// be smaller.
-	pixels = new byte[width/8*height/8];
+	pixelsArraySize = width / 8 * height / 8;
+	pixels = new byte[pixelsArraySize];
+}
+
+StubBitmap::StubBitmap(int w, int h) {
+	width = w;
+	height = h;
+	pixelsArraySize = 0;
 }
 
 }

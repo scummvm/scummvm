@@ -101,6 +101,8 @@ enum MidiTracks {
 // Max # of VOC files that can play at once
 const int MAX_SFX_PLAYING = 4;
 
+const int NUM_MIDI_SLOTS = 8;
+
 struct MidiPlaybackSlot {
 	int slot;
 	int track;
@@ -116,6 +118,7 @@ public:
 	void clearAllMidiSlots();
 	void playMidiTrack(int track);
 	void playMidiTrackInSlot(int slot, int track);
+	bool isMidiPlaying();
 	void loadMusicFile(const Common::String &baseSoundName);
 	void playMidiMusicTracks(int startTrack, int loopTrack);
 	void playVoc(const Common::String &baseSoundName);
@@ -135,7 +138,7 @@ private:
 	
 	// MIDI-Related Variables
 	MidiDriver *_midiDriver;
-	MidiPlaybackSlot _midiSlots[8]; // 0 is for music; 1-7 are for sfx
+	MidiPlaybackSlot _midiSlots[NUM_MIDI_SLOTS]; // 0 is for music; 1-7 are for sfx
 	Common::List<MidiPlaybackSlot*> _midiSlotList; // Sorts midi slots by most recently used
 
 	byte *loadedSoundData;

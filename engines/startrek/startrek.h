@@ -199,6 +199,43 @@ struct TrekEvent {
 };
 
 
+// Pseudo-3D structs
+
+struct Point3 {
+	int32 x;
+	int32 y;
+	int32 z;
+
+	Point3 operator+(const Point3 &p) const {
+		Point3 p2;
+		p2.x = x + p.x;
+		p2.y = y + p.y;
+		p2.z = z + p.z;
+		return p2;
+	}
+	Point3 operator-(const Point3 &p) const {
+		Point3 p2;
+		p2.x = x - p.x;
+		p2.y = y - p.y;
+		p2.z = z - p.z;
+		return p2;
+	}
+};
+
+struct Point3W {
+	int16 x;
+	int16 y;
+	int16 z;
+};
+
+struct Star {
+	bool active;
+	Point3 pos;
+};
+
+#define NUM_STARS 16
+
+
 struct StarTrekGameDescription;
 class Graphics;
 class IWFile;
@@ -237,6 +274,21 @@ public:
 	SharedPtr<Room> getRoom();
 
 private:
+	// Intro
+	void playIntro();
+	void loadSubtitleSprite(int index, Sprite *sprite);
+
+	// Space, pseudo-3D
+	void initStarfieldPosition();
+	void initStarfield(int16 x, int16 y, int16 width, int16 height, int16 arg8);
+	void clearStarfieldPixels();
+	void drawStarfield();
+	void updateStarfieldAndShips(bool arg0);
+
+	Point3 constructPoint3ForStarfield(int16 x, int16 y, int16 z);
+	Point3 applyPointWeightings(Point3W *weight, const Point3 &point);
+	Point3 applyPointWeightings2(const Point3 &point, Point3W *weight);
+
 	// Transporter room
 	void runTransportSequence(const Common::String &name);
 
@@ -281,12 +333,13 @@ public:
 	void showInventoryIcons(bool showItem);
 	void hideInventoryIcons();
 	int showInventoryMenu(int x, int y, bool restoreMouse);
+	void initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitmap, const Common::Rect &rect);
 	SharedPtr<Bitmap> scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed16 scale);
 	void scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uint16 scaledWidth);
 
 	// Events
 public:
-	void pollSystemEvents();
+	void pollSystemEvents(bool queueEvents = true);
 	void initializeEventsAndMouse();
 	bool getNextEvent(TrekEvent *e);
 	void removeNextEvent();
@@ -391,6 +444,10 @@ public:
 
 	// Resource related functions
 	SharedPtr<FileStream> loadFile(Common::String filename, int fileIndex=0);
+	/**
+	 * TODO: Figure out what the extra parameters are, and if they're important.
+	 */
+	SharedPtr<FileStream> loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3);
 
 	// Movie related functions
 	void playMovie(Common::String filename);
@@ -477,7 +534,18 @@ public:
 	bool _keyboardControlsMouse;
 
 	bool _inQuitGameMenu;
+	bool _showSubtitles;
 
+	byte _byte_45b3c;
+
+	// Pseudo-3D / starfield stuff
+	Sprite _starfieldSprite;
+	Star _starList[NUM_STARS];
+	Point3 _starfieldPosition;
+	int32 _starfieldPointDivisor;
+	int16 _starfieldXVar1, _starfieldYVar1;
+	int16 _starfieldXVar2, _starfieldYVar2;
+	Common::Rect _starfieldRect;
 	
 	Graphics *_gfx;
 	Sound *_sound;

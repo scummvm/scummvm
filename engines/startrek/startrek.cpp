@@ -20,6 +20,7 @@
  *
  */
 
+
 #include "base/plugins.h"
 #include "base/version.h"
 #include "common/archive.h"
@@ -83,8 +84,10 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_textboxVar6 = 0;
 	_textboxHasMultipleChoices = false;
 
-	_missionToLoad = "TRIAL";
+	_missionToLoad = "DEMON";
 	_roomIndexToLoad = 0;
+
+	_showSubtitles = false; // TODO: test
 
 	for (int i = 0; i < NUM_OBJECTS; i++)
 		_itemList[i] = g_itemList[i];
@@ -112,11 +115,14 @@ Common::Error StarTrekEngine::run() {
 	initializeEventsAndMouse();
 
 	_frameIndex = 0;
+	playIntro();
+
+	_frameIndex = 0;
 
 	_gameMode = -1;
 	_lastGameMode = -1;
 
-	runGameMode(GAMEMODE_AWAYMISSION);
+	runGameMode(GAMEMODE_START);
 	return Common::kNoError;
 }
 
@@ -198,6 +204,274 @@ Common::Error StarTrekEngine::runGameMode(int mode) {
 	}
 
 	return Common::kNoError;
+}
+
+void StarTrekEngine::playIntro() {
+	// TODO: .MT audio file
+
+	initStarfieldPosition();
+	initStarfield(10, 20, 309, 169, 128);
+
+	SharedPtr<Bitmap> fakeStarfieldBitmap(new StubBitmap(0, 0));
+	_starfieldSprite.bitmap = fakeStarfieldBitmap;
+	initStarfieldSprite(&_starfieldSprite, fakeStarfieldBitmap, _starfieldRect);
+
+	// TODO: remainder of starfield initialization
+
+	_gfx->clearScreenAndPriBuffer();
+	_gfx->fadeoutScreen();
+	_gfx->loadPalette("gold");
+	_gfx->setBackgroundImage(_gfx->loadBitmap("goldlogo"));
+	_sound->playVoc("logo");
+	_gfx->copyBackgroundScreen();
+	_system->updateScreen();
+	_gfx->fadeinScreen();
+
+	uint32 clockTicks = _clockTicks;
+
+	Sprite sprite;
+	_gfx->addSprite(&sprite);
+	sprite.setXYAndPriority(0, 0, 12);
+	sprite.bitmap = _gfx->loadBitmap("blank");
+	sprite.drawPriority2 = 16;
+
+	int index = 12;
+	while (index >= 0) {
+		Common::String file = Common::String::format("credit%02d.shp", index);
+		// TODO: This loads the file, but does not do anything with the resulting data, so
+		// this is just for caching it?
+		// Remember to deal with similar commented function calls below, too.
+		//loadFileWithParams(file, false, true, false);
+		index -= 1;
+	}
+
+	//loadFileWithParams("legal.bmp", false, true, false);
+
+	index = 6;
+	while (index >= 0) {
+		Common::String file = Common::String::format("tittxt%02d.bmp", index);
+		//loadFileWithParams(file, false, true, false);
+		index -= 1;
+	}
+
+	//loadFileWithParams("planet.shp", false, true, false);
+
+	index = 6;
+	while (index >= 0) {
+		Common::String file = Common::String::format("ent%d3.r3s", index);
+		//loadFileWithParams(file, false, true, false);
+		index -= 1;
+	}
+
+	// TODO: kirkintr
+
+	clockTicks += 540;
+
+	while (_clockTicks < clockTicks && _sound->isMidiPlaying()) {
+		pollSystemEvents(false);
+	}
+
+	// TODO: MT audio file
+
+	_gfx->fadeoutScreen();
+	_gfx->loadPalette("bridge");
+	_gfx->clearScreenAndPriBuffer();
+	_sound->loadMusicFile("title");
+	clockTicks = _clockTicks;
+
+	int32 starfieldZoomSpeed;
+	int16 frame = 0;
+	bool buttonPressed = 0;
+
+	while (frame != 0x180 || (_sound->isMidiPlaying() && !buttonPressed)) {
+		TrekEvent event;
+		while (popNextEvent(&event)) {
+			if (event.type == TREKEVENT_KEYDOWN) {
+				_gfx->fadeoutScreen();
+				buttonPressed = true;
+			} else if (event.type == TREKEVENT_TICK)
+				break;
+		}
+
+		switch (frame) {
+		case 0:
+			starfieldZoomSpeed = 10;
+			playMidiMusicTracks(MIDITRACK_0, -1);
+			_byte_45b3c = 0;
+			break;
+
+		case 30:
+			_sound->playVoc("kirkintr");
+			loadSubtitleSprite(0, &sprite);
+			break;
+
+		case 36:
+			loadSubtitleSprite(1, &sprite);
+			break;
+
+		case 42:
+			loadSubtitleSprite(-1, &sprite);
+			break;
+		}
+
+		if (!buttonPressed) {
+			updateStarfieldAndShips(false);
+			_gfx->drawAllSprites();
+			_gfx->incPaletteFadeLevel();
+			clockTicks += 3;
+
+			while (_clockTicks < clockTicks)
+				pollSystemEvents(false);
+		}
+
+		_starfieldPosition.z += starfieldZoomSpeed;
+
+		frame++;
+		if (frame >= 0x186)
+			frame = 0x186;
+	}
+
+	_gfx->fadeoutScreen();
+	_gfx->delSprite(&_starfieldSprite);
+	// TODO: the rest
+}
+
+void StarTrekEngine::loadSubtitleSprite(int index, Sprite *sprite) {
+	if (_showSubtitles) {
+		if (index == -1)
+			sprite->setBitmap(_gfx->loadBitmap("blank"));
+		else {
+			Common::String file = Common::String::format("tittxt%02d", index);
+			sprite->setBitmap(_gfx->loadBitmap(file));
+		}
+	}
+}
+
+void StarTrekEngine::initStarfieldPosition() {
+	memset(&_starfieldPosition, 0, sizeof(_starfieldPosition));
+	// TODO: matrix initialization
+}
+
+void StarTrekEngine::initStarfield(int16 x, int16 y, int16 width, int16 height, int16 arg8) {
+	_starfieldXVar1 = (x + width) / 2;
+	_starfieldYVar1 = (y + height) / 2;
+	_starfieldXVar2 = (width - x + 1) / 2;
+	_starfieldYVar2 = (height - y + 1) / 2;
+
+	_starfieldRect.left = _starfieldXVar1 - _starfieldXVar2;
+	_starfieldRect.right = _starfieldXVar1 + _starfieldXVar2;
+	_starfieldRect.top = _starfieldYVar1 - _starfieldYVar2;
+	_starfieldRect.bottom = _starfieldYVar1 + _starfieldYVar2;
+
+	memset(_starList, 0, sizeof(_starList));
+	_starfieldPointDivisor = 150;
+}
+
+void StarTrekEngine::clearStarfieldPixels() {
+	_gfx->fillBackgroundRect(_starfieldRect, 0);
+}
+
+void StarTrekEngine::drawStarfield() {
+	// TODO: make these class variables
+	Point3W starPositionWeightings[] = {{0x4000, 0, 0}, {0, 0x4000, 0}, {0, 0, 0x4000}};
+	float flt_50898 = 50.0; // ?
+
+	int16 var28 = ((_starfieldXVar2 * 3) >> 1);
+	int16 xvar = var28 / 2;
+	int16 var2a = ((_starfieldYVar2 * 3) >> 1);
+	int16 yvar = var2a / 2;
+	int16 var8 = _starfieldPointDivisor << 3;
+
+	SharedPtr<FileStream> file = loadFile("stars.shp");
+
+	for (int i = 0; i < NUM_STARS; i++) {
+		Star *star = &_starList[i];
+		if ((i & 0xf) == 0) {
+			file->seek(0, SEEK_SET);
+		}
+
+		if (!star->active) {
+			int16 var4 = getRandomWord() / var28 - xvar;
+			int16 var6 = getRandomWord() / var2a - yvar;
+			Point3 point = constructPoint3ForStarfield(var4, var6, var8);
+			star->pos = applyPointWeightings(starPositionWeightings, point) + _starfieldPosition;
+			star->active = true;
+		}
+
+		Point3 p = star->pos - _starfieldPosition;
+		Point3 point2 = applyPointWeightings2(p, starPositionWeightings);
+
+		if (point2.z > flt_50898 && point2.z < 0x3fff
+				&& abs(point2.x) < point2.z && abs(point2.y) < point2.z) {
+
+			int16 x = _starfieldXVar1 + (point2.x * _starfieldPointDivisor / point2.z);
+			int16 y = _starfieldYVar1 - (point2.y * _starfieldPointDivisor / point2.z);
+
+			int fileOffset = file->pos();
+			file->readUint32();
+			int16 width = file->readUint16();
+			int16 height = file->readUint16();
+
+			Common::Rect starRect(x, y, x + width, y + height);
+			Common::Rect drawRect = _starfieldRect.findIntersectingRect(starRect);
+
+			file->seek(fileOffset, SEEK_SET);
+			SharedPtr<Bitmap> bitmap = SharedPtr<Bitmap>(new Bitmap(file));
+
+			if (!drawRect.isEmpty()) {
+				_gfx->drawBitmapToBackground(starRect, drawRect, bitmap);
+				bitmap.reset();
+			}
+		} else {
+			star->active = false;
+
+			file->readUint32();
+			int16 offset2 = file->readUint16() * file->readUint16();
+			file->seek(file->pos() + offset2, SEEK_SET);
+		}
+	}
+}
+
+void StarTrekEngine::updateStarfieldAndShips(bool arg0) {
+	_starfieldSprite.bitmapChanged = true;
+	// sub_24b74(...);
+	clearStarfieldPixels();
+	drawStarfield();
+
+	// TODO
+}
+
+Point3 StarTrekEngine::constructPoint3ForStarfield(int16 x, int16 y, int16 z) {
+	Point3 point;
+	point.z = z;
+	point.y = y * z / _starfieldPointDivisor;
+	point.x = x * z / _starfieldPointDivisor;
+
+	return point;
+}
+
+Point3 StarTrekEngine::applyPointWeightings(Point3W *weight, const Point3 &point) {
+	int32 ret[3];
+	for (int i = 0; i < 3; i++) {
+		ret[i] = weight[i].x * (point.x & 0xffff) + weight[i].y * (point.y & 0xffff) + weight[i].z * (point.z & 0xffff);
+		ret[i] <<= 2;
+	}
+	Point3 p;
+	p.x = ret[0] >> 16;
+	p.y = ret[1] >> 16;
+	p.z = ret[2] >> 16;
+	return p;
+}
+
+Point3 StarTrekEngine::applyPointWeightings2(const Point3 &point, Point3W *weight) {
+	Point3 p = Point3();
+	p.x = (weight[0].x * (point.x & 0xffff) + weight[1].x * (point.y & 0xffff) + weight[2].x * (point.z & 0xffff)) << 2;
+	p.y = (weight[0].y * (point.x & 0xffff) + weight[1].y * (point.y & 0xffff) + weight[2].y * (point.z & 0xffff)) << 2;
+	p.z = (weight[0].z * (point.x & 0xffff) + weight[1].z * (point.y & 0xffff) + weight[2].z * (point.z & 0xffff)) << 2;
+	p.x >>= 16;
+	p.y >>= 16;
+	p.z >>= 16;
+	return p;
 }
 
 void StarTrekEngine::runTransportSequence(const Common::String &name) {
@@ -1486,6 +1760,17 @@ exitWithoutSelection:
 	return lastItemIndex;
 }
 
+void StarTrekEngine::initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitmap, const Common::Rect &rect) {
+	sprite->setXYAndPriority(rect.left, rect.top, 0);
+	sprite->setBitmap(bitmap);
+	bitmap->xoffset = 0;
+	bitmap->yoffset = 0;
+	bitmap->width = rect.width();
+	bitmap->height = rect.height();
+	_gfx->addSprite(sprite);
+	sprite->drawMode = 1;
+}
+
 /**
  * A scale of 256 is the baseline.
  */
@@ -1799,6 +2084,10 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 	error("Could not find data for \'%s\'", filename.c_str());
 
 	return SharedPtr<FileStream>();
+}
+
+SharedPtr<FileStream> StarTrekEngine::loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3) {
+	return loadFile(filename);
 }
 
 void StarTrekEngine::playMovie(Common::String filename) {

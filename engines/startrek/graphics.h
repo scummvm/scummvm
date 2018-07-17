@@ -52,7 +52,15 @@ public:
 	~Graphics();
 	
 	void setBackgroundImage(SharedPtr<Bitmap> bitmap);
+	/**
+	 * @param origRect The rectangle containing the original bitmap (must contain the
+	 *                 whole bitmap, even if some is outside the drawable space)
+	 * @param drawRect The clipped rectangle to draw at (must be within the drawable space)
+	 */
+	void drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, SharedPtr<Bitmap> bitmap);
+	void fillBackgroundRect(const Common::Rect &rect, byte color);
 
+	void clearScreenAndPriBuffer();
 	void loadPalette(const String &paletteFile);
 	void fadeinScreen();
 	void fadeoutScreen();
