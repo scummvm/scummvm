@@ -24,6 +24,7 @@
 
 #include "mutationofjb/timer.h"
 
+#include "common/rect.h"
 #include "common/str.h"
 
 namespace MutationOfJB {
@@ -36,9 +37,12 @@ public:
 	virtual void update() override;
 
 private:
+	void drawSubtitle(const Common::String &text, int16 talkX, int16 talkY, uint8 color);
+
 	Common::String _toSay;
 	uint8 _color;
 	Timer _timer;
+	Common::Rect _boundingBox;
 };
 
 }

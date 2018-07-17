@@ -27,6 +27,7 @@
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/room.h"
+#include "mutationofjb/util.h"
 
 #include "graphics/managed_surface.h"
 #include "graphics/screen.h"
@@ -36,8 +37,7 @@ namespace MutationOfJB {
 SayTask::SayTask(const Common::String &toSay, uint8 color) : _toSay(toSay), _color(color), _timer(1000) {}
 
 void SayTask::start() {
-
-	getTaskManager()->getGame().getAssets().getSpeechFont().drawString(_toSay, _color, 0, 0, getTaskManager()->getGame().getScreen());
+	drawSubtitle(_toSay, 160, 0, _color); // TODO: Respect PTALK and LTALK commands.
 	_timer.start();
 	setState(RUNNING);
 }
@@ -50,6 +50,41 @@ void SayTask::update() {
 		setState(FINISHED);
 		return;
 	}
+}
+
+void SayTask::drawSubtitle(const Common::String &text, int16 talkX, int16 talkY, uint8 color) {
+	const int MAX_LINE_WIDTH = 250;
+
+	const Font &font = getTaskManager()->getGame().getAssets().getSpeechFont();
+
+	Common::Array<Common::String> lines;
+	font.wordWrap(text, MAX_LINE_WIDTH, lines);
+
+	int16 x = talkX;
+	int16 y = talkY - (lines.size() - 1) * font.getLineHeight() - 15; // Get the top y
+
+	// Clamp to screen edges
+	y = MAX<int16>(y, 3);
+	int16 maxWidth = 0;
+	for (uint i = 0; i < lines.size(); i++) {
+		int16 lineWidth = font.getWidth(lines[i]);
+		if (lineWidth > maxWidth) {
+			maxWidth = lineWidth;
+		}
+		x = MAX<int16>(x, 3 + lineWidth / 2);
+		x = MIN<int16>(x, 317 - lineWidth / 2);
+	}
+
+	// Draw lines
+	for (uint i = 0; i < lines.size(); i++) {
+		font.drawString(lines[i], color, x - font.getWidth(lines[i]) / 2, y + i * font.getLineHeight(), getTaskManager()->getGame().getScreen());
+	}
+
+	// Remember the area occupied by the text
+	_boundingBox.top = x - maxWidth / 2;
+	_boundingBox.left = y;
+	_boundingBox.setWidth(maxWidth);
+	_boundingBox.setHeight(lines.size() * font.getLineHeight());
 }
 
 }

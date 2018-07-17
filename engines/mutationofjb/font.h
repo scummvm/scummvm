@@ -37,17 +37,20 @@ class Font {
 public:
 	Font(const Common::String &fileName, int horizSpacing, int vertSpacing);
 	virtual ~Font() {}
-	void drawString(const Common::String &str, uint8 baseColor, int16 x, int16 y, Graphics::ManagedSurface &surf);
+	int getLineHeight() const;
+	int16 getWidth(const Common::String &text) const;
+	void drawString(const Common::String &str, uint8 baseColor, int16 x, int16 y, Graphics::ManagedSurface &surf) const;
+	void wordWrap(const Common::String &str, int16 maxLineWidth, Common::Array<Common::String> &lines) const;
 
 protected:
-	virtual uint8 transformColor(uint8 baseColor, uint8 glyphColor);
+	virtual uint8 transformColor(uint8 baseColor, uint8 glyphColor) const;
 
 private:
-	void drawGlyph(uint8 glyph, uint8 baseColor, int16 &x, int16 &y, Graphics::ManagedSurface &surf);
+	void drawGlyph(uint8 glyph, uint8 baseColor, int16 &x, int16 &y, Graphics::ManagedSurface &surf) const;
 	bool load(const Common::String &fileName);
 
 	int _horizSpacing;
-	int _vertSpacing;
+	int _lineHeight;
 	typedef Common::HashMap<uint8, Graphics::ManagedSurface> GlyphMap;
 	GlyphMap _glyphs;
 };
@@ -62,7 +65,7 @@ public:
 	SpeechFont();
 
 protected:
-	virtual uint8 transformColor(uint8 baseColor, uint8 glyphColor) override;
+	virtual uint8 transformColor(uint8 baseColor, uint8 glyphColor) const override;
 };
 
 }
