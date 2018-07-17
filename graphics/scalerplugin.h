@@ -168,8 +168,6 @@ private:
 	byte *_oldSrc;
 };
 
-typedef PluginSubclass<ScalerPluginObject> ScalerPlugin;
-
 /**
  * Singleton class to manage scaler plugins
  */
@@ -178,7 +176,7 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 
 public:
-	const ScalerPlugin::List &getPlugins() const;
+	const PluginList &getPlugins() const;
 
 	/**
 	 * Queries all scaler plugins for the maximum number of pixels they

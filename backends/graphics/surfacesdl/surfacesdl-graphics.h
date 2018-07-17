@@ -87,6 +87,7 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 	virtual bool getFeatureState(OSystem::Feature f) const override;
 
+	const OSystem::GraphicsMode *supportedGraphicsModes() const;
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 	virtual int getDefaultGraphicsMode() const override;
 	virtual bool setGraphicsMode(int mode) override;
@@ -298,9 +299,9 @@ protected:
 	// Indicates whether it is needed to free _hwSurface in destructor
 	bool _displayDisabled;
 
-	const ScalerPlugin::List &_scalerPlugins;
-	ScalerPlugin *_scalerPlugin;
-	ScalerPlugin *_normalPlugin;
+	const PluginList &_scalerPlugins;
+	ScalerPluginObject *_scalerPlugin;
+	ScalerPluginObject *_normalPlugin;
 	uint _scalerIndex;
 	uint _maxExtraPixels;
 	uint _extraPixels;

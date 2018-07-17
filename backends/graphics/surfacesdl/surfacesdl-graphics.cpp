@@ -175,7 +175,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 
 #endif
 	// HACK: just pick first scaler plugin
-	_normalPlugin = _scalerPlugins.front();
+	_normalPlugin = &_scalerPlugins.front()->get<ScalerPluginObject>();
 	_scalerPlugin = NULL;
 	_scalerIndex = 0;
 	_maxExtraPixels = ScalerMan.getMaxExtraPixels();
@@ -295,6 +295,7 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 #ifdef USE_ASPECT
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
+#endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureFilteringMode:
 		return _videoMode.filtering;
@@ -309,15 +310,16 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 static void initGraphicsModes() {
 	s_supportedGraphicsModes = new Common::Array<OSystem::GraphicsMode>;
 	s_supportedGraphicsModesData = new Common::Array<GraphicsModeData>;
-	const ScalerPlugin::List &plugins = ScalerMan.getPlugins();
+	const PluginList &plugins = ScalerMan.getPlugins();
 	OSystem::GraphicsMode gm;
 	GraphicsModeData gmd;
 	// 0 should be the normal1x mode
 	s_defaultGraphicsMode = 0;
 	for (uint i = 0; i < plugins.size(); ++i) {
-		const Common::Array<uint> &factors = (*plugins[i])->getFactors();
-		const char *name = (*plugins[i])->getName();
-		const char *prettyName = (*plugins[i])->getPrettyName();
+        ScalerPluginObject &plugin = plugins[i]->get<ScalerPluginObject>();
+		const Common::Array<uint> &factors = plugin.getFactors();
+		const char *name = plugin.getName();
+		const char *prettyName = plugin.getPrettyName();
 		gmd.pluginName = name;
 		for (uint j = 0; j < factors.size(); ++j) {
 			Common::String n1 = Common::String::format("%s%dx", name, factors[j]);
@@ -341,7 +343,7 @@ static void initGraphicsModes() {
 	s_supportedGraphicsModes->push_back(gm);
 }
 
-const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes() {
+const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes() const {
 	if (!s_supportedGraphicsModes)
 		initGraphicsModes();
 
@@ -546,7 +548,7 @@ static void maskToBitCount(Uint32 mask, uint8 &numBits, uint8 &shift) {
 }
 #endif
 
-void SurfaceSdlGraphicsManager::convertSDLPixelFormat(SDL_PixelFormat *in, Graphics::PixelFormat *out) {
+void SurfaceSdlGraphicsManager::convertSDLPixelFormat(SDL_PixelFormat *in, Graphics::PixelFormat *out) const {
 	*out = Graphics::PixelFormat(in->BytesPerPixel,
 		8 - in->Rloss, 8 - in->Gloss,
 		8 - in->Bloss, 8 - in->Aloss,
@@ -721,7 +723,7 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 
 	// Find which plugin corresponds to the desired mode and set
 	// _scalerIndex accordingly. _scalerPlugin will be updated later.
-	while (strcmp(name, (*_scalerPlugins[_scalerIndex])->getName()) != 0) {
+	while (strcmp(name, _scalerPlugins[_scalerIndex]->get<ScalerPluginObject>().getName()) != 0) {
 		_scalerIndex++;
 		if (_scalerIndex >= _scalerPlugins.size()) {
 			_scalerIndex = 0;
@@ -748,23 +750,23 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 
 
 	// If the _scalerIndex has changed, change scaler plugins
-	if (_scalerPlugins[_scalerIndex] != _scalerPlugin || _transactionDetails.formatChanged) {
+	if (&_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>() != _scalerPlugin || _transactionDetails.formatChanged) {
 		Graphics::PixelFormat format;
 		convertSDLPixelFormat(_hwscreen->format, &format);
 		if (_scalerPlugin)
-			(*_scalerPlugin)->deinitialize();
+			_scalerPlugin->deinitialize();
 
-		if (_scalerPlugins[_scalerIndex] != _normalPlugin) {
+		if (&_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>() != _normalPlugin) {
 			// _normalPlugin might be needed and needs to be initialized
-			(*_normalPlugin)->initialize(format);
+			_normalPlugin->initialize(format);
 		}
-		_scalerPlugin = _scalerPlugins[_scalerIndex];
-		(*_scalerPlugin)->initialize(format);
-		_extraPixels = (*_scalerPlugin)->extraPixels();
-		_useOldSrc = (*_scalerPlugin)->useOldSource();
+		_scalerPlugin = &_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>();
+		_scalerPlugin->initialize(format);
+		_extraPixels = _scalerPlugin->extraPixels();
+		_useOldSrc = _scalerPlugin->useOldSource();
 		if (_useOldSrc) {
-			(*_scalerPlugin)->enableSource(true);
-			(*_scalerPlugin)->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
+			_scalerPlugin->enableSource(true);
+			_scalerPlugin->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
 										_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
 			if (!_destbuffer) {
 				_destbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth * _videoMode.scaleFactor,
@@ -780,7 +782,7 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 		}
 	}
 
-	(*_scalerPlugin)->setFactor(_videoMode.scaleFactor);
+	_scalerPlugin->setFactor(_videoMode.scaleFactor);
 
 	// Blit everything to the screen
 	_forceRedraw = true;
@@ -1078,7 +1080,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 
 	if (_useOldSrc) {
 		// Create surface containing previous frame's data to pass to scaler
-		(*_scalerPlugin)->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
+		_scalerPlugin->setSource((byte *)_tmpscreen->pixels, _tmpscreen->pitch,
 									_videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
 
 		// Create surface containing the raw output from the scaler
@@ -1395,10 +1397,10 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				} else {
 					if (_useOldSrc) {
 						// scale into _destbuffer instead of _hwscreen to avoid AR problems
-						(*_scalerPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
+						_scalerPlugin->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
 							(byte *)_destbuffer->pixels + rx1 * 2 + orig_dst_y * scale1 * _destbuffer->pitch, _destbuffer->pitch, r->w, dst_h, r->x, r->y);
 					} else
-						(*_scalerPlugin)->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
+						_scalerPlugin->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
 							(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
 				}
 			}
@@ -1929,13 +1931,13 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 
 	// The plugin won't write anything if _useOldSrc
 	if (_useOldSrc)
-		(*_scalerPlugin)->enableSource(false);
+		_scalerPlugin->enableSource(false);
 
-	(*_scalerPlugin)->scale((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
+	_scalerPlugin->scale((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, 0, 0);
 
 	if (_useOldSrc)
-		(*_scalerPlugin)->enableSource(true);
+		_scalerPlugin->enableSource(true);
 
 #ifdef USE_ASPECT
 	if (_videoMode.aspectRatioCorrection)
@@ -2300,21 +2302,21 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	// otherwise use the Normal scaler
 #ifdef USE_SCALERS
 	if (_cursorTargetScale == 1) {
-		if ((*_scalerPlugin)->canDrawCursor()) {
+		if (_scalerPlugin->canDrawCursor()) {
 #endif
-            (*_scalerPlugin)->scale(
+            _scalerPlugin->scale(
                     (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
                     _mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
                     _mouseCurState.w, _mouseCurState.h, 0, 0);
 #ifdef USE_SCALERS
 		} else {
-			int tmpFactor = (*_normalPlugin)->getFactor();
-			(*_normalPlugin)->setFactor(_videoMode.scaleFactor);
-			(*_normalPlugin)->scale(
+			int tmpFactor = _normalPlugin->getFactor();
+			_normalPlugin->setFactor(_videoMode.scaleFactor);
+			_normalPlugin->scale(
 				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
 				_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 				_mouseCurState.w, _mouseCurState.h, 0, 0);
-			(*_normalPlugin)->setFactor(tmpFactor);
+			_normalPlugin->setFactor(tmpFactor);
 		}
 	} else {
         blitSurface(
@@ -2644,9 +2646,9 @@ void SurfaceSdlGraphicsManager::handleResizeImpl(const int width, const int heig
  * @param factor      The scale factor to match
  * @return            The graphics mode
  */
-int findGraphicsMode(uint factor, ScalerPlugin *plugin) {
+int findGraphicsMode(uint factor, ScalerPluginObject &plugin) {
 	for (uint i = 0; i < s_supportedGraphicsModesData->size(); ++i) {
-		if (strcmp((*s_supportedGraphicsModesData)[i].pluginName, (*plugin)->getName()) == 0
+		if (strcmp((*s_supportedGraphicsModesData)[i].pluginName, plugin.getName()) == 0
 				&& (*s_supportedGraphicsModesData)[i].scaleFactor == factor) {
 			return i;
 		}
@@ -2680,6 +2682,7 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		internUpdateScreen();
 		return true;
 	}
+#endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Ctrl-Alt-f toggles filtering
@@ -2745,9 +2748,9 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		sdlKey == SDLK_KP_PLUS || sdlKey == SDLK_KP_MINUS) {
 		factor += (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS) ? -1 : +1;
 		if (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS)
-			factor = (*_scalerPlugin)->decreaseFactor();
+			factor = _scalerPlugin->decreaseFactor();
 		else
-			factor = (*_scalerPlugin)->increaseFactor();
+			factor = _scalerPlugin->increaseFactor();
 		needSwitch = true;
 	}
 
@@ -2757,7 +2760,7 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		}
 		_scalerIndex--;
 		needSwitch = true;
-		factor = (*_scalerPlugins[_scalerIndex])->getFactor();
+		factor = _scalerPlugins[_scalerIndex]->get<ScalerPluginObject>().getFactor();
 	}
 
 	if (sdlKey == SDLK_0) {
@@ -2766,23 +2769,23 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 			_scalerIndex = 0;
 		}
 		needSwitch = true;
-		factor = (*_scalerPlugins[_scalerIndex])->getFactor();
+		factor = _scalerPlugins[_scalerIndex]->get<ScalerPluginObject>().getFactor();
 	}
 
 
 	if (needSwitch) {
-		int newMode = findGraphicsMode(factor, _scalerPlugins[_scalerIndex]);
+		int newMode = findGraphicsMode(factor, _scalerPlugins[_scalerIndex]->get<ScalerPluginObject>());
 		beginGFXTransaction();
 			setGraphicsMode(newMode);
 		endGFXTransaction();
 #ifdef USE_OSD
-		const char *newScalerName = (*_scalerPlugin)->getPrettyName();
+		const char *newScalerName = _scalerPlugin->getPrettyName();
 		if (newScalerName) {
 			const Common::String message = Common::String::format(
 				"%s %s%d\n%d x %d -> %d x %d",
 				_("Active graphics filter:"),
 				newScalerName,
-                (*_scalerPlugin)->getFactor(),
+                _scalerPlugin->getFactor(),
 				_videoMode.screenWidth, _videoMode.screenHeight,
 				_hwScreen->w, _hwScreen->h);
 			displayMessageOnOSD(message.c_str());
