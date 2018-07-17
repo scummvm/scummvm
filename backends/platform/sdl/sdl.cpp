@@ -154,12 +154,11 @@ OSystem_SDL::~OSystem_SDL() {
 	_mutexManager = 0;
 
 #ifdef USE_OPENGL
-	for (int i = 0; i < _sdlModesCount; ++i) {
+	for (uint i = 0; i < _graphicsModes.size(); ++i) {
 		// SurfaceSDL needs us to free these
 		free(const_cast<char *>(_graphicsModes[i].name));
 		free(const_cast<char *>(_graphicsModes[i].description));
 	}
-	delete[] _graphicsModes;
 #endif
 
 	delete _logger;
@@ -273,9 +272,10 @@ void OSystem_SDL::initBackend() {
 		}
 	}
 	// Look in all game domains as well
+#if 0
 	Common::ConfigManager::DomainMap &dm = ConfMan.getGameDomains();
 	for (Common::ConfigManager::DomainMap::iterator domain = dm.begin(); domain != dm.end(); ++domain) {
-		Common::ConfigManager::Domain::iterator gm = domain->_value.find("gfx_mode");
+		Common::ConfigManager::Domain::const_iterator gm = domain->_value.find("gfx_mode");
 		if (gm != domain->_value.end()) {
 			for (uint i = 0; i < ARRAYSIZE(s_legacyGraphicsModes); ++i) {
 				if (gm->_value == s_legacyGraphicsModes[i].oldName) {
@@ -285,6 +285,7 @@ void OSystem_SDL::initBackend() {
 			}
 		}
 	}
+#endif
 
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL
@@ -948,9 +949,6 @@ void OSystem_SDL::setupGraphicsModes() {
 		mode->id = i++;
 		mode++;
 	}
-
-	// SurfaceSDLGraphicsManager expects us to delete[] this
-	delete[] sdlGraphicsModes;
 }
 #endif
 
