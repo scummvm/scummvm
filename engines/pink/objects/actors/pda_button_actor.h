@@ -54,6 +54,8 @@ public:
 
 	void toConsole() override;
 
+	void init(bool paused) override;
+
 	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
 
 	void onLeftClickMessage() override;

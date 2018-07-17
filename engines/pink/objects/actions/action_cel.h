@@ -54,13 +54,14 @@ public:
 
 	void setCenter(const Common::Point &center);
 
+
+	void loadDecoder();
+
 protected:
 	virtual void onStart() = 0;
 
 	void decodeNext();
 	void setFrame(uint frame);
-
-	void loadDecoder();
 
 	CelDecoder _decoder;
 	Common::String _fileName;

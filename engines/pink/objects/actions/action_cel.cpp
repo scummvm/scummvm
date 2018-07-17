@@ -55,10 +55,6 @@ bool ActionCEL::initPalette(Director *director) {
 
 void ActionCEL::start() {
 	loadDecoder();
-
-	Common::Point point = _decoder.getCenter();
-	_bounds = Common::Rect::center(point.x, point.y, _decoder.getWidth(), _decoder.getHeight());
-
 	_decoder.start();
 	this->onStart();
 	_actor->getPage()->getGame()->getDirector()->addSprite(this);
@@ -84,8 +80,11 @@ Coordinates ActionCEL::getCoordinates() {
 }
 
 void ActionCEL::loadDecoder() {
-	if (!_decoder.isVideoLoaded())
+	if (!_decoder.isVideoLoaded()) {
 		_decoder.loadStream(_actor->getPage()->getResourceStream(_fileName));
+		Common::Point point = _decoder.getCenter();
+		_bounds = Common::Rect::center(point.x, point.y, _decoder.getWidth(), _decoder.getHeight());
+	}
 }
 
 void ActionCEL::setFrame(uint frame) {
