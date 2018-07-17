@@ -41,7 +41,7 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 		_midiDriver->open();
 		_midiDriver->setTimerCallback(this, Sound::midiDriverCallback);
 
-		for (int i=0; i<8; i++) {
+		for (int i = 0; i < NUM_MIDI_SLOTS; i++) {
 			_midiSlots[i].slot = i;
 			_midiSlots[i].track = -1;
 
@@ -59,7 +59,7 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 	_soundHandle = new Audio::SoundHandle();
 	loadedSoundData = nullptr;
 
-	for (int i=1; i<8; i++) {
+	for (int i = 1; i < NUM_MIDI_SLOTS; i++) {
 		_midiSlotList.push_back(&_midiSlots[i]);
 	}
 
@@ -71,7 +71,7 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 }
 
 Sound::~Sound() {
-	for (int i=0; i<8; i++)
+	for (int i = 0; i < NUM_MIDI_SLOTS; i++)
 		delete _midiSlots[i].midiParser;
 	delete _midiDriver;
 	delete _soundHandle;
@@ -80,7 +80,7 @@ Sound::~Sound() {
 
 
 void Sound::clearAllMidiSlots() {
-	for (int i=0; i<8; i++) {
+	for (int i=0; i < NUM_MIDI_SLOTS; i++) {
 		clearMidiSlot(i);
 	}
 }
@@ -95,7 +95,7 @@ void Sound::playMidiTrack(int track) {
 	assert(loadedSoundData != nullptr);
 
 	// Check if a midi slot for this track exists already
-	for (int i=1; i<8; i++) {
+	for (int i = 1; i < NUM_MIDI_SLOTS; i++) {
 		if (_midiSlots[i].track == track) {
 			debugC(6, kDebugSound, "Playing MIDI track %d (slot %d)", track, i);
 			_midiSlots[i].midiParser->loadMusic(loadedSoundData, sizeof(loadedSoundData));
@@ -126,6 +126,18 @@ void Sound::playMidiTrackInSlot(int slot, int track) {
 		_midiSlots[slot].midiParser->loadMusic(loadedSoundData, sizeof(loadedSoundData));
 		_midiSlots[slot].midiParser->setTrack(track);
 	}
+}
+
+bool Sound::isMidiPlaying() {
+	if (!_vm->_musicWorking)
+		return false;
+
+	for (int i = 0; i < NUM_MIDI_SLOTS; i++) {
+		if (_midiSlots[i].midiParser->isPlaying())
+			return true;
+	}
+
+	return false;
 }
 
 void Sound::loadMusicFile(const Common::String &baseSoundName) {
@@ -239,7 +251,7 @@ void Sound::playSpeech(const Common::String &basename) {
 			audioQueue->queueAudioStream(audioStream, DisposeAfterUse::YES);
 		}
 
-		name.erase(0,i+1);
+		name.erase(0, i + 1);
 	}
 
 	if (audioQueue != nullptr) {
@@ -288,7 +300,7 @@ void Sound::setSfxEnabled(bool enable) {
 	_vm->_sfxEnabled = enable;
 
 	if (!enable) {
-		for (int i = 1; i < 8; i++)
+		for (int i = 1; i < NUM_MIDI_SLOTS; i++)
 			clearMidiSlot(i);
 	}
 
@@ -354,7 +366,7 @@ void Sound::clearMidiSlot(int slot) {
 // Static callback method
 void Sound::midiDriverCallback(void *data) {
 	Sound *s = (Sound*)data;
-	for (int i=0; i<8; i++)
+	for (int i = NUM_MIDI_SLOTS; i < NUM_MIDI_SLOTS; i++)
 		s->_midiSlots[i].midiParser->onTimer();
 
 	// TODO: put this somewhere other than the midi callback...

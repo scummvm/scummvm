@@ -73,7 +73,45 @@ Graphics::~Graphics() {
 
 
 void Graphics::setBackgroundImage(SharedPtr<Bitmap> bitmap) {
-	_backgroundImage = bitmap;
+	_backgroundImage = SharedPtr<Bitmap>(new Bitmap(*bitmap));
+}
+
+void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, SharedPtr<Bitmap> bitmap) {
+	byte *dest = _backgroundImage->pixels + drawRect.top * SCREEN_WIDTH + drawRect.left;
+	byte *src = bitmap->pixels + (drawRect.left - origRect.left)
+		+ (drawRect.top - origRect.top) * bitmap->width;
+
+	for (int y = drawRect.top; y < drawRect.bottom; y++) {
+		for (int x = drawRect.left; x < drawRect.right; x++) {
+			byte b = *src;
+
+			if (b != 0)
+				*dest = b;
+
+			src++;
+			dest++;
+		}
+
+		src += bitmap->width - drawRect.width();
+		dest += SCREEN_WIDTH - drawRect.width();
+	}
+}
+
+void Graphics::fillBackgroundRect(const Common::Rect &rect, byte color) {
+	byte *dest = _backgroundImage->pixels + rect.top * SCREEN_WIDTH + rect.left;
+	for (int y = rect.top; y < rect.bottom; y++) {
+		memset(dest, color, rect.width());
+		dest += SCREEN_WIDTH;
+	}
+}
+
+void Graphics::clearScreenAndPriBuffer() {
+	Common::fill(_priData, _priData + sizeof(_priData), 0);
+
+	::Graphics::Surface *surface = _vm->_system->lockScreen();
+	surface->fillRect(_screenRect, 0);
+	_vm->_system->unlockScreen();
+	_vm->_system->updateScreen();
 }
 
 /**

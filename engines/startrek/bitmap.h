@@ -16,11 +16,13 @@ struct Bitmap {
 	byte *pixels;
 
 	Bitmap(Common::SharedPtr<FileStream> stream);
+	Bitmap(const Bitmap &bitmap);
 	Bitmap(int w, int h);
 	~Bitmap();
 
 protected:
-	Bitmap() : xoffset(0),yoffset(0),width(0),height(0),pixels(nullptr) {}
+	int32 pixelsArraySize;
+	Bitmap() : xoffset(0),yoffset(0),width(0),height(0),pixels(nullptr),pixelsArraySize(0) {}
 };
 
 
@@ -30,6 +32,15 @@ protected:
 // (since width/height still reflect the actual size when drawn).
 struct TextBitmap : Bitmap {
 	TextBitmap(int w, int h);
+};
+
+
+// StubBitmap is a bitmap without any actual pixel data. Used as a stub for the
+// "starfield" sprite, which is always in draw mode 1 (invisible), so it never gets drawn;
+// however, it does trigger refreshes on the background in that area, so the game can draw
+// on the background layer manually.
+struct StubBitmap : Bitmap {
+	StubBitmap(int w, int h);
 };
 
 }

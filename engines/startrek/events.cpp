@@ -26,11 +26,11 @@ namespace StarTrek {
 /**
  * Doesn't return until an event occurs.
  */
-void StarTrekEngine::pollSystemEvents() {
+void StarTrekEngine::pollSystemEvents(bool queueEvents) {
 	Common::Event event;
 	TrekEvent trekEvent;
 
-	while (_eventQueue.empty()) {
+	while (!queueEvents || _eventQueue.empty()) {
 		while (_eventMan->pollEvent(event)) {
 			trekEvent.mouse = event.mouse;
 			trekEvent.kbd = event.kbd;
@@ -41,26 +41,34 @@ void StarTrekEngine::pollSystemEvents() {
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
-				trekEvent.type = TREKEVENT_MOUSEMOVE;
-				addEventToQueue(trekEvent);
+				if (queueEvents) {
+					trekEvent.type = TREKEVENT_MOUSEMOVE;
+					addEventToQueue(trekEvent);
+				}
 
 				// WORKAROUND: this improves the responsiveness of the mouse.
 				_system->updateScreen();
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				trekEvent.type = TREKEVENT_LBUTTONDOWN;
-				addEventToQueue(trekEvent);
+				if (queueEvents) {
+					trekEvent.type = TREKEVENT_LBUTTONDOWN;
+					addEventToQueue(trekEvent);
+				}
 				break;
 
 			case Common::EVENT_RBUTTONDOWN:
-				trekEvent.type = TREKEVENT_RBUTTONDOWN;
-				addEventToQueue(trekEvent);
+				if (queueEvents) {
+					trekEvent.type = TREKEVENT_RBUTTONDOWN;
+					addEventToQueue(trekEvent);
+				}
 				break;
 
 			case Common::EVENT_KEYDOWN:
-				trekEvent.type = TREKEVENT_KEYDOWN;
-				addEventToQueue(trekEvent);
+				if (queueEvents) {
+					trekEvent.type = TREKEVENT_KEYDOWN;
+					addEventToQueue(trekEvent);
+				}
 				break;
 
 			default:
@@ -70,27 +78,34 @@ void StarTrekEngine::pollSystemEvents() {
 
 		// Check for tick event
 		uint nextFrame = _frameStartMillis + 1000 / 18.206;
+		uint millis = _system->getMillis();
 
-		if (_system->getMillis() >= nextFrame) {
+		if (millis >= nextFrame) {
 			_clockTicks++;
 
-			_frameStartMillis = _system->getMillis();
+			_frameStartMillis = millis;
 
-			TrekEvent tickEvent;
-			tickEvent.type = TREKEVENT_TICK;
-			tickEvent.tick = _clockTicks;
-			addEventToQueue(tickEvent);
+			if (queueEvents) {
+				TrekEvent tickEvent;
+				tickEvent.type = TREKEVENT_TICK;
+				tickEvent.tick = _clockTicks;
+				addEventToQueue(tickEvent);
+			}
 		}
 
-		if (!_eventQueue.empty())
+		if (queueEvents && !_eventQueue.empty())
 			break;
 
 		// Wait a 60th of a second before checking for events again
-		uint delay = 1000 / 60;
-		if (_system->getMillis() + delay > nextFrame)
-			delay = nextFrame - _system->getMillis();
+		int delay = 1000 / 60;
+		millis = _system->getMillis();
+		if (millis + delay > nextFrame)
+			delay = nextFrame - millis;
 		if (delay > 0)
 			_system->delayMillis(delay);
+
+		if (!queueEvents)
+			break;
 	}
 }
 
