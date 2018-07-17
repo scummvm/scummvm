@@ -598,7 +598,7 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 		// Get our currently set hardware format
 		Graphics::PixelFormat hwFormat = convertSDLPixelFormat(_hwScreen->format);
 
-		_supportedFormats.push_back(hwFormat);
+		_supportedFormats.push_back(format);
 
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 		format = hwFormat;
@@ -690,7 +690,6 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode, uint flags) {
 		}
 	}
 
-	_transactionDetails.normal1xScaler = (newScaleFactor == 1);
 	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
 		_transactionDetails.needHotswap = true;
 
@@ -705,14 +704,14 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode, uint flags) {
 void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 	Common::StackLock lock(_graphicsMutex);
 
-	if (!_screen || !_hwscreen)
+	if (!_screen || !_hwScreen)
 		return;
 
 
 	// If the _scalerIndex has changed, change scaler plugins
 	if (&_scalerPlugins[_scalerIndex]->get<ScalerPluginObject>() != _scalerPlugin || _transactionDetails.formatChanged) {
 		Graphics::PixelFormat format;
-		convertSDLPixelFormat(_hwscreen->format, &format);
+		convertSDLPixelFormat(_hwScreen->format, &format);
 		if (_scalerPlugin)
 			_scalerPlugin->deinitialize();
 
@@ -732,10 +731,10 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 				_destbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth * _videoMode.scaleFactor,
 									_videoMode.screenHeight * _videoMode.scaleFactor,
 									16,
-									_hwscreen->format->Rmask,
-									_hwscreen->format->Gmask,
-									_hwscreen->format->Bmask,
-									_hwscreen->format->Amask);
+									_hwScreen->format->Rmask,
+									_hwScreen->format->Gmask,
+									_hwScreen->format->Bmask,
+									_hwScreen->format->Amask);
 				if (_destbuffer == NULL)
 					error("allocating _destbuffer failed");
 			}
@@ -1031,10 +1030,10 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		_destbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth * _videoMode.scaleFactor,
 							_videoMode.screenHeight * _videoMode.scaleFactor,
 							16,
-							_hwscreen->format->Rmask,
-							_hwscreen->format->Gmask,
-							_hwscreen->format->Bmask,
-							_hwscreen->format->Amask);
+							_hwScreen->format->Rmask,
+							_hwScreen->format->Gmask,
+							_hwScreen->format->Bmask,
+							_hwScreen->format->Amask);
 		if (_destbuffer == NULL)
 			error("allocating _destbuffer failed");
 	}
@@ -1282,7 +1281,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 	// Force a full redraw if requested.
 	// If _useOldSrc, the scaler will do its own partial updates.
-	if (_forceFull) {
+	if (_forceRedraw) {
 		_numDirtyRects = 1;
 		_dirtyRectList[0].x = 0;
 		_dirtyRectList[0].y = 0;
@@ -1344,15 +1343,15 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 				if (_overlayVisible) {
 					blitSurface((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
-					            (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w * 2, dst_h);
+					            (byte *)_hwScreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w * 2, dst_h);
 				} else {
 					if (_useOldSrc) {
-						// scale into _destbuffer instead of _hwscreen to avoid AR problems
+						// scale into _destbuffer instead of _hwScreen to avoid AR problems
 						_scalerPlugin->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
 							(byte *)_destbuffer->pixels + rx1 * 2 + orig_dst_y * scale1 * _destbuffer->pitch, _destbuffer->pitch, r->w, dst_h, r->x, r->y);
 					} else
 						_scalerPlugin->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
-							(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
+							(byte *)_hwScreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h, r->x, r->y);
 				}
 			}
 
@@ -1363,11 +1362,11 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 #ifdef USE_SCALERS
 			if (_useOldSrc && !_overlayVisible) {
-				// Copy _destbuffer back into _hwscreen to be AR corrected
+				// Copy _destbuffer back into _hwScreen to be AR corrected
 				int y = orig_dst_y * scale1;
 				int h = r->h;
 				int w = r->w;
-				byte *dest = (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch;
+				byte *dest = (byte *)_hwScreen->pixels + rx1 * 2 + dst_y * dstPitch;
 				byte *src = (byte *)_destbuffer->pixels + rx1 * 2 + y * _destbuffer->pitch;
 				while (h--) {
 					memcpy(dest, src, w*2);
@@ -1380,9 +1379,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 #ifdef USE_ASPECT
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible) {
 				if (_useOldSrc)
-					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
+					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
 				else
-					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
+					r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
 			}
 #endif
 		}
@@ -2155,16 +2154,16 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	uint32 color;
 
 	// Make whole surface transparent
-	for (int i = 0; i < h + _maxExtraPixels * 2; i++) {
+	for (uint i = 0; i < h + _maxExtraPixels * 2; i++) {
 		dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * i;
-		for (int j = 0; j < w + _maxExtraPixels * 2; j++) {
+		for (uint j = 0; j < w + _maxExtraPixels * 2; j++) {
 			*(uint16 *)dstPtr = kMouseColorKey;
 			dstPtr += _cursorFormat.bytesPerPixel;
 		}
 	}
 
 	// Draw from [_maxExtraPixels,_maxExtraPixels] since scalers will read past boudaries
-	dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel;
+	dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _cursorFormat.bytesPerPixel;
 
 	SDL_Color *palette;
 
@@ -2173,8 +2172,8 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	else
 		palette = _cursorPalette;
 
-	for (int i = 0; i < h; i++) {
-		for (int j = 0; j < w; j++) {
+	for (uint i = 0; i < h; i++) {
+		for (uint j = 0; j < w; j++) {
 			if (_cursorFormat.bytesPerPixel == 2) {
 				color = *(const uint16 *)srcPtr;
 				if (color != _mouseKeyColor) {
@@ -2182,7 +2181,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 					_cursorFormat.colorToRGB(color, r, g, b);
 					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format, r, g, b);
 				}
-				dstPtr += bytesPerPixel;
+				dstPtr += _cursorFormat.bytesPerPixel;
 				srcPtr += _cursorFormat.bytesPerPixel;
 			} else {
 				color = *srcPtr;
@@ -2222,11 +2221,11 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	// the game. This only works well with the non-blurring scalers so we
 	// otherwise use the Normal scaler
 #ifdef USE_SCALERS
-	if (_cursorTargetScale == 1) {
+	if (!_cursorDontScale) {
 		if (_scalerPlugin->canDrawCursor()) {
 #endif
             _scalerPlugin->scale(
-                    (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
+                    (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _cursorFormat.bytesPerPixel,
                     _mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
                     _mouseCurState.w, _mouseCurState.h, 0, 0);
 #ifdef USE_SCALERS
@@ -2234,14 +2233,14 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 			int tmpFactor = _normalPlugin->getFactor();
 			_normalPlugin->setFactor(_videoMode.scaleFactor);
 			_normalPlugin->scale(
-				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
+				(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _cursorFormat.bytesPerPixel,
 				_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 				_mouseCurState.w, _mouseCurState.h, 0, 0);
 			_normalPlugin->setFactor(tmpFactor);
 		}
 	} else {
         blitSurface(
-                (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * bytesPerPixel,
+                (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _cursorFormat.bytesPerPixel,
                 _mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 			_mouseCurState.w * 2, _mouseCurState.h);
 	}
