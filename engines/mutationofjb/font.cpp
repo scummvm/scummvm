@@ -27,9 +27,9 @@
 
 namespace MutationOfJB {
 
-Font::Font(const Common::String &fileName, int horizSpacing, int vertSpacing) :
+Font::Font(const Common::String &fileName, int horizSpacing, int lineHeight) :
 	_horizSpacing(horizSpacing),
-	_vertSpacing(vertSpacing) {
+	_lineHeight(lineHeight) {
 
 	load(fileName);
 }
@@ -67,15 +67,14 @@ bool Font::load(const Common::String &fileName) {
 		}
 	}
 
-	if (_vertSpacing == -1) {
-		_vertSpacing = maxHeight;
+	if (_lineHeight == -1) {
+		_lineHeight = maxHeight;
 	}
 
 	return true;
 }
 
-
-void Font::drawGlyph(uint8 glyph, uint8 baseColor, int16 &x, int16 &y, Graphics::ManagedSurface &surf) {
+void Font::drawGlyph(uint8 glyph, uint8 baseColor, int16 &x, int16 &y, Graphics::ManagedSurface &surf) const {
 	GlyphMap::iterator it = _glyphs.find(glyph);
 	if (it == _glyphs.end()) {
 		warning("Glyph %d not found", glyph);
@@ -99,13 +98,54 @@ void Font::drawGlyph(uint8 glyph, uint8 baseColor, int16 &x, int16 &y, Graphics:
 	x += glyphSurface.w + _horizSpacing;
 }
 
-void Font::drawString(const Common::String &str, uint8 baseColor, int16 x, int16 y, Graphics::ManagedSurface &surf) {
+int16 Font::getWidth(const Common::String &str) const {
+	int16 width = 0;
+	for (uint i = 0; i < str.size(); ++i) {
+		GlyphMap::iterator it = _glyphs.find(str[i]);
+		if (it == _glyphs.end()) {
+			continue;
+		}
+
+		width += it->_value.w + _horizSpacing;
+	}
+	return width;
+}
+
+int Font::getLineHeight() const {
+	return _lineHeight;
+}
+
+void Font::drawString(const Common::String &str, uint8 baseColor, int16 x, int16 y, Graphics::ManagedSurface &surf) const {
 	for (uint i = 0; i < str.size(); ++i) {
 		drawGlyph(str[i], baseColor, x, y, surf); // "x" is updated.
 	}
 }
 
-uint8 Font::transformColor(uint8 baseColor, uint8 glyphColor) {
+void Font::wordWrap(const Common::String &str, int16 maxLineWidth, Common::Array<Common::String> &lines) const {
+	lines.push_back("");
+
+	for (Common::String::const_iterator it = str.begin(); it != str.end();) {
+		Common::String::const_iterator partStart = it;
+		it = Common::find(partStart, str.end(), ' ');
+		if (it != str.end()) {
+			while (*it == ' ' && it != str.end()) {
+				++it;
+			}
+		}
+
+		Common::String part(partStart, it); // Word + following whitespace
+		Common::String line = lines.back() + part;
+		if (getWidth(line) <= maxLineWidth) {
+			// The part fits in the current line
+			lines.back() = line;
+		} else {
+			// The part must go to the next line
+			lines.push_back(part);
+		}
+	}
+}
+
+uint8 Font::transformColor(uint8 baseColor, uint8 glyphColor) const {
 	return baseColor + glyphColor - 0x10;
 }
 
@@ -113,7 +153,7 @@ SystemFont::SystemFont() : Font("sysfnt.aft", 1, 7) {}
 
 SpeechFont::SpeechFont() : Font("font1.aft", -1, -1) {}
 
-uint8 SpeechFont::transformColor(uint8 baseColor, uint8 glyphColor) {
+uint8 SpeechFont::transformColor(uint8 baseColor, uint8 glyphColor) const {
 	// Hack in original game.
 	if (glyphColor == 0x11) {
 		return 0xC0;
