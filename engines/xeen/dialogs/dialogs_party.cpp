@@ -207,6 +207,10 @@ void PartyDialog::execute() {
 				if (_charList.size() == XEEN_TOTAL_CHARACTERS) {
 					ErrorScroll::show(_vm, Res.YOUR_ROSTER_IS_FULL);
 				} else {
+					// Save Background
+					Graphics::ManagedSurface savedBg;
+					savedBg.copyFrom(screen);
+
 					screen.fadeOut();
 					w.close();
 
@@ -215,7 +219,12 @@ void PartyDialog::execute() {
 
 					party.copyPartyToRoster();
 					//_vm->_saves->writeCharFile();
+
+					// Restore Background
 					screen.fadeOut();
+					screen.blitFrom(savedBg);
+					windows[0].update();
+
 					modeFlag = true;
 					breakFlag = true;
 				}
