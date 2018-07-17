@@ -102,8 +102,8 @@ residualvm.docktileplugin: ResidualVMDockTilePlugin
 	mkdir -p residualvm.docktileplugin/Contents
 	cp $(srcdir)/dists/macosx/dockplugin/Info.plist residualvm.docktileplugin/Contents
 	mkdir -p residualvm.docktileplugin/Contents/MacOS
-	cp ResidualVMDockTilePlugIn residualvm.docktileplugin/Contents/MacOS/
-	chmod 644 residualvm.docktileplugin/Contents/MacOS/ResidualVMDockTilePlugIn
+	cp ResidualVMDockTilePlugin residualvm.docktileplugin/Contents/MacOS/
+	chmod 644 residualvm.docktileplugin/Contents/MacOS/ResidualVMDockTilePlugin
 
 endif
 
