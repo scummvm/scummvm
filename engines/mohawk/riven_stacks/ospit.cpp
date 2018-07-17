@@ -143,7 +143,7 @@ void OSpit::xbookclick(const ArgumentArray &args) {
 	// Run the credits from here.
 	if (_vm->_vars["agehn"] == 3) {
 		_vm->_scriptMan->stopAllScripts();
-		runCredits(args[0], 5000, 0);
+		runCredits(args[0], 5000, 995);
 		return;
 	}
 
