@@ -39,6 +39,7 @@
 
 #define MAX_GAMES 100
 #define MAX_DIR 100
+#define MAX_PLUGIN_DIRS 100
 
 
 void draw_solid_quad(float x1, float y1, float x2, float y2,
@@ -517,3 +518,55 @@ bool selectGame(char *&ret, char *&dir_ret, Common::Language &lang_ret, Common::
   } else
     return false;
 }
+
+#ifdef DYNAMIC_MODULES
+static int findPluginDirs(Game *plugin_dirs, int max, const Common::FSNode &base)
+{
+  Common::FSList fslist;
+  int curr_dir = 0;
+  base.getChildren(fslist, Common::FSNode::kListDirectoriesOnly);
+  for (Common::FSList::const_iterator entry = fslist.begin(); entry != fslist.end();
+       ++entry) {
+    if (entry->isDirectory()) {
+      if (curr_dir >= max)
+	break;
+      strncpy(plugin_dirs[curr_dir].dir, (*entry).getPath().c_str(), 256);
+      strncpy(plugin_dirs[curr_dir].text, (*entry).getDisplayName().c_str(), 256);
+      plugin_dirs[curr_dir].icon.load(NULL, 0, 0);
+      curr_dir++;
+    }
+  }
+  return curr_dir;
+}
+
+bool selectPluginDir(Common::String &selection, const Common::FSNode &base)
+{
+  Game *plugin_dirs = new Game[MAX_PLUGIN_DIRS];
+  int selected, num_plugin_dirs;
+
+  ta_sync();
+  void *mark = ta_txmark();
+
+  num_plugin_dirs = findPluginDirs(plugin_dirs, MAX_PLUGIN_DIRS, base);
+
+  for (int i=0; i<num_plugin_dirs; i++) {
+    plugin_dirs[i].icon.create_texture();
+    plugin_dirs[i].label.create_texture(plugin_dirs[i].text);
+  }
+
+  selected = gameMenu(plugin_dirs, num_plugin_dirs);
+
+  ta_sync();
+  ta_txrelease(mark);
+
+  if (selected >= num_plugin_dirs)
+    selected = -1;
+
+  if (selected >= 0)
+    selection = plugin_dirs[selected].dir;
+
+  delete[] plugin_dirs;
+
+  return selected >= 0;
+}
+#endif

@@ -250,6 +250,11 @@ public:
  protected:
   Plugin* createPlugin(const Common::FSNode &node) const;
   bool isPluginFilename(const Common::FSNode &node) const;
+  void addCustomDirectories(Common::FSList &dirs) const;
+ public:
+  PluginList getPlugins();
+ private:
+  const char *pluginCustomDirectory;
 #endif
 };
 
@@ -258,3 +263,6 @@ extern int handleInput(struct mapledev *pad,
 		       int &mouse_x, int &mouse_y,
 		       byte &shiftFlags, Interactive *inter = NULL);
 extern bool selectGame(char *&, char *&, Common::Language &, Common::Platform &, class Icon &);
+#ifdef DYNAMIC_MODULES
+extern bool selectPluginDir(Common::String &selection, const Common::FSNode &base);
+#endif
