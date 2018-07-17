@@ -153,14 +153,6 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _mutexManager;
 	_mutexManager = 0;
 
-#ifdef USE_OPENGL
-	for (uint i = 0; i < _graphicsModes.size(); ++i) {
-		// SurfaceSDL needs us to free these
-		free(const_cast<char *>(_graphicsModes[i].name));
-		free(const_cast<char *>(_graphicsModes[i].description));
-	}
-#endif
-
 	delete _logger;
 	_logger = 0;
 
