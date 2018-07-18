@@ -87,7 +87,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_missionToLoad = "DEMON";
 	_roomIndexToLoad = 0;
 
-	_showSubtitles = false; // TODO: test
+	_showSubtitles = true; // TODO: test
 
 	for (int i = 0; i < NUM_OBJECTS; i++)
 		_itemList[i] = g_itemList[i];
@@ -116,13 +116,14 @@ Common::Error StarTrekEngine::run() {
 
 	_frameIndex = 0;
 	playIntro();
+	debug("DONE");
 
 	_frameIndex = 0;
 
 	_gameMode = -1;
 	_lastGameMode = -1;
 
-	runGameMode(GAMEMODE_START);
+	runGameMode(GAMEMODE_AWAYMISSION);
 	return Common::kNoError;
 }
 
@@ -229,11 +230,11 @@ void StarTrekEngine::playIntro() {
 
 	uint32 clockTicks = _clockTicks;
 
-	Sprite sprite;
-	_gfx->addSprite(&sprite);
-	sprite.setXYAndPriority(0, 0, 12);
-	sprite.bitmap = _gfx->loadBitmap("blank");
-	sprite.drawPriority2 = 16;
+	Sprite subtitleSprite;
+	_gfx->addSprite(&subtitleSprite);
+	subtitleSprite.setXYAndPriority(0, 0, 12);
+	subtitleSprite.bitmap = _gfx->loadBitmap("blank");
+	subtitleSprite.drawPriority2 = 16;
 
 	int index = 12;
 	while (index >= 0) {
@@ -268,7 +269,7 @@ void StarTrekEngine::playIntro() {
 	clockTicks += 540;
 
 	while (_clockTicks < clockTicks && _sound->isMidiPlaying()) {
-		pollSystemEvents(false);
+		waitForNextTick(true);
 	}
 
 	// TODO: MT audio file
@@ -281,16 +282,18 @@ void StarTrekEngine::playIntro() {
 
 	int32 starfieldZoomSpeed;
 	int16 frame = 0;
-	bool buttonPressed = 0;
+	bool buttonPressed = false;
 
 	while (frame != 0x180 || (_sound->isMidiPlaying() && !buttonPressed)) {
-		TrekEvent event;
-		while (popNextEvent(&event)) {
-			if (event.type == TREKEVENT_KEYDOWN) {
-				_gfx->fadeoutScreen();
-				buttonPressed = true;
-			} else if (event.type == TREKEVENT_TICK)
-				break;
+		if (!buttonPressed) {
+			TrekEvent event;
+			while (popNextEvent(&event, false)) {
+				if (event.type == TREKEVENT_KEYDOWN) {
+					_gfx->fadeoutScreen();
+					buttonPressed = true;
+				} else if (event.type == TREKEVENT_TICK)
+					break;
+			}
 		}
 
 		switch (frame) {
@@ -302,15 +305,20 @@ void StarTrekEngine::playIntro() {
 
 		case 30:
 			_sound->playVoc("kirkintr");
-			loadSubtitleSprite(0, &sprite);
+			loadSubtitleSprite(0, &subtitleSprite);
 			break;
 
 		case 36:
-			loadSubtitleSprite(1, &sprite);
+			loadSubtitleSprite(1, &subtitleSprite);
 			break;
 
 		case 42:
-			loadSubtitleSprite(-1, &sprite);
+			loadSubtitleSprite(-1, &subtitleSprite);
+			break;
+
+		case 378:
+			_gfx->delSprite(&subtitleSprite);
+			_byte_45b3c = 1;
 			break;
 		}
 
@@ -321,7 +329,7 @@ void StarTrekEngine::playIntro() {
 			clockTicks += 3;
 
 			while (_clockTicks < clockTicks)
-				pollSystemEvents(false);
+				waitForNextTick();
 		}
 
 		_starfieldPosition.z += starfieldZoomSpeed;
@@ -418,10 +426,9 @@ void StarTrekEngine::drawStarfield() {
 			file->seek(fileOffset, SEEK_SET);
 			SharedPtr<Bitmap> bitmap = SharedPtr<Bitmap>(new Bitmap(file));
 
-			if (!drawRect.isEmpty()) {
+			if (!drawRect.isEmpty())
 				_gfx->drawBitmapToBackground(starRect, drawRect, bitmap);
-				bitmap.reset();
-			}
+			bitmap.reset();
 		} else {
 			star->active = false;
 

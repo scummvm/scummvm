@@ -339,11 +339,20 @@ public:
 
 	// Events
 public:
-	void pollSystemEvents(bool queueEvents = true);
+	/**
+	 * Checks for all events, and updates Star Trek's event queue if queueEvents is set.
+	 * This does not account for "tick" events (getNextEvent/popNextEvent handle that).
+	 */
+	void pollEvents(bool queueEvents = true);
+	void waitForNextTick(bool queueEvents = true);
 	void initializeEventsAndMouse();
-	bool getNextEvent(TrekEvent *e);
+	/**
+	 * Returns false if there is no event waiting. If "poll" is true, this always returns
+	 * something (waits until an event occurs if necessary).
+	 */
+	bool getNextEvent(TrekEvent *e, bool poll = true);
 	void removeNextEvent();
-	bool popNextEvent(TrekEvent *e);
+	bool popNextEvent(TrekEvent *e, bool poll = true);
 	void addEventToQueue(const TrekEvent &e);
 	void clearEventBuffer();
 	void updateEvents();

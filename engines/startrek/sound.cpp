@@ -36,7 +36,7 @@ namespace StarTrek {
 
 Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 	if (_vm->getPlatform() == Common::kPlatformDOS || _vm->getPlatform() == Common::kPlatformMacintosh) {
-		_midiDevice = MidiDriver::detectDevice(MDT_PCSPK|MDT_ADLIB|MDT_MIDI);
+		_midiDevice = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
 		_midiDriver = MidiDriver::createMidi(_midiDevice);
 		_midiDriver->open();
 		_midiDriver->setTimerCallback(this, Sound::midiDriverCallback);
@@ -366,7 +366,7 @@ void Sound::clearMidiSlot(int slot) {
 // Static callback method
 void Sound::midiDriverCallback(void *data) {
 	Sound *s = (Sound*)data;
-	for (int i = NUM_MIDI_SLOTS; i < NUM_MIDI_SLOTS; i++)
+	for (int i = 0; i < NUM_MIDI_SLOTS; i++)
 		s->_midiSlots[i].midiParser->onTimer();
 
 	// TODO: put this somewhere other than the midi callback...
