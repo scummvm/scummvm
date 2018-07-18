@@ -59,7 +59,8 @@ enum {
 enum {
 	kWMModeNone         = 0,
 	kWMModeNoDesktop    = (1 << 0),
-	kWMModeAutohideMenu = (1 << 1)
+	kWMModeAutohideMenu = (1 << 1),
+	kWMModalMenuMode = (1 << 2)
 };
 
 }
@@ -222,6 +223,9 @@ public:
 	bool _menuTimerActive;
 
 	int _colorBlack, _colorWhite;
+
+	void *_engine;
+	void (*_pauseEngineCallback)(void *engine, bool pause);
 
 private:
 	void drawDesktop();

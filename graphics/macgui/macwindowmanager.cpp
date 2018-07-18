@@ -158,6 +158,8 @@ MacWindowManager::MacWindowManager() {
 	_menuDelay = 0;
 	_menuTimerActive = false;
 
+	_pauseEngineCallback = nullptr;
+
 	_colorBlack = 0;
 	_colorWhite = 2;
 
@@ -332,8 +334,12 @@ void MacWindowManager::draw() {
 static void menuTimerHandler(void *refCon) {
 	MacWindowManager *wm = (MacWindowManager *)refCon;
 
-	if (wm->_menuHotzone.contains(wm->_lastMousePos))
+	if (wm->_menuHotzone.contains(wm->_lastMousePos)) {
 		wm->activateMenu();
+		if ((wm->_mode & kWMModalMenuMode) && wm->_pauseEngineCallback) {
+			wm->_pauseEngineCallback(wm->_engine, true);
+		}
+	}
 
 	wm->_menuTimerActive = false;
 
