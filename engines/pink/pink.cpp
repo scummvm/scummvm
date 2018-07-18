@@ -161,6 +161,9 @@ Common::Error Pink::PinkEngine::run() {
 void PinkEngine::pauseEngine(void *engine, bool pause) {
 	PinkEngine *vm = (PinkEngine*)engine;
 	vm->pauseEngineIntern(pause);
+	if (!pause) {
+		vm->_director->addDirtyRect(Common::Rect(0, 0, 640, 480));
+	}
 }
 
 void PinkEngine::load(Archive &archive) {
