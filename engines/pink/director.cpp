@@ -88,9 +88,9 @@ Director::Director()
 }
 
 void Director::update() {
-	if (isMenuActive()) {
+	if (_wm.isMenuActive()) {
 		_wm.draw();
-		draw();
+		g_system->updateScreen();
 		return;
 	}
 
@@ -110,10 +110,6 @@ void Director::update() {
 
 bool Director::processEvent(Common::Event &event) {
 	return _wm.processEvent(event);
-}
-
-bool Director::isMenuActive() {
-	return _wm.isMenuActive();
 }
 
 void Director::setPalette(const byte *palette) {
