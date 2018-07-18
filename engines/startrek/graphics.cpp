@@ -134,11 +134,7 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 void Graphics::fadeinScreen() {
 	while (_paletteFadeLevel <= 100) {
 		TrekEvent event;
-		do {
-			if (!_vm->popNextEvent(&event))
-				continue;
-		}
-		while (event.type != TREKEVENT_TICK);
+		_vm->waitForNextTick();
 
 		setPaletteFadeLevel(_palData, _paletteFadeLevel);
 		_paletteFadeLevel += 10;
@@ -150,11 +146,7 @@ void Graphics::fadeinScreen() {
 void Graphics::fadeoutScreen() {
 	while (_paletteFadeLevel >= 0) {
 		TrekEvent event;
-		do {
-			if (!_vm->popNextEvent(&event))
-				continue;
-		}
-		while (event.type != TREKEVENT_TICK);
+		_vm->waitForNextTick();
 
 		setPaletteFadeLevel(_palData, _paletteFadeLevel);
 		_paletteFadeLevel -= 10;
