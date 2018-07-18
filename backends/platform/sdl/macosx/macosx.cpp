@@ -91,7 +91,8 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
 			// Success: Add it to the search path
 			Common::String bundlePath((const char *)buf);
-			s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
+			// ResidualVM: Search with a depth of 2 so the shaders are found
+			s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath, 2), priority);
 		}
 		CFRelease(fileUrl);
 	}
