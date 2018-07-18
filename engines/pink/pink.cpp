@@ -75,6 +75,9 @@ Common::Error PinkEngine::init() {
 	_console = new Console(this);
 	_director = new Director();
 
+	_director->getWndManager()._engine = this;
+	_director->getWndManager()._pauseEngineCallback = &pauseEngine;
+
 	Common::String orbName;
 	Common::String broName;
 	if (isPeril()) {
@@ -147,14 +150,17 @@ Common::Error Pink::PinkEngine::run() {
 			}
 		}
 
-		if (!_director->isMenuActive())
-			_actor->update();
-
+		_actor->update();
 		_director->update();
 		_system->delayMillis(10);
 	}
 
 	return Common::kNoError;
+}
+
+void PinkEngine::pauseEngine(void *engine, bool pause) {
+	PinkEngine *vm = (PinkEngine*)engine;
+	vm->pauseEngineIntern(pause);
 }
 
 void PinkEngine::load(Archive &archive) {

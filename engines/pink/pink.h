@@ -92,6 +92,8 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	bool canSaveGameStateCurrently() override;
 
+	static void pauseEngine(void *engine, bool pause); // for MacWndMgr
+
 	friend class Console;
 
 protected:
