@@ -45,7 +45,7 @@ void SayTask::start() {
 void SayTask::update() {
 	_timer.update();
 
-	if (_timer.isFnished()) {
+	if (_timer.isFinished()) {
 		getTaskManager()->getGame().getRoom().redraw(); // TODO: Only redraw the area occupied by the text.
 		setState(FINISHED);
 		return;

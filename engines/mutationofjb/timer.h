@@ -30,7 +30,7 @@ public:
 
 	void start();
 
-	bool isFnished() const;
+	bool isFinished() const;
 	bool isRunning() const;
 
 	void update();
