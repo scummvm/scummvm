@@ -46,6 +46,7 @@
 #include "startrek/items.h"
 #include "startrek/object.h"
 #include "startrek/sound.h"
+#include "startrek/space.h"
 
 
 using Common::SharedPtr;
@@ -199,43 +200,6 @@ struct TrekEvent {
 };
 
 
-// Pseudo-3D structs
-
-struct Point3 {
-	int32 x;
-	int32 y;
-	int32 z;
-
-	Point3 operator+(const Point3 &p) const {
-		Point3 p2;
-		p2.x = x + p.x;
-		p2.y = y + p.y;
-		p2.z = z + p.z;
-		return p2;
-	}
-	Point3 operator-(const Point3 &p) const {
-		Point3 p2;
-		p2.x = x - p.x;
-		p2.y = y - p.y;
-		p2.z = z - p.z;
-		return p2;
-	}
-};
-
-struct Point3W {
-	int16 x;
-	int16 y;
-	int16 z;
-};
-
-struct Star {
-	bool active;
-	Point3 pos;
-};
-
-#define NUM_STARS 16
-
-
 struct StarTrekGameDescription;
 class Graphics;
 class IWFile;
@@ -278,7 +242,7 @@ private:
 	void playIntro();
 	void loadSubtitleSprite(int index, Sprite *sprite);
 
-	// Space, pseudo-3D
+	// Space, pseudo-3D (space.cpp)
 	void initStarfieldPosition();
 	void initStarfield(int16 x, int16 y, int16 width, int16 height, int16 arg8);
 	void clearStarfieldPixels();

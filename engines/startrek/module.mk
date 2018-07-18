@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	room.o \
 	saveload.o \
 	sound.o \
+	space.o \
 	sprite.o \
 	startrek.o \
 	text.o \
