@@ -20,32 +20,26 @@
  *
  */
 
-#ifndef MUTATIONOFJB_SAYTASK_H
-#define MUTATIONOFJB_SAYTASK_H
+#ifndef MUTATIONOFJB_OBJECTANIMATIONTASK_H
+#define MUTATIONOFJB_OBJECTANIMATIONTASK_H
 
 #include "mutationofjb/tasks/task.h"
 
 #include "mutationofjb/timer.h"
 
-#include "common/rect.h"
-#include "common/str.h"
-
 namespace MutationOfJB {
 
-class SayTask : public Task {
+class ObjectAnimationTask : public Task {
 public:
-	SayTask(const Common::String &toSay, uint8 color);
+	ObjectAnimationTask();
 
 	virtual void start() override;
 	virtual void update() override;
 
-private:
-	void drawSubtitle(const Common::String &text, int16 talkX, int16 talkY, uint8 color);
+	void updateObjects();
 
-	Common::String _toSay;
-	uint8 _color;
+private:
 	Timer _timer;
-	Common::Rect _boundingBox;
 };
 
 }

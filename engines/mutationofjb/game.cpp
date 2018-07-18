@@ -21,16 +21,19 @@
  */
 
 #include "mutationofjb/game.h"
-#include "mutationofjb/gamedata.h"
+
+#include "mutationofjb/commands/command.h"
 #include "mutationofjb/encryptedfile.h"
+#include "mutationofjb/gamedata.h"
 #include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/room.h"
 #include "mutationofjb/script.h"
+#include "mutationofjb/tasks/objectanimationtask.h"
 #include "mutationofjb/util.h"
-#include "mutationofjb/commands/command.h"
-#include "common/util.h"
+
 #include "common/str.h"
 #include "common/translation.h"
+#include "common/util.h"
 
 namespace MutationOfJB {
 
@@ -57,6 +60,8 @@ Game::Game(MutationOfJBEngine *vm)
 	_room = new Room(this, _vm->getScreen());
 
 	_gui.init();
+
+	_taskManager.addTask(new ObjectAnimationTask);
 }
 
 Common::RandomSource &Game::getRandomSource() {

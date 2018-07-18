@@ -34,7 +34,7 @@ void Timer::start() {
 	_state = RUNNING;
 }
 
-bool Timer::isFnished() const {
+bool Timer::isFinished() const {
 	return _state == FINISHED;
 }
 

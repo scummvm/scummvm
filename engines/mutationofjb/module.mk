@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	commands/talkcommand.o \
 	commands/randomcommand.o \
 	tasks/conversationtask.o \
+	tasks/objectanimationtask.o \
 	tasks/saytask.o \
 	tasks/taskmanager.o \
 	widgets/buttonwidget.o \
