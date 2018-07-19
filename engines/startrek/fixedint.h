@@ -122,6 +122,31 @@ public:
 	bool operator<=(double d) const {
 		return toDouble() <= d;
 	}
+	bool operator>(double d) const {
+		return toDouble() > d;
+	}
+	bool operator>=(double d) const {
+		return toDouble() >= d;
+	}
+
+	bool operator==(const TFixedInt &f) const {
+		return val == f.val;
+	}
+	bool operator!=(const TFixedInt &f) const {
+		return val != f.val;
+	}
+	bool operator<(const TFixedInt &f) const {
+		return val < f.val;
+	}
+	bool operator<=(const TFixedInt &f) const {
+		return val <= f.val;
+	}
+	bool operator>(const TFixedInt &f) const {
+		return val > f.val;
+	}
+	bool operator>=(const TFixedInt &f) const {
+		return val >= f.val;
+	}
 
 	void saveLoadWithSerializer(Common::Serializer &ser) {
 		if (totalBits == 16)

@@ -73,7 +73,8 @@ struct TPoint {
 };
 
 typedef TPoint<int32> Point3;
-typedef TPoint<Fixed14> Point3W;
+typedef TPoint<int16> Point3_Short;
+typedef TPoint<Fixed14> Point_Fixed14;
 
 
 template<typename T>
@@ -106,7 +107,7 @@ public:
 	}
 };
 
-typedef TMatrix<Point3W> Matrix;
+typedef TMatrix<Point_Fixed14> Matrix;
 
 struct Star {
 	bool active;
@@ -117,10 +118,12 @@ struct Star {
 // TODO: what does this stand for? Maybe rename it.
 struct R3 {
 	Point3 pos; // 0x0
+	Matrix matrix; // 0xc
 	int16 field1e; // 0x1e
 	int16 field20; // 0x20
 	int16 field22; // 0x22
 	int16 field24; // 0x24
+	Point3_Short speed; // 0x26
 	SharedPtr<FileStream> shpFile; // 0x68
 };
 
