@@ -36,7 +36,7 @@
 #
 #
 # The following shell script can be used to extract the file sizes of a bunch
-# of detect files, autonmatically inserting the values in here:
+# of detect files, automatically inserting the values in here:
 #
 # #!/bin/sh
 # OIFS=$IFS
