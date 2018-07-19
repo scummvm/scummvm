@@ -30,6 +30,7 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/sinetables.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/system.h"
@@ -210,6 +211,13 @@ protected:
 	Common::Error run();
 
 public:
+	// math.cpp
+	/**
+	 * Unit of the angle is "quadrants" (90 degrees = 1.0)
+	 */
+	Fixed14 sin(Fixed8 angle);
+	Fixed14 cos(Fixed8 angle);
+
 	// Game modes
 	Common::Error runGameMode(int mode);
 
@@ -542,6 +550,7 @@ public:
 
 private:
 	Common::RandomSource _randomSource;
+	Common::SineTable _sineTable;
 
 	Common::MacResManager *_macResFork;
 	SharedPtr<Room> _room;
