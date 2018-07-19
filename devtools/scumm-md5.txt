@@ -322,6 +322,7 @@ tentacle	Day of the Tentacle
 	cc04a076779379524ed4d9c5ee3c6fb1	282467632	en	Mac	-	CD	Mac bundle	Fingolfin, Joachim Eberhard
 	ede149fda3edfc1dbd7347e0737cb583	282830409	fr	Mac	-	CD	Mac bundle	ThierryFR, Thierry Crozat
 	f73883f13b5a302749a5bad31d909780	-1	de	Mac	-	CD	Mac bundle	morrissey
+	8241070e96518c894e8f5f8e987b6030	-1	de	Mac	-	CD	-	Nur-Ab-Sal
 
 	c83079157ec765a28de445aec9768d60	7477	en	All	-	Demo	-	Fingolfin
 	17fa250eb72dae2dad511ba79c0b6b0a	-1	fr	DOS	-	Demo	-	cyx
