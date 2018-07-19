@@ -66,8 +66,8 @@ public:
 	// the "max Y" value.
 	uint16 getMaxY() { return readRdfWord(0x06); }
 	uint16 getMinY() { return readRdfWord(0x08); }
-	Fixed16 getMinScale() { return Fixed16::fromRaw(readRdfWord(0x0a)); }
-	Fixed16 getMaxScale() { return Fixed16::fromRaw(readRdfWord(0x0c)); }
+	Fixed8 getMinScale() { return Fixed8::fromRaw(readRdfWord(0x0a)); }
+	Fixed8 getMaxScale() { return Fixed8::fromRaw(readRdfWord(0x0c)); }
 
 	// words 0x0e and 0x10 in RDF file are pointers to start and end of event code.
 	// That code is instead rewritten on a per-room basis.
