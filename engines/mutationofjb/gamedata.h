@@ -36,40 +36,49 @@ enum {
 	MAX_ENTITY_NAME_LENGTH = 0x14
 };
 
-/*
-	There are 4 types of entities present in the game data:
-	- Door
-	- Object
-	- Static
-	- Bitmap
-*/
+/** @file gamedata.h
+ * There are 4 types of entities present in the game data:
+ * - Door
+ * - Object
+ * - Static
+ * - Bitmap
+ */
 
+/**
+ * An interactable scene changer with no visual representation.
+ */
 struct Door {
-	/*
-		Door name.
-		Can be empty - deactivates door completely.
-	*/
+	/**
+	 * Door name (NM register).
+	 *
+	 * Can be empty - deactivates door completely (you can't mouse over or interact with it at all).
+	 *
+	 * If it ends with '+', using the "go" verb on the door will not implicitly change the scene,
+	 * but the player will still walk towards the door.
+	 *
+	 * TODO: Implement the '+' restriction.
+	 */
 	char _name[MAX_ENTITY_NAME_LENGTH + 1];
-	/*
-		Scene ID where the door leads.
-		Can be 0 - you can hover your mouse over it, but clicking it doesn't do anything (unless scripted).
-	*/
+	/**
+	 * Scene ID where the door leads (LT register).
+	 * Can be 0 - you can hover your mouse over it, but clicking it doesn't do anything (unless scripted).
+	 */
 	uint8  _destSceneId;
-	/* X coordinate for player's position after going through the door. */
+	/** X coordinate for player's position after going through the door (SX register). */
 	uint16 _destX;
-	/* Y coordinate for player's position after going through the door. */
+	/** Y coordinate for player's position after going through the door (SY register). */
 	uint16 _destY;
-	/* X coordinate of the door rectangle. */
+	/** X coordinate of the door rectangle (XX register). */
 	uint16 _x;
-	/* Y coordinate of the door rectangle. */
+	/** Y coordinate of the door rectangle (YY register). */
 	uint8  _y;
-	/* Width of the door rectangle. */
+	/** Width of the door rectangle (XL register). */
 	uint16 _width;
-	/* Height of the door rectangle. */
+	/** Height of the door rectangle (YL register). */
 	uint8  _height;
-	/* X coordinate for position towards player will walk after clicking the door. */
+	/** X coordinate for position player will walk towards after clicking the door (WX register). */
 	uint16 _walkToX;
-	/* Y coordinate for position towards player will walk after clicking the door. */
+	/** Y coordinate for position player will walk towards after clicking the door (WY register). */
 	uint8  _walkToY;
 	/* Unknown for now - likely not even used. */
 	uint8  _SP;
@@ -77,56 +86,148 @@ struct Door {
 	bool loadFromStream(Common::ReadStream &stream);
 };
 
+/**
+ * An animated image in the scene.
+ *
+ * Object frames consist of surfaces carved out of room frames (starting from _roomFrame
+ * up until _roomFrame + _numFrames - 1) based on the object's rectangle. They are stored
+ * in the shared object frame space that each object occupies a continous part of from
+ * the beginning.
+ *
+ * By using the term "frame" alone we will be referring to an object frame, not a room
+ * frame.
+ *
+ * For details regarding animation playback, see objectanimationtask.cpp.
+ */
 struct Object {
-	uint8  _AC;
-	uint8  _FA;
-	uint8  _FR;
-	uint8  _NA;
-	uint8  _FS;
-	uint8  _unknown;
-	uint8  _CA;
-	uint16 _x;
-	uint8  _y;
-	uint16 _XL;
-	uint8  _YL;
-	uint16 _WX;
-	uint8  _WY;
-	uint8  _SP;
-
-	bool loadFromStream(Common::ReadStream &stream);
-};
-
-struct Static {
+	/** Controls whether the animation is playing. */
 	uint8  _active;
-	char _name[MAX_ENTITY_NAME_LENGTH + 1];
+	/**
+	 * Number of the first frame this object has in the shared object frame space (FA register).
+	 *
+	 * For the first object, it is equal to 1.
+	 * For any subsequent object, it is equal to (_firstFrame + _numFrames) of the previous object.
+	 *
+	 * @note The numbering starts from 1.
+	 * @note Technically this field is useless because it can be calculated.
+	 */
+	uint8  _firstFrame;
+	/**
+	 * The frame that is jumped to randomly based on _jumpChance (FR register).
+	 *
+	 * @note Numbered from 1 and relative to _firstFrame.
+	 * @note A value of 0 disables randomness completely.
+	 * @see objectanimationtask.cpp
+	 * @see _jumpChance
+	 */
+	uint8  _randomFrame;
+	/** Number of animation frames (NA register). */
+	uint8  _numFrames;
+	/**
+	 * Low 8 bits of the 16-bit starting room frame (FS register).
+	 *
+	 * @see _roomFrameMSB
+	 */
+	uint8  _roomFrameLSB;
+	/**
+	 * Chance (1 in x) of the animation jumping to _randomFrame.
+	 *
+	 * @see objectanimationtask.cpp
+	*/
+	uint8  _jumpChance;
+	/**
+	 * Current animation frame (CA register).
+	 *
+	 * @note Absolute index to the frame space. Numbered from 1.
+	 */
+	uint8  _currentFrame;
+	/** X coordinate of the object rectangle (XX register). */
 	uint16 _x;
+	/** Y coordinate of the object rectangle (YY register). */
 	uint8  _y;
+	/** Width of the object rectangle (XL register). */
 	uint16 _width;
+	/** Height of the object rectangle (YL register). */
 	uint8  _height;
-	uint16 _walkToX;
-	uint8  _walkToY;
+	/** A general-purpose register for use in scripts. Nothing to do with animation. */
+	uint16 _WX;
+	/**
+	 * High 8 bits of the 16-bit starting room frame (WY register).
+	 *
+	 * @see _roomFrameLSB
+	 */
+	uint8  _roomFrameMSB;
+	/* Unknown. TODO: Figure out what this does. */
 	uint8  _SP;
 
 	bool loadFromStream(Common::ReadStream &stream);
 };
 
+/**
+ * An interactable area without a visual representation.
+ */
+struct Static {
+	/** Whether you can mouse over and interact with the static (AC register). */
+	uint8  _active;
+	/**
+	 * Static name (NM register).
+	 *
+	 * If it starts with '~', the static has an implicit "pickup" action that adds
+	 * an item with the same name (except '`' replaces '~') to your inventory and
+	 * disables the static. If there is a matching scripted "pickup" action, it
+	 * overrides the implicit action.
+	 *
+	 * TODO: Support '~' statics.
+	 */
+	char _name[MAX_ENTITY_NAME_LENGTH + 1];
+	/** X coordinate of the static rectangle (XX register). */
+	uint16 _x;
+	/** Y coordinate of the static rectangle (YY register). */
+	uint8  _y;
+	/** Width of the static rectangle (XL register). */
+	uint16 _width;
+	/** Height of the static rectangle (YL register). */
+	uint8  _height;
+	/** X coordinate of the position the player will walk towards after clicking the static (WX register). */
+	uint16 _walkToX;
+	/** Y coordinate of the position the player will walk towards after clicking the static (WY register). */
+	uint8  _walkToY;
+	/** Player frame (rotation) set after the player finishes walking towards the walk to position (SP register). */
+	uint8  _walkToFrame;
+
+	bool loadFromStream(Common::ReadStream &stream);
+};
+
+/**
+ * A static image that is carved out of a room frame based on its rectangle.
+ * The bitmap rectangle also specifies where to blit it on the screen.
+ */
 struct Bitmap {
-	uint8  _frame;
+	/** Room frame that this bitmap carves out of. */
+	uint8  _roomFrame;
+	/** Whether to draw the bitmap. */
 	uint8  _isVisible;
+	/** X coordinate of the top left corner of the bitmap rectangle. */
 	uint16 _x1;
+	/** Y coordinate of the top left corner of the bitmap rectangle. */
 	uint8  _y1;
+	/** X coordinate of the bottom right corner of the bitmap rectangle. */
 	uint16 _x2;
+	/** Y coordinate of the bottom right corner of the bitmap rectangle. */
 	uint8  _y2;
 
 	bool loadFromStream(Common::ReadStream &stream);
 };
 
+/**
+ * Encoded exhausted choice.
+ */
 struct ExhaustedChoice {
-	/*
-		1 bit - context
-		3 bits - choice index
-		4 bits - choice list index
-	*/
+	/**
+	 * 1 bit - context
+	 * 3 bits - choice index
+	 * 4 bits - choice list index
+	 */
 	uint8 _encodedData;
 
 	uint8 getContext() const { return (_encodedData >> 7) & 0x1; }
@@ -154,29 +255,41 @@ struct Scene {
 	void addExhaustedChoice(uint8 context, uint8 choiceIndex, uint8 choiceIndexList);
 	bool isChoiceExhausted(uint8 context, uint8 choiceIndex, uint8 choiceIndexList) const;
 
+	/** Refers to the script block that will be executed when you enter this scene (DS register). */
 	uint8 _startup;
+	/**
+	 * These three variables control downscaling of the player character depending on his Y.
+	 * TODO: Find out more.
+	*/
 	uint8 _unknown001;
 	uint8 _unknown002;
 	uint8 _unknown003;
-	uint8 _DL;
+	uint8 _delay; /**< Delay between object animation advancements (DL register). */
 
-	uint8 _noDoors;
-	Door _doors[5];
+	uint8 _noDoors; /**< Number of doors in the scene (ND register). */
+	Door _doors[5]; /**< Door definitions. */
 
-	uint8 _noObjects;
-	Object _objects[9];
+	uint8 _noObjects; /**< Number of animated objects in the scene (NO register). */
+	Object _objects[9]; /**< Object definitions. */
 
-	uint8 _noStatics;
-	Static _statics[15];
+	uint8 _noStatics; /**< Number of statics in the scene (NS register). */
+	Static _statics[15]; /**< Static definitions. */
 
-	Bitmap _bitmaps[10];
+	Bitmap _bitmaps[10]; /**< Bitmap definitions. There is no corresponding _noBitmaps field. */
 
-	uint16 _obstacleY1;
-	uint8 _palRotStart;
-	uint8 _palRotEnd;
-	uint8 _palRotPeriod;
+	uint16 _obstacleY1; /**< Fixed Y coordinate for all static obstacles in the scene. Always 0 in data files. */
 
-	/* Points to the first free item in exhausted choices list. */
+	/** First index (inclusive and 0-indexed) of the rotating portion of the palette (PF register). */
+	uint8 _palRotFirst;
+	/** Last index (inclusive and 0-indexed) of the rotating portion of the palette (PL register). */
+	uint8 _palRotLast;
+	/** Delay between each right rotation of the palette portion (PD register). */
+	uint8 _palRotDelay;
+
+	/**
+	 * Points to the first free item in exhausted choices list.
+	 * @note Indexed from 1.
+	 */
 	uint8 _exhaustedChoiceNext;
 	ExhaustedChoice _exhaustedChoices[79];
 

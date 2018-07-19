@@ -31,6 +31,7 @@ namespace MutationOfJB {
 
 static const int TICK_MILLIS = 100;
 
+// TODO: Respect currentScene._delay.
 ObjectAnimationTask::ObjectAnimationTask() : _timer(TICK_MILLIS) {
 }
 
@@ -47,6 +48,17 @@ void ObjectAnimationTask::update() {
 	}
 }
 
+/**
+ * Advances every object animation in the current scene to the next frame.
+ *
+ * Normally the animation restarts after the last object frame. However, some animations have random
+ * elements to them. If _randomFrame is set, the animation restarts when _randomFrame is reached.
+ * Additionally, there is a chance with each frame until _randomFrame that the animation may jump
+ * straight to _randomFrame and continue until the last frame, then wrap around to the first frame.
+ *
+ * Randomness is used to introduce variety - e.g. in the starting scene a perched bird occassionally
+ * spreads its wings.
+ */
 void ObjectAnimationTask::updateObjects() {
 	Scene *const scene = getTaskManager()->getGame().getGameData().getCurrentScene();
 	if (!scene) {
@@ -56,34 +68,34 @@ void ObjectAnimationTask::updateObjects() {
 	for (uint8 i = 1; i <= scene->getNoObjects(); ++i) {
 		Object *const object = scene->getObject(i);
 		// Skip if object animation not active.
-		if (!object->_AC)
+		if (!object->_active)
 			continue;
 
-		// Number of framers must be higher than 1.
-		if (object->_NA <= 1)
+		// Number of frames must be higher than 1.
+		if (object->_numFrames <= 1)
 			continue;
 
-		const uint8 currentAnimOffset = object->_CA - object->_FA;
+		const uint8 currentAnimOffset = object->_currentFrame - object->_firstFrame;
 
-		const bool randomized = object->_FR != 0;
-		const bool belowRandomFrame = currentAnimOffset < (object->_FR - 1);
+		const bool randomized = object->_randomFrame != 0;
+		const bool belowRandomFrame = currentAnimOffset < (object->_randomFrame - 1);
 
-		uint8 maxAnimOffset = object->_NA - 1;
+		uint8 maxAnimOffset = object->_numFrames - 1;
 		if (randomized && belowRandomFrame) {
-			maxAnimOffset = object->_FR - 2;
+			maxAnimOffset = object->_randomFrame - 2;
 		}
 
 		uint8 nextAnimationOffset = currentAnimOffset + 1;
 		if (currentAnimOffset == maxAnimOffset) {
-			if (randomized && object->_unknown != 0 && getTaskManager()->getGame().getRandomSource().getRandomNumber(object->_unknown) == 0)
-				nextAnimationOffset = object->_FR - 1;
+			if (randomized && object->_jumpChance != 0 && getTaskManager()->getGame().getRandomSource().getRandomNumber(object->_jumpChance) == 0)
+				nextAnimationOffset = object->_randomFrame - 1;
 			else
 				nextAnimationOffset = 0;
 		}
 
 		// TODO: Hardcoded animations.
 
-		object->_CA = nextAnimationOffset + object->_FA;
+		object->_currentFrame = nextAnimationOffset + object->_firstFrame;
 		getTaskManager()->getGame().getRoom().drawObjectAnimation(i, nextAnimationOffset);
 	}
 }
