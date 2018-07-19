@@ -217,6 +217,7 @@ public:
 	 */
 	Fixed14 sin(Fixed8 angle);
 	Fixed14 cos(Fixed8 angle);
+	Fixed8 atan2(int32 deltaX, int32 deltaZ);
 
 	// Game modes
 	Common::Error runGameMode(int mode);

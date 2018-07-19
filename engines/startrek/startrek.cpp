@@ -371,7 +371,27 @@ void StarTrekEngine::initIntroR3ObjectToMove(R3 *r3, int16 srcAngle, int16 srcDe
 	Fixed8 a1 = Fixed8::fromRaw((srcAngle << 8) / 90);
 	Fixed8 a2 = Fixed8::fromRaw((destAngle << 8) / 90);
 
-	//r3->pos.x = sin(a1).multToFixed16(srcDepth) + _starfieldPosition.x;
+	r3->pos.x = (sin(a1).multToInt(srcDepth) << 16) + _starfieldPosition.x;
+	r3->pos.z = (cos(a1).multToInt(srcDepth) << 16) + _starfieldPosition.z;
+	r3->pos.y = 0;
+
+	int32 deltaX = (sin(a2).multToInt(destDepth) << 16) + _starfieldPosition.x - r3->pos.x;
+	int32 deltaZ = (cos(a2).multToInt(destDepth) << 16) + _starfieldPosition.z - r3->pos.z;
+
+	Fixed16 angle = atan2(deltaX, deltaZ);
+	r3->matrix = initMatrix();
+
+	// sub_248cc(angle, r3->matrix);
+
+	if (ticks != 0) {
+		r3->speed.x = deltaX / ticks;
+		r3->speed.z = deltaZ / ticks;
+		r3->speed.y = 0;
+	} else {
+		r3->speed.x = 0;
+		r3->speed.z = 0;
+		r3->speed.y = 0;
+	}
 }
 
 void StarTrekEngine::loadSubtitleSprite(int index, Sprite *sprite) {
