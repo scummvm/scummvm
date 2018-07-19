@@ -150,30 +150,32 @@ Point3 StarTrekEngine::constructPoint3ForStarfield(int16 x, int16 y, int16 z) {
 }
 
 Point3 StarTrekEngine::matrixMult(const Matrix &weight, const Point3 &point) {
-	int32 ret[3];
-	for (int i = 0; i < 3; i++) {
-		ret[i] = weight[i][0].multToInt(point.x & 0xffff) + weight[i][1].multToInt(point.y & 0xffff) + weight[i][2].multToInt(point.z & 0xffff);
-	}
 	Point3 p;
-	p.x = ret[0];
-	p.y = ret[1];
-	p.z = ret[2];
+	for (int i = 0; i < 3; i++) {
+		p[i] = 0;
+		for (int j = 0; j < 3; j++) { // FIXME: what is this weird multiplication?
+			p[i] += (weight[i][j].raw() * (point[j] & 0xffff) << 2) >> 16;
+		}
+	}
 	return p;
 }
 
 Point3 StarTrekEngine::matrixMult(const Point3 &point, const Matrix &weight) {
 	Point3 p = Point3();
-	p.x = (weight[0][0].multToInt(point.x & 0xffff) + weight[1][0].multToInt(point.y & 0xffff) + weight[2][0].multToInt(point.z & 0xffff));
-	p.y = (weight[0][1].multToInt(point.x & 0xffff) + weight[1][1].multToInt(point.y & 0xffff) + weight[2][1].multToInt(point.z & 0xffff));
-	p.z = (weight[0][2].multToInt(point.x & 0xffff) + weight[1][2].multToInt(point.y & 0xffff) + weight[2][2].multToInt(point.z & 0xffff));
+	for (int i = 0; i < 3; i++) {
+		p[i] = 0;
+		for (int j = 0; j < 3; j++) {
+			p[i] += (weight[j][i].raw() * (point[j] & 0xffff) << 2) >> 16;
+		}
+	}
 	return p;
 }
 
 Matrix StarTrekEngine::initMatrix() {
 	Matrix mat;
-	mat[0][0] = 1;
-	mat[1][1] = 1;
-	mat[2][2] = 1;
+	mat[0][0] = 1.0;
+	mat[1][1] = 1.0;
+	mat[2][2] = 1.0;
 	return mat;
 }
 

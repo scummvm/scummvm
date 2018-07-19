@@ -52,7 +52,8 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_kirkActor(&_actorList[0]),
 	_spockActor(&_actorList[1]),
 	_mccoyActor(&_actorList[2]),
-	_redshirtActor(&_actorList[3]) {
+	_redshirtActor(&_actorList[3]),
+	_sineTable(10) {
 
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics");
@@ -367,8 +368,10 @@ void StarTrekEngine::playIntro() {
 }
 
 void StarTrekEngine::initIntroR3ObjectToMove(R3 *r3, int16 srcAngle, int16 srcDepth, int16 destAngle, int16 destDepth, int16 ticks) {
-	srcAngle = (srcAngle << 9) / 180;
-	destAngle = (destAngle << 9) / 180;
+	Fixed8 a1 = Fixed8::fromRaw((srcAngle << 8) / 90);
+	Fixed8 a2 = Fixed8::fromRaw((destAngle << 8) / 90);
+
+	//r3->pos.x = sin(a1).multToFixed16(srcDepth) + _starfieldPosition.x;
 }
 
 void StarTrekEngine::loadSubtitleSprite(int index, Sprite *sprite) {

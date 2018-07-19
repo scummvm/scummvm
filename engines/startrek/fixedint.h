@@ -77,10 +77,11 @@ public:
 	}
 
 	/**
-	 * Multiplication with an int, with the result being an int.
+	 * Multiplication with an int, with the result being an int. Use this if the result
+	 * might exceed the capacity of this type.
 	 */
-	int32 multToInt(int32 i) {
-		return ((val * i) << (totalBits - decimalBits)) >> totalBits;
+	int16 multToInt(int32 i) {
+		return (val * i) >> decimalBits;
 	}
 
 	/**

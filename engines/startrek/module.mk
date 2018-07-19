@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	graphics.o \
 	iwfile.o \
 	lzss.o \
+	math.o \
 	menu.o \
 	object.o \
 	room.o \
