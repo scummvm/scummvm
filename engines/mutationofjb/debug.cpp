@@ -318,14 +318,14 @@ bool Console::cmd_dumpsceneinfo(int argc, const char **argv) {
 		Scene *scene = _vm->getGame().getGameData().getScene(sceneId);
 		if (scene) {
 			debugPrintf("Startup: %u\n", (unsigned int) scene->_startup);
-			debugPrintf("Delay: %u\n", (unsigned int) scene->_DL);
+			debugPrintf("Delay: %u\n", (unsigned int) scene->_delay);
 			debugPrintf("Doors: %u\n", (unsigned int) scene->_noDoors);
 			debugPrintf("Objects: %u\n", (unsigned int) scene->_noObjects);
 			debugPrintf("Statics: %u\n", (unsigned int) scene->_noStatics);
 			debugPrintf("ObstacleY1: %u\n", (unsigned int) scene->_obstacleY1);
-			debugPrintf("PalRotStart: %u\n", (unsigned int) scene->_palRotStart);
-			debugPrintf("PalRotEnd: %u\n", (unsigned int) scene->_palRotEnd);
-			debugPrintf("PalRotPeriod: %u\n", (unsigned int) scene->_palRotPeriod);
+			debugPrintf("PalRotFirst: %u\n", (unsigned int) scene->_palRotFirst);
+			debugPrintf("PalRotLast: %u\n", (unsigned int) scene->_palRotLast);
+			debugPrintf("PalRotDelay: %u\n", (unsigned int) scene->_palRotDelay);
 		} else {
 			debugPrintf(_("Scene %u not found.\n"), (unsigned int) sceneId);
 		}
@@ -377,19 +377,19 @@ bool Console::cmd_dumpobjectinfo(int argc, const char **argv) {
 		if (scene) {
 			Object *const object = scene->getObject(objectId);
 			if (object) {
-				debugPrintf("AC: %u\n", (unsigned int) object->_AC);
-				debugPrintf("FA: %u\n", (unsigned int) object->_FA);
-				debugPrintf("FR: %u\n", (unsigned int) object->_FR);
-				debugPrintf("NA: %u\n", (unsigned int) object->_NA);
-				debugPrintf("FS: %u\n", (unsigned int) object->_FS);
-				debugPrintf("Unknown: %u\n", (unsigned int) object->_unknown);
-				debugPrintf("CA: %u\n", (unsigned int) object->_CA);
+				debugPrintf("AC: %u\n", (unsigned int) object->_active);
+				debugPrintf("FA: %u\n", (unsigned int) object->_firstFrame);
+				debugPrintf("FR: %u\n", (unsigned int) object->_randomFrame);
+				debugPrintf("NA: %u\n", (unsigned int) object->_numFrames);
+				debugPrintf("FS: %u\n", (unsigned int) object->_roomFrameLSB);
+				debugPrintf("Jump chance: %u\n", (unsigned int) object->_jumpChance);
+				debugPrintf("CA: %u\n", (unsigned int) object->_currentFrame);
 				debugPrintf("X: %u\n", (unsigned int) object->_x);
 				debugPrintf("Y: %u\n", (unsigned int) object->_y);
-				debugPrintf("XL: %u\n", (unsigned int) object->_XL);
-				debugPrintf("YL: %u\n", (unsigned int) object->_YL);
+				debugPrintf("XL: %u\n", (unsigned int) object->_width);
+				debugPrintf("YL: %u\n", (unsigned int) object->_height);
 				debugPrintf("WX: %u\n", (unsigned int) object->_WX);
-				debugPrintf("WY: %u\n", (unsigned int) object->_WY);
+				debugPrintf("WY: %u\n", (unsigned int) object->_roomFrameMSB);
 				debugPrintf("SP: %u\n", (unsigned int) object->_SP);
 			} else {
 				debugPrintf(_("Object %u not found.\n"), (unsigned int) objectId);
@@ -421,7 +421,7 @@ bool Console::cmd_dumpstaticinfo(int argc, const char **argv) {
 				debugPrintf("Height: %u\n", (unsigned int) stat->_height);
 				debugPrintf("WalkToX: %u\n", (unsigned int) stat->_walkToY);
 				debugPrintf("WalkToY: %u\n", (unsigned int) stat->_walkToX);
-				debugPrintf("WalkToFrame: %u\n", (unsigned int) stat->_SP);
+				debugPrintf("WalkToFrame: %u\n", (unsigned int) stat->_walkToFrame);
 			} else {
 				debugPrintf(_("Static %u not found.\n"), (unsigned int) staticId);
 			}

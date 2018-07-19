@@ -381,22 +381,22 @@ Command::ExecuteResult ChangeObjectCommand::execute(ScriptExecutionContext &scri
 
 	switch (_register) {
 	case AC:
-		object->_AC = _value._byteVal;
+		object->_active = _value._byteVal;
 		break;
 	case FA:
-		object->_FA = _value._byteVal;
+		object->_firstFrame = _value._byteVal;
 		break;
 	case FR:
-		object->_FR = _value._byteVal;
+		object->_randomFrame = _value._byteVal;
 		break;
 	case NA:
-		object->_NA = _value._byteVal;
+		object->_numFrames = _value._byteVal;
 		break;
 	case FS:
-		object->_FS = _value._byteVal;
+		object->_roomFrameLSB = _value._byteVal;
 		break;
 	case CA:
-		object->_CA = _value._byteVal;
+		object->_currentFrame = _value._byteVal;
 		break;
 	case XX:
 		object->_x = _value._wordVal;
@@ -405,16 +405,16 @@ Command::ExecuteResult ChangeObjectCommand::execute(ScriptExecutionContext &scri
 		object->_y = _value._byteVal;
 		break;
 	case XL:
-		object->_XL = _value._wordVal;
+		object->_width = _value._wordVal;
 		break;
 	case YL:
-		object->_YL = _value._byteVal;
+		object->_height = _value._byteVal;
 		break;
 	case WX:
 		object->_WX = _value._wordVal;
 		break;
 	case WY:
-		object->_WY = _value._byteVal;
+		object->_roomFrameMSB = _value._byteVal;
 		break;
 	case SP:
 		object->_SP = _value._byteVal;
@@ -468,7 +468,7 @@ Command::ExecuteResult ChangeStaticCommand::execute(ScriptExecutionContext &scri
 		stat->_walkToY = _value._byteVal;
 		break;
 	case SP:
-		stat->_SP = _value._byteVal;
+		stat->_walkToFrame = _value._byteVal;
 		break;
 	default:
 		warning("Object does not support changing this register.");
@@ -493,7 +493,7 @@ Command::ExecuteResult ChangeSceneCommand::execute(ScriptExecutionContext &scrip
 		scene->_startup = _value._byteVal;
 		break;
 	case DL:
-		scene->_DL = _value._byteVal;
+		scene->_delay = _value._byteVal;
 		break;
 	case ND:
 		scene->_noDoors = _value._byteVal;
@@ -505,13 +505,13 @@ Command::ExecuteResult ChangeSceneCommand::execute(ScriptExecutionContext &scrip
 		scene->_noStatics = _value._byteVal;
 		break;
 	case PF:
-		scene->_palRotStart = _value._byteVal;
+		scene->_palRotFirst = _value._byteVal;
 		break;
 	case PL:
-		scene->_palRotEnd = _value._byteVal;
+		scene->_palRotLast = _value._byteVal;
 		break;
 	case PD:
-		scene->_palRotPeriod = _value._byteVal;
+		scene->_palRotDelay = _value._byteVal;
 		break;
 	default:
 		warning("Scene does not support changing this register.");

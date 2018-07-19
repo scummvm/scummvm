@@ -58,19 +58,19 @@ bool Door::loadFromStream(Common::ReadStream &stream) {
 }
 
 bool Object::loadFromStream(Common::ReadStream &stream) {
-	_AC = stream.readByte();
-	_FA = stream.readByte();
-	_FR = stream.readByte();
-	_NA = stream.readByte();
-	_FS = stream.readByte();
-	_unknown = stream.readByte();
-	_CA = stream.readByte();
+	_active = stream.readByte();
+	_firstFrame = stream.readByte();
+	_randomFrame = stream.readByte();
+	_numFrames = stream.readByte();
+	_roomFrameLSB = stream.readByte();
+	_jumpChance = stream.readByte();
+	_currentFrame = stream.readByte();
 	_x = stream.readUint16LE();
 	_y = stream.readByte();
-	_XL = stream.readUint16LE();
-	_YL = stream.readByte();
+	_width = stream.readUint16LE();
+	_height = stream.readByte();
 	_WX = stream.readUint16LE();
-	_WY = stream.readByte();
+	_roomFrameMSB = stream.readByte();
 	_SP = stream.readByte();
 
 	return true;
@@ -85,13 +85,13 @@ bool Static::loadFromStream(Common::ReadStream &stream) {
 	_height = stream.readByte();
 	_walkToX = stream.readUint16LE();
 	_walkToY = stream.readByte();
-	_SP = stream.readByte();
+	_walkToFrame = stream.readByte();
 
 	return true;
 }
 
 bool Bitmap::loadFromStream(Common::ReadStream &stream) {
-	_frame = stream.readByte();
+	_roomFrame = stream.readByte();
 	_isVisible = stream.readByte();
 	_x1 = stream.readUint16LE();
 	_y1 = stream.readByte();
@@ -108,7 +108,7 @@ bool Scene::loadFromStream(Common::ReadStream &stream) {
 	_unknown001 = stream.readByte();
 	_unknown002 = stream.readByte();
 	_unknown003 = stream.readByte();
-	_DL = stream.readByte();
+	_delay = stream.readByte();
 
 	_noDoors = stream.readByte();
 	_noDoors = MIN(_noDoors, (uint8) ARRAYSIZE(_doors));
@@ -133,9 +133,9 @@ bool Scene::loadFromStream(Common::ReadStream &stream) {
 	}
 
 	_obstacleY1 = stream.readUint16LE();
-	_palRotStart = stream.readByte();
-	_palRotEnd = stream.readByte();
-	_palRotPeriod = stream.readByte();
+	_palRotFirst = stream.readByte();
+	_palRotLast = stream.readByte();
+	_palRotDelay = stream.readByte();
 	_exhaustedChoiceNext = stream.readByte();
 
 	for (i = 0; i < 79; ++i) {

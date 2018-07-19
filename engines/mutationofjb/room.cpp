@@ -71,12 +71,12 @@ void RoomAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surfa
 		const uint8 noObjects = scene->getNoObjects();
 		for (int i = 0; i < noObjects; ++i) {
 			Object &object = scene->_objects[i];
-			const uint16 startFrame = (object._WY << 8) + object._FS;
-			if (frameNo1 >= startFrame && frameNo1 < startFrame + object._NA) {
+			const uint16 startFrame = (object._roomFrameMSB << 8) + object._roomFrameLSB;
+			if (frameNo1 >= startFrame && frameNo1 < startFrame + object._numFrames) {
 				const int x = object._x;
 				const int y = object._y;
-				const int w = (object._XL + 3) / 4 * 4; // Original code uses this to round up width to a multiple of 4.
-				const int h = object._YL;
+				const int w = (object._width + 3) / 4 * 4; // Original code uses this to round up width to a multiple of 4.
+				const int h = object._height;
 				Common::Rect rect(x, y, x + w, y + h);
 
 				const Graphics::Surface sharedSurface = surface.getSubArea(rect);
@@ -100,11 +100,11 @@ bool Room::load(uint8 roomNumber, bool roomB) {
 		for (int i = 0; i < noObjects; ++i) {
 			uint8 firstIndex = 0;
 			if (i != 0) {
-				firstIndex = _objectsStart[i - 1] + scene->_objects[i - 1]._NA;
+				firstIndex = _objectsStart[i - 1] + scene->_objects[i - 1]._numFrames;
 			}
 			_objectsStart.push_back(firstIndex);
 
-			uint8 numAnims = scene->_objects[i]._NA;
+			uint8 numAnims = scene->_objects[i]._numFrames;
 			while (numAnims--) {
 				_surfaces.push_back(Graphics::Surface());
 			}
@@ -142,7 +142,7 @@ void Room::redraw() {
 	Scene *const currentScene = _game->getGameData().getCurrentScene();
 	for (int i = 0; i < currentScene->getNoObjects(); ++i) {
 		Object *const obj = currentScene->getObject(i + 1);
-		if (obj->_AC) {
+		if (obj->_active) {
 			drawObjectAnimation(i + 1, 0);
 		}
 	}

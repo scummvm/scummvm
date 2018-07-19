@@ -60,10 +60,12 @@ void SayTask::drawSubtitle(const Common::String &text, int16 talkX, int16 talkY,
 	Common::Array<Common::String> lines;
 	font.wordWrap(text, MAX_LINE_WIDTH, lines);
 
+	// Get the x, y coordinates of the top center point of the text's bounding box
+	// from the (rather strange) talk coordinates coming from scripts.
 	int16 x = talkX;
-	int16 y = talkY - (lines.size() - 1) * font.getLineHeight() - 15; // Get the top y
+	int16 y = talkY - (lines.size() - 1) * font.getLineHeight() - 15;
 
-	// Clamp to screen edges
+	// Clamp to screen edges.
 	y = MAX<int16>(y, 3);
 	int16 maxWidth = 0;
 	for (uint i = 0; i < lines.size(); i++) {
@@ -75,12 +77,12 @@ void SayTask::drawSubtitle(const Common::String &text, int16 talkX, int16 talkY,
 		x = MIN<int16>(x, 317 - lineWidth / 2);
 	}
 
-	// Draw lines
+	// Draw lines.
 	for (uint i = 0; i < lines.size(); i++) {
 		font.drawString(lines[i], color, x - font.getWidth(lines[i]) / 2, y + i * font.getLineHeight(), getTaskManager()->getGame().getScreen());
 	}
 
-	// Remember the area occupied by the text
+	// Remember the area occupied by the text.
 	_boundingBox.top = x - maxWidth / 2;
 	_boundingBox.left = y;
 	_boundingBox.setWidth(maxWidth);
