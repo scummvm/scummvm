@@ -142,10 +142,10 @@ int32 operator*(const int16 lhs, const TFixedInt<T, totalBits, decimalBits> &rhs
 typedef TFixedInt<int16, 16, 14> Fixed14;
 
 // Fixed-point (8.8) number
-typedef TFixedInt<int16, 16, 8> Fixed16;
+typedef TFixedInt<int16, 16, 8> Fixed8;
 
 // Fixed-point (16.16) number
-typedef TFixedInt<int32, 32, 16> Fixed32;
+typedef TFixedInt<int32, 32, 16> Fixed16;
 
 }
 

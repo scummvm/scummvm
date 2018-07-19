@@ -538,7 +538,7 @@ void StarTrekEngine::initActors() {
 /**
  * Set an actor's animation, position, and scale.
  */
-int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed16 scale) {
+int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed8 scale) {
 	debugC(6, kDebugGraphics, "Load animation '%s' on actor %d", animName.c_str(), actorIndex);
 
 	Actor *actor;
@@ -695,8 +695,8 @@ void StarTrekEngine::updateActorAnimations() {
 					if (actor->field90 == 0)
 						break;
 					actor->field90--;
-					Fixed32 newX = actor->granularPosX + actor->speedX;
-					Fixed32 newY = actor->granularPosY + actor->speedY;
+					Fixed16 newX = actor->granularPosX + actor->speedX;
+					Fixed16 newY = actor->granularPosY + actor->speedY;
 					if ((actor->field90 & 3) == 0) {
 						sprite->bitmap.reset();
 						updateActorPositionWhileWalking(actor, (newX + 0.5).toInt(), (newY + 0.5).toInt());
@@ -771,7 +771,7 @@ void StarTrekEngine::actorFunc1() {
 	}
 }
 
-void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_animName, int16 x, int16 y, Fixed16 scale, bool addSprite) {
+void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_animName, int16 x, int16 y, Fixed8 scale, bool addSprite) {
 	Common::String animFilename = _animName;
 	if (_animName.hasPrefixIgnoreCase("stnd") /* && word_45d20 == -1 */) // TODO
 		animFilename += 'j';
@@ -861,7 +861,7 @@ void StarTrekEngine::initStandAnim(int actorIndex) {
 	else // Default to facing south
 		animName = Common::String(actor->animationString) + 's';
 
-	Fixed16 scale = getActorScaleAtPosition(actor->pos.y);
+	Fixed8 scale = getActorScaleAtPosition(actor->pos.y);
 	loadActorAnim(actorIndex, animName, actor->pos.x, actor->pos.y, scale);
 	actor->animType = 0;
 }
@@ -918,7 +918,7 @@ void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, in
 			else
 				actor->speedX = -1.0;
 
-			actor->speedY = Fixed32(distY) / absDistX;
+			actor->speedY = Fixed16(distY) / absDistX;
 		}
 	}
 	else {
@@ -941,7 +941,7 @@ void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, in
 			else
 				actor->speedY = -1.0;
 
-			actor->speedX = Fixed32(distX) / absDistY;
+			actor->speedX = Fixed16(distX) / absDistY;
 		}
 	}
 }
@@ -958,7 +958,7 @@ bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16
 	int32 absDistY = abs(distY);
 
 	int32 distCounter;
-	Fixed32 speedX, speedY;
+	Fixed16 speedX, speedY;
 
 	if (absDistX > absDistY) {
 		distCounter = absDistX;
@@ -966,7 +966,7 @@ bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16
 		if (distCounter == 0)
 			return true;
 
-		speedY = Fixed32(distY) / absDistX;
+		speedY = Fixed16(distY) / absDistX;
 
 		if (distX > 0)
 			speedX = 1.0;
@@ -979,7 +979,7 @@ bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16
 		if (distCounter == 0)
 			return true;
 
-		speedX = Fixed32(distX) / absDistY;
+		speedX = Fixed16(distX) / absDistY;
 
 		if (distY > 0)
 			speedY = 1.0;
@@ -987,8 +987,8 @@ bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16
 			speedY = -1.0;
 	}
 
-	Fixed32 fixedX = srcX;
-	Fixed32 fixedY = srcY;
+	Fixed16 fixedX = srcX;
+	Fixed16 fixedY = srcY;
 
 	if (isPositionSolid((fixedX + 0.5).toInt(), (fixedY + 0.5).toInt()))
 		return false;
@@ -1057,7 +1057,7 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 /**
  * Loads a bitmap for the animation frame with the given scale.
  */
-SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed16 scale) {
+SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed8 scale) {
 	SharedPtr<Bitmap> bitmapToReturn;
 
 	char basename[5];
@@ -1481,7 +1481,7 @@ void StarTrekEngine::updateCrewmanGetupTimers() {
 			}
 			else {
 				const char *dirs = "nsew";
-				Fixed16 scale = getActorScaleAtPosition(actor->sprite.pos.y);
+				Fixed8 scale = getActorScaleAtPosition(actor->sprite.pos.y);
 				d = dirs[dir];
 
 				int16 xOffset = 0, yOffset = 0;
@@ -1679,7 +1679,7 @@ void StarTrekEngine::initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitma
 	sprite->drawMode = 1;
 }
 
-SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed16 scale) {
+SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 scale) {
 	int scaledWidth  = scale.multToInt(bitmap->width);
 	int scaledHeight = scale.multToInt(bitmap->height);
 	int origWidth  = bitmap->width;

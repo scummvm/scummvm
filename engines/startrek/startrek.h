@@ -222,7 +222,7 @@ public:
 	void handleAwayMissionEvents();
 	void unloadRoom();
 	int loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y);
-	Fixed16 getActorScaleAtPosition(int16 y);
+	Fixed8 getActorScaleAtPosition(int16 y);
 	void addAction(const Action &action);
 	void addAction(byte type, byte b1, byte b2, byte b3);
 	bool checkItemInteractionExists(int action, int activeItem, int passiveItem, int16 arg6);
@@ -284,12 +284,12 @@ public:
 
 	// Actors
 	void initActors();
-	int loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed16 scale);
+	int loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed8 scale);
 	bool actorWalkToPosition(int actorIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY);
 	void updateActorAnimations();
 	void removeActorFromScreen(int actorIndex);
 	void actorFunc1();
-	void drawActorToScreen(Actor *actor, const Common::String &animName, int16 x, int16 y, Fixed16 scale, bool addSprite);
+	void drawActorToScreen(Actor *actor, const Common::String &animName, int16 x, int16 y, Fixed8 scale, bool addSprite);
 	void releaseAnim(Actor *actor);
 	void initStandAnim(int actorIndex);
 	void updateActorPositionWhileWalking(Actor *actor, int16 x, int16 y);
@@ -298,7 +298,7 @@ public:
 
 	int findObjectAt(int x, int y);
 	int findObjectAt(Common::Point p) { return findObjectAt(p.x, p.y); }
-	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, Fixed16 scale);
+	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, Fixed8 scale);
 
 	int selectObjectForUseAction();
 	Common::String getCrewmanAnimFilename(int actorIndex, const Common::String &basename);
@@ -310,7 +310,7 @@ public:
 	void hideInventoryIcons();
 	int showInventoryMenu(int x, int y, bool restoreMouse);
 	void initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitmap, const Common::Rect &rect);
-	SharedPtr<Bitmap> scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed16 scale);
+	SharedPtr<Bitmap> scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 scale);
 	void scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uint16 scaledWidth);
 
 	// Events
@@ -459,7 +459,7 @@ public:
 	Common::String _screenName; // _screenName = _missionName + _roomIndex
 	Common::String _mapFilename; // Similar to _screenName, but used for .map files?
 	SharedPtr<FileStream> _mapFile;
-	Fixed32 _playerActorScale;
+	Fixed16 _playerActorScale;
 
 	Common::String _txtFilename;
 	Common::String _loadedText; // TODO: might be OK to delete this
