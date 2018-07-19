@@ -210,7 +210,7 @@ void Room::loadActorAnim(int actorIndex, Common::String anim, int16 x, int16 y, 
 	if (actorIndex >= 0 && actorIndex < SCALED_ACTORS_END)
 		_vm->loadActorAnimWithRoomScaling(actorIndex, anim, x, y);
 	else
-		_vm->loadActorAnim(actorIndex, anim, x, y, 256);
+		_vm->loadActorAnim(actorIndex, anim, x, y, 1.0);
 
 	if (finishedAnimActionParam != 0) {
 		actor->triggerActionWhenAnimFinished = true;
@@ -231,7 +231,7 @@ void Room::loadActorAnimC(int actorIndex, Common::String anim, int16 x, int16 y,
 	if (actorIndex >= 0 && actorIndex < SCALED_ACTORS_END)
 		_vm->loadActorAnimWithRoomScaling(actorIndex, anim, x, y);
 	else
-		_vm->loadActorAnim(actorIndex, anim, x, y, 256);
+		_vm->loadActorAnim(actorIndex, anim, x, y, 1.0);
 
 	if (funcPtr != nullptr) {
 		actor->triggerActionWhenAnimFinished = true;

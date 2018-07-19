@@ -27,6 +27,7 @@
 #include "common/ptr.h"
 #include "common/str.h"
 
+#include "startrek/fixedint.h"
 #include "startrek/startrek.h"
 #include "startrek/text.h"
 
@@ -60,11 +61,13 @@ public:
 	// Helper stuff for RDF access
 	uint16 readRdfWord(int offset);
 
-	// Scale-related stuff (rename these later)
-	uint16 getVar06() { return readRdfWord(0x06); }
-	uint16 getVar08() { return readRdfWord(0x08); }
-	uint16 getVar0a() { return readRdfWord(0x0a); }
-	uint16 getVar0c() { return readRdfWord(0x0c); }
+	// Scale-related stuff; at the "min Y" position or below, the crewmembers have
+	// "minimum" scale; that value rises to the "max scale" value by the time they reach
+	// the "max Y" value.
+	uint16 getMaxY() { return readRdfWord(0x06); }
+	uint16 getMinY() { return readRdfWord(0x08); }
+	Fixed16 getMinScale() { return Fixed16::fromRaw(readRdfWord(0x0a)); }
+	Fixed16 getMaxScale() { return Fixed16::fromRaw(readRdfWord(0x0c)); }
 
 	// words 0x0e and 0x10 in RDF file are pointers to start and end of event code.
 	// That code is instead rewritten on a per-room basis.

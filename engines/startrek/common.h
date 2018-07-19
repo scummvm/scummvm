@@ -23,6 +23,7 @@
 #define STARTREK_COMMON_H
 
 #include "common/scummsys.h"
+#include "common/textconsole.h"
 
 namespace Common {
 struct Rect;
@@ -40,12 +41,6 @@ T max(T a, T b) { return a > b ? a : b; }
 Common::Rect getRectEncompassing(Common::Rect r1, Common::Rect r2);
 void serializeRect(Common::Rect rect, Common::Serializer &ser);
 
-
-// Fixed-point (16.16) number
-typedef int32 Fixed32;
-
-// Fixed-point (8.8) number
-typedef int16 Fixed16;
 
 }
 

@@ -256,7 +256,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			a->sprite.saveLoadWithSerializer(ser);
 
 			ser.syncBytes((byte *)a->bitmapFilename, 10);
-			ser.syncAsUint16LE(a->scale);
+			a->scale.saveLoadWithSerializer(ser);
 			// Can't save "animFile" (will be reloaded)
 			ser.syncAsUint16LE(a->numAnimFrames);
 			ser.syncAsUint16LE(a->animFrame);
@@ -274,10 +274,10 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			ser.syncAsUint16LE(a->field76);
 			ser.syncAsSint16LE(a->iwSrcPosition);
 			ser.syncAsSint16LE(a->iwDestPosition);
-			ser.syncAsSint32LE(a->granularPosX);
-			ser.syncAsSint32LE(a->granularPosY);
-			ser.syncAsSint32LE(a->speedX);
-			ser.syncAsSint32LE(a->speedY);
+			a->granularPosX.saveLoadWithSerializer(ser);
+			a->granularPosY.saveLoadWithSerializer(ser);
+			a->speedX.saveLoadWithSerializer(ser);
+			a->speedY.saveLoadWithSerializer(ser);
 			ser.syncAsSint16LE(a->dest.x);
 			ser.syncAsSint16LE(a->dest.y);
 			ser.syncAsUint16LE(a->field90);
