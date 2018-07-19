@@ -222,7 +222,7 @@ public:
 	void handleAwayMissionEvents();
 	void unloadRoom();
 	int loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y);
-	uint16 getActorScaleAtPosition(int16 y);
+	Fixed16 getActorScaleAtPosition(int16 y);
 	void addAction(const Action &action);
 	void addAction(byte type, byte b1, byte b2, byte b3);
 	bool checkItemInteractionExists(int action, int activeItem, int passiveItem, int16 arg6);
@@ -240,18 +240,30 @@ public:
 private:
 	// Intro
 	void playIntro();
+	/**
+	 * Initializes an object to spawn at one position and move toward another position.
+	 * @param ticks The number of ticks it should take for the object to reach the destination
+	 */
+	void initIntroR3ObjectToMove(R3 *r3, int16 srcAngle, int16 srcDepth, int16 destAngle, int16 destDepth, int16 ticks);
 	void loadSubtitleSprite(int index, Sprite *sprite);
 
 	// Space, pseudo-3D (space.cpp)
 	void initStarfieldPosition();
 	void initStarfield(int16 x, int16 y, int16 width, int16 height, int16 arg8);
+	void addR3(R3 *r3);
+	void delR3(R3 *r3);
 	void clearStarfieldPixels();
 	void drawStarfield();
 	void updateStarfieldAndShips(bool arg0);
 
 	Point3 constructPoint3ForStarfield(int16 x, int16 y, int16 z);
-	Point3 applyPointWeightings(Point3W *weight, const Point3 &point);
-	Point3 applyPointWeightings2(const Point3 &point, Point3W *weight);
+	Point3 matrixMult(const Matrix &weight, const Point3 &point);
+	Point3 matrixMult(const Point3 &point, const Matrix &weight);
+
+	/**
+	 * Creates something like an "identity" matrix? (Value 0x4000 along the diagonal)
+	 */
+	Matrix initMatrix();
 
 	// Transporter room
 	void runTransportSequence(const Common::String &name);
@@ -447,7 +459,7 @@ public:
 	Common::String _screenName; // _screenName = _missionName + _roomIndex
 	Common::String _mapFilename; // Similar to _screenName, but used for .map files?
 	SharedPtr<FileStream> _mapFile;
-	int32 _playerActorScale;
+	Fixed32 _playerActorScale;
 
 	Common::String _txtFilename;
 	Common::String _loadedText; // TODO: might be OK to delete this
@@ -519,6 +531,10 @@ public:
 	int16 _starfieldXVar1, _starfieldYVar1;
 	int16 _starfieldXVar2, _starfieldYVar2;
 	Common::Rect _starfieldRect;
+	R3 _enterpriseR3;
+	R3 *_r3List[NUM_SPACE_OBJECTS];
+	Matrix _starPositionMatrix;
+	Matrix _someMatrix;
 	
 	Graphics *_gfx;
 	Sound *_sound;

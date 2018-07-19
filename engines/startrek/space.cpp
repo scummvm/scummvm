@@ -26,8 +26,8 @@
 namespace StarTrek {
 
 void StarTrekEngine::initStarfieldPosition() {
-	memset(&_starfieldPosition, 0, sizeof(_starfieldPosition));
-	// TODO: matrix initialization
+	_starfieldPosition = Point3(0, 0, 0);
+	_someMatrix = initMatrix();
 }
 
 void StarTrekEngine::initStarfield(int16 x, int16 y, int16 width, int16 height, int16 arg8) {
@@ -45,13 +45,35 @@ void StarTrekEngine::initStarfield(int16 x, int16 y, int16 width, int16 height, 
 	_starfieldPointDivisor = 150;
 }
 
+void StarTrekEngine::addR3(R3 *r3) {
+	for (int i = 0; i < NUM_SPACE_OBJECTS; i++) {
+		if (_r3List[i] == nullptr) {
+			_r3List[i] = r3;
+			return;
+		}
+	}
+
+	error("addR3: out of shapes.");
+}
+
+void StarTrekEngine::delR3(R3 *r3) {
+	for (int i = 0; i < NUM_SPACE_OBJECTS; i++) {
+		if (_r3List[i] == r3) {
+			_r3List[i] = nullptr;
+			r3->field1e = 0;
+			return;
+		}
+	}
+
+	error("delR3: shape not found.");
+}
+
 void StarTrekEngine::clearStarfieldPixels() {
 	_gfx->fillBackgroundRect(_starfieldRect, 0);
 }
 
 void StarTrekEngine::drawStarfield() {
 	// TODO: make these class variables
-	Point3W starPositionWeightings[] = {{0x4000, 0, 0}, {0, 0x4000, 0}, {0, 0, 0x4000}};
 	float flt_50898 = 50.0; // ?
 
 	int16 var28 = ((_starfieldXVar2 * 3) >> 1);
@@ -72,12 +94,12 @@ void StarTrekEngine::drawStarfield() {
 			int16 var4 = getRandomWord() / var28 - xvar;
 			int16 var6 = getRandomWord() / var2a - yvar;
 			Point3 point = constructPoint3ForStarfield(var4, var6, var8);
-			star->pos = applyPointWeightings(starPositionWeightings, point) + _starfieldPosition;
+			star->pos = matrixMult(_starPositionMatrix, point) + _starfieldPosition;
 			star->active = true;
 		}
 
 		Point3 p = star->pos - _starfieldPosition;
-		Point3 point2 = applyPointWeightings2(p, starPositionWeightings);
+		Point3 point2 = matrixMult(p, _starPositionMatrix);
 
 		if (point2.z > flt_50898 && point2.z < 0x3fff
 				&& abs(point2.x) < point2.z && abs(point2.y) < point2.z) {
@@ -111,7 +133,7 @@ void StarTrekEngine::drawStarfield() {
 
 void StarTrekEngine::updateStarfieldAndShips(bool arg0) {
 	_starfieldSprite.bitmapChanged = true;
-	// sub_24b74(...);
+	_starPositionMatrix = _someMatrix.invert();
 	clearStarfieldPixels();
 	drawStarfield();
 
@@ -127,28 +149,32 @@ Point3 StarTrekEngine::constructPoint3ForStarfield(int16 x, int16 y, int16 z) {
 	return point;
 }
 
-Point3 StarTrekEngine::applyPointWeightings(Point3W *weight, const Point3 &point) {
+Point3 StarTrekEngine::matrixMult(const Matrix &weight, const Point3 &point) {
 	int32 ret[3];
 	for (int i = 0; i < 3; i++) {
-		ret[i] = weight[i].x * (point.x & 0xffff) + weight[i].y * (point.y & 0xffff) + weight[i].z * (point.z & 0xffff);
-		ret[i] <<= 2;
+		ret[i] = weight[i][0].multToInt(point.x & 0xffff) + weight[i][1].multToInt(point.y & 0xffff) + weight[i][2].multToInt(point.z & 0xffff);
 	}
 	Point3 p;
-	p.x = ret[0] >> 16;
-	p.y = ret[1] >> 16;
-	p.z = ret[2] >> 16;
+	p.x = ret[0];
+	p.y = ret[1];
+	p.z = ret[2];
 	return p;
 }
 
-Point3 StarTrekEngine::applyPointWeightings2(const Point3 &point, Point3W *weight) {
+Point3 StarTrekEngine::matrixMult(const Point3 &point, const Matrix &weight) {
 	Point3 p = Point3();
-	p.x = (weight[0].x * (point.x & 0xffff) + weight[1].x * (point.y & 0xffff) + weight[2].x * (point.z & 0xffff)) << 2;
-	p.y = (weight[0].y * (point.x & 0xffff) + weight[1].y * (point.y & 0xffff) + weight[2].y * (point.z & 0xffff)) << 2;
-	p.z = (weight[0].z * (point.x & 0xffff) + weight[1].z * (point.y & 0xffff) + weight[2].z * (point.z & 0xffff)) << 2;
-	p.x >>= 16;
-	p.y >>= 16;
-	p.z >>= 16;
+	p.x = (weight[0][0].multToInt(point.x & 0xffff) + weight[1][0].multToInt(point.y & 0xffff) + weight[2][0].multToInt(point.z & 0xffff));
+	p.y = (weight[0][1].multToInt(point.x & 0xffff) + weight[1][1].multToInt(point.y & 0xffff) + weight[2][1].multToInt(point.z & 0xffff));
+	p.z = (weight[0][2].multToInt(point.x & 0xffff) + weight[1][2].multToInt(point.y & 0xffff) + weight[2][2].multToInt(point.z & 0xffff));
 	return p;
+}
+
+Matrix StarTrekEngine::initMatrix() {
+	Matrix mat;
+	mat[0][0] = 1;
+	mat[1][1] = 1;
+	mat[2][2] = 1;
+	return mat;
 }
 
 }

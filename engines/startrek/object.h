@@ -24,6 +24,7 @@
 #define STARTREK_OBJECT_H
 
 #include "startrek/common.h"
+#include "startrek/fixedint.h"
 #include "startrek/items.h"
 #include "startrek/sprite.h"
 

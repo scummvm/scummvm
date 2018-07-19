@@ -217,6 +217,10 @@ void StarTrekEngine::playIntro() {
 	_starfieldSprite.bitmap = fakeStarfieldBitmap;
 	initStarfieldSprite(&_starfieldSprite, fakeStarfieldBitmap, _starfieldRect);
 
+	//delR3(&_enterpriseR3); // TODO: uncomment
+
+	R3 planetR3 = R3();
+
 	// TODO: remainder of starfield initialization
 
 	_gfx->clearScreenAndPriBuffer();
@@ -312,8 +316,26 @@ void StarTrekEngine::playIntro() {
 			loadSubtitleSprite(1, &subtitleSprite);
 			break;
 
-		case 42:
+		case 42: // Enterprise moves toward camera
 			loadSubtitleSprite(-1, &subtitleSprite);
+			addR3(&_enterpriseR3);
+			_enterpriseR3.field1e = 2;
+			initIntroR3ObjectToMove(&_enterpriseR3, 330, 5000, 0, 0, 18);
+			break;
+
+		case 60: // Enterprise moves away from camera
+			initIntroR3ObjectToMove(&_enterpriseR3, 0, 0, 30, 5000, 6);
+			break;
+
+		case 66: // Cut to scene with planet
+			loadSubtitleSprite(2, &subtitleSprite);
+			planetR3.field22 = 2000;
+			planetR3.field24 = 10000 / _starfieldPointDivisor;
+			planetR3.shpFile = loadFile("planet.shp");
+			initIntroR3ObjectToMove(&planetR3, 6, 10000, 6, 10000, 0);
+			addR3(&planetR3);
+			initIntroR3ObjectToMove(&_enterpriseR3, -15, 250, 15, 500, 18);
+			starfieldZoomSpeed = 0;
 			break;
 
 		case 378:
@@ -342,6 +364,11 @@ void StarTrekEngine::playIntro() {
 	_gfx->fadeoutScreen();
 	_gfx->delSprite(&_starfieldSprite);
 	// TODO: the rest
+}
+
+void StarTrekEngine::initIntroR3ObjectToMove(R3 *r3, int16 srcAngle, int16 srcDepth, int16 destAngle, int16 destDepth, int16 ticks) {
+	srcAngle = (srcAngle << 9) / 180;
+	destAngle = (destAngle << 9) / 180;
 }
 
 void StarTrekEngine::loadSubtitleSprite(int index, Sprite *sprite) {
@@ -379,25 +406,25 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 		Common::String filename = getCrewmanAnimFilename(i, name);
 		int x = crewmanTransportPositions[i][0];
 		int y = crewmanTransportPositions[i][1];
-		loadActorAnim(i, filename, x, y, 256);
+		loadActorAnim(i, filename, x, y, 1.0);
 		_actorList[i].animationString[0] = '\0';
 	}
 
 	if (_missionToLoad.equalsIgnoreCase("feather") && name[4] == 'b') {
-		loadActorAnim(9, "qteleb", 0x61, 0x79, 0x100);
+		loadActorAnim(9, "qteleb", 0x61, 0x79, 1.0);
 	}
 	else if (_missionToLoad.equalsIgnoreCase("trial")) {
 		if (name[4] == 'd') {
-			loadActorAnim(9, "qteled", 0x61, 0x79, 0x100);
+			loadActorAnim(9, "qteled", 0x61, 0x79, 1.0);
 		}
 		/* TODO
 		else if (word_51156 >= 3) {
-			loadActorAnim(9, "qteleb", 0x61, 0x79, 0x100);
+			loadActorAnim(9, "qteleb", 0x61, 0x79, 1.0);
 		}
 		*/
 	}
 
-	loadActorAnim(8, "transc", 0, 0, 0x100);
+	loadActorAnim(8, "transc", 0, 0, 1.0);
 
 	// TODO: redraw mouse and sprite_52c4e?
 
@@ -570,7 +597,7 @@ bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &a
 
 	if (directPathExists(srcX, srcY, destX, destY)) {
 		chooseActorDirectionForWalking(actor, srcX, srcY, destX, destY);
-		updateActorPositionWhileWalking(actor, (actor->granularPosX + 0x8000) >> 16, (actor->granularPosY + 0x8000) >> 16);
+		updateActorPositionWhileWalking(actor, (actor->granularPosX + 0.5).toInt(), (actor->granularPosY + 0.5).toInt());
 		return true;
 	}
 	else {
@@ -590,7 +617,7 @@ bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &a
 		else {
 			Common::Point iwSrc = _iwFile->_keyPositions[actor->iwSrcPosition];
 			chooseActorDirectionForWalking(actor, srcX, srcY, iwSrc.x, iwSrc.y);
-			updateActorPositionWhileWalking(actor, (actor->granularPosX + 0x8000) >> 16, (actor->granularPosY + 0x8000) >> 16);
+			updateActorPositionWhileWalking(actor, (actor->granularPosX + 0.5).toInt(), (actor->granularPosY + 0.5).toInt());
 			return true;
 		}
 	}
@@ -660,7 +687,7 @@ void StarTrekEngine::updateActorAnimations() {
 			if (actor->field90 != 0) {
 				Sprite *sprite = &actor->sprite;
 				int loops;
-				if (getActorScaleAtPosition((actor->granularPosY + 0x8000) >> 16) < 0xa0)
+				if (getActorScaleAtPosition((actor->granularPosY + 0.5).toInt()) < 0.625)
 					loops = 1;
 				else
 					loops = 2;
@@ -668,11 +695,11 @@ void StarTrekEngine::updateActorAnimations() {
 					if (actor->field90 == 0)
 						break;
 					actor->field90--;
-					uint32 newX = actor->granularPosX + actor->speedX;
-					uint32 newY = actor->granularPosY + actor->speedY;
+					Fixed32 newX = actor->granularPosX + actor->speedX;
+					Fixed32 newY = actor->granularPosY + actor->speedY;
 					if ((actor->field90 & 3) == 0) {
 						sprite->bitmap.reset();
-						updateActorPositionWhileWalking(actor, (newX + 0x8000) >> 16, (newY + 0x8000) >> 16);
+						updateActorPositionWhileWalking(actor, (newX + 0.5).toInt(), (newY + 0.5).toInt());
 						actor->field92++;
 					}
 
@@ -689,7 +716,7 @@ void StarTrekEngine::updateActorAnimations() {
 					}
 
 					actor->sprite.bitmap.reset();
-					updateActorPositionWhileWalking(actor, (actor->granularPosX + 0x8000) >> 16, (actor->granularPosY + 0x8000) >> 16);
+					updateActorPositionWhileWalking(actor, (actor->granularPosX + 0.5).toInt(), (actor->granularPosY + 0.5).toInt());
 					initStandAnim(i);
 				}
 				else { // actor->iwSrcPosition != -1
@@ -834,7 +861,7 @@ void StarTrekEngine::initStandAnim(int actorIndex) {
 	else // Default to facing south
 		animName = Common::String(actor->animationString) + 's';
 
-	uint16 scale = getActorScaleAtPosition(actor->pos.y);
+	Fixed16 scale = getActorScaleAtPosition(actor->pos.y);
 	loadActorAnim(actorIndex, animName, actor->pos.x, actor->pos.y, scale);
 	actor->animType = 0;
 }
@@ -863,8 +890,8 @@ void StarTrekEngine::updateActorPositionWhileWalking(Actor *actor, int16 x, int1
  * a destination position it's walking to.
  */
 void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, int16 srcY, int16 destX, int16 destY) {
-	actor->granularPosX = srcX << 16;
-	actor->granularPosY = srcY << 16;
+	actor->granularPosX = srcX;
+	actor->granularPosY = srcY;
 
 	int16 distX = destX - srcX;
 	int16 distY = destY - srcY;
@@ -887,11 +914,11 @@ void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, in
 
 		if (distX != 0) {
 			if (distX > 0)
-				actor->speedX = 1 << 16;
+				actor->speedX = 1.0;
 			else
-				actor->speedX = -1 << 16; // 0xffff0000
+				actor->speedX = -1.0;
 
-			actor->speedY = (distY << 16) / absDistX;
+			actor->speedY = Fixed32(distY) / absDistX;
 		}
 	}
 	else {
@@ -910,11 +937,11 @@ void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, in
 
 		if (distY != 0) {
 			if (distY > 0)
-				actor->speedY = 1 << 16;
+				actor->speedY = 1.0;
 			else
-				actor->speedY = -1 << 16; // 0xffff0000
+				actor->speedY = -1.0;
 
-			actor->speedX = (distX << 16) / absDistY;
+			actor->speedX = Fixed32(distX) / absDistY;
 		}
 	}
 }
@@ -939,12 +966,12 @@ bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16
 		if (distCounter == 0)
 			return true;
 
-		speedY = (distY << 16) / absDistX;
+		speedY = Fixed32(distY) / absDistX;
 
 		if (distX > 0)
-			speedX = 1 << 16;
+			speedX = 1.0;
 		else
-			speedX = -1 << 16;
+			speedX = -1.0;
 	}
 	else { // absDistX <= absDistY
 		distCounter = absDistY;
@@ -952,25 +979,25 @@ bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16
 		if (distCounter == 0)
 			return true;
 
-		speedX = (distX << 16) / absDistY;
+		speedX = Fixed32(distX) / absDistY;
 
 		if (distY > 0)
-			speedY = 1 << 16;
+			speedY = 1.0;
 		else
-			speedY = -1 << 16;
+			speedY = -1.0;
 	}
 
-	Fixed32 fixedX = srcX << 16;
-	Fixed32 fixedY = srcY << 16;
+	Fixed32 fixedX = srcX;
+	Fixed32 fixedY = srcY;
 
-	if (isPositionSolid((fixedX + 0x8000) >> 16, (fixedY + 0x8000) >> 16))
+	if (isPositionSolid((fixedX + 0.5).toInt(), (fixedY + 0.5).toInt()))
 		return false;
 
 	while (distCounter-- > 0) {
 		fixedX += speedX;
 		fixedY += speedY;
 
-		if (isPositionSolid((fixedX + 0x8000) >> 16, (fixedY + 0x8000) >> 16))
+		if (isPositionSolid((fixedX + 0.5).toInt(), (fixedY + 0.5).toInt()))
 			return false;
 	}
 
@@ -1119,7 +1146,7 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 		bitmapToReturn = _gfx->loadBitmap(filename);
 	}
 
-	if (scale != 256) {
+	if (scale != 1.0) {
 		bitmapToReturn = scaleBitmap(bitmapToReturn, scale);
 	}
 
@@ -1454,7 +1481,7 @@ void StarTrekEngine::updateCrewmanGetupTimers() {
 			}
 			else {
 				const char *dirs = "nsew";
-				uint16 scale = getActorScaleAtPosition(actor->sprite.pos.y);
+				Fixed16 scale = getActorScaleAtPosition(actor->sprite.pos.y);
 				d = dirs[dir];
 
 				int16 xOffset = 0, yOffset = 0;
@@ -1466,8 +1493,8 @@ void StarTrekEngine::updateCrewmanGetupTimers() {
 					xOffset = -35;
 					yOffset = -12;
 				}
-				actor->sprite.pos.x += (scale * xOffset) >> 8;
-				actor->sprite.pos.y += (scale * yOffset) >> 8;
+				actor->sprite.pos.x += scale.multToInt(xOffset);
+				actor->sprite.pos.y += scale.multToInt(yOffset);
 			}
 
 			anim += (char)d;
@@ -1652,12 +1679,9 @@ void StarTrekEngine::initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitma
 	sprite->drawMode = 1;
 }
 
-/**
- * A scale of 256 is the baseline.
- */
 SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed16 scale) {
-	int scaledWidth  = (bitmap->width  * scale) >> 8;
-	int scaledHeight = (bitmap->height * scale) >> 8;
+	int scaledWidth  = scale.multToInt(bitmap->width);
+	int scaledHeight = scale.multToInt(bitmap->height);
 	int origWidth  = bitmap->width;
 	int origHeight = bitmap->height;
 
@@ -1667,8 +1691,8 @@ SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed16 
 		scaledHeight = 1;
 
 	SharedPtr<Bitmap> scaledBitmap(new Bitmap(scaledWidth, scaledHeight));
-	scaledBitmap->xoffset = (bitmap->xoffset * scale) >> 8;
-	scaledBitmap->yoffset = (bitmap->yoffset * scale) >> 8;
+	scaledBitmap->xoffset = scale.multToInt(bitmap->xoffset);
+	scaledBitmap->yoffset = scale.multToInt(bitmap->yoffset);
 
 	// sub_344a5(scaledWidth, origWidth);
 
@@ -1678,7 +1702,7 @@ SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed16 
 	byte *src = bitmap->pixels;
 	byte *dest = scaledBitmap->pixels;
 
-	if (scale <= 256) {
+	if (scale <= 1.0) {
 		int16 var2e = 0;
 		uint16 var30 = scaledHeight << 1;
 		uint16 var32 = (scaledHeight - origHeight) << 1;

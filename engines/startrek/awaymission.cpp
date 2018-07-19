@@ -105,9 +105,9 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	actorFunc1();
 	initActors();
 
-	double num = _room->getVar0c() - _room->getVar0a();
-	double den = _room->getVar06() - _room->getVar08() + 1;
-	_playerActorScale = (int32)(num * 256 / den);
+	Fixed16 num = _room->getMaxScale() - _room->getMinScale();
+	int16 den = _room->getMaxY() - _room->getMinY() + 1;
+	_playerActorScale = Fixed32(num) / den;
 
 	// TODO: RDF vars 1e/1f and 20/21; relates to BAN files?
 
@@ -446,21 +446,21 @@ void StarTrekEngine::unloadRoom() {
  * further up (away) the object is, the smaller it is.
  */
 int StarTrekEngine::loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y) {
-	uint16 scale = getActorScaleAtPosition(y);
+	Fixed16 scale = getActorScaleAtPosition(y);
 	return loadActorAnim(actorIndex, animName, x, y, scale);
 }
 
-uint16 StarTrekEngine::getActorScaleAtPosition(int16 y) {
-	int16 var06 = _room->getVar06();
-	int16 var08 = _room->getVar08();
-	int16 var0a = _room->getVar0a();
+Fixed16 StarTrekEngine::getActorScaleAtPosition(int16 y) {
+	int16 maxY = _room->getMaxY();
+	int16 minY = _room->getMinY();
+	Fixed16 minScale = _room->getMinScale();
 
-	if (var06 < y)
-		y = var06;
-	if (var08 > y)
-		y = var08;
+	if (y > maxY)
+		y = maxY;
+	if (y < minY)
+		y = minY;
 
-	return ((_playerActorScale * (y - var08)) >> 8) + var0a;
+	return Fixed16(_playerActorScale * (y - minY)) + minScale;
 }
 
 SharedPtr<Room> StarTrekEngine::getRoom() {
