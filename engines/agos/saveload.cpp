@@ -32,6 +32,34 @@
 
 namespace AGOS {
 
+Common::String AGOSEngine::savenamePrefix(const char *target) {
+	Common::String prefix = target;
+	if (prefix.contains("simon1")) {
+		prefix = "simon1";
+	} else if (prefix.contains("simon2")) {
+		prefix = "simon2";
+	} else if (prefix.contains("pn")) {
+		prefix = "pn";
+	} else if (prefix.contains("waxworks")) {
+		prefix = "waxworks-pc"; // dos only support not amiga
+	} else if (prefix.contains("elvira1")) {
+		prefix = "elvira1";
+	} else if (prefix.contains("elvira2")) {
+		prefix = "elvira2-pc"; // dos only support not amiga
+	} else if (prefix.contains("feeble")) {
+		prefix = "feeble";
+	} else if (prefix.contains("dimp")) {
+		prefix = "dimp";
+	} else if (prefix.contains("jumble") || 
+	           prefix.contains("puzzle") ||
+	           prefix.contains("swampy")) {
+		prefix = "swampy";
+	} else {
+		warning("Unknown target %s",target);
+	}
+
+	return prefix;
+}
 
 // FIXME: This code counts savegames, but callers in many cases assume
 // that the return value + 1 indicates an empty slot.
@@ -202,7 +230,6 @@ void AGOSEngine::quickLoadOrSave() {
 		buf = Common::String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
 		GUI::TimedMessageDialog dialog(buf, 1500);
 		dialog.runModal();
-
 	}
 
 	_saveLoadType = 0;

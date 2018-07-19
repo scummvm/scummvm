@@ -216,6 +216,10 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void syncSoundSettings();
 	virtual void pauseEngineIntern(bool pause);
+	virtual bool canLoadGameStateCurrently() { return true; };
+	virtual bool canSaveGameStateCurrently() { return true; };
+	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	virtual void setupOpcodes();
 	uint16 _numOpcodes, _opcode;
@@ -240,6 +244,10 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	const char *getFileName(int type) const;
+	/*
+	** Return the save file prefix name given the target
+	*/
+	static Common::String savenamePrefix(const char *target);
 
 protected:
 	void playSting(uint16 a);
