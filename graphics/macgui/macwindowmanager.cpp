@@ -158,6 +158,7 @@ MacWindowManager::MacWindowManager() {
 	_menuDelay = 0;
 	_menuTimerActive = false;
 
+	_engine = nullptr;
 	_pauseEngineCallback = nullptr;
 
 	_colorBlack = 0;
