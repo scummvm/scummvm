@@ -337,8 +337,8 @@ static void menuTimerHandler(void *refCon) {
 
 	if (wm->_menuHotzone.contains(wm->_lastMousePos)) {
 		wm->activateMenu();
-		if ((wm->_mode & kWMModalMenuMode) && wm->_pauseEngineCallback) {
-			wm->_pauseEngineCallback(wm->_engine, true);
+		if (wm->_mode & kWMModalMenuMode) {
+			wm->pauseEngine(true);
 		}
 	}
 
@@ -507,6 +507,17 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 
 	_colorWhite = brightest;
 	_colorBlack = darkest;
+}
+
+void MacWindowManager::pauseEngine(bool pause) {
+	if (_engine && _pauseEngineCallback) {
+		_pauseEngineCallback(_engine, pause);
+	}
+}
+
+void MacWindowManager::setEnginePauseCallback(void *engine, void (*pauseCallback)(void *, bool)) {
+	_engine = engine;
+	_pauseEngineCallback = pauseCallback;
 }
 
 } // End of namespace Graphics

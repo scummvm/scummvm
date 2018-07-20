@@ -209,7 +209,11 @@ public:
 	void pushWatchCursor();
 	void popCursor();
 
+	void pauseEngine(bool pause);
+
 	void setMode(uint32 mode) { _mode = mode; }
+
+	void setEnginePauseCallback(void *engine, void (*pauseCallback)(void *engine, bool pause));
 
 	void passPalette(const byte *palette, uint size);
 
@@ -223,9 +227,6 @@ public:
 	bool _menuTimerActive;
 
 	int _colorBlack, _colorWhite;
-
-	void *_engine;
-	void (*_pauseEngineCallback)(void *engine, bool pause);
 
 private:
 	void drawDesktop();
@@ -252,6 +253,9 @@ private:
 
 	MacMenu *_menu;
 	uint32 _menuDelay;
+
+	void *_engine;
+	void (*_pauseEngineCallback)(void *engine, bool pause);
 
 	bool _cursorIsArrow;
 };

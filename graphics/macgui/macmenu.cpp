@@ -556,8 +556,8 @@ bool MacMenu::mouseMove(int x, int y) {
 			return true;
 	} else if ((_wm->_mode & kWMModeAutohideMenu) && !_bbox.contains(x, y)) {
 		_isVisible = false;
-		if ((_wm->_mode & kWMModalMenuMode) && _wm->_pauseEngineCallback) {
-			_wm->_pauseEngineCallback(_wm->_engine, false);
+		if (_wm->_mode & kWMModalMenuMode) {
+			_wm->pauseEngine(false);
 		}
 	}
 
