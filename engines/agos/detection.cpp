@@ -131,7 +131,9 @@ bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool AGOS::AGOSEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsRTL) ||
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsLoadingDuringRuntime);
 }
 
 bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -183,15 +185,15 @@ SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = target;
+	Common::String pattern = AGOS::AGOSEngine::savenamePrefix(target);
 	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
+		const char *ext = strrchr(file->c_str(), '.');
+		int slotNum = ext ? atoi(ext + 1) : -1;
 
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
@@ -206,6 +208,23 @@ SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 	// Sort saves based on slot number.
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
+}
+
+Common::Error AGOSEngine::loadGameState(int slot) {
+	_saveLoadType = 2; // 2=load
+	_saveLoadSlot = slot;
+	quickLoadOrSave();
+
+	return Common::kNoError;	// TODO: return success/failure
+}
+
+Common::Error AGOSEngine::saveGameState(int slot, const Common::String &desc) {
+	_saveLoadType = 1; // 1=save
+	_saveLoadSlot = slot;
+	Common::strlcpy(_saveLoadName, desc.c_str(), 108); // _saveLoadName buffer is size 108
+	quickLoadOrSave();
+
+	return Common::kNoError;	// TODO: return success/failure
 }
 
 int AgosMetaEngine::getMaximumSaveSlot() const { return 999; }
