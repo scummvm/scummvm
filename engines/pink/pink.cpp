@@ -75,8 +75,7 @@ Common::Error PinkEngine::init() {
 	_console = new Console(this);
 	_director = new Director();
 
-	_director->getWndManager()._engine = this;
-	_director->getWndManager()._pauseEngineCallback = &pauseEngine;
+	_director->getWndManager().setEnginePauseCallback(this, &pauseEngine);
 
 	Common::String orbName;
 	Common::String broName;
