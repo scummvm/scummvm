@@ -586,8 +586,8 @@ bool BaseMenuSystem::calcMenuItemTextPositionAtPoint(Common::Point pt, int &offs
 	Common::String text = menuItem->getText();
 	FontResource *font = _vm->_dict->findFont(_activeMenu->_fontId);
 
-	uint curX = 0;
-	for (int i = 0; i < text.size(); i++) {
+	int curX = 0;
+	for (uint i = 0; i < text.size(); i++) {
 		int16 w = font->getCharInfo(text[i])->_width;
 		if (x >= curX && x <= curX + w) {
 			offset = i;

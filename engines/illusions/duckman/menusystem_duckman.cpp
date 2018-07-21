@@ -361,7 +361,7 @@ int MenuActionUpdateSlider::calcNewSliderValue(int newOffset) {
 	int start = 0;
 	int end = 0;
 	int currentPosition = 0;
-	for (int i = 0; i < text.size(); i++) {
+	for (uint i = 0; i < text.size(); i++) {
 		switch (text[i]) {
 			case '{' : start = i; break;
 			case '}' : end = i; break;
@@ -386,7 +386,7 @@ int MenuActionUpdateSlider::calcNewSliderValue(int newOffset) {
 void MenuActionUpdateSlider::setSliderValue(uint8 newValue) {
 	int start = 0;
 	Common::String text = _menuItem->getText();
-	for (int i = 0; i < text.size(); i++) {
+	for (uint i = 0; i < text.size(); i++) {
 		switch (text[i]) {
 			case '{' : start = i; break;
 			case '|' : text.setChar('~', i); break;

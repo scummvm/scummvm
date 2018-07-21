@@ -64,7 +64,7 @@ namespace Illusions {
 char *debugW2I(byte *wstr) {
 	static char buf[65];
 	char *p = buf;
-	int i = 0;
+	uint i = 0;
 	while (*wstr != 0 && i < sizeof(buf) - 1) {
 		*p++ = *wstr;
 		wstr += 2;
