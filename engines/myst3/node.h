@@ -131,10 +131,13 @@ public:
 class Node : public Drawable {
 public:
 	Node(Myst3Engine *vm, uint16 id);
-	virtual ~Node();
+	~Node() override;
+
+	void initEffects();
+	void resetEffects();
 
 	void update();
-	void drawOverlay();
+	void drawOverlay() override;
 
 	void loadSpotItem(uint16 id, int16 condition, bool fade);
 	SpotItemFace *loadMenuSpotItem(int16 condition, const Common::Rect &rect);
@@ -146,6 +149,7 @@ protected:
 	virtual bool isFaceVisible(uint faceId) = 0;
 
 	Myst3Engine *_vm;
+	uint16 _id;
 	Face *_faces[6];
 	Common::Array<SpotItem *> _spotItems;
 	Subtitles *_subtitles;

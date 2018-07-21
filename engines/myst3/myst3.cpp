@@ -855,7 +855,8 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 
 	runNodeInitScripts();
 
-	// These effects can only be created after running the node init scripts
+	// The effects can only be created after running the node init scripts
+	_node->initEffects();
 	_shakeEffect = ShakeEffect::create(this);
 	_rotationEffect = RotationEffect::create(this);
 

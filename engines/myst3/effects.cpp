@@ -440,13 +440,12 @@ MagnetEffect::~MagnetEffect() {
 }
 
 MagnetEffect *MagnetEffect::create(Myst3Engine *vm, uint32 id) {
-	MagnetEffect *s = new MagnetEffect(vm);
-
-	if (!s->loadMasks("", id, DirectorySubEntry::kMagneticEffectMask)) {
-		delete s;
-		return 0;
+	if (!vm->_state->getMagnetEffectSound()) {
+		return nullptr;
 	}
 
+	MagnetEffect *s = new MagnetEffect(vm);
+	s->loadMasks("", id, DirectorySubEntry::kMagneticEffectMask);
 	return s;
 }
 
