@@ -25,6 +25,10 @@
 
 #include "common/str-array.h"
 
+namespace Common {
+class U32String;
+}
+
 namespace Graphics {
 
 struct MacMenuItem;
@@ -46,12 +50,15 @@ public:
 	static Common::StringArray *readMenuFromResource(Common::SeekableReadStream *res);
 
 	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
+	void setCommandsCallback(void (*callback)(int, Common::U32String &, void *), void *data) { _unicodeccallback = callback; _cdata = data; }
 
 	void addStaticMenus(const MacMenuData *data);
 	void calcDimensions();
 
 	int addMenuItem(const char *name);
+	int addMenuItem(const Common::U32String &name);
 	void addMenuSubItem(int id, const char *text, int action, int style = 0, char shortcut = 0, bool enabled = true);
+	void addMenuSubItem(int id, const Common::U32String &text, int action, int style = 0, char shortcut = 0, bool enabled = true);
 	void createSubMenuFromString(int id, const char *string, int commandId);
 	void clearSubMenu(int id);
 
@@ -60,6 +67,7 @@ public:
 
 	void enableCommand(int menunum, int action, bool state);
 	void enableCommand(const char *menuitem, const char *menuaction, bool state);
+	void enableCommand(const Common::U32String &menuitem, const Common::U32String &menuaction, bool state);
 	void disableAllMenus();
 
 	void setActive(bool active) { _menuActivated = active; }
@@ -99,6 +107,7 @@ private:
 	int _activeSubItem;
 
 	void (*_ccallback)(int action, Common::String &text, void *data);
+	void (*_unicodeccallback)(int action, Common::U32String &text, void *data);
 	void *_cdata;
 };
 
