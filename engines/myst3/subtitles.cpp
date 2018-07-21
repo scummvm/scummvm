@@ -227,8 +227,15 @@ void FontSubtitles::createTexture() {
 	// Create a surface to draw the subtitles on
 	// Use RGB 565 to allow use of BDF fonts
 	if (!_surface) {
+		uint16 width = Renderer::kOriginalWidth * _scale;
+		uint16 height = _surfaceHeight * _scale;
+
+		// Make sure the width is even. Some graphics drivers have trouble reading from
+		// surfaces with an odd width (Mesa 18 on Intel).
+		width &= ~1;
+
 		_surface = new Graphics::Surface();
-		_surface->create(Renderer::kOriginalWidth * _scale, _surfaceHeight * _scale, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+		_surface->create(width, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	}
 
 	if (!_texture) {
