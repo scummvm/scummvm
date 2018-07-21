@@ -55,7 +55,7 @@ public:
 	virtual void handle(Actor *actor);
 
 protected:
-	virtual void execute(Sequence *sequence);
+	virtual void execute(Sequence *sequence) {};
 };
 
 } // End of namespace Pink

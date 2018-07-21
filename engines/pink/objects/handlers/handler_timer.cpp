@@ -69,11 +69,6 @@ void HandlerTimerActions::handle(Actor *actor) {
 	}
 }
 
-
-void HandlerTimerSequences::execute(Sequence *sequence) {
-	error("HandlerTimerSequences function is not implemented");
-}
-
 void HandlerTimerSequences::toConsole() {
 	debug("HandlerTimerSequences:");
 
