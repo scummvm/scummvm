@@ -42,8 +42,8 @@ Game::Game(MutationOfJBEngine *vm)
 	_randomSource("mutationofjb"),
 	_delayedLocalScript(nullptr),
 	_gui(*this, _vm->getScreen()),
-	_scriptExecCtx(*this),
 	_currentAction(ActionInfo::Walk),
+	_scriptExecCtx(*this),
 	_taskManager(*this),
 	_assets(*this) {
 
@@ -61,7 +61,7 @@ Game::Game(MutationOfJBEngine *vm)
 
 	_gui.init();
 
-	_taskManager.addTask(TaskPtr(new ObjectAnimationTask));
+	_taskManager.startTask(TaskPtr(new ObjectAnimationTask));
 }
 
 Common::RandomSource &Game::getRandomSource() {
@@ -240,9 +240,16 @@ Assets &Game::getAssets() {
 	return _assets;
 }
 
-Graphics::Screen &Game::getScreen()
-{
+Graphics::Screen &Game::getScreen() {
 	return *_vm->getScreen();
+}
+
+TaskPtr Game::getActiveSayTask() const {
+	return _activeSayTask;
+}
+
+void Game::setActiveSayTask(const TaskPtr &sayTask) {
+	_activeSayTask = sayTask;
 }
 
 }

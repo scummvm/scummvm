@@ -21,7 +21,13 @@
  */
 
 #include "mutationofjb/commands/saycommand.h"
+
+#include "mutationofjb/game.h"
+#include "mutationofjb/gamedata.h"
 #include "mutationofjb/script.h"
+#include "mutationofjb/tasks/saytask.h"
+#include "mutationofjb/tasks/taskmanager.h"
+
 #include "common/str.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -140,9 +146,18 @@ bool SayCommandParser::parse(const Common::String &line, ScriptParseContext &par
 }
 
 
-Command::ExecuteResult SayCommand::execute(ScriptExecutionContext &) {
-	// TODO: Actual implementation.
-	debug("%s [%s]", _lineToSay.c_str(), _voiceFile.c_str());
+Command::ExecuteResult SayCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	Game &game = scriptExecCtx.getGame();
+
+	if (_waitForPrevious) {
+		if (game.getActiveSayTask()) {
+			return InProgress;
+		}
+	}
+
+	TaskPtr task(new SayTask(_lineToSay, game.getGameData()._color));
+	game.getTaskManager().startTask(task);
+
 	return Finished;
 }
 

@@ -23,12 +23,14 @@
 #ifndef MUTATIONOFJB_GAME_H
 #define MUTATIONOFJB_GAME_H
 
-#include "common/random.h"
-#include "common/scummsys.h"
 #include "mutationofjb/assets.h"
 #include "mutationofjb/gui.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/tasks/taskmanager.h"
+
+#include "common/ptr.h"
+#include "common/random.h"
+#include "common/scummsys.h"
 
 namespace Common {
 class String;
@@ -44,6 +46,7 @@ class Room;
 class Door;
 class Static;
 class Bitmap;
+class SayTask;
 
 class Game {
 public:
@@ -75,6 +78,9 @@ public:
 
 	Graphics::Screen &getScreen();
 
+	TaskPtr getActiveSayTask() const;
+	void setActiveSayTask(const TaskPtr &sayTask);
+
 private:
 	bool loadGameData(bool partB);
 	void runActiveCommand();
@@ -96,6 +102,7 @@ private:
 
 	TaskManager _taskManager;
 	Assets _assets;
+	TaskPtr _activeSayTask;
 };
 
 }

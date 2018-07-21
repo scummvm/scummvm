@@ -323,14 +323,16 @@ public:
 
 	bool loadFromStream(Common::ReadStream &stream);
 
-	uint8 _currentScene;
+	uint8 _currentScene; // Persistent.
 	uint8 _lastScene;
-	bool _partB;
-	Inventory _inventory;
-	Common::String _currentAPK;
+	bool _partB; // Persistent.
+	Inventory _inventory; // Persistent.
+	Common::String _currentAPK; // Persistent.
 	ConversationInfo _conversationInfo;
+	/** Current SayCommand color. */
+	uint8 _color;
 private:
-	Scene _scenes[45];
+	Scene _scenes[45]; // Persistent.
 };
 
 enum Colors {

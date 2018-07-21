@@ -34,21 +34,31 @@
 
 namespace MutationOfJB {
 
-SayTask::SayTask(const Common::String &toSay, uint8 color) : _toSay(toSay), _color(color), _timer(1000) {}
+SayTask::SayTask(const Common::String &toSay, uint8 color) : _toSay(toSay), _color(color), _timer(50 * toSay.size()) {}
 
 void SayTask::start() {
+	Game &game = getTaskManager()->getGame();
+	if (game.getActiveSayTask()) {
+		getTaskManager()->stopTask(game.getActiveSayTask());
+	}
+	game.setActiveSayTask(getTaskManager()->getTask(this));
+
+	setState(RUNNING);
 	drawSubtitle(_toSay, 160, 0, _color); // TODO: Respect PTALK and LTALK commands.
 	_timer.start();
-	setState(RUNNING);
 }
 
 void SayTask::update() {
 	_timer.update();
 
 	if (_timer.isFinished()) {
-		getTaskManager()->getGame().getRoom().redraw(); // TODO: Only redraw the area occupied by the text.
-		setState(FINISHED);
-		return;
+		finish();
+	}
+}
+
+void SayTask::stop() {
+	if (getState() == RUNNING) {
+		finish();
 	}
 }
 
@@ -87,6 +97,16 @@ void SayTask::drawSubtitle(const Common::String &text, int16 talkX, int16 talkY,
 	_boundingBox.left = y;
 	_boundingBox.setWidth(maxWidth);
 	_boundingBox.setHeight(lines.size() * font.getLineHeight());
+}
+
+void SayTask::finish() {
+	getTaskManager()->getGame().getRoom().redraw(); // TODO: Only redraw the area occupied by the text.
+	setState(FINISHED);
+
+	Game &game = getTaskManager()->getGame();
+	if (game.getActiveSayTask().get() == this) {
+		game.setActiveSayTask(Common::SharedPtr<SayTask>());
+	}
 }
 
 }

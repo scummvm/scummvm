@@ -21,21 +21,39 @@
  */
 
 #include "mutationofjb/tasks/taskmanager.h"
+
 #include "mutationofjb/tasks/task.h"
+
+#include "common/translation.h"
 
 namespace MutationOfJB {
 
-void TaskManager::addTask(const TaskPtr &task) {
+void TaskManager::startTask(const TaskPtr &task) {
 	_tasks.push_back(task);
 	task->setTaskManager(this);
 	task->start();
 }
 
-void TaskManager::removeTask(const TaskPtr &task) {
+void TaskManager::stopTask(const TaskPtr &task) {
 	TaskPtrs::iterator it = Common::find(_tasks.begin(), _tasks.end(), task);
-	if (it != _tasks.end()) {
-		_tasks.erase(it);
+	if (it == _tasks.end()) {
+		warning(_("Task is not registered in TaskManager."));
+		return;
 	}
+
+	task->stop();
+	assert(task->getState() != Task::RUNNING);
+	_tasks.erase(it);
+}
+
+TaskPtr TaskManager::getTask(Task *const task) {
+	for (TaskPtrs::iterator it = _tasks.begin(); it != _tasks.end(); ++it) {
+		if (it->get() == task) {
+			return *it;
+		}
+	}
+
+	return TaskPtr();
 }
 
 void TaskManager::update() {

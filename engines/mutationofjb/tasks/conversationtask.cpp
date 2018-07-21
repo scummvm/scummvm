@@ -54,7 +54,6 @@ void ConversationTask::start() {
 void ConversationTask::update() {
 	if (_sayTask) {
 		if (_sayTask->getState() == Task::FINISHED) {
-			getTaskManager()->removeTask(_sayTask);
 			_sayTask.reset();
 
 			switch (_substate) {
@@ -67,7 +66,7 @@ void ConversationTask::update() {
 
 				_substate = SAYING_RESPONSE;
 				createSayTasks(line);
-				getTaskManager()->addTask(_sayTask);
+				getTaskManager()->startTask(_sayTask);
 				break;
 			}
 			case SAYING_RESPONSE: {
@@ -105,7 +104,7 @@ void ConversationTask::onChoiceClicked(ConversationWidget *convWidget, int, uint
 
 	_substate = SAYING_CHOICE;
 	createSayTasks(line);
-	getTaskManager()->addTask(_sayTask);
+	getTaskManager()->startTask(_sayTask);
 	_currentItem = &item;
 
 	if (!line->_speeches[0].isRepeating()) {
@@ -177,7 +176,7 @@ void ConversationTask::showChoicesOrPick() {
 
 		_substate = SAYING_CHOICE;
 		createSayTasks(line);
-		getTaskManager()->addTask(_sayTask);
+		getTaskManager()->startTask(_sayTask);
 		_currentItem = &item;
 
 		if (!line->_speeches[0].isRepeating()) {
@@ -192,7 +191,7 @@ void ConversationTask::showChoicesOrPick() {
 
 		_substate = SAYING_RESPONSE;
 		createSayTasks(line);
-		getTaskManager()->addTask(_sayTask);
+		getTaskManager()->startTask(_sayTask);
 		_currentItem = &item;
 
 		_haveChoices = true;
@@ -204,7 +203,7 @@ void ConversationTask::showChoicesOrPick() {
 			finish();
 		} else {
 			_sayTask = TaskPtr(new SayTask("Nothing to talk about.", _convInfo._color)); // TODO: This is hardcoded in executable. Load it.
-			getTaskManager()->addTask(_sayTask);
+			getTaskManager()->startTask(_sayTask);
 			_substate = SAYING_NO_CHOICES;
 			_currentItem = nullptr;
 		}

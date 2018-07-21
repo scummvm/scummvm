@@ -154,6 +154,7 @@ Command::ExecuteResult ScriptExecutionContext::startCommand(Command *cmd) {
 		warning(_("Trying to start command while another one is running."));
 		return Command::Finished;
 	}
+	getGameData()._color = WHITE; // The original game resets the color to WHITE beforing running script sections.
 	clear();
 	_activeCommand = cmd;
 	return runActiveCommand();

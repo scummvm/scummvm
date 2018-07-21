@@ -38,9 +38,11 @@ public:
 
 	virtual void start() override;
 	virtual void update() override;
+	virtual void stop() override;
 
 private:
 	void drawSubtitle(const Common::String &text, int16 talkX, int16 talkY, uint8 color);
+	void finish();
 
 	Common::String _toSay;
 	uint8 _color;
