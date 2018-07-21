@@ -143,7 +143,7 @@ void Room::redraw() {
 	for (int i = 0; i < currentScene->getNoObjects(); ++i) {
 		Object *const obj = currentScene->getObject(i + 1);
 		if (obj->_active) {
-			drawObjectAnimation(i + 1, 0);
+			drawObjectAnimation(i + 1, obj->_currentFrame - _objectsStart[i] - 1);
 		}
 	}
 }
