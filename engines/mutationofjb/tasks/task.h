@@ -24,6 +24,8 @@
 #define MUTATIONOFJB_TASK_H
 
 #include "common/scummsys.h"
+#include "common/ptr.h"
+#include "common/array.h"
 
 namespace MutationOfJB {
 
@@ -37,7 +39,7 @@ public:
 		FINISHED
 	};
 
-	Task() : _taskManager(nullptr) {}
+	Task() : _taskManager(nullptr), _state(IDLE) {}
 	virtual ~Task() {}
 
 	virtual void start() = 0;
@@ -55,6 +57,9 @@ private:
 	TaskManager *_taskManager;
 	State _state;
 };
+
+typedef Common::SharedPtr<Task> TaskPtr;
+typedef Common::Array<Common::SharedPtr<Task> > TaskPtrs;
 
 }
 

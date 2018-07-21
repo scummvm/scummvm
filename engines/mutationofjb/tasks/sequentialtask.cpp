@@ -20,40 +20,43 @@
  *
  */
 
-#ifndef MUTATIONOFJB_CONVERSATIONLINELIST_H
-#define MUTATIONOFJB_CONVERSATIONLINELIST_H
+#include "mutationofjb/tasks/sequentialtask.h"
 
-#include "common/str.h"
-#include "common/array.h"
+#include "mutationofjb/tasks/taskmanager.h"
 
 namespace MutationOfJB {
 
-class ConversationLineList {
-public:
-	struct Speech {
-		Common::String _text;
-		Common::String _voiceFile;
-
-		bool isRepeating() const { return _text.firstChar() == '*'; }
-		bool isFirstSpeaker() const { return _text.firstChar() == '~'; }
-		bool isSecondSpeaker() const { return _text.firstChar() == '`'; }
-	};
-
-	typedef Common::Array<Speech> Speeches;
-	struct Line {
-		Speeches _speeches;
-		Common::String _extra;
-	};
-
-	ConversationLineList(const Common::String &fileName);
-	const Line *getLine(uint index) const;
-
-private:
-	bool parseFile(const Common::String &fileName);
-
-	Common::Array<Line> _lines;
-};
-
+SequentialTask::SequentialTask(const TaskPtrs &tasks) : _tasks(tasks) {
 }
 
-#endif
+void SequentialTask::start() {
+	setState(RUNNING);
+	runTasks();
+}
+
+void SequentialTask::update() {
+	runTasks();
+}
+
+void SequentialTask::runTasks() {
+	while (true) {
+		if (_tasks.empty()) {
+			setState(FINISHED);
+			return;
+		}
+
+		const TaskPtr &task = _tasks.front();
+		switch (task->getState()) {
+		case IDLE:
+			getTaskManager()->addTask(task);
+			break;
+		case RUNNING:
+			return;
+		case FINISHED:
+			_tasks.remove_at(0);
+			break;
+		}
+	}
+}
+
+}

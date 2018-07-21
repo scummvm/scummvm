@@ -20,38 +20,24 @@
  *
  */
 
-#ifndef MUTATIONOFJB_CONVERSATIONLINELIST_H
-#define MUTATIONOFJB_CONVERSATIONLINELIST_H
+#ifndef MUTATIONOFJB_SEQUENTIALTASK_H
+#define MUTATIONOFJB_SEQUENTIALTASK_H
 
-#include "common/str.h"
-#include "common/array.h"
+#include "mutationofjb/tasks/task.h"
 
 namespace MutationOfJB {
 
-class ConversationLineList {
+class SequentialTask : public Task {
 public:
-	struct Speech {
-		Common::String _text;
-		Common::String _voiceFile;
+	SequentialTask(const TaskPtrs &tasks);
 
-		bool isRepeating() const { return _text.firstChar() == '*'; }
-		bool isFirstSpeaker() const { return _text.firstChar() == '~'; }
-		bool isSecondSpeaker() const { return _text.firstChar() == '`'; }
-	};
-
-	typedef Common::Array<Speech> Speeches;
-	struct Line {
-		Speeches _speeches;
-		Common::String _extra;
-	};
-
-	ConversationLineList(const Common::String &fileName);
-	const Line *getLine(uint index) const;
+	virtual void start() override;
+	virtual void update() override;
 
 private:
-	bool parseFile(const Common::String &fileName);
+	void runTasks();
 
-	Common::Array<Line> _lines;
+	TaskPtrs _tasks;
 };
 
 }

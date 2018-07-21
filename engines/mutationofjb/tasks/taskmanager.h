@@ -24,6 +24,7 @@
 #define MUTATIONOFJB_TASKMANAGER_H
 
 #include "common/array.h"
+#include "task.h"
 
 namespace MutationOfJB {
 
@@ -34,15 +35,14 @@ class TaskManager {
 public:
 	TaskManager(Game &game) : _game(game) {}
 
-	void addTask(Task *task);
-	void removeTask(Task *task);
+	void addTask(const TaskPtr &task);
+	void removeTask(const TaskPtr &task);
 	void update();
 
 	Game &getGame() { return _game; }
 
 private:
-	typedef Common::Array<Task *> Tasks;
-	Tasks _tasks;
+	TaskPtrs _tasks;
 	Game &_game;
 };
 
