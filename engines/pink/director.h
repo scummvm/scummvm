@@ -30,6 +30,10 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/screen.h"
 
+namespace Common {
+	class PEResources;
+}
+
 namespace Graphics {
 	class MacMenu;
 }
@@ -42,7 +46,7 @@ class ActionSound;
 
 class Director {
 public:
-	Director();
+	Director(Common::PEResources &exe);
 
 	void update();
 	bool processEvent(Common::Event &event);

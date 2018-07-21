@@ -72,8 +72,13 @@ Common::Error PinkEngine::init() {
 
 	initGraphics(640, 480);
 
+	Common::PEResources exeResources;
+	Common::String fileName = isPeril() ? "pptp.exe" : "hpp.exe";
+	exeResources.loadFromEXE(fileName);
+
+
 	_console = new Console(this);
-	_director = new Director();
+	_director = new Director(exeResources);
 
 	_director->getWndManager().setEnginePauseCallback(this, &pauseEngine);
 
@@ -90,7 +95,7 @@ Common::Error PinkEngine::init() {
 	if (!_orb.open(orbName) || (_bro && !_bro->open(broName) && _orb.getTimestamp() == _bro->getTimestamp()))
 		return Common::kNoGameDataFoundError;
 
-	if (!loadCursors())
+	if (!loadCursors(exeResources))
 		return Common::kNoGameDataFoundError;
 
 	setCursor(kLoadingCursor);
@@ -229,12 +234,8 @@ bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &
 	return _variables[variable] == value;
 }
 
-bool PinkEngine::loadCursors() {
-	Common::PEResources exeResources;
+bool PinkEngine::loadCursors(Common::PEResources &exeResources) {
 	bool isPokus = !isPeril();
-	Common::String fileName = isPokus ? "hpp.exe" : "pptp.exe";
-	if (!exeResources.loadFromEXE(fileName))
-		return false;
 
 	_cursors.reserve(kCursorsCount);
 

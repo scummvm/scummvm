@@ -76,15 +76,15 @@ static const Graphics::MacMenuData menuSubItems[] = {
 };
 
 
-Director::Director()
+Director::Director(Common::PEResources &exe)
 	: _surface(640, 480) {
 	_wm.setScreen(&_surface);
 	_wm.setMode(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode);
 	_wm.setMenuHotzone(Common::Rect(0, 0, 640, 23));
 	_wm.setMenuDelay(250000);
 
-	_menu = _wm.addMenu();
-	_menu->addStaticMenus(menuSubItems);
+	_menu = Graphics::MacMenu::createMenuFromPEexe(exe, &_wm);
+	_menu->calcDimensions();
 }
 
 void Director::update() {

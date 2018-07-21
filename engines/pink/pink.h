@@ -122,7 +122,7 @@ public:
 private:
 	Common::Error init();
 
-	bool loadCursors();
+	bool loadCursors(Common::PEResources &exeResources);
 
 	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
 	void addModule(const Common::String &moduleName);
