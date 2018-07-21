@@ -52,7 +52,7 @@ bool ChangeCommandParser::parseValueString(const Common::String &valueString, bo
 	if (changeEntity) {
 		entityId = atoi(valueString.c_str() + 6);
 	}
-	const char *val = nullptr;
+	const char *val = "";
 	if (changeEntity) {
 		if (valueString.size() >= 9) {
 			val = valueString.c_str() + 9;
