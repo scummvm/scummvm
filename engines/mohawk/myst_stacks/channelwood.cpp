@@ -636,6 +636,9 @@ void Channelwood::o_hologramTemple(uint16 var, const ArgumentsArray &args) {
 }
 
 void Channelwood::o_executeMouseUp(uint16 var, const ArgumentsArray &args) {
+	// Clear the clicked resource so the mouse up event is not called a second time.
+	_vm->getCard()->resetClickedResource();
+
 	MystArea *resource = _vm->getCard()->getResource<MystArea>(args[0]);
 	resource->handleMouseUp();
 }

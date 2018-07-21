@@ -67,6 +67,13 @@ public:
 	/** Set the card's currently clicked resource to the currently active resource */
 	MystArea *forceUpdateClickedResource(const Common::Point &mouse);
 
+	/** Clear the card's currently clicked resource
+	 *
+	 * Used to indicate the mouse up event handler should not be called.
+	 * (Possibly because it was already called by the gameplay logic
+	 */
+	void resetClickedResource();
+
 	/**
 	 * Get the mouse cursor that should be used when hovering the currently active resource
 	 *

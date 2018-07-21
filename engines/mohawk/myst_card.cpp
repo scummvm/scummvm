@@ -453,4 +453,8 @@ bool MystCard::isDraggingResource() const {
 	return _clickedResource != nullptr;
 }
 
+void MystCard::resetClickedResource() {
+	_clickedResource = nullptr;
+}
+
 } // End of namespace Mohawk
