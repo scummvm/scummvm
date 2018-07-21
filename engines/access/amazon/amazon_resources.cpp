@@ -27,6 +27,11 @@ namespace Access {
 
 namespace Amazon {
 
+AmazonResources::~AmazonResources() {
+	delete _font3x5;
+	delete _font6x6;
+}
+
 void AmazonResources::load(Common::SeekableReadStream &s) {
 	Resources::load(s);
 	uint count;
@@ -60,24 +65,29 @@ void AmazonResources::load(Common::SeekableReadStream &s) {
 
 	// Load font data
 	count = s.readUint16LE();
-	FONT2_INDEX.resize(count);
+	Common::Array<int> index;
+	Common::Array<byte> data;
+
+	index.resize(count);
 	for (uint idx = 0; idx < count; ++idx)
-		FONT2_INDEX[idx] = s.readSint16LE();
+		index[idx] = s.readSint16LE();
 
 	count = s.readUint16LE();
-	FONT2_DATA.resize(count);
+	data.resize(count);
 	for (uint idx = 0; idx < count; ++idx)
-		FONT2_DATA[idx] = s.readByte();
+		data[idx] = s.readByte();
+	_font3x5 = new AmazonFont(&index[0], &data[0]);
 
 	count = s.readUint16LE();
-	FONT6x6_INDEX.resize(count);
+	index.resize(count);
 	for (uint idx = 0; idx < count; ++idx)
-		FONT6x6_INDEX[idx] = s.readSint16LE();
+		index[idx] = s.readSint16LE();
 
 	count = s.readUint16LE();
-	FONT6x6_DATA.resize(count);
+	data.resize(count);
 	for (uint idx = 0; idx < count; ++idx)
-		FONT6x6_DATA[idx] = s.readByte();
+		data[idx] = s.readByte();
+	_font6x6 = new AmazonFont(&index[0], &data[0]);
 }
 
 /*------------------------------------------------------------------------*/

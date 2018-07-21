@@ -162,8 +162,7 @@ void AmazonEngine::setupGame() {
 		_deaths._cells[i] = CellIdent(DEATH_CELLS[i][0], DEATH_CELLS[i][1], DEATH_CELLS[i][2]);
 
 	// Miscellaneous
-	_fonts._font1.load(&res.FONT6x6_INDEX[0], &res.FONT6x6_DATA[0]);
-	_fonts._font2.load(&res.FONT2_INDEX[0], &res.FONT2_DATA[0]);
+	_fonts.load(res._font6x6, res._font3x5);
 
 	initVariables();
 }
@@ -409,21 +408,21 @@ void AmazonEngine::calcIQ() {
 
 void AmazonEngine::helpTitle() {
 	AmazonResources &res = *(AmazonResources *)_res;
-	int width = _fonts._font2.stringWidth(_bubbleBox->_bubbleTitle);
+	int width = _fonts._font2->stringWidth(_bubbleBox->_bubbleTitle);
 	int posX = 160 - (width / 2);
-	_fonts._font2._fontColors[0] = 0;
-	_fonts._font2._fontColors[1] = 33;
-	_fonts._font2._fontColors[2] = 34;
-	_fonts._font2._fontColors[3] = 35;
-	_fonts._font2.drawString(_screen, _bubbleBox->_bubbleTitle, Common::Point(posX, 24));
+	_fonts._font2->_fontColors[0] = 0;
+	_fonts._font2->_fontColors[1] = 33;
+	_fonts._font2->_fontColors[2] = 34;
+	_fonts._font2->_fontColors[3] = 35;
+	_fonts._font2->drawString(_screen, _bubbleBox->_bubbleTitle, Common::Point(posX, 24));
 
-	width = _fonts._font2.stringWidth(res.HELPLVLTXT[_helpLevel]);
+	width = _fonts._font2->stringWidth(res.HELPLVLTXT[_helpLevel]);
 	posX = 160 - (width / 2);
-	_fonts._font2._fontColors[0] = 0;
-	_fonts._font2._fontColors[1] = 10;
-	_fonts._font2._fontColors[2] = 11;
-	_fonts._font2._fontColors[3] = 12;
-	_fonts._font2.drawString(_screen, res.HELPLVLTXT[_helpLevel], Common::Point(posX, 36));
+	_fonts._font2->_fontColors[0] = 0;
+	_fonts._font2->_fontColors[1] = 10;
+	_fonts._font2->_fontColors[2] = 11;
+	_fonts._font2->_fontColors[3] = 12;
+	_fonts._font2->drawString(_screen, res.HELPLVLTXT[_helpLevel], Common::Point(posX, 36));
 
 	Common::String iqText = "IQ: ";
 	calcIQ();
@@ -441,13 +440,13 @@ void AmazonEngine::helpTitle() {
 	iqText += " ";
 	iqText += res.IQLABELS[index];
 
-	width = _fonts._font2.stringWidth(iqText);
+	width = _fonts._font2->stringWidth(iqText);
 	posX = 160 - (width / 2);
-	_fonts._font2._fontColors[0] = 0;
-	_fonts._font2._fontColors[1] = 10;
-	_fonts._font2._fontColors[2] = 11;
-	_fonts._font2._fontColors[3] = 12;
-	_fonts._font2.drawString(_screen, iqText, Common::Point(posX, 44));
+	_fonts._font2->_fontColors[0] = 0;
+	_fonts._font2->_fontColors[1] = 10;
+	_fonts._font2->_fontColors[2] = 11;
+	_fonts._font2->_fontColors[3] = 12;
+	_fonts._font2->drawString(_screen, iqText, Common::Point(posX, 44));
 }
 
 void AmazonEngine::drawHelpText(const Common::String &msg) {
@@ -460,15 +459,15 @@ void AmazonEngine::drawHelpText(const Common::String &msg) {
 	int width = 0;
 	bool lastLine = false;
 	do {
-		lastLine = _fonts._font2.getLine(lines, _screen->_maxChars * 6, line, width);
+		lastLine = _fonts._font2->getLine(lines, _screen->_maxChars * 6, line, width);
 
 		// Set font colors
-		_fonts._font2._fontColors[0] = 0;
-		_fonts._font2._fontColors[1] = 27;
-		_fonts._font2._fontColors[2] = 28;
-		_fonts._font2._fontColors[3] = 29;
+		_fonts._font2->_fontColors[0] = 0;
+		_fonts._font2->_fontColors[1] = 27;
+		_fonts._font2->_fontColors[2] = 28;
+		_fonts._font2->_fontColors[3] = 29;
 
-		_fonts._font2.drawString(_screen, line, _screen->_printOrg);
+		_fonts._font2->drawString(_screen, line, _screen->_printOrg);
 		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 8);
 	} while (!lastLine);
 

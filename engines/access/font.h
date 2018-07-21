@@ -39,21 +39,23 @@ public:
 };
 
 class Font {
-private:
+protected:
+	byte _firstCharIndex;
 	int _bitWidth;
 	int _height;
 	Common::Array<Graphics::Surface> _chars;
+protected:
+	/**
+	 * Constructor
+	 */
+	Font(byte firstCharIndex);
 public:
 	static byte _fontColors[4];
 public:
-	Font();
-
-	~Font();
-
 	/**
-	 * Load the given font data
+	 * Destructor
 	 */
-	void load(const int *fontIndex, const byte *fontData);
+	virtual ~Font();
 
 	/**
 	 * Get the width of a given character
@@ -87,15 +89,53 @@ public:
 
 };
 
+class AmazonFont : public Font {
+private:
+	/**
+	 * Load the given font data
+	 */
+	void load(const int *fontIndex, const byte *fontData);
+public:
+	/**
+	 * Constructor
+	 */
+	AmazonFont(const int *fontIndex, const byte *fontData) : Font(32) {
+		load(fontIndex, fontData);
+	}
+
+};
+
+class MartianFont : public Font {
+private:
+	/**
+	 * Load the given font data
+	 */
+	void load(Common::SeekableReadStream &s);
+public:
+	/**
+	* Constructor
+	*/
+	MartianFont(int height, Common::SeekableReadStream &s);
+};
+
+
 class FontManager {
 public:
 	FontVal _charSet;
 	FontVal _charFor;
 	int _printMaxX;
-	Font _font1;
-	Font _font2;
+	Font *_font1;
+	Font *_font2;
 public:
+	/**
+	 * Constructor
+	 */
 	FontManager();
+
+	/**
+	 * Set the fonts
+	 */
+	void load(Font *font1, Font *font2);
 };
 
 } // End of namespace Access
