@@ -29,6 +29,8 @@
 
 namespace MutationOfJB {
 
+class Object;
+
 class ObjectAnimationTask : public Task {
 public:
 	ObjectAnimationTask();
@@ -37,6 +39,7 @@ public:
 	virtual void update() override;
 
 	void updateObjects();
+	bool handleHardcodedAnimation(Object *const object);
 
 private:
 	Timer _timer;

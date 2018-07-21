@@ -93,11 +93,81 @@ void ObjectAnimationTask::updateObjects() {
 				nextAnimationOffset = 0;
 		}
 
-		// TODO: Hardcoded animations.
-
 		object->_currentFrame = nextAnimationOffset + object->_firstFrame;
-		getTaskManager()->getGame().getRoom().drawObjectAnimation(i, nextAnimationOffset);
+
+		const bool drawObject = handleHardcodedAnimation(object);
+		if (drawObject) {
+			getTaskManager()->getGame().getRoom().drawObjectAnimation(i, nextAnimationOffset);
+		}
 	}
+}
+
+/**
+ * Nasty, hacky stuff the original game does to make some complex animations
+ * in the Carnival and Tavern Earthquake scenes possible.
+ *
+ * @param object Object to process.
+ * @return Whether to draw the object. It's important to respect this, otherwise
+ * some of the hardcoded animations would suffer from graphical glitches.
+ */
+bool ObjectAnimationTask::handleHardcodedAnimation(Object *const object) {
+	GameData &gameData = getTaskManager()->getGame().getGameData();
+	Scene *const scene = gameData.getCurrentScene();
+
+	const bool carnivalScene = gameData._currentScene == 30 && !gameData._partB;
+	const bool tavernScene = gameData._currentScene == 8 && gameData._partB;
+
+	if (carnivalScene) {
+		// This alternates between the two burglars' talking animations.
+		// Each burglar gets to talk for a varying amount of time since
+		// the switch occurs when his random frame is reached.
+		if (object->_WX == 1 && object->_currentFrame == 79) {
+			object->_currentFrame = 68;
+			object->_active = 0;
+			scene->getObject(6)->_active = 1;
+			scene->getObject(7)->_active = 0;
+			scene->getObject(8)->_active = 1;
+			return false;
+		} else if (object->_WX == 2 && object->_currentFrame == 91) {
+			object->_currentFrame = 80;
+			object->_active = 0;
+			scene->getObject(5)->_active = 1;
+			scene->getObject(7)->_active = 1;
+			scene->getObject(8)->_active = 0;
+			return false;
+		}
+
+		// The following makes sure you can't interact with the glass
+		// while the scientist is drinking from it.
+		if (scene->getObject(4)->_currentFrame > 52 && scene->getObject(4)->_active) {
+			scene->getStatic(9)->_active = 0; // disable scientist's glass
+		} else {
+			scene->getStatic(9)->_active = 1; // enable scientist's glass
+		}
+
+		if (!scene->getObject(4)->_active) {
+			scene->getStatic(9)->_active = 0; // disable scientist's glass
+		}
+	} else if (tavernScene) {
+		// Similarly to the carnival burglars, this alternates between
+		// the talking animations of the two soldiers in the tavern.
+		//
+		// At some point the script disables their conversation
+		// by nulling their _WX registers.
+		if (object->_WX == 3 && object->_currentFrame == 46) {
+			object->_currentFrame = 30;
+			object->_active = 0;
+			scene->getObject(3)->_active = 1;
+			return false;
+		} else if (object->_WX == 4 && object->_currentFrame == 63) {
+			object->_currentFrame = 47;
+			object->_active = 0;
+			scene->getObject(2)->_active = 1;
+			return false;
+		}
+	}
+
+	return true;
 }
 
 }
