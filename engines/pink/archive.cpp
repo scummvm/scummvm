@@ -285,7 +285,7 @@ Object *Archive::parseObject(bool &isCopyReturned) {
 }
 
 static int runtimeClassCmp(const void *key, const void *elem) {
-	return strcmp((const char *)key, *(const char **)elem);
+	return strcmp((const char *)key, *(const char * const *)elem);
 }
 
 uint Archive::findObjectId(const char *name) {
