@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	tasks/conversationtask.o \
 	tasks/objectanimationtask.o \
 	tasks/saytask.o \
+	tasks/sequentialtask.o \
 	tasks/taskmanager.o \
 	widgets/buttonwidget.o \
 	widgets/conversationwidget.o \

@@ -20,8 +20,10 @@
  *
  */
 
-#include "mutationofjb/tasks/task.h"
+#include "mutationofjb/commands/talkcommand.h"
+#include "mutationofjb/conversationlinelist.h"
 #include "mutationofjb/gamedata.h"
+#include "mutationofjb/tasks/task.h"
 #include "mutationofjb/widgets/conversationwidget.h"
 
 namespace MutationOfJB {
@@ -31,7 +33,7 @@ class ScriptExecutionContext;
 
 class ConversationTask : public Task, public ConversationWidgetCallback {
 public:
-	ConversationTask(uint8 sceneId, const ConversationInfo& convInfo) : _sceneId(sceneId), _convInfo(convInfo), _currentLineIndex(0), _currentItem(nullptr), _sayTask(nullptr), _substate(IDLE), _haveChoices(false), _innerExecCtx(nullptr) {}
+	ConversationTask(uint8 sceneId, const ConversationInfo& convInfo, TalkCommand::Mode mode) : _sceneId(sceneId), _convInfo(convInfo), _mode(mode), _currentLineIndex(0), _currentItem(nullptr), _substate(IDLE), _haveChoices(false), _innerExecCtx(nullptr) {}
 	virtual ~ConversationTask() {}
 
 	virtual void start() override;
@@ -44,12 +46,15 @@ private:
 	void finish();
 	void startExtra();
 	void gotoNextLine();
+	void createSayTasks(const ConversationLineList::Line *line);
+	uint8 getSpeechColor(const ConversationLineList::Speech &speech);
 
 	uint8 _sceneId;
 	const ConversationInfo &_convInfo;
+	TalkCommand::Mode _mode;
 	uint _currentLineIndex;
 	const ConversationInfo::Item *_currentItem;
-	SayTask* _sayTask;
+	TaskPtr _sayTask;
 
 	enum Substate {
 		IDLE,

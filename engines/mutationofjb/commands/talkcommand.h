@@ -25,6 +25,7 @@
 
 #include "mutationofjb/commands/seqcommand.h"
 #include "common/scummsys.h"
+#include "mutationofjb/tasks/task.h"
 
 namespace MutationOfJB {
 
@@ -43,13 +44,13 @@ public:
 		CARNIVAL_TICKET_SELLER_MODE
 	};
 
-	TalkCommand(Mode mode) : _mode(mode), _task(nullptr) {}
+	TalkCommand(Mode mode) : _mode(mode) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 
 private:
 	Mode _mode;
-	ConversationTask *_task;
+	TaskPtr _task;
 };
 
 }

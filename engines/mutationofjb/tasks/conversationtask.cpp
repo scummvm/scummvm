@@ -23,12 +23,12 @@
 #include "mutationofjb/tasks/conversationtask.h"
 
 #include "mutationofjb/assets.h"
-#include "mutationofjb/conversationlinelist.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/gui.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/tasks/saytask.h"
+#include "mutationofjb/tasks/sequentialtask.h"
 #include "mutationofjb/tasks/taskmanager.h"
 #include "mutationofjb/util.h"
 #include "mutationofjb/widgets/conversationwidget.h"
@@ -55,8 +55,7 @@ void ConversationTask::update() {
 	if (_sayTask) {
 		if (_sayTask->getState() == Task::FINISHED) {
 			getTaskManager()->removeTask(_sayTask);
-			delete _sayTask;
-			_sayTask = nullptr;
+			_sayTask.reset();
 
 			switch (_substate) {
 			case SAYING_NO_CHOICES:
@@ -66,9 +65,9 @@ void ConversationTask::update() {
 				const ConversationLineList& responseList = getTaskManager()->getGame().getAssets().getResponseList();
 				const ConversationLineList::Line *const line = responseList.getLine(_currentItem->_response);
 
-				_sayTask = new SayTask(line->_speeches[0]._text, _convInfo._color);
-				getTaskManager()->addTask(_sayTask);
 				_substate = SAYING_RESPONSE;
+				createSayTasks(line);
+				getTaskManager()->addTask(_sayTask);
 				break;
 			}
 			case SAYING_RESPONSE: {
@@ -102,14 +101,14 @@ void ConversationTask::onChoiceClicked(ConversationWidget *convWidget, int, uint
 	convWidget->clearChoices();
 
 	const ConversationLineList& toSayList = getTaskManager()->getGame().getAssets().getToSayList();
-	const ConversationLineList::Speech &speech = toSayList.getLine(item._choice)->_speeches[0];
+	const ConversationLineList::Line *line = toSayList.getLine(item._choice);
 
-	_sayTask = new SayTask(speech._text, _convInfo._color);
-	getTaskManager()->addTask(_sayTask);
 	_substate = SAYING_CHOICE;
+	createSayTasks(line);
+	getTaskManager()->addTask(_sayTask);
 	_currentItem = &item;
 
-	if (!speech.isRepeating()) {
+	if (!line->_speeches[0].isRepeating()) {
 		getTaskManager()->getGame().getGameData().getCurrentScene()->addExhaustedChoice(_convInfo._context, data + 1, _currentLineIndex + 1);
 	}
 }
@@ -176,9 +175,9 @@ void ConversationTask::showChoicesOrPick() {
 		const ConversationInfo::Item &item = currentLine->_items[itemsWithValidChoices.front()];
 		const ConversationLineList::Line *const line = toSayList.getLine(item._choice);
 
-		_sayTask = new SayTask(line->_speeches[0]._text, _convInfo._color);
-		getTaskManager()->addTask(_sayTask);
 		_substate = SAYING_CHOICE;
+		createSayTasks(line);
+		getTaskManager()->addTask(_sayTask);
 		_currentItem = &item;
 
 		if (!line->_speeches[0].isRepeating()) {
@@ -191,9 +190,9 @@ void ConversationTask::showChoicesOrPick() {
 		const ConversationInfo::Item &item = currentLine->_items[itemsWithValidResponses.front()];
 		const ConversationLineList::Line *const line = responseList.getLine(item._response);
 
-		_sayTask = new SayTask(line->_speeches[0]._text, _convInfo._color);
-		getTaskManager()->addTask(_sayTask);
 		_substate = SAYING_RESPONSE;
+		createSayTasks(line);
+		getTaskManager()->addTask(_sayTask);
 		_currentItem = &item;
 
 		_haveChoices = true;
@@ -204,7 +203,7 @@ void ConversationTask::showChoicesOrPick() {
 		if (_haveChoices) {
 			finish();
 		} else {
-			_sayTask = new SayTask("Nothing to talk about.", _convInfo._color); // TODO: This is hardcoded in executable. Load it.
+			_sayTask = TaskPtr(new SayTask("Nothing to talk about.", _convInfo._color)); // TODO: This is hardcoded in executable. Load it.
 			getTaskManager()->addTask(_sayTask);
 			_substate = SAYING_NO_CHOICES;
 			_currentItem = nullptr;
@@ -254,6 +253,34 @@ void ConversationTask::gotoNextLine() {
 		_currentLineIndex = _currentItem->_nextLineIndex - 1;
 		showChoicesOrPick();
 	}
+}
+
+void ConversationTask::createSayTasks(const ConversationLineList::Line *line) {
+	if (line->_speeches.size() == 1) {
+		const ConversationLineList::Speech &speech = line->_speeches[0];
+		_sayTask = TaskPtr(new SayTask(speech._text, getSpeechColor(speech)));
+	} else {
+		TaskPtrs tasks;
+		for (ConversationLineList::Speeches::const_iterator it = line->_speeches.begin(); it != line->_speeches.end(); ++it) {
+			tasks.push_back(TaskPtr(new SayTask(it->_text, getSpeechColor(*it))));
+		}
+		_sayTask = TaskPtr(new SequentialTask(tasks));
+	}
+}
+
+uint8 ConversationTask::getSpeechColor(const ConversationLineList::Speech &speech) {
+	uint8 color = WHITE;
+	if (_substate == SAYING_RESPONSE) {
+		color = _convInfo._color;
+		if (_mode == TalkCommand::RAY_AND_BUTTLEG_MODE) {
+			if (speech.isFirstSpeaker()) {
+				color = GREEN;
+			} else if (speech.isSecondSpeaker()) {
+				color = LIGHTBLUE;
+			}
+		}
+	}
+	return color;
 }
 
 }

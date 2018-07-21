@@ -25,23 +25,30 @@
 
 namespace MutationOfJB {
 
-void TaskManager::addTask(Task *task) {
+void TaskManager::addTask(const TaskPtr &task) {
 	_tasks.push_back(task);
 	task->setTaskManager(this);
 	task->start();
 }
 
-void TaskManager::removeTask(Task *task) {
-	Tasks::iterator it = Common::find(_tasks.begin(), _tasks.end(), task);
+void TaskManager::removeTask(const TaskPtr &task) {
+	TaskPtrs::iterator it = Common::find(_tasks.begin(), _tasks.end(), task);
 	if (it != _tasks.end()) {
 		_tasks.erase(it);
 	}
 }
 
 void TaskManager::update() {
-	for (Tasks::const_iterator it = _tasks.begin(); it != _tasks.end(); ++it) {
-		if ((*it)->getState() == Task::RUNNING) {
+	for (TaskPtrs::iterator it = _tasks.begin(); it != _tasks.end();) {
+		const Task::State state = (*it)->getState();
+		if (state == Task::RUNNING) {
 			(*it)->update();
+		}
+
+		if (state == Task::FINISHED) {
+			it = _tasks.erase(it);
+		} else {
+			++it;
 		}
 	}
 }

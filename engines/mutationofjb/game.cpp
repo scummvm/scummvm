@@ -61,7 +61,7 @@ Game::Game(MutationOfJBEngine *vm)
 
 	_gui.init();
 
-	_taskManager.addTask(new ObjectAnimationTask);
+	_taskManager.addTask(TaskPtr(new ObjectAnimationTask));
 }
 
 Common::RandomSource &Game::getRandomSource() {
