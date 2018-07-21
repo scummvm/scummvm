@@ -338,6 +338,14 @@ void Myst3Engine::openArchives() {
 	addArchive("RSRC.m3r", true);
 }
 
+bool Myst3Engine::isTextLanguageEnglish() const {
+	if (getGameLocalizationType() == kLocMonolingual && getGameLanguage() == Common::EN_ANY) {
+		return true;
+	}
+
+	return getGameLocalizationType() != kLocMonolingual && ConfMan.getInt("text_language") == kEnglish;
+}
+
 void Myst3Engine::closeArchives() {
 	for (uint i = 0; i < _archivesCommon.size(); i++)
 		delete _archivesCommon[i];

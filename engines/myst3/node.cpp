@@ -20,12 +20,14 @@
  *
  */
 
+#include "engines/myst3/database.h"
 #include "engines/myst3/effects.h"
 #include "engines/myst3/node.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
 #include "engines/myst3/subtitles.h"
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/rect.h"
 
@@ -197,10 +199,16 @@ void Node::loadSubtitles(uint32 id) {
 }
 
 bool Node::hasSubtitlesToDraw() {
-	if (!_subtitles)
+	if (!_subtitles || _vm->_state->getSpotSubtitle() <= 0)
 		return false;
 
-	return _vm->_state->getSpotSubtitle() > 0;
+	if (!_vm->isTextLanguageEnglish() && _vm->_state->getLocationRoom() == kRoomNarayan) {
+		// The words written on the walls in Narayan are always in English.
+		// Show the subtitles regardless of the "subtitles" setting if the game language is not English.
+		return true;
+	}
+
+	return ConfMan.getBool("subtitles");
 }
 
 void Node::drawOverlay() {

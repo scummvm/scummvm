@@ -117,6 +117,7 @@ public:
 	Common::Platform getPlatform() const;
 	Common::Language getGameLanguage() const;
 	uint32 getGameLocalizationType() const;
+	bool isTextLanguageEnglish() const;
 	bool isWideScreenModEnabled() const;
 
 	bool canSaveGameStateCurrently() override;
