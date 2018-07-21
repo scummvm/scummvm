@@ -46,6 +46,7 @@
 #include "mutationofjb/commands/definestructcommand.h"
 #include "mutationofjb/commands/talkcommand.h"
 #include "mutationofjb/commands/randomcommand.h"
+#include "mutationofjb/commands/setcolorcommand.h"
 #include "mutationofjb/game.h"
 
 namespace MutationOfJB {
@@ -74,6 +75,7 @@ static CommandParser **getParsers() {
 		new LabelCommandParser,
 		new RandomCommandParser,
 		new RandomBlockStartParser,
+		new SetColorCommandParser,
 		nullptr
 	};
 
