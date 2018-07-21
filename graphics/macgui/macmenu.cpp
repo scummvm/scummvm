@@ -62,7 +62,7 @@ enum {
 	kPopUp = 16,
 	kMenuBarBreak = 32,
 	kMenuBreak = 64,
-	kEndMenu = 128,
+	kEndMenu = 128
 };
 
 struct MacMenuSubItem {
