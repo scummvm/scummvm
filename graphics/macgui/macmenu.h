@@ -24,6 +24,7 @@
 #define GRAPHICS_MACGUI_MACMENU_H
 
 #include "common/str-array.h"
+#include "common/winexe_pe.h"
 
 namespace Common {
 class U32String;
@@ -48,6 +49,7 @@ public:
 	~MacMenu();
 
 	static Common::StringArray *readMenuFromResource(Common::SeekableReadStream *res);
+	static MacMenu *createMenuFromPEexe(Common::PEResources &exe, MacWindowManager *wm);
 
 	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
 	void setCommandsCallback(void (*callback)(int, Common::U32String &, void *), void *data) { _unicodeccallback = callback; _cdata = data; }

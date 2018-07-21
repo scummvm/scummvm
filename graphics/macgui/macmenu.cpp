@@ -56,6 +56,15 @@ enum {
 	kFontStyleExtended = 64
 };
 
+enum {
+	kGrayed = 1,
+	kInactive = 2,
+	kPopUp = 16,
+	kMenuBarBreak = 32,
+	kMenuBreak = 64,
+	kEndMenu = 128,
+};
+
 struct MacMenuSubItem {
 	Common::String text;
 	Common::U32String unicodeText;
@@ -160,6 +169,52 @@ Common::StringArray *MacMenu::readMenuFromResource(Common::SeekableReadStream *r
 	debug(4, "menu: %s", menu.c_str());
 
 	return result;
+}
+
+static Common::U32String readUnicodeString(Common::SeekableReadStream *stream) {
+	Common::Array<uint32> strData;
+	uint16 wchar;
+	while ((wchar = stream->readUint16LE()) != '\0') {
+		strData.push_back(wchar);
+	}
+	return strData.empty() ? Common::U32String() : Common::U32String(strData.data(), strData.size());
+}
+
+
+MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager *wm) {
+	Common::SeekableReadStream *menuData = exe.getResource(Common::kPEMenu, 128);
+	if (!menuData)
+		return nullptr;
+
+	menuData->readUint16LE(); // wVersion
+	menuData->readUint16LE(); // cbHeaderSize
+
+	MacMenu *menu = wm->addMenu();
+
+	int depth = 0;
+	int curMenuItemId = 0;
+	while (depth >= 0) {
+		uint16 flags = menuData->readUint16LE();
+		if (flags & kPopUp) {
+			if (depth == 0) {
+				menu->addMenuItem(readUnicodeString(menuData));
+			} else {
+				// TODO
+				// for now skip
+				readUnicodeString(menuData);
+			}
+			if (!(flags & kEndMenu)) {
+				depth++;
+			}
+		} else {
+			menuData->readUint16LE(); // menu id
+			menu->addMenuSubItem(curMenuItemId, readUnicodeString(menuData), 0);
+			if (flags & kEndMenu) {
+				depth--;
+			}
+		}
+	}
+	return menu;
 }
 
 void MacMenu::addStaticMenus(const MacMenuData *data) {
