@@ -23,14 +23,50 @@
 #ifndef MUTATIONOFJB_UTIL_H
 #define MUTATIONOFJB_UTIL_H
 
+#include "common/rect.h"
+
+#include "graphics/managed_surface.h"
+#include "graphics/surface.h"
+
 namespace Common {
 class String;
 }
+
 
 namespace MutationOfJB {
 
 void reportFileMissingError(const char *fileName);
 Common::String toUpperCP895(const Common::String &str);
+
+template <typename BlitOp>
+void blit_if(const Graphics::Surface &src, const Common::Rect &srcRect, Graphics::ManagedSurface &dest, const Common::Point &destPos, BlitOp blitOp) {
+	const Common::Rect srcBounds = srcRect;
+	const Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(), destPos.y + srcRect.height());
+
+	assert(srcRect.isValidRect());
+	assert(dest.format == src.format);
+
+	for (int y = 0; y < srcBounds.height(); ++y) {
+		const byte *srcP = reinterpret_cast<const byte *>(src.getBasePtr(srcBounds.left, srcBounds.top + y));
+		const byte *srcEndP = srcP + srcBounds.width();
+		byte *destP = reinterpret_cast<byte *>(dest.getBasePtr(destBounds.left, destBounds.top + y));
+
+		while (srcP != srcEndP) {
+			if (blitOp(*srcP, *destP)) {
+				*destP = *srcP;
+			}
+			++srcP;
+			++destP;
+		}
+	}
+
+	dest.getSubArea(destBounds); // This is a hack to invalidate the destination rectangle.
+}
+
+template <typename BlitOp>
+void blit_if(const Graphics::Surface &src, Graphics::ManagedSurface &dest, const Common::Point &destPos, BlitOp blitOp) {
+	blit_if(src, Common::Rect(0, 0, src.w, src.h), dest, destPos, blitOp);
+}
 
 }
 

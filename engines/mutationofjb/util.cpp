@@ -21,8 +21,10 @@
  */
 
 #include "mutationofjb/util.h"
+
 #include "common/str.h"
 #include "common/translation.h"
+
 #include "engines/engine.h"
 
 namespace MutationOfJB {
