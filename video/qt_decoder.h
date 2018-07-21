@@ -174,6 +174,7 @@ private:
 		uint32 getCurEditTrackDuration() const;
 		bool atLastEdit() const;
 		bool endOfCurEdit() const;
+		void checkEditListBounds();
 	};
 };
 

@@ -285,6 +285,8 @@ Audio::SeekableAudioStream *QuickTimeDecoder::AudioTrackHandler::getSeekableAudi
 }
 
 QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent) : _decoder(decoder), _parent(parent) {
+	checkEditListBounds();
+
 	_curEdit = 0;
 	enterNewEditList(false);
 
@@ -297,6 +299,36 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	_forcedDitherPalette = 0;
 	_ditherTable = 0;
 	_ditherFrame = 0;
+}
+
+void QuickTimeDecoder::VideoTrackHandler::checkEditListBounds() {
+	// Check all the edit list entries are within the bounds of the media
+	// In the Spanish version of Riven, the last edit of the video ogk.mov
+	// ends one frame after the end of the media.
+
+	uint32 offset = 0;
+	uint32 mediaDuration = _parent->mediaDuration * _decoder->_timeScale / _parent->timeScale;
+
+	for (uint i = 0; i < _parent->editList.size(); i++) {
+		EditListEntry &edit = _parent->editList[i];
+
+		if (edit.mediaTime < 0) {
+			continue; // Ignore empty edits
+		}
+
+		if ((uint32) edit.mediaTime > mediaDuration) {
+			// Check if the edit starts after the end of the media
+			// If so, mark it as empty so it is ignored
+			edit.mediaTime = -1;
+		} else if (edit.mediaTime + edit.trackDuration > mediaDuration) {
+			// Check if the edit ends after the end of the media
+			// If so, clip it so it fits in the media
+			edit.trackDuration = mediaDuration - edit.mediaTime;
+		}
+
+		edit.timeOffset = offset;
+		offset += edit.trackDuration;
+	}
 }
 
 QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
