@@ -80,7 +80,8 @@ enum {
 	kChooseThemeCmd			= 'chtf',
 	kUpdatesCheckCmd		= 'updc',
 	kKbdMouseSpeedChanged	= 'kmsc',
-	kJoystickDeadzoneChanged= 'jodc'
+	kJoystickDeadzoneChanged= 'jodc',
+	kGraphicsTabContainerReflowCmd = 'gtcr'
 };
 
 enum {
@@ -836,6 +837,9 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_joystickDeadzoneLabel->setValue(_joystickDeadzoneSlider->getValue());
 		_joystickDeadzoneLabel->markAsDirty();
 		break;
+	case kGraphicsTabContainerReflowCmd:
+		setupGraphicsTab();
+		break;
 	case kApplyCmd:
 		apply();
 		break;
@@ -1410,6 +1414,19 @@ void OptionsDialog::reflowLayout() {
 		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 
 	Dialog::reflowLayout();
+	setupGraphicsTab();
+}
+
+void OptionsDialog::setupGraphicsTab() {
+	_gfxPopUpDesc->setVisible(true);
+	_gfxPopUp->setVisible(true);
+	_stretchPopUpDesc->setVisible(true);
+	_stretchPopUp->setVisible(true);
+	_fullscreenCheckbox->setVisible(true);
+	_filteringCheckbox->setVisible(true);
+	_aspectCheckbox->setVisible(true);
+	_renderModePopUpDesc->setVisible(true);
+	_renderModePopUp->setVisible(true);
 }
 
 #pragma mark -
@@ -1493,7 +1510,9 @@ void GlobalOptionsDialog::build() {
 	// 1) The graphics tab
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
-	addGraphicControls(tab, "GlobalOptions_Graphics.");
+	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GlobalOptions_Graphics.Container", kGraphicsTabContainerReflowCmd);
+	graphicsContainer->setTarget(this);
+	addGraphicControls(graphicsContainer, "GlobalOptions_Graphics_Container.");
 
 	//
 	// The shader tab (currently visible only for Vita platform), visibility checking by features

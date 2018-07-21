@@ -38,6 +38,7 @@
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
+#include "gui/widgets/scrollcontainer.h"
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
@@ -72,7 +73,9 @@ enum {
 	kCmdExtraPathClear = 'PEXC',
 	kCmdGameBrowser = 'PGME',
 	kCmdSaveBrowser = 'PSAV',
-	kCmdSavePathClear = 'PSAC'
+	kCmdSavePathClear = 'PSAC',
+
+	kGraphicsTabContainerReflowCmd = 'gtcr'
 };
 
 /*
@@ -183,13 +186,15 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// 3) The graphics tab
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
+	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GameOptions_Graphics.Container", kGraphicsTabContainerReflowCmd);
+	graphicsContainer->setTarget(this);
 
 	if (g_system->getOverlayWidth() > 320)
-		_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _("Override global graphic settings"), 0, kCmdGlobalGraphicsOverride);
+		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _("Override global graphic settings"), 0, kCmdGlobalGraphicsOverride);
 	else
-		_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), 0, kCmdGlobalGraphicsOverride);
+		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), 0, kCmdGlobalGraphicsOverride);
 
-	addGraphicControls(tab, "GameOptions_Graphics.");
+	addGraphicControls(graphicsContainer, "GameOptions_Graphics_Container.");
 
 	//
 	// 4) The audio tab
@@ -292,6 +297,11 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// Add OK & Cancel buttons
 	new ButtonWidget(this, "GameOptions.Cancel", _("Cancel"), 0, kCloseCmd);
 	new ButtonWidget(this, "GameOptions.Ok", _("OK"), 0, kOKCmd);
+}
+
+void EditGameDialog::setupGraphicsTab() {
+	OptionsDialog::setupGraphicsTab();
+	_globalGraphicsOverride->setVisible(true);
 }
 
 void EditGameDialog::open() {
