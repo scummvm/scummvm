@@ -505,8 +505,8 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 		p += 3;
 	}
 
-	_colorWhite = brightest;
-	_colorBlack = darkest;
+	_colorWhite = bi;
+	_colorBlack = di;
 }
 
 void MacWindowManager::pauseEngine(bool pause) {
