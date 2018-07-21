@@ -28,6 +28,7 @@
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/util.h"
 
+#include "common/rect.h"
 #include "common/str.h"
 #include "common/translation.h"
 
@@ -117,6 +118,13 @@ bool Room::load(uint8 roomNumber, bool roomB) {
 	return decoder.decode(&callback);
 }
 
+// TODO: Take the threshold value from ATN data.
+struct ThresholdBlitOperation {
+	bool operator()(const byte /*srcColor*/, const byte destColor) {
+		return destColor <= 0xBF;
+	}
+};
+
 void Room::drawObjectAnimation(uint8 objectId, int animOffset) {
 	Scene *const scene = _game->getGameData().getCurrentScene();
 	if (!scene) {
@@ -129,8 +137,8 @@ void Room::drawObjectAnimation(uint8 objectId, int animOffset) {
 
 	const int startFrame = _objectsStart[objectId - 1];
 	const int animFrame = startFrame + animOffset;
-	// TODO: Threshold.
-	_screen->blitFrom(_surfaces[animFrame], Common::Point(object->_x, object->_y));
+
+	blit_if(_surfaces[animFrame], *_screen, Common::Point(object->_x, object->_y), ThresholdBlitOperation());
 }
 
 void Room::redraw() {
@@ -140,7 +148,7 @@ void Room::redraw() {
 	}
 
 	Scene *const currentScene = _game->getGameData().getCurrentScene();
-	for (int i = 0; i < currentScene->getNoObjects(); ++i) {
+	for (uint8 i = 0; i < currentScene->getNoObjects(); ++i) {
 		Object *const obj = currentScene->getObject(i + 1);
 		if (obj->_active) {
 			drawObjectAnimation(i + 1, obj->_currentFrame - _objectsStart[i] - 1);
