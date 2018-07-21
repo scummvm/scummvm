@@ -57,11 +57,10 @@ bool TalkCommandParser::parse(const Common::String &line, ScriptParseContext &, 
 Command::ExecuteResult TalkCommand::execute(ScriptExecutionContext &scriptExeCtx) {
 	if (!_task) {
 		_task = TaskPtr(new ConversationTask(scriptExeCtx.getGameData()._currentScene, scriptExeCtx.getGame().getGameData()._conversationInfo, _mode));
-		scriptExeCtx.getGame().getTaskManager().addTask(_task);
+		scriptExeCtx.getGame().getTaskManager().startTask(_task);
 	}
 
 	if (_task->getState() == Task::FINISHED) {
-		scriptExeCtx.getGame().getTaskManager().removeTask(_task);
 		_task.reset();
 
 		return Command::Finished;

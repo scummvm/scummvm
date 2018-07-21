@@ -247,7 +247,8 @@ GameData::GameData()
 	: _currentScene(0),
 	_lastScene(0),
 	_partB(false),
-	_inventory()
+	_inventory(),
+	_color(WHITE)
 	{}
 
 Scene *GameData::getScene(uint8 sceneId) {

@@ -44,6 +44,7 @@ public:
 
 	virtual void start() = 0;
 	virtual void update() = 0;
+	virtual void stop() { assert(false); } // Assert by default - stopping might not be safe for all tasks.
 
 	void setTaskManager(TaskManager *taskMan) { _taskManager = taskMan; }
 	TaskManager *getTaskManager() { return _taskManager; }

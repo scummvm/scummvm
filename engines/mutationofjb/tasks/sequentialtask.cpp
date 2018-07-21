@@ -48,7 +48,7 @@ void SequentialTask::runTasks() {
 		const TaskPtr &task = _tasks.front();
 		switch (task->getState()) {
 		case IDLE:
-			getTaskManager()->addTask(task);
+			getTaskManager()->startTask(task);
 			break;
 		case RUNNING:
 			return;

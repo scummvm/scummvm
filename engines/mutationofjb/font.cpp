@@ -77,7 +77,7 @@ bool Font::load(const Common::String &fileName) {
 void Font::drawGlyph(uint8 glyph, uint8 baseColor, int16 &x, int16 &y, Graphics::ManagedSurface &surf) const {
 	GlyphMap::iterator it = _glyphs.find(glyph);
 	if (it == _glyphs.end()) {
-		warning("Glyph %d not found", glyph);
+		// Missing glyph is a common situation in the game and it's okay to ignore it.
 		return;
 	}
 
