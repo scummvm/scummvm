@@ -228,6 +228,10 @@ uint8 Game::colorFromString(const char *colorStr) {
 		}
 	}
 
+	if (*colorStr == 'n') {
+		return static_cast<uint8>(atoi(colorStr + 1));
+	}
+
 	warning(_("Color not found"));
 	return 0x00;
 }

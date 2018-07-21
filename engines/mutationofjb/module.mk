@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	commands/renamecommand.o \
 	commands/saycommand.o \
 	commands/seqcommand.o \
+	commands/setcolorcommand.o \
 	commands/talkcommand.o \
 	commands/randomcommand.o \
 	tasks/conversationtask.o \
