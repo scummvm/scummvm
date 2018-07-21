@@ -68,8 +68,7 @@ PinkEngine::~PinkEngine() {
 }
 
 Common::Error PinkEngine::init() {
-	debug("PinkEngine init");
-
+	debugC(10, kPinkDebugGeneral, "PinkEngine init");
 	initGraphics(640, 480);
 
 	Common::PEResources exeResources;
@@ -101,7 +100,7 @@ Common::Error PinkEngine::init() {
 	setCursor(kLoadingCursor);
 
 	_orb.loadGame(this);
-	debug("Modules are loaded");
+	debugC(6, kPinkDebugGeneral, "Modules are loaded");
 
 	syncSoundSettings();
 
@@ -184,7 +183,7 @@ void PinkEngine::initModule(const Common::String &moduleName, const Common::Stri
 	if (saveFile)
 		_module->loadState(*saveFile);
 
-	debug("Module added");
+	debugC(6, kPinkDebugGeneral, "Module added");
 
 	_module->init(saveFile ? kLoadingSave : kLoadingNewGame, pageName);
 }

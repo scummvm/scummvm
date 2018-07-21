@@ -20,6 +20,7 @@
  *
  */
 
+#include "pink/pink.h"
 #include "pink/objects/actors/audio_info_pda_button.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/page.h"
@@ -27,7 +28,7 @@
 namespace Pink {
 
 void AudioInfoPDAButton::toConsole()  {
-	debug("AudioInfoPDAButton: _name = %s", _name.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "AudioInfoPDAButton: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
 		_actions[i]->toConsole();
 	}

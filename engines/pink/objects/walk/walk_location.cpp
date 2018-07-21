@@ -23,6 +23,7 @@
 #include "common/debug.h"
 
 #include "pink/archive.h"
+#include "pink/pink.h"
 #include "pink/objects/walk/walk_location.h"
 
 namespace Pink {
@@ -33,10 +34,10 @@ void WalkLocation::deserialize(Pink::Archive &archive) {
 }
 
 void WalkLocation::toConsole() {
-	debug("\tWalkLocation: _name =%s", _name.c_str());
-	debug("\tNeighbors:");
+	debugC(6, kPinkDebugLoadingObjects, "\tWalkLocation: _name =%s", _name.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\tNeighbors:");
 	for (uint i = 0; i < _neighbors.size(); ++i) {
-		debug("\t\t%s", _neighbors[i].c_str());
+		debugC(6, kPinkDebugLoadingObjects, "\t\t%s", _neighbors[i].c_str());
 	}
 }
 

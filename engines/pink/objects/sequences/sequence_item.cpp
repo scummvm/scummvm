@@ -23,6 +23,7 @@
 #include "common/debug.h"
 
 #include "pink/archive.h"
+#include "pink/pink.h"
 #include "pink/objects/actions/action.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/game_page.h"
@@ -39,7 +40,7 @@ void SequenceItem::deserialize(Archive &archive) {
 }
 
 void SequenceItem::toConsole() {
-	debug("\t\t\t\tSequenceItem: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\t\t\tSequenceItem: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
 bool SequenceItem::execute(uint segment, Sequence *sequence, bool loadingSave) {
@@ -68,7 +69,7 @@ bool SequenceItemLeader::isLeader() {
 }
 
 void SequenceItemLeader::toConsole() {
-	debug("\t\t\t\tSequenceItemLeader: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\t\t\tSequenceItemLeader: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
 
@@ -78,7 +79,7 @@ void SequenceItemLeaderAudio::deserialize(Archive &archive) {
 }
 
 void SequenceItemLeaderAudio::toConsole() {
-	debug("\t\t\t\tSequenceItemLeaderAudio: _actor=%s, _action=%s _sample=%d", _actor.c_str(), _action.c_str(), _sample);
+	debugC(6, kPinkDebugLoadingObjects, "\t\t\t\tSequenceItemLeaderAudio: _actor=%s, _action=%s _sample=%d", _actor.c_str(), _action.c_str(), _sample);
 }
 
 bool SequenceItemDefaultAction::execute(uint segment, Sequence *sequence, bool loadingSave) {
@@ -89,7 +90,7 @@ bool SequenceItemDefaultAction::execute(uint segment, Sequence *sequence, bool l
 }
 
 void SequenceItemDefaultAction::toConsole() {
-	debug("\t\t\t\tSequenceItemDefaultAction: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\t\t\tSequenceItemDefaultAction: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
 void SequenceItemDefaultAction::skip(Sequence *sequence) {

@@ -22,6 +22,7 @@
 
 #include "common/debug.h"
 
+#include "pink/pink.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/sequence.h"
@@ -46,7 +47,7 @@ SequenceContext::SequenceContext(Sequence *sequence)
 {
 	sequence->setContext(this);
 	Common::Array<SequenceItem *> &items = sequence->getItems();
-	debug("SequenceContext for %s", _sequence->getName().c_str());
+	debugC(6, kPinkDebugGeneral, "SequenceContext for %s", _sequence->getName().c_str());
 
 	for (uint i = 0; i < items.size(); ++i) {
 		bool found = 0;

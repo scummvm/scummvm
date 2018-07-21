@@ -24,6 +24,7 @@
 
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
+#include "pink/pink.h"
 #include "pink/objects/actions/action_still.h"
 #include "pink/objects/actors/actor.h"
 
@@ -35,19 +36,19 @@ void ActionStill::deserialize(Archive &archive) {
 }
 
 void ActionStill::toConsole() {
-	debug("\tActionStill: _name = %s, _fileName = %s, _z =%u _startFrame = %u",
+	debugC(6, kPinkDebugLoadingObjects, "\tActionStill: _name = %s, _fileName = %s, _z =%u _startFrame = %u",
 		  _name.c_str(), _fileName.c_str(), _z, _startFrame);
 }
 
 void ActionStill::end() {
 	ActionCEL::end();
-	debug("ActionStill %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	debugC(6, kPinkDebugGeneral, "ActionStill %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 void ActionStill::pause(bool paused) {}
 
 void ActionStill::onStart() {
-	debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
+	debugC(6, kPinkDebugGeneral, "Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
 
 	if (_startFrame >= _decoder.getFrameCount())
 		_startFrame = 0;

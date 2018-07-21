@@ -21,6 +21,7 @@
  */
 
 #include "pink/archive.h"
+#include "pink/pink.h"
 #include "pink/objects/inventory.h"
 #include "pink/objects/handlers/handler.h"
 #include "pink/objects/handlers/handler_mgr.h"
@@ -34,7 +35,7 @@ void HandlerMgr::deserialize(Archive &archive) {
 }
 
 void HandlerMgr::toConsole() {
-	debug("HandlerMgr:");
+	debugC(6, kPinkDebugLoadingObjects, "HandlerMgr:");
 	for (uint i = 0; i < _leftClickHandlers.size(); ++i) {
 		_leftClickHandlers[i]->toConsole();
 	}

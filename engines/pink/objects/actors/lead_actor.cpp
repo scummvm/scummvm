@@ -48,7 +48,7 @@ void LeadActor::deserialize(Archive &archive) {
 }
 
 void LeadActor::toConsole() {
-	debug("LeadActor: _name = %s", _name.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "LeadActor: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
 		_actions[i]->toConsole();
 	}
@@ -440,7 +440,7 @@ Actor *LeadActor::findActor(const Common::String &name) {
 }
 
 void ParlSqPink::toConsole() {
-	debug("ParlSqPink: _name = %s", _name.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "ParlSqPink: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
 		_actions[i]->toConsole();
 	}
@@ -454,7 +454,7 @@ WalkLocation *ParlSqPink::getWalkDestination() {
 }
 
 void PubPink::toConsole() {
-	debug("PubPink: _name = %s", _name.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "PubPink: _name = %s", _name.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
 		_actions[i]->toConsole();
 	}

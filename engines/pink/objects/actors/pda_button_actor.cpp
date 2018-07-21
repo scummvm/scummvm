@@ -57,7 +57,7 @@ void PDAButtonActor::deserialize(Archive &archive) {
 }
 
 void PDAButtonActor::toConsole() {
-	debug("PDAButtonActor: _name = %s, _x = %u _y = %u _hideOnStop = %u, _opaque = %u, _commandType = %u, _arg = %s",
+	debugC(6, kPinkDebugLoadingObjects, "PDAButtonActor: _name = %s, _x = %u _y = %u _hideOnStop = %u, _opaque = %u, _commandType = %u, _arg = %s",
 		  _name.c_str(), _x, _y, _hideOnStop, _opaque, (int)_command.type, _command.arg.c_str());
 }
 

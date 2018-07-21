@@ -21,22 +21,23 @@
  */
 
 #include "pink/archive.h"
+#include "pink/pink.h"
 #include "pink/objects/actions/action_hide.h"
 #include "pink/objects/actors/actor.h"
 
 namespace Pink {
 
 void ActionHide::toConsole() {
-	debug("\tActionHide: _name = %s", _name.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\tActionHide: _name = %s", _name.c_str());
 }
 
 void ActionHide::start() {
-	debug("Actor %s has now ActionHide %s", _actor->getName().c_str(), _name.c_str());
+	debugC(6, kPinkDebugGeneral, "Actor %s has now ActionHide %s", _actor->getName().c_str(), _name.c_str());
 	_actor->endAction();
 }
 
 void ActionHide::end() {
-	debug("ActionHide %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	debugC(6, kPinkDebugGeneral, "ActionHide %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 } //End of namespace Pink

@@ -38,7 +38,7 @@ bool Pink::ConditionGameVariable::evaluate(Actor *actor) {
 }
 
 void ConditionGameVariable::toConsole() {
-	debug("\t\tConditionGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
 bool Pink::ConditionModuleVariable::evaluate(Actor *actor) {
@@ -46,7 +46,7 @@ bool Pink::ConditionModuleVariable::evaluate(Actor *actor) {
 }
 
 void ConditionModuleVariable::toConsole() {
-	debug("\t\tConditionModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
 bool Pink::ConditionNotModuleVariable::evaluate(Actor *actor) {
@@ -54,7 +54,7 @@ bool Pink::ConditionNotModuleVariable::evaluate(Actor *actor) {
 }
 
 void ConditionNotModuleVariable::toConsole() {
-	debug("\t\tConditionNotModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionNotModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
 bool ConditionPageVariable::evaluate(Actor *actor) {
@@ -62,7 +62,7 @@ bool ConditionPageVariable::evaluate(Actor *actor) {
 }
 
 void ConditionPageVariable::toConsole() {
-	debug("\t\tConditionPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
 bool ConditionNotPageVariable::evaluate(Actor *actor) {
@@ -70,7 +70,7 @@ bool ConditionNotPageVariable::evaluate(Actor *actor) {
 }
 
 void ConditionNotPageVariable::toConsole() {
-	debug("\t\tConditionNotPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionNotPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
 void ConditionInventoryItemOwner::deserialize(Archive &archive) {
@@ -85,7 +85,7 @@ bool ConditionInventoryItemOwner::evaluate(Actor *actor) {
 }
 
 void ConditionInventoryItemOwner::toConsole() {
-	debug("\t\tConditionInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
 }
 
 bool ConditionNotInventoryItemOwner::evaluate(Actor *actor) {
@@ -93,7 +93,7 @@ bool ConditionNotInventoryItemOwner::evaluate(Actor *actor) {
 }
 
 void ConditionNotInventoryItemOwner::toConsole() {
-	debug("\t\tConditionNotInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tConditionNotInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
 }
 
 } // End of namespace Pink

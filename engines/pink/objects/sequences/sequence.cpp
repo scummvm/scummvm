@@ -23,6 +23,7 @@
 #include "common/debug.h"
 
 #include "pink/archive.h"
+#include "pink/pink.h"
 #include "pink/sound.h"
 #include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/game_page.h"
@@ -49,8 +50,8 @@ void Sequence::deserialize(Archive &archive) {
 }
 
 void Sequence::toConsole() {
-	debug("\t\tSequence %s", _name.c_str());
-	debug("\t\t\tItems:");
+	debugC(6, kPinkDebugLoadingObjects, "\t\tSequence %s", _name.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\t\tItems:");
 	for (uint i = 0; i < _items.size(); ++i) {
 		_items[i]->toConsole();
 	}
@@ -60,7 +61,7 @@ void Sequence::start(bool loadingSave) {
 	uint nextItemIndex = _context->getNextItemIndex();
 	if (nextItemIndex >= _items.size() ||
 		!_items[nextItemIndex]->execute(_context->getSegment(), this, loadingSave)) {
-		debug("Sequence %s ended", _name.c_str());
+		debugC(6, kPinkDebugGeneral, "Sequence %s ended", _name.c_str());
 		end();
 		return;
 	}
@@ -78,7 +79,7 @@ void Sequence::start(bool loadingSave) {
 
 void Sequence::update() {
 	if (!_context->getActor()->isPlaying()) {
-		debug("Sequence step ended");
+		debugC(6, kPinkDebugGeneral, "Sequence step ended");
 		start(0);
 	}
 }
@@ -132,8 +133,8 @@ void SequenceAudio::deserialize(Archive &archive) {
 }
 
 void SequenceAudio::toConsole() {
-	debug("\t\tSequenceAudio %s : _sound = %s", _name.c_str(), _soundName.c_str());
-	debug("\t\t\tItems:");
+	debugC(6, kPinkDebugLoadingObjects, "\t\tSequenceAudio %s : _sound = %s", _name.c_str(), _soundName.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\t\tItems:");
 	for (uint i = 0; i < _items.size(); ++i) {
 		_items[i]->toConsole();
 	}

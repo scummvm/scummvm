@@ -46,7 +46,7 @@ void ActionSound::deserialize(Archive &archive) {
 }
 
 void ActionSound::toConsole() {
-	debug("\tActionSound: _name = %s, _fileName = %s, _volume = %u, _isLoop = %u,"
+	debugC(6, kPinkDebugLoadingObjects, "\tActionSound: _name = %s, _fileName = %s, _volume = %u, _isLoop = %u,"
 				  " _isBackground = %u", _name.c_str(), _fileName.c_str(), _volume, _isLoop, _isBackground);
 }
 
@@ -62,7 +62,7 @@ void ActionSound::start() {
 
 	_sound.play(page->getResourceStream(_fileName), soundType, _volume, 0, _isLoop);
 
-	debug("Actor %s has now ActionSound %s", _actor->getName().c_str(), _name.c_str());
+	debugC(6, kPinkDebugGeneral, "Actor %s has now ActionSound %s", _actor->getName().c_str(), _name.c_str());
 }
 
 void ActionSound::end() {
@@ -72,7 +72,7 @@ void ActionSound::end() {
 		director->removeSound(this);
 	}
 
-	debug("ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	debugC(6, kPinkDebugGeneral, "ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 void ActionSound::update() {

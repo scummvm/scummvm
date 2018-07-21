@@ -23,6 +23,9 @@
 #include "common/debug.h"
 
 #include "pink/archive.h"
+#include "pink/director.h"
+#include "pink/pink.h"
+#include "pink/objects/actors/actor.h"
 #include "pink/objects/actions/action_text.h"
 
 namespace Pink {
@@ -43,7 +46,7 @@ void ActionText::deserialize(Archive &archive) {
 }
 
 void ActionText::toConsole() {
-	debug("\tActionText: _name = %s, _fileName = %s, "
+	debugC(6, kPinkDebugLoadingObjects, "\tActionText: _name = %s, _fileName = %s, "
 				  "_xLeft = %u, _yTop = %u, _xRight = %u, _yBottom = %u _centered = %u, _scrollBar = %u, _textColor = %u _backgroundColor = %u",
 		  _name.c_str(), _fileName.c_str(), _xLeft, _yTop, _xRight, _yBottom, _centered, _scrollBar, _textColor, _backgroundColor);
 }

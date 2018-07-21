@@ -91,40 +91,40 @@ void HandlerStartPage::execute(Sequence *sequence) {
 }
 
 void HandlerStartPage::toConsole() {
-	debug("HandlerStartPage:");
+	debugC(6, kPinkDebugLoadingObjects, "HandlerStartPage:");
 
-	debug("\tSideEffects:");
+	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
 	for (uint i = 0; i < _sideEffects.size(); ++i) {
 		_sideEffects[i]->toConsole();
 	}
 
-	debug("\tConditions:");
+	debugC(6, kPinkDebugLoadingObjects, "\tConditions:");
 	for (uint i = 0; i < _conditions.size(); ++i) {
 		_conditions[i]->toConsole();
 	}
 
-	debug("\tSequences:");
+	debugC(6, kPinkDebugLoadingObjects, "\tSequences:");
 	for (uint i = 0; i < _sequences.size(); ++i) {
-		debug("\t\t%s", _sequences[i].c_str());
+		debugC(6, kPinkDebugLoadingObjects, "\t\t%s", _sequences[i].c_str());
 	}
 }
 
 void HandlerLeftClick::toConsole() {
-	debug("HandlerLeftClick:");
+	debugC(6, kPinkDebugLoadingObjects, "HandlerLeftClick:");
 
-	debug("\tSideEffects:");
+	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
 	for (uint i = 0; i < _sideEffects.size(); ++i) {
 		_sideEffects[i]->toConsole();
 	}
 
-	debug("\tConditions:");
+	debugC(6, kPinkDebugLoadingObjects, "\tConditions:");
 	for (uint i = 0; i < _conditions.size(); ++i) {
 		_conditions[i]->toConsole();
 	}
 
-	debug("\tSequences:");
+	debugC(6, kPinkDebugLoadingObjects, "\tSequences:");
 	for (uint i = 0; i < _sequences.size(); ++i) {
-		debug("\t\t%s", _sequences[i].c_str());
+		debugC(6, kPinkDebugLoadingObjects, "\t\t%s", _sequences[i].c_str());
 	}
 }
 
@@ -135,20 +135,20 @@ void HandlerUseClick::deserialize(Archive &archive) {
 }
 
 void HandlerUseClick::toConsole() {
-	debug("HandlerUseClick: _inventoryItem=%s, _recepient=%s", _inventoryItem.c_str(), _recepient.c_str());
-	debug("\tSideEffects:");
+	debugC(6, kPinkDebugLoadingObjects, "HandlerUseClick: _inventoryItem=%s, _recepient=%s", _inventoryItem.c_str(), _recepient.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
 	for (uint i = 0; i < _sideEffects.size(); ++i) {
 		_sideEffects[i]->toConsole();
 	}
 
-	debug("\tConditions:");
+	debugC(6, kPinkDebugLoadingObjects, "\tConditions:");
 	for (uint i = 0; i < _conditions.size(); ++i) {
 		_conditions[i]->toConsole();
 	}
 
-	debug("\tSequences:");
+	debugC(6, kPinkDebugLoadingObjects, "\tSequences:");
 	for (uint i = 0; i < _sequences.size(); ++i) {
-		debug("\t\t%s", _sequences[i].c_str());
+		debugC(6, kPinkDebugLoadingObjects, "\t\t%s", _sequences[i].c_str());
 	}
 }
 

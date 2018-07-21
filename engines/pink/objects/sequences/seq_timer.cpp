@@ -43,7 +43,7 @@ void SeqTimer::deserialize(Archive &archive) {
 }
 
 void SeqTimer::toConsole() {
-	debug("\tSeqTimer: _actor=%s _period=%u _range=%u", _actor.c_str(), _period, _range);
+	debugC(6, kPinkDebugLoadingObjects, "\tSeqTimer: _actor=%s _period=%u _range=%u", _actor.c_str(), _period, _range);
 }
 
 void SeqTimer::update() {

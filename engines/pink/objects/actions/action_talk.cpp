@@ -22,6 +22,7 @@
  
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
+#include "pink/pink.h"
 #include "pink/sound.h"
 #include "pink/objects/actions/action_talk.h"
 #include "pink/objects/actors/actor.h"
@@ -35,7 +36,7 @@ void ActionTalk::deserialize(Archive &archive) {
 }
 
 void ActionTalk::toConsole() {
-	debug("\tActionTalk: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
+	debugC(6, kPinkDebugLoadingObjects, "\tActionTalk: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
 				  " _endFrame = %d, _intro = %u, _style = %u, _vox = %s",
 		  _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style, _vox.c_str());
 }

@@ -22,6 +22,7 @@
 
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
+#include "pink/pink.h"
 #include "pink/objects/actions/walk_action.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/walk/walk_location.h"
@@ -52,7 +53,7 @@ WalkLocation *WalkMgr::findLocation(const Common::String &name) {
 }
 
 void WalkMgr::toConsole() {
-	debug("WalkMgr:");
+	debugC(6, kPinkDebugLoadingObjects, "WalkMgr:");
 	for (uint i = 0; i < _locations.size(); ++i) {
 		_locations[i]->toConsole();
 	}

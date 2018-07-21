@@ -22,6 +22,7 @@
 
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
+#include "pink/pink.h"
 #include "pink/objects/actions/walk_action.h"
 #include "pink/objects/actors/actor.h"
 
@@ -34,7 +35,7 @@ void WalkAction::deserialize(Archive &archive) {
 }
 
 void WalkAction::toConsole() {
-	debug("\tWalkAction: _name = %s, _fileName = %s, _calcFramePositions = %u",
+	debugC(6, kPinkDebugLoadingObjects, "\tWalkAction: _name = %s, _fileName = %s, _calcFramePositions = %u",
 		  _name.c_str(), _fileName.c_str(), _toCalcFramePositions);
 }
 

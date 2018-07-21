@@ -42,7 +42,7 @@ void SideEffectExit::execute(Actor *actor) {
 }
 
 void SideEffectExit::toConsole() {
-	debug("\t\tSideEffectExit: _nextModule=%s, _nextPage=%s", _nextModule.c_str(), _nextPage.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectExit: _nextModule=%s, _nextPage=%s", _nextModule.c_str(), _nextPage.c_str());
 }
 
 void SideEffectLocation::deserialize(Archive &archive) {
@@ -57,7 +57,7 @@ void SideEffectLocation::execute(Actor *actor) {
 }
 
 void SideEffectLocation::toConsole() {
-	debug("\t\tSideEffectLocation: _location=%s", _location.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectLocation: _location=%s", _location.c_str());
 }
 
 void SideEffectInventoryItemOwner::deserialize(Archive &archive) {
@@ -72,7 +72,7 @@ void SideEffectInventoryItemOwner::execute(Actor *actor) {
 }
 
 void SideEffectInventoryItemOwner::toConsole() {
-	debug("\t\tSideEffectInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
 }
 
 void SideEffectVariable::deserialize(Pink::Archive &archive) {
@@ -85,7 +85,7 @@ void SideEffectGameVariable::execute(Actor *actor) {
 }
 
 void SideEffectGameVariable::toConsole() {
-	debug("\t\tSideEffectGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
 void SideEffectModuleVariable::execute(Actor *actor) {
@@ -93,7 +93,7 @@ void SideEffectModuleVariable::execute(Actor *actor) {
 }
 
 void SideEffectModuleVariable::toConsole() {
-	debug("\t\tSideEffectModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
 void SideEffectPageVariable::execute(Actor *actor) {
@@ -101,7 +101,7 @@ void SideEffectPageVariable::execute(Actor *actor) {
 }
 
 void SideEffectPageVariable::toConsole() {
-	debug("\t\tSideEffectPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
 void SideEffectRandomPageVariable::deserialize(Archive &archive) {
@@ -125,7 +125,7 @@ void SideEffectRandomPageVariable::toConsole() {
 		values += ',';
 	}
 	values += '}';
-	debug("\t\tSideEffectRandomPageVariable: _name=%s, _values=%s", _name.c_str(), values.c_str());
+	debugC(6, kPinkDebugLoadingObjects, "\t\tSideEffectRandomPageVariable: _name=%s, _values=%s", _name.c_str(), values.c_str());
 }
 
 } // End of namespace Pink

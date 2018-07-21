@@ -20,6 +20,7 @@
  *
  */
 
+#include "pink/pink.h"
 #include "pink/utils.h"
 #include "pink/constants.h"
 #include "pink/cursor_mgr.h"
@@ -38,7 +39,7 @@ void SupportingActor::deserialize(Archive &archive) {
 }
 
 void SupportingActor::toConsole() {
-	debug("SupportingActor: _name = %s, _location=%s, _pdaLink=%s, _cursor=%s",
+	debugC(6, kPinkDebugLoadingObjects, "SupportingActor: _name = %s, _location=%s, _pdaLink=%s, _cursor=%s",
 		  _name.c_str(), _location.c_str(), _pdaLink.c_str(), _cursor.c_str());
 	for (uint i = 0; i < _actions.size(); ++i) {
 		_actions[i]->toConsole();

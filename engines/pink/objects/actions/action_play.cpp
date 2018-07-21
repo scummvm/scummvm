@@ -24,6 +24,7 @@
 
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
+#include "pink/pink.h"
 #include "pink/objects/actions/action_play.h"
 #include "pink/objects/actors/actor.h"
 
@@ -35,13 +36,13 @@ void ActionPlay::deserialize(Archive &archive) {
 }
 
 void ActionPlay::toConsole() {
-	debug("\tActionPlay: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
+	debugC(6, kPinkDebugLoadingObjects, "\tActionPlay: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
 				  " _endFrame = %d", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame);
 }
 
 void ActionPlay::end() {
 	ActionCEL::end();
-	debug("ActionPlay %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	debugC(6, kPinkDebugGeneral, "ActionPlay %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 void ActionPlay::update() {
@@ -59,7 +60,7 @@ void ActionPlay::pause(bool paused) {
 }
 
 void ActionPlay::onStart() {
-	debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
+	debugC(6, kPinkDebugGeneral, "Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
 	int frameCount = _decoder.getFrameCount();
 	if (_stopFrame == -1 || _stopFrame >= frameCount)
 		_stopFrame = frameCount - 1;

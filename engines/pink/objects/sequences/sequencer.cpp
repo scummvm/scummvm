@@ -99,7 +99,7 @@ void Sequencer::authorParallelSequence(Sequence *seqeunce, bool loadingSave) {
 
 
 void Sequencer::toConsole() {
-	debug("Sequencer:");
+	debugC(6, kPinkDebugLoadingObjects, "Sequencer:");
 	for (uint i = 0; i < _sequences.size(); ++i) {
 		_sequences[i]->toConsole();
 	}

@@ -40,21 +40,21 @@ void HandlerTimerActions::deserialize(Archive &archive) {
 }
 
 void HandlerTimerActions::toConsole() {
-	debug("HandlerTimerActions:");
+	debugC(6, kPinkDebugLoadingObjects, "HandlerTimerActions:");
 
-	debug("\tSideEffects:");
+	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
 	for (uint i = 0; i < _sideEffects.size(); ++i) {
 		_sideEffects[i]->toConsole();
 	}
 
-	debug("\tConditions:");
+	debugC(6, kPinkDebugLoadingObjects, "\tConditions:");
 	for (uint i = 0; i < _conditions.size(); ++i) {
 		_conditions[i]->toConsole();
 	}
 
-	debug("\tActions:");
+	debugC(6, kPinkDebugLoadingObjects, "\tActions:");
 	for (uint i = 0; i < _actions.size(); ++i) {
-		debug("\t\t%s", _actions[i].c_str());
+		debugC(6, kPinkDebugLoadingObjects, "\t\t%s", _actions[i].c_str());
 	}
 }
 
@@ -70,21 +70,21 @@ void HandlerTimerActions::handle(Actor *actor) {
 }
 
 void HandlerTimerSequences::toConsole() {
-	debug("HandlerTimerSequences:");
+	debugC(6, kPinkDebugLoadingObjects, "HandlerTimerSequences:");
 
-	debug("\tSideEffects:");
+	debugC(6, kPinkDebugLoadingObjects, "\tSideEffects:");
 	for (uint i = 0; i < _sideEffects.size(); ++i) {
 		_sideEffects[i]->toConsole();
 	}
 
-	debug("\tConditions:");
+	debugC(6, kPinkDebugLoadingObjects, "\tConditions:");
 	for (uint i = 0; i < _conditions.size(); ++i) {
 		_conditions[i]->toConsole();
 	}
 
-	debug("\tSequences:");
+	debugC(6, kPinkDebugLoadingObjects, "\tSequences:");
 	for (uint i = 0; i < _sequences.size(); ++i) {
-		debug("\t\t%s", _sequences[i].c_str());
+		debugC(6, kPinkDebugLoadingObjects, "\t\t%s", _sequences[i].c_str());
 	}
 }
 
