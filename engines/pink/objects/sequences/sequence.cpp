@@ -61,7 +61,7 @@ void Sequence::start(bool loadingSave) {
 	uint nextItemIndex = _context->getNextItemIndex();
 	if (nextItemIndex >= _items.size() ||
 		!_items[nextItemIndex]->execute(_context->getSegment(), this, loadingSave)) {
-		debugC(6, kPinkDebugGeneral, "Sequence %s ended", _name.c_str());
+		debugC(6, kPinkDebugScripts, "Sequence %s ended", _name.c_str());
 		end();
 		return;
 	}
@@ -79,7 +79,7 @@ void Sequence::start(bool loadingSave) {
 
 void Sequence::update() {
 	if (!_context->getActor()->isPlaying()) {
-		debugC(6, kPinkDebugGeneral, "Sequence step ended");
+		debugC(6, kPinkDebugScripts, "SubSequence of %s Sequence ended", _name.c_str());
 		start(0);
 	}
 }

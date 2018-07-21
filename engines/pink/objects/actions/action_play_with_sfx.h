@@ -42,6 +42,8 @@ public:
 
 	void update() override;
 
+	void end() override;
+
 protected:
 	void onStart() override;
 

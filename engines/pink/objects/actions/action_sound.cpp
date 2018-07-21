@@ -62,7 +62,7 @@ void ActionSound::start() {
 
 	_sound.play(page->getResourceStream(_fileName), soundType, _volume, 0, _isLoop);
 
-	debugC(6, kPinkDebugGeneral, "Actor %s has now ActionSound %s", _actor->getName().c_str(), _name.c_str());
+	debugC(6, kPinkDebugActions, "Actor %s has now ActionSound %s", _actor->getName().c_str(), _name.c_str());
 }
 
 void ActionSound::end() {
@@ -72,7 +72,7 @@ void ActionSound::end() {
 		director->removeSound(this);
 	}
 
-	debugC(6, kPinkDebugGeneral, "ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	debugC(6, kPinkDebugActions, "ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 void ActionSound::update() {

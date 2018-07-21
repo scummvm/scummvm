@@ -73,8 +73,8 @@ enum {
 	kPinkDebugGeneral = 1 << 0,
 	kPinkDebugLoadingResources = 1 << 1,
 	kPinkDebugLoadingObjects = 1 << 2,
-	kPinkDebugGraphics = 1 << 3,
-	kPinkDebugSound = 1 << 4
+	kPinkDebugScripts = 1 << 3,
+	kPinkDebugActions = 1 << 4
 };
 
 class PinkEngine : public Engine {

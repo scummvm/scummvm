@@ -42,7 +42,7 @@ void ActionPlay::toConsole() {
 
 void ActionPlay::end() {
 	ActionCEL::end();
-	debugC(6, kPinkDebugGeneral, "ActionPlay %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	debugC(6, kPinkDebugActions, "ActionPlay %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 void ActionPlay::update() {
@@ -60,7 +60,7 @@ void ActionPlay::pause(bool paused) {
 }
 
 void ActionPlay::onStart() {
-	debugC(6, kPinkDebugGeneral, "Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
+	debugC(6, kPinkDebugActions, "Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
 	int frameCount = _decoder.getFrameCount();
 	if (_stopFrame == -1 || _stopFrame >= frameCount)
 		_stopFrame = frameCount - 1;

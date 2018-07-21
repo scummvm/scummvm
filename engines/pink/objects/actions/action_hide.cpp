@@ -32,12 +32,12 @@ void ActionHide::toConsole() {
 }
 
 void ActionHide::start() {
-	debugC(6, kPinkDebugGeneral, "Actor %s has now ActionHide %s", _actor->getName().c_str(), _name.c_str());
+	debugC(6, kPinkDebugActions, "Actor %s has now ActionHide %s", _actor->getName().c_str(), _name.c_str());
 	_actor->endAction();
 }
 
 void ActionHide::end() {
-	debugC(6, kPinkDebugGeneral, "ActionHide %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	debugC(6, kPinkDebugActions, "ActionHide %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 } //End of namespace Pink

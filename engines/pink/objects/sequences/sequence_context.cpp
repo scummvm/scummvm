@@ -47,7 +47,7 @@ SequenceContext::SequenceContext(Sequence *sequence)
 {
 	sequence->setContext(this);
 	Common::Array<SequenceItem *> &items = sequence->getItems();
-	debugC(6, kPinkDebugGeneral, "SequenceContext for %s", _sequence->getName().c_str());
+	debug(kPinkDebugScripts, "SequenceContext for %s", _sequence->getName().c_str());
 
 	for (uint i = 0; i < items.size(); ++i) {
 		bool found = 0;
@@ -58,7 +58,7 @@ SequenceContext::SequenceContext(Sequence *sequence)
 			}
 		}
 		if (!found) {
-			debug("%s", items[i]->getActor().c_str());
+			debug(kPinkDebugScripts, "%s", items[i]->getActor().c_str());
 			_states.push_back(SequenceActorState(items[i]->getActor()));
 		}
 	}

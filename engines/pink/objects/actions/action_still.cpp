@@ -42,13 +42,13 @@ void ActionStill::toConsole() {
 
 void ActionStill::end() {
 	ActionCEL::end();
-	debugC(6, kPinkDebugGeneral, "ActionStill %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	debugC(6, kPinkDebugActions, "ActionStill %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 void ActionStill::pause(bool paused) {}
 
 void ActionStill::onStart() {
-	debugC(6, kPinkDebugGeneral, "Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
+	debugC(6, kPinkDebugActions, "Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
 
 	if (_startFrame >= _decoder.getFrameCount())
 		_startFrame = 0;

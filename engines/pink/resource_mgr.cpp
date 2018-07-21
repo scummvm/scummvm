@@ -46,6 +46,8 @@ void ResourceMgr::init(PinkEngine *game, Page *page) {
 	_resCount = objDesc->resourcesCount;
 	orb->loadObject(page, objDesc);
 	_resDescTable = orb->createResDescTable(objDesc);
+
+	debugC(kPinkDebugLoadingResources, "%d Resource descriptions are loaded", _resCount);
 }
 
 void ResourceMgr::clear() {
@@ -77,6 +79,7 @@ Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(const Common::
 
 	stream->seek(desc->offset);
 
+	debugC(kPinkDebugLoadingResources, "Got stream of %s resource", name.c_str());
 	return new Common::SafeSeekableSubReadStream(stream, desc->offset,
 												 desc->offset + desc->size);
 }

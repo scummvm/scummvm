@@ -68,31 +68,32 @@ void Sequencer::authorSequence(Sequence *sequence, bool loadingSave) {
 
 	if (sequence) {
 		SequenceContext *context = new SequenceContext(sequence);
-
 		SequenceContext *confilct;
 		while((confilct = findConfilictingContextWith(context)) != nullptr)
 			confilct->getSequence()->forceEnd();
 
 		_context = context;
 		sequence->init(loadingSave);
+		debugC(5, kPinkDebugScripts, "Main Sequence %s started", sequence->getName().c_str());
 	}
 }
 
-void Sequencer::authorParallelSequence(Sequence *seqeunce, bool loadingSave) {
-	if (_context && _context->getSequence() == seqeunce)
+void Sequencer::authorParallelSequence(Sequence *sequence, bool loadingSave) {
+	if (_context && _context->getSequence() == sequence)
 		return;
 
 	for (uint i = 0; i < _parrallelContexts.size(); ++i) {
-		if (_parrallelContexts[i]->getSequence() == seqeunce)
+		if (_parrallelContexts[i]->getSequence() == sequence)
 			return;
 	}
 
 	const Common::String leadName = _page->getLeadActor()->getName();
-	SequenceContext *context = new SequenceContext(seqeunce);
+	SequenceContext *context = new SequenceContext(sequence);
 
 	if (!context->findState(leadName) && !findConfilictingContextWith(context)) {
 		_parrallelContexts.push_back(context);
-		seqeunce->init(loadingSave);
+		sequence->init(loadingSave);
+		debugC(6, kPinkDebugScripts, "Parallel Sequence %s started", sequence->getName().c_str());
 	} else
 		delete context;
 }

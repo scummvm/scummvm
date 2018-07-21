@@ -71,6 +71,11 @@ void ActionPlayWithSfx::onStart() {
 		_actor->endAction();
 }
 
+void ActionPlayWithSfx::end() {
+	ActionCEL::end();
+	debugC(6, kPinkDebugActions, "ActionPlayWithSfx %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+}
+
 void ActionSfx::deserialize(Pink::Archive &archive) {
 	_frame = archive.readDWORD();
 	_volume = archive.readDWORD();
@@ -86,6 +91,7 @@ void ActionSfx::toConsole() {
 void ActionSfx::play() {
 	Page *page = _sprite->getActor()->getPage();
 	if (!_sound.isPlaying()) {
+		debugC(kPinkDebugActions, "ActionSfx %s of %s is now playing", _sfxName.c_str(), _sprite->getName().c_str());
 		int8 balance = (_sprite->getDecoder()->getCenter().x * 396875 / 1000000) - 127;
 		_sound.play(page->getResourceStream(_sfxName), Audio::Mixer::kSFXSoundType, _volume, balance);
 	}

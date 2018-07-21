@@ -116,4 +116,9 @@ void ActionLoop::onStart() {
 	_forward = true;
 }
 
+void ActionLoop::end() {
+	ActionCEL::end();
+	debugC(6, kPinkDebugActions, "ActionLoop %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+}
+
 } // End of namespace Pink
