@@ -654,6 +654,11 @@ bool MacMenu::mouseMove(int x, int y) {
 bool MacMenu::mouseRelease(int x, int y) {
 	if (_menuActivated) {
 		_menuActivated = false;
+		_isVisible = false;
+
+		if (_wm->_mode & kWMModalMenuMode) {
+			_wm->pauseEngine(false);
+		}
 
 		if (_activeItem != -1 && _activeSubItem != -1 && _items[_activeItem]->subitems[_activeSubItem]->enabled) {
 			if (_items[_activeItem]->subitems[_activeSubItem]->unicode) {
