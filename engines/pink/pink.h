@@ -59,6 +59,10 @@
  *      missing menu
  */
 
+namespace Graphics {
+class MacMenu;
+}
+
 namespace Pink {
 
 class Console;
@@ -109,6 +113,8 @@ public:
 	void setVariable(Common::String &variable, Common::String &value);
 	bool checkValueOfVariable(Common::String &variable, Common::String &value);
 
+	void executeMenuCommand(uint id);
+
 	OrbFile *getOrb()  { return &_orb; }
 	BroFile *getBro()  { return _bro; }
 	Common::RandomSource &getRnd() { return _rnd; };
@@ -121,6 +127,8 @@ public:
 
 private:
 	Common::Error init();
+
+	void initMenu(Common::PEResources &exeResources);
 
 	bool loadCursors(Common::PEResources &exeResources);
 
@@ -139,6 +147,7 @@ private:
 	OrbFile  _orb;
 	BroFile *_bro;
 
+	Graphics::MacMenu *_menu;
 	Director *_director;
 	LeadActor *_actor;
 

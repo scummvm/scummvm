@@ -46,7 +46,7 @@ class ActionSound;
 
 class Director {
 public:
-	Director(Common::PEResources &exe);
+	Director();
 
 	void update();
 	bool processEvent(Common::Event &event);
@@ -81,7 +81,6 @@ private:
 private:
 	Graphics::Screen _surface;
 	Graphics::MacWindowManager _wm;
-	Graphics::MacMenu *_menu;
 	Common::Array<Common::Rect> _dirtyRects;
 	Common::Array<ActionCEL *> _sprites;
 	Common::Array<ActionCEL *> _savedSprites;

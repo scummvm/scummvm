@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	detection.o \
 	director.o \
 	file.o \
+	gui.o \
 	pda_mgr.o \
 	pink.o \
 	resource_mgr.o \
