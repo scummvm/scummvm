@@ -434,7 +434,7 @@ void MidiDriver_ThreadedMT32::onTimer() {
 class MT32EmuMusicPlugin : public MusicPluginObject {
 public:
 	const char *getName() const {
-		return _s("MT-32 Emulator");
+		return _s("MT-32 emulator");
 	}
 
 	const char *getId() const {

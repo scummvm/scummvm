@@ -2287,7 +2287,7 @@ void MidiDriver_ADLIB::adlibNoteOnEx(int chan, byte note, int mod) {
 class AdLibEmuMusicPlugin : public MusicPluginObject {
 public:
 	const char *getName() const {
-		return _s("AdLib Emulator");
+		return _s("AdLib emulator");
 	}
 
 	const char *getId() const {

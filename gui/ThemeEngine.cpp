@@ -254,9 +254,9 @@ ThemeEngine::~ThemeEngine() {
  *********************************************************/
 const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
 	{ _s("Disabled GFX"), _sc("Disabled GFX", "lowres"), "none", kGfxDisabled },
-	{ _s("Standard Renderer"), _s("Standard"), "normal", kGfxStandard },
+	{ _s("Standard renderer"), _s("Standard"), "normal", kGfxStandard },
 #ifndef DISABLE_FANCY_THEMES
-	{ _s("Antialiased Renderer"), _s("Antialiased"), "antialias", kGfxAntialias }
+	{ _s("Antialiased renderer"), _s("Antialiased"), "antialias", kGfxAntialias }
 #endif
 };
 
