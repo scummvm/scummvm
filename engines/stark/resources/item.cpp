@@ -1044,6 +1044,12 @@ Gfx::RenderEntry *ModelItem::getRenderEntry(const Common::Point &positionOffset)
 		_renderEntry->setVisual(visual);
 		_renderEntry->setPosition3D(_position3D, _direction3D);
 		_renderEntry->setSortKey(getSortKey());
+
+		Resources::Anim *anim = getAnim();
+		if (anim && anim->getSubType() == Anim::kAnimSkeleton) {
+			Resources::AnimSkeleton *animSkeleton = Resources::Object::cast<Resources::AnimSkeleton>(anim);
+			_renderEntry->setcastsShadow(animSkeleton->castsShadow());
+		}
 	} else {
 		_renderEntry->setVisual(nullptr);
 	}

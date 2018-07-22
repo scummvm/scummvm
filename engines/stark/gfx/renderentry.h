@@ -74,6 +74,7 @@ public:
 	void setPosition3D(const Math::Vector3d &position, float direction);
 	void setSortKey(float sortKey);
 	void setClickable(bool clickable);
+	void setcastsShadow(bool cast) { _castsShadow = cast; }
 
 	/** Gets the position */
 	Common::Point getPosition() const { return _position; }
@@ -115,6 +116,7 @@ protected:
 	float _direction3D;
 	float _sortKey;
 	bool _clickable;
+	bool _castsShadow;
 };
 
 typedef Common::Array<RenderEntry *> RenderEntryArray;

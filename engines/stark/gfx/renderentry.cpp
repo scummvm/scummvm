@@ -44,7 +44,8 @@ RenderEntry::RenderEntry(Resources::ItemVisual *owner, const Common::String &nam
 		_owner(owner),
 		_direction3D(0.0),
 		_sortKey(0.0),
-		_clickable(true) {
+		_clickable(true),
+		_castsShadow(false) {
 }
 
 void RenderEntry::render(const LightEntryArray &lights) {
@@ -60,7 +61,7 @@ void RenderEntry::render(const LightEntryArray &lights) {
 
 	VisualActor *actor = _visual->get<VisualActor>();
 	if (actor) {
-		actor->render(_position3D, _direction3D, lights);
+		actor->render(_position3D, _direction3D, lights, _castsShadow);
 	}
 
 	VisualProp *prop = _visual->get<VisualProp>();

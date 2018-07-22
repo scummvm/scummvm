@@ -49,7 +49,7 @@ OpenGLSActorRenderer::~OpenGLSActorRenderer() {
 	delete _shadowShader;
 }
 
-void OpenGLSActorRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) {
+void OpenGLSActorRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights, bool castsShadow) {
 	if (_modelIsDirty) {
 		// Update the OpenGL Buffer Objects if required
 		clearVertices();
@@ -115,33 +115,33 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 
 	_shader->unbind();
 
-	// Shadow
-	glEnable(GL_BLEND);
-	glEnable(GL_STENCIL_TEST);
+	if (castsShadow) {
+		glEnable(GL_BLEND);
+		glEnable(GL_STENCIL_TEST);
 
-	_shadowShader->enableVertexAttribute("position1", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 0);
-	_shadowShader->enableVertexAttribute("position2", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 12);
-	_shadowShader->enableVertexAttribute("bone1", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 24);
-	_shadowShader->enableVertexAttribute("bone2", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 28);
-	_shadowShader->enableVertexAttribute("boneWeight", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 32);
-	_shadowShader->use(true);
+		_shadowShader->enableVertexAttribute("position1", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 0);
+		_shadowShader->enableVertexAttribute("position2", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 12);
+		_shadowShader->enableVertexAttribute("bone1", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 24);
+		_shadowShader->enableVertexAttribute("bone2", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 28);
+		_shadowShader->enableVertexAttribute("boneWeight", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 32);
+		_shadowShader->use(true);
 
-	_shadowShader->setUniform("modelViewMatrix", modelViewMatrix);
-	_shadowShader->setUniform("projectionMatrix", projectionMatrix);
-	setBoneRotationArrayUniform(_shadowShader, "boneRotation");
-	setBonePositionArrayUniform(_shadowShader, "bonePosition");
+		_shadowShader->setUniform("modelViewMatrix", modelViewMatrix);
+		_shadowShader->setUniform("projectionMatrix", projectionMatrix);
+		setBoneRotationArrayUniform(_shadowShader, "boneRotation");
+		setBonePositionArrayUniform(_shadowShader, "bonePosition");
 
-	for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
-		GLuint ebo = _faceEBO[*face];
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glDrawElements(GL_TRIANGLES, (*face)->vertexIndices.size(), GL_UNSIGNED_INT, 0);
+		for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
+			GLuint ebo = _faceEBO[*face];
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+			glDrawElements(GL_TRIANGLES, (*face)->vertexIndices.size(), GL_UNSIGNED_INT, 0);
+		}
+
+		glDisable(GL_BLEND);
+		glDisable(GL_STENCIL_TEST);
+
+		_shadowShader->unbind();
 	}
-
-	glDisable(GL_BLEND);
-	glDisable(GL_STENCIL_TEST);
-
-	_shadowShader->unbind();
 }
 
 void OpenGLSActorRenderer::clearVertices() {

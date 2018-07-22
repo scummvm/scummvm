@@ -281,6 +281,8 @@ public:
 	/** Get the position in the animation loop in milliseconds */
 	uint32 getCurrentTime() const;
 
+	bool castsShadow() const { return _castsShadow; }
+
 protected:
 	void printData() override;
 
