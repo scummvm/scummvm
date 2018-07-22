@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-07-22 22:29+0200\n"
-"PO-Revision-Date: 2018-07-08 17:31+0000\n"
+"PO-Revision-Date: 2018-07-22 20:35+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
-"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fr/>\n"
+"Language-Team: French "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -799,22 +799,18 @@ msgid "Never"
 msgstr "Jamais"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 5 mins"
 msgstr "Toutes les 5 mins"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 10 mins"
 msgstr "Toutes les 10 mins"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 15 mins"
 msgstr "Toutes les 15 mins"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 30 mins"
 msgstr "Toutes les 30 mins"
 
@@ -944,14 +940,12 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Corrige le rapport d'aspect pour les jeux en 320x200"
 
 #: gui/options.cpp:1103
-#, fuzzy
 msgid "Preferred device:"
-msgstr "Sortie Préférée :"
+msgstr "Sortie préférée :"
 
 #: gui/options.cpp:1103
-#, fuzzy
 msgid "Music device:"
-msgstr "Sortie Audio :"
+msgstr "Sortie audio :"
 
 #: gui/options.cpp:1103 gui/options.cpp:1105
 msgid "Specifies preferred sound device or sound card emulator"
@@ -964,16 +958,14 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Spécifie le périphérique de sortie audio ou l'émulateur de carte audio"
 
 #: gui/options.cpp:1105
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr "Sortie Préférée :"
+msgstr "Sortie préférée :"
 
 #: gui/options.cpp:1105
-#, fuzzy
 msgctxt "lowres"
 msgid "Music device:"
-msgstr "Sortie Audio :"
+msgstr "Sortie audio :"
 
 #: gui/options.cpp:1132
 msgid "AdLib emulator:"
@@ -984,7 +976,6 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib est utilisé pour la musique dans de nombreux jeux"
 
 #: gui/options.cpp:1146
-#, fuzzy
 msgid "GM device:"
 msgstr "Sortie GM :"
 
@@ -1055,7 +1046,6 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 exacte (pas d'ému GM)"
 
 #: gui/options.cpp:1211
-#, fuzzy
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Roland GS (active le mappage MT-32)"
 
@@ -1072,7 +1062,6 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Ne pas utiliser la musique Roland MT-32"
 
 #: gui/options.cpp:1247
-#, fuzzy
 msgid "Text and speech:"
 msgstr "Dialogue :"
 
@@ -1093,7 +1082,6 @@ msgid "Subtitle speed:"
 msgstr "Vitesse des ST :"
 
 #: gui/options.cpp:1257
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "Dialogue :"
@@ -1130,7 +1118,6 @@ msgid "Music volume:"
 msgstr "Musique :"
 
 #: gui/options.cpp:1290
-#, fuzzy
 msgid "Mute all"
 msgstr "Silence"
 
@@ -1202,7 +1189,6 @@ msgid "Theme:"
 msgstr "Thème :"
 
 #: gui/options.cpp:1629
-#, fuzzy
 msgid "GUI renderer:"
 msgstr "Interface :"
 
@@ -1220,7 +1206,6 @@ msgid "Keys"
 msgstr "Touches"
 
 #: gui/options.cpp:1658
-#, fuzzy
 msgid "GUI language:"
 msgstr "Langue :"
 
@@ -1653,18 +1638,16 @@ msgid "Disabled GFX"
 msgstr "GFX désactivé"
 
 #: gui/ThemeEngine.cpp:257
-#, fuzzy
 msgid "Standard renderer"
-msgstr "Rendu Standard"
+msgstr "Rendu standard"
 
 #: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
 msgid "Standard"
 msgstr "Normal"
 
 #: gui/ThemeEngine.cpp:259
-#, fuzzy
 msgid "Antialiased renderer"
-msgstr "Rendu Anti-crénelé"
+msgstr "Rendu anti-crénelé"
 
 #: gui/ThemeEngine.cpp:259
 msgid "Antialiased"
@@ -2072,7 +2055,6 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Jeux possibles pour le moteur %s :"
 
 #: audio/adlib.cpp:2290
-#, fuzzy
 msgid "AdLib emulator"
 msgstr "Émulateur AdLib :"
 
@@ -2138,7 +2120,6 @@ msgstr ""
 "de log pour plus de détails."
 
 #: audio/mods/paula.cpp:196
-#, fuzzy
 msgid "Amiga Audio emulator"
 msgstr "Émulateur Amiga Audio"
 
@@ -2147,12 +2128,10 @@ msgid "No music"
 msgstr "Pas de musique"
 
 #: audio/softsynth/appleiigs.cpp:33
-#, fuzzy
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Émulateur Apple II GS (PAS IMPLÉMENTÉ)"
 
 #: audio/softsynth/cms.cpp:350
-#, fuzzy
 msgid "Creative Music System emulator"
 msgstr "Émulateur Creative Music System"
 
@@ -2169,22 +2148,18 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Initialisation de l'Émulateur MT-32"
 
 #: audio/softsynth/mt32.cpp:437
-#, fuzzy
 msgid "MT-32 emulator"
 msgstr "Émulateur MT-32"
 
 #: audio/softsynth/pcspk.cpp:139
-#, fuzzy
 msgid "PC Speaker emulator"
 msgstr "Émulateur Haut Parleur PC"
 
 #: audio/softsynth/pcspk.cpp:158
-#, fuzzy
 msgid "IBM PCjr emulator"
 msgstr "Émulateur IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1430
-#, fuzzy
 msgid "C64 Audio emulator"
 msgstr "Émulateur C64 Audio"
 
