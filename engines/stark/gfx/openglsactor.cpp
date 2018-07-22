@@ -26,6 +26,7 @@
 #include "engines/stark/model/animhandler.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 #include "engines/stark/gfx/opengls.h"
 #include "engines/stark/gfx/texture.h"
 
@@ -115,7 +116,7 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 
 	_shader->unbind();
 
-	if (castsShadow) {
+	if (castsShadow && StarkSettings->getBoolSetting(Settings::kShadow)) {
 		glEnable(GL_BLEND);
 		glEnable(GL_STENCIL_TEST);
 
