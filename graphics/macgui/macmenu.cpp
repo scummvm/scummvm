@@ -504,17 +504,21 @@ void MacMenu::renderSubmenu(MacMenuItem *menu) {
 	for (uint i = 0; i < menu->subitems.size(); i++) {
 		Common::String text(menu->subitems[i]->text);
 		Common::String acceleratorText(getAcceleratorString(menu->subitems[i], ""));
+
+		Common::U32String unicodeText(menu->subitems[i]->unicodeText);
+		// add unicode accelerator
+
 		int accelX = r->right - 25;
 
 		int color = _wm->_colorBlack;
-		if (i == (uint)_activeSubItem && !text.empty() && menu->subitems[i]->enabled) {
+		if (i == (uint)_activeSubItem && (!text.empty() || !unicodeText.empty()) && menu->subitems[i]->enabled) {
 			color = _wm->_colorWhite;
 			Common::Rect trect(r->left, y - (_wm->_fontMan->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
 			_screen.fillRect(trect, _wm->_colorBlack);
 		}
 
-		if (!text.empty()) {
+		if (!text.empty() || !unicodeText.empty()) {
 			ManagedSurface *s = &_screen;
 			int tx = x, ty = y;
 
@@ -527,7 +531,10 @@ void MacMenu::renderSubmenu(MacMenuItem *menu) {
 				_tempSurface.clear(kColorGreen);
 			}
 
-			_font->drawString(s, text, tx, ty, r->width(), color);
+			if (menu->subitems[i]->unicode)
+				_font->drawString(s, unicodeText, tx, ty, r->width(), color);
+			else
+				_font->drawString(s, text, tx, ty, r->width(), color);
 
 			if (!acceleratorText.empty())
 				_font->drawString(s, acceleratorText, accelX, ty, r->width(), color);
