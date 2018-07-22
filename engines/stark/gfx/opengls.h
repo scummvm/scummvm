@@ -25,6 +25,8 @@
 
 #include "common/system.h"
 
+//#define USE_GLES2
+
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "engines/stark/gfx/driver.h"
@@ -58,6 +60,7 @@ public:
 	OpenGL::Shader *createActorShaderInstance();
 	OpenGL::Shader *createSurfaceShaderInstance();
 	OpenGL::Shader *createFadeShaderInstance();
+	OpenGL::Shader *createShadowShaderInstance();
 
 	void start2DMode();
 	void end2DMode();
@@ -75,6 +78,7 @@ private:
 	OpenGL::Shader *_surfaceShader;
 	OpenGL::Shader *_actorShader;
 	OpenGL::Shader *_fadeShader;
+	OpenGL::Shader *_shadowShader;
 	uint32 _surfaceVBO;
 	uint32 _fadeVBO;
 };

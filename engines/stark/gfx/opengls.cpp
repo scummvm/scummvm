@@ -61,6 +61,7 @@ OpenGLSDriver::OpenGLSDriver() :
 	_surfaceShader(nullptr),
 	_actorShader(nullptr),
 	_fadeShader(nullptr),
+	_shadowShader(nullptr),
 	_surfaceVBO(0),
 	_fadeVBO(0) {
 }
@@ -71,6 +72,7 @@ OpenGLSDriver::~OpenGLSDriver() {
 	delete _surfaceShader;
 	delete _actorShader;
 	delete _fadeShader;
+	delete _shadowShader;
 }
 
 void OpenGLSDriver::init() {
@@ -84,6 +86,9 @@ void OpenGLSDriver::init() {
 
 	static const char* actorAttributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "normal", "texcoord", nullptr };
 	_actorShader = OpenGL::Shader::fromFiles("stark_actor", actorAttributes);
+
+	static const char* shadowAttributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", nullptr };
+	_shadowShader = OpenGL::Shader::fromFiles("stark_shadow", shadowAttributes);
 
 	static const char* fadeAttributes[] = { "position", nullptr };
 	_fadeShader = OpenGL::Shader::fromFiles("stark_fade", fadeAttributes);
@@ -199,6 +204,10 @@ OpenGL::Shader *OpenGLSDriver::createSurfaceShaderInstance() {
 
 OpenGL::Shader *OpenGLSDriver::createFadeShaderInstance() {
 	return _fadeShader->clone();
+}
+
+OpenGL::Shader *OpenGLSDriver::createShadowShaderInstance() {
+	return _shadowShader->clone();
 }
 
 Graphics::Surface *OpenGLSDriver::getViewportScreenshot() const {

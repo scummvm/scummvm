@@ -1,0 +1,24 @@
+in vec3 position1;
+in vec3 position2;
+in float bone1;
+in float bone2;
+in float boneWeight;
+
+const int maxBones = 70;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform vec4 boneRotation[maxBones];
+uniform vec3 bonePosition[maxBones];
+
+vec3 qrot(vec4 q, vec3 v) {
+	return v + 2.0 * cross(q.xyz, cross(q.xyz, v) + q.w * v);
+}
+
+void main() {
+	vec3 b1 = qrot(boneRotation[int(bone1)], position1) + bonePosition[int(bone1)];
+	vec3 b2 = qrot(boneRotation[int(bone2)], position2) + bonePosition[int(bone2)];
+	vec3 modelPosition = mix(b2, b1, boneWeight);
+
+	gl_Position = projectionMatrix * modelViewMatrix * vec4(modelPosition.x, 0.0, modelPosition.z, 1.0);
+}

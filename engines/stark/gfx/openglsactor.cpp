@@ -39,12 +39,14 @@ OpenGLSActorRenderer::OpenGLSActorRenderer(OpenGLSDriver *gfx) :
 		_gfx(gfx),
 		_faceVBO(0) {
 	_shader = _gfx->createActorShaderInstance();
+	_shadowShader = _gfx->createShadowShaderInstance();
 }
 
 OpenGLSActorRenderer::~OpenGLSActorRenderer() {
 	clearVertices();
 
 	delete _shader;
+	delete _shadowShader;
 }
 
 void OpenGLSActorRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) {
@@ -86,8 +88,8 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 	_shader->setUniform("modelViewMatrix", modelViewMatrix);
 	_shader->setUniform("projectionMatrix", projectionMatrix);
 	_shader->setUniform("normalMatrix", normalMatrix.getRotation());
-	setBoneRotationArrayUniform("boneRotation");
-	setBonePositionArrayUniform("bonePosition");
+	setBoneRotationArrayUniform(_shader, "boneRotation");
+	setBonePositionArrayUniform(_shader, "bonePosition");
 	setLightArrayUniform("lights", lights);
 
 	Common::Array<Face *> faces = _model->getFaces();
@@ -112,6 +114,28 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 	}
 
 	_shader->unbind();
+
+	// Shadow
+	_shadowShader->enableVertexAttribute("position1", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 0);
+	_shadowShader->enableVertexAttribute("position2", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 12);
+	_shadowShader->enableVertexAttribute("bone1", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 24);
+	_shadowShader->enableVertexAttribute("bone2", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 28);
+	_shadowShader->enableVertexAttribute("boneWeight", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 32);
+	_shadowShader->use(true);
+
+	_shadowShader->setUniform("modelViewMatrix", modelViewMatrix);
+	_shadowShader->setUniform("projectionMatrix", projectionMatrix);
+	setBoneRotationArrayUniform(_shadowShader, "boneRotation");
+	setBonePositionArrayUniform(_shadowShader, "bonePosition");
+
+	for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
+		GLuint ebo = _faceEBO[*face];
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glDrawElements(GL_TRIANGLES, (*face)->vertexIndices.size(), GL_UNSIGNED_INT, 0);
+	}
+
+	_shadowShader->unbind();
 }
 
 void OpenGLSActorRenderer::clearVertices() {
@@ -173,10 +197,10 @@ uint32 OpenGLSActorRenderer::createFaceEBO(const Face *face) {
 	return OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->vertexIndices.size(), &face->vertexIndices[0]);
 }
 
-void OpenGLSActorRenderer::setBonePositionArrayUniform(const char *uniform) {
+void OpenGLSActorRenderer::setBonePositionArrayUniform(OpenGL::Shader *shader, const char *uniform) {
 	const Common::Array<BoneNode *> &bones = _model->getBones();
 
-	GLint pos = _shader->getUniformLocation(uniform);
+	GLint pos = shader->getUniformLocation(uniform);
 	if (pos == -1) {
 		error("No uniform named '%s'", uniform);
 	}
@@ -194,10 +218,10 @@ void OpenGLSActorRenderer::setBonePositionArrayUniform(const char *uniform) {
 	delete[] positions;
 }
 
-void OpenGLSActorRenderer::setBoneRotationArrayUniform(const char *uniform) {
+void OpenGLSActorRenderer::setBoneRotationArrayUniform(OpenGL::Shader *shader, const char *uniform) {
 	const Common::Array<BoneNode *> &bones = _model->getBones();
 
-	GLint rot = _shader->getUniformLocation(uniform);
+	GLint rot = shader->getUniformLocation(uniform);
 	if (rot == -1) {
 		error("No uniform named '%s'", uniform);
 	}

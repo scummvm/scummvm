@@ -49,7 +49,7 @@ protected:
 	typedef Common::HashMap<Face *, uint32> FaceBufferMap;
 
 	OpenGLSDriver *_gfx;
-	OpenGL::Shader *_shader;
+	OpenGL::Shader *_shader, *_shadowShader;
 
 	uint32 _faceVBO;
 	FaceBufferMap _faceEBO;
@@ -58,8 +58,8 @@ protected:
 	void uploadVertices();
 	uint32 createModelVBO(const Model *model);
 	uint32 createFaceEBO(const Face *face);
-	void setBonePositionArrayUniform(const char *uniform);
-	void setBoneRotationArrayUniform(const char *uniform);
+	void setBonePositionArrayUniform(OpenGL::Shader *shader, const char *uniform);
+	void setBoneRotationArrayUniform(OpenGL::Shader *shader, const char *uniform);
 	void setLightArrayUniform(const char *uniform, const LightEntryArray &lights);
 };
 
