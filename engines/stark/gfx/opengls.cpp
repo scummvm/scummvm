@@ -130,7 +130,7 @@ void OpenGLSDriver::setViewport(const Common::Rect &rect, bool noScaling) {
 }
 
 void OpenGLSDriver::clearScreen() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void OpenGLSDriver::flipBuffer() {
@@ -184,6 +184,12 @@ void OpenGLSDriver::end2DMode() {
 void OpenGLSDriver::set3DMode() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+
+	// Blending and stencil test are only used in rendering shadows
+	// They are manually enabled and disabled there
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glStencilFunc(GL_EQUAL, 0, 0xFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 }
 
 Common::Rect OpenGLSDriver::getViewport() const {

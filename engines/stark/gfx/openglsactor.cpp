@@ -116,6 +116,9 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 	_shader->unbind();
 
 	// Shadow
+	glEnable(GL_BLEND);
+	glEnable(GL_STENCIL_TEST);
+
 	_shadowShader->enableVertexAttribute("position1", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 0);
 	_shadowShader->enableVertexAttribute("position2", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 12);
 	_shadowShader->enableVertexAttribute("bone1", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 24);
@@ -134,6 +137,9 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 		glDrawElements(GL_TRIANGLES, (*face)->vertexIndices.size(), GL_UNSIGNED_INT, 0);
 	}
+
+	glDisable(GL_BLEND);
+	glDisable(GL_STENCIL_TEST);
 
 	_shadowShader->unbind();
 }

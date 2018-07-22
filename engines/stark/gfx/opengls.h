@@ -25,8 +25,6 @@
 
 #include "common/system.h"
 
-//#define USE_GLES2
-
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "engines/stark/gfx/driver.h"
