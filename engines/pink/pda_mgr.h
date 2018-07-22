@@ -50,6 +50,8 @@ public:
 
 	void update() { _cursorMgr.update(); }
 
+	void close();
+
 	void onLeftButtonClick(Common::Point point);
 	void onLeftButtonUp(Common::Point point);
 	void onMouseMove(Common::Point point);
@@ -60,7 +62,6 @@ public:
 	void setLead(LeadActor *lead) { _lead = lead; }
 
 private:
-	void close();
 	void loadGlobal();
 
 	void initPerilButtons();

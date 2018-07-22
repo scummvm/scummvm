@@ -172,6 +172,9 @@ void PDAMgr::onMouseMove(Common::Point point) {
 }
 
 void PDAMgr::close() {
+	if (!_globalPage)
+		return;
+
 	delete _globalPage;
 	delete _page;
 	_globalPage = nullptr;

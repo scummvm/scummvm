@@ -214,6 +214,7 @@ void PinkEngine::addModule(const Common::String &moduleName) {
 void PinkEngine::removeModule() {
 	for (uint i = 0; i < _modules.size(); ++i) {
 		if (_module == _modules[i]) {
+			_pdaMgr.close();
 			_modules[i] = new ModuleProxy(_module->getName());
 			delete _module;
 			_module = nullptr;
