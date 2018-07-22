@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-22 13:22+0200\n"
+"POT-Creation-Date: 2018-07-22 22:29+0200\n"
 "PO-Revision-Date: 2018-04-18 10:12+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -786,19 +786,23 @@ msgid "Never"
 msgstr "Inoiz ez"
 
 #: gui/options.cpp:122
-msgid "every 5 mins"
+#, fuzzy
+msgid "Every 5 mins"
 msgstr "5 minuturo"
 
 #: gui/options.cpp:122
-msgid "every 10 mins"
+#, fuzzy
+msgid "Every 10 mins"
 msgstr "10 minuturo"
 
 #: gui/options.cpp:122
-msgid "every 15 mins"
+#, fuzzy
+msgid "Every 15 mins"
 msgstr "15 minuturo"
 
 #: gui/options.cpp:122
-msgid "every 30 mins"
+#, fuzzy
+msgid "Every 30 mins"
 msgstr "30 minuturo"
 
 #: gui/options.cpp:361 gui/options.cpp:690 gui/options.cpp:828
@@ -931,11 +935,13 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "320x200 jokoentzako formatu-ratioa zuzendu"
 
 #: gui/options.cpp:1103
-msgid "Preferred Device:"
+#, fuzzy
+msgid "Preferred device:"
 msgstr "Gogoko gailua:"
 
 #: gui/options.cpp:1103
-msgid "Music Device:"
+#, fuzzy
+msgid "Music device:"
 msgstr "Musika gailua:"
 
 #: gui/options.cpp:1103 gui/options.cpp:1105
@@ -947,13 +953,15 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Irteerako soinu txartel edo emuladorea ezartzen du"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Preferred Dev.:"
+msgid "Preferred dev.:"
 msgstr "Gail. gogokoa:"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Music Device:"
+msgid "Music device:"
 msgstr "Musika gailua:"
 
 #: gui/options.cpp:1132
@@ -965,7 +973,8 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib musikarako hainbat jokotan erabiltzen da"
 
 #: gui/options.cpp:1146
-msgid "GM Device:"
+#, fuzzy
+msgid "GM device:"
 msgstr "GM gailua:"
 
 #: gui/options.cpp:1146
@@ -1035,7 +1044,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Benetako Roland MT-32 (GM emulazio gabe)"
 
 #: gui/options.cpp:1211
-msgid "Roland GS Device (enable MT-32 mappings)"
+#, fuzzy
+msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Roland GS Gailua (gaitu MT-32 bihurketak)"
 
 #: gui/options.cpp:1211
@@ -1051,7 +1061,8 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Ez erabili Roland MT-32 musika"
 
 #: gui/options.cpp:1247
-msgid "Text and Speech:"
+#, fuzzy
+msgid "Text and speech:"
 msgstr "Testu eta ahotsa:"
 
 #: gui/options.cpp:1251 gui/options.cpp:1261
@@ -1071,8 +1082,9 @@ msgid "Subtitle speed:"
 msgstr "Azpitit. abiadura:"
 
 #: gui/options.cpp:1257
+#, fuzzy
 msgctxt "lowres"
-msgid "Text and Speech:"
+msgid "Text and speech:"
 msgstr "Testu eta ahotsa:"
 
 #: gui/options.cpp:1261
@@ -1107,7 +1119,8 @@ msgid "Music volume:"
 msgstr "Musika:"
 
 #: gui/options.cpp:1290
-msgid "Mute All"
+#, fuzzy
+msgid "Mute all"
 msgstr "Mututu dena"
 
 #: gui/options.cpp:1293
@@ -1178,7 +1191,8 @@ msgid "Theme:"
 msgstr "Gaia:"
 
 #: gui/options.cpp:1629
-msgid "GUI Renderer:"
+#, fuzzy
+msgid "GUI renderer:"
 msgstr "Interfazea:"
 
 #: gui/options.cpp:1641
@@ -1195,7 +1209,8 @@ msgid "Keys"
 msgstr "Teklak"
 
 #: gui/options.cpp:1658
-msgid "GUI Language:"
+#, fuzzy
+msgid "GUI language:"
 msgstr "Hizkuntza:"
 
 #: gui/options.cpp:1658
@@ -1629,7 +1644,8 @@ msgid "Disabled GFX"
 msgstr "GFX desgaituta"
 
 #: gui/ThemeEngine.cpp:257
-msgid "Standard Renderer"
+#, fuzzy
+msgid "Standard renderer"
 msgstr "Errendatzaile estandarra"
 
 #: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
@@ -1637,7 +1653,8 @@ msgid "Standard"
 msgstr "Estandarra"
 
 #: gui/ThemeEngine.cpp:259
-msgid "Antialiased Renderer"
+#, fuzzy
+msgid "Antialiased renderer"
 msgstr "Errendatzaile lausotua"
 
 #: gui/ThemeEngine.cpp:259
@@ -2034,8 +2051,9 @@ msgid "Matched game IDs for the %s engine:"
 msgstr ""
 
 #: audio/adlib.cpp:2290
-msgid "AdLib Emulator"
-msgstr "AdLib emuladorea"
+#, fuzzy
+msgid "AdLib emulator"
+msgstr "AdLib emuladorea:"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
@@ -2099,7 +2117,8 @@ msgstr ""
 "gehiagorako."
 
 #: audio/mods/paula.cpp:196
-msgid "Amiga Audio Emulator"
+#, fuzzy
+msgid "Amiga Audio emulator"
 msgstr "Amiga Audio emuladorea"
 
 #: audio/null.h:44
@@ -2107,11 +2126,13 @@ msgid "No music"
 msgstr "Musikarik ez"
 
 #: audio/softsynth/appleiigs.cpp:33
-msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
+#, fuzzy
+msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS emuladorea (INPLEMENTATU GABE)"
 
 #: audio/softsynth/cms.cpp:350
-msgid "Creative Music System Emulator"
+#, fuzzy
+msgid "Creative Music System emulator"
 msgstr "Creative musika sistema emuladorea"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
@@ -2127,19 +2148,23 @@ msgid "Initializing MT-32 Emulator"
 msgstr "MT-32 emuladorea hasieratzen"
 
 #: audio/softsynth/mt32.cpp:437
-msgid "MT-32 Emulator"
+#, fuzzy
+msgid "MT-32 emulator"
 msgstr "MT-32 emuladorea"
 
 #: audio/softsynth/pcspk.cpp:139
-msgid "PC Speaker Emulator"
+#, fuzzy
+msgid "PC Speaker emulator"
 msgstr "PC bozgoragailuaren emuladorea"
 
 #: audio/softsynth/pcspk.cpp:158
-msgid "IBM PCjr Emulator"
+#, fuzzy
+msgid "IBM PCjr emulator"
 msgstr "IBM PCjr emuladorea"
 
 #: audio/softsynth/sid.cpp:1430
-msgid "C64 Audio Emulator"
+#, fuzzy
+msgid "C64 Audio emulator"
 msgstr "C64 Audio emuladorea"
 
 #: backends/cloud/storage.cpp:211
@@ -4780,6 +4805,17 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#~ msgctxt "lowres"
+#~ msgid "Music Device:"
+#~ msgstr "Musika gailua:"
+
+#~ msgctxt "lowres"
+#~ msgid "Text and Speech:"
+#~ msgstr "Testu eta ahotsa:"
+
+#~ msgid "AdLib Emulator"
+#~ msgstr "AdLib emuladorea"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""

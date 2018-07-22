@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-22 13:22+0200\n"
+"POT-Creation-Date: 2018-07-22 22:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -773,19 +773,19 @@ msgid "Never"
 msgstr ""
 
 #: gui/options.cpp:122
-msgid "every 5 mins"
+msgid "Every 5 mins"
 msgstr ""
 
 #: gui/options.cpp:122
-msgid "every 10 mins"
+msgid "Every 10 mins"
 msgstr ""
 
 #: gui/options.cpp:122
-msgid "every 15 mins"
+msgid "Every 15 mins"
 msgstr ""
 
 #: gui/options.cpp:122
-msgid "every 30 mins"
+msgid "Every 30 mins"
 msgstr ""
 
 #: gui/options.cpp:361 gui/options.cpp:690 gui/options.cpp:828
@@ -911,11 +911,11 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr ""
 
 #: gui/options.cpp:1103
-msgid "Preferred Device:"
+msgid "Preferred device:"
 msgstr ""
 
 #: gui/options.cpp:1103
-msgid "Music Device:"
+msgid "Music device:"
 msgstr ""
 
 #: gui/options.cpp:1103 gui/options.cpp:1105
@@ -928,12 +928,12 @@ msgstr ""
 
 #: gui/options.cpp:1105
 msgctxt "lowres"
-msgid "Preferred Dev.:"
+msgid "Preferred dev.:"
 msgstr ""
 
 #: gui/options.cpp:1105
 msgctxt "lowres"
-msgid "Music Device:"
+msgid "Music device:"
 msgstr ""
 
 #: gui/options.cpp:1132
@@ -945,7 +945,7 @@ msgid "AdLib is used for music in many games"
 msgstr ""
 
 #: gui/options.cpp:1146
-msgid "GM Device:"
+msgid "GM device:"
 msgstr ""
 
 #: gui/options.cpp:1146
@@ -1009,7 +1009,7 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr ""
 
 #: gui/options.cpp:1211
-msgid "Roland GS Device (enable MT-32 mappings)"
+msgid "Roland GS device (enable MT-32 mappings)"
 msgstr ""
 
 #: gui/options.cpp:1211
@@ -1023,7 +1023,7 @@ msgid "Don't use Roland MT-32 music"
 msgstr ""
 
 #: gui/options.cpp:1247
-msgid "Text and Speech:"
+msgid "Text and speech:"
 msgstr ""
 
 #: gui/options.cpp:1251 gui/options.cpp:1261
@@ -1044,7 +1044,7 @@ msgstr ""
 
 #: gui/options.cpp:1257
 msgctxt "lowres"
-msgid "Text and Speech:"
+msgid "Text and speech:"
 msgstr ""
 
 #: gui/options.cpp:1261
@@ -1079,7 +1079,7 @@ msgid "Music volume:"
 msgstr ""
 
 #: gui/options.cpp:1290
-msgid "Mute All"
+msgid "Mute all"
 msgstr ""
 
 #: gui/options.cpp:1293
@@ -1148,7 +1148,7 @@ msgid "Theme:"
 msgstr ""
 
 #: gui/options.cpp:1629
-msgid "GUI Renderer:"
+msgid "GUI renderer:"
 msgstr ""
 
 #: gui/options.cpp:1641
@@ -1165,7 +1165,7 @@ msgid "Keys"
 msgstr ""
 
 #: gui/options.cpp:1658
-msgid "GUI Language:"
+msgid "GUI language:"
 msgstr ""
 
 #: gui/options.cpp:1658
@@ -1584,7 +1584,7 @@ msgid "Disabled GFX"
 msgstr ""
 
 #: gui/ThemeEngine.cpp:257
-msgid "Standard Renderer"
+msgid "Standard renderer"
 msgstr ""
 
 #: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
@@ -1592,7 +1592,7 @@ msgid "Standard"
 msgstr ""
 
 #: gui/ThemeEngine.cpp:259
-msgid "Antialiased Renderer"
+msgid "Antialiased renderer"
 msgstr ""
 
 #: gui/ThemeEngine.cpp:259
@@ -1965,7 +1965,7 @@ msgid "Matched game IDs for the %s engine:"
 msgstr ""
 
 #: audio/adlib.cpp:2290
-msgid "AdLib Emulator"
+msgid "AdLib emulator"
 msgstr ""
 
 #: audio/fmopl.cpp:71
@@ -2022,7 +2022,7 @@ msgid ""
 msgstr ""
 
 #: audio/mods/paula.cpp:196
-msgid "Amiga Audio Emulator"
+msgid "Amiga Audio emulator"
 msgstr ""
 
 #: audio/null.h:44
@@ -2030,11 +2030,11 @@ msgid "No music"
 msgstr ""
 
 #: audio/softsynth/appleiigs.cpp:33
-msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
+msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr ""
 
 #: audio/softsynth/cms.cpp:350
-msgid "Creative Music System Emulator"
+msgid "Creative Music System emulator"
 msgstr ""
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
@@ -2050,19 +2050,19 @@ msgid "Initializing MT-32 Emulator"
 msgstr ""
 
 #: audio/softsynth/mt32.cpp:437
-msgid "MT-32 Emulator"
+msgid "MT-32 emulator"
 msgstr ""
 
 #: audio/softsynth/pcspk.cpp:139
-msgid "PC Speaker Emulator"
+msgid "PC Speaker emulator"
 msgstr ""
 
 #: audio/softsynth/pcspk.cpp:158
-msgid "IBM PCjr Emulator"
+msgid "IBM PCjr emulator"
 msgstr ""
 
 #: audio/softsynth/sid.cpp:1430
-msgid "C64 Audio Emulator"
+msgid "C64 Audio emulator"
 msgstr ""
 
 #: backends/cloud/storage.cpp:211

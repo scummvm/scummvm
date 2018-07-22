@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-22 13:22+0200\n"
+"POT-Creation-Date: 2018-07-22 22:29+0200\n"
 "PO-Revision-Date: 2018-04-18 10:18+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -795,19 +795,23 @@ msgid "Never"
 msgstr "Ніколи"
 
 #: gui/options.cpp:122
-msgid "every 5 mins"
+#, fuzzy
+msgid "Every 5 mins"
 msgstr "кожні 5 хв"
 
 #: gui/options.cpp:122
-msgid "every 10 mins"
+#, fuzzy
+msgid "Every 10 mins"
 msgstr "кожні 10 хв"
 
 #: gui/options.cpp:122
-msgid "every 15 mins"
+#, fuzzy
+msgid "Every 15 mins"
 msgstr "кожні 15 хв"
 
 #: gui/options.cpp:122
-msgid "every 30 mins"
+#, fuzzy
+msgid "Every 30 mins"
 msgstr "кожні 30 хв"
 
 #: gui/options.cpp:361 gui/options.cpp:690 gui/options.cpp:828
@@ -935,11 +939,13 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Коригувати співвідношення сторін для ігор з графікою 320x200"
 
 #: gui/options.cpp:1103
-msgid "Preferred Device:"
+#, fuzzy
+msgid "Preferred device:"
 msgstr "Уподобаний пристрій:"
 
 #: gui/options.cpp:1103
-msgid "Music Device:"
+#, fuzzy
+msgid "Music device:"
 msgstr "Музич. пристрій:"
 
 #: gui/options.cpp:1103 gui/options.cpp:1105
@@ -951,14 +957,16 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Вказує вихідний звуковий пристрій або емулятор звукової карти"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Preferred Dev.:"
+msgid "Preferred dev.:"
 msgstr "Уподоб. пристрій:"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Music Device:"
-msgstr "Музичний пристрій:"
+msgid "Music device:"
+msgstr "Музич. пристрій:"
 
 #: gui/options.cpp:1132
 msgid "AdLib emulator:"
@@ -969,7 +977,8 @@ msgid "AdLib is used for music in many games"
 msgstr "Звукова карта AdLib використовується багатьма іграми для музики"
 
 #: gui/options.cpp:1146
-msgid "GM Device:"
+#, fuzzy
+msgid "GM device:"
 msgstr "Пристрій GM:"
 
 #: gui/options.cpp:1146
@@ -1038,7 +1047,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Справжній Roland MT-32 (вимкнути емуляцию GM)"
 
 #: gui/options.cpp:1211
-msgid "Roland GS Device (enable MT-32 mappings)"
+#, fuzzy
+msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Режим Roland GS (ввімкнути маплення MT-32)"
 
 #: gui/options.cpp:1211
@@ -1054,7 +1064,8 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Не використовувати музику для Roland MT-32"
 
 #: gui/options.cpp:1247
-msgid "Text and Speech:"
+#, fuzzy
+msgid "Text and speech:"
 msgstr "Текст і озвучка:"
 
 #: gui/options.cpp:1251 gui/options.cpp:1261
@@ -1074,8 +1085,9 @@ msgid "Subtitle speed:"
 msgstr "Швид. субтитрів:"
 
 #: gui/options.cpp:1257
+#, fuzzy
 msgctxt "lowres"
-msgid "Text and Speech:"
+msgid "Text and speech:"
 msgstr "Текст і озвучка:"
 
 #: gui/options.cpp:1261
@@ -1110,7 +1122,8 @@ msgid "Music volume:"
 msgstr "Гучність музики:"
 
 #: gui/options.cpp:1290
-msgid "Mute All"
+#, fuzzy
+msgid "Mute all"
 msgstr "Вимкнути все"
 
 #: gui/options.cpp:1293
@@ -1181,7 +1194,8 @@ msgid "Theme:"
 msgstr "Тема:"
 
 #: gui/options.cpp:1629
-msgid "GUI Renderer:"
+#, fuzzy
+msgid "GUI renderer:"
 msgstr "Растер. GUI:"
 
 #: gui/options.cpp:1641
@@ -1198,7 +1212,8 @@ msgid "Keys"
 msgstr "Клавіші"
 
 #: gui/options.cpp:1658
-msgid "GUI Language:"
+#, fuzzy
+msgid "GUI language:"
 msgstr "Мова інтерф.:"
 
 #: gui/options.cpp:1658
@@ -1628,7 +1643,8 @@ msgid "Disabled GFX"
 msgstr "Без графіки"
 
 #: gui/ThemeEngine.cpp:257
-msgid "Standard Renderer"
+#, fuzzy
+msgid "Standard renderer"
 msgstr "Стандартний растеризатор"
 
 #: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
@@ -1636,7 +1652,8 @@ msgid "Standard"
 msgstr "Стандартний"
 
 #: gui/ThemeEngine.cpp:259
-msgid "Antialiased Renderer"
+#, fuzzy
+msgid "Antialiased renderer"
 msgstr "Растеризатор зі згладжуванням"
 
 #: gui/ThemeEngine.cpp:259
@@ -2039,8 +2056,9 @@ msgid "Matched game IDs for the %s engine:"
 msgstr ""
 
 #: audio/adlib.cpp:2290
-msgid "AdLib Emulator"
-msgstr "Емулятор AdLib"
+#, fuzzy
+msgid "AdLib emulator"
+msgstr "Емулятор AdLib:"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
@@ -2104,7 +2122,8 @@ msgstr ""
 "протоколу для додаткової інформації."
 
 #: audio/mods/paula.cpp:196
-msgid "Amiga Audio Emulator"
+#, fuzzy
+msgid "Amiga Audio emulator"
 msgstr "Аміга Аудіо Емулятор"
 
 #: audio/null.h:44
@@ -2112,11 +2131,13 @@ msgid "No music"
 msgstr "Без музики"
 
 #: audio/softsynth/appleiigs.cpp:33
-msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
+#, fuzzy
+msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS Емулятор (НЕ РЕАЛІЗОВАНО)"
 
 #: audio/softsynth/cms.cpp:350
-msgid "Creative Music System Emulator"
+#, fuzzy
+msgid "Creative Music System emulator"
 msgstr "Емулятор Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
@@ -2132,19 +2153,23 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Налаштовую емулятор MT-32"
 
 #: audio/softsynth/mt32.cpp:437
-msgid "MT-32 Emulator"
+#, fuzzy
+msgid "MT-32 emulator"
 msgstr "Емулятор MT-32"
 
 #: audio/softsynth/pcspk.cpp:139
-msgid "PC Speaker Emulator"
+#, fuzzy
+msgid "PC Speaker emulator"
 msgstr "Емулятор PC спікера"
 
 #: audio/softsynth/pcspk.cpp:158
-msgid "IBM PCjr Emulator"
+#, fuzzy
+msgid "IBM PCjr emulator"
 msgstr "Емулятор IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1430
-msgid "C64 Audio Emulator"
+#, fuzzy
+msgid "C64 Audio emulator"
 msgstr "C64 Аудіо Емулятор"
 
 #: backends/cloud/storage.cpp:211
@@ -4787,6 +4812,17 @@ msgstr ""
 "Цей файл зі збереженою грою використовує версію %u, але движок підтримує "
 "версію до %d. Вам потрібна поновлена версія ScummVM для завантаження цього "
 "файлу."
+
+#~ msgctxt "lowres"
+#~ msgid "Music Device:"
+#~ msgstr "Музичний пристрій:"
+
+#~ msgctxt "lowres"
+#~ msgid "Text and Speech:"
+#~ msgstr "Текст і озвучка:"
+
+#~ msgid "AdLib Emulator"
+#~ msgstr "Емулятор AdLib"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""

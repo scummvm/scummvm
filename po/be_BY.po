@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-22 13:22+0200\n"
+"POT-Creation-Date: 2018-07-22 22:29+0200\n"
 "PO-Revision-Date: 2018-04-18 10:07+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -792,19 +792,23 @@ msgid "Never"
 msgstr "Ніколі"
 
 #: gui/options.cpp:122
-msgid "every 5 mins"
+#, fuzzy
+msgid "Every 5 mins"
 msgstr "кожныя 5 хв"
 
 #: gui/options.cpp:122
-msgid "every 10 mins"
+#, fuzzy
+msgid "Every 10 mins"
 msgstr "кожныя 10 хв"
 
 #: gui/options.cpp:122
-msgid "every 15 mins"
+#, fuzzy
+msgid "Every 15 mins"
 msgstr "кожныя 15 хв"
 
 #: gui/options.cpp:122
-msgid "every 30 mins"
+#, fuzzy
+msgid "Every 30 mins"
 msgstr "кожныя 30 хв"
 
 #: gui/options.cpp:361 gui/options.cpp:690 gui/options.cpp:828
@@ -932,11 +936,13 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Карэктаваць суадносіны бакоў для гульняў з адрозненнем 320x200"
 
 #: gui/options.cpp:1103
-msgid "Preferred Device:"
+#, fuzzy
+msgid "Preferred device:"
 msgstr "Упадабаная прылада:"
 
 #: gui/options.cpp:1103
-msgid "Music Device:"
+#, fuzzy
+msgid "Music device:"
 msgstr "Гукавая прылада:"
 
 #: gui/options.cpp:1103 gui/options.cpp:1105
@@ -948,13 +954,15 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Зазначае выходную гукавую прыладу ці эмулятар гукавой карты"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Preferred Dev.:"
+msgid "Preferred dev.:"
 msgstr "Упадабаная:"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Music Device:"
+msgid "Music device:"
 msgstr "Гукавая прылада:"
 
 #: gui/options.cpp:1132
@@ -966,7 +974,8 @@ msgid "AdLib is used for music in many games"
 msgstr "Гукавая карта AdLib выкарыстоўваецца многімі гульнямі"
 
 #: gui/options.cpp:1146
-msgid "GM Device:"
+#, fuzzy
+msgid "GM device:"
 msgstr "Прылада GM:"
 
 #: gui/options.cpp:1146
@@ -1034,7 +1043,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Сапраўдны Roland MT-32 (без эмуляцыі GM)"
 
 #: gui/options.cpp:1211
-msgid "Roland GS Device (enable MT-32 mappings)"
+#, fuzzy
+msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Рэжым Roland GS (дазволіць мапінг MT-32)"
 
 #: gui/options.cpp:1211
@@ -1050,7 +1060,8 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Не выкарыстоўваць музыку для MT-32"
 
 #: gui/options.cpp:1247
-msgid "Text and Speech:"
+#, fuzzy
+msgid "Text and speech:"
 msgstr "Тэкст і агучка:"
 
 #: gui/options.cpp:1251 gui/options.cpp:1261
@@ -1070,8 +1081,9 @@ msgid "Subtitle speed:"
 msgstr "Хуткасць тытраў:"
 
 #: gui/options.cpp:1257
+#, fuzzy
 msgctxt "lowres"
-msgid "Text and Speech:"
+msgid "Text and speech:"
 msgstr "Тэкст і агучка:"
 
 #: gui/options.cpp:1261
@@ -1106,7 +1118,8 @@ msgid "Music volume:"
 msgstr "Гучн. музыкі:"
 
 #: gui/options.cpp:1290
-msgid "Mute All"
+#, fuzzy
+msgid "Mute all"
 msgstr "Выкл. усё"
 
 #: gui/options.cpp:1293
@@ -1177,7 +1190,8 @@ msgid "Theme:"
 msgstr "Тэма:"
 
 #: gui/options.cpp:1629
-msgid "GUI Renderer:"
+#, fuzzy
+msgid "GUI renderer:"
 msgstr "Малявалка GUI:"
 
 #: gui/options.cpp:1641
@@ -1194,7 +1208,8 @@ msgid "Keys"
 msgstr "Клавішы"
 
 #: gui/options.cpp:1658
-msgid "GUI Language:"
+#, fuzzy
+msgid "GUI language:"
 msgstr "Мова GUI:"
 
 #: gui/options.cpp:1658
@@ -1621,7 +1636,8 @@ msgid "Disabled GFX"
 msgstr "Без графікі"
 
 #: gui/ThemeEngine.cpp:257
-msgid "Standard Renderer"
+#, fuzzy
+msgid "Standard renderer"
 msgstr "Стандартны растарызатар"
 
 #: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
@@ -1629,7 +1645,8 @@ msgid "Standard"
 msgstr "Стандартны"
 
 #: gui/ThemeEngine.cpp:259
-msgid "Antialiased Renderer"
+#, fuzzy
+msgid "Antialiased renderer"
 msgstr "Растарызатар са згладжваннем"
 
 #: gui/ThemeEngine.cpp:259
@@ -2034,8 +2051,9 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Магчымыя ID гульні:"
 
 #: audio/adlib.cpp:2290
-msgid "AdLib Emulator"
-msgstr "Эмулятар AdLib"
+#, fuzzy
+msgid "AdLib emulator"
+msgstr "Эмулятар AdLib:"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
@@ -2099,7 +2117,8 @@ msgstr ""
 "пратаколу для больш падрабязнай інфармацыі."
 
 #: audio/mods/paula.cpp:196
-msgid "Amiga Audio Emulator"
+#, fuzzy
+msgid "Amiga Audio emulator"
 msgstr "Эмулятар гуку Amiga"
 
 #: audio/null.h:44
@@ -2107,11 +2126,13 @@ msgid "No music"
 msgstr "Без музыкі"
 
 #: audio/softsynth/appleiigs.cpp:33
-msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
+#, fuzzy
+msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Эмулятар Apple II GS (НЕ ПАДТРЫМВАЕЦЦА)"
 
 #: audio/softsynth/cms.cpp:350
-msgid "Creative Music System Emulator"
+#, fuzzy
+msgid "Creative Music System emulator"
 msgstr "Эмулятар Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
@@ -2127,19 +2148,23 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Наладжваю эмулятар MT-32"
 
 #: audio/softsynth/mt32.cpp:437
-msgid "MT-32 Emulator"
+#, fuzzy
+msgid "MT-32 emulator"
 msgstr "Эмулятар MT-32"
 
 #: audio/softsynth/pcspk.cpp:139
-msgid "PC Speaker Emulator"
+#, fuzzy
+msgid "PC Speaker emulator"
 msgstr "Эмулятар дынаміка ПК"
 
 #: audio/softsynth/pcspk.cpp:158
-msgid "IBM PCjr Emulator"
+#, fuzzy
+msgid "IBM PCjr emulator"
 msgstr "Эмулятар IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1430
-msgid "C64 Audio Emulator"
+#, fuzzy
+msgid "C64 Audio emulator"
 msgstr "Эмулятар гуку C64"
 
 #: backends/cloud/storage.cpp:211
@@ -4809,6 +4834,17 @@ msgid ""
 msgstr ""
 "Гэты файл захаванай гульні мае версію %u, але рухавічок падтрымвае версіі да "
 "%d. Вам патрэбна новая версія ScummVM для карыстання гэтым файлам."
+
+#~ msgctxt "lowres"
+#~ msgid "Music Device:"
+#~ msgstr "Гукавая прылада:"
+
+#~ msgctxt "lowres"
+#~ msgid "Text and Speech:"
+#~ msgstr "Тэкст і агучка:"
+
+#~ msgid "AdLib Emulator"
+#~ msgstr "Эмулятар AdLib"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""

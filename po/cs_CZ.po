@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-22 13:22+0200\n"
+"POT-Creation-Date: 2018-07-22 22:29+0200\n"
 "PO-Revision-Date: 2018-04-18 10:09+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -792,19 +792,23 @@ msgid "Never"
 msgstr "Nikdy"
 
 #: gui/options.cpp:122
-msgid "every 5 mins"
+#, fuzzy
+msgid "Every 5 mins"
 msgstr "Ka¾dých 5 min"
 
 #: gui/options.cpp:122
-msgid "every 10 mins"
+#, fuzzy
+msgid "Every 10 mins"
 msgstr "Ka¾dých 10 min"
 
 #: gui/options.cpp:122
-msgid "every 15 mins"
+#, fuzzy
+msgid "Every 15 mins"
 msgstr "Ka¾dých 15 min"
 
 #: gui/options.cpp:122
-msgid "every 30 mins"
+#, fuzzy
+msgid "Every 30 mins"
 msgstr "Ka¾dých 30 min"
 
 #: gui/options.cpp:361 gui/options.cpp:690 gui/options.cpp:828
@@ -932,11 +936,13 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Korigovat pomìr stran pro hry 320x200"
 
 #: gui/options.cpp:1103
-msgid "Preferred Device:"
+#, fuzzy
+msgid "Preferred device:"
 msgstr "Prioritní Zaøízení:"
 
 #: gui/options.cpp:1103
-msgid "Music Device:"
+#, fuzzy
+msgid "Music device:"
 msgstr "Hudební zaøízení:"
 
 #: gui/options.cpp:1103 gui/options.cpp:1105
@@ -948,13 +954,15 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Stanoví výstupní zvukové zaøízení nebo emulátor zvukové karty"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Preferred Dev.:"
+msgid "Preferred dev.:"
 msgstr "Prioritní Zaø.:"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Music Device:"
+msgid "Music device:"
 msgstr "Hudební zaøízení:"
 
 #: gui/options.cpp:1132
@@ -966,7 +974,8 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib se pou¾ívá pro hudbu v mnoha hrách"
 
 #: gui/options.cpp:1146
-msgid "GM Device:"
+#, fuzzy
+msgid "GM device:"
 msgstr "GM Zaøízení:"
 
 #: gui/options.cpp:1146
@@ -1034,7 +1043,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Opravdový Roland MT-32 (¾ádná GM emulace)"
 
 #: gui/options.cpp:1211
-msgid "Roland GS Device (enable MT-32 mappings)"
+#, fuzzy
+msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Zaøízení Roland GS (zapne mapování MT-32)"
 
 #: gui/options.cpp:1211
@@ -1050,7 +1060,8 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Nepou¾ívat hudbu Roland MT-32"
 
 #: gui/options.cpp:1247
-msgid "Text and Speech:"
+#, fuzzy
+msgid "Text and speech:"
 msgstr "Text a Øeè:"
 
 #: gui/options.cpp:1251 gui/options.cpp:1261
@@ -1070,8 +1081,9 @@ msgid "Subtitle speed:"
 msgstr "Rychlost titulkù:"
 
 #: gui/options.cpp:1257
+#, fuzzy
 msgctxt "lowres"
-msgid "Text and Speech:"
+msgid "Text and speech:"
 msgstr "Text a Øeè:"
 
 #: gui/options.cpp:1261
@@ -1106,7 +1118,8 @@ msgid "Music volume:"
 msgstr "Hlasitost hudby:"
 
 #: gui/options.cpp:1290
-msgid "Mute All"
+#, fuzzy
+msgid "Mute all"
 msgstr "Ztlumit V¹e"
 
 #: gui/options.cpp:1293
@@ -1175,7 +1188,8 @@ msgid "Theme:"
 msgstr "Vzhled:"
 
 #: gui/options.cpp:1629
-msgid "GUI Renderer:"
+#, fuzzy
+msgid "GUI renderer:"
 msgstr "GUI Vykreslovaè:"
 
 #: gui/options.cpp:1641
@@ -1192,7 +1206,8 @@ msgid "Keys"
 msgstr "Klávesy"
 
 #: gui/options.cpp:1658
-msgid "GUI Language:"
+#, fuzzy
+msgid "GUI language:"
 msgstr "Jazyk GUI:"
 
 #: gui/options.cpp:1658
@@ -1624,7 +1639,8 @@ msgid "Disabled GFX"
 msgstr "GFX zakázáno"
 
 #: gui/ThemeEngine.cpp:257
-msgid "Standard Renderer"
+#, fuzzy
+msgid "Standard renderer"
 msgstr "Standardní Vykreslovaè"
 
 #: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
@@ -1632,7 +1648,8 @@ msgid "Standard"
 msgstr "Standardní"
 
 #: gui/ThemeEngine.cpp:259
-msgid "Antialiased Renderer"
+#, fuzzy
+msgid "Antialiased renderer"
 msgstr "Vykreslovaè s vyhlazenými hranami"
 
 #: gui/ThemeEngine.cpp:259
@@ -2037,8 +2054,9 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Shodné ID hry:"
 
 #: audio/adlib.cpp:2290
-msgid "AdLib Emulator"
-msgstr "AdLib Emulátor"
+#, fuzzy
+msgid "AdLib emulator"
+msgstr "AdLib emulátor:"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
@@ -2102,7 +2120,8 @@ msgstr ""
 "pro více informací."
 
 #: audio/mods/paula.cpp:196
-msgid "Amiga Audio Emulator"
+#, fuzzy
+msgid "Amiga Audio emulator"
 msgstr "Emulátor zvuku Amiga"
 
 #: audio/null.h:44
@@ -2110,11 +2129,13 @@ msgid "No music"
 msgstr "Bez hudby"
 
 #: audio/softsynth/appleiigs.cpp:33
-msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
+#, fuzzy
+msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS Emulátor (NENÍ ZAVEDEN)"
 
 #: audio/softsynth/cms.cpp:350
-msgid "Creative Music System Emulator"
+#, fuzzy
+msgid "Creative Music System emulator"
 msgstr "Emulátor hudebního systému Creative"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
@@ -2130,19 +2151,23 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Zavádím MT-32 Emulátor"
 
 #: audio/softsynth/mt32.cpp:437
-msgid "MT-32 Emulator"
+#, fuzzy
+msgid "MT-32 emulator"
 msgstr "MT-32 Emulátor"
 
 #: audio/softsynth/pcspk.cpp:139
-msgid "PC Speaker Emulator"
+#, fuzzy
+msgid "PC Speaker emulator"
 msgstr "PC Speaker Emulátor"
 
 #: audio/softsynth/pcspk.cpp:158
-msgid "IBM PCjr Emulator"
+#, fuzzy
+msgid "IBM PCjr emulator"
 msgstr "IBM PCjr Emulátor"
 
 #: audio/softsynth/sid.cpp:1430
-msgid "C64 Audio Emulator"
+#, fuzzy
+msgid "C64 Audio emulator"
 msgstr "Emulátor zvuku C64"
 
 #: backends/cloud/storage.cpp:211
@@ -4796,6 +4821,17 @@ msgid ""
 msgstr ""
 "Tato ulo¾ená hra je z verze %u, ale nejvy¹¹í verze, které toto jádro "
 "podporuje, je %d. Abyste tuto hru naèetli, musíte získat novìj¹í verzi jádra."
+
+#~ msgctxt "lowres"
+#~ msgid "Music Device:"
+#~ msgstr "Hudební zaøízení:"
+
+#~ msgctxt "lowres"
+#~ msgid "Text and Speech:"
+#~ msgstr "Text a Øeè:"
+
+#~ msgid "AdLib Emulator"
+#~ msgstr "AdLib Emulátor"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení místo rozhraní ScummVM"

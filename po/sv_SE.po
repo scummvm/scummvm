@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-22 13:22+0200\n"
+"POT-Creation-Date: 2018-07-22 22:29+0200\n"
 "PO-Revision-Date: 2018-06-11 21:45+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -796,19 +796,23 @@ msgid "Never"
 msgstr "Aldrig"
 
 #: gui/options.cpp:122
-msgid "every 5 mins"
+#, fuzzy
+msgid "Every 5 mins"
 msgstr "var 5:e minut"
 
 #: gui/options.cpp:122
-msgid "every 10 mins"
+#, fuzzy
+msgid "Every 10 mins"
 msgstr "var 10:e minut"
 
 #: gui/options.cpp:122
-msgid "every 15 mins"
+#, fuzzy
+msgid "Every 15 mins"
 msgstr "var 15:e minut"
 
 #: gui/options.cpp:122
-msgid "every 30 mins"
+#, fuzzy
+msgid "Every 30 mins"
 msgstr "var 30:e minut"
 
 #: gui/options.cpp:361 gui/options.cpp:690 gui/options.cpp:828
@@ -936,11 +940,13 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Korrigera bildförhållandet för 320x200-spel"
 
 #: gui/options.cpp:1103
-msgid "Preferred Device:"
+#, fuzzy
+msgid "Preferred device:"
 msgstr "Föredragen enhet:"
 
 #: gui/options.cpp:1103
-msgid "Music Device:"
+#, fuzzy
+msgid "Music device:"
 msgstr "Musikenhet:"
 
 #: gui/options.cpp:1103 gui/options.cpp:1105
@@ -952,13 +958,15 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Bestämmer emulator för ljudenhet eller ljudkort"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Preferred Dev.:"
+msgid "Preferred dev.:"
 msgstr "Föredr. enhet:"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Music Device:"
+msgid "Music device:"
 msgstr "Musikenhet:"
 
 #: gui/options.cpp:1132
@@ -970,7 +978,8 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib används för musik i många spel"
 
 #: gui/options.cpp:1146
-msgid "GM Device:"
+#, fuzzy
+msgid "GM device:"
 msgstr "GM-enhet:"
 
 #: gui/options.cpp:1146
@@ -1037,7 +1046,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Äkta Roland MT-32 (ingen GM-emulation)"
 
 #: gui/options.cpp:1211
-msgid "Roland GS Device (enable MT-32 mappings)"
+#, fuzzy
+msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Roland GS-enhet (aktivera MT-32 mappings)"
 
 #: gui/options.cpp:1211
@@ -1053,7 +1063,8 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Använd inte Roland MT-32 musik"
 
 #: gui/options.cpp:1247
-msgid "Text and Speech:"
+#, fuzzy
+msgid "Text and speech:"
 msgstr "Undertext och tal:"
 
 #: gui/options.cpp:1251 gui/options.cpp:1261
@@ -1073,9 +1084,10 @@ msgid "Subtitle speed:"
 msgstr "Texthastighet:"
 
 #: gui/options.cpp:1257
+#, fuzzy
 msgctxt "lowres"
-msgid "Text and Speech:"
-msgstr "Text och tal:"
+msgid "Text and speech:"
+msgstr "Undertext och tal:"
 
 #: gui/options.cpp:1261
 msgid "Spch"
@@ -1109,7 +1121,8 @@ msgid "Music volume:"
 msgstr "Musikvolym:"
 
 #: gui/options.cpp:1290
-msgid "Mute All"
+#, fuzzy
+msgid "Mute all"
 msgstr "Ljud av"
 
 #: gui/options.cpp:1293
@@ -1179,7 +1192,8 @@ msgid "Theme:"
 msgstr "Tema:"
 
 #: gui/options.cpp:1629
-msgid "GUI Renderer:"
+#, fuzzy
+msgid "GUI renderer:"
 msgstr "GUI-rendering:"
 
 #: gui/options.cpp:1641
@@ -1196,7 +1210,8 @@ msgid "Keys"
 msgstr "Tangenter"
 
 #: gui/options.cpp:1658
-msgid "GUI Language:"
+#, fuzzy
+msgid "GUI language:"
 msgstr "GUI-språk:"
 
 #: gui/options.cpp:1658
@@ -1625,7 +1640,8 @@ msgid "Disabled GFX"
 msgstr "Inaktiverad GFX"
 
 #: gui/ThemeEngine.cpp:257
-msgid "Standard Renderer"
+#, fuzzy
+msgid "Standard renderer"
 msgstr "Standard rendering"
 
 #: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
@@ -1633,7 +1649,8 @@ msgid "Standard"
 msgstr "Standard"
 
 #: gui/ThemeEngine.cpp:259
-msgid "Antialiased Renderer"
+#, fuzzy
+msgid "Antialiased renderer"
 msgstr "Antialiserad rendering"
 
 #: gui/ThemeEngine.cpp:259
@@ -2039,8 +2056,9 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Matchade spel-ID för motor %s:"
 
 #: audio/adlib.cpp:2290
-msgid "AdLib Emulator"
-msgstr "AdLib-emulator"
+#, fuzzy
+msgid "AdLib emulator"
+msgstr "AdLib-emulator:"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
@@ -2104,7 +2122,8 @@ msgstr ""
 "information."
 
 #: audio/mods/paula.cpp:196
-msgid "Amiga Audio Emulator"
+#, fuzzy
+msgid "Amiga Audio emulator"
 msgstr "Amiga ljudemulator"
 
 #: audio/null.h:44
@@ -2112,11 +2131,13 @@ msgid "No music"
 msgstr "Ingen musik"
 
 #: audio/softsynth/appleiigs.cpp:33
-msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
+#, fuzzy
+msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS-emulator (INTE IMPLEMENTERAD)"
 
 #: audio/softsynth/cms.cpp:350
-msgid "Creative Music System Emulator"
+#, fuzzy
+msgid "Creative Music System emulator"
 msgstr "Creative Music System-emulator"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
@@ -2132,19 +2153,23 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Initialiserar MT-32 emulator"
 
 #: audio/softsynth/mt32.cpp:437
-msgid "MT-32 Emulator"
+#, fuzzy
+msgid "MT-32 emulator"
 msgstr "MT-32 emulator"
 
 #: audio/softsynth/pcspk.cpp:139
-msgid "PC Speaker Emulator"
+#, fuzzy
+msgid "PC Speaker emulator"
 msgstr "PC Speaker-emulator"
 
 #: audio/softsynth/pcspk.cpp:158
-msgid "IBM PCjr Emulator"
+#, fuzzy
+msgid "IBM PCjr emulator"
 msgstr "IBM PCjr-emulator"
 
 #: audio/softsynth/sid.cpp:1430
-msgid "C64 Audio Emulator"
+#, fuzzy
+msgid "C64 Audio emulator"
 msgstr "C64 ljudemulator"
 
 #: backends/cloud/storage.cpp:211
@@ -4806,6 +4831,17 @@ msgstr ""
 "Den här sparfilen använder version %u, men spelmotorn har bara stöd för upp "
 "till version %d. Det krävs en uppdaterad version av spelmotorn för att "
 "använda den här sparfilen."
+
+#~ msgctxt "lowres"
+#~ msgid "Music Device:"
+#~ msgstr "Musikenhet:"
+
+#~ msgctxt "lowres"
+#~ msgid "Text and Speech:"
+#~ msgstr "Text och tal:"
+
+#~ msgid "AdLib Emulator"
+#~ msgstr "AdLib-emulator"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr "Använd originalskärmarna för spara/ladda istället för ScummVM:s"

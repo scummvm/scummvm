@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-22 13:22+0200\n"
+"POT-Creation-Date: 2018-07-22 22:29+0200\n"
 "PO-Revision-Date: 2018-04-18 10:19+0000\n"
 "Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -808,19 +808,23 @@ msgid "Never"
 msgstr "Ποτέ"
 
 #: gui/options.cpp:122
-msgid "every 5 mins"
+#, fuzzy
+msgid "Every 5 mins"
 msgstr "κάθε 5 λεπτά"
 
 #: gui/options.cpp:122
-msgid "every 10 mins"
+#, fuzzy
+msgid "Every 10 mins"
 msgstr "κάθε 10 λεπτά"
 
 #: gui/options.cpp:122
-msgid "every 15 mins"
+#, fuzzy
+msgid "Every 15 mins"
 msgstr "κάθε 15 λεπτά"
 
 #: gui/options.cpp:122
-msgid "every 30 mins"
+#, fuzzy
+msgid "Every 30 mins"
 msgstr "κάθε 30 λεπτά"
 
 #: gui/options.cpp:361 gui/options.cpp:690 gui/options.cpp:828
@@ -950,11 +954,13 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Διόρθωση αναλογίας διαστάσεων για παιχνίδια 320x200"
 
 #: gui/options.cpp:1103
-msgid "Preferred Device:"
+#, fuzzy
+msgid "Preferred device:"
 msgstr "Προτιμώμενη συσκευή:"
 
 #: gui/options.cpp:1103
-msgid "Music Device:"
+#, fuzzy
+msgid "Music device:"
 msgstr "Συσκευή Μουσικής:"
 
 #: gui/options.cpp:1103 gui/options.cpp:1105
@@ -966,14 +972,16 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Καθορίζει τη συσκευή εξόδου ήχου ή εξομοιωτή κάρτας ήχου"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Preferred Dev.:"
+msgid "Preferred dev.:"
 msgstr "Προτιμ. Συσκ.:"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Music Device:"
-msgstr "Συσκ. Μουσ.:"
+msgid "Music device:"
+msgstr "Συσκευή Μουσικής:"
 
 #: gui/options.cpp:1132
 msgid "AdLib emulator:"
@@ -984,7 +992,8 @@ msgid "AdLib is used for music in many games"
 msgstr "Η Adlib χρησιμοποιείται για μουσική σε πολλά παιχνίδια"
 
 #: gui/options.cpp:1146
-msgid "GM Device:"
+#, fuzzy
+msgid "GM device:"
 msgstr "Συσκευή GM:"
 
 #: gui/options.cpp:1146
@@ -1053,7 +1062,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Πραγματική Roland MT-32 (χωρίς εξομοίωση GM)"
 
 #: gui/options.cpp:1211
-msgid "Roland GS Device (enable MT-32 mappings)"
+#, fuzzy
+msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Συσκευή Roland GS (ενεργοποίηση αντιστοιχίσεων MT-32)"
 
 #: gui/options.cpp:1211
@@ -1069,7 +1079,8 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Μη χρήση μουσικής Roland MT-32"
 
 #: gui/options.cpp:1247
-msgid "Text and Speech:"
+#, fuzzy
+msgid "Text and speech:"
 msgstr "Κείμενο και Ομιλία:"
 
 #: gui/options.cpp:1251 gui/options.cpp:1261
@@ -1089,8 +1100,9 @@ msgid "Subtitle speed:"
 msgstr "Ταχύτητα υποτίτλων:"
 
 #: gui/options.cpp:1257
+#, fuzzy
 msgctxt "lowres"
-msgid "Text and Speech:"
+msgid "Text and speech:"
 msgstr "Κείμενο και Ομιλία:"
 
 #: gui/options.cpp:1261
@@ -1125,7 +1137,8 @@ msgid "Music volume:"
 msgstr "Ένταση μουσικής:"
 
 #: gui/options.cpp:1290
-msgid "Mute All"
+#, fuzzy
+msgid "Mute all"
 msgstr "Σίγαση Όλων"
 
 #: gui/options.cpp:1293
@@ -1196,7 +1209,8 @@ msgid "Theme:"
 msgstr "Θέμα:"
 
 #: gui/options.cpp:1629
-msgid "GUI Renderer:"
+#, fuzzy
+msgid "GUI renderer:"
 msgstr "Απεικόνιση GUI:"
 
 #: gui/options.cpp:1641
@@ -1213,7 +1227,8 @@ msgid "Keys"
 msgstr "Πλήκτρα"
 
 #: gui/options.cpp:1658
-msgid "GUI Language:"
+#, fuzzy
+msgid "GUI language:"
 msgstr "Γλώσσα GUI:"
 
 #: gui/options.cpp:1658
@@ -1649,7 +1664,8 @@ msgid "Disabled GFX"
 msgstr "Απενεργ. γραφικά"
 
 #: gui/ThemeEngine.cpp:257
-msgid "Standard Renderer"
+#, fuzzy
+msgid "Standard renderer"
 msgstr "Κανονική Απεικόνιση"
 
 #: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
@@ -1657,7 +1673,8 @@ msgid "Standard"
 msgstr "Κανονικό"
 
 #: gui/ThemeEngine.cpp:259
-msgid "Antialiased Renderer"
+#, fuzzy
+msgid "Antialiased renderer"
 msgstr "Εξομαλυμένη Απόδοση"
 
 #: gui/ThemeEngine.cpp:259
@@ -2068,8 +2085,9 @@ msgid "Matched game IDs for the %s engine:"
 msgstr ""
 
 #: audio/adlib.cpp:2290
-msgid "AdLib Emulator"
-msgstr "Εξομοιωτής Adlib"
+#, fuzzy
+msgid "AdLib emulator"
+msgstr "Εξομοιωτής Adlib:"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
@@ -2133,7 +2151,8 @@ msgstr ""
 "αρχείο καταγραφής για περισσότερες πληροφορίες."
 
 #: audio/mods/paula.cpp:196
-msgid "Amiga Audio Emulator"
+#, fuzzy
+msgid "Amiga Audio emulator"
 msgstr "Εξομοιωτής Ήχου Amiga"
 
 #: audio/null.h:44
@@ -2141,11 +2160,13 @@ msgid "No music"
 msgstr "Χωρίς μουσική"
 
 #: audio/softsynth/appleiigs.cpp:33
-msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
+#, fuzzy
+msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Εξομοιωτής Apple II GS (ΔΕΝ ΕΧΕΙ ΥΛΟΠΟΙΗΘΕΙ)"
 
 #: audio/softsynth/cms.cpp:350
-msgid "Creative Music System Emulator"
+#, fuzzy
+msgid "Creative Music System emulator"
 msgstr "Εξομοιωτής Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
@@ -2161,19 +2182,23 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Προετοιμασία Εξομοιωτή MT-32"
 
 #: audio/softsynth/mt32.cpp:437
-msgid "MT-32 Emulator"
+#, fuzzy
+msgid "MT-32 emulator"
 msgstr "Εξομοιωτής MT-32"
 
 #: audio/softsynth/pcspk.cpp:139
-msgid "PC Speaker Emulator"
+#, fuzzy
+msgid "PC Speaker emulator"
 msgstr "Εξομοιωτής Ηχείου PC"
 
 #: audio/softsynth/pcspk.cpp:158
-msgid "IBM PCjr Emulator"
+#, fuzzy
+msgid "IBM PCjr emulator"
 msgstr "Εξομοιωτής IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1430
-msgid "C64 Audio Emulator"
+#, fuzzy
+msgid "C64 Audio emulator"
 msgstr "Εξομοιωτής Ήχου C64"
 
 #: backends/cloud/storage.cpp:211
@@ -4836,6 +4861,17 @@ msgstr ""
 "Αυτό το αποθηκευμένο παιχνίδι χρησιμοποιεί έκδοση%u, αλλά η μηχανή αυτή "
 "υποστηρίζει μόνο μέχρι την έκδοση%d. Θα χρειαστείτε μια ενημερωμένη έκδοση "
 "της μηχανής για να χρησιμοποιήσετε αυτό το αποθηκευμένο παιχνίδι."
+
+#~ msgctxt "lowres"
+#~ msgid "Music Device:"
+#~ msgstr "Συσκ. Μουσ.:"
+
+#~ msgctxt "lowres"
+#~ msgid "Text and Speech:"
+#~ msgstr "Κείμενο και Ομιλία:"
+
+#~ msgid "AdLib Emulator"
+#~ msgstr "Εξομοιωτής Adlib"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-22 13:22+0200\n"
+"POT-Creation-Date: 2018-07-22 22:29+0200\n"
 "PO-Revision-Date: 2018-04-18 10:18+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -782,19 +782,23 @@ msgid "Never"
 msgstr "Yongbu"
 
 #: gui/options.cpp:122
-msgid "every 5 mins"
+#, fuzzy
+msgid "Every 5 mins"
 msgstr "Mei 5 Fenzhong"
 
 #: gui/options.cpp:122
-msgid "every 10 mins"
+#, fuzzy
+msgid "Every 10 mins"
 msgstr "Mei 10 Fenzhong"
 
 #: gui/options.cpp:122
-msgid "every 15 mins"
+#, fuzzy
+msgid "Every 15 mins"
 msgstr "Mei 15 Fenzhong"
 
 #: gui/options.cpp:122
-msgid "every 30 mins"
+#, fuzzy
+msgid "Every 30 mins"
 msgstr "Mei 30 Fenzhong"
 
 #: gui/options.cpp:361 gui/options.cpp:690 gui/options.cpp:828
@@ -927,11 +931,13 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "320x200 Youxi Bili Jiaozheng"
 
 #: gui/options.cpp:1103
-msgid "Preferred Device:"
+#, fuzzy
+msgid "Preferred device:"
 msgstr "Youxian Shebei:"
 
 #: gui/options.cpp:1103
-msgid "Music Device:"
+#, fuzzy
+msgid "Music device:"
 msgstr "Yinyue Shebei:"
 
 #: gui/options.cpp:1103 gui/options.cpp:1105
@@ -943,13 +949,15 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Zhiding Shuchu Shengyin Shebei huo Shengka Moniqi"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Preferred Dev.:"
+msgid "Preferred dev.:"
 msgstr "Youxian Shebei:"
 
 #: gui/options.cpp:1105
+#, fuzzy
 msgctxt "lowres"
-msgid "Music Device:"
+msgid "Music device:"
 msgstr "Yinyue Shebei:"
 
 #: gui/options.cpp:1132
@@ -961,7 +969,8 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib bei Henduo Youxi Yonglai Bofang Yinyue"
 
 #: gui/options.cpp:1146
-msgid "GM Device:"
+#, fuzzy
+msgid "GM device:"
 msgstr "GM Shebei:"
 
 #: gui/options.cpp:1146
@@ -1029,7 +1038,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Zhen Roland MT-32 Shebei (Wu GM Moni)"
 
 #: gui/options.cpp:1211
-msgid "Roland GS Device (enable MT-32 mappings)"
+#, fuzzy
+msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Roland GS Shebei (Qiyong MT-32 Yingshe)"
 
 #: gui/options.cpp:1211
@@ -1045,7 +1055,8 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Buyao Shiyong Roland MT-32 Yinyue"
 
 #: gui/options.cpp:1247
-msgid "Text and Speech:"
+#, fuzzy
+msgid "Text and speech:"
 msgstr "Wenzi he Yuyin:"
 
 #: gui/options.cpp:1251 gui/options.cpp:1261
@@ -1065,9 +1076,10 @@ msgid "Subtitle speed:"
 msgstr "Zimu Sudu:"
 
 #: gui/options.cpp:1257
+#, fuzzy
 msgctxt "lowres"
-msgid "Text and Speech:"
-msgstr "Wenben he Yuyin:"
+msgid "Text and speech:"
+msgstr "Wenzi he Yuyin:"
 
 #: gui/options.cpp:1261
 msgid "Spch"
@@ -1101,7 +1113,8 @@ msgid "Music volume:"
 msgstr "Yinyue Yinliang:"
 
 #: gui/options.cpp:1290
-msgid "Mute All"
+#, fuzzy
+msgid "Mute all"
 msgstr "Quanbu Jinyin"
 
 #: gui/options.cpp:1293
@@ -1171,7 +1184,8 @@ msgid "Theme:"
 msgstr "Zhuti:"
 
 #: gui/options.cpp:1629
-msgid "GUI Renderer:"
+#, fuzzy
+msgid "GUI renderer:"
 msgstr "Jiemian Xuanran:"
 
 #: gui/options.cpp:1641
@@ -1188,7 +1202,8 @@ msgid "Keys"
 msgstr "Guanjianzi"
 
 #: gui/options.cpp:1658
-msgid "GUI Language:"
+#, fuzzy
+msgid "GUI language:"
 msgstr "Jiemian Yuyan:"
 
 #: gui/options.cpp:1658
@@ -1622,7 +1637,8 @@ msgid "Disabled GFX"
 msgstr "Jinyong GFX"
 
 #: gui/ThemeEngine.cpp:257
-msgid "Standard Renderer"
+#, fuzzy
+msgid "Standard renderer"
 msgstr "Biaozhun Xuanranqi"
 
 #: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
@@ -1630,7 +1646,8 @@ msgid "Standard"
 msgstr "Biaozhun"
 
 #: gui/ThemeEngine.cpp:259
-msgid "Antialiased Renderer"
+#, fuzzy
+msgid "Antialiased renderer"
 msgstr "Fanjuchi Xuanranqi"
 
 #: gui/ThemeEngine.cpp:259
@@ -2027,8 +2044,9 @@ msgid "Matched game IDs for the %s engine:"
 msgstr ""
 
 #: audio/adlib.cpp:2290
-msgid "AdLib Emulator"
-msgstr "AdLib Moniqi"
+#, fuzzy
+msgid "AdLib emulator"
+msgstr "AdLib Moniqi:"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
@@ -2092,7 +2110,8 @@ msgstr ""
 "Xinxi."
 
 #: audio/mods/paula.cpp:196
-msgid "Amiga Audio Emulator"
+#, fuzzy
+msgid "Amiga Audio emulator"
 msgstr "Amiga Yinpin Moniqi"
 
 #: audio/null.h:44
@@ -2100,11 +2119,13 @@ msgid "No music"
 msgstr "Wu Yinyue"
 
 #: audio/softsynth/appleiigs.cpp:33
-msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
+#, fuzzy
+msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS Moniqi (Wei Shixian)"
 
 #: audio/softsynth/cms.cpp:350
-msgid "Creative Music System Emulator"
+#, fuzzy
+msgid "Creative Music System emulator"
 msgstr "Creative Music System Moniqi"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
@@ -2120,19 +2141,23 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Chushihua MT-32 Moniqi"
 
 #: audio/softsynth/mt32.cpp:437
-msgid "MT-32 Emulator"
+#, fuzzy
+msgid "MT-32 emulator"
 msgstr "MT-32 Moniqi"
 
 #: audio/softsynth/pcspk.cpp:139
-msgid "PC Speaker Emulator"
+#, fuzzy
+msgid "PC Speaker emulator"
 msgstr "PC Yangshengqi Moniqi"
 
 #: audio/softsynth/pcspk.cpp:158
-msgid "IBM PCjr Emulator"
+#, fuzzy
+msgid "IBM PCjr emulator"
 msgstr "IBM PCjr Moniqi"
 
 #: audio/softsynth/sid.cpp:1430
-msgid "C64 Audio Emulator"
+#, fuzzy
+msgid "C64 Audio emulator"
 msgstr "C64 Yinpin Moniqi"
 
 #: backends/cloud/storage.cpp:211
@@ -4749,6 +4774,17 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#~ msgctxt "lowres"
+#~ msgid "Music Device:"
+#~ msgstr "Yinyue Shebei:"
+
+#~ msgctxt "lowres"
+#~ msgid "Text and Speech:"
+#~ msgstr "Wenben he Yuyin:"
+
+#~ msgid "AdLib Emulator"
+#~ msgstr "AdLib Moniqi"
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr "Shiyong Yuanshi baocun/zairu Pingmu Erfei ScummVM jiemian"
