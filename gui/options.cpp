@@ -1418,6 +1418,8 @@ void OptionsDialog::reflowLayout() {
 }
 
 void OptionsDialog::setupGraphicsTab() {
+	if (!_fullscreenCheckbox)
+		return;
 	_gfxPopUpDesc->setVisible(true);
 	_gfxPopUp->setVisible(true);
 	_stretchPopUpDesc->setVisible(true);
