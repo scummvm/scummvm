@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-22 01:05+0200\n"
+"POT-Creation-Date: 2018-07-22 13:22+0200\n"
 "PO-Revision-Date: 2018-04-18 10:13+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -59,7 +59,7 @@ msgstr "Oppover"
 #: gui/browser.cpp:76 gui/chooser.cpp:46 gui/editgamedialog.cpp:298
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:43 gui/massadd.cpp:92
-#: gui/options.cpp:1764 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
+#: gui/options.cpp:1766 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:445
 #: gui/saveload-dialog.cpp:740 gui/saveload-dialog.cpp:1134
@@ -158,7 +158,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:299
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:504
-#: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1766
+#: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1768
 #: gui/saveload-dialog.cpp:1135 engines/engine.cpp:453 engines/engine.cpp:464
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
@@ -243,7 +243,7 @@ msgstr ""
 "engelsk versjon"
 
 #: gui/editgamedialog.cpp:155 gui/editgamedialog.cpp:169 gui/options.cpp:1054
-#: gui/options.cpp:1067 gui/options.cpp:1081 gui/options.cpp:1659
+#: gui/options.cpp:1067 gui/options.cpp:1081 gui/options.cpp:1661
 #: audio/null.cpp:41
 msgid "<default>"
 msgstr "<standard>"
@@ -266,11 +266,11 @@ msgstr "Plattform:"
 msgid "Engine"
 msgstr "Motor"
 
-#: gui/editgamedialog.cpp:188 gui/options.cpp:1414 gui/options.cpp:1512
+#: gui/editgamedialog.cpp:188 gui/options.cpp:1414 gui/options.cpp:1514
 msgid "Graphics"
 msgstr "Grafikk"
 
-#: gui/editgamedialog.cpp:188 gui/options.cpp:1414 gui/options.cpp:1512
+#: gui/editgamedialog.cpp:188 gui/options.cpp:1414 gui/options.cpp:1514
 msgid "GFX"
 msgstr "GFX"
 
@@ -283,7 +283,7 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Overstyr globale grafikkinstillingar"
 
-#: gui/editgamedialog.cpp:202 gui/options.cpp:1541
+#: gui/editgamedialog.cpp:202 gui/options.cpp:1543
 msgid "Audio"
 msgstr "Lyd"
 
@@ -296,11 +296,11 @@ msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Overstyr globale lydinstillingar"
 
-#: gui/editgamedialog.cpp:216 gui/options.cpp:1546
+#: gui/editgamedialog.cpp:216 gui/options.cpp:1548
 msgid "Volume"
 msgstr "Volum"
 
-#: gui/editgamedialog.cpp:218 gui/options.cpp:1548
+#: gui/editgamedialog.cpp:218 gui/options.cpp:1550
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Volum"
@@ -314,7 +314,7 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Overstyr globale voluminstillingar"
 
-#: gui/editgamedialog.cpp:232 gui/options.cpp:1556
+#: gui/editgamedialog.cpp:232 gui/options.cpp:1558
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -327,7 +327,7 @@ msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Overstyr globale MIDI-instillingar"
 
-#: gui/editgamedialog.cpp:247 gui/options.cpp:1566
+#: gui/editgamedialog.cpp:247 gui/options.cpp:1568
 msgid "MT-32"
 msgstr "MT-32"
 
@@ -340,11 +340,11 @@ msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Overstyr globale MT-32-instillingar"
 
-#: gui/editgamedialog.cpp:261 gui/options.cpp:1573
+#: gui/editgamedialog.cpp:261 gui/options.cpp:1575
 msgid "Paths"
 msgstr "Stiar"
 
-#: gui/editgamedialog.cpp:263 gui/options.cpp:1575
+#: gui/editgamedialog.cpp:263 gui/options.cpp:1577
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Stiar"
@@ -358,7 +358,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Spelsti:"
 
-#: gui/editgamedialog.cpp:277 gui/options.cpp:1599
+#: gui/editgamedialog.cpp:277 gui/options.cpp:1601
 msgid "Extra Path:"
 msgstr "Ekstrasti:"
 
@@ -367,44 +367,44 @@ msgstr "Ekstrasti:"
 msgid "Specifies path to additional data used by the game"
 msgstr "Veljer sti til tilleggsdata nytta av spelet"
 
-#: gui/editgamedialog.cpp:279 gui/options.cpp:1601
+#: gui/editgamedialog.cpp:279 gui/options.cpp:1603
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Ekstrasti:"
 
-#: gui/editgamedialog.cpp:286 gui/options.cpp:1583
+#: gui/editgamedialog.cpp:286 gui/options.cpp:1585
 msgid "Save Path:"
 msgstr "Lagringssti:"
 
 #: gui/editgamedialog.cpp:286 gui/editgamedialog.cpp:288
-#: gui/editgamedialog.cpp:289 gui/options.cpp:1583 gui/options.cpp:1585
-#: gui/options.cpp:1586
+#: gui/editgamedialog.cpp:289 gui/options.cpp:1585 gui/options.cpp:1587
+#: gui/options.cpp:1588
 msgid "Specifies where your saved games are put"
 msgstr "Veljer kor lagra spel vert lagra"
 
-#: gui/editgamedialog.cpp:288 gui/options.cpp:1585
+#: gui/editgamedialog.cpp:288 gui/options.cpp:1587
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Lagringssti:"
 
 #: gui/editgamedialog.cpp:312 gui/editgamedialog.cpp:409
-#: gui/editgamedialog.cpp:468 gui/editgamedialog.cpp:529 gui/options.cpp:1594
-#: gui/options.cpp:1602 gui/options.cpp:1611 gui/options.cpp:1791
-#: gui/options.cpp:1797 gui/options.cpp:1805 gui/options.cpp:1828
-#: gui/options.cpp:1861 gui/options.cpp:1867 gui/options.cpp:1874
-#: gui/options.cpp:1882 gui/options.cpp:2077 gui/options.cpp:2080
-#: gui/options.cpp:2087 gui/options.cpp:2097
+#: gui/editgamedialog.cpp:468 gui/editgamedialog.cpp:529 gui/options.cpp:1596
+#: gui/options.cpp:1604 gui/options.cpp:1613 gui/options.cpp:1793
+#: gui/options.cpp:1799 gui/options.cpp:1807 gui/options.cpp:1830
+#: gui/options.cpp:1863 gui/options.cpp:1869 gui/options.cpp:1876
+#: gui/options.cpp:1884 gui/options.cpp:2079 gui/options.cpp:2082
+#: gui/options.cpp:2089 gui/options.cpp:2099
 msgctxt "path"
 msgid "None"
 msgstr "Ingen"
 
 #: gui/editgamedialog.cpp:317 gui/editgamedialog.cpp:415
-#: gui/editgamedialog.cpp:533 gui/options.cpp:1785 gui/options.cpp:1855
-#: gui/options.cpp:2083 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:533 gui/options.cpp:1787 gui/options.cpp:1857
+#: gui/options.cpp:2085 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Standard"
 
-#: gui/editgamedialog.cpp:461 gui/options.cpp:2091
+#: gui/editgamedialog.cpp:461 gui/options.cpp:2093
 msgid "Select SoundFont"
 msgstr "Vel SoundFont"
 
@@ -412,7 +412,7 @@ msgstr "Vel SoundFont"
 msgid "Select additional game directory"
 msgstr "Vel mappe med tileggsdata for spelet"
 
-#: gui/editgamedialog.cpp:513 gui/options.cpp:2014
+#: gui/editgamedialog.cpp:513 gui/options.cpp:2016
 msgid "Select directory for saved games"
 msgstr "Vel mappe for lagra spel"
 
@@ -502,7 +502,7 @@ msgstr "Sinus"
 msgid "Triangle"
 msgstr "Triangel"
 
-#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1619
+#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1621
 msgid "Misc"
 msgstr "Diverse"
 
@@ -1126,270 +1126,270 @@ msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Talevolum:"
 
-#: gui/options.cpp:1522
+#: gui/options.cpp:1524
 msgid "Shader"
 msgstr ""
 
-#: gui/options.cpp:1534
+#: gui/options.cpp:1536
 msgid "Control"
 msgstr ""
 
-#: gui/options.cpp:1560
+#: gui/options.cpp:1562
 msgid "FluidSynth Settings"
 msgstr "FluidSynth instillingar"
 
-#: gui/options.cpp:1591
+#: gui/options.cpp:1593
 msgid "Theme Path:"
 msgstr "Temasti:"
 
-#: gui/options.cpp:1593
+#: gui/options.cpp:1595
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Temasti:"
 
-#: gui/options.cpp:1599 gui/options.cpp:1601 gui/options.cpp:1602
+#: gui/options.cpp:1601 gui/options.cpp:1603 gui/options.cpp:1604
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 
-#: gui/options.cpp:1608
+#: gui/options.cpp:1610
 msgid "Plugins Path:"
 msgstr "Pluginsti:"
 
-#: gui/options.cpp:1610
+#: gui/options.cpp:1612
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Pluginsti:"
 
-#: gui/options.cpp:1621
+#: gui/options.cpp:1623
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Div"
 
-#: gui/options.cpp:1623
+#: gui/options.cpp:1625
 msgid "Theme:"
 msgstr "Tema:"
 
-#: gui/options.cpp:1627
+#: gui/options.cpp:1629
 msgid "GUI Renderer:"
 msgstr "GUI-teiknar:"
 
-#: gui/options.cpp:1639
+#: gui/options.cpp:1641
 msgid "Autosave:"
 msgstr "Autolagre:"
 
-#: gui/options.cpp:1641
+#: gui/options.cpp:1643
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Autolagre:"
 
-#: gui/options.cpp:1649
+#: gui/options.cpp:1651
 msgid "Keys"
 msgstr "Tastar"
 
-#: gui/options.cpp:1656
+#: gui/options.cpp:1658
 msgid "GUI Language:"
 msgstr "GUI-språk:"
 
-#: gui/options.cpp:1656
+#: gui/options.cpp:1658
 msgid "Language of ScummVM GUI"
 msgstr "Språk i ScummVM-GUIet"
 
-#: gui/options.cpp:1684 gui/updates-dialog.cpp:86
+#: gui/options.cpp:1686 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr ""
 
-#: gui/options.cpp:1684
+#: gui/options.cpp:1686
 msgid "How often to check ScummVM updates"
 msgstr ""
 
-#: gui/options.cpp:1696
+#: gui/options.cpp:1698
 msgid "Check now"
 msgstr ""
 
-#: gui/options.cpp:1704
+#: gui/options.cpp:1706
 msgid "Cloud"
 msgstr ""
 
-#: gui/options.cpp:1706
+#: gui/options.cpp:1708
 msgctxt "lowres"
 msgid "Cloud"
 msgstr ""
 
-#: gui/options.cpp:1711
+#: gui/options.cpp:1713
 msgid "Storage:"
 msgstr ""
 
-#: gui/options.cpp:1711
+#: gui/options.cpp:1713
 msgid "Active cloud storage"
 msgstr ""
 
-#: gui/options.cpp:1718 gui/options.cpp:2294
+#: gui/options.cpp:1720 gui/options.cpp:2296
 msgid "<none>"
 msgstr ""
 
-#: gui/options.cpp:1722 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:1724 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "Brukarnamn:"
 
-#: gui/options.cpp:1722
+#: gui/options.cpp:1724
 msgid "Username used by this storage"
 msgstr ""
 
-#: gui/options.cpp:1725
+#: gui/options.cpp:1727
 msgid "Used space:"
 msgstr ""
 
-#: gui/options.cpp:1725
+#: gui/options.cpp:1727
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
 
-#: gui/options.cpp:1728
+#: gui/options.cpp:1730
 msgid "Last sync time:"
 msgstr ""
 
-#: gui/options.cpp:1728
+#: gui/options.cpp:1730
 msgid "When the last saved games sync for this storage occured"
 msgstr ""
 
-#: gui/options.cpp:1731 gui/storagewizarddialog.cpp:71
+#: gui/options.cpp:1733 gui/storagewizarddialog.cpp:71
 msgid "Connect"
 msgstr ""
 
-#: gui/options.cpp:1731
+#: gui/options.cpp:1733
 msgid "Open wizard dialog to connect your cloud storage account"
 msgstr ""
 
-#: gui/options.cpp:1732
+#: gui/options.cpp:1734
 msgid "Refresh"
 msgstr ""
 
-#: gui/options.cpp:1732
+#: gui/options.cpp:1734
 msgid "Refresh current cloud storage information (username and usage)"
 msgstr ""
 
-#: gui/options.cpp:1733
+#: gui/options.cpp:1735
 #, fuzzy
 msgid "Download"
 msgstr "Ned"
 
-#: gui/options.cpp:1733
+#: gui/options.cpp:1735
 msgid "Open downloads manager dialog"
 msgstr ""
 
-#: gui/options.cpp:1735
+#: gui/options.cpp:1737
 msgid "Run server"
 msgstr ""
 
-#: gui/options.cpp:1735
+#: gui/options.cpp:1737
 msgid "Run local webserver"
 msgstr ""
 
-#: gui/options.cpp:1736 gui/options.cpp:2404
+#: gui/options.cpp:1738 gui/options.cpp:2406
 #, fuzzy
 msgid "Not running"
 msgstr "Feil under køyring av spel:"
 
-#: gui/options.cpp:1740
+#: gui/options.cpp:1742
 #, fuzzy
 msgid "/root/ Path:"
 msgstr "Ekstrasti:"
 
-#: gui/options.cpp:1740 gui/options.cpp:1742 gui/options.cpp:1743
+#: gui/options.cpp:1742 gui/options.cpp:1744 gui/options.cpp:1745
 #, fuzzy
 msgid "Specifies which directory the Files Manager can access"
 msgstr "Veljer kor lagra spel vert lagra"
 
-#: gui/options.cpp:1742
+#: gui/options.cpp:1744
 #, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "Ekstrasti:"
 
-#: gui/options.cpp:1752
+#: gui/options.cpp:1754
 #, fuzzy
 msgid "Server's port:"
 msgstr "Teinar:"
 
-#: gui/options.cpp:1752
+#: gui/options.cpp:1754
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
 
-#: gui/options.cpp:1765
+#: gui/options.cpp:1767
 msgid "Apply"
 msgstr ""
 
-#: gui/options.cpp:1908
+#: gui/options.cpp:1910
 #, fuzzy
 msgid "Failed to change cloud storage!"
 msgstr "Klarte ikkje lagre spel"
 
-#: gui/options.cpp:1911
+#: gui/options.cpp:1913
 msgid "Another cloud storage is already active."
 msgstr ""
 
-#: gui/options.cpp:1979
+#: gui/options.cpp:1981
 #, fuzzy
 msgid "Theme does not support selected language!"
 msgstr "Spelmotor-plugin støttar ikkje lagra tilstandar."
 
-#: gui/options.cpp:1982
+#: gui/options.cpp:1984
 #, fuzzy
 msgid "Theme cannot be loaded!"
 msgstr "Spelet vart IKKJE lasta"
 
-#: gui/options.cpp:1985
+#: gui/options.cpp:1987
 msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
 
-#: gui/options.cpp:2021
+#: gui/options.cpp:2023
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Den velde mappa kan ikkje skrivast til. Vennlegst vel ein annan."
 
-#: gui/options.cpp:2030
+#: gui/options.cpp:2032
 msgid "Select directory for GUI themes"
 msgstr "Vel ei mappe for GUI-tema"
 
-#: gui/options.cpp:2040
+#: gui/options.cpp:2042
 msgid "Select directory for extra files"
 msgstr "Vel ei mappe for ekstra filer"
 
-#: gui/options.cpp:2051
+#: gui/options.cpp:2053
 msgid "Select directory for plugins"
 msgstr "Vel ei mappe for plugins"
 
-#: gui/options.cpp:2063
+#: gui/options.cpp:2065
 #, fuzzy
 msgid "Select directory for Files Manager /root/"
 msgstr "Vel ei mappe for ekstra filer"
 
-#: gui/options.cpp:2301
+#: gui/options.cpp:2303
 #, c-format
 msgid "%llu bytes"
 msgstr ""
 
-#: gui/options.cpp:2309
+#: gui/options.cpp:2311
 msgid "<right now>"
 msgstr ""
 
-#: gui/options.cpp:2311
+#: gui/options.cpp:2313
 #, fuzzy
 msgid "<never>"
 msgstr "Aldri"
 
-#: gui/options.cpp:2395
+#: gui/options.cpp:2397
 #, fuzzy
 msgid "Stop server"
 msgstr "Teinar:"
 
-#: gui/options.cpp:2396
+#: gui/options.cpp:2398
 msgid "Stop local webserver"
 msgstr ""
 
-#: gui/options.cpp:2487
+#: gui/options.cpp:2489
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
