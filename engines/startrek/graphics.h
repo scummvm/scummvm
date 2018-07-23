@@ -58,10 +58,13 @@ public:
 	 * @param drawRect The clipped rectangle to draw at (must be within the drawable space)
 	 */
 	void drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, SharedPtr<Bitmap> bitmap);
+
 	void fillBackgroundRect(const Common::Rect &rect, byte color);
+	byte *getBackgroundPixels();
 
 	void clearScreenAndPriBuffer();
 	void loadPalette(const String &paletteFile);
+	void copyRectBetweenBitmaps(Bitmap *destBitmap, int destX, int destY, Bitmap *srcBitmap, int srcX, int srcY, int width, int height);
 	void fadeinScreen();
 	void fadeoutScreen();
 	void setPaletteFadeLevel(byte *palData, int fadeLevel);

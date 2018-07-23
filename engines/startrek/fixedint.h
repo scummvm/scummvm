@@ -56,7 +56,7 @@ public:
 	 * Constructor from other fixed-point formats.
 	 */
 	template<typename T2, uint otherTB, uint otherDB>
-	TFixedInt<T, totalBits, decimalBits>(const TFixedInt<T2, otherTB, otherDB> &fi) {
+	explicit TFixedInt<T, totalBits, decimalBits>(const TFixedInt<T2, otherTB, otherDB> &fi) {
 		int diff = otherDB - decimalBits;
 		if (otherDB >= decimalBits)
 			val = fi.raw() >> diff;
@@ -76,12 +76,16 @@ public:
 		return ((double)val) / (1 << decimalBits);
 	}
 
+	TFixedInt operator-() const {
+		return fromRaw(-val);
+	}
+
 	/**
 	 * Multiplication with an int, with the result being an int. Use this if the result
 	 * might exceed the capacity of this type.
 	 */
 	int16 multToInt(int32 i) {
-		return (val * i) >> decimalBits;
+		return ((int32)(val * i)) >> decimalBits;
 	}
 
 	/**
@@ -89,6 +93,12 @@ public:
 	 */
 	TFixedInt operator*(int32 i) const {
 		return fromRaw(val * i);
+	}
+	/**
+	 * Multiplication with a FixedInt, with the result being the same type.
+	 */
+	TFixedInt operator*(const TFixedInt &f) const {
+		return fromRaw(((int32)(val * f.val)) >> decimalBits);
 	}
 	/**
 	 * Division with an int, with the result being the same type.
@@ -172,6 +182,8 @@ typedef TFixedInt<int16, 16, 8> Fixed8;
 
 // Fixed-point (16.16) number
 typedef TFixedInt<int32, 32, 16> Fixed16;
+
+typedef Fixed8 Angle;
 
 }
 

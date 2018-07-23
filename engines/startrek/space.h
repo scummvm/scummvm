@@ -38,6 +38,10 @@ struct TPoint {
 	TPoint() : x(0), y(0), z(0) {}
 	TPoint(T _x, T _y, T _z) : x(_x), y(_y), z(_z) {}
 
+	int32 getDiagonal() {
+		return sqrt(x * x + y * y + z * z);
+	}
+
 	TPoint<T> operator+(const TPoint<T> &p) const {
 		TPoint<T> p2;
 		p2.x = x + p.x;
@@ -51,6 +55,16 @@ struct TPoint {
 		p2.y = y - p.y;
 		p2.z = z - p.z;
 		return p2;
+	}
+	void operator+=(const TPoint &p) {
+		x += p.x;
+		y += p.y;
+		z += p.z;
+	}
+	void operator-=(const TPoint &p) {
+		x -= p.x;
+		y -= p.y;
+		z -= p.z;
 	}
 	T &operator[](int i) {
 		if (i == 0)
@@ -83,7 +97,11 @@ private:
 	T m[3];
 
 public:
-	TMatrix() {}
+	TMatrix() {
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++)
+				m[i][j] = 0;
+	}
 	TMatrix(const TMatrix<T> &mat) {
 		m[0] = mat.m[0];
 		m[1] = mat.m[1];
@@ -95,6 +113,22 @@ public:
 	T operator[](int i) const {
 		return m[i];
 	};
+
+	TMatrix operator*(const TMatrix &m2) const {
+		TMatrix ret;
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				ret[i][j] = 0;
+				for (int a = 0; a < 3; a++)
+					ret[i][j] += m[i][a] * m2[a][j];
+			}
+		}
+		return ret;
+	}
+
+	void operator*=(const TMatrix &m2) {
+		*this = *this * m2;
+	}
 
 	TMatrix<T> invert() {
 		TMatrix<T> ret;
@@ -124,7 +158,20 @@ struct R3 {
 	int16 field22; // 0x22
 	int16 field24; // 0x24
 	Point3_Short speed; // 0x26
+	int32 funcPtr1; // 0x2c
+	int32 funcPtr2; // 0x30
+	int16 field34; // 0x34
+	Point3 field36; // 0x36
+	Matrix matrix2; // 0x42
+	int32 field54; // 0x54 (used for sorting by draw priority?)
+	int16 field58; // 0x58
+	int16 field5a; // 0x5a
 	SharedPtr<FileStream> shpFile; // 0x68
+	int16 bitmapOffset; // 0x6a
+	double field80; // 0x80
+	double field88; // 0x88
+	double field90; // 0x90
+	double field98; // 0x98
 };
 
 // Maximum number of stars visible at once in the starfields
