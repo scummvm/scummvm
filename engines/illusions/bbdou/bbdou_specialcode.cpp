@@ -976,7 +976,7 @@ bool BbdouSpecialCode::testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 
 	if (holdingObjectId) {
 		if (interactMode == 9)
 			verbIds = kVerbIdsH9;
-		else if (interactMode == 9)
+		else if (interactMode == 8)
 			verbIds = kVerbIdsH8;
 		else
 			verbIds = kVerbIdsHE;
