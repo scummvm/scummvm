@@ -105,6 +105,10 @@ void Graphics::fillBackgroundRect(const Common::Rect &rect, byte color) {
 	}
 }
 
+byte *Graphics::getBackgroundPixels() {
+	return _backgroundImage->pixels;
+}
+
 void Graphics::clearScreenAndPriBuffer() {
 	Common::fill(_priData, _priData + sizeof(_priData), 0);
 
@@ -129,6 +133,17 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 	SharedPtr<FileStream> lutStream = _vm->loadFile(lutFile.c_str());
 
 	lutStream->read(_lutData, 256);
+}
+
+void Graphics::copyRectBetweenBitmaps(Bitmap *destBitmap, int destX, int destY, Bitmap *srcBitmap, int srcX, int srcY, int width, int height) {
+	byte *src = srcBitmap->pixels + srcX + srcY * srcBitmap->width;
+	byte *dest = destBitmap->pixels + destX + destY * destBitmap->width;
+
+	for (int y = 0; y < height; y++) {
+		memcpy(dest, src, width);
+		src += srcBitmap->width;
+		dest += destBitmap->width;
+	}
 }
 
 void Graphics::fadeinScreen() {

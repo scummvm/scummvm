@@ -58,6 +58,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics");
 	DebugMan.addDebugChannel(kDebugSavegame, "savegame", "Savegames");
+	DebugMan.addDebugChannel(kDebugSpace, "space", "Space and Pseudo-3D");
 
 	_gfx = nullptr;
 	_sound = nullptr;
@@ -89,6 +90,8 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_roomIndexToLoad = 0;
 
 	_showSubtitles = true; // TODO: test
+	Common::fill(_r3List, _r3List + NUM_SPACE_OBJECTS, (R3 *)nullptr);
+	Common::fill(_orderedR3List, _orderedR3List + NUM_SPACE_OBJECTS, (R3 *)nullptr);
 
 	for (int i = 0; i < NUM_OBJECTS; i++)
 		_itemList[i] = g_itemList[i];
@@ -221,8 +224,11 @@ void StarTrekEngine::playIntro() {
 	//delR3(&_enterpriseR3); // TODO: uncomment
 
 	R3 planetR3 = R3();
-
-	// TODO: remainder of starfield initialization
+	planetR3.matrix = initMatrix();
+	planetR3.field1e = 3;
+	planetR3.funcPtr1 = nullptr;
+	planetR3.funcPtr2 = nullptr;
+	planetR3.bitmapOffset = 0;
 
 	_gfx->clearScreenAndPriBuffer();
 	_gfx->fadeoutScreen();
@@ -339,6 +345,16 @@ void StarTrekEngine::playIntro() {
 			starfieldZoomSpeed = 0;
 			break;
 
+		case 186:
+			delR3(&_enterpriseR3);
+			// TODO: the rest
+			break;
+
+		case 366:
+			planetR3.shpFile.reset();
+			delR3(&planetR3);
+			break;
+
 		case 378:
 			_gfx->delSprite(&subtitleSprite);
 			_byte_45b3c = 1;
@@ -371,23 +387,26 @@ void StarTrekEngine::initIntroR3ObjectToMove(R3 *r3, int16 srcAngle, int16 srcDe
 	Fixed8 a1 = Fixed8::fromRaw((srcAngle << 8) / 90);
 	Fixed8 a2 = Fixed8::fromRaw((destAngle << 8) / 90);
 
-	r3->pos.x = (sin(a1).multToInt(srcDepth) << 16) + _starfieldPosition.x;
-	r3->pos.z = (cos(a1).multToInt(srcDepth) << 16) + _starfieldPosition.z;
+	r3->pos.x = sin(a1).multToInt(srcDepth) + _starfieldPosition.x;
+	r3->pos.z = cos(a1).multToInt(srcDepth) + _starfieldPosition.z;
 	r3->pos.y = 0;
 
-	int32 deltaX = (sin(a2).multToInt(destDepth) << 16) + _starfieldPosition.x - r3->pos.x;
-	int32 deltaZ = (cos(a2).multToInt(destDepth) << 16) + _starfieldPosition.z - r3->pos.z;
+	int32 deltaX = sin(a2).multToInt(destDepth) + _starfieldPosition.x - r3->pos.x;
+	int32 deltaZ = cos(a2).multToInt(destDepth) + _starfieldPosition.z - r3->pos.z;
+	debug("Z: %d, %d", r3->pos.z - _starfieldPosition.z, cos(a2).multToInt(destDepth));
 
-	Fixed16 angle = atan2(deltaX, deltaZ);
-	r3->matrix = initMatrix();
+	Angle angle = atan2(deltaX, deltaZ);
+	r3->matrix = initSpeedMatrixForXZMovement(angle, initMatrix());
 
-	// sub_248cc(angle, r3->matrix);
+	debugCN(5, kDebugSpace, "initIntroR3ObjectToMove: pos %x,%x,%x; ", r3->pos.x, r3->pos.y, r3->pos.z);
 
 	if (ticks != 0) {
+		debugC(5, kDebugSpace, "speed %x,%x,%x\n", r3->speed.x, r3->speed.y, r3->speed.z);
 		r3->speed.x = deltaX / ticks;
 		r3->speed.z = deltaZ / ticks;
 		r3->speed.y = 0;
 	} else {
+		debugC(5, kDebugSpace, "speed 0\n");
 		r3->speed.x = 0;
 		r3->speed.z = 0;
 		r3->speed.y = 0;

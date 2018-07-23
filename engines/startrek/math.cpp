@@ -24,7 +24,7 @@
 
 namespace StarTrek {
 
-Fixed14 StarTrekEngine::sin(Fixed8 angle) {
+Fixed14 StarTrekEngine::sin(Angle angle) {
 	int16 i = angle.raw();
 	if (angle < 0) {
 		i %= 0x400;
@@ -46,14 +46,14 @@ Fixed14 StarTrekEngine::sin(Fixed8 angle) {
 		f = -_sineTable.getTable()[i & 0xff];
 	else if (i < 0x400)
 		f = -_sineTable.getTable()[256 - (i & 0xff)];
-	return Fixed16(f);
+	return Fixed14(f);
 }
 
-Fixed14 StarTrekEngine::cos(Fixed8 angle) {
+Fixed14 StarTrekEngine::cos(Angle angle) {
 	return sin(angle + 1.0);
 }
 
-Fixed8 StarTrekEngine::atan2(int32 deltaX, int32 deltaY) {
+Angle StarTrekEngine::atan2(int32 deltaX, int32 deltaY) {
 	const int16 atanTable[] = {
 		0x0000, 0x0064, 0x00c9, 0x012d, 0x0192, 0x01f6, 0x025b, 0x02c0,
 		0x0324, 0x0389, 0x03ee, 0x0453, 0x04b8, 0x051d, 0x0582, 0x05e8,
@@ -85,9 +85,9 @@ Fixed8 StarTrekEngine::atan2(int32 deltaX, int32 deltaY) {
 
 	Fixed14 ratio;
 	if (deltaY > deltaX)
-		ratio = Fixed14::fromRaw(((deltaX & 0xffff0000) >> 2) / (deltaY >> 16));
+		ratio = Fixed14::fromRaw(((deltaX & 0xffff0000) >> 2) / deltaY);
 	else
-		ratio = Fixed14::fromRaw(((deltaY & 0xffff0000) >> 2) / (deltaX >> 16));
+		ratio = Fixed14::fromRaw(((deltaY & 0xffff0000) >> 2) / deltaX);
 
 	int16 endIndex = 128;
 	int16 index = 0;
@@ -123,7 +123,7 @@ Fixed8 StarTrekEngine::atan2(int32 deltaX, int32 deltaY) {
 			angle = -256 + angle;
 	}
 
-	return Fixed8::fromRaw(angle);
+	return Angle::fromRaw(angle);
 }
 
 }

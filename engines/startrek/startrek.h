@@ -112,7 +112,8 @@ enum StarTrekGameFeatures {
 enum kDebugLevels {
 	kDebugSound =     1 << 0,
 	kDebugGraphics =  1 << 1,
-	kDebugSavegame =  2 << 1
+	kDebugSavegame =  1 << 2,
+	kDebugSpace =     2 << 3
 };
 
 enum GameMode {
@@ -215,9 +216,9 @@ public:
 	/**
 	 * Unit of the angle is "quadrants" (90 degrees = 1.0)
 	 */
-	Fixed14 sin(Fixed8 angle);
-	Fixed14 cos(Fixed8 angle);
-	Fixed8 atan2(int32 deltaX, int32 deltaZ);
+	Fixed14 sin(Angle angle);
+	Fixed14 cos(Angle angle);
+	Angle atan2(int32 deltaX, int32 deltaZ);
 
 	// Game modes
 	Common::Error runGameMode(int mode);
@@ -264,15 +265,20 @@ private:
 	void clearStarfieldPixels();
 	void drawStarfield();
 	void updateStarfieldAndShips(bool arg0);
+	R3 *sub_19f24(R3 *r3);
+	void drawR3Shape(R3 *r3);
+	bool sub_1c022(R3 *r3);
 
 	Point3 constructPoint3ForStarfield(int16 x, int16 y, int16 z);
 	Point3 matrixMult(const Matrix &weight, const Point3 &point);
 	Point3 matrixMult(const Point3 &point, const Matrix &weight);
+	int32 scaleSpacePosition(int32 x, int32 z);
 
 	/**
 	 * Creates something like an "identity" matrix? (Value 0x4000 along the diagonal)
 	 */
 	Matrix initMatrix();
+	Matrix initSpeedMatrixForXZMovement(Angle angle, const Matrix &matrix);
 
 	// Transporter room
 	void runTransportSequence(const Common::String &name);
@@ -542,8 +548,10 @@ public:
 	Common::Rect _starfieldRect;
 	R3 _enterpriseR3;
 	R3 *_r3List[NUM_SPACE_OBJECTS];
+	R3 *_orderedR3List[NUM_SPACE_OBJECTS];
 	Matrix _starPositionMatrix;
 	Matrix _someMatrix;
+	float _flt_50898;
 	
 	Graphics *_gfx;
 	Sound *_sound;
