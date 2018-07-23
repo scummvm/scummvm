@@ -60,6 +60,7 @@ public:
 	int		_numEntries;
 	int		_entriesPerPage;
 	int		_currentPos;
+	int		_singleStep;
 
 public:
 	ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h);

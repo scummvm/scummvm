@@ -47,6 +47,7 @@ ScrollBarWidget::ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h)
 	_numEntries = 0;
 	_entriesPerPage = 0;
 	_currentPos = 0;
+	_singleStep = 1;
 
 	_repeatTimer = 0;
 }
@@ -60,12 +61,12 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) 
 
 	if (y <= UP_DOWN_BOX_HEIGHT) {
 		// Up arrow
-		_currentPos--;
+		_currentPos -= _singleStep;
 		_repeatTimer = g_system->getMillis() + kRepeatInitialDelay;
 		_draggingPart = kUpArrowPart;
 	} else if (y >= _h - UP_DOWN_BOX_HEIGHT) {
 		// Down arrow
-		_currentPos++;
+		_currentPos += _singleStep;
 		_repeatTimer = g_system->getMillis() + kRepeatInitialDelay;
 		_draggingPart = kDownArrowPart;
 	} else if (y < _sliderPos) {
@@ -93,9 +94,9 @@ void ScrollBarWidget::handleMouseWheel(int x, int y, int direction) {
 		return;
 
 	if (direction < 0) {
-		_currentPos--;
+		_currentPos -= _singleStep;
 	} else {
-		_currentPos++;
+		_currentPos += _singleStep;
 	}
 
 	// Make sure that _currentPos is still inside the bounds
@@ -146,9 +147,9 @@ void ScrollBarWidget::handleTickle() {
 			const int old_pos = _currentPos;
 
 			if (_part == kUpArrowPart)
-				_currentPos -= 3;
+				_currentPos -= 3 * _singleStep;
 			else if (_part == kDownArrowPart)
-				_currentPos += 3;
+				_currentPos += 3 * _singleStep;
 
 			checkBounds(old_pos);
 

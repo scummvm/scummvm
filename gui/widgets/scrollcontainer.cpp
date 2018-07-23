@@ -73,6 +73,7 @@ void ScrollContainerWidget::recalc() {
 	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
+	_verticalScroll->_singleStep = kLineHeight;
 	_verticalScroll->setPos(_w - scrollbarWidth, _scrolledY+1);
 	_verticalScroll->setSize(scrollbarWidth, _limitH -2);
 }
