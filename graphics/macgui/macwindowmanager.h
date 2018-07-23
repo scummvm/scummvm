@@ -235,9 +235,11 @@ private:
 	void removeFromStack(BaseMacWindow *target);
 	void removeFromWindowList(BaseMacWindow *target);
 
-private:
+public:
 	ManagedSurface *_screen;
+	ManagedSurface *_screenCopy;
 
+private:
 	Common::List<BaseMacWindow *> _windowStack;
 	Common::Array<BaseMacWindow *> _windows;
 

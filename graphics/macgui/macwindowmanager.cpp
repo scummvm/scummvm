@@ -149,6 +149,7 @@ static void menuTimerHandler(void *refCon);
 
 MacWindowManager::MacWindowManager() {
 	_screen = 0;
+	_screenCopy = 0;
 	_lastId = 0;
 	_activeWindow = -1;
 
@@ -184,6 +185,7 @@ MacWindowManager::~MacWindowManager() {
 		delete _windows[i];
 
 	delete _fontMan;
+	delete _screenCopy;
 
 	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
 }
@@ -338,6 +340,7 @@ static void menuTimerHandler(void *refCon) {
 	if (wm->_menuHotzone.contains(wm->_lastMousePos)) {
 		wm->activateMenu();
 		if (wm->_mode & kWMModalMenuMode) {
+			wm->_screenCopy = new ManagedSurface(*wm->_screen);	// Create a copy
 			wm->pauseEngine(true);
 		}
 	}
