@@ -68,35 +68,27 @@ void SayTask::drawSubtitle(const Common::String &text, int16 talkX, int16 talkY,
 	const Font &font = getTaskManager()->getGame().getAssets().getSpeechFont();
 
 	Common::Array<Common::String> lines;
-	font.wordWrap(text, MAX_LINE_WIDTH, lines);
+	const int16 actualMaxWidth = font.wordWrapText(text, MAX_LINE_WIDTH, lines);
 
 	// Get the x, y coordinates of the top center point of the text's bounding box
 	// from the (rather strange) talk coordinates coming from scripts.
 	int16 x = talkX;
-	int16 y = talkY - (lines.size() - 1) * font.getLineHeight() - 15;
+	int16 y = talkY - (lines.size() - 1) * font.getFontHeight() - 15;
 
 	// Clamp to screen edges.
+	x = CLIP<int16>(x, 3 + actualMaxWidth / 2, 317 - actualMaxWidth / 2);
 	y = MAX<int16>(y, 3);
-	int16 maxWidth = 0;
-	for (uint i = 0; i < lines.size(); i++) {
-		int16 lineWidth = font.getWidth(lines[i]);
-		if (lineWidth > maxWidth) {
-			maxWidth = lineWidth;
-		}
-		x = MAX<int16>(x, 3 + lineWidth / 2);
-		x = MIN<int16>(x, 317 - lineWidth / 2);
-	}
+
+	// Remember the area occupied by the text.
+	_boundingBox.left = x - actualMaxWidth / 2;
+	_boundingBox.top = y;
+	_boundingBox.setWidth(actualMaxWidth);
+	_boundingBox.setHeight(lines.size() * font.getFontHeight());
 
 	// Draw lines.
 	for (uint i = 0; i < lines.size(); i++) {
-		font.drawString(lines[i], color, x - font.getWidth(lines[i]) / 2, y + i * font.getLineHeight(), getTaskManager()->getGame().getScreen());
+		font.drawString(&getTaskManager()->getGame().getScreen(), lines[i], _boundingBox.left, _boundingBox.top + i * font.getFontHeight(), _boundingBox.width(), color, Graphics::kTextAlignCenter);
 	}
-
-	// Remember the area occupied by the text.
-	_boundingBox.top = x - maxWidth / 2;
-	_boundingBox.left = y;
-	_boundingBox.setWidth(maxWidth);
-	_boundingBox.setHeight(lines.size() * font.getLineHeight());
 }
 
 void SayTask::finish() {

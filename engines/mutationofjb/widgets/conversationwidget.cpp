@@ -69,7 +69,7 @@ void ConversationWidget::_draw(Graphics::ManagedSurface &surface) {
 		}
 
 		// TODO: Active line should be WHITE.
-		_gui.getGame().getAssets().getSystemFont().drawString(str, LIGHTGRAY, CONVERSATION_LINES_X, CONVERSATION_LINES_Y + i * CONVERSATION_LINE_HEIGHT, surface);
+		_gui.getGame().getAssets().getSystemFont().drawString(&surface, str, CONVERSATION_LINES_X, CONVERSATION_LINES_Y + i * CONVERSATION_LINE_HEIGHT, _area.width(), LIGHTGRAY);
 	}
 }
 

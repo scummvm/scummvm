@@ -29,7 +29,8 @@ namespace MutationOfJB {
 
 Font::Font(const Common::String &fileName, int horizSpacing, int lineHeight) :
 	_horizSpacing(horizSpacing),
-	_lineHeight(lineHeight) {
+	_lineHeight(lineHeight),
+	_maxCharWidth(0) {
 
 	load(fileName);
 }
@@ -62,6 +63,10 @@ bool Font::load(const Common::String &fileName) {
 			file.read(surf.getBasePtr(0, h), width);
 		}
 
+		if (width > _maxCharWidth) {
+			_maxCharWidth = width;
+		}
+
 		if (height > maxHeight) {
 			maxHeight = height;
 		}
@@ -74,75 +79,69 @@ bool Font::load(const Common::String &fileName) {
 	return true;
 }
 
-void Font::drawGlyph(uint8 glyph, uint8 baseColor, int16 &x, int16 &y, Graphics::ManagedSurface &surf) const {
-	GlyphMap::iterator it = _glyphs.find(glyph);
+int Font::getFontHeight() const {
+	return _lineHeight;
+}
+
+int Font::getMaxCharWidth() const {
+	return _maxCharWidth;
+}
+
+int Font::getCharWidth(uint32 chr) const {
+	GlyphMap::iterator it = _glyphs.find(chr);
+	if (it == _glyphs.end()) {
+		return 0;
+	}
+	return it->_value.w;
+}
+
+int Font::getKerningOffset(uint32 left, uint32 right) const {
+	if (left == 0) {
+		// Do not displace the first character.
+		return 0;
+	}
+
+	if (_glyphs.find(left) == _glyphs.end()) {
+		// Missing glyphs must not create extra displacement.
+		// FIXME: This way is not completely correct, as if the last character is
+		// missing a glyph, it will still create extra displacement. This should
+		// not affect the visuals but it might affect getStringWidth() / getBoundingBox().
+		return 0;
+	}
+
+	return _horizSpacing;
+}
+
+class FontBlitOperation {
+public:
+	FontBlitOperation(const Font &font, const byte baseColor)
+		: _font(font),
+		  _baseColor(baseColor) {}
+
+	byte operator()(const byte srcColor, const byte destColor) {
+		if (srcColor == 0) {
+			// Transparency - keep destination color.
+			return destColor;
+		}
+
+		// Replace destination with transformed source color.
+		return _font.transformColor(_baseColor, srcColor);
+	}
+
+private:
+	const Font &_font;
+	const byte _baseColor;
+};
+
+void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	GlyphMap::iterator it = _glyphs.find(chr);
 	if (it == _glyphs.end()) {
 		// Missing glyph is a common situation in the game and it's okay to ignore it.
 		return;
 	}
 
 	Graphics::ManagedSurface &glyphSurface = it->_value;
-
-	Graphics::ManagedSurface tmp(glyphSurface);
-	for (int h = 0; h < tmp.h; ++h) {
-		uint8 *ptr = reinterpret_cast<uint8 *>(tmp.getBasePtr(0, h));
-		for (int w = 0; w < tmp.w; ++w) {
-			if (*ptr != 0) {
-				*ptr = transformColor(baseColor, *ptr);
-			}
-			ptr++;
-		}
-	}
-	surf.transBlitFrom(tmp.rawSurface(), Common::Point(x, y));
-
-	x += glyphSurface.w + _horizSpacing;
-}
-
-int16 Font::getWidth(const Common::String &str) const {
-	int16 width = 0;
-	for (uint i = 0; i < str.size(); ++i) {
-		GlyphMap::iterator it = _glyphs.find(str[i]);
-		if (it == _glyphs.end()) {
-			continue;
-		}
-
-		width += it->_value.w + _horizSpacing;
-	}
-	return width;
-}
-
-int Font::getLineHeight() const {
-	return _lineHeight;
-}
-
-void Font::drawString(const Common::String &str, uint8 baseColor, int16 x, int16 y, Graphics::ManagedSurface &surf) const {
-	for (uint i = 0; i < str.size(); ++i) {
-		drawGlyph(str[i], baseColor, x, y, surf); // "x" is updated.
-	}
-}
-
-void Font::wordWrap(const Common::String &str, int16 maxLineWidth, Common::Array<Common::String> &lines) const {
-	lines.push_back("");
-
-	for (Common::String::const_iterator it = str.begin(); it != str.end();) {
-		Common::String::const_iterator partStart = it;
-		it = Common::find(partStart, str.end(), ' ');
-		if (it != str.end()) {
-			while (*it == ' ' && it != str.end()) {
-				++it;
-			}
-		}
-
-		Common::String part(partStart, it); // Word + following whitespace
-		Common::String line = lines.back() + part;
-		if (getWidth(line) <= maxLineWidth) {
-			// The part fits in the current line
-			lines.back() = line;
-		} else {
-			// The part must go to the next line
-			lines.push_back(part);
-		}
-	}
+	blit_if(glyphSurface, *dst, Common::Point(x, y), FontBlitOperation(*this, color));
 }
 
 uint8 Font::transformColor(uint8 baseColor, uint8 glyphColor) const {
