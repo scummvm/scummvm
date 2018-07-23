@@ -839,7 +839,7 @@ void ThemeEngine::drawDD(DrawData type, const Common::Rect &r, uint32 dynamic, b
 		return;
 
 	if (kDrawDataDefaults[type].parent != kDDNone && kDrawDataDefaults[type].parent != type)
-		drawDD(kDrawDataDefaults[type].parent, r);
+		drawDD(kDrawDataDefaults[type].parent, r, dynamic);
 
 	Common::Rect area = r;
 	area.clip(_screen.w, _screen.h);
