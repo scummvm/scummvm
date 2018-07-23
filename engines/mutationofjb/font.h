@@ -25,7 +25,9 @@
 
 #include "common/scummsys.h"
 #include "common/hashmap.h"
+#include "graphics/font.h"
 #include "graphics/managed_surface.h"
+#include "graphics/surface.h"
 
 namespace Common {
 class String;
@@ -33,24 +35,26 @@ class String;
 
 namespace MutationOfJB {
 
-class Font {
+class Font : public Graphics::Font {
+	friend class FontBlitOperation;
 public:
-	Font(const Common::String &fileName, int horizSpacing, int vertSpacing);
-	virtual ~Font() {}
-	int getLineHeight() const;
-	int16 getWidth(const Common::String &text) const;
-	void drawString(const Common::String &str, uint8 baseColor, int16 x, int16 y, Graphics::ManagedSurface &surf) const;
-	void wordWrap(const Common::String &str, int16 maxLineWidth, Common::Array<Common::String> &lines) const;
+	Font(const Common::String &fileName, int horizSpacing, int lineHeight);
+
+	virtual int getFontHeight() const override;
+	virtual int getMaxCharWidth() const override;
+	virtual int getCharWidth(uint32 chr) const override;
+	virtual int getKerningOffset(uint32 left, uint32 right) const override;
+	virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 protected:
 	virtual uint8 transformColor(uint8 baseColor, uint8 glyphColor) const;
 
 private:
-	void drawGlyph(uint8 glyph, uint8 baseColor, int16 &x, int16 &y, Graphics::ManagedSurface &surf) const;
 	bool load(const Common::String &fileName);
 
 	int _horizSpacing;
 	int _lineHeight;
+	int _maxCharWidth;
 	typedef Common::HashMap<uint8, Graphics::ManagedSurface> GlyphMap;
 	GlyphMap _glyphs;
 };
