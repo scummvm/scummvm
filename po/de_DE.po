@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-07-22 22:29+0200\n"
-"PO-Revision-Date: 2018-07-08 17:28+0000\n"
+"PO-Revision-Date: 2018-07-23 11:42+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -801,24 +801,20 @@ msgid "Never"
 msgstr "nie"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 5 mins"
-msgstr "alle 5 Minuten"
+msgstr "Alle 5 Minuten"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 10 mins"
-msgstr "alle 10 Minuten"
+msgstr "Alle 10 Minuten"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 15 mins"
-msgstr "alle 15 Minuten"
+msgstr "Alle 15 Minuten"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 30 mins"
-msgstr "alle 30 Minuten"
+msgstr "Alle 30 Minuten"
 
 #: gui/options.cpp:361 gui/options.cpp:690 gui/options.cpp:828
 #: gui/options.cpp:910 gui/options.cpp:1183
@@ -1092,10 +1088,9 @@ msgid "Subtitle speed:"
 msgstr "Untertitel-Tempo:"
 
 #: gui/options.cpp:1257
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and speech:"
-msgstr "Sprache und Text:"
+msgstr "Text und Sprache:"
 
 #: gui/options.cpp:1261
 msgid "Spch"
