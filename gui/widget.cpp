@@ -748,7 +748,10 @@ bool ContainerWidget::containsWidget(Widget *w) const {
 }
 
 Widget *ContainerWidget::findWidget(int x, int y) {
-	return findWidgetInChain(_firstWidget, x, y);
+	Widget *w = findWidgetInChain(_firstWidget, x, y);
+	if (w)
+		return w;
+	return this;
 }
 
 void ContainerWidget::removeWidget(Widget *widget) {

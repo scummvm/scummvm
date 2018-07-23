@@ -153,7 +153,10 @@ bool ScrollContainerWidget::containsWidget(Widget *w) const {
 Widget *ScrollContainerWidget::findWidget(int x, int y) {
 	if (_verticalScroll->isVisible() && x >= _w - _verticalScroll->getWidth())
 		return _verticalScroll;
-	return Widget::findWidgetInChain(_firstWidget, x + _scrolledX, y + _scrolledY);
+	Widget *w = Widget::findWidgetInChain(_firstWidget, x + _scrolledX, y + _scrolledY);
+	if (w)
+		return w;
+	return this;
 }
 
 Common::Rect ScrollContainerWidget::getClipRect() const {
