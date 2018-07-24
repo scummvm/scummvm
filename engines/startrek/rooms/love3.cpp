@@ -225,8 +225,7 @@ void Room::love3OpenedOrClosedServicePanel() {
 			showText(TX_LOV3N023);
 		else
 			showText(TX_LOV3N022);
-	}
-	else
+	} else
 		showText(TX_LOV3N020);
 }
 
@@ -246,8 +245,7 @@ void Room::love3ScrewedOrUnscrewedGasTank() {
 		if (!_vm->_awayMission.redshirtDead)
 			showText(TX_SPEAKER_FERRIS, TX_LOV3_022);
 		_vm->_awayMission.love.gasTankUnscrewed = true;
-	}
-	else {
+	} else {
 		showText(TX_LOV3N015);
 		_vm->_awayMission.love.gasTankUnscrewed = false;
 	}
@@ -351,8 +349,7 @@ void Room::love3OpenedOrClosedGrate() {
 			_vm->_awayMission.love.gotPointsForOpeningGrate = true;
 			_vm->_awayMission.love.missionScore++;
 		}
-	}
-	else {
+	} else {
 		loadActorAnim(OBJECT_GRATE, "s3r4g1", 0x116, 0x8f, 0);
 		_vm->_awayMission.love.grateRemoved = false;
 		showText(TX_LOV3N032);
@@ -452,8 +449,7 @@ void Room::love3PouredRomulanLaughingGasDownShaft() {
 	if (_vm->_awayMission.love.romulansUnconsciousFromVirus) {
 		showText(TX_LOV3NA08);
 		_vm->_awayMission.love.romulansUnconsciousFromLaughingGas = false;
-	}
-	else {
+	} else {
 		showText(TX_LOV3NA09);
 		playVoc("ROMULANL");
 	}
@@ -500,8 +496,7 @@ void Room::love3ReachedGasTankUsingAntigrav() {
 	if (_vm->_awayMission.love.gasTankUnscrewed) {
 		loadActorAnimC(OBJECT_KIRK, "kusehe", -1, -1, &Room::love3PickedUpGasTank);
 		playVoc("SE3PLBAT");
-	}
-	else {
+	} else {
 		showText(TX_LOV3N010);
 		showText(TX_SPEAKER_SPOCK, TX_LOV3_015);
 	}

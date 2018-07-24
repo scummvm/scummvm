@@ -158,8 +158,7 @@ void Room::demon5TalkToRoberts() {
 			_roomVar.demon5.numTalkedTo++;
 			demon5CheckCompletedStudy();
 		}
-	}
-	else {
+	} else {
 		showText(TX_DEM5N010);
 	}
 }
@@ -177,8 +176,7 @@ void Room::demon5TalkToChub() {
 			_roomVar.demon5.numTalkedTo++;
 			demon5CheckCompletedStudy();
 		}
-	}
-	else {
+	} else {
 		showText(TX_DEM5N013);
 	}
 }
@@ -195,8 +193,7 @@ void Room::demon5TalkToGrisnash() {
 			_roomVar.demon5.numTalkedTo++;
 			demon5CheckCompletedStudy();
 		}
-	}
-	else {
+	} else {
 		showText(TX_DEM5N011);
 	}
 }
@@ -214,21 +211,16 @@ void Room::demon5TalkToStephen() {
 			_roomVar.demon5.numTalkedTo++;
 			demon5CheckCompletedStudy();
 		}
-	}
-	else if (!_vm->_awayMission.demon.knowAboutHypoDytoxin) {
+	} else if (!_vm->_awayMission.demon.knowAboutHypoDytoxin) {
 		showText(TX_SPEAKER_ROBERTS, TX_DEM5_034);
-	}
-	else if (_vm->_awayMission.demon.madeHypoDytoxin) {
+	} else if (_vm->_awayMission.demon.madeHypoDytoxin) {
 		showText(TX_SPEAKER_ROBERTS, TX_DEM5_035);
-	}
-	else if (_vm->_awayMission.demon.gotBerries) {
+	} else if (_vm->_awayMission.demon.gotBerries) {
 		showText(TX_SPEAKER_ROBERTS, TX_DEM5_032);
 		_vm->_awayMission.demon.field3e = false;
-	}
-	else if (_vm->_awayMission.demon.field3e) {
+	} else if (_vm->_awayMission.demon.field3e) {
 		showText(TX_SPEAKER_ROBERTS, TX_DEM5_038);
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_ROBERTS, TX_DEM5_034);
 	}
 }
@@ -258,8 +250,7 @@ void Room::demon5TalkToMccoy() {
 			showText(TX_SPEAKER_SPOCK, TX_DEM5_026);
 			showText(TX_SPEAKER_MCCOY, TX_DEM5_019);
 		}
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_MCCOY, TX_DEM5_017);
 	}
 }
@@ -287,8 +278,7 @@ void Room::demon5UseMTricorderOnChub() {
 		_roomVar.demon5.scannedChub = true;
 		_roomVar.demon5.numScanned++;
 		demon5CheckCompletedStudy();
-	}
-	else {
+	} else {
 		if (_vm->_awayMission.demon.field3e)
 			showText(TX_SPEAKER_MCCOY, TX_DEM5_010);
 		else {

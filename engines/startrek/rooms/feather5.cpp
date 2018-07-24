@@ -81,7 +81,7 @@ extern const RoomAction feather5ActionList[] = {
 	{ {ACTION_USE, OBJECT_IROCK, OBJECT_REDSHIRT, 0},      &Room::feather5UseRockOnRedshirt },
 	{ {ACTION_USE, OBJECT_SPOCK, OBJECT_THROWN_FERN, 0},   &Room::feather5UseCrewmanOnThrownFern },
 	{ {ACTION_USE, OBJECT_MCCOY, OBJECT_THROWN_FERN, 0},   &Room::feather5UseCrewmanOnThrownFern },
-	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_THROWN_FERN, 0},&Room::feather5UseCrewmanOnThrownFern },
+	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_THROWN_FERN, 0}, &Room::feather5UseCrewmanOnThrownFern },
 	{ {ACTION_USE, OBJECT_SPOCK, OBJECT_MONSTER, 0},       &Room::feather5UseSpockOnMonster },
 	{ {ACTION_USE, OBJECT_MCCOY, OBJECT_MONSTER, 0},       &Room::feather5UseMccoyOnMonster },
 	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_MONSTER, 0},    &Room::feather5UseRedshirtOnMonster },

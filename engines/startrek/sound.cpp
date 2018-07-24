@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
- 
+
 #include "startrek/sound.h"
 
 #include "common/file.h"
@@ -80,7 +80,7 @@ Sound::~Sound() {
 
 
 void Sound::clearAllMidiSlots() {
-	for (int i=0; i < NUM_MIDI_SLOTS; i++) {
+	for (int i = 0; i < NUM_MIDI_SLOTS; i++) {
 		clearMidiSlot(i);
 	}
 }
@@ -235,7 +235,7 @@ void Sound::playSpeech(const Common::String &basename) {
 			i++;
 		}
 
-		Common::String filename = "voc/" + Common::String(name.c_str(), name.c_str()+i) + ".voc";
+		Common::String filename = "voc/" + Common::String(name.c_str(), name.c_str() + i) + ".voc";
 		debugC(5, kDebugSound, "Playing speech '%s'", filename.c_str());
 		Common::SeekableReadStream *readStream = SearchMan.createReadStreamForMember(filename);
 		if (readStream == nullptr)
@@ -300,8 +300,7 @@ void Sound::setSfxEnabled(bool enable) {
 
 	if (!enable) {
 		stopAllVocSounds();
-	}
-	else if (!_loopingAudioName.empty()) {
+	} else if (!_loopingAudioName.empty()) {
 		playVoc(_loopingAudioName);
 	}
 }
@@ -315,33 +314,33 @@ void Sound::checkLoopMusic() {
 // XMIDI or SM sound
 void Sound::loadPCMusicFile(const Common::String &baseSoundName) {
 	Common::String soundName = baseSoundName;
-	
+
 	soundName += '.';
-	
+
 	switch (MidiDriver::getMusicType(_midiDevice)) {
-		case MT_MT32:
-			if (_vm->getFeatures() & GF_DEMO)
-				soundName += "ROL";
-			else
-				soundName += "MT";
-			break;
-		case MT_PCSPK:
-			if (_vm->getFeatures() & GF_DEMO)
-				return; // Not supported...
-			else
-				soundName += "PC";
-			break;
-		default:
-			if (_vm->getFeatures() & GF_DEMO)
-				soundName += "ADL";
-			else
-				soundName += "AD";
-			break;
+	case MT_MT32:
+		if (_vm->getFeatures() & GF_DEMO)
+			soundName += "ROL";
+		else
+			soundName += "MT";
+		break;
+	case MT_PCSPK:
+		if (_vm->getFeatures() & GF_DEMO)
+			return; // Not supported...
+		else
+			soundName += "PC";
+		break;
+	default:
+		if (_vm->getFeatures() & GF_DEMO)
+			soundName += "ADL";
+		else
+			soundName += "AD";
+		break;
 	}
-	
+
 	debugC(5, kDebugSound, "Loading midi \'%s\'\n", soundName.c_str());
 	SharedPtr<FileStream> soundStream = _vm->loadFile(soundName.c_str());
-	
+
 	if (loadedSoundData != nullptr)
 		delete[] loadedSoundData;
 	loadedSoundData = new byte[soundStream->size()];
@@ -359,7 +358,7 @@ void Sound::clearMidiSlot(int slot) {
 
 // Static callback method
 void Sound::midiDriverCallback(void *data) {
-	Sound *s = (Sound*)data;
+	Sound *s = (Sound *)data;
 	for (int i = 0; i < NUM_MIDI_SLOTS; i++)
 		s->_midiSlots[i].midiParser->onTimer();
 

@@ -157,13 +157,11 @@ bool StarTrekEngine::loadGame(int slot) {
 				a->sprite.setBitmap(loadAnimationFrame(a->bitmapFilename, a->scale));
 			}
 		}
-	}
-	else if (_gameMode == -1) {
+	} else if (_gameMode == -1) {
 		initBridge(true);
 		_lastGameMode = GAMEMODE_BRIDGE;
 		// TODO: mode change
-	}
-	else {
+	} else {
 		_txtFilename = _missionToLoad;
 		initBridge(false);
 		// TODO: mode change
@@ -300,8 +298,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 				a.saveLoadWithSerializer(ser);
 				_actionQueue.push(a);
 			}
-		}
-		else { // Saving
+		} else { // Saving
 			int16 n = _actionQueue.size();
 			ser.syncAsSint16LE(n);
 			for (int i = 0; i < n; i++) {
@@ -347,8 +344,7 @@ bool saveOrLoadMetadata(Common::SeekableReadStream *in, Common::WriteStream *out
 	if (ser.isLoading()) {
 		if (!::Graphics::loadThumbnail(*in, meta->thumbnail))
 			meta->thumbnail = nullptr;
-	}
-	else
+	} else
 		::Graphics::saveThumbnail(*out);
 
 	// Creation date/time

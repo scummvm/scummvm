@@ -475,10 +475,10 @@ void Room::feather1CrewmanClimbVine() {
 	_vm->_awayMission.disableInput = true;
 	if (_roomVar.feather.crewEscaped[_roomVar.feather.crewmanClimbingVine])
 		walkCrewmanC(_roomVar.feather.crewmanClimbingVine, VINE_TOP_X, VINE_TOP_Y,
-				     &Room::feather1ReachedVineToClimbDown);
+		             &Room::feather1ReachedVineToClimbDown);
 	else
 		walkCrewmanC(_roomVar.feather.crewmanClimbingVine, VINE_BOT_X, VINE_BOT_Y,
-				     &Room::feather1ReachedVineToClimbUp);
+		             &Room::feather1ReachedVineToClimbUp);
 }
 
 void Room::feather1ReachedVineToClimbUp() {

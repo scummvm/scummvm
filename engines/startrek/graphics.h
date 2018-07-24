@@ -50,7 +50,7 @@ class Graphics {
 public:
 	Graphics(StarTrekEngine *vm);
 	~Graphics();
-	
+
 	void setBackgroundImage(SharedPtr<Bitmap> bitmap);
 	/**
 	 * @param origRect The rectangle containing the original bitmap (must contain the
@@ -104,20 +104,22 @@ public:
 	void drawTextChar(::Graphics::Surface *surface, const Sprite &sprite, int x, int y, const Common::Rect &rect);
 	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface);
 	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect);
-	void drawAllSprites(bool updateScreen=true);
+	void drawAllSprites(bool updateScreen = true);
 	/**
 	 * Sets "bitmapChanged" to true on all sprites before calling drawAllSprites.
 	 */
-	void forceDrawAllSprites(bool updateScreen=true);
+	void forceDrawAllSprites(bool updateScreen = true);
 	/**
 	 * Returns the sprite at the given position (ignores mouse).
 	 */
 	Sprite *getSpriteAt(int16 x, int16 y);
-	Sprite *getSpriteAt(Common::Point p) { return getSpriteAt(p.x, p.y); }
+	Sprite *getSpriteAt(Common::Point p) {
+		return getSpriteAt(p.x, p.y);
+	}
 
 	void addSprite(Sprite *sprite);
 	void delSprite(Sprite *sprite);
-	
+
 	// Save/load the current state of sprites. Can only push once for now.
 	void pushSprites();
 	void popSprites();
@@ -126,11 +128,11 @@ public:
 	void drawDirectToScreen(SharedPtr<Bitmap> bitmap);
 	void loadEGAData(const char *egaFile);
 	void drawBackgroundImage(const char *filename);
-	
+
 private:
 	StarTrekEngine *_vm;
 	Font *_font;
-	
+
 	bool _egaMode;
 	byte *_egaData;
 	byte *_palData;

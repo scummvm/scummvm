@@ -454,8 +454,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 
 	if (_missionToLoad.equalsIgnoreCase("feather") && name[4] == 'b') {
 		loadActorAnim(9, "qteleb", 0x61, 0x79, 1.0);
-	}
-	else if (_missionToLoad.equalsIgnoreCase("trial")) {
+	} else if (_missionToLoad.equalsIgnoreCase("trial")) {
 		if (name[4] == 'd') {
 			loadActorAnim(9, "qteled", 0x61, 0x79, 1.0);
 		}
@@ -548,7 +547,7 @@ void StarTrekEngine::playSoundEffectIndex(int index) {
 		_sound->playVoc("WARP");
 		break;
 	default:
-	    break;
+		break;
 	}
 }
 
@@ -585,15 +584,13 @@ int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName
 	if (actorIndex == -1) {
 		// TODO
 		warning("loadActorAnim: actor == -1");
-	}
-	else
+	} else
 		actor = &_actorList[actorIndex];
 
 	if (actor->spriteDrawn) {
 		releaseAnim(actor);
 		drawActorToScreen(actor, animName, x, y, scale, false);
-	}
-	else {
+	} else {
 		drawActorToScreen(actor, animName, x, y, scale, true);
 	}
 
@@ -634,8 +631,7 @@ bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &a
 		chooseActorDirectionForWalking(actor, srcX, srcY, destX, destY);
 		updateActorPositionWhileWalking(actor, (actor->granularPosX + 0.5).toInt(), (actor->granularPosY + 0.5).toInt());
 		return true;
-	}
-	else {
+	} else {
 		actor->iwSrcPosition = _iwFile->getClosestKeyPosition(srcX, srcY);
 		actor->iwDestPosition = _iwFile->getClosestKeyPosition(destX, destY);
 
@@ -648,8 +644,7 @@ bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &a
 			initStandAnim(actorIndex);
 
 			return false;
-		}
-		else {
+		} else {
 			Common::Point iwSrc = _iwFile->_keyPositions[actor->iwSrcPosition];
 			chooseActorDirectionForWalking(actor, srcX, srcY, iwSrc.x, iwSrc.y);
 			updateActorPositionWhileWalking(actor, (actor->granularPosX + 0.5).toInt(), (actor->granularPosY + 0.5).toInt());
@@ -687,8 +682,7 @@ void StarTrekEngine::updateActorAnimations() {
 						removeActorFromScreen(i);
 					else
 						initStandAnim(i);
-				}
-				else {
+				} else {
 					Sprite *sprite = &actor->sprite;
 
 					actor->animFile->seek(actor->animFrame * 22, SEEK_SET);
@@ -742,8 +736,7 @@ void StarTrekEngine::updateActorAnimations() {
 					actor->granularPosY = newY;
 					actor->frameToStartNextAnim = _frameIndex;
 				}
-			}
-			else { // actor->field90 == 0
+			} else { // actor->field90 == 0
 				if (actor->iwSrcPosition == -1) {
 					if (actor->triggerActionWhenAnimFinished) {
 						actor->triggerActionWhenAnimFinished = false;
@@ -753,15 +746,13 @@ void StarTrekEngine::updateActorAnimations() {
 					actor->sprite.bitmap.reset();
 					updateActorPositionWhileWalking(actor, (actor->granularPosX + 0.5).toInt(), (actor->granularPosY + 0.5).toInt());
 					initStandAnim(i);
-				}
-				else { // actor->iwSrcPosition != -1
+				} else { // actor->iwSrcPosition != -1
 					if (actor->iwSrcPosition == actor->iwDestPosition) {
 						actor->animationString2[strlen(actor->animationString2) - 1] = '\0';
 						actor->iwDestPosition = -1;
 						actor->iwSrcPosition = -1;
 						chooseActorDirectionForWalking(actor, actor->pos.x, actor->pos.y, actor->dest.x, actor->dest.y);
-					}
-					else {
+					} else {
 						int index = _iwFile->_iwEntries[actor->iwSrcPosition][actor->iwDestPosition];
 						actor->iwSrcPosition = index;
 						Common::Point dest = _iwFile->_keyPositions[actor->iwSrcPosition];
@@ -951,8 +942,7 @@ void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, in
 
 			actor->speedY = Fixed16(distY) / absDistX;
 		}
-	}
-	else {
+	} else {
 		char d;
 		if (distY > 0)
 			d = 'S';
@@ -999,8 +989,7 @@ bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16
 			speedX = 1.0;
 		else
 			speedX = -1.0;
-	}
-	else { // absDistX <= absDistY
+	} else { // absDistX <= absDistY
 		distCounter = absDistY;
 
 		if (distCounter == 0)
@@ -1059,15 +1048,14 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 			if ((word & actionBit) && isPointInPolygon((int16 *)(_room->_rdfData + offset + 6), x, y)) {
 				int actorIndex = _room->readRdfWord(offset + 6);
 				_objectHasWalkPosition = true;
-				 _objectWalkPosition.x = _room->readRdfWord(offset + 2);
-				 _objectWalkPosition.y = _room->readRdfWord(offset + 4);
+				_objectWalkPosition.x = _room->readRdfWord(offset + 2);
+				_objectWalkPosition.y = _room->readRdfWord(offset + 4);
 				return actorIndex;
 			}
 
 			int numVertices = _room->readRdfWord(offset + 8);
 			offset = offset + 10 + numVertices * 4;
-		}
-		else {
+		} else {
 			if (isPointInPolygon((int16 *)(_room->_rdfData + offset), x, y)) {
 				int actorIndex = _room->readRdfWord(offset);
 				return actorIndex;
@@ -1090,12 +1078,11 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 
 	char c = filename[0];
 	if ((strcmp(basename, "stnd") == 0 || strcmp(basename, "tele") == 0)
-			&& (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
+	        && (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
 		if (c == 'm') {
 			// Mccoy has the "base" animations for all crewmen
 			bitmapToReturn = _gfx->loadBitmap(filename);
-		}
-		else {
+		} else {
 			// All crewman other than mccoy copy the animation frames from mccoy, change
 			// the colors of the uniforms, and load an "xor" file to redraw the face.
 
@@ -1131,8 +1118,7 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 
 				if (colorShift == 0) {
 					memcpy(bitmapToReturn->pixels, bitmap->pixels, width * height);
-				}
-				else {
+				} else {
 					byte *src = bitmap->pixels;
 					byte *dest = bitmapToReturn->pixels;
 					byte baseUniformColor = 0xa8;
@@ -1163,8 +1149,7 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 				}
 			}
 		}
-	}
-	else {
+	} else {
 		// TODO: when loading a bitmap, it passes a different argument than is standard to
 		// the "file loading with cache" function...
 		bitmapToReturn = _gfx->loadBitmap(filename);
@@ -1193,34 +1178,28 @@ int StarTrekEngine::selectObjectForUseAction() {
 				updateMouseBitmap();
 				_gfx->drawAllSprites();
 				_sound->checkLoopMusic();
-			}
-			else if (event.type == TREKEVENT_LBUTTONDOWN) {
+			} else if (event.type == TREKEVENT_LBUTTONDOWN) {
 				removeNextEvent();
 				break;
-			}
-			else if (event.type == TREKEVENT_MOUSEMOVE) {
-			}
-			else if (event.type == TREKEVENT_RBUTTONDOWN) {
+			} else if (event.type == TREKEVENT_MOUSEMOVE) {
+			} else if (event.type == TREKEVENT_RBUTTONDOWN) {
 				// Allow this to be processed by main away mission loop
 				break;
-			}
-			else if (event.type == TREKEVENT_KEYDOWN) {
+			} else if (event.type == TREKEVENT_KEYDOWN) {
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE
-						|| event.kbd.keycode == Common::KEYCODE_w
-						|| event.kbd.keycode == Common::KEYCODE_t
-						|| event.kbd.keycode == Common::KEYCODE_u
-						|| event.kbd.keycode == Common::KEYCODE_g
-						|| event.kbd.keycode == Common::KEYCODE_l
-						|| event.kbd.keycode == Common::KEYCODE_SPACE
-						|| event.kbd.keycode == Common::KEYCODE_F2) {
+				        || event.kbd.keycode == Common::KEYCODE_w
+				        || event.kbd.keycode == Common::KEYCODE_t
+				        || event.kbd.keycode == Common::KEYCODE_u
+				        || event.kbd.keycode == Common::KEYCODE_g
+				        || event.kbd.keycode == Common::KEYCODE_l
+				        || event.kbd.keycode == Common::KEYCODE_SPACE
+				        || event.kbd.keycode == Common::KEYCODE_F2) {
 					// Allow these buttons to be processed by main away mission loop
 					break;
-				}
-				else if (event.kbd.keycode == Common::KEYCODE_i) {
+				} else if (event.kbd.keycode == Common::KEYCODE_i) {
 					removeNextEvent();
 					break;
-				}
-				else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_KP_ENTER || event.kbd.keycode == Common::KEYCODE_F1) {
+				} else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_KP_ENTER || event.kbd.keycode == Common::KEYCODE_F1) {
 					// Simulate left-click
 					removeNextEvent();
 					event.type = TREKEVENT_LBUTTONDOWN;
@@ -1237,8 +1216,7 @@ int StarTrekEngine::selectObjectForUseAction() {
 			if (clickedObject == -1)
 				continue;
 			return clickedObject;
-		}
-		else if (event.type == TREKEVENT_LBUTTONDOWN) {
+		} else if (event.type == TREKEVENT_LBUTTONDOWN) {
 			int clickedObject = findObjectAt(_gfx->getMousePos());
 			hideInventoryIcons();
 
@@ -1252,14 +1230,13 @@ int StarTrekEngine::selectObjectForUseAction() {
 					continue;
 				else
 					return clickedObject;
-			}
-			else if (clickedObject <= OBJECT_REDSHIRT)
+			} else if (clickedObject <= OBJECT_REDSHIRT)
 				return clickedObject;
 			else if (isObjectUnusable(OBJECT_KIRK, ACTION_USE))
 				continue;
 			else if (_room->actionHasCode(ACTION_USE, OBJECT_KIRK, clickedObject, 0)
-					|| _room->actionHasCode(ACTION_GET, clickedObject, 0, 0)
-					|| _room->actionHasCode(ACTION_WALK, clickedObject, 0, 0)) {
+			         || _room->actionHasCode(ACTION_GET, clickedObject, 0, 0)
+			         || _room->actionHasCode(ACTION_WALK, clickedObject, 0, 0)) {
 				_awayMission.activeObject = OBJECT_KIRK;
 				_awayMission.passiveObject = clickedObject;
 				_awayMission.activeAction = ACTION_USE;
@@ -1267,11 +1244,9 @@ int StarTrekEngine::selectObjectForUseAction() {
 				if (!walkActiveObjectToHotspot())
 					addAction(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0);
 				return clickedObject;
-			}
-			else
+			} else
 				continue;
-		}
-		else {
+		} else {
 			hideInventoryIcons();
 			return -1;
 		}
@@ -1342,8 +1317,7 @@ bool StarTrekEngine::walkActiveObjectToHotspot() {
 			objectIndex = OBJECT_MCCOY;
 		else
 			objectIndex = OBJECT_KIRK;
-	}
-	else // This is the original error message...
+	} else // This is the original error message...
 		error("Jay didn't think about pmcheck");
 
 	byte finishedAnimActionParam = false;
@@ -1381,8 +1355,7 @@ bool StarTrekEngine::walkActiveObjectToHotspot() {
 		}
 		_objectHasWalkPosition = false;
 		return true;
-	}
-	else {
+	} else {
 		_objectHasWalkPosition = false;
 		return false;
 	}
@@ -1484,8 +1457,7 @@ void StarTrekEngine::updateCrewmanGetupTimers() {
 			char d;
 			if (dir == -1) {
 				d = actor->direction;
-			}
-			else {
+			} else {
 				const char *dirs = "nsew";
 				Fixed8 scale = getActorScaleAtPosition(actor->sprite.pos.y);
 				d = dirs[dir];
@@ -1494,8 +1466,7 @@ void StarTrekEngine::updateCrewmanGetupTimers() {
 				if (d == 'n') {
 					xOffset = -24;
 					yOffset = -8;
-				}
-				else if (d == 'w') {
+				} else if (d == 'w') {
 					xOffset = -35;
 					yOffset = -12;
 				}
@@ -1717,8 +1688,7 @@ SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 s
 		while (origRow <= origHeight) {
 			if (var2e < 0) {
 				var2e += var30;
-			}
-			else {
+			} else {
 				var2e += var32;
 				scaleBitmapRow(src, dest, origWidth, scaledWidth);
 				dest += scaledWidth;
@@ -1727,8 +1697,7 @@ SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 s
 			src += bitmap->width;
 			origRow++;
 		}
-	}
-	else {
+	} else {
 		int16 var2e = (origHeight << 1) - scaledHeight;
 		uint16 var30 = origHeight << 1;
 		uint16 var32 = (origHeight - scaledHeight) << 1;
@@ -1748,8 +1717,7 @@ SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 s
 
 			if (var2e < 0) {
 				var2e += var30;
-			}
-			else {
+			} else {
 				var2e += var32;
 				src += origWidth;
 				srcRowChanged = true;
@@ -1775,8 +1743,7 @@ void StarTrekEngine::scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uin
 		while (var8-- != 0) {
 			if (var2 < 0) {
 				var2 += var4;
-			}
-			else {
+			} else {
 				var2 += var6;
 				if (di != 0) {
 					if (varE != 0) {
@@ -1794,8 +1761,7 @@ void StarTrekEngine::scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uin
 			di++;
 			varA++;
 		}
-	}
-	else {
+	} else {
 		int16 var2 = ((origWidth - 1) << 1) - (scaledWidth - 1);
 		uint16 var4 = (origWidth - 1) << 1;
 		uint16 var6 = ((origWidth - 1) - (scaledWidth - 1)) << 1;
@@ -1836,11 +1802,11 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 
 	bool bigEndian = getPlatform() == Common::kPlatformAmiga;
 
-	for (int i=filename.size()-1; ; i--) {
+	for (int i = filename.size() - 1; ; i--) {
 		if (filename[i] == '.') {
 			basename = filename;
 			extension = filename;
-			basename.replace(i, filename.size()-i, "");
+			basename.replace(i, filename.size() - i, "");
 			extension.replace(0, i + 1, "");
 			break;
 		}
@@ -1876,12 +1842,12 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 		if (!indexFile)
 			error("Could not open data.dir");
 	}
-	
+
 	uint32 indexOffset = 0;
 	bool foundData = false;
 	uint16 fileCount = 1;
 	uint16 uncompressedSize = 0;
-	
+
 	while (!indexFile->eos() && !indexFile->err()) {
 		Common::String testfile;
 		for (byte i = 0; i < 8; i++) {
@@ -1901,10 +1867,10 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 			uncompressedSize = indexFile->readUint16LE();
 		} else {
 			if (getPlatform() == Common::kPlatformAmiga)
-				indexOffset = (indexFile->readByte() << 16) + (indexFile->readByte() << 8) + indexFile->readByte();	
-			else 
+				indexOffset = (indexFile->readByte() << 16) + (indexFile->readByte() << 8) + indexFile->readByte();
+			else
 				indexOffset = indexFile->readByte() + (indexFile->readByte() << 8) + (indexFile->readByte() << 16);
-			
+
 			if (indexOffset & (1 << 23)) {
 				fileCount = (indexOffset >> 16) & 0x7F;
 				indexOffset = indexOffset & 0xFFFF;
@@ -1926,7 +1892,7 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 		// Files can be accessed "sequentially" if their filenames are the same except for
 		// the last character being incremented by one.
 		if ((basename.lastChar() >= '1' && basename.lastChar() <= '9') ||
-				(basename.lastChar() >= 'B' && basename.lastChar() <= 'Z')) {
+		        (basename.lastChar() >= 'B' && basename.lastChar() <= 'Z')) {
 			basename.setChar(basename.lastChar() - 1, basename.size() - 1);
 			return loadFile(basename + "." + extension, fileIndex + 1);
 		} else

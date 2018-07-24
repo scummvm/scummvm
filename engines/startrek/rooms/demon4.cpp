@@ -140,8 +140,7 @@ void Room::demon4UsePhaserOnNauian() {
 	if (!_roomVar.demon4.triedToShootNauian) { // Lenient the first time
 		showText(TX_SPEAKER_NAUIAN, TX_DEM4_033);
 		_roomVar.demon4.triedToShootNauian = true;
-	}
-	else { // Murdery the second time
+	} else { // Murdery the second time
 		showText(TX_SPEAKER_NAUIAN, TX_DEM4_032);
 		loadActorAnim2(10, "bxfire", 0, 0, 2);
 		playVoc("V0SPOCKT");
@@ -279,12 +278,10 @@ void Room::demon4TalkToNauian() {
 			_vm->_awayMission.disableInput = true;
 			_vm->_awayMission.demon.missionScore += 5;
 			_vm->_awayMission.timers[1] = 20;
-		}
-		else {
+		} else {
 			showText(TX_SPEAKER_NAUIAN, TX_DEM4_038);
 		}
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_NAUIAN, TX_DEM4_031);
 	}
 }
@@ -367,8 +364,7 @@ void Room::demon4CrewmanReachedPanel() {
 		loadActorAnim(9, "ctrl", 0, 0, 0);
 		_vm->_awayMission.demon.missionScore += 3;
 		_vm->_awayMission.timers[0] = 10;
-	}
-	else
+	} else
 		showText(TX_DEM4N013);
 
 	walkCrewman(_roomVar.demon4.crewmanUsingPanel, 0xae, 0x93, 0);

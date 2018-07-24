@@ -67,8 +67,7 @@ void Room::loveaTimer0Expired() {
 	if (randomVal == 0 || _vm->_awayMission.redshirtDead) {
 		speaker = TX_SPEAKER_MCCOY;
 		textTable = mccoyText;
-	}
-	else {
+	} else {
 		speaker = TX_SPEAKER_FERRIS;
 		textTable = ferrisText;
 	}
@@ -122,8 +121,7 @@ void Room::loveaUseCureSampleOnSpock() {
 	if (_vm->_awayMission.love.spockCured) {
 		walkCrewman(OBJECT_SPOCK, _roomVar.love.cmnXPosToCureSpock, _roomVar.love.cmnYPosToCureSpock, 99);
 		walkCrewman(OBJECT_MCCOY, _roomVar.love.cmnXPosToCureSpock, _roomVar.love.cmnYPosToCureSpock + 10, 99);
-	}
-	else
+	} else
 		showText(TX_SPEAKER_MCCOY, TX_LOVA_F55);
 }
 
@@ -162,20 +160,16 @@ void Room::loveaTimer2Expired() {
 			playMidiMusicTracks(2, -1); // FIXME: assembly had no second parameter...?
 			showText(TX_GENER004);
 			showGameOverMenu();
-		}
-		else if (_vm->_awayMission.love.spockInfectionCounter == 15) {
+		} else if (_vm->_awayMission.love.spockInfectionCounter == 15) {
 			showText(TX_SPEAKER_SPOCK, TX_SPOKCOFF);
 			_vm->_awayMission.love.spockInfectionCounter++;
-		}
-		else if (_vm->_awayMission.love.spockInfectionCounter == 30) {
+		} else if (_vm->_awayMission.love.spockInfectionCounter == 30) {
 			showText(TX_SPEAKER_MCCOY, TX_LOVA_F08);
 			_vm->_awayMission.love.spockInfectionCounter++;
-		}
-		else if (_vm->_awayMission.love.spockInfectionCounter == 45) {
+		} else if (_vm->_awayMission.love.spockInfectionCounter == 45) {
 			showText(TX_SPEAKER_SPOCK, TX_SPOKCOFF);
 			_vm->_awayMission.love.spockInfectionCounter++;
-		}
-		else if (_vm->_awayMission.love.spockInfectionCounter == 60) {
+		} else if (_vm->_awayMission.love.spockInfectionCounter == 60) {
 			showText(TX_SPEAKER_SPOCK, TX_LOVA_F54);
 			_vm->_awayMission.love.romulansUnconsciousFromVirus = true;
 			_vm->_awayMission.love.spockInfectionCounter++;

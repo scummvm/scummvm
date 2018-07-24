@@ -42,10 +42,10 @@ namespace StarTrek {
 void Room::mudd0Tick1() {
 	playVoc("MUD0LOOP");
 
-    // NOTE: Using the floppy version's code here; Mudd disappears from this room after
-    // the first meeting. Fixes an issue where Mudd appears in the first room when he's
-    // supposed to be in the medbay.
-    // TODO: verify this matches with floppy version's code
+	// NOTE: Using the floppy version's code here; Mudd disappears from this room after
+	// the first meeting. Fixes an issue where Mudd appears in the first room when he's
+	// supposed to be in the medbay.
+	// TODO: verify this matches with floppy version's code
 	if (_vm->_awayMission.mudd.muddFirstRoomState != 0)
 		_vm->_awayMission.mudd.muddFirstRoomState = 2;
 	else {
@@ -292,8 +292,7 @@ void Room::mudd0TalkToRedshirt() {
 	if (_vm->_awayMission.mudd.muddFirstRoomState == 2) {
 		showText(TX_SPEAKER_BUCHERT, TX_MUD0_039);
 		showText(TX_SPEAKER_KIRK,    TX_MUD0_008);
-    }
-	else {
+	} else {
 		showText(TX_SPEAKER_BUCHERT, TX_MUD0_040);
 		showText(TX_SPEAKER_MUDD,    TX_MUD0_030);
 		showText(TX_SPEAKER_BUCHERT, TX_MUD0_041);

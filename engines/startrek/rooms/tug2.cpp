@@ -139,8 +139,7 @@ void Room::tug2GetBomb() {
 		_vm->_awayMission.disableInput = true;
 		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 		walkCrewman(OBJECT_KIRK, 0xc9, 0xa0, 12);
-	}
-	else
+	} else
 		showText(TX_TUG2N024);
 }
 
@@ -297,8 +296,7 @@ void Room::tug2KirkGotWires() {
 		_vm->_awayMission.tug.gotWires = true;
 		_vm->_awayMission.disableInput = false;
 		_vm->_awayMission.tug.missionScore += 3;
-	}
-	else {
+	} else {
 		loadActorStandAnim(OBJECT_WIRE);
 		giveItem(OBJECT_IWIRING);
 		_vm->_awayMission.tug.gotWires = true;
@@ -368,8 +366,7 @@ void Room::tug2TurnedOffForceField() {
 		loadActorAnim2(OBJECT_BOMB, "t2bbo", -3, 1, 0);
 		// FIXME: doesn't play "PHASSHOT" sound effect like when kirk removes wires?
 		_vm->_awayMission.tug.field35 = 6;
-	}
-	else if (_vm->_awayMission.tug.field35 == 4 && !_vm->_awayMission.tug.brigForceFieldDown) {
+	} else if (_vm->_awayMission.tug.field35 == 4 && !_vm->_awayMission.tug.brigForceFieldDown) {
 		_vm->_awayMission.tug.brigForceFieldDown = true;
 		loadActorAnim2(OBJECT_BRIG, "fld10", 0, 0, 2);
 		_vm->_awayMission.tug.missionScore += 6;
@@ -459,7 +456,7 @@ void Room::tug2UseStunPhaserOnGuard2() {
 }
 
 void Room::tug2KirkShootGuard2() {
-	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_UP){
+	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_2, "p6stun", -1, -1, 0);
 		_vm->_awayMission.tug.guard2Status = GUARDSTAT_STUNNED;
 		playSoundEffectIndex(SND_PHASSHOT);
@@ -487,7 +484,7 @@ void Room::tug2UseKillPhaserOnGuard1() {
 }
 
 void Room::tug2KirkKillGuard1() {
-	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_UP){
+	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_1, "p5kill", -1, -1, 0);
 		_vm->_awayMission.tug.guard1Status = GUARDSTAT_DEAD;
 		playSoundEffectIndex(SND_PHASSHOT);
@@ -515,7 +512,7 @@ void Room::tug2UseKillPhaserOnGuard2() {
 }
 
 void Room::tug2KirkKillGuard2() {
-	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_UP){
+	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_2, "p6kill", -1, -1, 0);
 		_vm->_awayMission.tug.guard2Status = GUARDSTAT_DEAD;
 		playSoundEffectIndex(SND_PHASSHOT);
@@ -688,8 +685,7 @@ void Room::tug2Timer0Expired() {
 			_roomVar.tug2.shootingTarget = OBJECT_SPOCK;
 			_vm->_awayMission.timers[2] = 40;
 			tug2GuardShootsCrewman();
-		}
-		else if (_roomVar.tug2.shootKirkOverride) {
+		} else if (_roomVar.tug2.shootKirkOverride) {
 			tug2DetermineElasiShooter();
 			_roomVar.tug2.shootingTarget = OBJECT_KIRK;
 			_vm->_awayMission.timers[2] = 40; // TODO
@@ -738,8 +734,7 @@ void Room::tug2GuardShootsCrewman() {
 			bitmapArray = g1ShotsOnKill;
 		else
 			bitmapArray = g2ShotsOnKill;
-	}
-	else {
+	} else {
 		anim = "_stune";
 		if (_roomVar.tug2.shootingObject == OBJECT_GUARD_1)
 			bitmapArray = g1ShotsOnStun;

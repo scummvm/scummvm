@@ -57,7 +57,7 @@ struct Sprite : Common::Serializable {
 	Common::Rect lastDrawRect; // Rect encompassing the sprite last time it was drawn
 	Common::Rect drawRect;     // Rect encompassing the sprite currently
 	Common::Rect rectangle2;
-	int16 drawX,drawY;
+	int16 drawX, drawY;
 
 	Sprite();
 

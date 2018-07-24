@@ -32,7 +32,7 @@ Common::Rect getRectEncompassing(Common::Rect r1, Common::Rect r2) {
 	uint16 r = max(r1.right, r2.right);
 	uint16 b = max(r1.bottom, r2.bottom);
 
-	return Common::Rect(l,t,r,b);
+	return Common::Rect(l, t, r, b);
 }
 
 void serializeRect(Common::Rect rect, Common::Serializer &ser) {

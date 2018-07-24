@@ -92,7 +92,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	{
 		{
 			"st25",
@@ -107,7 +107,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	{
 		{
 			"st25",
@@ -122,7 +122,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	{
 		{
 			"st25",
@@ -137,7 +137,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	{
 		{
 			"st25",
@@ -152,7 +152,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	{
 		{
 			"st25",
@@ -167,7 +167,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	{
 		{
 			"st25",
@@ -197,7 +197,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0,
 	},
-	
+
 	{
 		{
 			"stjr",
@@ -211,8 +211,8 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		GType_STJR,
 		0,
 		0,
-	},	
-	
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
 
@@ -250,14 +250,14 @@ bool StarTrekMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSavesSupportThumbnail) ||
 	    (f == kSavesSupportCreationDate) ||
 	    (f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	    (f == kSimpleSavesNames);
 }
 
 bool StarTrekMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const StarTrek::StarTrekGameDescription *gd = (const StarTrek::StarTrekGameDescription *)desc;
-	
+
 	*engine = new StarTrek::StarTrekEngine(syst, gd);
-	
+
 	return (gd != 0);
 }
 
@@ -304,7 +304,9 @@ SaveStateList StarTrekMetaEngine::listSaves(const char *target) const {
 }
 
 
-int StarTrekMetaEngine::getMaximumSaveSlot() const { return 999; }
+int StarTrekMetaEngine::getMaximumSaveSlot() const {
+	return 999;
+}
 
 void StarTrekMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
@@ -372,8 +374,8 @@ SaveStateDescriptor StarTrekMetaEngine::querySaveMetaInfos(const char *target, i
 
 
 #if PLUGIN_ENABLED_DYNAMIC(STARTREK)
-	REGISTER_PLUGIN_DYNAMIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngine);
+REGISTER_PLUGIN_STATIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngine);
 #endif
 

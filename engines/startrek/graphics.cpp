@@ -79,7 +79,7 @@ void Graphics::setBackgroundImage(SharedPtr<Bitmap> bitmap) {
 void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, SharedPtr<Bitmap> bitmap) {
 	byte *dest = _backgroundImage->pixels + drawRect.top * SCREEN_WIDTH + drawRect.left;
 	byte *src = bitmap->pixels + (drawRect.left - origRect.left)
-		+ (drawRect.top - origRect.top) * bitmap->width;
+	            + (drawRect.top - origRect.top) * bitmap->width;
 
 	for (int y = drawRect.top; y < drawRect.bottom; y++) {
 		for (int x = drawRect.left; x < drawRect.right; x++) {
@@ -298,19 +298,19 @@ void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface) {
 // sprite's actual, full rectangle.
 void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect) {
 	Common::Rect spriteRect = Common::Rect(sprite.drawX, sprite.drawY,
-			sprite.drawX + sprite.bitmap->width, sprite.drawY + sprite.bitmap->height);
+	        sprite.drawX + sprite.bitmap->width, sprite.drawY + sprite.bitmap->height);
 
 	assert(_screenRect.contains(rect));
 	assert(spriteRect.contains(rect));
 
-	byte *dest = (byte*)surface->getPixels() + rect.top*SCREEN_WIDTH + rect.left;
+	byte *dest = (byte *)surface->getPixels() + rect.top * SCREEN_WIDTH + rect.left;
 
-	switch(sprite.drawMode) {
+	switch (sprite.drawMode) {
 	case 0: { // Normal sprite
 		byte *src = sprite.bitmap->pixels + (rect.left - sprite.drawX)
-			+ (rect.top - sprite.drawY) * sprite.bitmap->width;
+		            + (rect.top - sprite.drawY) * sprite.bitmap->width;
 
-		int priOffset = rect.top*SCREEN_WIDTH + rect.left;
+		int priOffset = rect.top * SCREEN_WIDTH + rect.left;
 
 		for (int y = rect.top; y < rect.bottom; y++) {
 			for (int x = rect.left; x < rect.right; x++) {
@@ -342,7 +342,7 @@ void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, co
 
 	case 2: { // Normal sprite with darkened background for "transparent" pixels (and no priority)
 		byte *src = sprite.bitmap->pixels + (rect.left - sprite.drawX)
-			+ (rect.top - sprite.drawY) * sprite.bitmap->width;
+		            + (rect.top - sprite.drawY) * sprite.bitmap->width;
 
 		for (int y = rect.top; y < rect.bottom; y++) {
 			for (int x = rect.left; x < rect.right; x++) {
@@ -380,13 +380,13 @@ void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, co
 		int drawWidth = rectangle1.width();
 		int drawHeight = rectangle1.height();
 
-		dest = (byte*)surface->getPixels() + sprite.drawY*SCREEN_WIDTH + sprite.drawX
-			+ rectangle1.top*8*SCREEN_WIDTH + rectangle1.left*8;
+		dest = (byte *)surface->getPixels() + sprite.drawY * SCREEN_WIDTH + sprite.drawX
+		       + rectangle1.top * 8 * SCREEN_WIDTH + rectangle1.left * 8;
 
 		byte *src = sprite.bitmap->pixels + rectangle1.top * sprite.bitmap->width / 8 + rectangle1.left;
 
-		for (int y=0; y < drawHeight; y++) {
-			for (int x=0; x < drawWidth; x++) {
+		for (int y = 0; y < drawHeight; y++) {
+			for (int x = 0; x < drawWidth; x++) {
 				byte c = *src;
 
 				int textColor;
@@ -456,7 +456,7 @@ void Graphics::drawAllSprites(bool updateScreen) {
 	Common::sort(_sprites, _sprites + _numSprites, &compareSpritesByLayer);
 
 	// Update sprite rectangles
-	for (int i=0; i<_numSprites; i++) {
+	for (int i = 0; i < _numSprites; i++) {
 		Sprite *spr = _sprites[i];
 		Common::Rect rect;
 
@@ -483,15 +483,13 @@ void Graphics::drawAllSprites(bool updateScreen) {
 					spr->rectangle2 = getRectEncompassing(spr->drawRect, spr->lastDrawRect);
 					spr->rect2Valid = 1;
 				}
-			}
-			else {
+			} else {
 				spr->rectangle2 = spr->drawRect;
 				spr->rect2Valid = 1;
 			}
 
 			spr->isOnScreen = 1;
-		}
-		else { // Off-screen
+		} else { // Off-screen
 			spr->rect2Valid = 0;
 			spr->isOnScreen = 0;
 		}
@@ -508,13 +506,11 @@ void Graphics::drawAllSprites(bool updateScreen) {
 			if (spr->isOnScreen) {
 				if (spr->rect2Valid) {
 					dirtyRects[numDirtyRects++] = spr->rectangle2;
-				}
-				else {
+				} else {
 					dirtyRects[numDirtyRects++] = spr->drawRect;
 					dirtyRects[numDirtyRects++] = spr->lastDrawRect;
 				}
-			}
-			else {
+			} else {
 				dirtyRects[numDirtyRects++] = spr->lastDrawRect;
 			}
 		}
@@ -584,8 +580,7 @@ void Graphics::drawAllSprites(bool updateScreen) {
 		if (_mouseToBeShown) {
 			CursorMan.showMouse(true);
 			_mouseToBeShown = false;
-		}
-		else if (_mouseToBeHidden) {
+		} else if (_mouseToBeHidden) {
 			CursorMan.showMouse(false);
 			_mouseToBeHidden = false;
 		}
@@ -650,7 +645,7 @@ void Graphics::addSprite(Sprite *sprite) {
 }
 
 void Graphics::delSprite(Sprite *sprite) {
-	for (int i=0; i<_numSprites; i++) {
+	for (int i = 0; i < _numSprites; i++) {
 		if (sprite != _sprites[i])
 			continue;
 

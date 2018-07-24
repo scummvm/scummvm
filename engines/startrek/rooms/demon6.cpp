@@ -174,8 +174,7 @@ void Room::demon6TalkToStephen() {
 void Room::demon6UseBerryOnStephen() {
 	if (_vm->_awayMission.demon.knowAboutHypoDytoxin) {
 		showText(TX_SPEAKER_STEPHEN, TX_DEM6_027);
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_STEPHEN, TX_DEM6_026);
 	}
 }
@@ -209,8 +208,7 @@ void Room::demon6FinishedMakingHypoDytoxin() {
 void Room::demon6UseHandOnWorkspace() {
 	if (_vm->_awayMission.demon.repairedHand) {
 		showText(TX_SPEAKER_SPOCK, TX_DEM6N018); // FIXME
-	}
-	else {
+	} else {
 		_vm->_awayMission.disableInput = true;
 		showText(TX_SPEAKER_KIRK, TX_DEM6_005);
 		walkCrewman(OBJECT_SPOCK, 0xb3, 0xbb, 2);
@@ -247,8 +245,7 @@ insult:
 			showText(TX_SPEAKER_STEPHEN, TX_DEM6_030);
 			_roomVar.demon6.insultedStephenRecently = true;
 			_vm->_awayMission.demon.insultedStephen = true;
-		}
-		else if (choice == 1) {
+		} else if (choice == 1) {
 			showText(TX_SPEAKER_STEPHEN, TX_DEM6_034);
 explain:
 			while (true) {
@@ -280,8 +277,7 @@ explain:
 					goto error;
 				}
 			}
-		}
-		else if (choice == 2) {
+		} else if (choice == 2) {
 			showText(TX_SPEAKER_STEPHEN, TX_DEM6_031);
 			int choices3[] = {TX_SPEAKER_KIRK, TX_DEM6_001, TX_DEM6_006, TX_BLANK};
 			choice = showText(choices3);
@@ -292,13 +288,11 @@ explain:
 				goto explain;
 			else
 				goto error;
-		}
-		else {
+		} else {
 error:
 			showText(TX_DIALOG_ERROR);
 		}
-	}
-	else {
+	} else {
 		showText(TX_DEM6N012);
 		showText(TX_SPEAKER_MCCOY, TX_DEM6_019);
 	}

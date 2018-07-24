@@ -62,7 +62,7 @@ void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSpri
 		Common::Rect rect = sprites[containMouseSprite].getRect();
 
 		if (mousePos.x < rect.left || mousePos.x >= rect.right
-				|| mousePos.y < rect.top || mousePos.y >= rect.bottom) {
+		        || mousePos.y < rect.top || mousePos.y >= rect.bottom) {
 			mousePos.x = (rect.left + rect.right) / 2;
 			mousePos.y = (rect.top + rect.bottom) / 2;
 		}
@@ -80,14 +80,14 @@ void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSpri
 		int vCenter = (rect.top + rect.bottom) / 2;
 
 		// Choose which sprite is closest based on certain criteria?
-		switch(mode) {
+		switch (mode) {
 		case 0: // Choose topmost, leftmost sprite that's below the cursor
 			if (((vCenter == mousePos.y && hCenter > mousePos.x) || vCenter > mousePos.y)
-					&& (vCenter < mouseY1 || (vCenter == mouseY1 && hCenter < mouseX1))) {
+			        && (vCenter < mouseY1 || (vCenter == mouseY1 && hCenter < mouseX1))) {
 				mouseX1 = hCenter;
 				mouseY1 = vCenter;
 			}
-			// fall through
+		// fall through
 
 		case 4: // Choose topmost, leftmost sprite
 			if (vCenter < mouseY2 || (vCenter == mouseY2 && hCenter < mouseX2)) {
@@ -98,16 +98,16 @@ void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSpri
 
 		case 1: // Choose bottommost, rightmost sprite that's above the cursor
 			if (((vCenter == mousePos.y && hCenter < mousePos.x) || vCenter < mousePos.y)
-					&& (mouseY1 == 0x7fff || vCenter > mouseY1
-						|| (vCenter == mouseY1 && hCenter > mouseX1))) {
+			        && (mouseY1 == 0x7fff || vCenter > mouseY1
+			            || (vCenter == mouseY1 && hCenter > mouseX1))) {
 				mouseX1 = hCenter;
 				mouseY1 = vCenter;
 			}
-			// fall through
+		// fall through
 
 		case 5: // Choose bottommost, rightmost sprite
 			if (mouseY2 == 0x7fff || vCenter > mouseY2
-					|| (vCenter == mouseY2 && hCenter > mouseX2)) {
+			        || (vCenter == mouseY2 && hCenter > mouseX2)) {
 				mouseX2 = hCenter;
 				mouseY2 = vCenter;
 			}
@@ -116,12 +116,12 @@ void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSpri
 		case 2:
 			// This seems broken... OR condition on first line has no affect on the logic...
 			if ((vCenter < mousePos.y || (vCenter == mouseY1 && hCenter == mousePos.x))
-					&& (mouseX1 == 0x7fff || vCenter >= mouseY1)) {
+			        && (mouseX1 == 0x7fff || vCenter >= mouseY1)) {
 				mouseX1 = hCenter;
 				mouseY1 = vCenter;
 			}
 			if (mouseX2 == 0x7fff || vCenter > mouseY2
-					|| (hCenter == mouseX2 && vCenter == mouseY2)) {
+			        || (hCenter == mouseX2 && vCenter == mouseY2)) {
 				mouseX2 = hCenter;
 				mouseY2 = vCenter;
 			}
@@ -130,12 +130,12 @@ void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSpri
 		case 3:
 			// Similar to above...
 			if ((vCenter > mousePos.y || (vCenter == mouseY1 && hCenter == mousePos.x))
-					&& (mouseX1 == 0x7fff || vCenter <= mouseY1)) {
+			        && (mouseX1 == 0x7fff || vCenter <= mouseY1)) {
 				mouseX1 = hCenter;
 				mouseY1 = vCenter;
 			}
 			if (mouseX2 == 0x7fff || vCenter < mouseY2
-					|| (hCenter == mouseX2 && vCenter == mouseY2)) {
+			        || (hCenter == mouseX2 && vCenter == mouseY2)) {
 				mouseX2 = hCenter;
 				mouseY2 = vCenter;
 			}
@@ -221,7 +221,7 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 
 	// Can't use OPTIONBUTTON constants since the button retvals differ from the button
 	// indices...
-	switch(event) {
+	switch (event) {
 	case 0: // Save
 		showSaveMenu();
 		break;
@@ -342,8 +342,7 @@ selectAndExit:
 			break;
 
 		case TREKEVENT_MOUSEMOVE:
-mousePosChanged:
-			{
+mousePosChanged: {
 				Common::Point mouse = _gfx->getMousePos();
 				Common::Point relMouse(mouse.x - pos.x, mouse.y - pos.y);
 
@@ -587,7 +586,7 @@ void StarTrekEngine::setVisibleMenuButtons(uint32 bits) {
 void StarTrekEngine::disableMenuButtons(uint32 bits) {
 	_activeMenu->disabledButtons |= bits;
 	if (_activeMenu->selectedButton != -1
-			&& (_activeMenu->disabledButtons & (1 << _activeMenu->selectedButton))) {
+	        && (_activeMenu->disabledButtons & (1 << _activeMenu->selectedButton))) {
 		Sprite *sprite = &_activeMenu->sprites[_activeMenu->selectedButton];
 		drawMenuButtonOutline(sprite->bitmap, 0x00);
 
@@ -606,13 +605,13 @@ int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool inTe
 	while (true) {
 		TrekEvent event;
 		while (popNextEvent(&event)) {
-			switch(event.type) {
+			switch (event.type) {
 
 			case TREKEVENT_TICK: {
 				Common::Point mousePos = _gfx->getMousePos();
 				int buttonIndex = getMenuButtonAt(_activeMenu->sprites, _activeMenu->numButtons, mousePos.x, mousePos.y);
 				if (buttonIndex != -1) {
-					if (_activeMenu->disabledButtons & (1<<buttonIndex))
+					if (_activeMenu->disabledButtons & (1 << buttonIndex))
 						buttonIndex = -1;
 				}
 
@@ -689,7 +688,7 @@ rclick:
 
 					case Common::KEYCODE_SPACE:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_NEXTCHOICE))
-								&& _activeMenu->sprites[TEXTBUTTON_NEXTCHOICE].drawMode == 2) {
+						        && _activeMenu->sprites[TEXTBUTTON_NEXTCHOICE].drawMode == 2) {
 							playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_NEXTCHOICE;
 						}
@@ -698,7 +697,7 @@ rclick:
 					case Common::KEYCODE_HOME:
 					case Common::KEYCODE_KP7:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLUP))
-								&& _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
+						        && _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
 							playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_GOTO_TOP;
 						}
@@ -707,7 +706,7 @@ rclick:
 					case Common::KEYCODE_UP:
 					case Common::KEYCODE_KP8:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLUP))
-								&& _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
+						        && _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
 							playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_SCROLLUP_ONELINE;
 						}
@@ -716,7 +715,7 @@ rclick:
 					case Common::KEYCODE_PAGEUP:
 					case Common::KEYCODE_KP9:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLUP))
-								&& _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
+						        && _activeMenu->sprites[TEXTBUTTON_SCROLLUP].drawMode == 2) {
 							playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_SCROLLUP;
 						}
@@ -725,7 +724,7 @@ rclick:
 					case Common::KEYCODE_LEFT:
 					case Common::KEYCODE_KP4:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_PREVCHOICE))
-								&& _activeMenu->sprites[TEXTBUTTON_PREVCHOICE].drawMode == 2) {
+						        && _activeMenu->sprites[TEXTBUTTON_PREVCHOICE].drawMode == 2) {
 							playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_PREVCHOICE;
 						}
@@ -734,7 +733,7 @@ rclick:
 					case Common::KEYCODE_RIGHT:
 					case Common::KEYCODE_KP6:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_NEXTCHOICE))
-								&& _activeMenu->sprites[TEXTBUTTON_NEXTCHOICE].drawMode == 2) {
+						        && _activeMenu->sprites[TEXTBUTTON_NEXTCHOICE].drawMode == 2) {
 							playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_NEXTCHOICE;
 						}
@@ -743,7 +742,7 @@ rclick:
 					case Common::KEYCODE_END:
 					case Common::KEYCODE_KP1:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLDOWN))
-								&& _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
+						        && _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
 							playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_GOTO_BOTTOM;
 						}
@@ -752,7 +751,7 @@ rclick:
 					case Common::KEYCODE_DOWN:
 					case Common::KEYCODE_KP2:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLDOWN))
-								&& _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
+						        && _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
 							playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_SCROLLDOWN_ONELINE;
 						}
@@ -761,7 +760,7 @@ rclick:
 					case Common::KEYCODE_PAGEDOWN:
 					case Common::KEYCODE_KP3:
 						if (!(_activeMenu->disabledButtons & (1 << TEXTBUTTON_SCROLLDOWN))
-								&& _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
+						        && _activeMenu->sprites[TEXTBUTTON_SCROLLDOWN].drawMode == 2) {
 							playSoundEffectIndex(SND_SELECTION);
 							return TEXTBUTTON_SCROLLDOWN;
 						}
@@ -986,7 +985,7 @@ void StarTrekEngine::showTextConfigurationMenu(bool fromOptionMenu) {
 		saveTextDisplayMode(val);
 	}
 
-	switch(val) {
+	switch (val) {
 	case 0:
 		_textDisplayMode = TEXTDISPLAY_SUBTITLES;
 		break;

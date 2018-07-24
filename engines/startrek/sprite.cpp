@@ -30,7 +30,7 @@ Sprite::Sprite() :
 	bitmap(), drawMode(0), textColor(0), bitmapChanged(false),
 	rect2Valid(false), isOnScreen(false), field16(false), lastDrawRect(),
 	drawRect(), rectangle2(), drawX(0), drawY(0)
-	{}
+{}
 
 void Sprite::setBitmap(SharedPtr<Bitmap> b) {
 	bitmap = b;

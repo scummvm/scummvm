@@ -45,8 +45,7 @@ void Room::demon3Tick1() {
 
 	if (_vm->_awayMission.demon.doorOpened) {
 		loadActorAnim(14, "door2", 0x82, 0x0c, 0);
-	}
-	else {
+	} else {
 		loadMapFile("demon3a");
 	}
 
@@ -91,8 +90,7 @@ void Room::demon3Timer3Expired() {
 		loadMapFile("demon3");
 		_vm->_awayMission.demon.doorOpened = true;
 		_vm->_awayMission.demon.missionScore += 2;
-	}
-	else {
+	} else {
 		showText(TX_DEM3N007);
 	}
 }
@@ -237,8 +235,7 @@ void Room::demon3UsePhaserOnBoulder3() {
 		_roomVar.demon3.boulderBeingShot = 3;
 		strcpy(_roomVar.demon3.boulderAnim, "s0r3s1");
 		demon3BoulderCommon();
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_SPOCK, TX_DEM3_006);
 	}
 }
@@ -253,8 +250,7 @@ void Room::demon3UsePhaserOnBoulder4() {
 		strcpy(_roomVar.demon3.boulderAnim, "s0r3s4");
 		_vm->_awayMission.demon.foundMiner = true;
 		demon3BoulderCommon();
-	}
-	else {
+	} else {
 		// BUGFIX: In the original, the audio didn't play, despite the file existing (and
 		// despite it being used for the boulder on the left).
 		showText(TX_SPEAKER_SPOCK, TX_DEM3_006);
@@ -271,8 +267,7 @@ void Room::demon3BoulderCommon() {
 
 	if (_roomVar.demon3.inFiringPosition) {
 		demon3PullOutPhaserAndFireAtBoulder();
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_KIRK, TX_DEM3_001);
 
 		walkCrewman(OBJECT_KIRK, 0x79, 0xa0, 1);
@@ -348,8 +343,7 @@ void Room::demon3RedshirtUsedPanel() {
 		playSoundEffectIndex(0x06);
 		_vm->_awayMission.redshirtDead = true;
 		_vm->_awayMission.demon.field45 = true;
-	}
-	else {
+	} else {
 		const int textTable[] = {
 			TX_DEM3N005,
 			TX_DEM3_033,
@@ -404,8 +398,7 @@ void Room::demon3UseHandOnPanel() {
 		if (_vm->_awayMission.demon.doorOpened)
 			return;
 		walkCrewman(OBJECT_KIRK, 0xd8, 0x70, 7);
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_SPOCK, TX_DEM3_005);
 	}
 }
@@ -428,8 +421,7 @@ void Room::demon3UseMTricorderOnMiner() {
 
 	if (_vm->_awayMission.demon.minerDead) {
 		showText(TX_SPEAKER_MCCOY, TX_DEM3_022);
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_MCCOY, TX_DEM3_023);
 	}
 }
@@ -437,8 +429,7 @@ void Room::demon3UseMTricorderOnMiner() {
 void Room::demon3UseMedkitOnMiner() {
 	if (_vm->_awayMission.demon.healedMiner) {
 		showText(TX_SPEAKER_MCCOY, TX_DEM3_015);
-	}
-	else {
+	} else {
 		walkCrewman(OBJECT_MCCOY, 0xe6, 0x7b, 6);
 		_roomVar.demon3.inFiringPosition = false;
 		_roomVar.demon3.kirkPhaserOut = false;
@@ -452,8 +443,7 @@ void Room::demon3McCoyReachedMiner() {
 void Room::demon3McCoyFinishedHealingMiner() {
 	if (_vm->_awayMission.demon.minerDead) {
 		showText(TX_SPEAKER_MCCOY, TX_DEM3_022);
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_MCCOY, TX_DEM3_021);
 		_vm->_awayMission.demon.healedMiner = true;
 		loadActorAnim2(13, "drmine", 0xda, 0x6c, 0);
@@ -485,8 +475,7 @@ void Room::demon3TalkToSpock() {
 void Room::demon3TalkToMccoy() {
 	if (_vm->_awayMission.redshirtDead) {
 		showText(TX_SPEAKER_MCCOY, TX_DEM3_014);
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_MCCOY, TX_DEM3_025);
 		showText(TX_SPEAKER_KIRK,  TX_DEM3_003);
 		showText(TX_SPEAKER_MCCOY, TX_DEM3_024);
@@ -517,8 +506,7 @@ void Room::demon3LookAtRedshirt() {
 	if (_vm->_awayMission.redshirtDead) {
 		showText(TX_DEM3N017);
 		// NOTE: there's an alternate string that isn't used? (TX_DEM3N018)
-	}
-	else {
+	} else {
 		showText(TX_DEM3N003);
 	}
 }
@@ -530,8 +518,7 @@ void Room::demon3LookAnywhere() {
 void Room::demon3LookAtMiner() {
 	if (_vm->_awayMission.demon.healedMiner) {
 		showText(TX_DEM3N000);
-	}
-	else {
+	} else {
 		showText(TX_DEM3N006);
 	}
 }
@@ -559,8 +546,7 @@ void Room::demon3LookAtStructure() {
 void Room::demon3LookAtDoor() {
 	if (_vm->_awayMission.demon.doorOpened) {
 		showText(TX_DEM3N014);
-	}
-	else {
+	} else {
 		showText(TX_DEM3N012);
 	}
 }
