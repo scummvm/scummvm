@@ -190,8 +190,7 @@ void Room::mudd4UseKirkOnConsole() {
 		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 		walkCrewmanC(OBJECT_SPOCK, 0x6d, 0x9a, &Room::mudd4FinishedWalking3);
 		_vm->_awayMission.disableInput = true;
-	}
-	else {
+	} else {
 		if (!_roomVar.mudd.kirkUsingRightConsole)
 			showText(TX_SPEAKER_KIRK, TX_MUD4_049);
 		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -257,8 +256,7 @@ void Room::mudd4KirkUsedViewScreen() {
 			_vm->_awayMission.mudd.gotPointsForEnablingViewscreen = true;
 			_vm->_awayMission.mudd.missionScore++;
 		}
-	}
-	else {
+	} else {
 		_vm->_awayMission.mudd.viewScreenEnabled = false;
 		loadActorAnim(OBJECT_VIEWSCREEN, "s4crvf", 0xa5, 0x76);
 		_vm->_awayMission.timers[3] = 5;
@@ -356,9 +354,9 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 	_vm->_awayMission.disableInput = false;
 
 	if (_vm->_awayMission.mudd.discoveredLenseAndDegrimerFunction
-			|| _vm->_awayMission.mudd.muddErasedDatabase
-			|| _vm->_awayMission.mudd.databaseDestroyed
-			|| !_vm->_awayMission.mudd.accessedAlienDatabase) { // NOTE: why this last line? Test this...
+	        || _vm->_awayMission.mudd.muddErasedDatabase
+	        || _vm->_awayMission.mudd.databaseDestroyed
+	        || !_vm->_awayMission.mudd.accessedAlienDatabase) { // NOTE: why this last line? Test this...
 		const int choices[] = {
 			TX_SPEAKER_KIRK,
 			TX_MUD4_009,
@@ -399,8 +397,7 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 				showText(TX_SPEAKER_KIRK,  TX_MUD4_036);
 				showText(TX_SPEAKER_SPOCK, TX_MUD4_029);
 				showText(TX_SPEAKER_KIRK,  TX_MUD4_030);
-			}
-			else {
+			} else {
 				// Mudd is forced to agree to give samples to a university.
 				showText(TX_SPEAKER_MUDD, TX_MUD4_064);
 				showText(TX_SPEAKER_KIRK, TX_MUD4_012);
@@ -420,8 +417,7 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 
 			endMission(_vm->_awayMission.mudd.missionScore, 0x1b, _vm->_awayMission.mudd.torpedoStatus);
 		}
-	}
-	else {
+	} else {
 		const int choices[] = {
 			TX_SPEAKER_KIRK,
 			TX_MUD4_014,

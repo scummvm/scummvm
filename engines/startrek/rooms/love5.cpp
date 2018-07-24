@@ -40,8 +40,7 @@ void Room::love5Tick1() {
 	if (_vm->_awayMission.love.freedMarcusAndCheever) {
 		loadActorAnim(OBJECT_MARCUS, "marcusst", 0x28, 0xa6);
 		loadActorAnim(OBJECT_CHEEVER, "s3gtupst", 0x49, 0xac);
-	}
-	else {
+	} else {
 		loadActorAnim(OBJECT_MARCUS, "marcus2", 0x28, 0xa6);
 		loadActorAnim(OBJECT_CHEEVER, "s3gtup2", 0x49, 0xac);
 	}
@@ -172,7 +171,7 @@ void Room::love5TalkToPreax() {
 			switch (choice) {
 			case 1:
 				showText(TX_SPEAKER_MARCUS, TX_LOV5_043);
-				// fall through
+			// fall through
 			case 0:
 				showText(TX_SPEAKER_PREAX, TX_LOV5_061);
 				showText(TX_SPEAKER_KIRK, TX_LOV5_010);
@@ -199,8 +198,7 @@ void Room::love5TalkToPreax() {
 			if (!_vm->_awayMission.love.spockCured) {
 				showText(TX_SPEAKER_MCCOY, TX_LOV5_021);
 				walkCrewmanC(OBJECT_MCCOY, 0x87, 0xc3, &Room::love5MccoyReachedSpockToCure);
-			}
-			else
+			} else
 				love5EndMission();
 		}
 	} else
@@ -326,14 +324,12 @@ void Room::love5UseWaterOnPreax() {
 			_vm->_awayMission.love.missionScore++;
 		}
 		loseItem(OBJECT_IH2O);
-	}
-	else {
+	} else {
 		if (_vm->_awayMission.love.romulansUnconsciousFromVirus) {
 			showText(TX_SPEAKER_MCCOY, TX_LOV5_013);
 			// BUGFIX: original didn't have correct speaker. Also, you shouldn't lose your
 			// water since it's not actually used here, so a "loseItem" line was removed.
-		}
-		else {
+		} else {
 			showText(TX_LOV5N017);
 			if (!_vm->_awayMission.redshirtDead) {
 				showText(TX_SPEAKER_FERRIS, TX_LOV5_053);

@@ -30,7 +30,7 @@
 #include "audio/mixer.h"
 
 namespace Common {
-	class MacResManager;
+class MacResManager;
 }
 
 namespace StarTrek {
@@ -114,7 +114,7 @@ class Sound {
 public:
 	Sound(StarTrekEngine *vm);
 	~Sound();
-	
+
 	void clearAllMidiSlots();
 	/**
 	 * Plays a midi track as a sound effect (one of midi slots 1-7)
@@ -131,21 +131,21 @@ public:
 	void setMusicEnabled(bool enable);
 	void setSfxEnabled(bool enable);
 	void checkLoopMusic();
-	
+
 private:
 	StarTrekEngine *_vm;
 	Audio::SoundHandle *_soundHandle;
-	
+
 	void loadPCMusicFile(const Common::String &baseSoundName);
 	void clearMidiSlot(int slot);
-	
+
 	// MIDI-Related Variables
 	MidiDriver *_midiDriver;
 	MidiPlaybackSlot _midiSlots[NUM_MIDI_SLOTS]; // 0 is for music; 1-7 are for sfx
-	Common::List<MidiPlaybackSlot*> _midiSlotList; // Sorts midi slots by most recently used
+	Common::List<MidiPlaybackSlot *> _midiSlotList; // Sorts midi slots by most recently used
 
 	byte *loadedSoundData;
-	uint32 _midiDevice;	
+	uint32 _midiDevice;
 
 	// VOC-related variables
 	Audio::SoundHandle _sfxHandles[MAX_SFX_PLAYING];

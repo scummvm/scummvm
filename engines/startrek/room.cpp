@@ -30,18 +30,18 @@
 // TODO: Delete this macro, replacing it with the next one.
 // New "[roomName]NumActions" variables need to be made before that.
 #define ADD_ROOM_OLD(ROOM) {\
-	if (name.equalsIgnoreCase(#ROOM)) {\
-		_roomActionList = ROOM##ActionList;\
-		_numRoomActions = sizeof(ROOM##ActionList) / sizeof(RoomAction);\
-	}\
-}
+		if (name.equalsIgnoreCase(#ROOM)) {\
+			_roomActionList = ROOM##ActionList;\
+			_numRoomActions = sizeof(ROOM##ActionList) / sizeof(RoomAction);\
+		}\
+	}
 
 #define ADD_ROOM(ROOM) {\
-	if (name.equalsIgnoreCase(#ROOM)) {\
-		_roomActionList = ROOM##ActionList;\
-		_numRoomActions = ROOM##NumActions;\
-	}\
-}
+		if (name.equalsIgnoreCase(#ROOM)) {\
+			_roomActionList = ROOM##ActionList;\
+			_numRoomActions = ROOM##NumActions;\
+		}\
+	}
 
 namespace StarTrek {
 
@@ -277,8 +277,7 @@ int Room::showRoomSpecificText(const char **array) {
 			textColor = TEXTCOLOR_RED;
 		else
 			textColor = TEXTCOLOR_GREY;
-	}
-	else
+	} else
 		textColor = TEXTCOLOR_YELLOW;
 
 	return _vm->showText(&StarTrekEngine::readTextFromArrayWithChoices, (uintptr)array, 20, 20, textColor, true, false, false);

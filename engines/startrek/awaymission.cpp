@@ -404,7 +404,7 @@ void StarTrekEngine::awayMissionUseObject(int16 clickedObject) {
 		tryWalkToHotspot = true;
 	else if (_awayMission.activeObject == OBJECT_MCCOY && _room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
 		tryWalkToHotspot = true;
-	else if (_awayMission.activeObject == OBJECT_SPOCK &&_room->actionHasCode(ACTION_USE, OBJECT_ISTRICOR, _awayMission.passiveObject, 0))
+	else if (_awayMission.activeObject == OBJECT_SPOCK && _room->actionHasCode(ACTION_USE, OBJECT_ISTRICOR, _awayMission.passiveObject, 0))
 		tryWalkToHotspot = true;
 
 	if (!tryWalkToHotspot) {
@@ -694,7 +694,7 @@ void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 	int16 offset = _room->getFirstDoorPolygonOffset();
 
 	while (offset != _room->getDoorPolygonEndOffset()) {
-		if (isPointInPolygon((int16*)(_room->_rdfData + offset), x, y)) {
+		if (isPointInPolygon((int16 *)(_room->_rdfData + offset), x, y)) {
 			uint16 var = _room->readRdfWord(offset);
 			if (_activeDoorWarpHotspot != var) {
 				_activeDoorWarpHotspot = var;
@@ -712,7 +712,7 @@ void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 		offset = _room->getFirstWarpPolygonOffset();
 
 		while (offset != _room->getWarpPolygonEndOffset()) {
-			if (isPointInPolygon((int16*)(_room->_rdfData + offset), x, y)) {
+			if (isPointInPolygon((int16 *)(_room->_rdfData + offset), x, y)) {
 				uint16 var = _room->readRdfWord(offset);
 				if (_activeWarpHotspot != var) {
 					_activeWarpHotspot = var;

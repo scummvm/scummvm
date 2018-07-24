@@ -25,9 +25,9 @@
 
 #ifndef STARTREK_FONT_H
 #define STARTREK_FONT_H
- 
+
 #include "startrek/startrek.h"
- 
+
 namespace StarTrek {
 
 class StarTrekEngine;
@@ -38,7 +38,7 @@ public:
 	~Font();
 
 	byte *getCharData(int i);
-	
+
 private:
 	StarTrekEngine *_vm;
 
@@ -48,6 +48,6 @@ private:
 };
 
 
-} 
+}
 
 #endif

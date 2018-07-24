@@ -2440,7 +2440,7 @@ enum GameStringIDs {
 };
 
 // TODO: Move this out of the header file. It's inflating the executable size.
-const char * const g_gameStrings[] = {
+const char *const g_gameStrings[] = {
 	nullptr,
 	"",
 	"Dialog error",

@@ -18,7 +18,7 @@ FileStream::~FileStream() {
 
 // ReadStream functions
 
-uint32 FileStream::read(void* dataPtr, uint32 dataSize) {
+uint32 FileStream::read(void *dataPtr, uint32 dataSize) {
 	if (_pos + dataSize > (uint32)size())
 		dataSize = size() - _pos;
 	memcpy(dataPtr, _data + _pos, dataSize);

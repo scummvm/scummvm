@@ -46,7 +46,7 @@ Bitmap::Bitmap(const Bitmap &bitmap) {
 }
 
 Bitmap::Bitmap(int w, int h) : width(w), height(h), xoffset(0), yoffset(0) {
-	pixels = new byte[width*height];
+	pixels = new byte[width * height];
 }
 
 Bitmap::~Bitmap() {

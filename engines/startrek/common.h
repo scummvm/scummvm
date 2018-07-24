@@ -33,10 +33,14 @@ class Serializer;
 namespace StarTrek {
 
 template<class T>
-T min(T a, T b) { return a < b ? a : b; }
+T min(T a, T b) {
+	return a < b ? a : b;
+}
 
 template<class T>
-T max(T a, T b) { return a > b ? a : b; }
+T max(T a, T b) {
+	return a > b ? a : b;
+}
 
 Common::Rect getRectEncompassing(Common::Rect r1, Common::Rect r2);
 void serializeRect(Common::Rect rect, Common::Serializer &ser);

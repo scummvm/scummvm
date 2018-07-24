@@ -301,8 +301,7 @@ void Room::mudd2UseMedkitOnMudd() {
 			showText(TX_SPEAKER_MCCOY, TX_MUD2_021);
 		else
 			walkCrewmanC(OBJECT_MCCOY, 0xde, 0xaf, &Room::mudd2MccoyReachedMudd);
-	}
-	else // Can't get to him since he's busy being crazy
+	} else // Can't get to him since he's busy being crazy
 		showText(TX_SPEAKER_MCCOY, TX_MUD2_016);
 }
 

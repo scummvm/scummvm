@@ -461,7 +461,7 @@ void Room::trial5ReachedHoleToPutGem() {
 		Common::Point(0x22, 0x95),
 		Common::Point(0x3c, 0x95),
 	};
-	const char * const gemAnims[] = {
+	const char *const gemAnims[] = {
 		"RedGem1", "RedGem2", "RedGem3",
 		"GrnGem1", "GrnGem2", "GrnGem3",
 		"BluGem1", "BluGem2", "BluGem3",

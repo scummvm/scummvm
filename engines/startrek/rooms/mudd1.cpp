@@ -174,7 +174,7 @@ void Room::mudd1SpockPressedRedButton() {
 
 	case 1:
 		showText(TX_SPEAKER_KIRK, TX_MUD1_007);
-		// fall through
+	// fall through
 
 	case 2:
 		_vm->_awayMission.mudd.torpedoStatus = 1;

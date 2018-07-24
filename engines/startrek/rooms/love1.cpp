@@ -77,7 +77,7 @@ void Room::love1Tick1() {
 
 common:
 		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
-		// fall through
+	// fall through
 
 	case BOTTLETYPE_NONE:
 		break;
@@ -308,8 +308,8 @@ void Room::love1KirkGotCureSample() {
 		giveItem(OBJECT_ISAMPLE);
 		showText(TX_LOV1N035);
 
-		 // BUGFIX: after removing the cure, unset this variable.
-		 // Otherwise, any normal dish inserted afterward automagically becomes a cure.
+		// BUGFIX: after removing the cure, unset this variable.
+		// Otherwise, any normal dish inserted afterward automagically becomes a cure.
 		_vm->_awayMission.love.chamberHasCure = false;
 	} else {
 		giveItem(OBJECT_IDISHES);

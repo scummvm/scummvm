@@ -117,7 +117,7 @@ String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *he
 		if (speakerOffset == 0 || room->_rdfData[speakerOffset] == '\0')
 			*headerTextOutput = "";
 		else {
-			char *speakerText = (char*)&room->_rdfData[speakerOffset];
+			char *speakerText = (char *)&room->_rdfData[speakerOffset];
 			if (room->readRdfWord(rdfVar + 4) != 0) // Check if there's more than one option
 				getTextboxHeader(headerTextOutput, speakerText, choiceIndex + 1);
 			else
@@ -125,7 +125,7 @@ String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *he
 		}
 	}
 
-	return (char*)&room->_rdfData[textOffset];
+	return (char *)&room->_rdfData[textOffset];
 }
 
 void StarTrekEngine::showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines) {
@@ -202,7 +202,7 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 	int numChoices = 0;
 	String speakerText;
 
-	while(true) {
+	while (true) {
 		String choiceText = (this->*textGetter)(numChoices, var, &speakerText);
 		if (choiceText.empty())
 			break;
@@ -231,13 +231,13 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 	int choiceIndex = 0;
 	int scrollOffset = 0;
 	if (tmpTextDisplayMode != TEXTDISPLAY_WAIT && tmpTextDisplayMode != TEXTDISPLAY_SUBTITLES
-			&& numChoices == 1 && _sfxEnabled && !_sfxWorking)
+	        && numChoices == 1 && _sfxEnabled && !_sfxWorking)
 		_textboxHasMultipleChoices = false;
 	else
 		_textboxHasMultipleChoices = true;
 
 	if (tmpTextDisplayMode >= TEXTDISPLAY_WAIT && tmpTextDisplayMode <= TEXTDISPLAY_NONE
-			&& _sfxEnabled && !_sfxWorking)
+	        && _sfxEnabled && !_sfxWorking)
 		_textboxVar6 = true;
 	else
 		_textboxVar6 = false;
@@ -286,7 +286,7 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 			if (ticksUntilClickingEnabled != 0)
 				enableMenuButtons(1 << TEXTBUTTON_CONFIRM);
 
-			switch(textboxReturnCode) {
+			switch (textboxReturnCode) {
 
 			case MENUEVENT_RCLICK_OFFBUTTON:
 			case MENUEVENT_RCLICK_ONBUTTON:
@@ -337,20 +337,20 @@ readjustScrollDown:
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				if (scrollOffset >= numTextLines)
 					scrollOffset -= numTextboxLines;
-				if (scrollOffset > numTextLines-1)
-					scrollOffset = numTextLines-1;
-				if (scrollOffset+numTextboxLines >= numTextLines)
+				if (scrollOffset > numTextLines - 1)
+					scrollOffset = numTextLines - 1;
+				if (scrollOffset + numTextboxLines >= numTextLines)
 					disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
 				goto readjustScroll;
 
 readjustScroll:
 				textboxSprite.bitmapChanged = true;
 				drawMainText(
-						textBitmap,
-						numTextLines-scrollOffset,
-						numTextboxLines,
-						lineFormattedText.c_str() + scrollOffset*(TEXTBOX_WIDTH-2),
-						numChoicesWithNames != 0);
+				    textBitmap,
+				    numTextLines - scrollOffset,
+				    numTextboxLines,
+				    lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
+				    numChoicesWithNames != 0);
 				break;
 
 			case TEXTBUTTON_PREVCHOICE:
@@ -359,7 +359,7 @@ readjustScroll:
 					disableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
 				} else {
 					if (choiceIndex < 0)
-						choiceIndex = numChoices-1;
+						choiceIndex = numChoices - 1;
 				}
 				enableMenuButtons(1 << TEXTBUTTON_NEXTCHOICE);
 				goto reloadText;
@@ -367,7 +367,7 @@ readjustScroll:
 			case TEXTBUTTON_NEXTCHOICE:
 				enableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
 				choiceIndex++;
-				if (!loopChoices && choiceIndex == numChoices-1) {
+				if (!loopChoices && choiceIndex == numChoices - 1) {
 					disableMenuButtons(1 << TEXTBUTTON_NEXTCHOICE);
 				} else {
 					choiceIndex %= numChoices;
@@ -380,7 +380,7 @@ reloadText:
 				if (numTextLines <= numTextboxLines) {
 					setVisibleMenuButtons((1 << TEXTBUTTON_CONFIRM) | (1 << TEXTBUTTON_PREVCHOICE) | (1 << TEXTBUTTON_NEXTCHOICE));
 				} else {
-					setVisibleMenuButtons((1 << TEXTBUTTON_CONFIRM) | (1 << TEXTBUTTON_SCROLLUP) | (1 << TEXTBUTTON_SCROLLDOWN)| (1 << TEXTBUTTON_PREVCHOICE) | (1 << TEXTBUTTON_NEXTCHOICE));
+					setVisibleMenuButtons((1 << TEXTBUTTON_CONFIRM) | (1 << TEXTBUTTON_SCROLLUP) | (1 << TEXTBUTTON_SCROLLDOWN) | (1 << TEXTBUTTON_PREVCHOICE) | (1 << TEXTBUTTON_NEXTCHOICE));
 				}
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
 				disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
@@ -424,10 +424,10 @@ int StarTrekEngine::getNumTextboxLines(const String &str) {
 	int lines = 0;
 
 	while (text != nullptr) {
-		text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
+		text = getNextTextLine(text, line, TEXTBOX_WIDTH - 2);
 		lines++;
 	}
-	return lines-1;
+	return lines - 1;
 }
 
 String StarTrekEngine::putTextIntoLines(const String &_text) {
@@ -436,17 +436,17 @@ String StarTrekEngine::putTextIntoLines(const String &_text) {
 	const char *text = _text.c_str();
 	String output;
 
-	text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
+	text = getNextTextLine(text, line, TEXTBOX_WIDTH - 2);
 
 	while (text != nullptr) {
 		int len = strlen(line);
-		while (len != TEXTBOX_WIDTH-2) {
+		while (len != TEXTBOX_WIDTH - 2) {
 			line[len++] = ' ';
 			line[len] = '\0';
 		}
 		output += line;
 
-		text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
+		text = getNextTextLine(text, line, TEXTBOX_WIDTH - 2);
 	}
 
 	return output;
@@ -462,7 +462,7 @@ SharedPtr<TextBitmap> StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffs
 
 	int textHeight = numTextLines + linesBeforeTextStart;
 
-	SharedPtr<TextBitmap> bitmap(new TextBitmap(TEXTBOX_WIDTH*8, textHeight*8));
+	SharedPtr<TextBitmap> bitmap(new TextBitmap(TEXTBOX_WIDTH * 8, textHeight * 8));
 
 	*sprite = Sprite();
 	sprite->drawPriority = 15;
@@ -470,9 +470,9 @@ SharedPtr<TextBitmap> StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffs
 	sprite->bitmap = bitmap;
 	sprite->textColor = textColor;
 
-	memset(bitmap->pixels, ' ', textHeight*TEXTBOX_WIDTH);
+	memset(bitmap->pixels, ' ', textHeight * TEXTBOX_WIDTH);
 
-	int varC = SCREEN_WIDTH-1 - xoffset - (bitmap->width + 0x1d) / 2;
+	int varC = SCREEN_WIDTH - 1 - xoffset - (bitmap->width + 0x1d) / 2;
 	if (varC < 0)
 		xoffset += varC;
 
@@ -484,35 +484,35 @@ SharedPtr<TextBitmap> StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffs
 	if (varC < 0)
 		yoffset -= varC;
 
-	xoffset -= (bitmap->width + 0x1d)/2;
+	xoffset -= (bitmap->width + 0x1d) / 2;
 	yoffset -= bitmap->height;
 
 	bitmap->pixels[0] = 0x10;
-	memset(&bitmap->pixels[1], 0x11, TEXTBOX_WIDTH-2);
-	bitmap->pixels[TEXTBOX_WIDTH-1] = 0x12;
+	memset(&bitmap->pixels[1], 0x11, TEXTBOX_WIDTH - 2);
+	bitmap->pixels[TEXTBOX_WIDTH - 1] = 0x12;
 
 	byte *textAddr = bitmap->pixels + TEXTBOX_WIDTH;
 
 	if (withHeader) {
 		textAddr[0] = 0x13;
-		textAddr[TEXTBOX_WIDTH-1] = 0x14;
+		textAddr[TEXTBOX_WIDTH - 1] = 0x14;
 		textAddr += TEXTBOX_WIDTH;
 
 		textAddr[0] = 0x13;
-		memset(&textAddr[1], 0x19, TEXTBOX_WIDTH-2);
-		textAddr[TEXTBOX_WIDTH-1] = 0x14;
+		memset(&textAddr[1], 0x19, TEXTBOX_WIDTH - 2);
+		textAddr[TEXTBOX_WIDTH - 1] = 0x14;
 		textAddr += TEXTBOX_WIDTH;
 	}
 
-	for (int line=0; line<numTextLines; line++) {
+	for (int line = 0; line < numTextLines; line++) {
 		textAddr[0] = 0x13;
-		textAddr[TEXTBOX_WIDTH-1] = 0x14;
+		textAddr[TEXTBOX_WIDTH - 1] = 0x14;
 		textAddr += TEXTBOX_WIDTH;
 	}
 
 	textAddr[0] = 0x15;
-	memset(&textAddr[1], 0x16, TEXTBOX_WIDTH-2);
-	textAddr[TEXTBOX_WIDTH-1] = 0x17;
+	memset(&textAddr[1], 0x16, TEXTBOX_WIDTH - 2);
+	textAddr[TEXTBOX_WIDTH - 1] = 0x17;
 
 	_gfx->addSprite(sprite);
 	sprite->drawMode = 3;
@@ -562,7 +562,7 @@ String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr 
 		if (oldSize != text.size())
 			_textboxHasMultipleChoices = true;
 	} else if ((_textDisplayMode == TEXTDISPLAY_WAIT || _textDisplayMode == TEXTDISPLAY_SUBTITLES)
-			&& _sfxEnabled && _sfxWorking) {
+	           && _sfxEnabled && _sfxWorking) {
 		text = playTextAudio(text);
 	} else {
 		text = skipTextAudioPrompt(text);
@@ -581,24 +581,6 @@ String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr 
 		return lineFormattedText;
 	} else
 		return nullptr;
-
-	/* Barebones implementation
-	*numTextLines = 1;
-
-	uint numChars = textBitmap->width*textBitmap->height;
-
-	String text = (this->*textGetter)(choiceIndex, var, nullptr);
-	while (text.size() < numChars) text += ' ';
-
-	byte *dest = textBitmap->pixels + TEXTBOX_WIDTH + 1;
-
-	for (int y=0; y<*numTextLines; y++) {
-		memcpy(dest, text.c_str(), TEXTBOX_WIDTH-2);
-		dest += TEXTBOX_WIDTH;
-	}
-
-	return text;
-	*/
 }
 
 String StarTrekEngine::readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput) {

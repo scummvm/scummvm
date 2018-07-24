@@ -280,8 +280,7 @@ void Room::demon0TalkToMcCoy() {
 		showText(TX_SPEAKER_SPOCK, TX_DEM0_029);
 		if (!_vm->_awayMission.redshirtDead)
 			showText(TX_SPEAKER_EVERTS, TX_DEM0_041);
-	}
-	else {
+	} else {
 		showText(TX_SPEAKER_MCCOY, TX_DEM0_019);
 		if (!_vm->_awayMission.demon.askedPrelateAboutSightings) {
 			demon0AskPrelateAboutSightings();

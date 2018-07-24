@@ -38,7 +38,9 @@ class IWFile {
 public:
 	IWFile(StarTrekEngine *vm, const Common::String &filename);
 
-	int getNumEntries() { return _numEntries; }
+	int getNumEntries() {
+		return _numEntries;
+	}
 	/**
 	 * Returns the index of the nearest "key position" in the room that an object can walk to
 	 * (in a straight line) from a given position.

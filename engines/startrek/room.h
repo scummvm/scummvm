@@ -64,10 +64,18 @@ public:
 	 * "minimum" scale; that value rises to the "max scale" value by the time they reach
 	 * the "max Y" value.
 	 */
-	uint16 getMaxY() { return readRdfWord(0x06); }
-	uint16 getMinY() { return readRdfWord(0x08); }
-	Fixed8 getMinScale() { return Fixed8::fromRaw(readRdfWord(0x0a)); }
-	Fixed8 getMaxScale() { return Fixed8::fromRaw(readRdfWord(0x0c)); }
+	uint16 getMaxY() {
+		return readRdfWord(0x06);
+	}
+	uint16 getMinY() {
+		return readRdfWord(0x08);
+	}
+	Fixed8 getMinScale() {
+		return Fixed8::fromRaw(readRdfWord(0x0a));
+	}
+	Fixed8 getMaxScale() {
+		return Fixed8::fromRaw(readRdfWord(0x0c));
+	}
 
 	/**
 	 * Check if a particular action is defined for this room.
@@ -87,14 +95,26 @@ public:
 	bool handleActionWithBitmask(const Action &action);
 	bool handleActionWithBitmask(byte type, byte b1, byte b2, byte b3);
 
-	uint16 getFirstHotspot() { return readRdfWord(0x12); }
-	uint16 getHotspotEnd()   { return readRdfWord(0x14); }
+	uint16 getFirstHotspot() {
+		return readRdfWord(0x12);
+	}
+	uint16 getHotspotEnd()   {
+		return readRdfWord(0x14);
+	}
 
 	// Warp-related stuff
-	uint16 getFirstWarpPolygonOffset() { return readRdfWord(0x16); }
-	uint16 getWarpPolygonEndOffset()   { return readRdfWord(0x18); }
-	uint16 getFirstDoorPolygonOffset() { return readRdfWord(0x1a); }
-	uint16 getDoorPolygonEndOffset()   { return readRdfWord(0x1c); }
+	uint16 getFirstWarpPolygonOffset() {
+		return readRdfWord(0x16);
+	}
+	uint16 getWarpPolygonEndOffset()   {
+		return readRdfWord(0x18);
+	}
+	uint16 getFirstDoorPolygonOffset() {
+		return readRdfWord(0x1a);
+	}
+	uint16 getDoorPolygonEndOffset()   {
+		return readRdfWord(0x1c);
+	}
 
 	/**
 	 * Get the point at which a crewman beams in to this room (not properly defined for

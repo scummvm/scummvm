@@ -54,7 +54,7 @@ using Common::SharedPtr;
 using Common::String;
 
 namespace Common {
-	class MacResManager;
+class MacResManager;
 }
 
 namespace StarTrek {
@@ -62,7 +62,7 @@ namespace StarTrek {
 class StarTrekEngine;
 class Room;
 
-typedef String (StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
+typedef String(StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
 
 
 const int SAVEGAME_DESCRIPTION_LEN = 30;
@@ -84,11 +84,21 @@ struct SavegameMetadata {
 		saveTimeSecs = time.tm_sec & 0xFF;
 	}
 
-	int getDay() { return (saveDate >> 24) & 0xFF; }
-	int getMonth() { return (saveDate >> 16) & 0xFF; }
-	int getYear() { return saveDate & 0xFFFF; }
-	int getHour() { return (saveTime >> 8) & 0xFF; }
-	int getMinute() { return saveTime & 0xFF; }
+	int getDay() {
+		return (saveDate >> 24) & 0xFF;
+	}
+	int getMonth() {
+		return (saveDate >> 16) & 0xFF;
+	}
+	int getYear() {
+		return saveDate & 0xFFFF;
+	}
+	int getHour() {
+		return (saveTime >> 8) & 0xFF;
+	}
+	int getMinute() {
+		return saveTime & 0xFF;
+	}
 };
 
 
@@ -106,7 +116,7 @@ enum StarTrekGameType {
 };
 
 enum StarTrekGameFeatures {
-	GF_DEMO =    (1 << 0)
+	GF_DEMO = (1 << 0)
 };
 
 enum kDebugLevels {
@@ -356,7 +366,9 @@ public:
 	bool directPathExists(int16 srcX, int16 srcY, int16 destX, int16 destY);
 
 	int findObjectAt(int x, int y);
-	int findObjectAt(Common::Point p) { return findObjectAt(p.x, p.y); }
+	int findObjectAt(Common::Point p) {
+		return findObjectAt(p.x, p.y);
+	}
 	/**
 	 * Loads a bitmap for the animation frame with the given scale.
 	 */
@@ -423,7 +435,9 @@ public:
 	void updateClockTicks();
 	bool checkKeyPressed();
 
-	Common::EventManager *getEventMan() { return _eventMan; }
+	Common::EventManager *getEventMan() {
+		return _eventMan;
+	}
 
 private:
 	Common::List<TrekEvent> _eventQueue;
@@ -592,7 +606,7 @@ public:
 	Common::Language getLanguage();
 
 	// Resource related functions
-	SharedPtr<FileStream> loadFile(Common::String filename, int fileIndex=0);
+	SharedPtr<FileStream> loadFile(Common::String filename, int fileIndex = 0);
 	/**
 	 * TODO: Figure out what the extra parameters are, and if they're important.
 	 */
@@ -644,10 +658,10 @@ public:
 	Item _itemList[NUM_OBJECTS];
 
 	Actor _actorList[NUM_ACTORS];
-	Actor * const _kirkActor;
-	Actor * const _spockActor;
-	Actor * const _mccoyActor;
-	Actor * const _redshirtActor;
+	Actor *const _kirkActor;
+	Actor *const _spockActor;
+	Actor *const _mccoyActor;
+	Actor *const _redshirtActor;
 
 	SharedPtr<FileStream> _actorBanFiles[NUM_ACTORS / 2];
 	uint16 _actorBanVar2[NUM_ACTORS / 2]; // TODO: initialize?
@@ -705,7 +719,7 @@ public:
 	Matrix _starPositionMatrix;
 	Matrix _someMatrix;
 	float _flt_50898;
-	
+
 	Graphics *_gfx;
 	Sound *_sound;
 	SharedPtr<IWFile> _iwFile;

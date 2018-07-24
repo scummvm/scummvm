@@ -119,12 +119,12 @@ void Room::muddaTick() {
 	/*
 	// Unused: The positions to they originally walked to before collapsing.
 	const Common::Point deathPositions[][4] = {
-		{ Common::Point(0xbb, 0x8d), Common::Point(0xd0, 0x89), Common::Point(0xaa, 0x85), Common::Point(0xbf, 0x83) },
-		{ Common::Point(0xaa, 0xa5), Common::Point(0x83, 0xac), Common::Point(-1, -1), Common::Point(-1, -1) },
-		{ Common::Point(0x108, 0xbb), Common::Point(0x118, 0xc4), Common::Point(0xfe, 0xb2), Common::Point(0x117, 0xae) },
-		{ Common::Point(0xf1, 0x95), Common::Point(0xcd, 0x87), Common::Point(0xec, 0x84), Common::Point(0x110, 0xa6) },
-		{ Common::Point(0x8b, 0xb6), Common::Point(0x69, 0xb7), Common::Point(-1, -1), Common::Point(-1, -1) },
-		{ Common::Point(0x8b, 0xac), Common::Point(0x6f, 0x99), Common::Point(-1, -1), Common::Point(-1, -1) },
+	    { Common::Point(0xbb, 0x8d), Common::Point(0xd0, 0x89), Common::Point(0xaa, 0x85), Common::Point(0xbf, 0x83) },
+	    { Common::Point(0xaa, 0xa5), Common::Point(0x83, 0xac), Common::Point(-1, -1), Common::Point(-1, -1) },
+	    { Common::Point(0x108, 0xbb), Common::Point(0x118, 0xc4), Common::Point(0xfe, 0xb2), Common::Point(0x117, 0xae) },
+	    { Common::Point(0xf1, 0x95), Common::Point(0xcd, 0x87), Common::Point(0xec, 0x84), Common::Point(0x110, 0xa6) },
+	    { Common::Point(0x8b, 0xb6), Common::Point(0x69, 0xb7), Common::Point(-1, -1), Common::Point(-1, -1) },
+	    { Common::Point(0x8b, 0xac), Common::Point(0x6f, 0x99), Common::Point(-1, -1), Common::Point(-1, -1) },
 	};
 	*/
 

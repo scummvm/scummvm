@@ -208,8 +208,8 @@ void Room::tug3ElasiStunnedOrKilled() {
 	if (_vm->_awayMission.tug.bridgeWinMethod == 1)
 		return;
 	if (_vm->_awayMission.tug.bridgeElasi1Status == GUARDSTAT_UP || _vm->_awayMission.tug.bridgeElasi2Status == GUARDSTAT_UP
-			|| _vm->_awayMission.tug.bridgeElasi3Status == GUARDSTAT_UP || _vm->_awayMission.tug.bridgeElasi4Status == GUARDSTAT_UP)
-			return;
+	        || _vm->_awayMission.tug.bridgeElasi3Status == GUARDSTAT_UP || _vm->_awayMission.tug.bridgeElasi4Status == GUARDSTAT_UP)
+		return;
 
 	// BUGFIX: if the ship is deorbiting, the mission isn't won yet.
 	if (_vm->_awayMission.tug.orbitalDecayCounter != 0)
@@ -342,15 +342,13 @@ void Room::tug3TalkToMccoy() {
 		if (_vm->_awayMission.tug.orbitalDecayCounter >= 10) {
 			if (_vm->_awayMission.tug.orbitalDecayCounter < 16)
 				showText(TX_SPEAKER_MCCOY, TX_TUG3_011);
-		}
-		else if (_vm->_awayMission.tug.orbitalDecayCounter != 0) {
+		} else if (_vm->_awayMission.tug.orbitalDecayCounter != 0) {
 			// BUGFIX: original game displays a blank textbox. An appropriate audio file
 			// exists, but the corresponding text was written from scratch for ScummVM.
 			// TODO: check if original floppy version has text for this.
 			showText(TX_SPEAKER_MCCOY, TX_TUG3_012);
 		}
-	}
-	else
+	} else
 		showText(TX_SPEAKER_MCCOY, TX_TUG3_013);
 }
 
@@ -359,8 +357,7 @@ void Room::tug3TalkToSpock() {
 		if (_vm->_awayMission.tug.orbitalDecayCounter >= 10) {
 			if (_vm->_awayMission.tug.orbitalDecayCounter < 16)
 				showText(TX_SPEAKER_SPOCK, TX_TUG3_008);
-		}
-		else
+		} else
 			showText(TX_SPEAKER_SPOCK, TX_TUG3_009);
 	}
 }
@@ -382,15 +379,14 @@ void Room::tug3UseCommunicator() {
 		// BUGFIX: if still fighting the elasi, the mission isn't done yet.
 		_vm->_awayMission.tug.orbitalDecayCounter = 0;
 		if (!_vm->_awayMission.tug.elasiSurrendered &&
-				(_vm->_awayMission.tug.bridgeElasi1Status == GUARDSTAT_UP
-				 || _vm->_awayMission.tug.bridgeElasi2Status == GUARDSTAT_UP
-				 || _vm->_awayMission.tug.bridgeElasi3Status == GUARDSTAT_UP
-				 || _vm->_awayMission.tug.bridgeElasi4Status == GUARDSTAT_UP))
+		        (_vm->_awayMission.tug.bridgeElasi1Status == GUARDSTAT_UP
+		         || _vm->_awayMission.tug.bridgeElasi2Status == GUARDSTAT_UP
+		         || _vm->_awayMission.tug.bridgeElasi3Status == GUARDSTAT_UP
+		         || _vm->_awayMission.tug.bridgeElasi4Status == GUARDSTAT_UP))
 			return;
 
 		tug3EndMission();
-	}
-	else {
+	} else {
 		if (_vm->_awayMission.tug.orbitalDecayCounter < 16) {
 			showText(TX_SPEAKER_KIRK, TX_TUG3_006);
 			showText(TX_SPEAKER_SCOTT, TX_TUG3_S07);
@@ -429,24 +425,20 @@ void Room::tug3Timer0Expired() {
 		_vm->_awayMission.redshirtDead = true;
 		loadActorAnim2(OBJECT_REDSHIRT, "rkills", -1, -1, 0);
 		elasiTarget = OBJECT_REDSHIRT;
-	}
-	else if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_KIRK]) {
+	} else if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_KIRK]) {
 		_vm->_awayMission.tug.crewmanKilled[OBJECT_KIRK] = 2;
 		_vm->_awayMission.disableInput = true;
 		loadActorAnim2(OBJECT_KIRK, "kkills", -1, -1, 0);
 		elasiTarget = OBJECT_KIRK;
-	}
-	else if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_SPOCK]) {
+	} else if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_SPOCK]) {
 		_vm->_awayMission.tug.crewmanKilled[OBJECT_SPOCK] = 2;
 		loadActorAnim2(OBJECT_SPOCK, "skills", -1, -1, 0);
 		elasiTarget = OBJECT_SPOCK;
-	}
-	else if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_MCCOY]) {
+	} else if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_MCCOY]) {
 		_vm->_awayMission.tug.crewmanKilled[OBJECT_MCCOY] = 2;
 		loadActorAnim2(OBJECT_MCCOY, "mkills", -1, -1, 13);
 		elasiTarget = OBJECT_MCCOY;
-	}
-	else
+	} else
 		return;
 
 	playSoundEffectIndex(SND_PHASSHOT);
@@ -465,13 +457,11 @@ void Room::tug3Timer1Expired() {
 		showText(TX_SPEAKER_SHIPS_COMPUTER, TX_COMPU182);
 		_vm->_awayMission.timers[1] = 100;
 		_vm->_awayMission.tug.orbitalDecayCounter++;
-	}
-	else if (_vm->_awayMission.tug.orbitalDecayCounter < 16) { // Decay now unavoidable
+	} else if (_vm->_awayMission.tug.orbitalDecayCounter < 16) { // Decay now unavoidable
 		showText(TX_SPEAKER_SHIPS_COMPUTER, TX_COMPU181);
 		_vm->_awayMission.timers[1] = 100;
 		_vm->_awayMission.tug.orbitalDecayCounter++;
-	}
-	else { // Game over
+	} else { // Game over
 		showText(TX_TUG3N006);
 		showGameOverMenu();
 	}
