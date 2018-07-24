@@ -1085,7 +1085,7 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 	SharedPtr<Bitmap> bitmapToReturn;
 
 	char basename[5];
-	strncpy(basename, filename.c_str()+1, 4);
+	strncpy(basename, filename.c_str() + 1, 4);
 	basename[4] = '\0';
 
 	char c = filename[0];
@@ -1841,7 +1841,7 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 			basename = filename;
 			extension = filename;
 			basename.replace(i, filename.size()-i, "");
-			extension.replace(0, i+1, "");
+			extension.replace(0, i + 1, "");
 			break;
 		}
 	}
@@ -1927,8 +1927,8 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 		// the last character being incremented by one.
 		if ((basename.lastChar() >= '1' && basename.lastChar() <= '9') ||
 				(basename.lastChar() >= 'B' && basename.lastChar() <= 'Z')) {
-			basename.setChar(basename.lastChar()-1, basename.size()-1);
-			return loadFile(basename + "." + extension, fileIndex+1);
+			basename.setChar(basename.lastChar() - 1, basename.size() - 1);
+			return loadFile(basename + "." + extension, fileIndex + 1);
 		} else
 			error("Could not find file \'%s\'", filename.c_str());
 	}

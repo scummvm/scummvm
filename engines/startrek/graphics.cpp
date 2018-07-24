@@ -298,7 +298,7 @@ void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface) {
 // sprite's actual, full rectangle.
 void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect) {
 	Common::Rect spriteRect = Common::Rect(sprite.drawX, sprite.drawY,
-			sprite.drawX+sprite.bitmap->width, sprite.drawY+sprite.bitmap->height);
+			sprite.drawX + sprite.bitmap->width, sprite.drawY + sprite.bitmap->height);
 
 	assert(_screenRect.contains(rect));
 	assert(spriteRect.contains(rect));
