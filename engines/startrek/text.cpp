@@ -68,7 +68,7 @@ const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, 
 	}
 	if (*text == ' ') {
 		*lineOutput = '\0';
-		return text+1;
+		return text + 1;
 	}
 	if (lastSpaceOutput == nullptr) { // Long word couldn't fit on line
 		*lineOutput = '\0';
@@ -165,7 +165,7 @@ String StarTrekEngine::skipTextAudioPrompt(const String &str) {
 		text++;
 	}
 
-	return String(text+1);
+	return String(text + 1);
 }
 
 String StarTrekEngine::playTextAudio(const String &str) {
@@ -186,7 +186,7 @@ String StarTrekEngine::playTextAudio(const String &str) {
 	soundFile[len] = '\0';
 	playSpeech(soundFile);
 
-	return String(text+1);
+	return String(text + 1);
 }
 
 int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, bool rclickCancelsChoice) {

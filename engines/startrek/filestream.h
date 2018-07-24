@@ -27,7 +27,6 @@
 namespace StarTrek {
 
 class FileStream {
-
 public:
 	FileStream(Common::SeekableReadStream *stream, bool bigEndian);
 	~FileStream();

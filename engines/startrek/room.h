@@ -53,7 +53,6 @@ const int RDF_BEAM_IN_POSITIONS = 0xaa;
 const int RDF_SPAWN_POSITIONS = 0xba;
 
 class Room {
-
 public:
 	Room(StarTrekEngine *vm, const Common::String &name);
 	~Room();

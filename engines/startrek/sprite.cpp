@@ -26,22 +26,10 @@
 namespace StarTrek {
 
 Sprite::Sprite() :
-	pos(),
-	drawPriority(),
-	drawPriority2(),
-	field8(),
-	bitmap(),
-	drawMode(),
-	textColor(),
-	bitmapChanged(),
-	rect2Valid(),
-	isOnScreen(),
-	field16(),
-	lastDrawRect(),
-	drawRect(),
-	rectangle2(),
-	drawX(),
-	drawY()
+	pos(), drawPriority(0), drawPriority2(0), field8(0),
+	bitmap(), drawMode(0), textColor(0), bitmapChanged(false),
+	rect2Valid(false), isOnScreen(false), field16(false), lastDrawRect(),
+	drawRect(), rectangle2(), drawX(0), drawY(0)
 	{}
 
 void Sprite::setBitmap(SharedPtr<Bitmap> b) {

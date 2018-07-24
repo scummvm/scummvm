@@ -157,14 +157,14 @@ void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSpri
 }
 
 void StarTrekEngine::drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color) {
-	int lineWidth = bitmap->width-2;
-	int offsetToBottom = (bitmap->height-3)*bitmap->width;
+	int lineWidth = bitmap->width - 2;
+	int offsetToBottom = (bitmap->height - 3) * bitmap->width;
 
 	byte *dest = bitmap->pixels + bitmap->width + 1;
 
 	while (lineWidth--) {
 		*dest = color;
-		*(dest+offsetToBottom) = color;
+		*(dest + offsetToBottom) = color;
 		dest++;
 	}
 
@@ -175,7 +175,7 @@ void StarTrekEngine::drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color)
 
 	while (lineHeight--) {
 		*dest = color;
-		*(dest+offsetToRight) = color;
+		*(dest + offsetToRight) = color;
 		dest += bitmap->width;
 	}
 }
