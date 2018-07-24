@@ -75,6 +75,7 @@ public:
 	void setSortKey(float sortKey);
 	void setClickable(bool clickable);
 	void setcastsShadow(bool cast) { _castsShadow = cast; }
+	void setMaxShadowLength(uint32 length) { _maxShadowLength = length; }
 
 	/** Gets the position */
 	Common::Point getPosition() const { return _position; }
@@ -116,7 +117,9 @@ protected:
 	float _direction3D;
 	float _sortKey;
 	bool _clickable;
+
 	bool _castsShadow;
+	uint32 _maxShadowLength;
 };
 
 typedef Common::Array<RenderEntry *> RenderEntryArray;

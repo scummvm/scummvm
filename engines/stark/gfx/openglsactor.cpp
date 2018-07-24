@@ -50,7 +50,8 @@ OpenGLSActorRenderer::~OpenGLSActorRenderer() {
 	delete _shadowShader;
 }
 
-void OpenGLSActorRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights, bool castsShadow) {
+void OpenGLSActorRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights,
+		bool castsShadow, uint32 maxShadowLength) {
 	if (_modelIsDirty) {
 		// Update the OpenGL Buffer Objects if required
 		clearVertices();

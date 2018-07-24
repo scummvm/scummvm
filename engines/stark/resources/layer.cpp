@@ -233,6 +233,8 @@ Gfx::RenderEntryArray Layer3D::listRenderEntries() {
 				continue;
 			}
 
+			renderEntry->setMaxShadowLength(_maxShadowLength);
+
 			itemEntries.push_back(renderEntry);
 		}
 	}
