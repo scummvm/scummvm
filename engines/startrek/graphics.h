@@ -63,10 +63,16 @@ public:
 	byte *getBackgroundPixels();
 
 	void clearScreenAndPriBuffer();
+	/**
+	 * Note: this doesn't flush the palette to the screen (must call "setPaletteFadeLevel")
+	 */
 	void loadPalette(const String &paletteFile);
 	void copyRectBetweenBitmaps(Bitmap *destBitmap, int destX, int destY, Bitmap *srcBitmap, int srcX, int srcY, int width, int height);
 	void fadeinScreen();
 	void fadeoutScreen();
+	/**
+	 * This flushes the palette to the screen. fadeLevel ranges from 0-100.
+	 */
 	void setPaletteFadeLevel(byte *palData, int fadeLevel);
 	void incPaletteFadeLevel();
 	void decPaletteFadeLevel();
@@ -78,7 +84,18 @@ public:
 	SharedPtr<Bitmap> loadBitmap(String basename);
 
 	Common::Point getMousePos();
+	/**
+	 * Changes the mouse bitmap. The change won't take effect until drawAllSprites is
+	 * called again.
+	 */
 	void setMouseBitmap(SharedPtr<Bitmap> bitmap);
+	/**
+	 * This function is a workaround for when the mouse position needs to be locked in a set
+	 * position (used in the action menu). This only affects the position it is drawn at; the
+	 * sprite's "real" position is still updated normally.
+	 *
+	 * This does not call updateScreen.
+	 */
 	void lockMousePosition(int16 x, int16 y);
 	void unlockMousePosition();
 	SharedPtr<Bitmap> getMouseBitmap();
@@ -88,7 +105,13 @@ public:
 	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface);
 	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect);
 	void drawAllSprites(bool updateScreen=true);
+	/**
+	 * Sets "bitmapChanged" to true on all sprites before calling drawAllSprites.
+	 */
 	void forceDrawAllSprites(bool updateScreen=true);
+	/**
+	 * Returns the sprite at the given position (ignores mouse).
+	 */
 	Sprite *getSpriteAt(int16 x, int16 y);
 	Sprite *getSpriteAt(Common::Point p) { return getSpriteAt(p.x, p.y); }
 

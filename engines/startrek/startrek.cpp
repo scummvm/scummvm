@@ -577,9 +577,6 @@ void StarTrekEngine::initActors() {
 	strcpy(_redshirtActor->animationString, "rstnd");
 }
 
-/**
- * Set an actor's animation, position, and scale.
- */
 int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed8 scale) {
 	debugC(6, kDebugGraphics, "Load animation '%s' on actor %d", animName.c_str(), actorIndex);
 
@@ -606,10 +603,6 @@ int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName
 	return actorIndex;
 }
 
-/**
- * Tries to make an actor walk to a position.
- * Returns true if successful in initiating the walk.
- */
 bool StarTrekEngine::actorWalkToPosition(int actorIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY) {
 	debugC(6, "Obj %d: walk from (%d,%d) to (%d,%d)", actorIndex, srcX, srcY, destX, destY);
 
@@ -927,10 +920,6 @@ void StarTrekEngine::updateActorPositionWhileWalking(Actor *actor, int16 x, int1
 	actor->pos.y = y;
 }
 
-/**
- * Chooses a value for the actor's speed and direction, based on a source position and
- * a destination position it's walking to.
- */
 void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, int16 srcY, int16 destX, int16 destY) {
 	actor->granularPosX = srcX;
 	actor->granularPosY = srcY;
@@ -988,10 +977,6 @@ void StarTrekEngine::chooseActorDirectionForWalking(Actor *actor, int16 srcX, in
 	}
 }
 
-/**
- * Returns true if an actor can walk directly from a source position to a destination
- * position without running into unwalkable terrain.
- */
 bool StarTrekEngine::directPathExists(int16 srcX, int16 srcY, int16 destX, int16 destY) {
 	int32 distX = destX - srcX;
 	int32 distY = destY - srcY;
@@ -1096,9 +1081,6 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 	return -1;
 }
 
-/**
- * Loads a bitmap for the animation frame with the given scale.
- */
 SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed8 scale) {
 	SharedPtr<Bitmap> bitmapToReturn;
 
@@ -1196,11 +1178,6 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 }
 
 
-/**
- * Called when the "get" action is first selected. Returns a selected object.
- * This behaves like other menus in that it holds game execution, but no actual menu pops
- * up; it just waits for the player to select something on the screen.
- */
 int StarTrekEngine::selectObjectForUseAction() {
 	while (true) {
 		if (!(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
@@ -1307,9 +1284,6 @@ Common::String StarTrekEngine::getCrewmanAnimFilename(int actorIndex, const Comm
 	return crewmanChars[actorIndex] + basename;
 }
 
-/**
- * Checks whether to change the mouse bitmap to have the red outline.
- */
 void StarTrekEngine::updateMouseBitmap() {
 	const bool worksOnCrewmen[] = { // True if the action reacts with crewmen
 		false, // ACTION_WALK
@@ -1352,10 +1326,6 @@ void StarTrekEngine::updateMouseBitmap() {
 	chooseMouseBitmapForAction(action, withRedOutline);
 }
 
-/**
- * Checks whether to walk a crewman to a hotspot (the last one obtained from
- * a "findObjectAt" call).
- */
 bool StarTrekEngine::walkActiveObjectToHotspot() {
 	if (!_objectHasWalkPosition)
 		return false;
@@ -1462,9 +1432,6 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 	_inventoryIconSprite.setBitmap(_gfx->loadBitmap("inv00"));
 }
 
-/**
- * Return true if an object is unselectable with the given action?
- */
 bool StarTrekEngine::isObjectUnusable(int object, int action) {
 	if (action == ACTION_LOOK)
 		return false;
@@ -1501,9 +1468,6 @@ void StarTrekEngine::hideInventoryIcons() {
 	}
 }
 
-/**
- * When a crewman is collapsed, they get once a timer reaches 0.
- */
 void StarTrekEngine::updateCrewmanGetupTimers() {
 	if (_awayMission.crewDownBitset == 0)
 		return;
@@ -1798,11 +1762,6 @@ SharedPtr<Bitmap> StarTrekEngine::scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 s
 	return scaledBitmap;
 }
 
-/**
- * This takes a row of an unscaled bitmap, and copies it to a row of a scaled bitmap.
- * This was heavily optimized in the original game (manually constructed an unrolled
- * loop).
- */
 void StarTrekEngine::scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uint16 scaledWidth) {
 	if (origWidth >= scaledWidth) {
 		int16 var2 = (scaledWidth << 1) - origWidth;
@@ -2088,10 +2047,6 @@ uint16 StarTrekEngine::getRandomWord() {
 	return _randomSource.getRandomNumber(0xffff);
 }
 
-/**
- * ".txt" files are just lists of strings. This traverses the file to get a particular
- * string index.
- */
 Common::String StarTrekEngine::getLoadedText(int textIndex) {
 	SharedPtr<FileStream> txtFile = loadFile(_txtFilename + ".txt");
 

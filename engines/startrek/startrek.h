@@ -239,6 +239,10 @@ public:
 	void awayMissionUseObject(int16 clickedObject);
 	void awayMissionGetLookOrTalk(int16 clickedObject);
 	void unloadRoom();
+	/**
+	 * Similar to loadActorAnim, but scale is determined by the y-position in the room. The
+	 * further up (away) the object is, the smaller it is.
+	 */
 	int loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y);
 	Fixed8 getActorScaleAtPosition(int16 y);
 	void addAction(const Action &action);
@@ -246,9 +250,26 @@ public:
 	bool checkItemInteractionExists(int action, int activeItem, int passiveItem, int16 arg6);
 	void handleAwayMissionAction();
 
+	/**
+	 * Returns true if the given position is contained in a polygon.
+	 *
+	 * The data passed contains the following words in this order:
+	 *   * Index of polygon (unused here)
+	 *   * Number of vertices in polygon
+	 *   * For each vertex: x and y coordinates.
+	 */
 	bool isPointInPolygon(int16 *data, int16 x, int16 y);
 	void checkTouchedLoadingZone(int16 x, int16 y);
+	/**
+	 * Updates any nonzero away mission timers, and invokes ACTION_TIMER_EXPIRED when any one
+	 * reaches 0.
+	 */
 	void updateAwayMissionTimers();
+	/**
+	 * Returns true if the given position in the room is solid (not walkable).
+	 * Reads from a ".map" file which has a bit for each position in the room, which is true
+	 * when that position is solid.
+	 */
 	bool isPositionSolid(int16 x, int16 y);
 	void loadRoomIndex(int roomIndex, int spawnIndex);
 
@@ -307,7 +328,14 @@ public:
 
 	// Actors
 	void initActors();
+	/**
+	 * Set an actor's animation, position, and scale.
+	 */
 	int loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed8 scale);
+	/**
+	 * Tries to make an actor walk to a position.
+	 * Returns true if successful in initiating the walk.
+	 */
 	bool actorWalkToPosition(int actorIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY);
 	void updateActorAnimations();
 	void removeActorFromScreen(int actorIndex);
@@ -316,24 +344,58 @@ public:
 	void releaseAnim(Actor *actor);
 	void initStandAnim(int actorIndex);
 	void updateActorPositionWhileWalking(Actor *actor, int16 x, int16 y);
+	/**
+	 * Chooses a value for the actor's speed and direction, based on a source position and
+	 * a destination position it's walking to.
+	 */
 	void chooseActorDirectionForWalking(Actor *actor, int16 srcX, int16 srcY, int16 destX, int16 destY);
+	/**
+	 * Returns true if an actor can walk directly from a source position to a destination
+	 * position without running into unwalkable terrain.
+	 */
 	bool directPathExists(int16 srcX, int16 srcY, int16 destX, int16 destY);
 
 	int findObjectAt(int x, int y);
 	int findObjectAt(Common::Point p) { return findObjectAt(p.x, p.y); }
+	/**
+	 * Loads a bitmap for the animation frame with the given scale.
+	 */
 	SharedPtr<Bitmap> loadAnimationFrame(const Common::String &filename, Fixed8 scale);
 
+	/**
+	 * Called when the "get" action is first selected. Returns a selected object.
+	 * This behaves like other menus in that it holds game execution, but no actual menu pops
+	 * up; it just waits for the player to select something on the screen.
+	 */
 	int selectObjectForUseAction();
 	Common::String getCrewmanAnimFilename(int actorIndex, const Common::String &basename);
+	/**
+	 * Checks whether to change the mouse bitmap to have the red outline.
+	 */
 	void updateMouseBitmap();
+	/**
+	 * Checks whether to walk a crewman to a hotspot (the last one obtained from
+	 * a "findObjectAt" call).
+	 */
 	bool walkActiveObjectToHotspot();
+	/**
+	 * Return true if an object is unselectable with the given action?
+	 */
 	bool isObjectUnusable(int objectIndex, int action);
+	/**
+	 * When a crewman is collapsed, they get once a timer reaches 0.
+	 */
 	void updateCrewmanGetupTimers();
 	void showInventoryIcons(bool showItem);
 	void hideInventoryIcons();
 	int showInventoryMenu(int x, int y, bool restoreMouse);
 	void initStarfieldSprite(Sprite *sprite, SharedPtr<Bitmap> bitmap, const Common::Rect &rect);
 	SharedPtr<Bitmap> scaleBitmap(SharedPtr<Bitmap> bitmap, Fixed8 scale);
+	/**
+	 * This takes a row of an unscaled bitmap, and copies it to a row of a scaled bitmap.
+	 * This was heavily optimized in the original game (manually constructed an unrolled
+	 * loop).
+	 */
 	void scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uint16 scaledWidth);
 
 	// Events
@@ -372,48 +434,123 @@ private:
 
 	// text.cpp
 public:
+	/**
+	 * Gets one line of text (does not include words that won't fit).
+	 * Returns position of text to continue from, or nullptr if done.
+	 */
 	const char *getNextTextLine(const char *text, char *line, int lineWidth);
 
 	String centerTextboxHeader(String headerText);
 	void getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex);
+	/**
+	 * Text getter for showText which reads from an rdf file.
+	 * Not really used, since it would require hardcoding text locations in RDF files.
+	 * "readTextFromArrayWithChoices" replaces this.
+	 */
 	String readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput);
 	String readTextFromBuffer(int choiceIndex, uintptr data, String *headerTextOutput);
 
+	/**
+	 * Shows text with the given header and main text.
+	 */
 	void showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines); // TODO: better name. (return type?)
 
 	String skipTextAudioPrompt(const String &str);
+	/**
+	 * Plays an audio prompt, if it exists, and returns the string starting at the end of the
+	 * prompt.
+	 */
 	String playTextAudio(const String &str);
 
+	/**
+	 * @param rclickCancelsChoice   If true, right-clicks return "-1" as choice instead of
+	 *                              whatever was selected.
+	 */
 	int showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, bool rclickCancelsChoice);
 
+	/**
+	 * Returns the number of lines this string will take up in a textbox.
+	 */
 	int getNumTextboxLines(const String &str);
 	String putTextIntoLines(const String &text);
 
+	/**
+	 * Creates a blank textbox in a TextBitmap, and initializes a sprite to use it.
+	 */
 	SharedPtr<TextBitmap> initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite);
+	/**
+	 * Draws the "main" text (everything but the header at the top) to a TextBitmap.
+	 */
 	void drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &text, bool withHeader);
 
 	String readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
 
+	/**
+	 * Text getter for showText which reads choices from an array of pointers.
+	 * Last element in the array must be an empty string.
+	 */
 	String readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput);
+	/**
+	 * Similar to above, but shows the choice index when multiple choices are present.
+	 * Effectively replaces the "readTextFromRdf" function.
+	 */
 	String readTextFromArrayWithChoices(int choiceIndex, uintptr data, String *headerTextOutput);
 
 	// menu.cpp
 public:
+	/**
+	 * Returns the index of the button at the given position, or -1 if none.
+	 */
 	int getMenuButtonAt(Sprite *sprites, int numSprites, int x, int y);
+	/**
+	 * This chooses a sprite from the list to place the mouse cursor at. The sprite it chooses
+	 * may be, for example, the top-leftmost one in the list. Exact behaviour is determined by
+	 * the "mode" parameter.
+	 *
+	 * If "containMouseSprite" is a valid index, it's ensured that the mouse is contained
+	 * within it. "mode" should be -1 in this case.
+	 */
 	void chooseMousePositionFromSprites(Sprite *sprites, int numSprites, int spriteIndex, int mode);
+	/**
+	 * Draws or removes the outline on menu buttons when the cursor hovers on them, or leaves
+	 * them.
+	 */
 	void drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color);
 	void showOptionsMenu(int x, int y);
+	/**
+	 * Show the "action selection" menu, ie. look, talk, etc.
+	 */
 	int showActionMenu();
+	/**
+	 * Loads a .MNU file, which is a list of buttons to display.
+	 */
 	void loadMenuButtons(String mnuFilename, int xpos, int ypos);
+	/**
+	 * Sets which buttons are visible based on the given bitmask.
+	 */
 	void setVisibleMenuButtons(uint32 bits);
+	/**
+	 * Disables the given bitmask of buttons.
+	 */
 	void disableMenuButtons(uint32 bits);
 	void enableMenuButtons(uint32 bits);
+	/**
+	 * This returns either a special menu event (negative number) or the retval of the button
+	 * clicked (usually an index, always positive).
+	 */
 	int handleMenuEvents(uint32 ticksUntilClickingEnabled, bool inTextbox);
 	void unloadMenuButtons();
 
+	/**
+	 * Sets the mouse bitmap based on which action is selected.
+	 */
 	void chooseMouseBitmapForAction(int action, bool withRedOutline);
 	void showQuitGamePrompt(int x, int y);
 	void showGameOverMenu();
+	/**
+	 * This can be called from startup or from the options menu.
+	 * On startup, this tries to load the setting without user input.
+	 */
 	void showTextConfigurationMenu(bool fromOptionMenu);
 
 	int loadTextDisplayMode();
@@ -437,6 +574,10 @@ public:
 	bool saveGame(int slot, Common::String desc);
 	bool loadGame(int slot);
 
+	/**
+	 * Call this after loading "saveOrLoadMetadata" to load all the data pertaining to game
+	 * execution.
+	 */
 	bool saveOrLoadGameData(Common::SeekableReadStream *in, Common::WriteStream *out, SavegameMetadata *meta);
 
 	Common::String getSavegameFilename(int slotId) const;
@@ -463,6 +604,10 @@ public:
 
 	// Misc
 	uint16 getRandomWord();
+	/**
+	 * ".txt" files are just lists of strings. This traverses the file to get a particular
+	 * string index.
+	 */
 	Common::String getLoadedText(int textIndex);
 
 

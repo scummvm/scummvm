@@ -118,9 +118,6 @@ void Graphics::clearScreenAndPriBuffer() {
 	_vm->_system->updateScreen();
 }
 
-/**
- * Note: this doesn't flush the palette to the screen (must call "setPaletteFadeLevel")
- */
 void Graphics::loadPalette(const Common::String &paletteName) {
 	// Set the palette from a PAL file
 	Common::String palFile = paletteName + ".PAL";
@@ -170,9 +167,6 @@ void Graphics::fadeoutScreen() {
 	_paletteFadeLevel = 0;
 }
 
-/**
- * This flushes the palette to the screen. fadeLevel ranges from 0-100.
- */
 void Graphics::setPaletteFadeLevel(byte *palData, int fadeLevel) {
 	byte palBuffer[256 * 3];
 
@@ -239,10 +233,6 @@ Common::Point Graphics::getMousePos() {
 	return _vm->_system->getEventManager()->getMousePos();
 }
 
-/**
- * The change to the mouse's bitmap won't take effect until drawAllSprites is called
- * again.
- */
 void Graphics::setMouseBitmap(SharedPtr<Bitmap> bitmap) {
 	_mouseBitmap = bitmap;
 
@@ -250,13 +240,6 @@ void Graphics::setMouseBitmap(SharedPtr<Bitmap> bitmap) {
 		_lockedMouseSprite.setBitmap(_mouseBitmap);
 }
 
-/**
- * This function is a workaround for when the mouse position needs to be locked in a set
- * position (used in the action menu). This only affects the position it is drawn at; the
- * sprite's "real" position is still updated normally.
- *
- * This does not call updateScreen.
- */
 void Graphics::lockMousePosition(int16 x, int16 y) {
 	if (_mouseLocked) {
 		if (x != _lockedMouseSprite.pos.x || y != _lockedMouseSprite.pos.y) {
@@ -617,18 +600,12 @@ void Graphics::drawAllSprites(bool updateScreen) {
 	}
 }
 
-/**
- * Sets "bitmapChanged" to true on all sprites before calling drawAllSprites.
- */
 void Graphics::forceDrawAllSprites(bool updateScreen) {
 	for (int i = 0; i < _numSprites; i++)
 		_sprites[i]->bitmapChanged = true;
 	drawAllSprites(updateScreen);
 }
 
-/**
- * Returns the sprite at the given position (ignores mouse).
- */
 Sprite *Graphics::getSpriteAt(int16 x, int16 y) {
 	for (int i = _numSprites - 1; i >= 0; i--) {
 		Sprite *sprite = _sprites[i];

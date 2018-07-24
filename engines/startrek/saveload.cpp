@@ -172,10 +172,6 @@ bool StarTrekEngine::loadGame(int slot) {
 	return true;
 }
 
-/**
- * Call this after loading "saveOrLoadMetadata" to load all the data pertaining to game
- * execution.
- */
 bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::WriteStream *out, SavegameMetadata *meta) {
 	Common::Serializer ser(in, out);
 

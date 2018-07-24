@@ -60,9 +60,7 @@ void Sprite::dontDrawNextFrame() {
 	field16 = true;
 	bitmapChanged = true;
 }
-/**
- * Returns a rect containing the sprite's bitmap on the screen.
- */
+
 Common::Rect Sprite::getRect() {
 	Common::Rect rect(bitmap->width, bitmap->height);
 	rect.translate(pos.x - bitmap->xoffset, pos.y - bitmap->yoffset);

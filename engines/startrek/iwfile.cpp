@@ -51,10 +51,6 @@ bool iwSorter(const Common::Point &p1, const Common::Point &p2) {
 	return p1.y < p2.y;
 }
 
-/**
- * Returns the index of the nearest "key position" in the room that an object can walk to
- * (in a straight line) from a given position.
- */
 int IWFile::getClosestKeyPosition(int16 x, int16 y) {
 	// This is a sorted list of indices from 0 to _numEntries-1.
 	// The index is stored in Point.x, and the "cost" (distance from position) is stored

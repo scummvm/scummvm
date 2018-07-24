@@ -65,6 +65,9 @@ struct Sprite : Common::Serializable {
 	void setXYAndPriority(int16 x, int16 y, int16 priority);
 	void dontDrawNextFrame();
 
+	/**
+	 * Returns a rect containing the sprite's bitmap on the screen.
+	 */
 	Common::Rect getRect();
 
 	/// NOTE: even after calling this, "bitmap" must be reloaded by the caller.

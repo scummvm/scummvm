@@ -463,10 +463,6 @@ void StarTrekEngine::unloadRoom() {
 	_mapFile.reset();
 }
 
-/**
- * Similar to loadActorAnim, but scale is determined by the y-position in the room. The
- * further up (away) the object is, the smaller it is.
- */
 int StarTrekEngine::loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y) {
 	Fixed8 scale = getActorScaleAtPosition(y);
 	return loadActorAnim(actorIndex, animName, x, y, scale);
@@ -673,14 +669,6 @@ void StarTrekEngine::handleAwayMissionAction() {
 	}
 }
 
-/**
- * Returns true if the given position is contained in a polygon?
- *
- * The data passed contains the following words in this order:
- *   * Index of polygon (unused here)
- *   * Number of vertices in polygon
- *   * For each vertex: x and y coordinates.
- */
 bool StarTrekEngine::isPointInPolygon(int16 *data, int16 x, int16 y) {
 	int16 numVertices = data[1];
 	int16 *vertData = &data[2];
@@ -740,10 +728,6 @@ void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 	_activeWarpHotspot = -1;
 }
 
-/**
- * Updates any nonzero away mission timers, and invokes ACTION_TIMER_EXPIRED when any one
- * reaches 0.
- */
 void StarTrekEngine::updateAwayMissionTimers() {
 	for (int i = 0; i < 8; i++) {
 		if (_awayMission.timers[i] == 0)
@@ -754,11 +738,6 @@ void StarTrekEngine::updateAwayMissionTimers() {
 	}
 }
 
-/**
- * Returns true if the given position in the room is solid (not walkable).
- * Reads from a ".map" file which has a bit for each position in the room, which is true
- * when that position is solid.
- */
 bool StarTrekEngine::isPositionSolid(int16 x, int16 y) {
 	assert(x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT);
 

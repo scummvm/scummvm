@@ -85,9 +85,6 @@ void Sound::clearAllMidiSlots() {
 	}
 }
 
-/**
- * Plays a midi track as a sound effect (one of midi slots 1-7)
- */
 void Sound::playMidiTrack(int track) {
 	if (!_vm->_musicEnabled || !_vm->_musicWorking)
 		return;
@@ -261,9 +258,6 @@ void Sound::playSpeech(const Common::String &basename) {
 	}
 }
 
-/**
- * Called when disabling sfx.
- */
 void Sound::stopAllVocSounds() {
 	stopPlayingSpeech();
 

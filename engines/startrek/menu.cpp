@@ -28,9 +28,6 @@
 
 namespace StarTrek {
 
-/**
- * Returns the index of the button at the given position, or -1 if none.
- */
 int StarTrekEngine::getMenuButtonAt(Sprite *sprites, int numSprites, int x, int y) {
 	for (int i = 0; i < numSprites; i++) {
 		const Sprite &spr = sprites[i];
@@ -52,14 +49,6 @@ int StarTrekEngine::getMenuButtonAt(Sprite *sprites, int numSprites, int x, int 
 	return -1;
 }
 
-/**
- * This chooses a sprite from the list to place the mouse cursor at. The sprite it chooses
- * may be, for example, the top-leftmost one in the list. Exact behaviour is determined by
- * the "mode" parameter.
- *
- * If "containMouseSprite" is a valid index, it's ensured that the mouse is contained
- * within it. "mode" should be -1 in this case.
- */
 void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSprites, int containMouseSprite, int mode) {
 	uint16 mouseX1 = 0x7fff; // Candidate positions to warp mouse to
 	uint16 mouseY1 = 0x7fff;
@@ -167,10 +156,6 @@ void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSpri
 
 }
 
-/**
- * Draws or removes the outline on menu buttons when the cursor hovers on them, or leaves
- * them.
- */
 void StarTrekEngine::drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color) {
 	int lineWidth = bitmap->width-2;
 	int offsetToBottom = (bitmap->height-3)*bitmap->width;
@@ -266,9 +251,6 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 	}
 }
 
-/**
- * Show the "action selection" menu, ie. look, talk, etc.
- */
 int StarTrekEngine::showActionMenu() {
 	const int actionMappingUp[] = { // Actions to jump to when up is pressed
 		ACTION_TALK,    // <- ACTION_WALK
@@ -513,9 +495,6 @@ lookupNextAction:
 	return action;
 }
 
-/**
- * Loads a .MNU file, which is a list of buttons to display.
- */
 void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	if (_activeMenu == nullptr)
 		_keyboardControlsMouseOutsideMenu = _keyboardControlsMouse;
@@ -563,9 +542,6 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	_keyboardControlsMouse = false;
 }
 
-/**
- * Sets which buttons are visible based on the given bitmask.
- */
 void StarTrekEngine::setVisibleMenuButtons(uint32 bits) {
 	for (int i = 0; i < _activeMenu->numButtons; i++) {
 		Sprite *sprite = &_activeMenu->sprites[i];
@@ -608,9 +584,6 @@ void StarTrekEngine::setVisibleMenuButtons(uint32 bits) {
 	}
 }
 
-/**
- * Disables the given bitmask of buttons.
- */
 void StarTrekEngine::disableMenuButtons(uint32 bits) {
 	_activeMenu->disabledButtons |= bits;
 	if (_activeMenu->selectedButton != -1
@@ -627,10 +600,6 @@ void StarTrekEngine::enableMenuButtons(uint32 bits) {
 	_activeMenu->disabledButtons &= ~bits;
 }
 
-/**
- * This returns either a special menu event (negative number) or the retval of the button
- * clicked (usually an index, always positive).
- */
 int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool inTextbox) {
 	uint32 tickWhenClickingEnabled = _clockTicks + ticksUntilClickingEnabled;
 
@@ -886,9 +855,6 @@ void StarTrekEngine::unloadMenuButtons() {
 		_keyboardControlsMouse = _keyboardControlsMouseOutsideMenu;
 }
 
-/**
- * Sets the mouse bitmap based on which action is selected.
- */
 void StarTrekEngine::chooseMouseBitmapForAction(int action, bool withRedOutline) {
 	const char *lookActionBitmaps[] = {
 		"lookh0", // The "look" action randomly animates with these images
@@ -1005,10 +971,6 @@ void StarTrekEngine::showGameOverMenu() {
 	}
 }
 
-/**
- * This can be called from startup or from the options menu.
- * On startup, this tries to load the setting without user input.
- */
 void StarTrekEngine::showTextConfigurationMenu(bool fromOptionMenu) {
 	const char *options[] = { // TODO: languages...
 		"Text display",
