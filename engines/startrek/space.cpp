@@ -336,7 +336,7 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 
 			if (top > bottom)
 				continue;
-			if (top > _starfieldRect.bottom - 1) // FIXME
+			if (top > _starfieldRect.bottom - 1)
 				continue;
 			if (bottom < _starfieldRect.top)
 				continue;

@@ -230,6 +230,14 @@ public:
 	void loadRoom(const Common::String &missionName, int roomIndex);
 	void initAwayCrewPositions(int warpEntryIndex);
 	void handleAwayMissionEvents();
+	void awayMissionLeftClick();
+	/**
+	 * Called on right-click (select action), or when certain actions are otherwise
+	 * selected (checks whether to show inventory icon, etc)
+	 */
+	void awayMissionSelectAction(bool openActionMenu);
+	void awayMissionUseObject(int16 clickedObject);
+	void awayMissionGetLookOrTalk(int16 clickedObject);
 	void unloadRoom();
 	int loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y);
 	Fixed8 getActorScaleAtPosition(int16 y);

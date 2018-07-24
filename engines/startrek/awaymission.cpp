@@ -195,178 +195,14 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			break;
 
 		case TREKEVENT_LBUTTONDOWN:
-lclick:
-			if (_awayMission.disableInput)
-				break;
-
-			switch (_awayMission.activeAction) {
-			case ACTION_WALK: {
-				if (_awayMission.disableWalking)
-					break;
-				_kirkActor->sprite.drawMode = 1; // Hide these objects for function call below?
-				_spockActor->sprite.drawMode = 1;
-				_mccoyActor->sprite.drawMode = 1;
-				_redshirtActor->sprite.drawMode = 1;
-
-				clickedObject = findObjectAt(_gfx->getMousePos());
-
-				_kirkActor->sprite.drawMode = 0;
-				_spockActor->sprite.drawMode = 0;
-				_mccoyActor->sprite.drawMode = 0;
-				_redshirtActor->sprite.drawMode = 0;
-
-				if (walkActiveObjectToHotspot())
-					break;
-
-				if (clickedObject > OBJECT_KIRK && clickedObject < ITEMS_START)
-					addAction(ACTION_WALK, clickedObject, 0, 0);
-				else {
-					Common::String animFilename = getCrewmanAnimFilename(OBJECT_KIRK, "walk");
-					Common::Point mousePos = _gfx->getMousePos();
-					actorWalkToPosition(OBJECT_KIRK, animFilename, _kirkActor->pos.x, _kirkActor->pos.y, mousePos.x, mousePos.y);
-				}
-				break;
-			}
-
-			case ACTION_USE: {
-				if (_awayMission.activeObject == OBJECT_REDSHIRT && (_awayMission.redshirtDead || (_awayMission.crewDownBitset & (1 << OBJECT_REDSHIRT)))) {
-					hideInventoryIcons();
-					_awayMission.activeAction = ACTION_WALK;
-					break;
-				}
-
-				clickedObject = findObjectAt(_gfx->getMousePos());
-				hideInventoryIcons();
-
-				if (clickedObject == OBJECT_INVENTORY_ICON) {
-					clickedObject = showInventoryMenu(50, 50, false);
-
-useInventory:
-					// -1 means "clicked on something unknown"; -2 means "clicked on
-					// nothing". In the case of the inventory, either one clicks on an
-					// inventory item, or no action is performed.
-					if (clickedObject == -1)
-						clickedObject = -2;
-				}
-
-				_awayMission.passiveObject = clickedObject;
-
-				bool activeIsCrewman = _awayMission.activeObject <= OBJECT_REDSHIRT;
-				bool activeIsItem = _awayMission.activeObject >= ITEMS_START && _awayMission.activeObject < ITEMS_END;
-				bool passiveIsCrewman = _awayMission.passiveObject <= OBJECT_REDSHIRT;
-				bool passiveIsItem = _awayMission.passiveObject >= ITEMS_START && _awayMission.passiveObject <= ITEMS_END; // FIXME: "<= ITEMS_END" doesn't make sense?
-
-				if (clickedObject == -2)
-					goto checkAddAction;
-				if (_room->actionHasCode(ACTION_USE, _awayMission.activeObject, _awayMission.passiveObject, 0))
-					goto checkAddAction;
-				if (_awayMission.activeObject == OBJECT_MCCOY) {
-					if (_room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
-						goto checkAddAction;
-					if (_room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
-						goto checkAddAction;
-				}
-				else if (_awayMission.activeObject == OBJECT_SPOCK) {
-					if (_room->actionHasCode(ACTION_USE, OBJECT_ISTRICOR, _awayMission.passiveObject, 0))
-						goto checkAddAction;
-				}
-
-				if ((activeIsCrewman && passiveIsCrewman)
-						|| (activeIsCrewman && passiveIsItem)
-						|| (activeIsItem && passiveIsItem)) {
-					if (_awayMission.passiveObject == OBJECT_ICOMM) {
-						if (walkActiveObjectToHotspot())
-							break;
-						addAction(ACTION_USE, OBJECT_ICOMM, 0, 0);
-						_sound->playVoc("commun30");
-						if (_awayMission.activeObject <= OBJECT_REDSHIRT) {
-							goto checkShowInventory;
-						}
-						else {
-							_awayMission.activeAction = ACTION_WALK;
-							break;
-						}
-					}
-
-					_awayMission.activeObject = _awayMission.passiveObject;
-					goto checkShowInventory;
-				}
-
-checkAddAction:
-				if (!walkActiveObjectToHotspot())
-				{
-					if (clickedObject != -2)
-						addAction(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0);
-
-checkShowInventory:
-					if (!(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
-						showInventoryIcons(true);
-				}
-				break;
-			}
-
-			case ACTION_GET:
-			case ACTION_LOOK:
-			case ACTION_TALK: {
-				clickedObject = findObjectAt(_gfx->getMousePos());
-				if (!isObjectUnusable(clickedObject, _awayMission.activeAction)) {
-					hideInventoryIcons();
-
-					if (clickedObject == OBJECT_INVENTORY_ICON) {
-						clickedObject = showInventoryMenu(50, 50, false);
-lookInventory:
-						if (clickedObject == -1)
-							clickedObject = -2;
-					}
-
-					_awayMission.activeObject = clickedObject;
-
-					if (walkActiveObjectToHotspot())
-						break;
-
-					if (clickedObject != -2)
-						addAction(_awayMission.activeAction, _awayMission.activeObject, 0, 0);
-
-					if (_awayMission.activeAction == ACTION_LOOK && !(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
-						showInventoryIcons(false);
-				}
-				break;
-			}
-
-			}
+			awayMissionLeftClick();
 			break; // End of TREKEVENT_LBUTTONDOWN
 
 		case TREKEVENT_MOUSEMOVE:
 			break;
 
 		case TREKEVENT_RBUTTONDOWN:
-rclick:
-			if (_awayMission.disableInput)
-				break;
-			hideInventoryIcons();
-			playSoundEffectIndex(0x07);
-			_awayMission.activeAction = showActionMenu();
-
-checkSelectedAction:
-			if (_awayMission.activeAction == ACTION_USE) {
-				clickedObject = selectObjectForUseAction();
-				if (clickedObject == -1)
-					break;
-				else
-					_awayMission.activeObject = clickedObject;
-			}
-			if (_awayMission.activeAction == ACTION_USE
-					&& _awayMission.activeObject == OBJECT_ICOMM && (_awayMission.crewDownBitset & (1 << OBJECT_KIRK)) == 0) {
-				if (!walkActiveObjectToHotspot()) {
-					addAction(_awayMission.activeAction, _awayMission.activeObject, 0, 0);
-					_sound->playVoc("communic");
-					_awayMission.activeAction = ACTION_WALK;
-				}
-			}
-			else if (_awayMission.activeAction == ACTION_LOOK)
-				showInventoryIcons(false);
-			else if (_awayMission.activeAction == ACTION_USE && (_awayMission.crewDownBitset & (1 << OBJECT_KIRK)) == 0)
-				showInventoryIcons(true);
+			awayMissionSelectAction(true);
 			break;
 
 		case TREKEVENT_KEYDOWN:
@@ -377,7 +213,8 @@ checkSelectedAction:
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_SPACE:
 			case Common::KEYCODE_F2:
-				goto rclick;
+				awayMissionSelectAction(true);
+				break;
 
 			case Common::KEYCODE_w:
 				hideInventoryIcons();
@@ -387,40 +224,48 @@ checkSelectedAction:
 			case Common::KEYCODE_t:
 				hideInventoryIcons();
 				_awayMission.activeAction = ACTION_TALK;
-				goto checkSelectedAction;
+				awayMissionSelectAction(false);
+				break;
 
 			case Common::KEYCODE_u:
 				hideInventoryIcons();
 				_awayMission.activeAction = ACTION_USE;
-				goto checkSelectedAction;
+				awayMissionSelectAction(false);
+				break;
 
 			case Common::KEYCODE_i:
 				if (_awayMission.activeAction == ACTION_USE) {
 					hideInventoryIcons();
 					clickedObject = showInventoryMenu(50, 50, true);
-					goto useInventory;
-				}
-				else if (_awayMission.activeAction == ACTION_LOOK) {
+					if (clickedObject == -1)
+						clickedObject = -2;
+					awayMissionUseObject(clickedObject);
+				} else if (_awayMission.activeAction == ACTION_LOOK) {
 					hideInventoryIcons();
 					clickedObject = showInventoryMenu(50, 50, true);
-					goto lookInventory;
+					if (clickedObject == -1)
+						clickedObject = -2;
+					awayMissionGetLookOrTalk(clickedObject);
 				}
 				break;
 
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
 			case Common::KEYCODE_F1:
-				goto lclick;
+				awayMissionLeftClick();
+				break;
 
 			case Common::KEYCODE_g:
 				hideInventoryIcons();
 				_awayMission.activeAction = ACTION_GET;
-				goto checkSelectedAction;
+				awayMissionSelectAction(false);
+				break;
 
 			case Common::KEYCODE_l:
 				hideInventoryIcons();
 				_awayMission.activeAction = ACTION_LOOK;
-				goto checkSelectedAction;
+				awayMissionSelectAction(false);
+				break;
 
 			default:
 				break;
@@ -431,6 +276,183 @@ checkSelectedAction:
 			break;
 		}
 	}
+}
+
+void StarTrekEngine::awayMissionLeftClick() {
+	if (_awayMission.disableInput)
+		return;
+
+	switch (_awayMission.activeAction) {
+	case ACTION_WALK: {
+		if (_awayMission.disableWalking)
+			break;
+		_kirkActor->sprite.drawMode = 1; // Hide these objects for function call below?
+		_spockActor->sprite.drawMode = 1;
+		_mccoyActor->sprite.drawMode = 1;
+		_redshirtActor->sprite.drawMode = 1;
+
+		int16 clickedObject = findObjectAt(_gfx->getMousePos());
+
+		_kirkActor->sprite.drawMode = 0;
+		_spockActor->sprite.drawMode = 0;
+		_mccoyActor->sprite.drawMode = 0;
+		_redshirtActor->sprite.drawMode = 0;
+
+		if (walkActiveObjectToHotspot())
+			break;
+
+		if (clickedObject > OBJECT_KIRK && clickedObject < ITEMS_START)
+			addAction(ACTION_WALK, clickedObject, 0, 0);
+		else {
+			Common::String animFilename = getCrewmanAnimFilename(OBJECT_KIRK, "walk");
+			Common::Point mousePos = _gfx->getMousePos();
+			actorWalkToPosition(OBJECT_KIRK, animFilename, _kirkActor->pos.x, _kirkActor->pos.y, mousePos.x, mousePos.y);
+		}
+		break;
+	}
+
+	case ACTION_USE: {
+		if (_awayMission.activeObject == OBJECT_REDSHIRT && (_awayMission.redshirtDead || (_awayMission.crewDownBitset & (1 << OBJECT_REDSHIRT)))) {
+			hideInventoryIcons();
+			_awayMission.activeAction = ACTION_WALK;
+			break;
+		}
+
+		int16 clickedObject = findObjectAt(_gfx->getMousePos());
+		hideInventoryIcons();
+
+		if (clickedObject == OBJECT_INVENTORY_ICON) {
+			clickedObject = showInventoryMenu(50, 50, false);
+
+			// -1 means "clicked on something unknown"; -2 means "clicked on
+			// nothing". In the case of the inventory, either one clicks on an
+			// inventory item, or no action is performed.
+			if (clickedObject == -1)
+				clickedObject = -2;
+		}
+
+		awayMissionUseObject(clickedObject);
+		break;
+	}
+
+	case ACTION_GET:
+	case ACTION_LOOK:
+	case ACTION_TALK: {
+		int16 clickedObject = findObjectAt(_gfx->getMousePos());
+		if (!isObjectUnusable(clickedObject, _awayMission.activeAction)) {
+			hideInventoryIcons();
+
+			if (clickedObject == OBJECT_INVENTORY_ICON) {
+				clickedObject = showInventoryMenu(50, 50, false);
+				if (clickedObject == -1)
+					clickedObject = -2;
+			}
+
+			awayMissionGetLookOrTalk(clickedObject);
+		}
+		break;
+	}
+
+	}
+}
+
+void StarTrekEngine::awayMissionSelectAction(bool openActionMenu) {
+	if (openActionMenu) {
+		if (_awayMission.disableInput)
+			return;
+		hideInventoryIcons();
+		playSoundEffectIndex(SND_07);
+		_awayMission.activeAction = showActionMenu();
+	}
+
+	if (_awayMission.activeAction == ACTION_USE) {
+		int16 clickedObject = selectObjectForUseAction();
+		if (clickedObject == -1)
+			return;
+		else
+			_awayMission.activeObject = clickedObject;
+	}
+	if (_awayMission.activeAction == ACTION_USE
+			&& _awayMission.activeObject == OBJECT_ICOMM && (_awayMission.crewDownBitset & (1 << OBJECT_KIRK)) == 0) {
+		if (!walkActiveObjectToHotspot()) {
+			addAction(_awayMission.activeAction, _awayMission.activeObject, 0, 0);
+			_sound->playVoc("communic");
+			_awayMission.activeAction = ACTION_WALK;
+		}
+	} else if (_awayMission.activeAction == ACTION_LOOK)
+		showInventoryIcons(false);
+	else if (_awayMission.activeAction == ACTION_USE && (_awayMission.crewDownBitset & (1 << OBJECT_KIRK)) == 0)
+		showInventoryIcons(true);
+}
+
+void StarTrekEngine::awayMissionUseObject(int16 clickedObject) {
+	_awayMission.passiveObject = clickedObject;
+
+	bool activeIsCrewman = _awayMission.activeObject <= OBJECT_REDSHIRT;
+	bool activeIsItem = _awayMission.activeObject >= ITEMS_START && _awayMission.activeObject < ITEMS_END;
+	bool passiveIsCrewman = _awayMission.passiveObject <= OBJECT_REDSHIRT;
+	bool passiveIsItem = _awayMission.passiveObject >= ITEMS_START && _awayMission.passiveObject <= ITEMS_END; // FIXME: "<= ITEMS_END" doesn't make sense?
+
+	bool tryWalkToHotspot = false;
+	bool showInventory = false;
+
+	if (clickedObject == -2)
+		tryWalkToHotspot = true;
+	else if (_room->actionHasCode(ACTION_USE, _awayMission.activeObject, _awayMission.passiveObject, 0))
+		tryWalkToHotspot = true;
+	else if (_awayMission.activeObject == OBJECT_MCCOY && _room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
+		tryWalkToHotspot = true;
+	else if (_awayMission.activeObject == OBJECT_MCCOY && _room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
+		tryWalkToHotspot = true;
+	else if (_awayMission.activeObject == OBJECT_SPOCK &&_room->actionHasCode(ACTION_USE, OBJECT_ISTRICOR, _awayMission.passiveObject, 0))
+		tryWalkToHotspot = true;
+
+	if (!tryWalkToHotspot) {
+		if ((activeIsCrewman && passiveIsCrewman)
+				|| (activeIsCrewman && passiveIsItem)
+				|| (activeIsItem && passiveIsItem)) {
+			if (_awayMission.passiveObject == OBJECT_ICOMM) {
+				if (walkActiveObjectToHotspot())
+					return;
+				addAction(ACTION_USE, OBJECT_ICOMM, 0, 0);
+				_sound->playVoc("commun30");
+				if (_awayMission.activeObject <= OBJECT_REDSHIRT) {
+					showInventory = true;
+				} else {
+					_awayMission.activeAction = ACTION_WALK;
+					return;
+				}
+			}
+
+			_awayMission.activeObject = _awayMission.passiveObject;
+			showInventory = true;
+		} else
+			tryWalkToHotspot = true;
+	}
+
+	if (tryWalkToHotspot) {
+		if (!walkActiveObjectToHotspot()) {
+			if (clickedObject != -2)
+				addAction(_awayMission.activeAction, _awayMission.activeObject, _awayMission.passiveObject, 0);
+			showInventory = true;
+		}
+	}
+
+	if (showInventory && !(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
+		showInventoryIcons(true);
+}
+
+void StarTrekEngine::awayMissionGetLookOrTalk(int16 clickedObject) {
+	_awayMission.activeObject = clickedObject;
+
+	if (walkActiveObjectToHotspot())
+		return;
+
+	if (clickedObject != -2)
+		addAction(_awayMission.activeAction, _awayMission.activeObject, 0, 0);
+
+	if (_awayMission.activeAction == ACTION_LOOK && !(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
+		showInventoryIcons(false);
 }
 
 void StarTrekEngine::unloadRoom() {
@@ -487,8 +509,7 @@ void StarTrekEngine::handleAwayMissionAction() {
 			_awayMission.disableInput = false;
 		_warpHotspotsActive = true;
 		return;
-	}
-	else if (action.type == ACTION_FINISHED_WALKING && action.b1 >= 0xe0) {
+	} else if (action.type == ACTION_FINISHED_WALKING && action.b1 >= 0xe0) {
 		// Finished walking to a position; perform the action that was input back when
 		// they started walking over there.
 		int index = action.b1 - 0xe0;
@@ -548,12 +569,10 @@ void StarTrekEngine::handleAwayMissionAction() {
 				if (action.passiveObject() == OBJECT_SPOCK) {
 					int text = GROUNDTX_PHASER_ON_SPOCK + getRandomWord() % 8;
 					showTextbox("Mr. Spock", getLoadedText(text), 20, 20, TEXTCOLOR_BLUE, 0);
-				}
-				else if (action.passiveObject() == OBJECT_MCCOY) {
+				} else if (action.passiveObject() == OBJECT_MCCOY) {
 					int text = GROUNDTX_PHASER_ON_MCCOY + getRandomWord() % 8;
 					showTextbox("Dr. McCoy", getLoadedText(text), 20, 20, TEXTCOLOR_BLUE, 0);
-				}
-				else if (action.passiveObject() == OBJECT_REDSHIRT) {
+				} else if (action.passiveObject() == OBJECT_REDSHIRT) {
 					Common::String text = getLoadedText(GROUNDTX_PHASER_ON_REDSHIRT + getRandomWord() % 8);
 					// Replace audio filename with start of mission name (to load the
 					// audio for the crewman specific to the mission))
@@ -563,8 +582,7 @@ void StarTrekEngine::handleAwayMissionAction() {
 					showTextbox("Security Officer", text, 20, 20, TEXTCOLOR_RED, 0);
 					// TODO: replace "Security Officer" string with their actual name as
 					// an enhancement?
-				}
-				else if (!_room->handleActionWithBitmask(action)) {
+				} else if (!_room->handleActionWithBitmask(action)) {
 					int index = getRandomWord() % 7;
 					if (index & 1)
 						showTextbox("Dr. McCoy", getLoadedText(GROUNDTX_PHASER_ANYWHERE + index), 20, 20, TEXTCOLOR_BLUE, 0);
@@ -607,8 +625,7 @@ void StarTrekEngine::handleAwayMissionAction() {
 			int i = action.activeObject() - ITEMS_START;
 			Common::String text = getLoadedText(_itemList[i].textIndex);
 			showTextbox("", text, 20, 20, TEXTCOLOR_YELLOW, 0);
-		}
-		else if (action.activeObject() == OBJECT_KIRK)
+		} else if (action.activeObject() == OBJECT_KIRK)
 			showTextbox("", getLoadedText(GROUNDTX_LOOK_KIRK), 20, 20, TEXTCOLOR_YELLOW, 0);
 		else if (action.activeObject() == OBJECT_SPOCK)
 			showTextbox("", getLoadedText(GROUNDTX_LOOK_SPOCK), 20, 20, TEXTCOLOR_YELLOW, 0);
