@@ -63,12 +63,4 @@ bool ClickText::containsPoint(const Common::Point &point) const {
 	return r.contains(point);
 }
 
-void ClickText::handleMouseMove(const Common::Point &point) {
-	if (containsPoint(point)) {
-		_curVisual = _visualActive;
-	} else {
-		_curVisual = _visualPassive;
-	}
-}
-
 } // End of namespace Stark

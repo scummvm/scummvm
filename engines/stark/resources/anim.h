@@ -114,6 +114,9 @@ public:
 	/** Return the hotspot index for a point given in relative coordinates */
 	virtual int getPointHotspotIndex(const Common::Point &point) const;
 
+	/** Get the hotspot position for a given index of a pat-table */
+	virtual Common::Point getHotspotPosition(uint index) const { return Common::Point(-1, -1); }
+
 	/** Get the animation typical duration in milliseconds */
 	virtual uint32 getDuration() const;
 
@@ -162,6 +165,7 @@ public:
 	void selectFrame(uint32 frameIndex) override;
 	Visual *getVisual() override;
 	int getPointHotspotIndex(const Common::Point &point) const override;
+	Common::Point getHotspotPosition(uint index) const override;
 
 protected:
 	void printData() override;

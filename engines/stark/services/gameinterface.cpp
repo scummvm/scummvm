@@ -269,4 +269,8 @@ void GameInterface::setAprilRunning() {
 	walk->setRunning();
 }
 
+Common::Array<Common::Point> GameInterface::listExitPositions() {
+	return StarkGlobal->getCurrent()->getLocation()->listExitPositions();
+}
+
 } // End of namespace Stark

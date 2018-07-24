@@ -58,6 +58,7 @@ public:
 	/** Get individual windows */
 	InventoryWindow *getInventoryWindow() const;
 	GameWindow *getGameWindow() const;
+	DialogPanel *getDialogPanel() const;
 
 	/** Clear any location dependant state */
 	void reset();

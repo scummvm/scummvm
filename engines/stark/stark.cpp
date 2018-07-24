@@ -202,6 +202,15 @@ void StarkEngine::processEvents() {
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
 		// Handle any buttons, keys and joystick operations
+
+		if (isPaused()) {
+			// Only pressing key P to resume the game is allowed when the game is paused
+			if (e.type == Common::EVENT_KEYDOWN && e.kbd.keycode == Common::KEYCODE_p) {
+				pauseEngine(false);
+			}
+			continue;
+		} 
+
 		if (e.type == Common::EVENT_KEYDOWN) {
 			if (e.kbd.keycode == Common::KEYCODE_d) {
 				if (e.kbd.flags & Common::KBD_CTRL) {
@@ -209,18 +218,108 @@ void StarkEngine::processEvents() {
 					_console->onFrame();
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				// Quick-hack for now.
-				bool skipped = _gameInterface->skipCurrentSpeeches();
-				if (!skipped) {
-					skipped = _userInterface->skipFMV();
-				}
-				if (!skipped && StarkSettings->getBoolSetting(Settings::kTimeSkip)) {
-					_global->setFastForward();
-				}
+				_userInterface->handleEscape();
 			} else if ((e.kbd.keycode == Common::KEYCODE_RETURN
-					|| e.kbd.keycode == Common::KEYCODE_KP_ENTER)
+					|| e.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
+				if (e.kbd.hasFlags(Common::KBD_ALT)) {
+					_gfx->toggleFullscreen();
+				} else if (_userInterface->isInGameScreen()){
+					_userInterface->selectFocusedDialogOption();
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_F1) {
+				_userInterface->toggleScreen(Screen::kScreenDiaryIndex);
+			} else if (e.kbd.keycode == Common::KEYCODE_F2) {
+				if (_userInterface->isInSaveLoadMenuScreen() || canSaveGameStateCurrently()) {
+					_userInterface->toggleScreen(Screen::kScreenSaveMenu);
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_F3) {
+				_userInterface->toggleScreen(Screen::kScreenLoadMenu);
+			} else if (e.kbd.keycode == Common::KEYCODE_F4) {
+				_userInterface->toggleScreen(Screen::kScreenDialog);
+			} else if (e.kbd.keycode == Common::KEYCODE_F5) {
+				if (_diary->isEnabled()) {
+					_userInterface->toggleScreen(Screen::kScreenDiaryPages);
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_F6) {
+				_userInterface->toggleScreen(Screen::kScreenFMVMenu);
+			} else if (e.kbd.keycode == Common::KEYCODE_F7) {
+				_userInterface->toggleScreen(Screen::kScreenSettingsMenu);
+			} else if (e.kbd.keycode == Common::KEYCODE_F8) {
+				warning("TODO: Implement the screenshot saving to local game directory");
+			} else if (e.kbd.keycode == Common::KEYCODE_F9) {
+				if (_userInterface->isInGameScreen()) {
+					_userInterface->requestToggleSubtitle();
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_F10) {
+				if (_userInterface->isInGameScreen() || _userInterface->isInDiaryIndexScreen()) {
+					if (_userInterface->confirm(GameMessage::kQuitGamePrompt)) {
+						_userInterface->requestQuitToMainMenu();
+					}
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_a) {
+				if (_userInterface->isInGameScreen()) {
+					_userInterface->cycleBackInventory();
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_s) {
+				if (_userInterface->isInGameScreen()) {
+					_userInterface->cycleForwardInventory();
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_i) {
+				if (_userInterface->isInGameScreen()) {
+					_userInterface->inventoryOpen(!_userInterface->isInventoryOpen());
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_x
+					&& !e.kbd.hasFlags(Common::KBD_ALT)) {
+				if (_userInterface->isInGameScreen()) {
+					_userInterface->toggleExitDisplay();
+				}
+			} else if ((e.kbd.keycode == Common::KEYCODE_x
+					|| e.kbd.keycode == Common::KEYCODE_q)
 					&& e.kbd.hasFlags(Common::KBD_ALT)) {
-				_gfx->toggleFullscreen();
+				if (_userInterface->confirm(GameMessage::kQuitPrompt)) {
+					_userInterface->notifyShouldExit();
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_p) {
+				if (_userInterface->isInGameScreen()) {
+					pauseEngine(true);
+					debug("The game is paused");
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_PAGEUP) {
+				if (_userInterface->isInGameScreen()) {
+					if (_userInterface->isInventoryOpen()) {
+						_userInterface->scrollInventoryUp();
+					} else {
+						_userInterface->scrollDialogUp();
+					}
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_UP) {
+				if (_userInterface->isInGameScreen()) {
+					if (_userInterface->isInventoryOpen()) {
+						_userInterface->scrollInventoryUp();
+					} else {
+						_userInterface->focusPrevDialogOption();
+					}
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_PAGEDOWN) {
+				if (_userInterface->isInGameScreen()) {
+					if (_userInterface->isInventoryOpen()) {
+						_userInterface->scrollInventoryDown();
+					} else {
+						_userInterface->scrollDialogDown();
+					}
+				}
+			} else if (e.kbd.keycode == Common::KEYCODE_DOWN) {
+				if (_userInterface->isInGameScreen()) {
+					if (_userInterface->isInventoryOpen()) {
+						_userInterface->scrollInventoryDown();
+					} else {
+						_userInterface->focusNextDialogOption();
+					}
+				}
+			} else if (e.kbd.keycode >= Common::KEYCODE_1 && e.kbd.keycode <= Common::KEYCODE_9) {
+				if (_userInterface->isInGameScreen()) {
+					_userInterface->selectDialogOptionByIndex(e.kbd.keycode - Common::KEYCODE_1);
+				}
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
@@ -257,7 +356,7 @@ void StarkEngine::updateDisplayScene() {
 	_gfx->clearScreen();
 
 	// Only update the world resources when on the game screen
-	if (_userInterface->isInGameScreen()) {
+	if (_userInterface->isInGameScreen() && !isPaused()) {
 		int frames = 0;
 		do {
 			// Update the game resources

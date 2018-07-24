@@ -190,6 +190,13 @@ int AnimImages::getPointHotspotIndex(const Common::Point &point) const {
 	return -1;
 }
 
+Common::Point AnimImages::getHotspotPosition(uint index) const {
+	if (_currentFrameImage) {
+		return _currentFrameImage->getHotspotPosition(index);
+	}
+	return Common::Point(-1, -1);
+}
+
 void AnimImages::saveLoad(ResourceSerializer *serializer) {
 	Anim::saveLoad(serializer);
 

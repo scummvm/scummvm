@@ -74,6 +74,7 @@ public:
 	void handleClick();
 	void handleRightClick();
 	void handleDoubleClick();
+	void handleEscape();
 	void notifyShouldExit() { _exitGame = true; }
 	void inventoryOpen(bool open);
 	bool shouldExit() { return _exitGame; }
@@ -110,6 +111,9 @@ public:
 
 	/** Is the save & load menu screen currently displayed? */
 	bool isInSaveLoadMenuScreen() const;
+
+	/** Is the diary index screen currently displayed? */
+	bool isInDiaryIndexScreen() const;
 
 	/** Is the inventory panel being displayed? */
 	bool isInventoryOpen() const;
@@ -159,12 +163,47 @@ public:
 	bool confirm(const Common::String &msg);
 	bool confirm(GameMessage::TextKey key);
 
+	/** Directly open or close a screen */
+	void toggleScreen(Screen::Name screenName);
+
+	/** Toggle subtitles on and off */
+	void requestToggleSubtitle() { _shouldToggleSubtitle = !_shouldToggleSubtitle; }
+	bool hasToggleSubtitleRequest() { return _shouldToggleSubtitle; }
+	void performToggleSubtitle();
+
+	/** Cycle back or forward through inventory cursor items */
+	void cycleBackInventory() { cycleInventory(false); }
+	void cycleForwardInventory() { cycleInventory(true); }
+
+	/** Scroll the inventory up or down */
+	void scrollInventoryUp();
+	void scrollInventoryDown();
+
+	/** Scroll the dialog options up or down */
+	void scrollDialogUp();
+	void scrollDialogDown();
+
+	/** Focus on the next or previous dialog option */
+	void focusNextDialogOption();
+	void focusPrevDialogOption();
+
+	/** Select the focused dialog option */
+	void selectFocusedDialogOption();
+
+	/** Directly select a dialog option by index */
+	void selectDialogOptionByIndex(uint index);
+
+	/** Toggle the display of exit locations */
+	void toggleExitDisplay();
+
 	static const uint kThumbnailWidth = 160;
 	static const uint kThumbnailHeight = 92;
 	static const uint kThumbnailSize = kThumbnailWidth * kThumbnailHeight * 4;
 
 private:
 	Screen *getScreenByName(Screen::Name screenName) const;
+
+	void cycleInventory(bool forward);
 
 	GameScreen *_gameScreen;
 	FMVScreen *_fmvScreen;
@@ -186,6 +225,8 @@ private:
 
 	bool _interactive;
 	bool _interactionAttemptDenied;
+
+	bool _shouldToggleSubtitle;
 
 	Graphics::Surface *_gameWindowThumbnail;
 };

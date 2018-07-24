@@ -85,6 +85,9 @@ public:
 
 	/** Make April run if she is walking */
 	void setAprilRunning();
+
+	/** List all the exit positions */
+	Common::Array<Common::Point> listExitPositions();
 };
 
 } // End of namespace Stark

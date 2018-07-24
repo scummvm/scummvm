@@ -49,7 +49,8 @@ public:
 	enum ActionType {
 		kActionUse  = 1,
 		kActionLook = 2,
-		kActionTalk = 3
+		kActionTalk = 3,
+		kActionExit = 7
 	};
 
 	PATTable(Object *parent, byte subType, uint16 index, const Common::String &name);

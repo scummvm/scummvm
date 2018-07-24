@@ -146,6 +146,32 @@ bool Image::isPointInPolygon(const Polygon &polygon, const Common::Point &point)
 	return intersectCount % 2 != 0;
 }
 
+Common::Point Image::getHotspotPosition(uint index) const {
+	if (index >= _polygons.size()) {
+		return Common::Point(-1, -1);
+	}
+
+	Polygon polygon = _polygons[index];
+
+	// Return the top-middle point as the hotspot
+	int right = polygon[0].x, top = polygon[0].y;
+
+	for (uint i = 1; i < polygon.size(); ++i) {
+		right += polygon[i].x;
+		if (polygon[i].y < top) {
+			top = polygon[i].y;
+		}
+	}
+
+	right /= polygon.size();
+	
+	if (top < 0) {
+		top = 0;
+	}
+
+	return Common::Point(right, top);
+}
+
 ImageStill::~ImageStill() {
 }
 

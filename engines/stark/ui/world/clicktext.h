@@ -39,8 +39,10 @@ public:
 	void setPosition(const Common::Point &pos) { _position = pos; }
 	void render();
 	bool containsPoint(const Common::Point &point) const;
-	void handleMouseMove(const Common::Point &point);
 	int getHeight() const { return _bbox.height(); }
+
+	void setActive() { _curVisual = _visualActive; }
+	void setPassive() { _curVisual = _visualPassive; }
 
 private:
 	VisualText *_visualPassive;

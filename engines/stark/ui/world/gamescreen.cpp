@@ -96,6 +96,10 @@ GameWindow *GameScreen::getGameWindow() const {
 	return _gameWindow;
 }
 
+DialogPanel *GameScreen::getDialogPanel() const {
+	return _dialogPanel;
+}
+
 void GameScreen::handleMouseMove() {
 	dispatchEvent(&Window::handleMouseMove);
 }

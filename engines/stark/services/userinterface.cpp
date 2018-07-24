@@ -33,6 +33,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/resourceprovider.h"
+#include "engines/stark/services/settings.h"
 
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/menu/diaryindex.h"
@@ -46,6 +47,10 @@
 #include "engines/stark/ui/world/fmvscreen.h"
 #include "engines/stark/ui/world/gamescreen.h"
 #include "engines/stark/ui/world/gamewindow.h"
+#include "engines/stark/ui/world/dialogpanel.h"
+
+#include "engines/stark/resources/knowledgeset.h"
+#include "engines/stark/resources/item.h"
 
 #include "gui/message.h"
 
@@ -64,6 +69,7 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_dialogScreen(nullptr),
 		_exitGame(false),
 		_quitToMainMenu(false),
+		_shouldToggleSubtitle(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
 		_interactive(true),
@@ -136,6 +142,23 @@ void UserInterface::handleRightClick() {
 
 void UserInterface::handleDoubleClick() {
 	_currentScreen->handleDoubleClick();
+}
+
+void UserInterface::handleEscape() {
+	bool handled = false;
+
+	handled = StarkGameInterface->skipCurrentSpeeches();
+	if (!handled) {
+		handled = skipFMV();
+	}
+	if (!handled) {
+		Screen::Name curScreenName = _currentScreen->getName();
+		if (curScreenName != Screen::kScreenGame && curScreenName != Screen::kScreenMainMenu) {
+			backPrevScreen();
+		} else if (StarkSettings->getBoolSetting(Settings::kTimeSkip)) {
+			StarkGlobal->setFastForward();
+		}
+	}
 }
 
 void UserInterface::inventoryOpen(bool open) {
@@ -238,6 +261,10 @@ bool UserInterface::isInGameScreen() const {
 bool UserInterface::isInSaveLoadMenuScreen() const {
 	Screen::Name name = _currentScreen->getName();
 	return name == Screen::kScreenSaveMenu || name == Screen::kScreenLoadMenu;
+}
+
+bool UserInterface::isInDiaryIndexScreen() const {
+	return _currentScreen->getName() == Screen::kScreenDiaryIndex;
 }
 
 bool UserInterface::isInventoryOpen() const {
@@ -368,6 +395,68 @@ bool UserInterface::confirm(const Common::String &msg) {
 bool UserInterface::confirm(GameMessage::TextKey key) {
 	Common::String msg = StarkGameMessage->getTextByKey(key);
 	return confirm(msg);
+}
+
+void UserInterface::toggleScreen(Screen::Name screenName) {
+	Screen::Name currentName = _currentScreen->getName();
+
+	if (currentName == screenName
+			|| (currentName == Screen::kScreenSaveMenu && screenName == Screen::kScreenLoadMenu)
+			|| (currentName == Screen::kScreenLoadMenu && screenName == Screen::kScreenSaveMenu)) {
+		backPrevScreen();
+	} else if (currentName == Screen::kScreenGame 
+			|| currentName == Screen::kScreenDiaryIndex
+			|| (currentName == Screen::kScreenMainMenu && screenName == Screen::kScreenLoadMenu)
+			|| (currentName == Screen::kScreenMainMenu && screenName == Screen::kScreenSettingsMenu)) {
+		changeScreen(screenName);
+	}
+}
+
+void UserInterface::performToggleSubtitle() {
+	StarkSettings->flipSetting(Settings::kSubtitle);
+	_shouldToggleSubtitle = false;
+}
+
+void UserInterface::cycleInventory(bool forward) {
+	int16 curItem = getSelectedInventoryItem();
+	int16 nextItem = StarkGlobal->getInventory()->getNeighborInventoryItem(curItem, forward);
+	selectInventoryItem(nextItem);
+}
+
+void UserInterface::scrollInventoryUp() {
+	_gameScreen->getInventoryWindow()->scrollUp();
+}
+
+void UserInterface::scrollInventoryDown() {
+	_gameScreen->getInventoryWindow()->scrollDown();
+}
+
+void UserInterface::scrollDialogUp() {
+	_gameScreen->getDialogPanel()->scrollUp();
+}
+
+void UserInterface::scrollDialogDown() {
+	_gameScreen->getDialogPanel()->scrollDown();
+}
+
+void UserInterface::focusNextDialogOption() {
+	_gameScreen->getDialogPanel()->focusNextOption();
+}
+
+void UserInterface::focusPrevDialogOption() {
+	_gameScreen->getDialogPanel()->focusPrevOption();
+}
+
+void UserInterface::selectFocusedDialogOption() {
+	_gameScreen->getDialogPanel()->selectFocusedOption();
+}
+
+void UserInterface::selectDialogOptionByIndex(uint index) {
+	_gameScreen->getDialogPanel()->selectOption(index);
+}
+
+void UserInterface::toggleExitDisplay() {
+	_gameScreen->getGameWindow()->toggleExitDisplay();
 }
 
 } // End of namespace Stark

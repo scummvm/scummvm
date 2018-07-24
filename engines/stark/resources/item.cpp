@@ -175,6 +175,10 @@ void Item::saveLoadCurrent(ResourceSerializer *serializer) {
 	}
 }
 
+Common::Array<Common::Point> Item::listExitPositions() {
+	return Common::Array<Common::Point>();
+}
+
 ItemVisual::~ItemVisual() {
 	delete _renderEntry;
 }
@@ -393,6 +397,25 @@ Common::String ItemVisual::getHotspotTitle(uint32 hotspotIndex) {
 	}
 
 	return title;
+}
+
+Common::Array<Common::Point> ItemVisual::listExitPositionsImpl() {
+	Common::Array<PATTable *> pattables = listChildrenRecursive<PATTable>();
+	
+	Common::Array<Common::Point> positions;
+	Common::Point invalidPosition(-1, -1);
+
+	for (uint i = 0; i < pattables.size(); ++i) {
+		if (pattables[i]->getDefaultAction() == PATTable::kActionExit) {
+			Common::Point hotspot = getAnim()->getHotspotPosition(i);
+			if (hotspot != invalidPosition) {
+				hotspot += _renderEntry->getPosition();
+				positions.push_back(hotspot);
+			}
+		}
+	}
+
+	return positions;
 }
 
 ItemTemplate::~ItemTemplate() {
@@ -807,6 +830,10 @@ Gfx::RenderEntry *FloorPositionedImageItem::getRenderEntry(const Common::Point &
 	return _renderEntry;
 }
 
+Common::Array<Common::Point> FloorPositionedImageItem::listExitPositions() {
+	return listExitPositionsImpl();
+}
+
 void FloorPositionedImageItem::setPosition2D(const Common::Point &position) {
 	_position = position;
 }
@@ -859,6 +886,10 @@ void ImageItem::printData() {
 
 	debug("reference: %s", _reference.describe().c_str());
 	debug("position: x %d, y %d", _position.x, _position.y);
+}
+
+Common::Array<Common::Point> ImageItem::listExitPositions() {
+	return listExitPositionsImpl();
 }
 
 ModelItem::~ModelItem() {

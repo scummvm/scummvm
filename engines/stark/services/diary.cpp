@@ -154,7 +154,7 @@ void Diary::logSpeech(const Common::String &line, int32 characterId) {
 }
 
 bool Diary::isEnabled() const {
-	return StarkGlobal->hasInventoryItem("Diary");
+	return StarkGlobal->getInventory() && StarkGlobal->hasInventoryItem("Diary");
 }
 
 bool Diary::hasUnreadEntries() const {

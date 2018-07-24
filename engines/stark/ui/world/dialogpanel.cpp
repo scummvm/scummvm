@@ -30,6 +30,7 @@
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/settings.h"
+#include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/world/clicktext.h"
@@ -45,7 +46,10 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 		_currentSpeech(nullptr),
 		_scrollUpArrowVisible(false),
 		_scrollDownArrowVisible(false),
-		_firstVisibleOption(0) {
+		_firstVisibleOption(0),
+		_lastVisibleOption(0),
+		_focusedOption(0),
+		_acceptIdleMousePos(false) {
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kBottomBorderHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight + Gfx::Driver::kGameViewportHeight);
 
@@ -61,7 +65,7 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 	_scrollUpArrowRect.translate(0, _optionsTop);
 
 	_scrollDownArrowRect = Common::Rect(_scrollDownArrowImage->getWidth(), _scrollDownArrowImage->getHeight());
-	_scrollDownArrowRect.translate(0, _optionsTop + _optionsHeight - _scrollDownArrowImage->getHeight());
+	_scrollDownArrowRect.translate(0, _optionsTop + _optionsHeight - _scrollDownArrowImage->getHeight() - 9);
 }
 
 DialogPanel::~DialogPanel() {
@@ -90,23 +94,17 @@ void DialogPanel::clearOptions() {
 
 void DialogPanel::renderOptions() {
 	uint32 pos = _optionsTop;
-	uint32 visibleOptions = 0;
-	for (uint i = _firstVisibleOption; i < _options.size(); i++) {
+	for (uint i = _firstVisibleOption; i <= _lastVisibleOption; ++i) {
 		_options[i]->setPosition(Common::Point(_optionsLeft, pos));
 		_options[i]->render();
 
 		_dialogOptionBullet->render(Common::Point(_optionsLeft - 13, pos + 3), false);
 
-		visibleOptions++;
-
 		pos += _options[i]->getHeight();
-		if (pos >= _optionsHeight) {
-			break;
-		}
 	}
 
 	_scrollUpArrowVisible = _firstVisibleOption > 0;
-	_scrollDownArrowVisible = _firstVisibleOption + visibleOptions < _options.size();
+	_scrollDownArrowVisible = _lastVisibleOption < _options.size() - 1;
 }
 
 void DialogPanel::renderScrollArrows() const {
@@ -125,6 +123,11 @@ void DialogPanel::onRender() {
 		_currentSpeech = nullptr;
 
 		clearSubtitleVisual();
+
+		// Toggle subtitles on and off when requested
+		if (StarkUserInterface->hasToggleSubtitleRequest()) {
+			StarkUserInterface->performToggleSubtitle();
+		}
 	}
 
 	// Update the dialog engine
@@ -174,23 +177,44 @@ void DialogPanel::updateDialogOptions() {
 	clearOptions();
 
 	_firstVisibleOption = 0;
+	_lastVisibleOption = 0;
+	_focusedOption = 0;
 	Common::Array<DialogPlayer::Option> options = StarkDialogPlayer->listOptions();
 
 	for (uint i = 0; i < options.size(); i++) {
 		_options.push_back(new ClickText(options[i]._caption, _aprilColor));
 	}
+
+	if (!_options.empty()) {
+		updateLastVisibleOption();
+		_options[_focusedOption]->setActive();
+		_acceptIdleMousePos = true;
+	}
 }
 
 void DialogPanel::onMouseMove(const Common::Point &pos) {
+	static Common::Point prevPos;
+
 	if (_subtitleVisual) {
 		_cursor->setCursorType(Cursor::kDefault);
 	} else if (!_options.empty()) {
-		for (uint i = _firstVisibleOption; i < _options.size(); i++) {
-			_options[i]->handleMouseMove(pos);
-		}
+		if (pos != prevPos || _acceptIdleMousePos) {
+			for (uint i = _firstVisibleOption; i <= _lastVisibleOption; ++i) {
+				if (_options[i]->containsPoint(pos)) {
+					_options[_focusedOption]->setPassive();
+					_focusedOption = i;
+					_options[_focusedOption]->setActive();
 
-		int hoveredOption = getHoveredOption(pos);
-		if (hoveredOption >= 0) {
+					_cursor->setCursorType(Cursor::kActive);
+					_acceptIdleMousePos = false;
+
+					prevPos = pos;
+					return;
+				}
+			}
+		}
+		
+		if (_options[_focusedOption]->containsPoint(pos)) {
 			_cursor->setCursorType(Cursor::kActive);
 		} else if (_scrollUpArrowVisible && _scrollUpArrowRect.contains(pos)) {
 			_cursor->setCursorType(Cursor::kActive);
@@ -202,22 +226,22 @@ void DialogPanel::onMouseMove(const Common::Point &pos) {
 	} else {
 		_cursor->setCursorType(Cursor::kDefault);
 	}
+
+	prevPos = pos;
 }
 
 void DialogPanel::onClick(const Common::Point &pos) {
-	if (!_options.empty() && _options.size() > 0) {
-		int hoveredOption = getHoveredOption(pos);
-		if (hoveredOption >= 0) {
-			StarkDialogPlayer->selectOption(hoveredOption);
-			clearOptions();
+	if (!_options.empty()) {
+		if (_options[_focusedOption]->containsPoint(pos)) {
+			selectFocusedOption();
 		}
 
 		if (_scrollUpArrowVisible && _scrollUpArrowRect.contains(pos)) {
-			scrollOptions(-3);
+			scrollUp();
 		}
 
 		if (_scrollDownArrowVisible && _scrollDownArrowRect.contains(pos)) {
-			scrollOptions(3);
+			scrollDown();
 		}
 	}
 }
@@ -237,18 +261,66 @@ void DialogPanel::reset() {
 	StarkDialogPlayer->reset();
 }
 
-int DialogPanel::getHoveredOption(const Common::Point &pos) {
-	for (uint i = _firstVisibleOption; i < _options.size(); i++) {
-		if (_options[i]->containsPoint(pos)) {
-			return i;
-		}
-	}
+void DialogPanel::scrollUp() {
+	if (!_scrollUpArrowVisible) return;
 
-	return -1;
+	_lastVisibleOption = _firstVisibleOption;
+	updateFirstVisibleOption();
+
+	_options[_focusedOption]->setPassive();
+	_focusedOption = _lastVisibleOption;
+	_options[_focusedOption]->setActive();
 }
 
-void DialogPanel::scrollOptions(int increment) {
-	_firstVisibleOption = CLIP<int32>(_firstVisibleOption + increment, 0, _options.size() - 3);
+void DialogPanel::scrollDown() {
+	if (!_scrollDownArrowVisible) return;
+
+	_firstVisibleOption = _lastVisibleOption;
+	updateLastVisibleOption();
+
+	_options[_focusedOption]->setPassive();
+	_focusedOption = _firstVisibleOption;
+	_options[_focusedOption]->setActive();
+}
+
+void DialogPanel::focusNextOption() {
+	if (_options.empty() || _focusedOption == _options.size() - 1) return;
+
+	_options[_focusedOption]->setPassive();
+	++_focusedOption;
+	_options[_focusedOption]->setActive();
+
+	if (_focusedOption > _lastVisibleOption) {
+		_lastVisibleOption = _focusedOption;
+		updateFirstVisibleOption();
+	}
+}
+
+void DialogPanel::focusPrevOption() {
+	if (_options.empty() || _focusedOption == 0) return;
+
+	_options[_focusedOption]->setPassive();
+	--_focusedOption;
+	_options[_focusedOption]->setActive();
+
+	if (_focusedOption < _firstVisibleOption) {
+		_firstVisibleOption = _focusedOption;
+		updateLastVisibleOption();
+	}
+}
+
+void DialogPanel::selectFocusedOption() {
+	if (_options.size() > 0) {
+		StarkDialogPlayer->selectOption(_focusedOption);
+		clearOptions();
+	}
+}
+
+void DialogPanel::selectOption(uint index) {
+	if (_options.size() <= index) return;
+
+	StarkDialogPlayer->selectOption(index);
+	clearOptions();
 }
 
 void DialogPanel::onScreenChanged() {
@@ -256,6 +328,56 @@ void DialogPanel::onScreenChanged() {
 		updateSubtitleVisual();
 	} else {
 		updateDialogOptions();
+	}
+}
+
+void DialogPanel::updateFirstVisibleOption() {
+	_firstVisibleOption = _lastVisibleOption;
+	uint32 height = _optionsTop + _options[_lastVisibleOption]->getHeight();
+
+	while (_firstVisibleOption > 0) {
+		height += _options[_firstVisibleOption - 1]->getHeight();
+		if (height <= _optionsHeight) {
+			--_firstVisibleOption;
+		} else {
+			break;
+		}
+	}
+
+	if (_firstVisibleOption == 0) {
+		while (_lastVisibleOption < _options.size() - 1) {
+			height += _options[_lastVisibleOption + 1]->getHeight();
+			if (height <= _optionsHeight) {
+				++_lastVisibleOption;
+			} else {
+				break;
+			}
+		}
+	}
+}
+
+void DialogPanel::updateLastVisibleOption() {
+	_lastVisibleOption = _firstVisibleOption;
+	uint32 height = _optionsTop + _options[_firstVisibleOption]->getHeight();
+
+	while (_lastVisibleOption < _options.size() - 1) {
+		height += _options[_lastVisibleOption + 1]->getHeight();
+		if (height <= _optionsHeight) {
+			++_lastVisibleOption;
+		} else {
+			break;
+		}
+	}
+
+	if (_lastVisibleOption == _options.size() - 1) {
+		while (_firstVisibleOption > 0) {
+			height += _options[_firstVisibleOption - 1]->getHeight();
+			if (height <= _optionsHeight) {
+				--_firstVisibleOption;
+			} else {
+				break;
+			}
+		}
 	}
 }
 
