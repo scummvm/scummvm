@@ -30,10 +30,6 @@
 
 namespace StarTrek {
 
-/**
- * Gets one line of text (does not include words that won't fit).
- * Returns position of text to continue from, or nullptr if done.
- */
 const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, int lineWidth) {
 	*lineOutput = '\0';
 	if (*text == '\0')
@@ -106,11 +102,6 @@ void StarTrekEngine::getTextboxHeader(String *headerTextOutput, String speakerTe
 	*headerTextOutput = centerTextboxHeader(header);
 }
 
-/**
- * Text getter for showText which reads from an rdf file.
- * Not really used, since it would require hardcoding text locations in RDF files.
- * "readTextFromArrayWithChoices" replaces this.
- */
 String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput) {
 	SharedPtr<Room> room = getRoom();
 
@@ -137,9 +128,6 @@ String StarTrekEngine::readTextFromRdf(int choiceIndex, uintptr data, String *he
 	return (char*)&room->_rdfData[textOffset];
 }
 
-/**
- * Shows text with the given header and main text.
- */
 void StarTrekEngine::showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines) {
 	if (!headerText.empty())
 		headerText = centerTextboxHeader(headerText);
@@ -180,10 +168,6 @@ String StarTrekEngine::skipTextAudioPrompt(const String &str) {
 	return String(text+1);
 }
 
-/**
- * Plays an audio prompt, if it exists, and returns the string starting at the end of the
- * prompt.
- */
 String StarTrekEngine::playTextAudio(const String &str) {
 	const char *text = str.c_str();
 	char soundFile[0x100];
@@ -205,10 +189,6 @@ String StarTrekEngine::playTextAudio(const String &str) {
 	return String(text+1);
 }
 
-/**
- * @param rclickCancelsChoice   If true, right-clicks return "-1" as choice instead of
- *                              whatever was selected.
- */
 int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, bool rclickCancelsChoice) {
 	int16 tmpTextDisplayMode = _textDisplayMode;
 
@@ -437,9 +417,6 @@ reloadText:
 	return choiceIndex;
 }
 
-/**
- * Returns the number of lines this string will take up in a textbox.
- */
 int StarTrekEngine::getNumTextboxLines(const String &str) {
 	const char *text = str.c_str();
 	char line[TEXTBOX_WIDTH];
@@ -475,9 +452,6 @@ String StarTrekEngine::putTextIntoLines(const String &_text) {
 	return output;
 }
 
-/**
- * Creates a blank textbox in a TextBitmap, and initializes a sprite to use it.
- */
 SharedPtr<TextBitmap> StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite) {
 	int linesBeforeTextStart = 2;
 	if (withHeader)
@@ -552,10 +526,6 @@ SharedPtr<TextBitmap> StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffs
 	return bitmap;
 }
 
-/**
- * Draws the "main" text (everything but the header which includes the speaker) to
- * a TextBitmap.
- */
 void StarTrekEngine::drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &_text, bool withHeader) {
 	byte *dest = bitmap->pixels + TEXTBOX_WIDTH + 1; // Start of 2nd row
 	const char *text = _text.c_str();
@@ -631,10 +601,6 @@ String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr 
 	*/
 }
 
-/**
- * Text getter for showText which reads choices from an array of pointers.
- * Last element in the array must be an empty string.
- */
 String StarTrekEngine::readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput) {
 	const char **textArray = (const char **)data;
 
@@ -651,10 +617,6 @@ String StarTrekEngine::readTextFromArray(int choiceIndex, uintptr data, String *
 	return String(mainText);
 }
 
-/**
- * Similar to above, but shows the choice index when multiple choices are present.
- * Effectively replaces the "readTextFromRdf" function.
- */
 String StarTrekEngine::readTextFromArrayWithChoices(int choiceIndex, uintptr data, String *headerTextOutput) {
 	const char **textArray = (const char **)data;
 

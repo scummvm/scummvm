@@ -116,6 +116,9 @@ public:
 	~Sound();
 	
 	void clearAllMidiSlots();
+	/**
+	 * Plays a midi track as a sound effect (one of midi slots 1-7)
+	 */
 	void playMidiTrack(int track);
 	void playMidiTrackInSlot(int slot, int track);
 	bool isMidiPlaying();

@@ -251,9 +251,6 @@ void Room::loadActorStandAnim(int actorIndex) {
 	}
 }
 
-/**
- * This is exactly the same as "loadActorAnim", but the game calls it at different times?
- */
 void Room::loadActorAnim2(int actorIndex, Common::String anim, int16 x, int16 y, uint16 finishedAnimActionParam) {
 	loadActorAnim(actorIndex, anim, x, y, finishedAnimActionParam);
 }
@@ -373,9 +370,6 @@ void Room::walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*f
 	}
 }
 
-/**
- * Loads a pair of .map and .iw files to change the room's collisions and pathfinding.
- */
 void Room::loadMapFile(const Common::String &name) {
 	_vm->_mapFilename = name;
 	_vm->_iwFile.reset();
@@ -418,9 +412,6 @@ Common::Point Room::getActorPos(int actorIndex) {
 	return _vm->_actorList[actorIndex].pos;
 }
 
-/**
- * Returns a word in range [start, end] (that's inclusive).
- */
 int16 Room::getRandomWordInRange(int start, int end) {
 	return _vm->getRandomWord() % (end - start + 1) + start;
 }

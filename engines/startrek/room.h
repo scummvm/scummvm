@@ -58,26 +58,33 @@ public:
 	Room(StarTrekEngine *vm, const Common::String &name);
 	~Room();
 
-	// Helper stuff for RDF access
 	uint16 readRdfWord(int offset);
 
-	// Scale-related stuff; at the "min Y" position or below, the crewmembers have
-	// "minimum" scale; that value rises to the "max scale" value by the time they reach
-	// the "max Y" value.
+	/**
+	 * Scale-related stuff; at the "min Y" position or below, the crewmembers have
+	 * "minimum" scale; that value rises to the "max scale" value by the time they reach
+	 * the "max Y" value.
+	 */
 	uint16 getMaxY() { return readRdfWord(0x06); }
 	uint16 getMinY() { return readRdfWord(0x08); }
 	Fixed8 getMinScale() { return Fixed8::fromRaw(readRdfWord(0x0a)); }
 	Fixed8 getMaxScale() { return Fixed8::fromRaw(readRdfWord(0x0c)); }
 
-	// words 0x0e and 0x10 in RDF file are pointers to start and end of event code.
-	// That code is instead rewritten on a per-room basis.
+	/**
+	 * Check if a particular action is defined for this room.
+	 */
 	bool actionHasCode(const Action &action);
 	bool actionHasCode(byte type, byte b1, byte b2, byte b3);
 
+	/**
+	 * Execute a particular action for this room, if defined.
+	 */
 	bool handleAction(const Action &action);
 	bool handleAction(byte type, byte b1, byte b2, byte b3);
 
-	// Same as above, but if any byte in the action is -1 (0xff), it matches any value.
+	/**
+	 * Same as above, but if any byte in the action is -1 (0xff), it matches any value.
+	 */
 	bool handleActionWithBitmask(const Action &action);
 	bool handleActionWithBitmask(byte type, byte b1, byte b2, byte b3);
 
@@ -90,10 +97,16 @@ public:
 	uint16 getFirstDoorPolygonOffset() { return readRdfWord(0x1a); }
 	uint16 getDoorPolygonEndOffset()   { return readRdfWord(0x1c); }
 
+	/**
+	 * Get the point at which a crewman beams in to this room (not properly defined for
+	 * all rooms).
+	 */
 	Common::Point getBeamInPosition(int crewmanIndex);
-	// This is analagous to above, but instead of beaming in, they just appear in a spot.
-	// Used sparingly, ie. in feather's serpent when appearing in cave after Quetzecoatl
-	// warps the crew.
+	/**
+	 * This is analagous to above, but instead of beaming in, they just appear in a spot.
+	 * Used sparingly, ie. in feather's serpent when appearing in cave after Quetzecoatl
+	 * warps the crew.
+	 */
 	Common::Point getSpawnPosition(int crewmanIndex);
 
 public:
@@ -110,38 +123,106 @@ private:
 
 	int findFunctionPointer(int action, void (Room::*funcPtr)());
 
+
 	// Interface for room-specific code
-	void loadActorAnim(int actorIndex, Common::String anim, int16 x = -1, int16 y = -1, uint16 field66 = 0); // Cmd 0x00
-	void loadActorAnimC(int actorIndex, Common::String anim, int16 x, int16 y, void (Room::*funcPtr)());// Cmd 0x00
-	void loadActorStandAnim(int actorIndex);                                                   // Cmd 0x01
-	void loadActorAnim2(int actorIndex, Common::String anim, int16 x = -1, int16 y = -1, uint16 field66 = 0);// Cmd 0x02
-	int showRoomSpecificText(const char **textAddr); // (Deprecated, use function below)       // Cmd 0x03
-	int showText(const TextRef *text);                                                         // Cmd 0x03
-	int showText(TextRef speaker, TextRef text);                                               // Cmd 0x03
-	int showText(TextRef text);                                                                // Cmd 0x03
-	void giveItem(int item);                                                                   // Cmd 0x04
+	/**
+	 * Cmd 0x00
+	 */
+	void loadActorAnim(int actorIndex, Common::String anim, int16 x = -1, int16 y = -1, uint16 field66 = 0);
+	/**
+	 * Cmd 0x00
+	 */
+	void loadActorAnimC(int actorIndex, Common::String anim, int16 x, int16 y, void (Room::*funcPtr)());
+	/**
+	 * Cmd 0x01
+	 */
+	void loadActorStandAnim(int actorIndex);
+	/**
+	 * Cmd 0x02
+	 * This is exactly the same as "loadActorAnim", but the game calls it at different times?
+	 */
+	void loadActorAnim2(int actorIndex, Common::String anim, int16 x = -1, int16 y = -1, uint16 field66 = 0);
+	/**
+	 * Cmd 0x03
+	 */
+	int showRoomSpecificText(const char **textAddr);
+	int showText(const TextRef *text);
+	int showText(TextRef speaker, TextRef text);
+	int showText(TextRef text);
+	/**
+	 * Cmd 0x04
+	 */
+	void giveItem(int item);
+
 	// Command 0x05: "demon4ShowSunPuzzle"
-	void loadRoomIndex(int roomIndex, int spawnIndex);                                         // Cmd 0x06
-	void loseItem(int item);                                                                   // Cmd 0x07
-	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam = 0);// Cmd 0x08
+
+	/**
+	 * Cmd 0x06
+	 */
+	void loadRoomIndex(int roomIndex, int spawnIndex);
+	/**
+	 * Cmd 0x07
+	 */
+	void loseItem(int item);
+	/**
+	 * Cmd 0x08
+	 */
+	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam = 0);
 	void walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*funcPtr)());      // Cmd 0x08
-	void loadMapFile(const Common::String &name);                                              // Cmd 0x09
-	void showBitmapFor5Ticks(const Common::String &bmpName, int priority);                     // Cmd 0x0a
+	/**
+	 * Cmd 0x09: Loads a pair of .map and .iw files to change the room's collisions and pathfinding.
+	 */
+	void loadMapFile(const Common::String &name);
+	/**
+	 * Cmd 0x0a
+	 */
+	void showBitmapFor5Ticks(const Common::String &bmpName, int priority);
+	/**
+	 * Cmd 0x0b
+	 */
+	bool haveItem(int item);
+
 	// Command 0x0c: "demon6ShowCase"
-	bool haveItem(int item);                                                                   // Cmd 0x0b
-	Common::Point getActorPos(int actorIndex);                                                 // Cmd 0x0d
-	int16 getRandomWordInRange(int start, int end);                                            // Cmd 0x0e
-	void playSoundEffectIndex(int soundEffect);                                                // Cmd 0x0f
-	void playMidiMusicTracks(int startTrack, int loopTrack = -1);                              // Cmd 0x10
-	void endMission(int16 score, int16 arg2, int16 arg3);                                      // Cmd 0x11
-	void showGameOverMenu();                                                                   // Cmd 0x12
-	void playVoc(Common::String filename);                                                     // Cmd 0x15
-	void stopAllVocSounds();                                                                   // Cmd 0x17
+
+	/**
+	 * Cmd 0x0d
+	 */
+	Common::Point getActorPos(int actorIndex);
+	/**
+	 * Cmd 0x0e: Returns a word in range [start, end] (that's inclusive).
+	 */
+	int16 getRandomWordInRange(int start, int end);
+	/**
+	 * Cmd 0x0f
+	 */
+	void playSoundEffectIndex(int soundEffect);
+	/**
+	 * Cmd 0x10
+	 */
+	void playMidiMusicTracks(int startTrack, int loopTrack = -1);
+	/**
+	 * Cmd 0x11
+	 */
+	void endMission(int16 score, int16 arg2, int16 arg3);
+	/**
+	 * Cmd 0x12
+	 */
+	void showGameOverMenu();
+	/**
+	 * Cmd 0x15
+	 */
+	void playVoc(Common::String filename);
+	/**
+	 * Cmd 0x17
+	 */
+	void stopAllVocSounds();
 
 	// Helper functions for repetitive stuff.
 
-	// If "changeDirection" is true, they remain facing that direction even after their
-	// animation is finished. The game is inconsistent about doing this.
+	/**
+	 * If "changeDirection" is true, they remain facing that direction even after their
+	 * animation is finished. The game is inconsistent about doing this.
+	 */
 	void spockScan(int direction, TextRef text, bool changeDirection = false);
 	void mccoyScan(int direction, TextRef text, bool changeDirection = false);
 
