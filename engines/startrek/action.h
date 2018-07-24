@@ -60,8 +60,8 @@ struct Action {
 	byte b3;
 
 	// ACTION_USE, ACTION_GET, ACTION_LOOK, ACTION_TALK
-	byte activeObject() { return b1; }
-	byte passiveObject() { return b2; }
+	byte activeObject() const { return b1; }
+	byte passiveObject() const { return b2; }
 
 	bool operator==(const Action &a) const {
 		return type == a.type && b1 == a.b1 && b2 == a.b2 && b3 == a.b3;
