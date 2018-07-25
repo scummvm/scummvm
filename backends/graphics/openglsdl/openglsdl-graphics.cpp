@@ -280,15 +280,17 @@ bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint effectiveWidth, uint
 #else
 		// AmigaOS4's OpenGL implementation is close to 1.3. Until that changes we need
 		// to use 1.3 as version or residualvm will cease working at all on that platform.
-		// This will be revised and removed once AmigaOS4 supports 2.x or OpenGLES.
+		// Profile Mask has to be 0 as well.
+		// This will be revised and removed once AmigaOS4 supports 2.x or OpenGLES2.
 		#ifdef __amigaos4__
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, 0);
 		#else
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 		#endif
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 #endif
 #endif
 
