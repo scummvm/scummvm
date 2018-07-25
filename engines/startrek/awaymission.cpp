@@ -45,7 +45,7 @@ void StarTrekEngine::initAwayMission() {
 }
 
 void StarTrekEngine::runAwayMission() {
-	while (true) {
+	while (_gameMode == GAMEMODE_AWAYMISSION && !_resetGameMode) {
 		// Original game manipulates the stack when the room changes to return execution
 		// to this point. Instead of doing that, just check if a variable is set.
 		if (_roomIndexToLoad != -1 && _spawnIndexToLoad != -1) {
