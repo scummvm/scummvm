@@ -65,40 +65,40 @@ void Room::demon0TouchedWarp0() {
 
 void Room::demon0WalkToBottomDoor() {
 	_vm->_awayMission.disableInput = 1;
-	_rdfData[0xcd] = 1; // FIXME
+	_roomVar.demon.movingToBottomDoor = true;
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewman(OBJECT_KIRK, 243, 158, 1);
 }
 
 void Room::demon0TouchedHotspot1() {
-	if (_rdfData[0xcd] != 1) // FIXME: not portable to mac/amiga?
+	if (!_roomVar.demon.movingToBottomDoor)
 		return;
 	loadActorAnim2(9, "s0r0d1", 254, 153, 1);
 	playSoundEffectIndex(0x05);
 }
 
 void Room::demon0ReachedBottomDoor() {
-	if (++_rdfData[0xca] != 2) // FIXME
+	if (++_roomVar.demon.bottomDoorCounter != 2)
 		return;
 	loadRoomIndex(5, 0);
 }
 
 void Room::demon0WalkToTopDoor() {
 	_vm->_awayMission.disableInput = 1;
-	_rdfData[0xcc] = 1; // FIXME
+	_roomVar.demon.movingToTopDoor = true;
 	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewman(OBJECT_KIRK, 157, 134, 2);
 }
 
 void Room::demon0TouchedHotspot0() {
-	if (_rdfData[0xcc] != 1) // FIXME: not portable to mac/amiga?
+	if (!_roomVar.demon.movingToTopDoor)
 		return;
 	loadActorAnim2(10, "s0r0d2", 158, 130, 2);
 	playSoundEffectIndex(0x05);
 }
 
 void Room::demon0ReachedTopDoor() {
-	if (++_rdfData[0xcb] != 2) // FIXME
+	if (++_roomVar.demon.topDoorCounter != 2)
 		return;
 	loadRoomIndex(6, 3);
 }
