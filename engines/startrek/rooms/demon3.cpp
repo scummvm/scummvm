@@ -28,10 +28,10 @@ void Room::demon3Tick1() {
 	playVoc("DEM3LOOP");
 	loadActorAnim(8, "light", 0xab, 0x03, 0);
 
-	_roomVar.demon3.boulder1Shot = true;
+	_roomVar.demon.boulder1Shot = true;
 	if (!_vm->_awayMission.demon.boulder1Gone) {
 		loadActorAnim(9, "bldr1", 0x26, 0, 0);
-		_roomVar.demon3.boulder1Shot = false;
+		_roomVar.demon.boulder1Shot = false;
 	}
 	if (!_vm->_awayMission.demon.boulder2Gone) {
 		loadActorAnim(10, "bldr2", 0x22, 0, 0);
@@ -65,7 +65,7 @@ void Room::demon3Tick1() {
 
 // Boulder falling over
 void Room::demon3Timer0Expired() {
-	_roomVar.demon3.boulder1Shot = true;
+	_roomVar.demon.boulder1Shot = true;
 	loadActorAnim2(9, "drbldr", 0x26, 0, 0);
 	_vm->_awayMission.timers[1] = 13;
 	_vm->_awayMission.demon.boulder1Gone = true;
@@ -77,7 +77,7 @@ void Room::demon3Timer0Expired() {
 
 // Redshirt pushing Kirk away
 void Room::demon3Timer1Expired() {
-	_roomVar.demon3.kirkPhaserOut = false;
+	_roomVar.demon.kirkPhaserOut = false;
 	loadActorAnim2(OBJECT_REDSHIRT, "redkil", 0x46, 0xa0, 0);
 	loadActorAnim2(OBJECT_KIRK, "redkil", 0x46, 0xa0, 1);
 }
@@ -100,7 +100,7 @@ void Room::demon3FinishedAnimation1() {
 	loadActorAnim2(OBJECT_REDSHIRT, "deadre", 0x46, 0xa0, 0);
 	loadActorStandAnim(OBJECT_SPOCK);
 	walkCrewman(OBJECT_MCCOY, 0x9c, 0xb2, 5);
-	_roomVar.demon3.inFiringPosition = false;
+	_roomVar.demon.inFiringPosition = false;
 	_vm->_awayMission.redshirtDead = true;
 }
 
@@ -119,50 +119,50 @@ void Room::demon3FinishedWalking5() {
 
 void Room::demon3McCoyInFiringPosition() {
 	loadActorAnim2(OBJECT_MCCOY, "mwaitn", 0xd6, 0xb8, 0);
-	_roomVar.demon3.mccoyInPosition = true;
+	_roomVar.demon.mccoyInPosition = true;
 	demon3CrewmanInFiringPosition();
 }
 
 void Room::demon3SpockInFiringPosition() {
 	loadActorAnim2(OBJECT_SPOCK, "swaitn", 0xae, 0xb4, 0);
-	_roomVar.demon3.spockInPosition = true;
+	_roomVar.demon.spockInPosition = true;
 	demon3CrewmanInFiringPosition();
 }
 
 void Room::demon3RedShirtInFiringPosition() {
 	loadActorAnim2(OBJECT_REDSHIRT, "rwaitn", 0x46, 0xa0, 0);
-	_roomVar.demon3.redshirtInPosition = true;
+	_roomVar.demon.redshirtInPosition = true;
 	demon3CrewmanInFiringPosition();
 }
 
 void Room::demon3KirkInFiringPosition() {
 	loadActorAnim2(OBJECT_KIRK, "kwaitn", 0x79, 0xa0, 0);
-	_roomVar.demon3.kirkInPosition = true;
+	_roomVar.demon.kirkInPosition = true;
 	demon3CrewmanInFiringPosition();
 }
 
 void Room::demon3CrewmanInFiringPosition() {
-	if (_roomVar.demon3.kirkInPosition && _roomVar.demon3.spockInPosition && _roomVar.demon3.mccoyInPosition && (_vm->_awayMission.redshirtDead || _roomVar.demon3.redshirtInPosition))
+	if (_roomVar.demon.kirkInPosition && _roomVar.demon.spockInPosition && _roomVar.demon.mccoyInPosition && (_vm->_awayMission.redshirtDead || _roomVar.demon.redshirtInPosition))
 		demon3PullOutPhaserAndFireAtBoulder();
 }
 
 void Room::demon3PullOutPhaserAndFireAtBoulder() {
-	if (_roomVar.demon3.kirkPhaserOut)
+	if (_roomVar.demon.kirkPhaserOut)
 		demon3FireAtBoulder();
 	else {
 		loadActorAnim2(OBJECT_KIRK, "kfiren", -1, -1, 4);
-		_roomVar.demon3.kirkPhaserOut = true;
+		_roomVar.demon.kirkPhaserOut = true;
 	}
 }
 
 void Room::demon3FireAtBoulder() {
-	_roomVar.demon3.kirkInPosition = false;
-	_roomVar.demon3.spockInPosition = false;
-	_roomVar.demon3.mccoyInPosition = false;
-	_roomVar.demon3.redshirtInPosition = false;
-	_roomVar.demon3.shootingBoulder = false;
+	_roomVar.demon.kirkInPosition = false;
+	_roomVar.demon.spockInPosition = false;
+	_roomVar.demon.mccoyInPosition = false;
+	_roomVar.demon.redshirtInPosition = false;
+	_roomVar.demon.shootingBoulder = false;
 
-	switch (_roomVar.demon3.boulderBeingShot) {
+	switch (_roomVar.demon.boulderBeingShot) {
 	case 1: // FIXME: animation overlaps on Kirk, probably due to sprite sorting inaccuracy
 		loadActorAnim2(9, "sbldr1", 0x22, 0, 0);
 		break;
@@ -188,9 +188,9 @@ void Room::demon3FireAtBoulder() {
 	}
 	}
 
-	loadActorAnim(17, _roomVar.demon3.boulderAnim, 0, 0, 0);
+	loadActorAnim(17, _roomVar.demon.boulderAnim, 0, 0, 0);
 	playSoundEffectIndex(0x06);
-	if (!_roomVar.demon3.boulder1Shot)
+	if (!_roomVar.demon.boulder1Shot)
 		_vm->_awayMission.timers[0] = 1;
 	_vm->_awayMission.disableInput = false;
 }
@@ -206,34 +206,34 @@ void Room::demon3UseStunPhaserOnBoulder() {
 }
 
 void Room::demon3UsePhaserOnBoulder1() {
-	if (_roomVar.demon3.shootingBoulder || _vm->_awayMission.demon.boulder1Gone)
+	if (_roomVar.demon.shootingBoulder || _vm->_awayMission.demon.boulder1Gone)
 		return;
 	_vm->_awayMission.demon.boulder1Gone = true;
 	_vm->_awayMission.demon.numBouldersGone++;
-	_roomVar.demon3.boulderBeingShot = 1;
-	_roomVar.demon3.boulder1Shot = true;
-	strcpy(_roomVar.demon3.boulderAnim, "s0r3s2");
+	_roomVar.demon.boulderBeingShot = 1;
+	_roomVar.demon.boulder1Shot = true;
+	strcpy(_roomVar.demon.boulderAnim, "s0r3s2");
 	demon3BoulderCommon();
 }
 
 void Room::demon3UsePhaserOnBoulder2() {
-	if (_roomVar.demon3.shootingBoulder || _vm->_awayMission.demon.boulder2Gone)
+	if (_roomVar.demon.shootingBoulder || _vm->_awayMission.demon.boulder2Gone)
 		return;
 	_vm->_awayMission.demon.boulder2Gone = true;
 	_vm->_awayMission.demon.numBouldersGone++;
-	_roomVar.demon3.boulderBeingShot = 2;
-	strcpy(_roomVar.demon3.boulderAnim, "s0r3s3");
+	_roomVar.demon.boulderBeingShot = 2;
+	strcpy(_roomVar.demon.boulderAnim, "s0r3s3");
 	demon3BoulderCommon();
 }
 
 void Room::demon3UsePhaserOnBoulder3() {
 	if (_vm->_awayMission.demon.boulder1Gone) {
-		if (_roomVar.demon3.shootingBoulder || _vm->_awayMission.demon.boulder3Gone)
+		if (_roomVar.demon.shootingBoulder || _vm->_awayMission.demon.boulder3Gone)
 			return;
 		_vm->_awayMission.demon.boulder3Gone = true;
 		_vm->_awayMission.demon.numBouldersGone++;
-		_roomVar.demon3.boulderBeingShot = 3;
-		strcpy(_roomVar.demon3.boulderAnim, "s0r3s1");
+		_roomVar.demon.boulderBeingShot = 3;
+		strcpy(_roomVar.demon.boulderAnim, "s0r3s1");
 		demon3BoulderCommon();
 	} else {
 		showText(TX_SPEAKER_SPOCK, TX_DEM3_006);
@@ -242,12 +242,12 @@ void Room::demon3UsePhaserOnBoulder3() {
 
 void Room::demon3UsePhaserOnBoulder4() {
 	if (_vm->_awayMission.demon.boulder2Gone) {
-		if (_roomVar.demon3.shootingBoulder || _vm->_awayMission.demon.boulder4Gone)
+		if (_roomVar.demon.shootingBoulder || _vm->_awayMission.demon.boulder4Gone)
 			return;
 		_vm->_awayMission.demon.boulder4Gone = true;
 		_vm->_awayMission.demon.numBouldersGone++;
-		_roomVar.demon3.boulderBeingShot = 4;
-		strcpy(_roomVar.demon3.boulderAnim, "s0r3s4");
+		_roomVar.demon.boulderBeingShot = 4;
+		strcpy(_roomVar.demon.boulderAnim, "s0r3s4");
 		_vm->_awayMission.demon.foundMiner = true;
 		demon3BoulderCommon();
 	} else {
@@ -261,11 +261,11 @@ void Room::demon3BoulderCommon() {
 	_vm->_awayMission.disableInput = true;
 	Common::Point pos = getActorPos(OBJECT_KIRK);
 	if (!(pos.x == 0x79 && pos.y == 0xa0)) {
-		_roomVar.demon3.inFiringPosition = false;
-		_roomVar.demon3.kirkPhaserOut = false;
+		_roomVar.demon.inFiringPosition = false;
+		_roomVar.demon.kirkPhaserOut = false;
 	}
 
-	if (_roomVar.demon3.inFiringPosition) {
+	if (_roomVar.demon.inFiringPosition) {
 		demon3PullOutPhaserAndFireAtBoulder();
 	} else {
 		showText(TX_SPEAKER_KIRK, TX_DEM3_001);
@@ -276,8 +276,8 @@ void Room::demon3BoulderCommon() {
 		if (!_vm->_awayMission.redshirtDead)
 			walkCrewman(OBJECT_REDSHIRT, 0x46, 0xa0, 4);
 
-		_roomVar.demon3.shootingBoulder = true;
-		_roomVar.demon3.inFiringPosition = true;
+		_roomVar.demon.shootingBoulder = true;
+		_roomVar.demon.inFiringPosition = true;
 	}
 }
 
@@ -385,11 +385,11 @@ void Room::demon3UseMTricorderOnDoor() {
 }
 
 void Room::demon3UsePhaserOnDoor() {
-	_roomVar.demon3.usedPhaserOnDoor++;
+	_roomVar.demon.usedPhaserOnDoor++;
 
-	if (_roomVar.demon3.usedPhaserOnDoor == 1)
+	if (_roomVar.demon.usedPhaserOnDoor == 1)
 		showText(TX_DEM3N009);
-	else if (_roomVar.demon3.usedPhaserOnDoor == 2)
+	else if (_roomVar.demon.usedPhaserOnDoor == 2)
 		showText(TX_SPEAKER_SPOCK, TX_DEM3_011);
 }
 
@@ -431,8 +431,8 @@ void Room::demon3UseMedkitOnMiner() {
 		showText(TX_SPEAKER_MCCOY, TX_DEM3_015);
 	} else {
 		walkCrewman(OBJECT_MCCOY, 0xe6, 0x7b, 6);
-		_roomVar.demon3.inFiringPosition = false;
-		_roomVar.demon3.kirkPhaserOut = false;
+		_roomVar.demon.inFiringPosition = false;
+		_roomVar.demon.kirkPhaserOut = false;
 	}
 }
 

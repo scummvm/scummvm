@@ -36,7 +36,7 @@ void Room::demon4Tick1() {
 	if (_vm->_awayMission.demon.solvedSunPuzzle) {
 		loadActorAnim(10, "bxrise2", 0x122, 0x91, 0);
 		loadActorAnim(8, "stpout2", 0x107, 0x92, 0);
-		_roomVar.demon4.nauianEmerged = true;
+		_roomVar.demon.nauianEmerged = true;
 
 		if ((_vm->_awayMission.demon.itemsTakenFromCase & 0x10) && !_vm->_awayMission.demon.gaveSkullToNauian)
 			_vm->_awayMission.timers[6] = 20;
@@ -51,14 +51,14 @@ void Room::demon4Tick1() {
 // Alien emerged
 void Room::demon4FinishedAnimation1() {
 	loadActorAnim(8, "stpout", 0x107, 0x92, 5);
-	_roomVar.demon4.nauianEmerged = true;
+	_roomVar.demon.nauianEmerged = true;
 	if (_vm->_awayMission.demon.itemsTakenFromCase & 0x10)
 		_vm->_awayMission.timers[6] = 45;
 }
 
 void Room::demon4FinishedAnimation2() {
-	if (!_roomVar.demon4.cd) {
-		_roomVar.demon4.cd = true;
+	if (!_roomVar.demon.cd) {
+		_roomVar.demon.cd = true;
 		showText(TX_DEM4N011);
 	}
 
@@ -100,12 +100,12 @@ void Room::demon4Timer1Expired() {
 	if (!_vm->_awayMission.redshirtDead)
 		walkCrewman(OBJECT_REDSHIRT, 0xc1, 0x91, 4);
 	else
-		_roomVar.demon4.crewReadyToBeamOut++;
+		_roomVar.demon.crewReadyToBeamOut++;
 }
 
 void Room::demon4CrewmanReachedBeamoutPosition() {
-	_roomVar.demon4.crewReadyToBeamOut++;
-	if (_roomVar.demon4.crewReadyToBeamOut != 4)
+	_roomVar.demon.crewReadyToBeamOut++;
+	if (_roomVar.demon.crewReadyToBeamOut != 4)
 		return;
 
 	if (!_vm->_awayMission.demon.insultedStephen)
@@ -137,9 +137,9 @@ void Room::demon4Timer6Expired() {
 }
 
 void Room::demon4UsePhaserOnNauian() {
-	if (!_roomVar.demon4.triedToShootNauian) { // Lenient the first time
+	if (!_roomVar.demon.triedToShootNauian) { // Lenient the first time
 		showText(TX_SPEAKER_NAUIAN, TX_DEM4_033);
-		_roomVar.demon4.triedToShootNauian = true;
+		_roomVar.demon.triedToShootNauian = true;
 	} else { // Murdery the second time
 		showText(TX_SPEAKER_NAUIAN, TX_DEM4_032);
 		loadActorAnim2(10, "bxfire", 0, 0, 2);
@@ -266,7 +266,7 @@ void Room::demon4TalkToNauian() {
 
 		showText(TX_SPEAKER_NAUIAN, TX_DEM4_040);
 
-		if (_roomVar.demon4.disabledSecurity) { // Impossible condition?
+		if (_roomVar.demon.disabledSecurity) { // Impossible condition?
 			showText(TX_SPEAKER_NAUIAN, TX_DEM4_037);
 
 			// BUGFIX: Originally all of these used no audio, despite the files existing
@@ -331,30 +331,30 @@ void Room::demon4LookAtPanel() {
 }
 
 void Room::demon4UseKirkOnPanel() {
-	_roomVar.demon4.crewmanUsingPanel = OBJECT_KIRK;
+	_roomVar.demon.crewmanUsingPanel = OBJECT_KIRK;
 	demon4UseCrewmanOnPanel();
 }
 
 void Room::demon4UseSpockOnPanel() {
-	_roomVar.demon4.crewmanUsingPanel = OBJECT_SPOCK;
+	_roomVar.demon.crewmanUsingPanel = OBJECT_SPOCK;
 	demon4UseCrewmanOnPanel();
 }
 
 void Room::demon4UseMccoyOnPanel() {
-	_roomVar.demon4.crewmanUsingPanel = OBJECT_MCCOY;
+	_roomVar.demon.crewmanUsingPanel = OBJECT_MCCOY;
 	demon4UseCrewmanOnPanel();
 }
 
 void Room::demon4UseRedshirtOnPanel() {
-	_roomVar.demon4.crewmanUsingPanel = OBJECT_REDSHIRT;
+	_roomVar.demon.crewmanUsingPanel = OBJECT_REDSHIRT;
 	demon4UseCrewmanOnPanel();
 }
 
 void Room::demon4UseCrewmanOnPanel() {
 	if (_vm->_awayMission.demon.solvedSunPuzzle)
 		return;
-	walkCrewman(_roomVar.demon4.crewmanUsingPanel, 0xda, 0x83, 3);
-	_vm->_awayMission.crewDirectionsAfterWalk[_roomVar.demon4.crewmanUsingPanel] = DIR_N;
+	walkCrewman(_roomVar.demon.crewmanUsingPanel, 0xda, 0x83, 3);
+	_vm->_awayMission.crewDirectionsAfterWalk[_roomVar.demon.crewmanUsingPanel] = DIR_N;
 	_vm->_awayMission.disableInput = true;
 }
 
@@ -367,7 +367,7 @@ void Room::demon4CrewmanReachedPanel() {
 	} else
 		showText(TX_DEM4N013);
 
-	walkCrewman(_roomVar.demon4.crewmanUsingPanel, 0xae, 0x93, 0);
+	walkCrewman(_roomVar.demon.crewmanUsingPanel, 0xae, 0x93, 0);
 	_vm->_awayMission.disableInput = false;
 }
 
@@ -539,21 +539,21 @@ void Room::demon4TalkToKirk() {
 }
 
 void Room::demon4TalkToMccoy() {
-	if (_roomVar.demon4.nauianEmerged)
+	if (_roomVar.demon.nauianEmerged)
 		showText(TX_SPEAKER_MCCOY, TX_DEM4_019);
 	else
 		showText(TX_SPEAKER_MCCOY, TX_DEM4_015);
 }
 
 void Room::demon4TalkToSpock() {
-	if (_roomVar.demon4.nauianEmerged)
+	if (_roomVar.demon.nauianEmerged)
 		showText(TX_SPEAKER_SPOCK, TX_DEM4_022);
 	else
 		showText(TX_SPEAKER_SPOCK, TX_DEM4_024);
 }
 
 void Room::demon4TalkToRedshirt() {
-	if (_roomVar.demon4.nauianEmerged)
+	if (_roomVar.demon.nauianEmerged)
 		showText(TX_SPEAKER_EVERTS, TX_DEM4_047);
 	else
 		showText(TX_SPEAKER_EVERTS, TX_DEM4_046);

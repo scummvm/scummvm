@@ -2140,13 +2140,20 @@ private:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	union {
 		struct {
+			// demon0
+			byte bottomDoorCounter; // 0xca
+			byte topDoorCounter; // 0xcb
+			bool movingToTopDoor; // 0xcc
+			bool movingToBottomDoor; // 0xcd
+
+			// demon1
+			bool klingonShot[3]; // 0xca
 			int numKlingonsKilled;
 			byte attackIndex;
 			bool kirkShooting;
 			char d6[10];
-		} demon1;
 
-		struct {
+			// demon3
 			bool shootingBoulder; // 0xca
 			bool boulder1Shot; // 0xcb
 			byte boulderBeingShot; // 0xcc
@@ -2158,18 +2165,16 @@ private:
 			bool kirkPhaserOut; // 0xd3
 			char boulderAnim[10]; // 0xd4
 			int16 usedPhaserOnDoor; // 0xd6
-		} demon3;
 
-		struct {
+			// demon4
 			bool triedToShootNauian; // 0xca
 			bool nauianEmerged; // 0xcb
 			bool disabledSecurity; // 0xcc
 			bool cd; // 0xcd
 			byte crewReadyToBeamOut; // 0xce
 			int16 crewmanUsingPanel; // 0xcf
-		} demon4;
 
-		struct {
+			// demon5
 			bool scannedRoberts; // 0xca
 			bool scannedChub; // 0xcb
 			bool scannedGrisnash; // 0xcc
@@ -2180,17 +2185,16 @@ private:
 			bool talkedToChub; // 0xd1
 			bool talkedToGrisnash; // 0xd2
 			bool talkedToStephen; // 0xd3
-			byte doorCounter; // 0xd4
-			bool movingToDoor; // 0xd5
-		} demon5;
 
-		struct {
+			// demon6
 			bool insultedStephenRecently; // 0xca
 			bool stephenInRoom; // 0xcb
 			bool caseOpened; // 0xcd
-			byte doorCounter; // 0xce
-			bool movingToDoor; // 0xcf
-		} demon6;
+
+			// common
+			bool movingToDoor;
+			byte doorCounter;
+		} demon;
 
 		struct {
 			byte shootingObject; // 0x1ec1
@@ -2198,7 +2202,6 @@ private:
 			bool elasiPhaserOnKill;
 			byte shootKirkOverride; // 0x1ec4
 		} tug2;
-
 
 		struct {
 			// love0

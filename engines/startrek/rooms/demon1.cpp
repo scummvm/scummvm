@@ -54,15 +54,15 @@ void Room::demon1Tick1() {
 		loadActorAnim(9, "klg2d2", 0xaa, 0x7c, 0);
 		loadActorAnim(10, "klg3d2", 0, 0, 0);
 
-		_rdfData[0xca] = 1; // FIXME
-		_rdfData[0xcb] = 1;
-		_rdfData[0xcc] = 1;
-		_roomVar.demon1.numKlingonsKilled = 3;
+		_roomVar.demon.klingonShot[0] = true;
+		_roomVar.demon.klingonShot[1] = true;
+		_roomVar.demon.klingonShot[2] = true;
+		_roomVar.demon.numKlingonsKilled = 3;
 	}
 }
 
 void Room::demon1WalkToCave() {
-	if (_roomVar.demon1.numKlingonsKilled != 3)
+	if (_roomVar.demon.numKlingonsKilled != 3)
 		return;
 	walkCrewman(OBJECT_KIRK, 0xa3, 0x56, 2);
 }
@@ -103,42 +103,42 @@ void Room::demon1Timer1Expired() {
 	int shooter;
 	Common::String anim;
 
-	if (_rdfData[0xca] != 1) {
+	if (!_roomVar.demon.klingonShot[0]) {
 		anim = "klg1f";
 		shooter = 8;
 
-		switch (_roomVar.demon1.attackIndex) {
+		switch (_roomVar.demon.attackIndex) {
 		case 0:
-			strcpy(_roomVar.demon1.d6, "klg1fr");
+			strcpy(_roomVar.demon.d6, "klg1fr");
 			break;
 		case 1:
-			strcpy(_roomVar.demon1.d6, "klg1fm");
+			strcpy(_roomVar.demon.d6, "klg1fm");
 			break;
 		case 2:
-			strcpy(_roomVar.demon1.d6, "klg1fs");
+			strcpy(_roomVar.demon.d6, "klg1fs");
 			break;
 		case 3:
-			strcpy(_roomVar.demon1.d6, "klg1fk");
+			strcpy(_roomVar.demon.d6, "klg1fk");
 			break;
 		default:
 			// TODO
 			return;
 		}
-	} else if (_rdfData[0xcb] != 1) {
+	} else if (!_roomVar.demon.klingonShot[1]) {
 		anim = "klg2f";
 		shooter = 9;
-		switch (_roomVar.demon1.attackIndex) {
+		switch (_roomVar.demon.attackIndex) {
 		case 0:
-			strcpy(_roomVar.demon1.d6, "klg2fr");
+			strcpy(_roomVar.demon.d6, "klg2fr");
 			break;
 		case 1:
-			strcpy(_roomVar.demon1.d6, "klg2fm");
+			strcpy(_roomVar.demon.d6, "klg2fm");
 			break;
 		case 2:
-			strcpy(_roomVar.demon1.d6, "klg2fs");
+			strcpy(_roomVar.demon.d6, "klg2fs");
 			break;
 		case 3:
-			strcpy(_roomVar.demon1.d6, "klg2fk");
+			strcpy(_roomVar.demon.d6, "klg2fk");
 			break;
 		default:
 			// TODO
@@ -147,18 +147,18 @@ void Room::demon1Timer1Expired() {
 	} else {
 		anim = "klg3f";
 		shooter = 10;
-		switch (_roomVar.demon1.attackIndex) {
+		switch (_roomVar.demon.attackIndex) {
 		case 0:
-			strcpy(_roomVar.demon1.d6, "klg3fr");
+			strcpy(_roomVar.demon.d6, "klg3fr");
 			break;
 		case 1:
-			strcpy(_roomVar.demon1.d6, "klg3fm");
+			strcpy(_roomVar.demon.d6, "klg3fm");
 			break;
 		case 2:
-			strcpy(_roomVar.demon1.d6, "klg3fs");
+			strcpy(_roomVar.demon.d6, "klg3fs");
 			break;
 		case 3:
-			strcpy(_roomVar.demon1.d6, "klg3fk");
+			strcpy(_roomVar.demon.d6, "klg3fk");
 			break;
 		default:
 			// TODO
@@ -170,21 +170,21 @@ void Room::demon1Timer1Expired() {
 }
 
 void Room::demon1KlingonFinishedAimingWeapon() {
-	loadActorAnim(11, _roomVar.demon1.d6, 0, 0, 0);
+	loadActorAnim(11, _roomVar.demon.d6, 0, 0, 0);
 	playSoundEffectIndex(0x06);
 
-	_roomVar.demon1.attackIndex++;
+	_roomVar.demon.attackIndex++;
 	int crewman;
-	if (_roomVar.demon1.attackIndex == 1) {
+	if (_roomVar.demon.attackIndex == 1) {
 		loadActorAnim2(OBJECT_REDSHIRT, "rstunn", -1, -1, 0);
 		crewman = OBJECT_REDSHIRT;
-	} else if (_roomVar.demon1.attackIndex == 2) {
+	} else if (_roomVar.demon.attackIndex == 2) {
 		loadActorAnim2(OBJECT_SPOCK, "sstunn", -1, -1, 0);
 		crewman = OBJECT_SPOCK;
-	} else if (_roomVar.demon1.attackIndex == 3) {
+	} else if (_roomVar.demon.attackIndex == 3) {
 		loadActorAnim2(OBJECT_MCCOY, "mstune", -1, -1, 0);
 		crewman = OBJECT_MCCOY;
-	} else if (_roomVar.demon1.attackIndex == 4) {
+	} else if (_roomVar.demon.attackIndex == 4) {
 		loadActorAnim2(OBJECT_KIRK, "kstunn", -1, -1, 1);
 		crewman = OBJECT_KIRK;
 	}
@@ -202,27 +202,27 @@ void Room::demon1KirkShot() {
 }
 
 void Room::demon1UsePhaserOnAnything() {
-	if (_roomVar.demon1.numKlingonsKilled == 3)
+	if (_roomVar.demon.numKlingonsKilled == 3)
 		showText(TX_SPEAKER_MCCOY, TX_DEM1_011);
 }
 
 void Room::demon1UsePhaserOnKlingon1() {
-	if (_rdfData[0xca] != 0)
+	if (_roomVar.demon.klingonShot[0])
 		return;
 	_vm->_awayMission.disableInput = 1;
-	_rdfData[0xca] = 1;
+	_roomVar.demon.klingonShot[0] = true;
 
-	if (_roomVar.demon1.kirkShooting) {
+	if (_roomVar.demon.kirkShooting) {
 		demon1ShootKlingon1();
 	} else {
 		loadActorAnim2(OBJECT_KIRK, "kfiren", -1, -1, 3);
-		_roomVar.demon1.kirkShooting = true;
+		_roomVar.demon.kirkShooting = true;
 	}
 }
 
 void Room::demon1ShootKlingon1() {
-	_roomVar.demon1.numKlingonsKilled++;
-	if (_roomVar.demon1.numKlingonsKilled == 3) {
+	_roomVar.demon.numKlingonsKilled++;
+	if (_roomVar.demon.numKlingonsKilled == 3) {
 		_vm->_awayMission.timers[1] = 0;
 		_vm->_awayMission.timers[5] = 180;
 		_vm->_awayMission.timers[6] = 1;
@@ -246,7 +246,7 @@ void Room::demon1KlingonDropsHand() {
 
 	showText(TX_SPEAKER_EVERTS, TX_DEM1_025);
 
-	if (_roomVar.demon1.numKlingonsKilled == 3)
+	if (_roomVar.demon.numKlingonsKilled == 3)
 		return;
 
 	showText(TX_SPEAKER_KLINGON, TX_DEM1_F23);
@@ -255,22 +255,22 @@ void Room::demon1KlingonDropsHand() {
 }
 
 void Room::demon1UsePhaserOnKlingon2() {
-	if (_rdfData[0xcb] != 0)
+	if (_roomVar.demon.klingonShot[1])
 		return;
 	_vm->_awayMission.disableInput = 1;
-	_rdfData[0xcb] = 1;
+	_roomVar.demon.klingonShot[1] = true;
 
-	if (_roomVar.demon1.kirkShooting) {
+	if (_roomVar.demon.kirkShooting) {
 		demon1ShootKlingon2();
 	} else {
 		loadActorAnim2(OBJECT_KIRK, "kfiren", -1, -1, 4);
-		_roomVar.demon1.kirkShooting = true;
+		_roomVar.demon.kirkShooting = true;
 	}
 }
 
 void Room::demon1ShootKlingon2() {
-	_roomVar.demon1.numKlingonsKilled++;
-	if (_roomVar.demon1.numKlingonsKilled == 3) {
+	_roomVar.demon.numKlingonsKilled++;
+	if (_roomVar.demon.numKlingonsKilled == 3) {
 		_vm->_awayMission.timers[1] = 0;
 		_vm->_awayMission.timers[5] = 180;
 		_vm->_awayMission.timers[6] = 1;
@@ -284,22 +284,22 @@ void Room::demon1ShootKlingon2() {
 }
 
 void Room::demon1UsePhaserOnKlingon3() {
-	if (_rdfData[0xcc] != 0)
+	if (_roomVar.demon.klingonShot[2])
 		return;
 	_vm->_awayMission.disableInput = 1;
-	_rdfData[0xcc] = 1;
+	_roomVar.demon.klingonShot[2] = true;
 
-	if (_roomVar.demon1.kirkShooting) {
+	if (_roomVar.demon.kirkShooting) {
 		demon1ShootKlingon3();
 	} else {
 		loadActorAnim2(OBJECT_KIRK, "kfiren", -1, -1, 5);
-		_roomVar.demon1.kirkShooting = true;
+		_roomVar.demon.kirkShooting = true;
 	}
 }
 
 void Room::demon1ShootKlingon3() {
-	_roomVar.demon1.numKlingonsKilled++;
-	if (_roomVar.demon1.numKlingonsKilled == 3) {
+	_roomVar.demon.numKlingonsKilled++;
+	if (_roomVar.demon.numKlingonsKilled == 3) {
 		_vm->_awayMission.timers[1] = 0;
 		_vm->_awayMission.timers[5] = 180;
 		_vm->_awayMission.timers[6] = 1;
@@ -377,7 +377,7 @@ void Room::demon1UseSTricorderOnKlingon1() {
 
 	playSoundEffectIndex(0x04);
 
-	if (_roomVar.demon1.numKlingonsKilled == 3 && !_vm->_awayMission.demon.tookKlingonHand && _rdfData[0xcf] != 1) {
+	if (_roomVar.demon.numKlingonsKilled == 3 && !_vm->_awayMission.demon.tookKlingonHand && _rdfData[0xcf] != 1) {
 		showText(TX_SPEAKER_SPOCK, TX_DEM1_018);
 		_rdfData[0xcf] = 1;
 	} else {
@@ -413,7 +413,7 @@ void Room::demon1UseMTricorderOnCrewman() {
 }
 
 void Room::demon1GetHand() {
-	if (_roomVar.demon1.numKlingonsKilled != 3)
+	if (_roomVar.demon.numKlingonsKilled != 3)
 		return;
 	walkCrewman(OBJECT_KIRK, 0x104, 0x8e, 1);
 }
@@ -511,7 +511,7 @@ void Room::demon1LookAtRedshirt() {
 void Room::demon1TalkToKirk() {
 	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_KIRK))
 		demon1TalkToUnconsciousCrewman();
-	else if (_roomVar.demon1.numKlingonsKilled == 3)
+	else if (_roomVar.demon.numKlingonsKilled == 3)
 		showText(TX_SPEAKER_KIRK, TX_DEM1_001);
 }
 

@@ -28,7 +28,7 @@ void Room::demon6Tick1() {
 	playVoc("DEM6LOOP");
 	if (_vm->_awayMission.demon.gotBerries || (!_vm->_awayMission.demon.field3e && _vm->_awayMission.demon.field37)) {
 		loadActorAnim(8, "oldman", 0x5f, 0xb1, 0);
-		_roomVar.demon6.stephenInRoom = true;
+		_roomVar.demon.stephenInRoom = true;
 	}
 	loadActorAnim(10, "s0r6d2", 0xa0, 0x92, 0);
 	loadActorAnim(9, "scrnan", 0, 0xc7, 0);
@@ -54,20 +54,20 @@ void Room::demon6SpockReachedComputer() {
 
 void Room::demon6WalkToDoor() {
 	_vm->_awayMission.disableInput = true;
-	_roomVar.demon6.movingToDoor = true;
+	_roomVar.demon.movingToDoor = true;
 	walkCrewman(OBJECT_KIRK, 0xa0, 0x94, 4);
 }
 
 void Room::demon6TouchedDoorOpenTrigger() {
-	if (!_roomVar.demon6.movingToDoor)
+	if (!_roomVar.demon.movingToDoor)
 		return;
 	loadActorAnim(10, "s0r6d1", 0xa0, 0x92, 2);
 	playSoundEffectIndex(5);
 }
 
 void Room::demon6DoorOpenedOrReachedDoor() {
-	_roomVar.demon6.doorCounter++;
-	if (_roomVar.demon6.doorCounter == 2)
+	_roomVar.demon.doorCounter++;
+	if (_roomVar.demon.doorCounter == 2)
 		loadRoomIndex(0, 2);
 }
 
@@ -233,8 +233,8 @@ void Room::demon6UseAnythingOnWorkspace() {
 }
 
 void Room::demon6UseCrewmanOnCase() {
-	if (_roomVar.demon6.stephenInRoom) {
-		if (_roomVar.demon6.insultedStephenRecently)
+	if (_roomVar.demon.stephenInRoom) {
+		if (_roomVar.demon.insultedStephenRecently)
 			return;
 		showText(TX_SPEAKER_STEPHEN, TX_DEM6_044);
 		int choices1[] = {TX_SPEAKER_KIRK, TX_DEM6_001, TX_DEM6_006, TX_DEM6_003, TX_BLANK};
@@ -243,7 +243,7 @@ void Room::demon6UseCrewmanOnCase() {
 		if (choice == 0) {
 insult:
 			showText(TX_SPEAKER_STEPHEN, TX_DEM6_030);
-			_roomVar.demon6.insultedStephenRecently = true;
+			_roomVar.demon.insultedStephenRecently = true;
 			_vm->_awayMission.demon.insultedStephen = true;
 		} else if (choice == 1) {
 			showText(TX_SPEAKER_STEPHEN, TX_DEM6_034);
@@ -271,7 +271,7 @@ explain:
 					break;
 				case 5:
 					showText(TX_SPEAKER_STEPHEN, TX_DEM6_041);
-					_roomVar.demon6.caseOpened = true;
+					_roomVar.demon.caseOpened = true;
 					return;
 				default:
 					goto error;
@@ -414,7 +414,7 @@ void Room::demon6UseSTricoderOnSynthesizer() {
 }
 
 void Room::demon6GetCase() {
-	if (!_roomVar.demon6.caseOpened)
+	if (!_roomVar.demon.caseOpened)
 		showText(TX_DEM6N022);
 	else
 		walkCrewman(OBJECT_KIRK, 0xff, 0xba, 5);
