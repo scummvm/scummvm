@@ -256,7 +256,7 @@ void MohawkEngine_Myst::playMovieBlocking(const Common::String &name, MystStack 
 	waitUntilMovieEnds(video);
 }
 
-void MohawkEngine_Myst::playFlybyMovie(MystStack stack, uint16 card) {
+void MohawkEngine_Myst::playFlybyMovie(MystStack stack) {
 	static const uint16 kMasterpieceOnly = 0xFFFF;
 
 	// Play Flyby Entry Movie on Masterpiece Edition.
@@ -608,8 +608,8 @@ void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 lin
 	// In Myst ME, play a fullscreen flyby movie, except when loading saves.
 	// Also play a flyby when first linking to Myst.
 	if (getFeatures() & GF_ME
-			&& ((_stack && _stack->getStackId() != kIntroStack) || (stackId == kMystStack && card == 4134))) {
-		playFlybyMovie(stackId, card);
+			&& ((_stack && _stack->getStackId() == kMystStack) || (stackId == kMystStack && card == 4134))) {
+		playFlybyMovie(stackId);
 	}
 
 	_sound->stopBackground();
