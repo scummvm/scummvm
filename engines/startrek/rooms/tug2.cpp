@@ -610,9 +610,9 @@ void Room::tug2UseCommunicator() {
 
 void Room::tug2DetermineElasiShooter() {
 	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_UP)
-		_roomVar.tug2.shootingObject = OBJECT_GUARD_2;
+		_roomVar.tug.shootingObject = OBJECT_GUARD_2;
 	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_UP)
-		_roomVar.tug2.shootingObject = OBJECT_GUARD_1;
+		_roomVar.tug.shootingObject = OBJECT_GUARD_1;
 }
 
 // Elasi shoots someone
@@ -620,9 +620,9 @@ void Room::tug2Timer0Expired() {
 	if (_vm->_awayMission.tug.guard1Status != GUARDSTAT_UP && _vm->_awayMission.tug.guard2Status != GUARDSTAT_UP)
 		return;
 
-	_roomVar.tug2.elasiPhaserOnKill = 0;
+	_roomVar.tug.elasiPhaserOnKill = 0;
 	if (_vm->_awayMission.tug.brigElasiPhasersOnKill)
-		_roomVar.tug2.elasiPhaserOnKill = 1;
+		_roomVar.tug.elasiPhaserOnKill = 1;
 
 	switch (_vm->_awayMission.tug.field4b) {
 	case 0:
@@ -638,7 +638,7 @@ void Room::tug2Timer0Expired() {
 		showBitmapFor5Ticks("t2beem00", 5);
 		playSoundEffectIndex(SND_PHASSHOT);
 		loadActorAnim2(OBJECT_GUARD_2, "p6fire", -1, -1, 0);
-		_vm->_awayMission.tug.field4e = _roomVar.tug2.elasiPhaserOnKill;
+		_vm->_awayMission.tug.field4e = _roomVar.tug.elasiPhaserOnKill;
 		_vm->_awayMission.timers[0] = 60;
 		break;
 
@@ -647,7 +647,7 @@ void Room::tug2Timer0Expired() {
 		_vm->_awayMission.tug.field4b++;
 		if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_REDSHIRT]) {
 			tug2DetermineElasiShooter();
-			_roomVar.tug2.shootingTarget = OBJECT_REDSHIRT;
+			_roomVar.tug.shootingTarget = OBJECT_REDSHIRT;
 			_vm->_awayMission.timers[0] = 60;
 			tug2GuardShootsCrewman();
 		}
@@ -656,14 +656,14 @@ void Room::tug2Timer0Expired() {
 	case 2:
 		// Guard shoots spock (or kirk)
 		_vm->_awayMission.tug.field4b++;
-		_roomVar.tug2.shootKirkOverride = false;
+		_roomVar.tug.shootKirkOverride = false;
 		if (_vm->_awayMission.tug.brigElasiPhasersOnKill)
-			_roomVar.tug2.shootKirkOverride = true;
+			_roomVar.tug.shootKirkOverride = true;
 		tug2DetermineElasiShooter();
-		if (_roomVar.tug2.shootKirkOverride)
-			_roomVar.tug2.shootingTarget = OBJECT_KIRK;
+		if (_roomVar.tug.shootKirkOverride)
+			_roomVar.tug.shootingTarget = OBJECT_KIRK;
 		else
-			_roomVar.tug2.shootingTarget = OBJECT_SPOCK;
+			_roomVar.tug.shootingTarget = OBJECT_SPOCK;
 		_vm->_awayMission.timers[0] = 60;
 		tug2GuardShootsCrewman();
 		break;
@@ -672,7 +672,7 @@ void Room::tug2Timer0Expired() {
 		_vm->_awayMission.tug.field4b++;
 		if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_MCCOY]) {
 			tug2DetermineElasiShooter();
-			_roomVar.tug2.shootingTarget = OBJECT_MCCOY;
+			_roomVar.tug.shootingTarget = OBJECT_MCCOY;
 			_vm->_awayMission.timers[0] = 80;
 			tug2GuardShootsCrewman();
 		}
@@ -680,14 +680,14 @@ void Room::tug2Timer0Expired() {
 
 	case 4:
 		_vm->_awayMission.tug.field4b++;
-		if (_roomVar.tug2.shootKirkOverride) {
+		if (_roomVar.tug.shootKirkOverride) {
 			tug2DetermineElasiShooter();
-			_roomVar.tug2.shootingTarget = OBJECT_SPOCK;
+			_roomVar.tug.shootingTarget = OBJECT_SPOCK;
 			_vm->_awayMission.timers[2] = 40;
 			tug2GuardShootsCrewman();
-		} else if (_roomVar.tug2.shootKirkOverride) {
+		} else if (_roomVar.tug.shootKirkOverride) {
 			tug2DetermineElasiShooter();
-			_roomVar.tug2.shootingTarget = OBJECT_KIRK;
+			_roomVar.tug.shootingTarget = OBJECT_KIRK;
 			_vm->_awayMission.timers[2] = 40; // TODO
 			tug2GuardShootsCrewman();
 		}
@@ -723,51 +723,51 @@ void Room::tug2GuardShootsCrewman() {
 
 	const char *crewPrefixes = "ksmr";
 
-	if (!_roomVar.tug2.elasiPhaserOnKill)
-		_vm->_awayMission.crewDirectionsAfterWalk[_roomVar.tug2.shootingTarget] = DIR_W;
+	if (!_roomVar.tug.elasiPhaserOnKill)
+		_vm->_awayMission.crewDirectionsAfterWalk[_roomVar.tug.shootingTarget] = DIR_W;
 
 	Common::String anim;
 	const char **bitmapArray;
-	if (_roomVar.tug2.elasiPhaserOnKill) {
+	if (_roomVar.tug.elasiPhaserOnKill) {
 		anim = "_Kille";
-		if (_roomVar.tug2.shootingObject == OBJECT_GUARD_1)
+		if (_roomVar.tug.shootingObject == OBJECT_GUARD_1)
 			bitmapArray = g1ShotsOnKill;
 		else
 			bitmapArray = g2ShotsOnKill;
 	} else {
 		anim = "_stune";
-		if (_roomVar.tug2.shootingObject == OBJECT_GUARD_1)
+		if (_roomVar.tug.shootingObject == OBJECT_GUARD_1)
 			bitmapArray = g1ShotsOnStun;
 		else
 			bitmapArray = g2ShotsOnStun;
 	}
-	anim.setChar(crewPrefixes[_roomVar.tug2.shootingTarget], 0);
+	anim.setChar(crewPrefixes[_roomVar.tug.shootingTarget], 0);
 
-	if (_roomVar.tug2.shootingTarget != OBJECT_KIRK)
-		loadActorAnim2(_roomVar.tug2.shootingTarget, anim, -1, -1, 0);
-	else if (_roomVar.tug2.elasiPhaserOnKill)
-		loadActorAnim2(_roomVar.tug2.shootingTarget, anim, -1, -1, 27);
+	if (_roomVar.tug.shootingTarget != OBJECT_KIRK)
+		loadActorAnim2(_roomVar.tug.shootingTarget, anim, -1, -1, 0);
+	else if (_roomVar.tug.elasiPhaserOnKill)
+		loadActorAnim2(_roomVar.tug.shootingTarget, anim, -1, -1, 27);
 	else
-		loadActorAnim2(_roomVar.tug2.shootingTarget, anim, -1, -1, 26);
+		loadActorAnim2(_roomVar.tug.shootingTarget, anim, -1, -1, 26);
 
-	showBitmapFor5Ticks(bitmapArray[_roomVar.tug2.shootingTarget], 5);
+	showBitmapFor5Ticks(bitmapArray[_roomVar.tug.shootingTarget], 5);
 	playSoundEffectIndex(SND_PHASSHOT);
 
-	if (_roomVar.tug2.shootingObject == OBJECT_GUARD_1)
+	if (_roomVar.tug.shootingObject == OBJECT_GUARD_1)
 		loadActorAnim2(OBJECT_GUARD_1, "p5fire", -1, -1, 0);
 	else
 		loadActorAnim2(OBJECT_GUARD_2, "p6fire", -1, -1, 0);
 
-	_vm->_awayMission.tug.crewmanKilled[_roomVar.tug2.shootingTarget] = _roomVar.tug2.elasiPhaserOnKill;
+	_vm->_awayMission.tug.crewmanKilled[_roomVar.tug.shootingTarget] = _roomVar.tug.elasiPhaserOnKill;
 
-	if (!_roomVar.tug2.elasiPhaserOnKill) {
+	if (!_roomVar.tug.elasiPhaserOnKill) {
 		// BUG: crew goes down for 120 frames, but they start to get up before the fight
 		// is over. Perhaps this number should be increased.
-		_vm->_awayMission.crewDirectionsAfterWalk[_roomVar.tug2.shootingTarget] = DIR_W;
-		_vm->_awayMission.crewGetupTimers[_roomVar.tug2.shootingTarget] = 120;
-		_vm->_awayMission.crewDownBitset |= (1 << _roomVar.tug2.shootingTarget);
+		_vm->_awayMission.crewDirectionsAfterWalk[_roomVar.tug.shootingTarget] = DIR_W;
+		_vm->_awayMission.crewGetupTimers[_roomVar.tug.shootingTarget] = 120;
+		_vm->_awayMission.crewDownBitset |= (1 << _roomVar.tug.shootingTarget);
 	}
-	if (_roomVar.tug2.elasiPhaserOnKill && _roomVar.tug2.shootingTarget == OBJECT_REDSHIRT)
+	if (_roomVar.tug.elasiPhaserOnKill && _roomVar.tug.shootingTarget == OBJECT_REDSHIRT)
 		_vm->_awayMission.redshirtDead = true;
 }
 
