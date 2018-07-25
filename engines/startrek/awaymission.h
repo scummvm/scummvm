@@ -24,6 +24,7 @@
 #define STARTREK_AWAYMISSION_H
 
 // All variables here get cleared to 0 upon starting an away mission.
+// NOTE: Any added or changed variables here must be mirrored in "saveload.cpp".
 struct AwayMission {
 	// These timers count down automatically when nonzero. When they reach 0,
 	// ACTION_TIMER_EXPIRED is invoked with the corresponding index (0-7).

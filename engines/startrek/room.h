@@ -2136,8 +2136,9 @@ public:
 	void trial5UseBlueGem3OnHole3();
 	void trial5UseMedkitAnywhere();
 
-private:
+public:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
+	// NOTE: Any changes here must be reflected in saveload.cpp.
 	union {
 		struct {
 			// demon0
@@ -2147,8 +2148,8 @@ private:
 			bool movingToBottomDoor; // 0xcd
 
 			// demon1
-			bool klingonShot[3]; // 0xca
-			int numKlingonsKilled;
+			byte klingonShot[3]; // 0xca
+			int16 numKlingonsKilled;
 			byte attackIndex;
 			bool kirkShooting;
 			char d6[10];
@@ -2263,7 +2264,7 @@ private:
 			// feather1
 			byte snakeInHole; // 0xca
 			bool scannedSnake; // 0xcb
-			bool crewEscaped[4]; // 0xcc
+			byte crewEscaped[4]; // 0xcc
 			byte crewmanClimbingVine;
 
 			// feather2
