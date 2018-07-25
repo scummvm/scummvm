@@ -29,6 +29,9 @@
 
 namespace StarTrek {
 
+// The type to use for text references (values of "GameStringIDs" enum).
+// NOTE: if this typedef is changed, certain lines in "saveload.cpp" would also need to be
+// changed. Better to leave this as-is.
 typedef int32 TextRef;
 
 // Text that's loaded from "GROUND.TXT". First 0x40 pieces of text are for items.
