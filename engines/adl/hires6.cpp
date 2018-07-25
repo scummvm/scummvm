@@ -94,73 +94,51 @@ void HiRes6Engine::gameLoop() {
 	}
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, int, HiRes6Engine> OpcodeH6;
-#define SetOpcodeTable(x) table = &x;
-#define Opcode(x) table->push_back(new OpcodeH6(this, &HiRes6Engine::x))
-#define OpcodeUnImpl() table->push_back(new OpcodeH6(this, 0))
-
 void HiRes6Engine::setupOpcodeTables() {
-	Common::Array<const Opcode *> *table = 0;
+	_condOpcodes.resize(0x0b);
+	_condOpcodes[0x01] = opcode(o2_isFirstTime);
+	_condOpcodes[0x02] = opcode(o2_isRandomGT);
+	_condOpcodes[0x03] = opcode(o4_isItemInRoom);
+	_condOpcodes[0x04] = opcode(o5_isNounNotInRoom);
+	_condOpcodes[0x05] = opcode(o1_isMovesGT);
+	_condOpcodes[0x06] = opcode(o1_isVarEQ);
+	_condOpcodes[0x07] = opcode(o2_isCarryingSomething);
+	_condOpcodes[0x08] = opcode(o4_isVarGT);
+	_condOpcodes[0x09] = opcode(o1_isCurPicEQ);
+	_condOpcodes[0x0a] = opcode(o5_abortScript);
 
-	SetOpcodeTable(_condOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o2_isFirstTime);
-	Opcode(o2_isRandomGT);
-	Opcode(o4_isItemInRoom);
-	// 0x04
-	Opcode(o5_isNounNotInRoom);
-	Opcode(o1_isMovesGT);
-	Opcode(o1_isVarEQ);
-	Opcode(o2_isCarryingSomething);
-	// 0x08
-	Opcode(o4_isVarGT);
-	Opcode(o1_isCurPicEQ);
-	Opcode(o5_abortScript);
-
-	SetOpcodeTable(_actOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o1_varAdd);
-	Opcode(o1_varSub);
-	Opcode(o1_varSet);
-	// 0x04
-	Opcode(o1_listInv);
-	Opcode(o4_moveItem);
-	Opcode(o1_setRoom);
-	Opcode(o2_setCurPic);
-	// 0x08
-	Opcode(o2_setPic);
-	Opcode(o1_printMsg);
-	Opcode(o5_dummy);
-	Opcode(o5_setTextMode);
-	// 0x0c
-	Opcode(o4_moveAllItems);
-	Opcode(o1_quit);
-	Opcode(o5_dummy);
-	Opcode(o4_save);
-	// 0x10
-	Opcode(o4_restore);
-	Opcode(o1_restart);
-	Opcode(o5_setRegionRoom);
-	Opcode(o5_dummy);
-	// 0x14
-	Opcode(o1_resetPic);
-	Opcode(o_goDirection<IDI_DIR_NORTH>);
-	Opcode(o_goDirection<IDI_DIR_SOUTH>);
-	Opcode(o_goDirection<IDI_DIR_EAST>);
-	// 0x18
-	Opcode(o_goDirection<IDI_DIR_WEST>);
-	Opcode(o_goDirection<IDI_DIR_UP>);
-	Opcode(o_goDirection<IDI_DIR_DOWN>);
-	Opcode(o1_takeItem);
-	// 0x1c
-	Opcode(o1_dropItem);
-	Opcode(o5_setRoomPic);
-	Opcode(o_fluteSound);
-	OpcodeUnImpl();
-	// 0x20
-	Opcode(o2_initDisk);
+	_actOpcodes.resize(0x21);
+	_actOpcodes[0x01] = opcode(o1_varAdd);
+	_actOpcodes[0x02] = opcode(o1_varSub);
+	_actOpcodes[0x03] = opcode(o1_varSet);
+	_actOpcodes[0x04] = opcode(o1_listInv);
+	_actOpcodes[0x05] = opcode(o4_moveItem);
+	_actOpcodes[0x06] = opcode(o1_setRoom);
+	_actOpcodes[0x07] = opcode(o2_setCurPic);
+	_actOpcodes[0x08] = opcode(o2_setPic);
+	_actOpcodes[0x09] = opcode(o1_printMsg);
+	_actOpcodes[0x0a] = opcode(o5_dummy);
+	_actOpcodes[0x0b] = opcode(o5_setTextMode);
+	_actOpcodes[0x0c] = opcode(o4_moveAllItems);
+	_actOpcodes[0x0d] = opcode(o1_quit);
+	_actOpcodes[0x0e] = opcode(o5_dummy);
+	_actOpcodes[0x0f] = opcode(o4_save);
+	_actOpcodes[0x10] = opcode(o4_restore);
+	_actOpcodes[0x11] = opcode(o1_restart);
+	_actOpcodes[0x12] = opcode(o5_setRegionRoom);
+	_actOpcodes[0x13] = opcode(o5_dummy);
+	_actOpcodes[0x14] = opcode(o1_resetPic);
+	_actOpcodes[0x15] = opcode(o_goDirection<IDI_DIR_NORTH>);
+	_actOpcodes[0x16] = opcode(o_goDirection<IDI_DIR_SOUTH>);
+	_actOpcodes[0x17] = opcode(o_goDirection<IDI_DIR_EAST>);
+	_actOpcodes[0x18] = opcode(o_goDirection<IDI_DIR_WEST>);
+	_actOpcodes[0x19] = opcode(o_goDirection<IDI_DIR_UP>);
+	_actOpcodes[0x1a] = opcode(o_goDirection<IDI_DIR_DOWN>);
+	_actOpcodes[0x1b] = opcode(o1_takeItem);
+	_actOpcodes[0x1c] = opcode(o1_dropItem);
+	_actOpcodes[0x1d] = opcode(o5_setRoomPic);
+	_actOpcodes[0x1e] = opcode(o_fluteSound);
+	_actOpcodes[0x20] = opcode(o2_initDisk);
 }
 
 template <Direction D>

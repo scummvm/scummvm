@@ -56,12 +56,10 @@ void AdlEngine_v3::loadItemDescriptions(Common::SeekableReadStream &stream, byte
 		error("Error loading item descriptions");
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v3> OpcodeV3;
-
 void AdlEngine_v3::setupOpcodeTables() {
 	AdlEngine_v2::setupOpcodeTables();
 	delete _condOpcodes[0x04];
-	_condOpcodes[0x04] = new OpcodeV3(this, &AdlEngine_v3::o3_isNounNotInRoom);
+	_condOpcodes[0x04] = opcode(o3_isNounNotInRoom);
 }
 
 int AdlEngine_v3::o3_isNounNotInRoom(ScriptEnv &e) {

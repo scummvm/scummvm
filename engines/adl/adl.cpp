@@ -415,69 +415,42 @@ bool AdlEngine::isInputValid(const Commands &commands, byte verb, byte noun, boo
 	return false;
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine> OpcodeV1;
-#define SetOpcodeTable(x) table = &x;
-#define Opcode(x) table->push_back(new OpcodeV1(this, &AdlEngine::x))
-#define OpcodeUnImpl() table->push_back(new OpcodeV1(this, 0))
-
 void AdlEngine::setupOpcodeTables() {
-	Common::Array<const Opcode *> *table = 0;
+	_condOpcodes.resize(0x0b);
+	_condOpcodes[0x03] = opcode(o1_isItemInRoom);
+	_condOpcodes[0x05] = opcode(o1_isMovesGT);
+	_condOpcodes[0x06] = opcode(o1_isVarEQ);
+	_condOpcodes[0x09] = opcode(o1_isCurPicEQ);
+	_condOpcodes[0x0a] = opcode(o1_isItemPicEQ);
 
-	SetOpcodeTable(_condOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
-	Opcode(o1_isItemInRoom);
-	// 0x04
-	OpcodeUnImpl();
-	Opcode(o1_isMovesGT);
-	Opcode(o1_isVarEQ);
-	OpcodeUnImpl();
-	// 0x08
-	OpcodeUnImpl();
-	Opcode(o1_isCurPicEQ);
-	Opcode(o1_isItemPicEQ);
-
-	SetOpcodeTable(_actOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o1_varAdd);
-	Opcode(o1_varSub);
-	Opcode(o1_varSet);
-	// 0x04
-	Opcode(o1_listInv);
-	Opcode(o1_moveItem);
-	Opcode(o1_setRoom);
-	Opcode(o1_setCurPic);
-	// 0x08
-	Opcode(o1_setPic);
-	Opcode(o1_printMsg);
-	Opcode(o1_setLight);
-	Opcode(o1_setDark);
-	// 0x0c
-	OpcodeUnImpl();
-	Opcode(o1_quit);
-	OpcodeUnImpl();
-	Opcode(o1_save);
-	// 0x10
-	Opcode(o1_restore);
-	Opcode(o1_restart);
-	Opcode(o1_placeItem);
-	Opcode(o1_setItemPic);
-	// 0x14
-	Opcode(o1_resetPic);
-	Opcode(o1_goDirection<IDI_DIR_NORTH>);
-	Opcode(o1_goDirection<IDI_DIR_SOUTH>);
-	Opcode(o1_goDirection<IDI_DIR_EAST>);
-	// 0x18
-	Opcode(o1_goDirection<IDI_DIR_WEST>);
-	Opcode(o1_goDirection<IDI_DIR_UP>);
-	Opcode(o1_goDirection<IDI_DIR_DOWN>);
-	Opcode(o1_takeItem);
-	// 0x1c
-	Opcode(o1_dropItem);
-	Opcode(o1_setRoomPic);
+	_actOpcodes.resize(0x1e);
+	_actOpcodes[0x01] = opcode(o1_varAdd);
+	_actOpcodes[0x02] = opcode(o1_varSub);
+	_actOpcodes[0x03] = opcode(o1_varSet);
+	_actOpcodes[0x04] = opcode(o1_listInv);
+	_actOpcodes[0x05] = opcode(o1_moveItem);
+	_actOpcodes[0x06] = opcode(o1_setRoom);
+	_actOpcodes[0x07] = opcode(o1_setCurPic);
+	_actOpcodes[0x08] = opcode(o1_setPic);
+	_actOpcodes[0x09] = opcode(o1_printMsg);
+	_actOpcodes[0x0a] = opcode(o1_setLight);
+	_actOpcodes[0x0b] = opcode(o1_setDark);
+	_actOpcodes[0x0d] = opcode(o1_quit);
+	_actOpcodes[0x0f] = opcode(o1_save);
+	_actOpcodes[0x10] = opcode(o1_restore);
+	_actOpcodes[0x11] = opcode(o1_restart);
+	_actOpcodes[0x12] = opcode(o1_placeItem);
+	_actOpcodes[0x13] = opcode(o1_setItemPic);
+	_actOpcodes[0x14] = opcode(o1_resetPic);
+	_actOpcodes[0x15] = opcode(o1_goDirection<IDI_DIR_NORTH>);
+	_actOpcodes[0x16] = opcode(o1_goDirection<IDI_DIR_SOUTH>);
+	_actOpcodes[0x17] = opcode(o1_goDirection<IDI_DIR_EAST>);
+	_actOpcodes[0x18] = opcode(o1_goDirection<IDI_DIR_WEST>);
+	_actOpcodes[0x19] = opcode(o1_goDirection<IDI_DIR_UP>);
+	_actOpcodes[0x1a] = opcode(o1_goDirection<IDI_DIR_DOWN>);
+	_actOpcodes[0x1b] = opcode(o1_takeItem);
+	_actOpcodes[0x1c] = opcode(o1_dropItem);
+	_actOpcodes[0x1d] = opcode(o1_setRoomPic);
 }
 
 void AdlEngine::initState() {

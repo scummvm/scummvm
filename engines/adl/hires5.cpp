@@ -134,73 +134,50 @@ void HiRes5Engine::animateLights() const {
 	}
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, int, HiRes5Engine> OpcodeH5;
-#define SetOpcodeTable(x) table = &x;
-#define Opcode(x) table->push_back(new OpcodeH5(this, &HiRes5Engine::x))
-#define OpcodeUnImpl() table->push_back(new OpcodeH5(this, 0))
-
 void HiRes5Engine::setupOpcodeTables() {
-	Common::Array<const Opcode *> *table = 0;
+	_condOpcodes.resize(0x0a);
+	_condOpcodes[0x01] = opcode(o2_isFirstTime);
+	_condOpcodes[0x02] = opcode(o2_isRandomGT);
+	_condOpcodes[0x03] = opcode(o4_isItemInRoom);
+	_condOpcodes[0x04] = opcode(o3_isNounNotInRoom);
+	_condOpcodes[0x05] = opcode(o1_isMovesGT);
+	_condOpcodes[0x06] = opcode(o1_isVarEQ);
+	_condOpcodes[0x07] = opcode(o2_isCarryingSomething);
+	_condOpcodes[0x08] = opcode(o4_isVarGT);
+	_condOpcodes[0x09] = opcode(o1_isCurPicEQ);
 
-	SetOpcodeTable(_condOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o2_isFirstTime);
-	Opcode(o2_isRandomGT);
-	Opcode(o4_isItemInRoom);
-	// 0x04
-	Opcode(o3_isNounNotInRoom);
-	Opcode(o1_isMovesGT);
-	Opcode(o1_isVarEQ);
-	Opcode(o2_isCarryingSomething);
-	// 0x08
-	Opcode(o4_isVarGT);
-	Opcode(o1_isCurPicEQ);
-	OpcodeUnImpl();
-
-	SetOpcodeTable(_actOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o1_varAdd);
-	Opcode(o1_varSub);
-	Opcode(o1_varSet);
-	// 0x04
-	Opcode(o1_listInv);
-	Opcode(o4_moveItem);
-	Opcode(o1_setRoom);
-	Opcode(o2_setCurPic);
-	// 0x08
-	Opcode(o2_setPic);
-	Opcode(o1_printMsg);
-	Opcode(o4_setRegionToPrev);
-	Opcode(o_checkItemTimeLimits);
-	// 0x0c
-	Opcode(o4_moveAllItems);
-	Opcode(o1_quit);
-	Opcode(o4_setRegion);
-	Opcode(o4_save);
-	// 0x10
-	Opcode(o4_restore);
-	Opcode(o4_restart);
-	Opcode(o4_setRegionRoom);
-	Opcode(o_startAnimation);
-	// 0x14
-	Opcode(o1_resetPic);
-	Opcode(o1_goDirection<IDI_DIR_NORTH>);
-	Opcode(o1_goDirection<IDI_DIR_SOUTH>);
-	Opcode(o1_goDirection<IDI_DIR_EAST>);
-	// 0x18
-	Opcode(o1_goDirection<IDI_DIR_WEST>);
-	Opcode(o1_goDirection<IDI_DIR_UP>);
-	Opcode(o1_goDirection<IDI_DIR_DOWN>);
-	Opcode(o1_takeItem);
-	// 0x1c
-	Opcode(o1_dropItem);
-	Opcode(o4_setRoomPic);
-	Opcode(o_winGame);
-	OpcodeUnImpl();
-	// 0x20
-	Opcode(o2_initDisk);
+	_actOpcodes.resize(0x21);
+	_actOpcodes[0x01] = opcode(o1_varAdd);
+	_actOpcodes[0x02] = opcode(o1_varSub);
+	_actOpcodes[0x03] = opcode(o1_varSet);
+	_actOpcodes[0x04] = opcode(o1_listInv);
+	_actOpcodes[0x05] = opcode(o4_moveItem);
+	_actOpcodes[0x06] = opcode(o1_setRoom);
+	_actOpcodes[0x07] = opcode(o2_setCurPic);
+	_actOpcodes[0x08] = opcode(o2_setPic);
+	_actOpcodes[0x09] = opcode(o1_printMsg);
+	_actOpcodes[0x0a] = opcode(o4_setRegionToPrev);
+	_actOpcodes[0x0b] = opcode(o_checkItemTimeLimits);
+	_actOpcodes[0x0c] = opcode(o4_moveAllItems);
+	_actOpcodes[0x0d] = opcode(o1_quit);
+	_actOpcodes[0x0e] = opcode(o4_setRegion);
+	_actOpcodes[0x0f] = opcode(o4_save);
+	_actOpcodes[0x10] = opcode(o4_restore);
+	_actOpcodes[0x11] = opcode(o4_restart);
+	_actOpcodes[0x12] = opcode(o4_setRegionRoom);
+	_actOpcodes[0x13] = opcode(o_startAnimation);
+	_actOpcodes[0x14] = opcode(o1_resetPic);
+	_actOpcodes[0x15] = opcode(o1_goDirection<IDI_DIR_NORTH>);
+	_actOpcodes[0x16] = opcode(o1_goDirection<IDI_DIR_SOUTH>);
+	_actOpcodes[0x17] = opcode(o1_goDirection<IDI_DIR_EAST>);
+	_actOpcodes[0x18] = opcode(o1_goDirection<IDI_DIR_WEST>);
+	_actOpcodes[0x19] = opcode(o1_goDirection<IDI_DIR_UP>);
+	_actOpcodes[0x1a] = opcode(o1_goDirection<IDI_DIR_DOWN>);
+	_actOpcodes[0x1b] = opcode(o1_takeItem);
+	_actOpcodes[0x1c] = opcode(o1_dropItem);
+	_actOpcodes[0x1d] = opcode(o4_setRoomPic);
+	_actOpcodes[0x1e] = opcode(o_winGame);
+	_actOpcodes[0x20] = opcode(o2_initDisk);
 }
 
 bool HiRes5Engine::isInventoryFull() {
