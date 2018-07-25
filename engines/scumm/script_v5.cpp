@@ -776,7 +776,6 @@ void ScummEngine_v5::o5_divide() {
 	a = getVarOrDirectWord(PARAM_1);
 	if (a == 0) {
 		error("Divide by zero");
-		setResult(0);
 	} else
 		setResult(readVar(_resultVarNumber) / a);
 }
