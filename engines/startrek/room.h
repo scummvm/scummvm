@@ -2197,11 +2197,12 @@ private:
 		} demon;
 
 		struct {
+			// tug2
 			byte shootingObject; // 0x1ec1
 			byte shootingTarget;
 			bool elasiPhaserOnKill;
 			byte shootKirkOverride; // 0x1ec4
-		} tug2;
+		} tug;
 
 		struct {
 			// love0
