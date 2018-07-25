@@ -227,6 +227,7 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 		break;
 	case 1: // Load
 		showLoadMenu();
+		_resetGameMode = true;
 		break;
 	case 2: // Enable music
 		_sound->setMusicEnabled(true);
@@ -955,15 +956,17 @@ void StarTrekEngine::showGameOverMenu() {
 		case 0: // Load game
 			_gfx->fadeoutScreen();
 			showLoadMenu(); // TODO: this probably manipulates the stack to jump out of this function...
-			break;
+			_resetGameMode = true;
+			return;
 		case 1: // Restart
 			_gfx->fadeoutScreen();
 			// TODO
-			break;
+			_resetGameMode = true;
+			return;
 		case 2: // Quit
 			_gfx->fadeoutScreen();
 			_system->quit();
-			break;
+			return;
 		default:
 			break;
 		}

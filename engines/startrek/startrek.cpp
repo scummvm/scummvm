@@ -135,13 +135,17 @@ Common::Error StarTrekEngine::runGameMode(int mode) {
 	_gameMode = mode;
 
 	_sound->stopAllVocSounds();
-	if (!_sound->_loopingAudioName.empty())
-		_sound->playVoc(_sound->_loopingAudioName);
 
+	_resetGameMode = true;
 	if (_gameMode == GAMEMODE_START)
 		_gameMode = GAMEMODE_BRIDGE;
 
 	while (true) {
+		if (_resetGameMode) {
+			if (!_sound->_loopingAudioName.empty())
+				_sound->playVoc(_sound->_loopingAudioName);
+			_resetGameMode = false;
+		}
 		TrekEvent event;
 
 		if (_gameMode != _lastGameMode) {

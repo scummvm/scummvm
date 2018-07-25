@@ -628,6 +628,7 @@ public:
 public:
 	int _gameMode;
 	int _lastGameMode;
+	bool _resetGameMode;
 
 	// NOTE: this has a different meaning than the original game. When non-empty, a new
 	// room load is triggered, as opposed to original behaviour where this was only read
