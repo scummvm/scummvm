@@ -1790,6 +1790,11 @@ extern const int        trial0NumActions,   trial1NumActions,   trial2NumActions
 extern const RoomAction trial4ActionList[], trial5ActionList[];
 extern const int        trial4NumActions,   trial5NumActions;
 
+extern const RoomAction sins0ActionList[], sins1ActionList[], sins2ActionList[], sins3ActionList[];
+extern const int        sins0NumActions,   sins1NumActions,   sins2NumActions,   sins3NumActions;
+extern const RoomAction sins4ActionList[], sins5ActionList[];
+extern const int        sins4NumActions,   sins5NumActions;
+
 }
 
 #endif

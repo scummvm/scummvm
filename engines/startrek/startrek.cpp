@@ -90,7 +90,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_missionToLoad = "DEMON";
 	_roomIndexToLoad = 0;
 
-	_showSubtitles = true; // TODO: test
+	_showSubtitles = true;
 	Common::fill(_r3List, _r3List + NUM_SPACE_OBJECTS, (R3 *)nullptr);
 	Common::fill(_orderedR3List, _orderedR3List + NUM_SPACE_OBJECTS, (R3 *)nullptr);
 
@@ -901,10 +901,6 @@ void StarTrekEngine::renderBanAboveSprites() {
 			byte *src = (byte *)surface.getPixels() + offset;
 			byte *dest = destPixels + offset;
 
-			/*
-			_banFiles[i]->seek(_banFileOffsets[i], SEEK_SET);
-			renderBan(destPixels, _banFiles[i]);
-			*/
 			// This is similar to renderBan(), except it copies pixels from the surface
 			// above instead of drawing directly to it. (Important since sprites may be
 			// drawn on top.)

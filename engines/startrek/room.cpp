@@ -93,6 +93,12 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
 	ADD_ROOM(trial3);
 	ADD_ROOM(trial4);
 	ADD_ROOM(trial5);
+	ADD_ROOM(sins0);
+	ADD_ROOM(sins1);
+	ADD_ROOM(sins2);
+	ADD_ROOM(sins3);
+	ADD_ROOM(sins4);
+	ADD_ROOM(sins5);
 
 	if (_roomActionList == nullptr) {
 		warning("Room \"%s\" unimplemented", name.c_str());
@@ -457,6 +463,10 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 		_vm->_missionToLoad = "FEATHER";
 	if (_vm->_missionName == "FEATHER")
 		_vm->_missionToLoad = "TRIAL";
+	if (_vm->_missionName == "TRIAL")
+		_vm->_missionToLoad = "SINS";
+	if (_vm->_missionName == "SINS")
+		_vm->_missionToLoad = "VENG";
 	_vm->_roomIndexToLoad = 0;
 }
 

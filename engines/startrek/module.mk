@@ -60,6 +60,12 @@ MODULE_OBJS = \
 	rooms/trial3.o \
 	rooms/trial4.o \
 	rooms/trial5.o \
+	rooms/sins0.o \
+	rooms/sins1.o \
+	rooms/sins2.o \
+	rooms/sins3.o \
+	rooms/sins4.o \
+	rooms/sins5.o \
 	
 
 
