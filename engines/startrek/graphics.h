@@ -105,13 +105,21 @@ public:
 
 	void drawTextChar(::Graphics::Surface *surface, const Sprite &sprite, int x, int y, const Common::Rect &rect);
 	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface);
-	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect);
+	/**
+	 * @param sprite The sprite to draw
+	 * @param surface The surface to draw to
+	 * @param rect The part of the sprite to draw (only draw the part of the sprite that
+	 *             intersects with it)
+	 @ @param rectLeft X-offset to subtract before drawing to surface.
+	 @ @param rectTop  Y-offset to subtract before drawing to surface.
+	 */
+	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect, int rectLeft = 0, int rectTop = 0);
 	void drawAllSprites(bool updateScreen = true);
 	/**
 	 * This function should only be called after "drawAllSprites" (so that sprite rects
 	 * are updated).
 	 */
-	void drawAllSpritesInRect(const Common::Rect &rect);
+	void drawAllSpritesInRectToSurface(const Common::Rect &rect, ::Graphics::Surface *surface);
 	/**
 	 * Sets "bitmapChanged" to true on all sprites before calling drawAllSprites.
 	 */

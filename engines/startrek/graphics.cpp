@@ -304,14 +304,14 @@ void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface) {
 
 // rect is the portion of the sprite to update. It must be entirely contained within the
 // sprite's actual, full rectangle.
-void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect) {
+void Graphics::drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect, int rectLeft, int rectTop) {
 	Common::Rect spriteRect = Common::Rect(sprite.drawX, sprite.drawY,
 	        sprite.drawX + sprite.bitmap->width, sprite.drawY + sprite.bitmap->height);
 
 	assert(_screenRect.contains(rect));
 	assert(spriteRect.contains(rect));
 
-	byte *dest = (byte *)surface->getPixels() + rect.top * SCREEN_WIDTH + rect.left;
+	byte *dest = (byte *)surface->getPixels() + (rect.top - rectTop) * SCREEN_WIDTH + (rect.left - rectLeft);
 
 	switch (sprite.drawMode) {
 	case 0: { // Normal sprite
@@ -583,8 +583,9 @@ void Graphics::drawAllSprites(bool updateScreen) {
 		this->updateScreen();
 }
 
-void Graphics::drawAllSpritesInRect(const Common::Rect &rect) {
-	::Graphics::Surface *surface = _vm->_system->lockScreen();
+void Graphics::drawAllSpritesInRectToSurface(const Common::Rect &rect, ::Graphics::Surface *surface) {
+	surface->copyFrom(*_vm->_system->lockScreen());
+	_vm->_system->unlockScreen();
 
 	for (int i = 0; i < _numSprites; i++) {
 		Sprite *sprite = _sprites[i];
@@ -595,8 +596,6 @@ void Graphics::drawAllSpritesInRect(const Common::Rect &rect) {
 		if (!intersect.isEmpty())
 			drawSprite(*sprite, surface, intersect);
 	}
-
-	_vm->_system->unlockScreen();
 }
 
 void Graphics::forceDrawAllSprites(bool updateScreen) {
