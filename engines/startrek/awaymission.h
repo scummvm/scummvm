@@ -24,7 +24,7 @@
 #define STARTREK_AWAYMISSION_H
 
 // All variables here get cleared to 0 upon starting an away mission.
-// NOTE: Any added or changed variables here must be mirrored in "saveload.cpp".
+// NOTE: Any changes here must be reflected in the corresponding serializer functions.
 struct AwayMission {
 	// These timers count down automatically when nonzero. When they reach 0,
 	// ACTION_TIMER_EXPIRED is invoked with the corresponding index (0-7).
@@ -99,6 +99,48 @@ struct AwayMission {
 			byte field56; // 0x56
 			bool foundAlienRoom; // 0x57
 			int16 missionScore; // 0x58
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				ser.syncAsByte(wasRudeToPrelate);
+				ser.syncAsByte(insultedStephen);
+				ser.syncAsByte(field2d);
+				ser.syncAsByte(beatKlingons);
+				ser.syncAsByte(tookKlingonHand);
+				ser.syncAsByte(talkedToPrelate);
+				ser.syncAsByte(stephenWelcomedToStudy);
+				ser.syncAsByte(prelateWelcomedCrew);
+				ser.syncAsByte(askedPrelateAboutSightings);
+				ser.syncAsByte(field37);
+				ser.syncAsByte(mccoyMentionedFlora);
+				ser.syncAsByte(numBouldersGone);
+				ser.syncAsByte(enteredFrom);
+				ser.syncAsByte(repairedHand);
+				ser.syncAsByte(healedMiner);
+				ser.syncAsByte(curedChub);
+				ser.syncAsByte(field3e);
+				ser.syncAsByte(knowAboutHypoDytoxin);
+				ser.syncAsByte(minerDead);
+				ser.syncAsByte(field41);
+				ser.syncAsByte(foundMiner);
+				ser.syncAsByte(field45);
+				ser.syncAsByte(gaveSkullToNauian);
+				ser.syncAsByte(warpsDisabled);
+				ser.syncAsByte(boulder1Gone);
+				ser.syncAsByte(boulder2Gone);
+				ser.syncAsByte(boulder3Gone);
+				ser.syncAsByte(boulder4Gone);
+				ser.syncAsByte(doorOpened);
+				ser.syncAsByte(solvedSunPuzzle);
+				ser.syncAsByte(itemsTakenFromCase);
+				ser.syncAsByte(gotBerries);
+				ser.syncAsByte(madeHypoDytoxin);
+				ser.syncAsByte(metNauian);
+				ser.syncAsByte(gavePointsForDytoxin);
+				ser.syncAsByte(lookedAtComputer);
+				ser.syncAsByte(field56);
+				ser.syncAsByte(foundAlienRoom);
+				ser.syncAsSint16LE(missionScore);
+			}
 		} demon;
 
 		// Hijacked
@@ -142,6 +184,43 @@ struct AwayMission {
 			byte bridgeWinMethod; // 0x5e
 
 			bool talkedToBrigCrewman; // 0x5f
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				ser.syncAsSint16LE(missionScore);
+				ser.syncAsSint16LE(field2b);
+				ser.syncAsSint16LE(field2d);
+				ser.syncAsByte(engineerConscious);
+				ser.syncAsByte(field35);
+				ser.syncAsByte(gotWires);
+				ser.syncAsByte(orbitalDecayCounter);
+				ser.syncAsByte(bridgeElasiDrewPhasers);
+				ser.syncAsByte(talkedToCereth);
+				ser.syncAsByte(gotJunkPile);
+				ser.syncAsByte(gotTransmogrifier);
+				ser.syncAsByte(transporterRepaired);
+				ser.syncAsByte(spockExaminedTransporter);
+				ser.syncAsByte(usedTransmogrifierOnTransporter);
+				ser.syncAsByte(bridgeForceFieldDown);
+				ser.syncAsByte(savedPrisoners);
+				ser.syncAsByte(haveBomb);
+				ser.syncAsByte(brigElasiPhasersOnKill);
+				ser.syncAsByte(elasiTargetIndex);
+				ser.syncAsByte(guard1Status);
+				ser.syncAsByte(guard2Status);
+				ser.syncAsByte(field4e);
+				ser.syncBytes(crewmanKilled, 4);
+				ser.syncAsByte(bridgeElasi1Status);
+				ser.syncAsByte(bridgeElasi2Status);
+				ser.syncAsByte(bridgeElasi3Status);
+				ser.syncAsByte(bridgeElasi4Status);
+				ser.syncAsByte(brigForceFieldDown);
+				ser.syncAsByte(field59);
+				ser.syncAsByte(field5b);
+				ser.syncAsByte(elasiSurrendered);
+				ser.syncAsByte(kirkPhaserDrawn);
+				ser.syncAsByte(bridgeWinMethod);
+				ser.syncAsByte(talkedToBrigCrewman);
+			}
 		} tug;
 
 		// Love's Labor Jeopardized
@@ -187,6 +266,50 @@ struct AwayMission {
 			bool gotPointsForHydratingPreax; // 0x50
 			bool gotPointsForHydratingRomulans; // 0x51
 			int16 missionScore; // 0x52
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				ser.syncAsByte(alreadyStartedMission);
+				ser.syncAsByte(knowAboutVirus);
+				ser.syncAsByte(romulansUnconsciousFromLaughingGas);
+				ser.syncAsByte(releasedHumanLaughingGas);
+				ser.syncAsByte(releasedRomulanLaughingGas);
+				ser.syncAsByte(chamberHasCure);
+				ser.syncAsByte(freezerOpen);
+				ser.syncAsByte(chamberHasDish);
+				ser.syncAsByte(bottleInNozzle);
+				ser.syncAsByte(cabinetOpen);
+				ser.syncAsByte(gasFeedOn);
+				ser.syncAsByte(synthesizerBottleIndex);
+				ser.syncAsByte(synthesizerContents);
+				ser.syncAsByte(canister1);
+				ser.syncAsByte(canister2);
+				ser.syncAsByte(servicePanelOpen);
+				ser.syncAsByte(gasTankUnscrewed);
+				ser.syncAsByte(wrenchTaken);
+				ser.syncAsByte(tookN2TankFromServicePanel);
+				ser.syncAsByte(field3c);
+				ser.syncAsByte(grateRemoved);
+				ser.syncAsByte(insulationOnGround);
+				ser.syncAsByte(visitedRoomWithRomulans);
+				ser.syncAsByte(romulansCured);
+				ser.syncAsByte(romulansUnconsciousFromVirus);
+				ser.syncAsByte(freedMarcusAndCheever);
+				ser.syncAsByte(preaxCured);
+				ser.syncAsByte(spockInfectionCounter);
+				ser.syncAsByte(spockCured);
+				ser.syncAsByte(contactedEnterpriseBeforeCure);
+				ser.syncAsByte(contactedEnterpriseAfterCure);
+				ser.syncAsByte(spockAccessedConsole);
+				ser.syncAsByte(mccoyAccessedConsole);
+				ser.syncAsByte(gotPolyberylcarbonate);
+				ser.syncAsByte(gotTLDH);
+				ser.syncAsByte(gotPointsForOpeningGrate);
+				ser.syncAsByte(gotPointsForGassingRomulans);
+				ser.syncAsByte(gotCure);
+				ser.syncAsByte(gotPointsForHydratingPreax);
+				ser.syncAsByte(gotPointsForHydratingRomulans);
+				ser.syncAsSint16LE(missionScore);
+			}
 		} love;
 
 		struct {
@@ -241,6 +364,46 @@ struct AwayMission {
 			bool enteredRoom1ForFirstTime; // 0x58
 			bool repairedLifeSupportGenerator; // 0x59
 			int16 missionScore; // 0x5a
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				ser.syncAsByte(muddFirstRoomState);
+				ser.syncAsByte(torpedoLoaded);
+				ser.syncAsByte(knowAboutTorpedo);
+				ser.syncAsByte(discoveredBase3System);
+				ser.syncAsByte(translatedAlienLanguage);
+				ser.syncAsByte(databaseDestroyed);
+				ser.syncAsByte(muddInDatabaseRoom);
+				ser.syncAsByte(muddCurrentlyInsane);
+				ser.syncAsByte(computerDataErasedOrDestroyed);
+				ser.syncAsByte(muddErasedDatabase);
+				ser.syncAsByte(discoveredLenseAndDegrimerFunction);
+				ser.syncAsSint16LE(torpedoStatus);
+				ser.syncAsByte(muddUnavailable);
+				ser.syncAsByte(muddVisitedDatabaseRoom);
+				ser.syncAsByte(accessedAlienDatabase);
+				ser.syncAsByte(tookRepairTool);
+				ser.syncAsByte(gotPointsForDownloadingData);
+				ser.syncAsByte(contactedEnterpriseFirstTime);
+				ser.syncAsByte(viewScreenEnabled);
+				ser.syncAsByte(lifeSupportMalfunctioning);
+				ser.syncAsByte(numTimesEnteredRoom5);
+				ser.syncAsByte(gotMemoryDisk);
+				ser.syncAsByte(gotLense);
+				ser.syncAsByte(gotDegrimer);
+				ser.syncAsByte(putCapsuleInMedicalMachine);
+				ser.syncAsByte(muddUnconscious);
+				ser.syncAsByte(muddInsanityState);
+				ser.syncAsByte(muddInhaledGas);
+				ser.syncAsSint16LE(lifeSupportTimer);
+				ser.syncAsByte(startedLifeSupportTimer);
+				ser.syncAsByte(enteredRoom0ForFirstTime);
+				ser.syncAsByte(gotPointsForLoadingTorpedo);
+				ser.syncAsByte(gotPointsForPressingRedButton);
+				ser.syncAsByte(gotPointsForEnablingViewscreen);
+				ser.syncAsByte(enteredRoom1ForFirstTime);
+				ser.syncAsByte(repairedLifeSupportGenerator);
+				ser.syncAsSint16LE(missionScore);
+			}
 		} mudd;
 
 		struct {
@@ -262,6 +425,23 @@ struct AwayMission {
 			bool waterMonsterRetreated; // 0x34
 			bool showedSnakeToTlaoxac; // 0x35
 			int16 missionScore; // 0x36
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				ser.syncAsByte(diedFromStalactites);
+				ser.syncAsByte(vineState);
+				ser.syncAsByte(gotRock);
+				ser.syncAsByte(gotSnake);
+				ser.syncAsByte(tookKnife);
+				ser.syncAsByte(field2e);
+				ser.syncAsByte(numRocksThrownAtTlaoxac);
+				ser.syncAsByte(gotFern);
+				ser.syncAsByte(holeBlocked);
+				ser.syncAsByte(tlaoxacTestPassed);
+				ser.syncAsByte(knockedOutTlaoxac);
+				ser.syncAsByte(waterMonsterRetreated);
+				ser.syncAsByte(showedSnakeToTlaoxac);
+				ser.syncAsSint16LE(missionScore);
+			}
 		} feather;
 
 		struct {
@@ -309,6 +489,34 @@ struct AwayMission {
 			bool gotPointsForScanningGlob; // 0x64
 
 			bool gotPointsForBeamingOut;
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				ser.syncAsSint16LE(missionScore);
+				ser.syncAsSint16LE(field2b);
+				ser.syncAsByte(entityDefeated);
+				ser.syncAsByte(doorOpen);
+				ser.syncAsByte(scannedLock);
+				ser.syncAsByte(doorCodeBehaviour);
+				ser.syncAsByte(globSplitInTwo);
+				ser.syncAsByte(globDefeated);
+				ser.syncBytes(globEnergyLevels, 3);
+				ser.syncAsByte(enteredTrial3FirstTime);
+				ser.syncAsByte(klingonShootIndex);
+				ser.syncAsByte(shotKlingons);
+				ser.syncAsSint16LE(shotKlingonState);
+				ser.syncAsByte(neuralInterfaceActive);
+				for (int i = 0; i < 3; i++)
+					ser.syncAsSint16LE(holeContents[i]);
+				ser.syncAsByte(enteredGlobRoom);
+				ser.syncAsByte(forceFieldDown);
+				ser.syncAsByte(uhuraAnalyzedCode);
+				ser.syncAsSint16LE(missionEndMethod);
+				ser.syncAsByte(gotPointsForGettingRod);
+				ser.syncAsByte(gotPointsForCoatingRodWithIron);
+				ser.syncAsByte(gotPointsForActivatingInterface);
+				ser.syncAsByte(gotPointsForScanningGlob);
+				ser.syncAsByte(gotPointsForBeamingOut);
+			}
 		} trial;
 	};
 };
