@@ -184,14 +184,15 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 	ser.syncAsUint16LE(_gameMode);
 	// TODO: sub_1d8eb (save) / sub_1d958 (load) (probably bridge / space combat state)
 
-	ser.syncString(_sound->_loadedMidiFilename);
+	Common::String midiFilename = _sound->_loadedMidiFilename;
+	ser.syncString(midiFilename);
 	ser.syncAsSint16LE(_sound->_loopingMidiTrack);
 
 	if (ser.isLoading()) {
-		if (_sound->_loadedMidiFilename.empty())
+		if (midiFilename.empty())
 			_sound->clearAllMidiSlots();
 		else {
-			_sound->loadMusicFile(_sound->_loadedMidiFilename);
+			_sound->loadMusicFile(midiFilename);
 			_sound->playMidiMusicTracks(_sound->_loopingMidiTrack, _sound->_loopingMidiTrack);
 		}
 	}
