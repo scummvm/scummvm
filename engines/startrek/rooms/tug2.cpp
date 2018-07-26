@@ -624,9 +624,9 @@ void Room::tug2Timer0Expired() {
 	if (_vm->_awayMission.tug.brigElasiPhasersOnKill)
 		_roomVar.tug.elasiPhaserOnKill = 1;
 
-	switch (_vm->_awayMission.tug.field4b) {
+	switch (_vm->_awayMission.tug.elasiTargetIndex) {
 	case 0:
-		_vm->_awayMission.tug.field4b++;
+		_vm->_awayMission.tug.elasiTargetIndex++;
 		if (_vm->_awayMission.tug.guard2Status != GUARDSTAT_UP) {
 			// BUGFIX: reset the timer to allow guard 1 to continue if guard 2 is down
 			_vm->_awayMission.timers[0] = 60;
@@ -644,7 +644,7 @@ void Room::tug2Timer0Expired() {
 
 	case 1:
 		// Guard shoots redshirt
-		_vm->_awayMission.tug.field4b++;
+		_vm->_awayMission.tug.elasiTargetIndex++;
 		if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_REDSHIRT]) {
 			tug2DetermineElasiShooter();
 			_roomVar.tug.shootingTarget = OBJECT_REDSHIRT;
@@ -655,7 +655,7 @@ void Room::tug2Timer0Expired() {
 
 	case 2:
 		// Guard shoots spock (or kirk)
-		_vm->_awayMission.tug.field4b++;
+		_vm->_awayMission.tug.elasiTargetIndex++;
 		_roomVar.tug.shootKirkOverride = false;
 		if (_vm->_awayMission.tug.brigElasiPhasersOnKill)
 			_roomVar.tug.shootKirkOverride = true;
@@ -669,7 +669,8 @@ void Room::tug2Timer0Expired() {
 		break;
 
 	case 3:
-		_vm->_awayMission.tug.field4b++;
+		// Guard shoots Mccoy
+		_vm->_awayMission.tug.elasiTargetIndex++;
 		if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_MCCOY]) {
 			tug2DetermineElasiShooter();
 			_roomVar.tug.shootingTarget = OBJECT_MCCOY;
@@ -679,16 +680,17 @@ void Room::tug2Timer0Expired() {
 		break;
 
 	case 4:
-		_vm->_awayMission.tug.field4b++;
+		// Guard shoots kirk (or Spock)
+		_vm->_awayMission.tug.elasiTargetIndex++;
 		if (_roomVar.tug.shootKirkOverride) {
 			tug2DetermineElasiShooter();
 			_roomVar.tug.shootingTarget = OBJECT_SPOCK;
 			_vm->_awayMission.timers[2] = 40;
 			tug2GuardShootsCrewman();
-		} else if (_roomVar.tug.shootKirkOverride) {
+		} else {
 			tug2DetermineElasiShooter();
 			_roomVar.tug.shootingTarget = OBJECT_KIRK;
-			_vm->_awayMission.timers[2] = 40; // TODO
+			_vm->_awayMission.timers[2] = 40;
 			tug2GuardShootsCrewman();
 		}
 		break;
