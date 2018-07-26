@@ -2146,7 +2146,7 @@ public:
 
 public:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
-	// NOTE: Any changes here must be reflected in saveload.cpp.
+	// NOTE: Any changes here must be reflected in the corresponding serializer functions.
 	union {
 		struct {
 			// demon0
@@ -2203,6 +2203,63 @@ public:
 			// common
 			bool movingToDoor;
 			byte doorCounter;
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				// demon0
+				ser.syncAsByte(bottomDoorCounter);
+				ser.syncAsByte(topDoorCounter);
+				ser.syncAsByte(movingToTopDoor);
+				ser.syncAsByte(movingToBottomDoor);
+
+				// demon1
+				ser.syncBytes((byte *)klingonShot, 3);
+				ser.syncAsSint16LE(numKlingonsKilled);
+				ser.syncAsByte(attackIndex);
+				ser.syncAsByte(kirkShooting);
+				ser.syncBytes((byte *)d6, 10);
+
+				// demon3
+				ser.syncAsByte(shootingBoulder);
+				ser.syncAsByte(boulder1Shot);
+				ser.syncAsByte(boulderBeingShot);
+				ser.syncAsByte(kirkInPosition);
+				ser.syncAsByte(redshirtInPosition);
+				ser.syncAsByte(spockInPosition);
+				ser.syncAsByte(mccoyInPosition);
+				ser.syncAsByte(inFiringPosition);
+				ser.syncAsByte(kirkPhaserOut);
+				ser.syncBytes((byte *)boulderAnim, 10);
+				ser.syncAsSint16LE(usedPhaserOnDoor);
+
+				// demon4
+				ser.syncAsByte(triedToShootNauian);
+				ser.syncAsByte(nauianEmerged);
+				ser.syncAsByte(disabledSecurity);
+				ser.syncAsByte(cd);
+				ser.syncAsByte(crewReadyToBeamOut);
+				ser.syncAsSint16LE(crewmanUsingPanel);
+
+				// demon5
+				ser.syncAsByte(scannedRoberts);
+				ser.syncAsByte(scannedChub);
+				ser.syncAsByte(scannedGrisnash);
+				ser.syncAsByte(scannedStephen);
+				ser.syncAsByte(numScanned);
+				ser.syncAsByte(numTalkedTo);
+				ser.syncAsByte(talkedToRoberts);
+				ser.syncAsByte(talkedToChub);
+				ser.syncAsByte(talkedToGrisnash);
+				ser.syncAsByte(talkedToStephen);
+
+				// demon6
+				ser.syncAsByte(insultedStephenRecently);
+				ser.syncAsByte(stephenInRoom);
+				ser.syncAsByte(caseOpened);
+
+				// common
+				ser.syncAsByte(movingToDoor);
+				ser.syncAsByte(doorCounter);
+			}
 		} demon;
 
 		struct {
@@ -2211,6 +2268,14 @@ public:
 			byte shootingTarget;
 			bool elasiPhaserOnKill;
 			bool shootKirkOverride; // 0x1ec4
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				// tug2
+				ser.syncAsByte(shootingObject);
+				ser.syncAsByte(shootingTarget);
+				ser.syncAsByte(elasiPhaserOnKill);
+				ser.syncAsByte(shootKirkOverride);
+			}
 		} tug;
 
 		struct {
@@ -2253,6 +2318,48 @@ public:
 			byte spockAndMccoyReadyToUseCure;
 			byte cmnXPosToCureSpock;
 			byte cmnYPosToCureSpock;
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				// love0
+				ser.syncAsByte(heardSummaryOfVirus);
+				ser.syncAsSint16LE(consoleCrewman);
+				ser.syncBytes((byte *)consoleAnimation, 10);
+				ser.syncAsSint32LE(consoleSpeaker);
+				ser.syncAsSint32LE(consoleText);
+
+				// love1
+				ser.syncAsSint32LE(dyingSpeaker);
+				ser.syncAsSint16LE(crewmanUsingFreezerRetX);
+				ser.syncAsSint16LE(crewmanUsingFreezerRetY);
+				ser.syncAsSint16LE(crewmanUsingDevice);
+				ser.syncAsSint16LE(itemInNozzle);
+				ser.syncBytes((byte *)bottleAnimation, 10);
+
+				// love2
+				ser.syncAsByte(canisterType);
+				ser.syncAsByte(cb);
+				ser.syncAsSint16LE(canisterItem);
+				ser.syncBytes((byte *)canisterAnim, 10);
+				ser.syncAsSint16LE(chamberObject);
+				ser.syncBytes((byte *)chamberInputAnim, 10);
+				ser.syncBytes((byte *)chamberOutputAnim, 10);
+
+				// love3
+				ser.syncAsByte(activeCrewman);
+
+				// love4
+				ser.syncAsByte(gaveWaterToRomulans);
+
+				// love5
+				ser.syncAsByte(numCrewmenReadyToBeamOut);
+
+				// common
+				ser.syncAsByte(walkingToDoor);
+				ser.syncAsByte(doorOpenCounter);
+				ser.syncAsByte(spockAndMccoyReadyToUseCure);
+				ser.syncAsByte(cmnXPosToCureSpock);
+				ser.syncAsByte(cmnYPosToCureSpock);
+			}
 		} love;
 
 		struct {
@@ -2266,6 +2373,19 @@ public:
 
 			// common
 			byte walkingToDoor;
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				// mudd3
+				ser.syncAsByte(suggestedUsingTricorders);
+				ser.syncAsByte(tricordersUnavailable);
+
+				// mudd4
+				ser.syncAsByte(usingLeftConsole);
+				ser.syncAsByte(kirkUsingRightConsole);
+
+				// common
+				ser.syncAsByte(walkingToDoor);
+			}
 		} mudd;
 
 		struct {
@@ -2284,6 +2404,24 @@ public:
 
 			// feather7
 			bool insultedQuetzecoatl;
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				// feather1
+				ser.syncAsByte(snakeInHole);
+				ser.syncAsByte(scannedSnake);
+				ser.syncBytes(crewEscaped, 4);
+				ser.syncAsByte(crewmanClimbingVine);
+
+				// feather2
+				ser.syncAsByte(showedSnakeToTlaoxac);
+				ser.syncAsByte(tlaoxacUnconscious);
+
+				// feather6
+				ser.syncAsByte(usedRockOnCrystalsOnce);
+
+				// feather7
+				ser.syncAsByte(insultedQuetzecoatl);
+			}
 		} feather;
 
 		struct {
@@ -2295,6 +2433,17 @@ public:
 			int16 itemToUse; // 0x1386
 			int16 objectToUse; // 0x1388
 			int16 hole;
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				// trial2
+				ser.syncAsByte(globBeingShot);
+				ser.syncAsByte(phaserOnKill);
+
+				// trial5
+				ser.syncAsSint16LE(itemToUse);
+				ser.syncAsSint16LE(objectToUse);
+				ser.syncAsSint16LE(hole);
+			}
 		} trial;
 
 	} _roomVar;
