@@ -162,8 +162,8 @@ void LeadActor::loadPDA(const Common::String &pageName) {
 
 		_stateBeforePDA = _state;
 		_state = kPDA;
+		_page->getGame()->getDirector()->saveStage();
 	}
-	_page->getGame()->getDirector()->saveStage();
 	_page->getGame()->getPdaMgr().setLead(this);
 	_page->getGame()->getPdaMgr().goToPage(pageName);
 }
