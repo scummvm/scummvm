@@ -420,7 +420,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			ser.syncAsByte(_awayMission.tug.savedPrisoners);
 			ser.syncAsByte(_awayMission.tug.haveBomb);
 			ser.syncAsByte(_awayMission.tug.brigElasiPhasersOnKill);
-			ser.syncAsByte(_awayMission.tug.field4b);
+			ser.syncAsByte(_awayMission.tug.elasiTargetIndex);
 			ser.syncAsByte(_awayMission.tug.guard1Status);
 			ser.syncAsByte(_awayMission.tug.guard2Status);
 			ser.syncAsByte(_awayMission.tug.field4e);

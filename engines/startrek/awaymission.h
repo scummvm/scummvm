@@ -121,7 +121,7 @@ struct AwayMission {
 			bool savedPrisoners; // 0x48
 			bool haveBomb; // 0x49
 			bool brigElasiPhasersOnKill; // 0x4a
-			byte field4b; // 0x4b
+			byte elasiTargetIndex; // 0x4b
 			byte guard1Status; // 0x4c
 			byte guard2Status; // 0x4d
 			byte field4e; // 0x4e
