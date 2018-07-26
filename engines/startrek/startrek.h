@@ -234,7 +234,7 @@ public:
 	Angle atan2(int32 deltaX, int32 deltaZ);
 
 	// Game modes
-	Common::Error runGameMode(int mode);
+	Common::Error runGameMode(int mode, bool resume);
 
 	// Away missions
 	void initAwayMission();

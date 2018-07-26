@@ -119,27 +119,46 @@ Common::Error StarTrekEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, &format);
 	initializeEventsAndMouse();
 
-	_frameIndex = 0;
-	playIntro();
-	debug("DONE");
+	bool shouldPlayIntro = false;
+	bool loadedSave = false;
 
-	_frameIndex = 0;
+	if (ConfMan.hasKey("save_slot")) {
+		if (!loadGame(ConfMan.getInt("save_slot")))
+			error("Failed to load savegame %d", ConfMan.getInt("save_slot"));
+		shouldPlayIntro = false;
+		loadedSave = true;
+		_roomIndexToLoad = -1;
+	}
 
-	_gameMode = -1;
-	_lastGameMode = -1;
+	if (!loadedSave) {
+		if (shouldPlayIntro) {
+			_frameIndex = 0;
+			playIntro();
+		}
 
-	runGameMode(GAMEMODE_AWAYMISSION);
+		_frameIndex = 0;
+
+		_gameMode = -1;
+		_lastGameMode = -1;
+	}
+
+	if (loadedSave)
+		runGameMode(_gameMode, true);
+	else
+		runGameMode(GAMEMODE_AWAYMISSION, false);
 	return Common::kNoError;
 }
 
-Common::Error StarTrekEngine::runGameMode(int mode) {
-	_gameMode = mode;
+Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
+	if (!resume) { // Only run this if not just resuming from a savefile
+		_gameMode = mode;
 
-	_sound->stopAllVocSounds();
+		_sound->stopAllVocSounds();
 
-	_resetGameMode = true;
-	if (_gameMode == GAMEMODE_START)
-		_gameMode = GAMEMODE_BRIDGE;
+		_resetGameMode = true;
+		if (_gameMode == GAMEMODE_START)
+			_gameMode = GAMEMODE_BRIDGE;
+	}
 
 	while (true) {
 		if (_resetGameMode) {
