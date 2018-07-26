@@ -884,22 +884,62 @@ void StarTrekEngine::renderBanAboveSprites() {
 			rect.top    = _banFiles[i]->readSint16();
 			rect.right  = _banFiles[i]->readSint16() + 1;
 			rect.bottom = _banFiles[i]->readSint16() + 1;
-			_gfx->drawAllSpritesInRect(rect);
 
-			// Just read through the BAN data to get the end address, not doing anything
-			// with it.
+			// Draw all sprites in this rectangle to a custom surface, and only update the
+			// specific pixels that were updated by the BAN file this frame.
+			// Rationale behind this is that, since the background may not have been
+			// redrawn, the transparent sprites (ie. textboxes) would further darken any
+			// pixels behind them that haven't been updated this frame. So, we can't just
+			// update everything in this rectangle.
+			// FIXME: This copies the entire screen surface for temporary drawing, which
+			// is somewhat wasteful. Original game had one more graphics layer it drew to
+			// before the screen was updated...
+			::Graphics::Surface surface;
+			_gfx->drawAllSpritesInRectToSurface(rect, &surface);
+
+			byte *destPixels = _gfx->lockScreenPixels();
+			byte *src = (byte *)surface.getPixels() + offset;
+			byte *dest = destPixels + offset;
+
+			/*
+			_banFiles[i]->seek(_banFileOffsets[i], SEEK_SET);
+			renderBan(destPixels, _banFiles[i]);
+			*/
+			// This is similar to renderBan(), except it copies pixels from the surface
+			// above instead of drawing directly to it. (Important since sprites may be
+			// drawn on top.)
 			while (--size >= 0) {
+				assert(dest >= destPixels && dest < destPixels + SCREEN_WIDTH * SCREEN_HEIGHT);
 				int8 b = _banFiles[i]->readByte();
-				if (b == -128)
-					_banFiles[i]->readUint16();
-				else if (b < 0) {
-					_banFiles[i]->readByte();
+				if (b == -128) {
+					uint16 skip = _banFiles[i]->readUint16();
+					dest += skip;
+					src  += skip;
+				} else if (b < 0) {
+					byte c = _banFiles[i]->readByte();
+					if (c == 0) {
+						dest += (-b) + 1;
+						src  += (-b) + 1;
+					}
+					else {
+						for (int j = 0; j < (-b) + 1; j++)
+							*(dest++) = *(src++);
+					}
 				} else {
 					b++;
-					while (b-- != 0)
-						_banFiles[i]->readByte();
+					while (b-- != 0) {
+						byte c = _banFiles[i]->readByte();
+						if (c == 0) {
+							dest++;
+							src++;
+						} else
+							*(dest++) = *(src++);
+					}
 				}
 			}
+
+			_gfx->unlockScreenPixels();
+			surface.free();
 
 			_banFileOffsets[i] = _banFiles[i]->pos();
 		}
