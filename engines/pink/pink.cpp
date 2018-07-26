@@ -56,6 +56,7 @@ PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 PinkEngine::~PinkEngine() {
 	delete _console;
 	delete _bro;
+	_pdaMgr.close();
 	for (uint i = 0; i < _modules.size(); ++i) {
 		delete _modules[i];
 	}
