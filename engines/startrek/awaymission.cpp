@@ -109,7 +109,12 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	int16 den = _room->getMaxY() - _room->getMinY() + 1;
 	_playerActorScale = Fixed16(num) / den;
 
-	// TODO: RDF vars 1e/1f and 20/21; relates to BAN files?
+	int16 addr = _room->getBanDataStart();
+	while (addr != _room->getBanDataEnd()) {
+		Common::String name((char *)&_room->_rdfData[addr]);
+		loadBanFile(name);
+		addr += strlen((char *)&_room->_rdfData[addr]) + 1;
+	}
 
 	_actionQueue.clear();
 }
@@ -181,10 +186,13 @@ void StarTrekEngine::handleAwayMissionEvents() {
 		case TREKEVENT_TICK:
 			updateActorAnimations();
 			updateCrewmanGetupTimers();
+
 			updateMouseBitmap();
-			// doSomethingWithBanData1();
-			_gfx->drawAllSprites();
-			// doSomethingWithBanData2();
+			renderBanBelowSprites();
+			_gfx->drawAllSprites(false);
+			renderBanAboveSprites();
+			_gfx->updateScreen();
+
 			_sound->checkLoopMusic();
 			updateAwayMissionTimers();
 			_frameIndex++;

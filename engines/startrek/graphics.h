@@ -61,6 +61,8 @@ public:
 
 	void fillBackgroundRect(const Common::Rect &rect, byte color);
 	byte *getBackgroundPixels();
+	byte *lockScreenPixels();
+	void unlockScreenPixels();
 
 	void clearScreenAndPriBuffer();
 	/**
@@ -106,9 +108,18 @@ public:
 	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect);
 	void drawAllSprites(bool updateScreen = true);
 	/**
+	 * This function should only be called after "drawAllSprites" (so that sprite rects
+	 * are updated).
+	 */
+	void drawAllSpritesInRect(const Common::Rect &rect);
+	/**
 	 * Sets "bitmapChanged" to true on all sprites before calling drawAllSprites.
 	 */
 	void forceDrawAllSprites(bool updateScreen = true);
+	/**
+	 * Flushes the screen. Usually called by "drawAllSprites".
+	 */
+	void updateScreen();
 	/**
 	 * Returns the sprite at the given position (ignores mouse).
 	 */

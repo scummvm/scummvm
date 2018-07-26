@@ -47,6 +47,8 @@ struct RoomAction {
 
 // Offsets of data in RDF files
 
+const int RDF_BAN_DATA_START = 0x1e;
+const int RDF_BAN_DATA_END   = 0x20;
 const int RDF_WARP_ROOM_INDICES = 0x22;
 const int RDF_ROOM_ENTRY_POSITIONS = 0x2a;
 const int RDF_BEAM_IN_POSITIONS = 0xaa;
@@ -75,6 +77,12 @@ public:
 	}
 	Fixed8 getMaxScale() {
 		return Fixed8::fromRaw(readRdfWord(0x0c));
+	}
+	int16 getBanDataStart() {
+		return readRdfWord(RDF_BAN_DATA_START);
+	}
+	int16 getBanDataEnd() {
+		return readRdfWord(RDF_BAN_DATA_END);
 	}
 
 	/**
