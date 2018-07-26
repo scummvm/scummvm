@@ -152,6 +152,7 @@ MacWindowManager::MacWindowManager() {
 	_screenCopy = 0;
 	_lastId = 0;
 	_activeWindow = -1;
+	_needsRemoval = false;
 
 	_mode = kWMModeNone;
 
