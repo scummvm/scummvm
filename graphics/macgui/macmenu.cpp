@@ -236,6 +236,7 @@ MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager
 			}
 		}
 	}
+	delete menuData;
 	return menu;
 }
 
