@@ -109,6 +109,14 @@ byte *Graphics::getBackgroundPixels() {
 	return _backgroundImage->pixels;
 }
 
+byte *Graphics::lockScreenPixels() {
+	return (byte *)_vm->_system->lockScreen()->getPixels();
+}
+
+void Graphics::unlockScreenPixels() {
+	_vm->_system->unlockScreen();
+}
+
 void Graphics::clearScreenAndPriBuffer() {
 	Common::fill(_priData, _priData + sizeof(_priData), 0);
 
@@ -571,34 +579,53 @@ void Graphics::drawAllSprites(bool updateScreen) {
 
 	surface.free();
 
-	if (updateScreen) {
-		// Check if there are any pending updates to the mouse.
-		if (_mouseBitmap != _mouseBitmapLastFrame) {
-			_mouseBitmapLastFrame = _mouseBitmap;
-			_vm->_system->setMouseCursor(_mouseBitmap->pixels, _mouseBitmap->width, _mouseBitmap->height, _mouseBitmap->xoffset, _mouseBitmap->yoffset, 0);
-		}
-		if (_mouseToBeShown) {
-			CursorMan.showMouse(true);
-			_mouseToBeShown = false;
-		} else if (_mouseToBeHidden) {
-			CursorMan.showMouse(false);
-			_mouseToBeHidden = false;
-		}
+	if (updateScreen)
+		this->updateScreen();
+}
 
-		if (_mouseWarpX != -1) {
-			_vm->_system->warpMouse(_mouseWarpX, _mouseWarpY);
-			_mouseWarpX = -1;
-			_mouseWarpY = -1;
-		}
+void Graphics::drawAllSpritesInRect(const Common::Rect &rect) {
+	::Graphics::Surface *surface = _vm->_system->lockScreen();
 
-		_vm->_system->updateScreen();
+	for (int i = 0; i < _numSprites; i++) {
+		Sprite *sprite = _sprites[i];
+		if (!sprite->isOnScreen)
+			continue;
+
+		Common::Rect intersect = rect.findIntersectingRect(sprite->drawRect);
+		if (!intersect.isEmpty())
+			drawSprite(*sprite, surface, intersect);
 	}
+
+	_vm->_system->unlockScreen();
 }
 
 void Graphics::forceDrawAllSprites(bool updateScreen) {
 	for (int i = 0; i < _numSprites; i++)
 		_sprites[i]->bitmapChanged = true;
 	drawAllSprites(updateScreen);
+}
+
+void Graphics::updateScreen() {
+	// Check if there are any pending updates to the mouse.
+	if (_mouseBitmap != _mouseBitmapLastFrame) {
+		_mouseBitmapLastFrame = _mouseBitmap;
+		_vm->_system->setMouseCursor(_mouseBitmap->pixels, _mouseBitmap->width, _mouseBitmap->height, _mouseBitmap->xoffset, _mouseBitmap->yoffset, 0);
+	}
+	if (_mouseToBeShown) {
+		CursorMan.showMouse(true);
+		_mouseToBeShown = false;
+	} else if (_mouseToBeHidden) {
+		CursorMan.showMouse(false);
+		_mouseToBeHidden = false;
+	}
+
+	if (_mouseWarpX != -1) {
+		_vm->_system->warpMouse(_mouseWarpX, _mouseWarpY);
+		_mouseWarpX = -1;
+		_mouseWarpY = -1;
+	}
+
+	_vm->_system->updateScreen();
 }
 
 Sprite *Graphics::getSpriteAt(int16 x, int16 y) {

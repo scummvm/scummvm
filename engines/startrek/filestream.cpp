@@ -53,6 +53,14 @@ uint32 FileStream::readUint32() {
 	return w;
 }
 
+int16 FileStream::readSint16() {
+	return (int16)readUint16();
+}
+
+int32 FileStream::readSint32() {
+	return (int32)readUint32();
+}
+
 // SeekableReadStream functions
 
 int32 FileStream::pos() const {

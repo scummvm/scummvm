@@ -109,6 +109,8 @@ const int MAX_TEXTBOX_LINES = 12;
 
 const int MAX_BUFFERED_WALK_ACTIONS = 32;
 
+const int MAX_BAN_FILES = 16;
+
 
 enum StarTrekGameType {
 	GType_ST25 = 1,
@@ -123,7 +125,8 @@ enum kDebugLevels {
 	kDebugSound =     1 << 0,
 	kDebugGraphics =  1 << 1,
 	kDebugSavegame =  1 << 2,
-	kDebugSpace =     2 << 3
+	kDebugSpace =     1 << 3,
+	kDebugGeneral =   1 << 4
 };
 
 enum GameMode {
@@ -342,12 +345,22 @@ public:
 	 * Set an actor's animation, position, and scale.
 	 */
 	int loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed8 scale);
+	void loadBanFile(const Common::String &name);
 	/**
 	 * Tries to make an actor walk to a position.
 	 * Returns true if successful in initiating the walk.
 	 */
 	bool actorWalkToPosition(int actorIndex, const Common::String &animFile, int16 srcX, int16 srcY, int16 destX, int16 destY);
 	void updateActorAnimations();
+
+	/**
+	 * ".BAN" files relate to drawing background animations, ie. flashing computer lights.
+	 * "renderBanBelowSprites()" does the work of drawing it, while
+	 * "renderBanAboveSprites()" redraws sprites above them if necessary.
+	 */
+	void renderBanBelowSprites();
+	void renderBan(byte *pixelDest, SharedPtr<FileStream> file);
+	void renderBanAboveSprites();
 	void removeActorFromScreen(int actorIndex);
 	void actorFunc1();
 	void drawActorToScreen(Actor *actor, const Common::String &animName, int16 x, int16 y, Fixed8 scale, bool addSprite);
@@ -664,8 +677,10 @@ public:
 	Actor *const _mccoyActor;
 	Actor *const _redshirtActor;
 
-	SharedPtr<FileStream> _actorBanFiles[NUM_ACTORS / 2];
-	uint16 _actorBanVar2[NUM_ACTORS / 2]; // TODO: initialize?
+	// ".BAN" files provide extra miscellaneous animations in the room, ie. flashing
+	// pixels on computer consoles, or fireflies in front of the screen.
+	SharedPtr<FileStream> _banFiles[MAX_BAN_FILES];
+	uint16 _banFileOffsets[MAX_BAN_FILES];
 
 	Sprite _inventoryIconSprite;
 	Sprite _itemIconSprite;

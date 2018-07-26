@@ -46,6 +46,8 @@ public:
 	byte readByte();
 	uint16 readUint16();
 	uint32 readUint32();
+	int16 readSint16();
+	int32 readSint32();
 
 	// SeekableReadStream functions
 	int32 pos() const;
