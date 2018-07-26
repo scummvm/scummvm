@@ -2144,6 +2144,51 @@ public:
 	void trial5UseBlueGem3OnHole3();
 	void trial5UseMedkitAnywhere();
 
+
+	// SINS0
+	void sins0Tick1();
+	void sins0LookAnywhere();
+	void sins0LookAtOpenDoor();
+	void sins0LookAtClosedDoor();
+	void sins0TalkToSpock();
+	void sins0TalkToMccoy();
+	void sins0TalkToRedshirt();
+	void sins0LookAtGround();
+	void sins0GetRock();
+	void sins0PickedUpRock();
+	void sins0UseSTricorderAnywhere();
+	void sins0UseSTricorderOnGround();
+	void sins0UseSTricorderOnPlanet();
+	void sins0Tick40();
+	void sins0LookAtStatue();
+	void sins0LookAtPlanet();
+	void sins0LookAtSky();
+	void sins0LookAtKirk();
+	void sins0LookAtSpock();
+	void sins0LookAtMccoy();
+	void sins0LookAtRedshirt();
+	void sins0UseSTricorderOnClosedDoor();
+	void sins0UseSTricorderOnStatue();
+	void sins0UseMedkitOnCrewman();
+	void sins0UseMTricorderOnCrewman();
+	void sins0UseCommunicator();
+	void sins0WalkToDoor();
+
+	// SINS1
+	void sins1Tick1();
+
+	// SINS2
+	void sins2Tick1();
+
+	// SINS3
+	void sins3Tick1();
+
+	// SINS4
+	void sins4Tick1();
+
+	// SINS5
+	void sins5Tick1();
+
 public:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	// NOTE: Any changes here must be reflected in the corresponding serializer functions.

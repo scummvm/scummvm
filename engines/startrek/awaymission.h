@@ -518,6 +518,16 @@ struct AwayMission {
 				ser.syncAsByte(gotPointsForBeamingOut);
 			}
 		} trial;
+
+		struct {
+			byte field39; // 0x39
+			bool field3d; // 0x3d
+			bool field3e; // 0x3e
+			bool enteredRoom0FirstTime; // 0x42
+			bool field43; // 0x43
+			bool gotPointsForScanningStatue; // 0x48
+			int16 missionScore; // 0x52
+		} sins;
 	};
 };
 // Size: 0x129 bytes
