@@ -62,7 +62,7 @@ PinkEngine::~PinkEngine() {
 	for (uint j = 0; j < _cursors.size(); ++j) {
 		delete _cursors[j];
 	}
-
+	delete _director;
 	DebugMan.clearAllDebugChannels();
 }
 
