@@ -674,7 +674,7 @@ bool MacMenu::mouseMove(int x, int y) {
 		_isVisible = false;
 		if (_wm->_mode & kWMModalMenuMode) {
 			_wm->pauseEngine(false);
-			_wm->_screen = _wm->_screenCopy; // restore screen
+			*_wm->_screen = *_wm->_screenCopy; // restore screen
 			g_system->copyRectToScreen(_wm->_screenCopy->getBasePtr(0, 0), _wm->_screenCopy->pitch, 0, 0, _wm->_screenCopy->w, _wm->_screenCopy->h);
 		}
 	}
@@ -689,7 +689,7 @@ bool MacMenu::mouseRelease(int x, int y) {
 
 		if (_wm->_mode & kWMModalMenuMode) {
 			_wm->pauseEngine(false);
-			_wm->_screen = _wm->_screenCopy; // restore screen
+			*_wm->_screen = *_wm->_screenCopy; // restore screen
 			g_system->copyRectToScreen(_wm->_screenCopy->getBasePtr(0, 0), _wm->_screenCopy->pitch, 0, 0, _wm->_screenCopy->w, _wm->_screenCopy->h);
 		}
 

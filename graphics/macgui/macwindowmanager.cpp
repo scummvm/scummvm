@@ -341,7 +341,10 @@ static void menuTimerHandler(void *refCon) {
 	if (wm->_menuHotzone.contains(wm->_lastMousePos)) {
 		wm->activateMenu();
 		if (wm->_mode & kWMModalMenuMode) {
-			wm->_screenCopy = new ManagedSurface(*wm->_screen);	// Create a copy
+			if (!wm->_screenCopy)
+				wm->_screenCopy = new ManagedSurface(*wm->_screen);	// Create a copy
+			else
+				*wm->_screenCopy = *wm->_screen;
 			wm->pauseEngine(true);
 		}
 	}
