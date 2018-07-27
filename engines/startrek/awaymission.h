@@ -520,12 +520,18 @@ struct AwayMission {
 		} trial;
 
 		struct {
+			byte field31; // 0x31
+			byte field32; // 0x32
+			bool field33; // 0x33
+			bool doorLaserFiredOnce; // 0x34
 			byte field39; // 0x39
-			bool field3d; // 0x3d
+			bool openedDoor; // 0x3d
 			bool field3e; // 0x3e
 			bool enteredRoom0FirstTime; // 0x42
-			bool field43; // 0x43
+			bool scottyInformedKirkAboutVirus; // 0x43
+			bool field44; // 0x44
 			bool gotPointsForScanningStatue; // 0x48
+			bool enteredRoom1FirstTime; // 0x50
 			int16 missionScore; // 0x52
 		} sins;
 	};

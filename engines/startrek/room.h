@@ -236,6 +236,10 @@ private:
 	 */
 	void showGameOverMenu();
 	/**
+	 * Cmd 0x13: Keypad used in "Than Old Devil Moon" (SINS mission)
+	 */
+	int showKeypad(const Common::String &code);
+	/**
 	 * Cmd 0x15
 	 */
 	void playVoc(Common::String filename);
@@ -2176,6 +2180,43 @@ public:
 
 	// SINS1
 	void sins1Tick1();
+	void sins1LookAnywhere();
+	void sins1LookAtLock();
+	void sins1LookAtDoor();
+	void sins1LookAtPanel();
+	void sins1LookAtKeypad();
+	void sins1UseSTricorderOnPanel();
+	void sins1UseSTricorderOnKeypad();
+	void sins1UseSTricorderOnLock();
+	void sins1UseSTricorderOnDoor();
+	void sins1UseSTricorderAnywhere();
+	void sins1UseSTricorderOnLens();
+	void sins1UseRockOnDoor();
+	void sins1UseRedshirtOnKeypad();
+	void sins1UseMccoyOnKeypad();
+	void sins1UseKirkOnKeypad();
+	void sins1UseSpockOnKeypad();
+	void sins1SpockReachedKeypad();
+	void sins1EnteredCorrectCode();
+	void sins1DoorDoneOpening();
+	void sins1EnteredIncorrectCode();
+	void sins1EnteredSacredSofNumber();
+	void sins1UsePhaserOnDoor();
+	void sins1DoorUsedLaser();
+	void sins1Tick40();
+	void sins1TalkToKirk();
+	void sins1TalkToSpock();
+	void sins1TalkToMccoy();
+	void sins1TalkToRedshirt();
+	void sins1LookAtKirk();
+	void sins1LookAtSpock();
+	void sins1LookAtMccoy();
+	void sins1LookAtRedshirt();
+	void sins1LookAtLens();
+	void sins1UseCommunicator();
+	void sins1UseMedkitOnCrewman();
+	void sins1UseMTricorderOnCrewman();
+	void sins1WalkToDoor();
 
 	// SINS2
 	void sins2Tick1();
