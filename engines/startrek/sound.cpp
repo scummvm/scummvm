@@ -64,7 +64,8 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 	}
 
 	if (!SearchMan.hasFile("voc/speech.mrk")) {
-		error("Couldn't find 'voc/speech.mrk'. The 'trekcd/voc/' directory must be dumped from the CD");
+		warning("Couldn't find 'voc/speech.mrk'. The 'trekcd/voc/' directory should be dumped from the CD. Continuing without CD audio");
+		_vm->_sfxWorking = false;
 	}
 
 	_playingSpeech = false;
