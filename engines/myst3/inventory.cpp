@@ -24,6 +24,7 @@
 
 #include "engines/myst3/cursor.h"
 #include "engines/myst3/database.h"
+#include "engines/myst3/scene.h"
 #include "engines/myst3/state.h"
 
 namespace Myst3 {
@@ -296,7 +297,11 @@ Common::Rect Inventory::getPosition() const {
 	Common::Rect frame;
 	if (_vm->isWideScreenModEnabled()) {
 		frame = Common::Rect(screen.width(), Renderer::kBottomBorderHeight);
-		frame.translate(0, screen.height() - frame.height());
+
+		Common::Rect scenePosition = _vm->_scene->getPosition();
+		int16 top = CLIP<int16>(screen.height() - frame.height(), 0, scenePosition.bottom);
+
+		frame.translate(0, top);
 	} else {
 		frame = Common::Rect(screen.width(), screen.height() * Renderer::kBottomBorderHeight / Renderer::kOriginalHeight);
 		frame.translate(screen.left, screen.top + screen.height() * (Renderer::kTopBorderHeight + Renderer::kFrameHeight) / Renderer::kOriginalHeight);

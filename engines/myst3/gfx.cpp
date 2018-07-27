@@ -188,7 +188,16 @@ Renderer *createRenderer(OSystem *system) {
 
 	bool fullscreen = ConfMan.getBool("fullscreen");
 	bool isAccelerated = matchingRendererType != Graphics::kRendererTypeTinyGL;
-	system->setupScreen(Renderer::kOriginalWidth, Renderer::kOriginalHeight, fullscreen, isAccelerated);
+
+	uint width;
+	uint height = Renderer::kOriginalHeight;
+	if (ConfMan.getBool("widescreen_mod")) {
+		width = Renderer::kOriginalWidth * Renderer::kOriginalHeight / Renderer::kFrameHeight;
+	} else {
+		width = Renderer::kOriginalWidth;
+	}
+
+	system->setupScreen(width, height, fullscreen, isAccelerated);
 
 #if defined(USE_OPENGL)
 	// Check the OpenGL context actually supports shaders
