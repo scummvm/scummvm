@@ -495,7 +495,7 @@ SharedPtr<Room> StarTrekEngine::getRoom() {
 
 void StarTrekEngine::addAction(const Action &action) {
 	if (action.type != ACTION_TICK)
-		debug("Action %d: %x, %x, %x", action.type, action.b1, action.b2, action.b3);
+		debugC(kDebugGeneral, 4, "Action %d: %x, %x, %x", action.type, action.b1, action.b2, action.b3);
 	_actionQueue.push(action);
 }
 
