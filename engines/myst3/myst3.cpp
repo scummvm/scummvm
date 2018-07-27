@@ -1941,6 +1941,11 @@ void Myst3Engine::pauseEngineIntern(bool pause) {
 	if (_state->getViewType() == kCube && _cursor->isPositionLocked()) {
 		_system->lockMouse(!pause);
 	}
+
+	// The user may have moved the mouse while the engine was paused
+	if (!pause) {
+		_cursor->updatePosition(_eventMan->getMousePos());
+	}
 }
 
 } // end of namespace Myst3
