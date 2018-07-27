@@ -37,8 +37,6 @@ ResVmSdlGraphicsManager::ResVmSdlGraphicsManager(SdlEventSource *source, SdlWind
 		_fullscreen(false),
 		_lockAspectRatio(true),
 		_overlayVisible(false),
-		_overlayWidth(0),
-		_overlayHeight(0),
 		_screenChangeCount(0),
 		_capabilities(capabilities),
 		_engineRequestedWidth(0),
@@ -65,71 +63,6 @@ void ResVmSdlGraphicsManager::deactivateManager() {
 	}
 
 	SdlGraphicsManager::deactivateManager();
-}
-
-ResVmSdlGraphicsManager::GameRenderTarget ResVmSdlGraphicsManager::selectGameRenderTarget(bool fullscreen,
-                                                                                              bool accel3d,
-                                                                                              bool engineSupportsArbitraryResolutions,
-                                                                                              bool framebufferSupported,
-                                                                                              bool lockAspectRatio) {
-	if (!fullscreen) {
-		return kScreen;
-	}
-
-	if (!accel3d && lockAspectRatio) {
-		return kSubScreen;
-	}
-
-	if (!engineSupportsArbitraryResolutions && framebufferSupported) {
-		return kFramebuffer;
-	}
-
-	return kScreen;
-}
-
-Math::Rect2d ResVmSdlGraphicsManager::computeGameRect(GameRenderTarget gameRenderTarget, uint gameWidth, uint gameHeight,
-                                                        uint effectiveWidth, uint effectiveHeight) {
-	switch (gameRenderTarget) {
-		case kScreen:
-			// The game occupies the whole screen
-			return Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(1, 1));
-		case kSubScreen:
-			// The game is centered on the screen
-			return Math::Rect2d(
-					Math::Vector2d((effectiveWidth - gameWidth) / 2, (effectiveHeight - gameHeight) / 2),
-					Math::Vector2d((effectiveWidth + gameWidth) / 2, (effectiveHeight + gameHeight) / 2)
-			);
-		case kFramebuffer:
-			if (_lockAspectRatio) {
-				// The game is scaled to fit the screen, keeping the same aspect ratio
-				float scale = MIN(effectiveHeight / float(gameHeight), effectiveWidth / float(gameWidth));
-				float scaledW = scale * (gameWidth / float(effectiveWidth));
-				float scaledH = scale * (gameHeight / float(effectiveHeight));
-				return Math::Rect2d(
-						Math::Vector2d(0.5 - (0.5 * scaledW), 0.5 - (0.5 * scaledH)),
-						Math::Vector2d(0.5 + (0.5 * scaledW), 0.5 + (0.5 * scaledH))
-				);
-			} else {
-				// The game occupies the whole screen
-				return Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(1, 1));
-			}
-		default:
-			error("Unhandled game render target '%d'", gameRenderTarget);
-	}
-}
-
-bool ResVmSdlGraphicsManager::canUsePreferredResolution(GameRenderTarget gameRenderTarget,
-                                                          bool engineSupportsArbitraryResolutions) {
-	switch (gameRenderTarget) {
-		case kScreen:
-			// If the game supports arbitrary resolutions, use the preferred mode as the game mode
-			return engineSupportsArbitraryResolutions;
-		case kSubScreen:
-		case kFramebuffer:
-			return true;
-		default:
-			error("Unhandled game render target '%d'", gameRenderTarget);
-	}
 }
 
 Common::Rect ResVmSdlGraphicsManager::getPreferredFullscreenResolution() {
@@ -318,7 +251,7 @@ bool ResVmSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 void ResVmSdlGraphicsManager::notifyVideoExpose() {
 	//ResidualVM specific:
-	updateScreen();
+	//updateScreen();
 }
 
 bool ResVmSdlGraphicsManager::notifyMousePosition(Common::Point mouse) {

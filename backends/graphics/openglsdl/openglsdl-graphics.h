@@ -62,6 +62,8 @@ public:
 	virtual void clearOverlay() override;
 	virtual void grabOverlay(void *buf, int pitch) const override;
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
+	int16 getOverlayWidth() const override;
+	int16 getOverlayHeight() const override;
 
 	/* Render the passed Surfaces besides the game texture.
 	 * This is used for widescreen support in the Grim engine.
@@ -74,6 +76,8 @@ public:
 
 	// SdlGraphicsManager API
 	virtual void transformMouseCoordinates(Common::Point &point) override;
+
+	void notifyResize(const uint width, const uint height) override;
 
 protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -100,9 +104,13 @@ protected:
 	 * When unable to create a context with anti-aliasing this tries without.
 	 * When unable to create a context with the desired pixel depth this tries lower values.
 	 */
-	bool createOrUpdateGLContext(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget);
+	bool createOrUpdateGLContext(uint gameWidth, uint gameHeight, uint effectiveWidth, uint effectiveHeight, bool renderToFramebuffer);
 
 	void createOrUpdateScreen();
+
+	/** Compute the size and position of the game rectangle in the screen */
+	Math::Rect2d computeGameRect(bool renderToFrameBuffer, uint gameWidth, uint gameHeight,
+	                             uint screenWidth, uint screenHeight);
 
 	int _antialiasing;
 	bool _vsync;

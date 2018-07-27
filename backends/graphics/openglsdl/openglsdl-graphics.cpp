@@ -151,16 +151,15 @@ void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool
 void OpenGLSdlGraphicsManager::createOrUpdateScreen() {
 	closeOverlay();
 
-	bool engineSupportsArbitraryResolutions = g_engine && g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
-
-	// Select how the game screen is going to be drawn
-	GameRenderTarget gameRenderTarget = selectGameRenderTarget(_fullscreen, true, engineSupportsArbitraryResolutions,
-	                                                           _capabilities.openGLFrameBuffer, _lockAspectRatio);
+	// If the game can't adapt to any resolution, render it to a framebuffer
+	// so it can be scaled to fill the available space.
+	bool engineSupportsArbitraryResolutions = !g_engine || g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
+	bool renderToFrameBuffer = !engineSupportsArbitraryResolutions && _capabilities.openGLFrameBuffer;
 
 	// Choose the effective window size or fullscreen mode
 	uint effectiveWidth;
 	uint effectiveHeight;
-	if (_fullscreen && canUsePreferredResolution(gameRenderTarget, engineSupportsArbitraryResolutions)) {
+	if (_fullscreen && !renderToFrameBuffer) {
 		Common::Rect fullscreenResolution = getPreferredFullscreenResolution();
 		effectiveWidth = fullscreenResolution.width();
 		effectiveHeight = fullscreenResolution.height();
@@ -169,10 +168,8 @@ void OpenGLSdlGraphicsManager::createOrUpdateScreen() {
 		effectiveHeight = _engineRequestedHeight;
 	}
 
-	// Compute the rectangle where to draw the game inside the effective screen
-	_gameRect = computeGameRect(gameRenderTarget, _engineRequestedWidth, _engineRequestedHeight, effectiveWidth, effectiveHeight);
-
-	if (!createOrUpdateGLContext(effectiveWidth, effectiveHeight, gameRenderTarget)) {
+	if (!createOrUpdateGLContext(_engineRequestedWidth, _engineRequestedHeight,
+	                             effectiveWidth, effectiveHeight, renderToFrameBuffer)) {
 		warning("SDL Error: %s", SDL_GetError());
 		g_system->quit();
 	}
@@ -185,26 +182,87 @@ void OpenGLSdlGraphicsManager::createOrUpdateScreen() {
 	}
 #endif
 
+#if SDL_VERSION_ATLEAST(2, 0, 1)
+	int obtainedWidth = 0, obtainedHeight = 0;
+	SDL_GL_GetDrawableSize(_window->getSDLWindow(), &obtainedWidth, &obtainedHeight);
+#else
+	int obtainedWidth = effectiveWidth;
+	int obtainedHeight = effectiveHeight;
+#endif
+
+	// Compute the rectangle where to draw the game inside the effective screen
+	_gameRect = computeGameRect(renderToFrameBuffer, _engineRequestedWidth, _engineRequestedHeight,
+	                            obtainedWidth, obtainedHeight);
+
 	initializeOpenGLContext();
 	_surfaceRenderer = OpenGL::createBestSurfaceRenderer();
 
 	_overlayFormat = OpenGL::Texture::getRGBAPixelFormat();
-	_overlayScreen = new OpenGL::TiledSurface(effectiveWidth, effectiveHeight, _overlayFormat);
+	_overlayScreen = new OpenGL::TiledSurface(obtainedWidth, obtainedHeight, _overlayFormat);
 
-	_overlayWidth = effectiveWidth;
-	_overlayHeight = effectiveHeight;
 	_screenFormat = _overlayFormat;
 
 	_screenChangeCount++;
 
-	_eventSource->resetKeyboardEmulation(effectiveWidth - 1, effectiveHeight - 1);
+	_eventSource->resetKeyboardEmulation(obtainedWidth - 1, obtainedHeight - 1);
 
 #if !defined(AMIGAOS)
-	if (gameRenderTarget == kFramebuffer) {
+	if (renderToFrameBuffer) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		_frameBuffer = createFramebuffer(_engineRequestedWidth, _engineRequestedHeight);
 		_frameBuffer->attach();
 	}
+#endif
+}
+
+Math::Rect2d OpenGLSdlGraphicsManager::computeGameRect(bool renderToFrameBuffer, uint gameWidth, uint gameHeight,
+                                                      uint screenWidth, uint screenHeight) {
+	if (renderToFrameBuffer) {
+		if (_lockAspectRatio) {
+			// The game is scaled to fit the screen, keeping the same aspect ratio
+			float scale = MIN(screenHeight / float(gameHeight), screenWidth / float(gameWidth));
+			float scaledW = scale * (gameWidth / float(screenWidth));
+			float scaledH = scale * (gameHeight / float(screenHeight));
+			return Math::Rect2d(
+					Math::Vector2d(0.5 - (0.5 * scaledW), 0.5 - (0.5 * scaledH)),
+					Math::Vector2d(0.5 + (0.5 * scaledW), 0.5 + (0.5 * scaledH))
+			);
+		} else {
+			// The game occupies the whole screen
+			return Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(1, 1));
+		}
+	} else {
+		return Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(1, 1));
+	}
+}
+
+void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// Get the updated size directly from SDL, in case there are multiple
+	// resize events in the message queue.
+	int newWidth = 0, newHeight = 0;
+	SDL_GL_GetDrawableSize(_window->getSDLWindow(), &newWidth, &newHeight);
+
+	if (newWidth == _overlayScreen->getWidth() && newHeight == _overlayScreen->getHeight()) {
+		return; // nothing to do
+	}
+
+	// Compute the rectangle where to draw the game inside the effective screen
+	_gameRect = computeGameRect(_frameBuffer != nullptr,
+	                            _engineRequestedWidth, _engineRequestedHeight,
+	                            newWidth, newHeight);
+
+	// Update the overlay
+	delete _overlayScreen;
+	_overlayScreen = new OpenGL::TiledSurface(newWidth, newHeight, _overlayFormat);
+
+	// Clear the overlay background so it is not displayed distorted while resizing
+	delete _overlayBackground;
+	_overlayBackground = nullptr;
+
+	_screenChangeCount++;
+
+	_eventSource->resetKeyboardEmulation(newWidth - 1, newHeight- 1);
 #endif
 }
 
@@ -240,11 +298,12 @@ OpenGLSdlGraphicsManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytesP
 
 }
 
-bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint effectiveWidth, uint effectiveHeight,
-                                                       GameRenderTarget gameRenderTarget) {
+bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint gameWidth, uint gameHeight,
+                                                       uint effectiveWidth, uint effectiveHeight,
+                                                       bool renderToFramebuffer) {
 	// Build a list of OpenGL pixel formats usable by ResidualVM
 	Common::Array<OpenGLPixelFormat> pixelFormats;
-	if (_antialiasing > 0 && gameRenderTarget == kScreen) {
+	if (_antialiasing > 0 && !renderToFramebuffer) {
 		// Don't enable screen level multisampling when rendering to a framebuffer
 		pixelFormats.push_back(OpenGLPixelFormat(32, 8, 8, 8, 8, _antialiasing));
 		pixelFormats.push_back(OpenGLPixelFormat(16, 5, 5, 5, 1, _antialiasing));
@@ -295,7 +354,7 @@ bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint effectiveWidth, uint
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-		uint32 sdlflags = SDL_WINDOW_OPENGL;
+		uint32 sdlflags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 		if (_fullscreen) {
 			// On Linux/X11, when toggling to fullscreen, the window manager saves
 			// the window size to be able to restore it when going back to windowed mode.
@@ -305,7 +364,7 @@ bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint effectiveWidth, uint
 			// to windowed mode, the window manager has a window size to apply instead
 			// of leaving the window at the fullscreen resolution size.
 			if (!_window->getSDLWindow()) {
-				_window->createOrUpdateWindow(effectiveWidth, effectiveHeight, sdlflags);
+				_window->createOrUpdateWindow(gameWidth, gameHeight, sdlflags);
 			}
 
 			sdlflags |= SDL_WINDOW_FULLSCREEN;
@@ -364,7 +423,7 @@ bool OpenGLSdlGraphicsManager::isVSyncEnabled() const {
 }
 
 void OpenGLSdlGraphicsManager::drawOverlay() {
-	glViewport(0, 0, _overlayWidth, _overlayHeight);
+	glViewport(0, 0, _overlayScreen->getWidth(), _overlayScreen->getHeight());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	_surfaceRenderer->prepareState();
@@ -384,15 +443,15 @@ void OpenGLSdlGraphicsManager::drawSideTextures() {
 	if (_fullscreen && _lockAspectRatio) {
 		_surfaceRenderer->setFlipY(true);
 
-		const Math::Vector2d nudge(1.0 / float(_overlayWidth), 0);
+		const Math::Vector2d nudge(1.0 / float(_overlayScreen->getWidth()), 0);
 		if (_sideTextures[0] != nullptr) {
-			float left = _gameRect.getBottomLeft().getX() - (float(_overlayHeight) / float(_sideTextures[0]->getHeight())) * _sideTextures[0]->getWidth() / float(_overlayWidth);
+			float left = _gameRect.getBottomLeft().getX() - (float(_overlayScreen->getHeight()) / float(_sideTextures[0]->getHeight())) * _sideTextures[0]->getWidth() / float(_overlayScreen->getWidth());
 			Math::Rect2d leftRect(Math::Vector2d(left, 0.0), _gameRect.getBottomLeft() + nudge);
 			_surfaceRenderer->render(_sideTextures[0], leftRect);
 		}
 
 		if (_sideTextures[1] != nullptr) {
-			float right = _gameRect.getTopRight().getX() + (float(_overlayHeight) / float(_sideTextures[1]->getHeight())) * _sideTextures[1]->getWidth() / float(_overlayWidth);
+			float right = _gameRect.getTopRight().getX() + (float(_overlayScreen->getHeight()) / float(_sideTextures[1]->getHeight())) * _sideTextures[1]->getWidth() / float(_overlayScreen->getWidth());
 			Math::Rect2d rightRect(_gameRect.getTopRight() - nudge, Math::Vector2d(right, 1.0));
 			_surfaceRenderer->render(_sideTextures[1], rightRect);
 		}
@@ -417,7 +476,7 @@ OpenGL::FrameBuffer *OpenGLSdlGraphicsManager::createFramebuffer(uint width, uin
 void OpenGLSdlGraphicsManager::updateScreen() {
 	if (_frameBuffer) {
 		_frameBuffer->detach();
-		glViewport(0, 0, _overlayWidth, _overlayHeight);
+		glViewport(0, 0, _overlayScreen->getWidth(), _overlayScreen->getHeight());
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		_surfaceRenderer->prepareState();
 		drawSideTextures();
@@ -451,7 +510,7 @@ int16 OpenGLSdlGraphicsManager::getHeight() const {
 	if (_frameBuffer)
 		return _frameBuffer->getHeight();
 	else
-		return _overlayHeight;
+		return _overlayScreen->getHeight();
 }
 
 int16 OpenGLSdlGraphicsManager::getWidth() const {
@@ -459,7 +518,7 @@ int16 OpenGLSdlGraphicsManager::getWidth() const {
 	if (_frameBuffer)
 		return _frameBuffer->getWidth();
 	else
-		return _overlayWidth;
+		return _overlayScreen->getWidth();
 }
 
 #pragma mark -
@@ -492,7 +551,7 @@ void OpenGLSdlGraphicsManager::showOverlay() {
 		if (_frameBuffer)
 			_frameBuffer->detach();
 		// If there is a game running capture the screen, so that it can be shown "below" the overlay.
-		_overlayBackground = new OpenGL::TiledSurface(_overlayWidth, _overlayHeight, _overlayFormat);
+		_overlayBackground = new OpenGL::TiledSurface(_overlayScreen->getWidth(), _overlayScreen->getHeight(), _overlayFormat);
 		Graphics::Surface *background = _overlayBackground->getBackingSurface();
 		glReadPixels(0, 0, background->w, background->h, GL_RGBA, GL_UNSIGNED_BYTE, background->getPixels());
 		if (_frameBuffer)
@@ -550,15 +609,23 @@ void OpenGLSdlGraphicsManager::closeOverlay() {
 	OpenGL::Context::destroy();
 }
 
+int16 OpenGLSdlGraphicsManager::getOverlayHeight() const {
+	return _overlayScreen->getHeight();
+}
+
+int16 OpenGLSdlGraphicsManager::getOverlayWidth() const {
+	return _overlayScreen->getWidth();
+}
+
 void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 	//ResidualVM specific
 	if (_frameBuffer) {
 		// Scale from game coordinates to screen coordinates
-		x = (x * _gameRect.getWidth() * _overlayWidth) / _frameBuffer->getWidth();
-		y = (y * _gameRect.getHeight() * _overlayHeight) / _frameBuffer->getHeight();
+		x = (x * _gameRect.getWidth() * _overlayScreen->getWidth()) / _frameBuffer->getWidth();
+		y = (y * _gameRect.getHeight() * _overlayScreen->getHeight()) / _frameBuffer->getHeight();
 
-		x += _gameRect.getTopLeft().getX() * _overlayWidth;
-		y += _gameRect.getTopLeft().getY() * _overlayHeight;
+		x += _gameRect.getTopLeft().getX() * _overlayScreen->getWidth();
+		y += _gameRect.getTopLeft().getY() * _overlayScreen->getHeight();
 	}
 
 	_window->warpMouseInWindow(x, y);
@@ -569,11 +636,11 @@ void OpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 		return;
 
 	// Scale from screen coordinates to game coordinates
-	point.x -= _gameRect.getTopLeft().getX() * _overlayWidth;
-	point.y -= _gameRect.getTopLeft().getY() * _overlayHeight;
+	point.x -= _gameRect.getTopLeft().getX() * _overlayScreen->getWidth();
+	point.y -= _gameRect.getTopLeft().getY() * _overlayScreen->getHeight();
 
-	point.x = (point.x * _frameBuffer->getWidth())  / (_gameRect.getWidth() * _overlayWidth);
-	point.y = (point.y * _frameBuffer->getHeight()) / (_gameRect.getHeight() * _overlayHeight);
+	point.x = (point.x * _frameBuffer->getWidth())  / (_gameRect.getWidth() * _overlayScreen->getWidth());
+	point.y = (point.y * _frameBuffer->getHeight()) / (_gameRect.getHeight() * _overlayScreen->getHeight());
 
 	// Make sure we only supply valid coordinates.
 	point.x = CLIP<int16>(point.x, 0, _frameBuffer->getWidth() - 1);

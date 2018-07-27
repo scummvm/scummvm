@@ -155,8 +155,6 @@ void SurfaceSdlGraphicsManager::createOrUpdateScreen() {
 	SDL_SetSurfaceBlendMode(_overlayscreen, SDL_BLENDMODE_NONE);
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
-	_overlayWidth = effectiveWidth;
-	_overlayHeight = effectiveHeight;
 	_screenFormat = _overlayFormat;
 
 	_screenChangeCount++;
@@ -269,7 +267,7 @@ void SurfaceSdlGraphicsManager::showOverlay() {
 
 	clearOverlay();
 
-	_eventSource->resetKeyboardEmulation(_overlayWidth - 1, _overlayHeight - 1);
+	_eventSource->resetKeyboardEmulation(getOverlayWidth() - 1, getOverlayHeight() - 1);
 }
 
 void SurfaceSdlGraphicsManager::hideOverlay() {
@@ -292,9 +290,9 @@ void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
 
 	byte *src = (byte *)_overlayscreen->pixels;
 	byte *dst = (byte *)buf;
-	int h = _overlayHeight;
+	int h = _overlayscreen->h;
 	do {
-		memcpy(dst, src, _overlayWidth * _overlayscreen->format->BytesPerPixel);
+		memcpy(dst, src, _overlayscreen->w * _overlayscreen->format->BytesPerPixel);
 		src += _overlayscreen->pitch;
 		dst += pitch;
 	} while (--h);
@@ -321,12 +319,12 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, in
 		y = 0;
 	}
 
-	if (w > _overlayWidth - x) {
-		w = _overlayWidth - x;
+	if (w > _overlayscreen->w - x) {
+		w = _overlayscreen->w - x;
 	}
 
-	if (h > _overlayHeight - y) {
-		h = _overlayHeight - y;
+	if (h > _overlayscreen->h - y) {
+		h = _overlayscreen->h - y;
 	}
 
 	if (w <= 0 || h <= 0)

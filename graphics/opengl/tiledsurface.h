@@ -48,7 +48,7 @@ public:
 	 *
 	 * The format of the input data needs to match the format returned by
 	 * getFormat.
-	 * This does not immediatly updates the textures.
+	 * This does not immediately updates the textures.
 	 *
 	 * @param x        X coordinate of upper left corner to copy data to.
 	 * @param y        Y coordinate of upper left corner to copy data to.
@@ -97,6 +97,15 @@ public:
 	 * a full texture invalidation.
 	 */
 	const Graphics::Surface *getBackingSurface() const;
+
+	/**
+	 * Get the dimensions in pixels of the surface
+	 *
+	 * This does not include the unused area in the textures at the edges
+	 * of the grid.
+	 */
+	uint16 getWidth() const { return _backingSurface.w; }
+	uint16 getHeight() const { return _backingSurface.h; }
 
 private:
 	static const uint maxTextureSize = 256;

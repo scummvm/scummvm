@@ -330,7 +330,7 @@ void OptionsDialog::build() {
 			_filteringCheckbox->setVisible(false);
 
 		// Aspect ratio setting
-		if (_guioptions.contains(GUIO_NOASPECT) || !_fullscreenCheckbox->getState()) { // ResidualVM specific change
+		if (_guioptions.contains(GUIO_NOASPECT)) { // ResidualVM specific change
 			_aspectCheckbox->setState(true); // ResidualVM specific change
 			_aspectCheckbox->setEnabled(false);
 		} else {
@@ -870,11 +870,6 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kGraphicsTabContainerReflowCmd:
 		setupGraphicsTab();
 		break;
-	// ResidualVM specific
-	case kFullscreenToggled:
-		_aspectCheckbox->setEnabled(_fullscreenCheckbox->getState());
-		g_gui.scheduleTopDialogRedraw();
-		break;
 	case kApplyCmd:
 		apply();
 		break;
@@ -905,7 +900,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 #ifndef GUI_ENABLE_KEYSDIALOG
 #ifndef GUI_ONLY_FULLSCREEN
 	_fullscreenCheckbox->setEnabled(enabled);
-	if (_guioptions.contains(GUIO_NOASPECT) || !_fullscreenCheckbox->getState())
+	if (_guioptions.contains(GUIO_NOASPECT))
 #endif // !GUI_ONLY_FULLSCREEN
 		_aspectCheckbox->setEnabled(false);
 	else
