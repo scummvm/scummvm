@@ -80,6 +80,62 @@ const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, 
 	return lastSpaceInput + 1;
 }
 
+void StarTrekEngine::drawTextLineToBitmap(const char *text, int textLen, int x, int y, SharedPtr<Bitmap> bitmap) {
+	const int charWidth = 8;
+
+	int textOffset = 0;
+
+	while (textOffset < textLen) {
+		Common::Rect destRect(x, y, x + 8, y + 8);
+		Common::Rect bitmapRect(bitmap->width, bitmap->height);
+
+		if (destRect.intersects(bitmapRect)) {
+			// drawRect = the rectangle within the 8x8 font character that will be drawn
+			// (part of it may be clipped)
+			Common::Rect drawRect;
+			drawRect.left = bitmapRect.left - destRect.left;
+			if (drawRect.left < destRect.left - destRect.left)
+				drawRect.left = destRect.left - destRect.left;
+
+			drawRect.right = bitmapRect.right - destRect.left;
+			if (drawRect.right > destRect.right - destRect.left)
+				drawRect.right = destRect.right - destRect.left;
+
+			drawRect.top = bitmapRect.top - destRect.top;
+			if (drawRect.top < destRect.top - destRect.top)
+				drawRect.top = destRect.top - destRect.top;
+
+			drawRect.bottom = bitmapRect.bottom - destRect.top;
+			if (drawRect.bottom > destRect.bottom - destRect.top)
+				drawRect.bottom = destRect.bottom - destRect.top;
+
+
+			int16 destX = destRect.left - bitmapRect.left;
+			if (destX < bitmapRect.right - bitmapRect.right)
+				destX = bitmapRect.right - bitmapRect.right;
+
+			int16 destY = destRect.top - bitmapRect.top;
+			if (destY < bitmapRect.top - bitmapRect.top)
+				destY = bitmapRect.top - bitmapRect.top;
+
+			int16 srcRowDiff = charWidth - drawRect.width();
+			int16 destRowDiff = bitmapRect.width() - drawRect.width();
+
+			byte *srcPixels = _gfx->getFontGfx(text[textOffset]) + drawRect.top * charWidth + drawRect.left;
+			byte *destPixels = bitmap->pixels + destY * bitmapRect.width() + destX;
+
+			for (int i = 0; i < drawRect.height(); i++) {
+				memcpy(destPixels, srcPixels, drawRect.width());
+				destPixels += destRowDiff + drawRect.width();
+				srcPixels += srcRowDiff + drawRect.width();
+			}
+		}
+
+		x += charWidth;
+		textOffset++;
+	}
+}
+
 String StarTrekEngine::centerTextboxHeader(String headerText) {
 	char text[TEXT_CHARS_PER_LINE + 1];
 	memset(text, ' ', sizeof(text));
@@ -619,6 +675,259 @@ String StarTrekEngine::readTextFromArrayWithChoices(int choiceIndex, uintptr dat
 		}
 	}
 	return String(mainText);
+}
+
+Common::String StarTrekEngine::showCodeInputBox() {
+	memset(_textInputBuffer, 0, TEXT_INPUT_BUFFER_SIZE - 1);
+	return showTextInputBox(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, "Code:\n                    ");
+}
+
+void StarTrekEngine::redrawTextInput() {
+	char buf[MAX_TEXT_INPUT_LEN * 2 + 2];
+	memset(buf, 0, MAX_TEXT_INPUT_LEN * 2);
+	strcpy(buf, _textInputBuffer);
+
+	if (_textInputCursorChar != 0)
+		buf[_textInputCursorPos] = _textInputCursorChar;
+
+	memcpy(_textInputBitmap->pixels, _textInputBitmapSkeleton->pixels, _textInputBitmapSkeleton->width * _textInputBitmapSkeleton->height);
+
+	drawTextLineToBitmap(buf, MAX_TEXT_INPUT_LEN, 4, 12, _textInputBitmap);
+	_textInputSprite.bitmapChanged = true;
+	_gfx->drawAllSprites();
+}
+
+void StarTrekEngine::addCharToTextInputBuffer(char c) {
+	Common::String str(_textInputBuffer);
+	while ((int)str.size() < _textInputCursorPos) {
+		str += " ";
+	}
+
+	str.insertChar(c, _textInputCursorPos);
+
+	strncpy(_textInputBuffer, str.c_str(), MAX_TEXT_INPUT_LEN);
+	_textInputBuffer[MAX_TEXT_INPUT_LEN] = '\0';
+}
+
+Common::String StarTrekEngine::showTextInputBox(int16 x, int16 y, const Common::String &headerText) {
+	bool validInput = false;
+
+	_keyboardControlsMouse = false;
+	_textInputCursorPos = 0;
+
+	initTextInputSprite(x, y, headerText);
+
+	bool loop = true;
+
+	while (loop) {
+		TrekEvent event;
+		if (!popNextEvent(&event))
+			continue;
+
+		switch (event.type) {
+		case TREKEVENT_TICK:
+			_gfx->incPaletteFadeLevel();
+			_frameIndex++;
+			_textInputCursorChar = (_frameIndex & 2 ? 1 : 0);
+			redrawTextInput();
+			break;
+
+		case TREKEVENT_LBUTTONDOWN:
+			redrawTextInput();
+			validInput = true;
+			loop = false;
+			break;
+
+		case TREKEVENT_RBUTTONDOWN:
+			loop = false;
+			break;
+
+		case TREKEVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_BACKSPACE:
+				if (_textInputCursorPos > 0) {
+					_textInputCursorPos--;
+					Common::String str(_textInputBuffer);
+					str.deleteChar(_textInputCursorPos);
+					strcpy(_textInputBuffer, str.c_str());
+				}
+				redrawTextInput();
+				break;
+
+			case Common::KEYCODE_DELETE: { // ENHANCEMENT: Support delete key
+				Common::String str(_textInputBuffer);
+				if (_textInputCursorPos < (int)str.size()) {
+					str.deleteChar(_textInputCursorPos);
+					strcpy(_textInputBuffer, str.c_str());
+					redrawTextInput();
+				}
+				break;
+			}
+
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+			case Common::KEYCODE_F1:
+				redrawTextInput();
+				loop = false;
+				validInput = true;
+				break;
+
+			case Common::KEYCODE_ESCAPE:
+			case Common::KEYCODE_F2:
+				loop = false;
+				break;
+
+			case Common::KEYCODE_HOME:
+			case Common::KEYCODE_KP7:
+				_textInputCursorPos = 0;
+				break;
+
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_KP4:
+				if (_textInputCursorPos > 0)
+					_textInputCursorPos--;
+				redrawTextInput();
+				break;
+
+			case Common::KEYCODE_RIGHT:
+			case Common::KEYCODE_KP6:
+				if (_textInputCursorPos < MAX_TEXT_INPUT_LEN - 1)
+					_textInputCursorPos++;
+				redrawTextInput();
+				break;
+
+			case Common::KEYCODE_END:
+			case Common::KEYCODE_KP1:
+				_textInputCursorPos = strlen(_textInputBuffer);
+				// BUGFIX: Check that it doesn't exceed the buffer length.
+				// Original game had a bug where you could crash the game by pressing
+				// "end", writing a character, pressing "end" again, etc.
+				if (_textInputCursorPos >= MAX_TEXT_INPUT_LEN)
+					_textInputCursorPos = MAX_TEXT_INPUT_LEN - 1;
+				break;
+
+			default: // Typed any other character
+				if (_gfx->_font->isDisplayableCharacter(event.kbd.ascii)) {
+					addCharToTextInputBuffer(event.kbd.ascii);
+					if (_textInputCursorPos < MAX_TEXT_INPUT_LEN - 1)
+						_textInputCursorPos++;
+					redrawTextInput();
+				}
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	cleanupTextInputSprite();
+	_keyboardControlsMouse = true;
+
+	if (validInput)
+		return _textInputBuffer;
+	else
+		return "";
+}
+
+void StarTrekEngine::initTextInputSprite(int16 textboxX, int16 textboxY, const Common::String &headerText) {
+	int headerLen = headerText.size();
+
+	if (headerLen > 25)
+		headerLen = 25;
+
+	char textBuf[TEXTBOX_WIDTH * 11 + 1];
+	const char *headerPos = headerText.c_str();
+	int row = 0;
+
+	/*
+	// TODO: investigate this (might be unused...)
+	if (word_53100 != 0) {
+		// ...
+	}
+	*/
+
+	do {
+		headerPos = getNextTextLine(headerPos, textBuf + row * TEXTBOX_WIDTH, headerLen);
+		row++;
+	} while (headerPos != 0 && row < 11);
+
+	int16 width = headerLen * 8 + 8;
+	int16 height = row * 8 + 8;
+
+	_textInputBitmapSkeleton = SharedPtr<Bitmap>(new Bitmap(width, height));
+	_textInputBitmap         = SharedPtr<Bitmap>(new Bitmap(width, height));
+
+	_textInputBitmapSkeleton->xoffset = width / 2;
+	if (textboxX + width / 2 >= SCREEN_WIDTH)
+		_textInputBitmapSkeleton->xoffset += width / 2 + textboxX - (SCREEN_WIDTH - 1);
+	if (textboxX - width / 2 < 0)
+		_textInputBitmapSkeleton->xoffset -= 0 - (textboxX - width / 2);
+
+	_textInputBitmapSkeleton->yoffset = height + 20;
+	memset(_textInputBitmapSkeleton->pixels, 0, width * height);
+
+	// Top border
+	int16 xPos = 1;
+	int16 yPos = 1;
+	while (xPos < width - 1) {
+		_textInputBitmapSkeleton->pixels[yPos * width + xPos] = 0x78;
+		xPos++;
+	}
+
+	// Bottom border
+	xPos = 1;
+	yPos = height - 2;
+	while (xPos < width - 1) {
+		_textInputBitmapSkeleton->pixels[yPos * width + xPos] = 0x78;
+		xPos++;
+	}
+
+	// Left border
+	xPos = 1;
+	yPos = 1;
+	while (yPos < height - 1) {
+		_textInputBitmapSkeleton->pixels[yPos * width + xPos] = 0x78;
+		yPos++;
+	}
+
+	// Right border
+	xPos = width - 2;
+	yPos = 1;
+	while (yPos < height - 1) {
+		_textInputBitmapSkeleton->pixels[yPos * width + xPos] = 0x78;
+		yPos++;
+	}
+
+	// Draw header text
+	for (int r = 0; r < row; r++) {
+		char *text = textBuf + r * TEXTBOX_WIDTH;
+		drawTextLineToBitmap(text, strlen(text), 4, r * 8 + 4, _textInputBitmapSkeleton);
+	}
+
+	// Copy skeleton bitmap to actual used bitmap
+	_textInputBitmap->xoffset = _textInputBitmapSkeleton->xoffset;
+	_textInputBitmap->yoffset = _textInputBitmapSkeleton->yoffset;
+	memcpy(_textInputBitmap->pixels, _textInputBitmapSkeleton->pixels, width * height);
+
+	_gfx->addSprite(&_textInputSprite);
+	_textInputSprite.drawMode = 2;
+	_textInputSprite.field8 = "System";
+	_textInputSprite.bitmap = _textInputBitmap;
+	_textInputSprite.setXYAndPriority(textboxX, textboxY, 15);
+	_textInputSprite.drawPriority2 = 8;
+	_gfx->drawAllSprites();
+}
+
+void StarTrekEngine::cleanupTextInputSprite() {
+	_textInputSprite.dontDrawNextFrame();
+	_gfx->drawAllSprites();
+	_gfx->delSprite(&_textInputSprite);
+
+	_textInputSprite.bitmap.reset();
+	_textInputBitmapSkeleton.reset();
+	_textInputBitmap.reset();
 }
 
 }

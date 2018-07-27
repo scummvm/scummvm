@@ -46,7 +46,7 @@ struct Sprite : Common::Serializable {
 	Common::Point pos;
 	uint16 drawPriority;
 	uint16 drawPriority2; // If two sprites' drawPriorities are equal, this is checked.
-	uint16 field8;
+	Common::String field8;
 	SharedPtr<Bitmap> bitmap;
 	uint16 drawMode;
 	uint16 textColor;

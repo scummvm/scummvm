@@ -236,9 +236,11 @@ private:
 	 */
 	void showGameOverMenu();
 	/**
-	 * Cmd 0x13: Keypad used in "Than Old Devil Moon" (SINS mission)
+	 * Cmd 0x13: Text input used in "Than Old Devil Moon" (SINS mission)
+	 * Takes a list of codes (ending with nullptr) and returns the index of the matched
+	 * code (plus one), or 0 if no code was matched.
 	 */
-	int showKeypad(const Common::String &code);
+	int showCodeInputBox(const char * const *codes);
 	/**
 	 * Cmd 0x15
 	 */

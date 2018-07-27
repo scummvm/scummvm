@@ -658,7 +658,7 @@ void Graphics::addSprite(Sprite *sprite) {
 
 	// Initialize some fields
 	sprite->drawMode = 0;
-	sprite->field8 = 0;
+	sprite->field8 = "";
 	sprite->field16 = false;
 	sprite->bitmapChanged = true; // FIXME (delete this later?)
 
@@ -699,6 +699,10 @@ void Graphics::popSprites() {
 	memcpy(_sprites, _pushedSprites, sizeof(_sprites));
 
 	_pushedNumSprites = -1;
+}
+
+byte *Graphics::getFontGfx(char c) {
+	return _font->getCharData(c & 0xff);
 }
 
 
