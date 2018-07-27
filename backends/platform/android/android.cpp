@@ -347,14 +347,16 @@ void OSystem_Android::initBackend() {
 
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("touchpad_mouse_mode", true);
 
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
 
-	// TODO hackity hack
-	if (ConfMan.hasKey("multi_midi"))
-		_touchpad_mode = !ConfMan.getBool("multi_midi");
+	if (ConfMan.hasKey("touchpad_mouse_mode"))
+		_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");
+	else
+		ConfMan.setBool("touchpad_mouse_mode", true);
 
 	// must happen before creating TimerManager to avoid race in
 	// creating EventManager
@@ -402,7 +404,8 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureCursorPalette ||
 			f == kFeatureVirtualKeyboard ||
 			f == kFeatureOverlaySupportsAlpha ||
-			f == kFeatureOpenUrl);
+			f == kFeatureOpenUrl ||
+			f == kFeatureTouchpadMode);
 }
 
 void OSystem_Android::setFeatureState(Feature f, bool enable) {
@@ -426,6 +429,10 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 		if (!enable)
 			disableCursorPalette();
 		break;
+	case kFeatureTouchpadMode:
+		ConfMan.setBool("touchpad_mouse_mode", enable);
+		_touchpad_mode = enable;
+		break;
 	default:
 		break;
 	}
@@ -441,6 +448,8 @@ bool OSystem_Android::getFeatureState(Feature f) {
 		return _virtkeybd_on;
 	case kFeatureCursorPalette:
 		return _use_mouse_palette;
+	case kFeatureTouchpadMode:
+		return ConfMan.getBool("touchpad_mouse_mode");
 	default:
 		return false;
 	}
