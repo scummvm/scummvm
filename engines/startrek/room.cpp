@@ -475,6 +475,11 @@ void Room::showGameOverMenu() { // TODO: takes an optional parameter?
 	// TODO: finish. Shouldn't do this within a room due to deletion of current room?
 }
 
+int Room::showKeypad(const Common::String &code) {
+	// TODO
+	return 3;
+}
+
 void Room::playVoc(Common::String filename) {
 	_vm->_sound->playVoc(filename);
 }

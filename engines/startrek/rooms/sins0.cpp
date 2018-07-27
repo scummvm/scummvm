@@ -86,7 +86,7 @@ void Room::sins0Tick1() {
 
 	if (_vm->_awayMission.sins.field3e)
 		loadActorAnim2(OBJECT_DOOR, "s0dr2", 0, 0);
-	if (_vm->_awayMission.sins.field3d)
+	if (_vm->_awayMission.sins.openedDoor)
 		loadActorAnim2(OBJECT_DOOR, "s0dr1", 0, 0);
 
 	playMidiMusicTracks(MIDITRACK_27, -3);
@@ -231,7 +231,7 @@ void Room::sins0UseMTricorderOnCrewman() {
 }
 
 void Room::sins0UseCommunicator() {
-	if (!_vm->_awayMission.sins.field43) {
+	if (!_vm->_awayMission.sins.scottyInformedKirkAboutVirus) {
 		showText(TX_SPEAKER_KIRK,  TX_SIN0_004);
 		showText(TX_SPEAKER_SCOTT, TX_SIN0_S01);
 		showText(TX_SPEAKER_KIRK,  TX_SIN0_002);
