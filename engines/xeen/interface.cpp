@@ -162,6 +162,7 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceScene(vm),
 	_face1State = _face2State = 0;
 	_upDoorText = false;
 	_tillMove = 0;
+	_iconsMode = ICONS_STANDARD;
 	Common::fill(&_charFX[0], &_charFX[MAX_ACTIVE_PARTY], 0);
 	setWaitBounds();
 }

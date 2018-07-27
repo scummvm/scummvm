@@ -627,11 +627,6 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 			wizard.draw(0, 0, Common::Point(9, 57));
 		fizzle.draw(0, idx, Common::Point(9, 57));
 
-		if (!sound.isSoundPlaying() && !vocIndex) {
-			sound.playVoice("pharoh7t.voc");
-			vocIndex = 1;
-		}
-
 		_subtitles.show();
 		WAIT(3);
 	}

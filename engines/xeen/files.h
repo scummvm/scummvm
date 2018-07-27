@@ -212,7 +212,6 @@ class SubWriteStream : virtual public Common::WriteStream {
 protected:
 	Common::WriteStream *_parentStream;
 	uint32 _begin;
-	DisposeAfterUse::Flag _disposeAfterUse;
 public:
 	SubWriteStream(Common::WriteStream *parentStream) :
 		_parentStream(parentStream),  _begin(parentStream->pos()) {

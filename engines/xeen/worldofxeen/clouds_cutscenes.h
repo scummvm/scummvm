@@ -81,7 +81,7 @@ private:
 	 */
 	bool showCloudsEnding5();
 public:
-	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
+	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm), _mergeX(0) {}
 
 	/**
 	 * Shows the Clouds of Xeen intro sequence

@@ -444,8 +444,7 @@ void StringArray::load(const Common::String &name, int ccMode) {
 
 /*------------------------------------------------------------------------*/
 
-SaveArchive::SaveArchive(Party *party) : BaseCCArchive(), _party(party) {
-	_data = nullptr;
+SaveArchive::SaveArchive(Party *party) : BaseCCArchive(), _party(party), _data(nullptr), _dataSize(0) {
 }
 
 SaveArchive::~SaveArchive() {

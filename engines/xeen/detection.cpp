@@ -164,7 +164,7 @@ bool XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		error("Invalid game");
 	}
 
-	return gd != 0;
+	return true;
 }
 
 SaveStateList XeenMetaEngine::listSaves(const char *target) const {

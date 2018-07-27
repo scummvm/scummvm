@@ -1612,10 +1612,6 @@ bool Combat::hitMonster(Character &c, RangeType rangeType) {
 	int divisor = 0;
 
 	switch (c._class) {
-	case CLASS_KNIGHT:
-	case CLASS_BARBARIAN:
-		divisor = 1;
-		break;
 	case CLASS_PALADIN :
 	case CLASS_ARCHER:
 	case CLASS_ROBBER:
@@ -1630,7 +1626,10 @@ bool Combat::hitMonster(Character &c, RangeType rangeType) {
 	case CLASS_SORCERER:
 		divisor = 4;
 		break;
+	case CLASS_KNIGHT:
+	case CLASS_BARBARIAN:
 	default:
+		divisor = 1;
 		break;
 	}
 

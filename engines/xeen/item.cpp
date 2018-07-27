@@ -113,7 +113,7 @@ const char *XeenItem::getItemName(ItemCategory category, uint id) {
 		case CATEGORY_ACCESSORY:
 			return questItems[id - QUEST_OFFSET + 35 + 14];
 		default:
-			assert(g_vm->getGameID() != GType_Swords);
+			assert(g_vm->getGameID() != GType_Swords && (id - QUEST_OFFSET + 35 + 14 + 11) < 85);
 			return questItems[id - QUEST_OFFSET + 35 + 14 + 11];
 		}
 	}
