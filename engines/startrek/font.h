@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/font.h $
- * $Id: font.h 2 2009-09-12 20:13:40Z clone2727 $
- *
  */
 
 #ifndef STARTREK_FONT_H
@@ -38,6 +35,7 @@ public:
 	~Font();
 
 	byte *getCharData(int i);
+	bool isDisplayableCharacter(char c);
 
 private:
 	StarTrekEngine *_vm;
@@ -45,6 +43,8 @@ private:
 	struct Character {
 		byte data[0x40];
 	} *_characters;
+
+	const static byte _fontProperties[256];
 };
 
 

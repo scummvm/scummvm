@@ -197,9 +197,16 @@ void Room::sins1UseSpockOnKeypad() {
 }
 
 void Room::sins1SpockReachedKeypad() {
-	int ans = showKeypad("01210");
+	const char * const codes[] = {
+		"01210", "1210", "10200", nullptr
+	};
+	int ans = showCodeInputBox(codes);
 
-	if (ans == 1 || ans == 2) {
+	if (ans == -1) {
+		// ENHANCEMENT: Do nothing if no code was entered.
+		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
+		walkCrewman(OBJECT_SPOCK, 0xf3, 0xad);
+	} else if (ans == 1 || ans == 2) {
 		playVoc("EFX14S");
 		loadActorAnimC(OBJECT_SPOCK, "susehn", -1, -1, &Room::sins1EnteredSacredSofNumber);
 	} else if (ans == 3) {

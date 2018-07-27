@@ -107,6 +107,9 @@ const int TEXTBOX_WIDTH = 26;
 const int TEXT_CHARS_PER_LINE = TEXTBOX_WIDTH - 2;
 const int MAX_TEXTBOX_LINES = 12;
 
+const int TEXT_INPUT_BUFFER_SIZE = 134;
+const int MAX_TEXT_INPUT_LEN = 20;
+
 const int MAX_BUFFERED_WALK_ACTIONS = 32;
 
 const int MAX_BAN_FILES = 16;
@@ -466,6 +469,11 @@ public:
 	 * Returns position of text to continue from, or nullptr if done.
 	 */
 	const char *getNextTextLine(const char *text, char *line, int lineWidth);
+	/**
+	 * Draw a line of text to a standard bitmap (NOT a "TextBitmap", whose pixel array is
+	 * an array of characters, but an actual standard bitmap).
+	 */
+	void drawTextLineToBitmap(const char *text, int textLen, int x, int y, SharedPtr<Bitmap> bitmap);
 
 	String centerTextboxHeader(String headerText);
 	void getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex);
@@ -522,6 +530,24 @@ public:
 	 * Effectively replaces the "readTextFromRdf" function.
 	 */
 	String readTextFromArrayWithChoices(int choiceIndex, uintptr data, String *headerTextOutput);
+
+	Common::String showCodeInputBox();
+	void redrawTextInput();
+	void addCharToTextInputBuffer(char c);
+	/**
+	 * Shows a textbox that the player can type a string into.
+	 */
+	Common::String showTextInputBox(int16 arg0, int16 arg2, const Common::String &headerText);
+	void initTextInputSprite(int16 arg0, int16 arg2, const Common::String &headerText);
+	void cleanupTextInputSprite();
+
+private:
+	char _textInputBuffer[TEXT_INPUT_BUFFER_SIZE];
+	int16 _textInputCursorPos;
+	char _textInputCursorChar;
+	SharedPtr<Bitmap> _textInputBitmapSkeleton;
+	SharedPtr<Bitmap> _textInputBitmap;
+	Sprite _textInputSprite;
 
 	// menu.cpp
 public:

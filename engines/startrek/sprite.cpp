@@ -26,7 +26,7 @@
 namespace StarTrek {
 
 Sprite::Sprite() :
-	pos(), drawPriority(0), drawPriority2(0), field8(0),
+	pos(), drawPriority(0), drawPriority2(0), field8(""),
 	bitmap(), drawMode(0), textColor(0), bitmapChanged(false),
 	rect2Valid(false), isOnScreen(false), field16(false), lastDrawRect(),
 	drawRect(), rectangle2(), drawX(0), drawY(0)
@@ -60,7 +60,7 @@ void Sprite::saveLoadWithSerializer(Common::Serializer &ser) {
 	ser.syncAsSint16LE(pos.y);
 	ser.syncAsUint16LE(drawPriority);
 	ser.syncAsUint16LE(drawPriority2);
-	ser.syncAsUint16LE(field8);
+	ser.syncString(field8);
 	// Note: bitmap must be reloaded
 	ser.syncAsUint16LE(drawMode);
 	ser.syncAsUint16LE(textColor);

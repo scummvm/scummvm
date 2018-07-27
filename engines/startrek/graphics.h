@@ -143,14 +143,18 @@ public:
 	void pushSprites();
 	void popSprites();
 
+	byte *getFontGfx(char c);
+
 	void copyBackgroundScreen();
 	void drawDirectToScreen(SharedPtr<Bitmap> bitmap);
 	void loadEGAData(const char *egaFile);
 	void drawBackgroundImage(const char *filename);
 
+public:
+	Font *_font;
+
 private:
 	StarTrekEngine *_vm;
-	Font *_font;
 
 	bool _egaMode;
 	byte *_egaData;
