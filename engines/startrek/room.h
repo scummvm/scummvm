@@ -2272,6 +2272,46 @@ public:
 
 	// SINS4
 	void sins4Tick1();
+	void sins4UseSTricorderOnPanel();
+	void sins4UseSpockOnPanel();
+	void sins4UsePhaserOnNorthDoor();
+	void sins4UsePhaserOnPanel();
+	void sins4UseIDCardOnPanel();
+	void sins4KirkReachedPanel();
+	void sins4KirkPutCardInPanel();
+	void sins4UseRockOnPanel();
+	void sins4KirkReachedPanelWithRock();
+	void sins4KirkUsedRockOnPanel();
+	void sins4LookAtWestDoor();
+	void sins4LookAtEastDoor();
+	void sins4LookAnywhere();
+	void sins4LookAtPanel();
+	void sins4Tick40();
+	void sins4LookAtKirk();
+	void sins4LookAtSpock();
+	void sins4LookAtMccoy();
+	void sins4LookAtRedshirt();
+	void sins4LookAtLight();
+	void sins4LookAtBeam();
+	void sins4LookAtOpenNorthDoor();
+	void sins4LookAtClosedNorthDoor();
+	void sins4TalkToKirk();
+	void sins4TalkToSpock();
+	void sins4TalkToMccoy();
+	void sins4TalkToRedshirt();
+	void sins4UseSTricorderOnNorthDoor();
+	void sins4UseSTricorderAnywhere();
+	void sins4UseCommunicator();
+	void sins4UseMccoyOnNorthDoor();
+	void sins4UseRedshirtOnNorthDoor();
+	void sins4UseSpockOnNorthDoor();
+	void sins4UseMccoyOnPanel();
+	void sins4UseRedshirtOnPanel();
+	void sins4WalkToNorthDoor();
+	void sins4WalkToWestDoor();
+	void sins4WalkToEastDoor();
+	void sins4UseMedkitOnCrewman();
+	void sins4UseMTricorderOnCrewman();
 
 	// SINS5
 	void sins5Tick1();
