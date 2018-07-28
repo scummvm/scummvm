@@ -170,20 +170,20 @@ extern const int trial1NumActions = sizeof(trial1ActionList) / sizeof(RoomAction
 
 
 void Room::trial1Tick1() {
-	if (!_vm->_awayMission.trial.doorOpen) {
-		_vm->_awayMission.disableInput = 2;
+	if (!_awayMission->trial.doorOpen) {
+		_awayMission->disableInput = 2;
 		loadActorAnim2(OBJECT_DOOR, "t1drc");
 	}
-	if (!_vm->_awayMission.trial.entityDefeated) {
+	if (!_awayMission->trial.entityDefeated) {
 		loadActorAnim2(OBJECT_ENTITY, "ec", 0x5f, 0xb1, 3); // No callback defined
 		playVoc("TRI1LOOP");
 	}
 }
 
 void Room::trial1Tick50() {
-	if (!_vm->_awayMission.trial.doorOpen)
-		_vm->_awayMission.disableInput = false;
-	if (!_vm->_awayMission.trial.entityDefeated) {
+	if (!_awayMission->trial.doorOpen)
+		_awayMission->disableInput = false;
+	if (!_awayMission->trial.entityDefeated) {
 		showText(TX_SPEAKER_BENNIE, TX_TRI1_056);
 		showText(TX_SPEAKER_SPOCK,  TX_TRI1_047);
 		showText(TX_SPEAKER_MCCOY,  TX_TRI1_032);
@@ -195,14 +195,14 @@ void Room::trial1Tick50() {
 }
 
 void Room::trial1DoorOpened() { // Called after Spock opens the door
-	_vm->_awayMission.trial.doorOpen = true;
+	_awayMission->trial.doorOpen = true;
 	loadActorStandAnim(OBJECT_DOOR);
 }
 
 void Room::trial1TouchedHotspot0() { // Kirk touched the energy thing
-	if (!_vm->_awayMission.trial.entityDefeated) {
+	if (!_awayMission->trial.entityDefeated) {
 		// BUGFIX: Disable input, otherwise you can cancel the death
-		_vm->_awayMission.disableInput = true;
+		_awayMission->disableInput = true;
 		loadActorAnimC(OBJECT_KIRK, "kkills", -1, -1, &Room::trial1KirkDied);
 	}
 }
@@ -212,29 +212,29 @@ void Room::trial1KirkDied() {
 }
 
 void Room::trial1TouchedHotspot1() { // Entered the door
-	if (_vm->_awayMission.trial.doorOpen) {
-		_vm->_awayMission.disableInput = true;
+	if (_awayMission->trial.doorOpen) {
+		_awayMission->disableInput = true;
 		loadRoomIndex(2, 2);
 	}
 }
 
 
 void Room::trial1GetRod() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewmanC(OBJECT_KIRK, 0xe9, 0xa9, &Room::trial1ReachedRod);
 }
 
 void Room::trial1ReachedRod() {
 	loadActorAnimC(OBJECT_KIRK, "t1pkup", 0xe9, 0xa9, &Room::trial1PickedUpRod);
 	giveItem(OBJECT_IWROD);
-	if (!_vm->_awayMission.trial.gotPointsForGettingRod) {
-		_vm->_awayMission.trial.gotPointsForGettingRod = true;
-		_vm->_awayMission.trial.missionScore += 1;
+	if (!_awayMission->trial.gotPointsForGettingRod) {
+		_awayMission->trial.gotPointsForGettingRod = true;
+		_awayMission->trial.missionScore += 1;
 	}
 }
 
 void Room::trial1PickedUpRod() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 }
 
 void Room::trial1LookAtKirk() {
@@ -316,8 +316,8 @@ void Room::trial1UsePhaserOnWall() {
 
 
 void Room::trial1UseStunPhaserOnFloor() {
-	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+	_awayMission->disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewmanC(OBJECT_KIRK, 0xca, 0xbc, &Room::trial1ReachedFloorToUseStunPhaser);
 }
 
@@ -327,15 +327,15 @@ void Room::trial1ReachedFloorToUseStunPhaser() {
 }
 
 void Room::trial1DoneShootingFloorWithStunPhaser() {
-	_vm->_awayMission.disableInput = false;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+	_awayMission->disableInput = false;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	loadActorStandAnim(OBJECT_KIRK);
 }
 
 
 void Room::trial1UseKillPhaserOnFloor() {
-	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+	_awayMission->disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewmanC(OBJECT_KIRK, 0xca, 0xbc, &Room::trial1ReachedFloorToUseKillPhaser);
 }
 
@@ -348,12 +348,12 @@ void Room::trial1DoneShootingFloorWithKillPhaser() {
 	showText(TX_TRI1N014);
 	loadActorAnim2(OBJECT_MOLTEN_ROCK, "t1mltd", 0xca, 0xbc);
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	loadActorStandAnim(OBJECT_KIRK);
 
 	// BUG: Infinite score mechanism
-	_vm->_awayMission.trial.missionScore += 1;
-	_vm->_awayMission.disableInput = false;
+	_awayMission->trial.missionScore += 1;
+	_awayMission->disableInput = false;
 }
 
 void Room::trial1UsePhaserOnRod() {
@@ -397,7 +397,7 @@ void Room::trial1UseSTricorderOnEntity() {
 	spockScan(DIR_S, TX_TRI1_012, true);
 
 	// BUG: infinite score mechanism
-	_vm->_awayMission.trial.missionScore += 1;
+	_awayMission->trial.missionScore += 1;
 }
 
 void Room::trial1UseSTricorderOnRods() {
@@ -408,7 +408,7 @@ void Room::trial1UseSTricorderOnFloor() {
 	spockScan(DIR_S, TX_TRI1_042, true);
 
 	// BUG: infinite score mechanism
-	_vm->_awayMission.trial.missionScore += 1;
+	_awayMission->trial.missionScore += 1;
 }
 
 void Room::trial1UseSTricorderOnDoor() {
@@ -418,15 +418,15 @@ void Room::trial1UseSTricorderOnDoor() {
 void Room::trial1UseSTricorderOnLock() {
 	spockScan(DIR_S, TX_TRI1_014, true);
 
-	if (!_vm->_awayMission.trial.scannedLock) {
-		_vm->_awayMission.trial.scannedLock = true;
+	if (!_awayMission->trial.scannedLock) {
+		_awayMission->trial.scannedLock = true;
 		// BUGFIX: Moved this into the if statement (used to be an infinite score mechanism)
-		_vm->_awayMission.trial.missionScore += 1;
+		_awayMission->trial.missionScore += 1;
 	}
 }
 
 void Room::trial1UseCommunicator() {
-	if (_vm->_awayMission.trial.forceFieldDown) {
+	if (_awayMission->trial.forceFieldDown) {
 		showText(TX_SPEAKER_UHURA, TX_TRI1U090);
 
 		const TextRef choices[] = {
@@ -437,22 +437,22 @@ void Room::trial1UseCommunicator() {
 		int choice = showText(choices);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
-			_vm->_awayMission.trial.missionEndMethod = 1;
+			_awayMission->trial.missionEndMethod = 1;
 			endMission(1, 1, 1);
 		} else if (choice == 1) { // "Beam us to Vlict's position"
 			showText(TX_SPEAKER_UHURA, TX_TRI1U080);
-			_vm->_awayMission.disableInput = true;
+			_awayMission->disableInput = true;
 			loadRoomIndex(4, 4);
 		} // Else don't transport anywhere
 	} else { // Force field still up
-		if (_vm->_awayMission.trial.uhuraAnalyzedCode)
+		if (_awayMission->trial.uhuraAnalyzedCode)
 			showText(TX_SPEAKER_UHURA, TX_TRI1U068);
 		else {
 			showText(TX_SPEAKER_UHURA, TX_TRI1U086);
 			showText(TX_SPEAKER_UHURA, TX_TRI1U106);
 			showText(TX_SPEAKER_UHURA, TX_TRI1U098);
 
-			if (_vm->_awayMission.trial.scannedLock) {
+			if (_awayMission->trial.scannedLock) {
 				showText(TX_SPEAKER_KIRK,  TX_TRI1_011);
 				showText(TX_SPEAKER_UHURA, TX_TRI1U101);
 
@@ -465,9 +465,9 @@ void Room::trial1UseCommunicator() {
 
 				if (choice == 0) { // Don't analyze the anomolous program
 					showText(TX_SPEAKER_UHURA, TX_TRI1U079);
-					_vm->_awayMission.trial.doorCodeBehaviour = 2;
-					_vm->_awayMission.trial.uhuraAnalyzedCode = true;
-					_vm->_awayMission.trial.missionScore += 1;
+					_awayMission->trial.doorCodeBehaviour = 2;
+					_awayMission->trial.uhuraAnalyzedCode = true;
+					_awayMission->trial.missionScore += 1;
 				} else { // Analyze the anomolous program
 					showText(TX_SPEAKER_UHURA, TX_TRI1U102);
 
@@ -480,14 +480,14 @@ void Room::trial1UseCommunicator() {
 
 					if (choice == 0) { // Activate the program
 						showText(TX_SPEAKER_UHURA, TX_TRI1U095);
-						_vm->_awayMission.trial.doorCodeBehaviour = 5;
-						_vm->_awayMission.trial.uhuraAnalyzedCode = true;
-						_vm->_awayMission.trial.missionScore += 3;
+						_awayMission->trial.doorCodeBehaviour = 5;
+						_awayMission->trial.uhuraAnalyzedCode = true;
+						_awayMission->trial.missionScore += 3;
 					} else { // Don't activate, only open the door
 						showText(TX_SPEAKER_UHURA, TX_TRI1U079);
-						_vm->_awayMission.trial.doorCodeBehaviour = 2;
-						_vm->_awayMission.trial.uhuraAnalyzedCode = true;
-						_vm->_awayMission.trial.missionScore += 1;
+						_awayMission->trial.doorCodeBehaviour = 2;
+						_awayMission->trial.uhuraAnalyzedCode = true;
+						_awayMission->trial.missionScore += 1;
 					}
 				}
 			}
@@ -500,9 +500,9 @@ void Room::trial1UseMccoyOnEntity() {
 }
 
 void Room::trial1UseMccoyOnLock() {
-	if (!_vm->_awayMission.trial.entityDefeated)
+	if (!_awayMission->trial.entityDefeated)
 		showText(TX_SPEAKER_MCCOY, TX_TRI1_018);
-	else if (_vm->_awayMission.trial.doorCodeBehaviour == 0)
+	else if (_awayMission->trial.doorCodeBehaviour == 0)
 		showText(TX_SPEAKER_MCCOY, TX_TRI1_020);
 	else
 		showText(TX_SPEAKER_MCCOY, TX_TRI1_029);
@@ -518,13 +518,13 @@ void Room::trial1UseSpockOnEntity() {
 
 
 void Room::trial1UseSpockOnLock() {
-	if (_vm->_awayMission.trial.doorOpen)
+	if (_awayMission->trial.doorOpen)
 		showText(TX_SPEAKER_SPOCK, TX_TRI1_038);
-	else if (!_vm->_awayMission.trial.entityDefeated)
+	else if (!_awayMission->trial.entityDefeated)
 		showText(TX_SPEAKER_SPOCK, TX_TRI1_036);
-	else if (_vm->_awayMission.trial.doorCodeBehaviour == 0)
+	else if (_awayMission->trial.doorCodeBehaviour == 0)
 		showText(TX_SPEAKER_SPOCK, TX_TRI1_044);
-	else if (_vm->_awayMission.trial.doorCodeBehaviour == 2)
+	else if (_awayMission->trial.doorCodeBehaviour == 2)
 		walkCrewmanC(OBJECT_SPOCK, 0x1f, 0xb8, &Room::trial1SpockReachedKeypad);
 	else
 		walkCrewmanC(OBJECT_SPOCK, 0x1f, 0xb8, &Room::trial1SpockReachedKeypadWithExtraProgram);
@@ -536,11 +536,11 @@ void Room::trial1SpockReachedKeypad() { // Spock opens the door
 }
 
 void Room::trial1SpockUsedKeypad() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	loadActorStandAnim(OBJECT_SPOCK);
 	playSoundEffectIndex(SND_DOOR1);
 	loadActorAnimC(OBJECT_DOOR, "t1drco", -1, -1, &Room::trial1DoorOpened);
-	_vm->_awayMission.trial.doorOpen = true;
+	_awayMission->trial.doorOpen = true;
 }
 
 void Room::trial1SpockReachedKeypadWithExtraProgram() { // Spock activates the unknown program
@@ -549,10 +549,10 @@ void Room::trial1SpockReachedKeypadWithExtraProgram() { // Spock activates the u
 }
 
 void Room::trial1SpockUsedKeypadWithExtraProgram() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	loadActorStandAnim(OBJECT_SPOCK);
 
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	loadRoomIndex(5, 5);
 }
 
@@ -567,13 +567,13 @@ void Room::trial1UseRedshirtOnEntity() {
 
 
 void Room::trial1UseRedshirtOnLock() {
-	if (_vm->_awayMission.trial.doorOpen)
+	if (_awayMission->trial.doorOpen)
 		return;
-	else if (!_vm->_awayMission.trial.entityDefeated)
+	else if (!_awayMission->trial.entityDefeated)
 		showText(TX_SPEAKER_BENNIE, TX_TRI1_051);
-	else if (_vm->_awayMission.trial.doorCodeBehaviour == 0)
+	else if (_awayMission->trial.doorCodeBehaviour == 0)
 		showText(TX_SPEAKER_BENNIE, TX_TRI1_054);
-	else if (_vm->_awayMission.trial.doorCodeBehaviour == 2)
+	else if (_awayMission->trial.doorCodeBehaviour == 2)
 		walkCrewmanC(OBJECT_REDSHIRT, 0x1f, 0xb8, &Room::trial1RedshirtReachedKeypad);
 	else
 		walkCrewmanC(OBJECT_REDSHIRT, 0x1f, 0xb8, &Room::trial1RedshirtReachedKeypadWithExtraProgram);
@@ -585,11 +585,11 @@ void Room::trial1RedshirtReachedKeypad() { // Redshirt opens the lock
 }
 
 void Room::trial1RedshirtUsedKeypad() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_W;
 	loadActorStandAnim(OBJECT_REDSHIRT);
 	playSoundEffectIndex(SND_DOOR1);
 	loadActorAnimC(OBJECT_DOOR, "t1drco", -1, -1, &Room::trial1DoorOpened);
-	_vm->_awayMission.trial.doorOpen = true;
+	_awayMission->trial.doorOpen = true;
 }
 
 void Room::trial1RedshirtReachedKeypadWithExtraProgram() {
@@ -598,10 +598,10 @@ void Room::trial1RedshirtReachedKeypadWithExtraProgram() {
 }
 
 void Room::trial1RedshirtUsedKeypadWithExtraProgram() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_W;
 	loadActorStandAnim(OBJECT_REDSHIRT);
 
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	loadRoomIndex(5, 5);
 }
 
@@ -630,7 +630,7 @@ void Room::trial1UseRodOnFloorOrWall() {
 
 
 void Room::trial1UseWoodRodOnEntity() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewmanC(OBJECT_KIRK, 0xe9, 0xad, &Room::trial1ReachedPositionToThrowWoodRod);
 	loseItem(OBJECT_IWROD);
 }
@@ -640,7 +640,7 @@ void Room::trial1ReachedPositionToThrowWoodRod() {
 }
 
 void Room::trial1DoneThrowingWoodRod() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 }
 
 
@@ -650,7 +650,7 @@ void Room::trial1UseWoodRodOnLock() {
 
 
 void Room::trial1UseWoodRodOnMoltenRock() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewmanC(OBJECT_KIRK, 0xe4, 0xc4, &Room::trial1ReachedMoltenRock);
 }
 
@@ -659,22 +659,22 @@ void Room::trial1ReachedMoltenRock() {
 }
 
 void Room::trial1DoneCoatingWoodRod() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	showText(TX_TRI1N013);
 	loseItem(OBJECT_IWROD);
 	giveItem(OBJECT_IIROD);
 
-	if (!_vm->_awayMission.trial.gotPointsForCoatingRodWithIron) {
-		_vm->_awayMission.trial.gotPointsForCoatingRodWithIron = true;
-		_vm->_awayMission.trial.missionScore += 1;
+	if (!_awayMission->trial.gotPointsForCoatingRodWithIron) {
+		_awayMission->trial.gotPointsForCoatingRodWithIron = true;
+		_awayMission->trial.missionScore += 1;
 	}
 }
 
 
 void Room::trial1UseIronRodOnEntity() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewmanC(OBJECT_KIRK, 0xe9, 0xac, &Room::trial1ReachedPositionToThrowIronRod);
-	_vm->_awayMission.trial.entityDefeated = true;
+	_awayMission->trial.entityDefeated = true;
 	loseItem(OBJECT_IIROD);
 }
 
@@ -686,15 +686,15 @@ void Room::trial1ReachedPositionToThrowIronRod() {
 void Room::trial1DoneThrowingIronRod() {
 	loadActorAnim(OBJECT_THROWN_IRON_ROD, "t1irod", 0xe9, 0xac, 8); // No callback defined
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
 	loadActorStandAnim(OBJECT_KIRK);
 
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	stopAllVocSounds();
 	showText(TX_SPEAKER_SPOCK, TX_TRI1_045);
 	showText(TX_SPEAKER_MCCOY, TX_TRI1_033);
 
-	_vm->_awayMission.trial.missionScore += 1;
+	_awayMission->trial.missionScore += 1;
 }
 
 
@@ -707,7 +707,7 @@ void Room::trial1GetThrownIronRod() {
 }
 
 void Room::trial1WalkToDoor() {
-	if (_vm->_awayMission.trial.doorOpen)
+	if (_awayMission->trial.doorOpen)
 		walkCrewman(OBJECT_KIRK, 0x1a, 0xac, 28);
 }
 

@@ -29,27 +29,27 @@ namespace StarTrek {
 void Room::demon1Tick1() {
 	playVoc("DEM1LOOP");
 
-	if (!_vm->_awayMission.demon.beatKlingons)
+	if (!_awayMission->demon.beatKlingons)
 		playMidiMusicTracks(1, -1);
 
-	if (_vm->_awayMission.demon.enteredFrom == 1) { // Entered from south
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_N;
-	} else if (_vm->_awayMission.demon.enteredFrom == 2) { // Entered from north?
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_S;
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_S;
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_S;
+	if (_awayMission->demon.enteredFrom == 1) { // Entered from south
+		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_N;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_N;
+	} else if (_awayMission->demon.enteredFrom == 2) { // Entered from north?
+		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_S;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_S;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_S;
 	}
 
-	if (!_vm->_awayMission.demon.beatKlingons) {
-		_vm->_awayMission.disableWalking = true;
-		_vm->_awayMission.timers[2] = 50;
+	if (!_awayMission->demon.beatKlingons) {
+		_awayMission->disableWalking = true;
+		_awayMission->timers[2] = 50;
 	} else {
 		loadActorAnim(8, "klg1d2", 0x120, 0x82, 0);
-		if (!_vm->_awayMission.demon.tookKlingonHand)
+		if (!_awayMission->demon.tookKlingonHand)
 			loadActorAnim(13, "klghnd", 0x10b, 0x8e, 0);
 		loadActorAnim(9, "klg2d2", 0xaa, 0x7c, 0);
 		loadActorAnim(10, "klg3d2", 0, 0, 0);
@@ -68,26 +68,26 @@ void Room::demon1WalkToCave() {
 }
 
 void Room::demon1TouchedTopWarp() {
-	if (_vm->_awayMission.demon.warpsDisabled)
+	if (_awayMission->demon.warpsDisabled)
 		return;
 	loadRoomIndex(2, 1);
 }
 
 void Room::demon1TouchedBottomWarp() {
-	if (_vm->_awayMission.demon.warpsDisabled)
+	if (_awayMission->demon.warpsDisabled)
 		return;
 	loadRoomIndex(0, 0);
 }
 
 void Room::demon1Timer2Expired() {
-	if (_vm->_awayMission.demon.beatKlingons)
+	if (_awayMission->demon.beatKlingons)
 		return;
-	_vm->_awayMission.demon.field37 = 1;
-	_vm->_awayMission.demon.beatKlingons = true;
-	_vm->_awayMission.demon.warpsDisabled = true;
-	_vm->_awayMission.timers[0] = 5;
-	_vm->_awayMission.timers[3] = 2;
-	_vm->_awayMission.timers[1] = 100;
+	_awayMission->demon.field37 = 1;
+	_awayMission->demon.beatKlingons = true;
+	_awayMission->demon.warpsDisabled = true;
+	_awayMission->timers[0] = 5;
+	_awayMission->timers[3] = 2;
+	_awayMission->timers[1] = 100;
 	loadActorAnim(8, "klg1u", 0x120, 0x82, 0);
 }
 
@@ -189,11 +189,11 @@ void Room::demon1KlingonFinishedAimingWeapon() {
 		crewman = OBJECT_KIRK;
 	}
 
-	_vm->_awayMission.crewDirectionsAfterWalk[crewman] = DIR_N;
-	_vm->_awayMission.crewGetupTimers[crewman] = 650;
-	_vm->_awayMission.crewDownBitset |= (1 << crewman);
+	_awayMission->crewDirectionsAfterWalk[crewman] = DIR_N;
+	_awayMission->crewGetupTimers[crewman] = 650;
+	_awayMission->crewDownBitset |= (1 << crewman);
 
-	_vm->_awayMission.timers[1] = 100;
+	_awayMission->timers[1] = 100;
 }
 
 void Room::demon1KirkShot() {
@@ -209,7 +209,7 @@ void Room::demon1UsePhaserOnAnything() {
 void Room::demon1UsePhaserOnKlingon1() {
 	if (_roomVar.demon.klingonShot[0])
 		return;
-	_vm->_awayMission.disableInput = 1;
+	_awayMission->disableInput = 1;
 	_roomVar.demon.klingonShot[0] = true;
 
 	if (_roomVar.demon.kirkShooting) {
@@ -223,11 +223,11 @@ void Room::demon1UsePhaserOnKlingon1() {
 void Room::demon1ShootKlingon1() {
 	_roomVar.demon.numKlingonsKilled++;
 	if (_roomVar.demon.numKlingonsKilled == 3) {
-		_vm->_awayMission.timers[1] = 0;
-		_vm->_awayMission.timers[5] = 180;
-		_vm->_awayMission.timers[6] = 1;
-		_vm->_awayMission.demon.warpsDisabled = false;
-		_vm->_awayMission.disableWalking = false;
+		_awayMission->timers[1] = 0;
+		_awayMission->timers[5] = 180;
+		_awayMission->timers[6] = 1;
+		_awayMission->demon.warpsDisabled = false;
+		_awayMission->disableWalking = false;
 	}
 	loadActorAnim(12, "s0ks1", 0, 0, 0);
 	playSoundEffectIndex(0x06);
@@ -237,11 +237,11 @@ void Room::demon1ShootKlingon1() {
 
 void Room::demon1KlingonDropsHand() {
 	loadActorAnim(13, "klghnd", 0x10b, 0x8e, 0);
-	_vm->_awayMission.disableInput = 0;
-	_vm->_awayMission.timers[1] = 0;
+	_awayMission->disableInput = 0;
+	_awayMission->timers[1] = 0;
 	showText(TX_DEM1N020);
 
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_REDSHIRT))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_REDSHIRT))
 		return;
 
 	showText(TX_SPEAKER_EVERTS, TX_DEM1_025);
@@ -251,13 +251,13 @@ void Room::demon1KlingonDropsHand() {
 
 	showText(TX_SPEAKER_KLINGON, TX_DEM1_F23);
 
-	_vm->_awayMission.timers[1] = 1;
+	_awayMission->timers[1] = 1;
 }
 
 void Room::demon1UsePhaserOnKlingon2() {
 	if (_roomVar.demon.klingonShot[1])
 		return;
-	_vm->_awayMission.disableInput = 1;
+	_awayMission->disableInput = 1;
 	_roomVar.demon.klingonShot[1] = true;
 
 	if (_roomVar.demon.kirkShooting) {
@@ -271,22 +271,22 @@ void Room::demon1UsePhaserOnKlingon2() {
 void Room::demon1ShootKlingon2() {
 	_roomVar.demon.numKlingonsKilled++;
 	if (_roomVar.demon.numKlingonsKilled == 3) {
-		_vm->_awayMission.timers[1] = 0;
-		_vm->_awayMission.timers[5] = 180;
-		_vm->_awayMission.timers[6] = 1;
-		_vm->_awayMission.demon.warpsDisabled = false;
-		_vm->_awayMission.disableWalking = false;
+		_awayMission->timers[1] = 0;
+		_awayMission->timers[5] = 180;
+		_awayMission->timers[6] = 1;
+		_awayMission->demon.warpsDisabled = false;
+		_awayMission->disableWalking = false;
 	}
 	loadActorAnim(12, "s0ks2", 0, 0, 0);
 	playSoundEffectIndex(0x06);
 	loadActorAnim2(9, "klg2d", 0xaa, 0x7c, 0);
-	_vm->_awayMission.disableInput = 0;
+	_awayMission->disableInput = 0;
 }
 
 void Room::demon1UsePhaserOnKlingon3() {
 	if (_roomVar.demon.klingonShot[2])
 		return;
-	_vm->_awayMission.disableInput = 1;
+	_awayMission->disableInput = 1;
 	_roomVar.demon.klingonShot[2] = true;
 
 	if (_roomVar.demon.kirkShooting) {
@@ -300,28 +300,28 @@ void Room::demon1UsePhaserOnKlingon3() {
 void Room::demon1ShootKlingon3() {
 	_roomVar.demon.numKlingonsKilled++;
 	if (_roomVar.demon.numKlingonsKilled == 3) {
-		_vm->_awayMission.timers[1] = 0;
-		_vm->_awayMission.timers[5] = 180;
-		_vm->_awayMission.timers[6] = 1;
-		_vm->_awayMission.demon.warpsDisabled = false;
-		_vm->_awayMission.disableWalking = false;
+		_awayMission->timers[1] = 0;
+		_awayMission->timers[5] = 180;
+		_awayMission->timers[6] = 1;
+		_awayMission->demon.warpsDisabled = false;
+		_awayMission->disableWalking = false;
 	}
 	loadActorAnim(12, "s0ks3", 0, 0, 0);
 	playSoundEffectIndex(0x06);
 	loadActorAnim2(10, "klg3d", 0, 0, 0);
-	_vm->_awayMission.disableInput = 0;
+	_awayMission->disableInput = 0;
 }
 
 // Timer 6 expired
 void Room::demon1AllKlingonsDead() {
-	_vm->_awayMission.crewGetupTimers[OBJECT_KIRK] = 45;
-	_vm->_awayMission.crewGetupTimers[OBJECT_SPOCK] = 45;
-	_vm->_awayMission.crewGetupTimers[OBJECT_MCCOY] = 45;
-	_vm->_awayMission.crewGetupTimers[OBJECT_REDSHIRT] = 45;
+	_awayMission->crewGetupTimers[OBJECT_KIRK] = 45;
+	_awayMission->crewGetupTimers[OBJECT_SPOCK] = 45;
+	_awayMission->crewGetupTimers[OBJECT_MCCOY] = 45;
+	_awayMission->crewGetupTimers[OBJECT_REDSHIRT] = 45;
 }
 
 void Room::demon1Timer5Expired() {
-	if (_vm->_awayMission.crewDownBitset != 0)
+	if (_awayMission->crewDownBitset != 0)
 		return;
 
 	showText(TX_SPEAKER_UHURA, TX_DEM1U077);
@@ -377,7 +377,7 @@ void Room::demon1UseSTricorderOnKlingon1() {
 
 	playSoundEffectIndex(0x04);
 
-	if (_roomVar.demon.numKlingonsKilled == 3 && !_vm->_awayMission.demon.tookKlingonHand && _rdfData[0xcf] != 1) {
+	if (_roomVar.demon.numKlingonsKilled == 3 && !_awayMission->demon.tookKlingonHand && _rdfData[0xcf] != 1) {
 		showText(TX_SPEAKER_SPOCK, TX_DEM1_018);
 		_rdfData[0xcf] = 1;
 	} else {
@@ -392,17 +392,17 @@ void Room::demon1UseSTricorderOnKlingon2Or3() {
 }
 
 void Room::demon1UseMTricorderOnKirk() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_KIRK))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_KIRK))
 		demon1UseMTricorderOnCrewman();
 }
 
 void Room::demon1UseMTricorderOnSpock() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_SPOCK))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_SPOCK))
 		demon1UseMTricorderOnCrewman();
 }
 
 void Room::demon1UseMTricorderOnRedshirt() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_REDSHIRT))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_REDSHIRT))
 		demon1UseMTricorderOnCrewman();
 }
 
@@ -424,18 +424,18 @@ void Room::demon1ReachedHand() {
 
 void Room::demon1PickedUpHand() {
 	loadActorStandAnim(13);
-	_vm->_awayMission.demon.missionScore += 3;
+	_awayMission->demon.missionScore += 3;
 	loadActorStandAnim(OBJECT_KIRK);
-	_vm->_awayMission.timers[4] = 2;
+	_awayMission->timers[4] = 2;
 }
 
 // Timer 4 expired
 void Room::demon1FinishedGettingHand() {
 
-	if (_vm->_awayMission.demon.tookKlingonHand)
+	if (_awayMission->demon.tookKlingonHand)
 		showText(TX_DEM1N005);
 	else {
-		_vm->_awayMission.demon.tookKlingonHand = true;
+		_awayMission->demon.tookKlingonHand = true;
 		giveItem(OBJECT_IHAND);
 		showText(TX_DEM1N007);
 	}
@@ -481,42 +481,42 @@ void Room::demon1LookAnywhere() {
 }
 
 void Room::demon1LookAtKirk() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_KIRK))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_KIRK))
 		showText(TX_DEM1N012);
 	else
 		showText(TX_DEM1N003);
 }
 
 void Room::demon1LookAtSpock() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_SPOCK))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_SPOCK))
 		showText(TX_DEM1N015);
 	else
 		showText(TX_DEM1N008);
 }
 
 void Room::demon1LookAtMcCoy() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_MCCOY))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_MCCOY))
 		showText(TX_DEM1N013);
 	else
 		showText(TX_DEM1N001);
 }
 
 void Room::demon1LookAtRedshirt() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_REDSHIRT))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_REDSHIRT))
 		showText(TX_DEM1N014);
 	else
 		showText(TX_DEM1N002);
 }
 
 void Room::demon1TalkToKirk() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_KIRK))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_KIRK))
 		demon1TalkToUnconsciousCrewman();
 	else if (_roomVar.demon.numKlingonsKilled == 3)
 		showText(TX_SPEAKER_KIRK, TX_DEM1_001);
 }
 
 void Room::demon1TalkToSpock() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_SPOCK))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_SPOCK))
 		demon1TalkToUnconsciousCrewman();
 	else {
 		showText(TX_SPEAKER_SPOCK, TX_DEM1_022);
@@ -527,7 +527,7 @@ void Room::demon1TalkToSpock() {
 }
 
 void Room::demon1TalkToMcCoy() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_MCCOY))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_MCCOY))
 		demon1TalkToUnconsciousCrewman();
 	else {
 		showText(TX_SPEAKER_MCCOY, TX_DEM1_015);
@@ -536,7 +536,7 @@ void Room::demon1TalkToMcCoy() {
 }
 
 void Room::demon1TalkToRedshirt() {
-	if (_vm->_awayMission.crewDownBitset & (1 << OBJECT_REDSHIRT))
+	if (_awayMission->crewDownBitset & (1 << OBJECT_REDSHIRT))
 		demon1TalkToUnconsciousCrewman();
 	else
 		showText(TX_SPEAKER_EVERTS, TX_DEM1_026);

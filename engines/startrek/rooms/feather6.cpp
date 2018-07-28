@@ -126,7 +126,7 @@ void Room::feather6UseRedshirtOnCrystals() {
 
 
 void Room::feather6UseRockOnStalactites() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewmanC(OBJECT_KIRK, 0x94, 0x97, &Room::feather6ReachedPositionToThrowRock);
 }
 
@@ -143,21 +143,21 @@ void Room::feather6DoneThrowingRock() {
 }
 
 void Room::feather6KirkDiedFromStalactites() {
-	_vm->_awayMission.feather.missionScore -= 3;
-	_vm->_awayMission.feather.diedFromStalactites = true;
-	_vm->_awayMission.disableInput = false;
+	_awayMission->feather.missionScore -= 3;
+	_awayMission->feather.diedFromStalactites = true;
+	_awayMission->disableInput = false;
 	showText(TX_FEA6N000);
 	showText(TX_FEA6N004);
 	loadRoomIndex(7, 5);
 }
 
 void Room::feather6UseRockOnCrystals() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewmanC(OBJECT_KIRK, 0x9a, 0x97, &Room::feather6ReachedCrystalsWithRock);
 }
 
 void Room::feather6ReachedCrystalsWithRock() {
-	_vm->_awayMission.timers[2] = 174;
+	_awayMission->timers[2] = 174;
 	loadActorAnim2(OBJECT_STALACTITES, "s5r6tm");
 	if (!_roomVar.feather.usedRockOnCrystalsOnce) {
 		_roomVar.feather.usedRockOnCrystalsOnce = true;
@@ -167,12 +167,12 @@ void Room::feather6ReachedCrystalsWithRock() {
 }
 
 void Room::feather6Tick() {
-	if (_vm->_awayMission.timers[2] == 55 || _vm->_awayMission.timers[2] == 89 || _vm->_awayMission.timers[2] == 119)
+	if (_awayMission->timers[2] == 55 || _awayMission->timers[2] == 89 || _awayMission->timers[2] == 119)
 		playSoundEffectIndex(SND_BLANK_0b);
 }
 
 void Room::feather6HitCrystalsWithRockFirstTime() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
 	showText(TX_SPEAKER_KIRK, TX_FEA6_001);
 }
@@ -302,7 +302,7 @@ void Room::feather6TalkToRedshirt() {
 }
 
 void Room::feather6TalkToSpock() {
-	if (!_vm->_awayMission.redshirtDead)
+	if (!_awayMission->redshirtDead)
 		showText(TX_SPEAKER_SPOCK, TX_FEA6_035);
 	else {
 		showText(TX_SPEAKER_SPOCK, TX_FEA6_038);
@@ -361,19 +361,19 @@ void Room::feather6GetCrystals() {
 }
 
 void Room::feather6UseKnifeOnCrystals() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewmanC(OBJECT_KIRK, 0x9a, 0x97, &Room::feather6ReachedCrystalsWithKnife);
 }
 
 void Room::feather6ReachedCrystalsWithKnife() {
 	loadActorAnimC(OBJECT_KIRK, "s5r6kp", -1, -1, &Room::feather6DoneCuttingCrystals);
-	_vm->_awayMission.timers[4] = 122;
+	_awayMission->timers[4] = 122;
 }
 
 void Room::feather6DoneCuttingCrystals() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
-	_vm->_awayMission.feather.missionScore += 1;
+	_awayMission->feather.missionScore += 1;
 	giveItem(OBJECT_ICRYSTAL);
 	showText(TX_FEA6N017);
 }

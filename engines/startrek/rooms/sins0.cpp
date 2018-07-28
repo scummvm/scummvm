@@ -81,12 +81,12 @@ extern const int sins0NumActions = sizeof(sins0ActionList) / sizeof(RoomAction);
 void Room::sins0Tick1() {
 	playVoc("SIN0LOOP");
 
-	if (!_vm->_awayMission.sins.enteredRoom0FirstTime)
-		_vm->_awayMission.disableInput = 2;
+	if (!_awayMission->sins.enteredRoom0FirstTime)
+		_awayMission->disableInput = 2;
 
-	if (_vm->_awayMission.sins.field3e)
+	if (_awayMission->sins.field3e)
 		loadActorAnim2(OBJECT_DOOR, "s0dr2", 0, 0);
-	if (_vm->_awayMission.sins.openedDoor)
+	if (_awayMission->sins.openedDoor)
 		loadActorAnim2(OBJECT_DOOR, "s0dr1", 0, 0);
 
 	playMidiMusicTracks(MIDITRACK_27, -3);
@@ -131,13 +131,13 @@ void Room::sins0LookAtGround() {
 }
 
 void Room::sins0GetRock() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	loadActorAnimC(OBJECT_KIRK, "kpickw", -1, -1, &Room::sins0PickedUpRock);
-	_vm->_awayMission.sins.field39 |= 1;
+	_awayMission->sins.field39 |= 1;
 }
 
 void Room::sins0PickedUpRock() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
 	showText(TX_SIN0N010);
 	giveItem(OBJECT_IS8ROCKS);
@@ -149,7 +149,7 @@ void Room::sins0UseSTricorderAnywhere() {
 
 void Room::sins0UseSTricorderOnGround() {
 	spockScan(DIR_S, TX_SIN0_017);
-	_vm->_awayMission.sins.field39 |= 1;
+	_awayMission->sins.field39 |= 1;
 }
 
 void Room::sins0UseSTricorderOnPlanet() {
@@ -157,8 +157,8 @@ void Room::sins0UseSTricorderOnPlanet() {
 }
 
 void Room::sins0Tick40() {
-	if (!_vm->_awayMission.sins.enteredRoom0FirstTime) {
-		_vm->_awayMission.disableInput = false;
+	if (!_awayMission->sins.enteredRoom0FirstTime) {
+		_awayMission->disableInput = false;
 		showText(TX_SPEAKER_UHURA, TX_SIN0U082);
 		showText(TX_SPEAKER_KIRK,  TX_SIN0_003);
 		showText(TX_SPEAKER_SCOTT, TX_SIN0_S48);
@@ -167,7 +167,7 @@ void Room::sins0Tick40() {
 		showText(TX_SPEAKER_KIRK,  TX_SIN0_005);
 		showText(TX_SPEAKER_SCOTT, TX_SIN0_S49);
 		showText(TX_SPEAKER_KIRK,  TX_SIN0_001);
-		_vm->_awayMission.sins.enteredRoom0FirstTime = true;
+		_awayMission->sins.enteredRoom0FirstTime = true;
 	}
 }
 
@@ -216,9 +216,9 @@ void Room::sins0UseSTricorderOnStatue() {
 	showText(TX_SPEAKER_KIRK,  TX_SIN0_008);
 	showText(TX_SPEAKER_SPOCK, TX_SIN0_023);
 
-	if (!_vm->_awayMission.sins.gotPointsForScanningStatue) {
-		_vm->_awayMission.sins.gotPointsForScanningStatue = true;
-		_vm->_awayMission.sins.missionScore += 1;
+	if (!_awayMission->sins.gotPointsForScanningStatue) {
+		_awayMission->sins.gotPointsForScanningStatue = true;
+		_awayMission->sins.missionScore += 1;
 	}
 }
 
@@ -231,7 +231,7 @@ void Room::sins0UseMTricorderOnCrewman() {
 }
 
 void Room::sins0UseCommunicator() {
-	if (!_vm->_awayMission.sins.scottyInformedKirkAboutVirus) {
+	if (!_awayMission->sins.scottyInformedKirkAboutVirus) {
 		showText(TX_SPEAKER_KIRK,  TX_SIN0_004);
 		showText(TX_SPEAKER_SCOTT, TX_SIN0_S01);
 		showText(TX_SPEAKER_KIRK,  TX_SIN0_002);

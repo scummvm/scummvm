@@ -43,22 +43,22 @@ extern const int feather7NumActions = sizeof(feather7ActionList) / sizeof(RoomAc
 void Room::feather7Tick1() {
 	playVoc("FEA7LOOP");
 	playMidiMusicTracks(33);
-	_vm->_awayMission.disableInput = 2;
+	_awayMission->disableInput = 2;
 	loadActorAnim(OBJECT_QUETZECOATL, "s5r7qn", 0x106, 0x98);
 }
 
 void Room::feather7Tick40() {
-	if (_vm->_awayMission.feather.diedFromStalactites)
+	if (_awayMission->feather.diedFromStalactites)
 		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_017);
 
 	showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_022);
 
-	if (_vm->_awayMission.redshirtDead)
+	if (_awayMission->redshirtDead)
 		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_021);
 
 	// BUGFIX: Show this even if redshirt isn't dead (he wishes you wouldn't have knocked
 	// out Tlaoxac)
-	if (_vm->_awayMission.feather.knockedOutTlaoxac)
+	if (_awayMission->feather.knockedOutTlaoxac)
 		showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_023);
 
 	showText(TX_SPEAKER_QUETZECOATL, TX_FEA7_027);
@@ -146,19 +146,19 @@ void Room::feather7KirkSatDown() {
 }
 
 void Room::feather7ReadyToBeamOut() {
-	if (_vm->_awayMission.redshirtDead)
+	if (_awayMission->redshirtDead)
 		showText(TX_SPEAKER_KIRK, TX_FEA7_002);
 	else {
-		_vm->_awayMission.feather.missionScore += 1;
+		_awayMission->feather.missionScore += 1;
 		showText(TX_SPEAKER_KIRK, TX_FEA7_001);
 	}
 
 	if (!_roomVar.feather.insultedQuetzecoatl)
-		_vm->_awayMission.feather.missionScore += 2;
-	_vm->_awayMission.feather.missionScore += 4;
+		_awayMission->feather.missionScore += 2;
+	_awayMission->feather.missionScore += 4;
 
 	loadActorAnim2(OBJECT_QUETZECOATL, "s5r7qt");
-	endMission(_vm->_awayMission.feather.missionScore, 0x13, 0);
+	endMission(_awayMission->feather.missionScore, 0x13, 0);
 }
 
 }

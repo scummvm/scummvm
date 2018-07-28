@@ -49,7 +49,7 @@ void Room::love2Tick1() {
 
 	char canName[10];
 
-	switch (_vm->_awayMission.love.canister1) {
+	switch (_awayMission->love.canister1) {
 	case CANTYPE_O2:
 		strcpy(canName, "o2can");
 		break;
@@ -63,10 +63,10 @@ void Room::love2Tick1() {
 		break;
 	}
 
-	if (_vm->_awayMission.love.canister1 >= 1 && _vm->_awayMission.love.canister1 <= 3)
+	if (_awayMission->love.canister1 >= 1 && _awayMission->love.canister1 <= 3)
 		loadActorAnim(OBJECT_CAN1, canName, 0xa7, 0xae, 0);
 
-	switch (_vm->_awayMission.love.canister2) {
+	switch (_awayMission->love.canister2) {
 	case CANTYPE_O2:
 		strcpy(canName, "o2can");
 		break;
@@ -80,30 +80,30 @@ void Room::love2Tick1() {
 		break;
 	}
 
-	if (_vm->_awayMission.love.canister2 >= 1 && _vm->_awayMission.love.canister2 <= 3)
+	if (_awayMission->love.canister2 >= 1 && _awayMission->love.canister2 <= 3)
 		loadActorAnim(OBJECT_CAN2, canName, 0xb1, 0xaf, 0);
 
-	if (_vm->_awayMission.love.gasFeedOn)
+	if (_awayMission->love.gasFeedOn)
 		loadActorAnim(OBJECT_GAS_FEED, "s3r3vo", 0xac, 0x75, 0);
 	else
 		loadActorAnim(OBJECT_GAS_FEED, "s3r3vc", 0xac, 0x75, 0);
 
-	if (_vm->_awayMission.love.cabinetOpen)
+	if (_awayMission->love.cabinetOpen)
 		loadActorAnim(OBJECT_CABINET, "s3r3d1o", 0x1e, 0xaf, 0);
 	else
 		loadActorAnim(OBJECT_CABINET, "s3r3d1c", 0x1e, 0xaf, 0);
 
-	if (_vm->_awayMission.love.cabinetOpen && !haveItem(OBJECT_IANTIGRA))
+	if (_awayMission->love.cabinetOpen && !haveItem(OBJECT_IANTIGRA))
 		loadActorAnim(OBJECT_ANTIGRAV, "antigr", 0x1f, 0xa7, 0);
 
-	if (_vm->_awayMission.love.synthesizerContents != 0)
+	if (_awayMission->love.synthesizerContents != 0)
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2o", 0x8a, 0x8d, 0);
 	else
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2c", 0x8a, 0x8d, 0);
 
 	bool valid = true;
 
-	switch (_vm->_awayMission.love.synthesizerContents) {
+	switch (_awayMission->love.synthesizerContents) {
 	case SYNTHITEM_PBC:
 		strcpy(_roomVar.love.chamberInputAnim, "pbcanm");
 		_roomVar.love.chamberObject = OBJECT_POLYBERYLCARBONATE;
@@ -117,7 +117,7 @@ void Room::love2Tick1() {
 		_roomVar.love.chamberObject = OBJECT_CURESAMPLE;
 		break;
 	case SYNTHITEM_BOTTLE:
-		switch (_vm->_awayMission.love.synthesizerBottleIndex) {
+		switch (_awayMission->love.synthesizerBottleIndex) {
 		case 1:
 			strcpy(_roomVar.love.chamberOutputAnim, "btle1");
 			_roomVar.love.chamberObject = OBJECT_SYNTHESIZER_OUTPUT;
@@ -146,17 +146,17 @@ void Room::love2Tick1() {
 	}
 
 	if (valid) {
-		if (_vm->_awayMission.love.synthesizerContents == 9)
+		if (_awayMission->love.synthesizerContents == 9)
 			loadActorAnim2(_roomVar.love.chamberObject, _roomVar.love.chamberOutputAnim, 0x8a, 0x8b, 0);
 		else
 			loadActorAnim2(_roomVar.love.chamberObject, _roomVar.love.chamberInputAnim, 0x8a, 0x8b, 0);
 	}
 
-	if (_vm->_awayMission.love.releasedHumanLaughingGas)
-		_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
-	if (_vm->_awayMission.love.releasedRomulanLaughingGas)
-		_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
-	_vm->_awayMission.timers[2] = 200;
+	if (_awayMission->love.releasedHumanLaughingGas)
+		_awayMission->timers[0] = getRandomWordInRange(200, 400);
+	if (_awayMission->love.releasedRomulanLaughingGas)
+		_awayMission->timers[1] = getRandomWordInRange(200, 400);
+	_awayMission->timers[2] = 200;
 
 	loadActorAnim(OBJECT_DOOR, "s3r3d3a", 0x12a, 0xb5, 0);
 
@@ -165,9 +165,9 @@ void Room::love2Tick1() {
 }
 
 void Room::love2TouchedWarp1() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	playSoundEffectIndex(SND_DOOR1);
-	_vm->_awayMission.timers[3] = 10;
+	_awayMission->timers[3] = 10;
 }
 
 void Room::love2Timer3Expired() {
@@ -175,7 +175,7 @@ void Room::love2Timer3Expired() {
 }
 
 void Room::love2WalkToDoor() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	_roomVar.love.walkingToDoor = true;
 	walkCrewman(OBJECT_KIRK, 0x127, 0xba, 14);
 }
@@ -244,7 +244,7 @@ void Room::love2LookAtChamber() {
 }
 
 void Room::love2LookAtCan1() {
-	switch (_vm->_awayMission.love.canister1) {
+	switch (_awayMission->love.canister1) {
 	case CANTYPE_O2:
 		showText(TX_LOV2N004);
 		break;
@@ -259,7 +259,7 @@ void Room::love2LookAtCan1() {
 }
 
 void Room::love2LookAtCan2() {
-	switch (_vm->_awayMission.love.canister2) {
+	switch (_awayMission->love.canister2) {
 	case CANTYPE_O2:
 		showText(TX_LOV2N004);
 		break;
@@ -290,7 +290,7 @@ void Room::love2TalkToRedshirt() {
 }
 
 void Room::love2UseMTricorderAnywhere() {
-	if (_vm->_awayMission.love.knowAboutVirus)
+	if (_awayMission->love.knowAboutVirus)
 		mccoyScan(DIR_S, TX_LOV2_008, false);
 	else
 		// BUGFIX: should be TX_LOV2_012, but the audio file is missing. Using equivalent
@@ -323,26 +323,26 @@ void Room::love2UseRedshirtOnCabinet() {
 }
 
 void Room::love2CrewmanReachedCabinet() {
-	Common::String anim = _vm->getCrewmanAnimFilename(_roomVar.love.chamberObject, "usehw");
+	Common::String anim = getCrewmanAnimFilename(_roomVar.love.chamberObject, "usehw");
 	loadActorAnim2(_roomVar.love.chamberObject, anim, -1, -1, 11);
 }
 
 void Room::love2CrewmanAccessedCabinet() {
-	if (_vm->_awayMission.love.cabinetOpen)
+	if (_awayMission->love.cabinetOpen)
 		loadActorAnim2(OBJECT_CABINET, "s3r3d4", 0x1e, 0xaf, 2);
 	else
 		loadActorAnim2(OBJECT_CABINET, "s3r3d1", 0x1e, 0xaf, 2);
 
 	playSoundEffectIndex(SND_DOOR1);
 
-	if (_vm->_awayMission.love.cabinetOpen)
+	if (_awayMission->love.cabinetOpen)
 		loadActorStandAnim(OBJECT_ANTIGRAV);
 
-	_vm->_awayMission.love.cabinetOpen = !_vm->_awayMission.love.cabinetOpen;
+	_awayMission->love.cabinetOpen = !_awayMission->love.cabinetOpen;
 }
 
 void Room::love2CrewmanOpenedOrClosedCabinet() {
-	if (_vm->_awayMission.love.cabinetOpen && !haveItem(OBJECT_IANTIGRA))
+	if (_awayMission->love.cabinetOpen && !haveItem(OBJECT_IANTIGRA))
 		loadActorAnim(OBJECT_ANTIGRAV, "antigr", 0x1f, 0xa7, 0);
 }
 
@@ -356,12 +356,12 @@ void Room::love2ReachedGasFeed() {
 }
 
 void Room::love2ChangedGasFeed() {
-	if (_vm->_awayMission.love.gasFeedOn) {
-		_vm->_awayMission.love.gasFeedOn = false;
+	if (_awayMission->love.gasFeedOn) {
+		_awayMission->love.gasFeedOn = false;
 		loadActorAnim2(OBJECT_GAS_FEED, "s3r3v2", 0xac, 0x75, 0);
 		showText(TX_LOV2N007);
 	} else {
-		_vm->_awayMission.love.gasFeedOn = true;
+		_awayMission->love.gasFeedOn = true;
 		loadActorAnim2(OBJECT_GAS_FEED, "s3r3v1", 0xac, 0x75, 0);
 		showText(TX_LOV2N008);
 	}
@@ -389,12 +389,12 @@ void Room::love2UseN2GasOnCanisterSlot() {
 }
 
 void Room::love2ReachedCanisterSlot() {
-	if (_vm->_awayMission.love.gasFeedOn)
+	if (_awayMission->love.gasFeedOn)
 		showText(TX_SPEAKER_SPOCK, TX_LOV2_026);
 	else {
-		if (_vm->_awayMission.love.canister1 == CANTYPE_NONE)
+		if (_awayMission->love.canister1 == CANTYPE_NONE)
 			loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 13);
-		else if (_vm->_awayMission.love.canister2 == CANTYPE_NONE)
+		else if (_awayMission->love.canister2 == CANTYPE_NONE)
 			loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 14);
 		else
 			showText(TX_LOV2N024);
@@ -404,7 +404,7 @@ void Room::love2ReachedCanisterSlot() {
 void Room::love2PutCanisterInSlot1() {
 	playVoc("SE6FOOD");
 	loadActorAnim(OBJECT_CAN1, _roomVar.love.canisterAnim, 0xa7, 0xae, 0);
-	_vm->_awayMission.love.canister1 = _roomVar.love.canisterType;
+	_awayMission->love.canister1 = _roomVar.love.canisterType;
 	showText(TX_LOV2N034);
 	loseItem(_roomVar.love.canisterItem);
 }
@@ -412,7 +412,7 @@ void Room::love2PutCanisterInSlot1() {
 void Room::love2PutCanisterInSlot2() {
 	playVoc("SE6FOOD");
 	loadActorAnim(OBJECT_CAN2, _roomVar.love.canisterAnim, 0xb1, 0xaf, 0);
-	_vm->_awayMission.love.canister2 = _roomVar.love.canisterType;
+	_awayMission->love.canister2 = _roomVar.love.canisterType;
 	showText(TX_LOV2N035);
 	loseItem(_roomVar.love.canisterItem);
 }
@@ -422,7 +422,7 @@ void Room::love2UseAntigravOnCanister1() {
 }
 
 void Room::love2ReachedCanisterSlot1ToGet() {
-	if (_vm->_awayMission.love.gasFeedOn)
+	if (_awayMission->love.gasFeedOn)
 		showText(TX_SPEAKER_SPOCK, TX_LOV2_025);
 	else {
 		loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 15);
@@ -435,7 +435,7 @@ void Room::love2TookCanister1() {
 	showText(TX_LOV2N030);
 	loadActorStandAnim(OBJECT_CAN1);
 
-	switch (_vm->_awayMission.love.canister1) {
+	switch (_awayMission->love.canister1) {
 	case CANTYPE_O2:
 		giveItem(OBJECT_IO2GAS);
 		break;
@@ -448,7 +448,7 @@ void Room::love2TookCanister1() {
 		break;
 	}
 
-	_vm->_awayMission.love.canister1 = CANTYPE_NONE;
+	_awayMission->love.canister1 = CANTYPE_NONE;
 }
 
 void Room::love2UseAntigravOnCanister2() {
@@ -456,7 +456,7 @@ void Room::love2UseAntigravOnCanister2() {
 }
 
 void Room::love2ReachedCanisterSlot2ToGet() {
-	if (_vm->_awayMission.love.gasFeedOn)
+	if (_awayMission->love.gasFeedOn)
 		showText(TX_SPEAKER_SPOCK, TX_LOV2_025);
 	else {
 		loadActorAnim2(OBJECT_KIRK, "kusehn", -1, -1, 16);
@@ -468,7 +468,7 @@ void Room::love2TookCanister2() {
 	showText(TX_LOV2N031);
 	loadActorStandAnim(OBJECT_CAN2);
 
-	switch (_vm->_awayMission.love.canister2) {
+	switch (_awayMission->love.canister2) {
 	case CANTYPE_O2:
 		giveItem(OBJECT_IO2GAS);
 		break;
@@ -481,7 +481,7 @@ void Room::love2TookCanister2() {
 		break;
 	}
 
-	_vm->_awayMission.love.canister2 = CANTYPE_NONE;
+	_awayMission->love.canister2 = CANTYPE_NONE;
 }
 
 void Room::love2UseKirkOnSynthesizer() {
@@ -505,12 +505,12 @@ void Room::love2UseRedshirtOnSynthesizer() {
 }
 
 void Room::love2CrewmanReachedSynthesizer() {
-	Common::String anim = _vm->getCrewmanAnimFilename(_roomVar.love.chamberObject, "usemn");
+	Common::String anim = getCrewmanAnimFilename(_roomVar.love.chamberObject, "usemn");
 	loadActorAnim2(_roomVar.love.chamberObject, anim, -1, -1, 17);
 }
 
 void Room::love2CrewmanUsedSynthesizer() {
-	if (_vm->_awayMission.love.gasFeedOn) {
+	if (_awayMission->love.gasFeedOn) {
 		love2UseSynthesizer();
 	} else {
 		if (_roomVar.love.cb == 3) {
@@ -532,7 +532,7 @@ void Room::love2SpockReachedGasFeeds() {
 }
 
 void Room::love2SpockEnabledGasFeeds() {
-	_vm->_awayMission.love.gasFeedOn = true;
+	_awayMission->love.gasFeedOn = true;
 
 	loadActorAnim2(OBJECT_GAS_FEED, "s3r3v1", 0xac, 0x75, 0);
 	showText(TX_LOV2N008);
@@ -543,10 +543,10 @@ void Room::love2SpockEnabledGasFeeds() {
 
 // Synthesizer takes the input and produces some output
 void Room::love2UseSynthesizer() {
-	if (_vm->_awayMission.love.canister1 != 0) {
-		if (_vm->_awayMission.love.canister2 != 0) {
-			int c1 = _vm->_awayMission.love.canister1;
-			int c2 = _vm->_awayMission.love.canister2;
+	if (_awayMission->love.canister1 != 0) {
+		if (_awayMission->love.canister2 != 0) {
+			int c1 = _awayMission->love.canister1;
+			int c2 = _awayMission->love.canister2;
 			if (c1 > c2) {
 				int tmp = c1;
 				c1 = c2;
@@ -554,7 +554,7 @@ void Room::love2UseSynthesizer() {
 			}
 
 			if (c1 == CANTYPE_O2 && c2 == CANTYPE_H2) {
-				switch (_vm->_awayMission.love.synthesizerContents) {
+				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Romulan Laughing Gas
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", -1, -1, 27); // -> love2ClosedSynthesizerDoorMakingRLG
 					playSoundEffectIndex(SND_DOOR1);
@@ -581,7 +581,7 @@ bottleFailure:
 
 				case SYNTHITEM_NONE: // Water
 				default:
-					_vm->_awayMission.love.synthesizerBottleIndex = BOTTLETYPE_H2O;
+					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_H2O;
 					strcpy(_roomVar.love.chamberOutputAnim, "btle3");
 produceBottle:
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
@@ -591,11 +591,11 @@ produceBottle:
 closeSynthesizerDoor:
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
 					playSoundEffectIndex(SND_DOOR1);
-					_vm->_awayMission.love.synthesizerContents = 0;
+					_awayMission->love.synthesizerContents = 0;
 					break;
 				}
 			} else if (c1 == CANTYPE_H2 && c2 == CANTYPE_N2) {
-				switch (_vm->_awayMission.love.synthesizerContents) {
+				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Inert matter
 inertMatterFailure:
 					showText(TX_LOV2N049);
@@ -621,12 +621,12 @@ inertMatterFailure:
 
 				case SYNTHITEM_NONE: // Ammonia
 				default:
-					_vm->_awayMission.love.synthesizerBottleIndex = BOTTLETYPE_NH3;
+					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_NH3;
 					strcpy(_roomVar.love.chamberOutputAnim, "btle2");
 					goto produceBottle;
 				}
 			} else if (c1 == CANTYPE_O2 && c2 == CANTYPE_N2) {
-				switch (_vm->_awayMission.love.synthesizerContents) {
+				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Inert matter
 					goto inertMatterFailure;
 
@@ -644,7 +644,7 @@ inertMatterFailure:
 
 				case SYNTHITEM_NONE: // Laughing gas
 				default:
-					_vm->_awayMission.love.synthesizerBottleIndex = BOTTLETYPE_N2O;
+					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_N2O;
 					strcpy(_roomVar.love.chamberOutputAnim, "btle1");
 					goto produceBottle;
 				}
@@ -664,12 +664,12 @@ inertMatterFailure:
 void Room::love2SynthesizerDoorClosed() {
 	playVoc("LD1SCAN");
 	loadActorAnim(OBJECT_SYNTHESIZER_OUTPUT, _roomVar.love.chamberOutputAnim, 0x8a, 0x8d, 4); // -> love2SynthesizerFinished
-	_vm->_awayMission.love.synthesizerContents = SYNTHITEM_BOTTLE;
+	_awayMission->love.synthesizerContents = SYNTHITEM_BOTTLE;
 }
 
 // Final product of synthesizer is produced
 void Room::love2SynthesizerFinished() {
-	switch (_vm->_awayMission.love.synthesizerBottleIndex) {
+	switch (_awayMission->love.synthesizerBottleIndex) {
 	case BOTTLETYPE_N2O:
 		showText(TX_LOV2N017);
 		showText(TX_SPEAKER_SPOCK, TX_LOV2_032);
@@ -679,7 +679,7 @@ void Room::love2SynthesizerFinished() {
 
 	case BOTTLETYPE_NH3:
 		showText(TX_LOV2N016);
-		if (!_vm->_awayMission.redshirtDead) {
+		if (!_awayMission->redshirtDead) {
 			showText(TX_SPEAKER_FERRIS, TX_LOV2_043);
 			showText(TX_SPEAKER_KIRK, TX_LOV2_003);
 		}
@@ -703,7 +703,7 @@ void Room::love2SynthesizerFinished() {
 }
 
 void Room::love2ClosedSynthesizerDoorMakingRLG() {
-	_vm->_awayMission.love.synthesizerBottleIndex = BOTTLETYPE_RLG;
+	_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_RLG;
 	strcpy(_roomVar.love.chamberOutputAnim, "btle4");
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
 	playSoundEffectIndex(SND_DOOR1);
@@ -727,11 +727,11 @@ void Room::love2CureSynthesized() {
 // Put polycarbonate in synthesizer
 void Room::love2UsePolyberylcarbonateOnSynthesizerDoor() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 6);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
 void Room::love2KirkReachedSynthesizerWithPolyberylcarbonate() {
-	if (_vm->_awayMission.love.synthesizerContents != 0)
+	if (_awayMission->love.synthesizerContents != 0)
 		showText(TX_LOV2N025);
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 5);
@@ -746,18 +746,18 @@ void Room::love2SynthesizerDoorOpenedWithPolyberylcarbonate() {
 void Room::love2PutPolyberylcarbonateInSynthesizer() {
 	loadActorAnim(OBJECT_POLYBERYLCARBONATE, "pbcanm", 0x8a, 0x8b, 0);
 	loseItem(OBJECT_IPBC);
-	_vm->_awayMission.love.synthesizerContents = SYNTHITEM_PBC;
+	_awayMission->love.synthesizerContents = SYNTHITEM_PBC;
 }
 
 
 // Put dish (virus sample) in synthesizer
 void Room::love2UseVirusSampleOnSynthesizerDoor() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 7);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
 void Room::love2KirkReachedSynthesizerWithVirusSample() {
-	if (_vm->_awayMission.love.synthesizerContents != 0)
+	if (_awayMission->love.synthesizerContents != 0)
 		showText(TX_LOV2N025);
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 6);
@@ -772,18 +772,18 @@ void Room::love2SynthesizerDoorOpenedWithVirusSample() {
 void Room::love2PutVirusSampleInSynthesizer() {
 	loadActorAnim(OBJECT_VIRUSSAMPLE, "dishes", 0x8a, 0x8b, 0);
 	loseItem(OBJECT_IDISHES);
-	_vm->_awayMission.love.synthesizerContents = SYNTHITEM_VIRUS_SAMPLE;
+	_awayMission->love.synthesizerContents = SYNTHITEM_VIRUS_SAMPLE;
 }
 
 
 // Put cure sample in synthesizer
 void Room::love2UseCureSampleOnSynthesizerDoor() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 8);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
 void Room::love2KirkReachedSynthesizerWithCureSample() {
-	if (_vm->_awayMission.love.synthesizerContents != 0)
+	if (_awayMission->love.synthesizerContents != 0)
 		showText(TX_LOV2N025); // BUGFIX: original didn't play audio
 	else {
 		loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 7);
@@ -798,7 +798,7 @@ void Room::love2SynthesizerDoorOpenedWithCureSample() {
 void Room::love2PutCureSampleInSynthesizer() {
 	loadActorAnim(OBJECT_CURESAMPLE, "dishes", 0x8a, 0x8b, 0);
 	loseItem(OBJECT_ISAMPLE);
-	_vm->_awayMission.love.synthesizerContents = SYNTHITEM_CURE_SAMPLE;
+	_awayMission->love.synthesizerContents = SYNTHITEM_CURE_SAMPLE;
 }
 
 
@@ -812,7 +812,7 @@ void Room::love2UseAnythingOnSynthesizer() {
 }
 
 void Room::love2GetCanister() {
-	if (_vm->_awayMission.redshirtDead)
+	if (_awayMission->redshirtDead)
 		showText(TX_SPEAKER_MCCOY, TX_LOV2_011);
 	else
 		showText(TX_SPEAKER_FERRIS, TX_LOV2_040);
@@ -838,7 +838,7 @@ void Room::love2GotAntigrav() {
 // Get polyberylcarbonate from synthesizer
 void Room::love2GetPolyberylcarbonate() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 18);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
 void Room::love2ReachedPolyberylcarbonate() {
@@ -849,7 +849,7 @@ void Room::love2GotPolyberylcarbonate() {
 	loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
 	showText(TX_LOV2N044);
 	giveItem(OBJECT_IPBC);
-	_vm->_awayMission.love.synthesizerContents = 0;
+	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
 	playSoundEffectIndex(SND_DOOR1);
 }
@@ -858,7 +858,7 @@ void Room::love2GotPolyberylcarbonate() {
 // Get virus sample from synthesizer
 void Room::love2GetDishes() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 17);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
 void Room::love2ReachedDishes() {
@@ -869,7 +869,7 @@ void Room::love2GotDishes() {
 	loadActorStandAnim(OBJECT_VIRUSSAMPLE);
 	showText(TX_LOV2N036); // FIXME: text doesn't match audio
 	giveItem(OBJECT_IDISHES);
-	_vm->_awayMission.love.synthesizerContents = 0;
+	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
 	playSoundEffectIndex(SND_DOOR1);
 }
@@ -878,7 +878,7 @@ void Room::love2GotDishes() {
 // Get cure sample from synthesizer
 void Room::love2GetSample() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 19);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
 void Room::love2ReachedSample() {
@@ -889,7 +889,7 @@ void Room::love2GotSample() {
 	loadActorStandAnim(OBJECT_CURESAMPLE);
 	showText(TX_LOV2N037);
 	giveItem(OBJECT_ISAMPLE);
-	_vm->_awayMission.love.synthesizerContents = 0;
+	_awayMission->love.synthesizerContents = 0;
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
 	playSoundEffectIndex(SND_DOOR1);
 }
@@ -898,7 +898,7 @@ void Room::love2GotSample() {
 // Get synthesizer output
 void Room::love2GetSynthesizerOutput() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 10);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
 void Room::love2ReachedSynthesizerOutput() {
@@ -906,7 +906,7 @@ void Room::love2ReachedSynthesizerOutput() {
 }
 
 void Room::love2GotSynthesizerOutput() {
-	switch (_vm->_awayMission.love.synthesizerBottleIndex) {
+	switch (_awayMission->love.synthesizerBottleIndex) {
 	case BOTTLETYPE_N2O:
 		showText(TX_LOV2N040);
 		giveItem(OBJECT_IN2O);
@@ -925,9 +925,9 @@ void Room::love2GotSynthesizerOutput() {
 	case BOTTLETYPE_RLG:
 	default:
 		showText(TX_LOV2N038);
-		if (!_vm->_awayMission.love.gotTLDH) {
-			_vm->_awayMission.love.gotTLDH = true;
-			_vm->_awayMission.love.missionScore += 4;
+		if (!_awayMission->love.gotTLDH) {
+			_awayMission->love.gotTLDH = true;
+			_awayMission->love.missionScore += 4;
 		}
 		giveItem(OBJECT_IRLG);
 		break;
@@ -937,14 +937,14 @@ void Room::love2GotSynthesizerOutput() {
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
 	playSoundEffectIndex(SND_DOOR1);
 
-	_vm->_awayMission.love.synthesizerContents = 0;
-	_vm->_awayMission.love.synthesizerBottleIndex = 0;
+	_awayMission->love.synthesizerContents = 0;
+	_awayMission->love.synthesizerBottleIndex = 0;
 }
 
 // Get the cure
 void Room::love2GetCure() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 11);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
 void Room::love2ReachedCure() {
@@ -952,9 +952,9 @@ void Room::love2ReachedCure() {
 }
 
 void Room::love2GotCure() {
-	if (!_vm->_awayMission.love.gotCure) {
-		_vm->_awayMission.love.gotCure = true;
-		_vm->_awayMission.love.missionScore += 5;
+	if (!_awayMission->love.gotCure) {
+		_awayMission->love.gotCure = true;
+		_awayMission->love.missionScore += 5;
 	}
 
 	giveItem(OBJECT_ICURE);
@@ -963,7 +963,7 @@ void Room::love2GotCure() {
 
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
 	playSoundEffectIndex(SND_DOOR1);
-	_vm->_awayMission.love.synthesizerContents = 0;
+	_awayMission->love.synthesizerContents = 0;
 }
 
 }

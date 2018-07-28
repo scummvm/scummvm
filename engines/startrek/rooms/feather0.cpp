@@ -122,11 +122,11 @@ void Room::feather0TalkToQuetzecoatl() {
 	}
 
 	// Quetzecoatl ultimately warps the crew away no matter what
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	loadActorAnim(OBJECT_QUETZECOATL, "s5r0qt");
 	playMidiMusicTracks(1);
-	_vm->_awayMission.timers[0] = 50;
-	_vm->_awayMission.timers[1] = 64;
+	_awayMission->timers[0] = 50;
+	_awayMission->timers[1] = 64;
 }
 
 void Room::feather0Timer0Expired() {
@@ -139,7 +139,7 @@ void Room::feather0Timer0Expired() {
 }
 
 void Room::feather0Timer1Expired() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	loadRoomIndex(1, 5);
 }
 

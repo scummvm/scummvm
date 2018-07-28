@@ -38,46 +38,46 @@ namespace StarTrek {
 void Room::love3Tick1() {
 	playVoc("LOV3LOOP");
 
-	if (!_vm->_awayMission.love.wrenchTaken)
+	if (!_awayMission->love.wrenchTaken)
 		loadActorAnim(OBJECT_WRENCH, "wrench", 0x10a, 0xb6, 0);
 
-	if (_vm->_awayMission.love.grateRemoved)
+	if (_awayMission->love.grateRemoved)
 		loadActorAnim(OBJECT_GRATE, "s3r4g3", 0, 0, 0);
 	else
 		loadActorAnim(OBJECT_GRATE, "s3r4g1", 0x116, 0x8f, 0);
 
-	if (_vm->_awayMission.love.insulationOnGround)
+	if (_awayMission->love.insulationOnGround)
 		loadActorAnim(OBJECT_INSULATION, "s3r4p2", 0, 0, 0);
 
-	if (!_vm->_awayMission.love.tookN2TankFromServicePanel)
+	if (!_awayMission->love.tookN2TankFromServicePanel)
 		loadActorAnim(OBJECT_GAS_TANK, "r4n2", 0, 0, 0);
 
-	if (_vm->_awayMission.love.servicePanelOpen)
+	if (_awayMission->love.servicePanelOpen)
 		loadActorAnim(OBJECT_SERVICE_PANEL, "s3r4d1a", 1, 0, 0);
 	else
 		loadActorAnim(OBJECT_SERVICE_PANEL, "s3r4d2", 1, 0, 0);
 
-	if (_vm->_awayMission.love.releasedHumanLaughingGas)
-		_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
-	if (_vm->_awayMission.love.releasedRomulanLaughingGas)
-		_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
-	_vm->_awayMission.timers[2] = 200;
+	if (_awayMission->love.releasedHumanLaughingGas)
+		_awayMission->timers[0] = getRandomWordInRange(200, 400);
+	if (_awayMission->love.releasedRomulanLaughingGas)
+		_awayMission->timers[1] = getRandomWordInRange(200, 400);
+	_awayMission->timers[2] = 200;
 
 	_roomVar.love.cmnXPosToCureSpock = 0xb4;
 	_roomVar.love.cmnYPosToCureSpock = 0xb7;
 }
 
 void Room::love3Tick80() {
-	if (!_vm->_awayMission.love.visitedRoomWithRomulans && haveItem(OBJECT_IRLG)) {
+	if (!_awayMission->love.visitedRoomWithRomulans && haveItem(OBJECT_IRLG)) {
 		showText(TX_SPEAKER_MCCOY, TX_LOV3_010);
 		showText(TX_SPEAKER_SPOCK, TX_LOV3_020);
 	}
 }
 
 void Room::love3TouchedWarp1() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	playSoundEffectIndex(SND_DOOR1);
-	_vm->_awayMission.timers[3] = 10;
+	_awayMission->timers[3] = 10;
 }
 
 void Room::love3Timer3Expired() {
@@ -125,7 +125,7 @@ void Room::love3LookAtGrate() {
 }
 
 void Room::love3LookAtPanel() {
-	if (_vm->_awayMission.love.insulationOnGround)
+	if (_awayMission->love.insulationOnGround)
 		showText(TX_LOV3N017);
 	else
 		showText(TX_LOV3NA22);
@@ -139,7 +139,7 @@ void Room::love3LookAtTurbines() {
 	showText(TX_LOV3N026);
 	showText(TX_SPEAKER_MCCOY, TX_LOV3_009);
 	showText(TX_SPEAKER_SPOCK, TX_LOV3_019);
-	if (!_vm->_awayMission.redshirtDead)
+	if (!_awayMission->redshirtDead)
 		showText(TX_SPEAKER_FERRIS, TX_LOV3_026);
 }
 
@@ -148,9 +148,9 @@ void Room::love3TalkToKirk() {
 }
 
 void Room::love3TalkToSpock() {
-	if (_vm->_awayMission.love.visitedRoomWithRomulans)
+	if (_awayMission->love.visitedRoomWithRomulans)
 		showText(TX_SPEAKER_SPOCK, TX_LOV3_003);
-	else if (_vm->_awayMission.love.romulansUnconsciousFromLaughingGas)
+	else if (_awayMission->love.romulansUnconsciousFromLaughingGas)
 		showText(TX_SPEAKER_SPOCK, TX_LOV3_017);
 	else if (haveItem(OBJECT_IRLG))
 		showText(TX_SPEAKER_SPOCK, TX_LOV3_004);
@@ -167,7 +167,7 @@ void Room::love3TalkToRedshirt() {
 }
 
 void Room::love3UseMTricorderAnywhere() {
-	if (_vm->_awayMission.love.knowAboutVirus)
+	if (_awayMission->love.knowAboutVirus)
 		mccoyScan(DIR_S, TX_LOV3_005, false);
 	else
 		mccoyScan(DIR_S, TX_LOV3_006, false);
@@ -178,7 +178,7 @@ void Room::love3UseSTricorderOnTurbines() {
 }
 
 void Room::love3UseSTricorderOnInsulation() {
-	if (_vm->_awayMission.love.insulationOnGround)
+	if (_awayMission->love.insulationOnGround)
 		spockScan(DIR_W, TX_LOV3_002, false);
 }
 
@@ -207,21 +207,21 @@ void Room::love3UseRedshirtOnServicePanel() {
 }
 
 void Room::love3CrewmanReachedServicePanel() {
-	Common::String anim = _vm->getCrewmanAnimFilename(_roomVar.love.activeCrewman, "usehe");
+	Common::String anim = getCrewmanAnimFilename(_roomVar.love.activeCrewman, "usehe");
 	loadActorAnim2(_roomVar.love.activeCrewman, anim, -1, -1, 1);
 }
 
 void Room::love3OpenedOrClosedServicePanel() {
-	if (_vm->_awayMission.love.servicePanelOpen)
+	if (_awayMission->love.servicePanelOpen)
 		loadActorAnim2(OBJECT_SERVICE_PANEL, "s3r4d1b", 1, 0, 0);
 	else
 		loadActorAnim2(OBJECT_SERVICE_PANEL, "s3r4d1", 1, 0, 0);
 
 	playVoc("SMADOOR1");
-	_vm->_awayMission.love.servicePanelOpen = !_vm->_awayMission.love.servicePanelOpen;
+	_awayMission->love.servicePanelOpen = !_awayMission->love.servicePanelOpen;
 
-	if (_vm->_awayMission.love.servicePanelOpen) {
-		if (_vm->_awayMission.love.tookN2TankFromServicePanel)
+	if (_awayMission->love.servicePanelOpen) {
+		if (_awayMission->love.tookN2TankFromServicePanel)
 			showText(TX_LOV3N023);
 		else
 			showText(TX_LOV3N022);
@@ -240,14 +240,14 @@ void Room::love3ReachedGasTankToUnscrew() {
 }
 
 void Room::love3ScrewedOrUnscrewedGasTank() {
-	if (!_vm->_awayMission.love.gasTankUnscrewed) {
+	if (!_awayMission->love.gasTankUnscrewed) {
 		showText(TX_LOV3N012);
-		if (!_vm->_awayMission.redshirtDead)
+		if (!_awayMission->redshirtDead)
 			showText(TX_SPEAKER_FERRIS, TX_LOV3_022);
-		_vm->_awayMission.love.gasTankUnscrewed = true;
+		_awayMission->love.gasTankUnscrewed = true;
 	} else {
 		showText(TX_LOV3N015);
-		_vm->_awayMission.love.gasTankUnscrewed = false;
+		_awayMission->love.gasTankUnscrewed = false;
 	}
 }
 
@@ -269,7 +269,7 @@ void Room::love3ReachedGasTankToPutDown() {
 
 void Room::love3PutN2TankBack() {
 	showText(TX_LOV3N013);
-	_vm->_awayMission.love.tookN2TankFromServicePanel = false;
+	_awayMission->love.tookN2TankFromServicePanel = false;
 	loseItem(OBJECT_IN2GAS);
 	loadActorAnim(OBJECT_GAS_TANK, "r4n2", 0, 0, 0);
 }
@@ -286,10 +286,10 @@ void Room::love3ReachedEngineeringPanel() {
 }
 
 void Room::love3OpenedEngineeringPanel() {
-	if (!_vm->_awayMission.love.insulationOnGround) {
+	if (!_awayMission->love.insulationOnGround) {
 		playVoc("MADR4E4A");
 		loadActorAnim(OBJECT_INSULATION, "s3r4p1", 0, 0, 0);
-		_vm->_awayMission.love.insulationOnGround = true;
+		_awayMission->love.insulationOnGround = true;
 	}
 	showText(TX_LOV3N021);
 }
@@ -325,11 +325,11 @@ void Room::love3UseCrewmanOnEngineeringPanelOrGrate() {
 
 void Room::love3UseWrenchOnGrate() {
 	walkCrewmanC(OBJECT_KIRK, 0xf6, 0xaa, &Room::love3ReachedGateWithWrench);
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 }
 
 void Room::love3ReachedGateWithWrench() {
-	if (_vm->_awayMission.love.grateRemoved)
+	if (_awayMission->love.grateRemoved)
 		loadActorAnimC(OBJECT_KIRK, "s3r4g2a", -1, -1, &Room::love3OpenedOrClosedGrate);
 	else
 		loadActorAnimC(OBJECT_KIRK, "s3r4g2",  -1, -1, &Room::love3OpenedOrClosedGrate);
@@ -338,20 +338,20 @@ void Room::love3ReachedGateWithWrench() {
 }
 
 void Room::love3OpenedOrClosedGrate() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
 
-	if (!_vm->_awayMission.love.grateRemoved) {
-		_vm->_awayMission.love.grateRemoved = true;
+	if (!_awayMission->love.grateRemoved) {
+		_awayMission->love.grateRemoved = true;
 		loadActorAnim(OBJECT_GRATE, "s3r4g3", 0, 0, 0);
 		showText(TX_LOV3N016);
-		if (!_vm->_awayMission.love.gotPointsForOpeningGrate) {
-			_vm->_awayMission.love.gotPointsForOpeningGrate = true;
-			_vm->_awayMission.love.missionScore++;
+		if (!_awayMission->love.gotPointsForOpeningGrate) {
+			_awayMission->love.gotPointsForOpeningGrate = true;
+			_awayMission->love.missionScore++;
 		}
 	} else {
 		loadActorAnim(OBJECT_GRATE, "s3r4g1", 0x116, 0x8f, 0);
-		_vm->_awayMission.love.grateRemoved = false;
+		_awayMission->love.grateRemoved = false;
 		showText(TX_LOV3N032);
 	}
 }
@@ -367,7 +367,7 @@ void Room::love3UseWaterOnShaft() {
 }
 
 void Room::love3ReachedShaftUsingWater() {
-	if (!_vm->_awayMission.love.grateRemoved)
+	if (!_awayMission->love.grateRemoved)
 		showText(TX_LOV3N025);
 	else
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredWaterDownShaft);
@@ -384,7 +384,7 @@ void Room::love3UseNitrousOxideOnShaft() {
 }
 
 void Room::love3ReachedShaftUsingNitrousOxide() {
-	if (!_vm->_awayMission.love.grateRemoved)
+	if (!_awayMission->love.grateRemoved)
 		showText(TX_LOV3N025);
 	else
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredNitrousOxideDownShaft);
@@ -402,16 +402,16 @@ void Room::love3UseAmmoniaOnShaft() {
 }
 
 void Room::love3ReachedShaftUsingAmmonia() {
-	if (!_vm->_awayMission.love.grateRemoved)
+	if (!_awayMission->love.grateRemoved)
 		showText(TX_LOV3N025);
 	else
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredAmmoniaDownShaft);
 }
 
 void Room::love3PouredAmmoniaDownShaft() {
-	if (!_vm->_awayMission.love.romulansUnconsciousFromVirus) {
+	if (!_awayMission->love.romulansUnconsciousFromVirus) {
 		showText(TX_LOV3N001);
-		if (!_vm->_awayMission.redshirtDead)
+		if (!_awayMission->redshirtDead)
 			showText(TX_SPEAKER_FERRIS, TX_LOV3_023);
 	}
 
@@ -420,13 +420,13 @@ void Room::love3PouredAmmoniaDownShaft() {
 
 
 void Room::love3UseRomulanLaughingGasOnShaft() {
-	if (_vm->_awayMission.love.gotPointsForGassingRomulans) {
+	if (_awayMission->love.gotPointsForGassingRomulans) {
 		// BUG-ish: you could get the points for this by starting the action, then
 		// canceling it before Kirk reaches the shaft.
-		_vm->_awayMission.love.gotPointsForGassingRomulans = true;
-		_vm->_awayMission.love.missionScore += 6;
+		_awayMission->love.gotPointsForGassingRomulans = true;
+		_awayMission->love.missionScore += 6;
 	}
-	if (_vm->_awayMission.love.romulansUnconsciousFromLaughingGas)
+	if (_awayMission->love.romulansUnconsciousFromLaughingGas)
 		showText(TX_SPEAKER_SPOCK, TX_LOV3_011);
 	else {
 		walkCrewmanC(OBJECT_KIRK, 0xf6, 0xa4, &Room::love3ReachedShaftUsingRomulanLaughingGas);
@@ -434,7 +434,7 @@ void Room::love3UseRomulanLaughingGasOnShaft() {
 }
 
 void Room::love3ReachedShaftUsingRomulanLaughingGas() {
-	if (!_vm->_awayMission.love.grateRemoved)
+	if (!_awayMission->love.grateRemoved)
 		showText(TX_LOV3N025);
 	else {
 		loadActorAnimC(OBJECT_KIRK, "kuseme", -1, -1, &Room::love3PouredRomulanLaughingGasDownShaft);
@@ -444,11 +444,11 @@ void Room::love3ReachedShaftUsingRomulanLaughingGas() {
 
 void Room::love3PouredRomulanLaughingGasDownShaft() {
 	loseItem(OBJECT_IRLG);
-	_vm->_awayMission.love.romulansUnconsciousFromLaughingGas = true;
+	_awayMission->love.romulansUnconsciousFromLaughingGas = true;
 
-	if (_vm->_awayMission.love.romulansUnconsciousFromVirus) {
+	if (_awayMission->love.romulansUnconsciousFromVirus) {
 		showText(TX_LOV3NA08);
-		_vm->_awayMission.love.romulansUnconsciousFromLaughingGas = false;
+		_awayMission->love.romulansUnconsciousFromLaughingGas = false;
 	} else {
 		showText(TX_LOV3NA09);
 		playVoc("ROMULANL");
@@ -469,7 +469,7 @@ void Room::love3PickedUpWrench() {
 	loadActorStandAnim(OBJECT_KIRK);
 	giveItem(OBJECT_IWRENCH);
 	loadActorStandAnim(OBJECT_WRENCH);
-	_vm->_awayMission.love.wrenchTaken = true;
+	_awayMission->love.wrenchTaken = true;
 	showText(TX_LOV3N031);
 }
 
@@ -480,7 +480,7 @@ void Room::love3GetGasTank() {
 }
 
 void Room::love3ReachedGasTankToGet() {
-	if (_vm->_awayMission.love.gasTankUnscrewed)
+	if (_awayMission->love.gasTankUnscrewed)
 		showText(TX_LOV3N007);
 	else
 		showText(TX_LOV3N014);
@@ -493,7 +493,7 @@ void Room::love3UseAntigravOnGasTank() {
 }
 
 void Room::love3ReachedGasTankUsingAntigrav() {
-	if (_vm->_awayMission.love.gasTankUnscrewed) {
+	if (_awayMission->love.gasTankUnscrewed) {
 		loadActorAnimC(OBJECT_KIRK, "kusehe", -1, -1, &Room::love3PickedUpGasTank);
 		playVoc("SE3PLBAT");
 	} else {
@@ -505,10 +505,10 @@ void Room::love3ReachedGasTankUsingAntigrav() {
 void Room::love3PickedUpGasTank() {
 	giveItem(OBJECT_IN2GAS);
 	loadActorStandAnim(OBJECT_GAS_TANK);
-	_vm->_awayMission.love.tookN2TankFromServicePanel = true;
+	_awayMission->love.tookN2TankFromServicePanel = true;
 
 	showText(TX_LOV3NJ32);
-	if (!_vm->_awayMission.redshirtDead)
+	if (!_awayMission->redshirtDead)
 		showText(TX_SPEAKER_FERRIS, TX_LOV3_025);
 }
 
@@ -517,7 +517,7 @@ void Room::love3GetInsulation() {
 }
 
 void Room::love3ReachedInsulationToGet() {
-	if (!_vm->_awayMission.love.field3c)
+	if (!_awayMission->love.field3c)
 		loadActorAnimC(OBJECT_KIRK, "s5r1kg", -1, -1, &Room::love3PickedUpInsulation);
 }
 

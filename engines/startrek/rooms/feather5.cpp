@@ -118,16 +118,16 @@ void Room::feather5Tick1() {
 	playVoc("FEA5LOOP");
 	playMidiMusicTracks(29);
 
-	if (!_vm->_awayMission.feather.waterMonsterRetreated)
+	if (!_awayMission->feather.waterMonsterRetreated)
 		loadActorAnim(OBJECT_MONSTER, "s5r5os", 0x4e, 0xa4);
 	else
 		loadMapFile("feath5b");
 }
 
 void Room::feather5TouchedHotspot0() { // Approached the log
-	if (!_vm->_awayMission.feather.waterMonsterRetreated) {
+	if (!_awayMission->feather.waterMonsterRetreated) {
 		showText(TX_SPEAKER_SPOCK, TX_FEA5_005);
-		if (!_vm->_awayMission.redshirtDead)
+		if (!_awayMission->redshirtDead)
 			showText(TX_SPEAKER_STRAGEY, TX_FEA5_033);
 	}
 }
@@ -145,9 +145,9 @@ void Room::feather5UseRedshirtOnFern() {
 }
 
 void Room::feather5UseRedshirtOnLeftExit() {
-	if (!_vm->_awayMission.feather.waterMonsterRetreated) {
+	if (!_awayMission->feather.waterMonsterRetreated) {
 		showText(TX_SPEAKER_STRAGEY, TX_FEA5_034);
-		_vm->_awayMission.disableInput = true;
+		_awayMission->disableInput = true;
 		loadMapFile("feath5b");
 		walkCrewmanC(OBJECT_REDSHIRT, 0x8f, 0x64, &Room::feather5RedshirtReachedLog);
 	}
@@ -158,22 +158,22 @@ void Room::feather5RedshirtReachedLog() {
 	playVoc("TENTICL2");
 	loadActorAnim(OBJECT_MONSTER, "s5r5oh", 0x4e, 0xa4);
 	loadActorAnimC(OBJECT_REDSHIRT, "s5r5ol", 0x8f, 0x64, &Room::feather5RedshirtDeathFinished);
-	_vm->_awayMission.feather.waterMonsterRetreated = true;
-	_vm->_awayMission.redshirtDead = true;
+	_awayMission->feather.waterMonsterRetreated = true;
+	_awayMission->redshirtDead = true;
 }
 
 void Room::feather5RedshirtDeathFinished() {
 	loadActorStandAnim(OBJECT_REDSHIRT);
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 }
 
 void Room::feather5UseSpockOnLeftExit() {
-	if (!_vm->_awayMission.feather.waterMonsterRetreated)
+	if (!_awayMission->feather.waterMonsterRetreated)
 		showText(TX_SPEAKER_SPOCK, TX_FEA5_002);
 }
 
 void Room::feather5UseMccoyOnLeftExit() {
-	if (!_vm->_awayMission.feather.waterMonsterRetreated)
+	if (!_awayMission->feather.waterMonsterRetreated)
 		showText(TX_SPEAKER_MCCOY, TX_FEA5_015);
 }
 
@@ -231,11 +231,11 @@ void Room::feather5GetFern() {
 }
 
 void Room::feather5UseKnifeOnFern() {
-	if (_vm->_awayMission.feather.gotFern)
+	if (_awayMission->feather.gotFern)
 		showText(TX_FEA5N015);
 	else {
 		walkCrewmanC(OBJECT_KIRK, 0x106, 0x8a, &Room::feather5ReachedFern);
-		_vm->_awayMission.disableInput = true;
+		_awayMission->disableInput = true;
 	}
 }
 
@@ -244,18 +244,18 @@ void Room::feather5ReachedFern() {
 }
 
 void Room::feather5PickedUpFern() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
 	giveItem(OBJECT_IFERN);
-	_vm->_awayMission.feather.gotFern = true;
+	_awayMission->feather.gotFern = true;
 }
 
 
 void Room::feather5UseFernOnMonster() {
 	// BUG: Infinite score mechanism. Just keep throwing ferns into the water.
-	_vm->_awayMission.feather.missionScore += 2;
+	_awayMission->feather.missionScore += 2;
 	walkCrewmanC(OBJECT_KIRK, 0x106, 0x8a, &Room::feather5ReachedPositionToUseFern);
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 }
 
 void Room::feather5ReachedPositionToUseFern() {
@@ -264,16 +264,16 @@ void Room::feather5ReachedPositionToUseFern() {
 }
 
 void Room::feather5DoneThrowingFern() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_KIRK);
 	loseItem(OBJECT_IFERN);
-	_vm->_awayMission.feather.gotFern = false;
+	_awayMission->feather.gotFern = false;
 }
 
 void Room::feather5FernFellIntoWater() {
-	if (!_vm->_awayMission.feather.waterMonsterRetreated) {
-		_vm->_awayMission.feather.waterMonsterRetreated = true;
-		_vm->_awayMission.timers[1] = 20;
+	if (!_awayMission->feather.waterMonsterRetreated) {
+		_awayMission->feather.waterMonsterRetreated = true;
+		_awayMission->timers[1] = 20;
 		loadActorStandAnim(OBJECT_MONSTER);
 		loadMapFile("feath5b");
 	}
@@ -351,24 +351,24 @@ void Room::feather5LookAtSpock() {
 }
 
 void Room::feather5LookAtKirk() {
-	if (!_vm->_awayMission.feather.waterMonsterRetreated)
+	if (!_awayMission->feather.waterMonsterRetreated)
 		showText(TX_FEA5N001);
 	else // ENHANCEMENT: Fall back to default behaviour instead of doing nothing
-		_vm->_awayMission.rdfStillDoDefaultAction = true;
+		_awayMission->rdfStillDoDefaultAction = true;
 }
 
 void Room::feather5LookAtMccoy() {
-	if (!_vm->_awayMission.feather.waterMonsterRetreated)
+	if (!_awayMission->feather.waterMonsterRetreated)
 		showText(TX_FEA5N002);
 	else // ENHANCEMENT: Fall back to default behaviour instead of doing nothing
-		_vm->_awayMission.rdfStillDoDefaultAction = true;
+		_awayMission->rdfStillDoDefaultAction = true;
 }
 
 void Room::feather5LookAtRedshirt() {
-	if (!_vm->_awayMission.feather.waterMonsterRetreated)
+	if (!_awayMission->feather.waterMonsterRetreated)
 		showText(TX_FEA5N004);
 	else // ENHANCEMENT: Fall back to default behaviour instead of doing nothing
-		_vm->_awayMission.rdfStillDoDefaultAction = true;
+		_awayMission->rdfStillDoDefaultAction = true;
 }
 
 void Room::feather5TalkToMccoy() {
@@ -384,7 +384,7 @@ void Room::feather5TalkToRedshirt() {
 }
 
 void Room::feather5UseMTricorderOnWater() {
-	if (_vm->_awayMission.feather.waterMonsterRetreated)
+	if (_awayMission->feather.waterMonsterRetreated)
 		mccoyScan(DIR_W, TX_FEA5_011);
 	else
 		mccoyScan(DIR_W, TX_FEA5_014);
@@ -403,7 +403,7 @@ void Room::feather5UseSTricorderAnywhere() {
 }
 
 void Room::feather5UseSTricorderOnWater() {
-	if (_vm->_awayMission.feather.waterMonsterRetreated)
+	if (_awayMission->feather.waterMonsterRetreated)
 		spockScan(DIR_W, TX_FEA5_031);
 	else
 		spockScan(DIR_W, TX_FEA5_030);

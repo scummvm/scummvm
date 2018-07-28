@@ -37,7 +37,7 @@ void Room::love5Tick1() {
 
 	loadActorAnim(OBJECT_8, "s3r6c1", 0x27, 0xa9);
 
-	if (_vm->_awayMission.love.freedMarcusAndCheever) {
+	if (_awayMission->love.freedMarcusAndCheever) {
 		loadActorAnim(OBJECT_MARCUS, "marcusst", 0x28, 0xa6);
 		loadActorAnim(OBJECT_CHEEVER, "s3gtupst", 0x49, 0xac);
 	} else {
@@ -45,25 +45,25 @@ void Room::love5Tick1() {
 		loadActorAnim(OBJECT_CHEEVER, "s3gtup2", 0x49, 0xac);
 	}
 
-	if (_vm->_awayMission.love.preaxCured)
+	if (_awayMission->love.preaxCured)
 		loadActorAnim(OBJECT_PREAX, "s3r6r3", 0x116, 0xba);
 	else
 		loadActorAnim(OBJECT_PREAX, "s3r6r2", 0x116, 0xba);
 
-	if (_vm->_awayMission.love.releasedHumanLaughingGas)
-		_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
-	if (_vm->_awayMission.love.releasedRomulanLaughingGas)
-		_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
-	_vm->_awayMission.timers[2] = 200;
+	if (_awayMission->love.releasedHumanLaughingGas)
+		_awayMission->timers[0] = getRandomWordInRange(200, 400);
+	if (_awayMission->love.releasedRomulanLaughingGas)
+		_awayMission->timers[1] = getRandomWordInRange(200, 400);
+	_awayMission->timers[2] = 200;
 
 	_roomVar.love.cmnXPosToCureSpock = 0x89;
 	_roomVar.love.cmnXPosToCureSpock = 0xb9;
 }
 
 void Room::love5TouchedWarp1() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	playSoundEffectIndex(SND_DOOR1);
-	_vm->_awayMission.timers[4] = 10;
+	_awayMission->timers[4] = 10;
 }
 
 void Room::love5Timer4Expired() {
@@ -121,7 +121,7 @@ void Room::love5LookAtConsole() {
 }
 
 void Room::love5LookAtDrMarcus() {
-	if (_vm->_awayMission.love.freedMarcusAndCheever)
+	if (_awayMission->love.freedMarcusAndCheever)
 		showText(TX_LOV5N001);
 	else {
 		// BUGFIX: originally played audio "LOV5N001", which is only the first sentence of
@@ -133,12 +133,12 @@ void Room::love5LookAtDrMarcus() {
 }
 
 void Room::love5LookAtDrCheever() {
-	if (_vm->_awayMission.love.freedMarcusAndCheever)
+	if (_awayMission->love.freedMarcusAndCheever)
 		showText(TX_LOV5N000);
 	else {
 		showText(TX_LOV5N014);
 		showText(TX_SPEAKER_CHEEVER, TX_LOV5_057);
-		if (!_vm->_awayMission.redshirtDead) {
+		if (!_awayMission->redshirtDead) {
 			showText(TX_SPEAKER_FERRIS, TX_LOV5_054);
 			showText(TX_SPEAKER_CHEEVER, TX_LOV5_058);
 		}
@@ -146,15 +146,15 @@ void Room::love5LookAtDrCheever() {
 }
 
 void Room::love5LookAtPreax() {
-	if (_vm->_awayMission.love.preaxCured)
+	if (_awayMission->love.preaxCured)
 		showText(TX_LOV5N011);
 	else
 		showText(TX_LOV5N012);
 }
 
 void Room::love5TalkToPreax() {
-	if (_vm->_awayMission.love.preaxCured) {
-		if (!_vm->_awayMission.love.freedMarcusAndCheever)
+	if (_awayMission->love.preaxCured) {
+		if (!_awayMission->love.freedMarcusAndCheever)
 			showText(TX_LOV5N006);
 		else {
 			const int choices[] = {
@@ -193,9 +193,9 @@ void Room::love5TalkToPreax() {
 			showText(TX_SPEAKER_KIRK,   TX_LOV5_002);
 			showText(TX_SPEAKER_MARCUS, TX_LOV5_045);
 
-			_vm->_awayMission.disableInput = true;
+			_awayMission->disableInput = true;
 
-			if (!_vm->_awayMission.love.spockCured) {
+			if (!_awayMission->love.spockCured) {
 				showText(TX_SPEAKER_MCCOY, TX_LOV5_021);
 				walkCrewmanC(OBJECT_MCCOY, 0x87, 0xc3, &Room::love5MccoyReachedSpockToCure);
 			} else
@@ -221,17 +221,17 @@ void Room::love5MccoyCuredSpock() {
 void Room::love5EndMission() {
 	showText(TX_SPEAKER_KIRK, TX_LOV5_001);
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	walkCrewmanC(OBJECT_KIRK, 0x64, 0xc2, &Room::love5CrewmanReachedBeamoutPosition);
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_S;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_S;
 	walkCrewmanC(OBJECT_SPOCK, 0x5a, 0xb8, &Room::love5CrewmanReachedBeamoutPosition);
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_S;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_S;
 	walkCrewmanC(OBJECT_MCCOY, 0x6e, 0xb8, &Room::love5CrewmanReachedBeamoutPosition);
 
-	if (!_vm->_awayMission.redshirtDead) {
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_S;
+	if (!_awayMission->redshirtDead) {
+		_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_S;
 		walkCrewmanC(OBJECT_REDSHIRT, 0x69, 0xae, &Room::love5CrewmanReachedBeamoutPosition);
 		_roomVar.love.numCrewmenReadyToBeamOut--;
 	}
@@ -240,13 +240,13 @@ void Room::love5EndMission() {
 void Room::love5CrewmanReachedBeamoutPosition() {
 	_roomVar.love.numCrewmenReadyToBeamOut++;
 	if (_roomVar.love.numCrewmenReadyToBeamOut == 3) {
-		_vm->_awayMission.love.missionScore += 17;
-		endMission(_vm->_awayMission.love.missionScore, 0x2c, 0);
+		_awayMission->love.missionScore += 17;
+		endMission(_awayMission->love.missionScore, 0x2c, 0);
 	}
 }
 
 void Room::love5TalkToDrMarcus() {
-	if (!_vm->_awayMission.love.freedMarcusAndCheever)
+	if (!_awayMission->love.freedMarcusAndCheever)
 		showText(TX_SPEAKER_MARCUS, TX_LOV5_040);
 	else {
 		if (!haveItem(OBJECT_ICURE))
@@ -257,7 +257,7 @@ void Room::love5TalkToDrMarcus() {
 }
 
 void Room::love5TalkToDrCheever() {
-	if (!_vm->_awayMission.love.freedMarcusAndCheever)
+	if (!_awayMission->love.freedMarcusAndCheever)
 		showText(TX_SPEAKER_CHEEVER, TX_LOV5_055);
 	else
 		showText(TX_SPEAKER_CHEEVER, TX_LOV5_056);
@@ -277,7 +277,7 @@ void Room::love5TalkToSpock() {
 }
 
 void Room::love5TalkToMccoy() {
-	if (!_vm->_awayMission.love.preaxCured)
+	if (!_awayMission->love.preaxCured)
 		showText(TX_SPEAKER_MCCOY, TX_LOV5_014);
 }
 
@@ -299,8 +299,8 @@ void Room::love5UseMTricorderOnMarcusOrCheever() {
 }
 
 void Room::love5UseMTricorderOnPreax() {
-	if (!_vm->_awayMission.love.preaxCured) {
-		if (_vm->_awayMission.love.romulansUnconsciousFromLaughingGas)
+	if (!_awayMission->love.preaxCured) {
+		if (_awayMission->love.romulansUnconsciousFromLaughingGas)
 			mccoyScan(DIR_E, TX_LOV5_024, false);
 		else
 			mccoyScan(DIR_E, TX_LOV5_016, false);
@@ -308,30 +308,30 @@ void Room::love5UseMTricorderOnPreax() {
 }
 
 void Room::love5UseMedkitOnPreax() {
-	if (_vm->_awayMission.love.preaxCured)
+	if (_awayMission->love.preaxCured)
 		showText(TX_SPEAKER_MCCOY, TX_LOV5_015);
 	else
 		showText(TX_SPEAKER_MCCOY, TX_LOV5_019);
 }
 
 void Room::love5UseWaterOnPreax() {
-	if (_vm->_awayMission.love.preaxCured) {
+	if (_awayMission->love.preaxCured) {
 		showText(TX_LOV5N018);
 		showText(TX_SPEAKER_MCCOY, TX_LOV5_029);
 		showText(TX_SPEAKER_KIRK,  TX_LOV5_007);
-		if (!_vm->_awayMission.love.gotPointsForHydratingPreax) {
-			_vm->_awayMission.love.gotPointsForHydratingPreax = true;
-			_vm->_awayMission.love.missionScore++;
+		if (!_awayMission->love.gotPointsForHydratingPreax) {
+			_awayMission->love.gotPointsForHydratingPreax = true;
+			_awayMission->love.missionScore++;
 		}
 		loseItem(OBJECT_IH2O);
 	} else {
-		if (_vm->_awayMission.love.romulansUnconsciousFromVirus) {
+		if (_awayMission->love.romulansUnconsciousFromVirus) {
 			showText(TX_SPEAKER_MCCOY, TX_LOV5_013);
 			// BUGFIX: original didn't have correct speaker. Also, you shouldn't lose your
 			// water since it's not actually used here, so a "loseItem" line was removed.
 		} else {
 			showText(TX_LOV5N017);
-			if (!_vm->_awayMission.redshirtDead) {
+			if (!_awayMission->redshirtDead) {
 				showText(TX_SPEAKER_FERRIS, TX_LOV5_053);
 				showText(TX_SPEAKER_KIRK,   TX_LOV5_005);
 			}
@@ -340,9 +340,9 @@ void Room::love5UseWaterOnPreax() {
 
 			// BUGFIX: give a point for hydrating the Preax. It's inconsistent to only
 			// give points if he's already cured.
-			if (!_vm->_awayMission.love.gotPointsForHydratingPreax) {
-				_vm->_awayMission.love.gotPointsForHydratingPreax = true;
-				_vm->_awayMission.love.missionScore++;
+			if (!_awayMission->love.gotPointsForHydratingPreax) {
+				_awayMission->love.gotPointsForHydratingPreax = true;
+				_awayMission->love.missionScore++;
 			}
 		}
 	}
@@ -354,7 +354,7 @@ void Room::love5UseCureSampleOnPreax() {
 
 
 void Room::love5UseCureOnPreax() {
-	if (!_vm->_awayMission.love.preaxCured)
+	if (!_awayMission->love.preaxCured)
 		walkCrewmanC(OBJECT_MCCOY, 0x116, 0xbf, &Room::love5ReachedPreaxUsingCure);
 }
 
@@ -364,7 +364,7 @@ void Room::love5ReachedPreaxUsingCure() {
 
 void Room::love5CuredPreax() {
 	walkCrewman(OBJECT_MCCOY, 0xdc, 0xc3);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_E;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_E;
 
 	showText(TX_LOV5N007);
 
@@ -375,7 +375,7 @@ void Room::love5CuredPreax() {
 	showText(TX_SPEAKER_MCCOY, TX_LOV5_017);
 
 	loadActorAnim2(OBJECT_PREAX, "s3r6r1", 0x116, 0xba);
-	_vm->_awayMission.love.preaxCured = true;
+	_awayMission->love.preaxCured = true;
 }
 
 
@@ -386,10 +386,10 @@ void Room::love5UseAnythingOnPreax() {
 
 // Kirk walks to Cheever, unties him, then walks to Marcus, unties her.
 void Room::love5UseKirkOnMarcusOrCheever() {
-	if (!_vm->_awayMission.love.freedMarcusAndCheever) {
-		_vm->_awayMission.disableInput = true;
+	if (!_awayMission->love.freedMarcusAndCheever) {
+		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_KIRK, 0x49, 0xb1, &Room::love5KirkReachedCheever);
-		_vm->_awayMission.love.freedMarcusAndCheever = true;
+		_awayMission->love.freedMarcusAndCheever = true;
 	}
 }
 
@@ -410,11 +410,11 @@ void Room::love5KirkUntiedMarcus() {
 	loadActorStandAnim(OBJECT_KIRK);
 	loadActorAnimC(OBJECT_MARCUS, "marcus", 0x28, 0xa6, &Room::love5MarcusStoodUp);
 	walkCrewman(OBJECT_KIRK, 0x35, 0xb9);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
 void Room::love5MarcusStoodUp() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	showText(TX_SPEAKER_MARCUS, TX_LOV5_041);
 }
 

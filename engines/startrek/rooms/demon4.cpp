@@ -21,6 +21,7 @@
  */
 
 #include "startrek/room.h"
+#include "startrek/startrek.h"
 
 namespace StarTrek {
 
@@ -30,20 +31,20 @@ namespace StarTrek {
 void Room::demon4Tick1() {
 	playVoc("DEM4LOOP");
 
-	if (!_vm->_awayMission.demon.healedMiner)
-		_vm->_awayMission.demon.minerDead = true;
+	if (!_awayMission->demon.healedMiner)
+		_awayMission->demon.minerDead = true;
 
-	if (_vm->_awayMission.demon.solvedSunPuzzle) {
+	if (_awayMission->demon.solvedSunPuzzle) {
 		loadActorAnim(10, "bxrise2", 0x122, 0x91, 0);
 		loadActorAnim(8, "stpout2", 0x107, 0x92, 0);
 		_roomVar.demon.nauianEmerged = true;
 
-		if ((_vm->_awayMission.demon.itemsTakenFromCase & 0x10) && !_vm->_awayMission.demon.gaveSkullToNauian)
-			_vm->_awayMission.timers[6] = 20;
+		if ((_awayMission->demon.itemsTakenFromCase & 0x10) && !_awayMission->demon.gaveSkullToNauian)
+			_awayMission->timers[6] = 20;
 	}
 
-	if (!_vm->_awayMission.demon.foundAlienRoom) {
-		_vm->_awayMission.demon.foundAlienRoom = true;
+	if (!_awayMission->demon.foundAlienRoom) {
+		_awayMission->demon.foundAlienRoom = true;
 		playMidiMusicTracks(1, -1);
 	}
 }
@@ -52,8 +53,8 @@ void Room::demon4Tick1() {
 void Room::demon4FinishedAnimation1() {
 	loadActorAnim(8, "stpout", 0x107, 0x92, 5);
 	_roomVar.demon.nauianEmerged = true;
-	if (_vm->_awayMission.demon.itemsTakenFromCase & 0x10)
-		_vm->_awayMission.timers[6] = 45;
+	if (_awayMission->demon.itemsTakenFromCase & 0x10)
+		_awayMission->timers[6] = 45;
 }
 
 void Room::demon4FinishedAnimation2() {
@@ -67,7 +68,7 @@ void Room::demon4FinishedAnimation2() {
 	// WORKAROUND: original game has the below line; however, it's never executed anyway
 	// since the game over menu manipulates the stack. Here, the menu could delete this
 	// room object, so it should be the last statement...
-	//_vm->_awayMission.disableInput = false;
+	//_awayMission->disableInput = false;
 }
 
 void Room::demon4FinishedAnimation3() {
@@ -76,15 +77,15 @@ void Room::demon4FinishedAnimation3() {
 	showText(TX_SPEAKER_NAUIAN, TX_DEM4_035);
 	showText(TX_SPEAKER_SPOCK,  TX_DEM4_030);
 
-	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.demon.missionScore += 5;
-	_vm->_awayMission.timers[1] = 20;
+	_awayMission->disableInput = true;
+	_awayMission->demon.missionScore += 5;
+	_awayMission->timers[1] = 20;
 }
 
 // Just solved sun puzzle
 void Room::demon4Timer0Expired() {
 	loadActorAnim(10, "bxrise", 0x122, 0x91, 1);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	loadActorStandAnim(OBJECT_KIRK);
 	playVoc("SE2POWER");
 }
@@ -97,7 +98,7 @@ void Room::demon4Timer1Expired() {
 	walkCrewman(OBJECT_SPOCK, 0xb4, 0x9b, 4);
 	walkCrewman(OBJECT_MCCOY, 0xc8, 0x9b, 4);
 
-	if (!_vm->_awayMission.redshirtDead)
+	if (!_awayMission->redshirtDead)
 		walkCrewman(OBJECT_REDSHIRT, 0xc1, 0x91, 4);
 	else
 		_roomVar.demon.crewReadyToBeamOut++;
@@ -108,12 +109,12 @@ void Room::demon4CrewmanReachedBeamoutPosition() {
 	if (_roomVar.demon.crewReadyToBeamOut != 4)
 		return;
 
-	if (!_vm->_awayMission.demon.insultedStephen)
-		_vm->_awayMission.demon.missionScore += 3;
-	if (!_vm->_awayMission.redshirtDead)
-		_vm->_awayMission.demon.missionScore += 2;
+	if (!_awayMission->demon.insultedStephen)
+		_awayMission->demon.missionScore += 3;
+	if (!_awayMission->redshirtDead)
+		_awayMission->demon.missionScore += 2;
 
-	endMission(_vm->_awayMission.demon.missionScore, 0x24, 0);
+	endMission(_awayMission->demon.missionScore, 0x24, 0);
 }
 
 void Room::demon4Timer2Expired() {
@@ -144,16 +145,16 @@ void Room::demon4UsePhaserOnNauian() {
 		showText(TX_SPEAKER_NAUIAN, TX_DEM4_032);
 		loadActorAnim2(10, "bxfire", 0, 0, 2);
 		playVoc("V0SPOCKT");
-		_vm->_awayMission.disableInput = true;
-		_vm->_awayMission.timers[2] = 7;
-		_vm->_awayMission.timers[3] = 8;
-		_vm->_awayMission.timers[4] = 7;
-		_vm->_awayMission.timers[5] = 8;
+		_awayMission->disableInput = true;
+		_awayMission->timers[2] = 7;
+		_awayMission->timers[3] = 8;
+		_awayMission->timers[4] = 7;
+		_awayMission->timers[5] = 8;
 	}
 }
 
 void Room::demon4UseMetalOnSecurityEquipment() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewman(OBJECT_KIRK, 0xf5, 0x90, 5);
 }
 
@@ -162,20 +163,20 @@ void Room::demon4KirkReachedSecurityEquipment() {
 }
 
 void Room::demon4KirkFinishedUsingSecurityEquipment() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	showText(TX_DEM4N014);
 }
 
 void Room::demon4UseMetalOnNauian() {
 	walkCrewman(OBJECT_KIRK, 0xe9, 0x90, 1);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 }
 
 void Room::demon4KirkReachedNauian() {
 	loadActorAnim2(8, "usekey", 0x107, 0x8e, 3);
 	loseItem(OBJECT_IMETAL);
-	_vm->_awayMission.demon.missionScore += 2;
-	_vm->_awayMission.demon.itemsTakenFromCase &= ~1;
+	_awayMission->demon.missionScore += 2;
+	_awayMission->demon.itemsTakenFromCase &= ~1;
 }
 
 void Room::demon4UseSkullOnNauian() {
@@ -190,11 +191,11 @@ void Room::demon4KirkReachedNauianWithSkull() {
 
 	switch (choice) {
 	case 0:
-		_vm->_awayMission.demon.missionScore++;
+		_awayMission->demon.missionScore++;
 		loadActorAnim2(8, "takesk", 0x107, 0x8e, 0);
 		loseItem(OBJECT_ISKULL);
-		_vm->_awayMission.demon.itemsTakenFromCase &= ~16; // BUG: skull reappears in case? Can abuse for infinite ponits?
-		_vm->_awayMission.demon.gaveSkullToNauian = true;
+		_awayMission->demon.itemsTakenFromCase &= ~16; // BUG: skull reappears in case? Can abuse for infinite ponits?
+		_awayMission->demon.gaveSkullToNauian = true;
 		break;
 
 	case 1:
@@ -220,10 +221,10 @@ void Room::demon4UsePhaserOnMccoy() {
 }
 
 void Room::demon4TalkToNauian() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 
-	if (!_vm->_awayMission.demon.metNauian) {
-		_vm->_awayMission.demon.metNauian = true;
+	if (!_awayMission->demon.metNauian) {
+		_awayMission->demon.metNauian = true;
 		showText(TX_SPEAKER_NAUIAN, TX_DEM4_044);
 
 		const int choices[] = { TX_SPEAKER_KIRK, TX_DEM4_002, TX_DEM4_004, TX_DEM4_009, TX_BLANK };
@@ -231,7 +232,7 @@ void Room::demon4TalkToNauian() {
 
 		switch (choice) {
 		case 0:
-			_vm->_awayMission.demon.field2d = true;
+			_awayMission->demon.field2d = true;
 			showText(TX_SPEAKER_NAUIAN, TX_DEM4_042);
 			break;
 
@@ -254,7 +255,7 @@ void Room::demon4TalkToNauian() {
 
 		switch (choice) {
 		case 0:
-			_vm->_awayMission.demon.field2d = true;
+			_awayMission->demon.field2d = true;
 			showText(TX_SPEAKER_NAUIAN, TX_DEM4_041);
 			break;
 		case 1:
@@ -275,9 +276,9 @@ void Room::demon4TalkToNauian() {
 			showText(TX_SPEAKER_NAUIAN, TX_DEM4_035);
 			showText(TX_SPEAKER_SPOCK,  TX_DEM4_030);
 
-			_vm->_awayMission.disableInput = true;
-			_vm->_awayMission.demon.missionScore += 5;
-			_vm->_awayMission.timers[1] = 20;
+			_awayMission->disableInput = true;
+			_awayMission->demon.missionScore += 5;
+			_awayMission->timers[1] = 20;
 		} else {
 			showText(TX_SPEAKER_NAUIAN, TX_DEM4_038);
 		}
@@ -351,24 +352,24 @@ void Room::demon4UseRedshirtOnPanel() {
 }
 
 void Room::demon4UseCrewmanOnPanel() {
-	if (_vm->_awayMission.demon.solvedSunPuzzle)
+	if (_awayMission->demon.solvedSunPuzzle)
 		return;
 	walkCrewman(_roomVar.demon.crewmanUsingPanel, 0xda, 0x83, 3);
-	_vm->_awayMission.crewDirectionsAfterWalk[_roomVar.demon.crewmanUsingPanel] = DIR_N;
-	_vm->_awayMission.disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[_roomVar.demon.crewmanUsingPanel] = DIR_N;
+	_awayMission->disableInput = true;
 }
 
 void Room::demon4CrewmanReachedPanel() {
 	if (demon4ShowSunPuzzle()) {
-		_vm->_awayMission.demon.solvedSunPuzzle = true;
+		_awayMission->demon.solvedSunPuzzle = true;
 		loadActorAnim(9, "ctrl", 0, 0, 0);
-		_vm->_awayMission.demon.missionScore += 3;
-		_vm->_awayMission.timers[0] = 10;
+		_awayMission->demon.missionScore += 3;
+		_awayMission->timers[0] = 10;
 	} else
 		showText(TX_DEM4N013);
 
 	walkCrewman(_roomVar.demon.crewmanUsingPanel, 0xae, 0x93, 0);
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 }
 
 bool Room::demon4ShowSunPuzzle() {

@@ -97,17 +97,17 @@ extern const int trial3NumActions = sizeof(trial3ActionList) / sizeof(RoomAction
 void Room::trial3Tick1() {
 	playVoc("TRI3LOOP");
 
-	if (!_vm->_awayMission.trial.enteredTrial3FirstTime) {
-		_vm->_awayMission.disableWalking = true;
-		_vm->_awayMission.disableInput = 2;
+	if (!_awayMission->trial.enteredTrial3FirstTime) {
+		_awayMission->disableWalking = true;
+		_awayMission->disableInput = 2;
 	}
 	playMidiMusicTracks(MIDITRACK_33, -1);
 }
 
 void Room::trial3Tick30() {
-	if (!_vm->_awayMission.trial.enteredTrial3FirstTime) {
-		_vm->_awayMission.disableInput = false;
-		_vm->_awayMission.trial.enteredTrial3FirstTime = true;
+	if (!_awayMission->trial.enteredTrial3FirstTime) {
+		_awayMission->disableInput = false;
+		_awayMission->trial.enteredTrial3FirstTime = true;
 
 		showText(TX_SPEAKER_BENNIE, TX_TRI3_030);
 		showText(TX_SPEAKER_KIRK,   TX_TRI3_005);
@@ -134,13 +134,13 @@ void Room::trial3Klingon3BeamedIn() {
 }
 
 void Room::trial3KlingonShootsSomeone1() {
-	_vm->_awayMission.trial.klingonShootIndex++;
-	if (_vm->_awayMission.trial.klingonShootIndex == 1) {
+	_awayMission->trial.klingonShootIndex++;
+	if (_awayMission->trial.klingonShootIndex == 1) {
 		playSoundEffectIndex(SND_PHASSHOT);
 		showBitmapFor5Ticks("t3phas04", 5);
 		loadActorAnimC(OBJECT_REDSHIRT, "rkillw", -1, -1, &Room::trial3RedshirtDoneDying);
-		_vm->_awayMission.redshirtDead = true;
-	} else if (_vm->_awayMission.trial.klingonShootIndex == 2) {
+		_awayMission->redshirtDead = true;
+	} else if (_awayMission->trial.klingonShootIndex == 2) {
 		playSoundEffectIndex(SND_PHASSHOT);
 		showBitmapFor5Ticks("t3phas05", 5);
 		playMidiMusicTracks(MIDITRACK_2, -1);
@@ -166,13 +166,13 @@ void Room::trial3Klingon3DoneShooting() {
 void Room::trial3KlingonShootsSomeone2() {
 	// This function is almost exactly identical to "trial3KlingonShootsSomeone1(), just
 	// one line differs...
-	_vm->_awayMission.trial.klingonShootIndex++;
-	if (_vm->_awayMission.trial.klingonShootIndex == 1) {
+	_awayMission->trial.klingonShootIndex++;
+	if (_awayMission->trial.klingonShootIndex == 1) {
 		playSoundEffectIndex(SND_PHASSHOT);
 		showBitmapFor5Ticks("t3phas04", 5);
 		loadActorAnimC(OBJECT_REDSHIRT, "rkillw", -1, -1, &Room::trial3RedshirtDoneDying);
-		_vm->_awayMission.redshirtDead = true;
-	} else if (_vm->_awayMission.trial.klingonShootIndex == 2) {
+		_awayMission->redshirtDead = true;
+	} else if (_awayMission->trial.klingonShootIndex == 2) {
 		playSoundEffectIndex(SND_PHASSHOT);
 		showBitmapFor5Ticks("t3phas05", 5);
 		// NOTE: Only difference to "trial3KlingonShootsSomeone1" is this doesn't play a midi track?
@@ -181,7 +181,7 @@ void Room::trial3KlingonShootsSomeone2() {
 }
 
 void Room::trial3RedshirtDoneDying() {
-	_vm->_awayMission.redshirtDead = true;
+	_awayMission->redshirtDead = true;
 }
 
 void Room::trial3KirkDoneDying() {
@@ -189,31 +189,31 @@ void Room::trial3KirkDoneDying() {
 }
 
 void Room::trial3Klingon1Shot() {
-	_vm->_awayMission.trial.shotKlingons |= 1;
+	_awayMission->trial.shotKlingons |= 1;
 	trial3CheckShowUhuraText();
 }
 
 void Room::trial3Klingon2Shot() {
-	_vm->_awayMission.trial.shotKlingons |= 2;
+	_awayMission->trial.shotKlingons |= 2;
 	trial3CheckShowUhuraText();
 }
 
 void Room::trial3Klingon3Shot() {
-	_vm->_awayMission.trial.shotKlingons |= 4;
+	_awayMission->trial.shotKlingons |= 4;
 	trial3CheckShowUhuraText();
 }
 
 void Room::trial3CheckShowUhuraText() {
-	if (_vm->_awayMission.trial.shotKlingons == 1) {
-		_vm->_awayMission.trial.shotKlingons |= 8;
-		_vm->_awayMission.disableWalking = false;
+	if (_awayMission->trial.shotKlingons == 1) {
+		_awayMission->trial.shotKlingons |= 8;
+		_awayMission->disableWalking = false;
 		loadActorStandAnim(OBJECT_KIRK);
 
 		showText(TX_SPEAKER_UHURA, TX_TRI3U084);
 		showText(TX_SPEAKER_KIRK,  TX_TRI3_007);
 		showText(TX_SPEAKER_UHURA, TX_TRI3U099);
 
-		_vm->_awayMission.trial.forceFieldDown = true;
+		_awayMission->trial.forceFieldDown = true;
 
 		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
@@ -224,7 +224,7 @@ void Room::trial3CheckShowUhuraText() {
 
 		if (choice == 0) { // Don't beam out
 		} else if (choice == 1) { // Beam to enterprise
-			endMission(_vm->_awayMission.trial.missionScore, _vm->_awayMission.trial.field2b, 1); // FIXME: inconsistent
+			endMission(_awayMission->trial.missionScore, _awayMission->trial.field2b, 1); // FIXME: inconsistent
 		} else if (choice == 2) { // Beam to Vlict
 			trial3BeamToVlict();
 		}
@@ -232,19 +232,19 @@ void Room::trial3CheckShowUhuraText() {
 }
 
 void Room::trial3CrewmanBeamedOut() {
-	if (!_vm->_awayMission.trial.gotPointsForBeamingOut) {
-		_vm->_awayMission.trial.gotPointsForBeamingOut = true;
-		_vm->_awayMission.trial.missionScore += 2; // BUG: Doesn't happen when done in other rooms
+	if (!_awayMission->trial.gotPointsForBeamingOut) {
+		_awayMission->trial.gotPointsForBeamingOut = true;
+		_awayMission->trial.missionScore += 2; // BUG: Doesn't happen when done in other rooms
 	}
 	loadRoomIndex(4, 4);
 }
 
 void Room::trial3Tick90() {
-	if ((!(_vm->_awayMission.trial.shotKlingons & 8) && _vm->_awayMission.trial.shotKlingonState != 20)) {
+	if ((!(_awayMission->trial.shotKlingons & 8) && _awayMission->trial.shotKlingonState != 20)) {
 		playSoundEffectIndex(SND_TRANSMAT);
 		playMidiMusicTracks(MIDITRACK_32, -1);
 		loadActorAnimC(OBJECT_KLINGON_1, "t3ktel", 0x57, 0xb1, &Room::trial3Klingon1BeamedIn);
-		_vm->_awayMission.trial.shotKlingonState = 21;
+		_awayMission->trial.shotKlingonState = 21;
 	}
 }
 
@@ -308,19 +308,19 @@ void Room::trial3UseStunPhaserOnKlingon1() {
 	// he's conscious (21).
 	// There's also the "dead" state (23) to consider. This prevents a softlock if
 	// a phaser is used on him just as he's being vaporized.
-	if (_vm->_awayMission.trial.shotKlingonState == 21) {
-		_vm->_awayMission.disableInput = true;
+	if (_awayMission->trial.shotKlingonState == 21) {
+		_awayMission->disableInput = true;
 		loadActorAnimC(OBJECT_KIRK, "kdraww", -1, -1, &Room::trial3ReadyToShootKlingon1OnStun);
 	}
 }
 
 void Room::trial3ReadyToShootKlingon1OnStun() {
-	if (_vm->_awayMission.trial.shotKlingonState == 21) {
+	if (_awayMission->trial.shotKlingonState == 21) {
 		playSoundEffectIndex(SND_PHASSHOT);
 		showBitmapFor5Ticks("t3phas00", 5);
 		loadActorAnimC(OBJECT_KLINGON_1, "t3kstn", -1, -1, &Room::trial3Klingon1Shot);
-		_vm->_awayMission.disableInput = false;
-		_vm->_awayMission.trial.shotKlingonState = 22;
+		_awayMission->disableInput = false;
+		_awayMission->trial.shotKlingonState = 22;
 	}
 }
 
@@ -328,20 +328,20 @@ void Room::trial3UseKillPhaserOnKlingon1() {
 	// BUGFIX: Prevent softlock by checking that he's conscious (shotKlingonState == 21)
 	// In addition to preventing the softlock mentioned above, this also prevents
 	// a softlock where a kill phaser is used on the unconscious klingon.
-	if (_vm->_awayMission.trial.shotKlingonState == 21) {
-		_vm->_awayMission.disableInput = true;
+	if (_awayMission->trial.shotKlingonState == 21) {
+		_awayMission->disableInput = true;
 		loadActorAnimC(OBJECT_KIRK, "kdraww", -1, -1, &Room::trial3ReadyToShootKlingon1OnKill);
 	}
 }
 
 void Room::trial3ReadyToShootKlingon1OnKill() {
-	if (_vm->_awayMission.trial.shotKlingonState == 21) {
+	if (_awayMission->trial.shotKlingonState == 21) {
 		playSoundEffectIndex(SND_PHASSHOT);
 		showBitmapFor5Ticks("t3phas02", 5);
 		loadActorAnimC(OBJECT_KLINGON_1, "t3kdie", -1, -1, &Room::trial3Klingon1Shot);
-		_vm->_awayMission.disableInput = false;
-		_vm->_awayMission.trial.shotKlingonState = 23;
-		_vm->_awayMission.trial.missionScore -= 3; // Penalty for killing klingon
+		_awayMission->disableInput = false;
+		_awayMission->trial.shotKlingonState = 23;
+		_awayMission->trial.missionScore -= 3; // Penalty for killing klingon
 	}
 }
 
@@ -379,15 +379,15 @@ void Room::trial3UseSTricorderOnExit() {
 }
 
 void Room::trial3UseMTricorderOnKlingon() {
-	if (_vm->_awayMission.trial.shotKlingonState == 22) { // Unconscious
+	if (_awayMission->trial.shotKlingonState == 22) { // Unconscious
 		mccoyScan(DIR_S, TX_TRI3_011);
-		if (!_vm->_awayMission.redshirtDead) // BUGFIX: Check if redshirt is dead
+		if (!_awayMission->redshirtDead) // BUGFIX: Check if redshirt is dead
 			showText(TX_SPEAKER_BENNIE, TX_TRI3_028);
 	}
 }
 
 void Room::trial3UseCommunicator() {
-	if (_vm->_awayMission.trial.forceFieldDown) {
+	if (_awayMission->trial.forceFieldDown) {
 		showText(TX_SPEAKER_UHURA, TX_TRI3U089);
 
 		const TextRef choices[] = {
@@ -398,8 +398,8 @@ void Room::trial3UseCommunicator() {
 		int choice = showText(choices);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
-			_vm->_awayMission.trial.missionEndMethod = 1;
-			endMission(_vm->_awayMission.trial.missionScore, _vm->_awayMission.trial.field2b, 1); // FIXME: inconsistent
+			_awayMission->trial.missionEndMethod = 1;
+			endMission(_awayMission->trial.missionScore, _awayMission->trial.field2b, 1); // FIXME: inconsistent
 		} else if (choice == 1) { // "Beam us to Vlict's position"
 			trial3BeamToVlict();
 		} // Else don't transport anywhere
@@ -414,13 +414,13 @@ void Room::trial3BeamToVlict() {
 	// text from TRIAL1 instead.
 	showText(TX_SPEAKER_UHURA, TX_TRI1U080);
 
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	playSoundEffectIndex(SND_TRANSDEM);
 
 	loadActorAnimC(OBJECT_KIRK,  "kteled", -1, -1, &Room::trial3CrewmanBeamedOut);
 	loadActorAnimC(OBJECT_SPOCK, "steled", -1, -1, &Room::trial3CrewmanBeamedOut);
 	loadActorAnimC(OBJECT_MCCOY, "mteled", -1, -1, &Room::trial3CrewmanBeamedOut);
-	if (!_vm->_awayMission.redshirtDead)
+	if (!_awayMission->redshirtDead)
 		loadActorAnimC(OBJECT_REDSHIRT, "rteled", -1, -1, &Room::trial3CrewmanBeamedOut);
 }
 

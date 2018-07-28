@@ -21,12 +21,13 @@
  */
 
 #include "startrek/room.h"
+#include "startrek/startrek.h"
 
 namespace StarTrek {
 
 void Room::demon6Tick1() {
 	playVoc("DEM6LOOP");
-	if (_vm->_awayMission.demon.gotBerries || (!_vm->_awayMission.demon.field3e && _vm->_awayMission.demon.field37)) {
+	if (_awayMission->demon.gotBerries || (!_awayMission->demon.field3e && _awayMission->demon.field37)) {
 		loadActorAnim(8, "oldman", 0x5f, 0xb1, 0);
 		_roomVar.demon.stephenInRoom = true;
 	}
@@ -35,17 +36,17 @@ void Room::demon6Tick1() {
 }
 
 void Room::demon6Tick30() {
-	if (!_vm->_awayMission.demon.gotBerries)
+	if (!_awayMission->demon.gotBerries)
 		return;
-	if (_vm->_awayMission.demon.field3e)
+	if (_awayMission->demon.field3e)
 		return;
-	if (!_vm->_awayMission.demon.field37)
+	if (!_awayMission->demon.field37)
 		return;
-	if (_vm->_awayMission.demon.stephenWelcomedToStudy)
+	if (_awayMission->demon.stephenWelcomedToStudy)
 		return;
 
 	showText(TX_SPEAKER_STEPHEN, TX_DEM6_042);
-	_vm->_awayMission.demon.stephenWelcomedToStudy = true;
+	_awayMission->demon.stephenWelcomedToStudy = true;
 }
 
 void Room::demon6SpockReachedComputer() {
@@ -53,7 +54,7 @@ void Room::demon6SpockReachedComputer() {
 }
 
 void Room::demon6WalkToDoor() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	_roomVar.demon.movingToDoor = true;
 	walkCrewman(OBJECT_KIRK, 0xa0, 0x94, 4);
 }
@@ -137,9 +138,9 @@ void Room::demon6LookAtRedshirt() {
 
 void Room::demon6LookAtComputer() {
 	showText(TX_DEM6N006);
-	if (!_vm->_awayMission.demon.lookedAtComputer) {
-		_vm->_awayMission.demon.lookedAtComputer = true;
-		_vm->_awayMission.demon.missionScore++;
+	if (!_awayMission->demon.lookedAtComputer) {
+		_awayMission->demon.lookedAtComputer = true;
+		_awayMission->demon.missionScore++;
 	}
 }
 
@@ -172,7 +173,7 @@ void Room::demon6TalkToStephen() {
 }
 
 void Room::demon6UseBerryOnStephen() {
-	if (_vm->_awayMission.demon.knowAboutHypoDytoxin) {
+	if (_awayMission->demon.knowAboutHypoDytoxin) {
 		showText(TX_SPEAKER_STEPHEN, TX_DEM6_027);
 	} else {
 		showText(TX_SPEAKER_STEPHEN, TX_DEM6_026);
@@ -180,7 +181,7 @@ void Room::demon6UseBerryOnStephen() {
 }
 
 void Room::demon6UseBerryOnSynthesizer() {
-	if (!_vm->_awayMission.demon.knowAboutHypoDytoxin)
+	if (!_awayMission->demon.knowAboutHypoDytoxin)
 		return;
 	walkCrewman(OBJECT_MCCOY, 0x104, 0xa5, 1);
 }
@@ -196,20 +197,20 @@ void Room::demon6FinishedMakingHypoDytoxin() {
 	showText(TX_SPEAKER_MCCOY, TX_DEM6_018);
 
 	giveItem(OBJECT_IDETOXIN);
-	_vm->_awayMission.demon.madeHypoDytoxin = true;
+	_awayMission->demon.madeHypoDytoxin = true;
 	loseItem(OBJECT_IBERRY);
 
-	if (!_vm->_awayMission.demon.gavePointsForDytoxin) {
-		_vm->_awayMission.demon.gavePointsForDytoxin = true;
-		_vm->_awayMission.demon.missionScore++;
+	if (!_awayMission->demon.gavePointsForDytoxin) {
+		_awayMission->demon.gavePointsForDytoxin = true;
+		_awayMission->demon.missionScore++;
 	}
 }
 
 void Room::demon6UseHandOnWorkspace() {
-	if (_vm->_awayMission.demon.repairedHand) {
+	if (_awayMission->demon.repairedHand) {
 		showText(TX_SPEAKER_SPOCK, TX_DEM6N018); // FIXME
 	} else {
-		_vm->_awayMission.disableInput = true;
+		_awayMission->disableInput = true;
 		showText(TX_SPEAKER_KIRK, TX_DEM6_005);
 		walkCrewman(OBJECT_SPOCK, 0xb3, 0xbb, 2);
 	}
@@ -221,10 +222,10 @@ void Room::demon6SpockReachedWorkspace() {
 
 void Room::demon6SpockFinishedRepairingHand() {
 	showText(TX_SPEAKER_SPOCK, TX_DEM6_024);
-	_vm->_awayMission.demon.repairedHand = true;
-	_vm->_awayMission.demon.missionScore += 2;
+	_awayMission->demon.repairedHand = true;
+	_awayMission->demon.missionScore += 2;
 	loadActorStandAnim(OBJECT_SPOCK);
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 }
 
 // FIXME: doesn't work
@@ -244,7 +245,7 @@ void Room::demon6UseCrewmanOnCase() {
 insult:
 			showText(TX_SPEAKER_STEPHEN, TX_DEM6_030);
 			_roomVar.demon.insultedStephenRecently = true;
-			_vm->_awayMission.demon.insultedStephen = true;
+			_awayMission->demon.insultedStephen = true;
 		} else if (choice == 1) {
 			showText(TX_SPEAKER_STEPHEN, TX_DEM6_034);
 explain:
@@ -316,27 +317,27 @@ void Room::demon6UseSpockOnComputer() {
 }
 
 void Room::demon6UseMineralOnStephen() {
-	_vm->_awayMission.demon.itemsTakenFromCase &= ~8;
+	_awayMission->demon.itemsTakenFromCase &= ~8;
 	demon6ReturnItemToStephen(OBJECT_IMINERAL);
 }
 
 void Room::demon6UseShellsOnStephen() {
-	_vm->_awayMission.demon.itemsTakenFromCase &= ~2;
+	_awayMission->demon.itemsTakenFromCase &= ~2;
 	demon6ReturnItemToStephen(OBJECT_ISHELLS);
 }
 
 void Room::demon6UseMeteorOnStephen() {
-	_vm->_awayMission.demon.itemsTakenFromCase &= ~4;
+	_awayMission->demon.itemsTakenFromCase &= ~4;
 	demon6ReturnItemToStephen(OBJECT_IMETEOR);
 }
 
 void Room::demon6UseSkullOnStephen() {
-	_vm->_awayMission.demon.itemsTakenFromCase &= ~16;
+	_awayMission->demon.itemsTakenFromCase &= ~16;
 	demon6ReturnItemToStephen(OBJECT_ISKULL);
 }
 
 void Room::demon6UseMetalOnStephen() {
-	_vm->_awayMission.demon.itemsTakenFromCase &= ~1;
+	_awayMission->demon.itemsTakenFromCase &= ~1;
 	demon6ReturnItemToStephen(OBJECT_IMETAL);
 }
 
@@ -347,7 +348,7 @@ void Room::demon6ReturnItemToStephen(int item) {
 }
 
 void Room::demon6UseHandOnStephen() {
-	if (_vm->_awayMission.demon.repairedHand)
+	if (_awayMission->demon.repairedHand)
 		showText(TX_SPEAKER_STEPHEN, TX_DEM6_037);
 	else
 		showText(TX_SPEAKER_STEPHEN, TX_DEM6_043);
@@ -422,8 +423,8 @@ void Room::demon6GetCase() {
 
 void Room::demon6KirkReachedCase() {
 	const int items[] = { OBJECT_IMETAL, OBJECT_ISHELLS, OBJECT_IMETEOR, OBJECT_IMINERAL, OBJECT_ISKULL };
-	byte ret = 0x1f ^ demon6ShowCase(_vm->_awayMission.demon.itemsTakenFromCase ^ 0x1f);
-	_vm->_awayMission.demon.itemsTakenFromCase = ret;
+	byte ret = 0x1f ^ demon6ShowCase(_awayMission->demon.itemsTakenFromCase ^ 0x1f);
+	_awayMission->demon.itemsTakenFromCase = ret;
 
 	const int *i = items;
 	while (ret != 0) {
