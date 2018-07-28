@@ -2535,7 +2535,7 @@ extern const char *const g_gameStrings[] = {
 	"#SIN3\\SIN3N007#These are display panels for the laser drill.",
 	"#SIN3\\SIN3N008#This box contains old wire and connectors.",
 	"#SIN3\\SIN3N009#This is a high powered item that will cause irrevocable damage if you use it in this manner.",
-	"#SIN3\\SIN3N010#This is a keycard made from the tri-phosphate silver rock.",
+	"#SIN3\\SIN3N010#This is a keycard made from the tri-phosphorate silver rock.", // TYPO
 	"#SIN3\\SIN3N011#This is a laser drill control panel.",
 	"#SIN3\\SIN3N012#This is an ancient laser drill.",
 	"#SIN3\\SIN3N013#This room looks like it was once used for some type of mining operation.",
