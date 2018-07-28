@@ -2443,7 +2443,7 @@ extern const char *const g_gameStrings[] = {
 	"#SIN2\\SIN2_008#Well done, Uhura.",
 	"#SIN2\\SIN2_009#A computer terminal, Captain. It uses the lucr alphabet. I think I can decipher it.",
 	"#SIN2\\SIN2_010#Fascinating. If the Federation language studies were correct, the ideograph for the word \"Scythe\" in the Lucrs language is the 17th symbol in their alphabet. That corresponds with 122 in base 3.",
-	"#SIN2\\SIN2_012#Damn it Jim, I'm a surgeon not a alien computer science specialist.",
+	"#SIN2\\SIN2_012#Damn it Jim, I'm a surgeon not an alien computer science specialist.", // TYPO
 	"#SIN2\\SIN2_013#I think Spock would have a better chance at cracking that, Jim.",
 	"#SIN2\\SIN2_014#We're safe from the cosmic radiation, Jim.",
 	"#SIN2\\SIN2_015#22%? That's very low -- hardly something to brag about.",
@@ -2494,11 +2494,11 @@ extern const char *const g_gameStrings[] = {
 	"#SIN2\\SIN2N007#You see another chamber.",
 	"#SIN2\\SIN2N008#The door has some strange writing on it.",
 	"#SIN2\\SIN2U085#The virus came from our sensor sweep of the moon's computers. We believe we have analyzed the memory sectors it attacked.",
-	"#SIN2\\SIN2U096#If we had a doctor as good with computers as you are with patients, we would be having a lot fewer problems.",
+	"#SIN2\\SIN2U096#If we had a doctor as good with computers as you are with patients, we'd be having a lot fewer problems.", // TYPO
 	"#SIN2\\SIN2U097#I wish I could take credit for it. It was Mr. Kyle who found the pattern. We are attacking it with anti-virus programs.",
 
 
-	"#SIN2\\SIN3_008#All readings are normal. The structure seems to be protecting us from the cosmic rays.",
+	"#SIN3\\SIN3_008#All readings are normal. The structure seems to be protecting us from the cosmic rays.",
 	"#SIN3\\SIN3_012#Can't say I like the decor.",
 
 
