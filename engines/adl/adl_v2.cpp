@@ -112,7 +112,7 @@ void AdlEngine_v2::checkTextOverflow(char c) {
 
 void AdlEngine_v2::handleTextOverflow() {
 	_linesPrinted = 0;
-	_display->updateTextScreen();
+	_display->copyTextSurface();
 
 	if (_inputScript) {
 		// Set pause flag to activate regular behaviour of delay and inputKey
@@ -153,7 +153,8 @@ Common::String AdlEngine_v2::loadMessage(uint idx) const {
 
 void AdlEngine_v2::printString(const Common::String &str) {
 	Common::String s(str);
-	uint endPos = TEXT_WIDTH - 1;
+	const uint textWidth = _display->getTextWidth();
+	uint endPos = textWidth - 1;
 	uint startPos = 0;
 	uint pos = 0;
 
@@ -167,7 +168,7 @@ void AdlEngine_v2::printString(const Common::String &str) {
 			}
 
 			s.setChar(APPLECHAR('\r'), pos);
-			endPos = pos + TEXT_WIDTH;
+			endPos = pos + textWidth;
 			startPos = pos + 1;
 		}
 
@@ -181,7 +182,7 @@ void AdlEngine_v2::printString(const Common::String &str) {
 
 	checkTextOverflow(APPLECHAR('\r'));
 	_display->printChar(APPLECHAR('\r'));
-	_display->updateTextScreen();
+	_display->copyTextSurface();
 }
 
 void AdlEngine_v2::drawItem(Item &item, const Common::Point &pos) {
@@ -259,7 +260,7 @@ void AdlEngine_v2::showRoom() {
 	if (!_state.isDark)
 		drawItems();
 
-	_display->updateHiResScreen();
+	_display->copyGfxSurface();
 	printString(_roomData.description);
 }
 

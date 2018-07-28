@@ -182,8 +182,8 @@ void Console::prepareGame() {
 	_engine->_graphics->clearScreen();
 	_engine->loadRoom(_engine->_state.room);
 	_engine->showRoom();
-	_engine->_display->updateTextScreen();
-	_engine->_display->updateHiResScreen();
+	_engine->_display->copyTextSurface();
+	_engine->_display->copyGfxSurface();
 }
 
 bool Console::Cmd_Region(int argc, const char **argv) {

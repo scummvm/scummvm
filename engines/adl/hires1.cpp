@@ -29,7 +29,7 @@
 
 #include "adl/adl.h"
 #include "adl/graphics.h"
-#include "adl/display.h"
+#include "adl/display_a2.h"
 
 namespace Adl {
 
@@ -126,7 +126,7 @@ private:
 };
 
 void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream, const uint pages[], bool goHome) {
-	_display->setMode(DISPLAY_MODE_TEXT);
+	_display->setMode(Display::kModeText);
 
 	uint page = 0;
 	while (pages[page] != 0) {
@@ -154,9 +154,9 @@ void HiRes1Engine::runIntro() {
 	// Early version have no bitmap in 'AUTO LOAD OBJ'
 	if (getGameVersion() >= GAME_VER_HR1_COARSE) {
 		stream->seek(IDI_HR1_OFS_LOGO_0);
-		_display->setMode(DISPLAY_MODE_HIRES);
-		_display->loadFrameBuffer(*stream);
-		_display->updateHiResScreen();
+		_display->setMode(Display::kModeGraphics);
+		static_cast<Display_A2 *>(_display)->loadFrameBuffer(*stream);
+		_display->copyGfxSurface();
 
 		if (getGameVersion() == GAME_VER_HR1_PD) {
 			// Only the PD version shows a title screen during the load
@@ -177,7 +177,7 @@ void HiRes1Engine::runIntro() {
 		// was present in the original PD release back in 1987.
 		StreamPtr basic(_files->createReadStream("MYSTERY.HELLO"));
 
-		_display->setMode(DISPLAY_MODE_TEXT);
+		_display->setMode(Display::kModeText);
 		_display->home();
 
 		str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_0, '"');
@@ -197,7 +197,7 @@ void HiRes1Engine::runIntro() {
 			return;
 	}
 
-	_display->setMode(DISPLAY_MODE_MIXED);
+	_display->setMode(Display::kModeMixed);
 
 	str = readStringAt(*stream, IDI_HR1_OFS_GAME_OR_HELP);
 
@@ -238,10 +238,10 @@ void HiRes1Engine::runIntro() {
 
 	stream.reset(_files->createReadStream(IDS_HR1_EXE_1));
 	stream->seek(0x1800);
-	_display->loadFrameBuffer(*stream);
-	_display->updateHiResScreen();
+	static_cast<Display_A2 *>(_display)->loadFrameBuffer(*stream);
+	_display->copyGfxSurface();
 
-	_display->setMode(DISPLAY_MODE_MIXED);
+	_display->setMode(Display::kModeMixed);
 
 	if (getGameVersion() == GAME_VER_HR1_SIMI) {
 		// The original waits for the key after initializing the state.
@@ -268,7 +268,7 @@ void HiRes1Engine::init() {
 		_files = files;
 	}
 
-	_graphics = new GraphicsMan(*_display);
+	_graphics = new GraphicsMan_v1<Display_A2>(*static_cast<Display_A2 *>(_display));
 	_display->moveCursorTo(Common::Point(0, 3));
 
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));
@@ -478,7 +478,7 @@ void HiRes1Engine::showRoom() {
 		drawItems();
 	}
 
-	_display->updateHiResScreen();
+	_display->copyGfxSurface();
 	_messageDelay = false;
 	printString(_roomData.description);
 	_messageDelay = true;

@@ -37,7 +37,7 @@
 #include "graphics/thumbnail.h"
 
 #include "adl/adl.h"
-#include "adl/display.h"
+#include "adl/display_a2.h"
 #include "adl/detection.h"
 #include "adl/graphics.h"
 #include "adl/sound.h"
@@ -259,7 +259,7 @@ byte AdlEngine::inputKey(bool showCursor) const {
 		if (_inputScript && !_scriptPaused)
 			return APPLECHAR('\r');
 
-		_display->updateTextScreen();
+		_display->copyTextSurface();
 		g_system->delayMillis(16);
 	}
 
@@ -703,10 +703,9 @@ void AdlEngine::gameLoop() {
 }
 
 Common::Error AdlEngine::run() {
-	initGraphics(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2);
-
+	_display = new Display_A2();
 	_console = new Console(this);
-	_display = new Display();
+	_display->init();
 
 	setupOpcodeTables();
 
@@ -724,7 +723,7 @@ Common::Error AdlEngine::run() {
 		_display->printAsciiString(_strings.lineFeeds);
 	}
 
-	_display->setMode(DISPLAY_MODE_MIXED);
+	_display->setMode(Display::kModeMixed);
 
 	while (!(_isQuitting || shouldQuit()))
 		gameLoop();
@@ -999,7 +998,7 @@ Common::String AdlEngine::getLine() {
 
 		if ((byte)line[0] == ('\r' | 0x80)) {
 			_textMode = !_textMode;
-			_display->setMode(_textMode ? DISPLAY_MODE_TEXT : DISPLAY_MODE_MIXED);
+			_display->setMode(_textMode ? Display::kModeText : Display::kModeMixed);
 			continue;
 		}
 
@@ -1252,8 +1251,8 @@ int AdlEngine::o_restart(ScriptEnv &e) {
 
 	if (input.size() == 0 || input[0] != APPLECHAR('N')) {
 		_isRestarting = true;
-		_display->clear(0x00);
-		_display->updateHiResScreen();
+		_graphics->clearScreen();
+		_display->copyGfxSurface();
 		_display->printString(_strings.pressReturn);
 		initState();
 		_display->printAsciiString(_strings.lineFeeds);

@@ -28,7 +28,7 @@
 #include "common/memstream.h"
 
 #include "adl/adl_v5.h"
-#include "adl/display.h"
+#include "adl/display_a2.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"
 
@@ -192,20 +192,22 @@ static Common::MemoryReadStream *loadSectors(DiskImage *disk, byte track, byte s
 }
 
 void HiRes6Engine::runIntro() {
+	Display_A2 *display = static_cast<Display_A2 *>(_display);
+
 	insertDisk(0);
 
 	StreamPtr stream(loadSectors(_disk, 11, 1, 96));
 
-	_display->setMode(DISPLAY_MODE_HIRES);
-	_display->loadFrameBuffer(*stream);
-	_display->updateHiResScreen();
+	display->setMode(Display::kModeGraphics);
+	display->loadFrameBuffer(*stream);
+	display->copyGfxSurface();
 	delay(256 * 8609 / 1000);
 
-	_display->loadFrameBuffer(*stream);
-	_display->updateHiResScreen();
+	display->loadFrameBuffer(*stream);
+	display->copyGfxSurface();
 	delay(256 * 8609 / 1000);
 
-	_display->loadFrameBuffer(*stream);
+	display->loadFrameBuffer(*stream);
 
 	// Load copyright string from boot file
 	Files_AppleDOS *files(new Files_AppleDOS());
@@ -218,16 +220,16 @@ void HiRes6Engine::runIntro() {
 
 	delete files;
 
-	_display->updateHiResScreen();
-	_display->home();
-	_display->setMode(DISPLAY_MODE_MIXED);
-	_display->moveCursorTo(Common::Point(0, 21));
-	_display->printString(copyright);
+	display->copyGfxSurface();
+	display->home();
+	display->setMode(Display::kModeMixed);
+	display->moveCursorTo(Common::Point(0, 21));
+	display->printString(copyright);
 	delay(256 * 8609 / 1000);
 }
 
 void HiRes6Engine::init() {
-	_graphics = new GraphicsMan_v3(*_display);
+	_graphics = new GraphicsMan_v3<Display_A2>(*static_cast<Display_A2 *>(_display));
 
 	insertDisk(0);
 
@@ -326,7 +328,7 @@ void HiRes6Engine::showRoom() {
 	if (!_state.isDark)
 		drawItems();
 
-	_display->updateHiResScreen();
+	_display->copyGfxSurface();
 	setVar(2, 0xff);
 	printString(_roomData.description);
 }

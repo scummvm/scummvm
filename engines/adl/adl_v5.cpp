@@ -123,7 +123,7 @@ int AdlEngine_v5::o_setTextMode(ScriptEnv &e) {
 		return 1;
 	case 2:
 		_textMode = true;
-		_display->setMode(DISPLAY_MODE_TEXT);
+		_display->setMode(Display::kModeText);
 		_display->home();
 		_maxLines = 24;
 		_linesPrinted = 0;
