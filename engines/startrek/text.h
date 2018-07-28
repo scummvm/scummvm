@@ -32,6 +32,7 @@ namespace StarTrek {
 typedef int32 TextRef;
 
 // Text that's loaded from "GROUND.TXT". First 0x40 pieces of text are for items.
+// TODO: Floppy version has different numbers for this.
 enum GroundTextIDs {
 	// Generic "perform undefined action" text (ie. look at nothing, talk to wall)
 	GROUNDTX_LOOK_KIRK = 0x49,
