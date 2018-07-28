@@ -157,7 +157,6 @@ private:
 	void initOverlay();
 
 #ifdef USE_RGB_COLOR
-	Common::String getPixelFormatName(const Graphics::PixelFormat &format) const;
 	void initTexture(GLESBaseTexture **texture, uint width, uint height,
 						const Graphics::PixelFormat *format);
 #endif

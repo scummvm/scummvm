@@ -101,23 +101,6 @@ Common::List<Graphics::PixelFormat> OSystem_Android::getSupportedFormats() const
 	return res;
 }
 
-Common::String OSystem_Android::getPixelFormatName(const Graphics::PixelFormat &format) const {
-	if (format.bytesPerPixel == 1)
-		return "CLUT8";
-
-	if (format.aLoss == 8)
-		return Common::String::format("RGB%u%u%u",
-										8 - format.rLoss,
-										8 - format.gLoss,
-										8 - format.bLoss);
-
-	return Common::String::format("RGBA%u%u%u%u",
-									8 - format.rLoss,
-									8 - format.gLoss,
-									8 - format.bLoss,
-									8 - format.aLoss);
-}
-
 void OSystem_Android::initTexture(GLESBaseTexture **texture,
 									uint width, uint height,
 									const Graphics::PixelFormat *format) {
@@ -140,7 +123,7 @@ void OSystem_Android::initTexture(GLESBaseTexture **texture,
 	if (format_current != format_new) {
 		if (*texture)
 			LOGD("switching pixel format from: %s",
-					getPixelFormatName((*texture)->getPixelFormat()).c_str());
+					(*texture)->getPixelFormat().toString().c_str());
 
 		delete *texture;
 
@@ -156,13 +139,13 @@ void OSystem_Android::initTexture(GLESBaseTexture **texture,
 			// TODO what now?
 			if (format_new != format_clut8)
 				LOGE("unsupported pixel format: %s",
-					getPixelFormatName(format_new).c_str());
+					format_new.toString().c_str());
 
 			*texture = new GLESFakePalette565Texture;
 		}
 
 		LOGD("new pixel format: %s",
-				getPixelFormatName((*texture)->getPixelFormat()).c_str());
+				(*texture)->getPixelFormat().toString().c_str());
 	}
 
 	(*texture)->allocBuffer(width, height);
