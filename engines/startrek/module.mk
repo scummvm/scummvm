@@ -66,7 +66,7 @@ MODULE_OBJS = \
 	rooms/sins2.o \
 	rooms/sins3.o \
 	rooms/sins4.o \
-	rooms/sins5.o \
+	rooms/sins5.o
 	
 
 
