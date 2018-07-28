@@ -400,8 +400,8 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 
 			if (!var3fa) {
 				if (r3->field1e == 3) {
-					// FIXME: is this used anywhere?
-					uint16 var3fc = (_frameIndex << 3) ^ _frameIndex;
+					// Is this used anywhere?
+					//uint16 var3fc = (_frameIndex << 3) ^ _frameIndex;
 				} else {
 					// TODO
 				}
