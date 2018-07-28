@@ -2565,7 +2565,7 @@ extern const char *const g_gameStrings[] = {
 	"#SIN4\\SIN4_020#This panel has a slot in it rather than a keypad. The slot bears traces of Tri-Phosphorate Silver, and power is currently running to it. I am recording the pattern of this lock into my tricorder.",
 	"#SIN4\\SIN4_021#This panel requires a coded identification key to get it open.",
 	"#SIN4\\SIN4_022#Very odd, Captain. There was a power surge to the panel just after the rock struck it. Probably 3KAg dust getting into the slot. ",
-	"#SIN4\\SIN4_023#We must find a way to bypass it's lock system.",
+	"#SIN4\\SIN4_023#We must find a way to bypass its lock system.", // TYPO
 	"#SIN4\\SIN4_024#Fascinating, doctor. I look forward to reading it.",
 	"#SIN4\\SIN4_025#Fascinating, lieutenant.",
 	"#SIN4\\SIN4_026#Indeed, Ensign. And considerably thinner. A remarkable achievement in metallurgical engineering.",
