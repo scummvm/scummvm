@@ -43,7 +43,7 @@ void Room::muddaUseLenseOnDegrimer() {
 	loseItem(OBJECT_IDEGRIME);
 	loseItem(OBJECT_ILENSES);
 
-	_vm->_awayMission.mudd.missionScore++;
+	_awayMission->mudd.missionScore++;
 	showText(text[_roomIndex]);
 }
 
@@ -60,9 +60,9 @@ void Room::muddaUseAlienDevice() {
 		11  // MUDD5
 	};
 
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
 	Common::Point pos = getActorPos(OBJECT_KIRK);
 	loadActorAnimC(deviceObjectIndices[_roomIndex], "s4cbxp", pos.x, 10, &Room::muddaFiredAlienDevice);
@@ -81,10 +81,10 @@ void Room::muddaFiredAlienDevice() {
 		TX_MUD2_002,
 	};
 
-	_vm->_awayMission.disableInput = false;
-	if (!_vm->_awayMission.mudd.discoveredLenseAndDegrimerFunction) {
-		_vm->_awayMission.mudd.discoveredLenseAndDegrimerFunction = true;
-		_vm->_awayMission.mudd.missionScore += 5; // BUGFIX: didn't happen if done in MUDD5
+	_awayMission->disableInput = false;
+	if (!_awayMission->mudd.discoveredLenseAndDegrimerFunction) {
+		_awayMission->mudd.discoveredLenseAndDegrimerFunction = true;
+		_awayMission->mudd.missionScore += 5; // BUGFIX: didn't happen if done in MUDD5
 		showText(TX_SPEAKER_KIRK, text[_roomIndex]);
 	}
 }
@@ -141,22 +141,22 @@ void Room::muddaTick() {
 
 	const int TIMER_LENGTH = 27000;
 
-	if (_vm->_awayMission.mudd.lifeSupportMalfunctioning) {
-		if (!_vm->_awayMission.mudd.startedLifeSupportTimer) {
-			_vm->_awayMission.mudd.startedLifeSupportTimer = true;
-			_vm->_awayMission.mudd.lifeSupportTimer = TIMER_LENGTH;
+	if (_awayMission->mudd.lifeSupportMalfunctioning) {
+		if (!_awayMission->mudd.startedLifeSupportTimer) {
+			_awayMission->mudd.startedLifeSupportTimer = true;
+			_awayMission->mudd.lifeSupportTimer = TIMER_LENGTH;
 		}
-		_vm->_awayMission.mudd.lifeSupportTimer--;
+		_awayMission->mudd.lifeSupportTimer--;
 
 		// BUGFIX: the warnings at 75%, 50%, and 25% were only voiced in MUDD0.
-		if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.25))
+		if (_awayMission->mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.25))
 			showText(TX_SPEAKER_SPOCK, TX_MUD0_018);
-		else if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.5))
+		else if (_awayMission->mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.5))
 			showText(TX_SPEAKER_SPOCK, TX_MUD0_019);
-		else if (_vm->_awayMission.mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.75))
+		else if (_awayMission->mudd.lifeSupportTimer == (int)(TIMER_LENGTH * 0.75))
 			showText(TX_SPEAKER_SPOCK, TX_MUD0_020);
-		else if (_vm->_awayMission.mudd.lifeSupportTimer == 1) {
-			_vm->_awayMission.disableInput = true;
+		else if (_awayMission->mudd.lifeSupportTimer == 1) {
+			_awayMission->disableInput = true;
 
 			// In each room, the crewmen collapse in a different directions.
 			// NOTE: "kgetdn" (kirk, north) doesn't work properly; files in the animation
@@ -171,7 +171,7 @@ void Room::muddaTick() {
 			};
 
 			for (int i = OBJECT_KIRK; i <= OBJECT_REDSHIRT; i++) {
-				Common::String anim = _vm->getCrewmanAnimFilename(i, "getd");
+				Common::String anim = getCrewmanAnimFilename(i, "getd");
 				anim += directions[i][_roomIndex];
 				loadActorAnim2(i, anim);
 			}

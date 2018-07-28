@@ -180,8 +180,8 @@ void Room::trial4Tick60() {
 	}
 
 	showText(TX_SPEAKER_KIRK, TX_TRI4_012);
-	_vm->_awayMission.trial.missionEndMethod = 2;
-	endMission(_vm->_awayMission.trial.missionScore, _vm->_awayMission.trial.field2b, 2);
+	_awayMission->trial.missionEndMethod = 2;
+	endMission(_awayMission->trial.missionScore, _awayMission->trial.field2b, 2);
 }
 
 }

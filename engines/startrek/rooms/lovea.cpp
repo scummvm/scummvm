@@ -64,7 +64,7 @@ void Room::loveaTimer0Expired() {
 
 	const TextRef *textTable;
 
-	if (randomVal == 0 || _vm->_awayMission.redshirtDead) {
+	if (randomVal == 0 || _awayMission->redshirtDead) {
 		speaker = TX_SPEAKER_MCCOY;
 		textTable = mccoyText;
 	} else {
@@ -76,7 +76,7 @@ void Room::loveaTimer0Expired() {
 
 	showText(speaker, textTable[randomVal]);
 
-	if (!_vm->_awayMission.love.releasedRomulanLaughingGas) {
+	if (!_awayMission->love.releasedRomulanLaughingGas) {
 		const int spockText[] = {
 			TX_LOV0_029,
 			TX_LOV0_033,
@@ -88,7 +88,7 @@ void Room::loveaTimer0Expired() {
 		// BUG(?): This is in an if statement, meaning the human crewmen stop talking from
 		// laughing gas if Spock is under laughing gas effects. Might be intentional, to
 		// reduce "spamming" of text?
-		_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
+		_awayMission->timers[0] = getRandomWordInRange(200, 400);
 	}
 }
 
@@ -107,18 +107,18 @@ void Room::loveaTimer1Expired() {
 
 	showText(TX_SPEAKER_SPOCK, spockText[getRandomWordInRange(0, 7)]);
 
-	_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
+	_awayMission->timers[1] = getRandomWordInRange(200, 400);
 }
 
 void Room::loveaUseMedkitOnSpock() {
-	if (_vm->_awayMission.love.spockCured)
+	if (_awayMission->love.spockCured)
 		showText(TX_SPEAKER_MCCOY, TX_LOV5_015);
 	else
 		showText(TX_SPEAKER_MCCOY, TX_LOV5_019);
 }
 
 void Room::loveaUseCureSampleOnSpock() {
-	if (_vm->_awayMission.love.spockCured) {
+	if (_awayMission->love.spockCured) {
 		walkCrewman(OBJECT_SPOCK, _roomVar.love.cmnXPosToCureSpock, _roomVar.love.cmnYPosToCureSpock, 99);
 		walkCrewman(OBJECT_MCCOY, _roomVar.love.cmnXPosToCureSpock, _roomVar.love.cmnYPosToCureSpock + 10, 99);
 	} else
@@ -127,7 +127,7 @@ void Room::loveaUseCureSampleOnSpock() {
 
 
 void Room::loveaUseCureOnSpock() {
-	if (_vm->_awayMission.love.spockCured)
+	if (_awayMission->love.spockCured)
 		showText(TX_SPEAKER_MCCOY, TX_LOV5_015);
 	else {
 		walkCrewman(OBJECT_SPOCK, _roomVar.love.cmnXPosToCureSpock, _roomVar.love.cmnYPosToCureSpock, 99);
@@ -146,37 +146,37 @@ void Room::loveaFinishedCuringSpock() {
 	showText(TX_SPEAKER_SPOCK, TX_LOV5_038);
 	showText(TX_SPEAKER_MCCOY, TX_LOV5_027);
 	showText(TX_SPEAKER_SPOCK, TX_LOV5C001);
-	_vm->_awayMission.love.spockCured = true;
+	_awayMission->love.spockCured = true;
 }
 
 
 // Timer 2 counts down the time until Spock and the Romulans succumb to the virus.
 // BUG(-ish): once Spock is cured, the romulans will never succumb to the virus.
 void Room::loveaTimer2Expired() {
-	if (!_vm->_awayMission.love.spockCured) {
-		_vm->_awayMission.love.spockInfectionCounter++;
-		if (_vm->_awayMission.love.spockInfectionCounter >= 100) { // Spock succumbs, game over
+	if (!_awayMission->love.spockCured) {
+		_awayMission->love.spockInfectionCounter++;
+		if (_awayMission->love.spockInfectionCounter >= 100) { // Spock succumbs, game over
 			loadActorAnim(OBJECT_SPOCK, "sgetdn", -1, -1, 0);
 			playMidiMusicTracks(2, -1); // FIXME: assembly had no second parameter...?
 			showText(TX_GENER004);
 			showGameOverMenu();
-		} else if (_vm->_awayMission.love.spockInfectionCounter == 15) {
+		} else if (_awayMission->love.spockInfectionCounter == 15) {
 			showText(TX_SPEAKER_SPOCK, TX_SPOKCOFF);
-			_vm->_awayMission.love.spockInfectionCounter++;
-		} else if (_vm->_awayMission.love.spockInfectionCounter == 30) {
+			_awayMission->love.spockInfectionCounter++;
+		} else if (_awayMission->love.spockInfectionCounter == 30) {
 			showText(TX_SPEAKER_MCCOY, TX_LOVA_F08);
-			_vm->_awayMission.love.spockInfectionCounter++;
-		} else if (_vm->_awayMission.love.spockInfectionCounter == 45) {
+			_awayMission->love.spockInfectionCounter++;
+		} else if (_awayMission->love.spockInfectionCounter == 45) {
 			showText(TX_SPEAKER_SPOCK, TX_SPOKCOFF);
-			_vm->_awayMission.love.spockInfectionCounter++;
-		} else if (_vm->_awayMission.love.spockInfectionCounter == 60) {
+			_awayMission->love.spockInfectionCounter++;
+		} else if (_awayMission->love.spockInfectionCounter == 60) {
 			showText(TX_SPEAKER_SPOCK, TX_LOVA_F54);
-			_vm->_awayMission.love.romulansUnconsciousFromVirus = true;
-			_vm->_awayMission.love.spockInfectionCounter++;
+			_awayMission->love.romulansUnconsciousFromVirus = true;
+			_awayMission->love.spockInfectionCounter++;
 		}
 	}
 
-	_vm->_awayMission.timers[2] = 200;
+	_awayMission->timers[2] = 200;
 }
 
 void Room::loveaUseMTricorderOnSpock() {
@@ -184,19 +184,19 @@ void Room::loveaUseMTricorderOnSpock() {
 	// (possible future enhancement?)
 	playSoundEffectIndex(SND_TRICORDER);
 
-	if (_vm->_awayMission.love.spockCured)
+	if (_awayMission->love.spockCured)
 		showText(TX_SPEAKER_MCCOY, TX_LOVA_F01);
-	else if (!_vm->_awayMission.love.knowAboutVirus)
+	else if (!_awayMission->love.knowAboutVirus)
 		showText(TX_SPEAKER_MCCOY, TX_LOVA_F02);
-	else if (_vm->_awayMission.love.spockInfectionCounter < 10)
+	else if (_awayMission->love.spockInfectionCounter < 10)
 		showText(TX_SPEAKER_MCCOY, TX_LOVA_F04);
-	else if (_vm->_awayMission.love.spockInfectionCounter < 30)
+	else if (_awayMission->love.spockInfectionCounter < 30)
 		showText(TX_SPEAKER_MCCOY, TX_LOVA_F03);
-	else if (_vm->_awayMission.love.spockInfectionCounter < 50)
+	else if (_awayMission->love.spockInfectionCounter < 50)
 		showText(TX_SPEAKER_MCCOY, TX_LOVA_F08);
-	else if (_vm->_awayMission.love.spockInfectionCounter < 70) // BUGFIX: < 70 instead of == 70
+	else if (_awayMission->love.spockInfectionCounter < 70) // BUGFIX: < 70 instead of == 70
 		showText(TX_SPEAKER_MCCOY, TX_TUG2_010);
-	else if (_vm->_awayMission.love.spockInfectionCounter < 100)
+	else if (_awayMission->love.spockInfectionCounter < 100)
 		showText(TX_SPEAKER_MCCOY, TX_LOVA_F10);
 	else
 		showText(TX_SPEAKER_MCCOY, TX_LOVA_100);
@@ -209,22 +209,22 @@ void Room::loveaUseMTricorderOnHuman() {
 
 void Room::loveaUseRomulanLaughingGas() {
 	showText(TX_LOV2N005);
-	_vm->_awayMission.love.releasedRomulanLaughingGas = true;
+	_awayMission->love.releasedRomulanLaughingGas = true;
 	loseItem(OBJECT_IRLG);
 
 	// BUGFIX: start the effects immediately
-	_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
+	_awayMission->timers[1] = getRandomWordInRange(200, 400);
 }
 
 void Room::loveaUseHumanLaughingGas() {
 	showText(TX_LOV2N005);
 	showText(TX_SPEAKER_SPOCK, TX_MUD2_040);
-	_vm->_awayMission.love.releasedHumanLaughingGas = true;
+	_awayMission->love.releasedHumanLaughingGas = true;
 	loseItem(OBJECT_IN2O);
 	playMidiMusicTracks(3, -1); // FIXME: assembly had no second parameter...?
 
 	// BUGFIX: start the effects immediately
-	_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
+	_awayMission->timers[0] = getRandomWordInRange(200, 400);
 }
 
 void Room::loveaUseAmmonia() {
@@ -242,7 +242,7 @@ void Room::loveaUseCommunicator() {
 	showText(TX_SPEAKER_KIRK,  TX_MUD4_018);
 	showText(TX_SPEAKER_UHURA, TX_BRIDU146);
 	showText(TX_SPEAKER_KIRK,  TX_VENA_F41);
-	_vm->_awayMission.love.contactedEnterpriseBeforeCure = true;
+	_awayMission->love.contactedEnterpriseBeforeCure = true;
 }
 
 }

@@ -48,14 +48,14 @@ namespace StarTrek {
 void Room::mudd1Tick1() {
 	playVoc("MUD1LOOP"); // BUGFIX: moved this out of below if statement
 
-	if (!_vm->_awayMission.mudd.enteredRoom1ForFirstTime) {
+	if (!_awayMission->mudd.enteredRoom1ForFirstTime) {
 		playMidiMusicTracks(0);
-		_vm->_awayMission.mudd.enteredRoom1ForFirstTime = true;
+		_awayMission->mudd.enteredRoom1ForFirstTime = true;
 	}
 
 	loadActorAnim2(OBJECT_CRANE, "s4wbhs", 0x9b, 0x31);
 
-	if (!_vm->_awayMission.mudd.torpedoLoaded)
+	if (!_awayMission->mudd.torpedoLoaded)
 		loadActorAnim(OBJECT_TORPEDO, "s4wbcs", 0x32, 0x65);
 }
 
@@ -70,20 +70,20 @@ void Room::mudd1UseCommunicator() {
 
 
 void Room::mudd1UseSpockOnBlueButton() { // Loads up the torpedo
-	if (!_vm->_awayMission.mudd.torpedoLoaded) {
+	if (!_awayMission->mudd.torpedoLoaded) {
 		walkCrewmanC(OBJECT_SPOCK, 0x2f, 0x9f, &Room::mudd1SpockReachedBlueButton);
-		_vm->_awayMission.disableInput = true;
-		if (!_vm->_awayMission.mudd.gotPointsForLoadingTorpedo) {
-			_vm->_awayMission.mudd.gotPointsForLoadingTorpedo = true;
-			_vm->_awayMission.mudd.missionScore += 2;
+		_awayMission->disableInput = true;
+		if (!_awayMission->mudd.gotPointsForLoadingTorpedo) {
+			_awayMission->mudd.gotPointsForLoadingTorpedo = true;
+			_awayMission->mudd.missionScore += 2;
 		}
 	}
 }
 
 void Room::mudd1SpockReachedBlueButton() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
 	loadActorAnimC(OBJECT_SPOCK, "susemn", -1, -1, &Room::mudd1SpockPressedBlueButton);
-	_vm->_awayMission.timers[1] = 5;
+	_awayMission->timers[1] = 5;
 }
 
 void Room::mudd1SpockPressedBlueButton() {
@@ -91,14 +91,14 @@ void Room::mudd1SpockPressedBlueButton() {
 	loadActorAnim(OBJECT_CRANE, "s4wbcr");
 	loadActorAnim(OBJECT_TORPEDO, "s4wbcn");
 	loadActorAnimC(OBJECT_CRANE_ANIMATION, "s4wbsl", 0x77, 0x83, &Room::mudd1CraneFinishedMoving);
-	_vm->_awayMission.mudd.torpedoLoaded = true;
+	_awayMission->mudd.torpedoLoaded = true;
 }
 
 void Room::mudd1CraneFinishedMoving() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	walkCrewman(OBJECT_SPOCK, 0x43, 0x9f);
 
-	if (_vm->_awayMission.mudd.torpedoLoaded)
+	if (_awayMission->mudd.torpedoLoaded)
 		showText(TX_SPEAKER_SPOCK, TX_MUD1_017);
 	else
 		showText(TX_SPEAKER_SPOCK, TX_MUD1_016);
@@ -106,16 +106,16 @@ void Room::mudd1CraneFinishedMoving() {
 
 
 void Room::mudd1UseSpockOnYellowButton() { // Unloads the torpedo
-	if (_vm->_awayMission.mudd.torpedoLoaded) {
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
+	if (_awayMission->mudd.torpedoLoaded) {
+		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
 		walkCrewmanC(OBJECT_SPOCK, 0x2f, 0x9f, &Room::mudd1SpockReachedYellowButton);
-		_vm->_awayMission.disableInput = true;
+		_awayMission->disableInput = true;
 	}
 }
 
 void Room::mudd1SpockReachedYellowButton() {
 	loadActorAnim2(OBJECT_SPOCK, "susemn", -1, -1, 3);
-	_vm->_awayMission.timers[1] = 5;
+	_awayMission->timers[1] = 5;
 }
 
 void Room::mudd1SpockPressedYellowButton() {
@@ -123,24 +123,24 @@ void Room::mudd1SpockPressedYellowButton() {
 	loadActorAnim2(OBJECT_CRANE, "s4wbhb");
 	loadActorAnim2(OBJECT_TORPEDO, "s4wbcb", 0x32, 0x65, 0);
 	loadActorAnimC(OBJECT_CRANE_ANIMATION, "s4wbsb", -1, -1, &Room::mudd1CraneFinishedMoving);
-	_vm->_awayMission.mudd.torpedoLoaded = false;
+	_awayMission->mudd.torpedoLoaded = false;
 }
 
 
 void Room::mudd1UseSpockOnRedButton() {
-	if (_vm->_awayMission.mudd.torpedoLoaded) {
+	if (_awayMission->mudd.torpedoLoaded) {
 		walkCrewmanC(OBJECT_SPOCK, 0x2f, 0x9f, &Room::mudd1SpockReachedRedButton);
-		_vm->_awayMission.disableInput = true;
-		if (!_vm->_awayMission.mudd.gotPointsForPressingRedButton) {
-			_vm->_awayMission.mudd.gotPointsForPressingRedButton = true;
-			_vm->_awayMission.mudd.missionScore += 3;
+		_awayMission->disableInput = true;
+		if (!_awayMission->mudd.gotPointsForPressingRedButton) {
+			_awayMission->mudd.gotPointsForPressingRedButton = true;
+			_awayMission->mudd.missionScore += 3;
 		}
 	}
 }
 
 void Room::mudd1SpockReachedRedButton() {
 	loadActorAnimC(OBJECT_SPOCK, "susemn", -1, -1, &Room::mudd1SpockPressedRedButton);
-	_vm->_awayMission.timers[1] = 5;
+	_awayMission->timers[1] = 5;
 }
 
 void Room::mudd1SpockPressedRedButton() {
@@ -150,8 +150,8 @@ void Room::mudd1SpockPressedRedButton() {
 	showText(TX_SPEAKER_SPOCK, TX_MUD1_021);
 	showText(TX_SPEAKER_SPOCK, TX_MUD1_023);
 
-	_vm->_awayMission.disableInput = false;
-	_vm->_awayMission.mudd.knowAboutTorpedo = true;
+	_awayMission->disableInput = false;
+	_awayMission->mudd.knowAboutTorpedo = true;
 
 	const int choices[] = {
 		TX_SPEAKER_KIRK,
@@ -165,7 +165,7 @@ void Room::mudd1SpockPressedRedButton() {
 
 	switch (choice) {
 	case 0:
-		_vm->_awayMission.mudd.torpedoStatus = 0;
+		_awayMission->mudd.torpedoStatus = 0;
 
 		// ENHANCEMENT: Original text was just "(Spock raises eyebrow)" without any audio.
 		// This changes it to a narration to make it flow better.
@@ -177,7 +177,7 @@ void Room::mudd1SpockPressedRedButton() {
 	// fall through
 
 	case 2:
-		_vm->_awayMission.mudd.torpedoStatus = 1;
+		_awayMission->mudd.torpedoStatus = 1;
 		showText(TX_SPEAKER_UHURA, TX_STATICU1);
 		break;
 	}
@@ -284,7 +284,7 @@ void Room::mudd1TalkToRedshirt() {
 
 void Room::mudd1WalkToSouthDoor() {
 	_roomVar.mudd.walkingToDoor = 1;
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewman(OBJECT_KIRK, 0xa0, 0xc7);
 }
 
@@ -296,7 +296,7 @@ void Room::mudd1TouchedHotspot2() { // Trigger door at bottom of room
 
 void Room::mudd1WalkToNorthDoor() {
 	_roomVar.mudd.walkingToDoor = 1;
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewman(OBJECT_KIRK, 0xab, 0x71);
 }
 
@@ -309,7 +309,7 @@ void Room::mudd1TouchedHotspot1() { // Trigger door at top of room
 
 void Room::mudd1WalkToWestDoor() {
 	_roomVar.mudd.walkingToDoor = 2;
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewman(OBJECT_KIRK, 0x35, 0x71);
 }
 

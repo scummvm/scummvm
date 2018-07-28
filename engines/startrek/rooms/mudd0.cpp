@@ -46,27 +46,27 @@ void Room::mudd0Tick1() {
 	// the first meeting. Fixes an issue where Mudd appears in the first room when he's
 	// supposed to be in the medbay.
 	// TODO: verify this matches with floppy version's code
-	if (_vm->_awayMission.mudd.muddFirstRoomState != 0)
-		_vm->_awayMission.mudd.muddFirstRoomState = 2;
+	if (_awayMission->mudd.muddFirstRoomState != 0)
+		_awayMission->mudd.muddFirstRoomState = 2;
 	else {
-		_vm->_awayMission.disableInput = 2;
+		_awayMission->disableInput = 2;
 		loadActorAnim(OBJECT_MUDD, "s4cbhr", 0xa2, 0xa9, 0);
 	}
 }
 
 void Room::mudd0Tick50() {
-	if (!_vm->_awayMission.mudd.enteredRoom0ForFirstTime) {
+	if (!_awayMission->mudd.enteredRoom0ForFirstTime) {
 		playMidiMusicTracks(3);
-		_vm->_awayMission.mudd.enteredRoom0ForFirstTime = true;
+		_awayMission->mudd.enteredRoom0ForFirstTime = true;
 	}
 }
 
 void Room::mudd0Tick60() {
-	if (_vm->_awayMission.mudd.muddFirstRoomState == 0) {
+	if (_awayMission->mudd.muddFirstRoomState == 0) {
 		// ENHANCEMENT: Move this into if statement (related to above enhancement)
-		_vm->_awayMission.disableInput = false;
+		_awayMission->disableInput = false;
 
-		_vm->_awayMission.mudd.muddFirstRoomState++;
+		_awayMission->mudd.muddFirstRoomState++;
 
 		showText(TX_SPEAKER_MUDD,  TX_MUD0_037);
 		showText(TX_SPEAKER_KIRK,  TX_MUD0_009);
@@ -90,13 +90,13 @@ void Room::mudd0UseCommunicator() {
 }
 
 void Room::mudd0LookAtFoodBox() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
 	showText(TX_MUD0N012);
 }
 
 void Room::mudd0LookAtComponentBox() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 	loadActorStandAnim(OBJECT_KIRK);
 	showText(TX_MUD0N013);
 }
@@ -106,19 +106,19 @@ void Room::mudd0LookAnywhere() {
 }
 
 void Room::mudd0LookAtMemoryDiskBox() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 	loadActorStandAnim(OBJECT_KIRK);
 	showText(TX_MUD0N010);
 }
 
 void Room::mudd0LookAtDegrimerBox() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
 	loadActorStandAnim(OBJECT_KIRK);
 	showText(TX_MUD0N008);
 }
 
 void Room::mudd0LookAtLense() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	loadActorStandAnim(OBJECT_KIRK);
 	showText(TX_MUD0N014);
 }
@@ -145,52 +145,52 @@ void Room::mudd0UseSTricorderOnMemoryDiskBox() {
 
 void Room::mudd0UseSTricorderOnDegrimerBox() {
 	// Narrator says something, not Spock (so we don't use "spockScan" function)
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	loadActorAnim2(OBJECT_SPOCK, "sscanw", -1, -1, 0);
 	playSoundEffectIndex(SND_TRICORDER);
 	showText(TX_MUD0N000);
 }
 
 void Room::mudd0UseMTricorderOnLense() {
-	if (_vm->_awayMission.mudd.discoveredLenseAndDegrimerFunction)
+	if (_awayMission->mudd.discoveredLenseAndDegrimerFunction)
 		mccoyScan(DIR_E, TX_MUD0_012, true);
 	else
 		mccoyScan(DIR_E, TX_MUD0_013, true);
 }
 
 void Room::mudd0GetLense() {
-	if (_vm->_awayMission.mudd.gotLense)
+	if (_awayMission->mudd.gotLense)
 		showText(TX_MUD0N016);
 	else {
-		_vm->_awayMission.mudd.gotLense = true;
-		_vm->_awayMission.mudd.missionScore++;
+		_awayMission->mudd.gotLense = true;
+		_awayMission->mudd.missionScore++;
 		giveItem(OBJECT_ILENSES);
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 		loadActorAnim2(OBJECT_KIRK, "s5r1kg", -1, -1);
-		_vm->_awayMission.timers[1] = 27;
+		_awayMission->timers[1] = 27;
 	}
 }
 
 void Room::mudd0GetMemoryDisk() {
-	if (_vm->_awayMission.mudd.gotMemoryDisk)
+	if (_awayMission->mudd.gotMemoryDisk)
 		showText(TX_MUD0N016);
 	else {
-		_vm->_awayMission.mudd.gotMemoryDisk = true;
-		_vm->_awayMission.mudd.missionScore++;
+		_awayMission->mudd.gotMemoryDisk = true;
+		_awayMission->mudd.missionScore++;
 		giveItem(OBJECT_IDISKS);
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 		loadActorAnimC(OBJECT_KIRK, "kuseln", -1, -1, &Room::mudd0PickedUpItem);
 	}
 }
 
 void Room::mudd0GetDegrimer() {
-	if (_vm->_awayMission.mudd.gotDegrimer)
+	if (_awayMission->mudd.gotDegrimer)
 		showText(TX_MUD0N016);
 	else {
-		_vm->_awayMission.mudd.gotDegrimer = true;
-		_vm->_awayMission.mudd.missionScore++;
+		_awayMission->mudd.gotDegrimer = true;
+		_awayMission->mudd.missionScore++;
 		giveItem(OBJECT_IDEGRIME);
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_S;
 		loadActorAnimC(OBJECT_KIRK, "kusemw", -1, -1, &Room::mudd0PickedUpItem);
 	}
 }
@@ -202,14 +202,14 @@ void Room::mudd0PickedUpLense() {
 }
 
 void Room::mudd0PickedUpItem() {
-	_vm->_awayMission.disableInput = false; // NOTE: this was never set to true
+	_awayMission->disableInput = false; // NOTE: this was never set to true
 	showText(TX_LOV1N007);
 }
 
 
 void Room::mudd0WalkToSouthDoor() {
 	_roomVar.mudd.walkingToDoor = true;
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewman(OBJECT_KIRK, 0x5a, 0xc7);
 }
 
@@ -220,7 +220,7 @@ void Room::mudd0TouchedHotspot1() { // Trigger bottom door opening
 
 void Room::mudd0WalkToNorthDoor() {
 	_roomVar.mudd.walkingToDoor = true;
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewman(OBJECT_KIRK, 0xa0, 0x68);
 }
 
@@ -256,7 +256,7 @@ void Room::mudd0LookAtMudd() {
 }
 
 void Room::mudd0TalkToKirk() {
-	if (_vm->_awayMission.mudd.muddFirstRoomState == 2)
+	if (_awayMission->mudd.muddFirstRoomState == 2)
 		showText(TX_SPEAKER_KIRK, TX_MUD0_010);
 	else {
 		showText(TX_SPEAKER_KIRK, TX_MUD0_010);
@@ -266,7 +266,7 @@ void Room::mudd0TalkToKirk() {
 }
 
 void Room::mudd0TalkToSpock() {
-	if (_vm->_awayMission.mudd.muddFirstRoomState == 2)
+	if (_awayMission->mudd.muddFirstRoomState == 2)
 		showText(TX_SPEAKER_SPOCK, TX_MUD0_022);
 	else {
 		showText(TX_SPEAKER_SPOCK, TX_MUD0_022);
@@ -278,7 +278,7 @@ void Room::mudd0TalkToSpock() {
 }
 
 void Room::mudd0TalkToMccoy() {
-	if (_vm->_awayMission.mudd.muddFirstRoomState == 2)
+	if (_awayMission->mudd.muddFirstRoomState == 2)
 		showText(TX_SPEAKER_MCCOY, TX_MUD0_016);
 	else {
 		showText(TX_SPEAKER_MCCOY, TX_MUD0_016);
@@ -289,7 +289,7 @@ void Room::mudd0TalkToMccoy() {
 }
 
 void Room::mudd0TalkToRedshirt() {
-	if (_vm->_awayMission.mudd.muddFirstRoomState == 2) {
+	if (_awayMission->mudd.muddFirstRoomState == 2) {
 		showText(TX_SPEAKER_BUCHERT, TX_MUD0_039);
 		showText(TX_SPEAKER_KIRK,    TX_MUD0_008);
 	} else {

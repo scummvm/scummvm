@@ -220,14 +220,14 @@ void Room::trial5VlictAppeared() {
 	if (choice == 1) { // "Now you can rot as you deserve"
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_034);
 
-		_vm->_awayMission.trial.missionEndMethod = 4;
-		endMission(_vm->_awayMission.trial.missionScore, 1, 4);
+		_awayMission->trial.missionEndMethod = 4;
+		endMission(_awayMission->trial.missionScore, 1, 4);
 	} else if (choice == 2) { // "I'll intervene if Quetzecoatl goes free"
 		showText(TX_SPEAKER_VLICT, TX_TRI5_019);
 		playMidiMusicTracks(MIDITRACK_28, -1);
 
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_025);
-		_vm->_awayMission.trial.missionScore += 4;
+		_awayMission->trial.missionScore += 4;
 		showText(TX_SPEAKER_KIRK,   TX_TRI5_004);
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_030);
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_026);
@@ -237,7 +237,7 @@ void Room::trial5VlictAppeared() {
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_033);
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_032);
 
-		_vm->_awayMission.trial.missionEndMethod = 3;
+		_awayMission->trial.missionEndMethod = 3;
 		endMission(1, 1, 3); // FIXME: Are these parameters correct?
 	}
 }
@@ -247,12 +247,12 @@ void Room::trial5WalkToInterface() {
 }
 
 void Room::trial5ReachedInterface() {
-	if (!_vm->_awayMission.trial.neuralInterfaceActive)
+	if (!_awayMission->trial.neuralInterfaceActive)
 		showText(TX_SPEAKER_VOICE, TX_TRI5_035);
 	else {
 		showText(TX_SPEAKER_BIALBI, TX_TRI5_024);
 		loadActorAnimC(OBJECT_VLICT, "vlict1", 0xbe, 0x91, &Room::trial5VlictAppeared);
-		_vm->_awayMission.trial.missionScore += 5;
+		_awayMission->trial.missionScore += 5;
 		playMidiMusicTracks(MIDITRACK_1, -1);
 	}
 }
@@ -261,20 +261,20 @@ void Room::trial5GetGem(int16 item, int16 object) {
 	_roomVar.trial.itemToUse = item;
 	_roomVar.trial.objectToUse = object;
 
-	_vm->_awayMission.disableInput = true;
-	if (object == _vm->_awayMission.trial.holeContents[0]) {
-		_vm->_awayMission.trial.holeContents[0] = 0;
-		_vm->_awayMission.trial.neuralInterfaceActive = false;
+	_awayMission->disableInput = true;
+	if (object == _awayMission->trial.holeContents[0]) {
+		_awayMission->trial.holeContents[0] = 0;
+		_awayMission->trial.neuralInterfaceActive = false;
 		loadActorStandAnim(OBJECT_BEAM);
 		walkCrewmanC(OBJECT_KIRK, 0x2c, 0x9f, &Room::trial5ReachedGem);
-	} else if (object == _vm->_awayMission.trial.holeContents[1]) {
-		_vm->_awayMission.trial.holeContents[1] = 0;
-		_vm->_awayMission.trial.neuralInterfaceActive = false;
+	} else if (object == _awayMission->trial.holeContents[1]) {
+		_awayMission->trial.holeContents[1] = 0;
+		_awayMission->trial.neuralInterfaceActive = false;
 		loadActorStandAnim(OBJECT_BEAM);
 		walkCrewmanC(OBJECT_KIRK, 0x22, 0x9f, &Room::trial5ReachedGem);
-	} else if (object == _vm->_awayMission.trial.holeContents[2]) {
-		_vm->_awayMission.trial.holeContents[2] = 0;
-		_vm->_awayMission.trial.neuralInterfaceActive = false;
+	} else if (object == _awayMission->trial.holeContents[2]) {
+		_awayMission->trial.holeContents[2] = 0;
+		_awayMission->trial.neuralInterfaceActive = false;
 		loadActorStandAnim(OBJECT_BEAM);
 		walkCrewmanC(OBJECT_KIRK, 0x3c, 0x9f, &Room::trial5ReachedGem);
 	} else if (object == OBJECT_REDGEM1 || object == OBJECT_REDGEM2 || object == OBJECT_REDGEM3)
@@ -292,7 +292,7 @@ void Room::trial5ReachedGem() {
 void Room::trial5PickedUpGem() {
 	giveItem(_roomVar.trial.itemToUse);
 	loadActorStandAnim(_roomVar.trial.objectToUse);
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 }
 
 void Room::trial5GetRedGem1() {
@@ -451,7 +451,7 @@ void Room::trial5UseGemOnHole(int16 item, int16 object, int16 hole) {
 	_roomVar.trial.objectToUse = object;
 	_roomVar.trial.hole = hole;
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 	walkCrewmanC(OBJECT_KIRK, positions[hole].x, positions[hole].y, &Room::trial5ReachedHoleToPutGem);
 }
 
@@ -473,8 +473,8 @@ void Room::trial5ReachedHoleToPutGem() {
 
 	loadActorAnim2(OBJECT_KIRK, "kusehn");
 
-	if (_vm->_awayMission.trial.holeContents[hole] == 0) {
-		_vm->_awayMission.trial.holeContents[hole] = _roomVar.trial.objectToUse;
+	if (_awayMission->trial.holeContents[hole] == 0) {
+		_awayMission->trial.holeContents[hole] = _roomVar.trial.objectToUse;
 		loadActorAnim2(_roomVar.trial.objectToUse, anim, pos.x, pos.y);
 		loseItem(_roomVar.trial.itemToUse);
 
@@ -490,7 +490,7 @@ void Room::trial5ReachedHoleToPutGem() {
 		holes[2] = 0;
 
 		for (int i = 0; i < 3; i++) {
-			int16 c = _vm->_awayMission.trial.holeContents[i];
+			int16 c = _awayMission->trial.holeContents[i];
 			if (c >= OBJECT_REDGEM1 && c <= OBJECT_REDGEM3)
 				holes[i] = RED;
 			else if (c >= OBJECT_GRNGEM1 && c <= OBJECT_GRNGEM3)
@@ -537,11 +537,11 @@ void Room::trial5ReachedHoleToPutGem() {
 			playVoc("EFX12B");
 			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_040);
 			showText(TX_SPEAKER_LIGHT_OF_KNOWLEDGE, TX_TRI5_037);
-			_vm->_awayMission.trial.neuralInterfaceActive = true;
+			_awayMission->trial.neuralInterfaceActive = true;
 
-			if (!_vm->_awayMission.trial.gotPointsForActivatingInterface) {
-				_vm->_awayMission.trial.gotPointsForActivatingInterface = true;
-				_vm->_awayMission.trial.missionScore += 3;
+			if (!_awayMission->trial.gotPointsForActivatingInterface) {
+				_awayMission->trial.gotPointsForActivatingInterface = true;
+				_awayMission->trial.missionScore += 3;
 			}
 		} else if COMBO(GREEN, GREEN, BLUE) {
 			trial5RestrictedCombination1();
@@ -576,13 +576,13 @@ void Room::trial5ReachedHoleToPutGem() {
 			trial5ActivateLightOfTravel();
 			showText(TX_SPEAKER_LIGHT_OF_TRAVEL, TX_TRI5_046);
 
-			_vm->_awayMission.disableInput = true;
+			_awayMission->disableInput = true;
 			playSoundEffectIndex(SND_TRANSDEM);
 
 			loadActorAnimC(OBJECT_KIRK,  "kteled", -1, -1, &Room::trial5CrewmanBeamedOut);
 			loadActorAnimC(OBJECT_SPOCK, "steled", -1, -1, &Room::trial5CrewmanBeamedOut);
 			loadActorAnimC(OBJECT_MCCOY, "mteled", -1, -1, &Room::trial5CrewmanBeamedOut);
-			if (!_vm->_awayMission.redshirtDead)
+			if (!_awayMission->redshirtDead)
 				loadActorAnimC(OBJECT_REDSHIRT, "rteled", -1, -1, &Room::trial5CrewmanBeamedOut);
 		} else {
 			// Some holes are empty
@@ -626,9 +626,9 @@ void Room::trial5DestinationNoLongerExists() {
 }
 
 void Room::trial5CrewmanBeamedOut() {
-	if (!_vm->_awayMission.trial.gotPointsForBeamingOut) {
-		_vm->_awayMission.trial.gotPointsForBeamingOut = true;
-		_vm->_awayMission.trial.missionScore += 1;
+	if (!_awayMission->trial.gotPointsForBeamingOut) {
+		_awayMission->trial.gotPointsForBeamingOut = true;
+		_awayMission->trial.missionScore += 1;
 	}
 	loadRoomIndex(4, 4);
 }

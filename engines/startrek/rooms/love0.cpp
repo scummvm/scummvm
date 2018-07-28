@@ -36,17 +36,17 @@ void Room::love0Tick1() {
 	// BUGFIX: moved this out of the if statement below.
 	playVoc("LOV0LOOP");
 
-	if (!_vm->_awayMission.love.alreadyStartedMission) {
-		_vm->_awayMission.love.canister1 = CANTYPE_O2;
-		_vm->_awayMission.love.canister2 = CANTYPE_H2;
-		_vm->_awayMission.love.alreadyStartedMission = true;
+	if (!_awayMission->love.alreadyStartedMission) {
+		_awayMission->love.canister1 = CANTYPE_O2;
+		_awayMission->love.canister2 = CANTYPE_H2;
+		_awayMission->love.alreadyStartedMission = true;
 	}
 
-	if (_vm->_awayMission.love.releasedHumanLaughingGas)
-		_vm->_awayMission.timers[0] = getRandomWordInRange(200, 400);
-	if (_vm->_awayMission.love.releasedRomulanLaughingGas)
-		_vm->_awayMission.timers[1] = getRandomWordInRange(200, 400);
-	_vm->_awayMission.timers[2] = 200;
+	if (_awayMission->love.releasedHumanLaughingGas)
+		_awayMission->timers[0] = getRandomWordInRange(200, 400);
+	if (_awayMission->love.releasedRomulanLaughingGas)
+		_awayMission->timers[1] = getRandomWordInRange(200, 400);
+	_awayMission->timers[2] = 200;
 
 	loadActorAnim(OBJECT_DOOR2, "s3r0d2a", 0xe6, 0x80, 0);
 	loadActorAnim(OBJECT_DOOR1, "s3r0d1a", 0x123, 0x8d, 0);
@@ -59,10 +59,10 @@ void Room::love0Tick10() {
 }
 
 void Room::love0WalkToDoor2() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	_roomVar.love.walkingToDoor = 2;
 	walkCrewman(OBJECT_KIRK, 0xe6, 0x81, 4);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 }
 
 void Room::love0OpenDoor2() {
@@ -79,7 +79,7 @@ void Room::love0ReachedDoor2() {
 }
 
 void Room::love0WalkToDoor1() {
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	_roomVar.love.walkingToDoor = 1;
 	walkCrewman(OBJECT_KIRK, 0x125, 0x8d, 5);
 }
@@ -150,7 +150,7 @@ void Room::love0TalkToRedshirt() {
 }
 
 void Room::love0UseMTricorderAnywhere() {
-	if (_vm->_awayMission.love.knowAboutVirus)
+	if (_awayMission->love.knowAboutVirus)
 		mccoyScan(DIR_N, TX_LOV0_008, false);
 	else
 		mccoyScan(DIR_N, TX_LOV0_006, false);
@@ -180,9 +180,9 @@ void Room::love0UseSpockOnConsole() {
 	strcpy(_roomVar.love.consoleAnimation, "susemn");
 
 	walkCrewman(_roomVar.love.consoleCrewman, 0x9a, 0x9a, 2);
-	if (!_vm->_awayMission.love.spockAccessedConsole) {
-		_vm->_awayMission.love.spockAccessedConsole = true;
-		_vm->_awayMission.love.missionScore += 4;
+	if (!_awayMission->love.spockAccessedConsole) {
+		_awayMission->love.spockAccessedConsole = true;
+		_awayMission->love.missionScore += 4;
 	}
 }
 
@@ -192,7 +192,7 @@ void Room::love0SpockReachedConsole() {
 
 void Room::love0SpockAccessedConsole() {
 	playVoc("V6KIRKTY");
-	if (_vm->_awayMission.love.knowAboutVirus)
+	if (_awayMission->love.knowAboutVirus)
 		love0InteractWithConsole();
 	else {
 		showText(TX_SPEAKER_COMPUTER, TX_COMPU188);
@@ -211,12 +211,12 @@ void Room::love0MccoyReachedConsole() {
 
 void Room::love0MccoyAccessedConsole() {
 	playVoc("V6KIRKTY");
-	if (!_vm->_awayMission.love.mccoyAccessedConsole) {
-		_vm->_awayMission.love.mccoyAccessedConsole = true;
-		_vm->_awayMission.love.missionScore += 2;
+	if (!_awayMission->love.mccoyAccessedConsole) {
+		_awayMission->love.mccoyAccessedConsole = true;
+		_awayMission->love.missionScore += 2;
 	}
 
-	if (_vm->_awayMission.love.knowAboutVirus)
+	if (_awayMission->love.knowAboutVirus)
 		love0InteractWithConsole();
 	else {
 		if (!_roomVar.love.heardSummaryOfVirus) {
@@ -228,7 +228,7 @@ void Room::love0MccoyAccessedConsole() {
 		showText(TX_SPEAKER_MCCOY, TX_LOV0_023);
 		showText(TX_SPEAKER_KIRK,  TX_LOV0_004);
 		showText(TX_SPEAKER_MCCOY, TX_LOV0_009);
-		_vm->_awayMission.love.knowAboutVirus = true;
+		_awayMission->love.knowAboutVirus = true;
 	}
 }
 

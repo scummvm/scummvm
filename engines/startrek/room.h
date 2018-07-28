@@ -27,8 +27,11 @@
 #include "common/ptr.h"
 #include "common/str.h"
 
+#include "startrek/action.h"
+#include "startrek/awaymission.h"
 #include "startrek/fixedint.h"
-#include "startrek/startrek.h"
+#include "startrek/object.h"
+#include "startrek/soundeffects.h"
 #include "startrek/text.h"
 
 using Common::SharedPtr;
@@ -141,6 +144,7 @@ public:
 
 private:
 	StarTrekEngine *_vm;
+	AwayMission *_awayMission;
 
 	const RoomAction *_roomActionList;
 	int _numRoomActions;
@@ -251,6 +255,8 @@ private:
 	void stopAllVocSounds();
 
 	// Helper functions for repetitive stuff.
+
+	Common::String getCrewmanAnimFilename(int object, const Common::String &str);
 
 	/**
 	 * If "changeDirection" is true, they remain facing that direction even after their

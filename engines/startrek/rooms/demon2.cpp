@@ -37,8 +37,8 @@ void Room::demon2ReachedCave() {
 }
 
 void Room::demon2TouchedWarp1() {
-	_vm->_awayMission.demon.enteredFrom = 2;
-	_vm->_awayMission.rdfStillDoDefaultAction = true;
+	_awayMission->demon.enteredFrom = 2;
+	_awayMission->rdfStillDoDefaultAction = true;
 }
 
 void Room::demon2LookAtCave() {
@@ -141,18 +141,18 @@ void Room::demon2UseMTricorderOnBerries() {
 	loadActorAnim2(OBJECT_MCCOY, "mscane", -1, -1, 0);
 	playSoundEffectIndex(0x04);
 
-	if (_vm->_awayMission.demon.curedChub)
+	if (_awayMission->demon.curedChub)
 		showText(TX_SPEAKER_MCCOY, TX_DEM2_013);
-	else if (_vm->_awayMission.demon.madeHypoDytoxin)
+	else if (_awayMission->demon.madeHypoDytoxin)
 		showText(TX_SPEAKER_MCCOY, TX_DEM2_009);
-	else if (_vm->_awayMission.demon.knowAboutHypoDytoxin)
+	else if (_awayMission->demon.knowAboutHypoDytoxin)
 		showText(TX_SPEAKER_MCCOY, TX_DEM2_010);
 	else
 		showText(TX_SPEAKER_MCCOY, TX_DEM2_012);
 }
 
 void Room::demon2GetBerries() {
-	if (_vm->_awayMission.demon.gotBerries)
+	if (_awayMission->demon.gotBerries)
 		showText(TX_SPEAKER_MCCOY, TX_DEM2_014);
 	else
 		walkCrewman(OBJECT_KIRK, 0xe8, 0x97, 1);
@@ -166,8 +166,8 @@ void Room::demon2ReachedBerries() {
 void Room::demon2PickedUpBerries() {
 	showText(TX_DEM2N013);
 	giveItem(OBJECT_IBERRY);
-	_vm->_awayMission.demon.gotBerries = true;
-	_vm->_awayMission.demon.missionScore += 1;
+	_awayMission->demon.gotBerries = true;
+	_awayMission->demon.missionScore += 1;
 }
 
 }

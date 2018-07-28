@@ -180,7 +180,7 @@ struct AwayMission {
 
 			// 1: Decided to shoot them
 			// 2: Talked, and they surrendered immediately
-			// 3: They deorbited the ship (and perhps surrendered after)
+			// 3: They deorbited the ship (and perhaps surrendered after)
 			byte bridgeWinMethod; // 0x5e
 
 			bool talkedToBrigCrewman; // 0x5f

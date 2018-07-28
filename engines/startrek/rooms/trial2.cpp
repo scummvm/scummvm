@@ -126,40 +126,40 @@ extern const int trial2NumActions = sizeof(trial2ActionList) / sizeof(RoomAction
 void Room::trial2Tick1() {
 	playVoc("NOOOLOOP");
 
-	if (!_vm->_awayMission.trial.enteredGlobRoom)
-		_vm->_awayMission.disableInput = 2;
+	if (!_awayMission->trial.enteredGlobRoom)
+		_awayMission->disableInput = 2;
 
-	if (!_vm->_awayMission.trial.globDefeated) {
+	if (!_awayMission->trial.globDefeated) {
 		playMidiMusicTracks(MIDITRACK_24, -1);
 		loadMapFile("trial22");
 
-		if (!_vm->_awayMission.trial.globSplitInTwo) {
+		if (!_awayMission->trial.globSplitInTwo) {
 			playVoc("TRI2LOOP");
 			loadActorAnim2(OBJECT_GLOB, "sglob", 0x46, 0xaf);
-			_vm->_awayMission.trial.globEnergyLevels[0] = 1;
+			_awayMission->trial.globEnergyLevels[0] = 1;
 		} else {
 			playVoc("TRI2LOOP");
 			loadActorAnim2(OBJECT_SPLIT_GLOB_1, "sglob", 0x20, 0xaf);
 			loadActorAnim2(OBJECT_SPLIT_GLOB_2, "sglob", 0x69, 0xaf);
-			_vm->_awayMission.trial.globEnergyLevels[1] = 1;
-			_vm->_awayMission.trial.globEnergyLevels[2] = 1;
+			_awayMission->trial.globEnergyLevels[1] = 1;
+			_awayMission->trial.globEnergyLevels[2] = 1;
 		}
 	}
 }
 
 void Room::trial2Tick60() {
-	if (!_vm->_awayMission.trial.enteredGlobRoom) {
-		_vm->_awayMission.disableInput = false;
+	if (!_awayMission->trial.enteredGlobRoom) {
+		_awayMission->disableInput = false;
 		showText(TX_SPEAKER_BENNIE, TX_TRI2_034);
 		showText(TX_SPEAKER_KIRK, TX_TRI2_005);
 		showText(TX_SPEAKER_SPOCK, TX_TRI2_030);
 		showText(TX_SPEAKER_KIRK, TX_TRI2_008);
-		_vm->_awayMission.trial.enteredGlobRoom = true;
+		_awayMission->trial.enteredGlobRoom = true;
 	}
 }
 
 void Room::trial2TouchedHotspot0() { // This is unused
-	if (_vm->_awayMission.trial.globEnergyLevels[1] != 0 || _vm->_awayMission.trial.globEnergyLevels[2] != 0)
+	if (_awayMission->trial.globEnergyLevels[1] != 0 || _awayMission->trial.globEnergyLevels[2] != 0)
 		showText(TX_SPEAKER_SPOCK, TX_TRI2_024);
 }
 
@@ -224,7 +224,7 @@ void Room::trial2UsePhaserOnGlob(int object, bool phaserOnKill) {
 	_roomVar.trial.globBeingShot = object;
 	_roomVar.trial.phaserOnKill = phaserOnKill;
 
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewmanC(OBJECT_KIRK, 0xcd, 0xc5, &Room::trial2ReachedPositionToShootGlob);
 }
 
@@ -246,7 +246,7 @@ void Room::trial2DrewPhaserToShootGlob() {
 
 	int index = _roomVar.trial.globBeingShot - OBJECT_GLOB;
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
 	playSoundEffectIndex(SND_PHASSHOT);
 	if (_roomVar.trial.phaserOnKill)
 		showBitmapFor5Ticks(killPhaserAnims[index], 5);
@@ -254,12 +254,12 @@ void Room::trial2DrewPhaserToShootGlob() {
 		showBitmapFor5Ticks(stunPhaserAnims[index], 5);
 	loadActorStandAnim(OBJECT_KIRK);
 
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 
 	if (_roomVar.trial.phaserOnKill)
-		_vm->_awayMission.trial.globEnergyLevels[index] += 2;
+		_awayMission->trial.globEnergyLevels[index] += 2;
 	else
-		_vm->_awayMission.trial.globEnergyLevels[index] += 1;
+		_awayMission->trial.globEnergyLevels[index] += 1;
 
 	if (!(_roomVar.trial.globBeingShot == OBJECT_GLOB && _roomVar.trial.phaserOnKill == true)) {
 		if (_roomVar.trial.phaserOnKill)
@@ -275,10 +275,10 @@ void Room::trial2DrewPhaserToShootGlob() {
 		Common::Point(SPLIT_GLOB_2_X, SPLIT_GLOB_2_Y)
 	};
 
-	if (_vm->_awayMission.trial.globEnergyLevels[index] == 3) {
+	if (_awayMission->trial.globEnergyLevels[index] == 3) {
 		playVoc("GLOBEDIV");
 		loadActorAnimC(_roomVar.trial.globBeingShot, "globsp", globPositions[index].x, globPositions[index].y, &Room::trial2GlobDoneSplitting);
-	} else if (_vm->_awayMission.trial.globEnergyLevels[index] >= 4) {
+	} else if (_awayMission->trial.globEnergyLevels[index] >= 4) {
 		playSoundEffectIndex(SND_BLANK_14);
 		playVoc("REDBALL");
 		loadActorAnimC(_roomVar.trial.globBeingShot, "globex", globPositions[index].x, globPositions[index].y, &Room::trial2GlobDoneExploding);
@@ -289,9 +289,9 @@ void Room::trial2GlobDoneExploding() {
 	stopAllVocSounds();
 	playVoc("Noooloop");
 	showText(TX_SPEAKER_SPOCK, TX_TRI2_020);
-	_vm->_awayMission.trial.globDefeated = true;
+	_awayMission->trial.globDefeated = true;
 	playMidiMusicTracks(MIDITRACK_28, -1);
-	_vm->_awayMission.trial.missionScore += 1;
+	_awayMission->trial.missionScore += 1;
 	loadMapFile("trial2");
 }
 
@@ -302,10 +302,10 @@ void Room::trial2GlobDoneSplitting() {
 		else {
 			// Unused code block: instead of killing the crew right away, the crew can
 			// interact with the split globs.
-			_vm->_awayMission.trial.globEnergyLevels[0] = 0;
-			_vm->_awayMission.trial.globEnergyLevels[1] = 1;
-			_vm->_awayMission.trial.globEnergyLevels[2] = 1;
-			_vm->_awayMission.trial.globSplitInTwo = true;
+			_awayMission->trial.globEnergyLevels[0] = 0;
+			_awayMission->trial.globEnergyLevels[1] = 1;
+			_awayMission->trial.globEnergyLevels[2] = 1;
+			_awayMission->trial.globSplitInTwo = true;
 			loadActorAnim2(OBJECT_SPLIT_GLOB_1, "sglob", SPLIT_GLOB_1_X, SPLIT_GLOB_1_Y);
 			loadActorAnim2(OBJECT_SPLIT_GLOB_2, "sglob", SPLIT_GLOB_2_X, SPLIT_GLOB_2_Y);
 			loadActorStandAnim(OBJECT_GLOB);
@@ -322,7 +322,7 @@ void Room::trial2GlobDoneSplitting() {
 
 	// Everyone gets vaporized
 	playVoc("V7ALLGET");
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	playMidiMusicTracks(MIDITRACK_26, -1);
 	loadActorAnimC(OBJECT_KIRK, "kkills", -1, -1, &Room::trial2KirkDied);
 	loadActorAnim2(OBJECT_SPOCK, "skills");
@@ -331,7 +331,7 @@ void Room::trial2GlobDoneSplitting() {
 }
 
 void Room::trial2KirkDied() {
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	showGameOverMenu();
 }
 
@@ -378,9 +378,9 @@ void Room::trial2UseMTricorderOnRedshirt() {
 void Room::trial2UseMTricorderOnGlob() {
 	mccoyScan(DIR_S, TX_TRI2_011, true);
 
-	if (!_vm->_awayMission.trial.gotPointsForScanningGlob) {
-		_vm->_awayMission.trial.gotPointsForScanningGlob = true;
-		_vm->_awayMission.trial.missionScore += 1;
+	if (!_awayMission->trial.gotPointsForScanningGlob) {
+		_awayMission->trial.gotPointsForScanningGlob = true;
+		_awayMission->trial.missionScore += 1;
 	}
 }
 
@@ -395,14 +395,14 @@ void Room::trial2UseSTricorderAnywhere() {
 void Room::trial2UseSTricorderOnGlob() {
 	spockScan(DIR_S, TX_TRI2_026, true);
 
-	if (!_vm->_awayMission.trial.gotPointsForScanningGlob) {
-		_vm->_awayMission.trial.gotPointsForScanningGlob = true;
-		_vm->_awayMission.trial.missionScore += 1;
+	if (!_awayMission->trial.gotPointsForScanningGlob) {
+		_awayMission->trial.gotPointsForScanningGlob = true;
+		_awayMission->trial.missionScore += 1;
 	}
 }
 
 void Room::trial2UseCommunicator() {
-	if (_vm->_awayMission.trial.forceFieldDown) { // TODO: Refactor this between rooms?
+	if (_awayMission->trial.forceFieldDown) { // TODO: Refactor this between rooms?
 		showText(TX_SPEAKER_UHURA, TX_TRI2U091);
 
 		const TextRef choices[] = {
@@ -413,18 +413,18 @@ void Room::trial2UseCommunicator() {
 		int choice = showText(choices);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
-			_vm->_awayMission.trial.missionEndMethod = 1;
-			endMission(_vm->_awayMission.trial.missionScore, 1, 1); // FIXME: Inconsistent with TRIAL1
+			_awayMission->trial.missionEndMethod = 1;
+			endMission(_awayMission->trial.missionScore, 1, 1); // FIXME: Inconsistent with TRIAL1
 		} else if (choice == 1) { // "Beam us to Vlict's position"
 			showText(TX_SPEAKER_UHURA, TX_TRI1U080); // NOTE: Original didn't show text here
-			_vm->_awayMission.disableInput = true;
+			_awayMission->disableInput = true;
 			loadRoomIndex(4, 4);
 		} // Else don't transport anywhere
 	} else { // Force field still up
 		showText(TX_SPEAKER_UHURA, TX_TRI2U087);
 		showText(TX_SPEAKER_KIRK,  TX_TRI2_006);
 		showText(TX_SPEAKER_UHURA, TX_TRI2U104);
-		if (!_vm->_awayMission.trial.globDefeated) {
+		if (!_awayMission->trial.globDefeated) {
 			showText(TX_SPEAKER_UHURA, TX_TRI2U081);
 			showText(TX_SPEAKER_KIRK,  TX_TRI2_002);
 		}

@@ -85,8 +85,8 @@ extern const int trial0NumActions = sizeof(trial0ActionList) / sizeof(RoomAction
 
 void Room::trial0Tick1() {
 	playVoc("TRI0LOOP");
-	_vm->_awayMission.timers[0] = getRandomWordInRange(180, 600);
-	_vm->_awayMission.trial.field2b = 0x1d;
+	_awayMission->timers[0] = getRandomWordInRange(180, 600);
+	_awayMission->trial.field2b = 0x1d;
 	loadActorAnim2(OBJECT_VLICT, "vlict1", 0x9f, 0x48);
 	loadActorAnim2(OBJECT_GUARD, "kgstnd", 0xdc, 0x6a);
 	loadActorAnim2(OBJECT_QUETZECOATL, "qteleg", 0x10e, 0xaa);
@@ -97,19 +97,19 @@ void Room::trial0Tick40() {
 }
 
 void Room::trial0Timer0Expired() { // Doesn't do anything?
-	_vm->_awayMission.timers[0] = getRandomWordInRange(180, 600);
+	_awayMission->timers[0] = getRandomWordInRange(180, 600);
 }
 
 void Room::trial0WalkToRoomCenter() {
-	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	_awayMission->disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 	walkCrewmanC(OBJECT_KIRK, 0xa0, 0xaa, &Room::trial0ReachedRoomCenter);
 }
 
 void Room::trial0ReachedRoomCenter() {
 	bool gaveUp = false;
 
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	showText(TX_SPEAKER_VLICT, TX_TRI0_053);
 
 	const TextRef choices1[] = {
@@ -137,7 +137,7 @@ void Room::trial0ReachedRoomCenter() {
 		showText(TX_SPEAKER_VLICT, TX_TRI0_061);
 		showText(TX_SPEAKER_KIRK,  TX_TRI0_001);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_060);
-		_vm->_awayMission.disableInput = true;
+		_awayMission->disableInput = true;
 		loadRoomIndex(1, 4);
 	} else if (choice == 1) { // "This trial is a mockery"
 		showText(TX_SPEAKER_VLICT,        TX_TRI0_048);
@@ -179,11 +179,11 @@ void Room::trial0ReachedRoomCenter() {
 
 				if (choice == 0 || choice == 1) {
 					showText(TX_SPEAKER_VLICT, TX_TRI0_055);
-					_vm->_awayMission.disableInput = true;
+					_awayMission->disableInput = true;
 					loadRoomIndex(1, 4);
 				} else { // choice == 2
 					showText(TX_SPEAKER_VLICT, TX_TRI0_045);
-					_vm->_awayMission.disableInput = true;
+					_awayMission->disableInput = true;
 					loadRoomIndex(1, 4);
 				}
 			} else // choice == 2
@@ -197,10 +197,10 @@ void Room::trial0ReachedRoomCenter() {
 		playMidiMusicTracks(2, -1);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_049);
 		showText(TX_SPEAKER_VLICT, TX_TRI0_044);
-		_vm->_awayMission.trial.missionEndMethod = 0;
+		_awayMission->trial.missionEndMethod = 0;
 
 		// FIXME: Are these parameters in the right order?
-		endMission(_vm->_awayMission.trial.missionScore, _vm->_awayMission.trial.field2b, 0);
+		endMission(_awayMission->trial.missionScore, _awayMission->trial.field2b, 0);
 	}
 }
 

@@ -40,22 +40,22 @@ namespace StarTrek {
 void Room::mudd5Tick1() {
 	playVoc("MUD5LOOP");
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_E;
-	if (_vm->_awayMission.mudd.lifeSupportMalfunctioning) {
+	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_E;
+	if (_awayMission->mudd.lifeSupportMalfunctioning) {
 		playMidiMusicTracks(19);
 		loadActorAnim(OBJECT_LIFE_SUPPORT_GENERATOR, "s4epls", GENERATOR_X, GENERATOR_Y);
 	} else {
 		loadActorAnim(OBJECT_LIFE_SUPPORT_GENERATOR, "s4eplo", GENERATOR_X, GENERATOR_Y);
-		_vm->_awayMission.mudd.numTimesEnteredRoom5++;
+		_awayMission->mudd.numTimesEnteredRoom5++;
 		// BUG: this event can become permanently unavailable? (test)
-		if (_vm->_awayMission.mudd.numTimesEnteredRoom5 == 2 && !_vm->_awayMission.mudd.muddUnavailable && !_vm->_awayMission.mudd.repairedLifeSupportGenerator) {
-			_vm->_awayMission.mudd.muddUnavailable = true;
-			_vm->_awayMission.mudd.numTimesEnteredRoom5 = 1;
-			_vm->_awayMission.disableInput = 2;
+		if (_awayMission->mudd.numTimesEnteredRoom5 == 2 && !_awayMission->mudd.muddUnavailable && !_awayMission->mudd.repairedLifeSupportGenerator) {
+			_awayMission->mudd.muddUnavailable = true;
+			_awayMission->mudd.numTimesEnteredRoom5 = 1;
+			_awayMission->disableInput = 2;
 			playMidiMusicTracks(3);
 			loadActorAnim(OBJECT_MUDD, "s4ephh", 0x0e, 0xa7);
-			_vm->_awayMission.timers[1] = 112;
-			_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
+			_awayMission->timers[1] = 112;
+			_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
 		}
 	}
 }
@@ -73,12 +73,12 @@ void Room::mudd5Timer1Expired() { // Mudd enters room through hatch
 	showText(TX_SPEAKER_MUDD, TX_MUD5_037);
 
 	loadActorAnim2(OBJECT_MUDD, "s4ephc");
-	_vm->_awayMission.timers[2] = 140;
+	_awayMission->timers[2] = 140;
 }
 
 void Room::mudd5Timer2Expired() { // Life-support generator starts acting up
-	_vm->_awayMission.disableInput = false;
-	_vm->_awayMission.mudd.lifeSupportMalfunctioning = true;
+	_awayMission->disableInput = false;
+	_awayMission->mudd.lifeSupportMalfunctioning = true;
 	playMidiMusicTracks(19);
 	loadActorAnim(OBJECT_LIFE_SUPPORT_GENERATOR, "s4epls", GENERATOR_X, GENERATOR_Y);
 }
@@ -106,7 +106,7 @@ void Room::mudd5UseSTricorderOnHatch() {
 }
 
 void Room::mudd5UseSTricorderOnLifeSupportGenerator() {
-	if (_vm->_awayMission.mudd.lifeSupportMalfunctioning)
+	if (_awayMission->mudd.lifeSupportMalfunctioning)
 		spockScan(DIR_W, TX_MUD5_019, false);
 	else
 		spockScan(DIR_W, TX_MUD5_021, false);
@@ -129,9 +129,9 @@ void Room::mudd5UseAnythingOnLifeSupportGenerator() {
 
 
 void Room::mudd5UseDooverOnLifeSupportGenerator() {
-	if (_vm->_awayMission.mudd.lifeSupportMalfunctioning) {
-		_vm->_awayMission.disableInput = true;
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	if (_awayMission->mudd.lifeSupportMalfunctioning) {
+		_awayMission->disableInput = true;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 		walkCrewmanC(OBJECT_KIRK, 0x57, 0xb4, &Room::mudd5KirkReachedLifeSupportGenerator);
 	} else
 		showText(TX_SPEAKER_MCCOY, TX_MUD5_014); // BUGFIX: speaker is McCoy, not none
@@ -139,30 +139,30 @@ void Room::mudd5UseDooverOnLifeSupportGenerator() {
 
 void Room::mudd5KirkReachedLifeSupportGenerator() {
 	loadActorAnimC(OBJECT_KIRK, "kuseln", -1, -1, &Room::mudd5KirkRepairedLifeSupportGenerator);
-	_vm->_awayMission.timers[4] = 20;
+	_awayMission->timers[4] = 20;
 }
 
 void Room::mudd5KirkTimer4Expired() {
 	playMidiMusicTracks(-1);
 	loadActorAnim2(OBJECT_LIFE_SUPPORT_GENERATOR, "s4eplo");
-	_vm->_awayMission.mudd.repairedLifeSupportGenerator = true;
-	_vm->_awayMission.mudd.missionScore += 2;
+	_awayMission->mudd.repairedLifeSupportGenerator = true;
+	_awayMission->mudd.missionScore += 2;
 }
 
 void Room::mudd5KirkRepairedLifeSupportGenerator() {
 	showText(TX_SPEAKER_KIRK,  TX_MUD5_007);
 	showText(TX_SPEAKER_SPOCK, TX_MUD5_028);
 
-	_vm->_awayMission.mudd.lifeSupportMalfunctioning = false;
-	_vm->_awayMission.mudd.muddUnavailable = false;
+	_awayMission->mudd.lifeSupportMalfunctioning = false;
+	_awayMission->mudd.muddUnavailable = false;
 	playMidiMusicTracks(3);
 	loadActorAnim(OBJECT_MUDD, "s4ephh", 0x0e, 0xa7);
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
 	loadActorStandAnim(OBJECT_KIRK);
 
-	_vm->_awayMission.timers[3] = 110;
+	_awayMission->timers[3] = 110;
 }
 
 void Room::mudd5KirkTimer3Expired() { // Mudd popped back in after repairing generator
@@ -171,7 +171,7 @@ void Room::mudd5KirkTimer3Expired() { // Mudd popped back in after repairing gen
 	showText(TX_SPEAKER_MUDD, TX_MUD5_036);
 
 	loadActorAnim2(OBJECT_MUDD, "s4ephc");
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 }
 
 void Room::mudd5LookAtHatch() {
@@ -181,7 +181,7 @@ void Room::mudd5LookAtHatch() {
 }
 
 void Room::mudd5LookAtLifeSupportGenerator() {
-	if (_vm->_awayMission.mudd.lifeSupportMalfunctioning)
+	if (_awayMission->mudd.lifeSupportMalfunctioning)
 		showText(TX_MUD5N008);
 	else {
 		showText(TX_MUD5N012);
@@ -198,7 +198,7 @@ void Room::mudd5TouchedHotspot0() { // Triggers door
 
 void Room::mudd5WalkToDoor() {
 	_roomVar.mudd.walkingToDoor = true;
-	_vm->_awayMission.disableInput = true;
+	_awayMission->disableInput = true;
 	walkCrewman(OBJECT_KIRK, 0x85, 0x74);
 }
 

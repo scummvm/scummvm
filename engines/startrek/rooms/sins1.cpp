@@ -92,27 +92,27 @@ extern const int sins1NumActions = sizeof(sins1ActionList) / sizeof(RoomAction);
 void Room::sins1Tick1() {
 	playVoc("SIN1LOOP");
 
-	if (!_vm->_awayMission.sins.scottyInformedKirkAboutVirus)
+	if (!_awayMission->sins.scottyInformedKirkAboutVirus)
 		// BUGFIX: Set this to 2, not 1 (disable input even after walking animation is done)
-		_vm->_awayMission.disableInput = 2;
+		_awayMission->disableInput = 2;
 
-	if (_vm->_awayMission.sins.openedDoor) {
+	if (_awayMission->sins.openedDoor) {
 		loadActorAnim2(OBJECT_DOOR, "s1dro", 0, 0);
 		loadMapFile("sins12");
 	} else
 		loadMapFile("sins1");
 
-	if (_vm->_awayMission.sins.field3e)
+	if (_awayMission->sins.field3e)
 		loadActorAnim2(OBJECT_DOOR, "s1ndro", 0, 0);
 
-	_vm->_awayMission.sins.field32 = 1;
-	_vm->_awayMission.sins.field31 = 1;
+	_awayMission->sins.field32 = 1;
+	_awayMission->sins.field31 = 1;
 
 	playMidiMusicTracks(MIDITRACK_27, -3);
 
-	if (!_vm->_awayMission.sins.enteredRoom1FirstTime) {
+	if (!_awayMission->sins.enteredRoom1FirstTime) {
 		playMidiMusicTracks(MIDITRACK_1, -2);
-		_vm->_awayMission.sins.enteredRoom1FirstTime = true;
+		_awayMission->sins.enteredRoom1FirstTime = true;
 	}
 }
 
@@ -153,7 +153,7 @@ void Room::sins1UseSTricorderOnLock() {
 }
 
 void Room::sins1UseSTricorderOnDoor() {
-	if (!_vm->_awayMission.sins.openedDoor)
+	if (!_awayMission->sins.openedDoor)
 		spockScan(DIR_N, TX_SIN1_019);
 }
 
@@ -162,7 +162,7 @@ void Room::sins1UseSTricorderAnywhere() {
 }
 
 void Room::sins1UseSTricorderOnLens() {
-	if (!_vm->_awayMission.sins.doorLaserFiredOnce)
+	if (!_awayMission->sins.doorLaserFiredOnce)
 		spockScan(DIR_N, TX_SIN1_022);
 	else // BUGFIX: Original didn't do the tricorder animation, etc. in this case
 		spockScan(DIR_N, TX_SIN1_023);
@@ -173,25 +173,25 @@ void Room::sins1UseRockOnDoor() {
 }
 
 void Room::sins1UseRedshirtOnKeypad() {
-	if (!_vm->_awayMission.sins.openedDoor)
+	if (!_awayMission->sins.openedDoor)
 		showText(TX_SPEAKER_MOSHER, TX_SIN1_028);
 }
 
 void Room::sins1UseMccoyOnKeypad() {
-	if (!_vm->_awayMission.sins.openedDoor)
+	if (!_awayMission->sins.openedDoor)
 		showText(TX_SPEAKER_MCCOY, TX_SIN1_012);
 }
 
 void Room::sins1UseKirkOnKeypad() {
-	if (!_vm->_awayMission.sins.openedDoor) {
+	if (!_awayMission->sins.openedDoor) {
 		showText(TX_SPEAKER_KIRK, TX_SIN1_001);
 		sins1UseSpockOnKeypad();
 	}
 }
 
 void Room::sins1UseSpockOnKeypad() {
-	if (!_vm->_awayMission.sins.openedDoor) {
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
+	if (!_awayMission->sins.openedDoor) {
+		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 		walkCrewmanC(OBJECT_SPOCK, 0xfd, 0xad, &Room::sins1SpockReachedKeypad);
 	}
 }
@@ -204,7 +204,7 @@ void Room::sins1SpockReachedKeypad() {
 
 	if (ans == -1) {
 		// ENHANCEMENT: Do nothing if no code was entered.
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 		walkCrewman(OBJECT_SPOCK, 0xf3, 0xad);
 	} else if (ans == 1 || ans == 2) {
 		playVoc("EFX14S");
@@ -219,9 +219,9 @@ void Room::sins1SpockReachedKeypad() {
 }
 
 void Room::sins1EnteredCorrectCode() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	walkCrewman(OBJECT_SPOCK, 0xf3, 0xad);
-	_vm->_awayMission.sins.openedDoor = true;
+	_awayMission->sins.openedDoor = true;
 	loadMapFile("sins12");
 	loadActorAnimC(OBJECT_DOOR, "s1door", 0, 0, &Room::sins1DoorDoneOpening);
 	playVoc("HUGEDOO2");
@@ -232,14 +232,14 @@ void Room::sins1DoorDoneOpening() {
 }
 
 void Room::sins1EnteredIncorrectCode() {
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	walkCrewman(OBJECT_SPOCK, 0xf3, 0xad);
 	showText(TX_SPEAKER_SPOCK, TX_SIN1_017);
 }
 
 void Room::sins1EnteredSacredSofNumber() {
 	// Entered a sacred Sof number, which is wrong since this is a Lucr base
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	walkCrewman(OBJECT_SPOCK, 0xf3, 0xad);
 	loadActorAnimC(OBJECT_9, "s1ph1", 0, 0, &Room::sins1DoorUsedLaser);
 	playSoundEffectIndex(SND_PHASSHOT);
@@ -253,12 +253,12 @@ void Room::sins1DoorUsedLaser() {
 	loadActorStandAnim(OBJECT_9);
 	showText(TX_SPEAKER_SPOCK, TX_SIN1_018);
 
-	_vm->_awayMission.sins.field33 = true;
-	_vm->_awayMission.sins.doorLaserFiredOnce = true;
+	_awayMission->sins.field33 = true;
+	_awayMission->sins.doorLaserFiredOnce = true;
 }
 
 void Room::sins1Tick40() {
-	if (!_vm->_awayMission.sins.scottyInformedKirkAboutVirus) {
+	if (!_awayMission->sins.scottyInformedKirkAboutVirus) {
 		showText(TX_SPEAKER_SCOTT, TX_SIN1_S10);
 		showText(TX_SPEAKER_KIRK,  TX_SIN1_007);
 		showText(TX_SPEAKER_SCOTT, TX_SIN1_S18);
@@ -267,8 +267,8 @@ void Room::sins1Tick40() {
 		showText(TX_SPEAKER_KIRK,  TX_SIN1_003);
 		showText(TX_SPEAKER_SCOTT, TX_SIN1_S17);
 
-		_vm->_awayMission.sins.scottyInformedKirkAboutVirus = true;
-		_vm->_awayMission.disableInput = false;
+		_awayMission->sins.scottyInformedKirkAboutVirus = true;
+		_awayMission->disableInput = false;
 	}
 }
 
@@ -318,7 +318,7 @@ void Room::sins1LookAtLens() {
 }
 
 void Room::sins1UseCommunicator() {
-	if (!_vm->_awayMission.sins.field44) {
+	if (!_awayMission->sins.field44) {
 		showText(TX_SPEAKER_KIRK,  TX_SIN1_008);
 		showText(TX_SPEAKER_SCOTT, TX_SIN1_S51);
 		showText(TX_SPEAKER_KIRK,  TX_SIN1_002);
@@ -337,7 +337,7 @@ void Room::sins1UseMTricorderOnCrewman() {
 }
 
 void Room::sins1WalkToDoor() {
-	if (_vm->_awayMission.sins.openedDoor)
+	if (_awayMission->sins.openedDoor)
 		walkCrewman(OBJECT_KIRK, 0x98, 0x9e, 5); // NOTE: Callback 5 not defined
 }
 

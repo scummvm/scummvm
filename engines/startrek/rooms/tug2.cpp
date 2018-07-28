@@ -43,76 +43,76 @@ namespace StarTrek {
 void Room::tug2Tick1() {
 	playVoc("TUG2LOOP");
 
-	if (!_vm->_awayMission.tug.haveBomb)
+	if (!_awayMission->tug.haveBomb)
 		loadActorAnim2(OBJECT_BOMB, "t2bomb", -3, 1, 0);
-	if (!_vm->_awayMission.tug.gotWires)
+	if (!_awayMission->tug.gotWires)
 		loadActorAnim2(OBJECT_WIRE, "t2wire", 0, 1, 0);
 
-	if (!_vm->_awayMission.tug.brigForceFieldDown)
+	if (!_awayMission->tug.brigForceFieldDown)
 		loadActorAnim2(OBJECT_BRIG, "fld01", 0, 0, 0);
 	else
 		loadActorAnim2(OBJECT_BRIG, "fld10d", 0, 0, 0);
-	if (_vm->_awayMission.tug.field35 == 6)
+	if (_awayMission->tug.field35 == 6)
 		loadActorAnim2(OBJECT_BRIG, "zapdon", 0, 0, 0);
 
 	// Security guy 1
-	if (_vm->_awayMission.tug.guard1Status == 8)
+	if (_awayMission->tug.guard1Status == 8)
 		loadActorAnim2(OBJECT_GUARD_1, "p5tied", 0xe0, 0xb1, 0);
-	else if (_vm->_awayMission.tug.guard1Status == 1 && _vm->_awayMission.tug.brigForceFieldDown) {
+	else if (_awayMission->tug.guard1Status == 1 && _awayMission->tug.brigForceFieldDown) {
 		loadActorAnim2(OBJECT_GUARD_1, "p5tied", 0xe0, 0xb1, 0);
-		_vm->_awayMission.tug.guard1Status = 8;
+		_awayMission->tug.guard1Status = 8;
 	}
-	if (_vm->_awayMission.tug.guard1Status == 1 && !_vm->_awayMission.tug.brigForceFieldDown) {
-		_vm->_awayMission.tug.guard1Status = 0;
-		_vm->_awayMission.tug.crewmanKilled[OBJECT_KIRK] = false;
-		_vm->_awayMission.tug.crewmanKilled[OBJECT_SPOCK] = false;
-		_vm->_awayMission.tug.crewmanKilled[OBJECT_MCCOY] = false;
-		if (!_vm->_awayMission.redshirtDead)
-			_vm->_awayMission.tug.crewmanKilled[OBJECT_REDSHIRT] = false;
-		_vm->_awayMission.tug.field5b = 0;
+	if (_awayMission->tug.guard1Status == 1 && !_awayMission->tug.brigForceFieldDown) {
+		_awayMission->tug.guard1Status = 0;
+		_awayMission->tug.crewmanKilled[OBJECT_KIRK] = false;
+		_awayMission->tug.crewmanKilled[OBJECT_SPOCK] = false;
+		_awayMission->tug.crewmanKilled[OBJECT_MCCOY] = false;
+		if (!_awayMission->redshirtDead)
+			_awayMission->tug.crewmanKilled[OBJECT_REDSHIRT] = false;
+		_awayMission->tug.field5b = 0;
 	}
-	if (_vm->_awayMission.tug.guard1Status == 0)
+	if (_awayMission->tug.guard1Status == 0)
 		loadActorAnim2(OBJECT_GUARD_1, "p5redy", 0xe0, 0xb1, 0);
-	if (_vm->_awayMission.tug.guard1Status == 2)
+	if (_awayMission->tug.guard1Status == 2)
 		loadActorAnim2(OBJECT_GUARD_1, "p5hat", 0xe0, 0xb1, 0);
 
 	// Security guy 2
-	if (_vm->_awayMission.tug.guard2Status == 8)
+	if (_awayMission->tug.guard2Status == 8)
 		loadActorAnim2(OBJECT_GUARD_2, "p6tied", 0xfb, 0xc5, 0);
-	else if (_vm->_awayMission.tug.guard2Status == 1 && _vm->_awayMission.tug.brigForceFieldDown) {
+	else if (_awayMission->tug.guard2Status == 1 && _awayMission->tug.brigForceFieldDown) {
 		loadActorAnim2(OBJECT_GUARD_2, "p6tied", 0xfb, 0xc5, 0);
-		_vm->_awayMission.tug.guard2Status = 8;
+		_awayMission->tug.guard2Status = 8;
 	}
-	if (_vm->_awayMission.tug.guard2Status == 1 && !_vm->_awayMission.tug.brigForceFieldDown) {
-		_vm->_awayMission.tug.guard2Status = 0;
-		_vm->_awayMission.tug.crewmanKilled[OBJECT_KIRK] = false;
-		_vm->_awayMission.tug.crewmanKilled[OBJECT_SPOCK] = false;
-		_vm->_awayMission.tug.crewmanKilled[OBJECT_MCCOY] = false;
-		if (!_vm->_awayMission.redshirtDead)
-			_vm->_awayMission.tug.crewmanKilled[OBJECT_REDSHIRT] = false;
-		_vm->_awayMission.tug.field5b = 0;
+	if (_awayMission->tug.guard2Status == 1 && !_awayMission->tug.brigForceFieldDown) {
+		_awayMission->tug.guard2Status = 0;
+		_awayMission->tug.crewmanKilled[OBJECT_KIRK] = false;
+		_awayMission->tug.crewmanKilled[OBJECT_SPOCK] = false;
+		_awayMission->tug.crewmanKilled[OBJECT_MCCOY] = false;
+		if (!_awayMission->redshirtDead)
+			_awayMission->tug.crewmanKilled[OBJECT_REDSHIRT] = false;
+		_awayMission->tug.field5b = 0;
 	}
-	if (_vm->_awayMission.tug.guard2Status == 0)
+	if (_awayMission->tug.guard2Status == 0)
 		loadActorAnim2(OBJECT_GUARD_2, "p6draw", 0xfb, 0xc5, 0);
-	if (_vm->_awayMission.tug.guard2Status == 2)
+	if (_awayMission->tug.guard2Status == 2)
 		loadActorAnim2(OBJECT_GUARD_2, "p5hat", 0xfb, 0xc5, 0); // FIXME
 
 
-	if (_vm->_awayMission.tug.field4e == 0)
+	if (_awayMission->tug.field4e == 0)
 		loadActorAnim2(OBJECT_13, "wallht", 0, 0, 0);
 
-	if (_vm->_awayMission.tug.field5b == 0) {
-		_vm->_awayMission.disableWalking = true;
+	if (_awayMission->tug.field5b == 0) {
+		_awayMission->disableWalking = true;
 		playMidiMusicTracks(32, -1);
 	}
 
-	_vm->_awayMission.tug.field5b = 1;
-	_vm->_awayMission.tug.kirkPhaserDrawn = 0;
+	_awayMission->tug.field5b = 1;
+	_awayMission->tug.kirkPhaserDrawn = 0;
 }
 
 void Room::tug2Tick60() {
-	if (!_vm->_awayMission.tug.guard1Status || !_vm->_awayMission.tug.guard2Status) {
-		_vm->_awayMission.timers[0] = 60;
+	if (!_awayMission->tug.guard1Status || !_awayMission->tug.guard2Status) {
+		_awayMission->timers[0] = 60;
 		showText(TX_SPEAKER_ELASI_GUARD, TX_TUG2L085);
 		tug2ElasiReadyPhaser();
 	}
@@ -135,9 +135,9 @@ void Room::tug2LookAtRedshirt() {
 }
 
 void Room::tug2GetBomb() {
-	if (_vm->_awayMission.tug.brigForceFieldDown) {
-		_vm->_awayMission.disableInput = true;
-		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
+	if (_awayMission->tug.brigForceFieldDown) {
+		_awayMission->disableInput = true;
+		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
 		walkCrewman(OBJECT_KIRK, 0xc9, 0xa0, 12);
 	} else
 		showText(TX_TUG2N024);
@@ -150,8 +150,8 @@ void Room::tug2KirkReachedBomb() {
 void Room::tug2KirkGotBomb() {
 	loadActorStandAnim(OBJECT_BOMB);
 	giveItem(OBJECT_IBOMB);
-	_vm->_awayMission.tug.haveBomb = true;
-	_vm->_awayMission.disableInput = false;
+	_awayMission->tug.haveBomb = true;
+	_awayMission->disableInput = false;
 }
 
 void Room::tug2LookAtBomb() {
@@ -159,24 +159,24 @@ void Room::tug2LookAtBomb() {
 }
 
 void Room::tug2LookAtGuard1() {
-	if (_vm->_awayMission.tug.guard1Status == 0)
+	if (_awayMission->tug.guard1Status == 0)
 		showText(TX_TUG2N001);
-	else if (_vm->_awayMission.tug.guard1Status == 1)
+	else if (_awayMission->tug.guard1Status == 1)
 		showText(TX_TUG2N013);
-	else if (_vm->_awayMission.tug.guard1Status == 8)
+	else if (_awayMission->tug.guard1Status == 8)
 		showText(TX_TUG2N015);
-	else if (_vm->_awayMission.tug.guard1Status == 2)
+	else if (_awayMission->tug.guard1Status == 2)
 		showText(TX_TUG2N106);
 }
 
 void Room::tug2LookAtGuard2() {
-	if (_vm->_awayMission.tug.guard2Status == 0)
+	if (_awayMission->tug.guard2Status == 0)
 		showText(TX_TUG2N037);
-	else if (_vm->_awayMission.tug.guard2Status == 1)
+	else if (_awayMission->tug.guard2Status == 1)
 		showText(TX_TUG2N014);
-	else if (_vm->_awayMission.tug.guard2Status == 8)
+	else if (_awayMission->tug.guard2Status == 8)
 		showText(TX_TUG2N016);
-	else if (_vm->_awayMission.tug.guard2Status == 2)
+	else if (_awayMission->tug.guard2Status == 2)
 		showText(TX_TUG2N106);
 }
 
@@ -185,13 +185,13 @@ void Room::tug2LookAtWires() {
 }
 
 void Room::tug2UseSTricorderOnButton() {
-	if (_vm->_awayMission.tug.field35 != 0)
+	if (_awayMission->tug.field35 != 0)
 		return;
 	spockScan(DIR_E, TX_TUG2_007, true);
 }
 
 void Room::tug2UseMccoyOnWires() {
-	if (_vm->_awayMission.tug.field35 != 0)
+	if (_awayMission->tug.field35 != 0)
 		return;
 	showText(TX_SPEAKER_MCCOY, TX_TUG2_009);
 }
@@ -201,11 +201,11 @@ void Room::tug2UseMccoyOnBomb() {
 }
 
 void Room::tug2UseRedshirtOnWires() {
-	if (_vm->_awayMission.disableWalking || _vm->_awayMission.tug.field35 != 0)
+	if (_awayMission->disableWalking || _awayMission->tug.field35 != 0)
 		return;
 	showText(TX_SPEAKER_CHRISTENSEN, TX_TUG2L007);
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_N;
-	_vm->_awayMission.disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_N;
+	_awayMission->disableInput = true;
 	walkCrewman(OBJECT_REDSHIRT, 0xc9, 0xa0, 6);
 }
 
@@ -216,21 +216,21 @@ void Room::tug2RedshirtReachedWires() {
 void Room::tug2RedshirtDefusedBomb() {
 	showText(TX_TUG2C001);
 	showText(TX_SPEAKER_CHRISTENSEN, TX_TUG2L011);
-	_vm->_awayMission.tug.field35 = 4;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_E;
+	_awayMission->tug.field35 = 4;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_E;
 	walkCrewman(OBJECT_REDSHIRT, 0x44, 0xc2, 8);
 }
 
 void Room::tug2RedshirtReturnedToPosition() {
-	_vm->_awayMission.disableInput = false;
-	_vm->_awayMission.tug.missionScore += 2;
+	_awayMission->disableInput = false;
+	_awayMission->tug.missionScore += 2;
 }
 
 void Room::tug2UseKirkOnWires() {
-	if (_vm->_awayMission.disableWalking || _vm->_awayMission.tug.field35 != 0)
+	if (_awayMission->disableWalking || _awayMission->tug.field35 != 0)
 		return;
-	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+	_awayMission->disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewman(OBJECT_KIRK, 0xc9, 0xa0, 5);
 }
 
@@ -238,17 +238,17 @@ void Room::tug2KirkReachedWires() {
 	showText(TX_SPEAKER_KIRK,  TX_TUG2_003);
 	showText(TX_SPEAKER_SPOCK, TX_TUG2_023);
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewman(OBJECT_KIRK, 0x66, 0xb8, 0);
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 	tug2UseSpockOnWires();
 }
 
 void Room::tug2UseSpockOnWires() {
-	if (_vm->_awayMission.disableWalking || _vm->_awayMission.tug.field35 != 0)
+	if (_awayMission->disableWalking || _awayMission->tug.field35 != 0)
 		return;
-	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
+	_awayMission->disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
 	walkCrewman(OBJECT_SPOCK, 0xc9, 0xa0, 9);
 }
 
@@ -256,25 +256,25 @@ void Room::tug2SpockReachedWires() {
 	loadActorAnim2(OBJECT_SPOCK, "suseme", -1, -1, 0);
 	playVoc("WIRESNIP");
 	showText(TX_SPEAKER_SPOCK, TX_TUG2_024);
-	_vm->_awayMission.tug.field35 = 4;
+	_awayMission->tug.field35 = 4;
 
-	if (_vm->_awayMission.tug.spockExaminedTransporter)
+	if (_awayMission->tug.spockExaminedTransporter)
 		showText(TX_SPEAKER_SPOCK, TX_TUG2_008);
 
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
 	walkCrewman(OBJECT_SPOCK, 0x56, 0xa9, 11);
 }
 
 void Room::tug2SpockReturnedToPosition() {
-	_vm->_awayMission.disableInput = false;
-	_vm->_awayMission.tug.missionScore += 2;
+	_awayMission->disableInput = false;
+	_awayMission->tug.missionScore += 2;
 }
 
 void Room::tug2GetWires() {
-	if (_vm->_awayMission.disableWalking)
+	if (_awayMission->disableWalking)
 		return;
-	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+	_awayMission->disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewman(OBJECT_KIRK, 0xc9, 0xa0, 28);
 }
 
@@ -283,33 +283,33 @@ void Room::tug2KirkReachedWiresToGet() {
 }
 
 void Room::tug2KirkGotWires() {
-	if (_vm->_awayMission.tug.field35 == 0) {
+	if (_awayMission->tug.field35 == 0) {
 		playMidiMusicTracks(2, -1);
 		loadActorAnim2(OBJECT_BRIG, "zap", 0, 0, 1);
 		playVoc("NM8EXPLO");
 		loadActorAnim2(OBJECT_BOMB, "t2bbo", -3, 1, 0);
 		playSoundEffectIndex(SND_PHASSHOT);
 		playSoundEffectIndex(SND_BLANK_16);
-		_vm->_awayMission.tug.field35 = 6;
+		_awayMission->tug.field35 = 6;
 		loadActorStandAnim(OBJECT_WIRE);
 		giveItem(OBJECT_IWIRING);
-		_vm->_awayMission.tug.gotWires = true;
-		_vm->_awayMission.disableInput = false;
-		_vm->_awayMission.tug.missionScore += 3;
+		_awayMission->tug.gotWires = true;
+		_awayMission->disableInput = false;
+		_awayMission->tug.missionScore += 3;
 	} else {
 		loadActorStandAnim(OBJECT_WIRE);
 		giveItem(OBJECT_IWIRING);
-		_vm->_awayMission.tug.gotWires = true;
-		_vm->_awayMission.disableInput = false;
-		_vm->_awayMission.tug.missionScore += 3;
+		_awayMission->tug.gotWires = true;
+		_awayMission->disableInput = false;
+		_awayMission->tug.missionScore += 3;
 	}
 }
 
 void Room::tug2UseKirkOnButton() {
-	if (_vm->_awayMission.disableWalking)
+	if (_awayMission->disableWalking)
 		return;
-	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
+	_awayMission->disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	walkCrewman(OBJECT_KIRK, 0xc9, 0xa0, 14);
 }
 
@@ -319,10 +319,10 @@ void Room::tug2KirkReachedButton() {
 }
 
 void Room::tug2UseSpockOnButton() {
-	if (_vm->_awayMission.disableWalking)
+	if (_awayMission->disableWalking)
 		return;
-	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
+	_awayMission->disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
 	walkCrewman(OBJECT_SPOCK, 0xc9, 0xa0, 16);
 }
 
@@ -332,10 +332,10 @@ void Room::tug2SpockReachedButton() {
 }
 
 void Room::tug2UseMccoyOnButton() {
-	if (_vm->_awayMission.disableWalking)
+	if (_awayMission->disableWalking)
 		return;
-	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_E;
+	_awayMission->disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_MCCOY] = DIR_E;
 	walkCrewman(OBJECT_MCCOY, 0xc9, 0xa0, 18);
 }
 
@@ -345,10 +345,10 @@ void Room::tug2MccoyReachedButton() {
 }
 
 void Room::tug2UseRedshirtOnButton() {
-	if (_vm->_awayMission.disableWalking)
+	if (_awayMission->disableWalking)
 		return;
-	_vm->_awayMission.disableInput = true;
-	_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_E;
+	_awayMission->disableInput = true;
+	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_E;
 	walkCrewman(OBJECT_REDSHIRT, 0xc9, 0xa0, 20);
 }
 
@@ -358,18 +358,18 @@ void Room::tug2RedshirtReachedButton() {
 }
 
 void Room::tug2TurnedOffForceField() {
-	_vm->_awayMission.disableInput = false;
-	if (_vm->_awayMission.tug.field35 == 0) {
+	_awayMission->disableInput = false;
+	if (_awayMission->tug.field35 == 0) {
 		playMidiMusicTracks(2, -1);
 		loadActorAnim2(OBJECT_BRIG, "zap", 0, 0, 1);
 		playVoc("NM8EXPLO");
 		loadActorAnim2(OBJECT_BOMB, "t2bbo", -3, 1, 0);
 		// FIXME: doesn't play "PHASSHOT" sound effect like when kirk removes wires?
-		_vm->_awayMission.tug.field35 = 6;
-	} else if (_vm->_awayMission.tug.field35 == 4 && !_vm->_awayMission.tug.brigForceFieldDown) {
-		_vm->_awayMission.tug.brigForceFieldDown = true;
+		_awayMission->tug.field35 = 6;
+	} else if (_awayMission->tug.field35 == 4 && !_awayMission->tug.brigForceFieldDown) {
+		_awayMission->tug.brigForceFieldDown = true;
 		loadActorAnim2(OBJECT_BRIG, "fld10", 0, 0, 2);
-		_vm->_awayMission.tug.missionScore += 6;
+		_awayMission->tug.missionScore += 6;
 		playVoc("EFX15");
 	}
 }
@@ -384,13 +384,13 @@ void Room::tug2PrisonersReleased() {
 	showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_029);
 	showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_030);
 	showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_028);
-	_vm->_awayMission.tug.savedPrisoners = true;
+	_awayMission->tug.savedPrisoners = true;
 }
 
 void Room::tug2UsePhaserOnBrig() {
-	if (_vm->_awayMission.tug.field35 == 0)
+	if (_awayMission->tug.field35 == 0)
 		showText(TX_SPEAKER_SPOCK, TX_TUG2_006);
-	else if (_vm->_awayMission.tug.brigForceFieldDown) {
+	else if (_awayMission->tug.brigForceFieldDown) {
 		// BUGFIX: this function had two implementations; one for firing on the brig, and
 		// one for firing on the masada crewman (who replaces the brig object). The first
 		// took priority, meaning the latter code never ran. That's fixed here.
@@ -399,128 +399,128 @@ void Room::tug2UsePhaserOnBrig() {
 }
 
 void Room::tug2ElasiReadyPhaser() {
-	if (_vm->_awayMission.tug.guard1Status == 0 && _vm->_awayMission.tug.field59 == 0) {
+	if (_awayMission->tug.guard1Status == 0 && _awayMission->tug.field59 == 0) {
 		loadActorAnim2(OBJECT_GUARD_1, "p5draw", -1, -1, 0);
-		_vm->_awayMission.tug.field59++;
+		_awayMission->tug.field59++;
 	}
 }
 
 void Room::tug2CheckEndFirefight() {
-	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_UP || _vm->_awayMission.tug.guard2Status == GUARDSTAT_UP)
+	if (_awayMission->tug.guard1Status == GUARDSTAT_UP || _awayMission->tug.guard2Status == GUARDSTAT_UP)
 		return;
-	_vm->_awayMission.disableWalking = false;
-	if (_vm->_awayMission.tug.kirkPhaserDrawn)
+	_awayMission->disableWalking = false;
+	if (_awayMission->tug.kirkPhaserDrawn)
 		loadActorStandAnim(OBJECT_KIRK);
 }
 
 void Room::tug2UseStunPhaserOnGuard1() {
-	if (_vm->_awayMission.tug.guard1Status != GUARDSTAT_UP)
+	if (_awayMission->tug.guard1Status != GUARDSTAT_UP)
 		tug2KirkShootGuard1();
 	else {
 		tug2ElasiReadyPhaser();
-		_vm->_awayMission.disableInput = true;
-		if (_vm->_awayMission.tug.kirkPhaserDrawn)
+		_awayMission->disableInput = true;
+		if (_awayMission->tug.kirkPhaserDrawn)
 			tug2KirkShootGuard1();
 		else {
 			loadActorAnim2(OBJECT_KIRK, "kdrawe", -1, -1, 22);
-			_vm->_awayMission.tug.kirkPhaserDrawn = true;
+			_awayMission->tug.kirkPhaserDrawn = true;
 		}
 	}
 }
 
 void Room::tug2KirkShootGuard1() {
-	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_UP) {
+	if (_awayMission->tug.guard1Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_1, "p5stun", -1, -1, 0);
-		_vm->_awayMission.tug.guard1Status = GUARDSTAT_STUNNED;
+		_awayMission->tug.guard1Status = GUARDSTAT_STUNNED;
 		playSoundEffectIndex(SND_PHASSHOT);
 		showBitmapFor5Ticks("t2beem03", 5);
 		tug2CheckEndFirefight();
 	}
 
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 }
 
 void Room::tug2UseStunPhaserOnGuard2() {
-	if (_vm->_awayMission.tug.guard2Status != GUARDSTAT_UP)
+	if (_awayMission->tug.guard2Status != GUARDSTAT_UP)
 		tug2KirkShootGuard2();
 	else {
 		tug2ElasiReadyPhaser();
-		_vm->_awayMission.disableInput = true;
-		if (_vm->_awayMission.tug.kirkPhaserDrawn)
+		_awayMission->disableInput = true;
+		if (_awayMission->tug.kirkPhaserDrawn)
 			tug2KirkShootGuard2();
 		else {
 			loadActorAnim2(OBJECT_KIRK, "kdrawe", -1, -1, 23);
-			_vm->_awayMission.tug.kirkPhaserDrawn = true;
+			_awayMission->tug.kirkPhaserDrawn = true;
 		}
 	}
 }
 
 void Room::tug2KirkShootGuard2() {
-	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_UP) {
+	if (_awayMission->tug.guard2Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_2, "p6stun", -1, -1, 0);
-		_vm->_awayMission.tug.guard2Status = GUARDSTAT_STUNNED;
+		_awayMission->tug.guard2Status = GUARDSTAT_STUNNED;
 		playSoundEffectIndex(SND_PHASSHOT);
 		showBitmapFor5Ticks("t2beem02", 5);
 		tug2CheckEndFirefight();
 	}
 
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 }
 
 void Room::tug2UseKillPhaserOnGuard1() {
-	if (_vm->_awayMission.tug.guard1Status != GUARDSTAT_UP)
+	if (_awayMission->tug.guard1Status != GUARDSTAT_UP)
 		tug2KirkKillGuard1();
 	else {
 		tug2ElasiReadyPhaser();
-		_vm->_awayMission.disableInput = true;
-		if (_vm->_awayMission.tug.kirkPhaserDrawn)
+		_awayMission->disableInput = true;
+		if (_awayMission->tug.kirkPhaserDrawn)
 			tug2KirkKillGuard1();
 		else {
 			loadActorAnim2(OBJECT_KIRK, "kdrawe", -1, -1, 24);
-			_vm->_awayMission.tug.kirkPhaserDrawn = true;
-			_vm->_awayMission.tug.brigElasiPhasersOnKill = true;
+			_awayMission->tug.kirkPhaserDrawn = true;
+			_awayMission->tug.brigElasiPhasersOnKill = true;
 		}
 	}
 }
 
 void Room::tug2KirkKillGuard1() {
-	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_UP) {
+	if (_awayMission->tug.guard1Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_1, "p5kill", -1, -1, 0);
-		_vm->_awayMission.tug.guard1Status = GUARDSTAT_DEAD;
+		_awayMission->tug.guard1Status = GUARDSTAT_DEAD;
 		playSoundEffectIndex(SND_PHASSHOT);
 		showBitmapFor5Ticks("t2beem05", 5);
 		tug2CheckEndFirefight();
 	}
 
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 }
 
 void Room::tug2UseKillPhaserOnGuard2() {
-	if (_vm->_awayMission.tug.guard2Status != GUARDSTAT_UP)
+	if (_awayMission->tug.guard2Status != GUARDSTAT_UP)
 		tug2KirkKillGuard2();
 	else {
 		tug2ElasiReadyPhaser();
-		_vm->_awayMission.disableInput = true;
-		if (_vm->_awayMission.tug.kirkPhaserDrawn)
+		_awayMission->disableInput = true;
+		if (_awayMission->tug.kirkPhaserDrawn)
 			tug2KirkKillGuard2();
 		else {
 			loadActorAnim2(OBJECT_KIRK, "kdrawe", -1, -1, 25);
-			_vm->_awayMission.tug.kirkPhaserDrawn = true;
-			_vm->_awayMission.tug.brigElasiPhasersOnKill = true;
+			_awayMission->tug.kirkPhaserDrawn = true;
+			_awayMission->tug.brigElasiPhasersOnKill = true;
 		}
 	}
 }
 
 void Room::tug2KirkKillGuard2() {
-	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_UP) {
+	if (_awayMission->tug.guard2Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_2, "p6kill", -1, -1, 0);
-		_vm->_awayMission.tug.guard2Status = GUARDSTAT_DEAD;
+		_awayMission->tug.guard2Status = GUARDSTAT_DEAD;
 		playSoundEffectIndex(SND_PHASSHOT);
 		showBitmapFor5Ticks("t2beem04", 5);
 		tug2CheckEndFirefight();
 	}
 
-	_vm->_awayMission.disableInput = false;
+	_awayMission->disableInput = false;
 }
 
 void Room::tug2UsePhaserOnWelder() {
@@ -530,7 +530,7 @@ void Room::tug2UsePhaserOnWelder() {
 
 	// BUGFIX: this following line didn't exist, despite it existing in TUG1; meaning this
 	// was supposed to give points, but it only did in a specific room.
-	_vm->_awayMission.tug.missionScore += 3;
+	_awayMission->tug.missionScore += 3;
 }
 
 void Room::tug2UseWelderOnWireScraps() {
@@ -571,14 +571,14 @@ void Room::tug2LookAtKirk() {
 }
 
 void Room::tug2TalkToKirk() {
-	if (_vm->_awayMission.tug.field35 == 6)
+	if (_awayMission->tug.field35 == 6)
 		showText(TX_SPEAKER_KIRK, TX_TUG2_001);
 	else
 		showText(TX_SPEAKER_KIRK, TX_TUG2_002);
 }
 
 void Room::tug2TalkToMccoy() {
-	if (_vm->_awayMission.tug.field35 == 6)
+	if (_awayMission->tug.field35 == 6)
 		showText(TX_SPEAKER_MCCOY, TX_TUG2_018);
 	else
 		showText(TX_SPEAKER_MCCOY, TX_TUG2_010);
@@ -588,7 +588,7 @@ void Room::tug2TalkToRedshirt() {
 	// BUGFIX: the original game has two implementations of this function; the first takes
 	// precedence, however, it's just generic, unhelpful text. The second implementation
 	// is more interesting, so that one is used instead.
-	if (_vm->_awayMission.tug.field35 == 6)
+	if (_awayMission->tug.field35 == 6)
 		showText(TX_SPEAKER_CHRISTENSEN, TX_TUG2L004);
 	else
 		showText(TX_SPEAKER_CHRISTENSEN, TX_TUG2J003);
@@ -598,7 +598,7 @@ void Room::tug2TalkToRedshirt() {
 }
 
 void Room::tug2TalkToSpock() {
-	if (_vm->_awayMission.tug.field35 == 6)
+	if (_awayMission->tug.field35 == 6)
 		showText(TX_SPEAKER_SPOCK, TX_TUG2_005);
 	else
 		showText(TX_SPEAKER_SPOCK, TX_TUG2_020);
@@ -609,27 +609,27 @@ void Room::tug2UseCommunicator() {
 }
 
 void Room::tug2DetermineElasiShooter() {
-	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_UP)
+	if (_awayMission->tug.guard2Status == GUARDSTAT_UP)
 		_roomVar.tug.shootingObject = OBJECT_GUARD_2;
-	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_UP)
+	if (_awayMission->tug.guard1Status == GUARDSTAT_UP)
 		_roomVar.tug.shootingObject = OBJECT_GUARD_1;
 }
 
 // Elasi shoots someone
 void Room::tug2Timer0Expired() {
-	if (_vm->_awayMission.tug.guard1Status != GUARDSTAT_UP && _vm->_awayMission.tug.guard2Status != GUARDSTAT_UP)
+	if (_awayMission->tug.guard1Status != GUARDSTAT_UP && _awayMission->tug.guard2Status != GUARDSTAT_UP)
 		return;
 
 	_roomVar.tug.elasiPhaserOnKill = 0;
-	if (_vm->_awayMission.tug.brigElasiPhasersOnKill)
+	if (_awayMission->tug.brigElasiPhasersOnKill)
 		_roomVar.tug.elasiPhaserOnKill = 1;
 
-	switch (_vm->_awayMission.tug.elasiTargetIndex) {
+	switch (_awayMission->tug.elasiTargetIndex) {
 	case 0:
-		_vm->_awayMission.tug.elasiTargetIndex++;
-		if (_vm->_awayMission.tug.guard2Status != GUARDSTAT_UP) {
+		_awayMission->tug.elasiTargetIndex++;
+		if (_awayMission->tug.guard2Status != GUARDSTAT_UP) {
 			// BUGFIX: reset the timer to allow guard 1 to continue if guard 2 is down
-			_vm->_awayMission.timers[0] = 60;
+			_awayMission->timers[0] = 60;
 			return;
 		}
 
@@ -638,59 +638,59 @@ void Room::tug2Timer0Expired() {
 		showBitmapFor5Ticks("t2beem00", 5);
 		playSoundEffectIndex(SND_PHASSHOT);
 		loadActorAnim2(OBJECT_GUARD_2, "p6fire", -1, -1, 0);
-		_vm->_awayMission.tug.field4e = _roomVar.tug.elasiPhaserOnKill;
-		_vm->_awayMission.timers[0] = 60;
+		_awayMission->tug.field4e = _roomVar.tug.elasiPhaserOnKill;
+		_awayMission->timers[0] = 60;
 		break;
 
 	case 1:
 		// Guard shoots redshirt
-		_vm->_awayMission.tug.elasiTargetIndex++;
-		if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_REDSHIRT]) {
+		_awayMission->tug.elasiTargetIndex++;
+		if (!_awayMission->tug.crewmanKilled[OBJECT_REDSHIRT]) {
 			tug2DetermineElasiShooter();
 			_roomVar.tug.shootingTarget = OBJECT_REDSHIRT;
-			_vm->_awayMission.timers[0] = 60;
+			_awayMission->timers[0] = 60;
 			tug2GuardShootsCrewman();
 		}
 		break;
 
 	case 2:
 		// Guard shoots spock (or kirk)
-		_vm->_awayMission.tug.elasiTargetIndex++;
+		_awayMission->tug.elasiTargetIndex++;
 		_roomVar.tug.shootKirkOverride = false;
-		if (_vm->_awayMission.tug.brigElasiPhasersOnKill)
+		if (_awayMission->tug.brigElasiPhasersOnKill)
 			_roomVar.tug.shootKirkOverride = true;
 		tug2DetermineElasiShooter();
 		if (_roomVar.tug.shootKirkOverride)
 			_roomVar.tug.shootingTarget = OBJECT_KIRK;
 		else
 			_roomVar.tug.shootingTarget = OBJECT_SPOCK;
-		_vm->_awayMission.timers[0] = 60;
+		_awayMission->timers[0] = 60;
 		tug2GuardShootsCrewman();
 		break;
 
 	case 3:
 		// Guard shoots Mccoy
-		_vm->_awayMission.tug.elasiTargetIndex++;
-		if (!_vm->_awayMission.tug.crewmanKilled[OBJECT_MCCOY]) {
+		_awayMission->tug.elasiTargetIndex++;
+		if (!_awayMission->tug.crewmanKilled[OBJECT_MCCOY]) {
 			tug2DetermineElasiShooter();
 			_roomVar.tug.shootingTarget = OBJECT_MCCOY;
-			_vm->_awayMission.timers[0] = 80;
+			_awayMission->timers[0] = 80;
 			tug2GuardShootsCrewman();
 		}
 		break;
 
 	case 4:
 		// Guard shoots kirk (or Spock)
-		_vm->_awayMission.tug.elasiTargetIndex++;
+		_awayMission->tug.elasiTargetIndex++;
 		if (_roomVar.tug.shootKirkOverride) {
 			tug2DetermineElasiShooter();
 			_roomVar.tug.shootingTarget = OBJECT_SPOCK;
-			_vm->_awayMission.timers[2] = 40;
+			_awayMission->timers[2] = 40;
 			tug2GuardShootsCrewman();
 		} else {
 			tug2DetermineElasiShooter();
 			_roomVar.tug.shootingTarget = OBJECT_KIRK;
-			_vm->_awayMission.timers[2] = 40;
+			_awayMission->timers[2] = 40;
 			tug2GuardShootsCrewman();
 		}
 		break;
@@ -726,7 +726,7 @@ void Room::tug2GuardShootsCrewman() {
 	const char *crewPrefixes = "ksmr";
 
 	if (!_roomVar.tug.elasiPhaserOnKill)
-		_vm->_awayMission.crewDirectionsAfterWalk[_roomVar.tug.shootingTarget] = DIR_W;
+		_awayMission->crewDirectionsAfterWalk[_roomVar.tug.shootingTarget] = DIR_W;
 
 	Common::String anim;
 	const char **bitmapArray;
@@ -760,17 +760,17 @@ void Room::tug2GuardShootsCrewman() {
 	else
 		loadActorAnim2(OBJECT_GUARD_2, "p6fire", -1, -1, 0);
 
-	_vm->_awayMission.tug.crewmanKilled[_roomVar.tug.shootingTarget] = _roomVar.tug.elasiPhaserOnKill;
+	_awayMission->tug.crewmanKilled[_roomVar.tug.shootingTarget] = _roomVar.tug.elasiPhaserOnKill;
 
 	if (!_roomVar.tug.elasiPhaserOnKill) {
 		// BUG: crew goes down for 120 frames, but they start to get up before the fight
 		// is over. Perhaps this number should be increased.
-		_vm->_awayMission.crewDirectionsAfterWalk[_roomVar.tug.shootingTarget] = DIR_W;
-		_vm->_awayMission.crewGetupTimers[_roomVar.tug.shootingTarget] = 120;
-		_vm->_awayMission.crewDownBitset |= (1 << _roomVar.tug.shootingTarget);
+		_awayMission->crewDirectionsAfterWalk[_roomVar.tug.shootingTarget] = DIR_W;
+		_awayMission->crewGetupTimers[_roomVar.tug.shootingTarget] = 120;
+		_awayMission->crewDownBitset |= (1 << _roomVar.tug.shootingTarget);
 	}
 	if (_roomVar.tug.elasiPhaserOnKill && _roomVar.tug.shootingTarget == OBJECT_REDSHIRT)
-		_vm->_awayMission.redshirtDead = true;
+		_awayMission->redshirtDead = true;
 }
 
 void Room::tug2Timer2Expired() {
@@ -784,27 +784,27 @@ void Room::tug2UseSTricorderOnBomb() {
 }
 
 void Room::tug2UseMTricorderOnGuard1() {
-	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_STUNNED)
+	if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED)
 		mccoyScan(DIR_E, TX_TUG2_016, true);
 }
 
 void Room::tug2UseMTricorderOnGuard2() {
 	// BUGFIX: original didn't play audio for this (despite being the same as above).
-	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_STUNNED)
+	if (_awayMission->tug.guard2Status == GUARDSTAT_STUNNED)
 		mccoyScan(DIR_E, TX_TUG2_016, true);
 }
 
 void Room::tug2TalkToGuard1() {
-	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_TIED)
+	if (_awayMission->tug.guard1Status == GUARDSTAT_TIED)
 		showText(TX_SPEAKER_ELASI_GUARD, TX_TUG2L086);
-	else if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_STUNNED)
+	else if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED)
 		showText(TX_SPEAKER_MCCOY, TX_TUG2_012);
 }
 
 void Room::tug2TalkToGuard2() {
-	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_TIED)
+	if (_awayMission->tug.guard2Status == GUARDSTAT_TIED)
 		showText(TX_SPEAKER_ELASI_GUARD, TX_TUG2L086);
-	else if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_STUNNED)
+	else if (_awayMission->tug.guard2Status == GUARDSTAT_STUNNED)
 		showText(TX_SPEAKER_MCCOY, TX_TUG2_013);
 }
 
@@ -813,27 +813,27 @@ void Room::tug2UseMedkitOnBomb() {
 }
 
 void Room::tug2UseMedkitOnGuard1() {
-	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_STUNNED)
+	if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED)
 		showText(TX_SPEAKER_MCCOY, TX_TUG2_014);
 }
 
 void Room::tug2UseMedkitOnGuard2() {
-	if (_vm->_awayMission.tug.guard2Status == GUARDSTAT_STUNNED)
+	if (_awayMission->tug.guard2Status == GUARDSTAT_STUNNED)
 		showText(TX_SPEAKER_MCCOY, TX_TUG2_014);
 }
 
 void Room::tug2LookAnywhere() {
-	if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_DEAD && _vm->_awayMission.tug.guard2Status == GUARDSTAT_DEAD && _vm->_awayMission.tug.field35 == 6)
+	if (_awayMission->tug.guard1Status == GUARDSTAT_DEAD && _awayMission->tug.guard2Status == GUARDSTAT_DEAD && _awayMission->tug.field35 == 6)
 		showText(TX_TUG2N019);
-	else if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_DEAD && _vm->_awayMission.tug.guard2Status == GUARDSTAT_DEAD && !_vm->_awayMission.tug.brigForceFieldDown)
+	else if (_awayMission->tug.guard1Status == GUARDSTAT_DEAD && _awayMission->tug.guard2Status == GUARDSTAT_DEAD && !_awayMission->tug.brigForceFieldDown)
 		showText(TX_TUG2N017);
-	else if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_STUNNED && _vm->_awayMission.tug.guard2Status == GUARDSTAT_STUNNED && _vm->_awayMission.tug.field35 == 6)
+	else if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED && _awayMission->tug.guard2Status == GUARDSTAT_STUNNED && _awayMission->tug.field35 == 6)
 		showText(TX_TUG2N020);
-	else if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_STUNNED && _vm->_awayMission.tug.guard2Status == GUARDSTAT_STUNNED && !_vm->_awayMission.tug.brigForceFieldDown)
+	else if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED && _awayMission->tug.guard2Status == GUARDSTAT_STUNNED && !_awayMission->tug.brigForceFieldDown)
 		showText(TX_TUG2N018);
-	else if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_STUNNED && _vm->_awayMission.tug.guard2Status == GUARDSTAT_STUNNED && _vm->_awayMission.tug.brigForceFieldDown)
+	else if (_awayMission->tug.guard1Status == GUARDSTAT_STUNNED && _awayMission->tug.guard2Status == GUARDSTAT_STUNNED && _awayMission->tug.brigForceFieldDown)
 		showText(TX_TUG2N021);
-	else if (_vm->_awayMission.tug.guard1Status == GUARDSTAT_DEAD && _vm->_awayMission.tug.guard2Status == GUARDSTAT_DEAD && _vm->_awayMission.tug.brigForceFieldDown)
+	else if (_awayMission->tug.guard1Status == GUARDSTAT_DEAD && _awayMission->tug.guard2Status == GUARDSTAT_DEAD && _awayMission->tug.brigForceFieldDown)
 		showText(TX_TUG2N022);
 	else
 		showText(TX_TUG2N023);
@@ -843,27 +843,27 @@ void Room::tug2TalkToBrig() {
 	// The "brig" can also be a masada crewman, when the force field is down, so there are
 	// at least two cases here.
 
-	if (_vm->_awayMission.tug.brigForceFieldDown && !_vm->_awayMission.tug.talkedToBrigCrewman) {
+	if (_awayMission->tug.brigForceFieldDown && !_awayMission->tug.talkedToBrigCrewman) {
 		loadActorAnim2(OBJECT_BRIG, "fld10d", 0, 0, 0);
 		showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_026);
-		_vm->_awayMission.tug.talkedToBrigCrewman = true;
+		_awayMission->tug.talkedToBrigCrewman = true;
 	}
 
-	if (_vm->_awayMission.tug.brigForceFieldDown && _vm->_awayMission.tug.talkedToBrigCrewman)
+	if (_awayMission->tug.brigForceFieldDown && _awayMission->tug.talkedToBrigCrewman)
 		showText(TX_SPEAKER_MASADA_CREWMAN, TX_TUG2_027);
-	else if (!_vm->_awayMission.tug.brigForceFieldDown)
+	else if (!_awayMission->tug.brigForceFieldDown)
 		mccoyScan(DIR_E, TX_TUG2_015, true);
 }
 
 void Room::tug2UseMTricorderOnBrig() {
-	if (_vm->_awayMission.tug.field35 == 6)
+	if (_awayMission->tug.field35 == 6)
 		mccoyScan(DIR_E, TX_TUG2_019, true);
-	else if (!_vm->_awayMission.tug.brigForceFieldDown)
+	else if (!_awayMission->tug.brigForceFieldDown)
 		mccoyScan(DIR_E, TX_TUG2_015, true);
 }
 
 void Room::tug2UseMTricorderOnOpenBrig() {
-	if (_vm->_awayMission.tug.brigForceFieldDown)
+	if (_awayMission->tug.brigForceFieldDown)
 		mccoyScan(DIR_E, TX_TUG2_015, true);
 }
 

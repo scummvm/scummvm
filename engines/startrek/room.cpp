@@ -45,7 +45,7 @@
 
 namespace StarTrek {
 
-Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm) {
+Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMission(&vm->_awayMission) {
 	SharedPtr<FileStream> rdfFile = _vm->loadFile(name + ".RDF");
 
 	int size = rdfFile->size();
@@ -500,6 +500,10 @@ void Room::playVoc(Common::String filename) {
 
 void Room::stopAllVocSounds() {
 	_vm->_sound->stopAllVocSounds();
+}
+
+Common::String Room::getCrewmanAnimFilename(int object, const Common::String &str) {
+	return _vm->getCrewmanAnimFilename(object, str);
 }
 
 void Room::spockScan(int direction, TextRef text, bool changeDirection) {
