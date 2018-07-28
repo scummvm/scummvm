@@ -42,7 +42,7 @@ struct StarTrekGameDescription {
 
 	uint8 gameType;
 	uint32 features;
-	uint16 version;
+	bool isCDEdition;
 };
 
 uint32 StarTrekEngine::getFeatures() const {
@@ -53,15 +53,15 @@ Common::Platform StarTrekEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-uint16 StarTrekEngine::getVersion() const {
-	return _gameDescription->version;
+bool StarTrekEngine::isCDEdition() const {
+	return _gameDescription->isCDEdition;
 }
 
-uint8 StarTrekEngine::getGameType() {
+uint8 StarTrekEngine::getGameType() const {
 	return _gameDescription->gameType;
 }
 
-Common::Language StarTrekEngine::getLanguage() {
+Common::Language StarTrekEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
@@ -78,11 +78,13 @@ static const PlainGameDescriptor starTrekGames[] = {
 namespace StarTrek {
 
 static const StarTrekGameDescription gameDescriptions[] = {
-	{
+	// TODO: Replace AD_ENTRY1 with AD_ENTRY1s for game versions I don't have yet
+
+	{ // ST25 DOS CD-ROM edition (EN)
 		{
 			"st25",
-			"",
-			AD_ENTRY1("data.001", "57040928a0f374281aa86ba4e7db8444"),
+			"CD",
+			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7793814),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -90,13 +92,28 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		0,
+		true,
 	},
 
-	{
+	{ // ST25 DOS floppy edition (EN)
 		{
 			"st25",
-			"",
+			"Floppy",
+			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7222630),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GType_ST25,
+		0,
+		false,
+	},
+
+	{ // ST25 Amiga ? (EN)
+		{
+			"st25",
+			"Floppy",
 			AD_ENTRY1("data.000", "f0918b6d096455ce2ae6dd5ef973292e"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
@@ -105,13 +122,13 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		0,
+		false,
 	},
 
-	{
+	{ // ST25 Amiga ? (GER)
 		{
 			"st25",
-			"",
+			"Floppy",
 			AD_ENTRY1("data.000", "70d0e374d5fa973e536dba0f42310672"),
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
@@ -120,13 +137,13 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		0,
+		false,
 	},
 
-	{
+	{ // ST25 Amiga ? (FR)
 		{
 			"st25",
-			"",
+			"Floppy",
 			AD_ENTRY1("data.000", "d0299af1385edd7c7612ed453e417dd8"),
 			Common::FR_FRA,
 			Common::kPlatformAmiga,
@@ -135,13 +152,13 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		0,
+		false,
 	},
 
-	{
+	{ // ST25 Mac ? (EN)
 		{
 			"st25",
-			"",
+			"Floppy",
 			AD_ENTRY1("Star Trek Data", "871fa51c7680c0a43df9622128f1569f"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -150,14 +167,14 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		0,
+		false,
 	},
 
-	{
+	{ // ST25 Mac floppy edition (EN)
 		{
 			"st25",
-			"",
-			AD_ENTRY1("Star Trek Data", "d95eb00532b7082d53862c906c7ac3dc"),
+			"Floppy",
+			AD_ENTRY1s("Star Trek Data", "d95eb00532b7082d53862c906c7ac3dc", 39032),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -165,10 +182,10 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		0,
+		false,
 	},
 
-	{
+	{ // ST25 DOS demo ? (EN)
 		{
 			"st25",
 			"Demo",
@@ -180,10 +197,10 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		GF_DEMO,
-		0,
+		false,
 	},
 
-	{
+	{ // ST25 MAC demo ? (EN)
 		{
 			"st25",
 			"Demo",
@@ -195,14 +212,14 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		GF_DEMO,
-		0,
+		false,
 	},
 
-	{
+	{ // STJR DOS CD-ROM edition (EN)
 		{
 			"stjr",
-			"",
-			AD_ENTRY1("data.001", "1c8de3c02f69c07c582d59d3c29e4dd9"),
+			"CD",
+			AD_ENTRY1s("data.001", "1c8de3c02f69c07c582d59d3c29e4dd9", 3318644),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -210,7 +227,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_STJR,
 		0,
-		0,
+		true,
 	},
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }

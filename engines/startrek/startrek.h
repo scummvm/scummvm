@@ -639,10 +639,10 @@ public:
 public:
 	const StarTrekGameDescription *_gameDescription;
 	uint32 getFeatures() const;
-	uint16 getVersion() const;
+	bool isCDEdition() const;
 	Common::Platform getPlatform() const;
-	uint8 getGameType();
-	Common::Language getLanguage();
+	uint8 getGameType() const;
+	Common::Language getLanguage() const;
 
 	// Resource related functions
 	SharedPtr<FileStream> loadFile(Common::String filename, int fileIndex = 0);
