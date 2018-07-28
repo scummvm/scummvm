@@ -2679,6 +2679,6 @@ public:
 	} _roomVar;
 };
 
-}
+} // End of namespace StarTrek
 
 #endif

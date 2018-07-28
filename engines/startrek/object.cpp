@@ -24,4 +24,4 @@
 
 namespace StarTrek {
 
-}
+} // End of namespace StarTrek

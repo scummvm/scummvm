@@ -536,4 +536,4 @@ void Room::mccoyScan(int direction, TextRef text, bool changeDirection) {
 		showText(TX_SPEAKER_MCCOY, text);
 }
 
-}
+} // End of namespace StarTrek

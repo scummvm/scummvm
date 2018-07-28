@@ -2719,6 +2719,6 @@ enum GameStringIDs {
 // defined in text.cpp
 extern const char *const g_gameStrings[];
 
-}
+} // End of namespace StarTrek
 
 #endif

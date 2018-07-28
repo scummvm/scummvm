@@ -77,4 +77,4 @@ bool FileStream::seek(int32 offset, int whence) {
 	return true;
 }
 
-}
+} // End of namespace StarTrek

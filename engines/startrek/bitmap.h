@@ -47,6 +47,6 @@ struct StubBitmap : Bitmap {
 	StubBitmap(int w, int h);
 };
 
-}
+} // End of namespace StarTrek
 
 #endif

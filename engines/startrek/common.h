@@ -45,7 +45,6 @@ T max(T a, T b) {
 Common::Rect getRectEncompassing(Common::Rect r1, Common::Rect r2);
 void serializeRect(Common::Rect rect, Common::Serializer &ser);
 
-
-}
+} // End of namespace StarTrek
 
 #endif

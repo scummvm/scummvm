@@ -930,4 +930,4 @@ void StarTrekEngine::cleanupTextInputSprite() {
 	_textInputBitmap.reset();
 }
 
-}
+} // End of namespace StarTrek

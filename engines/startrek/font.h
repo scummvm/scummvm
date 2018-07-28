@@ -47,7 +47,6 @@ private:
 	const static byte _fontProperties[256];
 };
 
-
-}
+} // End of namespace StarTrek
 
 #endif

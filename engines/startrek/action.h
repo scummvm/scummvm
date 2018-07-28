@@ -96,6 +96,6 @@ struct Action {
 	}
 };
 
-}
+} // End of namespace StarTrek
 
 #endif

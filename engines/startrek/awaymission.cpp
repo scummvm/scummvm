@@ -764,4 +764,4 @@ void StarTrekEngine::loadRoomIndex(int roomIndex, int spawnIndex) {
 	// the top of "runAwayMission". That can't really be done here. But does it matter?
 }
 
-}
+} // End of namespace StarTrek

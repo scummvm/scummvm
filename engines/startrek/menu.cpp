@@ -1010,4 +1010,4 @@ void StarTrekEngine::saveTextDisplayMode(int value) {
 	// TODO;
 }
 
-}
+} // End of namespace StarTrek
