@@ -110,11 +110,11 @@ void Room::sins4Tick1() {
 void Room::sins4UseSTricorderOnPanel() {
 	spockScan(DIR_N, TX_SIN4_020);
 	_awayMission->sins.scannedKeycardLock = true;
-	_awayMission->sins.field39 |= 4;
+	_awayMission->sins.gatheredClues |= 4;
 
-	if (_awayMission->sins.field39 == 7) {
+	if (_awayMission->sins.gatheredClues == 7) {
 		showText(TX_SPEAKER_SPOCK, TX_SIN4_010);
-		_awayMission->sins.field39 |= 8;
+		_awayMission->sins.gatheredClues |= 8;
 	}
 }
 
@@ -125,9 +125,9 @@ void Room::sins4UseSpockOnPanel() {
 	else {
 		showText(TX_SPEAKER_SPOCK, TX_SIN4_021);
 
-		if (_awayMission->sins.field39 == 7) {
+		if (_awayMission->sins.gatheredClues == 7) {
 			showText(TX_SPEAKER_SPOCK, TX_SIN4_010);
-			_awayMission->sins.field39 |= 8;
+			_awayMission->sins.gatheredClues |= 8;
 		}
 	}
 }
@@ -173,9 +173,9 @@ void Room::sins4KirkUsedRockOnPanel() {
 	showText(TX_SIN4N012);
 	showText(TX_SPEAKER_SPOCK, TX_SIN4_022);
 
-	if (_awayMission->sins.field39 == 7) {
+	if (_awayMission->sins.gatheredClues == 7) {
 		showText(TX_SPEAKER_SPOCK, TX_SIN4_010);
-		_awayMission->sins.field39 |= 8;
+		_awayMission->sins.gatheredClues |= 8;
 	}
 }
 
@@ -278,7 +278,7 @@ void Room::sins4UseSTricorderAnywhere() {
 }
 
 void Room::sins4UseCommunicator() {
-	if (!_awayMission->sins.field45) {
+	if (!_awayMission->sins.enteredRoom3FirstTime) {
 		showText(TX_SPEAKER_UHURA, TX_SIN4U100);
 		showText(TX_SPEAKER_KIRK,  TX_SIN4_006);
 		showText(TX_SPEAKER_UHURA, TX_SIN4U83B);

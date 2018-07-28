@@ -34,6 +34,7 @@ enum SoundEffects {
 	SND_TRANSMAT = 9,
 	SND_TRANSENE = 0x0a,
 	SND_BLANK_0b = 0x0b,
+	SND_0c = 0x0c,
 	SND_SELECTION = 0x10,
 	SND_BLANK_14 = 0x14,
 	SND_BLANK_16 = 0x16,
