@@ -301,7 +301,7 @@ void Room::sins2UseSpockOnDoor() {
 }
 
 void Room::sins2UseCommunicator() {
-	if (!_awayMission->sins.field46) {
+	if (!_awayMission->sins.enteredRoom4FirstTime) {
 		showText(TX_SPEAKER_KIRK,  TX_SIN2_006);
 		showText(TX_SPEAKER_SCOTT, TX_SIN2_S16);
 		showText(TX_SPEAKER_MCCOY, TX_SIN2_017);
