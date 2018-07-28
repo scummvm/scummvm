@@ -142,7 +142,7 @@ String StarTrekEngine::centerTextboxHeader(String headerText) {
 	text[TEXT_CHARS_PER_LINE] = '\0';
 
 	int strlen = headerText.size();
-	strlen = min(strlen, TEXT_CHARS_PER_LINE);
+	strlen = MIN(strlen, TEXT_CHARS_PER_LINE);
 
 	memcpy(text + (TEXT_CHARS_PER_LINE - strlen) / 2, headerText.c_str(), strlen);
 

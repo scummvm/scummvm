@@ -27,10 +27,10 @@
 namespace StarTrek {
 
 Common::Rect getRectEncompassing(Common::Rect r1, Common::Rect r2) {
-	uint16 l = min(r1.left, r2.left);
-	uint16 t = min(r1.top, r2.top);
-	uint16 r = max(r1.right, r2.right);
-	uint16 b = max(r1.bottom, r2.bottom);
+	uint16 l = MIN(r1.left, r2.left);
+	uint16 t = MIN(r1.top, r2.top);
+	uint16 r = MAX(r1.right, r2.right);
+	uint16 b = MAX(r1.bottom, r2.bottom);
 
 	return Common::Rect(l, t, r, b);
 }
