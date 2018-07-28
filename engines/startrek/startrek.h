@@ -462,7 +462,7 @@ private:
 	uint32 _frameStartMillis;
 
 
-	// text.cpp
+	// textbox.cpp
 public:
 	/**
 	 * Gets one line of text (does not include words that won't fit).
