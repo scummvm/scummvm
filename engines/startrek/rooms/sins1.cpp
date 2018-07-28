@@ -96,13 +96,13 @@ void Room::sins1Tick1() {
 		// BUGFIX: Set this to 2, not 1 (disable input even after walking animation is done)
 		_awayMission->disableInput = 2;
 
-	if (_awayMission->sins.openedDoor) {
+	if (_awayMission->sins.openedOuterDoor) {
 		loadActorAnim2(OBJECT_DOOR, "s1dro", 0, 0);
 		loadMapFile("sins12");
 	} else
 		loadMapFile("sins1");
 
-	if (_awayMission->sins.field3e)
+	if (_awayMission->sins.openedInnerDoor)
 		loadActorAnim2(OBJECT_DOOR, "s1ndro", 0, 0);
 
 	_awayMission->sins.field32 = 1;
@@ -153,7 +153,7 @@ void Room::sins1UseSTricorderOnLock() {
 }
 
 void Room::sins1UseSTricorderOnDoor() {
-	if (!_awayMission->sins.openedDoor)
+	if (!_awayMission->sins.openedOuterDoor)
 		spockScan(DIR_N, TX_SIN1_019);
 }
 
@@ -173,24 +173,24 @@ void Room::sins1UseRockOnDoor() {
 }
 
 void Room::sins1UseRedshirtOnKeypad() {
-	if (!_awayMission->sins.openedDoor)
+	if (!_awayMission->sins.openedOuterDoor)
 		showText(TX_SPEAKER_MOSHER, TX_SIN1_028);
 }
 
 void Room::sins1UseMccoyOnKeypad() {
-	if (!_awayMission->sins.openedDoor)
+	if (!_awayMission->sins.openedOuterDoor)
 		showText(TX_SPEAKER_MCCOY, TX_SIN1_012);
 }
 
 void Room::sins1UseKirkOnKeypad() {
-	if (!_awayMission->sins.openedDoor) {
+	if (!_awayMission->sins.openedOuterDoor) {
 		showText(TX_SPEAKER_KIRK, TX_SIN1_001);
 		sins1UseSpockOnKeypad();
 	}
 }
 
 void Room::sins1UseSpockOnKeypad() {
-	if (!_awayMission->sins.openedDoor) {
+	if (!_awayMission->sins.openedOuterDoor) {
 		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_N;
 		walkCrewmanC(OBJECT_SPOCK, 0xfd, 0xad, &Room::sins1SpockReachedKeypad);
 	}
@@ -221,7 +221,7 @@ void Room::sins1SpockReachedKeypad() {
 void Room::sins1EnteredCorrectCode() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_W;
 	walkCrewman(OBJECT_SPOCK, 0xf3, 0xad);
-	_awayMission->sins.openedDoor = true;
+	_awayMission->sins.openedOuterDoor = true;
 	loadMapFile("sins12");
 	loadActorAnimC(OBJECT_DOOR, "s1door", 0, 0, &Room::sins1DoorDoneOpening);
 	playVoc("HUGEDOO2");
@@ -318,7 +318,7 @@ void Room::sins1LookAtLens() {
 }
 
 void Room::sins1UseCommunicator() {
-	if (!_awayMission->sins.field44) {
+	if (!_awayMission->sins.enteredRoom2FirstTime) {
 		showText(TX_SPEAKER_KIRK,  TX_SIN1_008);
 		showText(TX_SPEAKER_SCOTT, TX_SIN1_S51);
 		showText(TX_SPEAKER_KIRK,  TX_SIN1_002);
@@ -337,7 +337,7 @@ void Room::sins1UseMTricorderOnCrewman() {
 }
 
 void Room::sins1WalkToDoor() {
-	if (_awayMission->sins.openedDoor)
+	if (_awayMission->sins.openedOuterDoor)
 		walkCrewman(OBJECT_KIRK, 0x98, 0x9e, 5); // NOTE: Callback 5 not defined
 }
 

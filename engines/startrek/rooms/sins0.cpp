@@ -84,9 +84,9 @@ void Room::sins0Tick1() {
 	if (!_awayMission->sins.enteredRoom0FirstTime)
 		_awayMission->disableInput = 2;
 
-	if (_awayMission->sins.field3e)
+	if (_awayMission->sins.openedInnerDoor)
 		loadActorAnim2(OBJECT_DOOR, "s0dr2", 0, 0);
-	if (_awayMission->sins.openedDoor)
+	else if (_awayMission->sins.openedOuterDoor)
 		loadActorAnim2(OBJECT_DOOR, "s0dr1", 0, 0);
 
 	playMidiMusicTracks(MIDITRACK_27, -3);

@@ -524,12 +524,14 @@ struct AwayMission {
 			byte field32; // 0x32
 			bool field33; // 0x33
 			bool doorLaserFiredOnce; // 0x34
+			bool gotPointsForAccessingTerminal; // 0x35
 			byte field39; // 0x39
-			bool openedDoor; // 0x3d
-			bool field3e; // 0x3e
+			bool openedOuterDoor; // 0x3d
+			bool openedInnerDoor; // 0x3e
 			bool enteredRoom0FirstTime; // 0x42
 			bool scottyInformedKirkAboutVirus; // 0x43
-			bool field44; // 0x44
+			bool enteredRoom2FirstTime; // 0x44
+			bool field46; // 0x46
 			bool gotPointsForScanningStatue; // 0x48
 			bool enteredRoom1FirstTime; // 0x50
 			int16 missionScore; // 0x52
