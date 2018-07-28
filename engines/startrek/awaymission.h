@@ -526,14 +526,39 @@ struct AwayMission {
 			bool doorLaserFiredOnce; // 0x34
 			bool gotPointsForAccessingTerminal; // 0x35
 			bool scannedKeycardLock; // 0x36
-			byte field39; // 0x39
+			byte laserSetting; // 0x37
+
+			// 0 if the laser hasn't been programmed with the keycard template;
+			// 1 if it has been programmed with the template;
+			// 2 if the rock has been placed on the wall.
+			byte laserPattern; // 0x38
+
+			// bit 0: got a rock, or at least scanned the ground outside
+			// bit 1: entered mineshaft room
+			// bit 2: scanned the ID card panel
+			// bit 3: set after all 3 clues are obtained and Spock explains how to make
+			//        the keycard
+			byte gatheredClues; // 0x39
+
 			bool openedOuterDoor; // 0x3d
 			bool openedInnerDoor; // 0x3e
 			bool unlockedIDCardDoor; // 0x3f
+
+			// 0: mold hasn't been created
+			// 2: mold for the keycard has been etched into the rock
+			// 3: rock placed top of the mold
+			// 4: a keycard is there
+			int8 moldState; // 0x40
+
+			// 0: box closed
+			// 1: box open
+			// 2: box empty
+			byte boxState; // 0x41
+
 			bool enteredRoom0FirstTime; // 0x42
 			bool scottyInformedKirkAboutVirus; // 0x43
 			bool enteredRoom2FirstTime; // 0x44
-			bool field45; // 0x45
+			bool enteredRoom3FirstTime; // 0x45
 			bool enteredRoom4FirstTime; // 0x46
 			bool gotPointsForScanningStatue; // 0x48
 			bool gotPointsForScanningRoom4; // 0x49

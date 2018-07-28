@@ -2541,6 +2541,10 @@ extern const char *const g_gameStrings[] = {
 	"#SIN3\\SIN3N013#This room looks like it was once used for some type of mining operation.",
 	"#SIN3\\SIN3N014#You have placed the rocks onto the pattern.",
 	"#SIN3\\SIN3U072#Nothing new to report Captain.",
+	"Laser Setting: 001",
+	"Laser Setting: 010",
+	"Laser Setting: 100",
+	"cancel",
 
 
 	"#SIN4\\SIN4_001#At least the Enterprise is safe.",

@@ -133,7 +133,7 @@ void Room::sins0LookAtGround() {
 void Room::sins0GetRock() {
 	_awayMission->disableInput = true;
 	loadActorAnimC(OBJECT_KIRK, "kpickw", -1, -1, &Room::sins0PickedUpRock);
-	_awayMission->sins.field39 |= 1;
+	_awayMission->sins.gatheredClues |= 1;
 }
 
 void Room::sins0PickedUpRock() {
@@ -149,7 +149,7 @@ void Room::sins0UseSTricorderAnywhere() {
 
 void Room::sins0UseSTricorderOnGround() {
 	spockScan(DIR_S, TX_SIN0_017);
-	_awayMission->sins.field39 |= 1;
+	_awayMission->sins.gatheredClues |= 1;
 }
 
 void Room::sins0UseSTricorderOnPlanet() {
