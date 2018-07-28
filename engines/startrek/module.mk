@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	space.o \
 	sprite.o \
 	startrek.o \
+	text.o \
 	textbox.o \
 	rooms/demon0.o \
 	rooms/demon1.o \
