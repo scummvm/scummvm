@@ -75,4 +75,4 @@ int IWFile::getClosestKeyPosition(int16 x, int16 y) {
 	return -1;
 }
 
-}
+} // End of namespace StarTrek

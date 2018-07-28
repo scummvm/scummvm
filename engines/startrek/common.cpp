@@ -42,4 +42,4 @@ void serializeRect(Common::Rect rect, Common::Serializer &ser) {
 	ser.syncAsSint16LE(rect.bottom);
 }
 
-}
+} // End of namespace StarTrek

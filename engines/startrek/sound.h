@@ -103,6 +103,6 @@ private:
 	static void midiDriverCallback(void *data);
 };
 
-}
+} // End of namespace StarTrek
 
 #endif

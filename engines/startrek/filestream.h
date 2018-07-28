@@ -56,6 +56,6 @@ public:
 
 };
 
-}
+} // End of namespace StarTrek
 
 #endif

@@ -185,4 +185,4 @@ void StarTrekEngine::addEventToQueue(const TrekEvent &e) {
 	_eventQueue.push_back(e);
 }
 
-}
+} // End of namespace StarTrek

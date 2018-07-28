@@ -398,4 +398,4 @@ bool saveOrLoadMetadata(Common::SeekableReadStream *in, Common::WriteStream *out
 	return true;
 }
 
-}
+} // End of namespace StarTrek

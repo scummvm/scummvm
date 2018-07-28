@@ -74,6 +74,6 @@ struct Sprite : Common::Serializable {
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
-}
+} // End of namespace StarTrek
 
 #endif

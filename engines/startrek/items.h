@@ -255,6 +255,6 @@ const Item g_itemList[] = {
 
 const int NUM_ITEMS = sizeof(g_itemList) / sizeof(struct Item) - 64; // 0x49
 
-}
+} // End of namespace StarTrek
 
 #endif

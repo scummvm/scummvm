@@ -60,6 +60,6 @@ private:
 	uint16 _numEntries;
 };
 
-}
+} // End of namespace StarTrek
 
 #endif

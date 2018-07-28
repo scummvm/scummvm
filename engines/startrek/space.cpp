@@ -551,4 +551,4 @@ Matrix StarTrekEngine::initSpeedMatrixForXZMovement(Angle angle, const Matrix &m
 	return matrix * matrix1;
 }
 
-}
+} // End of namespace StarTrek

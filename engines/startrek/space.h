@@ -180,6 +180,6 @@ struct R3 {
 // Maximum number of R3 objects in space at once
 #define NUM_SPACE_OBJECTS 0x30
 
-}
+} // End of namespace StarTrek
 
 #endif

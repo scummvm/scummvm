@@ -185,6 +185,6 @@ typedef TFixedInt<int32, 32, 16> Fixed16;
 
 typedef Fixed8 Angle;
 
-}
+} // End of namespace StarTrek
 
 #endif

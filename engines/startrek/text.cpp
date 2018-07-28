@@ -2609,4 +2609,4 @@ extern const char *const g_gameStrings[] = {
 	"#SFX\\STATICU1#Ent... neu ... trans...",
 };
 
-}
+} // End of namespace StarTrek

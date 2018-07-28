@@ -75,4 +75,4 @@ void Sprite::saveLoadWithSerializer(Common::Serializer &ser) {
 	ser.syncAsSint16LE(drawY);
 }
 
-}
+} // End of namespace StarTrek

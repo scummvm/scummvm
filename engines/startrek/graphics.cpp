@@ -756,4 +756,4 @@ void Graphics::drawBackgroundImage(const char *filename) {
 	delete[] palette;
 }
 
-}
+} // End of namespace StarTrek

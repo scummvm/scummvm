@@ -71,4 +71,4 @@ StubBitmap::StubBitmap(int w, int h) {
 	pixelsArraySize = 0;
 }
 
-}
+} // End of namespace StarTrek

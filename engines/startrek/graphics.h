@@ -187,10 +187,9 @@ private:
 	bool _mouseLocked;
 	Sprite _lockedMouseSprite;
 
-
 public:
 };
 
-}
+} // End of namespace StarTrek
 
 #endif

@@ -81,5 +81,5 @@ Common::SeekableReadStream *decodeLZSS(Common::SeekableReadStream *indata, uint3
 	return new Common::MemoryReadStream(outLzssBufData, uncompressedSize, DisposeAfterUse::YES);
 }
 
-}
+} // End of namespace StarTrek
 

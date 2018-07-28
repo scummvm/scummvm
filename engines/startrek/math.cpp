@@ -126,4 +126,4 @@ Angle StarTrekEngine::atan2(int32 deltaX, int32 deltaY) {
 	return Angle::fromRaw(angle);
 }
 
-}
+} // End of namespace StarTrek
