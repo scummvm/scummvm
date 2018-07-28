@@ -2228,6 +2228,44 @@ public:
 
 	// SINS2
 	void sins2Tick1();
+	void sins2UsePhaserOnDoor();
+	void sins2UseSTricorderAnywhere();
+	void sins2UseKirkOnTerminal();
+	void sins2UseSpockOnTerminal();
+	void sins2SpockReachedTerminal();
+	void sins2SpockUsedTerminal();
+	void sins2UseMccoyOnTerminal();
+	void sins2UseRedshirtOnTerminal();
+	void sins2UseSTricorderOnTerminal();
+	void sins2UseSTricorderOnKeypad();
+	void sins2UseSTricorderOnDoor();
+	void sins2UseKirkOnKeypad();
+	void sins2UseSpockOnKeypad();
+	void sins2SpockReachedKeypad();
+	void sins2EnteredCorrectCode();
+	void sins2EnteredIncorrectCode();
+	void sins2DoorFinishedOpening();
+	void sins2Tick40();
+	void sins2LookAnywhere();
+	void sins2LookAtOpenDoor();
+	void sins2LookAtTerminal();
+	void sins2LookAtKeypad();
+	void sins2LookAtKirk();
+	void sins2LookAtSpock();
+	void sins2LookAtMccoy();
+	void sins2LookAtRedshirt();
+	void sins2TalkToKirk();
+	void sins2TalkToSpock();
+	void sins2TalkToMccoy();
+	void sins2TalkToRedshirt();
+	void sins2LookAtDoor();
+	void sins2UseSpockOnDoor();
+	void sins2UseCommunicator();
+	void sins2UseMedkitOnCrewman();
+	void sins2UseMTricorderOnCrewman();
+	void sins2UseMccoyOnKeypad();
+	void sins2UseRedshirtOnKeypad();
+	void sins2WalkToDoor();
 
 	// SINS3
 	void sins3Tick1();
