@@ -118,7 +118,7 @@ Common::Error WintermuteEngine::run() {
 		initGraphics(800, 600, &format);
 	}
 	if (g_system->getScreenFormat() != format) {
-		error("Wintermute currently REQUIRES 32bpp");
+		return Common::kUnsupportedColorMode;
 	}
 
 	// Create debugger console. It requires GFX to be initialized
