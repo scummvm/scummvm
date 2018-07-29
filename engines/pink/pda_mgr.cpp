@@ -113,6 +113,7 @@ void PDAMgr::goToPage(const Common::String &pageName) {
 		initPerilButtons();
 
 	_cursorMgr.setPage(_page);
+	onMouseMove(_game->getEventManager()->getMousePos());
 }
 
 void PDAMgr::onLeftButtonClick(Common::Point point) {
