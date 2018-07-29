@@ -46,9 +46,9 @@
 	[self setAutocorrectionType:UITextAutocorrectionTypeNo];
 	[self setAutocapitalizationType:UITextAutocapitalizationTypeNone];
 	[self setEnablesReturnKeyAutomatically:NO];
-	UITextInputAssistantItem* item = [self inputAssistantItem];
-	item.leadingBarButtonGroups = @[];
-	item.trailingBarButtonGroups = @[];
+	//UITextInputAssistantItem* item = [self inputAssistantItem];
+	//item.leadingBarButtonGroups = @[];
+	//item.trailingBarButtonGroups = @[];
 
 	return self;
 }
@@ -75,20 +75,19 @@
 }
 
 - (void) upArrow: (UIKeyCommand *) keyCommand {
-//	[self resignFirstResponder];
-	[softKeyboard handleKeyPress:273];
+	[self handleKeyPress:273];
 }
 
 - (void) downArrow: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:274];
+	[self handleKeyPress:274];
 }
 
 - (void) leftArrow: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:276];
+	[self handleKeyPress:276];
 }
 
 - (void) rightArrow: (UIKeyCommand *) keyCommand {
-	[softKeyboard handleKeyPress:275];
+	[self handleKeyPress:275];
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
