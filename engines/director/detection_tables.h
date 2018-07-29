@@ -235,6 +235,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 		5
 	},
 
+	WINGAME("id4p1", "iD4 Mission Disk 1 - Alien Supreme Commander", "SUPREME.EXE", "34dcf97e16d6e105457440670c59e8dc", 1664965, 4),
+	WINGAME("id4p2", "iD4 Mission Disk 2 - Alien Science Officer", "SCIENCE.EXE", "c292846d0e1e6ed097e70b2e6c839743", 1766499, 4),
+	WINGAME("id4p3", "iD4 Mission Disk 3 - Warrior Alien", "WARRIOR.EXE", "16dd439a92eb34013a61e279c9d1e252", 1751593, 4),
+	WINGAME("id4p4", "iD4 Mission Disk 4 - Alien Navigator", "NAV.EXE", "d0c271bf4c51ed1dfcb924d13d47c3ce", 1834037, 4),
+	WINGAME("id4p5", "iD4 Mission Disk 5 - Captain Steve Hiller", "STEVE.EXE", "f871258cf9aeaac98770c7b117802b13", 1797301, 4),
+	WINGAME("id4p6", "iD4 Mission Disk 6 - Dave's Computer", "DAVE.EXE", "71c38258c6b59489b0024b959c7a55f1", 1774167, 4),
+	WINGAME("id4p7", "iD4 Mission Disk 7 - President Whitmore", "PREZ.EXE", "b88abd91f8c78bfb4c46dd1214938a23", 1666293, 4),
+	WINGAME("id4p8", "iD4 Mission Disk 8 - Alien Attack Fighter", "ALIEN_F.EXE", "3539ef55c384275753401454991441d0", 1754975, 4),
+	WINGAME("id4p9", "iD4 Mission Disk 9 - FA-18 Fighter Jet", "F18.EXE", "70ff3dc89e38aa87a460394434837e49", 1691893, 4),
+	WINGAME("id4p10", "iD4 Mission Disk 10 - Alien Bomber", "BOMBER.EXE", "04a0130ea83c80b090d1c52dd4ec9f36", 1844189, 4),
+	WINGAME("id4p11", "iD4 Mission Disk 11 - Area 51", "AREA51.EXE", "8c7a6325ca41b52ce349c9a31bc17526", 1776077, 4),
+
+	WINGAME("chopsuey", "Chop Suey", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 4),
+
 	{ AD_TABLE_END_MARKER, GID_GENERIC, 0 }
 };
 

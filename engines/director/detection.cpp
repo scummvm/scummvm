@@ -86,6 +86,18 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "vvdinosaur",	"Victor Vector & Yondo: The Last Dinosaur Egg"},
 	{ "warlock", 	"Spaceship Warlock"},
 	{ "ernie",		"Ernie"},
+	{ "id4p1",      "iD4 Mission Disk 1 - Alien Supreme Commander" },
+	{ "id4p2",      "iD4 Mission Disk 2 - Alien Science Officer" },
+	{ "id4p3",      "iD4 Mission Disk 3 - Warrior Alien" },
+	{ "id4p4",      "iD4 Mission Disk 4 - Alien Navigator" },
+	{ "id4p5",      "iD4 Mission Disk 5 - Captain Steve Hiller" },
+	{ "id4p6",      "iD4 Mission Disk 6 - Dave's Computer" },
+	{ "id4p7",      "iD4 Mission Disk 7 - President Whitmore" },
+	{ "id4p8",      "iD4 Mission Disk 8 - Alien Attack Fighter" },
+	{ "id4p9",      "iD4 Mission Disk 9 - FA-18 Fighter Jet" },
+	{ "id4p10",     "iD4 Mission Disk 10 - Alien Bomber" },
+	{ "id4p11",     "iD4 Mission Disk 11 - Area 51" },
+	{ "chopsuey",   "Chop Suey" },
 	{ 0, 0 }
 };
 
@@ -181,6 +193,7 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 		uint32 tag = f.readUint32LE();
 
 		switch (tag) {
+		case MKTAG('P', 'J', '9', '3'):
 		case MKTAG('3', '9', 'J', 'P'):
 			desc->version = 4;
 			break;
