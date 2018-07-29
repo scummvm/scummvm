@@ -110,6 +110,21 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		false,
 	},
 
+	{ // ST25 DOS floppy edition (GER)
+		{
+			"st25",
+			"Floppy",
+			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7181890),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GType_ST25,
+		0,
+		false,
+	},
+
 	{ // ST25 Amiga ? (EN)
 		{
 			"st25",
