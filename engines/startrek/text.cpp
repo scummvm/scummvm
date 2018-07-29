@@ -2617,7 +2617,7 @@ extern const char *const g_gameStrings[] = {
 	"#SIN5\\SIN5_013#All three of the computers in this room are fully operational.",
 	"#SIN5\\SIN5_014#All readings are normal. The structure seems to be protecting us from the cosmic rays.",
 	"#SIN5\\SIN5_015#Jim, I don't know anything about these things! Why don't you ask your science officer.",
-	"#SIN5\\SIN5_016#Thank goodness. I was worried that there might be a radiation leak, but there's no sign of any.",
+	"#SIN5\\SIN5_016#Thank goodness. I was worried there might be a radiation leak, but there's no sign of any.", // TYPO
 	"#SIN5\\SIN5_017#We're safe from the cosmic radiation, Jim.",
 	"#SIN5\\SIN5_018#I wish I hadn't seen any of this.",
 	"#SIN5\\SIN5_019#There's nothing constructive about this place, Spock! It's an obscenity!",
@@ -2661,7 +2661,7 @@ extern const char *const g_gameStrings[] = {
 	"#SIN5\\SIN5N009#This computer is marked with the first letter of the Lucr alphabet.",
 	"#SIN5\\SIN5N010#This computer is marked with the last letter of the Lucr alphabet.",
 	"#SIN5\\SIN5N011#This door is marked with a radiation hazard symbol.",
-	"#SIN5\\SIN5N012#Computer consoles do not take well to phasering. Sparks explode and, in a defensive maneuver prompted by this attack from within, the base launches a full spread of nuclear missiles at the Enterprise.",
+	"#SIN5\\SIN5N012#Computer consoles do not take well to phasering. Sparks fly and, in a defensive maneuver prompted by this attack from within, the base launches a full spread of nuclear missiles at the Enterprise.", // TYPO
 	"#SIN5\\SIN5N013#History will not be kind to you. Better luck next time.",
 
 
