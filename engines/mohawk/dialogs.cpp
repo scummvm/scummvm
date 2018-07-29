@@ -93,9 +93,8 @@ enum {
 
 #if defined(ENABLE_MYST) || defined(ENABLE_RIVEN)
 
-MohawkOptionsDialog::MohawkOptionsDialog(MohawkEngine *vm) :
-		GUI::Dialog(0, 0, 360, 200),
-		_vm(vm) {
+MohawkOptionsDialog::MohawkOptionsDialog() :
+		GUI::Dialog(0, 0, 360, 200) {
 	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), nullptr, GUI::kOKCmd);
 	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), nullptr, GUI::kCloseCmd);
 }
@@ -130,7 +129,7 @@ void MohawkOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, 
 #ifdef ENABLE_MYST
 
 MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) :
-		MohawkOptionsDialog(vm),
+		MohawkOptionsDialog(),
 		_vm(vm),
 		_canDropPage(false),
 		_canShowMap(false),
@@ -281,7 +280,7 @@ void MystOptionsDialog::setCanReturnToMenu(bool canReturnToMenu) {
 #ifdef ENABLE_RIVEN
 
 RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) :
-		MohawkOptionsDialog(vm),
+		MohawkOptionsDialog(),
 		_vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), nullptr, kZipCmd);
 	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 35, 220, 15, _("~W~ater Effect Enabled"), nullptr, kWaterCmd);

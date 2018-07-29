@@ -76,14 +76,11 @@ public:
 
 class MohawkOptionsDialog : public GUI::Dialog {
 public:
-	explicit MohawkOptionsDialog(MohawkEngine *_vm);
+	explicit MohawkOptionsDialog();
 	~MohawkOptionsDialog() override;
 
 	void reflowLayout() override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
-
-private:
-	MohawkEngine *_vm;
 };
 
 #endif
