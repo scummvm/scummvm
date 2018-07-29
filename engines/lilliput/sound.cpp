@@ -48,7 +48,7 @@ static const byte _soundType [40] = {
 	0, 0, 0, 0, 0, 0, 1, 0, 0, 0
 };
 
-LilliputSound::LilliputSound(LilliputEngine *vm) : _vm(vm) {
+LilliputSound::LilliputSound() {
 	_unpackedFiles = nullptr;
 	_unpackedSizes = nullptr;
 	_fileNumb = 0;

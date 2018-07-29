@@ -132,7 +132,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_debugFlag2 = 0;
 
 	_scriptHandler = new LilliputScript(this);
-	_soundHandler = new LilliputSound(this);
+	_soundHandler = new LilliputSound();
 
 	_handleOpcodeReturnCode = 0;
 	_delayedReactivationAction = false;

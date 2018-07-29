@@ -36,7 +36,7 @@ class LilliputEngine;
 
 class LilliputSound: public Audio::MidiPlayer {
 public:
-	LilliputSound(LilliputEngine *vm);
+	LilliputSound();
 	~LilliputSound();
 
 	void init();
@@ -48,8 +48,6 @@ public:
 	void remove();
 
 private:
-	LilliputEngine *_vm;
-
 	int _fileNumb;
 	byte **_unpackedFiles;
 	uint16 *_unpackedSizes;
