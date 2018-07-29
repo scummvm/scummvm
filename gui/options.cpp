@@ -1422,10 +1422,18 @@ void OptionsDialog::setupGraphicsTab() {
 		return;
 	_gfxPopUpDesc->setVisible(true);
 	_gfxPopUp->setVisible(true);
-	_stretchPopUpDesc->setVisible(true);
-	_stretchPopUp->setVisible(true);
+	if (g_system->hasFeature(OSystem::kFeatureStretchMode)) {
+		_stretchPopUpDesc->setVisible(true);
+		_stretchPopUp->setVisible(true);
+	} else {
+		_stretchPopUpDesc->setVisible(false);
+		_stretchPopUp->setVisible(false);
+	}
 	_fullscreenCheckbox->setVisible(true);
-	_filteringCheckbox->setVisible(true);
+	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
+		_filteringCheckbox->setVisible(true);
+	else
+		_filteringCheckbox->setVisible(false);
 	_aspectCheckbox->setVisible(true);
 	_renderModePopUpDesc->setVisible(true);
 	_renderModePopUp->setVisible(true);
