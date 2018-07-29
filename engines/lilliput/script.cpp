@@ -3288,7 +3288,7 @@ void LilliputScript::OC_playObjectSound() {
 	Common::Point var4 = Common::Point(0xFF, index & 0xFF);
 	int soundId = (_currScript->readUint16LE() & 0xFF);
 
-	_vm->_soundHandler->play(soundId, _viewportPos, _characterTilePos[index], var4);
+	_vm->_soundHandler->playSound(soundId, _viewportPos, _characterTilePos[index], var4);
 }
 
 void LilliputScript::OC_startLocationSound() {
@@ -3299,7 +3299,7 @@ void LilliputScript::OC_startLocationSound() {
 	Common::Point var2 = _viewportPos;
 	int var1 = (_currScript->readUint16LE() & 0xFF);
 
-	_vm->_soundHandler->play(var1, var2, var3, var4);
+	_vm->_soundHandler->playSound(var1, var2, var3, var4);
 }
 
 void LilliputScript::OC_stopObjectSound() {
@@ -3333,7 +3333,7 @@ void LilliputScript::OC_playMusic() {
 	warning("OC_playMusic: unknown value for var3");
 	Common::Point var3 = Common::Point(-1, -1);
 
-	_vm->_soundHandler->play(var1, var2, var3, var4);
+	_vm->_soundHandler->playSound(var1, var2, var3, var4);
 }
 
 void LilliputScript::OC_stopMusic() {

@@ -168,7 +168,6 @@ void LilliputSound::sendToChannel(byte channel, uint32 b) {
 		_channelsTable[channel]->send(b);
 }
 
-// Used during initialization
 void LilliputSound::init() {
 	debugC(1, kDebugSound, "LilliputSound::init()");
 
@@ -179,9 +178,9 @@ void LilliputSound::refresh() {
 	debugC(1, kDebugSound, "LilliputSound::refresh()");
 }
 
-void LilliputSound::play(int var1, Common::Point var2, Common::Point var3, Common::Point var4) {
-	debugC(1, kDebugSound, "LilliputSound::play(%d, %d - %d, %d - %d, %d - %d)", var1, var2.x, var2.y, var3.x, var3.y, var4.x, var4.y);
-	// warning("LilliputSound::play(%d, %d - %d, %d - %d, %d - %d)", var1, var2.x, var2.y, var3.x, var3.y, var4.x, var4.y);
+void LilliputSound::playSound(int var1, Common::Point var2, Common::Point var3, Common::Point var4) {
+	debugC(1, kDebugSound, "LilliputSound::playSound(%d, %d - %d, %d - %d, %d - %d)", var1, var2.x, var2.y, var3.x, var3.y, var4.x, var4.y);
+	// warning("LilliputSound::playSound(%d, %d - %d, %d - %d, %d - %d)", var1, var2.x, var2.y, var3.x, var3.y, var4.x, var4.y);
 
 	// save camera (var2)
 	if (_aliasArr[var1] == 0xFF) {
@@ -195,9 +194,8 @@ void LilliputSound::play(int var1, Common::Point var2, Common::Point var3, Commo
 	} else {
 		warning("longterm");
 	}
-
-	return;
 }
+
 void LilliputSound::playMusic(int var1) {
 	int idx = _aliasArr[var1];
 	bool loop = _loopArr[var1];

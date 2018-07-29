@@ -41,7 +41,7 @@ public:
 
 	void init();
 	void refresh();
-	void play(int var1, Common::Point var2, Common::Point var3, Common::Point var4);
+	void playSound(int var1, Common::Point var2, Common::Point var3, Common::Point var4);
 	void stopSound(Common::Point pos);
 	void toggleOnOff();
 	void update();

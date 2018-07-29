@@ -1714,7 +1714,7 @@ byte LilliputEngine::sequenceSound(int index, Common::Point var1) {
 	debugC(2, kDebugEngine, "sequenceSound(%d, %d - %d)", index, var1.x, var1.y);
 
 	int param4x = ((index | 0xFF00) >> 8);
-	_soundHandler->play(var1.y, _scriptHandler->_viewportPos, 
+	_soundHandler->playSound(var1.y, _scriptHandler->_viewportPos,
 		_scriptHandler->_characterTilePos[index], Common::Point(param4x, 0));
 	return kSeqRepeat;
 }
