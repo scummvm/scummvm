@@ -578,7 +578,7 @@ struct AwayMission {
 			bool gotPointsForUsingLeftComputer; // 0x4e
 			bool discoveredComputersOutOfSync; // 0x4f
 			bool enteredRoom1FirstTime; // 0x50
-			bool gotPointsForEnteringRoom5; // 0x51
+			bool playedMusicUponEnteringRoom5FirstTime; // 0x51
 			int16 missionScore; // 0x52
 
 			void saveLoadWithSerializer(Common::Serializer &ser) {
@@ -614,7 +614,7 @@ struct AwayMission {
 				ser.syncAsByte(gotPointsForUsingLeftComputer);
 				ser.syncAsByte(discoveredComputersOutOfSync);
 				ser.syncAsByte(enteredRoom1FirstTime);
-				ser.syncAsByte(gotPointsForEnteringRoom5);
+				ser.syncAsByte(playedMusicUponEnteringRoom5FirstTime);
 				ser.syncAsSint16LE(missionScore);
 			}
 		} sins;

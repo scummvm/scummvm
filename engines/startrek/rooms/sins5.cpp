@@ -141,9 +141,11 @@ void Room::sins5Tick1() {
 	if (_awayMission->sins.wireConnected1 && _awayMission->sins.wireConnected2)
 		loadActorAnim2(OBJECT_CABLE, "s5cabl", 0, 0);
 
-	if (!_awayMission->sins.gotPointsForEnteringRoom5) {
+	if (!_awayMission->sins.playedMusicUponEnteringRoom5FirstTime) {
+		// NOTE: The music gets drowned out due to a different track being played
+		// immediately after.
 		playMidiMusicTracks(MIDITRACK_0, -1);
-		_awayMission->sins.gotPointsForEnteringRoom5 = true;
+		_awayMission->sins.playedMusicUponEnteringRoom5FirstTime = true;
 	}
 
 	playMidiMusicTracks(MIDITRACK_27, -3);
