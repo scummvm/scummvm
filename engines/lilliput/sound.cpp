@@ -224,9 +224,10 @@ void LilliputSound::playMusic(int var1) {
 	}
 }
 
-void LilliputSound::stop(Common::Point pos) {
-	debugC(1, kDebugSound, "LilliputSound::stop(%d - %d)", pos.x, pos.y);
-	warning("LilliputSound::stop(%d - %d)", pos.x, pos.y);
+void LilliputSound::stopSound(Common::Point pos) {
+	debugC(1, kDebugSound, "LilliputSound::stopSound(%d - %d)", pos.x, pos.y);
+	warning("LilliputSound::stopSound(%d - %d)", pos.x, pos.y);
+	// FIXME: Audio::MidiPlayer::stop() call required?
 }
 
 void LilliputSound::toggleOnOff() {

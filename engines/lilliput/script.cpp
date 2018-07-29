@@ -3307,7 +3307,7 @@ void LilliputScript::OC_stopObjectSound() {
 
 	Common::Point var4 = Common::Point(-1, getValue1() & 0xFF);
 
-	_vm->_soundHandler->stop(var4); // Stop Sound
+	_vm->_soundHandler->stopSound(var4);
 }
 
 void LilliputScript::OC_stopLocationSound() {
@@ -3315,7 +3315,7 @@ void LilliputScript::OC_stopLocationSound() {
 
 	Common::Point var4 = getPosFromScript();
 
-	_vm->_soundHandler->stop(var4);
+	_vm->_soundHandler->stopSound(var4);
 }
 
 void LilliputScript::OC_toggleSound() {
