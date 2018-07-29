@@ -174,7 +174,8 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 			c = '\n';
 		}
 
-		const int w = font.getCharWidth(c) + font.getKerningOffset(last, c);
+		const int currentCharWidth = font.getCharWidth(c);
+		const int w = currentCharWidth + font.getKerningOffset(last, c);
 		last = c;
 		const bool wouldExceedWidth = (lineWidth + tmpWidth + w > maxWidth);
 
@@ -211,6 +212,15 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 					// This is not very fast, but it is the simplest way to
 					// assure we do not mess something up because of kerning.
 					tmpWidth = font.getStringWidth(tmpStr);
+				}
+
+				if (tmpStr.empty()) {
+					// If tmpStr is empty, we might have removed the space before 'c'.
+					// That means we have to recompute the kerning.
+
+					tmpWidth += currentCharWidth + font.getKerningOffset(0, c);
+					tmpStr += c;
+					continue;
 				}
 			} else {
 				wrapper.add(tmpStr, tmpWidth);
