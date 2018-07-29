@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-07-29 06:52+0200\n"
-"PO-Revision-Date: 2018-07-29 08:06+0000\n"
+"PO-Revision-Date: 2018-07-29 08:12+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
@@ -1074,7 +1074,7 @@ msgstr "Entrambi"
 
 #: gui/options.cpp:1255
 msgid "Subtitle speed:"
-msgstr "Velocità testo:"
+msgstr "Velocità sottotitoli:"
 
 #: gui/options.cpp:1257
 msgctxt "lowres"
@@ -1087,7 +1087,7 @@ msgstr "Voci"
 
 #: gui/options.cpp:1262
 msgid "Subs"
-msgstr "Sub"
+msgstr "Sott."
 
 #: gui/options.cpp:1263
 msgctxt "lowres"
@@ -1101,7 +1101,7 @@ msgstr "Mostra i sottotitoli e attiva le voci"
 #: gui/options.cpp:1265
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "Velocità testo:"
+msgstr "Velocità sottotitoli:"
 
 #: gui/options.cpp:1281
 msgid "Music volume:"
@@ -1183,7 +1183,7 @@ msgstr "Tema:"
 
 #: gui/options.cpp:1629
 msgid "GUI renderer:"
-msgstr "Renderer GUI:"
+msgstr "Renderer interfaccia grafica:"
 
 #: gui/options.cpp:1641
 msgid "Autosave:"
