@@ -356,7 +356,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 			startMarking(event.mouse.x, event.mouse.y);
 
 			return true;
-		} else if (event.type == Common::EVENT_LBUTTONUP) {
+		} else if (event.type == Common::EVENT_LBUTTONUP && _menu) {
 			if (_inTextSelection) {
 				_inTextSelection = false;
 
