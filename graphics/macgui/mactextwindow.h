@@ -48,7 +48,7 @@ struct SelectedText {
 
 class MacTextWindow : public MacWindow {
 public:
-	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu);
+	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
 	virtual ~MacTextWindow();
 
 	virtual void resize(int w, int h);

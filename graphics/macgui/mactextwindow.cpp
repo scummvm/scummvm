@@ -43,7 +43,7 @@ enum {
 
 static void cursorTimerHandler(void *refCon);
 
-MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu) :
+MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) :
 		MacWindow(wm->getLastId(), true, true, true, wm) {
 
 	_font = font;
@@ -72,7 +72,8 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 	_cursorSurface = new ManagedSurface(1, kCursorHeight);
 	_cursorSurface->fillRect(*_cursorRect, _wm->_colorBlack);
 
-	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
+	if (cursorHandler)
+		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
 }
 
 void MacTextWindow::resize(int w, int h) {
