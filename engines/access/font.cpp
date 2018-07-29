@@ -200,8 +200,8 @@ void MartianFont::load(Common::SeekableReadStream &s) {
 	// Iterate through decoding each character
 	_chars.resize(count);
 	for (size_t idx = 0; idx < count; ++idx) {
-		Graphics::Surface &s = _chars[idx];
-		s.create(widths[idx], _height, Graphics::PixelFormat::createFormatCLUT8());
+		Graphics::Surface &surface = _chars[idx];
+		surface.create(widths[idx], _height, Graphics::PixelFormat::createFormatCLUT8());
 		const byte *srcP = &data[offsets[idx]];
 		int x1, y1, x2, y2;
 
@@ -209,14 +209,14 @@ void MartianFont::load(Common::SeekableReadStream &s) {
 		while ((x1 = *srcP++) != 0xff) {
 			x2 = *srcP++;
 			y1 = *srcP++;
-			s.hLine(x1, y1, x2, 3);
+			surface.hLine(x1, y1, x2, 3);
 		}
 
 		// Write vertical lines
 		while ((x1 = *srcP++) != 0xff) {
 			y1 = *srcP++;
 			y2 = *srcP++;
-			s.vLine(x1, y1, y2, 3);
+			surface.vLine(x1, y1, y2, 3);
 		}
 	}
 }
