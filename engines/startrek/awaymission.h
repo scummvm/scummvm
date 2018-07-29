@@ -580,6 +580,43 @@ struct AwayMission {
 			bool enteredRoom1FirstTime; // 0x50
 			bool gotPointsForEnteringRoom5; // 0x51
 			int16 missionScore; // 0x52
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				ser.syncAsByte(field31);
+				ser.syncAsByte(field32);
+				ser.syncAsByte(field33);
+				ser.syncAsByte(doorLaserFiredOnce);
+				ser.syncAsByte(gotPointsForAccessingTerminal);
+				ser.syncAsByte(scannedKeycardLock);
+				ser.syncAsByte(laserSetting);
+				ser.syncAsByte(laserPattern);
+				ser.syncAsByte(gatheredClues);
+				ser.syncAsByte(scannedAndUsedComputers);
+				ser.syncAsByte(wireConnected1);
+				ser.syncAsByte(wireConnected2);
+				ser.syncAsByte(openedOuterDoor);
+				ser.syncAsByte(openedInnerDoor);
+				ser.syncAsByte(unlockedIDCardDoor);
+				ser.syncAsByte(moldState);
+				ser.syncAsByte(boxState);
+				ser.syncAsByte(enteredRoom0FirstTime);
+				ser.syncAsByte(scottyInformedKirkAboutVirus);
+				ser.syncAsByte(enteredRoom2FirstTime);
+				ser.syncAsByte(enteredRoom3FirstTime);
+				ser.syncAsByte(enteredRoom4FirstTime);
+				ser.syncAsByte(enteredRoom5FirstTime);
+				ser.syncAsByte(gotPointsForScanningStatue);
+				ser.syncAsByte(gotPointsForScanningRoom4);
+				ser.syncAsByte(gotPointsForScanningRoom5);
+				ser.syncAsByte(gotPointsForScanningRightComputer);
+				ser.syncAsByte(gotPointsForScanningLeftComputer);
+				ser.syncAsByte(gotPointsForUsingRightComputer);
+				ser.syncAsByte(gotPointsForUsingLeftComputer);
+				ser.syncAsByte(discoveredComputersOutOfSync);
+				ser.syncAsByte(enteredRoom1FirstTime);
+				ser.syncAsByte(gotPointsForEnteringRoom5);
+				ser.syncAsSint16LE(missionScore);
+			}
 		} sins;
 	};
 };
