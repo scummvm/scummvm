@@ -244,6 +244,10 @@ bool blur_createSettings(int numParams, VariableStack *&stack) {
 	return !createNullThing;
 }
 
+// FIXME - Disabled until blurScreen() is internally implemented where these are used...
+//         although these may be replaced by common/util.h, CLIP() function to replace clampi
+//         and various methods of Graphics::Surface.
+#if 0
 static inline int clampi(int i, int min, int max) {
 	return (i >= max) ? max : ((i <= min) ? min : i);
 }
@@ -264,6 +268,7 @@ static inline void blur_createSourceLine(byte *createLine, byte *fromLine, int o
 		createLine[miniX * 4 + 2] = fromLine[width * 4 - 2];
 	}
 }
+#endif
 
 bool blurScreen() {
 #if 0
