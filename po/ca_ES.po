@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-22 22:29+0200\n"
+"POT-Creation-Date: 2018-07-29 06:52+0200\n"
 "PO-Revision-Date: 2018-04-18 10:09+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -598,7 +598,7 @@ msgstr "Premeu la tecla a associar"
 msgid "Choose an action to map"
 msgstr "Sel·leccioneu una acció a assignar"
 
-#: gui/launcher.cpp:142 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:143
+#: gui/launcher.cpp:142 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:142
 msgid "~Q~uit"
 msgstr "~T~anca"
 
@@ -688,7 +688,7 @@ msgid "Search:"
 msgstr "Cerca:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:889
+#: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:889
 #: engines/mohawk/riven.cpp:655 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -697,7 +697,7 @@ msgstr "Carrega partida:"
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:163
+#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:162
 #: engines/mohawk/myst.cpp:889 engines/mohawk/riven.cpp:655
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
@@ -1852,11 +1852,11 @@ msgstr "<Valor incorrecte>"
 msgid "~R~esume"
 msgstr "~C~ontinua"
 
-#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:141
+#: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:140
 msgid "~L~oad"
 msgstr "C~a~rrega"
 
-#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:142
+#: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:141
 msgid "~S~ave"
 msgstr "~D~esa"
 
@@ -1887,7 +1887,7 @@ msgstr "~R~etorna al Llançador"
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
-#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:164
+#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:163
 #: engines/mohawk/myst.cpp:901 engines/mohawk/riven.cpp:667
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:658 engines/sci/engine/kfile.cpp:1054
@@ -1909,7 +1909,7 @@ msgstr "Desa la partida:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:164 engines/mohawk/myst.cpp:901
+#: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:901
 #: engines/mohawk/riven.cpp:667 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:659 engines/sci/engine/kfile.cpp:1054
@@ -1938,12 +1938,12 @@ msgstr ""
 "No s'ha pogut desar la partida (%s)! Consulteu el fitxer README per a la "
 "informació bàsica i les instruccions sobre com obtenir més assistència."
 
-#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:99
+#: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:98
 #: engines/tsage/dialogs.cpp:112
 msgid "~O~K"
 msgstr "~D~'acord"
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:100
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:99
 #: engines/tsage/dialogs.cpp:113
 msgid "~C~ancel"
 msgstr "~C~ancel·la"
@@ -3356,54 +3356,54 @@ msgid "The Myst fly by movie was not played by the original engine."
 msgstr ""
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:146 engines/mohawk/dialogs.cpp:286
+#: engines/mohawk/dialogs.cpp:145 engines/mohawk/dialogs.cpp:285
 msgid "~Z~ip Mode Activated"
 msgstr "Mode ~Z~ip activat"
 
-#: engines/mohawk/dialogs.cpp:147
+#: engines/mohawk/dialogs.cpp:146
 msgid "~T~ransitions Enabled"
 msgstr "~T~ransicions activades"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:149
+#: engines/mohawk/dialogs.cpp:148
 msgid "~D~rop Page"
 msgstr "~D~escarta la pàgina"
 
-#: engines/mohawk/dialogs.cpp:153
+#: engines/mohawk/dialogs.cpp:152
 #, fuzzy
 msgid "Show ~M~ap"
 msgstr "~M~ostra el mapa"
 
-#: engines/mohawk/dialogs.cpp:159
+#: engines/mohawk/dialogs.cpp:158
 #, fuzzy
 msgid "Main Men~u~"
 msgstr "~M~enú Principal"
 
-#: engines/mohawk/dialogs.cpp:287
+#: engines/mohawk/dialogs.cpp:286
 msgid "~W~ater Effect Enabled"
 msgstr "~E~fecte de l'aigua activat"
 
-#: engines/mohawk/dialogs.cpp:289
+#: engines/mohawk/dialogs.cpp:288
 #, fuzzy
 msgid "Transitions:"
 msgstr "~T~ransicions activades"
 
-#: engines/mohawk/dialogs.cpp:291
+#: engines/mohawk/dialogs.cpp:290
 #, fuzzy
 msgid "Disabled"
 msgstr "GFX desactivats"
 
-#: engines/mohawk/dialogs.cpp:292
+#: engines/mohawk/dialogs.cpp:291
 #, fuzzy
 msgid "Fastest"
 msgstr "Mode ràpid"
 
-#: engines/mohawk/dialogs.cpp:293
+#: engines/mohawk/dialogs.cpp:292
 #, fuzzy
 msgid "Normal"
 msgstr "OpenGL Normal"
 
-#: engines/mohawk/dialogs.cpp:294
+#: engines/mohawk/dialogs.cpp:293
 msgid "Best"
 msgstr ""
 
