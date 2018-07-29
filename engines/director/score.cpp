@@ -597,28 +597,33 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		for (uint child = 0; child < res->children.size(); child++)
 			_loadedBitmaps->getVal(id)->children.push_back(res->children[child]);
 		_castTypes[id] = kCastBitmap;
+		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastBitmap (%d)", res->children.size());
 		break;
 	case kCastText:
 		_loadedText->setVal(id, new TextCast(castStream, _vm->getVersion()));
 		for (uint child = 0; child < res->children.size(); child++)
 			_loadedText->getVal(id)->children.push_back(res->children[child]);
 		_castTypes[id] = kCastText;
+		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastText (%d)", res->children.size());
 		break;
 	case kCastShape:
 		_loadedShapes->setVal(id, new ShapeCast(castStream, _vm->getVersion()));
 		for (uint child = 0; child < res->children.size(); child++)
 			_loadedShapes->getVal(id)->children.push_back(res->children[child]);
 		_castTypes[id] = kCastShape;
+		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastShape (%d)", res->children.size());
 		break;
 	case kCastButton:
 		_loadedButtons->setVal(id, new ButtonCast(castStream, _vm->getVersion()));
 		for (uint child = 0; child < res->children.size(); child++)
 			_loadedButtons->getVal(id)->children.push_back(res->children[child]);
 		_castTypes[id] = kCastButton;
+		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastButton (%d)", res->children.size());
 		break;
 	case kCastLingoScript:
 		_loadedScripts->setVal(id, new ScriptCast(castStream, _vm->getVersion()));
 		_castTypes[id] = kCastLingoScript;
+		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastLingoScript");
 		break;
 	case kCastRTE:
 		//TODO: Actually load RTEs correctly, don't just make fake STXT.
@@ -635,6 +640,31 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 				_loadedText->getVal(id)->importRTE(buffer);
 			}
 		}
+		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastRTE (%d)", res->children.size());
+		break;
+	case kCastFilmLoop:
+		warning("STUB: Score::loadCastData(): kCastFilmLoop (%d)", res->children.size());
+		size2 = 0;
+		break;
+	case kCastPalette:
+		warning("STUB: Score::loadCastData(): kCastPalette (%d)", res->children.size());
+		size2 = 0;
+		break;
+	case kCastPicture:
+		warning("STUB: Score::loadCastData(): kCastPicture (%d)", res->children.size());
+		size2 = 0;
+		break;
+	case kCastSound:
+		warning("STUB: Score::loadCastData(): kCastSound (%d)", res->children.size());
+		size2 = 0;
+		break;
+	case kCastMovie:
+		warning("STUB: Score::loadCastData(): kCastMovie (%d)", res->children.size());
+		size2 = 0;
+		break;
+	case kCastDigitalVideo:
+		warning("STUB: Score::loadCastData(): kCastDigitalVideo (%d)", res->children.size());
+		size2 = 0;
 		break;
 	default:
 		warning("Score::loadCastData(): Unhandled cast type: %d [%s]", castType, tag2str(castType));
