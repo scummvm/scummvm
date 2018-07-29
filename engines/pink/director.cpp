@@ -54,6 +54,7 @@ enum {
 	kMenuActionExit
 };
 
+/* Currently Unused
 static const Graphics::MacMenuData menuSubItems[] = {
 	{ kMenuHighLevel, "Game",	0, 0, false },
 	{ kMenuHighLevel, "Book of Knowledge",	0, 0, false },
@@ -74,7 +75,7 @@ static const Graphics::MacMenuData menuSubItems[] = {
 
 	{ 0, NULL,			0, 0, false }
 };
-
+*/
 
 Director::Director()
 	: _surface(640, 480) {
