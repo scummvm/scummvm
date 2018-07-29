@@ -40,7 +40,7 @@ namespace Pink {
 
 PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	: Engine(system), _console(nullptr), _rnd("pink"),
-	_desc(*desc), _bro(nullptr), _actor(nullptr),
+	_desc(*desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
 	_module(nullptr), _director(nullptr), _pdaMgr(this) {
 
 	DebugMan.addDebugChannel(kPinkDebugGeneral, "general", "General issues");
@@ -73,8 +73,9 @@ Common::Error PinkEngine::init() {
 
 	Common::PEResources exeResources;
 	Common::String fileName = isPeril() ? "pptp.exe" : "hpp.exe";
-	exeResources.loadFromEXE(fileName);
-
+	if (!exeResources.loadFromEXE(fileName)) {
+		return Common::kNoGameDataFoundError;
+	}
 
 	_console = new Console(this);
 	_director = new Director();
