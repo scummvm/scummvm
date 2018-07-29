@@ -2373,6 +2373,63 @@ public:
 
 	// SINS5
 	void sins5Tick1();
+	void sins5UseSTricorderAnywhere();
+	void sins5UseSTricorderOnRightComputer();
+	void sins5UseSTricorderOnLeftComputer();
+	void sins5UseSTricorderOnMiddleComputer();
+	void sins5UseKirkOnRightComputer();
+	void sins5UseKirkOnLeftComputer();
+	void sins5UseKirkOnMiddleComputer();
+	void sins5UseMccoyOnComputer();
+	void sins5UseRedshirtOnComputer();
+	void sins5UseSpockOnMiddleComputer();
+	void sins5UseSpockOnRightComputer();
+	void sins5SpockReachedRightComputer();
+	void sins5SpockUsedRightComputer();
+	void sins5UseSpockOnLeftComputer();
+	void sins5SpockReachedLeftComputer();
+	void sins5SpockUsedLeftComputer();
+	void sins5CrewmanReadyToBeamOut();
+	void sins5Tick20();
+	void sins5CheckGatheredAllClues();
+	void sins5UseWireOnComputer();
+	void sins5KirkOrSpockInPositionToUseWire();
+	void sins5WireConnected();
+	void sins5UseStunPhaserOnComputer();
+	void sins5UseKillPhaserOnLeftComputer();
+	void sins5ReachedPositionToShootLeftComputer();
+	void sins5DrewPhaserToShootLeftComputer();
+	void sins5Timer0Expired();
+	void sins5UseKillPhaserOnMiddleComputer();
+	void sins5ReachedPositionToShootMiddleComputer();
+	void sins5DrewPhaserToShootMiddleComputer();
+	void sins5Timer1Expired();
+	void sins5UseKillPhaserOnRightComputer();
+	void sins5ReachedPositionToShootRightComputer();
+	void sins5DrewPhaserToShootRightComputer();
+	void sins5Timer2Expired();
+	void sins5ComputerLaunchesMissiles();
+	void sins5Timer3Expired();
+	void sins5LookAnywhere();
+	void sins5LookAtKirk();
+	void sins5LookAtSpock();
+	void sins5LookAtMccoy();
+	void sins5LookAtRedshirt();
+	void sins5LookAtLight();
+	void sins5LookAtLeftComputer();
+	void sins5LookAtMiddleComputer();
+	void sins5LookAtRightComputer();
+	void sins5LookAtMissile();
+	void sins5LookAtNorthDoor();
+	void sins5UseMedkitOnCrewman();
+	void sins5UseMTricorderAnywhere();
+	void sins5TalkToKirk();
+	void sins5TalkToSpock();
+	void sins5TalkToMccoy();
+	void sins5TalkToRedshirt();
+	void sins5UseSTricorderOnMissile();
+	void sins5UseSTricorderOnNorthDoor();
+	void sins5UseMTricorderOnCrewman();
 
 public:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
@@ -2675,6 +2732,11 @@ public:
 				ser.syncAsSint16LE(hole);
 			}
 		} trial;
+
+		struct {
+			byte numCrewmenInPositionForWire; // 0xca
+			byte numCrewmenReadyToBeamOut; // 0xcb
+		} sins;
 
 	} _roomVar;
 };
