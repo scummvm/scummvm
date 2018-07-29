@@ -540,6 +540,14 @@ struct AwayMission {
 			//        the keycard
 			byte gatheredClues; // 0x39
 
+			// bit 0: scanned left computer
+			// bit 1: scanned right computer
+			// bit 2: accessed left computer
+			// bit 3: accessed right computer
+			byte scannedAndUsedComputers; // 0x3a
+
+			bool wireConnected1; // 0x3b
+			bool wireConnected2; // 0x3c
 			bool openedOuterDoor; // 0x3d
 			bool openedInnerDoor; // 0x3e
 			bool unlockedIDCardDoor; // 0x3f
@@ -560,9 +568,17 @@ struct AwayMission {
 			bool enteredRoom2FirstTime; // 0x44
 			bool enteredRoom3FirstTime; // 0x45
 			bool enteredRoom4FirstTime; // 0x46
+			bool enteredRoom5FirstTime; // 0x47
 			bool gotPointsForScanningStatue; // 0x48
 			bool gotPointsForScanningRoom4; // 0x49
+			bool gotPointsForScanningRoom5; // 0x4a
+			bool gotPointsForScanningRightComputer; // 0x4b
+			bool gotPointsForScanningLeftComputer; // 0x4c
+			bool gotPointsForUsingRightComputer; // 0x4d
+			bool gotPointsForUsingLeftComputer; // 0x4e
+			bool discoveredComputersOutOfSync; // 0x4f
 			bool enteredRoom1FirstTime; // 0x50
+			bool gotPointsForEnteringRoom5; // 0x51
 			int16 missionScore; // 0x52
 		} sins;
 	};
