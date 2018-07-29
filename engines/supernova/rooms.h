@@ -819,8 +819,9 @@ private:
 	StringId _dialog3[4];
 	StringId _dialog4[3];
 
-	bool _found;
-	bool _flug;
+	// FIXME: Remove following unused bool variables?
+	//bool _found;
+	//bool _flug;
 };
 class ArsanoMeetup3 : public Room {
 public:
