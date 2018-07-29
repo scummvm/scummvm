@@ -2012,7 +2012,7 @@ void EdenGame::loadCharacter(perso_t *perso) {
 		ptr += READ_LE_UINT16(ptr) - 2;
 		_globals->_persoSpritePtr = baseptr;
 		_globals->_persoSpritePtr2 = baseptr + READ_LE_UINT16(ptr);
-		debug("load perso: b6 len is %ld", _globals->_persoSpritePtr2 - _globals->_persoSpritePtr);
+		debug("load perso: b6 len is %d", (int)(_globals->_persoSpritePtr2 - _globals->_persoSpritePtr));
 	} else {
 		useBank(_globals->_characterImageBank);
 		_characterBankData = _bankData;
@@ -3182,7 +3182,7 @@ void EdenGame::dialautooff() {
 
 void EdenGame::follow() {
 	if (_globals->_roomCharacterType == PersonFlags::pfType12) {
-		debug("follow: hiding person %ld", _globals->_roomCharacterPtr - _persons);
+		debug("follow: hiding person %d", (int)(_globals->_roomCharacterPtr - _persons));
 		_globals->_roomCharacterPtr->_flags |= PersonFlags::pf80;
 		_globals->_roomCharacterPtr->_roomNum = 0;
 		_globals->_gameFlags |= GameFlags::gfFlag8;
@@ -5845,7 +5845,7 @@ void EdenGame::perso_ici(int16 action) {
 
 // Original name: setpersohere
 void EdenGame::setCharacterHere() {
-	debug("setCharacterHere, perso is %ld", _globals->_characterPtr - _persons);
+	debug("setCharacterHere, perso is %d", (int)(_globals->_characterPtr - _persons));
 	_globals->_partyOutside = 0;
 	_globals->_party = 0;
 	_globals->_roomCharacterPtr = nullptr;
@@ -5871,7 +5871,7 @@ void EdenGame::faire_suivre(int16 roomNum) {
 
 // Original name: suis_moi5
 void EdenGame::AddCharacterToParty() {
-	debug("adding person %ld to party", _globals->_characterPtr - _persons);
+	debug("adding person %d to party", (int)(_globals->_characterPtr - _persons));
 	_globals->_characterPtr->_flags |= PersonFlags::pfInParty;
 	_globals->_characterPtr->_roomNum = _globals->_roomNum;
 	_globals->_party |= _globals->_characterPtr->_partyMask;
@@ -5888,7 +5888,7 @@ void EdenGame::addToParty(int16 index) {
 
 // Original name: reste_ici5
 void EdenGame::removeCharacterFromParty() {
-	debug("removing person %ld from party", _globals->_characterPtr - _persons);
+	debug("removing person %d from party", (int)(_globals->_characterPtr - _persons));
 	_globals->_characterPtr->_flags &= ~PersonFlags::pfInParty;
 	_globals->_partyOutside |= _globals->_characterPtr->_partyMask;
 	_globals->_party &= ~_globals->_characterPtr->_partyMask;
