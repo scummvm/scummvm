@@ -2734,8 +2734,14 @@ public:
 		} trial;
 
 		struct {
+			// sins5
 			byte numCrewmenInPositionForWire; // 0xca
 			byte numCrewmenReadyToBeamOut; // 0xcb
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				ser.syncAsByte(numCrewmenInPositionForWire);
+				ser.syncAsByte(numCrewmenReadyToBeamOut);
+			}
 		} sins;
 
 	} _roomVar;
