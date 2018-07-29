@@ -43,6 +43,7 @@ namespace Pink {
 class Actor;
 class ActionCEL;
 class ActionSound;
+class ActionText;
 
 class Director {
 public:
@@ -52,6 +53,9 @@ public:
 	bool processEvent(Common::Event &event);
 
 	void setPalette(const byte *palette);
+
+	void addTextAction(ActionText *action);
+	void removeTextAction(ActionText *action);
 
 	void addSprite(ActionCEL *sprite);
 	void removeSprite(ActionCEL *sprite);
@@ -85,6 +89,8 @@ private:
 	Common::Array<ActionCEL *> _sprites;
 	Common::Array<ActionCEL *> _savedSprites;
 	Common::Array<ActionSound *> _sounds;
+	Common::Array<ActionText *> _textActions;
+	bool _textRendered;
 };
 
 } // End of namespace Pink

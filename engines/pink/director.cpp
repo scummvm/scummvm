@@ -20,13 +20,15 @@
  *
  */
 
-#include "graphics/managed_surface.h"
+#include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/mactext.h"
 #include "graphics/palette.h"
 
 #include "pink/cel_decoder.h"
 #include "pink/director.h"
 #include "pink/objects/actions/action_sound.h"
 #include "pink/objects/actions/action_cel.h"
+#include "pink/objects/actions/action_text.h"
 #include "pink/objects/actors/actor.h"
 
 #include "graphics/macgui/macmenu.h"
@@ -78,7 +80,7 @@ static const Graphics::MacMenuData menuSubItems[] = {
 */
 
 Director::Director()
-	: _surface(640, 480) {
+	: _surface(640, 480), _textRendered(false) {
 	_wm.setScreen(&_surface);
 	_wm.setMode(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode);
 	_wm.setMenuHotzone(Common::Rect(0, 0, 640, 23));
@@ -116,6 +118,19 @@ void Director::setPalette(const byte *palette) {
 	_wm.passPalette(palette, 256);
 }
 
+void Director::addTextAction(ActionText *txt) {
+	_textActions.push_back(txt);
+	_textRendered = false;
+}
+
+void Director::removeTextAction(ActionText *action) {
+	for (uint i = 0; i < _textActions.size(); ++i) {
+		if (_textActions[i] == action) {
+			_textActions.remove_at(i);
+			break;
+		}
+	}
+}
 
 void Director::addSprite(ActionCEL *sprite) {
 	_sprites.push_back(sprite);
@@ -188,11 +203,18 @@ Actor *Director::getActorByPoint(const Common::Point point) {
 }
 
 void Director::draw() {
-	if (!_dirtyRects.empty()) {
+	if (!_dirtyRects.empty() || !_textRendered) {
 		mergeDirtyRects();
 
 		for (uint i = 0; i < _dirtyRects.size(); ++i) {
 			drawRect(_dirtyRects[i]);
+		}
+
+		if (!_textRendered) {
+			_textRendered = true;
+			for (uint i = 0; i < _textActions.size(); ++i) {
+				_textActions[i]->draw(&_surface);
+			}
 		}
 
 		_dirtyRects.resize(0);
@@ -253,4 +275,4 @@ void Director::drawRect(const Common::Rect &rect) {
 	}
 }
 
-}
+} // End of namespace Pink

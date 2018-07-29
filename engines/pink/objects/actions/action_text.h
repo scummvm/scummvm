@@ -23,12 +23,20 @@
 #ifndef PINK_ACTION_TEXT_H
 #define PINK_ACTION_TEXT_H
 
+#include "common/events.h"
+
+#include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/mactextwindow.h"
+
 #include "pink/objects/actions/action.h"
 
 namespace Pink {
 
 class ActionText : public Action {
 public:
+	ActionText();
+	~ActionText() override;
 	void deserialize(Archive &archive) override;
 
 	void toConsole() override;
@@ -36,8 +44,15 @@ public:
 	void start() override;
 	void end() override;
 
+	void draw(Graphics::ManagedSurface *surface); // only for non-scrollable text
+
+private:
+
+	void findColorsInPalette();
+
 private:
 	Common::String _fileName;
+	Graphics::MacTextWindow *_txtWnd;
 
 	uint32 _xLeft;
 	uint32 _yTop;
@@ -46,8 +61,11 @@ private:
 
 	uint32 _centered;
 	uint32 _scrollBar;
-	uint32 _textColor;
-	uint32 _backgroundColor;
+	uint32 _textRGB;
+	uint32 _backgroundRGB;
+
+	byte _textColorIndex;
+	byte _backgroundColorIndex;
 };
 
 } // End of namespace Pink
