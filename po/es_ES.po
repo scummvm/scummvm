@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-29 14:58+0200\n"
+"POT-Creation-Date: 2018-07-30 20:12+0200\n"
 "PO-Revision-Date: 2018-04-18 10:10+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -66,9 +66,9 @@ msgstr "Arriba"
 #: engines/engine.cpp:534 backends/events/default/default-events.cpp:190
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
-#: engines/mohawk/myst_stacks/menu.cpp:256
-#: engines/mohawk/myst_stacks/menu.cpp:273
-#: engines/mohawk/myst_stacks/menu.cpp:291
+#: engines/mohawk/myst_stacks/menu.cpp:284
+#: engines/mohawk/myst_stacks/menu.cpp:301
+#: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:395
 #: engines/mohawk/riven_stacks/aspit.cpp:417
 #: engines/mohawk/riven_stacks/aspit.cpp:501
@@ -687,8 +687,8 @@ msgid "Search:"
 msgstr "Buscar:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:889
-#: engines/mohawk/riven.cpp:655 engines/pegasus/pegasus.cpp:355
+#: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:942
+#: engines/mohawk/riven.cpp:653 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Cargar juego:"
@@ -697,7 +697,7 @@ msgstr "Cargar juego:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:162
-#: engines/mohawk/myst.cpp:889 engines/mohawk/riven.cpp:655
+#: engines/mohawk/myst.cpp:942 engines/mohawk/riven.cpp:653
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
@@ -1903,7 +1903,7 @@ msgstr "~V~olver al lanzador"
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:163
-#: engines/mohawk/myst.cpp:901 engines/mohawk/riven.cpp:667
+#: engines/mohawk/myst.cpp:954 engines/mohawk/riven.cpp:665
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:658 engines/sci/engine/kfile.cpp:1054
 #: engines/sherlock/scalpel/scalpel.cpp:1250
@@ -1924,8 +1924,8 @@ msgstr "Guardar partida:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:901
-#: engines/mohawk/riven.cpp:667 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:954
+#: engines/mohawk/riven.cpp:665 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:659 engines/sci/engine/kfile.cpp:1054
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
@@ -2229,7 +2229,7 @@ msgstr "¿Seguro que quieres salir?"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: engines/mohawk/myst_stacks/menu.cpp:290
+#: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:500 engines/scumm/dialogs.cpp:188
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
@@ -3379,11 +3379,11 @@ msgstr "Interfaz de juego animada"
 msgid "Naughty game mode"
 msgstr "Modo de juego picante"
 
-#: engines/mohawk/detection.cpp:179
+#: engines/mohawk/detection.cpp:180
 msgid "Play the Myst fly by movie"
 msgstr "Reproducir el vuelo de reconocimiento de Myst"
 
-#: engines/mohawk/detection.cpp:180
+#: engines/mohawk/detection.cpp:181
 msgid "The Myst fly by movie was not played by the original engine."
 msgstr ""
 "El vuelo de reconocimiento de Myst no se mostraba en el motor original."
@@ -3438,32 +3438,32 @@ msgstr "Mejor"
 msgid "The game is paused. Press any key to continue."
 msgstr "Juego pausado. Pulsa cualquier tecla para continuar."
 
-#: engines/mohawk/myst_stacks/menu.cpp:255
+#: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:394
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
 
-#: engines/mohawk/myst_stacks/menu.cpp:256
+#: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:395
 #, fuzzy
 msgid "Load game"
 msgstr "Cargar juego:"
 
-#: engines/mohawk/myst_stacks/menu.cpp:272
+#: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:416
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
 
-#: engines/mohawk/myst_stacks/menu.cpp:273
+#: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:417
 #, fuzzy
 msgid "New game"
 msgstr "Guardar"
 
-#: engines/mohawk/myst_stacks/menu.cpp:290
+#: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:500
 #, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
@@ -3493,7 +3493,7 @@ msgstr ""
 "Falta el fichero 'extras.mhk'. También es posible usar el fichero instalador "
 "'arcriven.z'."
 
-#: engines/mohawk/riven.cpp:528
+#: engines/mohawk/riven.cpp:506
 msgid "You are missing the following required Riven data files:\n"
 msgstr "Te faltan estos archivos de Riven:\n"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-29 14:58+0200\n"
+"POT-Creation-Date: 2018-07-30 20:12+0200\n"
 "PO-Revision-Date: 2018-07-23 11:42+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -67,9 +67,9 @@ msgstr "Pfad hoch"
 #: engines/engine.cpp:534 backends/events/default/default-events.cpp:190
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
-#: engines/mohawk/myst_stacks/menu.cpp:256
-#: engines/mohawk/myst_stacks/menu.cpp:273
-#: engines/mohawk/myst_stacks/menu.cpp:291
+#: engines/mohawk/myst_stacks/menu.cpp:284
+#: engines/mohawk/myst_stacks/menu.cpp:301
+#: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:395
 #: engines/mohawk/riven_stacks/aspit.cpp:417
 #: engines/mohawk/riven_stacks/aspit.cpp:501
@@ -693,8 +693,8 @@ msgid "Search:"
 msgstr "Suchen:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:889
-#: engines/mohawk/riven.cpp:655 engines/pegasus/pegasus.cpp:355
+#: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:942
+#: engines/mohawk/riven.cpp:653 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Spiel laden:"
@@ -703,7 +703,7 @@ msgstr "Spiel laden:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:162
-#: engines/mohawk/myst.cpp:889 engines/mohawk/riven.cpp:655
+#: engines/mohawk/myst.cpp:942 engines/mohawk/riven.cpp:653
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
@@ -1908,7 +1908,7 @@ msgstr "Zur Spiele~l~iste"
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:163
-#: engines/mohawk/myst.cpp:901 engines/mohawk/riven.cpp:667
+#: engines/mohawk/myst.cpp:954 engines/mohawk/riven.cpp:665
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:658 engines/sci/engine/kfile.cpp:1054
 #: engines/sherlock/scalpel/scalpel.cpp:1250
@@ -1929,8 +1929,8 @@ msgstr "Speichern:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:901
-#: engines/mohawk/riven.cpp:667 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:954
+#: engines/mohawk/riven.cpp:665 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:659 engines/sci/engine/kfile.cpp:1054
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
@@ -2236,7 +2236,7 @@ msgstr "Möchten Sie wirklich beenden?"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: engines/mohawk/myst_stacks/menu.cpp:290
+#: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:500 engines/scumm/dialogs.cpp:188
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
@@ -3396,11 +3396,11 @@ msgstr "Animierte Spieloberfläche"
 msgid "Naughty game mode"
 msgstr "Unanständiger Spielmodus"
 
-#: engines/mohawk/detection.cpp:179
+#: engines/mohawk/detection.cpp:180
 msgid "Play the Myst fly by movie"
 msgstr "Video vom Anflug auf Myst abspielen"
 
-#: engines/mohawk/detection.cpp:180
+#: engines/mohawk/detection.cpp:181
 msgid "The Myst fly by movie was not played by the original engine."
 msgstr ""
 "Das Video, welches den Anflug auf Myst zeigt, wurde in der ursprünglichen "
@@ -3456,7 +3456,7 @@ msgstr "Beste"
 msgid "The game is paused. Press any key to continue."
 msgstr "Das Spiel ist pausiert. Zum Weiterspielen beliebige Taste drücken."
 
-#: engines/mohawk/myst_stacks/menu.cpp:255
+#: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:394
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
@@ -3465,12 +3465,12 @@ msgstr ""
 "Sind Sie sicher, dass Sie ein gespeichertes Spiel laden möchten? Jeder nicht "
 "gespeicherte Fortschritt geht dabei verloren."
 
-#: engines/mohawk/myst_stacks/menu.cpp:256
+#: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:395
 msgid "Load game"
 msgstr "Spiel laden"
 
-#: engines/mohawk/myst_stacks/menu.cpp:272
+#: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:416
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
@@ -3478,12 +3478,12 @@ msgstr ""
 "Sind Sie sicher, dass Sie ein neues Spiel starten möchten? Jeder nicht "
 "gespeicherte Fortschritt geht dabei verloren."
 
-#: engines/mohawk/myst_stacks/menu.cpp:273
+#: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:417
 msgid "New game"
 msgstr "Neues Spiel"
 
-#: engines/mohawk/myst_stacks/menu.cpp:290
+#: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:500
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgstr ""
@@ -3514,7 +3514,7 @@ msgstr ""
 "Die Datei 'extras.mhk' fehlt. Sie können auch die Installationsdatei "
 "'arcriven.z verwenden."
 
-#: engines/mohawk/riven.cpp:528
+#: engines/mohawk/riven.cpp:506
 msgid "You are missing the following required Riven data files:\n"
 msgstr "Ihnen fehlen die folgenden Spieldateien für Riven:\n"
 
