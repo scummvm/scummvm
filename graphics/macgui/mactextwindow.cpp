@@ -108,7 +108,9 @@ void MacTextWindow::clearText() {
 }
 
 MacTextWindow::~MacTextWindow() {
+	delete _cursorRect;
 	delete _cursorSurface;
+	delete _mactext;
 
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 }
