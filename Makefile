@@ -91,9 +91,10 @@ ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 	AR="$(SAVED_AR)" AS="$(SAVED_AS)" ASFLAGS="$(SAVED_ASFLAGS)" \
 		CPPFLAGS="$(SAVED_CPPFLAGS)" CXX="$(SAVED_CXX)" \
 		CXXFLAGS="$(SAVED_CXXFLAGS)" LD="$(SAVED_LD)" \
-		LDFLAGS="$(SAVED_LDFLAGS)" RANLIB="$(SAVED_RANLIB)" \
-		SDL_CONFIG="$(SAVED_SDL_CONFIG)" STRIP="$(SAVED_STRIP)" \
-		WINDRES="$(SAVED_WINDRES)" WINDRESFLAGS="$(SAVED_WINDRESFLAGS)" \
+		LDFLAGS="$(SAVED_LDFLAGS)" PKG_CONFIG_LIBDIR="$(SAVED_PKG_CONFIG_LIBDIR)" \
+		RANLIB="$(SAVED_RANLIB)" SDL_CONFIG="$(SAVED_SDL_CONFIG)" \
+		STRIP="$(SAVED_STRIP)" WINDRES="$(SAVED_WINDRES)" \
+		WINDRESFLAGS="$(SAVED_WINDRESFLAGS)" \
 			$(srcdir)/configure $(SAVED_CONFIGFLAGS)
 else
 	$(error You need to run $(srcdir)/configure before you can run make. Check $(srcdir)/configure --help for a list of parameters)
