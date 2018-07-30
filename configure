@@ -3982,6 +3982,18 @@ EOF
 cc_check -lm && append_var LIBS "-lm"
 
 #
+# Check for pkg-config
+#
+echocheck "pkg-config"
+_pkg_config=no
+command -v pkg-config >/dev/null 2>&1 && _pkg_config=yes
+echo "$_pkg_config"
+
+if test "$_pkg_config" = yes && test -n "$_host" && test -z "$PKG_CONFIG_LIBDIR"; then
+	echo "WARNING: When cross-compiling PKG_CONFIG_LIBDIR must be set to the location of the .pc files for the target"
+fi
+
+#
 # Check for Ogg
 #
 echocheck "Ogg"
@@ -4638,7 +4650,7 @@ define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE_FOR_DEBUGGER'
 # Check for Unity if taskbar integration is enabled
 #
 echocheck "libunity"
-if test "$_unix" = no || test "$_taskbar" = no; then
+if test "$_unix" = no || test "$_taskbar" = no || test "$_pkg_config" = no; then
 	_libunity=no
 else
 if test "$_libunity" = auto ; then
@@ -4684,8 +4696,7 @@ find_freetype() {
         # pkg-config.
         # As of freetype-2.9.1 the freetype-config file
         # no longer gets installed by default.
-
-	if pkg-config --exists freetype2; then
+	if test "$_pkg_config" = "yes" && pkg-config --exists freetype2; then
 		FREETYPE2_LIBS=`pkg-config --libs freetype2`
 		FREETYPE2_CFLAGS=`pkg-config --cflags freetype2`
 		FREETYPE2_STATIC_LIBS=`pkg-config --static --libs freetype2`
