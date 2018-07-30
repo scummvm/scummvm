@@ -507,7 +507,7 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 #ifdef DEBUG_HASH_COLLISIONS
 			_dummyHits++;
 #endif
-			if (first_free != _mask + 1)
+			if (first_free == NONE_FOUND)
 				first_free = ctr;
 		} else if (_equal(_storage[ctr]->_key, key)) {
 			found = true;
@@ -528,7 +528,7 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 		(const void *)this, _mask + 1, _size);
 #endif
 
-	if (!found && first_free != _mask + 1)
+	if (!found && first_free != NONE_FOUND)
 		ctr = first_free;
 
 	if (!found) {
