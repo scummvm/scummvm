@@ -482,6 +482,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 	CreatureInfo *creatureInfo = nullptr;
 
 	CreatureType creatureType;
+	creatureType = kDMCreatureTypeGiantScorpion; // Value of 0 as default to avoid possible uninitialized usage
 	if (groupThing != _vm->_thingEndOfList) {
 		group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 		creatureType = group->_type;

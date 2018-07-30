@@ -3203,6 +3203,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	byte *bitmapGreenAnt = nullptr;
 	do {
 		/* Draw objects */
+		ActiveGroup *activeGroup = nullptr;
 		if (L0135_B_DrawAlcoveObjects) {
 			AL_2_viewCell = kDMViewCellAlcove; /* Index of coordinates to draw objects in alcoves */
 			cellYellowBear = _vm->returnOppositeDir(directionParam); /* Alcove is on the opposite direction of the viewing direction */
@@ -3360,7 +3361,6 @@ T0115015_DrawProjectileAsObject:
 		if ((groupThing == _vm->_thingNone) || drawCreaturesCompleted)
 			goto T0115129_DrawProjectiles; /* Skip code to draw creatures */
 
-		ActiveGroup *activeGroup;
 		if (group == nullptr) { /* If all creature data and info has not already been gathered */
 			group = (Group *)dungeon.getThingData(groupThing);
 			activeGroup = &_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()];
