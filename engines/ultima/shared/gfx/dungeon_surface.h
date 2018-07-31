@@ -109,11 +109,6 @@ public:
 	void drawRightEdge(uint distance);
 
 	/**
-	 * Draws a monster at a given distance from the player
-	 */
-	void drawMonsterAt(uint distance, uint monsterId);
-
-	/**
 	 * Draws a monster or item at a given distance from the player
 	 */
 	void drawWidget(uint widgetId, uint distance, byte color);

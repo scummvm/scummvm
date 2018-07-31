@@ -74,19 +74,6 @@ void DungeonSurface::drawRightEdge(uint distance) {
 	}
 }
 
-void DungeonSurface::drawMonsterAt(uint distance, uint monsterId) {
-	if (distance < 5) {
-		if (monsterId == 9) {
-			// Gelatinous cube
-			drawWall(distance);
-			drawLeftEdge(distance);
-			drawRightEdge(distance);
-		} else {
-			drawWidget(monsterId, distance, _edgeColor);
-		}
-	}
-}
-
 void DungeonSurface::drawWidget(uint widgetId, uint distance, byte color) {
 	_widgetFn(*this, widgetId, distance, color);
 }
