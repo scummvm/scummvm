@@ -405,8 +405,13 @@ const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream 
 	_curFrame.height = stream.readUint16BE();
 	_curFrame.stripCount = stream.readUint16BE();
 
-	if (!_curFrame.strips)
+	if (!_curFrame.strips) {
 		_curFrame.strips = new CinepakStrip[_curFrame.stripCount];
+		for (uint16 i = 0; i < _curFrame.stripCount; i++) {
+			initializeCodebook(i, 1);
+			initializeCodebook(i, 4);
+		}
+	}
 
 	debug(4, "Cinepak Frame: Width = %d, Height = %d, Strip Count = %d", _curFrame.width, _curFrame.height, _curFrame.stripCount);
 
@@ -424,7 +429,6 @@ const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream 
 		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat);
 	}
 
-	// Reset the y variable.
 	_y = 0;
 
 	for (uint16 i = 0; i < _curFrame.stripCount; i++) {
@@ -498,6 +502,19 @@ const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream 
 	}
 
 	return _curFrame.surface;
+}
+
+void CinepakDecoder::initializeCodebook(uint16 strip, byte codebookType) {
+	CinepakCodebook *codebook = (codebookType == 1) ? _curFrame.strips[strip].v1_codebook : _curFrame.strips[strip].v4_codebook;
+
+	for (uint16 i = 0; i < 256; i++) {
+		memset(codebook[i].y, 0, 4);
+		codebook[i].u = 0;
+		codebook[i].v = 0;
+
+		if (_ditherType == kDitherTypeQT)
+			ditherCodebookQT(strip, codebookType, i);
+	}
 }
 
 void CinepakDecoder::loadCodebook(Common::SeekableReadStream &stream, uint16 strip, byte codebookType, byte chunkID, uint32 chunkSize) {

@@ -179,9 +179,9 @@ public:
 			//unloadPlugin();
 	}
 
-//	virtual bool isLoaded() const = 0;	// TODO
-	virtual bool loadPlugin() = 0;	// TODO: Rename to load() ?
-	virtual void unloadPlugin() = 0;	// TODO: Rename to unload() ?
+//	virtual bool isLoaded() const = 0; // TODO
+	virtual bool loadPlugin() = 0;     // TODO: Rename to load() ?
+	virtual void unloadPlugin() = 0;   // TODO: Rename to unload() ?
 
 	/**
 	 * The following functions query information from the plugin object once

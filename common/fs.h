@@ -269,7 +269,7 @@ public:
 class FSDirectory : public Archive {
 	FSNode	_node;
 
-	String	_prefix;	// string that is prepended to each cache item key
+	String	_prefix; // string that is prepended to each cache item key
 	void setPrefix(const String &prefix);
 
 	// Caches are case insensitive, clashes are dealt with when creating

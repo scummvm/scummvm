@@ -73,6 +73,7 @@ void ScrollContainerWidget::recalc() {
 	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
+	_verticalScroll->_singleStep = kLineHeight;
 	_verticalScroll->setPos(_w - scrollbarWidth, _scrolledY+1);
 	_verticalScroll->setSize(scrollbarWidth, _limitH -2);
 }
@@ -140,7 +141,8 @@ void ScrollContainerWidget::reflowLayout() {
 }
 
 void ScrollContainerWidget::drawWidget() {
-	g_gui.theme()->drawDialogBackgroundClip(Common::Rect(_x, _y, _x + _w, _y + getHeight() - 1), getBossClipRect(), ThemeEngine::kDialogBackgroundDefault);
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + getHeight() - 1),
+	                                    ThemeEngine::kDialogBackgroundDefault);
 }
 
 bool ScrollContainerWidget::containsWidget(Widget *w) const {
@@ -152,7 +154,15 @@ bool ScrollContainerWidget::containsWidget(Widget *w) const {
 Widget *ScrollContainerWidget::findWidget(int x, int y) {
 	if (_verticalScroll->isVisible() && x >= _w - _verticalScroll->getWidth())
 		return _verticalScroll;
-	return Widget::findWidgetInChain(_firstWidget, x + _scrolledX, y + _scrolledY);
+	Widget *w = Widget::findWidgetInChain(_firstWidget, x + _scrolledX, y + _scrolledY);
+	if (w)
+		return w;
+	return this;
+}
+
+Common::Rect ScrollContainerWidget::getClipRect() const {
+	// Make sure the clipping rect contains the scrollbar so it is properly redrawn
+	return Common::Rect(getAbsX(), getAbsY(), getAbsX() + _w, getAbsY() + getHeight());
 }
 
 } // End of namespace GUI

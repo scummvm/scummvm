@@ -60,6 +60,7 @@ public:
 	int		_numEntries;
 	int		_entriesPerPage;
 	int		_currentPos;
+	int		_singleStep;
 
 public:
 	ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h);
@@ -71,6 +72,7 @@ public:
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); }
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; markAsDirty(); }
 	void handleTickle();
+	bool wantsFocus() { return true; }
 
 	// FIXME - this should be private, but then we also have to add accessors
 	// for _numEntries, _entriesPerPage and _currentPos. This again leads to the question:

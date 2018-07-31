@@ -53,6 +53,13 @@ public:
 	};
 	virtual bool setShader(int id) { return false; }
 	virtual int getShader() const { return 0; }
+	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const {
+		static const OSystem::GraphicsMode noStretchModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
+		return noStretchModes;
+	}
+	virtual int getDefaultStretchMode() const { return 0; }
+	virtual bool setStretchMode(int mode) { return false; }
+	virtual int getStretchMode() const { return 0; }
 
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const = 0;

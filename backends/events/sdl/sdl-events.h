@@ -94,6 +94,11 @@ protected:
 	SdlGraphicsManager *_graphicsManager;
 
 	/**
+	 * Search for a game controller db file and load it.
+	 */
+	void loadGameControllerMappingFile();
+
+	/**
 	 * Open the SDL joystick with the specified index
 	 *
 	 * After this function completes successfully, SDL sends events for the device.

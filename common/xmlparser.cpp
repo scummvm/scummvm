@@ -74,7 +74,7 @@ bool XMLParser::loadStream(SeekableReadStream *stream) {
 
 void XMLParser::close() {
 	delete _stream;
-	_stream = 0;
+	_stream = nullptr;
 }
 
 bool XMLParser::parserError(const String &errStr) {
@@ -299,13 +299,13 @@ bool XMLParser::closeKey() {
 }
 
 bool XMLParser::parse() {
-	if (_stream == 0)
+	if (_stream == nullptr)
 		return false;
 
 	// Make sure we are at the start of the stream.
 	_stream->seek(0, SEEK_SET);
 
-	if (_XMLkeys == 0)
+	if (_XMLkeys == nullptr)
 		buildLayout();
 
 	while (!_activeKey.empty())
@@ -373,12 +373,12 @@ bool XMLParser::parse() {
 					break;
 				}
 			} else {
-				ParserNode *node = allocNode(); //new ParserNode;
+				ParserNode *node = allocNode(); // new ParserNode;
 				node->name = _token;
 				node->ignore = false;
 				node->header = activeHeader;
 				node->depth = _activeKey.size();
-				node->layout = 0;
+				node->layout = nullptr;
 				_activeKey.push(node);
 			}
 

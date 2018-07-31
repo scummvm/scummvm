@@ -259,11 +259,12 @@ void splashScreen() {
 	logo->free();
 	delete logo;
 
+	g_system->updateScreen();
+
 	// Delay 0.6 secs
 	uint time0 = g_system->getMillis();
 	Common::Event event;
 	while (time0 + 600 > g_system->getMillis()) {
-		g_system->updateScreen();
 		(void)g_system->getEventManager()->pollEvent(event);
 		g_system->delayMillis(10);
 	}
@@ -322,6 +323,15 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
 		Common::String message = _("Could not switch to video mode: '");
 		message += ConfMan.get("gfx_mode");
+		message += "'.";
+
+		GUI::MessageDialog dialog(message);
+		dialog.runModal();
+	}
+
+	if (gfxError & OSystem::kTransactionStretchModeSwitchFailed) {
+		Common::String message = _("Could not switch to stretch mode: '");
+		message += ConfMan.get("stretch_mode");
 		message += "'.";
 
 		GUI::MessageDialog dialog(message);

@@ -57,7 +57,7 @@ protected:
 	T *_storage;
 
 public:
-	Array() : _capacity(0), _size(0), _storage(0) {}
+	Array() : _capacity(0), _size(0), _storage(nullptr) {}
 
 	/**
 	 * Constructs an array with `count` default-inserted instances of T. No
@@ -77,7 +77,7 @@ public:
 		uninitialized_fill_n(_storage, count, value);
 	}
 
-	Array(const Array<T> &array) : _capacity(array._size), _size(array._size), _storage(0) {
+	Array(const Array<T> &array) : _capacity(array._size), _size(array._size), _storage(nullptr) {
 		if (array._storage) {
 			allocCapacity(_size);
 			uninitialized_copy(array._storage, array._storage + _size, _storage);
@@ -96,7 +96,7 @@ public:
 
 	~Array() {
 		freeStorage(_storage, _size);
-		_storage = 0;
+		_storage = nullptr;
 		_capacity = _size = 0;
 	}
 
@@ -216,7 +216,7 @@ public:
 
 	void clear() {
 		freeStorage(_storage, _size);
-		_storage = 0;
+		_storage = nullptr;
 		_size = 0;
 		_capacity = 0;
 	}
@@ -310,7 +310,7 @@ protected:
 			if (!_storage)
 				::error("Common::Array: failure to allocate %u bytes", capacity * (size_type)sizeof(T));
 		} else {
-			_storage = 0;
+			_storage = nullptr;
 		}
 	}
 

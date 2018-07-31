@@ -38,6 +38,7 @@
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
+#include "gui/widgets/scrollcontainer.h"
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
@@ -72,7 +73,9 @@ enum {
 	kCmdExtraPathClear = 'PEXC',
 	kCmdGameBrowser = 'PGME',
 	kCmdSaveBrowser = 'PSAV',
-	kCmdSavePathClear = 'PSAC'
+	kCmdSavePathClear = 'PSAC',
+
+	kGraphicsTabContainerReflowCmd = 'gtcr'
 };
 
 /*
@@ -95,7 +98,7 @@ protected:
 	}
 };
 
-EditGameDialog::EditGameDialog(const String &domain, const String &desc)
+EditGameDialog::EditGameDialog(const String &domain)
 	: OptionsDialog(domain, "GameOptions") {
 	// Retrieve all game specific options.
 	const Plugin *plugin = nullptr;
@@ -106,7 +109,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 		gameId = domain;
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
-	EngineMan.findGame(gameId, &plugin);
+	PlainGameDescriptor pgd = EngineMan.findGame(gameId, &plugin);
 	if (plugin) {
 		_engineOptions = plugin->get<MetaEngine>().getExtraGuiOptions(domain);
 	} else {
@@ -120,8 +123,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.empty() && !desc.empty()) {
-		description = desc;
+	if (description.empty() && pgd.description) {
+		description = pgd.description;
 	}
 
 	// GUI:  Add tab widget
@@ -183,13 +186,15 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// 3) The graphics tab
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
+	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GameOptions_Graphics.Container", kGraphicsTabContainerReflowCmd);
+	graphicsContainer->setTarget(this);
 
 	if (g_system->getOverlayWidth() > 320)
-		_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _("Override global graphic settings"), 0, kCmdGlobalGraphicsOverride);
+		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _("Override global graphic settings"), 0, kCmdGlobalGraphicsOverride);
 	else
-		_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), 0, kCmdGlobalGraphicsOverride);
+		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), 0, kCmdGlobalGraphicsOverride);
 
-	addGraphicControls(tab, "GameOptions_Graphics.");
+	addGraphicControls(graphicsContainer, "GameOptions_Graphics_Container.");
 
 	//
 	// 4) The audio tab
@@ -294,6 +299,11 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	new ButtonWidget(this, "GameOptions.Ok", _("OK"), 0, kOKCmd);
 }
 
+void EditGameDialog::setupGraphicsTab() {
+	OptionsDialog::setupGraphicsTab();
+	_globalGraphicsOverride->setVisible(true);
+}
+
 void EditGameDialog::open() {
 	OptionsDialog::open();
 
@@ -384,35 +394,35 @@ void EditGameDialog::open() {
 
 void EditGameDialog::apply() {
 	ConfMan.set("description", _descriptionWidget->getEditString(), _domain);
-	
+
 	Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
 	if (lang < 0)
 		ConfMan.removeKey("language", _domain);
 	else
 		ConfMan.set("language", Common::getLanguageCode(lang), _domain);
-	
+
 	String gamePath(_gamePathWidget->getLabel());
 	if (!gamePath.empty())
 		ConfMan.set("path", gamePath, _domain);
-	
+
 	String extraPath(_extraPathWidget->getLabel());
 	if (!extraPath.empty() && (extraPath != _c("None", "path")))
 		ConfMan.set("extrapath", extraPath, _domain);
 	else
 		ConfMan.removeKey("extrapath", _domain);
-	
+
 	String savePath(_savePathWidget->getLabel());
 	if (!savePath.empty() && (savePath != _("Default")))
 		ConfMan.set("savepath", savePath, _domain);
 	else
 		ConfMan.removeKey("savepath", _domain);
-	
+
 	Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
 	if (platform < 0)
 		ConfMan.removeKey("platform", _domain);
 	else
 		ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
-	
+
 	// Set the state of engine-specific checkboxes
 	for (uint i = 0; i < _engineOptions.size(); i++) {
 		ConfMan.setBool(_engineOptions[i].configOption, _engineCheckboxes[i]->getState(), _domain);

@@ -195,18 +195,18 @@ static inline bool diffYUV(int yuv1, int yuv2) {
 	int mask;
 
 	diff = ((yuv1 & Umask) - (yuv2 & Umask));
-	mask = diff >> 31; // -1 if value < 0, 0 otherwise
-	diff = (diff ^ mask) - mask; //-1: ~value + 1; 0: value
+	mask = diff >> 31;           // -1 if value < 0, 0 otherwise
+	diff = (diff ^ mask) - mask; // -1: ~value + 1; 0: value
 	if (diff > trU) return true;
 
 	diff = ((yuv1 & Vmask) - (yuv2 & Vmask));
-	mask = diff >> 31; // -1 if value < 0, 0 otherwise
-	diff = (diff ^ mask) - mask; //-1: ~value + 1; 0: value
+	mask = diff >> 31;           // -1 if value < 0, 0 otherwise
+	diff = (diff ^ mask) - mask; // -1: ~value + 1; 0: value
 	if (diff > trV) return true;
 
 	diff = ((yuv1 & Ymask) - (yuv2 & Ymask));
-	mask = diff >> 31; // -1 if value < 0, 0 otherwise
-	diff = (diff ^ mask) - mask; //-1: ~value + 1; 0: value
+	mask = diff >> 31;           // -1 if value < 0, 0 otherwise
+	diff = (diff ^ mask) - mask; // -1: ~value + 1; 0: value
 	if (diff > trY) return true;
 
 	return false;

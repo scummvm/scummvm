@@ -45,7 +45,7 @@ namespace Common {
 
 QuickTimeParser::QuickTimeParser() {
 	_beginOffset = 0;
-	_fd = 0;
+	_fd = nullptr;
 	_scaleFactorX = 1;
 	_scaleFactorY = 1;
 	_resFork = new MacResManager();
@@ -166,7 +166,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readSMI,     MKTAG('S', 'M', 'I', ' ') },
 		{ &QuickTimeParser::readDefault, MKTAG('g', 'm', 'h', 'd') },
 		{ &QuickTimeParser::readLeaf,    MKTAG('g', 'm', 'i', 'n') },
-		{ 0, 0 }
+		{ nullptr, 0 }
 	};
 
 	_parseTable = p;
@@ -805,13 +805,13 @@ void QuickTimeParser::close() {
 	if (_disposeFileHandle == DisposeAfterUse::YES)
 		delete _fd;
 
-	_fd = 0;
+	_fd = nullptr;
 }
 
 QuickTimeParser::SampleDesc::SampleDesc(Track *parentTrack, uint32 codecTag) {
 	_parentTrack = parentTrack;
 	_codecTag = codecTag;
-	_extraData = 0;
+	_extraData = nullptr;
 	_objectTypeMP4 = 0;
 }
 
@@ -821,16 +821,16 @@ QuickTimeParser::SampleDesc::~SampleDesc() {
 
 QuickTimeParser::Track::Track() {
 	chunkCount = 0;
-	chunkOffsets = 0;
+	chunkOffsets = nullptr;
 	timeToSampleCount = 0;
-	timeToSample = 0;
+	timeToSample = nullptr;
 	sampleToChunkCount = 0;
-	sampleToChunk = 0;
+	sampleToChunk = nullptr;
 	sampleSize = 0;
 	sampleCount = 0;
-	sampleSizes = 0;
+	sampleSizes = nullptr;
 	keyframeCount = 0;
-	keyframes = 0;
+	keyframes = nullptr;
 	timeScale = 0;
 	width = 0;
 	height = 0;

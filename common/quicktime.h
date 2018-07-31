@@ -79,7 +79,7 @@ public:
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
 
 	/** Find out if this parser has an open file handle */
-	bool isOpen() const { return _fd != 0; }
+	bool isOpen() const { return _fd != nullptr; }
 
 protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.

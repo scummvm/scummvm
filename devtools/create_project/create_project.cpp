@@ -300,7 +300,7 @@ int main(int argc, char *argv[]) {
 		for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 			j->enable = false;
 	}
-	
+
 	// Disable engines for which we are missing dependencies
 	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
 		if (i->enable) {

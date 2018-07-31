@@ -101,7 +101,7 @@ public:
 
 	/**
 	 * A (subset) of the graphic manager's state. This is used when switching
-	 * between different SDL graphic managers on runtime.
+	 * between different SDL graphic managers at runtime.
 	 */
 	struct State {
 		int screenWidth, screenHeight;

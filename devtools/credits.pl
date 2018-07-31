@@ -137,44 +137,20 @@ sub html_entities_to_rtf {
 	$text =~ s/&oacute;/\\'97/g;
 	$text =~ s/&oslash;/\\'bf/g;
 	$text =~ s/&aring;/\\'8c/g;
-	# The following numerical values are octal!
+	# The following numerical values are decimal!
 	$text =~ s/&#322;/\\uc0\\u322 /g;
-	$text =~ s/&Scaron;/\\uc0\\u540 /g;
+	$text =~ s/&#347;/\\uc0\\u347 /g;
+	$text =~ s/&Scaron;/\\uc0\\u352 /g;
 
 	# Back to hex numbers
 	$text =~ s/&ntilde;/\\'96/g;
 
 	$text =~ s/&auml;/\\'8a/g;
-	$text =~ s/&euml;/\\'eb/g;
+	$text =~ s/&euml;/\\'91/g;
 	$text =~ s/&ouml;/\\'9a/g;
 	$text =~ s/&uuml;/\\'9f/g;
 
 	$text =~ s/&amp;/&/g;
-
-	return $text;
-}
-
-# Convert HTML entities to TeX codes
-sub html_entities_to_tex {
-	my $text = shift;
-
-	$text =~ s/&aacute;/\\'a/g;
-	$text =~ s/&eacute;/\\'e/g;
-	$text =~ s/&iacute;/\\'i/g;
-	$text =~ s/&igrave;/\\`\\i/g;
-	$text =~ s/&oacute;/\\'o/g;
-	$text =~ s/&oslash;/{\\o}/g;
-	$text =~ s/&aring;/\\aa /g;
-	$text =~ s/&#322;/{\\l}/g;
-	$text =~ s/&Scaron;/{\\v S}/g;
-	$text =~ s/&ntilde;/\\˜n/g;
-
-	$text =~ s/&auml;/\\"a/g;
-	$text =~ s/&ouml;/\\"o/g;
-	$text =~ s/&euml;/\\"e/g;
-	$text =~ s/&uuml;/\\"u/g;
-
-	$text =~ s/&amp;/\\&/g;
 
 	return $text;
 }

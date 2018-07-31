@@ -47,11 +47,11 @@ public:
 	 *  @param lengths Lengths of the individual codes.
 	 *  @param symbols The symbols. If 0, assume they are identical to the code indices.
 	 */
-	Huffman(uint8 maxLength, uint32 codeCount, const uint32 *codes, const uint8 *lengths, const uint32 *symbols = 0);
+	Huffman(uint8 maxLength, uint32 codeCount, const uint32 *codes, const uint8 *lengths, const uint32 *symbols = nullptr);
 	~Huffman();
 
 	/** Modify the codes' symbols. */
-	void setSymbols(const uint32 *symbols = 0);
+	void setSymbols(const uint32 *symbols = nullptr);
 
 	/** Return the next symbol in the bitstream. */
 	template<class BITSTREAM>

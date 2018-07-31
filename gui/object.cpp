@@ -67,4 +67,8 @@ void GuiObject::removeWidget(Widget *del) {
 	}
 }
 
+Common::Rect GuiObject::getClipRect() const {
+	return Common::Rect(getAbsX(), getAbsY(), getAbsX() + getWidth(), getAbsY() + getHeight());
+}
+
 } // End of namespace GUI

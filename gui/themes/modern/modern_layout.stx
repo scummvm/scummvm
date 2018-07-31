@@ -289,6 +289,11 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+	<dialog name = 'GlobalOptions_Graphics_Container' overlays = 'GlobalOptions_Graphics.Container'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<!-- ResidualVM - Unused
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
@@ -304,6 +309,14 @@
 						type = 'OptionsLabel'
 				/>
 				<widget name = 'grRenderPopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'grStretchModePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grStretchModePopup'
 						type = 'PopUp'
 				/>
 			</layout>

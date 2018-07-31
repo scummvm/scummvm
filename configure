@@ -392,6 +392,16 @@ define_in_config_if_yes() {
 	fi
 }
 
+define_in_config_if_no() {
+	if test "$1" = no ; then
+		add_line_to_config_h "#define $2"
+		add_line_to_config_mk "$2 = 1"
+	else
+		add_line_to_config_h "#undef $2"
+		add_line_to_config_mk "# $2 = 1"
+	fi
+}
+
 #
 # Determine sdl-config
 #
@@ -1475,7 +1485,7 @@ dreamcast)
 ds)
 	_host_os=ds
 	_host_cpu=arm
-	_host_alias=arm-eabi
+	_host_alias=arm-none-eabi
 	;;
 gamecube)
 	_host_os=gamecube
@@ -1774,6 +1784,12 @@ riscos)
 		echo "Please set GCCSDK_INSTALL_ENV in your environment. export GCCSDK_INSTALL_ENV=<path to GCCSDK_INSTALL_ENV>"
 		exit 1
 	fi
+
+	if test -e "$GCCSDK_INSTALL_ENV/bin/tokenize"; then
+		add_line_to_config_mk "TOKENIZE := $GCCSDK_INSTALL_ENV/bin/tokenize"
+	elif `which tokenize >/dev/null 2>&1`; then
+		add_line_to_config_mk "TOKENIZE := tokenize"
+	fi
 	;;
 tizen)
 	if test -z "$TIZEN_ROOTSTRAP"; then
@@ -2039,7 +2055,7 @@ esac
 
 # If possible, we want to use -Wglobal-constructors
 # However, not all compilers support that, so check whether the active one does.
-echocheck "whether -Wglobal-constructors work"
+echocheck "whether C++ compiler accepts -Wglobal-constructors"
 cat > $TMPC << EOF
 int main() { return 0; }
 EOF
@@ -2056,7 +2072,7 @@ echo $_global_constructors
 # change the way we instantiate the singleton classes as done in PR #967.
 # Note: we check the -Wundefined-var-template as gcc does not error out on unknown
 # -Wno-xxx flags.
-echocheck "whether -Wno-undefined-var-template work"
+echocheck "whether C++ compiler accepts -Wno-undefined-var-template"
 cat > $TMPC << EOF
 int main() { return 0; }
 EOF
@@ -2067,13 +2083,27 @@ if test "$_no_undefined_var_template" = yes; then
 fi
 echo $_no_undefined_var_template
 
+# Vanilla clang 6 enables the new -Wpragma-pack which warns when leaving an
+# included file which changes the current alignment.
+# As our common/pack-{start,end}.h trigger this we disable this warning.
+# Because there is no correlation between the version reported by Apple Xcode
+# clang and vanilla clang we cannot rely on the __clang_major__/clang_minor__
+# macros.
+# Note: as above, we check for -Wpragma-pack as not all compilers error out on
+# unknown -Wno-xxx flags.
+echocheck "whether C++ compiler accepts -Wno-pragma-pack"
+echo "int main() { return 0; }" >$TMPC
+cc_check -Wpragma-pack -Werror && _no_pragma_pack=yes
+test "$_no_pragma_pack" = yes && append_var CXXFLAGS "-Wno-pragma-pack"
+echo $_no_pragma_pack
+
 echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
 if `which $_host_alias-strings >/dev/null 2>&1`; then
-_strings=$_host_alias-strings
-echo yes >> "$TMPLOG"
+	_strings=$_host_alias-strings
+	echo yes >> "$TMPLOG"
 else
-_strings=strings
-echo no >> "$TMPLOG"
+	_strings=strings
+	echo no >> "$TMPLOG"
 fi
 
 #
@@ -2555,7 +2585,8 @@ case $_host_os in
 		append_var DEFINES "-DARM"
 		append_var DEFINES "-DNONSTANDARD_PORT"
 		append_var CXXFLAGS "-isystem $DEVKITPRO/libnds/include"
-		append_var CXXFLAGS "-isystem $DEVKITPRO/devkitARM/arm-eabi/include"
+		append_var CXXFLAGS "-isystem $DEVKITPRO/portlibs/nds/include"
+		append_var CXXFLAGS "-isystem $DEVKITPRO/portlibs/armv5te/include"
 		append_var CXXFLAGS "-mcpu=arm9tdmi"
 		append_var CXXFLAGS "-mtune=arm9tdmi"
 		append_var CXXFLAGS "-fomit-frame-pointer"
@@ -2564,9 +2595,8 @@ case $_host_os in
 		append_var CXXFLAGS "-fdata-sections"
 		append_var CXXFLAGS "-fno-strict-aliasing"
 		append_var CXXFLAGS "-fuse-cxa-atexit"
-		append_var LDFLAGS "-specs=ds_arm9.specs"
 		append_var LDFLAGS "-mthumb-interwork"
-		append_var LDFLAGS "-mno-fpu"
+		append_var LDFLAGS "-mfloat-abi=soft"
 		append_var LDFLAGS "-Wl,-Map,map.txt"
 		if test "$_dynamic_modules" = no ; then
 			append_var LDFLAGS "-Wl,--gc-sections"
@@ -2576,6 +2606,9 @@ case $_host_os in
 			# append_var LDFLAGS "-Wl,--retain-symbols-file,ds.syms"
 		fi
 		append_var LDFLAGS "-L$DEVKITPRO/libnds/lib"
+		append_var LDFLAGS "-L$DEVKITPRO/portlibs/nds/lib"
+		append_var LDFLAGS "-L$DEVKITPRO/portlibs/armv5te/lib"
+		append_var LIBS "-specs=ds_arm9.specs"
 		append_var LIBS "-lnds9"
 		;;
 	freebsd*)
@@ -3544,7 +3577,7 @@ esac
 # Enable High resolution engines (>320x240) support only for backends which support it
 #
 case $_host in
-	gcw0)
+	ds | gcw0)
 		if test "$_highres" = yes ; then
 			_highres=yes
 		else
@@ -3727,7 +3760,7 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 		append_var DEFINES "-DUNCACHED_PLUGINS"
 		append_var DEFINES "-DELF_NO_MEM_MANAGER"
 _mak_plugins='
-PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mno-fpu
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mfloat-abi=soft
 '
 		;;
 	freebsd*)
@@ -4024,7 +4057,7 @@ fi
 define_in_config_if_yes "$_flac" 'USE_FLAC'
 echo "$_flac"
 
-# Add the link to ogg only after verbs tremor and flac as it might be used by those.
+# Add the link to ogg only after vorbis, tremor and flac as it might be used by those.
 if test "$_ogg" = yes ; then
 	append_var LIBS "$OGG_LIBS -logg"
 	append_var INCLUDES "$OGG_CFLAGS"
@@ -5417,6 +5450,7 @@ cat > config.h << EOF
 $_config_h_data
 
 /* Data types */
+#ifndef SCUMMVM_DONT_DEFINE_TYPES
 typedef unsigned $type_1_byte byte;
 typedef unsigned int uint;
 typedef unsigned $type_1_byte uint8;
@@ -5427,6 +5461,7 @@ typedef signed $type_1_byte int8;
 typedef signed $type_2_byte int16;
 typedef signed $type_4_byte int32;
 typedef signed $type_8_byte int64;
+#endif
 
 typedef $type_ptr  uintptr;
 

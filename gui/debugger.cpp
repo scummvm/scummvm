@@ -404,17 +404,17 @@ void Debugger::splitCommand(char *input, int &argc, const char **argv) {
 	byte c;
 	enum states { DULL, IN_WORD, IN_STRING } state = DULL;
 	const char *paramStart = nullptr;
-	
+
 	argc = 0;
 	for (char *p = input; *p; ++p) {
 		c = (byte)*p;
 
 		switch (state) {
-		case DULL: 
+		case DULL:
 			// not in a word, not in a double quoted string
 			if (isspace(c))
 				break;
-			
+
 			// not a space -- if it's a double quote we go to IN_STRING, else to IN_WORD
 			if (c == '"') {
 				state = IN_STRING;

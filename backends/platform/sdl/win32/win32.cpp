@@ -150,6 +150,37 @@ bool OSystem_Win32::openUrl(const Common::String &url) {
 	return true;
 }
 
+void OSystem_Win32::logMessage(LogMessageType::Type type, const char *message) {
+	OSystem_SDL::logMessage(type, message);
+
+#if defined( USE_WINDBG )
+	OutputDebugString(message);
+#endif
+}
+
+Common::String OSystem_Win32::getSystemLanguage() const {
+#if defined(USE_DETECTLANG) && defined(USE_TRANSLATION)
+	// We can not use "setlocale" (at least not for MSVC builds), since it
+	// will return locales like: "English_USA.1252", thus we need a special
+	// way to determine the locale string for Win32.
+	char langName[9];
+	char ctryName[9];
+
+	const LCID languageIdentifier = GetUserDefaultUILanguage();
+
+	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
+		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
+		Common::String localeName = langName;
+		localeName += "_";
+		localeName += ctryName;
+
+		return localeName;
+	}
+#endif // USE_DETECTLANG
+	// Falback to SDL implementation
+	return OSystem_SDL::getSystemLanguage();
+}
+
 Common::String OSystem_Win32::getScreenshotsPath() {
 	Common::String screenshotsPath = ConfMan.get("screenshotpath");
 	if (!screenshotsPath.empty()) {

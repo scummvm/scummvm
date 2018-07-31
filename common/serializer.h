@@ -34,7 +34,7 @@ namespace Common {
 	template<typename T> \
 	void syncAs ## SUFFIX(T &val, Version minVersion = 0, Version maxVersion = kLastVersion) { \
 		if (_version < minVersion || _version > maxVersion) \
-			return;	\
+			return; \
 		if (_loadStream) \
 			val = static_cast<T>(_loadStream->read ## SUFFIX()); \
 		else { \
@@ -178,7 +178,7 @@ public:
 	 */
 	void skip(uint32 size, Version minVersion = 0, Version maxVersion = kLastVersion) {
 		if (_version < minVersion || _version > maxVersion)
-			return;	// Ignore anything which is not supposed to be present in this save game version
+			return; // Ignore anything which is not supposed to be present in this save game version
 
 		_bytesSynced += size;
 		if (isLoading())
@@ -194,7 +194,7 @@ public:
 	 */
 	void syncBytes(byte *buf, uint32 size, Version minVersion = 0, Version maxVersion = kLastVersion) {
 		if (_version < minVersion || _version > maxVersion)
-			return;	// Ignore anything which is not supposed to be present in this save game version
+			return; // Ignore anything which is not supposed to be present in this save game version
 
 		if (isLoading())
 			_loadStream->read(buf, size);
@@ -217,7 +217,7 @@ public:
 	 */
 	bool matchBytes(const char *magic, byte size, Version minVersion = 0, Version maxVersion = kLastVersion) {
 		if (_version < minVersion || _version > maxVersion)
-			return true;	// Ignore anything which is not supposed to be present in this save game version
+			return true; // Ignore anything which is not supposed to be present in this save game version
 
 		bool match;
 		if (isSaving()) {
@@ -238,7 +238,7 @@ public:
 	 */
 	void syncString(String &str, Version minVersion = 0, Version maxVersion = kLastVersion) {
 		if (_version < minVersion || _version > maxVersion)
-			return;	// Ignore anything which is not supposed to be present in this save game version
+			return; // Ignore anything which is not supposed to be present in this save game version
 
 		if (isLoading()) {
 			char c;

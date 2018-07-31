@@ -75,7 +75,7 @@ bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long
  *
  * @return true on success (Z_OK or Z_STREAM_END), false otherwise.
  */
-bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen, const byte *dict = 0, uint dictLen = 0);
+bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen, const byte *dict = nullptr, uint dictLen = 0);
 
 /**
  * Wrapper around zlib's inflate functions. This function will call the

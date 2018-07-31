@@ -42,6 +42,7 @@ enum Language {
 	EN_GRB,
 	EN_USA,
 	ET_EST,
+	FI_FIN,
 	FR_FRA,
 	DE_DEU,
 	GR_GRE,

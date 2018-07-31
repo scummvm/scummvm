@@ -149,13 +149,14 @@ public:
 	Win32AudioCDManager();
 	~Win32AudioCDManager();
 
-	bool open();
-	void close();
-	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
+	virtual bool open();
+	virtual void close();
+	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
+		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 
 protected:
-	bool openCD(int drive);
-	bool openCD(const Common::String &drive);
+	virtual bool openCD(int drive);
+	virtual bool openCD(const Common::String &drive);
 
 private:
 	bool loadTOC();
@@ -254,9 +255,10 @@ void Win32AudioCDManager::close() {
 	_tocEntries.clear();
 }
 
-bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
+bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
+		Audio::Mixer::SoundType soundType) {
 	// Prefer emulation
-	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate))
+	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
 		return true;
 
 	// If we're set to only emulate, or have no CD drive, return here
@@ -289,7 +291,7 @@ bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int dura
 	_emulating = true;
 
 	_mixer->playStream(
-	    Audio::Mixer::kMusicSoundType,
+	    soundType,
 	    &_handle,
 	    Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
 	    -1,

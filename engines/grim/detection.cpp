@@ -596,7 +596,7 @@ public:
 		_guiOptions = GUIO_NOMIDI;
 	}
 
-	virtual GameDescriptor findGame(const char *gameid) const override {
+	PlainGameDescriptor findGame(const char *gameid) const override {
 		return Engines::findGameID(gameid, _gameIds, obsoleteGameIDsTable);
 	}
 

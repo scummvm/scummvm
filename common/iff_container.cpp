@@ -34,7 +34,7 @@ IFFParser::~IFFParser() {
 	if (_disposeStream) {
 		delete _stream;
 	}
-	_stream = 0;
+	_stream = nullptr;
 }
 
 void IFFParser::setInputStream(ReadStream *stream) {

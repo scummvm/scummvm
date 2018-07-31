@@ -20,38 +20,40 @@
  *
  */
 
-#ifndef PLATFORM_SDL_MACOSX_H
-#define PLATFORM_SDL_MACOSX_H
+#ifndef GUI_UNKNOWN_GAME_DIALOG_H
+#define GUI_UNKNOWN_GAME_DIALOG_H
 
-#include "backends/platform/sdl/posix/posix.h"
+#include "gui/dialog.h"
+#include "common/array.h"
+#include "engines/game.h"
 
-class OSystem_MacOSX : public OSystem_POSIX {
+namespace GUI {
+
+class StaticTextWidget;
+class ScrollContainerWidget;
+class ButtonWidget;
+
+class UnknownGameDialog : public Dialog {
 public:
-	OSystem_MacOSX();
+	UnknownGameDialog(const DetectionResults &detectionResults);
 
-	virtual bool hasFeature(Feature f);
+private:
+	void rebuild();
 
-	virtual bool displayLogFile();
+	// Dialog API
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void reflowLayout() override;
 
-	virtual bool hasTextInClipboard();
-	virtual Common::String getTextFromClipboard();
-	virtual bool setTextInClipboard(const Common::String &text);
+	Common::String generateBugtrackerURL();
 
-	virtual bool openUrl(const Common::String &url);
-
-	virtual Common::String getSystemLanguage() const;
-
-	virtual void init();
-	virtual void initBackend();
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-
-	//Screenshots
-	virtual Common::String getScreenshotsPath();
-
-protected:
-	// Override createAudioCDManager() to get our Mac-specific
-	// version.
-	virtual AudioCDManager *createAudioCDManager();
+	const DetectionResults &_detectionResults;
+	ScrollContainerWidget *_textContainer;
+	Common::Array<StaticTextWidget *> _textWidgets;
+	ButtonWidget* _openBugTrackerUrlButton;
+	ButtonWidget* _copyToClipboardButton;
+	ButtonWidget* _closeButton;
 };
+
+} // End of namespace GUI
 
 #endif
