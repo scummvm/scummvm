@@ -189,10 +189,10 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 			s.drawWall(distance);
 		if (tile._tileNum == 7)
 			// Ladder down
-			s.drawWidget(27, distance, game->_edgeColor);
+			s.drawWidget(27, distance + 1, game->_edgeColor);
 		if (tile._tileNum == 6)
 			// Ladder up
-			s.drawWidget(26, distance, game->_edgeColor);
+			s.drawWidget(26, distance + 1, game->_edgeColor);
 
 		monster->draw(s, distance);
 	} else {
@@ -209,17 +209,17 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 		case 6:
 			// Ladder down
 			if (map->_direction == DIR_UP || map->_direction == DIR_DOWN) {
-				s.drawLadderDownFaceOn(distance);
+				s.drawLadderDownFaceOn(distance + 1);
 			} else {
-				s.drawLadderDownSideOn(distance);
+				s.drawLadderDownSideOn(distance + 1);
 			}
 			break;
 		case 7:
 			// Ladder up
 			if (map->_direction == DIR_UP || map->_direction == DIR_DOWN) {
-				s.drawLadderUpFaceOn(distance);
+				s.drawLadderUpFaceOn(distance + 1);
 			} else {
-				s.drawLadderUpSideOn(distance);
+				s.drawLadderUpSideOn(distance + 1);
 			}
 			break;
 		case 8:
