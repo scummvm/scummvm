@@ -134,7 +134,7 @@ Subtitles::~Subtitles() {
 		delete _subsFont;
 		_subsFont = nullptr;
 	}
-    // _subsBgFont is only used for the internal subtitles font case
+	// _subsBgFont is only used for the internal subtitles font case
 	if (_subsBgFont != nullptr) {
 		_subsBgFont->close();
 		delete _subsBgFont;
@@ -146,9 +146,9 @@ Subtitles::~Subtitles() {
 // Init is kept separated from constructor to allow not loading up resources if subtitles system is disabled
 //
 void Subtitles::init(void) {
-    if (_subtitlesSystemInactive) {
-        return;
-    }
+	if (_subtitlesSystemInactive) {
+		return;
+	}
 	//
 	// Loading text resources
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
@@ -180,13 +180,13 @@ void Subtitles::init(void) {
 	}
 
 	if (!_subsFontsExternal) {
-        _subsBgFont = new Font(_vm);
-        if (_subsFontsLoaded && _subsBgFont ->open(SUBTITLES_FONT_FILENAME_INTERNAL, 640, 480, -1, 0, 0)) { // TODO dark color? --- color does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here? ?? - we should give the original color here. What is it for TAHOMA?
-            _subsBgFont ->setSpacing(1, 0);
-            _subsBgFont ->setBlackColor();
-        } else {
-            _subsFontsLoaded = false;
-        }
+		_subsBgFont = new Font(_vm);
+		if (_subsFontsLoaded && _subsBgFont ->open(SUBTITLES_FONT_FILENAME_INTERNAL, 640, 480, -1, 0, 0)) { // TODO dark color? --- color does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here? ?? - we should give the original color here. What is it for TAHOMA?
+			_subsBgFont ->setSpacing(1, 0);
+			_subsBgFont ->setBlackColor();
+		} else {
+			_subsFontsLoaded = false;
+		}
 	}
 	//Done - Initializing/Loading Subtitles' Fonts
 	//
@@ -201,7 +201,7 @@ void Subtitles::init(void) {
 }
 
 void Subtitles::setSubtitlesSystemInactive(bool flag) {
-    _subtitlesSystemInactive = flag;
+	_subtitlesSystemInactive = flag;
 }
 
 /**
@@ -226,9 +226,9 @@ int Subtitles::getIdxForSubsTreName(const Common::String &treName) const {
 * Returns the dialogue quote, but also sets the private _currentSubtitleTextFull member
 */
 const char *Subtitles::getInGameSubsText(int actorId, int speech_id)  {
-    if (_subtitlesSystemInactive) {
-        return "";
-    }
+	if (_subtitlesSystemInactive) {
+		return "";
+	}
 
 	int32 id = 10000 * actorId + speech_id;
 	if (!_gameSubsResourceEntriesFound[0]) {
@@ -250,9 +250,9 @@ const char *Subtitles::getInGameSubsText(int actorId, int speech_id)  {
 * Returns the dialogue quote, but also sets the private _currentSubtitleTextFull member
 */
 const char *Subtitles::getOuttakeSubsText(const Common::String &outtakesName, int frame) {
-    if (_subtitlesSystemInactive) {
-        return "";
-    }
+	if (_subtitlesSystemInactive) {
+		return "";
+	}
 
 	int fileIdx = getIdxForSubsTreName(outtakesName);
 	if (fileIdx == -1 || !_gameSubsResourceEntriesFound[fileIdx]) {
@@ -291,9 +291,9 @@ void Subtitles::setGameSubsText(Common::String dbgQuote) {
 * @return true if the member was set now, false if the member was already set
 */
 bool Subtitles::show() {
-    if (_subtitlesSystemInactive) {
-        return false;
-    }
+	if (_subtitlesSystemInactive) {
+		return false;
+	}
 
 	if (_isVisible) {
 		return false;
@@ -307,9 +307,9 @@ bool Subtitles::show() {
 * @return true if the member was cleared, false if it was already clear.
 */
 bool Subtitles::hide() {
-    if (_subtitlesSystemInactive) {
-        return false;
-    }
+	if (_subtitlesSystemInactive) {
+		return false;
+	}
 
 	if (!_isVisible) {
 		return false;
@@ -373,25 +373,24 @@ void Subtitles::draw(Graphics::Surface &s) {
 		_subtitlesQuoteChanged = false;
 	}
 
-    if (_subsFontsExternal) {
-        for (int i = 0; i < _currentSubtitleLines; ++i) {
-            _subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i]);
-        }
-    }
-    else {
-        // INTERNAL FONT. NEEDS HACK (_subsBgFont) FOR SHADOW EFFECT
-        for (int i = 0; i < _currentSubtitleLines; ++i) {
-            _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i] - 1);
-            _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i] + 1);
-            _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[i] + 1);
-            _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[i] - 1);
-            if (_subtitleLineScreenX[i] > 0) {
-                _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[i] - 1);
-                _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[i] + 1);
-            }
-            _subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i],  _subtitleLineScreenY[i]);
-        }
-    }
+	if (_subsFontsExternal) {
+		for (int i = 0; i < _currentSubtitleLines; ++i) {
+			_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i]);
+		}
+	} else {
+		// INTERNAL FONT. NEEDS HACK (_subsBgFont) FOR SHADOW EFFECT
+		for (int i = 0; i < _currentSubtitleLines; ++i) {
+			_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i] - 1);
+			_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i] + 1);
+			_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[i] + 1);
+			_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[i] - 1);
+			if (_subtitleLineScreenX[i] > 0) {
+				_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[i] - 1);
+				_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[i] + 1);
+			}
+			_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i],  _subtitleLineScreenY[i]);
+		}
+	}
 }
 
 /**
@@ -552,7 +551,7 @@ void Subtitles::reset() {
 		_gameSubsResourceEntriesFound[i] = false;
 	}
 
-    if (_subsFont != nullptr) {
+	if (_subsFont != nullptr) {
 		_subsFont->close();
 		delete _subsFont;
 		_subsFont = nullptr;

@@ -684,7 +684,7 @@ void BladeRunnerEngine::shutdown() {
 	}
 
 	if(isArchiveOpen("SUBTITLES.MIX")) {
-        closeArchive("SUBTITLES.MIX");
+		closeArchive("SUBTITLES.MIX");
 	}
 	if (_subtitles) {
 		delete _subtitles;
