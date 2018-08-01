@@ -68,9 +68,7 @@ public:
 
 	void setSpacing(int spacing1, int spacing2);
 	void setColor(uint16 color);
-	#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-	void setBlackColor(); // for subtitles (when using internal font) - emulate shadows
-	#endif // !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+	void setBlackColor(); // for subtitles (when using internal font) - in order to emulate shadows
 
 	void draw(const Common::String &text, Graphics::Surface &surface, int x, int y) const;
 	void drawColor(const Common::String &text, Graphics::Surface &surface, int x, int y, uint16 color);

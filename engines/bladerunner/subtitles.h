@@ -50,16 +50,15 @@ class Subtitles {
 	static const int kMaxWidthPerLineToAutoSplitThresholdPx = 610;
 	static const int kMaxTextResourceEntries = 1 + 25; // Support in-game subs (1) and all possible VQAs (26) with spoken dialogue!
 	static const Common::String SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
-	static const Common::String SUBTITLES_FONT_FILENAME;
+	static const Common::String SUBTITLES_FONT_FILENAME_EXTERNAL;
+	static const Common::String SUBTITLES_FONT_FILENAME_INTERNAL;
 
 
 	BladeRunnerEngine *_vm;
 
 	TextResource    *_vqaSubsTextResourceEntries[kMaxTextResourceEntries];
 	Font            *_subsFont;
-#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	Font            *_subsBgFont; // needed for internal font to be used as a shadow effect and make subtitles more legible in certain situations
-#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 
 	bool                 _isVisible;
 	Common::String       _currentSubtitleTextFull;
@@ -70,8 +69,9 @@ class Subtitles {
 	int _currentSubtitleLines;
 	bool _subtitlesQuoteChanged;
 
-	bool _gameSubsResourceEntriesFound[kMaxTextResourceEntries];          // false if a TRE file did not open successfully
-	bool _subsFontsLoaded;                                          // false if external fonts did not load, or internal fonts (fore and background) did not load
+	bool _gameSubsResourceEntriesFound[kMaxTextResourceEntries];    // false if a TRE file did not open successfully
+	bool _subsFontsExternal;                                        // true if we are using the external font, false otherwise
+	bool _subsFontsLoaded;                                          // false if external fonts and internal fonts (fore and background) did not load
 	bool _subtitlesSystemInactive;                                  // true if the whole subtitles subsystem should be disabled (due to missing required resources)
 
 public:

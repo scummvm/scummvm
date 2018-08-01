@@ -39,8 +39,6 @@
 #define BLADERUNNER_DEBUG_CONSOLE 0
 #define BLADERUNNER_DEBUG_GAME 0
 
-#define BLADERUNNER_SUBTITLES_EXTERNAL_FONT         1
-
 namespace Common {
 struct Event;
 }
