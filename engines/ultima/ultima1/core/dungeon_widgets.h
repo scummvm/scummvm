@@ -50,8 +50,9 @@ public:
 	/**
 	 * Constructor
 	 */
-	U1DungeonMonster(Shared::Game *game, Shared::Map *map, DungeonWidgetId monsterId, int hitPoints) :
-		Shared::DungeonMonster(game, map, hitPoints), _monsterId(monsterId) {}
+	U1DungeonMonster(Shared::Game *game, Shared::Map *map, DungeonWidgetId monsterId,
+		const Point &pt, int hitPoints) :
+		Shared::DungeonMonster(game, map, pt, hitPoints), _monsterId(monsterId) {}
 
 	/**
 	 * Destructor
