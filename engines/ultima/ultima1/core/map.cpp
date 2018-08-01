@@ -359,8 +359,8 @@ void Ultima1Map::spawnMonster() {
 	// Pick a random position for the monster, trying again up to 500 times
 	// if the chosen position isn't a valid place for the monster
 	for (int tryNum = 0; tryNum < 500; ++tryNum) {
-		Point newPos(getRandomNumber(242) % 9 + 1, getRandomNumber(242) % 9 + 1);
-		newPos.x = 1;//****DEBUG****
+		Point newPos(_game->getRandomNumber(242) % 9 + 1, _game->getRandomNumber(242) % 9 + 1);
+		// newPos.x = 1; //****DEBUG****
 		getTileAt(newPos, &tile);
 
 		if (tile._tileNum == 0 && tile._widgetNum == -1) {
@@ -374,7 +374,7 @@ void Ultima1Map::spawnMonster() {
 void Ultima1Map::spawnMonsterAt(const Point &pt) {
 	// Try up 50 times to randomly pick a monster not already present in the dungeon map
 	for (int tryNum = 0; tryNum < 50; ++tryNum) {
-		DungeonWidgetId monsterId = (DungeonWidgetId)((_dungeonLevel - 1) / 2 * 5 + getRandomNumber(4));
+		DungeonWidgetId monsterId = (DungeonWidgetId)((_dungeonLevel - 1) / 2 * 5 + _game->getRandomNumber(4));
 
 		// Only allow one of every type of monster on the map at the same time
 		uint monsIdx;
@@ -386,7 +386,7 @@ void Ultima1Map::spawnMonsterAt(const Point &pt) {
 
 		if (monsIdx == _widgets.size()) {
 			// Monster not present, so can be added
-			uint hp = getRandomNumber(1, _dungeonLevel * _dungeonLevel + 1) +
+			uint hp = _game->getRandomNumber(1, _dungeonLevel * _dungeonLevel + 1) +
 				(int)monsterId + 10;
 			U1DungeonMonster *monster = new U1DungeonMonster(_game, this, monsterId, pt, hp);
 			addWidget(monster);

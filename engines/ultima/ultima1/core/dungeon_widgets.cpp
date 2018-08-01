@@ -61,8 +61,13 @@ enum { POINT_AT = 126, END_OF_DRAW = 127 };
 
 void DungeonWidget::drawWidget(Graphics::ManagedSurface &s, DungeonWidgetId widgetId, uint distance, byte color) {
 	Point pt, priorPt;
-	int yOffset = OFFSET_Y[distance];
-	int shift = (distance == 4) ? 5 : distance;
+
+	if (distance == 0)
+		// This can't happen in the original, but in case I add an 'etherial' cheat to allow moving
+		// through monsters, this will guard against a crash
+		distance = 1;
+	int yOffset = OFFSET_Y[MIN((int)distance - 1, 4)];
+	int shift = (distance == 5) ? 5 : distance - 1;
 
 	// Get a pointer to the drawing data
 	const byte *data = getData();
