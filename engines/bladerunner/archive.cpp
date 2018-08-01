@@ -56,7 +56,7 @@ bool MIXArchive::open(const Common::String &filename) {
 		_entries[i].length = _fd.readUint32LE();
 
 #if BLADERUNNER_DEBUG_CONSOLE
-		debug("%08x %-12d %-12d", _entries[i].id, _entries[i].offset, _entries[i].length);
+		debug("%08x %-12d %-12d", _entries[i].hash, _entries[i].offset, _entries[i].length);
 #endif
 
 		// Verify that the entries are sorted by id. Note that id is signed.

@@ -43,48 +43,6 @@ TextResource::~TextResource() {
 	delete[] _strings;
 }
 
-// for TRE subtitles support
-bool TextResource::openFromStream(Common::ScopedPtr<Common::SeekableReadStream> &s) {
-
-	if (!s) {
-		return false;
-	}
-
-	_count = s->readUint32LE();
-
-	_ids = new uint32[_count];
-	_offsets = new uint32[_count + 1];
-
-	for (uint32 i = 0; i != _count; ++i) {
-		_ids[i] = s->readUint32LE();
-	}
-
-	for (uint32 i = 0; i != _count + 1; ++i) {
-		_offsets[i] = s->readUint32LE();
-	}
-
-	uint32 stringsStart = s->pos() - 4;
-
-	for (uint32 i = 0; i != _count + 1; ++i) {
-		_offsets[i] -= stringsStart;
-	}
-
-	uint32 remain = s->size() - s->pos();
-	_strings = new char[remain];
-
-	assert(remain >= _offsets[_count]);
-
-	s->read(_strings, remain);
-#if BLADERUNNER_DEBUG_CONSOLE
-//	debug("\nRESOURCE:: from Stream\n----------------");
-//	for (uint32 i = 0; i != (uint32)_count; ++i) {
-//		debug("%3d: %s", _ids[i], getText(_ids[i]));
-//	}
-#endif
-
-	return true;
-}
-
 bool TextResource::open(const Common::String &name) {
 	assert(name.size() <= 8);
 

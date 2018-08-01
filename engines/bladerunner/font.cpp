@@ -37,46 +37,6 @@ Font::~Font() {
 	close();
 }
 
-#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-// for external FON font file / subtitles support
-bool Font::openFromStream(Common::ScopedPtr<Common::SeekableReadStream> &stream, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color) {
-	reset();
-
-	_screenWidth = screenWidth;
-	_screenHeight = screenHeight;
-	_spacing1 = spacing1;
-	_spacing2 = spacing2;
-	_color = color;
-
-	if (!stream) {
-		return false;
-	}
-	_characterCount = stream->readUint32LE();
-	debug("Font's character count: %d", _characterCount);
-	_maxWidth = stream->readUint32LE();
-	_maxHeight = stream->readUint32LE();
-	_dataSize = stream->readUint32LE();
-	_data = new uint16[_dataSize];
-	if (!_data) {
-		debug("Font::open failed to allocate font buffer");
-		return false;
-	}
-
-	for (int i = 0; i < _characterCount; i++) {
-		_characters[i].x = stream->readUint32LE();
-		_characters[i].y = stream->readUint32LE();
-		_characters[i].width = stream->readUint32LE();
-		_characters[i].height = stream->readUint32LE();
-		_characters[i].dataOffset = stream->readUint32LE();
-		debug("char::%d character x: %d, y: %d, w: %d, h:%d, do: %d", i, _characters[i].x, _characters[i].y, _characters[i].width, _characters[i].height, _characters[i].dataOffset);
-	}
-	for (int i = 0; i < _dataSize; i++) {
-		_data[i] = stream->readUint16LE();
-	}
-	return true;
-}
-#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-
 bool Font::open(const Common::String &fileName, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color) {
 	reset();
 
