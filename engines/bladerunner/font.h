@@ -63,9 +63,6 @@ public:
 	Font(BladeRunnerEngine *vm);
 	~Font();
 
-	#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-	bool openFromStream(Common::ScopedPtr<Common::SeekableReadStream> &s, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color);
-	#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	bool open(const Common::String &fileName, int screenWidth, int screenHeight, int spacing1, int spacing2, uint16 color);
 	void close();
 

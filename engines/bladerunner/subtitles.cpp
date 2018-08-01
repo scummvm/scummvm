@@ -39,10 +39,9 @@ namespace BladeRunner {
  *
  * TODO in python script (FON from png glyphs) check if you can have semi-transparent pixels to better outline the fringe points of the glyphs - check what happens when MSB is set (transparency) and the rest of the color value is not all 0s.
  * TODO Catch error for bad symbol in a quote (one that causes the font to crash) - this could happen with the corrupted internal font (TAHOMA18) -> font crash or bad font display / garbage character
- * TODO add a keyboard shortcut key to enable / disable subtitles?
  * TODO have a debug script to detect/report problematic lines (too long)
  *
- * TODO? put external FON and TRE in a new folder "SUBS" - case insensitive (?)
+ * TODO? add a keyboard shortcut key to enable / disable subtitles?
  * TODO? Use another escape sequence to progressively display text in a line (like in SCUMM games) <-- this could be very useful with very long lines - might also need an extra manual time or ticks parameter to determine when during the display of the first segment we should switch to the second.
  * TODO? A more advanced subtitles system
  *          TODO: subtitles could be independent from sound playing (but should disappear when switching between UI screens)
@@ -66,19 +65,18 @@ namespace BladeRunner {
  */
 
 #if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-const Common::String Subtitles::SUBTITLES_FONT_FILENAME = "SUBTITLES.FON";
+const Common::String Subtitles::SUBTITLES_FONT_FILENAME = "SUBTLS_E.FON";
 #else
 const Common::String Subtitles::SUBTITLES_FONT_FILENAME = "TAHOMA18.FON";
 #endif
 
 /*
 * All entries need to have the language code appended (after a '_').
-* The outtakes then need a substring ".VQA"
-* And all entries should have the suffix extension ".TRE"
+* And all entries should get the suffix extension ".TRE" (or FUTURE: the last letter in extension "TR*" should also be the language code)
 * If/When adding new TRE resources here --> Update kMaxTextResourceEntries and also update method getIdxForSubsTreName()
 */
 const Common::String Subtitles::SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries] = {
-	"outQuotes",        // 0 // (in-game subtitles, not VQA subtitles)
+	"INGQUO",           // 0 // (in-game subtitles, not VQA subtitles)
 	"WSTLGO",           // 1
 	"BRLOGO",           // 2
 	"INTRO",            // 3
@@ -97,14 +95,13 @@ const Common::String Subtitles::SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntr
 	"END04B",           // 16
 	"END04C",           // 17
 	"END06",            // 18
-	"END07",            // 19
-	"END01A",           // 20
-	"END01B",           // 21
-	"END01C",           // 22
-	"END01D",           // 23
-	"END01E",           // 24
-	"END01F",           // 25
-	"END03"             // 26
+	"END01A",           // 19
+	"END01B",           // 20
+	"END01C",           // 21
+	"END01D",           // 22
+	"END01E",           // 23
+	"END01F",           // 24
+	"END03"             // 25
 };
 
 /**
@@ -112,56 +109,83 @@ const Common::String Subtitles::SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntr
 */
 Subtitles::Subtitles(BladeRunnerEngine *vm) {
 	_vm = vm;
+	_subtitlesSystemInactive = false;
 	// Initializing and reseting Subtitles
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
-		_gameSubsFdEntries[i] = nullptr;
 		_vqaSubsTextResourceEntries[i] = nullptr;
 	}
 #if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-	_gameSubsFontsFd = nullptr;
 	_subsFont = nullptr;
 #else
 	_subsFont = nullptr;
 	_subsBgFont = nullptr;
 #endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	reset();
-	// Done - Subtitles Reset
+}
+
+/**
+* Subtitles Destructor
+*/
+Subtitles::~Subtitles() {
+	// delete any resource entries in the _vqaSubsTextResourceEntries table
+	// and close any open text resource files
+	for (int i = 0; i != kMaxTextResourceEntries; ++i) {
+		if (_vqaSubsTextResourceEntries[i] != nullptr) {
+			delete _vqaSubsTextResourceEntries[i];
+			_vqaSubsTextResourceEntries[i] = nullptr;
+		}
+	}
+
+	if (_subsFont != nullptr) {
+		_subsFont->close();
+		delete _subsFont;
+		_subsFont = nullptr;
+	}
+#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+	if (_subsBgFont != nullptr) {
+		_subsBgFont->close();
+		delete _subsBgFont;
+		_subsBgFont = nullptr;
+	}
+#endif // !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+}
+
+//
+// Init is kept separated from constructor to allow not loading up resources if subtitles system is disabled
+//
+void Subtitles::init(void) {
+    if (_subtitlesSystemInactive) {
+        return;
+    }
 	//
 	// Loading text resources
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
-		_gameSubsFdEntries[i] = new Common::File();
 		_vqaSubsTextResourceEntries[i] = new TextResource(_vm);
 		Common::String tmpConstructedFileName = "";
 		tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_" + _vm->_languageCode;
-		if (i > 0) {
-			tmpConstructedFileName += ".VQA";
-		}
-		tmpConstructedFileName += ".TRE";
-		if (openGameSubs(tmpConstructedFileName) && loadGameSubsText(i)) {
-			_gameSubsFdEntriesFound[i] = true;
+		//tmpConstructedFileName += ".TRE";   // = Common::String::format("%s.TR%s", tmpConstructedFileName.c_str(), _vm->_languageCode.c_str());
+		if ( _vqaSubsTextResourceEntries[i]->open(tmpConstructedFileName)) {
+			_gameSubsResourceEntriesFound[i] = true;
 		}
 	}
 	// Done - Loading text resources
 	//
 	// Initializing/Loading Subtitles' Fonts
-#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-	// Open external fonts file (FON file) and load fonts
-	_gameSubsFontsFd = new Common::File();
-	_subsFont = new Font(_vm);
-	if (openSubsFontFile() && loadSubsFont()) {
-		_subsFontsLoaded = true;
-	}
-#else
 	_subsFont = new Font(_vm);
 	// Use TAHOMA18.FON (is corrupted in places)
 	// 10PT or TAHOMA24 or KIA6PT  have all caps glyphs (and also are too big or too small) so they are not appropriate.
 	if (_subsFont ->open(SUBTITLES_FONT_FILENAME, 640, 480, -1, 0, 0)) { // Color setting does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here?
+#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+		_subsFont->setSpacing(-1, 0);
+#else
 		_subsFont->setSpacing(1, 0);
 		_subsFont->setWhiteColor();
+#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 		_subsFontsLoaded = true;
 	} else {
 		_subsFontsLoaded = false;
 	}
+#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	_subsBgFont = new Font(_vm);
 	if (_subsFontsLoaded && _subsBgFont ->open(SUBTITLES_FONT_FILENAME, 640, 480, -1, 0, 0)) { // TODO dark color? --- color does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here? ?? - we should give the original color here. What is it for TAHOMA?
 		_subsBgFont ->setSpacing(1, 0);
@@ -182,51 +206,8 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
 	}
 }
 
-/**
-* Subtitles Destructor
-*/
-Subtitles::~Subtitles() {
-	// delete any resource entries in the _vqaSubsTextResourceEntries table
-	// and close any open text resource files
-	for (int i = 0; i != kMaxTextResourceEntries; ++i) {
-		if (_vqaSubsTextResourceEntries[i] != nullptr) {
-			delete _vqaSubsTextResourceEntries[i];
-			_vqaSubsTextResourceEntries[i] = nullptr;
-		}
-		if (_gameSubsFdEntries[i] != nullptr) {
-
-			if (isOpenGameSubs(i)) {
-				closeGameSubs(i);
-			}
-			delete _gameSubsFdEntries[i];
-			_gameSubsFdEntries[i] = nullptr;
-		}
-	}
-#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-	if (_subsFont != nullptr) {
-		_subsFont->close();
-		delete _subsFont;
-		_subsFont = nullptr;
-	}
-	if (_gameSubsFontsFd != nullptr) {
-		if (isOpenSubsFontFile()) {
-			closeSubsFontFile();
-		}
-		delete _gameSubsFontsFd;
-		_gameSubsFontsFd = nullptr;
-	}
-#else
-	if (_subsFont != nullptr) {
-		_subsFont->close();
-		delete _subsFont;
-		_subsFont = nullptr;
-	}
-	if (_subsBgFont != nullptr) {
-		_subsBgFont->close();
-		delete _subsBgFont;
-		_subsBgFont = nullptr;
-	}
-#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+void Subtitles::setSubtitlesSystemInactive(bool flag) {
+    _subtitlesSystemInactive = flag;
 }
 
 /**
@@ -237,10 +218,6 @@ int Subtitles::getIdxForSubsTreName(const Common::String &treName) const {
 	Common::String tmpConstructedFileName = "";
 	for (int i = 0; i < kMaxTextResourceEntries; ++i) {
 		tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_" + _vm->_languageCode;
-		if (i > 0) {
-			tmpConstructedFileName += ".VQA";
-		}
-		tmpConstructedFileName += ".TRE";
 		if (tmpConstructedFileName == treName) {
 			return i;
 		}
@@ -249,178 +226,18 @@ int Subtitles::getIdxForSubsTreName(const Common::String &treName) const {
 	return -1;
 }
 
-
-/**
-* Open an external subtitles File and store its file descriptor
-* @return true if successful, false otherwise
-*/
-bool Subtitles::openGameSubs(const Common::String &filename) {
-	uint32 gameSubsEntryCount = 0;
-	int subTreIdx = getIdxForSubsTreName(filename);
-
-	if (subTreIdx < 0 || _gameSubsFdEntries[subTreIdx] == nullptr) {
-		debug("Subtitles::open(): Could not open %s", filename.c_str());
-		return false;
-	}
-//    debug("Now opening subs file: %s", filename.c_str());
-
-	if (!_gameSubsFdEntries[subTreIdx]->open(filename)) {
-		debug("Subtitles::open(): Could not open %s", filename.c_str());
-		return false;
-	}
-	gameSubsEntryCount = _gameSubsFdEntries[subTreIdx]->readUint32LE();
-
-	if (_gameSubsFdEntries[subTreIdx]->err()) {
-		error("Subtitles::open(): Error reading entries in %s", filename.c_str());
-		_gameSubsFdEntries[subTreIdx]->close();
-		return false;
-	}
-	debug("Subtitles::open: Opened in-game external subs file %s with %d entries", filename.c_str(), gameSubsEntryCount);
-	return true;
-}
-
-/**
-* Close an open external subtitles File
-*/
-void Subtitles::closeGameSubs(int subTreIdx) {
-	if (subTreIdx < 0 || _gameSubsFdEntries[subTreIdx] == nullptr) {
-		debug("Subtitles::close(): Could not close file with Idx %d", subTreIdx);
-		return;
-	}
-	return _gameSubsFdEntries[subTreIdx]->close();
-}
-
-/**
-* Check whether an external subtitles File is open
-*/
-bool Subtitles::isOpenGameSubs(int subTreIdx) const {
-	if (subTreIdx < 0 || _gameSubsFdEntries[subTreIdx] == nullptr) {
-		return false;
-	}
-	return _gameSubsFdEntries[subTreIdx]->isOpen();
-}
-
-/**
-* Load the game subs as a TRE resource and store them in a specific entry in _vqaSubsTextResourceEntries table
-*/
-bool Subtitles::loadGameSubsText(int subTreIdx) {
-	bool r = false;
-	Common::SeekableReadStream *stream = createReadStreamForGameSubs(subTreIdx);
-	if (stream != nullptr) {
-		Common::ScopedPtr<Common::SeekableReadStream> s(stream);
-		r = _vqaSubsTextResourceEntries[subTreIdx]->openFromStream(s);
-		if (!r) {
-			error("Failed to load subtitle text");
-		}
-		closeGameSubs(subTreIdx);
-	}
-	return r;
-}
-
-/**
-* Auxiliary method for loadGameSubsText
-* @return nullptr if failure, otherwise return a pointer to a new SafeSeekableSubReadStream
-*/
-Common::SeekableReadStream *Subtitles::createReadStreamForGameSubs(int subTreIdx) {
-	if (subTreIdx < 0 || _gameSubsFdEntries[subTreIdx] == nullptr) {
-		return nullptr;
-	}
-	if (!isOpenGameSubs(subTreIdx)) {
-		return nullptr;
-	}
-	return new Common::SafeSeekableSubReadStream(_gameSubsFdEntries[subTreIdx], 0, _gameSubsFdEntries[subTreIdx]->size(), DisposeAfterUse::YES); // TODO changed to YES from NO is this ok?
-}
-
-#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-//
-// EXTERN FONT MANAGEMENT - Font Open/ Create Read Stream / Load / Close methods
-//
-
-/**
-* @return true if successfully opened the external fonts (FON) file, false otherwise
-*/
-bool Subtitles::openSubsFontFile() {
-	uint32 subFontsTableEntryCount = 0;
-//    debug("Now opening subs file: %s", SUBTITLES_FONT_FILENAME.c_str());
-
-	if (_gameSubsFontsFd == nullptr || !_gameSubsFontsFd->open(SUBTITLES_FONT_FILENAME)) {
-		debug("Subtitles FONT::open(): Could not open %s", SUBTITLES_FONT_FILENAME.c_str());
-		return false;
-	}
-	subFontsTableEntryCount = _gameSubsFontsFd->readUint32LE(); // only for debug report purposes
-
-	if (_gameSubsFontsFd->err()) {
-		error("Subtitles FONT::open(): Error reading entries in %s", SUBTITLES_FONT_FILENAME.c_str());
-		_gameSubsFontsFd->close();
-		return false;
-	}
-
-	debug("Subtitles FONT::open: Opened in-game external subs FONT file %s with %d entries", SUBTITLES_FONT_FILENAME.c_str(), subFontsTableEntryCount);
-	return true;
-}
-
-/**
-* Close the external Fonts (FON) file
-*/
-void Subtitles::closeSubsFontFile() {
-	if (_gameSubsFontsFd != nullptr) {
-		_gameSubsFontsFd->close();
-	}
-}
-
-/**
-* Checks whether the external fonts (FON) file has been opened
-*/
-bool Subtitles::isOpenSubsFontFile() const {
-	return _gameSubsFontsFd != nullptr && _gameSubsFontsFd->isOpen();
-}
-
-/**
-* Auxiliary function to create a read stream fro the external fonts file
-* @return a pointer to the stream if successful, or nullptr otherwise
-*/
-Common::SeekableReadStream *Subtitles::createReadStreamForSubFonts() {
-	if (_gameSubsFontsFd == nullptr || !isOpenSubsFontFile()) {
-		return nullptr;
-	}
-	return new Common::SafeSeekableSubReadStream(_gameSubsFontsFd, 0, _gameSubsFontsFd->size(), DisposeAfterUse::YES); // TODO changed to YES from NO is this ok?
-}
-
-/**
-* Loads the font from the external font file
-* @return true if successful, or false otherwise
-*/
-bool Subtitles::loadSubsFont() {
-	bool r = false;
-	Common::SeekableReadStream *stream = createReadStreamForSubFonts();
-	if (stream != nullptr) {
-		Common::ScopedPtr<Common::SeekableReadStream> s(stream);
-		r = _subsFont->openFromStream(s, 640, 480, -1, 0, 0);
-
-		if (!r) {
-			error("Failed to load subtitle FONT");
-		} else {
-			_subsFont->setSpacing(-1, 0);
-		}
-		//_subsFont->setSpacing(0, 0);
-		closeSubsFontFile();
-	}
-	return r;
-}
-
-//
-// END OF EXTERNAL FONT MANAGEMENT
-//
-#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-
 /**
 * Get the active subtitle text by searching with actor ID and speech ID
 * Use this method for in-game dialogue - Not dialogue during a VQA cutscene
 * Returns the dialogue quote, but also sets the private _currentSubtitleTextFull member
 */
 const char *Subtitles::getInGameSubsText(int actorId, int speech_id)  {
+    if (_subtitlesSystemInactive) {
+        return "";
+    }
+
 	int32 id = 10000 * actorId + speech_id;
-	if (!_gameSubsFdEntriesFound[0]) {
+	if (!_gameSubsResourceEntriesFound[0]) {
 		if (_currentSubtitleTextFull  != "") {
 			_currentSubtitleTextFull = "";
 			_subtitlesQuoteChanged = true;
@@ -439,8 +256,12 @@ const char *Subtitles::getInGameSubsText(int actorId, int speech_id)  {
 * Returns the dialogue quote, but also sets the private _currentSubtitleTextFull member
 */
 const char *Subtitles::getOuttakeSubsText(const Common::String &outtakesName, int frame) {
+    if (_subtitlesSystemInactive) {
+        return "";
+    }
+
 	int fileIdx = getIdxForSubsTreName(outtakesName);
-	if (fileIdx == -1 || !_gameSubsFdEntriesFound[fileIdx]) {
+	if (fileIdx == -1 || !_gameSubsResourceEntriesFound[fileIdx]) {
 		if (_currentSubtitleTextFull != "") {
 			_currentSubtitleTextFull = "";
 			_subtitlesQuoteChanged = true;
@@ -476,6 +297,9 @@ void Subtitles::setGameSubsText(Common::String dbgQuote) {
 * @return true if the member was set now, false if the member was already set
 */
 bool Subtitles::show() {
+    if (_subtitlesSystemInactive) {
+        return false;
+    }
 
 	if (_isVisible) {
 		return false;
@@ -489,6 +313,10 @@ bool Subtitles::show() {
 * @return true if the member was cleared, false if it was already clear.
 */
 bool Subtitles::hide() {
+    if (_subtitlesSystemInactive) {
+        return false;
+    }
+
 	if (!_isVisible) {
 		return false;
 	}
@@ -502,7 +330,7 @@ bool Subtitles::hide() {
 * @return the value of the _isVisible member boolean var
 */
 bool Subtitles::isVisible() const {
-	return _isVisible;
+	return _subtitlesSystemInactive || _isVisible;
 }
 
 /**
@@ -514,7 +342,7 @@ void Subtitles::tickOuttakes(Graphics::Surface &s) {
 	} else {
 		_vm->_subtitles->show();
 	}
-	if (!_vm->isSubtitlesEnabled()) {
+	if (_subtitlesSystemInactive || !_vm->isSubtitlesEnabled()) {
 		return;
 	}
 	if (!_isVisible) { // keep it as a separate if
@@ -530,7 +358,7 @@ void Subtitles::tick(Graphics::Surface &s) {
 	if (!_vm->_audioSpeech->isPlaying()) {
 		_vm->_subtitles->hide(); // TODO might need a better system. Don't call it always.
 	}
-	if (!_vm->isSubtitlesEnabled()) {
+	if (_subtitlesSystemInactive || !_vm->isSubtitlesEnabled()) {
 		return;
 	}
 	if (!_isVisible)  { // keep it as a separate if
@@ -726,37 +554,15 @@ void Subtitles::reset() {
 			delete _vqaSubsTextResourceEntries[i];
 			_vqaSubsTextResourceEntries[i] = nullptr;
 		}
-		_gameSubsFdEntriesFound[i] = false;
-
-		if (_gameSubsFdEntries[i] != nullptr) {
-			if (isOpenGameSubs(i)) {
-				closeGameSubs(i);
-			}
-			delete _gameSubsFdEntries[i];
-			_gameSubsFdEntries[i] = nullptr;
-		}
+		_gameSubsResourceEntriesFound[i] = false;
 	}
 
-#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-	if (_subsFont != nullptr) {
+    if (_subsFont != nullptr) {
 		_subsFont->close();
 		delete _subsFont;
 		_subsFont = nullptr;
 	}
-
-	if (_gameSubsFontsFd != nullptr) {
-		if (isOpenSubsFontFile()) {
-			closeSubsFontFile();
-		}
-		delete _gameSubsFontsFd;
-		_gameSubsFontsFd = nullptr;
-	}
-#else
-	if (_subsFont != nullptr) {
-		_subsFont->close();
-		delete _subsFont;
-		_subsFont = nullptr;
-	}
+#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	if (_subsBgFont != nullptr) {
 		_subsBgFont->close();
 		delete _subsBgFont;

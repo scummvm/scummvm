@@ -45,7 +45,6 @@ public:
 	~TextResource();
 
 	bool open(const Common::String &name);
-	bool openFromStream(Common::ScopedPtr<Common::SeekableReadStream> &s);
 
 	const char *getText(uint32 id) const;
 	const char *getOuttakeTextByFrame(uint32 frame) const;

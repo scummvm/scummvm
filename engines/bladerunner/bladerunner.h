@@ -106,7 +106,7 @@ public:
 #if BLADERUNNER_DEBUG_GAME
 	static const int kArchiveCount = 100;
 #else
-	static const int kArchiveCount = 10;
+	static const int kArchiveCount = 11; // +1 to original value (10) to accommodate for SUBTITLES.MIX resource
 #endif
 	static const int kActorCount = 100;
 	static const int kActorVoiceOver = kActorCount - 1;

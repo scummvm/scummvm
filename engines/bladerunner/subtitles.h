@@ -48,7 +48,7 @@ class Subtitles {
 	// TODO Or just support the current _vm->_languageCode ? [current implementation]
 	static const int kMaxNumOfSubtitlesLines = 3;
 	static const int kMaxWidthPerLineToAutoSplitThresholdPx = 610;
-	static const int kMaxTextResourceEntries = 1 + 26; // Support in-game subs (1) and all possible VQAs (26) with spoken dialogue!
+	static const int kMaxTextResourceEntries = 1 + 25; // Support in-game subs (1) and all possible VQAs (26) with spoken dialogue!
 	static const Common::String SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
 	static const Common::String SUBTITLES_FONT_FILENAME;
 
@@ -70,17 +70,16 @@ class Subtitles {
 	int _currentSubtitleLines;
 	bool _subtitlesQuoteChanged;
 
-	Common::File *_gameSubsFdEntries[kMaxTextResourceEntries];      // an array of pointers to TRE FILEs
-	bool _gameSubsFdEntriesFound[kMaxTextResourceEntries];          // false if a TRE file did not open successfully
+	bool _gameSubsResourceEntriesFound[kMaxTextResourceEntries];          // false if a TRE file did not open successfully
 	bool _subsFontsLoaded;                                          // false if external fonts did not load, or internal fonts (fore and background) did not load
-#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-	Common::File *_gameSubsFontsFd;                                 // the file for the external FONT for subtitles
-#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+	bool _subtitlesSystemInactive;                                  // true if the whole subtitles subsystem should be disabled (due to missing required resources)
 
 public:
 	Subtitles(BladeRunnerEngine *vm);
 	~Subtitles();
 
+	void init();
+    void setSubtitlesSystemInactive(bool flag);                                    // disable subtitles system (possibly due to missing important resources like SUBTITLES.MIX file)
 	const char *getInGameSubsText(int actorId, int speech_id) ;     // get the text for actorId, quoteId (in-game subs)
 	const char *getOuttakeSubsText(const Common::String &outtakesName, int frame);  // get the text for this frame if any
 
@@ -92,24 +91,6 @@ public:
 	void tickOuttakes(Graphics::Surface &s);
 
 private:
-	Common::SeekableReadStream *createReadStreamForGameSubs(int subTreIdx);
-
-	bool openGameSubs(const Common::String &filename);
-	void closeGameSubs(int subTreIdx);
-	bool isOpenGameSubs(int subTreIdx) const;
-
-	bool loadGameSubsText(int subTreIdx);                           // populate a GAME SUBS TextResource with subtitles
-	//
-	//
-#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-	Common::SeekableReadStream *createReadStreamForSubFonts();
-	bool openSubsFontFile();
-	void closeSubsFontFile();
-	bool isOpenSubsFontFile()  const;          //
-	bool loadSubsFont();        // create a the font object from a FON file (external)
-#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-
-
 	void draw(Graphics::Surface &s);
 	// bool showAt(int x, int y);               // TODO maybe future use (?)
 	void calculatePosition();
