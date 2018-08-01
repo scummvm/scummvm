@@ -120,8 +120,14 @@ bool Room::load(uint8 roomNumber, bool roomB) {
 
 // TODO: Take the threshold value from ATN data.
 struct ThresholdBlitOperation {
-	bool operator()(const byte /*srcColor*/, const byte destColor) {
-		return destColor <= 0xBF;
+	byte operator()(const byte srcColor, const byte destColor) {
+		if (destColor <= 0xBF) {
+			// Within threshold - replace destination with source color.
+			return srcColor;
+		}
+
+		// Outside of threshold - keep destination color.
+		return destColor;
 	}
 };
 
