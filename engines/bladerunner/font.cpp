@@ -68,7 +68,6 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 		_characters[i].width = stream->readUint32LE();
 		_characters[i].height = stream->readUint32LE();
 		_characters[i].dataOffset = stream->readUint32LE();
-		#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 		// special explicit alignment fixes for TAHOMA18 (INTERNAL) font
 		if (fileName == "TAHOMA18.FON") {
 			// fix P -> i = 81 (ascii code 80  + 1)
@@ -84,7 +83,6 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 			}
 		}
 		//debug("char::%d character x: %d, y: %d, w: %d, h:%d, do: %d", i, _characters[i].x, _characters[i].y, _characters[i].width, _characters[i].height, _characters[i].dataOffset);
-		#endif // !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	}
 	for (int i = 0; i < _dataSize; i++) {
 		_data[i] = stream->readUint16LE();
@@ -193,9 +191,8 @@ void Font::replaceColor(uint16 oldColor, uint16 newColor) {
 	}
 }
 
-#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-// This was needed as a hack for using a duplicate of the font to act as shadow effect for the glyphs
-// Mainly needed for the internal font, since an external font can have shadow already drawn for the glyphs
+// This is useful when using a duplicate of the internal font to act as shadow effect for the glyphs for subtitles
+// Mainly needed for the internal font for subtitles, since an external font can have shadow already drawn for the glyphs
 void Font::setBlackColor() {
 	if (!_data || !_dataSize) {
 		return;
@@ -207,7 +204,6 @@ void Font::setBlackColor() {
 		}
 	}
 }
-#endif // !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 
 void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int x, int y) const {
 	uint8 characterIndex = character + 1;

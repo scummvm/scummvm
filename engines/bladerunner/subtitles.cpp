@@ -64,11 +64,8 @@ namespace BladeRunner {
  * DONE - OK - CHECK what happens in VQA when no corresponding TRE subs file?
  */
 
-#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-const Common::String Subtitles::SUBTITLES_FONT_FILENAME = "SUBTLS_E.FON";
-#else
-const Common::String Subtitles::SUBTITLES_FONT_FILENAME = "TAHOMA18.FON";
-#endif
+const Common::String Subtitles::SUBTITLES_FONT_FILENAME_EXTERNAL = "SUBTLS_E.FON";
+const Common::String Subtitles::SUBTITLES_FONT_FILENAME_INTERNAL = "TAHOMA18.FON";
 
 /*
 * All entries need to have the language code appended (after a '_').
@@ -114,12 +111,8 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
 		_vqaSubsTextResourceEntries[i] = nullptr;
 	}
-#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-	_subsFont = nullptr;
-#else
 	_subsFont = nullptr;
 	_subsBgFont = nullptr;
-#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	reset();
 }
 
@@ -141,13 +134,12 @@ Subtitles::~Subtitles() {
 		delete _subsFont;
 		_subsFont = nullptr;
 	}
-#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+    // _subsBgFont is only used for the internal subtitles font case
 	if (_subsBgFont != nullptr) {
 		_subsBgFont->close();
 		delete _subsBgFont;
 		_subsBgFont = nullptr;
 	}
-#endif // !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 }
 
 //
@@ -174,26 +166,28 @@ void Subtitles::init(void) {
 	_subsFont = new Font(_vm);
 	// Use TAHOMA18.FON (is corrupted in places)
 	// 10PT or TAHOMA24 or KIA6PT  have all caps glyphs (and also are too big or too small) so they are not appropriate.
-	if (_subsFont ->open(SUBTITLES_FONT_FILENAME, 640, 480, -1, 0, 0)) { // Color setting does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here?
-#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+	if (_subsFont ->open(SUBTITLES_FONT_FILENAME_EXTERNAL, 640, 480, -1, 0, 0)) { // Color setting does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here?
 		_subsFont->setSpacing(-1, 0);
-#else
-		_subsFont->setSpacing(1, 0);
-		_subsFont->setWhiteColor();
-#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 		_subsFontsLoaded = true;
+		_subsFontsExternal = true;
+	} else if (_subsFont ->open(SUBTITLES_FONT_FILENAME_INTERNAL, 640, 480, -1, 0, 0)) {
+		_subsFont->setSpacing(1, 0);
+		_subsFontsLoaded = true;
+		_subsFontsExternal = false;
 	} else {
+		_subsFontsExternal = false;
 		_subsFontsLoaded = false;
 	}
-#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-	_subsBgFont = new Font(_vm);
-	if (_subsFontsLoaded && _subsBgFont ->open(SUBTITLES_FONT_FILENAME, 640, 480, -1, 0, 0)) { // TODO dark color? --- color does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here? ?? - we should give the original color here. What is it for TAHOMA?
-		_subsBgFont ->setSpacing(1, 0);
-		_subsBgFont ->setBlackColor();
-	} else {
-		_subsFontsLoaded = false;
+
+	if (!_subsFontsExternal) {
+        _subsBgFont = new Font(_vm);
+        if (_subsFontsLoaded && _subsBgFont ->open(SUBTITLES_FONT_FILENAME_INTERNAL, 640, 480, -1, 0, 0)) { // TODO dark color? --- color does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here? ?? - we should give the original color here. What is it for TAHOMA?
+            _subsBgFont ->setSpacing(1, 0);
+            _subsBgFont ->setBlackColor();
+        } else {
+            _subsFontsLoaded = false;
+        }
 	}
-#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
 	//Done - Initializing/Loading Subtitles' Fonts
 	//
 	// calculate the Screen Y position of the subtitle lines
@@ -379,24 +373,25 @@ void Subtitles::draw(Graphics::Surface &s) {
 		_subtitlesQuoteChanged = false;
 	}
 
-#if BLADERUNNER_SUBTITLES_EXTERNAL_FONT
-	for (int i = 0; i < _currentSubtitleLines; ++i) {
-		_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i]);
-	}
-#else
-	// INTERNAL FONT. NEEDS HACK (_subsBgFont) FOR SHADOW EFFECT
-	for (int i = 0; i < _currentSubtitleLines; ++i) {
-		_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i] - 1);
-		_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i] + 1);
-		_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[i] + 1);
-		_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[i] - 1);
-		if (_subtitleLineScreenX[i] > 0) {
-			_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[i] - 1);
-			_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[i] + 1);
-		}
-		_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i],  _subtitleLineScreenY[i]);
-	}
-#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+    if (_subsFontsExternal) {
+        for (int i = 0; i < _currentSubtitleLines; ++i) {
+            _subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i]);
+        }
+    }
+    else {
+        // INTERNAL FONT. NEEDS HACK (_subsBgFont) FOR SHADOW EFFECT
+        for (int i = 0; i < _currentSubtitleLines; ++i) {
+            _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i] - 1);
+            _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i] + 1);
+            _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[i] + 1);
+            _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[i] - 1);
+            if (_subtitleLineScreenX[i] > 0) {
+                _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[i] - 1);
+                _subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[i] + 1);
+            }
+            _subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i],  _subtitleLineScreenY[i]);
+        }
+    }
 }
 
 /**
@@ -562,14 +557,15 @@ void Subtitles::reset() {
 		delete _subsFont;
 		_subsFont = nullptr;
 	}
-#if !BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+
 	if (_subsBgFont != nullptr) {
 		_subsBgFont->close();
 		delete _subsBgFont;
 		_subsBgFont = nullptr;
 	}
-#endif // BLADERUNNER_SUBTITLES_EXTERNAL_FONT
+
 	_subsFontsLoaded = false;
+	_subsFontsExternal = false;
 }
 
 } // End of namespace BladeRunner
