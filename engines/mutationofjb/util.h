@@ -38,13 +38,39 @@ namespace MutationOfJB {
 void reportFileMissingError(const char *fileName);
 Common::String toUpperCP895(const Common::String &str);
 
+template <typename SurfaceType>
+void clipBounds(Common::Rect &srcBounds, Common::Rect &destBounds, SurfaceType &destSurf) {
+	// Clip the bounds if source is too big to fit into destination.
+	if (destBounds.right > destSurf.w) {
+		srcBounds.right -= destBounds.right - destSurf.w;
+		destBounds.right = destSurf.w;
+	}
+
+	if (destBounds.bottom > destSurf.h) {
+		srcBounds.bottom -= destBounds.bottom - destSurf.h;
+		destBounds.bottom = destSurf.h;
+	}
+
+	if (destBounds.top < 0) {
+		srcBounds.top += -destBounds.top;
+		destBounds.top = 0;
+	}
+
+	if (destBounds.left < 0) {
+		srcBounds.left += -destBounds.left;
+		destBounds.left = 0;
+	}
+}
+
 template <typename BlitOp>
-void blit_if(const Graphics::Surface &src, const Common::Rect &srcRect, Graphics::ManagedSurface &dest, const Common::Point &destPos, BlitOp blitOp) {
-	const Common::Rect srcBounds = srcRect;
-	const Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(), destPos.y + srcRect.height());
+void blit_if(const Graphics::Surface &src, const Common::Rect &srcRect, Graphics::Surface &dest, const Common::Point &destPos, BlitOp blitOp) {
+	Common::Rect srcBounds = srcRect;
+	Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(), destPos.y + srcRect.height());
 
 	assert(srcRect.isValidRect());
 	assert(dest.format == src.format);
+
+	clipBounds(srcBounds, destBounds, dest);
 
 	for (int y = 0; y < srcBounds.height(); ++y) {
 		const byte *srcP = reinterpret_cast<const byte *>(src.getBasePtr(srcBounds.left, srcBounds.top + y));
@@ -52,15 +78,33 @@ void blit_if(const Graphics::Surface &src, const Common::Rect &srcRect, Graphics
 		byte *destP = reinterpret_cast<byte *>(dest.getBasePtr(destBounds.left, destBounds.top + y));
 
 		while (srcP != srcEndP) {
-			if (blitOp(*srcP, *destP)) {
-				*destP = *srcP;
+			const byte newColor = blitOp(*srcP, *destP);
+			if (*destP != newColor) {
+				*destP = newColor;
 			}
 			++srcP;
 			++destP;
 		}
 	}
+}
 
-	dest.getSubArea(destBounds); // This is a hack to invalidate the destination rectangle.
+template <typename BlitOp>
+void blit_if(const Graphics::Surface &src, const Common::Rect &srcRect, Graphics::ManagedSurface &dest, const Common::Point &destPos, BlitOp blitOp) {
+	Common::Rect srcBounds = srcRect;
+	Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(), destPos.y + srcRect.height());
+
+	assert(srcRect.isValidRect());
+	assert(dest.format == src.format);
+
+	clipBounds(srcBounds, destBounds, dest);
+
+	Graphics::Surface destSurf = dest.getSubArea(destBounds); // This will invalidate the rectangle.
+	blit_if(src, srcRect, destSurf, Common::Point(0, 0), blitOp);
+}
+
+template <typename BlitOp>
+void blit_if(const Graphics::Surface &src, Graphics::Surface &dest, const Common::Point &destPos, BlitOp blitOp) {
+	blit_if(src, Common::Rect(0, 0, src.w, src.h), dest, destPos, blitOp);
 }
 
 template <typename BlitOp>
