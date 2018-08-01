@@ -11,6 +11,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Improved GUI rendering and overall GUI performance.
+   - Add stretch mode option to control how the display is stretch to the
+     window or screen area.
    - Fixed incorrect cursor movement when it's controlled using the keyboard.
    - Updated the Roland MT-32 emulation code to Munt 2.3.0.
 
