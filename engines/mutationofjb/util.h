@@ -38,8 +38,13 @@ namespace MutationOfJB {
 void reportFileMissingError(const char *fileName);
 Common::String toUpperCP895(const Common::String &str);
 
+// Taken from ManagedSurface::clip.
 template <typename SurfaceType>
-void clipBounds(Common::Rect &srcBounds, Common::Rect &destBounds, SurfaceType &destSurf) {
+bool clipBounds(Common::Rect &srcBounds, Common::Rect &destBounds, SurfaceType &destSurf) {
+	if (destBounds.left >= destSurf.w || destBounds.top >= destSurf.h ||
+			destBounds.right <= 0 || destBounds.bottom <= 0)
+		return false;
+
 	// Clip the bounds if source is too big to fit into destination.
 	if (destBounds.right > destSurf.w) {
 		srcBounds.right -= destBounds.right - destSurf.w;
@@ -60,6 +65,8 @@ void clipBounds(Common::Rect &srcBounds, Common::Rect &destBounds, SurfaceType &
 		srcBounds.left += -destBounds.left;
 		destBounds.left = 0;
 	}
+
+	return true;
 }
 
 template <typename BlitOp>
@@ -70,7 +77,8 @@ void blit_if(const Graphics::Surface &src, const Common::Rect &srcRect, Graphics
 	assert(srcRect.isValidRect());
 	assert(dest.format == src.format);
 
-	clipBounds(srcBounds, destBounds, dest);
+	if (!clipBounds(srcBounds, destBounds, dest))
+		return;
 
 	for (int y = 0; y < srcBounds.height(); ++y) {
 		const byte *srcP = reinterpret_cast<const byte *>(src.getBasePtr(srcBounds.left, srcBounds.top + y));
@@ -96,7 +104,8 @@ void blit_if(const Graphics::Surface &src, const Common::Rect &srcRect, Graphics
 	assert(srcRect.isValidRect());
 	assert(dest.format == src.format);
 
-	clipBounds(srcBounds, destBounds, dest);
+	if (!clipBounds(srcBounds, destBounds, dest))
+		return;
 
 	Graphics::Surface destSurf = dest.getSubArea(destBounds); // This will invalidate the rectangle.
 	blit_if(src, srcRect, destSurf, Common::Point(0, 0), blitOp);
