@@ -296,14 +296,14 @@ bool Ultima1Map::changeDungeonLevel(int delta) {
 	// Randomly set up random tiles for all alternate positions in wall columns
 	for (int x = 2; x < (DUNGEON_WIDTH - 1); x += 2)
 		for (int y = 1; y < DUNGEON_HEIGHT; y += 2)
-			_data[y][x] = getRandomNumber(DTILE_HALLWAY, DTILE_DOOR);
+			_data[y][x] = getDeterministicRandomNumber(DTILE_HALLWAY, DTILE_DOOR);
 
 	// Set up wall and beams randomly to subdivide the blank columns
 	const byte DATA1[15] = { 8, 5, 2, 8, 1, 5, 4, 6, 1, 3, 7, 3, 9, 2, 6 };
 	const byte DATA2[15] = { 1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 8, 8, 9, 9 };
 	for (uint ctr = 0; ctr < (_dungeonLevel * 2); ++ctr) {
-		byte newTile = (getRandomNumber(0, 255) <= 160) ? DTILE_WALL : DTILE_BEAMS;
-		uint idx = getRandomNumber(0, 14);
+		byte newTile = (getDeterministicRandomNumber(0, 255) <= 160) ? DTILE_WALL : DTILE_BEAMS;
+		uint idx = getDeterministicRandomNumber(0, 14);
 
 		if (_dungeonLevel & 1) {
 			_data[DATA2[idx]][DATA1[idx]] = newTile;
@@ -315,12 +315,12 @@ bool Ultima1Map::changeDungeonLevel(int delta) {
 	// Place chests and/or coffins randomly throughout the level
 	_random.setSeed(_random.getSeed() + 1777);
 	for (uint ctr = 0; ctr <= _dungeonLevel; ++ctr) {
-		Point pt(getRandomNumber(10, 99) / 10, getRandomNumber(10, 99) / 10);
+		Point pt(getDeterministicRandomNumber(10, 99) / 10, getDeterministicRandomNumber(10, 99) / 10);
 		byte currTile = _data[pt.y][pt.x];
 
 		if (currTile != DTILE_WALL && currTile != DTILE_SECRET_DOOR && currTile != DTILE_BEAMS) {
 			_widgets.push_back(Shared::MapWidgetPtr(new DungeonWidget(_game, this, pt,
-				(getRandomNumber(1, 100) & 1) ? DITEM_COFFIN : DITEM_CHEST)));
+				(getDeterministicRandomNumber(1, 100) & 1) ? DITEM_COFFIN : DITEM_CHEST)));
 		}
 	}
 

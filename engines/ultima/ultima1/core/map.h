@@ -166,14 +166,10 @@ private:
 	void setRandomSeed();
 
 	/**
-	 * Gets a random number
+	 * Gets a deterministic random number based on a given seed. Used in dungeon generation
+	 * so that a given dungeon and level will always be built the same
 	 */
-	uint getRandomNumber(uint min, uint max) { return min + _random.getRandomNumber(max - min); }
-
-	/**
-	 * Gets a random number
-	 */
-	uint getRandomNumber(uint max) { return getRandomNumber(0, max); }
+	uint getDeterministicRandomNumber(uint min, uint max) { return min + _random.getRandomNumber(max - min); }
 
 	/**
 	 * Spawns a monster at a given position in the dungeon map
