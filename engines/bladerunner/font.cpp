@@ -70,16 +70,27 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 		_characters[i].dataOffset = stream->readUint32LE();
 		// special explicit alignment fixes for TAHOMA18 (INTERNAL) font
 		if (fileName == "TAHOMA18.FON") {
-			// fix P -> i = 81 (ascii code 80  + 1)
-			if (i == 81 || i == 72 || i == 74 || i == 75	// P, G, I, J
-				|| i == 46) {								// '-'
+			switch (i) {
+			case 46:	// '-'
+			case 72:	// G
+			case 74:	// I
+			case 75:	// J
 				_characters[i].x = 0;						// original value was 1
-			}
-			if (i == 81														// P
-				|| i == 83 || i == 84										// R, S,
-				|| i == 86													// U
-				|| i == 87 || i == 88 || i == 89 || i == 90 || i == 91) {	// V, W, X, Y ,Z
+				break;
+			case 81:	// P (ascii code 80  + 1)
+				_characters[i].x = 0;						// original value was 1
 				_characters[i].y = 7;						// original value was 6 -- bring them down for one (1) pixel
+				break;
+			case 83:	// R
+			case 84:	// S
+			case 86:	// U
+			case 87:	// V
+			case 88:	// W
+			case 89:	// X
+			case 90:	// Y
+			case 91:	// Z
+				_characters[i].y = 7;						// original value was 6 -- bring them down for one (1) pixel
+				break;
 			}
 		}
 		//debug("char::%d character x: %d, y: %d, w: %d, h:%d, do: %d", i, _characters[i].x, _characters[i].y, _characters[i].width, _characters[i].height, _characters[i].dataOffset);

@@ -79,7 +79,7 @@ public:
 	~Subtitles();
 
 	void init();
-    void setSubtitlesSystemInactive(bool flag);                                    // disable subtitles system (possibly due to missing important resources like SUBTITLES.MIX file)
+	void setSubtitlesSystemInactive(bool flag);                                    // disable subtitles system (possibly due to missing important resources like SUBTITLES.MIX file)
 	const char *getInGameSubsText(int actorId, int speech_id) ;     // get the text for actorId, quoteId (in-game subs)
 	const char *getOuttakeSubsText(const Common::String &outtakesName, int frame);  // get the text for this frame if any
 
