@@ -13,7 +13,6 @@ MODULE_OBJS = \
 	lzss.o \
 	math.o \
 	menu.o \
-	object.o \
 	room.o \
 	saveload.o \
 	sound.o \

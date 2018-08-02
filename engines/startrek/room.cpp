@@ -113,7 +113,7 @@ Room::~Room() {
 }
 
 uint16 Room::readRdfWord(int offset) {
-	return _rdfData[offset] | (_rdfData[offset + 1] << 8);
+	return READ_LE_UINT16((_rdfData + offset));
 }
 
 bool Room::actionHasCode(const Action &action) {

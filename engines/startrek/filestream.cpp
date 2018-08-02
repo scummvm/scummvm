@@ -57,9 +57,9 @@ uint16 FileStream::readUint16() {
 	assert(_pos + 2 <= size());
 	uint16 w;
 	if (_bigEndian)
-		w = _data[_pos + 1] | (_data[_pos] << 8);
+		w = READ_BE_UINT16(_data + _pos);
 	else
-		w = _data[_pos] | (_data[_pos + 1] << 8);
+		w = READ_LE_UINT16(_data + _pos);
 	_pos += 2;
 	return w;
 }
@@ -68,9 +68,9 @@ uint32 FileStream::readUint32() {
 	assert(_pos + 4 <= size());
 	uint32 w;
 	if (_bigEndian)
-		w = _data[_pos + 3] | (_data[_pos + 2] << 8) | (_data[_pos + 1] << 16) | (_data[_pos] << 24);
+		w = READ_BE_UINT32(_data + _pos);
 	else
-		w = _data[_pos] | (_data[_pos + 1] << 8) | (_data[_pos + 2] << 16) | (_data[_pos + 3] << 24);
+		w = READ_LE_UINT32(_data + _pos);
 	_pos += 4;
 	return w;
 }
