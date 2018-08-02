@@ -60,15 +60,15 @@ void WalkMgr::toConsole() {
 }
 
 void WalkMgr::start(WalkLocation *destination) {
-	if (_isWalking)
-		return;
-
 	if (_current.name.empty()) {
 		_current.name = _locations[0]->getName();
 		_current.coords = getLocationCoordinates(_locations[0]->getName());
 	}
 
 	_destination = destination;
+
+	if (_isWalking)
+		return;
 
 	if (_current.name == _destination->getName()) {
 		end();
