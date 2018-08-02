@@ -42,7 +42,6 @@ struct StarTrekGameDescription {
 
 	uint8 gameType;
 	uint32 features;
-	bool isCDEdition;
 };
 
 uint32 StarTrekEngine::getFeatures() const {
@@ -51,10 +50,6 @@ uint32 StarTrekEngine::getFeatures() const {
 
 Common::Platform StarTrekEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
-}
-
-bool StarTrekEngine::isCDEdition() const {
-	return _gameDescription->isCDEdition;
 }
 
 uint8 StarTrekEngine::getGameType() const {
@@ -91,8 +86,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GType_ST25,
-		0,
-		true,
+		GF_CDROM,
 	},
 
 	{ // ST25 DOS floppy edition (EN)
@@ -107,7 +101,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		false,
 	},
 
 	{ // ST25 DOS floppy edition (GER)
@@ -122,7 +115,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		false,
 	},
 
 	{ // ST25 Amiga ? (EN)
@@ -137,7 +129,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		false,
 	},
 
 	{ // ST25 Amiga ? (GER)
@@ -152,7 +143,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		false,
 	},
 
 	{ // ST25 Amiga ? (FR)
@@ -167,7 +157,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		false,
 	},
 
 	{ // ST25 Mac ? (EN)
@@ -182,7 +171,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		false,
 	},
 
 	{ // ST25 Mac floppy edition (EN)
@@ -197,7 +185,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		0,
-		false,
 	},
 
 	{ // ST25 DOS demo ? (EN)
@@ -212,7 +199,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		GF_DEMO,
-		false,
 	},
 
 	{ // ST25 MAC demo ? (EN)
@@ -227,7 +213,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		GF_DEMO,
-		false,
 	},
 
 	{ // STJR DOS CD-ROM edition (EN)
@@ -241,11 +226,10 @@ static const StarTrekGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 		GType_STJR,
-		0,
-		true,
+		GF_CDROM,
 	},
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0 }
+	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
 } // End of namespace StarTrek

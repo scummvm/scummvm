@@ -63,7 +63,7 @@ Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
 		_midiSlotList.push_back(&_midiSlots[i]);
 	}
 
-	if (!_vm->isCDEdition())
+	if (!(_vm->getFeatures() & GF_CDROM))
 		_vm->_sfxWorking = false;
 	else if (!SearchMan.hasFile("voc/speech.mrk")) {
 		warning("Couldn't find 'voc/speech.mrk'. The 'trekcd/voc/' directory should be dumped from the CD. Continuing without CD audio");
