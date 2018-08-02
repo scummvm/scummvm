@@ -25,11 +25,18 @@
 #include "bbvs/graphics.h"
 #include "bbvs/sound.h"
 
+#include "engines/advancedDetector.h"
+
 namespace Bbvs {
 
 static const int kAfterVideoSceneNum[] = {
 	 0, 43, 23, 12,  4, 44,  2,
 	16,  4,  4,  4, 44, 12, 44
+};
+
+static const int kAfterVideoSceneNumDemo[] = {
+	 0, 32, 33, 23,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0
 };
 
 void BbvsEngine::loadScene(int sceneNum) {
@@ -208,7 +215,10 @@ bool BbvsEngine::changeScene() {
 		_sceneVisited[_currSceneNum] = 1;
 		_playVideoNumber = _newSceneNum - 30;
 		_currSceneNum = _newSceneNum;
-		_newSceneNum = kAfterVideoSceneNum[_playVideoNumber];
+		if (_gameDescription->flags & ADGF_DEMO)
+			_newSceneNum = kAfterVideoSceneNumDemo[_playVideoNumber];
+		else
+			_newSceneNum = kAfterVideoSceneNum[_playVideoNumber];
 	} else if (_newSceneNum >= 100 && _currSceneNum == kCredits) {
 		// Play secret video
 		stopSounds();

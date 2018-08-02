@@ -49,6 +49,15 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"bbvs",
 		0,
+		AD_ENTRY1s("vspr0007.vnm", "5db44940fa93fdd5becb5c2a5ded7478", 242376),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"bbvs",
+		0,
 		AD_ENTRY1s("vspr0001.vnm", "91c76b1048f93208cd7b1a05ebccb408", 1176976),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
