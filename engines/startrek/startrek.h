@@ -226,9 +226,44 @@ class Sound;
 
 class StarTrekEngine : public ::Engine {
 protected:
-	Common::Error run();
-
+	// startrek.cpp
 public:
+	StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc);
+	virtual ~StarTrekEngine();
+
+	Common::Error run();
+	Common::Error runGameMode(int mode, bool resume);
+
+	// Transporter room
+	void runTransportSequence(const Common::String &name);
+
+	// Bridge
+	void initBridge(bool b) {}; // TODO
+	void cleanupBridge() {}; // TODO
+
+	// Running the game
+	void playSoundEffectIndex(int index);
+	void playMidiMusicTracks(int startTrack, int loopTrack);
+	void playSpeech(const Common::String &filename);
+	void stopPlayingSpeech();
+
+	SharedPtr<FileStream> loadFile(Common::String filename, int fileIndex = 0);
+	/**
+	 * TODO: Figure out what the extra parameters are, and if they're important.
+	 */
+	SharedPtr<FileStream> loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3);
+
+	void playMovie(Common::String filename);
+	void playMovieMac(Common::String filename);
+
+	uint16 getRandomWord();
+	/**
+	 * ".txt" files are just lists of strings. This traverses the file to get a particular
+	 * string index.
+	 */
+	Common::String getLoadedText(int textIndex);
+
+
 	// math.cpp
 	/**
 	 * Unit of the angle is "quadrants" (90 degrees = 1.0)
@@ -237,10 +272,7 @@ public:
 	Fixed14 cos(Angle angle);
 	Angle atan2(int32 deltaX, int32 deltaZ);
 
-	// Game modes
-	Common::Error runGameMode(int mode, bool resume);
-
-	// Away missions
+	// awaymission.cpp
 	void initAwayMission();
 	void runAwayMission();
 	void cleanupAwayMission();
@@ -290,11 +322,10 @@ public:
 	bool isPositionSolid(int16 x, int16 y);
 	void loadRoomIndex(int roomIndex, int spawnIndex);
 
-public:
 	SharedPtr<Room> getRoom();
 
+	// intro.cpp
 private:
-	// Intro
 	void playIntro();
 	/**
 	 * Initializes an object to spawn at one position and move toward another position.
@@ -303,7 +334,7 @@ private:
 	void initIntroR3ObjectToMove(R3 *r3, int16 srcAngle, int16 srcDepth, int16 destAngle, int16 destDepth, int16 ticks);
 	void loadSubtitleSprite(int index, Sprite *sprite);
 
-	// Space, pseudo-3D (space.cpp)
+	// space.cpp (pseudo-3d)
 	void initStarfieldPosition();
 	void initStarfield(int16 x, int16 y, int16 width, int16 height, int16 arg8);
 	void addR3(R3 *r3);
@@ -321,29 +352,14 @@ private:
 	int32 scaleSpacePosition(int32 x, int32 z);
 
 	/**
-	 * Creates something like an "identity" matrix? (Value 0x4000 along the diagonal)
+	 * Creates an identity matrix
 	 */
 	Matrix initMatrix();
 	Matrix initSpeedMatrixForXZMovement(Angle angle, const Matrix &matrix);
 
-	// Transporter room
-	void runTransportSequence(const Common::String &name);
 
-	// Bridge
-	void initBridge(bool b) {}; // TODO
-	void cleanupBridge() {}; // TODO
-
+	// actors.cpp (handles actors and animations)
 public:
-	StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc);
-	virtual ~StarTrekEngine();
-
-	// Running the game
-	void playSoundEffectIndex(int index);
-	void playMidiMusicTracks(int startTrack, int loopTrack);
-	void playSpeech(const Common::String &filename);
-	void stopPlayingSpeech();
-
-	// Actors
 	void initActors();
 	/**
 	 * Set an actor's animation, position, and scale.
@@ -427,7 +443,7 @@ public:
 	 */
 	void scaleBitmapRow(byte *src, byte *dest, uint16 origWidth, uint16 scaledWidth);
 
-	// Events
+	// events.cpp
 public:
 	/**
 	 * Checks for all events, and updates Star Trek's event queue if queueEvents is set.
@@ -636,7 +652,7 @@ public:
 
 	Common::String getSavegameFilename(int slotId) const;
 
-	// Detection related functions
+	// detection.cpp
 public:
 	const StarTrekGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -644,26 +660,8 @@ public:
 	uint8 getGameType() const;
 	Common::Language getLanguage() const;
 
-	// Resource related functions
-	SharedPtr<FileStream> loadFile(Common::String filename, int fileIndex = 0);
-	/**
-	 * TODO: Figure out what the extra parameters are, and if they're important.
-	 */
-	SharedPtr<FileStream> loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3);
 
-	// Movie related functions
-	void playMovie(Common::String filename);
-	void playMovieMac(Common::String filename);
-
-	// Misc
-	uint16 getRandomWord();
-	/**
-	 * ".txt" files are just lists of strings. This traverses the file to get a particular
-	 * string index.
-	 */
-	Common::String getLoadedText(int textIndex);
-
-
+	// Variables
 public:
 	int _gameMode;
 	int _lastGameMode;
