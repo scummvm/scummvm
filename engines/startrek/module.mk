@@ -1,6 +1,7 @@
 MODULE := engines/startrek
 
 MODULE_OBJS = \
+	actors.o \
 	awaymission.o \
 	bitmap.o \
 	common.o \
@@ -9,6 +10,7 @@ MODULE_OBJS = \
 	filestream.o \
 	font.o \
 	graphics.o \
+	intro.o \
 	iwfile.o \
 	lzss.o \
 	math.o \
