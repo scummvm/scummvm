@@ -129,7 +129,7 @@ extern const RoomAction sins5ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::sins5UseMTricorderOnCrewman },
 };
 
-extern const int sins5NumActions = sizeof(sins5ActionList) / sizeof(RoomAction);
+extern const int sins5NumActions = ARRAYSIZE(sins5ActionList);
 
 
 void Room::sins5Tick1() {

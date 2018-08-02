@@ -122,7 +122,7 @@ extern const RoomAction sins3ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::sins3UseMTricorderOnCrewman },
 };
 
-extern const int sins3NumActions = sizeof(sins3ActionList) / sizeof(RoomAction);
+extern const int sins3NumActions = ARRAYSIZE(sins3ActionList);
 
 
 void Room::sins3Tick1() {

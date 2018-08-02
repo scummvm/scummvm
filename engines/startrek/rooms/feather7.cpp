@@ -37,7 +37,7 @@ extern const RoomAction feather7ActionList[] = {
 	{ {ACTION_DONE_ANIM, 2, 0, 0},  &Room::feather7ReadyToBeamOut },
 };
 
-extern const int feather7NumActions = sizeof(feather7ActionList) / sizeof(RoomAction);
+extern const int feather7NumActions = ARRAYSIZE(feather7ActionList);
 
 
 void Room::feather7Tick1() {

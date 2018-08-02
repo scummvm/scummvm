@@ -33,7 +33,7 @@ extern const RoomAction trial4ActionList[] = {
 	{ {ACTION_TICK, 60, 0, 0}, &Room::trial4Tick60 },
 };
 
-extern const int trial4NumActions = sizeof(trial4ActionList) / sizeof(RoomAction);
+extern const int trial4NumActions = ARRAYSIZE(trial4ActionList);
 
 
 void Room::trial4Tick1() {

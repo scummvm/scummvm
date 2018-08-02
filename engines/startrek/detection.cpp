@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/detection.cpp $
- * $Id: detection.cpp 15 2010-06-27 06:13:42Z clone2727 $
- *
  */
 
 #include "base/plugins.h"

@@ -111,7 +111,7 @@ extern const RoomAction feather5ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},               &Room::feather5UseMedkitAnywhere },
 };
 
-extern const int feather5NumActions = sizeof(feather5ActionList) / sizeof(RoomAction);
+extern const int feather5NumActions = ARRAYSIZE(feather5ActionList);
 
 
 void Room::feather5Tick1() {

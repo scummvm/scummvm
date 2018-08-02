@@ -32,7 +32,7 @@
 #define ADD_ROOM_OLD(ROOM) {\
 		if (name.equalsIgnoreCase(#ROOM)) {\
 			_roomActionList = ROOM##ActionList;\
-			_numRoomActions = sizeof(ROOM##ActionList) / sizeof(RoomAction);\
+			_numRoomActions = ARRAYSIZE(ROOM##ActionList);\
 		}\
 	}
 

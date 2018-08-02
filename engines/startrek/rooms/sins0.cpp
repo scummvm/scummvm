@@ -75,7 +75,7 @@ extern const RoomAction sins0ActionList[] = {
 };
 
 
-extern const int sins0NumActions = sizeof(sins0ActionList) / sizeof(RoomAction);
+extern const int sins0NumActions = ARRAYSIZE(sins0ActionList);
 
 
 void Room::sins0Tick1() {
