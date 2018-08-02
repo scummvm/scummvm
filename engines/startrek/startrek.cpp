@@ -420,7 +420,9 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 		Common::File *file = new Common::File();
 		if (!file->open(filename.c_str()))
 			error("Could not find file \'%s\'", filename.c_str());
-		return SharedPtr<FileStream>(new FileStream(file, bigEndian));
+		byte *data = (byte *)malloc(file->size());
+		file->read(data, file->size());
+		return SharedPtr<FileStream>(new FileStream(data, file->size(), bigEndian));
 	}
 
 	Common::SeekableReadStream *indexFile = 0;
@@ -523,7 +525,10 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 		Common::SeekableReadStream *stream = dataFile->readStream(uncompressedSize);
 		delete dataFile;
 		delete dataRunFile;
-		return SharedPtr<FileStream>(new FileStream(stream, bigEndian));
+
+		byte *data = (byte *)malloc(stream->size());
+		stream->read(data, stream->size());
+		return SharedPtr<FileStream>(new FileStream(data, stream->size(), bigEndian));
 	} else {
 		if (fileCount != 1) {
 			dataRunFile->seek(indexOffset);
@@ -545,7 +550,10 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 
 		delete dataFile;
 		delete dataRunFile;
-		return SharedPtr<FileStream>(new FileStream(stream, bigEndian));
+
+		byte *data = (byte *)malloc(stream->size());
+		stream->read(data, stream->size());
+		return SharedPtr<FileStream>(new FileStream(data, stream->size(), bigEndian));
 	}
 
 	// We should not get to this point...

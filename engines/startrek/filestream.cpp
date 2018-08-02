@@ -24,79 +24,12 @@
 
 namespace StarTrek {
 
-FileStream::FileStream(Common::SeekableReadStream *stream, bool bigEndian) {
-	_bigEndian = bigEndian;
-
-	_pos = 0;
-	_size = stream->size();
-	_data = new byte[_size];
-	stream->read(_data, _size);
-	delete stream;
+FileStream::FileStream(byte *data, uint32 len, bool bigEndian) : Common::MemoryReadStreamEndian(data, len, bigEndian) {
+	_data = data;
 }
 
 FileStream::~FileStream() {
-	delete[] _data;
-}
-
-// ReadStream functions
-
-uint32 FileStream::read(void *dataPtr, uint32 dataSize) {
-	if (_pos + dataSize > (uint32)size())
-		dataSize = size() - _pos;
-	memcpy(dataPtr, _data + _pos, dataSize);
-	_pos += dataSize;
-	return dataSize;
-}
-
-byte FileStream::readByte() {
-	assert(_pos + 1 <= size());
-	return _data[_pos++];
-}
-
-uint16 FileStream::readUint16() {
-	assert(_pos + 2 <= size());
-	uint16 w;
-	if (_bigEndian)
-		w = READ_BE_UINT16(_data + _pos);
-	else
-		w = READ_LE_UINT16(_data + _pos);
-	_pos += 2;
-	return w;
-}
-
-uint32 FileStream::readUint32() {
-	assert(_pos + 4 <= size());
-	uint32 w;
-	if (_bigEndian)
-		w = READ_BE_UINT32(_data + _pos);
-	else
-		w = READ_LE_UINT32(_data + _pos);
-	_pos += 4;
-	return w;
-}
-
-int16 FileStream::readSint16() {
-	return (int16)readUint16();
-}
-
-int32 FileStream::readSint32() {
-	return (int32)readUint32();
-}
-
-// SeekableReadStream functions
-
-int32 FileStream::pos() const {
-	return _pos;
-}
-
-int32 FileStream::size() const {
-	return _size;
-}
-
-bool FileStream::seek(int32 offset, int whence) {
-	assert(whence == SEEK_SET);
-	_pos = offset;
-	return true;
+	free(_data);
 }
 
 } // End of namespace StarTrek
