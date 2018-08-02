@@ -52,11 +52,6 @@ bool StarTrekEngine::showSaveMenu() {
 	if (desc.size() > 28)
 		desc = Common::String(desc.c_str(), 28);
 
-	/*
-	dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-	slot = dialog->runModalWithCurrentTarget();
-	*/
-
 	delete dialog;
 
 	if (slot < 0)
