@@ -23,37 +23,16 @@
 #define STARTREK_FILESTREAM_H
 
 #include "common/stream.h"
+#include "common/memstream.h"
 
 namespace StarTrek {
 
-class FileStream {
+class FileStream : public Common::MemoryReadStreamEndian {
 public:
-	FileStream(Common::SeekableReadStream *stream, bool bigEndian);
+	FileStream(byte *data, uint32 len, bool bigEndian);
 	~FileStream();
 
 	byte *_data;
-
-private:
-	bool _bigEndian;
-	int32 _pos;
-	int32 _size;
-
-public:
-	// ReadStream functions
-	bool eos() const;
-	uint32 read(void *dataPtr, uint32 dataSize);
-
-	byte readByte();
-	uint16 readUint16();
-	uint32 readUint32();
-	int16 readSint16();
-	int32 readSint32();
-
-	// SeekableReadStream functions
-	int32 pos() const;
-	int32 size() const;
-	bool seek(int32 offset, int whence);
-
 };
 
 } // End of namespace StarTrek
