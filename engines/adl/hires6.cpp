@@ -216,7 +216,7 @@ void HiRes6Engine::runIntro() {
 		error("Failed to open disk volume 0");
 
 	stream.reset(files->createReadStream("\010\010\010\010\010\010"));
-	Common::String copyright(readStringAt(*stream, 0x103, APPLECHAR('\r')));
+	Common::String copyright(readStringAt(*stream, 0x103, _display->asciiToNative('\r')));
 
 	delete files;
 
@@ -339,13 +339,15 @@ Common::String HiRes6Engine::formatVerbError(const Common::String &verb) const {
 	for (uint i = 0; i < verb.size(); ++i)
 		err.setChar(verb[i], i + 24);
 
-	err.setChar(APPLECHAR(' '), 32);
+	const char spaceChar = _display->asciiToNative(' ');
+
+	err.setChar(spaceChar, 32);
 
 	uint i = 24;
-	while (err[i] != APPLECHAR(' '))
+	while (err[i] != spaceChar)
 		++i;
 
-	err.setChar(APPLECHAR('.'), i);
+	err.setChar(_display->asciiToNative('.'), i);
 
 	return err;
 }
@@ -356,16 +358,18 @@ Common::String HiRes6Engine::formatNounError(const Common::String &verb, const C
 	for (uint i = 0; i < noun.size(); ++i)
 		err.setChar(noun[i], i + 24);
 
+	const char spaceChar = _display->asciiToNative(' ');
+
 	for (uint  i = 35; i > 31; --i)
-		err.setChar(APPLECHAR(' '), i);
+		err.setChar(spaceChar, i);
 
 	uint i = 24;
-	while (err[i] != APPLECHAR(' '))
+	while (err[i] != spaceChar)
 		++i;
 
-	err.setChar(APPLECHAR('I'), i + 1);
-	err.setChar(APPLECHAR('S'), i + 2);
-	err.setChar(APPLECHAR('.'), i + 3);
+	err.setChar(_display->asciiToNative('I'), i + 1);
+	err.setChar(_display->asciiToNative('S'), i + 2);
+	err.setChar(_display->asciiToNative('.'), i + 3);
 
 	return err;
 }
@@ -409,7 +413,7 @@ void HiRes6Engine::printString(const Common::String &str) {
 	if (getVar(2) == 0xff) {
 		if (getVar(26) == 0) {
 			// This checks for special room description string " "
-			if (str.size() == 1 && APPLECHAR(str[0]) == APPLECHAR(' ')) {
+			if (str.size() == 1 && _display->asciiToNative(str[0]) == _display->asciiToNative(' ')) {
 				setVar(2, 160);
 			} else {
 				AdlEngine_v5::printString(s);

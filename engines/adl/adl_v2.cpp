@@ -101,7 +101,7 @@ void AdlEngine_v2::advanceClock() {
 }
 
 void AdlEngine_v2::checkTextOverflow(char c) {
-	if (c != APPLECHAR('\r'))
+	if (c != _display->asciiToNative('\r'))
 		return;
 
 	++_linesPrinted;
@@ -135,7 +135,7 @@ void AdlEngine_v2::handleTextOverflow() {
 		if (shouldQuit())
 			return;
 
-		if (key == APPLECHAR('\r'))
+		if (key == _display->asciiToNative('\r'))
 			break;
 
 		bell(3);
@@ -158,16 +158,19 @@ void AdlEngine_v2::printString(const Common::String &str) {
 	uint startPos = 0;
 	uint pos = 0;
 
+	const char spaceChar = _display->asciiToNative(' ');
+	const char returnChar = _display->asciiToNative('\r');
+
 	while (pos < s.size()) {
-		s.setChar(APPLECHAR(s[pos]), pos);
+		s.setChar(_display->asciiToNative(s[pos]), pos);
 
 		if (pos == endPos) {
-			while (s[pos] != APPLECHAR(' ') && s[pos] != APPLECHAR('\r')) {
+			while (s[pos] != spaceChar && s[pos] != returnChar) {
 				if (pos-- == startPos)
 					error("Word wrapping failed");
 			}
 
-			s.setChar(APPLECHAR('\r'), pos);
+			s.setChar(returnChar, pos);
 			endPos = pos + textWidth;
 			startPos = pos + 1;
 		}
@@ -180,8 +183,8 @@ void AdlEngine_v2::printString(const Common::String &str) {
 		_display->printChar(s[pos]);
 	}
 
-	checkTextOverflow(APPLECHAR('\r'));
-	_display->printChar(APPLECHAR('\r'));
+	checkTextOverflow(returnChar);
+	_display->printChar(returnChar);
 	_display->copyTextSurface();
 }
 
@@ -565,10 +568,12 @@ int AdlEngine_v2::o_tellTime(ScriptEnv &e) {
 
 	Common::String time = _strings_v2.time;
 
-	time.setChar(APPLECHAR('0') + _state.time.hours / 10, 12);
-	time.setChar(APPLECHAR('0') + _state.time.hours % 10, 13);
-	time.setChar(APPLECHAR('0') + _state.time.minutes / 10, 15);
-	time.setChar(APPLECHAR('0') + _state.time.minutes % 10, 16);
+	const char zeroChar = _display->asciiToNative('0');
+
+	time.setChar(zeroChar + _state.time.hours / 10, 12);
+	time.setChar(zeroChar + _state.time.hours % 10, 13);
+	time.setChar(zeroChar + _state.time.minutes / 10, 15);
+	time.setChar(zeroChar + _state.time.minutes % 10, 16);
 
 	printString(time);
 
@@ -611,8 +616,8 @@ int AdlEngine_v2::askForSlot(const Common::String &question) {
 		if (shouldQuit())
 			return -1;
 
-		if (input.size() > 0 && input[0] >= APPLECHAR('A') && input[0] <= APPLECHAR('O'))
-			return input[0] - APPLECHAR('A');
+		if (input.size() > 0 && input[0] >= _display->asciiToNative('A') && input[0] <= _display->asciiToNative('O'))
+			return input[0] - _display->asciiToNative('A');
 	}
 }
 

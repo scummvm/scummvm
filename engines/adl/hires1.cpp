@@ -214,10 +214,10 @@ void HiRes1Engine::runIntro() {
 			if (s.empty())
 				continue;
 
-			if (s[0] == APPLECHAR('I')) {
+			if (s[0] == _display->asciiToNative('I')) {
 				instructions = true;
 				break;
-			} else if (s[0] == APPLECHAR('G')) {
+			} else if (s[0] == _display->asciiToNative('G')) {
 				break;
 			}
 		}
@@ -397,8 +397,9 @@ void HiRes1Engine::printString(const Common::String &str) {
 }
 
 Common::String HiRes1Engine::loadMessage(uint idx) const {
+	const char returnChar = _display->asciiToNative('\r');
 	StreamPtr stream(_messages[idx]->createReadStream());
-	return readString(*stream, APPLECHAR('\r')) + APPLECHAR('\r');
+	return readString(*stream, returnChar) + returnChar;
 }
 
 void HiRes1Engine::printMessage(uint idx) {
@@ -487,14 +488,17 @@ void HiRes1Engine::showRoom() {
 void HiRes1Engine::wordWrap(Common::String &str) const {
 	uint end = 39;
 
+	const char spaceChar = _display->asciiToNative(' ');
+	const char returnChar = _display->asciiToNative('\r');
+
 	while (1) {
 		if (str.size() <= end)
 			return;
 
-		while (str[end] != APPLECHAR(' '))
+		while (str[end] != spaceChar)
 			--end;
 
-		str.setChar(APPLECHAR('\r'), end);
+		str.setChar(returnChar, end);
 		end += 40;
 	}
 }

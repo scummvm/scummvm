@@ -182,7 +182,7 @@ Common::String AdlEngine::inputString(byte prompt) const {
 			Common::String native;
 
 			for (uint i = 0; i < line.size(); ++i)
-				native += APPLECHAR(line[i]);
+				native += _display->asciiToNative(line[i]);
 
 			_display->printString(native);
 			// Set pause flag to activate regular behaviour of delay and inputKey
@@ -214,7 +214,7 @@ Common::String AdlEngine::inputString(byte prompt) const {
 			case Common::KEYCODE_BACKSPACE | 0x80:
 				if (!s.empty()) {
 					_display->moveCursorBackward();
-					_display->setCharAtCursor(APPLECHAR(' '));
+					_display->setCharAtCursor(_display->asciiToNative(' '));
 					s.deleteLastChar();
 				}
 				break;
@@ -233,7 +233,7 @@ byte AdlEngine::inputKey(bool showCursor) const {
 
 	// If debug script is active, we fake a return press for the text overflow handling
 	if (_inputScript && !_scriptPaused)
-		return APPLECHAR('\r');
+		return _display->asciiToNative('\r');
 
 	if (showCursor)
 		_display->showCursor(true);
@@ -257,7 +257,7 @@ byte AdlEngine::inputKey(bool showCursor) const {
 
 		// If debug script was activated in the meantime, abort input
 		if (_inputScript && !_scriptPaused)
-			return APPLECHAR('\r');
+			return _display->asciiToNative('\r');
 
 		_display->copyTextSurface();
 		g_system->delayMillis(16);
@@ -991,7 +991,7 @@ byte AdlEngine::convertKey(uint16 ascii) const {
 
 Common::String AdlEngine::getLine() {
 	while (1) {
-		Common::String line = inputString(APPLECHAR('?'));
+		Common::String line = inputString(_display->asciiToNative('?'));
 
 		if (shouldQuit() || _isRestoring)
 			return Common::String();
@@ -1010,9 +1010,10 @@ Common::String AdlEngine::getLine() {
 
 Common::String AdlEngine::getWord(const Common::String &line, uint &index) const {
 	Common::String str;
+	const char spaceChar = _display->asciiToNative(' ');
 
 	for (uint i = 0; i < 8; ++i)
-		str += APPLECHAR(' ');
+		str += spaceChar;
 
 	int copied = 0;
 
@@ -1020,7 +1021,7 @@ Common::String AdlEngine::getWord(const Common::String &line, uint &index) const
 	while (1) {
 		if (index == line.size())
 			return str;
-		if (line[index] != APPLECHAR(' '))
+		if (line[index] != spaceChar)
 			break;
 		++index;
 	}
@@ -1032,7 +1033,7 @@ Common::String AdlEngine::getWord(const Common::String &line, uint &index) const
 
 		index++;
 
-		if (index == line.size() || line[index] == APPLECHAR(' '))
+		if (index == line.size() || line[index] == spaceChar)
 			return str;
 	}
 }
@@ -1249,7 +1250,7 @@ int AdlEngine::o_restart(ScriptEnv &e) {
 	_display->printString(_strings.playAgain);
 	Common::String input = inputString();
 
-	if (input.size() == 0 || input[0] != APPLECHAR('N')) {
+	if (input.size() == 0 || input[0] != _display->asciiToNative('N')) {
 		_isRestarting = true;
 		_graphics->clearScreen();
 		_display->copyGfxSurface();

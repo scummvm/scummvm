@@ -239,9 +239,9 @@ void Display_A2::clear(byte color) {
 
 // FIXME: This does not currently update the surfaces
 void Display_A2::printChar(char c) {
-	if (c == APPLECHAR('\r'))
+	if (c == Display_A2::asciiToNative('\r'))
 		_cursorPos = (_cursorPos / Display_A2::kTextWidth + 1) * Display_A2::kTextWidth;
-	else if (c == APPLECHAR('\a')) {
+	else if (c == Display_A2::asciiToNative('\a')) {
 		copyTextSurface();
 		static_cast<AdlEngine *>(g_engine)->bell();
 	} else if ((byte)c < 0x80 || (byte)c >= 0xa0) {

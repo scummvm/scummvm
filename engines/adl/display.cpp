@@ -53,7 +53,7 @@ void Display::createTextBuffer(uint textWidth, uint textHeight) {
 	_textHeight = textHeight;
 
 	_textBuf = new byte[textWidth * textHeight];
-	memset(_textBuf, asciiToNative(' '), textWidth * textHeight);
+	memset(_textBuf, (byte)asciiToNative(' '), textWidth * textHeight);
 }
 
 void Display::setMode(Display::Mode mode) {
@@ -88,7 +88,7 @@ void Display::copyGfxSurface() {
 }
 
 void Display::home() {
-	memset(_textBuf, asciiToNative(' '), _textWidth * _textHeight);
+	memset(_textBuf, (byte)asciiToNative(' '), _textWidth * _textHeight);
 	_cursorPos = 0;
 }
 

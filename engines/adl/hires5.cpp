@@ -261,7 +261,7 @@ void HiRes5Engine::runIntro() {
 		Common::String cmd(inputString());
 
 		// We ignore the backup and format menu options
-		if (!cmd.empty() && cmd[0] == APPLECHAR('1'))
+		if (!cmd.empty() && cmd[0] == _display->asciiToNative('1'))
 			break;
 	};
 }

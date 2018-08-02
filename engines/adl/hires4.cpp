@@ -244,7 +244,7 @@ void HiRes4Engine::runIntroAdvise(Common::SeekableReadStream &menu) {
 		}
 
 		_display->moveCursorTo(Common::Point(32, 18));
-		_display->printChar(APPLECHAR(cursor[cursorIdx]));
+		_display->printChar(_display->asciiToNative(cursor[cursorIdx]));
 		_display->copyTextSurface();
 		g_system->delayMillis(25);
 		cursorIdx = (cursorIdx + 1) % cursor.size();
@@ -450,11 +450,11 @@ void HiRes4Engine::runIntro() {
 			if (shouldQuit())
 				return;
 
-			if (key == APPLECHAR('1')) {
+			if (key == _display->asciiToNative('1')) {
 				StreamPtr instructions(files->createReadStream("INSTRUCTIONS"));
 				runIntroInstructions(*instructions);
 				break;
-			} else if (key == APPLECHAR('2')) {
+			} else if (key == _display->asciiToNative('2')) {
 				StreamPtr adventure(files->createReadStream("THE ADVENTURE"));
 				runIntroLoading(*adventure);
 				return;

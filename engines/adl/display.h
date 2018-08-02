@@ -23,9 +23,6 @@
 #ifndef ADL_DISPLAY_H
 #define ADL_DISPLAY_H
 
-// REMOVE
-#define APPLECHAR(C) (char)(C | 0x80)
-
 #include "common/types.h"
 
 namespace Common {
