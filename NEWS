@@ -54,15 +54,15 @@ For a more comprehensive changelog of the latest experimental code, see:
      as fullscreen (320x200px) in the game data files.
 
  Tinsel:
-   - Fix loading Discworld 1 savegames from the launcher where Rincewind had a held item
+   - Fix loading Discworld 1 savegames from the launcher where Rincewind had a held item.
    - Script patch for hang in Discworld 1 GRA using items on Temple big hammer.
    - In Discworld 1, Held items being released that were never in the Luggage or Rincewind's inventory
      will now be automatically dropped into the Luggage rather than being lost.
 
  Titanic:
     - Fixed bug in entering floor numbers numerically that could crash the game.
-	- Fixed parser not getting properly reset across sentences in a conversation.
-	- Fixed endless busy cursor on Titania closeup when brain slots are incorrectly inserted.
+    - Fixed parser not getting properly reset across sentences in a conversation.
+    - Fixed endless busy cursor on Titania closeup when brain slots are incorrectly inserted.
 
  Tucker:
    - Fixed multiple graphic issues in Bud Tucker in Double Trouble.
