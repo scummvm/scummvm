@@ -67,6 +67,8 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 
 Graphics::~Graphics() {
 	delete[] _egaData;
+	delete[] _palData;
+	delete[] _lutData;
 
 	delete _font;
 }
@@ -711,10 +713,7 @@ void Graphics::copyBackgroundScreen() {
 }
 
 void Graphics::drawDirectToScreen(SharedPtr<Bitmap> bitmap) {
-	int xoffset = bitmap->xoffset;
-	int yoffset = bitmap->yoffset;
-
-	_vm->_system->copyRectToScreen(bitmap->pixels, bitmap->width, xoffset, yoffset, bitmap->width, bitmap->height);
+	_vm->_system->copyRectToScreen(bitmap->pixels, bitmap->width, bitmap->xoffset, bitmap->yoffset, bitmap->width, bitmap->height);
 }
 
 
