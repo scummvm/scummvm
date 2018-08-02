@@ -57,7 +57,7 @@ extern const RoomAction feather2ActionList[] = {
 	{ {ACTION_LOOK, OBJECT_REDSHIRT,   0, 0}, &Room::feather2LookAtRedshirt },
 };
 
-extern const int feather2NumActions = sizeof(feather2ActionList) / sizeof(RoomAction);
+extern const int feather2NumActions = ARRAYSIZE(feather2ActionList);
 
 
 void Room::feather2Tick1() {

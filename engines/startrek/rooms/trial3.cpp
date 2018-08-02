@@ -91,7 +91,7 @@ extern const RoomAction trial3ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},              &Room::trial3UseMedkitAnywhere },
 };
 
-extern const int trial3NumActions = sizeof(trial3ActionList) / sizeof(RoomAction);
+extern const int trial3NumActions = ARRAYSIZE(trial3ActionList);
 
 
 void Room::trial3Tick1() {

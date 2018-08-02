@@ -98,7 +98,7 @@ extern const RoomAction feather6ActionList[] = {
 	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_STALACTITES, 0}, &Room::feather6UseSTricorderOnStalactites },
 };
 
-extern const int feather6NumActions = sizeof(feather6ActionList) / sizeof(RoomAction);
+extern const int feather6NumActions = ARRAYSIZE(feather6ActionList);
 
 
 void Room::feather6Tick1() {
