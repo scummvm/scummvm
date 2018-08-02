@@ -529,7 +529,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 }
 
 void StarTrekEngine::playSoundEffectIndex(int index) {
-	if (!isCDEdition())
+	if (!(getFeatures() & GF_CDROM))
 		_sound->playMidiTrack(index);
 	else {
 		switch (index) {

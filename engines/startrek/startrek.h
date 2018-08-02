@@ -121,7 +121,8 @@ enum StarTrekGameType {
 };
 
 enum StarTrekGameFeatures {
-	GF_DEMO = (1 << 0)
+	GF_DEMO  = (1 << 0),
+	GF_CDROM = (1 << 1)
 };
 
 enum kDebugLevels {
@@ -639,7 +640,6 @@ public:
 public:
 	const StarTrekGameDescription *_gameDescription;
 	uint32 getFeatures() const;
-	bool isCDEdition() const;
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;
 	Common::Language getLanguage() const;
