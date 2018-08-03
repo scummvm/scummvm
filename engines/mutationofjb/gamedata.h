@@ -164,7 +164,7 @@ struct Object {
 };
 
 /**
- * An interactable area without a visual representation.
+ * An interactable area, usually without a visual representation.
  */
 struct Static {
 	/** Whether you can mouse over and interact with the static (AC register). */
@@ -175,9 +175,14 @@ struct Static {
 	 * If it starts with '~', the static has an implicit "pickup" action that adds
 	 * an item with the same name (except '`' replaces '~') to your inventory and
 	 * disables the static. If there is a matching scripted "pickup" action, it
-	 * overrides the implicit action.
+	 * overrides the implicit action. This kind of static also has graphics in the
+	 * form of its rectangle extracted from room frame 2 (and 3 after pickup).
+	 *
+	 * If it ends with '[', the "use" action allows combining the static with another
+	 * entity.
 	 *
 	 * TODO: Support '~' statics.
+	 * TODO: Support combinable statics.
 	 */
 	char _name[MAX_ENTITY_NAME_LENGTH + 1];
 	/** X coordinate of the static rectangle (XX register). */
