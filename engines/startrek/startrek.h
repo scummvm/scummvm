@@ -626,6 +626,20 @@ public:
 	int loadTextDisplayMode();
 	void saveTextDisplayMode(int value);
 
+	/**
+	 * Show the republic map, only used in mission 7.
+	 */
+	void showRepublicMap(int16 arg0, int16 turbolift);
+	/**
+	 * Checks the mouse position to return and index for the area selected.
+	 */
+	int getRepublicMapAreaAtMouse();
+	/**
+	 * Same as above, but returns 6 or 7 as error conditions (can't reach due to radiation
+	 * or wrong turbolift).
+	 */
+	int getRepublicMapAreaOrFailure(int16 turbolift);
+
 
 private:
 	int16 _textDisplayMode;

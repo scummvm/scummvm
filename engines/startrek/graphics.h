@@ -81,6 +81,7 @@ public:
 
 	void loadPri(const Common::String &priFile);
 	void clearPri();
+	void setPri(byte val);
 	byte getPriValue(int x, int y);
 
 	SharedPtr<Bitmap> loadBitmap(String basename);

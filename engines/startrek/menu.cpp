@@ -1010,4 +1010,222 @@ void StarTrekEngine::saveTextDisplayMode(int value) {
 	// TODO;
 }
 
+void StarTrekEngine::showRepublicMap(int16 arg0, int16 turbolift) {
+	_gfx->fadeoutScreen();
+	_sound->stopAllVocSounds();
+
+	bool spriteLoaded = false;
+	int16 clickedArea = 0;
+
+	actorFunc1();
+	_gfx->pushSprites();
+
+	if (!_awayMission.veng.scannedComputerBank) {
+		_gfx->setBackgroundImage(_gfx->loadBitmap("veng9b"));
+		_gfx->copyBackgroundScreen();
+		_system->updateScreen();
+		_gfx->setPri(15);
+		_gfx->fadeinScreen();
+
+		// TODO: hide mouse sprite?
+
+		bool exitLoop = 0;
+		int16 var54 = 0x2d;
+
+		while (!exitLoop) {
+			TrekEvent event;
+			if (!popNextEvent(&event))
+				continue;
+
+			switch (event.type) {
+			case TREKEVENT_TICK:
+				if (--var54 == 0)
+					exitLoop = true;
+				break;
+
+			case TREKEVENT_LBUTTONDOWN:
+			case TREKEVENT_RBUTTONDOWN:
+				exitLoop = true;
+				break;
+
+			case TREKEVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+				case Common::KEYCODE_RETURN:
+				case Common::KEYCODE_KP_ENTER:
+				case Common::KEYCODE_SPACE:
+					exitLoop = true;
+					break;
+
+				default:
+					break;
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		_awayMission.veng.scannedComputerBank = true; // FIXME?
+		_gfx->fadeoutScreen();
+	}
+
+	_gfx->setBackgroundImage(_gfx->loadBitmap("veng9"));
+	_gfx->copyBackgroundScreen();
+	_system->updateScreen();
+	_gfx->setPri(15);
+
+	Sprite someSprite;
+	_gfx->drawAllSprites();
+	_gfx->warpMouse(_gfx->getMousePos().x, 96);
+	_gfx->fadeinScreen();
+
+	bool exitLoop = false;
+
+	while (!exitLoop) {
+		TrekEvent event;
+		if (!popNextEvent(&event))
+			continue;
+
+		switch (event.type) {
+		case TREKEVENT_TICK:
+			_frameIndex++;
+			// sub_12fff();
+			_gfx->drawAllSprites();
+			break;
+
+		case TREKEVENT_LBUTTONDOWN: {
+lclick:
+			clickedArea = getRepublicMapAreaOrFailure(turbolift);
+			if (clickedArea == 0) {
+			} else if (clickedArea == 6) {
+				Common::String text = "#GENE\\GENE_F14#Turbolift access is blocked by an extremely high radiation level.";
+				showTextbox("", text, 50, 50, TEXTCOLOR_YELLOW, 0);
+			} else if (clickedArea == 7) {
+				Common::String text = "#GENE\\GENE_F15#This turbolift cannot reach that area of the ship.";
+				showTextbox("", text, 50, 50, TEXTCOLOR_YELLOW, 0);
+			} else
+				exitLoop = true;
+			break;
+		}
+
+		case TREKEVENT_MOUSEMOVE: {
+			if (_gfx->getMousePos().y < 96) // TODO: more elegant solution
+				_gfx->warpMouse(_gfx->getMousePos().x, 96);
+
+			clickedArea = getRepublicMapAreaAtMouse();
+			if (clickedArea != 0) {
+				if (!spriteLoaded) {
+					_gfx->addSprite(&someSprite);
+					someSprite.setXYAndPriority(3, 168, 15);
+					someSprite.bitmap = _gfx->loadBitmap(Common::String::format("turbo%d", clickedArea));
+					spriteLoaded = true;
+				}
+			} else {
+				if (spriteLoaded) {
+					someSprite.dontDrawNextFrame();
+					_gfx->drawAllSprites();
+					_gfx->delSprite(&someSprite);
+					someSprite.bitmap.reset();
+					spriteLoaded = false;
+				}
+			}
+			break;
+		}
+
+		case TREKEVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+			case Common::KEYCODE_F1:
+				goto lclick;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	_gfx->fadeoutScreen();
+	someSprite.bitmap.reset();
+	_gfx->popSprites();
+
+	_gfx->loadPri(_screenName);
+	_gfx->setBackgroundImage(_gfx->loadBitmap(_screenName));
+	_gfx->copyBackgroundScreen();
+	_system->updateScreen();
+
+	_gfx->drawAllSprites();
+
+	int16 roomIndex, spawnIndex;
+	if (clickedArea == 1) {
+		roomIndex = 0;
+		spawnIndex = 1;
+	} else if (clickedArea == 2) {
+		roomIndex = 1;
+		spawnIndex = 1;
+	} else if (clickedArea == 3 && turbolift == 0) {
+		roomIndex = 3;
+		spawnIndex = 1;
+	} else if (clickedArea == 3 && turbolift == 1) {
+		roomIndex = 3;
+		spawnIndex = 0;
+	} else if (clickedArea == 4) {
+		roomIndex = 5;
+		spawnIndex = 1;
+	} else if (clickedArea == 5) {
+		roomIndex = 7;
+		spawnIndex = 1;
+	} else {
+		warning("Unknown room selected");
+		roomIndex = 0;
+		spawnIndex = 1;
+	}
+
+	_roomIndexToLoad = roomIndex;
+	_spawnIndexToLoad = spawnIndex;
+}
+
+int StarTrekEngine::getRepublicMapAreaAtMouse() {
+	Common::Point mouse = _gfx->getMousePos();
+
+	if (mouse.x >= 0x7f && mouse.x <= 0x91 && mouse.y >= 0x78 && mouse.y <= 0x7b)
+		return 1;
+	else if (mouse.x >= 0x6e && mouse.x <= 0x7e && mouse.y >= 0x83 && mouse.y <= 0x87)
+		return 2;
+	else if (mouse.x >= 0x95 && mouse.x <= 0xad && mouse.y >= 0x8f && mouse.y <= 0x93)
+		return 3;
+	else if (mouse.x >= 0xef && mouse.x <= 0xfd && mouse.y >= 0x98 && mouse.y <= 0xa0)
+		return 4;
+	else if (mouse.x >= 0x6b && mouse.x <= 0x80 && mouse.y >= 0xa3 && mouse.y <= 0xa7)
+		return 5;
+	else if (mouse.x >= 0x6e && mouse.x <= 0x88 && mouse.y >= 0xab && mouse.y <= 0xaf)
+		return 6;
+	else
+		return 0;
+}
+
+int StarTrekEngine::getRepublicMapAreaOrFailure(int16 turbolift) {
+	Common::Point mouse = _gfx->getMousePos();
+
+	if (mouse.x >= 0x7f && mouse.x <= 0x91 && mouse.y >= 0x78 && mouse.y <= 0x7b)
+		return turbolift == 0 ? 1 : 7;
+	else if (mouse.x >= 0x6e && mouse.x <= 0x7e && mouse.y >= 0x83 && mouse.y <= 0x87)
+		return turbolift == 0 ? 2 : 7;
+	else if (mouse.x >= 0x95 && mouse.x <= 0xad && mouse.y >= 0x8f && mouse.y <= 0x93)
+		return 3;
+	else if (mouse.x >= 0xef && mouse.x <= 0xfd && mouse.y >= 0x98 && mouse.y <= 0xa0)
+		return turbolift == 1 ? 4 : 7;
+	else if (mouse.x >= 0x6b && mouse.x <= 0x80 && mouse.y >= 0xa3 && mouse.y <= 0xa7)
+		return turbolift == 1 ? 5 : 7;
+	else if (mouse.x >= 0x6e && mouse.x <= 0x88 && mouse.y >= 0xab && mouse.y <= 0xaf)
+		return 6;
+	return 0;
+}
+
 } // End of namespace StarTrek

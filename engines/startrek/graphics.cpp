@@ -221,6 +221,10 @@ void Graphics::clearPri() {
 	memset(_priData, 0, sizeof(_priData));
 }
 
+void Graphics::setPri(byte val) {
+	memset(_priData, val, sizeof(_priData));
+}
+
 byte Graphics::getPriValue(int x, int y) {
 	assert(_screenRect.contains(x, y));
 
@@ -459,127 +463,126 @@ bool compareSpritesByLayer(Sprite *s1, Sprite *s2) {
 void Graphics::drawAllSprites(bool updateScreen) {
 	// TODO: different video modes?
 
-	if (_numSprites == 0)
-		return;
+	if (_numSprites != 0) {
+		// Sort sprites by layer
+		Common::sort(_sprites, _sprites + _numSprites, &compareSpritesByLayer);
 
-	// Sort sprites by layer
-	Common::sort(_sprites, _sprites + _numSprites, &compareSpritesByLayer);
+		// Update sprite rectangles
+		for (int i = 0; i < _numSprites; i++) {
+			Sprite *spr = _sprites[i];
+			Common::Rect rect;
 
-	// Update sprite rectangles
-	for (int i = 0; i < _numSprites; i++) {
-		Sprite *spr = _sprites[i];
-		Common::Rect rect;
+			rect.left   = spr->pos.x - spr->bitmap->xoffset;
+			rect.top    = spr->pos.y - spr->bitmap->yoffset;
+			rect.right  = rect.left + spr->bitmap->width;
+			rect.bottom = rect.top + spr->bitmap->height;
 
-		rect.left   = spr->pos.x - spr->bitmap->xoffset;
-		rect.top    = spr->pos.y - spr->bitmap->yoffset;
-		rect.right  = rect.left + spr->bitmap->width;
-		rect.bottom = rect.top + spr->bitmap->height;
+			spr->drawX = rect.left;
+			spr->drawY = rect.top;
 
-		spr->drawX = rect.left;
-		spr->drawY = rect.top;
+			spr->drawRect = rect.findIntersectingRect(_screenRect);
 
-		spr->drawRect = rect.findIntersectingRect(_screenRect);
+			if (!spr->drawRect.isEmpty()) { // At least partly on-screen
+				if (spr->lastDrawRect.left < spr->lastDrawRect.right) {
+					// If the sprite's position is close to where it was last time it was
+					// drawn, combine the two rectangles and redraw that whole section.
+					// Otherwise, redraw the old position and current position separately.
+					rect = spr->drawRect.findIntersectingRect(spr->lastDrawRect);
 
-		if (!spr->drawRect.isEmpty()) { // At least partly on-screen
-			if (spr->lastDrawRect.left < spr->lastDrawRect.right) {
-				// If the sprite's position is close to where it was last time it was
-				// drawn, combine the two rectangles and redraw that whole section.
-				// Otherwise, redraw the old position and current position separately.
-				rect = spr->drawRect.findIntersectingRect(spr->lastDrawRect);
-
-				if (rect.isEmpty())
-					spr->rect2Valid = 0;
-				else {
-					spr->rectangle2 = getRectEncompassing(spr->drawRect, spr->lastDrawRect);
+					if (rect.isEmpty())
+						spr->rect2Valid = 0;
+					else {
+						spr->rectangle2 = getRectEncompassing(spr->drawRect, spr->lastDrawRect);
+						spr->rect2Valid = 1;
+					}
+				} else {
+					spr->rectangle2 = spr->drawRect;
 					spr->rect2Valid = 1;
 				}
-			} else {
-				spr->rectangle2 = spr->drawRect;
-				spr->rect2Valid = 1;
+
+				spr->isOnScreen = 1;
+			} else { // Off-screen
+				spr->rect2Valid = 0;
+				spr->isOnScreen = 0;
 			}
-
-			spr->isOnScreen = 1;
-		} else { // Off-screen
-			spr->rect2Valid = 0;
-			spr->isOnScreen = 0;
 		}
-	}
 
-	// Determine what portions of the screen need to be updated
-	Common::Rect dirtyRects[MAX_SPRITES * 2];
-	int numDirtyRects = 0;
+		// Determine what portions of the screen need to be updated
+		Common::Rect dirtyRects[MAX_SPRITES * 2];
+		int numDirtyRects = 0;
 
-	for (int i = 0; i < _numSprites; i++) {
-		Sprite *spr = _sprites[i];
+		for (int i = 0; i < _numSprites; i++) {
+			Sprite *spr = _sprites[i];
 
-		if (spr->bitmapChanged) {
-			if (spr->isOnScreen) {
-				if (spr->rect2Valid) {
-					dirtyRects[numDirtyRects++] = spr->rectangle2;
+			if (spr->bitmapChanged) {
+				if (spr->isOnScreen) {
+					if (spr->rect2Valid) {
+						dirtyRects[numDirtyRects++] = spr->rectangle2;
+					} else {
+						dirtyRects[numDirtyRects++] = spr->drawRect;
+						dirtyRects[numDirtyRects++] = spr->lastDrawRect;
+					}
 				} else {
-					dirtyRects[numDirtyRects++] = spr->drawRect;
 					dirtyRects[numDirtyRects++] = spr->lastDrawRect;
 				}
-			} else {
-				dirtyRects[numDirtyRects++] = spr->lastDrawRect;
 			}
 		}
-	}
 
-	// Redraw the background on every dirty rectangle
-	const ::Graphics::PixelFormat format = ::Graphics::PixelFormat::createFormatCLUT8();
-	::Graphics::Surface surface;
-	surface.create(SCREEN_WIDTH, SCREEN_HEIGHT, format);
+		// Redraw the background on every dirty rectangle
+		const ::Graphics::PixelFormat format = ::Graphics::PixelFormat::createFormatCLUT8();
+		::Graphics::Surface surface;
+		surface.create(SCREEN_WIDTH, SCREEN_HEIGHT, format);
 
-	for (int i = 0; i < numDirtyRects; i++) {
-		Common::Rect &r = dirtyRects[i];
-		if (r.width() == 0 || r.height() == 0)
-			continue;
+		for (int i = 0; i < numDirtyRects; i++) {
+			Common::Rect &r = dirtyRects[i];
+			if (r.width() == 0 || r.height() == 0)
+				continue;
 
-		int offset = r.top * SCREEN_WIDTH + r.left;
-		surface.copyRectToSurface(_backgroundImage->pixels + offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
-	}
+			int offset = r.top * SCREEN_WIDTH + r.left;
+			surface.copyRectToSurface(_backgroundImage->pixels + offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
+		}
 
-	// For each sprite, merge the rectangles that overlap with it and redraw the sprite.
-	for (int i = 0; i < _numSprites; i++) {
-		Sprite *spr = _sprites[i];
+		// For each sprite, merge the rectangles that overlap with it and redraw the sprite.
+		for (int i = 0; i < _numSprites; i++) {
+			Sprite *spr = _sprites[i];
 
-		if (!spr->field16 && spr->isOnScreen) {
-			bool mustRedrawSprite = false;
-			Common::Rect rect2;
+			if (!spr->field16 && spr->isOnScreen) {
+				bool mustRedrawSprite = false;
+				Common::Rect rect2;
 
-			for (int j = 0; j < numDirtyRects; j++) {
-				Common::Rect rect1 = spr->drawRect.findIntersectingRect(dirtyRects[j]);
+				for (int j = 0; j < numDirtyRects; j++) {
+					Common::Rect rect1 = spr->drawRect.findIntersectingRect(dirtyRects[j]);
 
-				if (rect1.width() != 0 && rect1.height() != 0) {
-					if (mustRedrawSprite)
-						rect2 = getRectEncompassing(rect1, rect2);
-					else
-						rect2 = rect1;
-					mustRedrawSprite = true;
+					if (rect1.width() != 0 && rect1.height() != 0) {
+						if (mustRedrawSprite)
+							rect2 = getRectEncompassing(rect1, rect2);
+						else
+							rect2 = rect1;
+						mustRedrawSprite = true;
+					}
 				}
+
+				if (mustRedrawSprite)
+					drawSprite(*spr, &surface, rect2);
 			}
 
-			if (mustRedrawSprite)
-				drawSprite(*spr, &surface, rect2);
+			spr->field16 = false;
+			spr->bitmapChanged = false;
+			spr->lastDrawRect = spr->drawRect;
 		}
 
-		spr->field16 = false;
-		spr->bitmapChanged = false;
-		spr->lastDrawRect = spr->drawRect;
+		// Copy dirty rects to screen
+		for (int j = 0; j < numDirtyRects; j++) {
+			Common::Rect &r = dirtyRects[j];
+			if (r.width() == 0 || r.height() == 0)
+				continue;
+
+			int offset = r.left + r.top * SCREEN_WIDTH;
+			_vm->_system->copyRectToScreen((byte *)surface.getPixels() + offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
+		}
+
+		surface.free();
 	}
-
-	// Copy dirty rects to screen
-	for (int j = 0; j < numDirtyRects; j++) {
-		Common::Rect &r = dirtyRects[j];
-		if (r.width() == 0 || r.height() == 0)
-			continue;
-
-		int offset = r.left + r.top * SCREEN_WIDTH;
-		_vm->_system->copyRectToScreen((byte *)surface.getPixels() + offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
-	}
-
-	surface.free();
 
 	if (updateScreen)
 		this->updateScreen();

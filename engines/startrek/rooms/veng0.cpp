@@ -144,7 +144,7 @@ void Room::veng0Tick50() {
 
 void Room::veng0TouchedDoor() {
 	playSoundEffectIndex(SND_DOOR1);
-	// TODO
+	showRepublicMap(0, 0);
 }
 
 void Room::veng0UseSTricorderOnComputerBank() {

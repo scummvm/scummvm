@@ -503,6 +503,10 @@ int Room::showCodeInputBox(const char * const *codes) {
 	return retval;
 }
 
+void Room::showRepublicMap(int16 arg0, int16 arg2) {
+	_vm->showRepublicMap(arg0, arg2);
+}
+
 void Room::playVoc(Common::String filename) {
 	_vm->_sound->playVoc(filename);
 }
