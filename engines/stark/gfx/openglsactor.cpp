@@ -92,7 +92,7 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 	_shader->setUniform("normalMatrix", normalMatrix.getRotation());
 	setBoneRotationArrayUniform(_shader, "boneRotation");
 	setBonePositionArrayUniform(_shader, "bonePosition");
-	setLightArrayUniform("lights", lights);
+	setLightArrayUniform(lights);
 
 	Common::Array<Face *> faces = _model->getFaces();
 	Common::Array<Material *> mats = _model->getMaterials();
@@ -128,10 +128,16 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 		_shadowShader->enableVertexAttribute("boneWeight", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 32);
 		_shadowShader->use(true);
 
-		_shadowShader->setUniform("modelViewMatrix", modelViewMatrix);
-		_shadowShader->setUniform("projectionMatrix", projectionMatrix);
+		Math::Matrix4 mvp = projection * view * model;
+		mvp.transpose();
+		_shadowShader->setUniform("mvp", mvp);
+
 		setBoneRotationArrayUniform(_shadowShader, "boneRotation");
 		setBonePositionArrayUniform(_shadowShader, "bonePosition");
+
+		Math::Matrix4 modelInverse = model;
+		modelInverse.inverse();
+		setShadowUniform(lights, position, maxShadowLength / 1000.0, modelInverse.getRotation());
 
 		for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
 			GLuint ebo = _faceEBO[*face];
@@ -248,7 +254,7 @@ void OpenGLSActorRenderer::setBoneRotationArrayUniform(OpenGL::Shader *shader, c
 	delete[] rotations;
 }
 
-void OpenGLSActorRenderer::setLightArrayUniform(const char *uniform, const LightEntryArray &lights) {
+void OpenGLSActorRenderer::setLightArrayUniform(const LightEntryArray &lights) {
 	static const uint maxLights = 10;
 
 	assert(lights.size() >= 1);
@@ -297,6 +303,126 @@ void OpenGLSActorRenderer::setLightArrayUniform(const char *uniform, const Light
 		_shader->setUniform(Common::String::format("lights[%d].position", i).c_str(), Math::Vector4d());
 	}
 }
+
+void OpenGLSActorRenderer::setShadowUniform(const LightEntryArray &lights, const Math::Vector3d &actorPosition,
+		float maxShadowLength, Math::Matrix3 worldToModelRot) {
+	Math::Vector3d sumDirection;
+	bool hasLight = false;
+
+	// Compute the contribution from each lights
+	// The ambient light is skipped intentionally
+	for (uint i = 1; i < lights.size(); ++i) {
+		LightEntry *light = lights[i];
+		bool contributes = false;
+
+		Math::Vector3d lightDirection;
+		switch (light->type) {
+			case LightEntry::kPoint:
+				contributes = getPointLightContribution(light, actorPosition, lightDirection);
+				break;
+			case LightEntry::kDirectional:
+				contributes = getDirectionalLightContribution(light, actorPosition, lightDirection);
+				break;
+			case LightEntry::kSpot:
+				contributes = getSpotLightContribution(light, actorPosition, lightDirection);
+				break;
+			case LightEntry::kAmbient:
+			default:
+				break;
+		}
+
+		if (contributes) {
+			sumDirection += lightDirection;
+			hasLight = true;
+		}
+	}
+
+	if (hasLight) {
+		// Clip the horizontal length
+		Math::Vector2d horizontalProjection(sumDirection.x(), sumDirection.y());
+		float shadowLength = MIN(horizontalProjection.getMagnitude(), maxShadowLength);
+
+		horizontalProjection.normalize();
+		horizontalProjection *= shadowLength;
+
+		sumDirection.x() = horizontalProjection.getX();
+		sumDirection.y() = horizontalProjection.getY();
+		sumDirection.z() = -1;
+	} else {
+		// Cast from above by default
+		sumDirection.x() = 0;
+		sumDirection.y() = 0;
+		sumDirection.z() = -1;
+	}
+
+	//Transform the direction to the model space and pass to the shader
+	sumDirection = worldToModelRot * sumDirection;
+	_shadowShader->setUniform("lightDirection", sumDirection);
+}
+
+bool OpenGLSActorRenderer::getPointLightContribution(LightEntry *light,
+		const Math::Vector3d &actorPosition, Math::Vector3d &direction) {
+	float distance = light->position.getDistanceTo(actorPosition);
+
+	if (distance > light->falloffFar) {
+		return false;
+	}
+
+	float factor;
+	if (distance > light->falloffNear) {
+		if (light->falloffFar - light->falloffNear > 1) {
+			factor = 1 - (distance - light->falloffNear) / (light->falloffFar - light->falloffNear);
+		} else {
+			factor = 0;
+		}
+	} else {
+		factor = 1;
+	}
+
+	float brightness = (light->color.x() + light->color.y() + light->color.z()) / 3.0f;
+
+	if (factor <= 0 || brightness <= 0) {
+		return false;
+	}
+
+	direction = actorPosition - light->position;
+	direction.normalize();
+	direction *= factor * brightness;
+
+	return true;
+}
+bool OpenGLSActorRenderer::getDirectionalLightContribution(LightEntry *light,
+		const Math::Vector3d &actorPosition, Math::Vector3d &direction) {
+	float brightness = (light->color.x() + light->color.y() + light->color.z()) / 3.0f;
+
+	if (brightness <= 0) {
+		return false;
+	}
+
+	direction = light->direction;
+	direction.normalize();
+	direction *= brightness;
+
+	return true;
+}
+bool OpenGLSActorRenderer::getSpotLightContribution(LightEntry *light,
+		const Math::Vector3d &actorPosition, Math::Vector3d &direction) {
+	Math::Vector3d LightToActor = actorPosition - light->position;
+	LightToActor.normalize();
+
+	float cosAngle = MAX(0.0f, LightToActor.dotProduct(light->direction));
+	float cone = (cosAngle - light->innerConeAngle.getCosine()) /
+			MAX(0.001f, light->outerConeAngle.getCosine() - light->innerConeAngle.getCosine());
+	cone = CLIP(cone, 0.0f, 1.0f);
+
+	if (cone <= 0) {
+		return false;
+	}
+
+	return getPointLightContribution(light, actorPosition, direction);
+}
+
+
 
 } // End of namespace Gfx
 } // End of namespace Stark

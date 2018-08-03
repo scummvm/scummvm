@@ -61,7 +61,14 @@ protected:
 	uint32 createFaceEBO(const Face *face);
 	void setBonePositionArrayUniform(OpenGL::Shader *shader, const char *uniform);
 	void setBoneRotationArrayUniform(OpenGL::Shader *shader, const char *uniform);
-	void setLightArrayUniform(const char *uniform, const LightEntryArray &lights);
+	void setLightArrayUniform(const LightEntryArray &lights);
+
+	void setShadowUniform(const LightEntryArray &lights, const Math::Vector3d &actorPosition,
+			float maxShadowLength, Math::Matrix3 worldToModelRot);
+	
+	bool getPointLightContribution(LightEntry *light, const Math::Vector3d &actorPosition, Math::Vector3d &direction);
+	bool getDirectionalLightContribution(LightEntry *light, const Math::Vector3d &actorPosition, Math::Vector3d &direction);
+	bool getSpotLightContribution(LightEntry *light, const Math::Vector3d &actorPosition, Math::Vector3d &direction);
 };
 
 } // End of namespace Gfx
