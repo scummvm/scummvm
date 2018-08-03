@@ -246,6 +246,10 @@ private:
 	 */
 	int showCodeInputBox(const char * const *codes);
 	/**
+	 * Cmd 0x14: Show a map of the republic for mission 7
+	 */
+	void showRepublicMap(int16 arg0, int16 arg2);
+	/**
 	 * Cmd 0x15
 	 */
 	void playVoc(Common::String filename);
