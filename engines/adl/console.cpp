@@ -44,6 +44,9 @@ Console::Console(AdlEngine *engine) : GUI::Debugger() {
 	registerCmd("vars", WRAP_METHOD(Console, Cmd_Vars));
 	registerCmd("var", WRAP_METHOD(Console, Cmd_Var));
 	registerCmd("convert_disk", WRAP_METHOD(Console, Cmd_ConvertDisk));
+	registerCmd("run_script", WRAP_METHOD(Console, Cmd_RunScript));
+	registerCmd("stop_script", WRAP_METHOD(Console, Cmd_StopScript));
+	registerCmd("set_script_delay", WRAP_METHOD(Console, Cmd_SetScriptDelay));
 }
 
 Common::String Console::toAscii(const Common::String &str) {
@@ -420,6 +423,41 @@ bool Console::Cmd_ConvertDisk(int argc, const char **argv) {
 		debugPrintf("Failed to write to '%s'", argv[2]);
 
 	delete[] buf;
+	return true;
+}
+
+bool Console::Cmd_RunScript(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <file>\n", argv[0]);
+		return true;
+	}
+
+	_engine->runScript(argv[1]);
+
+	return false;
+}
+
+bool Console::Cmd_StopScript(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	_engine->stopScript();
+
+	return true;
+}
+
+bool Console::Cmd_SetScriptDelay(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <delay>\n", argv[0]);
+		debugPrintf("A delay of zero indicates wait-for-key\n");
+		return true;
+	}
+
+	Common::String value(argv[1]);
+	_engine->setScriptDelay((uint)value.asUint64());
+
 	return true;
 }
 

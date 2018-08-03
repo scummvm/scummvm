@@ -29,6 +29,7 @@
 #include "common/events.h"
 #include "common/stream.h"
 #include "common/savefile.h"
+#include "common/random.h"
 
 #include "engines/util.h"
 
@@ -48,6 +49,8 @@ AdlEngine::~AdlEngine() {
 	delete _graphics;
 	delete _console;
 	delete _dumpFile;
+	delete _inputScript;
+	delete _random;
 }
 
 AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
@@ -62,6 +65,9 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_isQuitting(false),
 		_abortScript(false),
 		_gameDescription(gd),
+		_inputScript(nullptr),
+		_scriptDelay(1000),
+		_scriptPaused(false),
 		_console(nullptr),
 		_messageIds(),
 		_saveVerb(0),
@@ -71,6 +77,7 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_canSaveNow(false),
 		_canRestoreNow(false) {
 
+	_random = new Common::RandomSource("adl");
 	DebugMan.addDebugChannel(kDebugChannelScript, "Script", "Trace script execution");
 }
 
@@ -139,6 +146,9 @@ Common::String AdlEngine::getItemDescription(const Item &item) const {
 }
 
 void AdlEngine::delay(uint32 ms) const {
+	if (_inputScript && !_scriptPaused)
+		return;
+
 	uint32 now = g_system->getMillis();
 	const uint32 end = now + ms;
 
@@ -159,8 +169,36 @@ Common::String AdlEngine::inputString(byte prompt) const {
 	while (1) {
 		byte b = inputKey();
 
+		if (_inputScript) {
+			// If debug script is active, read input line from file
+			Common::String line(getScriptLine());
+
+			// Debug script terminated, go back to keyboard input
+			if (line.empty())
+				continue;
+
+			line += '\r';
+
+			Common::String native;
+
+			for (uint i = 0; i < line.size(); ++i)
+				native += APPLECHAR(line[i]);
+
+			_display->printString(native);
+			// Set pause flag to activate regular behaviour of delay and inputKey
+			_scriptPaused = true;
+
+			if (_scriptDelay > 0)
+				delay(_scriptDelay);
+			else
+				inputKey();
+
+			_scriptPaused = false;
+			return native;
+		}
+
 		if (shouldQuit() || _isRestoring)
-			return 0;
+			return Common::String();
 
 		if (b == 0)
 			continue;
@@ -193,6 +231,10 @@ Common::String AdlEngine::inputString(byte prompt) const {
 byte AdlEngine::inputKey(bool showCursor) const {
 	byte key = 0;
 
+	// If debug script is active, we fake a return press for the text overflow handling
+	if (_inputScript && !_scriptPaused)
+		return APPLECHAR('\r');
+
 	if (showCursor)
 		_display->showCursor(true);
 
@@ -212,6 +254,10 @@ byte AdlEngine::inputKey(bool showCursor) const {
 					key = convertKey(event.kbd.ascii);
 			};
 		}
+
+		// If debug script was activated in the meantime, abort input
+		if (_inputScript && !_scriptPaused)
+			return APPLECHAR('\r');
 
 		_display->updateTextScreen();
 		g_system->delayMillis(16);
@@ -481,6 +527,9 @@ void AdlEngine::bell(uint count) const {
 }
 
 bool AdlEngine::playTones(const Tones &tones, bool isMusic, bool allowSkip) const {
+	if (_inputScript && !_scriptPaused)
+		return false;
+
 	Audio::SoundHandle handle;
 	Audio::AudioStream *stream = new Sound(tones);
 
@@ -721,6 +770,44 @@ bool AdlEngine::hasFeature(EngineFeature f) const {
 	}
 }
 
+Common::String AdlEngine::getScriptLine() const {
+	Common::String line;
+
+	do {
+		line = _inputScript->readLine();
+
+		if (_inputScript->eos() || _inputScript->err()) {
+			stopScript();
+			return Common::String();
+		}
+
+		line.trim();
+	} while (line.size() == 0 || line.firstChar() == ';');
+
+	return line;
+}
+
+void AdlEngine::runScript(const char *filename) const {
+	// Debug functionality to read input from a text file
+	_inputScript = new Common::File;
+	if (!_inputScript->open(filename)) {
+		stopScript();
+		return;
+	}
+
+	Common::String line(getScriptLine());
+
+	if (!line.empty()) {
+		// Read random seed
+		_random->setSeed((uint32)line.asUint64());
+	}
+}
+
+void AdlEngine::stopScript() const {
+	delete _inputScript;
+	_inputScript = nullptr;
+}
+
 void AdlEngine::loadState(Common::ReadStream &stream) {
 	_state.room = stream.readByte();
 	_state.moves = stream.readByte();
@@ -935,7 +1022,7 @@ Common::String AdlEngine::getLine() {
 		Common::String line = inputString(APPLECHAR('?'));
 
 		if (shouldQuit() || _isRestoring)
-			return "";
+			return Common::String();
 
 		if ((byte)line[0] == ('\r' | 0x80)) {
 			_textMode = !_textMode;

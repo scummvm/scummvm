@@ -25,10 +25,6 @@
 
 #include "adl/adl.h"
 
-namespace Common {
-class RandomSource;
-}
-
 namespace Adl {
 
 class AdlEngine_v2 : public AdlEngine {
@@ -97,9 +93,6 @@ protected:
 	bool _itemRemoved;
 	byte _roomOnScreen, _picOnScreen, _itemsOnScreen;
 	Common::Array<byte> _brokenRooms;
-
-private:
-	Common::RandomSource *_random;
 };
 
 } // End of namespace Adl

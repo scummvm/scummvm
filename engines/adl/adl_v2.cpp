@@ -31,7 +31,6 @@
 namespace Adl {
 
 AdlEngine_v2::~AdlEngine_v2() {
-	delete _random;
 	delete _disk;
 }
 
@@ -43,9 +42,7 @@ AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
 		_itemRemoved(false),
 		_roomOnScreen(0),
 		_picOnScreen(0),
-		_itemsOnScreen(0) {
-	_random = new Common::RandomSource("adl");
-}
+		_itemsOnScreen(0) { }
 
 void AdlEngine_v2::insertDisk(byte volume) {
 	delete _disk;
@@ -170,6 +167,20 @@ void AdlEngine_v2::checkTextOverflow(char c) {
 void AdlEngine_v2::handleTextOverflow() {
 	_linesPrinted = 0;
 	_display->updateTextScreen();
+
+	if (_inputScript) {
+		// Set pause flag to activate regular behaviour of delay and inputKey
+		_scriptPaused = true;
+
+		if (_scriptDelay > 0)
+			delay(_scriptDelay);
+		else
+			inputKey();
+
+		_scriptPaused = false;
+		return;
+	}
+
 	bell();
 
 	while (true) {

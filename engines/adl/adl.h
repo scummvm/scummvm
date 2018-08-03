@@ -48,6 +48,7 @@ class WriteStream;
 class SeekableReadStream;
 class File;
 struct Event;
+class RandomSource;
 }
 
 namespace Adl {
@@ -399,8 +400,13 @@ protected:
 	bool _isRestarting, _isRestoring, _isQuitting;
 	bool _canSaveNow, _canRestoreNow;
 	bool _abortScript;
+	Common::RandomSource *_random;
 
 	const AdlGameDescription *_gameDescription;
+
+	mutable Common::File *_inputScript;
+	mutable uint _scriptDelay;
+	mutable bool _scriptPaused;
 
 private:
 	virtual void runIntro() { }
@@ -411,7 +417,10 @@ private:
 	virtual void loadRoom(byte roomNr) = 0;
 	virtual void showRoom() = 0;
 	virtual void switchRegion(byte region) { }
-
+	void runScript(const char *filename) const;
+	void stopScript() const;
+	void setScriptDelay(uint delay) const { _scriptDelay = delay; }
+	Common::String getScriptLine() const;
 	// Engine
 	Common::Error run();
 	bool hasFeature(EngineFeature f) const;
