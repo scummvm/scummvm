@@ -618,6 +618,24 @@ struct AwayMission {
 				ser.syncAsSint16LE(missionScore);
 			}
 		} sins;
+
+		struct {
+			bool enteredRoom0FirstTime; // 0x2d
+			bool bridgeCrewmanDead; // 0x30
+			bool scannedCaptainsChair; // 0x31
+			bool scannedComputerBank; // 0x32
+			bool field34; // 0x34
+
+			// 0: beam still in place
+			// 1: used saw on beam
+			// 2: beam taken
+			byte beamState; // 0x35
+
+			bool field36; // 0x36
+			bool field68; // 0x68
+			bool field6b; // 0x6b
+			bool field6c; // 0x6c
+		} veng;
 	};
 };
 // Size: 0x129 bytes

@@ -1795,6 +1795,11 @@ extern const int        sins0NumActions,   sins1NumActions,   sins2NumActions,  
 extern const RoomAction sins4ActionList[], sins5ActionList[];
 extern const int        sins4NumActions,   sins5NumActions;
 
+extern const RoomAction veng0ActionList[], veng1ActionList[], veng2ActionList[], veng3ActionList[];
+extern const int        veng0NumActions,   veng1NumActions,   veng2NumActions,   veng3NumActions;
+extern const RoomAction veng4ActionList[], veng5ActionList[], veng6ActionList[], veng7ActionList[], veng8ActionList[];
+extern const int        veng4NumActions,   veng5NumActions,   veng6NumActions,   veng7NumActions,   veng8NumActions;
+
 }
 
 #endif
