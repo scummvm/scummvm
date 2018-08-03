@@ -99,6 +99,15 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMissi
 	ADD_ROOM(sins3);
 	ADD_ROOM(sins4);
 	ADD_ROOM(sins5);
+	ADD_ROOM(veng0);
+	ADD_ROOM(veng1);
+	ADD_ROOM(veng2);
+	ADD_ROOM(veng3);
+	ADD_ROOM(veng4);
+	ADD_ROOM(veng5);
+	ADD_ROOM(veng6);
+	ADD_ROOM(veng7);
+	ADD_ROOM(veng8);
 
 	if (_roomActionList == nullptr) {
 		warning("Room \"%s\" unimplemented", name.c_str());

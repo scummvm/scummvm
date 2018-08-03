@@ -67,7 +67,16 @@ MODULE_OBJS = \
 	rooms/sins2.o \
 	rooms/sins3.o \
 	rooms/sins4.o \
-	rooms/sins5.o
+	rooms/sins5.o \
+	rooms/veng0.o \
+	rooms/veng1.o \
+	rooms/veng2.o \
+	rooms/veng3.o \
+	rooms/veng4.o \
+	rooms/veng5.o \
+	rooms/veng6.o \
+	rooms/veng7.o \
+	rooms/veng8.o
 	
 
 

@@ -17,6 +17,7 @@ extern const char *const g_gameStrings[] = {
 	"Lt. Uhura",
 	"Mr. Scott",
 	"Mr. Sulu",
+	"Mr. Chekov",
 
 	"Ensign Everts",
 	"Prel. Angiven",
@@ -61,6 +62,9 @@ extern const char *const g_gameStrings[] = {
 	"Light of Travel",
 
 	"Ensign Mosher",
+
+	"Ensign Kije",
+	"*Capt. Patterson*",
 
 	"#BRID\\BRIDU146#Nothing to report, Captain.",
 
@@ -2665,6 +2669,85 @@ extern const char *const g_gameStrings[] = {
 	"#SIN5\\SIN5N013#History will not be kind to you. Better luck next time.",
 
 
+	"#VEN0\\VEN0_001#Dick Patterson and I weren't exactly friends, but this...",
+	"#VEN0\\VEN0_002#Any idea of which one it was?",
+	"#VEN0\\VEN0_003#Can you bring him back?",
+	"#VEN0\\VEN0_004#Dick Patterson was never one for making long speeches.",
+	"#VEN0\\VEN0_005#Do the sensors read any other ships in the sector?",
+	"#VEN0\\VEN0_006#I don't know, Bones. We're too far from the Klingon and Romulan borders for it to be one of their ships.",
+	"#VEN0\\VEN0_007#It's a mess, Scotty. Life support's functioning, but that's about it.",
+	"#VEN0\\VEN0_008#Kirk Here. What is it, Scotty?",
+	"#VEN0\\VEN0_009#Mr. Scott, we will continue here. Assist the trade ship and return here. If we need assistance, we will contact you.",
+	"#VEN0\\VEN0_010#Well, Gentlemen. Let's see if we can reestablish power.",
+	"#VEN0\\VEN0_011#Yes, Scotty. Just don't take too long. Kirk out.",
+	"#VEN0\\VEN0_012#Captain, I believe we have exhausted all our options concerning data retrieval here on the bridge.",
+	"#VEN0\\VEN0_013#Captain, these phasers are not configured for fine cutting. We could cause extensive damage.",
+	"#VEN0\\VEN0_014#What kind of a butcher would do this sort of thing?",
+	"#VEN0\\VEN0_015#I'm a doctor, not a civil engineer!",
+	"#VEN0\\VEN0_016#They are dead, Jim. All of them.",
+	"#VEN0\\VEN0_017#Jim, don't forget, there's another survivor on board. We've got to find him!",
+	"#VEN0\\VEN0_018#My God, Jim. What kind of butcher would do something like this?",
+	"#VEN0\\VEN0_019#Punctured lung, nerve damage, brain damage, fractured arm and ribs; it's a miracle he lasted as long as he did. He's not coming back, Jim.",
+	"#VEN0\\VEN0_020#Someone must have tampered with the computer records!",
+	"#VEN0\\VEN0_021#Thanks for the dissertation, Spock.",
+	"#VEN0\\VEN0_022#We're too late. This man must have just died a few moments ago.",
+	"#VEN0\\VEN0_023#I recommend checking as many of the logs and sensor records as possible.",
+	"#VEN0\\VEN0_024#The controls have been totally destroyed. Undoubtedly due to circuit overloads caused by the battle.",
+	"#VEN0\\VEN0_025#There are no more computer entries accessible from this station.",
+	"#VEN0\\VEN0_026#There are no more log entries.",
+	"#VEN0\\VEN0_027#Tricorder readings indicate that the ship is running on minimal battery power. Only life support and essential systems are currently running.",
+	"#VEN0\\VEN0_028#Captain, records indicate that this ship was attacked by a Constitution-class Starship.",
+	"#VEN0\\VEN0_029#I am reading a record of the transponder signal. NCC-1701. It's the Enterprise, Captain.",
+	"#VEN0\\VEN0_030#I've done a primary scan of the Republic's systems. Main and auxiliary power is out. Life support is stable. I also read that communications are operable.",
+	"#VEN0\\VEN0_031#May I remind you, Doctor, that the main computer of a Constitution class starship has safeguards against such an intrusion. Furthermore, I do not see any discrepancies in any of the files that I am able to access.",
+	"#VEN0\\VEN0_32#My tricorder has picked up the final entry of the Republic.",
+	"#VEN0\\VEN0_033#That's all there is, Captain.",
+	"#VEN0\\VEN0_034#This is a standard Tritanium/Duranium support beam. Tricorder readings indicate that although it has experienced enough tensile stress to push it from one side of its mooring, it has not elastically deformed beyond its ability to support a compressive load.",
+	"#VEN0\\VEN0_035#We are under attack. Our sensors are inoperative. We're trying to get shields up. Our rear deflector's down. It appears our enemy is a Constitution class starship. We have tried to defend ourselves. We've hailed them, but no response.",
+	"#VEN0\\VEN0_036#I feel sick.",
+	"#VEN0\\VEN0_037#I think I remember seeing a ton of these at spacedock 4.",
+	"#VEN0\\VEN0_038#There is no response, Captain. The controls are completely dead.",
+	"#VEN0\\VEN0_039#Besides the trade wessel, this sector is clear, Sir.",
+	"#VEN0\\VEN0_S12#Enterprise to Captain Kirk.",
+	"#VEN0\\VEN0_S15#Should we beam you back, Captain?",
+	"#VEN0\\VEN0_S52#We've picked up a distress signal. It appears a trading vessel is having a wee bit of trouble with their warp drive. What condition is the Republic in?",
+	"#VEN0\\VEN0_S54#You sure you'll be all right, Captain?",
+	"#VEN0\\VEN0N000#A common Tritanium/Duranium support beam which has snapped away from the hull.",
+	"#VEN0\\VEN0N001#Captain James T. Kirk. This is not one of the best days of his life.",
+	"#VEN0\\VEN0N002#Dr. Leonard McCoy. You have rarely seen him as shaken as he is now.",
+	"#VEN0\\VEN0N003#Ensign Kije, who wishes that Lieutenant Stackpole had drawn this assignment.",
+	"#VEN0\\VEN0N004#Here is the body of Captain Patterson of the Republic. He didn't die without a fight.",
+	"#VEN0\\VEN0N005#Main computer banks. They appear to have been damaged.",
+	"#VEN0\\VEN0N006#Mr. Spock, awaiting orders.",
+	"#VEN0\\VEN0N007#The molecular saw easily cuts through the beam, separating it from the hull.",
+	"#VEN0\\VEN0N008#The support beam has already been detached from the hull.",
+	"#VEN0\\VEN0N009#The support beam is still attached to the hull.",
+	"#VEN0\\VEN0N010#The viewscreen is not functioning.",
+	"#VEN0\\VEN0N011#These are the helm controls for the Republic. They are currently inactive.",
+	"#VEN0\\VEN0N012#These are the navigation controls for the Republic. They are currently inactive.",
+	"#VEN0\\VEN0N013#This beam has been detached from the hull.",
+	"#VEN0\\VEN0N015#This is is the Captain's chair, where the Captain's log is stored.",
+	"#VEN0\\VEN0N016#This man is dead.",
+	"#VEN0\\VEN0N017#This person is dead.",
+	"#VEN0\\VEN0N018#You are in what's left of the bridge of the U.S.S. Republic.",
+	"#VEN0\\VEN0N019#You pick up the beam. It's a little heavy, but you manage it.",
+
+
+	"#VEN2\\VEN2_028#Yes, Uhura. Just wanted a status report. Kirk out.",
+	"#VEN2\\VEN2_066#They are jamming all frequencies, Captain. We will not be able to contact the Enterprise.",
+	"#VEN2\\VEN2_098#What are you stalling for? Lower your shields.",
+	"#VEN2\\VEN2U093#Enterprise here. We're still tracking the distress call. Are you all right, Sir?",
+
+
+	"#VEN4\\VEN4N010#This is an empty hypodermic injector.",
+
+
+	"#VEN6\\VEN6N007#The hypo is now filled with multipurpose oil.",
+
+
+	"#VENA\\VENA_F32#The landing party has been taken captive by the Elasi, and you know Starfleet does not negotiate with terrorists. As you look forward to a long captivity you wonder who will take command of the Enterprise. Better luck next time.",
+	"#VENA\\VENA_F34#Captain, it would be unwise to use your phaser considering the already extensive damage sustained by the Republic.",
+	"#VENA\\VENA_F40#The Elasi fire photon torpedoes. The Republic has been destroyed.",
 	"#VENA\\VENA_F41#Kirk out.",
 
 

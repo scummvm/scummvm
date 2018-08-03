@@ -2431,6 +2431,73 @@ public:
 	void sins5UseSTricorderOnNorthDoor();
 	void sins5UseMTricorderOnCrewman();
 
+	// VENG0
+	void veng0Tick1();
+	void veng0Tick10();
+	void veng0Tick50();
+	void veng0TouchedDoor();
+	void veng0UseSTricorderOnComputerBank();
+	void veng0UseSTricorderOnChair();
+	void veng0UseSTricorderAnywhere();
+	void veng0UseMccoyOnBeam();
+	void veng0UseSTricorderOnBeam();
+	void veng0UseRedshirtOnBeam();
+	void veng0UseSpockOnConsole();
+	void veng0UseRedshirtOnConsole();
+	void veng0UsePhaserOnBeam();
+	void veng0UseMccoyOnDeadCrewman();
+	void veng0UseSawOnBeam();
+	void veng0KirkReachedSaw();
+	void veng0Timer0Expired();
+	void veng0DoneCuttingBeam();
+	void veng0GetBeam();
+	void veng0TalkToKirk();
+	void veng0TalkToMccoy();
+	void veng0TalkToSpock();
+	void veng0TalkToRedshirt();
+	void veng0LookAtPatterson();
+	void veng0LookAtDeadCrewman2();
+	void veng0LookAtComputerBank();
+	void veng0LookAtChair();
+	void veng0LookAtKirk();
+	void veng0LookAtSpock();
+	void veng0LookAtMccoy();
+	void veng0LookAtRedshirt();
+	void veng0LookAtViewscreen();
+	void veng0LookAtHelmConsole();
+	void veng0LookAtNavConsole();
+	void veng0LookAtBeam();
+	void veng0LookAnywhere();
+	void veng0LookAtDeadCrewman1();
+	void veng0UseMccoyOnLivingCrewman();
+	void veng0MccoyReachedCrewman();
+	void veng0MccoyScannedCrewman();
+	// TODO: common code
+
+	// VENG1
+	void veng1Tick1();
+
+	// VENG2
+	void veng2Tick1();
+
+	// VENG3
+	void veng3Tick1();
+
+	// VENG4
+	void veng4Tick1();
+
+	// VENG5
+	void veng5Tick1();
+
+	// VENG6
+	void veng6Tick1();
+
+	// VENG7
+	void veng7Tick1();
+
+	// VENG8
+	void veng8Tick1();
+
 public:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.
 	// NOTE: Any changes here must be reflected in the corresponding serializer functions.
