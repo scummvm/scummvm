@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-31 14:31+0200\n"
+"POT-Creation-Date: 2018-08-03 14:52+0200\n"
 "PO-Revision-Date: 2018-06-11 21:45+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -3110,12 +3110,12 @@ msgid "Display graphics using the game's bright palette"
 msgstr "Visa grafik med spelets ljusa palett"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
-#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:524
+#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
 msgid "Failed to load saved game from file."
 msgstr "Kunde inte läsa spardata från filen."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
-#: engines/tinsel/saveload.cpp:537
+#: engines/tinsel/saveload.cpp:551
 msgid "Failed to save game to file."
 msgstr "Kunde inte skriva spardata till filen."
 

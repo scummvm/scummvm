@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-07-31 14:31+0200\n"
+"POT-Creation-Date: 2018-08-03 14:52+0200\n"
 "PO-Revision-Date: 2018-04-18 10:18+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -3094,13 +3094,13 @@ msgid "Display graphics using the game's bright palette"
 msgstr "Shiyong youxi de Liang Tiaoseban Lai Xianshi Tuxiang"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
-#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:524
+#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
 #, fuzzy
 msgid "Failed to load saved game from file."
 msgstr "Wufa Cong Cundang Wenjian Zhong Duqu"
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
-#: engines/tinsel/saveload.cpp:537
+#: engines/tinsel/saveload.cpp:551
 #, fuzzy
 msgid "Failed to save game to file."
 msgstr "Wufa Baocun Cundang "
