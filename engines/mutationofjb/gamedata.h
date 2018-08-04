@@ -235,9 +235,15 @@ struct ExhaustedChoice {
 	 */
 	uint8 _encodedData;
 
-	uint8 getContext() const { return (_encodedData >> 7) & 0x1; }
-	uint8 getChoiceIndex() const { return (_encodedData >> 4) & 0x7; }
-	uint8 getChoiceListIndex() const { return _encodedData & 0xF; }
+	uint8 getContext() const {
+		return (_encodedData >> 7) & 0x1;
+	}
+	uint8 getChoiceIndex() const {
+		return (_encodedData >> 4) & 0x7;
+	}
+	uint8 getChoiceListIndex() const {
+		return _encodedData & 0xF;
+	}
 
 	ExhaustedChoice() : _encodedData(0) {}
 	ExhaustedChoice(uint8 context, uint8 choiceIndex, uint8 choiceListIndex) :

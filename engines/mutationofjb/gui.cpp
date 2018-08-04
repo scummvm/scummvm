@@ -64,7 +64,7 @@ enum {
 
 Gui::Gui(Game &game, Graphics::Screen *screen)
 	: _game(game),
-	_screen(screen) {}
+	  _screen(screen) {}
 
 Gui::~Gui() {
 	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
@@ -122,7 +122,7 @@ bool Gui::init() {
 	}
 
 	const Common::Rect conversationRect(CONVERSATION_X, CONVERSATION_Y, CONVERSATION_X + CONVERSATION_WIDTH, CONVERSATION_Y + CONVERSATION_HEIGHT);
-	const Graphics::Surface conversationSurface =_hudSurfaces[2].getSubArea(conversationRect);
+	const Graphics::Surface conversationSurface = _hudSurfaces[2].getSubArea(conversationRect);
 	_conversationWidget = new ConversationWidget(*this, conversationRect, conversationSurface);
 	_conversationWidget->setVisible(false);
 	_widgets.push_back(_conversationWidget);
@@ -154,7 +154,7 @@ void Gui::update() {
 	}
 }
 
-ConversationWidget& Gui::getConversationWidget() {
+ConversationWidget &Gui::getConversationWidget() {
 	return *_conversationWidget;
 }
 

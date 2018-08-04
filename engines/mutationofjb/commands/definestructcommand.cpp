@@ -50,7 +50,7 @@ bool DefineStructCommandParser::parse(const Common::String &line, ScriptParseCon
 			continue;
 		}
 
-		const char* linePtr = convLineStr.c_str();
+		const char *linePtr = convLineStr.c_str();
 
 		ConversationInfo::Line convLine;
 

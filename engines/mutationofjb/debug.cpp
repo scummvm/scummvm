@@ -42,7 +42,7 @@ static Common::String convertToASCII(const Common::String &str) {
 	static const char conversionTable[] = {
 		'C', 'u', 'e', 'd', 'a', 'D', 'T', 'c', 'e', 'E', 'L', 'I', 'l', 'l', 'A', 'A', /* 0x80-0x8F */
 		'E', 'z', 'Z', 'o', 'o', 'O', 'u', 'U', 'y', 'O', 'U', 'S', 'L', 'Y', 'R', 't', /* 0x90-0x9F */
-		'a', 'i', 'o', 'u', 'n', 'N', 'U', 'O', 's', 'r', 'r', 'R'						/* 0xA0-0xAB */
+		'a', 'i', 'o', 'u', 'n', 'N', 'U', 'O', 's', 'r', 'r', 'R'                      /* 0xA0-0xAB */
 	};
 
 	Common::String ret = str;
@@ -151,9 +151,9 @@ void Console::showCommands(Command *command, int indentLevel) {
 			debugPrintf("ELSE\n");
 			showCommands(condCmd->getFalseCommand(), indentLevel + 1);
 			command = nullptr;
-		} else if (CallMacroCommand* const callMacroCmd = dynamic_cast<CallMacroCommand *>(command)) {
+		} else if (CallMacroCommand *const callMacroCmd = dynamic_cast<CallMacroCommand *>(command)) {
 			command = callMacroCmd->getReturnCommand();
-		} else if (RandomCommand* const randomCmd = dynamic_cast<RandomCommand *>(command)) {
+		} else if (RandomCommand *const randomCmd = dynamic_cast<RandomCommand *>(command)) {
 			const RandomCommand::Choices &choices = randomCmd->getChoices();
 			for (RandomCommand::Choices::size_type i = 0; i < choices.size(); ++i) {
 				showIndent(indentLevel + 1);
@@ -450,7 +450,7 @@ Script *Console::getScriptFromArg(const char *arg) {
 }
 
 bool Console::cmd_listinventory(int, const char **) {
-	Inventory &inventory =_vm->getGame().getGameData().getInventory();
+	Inventory &inventory = _vm->getGame().getGameData().getInventory();
 	const Inventory::Items &items = inventory.getItems();
 	for (Inventory::Items::const_iterator it = items.begin(); it != items.end(); ++it) {
 		debugPrintf("%s\n", convertToASCII(*it).c_str());

@@ -21,7 +21,7 @@
  */
 
 #ifndef MUTATIONOFJB_SEQCOMMAND_H
-#define MUTATIONOFJB_SEQCOMMAND_H 
+#define MUTATIONOFJB_SEQCOMMAND_H
 
 #include "mutationofjb/commands/command.h"
 #include "common/scummsys.h"

@@ -27,22 +27,22 @@
 #include "common/str.h"
 #include "common/translation.h"
 
-/*
-	"IFITEM" <item> ["!"]
-
-	IFITEM command tests whether an item is in the inventory.
-	If it is, execution continues to the next line.
-	Otherwise execution continues after first "#ELSE" or "=ELSE".
-	The logic can be reversed with exclamation mark at the end.
-
-	Please note that this does not work like you are used to from saner languages.
-	IFITEM does not have any blocks. It only searches for first #ELSE, so you can have stuff like:
-		IFITEM item1
-		IFITEM item2
-		#ELSE
-		...
-	This is effectively logical AND.
-*/
+/** @file
+ * "IFITEM" <item> ["!"]
+ *
+ * IFITEM command tests whether an item is in the inventory.
+ * If it is, execution continues to the next line.
+ * Otherwise execution continues after first "#ELSE" or "=ELSE".
+ * The logic can be reversed with exclamation mark at the end.
+ *
+ * Please note that this does not work like you are used to from saner languages.
+ * IFITEM does not have any blocks. It only searches for first #ELSE, so you can have stuff like:
+ *   IFITEM item1
+ *   IFITEM item2
+ *   #ELSE
+ *   ...
+ * This is effectively logical AND.
+ */
 
 namespace MutationOfJB {
 
@@ -50,7 +50,7 @@ bool IfItemCommandParser::parse(const Common::String &line, ScriptParseContext &
 	if (line.size() < 8) {
 		return false;
 	}
-	
+
 	if (!line.hasPrefix("IFITEM")) {
 		return false;
 	}

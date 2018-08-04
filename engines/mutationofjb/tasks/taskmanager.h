@@ -57,11 +57,13 @@ public:
 	 * However, if only a raw pointer is available (e.g. this),
 	 * the method can be used to obtain a SharedPtr.
 	 */
-	TaskPtr getTask(Task* task);
+	TaskPtr getTask(Task *task);
 
 	void update();
 
-	Game &getGame() { return _game; }
+	Game &getGame() {
+		return _game;
+	}
 
 private:
 	TaskPtrs _tasks;

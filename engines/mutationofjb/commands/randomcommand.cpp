@@ -28,16 +28,16 @@
 #include "common/random.h"
 #include "common/translation.h"
 
-/*
-	"RANDOM " <numChoices>
-
-	RANDOM command randomly picks one of the command blocks that
-	follow it and jumps to its start.
-
-	These blocks start with "/" and end with "\". The end of a random
-	block also ends the current section. The number of blocks must
-	match numChoices.
-*/
+/** @file
+ * "RANDOM " <numChoices>
+ *
+ * RANDOM command randomly picks one of the command blocks that
+ * follow it and jumps to its start.
+ *
+ * These blocks start with "/" and end with "\". The end of a random
+ * block also ends the current section. The number of blocks must
+ * match numChoices.
+ */
 
 namespace MutationOfJB {
 
@@ -86,8 +86,7 @@ void RandomBlockStartParser::transition(ScriptParseContext &parseCtx, Command *,
 
 RandomCommand::RandomCommand(uint numChoices)
 	: _numChoices(numChoices),
-	  _chosenNext(nullptr)
-{
+	  _chosenNext(nullptr) {
 	_choices.reserve(numChoices);
 }
 

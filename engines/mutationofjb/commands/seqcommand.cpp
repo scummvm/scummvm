@@ -34,8 +34,7 @@ void SeqCommandParser::transition(ScriptParseContext &, Command *oldCommand, Com
 	static_cast<SeqCommand *>(oldCommand)->setNextCommand(newCommand);
 }
 
-void SeqCommand::setNextCommand(Command *nextCommand)
-{
+void SeqCommand::setNextCommand(Command *nextCommand) {
 	_nextCommand = nextCommand;
 }
 

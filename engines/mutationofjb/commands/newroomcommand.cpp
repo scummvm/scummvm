@@ -26,15 +26,15 @@
 #include "mutationofjb/gamedata.h"
 #include "common/str.h"
 
-/*
-	"NEWROOM " <sceneId> " " <x> " " <y> " " <frame>
-
-	NEWROOM changes the current scene. While doing that, it also executes STARTUP section for the new room.
-	However, after that, the execution goes back to the old script to finish commands after NEWROOM.
-
-	All parameters are supposed to be 3 characters long.
-	SceneId is the scene to load, x and y are the player's new position and frame is the player's new frame (orientation).
-*/
+/** @file
+ * "NEWROOM " <sceneId> " " <x> " " <y> " " <frame>
+ *
+ * NEWROOM changes the current scene. While doing that, it also executes STARTUP section for the new room.
+ * However, after that, the execution goes back to the old script to finish commands after NEWROOM.
+ *
+ * All parameters are supposed to be 3 characters long.
+ * SceneId is the scene to load, x and y are the player's new position and frame is the player's new frame (orientation).
+ */
 
 namespace MutationOfJB {
 
@@ -62,7 +62,7 @@ Command::ExecuteResult NewRoomCommand::execute(ScriptExecutionContext &scriptExe
 	if (!_innerExecCtx) {
 		Script *newScript = game.changeSceneDelayScript(_sceneId, game.getGameData()._partB);
 		_innerExecCtx = new ScriptExecutionContext(scriptExecCtx.getGame(), newScript);
-		res =_innerExecCtx->startStartupSection();
+		res = _innerExecCtx->startStartupSection();
 	} else {
 		res = _innerExecCtx->runActiveCommand();
 	}

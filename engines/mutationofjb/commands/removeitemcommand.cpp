@@ -24,11 +24,11 @@
 #include "mutationofjb/script.h"
 #include "mutationofjb/gamedata.h"
 
-/*
-	"DELITEM" " " <item>
-
-	Removes item from inventory.
-*/
+/** @file
+ * "DELITEM" " " <item>
+ *
+ * Removes item from inventory.
+ */
 
 namespace MutationOfJB {
 

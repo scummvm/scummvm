@@ -61,7 +61,7 @@ void ConversationTask::update() {
 				finish();
 				break;
 			case SAYING_CHOICE: {
-				const ConversationLineList& responseList = getTaskManager()->getGame().getAssets().getResponseList();
+				const ConversationLineList &responseList = getTaskManager()->getGame().getAssets().getResponseList();
 				const ConversationLineList::Line *const line = responseList.getLine(_currentItem->_response);
 
 				_substate = SAYING_RESPONSE;
@@ -72,8 +72,7 @@ void ConversationTask::update() {
 			case SAYING_RESPONSE: {
 				startExtra();
 
-				if (_substate != RUNNING_EXTRA)
-				{
+				if (_substate != RUNNING_EXTRA) {
 					gotoNextLine();
 				}
 				break;
@@ -99,7 +98,7 @@ void ConversationTask::onChoiceClicked(ConversationWidget *convWidget, int, uint
 	const ConversationInfo::Item &item = getCurrentLine()->_items[data];
 	convWidget->clearChoices();
 
-	const ConversationLineList& toSayList = getTaskManager()->getGame().getAssets().getToSayList();
+	const ConversationLineList &toSayList = getTaskManager()->getGame().getAssets().getToSayList();
 	const ConversationLineList::Line *line = toSayList.getLine(item._choice);
 
 	_substate = SAYING_CHOICE;
@@ -157,7 +156,7 @@ void ConversationTask::showChoicesOrPick() {
 
 	if (itemsWithValidChoices.size() > 1) {
 		ConversationWidget &widget = game.getGui().getConversationWidget();
-		const ConversationLineList& toSayList = game.getAssets().getToSayList();
+		const ConversationLineList &toSayList = game.getAssets().getToSayList();
 
 		for (Common::Array<uint32>::size_type i = 0; i < itemsWithValidChoices.size() && i < ConversationWidget::CONVERSATION_MAX_CHOICES; ++i) {
 			const ConversationInfo::Item &item = currentLine->_items[itemsWithValidChoices[i]];
@@ -170,7 +169,7 @@ void ConversationTask::showChoicesOrPick() {
 
 		_haveChoices = true;
 	} else if (itemsWithValidChoices.size() == 1 && _haveChoices) {
-		const ConversationLineList& toSayList = game.getAssets().getToSayList();
+		const ConversationLineList &toSayList = game.getAssets().getToSayList();
 		const ConversationInfo::Item &item = currentLine->_items[itemsWithValidChoices.front()];
 		const ConversationLineList::Line *const line = toSayList.getLine(item._choice);
 
@@ -185,7 +184,7 @@ void ConversationTask::showChoicesOrPick() {
 
 		_haveChoices = true;
 	} else if (!itemsWithValidResponses.empty() && _haveChoices) {
-		const ConversationLineList& responseList = game.getAssets().getResponseList();
+		const ConversationLineList &responseList = game.getAssets().getResponseList();
 		const ConversationInfo::Item &item = currentLine->_items[itemsWithValidResponses.front()];
 		const ConversationLineList::Line *const line = responseList.getLine(item._response);
 
@@ -224,7 +223,7 @@ void ConversationTask::finish() {
 }
 
 void ConversationTask::startExtra() {
-	const ConversationLineList& responseList = getTaskManager()->getGame().getAssets().getResponseList();
+	const ConversationLineList &responseList = getTaskManager()->getGame().getAssets().getResponseList();
 	const ConversationLineList::Line *const line = responseList.getLine(_currentItem->_response);
 	if (!line->_extra.empty()) {
 		_innerExecCtx = new ScriptExecutionContext(getTaskManager()->getGame());

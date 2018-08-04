@@ -39,7 +39,7 @@ public:
 class IfItemCommand : public ConditionalCommand {
 public:
 	IfItemCommand(const Common::String &item, bool negative);
-	
+
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 

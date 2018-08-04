@@ -24,11 +24,11 @@
 #include "mutationofjb/commands/gotocommand.h"
 #include "mutationofjb/script.h"
 
-/*
-	<label> ":"
-
-	Creates a label.
-*/
+/** @file
+ * <label> ":"
+ *
+ * Creates a label.
+ */
 
 namespace MutationOfJB {
 
@@ -59,8 +59,7 @@ bool LabelCommandParser::parse(const Common::String &line, ScriptParseContext &p
 	return true;
 }
 
-const Common::String &LabelCommand::getName() const
-{
+const Common::String &LabelCommand::getName() const {
 	return _name;
 }
 

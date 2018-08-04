@@ -24,11 +24,11 @@
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/script.h"
 
-/*
-	"ADDITEM" " " <item>
-
-	Adds item to inventory.
-*/
+/** @file
+ * "ADDITEM " <item>
+ *
+ * Adds item to inventory.
+ */
 
 namespace MutationOfJB {
 

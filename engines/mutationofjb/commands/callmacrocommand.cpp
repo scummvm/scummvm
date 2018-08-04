@@ -25,11 +25,11 @@
 #include "mutationofjb/game.h"
 #include "common/translation.h"
 
-/*
-	"_" <name>
-
-	Calls macro with the specified name.
-*/
+/** @file
+ * "_" <name>
+ *
+ * Calls macro with the specified name.
+ */
 
 namespace MutationOfJB {
 

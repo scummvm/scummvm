@@ -38,9 +38,8 @@ void ButtonWidget::setCallback(ButtonWidgetCallback *callback) {
 }
 
 void ButtonWidget::handleEvent(const Common::Event &event) {
-	switch(event.type) {
-	case Common::EVENT_LBUTTONDOWN:
-	{
+	switch (event.type) {
+	case Common::EVENT_LBUTTONDOWN: {
 		const int16 x = event.mouse.x;
 		const int16 y = event.mouse.y;
 		if (_area.contains(x, y)) {
@@ -49,8 +48,7 @@ void ButtonWidget::handleEvent(const Common::Event &event) {
 		}
 		break;
 	}
-	case Common::EVENT_LBUTTONUP:
-	{
+	case Common::EVENT_LBUTTONUP: {
 		if (_pressed) {
 			_pressed = false;
 			markDirty();

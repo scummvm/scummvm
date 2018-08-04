@@ -21,7 +21,7 @@
  */
 
 #ifndef MUTATIONOFJB_SCRIPT_H
-#define MUTATIONOFJB_SCRIPT_H 
+#define MUTATIONOFJB_SCRIPT_H
 
 #include "mutationofjb/commands/command.h"
 #include "common/array.h"

@@ -40,11 +40,11 @@
 namespace MutationOfJB {
 
 MutationOfJBEngine::MutationOfJBEngine(OSystem *syst)
-: Engine(syst),
- _console(nullptr),
- _screen(nullptr),
- _mapObjectId(0),
- _cursorState(CURSOR_IDLE) {
+	: Engine(syst),
+	  _console(nullptr),
+	  _screen(nullptr),
+	  _mapObjectId(0),
+	  _cursorState(CURSOR_IDLE) {
 	debug("MutationOfJBEngine::MutationOfJBEngine");
 }
 
@@ -174,7 +174,7 @@ void MutationOfJBEngine::handleMapScene(const Common::Event &event) {
 		const int16 y = event.mouse.y;
 
 		int index = 0;
-		if (Bitmap *const bitmap = scene->findBitmap(x, y, &index))	{
+		if (Bitmap *const bitmap = scene->findBitmap(x, y, &index)) {
 			Static *const stat = scene->getStatic(index);
 			if (stat && stat->_active == 1) {
 				_game->startActionSection(ActionInfo::Walk, stat->_name);
@@ -188,7 +188,7 @@ void MutationOfJBEngine::handleMapScene(const Common::Event &event) {
 
 		int index = 0;
 		bool found = false;
-		if (Bitmap *const bitmap = scene->findBitmap(x, y, &index))	{
+		if (Bitmap *const bitmap = scene->findBitmap(x, y, &index)) {
 			Static *const stat = scene->getStatic(index);
 			if (stat && stat->_active == 1) {
 				Object *const object = scene->getObject(index);

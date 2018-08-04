@@ -25,11 +25,12 @@
 #include "mutationofjb/gamedata.h"
 #include "common/algorithm.h"
 
-/*
-	"REN " <oldName> " " <newName>
-	Renames every door, static (in the current scene) and inventory item
-	with the name oldName to newName.
-*/
+/** @file
+ * "REN " <oldName> " " <newName>
+ *
+ * Renames every door, static (in the current scene) and inventory item
+ * with the name oldName to newName.
+ */
 
 namespace MutationOfJB {
 
