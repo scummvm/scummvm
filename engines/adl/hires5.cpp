@@ -101,6 +101,10 @@ void HiRes5Engine::drawLight(uint index, byte color) const {
 }
 
 void HiRes5Engine::animateLights() const {
+	// Skip this if we're running a debug script
+	if (_inputScript)
+		return;
+
 	int index;
 	byte color = 0x2a;
 
