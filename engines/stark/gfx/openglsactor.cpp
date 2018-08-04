@@ -50,7 +50,7 @@ OpenGLSActorRenderer::~OpenGLSActorRenderer() {
 	delete _shadowShader;
 }
 
-void OpenGLSActorRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights, uint32 maxShadowLength) {
+void OpenGLSActorRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) {
 	if (_modelIsDirty) {
 		// Update the OpenGL Buffer Objects if required
 		clearVertices();
@@ -136,7 +136,7 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 
 		Math::Matrix4 modelInverse = model;
 		modelInverse.inverse();
-		setShadowUniform(lights, position, maxShadowLength / 1000.0, modelInverse.getRotation());
+		setShadowUniform(lights, position, modelInverse.getRotation());
 
 		for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
 			GLuint ebo = _faceEBO[*face];
@@ -303,8 +303,8 @@ void OpenGLSActorRenderer::setLightArrayUniform(const LightEntryArray &lights) {
 	}
 }
 
-void OpenGLSActorRenderer::setShadowUniform(const LightEntryArray &lights, const Math::Vector3d &actorPosition,
-		float maxShadowLength, Math::Matrix3 worldToModelRot) {
+void OpenGLSActorRenderer::setShadowUniform(const LightEntryArray &lights,
+		const Math::Vector3d &actorPosition, Math::Matrix3 worldToModelRot) {
 	Math::Vector3d sumDirection;
 	bool hasLight = false;
 
@@ -339,7 +339,7 @@ void OpenGLSActorRenderer::setShadowUniform(const LightEntryArray &lights, const
 	if (hasLight) {
 		// Clip the horizontal length
 		Math::Vector2d horizontalProjection(sumDirection.x(), sumDirection.y());
-		float shadowLength = MIN(horizontalProjection.getMagnitude(), maxShadowLength);
+		float shadowLength = MIN(horizontalProjection.getMagnitude(), StarkScene->getMaxShadowLength());
 
 		horizontalProjection.normalize();
 		horizontalProjection *= shadowLength;

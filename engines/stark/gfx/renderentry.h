@@ -74,7 +74,6 @@ public:
 	void setPosition3D(const Math::Vector3d &position, float direction);
 	void setSortKey(float sortKey);
 	void setClickable(bool clickable);
-	void setMaxShadowLength(uint32 length) { _maxShadowLength = length; }
 
 	/** Gets the position */
 	Common::Point getPosition() const { return _position; }
@@ -116,8 +115,6 @@ protected:
 	float _direction3D;
 	float _sortKey;
 	bool _clickable;
-
-	uint32 _maxShadowLength;
 };
 
 typedef Common::Array<RenderEntry *> RenderEntryArray;

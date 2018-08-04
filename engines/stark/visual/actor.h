@@ -67,7 +67,7 @@ public:
 	void setCastShadow(bool cast) { _castsShadow = cast; }
 
 	bool intersectRay(const Math::Ray &ray, const Math::Vector3d &position, float direction);
-	virtual void render(const Math::Vector3d &position, float direction, const Common::Array<Gfx::LightEntry *> &lights, uint32 maxShadowLength) = 0;
+	virtual void render(const Math::Vector3d &position, float direction, const Common::Array<Gfx::LightEntry *> &lights) = 0;
 
 protected:
 	AnimHandler *_animHandler;

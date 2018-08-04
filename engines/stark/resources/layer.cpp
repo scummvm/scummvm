@@ -28,7 +28,10 @@
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/light.h"
 
+#include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
+
+#include "engines/stark/scene.h"
 
 #include "common/debug.h"
 
@@ -220,6 +223,9 @@ Gfx::RenderEntry *Layer3D::getBackgroundRenderEntry() {
 }
 
 Gfx::RenderEntryArray Layer3D::listRenderEntries() {
+	// Set the shadow length
+	StarkScene->setMaxShadowLength(_maxShadowLength / 1000.0f);
+
 	// Sort the items by distance to the camera
 	Gfx::RenderEntryArray itemEntries;
 	for (uint i = 0; i < _items.size(); i++) {
@@ -232,8 +238,6 @@ Gfx::RenderEntryArray Layer3D::listRenderEntries() {
 				// warning("No render entry for item '%s'", item->getName().c_str());
 				continue;
 			}
-
-			renderEntry->setMaxShadowLength(_maxShadowLength);
 
 			itemEntries.push_back(renderEntry);
 		}

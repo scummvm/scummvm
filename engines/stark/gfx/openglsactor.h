@@ -43,7 +43,7 @@ public:
 	OpenGLSActorRenderer(OpenGLSDriver *gfx);
 	virtual ~OpenGLSActorRenderer();
 
-	void render(const Math::Vector3d &position, float direction, const LightEntryArray &lights, uint32 maxShadowLength) override;
+	void render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) override;
 
 protected:
 	typedef Common::HashMap<Face *, uint32> FaceBufferMap;
@@ -62,8 +62,7 @@ protected:
 	void setBoneRotationArrayUniform(OpenGL::Shader *shader, const char *uniform);
 	void setLightArrayUniform(const LightEntryArray &lights);
 
-	void setShadowUniform(const LightEntryArray &lights, const Math::Vector3d &actorPosition,
-			float maxShadowLength, Math::Matrix3 worldToModelRot);
+	void setShadowUniform(const LightEntryArray &lights, const Math::Vector3d &actorPosition, Math::Matrix3 worldToModelRot);
 	
 	bool getPointLightContribution(LightEntry *light, const Math::Vector3d &actorPosition,
 			Math::Vector3d &direction, float weight = 1.0f);
