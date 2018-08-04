@@ -33,8 +33,10 @@
 #include "common/debug-channels.h"
 
 /** @file
- * ("SM" | "SLM" | "NM" | "NLM") " " <lineToSay> ["<" <voiceFile> | "<!"]
- * <skipped> " " <lineToSay> ("<" <voiceFile> | "<!")
+ * <firstLine> { <CRLF> <additionalLine> }
+ *
+ * firstLine ::= ("SM" | "SLM" | "NM" | "NLM") " " <lineToSay> [ "<" <voiceFile> | "<!" ]
+ * additionalLine ::= <skipped> " " <lineToSay> ( "<" <voiceFile> | "<!" )
  *
  * Say command comes in four variants: SM, SLM, NM and NLM.
  * Note: In script files, they are usually written as *SM.

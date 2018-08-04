@@ -28,7 +28,7 @@
 #include "common/translation.h"
 
 /** @file
- * "IFITEM" <item> ["!"]
+ * "IFITEM " <item> [ "!" ]
  *
  * IFITEM command tests whether an item is in the inventory.
  * If it is, execution continues to the next line.

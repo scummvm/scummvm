@@ -25,8 +25,6 @@
 #include "mutationofjb/gamedata.h"
 #include "common/translation.h"
 
-namespace MutationOfJB {
-
 /** @file
  * "CHANGE" <entity> " " <register> " " <sceneId> " " <entityId> " " <value>
  *
@@ -42,6 +40,8 @@ namespace MutationOfJB {
  * <entityid> 2B  Entity ID.
  * <value>    *B  Value (variable length).
  */
+
+namespace MutationOfJB {
 
 bool ChangeCommandParser::parseValueString(const Common::String &valueString, bool changeEntity, uint8 &sceneId, uint8 &entityId, ChangeCommand::ChangeRegister &reg, ChangeCommand::ChangeOperation &op, ChangeCommandValue &ccv) {
 	if (changeEntity) {

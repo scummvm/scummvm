@@ -136,10 +136,10 @@ bool Scene::loadFromStream(Common::ReadStream &stream) {
 	_palRotFirst = stream.readByte();
 	_palRotLast = stream.readByte();
 	_palRotDelay = stream.readByte();
-	_exhaustedChoiceNext = stream.readByte();
+	_exhaustedConvItemNext = stream.readByte();
 
 	for (i = 0; i < 79; ++i) {
-		_exhaustedChoices[i]._encodedData = stream.readByte();
+		_exhaustedConvItems[i]._encodedData = stream.readByte();
 	}
 
 	return true;
@@ -226,15 +226,15 @@ Bitmap *Scene::findBitmap(int16 x, int16 y, int *index) {
 	return nullptr;
 }
 
-void Scene::addExhaustedChoice(uint8 context, uint8 choiceIndex, uint8 choiceIndexList) {
-	_exhaustedChoices[_exhaustedChoiceNext - 1] = ExhaustedChoice(context, choiceIndex, choiceIndexList);
-	_exhaustedChoiceNext++;
+void Scene::addExhaustedConvItem(uint8 context, uint8 convItemIndex, uint8 convGroupIndex) {
+	_exhaustedConvItems[_exhaustedConvItemNext - 1] = ExhaustedConvItem(context, convItemIndex, convGroupIndex);
+	_exhaustedConvItemNext++;
 }
 
-bool Scene::isChoiceExhausted(uint8 context, uint8 choiceIndex, uint8 choiceListIndex) const {
-	for (uint i = 0; i < _exhaustedChoiceNext - 1; ++i) {
-		const ExhaustedChoice &choice = _exhaustedChoices[i];
-		if (choice.getContext() == context && choice.getChoiceIndex() == choiceIndex && choice.getChoiceListIndex() == choiceListIndex) {
+bool Scene::isConvItemExhausted(uint8 context, uint8 convItemIndex, uint8 convGroupIndex) const {
+	for (uint8 i = 0; i < _exhaustedConvItemNext - 1; ++i) {
+		const ExhaustedConvItem &convItem = _exhaustedConvItems[i];
+		if (convItem.getContext() == context && convItem.getConvItemIndex() == convItemIndex && convItem.getConvGroupIndex() == convGroupIndex) {
 			return true;
 		}
 	}

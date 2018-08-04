@@ -33,18 +33,56 @@ class Command;
 class ScriptExecutionContext;
 class ScriptParseContext;
 
+/**
+ * Base class for command parsers.
+ *
+ * The parser's main job is to create a Command instance from input line.
+ */
 class CommandParser {
 public:
 	virtual ~CommandParser();
+
+	/**
+	 * Parses the specified line and possibly returns a Command instance.
+	 *
+	 * @param line Line to parse.
+	 * @param parseCtx Parse context.
+	 * @param command Output parameter for newly created command.
+	 * @return True if the line has been successfully parsed by this parser, false otherwise.
+	 * @note You may return true and set command to nullptr.
+	 * That means the line has been successfully parsed, but no command is needed.
+	 */
 	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) = 0;
 
-	/* Old command - created by this parser. */
+	/**
+	 * Called when transitioning parsing between two commands.
+	 *
+	 * For example, cmdParserA->transition(parseCtx, cmdA, cmdB, cmdParserB) is called after command B is done parsing
+	 * to notify command A parser about the transition from command A to command B.
+	 * This is useful for sequential commands, because at the time command A is being parsed,
+	 * we don't have any information about command B, so we cannot set the next pointer.
+	 * Transition method can be used to set the next pointer after command B is available.
+	 *
+	 * @param parseCtx Parse context.
+	 * @param oldCommand Old command (created by this parser).
+	 * @param newCommand New command (created by newCommandParser).
+	 * @param newCommandParser Command parser which created the new command.
+	 */
 	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser);
 
-	/* Called after parsing. */
+	/**
+	 * Called after the whole script is parsed.
+	 *
+	 * Can be used for cleanup.
+	 *
+	 * @param parseCtx Parse context.
+	 */
 	virtual void finish(ScriptParseContext &parseCtx);
 };
 
+/**
+ * Base class for script commands.
+ */
 class Command {
 public:
 	enum ExecuteResult {
@@ -60,6 +98,7 @@ public:
 
 	virtual Common::String debugString() const = 0;
 };
+
 }
 
 #endif

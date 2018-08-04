@@ -31,6 +31,9 @@ namespace MutationOfJB {
 
 class TaskManager;
 
+/**
+ * Base class for tasks.
+ */
 class Task {
 public:
 	enum State {

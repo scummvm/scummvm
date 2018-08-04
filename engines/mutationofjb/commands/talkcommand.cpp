@@ -29,6 +29,17 @@
 
 #include "common/str.h"
 
+/** @file
+ * "TALK TO HIM" [ " " <mode> ]
+ *
+ * Begins interactive conversation defined by DefineStructCommand.
+ * The command supports multiple modes:
+ *   0 - normal mode,
+ *   1 - Ray and Buttleg mode (two responders),
+ *   2 - unknown (unused) mode,
+ *   3 - carnival ticket seller mode (special animation).
+ */
+
 namespace MutationOfJB {
 
 bool TalkCommandParser::parse(const Common::String &line, ScriptParseContext &, Command *&command) {

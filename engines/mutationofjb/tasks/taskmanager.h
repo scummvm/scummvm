@@ -31,6 +31,11 @@ namespace MutationOfJB {
 class Game;
 class Task;
 
+/**
+ * Handles task management.
+ *
+ * Tasks are a way run game logic asynchronously.
+ */
 class TaskManager {
 public:
 	TaskManager(Game &game) : _game(game) {}
