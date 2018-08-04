@@ -1091,7 +1091,7 @@ void StarTrekEngine::showRepublicMap(int16 arg0, int16 turbolift) {
 		switch (event.type) {
 		case TREKEVENT_TICK:
 			_frameIndex++;
-			// sub_12fff();
+			// sub_12fff(); // TODO
 			_gfx->drawAllSprites();
 			break;
 
@@ -1101,10 +1101,10 @@ lclick:
 			if (clickedArea == 0) {
 			} else if (clickedArea == 6) {
 				Common::String text = "#GENE\\GENE_F14#Turbolift access is blocked by an extremely high radiation level.";
-				showTextbox("", text, 50, 50, TEXTCOLOR_YELLOW, 0);
+				showTextbox("Mr. Spock", text, 50, 50, TEXTCOLOR_YELLOW, 0); // ENHANCEMENT: Speaker is Spock
 			} else if (clickedArea == 7) {
 				Common::String text = "#GENE\\GENE_F15#This turbolift cannot reach that area of the ship.";
-				showTextbox("", text, 50, 50, TEXTCOLOR_YELLOW, 0);
+				showTextbox("Mr. Spock", text, 50, 50, TEXTCOLOR_YELLOW, 0); // ENHANCEMENT: Speaker is Spock
 			} else
 				exitLoop = true;
 			break;

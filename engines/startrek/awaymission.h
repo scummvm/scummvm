@@ -632,6 +632,12 @@ struct AwayMission {
 			byte beamState; // 0x35
 
 			bool field36; // 0x36
+			bool openedPanel; // 0x37
+			bool clearedPanelDebris; // 0x38
+			bool removedPanelDebris; // 0x39
+			bool oilInHypo; // 0x3a
+			bool loosenedDebrisWithOil; // 0x3b
+			bool tookMolecularSaw; // 0x60
 			bool field68; // 0x68
 			bool field6b; // 0x6b
 			bool field6c; // 0x6c
