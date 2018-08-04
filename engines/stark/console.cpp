@@ -35,6 +35,7 @@
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
+#include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/tools/decompiler.h"
@@ -560,11 +561,6 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
-	if (!StarkGlobal->getRoot()) {
-		debugPrintf("The global root has not been loaded\n");
-		return true;
-	}
-
 	if (argc != 3) {
 		debugPrintf("Change the current location. Use listLocations to get indices\n");
 		debugPrintf("Usage :\n");
@@ -581,6 +577,12 @@ bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
 
 	uint levelIndex = strtol(argv[1] , nullptr, 16);
 	uint locationIndex = strtol(argv[2] , nullptr, 16);
+
+	StarkUserInterface->changeScreen(Screen::kScreenGame);
+
+	if (!StarkGlobal->getRoot()) {
+		StarkResourceProvider->initGlobal();
+	}
 
 	StarkResourceProvider->requestLocationChange(levelIndex, locationIndex);
 
