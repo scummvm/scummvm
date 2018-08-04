@@ -361,7 +361,7 @@ void OpenGLSActorRenderer::setShadowUniform(const LightEntryArray &lights, const
 }
 
 bool OpenGLSActorRenderer::getPointLightContribution(LightEntry *light,
-		const Math::Vector3d &actorPosition, Math::Vector3d &direction) {
+		const Math::Vector3d &actorPosition, Math::Vector3d &direction, float weight) {
 	float distance = light->position.getDistanceTo(actorPosition);
 
 	if (distance > light->falloffFar) {
@@ -387,7 +387,7 @@ bool OpenGLSActorRenderer::getPointLightContribution(LightEntry *light,
 
 	direction = actorPosition - light->position;
 	direction.normalize();
-	direction *= factor * brightness;
+	direction *= factor * brightness * weight;
 
 	return true;
 }
@@ -407,10 +407,10 @@ bool OpenGLSActorRenderer::getDirectionalLightContribution(LightEntry *light,
 }
 bool OpenGLSActorRenderer::getSpotLightContribution(LightEntry *light,
 		const Math::Vector3d &actorPosition, Math::Vector3d &direction) {
-	Math::Vector3d LightToActor = actorPosition - light->position;
-	LightToActor.normalize();
+	Math::Vector3d lightToActor = actorPosition - light->position;
+	lightToActor.normalize();
 
-	float cosAngle = MAX(0.0f, LightToActor.dotProduct(light->direction));
+	float cosAngle = MAX(0.0f, lightToActor.dotProduct(light->direction));
 	float cone = (cosAngle - light->innerConeAngle.getCosine()) /
 			MAX(0.001f, light->outerConeAngle.getCosine() - light->innerConeAngle.getCosine());
 	cone = CLIP(cone, 0.0f, 1.0f);
@@ -419,7 +419,7 @@ bool OpenGLSActorRenderer::getSpotLightContribution(LightEntry *light,
 		return false;
 	}
 
-	return getPointLightContribution(light, actorPosition, direction);
+	return getPointLightContribution(light, actorPosition, direction, cone);
 }
 
 

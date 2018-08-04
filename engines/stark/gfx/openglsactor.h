@@ -66,7 +66,8 @@ protected:
 	void setShadowUniform(const LightEntryArray &lights, const Math::Vector3d &actorPosition,
 			float maxShadowLength, Math::Matrix3 worldToModelRot);
 	
-	bool getPointLightContribution(LightEntry *light, const Math::Vector3d &actorPosition, Math::Vector3d &direction);
+	bool getPointLightContribution(LightEntry *light, const Math::Vector3d &actorPosition,
+			Math::Vector3d &direction, float weight = 1.0f);
 	bool getDirectionalLightContribution(LightEntry *light, const Math::Vector3d &actorPosition, Math::Vector3d &direction);
 	bool getSpotLightContribution(LightEntry *light, const Math::Vector3d &actorPosition, Math::Vector3d &direction);
 };
