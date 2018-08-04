@@ -70,8 +70,6 @@ static const PlainGameDescriptor starTrekGames[] = {
 namespace StarTrek {
 
 static const StarTrekGameDescription gameDescriptions[] = {
-	// TODO: Replace AD_ENTRY1 with AD_ENTRY1s for game versions I don't have yet
-
 	{ // ST25 DOS CD-ROM edition (EN)
 		{
 			"st25",
@@ -114,6 +112,24 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{ // ST25 Mac floppy edition (EN)
+		{
+			"st25",
+			"Floppy",
+			AD_ENTRY1s("Star Trek Data", "d95eb00532b7082d53862c906c7ac3dc", 39032),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO0()
+		},
+		GType_ST25,
+		0,
+	},
+
+	// These are commented until future notice because I don't have complete information
+	// on them (the file size for data.000 / data.001). Will be relying on people to
+	// report the missing data.
+	/*
 	{ // ST25 Amiga ? (EN)
 		{
 			"st25",
@@ -170,20 +186,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		0,
 	},
 
-	{ // ST25 Mac floppy edition (EN)
-		{
-			"st25",
-			"Floppy",
-			AD_ENTRY1s("Star Trek Data", "d95eb00532b7082d53862c906c7ac3dc", 39032),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK,
-			GUIO0()
-		},
-		GType_ST25,
-		0,
-	},
-
 	{ // ST25 DOS demo ? (EN)
 		{
 			"st25",
@@ -211,6 +213,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		GType_ST25,
 		GF_DEMO,
 	},
+	*/
 
 	{ // STJR DOS CD-ROM edition (EN)
 		{
