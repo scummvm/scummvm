@@ -362,8 +362,12 @@ void TSpit::xtakeit(const ArgumentArray &args) {
 		}
 	}
 
-	// xtakeit() shouldn't be called if we're not on a marble hotspot
-	assert(marble != 0);
+	if (marble == 0) {
+		// xtakeit() shouldn't be called if we're not on a marble hotspot,
+		// but maybe another mouse moved event was received between the moment
+		// this script was queued and the moment it was executed.
+		return;
+	}
 
 	// Redraw the background
 	_vm->getCard()->drawPicture(1);
