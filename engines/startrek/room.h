@@ -2524,9 +2524,74 @@ public:
 	void veng1ReachedDebrisToGet();
 	void veng1TriedToGetDebris();
 	void veng1UseMccoyOnDeadGuy();
+	// TODO: common code
 
 	// VENG2
 	void veng2Tick1();
+	void veng2Timer0Expired();
+	void veng2ElasiShipDecloaked();
+	void veng2Timer2Expired();
+	void veng2TouchedDoor();
+	void veng2LookAtViewscreen();
+	void veng2LookAtMiddleConsole();
+	void veng2LookAtDamageDisplay();
+	void veng2LookAtSTricorder();
+	void veng2LookAtMTricorder();
+	void veng2LookAtTorpedoButton();
+	void veng2LookAtTorpedoControl();
+	void veng2LookAtImpulseConsole();
+	void veng2LookAtMainComputer();
+	void veng2LookAtRecordDeck();
+	void veng2LookAtDeckIOConsole();
+	void veng2LookAtKirk();
+	void veng2LookAtSpock();
+	void veng2LookAtMccoy();
+	void veng2LookAtRedshirt();
+	void veng2LookAnywhere();
+	void veng2TalkToKirk();
+	void veng2TalkToSpock();
+	void veng2TalkToMccoy();
+	void veng2TalkToRedshirt();
+	void veng2UseTechJournalOnDeckIOConsole();
+	void veng2ReachedDeckIOWithTechJournal();
+	void veng2DoneReadingTechJournal();
+	void veng2UseLogOnDeckIOConsole();
+	void veng2ReachedDeckIOWithLog();
+	void veng2LoadedLog();
+	void veng2UseCommunicator();
+	void veng2UseKirkOnTorpedoButton();
+	void veng2UseKirkReachedTorpedoButton();
+	void veng2KirkFiredTorpedo();
+	void veng2TorpedoStruckElasiShip();
+	void veng2ElasiRetreated();
+	void veng2CrewmanInPositionToBeamOut();
+	void veng2UseSTricorderOnTorpedoButton();
+	void veng2UseSTricorderOnMiddleConsole();
+	void veng2UseSTricorderOnTorpedoControl();
+	void veng2UseImpulseConsole();
+	void veng2SpockReachedImpulseConsole();
+	void veng2SpockUsedImpulseConsole();
+	void veng2UseMainComputer();
+	void veng2UseSTricorderOnMainComputer();
+	void veng2SpockReachedMainComputerToPutTricorder();
+	void veng2AttachedSTricorderToComputer();
+	void veng2UseMTricorderOnMainComputer();
+	void veng2MccoyReachedMainComputerToPutTricorder();
+	void veng2AttachedMTricorderToComputer();
+	void veng2BothTricordersPluggedIn();
+	void veng2UseSTricorderOnDeckIOConsole();
+	void veng2UseSTricorderOnImpulseConsole();
+	void veng2UseFusionPackOnMainComputer();
+	void veng2GetLogDeck();
+	void veng2ReachedLogDeck();
+	void veng2PickedUpLogDeck();
+	void veng2GetSTricorder();
+	void veng2ReachedSTricorderToGet();
+	void veng2PickedUpSTricorder();
+	void veng2GetMTricorder();
+	void veng2ReachedMTricorderToGet();
+	void veng2PickedUpMTricorder();
+	// TODO: common code
 
 	// VENG3
 	void veng3Tick1();
@@ -2863,6 +2928,9 @@ public:
 			// veng1
 			byte doorOpenCounter; // 0xca
 			bool walkingToDoor; // 0xcb
+
+			// veng2
+			byte numCrewmenReadyToBeamOut; // 0xca
 		} veng;
 
 	} _roomVar;

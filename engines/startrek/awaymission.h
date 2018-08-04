@@ -621,10 +621,11 @@ struct AwayMission {
 
 		struct {
 			bool enteredRoom0FirstTime; // 0x2d
+			int16 missionScore; // 0x2e
 			bool bridgeCrewmanDead; // 0x30
 			bool scannedCaptainsChair; // 0x31
 			bool scannedComputerBank; // 0x32
-			bool field34; // 0x34
+			bool impulseEnginesOn; // 0x34
 
 			// 0: beam still in place
 			// 1: used saw on beam
@@ -637,8 +638,40 @@ struct AwayMission {
 			bool removedPanelDebris; // 0x39
 			bool oilInHypo; // 0x3a
 			bool loosenedDebrisWithOil; // 0x3b
+
+			// 0: no power allocated
+			// 1: power to weapons
+			// 2: power to shields
+			// 3: power to transporter
+			byte poweredSystem; // 0x3c
+
+			// 0: no tricorders plugged in
+			// 1: med tricorder plugged in
+			// 2: sci tricorder plugged in
+			// 3: both plugged in
+			byte tricordersPluggedIntoComputer; // 0x3d
+
+			byte captainsLogIndex; // 0x3e
+			bool elasiShieldsDown; // 0x40
+			bool torpedoLoaded; // 0x41
+			bool firedTorpedo; // 0x42
+			bool elasiShipDecloaked; // 0x43
+			bool countdownStarted; // 0x44
+			bool toldElasiToBeamOver; // 0x45
+			bool scannedMainComputer; // 0x46
+			bool elasiHailedRepublic; // 0x47
+			bool tookRecordDeckFromAuxilaryControl; // 0x48
+			int16 field49; // 0x49
+			int16 field4b; // 0x4b
+			int16 field4d; // 0x4d
+			int16 field51; // 0x51
+			bool havePowerPack; // 0x5a
 			bool tookMolecularSaw; // 0x60
+			bool readEngineeringJournal; // 0x61
+			bool examinedTorpedoControl; // 0x66
 			bool field68; // 0x68
+			bool field69; // 0x69
+			bool readAllLogs; // 0x6a
 			bool field6b; // 0x6b
 			bool field6c; // 0x6c
 		} veng;
