@@ -34,9 +34,15 @@ public:
 		Common::String _text;
 		Common::String _voiceFile;
 
-		bool isRepeating() const { return _text.firstChar() == '*'; }
-		bool isFirstSpeaker() const { return _text.firstChar() == '~'; }
-		bool isSecondSpeaker() const { return _text.firstChar() == '`'; }
+		bool isRepeating() const {
+			return _text.firstChar() == '*';
+		}
+		bool isFirstSpeaker() const {
+			return _text.firstChar() == '~';
+		}
+		bool isSecondSpeaker() const {
+			return _text.firstChar() == '`';
+		}
 	};
 
 	typedef Common::Array<Speech> Speeches;

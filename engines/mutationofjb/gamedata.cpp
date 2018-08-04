@@ -245,11 +245,10 @@ bool Scene::isChoiceExhausted(uint8 context, uint8 choiceIndex, uint8 choiceList
 
 GameData::GameData()
 	: _currentScene(0),
-	_lastScene(0),
-	_partB(false),
-	_inventory(),
-	_color(WHITE)
-	{}
+	  _lastScene(0),
+	  _partB(false),
+	  _inventory(),
+	  _color(WHITE) {}
 
 Scene *GameData::getScene(uint8 sceneId) {
 	if (sceneId == 0 || sceneId > ARRAYSIZE(_scenes)) {

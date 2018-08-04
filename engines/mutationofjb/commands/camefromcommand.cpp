@@ -25,13 +25,13 @@
 #include "mutationofjb/script.h"
 #include "common/str.h"
 
-/*
-	"CAMEFROM" <sceneId>
-
-	This command tests whether last scene (the scene player came from) is sceneId.
-	If true, the execution continues after this command.
-	Otherwise the execution continues after first '#' found.
-*/
+/** @file
+ * "CAMEFROM" <sceneId>
+ *
+ * This command tests whether last scene (the scene player came from) is sceneId.
+ * If true, the execution continues after this command.
+ * Otherwise the execution continues after first '#' found.
+ */
 
 namespace MutationOfJB {
 

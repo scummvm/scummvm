@@ -41,7 +41,7 @@ enum {
 	INVENTORY_ITEMS_LINES = 5
 };
 
-InventoryWidget::InventoryWidget(Gui &gui, Gui::InventoryMap &inventoryMap, const Common::Array<Graphics::Surface>& inventorySurfaces) :
+InventoryWidget::InventoryWidget(Gui &gui, Gui::InventoryMap &inventoryMap, const Common::Array<Graphics::Surface> &inventorySurfaces) :
 	Widget(gui, Common::Rect(INVENTORY_START_X, INVENTORY_START_Y, INVENTORY_START_X + Inventory::VISIBLE_ITEMS * INVENTORY_ITEM_WIDTH, INVENTORY_START_Y + INVENTORY_ITEM_HEIGHT)),
 	_inventoryMap(inventoryMap),
 	_surfaces(inventorySurfaces) {}

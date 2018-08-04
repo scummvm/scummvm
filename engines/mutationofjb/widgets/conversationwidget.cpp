@@ -74,9 +74,8 @@ void ConversationWidget::_draw(Graphics::ManagedSurface &surface) {
 }
 
 void ConversationWidget::handleEvent(const Common::Event &event) {
-	switch(event.type) {
-	case Common::EVENT_LBUTTONDOWN:
-	{
+	switch (event.type) {
+	case Common::EVENT_LBUTTONDOWN: {
 		const int16 x = event.mouse.x;
 		const int16 y = event.mouse.y;
 		if (_area.contains(x, y)) {

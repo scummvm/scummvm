@@ -32,27 +32,27 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 
-/*
-	("SM" | "SLM" | "NM" | "NLM") " " <lineToSay> ["<" <voiceFile> | "<!"]
-	<skipped> " " <lineToSay> ("<" <voiceFile> | "<!")
-
-	Say command comes in four variants: SM, SLM, NM and NLM.
-	Note: In script files, they are usually written as *SM.
-	The asterisk is ignored by the readLine function.
-
-	Each of them plays a voice file (if present) and/or shows a message
-	(if voice file not present or subtitles are enabled).
-
-	The difference between versions starting with "S" and "N" is that
-	the "N" version does not show talking animation.
-
-	The "L" versions are "blocking", i.e. they wait for the previous say command to finish.
-
-	If the line ends with "<!", it means the message continues to the next line.
-	Next line usually has "SM" (or other variant) repeated, but it does not have to.
-	Then we have the rest of the string to say (which is concatenated with the previous line)
-	and possibly the voice file or "<!" again.
-*/
+/** @file
+ * ("SM" | "SLM" | "NM" | "NLM") " " <lineToSay> ["<" <voiceFile> | "<!"]
+ * <skipped> " " <lineToSay> ("<" <voiceFile> | "<!")
+ *
+ * Say command comes in four variants: SM, SLM, NM and NLM.
+ * Note: In script files, they are usually written as *SM.
+ * The asterisk is ignored by the readLine function.
+ *
+ * Each of them plays a voice file (if present) and/or shows a message
+ * (if voice file not present or subtitles are enabled).
+ *
+ * The difference between versions starting with "S" and "N" is that
+ * the "N" version does not show talking animation.
+ *
+ * The "L" versions are "blocking", i.e. they wait for the previous say command to finish.
+ *
+ * If the line ends with "<!", it means the message continues to the next line.
+ * Next line usually has "SM" (or other variant) repeated, but it does not have to.
+ * Then we have the rest of the string to say (which is concatenated with the previous line)
+ * and possibly the voice file or "<!" again.
+ */
 
 namespace MutationOfJB {
 
@@ -113,7 +113,7 @@ bool SayCommandParser::parse(const Common::String &line, ScriptParseContext &par
 		Common::String talkStr(currentLine.c_str() + startPos, endPos - startPos);
 
 		if (endPos != currentLine.size()) {
-			const char * end = currentLine.c_str() + endPos + 1;
+			const char *end = currentLine.c_str() + endPos + 1;
 			if (end[0] == '!') {
 				cont = true;
 			} else {

@@ -27,29 +27,29 @@
 #include "common/debug.h"
 #include "common/translation.h"
 
-/*
-	("#L " | "-L ") <object>
-	("#W " | "-W ") <object>
-	("#T " | "-T ") <object>
-	("#P " | "-P ") <object1>
-	("#U " | "-U ") <object1> [<object2>]
-	("#ELSE" | "-ELSE") [<tag>]
-	"#MACRO " <name>
-	"#EXTRA" <name>
-
-	If a line starts with '#', '=', '-', it is treated as the end of a section.
-	However, at the same time it can also start a new section depending on what follows.
-
-	#L (look), #W (walk), #T (talk), #U (use) sections are executed
-	when the user starts corresponding action on the object or in case of "use" up to two objects.
-	The difference between '#' and '-' version is whether the player walks towards the object ('#') or not ('-').
-
-	#ELSE is used by conditional commands (see comments for IfCommand and others).
-
-	#MACRO starts a new macro. Global script can call macros from local script and vice versa.
-
-	#EXTRA defines an "extra" section. This is called from dialog responses ("TALK TO HIM" command).
-*/
+/** @file
+ * ("#L " | "-L ") <object>
+ * ("#W " | "-W ") <object>
+ * ("#T " | "-T ") <object>
+ * ("#P " | "-P ") <object1>
+ * ("#U " | "-U ") <object1> [<object2>]
+ * ("#ELSE" | "-ELSE") [<tag>]
+ * "#MACRO " <name>
+ * "#EXTRA" <name>
+ *
+ * If a line starts with '#', '=', '-', it is treated as the end of a section.
+ * However, at the same time it can also start a new section depending on what follows.
+ *
+ * #L (look), #W (walk), #T (talk), #U (use) sections are executed
+ * when the user starts corresponding action on the object or in case of "use" up to two objects.
+ * The difference between '#' and '-' version is whether the player walks towards the object ('#') or not ('-').
+ *
+ * #ELSE is used by conditional commands (see comments for IfCommand and others).
+ *
+ * #MACRO starts a new macro. Global script can call macros from local script and vice versa.
+ *
+ * #EXTRA defines an "extra" section. This is called from dialog responses ("TALK TO HIM" command).
+ */
 
 namespace MutationOfJB {
 

@@ -41,7 +41,9 @@ public:
 	enum { CONVERSATION_MAX_CHOICES = 4 };
 
 	ConversationWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &surface);
-	void setCallback(ConversationWidgetCallback *callback) { _callback = callback; }
+	void setCallback(ConversationWidgetCallback *callback) {
+		_callback = callback;
+	}
 
 	void setChoice(int choiceNo, const Common::String &str, uint32 data = 0);
 	void clearChoices();

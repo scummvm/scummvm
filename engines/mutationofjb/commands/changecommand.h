@@ -44,7 +44,7 @@ public:
 		YL, // Height
 		WX, // Walk to X
 		WY, // Walk to Y
-		SP, // 
+		SP, //
 		AC, // Active
 		FA, // First animation
 		FR,
@@ -67,7 +67,7 @@ public:
 		SubtractValue
 	};
 
-	ChangeCommand(uint8 sceneId, uint8 entityId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue& val) :
+	ChangeCommand(uint8 sceneId, uint8 entityId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val) :
 		_sceneId(sceneId), _entityId(entityId), _register(reg), _operation(op), _value(val)
 	{}
 protected:

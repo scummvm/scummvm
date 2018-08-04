@@ -27,21 +27,21 @@
 #include "common/str.h"
 #include "common/translation.h"
 
-/*
-	"IFPIGGY"
-
-	IFPIGGY command tests whether current loaded APK file (character animation) is "piggy.apk".
-	If it is, execution continues to the next line.
-	Otherwise execution continues after first "#ELSE" or "=ELSE".
-
-	Please note that this does not work like you are used to from saner languages.
-	IFPIGGY does not have any blocks. It only searches for first #ELSE, so you can have stuff like:
-		IFPIGGY
-		IFITEM someitem
-		#ELSE
-		...
-	This is effectively logical AND.
-*/
+/** @file
+ * "IFPIGGY"
+ *
+ * IFPIGGY command tests whether current loaded APK file (character animation) is "piggy.apk".
+ * If it is, execution continues to the next line.
+ * Otherwise execution continues after first "#ELSE" or "=ELSE".
+ *
+ * Please note that this does not work like you are used to from saner languages.
+ * IFPIGGY does not have any blocks. It only searches for first #ELSE, so you can have stuff like:
+ *   IFPIGGY
+ *   IFITEM someitem
+ *   #ELSE
+ *   ...
+ * This is effectively logical AND.
+ */
 
 namespace MutationOfJB {
 

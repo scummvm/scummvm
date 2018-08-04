@@ -34,11 +34,11 @@ class Assets {
 public:
 	Assets(Game &game);
 
-	Font& getSystemFont();
-	Font& getSpeechFont();
+	Font &getSystemFont();
+	Font &getSpeechFont();
 
-	ConversationLineList& getToSayList();
-	ConversationLineList& getResponseList();
+	ConversationLineList &getToSayList();
+	ConversationLineList &getResponseList();
 
 private:
 	Game &_game;

@@ -33,7 +33,7 @@ class ScriptExecutionContext;
 
 class ConversationTask : public Task, public ConversationWidgetCallback {
 public:
-	ConversationTask(uint8 sceneId, const ConversationInfo& convInfo, TalkCommand::Mode mode) : _sceneId(sceneId), _convInfo(convInfo), _mode(mode), _currentLineIndex(0), _currentItem(nullptr), _substate(IDLE), _haveChoices(false), _innerExecCtx(nullptr) {}
+	ConversationTask(uint8 sceneId, const ConversationInfo &convInfo, TalkCommand::Mode mode) : _sceneId(sceneId), _convInfo(convInfo), _mode(mode), _currentLineIndex(0), _currentItem(nullptr), _substate(IDLE), _haveChoices(false), _innerExecCtx(nullptr) {}
 	virtual ~ConversationTask() {}
 
 	virtual void start() override;

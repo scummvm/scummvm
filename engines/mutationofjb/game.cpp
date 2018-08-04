@@ -39,13 +39,13 @@ namespace MutationOfJB {
 
 Game::Game(MutationOfJBEngine *vm)
 	: _vm(vm),
-	_randomSource("mutationofjb"),
-	_delayedLocalScript(nullptr),
-	_gui(*this, _vm->getScreen()),
-	_currentAction(ActionInfo::Walk),
-	_scriptExecCtx(*this),
-	_taskManager(*this),
-	_assets(*this) {
+	  _randomSource("mutationofjb"),
+	  _delayedLocalScript(nullptr),
+	  _gui(*this, _vm->getScreen()),
+	  _currentAction(ActionInfo::Walk),
+	  _scriptExecCtx(*this),
+	  _taskManager(*this),
+	  _assets(*this) {
 
 	_gameData = new GameData;
 	loadGameData(false);

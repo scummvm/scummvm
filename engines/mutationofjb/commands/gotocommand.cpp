@@ -25,11 +25,11 @@
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/script.h"
 
-/*
-	"GOTO " <label>
-
-	Jumps to a label.
-*/
+/** @file
+ * "GOTO " <label>
+ *
+ * Jumps to a label.
+ */
 
 namespace MutationOfJB {
 

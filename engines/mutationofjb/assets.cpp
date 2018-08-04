@@ -26,11 +26,11 @@ namespace MutationOfJB {
 
 Assets::Assets(Game &game) : _game(game), _toSayList("tosay.ger"), _responseList("response.ger") {}
 
-Font& Assets::getSystemFont() {
+Font &Assets::getSystemFont() {
 	return _systemFont;
 }
 
-Font& Assets::getSpeechFont() {
+Font &Assets::getSpeechFont() {
 	return _speechFont;
 }
 

@@ -114,7 +114,7 @@ void AnimationDecoder::loadPalette(Common::SeekableReadStream &file) {
 		copyCount = PALETTE_COLORS;
 	}
 
-	while(packets--) {
+	while (packets--) {
 		file.read(_palette + skipCount * 3, copyCount * 3);
 
 		for (int j = skipCount * 3; j < (skipCount + copyCount) * 3; ++j) {
@@ -145,7 +145,7 @@ void AnimationDecoder::loadFullFrame(EncryptedFile &file, uint32 size) {
 				// RLE - Copy color n times.
 				uint8 color = file.readByte();
 				readBytes++;
-				while(n--) {
+				while (n--) {
 					*ptr++ = color;
 				}
 			} else {

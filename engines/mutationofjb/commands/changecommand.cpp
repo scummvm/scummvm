@@ -27,15 +27,21 @@
 
 namespace MutationOfJB {
 
-// CHANGEe rr ss ii val
-// <e>   1B  Entity to change register for.
-//           D door
-//           O object
-//           S static
-// <rr>  2B  Register name.
-// <ss>  2B  Scene ID.
-// <ii>  2B  Entity ID.
-// <val> VL  Value.
+/** @file
+ * "CHANGE" <entity> " " <register> " " <sceneId> " " <entityId> " " <value>
+ *
+ * Changes entity register value for specified scene.
+ * <entity>   1B  Entity to change register for.
+ *                Possible values:
+ *                  'D' - door
+ *                  'O' - object
+ *                  'S' - static
+ *                  ''  - scene
+ * <register> 2B  Register name.
+ * <sceneId>  2B  Scene ID.
+ * <entityid> 2B  Entity ID.
+ * <value>    *B  Value (variable length).
+ */
 
 bool ChangeCommandParser::parseValueString(const Common::String &valueString, bool changeEntity, uint8 &sceneId, uint8 &entityId, ChangeCommand::ChangeRegister &reg, ChangeCommand::ChangeOperation &op, ChangeCommandValue &ccv) {
 	if (changeEntity) {
@@ -102,7 +108,7 @@ bool ChangeCommandParser::parseValueString(const Common::String &valueString, bo
 		ccv._byteVal = parseInteger(val, op);
 	} else if (valueString.hasPrefix("FR")) {
 		reg = ChangeCommand::FR;
-		ccv._byteVal = parseInteger(val, op); 
+		ccv._byteVal = parseInteger(val, op);
 	} else if (valueString.hasPrefix("NA")) {
 		reg = ChangeCommand::NA;
 		ccv._byteVal = parseInteger(val, op);
@@ -234,32 +240,58 @@ int ChangeCommandParser::parseInteger(const char *val, ChangeCommand::ChangeOper
 
 const char *ChangeCommand::getRegisterAsString() const {
 	switch (_register) {
-	case NM: return "NM";
-	case LT: return "LT";
-	case SX: return "SX";
-	case SY: return "SY";
-	case XX: return "XX";
-	case YY: return "YY";
-	case XL: return "XL";
-	case YL: return "YL";
-	case WX: return "WX";
-	case WY: return "WY";
-	case SP: return "SP";
-	case AC: return "AC";
-	case FA: return "FA";
-	case FR: return "FR";
-	case NA: return "NA";
-	case FS: return "FS";
-	case CA: return "CA";
-	case DS: return "DS";
-	case DL: return "DL";
-	case ND: return "ND";
-	case NO: return "NO";
-	case NS: return "NS";
-	case PF: return "PF";
-	case PL: return "PL";
-	case PD: return "PD";
-	default: return "(unknown)";
+	case NM:
+		return "NM";
+	case LT:
+		return "LT";
+	case SX:
+		return "SX";
+	case SY:
+		return "SY";
+	case XX:
+		return "XX";
+	case YY:
+		return "YY";
+	case XL:
+		return "XL";
+	case YL:
+		return "YL";
+	case WX:
+		return "WX";
+	case WY:
+		return "WY";
+	case SP:
+		return "SP";
+	case AC:
+		return "AC";
+	case FA:
+		return "FA";
+	case FR:
+		return "FR";
+	case NA:
+		return "NA";
+	case FS:
+		return "FS";
+	case CA:
+		return "CA";
+	case DS:
+		return "DS";
+	case DL:
+		return "DL";
+	case ND:
+		return "ND";
+	case NO:
+		return "NO";
+	case NS:
+		return "NS";
+	case PF:
+		return "PF";
+	case PL:
+		return "PL";
+	case PD:
+		return "PD";
+	default:
+		return "(unknown)";
 	}
 }
 

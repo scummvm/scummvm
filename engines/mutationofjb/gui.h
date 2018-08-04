@@ -65,7 +65,7 @@ public:
 	virtual void onInventoryChanged() override;
 	virtual void onButtonClicked(ButtonWidget *) override;
 
-	ConversationWidget& getConversationWidget();
+	ConversationWidget &getConversationWidget();
 
 private:
 	bool loadInventoryGfx();

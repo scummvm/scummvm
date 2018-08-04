@@ -24,11 +24,11 @@
 #include "mutationofjb/script.h"
 #include "mutationofjb/gamedata.h"
 
-/*
-	"DELALLITEMS"
-
-	Removes all items from inventory.
-*/
+/** @file
+ * "DELALLITEMS"
+ *
+ * Removes all items from inventory.
+ */
 
 namespace MutationOfJB {
 
