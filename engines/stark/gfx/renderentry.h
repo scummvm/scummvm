@@ -74,7 +74,6 @@ public:
 	void setPosition3D(const Math::Vector3d &position, float direction);
 	void setSortKey(float sortKey);
 	void setClickable(bool clickable);
-	void setcastsShadow(bool cast) { _castsShadow = cast; }
 	void setMaxShadowLength(uint32 length) { _maxShadowLength = length; }
 
 	/** Gets the position */
@@ -118,7 +117,6 @@ protected:
 	float _sortKey;
 	bool _clickable;
 
-	bool _castsShadow;
 	uint32 _maxShadowLength;
 };
 

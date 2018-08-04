@@ -50,8 +50,7 @@ OpenGLSActorRenderer::~OpenGLSActorRenderer() {
 	delete _shadowShader;
 }
 
-void OpenGLSActorRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights,
-		bool castsShadow, uint32 maxShadowLength) {
+void OpenGLSActorRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights, uint32 maxShadowLength) {
 	if (_modelIsDirty) {
 		// Update the OpenGL Buffer Objects if required
 		clearVertices();
@@ -117,7 +116,7 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 
 	_shader->unbind();
 
-	if (castsShadow && StarkSettings->getBoolSetting(Settings::kShadow)) {
+	if (_castsShadow && StarkSettings->getBoolSetting(Settings::kShadow)) {
 		glEnable(GL_BLEND);
 		glEnable(GL_STENCIL_TEST);
 

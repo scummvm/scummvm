@@ -43,8 +43,7 @@ public:
 	OpenGLSActorRenderer(OpenGLSDriver *gfx);
 	virtual ~OpenGLSActorRenderer();
 
-	void render(const Math::Vector3d &position, float direction, const LightEntryArray &lights,
-			bool castsShadow, uint32 maxShadowLength) override;
+	void render(const Math::Vector3d &position, float direction, const LightEntryArray &lights, uint32 maxShadowLength) override;
 
 protected:
 	typedef Common::HashMap<Face *, uint32> FaceBufferMap;
