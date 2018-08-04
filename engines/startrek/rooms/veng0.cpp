@@ -175,7 +175,7 @@ void Room::veng0UseSTricorderOnChair() {
 }
 
 void Room::veng0UseSTricorderAnywhere() {
-	if (!_awayMission->veng.field34)
+	if (!_awayMission->veng.impulseEnginesOn)
 		spockScan(DIR_S, TX_VEN0_027);
 }
 
