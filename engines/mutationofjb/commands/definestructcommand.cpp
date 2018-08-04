@@ -25,6 +25,22 @@
 #include "mutationofjb/game.h"
 #include "common/debug.h"
 
+/** @file
+ * "DEFINE_STRUCT " <numItemGroups> " " <context> " " <objectId> " " <colorString> <CRLF>
+ * <itemGroup> { <CRLF> <itemGroup> }
+ *
+ * item ::= <questionIndex> " " <responseIndex> " " <nextGroup>
+ * itemGroup ::= <item> " " <item> " " <item> " " <item> " " <item>
+ *
+ * Defines the flow of an interactive conversation.
+ *
+ * Every item group consists of 5 conversation items.
+ * "questionIndex" and "responseIndex" specify what the player and the responder say when the conversation item is selected.
+ * They refer to the line numbers of TOSAY.GER and RESPONSE.GER, respectively.
+ * "nextGroup" refers to the group that follows when the conversation item is selected. A value of 0 indicates end of
+ * conversation.
+ */
+
 namespace MutationOfJB {
 
 bool DefineStructCommandParser::parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) {
@@ -52,19 +68,19 @@ bool DefineStructCommandParser::parse(const Common::String &line, ScriptParseCon
 
 		const char *linePtr = convLineStr.c_str();
 
-		ConversationInfo::Line convLine;
+		ConversationInfo::ItemGroup convGroup;
 
 		for (int j = 0; j < 5; ++j) {
 			ConversationInfo::Item convItem;
-			convItem._choice = atoi(linePtr);
+			convItem._question = atoi(linePtr);
 			linePtr += 6;
 			convItem._response = atoi(linePtr);
 			linePtr += 6;
-			convItem._nextLineIndex = atoi(linePtr);
+			convItem._nextGroupIndex = atoi(linePtr);
 			linePtr += 3;
-			convLine._items.push_back(convItem);
+			convGroup.push_back(convItem);
 		}
-		convInfo._lines.push_back(convLine);
+		convInfo._itemGroups.push_back(convGroup);
 	}
 
 	command = new DefineStructCommand(convInfo);

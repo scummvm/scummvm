@@ -46,7 +46,7 @@ void ConversationTask::start() {
 	widget.setCallback(this);
 	widget.setVisible(true);
 
-	_currentLineIndex = 0;
+	_currentGroupIndex = 0;
 
 	showChoicesOrPick();
 }
@@ -57,10 +57,10 @@ void ConversationTask::update() {
 			_sayTask.reset();
 
 			switch (_substate) {
-			case SAYING_NO_CHOICES:
+			case SAYING_NO_QUESTIONS:
 				finish();
 				break;
-			case SAYING_CHOICE: {
+			case SAYING_QUESTION: {
 				const ConversationLineList &responseList = getTaskManager()->getGame().getAssets().getResponseList();
 				const ConversationLineList::Line *const line = responseList.getLine(_currentItem->_response);
 
@@ -73,7 +73,7 @@ void ConversationTask::update() {
 				startExtra();
 
 				if (_substate != RUNNING_EXTRA) {
-					gotoNextLine();
+					gotoNextGroup();
 				}
 				break;
 			}
@@ -89,25 +89,25 @@ void ConversationTask::update() {
 			delete _innerExecCtx;
 			_innerExecCtx = nullptr;
 
-			gotoNextLine();
+			gotoNextGroup();
 		}
 	}
 }
 
 void ConversationTask::onChoiceClicked(ConversationWidget *convWidget, int, uint32 data) {
-	const ConversationInfo::Item &item = getCurrentLine()->_items[data];
+	const ConversationInfo::Item &item = getCurrentGroup()[data];
 	convWidget->clearChoices();
 
 	const ConversationLineList &toSayList = getTaskManager()->getGame().getAssets().getToSayList();
-	const ConversationLineList::Line *line = toSayList.getLine(item._choice);
+	const ConversationLineList::Line *line = toSayList.getLine(item._question);
 
-	_substate = SAYING_CHOICE;
+	_substate = SAYING_QUESTION;
 	createSayTasks(line);
 	getTaskManager()->startTask(_sayTask);
 	_currentItem = &item;
 
 	if (!line->_speeches[0].isRepeating()) {
-		getTaskManager()->getGame().getGameData().getCurrentScene()->addExhaustedChoice(_convInfo._context, data + 1, _currentLineIndex + 1);
+		getTaskManager()->getGame().getGameData().getCurrentScene()->addExhaustedConvItem(_convInfo._context, data + 1, _currentGroupIndex + 1);
 	}
 }
 
@@ -116,33 +116,33 @@ void ConversationTask::showChoicesOrPick() {
 	GameData &gameData = game.getGameData();
 	Scene *const scene = gameData.getScene(_sceneId);
 
-	Common::Array<uint32> itemsWithValidChoices;
+	Common::Array<uint32> itemsWithValidQuestions;
 	Common::Array<uint32> itemsWithValidResponses;
 	Common::Array<uint32> itemsWithValidNext;
 
 	/*
-		Collect valid "to say" choices (not exhausted and not empty).
+		Collect valid questions (not exhausted and not empty).
 		Collect valid responses (not exhausted and not empty).
-		If there are at least two visible choices, we show them.
-		If there is just one visible choice, pick it automatically ONLY if this is not the first choice in this conversation.
+		If there are at least two visible questions, we show them.
+		If there is just one visible question, pick it automatically ONLY if this is not the first question in this conversation.
 		Otherwise we don't start the conversation.
-		If there are no visible choices, automatically pick first valid response.
+		If there are no visible questions, automatically pick the first valid response.
 		If nothing above applies, don't start the conversation.
 	*/
 
-	const ConversationInfo::Line *const currentLine = getCurrentLine();
-	for (ConversationInfo::Items::size_type i = 0; i < currentLine->_items.size(); ++i) {
-		const ConversationInfo::Item &item = currentLine->_items[i];
+	const ConversationInfo::ItemGroup &currentGroup = getCurrentGroup();
+	for (ConversationInfo::ItemGroup::size_type i = 0; i < currentGroup.size(); ++i) {
+		const ConversationInfo::Item &item = currentGroup[i];
 
-		if (scene->isChoiceExhausted(_convInfo._context, (uint8) i + 1, (uint8) _currentLineIndex + 1)) {
+		if (scene->isConvItemExhausted(_convInfo._context, (uint8) i + 1, (uint8) _currentGroupIndex + 1)) {
 			continue;
 		}
-		const uint8 choice = item._choice;
+		const uint8 toSay = item._question;
 		const uint8 response = item._response;
-		const uint8 next = item._nextLineIndex;
+		const uint8 next = item._nextGroupIndex;
 
-		if (choice != 0) {
-			itemsWithValidChoices.push_back(i);
+		if (toSay != 0) {
+			itemsWithValidQuestions.push_back(i);
 		}
 
 		if (response != 0) {
@@ -154,38 +154,38 @@ void ConversationTask::showChoicesOrPick() {
 		}
 	}
 
-	if (itemsWithValidChoices.size() > 1) {
+	if (itemsWithValidQuestions.size() > 1) {
 		ConversationWidget &widget = game.getGui().getConversationWidget();
 		const ConversationLineList &toSayList = game.getAssets().getToSayList();
 
-		for (Common::Array<uint32>::size_type i = 0; i < itemsWithValidChoices.size() && i < ConversationWidget::CONVERSATION_MAX_CHOICES; ++i) {
-			const ConversationInfo::Item &item = currentLine->_items[itemsWithValidChoices[i]];
-			const ConversationLineList::Line *const line = toSayList.getLine(item._choice);
+		for (Common::Array<uint32>::size_type i = 0; i < itemsWithValidQuestions.size() && i < ConversationWidget::CONVERSATION_MAX_CHOICES; ++i) {
+			const ConversationInfo::Item &item = currentGroup[itemsWithValidQuestions[i]];
+			const ConversationLineList::Line *const line = toSayList.getLine(item._question);
 			const Common::String widgetText = toUpperCP895(line->_speeches[0]._text);
-			widget.setChoice((int) i, widgetText, itemsWithValidChoices[i]);
+			widget.setChoice((int) i, widgetText, itemsWithValidQuestions[i]);
 		}
 		_substate = IDLE;
 		_currentItem = nullptr;
 
 		_haveChoices = true;
-	} else if (itemsWithValidChoices.size() == 1 && _haveChoices) {
+	} else if (itemsWithValidQuestions.size() == 1 && _haveChoices) {
 		const ConversationLineList &toSayList = game.getAssets().getToSayList();
-		const ConversationInfo::Item &item = currentLine->_items[itemsWithValidChoices.front()];
-		const ConversationLineList::Line *const line = toSayList.getLine(item._choice);
+		const ConversationInfo::Item &item = currentGroup[itemsWithValidQuestions.front()];
+		const ConversationLineList::Line *const line = toSayList.getLine(item._question);
 
-		_substate = SAYING_CHOICE;
+		_substate = SAYING_QUESTION;
 		createSayTasks(line);
 		getTaskManager()->startTask(_sayTask);
 		_currentItem = &item;
 
 		if (!line->_speeches[0].isRepeating()) {
-			game.getGameData().getCurrentScene()->addExhaustedChoice(_convInfo._context, itemsWithValidChoices.front() + 1, _currentLineIndex + 1);
+			game.getGameData().getCurrentScene()->addExhaustedConvItem(_convInfo._context, itemsWithValidQuestions.front() + 1, _currentGroupIndex + 1);
 		}
 
 		_haveChoices = true;
 	} else if (!itemsWithValidResponses.empty() && _haveChoices) {
 		const ConversationLineList &responseList = game.getAssets().getResponseList();
-		const ConversationInfo::Item &item = currentLine->_items[itemsWithValidResponses.front()];
+		const ConversationInfo::Item &item = currentGroup[itemsWithValidResponses.front()];
 		const ConversationLineList::Line *const line = responseList.getLine(item._response);
 
 		_substate = SAYING_RESPONSE;
@@ -195,7 +195,7 @@ void ConversationTask::showChoicesOrPick() {
 
 		_haveChoices = true;
 	} else if (!itemsWithValidNext.empty() && _haveChoices) {
-		_currentLineIndex = currentLine->_items[itemsWithValidNext.front()]._nextLineIndex - 1;
+		_currentGroupIndex = currentGroup[itemsWithValidNext.front()]._nextGroupIndex - 1;
 		showChoicesOrPick();
 	} else {
 		if (_haveChoices) {
@@ -203,14 +203,15 @@ void ConversationTask::showChoicesOrPick() {
 		} else {
 			_sayTask = TaskPtr(new SayTask("Nothing to talk about.", _convInfo._color)); // TODO: This is hardcoded in executable. Load it.
 			getTaskManager()->startTask(_sayTask);
-			_substate = SAYING_NO_CHOICES;
+			_substate = SAYING_NO_QUESTIONS;
 			_currentItem = nullptr;
 		}
 	}
 }
 
-const ConversationInfo::Line *ConversationTask::getCurrentLine() const {
-	return &_convInfo._lines[_currentLineIndex];
+const ConversationInfo::ItemGroup &ConversationTask::getCurrentGroup() const {
+	assert(_currentGroupIndex < _convInfo._itemGroups.size());
+	return _convInfo._itemGroups[_currentGroupIndex];
 }
 
 void ConversationTask::finish() {
@@ -244,11 +245,11 @@ void ConversationTask::startExtra() {
 	}
 }
 
-void ConversationTask::gotoNextLine() {
-	if (_currentItem->_nextLineIndex == 0) {
+void ConversationTask::gotoNextGroup() {
+	if (_currentItem->_nextGroupIndex == 0) {
 		finish();
 	} else {
-		_currentLineIndex = _currentItem->_nextLineIndex - 1;
+		_currentGroupIndex = _currentItem->_nextGroupIndex - 1;
 		showChoicesOrPick();
 	}
 }

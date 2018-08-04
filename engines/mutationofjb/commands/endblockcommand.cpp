@@ -28,16 +28,19 @@
 #include "common/translation.h"
 
 /** @file
- * ("#L " | "-L ") <object>
- * ("#W " | "-W ") <object>
- * ("#T " | "-T ") <object>
- * ("#P " | "-P ") <object1>
- * ("#U " | "-U ") <object1> [<object2>]
- * ("#ELSE" | "-ELSE") [<tag>]
- * "#MACRO " <name>
- * "#EXTRA" <name>
+ * <look> | <walk> | <talk> | <pickup> | <use> | <else> | <macro> | <extra> | <endRandom>
  *
- * If a line starts with '#', '=', '-', it is treated as the end of a section.
+ * look ::= ("#L " | "-L ") <object>
+ * walk ::= ("#W " | "-W ") <object>
+ * talk ::= ("#T " | "-T ") <object>
+ * pickup ::= ("#P " | "-P ") <object1>
+ * use ::= ("#U " | "-U ") <object1> [<object2>]
+ * else ::= ("#ELSE" | "-ELSE") [<tag>]
+ * macro ::= "#MACRO " <name>
+ * extra ::= "#EXTRA" <name>
+ * endRandom ::= "\"
+ *
+ * If a line starts with '#', '=', '-', '\' it is treated as the end of a section.
  * However, at the same time it can also start a new section depending on what follows.
  *
  * #L (look), #W (walk), #T (talk), #U (use) sections are executed
@@ -49,6 +52,8 @@
  * #MACRO starts a new macro. Global script can call macros from local script and vice versa.
  *
  * #EXTRA defines an "extra" section. This is called from dialog responses ("TALK TO HIM" command).
+ *
+ * TODO: TIMERPROC.
  */
 
 namespace MutationOfJB {

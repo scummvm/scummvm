@@ -26,7 +26,7 @@
 #include "common/str.h"
 
 /** @file
- * "CAMEFROM" <sceneId>
+ * "CAMEFROM " <sceneId>
  *
  * This command tests whether last scene (the scene player came from) is sceneId.
  * If true, the execution continues after this command.

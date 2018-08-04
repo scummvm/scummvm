@@ -56,7 +56,7 @@ void ObjectAnimationTask::update() {
  * Additionally, there is a chance with each frame until _randomFrame that the animation may jump
  * straight to _randomFrame and continue until the last frame, then wrap around to the first frame.
  *
- * Randomness is used to introduce variety - e.g. in the starting scene a perched bird occassionally
+ * Randomness is used to introduce variety - e.g. in the starting scene a perched bird occasionally
  * spreads its wings.
  */
 void ObjectAnimationTask::updateObjects() {

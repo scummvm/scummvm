@@ -33,6 +33,9 @@ public:
 	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
 };
 
+/**
+ * Base class for sequential commands.
+ */
 class SeqCommand : public Command {
 public:
 	SeqCommand() : _nextCommand(nullptr) {}

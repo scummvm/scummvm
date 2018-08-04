@@ -33,7 +33,7 @@ class ScriptExecutionContext;
 
 class ConversationTask : public Task, public ConversationWidgetCallback {
 public:
-	ConversationTask(uint8 sceneId, const ConversationInfo &convInfo, TalkCommand::Mode mode) : _sceneId(sceneId), _convInfo(convInfo), _mode(mode), _currentLineIndex(0), _currentItem(nullptr), _substate(IDLE), _haveChoices(false), _innerExecCtx(nullptr) {}
+	ConversationTask(uint8 sceneId, const ConversationInfo &convInfo, TalkCommand::Mode mode) : _sceneId(sceneId), _convInfo(convInfo), _mode(mode), _currentGroupIndex(0), _currentItem(nullptr), _substate(IDLE), _haveChoices(false), _innerExecCtx(nullptr) {}
 	virtual ~ConversationTask() {}
 
 	virtual void start() override;
@@ -42,25 +42,25 @@ public:
 	virtual void onChoiceClicked(ConversationWidget *, int response, uint32 data) override;
 private:
 	void showChoicesOrPick();
-	const ConversationInfo::Line *getCurrentLine() const;
+	const ConversationInfo::ItemGroup &getCurrentGroup() const;
 	void finish();
 	void startExtra();
-	void gotoNextLine();
+	void gotoNextGroup();
 	void createSayTasks(const ConversationLineList::Line *line);
 	uint8 getSpeechColor(const ConversationLineList::Speech &speech);
 
 	uint8 _sceneId;
 	const ConversationInfo &_convInfo;
 	TalkCommand::Mode _mode;
-	uint _currentLineIndex;
+	uint _currentGroupIndex;
 	const ConversationInfo::Item *_currentItem;
 	TaskPtr _sayTask;
 
 	enum Substate {
 		IDLE,
-		SAYING_CHOICE,
+		SAYING_QUESTION,
 		SAYING_RESPONSE,
-		SAYING_NO_CHOICES,
+		SAYING_NO_QUESTIONS,
 		RUNNING_EXTRA
 	};
 

@@ -27,6 +27,9 @@
 
 namespace MutationOfJB {
 
+/**
+ * Queues multiple tasks.
+ */
 class SequentialTask : public Task {
 public:
 	SequentialTask(const TaskPtrs &tasks);

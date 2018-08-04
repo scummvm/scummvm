@@ -25,7 +25,7 @@
 #include "mutationofjb/gamedata.h"
 
 /** @file
- * "DELITEM" " " <item>
+ * "DELITEM " <item>
  *
  * Removes item from inventory.
  */

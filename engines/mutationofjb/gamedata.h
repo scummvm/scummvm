@@ -225,29 +225,29 @@ struct Bitmap {
 };
 
 /**
- * Encoded exhausted choice.
+ * Encoded exhausted convesation item.
  */
-struct ExhaustedChoice {
+struct ExhaustedConvItem {
 	/**
-	 * 1 bit - context
-	 * 3 bits - choice index
-	 * 4 bits - choice list index
+	 * 1 bit - context.
+	 * 3 bits - conversation item index.
+	 * 4 bits - conversation group index.
 	 */
 	uint8 _encodedData;
 
 	uint8 getContext() const {
 		return (_encodedData >> 7) & 0x1;
 	}
-	uint8 getChoiceIndex() const {
+	uint8 getConvItemIndex() const {
 		return (_encodedData >> 4) & 0x7;
 	}
-	uint8 getChoiceListIndex() const {
+	uint8 getConvGroupIndex() const {
 		return _encodedData & 0xF;
 	}
 
-	ExhaustedChoice() : _encodedData(0) {}
-	ExhaustedChoice(uint8 context, uint8 choiceIndex, uint8 choiceListIndex) :
-		_encodedData(((context & 0x1) << 7) | ((choiceIndex & 0x7) << 4) | (choiceListIndex & 0xF)) {}
+	ExhaustedConvItem() : _encodedData(0) {}
+	ExhaustedConvItem(uint8 context, uint8 convItemIndex, uint8 convGroupIndex) :
+		_encodedData(((context & 0x1) << 7) | ((convItemIndex & 0x7) << 4) | (convGroupIndex & 0xF)) {}
 };
 
 struct Scene {
@@ -263,8 +263,8 @@ struct Scene {
 	Static *findStatic(int16 x, int16 y, int *index = nullptr);
 	Bitmap *findBitmap(int16 x, int16 y, int *index = nullptr);
 
-	void addExhaustedChoice(uint8 context, uint8 choiceIndex, uint8 choiceIndexList);
-	bool isChoiceExhausted(uint8 context, uint8 choiceIndex, uint8 choiceIndexList) const;
+	void addExhaustedConvItem(uint8 context, uint8 convItemIndex, uint8 convGroupIndex);
+	bool isConvItemExhausted(uint8 context, uint8 convItemIndex, uint8 convGroupIndex) const;
 
 	/** Refers to the script block that will be executed when you enter this scene (DS register). */
 	uint8 _startup;
@@ -298,28 +298,25 @@ struct Scene {
 	uint8 _palRotDelay;
 
 	/**
-	 * Points to the first free item in exhausted choices list.
+	 * Points to the first free item in exhausted conversation item array.
 	 * @note Indexed from 1.
 	 */
-	uint8 _exhaustedChoiceNext;
-	ExhaustedChoice _exhaustedChoices[79];
+	uint8 _exhaustedConvItemNext;
+	ExhaustedConvItem _exhaustedConvItems[79];
 
 	bool loadFromStream(Common::ReadStream &stream);
 };
 
 struct ConversationInfo {
 	struct Item {
-		uint8 _choice;
+		uint8 _question;
 		uint8 _response;
-		uint8 _nextLineIndex;
+		uint8 _nextGroupIndex;
 	};
 
-	typedef Common::Array<Item> Items;
-	struct Line {
-		Items _items;
-	};
+	typedef Common::Array<Item> ItemGroup;
 
-	Common::Array<Line> _lines;
+	Common::Array<ItemGroup> _itemGroups;
 	uint8 _context;
 	uint8 _objectId;
 	uint8 _color;
