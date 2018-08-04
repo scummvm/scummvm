@@ -2480,6 +2480,50 @@ public:
 
 	// VENG1
 	void veng1Tick1();
+	void veng1WalkToDoor();
+	void veng1TouchedHotspot0();
+	void veng1ReachedDoor();
+	void veng1TouchedTurbolift();
+	void veng1LookAtDeadGuy();
+	void veng1UseSTricorderOnVent();
+	void veng1LookAtPanel();
+	void veng1LookAtDoor();
+	void veng1LookAtSaw();
+	void veng1LookAtDebris();
+	void veng1LookAtKirk();
+	void veng1LookAtMccoy();
+	void veng1LookAtSpock();
+	void veng1LookAtRedshirt();
+	void veng1LookAnywhere();
+	void veng1TalkToKirk();
+	void veng1TalkToSpock();
+	void veng1TalkToMccoy();
+	void veng1TalkToRedshirt();
+	void veng1UsePhaserOnDoor();
+	void veng1UsePhaserOnPanel();
+	void veng1UseSTricorderOnSaw();
+	void veng1UseSTricorderOnDoor();
+	void veng1UseSTricorderOnPanel();
+	void veng1GetPanel();
+	void veng1KirkReachedPanel();
+	void veng1KirkAccessedPanel();
+	void veng1UseSawOnPanel();
+	void veng1UseSawOnDoor();
+	void veng1UseDrillOnDebris();
+	void veng1UseSawOnDebris();
+	void veng1UseDrillOnPanel();
+	void veng1KirkReachedPanelToDrill();
+	void veng1KirkDoneDrillingPanel();
+	void veng1UseHypoOnDebris();
+	void veng1KirkReachedDebris();
+	void veng1KirkUsedHypoOnDebris();
+	void veng1GetSaw();
+	void veng1ReachedSaw();
+	void veng1PickedUpSaw();
+	void veng1GetDebris();
+	void veng1ReachedDebrisToGet();
+	void veng1TriedToGetDebris();
+	void veng1UseMccoyOnDeadGuy();
 
 	// VENG2
 	void veng2Tick1();
@@ -2814,6 +2858,12 @@ public:
 				ser.syncAsByte(numCrewmenReadyToBeamOut);
 			}
 		} sins;
+
+		struct {
+			// veng1
+			byte doorOpenCounter; // 0xca
+			bool walkingToDoor; // 0xcb
+		} veng;
 
 	} _roomVar;
 };

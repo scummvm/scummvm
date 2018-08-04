@@ -68,6 +68,7 @@ extern const char *const g_gameStrings[] = {
 
 	"#BRID\\BRIDU146#Nothing to report, Captain.",
 
+	"#GENE\\G_014#This person's dead, Jim.",
 	"#GENE\\G_024#Fascinating.",
 	"#GENE\\G_043#Ouch! Watch it with that thing!",
 
@@ -2684,7 +2685,7 @@ extern const char *const g_gameStrings[] = {
 	"#VEN0\\VEN0_013#Captain, these phasers are not configured for fine cutting. We could cause extensive damage.",
 	"#VEN0\\VEN0_014#What kind of a butcher would do this sort of thing?",
 	"#VEN0\\VEN0_015#I'm a doctor, not a civil engineer!",
-	"#VEN0\\VEN0_016#They are dead, Jim. All of them.",
+	"#VEN0\\VEN0_016#They're dead, Jim. All of them.", // TYPO
 	"#VEN0\\VEN0_017#Jim, don't forget, there's another survivor on board. We've got to find him!",
 	"#VEN0\\VEN0_018#My God, Jim. What kind of butcher would do something like this?",
 	"#VEN0\\VEN0_019#Punctured lung, nerve damage, brain damage, fractured arm and ribs; it's a miracle he lasted as long as he did. He's not coming back, Jim.",
@@ -2733,13 +2734,57 @@ extern const char *const g_gameStrings[] = {
 	"#VEN0\\VEN0N019#You pick up the beam. It's a little heavy, but you manage it.",
 
 
+	"#VEN1\\VEN1_001#I wonder if anything will be working in Auxilary Control.",
+	"#VEN1\\VEN1_002#You'll get your chance, Bones. I promise.",
+	"#VEN1\\VEN1_004#I'd like to meet the people responsible for this and give them a piece of my mind.",
+	"#VEN1\\VEN1_005#Too bad you can't say the same for the crew.",
+	"#VEN1\\VEN1_006#Initial scans show that the gear mechanism is currently jammed with metallic debris.",
+	"#VEN1\\VEN1_007#Readings of the door indicate a jam in the gear mechanism.",
+	"#VEN1\\VEN1_008#That may not be wise, Captain. It could damage the entire door assembly in its weakened condition.",
+	"#VEN1\\VEN1_009#The gear mechanism is now cleared.",
+	"#VEN1\\VEN1_010#The gears are moving freely and are completely operative.",
+	"#VEN1\\VEN1_011#The vent is far too small for any one of us to fit through. It is also blocked point three meters inside the duct.",
+	"#VEN1\\VEN1_012#This is a molecular saw, Captain. It is used for precision cutting. My tricorder reads that the power cells are fully charged.",
+	"#VEN1\\VEN1_013#The Starfleet Engineers did their work well Captain. A surprising amount of the ship is intact.",
+	"#VEN1\\VEN1_014#Tricorder indicates that the panel is currently sealed by Federation standard molecular bonding cement.",
+	"#VEN1\\VEN1_015#From my lessons at the Academy, sir, we were told that a standard issue Federation phaser does not have enough power to cut through a security door such as this one.",
+	"#VEN1\\VEN1_016#I'm not in a talking mood right now, sir.",
+	"#VEN1\\VEN1_F33#The panel is open.",
+	"#VEN1\\VEN1N000#A knot of debris is jamming the gear mechanism.",
+	"#VEN1\\VEN1N001#A Molecular Saw. The 23rd century equivalent of a hacksaw.",
+	"#VEN1\\VEN1N002#Captain Kirk hopes that he will never see the day when the Enterprise is this badly battered.",
+	"#VEN1\\VEN1N003#Irritated by the emotions of the humans that are accompanying him, Spock does his best to keep his mind on the problems at hand.",
+	"#VEN1\\VEN1N004#Leonard McCoy wishes he were back on the Enterprise.",
+	"#VEN1\\VEN1N005#Kije wishes that everyone would stop fidgeting. It's making him nervous.",
+	"#VEN1\\VEN1N006#The debris is jammed in too tight.",
+	"#VEN1\\VEN1N007#The door is jammed shut.",
+	"#VEN1\\VEN1N008#The drill easily breaks through the seal of the panel.",
+	"#VEN1\\VEN1N009#The drill is not powerful enough to cut through the debris.",
+	"#VEN1\\VEN1N010#The gear mechanism for the door is now fully functional.",
+	"#VEN1\\VEN1N011#The gears are completely cleared of debris.",
+	"#VEN1\\VEN1N012#The Hypo is empty.",
+	"#VEN1\\VEN1N013#The molecular saw is much too large for the panel.",
+	"#VEN1\\VEN1N014#The molecular saw will not penetrate a security door.",
+	"#VEN1\\VEN1N015#The oil seeps into and loosens the debris.",
+	"#VEN1\\VEN1N016#The panel has been fastened shut with some kind of sealant.",
+	"#VEN1\\VEN1N017#The panel opens easily.",
+	"#VEN1\\VEN1N018#The saw is too bulky to reach the jammed debris.",
+	"#VEN1\\VEN1N019#There appears to be debris jammed in the gear mechanism.",
+	"#VEN1\\VEN1N020#This corridor leads to auxiliary control. It is a real mess.",
+	"#VEN1\\VEN1N021#This door leads to auxiliary control.",
+	"#VEN1\\VEN1N022#This is the maintenance panel for the auxiliary control room door.",
+	"#VEN1\\VEN1N023#You retrieve the molecular saw.",
+
+
 	"#VEN2\\VEN2_028#Yes, Uhura. Just wanted a status report. Kirk out.",
 	"#VEN2\\VEN2_066#They are jamming all frequencies, Captain. We will not be able to contact the Enterprise.",
 	"#VEN2\\VEN2_098#What are you stalling for? Lower your shields.",
 	"#VEN2\\VEN2U093#Enterprise here. We're still tracking the distress call. Are you all right, Sir?",
 
 
+	"#VEN4\\VEN4_016#There's nothing more I can do.", // TYPO
 	"#VEN4\\VEN4N010#This is an empty hypodermic injector.",
+	"#VEN4\\VEN4N014#Yet another crewman of the Republic whose life was unfairly abbreviated.",
 
 
 	"#VEN6\\VEN6N007#The hypo is now filled with multipurpose oil.",
