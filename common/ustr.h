@@ -195,7 +195,7 @@ private:
 
 U32String convertUtf8ToUtf32(const String &str);
 
-enum {
+enum CodePage {
 	kAscii,
 	kWindows1250,
 	kWindows1251,
@@ -203,7 +203,7 @@ enum {
 	kWindows1255
 };
 
-U32String convertToU32String(const char *str, uint codePage = kAscii);
+U32String convertToU32String(const char *str, CodePage page = kAscii);
 
 } // End of namespace Common
 

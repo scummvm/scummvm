@@ -428,9 +428,9 @@ uint32 g_windows1255ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0192, 0x201E,
 										 0x05E0, 0x05E1, 0x05E2, 0x05E3, 0x05E4, 0x05E5, 0x05E6, 0x05E7,
 										 0x05E8, 0x05E9, 0x05EA, 0x00FB, 0x00FC, 0x200E, 0x200F, 0x00FF};
 
-U32String convertToU32String(const char *str, uint codePage) {
+U32String convertToU32String(const char *str, CodePage page) {
 	const String string(str);
-	if (codePage == kAscii) {
+	if (page == kAscii) {
 		return convertUtf8ToUtf32(string);
 	}
 
@@ -443,7 +443,7 @@ U32String convertToU32String(const char *str, uint codePage) {
 
 		byte index = string[i] - 0x80;
 
-		switch (codePage) {
+		switch (page) {
 		case kWindows1250:
 			unicodeString += g_windows1250ConversionTable[index];
 			break;
