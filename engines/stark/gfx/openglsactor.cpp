@@ -320,7 +320,7 @@ void OpenGLSActorRenderer::setShadowUniform(const LightEntryArray &lights,
 				contributes = getPointLightContribution(light, actorPosition, lightDirection);
 				break;
 			case LightEntry::kDirectional:
-				contributes = getDirectionalLightContribution(light, actorPosition, lightDirection);
+				contributes = getDirectionalLightContribution(light, lightDirection);
 				break;
 			case LightEntry::kSpot:
 				contributes = getSpotLightContribution(light, actorPosition, lightDirection);
@@ -390,8 +390,8 @@ bool OpenGLSActorRenderer::getPointLightContribution(LightEntry *light,
 
 	return true;
 }
-bool OpenGLSActorRenderer::getDirectionalLightContribution(LightEntry *light,
-		const Math::Vector3d &actorPosition, Math::Vector3d &direction) {
+
+bool OpenGLSActorRenderer::getDirectionalLightContribution(LightEntry *light, Math::Vector3d &direction) {
 	float brightness = (light->color.x() + light->color.y() + light->color.z()) / 3.0f;
 
 	if (brightness <= 0) {
@@ -404,6 +404,7 @@ bool OpenGLSActorRenderer::getDirectionalLightContribution(LightEntry *light,
 
 	return true;
 }
+
 bool OpenGLSActorRenderer::getSpotLightContribution(LightEntry *light,
 		const Math::Vector3d &actorPosition, Math::Vector3d &direction) {
 	Math::Vector3d lightToActor = actorPosition - light->position;
@@ -420,8 +421,6 @@ bool OpenGLSActorRenderer::getSpotLightContribution(LightEntry *light,
 
 	return getPointLightContribution(light, actorPosition, direction, cone);
 }
-
-
 
 } // End of namespace Gfx
 } // End of namespace Stark

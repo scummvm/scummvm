@@ -66,7 +66,7 @@ protected:
 	
 	bool getPointLightContribution(LightEntry *light, const Math::Vector3d &actorPosition,
 			Math::Vector3d &direction, float weight = 1.0f);
-	bool getDirectionalLightContribution(LightEntry *light, const Math::Vector3d &actorPosition, Math::Vector3d &direction);
+	bool getDirectionalLightContribution(LightEntry *light, Math::Vector3d &direction);
 	bool getSpotLightContribution(LightEntry *light, const Math::Vector3d &actorPosition, Math::Vector3d &direction);
 };
 
