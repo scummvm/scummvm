@@ -77,6 +77,11 @@ void ActionText::start() {
 	findColorsInPalette();
 	Director *director = _actor->getPage()->getGame()->getDirector();
 	Graphics::TextAlign align = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
+	Common::SeekableReadStream *stream = _actor->getPage()->getResourceStream(_fileName);
+
+	char *str = new char[stream->size()];
+	stream->read(str, stream->size());
+	delete stream;
 
 	if (_scrollBar) {
 		Graphics::MacFont *font = new Graphics::MacFont;
@@ -85,10 +90,12 @@ void ActionText::start() {
 		_txtWnd->move(_xLeft, _yTop);
 		_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
 
-		_txtWnd->appendText("Testing ActionText", font);
+		if (_actor->getPage()->getGame()->getGameDesc().language == Common::EN_ANY)
+			_txtWnd->appendText(str, font);
 	} else {
 		director->addTextAction(this);
 	}
+	delete[] str;
 }
 
 void ActionText::end() {

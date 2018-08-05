@@ -115,6 +115,7 @@ public:
 
 	void executeMenuCommand(uint id);
 
+	const ADGameDescription &getGameDesc() { return _desc; }
 	OrbFile *getOrb()  { return &_orb; }
 	BroFile *getBro()  { return _bro; }
 	Common::RandomSource &getRnd() { return _rnd; };
