@@ -47,7 +47,8 @@ const Common::String MacFontRun::toString() {
 			(palinfo3 >> 8) & 0xff, palinfo3 & 0xff);
 }
 
-MacText::~MacText(){
+MacText::~MacText() {
+	delete _surface;
 	delete _macFont;
 }
 
