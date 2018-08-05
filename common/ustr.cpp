@@ -430,7 +430,7 @@ static const uint32 g_windows1255ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x
 
 U32String convertToU32String(const char *str, CodePage page) {
 	const String string(str);
-	if (page == kAscii) {
+	if (page == kUtf8) {
 		return convertUtf8ToUtf32(string);
 	}
 
