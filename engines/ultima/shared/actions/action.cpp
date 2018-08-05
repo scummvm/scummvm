@@ -45,7 +45,7 @@ Map *Action::getMap() {
 
 void Action::addInfoMsg(const Common::String &text, bool newLine) {
 	CInfoMsg msg(text, newLine);
-	msg.execute(getView(), nullptr, MSGFLAG_BREAK_IF_HANDLED);
+	msg.execute(getView());
 }
 
 void Action::playFX(uint effectId) {
