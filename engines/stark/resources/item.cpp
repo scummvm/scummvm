@@ -1041,13 +1041,6 @@ Gfx::RenderEntry *ModelItem::getRenderEntry(const Common::Point &positionOffset)
 			visual = getVisual();
 		}
 
-		VisualActor *actor = visual->get<VisualActor>();
-		Resources::Anim *anim = getAnim();
-		if (anim && anim->getSubType() == Anim::kAnimSkeleton) {
-			Resources::AnimSkeleton *animSkeleton = Resources::Object::cast<Resources::AnimSkeleton>(anim);
-			actor->setCastShadow(animSkeleton->castsShadow());
-		}
-
 		_renderEntry->setVisual(visual);
 		_renderEntry->setPosition3D(_position3D, _direction3D);
 		_renderEntry->setSortKey(getSortKey());

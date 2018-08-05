@@ -453,6 +453,9 @@ void AnimSkeleton::applyToItem(Item *item) {
 	_visual->setTextureFacial(nullptr);
 	_visual->setAnim(_seletonAnim);
 	_visual->setTime(_currentTime);
+
+	VisualActor *actor = _visual->get<VisualActor>();
+	actor->setCastShadow(_castsShadow);
 }
 
 void AnimSkeleton::removeFromItem(Item *item) {
