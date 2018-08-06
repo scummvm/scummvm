@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-03 14:58+0200\n"
-"PO-Revision-Date: 2018-08-06 21:27+0000\n"
-"Last-Translator: rte44 <Flytheshrimp@qq.com>\n"
+"PO-Revision-Date: 2018-08-06 21:28+0000\n"
+"Last-Translator: monkeymadness <ihave13redsox@hotmail.com>\n"
 "Language-Team: Chinese "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/zh_LATN@cn/>\n"
 "Language: zh-Latn_CN\n"
@@ -101,12 +101,12 @@ msgstr "Dao:"
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
-msgstr ""
+msgstr "QuXiao XiaZai"
 
 #: gui/downloaddialog.cpp:66
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "QuXiao XiaZai"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
@@ -703,7 +703,7 @@ msgstr ""
 
 #: gui/launcher.cpp:384
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Zhe MuLu Hai BuKeYi Yong, Ta MuQian XiaZai!"
 
 #: gui/launcher.cpp:395
 msgid "Do you really want to remove this game configuration?"
@@ -847,19 +847,17 @@ msgid "Swap Menu and Back buttons"
 msgstr ""
 
 #: gui/options.cpp:1002
-#, fuzzy
 msgid "Pointer Speed:"
-msgstr "Sudu:"
+msgstr "Zhizhen Sudu:"
 
 #: gui/options.cpp:1002 gui/options.cpp:1004 gui/options.cpp:1005
 msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr ""
 
 #: gui/options.cpp:1004
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Sudu:"
+msgstr "Zhizhen Sudu:"
 
 #: gui/options.cpp:1015
 msgid "Joy Deadzone:"
@@ -1060,7 +1058,7 @@ msgstr "Wenzi he Yuyin:"
 
 #: gui/options.cpp:1251 gui/options.cpp:1261
 msgid "Speech"
-msgstr "Yuyin"
+msgstr "Yanyu"
 
 #: gui/options.cpp:1252 gui/options.cpp:1262
 msgid "Subtitles"
@@ -1082,7 +1080,7 @@ msgstr "Wenzi he Yuyin:"
 
 #: gui/options.cpp:1261
 msgid "Spch"
-msgstr "Zimu"
+msgstr "Yanyu"
 
 #: gui/options.cpp:1262
 msgid "Subs"
@@ -1211,15 +1209,15 @@ msgstr "ScummVM Jiemian Yuyan"
 
 #: gui/options.cpp:1694 gui/updates-dialog.cpp:86
 msgid "Update check:"
-msgstr ""
+msgstr "GengXin JianCha:"
 
 #: gui/options.cpp:1694
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "DuoJiu YiCi JianCha ScummVM GengXin"
 
 #: gui/options.cpp:1706
 msgid "Check now"
-msgstr ""
+msgstr "XianZai JianCha"
 
 #: gui/options.cpp:1714
 msgid "Cloud"
