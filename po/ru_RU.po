@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-03 14:58+0200\n"
 "PO-Revision-Date: 2018-08-06 21:32+0000\n"
-"Last-Translator: Mikhail <dalekempire1963@gmail.com>\n"
+"Last-Translator: Pavel Kungurtsev <i@kyotohongaku.com>\n"
 "Language-Team: Russian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -1675,12 +1675,12 @@ msgstr ""
 
 #: gui/unknown-game-dialog.cpp:117
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
+msgstr "Вы также можете сообщить об игре напрямую в багтрекер."
 
 #: gui/unknown-game-dialog.cpp:199
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
-msgstr ""
+msgstr "Вся необходимая информация об игре была скопирована в буфер обмена"
 
 #: gui/unknown-game-dialog.cpp:201
 msgid "Copying the game information to the clipboard has failed!"
