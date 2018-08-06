@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-03 14:58+0200\n"
-"PO-Revision-Date: 2018-04-18 10:18+0000\n"
-"Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
-"Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/zh_LATN@cn/>\n"
+"PO-Revision-Date: 2018-08-06 21:27+0000\n"
+"Last-Translator: monkeymadness <ihave13redsox@hotmail.com>\n"
+"Language-Team: Chinese "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/zh_LATN@cn/>\n"
 "Language: zh-Latn_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -84,9 +84,8 @@ msgid "Choose"
 msgstr "Xuanze"
 
 #: gui/downloaddialog.cpp:49
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Xuanze Youxi Shuju Mulu"
+msgstr "XuanZe MuLu NaLi XiaZai YouXi de ShuJu"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:481 gui/launcher.cpp:198
 msgid "Select directory with game data"
