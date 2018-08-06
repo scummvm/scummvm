@@ -7,10 +7,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-03 14:58+0200\n"
-"PO-Revision-Date: 2018-04-18 10:19+0000\n"
-"Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
-"Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/el/>\n"
+"PO-Revision-Date: 2018-08-06 21:26+0000\n"
+"Last-Translator: Arius <alidop@pathfinder.gr>\n"
+"Language-Team: Greek "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-7\n"
@@ -1726,6 +1726,8 @@ msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"Μπορείτε να αλλάξετε αυτή τη ρύθμιση αργότερα\n"
+"στην καρτέλα Διάφορα στις Επιλογές."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -3447,27 +3449,24 @@ msgid "~W~ater Effect Enabled"
 msgstr "Εφέ ~Ν~ερού Ενεργοποιημένο"
 
 #: engines/mohawk/dialogs.cpp:288
-#, fuzzy
 msgid "Transitions:"
-msgstr "~Μ~εταβάσεις Ενεργοποιημένες"
+msgstr "~Μ~εταβάσεις:"
 
 #: engines/mohawk/dialogs.cpp:290
-#, fuzzy
 msgid "Disabled"
-msgstr "Απενεργοποιημένα γραφικά"
+msgstr "Απενεργοποιημένες"
 
 #: engines/mohawk/dialogs.cpp:291
-#, fuzzy
 msgid "Fastest"
-msgstr "Επικόλληση"
+msgstr "Σύντομες"
 
 #: engines/mohawk/dialogs.cpp:292
 msgid "Normal"
-msgstr ""
+msgstr "Κανονικές"
 
 #: engines/mohawk/dialogs.cpp:293
 msgid "Best"
-msgstr ""
+msgstr "Βέλτιστες"
 
 #: engines/mohawk/mohawk.cpp:55
 msgid "The game is paused. Press any key to continue."
@@ -3531,7 +3530,7 @@ msgstr ""
 
 #: engines/mohawk/riven.cpp:506
 msgid "You are missing the following required Riven data files:\n"
-msgstr ""
+msgstr "Λείπουν τα ακόλουθα αρχεία δεδομένων του Riven:\n"
 
 #: engines/mohawk/riven_stack.cpp:204
 msgid ""
@@ -3706,7 +3705,7 @@ msgstr ""
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "Χρήση κλιμάκωσης video υψηλής ποιότητας "
 
 #: engines/sci/detection.cpp:432
 #, fuzzy
@@ -3776,7 +3775,7 @@ msgstr "Ενεργοποίηση δρομέων κατεύθυνσης"
 
 #: engines/sci/detection.cpp:517
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "Ενεργοποίηση του προαιρετικού ενσωματωμένου φίλτρου λογοκρισίας"
 
 #: engines/sci/detection.cpp:847 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
@@ -3790,26 +3789,41 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"Χαρακτήρες αποθηκευμένοι μέσα στο ScummVM εμφανίζονται αυτομάτως. Αρχεία "
+"χαρακτήρων αποθηκευμένα με τον πρωτότυπο διερμηνευτή πρέπει να τοποθετηθούν "
+"στον φάκελο αποθηκευμένων παιχνιδιών του ScummVM. Έπειτα, πρέπει να "
+"προστεθεί σε κάθε τέτοιο αρχείο ένα πρόθεμα το οποίο διαφέρει ανάλογα με το "
+"παιχνίδι στο οποίο δημιουργήθηκε, όπως για παράδειγμα: πρόθεμα  'qfg1-' για "
+"το Quest for Glory 1, πρόθεμα 'qfg2-' για το Quest for Glory 2. Παράδειγμα "
+"αρχείου με το πρόθεμα: 'qfg2-thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:348
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
+"Πρέπει να χρησιμοποιήσετε ένα εξωτερικό πρόγραμμα για να ανοίξετε το "
+"ακόλουθο αρχείο βοηθείας του παιχνιδιού: %s"
 
 #: engines/sci/engine/savegame.cpp:1284
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
+"Η μορφή αυτού του αρχείου αποθηκευμένου παιχνιδιού είναι παρωχημένη, δεν "
+"γίνεται να φορτωθεί"
 
 #: engines/sci/engine/savegame.cpp:1286
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
+"Η έκδοση του αποθηκευμένου παχινιδιού είναι %d, η μέγιστη υποστηριζόμενη "
+"έκδοση είναι %0d"
 
 #: engines/sci/engine/savegame.cpp:1297
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
+"Αυτό το αποθηκευμένο παιχνίδι δημιουργήθηκε με διαφορετική έκδοση του "
+"παιχνιδιού, δεν γίνεται να φορτωθεί"
 
 #: engines/sci/resource.cpp:822
 msgid ""
@@ -3817,6 +3831,10 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Εντοπίστηκαν κατεστραμμένoι ή μη υπαρκτοί πόροι του παιχνιδιού. Κάποια "
+"χαρακτηριστικά του παιχνιδιού μπορεί να μην λειτουργήσουν σωστά. Ελέγξτε την "
+"κονσόλα για περισσότερες πληροφορίες και βεβαιωθείτε πως όλα τα αρχεία του "
+"παιχνιδιού είναι έγκυρα."
 
 #: engines/sci/sci.cpp:400
 msgid ""
@@ -3825,6 +3843,11 @@ msgid ""
 "riddles. Please, apply the latest patch for this game by Sierra to avoid "
 "possible problems."
 msgstr ""
+"Εντοπίστηκε μια δέσμη εντολών με γνωστό σφάλμα, το οποίο θα μπορούσε να σας "
+"εμποδίσει να συνεχίσετε την πρόοδο στο παιχνίδι σε αργότερο στάδιο, κατά την "
+"διάρκεια της σκηνής με τους γρίφους του Green Man. Εφαρμόστε την πιο "
+"πρόσφατη διόρθωση (patch) που προσφέρει η Sierra για το παιχνίδι ώστε να "
+"αποφύγετε πιθανά προβλήματα."
 
 #: engines/sci/sci.cpp:409
 msgid ""
@@ -3834,6 +3857,12 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"Οι υπότιτλοι είναι ενεργοί αλλά ο υποτιτλισμός στο King's Quest 7 ήταν "
+"ημιτελής και απενεργοποιήθηκε στην τελική έκδοση του παιχνιδιού. Το ScummVM "
+"επιτρέπει να ενεργοποιηθούν οι υπότιτλοι αλλά επειδή είχαν αφαιρεθεί από το "
+"πρωτότυπο παιχνίδι, δεν εμφανίζονται πάντα σωστά ή δεν είναι ίδιοι με την "
+"ομιλία του παιχνιδιού. Αυτό δεν είναι σφάλμα του ScummVM, είναι πρόβλημα του "
+"παιχνιδιού."
 
 #: engines/sci/sci.cpp:433
 msgid ""
@@ -3847,6 +3876,18 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"Επιλέξατε το General MIDI ως συσκευή ήχου. Η Sierra έχει προσθέσει "
+"υποστήριξη (μετά την κυκλοφορία του παιχνιδιού) για General MIDI με το "
+"βοηθητικό πρόγραμμα \"General MIDI Utility\". Εφαρμόστε την διόρθωση (patch) "
+"ώστε να απολαύσετε μουσική MIDI με αυτό το παιχνίδι. Μόλις προμηθευτείτε το "
+"βοηθητικό πρόγραμμα, μπορείτε να αποσυμπιέσετε όλα τα συμπεριλαμβανόμενα "
+"αρχεία τύπου *.PAT στον φάκελο extras του ScummVM και το ScummVM θα "
+"προσθέσει αυτόματα την κατάλληλη διόρθωση (patch). Εναλλακτικά, μπορείτε να "
+"ακολουθήσετε τις οδηγίες του αρχείου READ.ME το οποίο συμπεριλαμβάνεται στα "
+"αρχεία της διόρθωσης (patch). Εν συντομία, θα πρέπει να πάρετε το σχετικό "
+"αρχείο *.PAT, να το μετονομάσετε σε 4.PAT και ύστερα να το τοποθετήσετε στον "
+"φάκελο του παιχνιδιού. Χωρίς αυτήν τη διόρθωση (patch) η μουσική με General "
+"MIDI για αυτό το παιχνίδι θα ακούγεται πολύ παραμορφωμένη."
 
 #: engines/sci/sci.cpp:452
 msgid ""
@@ -3856,6 +3897,13 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"Το παιχνίδι σας έχει εφαρμοσμένη διόρθωση (patch) η οποία είναι δημιουργία "
+"θαυμαστών του παιχνιδιού (fan made). Έχει αναφερθεί πως τέτοιες διορθώσεις "
+"μπορεί να δημιουργούν προβλήματα καθώς τροποποιούν τις δέσμες ενέργειας του "
+"παιχνιδιού σημαντικά. Τα προβλήματα τα οποιά αυτές οι διορθώσεις (patches) "
+"επιλύνουν, δεν υφίστανται στο ScummVM. Για αυτό το λόγο σας προτείνουμε να "
+"αφαιρέσετε τις διορθώσεις (patches) από τον φάκελο των αρχείων του "
+"παιχνιδιου ώστε να μην αντιμετωπίσετε απρόβλεπτα σφάλματα στην συνέχεια."
 
 #: engines/scumm/detection.cpp:1123
 msgid ""
