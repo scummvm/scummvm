@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-03 14:58+0200\n"
 "PO-Revision-Date: 2018-08-06 21:27+0000\n"
-"Last-Translator: monkeymadness <ihave13redsox@hotmail.com>\n"
+"Last-Translator: rte44 <Flytheshrimp@qq.com>\n"
 "Language-Team: Chinese "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/zh_LATN@cn/>\n"
 "Language: zh-Latn_CN\n"
@@ -93,11 +93,11 @@ msgstr "Xuanze Youxi Shuju Mulu"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "From: "
-msgstr ""
+msgstr "Cong:"
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:265
 msgid "To: "
-msgstr ""
+msgstr "Dao:"
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
