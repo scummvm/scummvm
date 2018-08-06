@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-03 14:58+0200\n"
 "PO-Revision-Date: 2018-08-06 21:29+0000\n"
-"Last-Translator: Pere Orga <gotrunks@gmail.com>\n"
+"Last-Translator: Alfred Vallés Tortosa <lolocop@gmail.com>\n"
 "Language-Team: Catalan "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -874,7 +874,7 @@ msgstr "Velocitat del punter:"
 
 #: gui/options.cpp:1015
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Zona morta del controlador:"
 
 #: gui/options.cpp:1015 gui/options.cpp:1017 gui/options.cpp:1018
 msgid "Analog joystick Deadzone"
