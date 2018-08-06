@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-03 14:58+0200\n"
-"PO-Revision-Date: 2018-08-06 21:29+0000\n"
-"Last-Translator: Alfred Vallés Tortosa <lolocop@gmail.com>\n"
+"PO-Revision-Date: 2018-08-06 21:31+0000\n"
+"Last-Translator: Pere Orga <gotrunks@gmail.com>\n"
 "Language-Team: Catalan "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -1149,7 +1149,7 @@ msgstr "Volum de veus:"
 
 #: gui/options.cpp:1532
 msgid "Shader"
-msgstr ""
+msgstr "Ombreig"
 
 #: gui/options.cpp:1544
 #, fuzzy
@@ -1222,7 +1222,7 @@ msgstr "Idioma de la interfície d'usuari de ScummVM"
 
 #: gui/options.cpp:1694 gui/updates-dialog.cpp:86
 msgid "Update check:"
-msgstr ""
+msgstr "Comprovació d'actualitzacions:"
 
 #: gui/options.cpp:1694
 msgid "How often to check ScummVM updates"
@@ -1230,20 +1230,20 @@ msgstr ""
 
 #: gui/options.cpp:1706
 msgid "Check now"
-msgstr ""
+msgstr "Comprova ara"
 
 #: gui/options.cpp:1714
 msgid "Cloud"
-msgstr ""
+msgstr "Núvol"
 
 #: gui/options.cpp:1716
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Núvol"
 
 #: gui/options.cpp:1721
 msgid "Storage:"
-msgstr ""
+msgstr "Emmagatzematge:"
 
 #: gui/options.cpp:1721
 msgid "Active cloud storage"
@@ -1251,7 +1251,7 @@ msgstr ""
 
 #: gui/options.cpp:1728 gui/options.cpp:2304
 msgid "<none>"
-msgstr ""
+msgstr "<cap>"
 
 #: gui/options.cpp:1732 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1259,19 +1259,20 @@ msgstr "Nom d'usuari:"
 
 #: gui/options.cpp:1732
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Usuari usat per aquest emmagatzematge"
 
 #: gui/options.cpp:1735
 msgid "Used space:"
-msgstr ""
+msgstr "Espai usat:"
 
 #: gui/options.cpp:1735
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
+"Espai usat per les partides guardades de ScummVM en aquest emmagatzematge"
 
 #: gui/options.cpp:1738
 msgid "Last sync time:"
-msgstr ""
+msgstr "Última hora de sincronització:"
 
 #: gui/options.cpp:1738
 msgid "When the last saved games sync for this storage occured"
@@ -1279,7 +1280,7 @@ msgstr ""
 
 #: gui/options.cpp:1741 gui/storagewizarddialog.cpp:71
 msgid "Connect"
-msgstr ""
+msgstr "Connecta"
 
 #: gui/options.cpp:1741
 msgid "Open wizard dialog to connect your cloud storage account"
@@ -1295,7 +1296,7 @@ msgstr ""
 
 #: gui/options.cpp:1743
 msgid "Download"
-msgstr "Descarregar"
+msgstr "Baixa"
 
 #: gui/options.cpp:1743
 msgid "Open downloads manager dialog"
