@@ -159,7 +159,7 @@ SaveStateDescriptor TinselMetaEngine::querySaveMetaInfos(const char *target, int
 	int8 tm_min = file->readSByte();
 	file->readSByte(); // skip secs
 
-	desc.setSaveDate(1900+tm_year, tm_mon, tm_mday);
+	desc.setSaveDate(1900 + tm_year, 1 + tm_mon, tm_mday);
 	desc.setSaveTime(tm_hour, tm_min);
 
 	if (ver >= 3) {
