@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-03 14:58+0200\n"
-"PO-Revision-Date: 2018-04-18 14:10+0000\n"
-"Last-Translator: Fred Almeida <fred_pj@hotmail.com>\n"
-"Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
-"projects/scummvm/scummvm/pt_PT/>\n"
+"PO-Revision-Date: 2018-08-06 21:20+0000\n"
+"Last-Translator: Catarina Simões <velouria@velouria.org>\n"
+"Language-Team: Portuguese (Portugal) "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/pt_PT/>\n"
 "Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -850,7 +850,7 @@ msgstr "a taxa de proporção não pôde ser alterada"
 
 #: gui/options.cpp:588
 msgid "the fullscreen setting could not be changed"
-msgstr "a configuração de ecrã inteiro não pôde ser alterada"
+msgstr "a configuração de ecrã completo não pôde ser alterada"
 
 #: gui/options.cpp:594
 msgid "the filtering setting could not be changed"
@@ -858,7 +858,7 @@ msgstr "a configuração de filtragem não pôde ser alterada"
 
 #: gui/options.cpp:989
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Mostrar controlo no ecrã"
 
 #: gui/options.cpp:993
 msgid "Touchpad mouse mode"
