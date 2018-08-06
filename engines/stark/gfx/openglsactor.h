@@ -49,7 +49,7 @@ protected:
 	typedef Common::HashMap<Face *, uint32> FaceBufferMap;
 
 	OpenGLSDriver *_gfx;
-	OpenGL::Shader *_shader;
+	OpenGL::Shader *_shader, *_shadowShader;
 
 	uint32 _faceVBO;
 	FaceBufferMap _faceEBO;
@@ -58,9 +58,16 @@ protected:
 	void uploadVertices();
 	uint32 createModelVBO(const Model *model);
 	uint32 createFaceEBO(const Face *face);
-	void setBonePositionArrayUniform(const char *uniform);
-	void setBoneRotationArrayUniform(const char *uniform);
-	void setLightArrayUniform(const char *uniform, const LightEntryArray &lights);
+	void setBonePositionArrayUniform(OpenGL::Shader *shader, const char *uniform);
+	void setBoneRotationArrayUniform(OpenGL::Shader *shader, const char *uniform);
+	void setLightArrayUniform(const LightEntryArray &lights);
+
+	void setShadowUniform(const LightEntryArray &lights, const Math::Vector3d &actorPosition, Math::Matrix3 worldToModelRot);
+	
+	bool getPointLightContribution(LightEntry *light, const Math::Vector3d &actorPosition,
+			Math::Vector3d &direction, float weight = 1.0f);
+	bool getDirectionalLightContribution(LightEntry *light, Math::Vector3d &direction);
+	bool getSpotLightContribution(LightEntry *light, const Math::Vector3d &actorPosition, Math::Vector3d &direction);
 };
 
 } // End of namespace Gfx

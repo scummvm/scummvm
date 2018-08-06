@@ -63,6 +63,8 @@ shaders/stark_surface.fragment   FILE    "engines/stark/shaders/stark_surface.fr
 shaders/stark_surface.vertex     FILE    "engines/stark/shaders/stark_surface.vertex"
 shaders/stark_fade.fragment      FILE    "engines/stark/shaders/stark_fade.fragment"
 shaders/stark_fade.vertex        FILE    "engines/stark/shaders/stark_fade.vertex"
+shaders/stark_shadow.fragment    FILE    "engines/stark/shaders/stark_shadow.fragment"
+shaders/stark_shadow.vertex      FILE    "engines/stark/shaders/stark_shadow.vertex"
 #endif
 #endif
 

@@ -87,6 +87,10 @@ public:
 	void setFloatOffset(float floatOffset);
 	float getFloatOffset() const;
 
+	/** Access the maximum length of the horizontal light direction for casting shadows */
+	void setMaxShadowLength(float length) { _maxShadowLength = length; }
+	float getMaxShadowLength() const { return _maxShadowLength; }
+
 private:
 	void computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax);
 
@@ -106,6 +110,8 @@ private:
 	float _fadeLevel;
 	Math::Angle _swayAngle;
 	float _floatOffset;
+
+	float _maxShadowLength;
 };
 
 } // End of namespace Stark

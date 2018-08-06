@@ -39,7 +39,8 @@ VisualActor::VisualActor() :
 		_textureSetFacial(nullptr),
 		_time(0),
 		_modelIsDirty(true),
-		_faceTextureName(' ') {
+		_faceTextureName(' '),
+		_castsShadow(false) {
 }
 
 VisualActor::~VisualActor() {

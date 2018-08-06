@@ -61,6 +61,7 @@ OpenGLSDriver::OpenGLSDriver() :
 	_surfaceShader(nullptr),
 	_actorShader(nullptr),
 	_fadeShader(nullptr),
+	_shadowShader(nullptr),
 	_surfaceVBO(0),
 	_fadeVBO(0) {
 }
@@ -71,6 +72,7 @@ OpenGLSDriver::~OpenGLSDriver() {
 	delete _surfaceShader;
 	delete _actorShader;
 	delete _fadeShader;
+	delete _shadowShader;
 }
 
 void OpenGLSDriver::init() {
@@ -84,6 +86,9 @@ void OpenGLSDriver::init() {
 
 	static const char* actorAttributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "normal", "texcoord", nullptr };
 	_actorShader = OpenGL::Shader::fromFiles("stark_actor", actorAttributes);
+
+	static const char* shadowAttributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", nullptr };
+	_shadowShader = OpenGL::Shader::fromFiles("stark_shadow", shadowAttributes);
 
 	static const char* fadeAttributes[] = { "position", nullptr };
 	_fadeShader = OpenGL::Shader::fromFiles("stark_fade", fadeAttributes);
@@ -125,7 +130,7 @@ void OpenGLSDriver::setViewport(const Common::Rect &rect, bool noScaling) {
 }
 
 void OpenGLSDriver::clearScreen() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void OpenGLSDriver::flipBuffer() {
@@ -179,6 +184,12 @@ void OpenGLSDriver::end2DMode() {
 void OpenGLSDriver::set3DMode() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+
+	// Blending and stencil test are only used in rendering shadows
+	// They are manually enabled and disabled there
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glStencilFunc(GL_EQUAL, 0, 0xFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 }
 
 Common::Rect OpenGLSDriver::getViewport() const {
@@ -199,6 +210,10 @@ OpenGL::Shader *OpenGLSDriver::createSurfaceShaderInstance() {
 
 OpenGL::Shader *OpenGLSDriver::createFadeShaderInstance() {
 	return _fadeShader->clone();
+}
+
+OpenGL::Shader *OpenGLSDriver::createShadowShaderInstance() {
+	return _shadowShader->clone();
 }
 
 Graphics::Surface *OpenGLSDriver::getViewportScreenshot() const {

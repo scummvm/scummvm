@@ -64,6 +64,8 @@ public:
 	void setTime(uint32 time);
 	void resetBlending();
 
+	void setCastShadow(bool cast) { _castsShadow = cast; }
+
 	bool intersectRay(const Math::Ray &ray, const Math::Vector3d &position, float direction);
 	virtual void render(const Math::Vector3d &position, float direction, const Common::Array<Gfx::LightEntry *> &lights) = 0;
 
@@ -75,6 +77,7 @@ protected:
 	char _faceTextureName;
 	uint32 _time;
 	bool _modelIsDirty;
+	bool _castsShadow;
 
 	Math::Matrix4 getModelMatrix(const Math::Vector3d &position, float direction);
 	const Gfx::Texture *resolveTexture(const Material *material) const;
