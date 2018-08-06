@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-03 14:58+0200\n"
 "PO-Revision-Date: 2018-08-06 21:29+0000\n"
-"Last-Translator: Alfred Vallés Tortosa <lolocop@gmail.com>\n"
+"Last-Translator: Pere Orga <gotrunks@gmail.com>\n"
 "Language-Team: Catalan "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -453,7 +453,7 @@ msgstr "Introdueix nom d'arxiu per desar"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
-msgstr "Realment vols sobreescriure aquest arxiu?"
+msgstr "Realment voleu sobreescriure aquest fitxer?"
 
 #: gui/fluidsynth-dialog.cpp:69
 msgid "Reverb"
@@ -748,7 +748,7 @@ msgstr "Addició Massiva..."
 
 #: gui/launcher.cpp:699
 msgid "Record..."
-msgstr ""
+msgstr "Enregistra..."
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -776,11 +776,11 @@ msgstr ""
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr ""
+msgstr "Atura"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "Edita la descripció del registre"
 
 #: gui/onscreendialog.cpp:108
 msgid "Switch to Game"
@@ -848,7 +848,7 @@ msgstr "no s'han pogut canviar els ajustes de filtratge"
 
 #: gui/options.cpp:989
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Mostra el control En-pantalla"
 
 #: gui/options.cpp:993
 #, fuzzy
@@ -857,22 +857,20 @@ msgstr "Mode Touchpad desactivat."
 
 #: gui/options.cpp:997
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Intercanvia el menú i el botó enrere"
 
 #: gui/options.cpp:1002
-#, fuzzy
 msgid "Pointer Speed:"
-msgstr "Velocitat:"
+msgstr "Velocitat del punter:"
 
 #: gui/options.cpp:1002 gui/options.cpp:1004 gui/options.cpp:1005
 msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr ""
 
 #: gui/options.cpp:1004
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Velocitat:"
+msgstr "Velocitat del punter:"
 
 #: gui/options.cpp:1015
 msgid "Joy Deadzone:"
