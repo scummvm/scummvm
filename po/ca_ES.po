@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-03 14:58+0200\n"
-"PO-Revision-Date: 2018-08-06 21:28+0000\n"
-"Last-Translator: Pere Orga <gotrunks@gmail.com>\n"
+"PO-Revision-Date: 2018-08-06 21:29+0000\n"
+"Last-Translator: Alfred Vallés Tortosa <lolocop@gmail.com>\n"
 "Language-Team: Catalan "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -449,7 +449,7 @@ msgstr "Trieu el fitxer a carregar"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Introdueix nom d'arxiu per desar"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
