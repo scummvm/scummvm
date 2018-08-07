@@ -61,8 +61,19 @@ void VisualImageXMG::load(Common::ReadStream *stream) {
 }
 
 void VisualImageXMG::render(const Common::Point &position, bool useOffset) {
+	render(position, useOffset, true);
+}
+
+void VisualImageXMG::render(const Common::Point &position, bool useOffset, bool unscaled) {
 	Common::Point drawPos = useOffset ? position - _hotspot : position;
-	_surfaceRenderer->render(_texture, drawPos);
+
+	if (!unscaled) {
+		uint width = _gfx->scaleWidthOriginalToCurrent(_texture->width());
+		uint height = _gfx->scaleHeightOriginalToCurrent(_texture->height());
+		_surfaceRenderer->render(_texture, drawPos, width, height);
+	} else {
+		_surfaceRenderer->render(_texture, drawPos);
+	}
 }
 
 void VisualImageXMG::setFadeLevel(float fadeLevel) {

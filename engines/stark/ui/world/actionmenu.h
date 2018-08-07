@@ -47,7 +47,7 @@ public:
 	void close();
 
 protected:
-	Common::Rect getPosition(const Common::Point &mouse) const;
+	Common::Rect computePosition(const Common::Point &mouse) const;
 
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;

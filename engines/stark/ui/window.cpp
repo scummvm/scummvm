@@ -31,7 +31,6 @@ namespace Stark {
 Window::Window(Gfx::Driver *gfx, Cursor *cursor) :
 		_gfx(gfx),
 		_cursor(cursor),
-		_unscaled(false),
 		_visible(false) {
 }
 
@@ -43,7 +42,7 @@ void Window::render() {
 		return;
 	}
 
-	_gfx->setViewport(_position, _unscaled);
+	_gfx->setViewport(_position);
 
 	onRender();
 }
@@ -53,7 +52,7 @@ Graphics::Surface *Window::getScreenshot() const {
 		return nullptr;
 	}
 
-	_gfx->setViewport(_position, _unscaled);
+	_gfx->setViewport(_position);
 	return _gfx->getViewportScreenshot();
 }
 
@@ -62,7 +61,7 @@ bool Window::isMouseInside() const {
 		return false;
 	}
 
-	Common::Point mousePos = _cursor->getMousePosition(_unscaled);
+	Common::Point mousePos = _cursor->getMousePosition();
 	return _position.contains(mousePos);
 }
 
@@ -71,7 +70,7 @@ bool Window::isVisible() const {
 }
 
 Common::Point Window::getRelativeMousePosition() const {
-	Common::Point mousePos = _cursor->getMousePosition(_unscaled);
+	Common::Point mousePos = _cursor->getMousePosition();
 	return mousePos - Common::Point(_position.left, _position.top);
 }
 

@@ -110,7 +110,7 @@ void Cursor::render() {
 
 		// TODO: Should probably query the image for the width of the cursor
 		// TODO: Add delay to the mouse hints like in the game
-		const int16 cursorDistance = _gfx->scaleHeightCurrentToOriginal(32);
+		const int16 cursorDistance = 32;
 		Common::Rect mouseRect = _mouseText->getRect();
 		Common::Point pos = _gfx->convertCoordinateCurrentToOriginal(_mousePos);
 		pos.x = CLIP<int16>(pos.x, 48, Gfx::Driver::kOriginalWidth - 48);
@@ -122,10 +122,10 @@ void Cursor::render() {
 	}
 
 	if (_cursorImage) {
-		_gfx->setScreenViewport(true); // The cursor is drawn unscaled
+		_gfx->setScreenViewport(true); // Unscaled viewport so that cursor is drawn on native pixel space, thus no 'skipping', perform scaling below instead
 
 		_cursorImage->setFadeLevel(_fadeLevel);
-		_cursorImage->render(_mousePos, true);
+		_cursorImage->render(_mousePos, true, false); // Draws image (scaled)
 	}
 }
 

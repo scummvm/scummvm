@@ -94,7 +94,6 @@ protected:
 	Cursor *_cursor;
 
 	Common::Rect _position;
-	bool _unscaled;
 	bool _visible;
 };
 

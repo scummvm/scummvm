@@ -44,7 +44,7 @@ public:
 	void init() override;
 
 	void setScreenViewport(bool noScaling) override;
-	void setViewport(const Common::Rect &rect, bool noScaling) override;
+	void setViewport(const Common::Rect &rect) override;
 
 	void clearScreen() override;
 	void flipBuffer() override;
