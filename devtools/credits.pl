@@ -224,6 +224,7 @@ sub end_credits {
 
 sub begin_section {
 	my $title = shift;
+  my $anchor = shift;
 
 	if ($mode eq "TEXT") {
 		$title = html_entities_to_ascii($title);
@@ -284,9 +285,15 @@ sub begin_section {
 		if ($section_level eq 0) {
 			print "\t<section>\n";
 			print "\t\t<title>" . $title . "</title>\n";
+      if ($anchor) {
+        print "\t\t<anchor>" . $anchor . "</anchor>\n";
+      }        
 		} elsif ($section_level eq 1) {
 			print "\t\t<subsection>\n";
 			print "\t\t\t<title>" . $title . "</title>\n";
+      if ($anchor) {
+        print "\t\t\t<anchor>" . $anchor . "</anchor>\n";
+      }
 		} else {
 			#print "\t\t\t<group>" . $title . "</group>\n";
 			#print "\t\t\t\t<name>" . $title . "</name>\n";
@@ -459,20 +466,20 @@ sub add_paragraph {
 
 begin_credits("Credits");
 	begin_section("ScummVM Team");
-		begin_section("Project Leader");
+		begin_section("Project Leader", "leader");
 			begin_persons();
 				add_person("Eugene Sandulenko", "sev", "");
 			end_persons();
 		end_section();
 
-		begin_section("PR Office");
+		begin_section("PR Office", "pr");
 			begin_persons();
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "Public Relations Officer, Project Administrator");
 				add_person("Eugene Sandulenko", "sev", "Project Leader");
 			end_persons();
 		end_section();
 
-		begin_section("Retired Project Leaders");
+		begin_section("Retired Project Leaders", "retired_leaders");
 			begin_persons();
 				add_person("James Brown", "ender", "");
 				add_person("Vincent Hamm", "yaz0r", "ScummVM co-founder, Original Cruise/CinE author");
@@ -481,7 +488,7 @@ begin_credits("Credits");
 			end_persons();
 		end_section();
 
-		begin_section("Engine Teams");
+		begin_section("Engine Teams", "engine_teams");
 			begin_section("SCUMM");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 				add_person("James Brown", "ender", "(retired)");
@@ -623,11 +630,6 @@ begin_credits("Credits");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Oystein Eftevaag", "vinterstum", "");
 				add_person("Eugene Sandulenko", "sev", "");
-			end_section();
-
-			begin_section("Illusions");
-				add_person("Benjamin Haisch", "john_doe", "");
-				add_person("Eric Fry", "yuv422", "");
 			end_section();
 
 			begin_section("Kyra");
@@ -826,7 +828,7 @@ begin_credits("Credits");
 		end_section();
 
 
-		begin_section("Backend Teams");
+		begin_section("Backend Teams", "backends");
 			begin_section("Android");
 				add_person("Andre Heider", "dhewg", "");
 				add_person("Angus Lees", "Gus", "");
@@ -926,7 +928,7 @@ begin_credits("Credits");
 
 		end_section();
 
-		begin_section("Other subsystems");
+		begin_section("Other subsystems", "other_subsystems");
 			begin_section("Infrastructure");
 				add_person("Max Horn", "Fingolfin", "Backend &amp; Engine APIs, file API, sound mixer, audiostreams, data structures, etc. (retired)");
 				add_person("Eugene Sandulenko", "sev", "");
@@ -950,13 +952,13 @@ begin_credits("Credits");
 			end_section();
 		end_section();
 
-		begin_section("Website (code)");
+		begin_section("Website (code)", "web_code");
 			begin_persons();
 				add_person("Fredrik Wendel", "", "(retired)");
 			end_persons();
 		end_section();
 
-		begin_section("Website (maintenance)");
+		begin_section("Website (maintenance)", "web_maint");
 			begin_persons();
 				add_person("James Brown", "Ender", "IRC Logs maintainer");
 				add_person("Thierry Crozat", "criezy", "Wiki maintainer");
@@ -965,14 +967,15 @@ begin_credits("Credits");
 				add_person("Jordi Vilalta Prat", "jvprat", "Wiki maintainer");
 				add_person("Eugene Sandulenko", "sev", "Forum, IRC channel, Screen Shots and Mailing list maintainer");
 				add_person("John Willis", "DJWillis", "");
+        add_person("Matan Bareket", "mataniko", "Site maintainer");
 			end_persons();
 		end_section();
 
-		begin_section("Website (content)");
+		begin_section("Website (content)", "web_content");
 			add_paragraph("All active team members");
 		end_section();
 
-		begin_section("Documentation");
+		begin_section("Documentation", "docs");
 			begin_persons();
 				add_person("Thierry Crozat", "criezy", "Numerous contributions to documentation");
 				add_person("Joachim Eberhard", "joachimeberhard", "Numerous contributions to documentation (retired)");
@@ -980,7 +983,7 @@ begin_credits("Credits");
 			end_persons();
 		end_section();
 
-		begin_section("Retired Team Members");
+		begin_section("Retired Team Members", "retired_members");
 			begin_persons();
 				add_person("Chris Apers", "chrilith ", "Former PalmOS porter");
 				add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
@@ -998,7 +1001,7 @@ begin_credits("Credits");
 
 	begin_section("Other contributions");
 
-		begin_section("Packages");
+		begin_section("Packages", "packages");
 			begin_section("AmigaOS 4");
 				add_person("Hans-J&ouml;rg Frieden", "", "(retired)");
 				add_person("Hubert Maier", "Raziel_AOne", "");
@@ -1072,7 +1075,7 @@ begin_credits("Credits");
 			end_section();
 		end_section();
 
-		begin_section("GUI Translations");
+		begin_section("GUI Translations", "gui_translations");
 				begin_persons();
 					add_person("Thierry Crozat", "criezy", "Translation Lead");
 				end_persons();
@@ -1140,7 +1143,7 @@ begin_credits("Credits");
 					add_person("Lubomyr Lisen", "", "");
 				end_section();
 		end_section();
-		begin_section("Game Translations");
+		begin_section("Game Translations", "game_translations");
 				begin_section("CGE");
 					add_person("Dan Serban", "nutron", "Soltys English translation");
 					add_person("V&iacute;ctor Gonz&aacute;lez", "IlDucci", "Soltys Spanish translation");
@@ -1161,7 +1164,7 @@ begin_credits("Credits");
 				end_section();
 		end_section();
 
-		begin_section("Websites (design)");
+		begin_section("Websites (design)", "web_design");
 			begin_persons();
 				add_person("Dob&oacute; Bal&aacute;zs", "draven", "Website design");
 				add_person("William Claydon", "billwashere", "Skins for doxygen, buildbot and wiki");
@@ -1172,7 +1175,7 @@ begin_credits("Credits");
 			end_persons();
 		end_section();
 
-		begin_section("Code contributions");
+		begin_section("Code contributions", "code_contrib");
 			begin_persons();
 				add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI; BASS GUI fixes");
 				add_person("Stuart Caie", "", "Decoders for Amiga and AtariST data files (AGOS engine)");
@@ -1203,7 +1206,7 @@ begin_credits("Credits");
 			end_persons();
 		end_section();
 
-		begin_section("FreeSCI Contributors");
+		begin_section("FreeSCI Contributors", "freesci");
 			begin_persons();
 				add_person("Francois-R Boyer", "", "MT-32 information and mapping code");
 				add_person("Rainer Canavan", "", "IRIX MIDI driver and bug fixes");
@@ -1256,7 +1259,7 @@ begin_credits("Credits");
 	# HACK!
 	$max_name_width = 17;
 
-	begin_section("Special thanks to");
+	begin_section("Special thanks to", "special_thanks");
 		begin_persons();
 			add_person("Daniel Balsom", "DanielFox", "For the original Reinherit (SAGA) code");
 			add_person("Sander Buskens", "", "For his work on the initial reversing of Monkey2");
