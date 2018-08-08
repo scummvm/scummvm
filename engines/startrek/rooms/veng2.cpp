@@ -599,7 +599,7 @@ void Room::veng2CrewmanInPositionToBeamOut() {
 		_awayMission->veng.missionScore = 16;
 		if (_awayMission->veng.field68)
 			_awayMission->veng.missionScore += 1;
-		if (_awayMission->veng.field69)
+		if (_awayMission->veng.getPointsForHealingBrittany)
 			_awayMission->veng.missionScore += 1;
 		if (_awayMission->veng.readAllLogs)
 			_awayMission->veng.missionScore += 1;

@@ -620,6 +620,10 @@ struct AwayMission {
 		} sins;
 
 		struct {
+			bool usedMedkitOnBrittany; // 0x29
+			bool talkedToBrittany; // 0x2a
+			bool brittanyDead; // 0x2b
+			bool lookedAtBrittany; // 0x2c
 			bool enteredRoom0FirstTime; // 0x2d
 			int16 missionScore; // 0x2e
 			bool bridgeCrewmanDead; // 0x30
@@ -668,14 +672,16 @@ struct AwayMission {
 			bool putSupportBeamInSickbayHallway; // 0x53
 			bool clearedDebris; // 0x54
 			bool lookedAtTurbolift2Door; // 0x55
-			bool kirkSuggestedReestablishingPower; // 0x56
+			bool kirkShouldSuggestReestablishingPower; // 0x56
+			bool tookHypoFromSickbay; // 0x57
+			bool tookDrillFromSickbay; // 0x58
 			bool havePowerPack; // 0x5a
 			bool tookCableFromSickbayHallway; // 0x5f
 			bool tookMolecularSaw; // 0x60
 			bool readEngineeringJournal; // 0x61
 			bool examinedTorpedoControl; // 0x66
 			bool field68; // 0x68
-			bool field69; // 0x69
+			bool getPointsForHealingBrittany; // 0x69
 			bool readAllLogs; // 0x6a
 			bool field6b; // 0x6b
 			bool field6c; // 0x6c
