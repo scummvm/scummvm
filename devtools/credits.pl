@@ -224,7 +224,7 @@ sub end_credits {
 
 sub begin_section {
 	my $title = shift;
-  my $anchor = shift;
+	my $anchor = shift;
 
 	if ($mode eq "TEXT") {
 		$title = html_entities_to_ascii($title);
@@ -285,15 +285,15 @@ sub begin_section {
 		if ($section_level eq 0) {
 			print "\t<section>\n";
 			print "\t\t<title>" . $title . "</title>\n";
-      if ($anchor) {
-        print "\t\t<anchor>" . $anchor . "</anchor>\n";
-      }        
+			if ($anchor) {
+				print "\t\t<anchor>" . $anchor . "</anchor>\n";
+			}        
 		} elsif ($section_level eq 1) {
 			print "\t\t<subsection>\n";
 			print "\t\t\t<title>" . $title . "</title>\n";
-      if ($anchor) {
-        print "\t\t\t<anchor>" . $anchor . "</anchor>\n";
-      }
+			if ($anchor) {
+				print "\t\t\t<anchor>" . $anchor . "</anchor>\n";
+			}
 		} else {
 			#print "\t\t\t<group>" . $title . "</group>\n";
 			#print "\t\t\t\t<name>" . $title . "</name>\n";
@@ -967,7 +967,7 @@ begin_credits("Credits");
 				add_person("Jordi Vilalta Prat", "jvprat", "Wiki maintainer");
 				add_person("Eugene Sandulenko", "sev", "Forum, IRC channel, Screen Shots and Mailing list maintainer");
 				add_person("John Willis", "DJWillis", "");
-        add_person("Matan Bareket", "mataniko", "Site maintainer");
+				add_person("Matan Bareket", "mataniko", "Site maintainer");
 			end_persons();
 		end_section();
 
