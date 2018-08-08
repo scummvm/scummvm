@@ -665,7 +665,12 @@ struct AwayMission {
 			int16 field4b; // 0x4b
 			int16 field4d; // 0x4d
 			int16 field51; // 0x51
+			bool putSupportBeamInSickbayHallway; // 0x53
+			bool clearedDebris; // 0x54
+			bool lookedAtTurbolift2Door; // 0x55
+			bool kirkSuggestedReestablishingPower; // 0x56
 			bool havePowerPack; // 0x5a
+			bool tookCableFromSickbayHallway; // 0x5f
 			bool tookMolecularSaw; // 0x60
 			bool readEngineeringJournal; // 0x61
 			bool examinedTorpedoControl; // 0x66
