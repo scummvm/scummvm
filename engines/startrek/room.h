@@ -2716,6 +2716,59 @@ public:
 
 	// VENG6
 	void veng6Tick1();
+	void veng6WalkToDoor();
+	void veng6ReachedDoor();
+	void veng6DoorOpened();
+	void veng6LookAtLeftPort();
+	void veng6LookAtRightPort();
+	void veng6LookAtDoor();
+	void veng6LookAtOilCanister();
+	void veng6LookAtCabinet();
+	void veng6LookAtCable();
+	void veng6LookAtRightConsole();
+	void veng6LookAtImpulseEngines();
+	void veng6LookAtLeftConsole();
+	void veng6LookAtJunctionBox();
+	void veng6LookAtJournal();
+	void veng6LookAtKirk();
+	void veng6LookAtSpock();
+	void veng6LookAtMccoy();
+	void veng6LookAtRedshirt();
+	void veng6LookAtDeadGuy();
+	void veng6LookAnywhere();
+	void veng6TalkToKirk();
+	void veng6TalkToSpock();
+	void veng6TalkToMccoy();
+	void veng6TalkToRedshirt();
+	void veng6UseCable1OnLeftPort();
+	void veng6UseCable2OnLeftPort();
+	void veng6UseCableOnLeftPort(byte cable);
+	void veng6KirkOrSpockReachedLeftPort();
+	void veng6AttachedLeftCable();
+	void veng6UseCable1OnRightPort();
+	void veng6UseCable2OnRightPort();
+	void veng6UseCableOnRightPort(byte cable);
+	void veng6KirkOrSpockReachedRightPort();
+	void veng6AttachedRightCable();
+	void veng6UseCrewmanOnJunctionBox();
+	void veng6SpockReachedJunctionBox();
+	void veng6SpockAdjustedJunctionBox();
+	void veng6UseHypoOnOilCanister();
+	void veng6ReachedOilCanister();
+	void veng6FilledHypoWithOil();
+	void veng6UseCabinet();
+	void veng6ReachedCabinet();
+	void veng6OpenedOrClosedCabinet();
+	void veng6UseSTricorderOnImpulseEngines();
+	void veng6UseSTricorderOnRightConsole();
+	void veng6UseSTricorderOnJunctionBox();
+	void veng6UsePowerPackOnLeftConsole();
+	void veng6GetJunctionBox();
+	void veng6GetOilCanister();
+	void veng6GetEngineeringJournal();
+	void veng6ReachedEngineeringJournal();
+	void veng6TookEngineeringJournal();
+	// TODO: common code
 
 	// VENG7
 	void veng7Tick1();
@@ -3048,6 +3101,11 @@ public:
 
 			// veng4
 			bool usingMedkitOnBrittany;
+
+			// veng6
+			byte kirkAndSpockReadyToAttachLeftCable; // 0xca
+			byte kirkAndSpockReadyToAttachRightCable; // 0xcb
+			byte cableInUse; // 0xcc
 
 			// venga (common)
 			bool walkingToDoor; // 0xcb (veng1), 0xca (veng4)
