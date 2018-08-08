@@ -679,9 +679,16 @@ struct AwayMission {
 			bool havePowerPack; // 0x5a
 			bool enteredRoom5FirstTime; // 0x5b
 			bool askedSpockAboutFire; // 0x5c
+
+			// bits 0-1 are set for each of the 2 cables that can be connected to the
+			// junction box in engineering.
+			byte junctionCablesConnected; // 0x5d
+
 			bool tookCableFromSickbayHallway; // 0x5f
 			bool tookMolecularSaw; // 0x60
 			bool readEngineeringJournal; // 0x61
+			bool tookEngineeringJournal; // 0x62
+			bool engineeringCabinetOpen; // 0x63
 			bool examinedTorpedoControl; // 0x66
 			bool field68; // 0x68
 			bool getPointsForHealingBrittany; // 0x69
