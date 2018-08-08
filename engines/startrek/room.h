@@ -2595,6 +2595,49 @@ public:
 
 	// VENG3
 	void veng3Tick1();
+	void veng3Tick15();
+	void veng3TouchedTurbolift2();
+	void veng3TouchedTurbolift1();
+	void veng3WalkToDoor();
+	void veng3ReachedTurbolift2();
+	void veng3Turbolift2Opened();
+	void veng3WalkToSickbayDoor();
+	void veng3ReachedSickbayDoor();
+	void veng3SickbayDoorOpened();
+	void veng3LookAtSupportBeam();
+	void veng3LookAtDebris();
+	void veng3LookAtTurbolift2Door();
+	void veng3LookAtSickbayDoor();
+	void veng3LookAtCable();
+	void veng3LookAtDeadGuy();
+	void veng3LookAtKirk();
+	void veng3LookAtMccoy();
+	void veng3LookAtSpock();
+	void veng3LookAtRedshirt();
+	void veng3LookAnywhere();
+	void veng3UseStunPhaserOnDebris();
+	void veng3UseKillPhaserOnDebris();
+	void veng3ReachedPositionToShootDebris();
+	void veng3DrewPhaserToShootDebris();
+	void veng3DebrisVaporized();
+	void veng3DebrisFellAgain();
+	void veng3UseSpockOnDebris();
+	void veng3UseRedshirtOnDebris();
+	void veng3UseMccoyOnDebris();
+	void veng3UseBeamOnDebris();
+	void veng3ReachedPositionToPlaceBeam();
+	void veng3PlacedBeam();
+	void veng3UseSTricorderOnDebris();
+	void veng3UseMolecularSawOnDebris();
+	void veng3TalkToKirk();
+	void veng3TalkToSpock();
+	void veng3TalkToMccoy();
+	void veng3TalkToRedshirt();
+	void veng3GetDebris();
+	void veng3GetCable();
+	void veng3ReachedCable();
+	void veng3PickedUpCable();
+	void veng3UseMccoyOnDeadGuy();
 
 	// VENG4
 	void veng4Tick1();

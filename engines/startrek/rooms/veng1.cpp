@@ -390,7 +390,7 @@ void Room::veng1TriedToGetDebris() {
 	}
 }
 
-void Room::veng1UseMccoyOnDeadGuy() {
+void Room::veng1UseMccoyOnDeadGuy() { // NOTE: Identical to function in VENG3
 	int val = getRandomWordInRange(0, 5);
 
 	switch (val) {
