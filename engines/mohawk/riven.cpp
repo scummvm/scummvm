@@ -209,6 +209,7 @@ Common::Error MohawkEngine_Riven::run() {
 
 void MohawkEngine_Riven::doFrame() {
 	// Update background running things
+	uint32 loopStart = _system->getMillis();
 	_sound->updateSLST();
 	_video->updateMovies();
 
@@ -234,9 +235,11 @@ void MohawkEngine_Riven::doFrame() {
 
 	// Update the screen once per frame
 	_system->updateScreen();
+	uint32 loopElapsed = _system->getMillis() - loopStart;
 
 	// Cut down on CPU usage
-	_system->delayMillis(10);
+	if (loopElapsed < 10)
+		_system->delayMillis(10 - loopElapsed);
 }
 
 void MohawkEngine_Riven::processInput() {
