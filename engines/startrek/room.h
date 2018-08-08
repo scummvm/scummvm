@@ -2772,6 +2772,29 @@ public:
 
 	// VENG7
 	void veng7Tick1();
+	void veng7WalkToDoor();
+	void veng7ReachedDoor();
+	void veng7DoorOpened();
+	void veng7TouchedTurboliftDoor();
+	void veng7LookAtCollapsedSection();
+	void veng7LookAtDeadGuy();
+	void veng7LookAtDoor();
+	void veng7LookAtCable();
+	void veng7LookAtKirk();
+	void veng7LookAtSpock();
+	void veng7LookAtMccoy();
+	void veng7LookAtRedshirt();
+	void veng7LookAnywhere();
+	void veng7TalkToKirk();
+	void veng7TalkToSpock();
+	void veng7TalkToMccoy();
+	void veng7TalkToRedshirt();
+	void veng7UseSTricorderOnCollapsedSection();
+	void veng7TouchedHotspot0();
+	void veng7GetCable();
+	void veng7ReachedCable();
+	void veng7PickedUpCable();
+	// TODO: common code
 
 	// VENG8
 	void veng8Tick1();
