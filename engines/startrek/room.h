@@ -2638,9 +2638,46 @@ public:
 	void veng3ReachedCable();
 	void veng3PickedUpCable();
 	void veng3UseMccoyOnDeadGuy();
+	// TODO: Common code
 
 	// VENG4
 	void veng4Tick1();
+	void veng4TalkToKirk();
+	void veng4TalkToMccoy();
+	void veng4TalkToSpock();
+	void veng4TalkToRedshirt();
+	void veng4UseMccoyOnDeadGuy();
+	void veng4UseHypoOnBrittany();
+	void veng4UseMedkitOnBrittany();
+	void veng4UseMTricorderOnBrittany();
+	void veng4UseMccoyOnBrittany();
+	void veng4MccoyReachedBrittany();
+	void veng4UsedMedkitOnBrittany();
+	void veng4MccoyScannedBrittany();
+	void veng4TalkToBrittany();
+	void veng4LookAtDeadGuy();
+	void veng4LookAtRightBedReadings();
+	void veng4LookAtDoorHotspot();
+	void veng4LookAtKirk();
+	void veng4LookAtSpock();
+	void veng4LookAtMccoy();
+	void veng4LookAtRedshirt();
+	void veng4LookAtLeftBed();
+	void veng4LookAtLeftBedReadings();
+	void veng4LookAtBrittany();
+	void veng4LookAtDrill();
+	void veng4LookAtHypo();
+	void veng4LookAtDoorObject();
+	void veng4LookAnywhere();
+	void veng4GetHypo();
+	void veng4ReachedHypo();
+	void veng4PickedUpHypo();
+	void veng4GetDrill();
+	void veng4ReachedDrill();
+	void veng4PickedUpDrill();
+	void veng4TouchedHotspot0();
+	void veng4WalkToDoor();
+	// TODO: common code
 
 	// VENG5
 	void veng5Tick1();
@@ -2970,10 +3007,15 @@ public:
 		struct {
 			// veng1
 			byte doorOpenCounter; // 0xca
-			bool walkingToDoor; // 0xcb
 
 			// veng2
 			byte numCrewmenReadyToBeamOut; // 0xca
+
+			// veng4
+			bool usingMedkitOnBrittany;
+
+			// venga (common)
+			bool walkingToDoor; // 0xcb (veng1), 0xca (veng4)
 		} veng;
 
 	} _roomVar;

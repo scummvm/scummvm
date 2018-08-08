@@ -121,9 +121,9 @@ void Room::veng3Tick1() {
 }
 
 void Room::veng3Tick15() {
-	if (_awayMission->veng.kirkSuggestedReestablishingPower && !_awayMission->veng.impulseEnginesOn) {
+	if (_awayMission->veng.kirkShouldSuggestReestablishingPower && !_awayMission->veng.impulseEnginesOn) {
 		showText(TX_SPEAKER_KIRK, TX_VEN0_010);
-		_awayMission->veng.kirkSuggestedReestablishingPower = true;
+		_awayMission->veng.kirkShouldSuggestReestablishingPower = false;
 	}
 }
 

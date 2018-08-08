@@ -69,6 +69,7 @@ extern const char *const g_gameStrings[] = {
 	"Elasi Captain",
 	"Elasi Weapons Master",
 	"Elasi Crewman",
+	"Brittany Marata",
 
 	"#BRID\\BRIDU146#Nothing to report, Captain.",
 
@@ -2979,10 +2980,48 @@ extern const char *const g_gameStrings[] = {
 	"#VEN3\\VEN3N014#You have taken the cable.",
 
 
-	"#VEN4\\VEN4_016#There's nothing more I can do.", // TYPO
+	"#VEN4\\VEN4_001#Do what you can, Bones. I need to find out what happened here.",
+	"#VEN4\\VEN4_002#You always hope the instruments are wrong...that you'll find someone alive.",
+	"#VEN4\\VEN4_003#It wasn't the Enterprise, Marata!",
+	"#VEN4\\VEN4_004#Marata, what happened?",
+	"#VEN4\\VEN4_005#I can't believe it. That's Brittany Marata. I knew her from my Academy days. We studied alien history together.",
+	"#VEN4\\VEN4_006#What about the Enterprise?",
+	"#VEN4\\VEN4_007#He's dead, Jim. I can't bring him back.",
+	"#VEN4\\VEN4_008#That will accomplish nothing, Jim.",
+	"#VEN4\\VEN4_009#She's in bad shape, Jim. I've tried to stabilize her, but it doesn't look good.",
+	"#VEN4\\VEN4_010#She's in no condition to talk right now.",
+	"#VEN4\\VEN4_011#She's suffering from severe trauma and internal bleeding. I'll see what I can do.",
+	"#VEN4\\VEN4_012#That won't bring her back. She's gone.",
+	"#VEN4\\VEN4_013#There's nothing more I can do for her, Jim.",
+	"#VEN4\\VEN4_014#At least she's still alive, although just barely.",
+	"#VEN4\\VEN4_015#Life support must have gone down during the fight. Most of the people died from shock before the back-up systems came on line.",
+	"#VEN4\\VEN4_016#There's nothing more I can do.", // TYPO (in some rooms, this has "Jim..." at the start of the text, though not in VENG4 itself)
 	"#VEN4\\VEN4_017#I believe nothing needs to be said, Captain.",
+	"#VEN4\\VEN4_018#An interesting hypothesis, doctor. Had Mr. Scott been present, he might have been able to verify it.",
+	"#VEN4\\VEN4_019#No... you won't get us...",
+	"#VEN4\\VEN4_020#They said it was the Enterprise...They had visual confirmation...",
+	"#VEN4\\VEN4_021#You killed us, Jim. We were friends for... I trusted ...",
+	"#VEN4\\VEN4_022#Captain, did I ever mention how much I hate hospitals?",
+	"#VEN4\\VEN4N000#A very concerned Doctor Leonard McCoy.",
+	"#VEN4\\VEN4N001#A very unhappy looking Ensign Kije.",
+	"#VEN4\\VEN4N002#James T. Kirk, in total confusion at the moment.",
+	"#VEN4\\VEN4N003#Mr. Spock, looking pensive as usual.",
+	"#VEN4\\VEN4N004#Seeing Brittany in this condition stirs you on to find the culprits responsible for this injustice.",
+	"#VEN4\\VEN4N005#The medical scanner has registered the death of Brittany Marata.",
+	"#VEN4\\VEN4N006#The medical scanner is monitoring the woman's condition.",
+	"#VEN4\\VEN4N007#The woman in this sickbed is alive, barely.",
+	"#VEN4\\VEN4N008#This door leads back to the corridor and turbolifts.",
+	"#VEN4\\VEN4N009#This door leads back to the corridor, and turbolifts 1 and 2.",
 	"#VEN4\\VEN4N010#This is an empty hypodermic injector.",
+	"#VEN4\\VEN4N011#This is the Republic's sickbay. Fortunately, power is still functioning here.",
+	"#VEN4\\VEN4N012#This medical drill fires a microscopic phaser beam.",
+	"#VEN4\\VEN4N013#This monitor has recorded the death of a patient.",
 	"#VEN4\\VEN4N014#Yet another crewman of the Republic whose life was unfairly abbreviated.",
+	"#VEN4\\VEN4N015#You pick up the empty hypodermic injector.",
+	"#VEN4\\VEN4N016#You retrieve the medical drill.",
+	"#VEN4\\VEN4N017#You see the dead body of Brittany. Her life was cut short and you won't stop until you find the persons responsible.",
+
+	"#VEN4\\VEN4_017#I believe nothing needs to be said, Captain.",
 
 
 	"#VEN6\\VEN6N007#The hypo is now filled with multipurpose oil.",
