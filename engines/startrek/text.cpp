@@ -3059,7 +3059,7 @@ extern const char *const g_gameStrings[] = {
 	"#VEN6\\VEN6_001#Can we re-route the power lines?",
 	"#VEN6\\VEN6_002#Go ahead and adjust the settings, Spock.",
 	"#VEN6\\VEN6_003#Spock?",
-	"#VEN6\\VEN6_005#This reminds me of a poem I read when I was a child. \"I am Ozymandius, King of Kings, look ><upon my works, ye mighty, and despair.\"",
+	"#VEN6\\VEN6_005#This reminds me of a poem I read when I was a child. \"I am Ozymandius, King of Kings, look upon my works, ye mighty, and despair.\"", // TYPO
 	"#VEN6\\VEN6_006#Captain, the energy output of the Fusion Power pack is insufficient to power any of the major ship's systems.",
 	"#VEN6\\VEN6_007#Captain, this is the fusion mixture regulator for the impulse engines. There is currently no power running to it.",
 	"#VEN6\\VEN6_008#Remind me to compliment Mr. Scott on the efficiency of his engineering section.",
