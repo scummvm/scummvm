@@ -100,6 +100,9 @@ protected:
 	 */
 	void load(const Common::String &name, uint bpp, uint16 w = 16, uint16 h = 16);
 public:
+	/**
+	 * Destructor
+	 */
 	virtual ~Sprites() {}
 
 	/**

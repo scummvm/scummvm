@@ -42,7 +42,8 @@ enum MapIdent {
 
 class U1MapTile;
 class Ultima1Map;
-class MapCityCastle;
+class MapCity;
+class MapCastle;
 class MapDungeon;
 class MapOverworld;
 
@@ -95,7 +96,8 @@ public:
 
 private:
 	Ultima1Game *_game;
-	MapCityCastle *_mapCityCastle;
+	MapCity *_mapCity;
+	MapCastle *_mapCastle;
 	MapDungeon *_mapDungeon;
 	MapOverworld *_mapOverworld;
 public:

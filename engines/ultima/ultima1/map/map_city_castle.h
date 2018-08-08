@@ -33,8 +33,11 @@ enum CityTile {
 	CTILE_GATE = 11
 };
 
+/**
+ * Common base class for city and castle maps
+ */
 class MapCityCastle : public Ultima1Map::MapBase {
-private:
+protected:
 	/**
 	 * Load widget list for the map
 	 */
@@ -44,23 +47,11 @@ private:
 	 * Load the base map for towns and castles
 	 */
 	void loadTownCastleData();
-
-	/**
-	 * Loads a town/city
-	 */
-	void loadTown();
-
-	/**
-	 * Loads a castle
-	 */
-	void loadCastle();
-public:
-	uint _castleKey;					// Key for castle map lock
 public:
 	/**
 	 * Constructor
 	 */
-	MapCityCastle(Ultima1Game *game) : Ultima1Map::MapBase(game), _castleKey(0) {}
+	MapCityCastle(Ultima1Game *game) : Ultima1Map::MapBase(game) {}
 
 	/**
 	 * Destructor
@@ -76,6 +67,50 @@ public:
 	 * Get the viewport position
 	 */
 	virtual Point getViewportPosition(const Point &viewportSize);
+};
+
+/**
+ * City map
+ */
+class MapCity : public MapCityCastle {
+public:
+	/**
+	 * Constructor
+	 */
+	MapCity(Ultima1Game *game) : MapCityCastle(game) {}
+
+	/**
+	 * Destructor
+	 */
+	virtual ~MapCity() {}
+
+	/**
+	 * Load the map
+	 */
+	virtual void load(Shared::MapId mapId);
+};
+
+/**
+ * Castle map
+ */
+class MapCastle : public MapCityCastle {
+public:
+	uint _castleKey;					// Key for castle map lock
+public:
+	/**
+	 * Constructor
+	 */
+	MapCastle(Ultima1Game *game) : MapCityCastle(game), _castleKey(0) {}
+
+	/**
+	 * Destructor
+	 */
+	virtual ~MapCastle() {}
+
+	/**
+	 * Load the map
+	 */
+	virtual void load(Shared::MapId mapId);
 };
 
 } // End of namespace Map
