@@ -216,6 +216,30 @@ void MohawkEngine_Riven::doFrame() {
 		_stack->keyResetAction();
 	}
 
+	processInput();
+
+	_stack->onFrame();
+
+	if (!_scriptMan->runningQueuedScripts()) {
+		// Don't run queued scripts if we are calling from a queued script
+		// otherwise infinite looping will happen.
+		_scriptMan->runQueuedScripts();
+	}
+
+	if (shouldPerformAutoSave(_lastSaveTime)) {
+		tryAutoSaving();
+	}
+
+	_inventory->onFrame();
+
+	// Update the screen once per frame
+	_system->updateScreen();
+
+	// Cut down on CPU usage
+	_system->delayMillis(10);
+}
+
+void MohawkEngine_Riven::processInput() {
 	Common::Event event;
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
@@ -305,26 +329,6 @@ void MohawkEngine_Riven::doFrame() {
 			break;
 		}
 	}
-
-	_stack->onFrame();
-
-	if (!_scriptMan->runningQueuedScripts()) {
-		// Don't run queued scripts if we are calling from a queued script
-		// otherwise infinite looping will happen.
-		_scriptMan->runQueuedScripts();
-	}
-
-	if (shouldPerformAutoSave(_lastSaveTime)) {
-		tryAutoSaving();
-	}
-
-	_inventory->onFrame();
-
-	// Update the screen once per frame
-	_system->updateScreen();
-
-	// Cut down on CPU usage
-	_system->delayMillis(10);
 }
 
 void MohawkEngine_Riven::goToMainMenu() {
