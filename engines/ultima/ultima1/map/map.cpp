@@ -141,13 +141,15 @@ bool U1MapTile::isGround() const {
 
 Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map(), _game(game), _mapType(MAP_OVERWORLD) {
 	Ultima1Map::clear();
-	_mapCityCastle = new MapCityCastle(game);
+	_mapCity = new MapCity(game);
+	_mapCastle = new MapCastle(game);
 	_mapDungeon = new MapDungeon(game);
 	_mapOverworld = new MapOverworld(game);
 }
 
 Ultima1Map::~Ultima1Map() {
-	delete _mapCityCastle;
+	delete _mapCity;
+	delete _mapCastle;
 	delete _mapDungeon;
 	delete _mapOverworld;
 }
@@ -163,11 +165,16 @@ void Ultima1Map::load(Shared::MapId mapId) {
 	if (mapId == MAPID_OVERWORLD) {
 		_mapType = MAP_OVERWORLD;
 		_mapArea = _mapOverworld;
+	} else if (mapId < 33) {
+		_mapType = MAP_CITY;
+		_mapArea = _mapCity;
 	} else if (mapId < 41) {
-		_mapArea = _mapCityCastle;
+		_mapType = MAP_CASTLE;
+		_mapArea = _mapCastle;
 	} else if (mapId < 49) {
 		error("TODO: load Pillar");
 	} else {
+		_mapType = MAP_DUNGEON;
 		_mapArea = _mapDungeon;
 	}
 

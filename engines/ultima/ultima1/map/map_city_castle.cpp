@@ -35,17 +35,6 @@ void MapCityCastle::load(Shared::MapId mapId) {
 
 	setDimensions(Point(38, 18));
 	_tilesPerOrigTile = Point(1, 1);
-
-	// Set up properties for the map
-	if (_mapId < 33)
-		// Town/city
-		loadTown();
-	else
-		// Castle
-		loadCastle();
-
-	// Load widgets
-	loadWidgets();
 }
 
 void MapCityCastle::loadWidgets() {
@@ -94,7 +83,11 @@ void MapCityCastle::loadTownCastleData() {
 	}
 }
 
-void MapCityCastle::loadTown() {
+/*-------------------------------------------------------------------*/
+
+void MapCity::load(Shared::MapId mapId) {
+	MapCityCastle::load(mapId);
+
 	_mapStyle = (_mapId % 8) + 2;
 	_mapIndex = _mapId;
 	_name = Common::String::format("%s %s", _game->_res->THE_CITY_OF, _game->_res->LOCATION_NAMES[_mapId - 1]);
@@ -106,7 +99,11 @@ void MapCityCastle::loadTown() {
 	setPosition(Common::Point(width() / 2, height() - 1));		// Start at bottom center edge of map
 }
 
-void MapCityCastle::loadCastle() {
+/*-------------------------------------------------------------------*/
+
+void MapCastle::load(Shared::MapId mapId) {
+	MapCityCastle::load(mapId);
+
 	_mapIndex = _mapId - 33;
 	_mapStyle = _mapIndex % 2;
 	_name = _game->_res->LOCATION_NAMES[_mapId - 1];
