@@ -91,9 +91,10 @@ extern const RoomAction veng3ActionList[] = {
 	{ {ACTION_DONE_WALK, 11,                   0, 0}, &Room::veng3ReachedCable },
 	{ {ACTION_DONE_ANIM, 12,                   0, 0}, &Room::veng3PickedUpCable },
 
-	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::veng3UseMccoyOnDeadGuy },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::veng3UseMccoyOnDeadGuy },
-	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::veng3UseMccoyOnDeadGuy },
+	// Common code
+	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
+	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
+	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 };
 
 extern const int veng3NumActions = ARRAYSIZE(veng3ActionList);
@@ -351,33 +352,6 @@ void Room::veng3PickedUpCable() {
 	showText(TX_VEN3N014);
 	giveItem(OBJECT_ICABLE2);
 	_awayMission->veng.tookCableFromSickbayHallway = true;
-}
-
-void Room::veng3UseMccoyOnDeadGuy() { // NOTE: Identical to function in VENG1
-	int val = getRandomWordInRange(0, 5);
-
-	switch (val) {
-	case 0:
-		// NOTE: The exact text differs from the text used in DEM3. But, in order for this
-		// text indexing scheme to work, two rooms can't use the same audio with different
-		// text. Original was "He's dead, jim." instead of "He's dead, Jim...".
-		showText(TX_SPEAKER_MCCOY, TX_DEM3_019);
-		break;
-
-	case 1:
-		showText(TX_SPEAKER_MCCOY, TX_VEN4_016);
-		break;
-
-	case 2:
-	case 3:
-		showText(TX_SPEAKER_MCCOY, TX_G_014);
-		break;
-
-	case 4:
-	case 5:
-		showText(TX_SPEAKER_MCCOY, TX_VEN0_016);
-		break;
-	}
 }
 
 }

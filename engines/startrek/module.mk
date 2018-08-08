@@ -76,7 +76,8 @@ MODULE_OBJS = \
 	rooms/veng5.o \
 	rooms/veng6.o \
 	rooms/veng7.o \
-	rooms/veng8.o
+	rooms/veng8.o \
+	rooms/venga.o
 	
 
 
