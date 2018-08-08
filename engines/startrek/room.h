@@ -2523,7 +2523,6 @@ public:
 	void veng1GetDebris();
 	void veng1ReachedDebrisToGet();
 	void veng1TriedToGetDebris();
-	void veng1UseMccoyOnDeadGuy();
 	// TODO: common code
 
 	// VENG2
@@ -2637,7 +2636,6 @@ public:
 	void veng3GetCable();
 	void veng3ReachedCable();
 	void veng3PickedUpCable();
-	void veng3UseMccoyOnDeadGuy();
 	// TODO: Common code
 
 	// VENG4
@@ -2714,7 +2712,7 @@ public:
 	void veng5GetPowerPack();
 	void veng5ReachedPowerPack();
 	void veng5PickedUpPowerPack();
-	// TODO: common code (and scanning the dead guy)
+	// TODO: common code
 
 	// VENG6
 	void veng6Tick1();
@@ -2724,6 +2722,9 @@ public:
 
 	// VENG8
 	void veng8Tick1();
+
+	// VENGA (common code)
+	void vengaUseMccoyOnDeadGuy();
 
 public:
 	// Room-specific variables. This is memset'ed to 0 when the room is initialized.

@@ -76,6 +76,11 @@ extern const RoomAction veng5ActionList[] = {
 	{ {ACTION_GET, OBJECT_POWER_PACK, 0, 0}, &Room::veng5GetPowerPack },
 	{ {ACTION_DONE_WALK, 6,           0, 0}, &Room::veng5ReachedPowerPack },
 	{ {ACTION_DONE_ANIM, 7,           0, 0}, &Room::veng5PickedUpPowerPack },
+
+	// Common code
+	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
+	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
+	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 };
 
 extern const int veng5NumActions = ARRAYSIZE(veng5ActionList);
