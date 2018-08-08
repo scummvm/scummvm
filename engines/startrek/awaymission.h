@@ -675,7 +675,10 @@ struct AwayMission {
 			bool kirkShouldSuggestReestablishingPower; // 0x56
 			bool tookHypoFromSickbay; // 0x57
 			bool tookDrillFromSickbay; // 0x58
+			bool clearedDebrisInRoom5; // 0x59
 			bool havePowerPack; // 0x5a
+			bool enteredRoom5FirstTime; // 0x5b
+			bool askedSpockAboutFire; // 0x5c
 			bool tookCableFromSickbayHallway; // 0x5f
 			bool tookMolecularSaw; // 0x60
 			bool readEngineeringJournal; // 0x61

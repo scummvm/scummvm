@@ -2681,6 +2681,40 @@ public:
 
 	// VENG5
 	void veng5Tick1();
+	void veng5Tick45();
+	void veng5WalkToDoor();
+	void veng5ReachedDoor();
+	void veng5DoorOpened();
+	void veng5TouchedTurboliftDoor();
+	void veng5LookAtDoor();
+	void veng5LookAtLadder();
+	void veng5LookAtDeadGuy();
+	void veng5LookAtPowerPack();
+	void veng5LookAtDebris();
+	void veng5LookAtKirk();
+	void veng5LookAtSpock();
+	void veng5LookAtMccoy();
+	void veng5LookAtRedshirt();
+	void veng5LookAnywhere();
+	void veng5UsePhaserOnPowerPack();
+	void veng5UseStunPhaserOnDebris();
+	void veng5UseKillPhaserOnDebris();
+	void veng5ReachedPositionToShootDebris();
+	void veng5DrewPhaser();
+	void veng5VaporizedDebris();
+	void veng5UseMTricorderOnDebris();
+	void veng5UseSTricorderOnDebris();
+	void veng5UseMTricorderOnPowerPack();
+	void veng5UseSTricorderOnPowerPack();
+	void veng5TalkToKirk();
+	void veng5TalkToMccoy();
+	void veng5TalkToSpock();
+	void veng5TalkToRedshirt();
+	void veng5TouchedHotspot0();
+	void veng5GetPowerPack();
+	void veng5ReachedPowerPack();
+	void veng5PickedUpPowerPack();
+	// TODO: common code (and scanning the dead guy)
 
 	// VENG6
 	void veng6Tick1();
