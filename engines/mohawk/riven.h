@@ -106,6 +106,7 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 
 	void doFrame();
+	void processInput();
 
 private:
 	// Datafiles
