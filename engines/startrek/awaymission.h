@@ -684,6 +684,7 @@ struct AwayMission {
 			// junction box in engineering.
 			byte junctionCablesConnected; // 0x5d
 
+			bool tookCableFromTransporterRoomHallway; // 0x5e
 			bool tookCableFromSickbayHallway; // 0x5f
 			bool tookMolecularSaw; // 0x60
 			bool readEngineeringJournal; // 0x61

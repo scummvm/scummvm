@@ -3102,6 +3102,23 @@ extern const char *const g_gameStrings[] = {
 	"#VEN6\\VEN6N025#This is a library of engineering technical journals.",
 
 
+	"#VEN7\\VEN7_001#I haven't seen anything this bad since I was aboard the Farragut, and this vampire cloud...",
+	"#VEN7\\VEN7_003#Captain, please be careful. The floor in that area is very unstable and might collapse from our added weight.",
+	"#VEN7\\VEN7_005#I do not see the need for conversation, Captain. Humans have an irrational enjoyment of endless discourse.",
+	"#VEN7\\VEN7_006#It appears to be a section from a coolant exhaust port. I would not recommend too close of an inspection, Captain. The floor could collapse from our added weight.",
+	"#VEN7\\VEN7_007#It does get better than this, doesn't it Captain?",
+	"#VEN7\\VEN7N000#A corpse is half-buried under the debris.",
+	"#VEN7\\VEN7N001#A large piece of equipment has fallen through the ceiling. The area looks extremely unstable. fortunately, the entry to the transporter room is near.",
+	"#VEN7\\VEN7N002#Ensign Kije.",
+	"#VEN7\\VEN7N003#James T. Kirk.",
+	"#VEN7\\VEN7N004#Leonard McCoy.",
+	"#VEN7\\VEN7N005#Mister Spock.",
+	"#VEN7\\VEN7N006#This corridor leads to the transporter room.",
+	"#VEN7\\VEN7N007#This door leads to the transporter room.",
+	"#VEN7\\VEN7N008#This is a length of heavy duty insulated power cable.",
+	"#VEN7\\VEN7N009#You pick up a length of cable.",
+
+
 	"#VENA\\VENA_F32#The landing party has been taken captive by the Elasi, and you know Starfleet does not negotiate with terrorists. As you look forward to a long captivity you wonder who will take command of the Enterprise. Better luck next time.",
 	"#VENA\\VENA_F34#Captain, it would be unwise to use your phaser considering the already extensive damage sustained by the Republic.",
 	"#VENA\\VENA_F40#The Elasi fire photon torpedoes. The Republic has been destroyed.",
