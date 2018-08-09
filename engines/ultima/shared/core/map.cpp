@@ -129,6 +129,12 @@ void Map::MapBase::getTileAt(const Point &pt, MapTile *tile) {
 	}
 }
 
+void Map::MapBase::update() {
+	// Call the update method of each widget, to allow for things like npc movement, etc.
+	for (uint idx = 0; idx < _widgets.size(); ++idx)
+		_widgets[idx].get()->update();
+}
+
 /*-------------------------------------------------------------------*/
 
 void Map::clear() {
