@@ -34,8 +34,8 @@ namespace StarTrek {
  */
 template<typename T, uint totalBits, uint decimalBits>
 class TFixedInt : Common::Serializable {
-	const static int max = (1 << (totalBits - decimalBits - 1)) - 1;
-	const static int min = -max - 1;
+	static const int max = (1 << (totalBits - decimalBits - 1)) - 1;
+	static const int min = -max - 1;
 
 	T val;
 

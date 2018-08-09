@@ -73,7 +73,10 @@ struct TPoint {
 			return y;
 		else if (i == 2)
 			return z;
+
+		// Unknown Out of Range
 		assert(false);
+		return x;
 	}
 	T operator[](int i) const {
 		if (i == 0)
@@ -82,7 +85,10 @@ struct TPoint {
 			return y;
 		else if (i == 2)
 			return z;
+
+		// Unknown Out of Range
 		assert(false);
+		return x;
 	}
 };
 
