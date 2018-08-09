@@ -28,6 +28,8 @@ void Room::vengaTick() {
 	if (_awayMission->veng.counterUntilElasiBoardWithShieldsDown != 0) {
 		_awayMission->veng.counterUntilElasiBoardWithShieldsDown--;
 		if (_awayMission->veng.counterUntilElasiBoardWithShieldsDown == 0 && _awayMission->veng.poweredSystem != 2) {
+			// BUG: Should check you're now lowering the shields in the next phase (this
+			// is only meant for when they initially appear with your shields down)
 			vengaElasiBeamOver();
 			return;
 		}

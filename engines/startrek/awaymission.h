@@ -712,6 +712,67 @@ struct AwayMission {
 			bool readAllLogs; // 0x6a
 			bool field6b; // 0x6b
 			bool field6c; // 0x6c
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				ser.syncAsByte(usedMedkitOnBrittany);
+				ser.syncAsByte(talkedToBrittany);
+				ser.syncAsByte(brittanyDead);
+				ser.syncAsByte(lookedAtBrittany);
+				ser.syncAsByte(enteredRoom0FirstTime);
+				ser.syncAsSint16LE(missionScore);
+				ser.syncAsByte(bridgeCrewmanDead);
+				ser.syncAsByte(scannedCaptainsChair);
+				ser.syncAsByte(scannedComputerBank);
+				ser.syncAsByte(impulseEnginesOn);
+				ser.syncAsByte(beamState);
+				ser.syncAsByte(enterpriseLeftForDistressCall);
+				ser.syncAsByte(openedPanel);
+				ser.syncAsByte(clearedPanelDebris);
+				ser.syncAsByte(removedPanelDebris);
+				ser.syncAsByte(oilInHypo);
+				ser.syncAsByte(loosenedDebrisWithOil);
+				ser.syncAsByte(poweredSystem);
+				ser.syncAsByte(tricordersPluggedIntoComputer);
+				ser.syncAsByte(captainsLogIndex);
+				ser.syncAsByte(elasiShieldsDown);
+				ser.syncAsByte(torpedoLoaded);
+				ser.syncAsByte(firedTorpedo);
+				ser.syncAsByte(elasiShipDecloaked);
+				ser.syncAsByte(countdownStarted);
+				ser.syncAsByte(toldElasiToBeamOver);
+				ser.syncAsByte(scannedMainComputer);
+				ser.syncAsByte(elasiHailedRepublic);
+				ser.syncAsByte(tookRecordDeckFromAuxilaryControl);
+				ser.syncAsSint16LE(counterUntilElasiBoardWithShieldsDown);
+				ser.syncAsSint16LE(counterUntilElasiAttack);
+				ser.syncAsSint16LE(counterUntilElasiNagToDisableShields);
+				ser.syncAsSint16LE(counterUntilElasiDestroyShip);
+				ser.syncAsSint16LE(counterUntilElasiBoardWithInvitation);
+				ser.syncAsByte(clearedDebris);
+				ser.syncAsByte(lookedAtTurbolift2Door);
+				ser.syncAsByte(kirkShouldSuggestReestablishingPower);
+				ser.syncAsByte(tookHypoFromSickbay);
+				ser.syncAsByte(tookDrillFromSickbay);
+				ser.syncAsByte(clearedDebrisInRoom5);
+				ser.syncAsByte(havePowerPack);
+				ser.syncAsByte(enteredRoom5FirstTime);
+				ser.syncAsByte(askedSpockAboutFire);
+				ser.syncAsByte(junctionCablesConnected);
+				ser.syncAsByte(tookCableFromTransporterRoomHallway);
+				ser.syncAsByte(tookCableFromSickbayHallway);
+				ser.syncAsByte(tookMolecularSaw);
+				ser.syncAsByte(readEngineeringJournal);
+				ser.syncAsByte(tookEngineeringJournal);
+				ser.syncAsByte(engineeringCabinetOpen);
+				ser.syncAsByte(setTransporterCoordinates);
+				ser.syncAsByte(examinedTorpedoControl);
+				ser.syncAsByte(powerPackPluggedIntoTransporter);
+				ser.syncAsByte(field68);
+				ser.syncAsByte(getPointsForHealingBrittany);
+				ser.syncAsByte(readAllLogs);
+				ser.syncAsByte(field6b);
+				ser.syncAsByte(field6c);
+			}
 		} veng;
 	};
 };
