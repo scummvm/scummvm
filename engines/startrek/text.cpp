@@ -3152,7 +3152,7 @@ extern const char *const g_gameStrings[] = {
 	"#VEN8\\VEN8_034#I did good, didn't I sir?",
 	"#VEN8\\VEN8_035#I'll do my best, Sir.",
 	"#VEN8\\VEN8_036#I'm a security officer, not a grammarian.",
-	"#VEN8\\VEN8_037#I've reached the torpedo loading bay, Captain. Its not too badly damaged, fortunately.",
+	"#VEN8\\VEN8_037#I've reached the torpedo loading bay, Captain. It's not too badly damaged, fortunately.", // TYPO
 	"#VEN8\\VEN8_038#The door's open, Captain. I'm ready to transport back.",
 	"#VEN8\\VEN8_039#The inner loading door is stuck in the closed position. I can force it open, but when the loading cycle is begun, the room will lose pressure.  We won't be able to beam back here again.",
 	"#VEN8\\VEN8_040#I have a bad feeling about this place.",
