@@ -1,4 +1,4 @@
-#include "common/c++11-compat.h" // nullptr definition
+#include "common/scummsys.h"
 
 // In this file, the TYPO tag is used when a typo is fixed in a piece of text, or when
 // text is changed to match the audio.
@@ -6,7 +6,7 @@
 namespace StarTrek {
 
 extern const char *const g_gameStrings[] = {
-	nullptr,
+	NULL,
 	"",
 	"Dialog error",
 	"Animation error",
