@@ -104,51 +104,51 @@ void Room::demon0ReachedTopDoor() {
 }
 
 void Room::demon0TalkToPrelate() {
-	const int options1[] = {
+	const TextRef options1[] = {
 		TX_SPEAKER_KIRK,
 		TX_DEM0_006,
 		TX_DEM0_008,
 		TX_DEM0_003,
 		TX_BLANK
 	};
-	const int firstResponse0[] = {
+	const TextRef firstResponse0[] = {
 		TX_SPEAKER_ANGIVEN,
 		TX_DEM0_038,
 		TX_BLANK
 	};
-	const int firstResponse1[] = {
+	const TextRef firstResponse1[] = {
 		TX_SPEAKER_ANGIVEN,
 		TX_DEM0_032,
 		TX_BLANK
 	};
-	const int options2[] = {
+	const TextRef options2[] = {
 		TX_SPEAKER_KIRK,
 		TX_DEM0_002,
 		TX_DEM0_005,
 		TX_BLANK
 	};
-	const int secondResponse[] = {
+	const TextRef secondResponse[] = {
 		TX_SPEAKER_ANGIVEN,
 		TX_DEM0_031,
 		TX_BLANK
 	};
-	const int options3[] = {
+	const TextRef options3[] = {
 		TX_SPEAKER_KIRK,
 		TX_DEM0_010,
 		TX_DEM0_012,
 		TX_BLANK
 	};
-	const int thirdResponse[] = {
+	const TextRef thirdResponse[] = {
 		TX_SPEAKER_ANGIVEN,
 		TX_DEM0_035,
 		TX_BLANK
 	};
-	const int badConclusion[] = {
+	const TextRef badConclusion[] = {
 		TX_SPEAKER_ANGIVEN,
 		TX_DEM0_037,
 		TX_BLANK
 	};
-	const int goodConclusion[] = {
+	const TextRef goodConclusion[] = {
 		TX_SPEAKER_ANGIVEN,
 		TX_DEM0_034,
 		TX_BLANK
@@ -160,7 +160,7 @@ void Room::demon0TalkToPrelate() {
 	_awayMission->demon.missionScore += 3;
 	_awayMission->demon.talkedToPrelate = true;
 
-	const int *response = nullptr;
+	const TextRef *response = nullptr;
 
 	switch (showText(options1)) {
 	case 0:
