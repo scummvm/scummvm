@@ -70,8 +70,8 @@ extern const RoomAction veng4ActionList[] = {
 
 	{ {ACTION_USE,  OBJECT_ISTRICOR, OBJECT_DRILL, 0}, &Room::veng4LookAtDrill },
 	{ {ACTION_LOOK, OBJECT_DRILL,               0, 0}, &Room::veng4LookAtDrill },
-	{ {ACTION_USE,  OBJECT_ISTRICOR, OBJECT_HYPO,  0}, &Room::veng4LookAtHypo },
-	{ {ACTION_LOOK, OBJECT_HYPO,                0, 0}, &Room::veng4LookAtHypo },
+	{ {ACTION_USE,  OBJECT_ISTRICOR, OBJECT_HYPO,  0}, &Room::veng4LookAtHypoOnTable },
+	{ {ACTION_LOOK, OBJECT_HYPO,                0, 0}, &Room::veng4LookAtHypoOnTable },
 	{ {ACTION_LOOK, OBJECT_DOOR,                0, 0}, &Room::veng4LookAtDoorObject },
 	{ {ACTION_LOOK, 0xff,                       0, 0}, &Room::veng4LookAnywhere },
 
@@ -86,6 +86,13 @@ extern const RoomAction veng4ActionList[] = {
 	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::veng4TouchedHotspot0 },
 	{ {ACTION_WALK, OBJECT_DOOR,  0, 0}, &Room::veng4WalkToDoor },
 	{ {ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::veng4WalkToDoor },
+
+	// Common code
+	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
+	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
 
 	// ENHANCEMENT (let object count for the "look" action, not just the hotspot)
 	{ {ACTION_LOOK, OBJECT_LEFT_READINGS, 0, 0}, &Room::veng4LookAtLeftBedReadings },
@@ -288,7 +295,7 @@ void Room::veng4LookAtDrill() {
 	showText(TX_VEN4N012);
 }
 
-void Room::veng4LookAtHypo() {
+void Room::veng4LookAtHypoOnTable() {
 	showText(TX_VEN4N010);
 }
 
