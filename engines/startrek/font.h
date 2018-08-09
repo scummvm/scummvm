@@ -44,7 +44,7 @@ private:
 		byte data[0x40];
 	} *_characters;
 
-	const static byte _fontProperties[256];
+	static const byte _fontProperties[256];
 };
 
 } // End of namespace StarTrek
