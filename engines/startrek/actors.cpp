@@ -744,6 +744,12 @@ SharedPtr<Bitmap> StarTrekEngine::loadAnimationFrame(const Common::String &filen
 				case 's': // Spock
 					colorShift = 0;
 					break;
+				case 'm': // McCoy
+					colorShift = 0;
+					break;
+				default:
+					colorShift = 0;
+					break;
 				}
 
 				if (colorShift == 0) {

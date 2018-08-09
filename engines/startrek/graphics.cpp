@@ -460,7 +460,7 @@ bool compareSpritesByLayer(Sprite *s1, Sprite *s2) {
 	return s1->pos.x < s2->pos.x;
 }
 
-void Graphics::drawAllSprites(bool updateScreen) {
+void Graphics::drawAllSprites(bool updateScreenFlag) {
 	// TODO: different video modes?
 
 	if (_numSprites != 0) {
@@ -584,7 +584,7 @@ void Graphics::drawAllSprites(bool updateScreen) {
 		surface.free();
 	}
 
-	if (updateScreen)
+	if (updateScreenFlag)
 		this->updateScreen();
 }
 
@@ -603,10 +603,10 @@ void Graphics::drawAllSpritesInRectToSurface(const Common::Rect &rect, ::Graphic
 	}
 }
 
-void Graphics::forceDrawAllSprites(bool updateScreen) {
+void Graphics::forceDrawAllSprites(bool updateScreenFlag) {
 	for (int i = 0; i < _numSprites; i++)
 		_sprites[i]->bitmapChanged = true;
-	drawAllSprites(updateScreen);
+	drawAllSprites(updateScreenFlag);
 }
 
 void Graphics::updateScreen() {

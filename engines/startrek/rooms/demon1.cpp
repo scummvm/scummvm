@@ -174,7 +174,7 @@ void Room::demon1KlingonFinishedAimingWeapon() {
 	playSoundEffectIndex(0x06);
 
 	_roomVar.demon.attackIndex++;
-	int crewman;
+	int crewman = OBJECT_REDSHIRT;
 	if (_roomVar.demon.attackIndex == 1) {
 		loadActorAnim2(OBJECT_REDSHIRT, "rstunn", -1, -1, 0);
 		crewman = OBJECT_REDSHIRT;

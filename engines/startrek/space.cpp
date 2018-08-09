@@ -238,14 +238,14 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 		double dbl68 = ((double)r3->field24 * _starfieldPointDivisor) / r3->field36.z;
 		double dbl70 = 1.0 / dbl68;
 
-		double dbl30;
-		double dbl28;
-		double dbl20;
-		double dbl18;
-		double dbl60;
-		double dbl58;
-		double dbl50;
-		double dbl48;
+		double dbl30 = 1.0;
+		double dbl28 = 0.0;
+		double dbl20 = 0.0;
+		double dbl18 = 1.0;
+		double dbl60 = 1.0;
+		double dbl58 = 0.0;
+		double dbl50 = 0.0;
+		double dbl48 = 0.0;
 
 		switch (r3->field1e) {
 		case 1: // TODO
@@ -392,7 +392,7 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 
 		debug("Top: %d, Bot: %d", shpImageTop, shpImageBottom);
 		if (shpImageTop <= shpImageBottom) {
-			bool var3fa;
+			bool var3fa = false;
 			if (r3->field1e == 2) {
 				// TODO
 			} else

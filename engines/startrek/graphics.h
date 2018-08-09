@@ -115,7 +115,7 @@ public:
 	 @ @param rectTop  Y-offset to subtract before drawing to surface.
 	 */
 	void drawSprite(const Sprite &sprite, ::Graphics::Surface *surface, const Common::Rect &rect, int rectLeft = 0, int rectTop = 0);
-	void drawAllSprites(bool updateScreen = true);
+	void drawAllSprites(bool updateScreenFlag = true);
 	/**
 	 * This function should only be called after "drawAllSprites" (so that sprite rects
 	 * are updated).
@@ -124,7 +124,7 @@ public:
 	/**
 	 * Sets "bitmapChanged" to true on all sprites before calling drawAllSprites.
 	 */
-	void forceDrawAllSprites(bool updateScreen = true);
+	void forceDrawAllSprites(bool updateScreenFlag = true);
 	/**
 	 * Flushes the screen. Usually called by "drawAllSprites".
 	 */

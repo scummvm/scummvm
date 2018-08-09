@@ -104,7 +104,7 @@ void StarTrekEngine::playIntro() {
 	_sound->loadMusicFile("title");
 	clockTicks = _clockTicks;
 
-	int32 starfieldZoomSpeed;
+	int32 starfieldZoomSpeed = 0;
 	int16 frame = 0;
 	bool buttonPressed = false;
 
