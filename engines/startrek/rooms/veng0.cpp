@@ -97,6 +97,13 @@ extern const RoomAction veng0ActionList[] = {
 	{ {ACTION_USE, OBJECT_MCCOY,    HOTSPOT_CREWMAN_1, 0}, &Room::veng0UseMccoyOnLivingCrewman },
 	{ {ACTION_DONE_WALK, 3,                         0, 0}, &Room::veng0MccoyReachedCrewman },
 	{ {ACTION_DONE_ANIM, 1,                         0, 0}, &Room::veng0MccoyScannedCrewman },
+
+	// Common code
+	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
+	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
 };
 
 extern const int veng0NumActions = ARRAYSIZE(veng0ActionList);
@@ -138,7 +145,7 @@ void Room::veng0Tick50() {
 		showText(TX_SPEAKER_KIRK,  TX_VEN0_011);
 		showText(TX_SPEAKER_KIRK,  TX_VEN0_010);
 		showText(TX_SPEAKER_MCCOY, TX_VEN0_017);
-		_awayMission->veng.field36 = true;
+		_awayMission->veng.enterpriseLeftForDistressCall = true;
 	}
 }
 

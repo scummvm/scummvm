@@ -169,6 +169,12 @@ extern const RoomAction veng2ActionList[] = {
 	{ {ACTION_DONE_WALK, 16,          0, 0}, &Room::veng2ReachedMTricorderToGet },
 	{ {ACTION_DONE_ANIM, 17,          0, 0}, &Room::veng2PickedUpMTricorder },
 
+	// Common code
+	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
+	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
+	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
+
 	// ENHANCEMENTs
 	{ {ACTION_USE, OBJECT_KIRK, HOTSPOT_TORPEDO_CONTROL,     0}, &Room::veng2UseKirkOnTorpedoButton },
 	// TODO: uncomment
@@ -256,7 +262,7 @@ void Room::veng2ElasiShipDecloaked() {
 	showText(TX_SPEAKER_MCCOY, TX_VEN2_042);
 	if (_awayMission->veng.poweredSystem != 2) {
 		showText(TX_SPEAKER_SPOCK, TX_VEN2_032);
-		_awayMission->veng.field49 = 1800;
+		_awayMission->veng.counterUntilElasiBoardWithShieldsDown = 1800;
 	} else
 		veng2Timer2Expired();
 }
@@ -300,7 +306,7 @@ void Room::veng2Timer2Expired() { // Elasi hail the Enterprise if they haven't a
 	showText(TX_SPEAKER_KIRK,          TX_VEN2_022);
 
 	loadActorAnim2(OBJECT_VIEWSCREEN, "s7r2u2", VIEWSCREEN_X, VIEWSCREEN_Y);
-	_awayMission->veng.field4b = 27000;
+	_awayMission->veng.counterUntilElasiAttack = 27000;
 	_awayMission->veng.countdownStarted = true;
 }
 
@@ -531,7 +537,7 @@ void Room::veng2UseCommunicator() {
 					showText(TX_SPEAKER_ELASI_CAPTAIN, TX_VEN2_114);
 					showText(TX_SPEAKER_KIRK, TX_VEN2_025);
 					loadActorAnim2(OBJECT_VIEWSCREEN, "s7r2u2", VIEWSCREEN_X, VIEWSCREEN_Y);
-					_awayMission->veng.field4d = 1800;
+					_awayMission->veng.counterUntilElasiNagToDisableShields = 1800;
 					_awayMission->veng.toldElasiToBeamOver = true;
 				}
 			}
@@ -689,11 +695,11 @@ powerWeapons:
 			if (_awayMission->veng.toldElasiToBeamOver) {
 				showText(TX_SPEAKER_SPOCK, TX_VEN2_052);
 				_awayMission->veng.elasiShieldsDown = true;
-				_awayMission->veng.field51 = 900;
+				_awayMission->veng.counterUntilElasiBoardWithInvitation = 900;
 			}
 			if (_awayMission->veng.elasiShipDecloaked && !_awayMission->veng.elasiHailedRepublic) {
 				showText(TX_SPEAKER_SPOCK, TX_VEN2_033);
-				_awayMission->veng.field49 = 1800;
+				_awayMission->veng.counterUntilElasiBoardWithShieldsDown = 1800;
 			}
 		} else if (_awayMission->veng.countdownStarted)
 			showText(TX_SPEAKER_SPOCK, TX_VEN2_035);
@@ -731,7 +737,7 @@ powerWeapons:
 			showText(TX_SPEAKER_KIJE, TX_VEN2_087);
 			if (_awayMission->veng.elasiShipDecloaked && !_awayMission->veng.elasiHailedRepublic) {
 				showText(TX_SPEAKER_SPOCK, TX_VEN2_071);
-				_awayMission->veng.field49 = 1800;
+				_awayMission->veng.counterUntilElasiBoardWithShieldsDown = 1800;
 			}
 		}
 	}

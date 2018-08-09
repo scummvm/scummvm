@@ -2476,7 +2476,6 @@ public:
 	void veng0UseMccoyOnLivingCrewman();
 	void veng0MccoyReachedCrewman();
 	void veng0MccoyScannedCrewman();
-	// TODO: common code
 
 	// VENG1
 	void veng1Tick1();
@@ -2523,7 +2522,6 @@ public:
 	void veng1GetDebris();
 	void veng1ReachedDebrisToGet();
 	void veng1TriedToGetDebris();
-	// TODO: common code
 
 	// VENG2
 	void veng2Tick1();
@@ -2590,7 +2588,6 @@ public:
 	void veng2GetMTricorder();
 	void veng2ReachedMTricorderToGet();
 	void veng2PickedUpMTricorder();
-	// TODO: common code
 
 	// VENG3
 	void veng3Tick1();
@@ -2636,7 +2633,6 @@ public:
 	void veng3GetCable();
 	void veng3ReachedCable();
 	void veng3PickedUpCable();
-	// TODO: Common code
 
 	// VENG4
 	void veng4Tick1();
@@ -2664,7 +2660,7 @@ public:
 	void veng4LookAtLeftBedReadings();
 	void veng4LookAtBrittany();
 	void veng4LookAtDrill();
-	void veng4LookAtHypo();
+	void veng4LookAtHypoOnTable();
 	void veng4LookAtDoorObject();
 	void veng4LookAnywhere();
 	void veng4GetHypo();
@@ -2675,7 +2671,6 @@ public:
 	void veng4PickedUpDrill();
 	void veng4TouchedHotspot0();
 	void veng4WalkToDoor();
-	// TODO: common code
 
 	// VENG5
 	void veng5Tick1();
@@ -2712,7 +2707,6 @@ public:
 	void veng5GetPowerPack();
 	void veng5ReachedPowerPack();
 	void veng5PickedUpPowerPack();
-	// TODO: common code
 
 	// VENG6
 	void veng6Tick1();
@@ -2768,7 +2762,6 @@ public:
 	void veng6GetEngineeringJournal();
 	void veng6ReachedEngineeringJournal();
 	void veng6TookEngineeringJournal();
-	// TODO: common code
 
 	// VENG7
 	void veng7Tick1();
@@ -2794,7 +2787,6 @@ public:
 	void veng7GetCable();
 	void veng7ReachedCable();
 	void veng7PickedUpCable();
-	// TODO: common code
 
 	// VENG8
 	void veng8Tick1();
@@ -2840,6 +2832,11 @@ public:
 	void veng8UseSTricorderOnConsole();
 
 	// VENGA (common code)
+	void vengaTick();
+	void vengaElasiBeamOver();
+	void vengaUsePhaserAnywhere();
+	void vengaLookAtHypo();
+	void vengaUseCommunicator();
 	void vengaUseMccoyOnDeadGuy();
 
 public:

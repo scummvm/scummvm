@@ -636,7 +636,7 @@ struct AwayMission {
 			// 2: beam taken
 			byte beamState; // 0x35
 
-			bool field36; // 0x36
+			bool enterpriseLeftForDistressCall; // 0x36
 			bool openedPanel; // 0x37
 			bool clearedPanelDebris; // 0x38
 			bool removedPanelDebris; // 0x39
@@ -665,10 +665,24 @@ struct AwayMission {
 			bool scannedMainComputer; // 0x46
 			bool elasiHailedRepublic; // 0x47
 			bool tookRecordDeckFromAuxilaryControl; // 0x48
-			int16 field49; // 0x49
-			int16 field4b; // 0x4b
-			int16 field4d; // 0x4d
-			int16 field51; // 0x51
+
+			// Counter used when shields are down and Elasi are present
+			int16 counterUntilElasiBoardWithShieldsDown; // 0x49
+
+			// Counter used after talking with Elasi and they give you time to recover the
+			// data
+			int16 counterUntilElasiAttack; // 0x4b
+
+			// Counter used after telling Elasi you'll turn off shields (initial warning)
+			int16 counterUntilElasiNagToDisableShields; // 0x4d
+
+			// Counter used after telling Elasi you'll turn off shields (they destroy the
+			// ship this time)
+			int16 counterUntilElasiDestroyShip; // 0x4f
+
+			// Counter used after telling Elasi to beam over
+			int16 counterUntilElasiBoardWithInvitation; // 0x51
+
 			bool putSupportBeamInSickbayHallway; // 0x53
 			bool clearedDebris; // 0x54
 			bool lookedAtTurbolift2Door; // 0x55
