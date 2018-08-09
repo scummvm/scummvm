@@ -636,7 +636,7 @@ String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr 
 
 		return lineFormattedText;
 	} else
-		return nullptr;
+		return NULL;
 }
 
 String StarTrekEngine::readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput) {

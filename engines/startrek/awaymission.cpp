@@ -565,7 +565,7 @@ void StarTrekEngine::handleAwayMissionAction() {
 				break;
 
 			case OBJECT_REDSHIRT:
-				showTextbox(nullptr, getLoadedText(GROUNDTX_REDSHIRT_USE), 20, 20, TEXTCOLOR_YELLOW, 0);
+				showTextbox(NULL, getLoadedText(GROUNDTX_REDSHIRT_USE), 20, 20, TEXTCOLOR_YELLOW, 0);
 				break;
 
 			case OBJECT_IPHASERS:
