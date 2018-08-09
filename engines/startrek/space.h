@@ -39,7 +39,7 @@ struct TPoint {
 	TPoint(T _x, T _y, T _z) : x(_x), y(_y), z(_z) {}
 
 	int32 getDiagonal() {
-		return sqrt(x * x + y * y + z * z);
+		return (int32)sqrt((double)x * x + y * y + z * z);
 	}
 
 	TPoint<T> operator+(const TPoint<T> &p) const {
