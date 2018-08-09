@@ -98,6 +98,10 @@ void Game::playFX(uint effectId) {
 	warning("TODO: playFX");
 }
 
+void Game::endOfTurn() {
+	// Update things on the map
+	_gameState->_map->update();
+}
 
 } // End of namespace Shared
 } // End of namespace Ultima

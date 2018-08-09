@@ -76,6 +76,11 @@ public:
 	 * Play a sound effect
 	 */
 	void playFX(uint effectId);
+
+	/**
+	 * Called at the end of each turn
+	 */
+	void endOfTurn();
 };
 
 } // End of namespace Shared

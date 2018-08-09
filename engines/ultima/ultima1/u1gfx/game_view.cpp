@@ -152,6 +152,9 @@ bool GameView::KeypressMsg(CKeypressMsg &msg) {
 		return false;
 	}
 
+	// End of turn
+	getGame()->endOfTurn();
+
 	return true;
 }
 

@@ -179,6 +179,11 @@ public:
 		virtual ~MapBase() {}
 
 		/**
+		 * Adds a widget to the map
+		 */
+		void addWidget(MapWidget *widget);
+
+		/**
 		 * Clears all map data
 		 */
 		virtual void clear();
@@ -251,9 +256,9 @@ public:
 		virtual void shiftViewport(const Point &delta);
 
 		/**
-		 * Adds a widget to the map
+		 * Updates the map at the end of a turn
 		 */
-		void addWidget(MapWidget *widget);
+		virtual void update();
 	};
 protected:
 	MapBase *_mapArea;
@@ -407,6 +412,14 @@ public:
 		assert(_mapArea);
 		return _mapArea->getLevel();
 	}
+
+	/**
+	 * Updates the map at the end of a turn
+	 */
+	void update() {
+		assert(_mapArea);
+		return _mapArea->update();
+	}
 };
 
 /**
@@ -442,6 +455,11 @@ public:
 	 * Returns true if the player can move onto a tile the widget occupies
 	 */
 	virtual bool isBlocking() const { return false; }
+
+	/**
+	 * Called to update the widget at the end of a turn
+	 */
+	virtual void update() {}
 };
 
 } // End of namespace Shared
