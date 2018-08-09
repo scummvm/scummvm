@@ -310,9 +310,8 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 		thing[6] = 1.0 * dbl20 + dbl3e4 * dbl30 + dbl10;
 		thing[7] = 1.0 * dbl18 + dbl3e4 * dbl28 + dbl8;
 
-
-		int16 rightBounds[SCREEN_HEIGHT];
-		int16 leftBounds[SCREEN_HEIGHT];
+		int16 *rightBounds = new int16[SCREEN_HEIGHT];
+		int16 *leftBounds = new int16[SCREEN_HEIGHT];
 
 		for (int y = _starfieldRect.top; y < _starfieldRect.bottom; y++) {
 			leftBounds[y] = _starfieldRect.right;
@@ -416,7 +415,7 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 			int16 var3f8 = var3f4 * shpImageTop + (int16)(dbl38 * 256);
 
 			Bitmap tmpBitmap(256, 249);
-			byte otherBuffer[256 * 256];
+			byte *otherBuffer = new byte[256 * 256];
 
 			int16 bitmapWidth = bitmap->width;
 			int16 bitmapHeight = bitmap->height;
@@ -482,7 +481,12 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 					warning("Unimplemented branch in \"drawR3Shape\"");
 				}
 			}
+
+			delete[] otherBuffer;
 		}
+
+		delete[] rightBounds;
+		delete[] leftBounds;
 	}
 
 	if (r3->funcPtr2 != 0) {
