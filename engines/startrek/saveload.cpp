@@ -131,7 +131,7 @@ bool StarTrekEngine::loadGame(int slot) {
 
 	if (meta.version > CURRENT_SAVEGAME_VERSION) {
 		delete in;
-		error("Savegame version (%d) is newer than current version (%d). A newer version of ScummVM is needed", meta.version, CURRENT_SAVEGAME_VERSION);
+		error("Savegame version (%u) is newer than current version (%u). A newer version of ScummVM is needed", meta.version, CURRENT_SAVEGAME_VERSION);
 	}
 
 	if (!saveOrLoadGameData(in, nullptr, &meta)) {
@@ -328,7 +328,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 		// The action queue
 		if (ser.isLoading()) {
 			_actionQueue = Common::Queue<Action>();
-			int16 n;
+			int16 n = 0;
 			ser.syncAsSint16LE(n);
 			for (int i = 0; i < n; i++) {
 				Action a;
