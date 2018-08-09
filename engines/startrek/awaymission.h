@@ -629,6 +629,7 @@ struct AwayMission {
 			bool bridgeCrewmanDead; // 0x30
 			bool scannedCaptainsChair; // 0x31
 			bool scannedComputerBank; // 0x32
+			bool showedRepublicMapFirstTime; // 0x33
 			bool impulseEnginesOn; // 0x34
 
 			// 0: beam still in place
