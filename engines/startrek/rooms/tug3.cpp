@@ -224,7 +224,7 @@ void Room::tug3TalkToElasi1() {
 		return;
 	_awayMission->tug.talkedToCereth = true;
 
-	const int choices[] = {
+	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
 		TX_TUG3_004,
 		TX_TUG3_003,

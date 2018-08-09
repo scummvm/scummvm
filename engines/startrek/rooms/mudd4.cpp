@@ -357,7 +357,7 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 	        || _awayMission->mudd.muddErasedDatabase
 	        || _awayMission->mudd.databaseDestroyed
 	        || !_awayMission->mudd.accessedAlienDatabase) { // NOTE: why this last line? Test this...
-		const int choices[] = {
+		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
 			TX_MUD4_009,
 			TX_MUD4_016,
@@ -418,7 +418,7 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 			endMission(_awayMission->mudd.missionScore, 0x1b, _awayMission->mudd.torpedoStatus);
 		}
 	} else {
-		const int choices[] = {
+		const TextRef choices[] = {
 			TX_SPEAKER_KIRK,
 			TX_MUD4_014,
 			TX_MUD4_021,

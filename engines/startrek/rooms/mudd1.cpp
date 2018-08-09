@@ -153,7 +153,7 @@ void Room::mudd1SpockPressedRedButton() {
 	_awayMission->disableInput = false;
 	_awayMission->mudd.knowAboutTorpedo = true;
 
-	const int choices[] = {
+	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
 		TX_MUD1_004,
 		TX_MUD1_003,

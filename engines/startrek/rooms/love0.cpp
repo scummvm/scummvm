@@ -234,7 +234,7 @@ void Room::love0MccoyAccessedConsole() {
 
 // Interact with computer console, by selecting topics for the computer to talk about
 void Room::love0InteractWithConsole() {
-	const int choices[] = {
+	const TextRef choices[] = {
 		TX_SPEAKER_COMPUTER,
 		TX_COMPA190,
 		TX_COMPA193,

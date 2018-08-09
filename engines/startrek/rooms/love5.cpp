@@ -157,7 +157,7 @@ void Room::love5TalkToPreax() {
 		if (!_awayMission->love.freedMarcusAndCheever)
 			showText(TX_LOV5N006);
 		else {
-			const int choices[] = {
+			const TextRef choices[] = {
 				TX_SPEAKER_KIRK,
 				TX_LOV5_008,
 				TX_LOV5_004,

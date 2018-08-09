@@ -249,7 +249,7 @@ void Room::mudd3Timer1Expired() { // Tricorders ready for use again
 
 // Harry Mudd stumbled into the room
 void Room::mudd3Timer2Expired() {
-	const int choices[] = {
+	const TextRef choices[] = {
 		TX_SPEAKER_KIRK,
 		TX_MUD3_010,
 		TX_MUD3_009,
