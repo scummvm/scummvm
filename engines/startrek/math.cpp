@@ -37,7 +37,7 @@ Fixed14 StarTrekEngine::sin(Angle angle) {
 	else if (i == 0x300)
 		return -1.0;
 
-	float f;
+	float f = 0.0;
 	if (i < 0x100)
 		f = _sineTable.getTable()[i & 0xff];
 	else if (i < 0x200)
@@ -104,23 +104,23 @@ Angle StarTrekEngine::atan2(int32 deltaX, int32 deltaY) {
 	}
 
 	if (deltaY > deltaX) {
-		if (!deltaYNegative && !deltaXNegative)
-			angle = angle;
-		else if (!deltaYNegative && deltaXNegative)
-			angle = -angle;
+		if (deltaYNegative && deltaXNegative)
+			angle = angle - 512;
 		else if (deltaYNegative && !deltaXNegative)
 			angle = 512 - angle;
-		else
-			angle = angle - 512;
+		else if (!deltaYNegative && deltaXNegative)
+			angle = -angle;
+		// else if (!deltaYNegative && !deltaXNegative)
+		//	angle remains the same i.e. angle = angle
 	} else {
-		if (!deltaYNegative && !deltaXNegative)
-			angle = 256 - angle;
+		if (deltaYNegative && deltaXNegative)
+			angle = -256 - angle;
 		else if (deltaYNegative && !deltaXNegative)
 			angle = 256 + angle;
-		else if (deltaYNegative && deltaXNegative)
-			angle = -256 - angle;
-		else
+		else if (!deltaYNegative && deltaXNegative)
 			angle = -256 + angle;
+		else // if (!deltaYNegative && !deltaXNegative)
+			angle = 256 - angle;
 	}
 
 	return Angle::fromRaw(angle);
