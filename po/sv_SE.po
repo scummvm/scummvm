@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-08-03 14:58+0200\n"
+"POT-Creation-Date: 2018-08-09 08:37+0200\n"
 "PO-Revision-Date: 2018-06-11 21:45+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -1900,9 +1900,10 @@ msgstr "Åte~r~vänd till launcher"
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:658 engines/sci/engine/kfile.cpp:1054
 #: engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
-#: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
-#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
+#: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3340
+#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:758
+#: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Spara spelet:"
 
@@ -1922,9 +1923,10 @@ msgstr "Spara spelet:"
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:659 engines/sci/engine/kfile.cpp:1054
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
-#: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
-#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
+#: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3340
+#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:758
+#: engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Spara"
 
@@ -3018,8 +3020,9 @@ msgstr ""
 #: engines/neverhood/menumodule.cpp:893
 #: engines/sci/engine/guest_additions.cpp:661 engines/sci/engine/kfile.cpp:1173
 #: engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
-#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
+#: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3432
+#: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Ladda sparfil:"
 
@@ -3032,8 +3035,9 @@ msgstr "Ladda sparfil:"
 #: engines/neverhood/menumodule.cpp:893
 #: engines/sci/engine/guest_additions.cpp:662 engines/sci/engine/kfile.cpp:1173
 #: engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
-#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
+#: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3432
+#: engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Ladda"
 

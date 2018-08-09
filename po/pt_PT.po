@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-08-03 14:58+0200\n"
+"POT-Creation-Date: 2018-08-09 08:37+0200\n"
 "PO-Revision-Date: 2018-08-06 21:24+0000\n"
 "Last-Translator: Fred Almeida <fred_pj@hotmail.com>\n"
-"Language-Team: Portuguese (Portugal) "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/pt_PT/>\n"
+"Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
+"projects/scummvm/scummvm/pt_PT/>\n"
 "Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1036,8 +1036,8 @@ msgstr "Dispositivo MT-32:"
 #: gui/options.cpp:1201
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
-"Especifica o dispositivo audio por defeito para saída Roland "
-"MT-32/LAPC1/CM32l/CM64"
+"Especifica o dispositivo audio por defeito para saída Roland MT-32/LAPC1/"
+"CM32l/CM64"
 
 #: gui/options.cpp:1206
 msgid "True Roland MT-32 (disable GM emulation)"
@@ -1882,9 +1882,10 @@ msgstr ""
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:658 engines/sci/engine/kfile.cpp:1054
 #: engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
-#: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
-#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
+#: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3340
+#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:758
+#: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr ""
 
@@ -1904,9 +1905,10 @@ msgstr ""
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
 #: engines/sci/engine/guest_additions.cpp:659 engines/sci/engine/kfile.cpp:1054
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
-#: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
-#: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
-#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
+#: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
+#: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3340
+#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:758
+#: engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr ""
 
@@ -2944,8 +2946,9 @@ msgstr ""
 #: engines/neverhood/menumodule.cpp:893
 #: engines/sci/engine/guest_additions.cpp:661 engines/sci/engine/kfile.cpp:1173
 #: engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
-#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
+#: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3432
+#: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr ""
 
@@ -2958,8 +2961,9 @@ msgstr ""
 #: engines/neverhood/menumodule.cpp:893
 #: engines/sci/engine/guest_additions.cpp:662 engines/sci/engine/kfile.cpp:1173
 #: engines/sherlock/scalpel/scalpel.cpp:1263
-#: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
-#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
+#: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
+#: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3432
+#: engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr ""
 
