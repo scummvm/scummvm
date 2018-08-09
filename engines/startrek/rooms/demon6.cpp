@@ -238,8 +238,8 @@ void Room::demon6UseCrewmanOnCase() {
 		if (_roomVar.demon.insultedStephenRecently)
 			return;
 		showText(TX_SPEAKER_STEPHEN, TX_DEM6_044);
-		int choices1[] = {TX_SPEAKER_KIRK, TX_DEM6_001, TX_DEM6_006, TX_DEM6_003, TX_BLANK};
-		int choice = showText(choices1);
+		TextRef choices1[] = {TX_SPEAKER_KIRK, TX_DEM6_001, TX_DEM6_006, TX_DEM6_003, TX_BLANK};
+		TextRef choice = showText(choices1);
 
 		if (choice == 0) {
 insult:
@@ -251,7 +251,7 @@ insult:
 explain:
 			while (true) {
 				showText(TX_SPEAKER_STEPHEN, TX_DEM6_051);
-				int choices2[] = {TX_SPEAKER_STEPHEN, TX_DEM6_045, TX_DEM6_046, TX_DEM6_047, TX_DEM6_048, TX_DEM6_049, TX_DEM6_050, TX_BLANK};
+				TextRef choices2[] = {TX_SPEAKER_STEPHEN, TX_DEM6_045, TX_DEM6_046, TX_DEM6_047, TX_DEM6_048, TX_DEM6_049, TX_DEM6_050, TX_BLANK};
 				choice = showText(choices2);
 
 				switch (choice) {
@@ -280,7 +280,7 @@ explain:
 			}
 		} else if (choice == 2) {
 			showText(TX_SPEAKER_STEPHEN, TX_DEM6_031);
-			int choices3[] = {TX_SPEAKER_KIRK, TX_DEM6_001, TX_DEM6_006, TX_BLANK};
+			TextRef choices3[] = {TX_SPEAKER_KIRK, TX_DEM6_001, TX_DEM6_006, TX_BLANK};
 			choice = showText(choices3);
 
 			if (choice == 0)

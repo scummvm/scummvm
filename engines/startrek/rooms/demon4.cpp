@@ -227,7 +227,7 @@ void Room::demon4TalkToNauian() {
 		_awayMission->demon.metNauian = true;
 		showText(TX_SPEAKER_NAUIAN, TX_DEM4_044);
 
-		const int choices[] = { TX_SPEAKER_KIRK, TX_DEM4_002, TX_DEM4_004, TX_DEM4_009, TX_BLANK };
+		const TextRef choices[] = { TX_SPEAKER_KIRK, TX_DEM4_002, TX_DEM4_004, TX_DEM4_009, TX_BLANK };
 		int choice = showText(choices);
 
 		switch (choice) {
@@ -250,7 +250,7 @@ void Room::demon4TalkToNauian() {
 
 		showText(TX_SPEAKER_NAUIAN, TX_DEM4_043);
 
-		const int choices2[] = { TX_SPEAKER_KIRK, TX_DEM4_008, TX_DEM4_007, TX_BLANK };
+		const TextRef choices2[] = { TX_SPEAKER_KIRK, TX_DEM4_008, TX_DEM4_007, TX_BLANK };
 		choice = showText(choices2);
 
 		switch (choice) {

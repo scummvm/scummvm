@@ -344,14 +344,14 @@ void Room::demon3RedshirtUsedPanel() {
 		_awayMission->redshirtDead = true;
 		_awayMission->demon.field45 = true;
 	} else {
-		const int textTable[] = {
+		const TextRef textTable[] = {
 			TX_DEM3N005,
 			TX_DEM3_033,
 			TX_DEM3_035,
 			TX_DEM3_034,
 		};
 
-		int text[] = {
+		TextRef text[] = {
 			TX_SPEAKER_EVERTS,
 			TX_NULL,
 			TX_BLANK
