@@ -313,7 +313,7 @@ int Room::showText(const TextRef *textIDs) {
 }
 
 int Room::showText(TextRef speaker, TextRef text) {
-	int textIDs[3];
+	TextRef textIDs[3];
 	textIDs[0] = speaker;
 	textIDs[1] = text;
 	textIDs[2] = TX_BLANK;

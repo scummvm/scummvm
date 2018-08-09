@@ -186,7 +186,7 @@ void Room::demon4UseSkullOnNauian() {
 void Room::demon4KirkReachedNauianWithSkull() {
 	showText(TX_SPEAKER_NAUIAN, TX_DEM4_036);
 
-	const int choices[] = { TX_SPEAKER_KIRK, TX_DEM4_006, TX_DEM4_003, TX_DEM4_005, TX_BLANK };
+	const TextRef choices[] = { TX_SPEAKER_KIRK, TX_DEM4_006, TX_DEM4_003, TX_DEM4_005, TX_BLANK };
 	int choice = showText(choices);
 
 	switch (choice) {
