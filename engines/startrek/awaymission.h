@@ -690,7 +690,9 @@ struct AwayMission {
 			bool readEngineeringJournal; // 0x61
 			bool tookEngineeringJournal; // 0x62
 			bool engineeringCabinetOpen; // 0x63
+			bool setTransporterCoordinates; // 0x65
 			bool examinedTorpedoControl; // 0x66
+			bool powerPackPluggedIntoTransporter; // 0x67
 			bool field68; // 0x68
 			bool getPointsForHealingBrittany; // 0x69
 			bool readAllLogs; // 0x6a

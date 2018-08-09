@@ -2806,6 +2806,46 @@ public:
 
 	// VENG8
 	void veng8Tick1();
+	void veng8WalkToDoor();
+	void veng8ReachedDoor();
+	void veng8DoorOpened();
+	void veng8Timer0Expired();
+	void veng8SparkAnim1Done();
+	void veng8Timer1Expired();
+	void veng8SparkAnim2Done();
+	void veng8LookAtPowerPack();
+	void veng8LookAtDoor();
+	void veng8LookAtPowerCircuits();
+	void veng8LookAtControls();
+	void veng8LookAtDeadGuy();
+	void veng8LookAtSlider();
+	void veng8LookAtKirk();
+	void veng8LookAtSpock();
+	void veng8LookAtMccoy();
+	void veng8LookAtRedshirt();
+	void veng8LookAtTransporter();
+	void veng8LookAnywhere();
+	void veng8TalkToKirk();
+	void veng8TalkToSpock();
+	void veng8TalkToMccoy();
+	void veng8TalkToRedshirt();
+	void veng8UseKirkOnControls();
+	void veng8UseSpockOnControls();
+	void veng8SpockReachedControls();
+	void veng8SpockUsedControls();
+	void veng8UsePowerPackOnPowerCircuit();
+	void veng8SpockReachedPowerCircuit();
+	void veng8SpockConnectedPowerPack();
+	void veng8TransporterPoweredUp();
+	void veng8UseKirkOnSlider();
+	void veng8UseSpockOnSlider();
+	void veng8SpockReachedSlider();
+	void veng8RedshirtReachedTransporter();
+	void veng8SpockPulledSliderToBeamOut();
+	void veng8RedshirtBeamedOut();
+	void veng8SpockPulledSliderToBeamIn();
+	void veng8RedshirtBeamedIn();
+	void veng8UseSTricorderOnConsole();
 
 	// VENGA (common code)
 	void vengaUseMccoyOnDeadGuy();
