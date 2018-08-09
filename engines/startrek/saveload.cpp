@@ -338,6 +338,9 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 		} else if (_missionName == "SINS") {
 			_awayMission.sins.saveLoadWithSerializer(ser);
 			_room->_roomVar.sins.saveLoadWithSerializer(ser);
+		} else if (_missionName == "VENG") {
+			_awayMission.veng.saveLoadWithSerializer(ser);
+			_room->_roomVar.veng.saveLoadWithSerializer(ser);
 		}
 
 		// The action queue

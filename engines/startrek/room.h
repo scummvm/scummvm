@@ -3177,6 +3177,25 @@ public:
 
 			// venga (common)
 			bool walkingToDoor; // 0xcb (veng1), 0xca (veng4)
+
+			void saveLoadWithSerializer(Common::Serializer &ser) {
+				// veng1
+				ser.syncAsByte(doorOpenCounter);
+
+				// veng2
+				ser.syncAsByte(numCrewmenReadyToBeamOut);
+
+				// veng4
+				ser.syncAsByte(usingMedkitOnBrittany);
+
+				// veng6
+				ser.syncAsByte(kirkAndSpockReadyToAttachLeftCable);
+				ser.syncAsByte(kirkAndSpockReadyToAttachRightCable);
+				ser.syncAsByte(cableInUse);
+
+				// venga (common)
+				ser.syncAsByte(walkingToDoor);
+			}
 		} veng;
 
 	} _roomVar;
