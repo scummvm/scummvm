@@ -228,7 +228,7 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 	if (r3->field1e != 3) // TODO: remove this
 		return;
 
-	if (r3->funcPtr1 != NULL) {
+	if (r3->funcPtr1 != 0) {
 		// TODO: call it
 	}
 
@@ -485,7 +485,7 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 		}
 	}
 
-	if (r3->funcPtr2 != NULL) {
+	if (r3->funcPtr2 != 0) {
 		// TODO: call it
 	}
 }

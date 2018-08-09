@@ -39,8 +39,8 @@ void StarTrekEngine::playIntro() {
 	R3 planetR3 = R3();
 	planetR3.matrix = initMatrix();
 	planetR3.field1e = 3;
-	planetR3.funcPtr1 = NULL;
-	planetR3.funcPtr2 = NULL;
+	planetR3.funcPtr1 = 0;
+	planetR3.funcPtr2 = 0;
 	planetR3.bitmapOffset = 0;
 
 	_gfx->clearScreenAndPriBuffer();
