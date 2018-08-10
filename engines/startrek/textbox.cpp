@@ -728,7 +728,7 @@ Common::String StarTrekEngine::showTextInputBox(int16 x, int16 y, const Common::
 		case TREKEVENT_TICK:
 			_gfx->incPaletteFadeLevel();
 			_frameIndex++;
-			_textInputCursorChar = (_frameIndex & 2 ? 1 : 0);
+			_textInputCursorChar = ((_frameIndex & 2) ? 1 : 0);
 			redrawTextInput();
 			break;
 
