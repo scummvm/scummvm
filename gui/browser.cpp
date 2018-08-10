@@ -21,9 +21,9 @@
  */
 
 #include "gui/browser.h"
+#include "gui/widgets/edittext.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/list.h"
-#include "gui/widgets/edittext.h"
 
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -94,11 +94,12 @@ void BrowserDialog::open() {
 
 void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	//Search by text input
+	//Search for typed-in directory
 	case _ExitTxtCmd:
 		_node = Common::FSNode(_currentPath->getEditString());
 		updateListing();
 		break;
+	//Search by text input
 	case kChooseCmd:
 		if (_isDirBrowser) {
 			// If nothing is selected in the list widget, choose the current dir.
