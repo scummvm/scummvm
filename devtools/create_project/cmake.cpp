@@ -81,7 +81,7 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "# Generate options for the engines\n";
 	writeEngineOptions(workspace);
 
-	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR} ${" << setup.projectDescription << "_SOURCE_DIR}/engines "
+	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << " ${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << "/engines "
 			"$ENV{"<<LIBS_DEFINE<<"}/include .)\n\n";
 
 	workspace << "# Libraries and features\n\n";
