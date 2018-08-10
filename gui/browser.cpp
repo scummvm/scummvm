@@ -23,6 +23,7 @@
 #include "gui/browser.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/list.h"
+#include "gui/widgets/edittext.h"
 
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -53,10 +54,9 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	_showHidden = false;
 
 	// Headline - TODO: should be customizable during creation time
-	new StaticTextWidget(this, "Browser.Headline", title);
-
+	
 	// Current path - TODO: handle long paths ?
-	_currentPath = new StaticTextWidget(this, "Browser.Path", "DUMMY");
+	_currentPath = new EditTextWidget(this, "Browser.Path", "DUMMY");
 
 	// Add file list
 	_fileList = new ListWidget(this, "Browser.List");
@@ -94,6 +94,11 @@ void BrowserDialog::open() {
 
 void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
+	//Search by text input
+	case _ExitTxtCmd:
+		_node = Common::FSNode(_currentPath->getEditString());
+		updateListing();
+		break;
 	case kChooseCmd:
 		if (_isDirBrowser) {
 			// If nothing is selected in the list widget, choose the current dir.
@@ -157,7 +162,7 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 void BrowserDialog::updateListing() {
 	// Update the path display
-	_currentPath->setLabel(_node.getPath());
+	_currentPath->setEditString(_node.getPath());
 
 	// We memorize the last visited path.
 	ConfMan.set("browser_lastpath", _node.getPath());
