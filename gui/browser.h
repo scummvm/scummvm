@@ -29,7 +29,7 @@
 namespace GUI {
 
 class ListWidget;
-class StaticTextWidget;
+class EditTextWidget;
 class CheckboxWidget;
 class CommandSender;
 
@@ -54,7 +54,7 @@ protected:
 	const void *_chooseRef;
 #else
 	ListWidget		*_fileList;
-	StaticTextWidget	*_currentPath;
+	EditTextWidget	*_currentPath;
 	Common::FSNode	_node;
 	Common::FSList			_nodeContent;
 	bool _showHidden;
