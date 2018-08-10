@@ -161,7 +161,7 @@ bool StarTrekEngine::popNextEvent(TrekEvent *e, bool poll) {
 void StarTrekEngine::addEventToQueue(const TrekEvent &e) {
 	if (e.type == TREKEVENT_MOUSEMOVE && _mouseMoveEventInQueue) {
 		// Only allow one mouse move event at once
-		for (Common::List<TrekEvent>::iterator i = _eventQueue.begin(); i != _eventQueue.end(); i++) {
+		for (Common::List<TrekEvent>::iterator i = _eventQueue.begin(); i != _eventQueue.end(); ++i) {
 			if (i->type == TREKEVENT_MOUSEMOVE) {
 				*i = e;
 				return;

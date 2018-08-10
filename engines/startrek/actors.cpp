@@ -41,13 +41,11 @@ void StarTrekEngine::initActors() {
 int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName, int16 x, int16 y, Fixed8 scale) {
 	debugC(6, kDebugGraphics, "Load animation '%s' on actor %d", animName.c_str(), actorIndex);
 
-	Actor *actor = nullptr;
-
 	if (actorIndex == -1) {
 		// TODO
 		warning("loadActorAnim: actor == -1");
 	} else {
-		actor = &_actorList[actorIndex];
+		Actor *actor = &_actorList[actorIndex];
 
 		if (actor->spriteDrawn) {
 			releaseAnim(actor);

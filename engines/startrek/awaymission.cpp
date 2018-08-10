@@ -179,7 +179,6 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 
 void StarTrekEngine::handleAwayMissionEvents() {
 	TrekEvent event;
-	int clickedObject = -1;
 
 	if (popNextEvent(&event)) {
 		switch (event.type) {
@@ -244,13 +243,13 @@ void StarTrekEngine::handleAwayMissionEvents() {
 			case Common::KEYCODE_i:
 				if (_awayMission.activeAction == ACTION_USE) {
 					hideInventoryIcons();
-					clickedObject = showInventoryMenu(50, 50, true);
+					int clickedObject = showInventoryMenu(50, 50, true);
 					if (clickedObject == -1)
 						clickedObject = -2;
 					awayMissionUseObject(clickedObject);
 				} else if (_awayMission.activeAction == ACTION_LOOK) {
 					hideInventoryIcons();
-					clickedObject = showInventoryMenu(50, 50, true);
+					int clickedObject = showInventoryMenu(50, 50, true);
 					if (clickedObject == -1)
 						clickedObject = -2;
 					awayMissionGetLookOrTalk(clickedObject);
@@ -410,6 +409,7 @@ void StarTrekEngine::awayMissionUseObject(int16 clickedObject) {
 		tryWalkToHotspot = true;
 	else if (_awayMission.activeObject == OBJECT_MCCOY && _room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
 		tryWalkToHotspot = true;
+	// CHECKME: Identical to the previous check, thus never used
 	else if (_awayMission.activeObject == OBJECT_MCCOY && _room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
 		tryWalkToHotspot = true;
 	else if (_awayMission.activeObject == OBJECT_SPOCK && _room->actionHasCode(ACTION_USE, OBJECT_ISTRICOR, _awayMission.passiveObject, 0))
