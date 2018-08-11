@@ -37,6 +37,7 @@ void MapDungeon::load(Shared::MapId mapId) {
 	_dungeonLevel = 1;
 
 	changeLevel(0);
+	_currentTransport->moveTo(Point(1, 1), Shared::DIR_SOUTH);
 }
 
 bool MapDungeon::changeLevel(int delta) {
@@ -49,12 +50,14 @@ bool MapDungeon::changeLevel(int delta) {
 
 	// Reset dungeon area
 	setDimensions(Point(DUNGEON_WIDTH, DUNGEON_HEIGHT));
-	_widgets.clear();
-	_currentTransport = nullptr;
 
-	// Set up widget for the player
-	_currentTransport = new Widgets::DungeonPlayer(_game, this, Point(1, 1));
-	addWidget(_currentTransport);
+	if (_widgets.empty()) {
+		// Set up widget for the player
+		_currentTransport = new Widgets::DungeonPlayer(_game, this);
+		addWidget(_currentTransport);
+	} else {
+		_widgets.resize(1);
+	}
 
 	// Place walls around the edge of the map
 	for (int y = 0; y < DUNGEON_HEIGHT; ++y) {
