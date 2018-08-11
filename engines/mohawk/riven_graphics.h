@@ -25,6 +25,12 @@
 
 #include "mohawk/graphics.h"
 
+#include "common/ustr.h"
+
+namespace Graphics {
+struct Font;
+}
+
 namespace Mohawk {
 
 class MohawkEngine_Riven;
@@ -68,8 +74,6 @@ public:
 	void drawExtrasImage(uint16 id, const Common::Rect &dstRect);
 	void drawExtrasImageToScreen(uint16 id, const Common::Rect &rect);
 
-	void copySurfaceToScreen(Graphics::Surface *src, uint32 x, uint32 y);
-
 	/** Copy a rect from the system screen to the game screen */
 	void copySystemRectToScreen(const Common::Rect &rect);
 
@@ -92,6 +96,9 @@ public:
 	void runScheduledTransition();
 	void fadeToBlack();
 	void setTransitionMode(RivenTransitionMode mode);
+
+	// Main menu
+	void drawText(const Common::U32String &text, const Common::Rect &dest, uint8 greyLevel);
 
 	// Credits
 	void beginCredits();
@@ -129,6 +136,11 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	void updateScreen();
 	void clearMainScreen();
+
+	// Main menu
+	Graphics::Font *_menuFont;
+	void loadMenuFont();
+	const Graphics::Font *getMenuFont() const;
 
 	// Credits
 	uint _creditsImage, _creditsPos;

@@ -93,42 +93,6 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 	if (!(_vm->getFeatures() & GF_25TH))
 		return;
 
-	Common::File file;
-
-	const char *fontname;
-	const Graphics::Font *font = nullptr;
-
-	if (_vm->getLanguage() != Common::JA_JPN) {
-		fontname = "FreeSans.ttf";
-	} else {
-		fontname = "mplus-2c-regular.ttf";
-	}
-
-#if defined(USE_FREETYPE2)
-	int fontHeight;
-
-	if (_vm->getLanguage() != Common::JA_JPN) {
-		fontHeight = 12;
-	} else {
-		fontHeight = 11;
-	}
-
-	if (file.open(fontname)) {
-		font = Graphics::loadTTFFont(file, fontHeight);
-	}
-#endif
-
-	if (!font) {
-		warning("Cannot load font %s directly", fontname);
-		font = FontMan.getFontByName(fontname);
-	}
-
-	if (!font) {
-		warning("Cannot load font %s", fontname);
-
-		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	}
-
 	int lang = -1;
 	for (int i = 0; menuItems[i].language != -1; i++) {
 		if (menuItems[i].language == _vm->getLanguage()) {
@@ -168,24 +132,11 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 		bool enabled = !items[i].requiresStartedGame || _vm->isGameStarted();
 		hotspot->enable(enabled);
 
-		Common::Rect hotspotRect = hotspot->getRect();
-
-		Graphics::Surface surface;
-		surface.create(hotspotRect.width(), hotspotRect.height(), _vm->_gfx->getBackScreen()->format);
-
-		uint32 textColor;
-		if (enabled) {
-			textColor = surface.format.RGBToColor(164, 164, 164);
-		} else {
-			textColor = surface.format.RGBToColor(96, 96, 96);
-		}
-
 		Common::U32String str = Common::convertUtf8ToUtf32(menuItems[lang].items[i]);
+		Common::Rect hotspotRect = hotspot->getRect();
+		uint8 greyLevel = enabled ? 164 : 96;
 
-		font->drawString(&surface, str, 0, 0, surface.w, textColor);
-
-		_vm->_gfx->copySurfaceToScreen(&surface, hotspotRect.left, hotspotRect.top);
-		surface.free();
+		_vm->_gfx->drawText(str, hotspotRect, greyLevel);
 	}
 }
 

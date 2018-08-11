@@ -29,7 +29,12 @@
 #include "mohawk/riven_video.h"
 
 #include "common/system.h"
+
 #include "engines/util.h"
+
+#include "graphics/fontman.h"
+#include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 #include "graphics/colormasks.h"
 
 namespace Mohawk {
@@ -317,6 +322,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) :
 		_transitionOffset(-1),
 		_waterEffect(nullptr),
 		_fliesEffect(nullptr),
+		_menuFont(nullptr),
 		_transitionFrames(0),
 		_transitionDuration(0) {
 	_bitmapDecoder = new MohawkBitmap();
@@ -332,6 +338,8 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) :
 
 	_effectScreen = new Graphics::Surface();
 	_effectScreen->create(608, 392, _pixelFormat);
+
+	loadMenuFont();
 }
 
 RivenGraphics::~RivenGraphics() {
@@ -342,6 +350,7 @@ RivenGraphics::~RivenGraphics() {
 	delete _bitmapDecoder;
 	clearFliesEffect();
 	clearWaterEffect();
+	delete _menuFont;
 }
 
 MohawkSurface *RivenGraphics::decodeImage(uint16 id) {
@@ -361,26 +370,6 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 
 	for (uint16 i = 0; i < surface->h; i++)
 		memcpy(_mainScreen->getBasePtr(left, i + top), surface->getBasePtr(0, i), surface->w * surface->format.bytesPerPixel);
-
-	_dirtyScreen = true;
-	applyScreenUpdate();
-}
-
-void RivenGraphics::copySurfaceToScreen(Graphics::Surface *src, uint32 x, uint32 y) {
-	beginScreenUpdate();
-
-	int w = src->w;
-	int h = src->h;
-
-	// Clip the width to fit on the screen. Fixes some images.
-	if (x + w > 608)
-		w = 608 - x;
-
-	if (y + h > 436)
-		h = 346 - y;
-
-	for (uint16 i = 0; i < h; i++)
-		memcpy(_mainScreen->getBasePtr(x, i + y), src->getBasePtr(0, i), w * src->format.bytesPerPixel);
 
 	_dirtyScreen = true;
 	applyScreenUpdate();
@@ -780,6 +769,59 @@ void RivenGraphics::copySystemRectToScreen(const Common::Rect &rect) {
 
 void RivenGraphics::enableCardUpdateScript(bool enable) {
 	_enableCardUpdateScript = enable;
+}
+
+void RivenGraphics::drawText(const Common::U32String &text, const Common::Rect &dest, uint8 greyLevel) {
+	_mainScreen->fillRect(dest, _pixelFormat.RGBToColor(0, 0, 0));
+
+	uint32 color = _pixelFormat.RGBToColor(greyLevel, greyLevel, greyLevel);
+
+	const Graphics::Font *font = getMenuFont();
+	font->drawString(_mainScreen, text, dest.left, dest.top, dest.width(), color);
+
+	_dirtyScreen = true;
+}
+
+void RivenGraphics::loadMenuFont() {
+	const char *fontName;
+
+	if (_vm->getLanguage() != Common::JA_JPN) {
+		fontName = "FreeSans.ttf";
+	} else {
+		fontName = "mplus-2c-regular.ttf";
+	}
+
+#if defined(USE_FREETYPE2)
+	int fontHeight;
+
+	if (_vm->getLanguage() != Common::JA_JPN) {
+		fontHeight = 12;
+	} else {
+		fontHeight = 11;
+	}
+
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fontName);
+	if (stream) {
+		_menuFont = Graphics::loadTTFFont(*stream, fontHeight);
+		delete stream;
+	}
+#endif
+
+	if (!_menuFont) {
+		warning("Cannot load font %s", fontName);
+	}
+}
+
+const Graphics::Font *RivenGraphics::getMenuFont() const {
+	const Graphics::Font *font;
+
+	if (_menuFont) {
+		font = _menuFont;
+	} else {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	}
+
+	return font;
 }
 
 const FliesEffect::FliesEffectData FliesEffect::_firefliesParameters = {
