@@ -35,7 +35,7 @@ namespace Shared {
 enum Direction {
 	DIR_NONE = 0,
 	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4,
-	DIR_NORTH = 1, DIR_SOUTH = 2, DIR_EAST = 3, DIR_WEST = 4
+	DIR_WEST = 1, DIR_EAST = 2, DIR_NORTH = 3, DIR_SOUTH = 4
 };
 
 typedef byte MapCell;
