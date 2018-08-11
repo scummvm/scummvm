@@ -53,13 +53,6 @@ public:
 	 * Destructor
 	 */
 	virtual ~Transport() {}
-
-	/**
-	 * Moves to a given position
-	 * @param destPos		Specified new position
-	 * @returns				If true, the direction moved will be printed in the status area
-	 */
-	virtual bool moveTo(const Point &destPos) = 0;
 };
 
 class TransportOnFoot : public Transport {
@@ -92,9 +85,10 @@ public:
 	/**
 	 * Moves to a given position
 	 * @param destPos		Specified new position
-	 * @returns				If true, the direction moved will be printed in the status area
+	 * @param dir			Optional explicit direction to set. If not specified,
+	 *		the direction will be set relative to the position moved from
 	 */
-	virtual bool moveTo(const Point &destPos);
+	virtual void moveTo(const Point &destPos, Shared::Direction dir = Shared::DIR_NONE);
 };
 
 } // End of namespace Widgets

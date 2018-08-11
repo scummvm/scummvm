@@ -57,6 +57,8 @@ void ViewportDungeon::draw() {
 		leftDelta.x = 1;
 		rightDelta.x = -1;
 		break;
+	default:
+		break;
 	}
 
 	MapTile tile, deltaTile, leftTile, rightTile, backTile;

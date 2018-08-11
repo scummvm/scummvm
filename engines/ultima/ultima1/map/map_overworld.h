@@ -45,9 +45,9 @@ public:
 	virtual void load(Shared::MapId mapId);
 
 	/**
-	 * Returns whether the map is fixed
+	 * Returns whether the map wraps around to the other side at it's edges (i.e. the overworld)
 	 */
-	virtual bool isFixed() const { return false; }
+	virtual bool isMapWrapped() const { return true; }
 
 	/**
 	 * Shifts the viewport by a given delta

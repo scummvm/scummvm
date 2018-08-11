@@ -36,9 +36,9 @@ public:
 	 * Constructor
 	 */
 	DungeonPlayer(Shared::Game *game, Shared::Map::MapBase *map) : Shared::DungeonWidget(game, map) {}
-	DungeonPlayer(Shared::Game *game, Shared::Map::MapBase *map, const Point &pt) : Shared::DungeonWidget(game, map, pt) {}
-	DungeonPlayer(Shared::Game *game, Shared::Map::MapBase *map, const Point &pt, const Common::String &name) :
-		Shared::DungeonWidget(game, map, pt, name) {}
+	DungeonPlayer(Shared::Game *game, Shared::Map::MapBase *map, const Point &pt, Shared::Direction dir = Shared::DIR_NONE) : Shared::DungeonWidget(game, map, pt, dir) {}
+	DungeonPlayer(Shared::Game *game, Shared::Map::MapBase *map, const Common::String &name, const Point &pt, Shared::Direction dir = Shared::DIR_NONE) :
+		Shared::DungeonWidget(game, map, name, pt, dir) {}
 
 	/**
 	 * Destructor
