@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-08-09 08:37+0200\n"
+"POT-Creation-Date: 2018-08-11 08:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -66,9 +66,9 @@ msgstr ""
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/myst_stacks/menu.cpp:319
-#: engines/mohawk/riven_stacks/aspit.cpp:399
-#: engines/mohawk/riven_stacks/aspit.cpp:421
-#: engines/mohawk/riven_stacks/aspit.cpp:505
+#: engines/mohawk/riven_stacks/aspit.cpp:350
+#: engines/mohawk/riven_stacks/aspit.cpp:372
+#: engines/mohawk/riven_stacks/aspit.cpp:456
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:887
 msgid "Cancel"
@@ -2113,7 +2113,7 @@ msgstr ""
 #: backends/platform/wince/CEActionsPocket.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:52
 #: engines/mohawk/myst_stacks/menu.cpp:318
-#: engines/mohawk/riven_stacks/aspit.cpp:504 engines/scumm/dialogs.cpp:188
+#: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:188
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr ""
@@ -3277,30 +3277,30 @@ msgid "The game is paused. Press any key to continue."
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:283
-#: engines/mohawk/riven_stacks/aspit.cpp:398
+#: engines/mohawk/riven_stacks/aspit.cpp:349
 msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
-#: engines/mohawk/riven_stacks/aspit.cpp:399
+#: engines/mohawk/riven_stacks/aspit.cpp:350
 msgid "Load game"
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
-#: engines/mohawk/riven_stacks/aspit.cpp:420
+#: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
-#: engines/mohawk/riven_stacks/aspit.cpp:421
+#: engines/mohawk/riven_stacks/aspit.cpp:372
 msgid "New game"
 msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:318
-#: engines/mohawk/riven_stacks/aspit.cpp:504
+#: engines/mohawk/riven_stacks/aspit.cpp:455
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgstr ""
 
@@ -3332,7 +3332,7 @@ msgid ""
 "the game."
 msgstr ""
 
-#: engines/mohawk/riven_stacks/aspit.cpp:478
+#: engines/mohawk/riven_stacks/aspit.cpp:429
 msgid ""
 "At this point, the Riven Demo would\n"
 "ask if you would like to open a web browser\n"
