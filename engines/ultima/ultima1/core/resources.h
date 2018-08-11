@@ -39,6 +39,7 @@ protected:
 public:
 	const char *STATUS_TEXT[4];
 	const char *DIRECTION_NAMES[4];
+	const char *DUNGEON_MOVES[4];
 	const char *LOCATION_NAMES[LOCATION_COUNT];
 	byte LOCATION_X[LOCATION_COUNT];
 	byte LOCATION_Y[LOCATION_COUNT];
