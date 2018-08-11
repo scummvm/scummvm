@@ -46,7 +46,8 @@ uint TransportOnFoot::getTileNum() const {
 	return dynamic_cast<Map::MapOverworld *>(map) ? 8 : 18;
 }
 
-bool TransportOnFoot::moveTo(const Point &destPos) {
+void TransportOnFoot::moveTo(const Point &destPos, Shared::Direction dir) {
+	Transport::moveTo(destPos, dir);
 	Map::Ultima1Map::MapBase *map = getMap();
 
 	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)map->width() || destPos.y >= (int)map->height()) {
@@ -70,7 +71,6 @@ bool TransportOnFoot::moveTo(const Point &destPos) {
 				if (mapTile._locationNum != -1) {
 					// We've found the location tile
 					map->setPosition(mapPos);
-					return false;
 				}
 			}
 		}
@@ -79,12 +79,7 @@ bool TransportOnFoot::moveTo(const Point &destPos) {
 		Point mapPos(worldPos.x * map->_tilesPerOrigTile.x - ((map->_tilesPerOrigTile.x - 1) / 2),
 			worldPos.y * map->_tilesPerOrigTile.y - ((map->_tilesPerOrigTile.y - 1) / 2));
 		map->setPosition(mapPos);
-		return false;
 	}
-
-	// Normal movement
-	_map->setPosition(destPos);
-	return true;
 }
 
 bool TransportOnFoot::isPrincessSaved() const {
@@ -92,7 +87,7 @@ bool TransportOnFoot::isPrincessSaved() const {
 }
 
 void TransportOnFoot::princessSaved() {
-
+	// TODO
 }
 
 } // End of namespace Widgets

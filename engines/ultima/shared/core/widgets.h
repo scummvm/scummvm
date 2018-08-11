@@ -38,7 +38,7 @@ public:
 	 * Constructor
 	 */
 	StandardWidget(Game *game, Map::MapBase *map) : MapWidget(game, map) {}
-	StandardWidget(Game *game, Map::MapBase *map, const Point &pt) : MapWidget(game, map, pt) {}
+	StandardWidget(Game *game, Map::MapBase *map, const Point &pt, Direction dir = DIR_NONE) : MapWidget(game, map, pt, dir) {}
 
 	/**
 	 * Destructor
@@ -55,7 +55,7 @@ public:
 	 */
 	Monster(Game *game, Map::MapBase *map) : StandardWidget(game, map), _hitPoints(0) {}
 	Monster(Game *game, Map::MapBase *map, int hitPoints) : StandardWidget(game, map), _hitPoints(hitPoints) {}
-	Monster(Game *game, Map::MapBase *map, const Point &pt, int hitPoints) : StandardWidget(game, map, pt), _hitPoints(hitPoints) {}
+	Monster(Game *game, Map::MapBase *map, int hitPoints, const Point &pt, Direction dir = DIR_NONE) : StandardWidget(game, map, pt, dir), _hitPoints(hitPoints) {}
 
 	/**
 	 * Destructor
@@ -70,12 +70,12 @@ public:
 class DungeonWidget : public MapWidget {
 public:
 	/**
-	* Constructor
-	*/
+	 * Constructor
+	 */
 	DungeonWidget(Game *game, Map::MapBase *map) : MapWidget(game, map) {}
-	DungeonWidget(Game *game, Map::MapBase *map, const Point &pt) : MapWidget(game, map, pt) {}
-	DungeonWidget(Game *game, Map::MapBase *map, const Point &pt, const Common::String &name) :
-		MapWidget(game, map, pt, name) {}
+	DungeonWidget(Game *game, Map::MapBase *map, const Point &pt, Direction dir = DIR_NONE) : MapWidget(game, map, pt, dir) {}
+	DungeonWidget(Game *game, Map::MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) :
+		MapWidget(game, map, name, pt, dir) {}
 
 	/**
 	 * Destructor
@@ -104,8 +104,8 @@ public:
 	 * Constructor
 	 */
 	DungeonMonster(Game *game, Map::MapBase *map, int hitPoints) : DungeonWidget(game, map), _hitPoints(hitPoints) {}
-	DungeonMonster(Game *game, Map::MapBase *map, const Point &pt, int hitPoints) :
-		DungeonWidget(game, map, pt), _hitPoints(hitPoints) {}
+	DungeonMonster(Game *game, Map::MapBase *map, int hitPoints, const Point &pt, Direction dir = DIR_NONE) :
+		DungeonWidget(game, map, pt, dir), _hitPoints(hitPoints) {}
 
 	/**
 	 * Destructor

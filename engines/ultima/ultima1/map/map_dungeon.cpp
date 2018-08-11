@@ -35,8 +35,6 @@ void MapDungeon::load(Shared::MapId mapId) {
 
 	_tilesPerOrigTile = Point(1, 1);
 	_dungeonLevel = 1;
-	_position = Point(1, 1);
-	_direction = Shared::DIR_DOWN;
 
 	changeLevel(0);
 }
@@ -55,7 +53,7 @@ bool MapDungeon::changeLevel(int delta) {
 	_currentTransport = nullptr;
 
 	// Set up widget for the player
-	_currentTransport = new Widgets::DungeonPlayer(_game, this);
+	_currentTransport = new Widgets::DungeonPlayer(_game, this, Point(1, 1));
 	addWidget(_currentTransport);
 
 	// Place walls around the edge of the map
@@ -169,7 +167,7 @@ void MapDungeon::spawnMonsterAt(const Point &pt) {
 			// Monster not present, so can be added
 			uint hp = _game->getRandomNumber(1, _dungeonLevel * _dungeonLevel + 1) +
 				(int)monsterId + 10;
-			Widgets::DungeonMonster *monster = new Widgets::DungeonMonster(_game, this, monsterId, pt, hp);
+			Widgets::DungeonMonster *monster = new Widgets::DungeonMonster(_game, this, monsterId, hp, pt);
 			addWidget(monster);
 			return;
 		}

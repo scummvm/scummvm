@@ -55,7 +55,7 @@ void Map::MapBase::setDimensions(const Point &size) {
 }
 
 Point Map::MapBase::getDirectionDelta() const {
-	switch (_direction) {
+	switch (_currentTransport->_direction) {
 	case DIR_LEFT:
 		return Point(-1, 0);
 	case DIR_RIGHT:
@@ -68,16 +68,10 @@ Point Map::MapBase::getDirectionDelta() const {
 }
 
 Point Map::MapBase::getDeltaPosition(const Point &delta) {
-	return _position + delta;
+	return _currentTransport->_position + delta;
 } 
 
-void Map::MapBase::setPosition(const Point &pt) {
-	// Set the new party/player position
-	_position = Point(pt.x * _tilesPerOrigTile.x, pt.y * _tilesPerOrigTile.y);
-
-	// The party is kept in the first widget slot, so keep it's position up to date
-	_widgets[0]->_position = _position;
-
+void Map::MapBase::resetViewport() {
 	// Reset the viewport, so it's position will get recalculated
 	_viewportPos.reset();
 }
@@ -87,8 +81,8 @@ Point Map::MapBase::getViewportPosition(const Point &viewportSize) {
 
 	if (!_viewportPos.isValid() || _viewportPos._size != viewportSize) {
 		// Calculate the new position
-		topLeft.x = _position.x - (viewportSize.x - 1) / 2;
-		topLeft.y = _position.y - (viewportSize.y - 1) / 2;
+		topLeft.x = _currentTransport->_position.x - (viewportSize.x - 1) / 2;
+		topLeft.y = _currentTransport->_position.y - (viewportSize.y - 1) / 2;
 
 		// Fixed maps, so constrain top left corner so the map fills the viewport.
 		// This will accomodate future renderings with more tiles, or greater tile size
@@ -135,12 +129,28 @@ void Map::MapBase::update() {
 		_widgets[idx].get()->update();
 }
 
+Point Map::MapBase::getPosition() const {
+	return _currentTransport->_position;
+}
+
+void Map::MapBase::setPosition(const Point &pt) {
+	_currentTransport->_position = pt;
+}
+
+Direction Map::MapBase::getDirection() const {
+	return _currentTransport->_direction;
+}
+
+void Map::MapBase::setDirection(Shared::Direction dir) {
+	_currentTransport->_direction = dir;
+}
+
 /*------------------------------------------------------------------------*/
 
 bool MapWidget::canMoveTo(const Point &destPos) {
 	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)_map->width() || destPos.y >= (int)_map->height()) {
 		// If the map is fixed, allow moving beyond it's edges so it can be left
-		if (_map->isFixed())
+		if (!_map->isMapWrapped())
 			return true;
 	}
 
@@ -153,6 +163,34 @@ bool MapWidget::canMoveTo(const Point &destPos) {
 		return false;
 
 	return true;
+}
+
+void MapWidget::moveTo(const Point &destPos, Direction dir) {
+	// If no direction is specified, we'll need to figure it out relative to the old position
+	if (dir == DIR_NONE) {
+		Point delta = destPos - _position;
+		if (ABS(delta.x) > ABS(delta.y))
+			_direction = delta.x > 0 ? DIR_EAST : DIR_WEST;
+		else if (delta.y != 0)
+			_direction = delta.y > 0 ? DIR_SOUTH : DIR_NORTH;
+	} else {
+		_direction = dir;
+	}
+
+	// Set new location
+	_position = destPos;
+
+	// Handle wrap around if need be on maps that wrap
+	if (_map->isMapWrapped()) {
+		if (_position.x < 0)
+			_position.x += _map->width();
+		else if (_position.x >= (int)_map->width())
+			_position.x -= _map->width();
+		if (_position.y < 0)
+			_position.y += _map->height();
+		else if (_position.y >= (int)_map->height())
+			_position.y -= _map->height();
+	}
 }
 
 /*-------------------------------------------------------------------*/

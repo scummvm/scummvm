@@ -80,8 +80,8 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 			map->shiftViewport(delta);
 
 			// Move to the new position
-			if (transport->moveTo(newPos))
-				addInfoMsg(getRes()->DIRECTION_NAMES[msg._direction - 1]);
+			transport->moveTo(newPos);
+			addInfoMsg(getRes()->DIRECTION_NAMES[msg._direction - 1]);
 		} else {
 			// Nope, so show a blocked message
 			addInfoMsg(getRes()->BLOCKED);
@@ -108,6 +108,8 @@ void Move::dungeonTurnLeft() {
 	case Shared::DIR_UP:
 		map->setDirection(Shared::DIR_LEFT);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -127,6 +129,8 @@ void Move::dungeonTurnRight() {
 	case Shared::DIR_UP:
 		map->setDirection(Shared::DIR_RIGHT);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -145,6 +149,8 @@ void Move::dungeonTurnAround() {
 		break;
 	case Shared::DIR_UP:
 		map->setDirection(Shared::DIR_DOWN);
+		break;
+	default:
 		break;
 	}
 }

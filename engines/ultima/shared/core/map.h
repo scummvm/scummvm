@@ -33,7 +33,9 @@ namespace Ultima {
 namespace Shared {
 
 enum Direction {
-	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4
+	DIR_NONE = 0,
+	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4,
+	DIR_NORTH = 1, DIR_SOUTH = 2, DIR_EAST = 3, DIR_WEST = 4
 };
 
 typedef byte MapCell;
@@ -148,7 +150,6 @@ public:
 		MapId _mapId;						// The map Id
 		uint _mapIndex;						// Index of map within the group of same maps
 		uint _mapStyle;						// Map style category for towns & castles
-		Point _position;					// Current position within the map
 		ViewportPosition _viewportPos;		// Viewport position
 	protected:
 		/**
@@ -158,7 +159,6 @@ public:
 	public:
 		Point _size;						// X, Y size of the map
 		Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
-		Direction _direction;				// Current direction being faced in the underworld
 		Common::String _name;				// Name of map, if applicable
 		MapWidget *_currentTransport;		// Current means of transport, even if on foot
 		Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
@@ -168,7 +168,7 @@ public:
 		 * Constructor
 		 */
 		MapBase(Game *game) : _game(game), _currentTransport(nullptr), _mapId(0), _mapIndex(0),
-			_direction(DIR_UP), _mapStyle(0) {}
+			_mapStyle(0) {}
 
 		/**
 		 * Destructor
@@ -189,6 +189,11 @@ public:
 		 * Gets a tile at a given position
 		 */
 		virtual void getTileAt(const Point &pt, MapTile *tile);
+
+		/**
+		 * Resets the viewport when the viewport changes
+		 */
+		void resetViewport();
 
 		/**
 		 * Get the viewport position
@@ -213,9 +218,9 @@ public:
 		virtual uint getLevel() const { return 0; }
 
 		/**
-		 * Returns whether the map is fixed
+		 * Returns whether the map wraps around to the other side at it's edges (i.e. the overworld)
 		 */
-		virtual bool isFixed() const { return true; }
+		virtual bool isMapWrapped() const { return false; }
 
 		/**
 		 * Returns the width of the map
@@ -228,9 +233,24 @@ public:
 		size_t height() const { return _size.y; }
 
 		/**
-		 * Return the current position
+		 * Get the current position
 		 */
-		Point getPosition() const { return _position; }
+		Point getPosition() const;
+
+		/**
+		 * Set the current position
+		 */
+		void setPosition(const Point &pt);
+
+		/**
+		 * Get the current direction
+		 */
+		Direction getDirection() const;
+
+		/**
+		 * Set the current direction
+		 */
+		void setDirection(Shared::Direction dir);
 
 		/**
 		 * Returns a delta for the cell in front of the player based on the direction they're facing
@@ -246,11 +266,6 @@ public:
 		 * Gets the map Index
 		 */
 		uint getMapIndex() const { return _mapIndex; }
-
-		/**
-		 * Set the position
-		 */
-		void setPosition(const Point &pt);
 
 		/**
 		 * Shifts the viewport by a given delta
@@ -334,19 +349,19 @@ public:
 	}
 
 	/**
-	 * The current direction
+	 * Get the current direction
 	 */
 	Shared::Direction getDirection() const {
 		assert(_mapArea);
-		return _mapArea->_direction;
+		return _mapArea->getDirection();
 	}
 
 	/**
-	 * Set the curren direction
+	 * Set the current direction
 	 */
 	void setDirection(Shared::Direction dir) {
 		assert(_mapArea);
-		_mapArea->_direction = dir;
+		_mapArea->setDirection(dir);
 	}
 
 	/**
@@ -416,11 +431,11 @@ public:
 	}
 
 	/**
-	 * Returns whether the map is fixed
+	 * Returns whether the map wraps around to the other side at it's edges (i.e. the overworld)
 	 */
-	bool isFixed() const {
+	bool isMapWrapped() const {
 		assert(_mapArea);
-		return _mapArea->isFixed();
+		return _mapArea->isMapWrapped();
 	}
 
 	/**
@@ -441,15 +456,16 @@ protected:
 	Map::MapBase *_map;					// Map reference
 public:
 	Point _position;					// Position within the map
+	Direction _direction;				// Direction
 	Common::String _name;				// Name of widget
 public:
 	/**
 	 * Constructor
 	 */
 	MapWidget(Game *game, Map::MapBase *map) : _game(game), _map(map) {}
-	MapWidget(Game *game, Map::MapBase *map, const Point &pt) : _game(game), _map(map), _position(pt) {}
-	MapWidget(Game *game, Map::MapBase *map, const Point &pt, const Common::String &name) :
-		_game(game), _map(map), _position(pt), _name(name) {}
+	MapWidget(Game *game, Map::MapBase *map, const Point &pt, Direction dir = DIR_NONE) : _game(game), _map(map), _position(pt), _direction(dir) {}
+	MapWidget(Game *game, Map::MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) :
+		_game(game), _map(map), _name(name), _position(pt), _direction(dir) {}
 
 	/**
 	 * Destructor
@@ -475,6 +491,14 @@ public:
 	 * Returns true if the given transport type can move to a given position on the map
 	 */
 	virtual bool canMoveTo(const Point &destPos);
+
+	/**
+	 * Moves to a given position
+	 * @param destPos		Specified new position
+	 * @param dir			Optional explicit direction to set. If not specified,
+	 *		the direction will be set relative to the position moved from
+	 */
+	virtual void moveTo(const Point &destPos, Direction dir = DIR_NONE);
 };
 
 } // End of namespace Shared

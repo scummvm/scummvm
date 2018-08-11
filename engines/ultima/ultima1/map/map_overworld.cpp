@@ -55,7 +55,7 @@ void MapOverworld::loadWidgets() {
 }
 
 Point MapOverworld::getDeltaPosition(const Point &delta) {
-	Point pt = _position + delta;
+	Point pt = _currentTransport->_position + delta;
 
 	if (pt.x < 0)
 		pt.x += _size.x;
@@ -74,8 +74,8 @@ Point MapOverworld::getViewportPosition(const Point &viewportSize) {
 
 	if (!_viewportPos.isValid() || _viewportPos._size != viewportSize) {
 		// Calculate the new position
-		topLeft.x = _position.x - (viewportSize.x - 1) / 2;
-		topLeft.y = _position.y - (viewportSize.y - 1) / 2;
+		topLeft.x = _currentTransport->_position.x - (viewportSize.x - 1) / 2;
+		topLeft.y = _currentTransport->_position.y - (viewportSize.y - 1) / 2;
 
 		// Non-fixed map, so it wraps around the edges if necessary
 		if (topLeft.x < 0)

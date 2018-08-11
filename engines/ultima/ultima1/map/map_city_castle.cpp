@@ -88,8 +88,8 @@ Point MapCityCastle::getViewportPosition(const Point &viewportSize) {
 
 	if (!_viewportPos.isValid() || _viewportPos._size != viewportSize) {
 		// Calculate the new position
-		topLeft.x = _position.x - (viewportSize.x - 1) / 2;
-		topLeft.y = _position.y - (viewportSize.y - 1) / 2;
+		topLeft.x = _currentTransport->_position.x - (viewportSize.x - 1) / 2;
+		topLeft.y = _currentTransport->_position.y - (viewportSize.y - 1) / 2;
 
 		// Fixed maps, so constrain top left corner so the map fills the viewport. This will accomodate
 		// future renderings with more tiles, or greater tile size
