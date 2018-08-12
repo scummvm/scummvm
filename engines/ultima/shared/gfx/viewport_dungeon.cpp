@@ -172,7 +172,7 @@ bool ViewportDungeon::isCellOccupied(const Point &delta) {
 bool ViewportDungeon::isMonsterBlocking(const Point &pt) {
 	MapTile tile;
 	getMap()->getTileAt(pt, &tile);
-	DungeonMonster *monster = dynamic_cast<DungeonMonster *>(tile._widget);
+	DungeonCreature *monster = dynamic_cast<DungeonCreature *>(tile._widget);
 	return monster != nullptr && monster->isBlockingView();
 }
 
@@ -184,7 +184,7 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 	MapTile tile;
 	map->getTileAt(pt, &tile);
 
-	DungeonMonster *monster = dynamic_cast<DungeonMonster *>(tile._widget);
+	DungeonCreature *monster = dynamic_cast<DungeonCreature *>(tile._widget);
 	if (monster) {
 		// Draw a monster
 		if (tile.isWallOrDoorway())
