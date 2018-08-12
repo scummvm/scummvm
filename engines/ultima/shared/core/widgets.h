@@ -94,23 +94,11 @@ public:
 };
 
 /**
- * Base class for dungeon monsters
+ * Stub class for dungeon creatures
  */
-class DungeonMonster : public DungeonWidget {
-protected:
-	int _hitPoints;
+class DungeonCreature {
 public:
-	/**
-	 * Constructor
-	 */
-	DungeonMonster(Game *game, Map::MapBase *map, int hitPoints) : DungeonWidget(game, map), _hitPoints(hitPoints) {}
-	DungeonMonster(Game *game, Map::MapBase *map, int hitPoints, const Point &pt, Direction dir = DIR_NONE) :
-		DungeonWidget(game, map, pt, dir), _hitPoints(hitPoints) {}
-
-	/**
-	 * Destructor
-	 */
-	virtual ~DungeonMonster() {}
+	virtual ~DungeonCreature() {}
 
 	/**
 	 * Returns true if a monster blocks the background behind him
@@ -120,7 +108,7 @@ public:
 	/**
 	 * Draw a monster
 	 */
-	virtual void draw(DungeonSurface &s, uint distance) {}
+	virtual void draw(DungeonSurface &s, uint distance) = 0;
 };
 
 } // End of namespace Shared
