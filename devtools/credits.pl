@@ -485,6 +485,7 @@ begin_credits("Credits");
 	    begin_section("Stark Team");
 		add_person("Bastien Bouclet", "bgK", "Core developer");
 		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "Core developer (retired)");
+		add_person("Liu Zhaosong", "Douglas", "Core developer");
 	    end_section();
 	end_section();
 

@@ -23,6 +23,7 @@ ResidualVM
     Stark Team:
        Bastien Bouclet              - Core developer
        Einar Johan T. Soemaaen      - Core developer (retired)
+       Liu Zhaosong                 - Core developer
 
   Contributors
   ------------
@@ -95,7 +96,7 @@ ResidualVM
 ScummVM code
 ************
    ResidualVM uses a lot of ScummVM code. For a list of authors look into
-   COPYRIGHT file. 
+   COPYRIGHT file.
 
 Website code
 ************
@@ -103,7 +104,7 @@ Website code
 
 Special thanks to
 *****************
-   The LUA developers, for creating a nice compact script interpreter. 
+   The LUA developers, for creating a nice compact script interpreter.
 
    Tim Schafer, for obvious reasons, and everybody else who helped make Grim
    Fandango a brilliant game; and the EMI team for giving it their best try.
@@ -112,5 +113,5 @@ Special thanks to
    avoiding the horrible hack it could have been.
 
    Benjamin Haisch, for emimeshviewer, which our EMI code borrows heavily
-   from. 
+   from.
 
