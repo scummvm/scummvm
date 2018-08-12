@@ -28,7 +28,7 @@
 #include "common/ustr.h"
 
 namespace Graphics {
-struct Font;
+class Font;
 }
 
 namespace Mohawk {
