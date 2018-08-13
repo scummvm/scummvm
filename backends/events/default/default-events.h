@@ -88,13 +88,13 @@ public:
 	virtual int shouldRTL() const override { return _shouldRTL; }
 	virtual void resetRTL() override { _shouldRTL = false; }
 #ifdef FORCE_RTL
-	virtual void resetQuit() { _shouldQuit = false; }
+	virtual void resetQuit() override { _shouldQuit = false; }
 #endif
 
 #ifdef ENABLE_KEYMAPPER
 	 // IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
 	 // this, please talk to tsoliman and/or LordHoto.
-	virtual Common::Keymapper *getKeymapper() { return _keymapper; }
+	virtual Common::Keymapper *getKeymapper() override { return _keymapper; }
 #endif
 
 	/**
