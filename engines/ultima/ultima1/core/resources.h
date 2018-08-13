@@ -46,6 +46,10 @@ public:
 	int LOCATION_PEOPLE[150][4];
 	byte DUNGEON_DRAW_DATA[1964];
 	const char *DUNGEON_ITEM_NAMES[2];
+	const char *WEAPON_NAMES_UPPERCASE[16];
+	const char *WEAPON_NAMES_LOWERCASE[16];
+	const char *ARMOR_NAMES[6];
+	const char *SPELL_NAMES[11];
 	const char *BLOCKED;
 	const char *ENTER_QUESTION;
 	const char *ENTERING;

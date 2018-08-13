@@ -124,6 +124,25 @@ const char *const SRC_LOCATION_NAMES[LOCATION_COUNT] = {
 
 static const char *const SRC_DUNGEON_ITEM_NAMES[2] = { "Chest", "Coffin" };
 
+static const char *SRC_WEAPON_NAMES_UPPERCASE[16] = {
+	"Hands", "Dagger", "Mace", "Axe", "Rope & Spikes", "Sword", "Great Sword"
+	"Bow & Arrows", "Amulet", "Pistol", "Light Sword", "Phazor", "Blaster"
+};
+
+static const char *SRC_WEAPON_NAMES_LOWERCASE[16] = {
+	"hands", "dagger", "mace", "axe", "rope", "sword", "g sword", "bow",
+	"amulet", "wand", "staff" "triangle", "pistol", "L sword", "phazor", "blaster"
+};
+
+static const char *SRC_ARMOR_NAMES[6] = {
+	"Skin", "Leather armor", "Chain mail", "Plate mail", "Vacuum suit", "Reflect suit"
+};
+
+static const char *SRC_SPELL_NAMES[11] = {
+	"Prayer", "Open", "Unlock", "Magic Missile", "Steal", "Ladder Down", "Ladder Up",
+	"Blink", "Create", "Destroy", "Kill"
+};
+
 const byte SRC_LOCATION_X[LOCATION_COUNT] = {
 	39, 66, 25, 46, 52, 18, 70, 64, 126, 128, 148, 115, 150, 121,
 	150, 109, 42, 44, 64, 31, 66, 37, 66, 25, 128, 101, 142, 121,
@@ -477,6 +496,11 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(&SRC_LOCATION_PEOPLE[0][0], &SRC_LOCATION_PEOPLE[0][0] + 150 * 4, &LOCATION_PEOPLE[0][0]);
 	Common::copy(&SRC_DUNGEON_DRAW_DATA[0], &SRC_DUNGEON_DRAW_DATA[1964], DUNGEON_DRAW_DATA);
 	Common::copy(&SRC_DUNGEON_ITEM_NAMES[0], &SRC_DUNGEON_ITEM_NAMES[2], DUNGEON_ITEM_NAMES);
+	Common::copy(&SRC_WEAPON_NAMES_UPPERCASE[0], &SRC_WEAPON_NAMES_UPPERCASE[16], WEAPON_NAMES_UPPERCASE);
+	Common::copy(&SRC_WEAPON_NAMES_LOWERCASE[0], &SRC_WEAPON_NAMES_LOWERCASE[16], WEAPON_NAMES_LOWERCASE);
+	Common::copy(&SRC_ARMOR_NAMES[0], &SRC_ARMOR_NAMES[16], ARMOR_NAMES);
+	Common::copy(&SRC_SPELL_NAMES[0], &SRC_SPELL_NAMES[16], SPELL_NAMES);
+
 	BLOCKED = SRC_BLOCKED;
 	ENTER_QUESTION = SRC_ENTER_QUESTION;
 	ENTERING = SRC_ENTERING;
@@ -501,6 +525,11 @@ void GameResources::synchronize() {
 	syncNumbers2D((int *)LOCATION_PEOPLE, 150, 4);
 	syncBytes(DUNGEON_DRAW_DATA, 1964);
 	syncStrings(DUNGEON_ITEM_NAMES, 2);
+	syncStrings(WEAPON_NAMES_UPPERCASE, 16);
+	syncStrings(WEAPON_NAMES_LOWERCASE, 16);
+	syncStrings(ARMOR_NAMES, 6);
+	syncStrings(SPELL_NAMES, 11);
+
 	syncString(BLOCKED);
 	syncString(ENTER_QUESTION);
 	syncString(ENTERING);
