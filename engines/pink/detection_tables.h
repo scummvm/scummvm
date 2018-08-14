@@ -28,7 +28,18 @@
 namespace Pink {
 
 static const ADGameDescription gameDescriptions[] = {
-	// English, Version 1.0
+	// Dutch, Version 1.0
+	{
+		"peril",
+		0,
+		AD_ENTRY1s("PPTP.ORB", "4ae829fb3988ad783409ce8311f95ddc", 613211963),
+		Common::NL_NLD,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	// English
 	{
 		"peril",
 		0,
@@ -138,7 +149,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// English, Version 1.0
+	// Dutch, Version 1.0
+	{
+		"pokus",
+		0,
+		AD_ENTRY1s("HPP.orb", "b769855e2fc94b9180763211c349a9ed",509498007),
+		Common::NL_NLD,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	// English
 	{
 		"pokus",
 		0,
