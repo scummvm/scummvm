@@ -251,10 +251,32 @@ Available keyboard shortcuts:
 Key             | Binding
 --------------- | -------------------------------------------------------------------------------------------
 `Escape`        | Skip video sequence or current line of dialogue, skip time if *Time Skip* option is enabled
+`F1`            | Diary Menu
+`F2`            | Save game
+`F3`            | Load game
+`F4`            | Conversation Log
+`F5`            | April's Diary (initially disabled)
+`F6`            | Video replay
+`F7`            | Game settings
+`F9`            | Toggle subtitles on and off
+`F10`           | Quit game and return to to main menu
+`A`             | Cycle back through inventory cursor items
+`S`             | Cycle forward through inventory cursor items
+`I`             | Inventory
+`P`             | Pause the game
+`X`             | Display all exits on current location
+`Page Up`       | Scroll up in dialogues and in your inventory
+`Up arrow`      | Scroll up in dialogues and in your inventory
+`Page Down`     | Scroll down in dialogues and in your inventory
+`Down arrow`    | Scroll down in dialogues and in your inventory
+`Enter`         | Select currently highlighted dialogue choice
+`1` – `9`       | Select a dialogue choice
 `Ctrl` + `F5`   | ResidualVM menu
+`Alt` + `Enter` | Switch between windowed mode and fullscreen
 `Ctrl` + `c`    | Force quit (from command line)
 `Ctrl` + `q`    | Quit (in-game)
-`Alt` + `Enter` | Switch between windowed mode and fullscreen
+`Alt` + `x`     | Quit
+`Alt` + `q`     | Quit
 
 
 ## 6. Configuration
