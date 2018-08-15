@@ -2127,7 +2127,7 @@ fi
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-android | androidsdl | gamecube | psp | tizen | wii | webos)
+android | androidsdl | gamecube | ps2 | psp | tizen | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -3296,7 +3296,7 @@ if test -n "$_host"; then
 			# libtremor, while our code later on expects it to be called libvorbisidec.
 			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
 			# Disable this for older SDK as this breaks the build otherwise...
-			if test -z "$PS2SDK_OLD"; then
+			if test -z "$PS2SDK_OLD" && test "$_tremor" = auto; then
 				_tremor=yes
 			fi
 			_mad=yes
@@ -3499,6 +3499,10 @@ case $_backend in
 		fi
 		append_var LDFLAGS "-L$PS2SDK/ee/lib"
 		append_var LDFLAGS "-L$PS2SDK/ports/lib"
+		if test -d "$PS2DEV/isjpcm"; then
+			append_var INCLUDES "-I$PS2DEV/isjpcm/include"
+			append_var LDFLAGS "-L$PS2DEV/isjpcm/lib"
+		fi
 		append_var LIBS "-lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm"
 		append_var LIBS "-lm -lc -lfileXio -lkernel -lstdc++"
 		;;
