@@ -602,8 +602,9 @@ bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
 		return true;
 	}
 
-	long value = strtol(argv[1], 0, 10);
-	if (value >= 0 && value <= INT_MAX)
+	char *endPtr = nullptr;
+	long value = strtol(argv[1], &endPtr, 10);
+	if (*endPtr == '\0' && value >= 0 && value <= INT_MAX)
 		StarkGlobal->setCurrentChapter((int32) value);
 	else
 		debugPrintf("Invalid chapter\n");
