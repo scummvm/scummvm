@@ -60,7 +60,7 @@ void Cursor::setCursorType(CursorType type) {
 		return;
 	}
 	_currentCursorType = type;
-	_cursorImage = StarkStaticProvider->getCursorImage(_currentCursorType);
+	_cursorImage = nullptr;
 }
 
 void Cursor::setCursorImage(VisualImageXMG *image) {
@@ -119,6 +119,10 @@ void Cursor::render() {
 		pos.y += cursorDistance;
 
 		_mouseText->render(pos);
+	}
+
+	if (_currentCursorType != kImage) {
+		_cursorImage = StarkStaticProvider->getCursorImage(_currentCursorType);
 	}
 
 	if (_cursorImage) {
