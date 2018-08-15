@@ -20,12 +20,17 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_abort
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+
 #include "common/scummsys.h"
 
 #if defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
 #include "backends/plugins/ps2/ps2-provider.h"
 #include "backends/plugins/elf/mips-loader.h"
+
+#include <kernel.h>
 
 class PS2DLObject : public MIPSDLObject {
 protected:

@@ -21,6 +21,8 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_abort
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "Gs2dScreen.h"
 #include <kernel.h>
