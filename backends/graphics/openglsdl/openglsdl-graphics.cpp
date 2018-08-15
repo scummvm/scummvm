@@ -173,7 +173,7 @@ void OpenGLSdlGraphicsManager::createOrUpdateScreen() {
 	_gameRect = computeGameRect(gameRenderTarget, _engineRequestedWidth, _engineRequestedHeight, effectiveWidth, effectiveHeight);
 
 	if (!createOrUpdateGLContext(effectiveWidth, effectiveHeight, gameRenderTarget)) {
-		warning("Error: %s", SDL_GetError());
+		warning("SDL Error: %s", SDL_GetError());
 		g_system->quit();
 	}
 

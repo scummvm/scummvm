@@ -135,7 +135,7 @@ void SurfaceSdlGraphicsManager::createOrUpdateScreen() {
 
 	_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, ConfMan.getInt("bpp"), sdlflags);
 	if (!_screen) {
-		warning("Error: %s", SDL_GetError());
+		warning("SDL_SetVideoMode failed: %s", SDL_GetError());
 		g_system->quit();
 	}
 
@@ -147,7 +147,7 @@ void SurfaceSdlGraphicsManager::createOrUpdateScreen() {
 	                                       f->Rshift, f->Gshift, f->Bshift, f->Ashift);
 
 	if (!_overlayscreen) {
-		warning("Error: %s", SDL_GetError());
+		warning("SDL_RGBSurface failed: %s", SDL_GetError());
 		g_system->quit();
 	}
 
