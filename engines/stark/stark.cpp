@@ -152,7 +152,10 @@ Common::Error StarkEngine::run() {
 	// Load global resources
 	_staticProvider->init();
 	_fontProvider->initFonts();
-	
+
+	// Apply the sound volume settings
+	syncSoundSettings();
+
 	// Initialize the UI
 	_userInterface->init();
 
