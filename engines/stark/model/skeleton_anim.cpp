@@ -79,13 +79,7 @@ void SkeletonAnim::getCoordForBone(uint32 time, int boneIdx, Math::Vector3d &pos
 	}
 
 	for (Common::Array<AnimKey>::const_iterator it = keys.begin(); it < keys.end(); ++it) {
-		if (it->_time == time) {
-			const AnimKey *key = it;
-			pos = key->_pos;
-			rot = key->_rot;
-
-			return;
-		} else if (it->_time > time) {
+		if (it->_time > time) {
 			// Between two key frames, interpolate
 			const AnimKey *a = it;
 			--it;
@@ -97,10 +91,18 @@ void SkeletonAnim::getCoordForBone(uint32 time, int boneIdx, Math::Vector3d &pos
 			rot = b->_rot.slerpQuat(a->_rot, t);
 
 			return;
+		} else if (it->_time == time || it == keys.end() - 1){
+			// At a key frame
+			// If not right one but didn't find any, then use last one as default
+			const AnimKey *key = it;
+			pos = key->_pos;
+			rot = key->_rot;
+			if (it == keys.end() - 1) {
+				warning("Unable to find keyframe for bone '%d' at %d ms, using default", boneIdx, time);
+			}
+			return;
 		}
 	}
-
-	warning("Unable to animate bone '%d' at %d ms", boneIdx, time);
 }
 
 } // End of namespace Stark
