@@ -39,24 +39,35 @@ public:
 	~GameChapter() {}
 
 	const Common::String &getChapterTitle(uint chapter) const {
-		return _chapterEntries[chapter / 10].title;
+		if (chapter >= _numChapter * 10) {
+			return  _errorText;
+		} else {
+			return _chapterEntries[chapter / 10].title;
+		}
 	}
 
 	const Common::String &getCurrentChapterTitle() const;
 
 	const Common::String &getChapterSubtitle(uint chapter) const {
-		return _chapterEntries[chapter / 10].subtitle;
+		if (chapter >= _numChapter * 10) {
+			return _errorText;
+		} else {
+			return _chapterEntries[chapter / 10].subtitle;
+		}
 	}
 
 	const Common::String &getCurrentChapterSubtitle() const;
 
 private:
+	static const int _numChapter = 15;
+
 	struct ChapterEntry {
 		Common::String title;
 		Common::String subtitle;
 	};
 
 	Common::Array<ChapterEntry> _chapterEntries;
+	Common::String _errorText;
 };
 
 } // End of namespace Stark

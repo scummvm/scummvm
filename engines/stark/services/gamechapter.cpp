@@ -29,7 +29,7 @@
 
 namespace Stark {
 
-GameChapter::GameChapter() {
+GameChapter::GameChapter() : _errorText("Unknown Chapter") {
 	Common::INIFile file;
 	if (!file.loadFromFile("chapters.ini")) {
 		error("Opening file 'chapters.ini' failed");
@@ -56,7 +56,7 @@ GameChapter::GameChapter() {
 		key = Common::String::format("%02d", index);
 	}
 
-	if (index < 15) {
+	if (index < _numChapter) {
 		error("File 'chapters.ini' is incomplete");
 	}
 }
