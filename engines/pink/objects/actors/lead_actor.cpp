@@ -283,9 +283,9 @@ void LeadActor::onMouseOver(const Common::Point point, CursorMgr *mgr) {
 
 void LeadActor::onLeftClickMessage() {
 	if (_isHaveItem) {
-		assert(_state != kMoving);
 		_isHaveItem = false;
-		_nextState = kUndefined;
+		_nextState = _state != kMoving ? kUndefined : kReady;
+		forceUpdateCursor();
 	} else {
 		if (_state == kMoving)
 			cancelInteraction();
