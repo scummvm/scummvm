@@ -467,6 +467,10 @@ static const byte SRC_DUNGEON_DRAW_DATA[1964] = {
 	0xEC, 0xD3, 0x14, 0xD3, 0x7E, 0xEC, 0xF1, 0x14, 0xF1, 0x7F, 0x7E, 0x00, 0x88, 0x00, 0x00, 0x7F
 };
 
+const byte SRC_OVERWORLD_MONSTER_DAMAGE[15] = {
+	10, 5, 4, 3, 2, 1, 4, 6, 8, 10, 1, 2, 4, 6, 8
+};
+
 const char *const SRC_OVERWORLD_MONSTER_NAMES[15] = {
 	"Ness creature", "Giant squid", "Dragon turtle", "Pirate ship", "Hood", "Bear", "Hidden archer",
 	"Dark knight", "Evil trent", "Thief", "Orc", "Knight", "Necromancer", "Evil ranger", "Wandering warlock"
@@ -492,7 +496,7 @@ const char *const SRC_MISSED = "Missed!";
 const char *const SRC_THIEF_STOLE = "Thief stole %s %s";
 const char *const SRC_A = "a";
 const char *const SRC_AN = "an";
-const char *const SRC_HIT_DAMAGE = "Hit! %d damage!";
+const char *const SRC_HIT_DAMAGE = "Hit! %2d damage!";
 const char *const SRC_MONSTER_ATTACKS = "%s attacks!";
 
 /*-------------------------------------------------------------------*/
@@ -514,6 +518,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(&SRC_WEAPON_NAMES_LOWERCASE[0], &SRC_WEAPON_NAMES_LOWERCASE[16], WEAPON_NAMES_LOWERCASE);
 	Common::copy(&SRC_ARMOR_NAMES[0], &SRC_ARMOR_NAMES[16], ARMOR_NAMES);
 	Common::copy(&SRC_SPELL_NAMES[0], &SRC_SPELL_NAMES[16], SPELL_NAMES);
+	Common::copy(&SRC_OVERWORLD_MONSTER_DAMAGE[0], &SRC_OVERWORLD_MONSTER_DAMAGE[15], OVERWORLD_MONSTER_DAMAGE);
 	Common::copy(&SRC_OVERWORLD_MONSTER_NAMES[0], &SRC_OVERWORLD_MONSTER_NAMES[15], OVERWORLD_MONSTER_NAMES);
 	Common::copy(&SRC_DUNGEON_MONSTER_NAMES[0], &SRC_DUNGEON_MONSTER_NAMES[25], DUNGEON_MONSTER_NAMES);
 
@@ -550,6 +555,7 @@ void GameResources::synchronize() {
 	syncStrings(WEAPON_NAMES_LOWERCASE, 16);
 	syncStrings(ARMOR_NAMES, 6);
 	syncStrings(SPELL_NAMES, 11);
+	syncBytes(OVERWORLD_MONSTER_DAMAGE, 15);
 	syncStrings(OVERWORLD_MONSTER_NAMES, 15);
 	syncStrings(DUNGEON_MONSTER_NAMES, 25);
 
