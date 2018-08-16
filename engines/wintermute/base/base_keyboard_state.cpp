@@ -198,20 +198,46 @@ const char *BaseKeyboardState::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseKeyboardState::readKey(Common::Event *event) {
-	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
-	_currentCharCode = keyCodeToVKey(event);
-	// convert all lowercase keys to uppercase to make it easier for handling later on for consistency
-	if (Common::isLower(_currentCharCode) && (event->kbd.hasFlags(Common::KBD_SHIFT) || event->kbd.flags & Common::KBD_CAPS)) {
-		if (!(event->kbd.keycode >= Common::KEYCODE_F1 && event->kbd.keycode <= Common::KEYCODE_F12)) {
-			_currentCharCode = toupper(_currentCharCode);
-		}
-	}
-	// Verify that this is a printable ISO-8859-character (including the upper charset)
-	if ((_currentCharCode <= 0x7E && _currentCharCode >= 0x20) || (_currentCharCode <= 0xFF && _currentCharCode >= 0xA0)) {
-		_currentPrintable = true;
-	} else {
+
+	Common::KeyCode code = event->kbd.keycode;
+
+	if (event->type != Common::EVENT_KEYDOWN) {
+		_currentCharCode = 0;
 		_currentPrintable = false;
 	}
+
+	// use ASCII value if key pressed is an alphanumeric or punctuation key
+	// keys pressed on numpad are handled in next 2 blocks
+	else if (code > Common::KEYCODE_SPACE && code < Common::KEYCODE_DELETE) {
+		_currentCharCode = event->kbd.ascii;
+		_currentPrintable = true;
+	}
+
+	// use ASCII value for numpad '/', '*', '-', '+'
+	else if (code >= Common::KEYCODE_KP_DIVIDE && code <= Common::KEYCODE_KP_PLUS) {
+		_currentCharCode = event->kbd.ascii;
+		_currentPrintable = true;
+	}
+
+	// if NumLock is active, use ASCII for numpad keys '0'~'9' and '.'
+	// keys pressed on numpad without NumLock are considered as normal keycodes, handled in the next block
+	else if ((code >= Common::KEYCODE_KP0 && code <= Common::KEYCODE_KP_PERIOD) && ((event->kbd.flags & Common::KBD_NUM) != 0)) {
+		_currentCharCode = event->kbd.ascii;
+		_currentPrintable = true;
+	}
+
+	// use keyCodeToVKey mapping for all other events
+	// some keys are printable from those keys
+	else {
+		_currentCharCode = keyCodeToVKey(event);
+		_currentPrintable = code == Common::KEYCODE_BACKSPACE || 
+		                    code == Common::KEYCODE_TAB || 
+		                    code == Common::KEYCODE_RETURN || 
+		                    code == Common::KEYCODE_KP_ENTER || 
+		                    code == Common::KEYCODE_ESCAPE || 
+		                    code == Common::KEYCODE_SPACE;
+	}
+
 	//_currentKeyData = KeyData;
 
 	_currentControl = isControlDown();
@@ -269,15 +295,13 @@ bool BaseKeyboardState::isCurrentPrintable() const {
 
 //////////////////////////////////////////////////////////////////////////
 enum VKeyCodes {
-	kVkBack       = 8,
-	kVkTab        = 9,
-
-	kVkReturn     = 13,
+	kVkBack       = 8,  //printable
+	kVkTab        = 9,  //printable
+	kVkReturn     = 13, //printable
 	kVkPause      = 19,
+	kVkEscape     = 27, //printable
+	kVkSpace      = 32, //printable
 
-	kVkEscape     = 27,
-
-	kVkSpace      = 32,
 	kVkEnd        = 35,
 	kVkHome       = 36,
 	kVkLeft       = 37,
@@ -304,22 +328,6 @@ enum VKeyCodes {
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 	// todo
-	if (event->type != Common::EVENT_KEYDOWN) {
-		return 0;
-	}
-
-	// return ASCII value if key pressed is an alphanumeric key
-	// number keys pressed on numpad are handled in next block
-	if (Common::isAlnum(event->kbd.keycode)) {
-		return event->kbd.ascii;
-	}
-
-	// if NumLock is active, return ASCII for numpad keys
-	// keys pressed on numpad without NumLock are considered as normal keycodes, handled in the next block
-	if (Common::isDigit(event->kbd.ascii) && ((event->kbd.flags & Common::KBD_NUM) != 0)) {
-		return event->kbd.ascii;
-	}
-
 	switch (event->kbd.keycode) {
 	case Common::KEYCODE_BACKSPACE:
 		return kVkBack;
