@@ -28,6 +28,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit		//Needed for IRIX's unistd.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_random
+#define FORBIDDEN_SYMBOL_EXCEPTION_srandom
 
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
