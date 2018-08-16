@@ -4285,7 +4285,6 @@ if test "$_theoradec" = auto ; then
 	_theoradec=no
 	cat > $TMPC << EOF
 #include <theora/theoradec.h>
-#include <vorbis/codec.h>
 int main(void) { th_ycbcr_buffer yuv; th_decode_ycbcr_out(NULL, yuv);  }
 EOF
 	cc_check $THEORADEC_CFLAGS $THEORADEC_LIBS -ltheoradec && _theoradec=yes
