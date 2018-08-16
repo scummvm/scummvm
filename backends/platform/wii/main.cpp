@@ -52,7 +52,7 @@ extern "C" {
 bool reset_btn_pressed = false;
 bool power_btn_pressed = false;
 
-void reset_cb(void) {
+void reset_cb(u32, void*) {
 #ifdef DEBUG_WII_GDB
 	printf("attach gdb now\n");
 	_break();

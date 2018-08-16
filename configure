@@ -2693,6 +2693,10 @@ case $_host_os in
 			# retarded toolchain patch forces --gc-sections, overwrite it
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
+		if test -d "$DEVKITPRO/portlibs/ppc" ; then
+			append_var CXXFLAGS "-isystem $DEVKITPRO/portlibs/ppc/include"
+			append_var LDFLAGS "-L$DEVKITPRO/portlibs/ppc/lib"
+		fi
 		;;
 	haiku*)
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -2872,6 +2876,10 @@ case $_host_os in
 		if test "$_dynamic_modules" = "yes" ; then
 			# retarded toolchain patch forces --gc-sections, overwrite it
 			append_var LDFLAGS "-Wl,--no-gc-sections"
+		fi
+		if test -d "$DEVKITPRO/portlibs/ppc" ; then
+			append_var CXXFLAGS "-isystem $DEVKITPRO/portlibs/ppc/include"
+			append_var LDFLAGS "-L$DEVKITPRO/portlibs/ppc/lib"
 		fi
 		;;
 	wince)
