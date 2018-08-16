@@ -84,6 +84,20 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		GF_CDROM,
 	},
 
+	{ // ST25 DOS CD-ROM edition (EN) #2
+		{
+			"st25",
+			"CD",
+			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7793808),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GType_ST25,
+		GF_CDROM,
+	},	
+
 	{ // ST25 DOS CD-ROM edition (FR)
 		{
 			"st25",
