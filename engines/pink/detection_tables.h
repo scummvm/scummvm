@@ -153,7 +153,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"pokus",
 		0,
-		AD_ENTRY1s("HPP.orb", "b769855e2fc94b9180763211c349a9ed",509498007),
+		AD_ENTRY1s("HPP.orb", "b769855e2fc94b9180763211c349a9ed", 509498007),
 		Common::NL_NLD,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
