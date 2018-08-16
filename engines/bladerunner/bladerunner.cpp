@@ -315,8 +315,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// Seed rand
 
 	// TODO: Sine and cosine lookup tables for intervals of 1.0, 4.0, and 12.0
-	_cosTable1024 = new Common::CosineTable(10); // 10-bits = 1024 points for 2*PI;	
-	_sinTable1024 = new Common::SineTable(10);	
+	_cosTable1024 = new Common::CosineTable(1024); // 10-bits = 1024 points for 2*PI;	
+	_sinTable1024 = new Common::SineTable(1024);	
 
 	_view = new View();
 
