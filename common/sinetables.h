@@ -46,15 +46,23 @@ public:
 	 * - Entries 2_nPoints/4 up to nPoints/2:
 	 *           sin(pi) till (excluding) sin(3/2*pi)
 	 */
-	const float *getTable() { return _table; }
+	const float *getTable() { return _tableEOS; }
+
+	/**
+	 * Returns sin(2*pi * index / nPoints )
+	 * Index must be in range [0, nPoints - 1]
+	 * Faster than atLegacy
+	 */
+	float at(int index) const;
 
 	/**
 	 * Returns sin(2*pi * index / nPoints )
 	 * Index must be in range [0, nPoints - 1]
 	 */
-	float at(int index) const;
+	float atLegacy(int index) const;	
 
 private:
+	float *_tableEOS;
 	float *_table;
 	double _radResolution; // Smallest radian increment
 	int _refSize; // _nPoints / 4
