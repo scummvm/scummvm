@@ -30,6 +30,16 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+OverworldMonster::OverworldMonster(Shared::Game *game, Shared::Map::MapBase *map, uint tileNum, int hitPoints,
+		const Point &pt, Shared::Direction dir) : Shared::Creature(game, map, hitPoints, pt, dir), _tileNum(tileNum) {
+	_monsterId = (OverworldMonsterId)((tileNum - 19) / 2);
+	
+	Ultima1Game *g = static_cast<Ultima1Game *>(game);
+	_name = g->_res->OVERWORLD_MONSTER_NAMES[_monsterId];
+	_attackStrength = g->_res->OVERWORLD_MONSTER_DAMAGE[_monsterId];
+}
+
+
 uint OverworldMonster::attackDistance() const {
 	Point playerPos = _map->_currentTransport->_position;
 	Point diff = playerPos - _position;
@@ -47,6 +57,8 @@ void OverworldMonster::attack() {
 	Point tempDiff;
 	int maxDistance = attackDistance();
 	Shared::MapTile mapTile;
+	Shared::Character *c = _game->_gameState->_currentCharacter;
+	uint threshold, damage;
 
 	// Print out the monster attacking
 	addInfoMsg(Common::String::format(game->_res->MONSTER_ATTACKS, _name.c_str()));
@@ -64,7 +76,21 @@ void OverworldMonster::attack() {
 		_game->sleep(50);
 
 	} while (++distance <= maxDistance && mapTile._tileNum != 3 && (tempDiff.x != 0 || tempDiff.y != 0));
-	// TODO: Stuff
+
+	// Calculate damage threshold
+	threshold = (c->_stamina / 2) + (c->_equippedArmor * 8) + 56;
+
+	if (tempDiff.x == 0 && tempDiff.y == 0 &&  _game->getRandomNumber(1, 255) > threshold) {
+		hit->_position = playerPos;
+		_game->playFX(2);
+		
+		damage = _game->getRandomNumber(1, _attackStrength * 2 + 1);
+		addInfoMsg(Common::String::format(game->_res->HIT_DAMAGE, damage));
+		game->_gameState->_currentCharacter->_hitPoints -= damage;
+
+	} else {
+		addInfoMsg(Common::String::format("%s %s", _name.c_str(), game->_res->MISSED));
+	}
 
 	_map->removeWidget(hit);
 }

@@ -41,6 +41,7 @@ class OverworldMonster : public Shared::Creature {
 private:
 	uint _tileNum;
 	OverworldMonsterId _monsterId;
+	uint _attackStrength;
 protected:
 	/**
 	 * Returns either the maximum attack distance for a monster, or 0 if the monster is beyond
@@ -68,9 +69,7 @@ public:
 	 * Constructor
 	 */
 	OverworldMonster(Shared::Game *game, Shared::Map::MapBase *map, uint tileNum, int hitPoints,
-		const Point &pt, Shared::Direction dir = Shared::DIR_NONE) :
-		Shared::Creature(game, map, hitPoints, pt, dir), _tileNum(tileNum),
-		_monsterId((OverworldMonsterId)((tileNum - 19) / 2)) {}
+		const Point &pt, Shared::Direction dir = Shared::DIR_NONE);
 
 	/**
 	 * Destructor
