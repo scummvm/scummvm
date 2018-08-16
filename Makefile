@@ -114,7 +114,7 @@ endif
 
 .PHONY: print-dists print-executables
 print-dists:
-	@echo $(foreach V, $(filter DIST_FILES_%, $(.VARIABLES)), $($V))
+	@echo $(DIST_FILES_DOCS) $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) $(srcdir)/doc
 
 print-executables:
 	@echo $(if $(DIST_EXECUTABLES),$(DIST_EXECUTABLES),$(EXECUTABLE) $(PLUGINS))
