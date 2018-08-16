@@ -46,15 +46,23 @@ public:
 	 * - Entries (excluding) nPoints/4 up to nPoints/2:
 	 *           (excluding) cos(3/2*pi) till (excluding) cos(2*pi)
 	 */
-	const float *getTable() { return _table; }
+	const float *getTable() { return _tableEOS; }
+
+	/**
+	 * Returns cos(2*pi * index / nPoints )
+	 * Index must be in range [0, nPoints - 1]
+	 * Faster than atLegacy
+	 */
+	float at(int index) const;
 
 	/**
 	 * Returns cos(2*pi * index / nPoints )
 	 * Index must be in range [0, nPoints - 1]
 	 */
-	float at(int index) const;
+	float atLegacy(int index) const;
 
 private:
+	float *_tableEOS;
 	float *_table;
 	double _radResolution; // Smallest radian increment
 	int _refSize; // _nPoints / 4
