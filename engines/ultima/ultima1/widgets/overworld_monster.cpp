@@ -61,7 +61,8 @@ void OverworldMonster::attack() {
 	uint threshold, damage;
 
 	// Print out the monster attacking
-	addInfoMsg(Common::String::format(game->_res->MONSTER_ATTACKS, _name.c_str()));
+	
+	addInfoMsg(Common::String::format("%s %s %s", _name.c_str(), game->_res->ATTACKS, _name.c_str()), false);
 
 	// Set up widget for displaying the moving hit circle
 	Hit *hit = new Hit(_game, _map);
@@ -80,16 +81,26 @@ void OverworldMonster::attack() {
 	// Calculate damage threshold
 	threshold = (c->_stamina / 2) + (c->_equippedArmor * 8) + 56;
 
-	if (tempDiff.x == 0 && tempDiff.y == 0 &&  _game->getRandomNumber(1, 255) > threshold) {
+	if (tempDiff.x == 0 && tempDiff.y == 0 && _game->getRandomNumber(1, 255) > threshold) {
 		hit->_position = playerPos;
 		_game->playFX(2);
-		
+
 		damage = _game->getRandomNumber(1, _attackStrength * 2 + 1);
-		addInfoMsg(Common::String::format(game->_res->HIT_DAMAGE, damage));
 		game->_gameState->_currentCharacter->_hitPoints -= damage;
 
+		if (_name.size() > 8) {
+			addInfoMsg("");
+			addInfoMsg(Common::String::format("%s %2d %s", game->_res->HIT, damage, game->_res->DAMAGE));
+		} else {
+			addInfoMsg(Common::String::format(" %s", game->_res->HIT));
+			addInfoMsg(Common::String::format("%2d %s", damage, game->_res->DAMAGE));
+		}
 	} else {
-		addInfoMsg(Common::String::format("%s %s", _name.c_str(), game->_res->MISSED));
+		if (_name.size() > 8)
+			addInfoMsg("", true);
+		else
+			addInfoMsg(" ", false);
+		addInfoMsg(game->_res->MISSED);
 	}
 
 	_map->removeWidget(hit);

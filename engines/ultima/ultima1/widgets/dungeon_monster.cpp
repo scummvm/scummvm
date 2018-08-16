@@ -154,7 +154,7 @@ void DungeonMonster::attack() {
 		}
 
 		if (isHit) {
-			addInfoMsg(Common::String::format(game->_res->HIT_DAMAGE, damage));
+			addInfoMsg(Common::String::format("%s %2d %s", game->_res->HIT, damage, game->_res->DAMAGE));
 			c->_hitPoints -= damage;
 		}
 	} else {
