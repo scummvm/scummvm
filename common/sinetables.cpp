@@ -27,12 +27,11 @@
 
 namespace Common {
 
-SineTable::SineTable(int bitPrecision) {
-	assert((bitPrecision >= 4) && (bitPrecision <= 16));
+SineTable::SineTable(int nPoints) {
+	assert((nPoints >= 16) && (nPoints <= 65536)); // log2 space is in [4,16]
+	assert(nPoints % 4 == 0);
 
-	_bitPrecision = bitPrecision;
-
-	_nPoints = 1 << _bitPrecision;
+	_nPoints = nPoints;
 	_radResolution = 2.0 * M_PI / _nPoints;
 	_refSize = _nPoints / 4;
 	_table = new float[_nPoints / 2];
