@@ -29,6 +29,8 @@
 
 namespace Pink {
 
+bool g_skipping = false; // FIXME: non-const global var
+
 ActionPlayWithSfx::~ActionPlayWithSfx() {
 	ActionPlay::end();
 	for (uint i = 0; i < _sfxArray.size(); ++i) {
@@ -74,6 +76,12 @@ void ActionPlayWithSfx::onStart() {
 void ActionPlayWithSfx::end() {
 	ActionCEL::end();
 	debugC(6, kPinkDebugActions, "ActionPlayWithSfx %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+	// original bug fix
+	if (g_skipping) {
+		for (uint i = 0; i < _sfxArray.size(); ++i) {
+			_sfxArray[i]->end();
+		}
+	}
 }
 
 void ActionSfx::deserialize(Pink::Archive &archive) {
@@ -95,6 +103,10 @@ void ActionSfx::play() {
 		int8 balance = (_sprite->getDecoder()->getCenter().x * 396875 / 1000000) - 127;
 		_sound.play(page->getResourceStream(_sfxName), Audio::Mixer::kSFXSoundType, _volume, balance);
 	}
+}
+
+void ActionSfx::end() {
+	_sound.stop();
 }
 
 } // End of namespace Pink

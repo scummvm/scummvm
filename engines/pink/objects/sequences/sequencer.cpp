@@ -24,6 +24,7 @@
 
 #include "pink/archive.h"
 #include "pink/pink.h"
+#include "pink/objects/actions/action_play_with_sfx.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/game_page.h"
 #include "pink/objects/sequences/sequencer.h"
@@ -143,18 +144,27 @@ void Sequencer::removeContext(SequenceContext *context) {
 }
 
 void Sequencer::skipSubSequence() {
-	if (_context)
+	if (_context) {
+		g_skipping = true;
 		_context->getSequence()->skipSubSequence();
+		g_skipping = false;
+	}
 }
 
 void Sequencer::restartSequence() {
-	if (_context)
+	if (_context) {
+		g_skipping = true;
 		_context->getSequence()->restart();
+		g_skipping = false;
+	}
 }
 
 void Sequencer::skipSequence() {
-	if (_context && _context->getSequence()->isSkippingAllowed())
+	if (_context && _context->getSequence()->isSkippingAllowed()) {
+		g_skipping = true;
 		_context->getSequence()->skip();
+		g_skipping = false;
+	}
 }
 
 void Sequencer::loadState(Archive &archive) {

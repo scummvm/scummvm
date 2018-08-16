@@ -28,6 +28,8 @@
 
 namespace Pink {
 
+extern bool g_skipping;
+
 class ActionSfx;
 
 class ActionPlayWithSfx : public ActionPlay {
@@ -61,6 +63,7 @@ public:
 	void toConsole() override;
 
 	void play();
+	void end();
 
 	int32 getFrame() { return _frame; }
 
