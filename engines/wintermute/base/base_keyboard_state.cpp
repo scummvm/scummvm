@@ -32,6 +32,8 @@
 #include "common/system.h"
 #include "common/keyboard.h"
 
+#define KEYSTATES_ARRAY_SIZE (Common::KEYCODE_UNDO + 1) // Hardcoded size for the common/keyboard.h enum
+
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseKeyboardState, false)
@@ -46,8 +48,8 @@ BaseKeyboardState::BaseKeyboardState(BaseGame *inGame) : BaseScriptable(inGame) 
 	_currentAlt = false;
 	_currentControl = false;
 
-	_keyStates = new uint8[323]; // Hardcoded size for the common/keyboard.h enum
-	for (int i = 0; i < 323; i++) {
+	_keyStates = new uint8[KEYSTATES_ARRAY_SIZE];
+	for (int i = 0; i < KEYSTATES_ARRAY_SIZE; i++) {
 		_keyStates[i] = false;
 	}
 }
@@ -499,7 +501,7 @@ Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 		return Common::KEYCODE_SCROLLOCK;
 	default:
 		warning("Unknown VKEY: %d", vkey);
-		return (Common::KeyCode)vkey;
+		return (Common::KeyCode)(vkey < KEYSTATES_ARRAY_SIZE ? vkey : 0);
 		break;
 	}
 
