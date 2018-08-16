@@ -2832,6 +2832,7 @@ case $_host_os in
 		append_var CXXFLAGS "-march=armv3m"
 		append_var CXXFLAGS "-mtune=xscale"
 		append_var LDFLAGS "-static"
+		_optimization_level=-O2
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-fdata-sections"
 		append_var LDFLAGS "-Wl,--gc-sections"
