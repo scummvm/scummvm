@@ -66,30 +66,6 @@
 	return self;
 }
 
-- (NSArray *)keyCommands {
-	UIKeyCommand *upArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags: 0 action: @selector(upArrow:)];
-	UIKeyCommand *downArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputDownArrow modifierFlags: 0 action: @selector(downArrow:)];
-	UIKeyCommand *leftArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputLeftArrow modifierFlags: 0 action: @selector(leftArrow:)];
-	UIKeyCommand *rightArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputRightArrow modifierFlags: 0 action: @selector(rightArrow:)];
-	return [[NSArray alloc] initWithObjects: upArrow, downArrow, leftArrow, rightArrow, nil];
-}
-
-- (void) upArrow: (UIKeyCommand *) keyCommand {
-	[self handleKeyPress:273];
-}
-
-- (void) downArrow: (UIKeyCommand *) keyCommand {
-	[self handleKeyPress:274];
-}
-
-- (void) leftArrow: (UIKeyCommand *) keyCommand {
-	[self handleKeyPress:276];
-}
-
-- (void) rightArrow: (UIKeyCommand *) keyCommand {
-	[self handleKeyPress:275];
-}
-
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
 	unichar c;
 	if (text.length) {
