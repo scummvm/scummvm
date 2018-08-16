@@ -33,12 +33,10 @@ void Wench::movement() {
 		Point delta = getRandomMoveDelta();
 		Point newPos = _position + delta;
 		
-		// Check the destination tile
-		Map::U1MapTile mapTile;
-		_map->getTileAt(newPos, &mapTile);
-
-		// If the destination is clear, move to it
-		// TODO: move check, and if clear, move to dest
+		if (canMoveTo(newPos)) {
+			_position = newPos;
+			_game->playFX(4);
+		}
 	}
 }
 
