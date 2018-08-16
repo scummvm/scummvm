@@ -166,6 +166,7 @@ _debug_build=auto
 _release_build=auto
 _optimizations=auto
 _cxx_std=c++14
+_need_gnu=auto
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
@@ -1521,6 +1522,8 @@ ds)
 	_host_os=ds
 	_host_cpu=arm
 	_host_alias=arm-none-eabi
+	# The following is required to use viprintf in dsmain.cpp
+	_need_gnu=no
 	;;
 gamecube)
 	_host_os=gamecube
@@ -2070,6 +2073,7 @@ fi
 #
 if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
+		gnu_std=`echo $_cxx_std | sed 's/c++/gnu++/'`
 		if test "$_cxx_std" = "" ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
@@ -2080,9 +2084,8 @@ if test "$have_gcc" = yes ; then
 				append_var CXXFLAGS "-ansi"
 				;;
 			esac
-		else
-			need_gnu=no
-			gnu_std=`echo $_cxx_std | sed 's/c++/gnu++/'`
+		elif test "$_need_gnu" = "auto" ; then
+			_need_gnu=no
 
 			# This is only a problem until we can use variadic templates (i.e.
 			# C++11 is the minimum baseline), at which point vsnprintf goes
@@ -2106,16 +2109,16 @@ EOF
 					echo "vsprintf is broken"
 					exit 1
 				else
-					need_gnu=yes
+					_need_gnu=yes
 				fi
 			fi
 			cc_check_clean
-			echo $need_gnu
-
-			if test "$need_gnu" = "yes"; then
-				_cxx_std=$gnu_std
-			fi
+			echo $_need_gnu
 		fi
+		if test "$_need_gnu" = "yes"; then
+			_cxx_std=$gnu_std
+		fi
+
 		append_var CXXFLAGS "-W -Wno-unused-parameter"
 		add_line_to_config_mk 'HAVE_GCC3 = 1'
 		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'

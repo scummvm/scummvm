@@ -30,6 +30,8 @@
 // re-define those data types.
 #define SCUMMVM_DONT_DEFINE_TYPES
 
+typedef unsigned int uint;
+
 // Include required headers
 #include <stdio.h>
 #include <stdlib.h>
