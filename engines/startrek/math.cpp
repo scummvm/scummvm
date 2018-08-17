@@ -37,15 +37,7 @@ Fixed14 StarTrekEngine::sin(Angle angle) {
 	else if (i == 0x300)
 		return -1.0;
 
-	float f = 0.0;
-	if (i < 0x100)
-		f = _sineTable.getTable()[i & 0xff];
-	else if (i < 0x200)
-		f = _sineTable.getTable()[256 - (i & 0xff)];
-	else if (i < 0x300)
-		f = -_sineTable.getTable()[i & 0xff];
-	else if (i < 0x400)
-		f = -_sineTable.getTable()[256 - (i & 0xff)];
+	float f = _sineTable.at(i);
 	return Fixed14(f);
 }
 
