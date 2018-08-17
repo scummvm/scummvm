@@ -53,7 +53,7 @@ public:
 	void close();
 
 	void onLeftButtonClick(Common::Point point);
-	void onLeftButtonUp(Common::Point point);
+	void onLeftButtonUp();
 	void onMouseMove(Common::Point point);
 
 	PinkEngine *getGame() const { return _game; }

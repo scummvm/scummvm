@@ -246,9 +246,9 @@ void LeadActor::onLeftButtonClick(const Common::Point point) {
 	}
 }
 
-void LeadActor::onLeftButtonUp(const Common::Point point) {
+void LeadActor::onLeftButtonUp() {
 	if (_state == kPDA)
-		_page->getGame()->getPdaMgr().onLeftButtonUp(point);
+		_page->getGame()->getPdaMgr().onLeftButtonUp();
 }
 
 void LeadActor::onRightButtonClick(const Common::Point point) {

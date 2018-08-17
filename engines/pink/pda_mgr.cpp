@@ -125,7 +125,7 @@ void PDAMgr::onLeftButtonClick(Common::Point point) {
 		actor->onLeftClickMessage();
 }
 
-void PDAMgr::onLeftButtonUp(Common::Point point) {
+void PDAMgr::onLeftButtonUp() {
 	Actor* _rightHand = _globalPage->findActor(kRightHand);
 	if (_rightHand)
 		static_cast<ActionStill*>(_rightHand->getAction())->setFrame(0);
