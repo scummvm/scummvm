@@ -34,10 +34,6 @@ namespace Pink {
 
 class Page;
 class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
-class CelDecoder;
 
 struct ResourceDescription;
 

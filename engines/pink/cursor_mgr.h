@@ -32,7 +32,6 @@
 namespace Pink {
 
 class CursorActor;
-class Action;
 class Page;
 class PinkEngine;
 
