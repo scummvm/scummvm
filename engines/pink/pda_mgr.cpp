@@ -117,18 +117,18 @@ void PDAMgr::goToPage(const Common::String &pageName) {
 }
 
 void PDAMgr::onLeftButtonClick(Common::Point point) {
-	Actor* _rightHand = _globalPage->findActor(kRightHand);
-	if (_rightHand)
-		static_cast<ActionStill*>(_rightHand->getAction())->setFrame(1);
+	Actor* rightHand = _globalPage->findActor(kRightHand);
+	if (rightHand)
+		static_cast<ActionStill*>(rightHand->getAction())->setFrame(1);
 	Actor *actor = _game->getDirector()->getActorByPoint(point);
 	if (actor)
 		actor->onLeftClickMessage();
 }
 
 void PDAMgr::onLeftButtonUp() {
-	Actor* _rightHand = _globalPage->findActor(kRightHand);
-	if (_rightHand)
-		static_cast<ActionStill*>(_rightHand->getAction())->setFrame(0);
+	Actor* rightHand = _globalPage->findActor(kRightHand);
+	if (rightHand)
+		static_cast<ActionStill*>(rightHand->getAction())->setFrame(0);
 }
 
 void PDAMgr::onMouseMove(Common::Point point) {
