@@ -168,8 +168,8 @@ void PinkEngine::pauseEngine(void *engine, bool pause) {
 }
 
 void PinkEngine::load(Archive &archive) {
-	archive.readString();
-	archive.readString();
+	archive.skipString();
+	archive.skipString();
 	_modules.deserialize(archive);
 }
 

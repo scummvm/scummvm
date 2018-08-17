@@ -305,6 +305,11 @@ Common::String Archive::readString() {
 	return Common::String(buffer, len);
 }
 
+void Archive::skipString() {
+	byte len = _readStream->readByte();
+	_readStream->skip(len);
+}
+
 void Archive::writeString(const Common::String &string) {
 	_writeStream->writeByte(string.size());
 	_writeStream->write(string.c_str(), string.size());

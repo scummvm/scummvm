@@ -35,7 +35,7 @@ void Page::load(Archive &archive) {
 	debugC(6, kPinkDebugLoadingObjects, "Page load");
 	archive.mapObject(this);
 	NamedObject::deserialize(archive);
-	archive.readString(); //skip directory
+	archive.skipString(); //skip directory
 	_actors.deserialize(archive);
 }
 

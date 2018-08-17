@@ -49,6 +49,7 @@ public:
 	uint16 readWORD() { return _readStream->readUint16LE(); }
 
 	Common::String readString();
+	void skipString();
 
 	Object *readObject();
 

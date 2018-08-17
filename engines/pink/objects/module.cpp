@@ -45,7 +45,7 @@ void Module::load(Archive &archive) {
 	archive.mapObject(this);
 	NamedObject::deserialize(archive);
 
-	archive.readString(); // skip directory
+	archive.skipString(); // skip directory
 
 	_invMgr.deserialize(archive);
 	_pages.deserialize(archive);
