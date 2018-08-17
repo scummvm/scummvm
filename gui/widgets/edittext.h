@@ -30,7 +30,7 @@
 namespace GUI {
 
 enum {
-	_ExitTxtCmd = 'TXTE'
+	kExitTxtCmd = 'TXTE'
 };
 
 /* EditTextWidget */

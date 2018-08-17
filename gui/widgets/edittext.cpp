@@ -132,7 +132,7 @@ void EditTextWidget::startEditMode() {
 void EditTextWidget::endEditMode() {
 	releaseFocus();
 	
-	sendCommand(_ExitTxtCmd, 0);
+	sendCommand(kExitTxtCmd, 0);
 	sendCommand(_finishCmd, 0);
 }
 
@@ -143,7 +143,7 @@ void EditTextWidget::abortEditMode() {
 	releaseFocus();
 }
 
-Common::String EditTextWidget::getEditString(){
+Common::String EditTextWidget::getEditString() {
 	return _backupString;
 }
 

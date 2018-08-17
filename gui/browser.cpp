@@ -95,7 +95,7 @@ void BrowserDialog::open() {
 void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	//Search for typed-in directory
-	case _ExitTxtCmd:
+	case kExitTxtCmd:
 		_node = Common::FSNode(_currentPath->getEditString());
 		updateListing();
 		break;
