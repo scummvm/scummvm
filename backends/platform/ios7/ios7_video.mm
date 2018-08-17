@@ -986,27 +986,27 @@ uint getSizeNextPOT(uint size) {
 }
 
 - (NSArray *)keyCommands {
-    UIKeyCommand *upArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags: 0 action: @selector(upArrow:)];
-    UIKeyCommand *downArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputDownArrow modifierFlags: 0 action: @selector(downArrow:)];
-    UIKeyCommand *leftArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputLeftArrow modifierFlags: 0 action: @selector(leftArrow:)];
-    UIKeyCommand *rightArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputRightArrow modifierFlags: 0 action: @selector(rightArrow:)];
-    return [[NSArray alloc] initWithObjects: upArrow, downArrow, leftArrow, rightArrow, nil];
+	UIKeyCommand *upArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputUpArrow modifierFlags: 0 action: @selector(upArrow:)];
+	UIKeyCommand *downArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputDownArrow modifierFlags: 0 action: @selector(downArrow:)];
+	UIKeyCommand *leftArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputLeftArrow modifierFlags: 0 action: @selector(leftArrow:)];
+	UIKeyCommand *rightArrow = [UIKeyCommand keyCommandWithInput: UIKeyInputRightArrow modifierFlags: 0 action: @selector(rightArrow:)];
+	return [[NSArray alloc] initWithObjects: upArrow, downArrow, leftArrow, rightArrow, nil];
 }
 
 - (void) upArrow: (UIKeyCommand *) keyCommand {
-    [_keyboardView handleKeyPress:273];
+	[_keyboardView handleKeyPress:273];
 }
 
 - (void) downArrow: (UIKeyCommand *) keyCommand {
-    [_keyboardView handleKeyPress:274];
+	[_keyboardView handleKeyPress:274];
 }
 
 - (void) leftArrow: (UIKeyCommand *) keyCommand {
-    [_keyboardView handleKeyPress:276];
+	[_keyboardView handleKeyPress:276];
 }
 
 - (void) rightArrow: (UIKeyCommand *) keyCommand {
-    [_keyboardView handleKeyPress:275];
+	[_keyboardView handleKeyPress:275];
 }
 
 - (void)applicationSuspend {
