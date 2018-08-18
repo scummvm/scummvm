@@ -160,6 +160,7 @@ bool ToonMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
 	    (f == kSavesSupportCreationDate) ||
+	    (f == kSavesSupportPlayTime) ||
 		(f == kSimpleSavesNames);
 }
 
@@ -168,7 +169,7 @@ void ToonMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int ToonMetaEngine::getMaximumSaveSlot() const { return 99; }
+int ToonMetaEngine::getMaximumSaveSlot() const { return MAX_SAVE_SLOT; }
 
 SaveStateList ToonMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
@@ -183,11 +184,11 @@ SaveStateList ToonMetaEngine::listSaves(const char *target) const {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(filename->c_str() + filename->size() - 3);
 
-		if (slotNum >= 0 && slotNum <= 99) {
+		if (slotNum >= 0 && slotNum <= MAX_SAVE_SLOT) {
 			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
 			if (file) {
 				int32 version = file->readSint32BE();
-				if (version != TOON_SAVEGAME_VERSION) {
+				if ( (version < 4) || (version > TOON_SAVEGAME_VERSION) ) {
 					delete file;
 					continue;
 				}
@@ -220,7 +221,7 @@ SaveStateDescriptor ToonMetaEngine::querySaveMetaInfos(const char *target, int s
 	if (file) {
 
 		int32 version = file->readSint32BE();
-		if (version != TOON_SAVEGAME_VERSION) {
+		if ( (version < 4) || (version > TOON_SAVEGAME_VERSION) ) {
 			delete file;
 			return SaveStateDescriptor();
 		}
@@ -232,8 +233,8 @@ SaveStateDescriptor ToonMetaEngine::querySaveMetaInfos(const char *target, int s
 
 		SaveStateDescriptor desc(slot, saveName);
 
-		Graphics::Surface *thumbnail;
-		if (!Graphics::loadThumbnail(*file, thumbnail)) {
+		Graphics::Surface *thumbnail = nullptr;
+		if (!Graphics::loadThumbnail(*file, thumbnail, false)) {
 			delete file;
 			return SaveStateDescriptor();
 		}
@@ -252,6 +253,11 @@ SaveStateDescriptor ToonMetaEngine::querySaveMetaInfos(const char *target, int s
 		int minutes = saveTime & 0xFF;
 
 		desc.setSaveTime(hour, minutes);
+
+		if (version >= 5) {
+			uint32 playTimeMsec = file->readUint32BE();
+			desc.setPlayTime(playTimeMsec);
+		}
 
 		delete file;
 		return desc;

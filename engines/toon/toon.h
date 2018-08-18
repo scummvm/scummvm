@@ -47,8 +47,9 @@ struct ADGameDescription;
 
 #define TOON_DAT_VER_MAJ 0  // 1 byte
 #define TOON_DAT_VER_MIN 3  // 1 byte
-#define TOON_SAVEGAME_VERSION 4
+#define TOON_SAVEGAME_VERSION 5
 #define DATAALIGNMENT 4
+#define MAX_SAVE_SLOT 99
 
 #define TOON_SCREEN_WIDTH 640
 #define TOON_SCREEN_HEIGHT 400
