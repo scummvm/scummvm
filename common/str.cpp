@@ -1058,3 +1058,13 @@ int scumm_strnicmp(const char *s1, const char *s2, uint n) {
 	} while (l1 == l2 && l1 != 0);
 	return l1 - l2;
 }
+
+//  Portable implementation of strdup.
+char *scumm_strdup(const char *in) {
+	const size_t len = strlen(in) + 1;
+	char *out = new char[len];
+	if (out) {
+		strcpy(out, in);
+	}
+	return out;
+}
