@@ -459,6 +459,10 @@
 #define strncasecmp(a,b,c)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_strdup
+#undef strdup
+#define strdup(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
 /*
  * We also would like to disable the following symbols;
