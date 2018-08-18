@@ -41,9 +41,7 @@ public:
 	bool getFeatureState(OSystem::Feature f) const override;
 	int getDefaultGraphicsMode() const override;
 
-	void initSize(uint w, uint h) override;
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
-	bool setGraphicsMode(const char *name) override;
 	bool setGraphicsMode(int mode) override;
 	void setGraphicsModeIntern() override;
 	void internUpdateScreen() override;
