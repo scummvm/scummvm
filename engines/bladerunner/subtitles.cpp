@@ -396,29 +396,50 @@ void Subtitles::draw(Graphics::Surface &s) {
 /**
 * Calculate the position (X axis - horizontal) where the current active subtitle text should be displayed/drawn
 * This also determines if more than one lines should be drawn and what text goes into each line; splitting into multiple lines is done here
+*
+* The code first prioritizes splitting on the "new line" character.
+*   That is, if the string contains at least one new line character, then line splitting occurs on new line characters exclusively.
+*   The idea is that new line characters are put in the string explicitly by someone who wants specific control over line splitting
+*   and thus they assume the responsibility for the resulting line segment widths (the code won't bother with them in this case).
+*
+* If there are NO "new line" characters, then the code will split lines on a space character (auto-split case).
+*   For this case we only split if the full original line width exceeds a preset width threshold.
+*   If the threshold is exceeded, then we parse the line and calculate how many lines we can split it into (starting from 2 lines)
+*   to get segments smaller than the width threshold and also while maintaining (close to) even width across the resulting line segments.
+*   What's happening here is that we loop dividing the original quote's character total by an increasing target number of line segments,
+*   in order to get an "ideal" length for each segment (for evenness). Then we seek for split points (space character)
+*   past the characters of the "ideal" length points.
+*
+* For the second case (auto-split), we don't account for the special case of a single word larger than max line length
+* (no spaces), as practically this won't ever happen.
+*
+* TODO; simplify this code
+* TODO: maybe calculate auto-split points based on quote pixel width and not character count
+* TODO: somehow merge with graphics/font.cpp -> wordWrapTextImpl ?
 */
 void Subtitles::calculatePosition() {
 
-	// wOrig is in pixels, origQuoteLength is num of chars in string
+	// wOrig is in pixels, origQuoteNumOfChars is num of chars in string
 	int wOrig = _subsFont->getTextWidth(_currentSubtitleTextFull) + 2; // +2 to account for left/ right shadow pixels (or for good measure)
-	int origQuoteLength = _currentSubtitleTextFull.size();
+	int origQuoteNumOfChars = _currentSubtitleTextFull.size();
 	int tmpCharIndex = 0;
 	bool drawSingleLineQuote = false;
 
 	const uint8 *textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();
 	int tmpLineWidth[kMaxNumOfSubtitlesLines];
 
+	// initialization of aux variables
 	_currentSubtitleLines = 1;
-	for (int i = 0; i < kMaxNumOfSubtitlesLines; ++i) {
-		_subtitleLineSplitAtCharIndex[i] = 0;
-		_subtitleLineQuote[i] = "";
-		_subtitleLineScreenX[i] = 0;
-		tmpLineWidth[i] = 0;
+	for (int j = 0; j < kMaxNumOfSubtitlesLines; ++j) {
+		_subtitleLineSplitAtCharIndex[j] = 0;
+		_subtitleLineQuote[j] = "";
+		_subtitleLineScreenX[j] = 0;
+		tmpLineWidth[j] = 0;
 	}
 
 	while (*textCharacters != 0) {
-		// check for new line explicit split
-		if (_currentSubtitleLines < kMaxNumOfSubtitlesLines && *textCharacters == 0x0A && tmpCharIndex != 0 && _subtitleLineSplitAtCharIndex[_currentSubtitleLines - 1] == 0) {
+		// check for new line explicit split case
+		if (_currentSubtitleLines < kMaxNumOfSubtitlesLines && *textCharacters == '\n' && tmpCharIndex != 0 && _subtitleLineSplitAtCharIndex[_currentSubtitleLines - 1] == 0) {
 			_subtitleLineSplitAtCharIndex[_currentSubtitleLines - 1] = tmpCharIndex;
 			_currentSubtitleLines += 1;
 		}
@@ -426,26 +447,25 @@ void Subtitles::calculatePosition() {
 		textCharacters += 1;
 	}
 	_subtitleLineSplitAtCharIndex[_currentSubtitleLines - 1] = tmpCharIndex;
-	if (_currentSubtitleLines > 1) {
-		// if we can split at new line characters:
+	if (_currentSubtitleLines > 1) { // This means that split on new line characters is possible
 		//
-		int j = 0;
-		textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();  // reset pointer to the start of subtitle quote
-		for (int i = 0; i < origQuoteLength ; ++i) {
+		int j = 0;																// j iterates over subtitle lines.
+		textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();		// reset pointer to the start of subtitle quote
+		for (int i = 0; i < origQuoteNumOfChars ; ++i) {						// i iterates over line characters
 			if (j < _currentSubtitleLines && i < _subtitleLineSplitAtCharIndex[j]) {
 				_subtitleLineQuote[j] += textCharacters[i];
-			} else { // i is at split point
+			} else { 															// i is at split point
 				_subtitleLineQuote[j] += '\0';
-				j += 1;
+				j += 1;															// start next line
 			}
 		}
-		_subtitleLineQuote[j] += '\0'; // the last line should also be NULL terminated
+		_subtitleLineQuote[j] += '\0';											// the last line should also be NULL terminated
 		//
-		// Check widths
-		for (int i = 0; i < _currentSubtitleLines; ++i) {
-			tmpLineWidth[i] = _subsFont->getTextWidth(_subtitleLineQuote[i]) + 2;
-			_subtitleLineScreenX[i] = (639 - tmpLineWidth[i]) / 2;
-			_subtitleLineScreenX[i] = CLIP(_subtitleLineScreenX[i], 0, 639 - tmpLineWidth[i]);
+		// Check widths and set starting X positions per line
+		for (int k = 0; k < _currentSubtitleLines; ++k) {
+			tmpLineWidth[k] = _subsFont->getTextWidth(_subtitleLineQuote[k]) + 2;
+			_subtitleLineScreenX[k] = (639 - tmpLineWidth[k]) / 2;
+			_subtitleLineScreenX[k] = CLIP(_subtitleLineScreenX[k], 0, 639 - tmpLineWidth[k]);
 		}
 	} else {
 		// Here we initially have _currentSubtitleLines == 1
@@ -454,19 +474,19 @@ void Subtitles::calculatePosition() {
 		if (wOrig > kMaxWidthPerLineToAutoSplitThresholdPx) { // kMaxWidthPerLineToAutoSplitThresholdPx is a practical chosen threshold for width for auto-splitting quotes purposes
 			// Start by splitting in two lines. If the new parts are still too lengthy, re-try by splitting in three lines, etc.
 			for (int linesToSplitInto = 2; linesToSplitInto <= kMaxNumOfSubtitlesLines; ++linesToSplitInto) {
-				// find the first blank space after the middle
+				// find the first space after the middle
 				_subtitleLineQuote[0] = "";
 				_currentSubtitleLines = 1;
 
-				textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();   // reset pointer to the start of subtitle quote
-				textCharacters += (origQuoteLength / linesToSplitInto);
-				_subtitleLineSplitAtCharIndex[0] = (origQuoteLength / linesToSplitInto);
-				while (*textCharacters != 0 && *textCharacters != 0x20) {   // seek for a blank space character
+				textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();		// reset pointer to the start of subtitle quote
+				textCharacters += (origQuoteNumOfChars / linesToSplitInto);
+				_subtitleLineSplitAtCharIndex[0] = (origQuoteNumOfChars / linesToSplitInto);
+				while (*textCharacters != 0 && !Common::isSpace(*textCharacters)) {		// seek for a space character
 					_subtitleLineSplitAtCharIndex[0] += 1;
 					textCharacters += 1;
 				}
-//                debug("space blank at: %d", _subtitleLineSplitAtCharIndex[0]);
-				if (*textCharacters == 0x20) { // if we found a blank space
+//                debug("space character at: %d", _subtitleLineSplitAtCharIndex[0]);
+				if (Common::isSpace(*textCharacters)) { // if we found a space, we store the segment up to this point in the first _subtitleLineQuote entry
 					textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();
 					for (int i = 0; i < _subtitleLineSplitAtCharIndex[0] ; ++i) {
 						_subtitleLineQuote[0] += textCharacters[i];
@@ -475,19 +495,19 @@ void Subtitles::calculatePosition() {
 //                    debug(" Line 0 quote %s", _subtitleLineQuote[0].c_str());
 					tmpLineWidth[0] = _subsFont->getTextWidth(_subtitleLineQuote[0]) + 2; // check the width of the first segment of the quote
 					if (tmpLineWidth[0] > kMaxWidthPerLineToAutoSplitThresholdPx && linesToSplitInto < kMaxNumOfSubtitlesLines) {
-						// reset process by trying to split into more lines
-						continue; // try the for loop with increased linesToSplitInto by 1
+						// we exceed max width so we reset process by trying to split into more lines
+						continue; // re-try the For-loop with increased linesToSplitInto by 1
 					} else {
 						// keep current split, proceed with splitting the quote for the rest of the subtitle lines (linesToSplitInto)
 						for (int j = 2; j <= linesToSplitInto; ++j) {
-							textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();   // reset pointer to the start of subtitle quote
-							textCharacters += ((j * origQuoteLength) / linesToSplitInto);
-							_subtitleLineSplitAtCharIndex[_currentSubtitleLines] = ((j * origQuoteLength) / linesToSplitInto);
-							while (*textCharacters != 0 && *textCharacters != 0x20) {
+							textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();	// reset pointer to the start of subtitle quote
+							textCharacters += ((j * origQuoteNumOfChars) / linesToSplitInto);	// move pointer to start of split-seek point for this line segment
+							_subtitleLineSplitAtCharIndex[_currentSubtitleLines] = ((j * origQuoteNumOfChars) / linesToSplitInto);
+							while (*textCharacters != 0 && !Common::isSpace(*textCharacters)) {
 								_subtitleLineSplitAtCharIndex[_currentSubtitleLines] += 1;
 								textCharacters += 1;
 							}
-							textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();   // reset pointer to the start of subtitle quote
+							textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();	// reset pointer to the start of subtitle quote
 							for (int i = _subtitleLineSplitAtCharIndex[_currentSubtitleLines - 1] + 1; i < _subtitleLineSplitAtCharIndex[_currentSubtitleLines]; ++i) {
 								_subtitleLineQuote[_currentSubtitleLines] += textCharacters[i];
 							}
@@ -496,20 +516,22 @@ void Subtitles::calculatePosition() {
 							_currentSubtitleLines += 1;
 						}
 						//
-						// Check widths
-						for (int i = 0; i < _currentSubtitleLines; ++i) {
-							tmpLineWidth[i] = _subsFont->getTextWidth(_subtitleLineQuote[i]) + 2;
-							_subtitleLineScreenX[i] = (639 - tmpLineWidth[i]) / 2;
-							_subtitleLineScreenX[i] = CLIP(_subtitleLineScreenX[i], 0, 639 - tmpLineWidth[i]);
+						// Check widths and set starting X positions per line
+						for (int j = 0; j < _currentSubtitleLines; ++j) {
+							tmpLineWidth[j] = _subsFont->getTextWidth(_subtitleLineQuote[j]) + 2;
+							_subtitleLineScreenX[j] = (639 - tmpLineWidth[j]) / 2;
+							_subtitleLineScreenX[j] = CLIP(_subtitleLineScreenX[j], 0, 639 - tmpLineWidth[j]);
 						}
-						break; // from for loop about linesToSplitInto
+						break; // end the for-loop on linesToSplitInto
 					}
 				} else {
+					// the line exceeds max width but has no space characters
+					// we treat it as single line quote (it will appear clipped). This won't happen practically though.
 					drawSingleLineQuote = true;
-					break;  // from for loop about linesToSplitInto
+					break;  // end the for-loop on linesToSplitInto
 				}
 			}
-		} else {
+		} else { // the width of the line is smaller than the max width
 			drawSingleLineQuote = true;
 		}
 		if (drawSingleLineQuote) {
