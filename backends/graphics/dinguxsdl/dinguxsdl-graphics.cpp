@@ -117,7 +117,7 @@ void DINGUXSdlGraphicsManager::setGraphicsModeIntern() {
 	blitCursor();
 }
 
-void DINGUXSdlGraphicsManager::initSize(uint w, uint h) {
+void DINGUXSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
 	// Avoid redundant res changes
