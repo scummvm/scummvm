@@ -38,7 +38,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 
 	if (speaker < 65) {
 		if (_characters[speaker].flags & 1)
-			speaker = (int) _characters[speaker].name[0];
+			speaker = (int)_characters[speaker].name[0];
 		else
 			speaker = 0;
 	}

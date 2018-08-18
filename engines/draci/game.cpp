@@ -135,7 +135,7 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	}
 
 	_dialogueVars = new int[curOffset];
-	memset(_dialogueVars, 0, sizeof (int) * curOffset);
+	memset(_dialogueVars, 0, sizeof(int) * curOffset);
 
 	// Read in game info
 	file = initArchive->getFile(3);

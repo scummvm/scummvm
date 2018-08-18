@@ -888,7 +888,7 @@ void GameNebular::step() {
 		else
 			++_globals[kTimebombTimer];
 
-		_globals[kTimebombClock] = (int) _scene._frameStartTime;
+		_globals[kTimebombClock] = (int)_scene._frameStartTime;
 	}
 }
 

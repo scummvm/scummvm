@@ -184,7 +184,7 @@ struct Anim {
 		case kAnimX:
 			return _x;
 		default:
-			error("getAnimData() - Wrong offset type: %d", (int) offset);
+			error("getAnimData() - Wrong offset type: %d", (int)offset);
 		}
 	}
 
@@ -192,7 +192,7 @@ struct Anim {
 		if (offset == kAnimX) {
 			_x = value;
 		} else {
-			error("setAnimData() - Wrong offset: %d, value: %d", (int) offset, value);
+			error("setAnimData() - Wrong offset: %d, value: %d", (int)offset, value);
 		}
 	}
 };

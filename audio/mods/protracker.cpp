@@ -328,7 +328,7 @@ void ProtrackerStream::updateRow() {
 				_speed = exy;
 			} else {
 				_bpm = exy;
-				setInterruptFreq((int) (getRate() / (_bpm * 0.4)));
+				setInterruptFreq((int)(getRate() / (_bpm * 0.4)));
 			}
 			break;
 		default:

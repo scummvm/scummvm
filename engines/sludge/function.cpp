@@ -661,7 +661,7 @@ int startNewFunctionNum(uint funcNum, uint numParamsExpected,
 
 	loadFunctionCode(newFunc);
 
-	if (newFunc->numArgs != (int) numParamsExpected)
+	if (newFunc->numArgs != (int)numParamsExpected)
 		return fatal("Wrong number of parameters!");
 	if (newFunc->numArgs > newFunc->numLocals)
 		return fatal("More arguments than local Variable space!");

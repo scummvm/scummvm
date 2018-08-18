@@ -496,7 +496,7 @@ void Util::setScrollOffset(int16 x, int16 y) {
 void Util::insertStr(const char *str1, char *str2, int16 pos) {
 	int len1 = strlen(str1);
 	int len2 = strlen(str2);
-	int from = MIN((int) pos, len2);
+	int from = MIN((int)pos, len2);
 
 	for (int i = len2; i >= from; i--)
 		str2[len1 + i] = str2[i];

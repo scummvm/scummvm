@@ -420,7 +420,7 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 			wordEnd = strchr(wordStart, '\0') - 1;
 		}
 
-		int wordBytes = (int) (wordEnd - s + 1);
+		int wordBytes = (int)(wordEnd - s + 1);
 		uint16 wordSize = (wordBytes == 0) ? 0 : textWidth(s, wordBytes);
 		if (gDebugLevel >= ERROR_DETAILED) {
 			char wordBuffer[MAX_DESC_SIZE];

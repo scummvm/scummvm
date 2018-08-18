@@ -320,7 +320,7 @@ bool DialogManager::showKnowledgeCheck() {
 		int prevChoice = 1;
 		for (int j = firstOption; j <= lastOption; ++j, ++prevChoice) {
 			tmpStr = _vm->getString(j);
-			if ((int) tmpStr.size() > maxLength)
+			if ((int)tmpStr.size() > maxLength)
 				maxLength = tmpStr.size();
 			_vm->_text->displayStr(tmpStr, 100, optionPosY, 100, 1, 0);
 			choiceArray[prevChoice] = tmpStr;

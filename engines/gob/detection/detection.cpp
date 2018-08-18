@@ -151,7 +151,7 @@ const Gob::GOBGameDescription *GobMetaEngine::detectOnceUponATime(const Common::
 
 	if ((gameType == Gob::kOnceUponATimeInvalid) || (platform == Gob::kOnceUponATimePlatformInvalid)) {
 		warning("GobMetaEngine::detectOnceUponATime(): Detection failed (%d, %d)",
-		        (int) gameType, (int) platform);
+		        (int)gameType, (int)platform);
 		return 0;
 	}
 

@@ -109,7 +109,7 @@ void CViewport::save(SimpleFile *file, int indent) {
 	file->writeFloatLine(_centerYAngleDegrees, indent);
 	file->writeFloatLine(_centerZAngleDegrees, indent);
 	file->writeNumberLine(_width | (_height << 16), indent);
-	int field24 = (int) _starColor;
+	int field24 = (int)_starColor;
 	file->writeNumberLine(field24, indent);
 
 	for (int idx = 0; idx < 2; ++idx)
