@@ -482,5 +482,6 @@ size_t strnlen(const char *src, size_t maxSize);
 
 extern int scumm_stricmp(const char *s1, const char *s2);
 extern int scumm_strnicmp(const char *s1, const char *s2, uint n);
+extern char *scumm_strdup(const char *in);
 
 #endif
