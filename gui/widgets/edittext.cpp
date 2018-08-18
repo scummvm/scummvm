@@ -64,7 +64,6 @@ void EditTextWidget::reflowLayout() {
 	EditableWidget::reflowLayout();
 }
 
-
 void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
@@ -132,14 +131,20 @@ void EditTextWidget::startEditMode() {
 
 void EditTextWidget::endEditMode() {
 	releaseFocus();
-
+	
+	sendCommand(kExitTxtCmd, 0);
 	sendCommand(_finishCmd, 0);
 }
 
 void EditTextWidget::abortEditMode() {
 	setEditString(_backupString);
 	sendCommand(_cmd, 0);
+	
 	releaseFocus();
+}
+
+Common::String EditTextWidget::getEditString() {
+	return _backupString;
 }
 
 } // End of namespace GUI
