@@ -3420,8 +3420,10 @@ case $_backend in
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
+		append_var INCLUDES "-isystem $RONINDIR/include"
 		append_var LDFLAGS "-Wl,-Ttext,0x8c010000"
 		append_var LDFLAGS "-nostartfiles"
+		append_var LDFLAGS "-L$RONINDIR/lib"
 		append_var LIBS "$RONINDIR/lib/crt0.o"
 		# Enable serial debugging output only when --enable-debug is passed
 		if test "$_release_build" = yes -o "$_debug_build" != yes; then
