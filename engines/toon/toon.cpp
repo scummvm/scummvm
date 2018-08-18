@@ -3378,6 +3378,8 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 
 	saveFile->writeUint32BE(saveDate);
 	saveFile->writeUint16BE(saveTime);
+	uint32 playTime = getTotalPlayTime();
+	saveFile->writeUint32BE(playTime);
 
 	// save global state
 	_gameState->save(saveFile);
@@ -3444,7 +3446,7 @@ bool ToonEngine::loadGame(int32 slot) {
 		return false;
 
 	int32 saveGameVersion = loadFile->readSint32BE();
-	if (saveGameVersion != TOON_SAVEGAME_VERSION) {
+	if ( (saveGameVersion < 4) || (saveGameVersion > TOON_SAVEGAME_VERSION) ) {
 		delete loadFile;
 		return false;
 	}
@@ -3455,6 +3457,12 @@ bool ToonEngine::loadGame(int32 slot) {
 	Graphics::skipThumbnail(*loadFile);
 
 	loadFile->skip(6); // date & time skip
+
+	uint32 playTimeMsec = 0;
+	if (saveGameVersion >= 5) {
+		playTimeMsec = loadFile->readUint32BE();
+	}
+	setTotalPlayTime(playTimeMsec);
 
 	if (_gameState->_currentScene != -1) {
 		exitScene();
