@@ -26,7 +26,6 @@
 #include "common/hash-str.h"
 #include "common/stream.h"
 #include "common/debug.h"
-#include "common/translation.h"
 #include "mutationofjb/commands/command.h"
 #include "mutationofjb/commands/ifcommand.h"
 #include "mutationofjb/commands/ifitemcommand.h"
@@ -152,7 +151,7 @@ Command::ExecuteResult ScriptExecutionContext::runActiveCommand() {
 
 Command::ExecuteResult ScriptExecutionContext::startCommand(Command *cmd) {
 	if (_activeCommand) {
-		warning(_("Trying to start command while another one is running."));
+		warning("Trying to start command while another one is running.");
 		return Command::Finished;
 	}
 	getGameData()._color = WHITE; // The original game resets the color to WHITE beforing running script sections.

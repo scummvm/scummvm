@@ -24,7 +24,6 @@
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/util.h"
 #include "common/debug.h"
-#include "common/translation.h"
 
 namespace MutationOfJB {
 
@@ -88,7 +87,7 @@ bool AnimationDecoder::decode(AnimationDecoderCallback *callback) {
 							callback->onFrame(frameNo, _surface);
 						}
 					} else {
-						debug(_("Unsupported record type %02X."), type);
+						debug("Unsupported record type %02X.", type);
 						file.seek(subLength - 6, SEEK_CUR);
 					}
 

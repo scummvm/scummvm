@@ -25,7 +25,6 @@
 #include "mutationofjb/commands/conditionalcommand.h"
 #include "common/str.h"
 #include "common/debug.h"
-#include "common/translation.h"
 
 /** @file
  * <look> | <walk> | <talk> | <pickup> | <use> | <else> | <macro> | <extra> | <endRandom>
@@ -171,7 +170,7 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *ol
 				if (!parseCtx._macros.contains(it->_name)) {
 					parseCtx._macros[it->_name] = newCommand;
 				} else {
-					warning(_("Macro '%s' already exists"), it->_name.c_str());
+					warning("Macro '%s' already exists", it->_name.c_str());
 				}
 				it = _foundMacros.erase(it);
 			}
@@ -188,7 +187,7 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *ol
 				if (!parseCtx._startups.contains(it->_id)) {
 					parseCtx._startups[it->_id] = newCommand;
 				} else {
-					warning(_("Startup %u already exists"), (unsigned int) it->_id);
+					warning("Startup %u already exists", (unsigned int) it->_id);
 				}
 				it = _foundStartups.erase(it);
 			}
@@ -205,7 +204,7 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *ol
 				if (!parseCtx._extras.contains(it->_name)) {
 					parseCtx._extras[it->_name] = newCommand;
 				} else {
-					warning(_("Extra '%s' already exists"), it->_name.c_str());
+					warning("Extra '%s' already exists", it->_name.c_str());
 				}
 				it = _foundExtras.erase(it);
 			}

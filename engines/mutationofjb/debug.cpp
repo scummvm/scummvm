@@ -32,7 +32,6 @@
 #include "mutationofjb/commands/callmacrocommand.h"
 #include "mutationofjb/commands/randomcommand.h"
 #include "common/debug-channels.h"
-#include "common/translation.h"
 #include "common/scummsys.h"
 
 namespace MutationOfJB {
@@ -84,7 +83,7 @@ bool Console::cmd_showallcommands(int argc, const char **argv) {
 			}
 		}
 	} else {
-		debugPrintf(_("showallcommands <G|L>\n"));
+		debugPrintf("showallcommands <G|L>\n");
 	}
 
 	return true;
@@ -98,21 +97,21 @@ bool Console::cmd_listsections(int argc, const char **argv) {
 			const char *word = nullptr;
 			if (strcmp(argv[2], "L") == 0) {
 				action = ActionInfo::Look;
-				word = _("Look");
+				word = "Look";
 			} else if (strcmp(argv[2], "W") == 0) {
 				action = ActionInfo::Walk;
-				word = _("Walk");
+				word = "Walk";
 			} else if (strcmp(argv[2], "T") == 0) {
 				action = ActionInfo::Talk;
-				word = _("Talk");
+				word = "Talk";
 			} else if (strcmp(argv[2], "U") == 0) {
 				action = ActionInfo::Use;
-				word = _("Use");
+				word = "Use";
 			} else if (strcmp(argv[2], "P") == 0) {
 				action = ActionInfo::PickUp;
-				word = _("Pick up");
+				word = "Pick up";
 			} else {
-				debugPrintf(_("Choose 'L' (look), 'W' (walk), 'T' (talk), 'U' (use) or 'P' (pick up).\n"));
+				debugPrintf("Choose 'L' (look), 'W' (walk), 'T' (talk), 'U' (use) or 'P' (pick up).\n");
 			}
 			if (word) {
 				const ActionInfos &actionInfos = script->getActionInfos(action);
@@ -127,7 +126,7 @@ bool Console::cmd_listsections(int argc, const char **argv) {
 			}
 		}
 	} else {
-		debugPrintf(_("listsections <G|L> <L|W|T|U|P>\n"));
+		debugPrintf("listsections <G|L> <L|W|T|U|P>\n");
 	}
 	return true;
 }
@@ -187,7 +186,7 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 			} else if (strcmp(argv[2], "P") == 0) {
 				action = ActionInfo::PickUp;
 			} else {
-				debugPrintf(_("Choose 'L' (look), 'W' (walk), 'T' (talk), 'U' (use) or 'P' (pick up).\n"));
+				debugPrintf("Choose 'L' (look), 'W' (walk), 'T' (talk), 'U' (use) or 'P' (pick up).\n");
 				correctAction = false;
 			}
 
@@ -212,7 +211,7 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 			}
 		}
 	} else {
-		debugPrintf(_("showsection <G|L> <L|W|T|U|P> <sectionname>\n"));
+		debugPrintf("showsection <G|L> <L|W|T|U|P> <sectionname>\n");
 	}
 
 	return true;
@@ -228,7 +227,7 @@ bool Console::cmd_listmacros(int argc, const char **argv) {
 			}
 		}
 	} else {
-		debugPrintf(_("listmacros <G|L>\n"));
+		debugPrintf("listmacros <G|L>\n");
 	}
 
 	return true;
@@ -243,7 +242,7 @@ bool Console::cmd_showmacro(int argc, const char **argv) {
 			script = _vm->getGame().getLocalScript();
 		}
 		if (!script) {
-			debugPrintf(_("Choose 'G' (global) or 'L' (local) script.\n"));
+			debugPrintf("Choose 'G' (global) or 'L' (local) script.\n");
 		} else {
 			const Macros &macros = script->getMacros();
 			Macros::const_iterator itMacro = macros.find(argv[2]);
@@ -256,7 +255,7 @@ bool Console::cmd_showmacro(int argc, const char **argv) {
 			}
 		}
 	} else {
-		debugPrintf(_("showmacro <G|L> <macroname>\n"));
+		debugPrintf("showmacro <G|L> <macroname>\n");
 	}
 
 	return true;
@@ -272,7 +271,7 @@ bool Console::cmd_liststartups(int argc, const char **argv) {
 			}
 		}
 	} else {
-		debugPrintf(_("liststartups <G|L>\n"));
+		debugPrintf("liststartups <G|L>\n");
 	}
 
 	return true;
@@ -293,7 +292,7 @@ bool Console::cmd_showstartup(int argc, const char **argv) {
 			}
 		}
 	} else {
-		debugPrintf(_("showstartup <G|L> <startupid>\n"));
+		debugPrintf("showstartup <G|L> <startupid>\n");
 	}
 
 	return true;
@@ -306,7 +305,7 @@ bool Console::cmd_changescene(int argc, const char **argv) {
 
 		_vm->getGame().changeScene(sceneId, partB);
 	} else {
-		debugPrintf(_("changescene <scenename>\n"));
+		debugPrintf("changescene <scenename>\n");
 	}
 
 	return true;
@@ -327,10 +326,10 @@ bool Console::cmd_dumpsceneinfo(int argc, const char **argv) {
 			debugPrintf("PalRotLast: %u\n", (unsigned int) scene->_palRotLast);
 			debugPrintf("PalRotDelay: %u\n", (unsigned int) scene->_palRotDelay);
 		} else {
-			debugPrintf(_("Scene %u not found.\n"), (unsigned int) sceneId);
+			debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
 		}
 	} else {
-		debugPrintf(_("dumpsceneinfo <sceneid>\n"));
+		debugPrintf("dumpsceneinfo <sceneid>\n");
 	}
 
 	return true;
@@ -357,13 +356,13 @@ bool Console::cmd_dumpdoorinfo(int argc, const char **argv) {
 				debugPrintf("WalkToY: %u\n", (unsigned int) door->_walkToY);
 				debugPrintf("SP: %u\n", (unsigned int) door->_SP);
 			} else {
-				debugPrintf(_("Door %u not found.\n"), (unsigned int) doorId);
+				debugPrintf("Door %u not found.\n", (unsigned int) doorId);
 			}
 		} else {
-			debugPrintf(_("Scene %u not found.\n"), (unsigned int) sceneId);
+			debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
 		}
 	} else {
-		debugPrintf(_("dumpdoorinfo <sceneid> <doorid>\n"));
+		debugPrintf("dumpdoorinfo <sceneid> <doorid>\n");
 	}
 
 	return true;
@@ -392,13 +391,13 @@ bool Console::cmd_dumpobjectinfo(int argc, const char **argv) {
 				debugPrintf("WY: %u\n", (unsigned int) object->_roomFrameMSB);
 				debugPrintf("SP: %u\n", (unsigned int) object->_SP);
 			} else {
-				debugPrintf(_("Object %u not found.\n"), (unsigned int) objectId);
+				debugPrintf("Object %u not found.\n", (unsigned int) objectId);
 			}
 		} else {
-			debugPrintf(_("Scene %u not found.\n"), (unsigned int) sceneId);
+			debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
 		}
 	} else {
-		debugPrintf(_("dumpobjectinfo <sceneid> <objectid>\n"));
+		debugPrintf("dumpobjectinfo <sceneid> <objectid>\n");
 	}
 
 	return true;
@@ -423,13 +422,13 @@ bool Console::cmd_dumpstaticinfo(int argc, const char **argv) {
 				debugPrintf("WalkToY: %u\n", (unsigned int) stat->_walkToX);
 				debugPrintf("WalkToFrame: %u\n", (unsigned int) stat->_walkToFrame);
 			} else {
-				debugPrintf(_("Static %u not found.\n"), (unsigned int) staticId);
+				debugPrintf("Static %u not found.\n", (unsigned int) staticId);
 			}
 		} else {
-			debugPrintf(_("Scene %u not found.\n"), (unsigned int) sceneId);
+			debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
 		}
 	} else {
-		debugPrintf(_("dumpstaticinfo <sceneid> <staticid>\n"));
+		debugPrintf("dumpstaticinfo <sceneid> <staticid>\n");
 	}
 
 	return true;
@@ -443,7 +442,7 @@ Script *Console::getScriptFromArg(const char *arg) {
 		script = _vm->getGame().getLocalScript();
 	}
 	if (!script) {
-		debugPrintf(_("Choose 'G' (global) or 'L' (local) script.\n"));
+		debugPrintf("Choose 'G' (global) or 'L' (local) script.\n");
 	}
 
 	return script;
