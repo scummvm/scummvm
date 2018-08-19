@@ -350,8 +350,11 @@ Common::Platform GroovieEngine::getPlatform() const {
 bool GroovieEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsLoadingDuringRuntime);
+		(f == kSupportsSavingDuringRuntime);
+		// Game will crash during loading at a few puzzles.
+		// So don't enable until thats been figured out.
+		// See Trac#10664.
+		//(f == kSupportsLoadingDuringRuntime);
 }
 
 void GroovieEngine::syncSoundSettings() {
