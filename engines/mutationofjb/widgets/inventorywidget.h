@@ -35,7 +35,7 @@ namespace MutationOfJB {
 class InventoryWidget : public Widget {
 public:
 	InventoryWidget(Gui &gui, Gui::InventoryMap &inventoryMap, const Common::Array<Graphics::Surface> &inventorySurfaces);
-	virtual void _draw(Graphics::ManagedSurface &) override;
+	virtual void draw(Graphics::ManagedSurface &) override;
 
 private:
 	void drawInventoryItem(Graphics::ManagedSurface &surface, const Common::String &item, int pos);

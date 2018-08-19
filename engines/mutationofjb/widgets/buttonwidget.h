@@ -44,7 +44,7 @@ public:
 	virtual void handleEvent(const Common::Event &event) override;
 
 protected:
-	virtual void _draw(Graphics::ManagedSurface &) override;
+	virtual void draw(Graphics::ManagedSurface &) override;
 
 private:
 	Graphics::Surface _normalSurface;

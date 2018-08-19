@@ -46,9 +46,7 @@ void ConditionalCommandParser::finish(ScriptParseContext &) {
 ConditionalCommand::ConditionalCommand() :
 	_trueCommand(nullptr),
 	_falseCommand(nullptr),
-	_cachedResult(false)
-{}
-
+	_cachedResult(false) {}
 
 Command *ConditionalCommand::getTrueCommand() const {
 	return _trueCommand;
@@ -73,4 +71,5 @@ Command *ConditionalCommand::next() const {
 		return _falseCommand;
 	}
 }
+
 }

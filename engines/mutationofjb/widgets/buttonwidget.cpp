@@ -62,7 +62,9 @@ void ButtonWidget::handleEvent(const Common::Event &event) {
 		break;
 	}
 }
-void ButtonWidget::_draw(Graphics::ManagedSurface &surface) {
+
+void ButtonWidget::draw(Graphics::ManagedSurface &surface) {
 	surface.blitFrom(_pressed ? _pressedSurface : _normalSurface, Common::Point(_area.left, _area.top));
 }
+
 }

@@ -59,6 +59,7 @@ bool LabelCommandParser::parse(const Common::String &line, ScriptParseContext &p
 	return true;
 }
 
+
 const Common::String &LabelCommand::getName() const {
 	return _name;
 }

@@ -80,4 +80,3 @@ Common::String NewRoomCommand::debugString() const {
 }
 
 }
-

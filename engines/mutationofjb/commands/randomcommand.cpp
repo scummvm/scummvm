@@ -61,6 +61,7 @@ bool RandomCommandParser::parse(const Common::String &line, ScriptParseContext &
 	return true;
 }
 
+
 bool RandomBlockStartParser::parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&) {
 	if (line != "/") {
 		return false;
@@ -83,6 +84,7 @@ void RandomBlockStartParser::transition(ScriptParseContext &parseCtx, Command *,
 		}
 	}
 }
+
 
 RandomCommand::RandomCommand(uint numChoices)
 	: _numChoices(numChoices),

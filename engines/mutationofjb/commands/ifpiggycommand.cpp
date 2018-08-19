@@ -68,4 +68,3 @@ Common::String IfPiggyCommand::debugString() const {
 }
 
 }
-

@@ -110,4 +110,3 @@ public:
 #else
 	REGISTER_PLUGIN_STATIC(MUTATIONOFJB, PLUGIN_TYPE_ENGINE, MutationOfJBMetaEngine);
 #endif
-

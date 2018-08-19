@@ -30,7 +30,7 @@ ImageWidget::ImageWidget(Gui &gui, const Common::Rect &area, const Graphics::Sur
 	_image(image) {}
 
 
-void ImageWidget::_draw(Graphics::ManagedSurface &surface) {
+void ImageWidget::draw(Graphics::ManagedSurface &surface) {
 	surface.blitFrom(_image, Common::Point(_area.left, _area.top));
 }
 

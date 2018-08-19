@@ -33,7 +33,7 @@ public:
 	ImageWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &image);
 
 protected:
-	virtual void _draw(Graphics::ManagedSurface &surface) override;
+	virtual void draw(Graphics::ManagedSurface &surface) override;
 
 private:
 	Graphics::Surface _image;

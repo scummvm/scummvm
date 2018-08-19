@@ -70,8 +70,7 @@ bool IfItemCommandParser::parse(const Common::String &line, ScriptParseContext &
 
 IfItemCommand::IfItemCommand(const Common::String &item, bool negative) :
 	_item(item),
-	_negative(negative)
-{}
+	_negative(negative) {}
 
 Command::ExecuteResult IfItemCommand::execute(ScriptExecutionContext &scriptExecCtx) {
 	_cachedResult = scriptExecCtx.getGameData()._inventory.hasItem(_item);
@@ -87,4 +86,3 @@ Common::String IfItemCommand::debugString() const {
 }
 
 }
-

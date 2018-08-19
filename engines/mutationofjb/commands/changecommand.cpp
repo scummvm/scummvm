@@ -556,4 +556,5 @@ Command::ExecuteResult ChangeSceneCommand::execute(ScriptExecutionContext &scrip
 Common::String ChangeSceneCommand::debugString() const {
 	return Common::String::format("SCENE%d.%s %s %s", _sceneId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
 }
+
 }

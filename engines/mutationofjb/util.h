@@ -32,7 +32,6 @@ namespace Common {
 class String;
 }
 
-
 namespace MutationOfJB {
 
 void reportFileMissingError(const char *fileName);

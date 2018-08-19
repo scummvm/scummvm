@@ -77,12 +77,12 @@ bool IfCommandParser::parse(const Common::String &line, ScriptParseContext &, Co
 	return true;
 }
 
+
 IfCommand::IfCommand(uint8 sceneId, uint8 objectId, uint16 value, bool negative) :
 	_sceneId(sceneId),
 	_objectId(objectId),
 	_value(value),
-	_negative(negative)
-{}
+	_negative(negative) {}
 
 Command::ExecuteResult IfCommand::execute(ScriptExecutionContext &scriptExecCtx) {
 	Scene *const scene = scriptExecCtx.getGameData().getScene(_sceneId);
@@ -108,4 +108,3 @@ Common::String IfCommand::debugString() const {
 }
 
 }
-
