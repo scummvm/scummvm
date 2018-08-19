@@ -31,7 +31,7 @@
 #include "mutationofjb/widgets/buttonwidget.h"
 
 namespace Common {
-class Event;
+struct Event;
 }
 
 namespace Graphics {

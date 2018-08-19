@@ -29,7 +29,7 @@
 
 namespace MutationOfJB {
 
-class ActionInfo;
+struct ActionInfo;
 
 class EndBlockCommandParser : public CommandParser {
 public:
