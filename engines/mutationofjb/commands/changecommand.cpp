@@ -23,7 +23,6 @@
 #include "mutationofjb/commands/changecommand.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/gamedata.h"
-#include "common/translation.h"
 
 /** @file
  * "CHANGE" <entity> " " <register> " " <sceneId> " " <entityId> " " <value>

@@ -25,7 +25,6 @@
 #include "mutationofjb/script.h"
 #include "mutationofjb/util.h"
 #include "common/str.h"
-#include "common/translation.h"
 
 /** @file
  * "IFPIGGY"

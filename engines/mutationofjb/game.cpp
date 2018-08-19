@@ -32,7 +32,6 @@
 #include "mutationofjb/util.h"
 
 #include "common/str.h"
-#include "common/translation.h"
 #include "common/util.h"
 
 namespace MutationOfJB {
@@ -232,7 +231,7 @@ uint8 Game::colorFromString(const char *colorStr) {
 		return static_cast<uint8>(atoi(colorStr + 1));
 	}
 
-	warning(_("Color not found"));
+	warning("Color not found");
 	return 0x00;
 }
 

@@ -30,7 +30,6 @@
 
 #include "common/rect.h"
 #include "common/str.h"
-#include "common/translation.h"
 
 #include "graphics/screen.h"
 

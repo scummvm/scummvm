@@ -23,7 +23,6 @@
 #include "mutationofjb/commands/callmacrocommand.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/game.h"
-#include "common/translation.h"
 
 /** @file
  * "_" <name>
@@ -45,7 +44,7 @@ bool CallMacroCommandParser::parse(const Common::String &line, ScriptParseContex
 
 void CallMacroCommandParser::transition(ScriptParseContext &, Command *oldCommand, Command *newCommand, CommandParser *) {
 	if (!oldCommand || !newCommand) {
-		warning(_("Unexpected empty command in transition"));
+		warning("Unexpected empty command in transition");
 		return;
 	}
 

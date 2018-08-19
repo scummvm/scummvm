@@ -23,7 +23,6 @@
 #include "mutationofjb/gamedata.h"
 #include "common/stream.h"
 #include "common/util.h"
-#include "common/translation.h"
 
 namespace MutationOfJB {
 
@@ -147,7 +146,7 @@ bool Scene::loadFromStream(Common::ReadStream &stream) {
 
 Door *Scene::getDoor(uint8 doorId) {
 	if (doorId == 0 || doorId > _noDoors) {
-		warning(_("Door %d does not exist"), doorId);
+		warning("Door %d does not exist", doorId);
 		return nullptr;
 	}
 
@@ -156,7 +155,7 @@ Door *Scene::getDoor(uint8 doorId) {
 
 Object *Scene::getObject(uint8 objectId, bool ignoreNo) {
 	if (objectId == 0 || objectId > getNoObjects(ignoreNo))  {
-		warning(_("Object %d does not exist"), objectId);
+		warning("Object %d does not exist", objectId);
 		return nullptr;
 	}
 
@@ -165,7 +164,7 @@ Object *Scene::getObject(uint8 objectId, bool ignoreNo) {
 
 Static *Scene::getStatic(uint8 staticId, bool ignoreNo) {
 	if (staticId == 0 || staticId > (!ignoreNo ? MIN(_noStatics, (uint8) ARRAYSIZE(_statics)) : ARRAYSIZE(_statics))) {
-		warning(_("Static %d does not exist"), staticId);
+		warning("Static %d does not exist", staticId);
 		return nullptr;
 	}
 
@@ -252,7 +251,7 @@ GameData::GameData()
 
 Scene *GameData::getScene(uint8 sceneId) {
 	if (sceneId == 0 || sceneId > ARRAYSIZE(_scenes)) {
-		warning(_("Scene %d does not exist"), sceneId);
+		warning("Scene %d does not exist", sceneId);
 		return nullptr;
 	}
 

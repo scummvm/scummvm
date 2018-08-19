@@ -24,8 +24,6 @@
 
 #include "mutationofjb/tasks/task.h"
 
-#include "common/translation.h"
-
 namespace MutationOfJB {
 
 void TaskManager::startTask(const TaskPtr &task) {
@@ -37,7 +35,7 @@ void TaskManager::startTask(const TaskPtr &task) {
 void TaskManager::stopTask(const TaskPtr &task) {
 	TaskPtrs::iterator it = Common::find(_tasks.begin(), _tasks.end(), task);
 	if (it == _tasks.end()) {
-		warning(_("Task is not registered in TaskManager."));
+		warning("Task is not registered in TaskManager");
 		return;
 	}
 

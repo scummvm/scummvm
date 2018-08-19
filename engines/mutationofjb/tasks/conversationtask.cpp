@@ -33,8 +33,6 @@
 #include "mutationofjb/util.h"
 #include "mutationofjb/widgets/conversationwidget.h"
 
-#include "common/translation.h"
-
 namespace MutationOfJB {
 
 void ConversationTask::start() {
@@ -238,7 +236,7 @@ void ConversationTask::startExtra() {
 				_innerExecCtx = nullptr;
 			}
 		} else {
-			warning(_("Extra '%s' not found"), line->_extra.c_str());
+			warning("Extra '%s' not found", line->_extra.c_str());
 			delete _innerExecCtx;
 			_innerExecCtx = nullptr;
 		}

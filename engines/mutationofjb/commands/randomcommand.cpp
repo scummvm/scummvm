@@ -26,7 +26,6 @@
 #include "mutationofjb/script.h"
 #include "common/debug.h"
 #include "common/random.h"
-#include "common/translation.h"
 
 /** @file
  * "RANDOM " <numChoices>
@@ -49,13 +48,13 @@ bool RandomCommandParser::parse(const Common::String &line, ScriptParseContext &
 	int numChoices = atoi(line.c_str() + 7);
 	if (parseCtx._pendingRandomCommand) {
 		// Nested RANDOM commands are unused and not properly supported by the original game.
-		warning(_("Ignoring nested RANDOM command."));
+		warning("Ignoring nested RANDOM command.");
 	} else if (numChoices >= 1) {
 		RandomCommand *randomCommand = new RandomCommand(static_cast<uint>(numChoices));
 		parseCtx._pendingRandomCommand = randomCommand;
 		command = randomCommand;
 	} else {
-		warning(_("Ignoring malformed RANDOM command with %d choices."), numChoices);
+		warning("Ignoring malformed RANDOM command with %d choices.", numChoices);
 	}
 
 	return true;
@@ -68,7 +67,7 @@ bool RandomBlockStartParser::parse(const Common::String &line, ScriptParseContex
 	}
 
 	if (!parseCtx._pendingRandomCommand) {
-		warning(_("Unexpected start of RANDOM block"));
+		warning("Unexpected start of RANDOM block");
 	}
 
 	return true;

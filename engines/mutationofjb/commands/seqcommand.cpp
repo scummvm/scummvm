@@ -21,13 +21,14 @@
  */
 
 #include "mutationofjb/commands/seqcommand.h"
-#include "common/translation.h"
+
+#include "common/textconsole.h"
 
 namespace MutationOfJB {
 
 void SeqCommandParser::transition(ScriptParseContext &, Command *oldCommand, Command *newCommand, CommandParser *) {
 	if (!oldCommand || !newCommand) {
-		warning(_("Unexpected empty command in transition"));
+		warning("Unexpected empty command in transition");
 		return;
 	}
 

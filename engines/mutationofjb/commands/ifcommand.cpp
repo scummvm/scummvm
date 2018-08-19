@@ -24,7 +24,6 @@
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/script.h"
 #include "common/str.h"
-#include "common/translation.h"
 
 /** @file
  * "IF" <tag> <sceneId> <objectId> <value> ["!"]
