@@ -54,6 +54,8 @@ void Archive::save() {
 		_file.writeString(ae._name.c_str());
 		_file.writeLong(ae._offset);
 		_file.writeWord(ae._size);
+
+		dataOffset += ae._size;
 	}
 	if (_file.pos() % 2)
 		_file.writeByte(0);
