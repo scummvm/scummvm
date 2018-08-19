@@ -3159,6 +3159,7 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_seq_midi=no
 			_timidity=no
+			_port_mk="backends/platform/iphone/iphone.mk"
 			;;
 		ios7)
 			append_var DEFINES "-DIPHONE"
@@ -3166,6 +3167,7 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_seq_midi=no
 			_timidity=no
+			_port_mk="backends/platform/ios7/ios7.mk"
 			;;
 		m68k-atari-mint)
 			_seq_midi=no
