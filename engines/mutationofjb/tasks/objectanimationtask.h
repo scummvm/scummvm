@@ -38,7 +38,27 @@ public:
 	virtual void start() override;
 	virtual void update() override;
 
+	/**
+	 * Advances every object animation in the current scene to the next frame.
+	 *
+	 * Normally the animation restarts after the last object frame. However, some animations have random
+	 * elements to them. If _randomFrame is set, the animation restarts when _randomFrame is reached.
+	 * Additionally, there is a chance with each frame until _randomFrame that the animation may jump
+	 * straight to _randomFrame and continue until the last frame, then wrap around to the first frame.
+	 *
+	 * Randomness is used to introduce variety - e.g. in the starting scene a perched bird occasionally
+	 * spreads its wings.
+	 */
 	void updateObjects();
+
+	/**
+	 * Nasty, hacky stuff the original game does to make some complex animations
+	 * in the Carnival and Tavern Earthquake scenes possible.
+	 *
+	 * @param object Object to process.
+	 * @return Whether to draw the object. It's important to respect this, otherwise
+	 * some of the hardcoded animations would suffer from graphical glitches.
+	 */
 	bool handleHardcodedAnimation(Object *const object);
 
 private:
