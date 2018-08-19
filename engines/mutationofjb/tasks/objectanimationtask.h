@@ -29,7 +29,7 @@
 
 namespace MutationOfJB {
 
-class Object;
+struct Object;
 
 class ObjectAnimationTask : public Task {
 public:
