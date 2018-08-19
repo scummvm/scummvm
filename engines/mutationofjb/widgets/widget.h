@@ -55,7 +55,7 @@ public:
 
 	virtual void handleEvent(const Common::Event &) {}
 protected:
-	virtual void _draw(Graphics::ManagedSurface &) = 0;
+	virtual void draw(Graphics::ManagedSurface &) = 0;
 
 	Gui &_gui;
 	Common::Rect _area;
@@ -67,4 +67,3 @@ protected:
 }
 
 #endif
-

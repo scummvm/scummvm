@@ -54,7 +54,7 @@ bool Widget::isDirty() const {
 void Widget::update(Graphics::ManagedSurface &surface) {
 	if (_dirty) {
 		if (_visible) {
-			_draw(surface);
+			draw(surface);
 		}
 		_dirty = false;
 	}

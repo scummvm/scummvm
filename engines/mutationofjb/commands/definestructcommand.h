@@ -38,4 +38,5 @@ public:
 private:
 	ConversationInfo _conversationInfo;
 };
+
 }

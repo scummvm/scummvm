@@ -96,4 +96,5 @@ Command::ExecuteResult DefineStructCommand::execute(ScriptExecutionContext &scri
 Common::String DefineStructCommand::debugString() const {
 	return "DEFINE_STRUCT <data omitted>";
 }
+
 }

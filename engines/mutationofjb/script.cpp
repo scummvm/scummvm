@@ -87,8 +87,7 @@ ScriptParseContext::ScriptParseContext(Common::SeekableReadStream &stream) :
 	_stream(stream),
 	_currentCommand(nullptr),
 	_lastCommand(nullptr),
-	_pendingRandomCommand(nullptr)
-{}
+	_pendingRandomCommand(nullptr) {}
 
 bool ScriptParseContext::readLine(Common::String &line) {
 	do {

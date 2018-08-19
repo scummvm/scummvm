@@ -51,7 +51,7 @@ public:
 	virtual void handleEvent(const Common::Event &event) override;
 
 protected:
-	virtual void _draw(Graphics::ManagedSurface &surface) override;
+	virtual void draw(Graphics::ManagedSurface &surface) override;
 
 private:
 	Graphics::Surface _surface;

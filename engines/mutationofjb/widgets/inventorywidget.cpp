@@ -63,7 +63,7 @@ void InventoryWidget::drawInventoryItem(Graphics::ManagedSurface &surface, const
 	surface.blitFrom(_surfaces[surfaceNo], sourceRect, destStartPos);
 }
 
-void InventoryWidget::_draw(Graphics::ManagedSurface &surface) {
+void InventoryWidget::draw(Graphics::ManagedSurface &surface) {
 	Inventory &inventory = _gui.getGame().getGameData().getInventory();
 	const Inventory::Items &items = inventory.getItems();
 	surface.fillRect(_area, 0x00);

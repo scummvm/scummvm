@@ -58,4 +58,3 @@ Common::String toUpperCP895(const Common::String &str) {
 }
 
 }
-

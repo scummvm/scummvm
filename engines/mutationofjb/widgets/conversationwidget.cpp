@@ -59,7 +59,7 @@ void ConversationWidget::clearChoices() {
 	markDirty();
 }
 
-void ConversationWidget::_draw(Graphics::ManagedSurface &surface) {
+void ConversationWidget::draw(Graphics::ManagedSurface &surface) {
 	surface.blitFrom(_surface, Common::Point(_area.left, _area.top));
 
 	for (int i = 0; i < CONVERSATION_MAX_CHOICES; ++i) {
@@ -94,4 +94,3 @@ void ConversationWidget::handleEvent(const Common::Event &event) {
 }
 
 }
-

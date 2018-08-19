@@ -72,7 +72,6 @@ private:
 	CursorState _cursorState;
 };
 
-
 }
 
 #endif
