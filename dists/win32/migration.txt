@@ -1,7 +1,4 @@
 AUTHORS.txt
-COPYING.BSD.txt
-COPYING.FREEFONT.txt
-COPYING.LGPL.txt
 COPYING.txt
 COPYRIGHT.txt
 drascula.dat
