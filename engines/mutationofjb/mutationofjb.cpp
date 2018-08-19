@@ -156,14 +156,6 @@ void MutationOfJBEngine::handleNormalScene(const Common::Event &event) {
 	_game->getGui().handleEvent(event);
 }
 
-/*
-	Special handling for map scenes.
-
-	Bitmaps define mouse clickable areas.
-	Statics are used to start actions.
-	Objects are used for showing labels.
-
-*/
 void MutationOfJBEngine::handleMapScene(const Common::Event &event) {
 	Scene *const scene = _game->getGameData().getCurrentScene();
 

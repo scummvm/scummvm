@@ -61,7 +61,27 @@ private:
 	void setupCursor();
 	void updateCursorHitTest(int16 x, int16 y);
 	void updateCursorPalette();
+
+	/**
+	 * Handling for normal (non-map) scenes.
+	 *
+	 * Statics and doors define mouse clickable areas.
+	 * Statics are used to start actions.
+	 * Doors are used to transition between scenes.
+	 *
+	 * @param event ScummVM event.
+	 */
 	void handleNormalScene(const Common::Event &event);
+
+	/**
+	 * Special handling for map scenes.
+	 *
+	 * Bitmaps define mouse clickable areas.
+	 * Statics are used to start actions.
+	 * Objects are used for showing labels.
+	 *
+	 * @param event ScummVM event.
+	 */
 	void handleMapScene(const Common::Event &event);
 
 	Console *_console;
