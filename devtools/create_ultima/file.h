@@ -214,6 +214,13 @@ public:
 		_offset += len;
 		_size = MAX(_offset, _size);
 	}
+	virtual void write(Stream &src, size_t size) {
+		byte *buffer = new byte[size];
+		src.read(buffer, size);
+		write(buffer, size);
+		delete[] buffer;
+	}
+
 	virtual uint pos() const {
 		return _offset;
 	}
