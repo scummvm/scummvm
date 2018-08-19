@@ -67,7 +67,7 @@ void InventoryWidget::draw(Graphics::ManagedSurface &surface) {
 	Inventory &inventory = _gui.getGame().getGameData().getInventory();
 	const Inventory::Items &items = inventory.getItems();
 	surface.fillRect(_area, 0x00);
-	for (int i = 0; i < MIN((int) items.size(), (int) Inventory::VISIBLE_ITEMS); ++i) {
+	for (Inventory::Items::size_type i = 0; i < MIN<Inventory::Items::size_type>(items.size(), Inventory::VISIBLE_ITEMS); ++i) {
 		drawInventoryItem(surface, items[i], i);
 	}
 }

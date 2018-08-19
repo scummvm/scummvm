@@ -282,7 +282,7 @@ bool Console::cmd_showstartup(int argc, const char **argv) {
 		Script *const script = getScriptFromArg(argv[1]);
 		if (script) {
 			const Startups &startups = script->getStartups();
-			Startups::const_iterator itMacro = startups.find((uint8) atoi(argv[2]));
+			Startups::const_iterator itMacro = startups.find(static_cast<uint8>(atoi(argv[2])));
 			if (itMacro != startups.end()) {
 				if (itMacro->_value) {
 					showCommands(itMacro->_value);

@@ -33,7 +33,7 @@ static bool readString(Common::ReadStream &stream, char *str) {
 	uint8 len = stream.readByte();
 	stream.read(buf, MAX_ENTITY_NAME_LENGTH);
 
-	len = MIN(len, (uint8) MAX_ENTITY_NAME_LENGTH);
+	len = MIN(len, static_cast<uint8>(MAX_ENTITY_NAME_LENGTH));
 	memcpy(str, buf, len);
 
 	return true;
@@ -110,19 +110,19 @@ bool Scene::loadFromStream(Common::ReadStream &stream) {
 	_delay = stream.readByte();
 
 	_noDoors = stream.readByte();
-	_noDoors = MIN(_noDoors, (uint8) ARRAYSIZE(_doors));
+	_noDoors = MIN(_noDoors, static_cast<uint8>(ARRAYSIZE(_doors)));
 	for (i = 0; i < ARRAYSIZE(_doors); ++i) {
 		_doors[i].loadFromStream(stream);
 	}
 
 	_noObjects = stream.readByte();
-	_noObjects = MIN(_noObjects, (uint8) ARRAYSIZE(_objects));
+	_noObjects = MIN(_noObjects, static_cast<uint8>(ARRAYSIZE(_objects)));
 	for (i = 0; i < ARRAYSIZE(_objects); ++i) {
 		_objects[i].loadFromStream(stream);
 	}
 
 	_noStatics = stream.readByte();
-	_noStatics = MIN(_noStatics, (uint8) ARRAYSIZE(_statics));
+	_noStatics = MIN(_noStatics, static_cast<uint8>(ARRAYSIZE(_statics)));
 	for (i = 0; i < ARRAYSIZE(_statics); ++i) {
 		_statics[i].loadFromStream(stream);
 	}
@@ -163,7 +163,7 @@ Object *Scene::getObject(uint8 objectId, bool ignoreNo) {
 }
 
 Static *Scene::getStatic(uint8 staticId, bool ignoreNo) {
-	if (staticId == 0 || staticId > (!ignoreNo ? MIN(_noStatics, (uint8) ARRAYSIZE(_statics)) : ARRAYSIZE(_statics))) {
+	if (staticId == 0 || staticId > (!ignoreNo ? MIN(_noStatics, static_cast<uint8>(ARRAYSIZE(_statics))) : ARRAYSIZE(_statics))) {
 		warning("Static %d does not exist", staticId);
 		return nullptr;
 	}
@@ -172,15 +172,15 @@ Static *Scene::getStatic(uint8 staticId, bool ignoreNo) {
 }
 
 uint8 Scene::getNoDoors(bool ignoreNo) const {
-	return (!ignoreNo ? MIN(_noDoors, (uint8) ARRAYSIZE(_doors)) : ARRAYSIZE(_doors));
+	return (!ignoreNo ? MIN(_noDoors, static_cast<uint8>(ARRAYSIZE(_doors))) : ARRAYSIZE(_doors));
 }
 
 uint8 Scene::getNoObjects(bool ignoreNo) const {
-	return (!ignoreNo ? MIN(_noObjects, (uint8) ARRAYSIZE(_objects)) : ARRAYSIZE(_objects));
+	return (!ignoreNo ? MIN(_noObjects, static_cast<uint8>(ARRAYSIZE(_objects))) : ARRAYSIZE(_objects));
 }
 
 uint8 Scene::getNoStatics(bool ignoreNo) const {
-	return (!ignoreNo ? MIN(_noStatics, (uint8) ARRAYSIZE(_statics)) : ARRAYSIZE(_statics));
+	return (!ignoreNo ? MIN(_noStatics, static_cast<uint8>(ARRAYSIZE(_statics))) : ARRAYSIZE(_statics));
 }
 
 Door *Scene::findDoor(int16 x, int16 y, int *index) {

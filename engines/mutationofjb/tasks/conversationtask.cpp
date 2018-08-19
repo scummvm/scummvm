@@ -132,7 +132,7 @@ void ConversationTask::showChoicesOrPick() {
 	for (ConversationInfo::ItemGroup::size_type i = 0; i < currentGroup.size(); ++i) {
 		const ConversationInfo::Item &item = currentGroup[i];
 
-		if (scene->isConvItemExhausted(_convInfo._context, (uint8) i + 1, (uint8) _currentGroupIndex + 1)) {
+		if (scene->isConvItemExhausted(_convInfo._context, static_cast<uint8>(i + 1), static_cast<uint8>(_currentGroupIndex + 1))) {
 			continue;
 		}
 		const uint8 toSay = item._question;
@@ -160,7 +160,7 @@ void ConversationTask::showChoicesOrPick() {
 			const ConversationInfo::Item &item = currentGroup[itemsWithValidQuestions[i]];
 			const ConversationLineList::Line *const line = toSayList.getLine(item._question);
 			const Common::String widgetText = toUpperCP895(line->_speeches[0]._text);
-			widget.setChoice((int) i, widgetText, itemsWithValidQuestions[i]);
+			widget.setChoice(static_cast<int>(i), widgetText, itemsWithValidQuestions[i]);
 		}
 		_substate = IDLE;
 		_currentItem = nullptr;

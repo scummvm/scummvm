@@ -82,7 +82,7 @@ Command::ExecuteResult TalkCommand::execute(ScriptExecutionContext &scriptExeCtx
 
 Common::String TalkCommand::debugString() const {
 	const char *modes[] = {"NORMAL", "RAY_AND_BUTTLEG", "CARNIVAL_TICKET_SELLER"};
-	return Common::String::format("TALK %s", modes[(int) _mode]);
+	return Common::String::format("TALK %s", modes[static_cast<int>(_mode)]);
 }
 
 }
