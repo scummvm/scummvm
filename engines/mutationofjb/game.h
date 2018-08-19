@@ -40,13 +40,13 @@ namespace MutationOfJB {
 
 class Command;
 class MutationOfJBEngine;
-class GameData;
 class Script;
 class Room;
-class Door;
-class Static;
-class Bitmap;
 class SayTask;
+struct GameData;
+struct Door;
+struct Static;
+struct Bitmap;
 
 class Game {
 public:

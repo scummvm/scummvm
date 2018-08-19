@@ -39,13 +39,13 @@ namespace MutationOfJB {
 class Command;
 class LabelCommand;
 class Game;
-class GameData;
 class GotoCommand;
 class ConditionalCommand;
 class Script;
 class RandomCommand;
-typedef Common::Array<Command *> Commands;
+struct GameData;
 
+typedef Common::Array<Command *> Commands;
 
 struct ActionInfo {
 	enum Action {
