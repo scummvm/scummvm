@@ -93,7 +93,7 @@ bool Console::cmd_listsections(int argc, const char **argv) {
 	if (argc == 3) {
 		Script *const script = getScriptFromArg(argv[1]);
 		if (script) {
-			ActionInfo::Action action;
+			ActionInfo::Action action = ActionInfo::Look;
 			const char *word = nullptr;
 			if (strcmp(argv[2], "L") == 0) {
 				action = ActionInfo::Look;
@@ -171,7 +171,7 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 		Script *const script = getScriptFromArg(argv[1]);
 		if (script) {
 			Command *command = nullptr;
-			ActionInfo::Action action;
+			ActionInfo::Action action = ActionInfo::Look;
 			bool correctAction = true;
 			bool found = false;
 
