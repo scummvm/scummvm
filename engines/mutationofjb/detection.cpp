@@ -24,15 +24,71 @@
 
 #include "common/config-manager.h"
 
-#include "engines/metaengine.h"
+#include "engines/advancedDetector.h"
 
-static const PlainGameDescriptor mutationofjb_setting[] = {
+static const PlainGameDescriptor mutationofjbGames[] = {
 	{"mutationofjb", "Mutation of J.B."},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
-class MutationOfJBMetaEngine : public MetaEngine {
+static const ADGameDescription mutationofjbDescriptions[] = {
+	{
+		"mutationofjb",
+		"",
+		{
+			{"jb.ex_", 0, "934164b09c72fa7167811f448ee0a426", 150048},
+			{"startup.dat", 0, nullptr, -1},
+			{"startupb.dat", 0, nullptr, -1},
+			{"global.atn", 0, nullptr, -1},
+			{"piggy.apk", 0, nullptr, -1},
+			{"foogl.apk", 0, nullptr, -1},
+			{"tosay.ger", 0, nullptr, -1},
+			{"response.ger", 0, nullptr, -1},
+			{"font1.aft", 0, nullptr, -1},
+			{"sysfnt.aft", 0, nullptr, -1},
+			{nullptr, 0, nullptr, 0}
+		},
+		Common::SK_SVK,
+		Common::kPlatformDOS,
+		ADGF_CD,
+		GUIO0()
+	},
+	{
+		"mutationofjb",
+		"",
+		{
+			{"jb.ex_", 0, "8833f22f1763d05eeb909e8626cdec7b", 150800},
+			{"startup.dat", 0, nullptr, -1},
+			{"startupb.dat", 0, nullptr, -1},
+			{"global.atn", 0, nullptr, -1},
+			{"piggy.apk", 0, nullptr, -1},
+			{"foogl.apk", 0, nullptr, -1},
+			{"tosay.ger", 0, nullptr, -1},
+			{"response.ger", 0, nullptr, -1},
+			{"font1.aft", 0, nullptr, -1},
+			{"sysfnt.aft", 0, nullptr, -1},
+			{nullptr, 0, nullptr, 0}
+		},
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_CD,
+		GUIO0()
+	},
+	AD_TABLE_END_MARKER
+};
+
+static const char *const mutationofjbDirectoryGlobs[] = {
+	"data",
+	nullptr
+};
+
+class MutationOfJBMetaEngine : public AdvancedMetaEngine {
 public:
+	MutationOfJBMetaEngine() : AdvancedMetaEngine(mutationofjbDescriptions, sizeof(ADGameDescription), mutationofjbGames) {
+		_maxScanDepth = 2;
+		_directoryGlobs = mutationofjbDirectoryGlobs;
+	}
+
 	virtual const char *getName() const {
 		return "Mutation of J.B.";
 	}
@@ -41,67 +97,11 @@ public:
 		return "Mutation of J.B. (C) 1996 RIKI Computer Games";
 	}
 
-	virtual PlainGameList getSupportedGames() const {
-		PlainGameList games;
-		const PlainGameDescriptor *g = mutationofjb_setting;
-		while (g->gameId) {
-			games.push_back(*g);
-			g++;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+		if (desc) {
+			*engine = new MutationOfJB::MutationOfJBEngine(syst);
 		}
-
-		return games;
-	}
-
-	virtual PlainGameDescriptor findGame(const char *gameid) const {
-		const PlainGameDescriptor *g = mutationofjb_setting;
-		while (g->gameId) {
-			if (0 == scumm_stricmp(gameid, g->gameId))
-				return *g;
-			g++;
-		}
-		return PlainGameDescriptor::empty();
-	}
-
-	virtual DetectedGames detectGames(const Common::FSList &fslist) const {
-		DetectedGames detectedGames;
-
-		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			if (!file->isDirectory()) {
-				const char *gameName = file->getName().c_str();
-
-				if (0 == scumm_stricmp("startup.dat", gameName)) {
-					detectedGames.push_back(DetectedGame(mutationofjb_setting[0]));
-					break;
-				}
-			}
-		}
-		return detectedGames;
-	}
-
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
-		assert(syst);
-		assert(engine);
-
-		Common::FSList fslist;
-		Common::FSNode dir(ConfMan.get("path"));
-		if (!dir.getChildren(fslist, Common::FSNode::kListAll)) {
-			return Common::kNoGameDataFoundError;
-		}
-
-		// Invoke the detector
-		Common::String gameid = ConfMan.get("gameid");
-		DetectedGames detectedGames = detectGames(fslist);
-
-		for (uint i = 0; i < detectedGames.size(); i++) {
-			if (detectedGames[i].gameId == gameid) {
-				// At this point you may want to perform additional sanity checks.
-				*engine = new MutationOfJB::MutationOfJBEngine(syst);
-				return Common::kNoError;
-			}
-		}
-
-		// Failed to find any game data
-		return Common::kNoGameDataFoundError;
+		return desc != nullptr;
 	}
 };
 

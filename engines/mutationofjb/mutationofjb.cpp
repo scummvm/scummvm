@@ -22,10 +22,12 @@
 
 #include "common/scummsys.h"
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/fs.h"
 #include "graphics/screen.h"
 #include "graphics/cursorman.h"
 
@@ -45,12 +47,12 @@ MutationOfJBEngine::MutationOfJBEngine(OSystem *syst)
 	  _screen(nullptr),
 	  _mapObjectId(0),
 	  _cursorState(CURSOR_IDLE) {
-	debug("MutationOfJBEngine::MutationOfJBEngine");
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 }
 
-MutationOfJBEngine::~MutationOfJBEngine() {
-	debug("MutationOfJBEngine::~MutationOfJBEngine");
-}
+MutationOfJBEngine::~MutationOfJBEngine() {}
 
 void MutationOfJBEngine::setupCursor() {
 	const uint8 cursor[] = {
@@ -237,8 +239,6 @@ void MutationOfJBEngine::updateCursorHitTest(int16 x, int16 y) {
 }
 
 Common::Error MutationOfJBEngine::run() {
-	debug("MutationOfJBEngine::run");
-
 	initGraphics(320, 200);
 
 	_console = new Console(this);
