@@ -317,13 +317,13 @@ Common::String ChangeCommand::getValueAsString() const {
 	case PF:
 	case PL:
 	case PD:
-		return Common::String::format("%d", (int)_value._byteVal);
+		return Common::String::format("%d", static_cast<int>(_value._byteVal));
 	case SX:
 	case SY:
 	case XX:
 	case XL:
 	case WX:
-		return Common::String::format("%d", (int)_value._wordVal);
+		return Common::String::format("%d", static_cast<int>(_value._wordVal));
 	default:
 		return "(unknown)";
 	}
