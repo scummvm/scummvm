@@ -35,6 +35,10 @@
 #define NSEventModifierFlagOption  NSAlternateKeyMask
 #endif
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_10
+#define NSEventModifierFlags NSUInteger
+#endif
+
 // Apple added setAppleMenu in 10.5 and removed it in 10.6.
 // But as the method still exists we declare it ourselves here.
 // Yes, this works :)
