@@ -282,9 +282,13 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
+	// WORKAROUND: Avoid referencing invalid export 0 in script 601 (Snakes & Ladders) in Hoyle 3 Amiga
+	if (g_sci->getGameId() == GID_HOYLE3 && g_sci->getPlatform() == Common::kPlatformAmiga && script == 601 && argc == 1)
+		return NULL_REG;
+
 	const uint32 address = scr->validateExportFunc(index, true) + scr->getHeapOffset();
 
-	// Bugfix for the intro speed in PQ2 version 1.002.011.
+	// WORKAROUND: Bugfix for the intro speed in PQ2 version 1.002.011.
 	// This is taken from the patch by NewRisingSun(NRS) / Belzorash. Global 3
 	// is used for timing during the intro, and in the problematic version it's
 	// initialized to 0, whereas it's 6 in other versions. Thus, we assign it
