@@ -678,6 +678,38 @@ reg_t kWebConnect(EngineState *s, int argc, reg_t *argv) {
 reg_t kWinExec(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
+
+extern void showScummVMDialog(const Common::String &message);
+
+reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
+	uint16 operation = argv[0].toUint16();
+	Common::String dllName = s->_segMan->getString(argv[1]);
+
+	switch (operation) {
+	case 0:	// load DLL
+		// This is originally a call to LoadLibrary() and to the Watcom function GetIndirectFunctionHandle
+		return make_reg(0, 1000);	// fake ID for loaded DLL, normally returned from Windows LoadLibrary()
+	case 1: // free DLL
+		// In the original, FreeLibrary() was called here for the loaded DLL
+		return TRUE_REG;
+	case 2:	// call DLL function
+		if (dllName == "PENGIN16.DLL") {
+			// Poker engine logic for Hoyle 5
+			// This is originally a call to the Watcom function InvokeIndirectFunction()
+			// TODO: we need to reverse the logic in PENGIN16.DLL and call it directly
+			//SciArray *data = s->_segMan->lookupArray(argv[2]);
+			warning("The Poker game logic has not been implemented yet");
+			showScummVMDialog("The Poker game logic has not been implemented yet");
+			return NULL_REG;
+		} else {
+			error("kWinDLL: Unknown DLL to invoke: %s", dllName.c_str());
+			return NULL_REG;
+		}
+	default:
+		return NULL_REG;
+	}
+}
+
 #endif
 
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
