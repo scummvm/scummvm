@@ -99,8 +99,7 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		// However, since we address the heap with a 16-bit pointer, the
 		// combined size of the stack and the heap must be 64KB. So far this has
 		// worked for SCI11, SCI2 and SCI21 games. SCI3 games use a different
-		// script format, and theoretically they can exceed the 64KB boundary
-		// using relocation.
+		// script format, and they can exceed the 64KB boundary using relocation.
 		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), false);
 		bufSize += heap->size();
 
