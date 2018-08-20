@@ -244,7 +244,19 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 			deleteShowStyle(findIteratorForPlane(planeObj));
 		}
 
-		return;
+		// Do not add kShowStyleNone types to the showStyles list.
+		//
+		// HACK: Hoyle 5 does a fade out in some screens, and then makes a
+		// kShowStyleNone call to enter the new screen, without a fade in,
+		// thus leaving the whole screen black. By removing ths return,
+		// the code for queuing the kShowStyleNone calls is enabled, and this
+		// wrong behavior is fixed, as the screen palette is restored in the
+		// processNone() call inside processShowStyle(). I wasn't able to find
+		// any other notable difference in the graphics code of the Hoyle 5
+		// interpreter, and disabling this return has no other ill effects for
+		// this game, so this will suffice for now.
+		if (g_sci->getGameId() != GID_HOYLE5)
+			return;
 	}
 
 	if (createNewEntry) {
