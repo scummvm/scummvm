@@ -880,7 +880,20 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 	if (address.getSegment())
 		return _segMan->getString(address);
 
-	Resource *textres = _resMan->findResource(ResourceId(kResourceTypeText, address.getOffset()), false);
+	ResourceId resourceId = ResourceId(kResourceTypeText, address.getOffset());
+	if (g_sci->getGameId() == GID_HOYLE3 && g_sci->getPlatform() == Common::kPlatformAmiga) {
+		// WORKAROUND: In the Amiga version of Hoyle 3, texts are stored as
+		// either text, font or palette types. Seems like the resource type
+		// bits are used as part of the resource numbers. This is the same
+		// as the workaround used in GfxFontFromResource()
+		resourceId = ResourceId(kResourceTypeText, address.getOffset() & 0x7FF);
+		if (!_resMan->testResource(resourceId))
+			resourceId = ResourceId(kResourceTypeFont, address.getOffset() & 0x7FF);
+		if (!_resMan->testResource(resourceId))
+			resourceId = ResourceId(kResourceTypePalette, address.getOffset() & 0x7FF);
+	}
+
+	Resource *textres = _resMan->findResource(resourceId, false);
 
 	if (!textres) {
 		error("text.%03d not found", address.getOffset());
