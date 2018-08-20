@@ -130,7 +130,6 @@ static const uint16 sig_uninitread_hoyle4_1[] = {
 //   Subroutine offset: 0x2fb2 (script 300)
 // Applies to at least: English PC demo
 static const uint16 sig_uninitread_hoyle5_1[] = {
-
 	0x7e, SIG_ADDTOOFFSET(2),        // line N
 	0x7d, 0x68, 0x65, 0x61, 0x72,
 	      0x74, 0x73, 0x2e, 0x73,
@@ -139,6 +138,55 @@ static const uint16 sig_uninitread_hoyle5_1[] = {
 	0x7e, SIG_ADDTOOFFSET(2),        // line N
 	0x39, 0x4b,                      // pushi 4bh
 	0x78,                            // push1
+	SIG_END
+};
+
+//                Game: Hoyle 5 (Solitaire)
+//      Calling methods: roomScript::changeState, beleaguered_castle::init, strategy::init
+//   Subroutine offsets: 0x25f4 (script 6001), 0x1d7a (script 6004), 0x239d (script 6002)
+// Applies to at least: English PC
+static const uint16 sig_uninitread_hoyle5_2[] = {
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x7d, SIG_ADDTOOFFSET(8),
+	      0x2e, 0x73, 0x63, 0x00,    // file "calculat.sc" / "belcastl.sc" / "strategy.sc"
+	0x3f, 0x02,                      // link 02
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x8d, 0x00,                      // lst temp[0]
+	0x35, 0x00,                      // ldi 00
+	0x1a,                            // eq?
+	SIG_END
+};
+
+//                Game: Hoyle 5 (Solitaire)
+//      Calling method: roomScript::changeState
+//   Subroutine offset: 0x494a (script 6023)
+// Applies to at least: English PC
+static const uint16 sig_uninitread_hoyle5_3[] = {
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x7d, 0x67, 0x61, 0x70,	0x73,
+	      0x2e, 0x73, 0x63, 0x00,    // file "gaps.sc"
+	0x3f, 0x02,                      // link 02
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x8d, 0x00,                      // lst temp[0]
+	0x35, 0x00,                      // ldi 00
+	0x1a,                            // eq?
+	SIG_END
+};
+
+//                Game: Hoyle 5 (Solitaire)
+//      Calling method: roomScript::changeState
+//   Subroutine offset: 0x2097 (script 6011)
+// Applies to at least: English PC
+static const uint16 sig_uninitread_hoyle5_4[] = {
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x7d, 0x6c, 0x61, 0x62, 0x65,
+	      0x6c, 0x6c, 0x65,
+	      0x2e, 0x73, 0x63, 0x00,    // file "labelle.sc"
+	0x3f, 0x02,                      // link 02
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x8d, 0x00,                      // lst temp[0]
+	0x35, 0x00,                      // ldi 00
+	0x1a,                            // eq?
 	SIG_END
 };
 
@@ -324,6 +372,17 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,         -1, 64937, -1,                 NULL, "select",                          NULL,     7,     7, { WORKAROUND_FAKE,   0 } }, // clicking the "control" and "options" buttons in the icon bar
 	{ GID_HOYLE5,         -1, 64937, -1,            "IconBar", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // clicking on any button in the icon bar
 	{ GID_HOYLE5,        300,   300,  0,                   "", "export 2",     sig_uninitread_hoyle5_1,     0,     0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
+	{ GID_HOYLE5,        400,   400,  1,            "GinHand", "calcRuns",                        NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // when starting Gin
+	{ GID_HOYLE5,       1100,  1100,  0,         "anteButton", "handleEvent",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when exiting Poker
+	{ GID_HOYLE5,       6029,  6029,  1,        "ControlIcon", "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // Solitaire: when changing any slider in the Card Flip mini-game's options window
+	{ GID_HOYLE5,         -1,  6000,  1,              "sHand", "handleEvent",                     NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // Solitaire: when clicking on an empty card base in any game
+	{ GID_HOYLE5,       6001,  6001,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Calculation
+	{ GID_HOYLE5,       6004,  6004,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Beleaguered Castle
+	{ GID_HOYLE5,       6004,  6004,  0, "beleaguered_castle", "init",         sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Beleaguered Castle
+	{ GID_HOYLE5,       6023,  6023,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_3,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Gaps
+	{ GID_HOYLE5,       6011,  6011,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_4,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting La Belle Lucie
+	{ GID_HOYLE5,       6002,  6002,  0,         "roomScript", "changeState",  sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Strategy
+	{ GID_HOYLE5,       6002,  6002,  0,           "strategy", "init",         sig_uninitread_hoyle5_2,     0,     0, { WORKAROUND_FAKE,   0 } }, // Solitaire: when starting Strategy
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",                   NULL,    58,    58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #5241
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",                            NULL,     3,     3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   180,   190,  0,               "word", "dispatchEvent",                   NULL,    14,    15, { WORKAROUND_FAKE,   0 } }, // holding down enter key during the word search puzzle, temps 14 and 15
