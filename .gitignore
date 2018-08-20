@@ -3,6 +3,7 @@
 .*.swp
 .*.swo
 *.o
+*.dwo
 lib*.a
 .deps
 

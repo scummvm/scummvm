@@ -98,5 +98,8 @@ endif # TOOL_EXECUTABLE
 clean: clean-$(MODULE)
 clean-$(MODULE): clean-% :
 	-$(RM) $(MODULE_OBJS-$*) $(MODULE_LIB-$*) $(PLUGIN-$*) $(TOOL-$*)
+ifdef SPLIT_DWARF
+	-$(RM) $(MODULE_OBJS-$*:.o=.dwo)
+endif
 
 .PHONY: clean-$(MODULE) $(MODULE)
