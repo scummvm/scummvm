@@ -88,15 +88,26 @@ MidiDriver_FluidSynth::MidiDriver_FluidSynth(Audio::Mixer *mixer)
 }
 
 void MidiDriver_FluidSynth::setInt(const char *name, int val) {
-	fluid_settings_setint(_settings, name, val);
+	char *name2 = scumm_strdup(name);
+
+	fluid_settings_setint(_settings, name2, val);
+	free(name2);
 }
 
 void MidiDriver_FluidSynth::setNum(const char *name, double val) {
-	fluid_settings_setnum(_settings, name, val);
+	char *name2 = scumm_strdup(name);
+
+	fluid_settings_setnum(_settings, name2, val);
+	free(name2);
 }
 
 void MidiDriver_FluidSynth::setStr(const char *name, const char *val) {
-	fluid_settings_setstr(_settings, name, val);
+	char *name2 = scumm_strdup(name);
+	char *val2 = scumm_strdup(val);
+
+	fluid_settings_setstr(_settings, name2, val2);
+	free(name2);
+	free(val2);
 }
 
 int MidiDriver_FluidSynth::open() {
