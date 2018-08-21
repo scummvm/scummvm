@@ -81,7 +81,7 @@ static void openFromBundle(NSString *file) {
 }
 
 - (void)openLicense {
-	openFromBundle(@"COPYING");
+	openFromBundle(@"COPYING-COMBINED");
 }
 
 - (void)openNews {
