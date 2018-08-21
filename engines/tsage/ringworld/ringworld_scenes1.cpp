@@ -2276,7 +2276,7 @@ void Scene60::Item1::doAction(int action) {
 				scene->_action1.setActionIndex(9);
 				scene->_action1.setDelay(1);
 			}
-			if (g_globals->getFlag(121) && !g_globals->_stripNum) {
+			if (g_globals->getFlag(121) && g_globals->_stripNum) {
 				g_globals->clearFlag(121);
 				scene->setAction(&scene->_action1);
 				scene->_action1.setActionIndex(9);
