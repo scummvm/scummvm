@@ -121,10 +121,9 @@ ifdef DIST_FILES_ENGINEDATA
 endif
 	$(srcdir)/devtools/credits.pl --rtf > $(bundle_name)/Contents/Resources/AUTHORS.rtf
 	rm $(bundle_name)/Contents/Resources/AUTHORS
-	cp $(bundle_name)/Contents/Resources/COPYING $(bundle_name)/Contents/Resources/COPYING-COMBINED
-	echo "\n---\n" | cat - $(bundle_name)/Contents/Resources/COPYING.LGPL >> $(bundle_name)/Contents/Resources/COPYING-COMBINED
-	echo "\n---\n" | cat - $(bundle_name)/Contents/Resources/COPYING.FREEFONT >> $(bundle_name)/Contents/Resources/COPYING-COMBINED
-	echo "\n---\n" | cat - $(bundle_name)/Contents/Resources/COPYING.BSD >> $(bundle_name)/Contents/Resources/COPYING-COMBINED
+	cp $(bundle_name)/Contents/Resources/COPYING.LGPL $(bundle_name)/Contents/Resources/COPYING-LGPL
+	cp $(bundle_name)/Contents/Resources/COPYING.FREEFONT $(bundle_name)/Contents/Resources/COPYING-FREEFONT
+	cp $(bundle_name)/Contents/Resources/COPYING.BSD $(bundle_name)/Contents/Resources/COPYING-BSD
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	chmod 755 $(bundle_name)/Contents/MacOS/scummvm

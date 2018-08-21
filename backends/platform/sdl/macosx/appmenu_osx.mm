@@ -69,7 +69,10 @@ static void openFromBundle(NSString *file) {
 @interface ScummVMMenuHandler : NSObject {
 }
 - (void) openReadme;
-- (void) openLicense;
+- (void) openLicenseGPL;
+- (void) openLicenseLGPL;
+- (void) openLicenseFreefont;
+- (void) openLicenseBSD;
 - (void) openNews;
 - (void) openUserManual;
 - (void) openCredits;
@@ -80,8 +83,20 @@ static void openFromBundle(NSString *file) {
 	openFromBundle(@"README");
 }
 
-- (void)openLicense {
-	openFromBundle(@"COPYING-COMBINED");
+- (void)openLicenseGPL {
+	openFromBundle(@"COPYING");
+}
+
+- (void)openLicenseLGPL {
+	openFromBundle(@"COPYING-LGPL");
+}
+
+- (void)openLicenseFreefont {
+	openFromBundle(@"COPYING-FREEFONT");
+}
+
+- (void)openLicenseBSD {
+	openFromBundle(@"COPYING-BSD");
 }
 
 - (void)openNews {
@@ -183,7 +198,11 @@ void replaceApplicationMenuItems() {
 	addMenuItem(_("What's New in ScummVM"), stringEncoding, delegate, @selector(openNews), @"", helpMenu);
 	[helpMenu addItem:[NSMenuItem separatorItem]];
 	addMenuItem(_("Credits"), stringEncoding, delegate, @selector(openCredits), @"", helpMenu);
-	addMenuItem(_("Licensing Information"), stringEncoding, delegate, @selector(openLicense), @"", helpMenu);
+	addMenuItem(_("GPL License"), stringEncoding, delegate, @selector(openLicenseGPL), @"", helpMenu);
+	addMenuItem(_("LGPL License"), stringEncoding, delegate, @selector(openLicenseLGPL), @"", helpMenu);
+	addMenuItem(_("Freefont License"), stringEncoding, delegate, @selector(openLicenseFreefont), @"", helpMenu);
+	addMenuItem(_("BSD License"), stringEncoding, delegate, @selector(openLicenseBSD), @"", helpMenu);
+
 
 	[appleMenu release];
 	[windowMenu release];
