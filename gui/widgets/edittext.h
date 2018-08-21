@@ -25,8 +25,13 @@
 
 #include "gui/widgets/editable.h"
 #include "common/str.h"
+#include "gui/dialog.h"
 
 namespace GUI {
+
+enum {
+	kExitTxtCmd = 'TXTE'
+};
 
 /* EditTextWidget */
 class EditTextWidget : public EditableWidget {
@@ -43,12 +48,15 @@ public:
 	EditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltp = 0, uint32 cmd = 0, uint32 finishCmd = 0);
 
 	void setEditString(const String &str);
+	
+	String getEditString();
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
-
+	
 	virtual bool wantsFocus() { return true; }
 
 	virtual void reflowLayout();
+
 
 protected:
 	void drawWidget();
@@ -58,6 +66,7 @@ protected:
 	void startEditMode();
 	void endEditMode();
 	void abortEditMode();
+	
 
 	Common::Rect getEditRect() const;
 
