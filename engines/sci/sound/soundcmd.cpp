@@ -634,6 +634,12 @@ reg_t SoundCommandParser::kDoSoundSendMidi(EngineState *s, int argc, reg_t *argv
 	uint16 controller = (argc == 5) ? argv[3].toUint16() : argv[2].toUint16();
 	uint16 param = (argc == 5) ? argv[4].toUint16() : argv[3].toUint16();
 
+	// This call is made in Hoyle 5 when toggling the music from the main menu.
+	// Ignore it for this game, since it doesn't use MIDI audio, and this call
+	// looks to be a leftover in Sound::mute (script 64989).
+	if (g_sci->getGameId() == GID_HOYLE5)
+		return s->r_acc;
+
 	if (argc == 4 && controller == 0xFF) {
 		midiCmd = 0xE0;	// 0xE0: pitch wheel
 		uint16 pitch = CLIP<uint16>(argv[3].toSint16() + 0x2000, 0x0000, 0x3FFF);
