@@ -30,6 +30,7 @@ namespace GUI {
 
 class ListWidget;
 class EditTextWidget;
+class StaticTextWidget;
 class CheckboxWidget;
 class CommandSender;
 
