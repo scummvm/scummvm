@@ -88,6 +88,7 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	{ GID_QFG2,           200,  200,  0,              "astro", "messages",                        NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_lsi: when getting asked for your name by the astrologer - bug #5152
 	{ GID_QFG3,           780,  999,  0,                   "", "export 6",                        NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // op_add: trying to talk to yourself at the top of the giant tree - bug #6692
 	{ GID_QFG4,           710,64941,  0,          "RandCycle", "doit",                            NULL,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_gt: when the tentacle appears in the third room of the caves
+	{ GID_QFG4,            -1,  870,  0,         "hurtMyself", "changeState",                     NULL,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_or: when hitting a necrotaur with a sword as a paladin
 	{ GID_TORIN,        51400,64928,  0,              "Blink", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   1 } }, // op_div: when Lycentia knocks Torin out after he removes her collar
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
