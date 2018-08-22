@@ -62,6 +62,7 @@ struct SciWorkaroundEntry {
 
 extern const SciWorkaroundEntry arithmeticWorkarounds[];
 extern const SciWorkaroundEntry uninitializedReadWorkarounds[];
+extern const SciWorkaroundEntry uninitializedReadForParamWorkarounds[];
 extern const SciWorkaroundEntry kAbs_workarounds[];
 extern const SciWorkaroundEntry kCelHigh_workarounds[];
 extern const SciWorkaroundEntry kCelWide_workarounds[];
