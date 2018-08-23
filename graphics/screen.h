@@ -40,22 +40,22 @@ namespace Graphics {
  * areas to the physical screen
  */
 class Screen : public ManagedSurface {
-private:
+protected:
 	/**
 	 * List of affected areas of the screen
 	 */
 	Common::List<Common::Rect> _dirtyRects;
-private:
+protected:
 	/**
-	* Merges together overlapping dirty areas of the screen
-	*/
+	 * Merges together overlapping dirty areas of the screen
+	 */
 	void mergeDirtyRects();
 
 	/**
-	* Returns the union of two dirty area rectangles
-	*/
+	 * Returns the union of two dirty area rectangles
+	 */
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
-protected:
+
 	/**
 	 * Adds a rectangle to the list of modified areas of the screen during the
 	 * current frame
@@ -86,6 +86,11 @@ public:
 	 * Updates the screen by copying any affected areas to the system
 	 */
 	virtual void update();
+
+	/**
+	 * Updates the screen at the end of an update call
+	 */
+	virtual void updateScreen();
 
 	/**
 	 * Return the currently active palette
