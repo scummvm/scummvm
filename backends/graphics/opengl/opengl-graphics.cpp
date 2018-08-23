@@ -420,16 +420,22 @@ void OpenGLGraphicsManager::updateScreen() {
 
 	const GLfloat shakeOffset = _gameScreenShakeOffset * (GLfloat)_gameDrawRect.height() / _gameScreen->getHeight();
 
+	// Alpha blending is disabled when drawing the screen
+	_backBuffer.enableBlend(Framebuffer::kBlendModeDisabled);
+
 	// First step: Draw the (virtual) game screen.
 	g_context.getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top + shakeOffset, _gameDrawRect.width(), _gameDrawRect.height());
 
 	// Second step: Draw the overlay if visible.
 	if (_overlayVisible) {
+		_backBuffer.enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
 		g_context.getActivePipeline()->drawTexture(_overlay->getGLTexture(), 0, 0, _overlayDrawRect.width(), _overlayDrawRect.height());
 	}
 
 	// Third step: Draw the cursor if visible.
 	if (_cursorVisible && _cursor) {
+		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
+
 		// Adjust game screen shake position, but only when the overlay is not
 		// visible.
 		const GLfloat cursorOffset = _overlayVisible ? 0 : shakeOffset;
@@ -446,6 +452,10 @@ void OpenGLGraphicsManager::updateScreen() {
 
 #ifdef USE_OSD
 	// Fourth step: Draw the OSD.
+	if (_osdMessageSurface || _osdIconSurface) {
+		_backBuffer.enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
+	}
+
 	if (_osdMessageSurface) {
 		// Update alpha value.
 		const int diff = g_system->getMillis(false) - _osdMessageFadeStartTime;
@@ -549,20 +559,35 @@ void OpenGLGraphicsManager::grabOverlay(void *buf, int pitch) const {
 }
 
 namespace {
-template<typename DstPixel, typename SrcPixel>
-void applyColorKey(DstPixel *dst, const SrcPixel *src, uint w, uint h, uint dstPitch, uint srcPitch, SrcPixel keyColor, DstPixel alphaMask) {
-	const uint srcAdd = srcPitch - w * sizeof(SrcPixel);
-	const uint dstAdd = dstPitch - w * sizeof(DstPixel);
+template<typename SrcColor, typename DstColor>
+void multiplyColorWithAlpha(const byte *src, byte *dst, const uint w, const uint h,
+                            const Graphics::PixelFormat &srcFmt, const Graphics::PixelFormat &dstFmt,
+                            const uint srcPitch, const uint dstPitch, const SrcColor keyColor) {
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			const uint32 color = *(const SrcColor *)src;
 
-	while (h-- > 0) {
-		for (uint x = w; x > 0; --x, ++dst, ++src) {
-			if (*src == keyColor) {
-				*dst &= ~alphaMask;
+			if (color == keyColor) {
+				*(DstColor *)dst = 0;
+			} else {
+				byte a, r, g, b;
+				srcFmt.colorToARGB(color, a, r, g, b);
+
+				if (a != 0xFF) {
+					r = (int) r * a / 255;
+					g = (int) g * a / 255;
+					b = (int) b * a / 255;
+				}
+
+				*(DstColor *)dst = dstFmt.ARGBToColor(a, r, g, b);
 			}
+
+			src += sizeof(SrcColor);
+			dst += sizeof(DstColor);
 		}
 
-		dst = (DstPixel *)((byte *)dst + dstAdd);
-		src = (const SrcPixel *)((const byte *)src + srcAdd);
+		src += srcPitch - w * srcFmt.bytesPerPixel;
+		dst += dstPitch - w * dstFmt.bytesPerPixel;
 	}
 }
 } // End of anonymous namespace
@@ -629,27 +654,26 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 
 		// Copy the cursor data to the actual texture surface. This will make
 		// sure that the data is also converted to the expected format.
-		Graphics::crossBlit((byte *)dst->getPixels(), (const byte *)buf, dst->pitch, srcPitch,
-		                    w, h, dst->format, inputFormat);
 
-		// We apply the color key by setting the alpha bits of the pixels to
-		// fully transparent.
-		const uint32 aMask = (0xFF >> dst->format.aLoss) << dst->format.aShift;
+		// Also multiply the color values with the alpha channel.
+		// The pre-multiplication allows using a blend mode that prevents
+		// color fringes due to filtering.
+
 		if (dst->format.bytesPerPixel == 2) {
 			if (inputFormat.bytesPerPixel == 2) {
-				applyColorKey<uint16, uint16>((uint16 *)dst->getPixels(), (const uint16 *)buf, w, h,
-				                              dst->pitch, srcPitch, keycolor, aMask);
+				multiplyColorWithAlpha<uint16, uint16>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			} else if (inputFormat.bytesPerPixel == 4) {
-				applyColorKey<uint16, uint32>((uint16 *)dst->getPixels(), (const uint32 *)buf, w, h,
-				                              dst->pitch, srcPitch, keycolor, aMask);
+				multiplyColorWithAlpha<uint32, uint16>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			}
 		} else {
 			if (inputFormat.bytesPerPixel == 2) {
-				applyColorKey<uint32, uint16>((uint32 *)dst->getPixels(), (const uint16 *)buf, w, h,
-				                              dst->pitch, srcPitch, keycolor, aMask);
+				multiplyColorWithAlpha<uint16, uint32>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			} else if (inputFormat.bytesPerPixel == 4) {
-				applyColorKey<uint32, uint32>((uint32 *)dst->getPixels(), (const uint32 *)buf, w, h,
-				                              dst->pitch, srcPitch, keycolor, aMask);
+				multiplyColorWithAlpha<uint32, uint32>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			}
 		}
 
@@ -881,14 +905,10 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 
 	g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-	GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
 	// Setup backbuffer state.
 
 	// Default to black as clear color.
 	_backBuffer.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	// Setup alpha blend (for overlay and cursor).
-	_backBuffer.enableBlend(true);
 
 	g_context.getActivePipeline()->setFramebuffer(&_backBuffer);
 
