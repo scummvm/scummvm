@@ -39,3 +39,5 @@ clean: riscosclean
 
 riscosclean:
 	$(RM_REC) $(APP_NAME)
+
+.PHONY: riscosdist riscosclean
