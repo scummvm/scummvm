@@ -71,12 +71,16 @@ public:
 	Common::Array<Weapon> _weapons;
 	Common::Array<Armor> _armor;
 	Common::Array<Spell> _spells;
+	uint _race;
+	uint _sex;
+	uint _class;
 public:
 	/**
 	 * Constructor
 	 */
 	Character() : _strength(0), _agility(0), _stamina(0), _charisma(0), _wisdom(0), _intelligence(0),
-		_hitPoints(0), _experience(0), _food(0), _coins(0), _equippedWeapon(0), _equippedArmor(0), _equippedSpell(0) {}
+		_hitPoints(0), _experience(0), _food(0), _coins(0), _equippedWeapon(0), _equippedArmor(0), _equippedSpell(0),
+		_race(0), _sex(0), _class(0) {}
 
 	/**
 	 * Returns true if a weapon is equipped
