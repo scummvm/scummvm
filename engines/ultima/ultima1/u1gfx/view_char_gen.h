@@ -60,7 +60,7 @@ private:
 	/**
 	 * Set state within the view
 	 */
-	void setMode(Flag flag);
+	void setMode(uint flags);
 
 	/**
 	 * Draw the outer frame for the view

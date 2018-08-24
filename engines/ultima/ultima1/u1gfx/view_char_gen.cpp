@@ -47,14 +47,13 @@ ViewCharacterGeneration::ViewCharacterGeneration(Shared::TreeItem *parent) :
 	setMode(FLAG_INITIAL);
 }
 
-void ViewCharacterGeneration::setMode(Flag flag) {
-	_flags = flag;
+void ViewCharacterGeneration::setMode(uint flags) {
+	_flags = flags;
 	setDirty();
 	Shared::Gfx::TextCursor *textCursor = getGame()->_textCursor;
 	textCursor->setVisible(false);
 
-	switch (flag) {
-	case FLAG_INITIAL:
+	if (flags & FLAG_FRAME) {
 		_pointsRemaining = 30;
 		_selectedAttribute = 0;
 		_character._strength = 10;
@@ -63,13 +62,15 @@ void ViewCharacterGeneration::setMode(Flag flag) {
 		_character._charisma = 10;
 		_character._wisdom = 10;
 		_character._intelligence = 10;
-		break;
-	case FLAG_RACE:
+	} else if (_flags & FLAG_RACE) {
 		textCursor->setPosition(TextPoint(20, 17));
 		textCursor->setVisible(true);
-		break;
-	default:
-		break;
+	} else if (_flags & FLAG_SEX) {
+		textCursor->setPosition(TextPoint(19, 17));
+		textCursor->setVisible(true);
+	} else if (_flags & FLAG_CLASS) {
+		textCursor->setPosition(TextPoint(21, 17));
+		textCursor->setVisible(true);
 	}
 }
 
@@ -91,6 +92,8 @@ void ViewCharacterGeneration::draw() {
 		drawSex(s);
 	if (_flags & FLAG_CLASS)
 		drawClass(s);
+	if (_flags & FLAG_NAME)
+		drawName(s);
 }
 
 void ViewCharacterGeneration::drawFrame(Shared::Gfx::VisualSurface &s) {
@@ -123,8 +126,10 @@ void ViewCharacterGeneration::drawAttributePointers(Shared::Gfx::VisualSurface &
 
 	s.fillRect(Common::Rect(11 * 8, 6 * 8, 12 * 8, 12 * 8), game->_bgColor);
 	s.fillRect(Common::Rect(30 * 8, 6 * 8, 31 * 8, 12 * 8), game->_bgColor);
-	ds.drawRightArrow(TextPoint(11, _selectedAttribute + 6));
-	ds.drawLeftArrow(TextPoint(30, _selectedAttribute + 6));
+	if (_selectedAttribute != -1) {
+		ds.drawRightArrow(TextPoint(11, _selectedAttribute + 6));
+		ds.drawLeftArrow(TextPoint(30, _selectedAttribute + 6));
+	}
 }
 
 void ViewCharacterGeneration::drawHelp(Shared::Gfx::VisualSurface &s) {
@@ -134,43 +139,81 @@ void ViewCharacterGeneration::drawHelp(Shared::Gfx::VisualSurface &s) {
 
 void ViewCharacterGeneration::drawRace(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	s.fillRect(Rect(14, 128, 302, 176), game->_bgColor);
-	s.writeString(game->_res->CHAR_GEN_TEXT[4], TextPoint(3, 17), game->_textColor);
-	s.writeString(game->_res->CHAR_GEN_TEXT[5], TextPoint(12, 19), game->_textColor);
+	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[6], TextPoint(3, 17), game->_textColor);
+	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[4], 
+		game->_res->RACE_NAMES[0], game->_res->RACE_NAMES[1],
+		game->_res->RACE_NAMES[2], game->_res->RACE_NAMES[3]),
+		TextPoint(12, 19), game->_textColor);
 }
 
 void ViewCharacterGeneration::drawSex(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	s.fillRect(Rect(14, 128, 302, 176), game->_bgColor);
-	s.writeString(game->_res->CHAR_GEN_TEXT[6], TextPoint(3, 17), game->_textColor);
-	s.writeString(game->_res->CHAR_GEN_TEXT[7], TextPoint(12, 19), game->_textColor);
+
+	s.writeString(game->_res->CHAR_GEN_TEXT[9], TextPoint(14, 13), game->_textColor);
+	s.writeString(game->_res->RACE_NAMES[_character._race], game->_textColor);
+
+	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[7], TextPoint(3, 17), game->_textColor);
+	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[5],
+		game->_res->SEX_NAMES[0], game->_res->SEX_NAMES[1]), TextPoint(12, 19), game->_textColor);
 }
 
 void ViewCharacterGeneration::drawClass(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	s.fillRect(Rect(14, 128, 302, 176), game->_bgColor);
+
+	s.writeString(game->_res->CHAR_GEN_TEXT[10], TextPoint(15, 14), game->_textColor);
+	s.writeString(game->_res->SEX_NAMES[_character._sex], game->_textColor);
+
+	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
 	s.writeString(game->_res->CHAR_GEN_TEXT[8], TextPoint(3, 17), game->_textColor);
-	s.writeString(game->_res->CHAR_GEN_TEXT[9], TextPoint(12, 19), game->_textColor);
+	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[4],
+		game->_res->CLASS_NAMES[0], game->_res->CLASS_NAMES[1],
+		game->_res->CLASS_NAMES[2], game->_res->CLASS_NAMES[3]),
+		TextPoint(12, 19), game->_textColor);
 }
 
 void ViewCharacterGeneration::drawName(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	s.fillRect(Rect(14, 128, 302, 176), game->_bgColor);
-	s.writeString(game->_res->CHAR_GEN_TEXT[10], TextPoint(3, 17), game->_textColor);
+
+	s.writeString(game->_res->CHAR_GEN_TEXT[11], TextPoint(13, 15), game->_textColor);
+	s.writeString(game->_res->CLASS_NAMES[_character._class], game->_textColor);
+
+	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[12], TextPoint(3, 17), game->_textColor);
 }
 
 void ViewCharacterGeneration::setRace(int raceNum) {
+	_character._race = raceNum;
 
-	setMode(FLAG_SEX);
+	switch (raceNum) {
+	case 0:
+		_character._intelligence += 5;
+		break;
+	case 1:
+		_character._agility += 5;
+		break;
+	case 2:
+		_character._strength += 5;
+		break;
+	case 3:
+		_character._wisdom += 10;
+		_character._strength -= 5;
+		break;
+	default:
+		break;
+	}
+
+	setMode(FLAG_SEX | FLAG_ATTRIBUTES);
 }
 
 void ViewCharacterGeneration::setSex(int sexNum) {
-
+	_character._sex = sexNum;
 	setMode(FLAG_CLASS);
 }
 
 void ViewCharacterGeneration::setClass(int classNum) {
-
+	_character._class = classNum;
 	setMode(FLAG_NAME);
 }
 
@@ -193,7 +236,7 @@ bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
 	} else if (_flags & FLAG_SEX) {
 		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode <= Common::KEYCODE_b)
 			setSex(msg._keyState.keycode - Common::KEYCODE_a);
-	} else if (_flags & FLAG_SEX) {
+	} else if (_flags & FLAG_CLASS) {
 		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode <= Common::KEYCODE_d)
 			setClass(msg._keyState.keycode - Common::KEYCODE_a);
 	} else if (_flags & FLAG_NAME) {
@@ -233,7 +276,8 @@ bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
 
 		case Common::KEYCODE_SPACE:
 			// Switch over to selecting race
-			setMode(FLAG_RACE);
+			_selectedAttribute = -1;
+			setMode(FLAG_RACE | FLAG_ATTR_POINTERS);
 			break;
 
 		case Common::KEYCODE_ESCAPE:
