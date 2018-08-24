@@ -104,7 +104,7 @@ static void openFromBundle(NSString *file) {
 }
 
 - (void)openUserManual {
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.scummvm.org/manual"]];
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.scummvm.org/documentation"]];
 }
 
 - (void)openCredits {
