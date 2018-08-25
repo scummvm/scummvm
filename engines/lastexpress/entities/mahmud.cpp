@@ -41,15 +41,15 @@ namespace LastExpress {
 
 Mahmud::Mahmud(LastExpressEngine *engine) : Entity(engine, kEntityMahmud) {
 	ADD_CALLBACK_FUNCTION(Mahmud, reset);
-	ADD_CALLBACK_FUNCTION(Mahmud, draw);
-	ADD_CALLBACK_FUNCTION(Mahmud, enterExitCompartment);
-	ADD_CALLBACK_FUNCTION(Mahmud, enterExitCompartment2);
-	ADD_CALLBACK_FUNCTION(Mahmud, playSound);
-	ADD_CALLBACK_FUNCTION(Mahmud, playSoundMertens);
-	ADD_CALLBACK_FUNCTION(Mahmud, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Mahmud, savegame);
-	ADD_CALLBACK_FUNCTION(Mahmud, updateEntity);
-	ADD_CALLBACK_FUNCTION(Mahmud, function10);
+	ADD_CALLBACK_FUNCTION_S(Mahmud, draw);
+	ADD_CALLBACK_FUNCTION_SI(Mahmud, enterExitCompartment);
+	ADD_CALLBACK_FUNCTION_SIII(Mahmud, enterExitCompartment2);
+	ADD_CALLBACK_FUNCTION_S(Mahmud, playSound);
+	ADD_CALLBACK_FUNCTION_S(Mahmud, playSoundMertens);
+	ADD_CALLBACK_FUNCTION_I(Mahmud, updateFromTime);
+	ADD_CALLBACK_FUNCTION_II(Mahmud, savegame);
+	ADD_CALLBACK_FUNCTION_II(Mahmud, updateEntity);
+	ADD_CALLBACK_FUNCTION_II(Mahmud, function10);
 	ADD_CALLBACK_FUNCTION(Mahmud, function11);
 	ADD_CALLBACK_FUNCTION(Mahmud, function12);
 	ADD_CALLBACK_FUNCTION(Mahmud, function13);
@@ -128,7 +128,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION_II(9, Mahmud, updateEntity, CarIndex, EntityPosition)
 	if (savepoint.action == kActionExcuseMeCath) {
 		if (getInventory()->hasItem(kItemPassengerList))
-			getSound()->playSound(kEntityPlayer, rnd(2) ? "CAT1025" : "CAT1025Q");
+			getSound()->playSound(kEntityPlayer, rnd(2) ? "CAT1025" : "CAT1025A");
 		else
 			getSound()->excuseMeCath();
 
@@ -189,7 +189,7 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 				break;
 
 			case 1:
-				getSound()->playSound(kEntityMahmud, "MAH1174");
+				getSound()->playSound(kEntityMahmud, params->param2 ? "MAH1170E" : "MAH1173A");
 				break;
 
 			case 2:
@@ -197,7 +197,7 @@ IMPLEMENT_FUNCTION_II(10, Mahmud, function10, ObjectIndex, bool)
 				break;
 
 			case 3:
-				getSound()->playSound(kEntityMahmud, params->param2 ? "MAH1170E" : "MAH1173A");
+				getSound()->playSound(kEntityMahmud, "MAH1174");
 				break;
 			}
 		}
@@ -720,7 +720,7 @@ IMPLEMENT_FUNCTION(14, Mahmud, chaptersHandler)
 		break;
 
 	case kAction290410610:
-		params->param3 = (params->param3 < 1) ? 1 : 0;
+		params->param3 = (params->param3 == 0) ? 1 : 0;
 		setCallback(11);
 		setup_function10((ObjectIndex)savepoint.param.intValue, (bool)params->param3);
 		break;

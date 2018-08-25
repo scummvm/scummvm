@@ -487,10 +487,7 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 
 					// Handle right-click to interrupt sequence
 					Common::Event ev;
-					if (!_engine->getEventManager()->pollEvent(ev))
-						break;
-
-					if (ev.type == Common::EVENT_RBUTTONUP)
+					if (_engine->getEventManager()->pollEvent(ev) && ev.type == Common::EVENT_RBUTTONUP)
 						break;
 
 					_engine->_system->delayMillis(175);

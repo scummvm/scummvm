@@ -132,7 +132,7 @@ void SoundQueue::updateQueue() {
 		// and if the sound data buffer is not full, loads a new entry to be played based on
 		// its priority and filter id
 
-		if (!entry->updateSound() && !(entry->getStatus().status3 & 0x8)) {
+		if (!entry->updateSound() && !(entry->getStatus().b.status3 & 0x8)) {
 			entry->close();
 			SAFE_DELETE(entry);
 			it = _soundList.reverse_erase(it);

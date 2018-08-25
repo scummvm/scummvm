@@ -72,9 +72,9 @@
 namespace LastExpress {
 
 Chapters::Chapters(LastExpressEngine *engine) : Entity(engine, kEntityChapters) {
-	ADD_CALLBACK_FUNCTION(Chapters, savegame);
-	ADD_CALLBACK_FUNCTION(Chapters, enterStation);
-	ADD_CALLBACK_FUNCTION(Chapters, exitStation);
+	ADD_CALLBACK_FUNCTION_II(Chapters, savegame);
+	ADD_CALLBACK_FUNCTION_SI(Chapters, enterStation);
+	ADD_CALLBACK_FUNCTION_S(Chapters, exitStation);
 	ADD_CALLBACK_FUNCTION(Chapters, chapter1);
 	ADD_CALLBACK_FUNCTION(Chapters, resetMainEntities);
 	ADD_CALLBACK_FUNCTION(Chapters, firstDream);
@@ -92,8 +92,8 @@ Chapters::Chapters(LastExpressEngine *engine) : Entity(engine, kEntityChapters) 
 	ADD_CALLBACK_FUNCTION(Chapters, chapter4Init);
 	ADD_CALLBACK_FUNCTION(Chapters, chapter4Handler);
 	ADD_CALLBACK_FUNCTION(Chapters, chapter5);
-	ADD_CALLBACK_FUNCTION(Chapters, chapter4Init);
-	ADD_CALLBACK_FUNCTION(Chapters, chapter4Handler);
+	ADD_CALLBACK_FUNCTION(Chapters, chapter5Init);
+	ADD_CALLBACK_FUNCTION(Chapters, chapter5Handler);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -135,6 +135,7 @@ IMPLEMENT_FUNCTION(5, Chapters, resetMainEntities)
 	RESET_ENTITY_STATE(kEntityHadija, Hadija, setup_reset);
 	RESET_ENTITY_STATE(kEntityIvo, Ivo, setup_reset);
 	RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_reset);
+	RESET_ENTITY_STATE(kEntityKronos, Kronos, setup_reset);
 	RESET_ENTITY_STATE(kEntityMmeBoutarel, MmeBoutarel, setup_reset);
 	RESET_ENTITY_STATE(kEntityMahmud, Mahmud, setup_reset);
 	RESET_ENTITY_STATE(kEntityMax, Max, setup_reset);
@@ -258,17 +259,13 @@ IMPLEMENT_FUNCTION(6, Chapters, firstDream)
 
 		if (getSoundQueue()->isBuffered("ZFX1005"))
 			getSoundQueue()->processEntry("ZFX1005");
-
-		if (getSoundQueue()->isBuffered("ZFX1006"))
+		else if (getSoundQueue()->isBuffered("ZFX1006"))
 			getSoundQueue()->processEntry("ZFX1006");
-
-		if (getSoundQueue()->isBuffered("ZFX1007"))
+		else if (getSoundQueue()->isBuffered("ZFX1007"))
 			getSoundQueue()->processEntry("ZFX1007");
-
-		if (getSoundQueue()->isBuffered("ZFX1007A"))
+		else if (getSoundQueue()->isBuffered("ZFX1007A"))
 			getSoundQueue()->processEntry("ZFX1007A");
-
-		if (getSoundQueue()->isBuffered("ZFX1007B"))
+		else if (getSoundQueue()->isBuffered("ZFX1007B"))
 			getSoundQueue()->processEntry("ZFX1007B");
 
 		getSound()->playSound(kEntityPlayer, "MUS008", kFlagDefault);
@@ -321,7 +318,7 @@ IMPLEMENT_FUNCTION(7, Chapters, chapter1Init)
 	getProgress().chapter = kChapter1;
 	getSoundQueue()->resetState();
 
-	getState()->time = kTimeChapter1;
+	getState()->time = kTimeStartGame;
 	getState()->timeDelta = 0;
 	getProgress().isTrainRunning = true;
 	getProgress().portrait = kPortraitOriginal;
@@ -376,8 +373,8 @@ IMPLEMENT_FUNCTION(7, Chapters, chapter1Init)
 	getObjects()->update(kObject65, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
 	getObjects()->update(kObject69, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
 	getObjects()->update(kObject98, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
-	getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHandKnock);
-	getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHandKnock);
+	getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
+	getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
 	getObjects()->update(kObject101, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 	setup_chapter1Handler();
@@ -972,7 +969,7 @@ label_callback_4:
 			break;
 
 label_callback_5:
-		if (timeCheckExitStation(kTimeEnterWels, CURRENT_PARAM(1, 3), 6, "Wels"))
+		if (timeCheckExitStation(kTimeExitWels, CURRENT_PARAM(1, 3), 6, "Wels"))
 			break;
 
 label_callback_6:
@@ -980,7 +977,7 @@ label_callback_6:
 			break;
 
 label_callback_7:
-		if (timeCheckExitStation(kTimeCityLinz, CURRENT_PARAM(1, 5), 8, "Linz"))
+		if (timeCheckExitStation(kTimeExitLinz, CURRENT_PARAM(1, 5), 8, "Linz"))
 			break;
 
 label_callback_8:
@@ -1024,7 +1021,7 @@ label_callback_8:
 			getSound()->playSteam((CityIndex)ENTITY_PARAM(0, 4));
 
 			ENTITY_PARAM(0, 2) = 0;
-			if (params->param1)
+			if (params->param3)
 				setup_viennaEvents();
 
 			break;
@@ -1086,6 +1083,30 @@ IMPLEMENT_FUNCTION(16, Chapters, viennaEvents)
 		break;
 
 	case kActionDefault:
+		getEntityData(kEntityPlayer)->car = kCarLocomotive;
+		if (getSoundQueue()->isBuffered(kEntityAbbot))
+			getSoundQueue()->processEntry(kEntityAbbot);
+
+		if (!getEvent(kEventAugustBringBriefcase)) {
+			setCallback(1);
+			setup_savegame(kSavegameTypeEvent, kEventViennaAugustUnloadGuns);
+			break;
+		}
+
+		if (getInventory()->get(kItemFirebird)->location == kObjectLocation5) {
+			setCallback(2);
+			setup_savegame(kSavegameTypeEvent, kEventViennaKronosFirebird);
+			break;
+		}
+
+		if (ENTITY_PARAM(0, 1)) {
+			setCallback(3);
+			setup_savegame(kSavegameTypeEvent, kEventVergesAnnaDead);
+			break;
+		}
+
+		setCallback(4);
+		setup_savegame(kSavegameTypeEvent, kEventViennaContinueGame);
 		break;
 
 	case kActionCallback:
@@ -1108,10 +1129,7 @@ IMPLEMENT_FUNCTION(16, Chapters, viennaEvents)
 			if (getEvent(kEventKronosBringEggCeiling))
 				getLogic()->gameOver(kSavegameTypeEvent2, kEventKronosBringEggCeiling, kSceneGameOverVienna1, true);
 			else if (getEvent(kEventKronosBringEgg)) {
-				if (getEvent(kEventKronosBringEggCeiling))
-					getLogic()->gameOver(kSavegameTypeEvent2, kEventKronosBringEggCeiling, kSceneGameOverVienna1, true);
-				else
-					getLogic()->gameOver(kSavegameTypeTime, kTime2155500, kSceneGameOverVienna1, true);
+				getLogic()->gameOver(kSavegameTypeTime, kTime2155500, kSceneGameOverVienna1, true);
 			} else {
 				if (getProgress().field_C0) {
 					if (getEvent(kEventKronosReturnBriefcase))
@@ -1733,7 +1751,7 @@ IMPLEMENT_FUNCTION(22, Chapters, chapter5Handler)
 			setCallback(1);
 			setup_savegame(kSavegameTypeEvent, kEventTrainStopped);
 		} else {
-			getLogic()->gameOver(kSavegameTypeTime, kTimeTrainStopped2, kSceneGameOverTrainStopped, true);
+			getLogic()->gameOver(kSavegameTypeTime, kTime2934000, kSceneGameOverTrainStopped, true);
 		}
 		break;
 

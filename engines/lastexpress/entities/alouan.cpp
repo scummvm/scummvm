@@ -34,10 +34,10 @@ namespace LastExpress {
 
 Alouan::Alouan(LastExpressEngine *engine) : Entity(engine, kEntityAlouan) {
 	ADD_CALLBACK_FUNCTION(Alouan, reset);
-	ADD_CALLBACK_FUNCTION(Alouan, enterExitCompartment);
-	ADD_CALLBACK_FUNCTION(Alouan, playSound);
-	ADD_CALLBACK_FUNCTION(Alouan, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Alouan, updateEntity);
+	ADD_CALLBACK_FUNCTION_SI(Alouan, enterExitCompartment);
+	ADD_CALLBACK_FUNCTION_S(Alouan, playSound);
+	ADD_CALLBACK_FUNCTION_I(Alouan, updateFromTime);
+	ADD_CALLBACK_FUNCTION_II(Alouan, updateEntity);
 	ADD_CALLBACK_FUNCTION(Alouan, peekF);
 	ADD_CALLBACK_FUNCTION(Alouan, peekH);
 	ADD_CALLBACK_FUNCTION(Alouan, goFtoH);
@@ -287,7 +287,7 @@ IMPLEMENT_FUNCTION(16, Alouan, chapter3Handler)
 
 label_callback1:
 		if (params->param2 != kTimeInvalid && getState()->time > kTime1989000) {
-			if (Entity::timeCheckCar(kTime2119500, params->param5, 5, WRAP_SETUP_FUNCTION(Alouan, setup_peekH)))
+			if (Entity::timeCheckCar(kTime2119500, params->param2, 2, WRAP_SETUP_FUNCTION(Alouan, setup_peekF)))
 				break;
 		}
 
@@ -486,7 +486,7 @@ IMPLEMENT_FUNCTION(23, Alouan, hiding)
 
 		case 1:
 			setCallback(2);
-			setup_enterExitCompartment("619AF", kObjectCompartment5);
+			setup_enterExitCompartment("619AF", kObjectCompartment6);
 			break;
 
 		case 2:

@@ -76,12 +76,15 @@ namespace LastExpress {
 class LastExpressEngine;
 class SubtitleEntry;
 
+// TODO: this union assumes little-endian machine
 union SoundStatusUnion {
 	uint32 status;
-	byte status1;
-	byte status2;
-	byte status3;
-	byte status4;
+	struct {
+		byte status1;
+		byte status2;
+		byte status3;
+		byte status4;
+	} b;
 
 	SoundStatusUnion() {
 		status = 0;

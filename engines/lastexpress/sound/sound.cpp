@@ -136,7 +136,7 @@ SoundManager::~SoundManager() {
 // Sound-related functions
 //////////////////////////////////////////////////////////////////////////
 void SoundManager::playSound(EntityIndex entity, Common::String filename, SoundFlag flag, byte a4) {
-	if (_queue->isBuffered(entity) && entity)
+	if (_queue->isBuffered(entity) && entity && entity < kEntityTrain)
 		_queue->removeFromQueue(entity);
 
 	SoundFlag currentFlag = (flag == -1) ? getSoundFlag(entity) : (SoundFlag)(flag | 0x80000);
@@ -372,6 +372,8 @@ void SoundManager::playLocomotiveSound() {
 }
 
 const char *SoundManager::getDialogName(EntityIndex entity) const {
+	if (_queue->isBuffered(kEntityTables4))
+		return NULL;
 	switch (entity) {
 	case kEntityAnna:
 		if (getEvent(kEventAnnaDialogGoToJerusalem))
@@ -558,7 +560,7 @@ const char *SoundManager::getDialogName(EntityIndex entity) const {
 			return "XKRO4";
 
 		if (getEvent(kEventKronosConversation)) {
-			if (!getEvent(kEventMilosCompartmentVisitAugust))
+			if (getEvent(kEventMilosCompartmentVisitAugust))
 				return "XKRO3";
 			else
 				return "XKRO2";
@@ -675,7 +677,7 @@ const char *SoundManager::getDialogName(EntityIndex entity) const {
 // Letters & Messages
 //////////////////////////////////////////////////////////////////////////
 void SoundManager::readText(int id) {
-	if (!_queue->isBuffered(kEntityTables4))
+	if (_queue->isBuffered(kEntityTables4))
 		return;
 
 	if (id < 0 || (id > 8 && id < 50) || id > 64)
@@ -840,9 +842,9 @@ void SoundManager::playWarningCompartment(EntityIndex entity, ObjectIndex compar
 			}
 
 			if (rnd(2) || getEntities()->isInsideCompartment(kEntityAnna, kCarRedSleeping, kPosition_4070))
-				getSound()->playSound(kEntityCoudert, "Jac1503", kFlagDefault);
-			else
 				getSound()->playSound(kEntityCoudert, "Jac1503A", kFlagDefault);
+			else
+				getSound()->playSound(kEntityCoudert, "Jac1503", kFlagDefault);
 			break;
 
 		case kObjectCompartmentG:
@@ -851,6 +853,10 @@ void SoundManager::playWarningCompartment(EntityIndex entity, ObjectIndex compar
 				break;
 			}
 
+			// BUG: the original game got isInsideCompartment() inverted
+			// Jac1502A is "the serbian gentleman is not in, monsier",
+			// Jac1502 is a generic response,
+			// so Coudert only says "Milos is not in" when Milos is actually in.
 			if (rnd(2) || getEntities()->isInsideCompartment(kEntityMilos, kCarRedSleeping, kPosition_3050))
 				getSound()->playSound(kEntityCoudert, "Jac1502", kFlagDefault);
 			else
@@ -922,7 +928,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 		if (Entities::isFemale(entity2)) {
 			playSound(kEntityPlayer, (rnd(2) ? "CON1111" : "CON1111A"), flag);
 		} else {
-			if (entity2 || getProgress().jacket != kJacketGreen || !rnd(2)) {
+			if (entity2 != kEntityPlayer || getProgress().jacket != kJacketGreen || !rnd(2)) {
 				switch(rnd(3)) {
 				default:
 					break;
@@ -941,9 +947,9 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 				}
 			} else {
 				if (isNight()) {
-					playSound(kEntityPlayer, (getProgress().field_18 == 2 ? "CON1110F" : "CON1110E"));
+					playSound(kEntityPlayer, (getProgress().field_18 == 2 ? "CON1110F" : "CON1110E"), flag);
 				} else {
-					playSound(kEntityPlayer, "CON1110D");
+					playSound(kEntityPlayer, "CON1110D", flag);
 				}
 			}
 		}
@@ -953,7 +959,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 		if (Entities::isFemale(entity2)) {
 			playSound(kEntityPlayer, "JAC1111D", flag);
 		} else {
-			if (entity2 || getProgress().jacket != kJacketGreen || !rnd(2)) {
+			if (entity2 != kEntityPlayer || getProgress().jacket != kJacketGreen || !rnd(2)) {
 				switch(rnd(4)) {
 				default:
 					break;
@@ -981,7 +987,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 		break;
 
 	case kEntityPascale:
-		playSound(kEntityPlayer, (rnd(2) ? "HDE1002" : "HED1002A"), flag);
+		playSound(kEntityPlayer, (rnd(2) ? "HED1002" : "HED1002A"), flag);
 		break;
 
 	case kEntityWaiter1:
@@ -1006,7 +1012,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 
 	case kEntityVerges:
 		if (Entities::isFemale(entity2)) {
-			playSound(kEntityPlayer, (rnd(2) ? "TRA1113A" : "TRA1113B"));
+			playSound(kEntityPlayer, (rnd(2) ? "TRA1113A" : "TRA1113B"), flag);
 		} else {
 			playSound(kEntityPlayer, "TRA1112", flag);
 		}
@@ -1097,7 +1103,7 @@ void SoundManager::excuseMe(EntityIndex entity, EntityIndex entity2, SoundFlag f
 		break;
 
 	case kEntityRebecca:
-		playSound(kEntityPlayer, (rnd(2) ? "REB1106" : "REB110A"), flag);
+		playSound(kEntityPlayer, (rnd(2) ? "REB1106" : "Reb1106A"), flag);
 		break;
 
 	case kEntitySophie: {
@@ -1239,8 +1245,8 @@ SoundFlag SoundManager::getSoundFlag(EntityIndex entity) const {
 	if (index < 32)
 		ret = soundFlags[index];
 
-	if (getEntityData(entity)->location == kLocationOutsideTrain) {
-		if (getEntityData(entity)->car != kCarKronos
+	if (getEntityData(kEntityPlayer)->location == kLocationOutsideTrain) {
+		if (getEntityData(kEntityPlayer)->car != kCarKronos
 		&& !getEntities()->isOutsideAlexeiWindow()
 		&& !getEntities()->isOutsideAnnaWindow())
 			return kFlagNone;
@@ -1254,25 +1260,24 @@ SoundFlag SoundManager::getSoundFlag(EntityIndex entity) const {
 
 	case kCarKronos:
 		if (getEntities()->isInKronosSalon(entity) != getEntities()->isInKronosSalon(kEntityPlayer))
-			ret = (SoundFlag)(ret * 2);
+			ret = (SoundFlag)(ret / 2);
 		break;
 
 	case kCarGreenSleeping:
 	case kCarRedSleeping:
-		if (getEntities()->isInGreenCarEntrance(kEntityPlayer) && !getEntities()->isInKronosSalon(entity))
-			ret = (SoundFlag)(ret * 2);
+		if (getEntities()->isInGreenCarEntrance(kEntityPlayer) && !getEntities()->isInGreenCarEntrance(entity))
+			ret = (SoundFlag)(ret / 2);
 
-		if (getEntityData(kEntityPlayer)->location
-		&& (getEntityData(entity)->entityPosition != kPosition_1 || !getEntities()->isDistanceBetweenEntities(kEntityPlayer, entity, 400)))
-			ret = (SoundFlag)(ret * 2);
+		if (getEntityData(kEntityPlayer)->location == kLocationInsideCompartment
+		&& (getEntityData(entity)->location != kLocationInsideCompartment || !getEntities()->isDistanceBetweenEntities(kEntityPlayer, entity, 400)))
+			ret = (SoundFlag)(ret / 2);
 		break;
 
 	case kCarRestaurant:
-		if (getEntities()->isInSalon(entity) == getEntities()->isInSalon(kEntityPlayer)
-		&& (getEntities()->isInRestaurant(entity) != getEntities()->isInRestaurant(kEntityPlayer)))
-			ret = (SoundFlag)(ret * 2);
-		else
-			ret = (SoundFlag)(ret * 4);
+		if (getEntities()->isInSalon(entity) != getEntities()->isInSalon(kEntityPlayer))
+			ret = (SoundFlag)(ret / 4);
+		else if (getEntities()->isInRestaurant(entity) != getEntities()->isInRestaurant(kEntityPlayer))
+			ret = (SoundFlag)(ret / 2);
 		break;
 	}
 
@@ -1314,7 +1319,7 @@ void SoundManager::playLoopingSound(int param) {
 				partNumber = 6;
 			} else {
 				if (getEntities()->isInsideCompartments(kEntityPlayer)) {
-					int objNum = (getEntityData(kEntityPlayer)->car - 3) < 1 ? 9 : 40; // Weird numbers
+					int objNum = (getEntityData(kEntityPlayer)->car == kCarGreenSleeping) ? 9 : 40; // Weird numbers
 
 					numLoops[0] = 0;
 
@@ -1323,7 +1328,7 @@ void SoundManager::playLoopingSound(int param) {
 							break;
 						if (getEntities()->isInsideCompartment(kEntityPlayer, getEntityData(kEntityPlayer)->car, positions[pos])) {
 							numLoops[0] = 1;
-							partNumber = (getObjects()->get((ObjectIndex)objNum).status - 2) < 1 ? 6 : 1;
+							partNumber = (getObjects()->get((ObjectIndex)objNum).status == kObjectLocation2) ? 6 : 1;
 						}
 						objNum++;
 					}

@@ -93,7 +93,7 @@ void SoundEntry::close() {
 	_status.status |= kSoundStatusClosed;
 
 	// Loop until ready
-	//while (!(_status.status1 & 4) && !(getSoundQueue()->getFlag() & 8) && (getSoundQueue()->getFlag() & 1))
+	//while (!(_status.b.status1 & 4) && !(getSoundQueue()->getFlag() & 8) && (getSoundQueue()->getFlag() & 1))
 	//	;	// empty loop body
 
 	// The original game remove the entry from the cache here,
@@ -246,7 +246,7 @@ void SoundEntry::loadStream(Common::String name) {
 }
 
 void SoundEntry::update(uint val) {
-	if (!(_status.status3 & 64)) {
+	if (!(_status.b.status3 & 64)) {
 		int value2 = val;
 
 		_status.status |= kSoundStatus_100000;
@@ -271,10 +271,10 @@ bool SoundEntry::updateSound() {
 	bool result;
 	char sub[16];
 
-	if (_status.status2 & 4) {
+	if (_status.b.status2 & 4) {
 		result = false;
 	} else {
-		if (_status.status2 & 0x80) {
+		if (_status.b.status2 & 0x80) {
 			if (_field_48 <= getSound()->getData2()) {
 				_status.status |= 0x20;
 				_status.status &= ~0x8000;
@@ -288,7 +288,7 @@ bool SoundEntry::updateSound() {
 			}
 		} else {
 			if (!(getSoundQueue()->getFlag() & 0x20)) {
-				if (!(_status.status3 & 8)) {
+				if (!(_status.b.status3 & 8)) {
 					if (_entity) {
 						if (_entity < 0x80) {
 							updateEntryFlag(getSound()->getSoundFlag(_entity));
@@ -296,7 +296,7 @@ bool SoundEntry::updateSound() {
 					}
 				}
 			}
-			//if (status.status2 & 0x40 && !((uint32)_status.status & 0x180) && v1->soundBuffer)
+			//if (status.b.status2 & 0x40 && !((uint32)_status.status & 0x180) && v1->soundBuffer)
 			//	Sound_FillSoundBuffer(v1);
 		}
 		result = true;
@@ -354,7 +354,7 @@ void SoundEntry::showSubtitle(Common::String filename) {
 	_subtitle = new SubtitleEntry(_engine);
 	_subtitle->load(filename, this);
 
-	if (_subtitle->getStatus().status2 & 4) {
+	if (_subtitle->getStatus().b.status2 & 4) {
 		_subtitle->draw();
 		SAFE_DELETE(_subtitle);
 	} else {
