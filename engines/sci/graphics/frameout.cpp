@@ -1354,6 +1354,16 @@ void GfxFrameout::remapMarkRedraw() {
 #pragma mark -
 #pragma mark Debugging
 
+Plane *GfxFrameout::getTopVisiblePlane() {
+	for (PlaneList::const_iterator it = _visiblePlanes.begin(); it != _visiblePlanes.end(); ++it) {
+		Plane *p = *it;
+		if (p->_type == kPlaneTypePicture)
+			return p;
+	}
+
+	return nullptr;
+}
+
 void GfxFrameout::printPlaneListInternal(Console *con, const PlaneList &planeList) const {
 	for (PlaneList::const_iterator it = planeList.begin(); it != planeList.end(); ++it) {
 		Plane *p = *it;
