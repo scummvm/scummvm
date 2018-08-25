@@ -83,7 +83,7 @@ struct ExecStack {
 
 	union {
 		ObjVarRef varp; // Variable pointer for r/w access
-		reg32_t pc;       // Pointer to the initial program counter. Not accurate for the TOS element
+		reg_t pc;       // Pointer to the initial program counter. Not accurate for the TOS element
 	} addr;
 
 	StackPtr fp; // Frame pointer
@@ -105,7 +105,7 @@ struct ExecStack {
 	reg_t* getVarPointer(SegManager *segMan) const;
 
 	ExecStack(reg_t objp_, reg_t sendp_, StackPtr sp_, int argc_, StackPtr argp_,
-				SegmentId localsSegment_, reg32_t pc_, Selector debugSelector_,
+				SegmentId localsSegment_, reg_t pc_, Selector debugSelector_,
 				int debugKernelFunction_, int debugKernelSubFunction_,
 				int debugExportId_, int debugLocalCallOffset_, int debugOrigin_,
 				ExecStackType type_) {

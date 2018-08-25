@@ -292,7 +292,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 		ExecStackType stackType = EXEC_STACK_TYPE_VARSELECTOR;
 		StackPtr curSP = NULL;
-		reg32_t curFP = make_reg32(0, 0);
+		reg_t curFP = make_reg32(0, 0);
 		if (selectorType == kSelectorMethod) {
 			stackType = EXEC_STACK_TYPE_CALL;
 			curSP = sp;

@@ -81,12 +81,10 @@ void DebugState::updateActiveBreakpointTypes() {
 }
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTag, bool printBytecode) {
+reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag, bool printBytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
-	reg_t retval;
-	retval.setSegment(pos.getSegment());
-	retval.setOffset(pos.getOffset() + 1);
+	reg_t retval = make_reg32(pos.getSegment(), pos.getOffset() + 1);
 	uint16 param_value = 0xffff; // Suppress GCC warning by setting default value, chose value as invalid to getKernelName etc.
 	uint i = 0;
 	Kernel *kernel = g_sci->getKernel();
@@ -261,9 +259,7 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 			}
 
 			const uint32 offset = findOffset(param_value, script_entity, pos.getOffset() + bytecount);
-			reg_t addr;
-			addr.setSegment(retval.getSegment());
-			addr.setOffset(offset);
+			reg_t addr = make_reg32(retval.getSegment(), offset);
 			if (!s->_segMan->isObject(addr)) {
 				debugN("\t\"%s\"", s->_segMan->derefString(addr));
 			} else {
@@ -438,7 +434,7 @@ void SciEngine::scriptDebug() {
 		}
 
 		if (_debugState.seeking != kDebugSeekNothing) {
-			const reg32_t pc = s->xs->addr.pc;
+			const reg_t pc = s->xs->addr.pc;
 			SegmentObj *mobj = s->_segMan->getSegment(pc.getSegment(), SEG_TYPE_SCRIPT);
 
 			if (mobj) {
@@ -762,7 +758,7 @@ bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 	return found;
 }
 
-bool SciEngine::checkAddressBreakpoint(const reg32_t &address) {
+bool SciEngine::checkAddressBreakpoint(const reg_t &address) {
 	if (!(_debugState._activeBreakpointTypes & BREAK_ADDRESS))
 		return false;
 

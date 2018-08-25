@@ -4576,14 +4576,10 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 		relativeOffset = true;
 
 		if (!scumm_strnicmp(str + 1, "PC", 2)) {
-			reg32_t pc = s->_executionStack.back().addr.pc;
-			dest->setSegment(pc.getSegment());
-			dest->setOffset(pc.getOffset());
+			*dest = s->_executionStack.back().addr.pc;
 			offsetStr = str + 3;
 		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
-			reg32_t pc = s->_executionStack.back().addr.pc;
-			dest->setSegment(pc.getSegment());
-			dest->setOffset(pc.getOffset());
+			*dest = s->_executionStack.back().addr.pc;;
 			offsetStr = str + 2;
 		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
 			*dest = s->r_prev;
