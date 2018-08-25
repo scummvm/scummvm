@@ -167,7 +167,7 @@ void EntityData::saveLoadWithSerializer(Common::Serializer &s, const Common::Arr
 
 		for (uint i = 0; i < 8; i++) {
 			if (!paramsTypeSetters || _data.callbacks[i] >= paramsTypeSetters->size())
-				resetParametersType<EntityParametersIIII>(&_parameters[i]);
+				resetParametersType<EntityParametersIIII, EntityParametersIIII, EntityParametersIIII>(&_parameters[i]);
 			else
 				(*paramsTypeSetters)[_data.callbacks[i]](&_parameters[i]);
 		}
@@ -186,7 +186,7 @@ Entity::Entity(LastExpressEngine *engine, EntityIndex index) : _engine(engine), 
 
 	// Add first empty entry to callbacks array
 	_callbacks.push_back(NULL);
-	_paramsTypeSetters.push_back(&EntityData::resetParametersType<EntityData::EntityParametersIIII>);
+	_paramsTypeSetters.push_back(&EntityData::resetParametersType<EntityData::EntityParametersIIII, EntityData::EntityParametersIIII, EntityData::EntityParametersIIII>);
 }
 
 Entity::~Entity() {
