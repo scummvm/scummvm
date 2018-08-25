@@ -42,8 +42,8 @@ namespace LastExpress {
 
 Vassili::Vassili(LastExpressEngine *engine) : Entity(engine, kEntityVassili) {
 	ADD_CALLBACK_FUNCTION(Vassili, reset);
-	ADD_CALLBACK_FUNCTION(Vassili, draw);
-	ADD_CALLBACK_FUNCTION(Vassili, savegame);
+	ADD_CALLBACK_FUNCTION_S(Vassili, draw);
+	ADD_CALLBACK_FUNCTION_II(Vassili, savegame);
 	ADD_CALLBACK_FUNCTION(Vassili, chapter1);
 	ADD_CALLBACK_FUNCTION(Vassili, chapter1Handler);
 	ADD_CALLBACK_FUNCTION(Vassili, inBed);
@@ -103,14 +103,10 @@ IMPLEMENT_FUNCTION(5, Vassili, chapter1Handler)
 		if (params->param1) {
 			getData()->entityPosition = getEntityData(kEntityTatiana)->entityPosition;
 			getData()->location = getEntityData(kEntityTatiana)->location;
+			getData()->car = getEntityData(kEntityTatiana)->car;
 		} else {
-			if (params->param3 && params->param3 >= getState()->time) {
+			if (!Entity::updateParameterCheck(params->param3, getState()->time, 450))
 				break;
-			}else {
-				params->param3 = (uint)getState()->time + 450;
-				if (params->param3 == 0)
-					break;
-			}
 
 			if (!params->param2 && getObjects()->get(kObjectCompartmentA).status == kObjectLocation1) {
 				params->param2 = 1;
@@ -215,9 +211,9 @@ IMPLEMENT_FUNCTION(7, Vassili, function7)
 		if (params->param1 != kTimeInvalid && getState()->time > kTime1503000) {
 
 			 if (getState()->time <= kTime1512000) {
-				 if (getEntities()->isPlayerInCar(kCarRedSleeping) || !params->param1) {
+				 if (!getEntities()->isPlayerInCar(kCarRedSleeping) || !params->param1) {
 					 params->param1 = (uint)getState()->time + 150;
-					 if (params->param1) {
+					 if (!params->param1) {
 						 setup_function8();
 						 break;
 					 }
@@ -345,7 +341,7 @@ IMPLEMENT_FUNCTION(10, Vassili, seizure)
 		if (getCallback() != 1)
 			break;
 
-		getData()->location = kLocationInsideCompartment;
+		getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
 		getAction()->playAnimation(kEventVassiliSeizure);
 
 		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);

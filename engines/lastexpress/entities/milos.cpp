@@ -43,16 +43,16 @@ namespace LastExpress {
 
 Milos::Milos(LastExpressEngine *engine) : Entity(engine, kEntityMilos) {
 	ADD_CALLBACK_FUNCTION(Milos, reset);
-	ADD_CALLBACK_FUNCTION(Milos, draw);
-	ADD_CALLBACK_FUNCTION(Milos, enterExitCompartment);
-	ADD_CALLBACK_FUNCTION(Milos, enterExitCompartment2);
+	ADD_CALLBACK_FUNCTION_S(Milos, draw);
+	ADD_CALLBACK_FUNCTION_SI(Milos, enterExitCompartment);
+	ADD_CALLBACK_FUNCTION_SI(Milos, enterExitCompartment2);
 	ADD_CALLBACK_FUNCTION(Milos, callbackActionOnDirection);
-	ADD_CALLBACK_FUNCTION(Milos, playSound);
-	ADD_CALLBACK_FUNCTION(Milos, playSound16);
-	ADD_CALLBACK_FUNCTION(Milos, savegame);
-	ADD_CALLBACK_FUNCTION(Milos, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Milos, enterCompartmentDialog);
-	ADD_CALLBACK_FUNCTION(Milos, function11);
+	ADD_CALLBACK_FUNCTION_S(Milos, playSound);
+	ADD_CALLBACK_FUNCTION_S(Milos, playSound16);
+	ADD_CALLBACK_FUNCTION_II(Milos, savegame);
+	ADD_CALLBACK_FUNCTION_I(Milos, updateFromTime);
+	ADD_CALLBACK_FUNCTION_II(Milos, enterCompartmentDialog);
+	ADD_CALLBACK_FUNCTION_I(Milos, function11);
 	ADD_CALLBACK_FUNCTION(Milos, chapter1);
 	ADD_CALLBACK_FUNCTION(Milos, function13);
 	ADD_CALLBACK_FUNCTION(Milos, function14);
@@ -67,8 +67,8 @@ Milos::Milos(LastExpressEngine *engine) : Entity(engine, kEntityMilos) {
 	ADD_CALLBACK_FUNCTION(Milos, function23);
 	ADD_CALLBACK_FUNCTION(Milos, function24);
 	ADD_CALLBACK_FUNCTION(Milos, function25);
-	ADD_CALLBACK_FUNCTION(Milos, function26);
-	ADD_CALLBACK_FUNCTION(Milos, function27);
+	ADD_CALLBACK_FUNCTION_I(Milos, function26);
+	ADD_CALLBACK_FUNCTION_II(Milos, function27);
 	ADD_CALLBACK_FUNCTION(Milos, chapter4);
 	ADD_CALLBACK_FUNCTION(Milos, chapter4Handler);
 	ADD_CALLBACK_FUNCTION(Milos, function30);
@@ -180,10 +180,11 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 				params->param2 = 0;
 				params->param3 = 1;
 				getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorNormal, kCursorNormal);
+				params->param8 = 0;
 			}
+		} else {
+			params->param8 = 0;
 		}
-
-		params->param8 = 0;
 
 		if (getProgress().chapter != kChapter1 || params->param5)
 			break;
@@ -344,7 +345,7 @@ IMPLEMENT_FUNCTION_I(11, Milos, function11, TimeValue)
 		break;
 
 	case kAction123852928:
-		params->param1 = 13;
+		setCallback(13);
 		setup_enterExitCompartment("611Dg", kObjectCompartmentG);
 		break;
 
@@ -737,6 +738,7 @@ IMPLEMENT_FUNCTION(15, Milos, chapter1Handler)
 			}
 		}
 
+label_callback_1:
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 70) && !params->param2) {
 			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 45))
 				break;
@@ -759,7 +761,7 @@ IMPLEMENT_FUNCTION(15, Milos, chapter1Handler)
 		case 1:
 			getEntities()->drawSequenceLeft(kEntityMilos, "009A");
 			params->param1 = 1;
-			break;
+			goto label_callback_1;
 
 		case 2:
 			getEntities()->drawSequenceLeft(kEntityMilos, "009A");
@@ -891,9 +893,11 @@ IMPLEMENT_FUNCTION(19, Milos, chapter2)
 	case kActionDefault:
 		getEntities()->clearSequences(kEntityMilos);
 
-		getData()->entityPosition = kPosition_4689;
-		getData()->location = kLocationInsideCompartment;
-		getData()->car = kCarRestaurant;
+		getData()->entityPosition = kPosition_540;
+		getData()->location = kLocationOutsideCompartment;
+		getData()->car = kCarRedSleeping;
+		getData()->inventoryItem = kItemNone;
+		getData()->clothes = kClothesDefault;
 
 		getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObject46, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
@@ -969,6 +973,7 @@ IMPLEMENT_FUNCTION(21, Milos, function21)
 
 	case kActionOpenDoor:
 		getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation3, kCursorNormal, kCursorNormal);
+		getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
 
 		setCallback(3);
 		setup_savegame(kSavegameTypeEvent, kEventMilosCompartmentVisitAugust);
@@ -1156,7 +1161,7 @@ IMPLEMENT_FUNCTION(24, Milos, function24)
 			setCallback(12);
 			setup_playSound("LIB013");
 		} else {
-			getData()->location = kLocationInsideCompartment;
+			getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
 
 			setCallback(11);
 			setup_savegame(kSavegameTypeEvent, kEventMilosCompartmentVisitAugust);
@@ -1354,7 +1359,7 @@ IMPLEMENT_FUNCTION(25, Milos, function25)
 
 			RESET_ENTITY_STATE(kEntityVesna, Vesna, setup_inCompartment);
 
-			getData()->location = kLocationInsideCompartment;
+			getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
 
 			setCallback(4);
 			setup_savegame(kSavegameTypeEvent, kEventMilosCompartmentVisitTyler);
@@ -1390,6 +1395,7 @@ IMPLEMENT_FUNCTION_I(26, Milos, function26, TimeValue)
 
 	case kActionNone:
 		if (params->param1 < getState()->time && !params->param2) {
+			params->param2 = 1;
 			callbackAction();
 			break;
 		}
@@ -1556,7 +1562,7 @@ IMPLEMENT_FUNCTION(29, Milos, chapter4Handler)
 			break;
 
 		case 2:
-			getEntities()->exitCompartment(kEntityMilos, kObjectCompartmentG);
+			getEntities()->exitCompartment(kEntityMilos, kObjectCompartmentG, true);
 
 			getData()->location = kLocationInsideCompartment;
 			getData()->entityPosition = kPosition_3050;
@@ -1600,7 +1606,7 @@ IMPLEMENT_FUNCTION(30, Milos, function30)
 	default:
 		break;
 
-	case kActionNone:
+	case kActionDefault:
 		setCallback(1);
 		setup_function11(kTime2410200);
 		break;
@@ -1638,7 +1644,7 @@ IMPLEMENT_FUNCTION(31, Milos, function31)
 	default:
 		break;
 
-	case kActionNone:
+	case kActionDefault:
 		setCallback(1);
 		setup_enterExitCompartment("609CG", kObjectCompartmentG);
 		break;
@@ -1721,7 +1727,7 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 			break;
 
 		case 1:
-			getAction()->playAnimation(isNight() ? kEventLocomotiveMilosShovelingNight : kEventLocomotiveMilosShovelingDay);
+			getAction()->playAnimation(getProgress().isNightTime ? kEventLocomotiveMilosShovelingDay : kEventLocomotiveMilosShovelingNight);
 			getScenes()->processScene();
 			break;
 
@@ -1733,7 +1739,7 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 				getSoundQueue()->removeFromQueue("ARRIVE");
 
 			getSoundQueue()->processEntries();
-			getAction()->playAnimation(isNight() ? kEventLocomotiveMilosNight : kEventLocomotiveMilosDay);
+			getAction()->playAnimation(getProgress().isNightTime ? kEventLocomotiveMilosDay : kEventLocomotiveMilosNight);
 			getSoundQueue()->setupEntry(kSoundType7, kEntityMilos);
 			getScenes()->loadSceneFromPosition(kCarCoalTender, 1);
 			break;
@@ -1787,11 +1793,12 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 		if (!getProgress().isNightTime) {
 			setCallback(3);
 			setup_savegame(kSavegameTypeEvent, kEventLocomotiveAnnaStopsTrain);
+			break;
 		}
 
 		getSoundQueue()->processEntry(kEntityMilos);
-		if (getState()->time < kTimeTrainStopped2)
-			getState()->time = kTimeTrainStopped2;
+		if (getState()->time < kTime2949300)
+			getState()->time = kTime2949300;
 
 		setCallback(4);
 		setup_savegame(kSavegameTypeEvent, kEventLocomotiveRestartTrain);

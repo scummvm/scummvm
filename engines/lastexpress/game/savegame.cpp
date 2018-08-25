@@ -802,7 +802,7 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 	// Skip padding
 	uint32 offset = (uint32)_savegame->pos() - originalPosition;
 	if (offset & 0xF) {
-		_savegame->seek((~offset & 0xF) + 1, SEEK_SET);
+		_savegame->seek((~offset & 0xF) + 1, SEEK_CUR);
 	}
 }
 

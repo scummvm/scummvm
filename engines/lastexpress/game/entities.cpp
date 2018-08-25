@@ -241,7 +241,7 @@ int Entities::getCompartments1(int index) const {
 // Savegame
 //////////////////////////////////////////////////////////////////////////
 void Entities::saveLoadWithSerializer(Common::Serializer &s) {
-	_header->saveLoadWithSerializer(s);
+	_header->saveLoadWithSerializer(s, NULL);
 	for (uint i = 1; i < _entities.size(); i++)
 		_entities[i]->saveLoadWithSerializer(s);
 }
@@ -1931,7 +1931,7 @@ void Entities::loadSceneFromEntityPosition(CarIndex car, EntityPosition entityPo
 	// Determine position
 	Position position = (alternate ? 1 : 40);
 	do {
-		if (entityPosition > entityPositions[position]) {
+		if (alternate ? entityPosition < entityPositions[position] : entityPosition > entityPositions[position]) {
 			if (alternate)
 				break;
 
@@ -1945,7 +1945,7 @@ void Entities::loadSceneFromEntityPosition(CarIndex car, EntityPosition entityPo
 	} while (alternate ? position <= 18 : position >= 22);
 
 	// For position outside bounds, use minimal value
-	if ((alternate && position > 18) || (alternate && position < 22)) {
+	if ((alternate && position > 18) || (!alternate && position < 22)) {
 		getScenes()->loadSceneFromPosition(car, alternate ? 18 : 22);
 		return;
 	}
@@ -2117,7 +2117,7 @@ label_process_entity:
 
 				if (checkDistanceFromPosition(entity, kPosition_1500, 750) && entity != kEntityFrancois) {
 
-					if (data->entity != kEntityPlayer) {
+					if (data->entity == kEntityPlayer) {
 						if (data->direction != kDirectionUp || (position <= kPosition_2000 && data->car == car)) {
 							if (data->direction == kDirectionDown && (position < kPosition_1500 || data->car != car)) {
 								if (data->entityPosition > kPosition_1500 && (data->car == kCarGreenSleeping || data->car == kCarRedSleeping)) {
@@ -2282,8 +2282,8 @@ label_process_entity:
 							}
 						}
 					}
-					return false;
 				}
+				return false;
 			}
 		} else if (!flag1) {
 			drawSequences(entity, direction, true);

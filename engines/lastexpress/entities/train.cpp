@@ -38,14 +38,14 @@
 namespace LastExpress {
 
 Train::Train(LastExpressEngine *engine) : Entity(engine, kEntityTrain) {
-	ADD_CALLBACK_FUNCTION(Train, savegame);
+	ADD_CALLBACK_FUNCTION_II(Train, savegame);
 	ADD_CALLBACK_FUNCTION(Train, chapter1);
 	ADD_CALLBACK_FUNCTION(Train, chapter2);
 	ADD_CALLBACK_FUNCTION(Train, chapter3);
 	ADD_CALLBACK_FUNCTION(Train, chapter4);
 	ADD_CALLBACK_FUNCTION(Train, chapter5);
-	ADD_CALLBACK_FUNCTION(Train, harem);
-	ADD_CALLBACK_FUNCTION(Train, process);
+	ADD_CALLBACK_FUNCTION_II(Train, harem);
+	ADD_CALLBACK_FUNCTION_TYPE2(Train, process, EntityParametersIIII, EntityParametersIIIS);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 	}
 
 	params->param4 = getEntities()->isInsideCompartment(kEntityAlouan, kCarGreenSleeping, (EntityPosition)params->param3);
-	params->param5 = (ENTITY_PARAM(0, 7) - params->param3) < 1 ? true : false;
+	params->param5 = (ENTITY_PARAM(0, 7) == params->param3) ? true : false;
 	params->param6 = getEntities()->isInsideCompartment(kEntityYasmin, kCarGreenSleeping, (EntityPosition)params->param3);
 	params->param7 = getEntities()->isInsideCompartment(kEntityHadija, kCarGreenSleeping, (EntityPosition)params->param3);
 
@@ -374,7 +374,10 @@ label_process:
 					break;
 
 				case kCarRestaurant:
-					getEntities()->drawSequenceLeft(kEntityTrain, isNight() ? "RCWNN" : "RCWND");
+					if (getProgress().isNightTime)
+						getEntities()->drawSequenceLeft(kEntityTrain, "RCWNM");
+					else
+						getEntities()->drawSequenceLeft(kEntityTrain, isNight() ? "RCWNN" : "RCWND");
 					break;
 				}
 
@@ -478,7 +481,7 @@ label_process:
 		break;
 
 	case kAction203863200:
-		if (!strcmp(savepoint.param.charValue, "")) {
+		if (strcmp(savepoint.param.charValue, "")) {
 			params->param8 = 1;
 			strcpy((char *)&params1->seq, savepoint.param.charValue);	// this is the sound file name
 		}
@@ -502,7 +505,7 @@ label_process:
 		case kObjectCompartment4:
 		case kObjectCompartmentC:
 		case kObjectCompartmentD:
-			params1->param1 = (savepoint.param.intValue == kObjectCompartment1 || savepoint.param.intValue == kObjectCompartment2) ? kCarGreenSleeping : kCarRedSleeping;
+			params1->param1 = (savepoint.param.intValue == kObjectCompartment3 || savepoint.param.intValue == kObjectCompartment4) ? kCarGreenSleeping : kCarRedSleeping;
 			params1->param2 = (savepoint.param.intValue == kObjectCompartment3 || savepoint.param.intValue == kObjectCompartmentC) ? kPosition_6470 : kPosition_5790;
 			params1->param3 = kPosition_6130;
 			break;
@@ -511,7 +514,7 @@ label_process:
 		case kObjectCompartment6:
 		case kObjectCompartmentE:
 		case kObjectCompartmentF:
-			params1->param1 = (savepoint.param.intValue == kObjectCompartment1 || savepoint.param.intValue == kObjectCompartment2) ? kCarGreenSleeping : kCarRedSleeping;
+			params1->param1 = (savepoint.param.intValue == kObjectCompartment5 || savepoint.param.intValue == kObjectCompartment6) ? kCarGreenSleeping : kCarRedSleeping;
 			params1->param2 = (savepoint.param.intValue == kObjectCompartment5 || savepoint.param.intValue == kObjectCompartmentE) ? kPosition_4840 : kPosition_4070;
 			params1->param3 = kPosition_4455;
 			break;
@@ -520,7 +523,7 @@ label_process:
 		case kObjectCompartment8:
 		case kObjectCompartmentG:
 		case kObjectCompartmentH:
-			params1->param1 = (savepoint.param.intValue == kObjectCompartment1 || savepoint.param.intValue == kObjectCompartment2) ? kCarGreenSleeping : kCarRedSleeping;
+			params1->param1 = (savepoint.param.intValue == kObjectCompartment7 || savepoint.param.intValue == kObjectCompartment8) ? kCarGreenSleeping : kCarRedSleeping;
 			params1->param2 = (savepoint.param.intValue == kObjectCompartment7 || savepoint.param.intValue == kObjectCompartmentG) ? kPosition_3050 : kPosition_2740;
 			params1->param3 = kPositionNone;
 			break;

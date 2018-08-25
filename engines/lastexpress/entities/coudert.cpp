@@ -39,25 +39,25 @@ namespace LastExpress {
 
 Coudert::Coudert(LastExpressEngine *engine) : Entity(engine, kEntityCoudert) {
 	ADD_CALLBACK_FUNCTION(Coudert, reset);
-	ADD_CALLBACK_FUNCTION(Coudert, bloodJacket);
-	ADD_CALLBACK_FUNCTION(Coudert, enterExitCompartment);
+	ADD_CALLBACK_FUNCTION_S(Coudert, bloodJacket);
+	ADD_CALLBACK_FUNCTION_SI(Coudert, enterExitCompartment);
 	ADD_CALLBACK_FUNCTION(Coudert, callbackActionOnDirection);
-	ADD_CALLBACK_FUNCTION(Coudert, enterExitCompartment2);
-	ADD_CALLBACK_FUNCTION(Coudert, playSound);
-	ADD_CALLBACK_FUNCTION(Coudert, playSound16);
-	ADD_CALLBACK_FUNCTION(Coudert, savegame);
-	ADD_CALLBACK_FUNCTION(Coudert, updateEntity);
-	ADD_CALLBACK_FUNCTION(Coudert, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Coudert, updateFromTicks);
-	ADD_CALLBACK_FUNCTION(Coudert, excuseMe);
-	ADD_CALLBACK_FUNCTION(Coudert, function13);
-	ADD_CALLBACK_FUNCTION(Coudert, function14);
-	ADD_CALLBACK_FUNCTION(Coudert, function15);
+	ADD_CALLBACK_FUNCTION_SIII(Coudert, enterExitCompartment2);
+	ADD_CALLBACK_FUNCTION_S(Coudert, playSound);
+	ADD_CALLBACK_FUNCTION_S(Coudert, playSound16);
+	ADD_CALLBACK_FUNCTION_II(Coudert, savegame);
+	ADD_CALLBACK_FUNCTION_II(Coudert, updateEntity);
+	ADD_CALLBACK_FUNCTION_I(Coudert, updateFromTime);
+	ADD_CALLBACK_FUNCTION_I(Coudert, updateFromTicks);
+	ADD_CALLBACK_FUNCTION_I(Coudert, excuseMe);
+	ADD_CALLBACK_FUNCTION_II(Coudert, function13);
+	ADD_CALLBACK_FUNCTION_I(Coudert, function14);
+	ADD_CALLBACK_FUNCTION_I(Coudert, function15);
 	ADD_CALLBACK_FUNCTION(Coudert, function16);
-	ADD_CALLBACK_FUNCTION(Coudert, function17);
+	ADD_CALLBACK_FUNCTION_I(Coudert, function17);
 	ADD_CALLBACK_FUNCTION(Coudert, function18);
-	ADD_CALLBACK_FUNCTION(Coudert, function19);
-	ADD_CALLBACK_FUNCTION(Coudert, function20);
+	ADD_CALLBACK_FUNCTION_I(Coudert, function19);
+	ADD_CALLBACK_FUNCTION_II(Coudert, function20);
 	ADD_CALLBACK_FUNCTION(Coudert, function21);
 	ADD_CALLBACK_FUNCTION(Coudert, function22);
 	ADD_CALLBACK_FUNCTION(Coudert, function23);
@@ -67,12 +67,12 @@ Coudert::Coudert(LastExpressEngine *engine) : Entity(engine, kEntityCoudert) {
 	ADD_CALLBACK_FUNCTION(Coudert, function27);
 	ADD_CALLBACK_FUNCTION(Coudert, visitCompartmentB);
 	ADD_CALLBACK_FUNCTION(Coudert, visitCompartmentA);
-	ADD_CALLBACK_FUNCTION(Coudert, function30);
-	ADD_CALLBACK_FUNCTION(Coudert, function31);
+	ADD_CALLBACK_FUNCTION_TYPE2(Coudert, function30, EntityParametersI5S, EntityParametersSIIS);
+	ADD_CALLBACK_FUNCTION_I(Coudert, function31);
 	ADD_CALLBACK_FUNCTION(Coudert, function32);
 	ADD_CALLBACK_FUNCTION(Coudert, function33);
-	ADD_CALLBACK_FUNCTION(Coudert, function34);
-	ADD_CALLBACK_FUNCTION(Coudert, function35);
+	ADD_CALLBACK_FUNCTION_I(Coudert, function34);
+	ADD_CALLBACK_FUNCTION_I(Coudert, function35);
 	ADD_CALLBACK_FUNCTION(Coudert, chapter1);
 	ADD_CALLBACK_FUNCTION(Coudert, function37);
 	ADD_CALLBACK_FUNCTION(Coudert, function38);
@@ -84,7 +84,7 @@ Coudert::Coudert(LastExpressEngine *engine) : Entity(engine, kEntityCoudert) {
 	ADD_CALLBACK_FUNCTION(Coudert, chapter3);
 	ADD_CALLBACK_FUNCTION(Coudert, function45);
 	ADD_CALLBACK_FUNCTION(Coudert, function46);
-	ADD_CALLBACK_FUNCTION(Coudert, function47);
+	ADD_CALLBACK_FUNCTION_I(Coudert, function47);
 	ADD_CALLBACK_FUNCTION(Coudert, function48);
 	ADD_CALLBACK_FUNCTION(Coudert, function49);
 	ADD_CALLBACK_FUNCTION(Coudert, function50);
@@ -105,7 +105,7 @@ Coudert::Coudert(LastExpressEngine *engine) : Entity(engine, kEntityCoudert) {
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Coudert, reset)
-	Entity::reset(savepoint, true);
+	Entity::reset(savepoint, kClothes1, true);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ IMPLEMENT_FUNCTION_S(2, Coudert, bloodJacket)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		break;
 
 	case kActionExitCompartment:
@@ -142,7 +142,7 @@ IMPLEMENT_FUNCTION_SI(3, Coudert, enterExitCompartment, ObjectIndex)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		return;
 
 	case kActionCallback:
@@ -168,7 +168,7 @@ IMPLEMENT_FUNCTION(4, Coudert, callbackActionOnDirection)
 			break;
 		}
 
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		break;
 
 	case kActionExitCompartment:
@@ -191,7 +191,7 @@ IMPLEMENT_FUNCTION_SIII(5, Coudert, enterExitCompartment2, ObjectIndex, EntityPo
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		return;
 
 	case kActionCallback:
@@ -212,7 +212,7 @@ IMPLEMENT_FUNCTION_S(6, Coudert, playSound)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		break;
 
 	case kActionEndSound:
@@ -241,7 +241,7 @@ IMPLEMENT_FUNCTION_NOSETUP(7, Coudert, playSound16)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		break;
 
 	case kActionEndSound:
@@ -354,7 +354,7 @@ IMPLEMENT_FUNCTION_I(10, Coudert, updateFromTime, uint32)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 
 		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
 			break;
@@ -378,7 +378,7 @@ IMPLEMENT_FUNCTION_I(11, Coudert, updateFromTicks, uint32)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 
 		if (!Entity::updateParameter(params->param2, getState()->timeTicks, params->param1))
 			break;
@@ -453,7 +453,8 @@ IMPLEMENT_FUNCTION_II(13, Coudert, function13, bool, EntityIndex)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		if (Entity::savegameBloodJacket(1))
+			break;
 
 		if (!params->param2 && !params->param3) {
 
@@ -576,7 +577,7 @@ IMPLEMENT_FUNCTION_I(14, Coudert, function14, EntityIndex)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(4);
 		break;
 
 	case kActionDefault:
@@ -678,7 +679,7 @@ IMPLEMENT_FUNCTION_I(15, Coudert, function15, bool)
 			if (params->param1)
 				getSound()->playSound(kEntityCoudert, "Tat3163");
 			else
-				getSound()->playSound(kEntityCoudert, (getProgress().chapter != kChapter3 || getState()->time > kTime1449000) ? "Tat3162A" : "Tat3161A");
+				getSound()->playSound(kEntityCoudert, (getProgress().chapter != kChapter3 || getState()->time >= kTime1449000) ? "Tat3162A" : "Tat3161A");
 
 			setCallback(3);
 			setup_enterExitCompartment("627Xb", kObjectCompartmentB);
@@ -808,6 +809,7 @@ IMPLEMENT_FUNCTION(18, Coudert, function18)
 		if (ENTITY_PARAM(0, 3) || ENTITY_PARAM(0, 5) || ENTITY_PARAM(0, 4)) {
 			getEntities()->drawSequenceLeft(kEntityCoudert, "627K");
 			getScenes()->loadSceneFromItemPosition(kItem5);
+			ENTITY_PARAM(2, 1) = 1;
 
 			callbackAction();
 			break;
@@ -1305,7 +1307,7 @@ IMPLEMENT_FUNCTION(26, Coudert, function26)
 		break;
 
 	case kActionNone:
-		if (params->param1) {
+		if (!params->param1) {
 			if (!Entity::updateParameter(params->param2, getState()->timeTicks, 75))
 				break;
 
@@ -1963,7 +1965,7 @@ IMPLEMENT_FUNCTION(36, Coudert, chapter1)
 		break;
 
 	case kActionNone:
-		Entity::timeCheckCallback(kTimeChapter1, params->param1, 1, WRAP_SETUP_FUNCTION(Coudert, setup_chapter1Handler));
+		Entity::timeCheckCallback(kTimeChapter1, params->param1, 1, WRAP_SETUP_FUNCTION(Coudert, setup_function18));
 		break;
 
 	case kActionDefault:
@@ -2088,7 +2090,7 @@ switch (savepoint.action) {
 	case kAction191477936:
 		getData()->entityPosition = kPosition_4070;
 		getData()->location = kLocationOutsideCompartment;
-		getObjects()->update(kObjectCompartment4, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
+		getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 
 		setCallback(1);
 		setup_updateEntity(kCarRedSleeping, kPosition_2000);
@@ -2152,7 +2154,7 @@ IMPLEMENT_FUNCTION(39, Coudert, function39)
 
 		case 7:
 			setCallback(8);
-			setup_enterExitCompartment("MME1151", kObjectCompartmentD);
+			setup_enterExitCompartment("697Ad", kObjectCompartmentD);
 			break;
 
 		case 8:
@@ -2271,7 +2273,7 @@ label_callback_9:
 		if (ENTITY_PARAM(0, 1) && !getSoundQueue()->isBuffered(kEntityCoudert))
 			getSound()->playSound(kEntityCoudert, rnd(2) ? "JAC1065" : "JAC1065A");
 
-		if (getState()->time > kTime1107000 && !ENTITY_PARAM(0, 1) && !getEvent(kEventVassiliSeizure)) {
+		if (getState()->time > kTime1107000 && !params->param1 && !getEvent(kEventVassiliSeizure)) {
 			getData()->inventoryItem = kItemNone;
 
 			setCallback(10);
@@ -2601,7 +2603,7 @@ IMPLEMENT_FUNCTION(43, Coudert, function43)
 		}
 
 label_callback1:
-		if (!ENTITY_PARAM(1, 1)) {
+		if (ENTITY_PARAM(1, 1)) {
 			setCallback(2);
 			setup_function15(false);
 			break;
@@ -3366,7 +3368,7 @@ IMPLEMENT_FUNCTION(51, Coudert, function51)
 
 	case kActionNone:
 		if (getState()->time > kTime2133000 && !getProgress().field_40) {
-			getEntities()->exitCompartment(kEntityCoudert, kObjectCompartmentB);
+			getEntities()->exitCompartment(kEntityCoudert, kObjectCompartmentB, true);
 			getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			getObjects()->update(kObjectCompartmentB, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
@@ -3439,7 +3441,7 @@ IMPLEMENT_FUNCTION(51, Coudert, function51)
 			break;
 
 		case 5:
-			setCallback(5);
+			setCallback(6);
 			setup_function18();
 			break;
 		}
@@ -4095,7 +4097,7 @@ IMPLEMENT_FUNCTION(62, Coudert, function62)
 		case 3:
 			++params->param3;
 
-			if (params->param3 == 1 || params->param2) {
+			if (params->param3 == 1 || params->param3 == 2) {
 				getObjects()->update(kObjectCompartmentH, kEntityCoudert, kObjectLocation1, kCursorNormal, kCursorNormal);
 				setCallback(params->param3 == 1 ? 4 : 5);
 				setup_playSound(params->param3 == 1 ? "Jac5002" : "Jac5002A");

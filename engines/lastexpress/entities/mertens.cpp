@@ -40,36 +40,36 @@ namespace LastExpress {
 
 Mertens::Mertens(LastExpressEngine *engine) : Entity(engine, kEntityMertens) {
 	ADD_CALLBACK_FUNCTION(Mertens, reset);
-	ADD_CALLBACK_FUNCTION(Mertens, bloodJacket);
-	ADD_CALLBACK_FUNCTION(Mertens, enterExitCompartment);
-	ADD_CALLBACK_FUNCTION(Mertens, enterExitCompartment2);
-	ADD_CALLBACK_FUNCTION(Mertens, enterExitCompartment3);
+	ADD_CALLBACK_FUNCTION_S(Mertens, bloodJacket);
+	ADD_CALLBACK_FUNCTION_SI(Mertens, enterExitCompartment);
+	ADD_CALLBACK_FUNCTION_SI(Mertens, enterExitCompartment2);
+	ADD_CALLBACK_FUNCTION_SIII(Mertens, enterExitCompartment3);
 	ADD_CALLBACK_FUNCTION(Mertens, callbackActionOnDirection);
-	ADD_CALLBACK_FUNCTION(Mertens, playSound);
-	ADD_CALLBACK_FUNCTION(Mertens, playSound16);
-	ADD_CALLBACK_FUNCTION(Mertens, savegame);
-	ADD_CALLBACK_FUNCTION(Mertens, updateEntity);
-	ADD_CALLBACK_FUNCTION(Mertens, function11);
-	ADD_CALLBACK_FUNCTION(Mertens, bonsoir);
-	ADD_CALLBACK_FUNCTION(Mertens, function13);
-	ADD_CALLBACK_FUNCTION(Mertens, function14);
-	ADD_CALLBACK_FUNCTION(Mertens, function15);
-	ADD_CALLBACK_FUNCTION(Mertens, function16);
+	ADD_CALLBACK_FUNCTION_S(Mertens, playSound);
+	ADD_CALLBACK_FUNCTION_S(Mertens, playSound16);
+	ADD_CALLBACK_FUNCTION_II(Mertens, savegame);
+	ADD_CALLBACK_FUNCTION_II(Mertens, updateEntity);
+	ADD_CALLBACK_FUNCTION_I(Mertens, function11);
+	ADD_CALLBACK_FUNCTION_I(Mertens, bonsoir);
+	ADD_CALLBACK_FUNCTION_II(Mertens, function13);
+	ADD_CALLBACK_FUNCTION_I(Mertens, function14);
+	ADD_CALLBACK_FUNCTION_I(Mertens, function15);
+	ADD_CALLBACK_FUNCTION_I(Mertens, function16);
 	ADD_CALLBACK_FUNCTION(Mertens, function17);
 	ADD_CALLBACK_FUNCTION(Mertens, function18);
 	ADD_CALLBACK_FUNCTION(Mertens, function19);
 	ADD_CALLBACK_FUNCTION(Mertens, function20);
-	ADD_CALLBACK_FUNCTION(Mertens, function21);
+	ADD_CALLBACK_FUNCTION_II(Mertens, function21);
 	ADD_CALLBACK_FUNCTION(Mertens, function22);
 	ADD_CALLBACK_FUNCTION(Mertens, function23);
 	ADD_CALLBACK_FUNCTION(Mertens, function24);
 	ADD_CALLBACK_FUNCTION(Mertens, function25);
-	ADD_CALLBACK_FUNCTION(Mertens, function26);
-	ADD_CALLBACK_FUNCTION(Mertens, tylerCompartment);
-	ADD_CALLBACK_FUNCTION(Mertens, function28);
-	ADD_CALLBACK_FUNCTION(Mertens, function29);
-	ADD_CALLBACK_FUNCTION(Mertens, function30);
-	ADD_CALLBACK_FUNCTION(Mertens, function31);
+	ADD_CALLBACK_FUNCTION_I(Mertens, function26);
+	ADD_CALLBACK_FUNCTION_I(Mertens, tylerCompartment);
+	ADD_CALLBACK_FUNCTION_S(Mertens, function28);
+	ADD_CALLBACK_FUNCTION_SS(Mertens, function29);
+	ADD_CALLBACK_FUNCTION_I(Mertens, function30);
+	ADD_CALLBACK_FUNCTION_I(Mertens, function31);
 	ADD_CALLBACK_FUNCTION(Mertens, function32);
 	ADD_CALLBACK_FUNCTION(Mertens, function33);
 	ADD_CALLBACK_FUNCTION(Mertens, chapter1);
@@ -107,7 +107,7 @@ IMPLEMENT_FUNCTION_S(2, Mertens, bloodJacket)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		break;
 
 	case kActionExitCompartment:
@@ -134,7 +134,7 @@ IMPLEMENT_FUNCTION_SI(3, Mertens, enterExitCompartment, ObjectIndex)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		return;
 
 	case kActionCallback:
@@ -155,7 +155,7 @@ IMPLEMENT_FUNCTION_SI(4, Mertens, enterExitCompartment2, ObjectIndex)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		return;
 
 	case kAction4:
@@ -181,7 +181,7 @@ IMPLEMENT_FUNCTION_SIII(5, Mertens, enterExitCompartment3, ObjectIndex, EntityPo
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		break;
 
 	case kActionExitCompartment:
@@ -223,7 +223,7 @@ IMPLEMENT_FUNCTION(6, Mertens, callbackActionOnDirection)
 			break;
 		}
 
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		break;
 
 	case kActionExitCompartment:
@@ -246,7 +246,7 @@ IMPLEMENT_FUNCTION_S(7, Mertens, playSound)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		break;
 
 	case kActionEndSound:
@@ -273,7 +273,7 @@ IMPLEMENT_FUNCTION_S(8, Mertens, playSound16)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(1);
 		break;
 
 	case kActionEndSound:
@@ -352,6 +352,7 @@ IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
 
 	case kAction1:
 		params->param3 = 0;
+		getData()->inventoryItem = kItemNone;
 		if (getProgress().eventCorpseFound || getEvent(kEventMertensAskTylerCompartment) || getEvent(kEventMertensAskTylerCompartmentD)) {
 			if (ENTITY_PARAM(0, 4) && getProgress().jacket == kJacketGreen && !getEvent(kEventMertensDontMakeBed) && !getProgress().eventCorpseThrown) {
 				setCallback(6);
@@ -462,7 +463,8 @@ IMPLEMENT_FUNCTION_I(11, Mertens, function11, uint32)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		if (Entity::savegameBloodJacket(1))
+			break;
 
 		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
 			break;
@@ -483,7 +485,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION_I(12, Mertens, bonsoir, EntityIndex)
 	EntityIndex entity = (EntityIndex)params->param1;
 
-	if (savepoint.action == kActionDefault)
+	if (savepoint.action != kActionDefault)
 		return;
 
 	if (getSoundQueue()->isBuffered(kEntityMertens)) {
@@ -495,7 +497,7 @@ IMPLEMENT_FUNCTION_I(12, Mertens, bonsoir, EntityIndex)
 		if (Entities::isFemale(entity)) {
 			getSound()->playSound(kEntityMertens, rnd(2) ? "CON1112" : "CON1112A");
 		} else {
-			if (entity || getProgress().field_18 != 2) {
+			if (entity != kEntityPlayer || getProgress().field_18 != 2) {
 				getSound()->playSound(kEntityMertens, "CON1112F");
 			} else {
 				switch (rnd(3)) {
@@ -525,15 +527,16 @@ IMPLEMENT_FUNCTION_I(12, Mertens, bonsoir, EntityIndex)
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
-IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, bool)
+IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, EntityIndex)
 	switch (savepoint.action) {
 	default:
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		if (Entity::savegameBloodJacket(4))
+			break;
 
-		if (!params->param2 && !params->param3) {
+		if (params->param2 == kEntityPlayer && !params->param3) {
 			if (Entity::updateParameter(params->param4, getState()->timeTicks, 75)) {
 				getData()->inventoryItem = kItemNone;
 				setCallback(5);
@@ -569,11 +572,29 @@ IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, bool)
 		break;
 
 	case kActionDefault:
-		if (params->param2)
+		if (params->param2 != kEntityPlayer)
 			params->param3 = 1;
 
 		if (!getSoundQueue()->isBuffered(kEntityMertens)) {
-
+			if (getProgress().chapter == kChapter3 && !params->param1 && getState()->time < kTime2173500 &&
+			 (getState()->time > kTime2106000 || params->param2 != kEntityPlayer && getState()->time > kTime2079000)) {
+				// guide guests to the concert
+				if (params->param2 == kEntityAugust)
+					getSound()->playSound(kEntityMertens, "CON3052");
+				else if (Entities::isFemale((EntityIndex)params->param2))
+					getSound()->playSound(kEntityMertens, "CON3051");
+				else if (params->param2 == kEntityPlayer)
+					getSound()->playSound(kEntityMertens, getProgress().field_40 ? "CON3054" : "CON3053");
+				else {
+					setCallback(1);
+					setup_bonsoir((EntityIndex)params->param2);
+					break;
+				}
+			} else {
+				setCallback(2);
+				setup_bonsoir((EntityIndex)params->param2);
+				break;
+			}
 		}
 
 		setCallback(3);
@@ -583,7 +604,7 @@ IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, bool)
 	case kAction16:
 		params->param3--;
 
-		if (params->param2 && !params->param3) {
+		if (params->param2 != kEntityPlayer && !params->param3) {
 			getData()->inventoryItem = kItemNone;
 			setCallback(10);
 			setup_function18();
@@ -594,6 +615,12 @@ IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, bool)
 		if (getEntities()->isPlayerPosition(kCarGreenSleeping, 23) && ENTITY_PARAM(0, 7) && !getEvent(kEventKronosConversation)) {
 			setCallback(8);
 			setup_savegame(kSavegameTypeEvent, kEventMertensKronosInvitation);
+			break;
+		}
+		if (!params->param3) {
+			getData()->inventoryItem = kItemNone;
+			setCallback(9);
+			setup_function18();
 		}
 		break;
 
@@ -631,13 +658,14 @@ IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, bool)
 
 		case 8:
 			getAction()->playAnimation(kEventMertensKronosInvitation);
+			getProgress().eventMertensKronosInvitation = true;
 			ENTITY_PARAM(0, 6) = 0;
 			ENTITY_PARAM(0, 7) = 0;
 			getScenes()->processScene();
 
 			if (!params->param3) {
 				getData()->inventoryItem = kItemNone;
-				setCallback(10);
+				setCallback(9);
 				setup_function18();
 			}
 			break;
@@ -653,7 +681,7 @@ IMPLEMENT_FUNCTION_I(14, Mertens, function14, EntityIndex)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket();
+		Entity::savegameBloodJacket(4);
 		break;
 
 	case kActionDefault:
@@ -1167,7 +1195,7 @@ IMPLEMENT_FUNCTION(22, Mertens, function22)
 
 		case 4:
 			getEntities()->drawSequenceLeft(kEntityMertens, "601Nh");
-			getEntities()->enterCompartment(kEntityMertens, kObjectCompartment8);
+			getEntities()->enterCompartment(kEntityMertens, kObjectCompartment8, true);
 			getSavePoints()->push(kEntityMertens, kEntityMahmud, kAction225563840);
 			break;
 
@@ -1257,7 +1285,7 @@ IMPLEMENT_FUNCTION(23, Mertens, function23)
 			break;
 
 		case 4:
-			getEntities()->exitCompartment(kEntityMertens, kObjectCompartment4);
+			getEntities()->exitCompartment(kEntityMertens, kObjectCompartment4, true);
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMertens);
 
@@ -1669,7 +1697,7 @@ label_callback11:
 						break;
 					}
 				} else {
-					setCallback(26);
+					setCallback(19);
 					setup_function26(false);
 				}
 
@@ -1742,7 +1770,7 @@ label_callback11:
 
 	case kActionKnock:
 		if (params->param1) {
-			getObjects()->update(kObjectCompartment1, kEntityMertens, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorNormal, kCursorNormal);
 
 			switch (params->param1) {
 			default:
@@ -1774,7 +1802,7 @@ label_callback11:
 		break;
 
 	case kActionOpenDoor:
-		getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).status == kObjectLocation1 ? "LIB012" : "LIB014");
+		getSound()->playSound(kEntityPlayer, getObjects()->get(kObjectCompartment1).status == kObjectLocation1 ? "LIB032" : "LIB014");
 
 		if (getProgress().eventCorpseMovedFromFloor) {
 
@@ -1855,7 +1883,7 @@ label_callback11:
 			} else {
 				if (getEntities()->isInsideTrainCar(kEntityPlayer, kCarGreenSleeping)) {
 					setCallback(2);
-					setup_enterExitCompartment("601Ra", kObjectCompartment1);
+					setup_enterExitCompartment2("601Ra", kObjectCompartment1);
 				} else {
 					getScenes()->loadSceneFromPosition(kCarNone, 1);
 
@@ -2222,7 +2250,7 @@ IMPLEMENT_FUNCTION_I(30, Mertens, function30, MertensActionType)
 			if (params->param3)
 				getObjects()->update(kObjectCompartment2, kEntityPlayer, getObjects()->get(kObjectCompartment2).status, kCursorHandKnock, kCursorHand);
 
-			getEntities()->exitCompartment(kEntityMertens, kObjectCompartment2);
+			getEntities()->exitCompartment(kEntityMertens, kObjectCompartment2, true);
 
 			if (getProgress().field_14 == 3)
 					getProgress().field_14 = 0;
@@ -2243,7 +2271,7 @@ IMPLEMENT_FUNCTION_I(30, Mertens, function30, MertensActionType)
 			if (params->param3)
 				getObjects()->update(kObjectCompartment3, kEntityPlayer, getObjects()->get(kObjectCompartment3).status, kCursorHandKnock, kCursorHand);
 
-			getEntities()->exitCompartment(kEntityMertens, kObjectCompartment3);
+			getEntities()->exitCompartment(kEntityMertens, kObjectCompartment3, true);
 
 			if (getProgress().field_14 == 3)
 					getProgress().field_14 = 0;
@@ -2465,6 +2493,7 @@ IMPLEMENT_FUNCTION(33, Mertens, function33)
 				break;
 			}
 
+			ENTITY_PARAM(1, 8) = 0;
 			callbackAction();
 			break;
 
@@ -2478,12 +2507,14 @@ IMPLEMENT_FUNCTION(33, Mertens, function33)
 				break;
 			}
 
+			ENTITY_PARAM(1, 8) = 0;
 			callbackAction();
 			break;
 
 		case 13:
 			ENTITY_PARAM(2, 2) = 0;
 
+			ENTITY_PARAM(1, 8) = 0;
 			callbackAction();
 			break;
 		}
@@ -2631,14 +2662,12 @@ IMPLEMENT_FUNCTION(36, Mertens, function36)
 			break;
 
 		case 2:
-			if (ENTITY_PARAM(0, 6)) {
-				if (getEntities()->isPlayerInCar(kCarGreenSleeping) && getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition) {
-					setCallback(3);
-					setup_updateEntity(kCarGreenSleeping, kPosition_9460);
-				} else {
-					setCallback(7);
-					setup_tylerCompartment(kMertensAction2);
-				}
+			if (ENTITY_PARAM(0, 6) && getEntities()->isPlayerInCar(kCarGreenSleeping) && getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition) {
+				setCallback(3);
+				setup_updateEntity(kCarGreenSleeping, kPosition_9460);
+			} else if (!getProgress().eventMertensKronosInvitation) {
+				setCallback(7);
+				setup_tylerCompartment(kMertensAction2);
 			} else {
 				ENTITY_PARAM(0, 6) = 0;
 				ENTITY_PARAM(0, 7) = 0;
@@ -2657,7 +2686,7 @@ IMPLEMENT_FUNCTION(36, Mertens, function36)
 			break;
 
 		case 4:
-			if (ENTITY_PARAM(0, 6)) {
+			if (!getProgress().eventMertensKronosInvitation) {
 				setCallback(7);
 				setup_tylerCompartment(kMertensAction2);
 			} else {
@@ -2720,9 +2749,9 @@ IMPLEMENT_FUNCTION(37, Mertens, function37)
 		break;
 
 	case kActionEndSound:
-		++params->param6;
+		++params->param1;
 
-		if (params->param6 == 1)
+		if (params->param1 == 1)
 			getSound()->playSound(kEntityMertens, getEntities()->isDistanceBetweenEntities(kEntityMertens, kEntityPlayer, 2000) ? "CON1152" : "CON1151");
 		break;
 
@@ -2737,7 +2766,7 @@ IMPLEMENT_FUNCTION(37, Mertens, function37)
 			break;
 
 		case 1:
-			setCallback(1);
+			setCallback(2);
 			setup_updateEntity(kCarRedSleeping, kPosition_1500);
 			break;
 
@@ -3039,10 +3068,10 @@ label_callback_8:
 			break;
 		}
 
+label_callback_9:
 		if (getProgress().field_14 == 29)
 			goto label_callback_13;
 
-label_callback_9:
 		if (ENTITY_PARAM(1, 6)) {
 			getData()->inventoryItem = kItemNone;
 			setCallback(10);
@@ -3141,7 +3170,7 @@ label_callback_19:
 		if (!ENTITY_PARAM(0, 1) && !ENTITY_PARAM(2, 1)) {
 			getData()->inventoryItem = kItemNone;
 			setCallback(20);
-			setup_function13((bool)savepoint.param.intValue, (bool)savepoint.entity2);
+			setup_function13((bool)savepoint.param.intValue, savepoint.entity2);
 		}
 		break;
 
@@ -3172,13 +3201,13 @@ label_callback_2_4:
 		if ((getEntities()->isPlayerPosition(kCarGreenSleeping, 1) || getEntities()->isPlayerPosition(kCarGreenSleeping, 23)) && !ENTITY_PARAM(0, 1) && !ENTITY_PARAM(2, 1)) {
 			getData()->inventoryItem = kItemNone;
 			setCallback(getEntities()->isPlayerPosition(kCarGreenSleeping, 1) ? 5 : 6);
-			setup_function13(getEntities()->isPlayerPosition(kCarGreenSleeping, 1), false);
+			setup_function13(getEntities()->isPlayerPosition(kCarGreenSleeping, 1), kEntityPlayer);
 			break;
 		}
 
 label_callback_5_6:
 		if (getEntities()->isPlayerInCar(kCarGreenSleeping) && getData()->entityPosition < getEntityData(kEntityPlayer)->entityPosition) {
-			if (getProgress().jacket == kJacketOriginal || ENTITY_PARAM(0, 7)) {
+			if (getProgress().jacket == kJacketBlood || ENTITY_PARAM(0, 7)) {
 				getData()->inventoryItem = kItemNone;
 				setCallback(7);
 				setup_function32();
@@ -3325,13 +3354,13 @@ IMPLEMENT_FUNCTION(43, Mertens, chapter2)
 		ENTITY_PARAM(0, 6) = 0;
 		ENTITY_PARAM(0, 8) = 0;
 
-		ENTITY_PARAM(0, 1) = 0;
-		ENTITY_PARAM(0, 2) = 0;
-		ENTITY_PARAM(0, 3) = 0;
-		ENTITY_PARAM(0, 4) = 0;
-		ENTITY_PARAM(0, 5) = 0;
-		ENTITY_PARAM(0, 6) = 0;
-		ENTITY_PARAM(0, 7) = 0;
+		ENTITY_PARAM(1, 1) = 0;
+		ENTITY_PARAM(1, 2) = 0;
+		ENTITY_PARAM(1, 3) = 0;
+		ENTITY_PARAM(1, 4) = 0;
+		ENTITY_PARAM(1, 5) = 0;
+		ENTITY_PARAM(1, 6) = 0;
+		ENTITY_PARAM(1, 7) = 0;
 		break;
 
 	case kActionCallback:
@@ -3380,7 +3409,7 @@ label_callback3:
 	case kAction11:
 		if (!ENTITY_PARAM(2, 1)) {
 			setCallback(5);
-			setup_function13((bool)savepoint.param.intValue, (bool)savepoint.entity2);
+			setup_function13((bool)savepoint.param.intValue, savepoint.entity2);
 		}
 		break;
 
@@ -3390,11 +3419,11 @@ label_callback3:
 
 		if (getEntities()->isPlayerPosition(kCarGreenSleeping, 1)) {
 			setCallback(6);
-			setup_function13(true, false);
+			setup_function13(true, kEntityPlayer);
 
 		} else if (getEntities()->isPlayerPosition(kCarGreenSleeping, 23)) {
 			setCallback(7);
-			setup_function13(false, false);
+			setup_function13(false, kEntityPlayer);
 		}
 		break;
 
@@ -3470,7 +3499,7 @@ IMPLEMENT_FUNCTION(45, Mertens, chapter3)
 		ENTITY_PARAM(1, 6) = 0;
 		ENTITY_PARAM(1, 7) = 0;
 
-		ENTITY_PARAM(2, 3) = 0;
+		ENTITY_PARAM(2, 4) = 0;
 		break;
 
 	case kActionCallback:
@@ -3554,7 +3583,7 @@ label_callback_10:
 	case kAction11:
 		if (!ENTITY_PARAM(2, 1)) {
 			setCallback(12);
-			setup_function13((bool)savepoint.param.intValue, savepoint.entity2 != kEntityPlayer);
+			setup_function13((bool)savepoint.param.intValue, savepoint.entity2);
 		}
 		break;
 
@@ -3565,10 +3594,10 @@ label_callback_10:
 		if (!ENTITY_PARAM(2, 1)) {
 			if (getEntities()->isPlayerPosition(kCarGreenSleeping, 1)) {
 				setCallback(13);
-				setup_function13(true, false);
+				setup_function13(true, kEntityPlayer);
 			} else if (getEntities()->isPlayerPosition(kCarGreenSleeping, 23)) {
 				setCallback(14);
-				setup_function13(false, false);
+				setup_function13(false, kEntityPlayer);
 			}
 		}
 		break;
@@ -3668,7 +3697,7 @@ IMPLEMENT_FUNCTION(47, Mertens, chapter4)
 		ENTITY_PARAM(1, 6) = 0;
 		ENTITY_PARAM(1, 7) = 0;
 
-		ENTITY_PARAM(2, 4) = 0;
+		ENTITY_PARAM(2, 3) = 0;
 		break;
 
 	case kActionCallback:
@@ -3762,7 +3791,7 @@ label_callback_8:
 	case kAction11:
 		if (!ENTITY_PARAM(2, 1) && !ENTITY_PARAM(0, 1)) {
 			setCallback(9);
-			setup_function13((bool)savepoint.param.intValue, savepoint.entity2 != kEntityPlayer);
+			setup_function13((bool)savepoint.param.intValue, savepoint.entity2);
 		}
 		break;
 
@@ -3778,10 +3807,10 @@ label_callback_8:
 		if (!ENTITY_PARAM(2, 1) && !ENTITY_PARAM(0, 1)) {
 			if (getEntities()->isPlayerPosition(kCarGreenSleeping, 1)) {
 				setCallback(10);
-				setup_function13(true, false);
+				setup_function13(true, kEntityPlayer);
 			} else if (getEntities()->isPlayerPosition(kCarGreenSleeping, 23)) {
 				setCallback(11);
-				setup_function13(false, false);
+				setup_function13(false, kEntityPlayer);
 			}
 		}
 		break;
@@ -4008,7 +4037,7 @@ IMPLEMENT_FUNCTION(53, Mertens, function53)
 				break;
 
 			params->param1 = 0;
-			params->param2 = 0;
+			params->param2 = 1;
 
 			getObjects()->update(kObjectCompartment4, kEntityMertens, kObjectLocation1, kCursorNormal, kCursorNormal);
 		}

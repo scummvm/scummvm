@@ -37,14 +37,14 @@ namespace LastExpress {
 Gendarmes::Gendarmes(LastExpressEngine *engine) : Entity(engine, kEntityGendarmes) {
 	ADD_CALLBACK_FUNCTION(Gendarmes, reset);
 	ADD_CALLBACK_FUNCTION(Gendarmes, chapter1);
-	ADD_CALLBACK_FUNCTION(Gendarmes, doDraw);
-	ADD_CALLBACK_FUNCTION(Gendarmes, doDialog);
-	ADD_CALLBACK_FUNCTION(Gendarmes, doDialogFullVolume);
-	ADD_CALLBACK_FUNCTION(Gendarmes, doWait);
-	ADD_CALLBACK_FUNCTION(Gendarmes, savegame);
-	ADD_CALLBACK_FUNCTION(Gendarmes, doWalk);
-	ADD_CALLBACK_FUNCTION(Gendarmes, doCompartment);
-	ADD_CALLBACK_FUNCTION(Gendarmes, trappedCath);
+	ADD_CALLBACK_FUNCTION_S(Gendarmes, doDraw);
+	ADD_CALLBACK_FUNCTION_S(Gendarmes, doDialog);
+	ADD_CALLBACK_FUNCTION_S(Gendarmes, doDialogFullVolume);
+	ADD_CALLBACK_FUNCTION_I(Gendarmes, doWait);
+	ADD_CALLBACK_FUNCTION_II(Gendarmes, savegame);
+	ADD_CALLBACK_FUNCTION_II(Gendarmes, doWalk);
+	ADD_CALLBACK_FUNCTION_TYPE3(Gendarmes, doCompartment, EntityParametersIISS, EntityParametersSSS, EntityParametersISII);
+	ADD_CALLBACK_FUNCTION_III(Gendarmes, trappedCath);
 	ADD_CALLBACK_FUNCTION(Gendarmes, chapter1Handler);
 	ADD_CALLBACK_FUNCTION(Gendarmes, searchTrain);
 	ADD_CALLBACK_FUNCTION(Gendarmes, function13);
@@ -156,7 +156,7 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, doCompartment, CarIndex, EntityPosition)
 			parameters2->param7 = kPosition_7850;
 		}
 
-		if (params->param1 == kCarBaggageRear)
+		if (params->param1 == kCarRedSleeping)
 			parameters2->param5 += 31; // Switch to next compartment car
 
 		if (parameters2->param6) {
@@ -184,7 +184,7 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, doCompartment, CarIndex, EntityPosition)
 			setup_trappedCath((CarIndex)params->param1, (EntityPosition)params->param2, (ObjectIndex)parameters2->param5);
 		} else {
 			getEntities()->drawSequenceLeft(kEntityGendarmes, (char *)&parameters1->seq1);
-			getEntities()->enterCompartment(kEntityGendarmes, (ObjectIndex)CURRENT_PARAM(2, 5));
+			getEntities()->enterCompartment(kEntityGendarmes, (ObjectIndex)CURRENT_PARAM(2, 5), true);
 
 			setCallback(parameters2->param6 ? 2 : 3);
 			setup_doDialog(parameters2->param6 ? "POL1044A" : "POL1044B");
@@ -234,7 +234,7 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, doCompartment, CarIndex, EntityPosition)
 
 		case 6:
 			getData()->location = kLocationOutsideCompartment;
-			getEntities()->exitCompartment(kEntityGendarmes, (ObjectIndex)parameters2->param5);
+			getEntities()->exitCompartment(kEntityGendarmes, (ObjectIndex)parameters2->param5, true);
 			callbackAction();
 			break;
 		}
@@ -249,10 +249,10 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, trappedCath, CarIndex, EntityPosition, Obj
 		break;
 
 	case kActionNone:
-		if (!params->param5 || getState()->timeTicks > (uint32)params->param5) {
-			if (!params->param5)
-				params->param5 = getState()->timeTicks + 75;
+		if (!params->param5)
+			params->param5 = getState()->timeTicks + 75;
 
+		if (getState()->timeTicks > (uint32)params->param5) {
 			if (!getEntities()->isOutsideAlexeiWindow() && getObjects()->get((ObjectIndex)params->param3).status != kObjectLocation1) {
 				setCallback(2);
 				setup_savegame(kSavegameTypeEvent, kEventGendarmesArrestation);
@@ -321,7 +321,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, trappedCath, CarIndex, EntityPosition, Obj
 			break;
 
 		case 3:
-			getAction()->playAnimation((params->param1 < kCarRedSleeping) ? kEventMertensBloodJacket : kEventCoudertBloodJacket);
+			getAction()->playAnimation((params->param1 == kCarGreenSleeping) ? kEventMertensBloodJacket : kEventCoudertBloodJacket);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverBloodJacket, true);
 
 			getObjects()->update((ObjectIndex)params->param3, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
@@ -338,6 +338,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, trappedCath, CarIndex, EntityPosition, Obj
 
 		case 5:
 			getObjects()->update((ObjectIndex)params->param3, kEntityGendarmes, getObjects()->get((ObjectIndex)params->param3).status, kCursorNormal, kCursorHand);
+			params->param4 = 1;
 			break;
 
 		case 6:
@@ -574,7 +575,7 @@ void Gendarmes::handleAction(const SavePoint &savepoint, bool shouldPlaySound, S
 			ENTITY_PARAM(0, 1) = 1;
 		}
 
-		if (getEntities()->isDistanceBetweenEntities(kEntityGendarmes, kEntityPlayer, 1000) && !getEntityData(kEntityPlayer)->location) {
+		if (getEntities()->isDistanceBetweenEntities(kEntityGendarmes, kEntityPlayer, shouldUpdateEntity ? 1750 : 1000) && !getEntityData(kEntityPlayer)->location) {
 
 			if (shouldUpdateEntity)
 				if (getEntities()->isPlayerPosition(kCarRedSleeping, 22) && !getEntities()->isDistanceBetweenEntities(kEntityGendarmes, kEntityPlayer, 250))
@@ -585,13 +586,21 @@ void Gendarmes::handleAction(const SavePoint &savepoint, bool shouldPlaySound, S
 		}
 		break;
 
+	case kActionEndSound:
+		if (shouldPlaySound && !checkCallback && !shouldUpdateEntity) {
+			callbackAction();
+		}
+		break;
+
 	case kActionExitCompartment:
-		callbackAction();
+		if (!shouldPlaySound && !checkCallback && !shouldUpdateEntity) {
+			callbackAction();
+		}
 		break;
 
 	case kActionDefault:
 		// Only handle when passing SIIS params
-		if (!checkCallback) {
+		if (!checkCallback && !shouldUpdateEntity) {
 			EXPOSE_PARAMS(EntityData::EntityParametersSIIS);
 
 			if (!shouldPlaySound)
