@@ -1581,8 +1581,10 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			if (getSciVersion() <= SCI_VERSION_1_1) {
 				g_sci->_gfxScreen->copyToScreen();
 				g_system->updateScreen();
+#ifdef ENABLE_SCI32
 			} else {
 				g_sci->_gfxFrameout->kernelFrameOut(true);
+#endif
 			}
 		}
 
