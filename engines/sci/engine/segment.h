@@ -884,6 +884,7 @@ public:
 			type = "string";
 			break;
 		case kArrayTypeInvalid:
+		default:
 			type = "invalid";
 			break;
 		}
