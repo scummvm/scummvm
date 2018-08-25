@@ -78,11 +78,11 @@ struct SavePoint;
 
 #define ADD_CALLBACK_FUNCTION_TYPE(class, name, type) \
 	_callbacks.push_back(new ENTITY_CALLBACK(class, name, this)); \
-	_paramsTypeSetters.push_back(&EntityData::resetParametersType<EntityData::type>);
+	_paramsTypeSetters.push_back(&EntityData::resetParametersType<EntityData::type, EntityData::EntityParametersIIII, EntityData::EntityParametersIIII>);
 
 #define ADD_CALLBACK_FUNCTION_TYPE2(class, name, type1, type2) \
 	_callbacks.push_back(new ENTITY_CALLBACK(class, name, this)); \
-	_paramsTypeSetters.push_back(&EntityData::resetParametersType<EntityData::type1, EntityData::type2>);
+	_paramsTypeSetters.push_back(&EntityData::resetParametersType<EntityData::type1, EntityData::type2, EntityData::EntityParametersIIII>);
 
 #define ADD_CALLBACK_FUNCTION_TYPE3(class, name, type1, type2, type3) \
 	_callbacks.push_back(new ENTITY_CALLBACK(class, name, this)); \
@@ -106,7 +106,7 @@ struct SavePoint;
 
 #define ADD_NULL_FUNCTION() \
 	_callbacks.push_back(new ENTITY_CALLBACK(Entity, nullfunction, this)); \
-	_paramsTypeSetters.push_back(&(EntityData::resetParametersType<EntityData::EntityParametersIIII>));
+	_paramsTypeSetters.push_back(&(EntityData::resetParametersType<EntityData::EntityParametersIIII, EntityData::EntityParametersIIII, EntityData::EntityParametersIIII>));
 
 #define WRAP_SETUP_FUNCTION(className, method) \
 	new Common::Functor0Mem<void, className>(this, &className::method)
@@ -873,7 +873,7 @@ public:
 
 	EntityData() {}
 
-	template<class T1, class T2 = EntityParametersIIII, class T3 = EntityParametersIIII>
+	template<class T1, class T2, class T3>
 	static void resetParametersType(EntityCallParameters* params) {
 		params->clear();
 		params->parameters[0] = new T1();
