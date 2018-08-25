@@ -1202,10 +1202,10 @@ static const uint16 gk1InterrogationBugPatch[] = {
 static const uint16 gk1CazanouxPathfindingSignature[] = {
 	SIG_MAGICDWORD,
 	0x78,                            // push1 x = 1
-	0x38, SIG_UINT16(0x90, 0x00),    // pushi y = 144
-	0x38, SIG_UINT16(0xf6, 0x00),    // pushi x = 246
-	0x38, SIG_UINT16(0x92, 0x00),    // pushi y = 146
-	0x38, SIG_UINT16(0xf2, 0x00),    // pushi x = 242
+	0x38, SIG_UINT16(0x0090),        // pushi y = 144
+	0x38, SIG_UINT16(0x00f6),        // pushi x = 246
+	0x38, SIG_UINT16(0x0092),        // pushi y = 146
+	0x38, SIG_UINT16(0x00f2),        // pushi x = 242
 	0x39, 0x69,                      // pushi y = 105
 	0x39, 0x7c,                      // pushi x = 124
 	0x39, 0x68,                      // pushi y = 104
@@ -1214,7 +1214,7 @@ static const uint16 gk1CazanouxPathfindingSignature[] = {
 	0x39, 0x45,                      // pushi x = 69
 	0x39, 0x7c,                      // pushi y = 124
 	0x39, 0x2e,                      // pushi x = 46
-	0x38, SIG_UINT16(0x81, 0x00),    // pushi y = 129
+	0x38, SIG_UINT16(0x0081),        // pushi y = 129
 	SIG_END
 };
 
