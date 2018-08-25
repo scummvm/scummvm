@@ -37,6 +37,7 @@ class UltimaEngine;
 class GameState;
 
 namespace Gfx {
+	class Dialog;
 	class Font;
 	class TextCursor;
 	class TextInput;
@@ -67,6 +68,7 @@ protected:
 	uint32 _priorMiddleDownTime;
 	uint32 _priorRightDownTime;
 	Gfx::VisualItem *_currentView;
+	Gfx::Dialog *_pendingDialog;
 	InputHandler _inputHandler;
 	InputTranslator _inputTranslator;
 	Gfx::Font *_font;
@@ -130,6 +132,11 @@ public:
 	 * Set the currently active view to display
 	 */
 	void setView(const Common::String &viewName);
+
+	/**
+	 * Sets a dialog to be active
+	 */
+	void setDialog(Gfx::Dialog *dialog);
 
 	/**
 	 * Returns the current view

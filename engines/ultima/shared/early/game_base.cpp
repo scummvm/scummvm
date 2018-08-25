@@ -35,9 +35,9 @@
 namespace Ultima {
 namespace Shared {
 
-GameBase::GameBase(): _currentView(nullptr), _font(nullptr), _priorLeftDownTime(0), _priorMiddleDownTime(0),
-		_priorRightDownTime(0), _inputHandler(this), _inputTranslator(&_inputHandler), _gameState(nullptr),
-		_videoMode(0), _textCursor(nullptr) {
+GameBase::GameBase(): _currentView(nullptr), _pendingDialog(nullptr), _font(nullptr), _priorLeftDownTime(0),
+		_priorMiddleDownTime(0), _priorRightDownTime(0), _inputHandler(this), _inputTranslator(&_inputHandler),
+		_gameState(nullptr), _videoMode(0), _textCursor(nullptr) {
 	_textInput = new Gfx::TextInput(this);
 }
 
@@ -188,6 +188,11 @@ void GameBase::setView(const Common::String &viewName) {
 	showMsg.execute(_currentView);
 }
 
+void GameBase::setDialog(Gfx::Dialog *dialog) {
+	assert(!_pendingDialog);
+	_pendingDialog = dialog;
+}
+
 void GameBase::update() {
 	if (_currentView) {
 		// Signal the next frame
@@ -195,8 +200,13 @@ void GameBase::update() {
 		frameMsg.execute(_currentView, nullptr, MSGFLAG_SCAN);
 
 		// Draw the view
-		if (_currentView->isDirty())
+		if (_currentView->isDirty()) {
 			_currentView->draw();
+		} else if (_pendingDialog) {
+			// There's a pending dialog to display, so make it active
+			_currentView = _pendingDialog;
+			_pendingDialog = nullptr;
+		}
 
 		 // Allow the text cursor to update
 		_textCursor->update();
