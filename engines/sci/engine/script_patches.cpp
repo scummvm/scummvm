@@ -1192,6 +1192,39 @@ static const uint16 gk1InterrogationBugPatch[] = {
 	PATCH_END
 };
 
+// In Madame Cazanoux's house, when Gabriel is leaving, he is placed on
+// the edge of the walkable area initially. This leads to a failure in
+// the pathfinding algorithm, and the pathfinding area is then ignored,
+// so Gabriel goes straight to the door by walking through the wall.
+// This is an edge case, which was apparently acceptable in SSCI. We
+// change the upper border of the walk area slightly, so that Gabriel
+// can be placed inside, and the pathfinding algorithm works correctly.
+static const uint16 gk1CazanouxPathfindingSignature[] = {
+	SIG_MAGICDWORD,
+	0x78,                            // push1 x = 1
+	0x38, SIG_UINT16(0x90, 0x00),    // pushi y = 144
+	0x38, SIG_UINT16(0xf6, 0x00),    // pushi x = 246
+	0x38, SIG_UINT16(0x92, 0x00),    // pushi y = 146
+	0x38, SIG_UINT16(0xf2, 0x00),    // pushi x = 242
+	0x39, 0x69,                      // pushi y = 105
+	0x39, 0x7c,                      // pushi x = 124
+	0x39, 0x68,                      // pushi y = 104
+	0x39, 0x56,                      // pushi x = 86
+	0x39, 0x6f,                      // pushi y = 111
+	0x39, 0x45,                      // pushi x = 69
+	0x39, 0x7c,                      // pushi y = 124
+	0x39, 0x2e,                      // pushi x = 46
+	0x38, SIG_UINT16(0x81, 0x00),    // pushi y = 129
+	SIG_END
+};
+
+static const uint16 gk1CazanouxPathfindingPatch[] = {
+	PATCH_ADDTOOFFSET(+15),
+	0x39, 0x7c,                      // pushi x = 124
+	0x39, 0x67,                      // pushi y = 103 (was 104)
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
@@ -1200,6 +1233,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   230, "fix day 6 police beignet timer issue (1/2)",  1, gk1Day6PoliceBeignetSignature1,   gk1Day6PoliceBeignetPatch1 },
 	{  true,   230, "fix day 6 police beignet timer issue (2/2)",  1, gk1Day6PoliceBeignetSignature2,   gk1Day6PoliceBeignetPatch2 },
 	{  true,   230, "fix day 6 police sleep timer issue",          1, gk1Day6PoliceSleepSignature,      gk1Day6PoliceSleepPatch },
+	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
