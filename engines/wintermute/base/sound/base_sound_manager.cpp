@@ -73,6 +73,7 @@ bool BaseSoundMgr::cleanup() {
 void BaseSoundMgr::saveSettings() {
 	if (_soundAvailable) {
 		ConfMan.setInt("master_volume_percent", _volumeMasterPercent);
+		ConfMan.flushToDisk();
 	}
 }
 
@@ -181,12 +182,15 @@ bool BaseSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
 	switch (type) {
 	case Audio::Mixer::kSFXSoundType:
 		ConfMan.setInt("sfx_volume", volume);
+		ConfMan.flushToDisk();
 		break;
 	case Audio::Mixer::kSpeechSoundType:
 		ConfMan.setInt("speech_volume", volume);
+		ConfMan.flushToDisk();
 		break;
 	case Audio::Mixer::kMusicSoundType:
 		ConfMan.setInt("music_volume", volume);
+		ConfMan.flushToDisk();
 		break;
 	case Audio::Mixer::kPlainSoundType:
 		error("Plain sound type shouldn't be used in WME");
