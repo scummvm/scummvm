@@ -39,6 +39,7 @@ void TextInput::show(const Point &pt, bool isNumeric, size_t maxCharacters, byte
 	_maxCharacters = maxCharacters;
 	_color = color;
 	_bounds = Rect(pt.x, pt.y, pt.x + 8 * (maxCharacters + 1), pt.y + 8);
+	_text = "";
 
 	_game->_textCursor->setPosition(Point(_bounds.left, _bounds.top));
 	_game->_textCursor->setVisible(true);

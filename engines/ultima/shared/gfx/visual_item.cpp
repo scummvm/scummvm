@@ -86,6 +86,10 @@ void VisualItem::setView(const Common::String &viewName) {
 	getGame()->setView(viewName);
 }
 
+void VisualItem::setDialog(Gfx::Dialog *dialog) {
+	getGame()->setDialog(dialog);
+}
+
 void VisualItem::setView() {
 	getGame()->setView(this);
 }
