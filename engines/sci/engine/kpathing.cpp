@@ -27,10 +27,12 @@
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
+#ifdef ENABLE_SCI32
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/plane32.h"
 #include "sci/graphics/frameout.h"
+#endif
 
 #include "common/debug-channels.h"
 #include "common/list.h"
@@ -316,18 +318,20 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	// Blue: Near-point access
 	// Red : Barred access
 	// Yellow: Contained access
-	int poly_colors[4];
+	int poly_colors[4] = { 0, 0, 0, 0 };
 	
 	if (getSciVersion() <= SCI_VERSION_1_1) {
 		poly_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0);		// green
 		poly_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255);		// blue
 		poly_colors[2] = g_sci->_gfxPalette16->kernelFindColor(255, 0, 0);		// red
 		poly_colors[3] = g_sci->_gfxPalette16->kernelFindColor(255, 255, 0);	// yellow
+#ifdef ENABLE_SCI32
 	} else {
 		poly_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0);			// green
 		poly_colors[1] = g_sci->_gfxPalette32->matchColor(0, 0, 255);			// blue
 		poly_colors[2] = g_sci->_gfxPalette32->matchColor(255, 0, 0);			// red
 		poly_colors[3] = g_sci->_gfxPalette32->matchColor(255, 255, 0);			// yellow	
+#endif
 	}
 
 	// Clip
@@ -341,9 +345,11 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
 		g_sci->_gfxPaint16->kernelGraphDrawLine(p1, p2, poly_colors[type], 255, 255);
+#ifdef ENABLE_SCI32
 	} else {
 		Plane *topPlane = g_sci->_gfxFrameout->getTopVisiblePlane();
 		g_sci->_gfxPaint32->kernelAddLine(topPlane->_object, p1, p2, 255, poly_colors[type], kLineStyleSolid, 0, 1);
+#endif
 	}
 }
 
@@ -351,14 +357,16 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 	// Colors for starting and end point
 	// Green: End point
 	// Blue: Starting point
-	int point_colors[2];
+	int point_colors[2] = { 0, 0 };
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
 		point_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0);	// green
 		point_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255);	// blue
+#ifdef ENABLE_SCI32
 	} else {
 		point_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0);		// green
 		point_colors[1] = g_sci->_gfxPalette32->matchColor(0, 0, 255);		// blue
+#endif
 	}
 
 	Common::Rect rect = Common::Rect(p.x - 1, p.y - 1, p.x - 1 + 3, p.y - 1 + 3);
@@ -372,12 +380,14 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 	assert(start >= 0 && start <= 1);
 	if (getSciVersion() <= SCI_VERSION_1_1) {
 		g_sci->_gfxPaint16->kernelGraphFrameBox(rect, point_colors[start]);
+#ifdef ENABLE_SCI32
 	} else {
 		Plane *topPlane = g_sci->_gfxFrameout->getTopVisiblePlane();
 		g_sci->_gfxPaint32->kernelAddLine(topPlane->_object, Common::Point(rect.left, rect.top), Common::Point(rect.right, rect.top), 255, point_colors[start], kLineStyleSolid, 0, 1);
 		g_sci->_gfxPaint32->kernelAddLine(topPlane->_object, Common::Point(rect.right, rect.top), Common::Point(rect.right, rect.bottom), 255, point_colors[start], kLineStyleSolid, 0, 1);
 		g_sci->_gfxPaint32->kernelAddLine(topPlane->_object, Common::Point(rect.left, rect.bottom), Common::Point(rect.right, rect.bottom), 255, point_colors[start], kLineStyleSolid, 0, 1);
 		g_sci->_gfxPaint32->kernelAddLine(topPlane->_object, Common::Point(rect.left, rect.top), Common::Point(rect.left, rect.bottom), 255, point_colors[start], kLineStyleSolid, 0, 1);
+#endif
 	}
 }
 
