@@ -29,6 +29,7 @@
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_response.h"
 #include "engines/wintermute/ad/ad_response_box.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_parser.h"
@@ -190,6 +191,18 @@ bool AdResponseBox::createButtons() {
 					btn->setWidth(width);
 				}
 			}
+
+#ifdef ENABLE_FOXTAIL
+			if (BaseEngine::instance().isFoxTail()) {
+				btn->addScript("interface/scripts/dialogue_button.script");
+				btn->setWidth(120);
+				if (_fontHover == nullptr) {
+					btn->setFontHover(btn->getFont());
+					btn->setFontPress(btn->getFontHover());
+				}
+			}
+#endif
+
 			btn->setName("response");
 			btn->correctSize();
 
@@ -500,6 +513,22 @@ bool AdResponseBox::display() {
 	// prepare response buttons
 	bool scrollNeeded = false;
 	for (i = _scrollOffset; i < _respButtons.size(); i++) {
+
+#ifdef ENABLE_FOXTAIL
+		// FoxTail's "HORIZONTAL=TRUE" display boxes are actual 2x3 display boxes
+		// Tests show that this hack was removed in FOXTAIL_1_2_362
+		if (_horizontal && BaseEngine::instance().isFoxTail(FOXTAIL_OLDEST_VERSION, FOXTAIL_1_2_304)) {
+			if (i >= _scrollOffset + 6) {
+				scrollNeeded = true;
+				break;
+			}
+			_respButtons[i]->setVisible(true);
+			_respButtons[i]->_posX = 55 + 120 * (i / 3);
+			_respButtons[i]->_posY = 100 + 10 * (i % 3);
+			continue;
+		}
+#endif
+
 		if ((_horizontal && xxx + _respButtons[i]->getWidth() > rect.right)
 		        || (!_horizontal && yyy + _respButtons[i]->getHeight() > rect.bottom)) {
 
