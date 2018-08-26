@@ -104,13 +104,14 @@ bool UltimaEngine::initialize() {
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
-		if (saveSlot >= 0 && saveSlot <= 999)
+		if (saveSlot >= 0 && saveSlot <= 999) {
+			_game->starting(true);
 			loadGameState(saveSlot);
-		_game->starting(true);
-	} else {
-		_game->starting(false);
+			return true;
+		}
 	}
 
+	_game->starting(false);
 	return true;
 }
 
