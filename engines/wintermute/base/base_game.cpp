@@ -1983,6 +1983,96 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetScreenType
+	// Returns 0 on fullscreen and 1 on window
+	// Used to init and update controls at options.script and methods.script
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetScreenType") == 0) {
+		stack->correctParams(0);
+		int type = !g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+		stack->pushInt(type);
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetScreenMode
+	// Returns integer to be used as a pixelization mode multiplier
+	// (e.g. it returns 2 for 640x360, 3 for 960x540, etc...)
+	// Used to init and update controls at options.script and methods.script
+	// This implementation always return 2 to fake window size of 2*320 x 2*180
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetScreenMode") == 0) {
+		stack->correctParams(0);
+		stack->pushInt(2);
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetDesktopDisplayMode
+	// Return struct with "w" and "h" fields in 1.2.362-
+	// Return array  with "w" and "h" items  in 1.2.527+
+	// Used to init and update controls at options.script and methods.script
+	// w,h of actual desktop size expected to calcucate maximum available size
+	// Available screen modes are calcucated as 2...N, N*320<w and N*180<h
+	// This implementation fakes available size as 2*320 x 2*180 only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetDesktopDisplayMode") == 0) {
+		stack->correctParams(0);
+		stack->pushInt(2 * 180 + 1);
+		stack->pushInt(2 * 320 + 1);
+
+		BaseScriptable *obj;
+		if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_527, FOXTAIL_LATEST_VERSION)) {
+			stack->pushInt(2);
+			obj = makeSXArray(_gameRef, stack);
+		} else {
+			stack->pushInt(0);
+			obj = makeSXObject(_gameRef, stack);
+			obj->scSetProperty("w", stack->pop());
+			obj->scSetProperty("h", stack->pop());
+		}
+		stack->pushNative(obj, false);
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] SetScreenTypeMode
+	// This implementation ignores mode, toggles screen type only
+	// Used to change screen type&mode at options.script and methods.script
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetScreenTypeMode") == 0) {
+		stack->correctParams(2);
+		int type = stack->pop()->getInt();
+		stack->pop()->getInt(); //mode is unused
+		g_system->beginGFXTransaction();
+		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !type);
+		g_system->endGFXTransaction();
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] ChangeWindowGrab
+	// Used at game.script on "Keypress" event on F11
+	// Readme of FoxTail says: "F11 - free the mouse pointer from the window"
+	// This implementation does nothing
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "ChangeWindowGrab") == 0) {
+		stack->correctParams(0);
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// ShowStatusLine
 	//////////////////////////////////////////////////////////////////////////
