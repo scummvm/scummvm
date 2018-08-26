@@ -2329,6 +2329,84 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] SystemLanguage (RO)
+	// Returns Steam API language name string
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "SystemLanguage") {
+		switch (Common::parseLanguage(ConfMan.get("language"))) {
+		case Common::CZ_CZE:
+			_scValue->setString("czech");
+			break;
+		case Common::DA_DAN:
+			_scValue->setString("danish");
+			break;
+		case Common::DE_DEU:
+			_scValue->setString("german");
+			break;
+		case Common::ES_ESP:
+			_scValue->setString("spanish");
+			break;
+		case Common::FI_FIN:
+			_scValue->setString("finnish");
+			break;
+		case Common::FR_FRA:
+			_scValue->setString("french");
+			break;
+		case Common::GR_GRE:
+			_scValue->setString("greek");
+			break;
+		case Common::HU_HUN:
+			_scValue->setString("hungarian");
+			break;
+		case Common::IT_ITA:
+			_scValue->setString("italian");
+			break;
+		case Common::JA_JPN:
+			_scValue->setString("japanese");
+			break;
+		case Common::KO_KOR:
+			_scValue->setString("koreana");
+			break;
+		case Common::NB_NOR:
+			_scValue->setString("norwegian");
+			break;
+		case Common::NL_NLD:
+			_scValue->setString("dutch");
+			break;
+		case Common::PT_BRA:
+			_scValue->setString("brazilian");
+			break;
+		case Common::PT_POR:
+			_scValue->setString("portuguese");
+			break;
+		case Common::PL_POL:
+			_scValue->setString("polish");
+			break;
+		case Common::RU_RUS:
+			_scValue->setString("russian");
+			break;
+		case Common::SE_SWE:
+			_scValue->setString("swedish");
+			break;
+		case Common::UA_UKR:
+			_scValue->setString("ukrainian");
+			break;
+		case Common::ZH_CNA:
+			_scValue->setString("schinese");
+			break;
+		case Common::ZH_TWN:
+			_scValue->setString("tchinese");
+			break;
+		default:
+			_scValue->setString("english");
+			break;
+		}
+		return _scValue;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Platform (RO)
 	//////////////////////////////////////////////////////////////////////////
