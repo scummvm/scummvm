@@ -47,16 +47,6 @@ GameBase::~GameBase() {
 	delete _textInput;
 }
 
-void GameBase::starting(bool isLoading) {
-	// Enable the mouse cursor
-	g_vm->_mouseCursor->show();
-
-	// Generate starting message for showing the view
-	assert(_currentView);
-	CShowMsg showMsg;
-	showMsg.execute(_currentView, nullptr, MSGFLAG_SCAN);
-}
-
 int GameBase::getSavegameSlot() {
 	return 0;
 }
