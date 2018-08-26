@@ -196,6 +196,12 @@ void Ultima1Map::load(Shared::MapId mapId) {
 	_mapArea->load(mapId);
 }
 
+void Ultima1Map::synchronize(Common::Serializer &s) {
+	Shared::Map::synchronize(s);
+	if (_mapType != MAP_OVERWORLD)
+		_mapOverworld->synchronize(s);
+}
+
 bool Ultima1Map::isLordBritishCastle() const {
 	return _mapType == MAP_CASTLE && static_cast<MapCityCastle *>(_mapArea)->getMapIndex() == 0;
 }

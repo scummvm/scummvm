@@ -125,6 +125,11 @@ public:
 	virtual void load(Shared::MapId mapId) override;
 
 	/**
+	 * Handles loading and saving the map's data
+	 */
+	virtual void synchronize(Common::Serializer &s) override;
+
+	/**
 	 * Returns true if Lord British's castle is the currently active map
 	 */
 	bool isLordBritishCastle() const;

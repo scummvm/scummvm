@@ -283,6 +283,11 @@ public:
 		virtual Point getDeltaPosition(const Point &delta);
 
 		/**
+		 * Returns the map Id
+		 */
+		MapId getMapId() const { return _mapId; }
+
+		/**
 		 * Gets the map Index
 		 */
 		uint getMapIndex() const { return _mapIndex; }
