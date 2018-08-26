@@ -51,8 +51,29 @@ void Map::MapBase::load(MapId mapId) {
 
 void Map::MapBase::synchronize(Common::Serializer &s) {
 	_viewportPos.synchronize(s);
+	uint size;
+	Common::String name;
 
-	// Synchronize the list of widgets
+	if (s.isSaving()) {
+		// Save widgest
+		size = _widgets.size();
+		s.syncAsUint16LE(size);
+		for (uint idx = 0; idx < _widgets.size(); ++idx) {
+			// TODO: Need to have way to get class name for widget
+			_widgets[idx]->synchronize(s);
+		}
+	} else {
+		// Load widgets
+		s.syncAsUint16LE(size);
+		_widgets.clear();
+		for (uint idx = 0; idx < size; ++idx) {
+			s.syncString(name);
+
+			MapWidget *w = _map->createWidget(this, name);
+			w->synchronize(s);
+			addWidget(w);
+		}
+	}
 }
 
 void Map::MapBase::setDimensions(const Point &size) {
@@ -239,6 +260,7 @@ void Map::load(MapId mapId) {
 }
 
 void Map::synchronize(Common::Serializer &s) {
+	load(_mapArea->getMapId());
 	_mapArea->synchronize(s);
 }
 
