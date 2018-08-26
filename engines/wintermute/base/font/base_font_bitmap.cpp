@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/base/font/base_font_bitmap.h"
 #include "engines/wintermute/utils/string_util.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_frame.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
@@ -141,6 +142,9 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 	bool done = false;
 	bool newLine = false;
 	bool longLine = false;
+#ifdef ENABLE_FOXTAIL
+	bool minimizeSpacing = BaseEngine::instance().isFoxTail();
+#endif
 
 	if (draw) {
 		_gameRef->_renderer->startSpriteBatch();
@@ -211,6 +215,11 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 				startX += getCharWidth(str[i]);
 			}
 			y += _tileHeight;
+#ifdef ENABLE_FOXTAIL
+			if (minimizeSpacing) {
+				y -= 3;
+			}
+#endif
 			last_end = end;
 			if (longLine) {
 				end--;
@@ -488,6 +497,14 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 			_widths[i] = defaultWidth;
 		}
 	}
+
+#ifdef ENABLE_FOXTAIL
+	if (BaseEngine::instance().isFoxTail()) {
+		for (i = lastWidth; i < NUM_CHARACTERS; i++) {
+			_widths[i]--;
+		}
+	}
+#endif
 
 
 	return STATUS_OK;
