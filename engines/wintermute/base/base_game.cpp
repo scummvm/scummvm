@@ -48,6 +48,7 @@
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/saveload.h"
 #include "engines/wintermute/base/save_thumb_helper.h"
+#include "engines/wintermute/base/scriptables/script_ext_array.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -3113,6 +3114,44 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 		bool val = stack->pop()->getBool();
 		stack->pushBool(val);
 	}
+
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] Split
+	// Returns array of words of a string, using another as a delimeter
+	// Used to split strings by 1 character delimeter in various scripts
+	// All the delimeters ever used in FoxTail are: " ", "@", "#", "$", "&"
+	// So, this implementation takes 1st char of delimeter string only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Split") == 0) {
+		stack->correctParams(2);
+		const char *str = stack->pop()->getString();
+		const char sep = stack->pop()->getString()[0];
+		size_t size = strlen(str) + 1;
+
+		// There is no way to makeSXArray() with exactly 1 given element
+		// That's why we are creating empty Array and SXArray::push() later
+		stack->pushInt(0);
+		BaseScriptable *arr = makeSXArray(_gameRef, stack);
+
+		// Iterating string copy, replacing delimeter with '\0' and pushing matches
+		char *copy = new char[size];
+		strcpy(copy, str);
+		char *begin = copy;
+		for (char *it = copy; it < copy + size; it++) {
+			if (*it == sep || *it == '\0') {
+				*it = '\0';
+				stack->pushString(begin);
+				((SXArray *)arr)->push(stack->pop());
+				begin = it + 1;
+			}
+		}
+
+		stack->pushNative(arr, false);
+
+		delete[] copy;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// failure
