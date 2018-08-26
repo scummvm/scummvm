@@ -25,8 +25,39 @@
 namespace Ultima {
 namespace Shared {
 
-void Character::synchronize(Common::Serializer &s) {
+template<typename T>
+void syncItems(Common::Array<T> &items, Common::Serializer &s) {
+	uint count = items.size();
+	s.syncAsByte(count);
+	if (s.isLoading())
+		assert(count == items.size());
 
+	for (uint idx = 0; idx < items.size(); ++idx)
+		s.syncAsUint16LE(items[idx]._quantity);
+}
+
+void Character::synchronize(Common::Serializer &s) {
+	s.syncString(_name);
+	s.syncAsByte(_race);
+	s.syncAsByte(_sex);
+	s.syncAsByte(_class);
+	s.syncAsUint16LE(_strength);
+	s.syncAsUint16LE(_agility);
+	s.syncAsUint16LE(_stamina);
+	s.syncAsUint16LE(_charisma);
+	s.syncAsUint16LE(_wisdom);
+	s.syncAsUint16LE(_intelligence);
+	s.syncAsUint32LE(_hitPoints);
+	s.syncAsUint32LE(_experience);
+	s.syncAsUint32LE(_food);
+	s.syncAsUint32LE(_coins);
+	s.syncAsSByte(_equippedWeapon);
+	s.syncAsSByte(_equippedArmor);
+	s.syncAsSByte(_equippedSpell);
+
+	syncItems<Weapon>(_weapons, s);
+	syncItems<Armor>(_armor, s);
+	syncItems<Spell>(_spells, s);
 }
 
 } // End of namespace Shared

@@ -55,6 +55,7 @@ public:
 		Common::String _name;
 		uint _quantity;
 	};
+
 public:
 	Common::String _name;
 	uint _race;
