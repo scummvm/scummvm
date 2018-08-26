@@ -873,6 +873,19 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] SetInventoryBoxHideSelected
+	// Used while changing cursor type at some included script
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetInventoryBoxHideSelected") == 0) {
+		stack->correctParams(1);
+		_inventoryBox->_hideSelected = stack->pop()->getBool(false);
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+#endif
 
 	else {
 		return BaseGame::scCallMethod(script, stack, thisStack, name);
