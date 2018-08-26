@@ -107,7 +107,7 @@ public:
 	/**
 	 * Called when the game starts
 	 */
-	virtual void starting(bool isLoading);
+	virtual void starting(bool isLoading) {}
 	
 	/**
 	 * Returns true if the current video mode is VGA
