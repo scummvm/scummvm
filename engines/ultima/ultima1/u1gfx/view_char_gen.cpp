@@ -385,6 +385,7 @@ bool ViewCharacterGeneration::save() {
 	// Set other character properties
 	_character->_hitPoints = 150;
 	_character->_coins = 100;
+	_character->_food = 200;
 	_character->_experience = 0;
 	_character->_equippedWeapon = 1;
 	_character->_weapons[1]._quantity = 1;
