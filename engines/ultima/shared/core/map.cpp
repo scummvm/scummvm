@@ -52,6 +52,7 @@ void Map::MapBase::load(MapId mapId) {
 void Map::MapBase::synchronize(Common::Serializer &s) {
 	_viewportPos.synchronize(s);
 	uint size;
+	int transportIndex = -1;
 	Common::String name;
 
 	if (s.isSaving()) {
@@ -60,7 +61,10 @@ void Map::MapBase::synchronize(Common::Serializer &s) {
 		for (uint idx = 0; idx < _widgets.size(); ++idx) {
 			if (_widgets[idx]->getClassName())
 				++size;
+			if (_currentTransport == _widgets[idx].get())
+				transportIndex = (int)idx;
 		}
+		assert(transportIndex >= 0);
 
 		s.syncAsUint16LE(size);
 		for (uint idx = 0; idx < _widgets.size(); ++idx) {
@@ -70,6 +74,8 @@ void Map::MapBase::synchronize(Common::Serializer &s) {
 				_widgets[idx]->synchronize(s);
 			}
 		}
+		s.syncAsUint16LE(transportIndex);
+
 	} else {
 		// Load widgets
 		s.syncAsUint16LE(size);
@@ -81,6 +87,9 @@ void Map::MapBase::synchronize(Common::Serializer &s) {
 			w->synchronize(s);
 			addWidget(w);
 		}
+
+		s.syncAsUint16LE(transportIndex);
+		_currentTransport = _widgets[transportIndex].get();
 	}
 }
 

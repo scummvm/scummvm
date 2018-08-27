@@ -94,12 +94,12 @@ public:
 	/**
 	 * Flags the item as being changed, requiring a redraw
 	 */
-	void setDirty();
+	virtual void setDirty();
 
 	/**
 	 * Returns true if the item is dirty, requiring a redraw
 	 */
-	bool isDirty() const { return _isDirty; }
+	virtual bool isDirty() const { return _isDirty; }
 
 	/**
 	 * Helper function to switch to a different visual item
