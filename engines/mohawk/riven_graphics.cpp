@@ -316,7 +316,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) :
 		_enableCardUpdateScript(true),
 		_scheduledTransition(kRivenTransitionNone),
 		_dirtyScreen(false),
-		_creditsImage(302),
+		_creditsImage(kRivenCreditsZeroImage),
 		_creditsPos(0),
 		_transitionMode(kRivenTransitionModeFastest),
 		_transitionOffset(-1),
@@ -657,7 +657,7 @@ void RivenGraphics::beginCredits() {
 	clearCache();
 
 	// Now cache all the credits images
-	for (uint16 i = 302; i <= 320; i++) {
+	for (uint16 i = kRivenCreditsZeroImage; i <= kRivenCreditsLastImage; i++) {
 		MohawkSurface *surface = _bitmapDecoder->decodeImage(_vm->getExtrasResource(ID_TBMP, i));
 		surface->convertToTrueColor();
 		addImageToCache(i, surface);
@@ -669,32 +669,32 @@ void RivenGraphics::beginCredits() {
 }
 
 void RivenGraphics::updateCredits() {
-	if ((_creditsImage == 303 || _creditsImage == 304) && _creditsPos == 0)
+	if ((_creditsImage == kRivenCreditsFirstImage || _creditsImage == kRivenCreditsSecondImage) && _creditsPos == 0)
 		fadeToBlack();
 
-	if (_creditsImage < 304) {
+	if (_creditsImage < kRivenCreditsSecondImage) {
 		// For the first two credit images, they are faded from black to the image and then out again
 		scheduleTransition(kRivenTransitionBlend);
 
 		Graphics::Surface *frame = findImage(_creditsImage++)->getSurface();
-
 		for (int y = 0; y < frame->h; y++)
 			memcpy(_mainScreen->getBasePtr(124, y), frame->getBasePtr(0, y), frame->pitch);
 
 		runScheduledTransition();
 	} else {
 		// Otheriwse, we're scrolling
+		// This is done by 1) moving the screen up one row and 
+		// 2) adding a new row at the bottom that is the current row of the current image or 
+		// not and it defaults to being empty (a black row).
+
 		// Move the screen up one row
 		memmove(_mainScreen->getPixels(), _mainScreen->getBasePtr(0, 1), _mainScreen->pitch * (_mainScreen->h - 1));
 
-		// Only update as long as we're not before the last frame
-		// Otherwise, we're just moving up a row (which we already did)
-		if (_creditsImage <= 320) {
-			// Copy the next row to the bottom of the screen
+		// Copy the next row to the bottom of the screen and keep incrementing the credit images and which row we are on until we reach the last.
+		if (_creditsImage <= kRivenCreditsLastImage) {
 			Graphics::Surface *frame = findImage(_creditsImage)->getSurface();
 			memcpy(_mainScreen->getBasePtr(124, _mainScreen->h - 1), frame->getBasePtr(0, _creditsPos), frame->pitch);
 			_creditsPos++;
-
 			if (_creditsPos == _mainScreen->h) {
 				_creditsImage++;
 				_creditsPos = 0;
