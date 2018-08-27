@@ -109,6 +109,29 @@ void VisualContainer::draw() {
 	_isDirty = false;
 }
 
+void VisualContainer::setDirty() {
+	for (TreeItem *child = getFirstChild(); child; child = child->getNextSibling()) {
+		VisualItem *item = dynamic_cast<VisualItem *>(child);
+		if (item)
+			item->setDirty();
+	}
+
+	_isDirty = true;
+}
+
+bool VisualContainer::isDirty() const {
+	if (_isDirty)
+		return true;
+
+	for (TreeItem *child = getFirstChild(); child; child = child->getNextSibling()) {
+		VisualItem *item = dynamic_cast<VisualItem *>(child);
+		if (item && item->isDirty())
+			return true;
+	}
+
+	return false;
+}
+
 } // End of namespace Gfx
 } // End of namespace Shared
 } // End of namespace Ultima
