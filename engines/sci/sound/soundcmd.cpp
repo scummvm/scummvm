@@ -100,12 +100,7 @@ void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
 	// a relevant audio resource, play it, otherwise switch to synthesized
 	// effects. If the resource exists, play it using map 65535 (sound
 	// effects map)
-	bool checkAudioResource = getSciVersion() >= SCI_VERSION_1_1;
-	// Hoyle 4 has garbled audio resources in place of the sound resources.
-	if (g_sci->getGameId() == GID_HOYLE4)
-		checkAudioResource = false;
-
-	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId))) {
+	if (getSciVersion() >= SCI_VERSION_1_1 && _resMan->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId))) {
 		// Found a relevant audio resource, create an audio stream if there is
 		// no associated sound resource, or if both resources exist and the
 		// user wants the digital version.

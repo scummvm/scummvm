@@ -2065,7 +2065,11 @@ bool ResourceManager::validateResource(const ResourceId &resourceId, const Commo
 
 Resource *ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation) {
 	// Adding new resource only if it does not exist
-	if (_resMap.contains(resId) == false) {
+	// Hoyle 4 contains each audio resource twice. The first file is in an unknown
+	// format and only static sounds are heard when it's played. The second file
+	// is a typical SOL audio file. We therefore skip the first audio file and add
+	// second one for this game.
+	if (_resMap.contains(resId) == false || (resId.getType() == kResourceTypeAudio && g_sci && g_sci->getGameId() == GID_HOYLE4)) {
 		return updateResource(resId, src, offset, size, sourceMapLocation);
 	} else {
 		return _resMap.getVal(resId);
