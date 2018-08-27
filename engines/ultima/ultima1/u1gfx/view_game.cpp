@@ -68,9 +68,16 @@ ViewGame::~ViewGame() {
 }
 
 void ViewGame::draw() {
-	DrawingSupport ds(getSurface());
-	ds.drawGameFrame();
-	drawIndicators();
+	Shared::Gfx::VisualSurface s = getSurface();
+
+	if (_isDirty) {
+		// Draw the overal frame
+		s.clear();
+		DrawingSupport ds(s);
+		ds.drawGameFrame();
+		drawIndicators();
+		_isDirty = false;
+	}
 
 	_info->draw();
 	_status->draw();
