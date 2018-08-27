@@ -245,6 +245,12 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			t.cond = 13;
 		}
 
+		if (g_sci->getGameId() == GID_QFG4 && stack.getModule() == 579 &&
+			t.noun == 0 && t.verb == 0 && t.cond == 0 && t.seq == 1) {
+			// Talking with the Leshy and telling him about "bush in goo" - bug #10137
+			t.verb = 1;
+		}
+
 		// Fill in known missing message tuples
 		if (g_sci->getGameId() == GID_SQ4 && stack.getModule() == 16 &&
 			t.noun == 7 && t.verb == 0 && t.cond == 3 && t.seq == 1) {
