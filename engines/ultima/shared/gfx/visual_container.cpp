@@ -102,7 +102,7 @@ void VisualContainer::draw() {
 	// Iterate through each child and draw any dirty visual items
 	for (TreeItem *child = getFirstChild(); child; child = child->getNextSibling()) {
 		VisualItem *item = dynamic_cast<VisualItem *>(child);
-		if (item)
+		if (item && item->isDirty())
 			item->draw();
 	}
 
