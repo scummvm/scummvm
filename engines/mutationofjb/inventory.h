@@ -45,6 +45,8 @@ public:
 
 	typedef Common::Array<Common::String> Items;
 
+	Inventory() : _observer(nullptr) {}
+
 	const Items &getItems() const;
 	bool hasItem(const Common::String &item) const;
 	void addItem(const Common::String &item);

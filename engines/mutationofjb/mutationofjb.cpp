@@ -45,6 +45,7 @@ MutationOfJBEngine::MutationOfJBEngine(OSystem *syst)
 	: Engine(syst),
 	  _console(nullptr),
 	  _screen(nullptr),
+	  _game(nullptr),
 	  _mapObjectId(0),
 	  _cursorState(CURSOR_IDLE) {
 

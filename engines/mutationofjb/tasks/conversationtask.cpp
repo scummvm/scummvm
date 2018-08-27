@@ -113,6 +113,9 @@ void ConversationTask::showChoicesOrPick() {
 	Game &game = getTaskManager()->getGame();
 	GameData &gameData = game.getGameData();
 	Scene *const scene = gameData.getScene(_sceneId);
+	if (!scene) {
+		return;
+	}
 
 	Common::Array<uint32> itemsWithValidQuestions;
 	Common::Array<uint32> itemsWithValidResponses;

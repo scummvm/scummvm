@@ -64,7 +64,9 @@ enum {
 
 Gui::Gui(Game &game, Graphics::Screen *screen)
 	: _game(game),
-	  _screen(screen) {}
+	  _screen(screen),
+	  _inventoryWidget(nullptr),
+	  _conversationWidget(nullptr) {}
 
 Gui::~Gui() {
 	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
