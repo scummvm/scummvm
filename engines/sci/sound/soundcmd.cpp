@@ -450,7 +450,7 @@ reg_t SoundCommandParser::kDoSoundFade(EngineState *s, int argc, reg_t *argv) {
 		musicSlot->fadeTicker = 0;
 
 		// argv[4] is a boolean. Scripts sometimes pass strange values,
-		// but SSCI only checks for zero/non-zero. (Verified in KQ6.)
+		// but SSCI only checks for zero/non-zero. (Verified in KQ6).
 		// KQ6 room 460 even passes an object, but treating this as 'true'
 		// seems fine in that case.
 		if (argc == 5)
