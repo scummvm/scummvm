@@ -58,6 +58,13 @@ enum RivenTransitionMode {
 	kRivenTransitionModeBest     = 5003
 };
 
+enum RivenCreditsImageNumber {
+	kRivenCreditsZeroImage   = 302,
+	kRivenCreditsFirstImage  = 303,
+	kRivenCreditsSecondImage = 304,
+	kRivenCreditsLastImage   = 320
+};
+
 class RivenGraphics : public GraphicsManager {
 public:
 	explicit RivenGraphics(MohawkEngine_Riven *vm);
