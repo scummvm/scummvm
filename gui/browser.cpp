@@ -36,7 +36,8 @@ namespace GUI {
 enum {
 	kChooseCmd = 'Chos',
 	kGoUpCmd = 'GoUp',
-	kHiddenCmd = 'Hidd'
+	kHiddenCmd = 'Hidd',
+	kPathEditedCmd = 'Path'
 };
 
 /* We want to use this as a general directory selector at some point... possible uses
@@ -57,7 +58,7 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	new StaticTextWidget(this, "Browser.Headline", title);
 
 	// Current path - TODO: handle long paths ?
-	_currentPath = new EditTextWidget(this, "Browser.Path", "DUMMY");
+	_currentPath = new EditTextWidget(this, "Browser.Path", "", nullptr, 0, kPathEditedCmd);
 
 	// Add file list
 	_fileList = new ListWidget(this, "Browser.List");
@@ -96,7 +97,7 @@ void BrowserDialog::open() {
 void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	//Search for typed-in directory
-	case kExitTxtCmd:
+	case kPathEditedCmd:
 		_node = Common::FSNode(_currentPath->getEditString());
 		updateListing();
 		break;

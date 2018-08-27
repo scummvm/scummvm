@@ -29,10 +29,6 @@
 
 namespace GUI {
 
-enum {
-	kExitTxtCmd = 'TXTE'
-};
-
 /* EditTextWidget */
 class EditTextWidget : public EditableWidget {
 protected:
@@ -48,7 +44,6 @@ public:
 	EditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltp = 0, uint32 cmd = 0, uint32 finishCmd = 0);
 
 	void setEditString(const String &str);
-	String getEditString();
 
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 
