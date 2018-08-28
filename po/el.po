@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-08-28 15:54+0200\n"
+"POT-Creation-Date: 2018-08-28 18:39+0200\n"
 "PO-Revision-Date: 2018-08-06 21:26+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -608,7 +608,7 @@ msgstr "Επιλέξτε μια ενέργεια για αντιστοίχιση"
 msgid "~Q~uit"
 msgstr "Έ~ξ~οδος"
 
-#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:189
+#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:193
 msgid "Quit ScummVM"
 msgstr "Έξοδος από το ScummVM"
 
@@ -616,7 +616,7 @@ msgstr "Έξοδος από το ScummVM"
 msgid "A~b~out..."
 msgstr "~Π~ερί..."
 
-#: gui/launcher.cpp:143 backends/platform/sdl/macosx/appmenu_osx.mm:183
+#: gui/launcher.cpp:143 backends/platform/sdl/macosx/appmenu_osx.mm:187
 msgid "About ScummVM"
 msgstr "Περί του ScummVM"
 
@@ -2567,60 +2567,60 @@ msgstr "Μεσαίο Click"
 msgid "Right Click"
 msgstr "Δεξί Click"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:185
+#: backends/platform/sdl/macosx/appmenu_osx.mm:189
 msgid "Hide ScummVM"
 msgstr "Απόκρυψη ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:186
+#: backends/platform/sdl/macosx/appmenu_osx.mm:190
 msgid "Hide Others"
 msgstr "Απόκρυψη ¶λλων"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:187
+#: backends/platform/sdl/macosx/appmenu_osx.mm:191
 msgid "Show All"
 msgstr "Προβολή όλων"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:191
+#: backends/platform/sdl/macosx/appmenu_osx.mm:195
 msgid "Window"
 msgstr "Παράθυρο"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:192
+#: backends/platform/sdl/macosx/appmenu_osx.mm:196
 msgid "Minimize"
 msgstr "Ελαχιστοποίηση"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:194
+#: backends/platform/sdl/macosx/appmenu_osx.mm:198
 msgid "Help"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:195
+#: backends/platform/sdl/macosx/appmenu_osx.mm:199
 #, fuzzy
 msgid "User Manual"
 msgstr "Ο χρήστης ακύρωσε"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:197
+#: backends/platform/sdl/macosx/appmenu_osx.mm:201
 msgid "General Information"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:198
+#: backends/platform/sdl/macosx/appmenu_osx.mm:202
 msgid "What's New in ScummVM"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:200
+#: backends/platform/sdl/macosx/appmenu_osx.mm:204
 msgid "Credits"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:201
+#: backends/platform/sdl/macosx/appmenu_osx.mm:205
 msgid "GPL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:202
+#: backends/platform/sdl/macosx/appmenu_osx.mm:206
 msgid "LGPL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:203
+#: backends/platform/sdl/macosx/appmenu_osx.mm:207
 msgid "Freefont License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:204
+#: backends/platform/sdl/macosx/appmenu_osx.mm:208
 msgid "BSD License"
 msgstr ""
 
