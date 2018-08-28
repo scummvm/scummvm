@@ -271,7 +271,12 @@ void ItemVisual::setEnabled(bool enabled) {
 	Item::setEnabled(enabled);
 
 	if (enabled) {
-		_animHierarchy->selectItemAnim(this);
+		// If an action animation was selected while the item was disabled,
+		// honor it. This is not what the original engine did, but seems
+		// logical and fixes the Gribbler hurting animation in the forest.
+		if (!_actionAnim) {
+			_animHierarchy->selectItemAnim(this);
+		}
 	} else {
 		resetActionAnim();
 		_animHierarchy->unselectItemAnim(this);
