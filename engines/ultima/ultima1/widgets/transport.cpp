@@ -48,7 +48,7 @@ uint TransportOnFoot::getTileNum() const {
 
 void TransportOnFoot::moveTo(const Point &destPos, Shared::Direction dir) {
 	Transport::moveTo(destPos, dir);
-	Map::Ultima1Map::MapBase *map = getMap();
+	Shared::Map *map = getGame()->getMap();
 
 	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)map->width() || destPos.y >= (int)map->height()) {
 		// Handling for leaving locations by walking off the edge of the map
@@ -57,7 +57,6 @@ void TransportOnFoot::moveTo(const Point &destPos, Shared::Direction dir) {
 
 		// Load the overworld map
 		map->load(Map::MAP_OVERWORLD);
-		map->setPosition(destPos);
 	}
 }
 
