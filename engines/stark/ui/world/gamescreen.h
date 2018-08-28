@@ -48,6 +48,7 @@ public:
 	// Screen API
 	void open() override;
 	void close() override;
+	void handleGameLoop() override;
 	void render() override;
 	void onScreenChanged() override;
 	void handleMouseMove() override;
@@ -68,6 +69,7 @@ public:
 
 	/** A new entry has been added to the player's diary */
 	void notifyDiaryEntryEnabled();
+
 
 private:
 	Gfx::Driver *_gfx;

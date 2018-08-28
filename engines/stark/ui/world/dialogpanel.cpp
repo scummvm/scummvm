@@ -117,7 +117,7 @@ void DialogPanel::renderScrollArrows() const {
 	}
 }
 
-void DialogPanel::onRender() {
+void DialogPanel::onGameLoop() {
 	// Clear completed speeches
 	if (!_currentSpeech || !_currentSpeech->isPlaying()) {
 		_currentSpeech = nullptr;
@@ -143,7 +143,9 @@ void DialogPanel::onRender() {
 	if (_options.empty() && StarkDialogPlayer->areOptionsAvailable()) {
 		updateDialogOptions();
 	}
+}
 
+void DialogPanel::onRender() {
 	// Draw options if available
 	if (!_options.empty()) {
 		_activeBackGroundTexture->render(Common::Point(0, 0), false);

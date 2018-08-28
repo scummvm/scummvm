@@ -76,6 +76,12 @@ void GameScreen::close() {
 	StarkUserInterface->saveGameScreenThumbnail();
 }
 
+void GameScreen::handleGameLoop() {
+	for (int i = _gameScreenWindows.size() - 1; i >= 0; i--) {
+		_gameScreenWindows[i]->handleGameLoop();
+	}
+}
+
 void GameScreen::render() {
 	for (int i = _gameScreenWindows.size() - 1; i >= 0; i--) {
 		_gameScreenWindows[i]->render();

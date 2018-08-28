@@ -69,6 +69,9 @@ public:
 	/** Called by the user interface when the mouse is double clicked inside the window */
 	void handleDoubleClick();
 
+	/** Called once per game loop when the screen is active. */
+	void handleGameLoop();
+
 	/** Called by the user interface in the render phase of the game loop */
 	void render();
 
@@ -86,6 +89,7 @@ protected:
 	virtual void onClick(const Common::Point &pos) {}
 	virtual void onRightClick(const Common::Point &pos) {}
 	virtual void onDoubleClick(const Common::Point &pos) {}
+	virtual void onGameLoop() {};
 	virtual void onRender() = 0;
 
 	Common::Point getRelativeMousePosition() const;

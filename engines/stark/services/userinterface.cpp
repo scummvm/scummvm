@@ -116,10 +116,16 @@ void UserInterface::init() {
 	_fmvScreen->play("1402.bbb");
 }
 
-void UserInterface::update() {
+void UserInterface::onGameLoop() {
 	StarkStaticProvider->onGameLoop();
 
+	_currentScreen->handleGameLoop();
+
 	// Check for UI mouse overs
+	// TODO: Call mouse move only if the mouse position actually changed
+	// probably some code will need to be moved to gameloop handling to
+	// account for the case where hotspots move and the mouse cursor needs
+	// to be updated regardless of the mouse actually moved.
 	_currentScreen->handleMouseMove();
 }
 

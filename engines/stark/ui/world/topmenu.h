@@ -43,6 +43,7 @@ public:
 	~TopMenu() override;
 
 	// Window API
+	void onGameLoop() override;
 	void onRender() override;
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;

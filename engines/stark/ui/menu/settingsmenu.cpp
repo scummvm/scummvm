@@ -198,8 +198,7 @@ void SettingsMenuScreen::close() {
 	StaticLocationScreen::close();
 }
 
-void SettingsMenuScreen::onMouseMove(const Common::Point &pos) {
-	StaticLocationScreen::onMouseMove(pos);
+void SettingsMenuScreen::onGameLoop() {
 	_soundManager.update();
 }
 

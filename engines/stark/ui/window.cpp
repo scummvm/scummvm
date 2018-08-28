@@ -37,6 +37,14 @@ Window::Window(Gfx::Driver *gfx, Cursor *cursor) :
 Window::~Window() {
 }
 
+void Window::handleGameLoop() {
+	if (!_visible) {
+		return;
+	}
+
+	onGameLoop();
+}
+
 void Window::render() {
 	if (!_visible) {
 		return;

@@ -86,8 +86,7 @@ void FMVScreen::play(const Common::String &name) {
 	_decoder->start();
 }
 
-void FMVScreen::onRender() {
-	// TODO: Refactor this into an update method
+void FMVScreen::onGameLoop() {
 	if (isPlaying()) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *decodedSurface = _decoder->decodeNextFrame();
@@ -96,7 +95,9 @@ void FMVScreen::onRender() {
 	} else {
 		stop();
 	}
+}
 
+void FMVScreen::onRender() {
 	_surfaceRenderer->render(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight),
 			Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 }

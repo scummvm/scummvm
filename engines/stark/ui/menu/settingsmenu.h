@@ -74,7 +74,7 @@ public:
 	// StaticLocationScreen API
 	void open() override;
 	void close() override;
-	void onMouseMove(const Common::Point &pos) override;
+	void onGameLoop() override;
 
 	void handleMouseUp();
 

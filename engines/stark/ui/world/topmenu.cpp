@@ -67,7 +67,7 @@ TopMenu::~TopMenu() {
 	delete _optionsButton;
 }
 
-void TopMenu::onRender() {
+void TopMenu::onGameLoop() {
 	_widgetsVisible = (isMouseInside() && StarkUserInterface->isInteractive()) || isAnimationPlaying();
 
 	if (!_widgetsVisible) {
@@ -81,6 +81,12 @@ void TopMenu::onRender() {
 	}
 
 	updateAnimations();
+}
+
+void TopMenu::onRender() {
+	if (!_widgetsVisible) {
+		return;
+	}
 
 	_inventoryButton->render();
 	_optionsButton->render();

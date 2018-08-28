@@ -377,7 +377,7 @@ void StarkEngine::updateDisplayScene() {
 
 	// Render the current scene
 	// Update the UI state before displaying the scene
-	_userInterface->update();
+	_userInterface->onGameLoop();
 
 	// Tell the UI to render, and update implicitly, if this leads to new mouse-over events.
 	_userInterface->render();

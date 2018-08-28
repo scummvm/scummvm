@@ -63,6 +63,9 @@ public:
 	/** Draw the screen */
 	virtual void render() = 0;
 
+	/** Called once per game loop when the screen is active. */
+	virtual void handleGameLoop() {}
+
 	/** Called when the screen resolution changes */
 	virtual void onScreenChanged() {}
 
@@ -80,6 +83,7 @@ public:
 	SingleWindowScreen(Name name, Gfx::Driver *gfx, Cursor *cursor) :
 			Screen(name), Window(gfx, cursor) {}
 
+	void handleGameLoop() override { Window::handleGameLoop(); }
 	void render() override { Window::render(); }
 
 	void handleMouseMove() override { Window::handleMouseMove(); }

@@ -67,7 +67,10 @@ public:
 	virtual ~UserInterface();
 
 	void init();
-	void update();
+
+	/** Called once per game loop. */
+	void onGameLoop();
+
 	void render();
 	void handleMouseMove(const Common::Point &pos);
 	void handleMouseUp();

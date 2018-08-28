@@ -70,6 +70,7 @@ protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
 	void onRightClick(const Common::Point &pos) override;
+	void onGameLoop() override;
 	void onRender() override;
 
 private:

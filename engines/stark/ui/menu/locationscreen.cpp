@@ -73,15 +73,20 @@ void StaticLocationScreen::freeWidgets() {
 	_hoveredWidgetIndex = -1;
 }
 
-void StaticLocationScreen::onMouseMove(const Common::Point &pos) {
-	int newHoveredWidget = -1;
-
+void StaticLocationScreen::onGameLoop() {
 	for (uint i = 0; i < _widgets.size(); i++) {
 		StaticLocationWidget *widget = _widgets[i];
 		if (widget->isVisible()) {
 			widget->onGameLoop();
 		}
+	}
+}
 
+void StaticLocationScreen::onMouseMove(const Common::Point &pos) {
+	int newHoveredWidget = -1;
+
+	for (uint i = 0; i < _widgets.size(); i++) {
+		StaticLocationWidget *widget = _widgets[i];
 		widget->onMouseMove(pos);
 
 		if (widget->isVisible() && widget->isMouseInside(pos)) {

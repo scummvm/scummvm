@@ -52,6 +52,7 @@ public:
 	void stop();
 
 protected:
+	void onGameLoop() override;
 	void onRender() override;
 
 private:

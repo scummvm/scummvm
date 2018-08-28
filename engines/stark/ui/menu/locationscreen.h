@@ -57,6 +57,7 @@ protected:
 	// Window API
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
+	void onGameLoop() override;
 	void onRender() override;
 
 	Common::Array<StaticLocationWidget *> _widgets;
