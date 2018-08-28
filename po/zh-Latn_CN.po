@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-08-27 06:41+0200\n"
+"POT-Creation-Date: 2018-08-28 15:54+0200\n"
 "PO-Revision-Date: 2018-08-06 21:28+0000\n"
 "Last-Translator: monkeymadness <ihave13redsox@hotmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -592,7 +592,7 @@ msgstr "Xuanze yao Yingshe de Xingwei"
 msgid "~Q~uit"
 msgstr "~Q~Tuichu"
 
-#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:112
+#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:189
 msgid "Quit ScummVM"
 msgstr "Tuichu ScummVM"
 
@@ -600,7 +600,7 @@ msgstr "Tuichu ScummVM"
 msgid "A~b~out..."
 msgstr "~b~Guanyu..."
 
-#: gui/launcher.cpp:143 backends/platform/sdl/macosx/appmenu_osx.mm:86
+#: gui/launcher.cpp:143 backends/platform/sdl/macosx/appmenu_osx.mm:183
 msgid "About ScummVM"
 msgstr "Guanyu ScummVM"
 
@@ -2522,26 +2522,62 @@ msgstr "Zhongjian Danji"
 msgid "Right Click"
 msgstr "Youjian Danji"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:94
+#: backends/platform/sdl/macosx/appmenu_osx.mm:185
 msgid "Hide ScummVM"
 msgstr "Yincang ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:99
+#: backends/platform/sdl/macosx/appmenu_osx.mm:186
 msgid "Hide Others"
 msgstr "Yincang QIta"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:104
+#: backends/platform/sdl/macosx/appmenu_osx.mm:187
 msgid "Show All"
 msgstr "Xianshi Quanbu"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:126
-#: backends/platform/sdl/macosx/appmenu_osx.mm:137
+#: backends/platform/sdl/macosx/appmenu_osx.mm:191
 msgid "Window"
 msgstr "Chuangkou"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:131
+#: backends/platform/sdl/macosx/appmenu_osx.mm:192
 msgid "Minimize"
 msgstr "Zuixiaohua"
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:194
+msgid "Help"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:195
+#, fuzzy
+msgid "User Manual"
+msgstr "Yonghu Quxiao"
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:197
+msgid "General Information"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:198
+msgid "What's New in ScummVM"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:200
+msgid "Credits"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:201
+msgid "GPL License"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:202
+msgid "LGPL License"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:203
+msgid "Freefont License"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appmenu_osx.mm:204
+msgid "BSD License"
+msgstr ""
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
