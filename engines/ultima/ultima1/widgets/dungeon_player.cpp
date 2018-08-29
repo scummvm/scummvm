@@ -28,9 +28,10 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-bool DungeonPlayer::canMoveTo(const Point &destPos) {
-	if (!MapWidget::canMoveTo(destPos))
-		return false;
+Shared::MapWidget::CanMove DungeonPlayer::canMoveTo(const Point &destPos) {
+	Shared::MapWidget::CanMove result = MapWidget::canMoveTo(destPos);
+	if (result != UNSET)
+		return result;
 
 	return DungeonMonster::canMoveTo(_map, this, destPos);
 }
