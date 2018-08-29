@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-28 18:39+0200\n"
-"PO-Revision-Date: 2018-07-30 19:07+0000\n"
+"PO-Revision-Date: 2018-08-29 06:08+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -2552,40 +2552,39 @@ msgstr "Minimieren"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:198
 msgid "Help"
-msgstr ""
+msgstr "Hilfe"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:199
-#, fuzzy
 msgid "User Manual"
-msgstr "Abbruch durch Benutzer"
+msgstr "Benutzer-Handbuch"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:201
 msgid "General Information"
-msgstr ""
+msgstr "Allgemeine Informationen"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:202
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "Neues in ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:204
 msgid "Credits"
-msgstr ""
+msgstr "Mitwirkende"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:205
 msgid "GPL License"
-msgstr ""
+msgstr "GPL-Lizenz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:206
 msgid "LGPL License"
-msgstr ""
+msgstr "LGPL-Lizenz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:207
 msgid "Freefont License"
-msgstr ""
+msgstr "Freefont-Lizenz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:208
 msgid "BSD License"
-msgstr ""
+msgstr "BSD-Lizenz"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
