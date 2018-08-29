@@ -197,10 +197,10 @@ Door *Scene::findDoor(int16 x, int16 y, int *index) {
 	return nullptr;
 }
 
-Static *Scene::findStatic(int16 x, int16 y, int *index) {
+Static *Scene::findStatic(int16 x, int16 y, bool activeOnly, int *index) {
 	for (int i = 0; i < getNoStatics(); ++i) {
 		Static &stat = _statics[i];
-		if ((x >= stat._x) && (x < stat._x + stat._width) && (y >= stat._y) && (y < stat._y + stat._height)) {
+		if ((!activeOnly || stat._active) && (x >= stat._x) && (x < stat._x + stat._width) && (y >= stat._y) && (y < stat._y + stat._height)) {
 			if (index) {
 				*index = i + 1;
 			}

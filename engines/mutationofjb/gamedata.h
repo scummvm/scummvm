@@ -260,7 +260,16 @@ struct Scene {
 	uint8 getNoStatics(bool ignoreNo = false) const;
 
 	Door *findDoor(int16 x, int16 y, int *index = nullptr);
-	Static *findStatic(int16 x, int16 y, int *index = nullptr);
+	/**
+	 * Finds the static at the given position. By default, only active statics are considered.
+	 *
+	 * @param x X coordinate.
+	 * @param y Y coordinate.
+	 * @param activeOnly If true, consider only active statics; otherwise consider any.
+	 * @param index Output parameter for the found static's ID.
+	 * @return A static if found, nullptr otherwise.
+	 */
+	Static *findStatic(int16 x, int16 y, bool activeOnly = true, int *index = nullptr);
 	Bitmap *findBitmap(int16 x, int16 y, int *index = nullptr);
 
 	void addExhaustedConvItem(uint8 context, uint8 convItemIndex, uint8 convGroupIndex);
