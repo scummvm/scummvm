@@ -138,9 +138,7 @@ void MutationOfJBEngine::handleNormalScene(const Common::Event &event) {
 				_game->changeScene(door->_destSceneId, _game->getGameData()._partB);
 			}
 		} else if (Static *const stat = scene->findStatic(x, y)) {
-			if (stat->_active == 1) {
-				_game->startActionSection(_game->getCurrentAction(), stat->_name);
-			}
+			_game->startActionSection(_game->getCurrentAction(), stat->_name);
 		}
 		break;
 	}
@@ -224,9 +222,7 @@ void MutationOfJBEngine::updateCursorHitTest(int16 x, int16 y) {
 			entityHit = true;
 		}
 	} else if (Static *const stat = scene->findStatic(x, y)) {
-		if (stat->_active == 1) {
-			entityHit = true;
-		}
+		entityHit = true;
 	}
 	bool cursorPaletteChange = false;
 	if ((_cursorState == CURSOR_ACTIVE && !entityHit) || (_cursorState == CURSOR_IDLE && entityHit)) {
