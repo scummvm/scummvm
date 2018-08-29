@@ -1256,7 +1256,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int val = stack->pop()->getInt();
 		Common::String privKey = "priv_" + StringUtil::encodeSetting(key);
 		ConfMan.setInt(privKey, val);
-		ConfMan.flushToDisk();
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1287,7 +1286,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		Common::String privKey = "wme_" + StringUtil::encodeSetting(key);
 		Common::String privVal = StringUtil::encodeSetting(val);
 		ConfMan.set(privKey, privVal);
-		ConfMan.flushToDisk();
 		stack->pushNULL();
 		return STATUS_OK;
 	}
