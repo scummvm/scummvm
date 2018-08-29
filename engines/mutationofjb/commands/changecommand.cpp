@@ -405,7 +405,7 @@ Command::ExecuteResult ChangeObjectCommand::execute(ScriptExecutionContext &scri
 		return Finished;
 	}
 
-	Object *const object = scene->getObject(_entityId);
+	Object *const object = scene->getObject(_entityId, true);
 	if (!object) {
 		return Finished;
 	}

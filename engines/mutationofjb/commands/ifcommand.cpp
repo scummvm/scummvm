@@ -89,7 +89,7 @@ Command::ExecuteResult IfCommand::execute(ScriptExecutionContext &scriptExecCtx)
 		return Finished;
 	}
 
-	Object *const object = scene->getObject(_objectId);
+	Object *const object = scene->getObject(_objectId, true);
 	if (!object) {
 		return Finished;
 	}
