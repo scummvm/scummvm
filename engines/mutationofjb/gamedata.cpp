@@ -39,6 +39,10 @@ static bool readString(Common::ReadStream &stream, char *str) {
 	return true;
 }
 
+bool Door::isActive() {
+	return *_name != '\0';
+}
+
 bool Door::loadFromStream(Common::ReadStream &stream) {
 	readString(stream, _name);
 
@@ -183,10 +187,10 @@ uint8 Scene::getNoStatics(bool ignoreNo) const {
 	return (!ignoreNo ? MIN(_noStatics, static_cast<uint8>(ARRAYSIZE(_statics))) : ARRAYSIZE(_statics));
 }
 
-Door *Scene::findDoor(int16 x, int16 y, int *index) {
+Door *Scene::findDoor(int16 x, int16 y, bool activeOnly, int *index) {
 	for (int i = 0; i < getNoDoors(); ++i) {
 		Door &door = _doors[i];
-		if ((x >= door._x) && (x < door._x + door._width) && (y >= door._y) && (y < door._y + door._height)) {
+		if ((!activeOnly || door.isActive()) && (x >= door._x) && (x < door._x + door._width) && (y >= door._y) && (y < door._y + door._height)) {
 			if (index) {
 				*index = i + 1;
 			}
