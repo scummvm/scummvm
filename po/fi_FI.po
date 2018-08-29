@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-08-28 18:39+0200\n"
-"PO-Revision-Date: 2018-07-23 08:33+0000\n"
+"PO-Revision-Date: 2018-08-29 17:46+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -2523,40 +2523,39 @@ msgstr "Minimoi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:198
 msgid "Help"
-msgstr ""
+msgstr "Ohje"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:199
-#, fuzzy
 msgid "User Manual"
-msgstr "Käyttäjä peruutti"
+msgstr "Käyttöohje"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:201
 msgid "General Information"
-msgstr ""
+msgstr "Yleistä Tietoa"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:202
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "Uutta ScummVM:ssä"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:204
 msgid "Credits"
-msgstr ""
+msgstr "Tekijät"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:205
 msgid "GPL License"
-msgstr ""
+msgstr "GPL-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:206
 msgid "LGPL License"
-msgstr ""
+msgstr "LGPL-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:207
 msgid "Freefont License"
-msgstr ""
+msgstr "Freefont-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:208
 msgid "BSD License"
-msgstr ""
+msgstr "BSD-lisenssi"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
