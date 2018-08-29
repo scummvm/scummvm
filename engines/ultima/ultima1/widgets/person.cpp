@@ -36,10 +36,22 @@ int Person::getRandomDelta() const {
 	return _game->getRandomNumber(2) - 1;
 }
 
+Shared::MapWidget::CanMove Person::canMoveTo(const Point &destPos) {
+	Shared::MapWidget::CanMove result = Creature::canMoveTo(destPos);
+	if (result != UNSET)
+		return result;
+
+	// Get the details of the position
+	Map::U1MapTile destTile;
+	_map->getTileAt(destPos, &destTile);
+
+	return destTile._tileNum == 1 ? YES : NO;
+}
+
 bool Person::moveBy(const Point &delta) {
 	// TODO: Movement allowed on tile 63.. is this the gate of the princess' cells?
 	Point newPos = _position + delta;
-	if (canMoveTo(newPos)) {
+	if (canMoveTo(newPos) == YES) {
 		_position = newPos;
 		return true;
 	} else {

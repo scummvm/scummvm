@@ -55,7 +55,7 @@ public:
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	virtual bool canMoveTo(const Point &destPos) override;
+	virtual CanMove canMoveTo(const Point &destPos) override;
 };
 
 } // End of namespace Widgets

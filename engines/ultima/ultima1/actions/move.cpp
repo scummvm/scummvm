@@ -75,7 +75,7 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 
 		// Check if the player's widget type can move to the new position
 		Point newPos = map->getDeltaPosition(delta);
-		if (player->canMoveTo(newPos)) {
+		if (player->canMoveTo(newPos) == Shared::MapWidget::YES) {
 			// Shift the viewport
 			map->shiftViewport(delta);
 
@@ -167,7 +167,7 @@ void Move::dungeonMoveForward() {
 	Shared::MapWidget *player = map->getPlayerWidget();
 	assert(player);
 
-	if (player->canMoveTo(map->getPosition() + delta)) {
+	if (player->canMoveTo(map->getPosition() + delta) == Shared::MapWidget::YES) {
 		map->setPosition(map->getPosition() + delta);
 	} else {
 		playFX(0);

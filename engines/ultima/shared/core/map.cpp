@@ -218,11 +218,11 @@ void MapWidget::addInfoMsg(const Common::String &text, bool newLine) {
 	msg.execute(_game->getView());
 }
 
-bool MapWidget::canMoveTo(const Point &destPos) {
+Shared::MapWidget::CanMove MapWidget::canMoveTo(const Point &destPos) {
 	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)_map->width() || destPos.y >= (int)_map->height()) {
 		// If the map is fixed, allow moving beyond it's edges so it can be left
 		if (!_map->isMapWrapped())
-			return true;
+			return YES;
 	}
 
 	// Get the details of the position
@@ -231,9 +231,9 @@ bool MapWidget::canMoveTo(const Point &destPos) {
 
 	// If there's a widget blocking the tile, return false
 	if (destTile._widget && destTile._widget->isBlocking())
-		return false;
+		return NO;
 
-	return true;
+	return UNSET;
 }
 
 void MapWidget::moveTo(const Point &destPos, Direction dir) {

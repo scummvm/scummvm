@@ -44,7 +44,7 @@ public:
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	static bool canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, const Point &destPos);
+	static Shared::MapWidget::CanMove canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, const Point &destPos);
 public:
 	DECLARE_WIDGET(DungeonMonster)
 
@@ -91,7 +91,7 @@ public:
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	virtual bool canMoveTo(const Point &destPos) override;
+	virtual CanMove canMoveTo(const Point &destPos) override;
 
 	/**
 	 * Handles attacks

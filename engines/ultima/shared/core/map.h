@@ -544,10 +544,12 @@ public:
 	 */
 	virtual void update(bool isPreUpdate) {}
 
+	enum CanMove { UNSET = 0, YES = 1, NO = 2 };
+
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	virtual bool canMoveTo(const Point &destPos);
+	virtual CanMove canMoveTo(const Point &destPos);
 
 	/**
 	 * Moves the widget to a given position

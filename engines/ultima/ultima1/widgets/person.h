@@ -88,6 +88,11 @@ public:
 	virtual uint getTileNum() const override { return _tileNum; }
 
 	/**
+	 * Returns true if the given widget can move to a given position on the map
+	 */
+	virtual CanMove canMoveTo(const Point &destPos);
+
+	/**
 	 * Talk to an NPC
 	 */
 	virtual void talk() {}

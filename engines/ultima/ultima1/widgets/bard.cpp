@@ -38,7 +38,7 @@ void Bard::movement() {
 	// Choose a new random position to  move to
 	Point newPos = _position + getRandomMoveDelta();
 
-	if (canMoveTo(newPos)) {
+	if (canMoveTo(newPos) == YES) {
 		// Move to the new position
 		_position = newPos;
 		_game->playFX(4);
