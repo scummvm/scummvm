@@ -83,6 +83,12 @@ struct Door {
 	/* Unknown for now - likely not even used. */
 	uint8  _SP;
 
+	/**
+	 * Check if this door can be interacted with.
+	 * @return True if this door can be interacted with, false otherwise.
+	 */
+	bool isActive();
+
 	bool loadFromStream(Common::ReadStream &stream);
 };
 
@@ -259,7 +265,16 @@ struct Scene {
 	uint8 getNoObjects(bool ignoreNo = false) const;
 	uint8 getNoStatics(bool ignoreNo = false) const;
 
-	Door *findDoor(int16 x, int16 y, int *index = nullptr);
+	/**
+	 * Finds the door at the given position. By default, only active doors are considered.
+	 *
+	 * @param x X coordinate.
+	 * @param y Y coordinate.
+	 * @param activeOnly If true, consider only active doors; otherwise consider any.
+	 * @param index Output parameter for the found door's ID.
+	 * @return A door if found, nullptr otherwise.
+	 */
+	Door *findDoor(int16 x, int16 y, bool activeOnly = true, int *index = nullptr);
 	/**
 	 * Finds the static at the given position. By default, only active statics are considered.
 	 *
