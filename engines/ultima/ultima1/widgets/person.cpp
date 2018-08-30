@@ -45,7 +45,7 @@ Shared::MapWidget::CanMove Person::canMoveTo(const Point &destPos) {
 	Map::U1MapTile destTile;
 	_map->getTileAt(destPos, &destTile);
 
-	return destTile._tileNum == 1 ? YES : NO;
+	return destTile._tileNum == Map::CTILE_1 || destTile._tileNum == Map::CTILE_51 ? YES : NO;
 }
 
 bool Person::moveBy(const Point &delta) {

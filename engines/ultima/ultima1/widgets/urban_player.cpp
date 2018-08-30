@@ -29,7 +29,7 @@ namespace Ultima1 {
 namespace Widgets {
 
 void UrbanPlayer::moveTo(const Point &destPos, Shared::Direction dir) {
-	Creature::moveTo(destPos, dir);
+	Person::moveTo(destPos, dir);
 	Shared::Map *map = _game->getMap();
 
 	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)map->width() || destPos.y >= (int)map->height()) {
