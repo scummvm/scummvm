@@ -81,6 +81,8 @@ public:
 	TaskPtr getActiveSayTask() const;
 	void setActiveSayTask(const TaskPtr &sayTask);
 
+	bool loadSaveAllowed() const;
+
 private:
 	bool loadGameData(bool partB);
 	void runActiveCommand();

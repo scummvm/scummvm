@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/fs.h"
+#include "common/savefile.h"
 #include "graphics/screen.h"
 #include "graphics/cursorman.h"
 
@@ -123,6 +124,55 @@ void MutationOfJBEngine::updateCursor() {
 		const Common::Point point = _eventMan->getMousePos();
 		updateCursorHitTest(point.x, point.y);
 	}
+}
+
+bool MutationOfJBEngine::hasFeature(Engine::EngineFeature f) const {
+	if (f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime) {
+		return true;
+	}
+
+	return false;
+}
+
+bool MutationOfJBEngine::canLoadGameStateCurrently() {
+	return _game->loadSaveAllowed();
+}
+
+Common::Error MutationOfJBEngine::loadGameState(int slot) {
+	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	Common::InSaveFile *const saveFile = g_system->getSavefileManager()->openForLoading(saveName);
+
+	Common::Serializer sz(saveFile, nullptr);
+
+	SaveHeader saveHdr;
+	saveHdr.sync(sz);
+	_game->getGameData().saveLoadWithSerializer(sz);
+	delete saveFile;
+
+	_game->changeScene(_game->getGameData()._currentScene, _game->getGameData()._partB);
+	_game->getGui().markDirty();
+
+	return Common::kNoError;
+}
+
+bool MutationOfJBEngine::canSaveGameStateCurrently() {
+	return _game->loadSaveAllowed();
+}
+
+Common::Error MutationOfJBEngine::saveGameState(int slot, const Common::String &desc) {
+	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	Common::OutSaveFile *const saveFile = g_system->getSavefileManager()->openForSaving(saveName);
+
+	Common::Serializer sz(nullptr, saveFile);
+
+	SaveHeader saveHdr;
+	saveHdr._description = desc;
+	saveHdr.sync(sz);
+	_game->getGameData().saveLoadWithSerializer(sz);
+	saveFile->finalize();
+	delete saveFile;
+
+	return Common::kNoError;
 }
 
 void MutationOfJBEngine::handleNormalScene(const Common::Event &event) {
@@ -255,6 +305,9 @@ Common::Error MutationOfJBEngine::run() {
 						event.kbd.ascii == '~' || event.kbd.ascii == '#') {
 					_console->attach();
 				}
+				if (event.kbd.keycode == Common::KEYCODE_F5 && event.kbd.hasFlags(0)) {
+					openMainMenuDialog();
+				}
 				break;
 			}
 			case Common::EVENT_KEYUP: {
@@ -295,6 +348,28 @@ Common::Error MutationOfJBEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+bool SaveHeader::sync(Common::Serializer &sz) {
+	const uint32 SAVE_MAGIC_NUMBER = MKTAG('M', 'O', 'J', 'B');
+	const uint32 SAVE_FILE_VERSION = 1;
+
+	if (sz.isLoading()) {
+		uint32 magic = 0;
+		sz.syncAsUint32BE(magic);
+		if (magic != SAVE_MAGIC_NUMBER) {
+			warning("Invalid save");
+			return false;
+		}
+	} else {
+		uint32 magic = SAVE_MAGIC_NUMBER;
+		sz.syncAsUint32BE(magic);
+	}
+
+	sz.syncVersion(SAVE_FILE_VERSION);
+	sz.syncString(_description);
+
+	return true;
 }
 
 }

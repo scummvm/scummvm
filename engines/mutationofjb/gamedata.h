@@ -23,8 +23,10 @@
 #ifndef MUTATIONOFJB_GAMEDATA_H
 #define MUTATIONOFJB_GAMEDATA_H
 
-#include "common/scummsys.h"
 #include "mutationofjb/inventory.h"
+
+#include "common/serializer.h"
+#include "common/scummsys.h"
 
 namespace Common {
 class ReadStream;
@@ -36,7 +38,7 @@ enum {
 	MAX_ENTITY_NAME_LENGTH = 0x14
 };
 
-/** @file gamedata.h
+/** @file
  * There are 4 types of entities present in the game data:
  * - Door
  * - Object
@@ -47,7 +49,9 @@ enum {
 /**
  * An interactable scene changer with no visual representation.
  */
-struct Door {
+struct Door : public Common::Serializable {
+	virtual ~Door() {}
+
 	/**
 	 * Door name (NM register).
 	 *
@@ -80,7 +84,7 @@ struct Door {
 	uint16 _walkToX;
 	/** Y coordinate for position player will walk towards after clicking the door (WY register). */
 	uint8  _walkToY;
-	/* Unknown for now - likely not even used. */
+	/** Unknown for now - likely not even used. */
 	uint8  _SP;
 
 	/**
@@ -89,7 +93,20 @@ struct Door {
 	 */
 	bool isActive();
 
-	bool loadFromStream(Common::ReadStream &stream);
+	/**
+	 * Load initial state from game data file.
+	 *
+	 * @param stream Stream for reading.
+	 * @return True if success, false otherwise.
+	 */
+	bool loadInitialState(Common::ReadStream &stream);
+
+	/**
+	 * (De)serialization for save/load.
+	 *
+	 * @param sz Serializer.
+	 */
+	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
 };
 
 /**
@@ -105,7 +122,7 @@ struct Door {
  *
  * For details regarding animation playback, see objectanimationtask.cpp.
  */
-struct Object {
+struct Object : public Common::Serializable {
 	/** Controls whether the animation is playing. */
 	uint8  _active;
 	/**
@@ -163,16 +180,29 @@ struct Object {
 	 * @see _roomFrameLSB
 	 */
 	uint8  _roomFrameMSB;
-	/* Unknown. TODO: Figure out what this does. */
+	/** Unknown. TODO: Figure out what this does. */
 	uint8  _SP;
 
-	bool loadFromStream(Common::ReadStream &stream);
+	/**
+	 * Load initial state from game data file.
+	 *
+	 * @param stream Stream for reading.
+	 * @return True if success, false otherwise.
+	 */
+	bool loadInitialState(Common::ReadStream &stream);
+
+	/**
+	 * (De)serialization for save/load.
+	 *
+	 * @param sz Serializer.
+	 */
+	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
 };
 
 /**
  * An interactable area, usually without a visual representation.
  */
-struct Static {
+struct Static : public Common::Serializable {
 	/** Whether you can mouse over and interact with the static (AC register). */
 	uint8  _active;
 	/**
@@ -206,14 +236,27 @@ struct Static {
 	/** Player frame (rotation) set after the player finishes walking towards the walk to position (SP register). */
 	uint8  _walkToFrame;
 
-	bool loadFromStream(Common::ReadStream &stream);
+	/**
+	 * Load initial state from game data file.
+	 *
+	 * @param stream Stream for reading.
+	 * @return True if success, false otherwise.
+	 */
+	bool loadInitialState(Common::ReadStream &stream);
+
+	/**
+	 * (De)serialization for save/load.
+	 *
+	 * @param sz Serializer.
+	 */
+	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
 };
 
 /**
  * A static image that is carved out of a room frame based on its rectangle.
  * The bitmap rectangle also specifies where to blit it on the screen.
  */
-struct Bitmap {
+struct Bitmap : public Common::Serializable {
 	/** Room frame that this bitmap carves out of. */
 	uint8  _roomFrame;
 	/** Whether to draw the bitmap. */
@@ -227,7 +270,20 @@ struct Bitmap {
 	/** Y coordinate of the bottom right corner of the bitmap rectangle. */
 	uint8  _y2;
 
-	bool loadFromStream(Common::ReadStream &stream);
+	/**
+	 * Load initial state from game data file.
+	 *
+	 * @param stream Stream for reading.
+	 * @return True if success, false otherwise.
+	 */
+	bool loadInitialState(Common::ReadStream &stream);
+
+	/**
+	 * (De)serialization for save/load.
+	 *
+	 * @param sz Serializer.
+	 */
+	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
 };
 
 /**
@@ -256,7 +312,7 @@ struct ExhaustedConvItem {
 		_encodedData(((context & 0x1) << 7) | ((convItemIndex & 0x7) << 4) | (convGroupIndex & 0xF)) {}
 };
 
-struct Scene {
+struct Scene : Common::Serializable {
 	Door *getDoor(uint8 objectId);
 	Object *getObject(uint8 objectId, bool ignoreNo = false);
 	Static *getStatic(uint8 staticId, bool ignoreNo = false);
@@ -328,7 +384,20 @@ struct Scene {
 	uint8 _exhaustedConvItemNext;
 	ExhaustedConvItem _exhaustedConvItems[79];
 
-	bool loadFromStream(Common::ReadStream &stream);
+	/**
+	 * Load initial state from game data file.
+	 *
+	 * @param stream Stream for reading.
+	 * @return True if success, false otherwise.
+	 */
+	bool loadInitialState(Common::ReadStream &stream);
+
+	/**
+	 * (De)serialization for save/load.
+	 *
+	 * @param sz Serializer.
+	 */
+	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
 };
 
 struct ConversationInfo {
@@ -346,14 +415,27 @@ struct ConversationInfo {
 	uint8 _color;
 };
 
-struct GameData {
+struct GameData : public Common::Serializable {
 public:
 	GameData();
 	Scene *getScene(uint8 sceneId);
 	Scene *getCurrentScene();
 	Inventory &getInventory();
 
-	bool loadFromStream(Common::ReadStream &stream);
+	/**
+	 * Load initial state from game data file.
+	 *
+	 * @param stream Stream for reading.
+	 * @return True if success, false otherwise.
+	 */
+	bool loadInitialState(Common::ReadStream &stream);
+
+	/**
+	 * (De)serialization for save/load.
+	 *
+	 * @param sz Serializer.
+	 */
+	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
 
 	uint8 _currentScene; // Persistent.
 	uint8 _lastScene;

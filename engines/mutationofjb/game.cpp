@@ -92,7 +92,7 @@ bool Game::loadGameData(bool partB) {
 		return false;
 	}
 
-	_gameData->loadFromStream(file);
+	_gameData->loadInitialState(file);
 
 	file.close();
 
@@ -253,6 +253,16 @@ TaskPtr Game::getActiveSayTask() const {
 
 void Game::setActiveSayTask(const TaskPtr &sayTask) {
 	_activeSayTask = sayTask;
+}
+
+bool Game::loadSaveAllowed() const {
+	if (_scriptExecCtx.isCommandRunning())
+		return false;
+
+	if (isCurrentSceneMap())
+		return false;
+
+	return true;
 }
 
 }

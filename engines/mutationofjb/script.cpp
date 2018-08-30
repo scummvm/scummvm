@@ -207,6 +207,10 @@ Command *ScriptExecutionContext::getExtra(const Common::String &name) const {
 	return cmd;
 }
 
+bool ScriptExecutionContext::isCommandRunning() const {
+	return _activeCommand;
+}
+
 bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 	destroy();
 

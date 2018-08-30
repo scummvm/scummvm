@@ -21,12 +21,14 @@
  */
 
 #include "mutationofjb/gamedata.h"
+
+#include "common/serializer.h"
 #include "common/stream.h"
 #include "common/util.h"
 
 namespace MutationOfJB {
 
-static bool readString(Common::ReadStream &stream, char *str) {
+static bool readEntityNameString(Common::ReadStream &stream, char *str) {
 	char buf[MAX_ENTITY_NAME_LENGTH];
 	memset(str, 0, MAX_ENTITY_NAME_LENGTH + 1);
 
@@ -39,12 +41,24 @@ static bool readString(Common::ReadStream &stream, char *str) {
 	return true;
 }
 
+static void syncEntityNameString(char *cstr, Common::Serializer &sz) {
+	if (sz.isLoading()) {
+		Common::String str;
+		sz.syncString(str);
+		strncpy(cstr, str.c_str(), MAX_ENTITY_NAME_LENGTH);
+		cstr[MAX_ENTITY_NAME_LENGTH] = 0;
+	} else {
+		Common::String str(cstr);
+		sz.syncString(str);
+	}
+}
+
 bool Door::isActive() {
 	return *_name != '\0';
 }
 
-bool Door::loadFromStream(Common::ReadStream &stream) {
-	readString(stream, _name);
+bool Door::loadInitialState(Common::ReadStream &stream) {
+	readEntityNameString(stream, _name);
 
 	_destSceneId = stream.readByte();
 	_destX = stream.readUint16LE();
@@ -60,7 +74,21 @@ bool Door::loadFromStream(Common::ReadStream &stream) {
 	return true;
 }
 
-bool Object::loadFromStream(Common::ReadStream &stream) {
+void Door::saveLoadWithSerializer(Common::Serializer &sz) {
+	syncEntityNameString(_name, sz);
+	sz.syncAsByte(_destSceneId);
+	sz.syncAsUint16LE(_destX);
+	sz.syncAsUint16LE(_destY);
+	sz.syncAsUint16LE(_x);
+	sz.syncAsByte(_y);
+	sz.syncAsUint16LE(_width);
+	sz.syncAsByte(_height);
+	sz.syncAsUint16LE(_walkToX);
+	sz.syncAsByte(_walkToY);
+	sz.syncAsByte(_SP);
+}
+
+bool Object::loadInitialState(Common::ReadStream &stream) {
 	_active = stream.readByte();
 	_firstFrame = stream.readByte();
 	_randomFrame = stream.readByte();
@@ -79,9 +107,26 @@ bool Object::loadFromStream(Common::ReadStream &stream) {
 	return true;
 }
 
-bool Static::loadFromStream(Common::ReadStream &stream) {
+void Object::saveLoadWithSerializer(Common::Serializer &sz) {
+	sz.syncAsByte(_active);
+	sz.syncAsByte(_firstFrame);
+	sz.syncAsByte(_randomFrame);
+	sz.syncAsByte(_numFrames);
+	sz.syncAsByte(_roomFrameLSB);
+	sz.syncAsByte(_jumpChance);
+	sz.syncAsByte(_currentFrame);
+	sz.syncAsUint16LE(_x);
+	sz.syncAsByte(_y);
+	sz.syncAsUint16LE(_width);
+	sz.syncAsByte(_height);
+	sz.syncAsUint16LE(_WX);
+	sz.syncAsByte(_roomFrameMSB);
+	sz.syncAsByte(_SP);
+}
+
+bool Static::loadInitialState(Common::ReadStream &stream) {
 	_active = stream.readByte();
-	readString(stream, _name);
+	readEntityNameString(stream, _name);
 	_x = stream.readUint16LE();
 	_y = stream.readByte();
 	_width = stream.readUint16LE();
@@ -93,7 +138,19 @@ bool Static::loadFromStream(Common::ReadStream &stream) {
 	return true;
 }
 
-bool Bitmap::loadFromStream(Common::ReadStream &stream) {
+void Static::saveLoadWithSerializer(Common::Serializer &sz) {
+	sz.syncAsByte(_active);
+	syncEntityNameString(_name, sz);
+	sz.syncAsUint16LE(_x);
+	sz.syncAsByte(_y);
+	sz.syncAsUint16LE(_width);
+	sz.syncAsByte(_height);
+	sz.syncAsUint16LE(_walkToX);
+	sz.syncAsByte(_walkToY);
+	sz.syncAsByte(_walkToFrame);
+}
+
+bool Bitmap::loadInitialState(Common::ReadStream &stream) {
 	_roomFrame = stream.readByte();
 	_isVisible = stream.readByte();
 	_x1 = stream.readUint16LE();
@@ -104,7 +161,16 @@ bool Bitmap::loadFromStream(Common::ReadStream &stream) {
 	return true;
 }
 
-bool Scene::loadFromStream(Common::ReadStream &stream) {
+void Bitmap::saveLoadWithSerializer(Common::Serializer &sz) {
+	sz.syncAsByte(_roomFrame);
+	sz.syncAsByte(_isVisible);
+	sz.syncAsUint16LE(_x1);
+	sz.syncAsByte(_y1);
+	sz.syncAsUint16LE(_x2);
+	sz.syncAsByte(_y2);
+}
+
+bool Scene::loadInitialState(Common::ReadStream &stream) {
 	int i;
 
 	_startup = stream.readByte();
@@ -116,23 +182,23 @@ bool Scene::loadFromStream(Common::ReadStream &stream) {
 	_noDoors = stream.readByte();
 	_noDoors = MIN(_noDoors, static_cast<uint8>(ARRAYSIZE(_doors)));
 	for (i = 0; i < ARRAYSIZE(_doors); ++i) {
-		_doors[i].loadFromStream(stream);
+		_doors[i].loadInitialState(stream);
 	}
 
 	_noObjects = stream.readByte();
 	_noObjects = MIN(_noObjects, static_cast<uint8>(ARRAYSIZE(_objects)));
 	for (i = 0; i < ARRAYSIZE(_objects); ++i) {
-		_objects[i].loadFromStream(stream);
+		_objects[i].loadInitialState(stream);
 	}
 
 	_noStatics = stream.readByte();
 	_noStatics = MIN(_noStatics, static_cast<uint8>(ARRAYSIZE(_statics)));
 	for (i = 0; i < ARRAYSIZE(_statics); ++i) {
-		_statics[i].loadFromStream(stream);
+		_statics[i].loadInitialState(stream);
 	}
 
 	for (i = 0; i < ARRAYSIZE(_bitmaps); ++i) {
-		_bitmaps[i].loadFromStream(stream);
+		_bitmaps[i].loadInitialState(stream);
 	}
 
 	_obstacleY1 = stream.readUint16LE();
@@ -141,11 +207,48 @@ bool Scene::loadFromStream(Common::ReadStream &stream) {
 	_palRotDelay = stream.readByte();
 	_exhaustedConvItemNext = stream.readByte();
 
-	for (i = 0; i < 79; ++i) {
+	for (i = 0; i < ARRAYSIZE(_exhaustedConvItems); ++i) {
 		_exhaustedConvItems[i]._encodedData = stream.readByte();
 	}
 
 	return true;
+}
+
+void Scene::saveLoadWithSerializer(Common::Serializer &sz) {
+	sz.syncAsByte(_startup);
+	sz.syncAsByte(_unknown001);
+	sz.syncAsByte(_unknown002);
+	sz.syncAsByte(_unknown003);
+	sz.syncAsByte(_delay);
+
+	sz.syncAsByte(_noDoors);
+	for (int i = 0; i < ARRAYSIZE(_doors); ++i) {
+		_doors[i].saveLoadWithSerializer(sz);
+	}
+
+	sz.syncAsByte(_noObjects);
+	for (int i = 0; i < ARRAYSIZE(_objects); ++i) {
+		_objects[i].saveLoadWithSerializer(sz);
+	}
+
+	sz.syncAsByte(_noStatics);
+	for (int i = 0; i < ARRAYSIZE(_statics); ++i) {
+		_statics[i].saveLoadWithSerializer(sz);
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_bitmaps); ++i) {
+		_bitmaps[i].saveLoadWithSerializer(sz);
+	}
+
+	sz.syncAsUint16LE(_obstacleY1);
+	sz.syncAsByte(_palRotFirst);
+	sz.syncAsByte(_palRotLast);
+	sz.syncAsByte(_palRotDelay);
+	sz.syncAsByte(_exhaustedConvItemNext);
+
+	for (int i = 0; i < ARRAYSIZE(_exhaustedConvItems); ++i) {
+		sz.syncAsByte(_exhaustedConvItems[i]._encodedData);
+	}
 }
 
 Door *Scene::getDoor(uint8 doorId) {
@@ -270,12 +373,23 @@ Inventory &GameData::getInventory() {
 	return _inventory;
 }
 
-bool GameData::loadFromStream(Common::ReadStream &stream) {
+bool GameData::loadInitialState(Common::ReadStream &stream) {
 	for (int i = 0; i < ARRAYSIZE(_scenes); ++i) {
-		_scenes[i].loadFromStream(stream);
+		_scenes[i].loadInitialState(stream);
 	}
 
 	return true;
+}
+
+void GameData::saveLoadWithSerializer(Common::Serializer &sz) {
+	for (int i = 0; i < ARRAYSIZE(_scenes); ++i) {
+		_scenes[i].saveLoadWithSerializer(sz);
+	}
+
+	sz.syncAsByte(_currentScene);
+	sz.syncAsByte(_partB);
+	_inventory.saveLoadWithSerializer(sz);
+	sz.syncString(_currentAPK);
 }
 
 }

@@ -23,6 +23,9 @@
 #include "mutationofjb/mutationofjb.h"
 
 #include "common/config-manager.h"
+#include "common/system.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
 
 #include "engines/advancedDetector.h"
 
@@ -89,19 +92,58 @@ public:
 		_directoryGlobs = mutationofjbDirectoryGlobs;
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Mutation of J.B.";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Mutation of J.B. (C) 1996 RIKI Computer Games";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc) {
 			*engine = new MutationOfJB::MutationOfJBEngine(syst);
 		}
 		return desc != nullptr;
+	}
+
+	virtual bool hasFeature(MetaEngineFeature f) const override {
+		if (f == kSupportsListSaves || f == kSimpleSavesNames) {
+			return true;
+		}
+
+		return false;
+	}
+
+	virtual int getMaximumSaveSlot() const override {
+		return 999;
+	}
+
+	virtual SaveStateList listSaves(const char *target) const override {
+		Common::SaveFileManager *const saveFileMan = g_system->getSavefileManager();
+		Common::StringArray filenames;
+		Common::String pattern = target;
+		pattern += ".###";
+
+		filenames = saveFileMan->listSavefiles(pattern);
+
+		SaveStateList saveList;
+		int slotNo = 0;
+		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+			// Obtain the last 3 digits of the filename, since they correspond to the save slot
+			slotNo = atoi(file->c_str() + file->size() - 3);
+
+			Common::InSaveFile *const in = saveFileMan->openForLoading(*file);
+			if (in) {
+				Common::Serializer sz(in, nullptr);
+
+				MutationOfJB::SaveHeader saveHdr;
+				if (saveHdr.sync(sz)) {
+					saveList.push_back(SaveStateDescriptor(slotNo, saveHdr._description));
+				}
+			}
+		}
+		return saveList;
 	}
 };
 

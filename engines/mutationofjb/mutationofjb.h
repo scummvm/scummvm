@@ -28,6 +28,7 @@
 
 namespace Common {
 struct Event;
+class Serializer;
 }
 
 namespace Graphics {
@@ -38,6 +39,12 @@ namespace MutationOfJB {
 
 class Console;
 class Game;
+
+struct SaveHeader {
+	bool sync(Common::Serializer &sz);
+
+	Common::String _description;
+};
 
 class MutationOfJBEngine : public Engine {
 public:
@@ -55,6 +62,12 @@ public:
 	Game &getGame();
 	void setCursorState(CursorState cursorState);
 	void updateCursor();
+
+	virtual bool hasFeature(EngineFeature f) const override;
+	virtual bool canLoadGameStateCurrently() override;
+	virtual Common::Error loadGameState(int slot) override;
+	virtual bool canSaveGameStateCurrently() override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 private:
 	bool loadGameData(bool partB);

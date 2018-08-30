@@ -119,6 +119,7 @@ public:
 	GameData &getGameData();
 	Command *getMacro(const Common::String &name) const;
 	Command *getExtra(const Common::String &name) const;
+	bool isCommandRunning() const;
 
 private:
 	Game &_game;

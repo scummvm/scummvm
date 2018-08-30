@@ -23,8 +23,9 @@
 #ifndef MUTATIONOFJB_INVENTORY_H
 #define MUTATIONOFJB_INVENTORY_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/serializer.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace MutationOfJB {
@@ -37,7 +38,7 @@ public:
 	virtual ~InventoryObserver() {}
 };
 
-class Inventory {
+class Inventory : public Common::Serializable {
 public:
 	enum {
 		VISIBLE_ITEMS = 6
@@ -58,6 +59,8 @@ public:
 	void scrollRight();
 
 	void setObserver(InventoryObserver *observer);
+
+	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
 
 private:
 	void rotateItemsRight(uint n);
