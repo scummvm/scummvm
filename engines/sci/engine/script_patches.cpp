@@ -910,12 +910,190 @@ static const uint16 hoyle5PatchSpinLoop[] = {
 	PATCH_END
 };
 
+// There are two derived collections of Hoyle Classic Games:
+// 1) The Hoyle Children's Collection, which includes the following games:
+// - Crazy Eights (script 100)
+// - Old Maid (script 200)
+// - Checkers (script 1200)
+// 2) Hoyle Bridge, which includes the following games:
+// - Bridge (script 700)
+// In these two collections, the scripts for the other games have been removed.
+// Choosing any other game than the above results in a "No script found" error.
+// The original game did not show the game selection screen, as there were
+// direct shortucts to each game.
+// Since we do show the game selection screen, we remove all the games
+// which from the ones below, which are not included in each version:
+// - Crazy Eights (script 100)
+// - Old Maid (script 200)
+// - Hearts (script 300)
+// - Gin Rummy (script 400)
+// - Cribbage (script 500)
+// - Klondike / Solitaire (script 600)
+// - Bridge (script 700)
+// - Poker (script 1100)
+// - Checkers (script 1200)
+// - Backgammon (script 1300)
+static const uint16 hoyle5SignatureCrazyEights[] = {
+	SIG_MAGICDWORD,
+	0x38, 0x8e, 0x00,      // pushi 008e
+	0x76,                  // push0
+	0x38, 0xf0, 0x02,      // pushi 02f0
+	0x76,                  // push0
+	0x72, 0x9c, 0x01,      // lofsa chooseCrazy8s
+	0x4a, 0x08, 0x00,      // send  0008
+	SIG_END
+};
+
+static const uint16 hoyle5SignatureOldMaid[] = {
+	SIG_MAGICDWORD,
+	0x38, 0x8e, 0x00,      // pushi 008e
+	0x76,                  // push0
+	0x38, 0xf0, 0x02,      // pushi 02f0
+	0x76,                  // push0
+	0x72, 0x2c, 0x02,      // lofsa chooseOldMaid
+	0x4a, 0x08, 0x00,      // send  0008
+	SIG_END
+};
+
+static const uint16 hoyle5SignatureHearts[] = {
+	SIG_MAGICDWORD,
+	0x38, 0x8e, 0x00,      // pushi 008e
+	0x76,                  // push0
+	0x38, 0xf0, 0x02,      // pushi 02f0
+	0x76,                  // push0
+	0x72, 0xdc, 0x03,      // lofsa chooseHearts
+	0x4a, 0x08, 0x00,      // send  0008
+	SIG_END
+};
+
+static const uint16 hoyle5SignatureGinRummy[] = {
+	SIG_MAGICDWORD,
+	0x38, 0x8e, 0x00,      // pushi 008e
+	0x76,                  // push0
+	0x38, 0xf0, 0x02,      // pushi 02f0
+	0x76,                  // push0
+	0x72, 0xbc, 0x02,      // lofsa chooseGinRummy
+	0x4a, 0x08, 0x00,      // send  0008
+	SIG_END
+};
+
+static const uint16 hoyle5SignatureCribbage[] = {
+	SIG_MAGICDWORD,
+	0x38, 0x8e, 0x00,      // pushi 008e
+	0x76,                  // push0
+	0x38, 0xf0, 0x02,      // pushi 02f0
+	0x76,                  // push0
+	0x72, 0x4c, 0x03,      // lofsa chooseCribbage
+	0x4a, 0x08, 0x00,      // send  0008
+	SIG_END
+};
+
+static const uint16 hoyle5SignatureKlondike[] = {
+	SIG_MAGICDWORD,
+	0x38, 0x8e, 0x00,      // pushi 008e
+	0x76,                  // push0
+	0x38, 0xf0, 0x02,      // pushi 02f0
+	0x76,                  // push0
+	0x72, 0xfc, 0x04,      // lofsa chooseKlondike
+	0x4a, 0x08, 0x00,      // send  0008
+	SIG_END
+};
+
+static const uint16 hoyle5SignatureBridge[] = {
+	SIG_MAGICDWORD,
+	0x38, 0x8e, 0x00,      // pushi 008e
+	0x76,                  // push0
+	0x38, 0xf0, 0x02,      // pushi 02f0
+	0x76,                  // push0
+	0x72, 0x6c, 0x04,      // lofsa chooseBridge
+	0x4a, 0x08, 0x00,      // send  0008
+	SIG_END
+};
+
+static const uint16 hoyle5SignaturePoker[] = {
+	SIG_MAGICDWORD,
+	0x38, 0x8e, 0x00,      // pushi 008e
+	0x76,                  // push0
+	0x38, 0xf0, 0x02,      // pushi 02f0
+	0x76,                  // push0
+	0x72, 0x8c, 0x05,      // lofsa choosePoker
+	0x4a, 0x08, 0x00,      // send  0008
+	SIG_END
+};
+
+static const uint16 hoyle5SignatureCheckers[] = {
+	SIG_MAGICDWORD,
+	0x38, 0x8e, 0x00,      // pushi 008e
+	0x76,                  // push0
+	0x38, 0xf0, 0x02,      // pushi 02f0
+	0x76,                  // push0
+	0x72, 0x1c, 0x06,      // lofsa chooseCheckers
+	0x4a, 0x08, 0x00,      // send  0008
+	SIG_END
+};
+
+static const uint16 hoyle5SignatureBackgammon[] = {
+	SIG_MAGICDWORD,
+	0x38, 0x8e, 0x00,      // pushi 008e
+	0x76,                  // push0
+	0x38, 0xf0, 0x02,      // pushi 02f0
+	0x76,                  // push0
+	0x72, 0xac, 0x06,      // lofsa chooseBackgammon
+	0x4a, 0x08, 0x00,      // send  0008
+	SIG_END
+};
+
+static const uint16 hoyle5PatchDisableGame[] = {
+	0x35, 0x00,                      // ldi 00
+	0x35, 0x00,                      // ldi 00
+	0x35, 0x00,                      // ldi 00
+	0x35, 0x00,                      // ldi 00
+	0x35, 0x00,                      // ldi 00
+	0x35, 0x00,                      // ldi 00
+	0x35, 0x00,                      // ldi 00
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry hoyle5Signatures[] = {
 	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true,    23, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry hoyle5ChildrensCollectionSignatures[] = {
+	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,    23, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,   975, "disable Gin Rummy",                           1, hoyle5SignatureGinRummy,          hoyle5PatchDisableGame },
+	{  true,   975, "disable Cribbage",                            1, hoyle5SignatureCribbage,          hoyle5PatchDisableGame },
+	{  true,   975, "disable Klondike",                            1, hoyle5SignatureKlondike,          hoyle5PatchDisableGame },
+	{  true,   975, "disable Bridge",                              1, hoyle5SignatureBridge,            hoyle5PatchDisableGame },
+	{  true,   975, "disable Poker",                               1, hoyle5SignaturePoker,             hoyle5PatchDisableGame },
+	{  true,   975, "disable Hearts",                              1, hoyle5SignatureHearts,            hoyle5PatchDisableGame },
+	{  true,   975, "disable Backgammon",                          1, hoyle5SignatureBackgammon,        hoyle5PatchDisableGame },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry hoyle5BridgeSignatures[] = {
+	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,    23, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,   975, "disable Gin Rummy",                           1, hoyle5SignatureGinRummy,          hoyle5PatchDisableGame },
+	{  true,   975, "disable Cribbage",                            1, hoyle5SignatureCribbage,          hoyle5PatchDisableGame },
+	{  true,   975, "disable Klondike",                            1, hoyle5SignatureKlondike,          hoyle5PatchDisableGame },
+	{  true,   975, "disable Poker",                               1, hoyle5SignaturePoker,             hoyle5PatchDisableGame },
+	{  true,   975, "disable Hearts",                              1, hoyle5SignatureHearts,            hoyle5PatchDisableGame },
+	{  true,   975, "disable Backgammon",                          1, hoyle5SignatureBackgammon,        hoyle5PatchDisableGame },
+	{  true,   975, "disable Crazy Eights",                        1, hoyle5SignatureCrazyEights,       hoyle5PatchDisableGame },
+	{  true,   975, "disable Old Maid",                            1, hoyle5SignatureOldMaid,           hoyle5PatchDisableGame },
+	{  true,   975, "disable Checkers",                            1, hoyle5SignatureCheckers,          hoyle5PatchDisableGame },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -7647,7 +7825,15 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 #ifdef ENABLE_SCI32
 	case GID_HOYLE5:
-		signatureTable = hoyle5Signatures;
+		if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 100)) &&
+			g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700)))
+			signatureTable = hoyle5Signatures;
+		else if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 100)) &&
+			    !g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700)))
+			signatureTable = hoyle5ChildrensCollectionSignatures;
+		else if (!g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 100)) &&
+			      g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700)))
+			signatureTable = hoyle5BridgeSignatures;
 		break;
 	case GID_GK1:
 		signatureTable = gk1Signatures;
