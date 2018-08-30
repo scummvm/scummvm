@@ -37,6 +37,11 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	_egaData = nullptr;
 	_lutData = nullptr;
 
+	for (int i = 0; i < 32; ++i) {
+		_sprites[i] = nullptr;
+		_pushedSprites[i] = nullptr;
+	}
+
 	_screenRect = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	if (ConfMan.hasKey("render_mode"))
