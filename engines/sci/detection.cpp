@@ -227,76 +227,77 @@ struct OldNewIdTableEntry {
 };
 
 static const OldNewIdTableEntry s_oldNewTable[] = {
-	{ "archive",    "chest",            SCI_VERSION_NONE     },
-	{ "arthur",		"camelot",			SCI_VERSION_NONE     },
-	{ "brain",      "castlebrain",      SCI_VERSION_1_MIDDLE },	// Amiga
-	{ "brain",      "castlebrain",      SCI_VERSION_1_LATE   },
-	{ "demo",		"christmas1988",	SCI_VERSION_NONE     },
-	{ "card",       "christmas1990",    SCI_VERSION_1_EARLY, },
-	{ "card",       "christmas1992",    SCI_VERSION_1_1      },
-	{ "RH Budget",	"cnick-longbow",	SCI_VERSION_NONE     },
+	{ "archive",    "chest",            SCI_VERSION_NONE       },
+	{ "arthur",		"camelot",			SCI_VERSION_NONE       },
+	{ "brain",      "castlebrain",      SCI_VERSION_1_MIDDLE   },	// Amiga
+	{ "brain",      "castlebrain",      SCI_VERSION_1_LATE     },
+	{ "demo",		"christmas1988",	SCI_VERSION_NONE       },
+	{ "card",       "christmas1990",    SCI_VERSION_1_EARLY,   },
+	{ "card",       "christmas1992",    SCI_VERSION_1_1        },
+	{ "RH Budget",	"cnick-longbow",	SCI_VERSION_NONE       },
 	// iceman is the same
-	{ "icedemo",	"iceman",			SCI_VERSION_NONE     },
+	{ "icedemo",	"iceman",			SCI_VERSION_NONE       },
 	// longbow is the same
-	{ "eco",		"ecoquest",			SCI_VERSION_NONE     },
-	{ "eco2",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 demo
-	{ "rain",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 full
-	{ "tales",		"fairytales",		SCI_VERSION_NONE     },
-	{ "fp",			"freddypharkas",	SCI_VERSION_NONE     },
-	{ "emc",		"funseeker",		SCI_VERSION_NONE     },
-	{ "gk",			"gk1",				SCI_VERSION_NONE     },
+	{ "eco",		"ecoquest",			SCI_VERSION_NONE       },
+	{ "eco2",		"ecoquest2",		SCI_VERSION_NONE       },	// EcoQuest 2 demo
+	{ "rain",		"ecoquest2",		SCI_VERSION_NONE       },	// EcoQuest 2 full
+	{ "tales",		"fairytales",		SCI_VERSION_NONE       },
+	{ "fp",			"freddypharkas",	SCI_VERSION_NONE       },
+	{ "emc",		"funseeker",		SCI_VERSION_NONE       },
+	{ "gk",			"gk1",				SCI_VERSION_NONE       },
 	// gk2 is the same
-	{ "gk2demo",	"gk2",				SCI_VERSION_NONE     },
-	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE     },
-	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE     },
-	{ "solitare",	"hoyle2",			SCI_VERSION_NONE     },
-	// hoyle3 is the same
-	// hoyle4 is the same
-	{ "brain",      "islandbrain",      SCI_VERSION_1_1      },
-	{ "demo000",	"kq1sci",			SCI_VERSION_NONE     },
-	{ "kq1",		"kq1sci",			SCI_VERSION_NONE     },
-	{ "kq4",		"kq4sci",			SCI_VERSION_NONE     },
+	{ "gk2demo",	"gk2",				SCI_VERSION_NONE       },
+	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE       },
+	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE       },
+	{ "solitare",	"hoyle2",			SCI_VERSION_NONE       },
+	{ "hoyle3",	    "hoyle3",			SCI_VERSION_NONE       },
+	{ "hoyle4",	    "hoyle4",			SCI_VERSION_1_1        },
+	{ "hoyle4",	    "hoyle5",			SCI_VERSION_2_1_MIDDLE },
+	{ "brain",      "islandbrain",      SCI_VERSION_1_1        },
+	{ "demo000",	"kq1sci",			SCI_VERSION_NONE       },
+	{ "kq1",		"kq1sci",			SCI_VERSION_NONE       },
+	{ "kq4",		"kq4sci",			SCI_VERSION_NONE       },
 	// kq5 is the same
 	// kq6 is the same
-	{ "kq7cd",		"kq7",				SCI_VERSION_NONE     },
-	{ "quizgame-demo", "kquestions",    SCI_VERSION_NONE     },
-	{ "mm1",		"laurabow",			SCI_VERSION_NONE     },
-	{ "cb1",		"laurabow",			SCI_VERSION_NONE     },
-	{ "lb2",		"laurabow2",		SCI_VERSION_NONE     },
-	{ "rh",			"longbow",			SCI_VERSION_NONE     },
-	{ "ll1",		"lsl1sci",			SCI_VERSION_NONE     },
-	{ "lsl1",		"lsl1sci",			SCI_VERSION_NONE     },
+	{ "kq7cd",		"kq7",				SCI_VERSION_NONE       },
+	{ "quizgame-demo", "kquestions",    SCI_VERSION_NONE       },
+	{ "mm1",		"laurabow",			SCI_VERSION_NONE       },
+	{ "cb1",		"laurabow",			SCI_VERSION_NONE       },
+	{ "lb2",		"laurabow2",		SCI_VERSION_NONE       },
+	{ "rh",			"longbow",			SCI_VERSION_NONE       },
+	{ "ll1",		"lsl1sci",			SCI_VERSION_NONE       },
+	{ "lsl1",		"lsl1sci",			SCI_VERSION_NONE       },
 	// lsl2 is the same
-	{ "lsl3",		"lsl3",				SCI_VERSION_NONE     },
-	{ "ll5",		"lsl5",				SCI_VERSION_NONE     },
+	{ "lsl3",		"lsl3",				SCI_VERSION_NONE       },
+	{ "ll5",		"lsl5",				SCI_VERSION_NONE       },
 	// lsl5 is the same
 	// lsl6 is the same
-	{ "mg",			"mothergoose",		SCI_VERSION_NONE     },
-	{ "twisty",		"pepper",			SCI_VERSION_NONE     },
-	{ "scary",      "phantasmagoria",   SCI_VERSION_NONE     },
+	{ "mg",			"mothergoose",		SCI_VERSION_NONE       },
+	{ "twisty",		"pepper",			SCI_VERSION_NONE       },
+	{ "scary",      "phantasmagoria",   SCI_VERSION_NONE       },
 	// TODO: distinguish the full version of Phantasmagoria from the demo
-	{ "pq1",		"pq1sci",			SCI_VERSION_NONE     },
-	{ "pq",			"pq2",				SCI_VERSION_NONE     },
+	{ "pq1",		"pq1sci",			SCI_VERSION_NONE       },
+	{ "pq",			"pq2",				SCI_VERSION_NONE       },
 	// pq3 is the same
 	// pq4 is the same
-	{ "hq",			"qfg1",				SCI_VERSION_NONE     },	// QFG1 SCI0/EGA
-	{ "glory",      "qfg1",             SCI_VERSION_0_LATE   },	// QFG1 SCI0/EGA
-	{ "trial",		"qfg2",				SCI_VERSION_NONE     },
-	{ "hq2demo",	"qfg2",				SCI_VERSION_NONE     },
+	{ "hq",			"qfg1",				SCI_VERSION_NONE       },	// QFG1 SCI0/EGA
+	{ "glory",      "qfg1",             SCI_VERSION_0_LATE     },	// QFG1 SCI0/EGA
+	{ "trial",		"qfg2",				SCI_VERSION_NONE       },
+	{ "hq2demo",	"qfg2",				SCI_VERSION_NONE       },
 	// rama is the same
 	// TODO: distinguish the full version of rama from the demo
-	{ "thegame",	"slater",			SCI_VERSION_NONE     },
-	{ "sq1demo",	"sq1sci",			SCI_VERSION_NONE     },
-	{ "sq1",		"sq1sci",			SCI_VERSION_NONE     },
+	{ "thegame",	"slater",			SCI_VERSION_NONE       },
+	{ "sq1demo",	"sq1sci",			SCI_VERSION_NONE       },
+	{ "sq1",		"sq1sci",			SCI_VERSION_NONE       },
 	// sq3 is the same
 	// sq4 is the same
 	// sq5 is the same
 	// sq6 is the same
 	// TODO: distinguish the full version of SQ6 from the demo
 	// torin is the same
-
-
-	// TODO: SCI3 IDs
+	{ "l7",			"lsl7",				SCI_VERSION_NONE       },
+	{ "p2",			"phantasmagoria2",	SCI_VERSION_NONE       },
+	{ "lite",		"lighthouse",		SCI_VERSION_NONE       },
 
 	{ "", "", SCI_VERSION_NONE }
 };
@@ -378,15 +379,6 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 		// Otherwise it's qfg3
 		return "qfg3";
 	}
-
-	if (sierraId == "l7")
-		return "lsl7";
-
-	if (sierraId == "p2")
-		return "phantasmagoria2";
-
-	if (sierraId == "lite")
-		return "lighthouse";
 
 	return sierraId;
 }
