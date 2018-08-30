@@ -176,7 +176,8 @@ enum GlobalVar {
 	// a master volume that affects both music *and* sound effects
 	kGlobalVarPhant2MasterVolume   = 236, // 0 to 127
 	kGlobalVarPhant2ControlPanel   = 250,
-	kGlobalVarShivers1Score        = 349
+	kGlobalVarShivers1Score        = 349,
+	kGlobalVarHoyle5MusicVolume    = 897
 };
 
 /** Number of kernel calls in between gcs; should be < 50000 */
