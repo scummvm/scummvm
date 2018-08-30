@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-08-28 18:39+0200\n"
+"POT-Creation-Date: 2018-08-30 22:51+0200\n"
 "PO-Revision-Date: 2018-04-18 10:10+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -1905,7 +1905,7 @@ msgstr "~V~olver al lanzador"
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:163
 #: engines/mohawk/myst.cpp:954 engines/mohawk/riven.cpp:672
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
-#: engines/sci/engine/guest_additions.cpp:658 engines/sci/engine/kfile.cpp:1054
+#: engines/sci/engine/guest_additions.cpp:660 engines/sci/engine/kfile.cpp:1054
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3340
@@ -1928,7 +1928,7 @@ msgstr "Guardar partida:"
 #: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:954
 #: engines/mohawk/riven.cpp:672 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
-#: engines/sci/engine/guest_additions.cpp:659 engines/sci/engine/kfile.cpp:1054
+#: engines/sci/engine/guest_additions.cpp:661 engines/sci/engine/kfile.cpp:1054
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3340
@@ -2997,7 +2997,7 @@ msgstr "Mostrar líneas horizontales"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
-#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:462
+#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:454
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
@@ -3005,7 +3005,7 @@ msgstr "Usar pantallas de guardar/cargar originales"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
-#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:463
+#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:455
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM ones"
@@ -3061,7 +3061,7 @@ msgstr ""
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:661 engines/sci/engine/kfile.cpp:1173
+#: engines/sci/engine/guest_additions.cpp:663 engines/sci/engine/kfile.cpp:1173
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3434
@@ -3076,7 +3076,7 @@ msgstr "Cargar partida:"
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:662 engines/sci/engine/kfile.cpp:1173
+#: engines/sci/engine/guest_additions.cpp:664 engines/sci/engine/kfile.cpp:1173
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3434
@@ -3678,62 +3678,62 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr ""
 "Usa una introducción alternativa para el juego (solo para la versión CD)"
 
-#: engines/sci/detection.cpp:400
+#: engines/sci/detection.cpp:392
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr "Omitir difuminado EGA (colores completos)"
 
-#: engines/sci/detection.cpp:401
+#: engines/sci/detection.cpp:393
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 "Omitir pasada de difuminado en los juegos EGA. Los gráficos se muestran con "
 "los colores completos"
 
-#: engines/sci/detection.cpp:410
+#: engines/sci/detection.cpp:402
 msgid "Enable high resolution graphics"
 msgstr "Activar gráficos de alta resolución"
 
-#: engines/sci/detection.cpp:411
+#: engines/sci/detection.cpp:403
 msgid "Enable high resolution graphics/content"
 msgstr "Activar gráficos/contenido de alta resolución"
 
-#: engines/sci/detection.cpp:420
+#: engines/sci/detection.cpp:412
 msgid "Enable black-lined video"
 msgstr "Activar líneas negras en vídeos"
 
-#: engines/sci/detection.cpp:421
+#: engines/sci/detection.cpp:413
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr "Mostrar líneas negras sobre los vídeos para que parezcan más nítidos"
 
-#: engines/sci/detection.cpp:431
+#: engines/sci/detection.cpp:423
 msgid "Use high-quality video scaling"
 msgstr "Usar reescalado de vídeo de alta calidad"
 
-#: engines/sci/detection.cpp:432
+#: engines/sci/detection.cpp:424
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr "Usar interpolación lineal al reescalar vídeos, siempre que sea posible"
 
-#: engines/sci/detection.cpp:442
+#: engines/sci/detection.cpp:434
 #, fuzzy
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr "Usar reescalado de vídeo de alta calidad"
 
-#: engines/sci/detection.cpp:443
+#: engines/sci/detection.cpp:435
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
 
-#: engines/sci/detection.cpp:452
+#: engines/sci/detection.cpp:444
 msgid "Prefer digital sound effects"
 msgstr "Preferir efectos de sonido digitales"
 
-#: engines/sci/detection.cpp:453
+#: engines/sci/detection.cpp:445
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Preferir efectos de sonido digitales en vez de los sintetizados"
 
-#: engines/sci/detection.cpp:472
+#: engines/sci/detection.cpp:464
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Usar IMF/Yamaha FB-01 para la salida MIDI"
 
-#: engines/sci/detection.cpp:473
+#: engines/sci/detection.cpp:465
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -3741,44 +3741,44 @@ msgstr ""
 "Usar una tarjeta IBM Music o un módulo sintetizador Yamaha FB-01 FM para la "
 "salida MIDI"
 
-#: engines/sci/detection.cpp:483
+#: engines/sci/detection.cpp:475
 msgid "Use CD audio"
 msgstr "Usar CD audio"
 
-#: engines/sci/detection.cpp:484
+#: engines/sci/detection.cpp:476
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Usar CD audio en vez del sonido interno del juego, si está disponible"
 
-#: engines/sci/detection.cpp:494
+#: engines/sci/detection.cpp:486
 msgid "Use Windows cursors"
 msgstr "Usar cursores de Windows"
 
-#: engines/sci/detection.cpp:495
+#: engines/sci/detection.cpp:487
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Usar los cursores de Windows (más pequeños y monocromos) en vez de los de DOS"
 
-#: engines/sci/detection.cpp:505
+#: engines/sci/detection.cpp:497
 msgid "Use silver cursors"
 msgstr "Usar cursores plateados"
 
-#: engines/sci/detection.cpp:506
+#: engines/sci/detection.cpp:498
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Usar el set alternativo de colores plateados en lugar de los dorados, usados "
 "normalmente"
 
-#: engines/sci/detection.cpp:516
+#: engines/sci/detection.cpp:508
 msgid "Enable content censoring"
 msgstr "Activar censura"
 
-#: engines/sci/detection.cpp:517
+#: engines/sci/detection.cpp:509
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Activar la opción de censura incluida en el juego"
 
-#: engines/sci/detection.cpp:847 engines/sci/engine/kfile.cpp:481
+#: engines/sci/detection.cpp:839 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
 msgstr "(Autoguardado)"
 
