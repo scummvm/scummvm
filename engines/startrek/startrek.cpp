@@ -520,15 +520,10 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 			error("Could not open data.run");
 	}
 
+	Common::SeekableReadStream *stream;
 	if (getFeatures() & GF_DEMO && getPlatform() == Common::kPlatformDOS) {
 		assert(fileCount == 1); // Sanity check...
-		Common::SeekableReadStream *stream = dataFile->readStream(uncompressedSize);
-		delete dataFile;
-		delete dataRunFile;
-
-		byte *data = (byte *)malloc(stream->size());
-		stream->read(data, stream->size());
-		return SharedPtr<FileStream>(new FileStream(data, stream->size(), bigEndian));
+		stream = dataFile->readStream(uncompressedSize);
 	} else {
 		if (fileCount != 1) {
 			dataRunFile->seek(indexOffset);
@@ -546,20 +541,14 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 		uncompressedSize = (getPlatform() == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
 		uint16 compressedSize = (getPlatform() == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
 
-		Common::SeekableReadStream *stream = decodeLZSS(dataFile->readStream(compressedSize), uncompressedSize);
-
-		delete dataFile;
-		delete dataRunFile;
-
-		byte *data = (byte *)malloc(stream->size());
-		stream->read(data, stream->size());
-		return SharedPtr<FileStream>(new FileStream(data, stream->size(), bigEndian));
+		stream = decodeLZSS(dataFile->readStream(compressedSize), uncompressedSize);
 	}
 
-	// We should not get to this point...
-	error("Could not find data for \'%s\'", filename.c_str());
-
-	return SharedPtr<FileStream>();
+	delete dataFile;
+	delete dataRunFile;
+	byte *data = (byte *)malloc(stream->size());
+	stream->read(data, stream->size());
+	return SharedPtr<FileStream>(new FileStream(data, stream->size(), bigEndian));
 }
 
 SharedPtr<FileStream> StarTrekEngine::loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3) {
