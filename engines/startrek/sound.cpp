@@ -35,6 +35,10 @@ namespace StarTrek {
 // Main Sound Functions
 
 Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
+	_midiDevice = MT_INVALID;
+	_midiDriver = nullptr;
+	_loopingMidiTrack = false;
+
 	if (_vm->getPlatform() == Common::kPlatformDOS || _vm->getPlatform() == Common::kPlatformMacintosh) {
 		_midiDevice = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
 		_midiDriver = MidiDriver::createMidi(_midiDevice);
