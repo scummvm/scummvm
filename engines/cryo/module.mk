@@ -6,7 +6,7 @@ MODULE_OBJS = \
 	debugger.o \
 	detection.o \
 	eden.o \
-	graphics.o \
+	eden_graphics.o \
 	resource.o \
 	sound.o \
 	video.o
