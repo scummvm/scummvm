@@ -40,17 +40,80 @@ enum Direction {
 namespace Cryo {
 
 class CryoEngine;
+class EdenGraphics;
 
 class EdenGame {
 private:
-	CryoEngine *_vm;
+	
+	EdenGraphics *_graphics;
 
 public:
 	EdenGame(CryoEngine *vm);
+	~EdenGame();
 
 	void run();
 	object_t *getObjectPtr(int16 id);
 	void showObjects();
+	void saveFriezes();
+	void useBank(int16 bank);
+	void musicspy();
+	void fademusica0(int16 delay);
+	void wait(int howlong);
+	bool isObjectHere(int16 id);
+	void display();
+
+	void setMouseCenterX(uint16 xpos);
+	void setMouseCenterY(uint16 ypos);
+
+	void stopMusic();
+
+	void setVolume(uint16 vol);
+
+	uint16 getMouseCenterX();
+	uint16 getMouseCenterY();
+
+	bool dialoscansvmas(Dialog *dial);
+	void musique();
+	void preloadDialogs(int16 vid);
+	void loadHnm(uint16 num);
+	bool personIsTalking();
+	bool animationIsActive();
+	byte *getImageDesc();
+	byte *getPlaceRawBuf();
+	byte getActionCursor(byte value);
+	int16 getNumTextLines();
+	int16 getScrollPos();
+	/* 
+	 * Identify person based on current video number
+	 */
+	perso_t *personSubtitles();
+
+	int16 getGameIconY(int16 index);
+	int16 getGameIconX(int16 index);
+
+	byte *getGameDialogs();
+
+	bool getSpecialTextMode();
+	void setSpecialTextMode(bool value);
+
+	void setCursorSaved(bool cursorSaved);
+	bool getCursorSaved();
+	bool getNoPalette();
+	int16 getCurBankNum();
+	byte *getCurKeepBuf();
+	byte *getBankData();
+	int16 getCurPosX();
+	void setCurPosX(int16 xpos);
+	int16 getCurPosY();
+	void setCurPosY(int16 ypos);
+	byte *getGlowBuffer();
+	void setMusicFade(byte value);
+	bool isMouseHeld();
+	void setMouseHeld();
+	void setMouseNotHeld();
+
+	global_t *_globals; // TODO: Make private and use getters
+	CryoEngine *_vm;
 
 private:
 	void removeConsole();
@@ -110,29 +173,15 @@ private:
 	void actionMoveEast();
 	void actionMoveSouth();
 	void actionMoveWest();
-	void display();
+
 	void afficher128();
-	void saveFriezes();
-	void saveTopFrieze(int16 x);
-	void saveBottomFrieze();
+
+
 	void restoreFriezes();
-	void restoreTopFrieze();
-	void restoreBottomFrieze();
+
 	void useMainBank();
 	void useCharacterBank();
-	void useBank(int16 bank);
-	void sundcurs(int16 x, int16 y);
-	void rundcurs();
-	void drawSprite(int16 index, int16 x, int16 y, bool withBlack = false, bool onSubtitle = false);
-	void getglow(int16 x, int16 y, int16 w, int16 h);
-	void unglow();
-	void glow(int16 index);
-	void readPalette(byte *ptr);
-	void hideBars();
-	void showBars();
-	void saveMouthBackground();
-	void restoreMouthBackground();
-	void drawBlackBars();
+
 	void drawTopScreen();
 	void displayValleyMap();
 	void displayMapMark(int16 index, int16 location);
@@ -170,7 +219,6 @@ private:
 	void removeMouthSprite();
 	void AnimEndCharacter();
 	void setCharacterSprite(byte *spr);
-	void displayImage();
 	void displayCharacter1();
 	void displayCharacter();
 	void ef_perso();
@@ -192,10 +240,7 @@ private:
 	void my_bulle();
 	void my_pr_bulle();
 	void drawSubtitleChar(byte c, byte color, int16 width);
-	void displaySubtitles();
-	void saveUnderSubtitles(int16 y);
-	void restoreUnderSubtitles();
-	void displayHNMSubtitle();
+	
 	void patchSentence();
 	void vavapers();
 	void citadelle();
@@ -258,34 +303,20 @@ private:
 	void actionGotoMap();
 	void record();
 	bool dial_scan(Dialog *dial);
-	bool dialoscansvmas(Dialog *dial);
+
 	bool dialogEvent(perso_t *perso);
 	void characterStayHere();
 	void endDeath(int16 vid);
 	void chronoEvent();
 	void setChrono(int16 t);
-	void preloadDialogs(int16 vid);
-	void displayEffect1();
-	void displayEffect2();
-	void displayEffect3();
-	void displayEffect4();
-	void clearScreen();
-	void colimacon(int16 pattern[16]);
-	void fadeToBlack(int delay);
-	void fadeToBlackLowPalette(int delay);
-	void fadeFromBlackLowPalette(int delay);
-	void blackRect32();
-	void setSrcRect(int16 sx, int16 sy, int16 ex, int16 ey);
-	void setDestRect(int16 sx, int16 sy, int16 ex, int16 ey);
-	void wait(int howlong);
-	void effetpix();
+
+
 	void verifh(byte *ptr);
 	void openbigfile();
 	void closebigfile();
 	void loadRawFile(uint16 num, byte *buffer);
 	void loadIconFile(uint16 num, Icon *buffer);
 	void loadRoomFile(uint16 num, Room *buffer);
-	void loadHnm(uint16 num);
 	int loadSound(uint16 num);
 	void convertMacToPC();
 	void loadpermfiles();
@@ -299,10 +330,8 @@ private:
 	void removeInfo(byte info);
 	void updateInfoList();
 	void initGlobals();
-	void initRects();
+
 	void closeRoom();
-	void displaySingleRoom(Room *room);
-	void displayRoom();
 	void displayPlace();
 	void loadPlace(int16 num);
 	void specialoutside();
@@ -317,7 +346,6 @@ private:
 	void updateRoom(uint16 roomNum);
 	void allocateBuffers();
 	void freebuf();
-	void openWindow();
 	void EmergencyExit();
 	void edmain();
 	void intro();
@@ -327,22 +355,19 @@ private:
 	Icon *scan_icon_list(int16 x, int16 y, int16 index);
 	void updateCursor();
 	void mouse();
-	void showMovie(char arg1);
-	void playHNM(int16 num);
-	void handleHNMSubtitles();
-	void musique();
+
 	void startmusique(byte num);
-	void musicspy();
+
 	int loadmusicfile(int16 num);
 	void persovox();
 	void endCharacterSpeech();
 	void fademusicup();
-	void fademusica0(int16 delay);
+
 	void countObjects();
 	void winObject(int16 id);
 	void loseObject(int16 id);
 	void lostObject();
-	bool isObjectHere(int16 id);
+
 	void objectmain(int16 id);
 	void getObject(int16 id);
 	void putObject();
@@ -381,9 +406,6 @@ private:
 	void forwardTape();
 	void stopTape();
 	void clickTapeCursor();
-	void paneltobuf();
-	void cursbuftopanel();
-	void langbuftopanel();
 	void displayPanel();
 	void displayLanguage();
 	void displayVolCursor(int16 x, int16 vol1, int16 vol2);
@@ -557,24 +579,16 @@ private:
 	byte  _oldPix[8];
 	Common::Point _adamMapMarkPos;
 	byte  _cursKeepBuf[2500];
-	Common::Point _cursKeepPos;
 	bool  _torchCursor;
 	int16 _curBankNum;
-	int16 _glowX;
-	int16 _glowY;
-	int16 _glowW;
-	int16 _glowH;
 	bool  _paletteUpdateRequired;
 	bool  _cursorSaved;
-	bool  _showBlackBars;
 	bool  _backgroundSaved;
 	byte *_bankData;
-	color_t _globalPalette[256];    //TODO palette_t
 	perso_t *_tyranPtr;
 	int   _lastAnimFrameNumb;
 	int   _curAnimFrameNumb;
 	int   _lastAnimTicks;
-	Common::Rect *_curCharacterRect;
 	int16 _numAnimFrames;
 	int16 _maxPersoDesc;
 	int16 _numImgDesc;
@@ -590,7 +604,6 @@ private:
 	byte *_animationTable;
 	byte  _imageDesc[512];
 	byte *_characterBankData;
-	bool  _savedUnderSubtitles;
 	int16 _numTextLines;
 	byte  _sentenceBuffer[400];
 	byte   phraseIconsBuffer[10];
@@ -607,14 +620,9 @@ private:
 	char            _lastPhrasesFile;
 	byte _dialogSkipFlags;
 
-	color3_t        newColor;
-	color_t         oldPalette[256];    // TODO palette_t ?
-	color_t         newPalette[256];
-	Common::Rect          rect_dst, rect_src;
 	byte *_voiceSamplesBuffer;    //TODO: sound sample buffer
 	Common::File _bigfile;
 	byte  _infoList[16];
-	bool  _needToFade;
 	byte *_mainBankBuf;
 	byte *_musicBuf;
 	byte *_gameLipsync;
@@ -627,12 +635,9 @@ private:
 	Room *_gameRooms;
 	PakHeaderNode *_bigfileHeader;
 	byte *_glowBuffer;
-	byte *_mainViewBuf;
-	byte *_view2Buf;
+
 	byte *_gameFont;  //TODO: rename to font?
-	byte *_subtitlesViewBuf;
-	byte *_underSubtitlesViewBuf; // CHECKME: Useless?
-	global_t *_globals;
+
 	uint16 _mouseCenterX;
 	uint16 _mouseCenterY;
 	bool _bufferAllocationErrorFl;
@@ -646,18 +651,6 @@ private:
 	CSoundChannel *_hnmSoundChannel;
 	Sound        *_voiceSound;
 
-	View  *_view2;
-	View  *_underSubtitlesView;
-	View  *_subtitlesView;
-	View  *_underBarsView;
-	View  *_mainView;
-	View  *_hnmView;
-	Common::Rect _underSubtitlesBackupRect;
-	Common::Rect _underSubtitlesScreenRect;
-	Common::Rect _underBottomBarBackupRect;
-	Common::Rect _underBottomBarScreenRect;
-	Common::Rect _underTopBarBackupRect;
-	Common::Rect _underTopBarScreenRect;
 	int   _demoCurrentTicks;
 	int   _demoStartTicks;
 	int   _currentTime;
@@ -670,11 +663,8 @@ private:
 	Icon *_curSpot2;
 	bool  _mouseHeld;
 	bool  _normalCursor;
-	byte *_hnmViewBuf;
-	bool  _showVideoSubtitle;
-	bool  _videoCanceledFlag;  //TODO: hnm_canceled
+
 	bool  _specialTextMode;
-	int   _hnmFrameNum;
 	int   _voiceSamplesSize;   //TODO: perso vox sample data len
 	int16 _musicRightVol;
 	int16 _musicLeftVol;

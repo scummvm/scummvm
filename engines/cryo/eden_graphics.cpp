@@ -20,22 +20,89 @@
  *
  */
 
-#include "cryo/defs.h"
 #include "cryo/cryo.h"
 #include "cryo/platdefs.h"
 #include "cryo/cryolib.h"
 #include "cryo/eden.h"
 #include "cryo/sound.h"
+#include "cryo/eden_graphics.h"
+#include "cryo/video.h"
 
 namespace Cryo {
 
+EdenGraphics::EdenGraphics(EdenGame *game, HnmPlayer *video) : _game(game), _video(video) {
+	_glowH = _glowW = _glowY = _glowX = 0;
+	_showVideoSubtitle = false;
+	_showBlackBars = false;	
+	_mainView = nullptr;
+	_mainViewBuf = nullptr;
+	_hnmView = nullptr;
+	_view2 = nullptr;
+	_view2Buf = nullptr;
+	_curCharacterRect = nullptr;
+	_subtitlesViewBuf = nullptr;
+	_underSubtitlesView = nullptr;
+	_subtitlesView = nullptr;
+	_underBarsView = nullptr;
+	_needToFade = false;
+}
+
+void EdenGraphics::SendPalette2Screen(int16 value) {
+	CLPalette_Send2Screen(_globalPalette, 0, value);
+}
+
+void EdenGraphics::setFade(bool value) {
+	_needToFade = value;
+}
+
+bool EdenGraphics::getFade() {
+	return _needToFade;
+}
+
+void EdenGraphics::setPaletteColor(byte *buffer) {
+	for (int i = 0; i < 256; i++) {
+		color3_t color;
+		color.r = buffer[i * 3] << 8;
+		color.g = buffer[i * 3 + 1] << 8;
+		color.b = buffer[i * 3 + 2] << 8;
+		CLPalette_SetRGBColor(_globalPalette, i, &color);
+	}
+	SendPalette2Screen(256);
+}
+
+void EdenGraphics::readPalette(byte *ptr) {
+	bool doit = true;
+	color3_t pal_entry;
+	while (doit) {
+		uint16 idx = *ptr++;
+		if (idx != 0xFF) {
+			uint16 cnt = *ptr++;
+			while (cnt--) {
+				if (idx == 0) {
+					pal_entry.r = 0;
+					pal_entry.g = 0;
+					pal_entry.b = 0;
+					ptr += 3;
+				} else {
+					pal_entry.r = *ptr++ << 10;
+					pal_entry.g = *ptr++ << 10;
+					pal_entry.b = *ptr++ << 10;
+				}
+				CLPalette_SetRGBColor(_globalPalette, idx, &pal_entry);
+				idx++;
+			}
+		} else
+			doit = false;
+	}
+}
+
 // Original name: noclipax
-void EdenGame::drawSprite(int16 index, int16 x, int16 y, bool withBlack, bool onSubtitle) {
+void EdenGraphics::drawSprite(int16 index, int16 x, int16 y, bool withBlack, bool onSubtitle) {
 	uint16 width = (!onSubtitle) ? 640 : _subtitlesXWidth;
-	byte *pix = _bankData;
+	byte *pix = _game->getBankData();
 	byte *buf = (!onSubtitle) ? _mainViewBuf : _subtitlesViewBuf;
 	byte *scr = buf + x + y * width;
-	if (_curBankNum != 117 && (!_noPalette || withBlack || onSubtitle)) {
+	if (_game->getCurBankNum() != 117 && (!_game->getNoPalette() || withBlack || onSubtitle)) {
 		if (READ_LE_UINT16(pix) > 2)
 			readPalette(pix + 2);
 	}
@@ -115,8 +182,77 @@ void EdenGame::drawSprite(int16 index, int16 x, int16 y, bool withBlack, bool on
 	}
 }
 
-void EdenGame::sundcurs(int16 x, int16 y) {
-	byte *keep = _cursKeepBuf;
+void EdenGraphics::setCursKeepPos(int16 x, int16 y) {
+	_cursKeepPos = Common::Point(-1, -1);
+}
+
+byte *EdenGraphics::getSubtitlesViewBuf() {
+	return _subtitlesViewBuf;
+}
+
+View *EdenGraphics::getSubtitlesView() {
+	return _subtitlesView;
+}
+
+void EdenGraphics::loadMouthRectFromCurChar() {
+	_rect_src.left   = _curCharacterRect->left;
+	_rect_src.top    = _curCharacterRect->top;
+	_rect_src.right  = _curCharacterRect->right;
+	_rect_src.bottom = _curCharacterRect->bottom;
+	_rect_dst.left   = _curCharacterRect->left  + 320;
+	_rect_dst.top    = _curCharacterRect->top;
+	_rect_dst.right  = _curCharacterRect->right + 320;
+	_rect_dst.bottom = _curCharacterRect->bottom;
+}
+
+void EdenGraphics::paneltobuf() {
+	setSrcRect(0, 16, 320 - 1, 169 - 1);
+	setDestRect(320, 16, 640 - 1, 169 - 1);
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+}
+
+void EdenGraphics::cursbuftopanel() {
+	setSrcRect(434, 40, 525 - 1, 111 - 1);
+	setDestRect(114, 40, 205 - 1, 111 - 1);
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+}
+
+void EdenGraphics::langbuftopanel() {
+	setSrcRect(328, 42, 407 - 1, 97 - 1);
+	setDestRect(8, 42,  87 - 1, 97 - 1);
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+}
+
+// Original name: sauvefondbouche
+void EdenGraphics::saveMouthBackground() {
+	loadMouthRectFromCurChar();
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+}
+
+// Original name: restaurefondbouche
+void EdenGraphics::restoreMouthBackground() {
+	loadMouthRectFromCurChar();
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_dst, &_rect_src);
+}
+
+void EdenGraphics::setGlowX(int16 value) {
+	_glowX = value;
+}
+
+View *EdenGraphics::getMainView() {
+	return _mainView;
+}
+
+void EdenGraphics::setGlowY(int16 value) {
+	_glowY = value;
+}
+
+void EdenGraphics::setCurCharRect(Common::Rect * charRect) {
+	_curCharacterRect = charRect;
+}
+
+void EdenGraphics::sundcurs(int16 x, int16 y) {
+	byte *keep = _game->getCurKeepBuf();
 	x = CLIP<int16>(x - 4, 0, 640 - 48);
 	y = CLIP<int16>(y - 4, 0, 200 - 48);
 	_cursKeepPos = Common::Point(x, y);
@@ -126,13 +262,13 @@ void EdenGame::sundcurs(int16 x, int16 y) {
 			*keep++ = *scr++;
 		scr += 640 - 48;
 	}
-	_cursorSaved = true;
+	_game->setCursorSaved(true);;
 }
 
-void EdenGame::rundcurs() {
-	byte *keep = _cursKeepBuf;
+void EdenGraphics::rundcurs() {
+	byte *keep = _game->getCurKeepBuf();
 	byte *scr = _mainViewBuf + _cursKeepPos.x + _cursKeepPos.y * 640;
-	if (!_cursorSaved || (_cursKeepPos == Common::Point(-1, -1)))  //TODO ...
+	if (!_game->getCursorSaved() || (_cursKeepPos == Common::Point(-1, -1)))  //TODO ...
 		return;
 
 	for (int16 h = 48; h--;) {
@@ -142,9 +278,13 @@ void EdenGame::rundcurs() {
 	}
 }
 
-void EdenGame::getglow(int16 x, int16 y, int16 w, int16 h) {
+byte * EdenGraphics::getHnmViewBuf() {
+	return _hnmViewBuf;
+}
+
+void EdenGraphics::getglow(int16 x, int16 y, int16 w, int16 h) {
 	byte *scr = _mainViewBuf + x + y * 640;
-	byte *gl = _glowBuffer;
+	byte *gl = _game->getGlowBuffer();
 	_glowX = x;
 	_glowY = y;
 	_glowW = w;
@@ -156,8 +296,8 @@ void EdenGame::getglow(int16 x, int16 y, int16 w, int16 h) {
 	}
 }
 
-void EdenGame::unglow() {
-	byte *gl = _glowBuffer;
+void EdenGraphics::unglow() {
+	byte *gl = _game->getGlowBuffer();
 	byte *scr = _mainViewBuf + _glowX + _glowY * 640;
 	if (_glowX < 0 || _glowY < 0)   //TODO: move it up
 		return;
@@ -168,9 +308,9 @@ void EdenGame::unglow() {
 	}
 }
 
-void EdenGame::glow(int16 index) {
+void EdenGraphics::glow(int16 index) {
 	// byte pixbase;
-	byte *pix = _bankData;
+	byte *pix = _game->getBankData();
 
 	index += 9;
 	pix += READ_LE_UINT16(pix);
@@ -186,9 +326,9 @@ void EdenGame::glow(int16 index) {
 	if (mode != 0xFF && mode != 0xFE)
 		return;
 
-	int16 x = _cursorPosX + _scrollPos - 38;
-	int16 y = _cursorPosY - 28;
-	int16 ex = _globals->_frescoeWidth + 320;
+	int16 x = _game->getCurPosX() + _game->getScrollPos() - 38;
+	int16 y = _game->getCurPosY() - 28;
+	int16 ex = _game->_globals->_frescoeWidth + 320;
 
 	if (x + w <= 0 || x >= ex || y + h <= 0 || y >= 176)
 		return;
@@ -239,7 +379,7 @@ void EdenGame::glow(int16 index) {
 }
 
 // Original name : blackbars
-void EdenGame::drawBlackBars() {
+void EdenGraphics::drawBlackBars() {
 	byte *scr = _mainViewBuf;
 	for (int16 y = 0; y < 16; y++) {
 		for (int16 x = 0; x < 640; x++)
@@ -253,14 +393,21 @@ void EdenGame::drawBlackBars() {
 	}
 }
 
+// Original name: restaurefriseshaut
+void EdenGraphics::restoreTopFrieze() {
+	_underTopBarScreenRect.left = _game->getScrollPos();
+	_underTopBarScreenRect.right = _game->getScrollPos() + 320 - 1;
+	CLBlitter_CopyViewRect(_underBarsView, getMainView(), &_underTopBarBackupRect, &_underTopBarScreenRect);
+}
+
 // Original name: bars_out
-void EdenGame::hideBars() {
+void EdenGraphics::hideBars() {
 	if (_showBlackBars)
 		return;
 
-	display();
-	_underTopBarScreenRect.left = _scrollPos;
-	_underTopBarScreenRect.right = _scrollPos + 320 - 1;
+	_game->display();
+	_underTopBarScreenRect.left = _game->getScrollPos();
+	_underTopBarScreenRect.right = _game->getScrollPos() + 320 - 1;
 	CLBlitter_CopyViewRect(_mainView, _underBarsView, &_underTopBarScreenRect, &_underTopBarBackupRect);
 	_underBottomBarScreenRect.left = _underTopBarScreenRect.left;
 	_underBottomBarScreenRect.right = _underTopBarScreenRect.right;
@@ -271,8 +418,8 @@ void EdenGame::hideBars() {
 	int16 r24 = 21;
 	_underTopBarScreenRect.left = 0;
 	_underTopBarScreenRect.right = 320 - 1;
-	_underTopBarBackupRect.left = _scrollPos;
-	_underTopBarBackupRect.right = _scrollPos + 320 - 1;
+	_underTopBarBackupRect.left = _game->getScrollPos();
+	_underTopBarBackupRect.right = _game->getScrollPos() + 320 - 1;
 	unsigned int *scr40, *scr41, *scr42;
 	while (r24 > 0) {
 		if (r25 > 0) {
@@ -305,7 +452,7 @@ void EdenGame::hideBars() {
 		r20 += 3;
 		r25 -= 2;
 		r24 -= 3;
-		display();
+		_game->display();
 	}
 	scr40 = (unsigned int *)_mainViewBuf;
 	scr41 = scr40 + 640 / 4;
@@ -321,13 +468,20 @@ void EdenGame::hideBars() {
 		*scr41++ = 0;
 		*scr42++ = 0;
 	}
-	display();
+	_game->display();
 	initRects();
 	_showBlackBars = true;
 }
 
+void EdenGraphics::initRects() {
+	_underTopBarScreenRect = Common::Rect(0, 0, 320 - 1, 16 - 1);
+	_underTopBarBackupRect = Common::Rect(0, 0, 320 - 1, 16 - 1);
+	_underBottomBarScreenRect = Common::Rect(0, 176, 320 - 1, 200 - 1);  //TODO: original bug? this cause crash in copyrect (this, underBottomBarBackupRect)
+	_underBottomBarBackupRect = Common::Rect(0, 16, 320 - 1, 40 - 1);
+}
+
 // Original name: bars_in
-void EdenGame::showBars() {
+void EdenGraphics::showBars() {
 	if (!_showBlackBars)
 		return;
 
@@ -336,8 +490,8 @@ void EdenGame::showBars() {
 	int16 r28 = 2;
 	_underTopBarScreenRect.left = 0;
 	_underTopBarScreenRect.right = 320 - 1;
-	_underTopBarBackupRect.left = _scrollPos;
-	_underTopBarBackupRect.right = _scrollPos + 320 - 1;
+	_underTopBarBackupRect.left = _game->getScrollPos();
+	_underTopBarBackupRect.right = _game->getScrollPos() + 320 - 1;
 	while (r28 < 24) {
 		if (r29 <= 16) {
 			_underTopBarScreenRect.top = 16 - r29;
@@ -353,22 +507,22 @@ void EdenGame::showBars() {
 		CLBlitter_CopyViewRect(_underBarsView, _mainView, &_underTopBarScreenRect, &_underTopBarBackupRect);
 		r29 += 2;
 		r28 += 3;
-		display();
+		_game->display();
 	}
 	initRects();
 	_showBlackBars = false;
 }
 
 // Original name: af_image
-void EdenGame::displayImage() {
-	byte *img = _imageDesc + 200;
+void EdenGraphics::displayImage() {
+	byte *img = _game->getImageDesc() + 200;
 
 	int16 count = READ_LE_UINT16(img);
 	if (!count)
 		return;
 
 	byte *img_start = img;
-	byte *curimg = _imageDesc;
+	byte *curimg = _game->getImageDesc();
 
 	img += 2;
 	count *= 3;
@@ -380,9 +534,9 @@ void EdenGame::displayImage() {
 	/////// draw it
 	while (count--) {
 		uint16 index = *img++;
-		uint16 x = *img++ + _gameIcons[0].sx;
-		uint16 y = *img++ + _gameIcons[0].sy;
-		byte *pix = _bankData;
+		uint16 x = *img++ + _game->getGameIconX(0);
+		uint16 y = *img++ + _game->getGameIconY(0);
+		byte *pix = _game->getBankData();
 		byte *scr = _mainViewBuf + x + y * 640;
 		index--;
 		if (READ_LE_UINT16(pix) > 2)
@@ -464,24 +618,24 @@ void EdenGame::displayImage() {
 }
 
 // Original name: af_subtitle
-void EdenGame::displaySubtitles() {
+void EdenGraphics::displaySubtitles() {
 	byte *src = _subtitlesViewBuf;
 	byte *dst = _mainViewBuf;
 	int16 y;
-	if (_globals->_displayFlags & DisplayFlags::dfFlag2) {
+	if (_game->_globals->_displayFlags & DisplayFlags::dfFlag2) {
 		y = 174;
-		if ((_globals->_drawFlags & DrawFlags::drDrawMenu) && _numTextLines == 1)
+		if ((_game->_globals->_drawFlags & DrawFlags::drDrawMenu) && _game->getNumTextLines() == 1)
 			y = 167;
-		dst += 640 * (y - _numTextLines * FONT_HEIGHT) + _subtitlesXScrMargin;
+		dst += 640 * (y - _game->getNumTextLines() * FONT_HEIGHT) + _subtitlesXScrMargin;
 	}
 	else {
 		y = 174;
-		dst += 640 * (y - _numTextLines * FONT_HEIGHT) + _scrollPos + _subtitlesXScrMargin;
+		dst += 640 * (y - _game->getNumTextLines() * FONT_HEIGHT) + _game->getScrollPos() + _subtitlesXScrMargin;
 	}
-	if (_animationActive && !_personTalking)
+	if (_game->animationIsActive() && !_game->personIsTalking())
 		return;
 	saveUnderSubtitles(y);
-	for (int16 h = 0; h < _numTextLines * FONT_HEIGHT + 1; h++) {
+	for (int16 h = 0; h < _game->getNumTextLines() * FONT_HEIGHT + 1; h++) {
 		for (int16 w = 0; w < _subtitlesXWidth; w++) {
 			byte c = *src++;
 			if (c)
@@ -493,8 +647,8 @@ void EdenGame::displaySubtitles() {
 }
 
 // Original name afsalle1
-void EdenGame::displaySingleRoom(Room *room) {
-	byte *ptr = (byte *)getElem(_placeRawBuf, room->_id - 1);
+void EdenGraphics::displaySingleRoom(Room *room) {
+	byte *ptr = (byte *)getElem(_game->getPlaceRawBuf(), room->_id - 1);
 	ptr++;
 	for (;;) {
 		byte b0 = *ptr++;
@@ -507,30 +661,30 @@ void EdenGame::displaySingleRoom(Room *room) {
 			int16 y = *ptr++;
 			ptr++;
 			index &= 0x1FF;
-			if (!(_globals->_displayFlags & 0x80)) {
-				if (index == 1 || _globals->_varF7)
+			if (!(_game->_globals->_displayFlags & 0x80)) {
+				if (index == 1 || _game->_globals->_varF7)
 					drawSprite(index - 1, x, y, true);
 			}
-			_globals->_varF7 = 0;
+			_game->_globals->_varF7 = 0;
 			continue;
 		}
 		if (b1 & 0x40) {
 			if (b1 & 0x20) {
 				bool addIcon = false;
-				Icon *icon = _globals->_nextRoomIcon;
+				Icon *icon = _game->_globals->_nextRoomIcon;
 				if (b0 < 4) {
-					if (_globals->_roomPtr->_exits[b0])
+					if (_game->_globals->_roomPtr->_exits[b0])
 						addIcon = true;
 				}
 				else if (b0 > 229) {
-					if (_globals->_partyOutside & (1 << (b0 - 230)))
+					if (_game->_globals->_partyOutside & (1 << (b0 - 230)))
 						addIcon = true;
 				}
 				else if (b0 >= 100) {
 					debug("add object %d", b0 - 100);
-					if (isObjectHere(b0 - 100)) {
+					if (_game->isObjectHere(b0 - 100)) {
 						addIcon = true;
-						_globals->_varF7 = 1;
+						_game->_globals->_varF7 = 1;
 					}
 				}
 				else
@@ -538,7 +692,7 @@ void EdenGame::displaySingleRoom(Room *room) {
 				if (addIcon) {
 					icon->_actionId = b0;
 					icon->_objectId = b0;
-					icon->_cursorId = _actionCursors[b0];
+					icon->_cursorId = _game->getActionCursor(b0);
 					int16 x = READ_LE_UINT16(ptr);
 					ptr += 2;
 					int16 y = READ_LE_UINT16(ptr);
@@ -547,11 +701,11 @@ void EdenGame::displaySingleRoom(Room *room) {
 					ptr += 2;
 					int16 ey = READ_LE_UINT16(ptr);
 					ptr += 2;
-					x += _globals->_roomBaseX;
-					ex += _globals->_roomBaseX;
+					x += _game->_globals->_roomBaseX;
+					ex += _game->_globals->_roomBaseX;
 					debug("add hotspot at %3d:%3d - %3d:%3d, action = %d", x, y, ex, ey, b0);
 
-					if (_vm->_showHotspots) {
+					if (_game->_vm->_showHotspots) {
 						for (int iii = x; iii < ex; iii++)
 							_mainViewBuf[y * 640 + iii] = _mainViewBuf[ey * 640 + iii] = (iii % 2) ? 0 : 255;
 						for (int iii = y; iii < ey; iii++)
@@ -562,7 +716,7 @@ void EdenGame::displaySingleRoom(Room *room) {
 					icon->sy = y;
 					icon->ex = ex;
 					icon->ey = ey;
-					_globals->_nextRoomIcon = ++icon;
+					_game->_globals->_nextRoomIcon = ++icon;
 					icon->sx = -1;
 				}
 				else
@@ -576,26 +730,47 @@ void EdenGame::displaySingleRoom(Room *room) {
 	}
 }
 
+// Original name: restaurefrisesbas
+void EdenGraphics::restoreBottomFrieze() {
+	_underBottomBarScreenRect.left = _game->getScrollPos();
+	_underBottomBarScreenRect.right = _game->getScrollPos() + 320 - 1;
+	CLBlitter_CopyViewRect(_underBarsView, getMainView(), &_underBottomBarBackupRect, &_underBottomBarScreenRect);
+}
+
+// Original name: sauvefriseshaut
+void EdenGraphics::saveTopFrieze(int16 x) { // Save top bar
+	_underTopBarScreenRect = Common::Rect(x, 0, x + 320 - 1, 15);
+	_underTopBarBackupRect = Common::Rect(0, 0, 320 - 1, 15);
+	CLBlitter_CopyViewRect(getMainView(), _underBarsView, &_underTopBarScreenRect, &_underTopBarBackupRect);
+}
+
+// Original name: sauvefrisesbas
+void EdenGraphics::saveBottomFrieze() {         // Save bottom bar
+	_underBottomBarScreenRect.left = 0;
+	_underBottomBarScreenRect.right = 320 - 1;
+	CLBlitter_CopyViewRect(getMainView(), _underBarsView, &_underBottomBarScreenRect, &_underBottomBarBackupRect);
+}
+
 // Original name: afsalle
-void EdenGame::displayRoom() {
-	Room *room = _globals->_roomPtr;
-	_globals->_displayFlags = DisplayFlags::dfFlag1;
-	_globals->_roomBaseX = 0;
-	_globals->_roomBackgroundBankNum = room->_backgroundBankNum;
+void EdenGraphics::displayRoom() {
+	Room *room = _game->_globals->_roomPtr;
+	_game->_globals->_displayFlags = DisplayFlags::dfFlag1;
+	_game->_globals->_roomBaseX = 0;
+	_game->_globals->_roomBackgroundBankNum = room->_backgroundBankNum;
 	if (room->_flags & RoomFlags::rf08) {
-		_globals->_displayFlags |= DisplayFlags::dfFlag80;
+		_game->_globals->_displayFlags |= DisplayFlags::dfFlag80;
 		if (room->_flags & RoomFlags::rfPanable) {
 			// Scrollable room on 2 screens
-			_globals->_displayFlags |= DisplayFlags::dfPanable;
-			_globals->_varF4 = 0;
+			_game->_globals->_displayFlags |= DisplayFlags::dfPanable;
+			_game->_globals->_varF4 = 0;
 			rundcurs();
-			saveFriezes();
-			useBank(room->_bank - 1);
+			_game->saveFriezes();
+			_game->useBank(room->_bank - 1);
 			drawSprite(0, 0, 16, true);
-			useBank(room->_bank);
+			_game->useBank(room->_bank);
 			drawSprite(0, 320, 16, true);
 			displaySingleRoom(room);
-			_globals->_roomBaseX = 320;
+			_game->_globals->_roomBaseX = 320;
 			displaySingleRoom(room + 1);
 		}
 		else
@@ -603,15 +778,19 @@ void EdenGame::displayRoom() {
 	}
 	else {
 		//TODO: roomImgBank is garbage here!
-		debug("displayRoom: room 0x%X using bank %d", _globals->_roomNum, _globals->_roomImgBank);
-		useBank(_globals->_roomImgBank);
+		debug("displayRoom: room 0x%X using bank %d", _game->_globals->_roomNum, _game->_globals->_roomImgBank);
+		_game->useBank(_game->_globals->_roomImgBank);
 		displaySingleRoom(room);
-		assert(_vm->_screenView->_pitch == 320);
+		assert(_game->_vm->_screenView->_pitch == 320);
 	}
 }
 
-void EdenGame::openWindow() {
-	_underBarsView = new View(320, 40);
+View *EdenGraphics::getUnderBarsView() {
+	return _underBarsView;
+}
+
+void EdenGraphics::openWindow() {
+	_underBarsView = new View(320, 40); //TODO: Who deletes these?
 	_underBarsView->_normal._width = 320;
 
 	_view2 = new View(32, 32);
@@ -628,32 +807,32 @@ void EdenGame::openWindow() {
 	CLBlitter_FillView(_mainView, 0xFFFFFFFF);
 	_mainView->setSrcZoomValues(0, 0);
 	_mainView->setDisplayZoomValues(640, 400);
-	_mainView->centerIn(_vm->_screenView);
+	_mainView->centerIn(_game->_vm->_screenView);
 	_mainViewBuf = _mainView->_bufferPtr;
 
-	_mouseCenterX = _mainView->_normal._dstLeft + _mainView->_normal._width / 2;
-	_mouseCenterY = _mainView->_normal._dstTop + _mainView->_normal._height / 2;
-	_vm->setMousePosition(_mouseCenterX, _mouseCenterY);
-	_vm->hideMouse();
+	_game->setMouseCenterX(_mainView->_normal._dstLeft + _mainView->_normal._width  / 2);
+	_game->setMouseCenterY(_mainView->_normal._dstTop  + _mainView->_normal._height / 2);
+	_game->_vm->setMousePosition(_game->getMouseCenterX(), _game->getMouseCenterY());
+	_game->_vm->hideMouse();
 
-	_cursorPosX = 320 / 2;
-	_cursorPosY = 200 / 2;
+	_game->setCurPosX(320 / 2);
+	_game->setCurPosY(200 / 2);
 }
 
 // Original name: effet1
-void EdenGame::displayEffect1() {
+void EdenGraphics::displayEffect1() {
 	blackRect32();
 	setSrcRect(0, 0, 16 - 1, 4 - 1);
 	int y = _mainView->_normal._dstTop;
 	for (int16 i = 16; i <= 96; i += 4) {
 		for (int x = _mainView->_normal._dstLeft; x < _mainView->_normal._dstLeft + 320; x += 16) {
 			setDestRect(x, y + i, x + 16 - 1, y + i + 4 - 1);
-			CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
+			CLBlitter_CopyViewRect(_view2, _game->_vm->_screenView, &_rect_src, &_rect_dst);
 			setDestRect(x, y + 192 - i, x + 16 - 1, y + 192 - i + 4 - 1);
-			CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
+			CLBlitter_CopyViewRect(_view2, _game->_vm->_screenView, &_rect_src, &_rect_dst);
 		}
 		CLBlitter_UpdateScreen();
-		wait(1);
+		_game->wait(1);
 	}
 	CLPalette_Send2Screen(_globalPalette, 0, 256);
 	_mainView->_normal._height = 2;
@@ -672,7 +851,7 @@ void EdenGame::displayEffect1() {
 		_mainView->_zoom._dstTop = (100 + i) * 2 + dy;
 		CLBlitter_CopyView2Screen(_mainView);
 		CLBlitter_UpdateScreen();
-		wait(1);
+		_game->wait(1);
 	}
 	_mainView->_normal._height = 200;
 	_mainView->_zoom._height = 400;
@@ -680,18 +859,18 @@ void EdenGame::displayEffect1() {
 	_mainView->_zoom._srcTop = 0;
 	_mainView->_normal._dstTop = ny;
 	_mainView->_zoom._dstTop = dy;
-	_globals->_varF1 = 0;
+	_game->_globals->_varF1 = 0;
 }
 
 // Original name: effet2
-void EdenGame::displayEffect2() {
+void EdenGraphics::displayEffect2() {
 	static int16 pattern1[] = { 0, 1, 2, 3, 7, 11, 15, 14, 13, 12, 8, 4, 5, 6, 10, 9 };
 	static int16 pattern2[] = { 0, 15, 1, 14, 2, 13, 3, 12, 7, 8, 11, 4, 5, 10, 6, 9 };
 	static int16 pattern3[] = { 0, 2, 5, 7, 8, 10, 13, 15, 1, 3, 4, 6, 9, 11, 12, 14 };
 	static int16 pattern4[] = { 0, 3, 15, 12, 1, 7, 14, 8, 2, 11, 13, 4, 5, 6, 10, 9 };
 
 	static int eff2pat = 0;
-	if (_globals->_var103 == 69) {
+	if (_game->_globals->_var103 == 69) {
 		displayEffect4();
 		return;
 	}
@@ -713,42 +892,42 @@ void EdenGame::displayEffect2() {
 }
 
 // Original name: effet3
-void EdenGame::displayEffect3() {
-	CLPalette_GetLastPalette(oldPalette);
+void EdenGraphics::displayEffect3() {
+	CLPalette_GetLastPalette(_oldPalette);
 	for (uint16 i = 0; i < 6; i++) {
 		for (uint16 c = 0; c < 256; c++) {
-			newColor.r = oldPalette[c].r >> i;
-			newColor.g = oldPalette[c].g >> i;
-			newColor.b = oldPalette[c].b >> i;
-			CLPalette_SetRGBColor(newPalette, c, &newColor);
+			_newColor.r = _oldPalette[c].r >> i;
+			_newColor.g = _oldPalette[c].g >> i;
+			_newColor.b = _oldPalette[c].b >> i;
+			CLPalette_SetRGBColor(_newPalette, c, &_newColor);
 		}
-		CLPalette_Send2Screen(newPalette, 0, 256);
-		wait(1);
+		CLPalette_Send2Screen(_newPalette, 0, 256);
+		_game->wait(1);
 	}
 	CLBlitter_CopyView2Screen(_mainView);
 	for (uint16 i = 0; i < 6; i++) {
 		for (uint16 c = 0; c < 256; c++) {
-			newColor.r = _globalPalette[c].r >> (5 - i);
-			newColor.g = _globalPalette[c].g >> (5 - i);
-			newColor.b = _globalPalette[c].b >> (5 - i);
-			CLPalette_SetRGBColor(newPalette, c, &newColor);
+			_newColor.r = _globalPalette[c].r >> (5 - i);
+			_newColor.g = _globalPalette[c].g >> (5 - i);
+			_newColor.b = _globalPalette[c].b >> (5 - i);
+			CLPalette_SetRGBColor(_newPalette, c, &_newColor);
 		}
-		CLPalette_Send2Screen(newPalette, 0, 256);
-		wait(1);
+		CLPalette_Send2Screen(_newPalette, 0, 256);
+		_game->wait(1);
 	}
 }
 
 // Original name: effet4
-void EdenGame::displayEffect4() {
+void EdenGraphics::displayEffect4() {
 	byte *scr, *pix, *r24, *r25, *r30, c;
 	int16 r17, r23, r16, r18, r19, r22, r27, r31;
 	CLPalette_Send2Screen(_globalPalette, 0, 256);
 
-	int16 ww = _vm->_screenView->_pitch;
+	int16 ww = _game->_vm->_screenView->_pitch;
 	int16 x = _mainView->_normal._dstLeft;
 	int16 y = _mainView->_normal._dstTop;
 	for (int16 i = 32; i > 0; i -= 2) {
-		scr = _vm->_screenView->_bufferPtr;
+		scr = _game->_vm->_screenView->_bufferPtr;
 		scr += (y + 16) * ww + x;
 		pix = _mainView->_bufferPtr + 16 * 640;
 		r17 = 320 / i;
@@ -806,16 +985,16 @@ void EdenGame::displayEffect4() {
 			}
 		}
 		CLBlitter_UpdateScreen();
-		wait(3);
+		_game->wait(3);
 	}
 	CLBlitter_CopyView2Screen(_mainView);
 }
 
-void EdenGame::clearScreen() {
-	int16 ww = _vm->_screenView->_pitch;
+void EdenGraphics::clearScreen() {
+	int16 ww = _game->_vm->_screenView->_pitch;
 	int16 x = _mainView->_normal._dstLeft;
 	int16 y = _mainView->_normal._dstTop;
-	byte *scr = _vm->_screenView->_bufferPtr;
+	byte *scr = _game->_vm->_screenView->_bufferPtr;
 	scr += (y + 16) * ww + x;
 	for (int16 yy = 0; yy < 160; yy++) {
 		for (int16 xx = 0; xx < 320; xx++)
@@ -825,13 +1004,13 @@ void EdenGame::clearScreen() {
 	CLBlitter_UpdateScreen();
 }
 
-void EdenGame::colimacon(int16 pattern[16]) {
+void EdenGraphics::colimacon(int16 pattern[16]) {
 	int16 p, r27, r25;
 
-	int16 ww = _vm->_screenView->_pitch;
+	int16 ww = _game->_vm->_screenView->_pitch;
 	int16 x = _mainView->_normal._dstLeft;
 	int16 y = _mainView->_normal._dstTop;
-	byte *scr = _vm->_screenView->_bufferPtr;
+	byte *scr = _game->_vm->_screenView->_bufferPtr;
 	scr += (y + 16) * ww + x;
 	for (int16 i = 0; i < 16; i++) {
 		p = pattern[i];
@@ -839,14 +1018,14 @@ void EdenGame::colimacon(int16 pattern[16]) {
 		for (int16 j = 0; j < 320 * 160 / 16; j++)
 			scr[j / (320 / 4) * ww * 4 + j % (320 / 4) * 4 + r27] = 0;
 		CLBlitter_UpdateScreen();
-		wait(1);
+		_game->wait(1);
 	}
 	CLPalette_Send2Screen(_globalPalette, 0, 256);
 	byte *pix = _mainView->_bufferPtr;
 	x = _mainView->_normal._dstLeft;
 	y = _mainView->_normal._dstTop;
 	pix += 640 * 16;
-	scr = _vm->_screenView->_bufferPtr;
+	scr = _game->_vm->_screenView->_bufferPtr;
 	scr += (y + 16) * ww + x;
 	for (int16 i = 0; i < 16; i++) {
 		p = pattern[i];
@@ -856,55 +1035,55 @@ void EdenGame::colimacon(int16 pattern[16]) {
 			scr[j / (320 / 4) * ww * 4 + j % (320 / 4) * 4 + r27] =
 			pix[j / (320 / 4) * 640 * 4 + j % (320 / 4) * 4 + r25];
 		CLBlitter_UpdateScreen();
-		wait(1);
+		_game->wait(1);
 	}
 }
 
-void EdenGame::fadeToBlack(int delay) {
-	CLPalette_GetLastPalette(oldPalette);
+void EdenGraphics::fadeToBlack(int delay) {
+	CLPalette_GetLastPalette(_oldPalette);
 	for (int16 i = 0; i < 6; i++) {
 		for (int16 j = 0; j < 256; j++) {
-			newColor.r = oldPalette[j].r >> i;
-			newColor.g = oldPalette[j].g >> i;
-			newColor.b = oldPalette[j].b >> i;
-			CLPalette_SetRGBColor(newPalette, j, &newColor);
+			_newColor.r = _oldPalette[j].r >> i;
+			_newColor.g = _oldPalette[j].g >> i;
+			_newColor.b = _oldPalette[j].b >> i;
+			CLPalette_SetRGBColor(_newPalette, j, &_newColor);
 		}
-		CLPalette_Send2Screen(newPalette, 0, 256);
-		wait(delay);
+		CLPalette_Send2Screen(_newPalette, 0, 256);
+		_game->wait(delay);
 	}
 }
 
 // Original name: fadetoblack128
-void EdenGame::fadeToBlackLowPalette(int delay) {
-	CLPalette_GetLastPalette(oldPalette);
+void EdenGraphics::fadeToBlackLowPalette(int delay) {
+	CLPalette_GetLastPalette(_oldPalette);
 	for (int16 i = 0; i < 6; i++) {
 		for (int16 j = 0; j < 129; j++) { //CHECKME: Should be 128?
-			newColor.r = oldPalette[j].r >> i;
-			newColor.g = oldPalette[j].g >> i;
-			newColor.b = oldPalette[j].b >> i;
-			CLPalette_SetRGBColor(newPalette, j, &newColor);
+			_newColor.r = _oldPalette[j].r >> i;
+			_newColor.g = _oldPalette[j].g >> i;
+			_newColor.b = _oldPalette[j].b >> i;
+			CLPalette_SetRGBColor(_newPalette, j, &_newColor);
 		}
-		CLPalette_Send2Screen(newPalette, 0, 128);
-		wait(delay);
+		CLPalette_Send2Screen(_newPalette, 0, 128);
+		_game->wait(delay);
 	}
 }
 
 // Original name: fadefromblack128
-void EdenGame::fadeFromBlackLowPalette(int delay) {
+void EdenGraphics::fadeFromBlackLowPalette(int delay) {
 	for (int16 i = 0; i < 6; i++) {
 		for (int16 j = 0; j < 129; j++) { //CHECKME: Should be 128?
-			newColor.r = _globalPalette[j].r >> (5 - i);
-			newColor.g = _globalPalette[j].g >> (5 - i);
-			newColor.b = _globalPalette[j].b >> (5 - i);
-			CLPalette_SetRGBColor(newPalette, j, &newColor);
+			_newColor.r = _globalPalette[j].r >> (5 - i);
+			_newColor.g = _globalPalette[j].g >> (5 - i);
+			_newColor.b = _globalPalette[j].b >> (5 - i);
+			CLPalette_SetRGBColor(_newPalette, j, &_newColor);
 		}
-		CLPalette_Send2Screen(newPalette, 0, 128);
-		wait(delay);
+		CLPalette_Send2Screen(_newPalette, 0, 128);
+		_game->wait(delay);
 	}
 }
 
 // Original name: rectanglenoir32
-void EdenGame::blackRect32() {
+void EdenGraphics::blackRect32() {
 	// blacken 32x32 rectangle
 	int *pix = (int *)_view2Buf;
 	for (int16 i = 0; i < 32; i++) {
@@ -920,24 +1099,24 @@ void EdenGame::blackRect32() {
 	}
 }
 
-void EdenGame::setSrcRect(int16 sx, int16 sy, int16 ex, int16 ey) {
-	rect_src = Common::Rect(sx, sy, ex, ey);
+void EdenGraphics::setSrcRect(int16 sx, int16 sy, int16 ex, int16 ey) {
+	_rect_src = Common::Rect(sx, sy, ex, ey);
 }
 
-void EdenGame::setDestRect(int16 sx, int16 sy, int16 ex, int16 ey) {
-	rect_dst = Common::Rect(sx, sy, ex, ey);
+void EdenGraphics::setDestRect(int16 sx, int16 sy, int16 ex, int16 ey) {
+	_rect_dst = Common::Rect(sx, sy, ex, ey);
 }
 
-void EdenGame::effetpix() {
+void EdenGraphics::effetpix() {
 	uint16 r25, r18, r31, r30;  //TODO: change to xx/yy
 
-	uint16 ww = _vm->_screenView->_pitch;
+	uint16 ww = _game->_vm->_screenView->_pitch;
 	r25 = ww * 80;
 	r18 = 640 * 80;
 	byte *pix = _mainView->_bufferPtr + 16 * 640;
 	int x = _mainView->_normal._dstLeft;
 	int y = _mainView->_normal._dstTop;
-	byte *scr = _vm->_screenView->_bufferPtr;
+	byte *scr = _game->_vm->_screenView->_bufferPtr;
 	scr += (y + 16) * ww + x;
 	int16 r20 = 0x4400;   //TODO
 	int16 r27 = 1;
@@ -954,7 +1133,7 @@ void EdenGame::effetpix() {
 			scr[r31 * ww + r25 + r30] = 0;
 			if (++r26 == 960) {
 				CLBlitter_UpdateScreen();
-				wait(1);
+				_game->wait(1);
 				r26 = 0;
 			}
 		}
@@ -977,33 +1156,32 @@ void EdenGame::effetpix() {
 			scr[r31 * ww + r25 + r30] = p1;
 			if (++r26 == 960) {
 				CLBlitter_UpdateScreen();
-				wait(1);
+				_game->wait(1);
 				r26 = 0;
 			}
 		}
 	} while (r27 != 1);
-	assert(_vm->_screenView->_pitch == 320);
+	assert(_game->_vm->_screenView->_pitch == 320);
 }
 
 ////// film.c
 // Original name: showfilm
-void EdenGame::showMovie(char arg1) {
-	_vm->_video->readHeader();
-	if (_globals->_curVideoNum == 92) {
+void EdenGraphics::showMovie(char arg1) {
+	_video->readHeader();
+	if (_game->_globals->_curVideoNum == 92) {
 		// _hnmContext->_header._unusedFlag2 = 0; CHECKME: Useless?
-		_hnmSoundChannel->setVolumeLeft(0);
-		_hnmSoundChannel->setVolumeRight(0);
+		_game->setVolume(0);
 	}
 
-	if (_vm->_video->getVersion() != 4)
+	if (_video->getVersion() != 4)
 		return;
 
 	bool playing = true;
-	_vm->_video->allocMemory();
-	_hnmView = new View(_vm->_video->_header._width, _vm->_video->_header._height);
+	_video->allocMemory();
+	_hnmView = new View(_video->_header._width, _video->_header._height);
 	_hnmView->setSrcZoomValues(0, 0);
-	_hnmView->setDisplayZoomValues(_vm->_video->_header._width * 2, _vm->_video->_header._height * 2);
-	_hnmView->centerIn(_vm->_screenView);
+	_hnmView->setDisplayZoomValues(_video->_header._width * 2, _video->_header._height * 2);
+	_hnmView->centerIn(_game->_vm->_screenView);
 	_hnmViewBuf = _hnmView->_bufferPtr;
 	if (arg1) {
 		_hnmView->_normal._height = 160;
@@ -1011,57 +1189,65 @@ void EdenGame::showMovie(char arg1) {
 		_hnmView->_normal._dstTop = _mainView->_normal._dstTop + 16;
 		_hnmView->_zoom._dstTop = _mainView->_zoom._dstTop + 32;
 	}
-	_vm->_video->setFinalBuffer(_hnmView->_bufferPtr);
+	_video->setFinalBuffer(_hnmView->_bufferPtr);
 	do {
-		_hnmFrameNum = _vm->_video->getFrameNum();
-		_vm->_video->waitLoop();
-		playing = _vm->_video->nextElement();
-		if (_specialTextMode)
+		_hnmFrameNum = _video->getFrameNum();
+		_video->waitLoop();
+		playing = _video->nextElement();
+		if (_game->getSpecialTextMode())
 			handleHNMSubtitles();
 		else
-			musicspy();
+			_game->musicspy();
 		CLBlitter_CopyView2Screen(_hnmView);
-		assert(_vm->_screenView->_pitch == 320);
-		_vm->pollEvents();
+		assert(_game->_vm->_screenView->_pitch == 320);
+		_game->_vm->pollEvents();
 
 		if (arg1) {
-			if (_vm->isMouseButtonDown()) {
-				if (!_mouseHeld) {
-					_mouseHeld = true;
+			if (_game->_vm->isMouseButtonDown()) {
+				if (!_game->isMouseHeld()) {
+					_game->setMouseHeld();
 					_videoCanceledFlag = true;
 				}
 			}
 			else
-				_mouseHeld = false;
+				_game->setMouseNotHeld();
 		}
 	} while (playing && !_videoCanceledFlag);
 	delete _hnmView;
-	_vm->_video->deallocMemory();
+	_video->deallocMemory();
 }
 
-void EdenGame::playHNM(int16 num) {
+bool EdenGraphics::getShowBlackBars() {
+	return _showBlackBars;
+}
+
+void EdenGraphics::setShowBlackBars(bool value) {
+	_showBlackBars = value;
+}
+
+void EdenGraphics::playHNM(int16 num) {
 	perso_t *perso = nullptr;
 	int16 oldDialogType = -1;
-	_globals->_curVideoNum = num;
+	_game->_globals->_curVideoNum = num;
 	if (num != 2001 && num != 2012 && num != 98 && num != 171) {
-		byte oldMusicType = _globals->_newMusicType;
-		_globals->_newMusicType = MusicType::mtEvent;
-		musique();
-		musicspy();
-		_globals->_newMusicType = oldMusicType;
+		byte oldMusicType = _game->_globals->_newMusicType;
+		_game->_globals->_newMusicType = MusicType::mtEvent;
+		_game->musique();
+		_game->musicspy();
+		_game->_globals->_newMusicType = oldMusicType;
 	}
-	_globals->_videoSubtitleIndex = 1;
-	if (_specialTextMode) {
-		perso = _globals->_characterPtr;
-		oldDialogType = _globals->_dialogType;
-		preloadDialogs(num);
-		fademusica0(1);
-		_musicChannel->stop();
+	_game->_globals->_videoSubtitleIndex = 1;
+	if (_game->getSpecialTextMode()) {
+		perso = _game->_globals->_characterPtr;
+		oldDialogType = _game->_globals->_dialogType;
+		_game->preloadDialogs(num);
+		_game->fademusica0(1);
+		_game->stopMusic();
 	}
 	_showVideoSubtitle = false;
 	_videoCanceledFlag = false;
-	loadHnm(num);
-	_vm->_video->reset();
+	_game->loadHnm(num);
+	_video->reset();
 	if (_needToFade) {
 		fadeToBlack(4);
 		clearScreen();
@@ -1072,29 +1258,80 @@ void EdenGame::playHNM(int16 num) {
 	else
 		showMovie(1);
 	_cursKeepPos = Common::Point(-1, -1);
-	if (_specialTextMode) {
-		_musicFadeFlag = 3;
-		musicspy();
-		_globals->_characterPtr = perso;
-		_globals->_dialogType = oldDialogType;
-		_specialTextMode = false;
+	if (_game->getSpecialTextMode()) {
+		_game->setMusicFade(3);;
+		_game->musicspy();
+		_game->_globals->_characterPtr = perso;
+		_game->_globals->_dialogType = oldDialogType;
+		_game->setSpecialTextMode(false);
 	}
 	if (_videoCanceledFlag)
-		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_globals->_curVideoNum == 167)
-		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_globals->_curVideoNum == 104)
-		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_globals->_curVideoNum == 102)
-		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_globals->_curVideoNum == 77)
-		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_globals->_curVideoNum == 149)
-		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+		_game->_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+	if (_game->_globals->_curVideoNum == 167)
+		_game->_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+	if (_game->_globals->_curVideoNum == 104)
+		_game->_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+	if (_game->_globals->_curVideoNum == 102)
+		_game->_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+	if (_game->_globals->_curVideoNum == 77)
+		_game->_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+	if (_game->_globals->_curVideoNum == 149)
+		_game->_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+}
+
+void EdenGraphics::initGlobals() {
+	_underSubtitlesScreenRect.top = 0;
+	_underSubtitlesScreenRect.left = _subtitlesXScrMargin;
+	_underSubtitlesScreenRect.right = _subtitlesXScrMargin + _subtitlesXWidth - 1;
+	_underSubtitlesScreenRect.bottom = 176 - 1;
+
+	_underSubtitlesBackupRect.top = 0;
+	_underSubtitlesBackupRect.left = _subtitlesXScrMargin;
+	_underSubtitlesBackupRect.right = _subtitlesXScrMargin + _subtitlesXWidth - 1;
+	_underSubtitlesBackupRect.bottom = 60 - 1;	
+}
+
+// Original name: sauvefondbulle
+void EdenGraphics::saveUnderSubtitles(int16 y) {
+	_underSubtitlesScreenRect.top = y - _game->getNumTextLines() * FONT_HEIGHT;
+	_underSubtitlesScreenRect.left = _game->getScrollPos() + _subtitlesXScrMargin;
+	_underSubtitlesScreenRect.right = _game->getScrollPos() + _subtitlesXScrMargin + _subtitlesXWidth - 1;
+	_underSubtitlesScreenRect.bottom = y;
+	_underSubtitlesBackupRect.top = 0;
+	_underSubtitlesBackupRect.bottom = _game->getNumTextLines() * FONT_HEIGHT;
+	CLBlitter_CopyViewRect(getMainView(), _underSubtitlesView, &_underSubtitlesScreenRect, &_underSubtitlesBackupRect);
+	_savedUnderSubtitles = true;
+}
+
+void EdenGraphics::setSavedUnderSubtitles(bool value) {
+	_savedUnderSubtitles = value;
+}
+
+// Original name: restaurefondbulle
+void EdenGraphics::restoreUnderSubtitles() {
+	if (!_savedUnderSubtitles)
+		return;
+	CLBlitter_CopyViewRect(_underSubtitlesView, getMainView(), &_underSubtitlesBackupRect, &_underSubtitlesScreenRect);
+	_savedUnderSubtitles = false;
+}
+
+// Original name: af_subtitlehnm
+void EdenGraphics::displayHNMSubtitle() {
+	byte *src = getSubtitlesViewBuf();
+	byte *dst = getHnmViewBuf() + _subtitlesXScrMargin + (158 - _game->getNumTextLines() * FONT_HEIGHT) * 320;
+	for (int16 y = 0; y < _game->getNumTextLines() * FONT_HEIGHT; y++) {
+		for (int16 x = 0; x < _subtitlesXWidth; x++) {
+			char c = *src++;
+			if (c)
+				*dst = c;
+			dst++;
+		}
+		dst += 320 - _subtitlesXWidth;
+	}
 }
 
 // Original name bullehnm
-void EdenGame::handleHNMSubtitles() {
+void EdenGraphics::handleHNMSubtitles() {
 #define SUB_LINE(start, end) \
 	(start), (end) | 0x8000
 
@@ -1154,32 +1391,34 @@ void EdenGame::handleHNMSubtitles() {
 
 #undef SUB_LINE
 
-	uint16 *frames;
-	perso_t *perso;
-	switch (_globals->_curVideoNum) {
+	uint16 *frames = nullptr;
+	perso_t *perso = nullptr;
+
+	switch (_game->_globals->_curVideoNum) {
 	case 170:
 		frames = kFramesVid170;
-		perso = &_persons[PER_UNKN_156];
 		break;
 	case 83:
 		frames = kFramesVid83;
-		perso = &_persons[PER_MORKUS];
 		break;
 	case 88:
 		frames = kFramesVid88;
-		perso = &_persons[PER_MORKUS];
 		break;
 	case 89:
 		frames = kFramesVid89;
-		perso = &_persons[PER_MORKUS];
 		break;
 	case 94:
 		frames = kFramesVid94;
-		perso = &_persons[PER_MORKUS];
 		break;
 	default:
 		return;
 	}
+
+	perso = _game->personSubtitles();
+
+	assert(perso  != nullptr);
+	assert(frames != nullptr);
+
 	uint16 *frames_start = frames;
 	uint16 frame;
 	while ((frame = *frames++) != 0xFFFF) {
@@ -1194,11 +1433,11 @@ void EdenGame::handleHNMSubtitles() {
 	if (frame & 0x8000)
 		_showVideoSubtitle = false;
 	else {
-		_globals->_videoSubtitleIndex = (frames - frames_start) / 2 + 1;
-		_globals->_characterPtr = perso;
-		_globals->_dialogType = DialogType::dtInspect;
-		int16 num = (perso->_id << 3) | _globals->_dialogType;
-		dialoscansvmas((Dialog *)getElem(_gameDialogs, num));
+		_game->_globals->_videoSubtitleIndex = (frames - frames_start) / 2 + 1;
+		_game->_globals->_characterPtr = perso;
+		_game->_globals->_dialogType = DialogType::dtInspect;
+		int16 num = (perso->_id << 3) | _game->_globals->_dialogType;
+		_game->dialoscansvmas((Dialog *)getElem(_game->getGameDialogs(), num));
 		_showVideoSubtitle = true;
 	}
 	if (_showVideoSubtitle)
