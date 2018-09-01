@@ -258,7 +258,16 @@ void RivenStack::runCredits(uint16 video, uint32 delay, uint32 videoFrameCountOv
 		_vm->doFrame();
 	}
 
-	_vm->setGameEnded();
+	videoPtr->stop();
+	_vm->_cursor->showCursor();
+
+	// Clear the game state
+	_vm->startNewGame();
+
+	// Go to the main menu
+	RivenScriptPtr goToMainMenu = _vm->_scriptMan->createScriptWithCommand(
+			new RivenStackChangeCommand(_vm, kStackAspit, 1, true, true));
+	_vm->_scriptMan->runScript(goToMainMenu, true);
 }
 
 void RivenStack::installCardTimer() {

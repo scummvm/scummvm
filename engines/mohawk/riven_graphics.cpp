@@ -656,6 +656,9 @@ void RivenGraphics::beginCredits() {
 	// Clear the old cache
 	clearCache();
 
+	_creditsImage = kRivenCreditsZeroImage;
+	_creditsPos = 0;
+
 	// Now cache all the credits images
 	for (uint16 i = kRivenCreditsZeroImage; i <= kRivenCreditsLastImage; i++) {
 		MohawkSurface *surface = _bitmapDecoder->decodeImage(_vm->getExtrasResource(ID_TBMP, i));
