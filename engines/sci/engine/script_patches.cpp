@@ -6191,11 +6191,52 @@ static const uint16 qfg4SlidingDownSlopePatch[] = {
 	PATCH_END
 };
 
+// At the inn, there is a path that goes off screen. In our pathfinding
+// algorithm, we move all the pathfinding points so that they are within
+// the visible area. However, two points of the path are outside the
+// screen, so moving them will place them both on top of each other,
+// thus creating an impossible pathfinding area. This makes the
+// pathfinding algorithm ignore the walkable area when the hero moves
+// up the ladder to his room. We therefore move one of the points
+// slightly, so that it is already within the visible screen, so that
+// the walkable polygon is valid, and the pathfinding algorithm can
+// work properly.
+//
+// Applies to: English CD, English floppy, German floppy
+//
+// Fixes bug #10693
+static const uint16 qg4InnPathfindingSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0154),  // pushi x = 340
+	0x39, 0x77,                // pushi y = 119
+	0x38, SIG_UINT16(0x0114),  // pushi x = 276
+	0x39, 0x31,                // pushi y = 49
+	0x38, SIG_UINT16(0x00fc),  // pushi x = 252
+	0x39, 0x30,                // pushi y = 48
+	0x38, SIG_UINT16(0x00a5),  // pushi x = 165
+	0x39, 0x55,                // pushi y = 85
+	0x38, SIG_UINT16(0x00c0),  // pushi x = 192
+	0x39, 0x55,                // pushi y = 85
+	0x38, SIG_UINT16(0x010b),  // pushi x = 267
+	0x39, 0x34,                // pushi y = 52
+	0x38, SIG_UINT16(0x0144),  // pushi x = 324
+	0x39, 0x77,                // pushi y = 119
+	SIG_END
+};
+
+static const uint16 qg4InnPathfindingPatch[] = {
+	PATCH_ADDTOOFFSET(+30),
+	0x38, PATCH_UINT16(0x013f), // pushi x = 319 (was 324)
+	0x39, 0x77,                 // pushi y = 119
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,      sci2VolumeResetPatch },
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
+	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,        sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,        sci2NumSavesPatch2 },
