@@ -36,6 +36,11 @@ int Person::getRandomDelta() const {
 	return _game->getRandomNumber(2) - 1;
 }
 
+void Person::synchronize(Common::Serializer &s) {
+	UrbanWidget::synchronize(s);
+	s.syncAsUint32LE(_hitPoints);
+}
+
 } // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima

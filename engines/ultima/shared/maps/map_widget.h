@@ -74,7 +74,7 @@ public:
 	virtual const char *getClassName() const { return nullptr; }
 
 	/**
-	 * Handles loading and saving games
+	 * Handles loading and saving game data
 	 */
 	virtual void synchronize(Common::Serializer &s);
 

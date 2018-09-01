@@ -78,6 +78,11 @@ public:
 	virtual ~Person() {}
 
 	/**
+	 * Handles loading and saving the map's data
+	 */
+	virtual void synchronize(Common::Serializer &s) override;
+
+	/**
 	 * Talk to an NPC
 	 */
 	virtual void talk() {}
