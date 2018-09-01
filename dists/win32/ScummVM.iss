@@ -190,10 +190,10 @@ Name: ukrainian; MessagesFile: compiler:Languages\Ukrainian.isl
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}" 
 
 [Icons]
-;Optional desktop icon
+; Optional desktop icon
 Name: "{userdesktop}\ScummVM"; Filename: "{app}\scummvm.exe"; Tasks: desktopicon
 
-;Start menu icons
+; Start menu icons
 Name: {group}\{cm:UninstallProgram, ScummVM}; Filename: {uninstallexe}
 Name: {group}\ScummVM; Filename: {app}\scummvm.exe; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex: 0
 Name: {group}\ScummVM (noconsole); Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex: 0; Languages: not german
@@ -206,8 +206,8 @@ Name: {group}\Dokumente; Filename: {app}\Documents; WorkingDir: {app}\Documents;
 [Run]
 Filename: {app}\ScummVM.exe; Flags: nowait skipifdoesntexist postinstall skipifsilent
 
-;Creates a symbolic link for standard save games area, under Windows Vista and higher
-;Filename: {cmd}; Parameters: "/c ""mklink /d ""%userprofile%\Saved Games\ScummVM"" ""%appdata%\ScummVM\Saved games"" "" "; MinVersion: 0, 6.1
+; Creates a symbolic link for standard save games area, under Windows Vista and higher
+; Filename: {cmd}; Parameters: "/c ""mklink /d ""%userprofile%\Saved Games\ScummVM"" ""%appdata%\ScummVM\Saved games"" "" "; MinVersion: 0, 6.1
 
 [UninstallDelete]
 Type: files; Name: {app}\ISTool.url
@@ -218,7 +218,7 @@ Name: "{userappdata}\ScummVM\Documents"; MinVersion: 0, 1
 Name: "{userappdata}\ScummVM\Saved Games"; MinVersion: 0, 1
 
 [Files]
-;AUTHORS and LICENSING
+; AUTHORS and LICENSING
 Source: AUTHORS.txt; DestDir: {app}\Documents; Flags: ignoreversion
 Source: COPYING.txt; DestDir: {app}\Documents; Flags: ignoreversion
 Source: COPYING.BSD.txt; DestDir: {app}\Documents; Flags: ignoreversion
@@ -226,11 +226,11 @@ Source: COPYING.FREEFONT.txt; DestDir: {app}\Documents; Flags: ignoreversion
 Source: COPYING.LGPL.txt; DestDir: {app}\Documents; Flags: ignoreversion
 Source: COPYRIGHT.txt; DestDir: {app}\Documents; Flags: ignoreversion
 
-;NEWS
+; NEWS
 Source: NEWS.txt; DestDir: {app}\Documents; Flags: ignoreversion; Languages: not german
 Source: doc/de/NEUES.txt; DestDir: {app}\Documents; Flags: ignoreversion; Languages: german
 
-;QUICKSTART
+; QUICKSTART
 Source: doc/de/Schnellstart.txt; DestDir: {app}\Documents; Flags: ignoreversion isreadme; Languages: german
 Source: doc/es/InicioRapido.txt; DestDir: {app}\Documents; Flags: ignoreversion isreadme; Languages: spanish
 Source: doc/fr/DemarrageRapide.txt; DestDir: {app}\Documents; Flags: ignoreversion isreadme; Languages: french
@@ -238,7 +238,7 @@ Source: doc/it/GuidaRapida.txt; DestDir: {app}\Documents; Flags: ignoreversion i
 Source: doc/no-nb/HurtigStart.txt; DestDir: {app}\Documents; Flags: ignoreversion isreadme; Languages: norwegian
 Source: doc/se/Snabbstart.txt; DestDir: {app}\Documents; Flags: ignoreversion isreadme; Languages: swedish
 
-;README
+; README
 Source: README.txt; DestDir: {app}\Documents; Flags: ignoreversion isreadme; Languages: not (czech or german or swedish)
 Source: doc/cz/PrectiMe.txt; DestDir: {app}\Documents; Flags: ignoreversion isreadme; Languages: czech
 Source: doc/de/LIESMICH.txt; DestDir: {app}\Documents; Flags: ignoreversion isreadme; Languages: german
@@ -246,11 +246,11 @@ Source: doc/se/LasMig.txt; DestDir: {app}\Documents; Flags: ignoreversion isread
 Source: README-SDL.txt; DestDir: {app}\Documents; Flags: ignoreversion
 Source: scummvm.exe; DestDir: {app}; Flags: ignoreversion
 
-;ScummVM executable and libraries
+; ScummVM executable and libraries
 Source: SDL2.dll; DestDir: {app}; Flags: replacesameversion
-;Source: SDL2_net.dll; DestDir: {app}; Flags: replacesameversion
-;Source: WinSparkle.dll; DestDir: {app}; Flags: replacesameversion
+; Source: SDL2_net.dll; DestDir: {app}; Flags: replacesameversion
+; Source: WinSparkle.dll; DestDir: {app}; Flags: replacesameversion
 
-;Migration script for saved games in Windows NT4 onwards
+; Migration script for saved games in Windows NT4 onwards
 Source: migration.bat; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
 Source: migration.txt; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
