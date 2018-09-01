@@ -191,6 +191,11 @@ void GuestAdditions::sciEngineInitGameHook() {
 	if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && Common::checkGameGUIOption(GAMEOPTION_ENABLE_CENSORING, ConfMan.get("guioptions"))) {
 		_state->variables[VAR_GLOBAL][kGlobalVarPhant2CensorshipFlag] = make_reg(0, ConfMan.getBool("enable_censoring"));
 	}
+
+	if (g_sci->getGameId() == GID_KQ7 && Common::checkGameGUIOption(GAMEOPTION_UPSCALE_VIDEOS, ConfMan.get("guioptions"))) {
+		uint16 value = ConfMan.getBool("enable_video_upscale") ? 32 : 0;
+		_state->variables[VAR_GLOBAL][kGlobalVarKQ7UpscaleVideos] = make_reg(0, value);
+	}
 }
 
 void GuestAdditions::sendSelectorHook(const reg_t sendObj, Selector &selector, reg_t *argp) {

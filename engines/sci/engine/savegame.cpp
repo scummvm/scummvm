@@ -1255,6 +1255,12 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 		g_sci->_gfxMenu->kernelSetAttribute(2, 1, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);	// Game -> Save Game
 		break;
 #ifdef ENABLE_SCI32
+	case GID_KQ7:
+		if (Common::checkGameGUIOption(GAMEOPTION_UPSCALE_VIDEOS, ConfMan.get("guioptions"))) {
+			uint16 value = ConfMan.getBool("enable_video_upscale") ? 32 : 0;
+			s->variables[VAR_GLOBAL][kGlobalVarKQ7UpscaleVideos] = make_reg(0, value);
+		}
+		break;
 	case GID_PHANTASMAGORIA2:
 		if (Common::checkGameGUIOption(GAMEOPTION_ENABLE_CENSORING, ConfMan.get("guioptions"))) {
 			s->variables[VAR_GLOBAL][kGlobalVarPhant2CensorshipFlag] = make_reg(0, ConfMan.getBool("enable_censoring"));

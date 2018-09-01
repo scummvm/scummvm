@@ -512,6 +512,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	// KQ7 - Upscale videos to double their size (The in-game "Full screen" video setting)
+	{
+		GAMEOPTION_UPSCALE_VIDEOS,
+	{
+		_s("Upscale videos"),
+		_s("Upscale videos to double their size"),
+		"enable_video_upscale",
+		true
+	}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

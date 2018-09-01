@@ -158,6 +158,7 @@ enum GlobalVar {
 	kGlobalVarGK1Music2            = 103, // 0 to 127
 	kGlobalVarRamaCatalogFile      = 130,
 	kGlobalVarLSL6HiresGameFlags   = 137,
+	kGlobalVarKQ7UpscaleVideos     = 160,
 	kGlobalVarGK1NarratorMode      = 166, // 0 for text, 1 for speech
 	kGlobalVarRamaMusicVolume      = 176, // 0 to 16
 	kGlobalVarPhant1MusicVolume    = 187, // 0 to 15
