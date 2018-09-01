@@ -108,7 +108,7 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const override {
-		if (f == kSupportsListSaves || f == kSimpleSavesNames) {
+		if (f == kSupportsListSaves || f == kSimpleSavesNames || f == kSupportsLoadingDuringStartup) {
 			return true;
 		}
 

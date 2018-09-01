@@ -294,7 +294,11 @@ Common::Error MutationOfJBEngine::run() {
 
 	setupCursor();
 
-	_game->changeScene(13, false); // Initial scene.
+	if (ConfMan.hasKey("save_slot")) {
+		loadGameState(ConfMan.getInt("save_slot"));
+	} else {
+		_game->changeScene(13, false); // Initial scene.
+	}
 
 	while (!shouldQuit()) {
 		Common::Event event;
