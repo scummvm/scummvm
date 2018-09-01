@@ -93,7 +93,7 @@ public:
 	/**
 	 * Handles loading and saving games
 	 */
-	virtual void synchronize(Common::Serializer &s);
+	virtual void synchronize(Common::Serializer &s) override;
 };
 
 } // End of namespace Widgets
