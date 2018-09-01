@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-08-30 22:51+0200\n"
+"POT-Creation-Date: 2018-09-01 12:15+0200\n"
 "PO-Revision-Date: 2018-08-28 15:36+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -1870,7 +1870,7 @@ msgstr "Visszatérés az indítóba"
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:163
 #: engines/mohawk/myst.cpp:954 engines/mohawk/riven.cpp:672
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
-#: engines/sci/engine/guest_additions.cpp:660 engines/sci/engine/kfile.cpp:1054
+#: engines/sci/engine/guest_additions.cpp:665 engines/sci/engine/kfile.cpp:1054
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3340
@@ -1893,7 +1893,7 @@ msgstr "Játék mentése:"
 #: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:954
 #: engines/mohawk/riven.cpp:672 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
-#: engines/sci/engine/guest_additions.cpp:661 engines/sci/engine/kfile.cpp:1054
+#: engines/sci/engine/guest_additions.cpp:666 engines/sci/engine/kfile.cpp:1054
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3340
@@ -3009,7 +3009,7 @@ msgstr ""
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:663 engines/sci/engine/kfile.cpp:1173
+#: engines/sci/engine/guest_additions.cpp:668 engines/sci/engine/kfile.cpp:1173
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3434
@@ -3024,7 +3024,7 @@ msgstr "Játékmenet visszaállítása:"
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:664 engines/sci/engine/kfile.cpp:1173
+#: engines/sci/engine/guest_additions.cpp:669 engines/sci/engine/kfile.cpp:1173
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3434
@@ -3722,7 +3722,15 @@ msgstr "Tartalmi cenzúra engedélyezése"
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Engedélyezze a játék beépített opcionális tartalmi cenzúrázását"
 
-#: engines/sci/detection.cpp:839 engines/sci/engine/kfile.cpp:481
+#: engines/sci/detection.cpp:519
+msgid "Upscale videos"
+msgstr ""
+
+#: engines/sci/detection.cpp:520
+msgid "Upscale videos to double their size"
+msgstr ""
+
+#: engines/sci/detection.cpp:849 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
 msgstr "(Automentés)"
 
@@ -3746,16 +3754,16 @@ msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
 "A játék súgófájljának megnyitásához külsõ megjelenítõt kell használnia: %s"
 
-#: engines/sci/engine/savegame.cpp:1294
+#: engines/sci/engine/savegame.cpp:1300
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr "A mentett játék formátuma elavult, nem lehet betölteni"
 
-#: engines/sci/engine/savegame.cpp:1296
+#: engines/sci/engine/savegame.cpp:1302
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "A mentés verziója %d, a maximálisan támogatott %0d"
 
-#: engines/sci/engine/savegame.cpp:1307
+#: engines/sci/engine/savegame.cpp:1313
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
