@@ -237,7 +237,7 @@ void RivenStack::runCredits(uint16 video, uint32 delay, uint32 videoFrameCountOv
 		frameCount = videoPtr->getFrameCount();
 	}
 
-	while (!_vm->hasGameEnded() && _vm->_gfx->getCurCreditsImage() <= kRivenCreditsLastImage) {
+	while (!_vm->hasGameEnded() && !videoPtr->endOfVideo()) {
 		if (videoPtr->getCurFrame() >= frameCount - 1) {
 			if (nextCreditsFrameStart == 0) {
 				videoPtr->disable();
@@ -258,21 +258,6 @@ void RivenStack::runCredits(uint16 video, uint32 delay, uint32 videoFrameCountOv
 		_vm->doFrame();
 	}
 
-	// Let the last frame of credits keep scrolling till black
-	uint currFrameTime = _vm->getTotalPlayTime();
-	nextCreditsFrameStart = currFrameTime + 1000 / 60;
-	uint endFrameTime = currFrameTime + 8000; // 8 seconds
-	uint sleepTime = 0;
-
-	while(currFrameTime < endFrameTime) {
-		if (sleepTime > 0)
-			_vm->delay(sleepTime);
-		nextCreditsFrameStart += 1000 / 60;
-		_vm->_gfx->updateCredits();
-		_vm->doFrame();
-		currFrameTime = _vm->getTotalPlayTime();
-		sleepTime = nextCreditsFrameStart - currFrameTime;
-	}
 	_vm->setGameEnded();
 }
 
