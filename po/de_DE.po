@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-09-01 12:15+0200\n"
-"PO-Revision-Date: 2018-08-29 06:08+0000\n"
+"PO-Revision-Date: 2018-09-01 10:58+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3784,11 +3784,11 @@ msgstr "Aktiviere die im Spiel eingebaute optionale Zensur des Inhalts"
 
 #: engines/sci/detection.cpp:519
 msgid "Upscale videos"
-msgstr ""
+msgstr "Videos hochskalieren"
 
 #: engines/sci/detection.cpp:520
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "Videos auf das Doppelte ihrer Größe skalieren"
 
 #: engines/sci/detection.cpp:849 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
