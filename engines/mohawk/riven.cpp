@@ -94,6 +94,12 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	SearchMan.addSubDirectoryMatching(gameDataDir, "program");
 }
 
+void MohawkEngine_Riven::restart() {
+	startNewGame();
+	_menuTumbnail.reset();
+	goToMainMenu(false);
+}
+
 MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _card;
 	delete _stack;
@@ -334,9 +340,14 @@ void MohawkEngine_Riven::processInput() {
 	}
 }
 
-void MohawkEngine_Riven::goToMainMenu() {
-	_menuSavedStack = _stack->getId();
-	_menuSavedCard = _card->getId();
+void MohawkEngine_Riven::goToMainMenu(bool allowResume) {
+	if (allowResume) {
+		_menuSavedStack = _stack->getId();
+		_menuSavedCard = _card->getId();
+	} else {
+		_menuSavedStack = -1;
+		_menuSavedCard = -1;
+	}
 
 	// If we are already in menu, do not call again
 	if (_menuSavedStack == kStackAspit && _menuSavedCard == 1) {
