@@ -25,13 +25,14 @@ DisableStartupPrompt=true
 AppendDefaultDirName=false
 SolidCompression=true
 DirExistsWarning=no
-SetupIconFile=graphics\scummvm-install.ico
+SetupIconFile=graphics\scummvm-install.icoUninstallDisplayIcon={app}\scummvm.exe
 WizardImageFile=graphics\left.bmp
 WizardSmallImageFile=graphics\scummvm-install.bmp
 ShowLanguageDialog=yes
 LanguageDetectionMethod=uilanguage
 PrivilegesRequired=none
 DisableWelcomePage=False
+
 
 ; This privilege escalation code comes from
 ; https://stackoverflow.com/a/35435534/252087
