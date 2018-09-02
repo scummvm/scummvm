@@ -90,7 +90,7 @@ const char *const SRC_DIRECTION_NAMES[4] = { "West", "East", "North", "South" };
 const char *const SRC_DUNGEON_MOVES[4] = { "Turn left", "Turn right", "Forward", "Turn around" };
 
 const char *const SRC_LOCATION_NAMES[LOCATION_COUNT] = {
-	"Britian",
+	"Britain",
 	"Moon",
 	"Fawn",
 	"Paws",
@@ -541,7 +541,7 @@ const char *const SRC_DUNGEON_MONSTER_NAMES[25] = {
 const char *const SRC_BLOCKED = "Blocked!";
 const char *const SRC_ENTER_QUESTION = "Enter?";
 const char *const SRC_ENTERING = "Entering...";
-const char *const SRC_THE_CITY_OF = "The city of ";
+const char *const SRC_THE_CITY_OF = "The city of";
 const char *const SRC_DUNGEON_LEVEL = " Level    ";
 const char *const SRC_PASS = "Pass";
 const char *const SRC_HUH = "Huh?";
