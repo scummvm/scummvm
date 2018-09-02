@@ -61,7 +61,8 @@ bool U1MapTile::isGround() const {
 	if (dynamic_cast<MapCityCastle *>(_map) && (_tileId == 1 || _tileId >= 51))
 		return true;
 	else if (dynamic_cast<MapOverworld *>(_map))
-		return _tileId != 0;
+		// Not water or mountains
+		return _tileId != 0 && _tileId != 3;
 	return false;
 }
 

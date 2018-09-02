@@ -54,7 +54,7 @@ Shared::Maps::MapWidget::CanMove OverworldWidget::canMoveTo(const Point &destPos
 	getMap()->getTileAt(destPos, &tile);
 
 	// Default mobility for most monsters and transports is overland only
-	return tile.isGrass() || tile.isWoods() ? Shared::Maps::MapWidget::YES : Shared::Maps::MapWidget::NO;
+	return tile.isGround() ? Shared::Maps::MapWidget::YES : Shared::Maps::MapWidget::NO;
 }
 
 
