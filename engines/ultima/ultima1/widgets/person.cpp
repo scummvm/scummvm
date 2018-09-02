@@ -38,7 +38,7 @@ int Person::getRandomDelta() const {
 
 void Person::synchronize(Common::Serializer &s) {
 	UrbanWidget::synchronize(s);
-	s.syncAsUint32LE(_hitPoints);
+	Creature::synchronize(s);
 }
 
 } // End of namespace Widgets

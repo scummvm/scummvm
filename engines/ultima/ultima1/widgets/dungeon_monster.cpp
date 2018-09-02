@@ -32,6 +32,12 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+void DungeonMonster::synchronize(Common::Serializer &s) {
+	DungeonWidget::synchronize(s);
+	Creature::synchronize(s);
+	s.syncAsUint16LE(_monsterId);
+}
+
 bool DungeonMonster::isBlockingView() const {
 	return _monsterId != MONSTER_INVISIBLE_SEEKER && _monsterId != MONSTER_MIMIC
 		&& _monsterId != MONSTER_GELATINOUS_CUBE;
