@@ -43,9 +43,9 @@ OverworldMonster::OverworldMonster(Shared::Game *game, Shared::Maps::MapBase *ma
 
 void OverworldMonster::synchronize(Common::Serializer &s) {
 	OverworldWidget::synchronize(s);
+	Creature::synchronize(s);
 	s.syncAsUint16LE(_monsterId);
 	s.syncAsUint16LE(_attackStrength);
-	s.syncAsSint16LE(_hitPoints);
 }
 
 uint OverworldMonster::attackDistance() const {

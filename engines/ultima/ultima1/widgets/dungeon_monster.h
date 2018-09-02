@@ -79,6 +79,11 @@ public:
 	virtual bool isBlockingView() const override;
 
 	/**
+	 * Handles loading and saving games
+	 */
+	virtual void synchronize(Common::Serializer &s) override;
+
+	/**
 	 * Draw a monster
 	 */
 	virtual void draw(Shared::DungeonSurface &s, uint distance) override;

@@ -27,6 +27,10 @@ namespace Ultima {
 namespace Shared {
 namespace Maps {
 
+void Creature::synchronize(Common::Serializer &s) {
+	s.syncAsSint32LE(_hitPoints);
+}
+
 void Creature::update(bool isPreUpdate) {
 	if (isPreUpdate) {
 		// Check whether creature can attack
