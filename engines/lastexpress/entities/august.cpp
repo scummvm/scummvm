@@ -453,14 +453,14 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 
 		if (parameters->param1) {
 			Common::String sequence = Common::String::format("%s%s", (char *)&parameters->seq1, "Gc");
-			assert(sequence.size() <= 13);
+			assert(sequence.size() <= 12); // .size() does not count terminating zero
 
 			strcpy((char *)&parameters->seq2, sequence.c_str());
 
 			getObjects()->update(kObjectCompartment3, kEntityPlayer, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
 		} else {
 			Common::String sequence = Common::String::format("%s%s", (char *)&parameters->seq1, "Ec");
-			assert(sequence.size() <= 13);
+			assert(sequence.size() <= 12);
 
 			strcpy((char *)&parameters->seq2, sequence.c_str());
 		}
@@ -477,10 +477,12 @@ IMPLEMENT_FUNCTION_I(20, August, function20, bool)
 		case 1: {
 			getData()->location = kLocationOutsideCompartment;
 
-			Common::String sequence2 = Common::String::format("%s%s", (char *)&parameters->seq2, "Pc");
-			strcpy((char *)&parameters->seq2, (char *)&parameters->seq1);
+			Common::String sequence2 = Common::String::format("%s%s", (char *)&parameters->seq1, "Pc");
+			assert(sequence2.size() <= 12);
 
-			getEntities()->drawSequenceLeft(kEntityAugust, sequence2.c_str());
+			strcpy((char *)&parameters->seq2, sequence2.c_str());
+
+			getEntities()->drawSequenceLeft(kEntityAugust, (char *)&parameters->seq2);
 			getEntities()->enterCompartment(kEntityAugust, kObjectCompartment3, true);
 
 			if (getProgress().chapter != kChapter3 || getState()->time >= kTime1998000) {
@@ -885,7 +887,7 @@ label_callback_9:
 				if (params->param8 >= 3) {
 					getObjects()->update(kObjectCompartment1, kEntityPlayer, getObjects()->get(kObjectCompartment1).status, kCursorHandKnock, kCursorHand);
 					callbackAction();
-					break;
+					return;
 				}
 
 				params->param6 = 0;
@@ -1014,7 +1016,7 @@ label_callback_9:
 		case 6:
 		case 7:
 			getObjects()->update(kObjectCompartment1, kEntityAugust, getObjects()->get(kObjectCompartment1).status, params->param4 ? kCursorNormal : kCursorTalk, kCursorHand);
-			ENTITY_PARAM(1, 2) = 0;
+			CURRENT_PARAM(1, 2) = 0;
 			break;
 
 		case 8:

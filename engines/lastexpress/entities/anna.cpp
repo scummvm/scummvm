@@ -3864,7 +3864,7 @@ IMPLEMENT_FUNCTION(78, Anna, kidnapped)
 
 		case 2:
 			getAction()->playAnimation(kEventKronosHostageAnna);
-			getScenes()->loadSceneFromPosition(kCarRestaurant, 61);
+			getScenes()->loadSceneFromPosition(kCarRestaurant, 61, 1);
 			getSound()->playSound(kEntityAnna, "Mus024", kFlagDefault);
 			setup_waiting();
 			break;

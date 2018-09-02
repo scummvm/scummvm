@@ -1792,8 +1792,8 @@ IMPLEMENT_FUNCTION(44, Alexei, goToPlatform)
 				if (getEntities()->isPlayerPosition(kCarGreenSleeping, 62))
 					getScenes()->loadSceneFromPosition(kCarGreenSleeping, 72);
 
-				setup_returnCompartment4();
 			}
+			setup_returnCompartment4();
 		}
 		break;
 
