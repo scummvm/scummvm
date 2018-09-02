@@ -357,6 +357,16 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_time = new Time(this);
 
+	// Try to load the SUBTITLES.MIX first, before Startup.MIX
+	// allows overriding any identically named resources (such as the original font files and as a bonus also the TRE files for the UI and dialogue menu)
+	_subtitles = new Subtitles(this);
+	r = openArchive("SUBTITLES.MIX");
+	if (!r) {
+		_subtitles->setSubtitlesSystemInactive(true); // no subtitles support
+	}
+	_subtitles->init();
+
+
 	r = openArchive("STARTUP.MIX");
 	if (!r)
 		return false;
@@ -503,13 +513,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_mainFont = new Font(this);
 	_mainFont->open("KIA6PT.FON", 640, 480, -1, 0, 0x252D);
 	_mainFont->setSpacing(1, 0);
-
-	_subtitles = new Subtitles(this);
-	r = openArchive("SUBTITLES.MIX");
-	if (!r) {
-		_subtitles->setSubtitlesSystemInactive(true); // no subtitles support
-	}
-	_subtitles->init();
 
 	for (int i = 0; i != 43; ++i) {
 		Shape *shape = new Shape(this);
