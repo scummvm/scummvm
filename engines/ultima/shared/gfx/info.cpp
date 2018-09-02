@@ -36,11 +36,11 @@ END_MESSAGE_MAP()
 bool Info::InfoMsg(CInfoMsg &msg) {
 	// Add new text
 	if (_lines.empty())
-		_lines.push_back("");
+		_lines.push_back(" ");
 	_lines.back() += msg._text;
 
 	if (msg._newLine)
-		_lines.push_back("");
+		_lines.push_back(" ");
 
 	return true;
 }
@@ -50,9 +50,9 @@ void Info::draw() {
 
 	// If the bottom line doesn't yet have a prompt, add it in
 	if (_lines.empty())
-		_lines.push_back("");
-	if (_lines.back().empty()) {
-		_lines.back() += PROMPT_CHAR;
+		_lines.push_back(" ");
+	if (_lines.back() == " ") {
+		_lines.back() = PROMPT_CHAR;
 		
 		Gfx::TextCursor *textCursor = game->_textCursor;
 		textCursor->setVisible(true);
