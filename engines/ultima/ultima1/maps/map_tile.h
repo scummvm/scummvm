@@ -29,6 +29,10 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Maps {
 
+enum TileId {
+	TILE_WATER = 0, TILE_GRASS = 1, TILE_WOODS = 2, TILE_MOUNTAINS = 3
+};
+
 class MapBase;
 class Ultima1Map;
 
