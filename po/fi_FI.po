@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-09-01 12:15+0200\n"
-"PO-Revision-Date: 2018-08-29 17:46+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"PO-Revision-Date: 2018-09-02 19:37+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3729,11 +3729,11 @@ msgstr "Pelin sisäänrakennettu valinnainen sisällön sensurointi"
 
 #: engines/sci/detection.cpp:519
 msgid "Upscale videos"
-msgstr ""
+msgstr "Skaalaa videot"
 
 #: engines/sci/detection.cpp:520
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "Skaalaa videot tuplakokoisiksi"
 
 #: engines/sci/detection.cpp:849 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
