@@ -34,27 +34,27 @@ void U1MapTile::clear() {
 }
 
 bool U1MapTile::isWater() const {
-	return dynamic_cast<MapOverworld *>(_map) && _tileId == 0;
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == TILE_WATER;
 }
 
 bool U1MapTile::isGrass() const {
-	return dynamic_cast<MapOverworld *>(_map) && _tileId == 1;
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == TILE_GRASS;
 }
 
 bool U1MapTile::isWoods() const {
-	return dynamic_cast<MapOverworld *>(_map) && _tileId == 2;
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == TILE_WOODS;
 }
 
 bool U1MapTile::isOriginalWater() const {
-	return dynamic_cast<MapOverworld *>(_map) && _tileId == 0;
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == TILE_WATER;
 }
 
 bool U1MapTile::isOriginalGrass() const {
-	return dynamic_cast<MapOverworld *>(_map) && _tileId == 1;
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == TILE_GRASS;
 }
 
 bool U1MapTile::isOriginalWoods() const {
-	return dynamic_cast<MapOverworld *>(_map) && _tileId == 2;
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == TILE_WOODS;
 }
 
 bool U1MapTile::isGround() const {
@@ -62,7 +62,7 @@ bool U1MapTile::isGround() const {
 		return true;
 	else if (dynamic_cast<MapOverworld *>(_map))
 		// Not water or mountains
-		return _tileId != 0 && _tileId != 3;
+		return _tileId != TILE_WATER && _tileId != TILE_MOUNTAINS;
 	return false;
 }
 
