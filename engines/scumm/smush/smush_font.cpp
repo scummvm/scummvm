@@ -191,8 +191,11 @@ void SmushFont::drawSubstring(const char *str, byte *buffer, int dst_width, int 
 	// to have to check for it.
 	if (x < 0)
 		x = 0;
+	
+	//for (int i = 0; str[i] != 0; i++) {
 
-	for (int i = 0; str[i] != 0; i++) {
+	int len = strlen(str);
+	for (int i = len; i >= 0; i--) {
 		if ((byte)str[i] >= 0x80 && _vm->_useCJKMode) {
 			x += draw2byte(buffer, dst_width, x, y, (byte)str[i] + 256 * (byte)str[i+1]);
 			i++;
@@ -207,6 +210,12 @@ void SmushFont::drawSubstring(const char *str, byte *buffer, int dst_width, int 
 void SmushFont::drawString(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, bool center) {
 	debugC(DEBUG_SMUSH, "SmushFont::drawString(%s, %d, %d, %d)", str, x, y, center);
 
+
+	//char rev[384] = {0};
+	//int len = strlen(str);
+	//for (int l = 0; l < len; l++) {
+	//	rev[l] = str[len - l - 1];
+	//}
 	while (str) {
 		char line[256];
 		const char *pos = strchr(str, '\n');

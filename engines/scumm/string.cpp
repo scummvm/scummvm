@@ -235,8 +235,10 @@ void ScummEngine_v7::addSubtitleToQueue(const byte *text, const Common::Point &p
 		assert(_subtitleQueuePos < ARRAYSIZE(_subtitleQueue));
 		SubtitleText *st = &_subtitleQueue[_subtitleQueuePos];
 		int i = 0;
+
+		int len = strlen((const char *)text);
 		while (1) {
-			st->text[i] = text[i];
+			st->text[i] = text[len - i - 1];
 			if (!text[i])
 				break;
 			++i;
@@ -1241,7 +1243,20 @@ int ScummEngine::convertNameMessage(byte *dst, int dstSize, int var) {
 	if (num) {
 		const byte *ptr = getObjOrActorName(num);
 		if (ptr) {
-			return convertMessageToString(ptr, dst, dstSize);
+			int retval = convertMessageToString(ptr, dst, dstSize);
+
+			if (_game.version >= 7 && (_language == Common::HE_ISR || true)) {
+				byte rev[384] = {0};
+				int lens = strlen((const char *)dst);
+
+				for (int l = 0; l < lens; l++) {
+					rev[l] = dst[lens - l - 1];
+				}
+				rev[lens] = '\0';
+				strcpy((char *)dst, (const char *)rev);
+			}
+
+			return retval;
 		}
 	}
 	return 0;
@@ -1269,7 +1284,19 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 	if (var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
-			return convertMessageToString(ptr, dst, dstSize);
+			int retval = convertMessageToString(ptr, dst, dstSize);
+
+			if (_game.version >= 7 && (_language == Common::HE_ISR || true)) {
+				byte rev[384] = {0};
+				int lens = strlen((const char *)dst);
+
+				for (int l = 0; l < lens; l++) {
+					rev[l] = dst[lens - l - 1];
+				}
+				rev[lens] = '\0';
+				strcpy((char *)dst, (const char *)rev);
+			}
+			return retval;
 		}
 	}
 	return 0;
@@ -1569,6 +1596,16 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 	}
 
 	if (found != NULL) {
+		//char rev[384] = {0};
+		//strcpy(rev, _languageBuffer + found->offset);
+		//int len = strlen(rev);
+		//for (int l = 0; l < len; l++) {
+		//	trans_buff[l] = rev[len - l - 1];
+		//}
+		//trans_buff[len] = '\0';
+
+		// OR
+
 		strcpy((char *)trans_buff, _languageBuffer + found->offset);
 
 		if ((_game.id == GID_DIG) && !(_game.features & GF_DEMO)) {
