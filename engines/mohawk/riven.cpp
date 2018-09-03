@@ -795,7 +795,8 @@ bool MohawkEngine_Riven::canLoadGameStateCurrently() {
 }
 
 bool MohawkEngine_Riven::canSaveGameStateCurrently() {
-	return canLoadGameStateCurrently();
+	return canLoadGameStateCurrently() && 
+	       !(_stack->getId() == kStackAspit && _card->getId() == 1);
 }
 
 bool MohawkEngine_Riven::hasGameEnded() const {
