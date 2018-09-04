@@ -324,6 +324,7 @@ static const uint16 sig_uninitread_sq1_1[] = {
 const SciWorkaroundEntry uninitializedReadForParamWorkarounds[] = {
 	{ GID_HOYLE5,         -1,    15, -1,               "Hand", "add",                             NULL,     1,     1,{ WORKAROUND_FAKE,   0 } }, // When the game adds cards to your hand in any mini-game
 	{ GID_HOYLE5,        700,   730,  0,                 NULL, "runningSuit",                     NULL,     2,     2,{ WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
+	{ GID_HOYLE5,       1100,    22, -1,           "HandPile", "show",                            NULL,     1,     1,{ WORKAROUND_FAKE,   0 } }, // when showing money piles in Poker
 	{ GID_PHANTASMAGORIA2,-1, 64926,  0,              "Thumb", "action",                          NULL,     1,     1,{ WORKAROUND_FAKE,   0 } }, // When dragging one of the volume sliders and releasing the mouse button over the +/- buttons
 	{ GID_PHANTASMAGORIA2,-1, 63019,  0,     "WynDocTextView", "cue",                             NULL,     2,     2,{ WORKAROUND_FAKE,   0 } }, // When dragging the slider next to an e-mail message
 	{ GID_SHIVERS,        -1, 64918,  0,                "Str", "strip",                           NULL,     1,     1,{ WORKAROUND_FAKE,   0 } }, // When starting a new game and entering a name
@@ -389,6 +390,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,        400,   400,  1,            "GinHand", "calcRuns",                        NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // when starting Gin
 	{ GID_HOYLE5,        700,   700,  1,         "BridgeHand", "calcQTS",                         NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
 	{ GID_HOYLE5,        700,   747,  0,   "LeadReturn_Trump", "think",                           NULL,    17,    17, { WORKAROUND_FAKE,   0 } }, // when an opponent is playing in Bridge
+	{ GID_HOYLE5,       1100,    18,  0,               "Tray", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when playing Poker
 	{ GID_HOYLE5,       1100,  1100,  0,         "anteButton", "handleEvent",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when exiting Poker
 	{ GID_HOYLE5,       6029,  6029,  1,        "ControlIcon", "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // Solitaire: when changing any slider in the Card Flip mini-game's options window
 	{ GID_HOYLE5,         -1,  6000,  1,              "sHand", "handleEvent",                     NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // Solitaire: when clicking on an empty card base in any game
