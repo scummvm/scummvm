@@ -169,7 +169,7 @@ void GuestAdditions::writeVarHook(const int type, const int index, const reg_t v
 				// WORKAROUND: Global 899 contains the response time value,
 				// which may have values between 1 and 15. There is a script
 				// bug when loading values from game.opt, where this variable
-				// may be incorrectly set to 0. This makes the opponent freezetat
+				// may be incorrectly set to 0. This makes the opponent freeze
 				// while playing Backgammon and Bridge. Fix this case here, by
 				// setting the correct minimum value, 1.
 				// TODO: Either make this a script patch, or find out if it's
