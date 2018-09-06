@@ -212,7 +212,7 @@ uint8 Game::colorFromString(const char *colorStr) {
 		uint8 color;
 	} colors[] = {
 		{"white", WHITE},
-		{"dakrgray", DARKGRAY},
+		{"darkgray", DARKGRAY},
 		{"lightgray", LIGHTGRAY},
 		{"green", GREEN},
 		{"orange", ORANGE},

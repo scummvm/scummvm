@@ -50,8 +50,6 @@ enum {
  * An interactable scene changer with no visual representation.
  */
 struct Door : public Common::Serializable {
-	virtual ~Door() {}
-
 	/**
 	 * Door name (NM register).
 	 *

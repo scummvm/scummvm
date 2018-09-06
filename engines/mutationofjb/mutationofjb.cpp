@@ -141,6 +141,8 @@ bool MutationOfJBEngine::canLoadGameStateCurrently() {
 Common::Error MutationOfJBEngine::loadGameState(int slot) {
 	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
 	Common::InSaveFile *const saveFile = g_system->getSavefileManager()->openForLoading(saveName);
+	if (!saveFile)
+		return Common::kReadingFailed;
 
 	Common::Serializer sz(saveFile, nullptr);
 
@@ -162,6 +164,8 @@ bool MutationOfJBEngine::canSaveGameStateCurrently() {
 Common::Error MutationOfJBEngine::saveGameState(int slot, const Common::String &desc) {
 	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
 	Common::OutSaveFile *const saveFile = g_system->getSavefileManager()->openForSaving(saveName);
+	if (!saveFile)
+		return Common::kWritingFailed;
 
 	Common::Serializer sz(nullptr, saveFile);
 
@@ -295,7 +299,9 @@ Common::Error MutationOfJBEngine::run() {
 	setupCursor();
 
 	if (ConfMan.hasKey("save_slot")) {
-		loadGameState(ConfMan.getInt("save_slot"));
+		const Common::Error err = loadGameState(ConfMan.getInt("save_slot"));
+		if (err.getCode() != Common::kNoError)
+			return err;
 	} else {
 		_game->changeScene(13, false); // Initial scene.
 	}
