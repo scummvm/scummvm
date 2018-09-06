@@ -20,25 +20,54 @@
  *
  */
 
-#ifndef MUTATIONOFJB_IMAGEWIDGET_H
-#define MUTATIONOFJB_IMAGEWIDGET_H
+#include "mutationofjb/guiscreen.h"
 
 #include "mutationofjb/widgets/widget.h"
-#include "graphics/surface.h"
+
+#include "graphics/screen.h"
 
 namespace MutationOfJB {
 
-class ImageWidget : public Widget {
-public:
-	ImageWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &image);
+GuiScreen::GuiScreen(Game &game, Graphics::Screen *screen)
+	: _game(game),
+	  _screen(screen) {}
 
-protected:
-	virtual void draw(Graphics::ManagedSurface &surface) override;
-
-private:
-	Graphics::Surface _image;
-};
-
+GuiScreen::~GuiScreen() {
+	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
+		delete *it;
+	}
 }
 
-#endif
+Game &GuiScreen::getGame() {
+	return _game;
+}
+
+void GuiScreen::markDirty() {
+	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
+		if ((*it)->isVisible()) {
+			(*it)->markDirty();
+		}
+	}
+}
+
+void GuiScreen::handleEvent(const Common::Event &event) {
+	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
+		if ((*it)->isVisible()) {
+			(*it)->handleEvent(event);
+		}
+	}
+}
+
+void GuiScreen::update() {
+	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
+		if ((*it)->isVisible()) {
+			(*it)->update(*_screen);
+		}
+	}
+}
+
+void GuiScreen::addWidget(Widget *widget) {
+	_widgets.push_back(widget);
+}
+
+}

@@ -23,12 +23,16 @@
 #ifndef MUTATIONOFJB_GUI_H
 #define MUTATIONOFJB_GUI_H
 
+#include "mutationofjb/inventory.h"
+#include "mutationofjb/widgets/buttonwidget.h"
+#include "mutationofjb/widgets/inventorywidget.h"
+#include "mutationofjb/guiscreen.h"
+
 #include "common/array.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+
 #include "graphics/surface.h"
-#include "mutationofjb/inventory.h"
-#include "mutationofjb/widgets/buttonwidget.h"
 
 namespace Common {
 struct Event;
@@ -45,44 +49,34 @@ class Widget;
 class InventoryWidget;
 class ConversationWidget;
 
-class Gui : public InventoryObserver, public ButtonWidgetCallback {
+class GameScreen : public GuiScreen, public InventoryObserver, public ButtonWidgetCallback, public InventoryWidgetCallback {
 public:
-	typedef Common::HashMap<Common::String, int> InventoryMap;
-
 	friend class InventoryAnimationDecoderCallback;
 	friend class HudAnimationDecoderCallback;
 
-	Gui(Game &game, Graphics::Screen *screen);
-	~Gui();
-	Game &getGame();
+	GameScreen(Game &game, Graphics::Screen *screen);
+	~GameScreen();
 
 	bool init();
-	void update();
-
-	void markDirty();
-	void handleEvent(const Common::Event &event);
 
 	virtual void onInventoryChanged() override;
 	virtual void onButtonClicked(ButtonWidget *) override;
+	virtual void onInventoryItemHovered(InventoryWidget *widget, int posInWidget) override;
+	virtual void onInventoryItemClicked(InventoryWidget *widget, int posInWidget) override;
 
 	ConversationWidget &getConversationWidget();
 
 private:
 	bool loadInventoryGfx();
 	bool loadHudGfx();
-	bool loadInventoryList();
 	void drawInventoryItem(const Common::String &item, int pos);
 	void drawInventory();
 
-	Game &_game;
-	Graphics::Screen *_screen;
-	InventoryMap _inventoryItems;
 	Common::Array<Graphics::Surface> _inventorySurfaces;
 	Common::Array<Graphics::Surface> _hudSurfaces;
 
 	InventoryWidget *_inventoryWidget;
 	ConversationWidget *_conversationWidget;
-	Common::Array<Widget *> _widgets;
 };
 
 }

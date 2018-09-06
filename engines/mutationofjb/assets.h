@@ -25,6 +25,7 @@
 
 #include "mutationofjb/font.h"
 #include "mutationofjb/conversationlinelist.h"
+#include "mutationofjb/inventoryitemdefinitionlist.h"
 
 namespace MutationOfJB {
 
@@ -39,6 +40,7 @@ public:
 
 	ConversationLineList &getToSayList();
 	ConversationLineList &getResponseList();
+	InventoryItemDefinitionList &getInventoryItemDefList();
 
 private:
 	Game &_game;
@@ -46,6 +48,7 @@ private:
 	SpeechFont _speechFont;
 	ConversationLineList _toSayList;
 	ConversationLineList _responseList;
+	InventoryItemDefinitionList _invItemDefList;
 };
 
 }

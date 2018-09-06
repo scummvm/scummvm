@@ -24,7 +24,9 @@
 #define MUTATIONOFJB_INVENTORYWIDGET_H
 
 #include "mutationofjb/widgets/widget.h"
-#include "mutationofjb/gui.h"
+
+#include "common/array.h"
+#include "graphics/surface.h"
 
 namespace Common {
 class String;
@@ -32,15 +34,46 @@ class String;
 
 namespace MutationOfJB {
 
+class InventoryWidget;
+
+class InventoryWidgetCallback {
+public:
+	virtual ~InventoryWidgetCallback() {}
+
+	/**
+	 * Called when the user hovers an inventory item with the mouse or when stops hovering an item.
+	 *
+	 * @param widget Inventory widget.
+	 * @param posInWidget Item position in the widget or -1 if none.
+	 */
+	virtual void onInventoryItemHovered(InventoryWidget *widget, int posInWidget) = 0;
+
+	/**
+	 * Called when the user clicks on an inventory item.
+	 *
+	 * @param widget Inventory widget.
+	 * @param posInWidget Item position in the widget.
+	 */
+	virtual void onInventoryItemClicked(InventoryWidget *widget, int posInWidget) = 0;
+};
+
 class InventoryWidget : public Widget {
 public:
-	InventoryWidget(Gui &gui, Gui::InventoryMap &inventoryMap, const Common::Array<Graphics::Surface> &inventorySurfaces);
-	virtual void draw(Graphics::ManagedSurface &) override;
+	InventoryWidget(GuiScreen &gui, const Common::Array<Graphics::Surface> &inventorySurfaces);
+	void setCallback(InventoryWidgetCallback *callback) {
+		_callback = callback;
+	}
+
+	virtual void handleEvent(const Common::Event &event) override;
+
+protected:
+	virtual void draw(Graphics::ManagedSurface &surface) override;
 
 private:
 	void drawInventoryItem(Graphics::ManagedSurface &surface, const Common::String &item, int pos);
-	Gui::InventoryMap &_inventoryMap;
 	const Common::Array<Graphics::Surface> &_surfaces;
+	InventoryWidgetCallback *_callback;
+	int _hoveredItemPos;
 };
 
 }

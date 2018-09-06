@@ -20,18 +20,69 @@
  *
  */
 
-#include "mutationofjb/widgets/imagewidget.h"
-#include "graphics/managed_surface.h"
+#ifndef MUTATIONOFJB_GUISCREEN_H
+#define MUTATIONOFJB_GUISCREEN_H
+
+#include "common/array.h"
+
+namespace Common {
+struct Event;
+}
+
+namespace Graphics {
+class Screen;
+}
 
 namespace MutationOfJB {
 
-ImageWidget::ImageWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &image) :
-	Widget(gui, area),
-	_image(image) {}
+class Game;
+class Widget;
 
+/**
+ * Base class for GUI screens.
+ *
+ * GUI screen is a collection of widgets.
+ */
+class GuiScreen {
+public:
 
-void ImageWidget::draw(Graphics::ManagedSurface &surface) {
-	surface.blitFrom(_image, Common::Point(_area.left, _area.top));
+	GuiScreen(Game &game, Graphics::Screen *screen);
+	virtual ~GuiScreen();
+	Game &getGame();
+
+	/**
+	 * Marks all visible widgets as dirty (needs redraw).
+	 */
+	void markDirty();
+
+	/**
+	 * Lets all visible widgets handle core events.
+	 *
+	 * @param event ScummVM event.
+	 */
+	void handleEvent(const Common::Event &event);
+
+	/**
+	 * Updates all visible widgets.
+	 */
+	void update();
+
+	/**
+	 * Adds a widget to the GUI screen.
+	 * The GUI screen will own the widget.
+	 *
+	 * @param widget Widget to add.
+	 */
+	void addWidget(Widget *widget);
+
+protected:
+	Game &_game;
+	Graphics::Screen *_screen;
+
+private:
+	Common::Array<Widget *> _widgets;
+};
+
 }
 
-}
+#endif

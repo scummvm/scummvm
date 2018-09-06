@@ -38,7 +38,7 @@ public:
 
 class ButtonWidget : public Widget {
 public:
-	ButtonWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &normalSurface, const Graphics::Surface &pressedSurface);
+	ButtonWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &normalSurface, const Graphics::Surface &pressedSurface);
 	void setCallback(ButtonWidgetCallback *callback);
 
 	virtual void handleEvent(const Common::Event &event) override;

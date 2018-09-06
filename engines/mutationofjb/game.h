@@ -24,7 +24,7 @@
 #define MUTATIONOFJB_GAME_H
 
 #include "mutationofjb/assets.h"
-#include "mutationofjb/gui.h"
+#include "mutationofjb/gamescreen.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/tasks/taskmanager.h"
 
@@ -66,7 +66,7 @@ public:
 
 	void update();
 
-	Gui &getGui();
+	GameScreen &getGameScreen();
 
 	ActionInfo::Action getCurrentAction() const;
 	void setCurrentAction(ActionInfo::Action);
@@ -97,7 +97,7 @@ private:
 	Script *_localScript;
 	Script *_delayedLocalScript;
 	Room *_room;
-	Gui _gui;
+	GameScreen _gui;
 	ActionInfo::Action _currentAction;
 
 	ScriptExecutionContext _scriptExecCtx;

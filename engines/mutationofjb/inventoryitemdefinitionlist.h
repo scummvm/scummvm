@@ -20,18 +20,31 @@
  *
  */
 
-#include "mutationofjb/widgets/imagewidget.h"
-#include "graphics/managed_surface.h"
+#ifndef MUTATIONOFJB_INVENTORYITEMDEFINITIONLIST_H
+#define MUTATIONOFJB_INVENTORYITEMDEFINITIONLIST_H
+
+#include "common/str.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 
 namespace MutationOfJB {
 
-ImageWidget::ImageWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &image) :
-	Widget(gui, area),
-	_image(image) {}
+typedef Common::HashMap<Common::String, int> InventoryMap;
 
+class InventoryItemDefinitionList {
+public:
+	InventoryItemDefinitionList();
+	const InventoryMap &getInventorMap() const;
 
-void ImageWidget::draw(Graphics::ManagedSurface &surface) {
-	surface.blitFrom(_image, Common::Point(_area.left, _area.top));
+	int findItemIndex(const Common::String &itemName);
+
+private:
+	bool parseFile();
+
+	typedef Common::HashMap<Common::String, int> InventoryItemMap;
+	InventoryItemMap _inventoryItemMap;
+};
+
 }
 
-}
+#endif

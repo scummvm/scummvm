@@ -150,7 +150,7 @@ Common::Error MutationOfJBEngine::loadGameState(int slot) {
 	delete saveFile;
 
 	_game->changeScene(_game->getGameData()._currentScene, _game->getGameData()._partB);
-	_game->getGui().markDirty();
+	_game->getGameScreen().markDirty();
 
 	return Common::kNoError;
 }
@@ -204,7 +204,7 @@ void MutationOfJBEngine::handleNormalScene(const Common::Event &event) {
 	default:
 		break;
 	}
-	_game->getGui().handleEvent(event);
+	_game->getGameScreen().handleEvent(event);
 }
 
 void MutationOfJBEngine::handleMapScene(const Common::Event &event) {

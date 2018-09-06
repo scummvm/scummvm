@@ -26,7 +26,7 @@
 
 namespace MutationOfJB {
 
-ButtonWidget::ButtonWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &normalSurface, const Graphics::Surface &pressedSurface) :
+ButtonWidget::ButtonWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &normalSurface, const Graphics::Surface &pressedSurface) :
 	Widget(gui, area),
 	_normalSurface(normalSurface),
 	_pressedSurface(pressedSurface),

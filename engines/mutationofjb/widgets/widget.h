@@ -36,11 +36,11 @@ class ManagedSurface;
 
 namespace MutationOfJB {
 
-class Gui;
+class GuiScreen;
 
 class Widget {
 public:
-	Widget(Gui &gui, const Common::Rect &area) : _gui(gui), _area(area), _id(0), _visible(true), _dirty(true) {}
+	Widget(GuiScreen &gui, const Common::Rect &area) : _gui(gui), _area(area), _id(0), _visible(true), _dirty(true) {}
 	virtual ~Widget() {}
 
 	int getId() const;
@@ -57,7 +57,7 @@ public:
 protected:
 	virtual void draw(Graphics::ManagedSurface &) = 0;
 
-	Gui &_gui;
+	GuiScreen &_gui;
 	Common::Rect _area;
 	int _id;
 	bool _visible;

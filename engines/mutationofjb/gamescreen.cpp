@@ -20,7 +20,8 @@
  *
  */
 
-#include "mutationofjb/gui.h"
+#include "mutationofjb/gamescreen.h"
+
 #include "mutationofjb/animationdecoder.h"
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/game.h"
@@ -31,7 +32,9 @@
 #include "mutationofjb/widgets/inventorywidget.h"
 #include "mutationofjb/widgets/imagewidget.h"
 #include "mutationofjb/widgets/conversationwidget.h"
+
 #include "common/rect.h"
+
 #include "graphics/screen.h"
 
 namespace MutationOfJB {
@@ -62,27 +65,14 @@ enum {
 };
 
 
-Gui::Gui(Game &game, Graphics::Screen *screen)
-	: _game(game),
-	  _screen(screen),
+GameScreen::GameScreen(Game &game, Graphics::Screen *screen)
+	: GuiScreen(game, screen),
 	  _inventoryWidget(nullptr),
 	  _conversationWidget(nullptr) {}
 
-Gui::~Gui() {
-	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
-		delete *it;
-	}
-}
+GameScreen::~GameScreen() {}
 
-Game &Gui::getGame() {
-	return _game;
-}
-
-bool Gui::init() {
-	if (!loadInventoryList()) {
-		return false;
-	}
-
+bool GameScreen::init() {
 	if (!loadInventoryGfx()) {
 		return false;
 	}
@@ -98,10 +88,11 @@ bool Gui::init() {
 	const Common::Rect backgroundRect(CONVERSATION_X, CONVERSATION_Y, CONVERSATION_X + CONVERSATION_WIDTH, CONVERSATION_Y + CONVERSATION_HEIGHT);
 	const Graphics::Surface backgroundSurface = _hudSurfaces[0].getSubArea(backgroundRect);
 	ImageWidget *image = new ImageWidget(*this, backgroundRect, backgroundSurface);
-	_widgets.push_back(image);
+	addWidget(image);
 
-	_inventoryWidget = new InventoryWidget(*this, _inventoryItems, _inventorySurfaces);
-	_widgets.push_back(_inventoryWidget);
+	_inventoryWidget = new InventoryWidget(*this, _inventorySurfaces);
+	_inventoryWidget->setCallback(this);
+	addWidget(_inventoryWidget);
 
 	const Common::Rect ButtonRects[] = {
 		Common::Rect(0, 148, 67, 158), // Walk
@@ -120,53 +111,29 @@ bool Gui::init() {
 		ButtonWidget *button = new ButtonWidget(*this, ButtonRects[i], normalSurface, pressedSurface);
 		button->setId(i);
 		button->setCallback(this);
-		_widgets.push_back(button);
+		addWidget(button);
 	}
 
 	const Common::Rect conversationRect(CONVERSATION_X, CONVERSATION_Y, CONVERSATION_X + CONVERSATION_WIDTH, CONVERSATION_Y + CONVERSATION_HEIGHT);
 	const Graphics::Surface conversationSurface = _hudSurfaces[2].getSubArea(conversationRect);
 	_conversationWidget = new ConversationWidget(*this, conversationRect, conversationSurface);
 	_conversationWidget->setVisible(false);
-	_widgets.push_back(_conversationWidget);
+	addWidget(_conversationWidget);
 
 	return true;
 }
 
-void Gui::markDirty() {
-	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
-		if ((*it)->isVisible()) {
-			(*it)->markDirty();
-		}
-	}
-}
-
-void Gui::handleEvent(const Common::Event &event) {
-	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
-		if ((*it)->isVisible()) {
-			(*it)->handleEvent(event);
-		}
-	}
-}
-
-void Gui::update() {
-	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
-		if ((*it)->isVisible()) {
-			(*it)->update(*_screen);
-		}
-	}
-}
-
-ConversationWidget &Gui::getConversationWidget() {
+ConversationWidget &GameScreen::getConversationWidget() {
 	return *_conversationWidget;
 }
 
 class InventoryAnimationDecoderCallback : public AnimationDecoderCallback {
 public:
-	InventoryAnimationDecoderCallback(Gui &gui) : _gui(gui) {}
+	InventoryAnimationDecoderCallback(GameScreen &gui) : _gui(gui) {}
 	virtual void onFrame(int frameNo, Graphics::Surface &surface) override;
 	virtual void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
 private:
-	Gui &_gui;
+	GameScreen &_gui;
 };
 
 void InventoryAnimationDecoderCallback::onPaletteUpdated(byte palette[PALETTE_SIZE]) {
@@ -181,7 +148,7 @@ void InventoryAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &
 	}
 }
 
-bool Gui::loadInventoryGfx() {
+bool GameScreen::loadInventoryGfx() {
 	AnimationDecoder decoder("icons.dat");
 	InventoryAnimationDecoderCallback callback(*this);
 	return decoder.decode(&callback);
@@ -189,11 +156,11 @@ bool Gui::loadInventoryGfx() {
 
 class HudAnimationDecoderCallback : public AnimationDecoderCallback {
 public:
-	HudAnimationDecoderCallback(Gui &gui) : _gui(gui) {}
+	HudAnimationDecoderCallback(GameScreen &gui) : _gui(gui) {}
 	virtual void onFrame(int frameNo, Graphics::Surface &surface) override;
 	virtual void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
 private:
-	Gui &_gui;
+	GameScreen &_gui;
 };
 
 void HudAnimationDecoderCallback::onPaletteUpdated(byte [PALETTE_SIZE]) {
@@ -207,48 +174,17 @@ void HudAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surfac
 	}
 }
 
-bool Gui::loadHudGfx() {
+bool GameScreen::loadHudGfx() {
 	AnimationDecoder decoder("room0.dat");
 	HudAnimationDecoderCallback callback(*this);
 	return decoder.decode(&callback);
 }
 
-bool Gui::loadInventoryList() {
-	EncryptedFile file;
-	const char *fileName = "fixitems.dat";
-	file.open(fileName);
-	if (!file.isOpen()) {
-		reportFileMissingError(fileName);
-		return false;
-	}
-
-	int itemIndex = 0;
-	while (!file.eos()) {
-		Common::String line = file.readLine();
-		if (line.empty() || line.hasPrefix("#")) {
-			continue;
-		}
-		const char *firstSpace = strchr(line.c_str(), ' ');
-		if (!firstSpace) {
-			continue;
-		}
-		const int len = firstSpace - line.c_str();
-		if (!len) {
-			continue;
-		}
-		Common::String item(line.c_str(), len);
-		_inventoryItems[item] = itemIndex;
-		itemIndex++;
-	}
-
-	return true;
-}
-
-void Gui::onInventoryChanged() {
+void GameScreen::onInventoryChanged() {
 	_inventoryWidget->markDirty();
 }
 
-void Gui::onButtonClicked(ButtonWidget *button) {
+void GameScreen::onButtonClicked(ButtonWidget *button) {
 	const int buttonId = button->getId();
 	if (buttonId <= BUTTON_PICKUP) {
 		const ActionInfo::Action actions[] = {ActionInfo::Walk, ActionInfo::Talk, ActionInfo::Look, ActionInfo::Use, ActionInfo::PickUp};
@@ -257,6 +193,21 @@ void Gui::onButtonClicked(ButtonWidget *button) {
 		_game.getGameData().getInventory().scrollLeft();
 	} else if (buttonId == BUTTON_SCROLL_RIGHT) {
 		_game.getGameData().getInventory().scrollRight();
+	}
+}
+
+void GameScreen::onInventoryItemHovered(InventoryWidget *widget, int posInWidget) {
+	// TODO
+}
+
+void GameScreen::onInventoryItemClicked(InventoryWidget *widget, int posInWidget) {
+	// Position in widget should match the position in inventory.
+	const Common::String &item = getGame().getGameData().getInventory().getItems()[posInWidget];
+
+	if (_game.getCurrentAction() == ActionInfo::Use) {
+		// TODO
+	} else {
+		_game.startActionSection(ActionInfo::Look, item);
 	}
 }
 

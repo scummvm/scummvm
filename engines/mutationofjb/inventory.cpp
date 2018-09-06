@@ -21,8 +21,10 @@
  */
 
 #include "mutationofjb/inventory.h"
+
 #include "mutationofjb/game.h"
-#include "mutationofjb/gui.h"
+#include "mutationofjb/gamescreen.h"
+
 #include "common/algorithm.h"
 #include "common/debug.h"
 

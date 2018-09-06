@@ -42,4 +42,8 @@ ConversationLineList &Assets::getResponseList() {
 	return _responseList;
 }
 
+InventoryItemDefinitionList &Assets::getInventoryItemDefList() {
+	return _invItemDefList;
+}
+
 }

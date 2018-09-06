@@ -23,7 +23,7 @@
 #include "mutationofjb/widgets/conversationwidget.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
-#include "mutationofjb/gui.h"
+#include "mutationofjb/guiscreen.h"
 #include "mutationofjb/font.h"
 #include "common/events.h"
 
@@ -35,7 +35,7 @@ enum {
 	CONVERSATION_LINE_HEIGHT = 12
 };
 
-ConversationWidget::ConversationWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &surface) :
+ConversationWidget::ConversationWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &surface) :
 	Widget(gui, area),
 	_surface(surface),
 	_callback(nullptr) {}

@@ -42,8 +42,10 @@ MODULE_OBJS := \
 	font.o \
 	game.o \
 	gamedata.o \
-	gui.o \
+	gamescreen.o \
+	guiscreen.o \
 	inventory.o \
+	inventoryitemdefinitionlist.o \
 	mutationofjb.o \
 	room.o \
 	script.o \

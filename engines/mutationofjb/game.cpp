@@ -194,7 +194,7 @@ void Game::update() {
 	_taskManager.update();
 }
 
-Gui &Game::getGui() {
+GameScreen &Game::getGameScreen() {
 	return _gui;
 }
 
