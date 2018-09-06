@@ -854,6 +854,13 @@ const SciWorkaroundEntry kListAt_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
+const SciWorkaroundEntry kLock_workarounds[] = {
+	{ GID_PQSWAT,       6400,  6400,  0,      "rookerTrains3", "changeState",                  NULL,     0,     0, { WORKAROUND_STILLCALL,    0 } }, // After completing Small Arms Training, at the end of the Tactics Training
+	{ GID_PQSWAT,       6400,  6400,  0,      "rookerTrains5", "changeState",                  NULL,     0,     0, { WORKAROUND_STILLCALL,    0 } }, // After completing Small Arms Training, at the end of the Tactics Training
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kMemory_workarounds[] = {
 	{ GID_LAURABOW2,      -1,   999,  0,                   "", "export 6",                  NULL,     0,     0, { WORKAROUND_FAKE,    0 } }, // during the intro, when exiting the train (room 160), talking to Mr. Augustini, etc. - bug #4944
 	{ GID_SQ1,            -1,   999,  0,                   "", "export 6",                  NULL,     0,     0, { WORKAROUND_FAKE,    0 } }, // during walking Roger around Ulence Flats - bug #6017
