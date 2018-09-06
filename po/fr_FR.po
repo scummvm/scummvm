@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-09-04 22:43+0200\n"
-"PO-Revision-Date: 2018-09-06 21:42+0000\n"
-"Last-Translator: Purple T <zeonk@hotmail.com>\n"
+"PO-Revision-Date: 2018-09-06 21:43+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -3772,7 +3772,7 @@ msgstr "Active la censure optionnel inclus dans le jeu"
 
 #: engines/sci/detection.cpp:519
 msgid "Upscale videos"
-msgstr ""
+msgstr "Agrandir les vidéos"
 
 #: engines/sci/detection.cpp:520
 msgid "Upscale videos to double their size"
