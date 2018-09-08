@@ -91,9 +91,9 @@ void CMovieRangeInfo::getMovieFrame(CMovieEventList &list, int frameNumber) {
 
 void CMovieRangeInfo::process(CGameObject *owner) {
 	int flags = 0;
-	if (_endFrame)
+	if (_isRepeat)
 		flags |= MOVIE_REPEAT;
-	if (_startFrame)
+	if (_isReversed)
 		flags |= MOVIE_REVERSE;
 
 	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
