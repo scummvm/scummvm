@@ -46,6 +46,7 @@ MODULE_OBJS := \
 	zlib.o
 
 MODULE_OBJS += \
+	atan2table.o \
 	cosinetables.o \
 	dct.o \
 	fft.o \
