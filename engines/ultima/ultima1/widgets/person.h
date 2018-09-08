@@ -37,8 +37,6 @@ namespace Widgets {
  * Base class for NPC creatures
  */
 class Person : public UrbanWidget, Shared::Maps::Creature {
-private:
-	uint _tileNum;
 protected:
 	Ultima1Game *_game;
 	Maps::MapBase *_map;

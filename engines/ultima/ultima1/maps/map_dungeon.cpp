@@ -42,6 +42,18 @@ void MapDungeon::load(Shared::Maps::MapId mapId) {
 	_playerWidget->moveTo(Point(1, 1), Shared::Maps::DIR_SOUTH);
 }
 
+void MapDungeon::getTileAt(const Point &pt, Shared::Maps::MapTile *tile) {
+	MapBase::MapBase::getTileAt(pt, tile);
+
+	tile->_isHallway = tile->_tileNum == DTILE_HALLWAY;
+	tile->_isDoor = tile->_tileNum == DTILE_DOOR;
+	tile->_isSecretDoor = tile->_tileNum == DTILE_SECRET_DOOR;
+	tile->_isWall = tile->_tileNum == DTILE_WALL;
+	tile->_isLadderUp = tile->_tileNum == DTILE_LADDER_UP;
+	tile->_isLadderDown = tile->_tileNum == DTILE_LADDER_DOWN;
+	tile->_isBeams = tile->_tileNum == DTILE_BEAMS;
+}
+
 bool MapDungeon::changeLevel(int delta) {
 	_dungeonLevel += delta;
 	if (_dungeonLevel <= 0)

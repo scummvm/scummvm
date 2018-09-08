@@ -39,21 +39,6 @@ MapBase::MapBase(Ultima1Game *game, Ultima1Map *map) : Shared::Maps::MapBase(gam
 void MapBase::getTileAt(const Point &pt, Shared::Maps::MapTile *tile) {
 	Shared::Maps::MapBase::getTileAt(pt, tile);
 
-	// Special handling for one of the city/town tile numbers
-	if (tile->_tileNum >= 51 && dynamic_cast<MapCityCastle *>(this))
-		tile->_tileNum = 1;
-
-	// Setting dungeon flags
-	if (dynamic_cast<MapDungeon *>(this)) {
-		tile->_isHallway = tile->_tileNum == DTILE_HALLWAY;
-		tile->_isDoor = tile->_tileNum == DTILE_DOOR;
-		tile->_isSecretDoor = tile->_tileNum == DTILE_SECRET_DOOR;
-		tile->_isWall = tile->_tileNum == DTILE_WALL;
-		tile->_isLadderUp = tile->_tileNum == DTILE_LADDER_UP;
-		tile->_isLadderDown = tile->_tileNum == DTILE_LADDER_DOWN;
-		tile->_isBeams = tile->_tileNum == DTILE_BEAMS;
-	}
-
 	// Extended properties to set if an Ultima 1 map tile structure was passed in
 	U1MapTile *mapTile = dynamic_cast<U1MapTile *>(tile);
 	if (mapTile) {
