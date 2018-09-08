@@ -25,6 +25,8 @@
 
 #include "titanic/star_control/fpoint.h"
 
+#include "common/atan2table.h"
+
 namespace Titanic {
 
 enum Axis { X_AXIS, Y_AXIS, Z_AXIS };
@@ -169,6 +171,8 @@ public:
 	 * Converts the vector to a string
 	 */
 	Common::String toString() const;
+private:
+	static Common::Atan2Table _atan2Table;
 };
 
 } // End of namespace Titanic

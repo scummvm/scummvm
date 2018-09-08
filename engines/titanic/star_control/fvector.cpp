@@ -27,6 +27,8 @@
 
 namespace Titanic {
 
+Common::Atan2Table FVector::_atan2Table = Common::Atan2Table(512);
+
 FVector FVector::swapComponents() const {
 	return FVector(
 		(ABS(_x - _y) < 0.00001 && ABS(_y - _z) < 0.00001 &&
@@ -91,7 +93,7 @@ FVector FVector::getAnglesAsVect() const {
 
 	dest._y = acos(vector._y);	// radian distance/angle that this vector's y component is from the +y axis,
 								// result is restricted to [0,pi]
-	dest._z = atan2(vector._x,vector._z); // result is restricted to [-pi,pi]
+	dest._z = _atan2Table.angle(vector._x,vector._z); // result is restricted to [-pi,pi]
 
 	return dest;
 }
