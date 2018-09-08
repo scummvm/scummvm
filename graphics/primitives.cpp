@@ -121,19 +121,16 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 
 	if (dy <= dx) {
 		/* More-or-less horizontal. use wid for vertical stroke */
-		/* Doug Claar: watch out for NaN in atan2 (2.0.5) */
 
 		/* 2.0.12: Michael Schwartz: divide rather than multiply;
 			  TBB: but watch out for /0! */
-		double ac = cos(atan2((double)dy, (double)dx));
-		if (ac != 0) {
-			wid = thick / ac;
+		if (dx != 0 && thick != 0) {
+			double ac_recip = 1/dx * sqrt(dx * dx + dy * dy); // 1 / cos(atan2((double)dy, (double)dx));
+			wid = thick * ac_recip;
 		} else {
 			wid = 1;
 		}
-		if (wid == 0) {
-			wid = 1;
-		}
+
 		d = 2 * dy - dx;
 		incr1 = 2 * dy;
 		incr2 = 2 * (dy - dx);
@@ -185,14 +182,12 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 		/* More-or-less vertical. use wid for horizontal stroke */
 		/* 2.0.12: Michael Schwartz: divide rather than multiply;
 		   TBB: but watch out for /0! */
-		double as = sin(atan2((double)dy, (double)dx));
-		if (as != 0) {
-			wid = thick / as;
+		if (dy != 0 && thick != 0) {
+			double as_recip = 1/dy * sqrt(dx * dx + dy * dy); // 1 / sin(atan2((double)dy, (double)dx));
+			wid = thick * as_recip;
 		} else {
 			wid = 1;
 		}
-		if (wid == 0)
-			wid = 1;
 
 		d = 2 * dx - dy;
 		incr1 = 2 * dx;
