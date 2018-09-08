@@ -66,8 +66,13 @@ public:
 	virtual void load(Shared::Maps::MapId mapId) override;
 
 	/**
-		* Clears all map data
-		*/
+	 * Gets a tile at a given position
+	 */
+	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile) override;
+
+	/**
+	 * Clears all map data
+	 */
 	virtual void clear() override;
 
 	/**

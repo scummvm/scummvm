@@ -70,6 +70,11 @@ public:
 	virtual void load(Shared::Maps::MapId mapId);
 
 	/**
+	 * Gets a tile at a given position
+	 */
+	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile) override;
+
+	/**
 	 * Changes the dungeon level by a given delta amount, and generates a new map
 	 * @param delta		Delta to change dungeon level by
 	 * @returns			False if dungeon left, true if still within dungeon
