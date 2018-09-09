@@ -126,7 +126,7 @@ private:
 
 	int _menuSavedCard;
 	int _menuSavedStack;
-	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> _menuTumbnail;
+	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> _menuThumbnail;
 
 	bool _gameEnded;
 	uint32 _lastSaveTime;
@@ -180,6 +180,7 @@ public:
 	// Main menu handling
 	void goToMainMenu();
 	void resumeFromMainMenu();
+	bool isInMainMenu() const;
 	bool isGameStarted() const;
 	void startNewGame();
 };
