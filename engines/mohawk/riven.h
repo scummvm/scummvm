@@ -106,6 +106,7 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 
 	void doFrame();
+	void restart(); //restart the game and go to the main menu
 	void processInput();
 
 private:
@@ -178,7 +179,7 @@ public:
 	void setGameEnded();
 
 	// Main menu handling
-	void goToMainMenu();
+	void goToMainMenu(bool allowResume = true);
 	void resumeFromMainMenu();
 	bool isGameStarted() const;
 	void startNewGame();

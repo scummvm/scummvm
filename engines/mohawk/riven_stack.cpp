@@ -258,7 +258,9 @@ void RivenStack::runCredits(uint16 video, uint32 delay, uint32 videoFrameCountOv
 		_vm->doFrame();
 	}
 
-	_vm->setGameEnded();
+	videoPtr->stop();
+	_vm->_cursor->showCursor();
+	_vm->restart();
 }
 
 void RivenStack::installCardTimer() {
