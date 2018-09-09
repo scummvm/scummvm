@@ -43,8 +43,8 @@ void MapDungeon::load(Shared::Maps::MapId mapId) {
 	_playerWidget->moveTo(Point(1, 1), Shared::Maps::DIR_SOUTH);
 }
 
-void MapDungeon::getTileAt(const Point &pt, Shared::Maps::MapTile *tile) {
-	MapBase::MapBase::getTileAt(pt, tile);
+void MapDungeon::getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer) {
+	MapBase::MapBase::getTileAt(pt, tile, includePlayer);
 
 	tile->_isHallway = tile->_tileId == DTILE_HALLWAY;
 	tile->_isDoor = tile->_tileId == DTILE_DOOR;

@@ -68,7 +68,7 @@ public:
 	/**
 	 * Gets a tile at a given position
 	 */
-	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile) override;
+	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer = true) override;
 
 	/**
 	 * Clears all map data

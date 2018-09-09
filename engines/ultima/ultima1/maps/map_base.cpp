@@ -42,8 +42,8 @@ namespace Maps {
 MapBase::MapBase(Ultima1Game *game, Ultima1Map *map) : Shared::Maps::MapBase(game, map), _game(game) {
 }
 
-void MapBase::getTileAt(const Point &pt, Shared::Maps::MapTile *tile) {
-	Shared::Maps::MapBase::getTileAt(pt, tile);
+void MapBase::getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer) {
+	Shared::Maps::MapBase::getTileAt(pt, tile, includePlayer);
 
 	// Extended properties to set if an Ultima 1 map tile structure was passed in
 	U1MapTile *mapTile = dynamic_cast<U1MapTile *>(tile);
