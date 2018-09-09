@@ -120,8 +120,11 @@ void MapOverworld::inform() {
 	getTileAt(getPosition(), &tile, false);
 
 	addInfoMsg("");
-	if (tile._widget) {
-		addInfoMsg(tile._widget->_name);
+	if (tile._locationNum != -1) {
+		if (tile._locationNum < 33)
+			addInfoMsg(Common::String::format("%s %s", _game->_res->THE_CITY_OF, _game->_res->LOCATION_NAMES[tile._locationNum - 1]));
+		else
+			addInfoMsg(_game->_res->LOCATION_NAMES[tile._locationNum - 1]);
 	} else if (tile._tileId == OTILE_OCEAN) {
 		addInfoMsg(_game->_res->YOU_ARE_AT_SEA);
 	} else if (tile._tileId == OTILE_WOODS) {
