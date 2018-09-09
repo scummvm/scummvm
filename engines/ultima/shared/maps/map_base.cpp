@@ -164,7 +164,7 @@ void MapBase::removeWidget(MapWidget *widget) {
 	}
 }
 
-void MapBase::getTileAt(const Point &pt, MapTile *tile) {
+void MapBase::getTileAt(const Point &pt, MapTile *tile, bool includePlayer) {
 	tile->clear();
 
 	// Get the base tile
@@ -173,7 +173,7 @@ void MapBase::getTileAt(const Point &pt, MapTile *tile) {
 	// Check for any widget on that map tile
 	for (int idx = (int)_widgets.size() - 1; idx >= 0; --idx) {
 		MapWidget *widget = _widgets[idx].get();
-		if (widget->_position == pt) {
+		if (widget->_position == pt && (includePlayer || widget != _playerWidget)) {
 			tile->_widgetNum = idx;
 			tile->_widget = widget;
 			break;

@@ -81,9 +81,9 @@ public:
 	/**
 	 * Gets a tile at a given position
 	 */
-	void getTileAt(const Point &pt, MapTile *tile) {
+	void getTileAt(const Point &pt, MapTile *tile, bool includePlayer = true) {
 		assert(_mapArea);
-		return _mapArea->getTileAt(pt, tile);
+		return _mapArea->getTileAt(pt, tile, includePlayer);
 	}
 
 	/**

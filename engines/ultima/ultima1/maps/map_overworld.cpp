@@ -117,7 +117,7 @@ void MapOverworld::shiftViewport(const Point &delta) {
 
 void MapOverworld::inform() {
 	Maps::U1MapTile tile;
-	getTileAt(getPosition(), &tile);
+	getTileAt(getPosition(), &tile, false);
 
 	addInfoMsg("");
 	if (tile._widget) {

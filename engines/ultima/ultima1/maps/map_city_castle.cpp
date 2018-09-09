@@ -118,8 +118,8 @@ void MapCityCastle::loadWidgets() {
 	}
 }
 
-void MapCityCastle::getTileAt(const Point &pt, Shared::Maps::MapTile *tile) {
-	MapBase::getTileAt(pt, tile);
+void MapCityCastle::getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer) {
+	MapBase::getTileAt(pt, tile, includePlayer);
 
 	// Special handling for the cells indicating various merchant talk/steal positions
 	if (tile->_tileDisplayNum >= 51)

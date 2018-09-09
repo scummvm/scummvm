@@ -168,7 +168,7 @@ public:
 	/**
 	 * Gets a tile at a given position
 	 */
-	virtual void getTileAt(const Point &pt, MapTile *tile);
+	virtual void getTileAt(const Point &pt, MapTile *tile, bool includePlayer = true);
 
 	/**
 	 * Resets the viewport when the viewport changes
