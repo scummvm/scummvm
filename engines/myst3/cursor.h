@@ -73,7 +73,7 @@ private:
 	bool _lockedAtCenter;
 
 	void loadAvailableCursors();
-	double getTransparencyForId(uint32 cursorId);
+	float getTransparencyForId(uint32 cursorId);
 };
 
 } // End of namespace Myst3
