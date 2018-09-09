@@ -576,6 +576,7 @@ const char *const SRC_GROCERY_NAMES[8] = {
 
 const char *const SRC_BUY_SELL = "-Buy, Sell: ";
 const char *const SRC_NOTHING = "nothing";
+const char *const SRC_NOTHING_HERE = " - nothing here!";
 const char *const SRC_SOLD = "Sold!";
 const char *const SRC_CANT_AFFORD = "Thou canst not afford it!";
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
@@ -641,6 +642,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	NONE_WILL_TALK = SRC_NONE_WILL_TALK;
 	BUY_SELL = SRC_BUY_SELL;
 	NOTHING = SRC_NOTHING;
+	NOTHING_HERE = SRC_NOTHING_HERE;
 	SOLD = SRC_SOLD;
 	CANT_AFFORD = SRC_CANT_AFFORD;
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
@@ -701,6 +703,7 @@ void GameResources::synchronize() {
 	syncString(NONE_WILL_TALK);
 	syncString(BUY_SELL);
 	syncString(NOTHING);
+	syncString(NOTHING_HERE);
 	syncString(SOLD);
 	syncString(CANT_AFFORD);
 	syncStrings(GROCERY_NAMES, 8);
