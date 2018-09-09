@@ -79,6 +79,11 @@ public:
 	 * Get the viewport position
 	 */
 	virtual Point getViewportPosition(const Point &viewportSize) override;
+
+	/**
+	 * Do a steal action
+	 */
+	virtual void steal();
 };
 
 /**

@@ -156,6 +156,35 @@ void MapCityCastle::loadTownCastleData() {
 	}
 }
 
+void MapCityCastle::steal() {
+	U1MapTile tile;
+	getTileAt(getPosition(), &tile);
+
+	// Scan for the correct merchant depending on the tile player is on
+	Widgets::Merchant *merchant = nullptr;
+	switch (tile._tileId) {
+	case 55:
+		merchant = dynamic_cast<Widgets::MerchantArmor *>(_widgets.findByClass(Widgets::MerchantArmor::type()));
+		break;
+	case 57:
+		merchant = dynamic_cast<Widgets::MerchantGrocer *>(_widgets.findByClass(Widgets::MerchantGrocer::type()));
+		break;
+	case 59:
+		merchant = dynamic_cast<Widgets::MerchantWeapons *>(_widgets.findByClass(Widgets::MerchantWeapons::type()));
+		break;
+	default:
+		break;
+	}
+
+	if (merchant) {
+		// Found a merchant, so call their steal handler
+		merchant->steal();
+	} else {
+		addInfoMsg(_game->_res->NOTHING_HERE);
+		_game->playFX(1);
+	}
+}
+
 /*-------------------------------------------------------------------*/
 
 void MapCity::load(Shared::Maps::MapId mapId) {

@@ -59,7 +59,7 @@ public:
 	/**
 	 * Do a steal action
 	 */
-	void steal();
+	virtual void steal();
 
 	/**
 	 * Do a talk action

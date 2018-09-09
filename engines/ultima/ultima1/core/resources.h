@@ -86,6 +86,7 @@ public:
 	const char *NONE_WILL_TALK;
 	const char *BUY_SELL;
 	const char *NOTHING;
+	const char *NOTHING_HERE;
 	const char *SOLD;
 	const char *CANT_AFFORD;
 	const char *GROCERY_NAMES[8];
