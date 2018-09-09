@@ -744,7 +744,7 @@ void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::St
 }
 
 void MohawkEngine_Riven::tryAutoSaving() {
-	if (!canSaveGameStateCurrently() || !isGameStarted() || _gameEnded) {
+	if (!canSaveGameStateCurrently() || _gameEnded) {
 		return; // Can't save right now, try again on the next frame
 	}
 
@@ -797,7 +797,7 @@ bool MohawkEngine_Riven::canLoadGameStateCurrently() {
 }
 
 bool MohawkEngine_Riven::canSaveGameStateCurrently() {
-	return canLoadGameStateCurrently();
+	return canLoadGameStateCurrently() && isGameStarted();
 }
 
 bool MohawkEngine_Riven::hasGameEnded() const {
