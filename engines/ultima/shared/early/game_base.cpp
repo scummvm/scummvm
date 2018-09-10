@@ -195,6 +195,9 @@ void GameBase::update() {
 			// There's a pending popup to display, so make it active
 			_currentView = _pendingPopup;
 			_pendingPopup = nullptr;
+
+			CShowMsg showMsg;
+			showMsg.execute(_currentView);
 		}
 
 		 // Allow the text cursor to update
