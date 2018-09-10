@@ -30,6 +30,7 @@ namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Drop, Dialog)
+	ON_MESSAGE(ShowMsg)
 	ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 

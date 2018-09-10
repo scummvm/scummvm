@@ -62,7 +62,6 @@ MODULE_OBJS += \
 	ultima0/game.o \
 	ultima0/resources.o \
 	ultima1/actions/action.o \
-	ultima1/actions/climb.o \
 	ultima1/actions/move.o \
 	ultima1/core/resources.o \
 	ultima1/maps/map.o \
