@@ -354,7 +354,8 @@ IMPLEMENT_FUNCTION_I(10, Coudert, updateFromTime, uint32)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket(1);
+		if (Entity::savegameBloodJacket(1))
+			break;
 
 		if (!Entity::updateParameter(params->param2, getState()->time, params->param1))
 			break;
@@ -378,7 +379,8 @@ IMPLEMENT_FUNCTION_I(11, Coudert, updateFromTicks, uint32)
 		break;
 
 	case kActionNone:
-		Entity::savegameBloodJacket(1);
+		if (Entity::savegameBloodJacket(1))
+			break;
 
 		if (!Entity::updateParameter(params->param2, getState()->timeTicks, params->param1))
 			break;
@@ -453,7 +455,7 @@ IMPLEMENT_FUNCTION_II(13, Coudert, function13, bool, EntityIndex)
 		break;
 
 	case kActionNone:
-		if (Entity::savegameBloodJacket(1))
+		if (Entity::savegameBloodJacket(3))
 			break;
 
 		if (!params->param2 && !params->param3) {
@@ -764,7 +766,7 @@ IMPLEMENT_FUNCTION_I(17, Coudert, function17, bool)
 			break;
 		}
 
-		if (params->param2) {
+		if (ENTITY_PARAM(0, 2)) {
 			setCallback(2);
 			setup_bloodJacket("627C");
 			break;
@@ -1160,7 +1162,7 @@ IMPLEMENT_FUNCTION(22, Coudert, function22)
 			break;
 
 		case 8:
-			getSound()->playSound(kEntityCoudert, "JAC1013A");
+			getSound()->playSound(kEntityCoudert, "JAC1030A");
 			getObjects()->update(kObjectCompartmentG, kEntityPlayer, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
 
 			setCallback(9);
@@ -2284,7 +2286,7 @@ label_callback_9:
 label_callback_10:
 		if (getState()->time > kTime1189800 && !ENTITY_PARAM(0, 1) && !ENTITY_PARAM(2, 1)) {
 			if (Entity::updateParameter(params->param3, getState()->time, 2700)) {
-				ENTITY_PARAM(0, 2) = 1;
+				ENTITY_PARAM(0, 2) = 0;
 				ENTITY_PARAM(0, 1) = 1;
 
 				getEntities()->drawSequenceLeft(kEntityCoudert, "697F");
@@ -2700,7 +2702,7 @@ IMPLEMENT_FUNCTION(44, Coudert, chapter3)
 		getData()->clothes = kClothesDefault;
 		getData()->inventoryItem = kItemNone;
 
-		ENTITY_PARAM(0, 2) = 0;
+		ENTITY_PARAM(0, 2) = 1;
 		ENTITY_PARAM(0, 3) = 0;
 		ENTITY_PARAM(0, 4) = 0;
 		ENTITY_PARAM(0, 5) = 0;
@@ -3092,7 +3094,7 @@ IMPLEMENT_FUNCTION_I(47, Coudert, function47, bool)
 
 		case 3:
 			getEntities()->drawSequenceLeft(kEntityCoudert, "627Wf");
-			getEntities()->enterCompartment(kEntityCoudert, kObjectCompartmentF);
+			getEntities()->enterCompartment(kEntityCoudert, kObjectCompartmentF, true);
 			// fall through
 
 		case 4:
@@ -3481,9 +3483,9 @@ IMPLEMENT_FUNCTION(52, Coudert, chapter4)
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRedSleeping;
 		getData()->clothes = kClothesDefault;
-		getData()->inventoryItem = kItemNone;
+		getData()->inventoryItem = kItemNone; // not in the original version, but it does no harm, I suppose?
 
-		ENTITY_PARAM(0, 2) = 0;
+		ENTITY_PARAM(0, 2) = 1;
 		ENTITY_PARAM(0, 3) = 0;
 		ENTITY_PARAM(0, 4) = 0;
 		ENTITY_PARAM(0, 5) = 0;

@@ -742,8 +742,8 @@ IMPLEMENT_FUNCTION(21, Boutarel, chapter1Handler)
 			if (getEntities()->isPlayerPosition(kCarRedSleeping, 54) || getEntities()->isPlayerPosition(kCarRedSleeping, 44))
 				getScenes()->loadSceneFromPosition(kCarRedSleeping, 10);
 
-			getEntities()->updatePositionExit(kEntityBoutarel, kCarRedSleeping, 54);
-			getEntities()->updatePositionExit(kEntityBoutarel, kCarRedSleeping, 44);
+			getEntities()->updatePositionEnter(kEntityBoutarel, kCarRedSleeping, 54);
+			getEntities()->updatePositionEnter(kEntityBoutarel, kCarRedSleeping, 44);
 
 			setCallback(4);
 			setup_playSound("MRB1074");

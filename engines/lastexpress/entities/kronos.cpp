@@ -589,6 +589,7 @@ IMPLEMENT_FUNCTION(20, Kronos, duringConcert)
 
 			case 3:
 				getAction()->playAnimation(kEventCathFallingAsleep);
+				// TODO: fade to black screen
 
 				while (getSoundQueue()->isBuffered("1919.LNK"))
 					getSoundQueue()->updateQueue();
@@ -696,7 +697,7 @@ IMPLEMENT_FUNCTION(20, Kronos, duringConcert)
 			break;
 
 		case 2:
-			getData()->entityPosition = kPosition_6000;
+			getEntityData(kEntityPlayer)->entityPosition = kPosition_6000;
 			getAction()->playAnimation(kEventConcertLeaveWithBriefcase);
 
 			RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_concert);
@@ -821,7 +822,7 @@ IMPLEMENT_FUNCTION(22, Kronos, awaitingCath)
 		case 1:
 			getAction()->playAnimation(kEventKronosReturnBriefcase);
 			getScenes()->loadSceneFromPosition(kCarKronos, 87);
-			getInventory()->removeItem(kItemFirebird);
+			getInventory()->removeItem(kItemBriefcase);
 			getInventory()->removeItem(kItemScarf);
 
 			setup_finished();
