@@ -3711,6 +3711,56 @@ static const uint16 laurabow2PatchRememberWiredEastDoor[] = {
 	PATCH_END
 };
 
+// The crate room (room 460) in act 5 locks up the game if you enter from the
+//  elevator (room 660), swing the hanging crate, and then attempt to leave
+//  back through the elevator door.
+//
+// The state of the wall crate that blocks the elevator door is tracked by
+//  setting local0 to 1 when you push it out of the way, but Sierra forgot
+//  to reinitialize local0 when you re-enter via the elevator door, causing
+//  it to be out of sync with the room state. When you then swing the hanging
+//  crate, sSwingIt:changeState(6) tests local0 to see which polygon it should
+//  set as the room's obstacle and incorrectly uses the one that blocks both
+//  doors. Attempting to use the elevator door then locks up the game as the
+//  obstacle polygon prevents ego from reaching the destination.
+//
+// Someone noticed that local0 wasn't always initialized as shoveCrate:doVerb(4)
+//  tests both local0 and the previous room to see if it was the elevator.
+//
+// We fix this by setting local0 to 1 if the previous room was the elevator
+//  during sSwingIt:changeState(3), just in time before it gets tested in
+//  sSwingIt:changeState(6). Luckily for us, the handlers for states 3 and 4
+//  don't do anything but load zero, making them two consecutive conditions
+//  of no-ops. By merging them into a single condition for state 3 we have
+//  a whopping 13 bytes available to add code to set local0 correctly.
+//
+// Affects floppy/cd, all versions, all languages, and occurs in Sierra's interpreter.
+// Fixes bug #10701
+static const uint16 laurabow2SignatureFixCrateRoomEastDoorLockup[] = {
+	0x1a,                               // eq? [ state 3? ]
+	SIG_MAGICDWORD,
+	0x31, 0x05,                         // bnt [ state 4 ]
+	0x35, 0x00,                         // ldi 0
+	0x32, SIG_ADDTOOFFSET(2),           // jmp [ exit switch. floppy: b3, cd: bb ]
+	0x3c,                               // dup
+	0x35, 0x04,                         // ldi 4
+	0x1a,                               // eq? [ state 4? ]
+	0x31, 0x05,                         // bnt [ state 5 ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixCrateRoomEastDoorLockup[] = {
+	PATCH_ADDTOOFFSET(1),               // eq? [ state 3? ]
+	0x31, 0x10,                         // bnt [ state 5 ]
+	0x89, 0x0c,                         // lsg global12 [ previous room # ]
+	0x34, PATCH_UINT16(0x0294),         // ldi 660d [ elevator room # ]
+	0x1a,                               // eq?
+	0x8b, 0x00,                         // lsl local0
+	0x02,                               // add
+	0xa3, 0x00,                         // sal local0 [ local0 += (global12 == 660d) ]
+	PATCH_END
+};
+
 // Laura Bow 2 CD resets the audio mode to speech on init/restart
 //  We already sync the settings from ScummVM (see SciEngine::syncIngameAudioOptions())
 //  and this script code would make it impossible to see the intro using "dual" mode w/o using debugger command
@@ -3803,6 +3853,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   350, "CD/Floppy: museum party fix entering south 2/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth2, laurabow2PatchMuseumPartyFixEnteringSouth2 },
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
+	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                     1, kq6laurabow2CDSignatureAudioTextSupport1,       kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support 2",                     1, kq6laurabow2CDSignatureAudioTextSupport2,       kq6laurabow2CDPatchAudioTextSupport2 },
