@@ -38,6 +38,8 @@ Drop::Drop(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT) {
 }
 
 bool Drop::KeypressMsg(CKeypressMsg &msg) {
+	Shared::Character &c = *_game->_party._currentCharacter;
+
 	switch (_mode) {
 	case SELECT:
 		_game->_textCursor->setVisible(false);
@@ -45,19 +47,46 @@ bool Drop::KeypressMsg(CKeypressMsg &msg) {
 		switch (msg._keyState.keycode) {
 		case Common::KEYCODE_p:
 			setMode(DROP_PENCE);
-			setDirty();
 			break;
 		case Common::KEYCODE_w:
 			setMode(DROP_WEAPON);
-			setDirty();
 			break;
 		case Common::KEYCODE_a:
 			setMode(DROP_ARMOR);
-			setDirty();
 			break;
 		default:
 			nothing();
 			break;
+		}
+		break;
+
+	case DROP_WEAPON:
+		if (msg._keyState.keycode >= Common::KEYCODE_b && msg._keyState.keycode < (Common::KEYCODE_b + (int)c._weapons.size())
+			&& c._weapons[msg._keyState.keycode - Common::KEYCODE_a]._quantity > 0) {
+			// Drop the weapon
+			int weaponNum = msg._keyState.keycode - Common::KEYCODE_a;
+			if (--c._weapons[weaponNum]._quantity == 0 && c._equippedWeapon == weaponNum)
+				c._equippedWeapon = 0;
+
+			addInfoMsg(Common::String::format(" %s", _game->_res->WEAPON_NAMES_UPPERCASE[weaponNum]));
+			hide();
+		} else {
+			none();
+		}
+		break;
+
+	case DROP_ARMOR:
+		if (msg._keyState.keycode >= Common::KEYCODE_b && msg._keyState.keycode < (Common::KEYCODE_b + (int)c._armor.size())
+			&& c._armor[msg._keyState.keycode - Common::KEYCODE_a]._quantity > 0) {
+			// Drop the armor
+			int armorNum = msg._keyState.keycode - Common::KEYCODE_a;
+			if (--c._armor[armorNum]._quantity == 0 && c._equippedArmor == armorNum)
+				c._equippedArmor = 0;
+
+			addInfoMsg(Common::String::format(" %s", _game->_res->ARMOR_NAMES[armorNum]));
+			hide();
+		} else {
+			none();
 		}
 		break;
 
@@ -69,9 +98,10 @@ bool Drop::KeypressMsg(CKeypressMsg &msg) {
 }
 
 void Drop::setMode(Mode mode) {
+	setDirty();
 	_mode = mode;
-	const Shared::Character &c = *_game->_party._currentCharacter;
 
+	const Shared::Character &c = *_game->_party._currentCharacter;
 	switch (mode) {
 	case DROP_WEAPON:
 		if (c._weapons.hasNothing()) {
@@ -92,6 +122,11 @@ void Drop::setMode(Mode mode) {
 
 void Drop::nothing() {
 	addInfoMsg(Common::String::format(" %s", _game->_res->NOTHING));
+	hide();
+}
+
+void Drop::none() {
+	addInfoMsg(Common::String::format(" %s", _game->_res->NONE));
 	hide();
 }
 

@@ -592,6 +592,7 @@ const char *const SRC_GROCERY_NAMES[8] = {
 
 const char *const SRC_BUY_SELL = "-Buy, Sell: ";
 const char *const SRC_NOTHING = "nothing";
+const char *const SRC_NONE = "none";
 const char *const SRC_NOTHING_HERE = " - nothing here!";
 const char *const SRC_SOLD = "Sold!";
 const char *const SRC_CANT_AFFORD = "Thou canst not afford it!";
@@ -673,6 +674,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	NONE_WILL_TALK = SRC_NONE_WILL_TALK;
 	BUY_SELL = SRC_BUY_SELL;
 	NOTHING = SRC_NOTHING;
+	NONE = SRC_NONE;
 	NOTHING_HERE = SRC_NOTHING_HERE;
 	SOLD = SRC_SOLD;
 	CANT_AFFORD = SRC_CANT_AFFORD;
@@ -751,6 +753,7 @@ void GameResources::synchronize() {
 	syncString(NONE_WILL_TALK);
 	syncString(BUY_SELL);
 	syncString(NOTHING);
+	syncString(NONE);
 	syncString(NOTHING_HERE);
 	syncString(SOLD);
 	syncString(CANT_AFFORD);
