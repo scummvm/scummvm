@@ -53,6 +53,11 @@ private:
 	void nothing();
 
 	/**
+	 * None response
+	 */
+	void none();
+
+	/**
 	 * Draw the initial mode selection display
 	 */
 	void drawSelection();
