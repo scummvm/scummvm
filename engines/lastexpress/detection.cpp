@@ -192,6 +192,24 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOASPECT)
 	},
 
+	// The Last Express (GOG)
+	//   expressw.exe ???
+	//   express.exe  2010-12-14 13:49:04
+	{
+		"lastexpress",
+		"",
+		{
+			{"HD.HPF",  0, "ab940d5815008b176502f759ae753fb7", 30715904},   // 2000-03-01 17:03:58
+			{"CD1.HPF", 0, "cec8810125b050f41b7f34ab72371f81", 525522944},  // 2000-02-14 16:02:02
+			{"CD2.HPF", 0, "c648872b31e43d458680cf16bedc636c", 669581312},  // 1997-02-10 21:19:30
+			{"CD3.HPF", 0, "8cb3e68a6dca354e556c487ea24a6b10", 641128448},  // 1997-02-10 20:44:08
+		},
+		Common::EN_ANY,
+		Common::kPlatformUnknown,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+
 	AD_TABLE_END_MARKER
 };
 
