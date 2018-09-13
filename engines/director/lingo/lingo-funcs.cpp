@@ -191,7 +191,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 
 			for (const byte *p = (const byte *)movieFilename.c_str(); *p; p++)
 				if (*p >= 0x20 && *p <= 0x7f)
-					cleanedFilename += (const char) *p;
+					cleanedFilename += (char) *p;
 
 			if (resMan.open(movieFilename)) {
 				fileExists = true;
