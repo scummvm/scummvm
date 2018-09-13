@@ -580,13 +580,13 @@ IMPLEMENT_FUNCTION(13, Francois, haremVisit)
 			getData()->location = kLocationOutsideCompartment;
 
 			setCallback(7);
-			setup_doWalk(kCarGreenSleeping, kPosition_4840);
+			setup_doWalk(kCarRedSleeping, kPosition_4840);
 			break;
 
 		case 7:
 			if (getInventory()->hasItem(kItemWhistle) || getInventory()->get(kItemWhistle)->location == kObjectLocation3) {
 				setCallback(10);
-				setup_doWalk(kCarGreenSleeping, kPosition_5790);
+				setup_doWalk(kCarRedSleeping, kPosition_5790);
 				break;
 			}
 
@@ -605,7 +605,7 @@ IMPLEMENT_FUNCTION(13, Francois, haremVisit)
 			getEntities()->exitCompartment(kEntityFrancois, kObjectCompartmentE, true);
 
 			setCallback(10);
-			setup_doWalk(kCarGreenSleeping, kPosition_5790);
+			setup_doWalk(kCarRedSleeping, kPosition_5790);
 			break;
 
 		case 10:
@@ -1151,16 +1151,18 @@ label_callback_10:
 
 label_callback_11:
 			if (getInventory()->get(kItemBeetle)->location == kObjectLocation3) {
-				if (getState()->time <= kTimeEnd)
-					if (!getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000) || !CURRENT_PARAM(1, 4))
-						CURRENT_PARAM(1, 4) = (uint)(getState()->time + 75);
+				if (CURRENT_PARAM(1, 4) != kTimeInvalid) {
+					if (getState()->time <= kTimeEnd)
+						if (!getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000) || !CURRENT_PARAM(1, 4))
+							CURRENT_PARAM(1, 4) = (uint)(getState()->time + 75);
 
-				if (CURRENT_PARAM(1, 4) < getState()->time || getState()->time > kTimeEnd) {
-					CURRENT_PARAM(1, 4) = kTimeInvalid;
+					if (CURRENT_PARAM(1, 4) < getState()->time || getState()->time > kTimeEnd) {
+						CURRENT_PARAM(1, 4) = kTimeInvalid;
 
-					setCallback(12);
-					setup_playSound("Fra2010");
-					break;
+						setCallback(12);
+						setup_playSound("Fra2010");
+						break;
+					}
 				}
 
 label_callback_12:
@@ -1174,6 +1176,12 @@ label_callback_13:
 label_callback_14:
 				timeCheckCallbackCompartment(kTime2218500, CURRENT_PARAM(1, 7), 15, kObjectCompartmentB, kPosition_7500, "b");
 			}
+			// The original game has some code here similar to withMama marked as BUG:
+			// if [kItemBeetle].location != kObjectLocation3 && !has(kItemWhistle) && [kItemWhistle].location != kObjectLocation3,
+			// there are several always-false checks (time < N && time > N),
+			// kTime2040300 with callback 16, kTime2119500 with callback 17, kTime2146500 with callback 18, kTime2218500 with callback 19,
+			// with takeWalk as a payload.
+			// No point in reproducing it here.
 		}
 		break;
 

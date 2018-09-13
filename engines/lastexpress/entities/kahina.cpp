@@ -861,7 +861,7 @@ label_callback_2:
 
 		case 1:
 			getAction()->playAnimation(kEventKahinaPunchSuite4);
-			getLogic()->gameOver(kSavegameTypeEvent2, kEventCathJumpDownCeiling, kSceneNone, false);
+			getLogic()->gameOver(kSavegameTypeEvent2, kEventCathJumpDownCeiling, kSceneNone, true);
 			goto label_callback_1;
 
 		case 2:
@@ -945,7 +945,7 @@ label_callback_2:
 			if (params->param6 != kTimeInvalid) {
 				if (Entity::updateParameterTime((TimeValue)params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param6, 0)) {
 					getSound()->playSound(kEntityPlayer, "LIB014", getSound()->getSoundFlag(kEntityKahina));
-					getSound()->playSound(kEntityPlayer, "LIB015", getSound()->getSoundFlag(kEntityKahina));
+					getSound()->playSound(kEntityPlayer, "LIB015", getSound()->getSoundFlag(kEntityKahina), 15);
 
 					getEntities()->drawSequenceLeft(kEntityKahina, "202a");
 
@@ -1181,7 +1181,7 @@ IMPLEMENT_FUNCTION(24, Kahina, seekCath)
 
 		case 2:
 			if (getEntityData(kEntityPlayer)->entityPosition >= getData()->entityPosition)
-				getAction()->playAnimation(getData()->car == kCarRedSleeping ? kEventKahinaGunYellow : kEventKahinaGunBlue);
+				getAction()->playAnimation(getData()->car == kCarGreenSleeping ? kEventKahinaGunYellow : kEventKahinaGunBlue);
 			else
 				getAction()->playAnimation(kEventKahinaGun);
 
@@ -1327,8 +1327,11 @@ IMPLEMENT_FUNCTION(25, Kahina, searchCath)
 
 			switch (getInventory()->get(kItemFirebird)->location) {
 			default:
-				if (ENTITY_PARAM(0, 3))
+				if (ENTITY_PARAM(0, 3)) {
 					getInventory()->setLocationAndProcess(kItemBriefcase, kObjectLocation2);
+					getProgress().field_78 = 1;
+					ENTITY_PARAM(0, 3) = 0;
+				}
 				break;
 
 			case kObjectLocation3:
@@ -1344,11 +1347,9 @@ IMPLEMENT_FUNCTION(25, Kahina, searchCath)
 				getInventory()->setLocationAndProcess(kItemBriefcase, kObjectLocation2);
 				getProgress().field_C0 = (uint)getState()->time;
 				getProgress().field_78 = 1;
+				ENTITY_PARAM(0, 3) = 0;
 				break;
 			}
-
-			getProgress().field_78 = 1;
-			ENTITY_PARAM(0, 3) = 0;
 
 			if (getInventory()->get(kItemFirebird)->location != kObjectLocation18) {
 				setCallback(10);
@@ -1416,9 +1417,9 @@ IMPLEMENT_FUNCTION(26, Kahina, searchTatiana)
 			break;
 
 		case 4:
-			if (getEntities()->checkFields19(kEntityPlayer, kCarGreenSleeping, kPosition_7850)) {
+			if (getEntities()->checkFields19(kEntityPlayer, kCarRedSleeping, kPosition_7850)) {
 				setCallback(5);
-				setup_function19(kCarRedSleeping, kPosition_9270);
+				setup_function19(kCarKronos, kPosition_9270);
 			} else {
 				setCallback(6);
 				setup_enterExitCompartment("616Aa", kObjectCompartmentA);

@@ -162,7 +162,7 @@ IMPLEMENT_FUNCTION(6, Chapters, firstDream)
 		break;
 
 	case kActionEndSound:
-		getSound()->playSound(kEntityChapters, "MUS0009", kFlagDefault);
+		getSound()->playSound(kEntityChapters, "MUS009", kFlagDefault);
 		break;
 
 	case kActionKnock:
@@ -270,6 +270,7 @@ IMPLEMENT_FUNCTION(6, Chapters, firstDream)
 
 		getSound()->playSound(kEntityPlayer, "MUS008", kFlagDefault);
 		getInventory()->unselectItem();
+		// TODO: fade to black screen
 
 		// FIXME add event pump ?
 		while (getSoundQueue()->isBuffered("MUS008"))
@@ -302,7 +303,7 @@ IMPLEMENT_FUNCTION(6, Chapters, firstDream)
 				getSound()->playSound(kEntityPlayer, "LIB031");
 
 			if (params->param2 == 3) {
-				getData()->car = kCarGreenSleeping;
+				getData()->car = kCarLocomotive;
 				getEntities()->drawSequenceLeft(kEntityChapters, "JUGL");
 			}
 		}
@@ -411,7 +412,7 @@ label_processStations:
 
 label_enter_epernay:
 		// Entering Epernay station
-		if (timeCheckEnterStation(kTimeEnterEpernay, params->param8, 1, "Epernay", kCityEpernay))
+		if (timeCheckEnterStation(kTimeEnterEpernay, params->param8, 2, "Epernay", kCityEpernay))
 			break;
 
 label_exit_epernay:
@@ -721,6 +722,7 @@ IMPLEMENT_FUNCTION(9, Chapters, chapter1Next)
 
 		getSound()->playSound(kEntityPlayer, "MUS008", kFlagDefault);
 		getInventory()->unselectItem();
+		// TODO: fade to black screen
 
 		while (getSoundQueue()->isBuffered("MUS008"))
 			getSoundQueue()->updateQueue();
@@ -782,6 +784,8 @@ IMPLEMENT_FUNCTION(11, Chapters, chapter2Init)
 
 	// Setup inventory & items location
 	getInventory()->addItem(kItemGreenJacket);
+	getInventory()->get(kItemCorpse)->location = kObjectLocationNone;
+	getInventory()->get(kItemCorpse)->inPocket = false;
 
 	getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
 	getObjects()->update(kObjectHandleOutsideRight, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorHand);
@@ -899,6 +903,8 @@ IMPLEMENT_FUNCTION(14, Chapters, chapter3Init)
 			ENTITY_PARAM(0, 2) = 0;
 			ENTITY_PARAM(0, 3) = 0;
 		}
+
+		// TODO: fade to black screen
 
 		getScenes()->loadSceneFromPosition(kCarRestaurant, 60);
 		getInventory()->show();
@@ -1234,6 +1240,8 @@ IMPLEMENT_FUNCTION(18, Chapters, chapter4Init)
 		ENTITY_PARAM(0, 3) = 0;
 	}
 
+	// TODO: fade to black screen
+
 	if (getInventory()->hasItem(kItemFirebird))
 		getScenes()->loadSceneFromPosition(kCarGreenSleeping, 76);
 	else
@@ -1528,8 +1536,13 @@ label_callback_4:
 			ENTITY_PARAM(0, 3) = 0;
 		}
 
+		// BUG: the original game fades to black screen twice, before MUS008 starts playing
+		// (the second call just makes a delay)
+
 		getSound()->playSound(kEntityPlayer, "MUS008", kFlagDefault);
 		getInventory()->unselectItem();
+
+		// TODO: fade to black screen
 
 		while (getSoundQueue()->isBuffered("MUS008"))
 			getSoundQueue()->updateQueue();
@@ -1705,6 +1718,8 @@ IMPLEMENT_FUNCTION(21, Chapters, chapter5Init)
 			ENTITY_PARAM(0, 2) = 0;
 			ENTITY_PARAM(0, 3) = 0;
 		}
+
+		// TODO: fade to black screen
 
 		getScenes()->loadSceneFromPosition(kCarBaggageRear, 95);
 		getInventory()->show();

@@ -403,7 +403,7 @@ IMPLEMENT_FUNCTION(10, Cooks, chapter3)
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->car = kCarRestaurant;
-		getData()->inventoryItem = kItemNone;
+		getData()->inventoryItem = kItemNone; // not in the original version, but it does no harm, I suppose?
 
 		getProgress().field_4C = 0;
 
