@@ -39,7 +39,7 @@ Shared::Maps::MapWidget::CanMove UrbanWidget::canMoveTo(const Point &destPos) {
 	Maps::U1MapTile destTile;
 	_map->getTileAt(destPos, &destTile);
 
-	return destTile._tileId == Maps::CTILE_GROUND || destTile._tileId >= Maps::CTILE_51 ? YES : NO;
+	return destTile._tileId == Maps::CTILE_GROUND || destTile._tileId >= Maps::CTILE_POND_EDGE1 ? YES : NO;
 }
 
 bool UrbanWidget::moveBy(const Point &delta) {

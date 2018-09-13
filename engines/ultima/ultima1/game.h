@@ -37,6 +37,12 @@ enum CharacterClass {
 	CLASS_FIGHTER = 0, CLASS_CLERIC = 1, CLASS_WIZARD = 0, CLASS_THIEF = 3
 };
 
+enum SpellId {
+	SPELL_PRAYER = 0, SPELL_OPEN = 1, SPELL_UNLOCK = 2, SPELL_MAGIC_MISSILE = 3, SPELL_STEAL = 4,
+	SPELL_LADDER_DOWN = 5, SPELL_LADDER_UP = 6, SPELL_BLINK = 7, SPELL_CREATE = 8,
+	SPELL_DESTROY = 9, SPELL_KILL = 10
+};
+
 class GameResources;
 
 class Ultima1Game : public Shared::Game {

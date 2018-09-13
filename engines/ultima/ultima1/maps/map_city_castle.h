@@ -30,7 +30,8 @@ namespace Ultima1 {
 namespace Maps {
 
 enum CityTile {
-	CTILE_GROUND = 1, CTILE_51 = 51, CTILE_GATE = 11
+	CTILE_GROUND = 1, CTILE_POND_EDGE1 = 51, CTILE_POND_EDGE2 = 52, CTILE_POND_EDGE3 = 53,
+	CTILE_GATE = 11
 };
 
 /**
