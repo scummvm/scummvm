@@ -689,8 +689,7 @@ label_continue:
 				setup_playSound(getProgress().eventMetAugust ? "AUG1128F" : "AUG1128H");
 				return;
 			}
-			// Fallback to next case
-
+			// fall through
 		case 9:
 		case 10:
 		case 11:
