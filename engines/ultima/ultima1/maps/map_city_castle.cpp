@@ -213,7 +213,42 @@ void MapCity::load(Shared::Maps::MapId mapId) {
 }
 
 void MapCity::dropCoins(uint coins) {
+	Shared::Character &c = *_game->_party._currentCharacter;
+	U1MapTile tile;
+	getTileAt(getPosition(), &tile);
 
+	if (tile._tileId == CTILE_POND_EDGE1 || tile._tileId == CTILE_POND_EDGE2 || tile._tileId == CTILE_POND_EDGE3) {
+		addInfoMsg(_game->_res->SHAZAM);
+		_game->playFX(5);
+
+		switch (tile._tileId) {
+		case CTILE_POND_EDGE1: {
+			// Increase one of the attributes randomly
+			uint *attrList[6] = { &c._strength, &c._agility, &c._stamina, &c._charisma, &c._wisdom, &c._intelligence };
+			uint &attr = *attrList[_game->getRandomNumber(0, 5)];
+			
+			attr = MIN(attr + coins / 10, 99U);
+			break;
+		}
+
+		case CTILE_POND_EDGE2: {
+			// Increase the quantity of a random weapon
+			uint weaponNum = _game->getRandomNumber(1, 15);
+			c._weapons[weaponNum]._quantity = MIN(c._weapons[weaponNum]._quantity + 1, 255U);
+			break;
+		}
+
+		case CTILE_POND_EDGE3:
+			// Increase food
+			c._food += coins;
+			break;
+
+		default:
+			break;
+		}
+	} else {
+		addInfoMsg(_game->_res->OK);
+	}
 }
 
 /*-------------------------------------------------------------------*/
@@ -238,7 +273,27 @@ void MapCastle::load(Shared::Maps::MapId mapId) {
 }
 
 void MapCastle::dropCoins(uint coins) {
+	Shared::Character &c = *_game->_party._currentCharacter;
+	U1MapTile tile;
+	getTileAt(getPosition(), &tile);
 
+	if (tile._tileId == CTILE_POND_EDGE1) {
+		uint hp = coins * 3 / 2;
+		c._hitPoints = MIN(c._hitPoints + hp, 9999U);
+		
+		if (_game->getRandomNumber(1, 255) > 16) {
+			addInfoMsg(_game->_res->SHAZAM);
+		} else {
+			uint spellNum = _game->getRandomNumber(1, 7);
+			if (spellNum == SPELL_MAGIC_MISSILE)
+				spellNum = SPELL_STEAL;
+		
+			c._spells[spellNum]._quantity++;
+			addInfoMsg(_game->_res->ALAKAZOT);
+		}
+	} else {
+		addInfoMsg(_game->_res->OK);
+	}
 }
 
 } // End of namespace Maps

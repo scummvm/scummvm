@@ -101,20 +101,25 @@ bool Drop::KeypressMsg(CKeypressMsg &msg) {
 bool Drop::TextInputMsg(CTextInputMsg &msg) {
 	Shared::Character &c = *_game->_party._currentCharacter;
 	assert(_mode == DROP_PENCE);
+	Ultima1Game *game = _game;
+	Maps::Ultima1Map *map = getMap();
+
 	uint amount = atoi(msg._text.c_str());
 
 	if (msg._escaped || !amount) {
 		none();
 
 	} else {
-		addInfoMsg("");
+		addInfoMsg(Common::String::format(" %u", amount));
 
 		if (amount > c._coins) {
-			addInfoMsg(_game->_res->NOT_THAT_MUCH);
-			_game->playFX(1);
+			addInfoMsg(game->_res->NOT_THAT_MUCH);
+			game->playFX(1);
 		} else {
 			c._coins -= amount;
-			getMap()->dropCoins(amount);
+			hide();
+
+			map->dropCoins(amount);
 		}
 	}
 
@@ -183,9 +188,9 @@ void Drop::drawDropPence() {
 	Shared::Gfx::VisualSurface s = getSurface();
 	Common::String text = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[3], _game->_res->DROP_PENCE);
 	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	s.writeString(_game->_res->DROP_ARMOR, TextPoint(1, 24), _game->_textColor);
+	s.writeString(_game->_res->DROP_PENCE, TextPoint(1, 24), _game->_textColor);
 
-	_textInput.show(TextPoint(12, 24), true, 4, _game->_textColor);
+	_textInput.show(TextPoint(13, 24), true, 4, _game->_textColor);
 }
 
 void Drop::drawDropWeapon() {
