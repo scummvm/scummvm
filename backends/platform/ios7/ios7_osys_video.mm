@@ -64,17 +64,13 @@ void OSystem_iOS7::fatalError() {
 void OSystem_iOS7::engineInit() {
 	EventsBaseBackend::engineInit();
 	// Prevent the device going to sleep during game play (and in particular cut scenes)
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
-	});
+	[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 }
 
 void OSystem_iOS7::engineDone() {
 	EventsBaseBackend::engineDone();
 	// Allow the device going to sleep if idle while in the Launcher
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[[UIApplication sharedApplication] setIdleTimerDisabled:NO];
-	});
+	[[UIApplication sharedApplication] setIdleTimerDisabled:NO];
 }
 
 void OSystem_iOS7::initVideoContext() {
