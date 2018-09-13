@@ -769,7 +769,7 @@ IMPLEMENT_FUNCTION(22, Alexei, standingAtWindow)
 		if (getState()->time > kTime1138500) {
 			params->param3 = kTimeInvalid;
 		} else {
-			if (!getEntities()->isInSalon(kEntityPlayer) && !getEntities()->isInRestaurant(kEntityPlayer) || !params->param3)
+			if ((!getEntities()->isInSalon(kEntityPlayer) && !getEntities()->isInRestaurant(kEntityPlayer)) || !params->param3)
 				params->param3 = (uint)getState()->time;
 
 			if (params->param3 >= getState()->time)
