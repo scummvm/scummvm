@@ -349,6 +349,18 @@ uint getSizeNextPOT(uint size) {
 }
 
 - (void)setupGestureRecognizers {
+	UISwipeGestureRecognizer *swipeUpFourFingers = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(fourFingersSwipeUp:)];
+	swipeUpFourFingers.direction = UISwipeGestureRecognizerDirectionUp;
+	swipeUpFourFingers.numberOfTouchesRequired = 4;
+	swipeUpFourFingers.delaysTouchesBegan = NO;
+	swipeUpFourFingers.delaysTouchesEnded = NO;
+
+	UISwipeGestureRecognizer *swipeDownFourFingers = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(fourFingersSwipeDown:)];
+	swipeDownFourFingers.direction = UISwipeGestureRecognizerDirectionDown;
+	swipeDownFourFingers.numberOfTouchesRequired = 4;
+	swipeDownFourFingers.delaysTouchesBegan = NO;
+	swipeDownFourFingers.delaysTouchesEnded = NO;
+
 	UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeRight:)];
 	swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
 	swipeRight.numberOfTouchesRequired = 2;
@@ -379,12 +391,16 @@ uint getSizeNextPOT(uint size) {
 	doubleTapTwoFingers.delaysTouchesBegan = NO;
 	doubleTapTwoFingers.delaysTouchesEnded = NO;
 
+	[self addGestureRecognizer:swipeUpFourFingers];
+	[self addGestureRecognizer:swipeDownFourFingers];
 	[self addGestureRecognizer:swipeRight];
 	[self addGestureRecognizer:swipeLeft];
 	[self addGestureRecognizer:swipeUp];
 	[self addGestureRecognizer:swipeDown];
 	[self addGestureRecognizer:doubleTapTwoFingers];
 
+	[swipeUpFourFingers release];
+	[swipeDownFourFingers release];
 	[swipeRight release];
 	[swipeLeft release];
 	[swipeUp release];
@@ -871,11 +887,14 @@ uint getSizeNextPOT(uint size) {
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation {
 	[self addEvent:InternalEvent(kInputOrientationChanged, orientation, 0)];
 
-	BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height);
-	if (isLandscape) {
-		[_keyboardView hideKeyboard];
-	} else {
-		[_keyboardView showKeyboard];
+	if (!iOS7_isBigDevice()) {
+		// iPad software keyboard has a close button so don't bother controlling iPads.
+		BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height);
+		if (isLandscape) {
+			[_keyboardView hideKeyboard];
+		} else {
+			[_keyboardView showKeyboard];
+		}
 	}
 }
 
@@ -964,6 +983,14 @@ uint getSizeNextPOT(uint size) {
 	_secondTouch = nil;
 }
 
+- (void)fourFingersSwipeUp:(UISwipeGestureRecognizer *)recognizer {
+	[_keyboardView showKeyboard];
+}
+
+- (void)fourFingersSwipeDown:(UISwipeGestureRecognizer *)recognizer {
+	[_keyboardView hideKeyboard];
+}
+	
 - (void)twoFingersSwipeRight:(UISwipeGestureRecognizer *)recognizer {
 	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeRight, 2)];
 }
