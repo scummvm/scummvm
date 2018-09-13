@@ -1118,7 +1118,7 @@ void Screen::rollCredits() {
 			} else if (creditsLines[i]->top < scrollPos + 400) {
 				if (!creditsLines[i]->sprite) {
 					debug(2, "Creating line %d: '%s'", i, creditsLines[i]->str.c_str());
-					creditsLines[i]->sprite = _vm->_fontRenderer->makeTextSprite((byte *)creditsLines[i]->str.c_str(), 600, 14, _vm->_speechFontId, 0);
+					creditsLines[i]->sprite = _vm->_fontRenderer->makeTextSprite((const byte *)creditsLines[i]->str.c_str(), 600, 14, _vm->_speechFontId, 0);
 				}
 
 				FrameHeader frame;
