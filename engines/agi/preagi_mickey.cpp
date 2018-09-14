@@ -843,6 +843,7 @@ void MickeyEngine::drawRoomAnimation() {
 				case IDI_MSA_PLANET_VENUS:
 					if (_gameStateMickey.iRmMenu[_gameStateMickey.iRoom] != 2)
 						break;
+					// fall through
 				default:
 					drawObj(
 					    IDI_MSA_OBJECT_CRYSTAL,
