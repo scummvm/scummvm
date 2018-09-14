@@ -1019,7 +1019,7 @@ void Interpreter::O_GETMOBTEXT() {
 	// Also, the pointer is only valid as long as _vm->_mobList[mob]
 	// is around and _vm->_mobList[mob]._examText hasn't been modified by any of its
 	// non-const member functions which also might or might not be a problem.
-	_string = (byte *)_vm->_mobList[mob]._examText.c_str();
+	_string = (const byte *)_vm->_mobList[mob]._examText.c_str();
 	debugInterpreter("O_GETMOBTEXT mob %d", mob);
 }
 
@@ -1841,7 +1841,7 @@ void Interpreter::O_GETMOBNAME() {
 	// Also, the pointer is only valid as long as _vm->_mobList[mobId]
 	// is around and _vm->_mobList[mobId]._name hasn't been modified by any of its
 	// non-const member functions which also might or might not be a problem.
-	_string = (byte *)_vm->_mobList[modId]._name.c_str();
+	_string = (const byte *)_vm->_mobList[modId]._name.c_str();
 	debugInterpreter("O_GETMOBNAME modId %d", modId);
 }
 
