@@ -726,6 +726,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 						kFilterNoInput, kSpotSoundCompletedFlag);
 				break;
 			}
+			// FIXME: missing break?
 		case kPlayingTime:
 			_gameState = kPlayingInstructions;
 			_globeMovie.show();
