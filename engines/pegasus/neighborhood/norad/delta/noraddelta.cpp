@@ -193,6 +193,7 @@ void NoradDelta::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSp
 	case kN59PlayerWins2:
 		compassMove.makeTwoKnotFaderSpec(kNoradDeltaMovieScale, entry.movieStart, 270, entry.movieEnd, 280);
 		compassMove.insertFaderKnot(entry.movieEnd - 1000, 270);
+		// FIXME: missing break?
 	default:
 		Norad::getExtraCompassMove(entry, compassMove);
 		break;
