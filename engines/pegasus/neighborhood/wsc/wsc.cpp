@@ -1567,6 +1567,7 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 			playSpotSoundSync(kPaging2In, kPaging2Out);
 			GameState.setWSCHeardPage2(true);
 		}
+		// FIXME: undocumented fall through?
 	case MakeRoomView(kWSC10, kNorth):
 	case MakeRoomView(kWSC26, kSouth):
 	case MakeRoomView(kWSC72, kWest):
