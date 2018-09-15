@@ -123,7 +123,7 @@ Resources::EXTResourceTable::~EXTResourceTable() {
 Resources::TOTTextTable::TOTTextTable() {
 	needFree   = false;
 	itemsCount = 0;
-	data       = (byte)0;
+	data       = NULL;
 	size       = 0;
 	items      = NULL;
 }
