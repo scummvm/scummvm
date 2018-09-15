@@ -290,6 +290,7 @@ void MapCastle::synchronize(Common::Serializer &s) {
 	MapCityCastle::synchronize(s);
 	s.syncAsByte(_castleKey);
 	s.syncAsByte(_getCounter);
+	s.syncAsByte(_freeingPrincess);
 }
 
 void MapCastle::dropCoins(uint coins) {
@@ -325,6 +326,25 @@ void MapCastle::get() {
 	} else {
 		addInfoMsg(_game->_res->NOTHING_HERE);
 		_game->playFX(1);
+	}
+}
+
+void MapCastle::unlock() {
+	U1MapTile tile;
+	Point pt = getPosition();
+	getTileAt(pt, &tile);
+
+	if (tile._tileId != CTILE_LOCK1 && tile._tileId != CTILE_LOCK2) {
+		addInfoMsg(_game->_res->WHAT);
+		_game->playFX(1);
+	} else if (!_castleKey) {
+		addInfoMsg(_game->_res->NO_KEY);
+	} else if (tile._tileId != (int)_castleKey) {
+		addInfoMsg(_game->_res->INCORRECT_KEY);
+	} else {
+		addInfoMsg(_game->_res->DOOR_IS_OPEN);
+		_data[pt.y][pt.x] = CTILE_GROUND;
+		_freeingPrincess = true;
 	}
 }
 

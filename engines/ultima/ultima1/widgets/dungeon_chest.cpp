@@ -53,7 +53,6 @@ bool DungeonChest::open() {
 		c._hitPoints -= map->getLevel();
 	}
 
-	// TODO
 	return true;
 }
 
