@@ -35,7 +35,7 @@ namespace Maps {
 
 enum CityTile {
 	CTILE_GROUND = 1, CTILE_POND_EDGE1 = 51, CTILE_POND_EDGE2 = 52, CTILE_POND_EDGE3 = 53,
-	CTILE_GATE = 11
+	CTILE_GATE = 11, CTILE_LOCK1 = 60, CTILE_LOCK2 = 61
 };
 
 /**
@@ -149,11 +149,13 @@ class MapCastle : public MapCityCastle {
 public:
 	uint _castleKey;					// Key for castle map lock
 	int _getCounter;					// Counter for allowed gets without stealing check
+	bool _freeingPrincess;				// Set when freeing the princess is in progress
 public:
 	/**
 	 * Constructor
 	 */
-	MapCastle(Ultima1Game *game, Ultima1Map *map) : MapCityCastle(game, map), _castleKey(0), _getCounter(0) {}
+	MapCastle(Ultima1Game *game, Ultima1Map *map) : MapCityCastle(game, map), _castleKey(0),
+		_getCounter(0), _freeingPrincess(false) {}
 
 	/**
 	 * Destructor
@@ -179,6 +181,11 @@ public:
 	 * Do an get action
 	 */
 	virtual void get() override;
+
+	/**
+	 * Do an unlock action
+	 */
+	virtual void unlock() override;
 };
 
 } // End of namespace Maps

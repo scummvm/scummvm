@@ -608,6 +608,10 @@ const char *const SRC_ALAKAZOT = "Alakazot!";
 const char *const SRC_NO_KINGS_PERMISSION = "Thou hast not the king's permission!";
 const char *const SRC_SET_OFF_TRAP = "Thou hast set off a trap!";
 const char *const SRC_THOU_DOST_FIND = "Thou dost find: ";
+const char *const SRC_NO_KEY = "Thou hast not a key!";
+const char *const SRC_INCORRECT_KEY = "Thou has not\x1F""the correct key!";
+const char *const SRC_DOOR_IS_OPEN = "The door is open";
+
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
 const char *const SRC_GROCERY_PACKS2 = "each.  How many dost thou";
@@ -697,6 +701,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	NO_KINGS_PERMISSION = SRC_NO_KINGS_PERMISSION;
 	SET_OFF_TRAP = SRC_SET_OFF_TRAP;
 	THOU_DOST_FIND = SRC_THOU_DOST_FIND;
+	NO_KEY = SRC_NO_KEY;
+	DOOR_IS_OPEN = SRC_DOOR_IS_OPEN;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -784,6 +790,9 @@ void GameResources::synchronize() {
 	syncString(NO_KINGS_PERMISSION);
 	syncString(SET_OFF_TRAP);
 	syncString(THOU_DOST_FIND);
+	syncString(NO_KEY);
+	syncString(INCORRECT_KEY);
+	syncString(DOOR_IS_OPEN);
 
 	syncStrings(GROCERY_NAMES, 8);
 	syncString(GROCERY_SELL);
