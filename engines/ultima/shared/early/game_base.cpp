@@ -179,7 +179,6 @@ void GameBase::setView(const Common::String &viewName) {
 void GameBase::setPopup(Gfx::Popup *popup) {
 	assert(!_pendingPopup);
 	_pendingPopup = popup;
-	addChild(popup);
 }
 
 void GameBase::update() {

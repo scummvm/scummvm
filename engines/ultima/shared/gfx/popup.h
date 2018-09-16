@@ -49,7 +49,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Popup(GameBase *game) : VisualItem(nullptr), _game(game), _respondTo(nullptr) {}
+	Popup(GameBase *game);
 
 	/**
 	 * Destructor
