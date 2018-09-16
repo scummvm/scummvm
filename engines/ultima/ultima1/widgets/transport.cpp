@@ -33,6 +33,7 @@ namespace Ultima1 {
 namespace Widgets {
 
 TransportOnFoot::TransportOnFoot(Ultima1Game *game, Maps::MapBase *map) : OverworldWidget(game, map) {
+	_name = game->_res->TRANSPORT_NAMES[0];
 }
 
 uint TransportOnFoot::getTileNum() const {
@@ -64,6 +65,48 @@ void Transport::disembark() {
 	} else {
 		map->addOnFoot();
 	}
+}
+
+/*-------------------------------------------------------------------*/
+
+Horse::Horse(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
+	_name = game->_res->TRANSPORT_NAMES[1];
+}
+
+/*-------------------------------------------------------------------*/
+
+Cart::Cart(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
+	_name = game->_res->TRANSPORT_NAMES[2];
+}
+
+/*-------------------------------------------------------------------*/
+
+Raft::Raft(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
+	_name = game->_res->TRANSPORT_NAMES[3];
+}
+
+/*-------------------------------------------------------------------*/
+
+Frigate::Frigate(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
+	_name = game->_res->TRANSPORT_NAMES[4];
+}
+
+/*-------------------------------------------------------------------*/
+
+Aircar::Aircar(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
+	_name = game->_res->TRANSPORT_NAMES[5];
+}
+
+/*-------------------------------------------------------------------*/
+
+Shuttle::Shuttle(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
+	_name = game->_res->TRANSPORT_NAMES[6];
+}
+
+/*-------------------------------------------------------------------*/
+
+TimeMachine::TimeMachine(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
+	_name = game->_res->TRANSPORT_NAMES[7];
 }
 
 } // End of namespace Widgets
