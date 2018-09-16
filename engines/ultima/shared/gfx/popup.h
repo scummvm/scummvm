@@ -52,6 +52,11 @@ public:
 	Popup(GameBase *game) : VisualItem(nullptr), _game(game), _respondTo(nullptr) {}
 
 	/**
+	 * Destructor
+	 */
+	virtual ~Popup();
+
+	/**
 	 * Show the popup
 	 * @param respondTo		Element to send any response to when the popup closes.
 	 *						If not provided, any response goes to the active view
