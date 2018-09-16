@@ -48,7 +48,7 @@ bool DungeonCoffin::open() {
 	addInfoMsg("");
 
 	if (_game->getRandomNumber(1, 255) < 104 && !deltaTile._isWall && !deltaTile._isSecretDoor && !deltaTile._widget) {
-		shiftTo(deltaPos);
+		spawnMonsterAt(deltaPos);
 	} else {
 		addInfoMsg(game->_res->FIND);
 		game->giveTreasure(game->getRandomNumber(3, map->getLevel() * map->getLevel() + 9), 0);
@@ -58,8 +58,14 @@ bool DungeonCoffin::open() {
 	return true;
 }
 
-void DungeonCoffin::shiftTo(const Point &newPos) {
-	// TODO
+void DungeonCoffin::spawnMonsterAt(const Point &newPos) {
+	Maps::U1MapTile tile;
+	_map->getTileAt(newPos, &tile);
+
+	if (tile._isHallway || tile._isLadderUp || tile._isLadderDown || tile._widget) {
+		Maps::MapDungeon *map = static_cast<Maps::MapDungeon *>(_map);
+		map->spawnMonsterAt(newPos);
+	}
 }
 
 } // End of namespace Widgets

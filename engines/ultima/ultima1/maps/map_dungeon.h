@@ -57,11 +57,6 @@ private:
 	 * so that a given dungeon and level will always be built the same
 	 */
 	uint getDeterministicRandomNumber(uint min, uint max) { return min + _random.getRandomNumber(max - min); }
-
-	/**
-	 * Spawns a monster at a given position in the dungeon map
-	 */
-	void spawnMonsterAt(const Point &pt);
 public:
 	MapDungeon(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map), _dungeonLevel(0),
 		_random("UltimaDungeons") {}
@@ -98,6 +93,11 @@ public:
 	 * Spawns a monster within dungeons
 	 */
 	void spawnMonster();
+
+	/**
+	 * Spawns a monster at a given position in the dungeon map
+	 */
+	void spawnMonsterAt(const Point &pt);
 
 	/**
 	 * Do an inform action
