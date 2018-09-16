@@ -35,9 +35,9 @@ namespace Widgets {
 class DungeonCoffin : public DungeonItem {
 private:
 	/**
-	 * Shifts the coffin to a given new position, if feasible
+	 * Spawns a monster from the coffin
 	 */
-	void shiftTo(const Point &newPos);
+	void spawnMonsterAt(const Point &newPos);
 public:
 	DECLARE_WIDGET(DungeonCoffin)
 
