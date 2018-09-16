@@ -72,7 +72,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Horse(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+	Horse(Ultima1Game *game, Maps::MapBase *map);
 };
 
 /**
@@ -83,7 +83,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Cart(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+	Cart(Ultima1Game *game, Maps::MapBase *map);
 };
 
 /**
@@ -94,7 +94,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Raft(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+	Raft(Ultima1Game *game, Maps::MapBase *map);
 };
 
 /**
@@ -105,7 +105,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Frigate(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+	Frigate(Ultima1Game *game, Maps::MapBase *map);
 };
 
 /**
@@ -116,7 +116,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Aircar(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+	Aircar(Ultima1Game *game, Maps::MapBase *map);
 };
 
 /**
@@ -127,7 +127,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Shuttle(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+	Shuttle(Ultima1Game *game, Maps::MapBase *map);
 };
 
 /**
@@ -138,7 +138,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	TimeMachine(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+	TimeMachine(Ultima1Game *game, Maps::MapBase *map);
 };
 
 } // End of namespace Widgets
