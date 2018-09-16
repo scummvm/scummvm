@@ -31,6 +31,10 @@ BEGIN_MESSAGE_MAP(Popup, VisualItem)
 	ON_MESSAGE(ShowMsg)
 END_MESSAGE_MAP()
 
+Popup::Popup(GameBase *game) : VisualItem(nullptr), _game(game), _respondTo(nullptr) {
+	game->addChild(this);
+}
+
 Popup::~Popup() {
 	detach();
 }
