@@ -34,10 +34,17 @@ Prayer::Prayer() : Spell(SPELL_PRAYER) {
 
 void Prayer::cast() {
 	// TODO
+	addInfoMsg("");
 }
 
 void Prayer::dungeonCast() {
-	// TODO
+	// When cast within the dungeon, cast a random spell without cost
+	SpellId spellId = (SpellId)_game->getRandomNumber(SPELL_OPEN, SPELL_KILL);
+	if (spellId == SPELL_STEAL)
+		spellId = SPELL_LADDER_DOWN;
+
+	const Shared::Character &c = *_game->_party._currentCharacter;
+	c._spells[spellId]->dungeonCast();
 }
 
 } // End of namespace Spells

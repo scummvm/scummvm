@@ -61,6 +61,7 @@ public:
 	const char *ARMOR_NAMES[6];
 	const char *ARMOR_NAMES_ARTICLE[6];
 	const char *SPELL_NAMES[11];
+	const char *SPELL_PHRASES[12];
 	const char *GEM_NAMES[4];
 	byte OVERWORLD_MONSTER_DAMAGE[15];
 	const char *OVERWORLD_MONSTER_NAMES[15];
@@ -131,6 +132,7 @@ public:
 	const char *NO_EFFECT;
 	const char *USED_UP_SPELL;
 	const char *DUNGEON_SPELL_ONLY;
+	const char *MONSTER_REMOVED;
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;

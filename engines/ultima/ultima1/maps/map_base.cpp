@@ -86,9 +86,8 @@ void MapBase::cast() {
 	Shared::Spell &spell = *c._spells[c._equippedSpell];
 	addInfoMsg(Common::String::format(" %s", spell._name.c_str()), false);
 
-
 	if (c._equippedSpell == Spells::SPELL_PRAYER) {
-		spell.cast();
+		castSpell(c._equippedSpell);
 	} else if (spell._quantity == 0) {
 		addInfoMsg("");
 		addInfoMsg(_game->_res->USED_UP_SPELL);

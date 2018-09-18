@@ -214,6 +214,12 @@ static const char *SRC_SPELL_NAMES[11] = {
 	"Blink", "Create", "Destroy", "Kill"
 };
 
+static const char *SRC_SPELL_PHRASES[12] = {
+	"\"POTENTIS-LAUDIS!\"", "\"APERTUS!\"", "\"PECUNIA!\"", "\"VASTO!\"", "\"NUDO!\"",
+	"\"INFERUS!\"", "\"ASCENDO!\"", "\"DUCIS-EDUCO!\"", "\"STRUXI!\"", "\"DELIO!\"",
+	"\"INTERFICIO!\"", " Shazam!"
+};
+
 static const char *SRC_GEM_NAMES[4] = { "Red Gem", "Green Gem", "Blue Gem", "White Gem" };
 
 const byte SRC_LOCATION_X[LOCATION_COUNT] = {
@@ -634,6 +640,7 @@ const char *const SRC_TRANSPORT_WEAPONS[2] = { "cannons", "lasers" };
 const char *const SRC_NO_EFFECT = "Hmmmm... no effect!";
 const char *const SRC_USED_UP_SPELL = "You've used up that spell!";
 const char *const SRC_DUNGEON_SPELL_ONLY = "Failed, dungeon spell only!";
+const char *const SRC_MONSTER_REMOVED = "Monster removed!";
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
@@ -671,6 +678,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(SRC_WEAPON_DISTANCES, SRC_WEAPON_DISTANCES + 16, WEAPON_DISTANCES);
 	Common::copy(&SRC_ARMOR_NAMES[0], &SRC_ARMOR_NAMES[16], ARMOR_NAMES);
 	Common::copy(&SRC_SPELL_NAMES[0], &SRC_SPELL_NAMES[16], SPELL_NAMES);
+	Common::copy(SRC_SPELL_PHRASES, SRC_SPELL_PHRASES + 12, SPELL_PHRASES);
 	Common::copy(&SRC_GEM_NAMES[0], &SRC_GEM_NAMES[4], GEM_NAMES);
 	Common::copy(&SRC_OVERWORLD_MONSTER_DAMAGE[0], &SRC_OVERWORLD_MONSTER_DAMAGE[15], OVERWORLD_MONSTER_DAMAGE);
 	Common::copy(&SRC_OVERWORLD_MONSTER_NAMES[0], &SRC_OVERWORLD_MONSTER_NAMES[15], OVERWORLD_MONSTER_NAMES);
@@ -743,6 +751,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	NO_EFFECT = SRC_NO_EFFECT;
 	USED_UP_SPELL = SRC_USED_UP_SPELL;
 	DUNGEON_SPELL_ONLY = SRC_DUNGEON_SPELL_ONLY;
+	MONSTER_REMOVED = SRC_MONSTER_REMOVED;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -777,6 +786,7 @@ void GameResources::synchronize() {
 	syncBytes(WEAPON_DISTANCES, 16);
 	syncStrings(ARMOR_NAMES, 6);
 	syncStrings(SPELL_NAMES, 11);
+	syncStrings(SPELL_PHRASES, 12);
 	syncStrings(GEM_NAMES, 4);
 	syncBytes(OVERWORLD_MONSTER_DAMAGE, 15);
 	syncStrings(OVERWORLD_MONSTER_NAMES, 15);
