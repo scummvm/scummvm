@@ -88,6 +88,7 @@ void Ultima1Game::starting(bool isLoading) {
 void Ultima1Game::setup() {
 	Shared::Character &c = *_party._currentCharacter;
 
+	// Weapons setup
 	c._weapons.resize(16);
 	for (int idx = 0; idx < 16; ++idx) {
 		c._weapons[idx]._longName = _res->WEAPON_NAMES_UPPERCASE[idx];
@@ -95,26 +96,24 @@ void Ultima1Game::setup() {
 		c._weapons[idx]._distance = _res->WEAPON_DISTANCES[idx];
 	}
 
+	// Armor setup
 	c._armor.resize(6);
 	for (int idx = 0; idx < 6; ++idx)
 		c._armor[idx]._name = _res->ARMOR_NAMES[idx];
 
+	// Spells setup
+	c._spells.push_back(&_spellPrayer);
+	c._spells.push_back(&_spellOpen);
+	c._spells.push_back(&_spellUnlock);
+	c._spells.push_back(&_spellMagicMissile);
+	c._spells.push_back(&_spellSteal);
+	c._spells.push_back(&_spellLadderDown);
+	c._spells.push_back(&_spellLadderUp);
 	c._spells.push_back(&_spellBlink);
 	c._spells.push_back(&_spellCreate);
 	c._spells.push_back(&_spellDestroy);
 	c._spells.push_back(&_spellKill);
-	c._spells.push_back(&_spellLadderDown);
-	c._spells.push_back(&_spellLadderUp);
-	c._spells.push_back(&_spellMagicMissile);
-	c._spells.push_back(&_spellOpen);
-	c._spells.push_back(&_spellPrayer);
-	c._spells.push_back(&_spellSteal);
-	c._spells.push_back(&_spellUnlock);
 
-
-	// TODO: Replace remaining spell slots with proper spell classes
-	for (int idx = 0; idx < 10; ++idx)
-		c._spells.push_back(&_spellPrayer);
 	for (int idx = 0; idx < 11; ++idx)
 		static_cast<Spells::Spell *>(c._spells[idx])->setGame(this);
 }
