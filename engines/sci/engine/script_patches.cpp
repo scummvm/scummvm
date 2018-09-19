@@ -3761,6 +3761,33 @@ static const uint16 laurabow2PatchFixCrateRoomEastDoorLockup[] = {
 	PATCH_END
 };
 
+// LB2 Floppy 1.0 attempts to show a non-existent message when using the
+//  carbon paper on the desk lamp in room 550.
+//
+// deskLamp:<noname300>(39), which is really doVerb, attempts to show a message
+//  for its own noun (5) instead of the expected noun (45) when the lamp is off.
+//  This results in "<Messager> 550: 5, 39, 6, 1 not found".
+//
+// We fix this the way Sierra did in version 1.1 by passing the correct noun.
+//
+// Applies to: English floppy 1.000
+// Responsible method: deskLamp:<noname300>(39), which is really doVerb
+// Fixes bug: #10706
+static const uint16 laurabow2SignatureMissingDeskLampMessage[] = {
+	SIG_MAGICDWORD,
+	0x33, 0x1a,                         // jmp 1a
+	0x38, SIG_UINT16(0x0127),           // pushi 127h [ say, hardcoded as we only patch one floppy version ]
+	0x39, 0x03,                         // pushi 3
+	0x67, 0x1a,                         // pTos 1a [ deskLamp noun (5) ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchMissingDeskLampMessage[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x39, 0x2d,                         // pushi 45d [ correct message noun ]
+	PATCH_END
+};
+
 // Laura Bow 2 CD resets the audio mode to speech on init/restart
 //  We already sync the settings from ScummVM (see SciEngine::syncIngameAudioOptions())
 //  and this script code would make it impossible to see the intro using "dual" mode w/o using debugger command
@@ -3854,6 +3881,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
+	{  true,   550, "Floppy: missing desk lamp message",              1, laurabow2SignatureMissingDeskLampMessage,       laurabow2PatchMissingDeskLampMessage },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                     1, kq6laurabow2CDSignatureAudioTextSupport1,       kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support 2",                     1, kq6laurabow2CDSignatureAudioTextSupport2,       kq6laurabow2CDPatchAudioTextSupport2 },
