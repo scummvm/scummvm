@@ -526,7 +526,7 @@ get_system_exe_extension() {
 	riscos)
 		_exeext=",e1f"
 		;;
-	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
+	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | switch | wii)
 		_exeext=".elf"
 		;;
 	gph-linux)
@@ -919,7 +919,7 @@ Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
                           gph, iphone, ios7, linuxmoto, maemo, n64, null, openpandora,
-                          ps2, psp, psp2, samsungtv, sdl, tizen, webos, wii, wince) [sdl]
+                          ps2, psp, psp2, samsungtv, sdl, switch, tizen, webos, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -972,6 +972,7 @@ Special configuration feature:
                                            psp2 for PlayStation Vita
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
+                                           switch for Nintendo Switch
                                            tizen for Samsung Tizen
                                            webos for HP Palm WebOS
                                            wii for Nintendo Wii
@@ -1685,6 +1686,16 @@ samsungtv)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
+switch)
+	_host_os=switch
+	_host_cpu=arm
+	_host_alias=aarch64-none-elf
+	test "x$prefix" = xNONE && prefix=.
+	datarootdir='${prefix}/data'
+	datadir='${datarootdir}'
+	docdir='${prefix}/doc'
+	PKG_CONFIG_LIBDIR=$DEVKITPRO/portlibs/switch/lib/pkgconfig
+	;;
 tizen)
  	_host_os=tizen
 	_host_cpu=arm
@@ -1784,7 +1795,7 @@ android)
 		exit 1
 	fi
 	;;
-3ds | ds | gamecube | wii)
+3ds | ds | gamecube | switch | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -2101,7 +2112,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | tizen | wii | wince )
+			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | switch | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -2175,7 +2186,7 @@ fi
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-3ds | android | androidsdl | gamecube | ps2 | psp | tizen | wii | webos)
+3ds | android | androidsdl | gamecube | ps2 | psp | switch | tizen | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2883,6 +2894,22 @@ case $_host_os in
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		append_var LIBS "-lnsl -lsocket"
 		;;
+	switch)
+		_pkgconfig="$DEVKITPRO/portlibs/switch/bin/aarch64-none-elf-pkg-config"
+		_sdlpath="$DEVKITPRO/portlibs/switch/bin"
+		append_var DEFINES "-DSWITCH -D__SWITCH__ -DNINTENDO_SWITCH"
+		append_var CXXFLAGS "-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE -ftls-model=local-exec"
+		append_var CXXFLAGS "-ffunction-sections -fdata-sections"
+		append_var CXXFLAGS "-I$DEVKITPRO/libnx/include -I$DEVKITPRO/portlibs/switch/include"
+		append_var LDFLAGS "-L$DEVKITPRO/libnx/lib -L$DEVKITPRO/portlibs/switch/lib"
+		append_var LDFLAGS "-specs=$DEVKITPRO/libnx/switch.specs"
+		add_line_to_config_mk 'SWITCH = 1'
+		if test "$_debug_build" = yes; then
+			append_var DEFINES "-D__SWITCH_DEBUG__"
+		else
+			_optimization_level=-O3
+		fi
+		;;
 	tizen)
 		add_line_to_config_mk "TIZEN_ROOTSTRAP = $TIZEN_ROOTSTRAP"
 		append_var LDFLAGS "--sysroot=${TIZEN_ROOTSTRAP}"
@@ -3374,6 +3401,19 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_vkeybd=yes
 			;;
+		switch)
+			_backend="switch"
+			_opengl_mode=gles2
+			_build_scalers=yes
+			_build_hq_scalers=yes
+			_dynamic_modules=no
+			_vkeybd=yes
+			_mt32emu=yes
+			_vorbis=yes
+			_tremor=no
+			_eventrec=no
+			_port_mk="backends/platform/sdl/switch/switch.mk"
+			;;
 		tizen)
 			_unix=yes
 			_backend="tizen"
@@ -3566,6 +3606,10 @@ case $_backend in
 	sdl)
 		_sdl=auto
 		;;
+	switch)
+		_sdl=auto
+		append_var MODULES "backends/platform/sdl"
+		;;
 	tizen)
 		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
 		append_var DEFINES "-DTIZEN -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
@@ -3686,7 +3730,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | psp2 | samsungtv | sdl | tizen | webos | wii)
+	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | psp2 | samsungtv | sdl | switch | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3765,7 +3809,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp2 | psp | riscos | wii | wince)
 		_posix=no
 		;;
-	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | switch | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)
