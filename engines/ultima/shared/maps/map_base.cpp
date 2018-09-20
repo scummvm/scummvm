@@ -58,6 +58,15 @@ void MapBase::synchronize(Common::Serializer &s) {
 	int transportIndex = -1;
 	Common::String name;
 
+	// If the map is modified in any way, it gets synchronized as well
+	s.syncAsByte(_mapModified);
+	if (_mapModified) {
+		for (uint y = 0; y < height(); ++y) {
+			for (uint x = 0; x < width(); ++x)
+				s.syncAsByte(_data[y][x]);
+		}
+	}
+
 	if (s.isSaving()) {
 		// Save widgets
 		size = 0;

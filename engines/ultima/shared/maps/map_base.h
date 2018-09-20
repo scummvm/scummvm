@@ -109,6 +109,7 @@ class MapBase {
 private:
 	Map *_map;							// Map manager reference
 	Game *_game;						// Game reference
+	bool _mapModified;					// Tiles have been dynamically changed
 protected:
 	MapId _mapId;						// The map Id
 	uint _mapIndex;						// Index of map within the group of same maps
@@ -138,8 +139,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	MapBase(Game *game, Map *map) : _game(game), _map(map), _playerWidget(nullptr), _mapId(0), _mapIndex(0),
-		_mapStyle(0) {}
+	MapBase(Game *game, Map *map) : _game(game), _map(map), _playerWidget(nullptr),
+		_mapModified(false), _mapId(0), _mapIndex(0), _mapStyle(0) {}
 
 	/**
 	 * Destructor
