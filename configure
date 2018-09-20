@@ -215,6 +215,7 @@ _amigaospath="Games:ScummVM"
 _staticlibpath=
 _xcodetoolspath=
 _sparklepath=
+_pkgconfig=pkg-config
 _sdlconfig=sdl2-config
 _libcurlconfig=curl-config
 _freetypeconfig=freetype-config
@@ -4087,7 +4088,7 @@ cc_check -lm && append_var LIBS "-lm"
 #
 echocheck "pkg-config"
 _pkg_config=no
-command -v pkg-config >/dev/null 2>&1 && _pkg_config=yes
+command -v $_pkgconfig >/dev/null 2>&1 && _pkg_config=yes
 echo "$_pkg_config"
 
 if test "$_pkg_config" = yes && test -n "$_host" && test -z "$PKG_CONFIG_LIBDIR"; then
@@ -4820,8 +4821,8 @@ if test "$_libunity" = auto ; then
 			;;
 		*)
 			# Unity has a lots of dependencies, update the libs and cflags var with them
-			LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
-			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
+			LIBUNITY_LIBS="$LIBUNITY_LIBS `$_pkgconfig --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
+			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `$_pkgconfig --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 			_libunity=no
 			cat > $TMPC << EOF
 #include <unity.h>
@@ -4836,8 +4837,8 @@ EOF
 fi
 if test "$_libunity" = yes ; then
 	if test "$LIBUNITY_CFLAGS" = "" || test "$LIBUNITY_LIBS" = ""; then
-		LIBUNITY_LIBS="$LIBUNITY_LIBS `pkg-config --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
-		LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
+		LIBUNITY_LIBS="$LIBUNITY_LIBS `$_pkgconfig --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
+		LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `$_pkgconfig --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 	fi
 	append_var LIBS "$LIBUNITY_LIBS"
 	append_var CXXFLAGS "$LIBUNITY_CFLAGS"
@@ -4855,10 +4856,10 @@ find_freetype() {
         # pkg-config.
         # As of freetype-2.9.1 the freetype-config file
         # no longer gets installed by default.
-	if test "$_pkg_config" = "yes" && pkg-config --exists freetype2; then
-		FREETYPE2_LIBS=`pkg-config --libs freetype2`
-		FREETYPE2_CFLAGS=`pkg-config --cflags freetype2`
-		FREETYPE2_STATIC_LIBS=`pkg-config --static --libs freetype2`
+	if test "$_pkg_config" = "yes" && $_pkgconfig --exists freetype2; then
+		FREETYPE2_LIBS=`$_pkgconfig --libs freetype2`
+		FREETYPE2_CFLAGS=`$_pkgconfig --cflags freetype2`
+		FREETYPE2_STATIC_LIBS=`$_pkgconfig --static --libs freetype2`
 		_freetype_found="true"
 	else
 		# Look for the freetype-config script
