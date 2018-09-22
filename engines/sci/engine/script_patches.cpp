@@ -3788,6 +3788,52 @@ static const uint16 laurabow2PatchMissingDeskLampMessage[] = {
 	PATCH_END
 };
 
+// LB2 Floppy 1.0 doesn't handle events for the inset of the corpse in the armor in room 440,
+//  preventing its messages from being displayed.
+//
+// The inset has messages that respond to look, do, and the magnifying glass, but rm440:<noname133>,
+//  which is really handleEvent, never passes events to it. Sierra fixed this in later floppy and
+//  cd versions by adding a condition to rm440:handleEvent that first tests if the room has an inset
+//  and calls its handleEvent if so.
+//
+// We fix this by patching rm440:handleEvent to call super:handleEvent if the room has an inset.
+//  This is equivalent to Sierra's fix but can be done within the existing space as there is already
+//  code to call super:handleEvent on Move events. This patch just extends that condition to also
+//  include if an inset exists. This works because Rm:handleEvent contains the same inset handling
+//  code that Sierra added to rm440:handleEvent.
+//
+// This fix is for floppy 1.0 but the signature also matches later floppy versions. That's okay,
+//  it's compatible with their fix. Making the signature only match 1.0 would add almost 100 bytes
+//  as the closest difference is at the start of the method and the patch is at the end.
+//
+// Applies to: English floppy 1.000
+// Responsible method: rm440:<noname133>, which is really handleEvent
+// Fixes bug: #10709
+static const uint16 laurabow2SignatureHandleArmorInsetEvents[] = {
+	SIG_MAGICDWORD,
+	0x31, 0x0b,                         // bnt 0b [ event type isn't Move ]
+	0x38, SIG_UINT16(0x0085),           // push 0085 [ <noname113> aka handleEvent ]
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp 01
+	0x57, 0x7a, 0x06,                   // super LBRoom[7a] 6 [ handle event ]
+	0x33, 0x03,                         // jmp 3
+	0x35, 0x00,                         // ldi 0 [ event not handled ]
+	0x48,                               // ret
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 laurabow2PatchHandleArmorInsetEvents[] = {
+	0x2f, 0x04,                         // bt 4 [ event type is Move ]
+	0x63, 0x3a,                         // pToa <noname365> aka inset
+	0x31, 0x09,                         // bnt 9 [ room has no inset, event not handled ]
+	0x38, PATCH_UINT16(0x0085),         // push 0085 [ <noname113> aka handleEvents ]
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp 01
+	0x57, 0x7a, 0x06,                   // super LBRoom[7a] 6 [ handle event ]
+	PATCH_END
+};
+
 // Laura Bow 2 CD resets the audio mode to speech on init/restart
 //  We already sync the settings from ScummVM (see SciEngine::syncIngameAudioOptions())
 //  and this script code would make it impossible to see the intro using "dual" mode w/o using debugger command
@@ -3882,6 +3928,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
 	{  true,   550, "Floppy: missing desk lamp message",              1, laurabow2SignatureMissingDeskLampMessage,       laurabow2PatchMissingDeskLampMessage },
+	{  true,   440, "Floppy: handle armor inset events",              1, laurabow2SignatureHandleArmorInsetEvents,       laurabow2PatchHandleArmorInsetEvents },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                     1, kq6laurabow2CDSignatureAudioTextSupport1,       kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support 2",                     1, kq6laurabow2CDSignatureAudioTextSupport2,       kq6laurabow2CDPatchAudioTextSupport2 },
