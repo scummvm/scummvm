@@ -275,6 +275,11 @@ MESSAGE1(CKeypressMsg, Common::KeyState, keyState, Common::KeyState());
 MESSAGE1(CPopupShownMsg, Gfx::Popup *, view, (Gfx::Popup *)nullptr);
 
 /**
+ * Called when a popup is hidden
+ */
+MESSAGE1(CPopupHiddenMsg, Gfx::Popup *, view, (Gfx::Popup *)nullptr);
+
+/**
  * Called when a game view is shown
  */
 MESSAGE2(CShowMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fadeIn, false);
