@@ -44,6 +44,11 @@ public:
 	 * Constructor
 	 */
 	FullScreenDialog(Ultima1Game *game);
+
+	/**
+	 * Hide the popup
+	 */
+	virtual void hide();
 };
 
 } // End of namespace U1Dialogs

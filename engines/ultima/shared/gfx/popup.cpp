@@ -53,7 +53,7 @@ void Popup::show(TreeItem *respondTo) {
 
 void Popup::hide() {
 	CPopupHiddenMsg hiddenMsg(this);
-	hiddenMsg.execute(_respondTo);
+	hiddenMsg.execute(_respondTo, nullptr, 0);
 
 	// Reset back to the parent view
 	_game->setView(_parentView);
@@ -62,7 +62,7 @@ void Popup::hide() {
 
 bool Popup::ShowMsg(CShowMsg &msg) {
 	CPopupShownMsg shownMsg(this);
-	shownMsg.execute(_respondTo);
+	shownMsg.execute(_respondTo, nullptr, 0);
 	return true;
 }
 

@@ -46,6 +46,13 @@ void FullScreenDialog::drawFrame(const Common::String &title) {
 	ds.drawLeftArrow(TextPoint(xStart + titleLen, 0));
 }
 
+void FullScreenDialog::hide() {
+	Ultima1Game *game = _game;
+	Dialog::hide();
+
+	game->endOfTurn();
+}
+
 } // End of namespace U1Dialogs
 } // End of namespace Gfx
 } // End of namespace Ultima
