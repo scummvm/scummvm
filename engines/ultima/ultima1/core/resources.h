@@ -61,7 +61,7 @@ public:
 	const char *ARMOR_NAMES[6];
 	const char *ARMOR_NAMES_ARTICLE[6];
 	const char *SPELL_NAMES[11];
-	const char *SPELL_PHRASES[12];
+	const char *SPELL_PHRASES[14];
 	const char *GEM_NAMES[4];
 	byte OVERWORLD_MONSTER_DAMAGE[15];
 	const char *OVERWORLD_MONSTER_NAMES[15];

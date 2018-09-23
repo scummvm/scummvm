@@ -214,10 +214,10 @@ static const char *SRC_SPELL_NAMES[11] = {
 	"Blink", "Create", "Destroy", "Kill"
 };
 
-static const char *SRC_SPELL_PHRASES[12] = {
+static const char *SRC_SPELL_PHRASES[14] = {
 	"\"POTENTIS-LAUDIS!\"", "\"APERTUS!\"", "\"PECUNIA!\"", "\"VASTO!\"", "\"NUDO!\"",
 	"\"INFERUS!\"", "\"ASCENDO!\"", "\"DUCIS-EDUCO!\"", "\"STRUXI!\"", "\"DELIO!\"",
-	"\"INTERFICIO!\"", " Shazam!"
+	"\"INTERFICIO!\"", " Shazam!", "\"DELCIO-ERE-UI\" ", "\"INTERFICIO-NUNC!\" "
 };
 
 static const char *SRC_GEM_NAMES[4] = { "Red Gem", "Green Gem", "Blue Gem", "White Gem" };
@@ -688,7 +688,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(SRC_WEAPON_DISTANCES, SRC_WEAPON_DISTANCES + 16, WEAPON_DISTANCES);
 	Common::copy(&SRC_ARMOR_NAMES[0], &SRC_ARMOR_NAMES[16], ARMOR_NAMES);
 	Common::copy(&SRC_SPELL_NAMES[0], &SRC_SPELL_NAMES[16], SPELL_NAMES);
-	Common::copy(SRC_SPELL_PHRASES, SRC_SPELL_PHRASES + 12, SPELL_PHRASES);
+	Common::copy(SRC_SPELL_PHRASES, SRC_SPELL_PHRASES + 14, SPELL_PHRASES);
 	Common::copy(&SRC_GEM_NAMES[0], &SRC_GEM_NAMES[4], GEM_NAMES);
 	Common::copy(&SRC_OVERWORLD_MONSTER_DAMAGE[0], &SRC_OVERWORLD_MONSTER_DAMAGE[15], OVERWORLD_MONSTER_DAMAGE);
 	Common::copy(&SRC_OVERWORLD_MONSTER_NAMES[0], &SRC_OVERWORLD_MONSTER_NAMES[15], OVERWORLD_MONSTER_NAMES);
@@ -806,7 +806,7 @@ void GameResources::synchronize() {
 	syncBytes(WEAPON_DISTANCES, 16);
 	syncStrings(ARMOR_NAMES, 6);
 	syncStrings(SPELL_NAMES, 11);
-	syncStrings(SPELL_PHRASES, 12);
+	syncStrings(SPELL_PHRASES, 14);
 	syncStrings(GEM_NAMES, 4);
 	syncBytes(OVERWORLD_MONSTER_DAMAGE, 15);
 	syncStrings(OVERWORLD_MONSTER_NAMES, 15);

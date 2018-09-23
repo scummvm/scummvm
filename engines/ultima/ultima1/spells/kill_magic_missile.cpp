@@ -48,11 +48,24 @@ bool KillMagicMIssile::CharacterInputMsg(CCharacterInputMsg &msg) {
 
 	if (dir == Shared::Maps::DIR_NONE) {
 		addInfoMsg(_game->_res->NONE);
+		_game->endOfTurn();
 	} else {
 		addInfoMsg(_game->_res->DIRECTION_NAMES[(int)dir - 1]);
+		addInfoMsg(_game->_res->SPELL_PHRASES[_spellId == SPELL_MAGIC_MISSILE ? 12 : 13], false);
+
+		Shared::Character &c = *_game->_party;
+		if (c._class == CLASS_CLERIC || _game->getRandomNumber(1, 100) < c._wisdom) {
+			_game->playFX(5);
+			addInfoMsg("");
+
+			// TODO: Non-dungeon damage
+		} else {
+			addInfoMsg(_game->_res->FAILED);
+			_game->playFX(6);
+			_game->endOfTurn();
+		}
 	}
 
-	_game->endOfTurn();
 	return true;
 }
 
