@@ -887,7 +887,7 @@ IMPLEMENT_FUNCTION(21, MmeBoutarel, chapter3Handler)
 			if (getState()->time <= kTime2038500) {
 				if (!getEntities()->isPlayerInCar(kCarRedSleeping)
 				 || !params->param1
-				 || getSoundQueue()->isBuffered("FRA2012")
+				 || getSoundQueue()->isBuffered("FRA2012") // the original game tests this sound twice. Maybe a bug?
 				 || getSoundQueue()->isBuffered("FRA2010")
 				 ||!params->param2)
 					params->param2 = (uint)getState()->time;

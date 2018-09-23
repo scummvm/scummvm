@@ -1049,8 +1049,6 @@ IMPLEMENT_FUNCTION(29, Vesna, guarding)
 
 	case kActionOpenDoor:
 		setCallback(1);
-
-		getData()->currentCall++;
 		setup_savegame(kSavegameTypeEvent, kEventCathVesnaRestaurantKilled);
 		break;
 
@@ -1118,6 +1116,7 @@ IMPLEMENT_FUNCTION(30, Vesna, climbing)
 				getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param2 == Fight::kFightEndLost);
 			} else {
 				getSound()->playSound(kEntityPlayer, "TUNNEL");
+				// TODO: fade to black screen
 
 				getState()->time = (TimeValue)(getState()->time + 1800);
 

@@ -209,7 +209,7 @@ IMPLEMENT_FUNCTION(15, Tatiana, exitCompartment)
 
 	case kActionDefault:
 		setCallback(getProgress().chapter == kChapter1 ? 1 : 2);
-		setup_enterExitCompartment2(getProgress().chapter == kChapter1 ? "603Bb" : "673Bb", kObjectCompartmentB);
+		setup_enterExitCompartment(getProgress().chapter == kChapter1 ? "603Bb" : "673Bb", kObjectCompartmentB);
 		break;
 
 	case kActionCallback:
@@ -615,8 +615,7 @@ IMPLEMENT_FUNCTION(22, Tatiana, getSomeAir)
 		if (params->param1 == kTimeInvalid || getState()->time <= kTime1179000)
 			goto label_update;
 
-		if (Entity::updateParameterTime(kTime1233000, ((!getEvent(kEventTatianaAskMatchSpeakRussian) && !getEvent(kEventTatianaAskMatch)) || getEntities()->isInGreenCarEntrance(kEntityPlayer)), params->param1, 0)) {
-			params->param1 = kTimeInvalid;
+		if (!Entity::updateParameterTime(kTime1233000, ((!getEvent(kEventTatianaAskMatchSpeakRussian) && !getEvent(kEventTatianaAskMatch)) || getEntities()->isInGreenCarEntrance(kEntityPlayer)), params->param1, 0)) {
 
 label_update:
 			if (!getEvent(kEventTatianaAskMatchSpeakRussian)
@@ -1036,6 +1035,7 @@ IMPLEMENT_FUNCTION(32, Tatiana, playChess)
 		break;
 
 	case  kActionEndSound:
+		parameters->param2 = 0;
 		++parameters->param3;
 
 		switch (parameters->param3) {
@@ -1200,7 +1200,7 @@ IMPLEMENT_FUNCTION(35, Tatiana, concert)
 
 label_callback_1:
 		if (getState()->time > kTime2133000) {
-			if (getData()->car >= kCarRedSleeping || (getData()->car == kCarGreenSleeping && getData()->entityPosition > kPosition_5790))
+			if (getEntityData(kEntityAugust)->car >= kCarRedSleeping || (getEntityData(kEntityAugust)->car == kCarGreenSleeping && getEntityData(kEntityAugust)->entityPosition > kPosition_5790))
 				setup_leaveConcert();
 		}
 		break;

@@ -131,7 +131,7 @@ IMPLEMENT_FUNCTION(7, Waiter2, monsieurServeUs)
 
 		case 2:
 			getSavePoints()->push(kEntityWaiter2, kEntityBoutarel, kAction122288808);
-			setCallback(2);
+			setCallback(3);
 			setup_draw("926");
 			break;
 

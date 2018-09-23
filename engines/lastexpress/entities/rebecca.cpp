@@ -309,7 +309,7 @@ IMPLEMENT_FUNCTION_I(17, Rebecca, function17, bool)
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntitySophie);
+			getEntities()->clearSequences(kEntityRebecca);
 			break;
 
 		case 3:
@@ -1371,7 +1371,7 @@ IMPLEMENT_FUNCTION(36, Rebecca, function36)
 				getSound()->playSound(kEntityRebecca, "Reb3007");
 
 				setCallback(2);
-				setup_updatePosition("118E", kCarRedSleeping, 52);
+				setup_updatePosition("118E", kCarRestaurant, 52);
 				break;
 			}
 		}
@@ -1726,7 +1726,7 @@ label_callback_2:
 		break;
 
 	case kAction123712592:
-		getEntities()->drawSequenceLeft(kEntityRebecca, "BLANK");
+		getEntities()->drawSequenceLeft(kEntityWaiter1, "BLANK");
 		getSound()->playSound(kEntityRebecca, "Reb4003");
 
 		setCallback(4);

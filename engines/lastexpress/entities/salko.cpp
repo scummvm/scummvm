@@ -181,7 +181,7 @@ IMPLEMENT_FUNCTION(10, Salko, chapter1Handler)
 
 	case kActionCallback:
 		if (getCallback() == 1) {
-			getEntities()->clearSequences(kEntitySalko);
+			getEntities()->drawSequenceLeft(kEntitySalko, "BLANK");
 			setup_function8();
 		}
 		break;

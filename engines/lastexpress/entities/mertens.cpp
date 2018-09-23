@@ -400,6 +400,10 @@ IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
 
 			if (params->param1 != 3 || (params->param2 != kPosition_8200 && params->param2 != kPosition_9510)) {
 				loadSceneFromPosition();
+				if (getEntities()->updateEntity(kEntityMertens, (CarIndex)params->param1, (EntityPosition)params->param2)) {
+					getData()->inventoryItem = kItemNone;
+					callbackAction();
+				}
 				break;
 			}
 
@@ -432,6 +436,10 @@ IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
 			}
 
 			loadSceneFromPosition();
+			if (getEntities()->updateEntity(kEntityMertens, (CarIndex)params->param1, (EntityPosition)params->param2)) {
+				getData()->inventoryItem = kItemNone;
+				callbackAction();
+			}
 			break;
 
 		case 4:
@@ -439,6 +447,10 @@ IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
 			ENTITY_PARAM(2, 4) = 0;
 
 			loadSceneFromPosition();
+			if (getEntities()->updateEntity(kEntityMertens, (CarIndex)params->param1, (EntityPosition)params->param2)) {
+				getData()->inventoryItem = kItemNone;
+				callbackAction();
+			}
 			break;
 
 		case 5:
@@ -501,7 +513,6 @@ IMPLEMENT_FUNCTION_I(12, Mertens, bonsoir, EntityIndex)
 				getSound()->playSound(kEntityMertens, "CON1112F");
 			} else {
 				switch (rnd(3)) {
-				default:
 				case 0:
 					getSound()->playSound(kEntityMertens, "CON1061");
 					break;
@@ -1964,6 +1975,7 @@ label_callback11:
 		case 27:
 			getAction()->playAnimation(kEventMertensBloodJacket);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverBloodJacket, true);
+			// BUG: for [case 13] the original game continues executing code here
 			break;
 
 		case 14:
@@ -3040,10 +3052,10 @@ IMPLEMENT_FUNCTION(42, Mertens, function42)
 					}
 
 					if (params->param4 >= getState()->time)
-						break;
+						goto label_callback_8;
 				}
 
-				ENTITY_PARAM(0, 4) = kTimeInvalid;
+				params->param4 = kTimeInvalid;
 				getData()->inventoryItem = kItemNone;
 
 				setCallback(8);
@@ -3240,7 +3252,7 @@ label_callback_5_6:
 			goto label_callback_2_4;
 
 		case 3:
-			getAction()->playAnimation(getProgress().jacket == kJacketOriginal ? kEventMertensLastCarOriginalJacket : kEventMertensLastCar);
+			getAction()->playAnimation(getProgress().jacket == kJacketGreen ? kEventMertensLastCar : kEventMertensLastCarOriginalJacket);
 			getEntities()->drawSequenceRight(kEntityMertens, "601A");
 			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 6);
 			getScenes()->loadSceneFromItemPosition(kItem7);

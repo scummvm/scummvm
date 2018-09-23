@@ -1083,6 +1083,7 @@ IMPLEMENT_FUNCTION(28, Verges, chapter2Handler)
 		if (getEntities()->isInBaggageCarEntrance(kEntityPlayer)) {
 			setCallback(1);
 			setup_baggageCar(false);
+			break;
 		}
 
 label_callback_1:
@@ -1708,7 +1709,7 @@ IMPLEMENT_FUNCTION(38, Verges, resetState)
 
 		getData()->entityPosition = kPosition_6469;
 		getData()->location = kLocationOutsideCompartment;
-		getData()->car = kCarGreenSleeping;
+		getData()->car = kCarRedSleeping;
 		break;
 
 	case kActionCallback:

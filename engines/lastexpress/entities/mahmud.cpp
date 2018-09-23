@@ -664,15 +664,15 @@ IMPLEMENT_FUNCTION(14, Mahmud, chaptersHandler)
 			break;
 
 		case 5: {
-			CursorStyle cursor = kCursorHand;
-			CursorStyle cursor2 = kCursorHandKnock;
+			CursorStyle cursor = kCursorHandKnock;
+			CursorStyle cursor2 = kCursorHand;
 
 			if (getProgress().jacket == kJacketBlood
 			 || getEvent(kEventMahmudWrongDoor)
 			 || getEvent(kEventMahmudWrongDoorOriginalJacket)
 			 || getEvent(kEventMahmudWrongDoorDay)) {
-				cursor = kCursorNormal;
-				cursor2 = kCursorTalk;
+				cursor = kCursorTalk;
+				cursor2 = kCursorNormal;
 			}
 
 			getObjects()->update(kObjectCompartment4, kEntityMahmud, kObjectLocation1, cursor, cursor2);
@@ -825,7 +825,7 @@ IMPLEMENT_FUNCTION(19, Mahmud, chapter4)
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarGreenSleeping;
 		getData()->clothes = kClothesDefault;
-		getData()->inventoryItem = kItemNone;
+		getData()->inventoryItem = kItemNone; // not in the original game, but it does no harm, I suppose?
 
 		break;
 	}
