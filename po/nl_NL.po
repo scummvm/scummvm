@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-09-09 16:14+0200\n"
-"PO-Revision-Date: 2018-06-18 18:28+0000\n"
+"PO-Revision-Date: 2018-09-24 18:39+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
-"Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/nl/>\n"
+"Language-Team: Dutch "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -797,24 +797,20 @@ msgid "Never"
 msgstr "Nooit"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 5 mins"
-msgstr "elke 5 minuten"
+msgstr "Elke 5 minuten"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 10 mins"
-msgstr "elke 10 minuten"
+msgstr "Elke 10 minuten"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 15 mins"
-msgstr "elke 15 minuten"
+msgstr "Elke 15 minuten"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 30 mins"
-msgstr "elke 30 minuten"
+msgstr "Elke 30 minuten"
 
 #: gui/options.cpp:361 gui/options.cpp:690 gui/options.cpp:828
 #: gui/options.cpp:910 gui/options.cpp:1183
@@ -827,14 +823,12 @@ msgid "Failed to apply some of the graphic options changes:"
 msgstr "Sommige grafische opties konden niet worden toegepast:"
 
 #: gui/options.cpp:563
-#, fuzzy
 msgid "the video mode could not be changed"
-msgstr "de videomodus kon niet veranderd worden."
+msgstr "de videomodus kon niet veranderd worden"
 
 #: gui/options.cpp:576
-#, fuzzy
 msgid "the stretch mode could not be changed"
-msgstr "de videomodus kon niet veranderd worden."
+msgstr "de uitrekmodus kon niet veranderd worden"
 
 #: gui/options.cpp:582
 msgid "the aspect ratio setting could not be changed"
@@ -917,7 +911,7 @@ msgstr "Speciale ditheringmodi die door sommige games ondersteund worden"
 
 #: gui/options.cpp:1078
 msgid "Stretch mode:"
-msgstr ""
+msgstr "uitrekmodus:"
 
 #: gui/options.cpp:1089 backends/graphics/openglsdl/openglsdl-graphics.cpp:637
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2696
@@ -941,12 +935,10 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Corrigeer de pixelverhouding voor 320x200 spellen"
 
 #: gui/options.cpp:1103
-#, fuzzy
 msgid "Preferred device:"
 msgstr "Voorkeursapparaat:"
 
 #: gui/options.cpp:1103
-#, fuzzy
 msgid "Music device:"
 msgstr "Muziekapparaat:"
 
@@ -959,13 +951,11 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Specificeert geluidsapparaat of geluidskaartemulator"
 
 #: gui/options.cpp:1105
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "Voorkeursapparaat:"
 
 #: gui/options.cpp:1105
-#, fuzzy
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "Muziekapparaat:"
@@ -979,9 +969,8 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib word in vele spelen voor muziek gebruikt"
 
 #: gui/options.cpp:1146
-#, fuzzy
 msgid "GM device:"
-msgstr "GM Apparaat:"
+msgstr "GM apparaat:"
 
 #: gui/options.cpp:1146
 msgid "Specifies default sound device for General MIDI output"
@@ -1049,9 +1038,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Echte Roland MT-32 (geen GM emulatie)"
 
 #: gui/options.cpp:1211
-#, fuzzy
 msgid "Roland GS device (enable MT-32 mappings)"
-msgstr "Roland GS Device (met MT-32 mappings)"
+msgstr "Roland GS apparaat (met MT-32 mappings)"
 
 #: gui/options.cpp:1211
 msgid ""
@@ -1066,9 +1054,8 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Geen Roland MT-32 muziek gebruiken"
 
 #: gui/options.cpp:1247
-#, fuzzy
 msgid "Text and speech:"
-msgstr "Spraak en/of tekst:"
+msgstr "Tekst en spraak:"
 
 #: gui/options.cpp:1251 gui/options.cpp:1261
 msgid "Speech"
@@ -1087,10 +1074,9 @@ msgid "Subtitle speed:"
 msgstr "Snelheid tekst:"
 
 #: gui/options.cpp:1257
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and speech:"
-msgstr "Spraak en/of tekst:"
+msgstr "Tekst en spraak:"
 
 #: gui/options.cpp:1261
 msgid "Spch"
@@ -1124,9 +1110,8 @@ msgid "Music volume:"
 msgstr "Muziek volume:"
 
 #: gui/options.cpp:1290
-#, fuzzy
 msgid "Mute all"
-msgstr "Alles Dempen"
+msgstr "Alles dempen"
 
 #: gui/options.cpp:1293
 msgid "SFX volume:"
@@ -1195,9 +1180,8 @@ msgid "Theme:"
 msgstr "Thema:"
 
 #: gui/options.cpp:1637
-#, fuzzy
 msgid "GUI renderer:"
-msgstr "GUI Renderer:"
+msgstr "GUI renderer:"
 
 #: gui/options.cpp:1649
 msgid "Autosave:"
@@ -1213,9 +1197,8 @@ msgid "Keys"
 msgstr "Toetsen"
 
 #: gui/options.cpp:1666
-#, fuzzy
 msgid "GUI language:"
-msgstr "GUI Taal:"
+msgstr "GUI taal:"
 
 #: gui/options.cpp:1666
 msgid "Language of ScummVM GUI"
@@ -1639,18 +1622,16 @@ msgid "Disabled GFX"
 msgstr "GFX uitgeschakeld"
 
 #: gui/ThemeEngine.cpp:257
-#, fuzzy
 msgid "Standard renderer"
-msgstr "Standaard Renderer"
+msgstr "Standaard renderer"
 
 #: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
 msgid "Standard"
 msgstr "Standaard"
 
 #: gui/ThemeEngine.cpp:259
-#, fuzzy
 msgid "Antialiased renderer"
-msgstr "Antialiased Renderer"
+msgstr "Antialiased renderer"
 
 #: gui/ThemeEngine.cpp:259
 msgid "Antialiased"
@@ -1976,7 +1957,6 @@ msgstr "Kon niet schakelen naar videomodus: '"
 
 # can this be changed into "Could not switch to video mode '%s'"?
 #: engines/engine.cpp:333
-#, fuzzy
 msgid "Could not switch to stretch mode: '"
 msgstr "Kon niet schakelen naar videomodus: '"
 
@@ -2063,9 +2043,8 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Matchende game IDs voor de %s engine:"
 
 #: audio/adlib.cpp:2290
-#, fuzzy
 msgid "AdLib emulator"
-msgstr "AdLib emulator:"
+msgstr "AdLib emulator"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
@@ -2129,23 +2108,20 @@ msgstr ""
 "voor meer informatie."
 
 #: audio/mods/paula.cpp:196
-#, fuzzy
 msgid "Amiga Audio emulator"
-msgstr "Amiga Geluid Emulator"
+msgstr "Amiga Geluid emulator"
 
 #: audio/null.h:44
 msgid "No music"
 msgstr "Geen muziek"
 
 #: audio/softsynth/appleiigs.cpp:33
-#, fuzzy
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
-msgstr "Apple II GS Emulator (NIET GEÏMPLEMENTEERD)"
+msgstr "Apple II GS emulator (NIET GEÏMPLEMENTEERD)"
 
 #: audio/softsynth/cms.cpp:350
-#, fuzzy
 msgid "Creative Music System emulator"
-msgstr "Creative Music System Emulator"
+msgstr "Creative Music System emulator"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
 msgid "FM-Towns Audio"
@@ -2160,24 +2136,20 @@ msgid "Initializing MT-32 Emulator"
 msgstr "MT-32 Emulator initialiseren"
 
 #: audio/softsynth/mt32.cpp:437
-#, fuzzy
 msgid "MT-32 emulator"
-msgstr "MT-32 Emulator"
+msgstr "MT-32 emulator"
 
 #: audio/softsynth/pcspk.cpp:139
-#, fuzzy
 msgid "PC Speaker emulator"
-msgstr "PC Speaker Emulator"
+msgstr "PC Speaker emulator"
 
 #: audio/softsynth/pcspk.cpp:158
-#, fuzzy
 msgid "IBM PCjr emulator"
-msgstr "IBM PCjr Emulator"
+msgstr "IBM PCjr emulator"
 
 #: audio/softsynth/sid.cpp:1430
-#, fuzzy
 msgid "C64 Audio emulator"
-msgstr "C64 Geluid Emulator"
+msgstr "C64 Geluid emulator"
 
 #: backends/cloud/storage.cpp:211
 msgid "Saved games sync complete."
@@ -2320,24 +2292,23 @@ msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:272
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
-#, fuzzy
 msgid "Center"
-msgstr "Enter"
+msgstr "Centreer"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:273
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "Pixel-perfect schalen"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:274
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Fit to window"
-msgstr ""
+msgstr "Maak passend aan window"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:275
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:79
 msgid "Stretch to window"
-msgstr ""
+msgstr "Rek uit naar window"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:639
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2698
@@ -2372,7 +2343,7 @@ msgstr "Filteren uitgeschakeld"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:825
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2581
 msgid "Stretch mode"
-msgstr ""
+msgstr "Uitrekmodus"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -2563,40 +2534,39 @@ msgstr "Minimaliseer"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:198
 msgid "Help"
-msgstr ""
+msgstr "Help"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:199
-#, fuzzy
 msgid "User Manual"
-msgstr "Gebruiker annuleerde"
+msgstr "Gebruikershandleiding"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:201
 msgid "General Information"
-msgstr ""
+msgstr "Algemene Informatie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:202
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "Wat is er nieuw in ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:204
 msgid "Credits"
-msgstr ""
+msgstr "Credits"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:205
 msgid "GPL License"
-msgstr ""
+msgstr "GPL Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:206
 msgid "LGPL License"
-msgstr ""
+msgstr "LGPL Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:207
 msgid "Freefont License"
-msgstr ""
+msgstr "Freefont Licentie"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:208
 msgid "BSD License"
-msgstr ""
+msgstr "BSD Licentie"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -3486,30 +3456,32 @@ msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
+"Weet u zeker dat u een opgeslagen spel wilt laden? Alle onbewaarde voortgang "
+"zal verloren gaan."
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
-#, fuzzy
 msgid "Load game"
-msgstr "Laad spel:"
+msgstr "Laad spel"
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
+"Weet u zeker dat u een nieuw spel wilt starten? Alle onbewaarde voortgang "
+"zal verloren gaan."
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#, fuzzy
 msgid "New game"
-msgstr "Nieuw spel opslaan"
+msgstr "Nieuw spel"
 
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455
-#, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "   Weet u zeker dat u wilt stoppen?   "
+msgstr ""
+"Weet u zeker dat u wilt stoppen? Alle onbewaarde voortgang zal verloren gaan."
 
 #: engines/mohawk/riven.cpp:158
 msgid ""
@@ -3786,11 +3758,11 @@ msgstr "Inschakelen van het in het spel gebouwde optionele inhoud censuur"
 
 #: engines/sci/detection.cpp:519
 msgid "Upscale videos"
-msgstr ""
+msgstr "Videos opschalen"
 
 #: engines/sci/detection.cpp:520
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "Schaal videos op naar dubbele grootte"
 
 #: engines/sci/detection.cpp:849 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
