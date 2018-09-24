@@ -108,7 +108,7 @@ IMPLEMENT_FUNCTION(5, Vassili, chapter1Handler)
 			if (!Entity::updateParameterCheck(params->param3, getState()->time, 450))
 				break;
 
-			if (!params->param2 && getObjects()->get(kObjectCompartmentA).model == kObjectLocation1) {
+			if (!params->param2 && getObjects()->get(kObjectCompartmentA).model == kObjectModel1) {
 				params->param2 = 1;
 				getEntities()->drawSequenceLeft(kEntityVassili, "303A");
 				getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
