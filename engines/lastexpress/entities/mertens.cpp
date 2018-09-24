@@ -588,7 +588,7 @@ IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, EntityIndex)
 
 		if (!getSoundQueue()->isBuffered(kEntityMertens)) {
 			if (getProgress().chapter == kChapter3 && !params->param1 && getState()->time < kTime2173500 &&
-			 (getState()->time > kTime2106000 || params->param2 != kEntityPlayer && getState()->time > kTime2079000)) {
+			 (getState()->time > kTime2106000 || (params->param2 != kEntityPlayer && getState()->time > kTime2079000))) {
 				// guide guests to the concert
 				if (params->param2 == kEntityAugust)
 					getSound()->playSound(kEntityMertens, "CON3052");
