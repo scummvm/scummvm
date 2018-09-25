@@ -465,8 +465,8 @@ sub add_paragraph {
 #
 
 begin_credits("Credits");
-	begin_section("ScummVM Team");
-		begin_section("Project Leader", "leader");
+	begin_section("ScummVM Team", "scummvm_team");
+		begin_section("Project Leader", "project_leader");
 			begin_persons();
 				add_person("Eugene Sandulenko", "sev", "");
 			end_persons();
@@ -828,7 +828,7 @@ begin_credits("Credits");
 		end_section();
 
 
-		begin_section("Backend Teams", "backends");
+		begin_section("Backend Teams", "backend_teams");
 			begin_section("Android");
 				add_person("Andre Heider", "dhewg", "");
 				add_person("Angus Lees", "Gus", "");
@@ -999,7 +999,7 @@ begin_credits("Credits");
 	end_section();
 
 
-	begin_section("Other contributions");
+	begin_section("Other contributions", "other_contrib");
 
 		begin_section("Packages", "packages");
 			begin_section("AmigaOS 4");
@@ -1206,7 +1206,7 @@ begin_credits("Credits");
 			end_persons();
 		end_section();
 
-		begin_section("FreeSCI Contributors", "freesci");
+		begin_section("FreeSCI Contributors", "freesci_contrib");
 			begin_persons();
 				add_person("Francois-R Boyer", "", "MT-32 information and mapping code");
 				add_person("Rainer Canavan", "", "IRIX MIDI driver and bug fixes");
