@@ -35,32 +35,31 @@ namespace Widgets {
 
 DungeonMonster::DungeonMonster(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId monsterId,
 		int hitPoints, const Point &pt) :
-		DungeonWidget(game, map, monsterId, pt), Shared::Maps::DungeonCreature(game, map, hitPoints),
-		_monsterId(monsterId) {
-	_name = getGame()->_res->DUNGEON_MONSTER_NAMES[_monsterId];
+		DungeonWidget(game, map, monsterId, pt), Shared::Maps::DungeonCreature(game, map, hitPoints) {
+	_name = getGame()->_res->DUNGEON_MONSTER_NAMES[_widgetId];
 }
 
 DungeonMonster::DungeonMonster(Ultima1Game *game, Maps::MapBase *map) :
-		DungeonWidget(game, map), Shared::Maps::DungeonCreature(game, map), _monsterId(MONSTER_NONE) {
+		DungeonWidget(game, map), Shared::Maps::DungeonCreature(game, map) {
 }
 
 void DungeonMonster::synchronize(Common::Serializer &s) {
 	DungeonWidget::synchronize(s);
 	Creature::synchronize(s);
-	s.syncAsUint16LE(_monsterId);
+	s.syncAsUint16LE(_widgetId);
 
 	if (s.isLoading())
-		_name = getGame()->_res->DUNGEON_MONSTER_NAMES[_monsterId];
+		_name = getGame()->_res->DUNGEON_MONSTER_NAMES[_widgetId];
 }
 
 bool DungeonMonster::isBlockingView() const {
-	return _monsterId != MONSTER_INVISIBLE_SEEKER && _monsterId != MONSTER_MIMIC
-		&& _monsterId != MONSTER_GELATINOUS_CUBE;
+	return _widgetId != MONSTER_INVISIBLE_SEEKER && _widgetId != MONSTER_MIMIC
+		&& _widgetId != MONSTER_GELATINOUS_CUBE;
 }
 
 void DungeonMonster::draw(Shared::DungeonSurface &s, uint distance) {
 	if (distance < 5) {
-		if (_monsterId == MONSTER_GELATINOUS_CUBE) {
+		if (_widgetId == MONSTER_GELATINOUS_CUBE) {
 			s.drawWall(distance);
 			s.drawLeftEdge(distance);
 			s.drawRightEdge(distance);
@@ -147,25 +146,25 @@ void DungeonMonster::attackParty() {
 
 	if (_game->getRandomNumber(1, 255) > threshold) {
 		threshold = _game->getRandomNumber(1, 255);
-		damage = (_monsterId * _monsterId) + _map->getLevel();
+		damage = (_widgetId * _widgetId) + _map->getLevel();
 		if (damage > 255) {
-			damage = _game->getRandomNumber(_monsterId + 1, 255);
+			damage = _game->getRandomNumber(_widgetId + 1, 255);
 		}
 
-		if (_monsterId == MONSTER_GELATINOUS_CUBE && c.isArmorEquipped()) {
+		if (_widgetId == MONSTER_GELATINOUS_CUBE && c.isArmorEquipped()) {
 			addInfoMsg(game->_res->ARMOR_DESTROYED);
 			c._armor[c._equippedArmor].decrQuantity();
 			c.removeArmor();
 			isHit = false;
-		} else if (_monsterId == MONSTER_GREMLIN) {
+		} else if (_widgetId == MONSTER_GREMLIN) {
 			addInfoMsg(game->_res->GREMLIN_STOLE);
 			c._food /= 2;
 			isHit = false;
-		} else if (_monsterId == MONSTER_MIND_WHIPPER && threshold < 128) {
+		} else if (_widgetId == MONSTER_MIND_WHIPPER && threshold < 128) {
 			addInfoMsg(game->_res->MENTAL_ATTACK);
 			c._intelligence = (c._intelligence / 2) + 5;
 			isHit = false;
-		} else if (_monsterId == MONSTER_THIEF) {
+		} else if (_widgetId == MONSTER_THIEF) {
 			// Thief will steal the first spare weapon player has that isn't equipped
 			for (int weaponNum = 1; weaponNum < (int)c._weapons.size(); ++weaponNum) {
 				if (weaponNum != c._equippedWeapon && c._weapons[weaponNum]._quantity > 0) {
@@ -218,7 +217,7 @@ void DungeonMonster::attackMonster(uint effectNum, uint agility, uint damage) {
 			monsterDead();
 
 			// Give some treasure
-			uint amount = game->getRandomNumber(2, map->getLevel() * 3 + (uint)_monsterId + 10);
+			uint amount = game->getRandomNumber(2, map->getLevel() * 3 + (uint)_widgetId + 10);
 			addInfoMsg(game->_res->THOU_DOST_FIND);
 			game->giveTreasure(amount, 0);
 
@@ -240,7 +239,7 @@ void DungeonMonster::attackMonster(uint effectNum, uint agility, uint damage) {
 
 void DungeonMonster::monsterDead() {
 	int index;
-	switch (_monsterId) {
+	switch (_widgetId) {
 	case MONSTER_BALRON:
 		index = 8;
 		break;
