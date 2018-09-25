@@ -271,6 +271,20 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		GF_CDROM,
 	},
 
+	{ // STJR DOS CD-ROM edition (GER)
+		{
+			"stjr",
+			"CD",
+			AD_ENTRY1s("data.001", "1c8de3c02f69c07c582d59d3c29e4dd9", 2958818),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GType_STJR,
+		GF_CDROM,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
