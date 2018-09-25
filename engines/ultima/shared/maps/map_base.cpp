@@ -180,6 +180,8 @@ void MapBase::getTileAt(const Point &pt, MapTile *tile, bool includePlayer) {
 	tile->_tileDisplayNum = tile->_tileId = _data[pt.y][pt.x];
 
 	// Check for any widget on that map tile
+	tile->_widget = nullptr;
+	tile->_widgetNum = -1;
 	for (int idx = (int)_widgets.size() - 1; idx >= 0; --idx) {
 		MapWidget *widget = _widgets[idx].get();
 		if (widget->_position == pt && (includePlayer || widget != _playerWidget)) {
