@@ -51,7 +51,7 @@ enum DungeonWidgetId {
  * Encapsulated class for drawing widgets within dungeons
  */
 class DungeonWidget : public Shared::Maps::DungeonWidget {
-private:
+protected:
 	DungeonWidgetId _widgetId;
 private:
 	/**

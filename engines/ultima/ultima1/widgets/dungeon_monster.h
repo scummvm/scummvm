@@ -41,8 +41,6 @@ enum {
  */
 class DungeonMonster : public DungeonWidget, public Shared::Maps::DungeonCreature {
 private:
-	DungeonWidgetId _monsterId;
-private:
 	/**
 	 * Called when the monster is killed
 	 */
@@ -79,7 +77,7 @@ public:
 	/**
 	 * Returns the monster's type
 	 */
-	DungeonWidgetId id() const { return _monsterId; }
+	DungeonWidgetId id() const { return _widgetId; }
 
 	/**
 	 * Returns true if a monster blocks the background behind him
