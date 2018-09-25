@@ -42,6 +42,7 @@ void MapDungeon::load(Shared::Maps::MapId mapId) {
 	_tilesPerOrigTile = Point(1, 1);
 	_dungeonLevel = 1;
 	_dungeonExitHitPoints = 0;
+	_name = _game->_res->LOCATION_NAMES[mapId - 1];
 
 	changeLevel(0);
 	_playerWidget->moveTo(Point(1, 1), Shared::Maps::DIR_SOUTH);
