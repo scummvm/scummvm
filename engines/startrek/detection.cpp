@@ -168,6 +168,20 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{ // ST25 DOS floppy demo (EN)
+		{
+			"st25",
+			"Demo",
+			AD_ENTRY1s("data.001", "093909a9d3dd3afd207c085a24baf9cf", 2598376),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO0()
+		},
+		GType_ST25,
+		GF_DEMO,
+	},
+
 	// These are commented until future notice because I don't have complete information
 	// on them (the file size for data.000 / data.001). Will be relying on people to
 	// report the missing data.
