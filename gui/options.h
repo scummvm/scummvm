@@ -281,6 +281,7 @@ protected:
 	PopUpWidget *_autosavePeriodPopUp;
 	StaticTextWidget *_guiLanguagePopUpDesc;
 	PopUpWidget *_guiLanguagePopUp;
+	CheckboxWidget *_guiLanguageUseGameLanguageCheckbox;
 
 #ifdef USE_UPDATES
 	StaticTextWidget *_updatesPopUpDesc;

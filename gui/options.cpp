@@ -1467,6 +1467,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_autosavePeriodPopUp = 0;
 	_guiLanguagePopUpDesc = 0;
 	_guiLanguagePopUp = 0;
+	_guiLanguageUseGameLanguageCheckbox = nullptr;
 #ifdef USE_UPDATES
 	_updatesPopUpDesc = 0;
 	_updatesPopUp = 0;
@@ -1689,6 +1690,17 @@ void GlobalOptionsDialog::build() {
 #else // !USE_DETECTLANG
 		_guiLanguagePopUp->setSelectedTag(Common::kTranslationBuiltinId);
 #endif // USE_DETECTLANG
+
+	_guiLanguageUseGameLanguageCheckbox = new CheckboxWidget(tab, "GlobalOptions_Misc.GuiLanguageUseGameLanguage",
+			_("Switch the GUI language to the game language"),
+			_("When starting a game, change the GUI language to the game language."
+			"That way, if a game uses the ScummVM save and load dialogs, they are"
+			"in the same language as the game.")
+	);
+
+	if (ConfMan.hasKey("gui_use_game_language")) {
+		_guiLanguageUseGameLanguageCheckbox->setState(ConfMan.getBool("gui_use_game_language", _domain));
+	}
 
 #endif // USE_TRANSLATION
 
@@ -1960,6 +1972,9 @@ void GlobalOptionsDialog::apply() {
 		newCharset = TransMan.getCurrentCharset();
 		isRebuildNeeded = true;
 	}
+
+	bool guiUseGameLanguage = _guiLanguageUseGameLanguageCheckbox->getState();
+	ConfMan.setBool("gui_use_game_language", guiUseGameLanguage, _domain);
 #endif
 
 	GUI::ThemeEngine::GraphicsMode gfxMode = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
