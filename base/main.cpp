@@ -254,6 +254,15 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 			warning(_("Engine does not support debug level '%s'"), token.c_str());
 	}
 
+#ifdef USE_TRANSLATION
+	Common::String previousLanguage = TransMan.getCurrentLanguage();
+	if (ConfMan.hasKey("gui_use_game_language")
+	    && ConfMan.getBool("gui_use_game_language")
+	    && ConfMan.hasKey("language")) {
+		TransMan.setLanguage(ConfMan.get("language"));
+	}
+#endif
+
 	// Initialize any game-specific keymaps
 	engine->initKeymap();
 
@@ -277,6 +286,10 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 
 	// Reset the file/directory mappings
 	SearchMan.clear();
+
+#ifdef USE_TRANSLATION
+	TransMan.setLanguage(previousLanguage);
+#endif
 
 	// Return result (== 0 means no error)
 	return result;
