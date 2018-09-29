@@ -92,7 +92,7 @@ public:
 	 * @param agility		Agility threshold
 	 * @param widgetNa
 	 */
-	virtual void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget);
+	virtual void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) = 0;
 
 	/**
 	 * Cast a spell

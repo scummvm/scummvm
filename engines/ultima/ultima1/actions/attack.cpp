@@ -72,7 +72,7 @@ bool Attack::AttackMsg(CAttackMsg &msg) {
 	} else if (map->_mapType == Maps::MAP_DUNGEON) {
 		// In the dungeons, attacks always are straight ahead
 		addInfoMsg("");
-		doAttack(Shared::Maps::DIR_NONE);
+		doAttack(Shared::Maps::DIR_UP);
 	} else if (msg._direction == Shared::Maps::DIR_NONE) {
 		// Prompt user for direction
 		addInfoMsg(": ", false);

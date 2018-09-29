@@ -69,6 +69,17 @@ public:
 	virtual Point getDeltaPosition(const Point &delta) override;
 
 	/**
+	 * Perform an attack in a direction
+	 * @param direction		Direction
+	 * @param effectId		Sound effect to play
+	 * @param maxDistance	Maximum distance in the given direction
+	 * @param amount		Damage amount
+	 * @param agility		Agility threshold
+	 * @param widgetNa
+	 */
+	virtual void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) override;
+
+	/**
 	 * Do an enter action
 	 */
 	virtual void enter() override;
