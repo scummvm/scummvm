@@ -514,6 +514,13 @@ void Myst3Engine::processInput(bool interactive) {
 					_console->onFrame();
 				}
 				break;
+			case Common::KEYCODE_i:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					bool mouseInverted = ConfMan.getBool("mouse_inverted");
+					mouseInverted = !mouseInverted;
+					ConfMan.setBool("mouse_inverted", mouseInverted);
+				}
+				break;
 			default:
 				break;
 			}
@@ -1849,6 +1856,7 @@ void Myst3Engine::settingsInitDefaults() {
 	ConfMan.registerDefault("water_effects", true);
 	ConfMan.registerDefault("transition_speed", 50);
 	ConfMan.registerDefault("mouse_speed", 50);
+	ConfMan.registerDefault("mouse_inverted", false);
 	ConfMan.registerDefault("zip_mode", false);
 	ConfMan.registerDefault("subtitles", false);
 	ConfMan.registerDefault("vibrations", true); // Xbox specific

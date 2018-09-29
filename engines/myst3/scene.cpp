@@ -53,7 +53,11 @@ void Scene::updateCamera(Common::Point &mouse) {
 		Common::Rect screen = _vm->_gfx->viewport();
 		speed *= Renderer::kOriginalHeight / (float) screen.height();
 
-		pitch -= mouse.y * speed;
+		if (ConfMan.getBool("mouse_inverted")) {
+			pitch += mouse.y * speed;
+		} else {
+			pitch -= mouse.y * speed;
+		}
 		heading += mouse.x * speed;
 	}
 
