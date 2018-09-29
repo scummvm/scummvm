@@ -3761,6 +3761,55 @@ static const uint16 laurabow2PatchFixCrateRoomEastDoorLockup[] = {
 	PATCH_END
 };
 
+// LB2 Floppy 1.0 doesn't initialize act 4 correctly when triggered by finding
+//  the dagger, causing the act 4 scene in Yvette's (room 550) to lockup the game.
+//
+// The Yvette/Olympia/Steve scene in act 4 (rooms 550 and 510) expects global111
+//  to be set to 11. This global tracks Yvette's state throughout acts 3 and 4
+//  and increments as you listen to her conversations and witness her scenes.
+//  Some of these are optional and so at the end of act 3 it can be less than 11.
+//  rm510:init initializes global111 to 11 when act 4 is triggered by reporting
+//  Ernie's death but no such initialization occurs when act 4 is triggered by
+//  finding the dagger (rooms 610 and 620). What happens when the global isn't 11
+//  depends on its value but some values, such as 8, cause the act 4 scene to
+//  never complete and never restore control to the user.
+//
+// We fix this the way Sierra did in floppy 1.1 and cd versions by setting global111
+//  to 11 in actBreak:init when act 4 starts so that it's always initialized.
+//
+// Applies to: Floppy 1.0 English only
+// Responsible method: actBreak:<noname150> which is really init
+// Fixes bug: #10716
+static const uint16 laurabow2SignatureFixAct4Initialization[] = {
+	SIG_MAGICDWORD,
+	0xa3, 0x08,                         // sal 8    [ 1.0 floppy only ]
+	0x89, 0x0c,                         // lsg 0c   [ previous room ]
+	0x34, SIG_UINT16(0x026c),           // ldi 026c [ room 620 ]
+	0x1a,                               // eq?
+	0x31, 0x05,                         // bnt 5
+	0x34, SIG_UINT16(0x0262),           // ldi 0262 [ room 610 ]
+	0x33, 0x03,                         // jmp 3
+	0x34, SIG_UINT16(0x01fe),           // ldi 01fe [ room 510 ]
+	0xa3, 0x00,                         // sal 0    [ local0 = (previous room == 620) ? 610 : 510 ]
+	0x33, 0x2d,                         // jmp 2d   [ exit switch ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixAct4Initialization[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x35, 0x0b,                         // ldi 0b
+	0xa1, 0x6f,                         // sag 6f   [ global111 = 11 ]
+	0x89, 0x0c,                         // lsg 0c   [ previous room ]
+	0x34, PATCH_UINT16(0x026c),         // ldi 026c [ room 620 ]
+	0x1a,                               // eq?
+	0x39, 0x64,                         // push 64
+	0x06,                               // mul
+	0x38, PATCH_UINT16(0x01fe),         // push 01fe
+	0x02,                               // add      [ acc = ((previous room == 620) * 100) + 510 ]
+	0x32, PATCH_UINT16(0x0013),         // jmp 0013 [ jmp to: sal 0, jmp exit switch ]
+	PATCH_END
+};
+
 // LB2 Floppy 1.0 attempts to show a non-existent message when using the
 //  carbon paper on the desk lamp in room 550.
 //
@@ -3927,6 +3976,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
+	{  true,    26, "Floppy: fix act 4 initialization",               1, laurabow2SignatureFixAct4Initialization,        laurabow2PatchFixAct4Initialization },
 	{  true,   550, "Floppy: missing desk lamp message",              1, laurabow2SignatureMissingDeskLampMessage,       laurabow2PatchMissingDeskLampMessage },
 	{  true,   440, "Floppy: handle armor inset events",              1, laurabow2SignatureHandleArmorInsetEvents,       laurabow2PatchHandleArmorInsetEvents },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
