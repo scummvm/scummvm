@@ -330,6 +330,20 @@ void MapDungeon::attack(int direction, int effectId) {
 	_game->endOfTurn();
 }
 
+void MapDungeon::attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) {
+	const Character &c = *static_cast<Party *>(_game->_party);
+	Widgets::DungeonMonster *monster = findCreatureInCurrentDirection(maxDistance);
+	_game->playFX(effectId);
+
+	if (monster) {
+		monster->attackMonster(2, agility, amount);
+	} else {
+		addInfoMsg(_game->_res->NOTHING);
+	}
+
+	_game->endOfTurn();
+}
+
 } // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima

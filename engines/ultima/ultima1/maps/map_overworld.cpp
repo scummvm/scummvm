@@ -77,6 +77,10 @@ Point MapOverworld::getDeltaPosition(const Point &delta) {
 	return pt;
 }
 
+void MapOverworld::attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) {
+	// TODO
+}
+
 Point MapOverworld::getViewportPosition(const Point &viewportSize) {
 	Point &topLeft = _viewportPos._topLeft;
 

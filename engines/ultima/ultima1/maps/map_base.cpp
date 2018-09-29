@@ -119,10 +119,6 @@ void MapBase::castSpell(uint spellId) {
 	static_cast<Spells::Spell *>(c._spells[spellId])->cast(this);
 }
 
-void MapBase::attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) {
-	// TODO
-}
-
 } // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima
