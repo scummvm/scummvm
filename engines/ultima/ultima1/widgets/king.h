@@ -33,6 +33,7 @@ namespace Widgets {
  * Implements the kings within castles
  */
 class King : public Person {
+	DECLARE_MESSAGE_MAP;
 protected:
 	/**
 	 * Handles moving creatures
@@ -40,6 +41,7 @@ protected:
 	virtual void movement() override;
 public:
 	DECLARE_WIDGET(King)
+	CLASSDEF;
 
 	/**
 	 * Constructor

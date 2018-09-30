@@ -29,6 +29,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+EMPTY_MESSAGE_MAP(King, Person);
+
 void King::movement() {
 }
 

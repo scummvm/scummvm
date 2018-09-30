@@ -58,7 +58,7 @@ bool Info::InfoMsg(CInfoMsg &msg) {
 		_lines.back() = " ";
 
 	for (uint idx = 0; idx < lines.size(); ++idx) {
-		if (_lines.empty())
+		if (_lines.empty() || idx > 0)
 			_lines.push_back(" ");
 
 		_lines.back() += lines[idx];
@@ -69,7 +69,12 @@ bool Info::InfoMsg(CInfoMsg &msg) {
 		_lines.push_back(" ");
 
 	setDirty();
+
+	// Adding any text hides any visible cursor
 	_commandRespondTo = nullptr;
+	Gfx::TextCursor *textCursor = getGame()->_textCursor;
+	textCursor->setVisible(false);
+
 	return true;
 }
 
