@@ -41,6 +41,7 @@ King::King(Ultima1Game *game) : Dialog(game), _mode(SELECT) {
 
 bool King::ShowMsg(CShowMsg &msg) {
 	addInfoMsg(_game->_res->KING_TEXT[0], false);
+	getKeypress();
 	return true;
 }
 
@@ -83,7 +84,8 @@ bool King::CharacterInputMsg(CCharacterInputMsg &msg) {
 }
 
 void King::nothing() {
-	addInfoMsg(Common::String::format(" %s", _game->_res->NOTHING));
+	addInfoMsg(_game->_res->NOTHING);
+	_game->endOfTurn();
 	hide();
 }
 
