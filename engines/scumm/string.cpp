@@ -437,7 +437,7 @@ bool ScummEngine::newLine() {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
-	} else if (_game.version >= 4 && true /*IS_HEBREW*/) {
+	} else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
 		_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
 	}
 
@@ -602,7 +602,7 @@ void ScummEngine::CHARSET_1() {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
-	} else if (_game.version >= 4 && true /*IS_HEBREW*/) {
+	} else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
 		_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
 	}
 
@@ -610,7 +610,7 @@ void ScummEngine::CHARSET_1() {
 
 	int c = 0;
 
-	if (_game.version >= 4 && true /*IS_HEBREW*/) {
+	if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
 		int ll = 0;
 		char* ltext = (char*)_charsetBuffer + _charsetBufPos;
 		while (ltext[ll] == -1) {
@@ -1062,7 +1062,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	if (_charset->_center) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
-	} else if (_game.version >= 4 && true /*IS_HEBREW*/) {
+	} else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
 		if (_charset->getStringWidth(a, buf) > _screenWidth) {
 			int ll = 0;
 			byte* ltext = buf;
@@ -1125,7 +1125,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 			case 8:
 				if (_charset->_center) {
 					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf + i);
-				} else if (_game.version >= 4 && true /*IS_HEBREW*/) {
+				} else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
 					if (_charset->getStringWidth(a, buf + i) > _screenWidth) {
 						int ll = 0;
 						byte* ltext = buf + i;
