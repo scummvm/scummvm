@@ -435,6 +435,8 @@ bool ScummEngine::newLine() {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
+	} else if (_game.version >= 4 && true /*IS_HEBREW*/) {
+		_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
 	}
 
 	if (_game.version == 0) {
@@ -598,11 +600,80 @@ void ScummEngine::CHARSET_1() {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
+	} else if (_game.version >= 4 && true /*IS_HEBREW*/) {
+		_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
 	}
 
 	_charset->_disableOffsX = _charset->_firstChar = !_keepText;
 
 	int c = 0;
+
+	if (_game.version >= 4 && true /*IS_HEBREW*/) {
+		int ll = 0;
+		char* ltext = (char*)_charsetBuffer + _charsetBufPos;
+		while (ltext[ll] == -1) {
+			ll += 4;
+		}
+
+		int i = 0;
+		int start = 0;
+		char* text = ltext + ll;
+
+
+		// for (int u = 0; u < strlen(text); u++) {
+		// 	char bufff[20];
+		// 	sprintf(bufff, "%d-%c\n", text[u], text[u]);
+		// 	debug(bufff);
+		// }
+
+
+
+		char* current = text;
+		while(1) {
+			if (*current == 13 || *current == 0 || *current == -1 || *current == -2) {
+
+				// ignore the line break for interface texts
+				if (*(current + 1) ==  8) {
+					*(current + 1) = *current;
+					*current = 8;
+					i += 2;
+					current += 2;
+					continue;
+				}
+
+				char buf[384] = {0};
+				for (int j = 0; j < i; j++) {
+					buf[j] = text[start + i - j - 1];
+				}
+				memcpy(text + start, buf, i);
+				start += i + 1;
+				i = -1;
+
+				if (*current == -1 || *current == -2) {
+					current++;
+					if (*current == 3) {
+						break;
+					}
+					if (*current == 0x0A) {
+						start += 2;
+						i +=2;
+						current += 2;
+					}
+					start++;
+					i++;
+					current++;
+					continue;
+				}
+			}
+			if (*current) {
+				i++;
+				current++;
+				continue;
+			}
+			break;
+		}
+	}
+
 	while (handleNextCharsetCode(a, &c)) {
 		if (c == 0) {
 			// End of text reached, set _haveMsg accordingly
@@ -872,6 +943,64 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	convertMessageToString(msg, buf, sizeof(buf));
 
+	if (_game.version >= 4 && true /*TODO: IS_HEBREW*/) {
+		int ll = 0;
+		char* ltext = (char*)buf;
+		while (ltext[ll] == -1) {
+			ll += 4;
+		}
+		// for (int u = 0; u < strlen(ltext + ll); u++) {
+		// 	char buf[384] = {0};
+		// 	sprintf(buf, "%d - %c\n", (ltext + ll)[u], (ltext + ll)[u]);
+		// 	debugN(buf);
+		// }
+		// char buf[384] = {0};
+		// sprintf(buf, "LL: %d", ll);
+		// warning(buf);
+		byte fin[270] = {0};
+
+		memcpy(fin, ltext, ll);
+		int i = 0;
+		int start = 0;
+		char* text = (char*)ltext + ll;
+		strncpy((char*)fin + ll, text, strlen(text));
+		char* current = text;
+		while(1) {
+			if (*current == 13 || *current == 0 || *current == -1 || *current == -2) {
+				char buff[384] = {0};
+				for (int j = 0; j < i; j++) {
+					buff[j] = text[start + i - j - 1];
+				}
+				memcpy(fin + ll + start, buff, i);
+				start += i + 1;
+				i = -1;
+				if (*current == -1 || *current == -2) {
+					current++;
+					if (*current == 3) {
+						break;
+					}
+					if (*current == 0x0A) {
+						start += 2;
+						i +=2;
+						current += 2;
+					}
+					start++;
+					i++;
+					current++;
+					continue;
+				}
+			}
+			if (*current) {			
+				i++;
+				current++;
+				continue;
+			}
+			break;
+		}
+		memcpy(buf, fin, start + i + ll);
+	}
+
+
 	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
 	_charset->_right = _string[a].right;
@@ -931,6 +1060,27 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	if (_charset->_center) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
+	} else if (_game.version >= 4 && true /*IS_HEBREW*/) {
+		if (_charset->getStringWidth(a, buf) > _screenWidth) {
+			int ll = 0;
+			byte* ltext = buf;
+			while (ltext[ll] == 0xFF) {
+				ll += 4;
+			}
+			byte lenbuf[270] = {0};
+			memcpy(lenbuf, ltext, ll);
+			int i = ll;
+			while (ltext[i]) {
+				if ((ltext[i] == 0xFF || (_game.version <= 6 && ltext[i] == 0xFE)) && ltext[i+1] == 8) {
+					break;
+				}
+				i++;
+			}
+			memcpy(lenbuf, ltext, i);
+			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
+		} else {
+			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, buf);
+		}
 	}
 
 	if (!buf[0]) {
@@ -971,6 +1121,27 @@ void ScummEngine::drawString(int a, const byte *msg) {
 			case 8:
 				if (_charset->_center) {
 					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf + i);
+				} else if (_game.version >= 4 && true /*IS_HEBREW*/) {
+					if (_charset->getStringWidth(a, buf + i) > _screenWidth) {
+						int ll = 0;
+						byte* ltext = buf + i;
+						while (ltext[ll] == 0xFF) {
+							ll += 4;
+						}
+						byte lenbuf[270] = {0};
+						memcpy(lenbuf, ltext, ll);
+						int u = ll;
+						while (ltext[u]) {
+							if ((ltext[u] == 0xFF || (_game.version <= 6 && ltext[u] == 0xFE)) && ltext[u + 1] == 8) {
+								break;
+							}
+							u++;
+						}
+						memcpy(lenbuf, ltext, u);
+						_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
+					} else {
+						_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, buf + i);
+					}
 				} else {
 					_charset->_left = _charset->_startLeft;
 				}
@@ -1051,7 +1222,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	} else {
 		src = msg;
 	}
-
+	
 	num = 0;
 
 	while (1) {
