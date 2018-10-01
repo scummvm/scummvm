@@ -3539,6 +3539,42 @@ static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 	PATCH_END
 };
 
+// LB2 CD responds with the wrong message when asking Yvette about Tut in acts 3+.
+//
+// aYvette:doVerb(6) tests flag 134, which is set when Pippin dies, to determine
+//  which Tut message to display but they got it backwards. One of the messages
+//  has additional dialogue about Pippin's murder.
+//
+// This is a regression introduced by Sierra when they fixed a bug from the floppy
+//  versions where asking Yvette about Tut in act 2 responds with the message
+//  about Pippin's murder which hasn't occurred yet, bug #10723. Sierra correctly
+//  fixed that in Yvette:doVerb in script 93, which applies to act 2, but then went
+//  on to add incorrect code to aYvette:doVerb in script 90, which applies to the
+//  later acts after the murder.
+//
+// We fix this by reversing the flag test so that the correct message is displayed.
+//
+// Applies to: CD version, at least English
+// Responsible method: aYvette:doVerb
+// Fixes bug: #10724
+static const uint16 laurabow2CDSignatureFixYvetteTutResponse[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x010f),           // ldi 010f [ tut ]
+	0x1a,                               // eq? [ asked about tut? ]
+	0x30, SIG_UINT16(0x0036),           // bnt 0036
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x0086),           // push 0086 [ pippin-dead flag ]
+	0x45, 0x02, 0x02,                   // call proc0_2 [ is pippin-dead flag set? ]
+	0x30, SIG_UINT16(0x0016),           // bnt 0016 [ pippin-dead message ]
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchFixYvetteTutResponse[] = {
+	PATCH_ADDTOOFFSET(+14),
+	0x2e,                               // change to bt
+	PATCH_END
+};
+
 // When entering the main musem party room (w/ the golden Egyptian head),
 // Laura is waslking a bit into the room automatically.
 // In case you press a mouse button while this is happening, you will get
@@ -3922,6 +3958,7 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport2[] = {
 static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   560, "CD: painting closing immediately",               1, laurabow2CDSignaturePaintingClosing,            laurabow2CDPatchPaintingClosing },
 	{  true,     0, "CD: fix problematic icon bar",                   1, laurabow2CDSignatureFixProblematicIconBar,      laurabow2CDPatchFixProblematicIconBar },
+	{  true,    90, "CD: fix yvette's tut response",                  1, laurabow2CDSignatureFixYvetteTutResponse,       laurabow2CDPatchFixYvetteTutResponse },
 	{  true,   350, "CD/Floppy: museum party fix entering south 1/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth1, laurabow2PatchMuseumPartyFixEnteringSouth1 },
 	{  true,   350, "CD/Floppy: museum party fix entering south 2/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth2, laurabow2PatchMuseumPartyFixEnteringSouth2 },
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
