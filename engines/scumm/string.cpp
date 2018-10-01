@@ -619,15 +619,6 @@ void ScummEngine::CHARSET_1() {
 		int start = 0;
 		char* text = ltext + ll;
 
-
-		// for (int u = 0; u < strlen(text); u++) {
-		// 	char bufff[20];
-		// 	sprintf(bufff, "%d-%c\n", text[u], text[u]);
-		// 	debug(bufff);
-		// }
-
-
-
 		char* current = text;
 		while(1) {
 			if (*current == 13 || *current == 0 || *current == -1 || *current == -2) {
@@ -960,7 +951,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		byte fin[270] = {0};
 
 		memcpy(fin, ltext, ll);
-		int i = 0;
+		int pos = 0;
 		int start = 0;
 		char* text = (char*)ltext + ll;
 		strncpy((char*)fin + ll, text, strlen(text));
@@ -968,12 +959,12 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		while(1) {
 			if (*current == 13 || *current == 0 || *current == -1 || *current == -2) {
 				char buff[384] = {0};
-				for (int j = 0; j < i; j++) {
-					buff[j] = text[start + i - j - 1];
+				for (int j = 0; j < pos; j++) {
+					buff[j] = text[start + pos - j - 1];
 				}
-				memcpy(fin + ll + start, buff, i);
-				start += i + 1;
-				i = -1;
+				memcpy(fin + ll + start, buff, pos);
+				start += pos + 1;
+				pos = -1;
 				if (*current == -1 || *current == -2) {
 					current++;
 					if (*current == 3) {
@@ -981,23 +972,23 @@ void ScummEngine::drawString(int a, const byte *msg) {
 					}
 					if (*current == 0x0A) {
 						start += 2;
-						i +=2;
+						pos +=2;
 						current += 2;
 					}
 					start++;
-					i++;
+					pos++;
 					current++;
 					continue;
 				}
 			}
 			if (*current) {			
-				i++;
+				pos++;
 				current++;
 				continue;
 			}
 			break;
 		}
-		memcpy(buf, fin, start + i + ll);
+		memcpy(buf, fin, start + pos + ll);
 	}
 
 
@@ -1069,14 +1060,14 @@ void ScummEngine::drawString(int a, const byte *msg) {
 			}
 			byte lenbuf[270] = {0};
 			memcpy(lenbuf, ltext, ll);
-			int i = ll;
-			while (ltext[i]) {
-				if ((ltext[i] == 0xFF || (_game.version <= 6 && ltext[i] == 0xFE)) && ltext[i+1] == 8) {
+			int pos = ll;
+			while (ltext[pos]) {
+				if ((ltext[pos] == 0xFF || (_game.version <= 6 && ltext[pos] == 0xFE)) && ltext[pos+1] == 8) {
 					break;
 				}
-				i++;
+				pos++;
 			}
-			memcpy(lenbuf, ltext, i);
+			memcpy(lenbuf, ltext, pos);
 			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
 		} else {
 			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, buf);
