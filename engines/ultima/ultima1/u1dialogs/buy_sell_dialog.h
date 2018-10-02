@@ -33,6 +33,7 @@ namespace U1Dialogs {
 enum BuySell { SELECT, BUY, SELL, SOLD, CANT_AFFORD };
 
 using Shared::CShowMsg;
+using Shared::CFrameMsg;
 using Shared::CCharacterInputMsg;
 
 /**
@@ -41,12 +42,14 @@ using Shared::CCharacterInputMsg;
 class BuySellDialog : public Dialog {
 	DECLARE_MESSAGE_MAP;
 	bool ShowMsg(CShowMsg &msg);
+	bool FrameMsg(CFrameMsg &msg);
 	virtual bool CharacterInputMsg(CCharacterInputMsg &msg);
 private:
 	Shared::Gfx::CharacterInput _charInput;
 protected:
 	BuySell _mode;
 	Common::String _title;
+	uint _closeCounter;
 protected:
 	/**
 	 * Constructor
