@@ -634,12 +634,12 @@ void ScummEngine::CHARSET_1() {
 
 
 
-		for (int u = 0; u < strlen(text); u++) {
-			char buffy[30] = {0};
-			sprintf(buffy, "[%d-%c],", text[u], text[u]);
-			debugN(buffy);
-		}
-		debugN("\n");
+		// for (int u = 0; u < strlen(text); u++) {
+		// 	char buffy[30] = {0};
+		// 	sprintf(buffy, "[%d-%c],", text[u], text[u]);
+		// 	debugN(buffy);
+		// }
+		// debugN("\n");
 
 
 		char* current = text;
