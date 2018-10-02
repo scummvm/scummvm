@@ -286,6 +286,9 @@ public:
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s,
 											int priority = 0);
 	virtual bool openUrl(const Common::String &url);
+	virtual bool hasTextInClipboard();
+	virtual Common::String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::String &text);
 	virtual Common::String getSystemLanguage() const;
 };
 
