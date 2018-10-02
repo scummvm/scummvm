@@ -279,7 +279,7 @@ void MapCityCastle::attack(int direction, int effectId, uint maxDistance, uint a
 void MapCity::load(Shared::Maps::MapId mapId) {
 	MapCityCastle::load(mapId);
 
-	_mapStyle = (_mapId % 8) + 2;
+	_mapStyle = ((_mapId - 1) % 8) + 2;
 	_mapIndex = _mapId;
 	_name = Common::String::format("%s %s", _game->_res->THE_CITY_OF, _game->_res->LOCATION_NAMES[_mapId - 1]);
 
