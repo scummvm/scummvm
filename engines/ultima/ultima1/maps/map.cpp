@@ -75,7 +75,8 @@ void SurroundingTotals::load(Ultima1Map *map) {
 
 /*------------------------------------------------------------------------*/
 
-Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Maps::Map(), _game(game), _mapType(MAP_UNKNOWN) {
+Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Maps::Map(), _game(game),
+		_mapType(MAP_UNKNOWN), _moveCounter(0) {
 	Ultima1Map::clear();
 	_mapCity = new MapCity(game, this);
 	_mapCastle = new MapCastle(game, this);
@@ -126,6 +127,8 @@ void Ultima1Map::synchronize(Common::Serializer &s) {
 	Shared::Maps::Map::synchronize(s);
 	if (_mapType != MAP_OVERWORLD)
 		_mapOverworld->synchronize(s);
+
+	s.syncAsUint32LE(_moveCounter);
 }
 
 Shared::Maps::MapWidget *Ultima1Map::createWidget(Shared::Maps::MapBase *map, const Common::String &name) {
