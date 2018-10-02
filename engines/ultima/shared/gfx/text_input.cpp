@@ -62,6 +62,7 @@ void TextInput::draw() {
 
 bool TextInput::KeypressMsg(CKeypressMsg &msg) {
 	uint16 c = msg._keyState.ascii;
+	TreeItem *respondTo = _respondTo;
 
 	if (c >= ' ' && c <= 0x7f) {
 		// Printable character
@@ -76,10 +77,14 @@ bool TextInput::KeypressMsg(CKeypressMsg &msg) {
 		}
 	} else if (msg._keyState.keycode == Common::KEYCODE_RETURN || msg._keyState.keycode == Common::KEYCODE_KP_ENTER) {
 		_game->_textCursor->setVisible(false);
+		hide();
+
 		CTextInputMsg inputMsg(_text, false);
 		inputMsg.execute(_respondTo);
 	} else if (msg._keyState.keycode == Common::KEYCODE_ESCAPE) {
 		_game->_textCursor->setVisible(false);
+		hide();
+
 		CTextInputMsg inputMsg("", true);
 		inputMsg.execute(_respondTo);
 	}

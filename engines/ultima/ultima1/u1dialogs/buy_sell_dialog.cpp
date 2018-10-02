@@ -30,19 +30,31 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
+#define DIALOG_CLOSE_DELAY 50
+
 BEGIN_MESSAGE_MAP(BuySellDialog, Dialog)
 	ON_MESSAGE(ShowMsg)
+	ON_MESSAGE(FrameMsg)
 	ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
 BuySellDialog::BuySellDialog(Ultima1Game *game, const Common::String &title) :
-	Dialog(game), _mode(SELECT), _title(title), _charInput(game) {
+	Dialog(game), _mode(SELECT), _title(title), _charInput(game), _closeCounter(0) {
 	_bounds = Rect(31, 23, 287, 127);
 }
 
 bool BuySellDialog::ShowMsg(CShowMsg &msg) {
 	addInfoMsg(_game->_res->BUY_SELL, false);
 	getKeypress();
+	return true;
+}
+
+bool BuySellDialog::FrameMsg(CFrameMsg &msg) {
+	if (_closeCounter > 0 && ++_closeCounter > DIALOG_CLOSE_DELAY) {
+		_game->endOfTurn();
+		hide();
+	}
+
 	return true;
 }
 
@@ -112,14 +124,16 @@ void BuySellDialog::setMode(BuySell mode) {
 
 	case CANT_AFFORD:
 		addInfoMsg(_game->_res->NOTHING);
-		addInfoMsg(_game->_res->PRESS_SPACE_TO_CONTINUE, false);
 		_game->playFX(1);
-		getKeypress();
 		break;
 
 	default:
 		break;
 	}
+
+	if (_mode == SOLD || _mode == CANT_AFFORD)
+		// Start dialog close countdown
+		_closeCounter = 1;
 }
 
 void BuySellDialog::nothing() {

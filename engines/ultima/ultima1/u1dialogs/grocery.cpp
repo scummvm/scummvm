@@ -31,11 +31,9 @@ namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Grocery, BuySellDialog)
 	ON_MESSAGE(TextInputMsg)
-	ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
-Grocery::Grocery(Ultima1Game *game, int groceryNum) : BuySellDialog(game, game->_res->GROCERY_NAMES[groceryNum - 1]),
-		_frameCounter(0) {
+Grocery::Grocery(Ultima1Game *game, int groceryNum) : BuySellDialog(game, game->_res->GROCERY_NAMES[groceryNum - 1]) {
 	Shared::Character &c = *game->_party;
 	_costPerPack = 5 - c._intelligence / 20;
 }
@@ -54,7 +52,7 @@ void Grocery::setMode(BuySell mode) {
 		addInfoMsg(Common::String::format("%s%s", _game->_res->ACTION_NAMES[19], _game->_res->SELL), false, true);
 
 		_mode = SELL;
-		_frameCounter = 1;
+		_closeCounter = 1;
 		setDirty();
 		break;
 
@@ -101,15 +99,6 @@ bool Grocery::TextInputMsg(CTextInputMsg &msg) {
 		c._coins -= cost;
 		c._food += amount * 10;
 		addInfoMsg(Common::String::format(_game->_res->GROCERY_PACKS_FOOD, amount));
-		_game->endOfTurn();
-		hide();
-	}
-
-	return true;
-}
-
-bool Grocery::FrameMsg(CFrameMsg &msg) {
-	if (_frameCounter > 0 && ++_frameCounter > 50) {
 		_game->endOfTurn();
 		hide();
 	}
