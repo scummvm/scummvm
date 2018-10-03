@@ -602,11 +602,12 @@ void ScummEngine::CHARSET_1() {
 
 		_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, maxwidth);
 	}
-	if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
-		_nextLeft = (_screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos)) - _nextLeft;
-	}
+	// if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
+	// 	_nextLeft = (_screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos)) - _nextLeft;
+	// }
 	if (_charset->_center) {
 		// warning("CENTER");
+		//_nextLeft = _midLeft;
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
@@ -616,7 +617,8 @@ void ScummEngine::CHARSET_1() {
 	// 	char buffy[30];
 	// 	sprintf(buffy, "%d-%d", _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos), _screenWidth);
 	// 	warning(buffy);
-	// 	_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+		//_midLeft = _nextLeft;
+		//_charset->_left = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
 	}
 
 	_charset->_disableOffsX = _charset->_firstChar = !_keepText;
@@ -626,6 +628,9 @@ void ScummEngine::CHARSET_1() {
 	if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
 		int ll = 0;
 		char* ltext = (char*)_charsetBuffer + _charsetBufPos;
+		if (_game.id == GID_INDY4 && ltext[ll] == 127) {
+			ll++;
+		}
 		while (ltext[ll] == -1) {
 			ll += 4;
 		}
@@ -688,7 +693,7 @@ void ScummEngine::CHARSET_1() {
 			}
 			break;
 		}
-
+		
 
 		// warning("REVERSED");
 		// for (int u = 0; u < strlen(text); u++) {
@@ -732,6 +737,7 @@ void ScummEngine::CHARSET_1() {
 				break;	// FIXME: Is this necessary? Only would be relevant for v0 games
 		}
 
+		// warning("SETTING");
 		_charset->_left = _nextLeft;
 		_charset->_top = _nextTop;
 
@@ -770,6 +776,7 @@ void ScummEngine::CHARSET_1() {
 					_charset->printChar(c, false);
 				}
 			}
+			// warning("RESETING");
 			_nextLeft = _charset->_left;
 			_nextTop = _charset->_top;
 		}
@@ -973,6 +980,9 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
 		int ll = 0;
 		char* ltext = (char*)buf;
+		if (_game.id == GID_INDY4 && ltext[ll] == 127) {
+			ll++;
+		}
 		while (ltext[ll] == -1) {
 			ll += 4;
 		}
@@ -982,6 +992,20 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		int pos = 0;
 		int start = 0;
 		char* text = (char*)ltext + ll;
+
+
+		// warning("BBEFORE");
+		// for (int u = 0; u < strlen(text); u++) {
+		// 	char buffy[30] = {0};
+		// 	sprintf(buffy, "%d,%d[%d-%c]\n",ltext[ll], ll, text[u], text[u]);
+		// 	debugN(buffy);
+		// }
+		// debugN("\n");
+
+
+
+
+
 		strncpy((char*)fin + ll, text, strlen(text));
 		char* current = text;
 		while(1) {
@@ -1017,6 +1041,23 @@ void ScummEngine::drawString(int a, const byte *msg) {
 			break;
 		}
 		memcpy(buf, fin, start + pos + ll);
+
+		if (_game.id == GID_INDY4 && ltext[0] == 127) {
+			buf[start + pos + ll] = 127;
+			buf[start + pos+ll + 1] = '\0';
+		}
+
+
+
+
+		// warning("BREVERSED");
+		// for (int u = 0; u < strlen(text); u++) {
+		// 	char buffy[30] = {0};
+		// 	sprintf(buffy, "[%d-%c]\n", text[u], text[u]);
+		// 	debugN(buffy);
+		// }
+		// debugN("\n\n\n\n\n");
+
 	}
 
 
@@ -1080,25 +1121,32 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	if (_charset->_center) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
 	} else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
-		if (_charset->getStringWidth(a, buf) > _screenWidth) {
-			int ll = 0;
-			byte* ltext = buf;
-			while (ltext[ll] == 0xFF) {
-				ll += 4;
+		// warning("FIRST BOTTTOMd");
+		if (_game.id != GID_INDY4 || buf[0] == 127) {
+			if (_game.id == GID_INDY4 && buf[0] == 127) {
+				buf[0] = 32;
 			}
-			byte lenbuf[270] = {0};
-			memcpy(lenbuf, ltext, ll);
-			int pos = ll;
-			while (ltext[pos]) {
-				if ((ltext[pos] == 0xFF || (_game.version <= 6 && ltext[pos] == 0xFE)) && ltext[pos+1] == 8) {
-					break;
+			if (_charset->getStringWidth(a, buf) > _screenWidth) {
+				int ll = 0;
+				byte* ltext = buf;
+				while (ltext[ll] == 0xFF) {
+					ll += 4;
 				}
-				pos++;
+				byte lenbuf[270] = {0};
+				memcpy(lenbuf, ltext, ll);
+				int pos = ll;
+				while (ltext[pos]) {
+					if ((ltext[pos] == 0xFF || (_game.version <= 6 && ltext[pos] == 0xFE)) && ltext[pos+1] == 8) {
+						break;
+					}
+					pos++;
+				}
+				memcpy(lenbuf, ltext, pos);
+
+				_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
+			} else {
+				_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, buf);
 			}
-			memcpy(lenbuf, ltext, pos);
-			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
-		} else {
-			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, buf);
 		}
 	}
 
@@ -1143,6 +1191,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				if (_charset->_center) {
 					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf + i);
 				} else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
+					// warning("SECOND BOTTOM");
 					if (_charset->getStringWidth(a, buf + i) > _screenWidth) {
 						int ll = 0;
 						byte* ltext = buf + i;
