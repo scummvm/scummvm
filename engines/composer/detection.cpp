@@ -271,6 +271,22 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	{ // Provided by msSeven - from bug Trac #10399
+		{
+			"darby",
+			0,
+			{
+				{"page99.rsc", 0, "ca350397f0c009649afc0cb6145921f0", 1286480},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
 	{ // Provided by Strangerke, "CD-Rom 100% Malin" Pack
 		{
 			"darby",
