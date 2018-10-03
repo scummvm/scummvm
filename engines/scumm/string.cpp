@@ -441,9 +441,11 @@ bool ScummEngine::newLine() {
 		// char buffy[30];
 		// sprintf(buffy, "%d-%d", _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos), _screenWidth);
 		// warning(buffy);
-		_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+		byte c = *(_charsetBuffer + _charsetBufPos + 7);
+		if (_game.id == GID_MONKEY && c == 0x05) {
+			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+		}
 	}
-
 	if (_game.version == 0) {
 		return false;
 	} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
@@ -600,23 +602,29 @@ void ScummEngine::CHARSET_1() {
 
 		_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, maxwidth);
 	}
-	// if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
-	// 	_nextLeft = (_screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos)) - _nextLeft;
-	// }
+	if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
+		byte c = *(_charsetBuffer + _charsetBufPos + 7);
+		if (_game.id == GID_MONKEY && c == 0x05) {
+			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+		}
+	}
 	if (_charset->_center) {
 		// warning("CENTER");
 		//_nextLeft = _midLeft;
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
-	} else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
-		// warning("SECOND");
+	// } else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
+		// byte c = *(_charsetBuffer + _charsetBufPos);
+		// if (c != 0xFF)
+		// 	_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+		//warning("SECOND");
 		//_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
 	// 	char buffy[30];
 	// 	sprintf(buffy, "%d-%d", _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos), _screenWidth);
 	// 	warning(buffy);
 		//_midLeft = _nextLeft;
-		//_charset->_left = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+		// _nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
 	}
 
 	_charset->_disableOffsX = _charset->_firstChar = !_keepText;
