@@ -3761,6 +3761,49 @@ static const uint16 laurabow2PatchFixCrateRoomEastDoorLockup[] = {
 	PATCH_END
 };
 
+// The act 4 back rub scene in Yvette's (room 550) locks up the game when
+//  entered from Carrington's (room 560) instead of the hallway (room 510).
+//
+// The difference is that entering from the hallway sets the room script to
+//  eRS (Enter Room Script) and entering from Carrington's doesn't set any
+//  room script. When sBackRubInterrupted moves ego off screen to the south,
+//  lRS (Leave Room Script) is run by LBRoom:doit if a room script isn't set,
+//  and lRS:changState(0) calls handsOff. Since control is already disabled,
+//  this unexpected second handsOff causes handsOn(1) to restore the disabled
+//  state in the hallway and the user never regains control.
+//
+// We fix this by setting sBackRubInterrupted as the room's script instead of
+//  backRub's script in backRub:doVerb/<noname300>(0). The script executes the
+//  same but having it set as the room script prevents LBRoom:doit from running
+//  lRS which prevents the extra handsOff. This patch overwrites backRub's
+//  default verb handler but that's okay because that code never executes.
+//  doVerb is only called by sBackRubViewing:changeState(6) which passes verb 0.
+//  The entire scene is in handsOff mode so the user can't send any verbs.
+//
+// Affects: All Floppy and CD versions
+// Responsible method: backRub:doVerb/<noname300> in script 550
+// Fixes bug #10729
+static const uint16 laurabow2SignatureFixBackRubEastEntranceLockup[] = {
+	SIG_MAGICDWORD,
+	0x31, 0x0c,                         // bnt 0c    [ unused default verb handler ]
+	0x38, PATCH_UINT16(0x0092),         // push 0092 [ setScript/<noname146> ]
+	0x78,                               // push1
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa sBackRubInterrupted [ cd: 0c94, floppy: 0c70 ]
+	0x36,                               // push
+	0x54, 0x06,                         // self 6 [ self:setScript sBackRubInterrupted ]
+	0x33, 0x09,                         // jmp 9  [ exit switch ]
+	0x38, SIG_ADDTOOFFSET(+2),          // push doVerb/<noname300> [ cd: 011d, floppy: 012c ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixBackRubEastEntranceLockup[] = {
+	PATCH_ADDTOOFFSET(+10),
+	0x81, 0x02,                         // lag 2  [ rm550 ]
+	0x4a, 0x06,                         // send 6 [ rm550:setScript sBackRubInterrupted ]
+	0x32, PATCH_UINT16(0x0006),         // jmp 6  [ exit switch ]
+	PATCH_END
+};
+
 // LB2 Floppy 1.0 doesn't initialize act 4 correctly when triggered by finding
 //  the dagger, causing the act 4 scene in Yvette's (room 550) to lockup the game.
 //
@@ -3976,6 +4019,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
+	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
 	{  true,    26, "Floppy: fix act 4 initialization",               1, laurabow2SignatureFixAct4Initialization,        laurabow2PatchFixAct4Initialization },
 	{  true,   550, "Floppy: missing desk lamp message",              1, laurabow2SignatureMissingDeskLampMessage,       laurabow2PatchMissingDeskLampMessage },
 	{  true,   440, "Floppy: handle armor inset events",              1, laurabow2SignatureHandleArmorInsetEvents,       laurabow2PatchHandleArmorInsetEvents },
