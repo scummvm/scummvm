@@ -3919,6 +3919,81 @@ static const uint16 laurabow2PatchHandleArmorInsetEvents[] = {
 	PATCH_END
 };
 
+// The "bugs with meat" in the basement hallway (room 600) can lockup the game
+//  if they appear while ego is leaving the room through one of the doors.
+//
+// bugsWithMeat cues after 5 seconds in the room and runs sDoMeat if no room
+//  script is set. sDoMeat:changeState(0) calls handsOff. Ego might already be
+//  leaving through the north door in handsOff mode, which is managed by lRS
+//  (Leave Room Script), which doesn't prevent sDoMeat from running because lRS
+//  isn't set as the room script. If the door is animating when the timer goes
+//  off then ego will continue to Wolfe's (room 650) and the unexpected second
+//  handsOff will cause handsOn(1) to restore the disabled state and the user
+//  will never regain control. If sDoMeat runs after the door animates then
+//  ego's movement will be interrupted and the door will be left open and broken.
+//  Similar problems occur with the other door in the room.
+//
+// We fix this by patching bugsWithMeat:cue from testing if the room has no
+//  script to instead testing if the user has control before running sDoMeat.
+//  All of the room's scripts call handsOff in state 0 and handsOn in their
+//  final state so this change just extends the interruption test to include
+//  other handsOff scripts.
+//
+// The signature and patch are duplicated for floppy and cd versions due to
+//  User:canControl having different selector values between versions, floppy
+//  versions not including selector names, and User:canControl's selector
+//  values not appearing in the script being patched.
+//
+// Applies to: All Floppy and CD versions
+// Responsible method: bugsWithMeat:cue/<noname145>
+// Fixes bug #10730
+static const uint16 laurabow2FloppySignatureFixBugsWithMeat[] = {
+	SIG_MAGICDWORD,
+	0x57, 0x32, 0x06,                   // super Actor[32], 6 [ floppy: 32, cd: 31 ]
+	0x3a,                               // toss
+	0x48,                               // ret [ end of bugsWithMeat:<noname300> aka doVerb ]
+	0x38, SIG_UINT16(0x008e),           // pushi 008e [ <noname142> aka script ]
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 2 [ rm600 ]
+	0x4a, 0x04,                         // send 4
+	0x31, 0x0e,                         // bnt 0e [ run sDoMeat if not rm600:<noname142>? ]
+	SIG_END
+};
+
+static const uint16 laurabow2FloppyPatchFixBugsWithMeat[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x38, PATCH_UINT16(0x00ed),         // pushi 00ed [ <noname237> aka canControl ]
+	0x76,                               // push0
+	0x81, 0x50,                         // lag 50 [ User ]
+	0x4a, 0x04,                         // send 4
+	0x2f, 0x0e,                         // bt 0e [ run sDoMeat if User:<noname237>? ]
+	PATCH_END
+};
+
+// cd version of the above signature/patch
+static const uint16 laurabow2CDSignatureFixBugsWithMeat[] = {
+	SIG_MAGICDWORD,
+	0x57, 0x31, 0x06,                   // super Actor[31], 6 [ floppy: 32, cd: 31 ]
+	0x3a,                               // toss
+	0x48,                               // ret [ end of bugsWithMeat:doVerb ]
+	0x38, SIG_UINT16(0x008e),           // pushi 008e [ script ]
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 2 [ rm600 ]
+	0x4a, 0x04,                         // send 4
+	0x31, 0x0e,                         // bnt 0e [ run sDoMeat if not rm600:script? ]
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchFixBugsWithMeat[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x38, PATCH_UINT16(0x00f6),         // pushi 00f6 [ canControl ]
+	0x76,                               // push0
+	0x81, 0x50,                         // lag 50 [ User ]
+	0x4a, 0x04,                         // send 4
+	0x2f, 0x0e,                         // bt 0e [ run sDoMeat if User:canControl? ]
+	PATCH_END
+};
+
 // Laura Bow 2 CD resets the audio mode to speech on init/restart
 //  We already sync the settings from ScummVM (see SciEngine::syncIngameAudioOptions())
 //  and this script code would make it impossible to see the intro using "dual" mode w/o using debugger command
@@ -4016,6 +4091,8 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,    26, "Floppy: fix act 4 initialization",               1, laurabow2SignatureFixAct4Initialization,        laurabow2PatchFixAct4Initialization },
 	{  true,   550, "Floppy: missing desk lamp message",              1, laurabow2SignatureMissingDeskLampMessage,       laurabow2PatchMissingDeskLampMessage },
 	{  true,   440, "Floppy: handle armor inset events",              1, laurabow2SignatureHandleArmorInsetEvents,       laurabow2PatchHandleArmorInsetEvents },
+	{  true,   600, "Floppy: fix bugs with meat",                     1, laurabow2FloppySignatureFixBugsWithMeat,        laurabow2FloppyPatchFixBugsWithMeat },
+	{  true,   600, "CD: fix bugs with meat",                         1, laurabow2CDSignatureFixBugsWithMeat,            laurabow2CDPatchFixBugsWithMeat },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                     1, kq6laurabow2CDSignatureAudioTextSupport1,       kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support 2",                     1, kq6laurabow2CDSignatureAudioTextSupport2,       kq6laurabow2CDPatchAudioTextSupport2 },
