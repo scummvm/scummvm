@@ -275,7 +275,7 @@ bool ResMan_v2::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	}
 
 	// Read the resource information
-	rlFile.readUint32LE(); // Unknown
+	resInfo.disks = rlFile.readUint32LE(); // Seems to be a bitfield indicating on which disk(s) the file can be found
 	resInfo.offset = rlFile.readUint32LE();
 	resInfo.size = rlFile.readUint32LE();
 	resInfo.gjd = rlFile.readUint16LE();

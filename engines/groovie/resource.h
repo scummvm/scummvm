@@ -30,6 +30,7 @@ class MacResManager;
 namespace Groovie {
 
 struct ResInfo {
+	uint32 disks;       // This seems to be a bitfield indicating on which disk(s) the file is located.
 	uint16 gjd;
 	uint32 offset;
 	uint32 size;
