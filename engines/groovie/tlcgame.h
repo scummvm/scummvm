@@ -74,6 +74,8 @@ public:
 	TlcGame();
 	~TlcGame();
 
+	static Common::String getTlcMusicFilename(int musicId);
+
 	/**
 	 * Sets a pointer to the script variables. This makes it easier if we want
 	 * to debug write accesses to the script variables

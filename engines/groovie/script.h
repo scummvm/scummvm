@@ -142,8 +142,9 @@ private:
 	uint32 readScript32bits();
 	uint16 readScript8or16bits();
 	uint8 readScriptChar(bool allow7C, bool limitVal, bool limitVar);
+	void readScriptString(Common::String &str);
 	uint8 readScriptVar();
-	uint32 getVideoRefString();
+	uint32 getVideoRefString(Common::String &resName);
 
 	bool hotspot(Common::Rect rect, uint16 addr, uint8 cursor);
 
@@ -239,6 +240,7 @@ private:
 
 	void o2_printstring();
 	void o2_playsong();
+	void o2_midicontrol();
 	void o2_setbackgroundsong();
 	void o2_videofromref();
 	void o2_vdxtransition();

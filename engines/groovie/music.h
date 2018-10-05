@@ -33,6 +33,7 @@ class MidiParser;
 namespace Groovie {
 
 class GroovieEngine;
+class TlcGame;
 
 class MusicPlayer {
 public:
@@ -177,6 +178,20 @@ class MusicPlayerIOS : public MusicPlayer {
 public:
 	MusicPlayerIOS(GroovieEngine *vm);
 	~MusicPlayerIOS();
+
+protected:
+	void updateVolume();
+	bool load(uint32 fileref, bool loop);
+	void unload();
+
+private:
+	Audio::SoundHandle _handle;
+};
+
+class MusicPlayerTlc : public MusicPlayer {
+public:
+	MusicPlayerTlc(GroovieEngine *vm);
+	~MusicPlayerTlc();
 
 protected:
 	void updateVolume();

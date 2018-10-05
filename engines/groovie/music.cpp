@@ -26,6 +26,7 @@
 #include "groovie/music.h"
 #include "groovie/groovie.h"
 #include "groovie/resource.h"
+#include "groovie/tlcgame.h"
 
 #include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"
@@ -37,6 +38,7 @@
 #include "audio/audiostream.h"
 #include "audio/midiparser.h"
 #include "audio/miles.h"
+#include "audio/decoders/mp3.h"
 
 namespace Groovie {
 
@@ -957,5 +959,60 @@ bool MusicPlayerIOS::load(uint32 fileref, bool loop) {
 	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handle, audStream);
 	return true;
 }
+
+
+MusicPlayerTlc::MusicPlayerTlc(GroovieEngine *vm) : MusicPlayer(vm) {
+	vm->getTimerManager()->installTimerProc(&onTimer, 50 * 1000, this, "groovieMusic");
+}
+
+MusicPlayerTlc::~MusicPlayerTlc() {
+	_vm->getTimerManager()->removeTimerProc(&onTimer);
+}
+
+void MusicPlayerTlc::updateVolume() {
+	// Just set the mixer volume for the music sound type
+	_vm->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, _userVolume * _gameVolume / 100);
+}
+
+void MusicPlayerTlc::unload() {
+	MusicPlayer::unload();
+
+	_vm->_system->getMixer()->stopHandle(_handle);
+}
+
+bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
+	// Find correct filename
+	Common::String filename;
+	Common::File  *fileHandle = new Common::File();
+	Audio::SeekableAudioStream *seekStream = NULL;
+
+	// Create the audio stream from fileref
+	filename = TlcGame::getTlcMusicFilename(fileref);
+	fileHandle->open(filename);
+	if (fileHandle->isOpen()) {
+		seekStream = Audio::makeMP3Stream(fileHandle, DisposeAfterUse::YES);
+	} else {
+		delete fileHandle;
+	}
+
+	if (!seekStream) {
+		warning("Could not play audio file '%s'", filename.c_str());
+		return false;
+	}
+
+	Audio::AudioStream *audStream = seekStream;
+
+	// Loop if requested
+	if (loop || 1)
+		audStream = Audio::makeLoopingAudioStream(seekStream, 0);
+
+	// MIDI player handles volume reset on load, IOS player doesn't - force update here
+	updateVolume();
+
+	// Play!
+	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_handle, audStream);
+	return true;
+}
+
 
 } // End of Groovie namespace

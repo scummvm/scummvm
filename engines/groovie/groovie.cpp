@@ -179,27 +179,41 @@ Common::Error GroovieEngine::run() {
 		error("GROOVIE: Unknown Game version. groovie.cpp:run()");
 	}
 
-	// Detect ScummVM Music Enhancement Project presence (T7G only)
-	if (Common::File::exists("gu16.ogg") && _gameDescription->version == kGroovieT7G) {
-		// Load player for external files
-		_musicPlayer = new MusicPlayerIOS(this);
-	} else {
-		// Create the music player
-		switch (getPlatform()) {
-		case Common::kPlatformMacintosh:
-			if (_gameDescription->version == kGroovieT7G)
-				_musicPlayer = new MusicPlayerMac_t7g(this);
-			else
-				_musicPlayer = new MusicPlayerMac_v2(this);
-			break;
-		case Common::kPlatformIOS:
+
+	switch (_gameDescription->version) {
+	case kGroovieT7G:
+	case kGroovieT11H:
+	case kGroovieCDY:
+	case kGroovieUHP:
+		// Detect ScummVM Music Enhancement Project presence (T7G only)
+		if (Common::File::exists("gu16.ogg") && _gameDescription->version == kGroovieT7G) {
+			// Load player for external files
 			_musicPlayer = new MusicPlayerIOS(this);
-			break;
-		default:
-			_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
-			break;
 		}
+		else {
+			// Create the music player
+			switch (getPlatform()) {
+			case Common::kPlatformMacintosh:
+				if (_gameDescription->version == kGroovieT7G)
+					_musicPlayer = new MusicPlayerMac_t7g(this);
+				else
+					_musicPlayer = new MusicPlayerMac_v2(this);
+				break;
+			case Common::kPlatformIOS:
+				_musicPlayer = new MusicPlayerIOS(this);
+				break;
+			default:
+				_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
+				break;
+			}
+		}
+		break;
+
+	case kGroovieTLC:
+		_musicPlayer = new MusicPlayerTlc(this);
+		break;
 	}
+
 
 	// Load volume levels
 	syncSoundSettings();
@@ -267,7 +281,7 @@ Common::Error GroovieEngine::run() {
 
 	// Check that the game files and the audio tracks aren't together run from
 	// the same cd
-	if (getPlatform() != Common::kPlatformIOS) {
+	if (getPlatform() != Common::kPlatformIOS && _gameDescription->version != kGroovieTLC) {
 		checkCD();
 		_system->getAudioCDManager()->open();
 	}

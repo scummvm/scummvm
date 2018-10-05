@@ -34,7 +34,7 @@
 namespace Groovie {
 
 // This a list of files for background music. These list is hard-coded in the TLC player.
-const Common::String kTlcMidiFiles[] = {"ep01epm.mpg", "ep01tatm.mpg", "amb_hs.mpg", "amb_mr.mpg", "amb_kr.mpg", "amb_mo.mpg", "music_rc.mpg", "amb_ds.mpg", "amb_ds3.mpg", "amb_jr.mpg", "amb_mr4.mpg", "amb_jr4.mpg", "amb_jr2.mpg", "amb_kr2.mpg", "amb_mr2.mpg", "amb_br.mpg", "amb_ds2.mpg", "amb_jr3.mpg", "amb_ds4.mpg", "amb_kr3.mpg", "amb_to1.mpg", "amb_to2.mpg", "ep02epm.mpg", "ep02tatm.mpg", "ep03epm.mpg", "ep03tatm.mpg", "ep04epm.mpg", "ep04tatm.mpg", "ep05epm.mpg", "ep05tatm.mpg", "ep06epm.mpg", "ep06tatm.mpg", "ep07epm.mpg", "ep07tatm.mpg", "ep08epm.mpg", "ep08tatm.mpg", "ep09epm.mpg", "ep09tatm.mpg", "ep10epm.mpg", "ep10tatm.mpg", "ep11epm.mpg", "ep11tatm.mpg", "ep12epm.mpg", "ep12tatm.mpg", "ep13epm.mpg", "ep13tatm.mpg", "ep14epm.mpg", "ep14tatm.mpg", "ep15epm.mpg", "ep15tatm.mpg" };
+const Common::String kTlcMusicFiles[] = {"ep01epm.mpg", "ep01tatm.mpg", "amb_hs.mpg", "amb_mr.mpg", "amb_kr.mpg", "amb_mo.mpg", "music_rc.mpg", "amb_ds.mpg", "amb_ds3.mpg", "amb_jr.mpg", "amb_mr4.mpg", "amb_jr4.mpg", "amb_jr2.mpg", "amb_kr2.mpg", "amb_mr2.mpg", "amb_br.mpg", "amb_ds2.mpg", "amb_jr3.mpg", "amb_ds4.mpg", "amb_kr3.mpg", "amb_to1.mpg", "amb_to2.mpg", "ep02epm.mpg", "ep02tatm.mpg", "ep03epm.mpg", "ep03tatm.mpg", "ep04epm.mpg", "ep04tatm.mpg", "ep05epm.mpg", "ep05tatm.mpg", "ep06epm.mpg", "ep06tatm.mpg", "ep07epm.mpg", "ep07tatm.mpg", "ep08epm.mpg", "ep08tatm.mpg", "ep09epm.mpg", "ep09tatm.mpg", "ep10epm.mpg", "ep10tatm.mpg", "ep11epm.mpg", "ep11tatm.mpg", "ep12epm.mpg", "ep12tatm.mpg", "ep13epm.mpg", "ep13tatm.mpg", "ep14epm.mpg", "ep14tatm.mpg", "ep15epm.mpg", "ep15tatm.mpg" };
 const uint8 kTlcEpQuestToPlay[] = { 0x0E, 0x0F, 0x0B, 0x10, 0x11, 0x12, 0x0C, 0x0C, 0x09, 0x06, 0x0F, 0x0C, 0x0B, 0x0D, 0x0D };
 
 
@@ -78,6 +78,10 @@ uint16 inline TlcGame::getScriptVar16(uint16 var) {
 	return value;
 }
 
+// Gets the filename of the background music file.
+Common::String TlcGame::getTlcMusicFilename(int musicId) {
+	return kTlcMusicFiles[musicId];
+}
 
 void TlcGame::opRegions() {
 	if (_scriptVariables[0x1A] == 1) {
