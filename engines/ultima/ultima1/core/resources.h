@@ -115,6 +115,7 @@ public:
 	const char *NONE_HERE;
 	const char *SOLD;
 	const char *CANT_AFFORD;
+	const char *DONE;
 	const char *DROP_PENCE_WEAPON_ARMOR;
 	const char *DROP_PENCE;
 	const char *DROP_WEAPON;

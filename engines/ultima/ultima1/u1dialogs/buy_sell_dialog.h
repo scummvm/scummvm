@@ -30,7 +30,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-enum BuySell { SELECT, BUY, SELL, SOLD, CANT_AFFORD };
+enum BuySell { SELECT, BUY, SELL, SOLD, CANT_AFFORD, DONE };
 
 using Shared::CShowMsg;
 using Shared::CFrameMsg;

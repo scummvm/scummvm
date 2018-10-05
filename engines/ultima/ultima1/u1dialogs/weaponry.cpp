@@ -132,8 +132,7 @@ bool Weaponry::CharacterInputMsg(CCharacterInputMsg &msg) {
 					c.removeWeapon();
 
 				// Close the dialog
-				_game->endOfTurn();
-				hide();
+				setMode(DONE);
 				return true;
 			}
 		}

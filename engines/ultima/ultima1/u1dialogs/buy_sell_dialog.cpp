@@ -98,11 +98,15 @@ void BuySellDialog::draw() {
 
 	switch (_mode) {
 	case SOLD:
-		s.writeString(getGame()->_res->SOLD, TextPoint(14, 5));
+		centerText(getGame()->_res->SOLD, 5);
 		break;
 
 	case CANT_AFFORD:
-		s.writeString(getGame()->_res->CANT_AFFORD, TextPoint(4, 6));
+		centerText(getGame()->_res->CANT_AFFORD, 5);
+		break;
+
+	case DONE:
+		centerText(getGame()->_res->DONE, 5);
 		break;
 
 	default:
@@ -134,7 +138,7 @@ void BuySellDialog::setMode(BuySell mode) {
 		break;
 	}
 
-	if (_mode == SOLD || _mode == CANT_AFFORD)
+	if (_mode == SOLD || _mode == CANT_AFFORD || _mode == DONE)
 		// Start dialog close countdown
 		closeShortly();
 }
