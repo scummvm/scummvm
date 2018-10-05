@@ -35,6 +35,7 @@ class MidiParser;
 namespace Groovie {
 
 class GroovieEngine;
+class TlcGame;
 
 class MusicPlayer {
 public:
@@ -199,6 +200,20 @@ protected:
 	void updateVolume() override;
 	bool load(uint32 fileref, bool loop) override;
 	void unload(bool updateState = true) override;
+
+private:
+	Audio::SoundHandle _handle;
+};
+
+class MusicPlayerTlc : public MusicPlayer {
+public:
+	MusicPlayerTlc(GroovieEngine *vm);
+	~MusicPlayerTlc();
+
+protected:
+	void updateVolume();
+	bool load(uint32 fileref, bool loop);
+	void unload();
 
 private:
 	Audio::SoundHandle _handle;
