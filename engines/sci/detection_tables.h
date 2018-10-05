@@ -275,6 +275,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Codename: Iceman - English DOS v1.022 (supplied by misterhands in bug report Trac #10678)
+	// SCI interpreter version 0.000.668
+	{"iceman", "", {
+		{"resource.map", 0, "7cca4017825bc21186aed5542912fbcd", 5670},
+		{"resource.000", 0, "b1bccd827453d4cb834bfd5b45bef63c", 26974},
+		{"resource.001", 0, "005bd332d4b0f9d8e99d3b905223a332", 438601},
+		{"resource.002", 0, "250b859381ebf2bf8922bd99683b0cc1", 566571},
+		{"resource.003", 0, "1f2f79e399098859c73e49ac6a3545d8", 622122},
+		{"resource.004", 0, "64f342463f6f35ba71b3509ef696ae3f", 669179},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Codename: Iceman - English DOS (supplied by ssburnout in bug report #3049193)
 	// 1.022 9x5.25" (label: Int#0.000.668)
 	{"iceman", "", {
