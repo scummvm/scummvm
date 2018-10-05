@@ -58,7 +58,7 @@ private:
 	bool processBlockSoundMono(ROQBlockHeader &blockHeader);
 	bool processBlockSoundStereo(ROQBlockHeader &blockHeader);
 	bool processBlockAudioContainer(ROQBlockHeader &blockHeader);
-	bool playFirstFrame() { return _alpha && !_flagTwo; }
+	bool playFirstFrame() { return _flagOne; }; // _alpha && !_flagTwo; }
 
 	void paint2(byte i, int destx, int desty);
 	void paint4(byte i, int destx, int desty);
@@ -67,6 +67,7 @@ private:
 
 	// Origin
 	int16 _origX, _origY;
+	void calcStartStop(int &start, int &stop, int origin, int length);
 
 	// Block coding type
 	byte getCodingType();
@@ -80,10 +81,11 @@ private:
 	byte _codebook4[256 * 4];
 
 	// Flags
-	bool _flagTwo;
+	bool _flagOne;	// Play only first frame and do not print the image to the screen
+	bool _flagTwo;	// If _flagOne is set. Copy frame to the foreground otherwise to the background
 
 	// Buffers
-	Graphics::Surface *_fg, *_bg;
+	Graphics::Surface *_fg, *_bg, *_overBuf;
 	Graphics::Surface *_currBuf, *_prevBuf;
 	void buildShowBuf();
 	byte _scaleX, _scaleY;
@@ -91,6 +93,7 @@ private:
 	bool _dirty;
 	byte _alpha;
 	bool _firstFrame;
+	Common::Rect *_restoreArea;	// Area to be repainted by foreground
 };
 
 } // End of Groovie namespace
