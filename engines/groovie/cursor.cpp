@@ -308,6 +308,8 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 
 	byte r, g, b;
 
+	const byte alphaDecoded[8] = {0, 36, 73, 109, 146, 182, 219, 255};	// Calculated by: alpha = ((int)(*data & 0xE0) * 255) / 224;
+
 	// Start frame decoding
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
@@ -317,7 +319,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 					ctrA = (*data++ & 0x7F) + 1;
 				} else {
 					ctrB = *data++ + 1;
-					alpha = *data & 0xE0;
+					alpha = alphaDecoded[(*data & 0xE0) >> 5];
 					palIdx = *data++ & 0x1F;
 				}
 			}
@@ -325,7 +327,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 			if (ctrA) {
 				// Block type A - chunk of non-continuous pixels
 				palIdx = *data & 0x1F;
-				alpha = *data++ & 0xE0;
+				alpha = alphaDecoded[(*data++ & 0xE0) >> 5];
 
 				r = *(pal + palIdx);
 				g = *(pal + palIdx + 0x20);
@@ -343,17 +345,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 
 			// Decode pixel
 			if (alpha) {
-				if (alpha != 0xE0) {
-					alpha = ((alpha << 8) / 224);
-
-					// TODO: The * 0 to be replaced by the component value of each pixel
-					//       below, respectively - does blending
-					r = (byte)((alpha * r + (256 - alpha) * 0) >> 8);
-					g = (byte)((alpha * g + (256 - alpha) * 0) >> 8);
-					b = (byte)((alpha * b + (256 - alpha) * 0) >> 8);
-				}
-
-				*ptr = 1;
+				*ptr = alpha;
 				*(ptr + 1) = r;
 				*(ptr + 2) = g;
 				*(ptr + 3) = b;
@@ -367,11 +359,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 	ptr = tmp;
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
-			if (*ptr == 1) {
-				*(uint32 *)dest = _format.RGBToColor(*(ptr + 1), *(ptr + 2), *(ptr + 3));
-			} else {
-				*(uint32 *)dest = 0;
-			}
+			*(uint32 *)dest = _format.ARGBToColor(*ptr, *(ptr + 1), *(ptr + 2), *(ptr + 3));
 			dest += 4;
 			ptr += 4;
 		}
