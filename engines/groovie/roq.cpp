@@ -44,7 +44,45 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
+/* copied from transparent_surface.cpp */
+#ifdef SCUMM_LITTLE_ENDIAN
+static const int kAIndex = 0;
+static const int kBIndex = 1;
+static const int kGIndex = 2;
+static const int kRIndex = 3;
+
+#else
+static const int kAIndex = 3;
+static const int kBIndex = 2;
+static const int kGIndex = 1;
+static const int kRIndex = 0;
+#endif
+
 namespace Groovie {
+
+// Overwrites one pixel of destination regardless of the alpha value 
+static inline void copyPixel(byte *dst, byte *src) {
+	dst[kAIndex] = src[kAIndex];
+	dst[kRIndex] = src[kRIndex];
+	dst[kGIndex] = src[kGIndex];
+	dst[kBIndex] = src[kBIndex];
+}
+
+// Copies one pixel to destination but respects the alpha value of the source
+static inline void copyPixelWithA(byte *dst, byte *src) {
+	if (src[kAIndex] == 255) {
+		copyPixel(dst, src);
+	} else {
+		if (src[kAIndex] > 0) {
+			dst[kAIndex] = 255;
+			dst[kRIndex] = ((src[kRIndex] * src[kAIndex]) + dst[kRIndex] * (255 - src[kAIndex])) >> 8;
+			dst[kGIndex] = ((src[kGIndex] * src[kAIndex]) + dst[kGIndex] * (255 - src[kAIndex])) >> 8;
+			dst[kBIndex] = ((src[kBIndex] * src[kAIndex]) + dst[kBIndex] * (255 - src[kAIndex])) >> 8;
+		}
+	}
+	// In case of alpha == 0 just do not copy
+}
+
 
 ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	VideoPlayer(vm), _codingTypeCount(0),
@@ -56,6 +94,8 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	// Create the work surfaces
 	_currBuf = new Graphics::Surface();
 	_prevBuf = new Graphics::Surface();
+	_overBuf = new Graphics::Surface();	// Overlay buffer. Object move behind this layer
+	_restoreArea = new Common::Rect();
 }
 
 ROQPlayer::~ROQPlayer() {
@@ -64,6 +104,9 @@ ROQPlayer::~ROQPlayer() {
 	delete _currBuf;
 	_prevBuf->free();
 	delete _prevBuf;
+	_overBuf->free();
+	delete _overBuf;
+	delete _restoreArea;
 }
 
 void ROQPlayer::setOrigin(int16 x, int16 y) {
@@ -74,7 +117,7 @@ void ROQPlayer::setOrigin(int16 x, int16 y) {
 uint16 ROQPlayer::loadInternal() {
 	if (DebugMan.isDebugChannelEnabled(kDebugVideo)) {
 		int8 i;
-		debugN(1, "Groovie::ROQ: New ROQ: bitflags are ");
+		debugN(1, "Groovie::ROQ: Loading video. New ROQ: bitflags are ");
 		for (i = 15; i >= 0; i--) {
 			debugN(1, "%d", _flags & (1 << i)? 1 : 0);
 			if (i % 4 == 0) {
@@ -86,10 +129,8 @@ uint16 ROQPlayer::loadInternal() {
 
 	// Flags:
 	// - 2 For overlay videos, show the whole video
-	_flagTwo =	((_flags & (1 << 2)) != 0);
-
-	// Begin reading the file
-	debugC(1, kDebugVideo, "Groovie::ROQ: Loading video");
+	_flagOne = ((_flags & (1 << 1)) != 0);
+	_flagTwo = ((_flags & (1 << 2)) != 0);
 
 	// Read the file header
 	ROQBlockHeader blockHeader;
@@ -97,17 +138,21 @@ uint16 ROQPlayer::loadInternal() {
 		return 0;
 	}
 
-	debugC(1, kDebugVideo, "Groovie::ROQ: First Block type = 0x%02X", blockHeader.type);
-	debugC(1, kDebugVideo, "Groovie::ROQ: First Block size = 0x%08X", blockHeader.size);
-	debugC(1, kDebugVideo, "Groovie::ROQ: First Block param = 0x%04X", blockHeader.param);
+	debugC(6, kDebugVideo, "Groovie::ROQ: First Block type = 0x%02X", blockHeader.type);
+	debugC(6, kDebugVideo, "Groovie::ROQ: First Block size = 0x%08X", blockHeader.size);
+	debugC(6, kDebugVideo, "Groovie::ROQ: First Block param = 0x%04X", blockHeader.param);
 
 	// Verify the file signature
 	if (blockHeader.type != 0x1084) {
 		return 0;
 	}
 
-	// Clear the dirty flag
-	_dirty = true;
+	// Clear the dirty flag and restore area
+	_dirty = false;
+	_restoreArea->top = 480;
+	_restoreArea->left = 640;
+	_restoreArea->bottom = 0;
+	_restoreArea->right = 0;
 
 	// Reset the codebooks
 	_num2blocks = 0;
@@ -134,31 +179,96 @@ uint16 ROQPlayer::loadInternal() {
 	}
 }
 
+
+// Calculate the overlapping area for the rendered frame to the visible frame. The game can use an origin to
+// place the rendered image at different places.
+void ROQPlayer::calcStartStop(int &start, int &stop, int origin, int length) {
+	if (origin >= 0) {
+		start = origin;
+		stop = length;
+	} else {
+		start = 0;
+		stop = length + origin;
+	}
+}
+
 void ROQPlayer::buildShowBuf() {
-	if (_alpha)
-		_fg->copyFrom(*_bg);
+	// Restore the background by data from the foreground. Only restore the area which was overwritten during the last frame
+	// Therefore we have the _restoreArea which reduces the area for restoring. We also use the _prevBuf to only overwrite the
+	// Pixels which have been written during the last frame. This means _restoreArea is just an optimization.
+	if (_alpha) {
+		if (!_restoreArea->isEmpty()) {
+			int width = _restoreArea->right - _restoreArea->left;
+			for (int line = _restoreArea->top; line < _restoreArea->bottom; line++) {
+				byte *src = (byte *)_fg->getBasePtr(_restoreArea->left, line);
+				byte *dst = (byte *)_bg->getBasePtr(_restoreArea->left, line);
+				byte *prv = (byte *)_prevBuf->getBasePtr((_restoreArea->left - _origX) / _scaleX, (line - _origY) / _scaleY);
+				byte *ovr = (byte *)_overBuf->getBasePtr(_restoreArea->left, line);
+				for (int i = 0; i < width; i++) {
+					if (prv[kAIndex] != 0) {
+						copyPixel(dst, src);
+						copyPixelWithA(dst, ovr);
+					}
+					src += _fg->format.bytesPerPixel;
+					dst += _fg->format.bytesPerPixel;
+					prv += _fg->format.bytesPerPixel;
+					ovr += _fg->format.bytesPerPixel;
+				}
+			}
+		}
 
-	for (int line = _origY; line < _bg->h; line++) {
-		uint32 *out = _alpha ? (uint32 *)_fg->getBasePtr(0, line) : (uint32 *)_bg->getBasePtr(0, line);
-		uint32 *in = (uint32 *)_currBuf->getBasePtr(0, (line - _origY) / _scaleY);
+		// Reset _restoreArea for the next frame
+		_restoreArea->top = 480;
+		_restoreArea->left = 640;
+		_restoreArea->bottom = 0;
+		_restoreArea->right = 0;
+	}
 
-		// Apply offset
-		out += _origX;
 
-		for (int x = _origX; x < _bg->w; x++) {
-			// Copy a pixel, checking the alpha channel first
-			if (_alpha && !(*in & 0xFF))
-				out++;
-			else if (_fg->h == 480 && *in == _vm->_pixelFormat.RGBToColor(255, 255, 255))
-				// Handle transparency in Gamepad videos
-				// TODO: For now, we detect these videos by checking for full screen
-				out++;
-			else
-				*out++ = *in;
+	// Select the destination buffer according to the given flags
+	Graphics::Surface *destBuf;
+	if (_flagOne) {
+		if (_flagTwo) {
+			destBuf = _overBuf;
+		} else {
+			destBuf = _fg;
+		}
+	} else {
+		destBuf = _bg;
+	}
+
+	
+	// _origY and _origX may be negative (11th hour uses this in the chapel puzzle against Stauf)
+	int startX, startY, stopX, stopY;
+	calcStartStop(startX, stopX, _origX, _bg->w);
+	calcStartStop(startY, stopY, _origY, _bg->h);
+
+	for (int line = startY; line < stopY; line++) {
+		byte *in = (byte *)_currBuf->getBasePtr(MAX(0, -_origX) / _scaleX, (line - _origY) / _scaleY);
+		byte *inOvr = (byte *)_overBuf->getBasePtr(startX, line);
+		byte *out = (byte *)destBuf->getBasePtr(startX, line);
+
+		for (int x = startX; x < stopX; x++) {
+			if (_alpha && destBuf != _overBuf) {
+				copyPixelWithA(out, in);
+			} else {
+				copyPixel(out, in);
+			}
+
+			if (_alpha && in[kAIndex] && destBuf != _overBuf) {
+				_restoreArea->top = MIN(line, (int)_restoreArea->top);
+				_restoreArea->left = MIN(x, (int)_restoreArea->left);
+				_restoreArea->bottom = MAX(line + 1, (int)_restoreArea->bottom);
+				_restoreArea->right = MAX(x + 1, (int)_restoreArea->right);
+
+				copyPixelWithA(out, inOvr);
+			}
 
 			// Skip to the next pixel
+			out += _bg->format.bytesPerPixel;
+			inOvr += _bg->format.bytesPerPixel;
 			if (!(x % _scaleX))
-				in++;
+				in += _bg->format.bytesPerPixel;
 		}
 	}
 
@@ -193,16 +303,21 @@ bool ROQPlayer::playFrameInternal() {
 
 	if (_dirty) {
 		// Update the screen
-		void *src = (_alpha) ? _fg->getPixels() : _bg->getPixels();
+		void *src = (_alpha && 0) ? _fg->getPixels() : _bg->getPixels();
 		_syst->copyRectToScreen(src, _bg->pitch, 0, (_syst->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
 		_syst->updateScreen();
 
 		// For overlay videos, set the background buffer when the video ends
-		if (_alpha && (!_flagTwo || (_flagTwo && _file->eos())))
-			_bg->copyFrom(*_fg);
+		if (_alpha && (!_flagTwo || (_flagTwo && _file->eos()))) {
+			//_bg->copyFrom(*_fg);
+		}
 
 		// Clear the dirty flag
 		_dirty = false;
+	}
+
+	if (_file->eos()) {
+		_overBuf->fillRect(Common::Rect(0, 0, _overBuf->w, _overBuf->h), _overBuf->format.ARGBToColor(0, 0, 0, 0));
 	}
 
 	// Report the end of the video if we reached the end of the file or if we
@@ -258,11 +373,13 @@ bool ROQPlayer::processBlock() {
 		ok = processBlockQuadVector(blockHeader);
 		_dirty = true;
 		endframe = true;
+		debugC(3, kDebugVideo, "Groovie::ROQ:   Decoded Quad Vector frame.");
 		break;
 	case 0x1012: // Still image (JPEG)
 		ok = processBlockStill(blockHeader);
 		_dirty = true;
 		endframe = true;
+		debugC(3, kDebugVideo, "Groovie::ROQ:   Decoded Still image (JPG).");
 		break;
 	case 0x1013: // Hang
 		assert(blockHeader.size == 0 && blockHeader.param == 0);
@@ -274,7 +391,7 @@ bool ROQPlayer::processBlock() {
 	case 0x1021: // Stereo sound samples
 		ok = processBlockSoundStereo(blockHeader);
 		break;
-	case 0x1030: // Audio container
+	case 0x1030: // Container Chunk -> Just skip the chunk header and continue
 		endpos = _file->pos();
 		ok = processBlockAudioContainer(blockHeader);
 		break;
@@ -325,17 +442,19 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		// Free the previous surfaces
 		_currBuf->free();
 		_prevBuf->free();
+		_overBuf->free();
 
 		// Allocate new buffers
 		_currBuf->create(width, height, _vm->_pixelFormat);
 		_prevBuf->create(width, height, _vm->_pixelFormat);
+		_overBuf->create(width, height, _vm->_pixelFormat);
 	}
 
 	// Hack: Detect a video with interlaced black lines, by checking its height compared to width
 	if (height <= width / 3) {
 		_offScale = 2;
 	}
-	debugC(1, kDebugVideo, "Groovie::ROQ: widht=%d, height=%d, scaleX=%d, scaleY=%d, _offScale=%d", width, height, _scaleX, _scaleY, _offScale);
+	debugC(2, kDebugVideo, "Groovie::ROQ: width=%d, height=%d, scaleX=%d, scaleY=%d, _offScale=%d, _alpha=%d", width, height, _scaleX, _scaleY, _offScale, _alpha);
 
 	// Switch from/to fullscreen, if needed
 	if (_bg->h != 480 && height == 480)
