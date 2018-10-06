@@ -204,6 +204,7 @@ bool PAKFile::addFile(const char *name, const char *file) {
 	assert(data);
 	if (fread(data, 1, filesize, f) != filesize) {
 		error("couldn't read from file '%s'", file);
+		delete[] data;
 		return false;
 	}
 	fclose(f);
