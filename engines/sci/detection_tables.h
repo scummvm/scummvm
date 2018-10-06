@@ -4436,6 +4436,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Space Quest 3 - English DOS 6 x 360k Floppy (from misterhands, bug report Trac #10677 and goodoldgeorge, bug report Trac #10636)
+	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
+	{"sq3", "", {
+		{"resource.map", 0, "590ed699f9a4789e9357c1e55ba4b1eb", 6078},
+		{"resource.001", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 175038},
+		{"resource.002", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 316877},
+		{"resource.003", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 330305},
+		{"resource.004", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 325779},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Space Quest 3 - English DOS (from telanus, bug report Trac#9626)
 	// Game version 1.0P 1989-03-22
 	// SCI interpreter version 0.000.453
