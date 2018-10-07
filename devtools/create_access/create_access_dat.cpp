@@ -167,7 +167,7 @@ void writeMartianCommonData(int argc, char *argv[]) {
 
 		// Total up the first 256 bytes of the executable as a simplified checksum
 		uint fileChecksum = 0;
-		for (int idx = 0; idx < 256; ++idx)
+		for (int i = 0; i < 256; ++i)
 			fileChecksum += exeFile.readByte();
 
 		if (fileChecksum == 10454) {
@@ -176,8 +176,8 @@ void writeMartianCommonData(int argc, char *argv[]) {
 			#define FONT_COUNT 119
 			const int FONT_WIDTHS[2] = { 0x47E6, 0x4C9C };
 			const int FONT_CHAR_OFFSETS[2] = { 0x46F8, 0x4BAE };
-			const int FONT_DATA_SIZE[2] = { 849, 907 };
-			int idx, dataOffset;
+			const uint FONT_DATA_SIZE[2] = { 849, 907 };
+			int dataOffset;
 
 			for (int fontNum = 0; fontNum < 2; ++fontNum) {
 				// Write out sizes
@@ -191,14 +191,14 @@ void writeMartianCommonData(int argc, char *argv[]) {
 				// Write out character offsets
 				uint offsets[FONT_COUNT];
 				exeFile.seek(DATA_SEGMENT + FONT_CHAR_OFFSETS[fontNum]);
-				for (int idx = 0; idx < FONT_COUNT; ++idx) {
-					offsets[idx] = exeFile.readWord();
-					if (idx == 0)
+				for (int i = 0; i < FONT_COUNT; ++i) {
+					offsets[i] = exeFile.readWord();
+					if (i == 0)
 						dataOffset = offsets[0];
-					offsets[idx] -= dataOffset;
-					assert(offsets[idx] < FONT_DATA_SIZE[fontNum]);
+					offsets[i] -= dataOffset;
+					assert(offsets[i] < FONT_DATA_SIZE[fontNum]);
 
-					outputFile.writeWord(offsets[idx]);
+					outputFile.writeWord(offsets[i]);
 				}
 
 				// Write out character data
