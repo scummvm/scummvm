@@ -35,7 +35,7 @@ enum VideoMode {
 };
 
 enum CharacterClass {
-	CLASS_FIGHTER = 0, CLASS_CLERIC = 1, CLASS_WIZARD = 0, CLASS_THIEF = 3
+	CLASS_FIGHTER = 0, CLASS_CLERIC = 1, CLASS_WIZARD = 2, CLASS_THIEF = 3
 };
 
 class GameResources;

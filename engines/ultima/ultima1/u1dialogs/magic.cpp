@@ -36,15 +36,9 @@ EMPTY_MESSAGE_MAP(Magic, BuySellDialog);
 
 Magic::Magic(Ultima1Game *game, int magicNum) : BuySellDialog(game, game->_res->MAGIC_NAMES[magicNum]),
 		_magicNum(magicNum) {
-	Maps::Ultima1Map *map = static_cast<Maps::Ultima1Map *>(game->_map);
-
-	int offset = (magicNum + 1) % 2 + 1;
-	int index = (map->_moveCounter % 0x7fff) / 1500;
-	if (index > 3 || map->_moveCounter > 3000)
-		index = 3;
-
-	_startIndex = offset;
-	_endIndex = offset + (index + 1) * 2;
+	const Shared::Character &c = *game->_party;
+	_startIndex = 1 + (magicNum & 1);
+	_endIndex = (c._class == CLASS_WIZARD) ? c._spells.size() - 1 : 5;
 }
 
 void Magic::setMode(BuySell mode) {
@@ -97,12 +91,12 @@ void Magic::drawBuy() {
 	int titleLines = String(_title).split("\r\n").size();
 	Common::String line;
 
-	for (uint idx = _startIndex, yp = titleLines + 2; idx <= _endIndex; ++idx, ++yp) {
-		const Spells::Spell &magic = *static_cast<Spells::Spell *>(c._spells[idx]);
+	for (uint idx = _startIndex, yp = titleLines + 2; idx <= _endIndex; idx += 2, ++yp) {
+		const Spells::Spell &spell = *static_cast<Spells::Spell *>(c._spells[idx]);
 
-		line = Common::String::format("%c) %s", 'a' + idx, magic._name.c_str());
+		line = Common::String::format("%c) %s", 'a' + idx, spell._name.c_str());
 		s.writeString(line, TextPoint(5, yp));
-		line = Common::String::format("-%4u", magic.getBuyCost());
+		line = Common::String::format("-%4u", spell.getBuyCost());
 		s.writeString(line, TextPoint(22, yp));
 	}
 }
@@ -112,17 +106,18 @@ bool Magic::CharacterInputMsg(CCharacterInputMsg &msg) {
 
 	if (_mode == BUY) {
 		if (msg._keyState.keycode >= (int)(Common::KEYCODE_a + _startIndex) &&
-			msg._keyState.keycode <= (int)(Common::KEYCODE_a + _endIndex)) {
+			msg._keyState.keycode <= (int)(Common::KEYCODE_a + _endIndex) &&
+			(int)(msg._keyState.keycode - Common::KEYCODE_a - _startIndex) % 2 == 0) {
 			uint magicNum = msg._keyState.keycode - Common::KEYCODE_a;
-			Spells::Spell &magic = *static_cast<Spells::Spell *>(c._spells[magicNum]);
+			Spells::Spell &spell = *static_cast<Spells::Spell *>(c._spells[magicNum]);
 
-			if (magic.getBuyCost() <= c._coins) {
-				// Display the sold magic in the info area
-				addInfoMsg(magic._name);
+			if (spell.getBuyCost() <= c._coins) {
+				// Display the sold spell in the info area
+				addInfoMsg(spell._name);
 
-				// Remove coins for magic and add it to the inventory
-				c._coins -= magic.getBuyCost();
-				magic.incrQuantity();
+				// Remove coins for spell and add it to the inventory
+				c._coins -= spell.getBuyCost();
+				spell.incrQuantity();
 
 				// Show sold and close the dialog
 				setMode(SOLD);
