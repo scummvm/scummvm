@@ -117,9 +117,9 @@ void VramAllocator::deallocate(void *address) {
 	// Find the Allocator to deallocate
 	for (i = _allocList.begin(); i != _allocList.end(); ++i) {
 		if ((*i).address == address) {
+			PSP_DEBUG_PRINT("Deallocated address[%p], size[%u]\n", (*i).address, (*i).size);
 			_bytesAllocated -= (*i).size;
 			_allocList.erase(i);
-			PSP_DEBUG_PRINT("Deallocated address[%p], size[%u]\n", (*i).address, (*i).size);
 			return;
 		}
 	}
