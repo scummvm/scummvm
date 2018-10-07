@@ -600,6 +600,15 @@ void MystScriptParser::o_copyBackBufferToScreen(uint16 var, const ArgumentsArray
 	debugC(kDebugScript, "\trect.bottom: %d", rect.bottom);
 
 	_vm->_gfx->copyBackBufferToScreen(rect);
+
+	// WORKAROUND: On Channelwood, wait for the sound to complete when
+	// closing the gate on the third level near the blue page.
+	// Fixes the gate not changing visual state despite the closing
+	// sound playing.
+	// There is one card id per side of the gate.
+	if (_vm->getCard()->getId() == 3481 || _vm->getCard()->getId() == 3522) {
+		soundWaitStop();
+	}
 }
 
 void MystScriptParser::o_copyImageToBackBuffer(uint16 var, const ArgumentsArray &args) {
