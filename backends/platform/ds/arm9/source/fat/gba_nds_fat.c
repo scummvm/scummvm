@@ -3186,7 +3186,7 @@ int FAT_mkdir (const char* path)
 	// Create . directory entry
 	dirEntry.name[0] = '.';
 	// Fill name and extension with spaces
-	for (i = 1; i < (sizeof(name)/sizeof(name[0])); i++)
+	for (i = 1; i < (sizeof(dirEntry.name)/sizeof(dirEntry.name[0])); i++)
 	{
 		dirEntry.name[i] = ' ';
 	}
