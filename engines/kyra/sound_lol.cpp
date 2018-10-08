@@ -161,7 +161,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 		return;
 
 	_lastSfxTrack = track;
-	if (track == -1 || track >= _ingameSoundIndexSize)
+	if (track == -1 || track >= (_ingameSoundIndexSize - 500) / 2)
 		return;
 
 	volume &= 0xFF;
