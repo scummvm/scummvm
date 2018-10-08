@@ -1191,6 +1191,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
+	// Hoyle 5 (Hoyle Classic Games for Laptops) - Windows
+	// SCI 2.100.002
+	// Reported by misterhands in bug Trac #10676
+	{"hoyle5", "", {
+		{"ressci.000", 0, "ca50cf09f80a5f982a965afea852cc42", 3278849},
+		{"resmap.000", 0, "d5eef6f2529313e950c4d78251a95b1e", 4213},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+
 	// Hoyle Bridge - Windows
 	{"hoyle5bridge", "", {
 		{"resource.aud", 0, "cc4a7e21dc864ae21cf823e893c279ad", 257585548},
