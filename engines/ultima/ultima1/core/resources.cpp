@@ -713,7 +713,7 @@ const char *SRC_TRANSPORTS_NAMES[8] = {
 	nullptr, "O.K. New and Used Transport", nullptr, "Sly Sam's Transportation\nSpecialists"
 };
 const char *SRC_TRANSPORTS_TEXT[2] = {
-	"Sorry, we don't deal in\nused stuff.", "Closed for the day.",
+	"Sorry, we don't deal in\nused stuff.", "Closed for the day."
 
 };
 const char *const SRC_WITH_KING = " with king";
