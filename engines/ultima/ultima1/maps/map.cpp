@@ -103,8 +103,11 @@ void Ultima1Map::load(Shared::Maps::MapId mapId) {
 
 void Ultima1Map::synchronize(Common::Serializer &s) {
 	Shared::Maps::Map::synchronize(s);
-	if (_mapType != MAP_OVERWORLD)
+	if (_mapType != MAP_OVERWORLD) {
+		if (s.isLoading())
+			_mapOverworld->load(MAP_OVERWORLD);
 		_mapOverworld->synchronize(s);
+	}
 
 	s.syncAsUint32LE(_moveCounter);
 }

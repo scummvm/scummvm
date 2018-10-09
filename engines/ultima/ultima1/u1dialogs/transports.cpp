@@ -38,6 +38,7 @@ EMPTY_MESSAGE_MAP(Transports, BuySellDialog);
 
 Transports::Transports(Ultima1Game *game, int transportsNum) : BuySellDialog(game, game->_res->WEAPONRY_NAMES[transportsNum]),
 		_transportsNum(transportsNum) {
+	loadOverworldFreeTiles();
 }
 
 void Transports::loadOverworldFreeTiles() {
@@ -53,15 +54,19 @@ void Transports::loadOverworldFreeTiles() {
 			if (delta.x != 0 || delta.y != 0) {
 				map->getTileAt(map->getPosition() + delta, &mapTile);
 
-				if (mapTile.isOriginalWater())
-					++_water;
-				else if (mapTile.isOriginalGrass())
-					++_grass;
-				else if (mapTile.isOriginalWoods())
-					++_woods;
+				if (!mapTile._widget) {
+					if (mapTile.isOriginalWater())
+						++_water;
+					else if (mapTile.isOriginalGrass())
+						++_grass;
+					else if (mapTile.isOriginalWoods())
+						++_woods;
+				}
 			}
 		}
 	}
+
+	_hasFreeTiles = _water != 0 || _woods != 0 || _grass != 0;
 }
 
 void Transports::setMode(BuySell mode) {
@@ -73,7 +78,12 @@ void Transports::setMode(BuySell mode) {
 	case BUY: {
 		addInfoMsg(Common::String::format("%s%s", _game->_res->ACTION_NAMES[19], _game->_res->BUY), false, true);
 
-		getKeypress();
+		if (!_hasFreeTiles) {
+			addInfoMsg(_game->_res->NOTHING, false);
+			closeShortly();
+		} else {
+			getKeypress();
+		}
 		break;
 	}
 
@@ -106,10 +116,17 @@ void Transports::draw() {
 }
 
 void Transports::drawBuy() {
-/*
+	int titleLines = String(_title).split("\r\n").size();
+
+	if (_hasFreeTiles) {
+
+	} else {
+		centerText(_game->_res->TRANSPORTS_TEXT[1], titleLines + 2);
+	}
+
+	/*
 	Gfx::VisualSurface s = getSurface();
 	const Shared::Character &c = *_game->_party;
-	int titleLines = String(_title).split("\r\n").size();
 	Common::String line;
 
 	for (uint idx = _startIndex, yp = titleLines + 2; idx <= _endIndex; idx += 2, ++yp) {

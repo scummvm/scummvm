@@ -40,6 +40,7 @@ class Transports : public BuySellDialog {
 private:
 	uint _transportsNum;
 	uint _water, _woods, _grass;
+	bool _hasFreeTiles;
 private:
 	/**
 	 * Calculates the number of free tiles in the overworld
