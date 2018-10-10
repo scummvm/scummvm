@@ -208,13 +208,16 @@ void Transports::addTransport(int transportIndex) {
 	// Iterate through the tiles surrounding the city/castle
 	for (delta.y = -1; delta.y <= 1; ++delta.y) {
 		for (delta.x = -1; delta.x <= 1; ++delta.x) {
-			if (delta.x != 0 || delta.y != 0) {
-				map->getTileAt(map->getPosition() + delta, &mapTile);
+			map->getTileAt(map->getPosition() + delta, &mapTile);
 
-				if ((transportIndex < 2 && mapTile.isOriginalWoods())
-						|| (transportIndex >= 3 && transportIndex <= 4 && mapTile.isOriginalWater())
-						|| (transportIndex >= 5 && mapTile.isOriginalGrass())) {
-					map->createWidget(WIDGET_NAMES[transportIndex]);
+			if (!mapTile._widget && mapTile._locationNum == -1) {
+				if ((transportIndex <= 1 && (mapTile.isOriginalWoods() || (!_woods && mapTile.isOriginalGrass())))
+						|| (transportIndex >= 2 && transportIndex <= 3 && mapTile.isOriginalWater())
+						|| (transportIndex >= 4 && mapTile.isOriginalGrass())) {
+					// Add the transport onto the designated tile around the location
+					Shared::Maps::MapWidget *widget = map->createWidget(WIDGET_NAMES[transportIndex]);
+					assert(widget);
+					map->addWidget(widget);
 					return;
 				}
 			}
