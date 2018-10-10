@@ -29,6 +29,7 @@ namespace Maps {
 
 void MapTile::clear() {
 	_tileId = _tileDisplayNum = -1;
+	_widgets.clear();
 	_widgetNum = -1;
 	_widget = nullptr;
 	_isDoor = _isSecretDoor = false;
