@@ -3346,6 +3346,38 @@ static const uint16 laurabow1PatchArmorOilingArmFix[] = {
 	PATCH_END
 };
 
+// LB1 DOS doesn't acknowledge Lillian's presence in room 44 when she's sitting
+//  on the bed in act 4. Look, talk, etc respond that she's not there.
+//  This is due to not setting global 195 which tracks who is in the room.
+//  We fix this by setting the global as Amiga and Atari ST versions do.
+//
+// Applies to: DOS only
+// Responsible method: Room44:init
+// Fixes bug #10742
+static const uint16 laurabow1SignatureLillianBedFix[] = {
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x10f8),           // lofsa suit2 [ only matches DOS version ]
+	0x4a, 0x14,                         // send 14
+	SIG_ADDTOOFFSET(+8),
+	0x89, 0x76,                         // lsg global118
+	0x35, 0x02,                         // ldi 2
+	0x12,                               // and
+	0x30, SIG_UINT16(0x000d),           // bnt d [ haven't seen Lillian in study ]
+	0x35, 0x01,                         // ldi 1
+	SIG_END
+};
+
+static const uint16 laurabow1PatchLillianBedFix[] = {
+	PATCH_ADDTOOFFSET(+13),
+	0x81, 0x76,                         // lag global118
+	0x7a,                               // push2
+	0x12,                               // and
+	0x31, 0x0f,                         // bnt f [ haven't seen Lillian in study ]
+	0x35, 0x20,                         // ldi 20 [ Lillian ]
+	0xa1, 0xc3,                         // sag global195 [ set Lillian as in the room ]
+	PATCH_END
+};
+
 // When you tell Lilly about Gertie in room 35, Lilly will then walk to the left and off the screen.
 // In case Laura (ego) is in the way, the whole game will basically block and you won't be able
 // to do anything except saving + restoring the game.
@@ -3417,6 +3449,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    37, "armor open visor fix",                     1, laurabow1SignatureArmorOpenVisorFix,               laurabow1PatchArmorOpenVisorFix },
 	{  true,    37, "armor move to fix",                        2, laurabow1SignatureArmorMoveToFix,                  laurabow1PatchArmorMoveToFix },
 	{  true,    37, "allowing input, after oiling arm",         1, laurabow1SignatureArmorOilingArmFix,               laurabow1PatchArmorOilingArmFix },
+	{  true,    44, "lillian bed fix",                          1, laurabow1SignatureLillianBedFix,                   laurabow1PatchLillianBedFix },
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
