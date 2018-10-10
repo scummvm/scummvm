@@ -61,6 +61,11 @@ public:
 	Transport(Ultima1Game *game, Maps::MapBase *map, uint transportId);
 
 	/**
+	 * Returns true if the player can move onto a tile the widget occupies
+	 */
+	virtual bool isBlocking() const { return false; }
+
+	/**
 	 * Disembarks from the transport
 	 */
 	virtual void disembark();
