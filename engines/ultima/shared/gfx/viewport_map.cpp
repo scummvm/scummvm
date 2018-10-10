@@ -52,9 +52,9 @@ void ViewportMap::draw() {
 			map->getTileAt(Point(topLeft.x + x, topLeft.y + y), &tile);
 			(*_sprites)[tile._tileDisplayNum].draw(s, drawPos);
 
-			// Draw any widget on the tile
-			if (tile._widget)
-				(*_sprites)[tile._widget->getTileNum()].draw(s, drawPos);
+			// Draw any widgets on the tile
+			for (uint idx = 0; idx < tile._widgets.size(); ++idx)
+				(*_sprites)[tile._widgets[idx]->getTileNum()].draw(s, drawPos);
 		}
 	}
 }

@@ -23,6 +23,8 @@
 #ifndef ULTIMA_SHARED_MAPS_MAP_TILE_H
 #define ULTIMA_SHARED_MAPS_MAP_TILE_H
 
+#include "common/array.h"
+
 namespace Ultima {
 namespace Shared {
 namespace Maps {
@@ -37,8 +39,9 @@ public:
 	int _tileId;							// Original tile Id
 	int _tileDisplayNum;					// Tile number to display. Can differ from tileId, such as tiles in the
 											// city for talking/stealing to merchants showing as ground
-	int _widgetNum;							// Widget number, if any
-	MapWidget *_widget;						// Widget pointer
+	Common::Array<MapWidget *> _widgets;	// Widgets on the tile, if any
+	int _widgetNum;							// Widget number of first widget, if any
+	MapWidget *_widget;						// Pointer tofirst widget on tile, if any
 	// Dungeon tile flags 
 	bool _isDoor, _isSecretDoor;
 	bool _isLadderUp, _isLadderDown;
