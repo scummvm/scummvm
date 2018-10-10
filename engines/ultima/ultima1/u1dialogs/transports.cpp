@@ -217,6 +217,7 @@ void Transports::addTransport(int transportIndex) {
 					// Add the transport onto the designated tile around the location
 					Shared::Maps::MapWidget *widget = map->createWidget(WIDGET_NAMES[transportIndex]);
 					assert(widget);
+					widget->_position = map->getPosition() + delta;
 					map->addWidget(widget);
 					return;
 				}

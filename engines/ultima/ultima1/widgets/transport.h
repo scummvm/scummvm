@@ -89,6 +89,11 @@ public:
 	 * Constructor
 	 */
 	Horse(Ultima1Game *game, Maps::MapBase *map);
+
+	/**
+	 * Get the tile for the transport method
+	 */
+	virtual uint getTileNum() const override { return 9; }
 };
 
 /**
@@ -104,6 +109,11 @@ public:
 	 * Constructor
 	 */
 	Cart(Ultima1Game *game, Maps::MapBase *map);
+
+	/**
+	 * Get the tile for the transport method
+	 */
+	virtual uint getTileNum() const override { return 10; }
 };
 
 /**
@@ -119,6 +129,11 @@ public:
 	 * Constructor
 	 */
 	Raft(Ultima1Game *game, Maps::MapBase *map);
+
+	/**
+	 * Get the tile for the transport method
+	 */
+	virtual uint getTileNum() const override { return 11; }
 };
 
 /**
@@ -139,6 +154,11 @@ public:
 	 * Get the name of a transport's weapons
 	 */
 	virtual Common::String getWeaponsName();
+
+	/**
+	 * Get the tile for the transport method
+	 */
+	virtual uint getTileNum() const override { return 12; }
 };
 
 /**
@@ -159,6 +179,11 @@ public:
 	 * Get the name of a transport's weapons
 	 */
 	virtual Common::String getWeaponsName();
+
+	/**
+	 * Get the tile for the transport method
+	 */
+	virtual uint getTileNum() const override { return 14; }
 };
 
 /**
@@ -181,6 +206,11 @@ public:
 	 * Handles loading and saving data
 	 */
 	virtual void synchronize(Common::Serializer &s) override;
+
+	/**
+	 * Get the tile for the transport method
+	 */
+	virtual uint getTileNum() const override { return 15; }
 };
 
 /**
@@ -196,6 +226,11 @@ public:
 	 * Constructor
 	 */
 	TimeMachine(Ultima1Game *game, Maps::MapBase *map);
+
+	/**
+	 * Get the tile for the transport method
+	 */
+	virtual uint getTileNum() const override { return 16; }
 };
 
 } // End of namespace Widgets
