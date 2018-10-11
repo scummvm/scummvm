@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-10-10 09:15+0200\n"
+"POT-Creation-Date: 2018-10-11 06:45+0200\n"
 "PO-Revision-Date: 2018-09-06 21:44+0000\n"
 "Last-Translator: Purple T <zeonk@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -1661,7 +1661,7 @@ msgstr "Copier Informations"
 msgid "Report game"
 msgstr "Signaler le jeu"
 
-#: gui/unknown-game-dialog.cpp:110
+#: gui/unknown-game-dialog.cpp:114
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
@@ -1669,20 +1669,20 @@ msgstr ""
 "Utilisez le bouton ci-dessous pour copier les informations requises dans le "
 "presse-papiers."
 
-#: gui/unknown-game-dialog.cpp:117
+#: gui/unknown-game-dialog.cpp:121
 msgid "You can also directly report your game to the Bug Tracker."
 msgstr ""
 "Vous pouvez également directement signaler votre jeu dans notre Tracker de "
 "Bogues."
 
-#: gui/unknown-game-dialog.cpp:199
+#: gui/unknown-game-dialog.cpp:203
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr ""
 "Toutes les informations nécessaires sur votre jeu ont été copiées dans le "
 "presse-papiers"
 
-#: gui/unknown-game-dialog.cpp:201
+#: gui/unknown-game-dialog.cpp:205
 msgid "Copying the game information to the clipboard has failed!"
 msgstr "La copie des informations du jeu dans le presse-papiers a échouée !"
 

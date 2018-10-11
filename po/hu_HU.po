@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-10-10 09:15+0200\n"
+"POT-Creation-Date: 2018-10-11 06:45+0200\n"
 "PO-Revision-Date: 2018-09-01 10:35+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -1638,7 +1638,7 @@ msgstr "Másolás a vágólapra"
 msgid "Report game"
 msgstr "Játék jelentése"
 
-#: gui/unknown-game-dialog.cpp:110
+#: gui/unknown-game-dialog.cpp:114
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
@@ -1646,16 +1646,16 @@ msgstr ""
 "Az alábbi gombra kattintva a szükséges játékinformációkat a vágólapra "
 "másolja."
 
-#: gui/unknown-game-dialog.cpp:117
+#: gui/unknown-game-dialog.cpp:121
 msgid "You can also directly report your game to the Bug Tracker."
 msgstr "A játékot közvetlenül a Bug Tracker-re is bejelentheti."
 
-#: gui/unknown-game-dialog.cpp:199
+#: gui/unknown-game-dialog.cpp:203
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr "Minden szükséges információ a játékról a vágólapra másolva"
 
-#: gui/unknown-game-dialog.cpp:201
+#: gui/unknown-game-dialog.cpp:205
 msgid "Copying the game information to the clipboard has failed!"
 msgstr "A játékinformációk másolása a vágólapra nem sikerült!"
 
