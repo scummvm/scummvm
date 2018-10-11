@@ -659,6 +659,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	FANMADE_FO("2 Player Demo", "4279f46b3cebd855132496476b1d2cca", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("AGI Combat", "0be6a8a9e19203dcca0067d280798871"),
+	FANMADE("AGI Combat (Beta)", "341a47d07be8490a488d0c709578dd10"),
 	FANMADE("AGI Contest 1 Template", "d879aed25da6fc655564b29567358ae2"),
 	FANMADE("AGI Contest 2 Template", "5a2fb2894207eff36c72f5c1b08bcc07"),
 	FANMADE_O("AGI Mouse Demo 0.60 demo 1", "c07e2519de674c67386cb2cc6f2e3904", GAMEOPTIONS_FANMADE_MOUSE),
