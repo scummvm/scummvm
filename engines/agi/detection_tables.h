@@ -825,6 +825,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("SQ2Eye (v0.484)", "f2c86fae7b9046d408c62c8c49a4b882"),
 	FANMADE("SQ2Eye (v0.485)", "af59e36bc28f44545458b68a93e91e67"),
 	FANMADE("SQ2Eye (v0.486)", "3fd86436e93456770dbdd4593eded70a"),
+	FANMADE("Sarien", "314e5fdef17b803226d1de3af2e997ea"),
 	FANMADE("Save Santa (v1.0)", "4644f6beb5802081772f14be56ae196c"),
 	FANMADE("Save Santa (v1.3)", "f8afdb6efc5af5e7c0228b44633066af"),
 	FANMADE("Schiller (preview 1)", "ade39dea968c959cfebe1cf935d653e9"),
