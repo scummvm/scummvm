@@ -50,6 +50,7 @@ public:
 
 	Common::Rect getClipRect() const override;
 
+	void handleMouseWheel(int x, int y, int direction);
 protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.
