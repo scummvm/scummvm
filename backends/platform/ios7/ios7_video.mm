@@ -776,6 +776,7 @@ uint getSizeNextPOT(uint size) {
 		GLfloat ratio = adjustedHeight / adjustedWidth;
 		int height = (int)(screenWidth * ratio);
 		//printf("Making rect (%u, %u)\n", screenWidth, height);
+        
 		_gameScreenRect = CGRectMake(0, 0, screenWidth, height);
 
 		overlayPortraitRatio = (_videoContext.overlayHeight * ratio) / _videoContext.overlayWidth;
@@ -792,6 +793,32 @@ uint getSizeNextPOT(uint size) {
 
 	[self setViewTransformation];
 	[self updateMouseCursorScaling];
+    [self adjustViewFrameForSafeArea];
+}
+
+#ifndef __has_builtin
+#define __has_builtin(x) 0
+#endif
+
+-(void)adjustViewFrameForSafeArea {
+#if __has_builtin(__builtin_available)
+    if ( @available(iOS 11,*) ) {
+#else
+    if ( [[UIApplication sharedApplication] keyWindow] respondsToSelector:@selector(safeAreaInsets) ) {
+#endif
+        CGRect screenSize = [[UIScreen mainScreen] bounds];
+        UIEdgeInsets inset = [[UIApplication sharedApplication] keyWindow].safeAreaInsets;
+        UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+        CGRect newFrame = screenSize;
+        if ( orientation == UIInterfaceOrientationPortrait ) {
+            newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y + inset.top, screenSize.size.width, screenSize.size.height - inset.top);
+        } else if ( orientation == UIInterfaceOrientationLandscapeLeft ) {
+            newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width - inset.right, screenSize.size.height);
+        } else if ( orientation == UIInterfaceOrientationLandscapeRight ) {
+            newFrame = CGRectMake(screenSize.origin.x + inset.left, screenSize.origin.y, screenSize.size.width - inset.left, screenSize.size.height);
+        }
+        self.frame = newFrame;
+    }
 }
 
 - (void)setViewTransformation {
