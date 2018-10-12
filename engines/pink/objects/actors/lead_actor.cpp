@@ -119,12 +119,11 @@ void LeadActor::start(bool isHandler) {
 
 void LeadActor::update() {
 	switch (_state) {
-	case kReady:
-		_sequencer->update();
-		_cursorMgr->update();
-		break;
 	case kMoving:
 		_walkMgr->update();
+		// fall through
+	case kReady:
+		_sequencer->update();
 		_cursorMgr->update();
 		break;
 	case kPlayingSequence:
