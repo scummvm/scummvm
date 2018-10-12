@@ -168,10 +168,6 @@ void LeadActor::loadPDA(const Common::String &pageName) {
 }
 
 void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
-	if (code == Common::KEYCODE_g) {
-		loadPDA("TOC");
-		return;
-	}
 	switch (_state) {
 	case kMoving:
 		switch (code) {
