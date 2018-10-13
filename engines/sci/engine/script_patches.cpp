@@ -3346,6 +3346,32 @@ static const uint16 laurabow1PatchArmorOilingArmFix[] = {
 	PATCH_END
 };
 
+// Jeeves lights the chapel candles (room 58) in act 2 but they don't stay
+//  lit when re-entering until the next act. This is due to Room58:init
+//  incorrectly testing the global variable that tracks Jeeves' act 2 state.
+//
+// We fix this by changing the test from if global155 equals 11, which it
+//  never does, to if it's greater than 11. The global is set to 12 in
+//  lightCandles:changeState(11) and it continues to increment as Jeeves'
+//  chore sequence progresses, ending with 17.
+//
+// Applies to: DOS, Amiga, Atari ST
+// Responsible method: Room58:init
+// Fixes bug #10743
+static const uint16 laurabow1SignatureChapelCandlesPersistence[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x9b,                         // lsg global155 [ Jeeves' act 2 state ]
+	0x35, 0x0b,                         // ldi b
+	0x1a,                               // eq?
+	SIG_END
+};
+
+static const uint16 laurabow1PatchChapelCandlesPersistence[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x1e,                               // gt?
+	PATCH_END
+};
+
 // When you tell Lilly about Gertie in room 35, Lilly will then walk to the left and off the screen.
 // In case Laura (ego) is in the way, the whole game will basically block and you won't be able
 // to do anything except saving + restoring the game.
@@ -3417,6 +3443,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    37, "armor open visor fix",                     1, laurabow1SignatureArmorOpenVisorFix,               laurabow1PatchArmorOpenVisorFix },
 	{  true,    37, "armor move to fix",                        2, laurabow1SignatureArmorMoveToFix,                  laurabow1PatchArmorMoveToFix },
 	{  true,    37, "allowing input, after oiling arm",         1, laurabow1SignatureArmorOilingArmFix,               laurabow1PatchArmorOilingArmFix },
+	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
