@@ -1942,9 +1942,11 @@ void Myst3Engine::pauseEngineIntern(bool pause) {
 		_system->lockMouse(!pause);
 	}
 
-	// The user may have moved the mouse while the engine was paused
+	// The user may have moved the mouse or resized the screen while the engine was paused
 	if (!pause) {
+		_gfx->computeScreenViewport();
 		_cursor->updatePosition(_eventMan->getMousePos());
+		_inventory->reflow();
 	}
 }
 
