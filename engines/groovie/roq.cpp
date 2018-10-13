@@ -249,13 +249,13 @@ void ROQPlayer::buildShowBuf() {
 		byte *out = (byte *)destBuf->getBasePtr(startX, line);
 
 		for (int x = startX; x < stopX; x++) {
-			if (_alpha && destBuf != _overBuf) {
+			if (_alpha) {
 				copyPixelWithA(out, in);
 			} else {
-				copyPixel(out, in);
+				copyPixelWithA(out, in);
 			}
 
-			if (_alpha && in[kAIndex] && destBuf != _overBuf) {
+			if (_alpha && in[kAIndex] != 0 && destBuf != _overBuf) {
 				_restoreArea->top = MIN(line, (int)_restoreArea->top);
 				_restoreArea->left = MIN(x, (int)_restoreArea->left);
 				_restoreArea->bottom = MAX(line + 1, (int)_restoreArea->bottom);
@@ -317,6 +317,7 @@ bool ROQPlayer::playFrameInternal() {
 	}
 
 	if (_file->eos()) {
+		debugC(1, kDebugVideo, "Groovie::ROQ: Clear overlay buffer");
 		_overBuf->fillRect(Common::Rect(0, 0, _overBuf->w, _overBuf->h), _overBuf->format.ARGBToColor(0, 0, 0, 0));
 	}
 
@@ -463,7 +464,7 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		_vm->_graphicsMan->switchToFullScreen(false);
 
 	// Clear the buffers with black
-	if (!_alpha) {
+	if (!_alpha && 0) {
 		_currBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
 		_prevBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
 	}
