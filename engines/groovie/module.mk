@@ -20,6 +20,7 @@ ifdef ENABLE_GROOVIE2
 MODULE_OBJS += \
 	roq.o \
 	tlcgame.o
+	t11hgame.o
 endif
 
 # This module can be built as a plugin
