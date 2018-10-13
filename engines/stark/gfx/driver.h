@@ -54,7 +54,7 @@ public:
 	 */
 	void toggleFullscreen() const;
 
-	void computeScreenViewport();
+	bool computeScreenViewport();
 	virtual void setScreenViewport(bool noScaling) = 0; // deprecated
 
 	virtual void setViewport(const Common::Rect &rect) = 0;

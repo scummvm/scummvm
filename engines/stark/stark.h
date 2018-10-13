@@ -77,6 +77,7 @@ private:
 	void mainLoop();
 	void updateDisplayScene();
 	void processEvents();
+	void onScreenChanged() const;
 
 	Gfx::Driver *_gfx;
 	Gfx::FrameLimiter *_frameLimiter;

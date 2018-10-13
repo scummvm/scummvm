@@ -338,9 +338,7 @@ void StarkEngine::processEvents() {
 		} else if (e.type == Common::EVENT_RBUTTONDOWN) {
 			_userInterface->handleRightClick();
 		} else if (e.type == Common::EVENT_SCREEN_CHANGED) {
-			_gfx->computeScreenViewport();
-			_fontProvider->initFonts();
-			_userInterface->onScreenChanged();
+			onScreenChanged();
 		}
 	}
 }
@@ -500,19 +498,19 @@ Common::String StarkEngine::formatSaveName(const char *target, int slot) {
 void StarkEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 
-	if (!_global || !_global->getLevel() || !_global->getCurrent() || !_frameLimiter) {
-		// This function may be called when an error occurs before the engine is fully initialized
-		return;
+	// This function may be called when an error occurs before the engine is fully initialized
+	if (_global && _global->getLevel() && _global->getCurrent()) {
+		_global->getLevel()->onEnginePause(pause);
+		_global->getCurrent()->getLevel()->onEnginePause(pause);
+		_global->getCurrent()->getLocation()->onEnginePause(pause);
 	}
 
-	_global->getLevel()->onEnginePause(pause);
-	_global->getCurrent()->getLevel()->onEnginePause(pause);
-	_global->getCurrent()->getLocation()->onEnginePause(pause);
-
-	_frameLimiter->pause(pause);
+	if (_frameLimiter) {
+		_frameLimiter->pause(pause);
+	}
 
 	// Grab a game screen thumbnail in case we need one when writing a save file
-	if (_userInterface->isInGameScreen()) {
+	if (_userInterface && _userInterface->isInGameScreen()) {
 		if (pause) {
 			_userInterface->saveGameScreenThumbnail();
 		} else {
@@ -520,9 +518,19 @@ void StarkEngine::pauseEngineIntern(bool pause) {
 		}
 	}
 
-	// The user may have moved the mouse while the engine was paused
-	if (!pause) {
-		StarkUserInterface->handleMouseMove(_eventMan->getMousePos());
+	// The user may have moved the mouse or resized the window while the engine was paused
+	if (!pause && _userInterface) {
+		onScreenChanged();
+		_userInterface->handleMouseMove(_eventMan->getMousePos());
 	}
 }
+
+void StarkEngine::onScreenChanged() const {
+	bool changed = _gfx->computeScreenViewport();
+	if (changed) {
+		_fontProvider->initFonts();
+		_userInterface->onScreenChanged();
+	}
+}
+
 } // End of namespace Stark

@@ -66,23 +66,31 @@ void Driver::toggleFullscreen() const {
 	g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !oldFullscreen);
 }
 
-void Driver::computeScreenViewport() {
+bool Driver::computeScreenViewport() {
 	int32 screenWidth = g_system->getWidth();
 	int32 screenHeight = g_system->getHeight();
 
+	Common::Rect viewport;
 	if (g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
 		// Aspect ratio correction
 		int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * kOriginalWidth / kOriginalHeight);
 		int32 viewportHeight = MIN<int32>(screenHeight, screenWidth * kOriginalHeight / kOriginalWidth);
-		_screenViewport = Common::Rect(viewportWidth, viewportHeight);
+		viewport = Common::Rect(viewportWidth, viewportHeight);
 
 		// Pillarboxing
-		_screenViewport.translate((screenWidth - viewportWidth) / 2,
+		viewport.translate((screenWidth - viewportWidth) / 2,
 			(screenHeight - viewportHeight) / 2);
 	} else {
 		// Aspect ratio correction disabled, just stretch
-		_screenViewport = Common::Rect(screenWidth, screenHeight);
+		viewport = Common::Rect(screenWidth, screenHeight);
 	}
+
+	if (viewport == _screenViewport) {
+		return false;
+	}
+
+	_screenViewport = viewport;
+	return true;
 }
 
 Common::Rect Driver::gameViewport() const {
