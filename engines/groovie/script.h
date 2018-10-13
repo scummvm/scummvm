@@ -48,6 +48,7 @@ class CellGame;
 class Debugger;
 class GroovieEngine;
 class TlcGame;
+class T11hGame;
 
 class Script {
 	friend class Debugger;
@@ -134,6 +135,7 @@ private:
 	// Special classes depending on played game
 	CellGame *_staufsMove;
 	TlcGame *_tlcGame;
+	T11hGame *_t11hGame;
 
 	// Helper functions
 	uint8 getCodeByte(uint16 address);
@@ -247,7 +249,7 @@ private:
 	void o2_setvideoskip();
 	void o2_copyscreentobg();
 	void o2_copybgtoscreen();
-	void o2_stub42();
+	void o2_gamespecial();
 	void o2_stub52();
 	void o2_setscriptend();
 };

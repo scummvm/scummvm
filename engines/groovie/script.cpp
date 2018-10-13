@@ -32,6 +32,7 @@
 #include "groovie/resource.h"
 #include "groovie/saveload.h"
 #include "groovie/tlcgame.h"
+#include "groovie/t11hgame.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
@@ -50,7 +51,7 @@ namespace Groovie {
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
 	_videoFile(NULL), _videoRef(0), _staufsMove(NULL), _lastCursor(0xff),
-	_version(version), _random("GroovieScripts"), _tlcGame(0) {
+	_version(version), _random("GroovieScripts"), _tlcGame(0), _t11hGame(0) {
 
 	// Initialize the opcode set depending on the engine version
 	if (version == kGroovieT7G) {
@@ -96,6 +97,7 @@ Script::~Script() {
 
 	delete _staufsMove;
 	delete _tlcGame;
+	delete _t11hGame;
 }
 
 void Script::setVariable(uint16 variablenum, byte value) {
@@ -1003,7 +1005,7 @@ void Script::o_strcmpnejmp_var() {			// 0x21
 void Script::o_copybgtofg() {			// 0x22
 	debugC(1, kDebugScript, "Groovie::Script: COPY_BG_TO_FG");
 	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: COPY_BG_TO_FG", _currentInstruction-1);
-	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * _vm->_graphicsMan->_foreground.h);
+	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * _vm->_graphicsMan->_foreground.h * _vm->_graphicsMan->_foreground.format.bytesPerPixel);
 }
 
 void Script::o_strcmpeqjmp() {			// 0x23
@@ -1527,6 +1529,7 @@ void Script::o_setvideoorigin() {
 	_bitflags |= 1 << 7;
 
 	debugC(1, kDebugScript, "Groovie::Script: SetVideoOrigin(0x%04X,0x%04X) (%d, %d)", origX, origY, origX, origY);
+	debugC(1, kDebugVideo, "Groovie::Script: SetVideoOrigin(0x % 04X, 0x % 04X) (%d, %d)", origX, origY, origX, origY);
 	_vm->_videoPlayer->setOrigin(origX, origY);
 }
 
@@ -1833,7 +1836,7 @@ void Script::o2_setvideoskip() {
 
 // This function depends on the actual game played. So it is different for 
 // T7G, 11H, TLC, ...
-void Script::o2_stub42() {
+void Script::o2_gamespecial() {
 	uint8 arg = readScript8bits();
 
 	switch (_version) {
@@ -1854,8 +1857,8 @@ void Script::o2_stub42() {
 			break;
 
 		case 2:
-			_tlcGame->opFlags();
 			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): TLC TATFlags", arg);
+			_tlcGame->opFlags();
 			break;
 
 		case 3:
@@ -1868,9 +1871,41 @@ void Script::o2_stub42() {
 		}
 		break;
 
+	case kGroovieT11H:
+		if (_t11hGame == NULL) {
+			_t11hGame = new T11hGame();
+			_t11hGame->setVariables(_variables);
+		}
+		switch (arg) {
+		case 1:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Connect four in the dining room. (tb.grv) TODO", arg);
+			break;
+
+		case 2:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Beehive Puzzle in the top room (hs.grv) TODO", arg);
+			break;
+
+		case 3:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Make last move on modern art picture in the gallery (bs.grv) TODO", arg);
+			_t11hGame->opGallery();
+			break;
+
+		case 4:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Triangle in the Chapel (tx.grv)", arg);
+			break;
+
+		case 5:
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Mouse Trap in the lab (al.grv)", arg);
+			break;
+
+		default:
+			debugC(1, kDebugScript, "Groovie::Script: Op42 (0x%02X): T11H Invalid -> NOP", arg);
+		}
+		break;
+
 	default:
-		debugC(1, kDebugScript, "Groovie::Script: STUB42 (0x%02X)", arg);
-		warning("Groovie::Script: OpCode 0x42 for current game not implemented yet.");
+		debugC(1, kDebugScript, "Groovie::Script: GameSpecial (0x%02X)", arg);
+		warning("Groovie::Script: OpCode 0x42 for (GameSpecial) current game not implemented yet.");
 	}
 }
 
@@ -2052,7 +2087,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_loadscript,
 	&Script::o_setvideoorigin, // 0x40
 	&Script::o_sub,
-	&Script::o2_stub42,
+	&Script::o2_gamespecial,
 	&Script::o_returnscript,
 	&Script::o_sethotspotright, // 0x44
 	&Script::o_sethotspotleft,
