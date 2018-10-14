@@ -155,7 +155,7 @@ enum SoundFlag {
 	kSoundFlagKeepAfterFinish = 0x8000000, // don't free the entry when it has stopped playing; used for kSoundTypeNIS
 	kSoundFlagDecodeError     = 0x20000000, // error in compressed stream
 	kSoundFlagFading          = 0x40000000, // prevents attempts to unfade once fade is requested
-	kSoundFlagUnmuteRequested = 0x80000000, // purely informational
+	kSoundFlagUnmuteRequested = 0x80000000  // purely informational
 };
 
 enum SoundState {
