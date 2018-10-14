@@ -366,7 +366,7 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	assert(_name1.size() <= 16);
 	assert(_name2.size() <= 16);
 
-	if (_name2.matchString("NISSND?") && ((_status.status & kFlagType9) != kFlag3)) {
+	if (_name2.matchString("NISSND?") && ((_status.status & kFlagType9) != kFlagType13)) {
 		s.syncAsUint32LE(_status.status);
 		s.syncAsUint32LE(_type);
 		s.syncAsUint32LE(_blockCount); // field_8;
@@ -376,7 +376,7 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsUint32LE(_entity);
 
 		uint32 delta = (uint32)_field_48 - getSound()->getData2();
-		if (delta > kFlag8)
+		if (delta > 0x8000000u) // sanity check against overflow
 			delta = 0;
 		s.syncAsUint32LE(delta);
 
