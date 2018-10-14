@@ -2075,7 +2075,7 @@ IMPLEMENT_FUNCTION(47, Anna, goLunch)
 			break;
 
 		case 4:
-			getSound()->playSound(kEntityAnna, getEvent(kEventAugustLunch) ? "Ann3136" : "Ann3136A", kFlagInvalid, 30);
+			getSound()->playSound(kEntityAnna, getEvent(kEventAugustLunch) ? "Ann3136" : "Ann3136A", kSoundVolumeEntityDefault, 30);
 			getSavePoints()->push(kEntityAnna, kEntityAugust, kAction122358304);
 
 			setCallback(5);
@@ -2270,7 +2270,7 @@ IMPLEMENT_FUNCTION(51, Anna, afterLunch)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityAnna, "Ann3142", kFlagInvalid, 30);
+		getSound()->playSound(kEntityAnna, "Ann3142", kSoundVolumeEntityDefault, 30);
 		getEntities()->updatePositionEnter(kEntityAnna, kCarRestaurant, 57);
 		getEntities()->drawSequenceRight(kEntityAnna, "112A");
 		if (getEntities()->isInRestaurant(kEntityPlayer))
@@ -3865,7 +3865,7 @@ IMPLEMENT_FUNCTION(78, Anna, kidnapped)
 		case 2:
 			getAction()->playAnimation(kEventKronosHostageAnna);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 61, 1);
-			getSound()->playSound(kEntityAnna, "Mus024", kFlagDefault);
+			getSound()->playSound(kEntityAnna, "Mus024", kVolumeFull);
 			setup_waiting();
 			break;
 		}
@@ -3936,11 +3936,11 @@ IMPLEMENT_FUNCTION(80, Anna, finalSequence)
 		if (!Entity::updateParameter(params->param1, getState()->timeTicks, 450))
 			break;
 
-		getSound()->playSound(kEntityPlayer, "Kro5001", kFlagDefault);
+		getSound()->playSound(kEntityPlayer, "Kro5001", kVolumeFull);
 		break;
 
 	case kActionEndSound:
-		getSound()->playSound(kEntityPlayer, "Kro5002", kFlagDefault);
+		getSound()->playSound(kEntityPlayer, "Kro5002", kVolumeFull);
 		getState()->time = kTime4929300;
 
 		setCallback(2);
@@ -3965,7 +3965,7 @@ IMPLEMENT_FUNCTION(80, Anna, finalSequence)
 
 			getAction()->playAnimation(kEventKronosBringFirebird);
 			getScenes()->loadSceneFromItem(kItemFirebird);
-			getSound()->playSound(kEntityAnna, "Mus025", kFlagDefault);
+			getSound()->playSound(kEntityAnna, "Mus025", kVolumeFull);
 			break;
 
 		case 2:
@@ -4006,7 +4006,7 @@ IMPLEMENT_FUNCTION(81, Anna, openFirebird)
 		if (!Entity::updateParameter(params->param1, getState()->timeTicks, 180))
 			break;
 
-		getSound()->playSound(kEntityTrain, "LIB069", kFlagDefault);
+		getSound()->playSound(kEntityTrain, "LIB069", kVolumeFull);
 		getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, true);
 		break;
 

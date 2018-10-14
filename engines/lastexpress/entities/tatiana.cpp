@@ -1960,7 +1960,7 @@ IMPLEMENT_FUNCTION(48, Tatiana, seekCath)
 		if (!Entity::updateParameter(params->param2, getState()->timeTicks, 5 * (3 * rnd(5) + 30)))
 			goto label_end;
 
-		getSound()->playSound(kEntityTatiana, "LIB012", kFlagDefault);
+		getSound()->playSound(kEntityTatiana, "LIB012", kVolumeFull);
 		params->param2 = 0;
 
 label_end:

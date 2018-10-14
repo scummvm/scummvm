@@ -162,7 +162,7 @@ IMPLEMENT_FUNCTION(6, Chapters, firstDream)
 		break;
 
 	case kActionEndSound:
-		getSound()->playSound(kEntityChapters, "MUS009", kFlagDefault);
+		getSound()->playSound(kEntityChapters, "MUS009", kVolumeFull);
 		break;
 
 	case kActionKnock:
@@ -194,10 +194,10 @@ IMPLEMENT_FUNCTION(6, Chapters, firstDream)
 			callbackAction();
 		} else {
 			getSound()->playSound(kEntityPlayer, "LIB014");
-			getSound()->playSound(kEntityPlayer, "LIB015", kFlagDefault, 15);
+			getSound()->playSound(kEntityPlayer, "LIB015", kVolumeFull, 15);
 
 			if (!getSoundQueue()->isBuffered(kEntityChapters))
-				getSound()->playSound(kEntityChapters, "MUS009", kFlagDefault);
+				getSound()->playSound(kEntityChapters, "MUS009", kVolumeFull);
 
 			getScenes()->loadSceneFromPosition(kCarLocomotive, 38);
 
@@ -268,7 +268,7 @@ IMPLEMENT_FUNCTION(6, Chapters, firstDream)
 		else if (getSoundQueue()->isBuffered("ZFX1007B"))
 			getSoundQueue()->processEntry("ZFX1007B");
 
-		getSound()->playSound(kEntityPlayer, "MUS008", kFlagDefault);
+		getSound()->playSound(kEntityPlayer, "MUS008", kVolumeFull);
 		getInventory()->unselectItem();
 		// TODO: fade to black screen
 
@@ -720,7 +720,7 @@ IMPLEMENT_FUNCTION(9, Chapters, chapter1Next)
 			ENTITY_PARAM(0, 3) = 0;
 		}
 
-		getSound()->playSound(kEntityPlayer, "MUS008", kFlagDefault);
+		getSound()->playSound(kEntityPlayer, "MUS008", kVolumeFull);
 		getInventory()->unselectItem();
 		// TODO: fade to black screen
 
@@ -1483,7 +1483,7 @@ label_callback_4:
 
 		case 11:
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 74);
-			getSound()->playSound(kEntityTrain, "ZFX4001", kFlagDefault);
+			getSound()->playSound(kEntityTrain, "ZFX4001", kVolumeFull);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneNone, true);
 			break;
 		}
@@ -1539,7 +1539,7 @@ label_callback_4:
 		// BUG: the original game fades to black screen twice, before MUS008 starts playing
 		// (the second call just makes a delay)
 
-		getSound()->playSound(kEntityPlayer, "MUS008", kFlagDefault);
+		getSound()->playSound(kEntityPlayer, "MUS008", kVolumeFull);
 		getInventory()->unselectItem();
 
 		// TODO: fade to black screen
@@ -1608,7 +1608,7 @@ label_callback_4:
 		if (getSoundQueue()->isBuffered(kEntityChapters))
 			getSoundQueue()->removeFromQueue(kEntityChapters);
 
-		getSound()->playSound(kEntityTrain, "ZFX4001", kFlagDefault);
+		getSound()->playSound(kEntityTrain, "ZFX4001", kVolumeFull);
 
 		getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, true);
 		break;
@@ -1746,7 +1746,7 @@ IMPLEMENT_FUNCTION(22, Chapters, chapter5Handler)
 			params->param2 = 1;
 
 			if (!getProgress().isNightTime) {
-				getSound()->playSound(kEntityChapters, "ARRIVE", kFlag8);
+				getSound()->playSound(kEntityChapters, "ARRIVE", kVolume8);
 				getSoundQueue()->processEntries();
 			}
 		}
@@ -1755,7 +1755,7 @@ IMPLEMENT_FUNCTION(22, Chapters, chapter5Handler)
 			params->param3 = 1;
 
 			if (!getEvent(kEventLocomotiveMilosDay) && !getEvent(kEventLocomotiveMilosNight)) {
-				getSound()->playSound(kEntityChapters, "ARRIVE", kFlag8);
+				getSound()->playSound(kEntityChapters, "ARRIVE", kVolume8);
 				getSoundQueue()->processEntries();
 			}
 		}
@@ -1868,7 +1868,7 @@ void Chapters::enterExitStation(const SavePoint &savepoint, bool isEnteringStati
 void Chapters::enterExitHelper(bool isEnteringStation) {
 	EXPOSE_PARAMS(EntityData::EntityParametersSIIS);
 
-	getSound()->playSound(kEntityChapters, isEnteringStation ? "ARRIVE" : "DEPART", kFlag8);
+	getSound()->playSound(kEntityChapters, isEnteringStation ? "ARRIVE" : "DEPART", kVolume8);
 	getSoundQueue()->processEntries();
 
 	getObjects()->update(kObjectHandleOutsideLeft, kEntityPlayer, kObjectLocation1, kCursorNormal, isEnteringStation ? kCursorNormal : kCursorHand);

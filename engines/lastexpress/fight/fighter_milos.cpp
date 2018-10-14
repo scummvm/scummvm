@@ -109,7 +109,7 @@ void FighterPlayerMilos::update() {
 			_opponent->setSequenceAndDraw(6, kFightSequenceType1);
 
 			getSoundQueue()->removeFromQueue(kEntityTables0);
-			getSound()->playSound(kEntityTrain, "MUS029", kFlagDefault);
+			getSound()->playSound(kEntityTrain, "MUS029", kVolumeFull);
 
 			handleAction(kFightActionWin);
 		}
@@ -149,7 +149,7 @@ FighterOpponentMilos::FighterOpponentMilos(LastExpressEngine *engine) : Opponent
 	_sequences.push_back(loadSequence("2001dbk.seq"));
 	_sequences.push_back(loadSequence("2001wbk.seq"));
 
-	getSound()->playSound(kEntityTables0, "MUS027", kFlagDefault);
+	getSound()->playSound(kEntityTables0, "MUS027", kVolumeFull);
 
 	_field_38 = 35;
 }

@@ -159,7 +159,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			_portraitHighlighted = false;
 			_isOpened = false;
 
-			getSound()->playSoundWithSubtitles("LIB039.SND", kFlagMenuClock, kEntityPlayer);
+			getSound()->playSoundWithSubtitles("LIB039.SND", kSoundTypeMenu | kSoundFlagFixedVolume | kVolumeFull, kEntityPlayer);
 
 			getMenu()->show(true, kSavegameTypeIndex, 0);
 
@@ -638,7 +638,7 @@ void Inventory::drawBlinkingEgg(uint ticks) {
 
 	if (globalTimer < 90) {
 		if ((globalTimer + ticks) >= 90)
-			getSound()->playSoundWithSubtitles("TIMER", (SoundFlag)(kFlagType13|kFlagDefault), kEntityPlayer);
+			getSound()->playSoundWithSubtitles("TIMER", kSoundTypeMenu | kVolumeFull, kEntityPlayer);
 
 		if (!getSoundQueue()->isBuffered("TIMER"))
 			setGlobalTimer(0);

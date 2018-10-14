@@ -151,7 +151,7 @@ FighterOpponentVesna::FighterOpponentVesna(LastExpressEngine *engine) : Opponent
 	_sequences.push_back(loadSequence("2005csbm.seq"));
 	_sequences.push_back(loadSequence("2005oam4.seq"));
 
-	getSound()->playSound(kEntityTables0, "MUS038", kFlagDefault);
+	getSound()->playSound(kEntityTables0, "MUS038", kVolumeFull);
 
 	_countdown = 4;
 	_field_38 = 30;

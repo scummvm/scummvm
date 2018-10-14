@@ -1079,7 +1079,7 @@ IMPLEMENT_FUNCTION(30, Vesna, climbing)
 	case kActionNone:
 		if (!params->param1) {
 			if (Entity::updateParameter(params->param3, getState()->timeTicks, 120)) {
-				getSound()->playSound(kEntityVesna, "Ves5001", kFlagDefault);
+				getSound()->playSound(kEntityVesna, "Ves5001", kVolumeFull);
 				params->param1 = 1;
 			}
 		}
@@ -1144,7 +1144,7 @@ IMPLEMENT_FUNCTION(30, Vesna, climbing)
 			setCallback(2);
 			setup_savegame(kSavegameTypeEvent, kEventCathVesnaTrainTopKilled);
 		} else {
-			getSound()->playSound(kEntityVesna, "Ves5001", kFlagDefault);
+			getSound()->playSound(kEntityVesna, "Ves5001", kVolumeFull);
 			params->param1 = 1;
 		}
 		break;

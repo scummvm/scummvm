@@ -125,7 +125,7 @@ FighterOpponentAnna::FighterOpponentAnna(LastExpressEngine *engine) : Opponent(e
 	_sequences.push_back(loadSequence("2002okml.seq"));
 	_sequences.push_back(loadSequence("2002okm.seq"));
 
-	getSound()->playSound(kEntityTables0, "MUS030", kFlagDefault);
+	getSound()->playSound(kEntityTables0, "MUS030", kVolumeFull);
 
 	_field_38 = 30;
 }

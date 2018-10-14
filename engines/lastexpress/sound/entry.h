@@ -76,21 +76,6 @@ namespace LastExpress {
 class LastExpressEngine;
 class SubtitleEntry;
 
-// TODO: this union assumes little-endian machine
-union SoundStatusUnion {
-	uint32 status;
-	struct {
-		byte status1;
-		byte status2;
-		byte status3;
-		byte status4;
-	} b;
-
-	SoundStatusUnion() {
-		status = 0;
-	}
-};
-
 //////////////////////////////////////////////////////////////////////////
 // SoundEntry
 //////////////////////////////////////////////////////////////////////////
@@ -116,12 +101,12 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser);
 
 	// Accessors
-	void setStatus(int status)         { _status.status = status; }
+	void setStatus(uint32 status)      { _status = status; }
 	void setType(SoundType type)       { _type = type; }
 	void setEntity(EntityIndex entity) { _entity = entity; }
 	void setField48(int val)           { _field_48 = val; }
 
-	SoundStatusUnion getStatus()   { return _status; }
+	uint32           getStatus()   { return _status; }
 	SoundType        getType()     { return _type; }
 	uint32           getTime()     { return _time; }
 	EntityIndex      getEntity()   { return _entity; }
@@ -134,7 +119,10 @@ public:
 private:
 	LastExpressEngine *_engine;
 
-	SoundStatusUnion _status;
+	// _status field is a combination of bits from SoundFlag; writing
+	// _status = (SoundFlag)(_status | kSoundFlagXxx) instead of _status |= kSoundFlagXxx
+	// is irksome, so let's keep the type as uint32
+	uint32 _status;
 	SoundType _type;    // int
 	//int _data;
 	//int _endOffset;
@@ -182,14 +170,14 @@ public:
 	void drawOnScreen();
 
 	// Accessors
-	SoundStatusUnion getStatus() { return _status; }
+	uint32 getStatus() { return _status; }
 	SoundEntry *getSoundEntry()  { return _sound; }
 
 private:
 	LastExpressEngine *_engine;
 
 	Common::String    _filename;
-	SoundStatusUnion  _status;
+	uint32            _status;
 	SoundEntry       *_sound;
 	SubtitleManager  *_data;
 };

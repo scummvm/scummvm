@@ -1137,7 +1137,7 @@ void SceneManager::postProcessScene() {
 			}
 
 			if (progress)
-				getSound()->excuseMe((progress == 1) ? entities[0] : entities[rnd(progress)], kEntityPlayer, kFlagDefault);
+				getSound()->excuseMe((progress == 1) ? entities[0] : entities[rnd(progress)], kEntityPlayer, kVolumeFull);
 		}
 
 		if (hotspot->scene)
@@ -1163,7 +1163,7 @@ void SceneManager::postProcessScene() {
 			break;
 
 		getSoundQueue()->processEntry(kSoundType7);
-		getSound()->playSound(kEntityTrain, "LIB050", kFlagDefault);
+		getSound()->playSound(kEntityTrain, "LIB050", kVolumeFull);
 
 		switch (getProgress().chapter) {
 		default:

@@ -123,7 +123,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(5, Verges, playSound16)
-	Entity::playSound(savepoint, false, kFlagDefault);
+	Entity::playSound(savepoint, false, kVolumeFull);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -700,7 +700,7 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityVerges, "POL1101", kFlagDefault);
+		getSound()->playSound(kEntityVerges, "POL1101", kVolumeFull);
 		break;
 
 	case kActionCallback:

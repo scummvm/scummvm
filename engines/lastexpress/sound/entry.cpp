@@ -42,6 +42,7 @@ namespace LastExpress {
 // SoundEntry
 //////////////////////////////////////////////////////////////////////////
 SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
+	_status = 0;
 	_type = kSoundTypeNone;
 
 	_currentDataPtr = NULL;
@@ -90,10 +91,10 @@ void SoundEntry::open(Common::String name, SoundFlag flag, int priority) {
 }
 
 void SoundEntry::close() {
-	_status.status |= kSoundStatusClosed;
+	_status |= kSoundFlagCloseRequested;
 
 	// Loop until ready
-	//while (!(_status.b.status1 & 4) && !(getSoundQueue()->getFlag() & 8) && (getSoundQueue()->getFlag() & 1))
+	//while (!(_status & kSoundFlagClosed) && !(getSoundQueue()->getFlag() & 8) && (getSoundQueue()->getFlag() & 1))
 	//	;	// empty loop body
 
 	// The original game remove the entry from the cache here,
@@ -123,7 +124,7 @@ void SoundEntry::play() {
 		_soundStream = new StreamedSound();
 
 	// Compute current filter id
-	int32 filterId = _status.status & kSoundStatusFilter;
+	int32 filterId = _status & kSoundVolumeMask;
 	// TODO adjust status (based on stepIndex)
 
 	if (_queued) {
@@ -150,14 +151,14 @@ bool SoundEntry::isFinished() {
 }
 
 void SoundEntry::setType(SoundFlag flag) {
-	switch (flag & kFlagType9) {
+	switch (flag & kSoundTypeMask) {
 	default:
-	case kFlagNone:
+	case kSoundTypeNormal:
 		_type = getSoundQueue()->getCurrentType();
 		getSoundQueue()->setCurrentType((SoundType)(_type + 1));
 		break;
 
-	case kFlagType1_2: {
+	case kSoundTypeAmbient: {
 		SoundEntry *previous2 = getSoundQueue()->getEntry(kSoundType2);
 		if (previous2)
 			previous2->update(0);
@@ -172,7 +173,7 @@ void SoundEntry::setType(SoundFlag flag) {
 		}
 		break;
 
-	case kFlagType3: {
+	case kSoundTypeWalla: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType3);
 		if (previous) {
 			previous->setType(kSoundType4);
@@ -183,7 +184,7 @@ void SoundEntry::setType(SoundFlag flag) {
 		}
 		break;
 
-	case kFlagType7: {
+	case kSoundTypeLink: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType7);
 		if (previous)
 			previous->setType(kSoundType8);
@@ -192,7 +193,7 @@ void SoundEntry::setType(SoundFlag flag) {
 		}
 		break;
 
-	case kFlagType9: {
+	case kSoundTypeNIS: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType9);
 		if (previous)
 			previous->setType(kSoundType10);
@@ -201,7 +202,7 @@ void SoundEntry::setType(SoundFlag flag) {
 		}
 		break;
 
-	case kFlagType11: {
+	case kSoundTypeIntro: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType11);
 		if (previous)
 			previous->setType(kSoundType14);
@@ -210,7 +211,7 @@ void SoundEntry::setType(SoundFlag flag) {
 		}
 		break;
 
-	case kFlagType13: {
+	case kSoundTypeMenu: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType13);
 		if (previous)
 			previous->setType(kSoundType14);
@@ -222,14 +223,12 @@ void SoundEntry::setType(SoundFlag flag) {
 }
 
 void SoundEntry::setupStatus(SoundFlag flag) {
-	SoundStatus statusFlag = (SoundStatus)flag;
-	if (!((statusFlag & 0xFF) & kSoundStatusFilter))
-		statusFlag = (SoundStatus)(statusFlag | kSoundStatusCached);
+	_status = flag;
+	if ((_status & kSoundVolumeMask) == kVolumeNone)
+		_status |= kSoundFlagMuteRequested;
 
-	if (((statusFlag & 0xFF00) >> 8) & kSoundStatusClear0)
-		_status.status = (uint32)statusFlag;
-	else
-		_status.status = (statusFlag | kSoundStatusClear4);
+	if (!(_status & kSoundFlagLooped))
+		_status |= kSoundFlagCloseOnDataEnd;
 }
 
 void SoundEntry::loadStream(Common::String name) {
@@ -242,26 +241,27 @@ void SoundEntry::loadStream(Common::String name) {
 		_stream = getArchive("DEFAULT.SND");
 
 	if (!_stream)
-		_status.status = kSoundStatusClosed;
+		_status = kSoundFlagCloseRequested;
 }
 
 void SoundEntry::update(uint val) {
-	if (!(_status.b.status3 & 64)) {
-		int value2 = val;
+	if (_status & kSoundFlagFading)
+		return;
 
-		_status.status |= kSoundStatus_100000;
+	int value2 = val;
 
-		if (val) {
-			if (getSoundQueue()->getFlag() & 32) {
-				_variant = val;
-				value2 = val * 2 + 1;
-			}
+	_status |= kSoundFlagVolumeChanging;
 
-			_field_3C = value2;
-		} else {
-			_field_3C = 0;
-			_status.status |= kSoundStatus_40000000;
+	if (val) {
+		if (getSoundQueue()->getFlag() & 32) {
+			_variant = val;
+			value2 = val * 2 + 1;
 		}
+
+		_field_3C = value2;
+	} else {
+		_field_3C = 0;
+		_status |= kSoundFlagFading;
 	}
 }
 
@@ -271,13 +271,13 @@ bool SoundEntry::updateSound() {
 	bool result;
 	char sub[16];
 
-	if (_status.b.status2 & 4) {
+	if (_status & kSoundFlagClosed) {
 		result = false;
 	} else {
-		if (_status.b.status2 & 0x80) {
+		if (_status & kSoundFlagDelayedActivate) {
 			if (_field_48 <= getSound()->getData2()) {
-				_status.status |= 0x20;
-				_status.status &= ~0x8000;
+				_status |= kSoundFlagPlayRequested;
+				_status &= ~kSoundFlagDelayedActivate;
 				strcpy(sub, _name2.c_str());
 
 				// FIXME: Rewrite and document expected behavior
@@ -288,7 +288,7 @@ bool SoundEntry::updateSound() {
 			}
 		} else {
 			if (!(getSoundQueue()->getFlag() & 0x20)) {
-				if (!(_status.b.status3 & 8)) {
+				if (!(_status & kSoundFlagFixedVolume)) {
 					if (_entity) {
 						if (_entity < 0x80) {
 							updateEntryFlag(getSound()->getSoundFlag(_entity));
@@ -296,7 +296,7 @@ bool SoundEntry::updateSound() {
 					}
 				}
 			}
-			//if (status.b.status2 & 0x40 && !((uint32)_status.status & 0x180) && v1->soundBuffer)
+			//if (_status & kSoundFlagHasUnreadData && !(_status & kSoundFlagMute) && v1->soundBuffer)
 			//	Sound_FillSoundBuffer(v1);
 		}
 		result = true;
@@ -310,31 +310,31 @@ void SoundEntry::updateEntryFlag(SoundFlag flag) {
 		if (getSoundQueue()->getFlag() & 0x20 && _type != kSoundType9 && _type != kSoundType7)
 			update(flag);
 		else
-			_status.status = flag + (_status.status & ~0x1F);
+			_status = flag + (_status & ~kSoundVolumeMask);
 	} else {
 		_variant = 0;
-		_status.status |= 0x80u;
-		_status.status &= ~0x10001F;
+		_status |= kSoundFlagMuteRequested;
+		_status &= ~(kSoundFlagVolumeChanging | kSoundVolumeMask);
 	}
 }
 
 void SoundEntry::updateState() {
 	if (getSoundQueue()->getFlag() & 32) {
 		if (_type != kSoundType9 && _type != kSoundType7 && _type != kSoundType5) {
-			uint32 variant = _status.status & kSoundStatusFilter;
+			uint32 variant = _status & kSoundVolumeMask;
 
-			_status.status &= kSoundStatusClearAll;
+			_status &= ~kSoundVolumeMask;
 
 			_variant = variant;
-			_status.status |= variant * 2 + 1;
+			_status |= variant * 2 + 1;
 		}
 	}
 
-	_status.status |= kSoundStatus_20;
+	_status |= kSoundFlagPlayRequested;
 }
 
 void SoundEntry::reset() {
-	_status.status |= kSoundStatusClosed;
+	_status |= kSoundFlagCloseRequested;
 	_entity = kEntityPlayer;
 
 	if (_stream) {
@@ -354,11 +354,11 @@ void SoundEntry::showSubtitle(Common::String filename) {
 	_subtitle = new SubtitleEntry(_engine);
 	_subtitle->load(filename, this);
 
-	if (_subtitle->getStatus().b.status2 & 4) {
+	if (_subtitle->getStatus() & 0x400) {
 		_subtitle->draw();
 		SAFE_DELETE(_subtitle);
 	} else {
-		_status.status |= kSoundStatus_20000;
+		_status |= kSoundFlagHasSubtitles;
 	}
 }
 
@@ -366,8 +366,8 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	assert(_name1.size() <= 16);
 	assert(_name2.size() <= 16);
 
-	if (_name2.matchString("NISSND?") && ((_status.status & kFlagType9) != kFlagType13)) {
-		s.syncAsUint32LE(_status.status);
+	if (_name2.matchString("NISSND?") && ((_status & kSoundTypeMask) != kSoundTypeMenu)) {
+		s.syncAsUint32LE(_status);
 		s.syncAsUint32LE(_type);
 		s.syncAsUint32LE(_blockCount); // field_8;
 		s.syncAsUint32LE(_time);
@@ -396,6 +396,7 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 // SubtitleEntry
 //////////////////////////////////////////////////////////////////////////
 SubtitleEntry::SubtitleEntry(LastExpressEngine *engine) : _engine(engine) {
+	_status = 0;
 	_sound = NULL;
 	_data = NULL;
 }
@@ -423,7 +424,7 @@ void SubtitleEntry::load(Common::String filename, SoundEntry *soundEntry) {
 
 		loadData();
 	} else {
-		_status.status = kSoundStatus_400;
+		_status = kSoundFlagClosed;
 	}
 }
 
@@ -445,7 +446,7 @@ void SubtitleEntry::setupAndDraw() {
 	}
 
 	if (_data->getMaxTime() > _sound->getTime()) {
-		_status.status = kSoundStatus_400;
+		_status = kSoundFlagClosed;
 	} else {
 		_data->setTime((uint16)_sound->getTime());
 

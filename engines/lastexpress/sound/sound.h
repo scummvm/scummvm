@@ -38,8 +38,8 @@ public:
 	~SoundManager();
 
 	// Sound playing
-	void playSound(EntityIndex entity, Common::String filename, SoundFlag flag = kFlagInvalid, byte a4 = 0);
-	bool playSoundWithSubtitles(Common::String filename, SoundFlag flag, EntityIndex entity, byte a4 = 0);
+	void playSound(EntityIndex entity, Common::String filename, SoundFlag flag = kSoundVolumeEntityDefault, byte a4 = 0);
+	bool playSoundWithSubtitles(Common::String filename, uint32 flag, EntityIndex entity, byte a4 = 0);
 	void playSoundEvent(EntityIndex entity, byte action, byte a3 = 0);
 	void playDialog(EntityIndex entity, EntityIndex entityDialog, SoundFlag flag, byte a4);
 	void playSteam(CityIndex index);
@@ -53,7 +53,7 @@ public:
 	const char *getDialogName(EntityIndex entity) const;
 
 	// Sound bites
-	void excuseMe(EntityIndex entity, EntityIndex entity2 = kEntityPlayer, SoundFlag flag = kFlagNone);
+	void excuseMe(EntityIndex entity, EntityIndex entity2 = kEntityPlayer, SoundFlag flag = kVolumeNone);
 	void excuseMeCath();
 	const char *justCheckingCath() const;
 	const char *wrongDoorCath() const;

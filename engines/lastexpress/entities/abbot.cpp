@@ -1119,7 +1119,7 @@ IMPLEMENT_FUNCTION(35, Abbot, inSalon3)
 
 		case 2:
 			getData()->location = kLocationOutsideCompartment;
-			getSound()->playSound(kEntityAbbot, "Abb3040", kFlagInvalid, 45);
+			getSound()->playSound(kEntityAbbot, "Abb3040", kSoundVolumeEntityDefault, 45);
 			getEntities()->updatePositionEnter(kEntityAbbot, kCarRestaurant, 57);
 
 			setCallback(3);

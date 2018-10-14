@@ -132,7 +132,7 @@ void SoundQueue::updateQueue() {
 		// and if the sound data buffer is not full, loads a new entry to be played based on
 		// its priority and filter id
 
-		if (!entry->updateSound() && !(entry->getStatus().b.status3 & 0x8)) {
+		if (!entry->updateSound() && !(entry->getStatus() & kSoundFlagKeepAfterFinish)) {
 			entry->close();
 			SAFE_DELETE(entry);
 			it = _soundList.reverse_erase(it);
@@ -203,7 +203,7 @@ void SoundQueue::clearStatus() {
 	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		(*i)->setStatus((*i)->getStatus().status | kSoundStatusClosed);
+		(*i)->setStatus((*i)->getStatus() | kSoundFlagCloseRequested);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -321,16 +321,16 @@ void SoundQueue::updateSubtitles() {
 	for (Common::List<SubtitleEntry *>::iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
 		uint32 current_index = 0;
 		SoundEntry *soundEntry = (*i)->getSoundEntry();
-		SoundStatus status = (SoundStatus)soundEntry->getStatus().status;
+		SoundFlag status = (SoundFlag)soundEntry->getStatus();
 
-		if (!(status & kSoundStatus_40)
-		 || status & kSoundStatus_180
+		if (!(status & kSoundFlagPlaying)
+		 || status & kSoundFlagMute
 		 || soundEntry->getTime() == 0
-		 || (status & kSoundStatusFilter) < 6
+		 || (status & kSoundVolumeMask) < kVolume6
 		 || ((getFlags()->nis & 0x8000) && soundEntry->getPriority() < 90)) {
 			 current_index = 0;
 		} else {
-			current_index = soundEntry->getPriority() + (status & kSoundStatusFilter);
+			current_index = soundEntry->getPriority() + (status & kSoundVolumeMask);
 
 			if (_currentSubtitle == (*i))
 				current_index += 4;

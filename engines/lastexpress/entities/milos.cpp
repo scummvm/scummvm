@@ -111,7 +111,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(7, Milos, playSound16)
-	Entity::playSound(savepoint, false, kFlagDefault);
+	Entity::playSound(savepoint, false, kVolumeFull);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
