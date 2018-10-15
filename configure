@@ -2477,7 +2477,7 @@ case $_host_os in
 				append_var LDFLAGS "-mthumb"
 				ABI="armeabi"
 				# Platform version 9 is used by ResidualVM
-				ANDROID_PLATFORM=9
+				ANDROID_PLATFORM=14
 				ANDROID_PLATFORM_ARCH="arm"
 				;;
 			android-v7a | android-arm-v7a)
@@ -2486,7 +2486,7 @@ case $_host_os in
 				append_var CXXFLAGS "-mfpu=vfp"
 				append_var LDFLAGS "-Wl,--fix-cortex-a8"
 				ABI="armeabi-v7a"
-				ANDROID_PLATFORM=9
+				ANDROID_PLATFORM=14
 				ANDROID_PLATFORM_ARCH="arm"
 				;;
 			android-mips)
@@ -2494,7 +2494,7 @@ case $_host_os in
 				append_var CXXFLAGS "-mtune=mips32"
 				ABI="mips"
 				# Platform version 9 is needed as earlier versions of platform do not support this arch.
-				ANDROID_PLATFORM=9
+				ANDROID_PLATFORM=14
 				ANDROID_PLATFORM_ARCH="mips"
 				;;
 			android-x86)
@@ -2502,7 +2502,7 @@ case $_host_os in
 				append_var CXXFLAGS "-mtune=i686"
 				ABI="x86"
 				# Platform version 9 is needed as earlier versions of platform do not support this arch.
-				ANDROID_PLATFORM=9
+				ANDROID_PLATFORM=14
 				ANDROID_PLATFORM_ARCH="x86"
 				;;
 			ouya)
@@ -2511,7 +2511,7 @@ case $_host_os in
 				append_var CXXFLAGS "-mfloat-abi=softfp"
 				append_var CXXFLAGS "-mfpu=neon"
 				ABI="armeabi-v7a"
-				ANDROID_PLATFORM=9
+				ANDROID_PLATFORM=14
 				ANDROID_PLATFORM_ARCH="arm"
 				;;
 		esac

@@ -1,10 +1,12 @@
 package org.residualvm.residualvm;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -12,6 +14,7 @@ import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.ClipboardManager;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -27,8 +30,6 @@ import android.widget.Toast;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-
-import tv.ouya.console.api.OuyaController;
 
 import java.io.File;
 
@@ -189,7 +190,7 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 
 		@Override
 		protected boolean isConnectionLimited() {
-			WifiManager wifiMgr = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+			WifiManager wifiMgr = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 			if (wifiMgr != null && wifiMgr.isWifiEnabled()) {
 				WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
 				return (wifiInfo == null || wifiInfo.getNetworkId() == -1); //WiFi is on, but it's not connected to any network
@@ -227,34 +228,20 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 	private MouseHelper _mouseHelper;
 	private Thread _residualvm_thread;
 
+	private boolean checkPermissions() {
+		return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+				&& ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		boolean have_permissions = checkPermissions();
 
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 		setContentView(R.layout.main);
-		OuyaController.init(this);
 		takeKeyEvents(true);
-
-		// This is a common enough error that we should warn about it
-		// explicitly.
-		if (!Environment.getExternalStorageDirectory().canRead()) {
-			new AlertDialog.Builder(this)
-				.setTitle(R.string.no_sdcard_title)
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setMessage(R.string.no_sdcard)
-				.setNegativeButton(R.string.quit,
-									new DialogInterface.OnClickListener() {
-										public void onClick(DialogInterface dialog,
-															int which) {
-											finish();
-										}
-									})
-				.show();
-
-			return;
-		}
 
 		SurfaceView main_surface = (SurfaceView)findViewById(R.id.main_surface);
 
@@ -301,7 +288,6 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 		((Button)findViewById(R.id.look_at_btn)).setOnClickListener(lookAtBtnOnClickListener);
 
 		main_surface.setOnKeyListener(_events);
-		main_surface.setOnGenericMotionListener(_events);
 
 		_residualvm_thread = new Thread(_residualvm, "ResidualVM");
 		_residualvm_thread.start();
