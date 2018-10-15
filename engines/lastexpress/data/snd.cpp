@@ -446,8 +446,9 @@ LastExpress_ADPCMStream *SimpleSound::makeDecoder(Common::SeekableReadStream *in
 	return new LastExpress_ADPCMStream(in, DisposeAfterUse::YES, size, _blockSize, filterId);
 }
 
-void SimpleSound::play(Audio::AudioStream *as) {
-	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, as);
+void SimpleSound::play(Audio::AudioStream *as, DisposeAfterUse::Flag autofreeStream) {
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, as,
+		-1, Audio::Mixer::kMaxChannelVolume, 0, autofreeStream);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -456,6 +457,7 @@ void SimpleSound::play(Audio::AudioStream *as) {
 StreamedSound::StreamedSound() : _as(NULL), _loaded(false) {}
 
 StreamedSound::~StreamedSound() {
+	delete _as;
 	_as = NULL;
 }
 
@@ -467,11 +469,15 @@ bool StreamedSound::load(Common::SeekableReadStream *stream, int32 filterId) {
 
 	loadHeader(stream);
 
+	if (_as) {
+		stop();
+		delete _as;
+	}
 	// Start decoding the input stream
 	_as = makeDecoder(stream, _size, filterId);
 
 	// Start playing the decoded audio stream
-	play(_as);
+	play(_as, DisposeAfterUse::NO);
 
 	_loaded = true;
 
@@ -501,7 +507,7 @@ AppendableSound::AppendableSound() : SimpleSound() {
 	_finished = false;
 
 	// Start playing the decoded audio stream
-	play(_as);
+	play(_as, DisposeAfterUse::YES);
 
 	// Initialize the block size
 	// TODO: get it as an argument?
