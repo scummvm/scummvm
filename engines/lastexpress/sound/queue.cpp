@@ -60,30 +60,6 @@ SoundQueue::~SoundQueue() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Timer
-//////////////////////////////////////////////////////////////////////////
-void SoundQueue::handleTimer() {
-	Common::StackLock locker(_mutex);
-
-	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
-		SoundEntry *entry = (*i);
-		if (entry == NULL)
-			error("[SoundQueue::handleTimer] Invalid entry found in sound queue");
-
-		// When the entry has stopped playing, we remove his buffer
-		if (entry->isFinished()) {
-			entry->close();
-			SAFE_DELETE(entry);
-			i = _soundList.reverse_erase(i);
-			continue;
-		}
-
-		// Queue the entry data, applying filtering
-		entry->play();
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
 // Sound queue management
 //////////////////////////////////////////////////////////////////////////
 void SoundQueue::addToQueue(SoundEntry *entry) {
@@ -91,24 +67,18 @@ void SoundQueue::addToQueue(SoundEntry *entry) {
 }
 
 void SoundQueue::removeFromQueue(EntityIndex entity) {
-	Common::StackLock locker(_mutex);
-
 	SoundEntry *entry = getEntry(entity);
 	if (entry)
 		entry->reset();
 }
 
 void SoundQueue::removeFromQueue(Common::String filename) {
-	Common::StackLock locker(_mutex);
-
 	SoundEntry *entry = getEntry(filename);
 	if (entry)
 		entry->reset();
 }
 
 void SoundQueue::updateQueue() {
-	Common::StackLock locker(_mutex);
-
 	++_flag;
 
 	if (getSoundState() & kSoundState1) {
@@ -136,7 +106,19 @@ void SoundQueue::updateQueue() {
 			entry->close();
 			SAFE_DELETE(entry);
 			it = _soundList.reverse_erase(it);
+			continue;
 		}
+
+		// When the entry has stopped playing, we remove his buffer
+		if (entry->isFinished()) {
+			entry->close();
+			SAFE_DELETE(entry);
+			it = _soundList.reverse_erase(it);
+			continue;
+		}
+
+		// Queue the entry data, applying filtering
+		entry->play();
 	}
 
 	// Original update the current entry, loading another set of samples to be decoded
@@ -147,8 +129,6 @@ void SoundQueue::updateQueue() {
 }
 
 void SoundQueue::resetQueue() {
-	Common::StackLock locker(_mutex);
-
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
 		if ((*i)->getType() == kSoundType1) {
 			(*i)->reset();
@@ -168,8 +148,6 @@ void SoundQueue::resetQueue(SoundType type1, SoundType type2) {
 	if (!type2)
 		type2 = type1;
 
-	Common::StackLock locker(_mutex);
-
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
 		if ((*i)->getType() != type1 && (*i)->getType() != type2)
 			(*i)->reset();
@@ -177,8 +155,6 @@ void SoundQueue::resetQueue(SoundType type1, SoundType type2) {
 }
 
 void SoundQueue::clearQueue() {
-	Common::StackLock locker(_mutex);
-
 	_flag |= 8;
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
@@ -200,8 +176,6 @@ void SoundQueue::clearQueue() {
 // State
 //////////////////////////////////////////////////////////////////////////
 void SoundQueue::clearStatus() {
-	Common::StackLock locker(_mutex);
-
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
 		(*i)->setStatus((*i)->getStatus() | kSoundFlagCloseRequested);
 }
@@ -210,16 +184,12 @@ void SoundQueue::clearStatus() {
 // Entry management
 //////////////////////////////////////////////////////////////////////////
 void SoundQueue::setupEntry(SoundType type, EntityIndex index) {
-	Common::StackLock locker(_mutex);
-
 	SoundEntry *entry = getEntry(type);
 	if (entry)
 		entry->setEntity(index);
 }
 
 void SoundQueue::processEntry(EntityIndex entity) {
-	Common::StackLock locker(_mutex);
-
 	SoundEntry *entry = getEntry(entity);
 	if (entry) {
 		entry->update(0);
@@ -228,16 +198,12 @@ void SoundQueue::processEntry(EntityIndex entity) {
 }
 
 void SoundQueue::processEntry(SoundType type) {
-	Common::StackLock locker(_mutex);
-
 	SoundEntry *entry = getEntry(type);
 	if (entry)
 		entry->update(0);
 }
 
 void SoundQueue::processEntry(Common::String filename) {
-	Common::StackLock locker(_mutex);
-
 	SoundEntry *entry = getEntry(filename);
 	if (entry) {
 		entry->update(0);
@@ -283,8 +249,6 @@ SoundEntry *SoundQueue::getEntry(SoundType type) {
 }
 
 uint32 SoundQueue::getEntryTime(EntityIndex index) {
-	Common::StackLock locker(_mutex);
-
 	SoundEntry *entry = getEntry(index);
 	if (entry)
 		return entry->getTime();
@@ -293,14 +257,10 @@ uint32 SoundQueue::getEntryTime(EntityIndex index) {
 }
 
 bool SoundQueue::isBuffered(EntityIndex entity) {
-	Common::StackLock locker(_mutex);
-
 	return (getEntry(entity) != NULL);
 }
 
 bool SoundQueue::isBuffered(Common::String filename, bool testForEntity) {
-	Common::StackLock locker(_mutex);
-
 	SoundEntry *entry = getEntry(filename);
 
 	if (testForEntity)
@@ -313,8 +273,6 @@ bool SoundQueue::isBuffered(Common::String filename, bool testForEntity) {
 // Subtitles
 //////////////////////////////////////////////////////////////////////////
 void SoundQueue::updateSubtitles() {
-	Common::StackLock locker(_mutex);
-
 	uint32 index = 0;
 	SubtitleEntry *subtitle = NULL;
 
@@ -363,8 +321,6 @@ void SoundQueue::updateSubtitles() {
 // Savegame
 //////////////////////////////////////////////////////////////////////////
 void SoundQueue::saveLoadWithSerializer(Common::Serializer &s) {
-	Common::StackLock locker(_mutex);
-
 	s.syncAsUint32LE(_state);
 	s.syncAsUint32LE(_currentType);
 
@@ -391,12 +347,7 @@ void SoundQueue::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 
-// FIXME: We probably need another mutex here to protect during the whole savegame process
-// as we could have removed an entry between the time we check the count and the time we
-// save the entries
 uint32 SoundQueue::count() {
-	Common::StackLock locker(_mutex);
-
 	uint32 numEntries = 0;
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
 		if ((*i)->getName2().matchString("NISSND?"))
@@ -409,8 +360,6 @@ uint32 SoundQueue::count() {
 // Debug
 //////////////////////////////////////////////////////////////////////////
 void SoundQueue::stopAllSound() {
-	Common::StackLock locker(_mutex);
-
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
 		(*i)->getSoundStream()->stop();
 }

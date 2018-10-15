@@ -40,9 +40,6 @@ public:
 	SoundQueue(LastExpressEngine *engine);
 	~SoundQueue();
 
-	// Timer
-	void handleTimer();
-
 	// Queue
 	void addToQueue(SoundEntry *entry);
 	void removeFromQueue(Common::String filename);
@@ -95,8 +92,6 @@ protected:
 
 private:
 	LastExpressEngine *_engine;
-
-	Common::Mutex _mutex;
 
 	// State & shared data
 	int _state;
