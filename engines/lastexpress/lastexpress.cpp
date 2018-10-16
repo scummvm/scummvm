@@ -70,7 +70,6 @@ LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 
 	// Initialize the custom debug levels
-	DebugMan.addDebugChannel(kLastExpressDebugAll, "All", "Debug everything");
 	DebugMan.addDebugChannel(kLastExpressDebugGraphics, "Graphics", "Debug graphics & animation/sequence playback");
 	DebugMan.addDebugChannel(kLastExpressDebugResource, "Resource", "Debug resource management");
 	DebugMan.addDebugChannel(kLastExpressDebugCursor, "Cursor", "Debug cursor handling");

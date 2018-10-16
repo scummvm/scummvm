@@ -50,7 +50,7 @@ bool Cursor::load(Common::SeekableReadStream *stream) {
 	for (int i = 0; i < kCursorMAX; i++) {
 		_cursors[i].hotspotX = data->readUint16LE();
 		_cursors[i].hotspotY = data->readUint16LE();
-		debugC(15, kLastExpressDebugCursor | kLastExpressDebugAll,
+		debugC(15, kLastExpressDebugCursor,
 			"Cursor %d hotspot x: %d, hotspot y: %d",
 			i, _cursors[i].hotspotX, _cursors[i].hotspotY);
 	}
@@ -84,7 +84,7 @@ void Cursor::setStyle(CursorStyle style) {
 	if (style == _current)
 		return;
 
-	debugC(10, kLastExpressDebugCursor | kLastExpressDebugAll, "Cursor: setting style: %d", style);
+	debugC(10, kLastExpressDebugCursor, "Cursor: setting style: %d", style);
 
 	// Save the new cursor
 	_current = style;
