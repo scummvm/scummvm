@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-10-11 06:45+0200\n"
-"PO-Revision-Date: 2018-10-16 20:01+0000\n"
+"PO-Revision-Date: 2018-10-16 20:21+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/da/>\n"
@@ -323,12 +323,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:235
 msgid "Override global MIDI settings"
-msgstr "Tilsidesæt globale MIDI indstillinger"
+msgstr "Tilsidesæt globale MIDI-indstillinger"
 
 #: gui/editgamedialog.cpp:237
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "Tilsidesæt globale MIDI indstillinger"
+msgstr "Tilsidesæt globale MIDI-indstillinger"
 
 #: gui/editgamedialog.cpp:247 gui/options.cpp:1576
 msgid "MT-32"
@@ -567,7 +567,7 @@ msgstr "Kortlæg taster"
 
 #: gui/gui-manager.cpp:133 base/main.cpp:350 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
-msgstr "Skift fuldskærm"
+msgstr "Fuldskærm til/fra"
 
 #: gui/KeysDialog.cpp:41
 msgid "Map"
@@ -827,7 +827,7 @@ msgstr "stræktilstanden kunne ikke ændres"
 
 #: gui/options.cpp:582
 msgid "the aspect ratio setting could not be changed"
-msgstr "billedformat indstillingen ikke kunne ændres"
+msgstr "højde-bredde-forhold-indstillingen ikke kunne ændres"
 
 #: gui/options.cpp:588
 msgid "the fullscreen setting could not be changed"
@@ -915,7 +915,7 @@ msgstr "Fuldskærmstilstand"
 
 #: gui/options.cpp:1092
 msgid "Filter graphics"
-msgstr "Filtrer grafik"
+msgstr "Filtrér grafik"
 
 #: gui/options.cpp:1092
 msgid "Use linear filtering when scaling graphics"
@@ -923,11 +923,11 @@ msgstr "Brug lineær filtrering når grafik skaleres"
 
 #: gui/options.cpp:1095
 msgid "Aspect ratio correction"
-msgstr "Rettelse af billedformat"
+msgstr "Rettelse af højde-bredde-forhold"
 
 #: gui/options.cpp:1095
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Korrekt billedformat til 320x200 spil"
+msgstr "Rettelse af højde-bredde-forhold til 320x200-spil"
 
 #: gui/options.cpp:1103
 msgid "Preferred device:"
@@ -969,11 +969,11 @@ msgstr "GM-enhed:"
 
 #: gui/options.cpp:1146
 msgid "Specifies default sound device for General MIDI output"
-msgstr "Angiver standard lydenhed for Generel MIDI-udgang"
+msgstr "Angiver standardlydenhed for generel MIDI-output"
 
 #: gui/options.cpp:1157
 msgid "Don't use General MIDI music"
-msgstr "Brug ikke Generel MIDI musik"
+msgstr "Brug ikke generel MIDI-musik"
 
 #: gui/options.cpp:1168 gui/options.cpp:1230
 msgid "Use first available device"
@@ -998,11 +998,11 @@ msgstr "Blandet AdLib/MIDI-tilstand"
 
 #: gui/options.cpp:1188
 msgid "Use both MIDI and AdLib sound generation"
-msgstr "Brug både MIDI og AdLib lyd generering"
+msgstr "Brug både MIDI- og AdLib-lydgenerering"
 
 #: gui/options.cpp:1191
 msgid "MIDI gain:"
-msgstr "Lydstyrke for MIDI:"
+msgstr "MIDI-forstærning:"
 
 #: gui/options.cpp:1201
 msgid "MT-32 Device:"
@@ -1010,7 +1010,7 @@ msgstr "MT-32-enhed:"
 
 #: gui/options.cpp:1201
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
-msgstr "Angiver standard lydenhed for Roland MT-32/LAPC1/CM32I/CM64 udgang"
+msgstr "Angiver standard lydenhed for Roland MT-32/LAPC1/CM32I/CM64-output"
 
 #: gui/options.cpp:1206
 msgid "True Roland MT-32 (disable GM emulation)"
@@ -1063,7 +1063,7 @@ msgstr "Begge"
 
 #: gui/options.cpp:1255
 msgid "Subtitle speed:"
-msgstr "Undertekster hastighed:"
+msgstr "Hastighed (undertekster):"
 
 #: gui/options.cpp:1257
 msgctxt "lowres"
@@ -1090,16 +1090,16 @@ msgstr "Vis undertekster og afspil tale"
 #: gui/options.cpp:1265
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "Undertekster hastighed:"
+msgstr "Hastighed (undertekster):"
 
 #: gui/options.cpp:1281
 msgid "Music volume:"
-msgstr "Lydstyrke for musik:"
+msgstr "Lydstyrke (musik):"
 
 #: gui/options.cpp:1283
 msgctxt "lowres"
 msgid "Music volume:"
-msgstr "Lydstyrke for musik:"
+msgstr "Lydstyrke (musik):"
 
 #: gui/options.cpp:1290
 msgid "Mute all"
@@ -1107,25 +1107,25 @@ msgstr "Mute alle"
 
 #: gui/options.cpp:1293
 msgid "SFX volume:"
-msgstr "Lydstyrke for SFX:"
+msgstr "Lydstyrke (SFX):"
 
 #: gui/options.cpp:1293 gui/options.cpp:1295 gui/options.cpp:1296
 msgid "Special sound effects volume"
-msgstr "Lydstyrke for specielle lydeffekter"
+msgstr "Lydstyrke (specielle lydeffekter)"
 
 #: gui/options.cpp:1295
 msgctxt "lowres"
 msgid "SFX volume:"
-msgstr "Lydstyrke for SFX:"
+msgstr "Lydstyrke (SFX):"
 
 #: gui/options.cpp:1303
 msgid "Speech volume:"
-msgstr "Lydstyrke for tale:"
+msgstr "Lydstyrke (tale):"
 
 #: gui/options.cpp:1305
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr "Lydstyrke for tale:"
+msgstr "Lydstyrke (tale):"
 
 #: gui/options.cpp:1532
 msgid "Shader"
@@ -1950,7 +1950,7 @@ msgstr "Kunne ikke skifte til stræktilstand: '"
 
 #: engines/engine.cpp:342
 msgid "Could not apply aspect ratio setting."
-msgstr "Kunne ikke anvende rettelse af billedformat-indstilling."
+msgstr "Kunne ikke anvende rettelse af højde-bredde-forhold-indstilling."
 
 #: engines/engine.cpp:347
 msgid "Could not apply fullscreen setting."
@@ -2261,7 +2261,7 @@ msgstr "FRA"
 
 #: backends/events/webossdl/webossdl-events.cpp:339
 msgid "Swipe two fingers to the right to toggle."
-msgstr "Før to fingre til højre for at skifte."
+msgstr "Før to fingre til højre for at skifte til/fra."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:359
@@ -2270,7 +2270,7 @@ msgstr "Auto-træk-tilstand er nu"
 
 #: backends/events/webossdl/webossdl-events.cpp:366
 msgid "Swipe three fingers to the right to toggle."
-msgstr "Før tre fingre til højre for at skifte."
+msgstr "Før tre fingre til højre for at skifte til/fra."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:149
 msgid "OpenGL"
@@ -2309,12 +2309,12 @@ msgstr "Opløsning: %dx%d"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
 msgid "Enabled aspect ratio correction"
-msgstr "Aktivér rettelse af billedformat"
+msgstr "Aktivér rettelse af højde-bredde-forhold"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:776
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
 msgid "Disabled aspect ratio correction"
-msgstr "Deaktivér rettelse af billedformat"
+msgstr "Deaktivér rettelse af højde-bredde-forhold"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
@@ -3307,10 +3307,10 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
-"Det lader til at du bruger en Generel MIDI-enhed,\n"
+"Det lader til at du bruger en generel MIDI-enhed,\n"
 "men dit spil kun understøtter Roland MT32 MIDI.\n"
 "Vi forsøger at kortlægge Roland MT32 instrumenterne til\n"
-"dem i Generel MIDI. Trods det kan det ske\n"
+"dem i generel MIDI. Trods det kan det ske\n"
 "at nogle stykker ikke lyder korrekt."
 
 #: engines/kyra/saveload_eob.cpp:557
@@ -3618,7 +3618,7 @@ msgstr "Handling/vælg"
 
 #: engines/pegasus/pegasus.cpp:2519
 msgid "Toggle Center Data Display"
-msgstr "Skift Center Data Display"
+msgstr "Center datavisning til/fra"
 
 #: engines/pegasus/pegasus.cpp:2520
 msgid "Display/Hide Info Screen"
@@ -3690,7 +3690,7 @@ msgstr "Foretræk digitale lydeffekter i stedet for syntetiserede"
 
 #: engines/sci/detection.cpp:464
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
-msgstr "Brug IMF/Yamaha FB-01 til MIDI-udgang"
+msgstr "Brug IMF/Yamaha FB-01 til MIDI-output"
 
 #: engines/sci/detection.cpp:465
 msgid ""
@@ -3698,7 +3698,7 @@ msgid ""
 "output"
 msgstr ""
 "Brug et IBM Music Feature-kort eller et Yamaha FB-01 FM synth-modul til MIDI-"
-"udgang"
+"output"
 
 #: engines/sci/detection.cpp:475
 msgid "Use CD audio"
@@ -3831,14 +3831,14 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
-"Du har valgt General MIDI som en lydenhed. Sierra har ydet "
-"eftermarkedsstøtte til General MIDI til spillet i deres \"General MIDI "
+"Du har valgt generel MIDI som en lydenhed. Sierra har ydet "
+"eftermarkedsstøtte til generel MIDI til spillet i deres \"General MIDI "
 "Utility\". Anvend venligst rettelsen for at nyde MIDI-musik med spillet. Når "
 "du har fået det, kan du pakke alle de medfølgende *.PAT-filer ud i din "
 "ScummVM extras-mappe, og ScummVM vil automatisk tilføje den relevante "
 "rettelse. Alternativt kan du følge instruktionerne i READ.ME-filen, der er "
 "inkluderet i rettelsen, og omdøbe den tilhørende *.PAT-fil til 4.PAT og "
-"placere den i spilmappen. Uden rettelsen lyder General MIDI-musik til "
+"placere den i spilmappen. Uden rettelsen lyder generel MIDI-musik til "
 "spillet stærkt forvrænget."
 
 #: engines/sci/sci.cpp:452
@@ -4058,7 +4058,7 @@ msgstr "Enter"
 
 #: engines/scumm/help.cpp:88
 msgid "Music volume up / down"
-msgstr "Musik lydstyrke op/ned"
+msgstr "Lydstyrke (musik) op/ned"
 
 #: engines/scumm/help.cpp:89
 msgid "Text speed slower / faster"
@@ -4102,7 +4102,7 @@ msgstr "Kør i meget hurtig-tilstand (*)"
 
 #: engines/scumm/help.cpp:100
 msgid "Toggle mouse capture"
-msgstr "Skift muse fanger"
+msgstr "Museindfangning til/fra"
 
 #: engines/scumm/help.cpp:101
 msgid "Switch between graphics filters"
@@ -4114,7 +4114,7 @@ msgstr "Hæv/sænk skaleringsfaktor"
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
-msgstr "Skift rettelse af billedformat"
+msgstr "Rettelse af højde-bredde-forhold til/fra"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
@@ -4545,11 +4545,11 @@ msgstr "Jævn bevægelse fra"
 
 #: engines/scumm/input.cpp:593
 msgid "Music volume: "
-msgstr "Lydstyrke for musik: "
+msgstr "Lydstyrke (musik): "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "Undertekster hastighed: "
+msgstr "Hastighed (undertekster): "
 
 #: engines/scumm/scumm.cpp:1881
 #, c-format
@@ -4831,7 +4831,7 @@ msgstr "Deaktivér animation, mens du drejer"
 
 #: engines/zvision/detection_tables.h:82
 msgid "Disable animation while turning in panorama mode"
-msgstr "Deaktivér animation mens du drejer i panorama-tilstand"
+msgstr "Deaktivér animation mens du drejer i panoramatilstand"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
