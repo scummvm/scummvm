@@ -116,9 +116,6 @@ void SoundQueue::updateQueue() {
 			it = _soundList.reverse_erase(it);
 			continue;
 		}
-
-		// Queue the entry data, applying filtering
-		entry->play();
 	}
 
 	// Original update the current entry, loading another set of samples to be decoded
@@ -177,7 +174,7 @@ void SoundQueue::clearQueue() {
 //////////////////////////////////////////////////////////////////////////
 void SoundQueue::clearStatus() {
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		(*i)->setStatus((*i)->getStatus() | kSoundFlagCloseRequested);
+		(*i)->addStatusFlag(kSoundFlagCloseRequested);
 }
 
 //////////////////////////////////////////////////////////////////////////

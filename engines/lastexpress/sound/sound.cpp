@@ -135,7 +135,7 @@ SoundManager::~SoundManager() {
 //////////////////////////////////////////////////////////////////////////
 // Sound-related functions
 //////////////////////////////////////////////////////////////////////////
-void SoundManager::playSound(EntityIndex entity, Common::String filename, SoundFlag flag, byte a4) {
+void SoundManager::playSound(EntityIndex entity, Common::String filename, SoundFlag flag, byte activateDelay) {
 	if (_queue->isBuffered(entity) && entity && entity < kEntityTrain)
 		_queue->removeFromQueue(entity);
 
@@ -145,20 +145,26 @@ void SoundManager::playSound(EntityIndex entity, Common::String filename, SoundF
 	if (!filename.contains('.'))
 		filename += ".SND";
 
-	if (!playSoundWithSubtitles(filename, currentFlag, entity, a4))
+	if (!playSoundWithSubtitles(filename, currentFlag, entity, activateDelay))
 		if (entity)
 			getSavePoints()->push(kEntityPlayer, entity, kActionEndSound);
 }
 
-bool SoundManager::playSoundWithSubtitles(Common::String filename, uint32 flag, EntityIndex entity, byte a4) {
+bool SoundManager::playSoundWithSubtitles(Common::String filename, uint32 flag, EntityIndex entity, unsigned activateDelay) {
 	SoundEntry *entry = new SoundEntry(_engine);
 
 	entry->open(filename, (SoundFlag)flag, 30);
 	entry->setEntity(entity);
 
-	if (a4) {
-		entry->setField48(_data2 + 2 * a4);
-		entry->setStatus(entry->getStatus() | kSoundFlagDelayedActivate);
+	// BUG: the original game skips adjustVolumeIfNISPlaying() for delayed-activate sounds.
+	// (the original code is structured in a slightly different way)
+	// Not sure whether it can be actually triggered,
+	// most delayed-activate sounds originate from user actions,
+	// all user actions are disabled while NIS is playing.
+	entry->adjustVolumeIfNISPlaying();
+
+	if (activateDelay) {
+		entry->initDelayedActivate(activateDelay);
 	} else {
 		// Get subtitles name
 		uint32 size = filename.size();
@@ -166,7 +172,7 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, uint32 flag, 
 			filename.deleteLastChar();
 
 		entry->showSubtitle(filename);
-		entry->updateState();
+		entry->play();
 	}
 
 	// Add entry to sound list
@@ -175,7 +181,7 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, uint32 flag, 
 	return (entry->getType() != kSoundTypeNone);
 }
 
-void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
+void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte activateDelay) {
 	int values[5];
 
 	if (getEntityData(entity)->car != getEntityData(kEntityPlayer)->car)
@@ -193,14 +199,14 @@ void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
 
 		if (_param3 > 7) {
 			_data0 = (uint)_param3;
-			_data1 = _data2 + 2 * a3;
+			_data1 = _data2 + 2 * activateDelay;
 		}
 		break;
 		}
 
 	case 37:
 		_data0 = 7;
-		_data1 = _data2 + 2 * a3;
+		_data1 = _data2 + 2 * activateDelay;
 		break;
 
 	case 150:
@@ -298,7 +304,7 @@ void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
 	}
 
 	if (_action && flag)
-		playSoundWithSubtitles(Common::String::format("LIB%03d.SND", _action), flag, kEntityPlayer, a3);
+		playSoundWithSubtitles(Common::String::format("LIB%03d.SND", _action), flag, kEntityPlayer, activateDelay);
 }
 
 void SoundManager::playSteam(CityIndex index) {

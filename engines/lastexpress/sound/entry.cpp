@@ -55,16 +55,15 @@ SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 	_field_34 = 0;
 	_field_38 = 0;
 	_field_3C = 0;
-	_variant = 0;
+	_volumeWithoutNIS = 0;
 	_entity = kEntityPlayer;
-	_field_48 = 0;
+	_initTimeMS = 0;
+	_activateDelayMS = 0;
 	_priority = 0;
 
 	_subtitle = NULL;
 
 	_soundStream = NULL;
-
-	_queued = false;
 }
 
 SoundEntry::~SoundEntry() {
@@ -123,27 +122,17 @@ void SoundEntry::play() {
 	if (!_soundStream)
 		_soundStream = new StreamedSound();
 
-	// Compute current filter id
-	int32 filterId = _status & kSoundVolumeMask;
-	// TODO adjust status (based on stepIndex)
+	_stream->seek(0);
 
-	if (_queued) {
-		_soundStream->setFilterId(filterId);
-	} else {
-		_stream->seek(0);
-
-		// Load the stream and start playing
-		_soundStream->load(_stream, filterId);
-
-		_queued = true;
-	}
+	// Load the stream and start playing
+	_soundStream->load(_stream, _status & kSoundVolumeMask);
 }
 
 bool SoundEntry::isFinished() {
 	if (!_stream)
 		return true;
 
-	if (!_soundStream || !_queued)
+	if (!_soundStream)
 		return false;
 
 	// TODO check that all data has been queued
@@ -254,8 +243,8 @@ void SoundEntry::update(uint val) {
 
 	if (val) {
 		if (getSoundQueue()->getFlag() & 32) {
-			_variant = val;
-			value2 = val * 2 + 1;
+			_volumeWithoutNIS = val;
+			value2 = val / 2 + 1;
 		}
 
 		_field_3C = value2;
@@ -266,7 +255,7 @@ void SoundEntry::update(uint val) {
 }
 
 bool SoundEntry::updateSound() {
-	assert(_name2.size() <= 16);
+	assert(_name2.size() < 16);
 
 	bool result;
 	char sub[16];
@@ -275,15 +264,16 @@ bool SoundEntry::updateSound() {
 		result = false;
 	} else {
 		if (_status & kSoundFlagDelayedActivate) {
-			if (_field_48 <= getSound()->getData2()) {
-				_status |= kSoundFlagPlayRequested;
+			// counter overflow is processed correctly
+			if (_engine->_system->getMillis() - _initTimeMS >= _activateDelayMS) {
 				_status &= ~kSoundFlagDelayedActivate;
-				strcpy(sub, _name2.c_str());
+				play();
 
-				// FIXME: Rewrite and document expected behavior
-				int l = strlen(sub) + 1;
-				if (l - 1 > 4)
-					sub[l - (1 + 4)] = 0;
+				// drop .SND extension
+				strcpy(sub, _name2.c_str());
+				int l = _name2.size();
+				if (l > 4)
+					sub[l - 4] = 0;
 				showSubtitle(sub);
 			}
 		} else {
@@ -312,25 +302,33 @@ void SoundEntry::updateEntryFlag(SoundFlag flag) {
 		else
 			_status = flag + (_status & ~kSoundVolumeMask);
 	} else {
-		_variant = 0;
+		_volumeWithoutNIS = 0;
 		_status |= kSoundFlagMuteRequested;
 		_status &= ~(kSoundFlagVolumeChanging | kSoundVolumeMask);
 	}
+	if (_soundStream)
+		_soundStream->setFilterId(_status & kSoundVolumeMask);
 }
 
-void SoundEntry::updateState() {
+void SoundEntry::adjustVolumeIfNISPlaying() {
 	if (getSoundQueue()->getFlag() & 32) {
 		if (_type != kSoundType9 && _type != kSoundType7 && _type != kSoundType5) {
-			uint32 variant = _status & kSoundVolumeMask;
+			uint32 baseVolume = _status & kSoundVolumeMask;
+			uint32 actualVolume = baseVolume / 2 + 1;
 
+			assert((actualVolume & kSoundVolumeMask) == actualVolume);
+
+			_volumeWithoutNIS = baseVolume;
 			_status &= ~kSoundVolumeMask;
-
-			_variant = variant;
-			_status |= variant * 2 + 1;
+			_status |= actualVolume;
 		}
 	}
+}
 
-	_status |= kSoundFlagPlayRequested;
+void SoundEntry::initDelayedActivate(unsigned activateDelay) {
+	_initTimeMS = _engine->_system->getMillis();
+	_activateDelayMS = activateDelay * 1000 / 15;
+	_status |= kSoundFlagDelayedActivate;
 }
 
 void SoundEntry::reset() {
@@ -375,10 +373,18 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsUint32LE(_field_38); // field_14;
 		s.syncAsUint32LE(_entity);
 
-		uint32 delta = (uint32)_field_48 - getSound()->getData2();
-		if (delta > 0x8000000u) // sanity check against overflow
-			delta = 0;
-		s.syncAsUint32LE(delta);
+		if (s.isLoading()) {
+			uint32 delta;
+			s.syncAsUint32LE(delta);
+			_initTimeMS = _engine->_system->getMillis();
+			_activateDelayMS = delta * 1000 / 15;
+		} else {
+			uint32 deltaMS = _initTimeMS + _activateDelayMS - _engine->_system->getMillis();
+			if (deltaMS > 0x8000000u) // sanity check against overflow
+				deltaMS = 0;
+			uint32 delta = deltaMS * 15 / 1000;
+			s.syncAsUint32LE(delta);
+		}
 
 		s.syncAsUint32LE(_priority);
 

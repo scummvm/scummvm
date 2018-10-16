@@ -38,9 +38,10 @@ public:
 	~SoundManager();
 
 	// Sound playing
-	void playSound(EntityIndex entity, Common::String filename, SoundFlag flag = kSoundVolumeEntityDefault, byte a4 = 0);
-	bool playSoundWithSubtitles(Common::String filename, uint32 flag, EntityIndex entity, byte a4 = 0);
-	void playSoundEvent(EntityIndex entity, byte action, byte a3 = 0);
+	// the original game uses byte in playSound but unsigned in playSoundWithSubtitles for activateDelay, no idea why
+	void playSound(EntityIndex entity, Common::String filename, SoundFlag flag = kSoundVolumeEntityDefault, byte activateDelay = 0);
+	bool playSoundWithSubtitles(Common::String filename, uint32 flag, EntityIndex entity, unsigned activateDelay = 0);
+	void playSoundEvent(EntityIndex entity, byte action, byte activateDelay = 0);
 	void playDialog(EntityIndex entity, EntityIndex entityDialog, SoundFlag flag, byte a4);
 	void playSteam(CityIndex index);
 	void playFightSound(byte action, byte a4);

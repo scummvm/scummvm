@@ -54,7 +54,9 @@
 	    uint32 {4}      - ??
 	    uint32 {4}      - ??
 	    uint32 {4}      - ??
-	    uint32 {4}      - ??
+	    uint32 {4}      - base volume if NIS is playing
+	                      (the actual volume is reduced in half for non-NIS sounds;
+	                       this is used to restore the volume after NIS ends)
 	    uint32 {4}      - entity
 	    uint32 {4}      - ??
 	    uint32 {4}      - priority
@@ -91,8 +93,10 @@ public:
 	bool isFinished();
 	void update(uint val);
 	bool updateSound();
-	void updateState();
+	void adjustVolumeIfNISPlaying();
 	void updateEntryFlag(SoundFlag flag);
+	// activateDelay is measured in main ticks, 15Hz timer
+	void initDelayedActivate(unsigned activateDelay);
 
 	// Subtitles
 	void showSubtitle(Common::String filename);
@@ -101,10 +105,9 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser);
 
 	// Accessors
-	void setStatus(uint32 status)      { _status = status; }
+	void addStatusFlag(SoundFlag flag) { _status |= flag; }
 	void setType(SoundType type)       { _type = type; }
 	void setEntity(EntityIndex entity) { _entity = entity; }
-	void setField48(int val)           { _field_48 = val; }
 
 	uint32           getStatus()   { return _status; }
 	SoundType        getType()     { return _type; }
@@ -137,9 +140,13 @@ private:
 	int _field_34;
 	int _field_38;
 	int _field_3C;
-	int _variant;
+	int _volumeWithoutNIS;
 	EntityIndex _entity;
-	int _field_48;
+	// The original game uses one variable _activateTime = _initTime + _activateDelay
+	// and measures everything in sound ticks (30Hz timer).
+	// We use milliseconds and two variables to deal with possible overflow
+	// (probably paranoid, but nothing really complicated).
+	uint32 _initTimeMS, _activateDelayMS;
 	uint32 _priority;
 	Common::String _name1;    //char[16];
 	Common::String _name2;    //char[16];
@@ -147,7 +154,6 @@ private:
 	SubtitleEntry *_subtitle;
 
 	// Sound buffer & stream
-	bool _queued;
 	StreamedSound *_soundStream;    // the filtered sound stream
 
 	void setType(SoundFlag flag);
