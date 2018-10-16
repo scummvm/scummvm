@@ -1380,11 +1380,11 @@ void SoundManager::playLoopingSound(int param) {
 				playSoundWithSubtitles(tmp, kSoundTypeAmbient | kSoundFlagLooped | kVolume1, kEntitySteam);
 
 				if (entry)
-					entry->update(0);
+					entry->fade();
 
 				SoundEntry *entry1 = _queue->getEntry(kSoundType1);
 				if (entry1)
-					entry1->update(7);
+					entry1->setVolumeSmoothly(kVolume7);
 			}
 		}
 	}

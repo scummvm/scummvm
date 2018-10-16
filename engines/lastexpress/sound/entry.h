@@ -29,10 +29,11 @@
 	    uint32 {4}      - type
 	    uint32 {4}      - blockCount
 	    uint32 {4}      - time
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
+	    uint32 {4}      - LastExpress_ADPCMStream::_volumeHoldBlocks
+	                      (useless since the target volume is not saved)
+	    uint32 {4}      - ?? [copy of a field below with no references]
 	    uint32 {4}      - entity
-	    uint32 {4}      - ??
+	    uint32 {4}      - activate delay in sound ticks (30Hz timer)
 	    uint32 {4}      - priority
 	    char {16}       - name 1
 	    char {16}       - name 2
@@ -51,14 +52,15 @@
 	    uint32 {4}      - ??
 	    uint32 {4}      - archive structure pointer
 	    uint32 {4}      - ??
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
-	    uint32 {4}      - ??
+	    uint32 {4}      - LastExpress_ADPCMStream::_volumeHoldBlocks
+	                      (used for smooth change of volume)
+	    uint32 {4}      - ?? [no references except for save/load]
+	    uint32 {4}      - target value for smooth change of volume
 	    uint32 {4}      - base volume if NIS is playing
 	                      (the actual volume is reduced in half for non-NIS sounds;
 	                       this is used to restore the volume after NIS ends)
 	    uint32 {4}      - entity
-	    uint32 {4}      - ??
+	    uint32 {4}      - activate time in sound ticks (30Hz timer)
 	    uint32 {4}      - priority
 	    char {16}       - name 1
 	    char {16}       - name 2
@@ -91,10 +93,13 @@ public:
 	void play();
 	void reset();
 	bool isFinished();
-	void update(uint val);
+	void setVolumeSmoothly(SoundFlag newVolume);
+	// setVolumeSmoothly() treats kVolumeNone in a special way;
+	// fade() terminates the stream after the transition
+	void fade() { setVolumeSmoothly(kVolumeNone); }
 	bool updateSound();
 	void adjustVolumeIfNISPlaying();
-	void updateEntryFlag(SoundFlag flag);
+	void setVolume(SoundFlag newVolume);
 	// activateDelay is measured in main ticks, 15Hz timer
 	void initDelayedActivate(unsigned activateDelay);
 
@@ -139,7 +144,6 @@ private:
 	//int _archive;
 	int _field_34;
 	int _field_38;
-	int _field_3C;
 	int _volumeWithoutNIS;
 	EntityIndex _entity;
 	// The original game uses one variable _activateTime = _initTime + _activateDelay

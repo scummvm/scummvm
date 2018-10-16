@@ -54,7 +54,6 @@ SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 
 	_field_34 = 0;
 	_field_38 = 0;
-	_field_3C = 0;
 	_volumeWithoutNIS = 0;
 	_entity = kEntityPlayer;
 	_initTimeMS = 0;
@@ -90,9 +89,9 @@ void SoundEntry::open(Common::String name, SoundFlag flag, int priority) {
 }
 
 void SoundEntry::close() {
-	_status |= kSoundFlagCloseRequested;
-
+	_status |= kSoundFlagClosed;
 	// Loop until ready
+	// _status |= kSoundFlagCloseRequested;
 	//while (!(_status & kSoundFlagClosed) && !(getSoundQueue()->getFlag() & 8) && (getSoundQueue()->getFlag() & 1))
 	//	;	// empty loop body
 
@@ -150,12 +149,12 @@ void SoundEntry::setType(SoundFlag flag) {
 	case kSoundTypeAmbient: {
 		SoundEntry *previous2 = getSoundQueue()->getEntry(kSoundType2);
 		if (previous2)
-			previous2->update(0);
+			previous2->fade();
 
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType1);
 		if (previous) {
 			previous->setType(kSoundType2);
-			previous->update(0);
+			previous->fade();
 		}
 
 		_type = kSoundType1;
@@ -166,7 +165,7 @@ void SoundEntry::setType(SoundFlag flag) {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundType3);
 		if (previous) {
 			previous->setType(kSoundType4);
-			previous->update(0);
+			previous->fade();
 		}
 
 		_type = kSoundType11;
@@ -230,28 +229,28 @@ void SoundEntry::loadStream(Common::String name) {
 		_stream = getArchive("DEFAULT.SND");
 
 	if (!_stream)
-		_status = kSoundFlagCloseRequested;
+		_status = kSoundFlagClosed;
 }
 
-void SoundEntry::update(uint val) {
+void SoundEntry::setVolumeSmoothly(SoundFlag newVolume) {
+	assert((newVolume & kSoundVolumeMask) == newVolume);
+
 	if (_status & kSoundFlagFading)
 		return;
 
-	int value2 = val;
+	// the original game sets kSoundFlagVolumeChanging here
+	uint32 requestedVolume = (uint32)newVolume;
 
-	_status |= kSoundFlagVolumeChanging;
-
-	if (val) {
-		if (getSoundQueue()->getFlag() & 32) {
-			_volumeWithoutNIS = val;
-			value2 = val / 2 + 1;
-		}
-
-		_field_3C = value2;
-	} else {
-		_field_3C = 0;
+	if (newVolume == kVolumeNone) {
 		_status |= kSoundFlagFading;
+	} else if (getSoundQueue()->getFlag() & 32) {
+		_volumeWithoutNIS = requestedVolume;
+		requestedVolume = requestedVolume / 2 + 1;
 	}
+
+	_status = (_status & ~kSoundVolumeMask) | requestedVolume;
+	if (_soundStream)
+		_soundStream->setVolumeSmoothly(requestedVolume);
 }
 
 bool SoundEntry::updateSound() {
@@ -281,7 +280,7 @@ bool SoundEntry::updateSound() {
 				if (!(_status & kSoundFlagFixedVolume)) {
 					if (_entity) {
 						if (_entity < 0x80) {
-							updateEntryFlag(getSound()->getSoundFlag(_entity));
+							setVolume(getSound()->getSoundFlag(_entity));
 						}
 					}
 				}
@@ -295,19 +294,21 @@ bool SoundEntry::updateSound() {
 	return result;
 }
 
-void SoundEntry::updateEntryFlag(SoundFlag flag) {
-	if (flag) {
+void SoundEntry::setVolume(SoundFlag newVolume) {
+	assert((newVolume & kSoundVolumeMask) == newVolume);
+
+	if (newVolume) {
 		if (getSoundQueue()->getFlag() & 0x20 && _type != kSoundType9 && _type != kSoundType7)
-			update(flag);
+			setVolumeSmoothly(newVolume);
 		else
-			_status = flag + (_status & ~kSoundVolumeMask);
+			_status = newVolume + (_status & ~kSoundVolumeMask);
 	} else {
 		_volumeWithoutNIS = 0;
 		_status |= kSoundFlagMuteRequested;
 		_status &= ~(kSoundFlagVolumeChanging | kSoundVolumeMask);
 	}
 	if (_soundStream)
-		_soundStream->setFilterId(_status & kSoundVolumeMask);
+		_soundStream->setVolume(_status & kSoundVolumeMask);
 }
 
 void SoundEntry::adjustVolumeIfNISPlaying() {
@@ -332,7 +333,7 @@ void SoundEntry::initDelayedActivate(unsigned activateDelay) {
 }
 
 void SoundEntry::reset() {
-	_status |= kSoundFlagCloseRequested;
+	_status |= kSoundFlagClosed;
 	_entity = kEntityPlayer;
 
 	if (_stream) {

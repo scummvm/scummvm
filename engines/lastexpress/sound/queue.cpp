@@ -87,7 +87,7 @@ void SoundQueue::updateQueue() {
 			getSound()->playLoopingSound(0x45);
 		} else {
 			if (getSound()->getData1() && getSound()->getData2() >= getSound()->getData1()) {
-				entry->update(getSound()->getData0());
+				entry->setVolumeSmoothly((SoundFlag)getSound()->getData0());
 				getSound()->setData1(0);
 			}
 		}
@@ -174,7 +174,7 @@ void SoundQueue::clearQueue() {
 //////////////////////////////////////////////////////////////////////////
 void SoundQueue::clearStatus() {
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		(*i)->addStatusFlag(kSoundFlagCloseRequested);
+		(*i)->addStatusFlag(kSoundFlagClosed);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -189,7 +189,7 @@ void SoundQueue::setupEntry(SoundType type, EntityIndex index) {
 void SoundQueue::processEntry(EntityIndex entity) {
 	SoundEntry *entry = getEntry(entity);
 	if (entry) {
-		entry->update(0);
+		entry->fade();
 		entry->setEntity(kEntityPlayer);
 	}
 }
@@ -197,13 +197,13 @@ void SoundQueue::processEntry(EntityIndex entity) {
 void SoundQueue::processEntry(SoundType type) {
 	SoundEntry *entry = getEntry(type);
 	if (entry)
-		entry->update(0);
+		entry->fade();
 }
 
 void SoundQueue::processEntry(Common::String filename) {
 	SoundEntry *entry = getEntry(filename);
 	if (entry) {
-		entry->update(0);
+		entry->fade();
 		entry->setEntity(kEntityPlayer);
 	}
 }

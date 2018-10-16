@@ -61,7 +61,7 @@ public:
 
 protected:
 	void loadHeader(Common::SeekableReadStream *in);
-	LastExpress_ADPCMStream *makeDecoder(Common::SeekableReadStream *in, uint32 size, int32 filterId = -1) const;
+	LastExpress_ADPCMStream *makeDecoder(Common::SeekableReadStream *in, uint32 size, uint32 volume) const;
 	void play(Audio::AudioStream *as, DisposeAfterUse::Flag autofreeStream);
 
 	uint32 _size;   ///< data size
@@ -78,10 +78,11 @@ public:
 	StreamedSound();
 	~StreamedSound();
 
-	bool load(Common::SeekableReadStream *stream, int32 filterId = -1);
+	bool load(Common::SeekableReadStream *stream, uint32 volume);
 	virtual bool isFinished();
 
-	void setFilterId(int32 filterId);
+	void setVolume(uint32 newVolume);
+	void setVolumeSmoothly(uint32 newVolume);
 
 private:
 	LastExpress_ADPCMStream *_as;
