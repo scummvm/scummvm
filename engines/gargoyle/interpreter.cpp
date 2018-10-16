@@ -20,39 +20,9 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
-#include "gargoyle/gargoyle.h"
+#include "gargoyle/interpreter.h"
 
 namespace Gargoyle {
 
-GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc) :
-	_gameDescription(gameDesc), Engine(syst), _glk(&_screen),
-	_scott(_glk) {
-}
-
-GargoyleEngine::~GargoyleEngine() {
-}
-
-void GargoyleEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
-
-	initGraphics(640, 480, false);
-}
-
-Common::Error GargoyleEngine::run() {
-	initialize();
-
-	return Common::kNoError;
-}
 
 } // End of namespace Gargoyle
