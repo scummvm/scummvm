@@ -28,6 +28,10 @@
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
+#include "graphics/screen.h"
+#include "gargoyle/events.h"
+#include "gargoyle/glk.h"
+#include "gargoyle/scott/scott.h"
 
 namespace Gargoyle {
 
@@ -57,9 +61,13 @@ private:
 	 * Handles basic initialization
 	 */
 	void initialize();
-protected:
+private:
 	const GargoyleGameDescription *_gameDescription;
 	int _loadSaveSlot;
+	Graphics::Screen _screen;
+	Events _events;
+	Glk _glk;
+	Scott::Scott _scott;
 
 	// Engine APIs
 	virtual Common::Error run();

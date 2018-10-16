@@ -20,39 +20,26 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
-#include "gargoyle/gargoyle.h"
+#ifndef GARGOYLE_INTERPRETER_H
+#define GARGOYLE_INTERPRETER_H
+
+#include "gargoyle/glk.h"
 
 namespace Gargoyle {
 
-GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc) :
-	_gameDescription(gameDesc), Engine(syst), _glk(&_screen),
-	_scott(_glk) {
-}
-
-GargoyleEngine::~GargoyleEngine() {
-}
-
-void GargoyleEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
-
-	initGraphics(640, 480, false);
-}
-
-Common::Error GargoyleEngine::run() {
-	initialize();
-
-	return Common::kNoError;
-}
+/**
+ * Base class for specific interpreters
+ */
+class Interpreter {
+protected:
+	Glk &_glk;
+public:
+	/**
+	 * Constructor
+	 */
+	Interpreter(Glk &glk) : _glk(glk) {}
+};
 
 } // End of namespace Gargoyle
+
+#endif
