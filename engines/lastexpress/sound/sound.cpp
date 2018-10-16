@@ -139,7 +139,7 @@ void SoundManager::playSound(EntityIndex entity, Common::String filename, SoundF
 	if (_queue->isBuffered(entity) && entity && entity < kEntityTrain)
 		_queue->removeFromQueue(entity);
 
-	SoundFlag currentFlag = (flag == -1) ? getSoundFlag(entity) : (SoundFlag)(flag | 0x80000);
+	SoundFlag currentFlag = (flag == kSoundVolumeEntityDefault) ? getSoundFlag(entity) : (SoundFlag)(flag | 0x80000);
 
 	// Add .SND at the end of the filename if needed
 	if (!filename.contains('.'))
