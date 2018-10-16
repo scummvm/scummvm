@@ -2880,8 +2880,8 @@ case $_host_os in
 		_pkgconfig="$DEVKITPRO/portlibs/switch/bin/aarch64-none-elf-pkg-config"
 		_sdlpath="$DEVKITPRO/portlibs/switch/bin"
 		append_var DEFINES "-DSWITCH -D__SWITCH__ -DNINTENDO_SWITCH"
-		append_var CXXFLAGS "-march=armv8-a -mtune=cortex-a57 -mtp=hard -fPIE"
-		append_var CXXFLAGS "-ffunction-sections -fno-exceptions"
+		append_var CXXFLAGS "-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE -ftls-model=local-exec"
+		append_var CXXFLAGS "-ffunction-sections -fdata-sections"
 		append_var CXXFLAGS "-I$DEVKITPRO/libnx/include -I$DEVKITPRO/portlibs/switch/include"
 		append_var LDFLAGS "-L$DEVKITPRO/libnx/lib -L$DEVKITPRO/portlibs/switch/lib"
 		append_var LDFLAGS "-specs=$DEVKITPRO/libnx/switch.specs"
@@ -2889,7 +2889,7 @@ case $_host_os in
 		if test "$_debug_build" = yes; then
 			append_var DEFINES "-D__SWITCH_DEBUG__"
 		else
-			_optimization_level=-O2
+			_optimization_level=-O3
 		fi
 		;;
 	tizen)
@@ -3387,11 +3387,10 @@ if test -n "$_host"; then
 			_build_hq_scalers=yes
 			_dynamic_modules=no
 			_vkeybd=yes
-			_timidity=no
-			_seq_midi=no
+			_mt32emu=yes
+			_vorbis=yes
+			_tremor=no
 			_eventrec=no
-			#_mt32emu=no
-			#_vorbis=no
 			_port_mk="backends/platform/sdl/switch/switch.mk"
 			;;
 		tizen)

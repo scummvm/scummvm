@@ -28,6 +28,7 @@
 
 #include "backends/platform/sdl/switch/switch.h"
 #include "backends/events/switchsdl/switchsdl-events.h"
+#include "backends/timer/sdl/sdl-timer.h"
 #include "backends/platform/sdl/sdl.h"
 #include "engines/engine.h"
 
@@ -51,6 +52,7 @@ SwitchEventSource::SwitchEventSource() {
 }
 
 bool SwitchEventSource::pollEvent(Common::Event &event) {
+	((DefaultTimerManager *) g_system->getTimerManager())->handler();
 	finishSimulatedMouseClicks();
 	return SdlEventSource::pollEvent(event);
 }
