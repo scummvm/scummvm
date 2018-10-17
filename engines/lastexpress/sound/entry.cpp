@@ -48,7 +48,6 @@ SoundEntry::SoundEntry(LastExpressEngine *engine) : _engine(engine) {
 	_currentDataPtr = NULL;
 
 	_blockCount = 0;
-	_time = 0;
 
 	_stream = NULL;
 
@@ -124,7 +123,7 @@ void SoundEntry::play() {
 	_stream->seek(0);
 
 	// Load the stream and start playing
-	_soundStream->load(_stream, _status & kSoundVolumeMask);
+	_soundStream->load(_stream, _status & kSoundVolumeMask, (_status & kSoundFlagLooped) != 0);
 }
 
 bool SoundEntry::isFinished() {
@@ -369,7 +368,8 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsUint32LE(_status);
 		s.syncAsUint32LE(_type);
 		s.syncAsUint32LE(_blockCount); // field_8;
-		s.syncAsUint32LE(_time);
+		uint32 time = getTime();
+		s.syncAsUint32LE(time);
 		s.syncAsUint32LE(_field_34); // field_10;
 		s.syncAsUint32LE(_field_38); // field_14;
 		s.syncAsUint32LE(_entity);

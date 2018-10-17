@@ -116,7 +116,7 @@ public:
 
 	uint32           getStatus()   { return _status; }
 	SoundType        getType()     { return _type; }
-	uint32           getTime()     { return _time; }
+	uint32           getTime()     { return _soundStream ? (_soundStream->getTimeMS() * 30 / 1000) : 0; }
 	EntityIndex      getEntity()   { return _entity; }
 	uint32           getPriority() { return _priority; }
 	Common::String   getName2()    { return _name2; }
@@ -137,7 +137,6 @@ private:
 	byte * _currentDataPtr;
 	//int _currentBufferPtr;
 	int _blockCount;
-	uint32 _time;
 	//int _size;
 	//int _field_28;
 	Common::SeekableReadStream *_stream;    // The file stream

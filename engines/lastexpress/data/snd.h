@@ -59,9 +59,11 @@ public:
 	void stop() const;
 	virtual bool isFinished() = 0;
 
+	uint32 getTimeMS();
+
 protected:
 	void loadHeader(Common::SeekableReadStream *in);
-	LastExpress_ADPCMStream *makeDecoder(Common::SeekableReadStream *in, uint32 size, uint32 volume) const;
+	LastExpress_ADPCMStream *makeDecoder(Common::SeekableReadStream *in, uint32 size, uint32 volume, bool looped) const;
 	void play(Audio::AudioStream *as, DisposeAfterUse::Flag autofreeStream);
 
 	uint32 _size;   ///< data size
@@ -78,7 +80,7 @@ public:
 	StreamedSound();
 	~StreamedSound();
 
-	bool load(Common::SeekableReadStream *stream, uint32 volume);
+	bool load(Common::SeekableReadStream *stream, uint32 volume, bool looped);
 	virtual bool isFinished();
 
 	void setVolume(uint32 newVolume);
