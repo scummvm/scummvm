@@ -28,7 +28,6 @@
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
-#include "gargoyle/interpreter.h"
 
 namespace Gargoyle {
 
@@ -57,20 +56,27 @@ struct GargoyleSavegameHeader {
 	int _totalFrames;
 };
 
+/**
+ * Base class for the different interpreters
+ */
 class GargoyleEngine : public Engine {
 private:
 	/**
 	 * Handles basic initialization
 	 */
 	void initialize();
-private:
+protected:
 	const GargoyleGameDescription *_gameDescription;
 	int _loadSaveSlot;
-	Interpreter *_interpreter;
 
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
+	/**
+	 * Main game loop for the individual interpreters
+	 */
+	virtual void main() = 0;
 public:
 	GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc);
 	virtual ~GargoyleEngine();

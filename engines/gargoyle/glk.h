@@ -23,16 +23,15 @@
 #ifndef GARGOYLE_GLK_H
 #define GARGOYLE_GLK_H
 
-#include "graphics/managed_surface.h"
-#include "gargoyle/interpreter.h"
-#include "gargoyle/glk/glk_types.h"
+#include "gargoyle/gargoyle.h"
+#include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
 
 /**
  * Implements the GLK interface
  */
-class Glk : public Interpreter {
+class Glk : public GargoyleEngine {
 private:
 	bool _gliFirstEvent;
 private:
@@ -46,7 +45,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Glk();
+	Glk(OSystem *syst, const GargoyleGameDescription *gameDesc);
 
 	void glk_exit(void);
 	void glk_set_interrupt_handler(void(*func)(void));

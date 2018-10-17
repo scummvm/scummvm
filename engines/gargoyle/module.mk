@@ -4,9 +4,8 @@ MODULE_OBJS := \
 	detection.o \
 	events.o \
 	gargoyle.o \
-	glk/glk.o \
-	interpreter.o \
-	interps/scott/scott.o
+	glk.o \
+	scott/scott.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GARGOYLE), DYNAMIC_PLUGIN)

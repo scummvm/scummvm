@@ -28,7 +28,7 @@
  */
 
 #include "common/scummsys.h"
-#include "gargoyle/glk/glk.h"
+#include "gargoyle/glk.h"
 
 namespace Gargoyle {
 namespace Scott {
@@ -92,12 +92,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	Scott() : Glk() {}
+	Scott(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst, gameDesc) {}
 
 	/**
 	 * Execute the game
 	 */
-	virtual void execute();
+	virtual void main();
 };
 
 } // End of namespace Scott
