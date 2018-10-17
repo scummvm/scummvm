@@ -79,7 +79,7 @@ public:
 	~LastExpressEngine();
 
 	// Misc
-	Common::RandomSource getRandom() const {return _random; }
+	Common::RandomSource& getRandom() {return _random; }
 
 	// Game
 	Cursor          *getCursor()          const { return _cursor; }
