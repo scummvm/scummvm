@@ -24,20 +24,21 @@
 #define GARGOYLE_GLK_H
 
 #include "graphics/managed_surface.h"
+#include "gargoyle/interpreter.h"
 
 namespace Gargoyle {
 
 /**
  * Implements the GLK interface
  */
-class Glk {
+class Glk : public Interpreter {
 private:
 	Graphics::ManagedSurface *_surface;
 public:
 	/**
 	 * Constructor
 	 */
-	Glk(Graphics::ManagedSurface *surface) : _surface(surface) {}
+	Glk() {}
 };
 
 } // End of namespace Gargoyle

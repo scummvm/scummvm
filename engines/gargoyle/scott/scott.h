@@ -28,7 +28,7 @@
  */
 
 #include "common/scummsys.h"
-#include "gargoyle/interpreter.h"
+#include "gargoyle/glk.h"
 
 namespace Gargoyle {
 namespace Scott {
@@ -84,12 +84,15 @@ struct Tail {
 	int Unknown;
 };
 
-class Scott : public Interpreter {
+/**
+ * Scott Adams game interpreter
+ */
+class Scott : public Glk {
 public:
 	/**
 	 * Constructor
 	 */
-	Scott(Glk &glk) : Interpreter(glk) {}
+	Scott() : Glk() {}
 };
 
 } // End of namespace Scott

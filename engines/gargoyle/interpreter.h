@@ -23,21 +23,27 @@
 #ifndef GARGOYLE_INTERPRETER_H
 #define GARGOYLE_INTERPRETER_H
 
-#include "gargoyle/glk.h"
-
 namespace Gargoyle {
 
 /**
  * Base class for specific interpreters
  */
 class Interpreter {
-protected:
-	Glk &_glk;
 public:
 	/**
 	 * Constructor
 	 */
-	Interpreter(Glk &glk) : _glk(glk) {}
+	Interpreter() {}
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Interpreter() {}
+
+	/**
+	 * Main execution method
+	 */
+	virtual void execute() = 0;
 };
 
 } // End of namespace Gargoyle
