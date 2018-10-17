@@ -20,11 +20,12 @@
  *
  */
 
-#include "gargoyle/glk/glk.h"
+#include "gargoyle/glk.h"
 
 namespace Gargoyle {
 
-Glk::Glk() : Interpreter(), _gliFirstEvent(false) {
+Glk::Glk(OSystem *syst, const GargoyleGameDescription *gameDesc) : 
+	GargoyleEngine(syst, gameDesc), _gliFirstEvent(false) {
 }
 
 void Glk::glk_exit(void) {

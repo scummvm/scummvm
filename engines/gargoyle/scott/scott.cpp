@@ -20,9 +20,22 @@
  *
  */
 
-#include "gargoyle/interpreter.h"
+#include "gargoyle/scott/scott.h"
 
 namespace Gargoyle {
+namespace Scott {
 
+void Scott::main() {
+	event_t ev;
+	do {
+		glk_select(&ev);
+		switch (ev.type) {
+		default:
+			/* do nothing */
+			break;
+		}
+	} while (ev.type != evtype_Quit);
+}
 
+} // End of namespace Scott
 } // End of namespace Gargoyle
