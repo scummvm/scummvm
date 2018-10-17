@@ -28,6 +28,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "gargoyle/gargoyle.h"
+#include "gargoyle/interps/scott/scott.h"
 
 namespace Gargoyle {
 
@@ -36,6 +37,7 @@ GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gam
 }
 
 GargoyleEngine::~GargoyleEngine() {
+	delete _interpreter;
 }
 
 void GargoyleEngine::initialize() {
@@ -46,10 +48,19 @@ void GargoyleEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	initGraphics(640, 480, false);
+
+	switch (getInterpreterType()) {
+	case INTERPRETER_SCOTT:
+		_interpreter = new Scott::Scott();
+		break;
+	default:
+		error("Unknown interpreter type");
+	}
 }
 
 Common::Error GargoyleEngine::run() {
 	initialize();
+	_interpreter->execute();
 
 	return Common::kNoError;
 }

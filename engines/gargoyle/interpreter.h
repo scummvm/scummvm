@@ -23,12 +23,16 @@
 #ifndef GARGOYLE_INTERPRETER_H
 #define GARGOYLE_INTERPRETER_H
 
+#include "graphics/screen.h"
+
 namespace Gargoyle {
 
 /**
  * Base class for specific interpreters
  */
 class Interpreter {
+protected:
+	Graphics::Screen _screen;
 public:
 	/**
 	 * Constructor
