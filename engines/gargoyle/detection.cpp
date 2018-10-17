@@ -58,16 +58,17 @@ InterpreterType GargoyleEngine::getInterpreterType() const {
 
 } // End of namespace Gargoyle
 
-static const PlainGameDescriptor GargoyleGames[] = {
-	{"Gargoyle", "Gargoyle Games"},
+static const PlainGameDescriptor gargoyleGames[] = {
+	{"scott", "Scott Adams Games"},
 	{0, 0}
 };
 
 #include "gargoyle/detection_tables.h"
+#include "gargoyle/scott/scott.h"
 
 class GargoyleMetaEngine : public AdvancedMetaEngine {
 public:
-	GargoyleMetaEngine() : AdvancedMetaEngine(Gargoyle::gameDescriptions, sizeof(Gargoyle::GargoyleGameDescription), GargoyleGames) {
+	GargoyleMetaEngine() : AdvancedMetaEngine(Gargoyle::gameDescriptions, sizeof(Gargoyle::GargoyleGameDescription), gargoyleGames) {
 		_maxScanDepth = 3;
 	}
 
@@ -105,7 +106,13 @@ bool Gargoyle::GargoyleEngine::hasFeature(EngineFeature f) const {
 
 bool GargoyleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Gargoyle::GargoyleGameDescription *gd = (const Gargoyle::GargoyleGameDescription *)desc;
-	*engine = new Gargoyle::GargoyleEngine(syst, gd);
+	switch (gd->interpType) {
+	case Gargoyle::INTERPRETER_SCOTT:
+		*engine = new Gargoyle::Scott::Scott(syst, gd);
+		break;
+	default:
+		error("Unknown interpreter");
+	}
 
 	return gd != 0;
 }
