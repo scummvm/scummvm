@@ -37,6 +37,7 @@ namespace Gargoyle {
 
 struct GargoyleGameDescription {
 	ADGameDescription desc;
+	InterpreterType interpType;
 };
 
 uint32 GargoyleEngine::getFeatures() const {
@@ -49,6 +50,10 @@ bool GargoyleEngine::isDemo() const {
 
 Common::Language GargoyleEngine::getLanguage() const {
 	return _gameDescription->desc.language;
+}
+
+InterpreterType GargoyleEngine::getInterpreterType() const {
+	return _gameDescription->interpType;
 }
 
 } // End of namespace Gargoyle

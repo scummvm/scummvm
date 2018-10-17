@@ -28,12 +28,13 @@
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
-#include "graphics/screen.h"
-#include "gargoyle/events.h"
-#include "gargoyle/glk.h"
-#include "gargoyle/scott/scott.h"
+#include "gargoyle/interpreter.h"
 
 namespace Gargoyle {
+
+enum InterpreterType {
+	INTERPRETER_SCOTT
+};
 
 enum GargoyleDebugChannels {
 	kDebugCore      = 1 << 0,
@@ -41,6 +42,7 @@ enum GargoyleDebugChannels {
 	kDebugGraphics	= 1 << 2,
 	kDebugSound     = 1 << 3
 };
+
 
 #define GARGOYLE_SAVEGAME_VERSION 1
 
@@ -64,8 +66,6 @@ private:
 private:
 	const GargoyleGameDescription *_gameDescription;
 	int _loadSaveSlot;
-	Graphics::Screen _screen;
-	Events _events;
 	Interpreter *_interpreter;
 
 	// Engine APIs
@@ -78,6 +78,7 @@ public:
 	uint32 getFeatures() const;
 	bool isDemo() const;
 	Common::Language getLanguage() const;
+	InterpreterType getInterpreterType() const;
 };
 
 } // End of namespace Gargoyle

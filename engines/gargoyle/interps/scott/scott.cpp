@@ -20,11 +20,22 @@
  *
  */
 
-#include "gargoyle/scott/scott.h"
+#include "gargoyle/interps/scott/scott.h"
 
 namespace Gargoyle {
 namespace Scott {
 
+void Scott::execute() {
+	event_t ev;
+	do {
+		glk_select(&ev);
+		switch (ev.type) {
+		default:
+			/* do nothing */
+			break;
+		}
+	} while (ev.type != evtype_Quit);
+}
 
 } // End of namespace Scott
 } // End of namespace Gargoyle
