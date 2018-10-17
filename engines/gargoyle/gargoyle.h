@@ -66,8 +66,7 @@ private:
 	int _loadSaveSlot;
 	Graphics::Screen _screen;
 	Events _events;
-	Glk _glk;
-	Scott::Scott _scott;
+	Interpreter *_interpreter;
 
 	// Engine APIs
 	virtual Common::Error run();

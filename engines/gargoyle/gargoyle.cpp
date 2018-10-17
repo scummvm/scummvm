@@ -32,8 +32,7 @@
 namespace Gargoyle {
 
 GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc) :
-	_gameDescription(gameDesc), Engine(syst), _glk(&_screen),
-	_scott(_glk) {
+	_gameDescription(gameDesc), Engine(syst), _interpreter(nullptr) {
 }
 
 GargoyleEngine::~GargoyleEngine() {
