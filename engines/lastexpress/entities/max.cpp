@@ -140,7 +140,7 @@ IMPLEMENT_FUNCTION(7, Max, guardingCompartment)
 		getObjects()->update(kObject53, kEntityMax, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 		if (getSoundQueue()->isBuffered(kEntityMax))
-			getSoundQueue()->processEntry(kEntityMax);
+			getSoundQueue()->fade(kEntityMax);
 
 		setCallback((savepoint.action == kActionKnock) ? 1 : 2);
 		setup_playSound((savepoint.action == kActionKnock) ? "LIB012" : "LIB013");
@@ -232,7 +232,7 @@ IMPLEMENT_FUNCTION(8, Max, inCageFriendly)
 		}
 
 		if (getSoundQueue()->isBuffered(kEntityMax))
-			getSoundQueue()->processEntry(kEntityMax);
+			getSoundQueue()->fade(kEntityMax);
 
 		getAction()->playAnimation(kEventCathMaxLickHand);
 		getScenes()->processScene();
@@ -259,7 +259,7 @@ IMPLEMENT_FUNCTION(8, Max, inCageFriendly)
 			break;
 
 		if (getSoundQueue()->isBuffered(kEntityMax))
-			getSoundQueue()->processEntry(kEntityMax);
+			getSoundQueue()->fade(kEntityMax);
 
 		getSound()->playSound(kEntityPlayer, "LIB026");
 		getAction()->playAnimation(kEventCathMaxFree);
@@ -483,16 +483,16 @@ IMPLEMENT_FUNCTION(14, Max, inCageMad)
 
 		case 1:
 			if (getSoundQueue()->isBuffered(kEntityMax))
-				getSoundQueue()->removeFromQueue(kEntityMax);
+				getSoundQueue()->stop(kEntityMax);
 
 			getAction()->playAnimation(kEventCathMaxCage);
-			getSoundQueue()->setupEntry(kSoundType7, kEntityMax);
+			getSoundQueue()->assignNISLink(kEntityMax);
 			getScenes()->processScene();
 			break;
 
 		case 2:
 			if (getSoundQueue()->isBuffered(kEntityMax))
-				getSoundQueue()->processEntry(kEntityMax);
+				getSoundQueue()->fade(kEntityMax);
 
 			getSound()->playSound(kEntityPlayer, "LIB026");
 			getAction()->playAnimation(kEventCathMaxFree);

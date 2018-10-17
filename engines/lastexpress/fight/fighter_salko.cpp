@@ -96,7 +96,7 @@ void FighterPlayerSalko::update() {
 	if (_frame && checkFrame(2)) {
 
 		if (_opponent->getCountdown() <= 0) {
-			getSoundQueue()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->stop(kEntityTables0);
 			_fight->bailout(Fight::kFightEndWin);
 
 			return;
@@ -185,7 +185,7 @@ void FighterOpponentSalko::update() {
 
 	if (_frame && checkFrame(2)) {
 		if (_opponent->getCountdown() <= 0) {
-			getSoundQueue()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->stop(kEntityTables0);
 			_fight->bailout(Fight::kFightEndLost);
 
 			// Stop processing

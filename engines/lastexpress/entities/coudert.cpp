@@ -2013,7 +2013,7 @@ IMPLEMENT_FUNCTION(37, Coudert, function37)
 
 	case kActionDefault:
 		if (getSoundQueue()->isBuffered(kEntityCoudert))
-			getSoundQueue()->processEntry(kEntityCoudert);
+			getSoundQueue()->fade(kEntityCoudert);
 
 		if (ENTITY_PARAM(0, 7)) {
 			getData()->entityPosition = kPosition_8200;

@@ -1944,7 +1944,7 @@ void Action::playAnimation(EventIndex index, bool debugMode) const {
 
 		if (getGlobalTimer()) {
 			if (getSoundQueue()->isBuffered("TIMER")) {
-				getSoundQueue()->processEntry("TIMER");
+				getSoundQueue()->fade("TIMER");
 				setGlobalTimer(105);
 			}
 		}
@@ -1962,7 +1962,7 @@ void Action::playAnimation(EventIndex index, bool debugMode) const {
 			animation.play();
 
 		if (getSoundQueue()->isBuffered("TIMER"))
-			getSoundQueue()->removeFromQueue("TIMER");
+			getSoundQueue()->stop("TIMER");
 	}
 
 	// Show cursor

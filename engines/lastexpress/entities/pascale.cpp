@@ -464,9 +464,9 @@ IMPLEMENT_FUNCTION(16, Pascale, greetTatiana)
 			getEntities()->updatePositionEnter(kEntityPascale, kCarRestaurant, 67);
 
 			if (getSoundQueue()->isBuffered("TAT1069A"))
-				getSoundQueue()->processEntry("TAT1069A");
+				getSoundQueue()->fade("TAT1069A");
 			else if (getSoundQueue()->isBuffered("TAT1069B"))
-				getSoundQueue()->processEntry("TAT1069B");
+				getSoundQueue()->fade("TAT1069B");
 
 			setCallback(2);
 			setup_playSound("TAT1066");

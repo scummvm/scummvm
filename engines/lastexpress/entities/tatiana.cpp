@@ -1865,7 +1865,7 @@ IMPLEMENT_FUNCTION(46, Tatiana, withAlexei)
 			parameters->param3 = 1;
 
 			if (parameters->param2) {
-				getSoundQueue()->removeFromQueue(kEntityTatiana);
+				getSoundQueue()->stop(kEntityTatiana);
 				getSavePoints()->call(kEntityTatiana, kEntityTatiana, kActionEndSound);
 			}
 		} else {
@@ -2122,7 +2122,7 @@ IMPLEMENT_FUNCTION(50, Tatiana, alexeiDead)
 	case kActionCallback:
 		if (getCallback() == 1) {
 			if (getSoundQueue()->isBuffered("MUS013"))
-				getSoundQueue()->processEntry("MUS013");
+				getSoundQueue()->fade("MUS013");
 
 			getAction()->playAnimation(kEventVassiliDeadAlexei);
 			getSavePoints()->push(kEntityTatiana, kEntityAbbot, kAction104060776);
@@ -2233,10 +2233,10 @@ IMPLEMENT_FUNCTION(54, Tatiana, autistic)
 	case kActionCallback:
 		if (getCallback() == 1) {
 			if (getSoundQueue()->isBuffered("MUS050"))
-				getSoundQueue()->processEntry("MUS050");
+				getSoundQueue()->fade("MUS050");
 
 			if (getSoundQueue()->isBuffered(kEntityTatiana))
-				getSoundQueue()->processEntry(kEntityTatiana);
+				getSoundQueue()->fade(kEntityTatiana);
 
 			getAction()->playAnimation(isNight() ? kEventTatianaVassiliTalkNight : kEventTatianaVassiliTalk);
 			getScenes()->processScene();

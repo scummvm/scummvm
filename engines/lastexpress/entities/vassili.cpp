@@ -292,7 +292,7 @@ IMPLEMENT_FUNCTION(9, Vassili, function9)
 		|| getEntities()->isPlayerPosition(kCarRedSleeping, 41)) {
 
 			if (savepoint.action == kActionDrawScene)
-				getSoundQueue()->processEntry(kEntityVassili);
+				getSoundQueue()->fade(kEntityVassili);
 
 			setup_seizure();
 		} else {

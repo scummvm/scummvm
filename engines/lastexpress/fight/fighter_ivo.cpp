@@ -111,7 +111,7 @@ void FighterPlayerIvo::update() {
 		if (_opponent->getCountdown() <= 0) {
 			setSequenceAndDraw(9, kFightSequenceType1);
 			_opponent->setSequenceAndDraw(8, kFightSequenceType1);
-			getSoundQueue()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->stop(kEntityTables0);
 
 			handleAction(kFightActionWin);
 			return;
@@ -228,7 +228,7 @@ void FighterOpponentIvo::update() {
 		if (_opponent->getCountdown() <= 0) {
 			setSequenceAndDraw(7, kFightSequenceType1);
 			_opponent->setSequenceAndDraw(8, kFightSequenceType1);
-			getSoundQueue()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->stop(kEntityTables0);
 
 			_opponent->handleAction(kFightActionWin);
 

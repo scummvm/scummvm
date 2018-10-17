@@ -3535,9 +3535,9 @@ IMPLEMENT_FUNCTION(69, August, unhookCars)
 		break;
 
 	case kActionDefault:
-		getSoundQueue()->processEntries();
+		getSoundQueue()->endAmbient();
 		if (getSoundQueue()->isBuffered("ARRIVE"))
-			getSoundQueue()->removeFromQueue("ARRIVE");
+			getSoundQueue()->stop("ARRIVE");
 
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventAugustUnhookCarsBetrayal);
@@ -3547,7 +3547,7 @@ IMPLEMENT_FUNCTION(69, August, unhookCars)
 		if (getCallback() == 1) {
 			getAction()->playAnimation(getProgress().field_C ? kEventAugustUnhookCarsBetrayal : kEventAugustUnhookCars);
 			getEntities()->clearSequences(kEntityAugust);
-			getSoundQueue()->resetState();
+			getSoundQueue()->startAmbient();
 			getSound()->playSound(kEntityPlayer, "MUS050");
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 85, 1);
 			getSavePoints()->pushAll(kEntityAugust, kActionProceedChapter5);

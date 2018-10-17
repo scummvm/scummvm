@@ -315,7 +315,7 @@ IMPLEMENT_FUNCTION(12, Anna, practiceMusic)
 			params->param4 = 0;
 			params->param5 = 1;
 		} else {
-			getSoundQueue()->removeFromQueue(kEntityAnna);
+			getSoundQueue()->stop(kEntityAnna);
 
 			getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocation1, kCursorNormal, kCursorNormal);
 			getObjects()->update(kObject53, kEntityAnna, kObjectLocation1, kCursorNormal, kCursorNormal);
@@ -326,7 +326,7 @@ IMPLEMENT_FUNCTION(12, Anna, practiceMusic)
 		break;
 
 	case kActionOpenDoor:
-		getSoundQueue()->removeFromQueue(kEntityAnna);
+		getSoundQueue()->stop(kEntityAnna);
 		setCallback(3);
 		setup_playSound("LIB013");
 		break;
@@ -343,7 +343,7 @@ IMPLEMENT_FUNCTION(12, Anna, practiceMusic)
 		getEntities()->drawSequenceLeft(kEntityAnna, "418C");
 
 		if (getSoundQueue()->isBuffered(kEntityAnna))
-			getSoundQueue()->processEntry(kEntityAnna);
+			getSoundQueue()->fade(kEntityAnna);
 
 		getSound()->playSound(kEntityAnna, "ANN2135A");
 		break;
@@ -1533,7 +1533,7 @@ IMPLEMENT_FUNCTION(35, Anna, wakeNight)
 	case kActionKnock:
 	case kActionOpenDoor:
 		if (getSoundQueue()->isBuffered(kEntityAnna))
-			getSoundQueue()->processEntry(kEntityAnna);
+			getSoundQueue()->fade(kEntityAnna);
 
 		if (savepoint.action == kActionKnock)
 			getSound()->playSound(kEntityPlayer, "LIB012");
@@ -1576,7 +1576,7 @@ IMPLEMENT_FUNCTION(35, Anna, wakeNight)
 
 	case kAction226031488:
 		if (getSoundQueue()->isBuffered(kEntityAnna))
-			getSoundQueue()->processEntry(kEntityAnna);
+			getSoundQueue()->fade(kEntityAnna);
 
 		getSavePoints()->push(kEntityAnna, kEntityMax, kAction71277948);
 		break;
@@ -3175,7 +3175,7 @@ IMPLEMENT_FUNCTION(63, Anna, deadBaggageCompartment)
 	// Anna will get killed...
 	case kAction272177921:
 		if (getSoundQueue()->isBuffered("MUS012"))
-			getSoundQueue()->processEntry("MUS012");
+			getSoundQueue()->fade("MUS012");
 
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventAnnaKilled);
@@ -3961,7 +3961,7 @@ IMPLEMENT_FUNCTION(80, Anna, finalSequence)
 
 		case 1:
 			if (getSoundQueue()->isBuffered(kEntityAnna))
-				getSoundQueue()->processEntry(kEntityAnna);
+				getSoundQueue()->fade(kEntityAnna);
 
 			getAction()->playAnimation(kEventKronosBringFirebird);
 			getScenes()->loadSceneFromItem(kItemFirebird);
@@ -3977,7 +3977,7 @@ IMPLEMENT_FUNCTION(80, Anna, finalSequence)
 			getProgress().isEggOpen = true;
 
 			if (getSoundQueue()->isBuffered(kEntityAnna))
-				getSoundQueue()->processEntry(kEntityAnna);
+				getSoundQueue()->fade(kEntityAnna);
 
 			getAction()->playAnimation(kEventKronosOpenFirebird);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 3);

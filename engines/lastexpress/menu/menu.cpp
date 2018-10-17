@@ -349,10 +349,10 @@ void Menu::show(bool doSavegame, SavegameType type, uint32 value) {
 	init(doSavegame, type, value);
 
 	// Setup sound
-	getSoundQueue()->resetQueue();
-	getSoundQueue()->resetQueue(kSoundType11, kSoundType13);
+	getSoundQueue()->stopAmbient();
+	getSoundQueue()->stopAllExcept(kSoundTagIntro, kSoundTagMenu);
 	if (getSoundQueue()->isBuffered("TIMER"))
-		getSoundQueue()->removeFromQueue("TIMER");
+		getSoundQueue()->stop("TIMER");
 
 	// Init flags & misc
 	_isShowingCredits = false;
@@ -412,7 +412,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 		if (clicked) {
 			showFrame(kOverlayButtons, kButtonQuitPushed, true);
 
-			getSoundQueue()->clearStatus();
+			getSoundQueue()->stopAll();
 			getSoundQueue()->updateQueue();
 			getSound()->playSound(kEntityPlayer, "LIB046");
 
@@ -485,7 +485,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 		setLogicEventHandlers();
 
 		if (_index) {
-			getSoundQueue()->processEntry(kSoundType11);
+			getSoundQueue()->fade(kSoundTagIntro);
 		} else {
 			if (!getFlags()->mouseRightClick) {
 				getScenes()->loadScene((SceneIndex)(5 * _gameId + 3));
@@ -497,7 +497,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 						getScenes()->loadScene((SceneIndex)(5 * _gameId + 5));
 
 						if (!getFlags()->mouseRightClick) {
-							getSoundQueue()->processEntry(kSoundType11);
+							getSoundQueue()->fade(kSoundTagIntro);
 
 							// Show intro
 							Animation animation;
@@ -513,7 +513,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 			if (!getEvent(kEventIntro))	{
 				getEvent(kEventIntro) = 1;
 
-				getSoundQueue()->processEntry(kSoundType11);
+				getSoundQueue()->fade(kSoundTagIntro);
 			}
 		}
 
@@ -1119,7 +1119,7 @@ void Menu::updateTime(uint32 time) {
 
 	if (_time != time) {
 		if (getSoundQueue()->isBuffered(kEntityChapters))
-			getSoundQueue()->removeFromQueue(kEntityChapters);
+			getSoundQueue()->stop(kEntityChapters);
 
 		getSound()->playSoundWithSubtitles((_currentTime >= _time) ? "LIB042" : "LIB041", kSoundTypeMenu | kSoundFlagFixedVolume | kVolumeFull, kEntityChapters);
 		adjustIndex(_currentTime, _time, false);
@@ -1251,7 +1251,7 @@ void Menu::adjustTime() {
 	}
 
 	if (_currentTime == _time && getSoundQueue()->isBuffered(kEntityChapters))
-		getSoundQueue()->removeFromQueue(kEntityChapters);
+		getSoundQueue()->stop(kEntityChapters);
 
 	_clock->draw(_time);
 	_trainLine->draw(_time);

@@ -165,7 +165,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 
 		} else if (ev.type == Common::EVENT_RBUTTONDOWN && getGlobalTimer()) {
 			if (getSoundQueue()->isBuffered("TIMER"))
-				getSoundQueue()->removeFromQueue("TIMER");
+				getSoundQueue()->stop("TIMER");
 
 			setGlobalTimer(900);
 		}

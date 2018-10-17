@@ -1064,7 +1064,7 @@ void SceneManager::preProcessScene(SceneIndex *index) {
 	Scene *newScene = getScenes()->get(*index);
 	if (getSoundQueue()->isBuffered(kEntityTables4)) {
 		if (newScene->type != Scene::kTypeReadText || newScene->param1)
-			getSoundQueue()->processEntry(kEntityTables4);
+			getSoundQueue()->fade(kEntityTables4);
 	}
 
 	// Cleanup beetle sequences
@@ -1162,7 +1162,7 @@ void SceneManager::postProcessScene() {
 		if (getState()->time >= kTimeCityGalanta || getProgress().field_18 == 4)
 			break;
 
-		getSoundQueue()->processEntry(kSoundType7);
+		getSoundQueue()->fade(kSoundTagLink);
 		getSound()->playSound(kEntityTrain, "LIB050", kVolumeFull);
 
 		switch (getProgress().chapter) {

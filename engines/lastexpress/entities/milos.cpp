@@ -1592,7 +1592,7 @@ IMPLEMENT_FUNCTION(29, Milos, chapter4Handler)
 
 	case kAction221683008:
 		if (getSoundQueue()->isBuffered(kEntityMilos))
-			getSoundQueue()->processEntry(kEntityMilos);
+			getSoundQueue()->fade(kEntityMilos);
 
 		params->param1 = 1;
 		getSavePoints()->push(kEntityMilos, kEntityCoudert, kAction123199584);
@@ -1735,14 +1735,14 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 
 		case 2:
 			if (getSoundQueue()->isBuffered("MUS050"))
-				getSoundQueue()->processEntry("MUS050");
+				getSoundQueue()->fade("MUS050");
 
 			if (getSoundQueue()->isBuffered("ARRIVE"))
-				getSoundQueue()->removeFromQueue("ARRIVE");
+				getSoundQueue()->stop("ARRIVE");
 
-			getSoundQueue()->processEntries();
+			getSoundQueue()->endAmbient();
 			getAction()->playAnimation(getProgress().isNightTime ? kEventLocomotiveMilosDay : kEventLocomotiveMilosNight);
-			getSoundQueue()->setupEntry(kSoundType7, kEntityMilos);
+			getSoundQueue()->assignNISLink(kEntityMilos);
 			getScenes()->loadSceneFromPosition(kCarCoalTender, 1);
 			break;
 
@@ -1754,7 +1754,7 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 		case 4:
 			getAction()->playAnimation(kEventLocomotiveRestartTrain);
 			getAction()->playAnimation(kEventLocomotiveOldBridge);
-			getSoundQueue()->resetState();
+			getSoundQueue()->startAmbient();
 			getState()->time = kTime2983500;
 
 			setCallback(5);
@@ -1798,7 +1798,7 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 			break;
 		}
 
-		getSoundQueue()->processEntry(kEntityMilos);
+		getSoundQueue()->fade(kEntityMilos);
 		if (getState()->time < kTime2949300)
 			getState()->time = kTime2949300;
 

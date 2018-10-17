@@ -31,24 +31,27 @@ namespace LastExpress {
 // Sound
 //////////////////////////////////////////////////////////////////////////
 
-enum SoundType {
-	kSoundTypeNone = 0,
-	kSoundType1,
-	kSoundType2,
-	kSoundType3,
-	kSoundType4,
-	kSoundType5,
-	kSoundType6,
-	kSoundType7,
-	kSoundType8,
-	kSoundType9,
-	kSoundType10,
-	kSoundType11,
-	kSoundType12,
-	kSoundType13,
-	kSoundType14,
-	kSoundType15,
-	kSoundType16
+enum SoundTag {
+	kSoundTagNone        = 0,
+	kSoundTagAmbient     = 1,
+	kSoundTagOldAmbient  = 2,
+	kSoundTagWalla       = 3,
+	kSoundTagOldWalla    = 4,
+	kSoundTagConcert     = 5,
+	// 6 is unused
+	kSoundTagLink        = 7,
+	kSoundTagOldLink     = 8,
+	kSoundTagNIS         = 9,
+	kSoundTagOldNIS      = 10,
+	kSoundTagIntro       = 11,
+	// 12 is unused
+	kSoundTagMenu        = 13,
+	kSoundTagOldMenu     = 14,
+	kSoundTagCredits     = 15,
+	kSoundTagFirstNormal = 16
+	// every normal sound gets its own tag from an incrementing counter
+	// initialized as kSoundTagFirstNormal,
+	// so tags can have values not covered by this enum
 };
 
 /*
@@ -158,10 +161,9 @@ enum SoundFlag {
 	kSoundFlagUnmuteRequested = 0x80000000  // purely informational
 };
 
-enum SoundState {
-	kSoundStateNone = 0,
-	kSoundState1    = 1,
-	kSoundState2    = 2
+enum AmbientSoundState {
+	kAmbientSoundEnabled  = 1,
+	kAmbientSoundSteam    = 2
 };
 
 //////////////////////////////////////////////////////////////////////////

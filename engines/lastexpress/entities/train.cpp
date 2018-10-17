@@ -346,7 +346,7 @@ label_process:
 		} else {
 			params->param6 = 0;
 			if (getSoundQueue()->isBuffered("ZFX1001", true))
-				getSoundQueue()->removeFromQueue("ZFX1001");
+				getSoundQueue()->stop("ZFX1001");
 		}
 
 		// Draw moving background behind windows
@@ -568,7 +568,7 @@ void Train::resetParam8() {
 	 && !getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params1->param1, (EntityPosition)params1->param3)) {
 
 		if (getSoundQueue()->isBuffered((const char *)&params1->seq))
-			getSoundQueue()->processEntry((const char *)&params1->seq);
+			getSoundQueue()->fade((const char *)&params1->seq);
 
 		params->param8 = 0;
 	}

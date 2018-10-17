@@ -399,7 +399,7 @@ IMPLEMENT_FUNCTION(11, Mahmud, function11)
 
 	case kAction123852928:
 		if (getSoundQueue()->isBuffered(kEntityMahmud))
-			getSoundQueue()->processEntry(kEntityMahmud);
+			getSoundQueue()->fade(kEntityMahmud);
 
 		getObjects()->update(kObjectCompartment5, kEntityTrain, kObjectLocation3, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObjectCompartment6, kEntityTrain, kObjectLocation3, kCursorHandKnock, kCursorHand);

@@ -47,7 +47,7 @@ public:
 	void playFightSound(byte action, byte a4);
 	void playLocomotiveSound();
 	void playWarningCompartment(EntityIndex entity, ObjectIndex compartment);
-	void playLoopingSound(int param);
+	void playAmbientSound(int param);
 
 	// Dialog & Letters
 	void readText(int id);
@@ -68,7 +68,7 @@ public:
 	uint32 getData0() { return _data0; }
 	int32 getData1() { return _data1; }
 	int32 getData2() { return _data2; }
-	uint32 getLoopingSoundDuration() { return _loopingSoundDuration; }
+	uint32 getAmbientSoundDuration() { return _ambientSoundDuration; }
 
 	// Setters
 	void setData1(int32 data) { _data1 = data; }
@@ -81,7 +81,7 @@ private:
 	uint32 _lastWarning[12];
 
 	// Looping sound
-	int _loopingSoundDuration;
+	int _ambientSoundDuration;
 
 	// Unknown data
 	uint32 _data0;

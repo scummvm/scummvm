@@ -108,7 +108,7 @@ void FighterPlayerAnna::handleAction(FightAction action) {
 	}
 
 	if (_field_34 > 4) {
-		getSoundQueue()->removeFromQueue(kEntityTables0);
+		getSoundQueue()->stop(kEntityTables0);
 		_fight->bailout(Fight::kFightEndWin);
 	}
 }
@@ -176,7 +176,7 @@ void FighterOpponentAnna::update() {
 			_opponent->handleAction((FightAction)_sequenceIndex);
 
 		if (_opponent->getCountdown() <= 0) {
-			getSoundQueue()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->stop(kEntityTables0);
 			handleAction(kFightActionLost);
 		}
 	}

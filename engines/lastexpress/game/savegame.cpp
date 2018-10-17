@@ -509,7 +509,7 @@ void SaveLoad::loadLastGame() {
 	_gameTicksLastSavegame = getState()->timeTicks;
 
 	if (header.keepIndex) {
-		getSoundQueue()->clearQueue();
+		getSoundQueue()->destroyAllSound();
 
 		readEntry(&type, &entity, &val, false);
 	}

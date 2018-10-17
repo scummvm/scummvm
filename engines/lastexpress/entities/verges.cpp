@@ -705,7 +705,7 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 
 	case kActionCallback:
 		if (getCallback() == 1) {
-			getSoundQueue()->processEntry(kEntityVerges);
+			getSoundQueue()->fade(kEntityVerges);
 			getAction()->playAnimation(kEventGendarmesArrestation);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverPolice1, true);
 		}
@@ -1781,10 +1781,10 @@ IMPLEMENT_FUNCTION(40, Verges, chapter5Handler)
 
 	case kActionOpenDoor:
 		if (getSoundQueue()->isBuffered(kEntityVerges))
-			getSoundQueue()->processEntry(kEntityVerges);
+			getSoundQueue()->fade(kEntityVerges);
 
 		if (getSoundQueue()->isBuffered("MUS050"))
-			getSoundQueue()->processEntry("MUS050");
+			getSoundQueue()->fade("MUS050");
 
 		getObjects()->update(kObject65, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
 
