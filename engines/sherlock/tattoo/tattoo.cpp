@@ -204,6 +204,11 @@ void TattooEngine::saveConfig() {
 	ConfMan.flushToDisk();
 }
 
+bool TattooEngine::canLoadGameStateCurrently() {
+	TattooUserInterface &ui = *(TattooUserInterface *)_ui;
+	return _canLoadSave && !ui._creditsWidget.active() && !_runningProlog;
+}
+
 bool TattooEngine::canSaveGameStateCurrently() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_ui;
 	return _canLoadSave && !ui._creditsWidget.active() && !_runningProlog;
