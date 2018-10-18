@@ -211,10 +211,9 @@ void Scott::Delay(int seconds) {
 
 	glk_request_timer_events(1000 * seconds);
 
-	do
-	{
+	do {
 		glk_select(&ev);
-	} while (ev.type != evtype_Timer);
+	} while (ev.type != evtype_Timer && ev.type != evtype_Quit);
 
 	glk_request_timer_events(0);
 }
@@ -283,8 +282,7 @@ int Scott::MatchUpItem(const char *text, int loc) {
 	return -1;
 }
 
-char *Scott::ReadString(Common::SeekableReadStream *f)
-{
+char *Scott::ReadString(Common::SeekableReadStream *f) {
 	char tmp[1024];
 	char *t;
 	int c, nc;
@@ -296,12 +294,12 @@ char *Scott::ReadString(Common::SeekableReadStream *f)
 		Fatal("Initial quote expected");
 	}
 
-	do {
-		c = f->readByte();
-		if (c == EOF)
+	for (;;) {
+		if (f->pos() >= f->size())
 			Fatal("EOF in string");
-		if (c == '"')
-		{
+
+		c = f->readByte();
+		if (c == '"') {
 			nc = f->readByte();
 			if (nc != '"') {
 				f->seek(-1, SEEK_CUR);
