@@ -56,9 +56,8 @@ Common::Error GargoyleEngine::run() {
 	initialize();
 
 	Common::File f;
-	if (!f.open(getFilename()))
-		error("Could not open game file");
-	runGame(&f);
+	if (f.open(getFilename()))
+		runGame(&f);
 
 	return Common::kNoError;
 }
