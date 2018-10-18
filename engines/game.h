@@ -148,6 +148,17 @@ struct DetectedGame {
 	 */
 	GameSupportLevel gameSupportLevel;
 
+	/**
+	 * A list of extra keys to write to the configuration file
+	 */
+	Common::StringMap _extraConfigEntries;
+
+	/**
+	 * Convenience operator for adding entries to the _extraConfigEntries
+	 */
+	Common::String &operator[](const Common::String &key) {
+		return _extraConfigEntries[key];
+	}
 private:
 	/**
 	 * Update the description string by appending (EXTRA/PLATFORM/LANG) to it.
