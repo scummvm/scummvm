@@ -94,10 +94,10 @@ public:
 
 	void glk_put_char(unsigned char ch);
 	void glk_put_char_stream(strid_t str, unsigned char ch);
-	void glk_put_string(char *s);
-	void glk_put_string_stream(strid_t str, char *s);
+	void glk_put_string(const char *s);
+	void glk_put_string_stream(strid_t str, const char *s);
 	void glk_put_buffer(char *buf, glui32 len);
-	void glk_put_buffer_stream(strid_t str, char *buf, glui32 len);
+	void glk_put_buffer_stream(strid_t str, const char *buf, glui32 len);
 	void glk_set_style(glui32 styl);
 	void glk_set_style_stream(strid_t str, glui32 styl);
 

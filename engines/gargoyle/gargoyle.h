@@ -24,10 +24,12 @@
 #define GARGOYLE_GARGOLE_H
 
 #include "common/scummsys.h"
+#include "common/random.h"
 #include "common/system.h"
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
+#include "graphics/screen.h"
 
 namespace Gargoyle {
 
@@ -67,6 +69,8 @@ private:
 	void initialize();
 protected:
 	const GargoyleGameDescription *_gameDescription;
+	Graphics::Screen *_screen;
+	Common::RandomSource _random;
 	int _loadSaveSlot;
 
 	// Engine APIs
@@ -76,7 +80,7 @@ protected:
 	/**
 	 * Main game loop for the individual interpreters
 	 */
-	virtual void main() = 0;
+	virtual void runGame(Common::SeekableReadStream *gameFile) = 0;
 public:
 	GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc);
 	virtual ~GargoyleEngine();
