@@ -75,6 +75,10 @@ protected:
 
 	// Engine APIs
 	virtual Common::Error run();
+
+	/**
+	  * Returns true whether a given feature is supported by the engine
+	  */
 	virtual bool hasFeature(EngineFeature f) const;
 
 	/**
@@ -85,10 +89,30 @@ public:
 	GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc);
 	virtual ~GargoyleEngine();
 
+	/**
+	 * Returns the bitset of game features
+	 */
 	uint32 getFeatures() const;
+
+	/**
+	 * Returns whether the game is a demo
+	 */
 	bool isDemo() const;
+
+	/**
+	 * Returns the language
+	 */
 	Common::Language getLanguage() const;
+
+	/**
+	 * Returns the running interpreter type
+	 */
 	InterpreterType getInterpreterType() const;
+
+	/**
+	 * Returns the primary filename for the game
+	 */
+	const Common::String &GargoyleEngine::getFilename() const;
 };
 
 } // End of namespace Gargoyle

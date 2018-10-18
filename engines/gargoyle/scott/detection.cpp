@@ -58,6 +58,8 @@ void ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			if (p->_filesize) {
 				// Found a match
 				DetectedGame gd("scott", p->_desc, Common::EN_ANY, Common::kPlatformUnknown, "Scott");
+				gd.addExtraEntry("filename", file->getName());
+
 				gameList.push_back(gd);
 			}
 

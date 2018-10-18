@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "engines/util.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
@@ -54,8 +55,10 @@ void GargoyleEngine::initialize() {
 Common::Error GargoyleEngine::run() {
 	initialize();
 
-	// TODO: Pass proper gamefile
-	runGame(nullptr);
+	Common::File f;
+	if (!f.open(getFilename()))
+		error("Could not open game file");
+	runGame(&f);
 
 	return Common::kNoError;
 }
