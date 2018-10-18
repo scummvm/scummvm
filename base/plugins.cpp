@@ -580,6 +580,11 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 	addStringToConf("extra", game.extra, domain);
 	addStringToConf("guioptions", game.getGUIOptions(), domain);
 
+	// Add any extra configuration keys
+	for (Common::StringMap::iterator i = game._extraConfigEntries.begin();
+			i != game._extraConfigEntries.end(); ++i)
+		addStringToConf((*i)._key, (*i)._value, domain);
+
 	// TODO: Setting the description field here has the drawback
 	// that the user does never notice when we upgrade our descriptions.
 	// It might be nice to leave this field empty, and only set it to
