@@ -37,9 +37,13 @@ namespace Gargoyle {
 
 struct GargoyleGameDescription {
 	ADGameDescription desc;
+	Common::String filename;
 	InterpreterType interpType;
 };
 
+const Common::String &GargoyleEngine::getFilename() const {
+	return _gameDescription->filename;
+}
 uint32 GargoyleEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
@@ -63,6 +67,7 @@ static const PlainGameDescriptor gargoyleGames[] = {
 	{0, 0}
 };
 
+#include "common/config-manager.h"
 #include "gargoyle/detection_tables.h"
 #include "gargoyle/scott/detection.h"
 #include "gargoyle/scott/scott.h"
@@ -89,6 +94,8 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 
 	virtual DetectedGames detectGames(const Common::FSList &fslist) const override;
+
+	virtual ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const override;
 };
 
 bool GargoyleMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -108,7 +115,9 @@ bool Gargoyle::GargoyleEngine::hasFeature(EngineFeature f) const {
 }
 
 bool GargoyleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Gargoyle::GargoyleGameDescription *gd = (const Gargoyle::GargoyleGameDescription *)desc;
+	Gargoyle::GargoyleGameDescription *gd = (Gargoyle::GargoyleGameDescription *)desc;
+	gd->filename = ConfMan.get("filename");
+
 	switch (gd->interpType) {
 	case Gargoyle::INTERPRETER_SCOTT:
 		*engine = new Gargoyle::Scott::Scott(syst, gd);
@@ -140,6 +149,24 @@ DetectedGames GargoyleMetaEngine::detectGames(const Common::FSList &fslist) cons
 	DetectedGames detectedGames;
 	Gargoyle::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
 
+	return detectedGames;
+}
+
+static Gargoyle::GargoyleGameDescription gameDescription;
+
+ADDetectedGames GargoyleMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
+	ADDetectedGames detectedGames;
+	static char gameId[100];
+	strcpy(gameId, ConfMan.get("gameid").c_str());
+
+	gameDescription.desc.gameId = gameId;
+	gameDescription.desc.language = language;
+	gameDescription.desc.platform = platform;
+	gameDescription.desc.extra = extra.c_str();
+	gameDescription.filename = ConfMan.get("filename");
+
+	ADDetectedGame dg((ADGameDescription *)&gameDescription);
+	detectedGames.push_back(dg);
 	return detectedGames;
 }
 
