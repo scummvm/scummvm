@@ -68,6 +68,7 @@ static const PlainGameDescriptor gargoyleGames[] = {
 };
 
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "gargoyle/detection_tables.h"
 #include "gargoyle/scott/detection.h"
 #include "gargoyle/scott/scott.h"
@@ -158,15 +159,19 @@ ADDetectedGames GargoyleMetaEngine::detectGame(const Common::FSNode &parent, con
 	ADDetectedGames detectedGames;
 	static char gameId[100];
 	strcpy(gameId, ConfMan.get("gameid").c_str());
+	Common::String filename = ConfMan.get("filename");
 
-	gameDescription.desc.gameId = gameId;
-	gameDescription.desc.language = language;
-	gameDescription.desc.platform = platform;
-	gameDescription.desc.extra = extra.c_str();
-	gameDescription.filename = ConfMan.get("filename");
+	if (parent.getChild(filename).exists()) {
+		gameDescription.desc.gameId = gameId;
+		gameDescription.desc.language = language;
+		gameDescription.desc.platform = platform;
+		gameDescription.desc.extra = extra.c_str();
+		gameDescription.filename = filename;
 
-	ADDetectedGame dg((ADGameDescription *)&gameDescription);
-	detectedGames.push_back(dg);
+		ADDetectedGame dg((ADGameDescription *)&gameDescription);
+		detectedGames.push_back(dg);
+	}
+
 	return detectedGames;
 }
 
