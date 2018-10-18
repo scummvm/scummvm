@@ -32,10 +32,12 @@
 namespace Gargoyle {
 
 GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc) :
-	_gameDescription(gameDesc), Engine(syst) {
+	_gameDescription(gameDesc), Engine(syst), _random("Gargoyle") {
+	_screen = nullptr;
 }
 
 GargoyleEngine::~GargoyleEngine() {
+	delete _screen;
 }
 
 void GargoyleEngine::initialize() {
@@ -46,11 +48,14 @@ void GargoyleEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	initGraphics(640, 480, false);
+	_screen = new Graphics::Screen();
 }
 
 Common::Error GargoyleEngine::run() {
 	initialize();
-	main();
+
+	// TODO: Pass proper gamefile
+	runGame(nullptr);
 
 	return Common::kNoError;
 }
