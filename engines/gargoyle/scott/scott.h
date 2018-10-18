@@ -45,6 +45,9 @@ namespace Scott {
 #define TRS80_STYLE	8		// Display in style used on TRS-80
 #define PREHISTORIC_LAMP 16	// Destroy the lamp (very old databases)
 
+#define TRS80_LINE	"\n<------------------------------------------------------------>\n"
+#define MyLoc	(GameHeader.PlayerRoom)
+
 struct Header {
  	int Unknown;
 	int NumItems;
@@ -58,17 +61,30 @@ struct Header {
 	int LightTime;
 	int NumMessages;
 	int TreasureRoom;
+
+	Header() : Unknown(0), NumItems(0), NumActions(0), NumWords(0), NumRooms(0),
+		MaxCarry(0), PlayerRoom(0), Treasures(0), WordLength(0), LightTime(0),
+		NumMessages(0), TreasureRoom(0) {}
 };
 
 struct Action {
 	uint Vocab;
 	uint Condition[5];
 	uint action[2];
+
+	Action() : Vocab(0) {
+		Common::fill(&Condition[0], &Condition[5], 0);
+		Common::fill(&action[0], &action[2], 0);
+	}
 };
 
 struct Room {
 	char *Text;
 	short Exits[6];
+
+	Room() : Text(0) {
+		Common::fill(&Exits[0], &Exits[6], 0);
+	}
 };
 
 struct Item {
@@ -76,28 +92,84 @@ struct Item {
 	byte Location;
 	byte InitialLoc;
 	char *AutoGet;
+
+	Item() : Text(nullptr), Location(0), InitialLoc(0), AutoGet(nullptr) {}
 };
 
 struct Tail {
 	int Version;
 	int AdventureNumber;
 	int Unknown;
+
+	Tail() : Version(0), AdventureNumber(0), Unknown(0) {}
 };
 
 /**
  * Scott Adams game interpreter
  */
 class Scott : public Glk {
+private:
+	Header GameHeader;
+	Item *Items;
+	Room *Rooms;
+	const char **Verbs;
+	const char **Nouns;
+	const char **Messages;
+	Action *Actions;
+	int LightRefill;
+	char NounText[16];
+	int Counters[16];   ///< Range unknown
+	int CurrentCounter;
+	int SavedRoom;
+	int RoomSaved[16];  ///< Range unknown
+	int Options;        ///< Option flags set
+	int Width;		    ///< Terminal width
+	int TopHeight;      ///< Height of top window
+
+	bool split_screen;
+	winid_t Bottom, Top;
+	uint32 BitFlags;    ///< Might be >32 flags - I haven't seen >32 yet
+private:
+	/**
+	 * Initialization code
+	 */
+	void initialize();
+
+	void Display(winid_t w, const char *fmt, ...);
+	void Delay(int seconds);
+	void Fatal(const char *x);
+	void ClearScreen(void);
+	void *MemAlloc(int size);
+	bool RandomPercent(uint n);
+	int CountCarried(void);
+	const char *MapSynonym(const char *word);
+	int MatchUpItem(const char *text, int loc);
+	char *ReadString(Common::SeekableReadStream *f);
+	void LoadDatabase(Common::SeekableReadStream *f, int loud);
+	void Output(const char *a);
+	void OutputNumber(int a);
+	void Look(void);
+	int WhichWord(const char *word, const char **list);
+	void LineInput(char *buf, size_t n);
+	void SaveGame(void);
+	void LoadGame(void);
+	int GetInput(int *vb, int *no);
+	int PerformLine(int ct);
+	int PerformActions(int vb, int no);
+
+	int xstrcasecmp(const char *, const char *);
+	int xstrncasecmp(const char *, const char *, size_t);
+	void readInts(Common::SeekableReadStream *f, size_t count, ...);
 public:
 	/**
 	 * Constructor
 	 */
-	Scott(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst, gameDesc) {}
+	Scott(OSystem *syst, const GargoyleGameDescription *gameDesc);
 
 	/**
 	 * Execute the game
 	 */
-	virtual void main();
+	virtual void runGame(Common::SeekableReadStream *gameFile) override;
 };
 
 } // End of namespace Scott

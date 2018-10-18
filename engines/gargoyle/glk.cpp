@@ -191,11 +191,11 @@ void Glk::glk_put_char_stream(strid_t str, unsigned char ch) {
 	// TODO
 }
 
-void Glk::glk_put_string(char *s) {
+void Glk::glk_put_string(const char *s) {
 	// TODO
 }
 
-void Glk::glk_put_string_stream(strid_t str, char *s) {
+void Glk::glk_put_string_stream(strid_t str, const char *s) {
 	// TODO
 }
 
@@ -203,7 +203,7 @@ void Glk::glk_put_buffer(char *buf, glui32 len) {
 	// TODO
 }
 
-void Glk::glk_put_buffer_stream(strid_t str, char *buf, glui32 len) {
+void Glk::glk_put_buffer_stream(strid_t str, const char *buf, glui32 len) {
 	// TODO
 }
 
