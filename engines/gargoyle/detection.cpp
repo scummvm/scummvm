@@ -64,6 +64,7 @@ static const PlainGameDescriptor gargoyleGames[] = {
 };
 
 #include "gargoyle/detection_tables.h"
+#include "gargoyle/scott/detection.h"
 #include "gargoyle/scott/scott.h"
 
 class GargoyleMetaEngine : public AdvancedMetaEngine {
@@ -80,12 +81,14 @@ public:
 		return "Gargoyle Engine (c)";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+
+	virtual DetectedGames detectGames(const Common::FSList &fslist) const override;
 };
 
 bool GargoyleMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -133,6 +136,12 @@ SaveStateDescriptor GargoyleMetaEngine::querySaveMetaInfos(const char *target, i
 	return SaveStateDescriptor();
 }
 
+DetectedGames GargoyleMetaEngine::detectGames(const Common::FSList &fslist) const {
+	DetectedGames detectedGames;
+	Gargoyle::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
+
+	return detectedGames;
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(GARGOYLE)
 	REGISTER_PLUGIN_DYNAMIC(Gargoyle, PLUGIN_TYPE_ENGINE, GargoyleMetaEngine);
