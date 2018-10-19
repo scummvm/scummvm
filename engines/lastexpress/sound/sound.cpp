@@ -119,10 +119,8 @@ SoundManager::SoundManager(LastExpressEngine *engine) : _engine(engine) {
 
 	memset(&_lastWarning, 0, sizeof(_lastWarning));
 
-	// Initialize unknown data
-	_data0 = 0;
-	_data1 = 0;
-	_data2 = 0;
+	_ambientVolumeChangeTimeMS = _ambientVolumeChangeDelayMS = 0;
+	_ambientScheduledVolume = kVolumeNone;
 }
 
 SoundManager::~SoundManager() {
@@ -181,6 +179,10 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, uint32 flag, 
 	return (entry->getTag() != kSoundTagNone);
 }
 
+bool SoundManager::needToChangeAmbientVolume() {
+	return _ambientScheduledVolume && _engine->_system->getMillis() - _ambientVolumeChangeTimeMS >= _ambientVolumeChangeDelayMS;
+}
+
 void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte activateDelay) {
 	int values[5];
 
@@ -195,18 +197,20 @@ void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte activate
 
 	switch (action) {
 	case 36: {
-		int _param3 = (flag <= 9) ? flag + 7 : 16;
+		uint newVolume = (flag <= kVolumeFull - 7) ? flag + 7 : kVolumeFull;
 
-		if (_param3 > 7) {
-			_data0 = (uint)_param3;
-			_data1 = _data2 + 2 * activateDelay;
+		if (newVolume > kVolume7) {
+			_ambientScheduledVolume = (SoundFlag)newVolume;
+			_ambientVolumeChangeTimeMS = _engine->_system->getMillis();
+			_ambientVolumeChangeDelayMS = activateDelay * 1000 / 15;
 		}
 		break;
 		}
 
 	case 37:
-		_data0 = 7;
-		_data1 = _data2 + 2 * activateDelay;
+		_ambientScheduledVolume = kVolume7;
+		_ambientVolumeChangeTimeMS = _engine->_system->getMillis();
+		_ambientVolumeChangeDelayMS = activateDelay * 1000 / 15;
 		break;
 
 	case 150:

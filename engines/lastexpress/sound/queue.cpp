@@ -86,9 +86,9 @@ void SoundQueue::updateQueue() {
 		if (!entry || getFlags()->flag_3 || (entry && entry->getTime() > getSound()->getAmbientSoundDuration())) {
 			getSound()->playAmbientSound(0x45);
 		} else {
-			if (getSound()->getData1() && getSound()->getData2() >= getSound()->getData1()) {
-				entry->setVolumeSmoothly((SoundFlag)getSound()->getData0());
-				getSound()->setData1(0);
+			if (getSound()->needToChangeAmbientVolume()) {
+				entry->setVolumeSmoothly(getSound()->getChangedAmbientVolume());
+				getSound()->clearAmbientVolumeChange();
 			}
 		}
 	}

@@ -65,13 +65,12 @@ public:
 
 	// Accessors
 	SoundQueue *getQueue() { return _queue; }
-	uint32 getData0() { return _data0; }
-	int32 getData1() { return _data1; }
-	int32 getData2() { return _data2; }
 	uint32 getAmbientSoundDuration() { return _ambientSoundDuration; }
+	bool needToChangeAmbientVolume();
+	SoundFlag getChangedAmbientVolume() { return _ambientScheduledVolume; }
 
 	// Setters
-	void setData1(int32 data) { _data1 = data; }
+	void clearAmbientVolumeChange() { _ambientScheduledVolume = kVolumeNone; }
 
 private:
 	LastExpressEngine *_engine;
@@ -80,13 +79,10 @@ private:
 	// Compartment warnings by Mertens or Coudert
 	uint32 _lastWarning[12];
 
-	// Looping sound
+	// Ambient sound
 	int _ambientSoundDuration;
-
-	// Unknown data
-	uint32 _data0;
-	int32 _data1;
-	int32 _data2;
+	uint32 _ambientVolumeChangeTimeMS, _ambientVolumeChangeDelayMS;
+	SoundFlag _ambientScheduledVolume;
 };
 
 } // End of namespace LastExpress
