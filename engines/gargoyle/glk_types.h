@@ -29,6 +29,7 @@ namespace Gargoyle {
 
 typedef uint32 glui32;
 typedef int32 glsi32;
+class Window;
 
 /**
  * These are the compile-time conditionals that reveal various Glk optional modules.
@@ -48,7 +49,6 @@ typedef int32 glsi32;
  * These types are opaque object identifiers. They're pointers to opaque
  * C structures, which are defined differently by each library.
  */
-typedef struct glk_window_struct  *winid_t;
 typedef struct glk_stream_struct  *strid_t;
 typedef struct glk_fileref_struct *frefid_t;
 typedef struct glk_schannel_struct *schanid_t;
@@ -233,7 +233,7 @@ enum ImageAlign {
 
 struct event_struct {
 	glui32 type;
-	winid_t win;
+	Window *win;
 	glui32 val1, val2;
 };
 typedef event_struct event_t;
@@ -264,6 +264,11 @@ struct glkdate_struct {
 	glsi32 microsec; ///< 0-999999
 };
 typedef glkdate_struct glkdate_t;
+
+union gidispatch_rock_t {
+	glui32 num;
+	void *ptr;
+};
 
 #endif /* GLK_MODULE_DATETIME */
 

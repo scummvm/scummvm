@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	events.o \
 	gargoyle.o \
 	glk.o \
+	windows.o \
 	scott/detection.o \
 	scott/scott.o
 

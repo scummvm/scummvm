@@ -21,6 +21,8 @@
  */
 
 #include "gargoyle/glk.h"
+#include "gargoyle/events.h"
+#include "gargoyle/windows.h"
 
 namespace Gargoyle {
 
@@ -60,15 +62,12 @@ unsigned char Glk::glk_char_to_upper(unsigned char ch) {
 	return '\0';
 }
 
-winid_t Glk::glk_window_get_root(void) {
-	// TODO
-	return nullptr;
+winid_t Glk::glk_window_get_root(void) const {
+	return _windows->getRoot();
 }
 
-winid_t Glk::glk_window_open(winid_t split, glui32 method, glui32 size,
-	glui32 wintype, glui32 rock) {
-	// TODO
-	return nullptr;
+winid_t Glk::glk_window_open(winid_t split, glui32 method, glui32 size, glui32 wintype, glui32 rock) const {
+	return _windows->windowOpen(split, method, size, wintype, rock);
 }
 
 void Glk::glk_window_close(winid_t win, stream_result_t *result) {

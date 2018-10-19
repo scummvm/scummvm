@@ -33,6 +33,9 @@
 
 namespace Gargoyle {
 
+class Events;
+class Windows;
+
 enum InterpreterType {
 	INTERPRETER_SCOTT
 };
@@ -69,7 +72,9 @@ private:
 	void initialize();
 protected:
 	const GargoyleGameDescription *_gameDescription;
+	Events *_events;
 	Graphics::Screen *_screen;
+	Windows *_windows;
 	Common::RandomSource _random;
 	int _loadSaveSlot;
 
