@@ -29,16 +29,20 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "gargoyle/gargoyle.h"
+#include "gargoyle/events.h"
+#include "gargoyle/windows.h"
 
 namespace Gargoyle {
 
 GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc) :
-	_gameDescription(gameDesc), Engine(syst), _random("Gargoyle") {
-	_screen = nullptr;
+		_gameDescription(gameDesc), Engine(syst), _random("Gargoyle"),
+		_events(nullptr), _screen(nullptr), _windows(nullptr) {
 }
 
 GargoyleEngine::~GargoyleEngine() {
+	delete _events;
 	delete _screen;
+	delete _windows;
 }
 
 void GargoyleEngine::initialize() {
@@ -50,6 +54,8 @@ void GargoyleEngine::initialize() {
 
 	initGraphics(640, 480, false);
 	_screen = new Graphics::Screen();
+	_events = new Events();
+	_windows = new Windows(_screen);
 }
 
 Common::Error GargoyleEngine::run() {

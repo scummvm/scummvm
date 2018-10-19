@@ -864,6 +864,7 @@ int Scott::PerformLine(int ct) {
 			case 63:
 				doneit:				Output("The game is now over.\n");
 									glk_exit();
+									break;
 			case 64:
 				break;
 			case 65:
