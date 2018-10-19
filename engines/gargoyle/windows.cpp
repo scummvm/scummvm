@@ -28,8 +28,47 @@ namespace Gargoyle {
 
 #define MAGIC_WINDOW_NUM (9876)
 
+bool Windows::_confLockCols;
+bool Windows::_confLockRows;
+int Windows::_wMarginx;
+int Windows::_wMarginy;
+int Windows::_wPaddingx;
+int Windows::_wPaddingy;
+int Windows::_wBorderx;
+int Windows::_wBordery;
+int Windows::_tMarginx;
+int Windows::_tMarginy;
+int Windows::_wMarginXsave;
+int Windows::_wMarginYsave;
+int Windows::_cols;
+int Windows::_rows;
+int Windows::_imageW;
+int Windows::_imageH;
+int Windows::_cellW;
+int Windows::_cellH;
+int Windows::_baseLine;
+int Windows::_leading;
+
 Windows::Windows(Graphics::Screen *screen) : _screen(screen), _forceRedraw(true), _moreFocus(false),
 		_windowList(nullptr), _rootWin(nullptr), _focusWin(nullptr) {
+	_confLockCols = false;
+	_confLockRows = false;
+	_wMarginx = 15;
+	_wMarginy = 15;
+	_wPaddingx = 0;
+	_wPaddingy = 0;
+	_wBorderx = 1;
+	_wBordery = 1;
+	_tMarginx = 7;
+	_tMarginy = 7;
+	_wMarginXsave = 15;
+	_wMarginYsave = 15;
+	_cols = 60;
+	_rows = 25;
+	_imageW = _imageH = 0;
+	_cellW = _cellH = 0;
+	_baseLine = 15;
+	_leading = 20;
 }
 
 Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
@@ -154,35 +193,32 @@ PairWindow *Windows::newPairWindow(glui32 method, Window *key, glui32 size) {
 }
 
 void Windows::rearrange() {
-	// TODO
-	/*
 	if (_rootWin) {
-		rect_t box;
+		Common::Rect box;
 
-		if (gli_conf_lockcols) {
-			int desired_width = gli_wmarginx_save * 2 + gli_cellw * gli_cols;
-			if (desired_width > gli_image_w)
-				gli_wmarginx = gli_wmarginx_save;
+		if (_confLockCols) {
+			int desired_width = _wMarginXsave * 2 + _cellW * _cols;
+			if (desired_width > _imageW)
+				_wMarginx = _wMarginXsave;
 			else
-				gli_wmarginx = (gli_image_w - gli_cellw * gli_cols) / 2;
+				_wMarginx = (_imageW - _cellW * _cols) / 2;
 		}
 
-		if (gli_conf_lockrows)
-		{
-			int desired_height = gli_wmarginy_save * 2 + gli_cellh * gli_rows;
-			if (desired_height > gli_image_h)
-				gli_wmarginy = gli_wmarginy_save;
+		if (_confLockRows) {
+			int desired_height = _wMarginYsave * 2 + _cellH * _rows;
+			if (desired_height > _imageH)
+				_wMarginy = _wMarginYsave;
 			else
-				gli_wmarginy = (gli_image_h - gli_cellh * gli_rows) / 2;
+				_wMarginy = (_imageH - _cellH * _rows) / 2;
 		}
 
-		box.x0 = gli_wmarginx;
-		box.y0 = gli_wmarginy;
-		box.x1 = gli_image_w - gli_wmarginx;
-		box.y1 = gli_image_h - gli_wmarginy;
-		gli_window_rearrange(_rootWin, &box);
+		box.left = _wMarginx;
+		box.top = _wMarginy;
+		box.right = _imageW - _wMarginx;
+		box.bottom = _imageH - _wMarginy;
+
+		_rootWin->rearrange(box);
 	}
-	*/
 }
 
 /*--------------------------------------------------------------------------*/
@@ -215,6 +251,50 @@ BlankWindow::BlankWindow(uint32 rock) : Window(rock) {
 
 TextGridWindow::TextGridWindow(uint32 rock) : Window(rock) {
 	_type = wintype_TextGrid;
+	width = height = 0;
+	curx = cury = 0;
+	inbuf = nullptr;
+	inorgx = inorgy = 0;
+	inmax = 0;
+	incurs = inlen = 0;
+	inarrayrock.num = 0;
+	line_terminators = nullptr;
+}
+
+void TextGridWindow::rearrange(const Common::Rect &box) {
+	Window::rearrange(box);
+	int newwid, newhgt;
+
+	newwid = box.width() / Windows::_cellW;
+	newhgt = box.height() / Windows::_cellH;
+
+	if (newwid == width && newhgt == height)
+		return;
+
+	lines.resize(newhgt);
+	for (int y = 0; y < newhgt; ++y) {
+		lines[y].resize(newwid);
+		touch(y);
+	}
+
+	attr.clear();
+	width = newwid;
+	height = newhgt;
+}
+
+void TextGridWindow::touch(int line) {
+//	int y = bbox.top + line * Windows::_leading;
+	lines[line].dirty = true;
+	// TODO
+//	winrepaint(bbox.left, y, bbox.right, y + Windows::_leading);
+}
+
+void TextGridWindow::TextGridRow::resize(size_t newSize) {
+	chars.clear();
+	attr.clear();
+	chars.resize(newSize);
+	attr.resize(newSize);
+	Common::fill(&chars[0], &chars[0] + newSize, ' ');
 }
 
 /*--------------------------------------------------------------------------*/
@@ -239,6 +319,25 @@ PairWindow::PairWindow(glui32 method, Window *_key, glui32 _size) : Window(0),
 		backward(dir == winmethod_Left || dir == winmethod_Above),
 		key(key), size(size), keydamage(0), child1(nullptr), child2(nullptr) {
 	_type = wintype_Pair;
+}
+
+/*--------------------------------------------------------------------------*/
+
+WindowStyle::WindowStyle() : font(0), reverse(0) {
+	Common::fill(&bg[0], &bg[3], 0);
+	Common::fill(&fg[0], &fg[3], 0);
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Attributes::clear() {
+	fgset = 0;
+	bgset = 0;
+	fgcolor = 0;
+	bgcolor = 0;
+	reverse = false;
+	hyper = 0;
+	style = 0;
 }
 
 } // End of namespace Gargoyle
