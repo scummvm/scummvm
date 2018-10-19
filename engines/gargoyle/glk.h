@@ -25,8 +25,10 @@
 
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/glk_types.h"
+#include "gargoyle/windows.h"
 
 namespace Gargoyle {
+
 
 /**
  * Implements the GLK interface
@@ -57,9 +59,17 @@ public:
 	unsigned char glk_char_to_lower(unsigned char ch);
 	unsigned char glk_char_to_upper(unsigned char ch);
 
-	winid_t glk_window_get_root(void);
+	/**
+	 * Get the root window of the window hierarchy
+	 */
+	winid_t glk_window_get_root(void) const;
+
+	/**
+	 * Open a new window
+	 */
 	winid_t glk_window_open(winid_t split, glui32 method, glui32 size,
-		glui32 wintype, glui32 rock);
+		glui32 wintype, glui32 rock = 0) const;
+
 	void glk_window_close(winid_t win, stream_result_t *result);
 	void glk_window_get_size(winid_t win, glui32 *widthptr,
 		glui32 *heightptr);
