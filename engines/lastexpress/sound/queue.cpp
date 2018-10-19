@@ -229,7 +229,7 @@ SoundEntry *SoundQueue::getEntry(Common::String name) {
 		name += ".SND";
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
-		if ((*i)->getName() == name)
+		if ((*i)->getName().equalsIgnoreCase(name))
 			return *i;
 	}
 
