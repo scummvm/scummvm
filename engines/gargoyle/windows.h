@@ -23,6 +23,7 @@
 #ifndef GARGOYLE_WINDOWS_H
 #define GARGOYLE_WINDOWS_H
 
+#include "common/array.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/stream.h"
@@ -58,6 +59,24 @@ private:
 	 */
 	void rearrange();
 public:
+	static bool _confLockCols, _confLockRows;
+	static int _wMarginx;
+	static int _wMarginy;
+	static int _wPaddingx;
+	static int _wPaddingy;
+	static int _wBorderx;
+	static int _wBordery;
+	static int _tMarginx;
+	static int _tMarginy;
+	static int _wMarginXsave;
+	static int _wMarginYsave;
+	static int _cols;
+	static int _rows;
+	static int _imageW, _imageH;
+	static int _cellW, _cellH;
+	static int _baseLine;
+	static int _leading;
+public:
 	/**
 	 * Constructor
 	 */
@@ -76,9 +95,21 @@ public:
 };
 
 /**
+ * Window styles
+ */
+struct WindowStyle {
+	int font;
+	byte bg[3];
+	byte fg[3];
+	int reverse;
+
+	WindowStyle();
+};
+
+/**
  * Window attributes
  */
-struct attr_t {
+struct Attributes {
     unsigned fgset   : 1;
     unsigned bgset   : 1;
     unsigned reverse : 1;
@@ -87,20 +118,18 @@ struct attr_t {
     unsigned fgcolor : 24;
     unsigned bgcolor : 24;
     unsigned hyper   : 32;
-};
 
-struct WindowPair {
-	Window *owner;
-	Window *child1, *child2;
+	/**
+	 * Constructor
+	 */
+	Attributes() {
+		clear();
+	}
 
-	// split info...
-	glui32 dir;             ///< winmethod_Left, Right, Above, or Below
-	int vertical, backward; ///< flags
-	glui32 division;        ///< winmethod_Fixed or winmethod_Proportional
-	Window *key;            ///< NULL or a leaf-descendant (not a Pair)
-	int keydamage;          ///< used as scratch space in window closing
-	glui32 size;            ///< size value
-	glui32 wborder;         ///< winMethod_Border, NoBorder
+	/**
+	 * Clear
+	 */
+	void clear();
 };
 
 /**
@@ -133,7 +162,7 @@ public:
 	glui32 *line_terminators;
 	glui32 termct;
 
-	attr_t attr;
+	Attributes attr;
 	byte bgcolor[3];
 	byte fgcolor[3];
 
@@ -149,6 +178,11 @@ public:
 	 * Destructor
 	 */
 	virtual ~Window() {}
+
+	/**
+	 * Rearranges the window
+	 */
+	virtual void rearrange(const Common::Rect &box) { bbox = box; }
 };
 typedef Window *winid_t;
 
@@ -167,11 +201,56 @@ public:
  * Text Grid window
  */
 class TextGridWindow : public Window {
+	/**
+	 * Structure for a row within the grid window
+	 */
+	struct TextGridRow {
+		Common::Array<uint32> chars;
+		Common::Array<Attributes> attr;
+		bool dirty;
+
+		/**
+		 * Constructor
+		 */
+		TextGridRow() : dirty(false) {}
+
+		/**
+		 * Resize the row
+		 */
+		void resize(size_t newSize);
+	};
+	typedef Common::Array<TextGridRow> TextGridRows;
+private:
+	/**
+	 * Mark a given text row as modified
+	 */
+	void touch(int line);
+public:
+	int width, height;
+	TextGridRows lines;
+
+	int curx, cury;     ///< the window cursor position
+
+                        ///< for line input
+	void *inbuf;        ///< unsigned char* for latin1, glui32* for unicode
+	int inorgx, inorgy;
+	int inmax;
+	int incurs, inlen;
+	Attributes origattr;
+	gidispatch_rock_t inarrayrock;
+	glui32 *line_terminators;
+
+	WindowStyle styles[style_NUMSTYLES]; ///< style hints and settings
 public:
 	/**
 	 * Constructor
 	 */
 	TextGridWindow(uint32 rock);
+
+	/**
+	 * Rearranges the window
+	 */
+	virtual void rearrange(const Common::Rect &box);
 };
 
 /**
