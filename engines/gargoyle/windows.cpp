@@ -90,6 +90,9 @@ WindowStyle G_STYLES[style_NUMSTYLES] = {
 Windows::Windows(Graphics::Screen *screen) : _screen(screen), _forceRedraw(true), _moreFocus(false),
 		_windowList(nullptr), _rootWin(nullptr), _focusWin(nullptr), _mask(nullptr),
 		_claimSelect(0), _currentStr(nullptr) {
+	_imageW = _screen->w;
+	_imageH = _screen->h;
+	_cellW = _cellH = 8;
 	_confLockCols = false;
 	_confLockRows = false;
 	_wMarginx = 15;
@@ -104,8 +107,6 @@ Windows::Windows(Graphics::Screen *screen) : _screen(screen), _forceRedraw(true)
 	_wMarginYsave = 15;
 	_cols = 60;
 	_rows = 25;
-	_imageW = _imageH = 0;
-	_cellW = _cellH = 0;
 	_baseLine = 15;
 	_leading = 20;
 	_scrollWidth = 0;
@@ -173,8 +174,8 @@ Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
 	} else {
 		// create pairwin, with newwin as the key
 		pairwin = newPairWindow(method, newwin, size);
-		pairwin->child1 = splitwin;
-		pairwin->child2 = newwin;
+		pairwin->_child1 = splitwin;
+		pairwin->_child2 = newwin;
 
 		splitwin->parent = pairwin;
 		newwin->parent = pairwin;
@@ -183,10 +184,10 @@ Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
 		if (oldparent) {
 			PairWindow *parentWin = dynamic_cast<PairWindow *>(oldparent);
 			assert(parentWin);
-			if (parentWin->child1 == splitwin)
-				parentWin->child1 = pairwin;
+			if (parentWin->_child1 == splitwin)
+				parentWin->_child1 = pairwin;
 			else
-				parentWin->child2 = pairwin;
+				parentWin->_child2 = pairwin;
 		} else {
 			_rootWin = pairwin;
 		}
@@ -284,6 +285,10 @@ void Windows::setCurrent(Common::WriteStream *stream) {
 	_currentStr = stream;
 }
 
+void Windows::repaint(const Common::Rect &box) {
+	// TODO
+}
+
 /*--------------------------------------------------------------------------*/
 
 Window::Window(Windows *windows, glui32 rock) : _magicnum(MAGIC_WINDOW_NUM),
@@ -348,10 +353,9 @@ void TextGridWindow::rearrange(const Common::Rect &box) {
 }
 
 void TextGridWindow::touch(int line) {
-//	int y = bbox.top + line * Windows::_leading;
+	int y = bbox.top + line * Windows::_leading;
 	lines[line].dirty = true;
-	// TODO
-//	winrepaint(bbox.left, y, bbox.right, y + Windows::_leading);
+	_windows->repaint(Common::Rect(bbox.left, y, bbox.right, y + Windows::_leading));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -543,9 +547,8 @@ void TextBufferWindow::reflow() {
 
 void TextBufferWindow::touchScroll() {
 	_windows->clearSelection();
+	_windows->repaint(bbox);
 
-	// TODO
-	//winrepaint(bbox.left, bbox.top, bbox.right, bbox.bottom);
 	for (int i = 0; i < scrollmax; i++)
 		lines[i].dirty = true;
 }
@@ -580,8 +583,8 @@ void TextBufferWindow::clear() {
 		lines[i].lm = 0;
 		lines[i].rm = 0;
 		lines[i].newline = 0;
-		lines[i].dirty = 1;
-		lines[i].repaint = 0;
+		lines[i].dirty = true;
+		lines[i].repaint = false;
 	}
 
 	lastseen = 0;
@@ -782,10 +785,10 @@ void TextBufferWindow::flowBreak() {
 }
 
 void TextBufferWindow::touch(int line) {
-//	int y = bbox.top + Windows::_tMarginy + (height - line - 1) * Windows::_leading;
+	int y = bbox.top + Windows::_tMarginy + (height - line - 1) * Windows::_leading;
 	lines[line].dirty = 1;
 	_windows->clearSelection();
-	//winrepaint(bbox.left, y - 2, bbox.right, y + Windows::_leading + 2);
+	_windows->repaint(Common::Rect(bbox.left, y - 2, bbox.right, y + Windows::_leading + 2));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -855,31 +858,30 @@ void GraphicsWindow::rearrange(const Common::Rect &box) {
 
 void GraphicsWindow::touch() {
 	dirty = true;
-//	winrepaint(bbox.left, bbox.top, bbox.right, bbox.bottom);
+	_windows->repaint(bbox);
 }
 
 /*--------------------------------------------------------------------------*/
 
-PairWindow::PairWindow(Windows *windows, glui32 method, Window *_key, glui32 _size) :
+PairWindow::PairWindow(Windows *windows, glui32 method, Window *key, glui32 size) :
 		Window(windows, 0),
-		dir(method & winmethod_DirMask),
-		division(method & winmethod_DivisionMask),
-		wborder((method & winmethod_BorderMask) == winmethod_Border),
-		vertical(dir == winmethod_Left || dir == winmethod_Right),
-		backward(dir == winmethod_Left || dir == winmethod_Above),
-		key(key), size(size), keydamage(0), child1(nullptr), child2(nullptr) {
+		_dir(method & winmethod_DirMask),
+		_division(method & winmethod_DivisionMask),
+		_wborder((method & winmethod_BorderMask) == winmethod_Border),
+		_vertical(_dir == winmethod_Left || _dir == winmethod_Right),
+		_backward(_dir == winmethod_Left || _dir == winmethod_Above),
+		_key(key), _size(size), _keydamage(0), _child1(nullptr), _child2(nullptr) {
 	_type = wintype_Pair;
 }
 
 void PairWindow::rearrange(const Common::Rect &box) {
 	Common::Rect box1, box2;
 	int min, diff, split, splitwid, max;
-	Window *keyWin;
 	Window *ch1, *ch2;
 
 	bbox = box;
 
-	if (vertical) {
+	if (_vertical) {
 		min = bbox.left;
 		max = bbox.right;
 	} else {
@@ -889,19 +891,18 @@ void PairWindow::rearrange(const Common::Rect &box) {
 	diff = max - min;
 
 	// We now figure split.
-	if (vertical)
+	if (_vertical)
 		splitwid = Windows::_wPaddingx; // want border?
 	else
 		splitwid = Windows::_wPaddingy; // want border?
 
-	switch (division) {
+	switch (_division) {
 	case winmethod_Proportional:
-		split = (diff * size) / 100;
+		split = (diff * _size) / 100;
 		break;
 
 	case winmethod_Fixed:
-		keyWin = key;
-		split = !keyWin ? 0 : keyWin->getSplit(size, vertical);
+		split = !_key ? 0 : _key->getSplit(_size, _vertical);
 		break;
 
 	default:
@@ -909,7 +910,7 @@ void PairWindow::rearrange(const Common::Rect &box) {
 		break;
 	}
 
-	if (!backward)
+	if (!_backward)
 		split = max - split - splitwid;
 	else
 		split = min + split;
@@ -923,7 +924,7 @@ void PairWindow::rearrange(const Common::Rect &box) {
 			split = max - splitwid;
 	}
 
-	if (vertical) {
+	if (_vertical) {
 		box1.left = bbox.left;
 		box1.right = split;
 		box2.left = split + splitwid;
@@ -943,12 +944,12 @@ void PairWindow::rearrange(const Common::Rect &box) {
 		box2.right = bbox.right;
 	}
 
-	if (!backward) {
-		ch1 = child1;
-		ch2 = child2;
+	if (!_backward) {
+		ch1 = _child1;
+		ch2 = _child2;
 	} else {
-		ch1 = child2;
-		ch2 = child1;
+		ch1 = _child2;
+		ch2 = _child1;
 	}
 
 	ch1->rearrange(box1);
