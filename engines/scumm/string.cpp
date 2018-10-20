@@ -432,17 +432,11 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 bool ScummEngine::newLine() {
 	_nextLeft = _string[0].xpos;
 	if (_charset->_center) {
-		// warning("NL CENTER");
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
 	} else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
-		// warning("FIRST");
-		// char buffy[30];
-		// sprintf(buffy, "%d-%d", _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos), _screenWidth);
-		// warning(buffy);
-		byte c = *(_charsetBuffer + _charsetBufPos + 7);
-		if (_game.id == GID_MONKEY && c == 0x05) {
+		if (_game.id == GID_MONKEY && _charset->getCurID() == 4) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
 		}
 	}
@@ -602,29 +596,14 @@ void ScummEngine::CHARSET_1() {
 
 		_charset->addLinebreaks(0, _charsetBuffer + _charsetBufPos, 0, maxwidth);
 	}
-	if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
-		byte c = *(_charsetBuffer + _charsetBufPos + 7);
-		if (_game.id == GID_MONKEY && c == 0x05) {
-			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
-		}
-	}
 	if (_charset->_center) {
-		// warning("CENTER");
-		//_nextLeft = _midLeft;
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
 			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
-	// } else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
-		// byte c = *(_charsetBuffer + _charsetBufPos);
-		// if (c != 0xFF)
-		// 	_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
-		//warning("SECOND");
-		//_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos);
-	// 	char buffy[30];
-	// 	sprintf(buffy, "%d-%d", _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos), _screenWidth);
-	// 	warning(buffy);
-		//_midLeft = _nextLeft;
-		// _nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+	} else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
+		if (_game.id == GID_MONKEY && _charset->getCurID() == 4) {
+			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
+		}
 	}
 
 	_charset->_disableOffsX = _charset->_firstChar = !_keepText;
@@ -999,19 +978,6 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		int start = 0;
 		char* text = (char*)ltext + ll;
 
-
-		// warning("BBEFORE");
-		// for (int u = 0; u < strlen(text); u++) {
-		// 	char buffy[30] = {0};
-		// 	sprintf(buffy, "%d,%d[%d-%c]\n",ltext[ll], ll, text[u], text[u]);
-		// 	debugN(buffy);
-		// }
-		// debugN("\n");
-
-
-
-
-
 		strncpy((char*)fin + ll, text, strlen(text));
 		char* current = text;
 		while(1) {
@@ -1052,17 +1018,6 @@ void ScummEngine::drawString(int a, const byte *msg) {
 			buf[start + pos + ll] = 127;
 			buf[start + pos+ll + 1] = '\0';
 		}
-
-
-
-
-		// warning("BREVERSED");
-		// for (int u = 0; u < strlen(text); u++) {
-		// 	char buffy[30] = {0};
-		// 	sprintf(buffy, "[%d-%c]\n", text[u], text[u]);
-		// 	debugN(buffy);
-		// }
-		// debugN("\n\n\n\n\n");
 
 	}
 
