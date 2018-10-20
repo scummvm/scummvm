@@ -349,6 +349,19 @@ uint getSizeNextPOT(uint size) {
 }
 
 - (void)setupGestureRecognizers {
+	const NSUInteger KEYBOARDSWIPETOUCHCOUNT = 3;
+	UISwipeGestureRecognizer *swipeUpKeyboard = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardSwipeUp:)];
+	swipeUpKeyboard.direction = UISwipeGestureRecognizerDirectionUp;
+	swipeUpKeyboard.numberOfTouchesRequired = KEYBOARDSWIPETOUCHCOUNT;
+	swipeUpKeyboard.delaysTouchesBegan = NO;
+	swipeUpKeyboard.delaysTouchesEnded = NO;
+
+	UISwipeGestureRecognizer *swipeDownKeyboard = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardSwipeDown:)];
+	swipeDownKeyboard.direction = UISwipeGestureRecognizerDirectionDown;
+	swipeDownKeyboard.numberOfTouchesRequired = KEYBOARDSWIPETOUCHCOUNT;
+	swipeDownKeyboard.delaysTouchesBegan = NO;
+	swipeDownKeyboard.delaysTouchesEnded = NO;
+
 	UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeRight:)];
 	swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
 	swipeRight.numberOfTouchesRequired = 2;
@@ -379,12 +392,16 @@ uint getSizeNextPOT(uint size) {
 	doubleTapTwoFingers.delaysTouchesBegan = NO;
 	doubleTapTwoFingers.delaysTouchesEnded = NO;
 
+	[self addGestureRecognizer:swipeUpKeyboard];
+	[self addGestureRecognizer:swipeDownKeyboard];
 	[self addGestureRecognizer:swipeRight];
 	[self addGestureRecognizer:swipeLeft];
 	[self addGestureRecognizer:swipeUp];
 	[self addGestureRecognizer:swipeDown];
 	[self addGestureRecognizer:doubleTapTwoFingers];
 
+	[swipeUpKeyboard release];
+	[swipeDownKeyboard release];
 	[swipeRight release];
 	[swipeLeft release];
 	[swipeUp release];
@@ -1011,6 +1028,14 @@ uint getSizeNextPOT(uint size) {
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
 	_firstTouch = nil;
 	_secondTouch = nil;
+}
+
+- (void)keyboardSwipeUp:(UISwipeGestureRecognizer *)recognizer {
+	[self showKeyboard];
+}
+
+- (void)keyboardSwipeDown:(UISwipeGestureRecognizer *)recognizer {
+	[self hideKeyboard];
 }
 
 - (void)twoFingersSwipeRight:(UISwipeGestureRecognizer *)recognizer {
