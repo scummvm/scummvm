@@ -349,6 +349,18 @@ uint getSizeNextPOT(uint size) {
 }
 
 - (void)setupGestureRecognizers {
+	UISwipeGestureRecognizer *swipeUpFourFingers = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(fourFingersSwipeUp:)];
+	swipeUpFourFingers.direction = UISwipeGestureRecognizerDirectionUp;
+	swipeUpFourFingers.numberOfTouchesRequired = 4;
+	swipeUpFourFingers.delaysTouchesBegan = NO;
+	swipeUpFourFingers.delaysTouchesEnded = NO;
+	
+	UISwipeGestureRecognizer *swipeDownFourFingers = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(fourFingersSwipeDown:)];
+	swipeDownFourFingers.direction = UISwipeGestureRecognizerDirectionDown;
+	swipeDownFourFingers.numberOfTouchesRequired = 4;
+	swipeDownFourFingers.delaysTouchesBegan = NO;
+	swipeDownFourFingers.delaysTouchesEnded = NO;
+	
 	UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeRight:)];
 	swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
 	swipeRight.numberOfTouchesRequired = 2;
@@ -379,12 +391,16 @@ uint getSizeNextPOT(uint size) {
 	doubleTapTwoFingers.delaysTouchesBegan = NO;
 	doubleTapTwoFingers.delaysTouchesEnded = NO;
 
+	[self addGestureRecognizer:swipeUpFourFingers];
+	[self addGestureRecognizer:swipeDownFourFingers];
 	[self addGestureRecognizer:swipeRight];
 	[self addGestureRecognizer:swipeLeft];
 	[self addGestureRecognizer:swipeUp];
 	[self addGestureRecognizer:swipeDown];
 	[self addGestureRecognizer:doubleTapTwoFingers];
 
+	[swipeUpFourFingers release];
+	[swipeDownFourFingers release];
 	[swipeRight release];
 	[swipeLeft release];
 	[swipeUp release];
