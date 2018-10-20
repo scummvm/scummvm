@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	gargoyle.o \
 	glk.o \
 	picture.o \
+	stream.o \
 	windows.o \
 	scott/detection.o \
 	scott/scott.o

@@ -24,6 +24,7 @@
 #define GARGOYLE_GLK_TYPES_H
 
 #include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace Gargoyle {
 
@@ -49,7 +50,7 @@ class Window;
  * These types are opaque object identifiers. They're pointers to opaque
  * C structures, which are defined differently by each library.
  */
-typedef struct glk_stream_struct  *strid_t;
+typedef Common::WriteStream  *strid_t;
 typedef struct glk_fileref_struct *frefid_t;
 typedef struct glk_schannel_struct *schanid_t;
 
