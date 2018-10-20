@@ -983,6 +983,14 @@ uint getSizeNextPOT(uint size) {
 	_secondTouch = nil;
 }
 
+- (void)fourFingersSwipeUp:(UISwipeGestureRecognizer *)recognizer {
+	[_keyboardView showKeyboard];
+}
+
+- (void)fourFingersSwipeDown:(UISwipeGestureRecognizer *)recognizer {
+	[_keyboardView hideKeyboard];
+}
+
 - (void)twoFingersSwipeRight:(UISwipeGestureRecognizer *)recognizer {
 	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeRight, 2)];
 }
