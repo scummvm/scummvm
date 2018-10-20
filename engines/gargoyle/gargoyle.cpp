@@ -30,7 +30,7 @@
 #include "graphics/thumbnail.h"
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/events.h"
-#include "gargoyle/stream.h"
+#include "gargoyle/streams.h"
 #include "gargoyle/windows.h"
 
 namespace Gargoyle {
@@ -57,8 +57,8 @@ void GargoyleEngine::initialize() {
 	initGraphics(640, 480, false);
 	_screen = new Graphics::Screen();
 	_events = new Events();
-	_streams = new Streams();
-	_windows = new Windows(_screen);
+	_streams = new Streams(this);
+	_windows = new Windows(this, _screen);
 }
 
 Common::Error GargoyleEngine::run() {

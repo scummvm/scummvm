@@ -21,7 +21,8 @@
  */
 
 #include "gargoyle/windows.h"
-#include "gargoyle/stream.h"
+#include "gargoyle/gargoyle.h"
+#include "gargoyle/streams.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
@@ -88,9 +89,10 @@ WindowStyle G_STYLES[style_NUMSTYLES] = {
 
 /*--------------------------------------------------------------------------*/
 
-Windows::Windows(Graphics::Screen *screen) : _screen(screen), _forceRedraw(true), _moreFocus(false),
+Windows::Windows(GargoyleEngine *engine, Graphics::Screen *screen) :
+		_engine(engine), _screen(screen), _forceRedraw(true), _moreFocus(false),
 		_windowList(nullptr), _rootWin(nullptr), _focusWin(nullptr), _mask(nullptr),
-		_claimSelect(0), _currentStr(nullptr) {
+		_claimSelect(0) {
 	_imageW = _screen->w;
 	_imageH = _screen->h;
 	_cellW = _cellH = 8;
@@ -305,7 +307,8 @@ Window::Window(Windows *windows, glui32 rock) : _magicnum(MAGIC_WINDOW_NUM),
 	Common::fill(&fgcolor[0], &fgcolor[3], 3);
 	disprock.num = 0;
 
-	_stream = new WindowStream(this, rock);
+	Streams &streams = *windows->_engine->_streams;
+	_stream = streams.addWindowStream(this);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -29,10 +29,11 @@
 #include "graphics/screen.h"
 #include "gargoyle/glk_types.h"
 #include "gargoyle/picture.h"
-#include "gargoyle/stream.h"
+#include "gargoyle/streams.h"
 
 namespace Gargoyle {
 
+class GargoyleEngine;
 class Window;
 class PairWindow;
 struct WindowMask;
@@ -45,7 +46,9 @@ struct WindowMask;
  * Main windows manager
  */
 class Windows {
+	friend class Window;
 private:
+	GargoyleEngine *_engine;
 	Graphics::Screen *_screen;
 	Window * _windowList;      ///< List of all windows
 	Window *_rootWin;          ///< The topmost window
@@ -54,7 +57,6 @@ private:
 	bool _moreFocus;
 	bool _claimSelect;
 	WindowMask *_mask;
-	Stream *_currentStr;
 private:
 	/**
 	 * Create a new window
@@ -98,7 +100,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Windows(Graphics::Screen *screen);
+	Windows(GargoyleEngine *engine, Graphics::Screen *screen);
 
 	/**
 	 * Open a new window
@@ -112,16 +114,6 @@ public:
 	Window *getRoot() const { return _rootWin; }
 
 	void clearSelection();
-
-	/**
-	 * Set the current output stream
-	 */
-	void setCurrent(Stream *stream) { _currentStr = stream; }
-
-	/**
-	 * Gets the current output stream
-	 */
-	Stream *getCurrent() const { return _currentStr; }
 
 	/**
 	 * Repaint an area of the windows
