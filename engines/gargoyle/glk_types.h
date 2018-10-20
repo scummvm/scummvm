@@ -50,7 +50,6 @@ class Window;
  * These types are opaque object identifiers. They're pointers to opaque
  * C structures, which are defined differently by each library.
  */
-typedef Common::WriteStream  *strid_t;
 typedef struct glk_fileref_struct *frefid_t;
 typedef struct glk_schannel_struct *schanid_t;
 

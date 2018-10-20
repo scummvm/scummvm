@@ -30,6 +30,7 @@
 #include "graphics/thumbnail.h"
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/events.h"
+#include "gargoyle/stream.h"
 #include "gargoyle/windows.h"
 
 namespace Gargoyle {
@@ -42,6 +43,7 @@ GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gam
 GargoyleEngine::~GargoyleEngine() {
 	delete _events;
 	delete _screen;
+	delete _streams;
 	delete _windows;
 }
 
@@ -55,6 +57,7 @@ void GargoyleEngine::initialize() {
 	initGraphics(640, 480, false);
 	_screen = new Graphics::Screen();
 	_events = new Events();
+	_streams = new Streams();
 	_windows = new Windows(_screen);
 }
 

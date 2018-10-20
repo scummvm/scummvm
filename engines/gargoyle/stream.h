@@ -23,46 +23,168 @@
 #ifndef GARGOYLE_STREAM_H
 #define GARGOYLE_STREAM_H
 
-#include "common/stream.h"
+#include "common/scummsys.h"
+#include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
 
 class Window;
 
+struct StreamResult {
+	uint32 _readCount;
+	uint32 _writeCount;
+};
+
+/**
+ * Base class for streams
+ */
+class Stream {
+public:
+	Stream *_prev;
+	Stream *_next;
+	uint32 _rock;
+	bool _unicode;
+	uint32 _readCount;
+	uint32 _writeCount;
+	bool _readable, _writable;
+public:
+	/**
+	 * Constructor
+	 */
+	Stream(bool readable, bool writable, uint32 rock, bool unicode);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Stream() {}
+
+	/**
+	 * Get the next stream
+	 */
+	Stream *getNext(uint32 *rock) const;
+
+	/**
+	 * Get the rock value for the stream
+	 */
+	uint32 getRock() const { return _rock; }
+
+	/**
+	 * Fill out the total amount read and/or written
+	 */
+	void fillResult(StreamResult *result);
+
+	/**
+	 * Close the stream
+	 */
+	virtual void close(StreamResult *result = nullptr);
+
+	/**
+	 * Write a character
+	 */
+	virtual void writeChar(unsigned char ch) = 0;
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void writeCharUni(uint32 ch) = 0;
+};
+typedef Stream *strid_t;
+
 /**
  * Implements the stream for writing text to a window
  */
-class WindowStream : public Common::WriteStream {
+class WindowStream : public Stream {
 private:
-	uint32 _rock;
 	Window *_window;
 public:
 	/**
 	 * Constructor
 	 */
-	WindowStream(Window *window, uint32 rock = 0) : Common::WriteStream(),
-		_window(window), _rock(rock) {}
+	WindowStream(Window *window, uint32 rock = 0, bool unicode = true) :
+		Stream(true, false, rock, unicode), _window(window) {}
 
 	/**
-	 * Write to the stream
+	 * Write a character
 	 */
-	virtual uint32 write(const void *dataPtr, uint32 dataSize);
-	
-	/**
-	 * Flush the stream
-	 */
-	virtual bool flush();
+	virtual void writeChar(unsigned char ch) override;
 
 	/**
-	 * Finalize and close this stream
+	 * Write a unicode character
 	 */
-	virtual void finalize() { flush(); }
-
-	/**
-	 * Returns the stream position
-	 */
-	virtual int32 pos() const { return 0; }
+	virtual void writeCharUni(uint32 ch) override;
 };
+
+/**
+ * Implements an in-memory stream
+ */
+class MemoryStream : public Stream {
+private:
+	void *_buf;		///< unsigned char* for latin1, glui32* for unicode
+	void *_bufptr;
+	void *_bufend;
+	void *_bufeof;
+	size_t _buflen;	///< # of bytes for latin1, # of 4-byte words for unicode
+public:
+	/**
+	 * Constructor
+	 */
+	MemoryStream(void *buf, size_t buflen, FileMode mode, uint32 rock = 0, bool unicode = true);
+
+	/**
+	 * Write a character
+	 */
+	virtual void writeChar(unsigned char ch);
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void writeCharUni(uint32 ch);
+};
+
+/**
+ * Streams manager
+ */
+class Streams {
+private:
+	Stream *_streamList;
+private:
+	/**
+	 * Adds a created stream to the list
+	 */
+	void addStream(Stream *stream);
+public:
+	/**
+	 * Constructor
+	 */
+	Streams();
+
+	/**
+	 * Destructor
+	 */
+	~Streams();
+
+	/**
+	 * Add a window stream
+	 */
+	WindowStream *addWindowStream(Window *window);
+
+	/**
+	 * Add a memory stream
+	 */
+	MemoryStream *addMemoryStream(void *buf, size_t buflen, FileMode mode, uint32 rock = 0, bool unicode = true);
+
+	/**
+	 * Delete a stream
+	 */
+	void deleteStream(Stream *stream);
+
+	/**
+	 * Start an Iteration through streams
+	 */
+	Stream *getFirst(uint32 *rock);
+};
+
+
 
 /*
  * Get the length of a unicode string

@@ -35,6 +35,7 @@ namespace Gargoyle {
 
 class Events;
 class Windows;
+class Streams;
 
 enum InterpreterType {
 	INTERPRETER_SCOTT
@@ -74,6 +75,7 @@ protected:
 	const GargoyleGameDescription *_gameDescription;
 	Events *_events;
 	Graphics::Screen *_screen;
+	Streams *_streams;
 	Windows *_windows;
 	Common::RandomSource _random;
 	int _loadSaveSlot;
