@@ -27,6 +27,7 @@
 namespace Gargoyle {
 
 #define MAGIC_WINDOW_NUM (9876)
+#define GLI_SUBPIX 8
 
 bool Windows::_confLockCols;
 bool Windows::_confLockRows;
@@ -48,9 +49,47 @@ int Windows::_cellW;
 int Windows::_cellH;
 int Windows::_baseLine;
 int Windows::_leading;
+int Windows::_scrollWidth;
+bool Windows::_overrideReverse;
+bool Windows::_overrideFgSet;
+bool Windows::_overrideBgSet;
+int Windows::_overrideFgVal;
+int Windows::_overrideBgVal;
+
+
+WindowStyle T_STYLES[style_NUMSTYLES] = {
+	{ PROPR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Normal
+	{ PROPI,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Emphasized
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Preformatted
+	{ PROPB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Header
+	{ PROPB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Subheader
+	{ PROPZ,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Alert
+	{ PROPR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Note
+	{ PROPR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< BlockQuote
+	{ PROPB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Input
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< User1
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< User2
+};
+
+WindowStyle G_STYLES[style_NUMSTYLES] = {
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Normal
+	{ MONOI,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Emphasized
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Preformatted
+	{ MONOB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Header
+	{ MONOB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Subheader
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Alert
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Note
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< BlockQuote
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Input
+	{ MONOR,{ 0x60,0x60,0x60 },{ 0xff,0xff,0xff }, 0 }, ///< User1
+	{ MONOR,{ 0x60,0x60,0x60 },{ 0xff,0xff,0xff }, 0 }, ///< User2
+};
+
+/*--------------------------------------------------------------------------*/
 
 Windows::Windows(Graphics::Screen *screen) : _screen(screen), _forceRedraw(true), _moreFocus(false),
-		_windowList(nullptr), _rootWin(nullptr), _focusWin(nullptr) {
+		_windowList(nullptr), _rootWin(nullptr), _focusWin(nullptr), _mask(nullptr),
+		_claimSelect(0) {
 	_confLockCols = false;
 	_confLockRows = false;
 	_wMarginx = 15;
@@ -69,6 +108,12 @@ Windows::Windows(Graphics::Screen *screen) : _screen(screen), _forceRedraw(true)
 	_cellW = _cellH = 0;
 	_baseLine = 15;
 	_leading = 20;
+	_scrollWidth = 0;
+	_overrideReverse = false;
+	_overrideFgSet = false;
+	_overrideBgSet = false;
+	_overrideFgVal = 0;
+	_overrideBgVal = 0;
 }
 
 Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
@@ -127,7 +172,7 @@ Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
 		_rootWin = newwin;
 	} else {
 		// create pairwin, with newwin as the key
-		pairwin = new PairWindow(method, newwin, size);
+		pairwin = newPairWindow(method, newwin, size);
 		pairwin->child1 = splitwin;
 		pairwin->child2 = newwin;
 
@@ -157,16 +202,16 @@ Window *Windows::newWindow(glui32 type, glui32 rock) {
 
 	switch (type) {
 	case wintype_Blank:
-		win = new BlankWindow(rock);
+		win = new BlankWindow(this, rock);
 		break;
 	case wintype_TextGrid:
-		win = new TextGridWindow(rock);
+		win = new TextGridWindow(this, rock);
 		break;
 	case wintype_TextBuffer:
-		win = new TextBufferWindow(rock);
+		win = new TextBufferWindow(this, rock);
 		break;
 	case wintype_Graphics:
-		win = new GraphicsWindow(rock);
+		win = new GraphicsWindow(this, rock);
 		break;
 	case wintype_Pair:
 		error("Pair windows cannot be created directly");
@@ -183,7 +228,7 @@ Window *Windows::newWindow(glui32 type, glui32 rock) {
 }
 
 PairWindow *Windows::newPairWindow(glui32 method, Window *key, glui32 size) {
-	PairWindow *pwin = new PairWindow(method, key, size);
+	PairWindow *pwin = new PairWindow(this, method, key, size);
 	pwin->next = _windowList;
 	_windowList = pwin;
 	if (pwin->next)
@@ -221,10 +266,24 @@ void Windows::rearrange() {
 	}
 }
 
+void Windows::clearSelection() {
+	if (!_mask) {
+		warning("clear_selection: mask not initialized");
+		return;
+	}
+
+	if (_mask->select.left || _mask->select.right
+		|| _mask->select.top || _mask->select.bottom)
+		_forceRedraw = true;
+
+	_mask->select = Common::Rect();
+	_claimSelect = false;
+}
+
 /*--------------------------------------------------------------------------*/
 
-Window::Window(glui32 rock) : _magicnum(MAGIC_WINDOW_NUM), _rock(rock), _type(0),
-		parent(nullptr), next(nullptr), prev(nullptr),
+Window::Window(Windows *windows, glui32 rock) : _magicnum(MAGIC_WINDOW_NUM),
+		_windows(windows), _rock(rock), _type(0), parent(nullptr), next(nullptr), prev(nullptr),
 		yadj(0), line_request(0), line_request_uni(0), char_request(0), char_request_uni(0),
 		mouse_request(0), hyper_request(0), more_request(0), scroll_request(0), image_loaded(0),
 		echo_line_input(true),  line_terminators(nullptr), termct(0), str(nullptr), echostr(nullptr) {
@@ -243,13 +302,13 @@ Window::Window(glui32 rock) : _magicnum(MAGIC_WINDOW_NUM), _rock(rock), _type(0)
 
 /*--------------------------------------------------------------------------*/
 
-BlankWindow::BlankWindow(uint32 rock) : Window(rock) {
+BlankWindow::BlankWindow(Windows *windows, uint32 rock) : Window(windows, rock) {
 	_type = wintype_Blank;
 }
 
 /*--------------------------------------------------------------------------*/
 
-TextGridWindow::TextGridWindow(uint32 rock) : Window(rock) {
+TextGridWindow::TextGridWindow(Windows *windows, uint32 rock) : Window(windows, rock) {
 	_type = wintype_TextGrid;
 	width = height = 0;
 	curx = cury = 0;
@@ -259,6 +318,8 @@ TextGridWindow::TextGridWindow(uint32 rock) : Window(rock) {
 	incurs = inlen = 0;
 	inarrayrock.num = 0;
 	line_terminators = nullptr;
+
+	Common::copy(&G_STYLES[0], &G_STYLES[style_NUMSTYLES], styles);
 }
 
 void TextGridWindow::rearrange(const Common::Rect &box) {
@@ -289,6 +350,8 @@ void TextGridWindow::touch(int line) {
 //	winrepaint(bbox.left, y, bbox.right, y + Windows::_leading);
 }
 
+/*--------------------------------------------------------------------------*/
+
 void TextGridWindow::TextGridRow::resize(size_t newSize) {
 	chars.clear();
 	attr.clear();
@@ -299,19 +362,452 @@ void TextGridWindow::TextGridRow::resize(size_t newSize) {
 
 /*--------------------------------------------------------------------------*/
 
-TextBufferWindow::TextBufferWindow(uint32 rock) : Window(rock) {
+TextBufferWindow::TextBufferWindow(Windows *windows, uint32 rock) : Window(windows, rock),
+		historypos(0), historyfirst(0), historypresent(0), lastseen(0), scrollpos(0),
+		scrollmax(0), scrollback(SCROLLBACK), width(-1), height(-1), inbuf(nullptr),
+		line_terminators(nullptr), echo_line_input(true), ladjw(0), radjw(0), ladjn(0),
+		radjn(0), numchars(0), chars(nullptr), attrs(nullptr),
+		spaced(0), dashed(0), copybuf(0), copypos(0) {
 	_type = wintype_TextBuffer;
+	Common::fill(&history[0], &history[HISTORYLEN], nullptr);
+
+	Common::copy(&T_STYLES[0], &T_STYLES[style_NUMSTYLES], styles);
+}
+
+void TextBufferWindow::rearrange(const Common::Rect &box) {
+	Window::rearrange(box);
+	int newwid, newhgt;
+	int rnd;
+
+	newwid = (box.width() - Windows::_tMarginx * 2 - Windows::_scrollWidth) / Windows::_cellW;
+	newhgt = (box.height() - Windows::_tMarginy * 2) / Windows::_cellH;
+
+	/* align text with bottom */
+	rnd = newhgt * Windows::_cellH + Windows::_tMarginy * 2;
+	yadj = (box.height() - rnd);
+	bbox.top += (box.height() - rnd);
+
+	if (newwid != width) {
+		width = newwid;
+		reflow();
+	}
+
+	if (newhgt != height) {
+		/* scroll up if we obscure new lines */
+		if (lastseen >= newhgt - 1)
+			scrollpos += (height - newhgt);
+
+		height = newhgt;
+
+		/* keep window within 'valid' lines */
+		if (scrollpos > scrollmax - height + 1)
+			scrollpos = scrollmax - height + 1;
+		if (scrollpos < 0)
+			scrollpos = 0;
+		touchScroll();
+
+		/* allocate copy buffer */
+		if (copybuf)
+			delete[] copybuf;
+		copybuf = new glui32[height * TBLINELEN];
+
+		for (int i = 0; i < (height * TBLINELEN); i++)
+			copybuf[i] = 0;
+
+		copypos = 0;
+	}
+}
+
+void TextBufferWindow::reflow() {
+	int inputbyte = -1;
+	Attributes curattr, oldattr;
+	int i, k, p, s;
+	int x;
+
+	if (height < 4 || width < 20)
+		return;
+
+	lines[0].len = numchars;
+
+	/* allocate temp buffers */
+	Attributes *attrbuf = new Attributes[SCROLLBACK * TBLINELEN];
+	glui32 *charbuf = new glui32[SCROLLBACK * TBLINELEN];
+	int *alignbuf = new int[SCROLLBACK];
+	Picture **pictbuf = new Picture *[SCROLLBACK];
+	glui32 *hyperbuf = new glui32[SCROLLBACK];
+	int *offsetbuf = new int[SCROLLBACK];
+
+	if (!attrbuf || !charbuf || !alignbuf || !pictbuf || !hyperbuf || !offsetbuf) {
+		delete[] attrbuf;
+		delete[] charbuf;
+		delete[] alignbuf;
+		delete[] pictbuf;
+		delete[] hyperbuf;
+		delete[] offsetbuf;
+		return;
+	}
+
+	/* copy text to temp buffers */
+
+	oldattr = attr;
+	curattr.clear();
+
+	x = 0;
+	p = 0;
+	s = scrollmax < SCROLLBACK ? scrollmax : SCROLLBACK - 1;
+
+	for (k = s; k >= 0; k--) {
+		if (k == 0 && line_request)
+			inputbyte = p + infence;
+
+		if (lines[k].lpic) {
+			offsetbuf[x] = p;
+			alignbuf[x] = imagealign_MarginLeft;
+			pictbuf[x] = lines[k].lpic;
+
+			if (pictbuf[x]) pictbuf[x]->increment();
+			hyperbuf[x] = lines[k].lhyper;
+			x++;
+		}
+
+		if (lines[k].rpic) {
+			offsetbuf[x] = p;
+			alignbuf[x] = imagealign_MarginRight;
+			pictbuf[x] = lines[k].rpic;
+			if (pictbuf[x]) pictbuf[x]->increment();
+			hyperbuf[x] = lines[k].rhyper;
+			x++;
+		}
+
+		for (i = 0; i < lines[k].len; i++) {
+			attrbuf[p] = curattr = lines[k].attr[i];
+			charbuf[p] = lines[k].chars[i];
+			p++;
+		}
+
+		if (lines[k].newline) {
+			attrbuf[p] = curattr;
+			charbuf[p] = '\n';
+			p++;
+		}
+	}
+
+	offsetbuf[x] = -1;
+
+	/* clear window */
+
+	clear();
+
+	/* and dump text back */
+
+	x = 0;
+	for (i = 0; i < p; i++) {
+		if (i == inputbyte)
+			break;
+		attr = attrbuf[i];
+
+		if (offsetbuf[x] == i) {
+			putPicture(pictbuf[x], alignbuf[x], hyperbuf[x]);
+			x++;
+		}
+
+		putCharUni(charbuf[i]);
+	}
+
+	/* terribly sorry about this... */
+	lastseen = 0;
+	scrollpos = 0;
+
+	if (inputbyte != -1) {
+		infence = numchars;
+		putTextUnit(charbuf + inputbyte, p - inputbyte, numchars, 0);
+		incurs = numchars;
+	}
+
+	// free temp buffers
+	delete[] attrbuf;
+	delete[] charbuf;
+	delete[] alignbuf;
+	delete[] pictbuf;
+	delete[] hyperbuf;
+	delete[] offsetbuf;
+
+	attr = oldattr;
+
+	touchScroll();
+}
+
+void TextBufferWindow::touchScroll() {
+	_windows->clearSelection();
+
+	// TODO
+	//winrepaint(win->bbox.left, win->bbox.top, win->bbox.right, win->bbox.bottom);
+	for (int i = 0; i < scrollmax; i++)
+		lines[i].dirty = true;
+}
+
+void TextBufferWindow::clear() {
+	int i;
+
+	attr.fgset = Windows::_overrideFgSet;
+	attr.bgset = Windows::_overrideBgSet;
+	attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : 0;
+	attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : 0;
+	attr.reverse = false;
+
+	ladjw = radjw = 0;
+	ladjn = radjn = 0;
+
+	spaced = 0;
+	dashed = 0;
+
+	numchars = 0;
+
+	for (i = 0; i < scrollback; i++) {
+		lines[i].len = 0;
+
+		if (lines[i].lpic) lines[i].lpic->decrement();
+		lines[i].lpic = nullptr;
+		if (lines[i].rpic) lines[i].rpic->decrement();
+		lines[i].rpic = nullptr;
+
+		lines[i].lhyper = 0;
+		lines[i].rhyper = 0;
+		lines[i].lm = 0;
+		lines[i].rm = 0;
+		lines[i].newline = 0;
+		lines[i].dirty = 1;
+		lines[i].repaint = 0;
+	}
+
+	lastseen = 0;
+	scrollpos = 0;
+	scrollmax = 0;
+
+	for (i = 0; i < height; i++)
+		touch(i);
+}
+
+bool TextBufferWindow::putPicture(Picture *pic, glui32 align, glui32 linkval) {
+	if (align == imagealign_MarginRight)
+	{
+		if (lines[0].rpic || numchars)
+			return false;
+
+		radjw = (pic->w + Windows::_tMarginx) * GLI_SUBPIX;
+		radjn = (pic->h + Windows::_cellH - 1) / Windows::_cellH;
+		lines[0].rpic = pic;
+		lines[0].rm = radjw;
+		lines[0].rhyper = linkval;
+	} else {
+		if (align != imagealign_MarginLeft && numchars)
+			putCharUni('\n');
+
+		if (lines[0].lpic || numchars)
+			return false;
+
+		ladjw = (pic->w + Windows::_tMarginx) * GLI_SUBPIX;
+		ladjn = (pic->h + Windows::_cellH - 1) / Windows::_cellH;
+		lines[0].lpic = pic;
+		lines[0].lm = ladjw;
+		lines[0].lhyper = linkval;
+
+		if (align != imagealign_MarginLeft)
+			flowBreak();
+	}
+
+	return true ;
+}
+
+void TextBufferWindow::putCharUni(glui32 ch) {
+	/*
+	glui32 bchars[TBLINELEN];
+	Attributes battrs[TBLINELEN];
+	int pw;
+	int bpoint;
+	int saved;
+	int i;
+	int linelen;
+	unsigned char *color;
+
+	gli_tts_speak(&ch, 1);
+
+	pw = (win->bbox.x1 - win->bbox.x0 - Windows::_tMarginx * 2 - gli_scroll_width) * GLI_SUBPIX;
+	pw = pw - 2 * SLOP - radjw - ladjw;
+
+	color = gli_override_bg_set ? gli_window_color : win->bgcolor;
+
+	// oops ... overflow
+	if (numchars + 1 >= TBLINELEN)
+		scrolloneline(dwin, 0);
+
+	if (ch == '\n') {
+		scrolloneline(dwin, 1);
+		return;
+	}
+
+	if (gli_conf_quotes) {
+		// fails for 'tis a wonderful day in the '80s
+		if (gli_conf_quotes > 1 && ch == '\'')
+		{
+			if (numchars == 0 || leftquote(chars[numchars - 1]))
+				ch = UNI_LSQUO;
+		}
+
+		if (ch == '`')
+			ch = UNI_LSQUO;
+
+		if (ch == '\'')
+			ch = UNI_RSQUO;
+
+		if (ch == '"')
+		{
+			if (numchars == 0 || leftquote(chars[numchars - 1]))
+				ch = UNI_LDQUO;
+			else
+				ch = UNI_RDQUO;
+		}
+	}
+
+	if (gli_conf_dashes && win->attr.style != style_Preformatted)
+	{
+		if (ch == '-')
+		{
+			dashed++;
+			if (dashed == 2)
+			{
+				numchars--;
+				if (gli_conf_dashes == 2)
+					ch = UNI_NDASH;
+				else
+					ch = UNI_MDASH;
+			}
+			if (dashed == 3)
+			{
+				numchars--;
+				ch = UNI_MDASH;
+				dashed = 0;
+			}
+		}
+		else
+			dashed = 0;
+	}
+
+	if (gli_conf_spaces && win->attr.style != style_Preformatted
+		&& styles[win->attr.style].bg == color
+		&& !styles[win->attr.style].reverse)
+	{
+		// turn (period space space) into (period space)
+		if (gli_conf_spaces == 1)
+		{
+			if (ch == '.')
+				spaced = 1;
+			else if (ch == ' ' && spaced == 1)
+				spaced = 2;
+			else if (ch == ' ' && spaced == 2)
+			{
+				spaced = 0;
+				return;
+			}
+			else
+				spaced = 0;
+		}
+
+		// Turn (per sp x) into (per sp sp x)
+		if (gli_conf_spaces == 2)
+		{
+			if (ch == '.')
+				spaced = 1;
+			else if (ch == ' ' && spaced == 1)
+				spaced = 2;
+			else if (ch != ' ' && spaced == 2)
+			{
+				spaced = 0;
+				win_textbuffer_putchar_uni(win, ' ');
+			}
+			else
+				spaced = 0;
+		}
+	}
+
+	chars[numchars] = ch;
+	attrs[numchars] = win->attr;
+	numchars++;
+
+	// kill spaces at the end for line width calculation
+	linelen = numchars;
+	while (linelen > 1 && chars[linelen - 1] == ' '
+		&& styles[attrs[linelen - 1].style].bg == color
+		&& !styles[attrs[linelen - 1].style].reverse)
+		linelen--;
+
+	if (calcwidth(dwin, chars, attrs, 0, linelen, -1) >= pw)
+	{
+		bpoint = numchars;
+
+		for (i = numchars - 1; i > 0; i--)
+			if (chars[i] == ' ')
+			{
+				bpoint = i + 1; // skip space
+				break;
+			}
+
+		saved = numchars - bpoint;
+
+		memcpy(bchars, chars + bpoint, saved * 4);
+		memcpy(battrs, attrs + bpoint, saved * sizeof(attr_t));
+		numchars = bpoint;
+
+		scrolloneline(dwin, 0);
+
+		memcpy(chars, bchars, saved * 4);
+		memcpy(attrs, battrs, saved * sizeof(attr_t));
+		numchars = saved;
+	}
+
+	touch(0);
+	*/
+}
+
+void TextBufferWindow::putTextUnit(const glui32 *buf, int len, int pos, int oldlen) {
+	// TODO
+}
+
+void TextBufferWindow::flowBreak() {
+	// TODO
+}
+
+void TextBufferWindow::touch(int line) {
+//	int y = bbox.top + Windows::_tMarginy + (height - line - 1) * Windows::_leading;
+	lines[line].dirty = 1;
+	_windows->clearSelection();
+	//winrepaint(bbox.left, y - 2, bbox.right, y + Windows::_leading + 2);
 }
 
 /*--------------------------------------------------------------------------*/
 
-GraphicsWindow::GraphicsWindow(uint32 rock) : Window(rock) {
+TextBufferWindow::TextBufferRow::TextBufferRow() : len(0), newline(0), dirty(false), repaint(false),
+		lpic(nullptr), rpic(nullptr), lhyper(0), rhyper(0), lm(0), rm(0) {
+}
+
+void TextBufferWindow::TextBufferRow::resize(size_t newSize) {
+	chars.clear();
+	attr.clear();
+	chars.resize(newSize);
+	attr.resize(newSize);
+	Common::fill(&chars[0], &chars[0] + newSize, ' ');
+}
+
+/*--------------------------------------------------------------------------*/
+
+GraphicsWindow::GraphicsWindow(Windows *windows, uint32 rock) : Window(windows, rock) {
 	_type = wintype_Graphics;
 }
 
 /*--------------------------------------------------------------------------*/
 
-PairWindow::PairWindow(glui32 method, Window *_key, glui32 _size) : Window(0),
+PairWindow::PairWindow(Windows *windows, glui32 method, Window *_key, glui32 _size) :
+		Window(windows, 0),
 		dir(method & winmethod_DirMask),
 		division(method & winmethod_DivisionMask),
 		wborder((method & winmethod_BorderMask) == winmethod_Border),
@@ -319,13 +815,6 @@ PairWindow::PairWindow(glui32 method, Window *_key, glui32 _size) : Window(0),
 		backward(dir == winmethod_Left || dir == winmethod_Above),
 		key(key), size(size), keydamage(0), child1(nullptr), child2(nullptr) {
 	_type = wintype_Pair;
-}
-
-/*--------------------------------------------------------------------------*/
-
-WindowStyle::WindowStyle() : font(0), reverse(0) {
-	Common::fill(&bg[0], &bg[3], 0);
-	Common::fill(&fg[0], &fg[3], 0);
 }
 
 /*--------------------------------------------------------------------------*/

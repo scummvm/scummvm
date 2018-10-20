@@ -29,12 +29,21 @@
 #include "common/stream.h"
 #include "graphics/screen.h"
 #include "gargoyle/glk_types.h"
+#include "gargoyle/picture.h"
 
 namespace Gargoyle {
 
 class Window;
 class PairWindow;
+struct WindowMask;
 
+#define HISTORYLEN 100
+#define SCROLLBACK 512
+#define TBLINELEN 300
+
+/**
+ * Main windows manager
+ */
 class Windows {
 private:
 	Graphics::Screen *_screen;
@@ -43,6 +52,8 @@ private:
 	Window *_focusWin;         ///< The window selected by the player
 	bool _forceRedraw;
 	bool _moreFocus;
+	bool _claimSelect;
+	WindowMask *_mask;
 private:
 	/**
 	 * Create a new window
@@ -76,6 +87,12 @@ public:
 	static int _cellW, _cellH;
 	static int _baseLine;
 	static int _leading;
+	static int _scrollWidth;
+	static bool _overrideReverse;
+	static bool _overrideFgSet;
+	static bool _overrideBgSet;
+	static int _overrideFgVal;
+	static int _overrideBgVal;
 public:
 	/**
 	 * Constructor
@@ -92,6 +109,8 @@ public:
 	 * Return the root window
 	 */
 	Window *getRoot() const { return _rootWin; }
+
+	void clearSelection();
 };
 
 /**
@@ -102,8 +121,6 @@ struct WindowStyle {
 	byte bg[3];
 	byte fg[3];
 	int reverse;
-
-	WindowStyle();
 };
 
 /**
@@ -132,11 +149,21 @@ struct Attributes {
 	void clear();
 };
 
+struct WindowMask {
+	int hor;
+	int ver;
+	glui32 **links;
+	Common::Rect select;
+
+	WindowMask() : hor(0), ver(0), links(nullptr) {}
+};
+
 /**
  * Window definition
  */
 class Window {
 public:
+	Windows *_windows;
 	glui32 _magicnum;
 	glui32 _rock;
 	glui32 _type;
@@ -172,7 +199,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Window(uint32 rock);
+	Window(Windows *windows, uint32 rock);
 
 	/**
 	 * Destructor
@@ -194,7 +221,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	BlankWindow(uint32 rock);
+	BlankWindow(Windows *windows, uint32 rock);
 };
 
 /**
@@ -245,7 +272,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	TextGridWindow(uint32 rock);
+	TextGridWindow(Windows *windows, uint32 rock);
 
 	/**
 	 * Rearranges the window
@@ -257,11 +284,101 @@ public:
  * Text Buffer window
  */
 class TextBufferWindow : public Window {
+	/**
+	 * Structure for a row within the window
+	 */
+	struct TextBufferRow {
+		Common::Array<uint32> chars;
+		Common::Array<Attributes> attr;
+		int len, newline;
+		bool dirty, repaint;
+		Picture *lpic, *rpic;
+		glui32 lhyper, rhyper;
+		int lm, rm;
+
+		/**
+		 * Constructor
+		 */
+		TextBufferRow();
+
+		/**
+		 * Resize the row
+		 */
+		void resize(size_t newSize);
+	};
+	typedef Common::Array<TextBufferRow> TextBufferRows;
+private:
+	void reflow();
+	void touchScroll();
+	bool putPicture(Picture *pic, glui32 align, glui32 linkval);
+	void putCharUni(glui32 ch);
+	void putTextUnit(const glui32 *buf, int len, int pos, int oldlen);
+	void flowBreak();
+
+	/**
+	 * Mark a given text row as modified
+	 */
+	void touch(int line);
+public:
+	int width, height;
+	int spaced;
+	int dashed;
+
+	TextBufferRows lines;
+	int scrollback;
+
+	int numchars;       ///< number of chars in last line: lines[0]
+	glui32 *chars;      ///< alias to lines[0].chars
+	Attributes *attrs;  ///< alias to lines[0].attrs
+
+						///< adjust margins temporarily for images
+	int ladjw;
+	int ladjn;
+	int radjw;
+	int radjn;
+
+	/* Command history. */
+	glui32 *history[HISTORYLEN];
+	int historypos;
+	int historyfirst, historypresent;
+
+	/* for paging */
+	int lastseen;
+	int scrollpos;
+	int scrollmax;
+
+	/* for line input */
+	void *inbuf;        ///< unsigned char* for latin1, glui32* for unicode
+	int inmax;
+	long infence;
+	long incurs;
+	Attributes origattr;
+	gidispatch_rock_t inarrayrock;
+
+	glui32 echo_line_input;
+	glui32 *line_terminators;
+
+	/* style hints and settings */
+	WindowStyle styles[style_NUMSTYLES];
+
+	/* for copy selection */
+	glui32 *copybuf;
+	int copypos;
 public:
 	/**
 	 * Constructor
 	 */
-	TextBufferWindow(uint32 rock);
+	TextBufferWindow(Windows *windows, uint32 rock);
+
+	/**
+	 * Rearranges the window
+	 */
+	virtual void rearrange(const Common::Rect &box);
+
+	/**
+	 * Clear the window
+	 */
+	void clear();
 };
 
 /**
@@ -272,7 +389,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	GraphicsWindow(uint32 rock);
+	GraphicsWindow(Windows *windows, uint32 rock);
 };
 
 /**
@@ -294,7 +411,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	PairWindow(glui32 method, Window *_key, glui32 _size);
+	PairWindow(Windows *windows, glui32 method, Window *_key, glui32 _size);
 };
 
 } // End of namespace Gargoyle
