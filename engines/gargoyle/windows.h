@@ -116,7 +116,12 @@ public:
 	/**
 	 * Set the current output stream
 	 */
-	void setCurrent(Common::WriteStream *stream);
+	void setCurrent(Common::WriteStream *stream) { _currentStr = stream; }
+
+	/**
+	 * Gets the current output stream
+	 */
+	Common::WriteStream *getCurrent() const { return _currentStr; }
 
 	/**
 	 * Repaint an area of the windows
@@ -179,12 +184,12 @@ public:
 	glui32 _rock;
 	glui32 _type;
 
-	Window *parent;               ///< pair window which contains this one
+	Window *parent;                   ///< pair window which contains this one
 	Common::Rect bbox;
 	int yadj;
 
-	Common::WriteStream *str;     ///< the window stream.
-	Common::WriteStream *echostr; ///< the window's echo stream, if any.
+	Common::WriteStream *_stream;     ///< the window stream.
+	Common::WriteStream *_echoStream; ///< the window's echo stream, if any.
 
 	int line_request;
 	int line_request_uni;

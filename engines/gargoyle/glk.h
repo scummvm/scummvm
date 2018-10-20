@@ -171,8 +171,8 @@ public:
 	void glk_put_string_uni(glui32 *s);
 	void glk_put_buffer_uni(glui32 *buf, glui32 len);
 	void glk_put_char_stream_uni(strid_t str, glui32 ch);
-	void glk_put_string_stream_uni(strid_t str, glui32 *s);
-	void glk_put_buffer_stream_uni(strid_t str, glui32 *buf, glui32 len);
+	void glk_put_string_stream_uni(strid_t str, const glui32 *s);
+	void glk_put_buffer_stream_uni(strid_t str, const glui32 *buf, glui32 len);
 
 	glsi32 glk_get_char_stream_uni(strid_t str);
 	glui32 glk_get_buffer_stream_uni(strid_t str, glui32 *buf, glui32 len);
