@@ -541,7 +541,7 @@ void TextBufferWindow::touchScroll() {
 	_windows->clearSelection();
 
 	// TODO
-	//winrepaint(win->bbox.left, win->bbox.top, win->bbox.right, win->bbox.bottom);
+	//winrepaint(bbox.left, bbox.top, bbox.right, bbox.bottom);
 	for (int i = 0; i < scrollmax; i++)
 		lines[i].dirty = true;
 }
@@ -632,10 +632,10 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 
 	gli_tts_speak(&ch, 1);
 
-	pw = (win->bbox.x1 - win->bbox.x0 - Windows::_tMarginx * 2 - gli_scroll_width) * GLI_SUBPIX;
+	pw = (bbox.right - bbox.left - Windows::_tMarginx * 2 - gli_scroll_width) * GLI_SUBPIX;
 	pw = pw - 2 * SLOP - radjw - ladjw;
 
-	color = gli_override_bg_set ? gli_window_color : win->bgcolor;
+	color = gli_override_bg_set ? gli_window_color : bgcolor;
 
 	// oops ... overflow
 	if (numchars + 1 >= TBLINELEN)
@@ -669,7 +669,7 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 		}
 	}
 
-	if (gli_conf_dashes && win->attr.style != style_Preformatted)
+	if (gli_conf_dashes && attr.style != style_Preformatted)
 	{
 		if (ch == '-')
 		{
@@ -693,9 +693,9 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 			dashed = 0;
 	}
 
-	if (gli_conf_spaces && win->attr.style != style_Preformatted
-		&& styles[win->attr.style].bg == color
-		&& !styles[win->attr.style].reverse)
+	if (gli_conf_spaces && attr.style != style_Preformatted
+		&& styles[attr.style].bg == color
+		&& !styles[attr.style].reverse)
 	{
 		// turn (period space space) into (period space)
 		if (gli_conf_spaces == 1)
@@ -731,7 +731,7 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 	}
 
 	chars[numchars] = ch;
-	attrs[numchars] = win->attr;
+	attrs[numchars] = attr;
 	numchars++;
 
 	// kill spaces at the end for line width calculation
@@ -800,8 +800,58 @@ void TextBufferWindow::TextBufferRow::resize(size_t newSize) {
 
 /*--------------------------------------------------------------------------*/
 
-GraphicsWindow::GraphicsWindow(Windows *windows, uint32 rock) : Window(windows, rock) {
+GraphicsWindow::GraphicsWindow(Windows *windows, uint32 rock) : Window(windows, rock),
+		w(0), h(0), dirty(false), _surface(nullptr) {
 	_type = wintype_Graphics;
+	Common::copy(&bgcolor[0], &bgcolor[3], bgnd);
+}
+
+void GraphicsWindow::rearrange(const Common::Rect &box) {
+	int newwid, newhgt;
+	int bothwid, bothhgt;
+	int oldw, oldh;
+	Graphics::ManagedSurface *newSurface;
+
+	bbox = box;
+
+	newwid = box.width();
+	newhgt = box.height();
+	oldw = w;
+	oldh = h;
+
+	if (newwid <= 0 || newhgt <= 0) {
+		w = 0;
+		h = 0;
+		delete _surface;
+		_surface = NULL;
+		return;
+	}
+
+	bothwid = w;
+	if (newwid < bothwid)
+		bothwid = newwid;
+	bothhgt = h;
+	if (newhgt < bothhgt)
+		bothhgt = newhgt;
+
+	newSurface = new Graphics::ManagedSurface(newwid, newhgt,
+		Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+
+	// If the new surface is equal or bigger than the old one, copy it over
+	if (_surface && bothwid && bothhgt)
+		newSurface->blitFrom(*_surface);
+
+	delete _surface;
+	_surface = newSurface;
+	w = newwid;
+	h = newhgt;
+
+	touch();
+}
+
+void GraphicsWindow::touch() {
+	dirty = true;
+//	winrepaint(bbox.left, bbox.top, bbox.right, bbox.bottom);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -815,6 +865,90 @@ PairWindow::PairWindow(Windows *windows, glui32 method, Window *_key, glui32 _si
 		backward(dir == winmethod_Left || dir == winmethod_Above),
 		key(key), size(size), keydamage(0), child1(nullptr), child2(nullptr) {
 	_type = wintype_Pair;
+}
+
+void PairWindow::rearrange(const Common::Rect &box) {
+	Common::Rect box1, box2;
+	int min, diff, split, splitwid, max;
+	Window *keyWin;
+	Window *ch1, *ch2;
+
+	bbox = box;
+
+	if (vertical) {
+		min = bbox.left;
+		max = bbox.right;
+	} else {
+		min = bbox.top;
+		max = bbox.bottom;
+	}
+	diff = max - min;
+
+	// We now figure split.
+	if (vertical)
+		splitwid = Windows::_wPaddingx; // want border?
+	else
+		splitwid = Windows::_wPaddingy; // want border?
+
+	switch (division) {
+	case winmethod_Proportional:
+		split = (diff * size) / 100;
+		break;
+
+	case winmethod_Fixed:
+		keyWin = key;
+		split = !keyWin ? 0 : keyWin->getSplit(size, vertical);
+		break;
+
+	default:
+		split = diff / 2;
+		break;
+	}
+
+	if (!backward)
+		split = max - split - splitwid;
+	else
+		split = min + split;
+
+	if (min >= max) {
+		split = min;
+	} else {
+		if (split < min)
+			split = min;
+		else if (split > max - splitwid)
+			split = max - splitwid;
+	}
+
+	if (vertical) {
+		box1.left = bbox.left;
+		box1.right = split;
+		box2.left = split + splitwid;
+		box2.right = bbox.right;
+		box1.top = bbox.top;
+		box1.bottom = bbox.bottom;
+		box2.top = bbox.top;
+		box2.bottom = bbox.bottom;
+	} else {
+		box1.top = bbox.top;
+		box1.bottom = split;
+		box2.top = split + splitwid;
+		box2.bottom = bbox.bottom;
+		box1.left = bbox.left;
+		box1.right = bbox.right;
+		box2.left = bbox.left;
+		box2.right = bbox.right;
+	}
+
+	if (!backward) {
+		ch1 = child1;
+		ch2 = child2;
+	} else {
+		ch1 = child2;
+		ch2 = child1;
+	}
+
+	ch1->rearrange(box1);
+	ch2->rearrange(box2);
 }
 
 /*--------------------------------------------------------------------------*/
