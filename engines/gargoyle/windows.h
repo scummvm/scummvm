@@ -210,6 +210,11 @@ public:
 	 * Rearranges the window
 	 */
 	virtual void rearrange(const Common::Rect &box) { bbox = box; }
+
+	/**
+	 * Get window split size within parent pair window
+	 */
+	virtual glui32 getSplit(glui32 size, bool vertical) const { return 0; }
 };
 typedef Window *winid_t;
 
@@ -277,7 +282,15 @@ public:
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Common::Rect &box);
+	virtual void rearrange(const Common::Rect &box) override;
+
+	/**
+	 * Get window split size within parent pair window
+	 */
+	virtual glui32 getSplit(glui32 size, bool vertical) const override {
+		return vertical ? size * Windows::_cellW + Windows::_tMarginx * 2 :
+			size * Windows::_cellH + Windows::_tMarginy * 2;
+	}
 };
 
 /**
@@ -373,7 +386,14 @@ public:
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Common::Rect &box);
+	virtual void rearrange(const Common::Rect &box) override;
+
+	/**
+	 * Get window split size within parent pair window
+	 */
+	virtual glui32 getSplit(glui32 size, bool vertical) const override {
+		return (vertical) ? size * Windows::_cellW : size * Windows::_cellH;
+	}
 
 	/**
 	 * Clear the window
@@ -385,11 +405,30 @@ public:
  * Graphics window
  */
 class GraphicsWindow : public Window {
+private:
+	void touch();
+public:
+	unsigned char bgnd[3];
+	bool dirty;
+	int w, h;
+	Graphics::ManagedSurface *_surface;
 public:
 	/**
 	 * Constructor
 	 */
 	GraphicsWindow(Windows *windows, uint32 rock);
+
+	/**
+	 * Rearranges the window
+	 */
+	virtual void rearrange(const Common::Rect &box) override;
+
+	/**
+	 * Get window split size within parent pair window
+	 */
+	virtual glui32 getSplit(glui32 size, bool vertical) const override {
+		return size;
+	}
 };
 
 /**
@@ -412,6 +451,11 @@ public:
 	 * Constructor
 	 */
 	PairWindow(Windows *windows, glui32 method, Window *_key, glui32 _size);
+
+	/**
+	 * Rearranges the window
+	 */
+	virtual void rearrange(const Common::Rect &box) override;
 };
 
 } // End of namespace Gargoyle
