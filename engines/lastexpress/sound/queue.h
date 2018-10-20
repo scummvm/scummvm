@@ -46,7 +46,7 @@ public:
 	void stop(EntityIndex entity);
 	void updateQueue();
 	void stopAmbient();
-	void stopAllExcept(SoundTag type1, SoundTag type2 = kSoundTagNone);
+	void stopAllExcept(SoundTag tag1, SoundTag tag2 = kSoundTagNone);
 	void destroyAllSound();
 
 	// State
@@ -58,10 +58,10 @@ public:
 	// Entries
 	void assignNISLink(EntityIndex index);
 	void fade(EntityIndex entity);
-	void fade(SoundTag type);
+	void fade(SoundTag tag);
 	void fade(Common::String filename);
 	void endAmbient();
-	SoundEntry *getEntry(SoundTag type);
+	SoundEntry *getEntry(SoundTag tag);
 	SoundEntry *getEntry(EntityIndex index);
 	SoundEntry *getEntry(Common::String name);
 	uint32 getEntryTime(EntityIndex index);
@@ -96,7 +96,6 @@ private:
 	// State & shared data
 	int _ambientState;
 	int32 _currentTag;
-	// TODO: this seems to be a synchronization flag for the sound timer
 	uint32 _flag;
 
 	// Entries

@@ -79,8 +79,6 @@ void SoundQueue::stop(Common::String filename) {
 }
 
 void SoundQueue::updateQueue() {
-	++_flag;
-
 	if (getAmbientState() & kAmbientSoundEnabled) {
 		SoundEntry *entry = getEntry(kSoundTagAmbient);
 		if (!entry || getFlags()->flag_3 || (entry && entry->getTime() > getSound()->getAmbientSoundDuration())) {
@@ -100,32 +98,23 @@ void SoundQueue::updateQueue() {
 
 		// Original removes the entry data from the cache and sets the archive as not loaded
 		// and if the sound data buffer is not full, loads a new entry to be played based on
-		// its priority and filter id
+		// its priority and volume
 
 		if (!entry->update() && !(entry->getStatus() & kSoundFlagKeepAfterFinish)) {
 			entry->close();
 			SAFE_DELETE(entry);
 			it = _soundList.reverse_erase(it);
-			continue;
-		}
-
-		// When the entry has stopped playing, we remove his buffer
-		if (entry->isFinished()) {
-			entry->close();
-			SAFE_DELETE(entry);
-			it = _soundList.reverse_erase(it);
-			continue;
 		}
 	}
 
 	// Original update the current entry, loading another set of samples to be decoded
 
 	getFlags()->flag_3 = false;
-
-	--_flag;
 }
 
 void SoundQueue::stopAmbient() {
+	_ambientState = 0;
+
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
 		if ((*i)->getTag() == kSoundTagAmbient) {
 			(*i)->kill();
@@ -141,12 +130,12 @@ void SoundQueue::stopAmbient() {
 	}
 }
 
-void SoundQueue::stopAllExcept(SoundTag type1, SoundTag type2) {
-	if (!type2)
-		type2 = type1;
+void SoundQueue::stopAllExcept(SoundTag tag1, SoundTag tag2) {
+	if (!tag2)
+		tag2 = tag1;
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
-		if ((*i)->getTag() != type1 && (*i)->getTag() != type2)
+		if ((*i)->getTag() != tag1 && (*i)->getTag() != tag2)
 			(*i)->kill();
 	}
 }
@@ -160,7 +149,7 @@ void SoundQueue::destroyAllSound() {
 			error("[SoundQueue::destroyAllSound] Invalid entry found in sound queue");
 
 		// Delete entry
-		entry->close();
+		entry->kill();
 		SAFE_DELETE(entry);
 
 		i = _soundList.reverse_erase(i);
@@ -174,7 +163,7 @@ void SoundQueue::destroyAllSound() {
 //////////////////////////////////////////////////////////////////////////
 void SoundQueue::stopAll() {
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		(*i)->addStatusFlag(kSoundFlagClosed);
+		(*i)->close();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -194,8 +183,8 @@ void SoundQueue::fade(EntityIndex entity) {
 	}
 }
 
-void SoundQueue::fade(SoundTag type) {
-	SoundEntry *entry = getEntry(type);
+void SoundQueue::fade(SoundTag tag) {
+	SoundEntry *entry = getEntry(tag);
 	if (entry)
 		entry->fade();
 }
@@ -236,9 +225,9 @@ SoundEntry *SoundQueue::getEntry(Common::String name) {
 	return NULL;
 }
 
-SoundEntry *SoundQueue::getEntry(SoundTag type) {
+SoundEntry *SoundQueue::getEntry(SoundTag tag) {
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
-		if ((*i)->getTag() == type)
+		if ((*i)->getTag() == tag)
 			return *i;
 	}
 
@@ -321,24 +310,22 @@ void SoundQueue::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint32LE(_ambientState);
 	s.syncAsUint32LE(_currentTag);
 
-	// Compute the number of entries to save
-	uint32 numEntries = count();
-	s.syncAsUint32LE(numEntries);
-
 	// Save or load each entry data
 	if (s.isSaving()) {
-		for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-			(*i)->saveLoadWithSerializer(s);
-	} else {
-		warning("[Sound::saveLoadWithSerializer] Loading not implemented");
+		// Compute the number of entries to save
+		uint32 numEntries = count();
+		s.syncAsUint32LE(numEntries);
 
-		uint32 unusedDataSize = numEntries * 64;
-		if (s.isLoading()) {
-			byte *empty = (byte *)malloc(unusedDataSize);
-			s.syncBytes(empty, unusedDataSize);
-			free(empty);
-		} else {
-			s.skip(unusedDataSize);
+		for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
+			if ((*i)->needSaving())
+				(*i)->saveLoadWithSerializer(s);
+	} else {
+		uint32 numEntries;
+		s.syncAsUint32LE(numEntries);
+		for (uint32 i = 0; i < numEntries; i++) {
+			SoundEntry* entry = new SoundEntry(_engine);
+			entry->saveLoadWithSerializer(s);
+			addToQueue(entry);
 		}
 	}
 }
@@ -347,7 +334,7 @@ void SoundQueue::saveLoadWithSerializer(Common::Serializer &s) {
 uint32 SoundQueue::count() {
 	uint32 numEntries = 0;
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		if ((*i)->getName().matchString("NISSND?"))
+		if ((*i)->needSaving())
 			++numEntries;
 
 	return numEntries;

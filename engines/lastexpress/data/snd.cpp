@@ -363,6 +363,11 @@ public:
 		return !_running || (!_looped && Audio::ADPCMStream::endOfData());
 	}
 
+	void seekToBlock(uint32 block) {
+		reset();
+		_stream->seek(_startpos + _blockAlign * block);
+	}
+
 	int readBuffer(int16 *buffer, const int numSamples) {
 		int samples = 0;
 		// Temporary data
@@ -384,22 +389,15 @@ public:
 				_status.ima_ch[0].stepIndex = _stream->readSint16LE() << 6;
 				_blockPos[0] = 4;
 
-				// Smooth transition, if requested
-				// the original game clears kSoundFlagVolumeChanging here if _nextVolume == _smoothChangeTarget
-				if (_nextVolume != _smoothChangeTarget) {
-					if (_volumeHoldBlocks > 3) {
-						if (_nextVolume < _smoothChangeTarget)
-							++_nextVolume;
-						else
-							--_nextVolume;
-						_volumeHoldBlocks = 0;
-						if (_nextVolume == 0) {
-							_running = false;
-							break;
-						}
-					} else {
-						_volumeHoldBlocks++;
-					}
+				// sanity check against broken stream
+				if ((unsigned)_status.ima_ch[0].stepIndex >= ARRAYSIZE(stepTable) * 4) {
+					// the original game sets kSoundFlagDecodeError here and stops playing
+					_status.ima_ch[0].stepIndex = 0;
+				}
+
+				if (!smoothVolumeChangeStep()) {
+					_running = false;
+					break;
 				}
 
 				// Get current volume
@@ -436,6 +434,21 @@ private:
 	uint32 _smoothChangeTarget;
 	uint32 _volumeHoldBlocks; // smooth change of volume keeps volume on hold for 4 blocks = 133ms for every value; this is the counter
 	bool _running, _looped;
+
+	bool smoothVolumeChangeStep() {
+		if (_nextVolume == _smoothChangeTarget)
+			return true; // the original game clears kSoundFlagVolumeChanging here
+		if (_volumeHoldBlocks <= 3) {
+			_volumeHoldBlocks++;
+			return true;
+		}
+		if (_nextVolume < _smoothChangeTarget)
+			++_nextVolume;
+		else
+			--_nextVolume;
+		_volumeHoldBlocks = 0;
+		return (_nextVolume != 0);
+	}
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -444,7 +457,6 @@ private:
 SimpleSound::SimpleSound() : _size(0), _blocks(0), _blockSize(0) {}
 
 SimpleSound::~SimpleSound() {
-	stop();
 }
 
 // Stop the sound
@@ -480,11 +492,12 @@ uint32 SimpleSound::getTimeMS() {
 StreamedSound::StreamedSound() : _as(NULL), _loaded(false) {}
 
 StreamedSound::~StreamedSound() {
+	stop(); // should execute before disposal of _as, so don't move in ~SimpleSound
 	delete _as;
 	_as = NULL;
 }
 
-bool StreamedSound::load(Common::SeekableReadStream *stream, uint32 volume, bool looped) {
+bool StreamedSound::load(Common::SeekableReadStream *stream, uint32 volume, bool looped, uint32 startBlock) {
 	if (!stream)
 		return false;
 
@@ -498,6 +511,8 @@ bool StreamedSound::load(Common::SeekableReadStream *stream, uint32 volume, bool
 	}
 	// Start decoding the input stream
 	_as = makeDecoder(stream, _size, volume, looped);
+	if (startBlock)
+		_as->seekToBlock(startBlock);
 
 	// Start playing the decoded audio stream
 	play(_as, DisposeAfterUse::NO);
@@ -546,6 +561,7 @@ AppendableSound::AppendableSound() : SimpleSound() {
 
 AppendableSound::~AppendableSound() {
 	finish();
+	stop();
 
 	_as = NULL;
 }

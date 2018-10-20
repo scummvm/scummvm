@@ -137,7 +137,7 @@ void SoundManager::playSound(EntityIndex entity, Common::String filename, SoundF
 	if (_queue->isBuffered(entity) && entity && entity < kEntityTrain)
 		_queue->stop(entity);
 
-	SoundFlag currentFlag = (flag == kSoundVolumeEntityDefault) ? getSoundFlag(entity) : (SoundFlag)(flag | 0x80000);
+	SoundFlag currentFlag = (flag == kSoundVolumeEntityDefault) ? getSoundFlag(entity) : (SoundFlag)(flag | kSoundFlagFixedVolume);
 
 	// Add .SND at the end of the filename if needed
 	if (!filename.contains('.'))
@@ -164,12 +164,6 @@ bool SoundManager::playSoundWithSubtitles(Common::String filename, uint32 flag, 
 	if (activateDelay) {
 		entry->initDelayedActivate(activateDelay);
 	} else {
-		// Get subtitles name
-		uint32 size = filename.size();
-		while (filename.size() > size - 4)
-			filename.deleteLastChar();
-
-		entry->showSubtitle(filename);
 		entry->play();
 	}
 
@@ -323,7 +317,7 @@ void SoundManager::playSteam(CityIndex index) {
 	// Get the new sound entry and show subtitles
 	SoundEntry *entry = _queue->getEntry(kSoundTagAmbient);
 	if (entry)
-		entry->showSubtitle(cities[index]);
+		entry->setSubtitles(cities[index]);
 }
 
 void SoundManager::playFightSound(byte action, byte a4) {

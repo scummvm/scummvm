@@ -96,9 +96,13 @@ public:
 
 	void open(Common::String name, SoundFlag flag, int priority);
 	void close();
-	void play();
-	void kill();
-	bool isFinished();
+	// startTime is measured in sound ticks, 30Hz timer
+	// [used for restoring the entry from savefile]
+	void play(uint32 startTime = 0);
+	void kill() {
+		_entity = kEntityPlayer; // no kActionEndSound notifications
+		close();
+	}
 	void setVolumeSmoothly(SoundFlag newVolume);
 	// setVolumeSmoothly() treats kVolumeNone in a special way;
 	// fade() terminates the stream after the transition
@@ -110,18 +114,20 @@ public:
 	void initDelayedActivate(unsigned activateDelay);
 
 	// Subtitles
-	void showSubtitle(Common::String filename);
+	void setSubtitles(Common::String filename);
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &ser);
 
 	// Accessors
-	void addStatusFlag(SoundFlag flag) { _status |= flag; }
 	void setEntity(EntityIndex entity) { _entity = entity; }
+	bool needSaving() const {
+		return (_name != "NISSND?" && (_status & kSoundTypeMask) != kSoundTypeMenu);
+	}
 
 	uint32           getStatus()   { return _status; }
 	int32            getTag()      { return _tag; }
-	uint32           getTime()     { return _soundStream ? (_soundStream->getTimeMS() * 30 / 1000) : 0; }
+	uint32           getTime()     { return _soundStream ? (_soundStream->getTimeMS() * 30 / 1000) + _startTime : 0; }
 	EntityIndex      getEntity()   { return _entity; }
 	uint32           getPriority() { return _priority; }
 	const Common::String& getName(){ return _name; }
@@ -138,9 +144,10 @@ private:
 	uint32 _status;
 	int32 _tag; // member of SoundTag for special sounds, unique value for normal sounds
 	//byte *_bufferStart, *_bufferEnd, *_decodePointer, *_buffer, *_readPointer;
-	// the original game uses uint32 _blocksLeft, _time instead of _totalBlocks
+	// the original game uses uint32 _blocksLeft, _time instead of _blockCount
 	// we ask the backend for sound time
 	uint32 _blockCount;
+	uint32 _startTime;
 	//uint32 _bufferSize;
 	//union { uint32 _streamPos; enum StreamCloseReason _streamCloseReason; };
 	Common::SeekableReadStream *_stream;    // The file stream

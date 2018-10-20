@@ -80,7 +80,7 @@ public:
 	StreamedSound();
 	~StreamedSound();
 
-	bool load(Common::SeekableReadStream *stream, uint32 volume, bool looped);
+	bool load(Common::SeekableReadStream *stream, uint32 volume, bool looped, uint32 startBlock = 0);
 	virtual bool isFinished();
 
 	void setVolume(uint32 newVolume);
