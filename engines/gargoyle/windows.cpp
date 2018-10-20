@@ -89,7 +89,7 @@ WindowStyle G_STYLES[style_NUMSTYLES] = {
 
 Windows::Windows(Graphics::Screen *screen) : _screen(screen), _forceRedraw(true), _moreFocus(false),
 		_windowList(nullptr), _rootWin(nullptr), _focusWin(nullptr), _mask(nullptr),
-		_claimSelect(0) {
+		_claimSelect(0), _currentStr(nullptr) {
 	_confLockCols = false;
 	_confLockRows = false;
 	_wMarginx = 15;
@@ -278,6 +278,10 @@ void Windows::clearSelection() {
 
 	_mask->select = Common::Rect();
 	_claimSelect = false;
+}
+
+void Windows::setCurrent(Common::WriteStream *stream) {
+	_currentStr = stream;
 }
 
 /*--------------------------------------------------------------------------*/

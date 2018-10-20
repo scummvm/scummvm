@@ -136,7 +136,7 @@ strid_t Glk::glk_window_get_echo_stream(winid_t win) {
 }
 
 void Glk::glk_set_window(winid_t win) {
-	// TODO
+	_windows->setCurrent(win ? win->str : nullptr);
 }
 
 strid_t Glk::glk_stream_open_file(frefid_t fileref, glui32 fmode,

@@ -54,6 +54,7 @@ private:
 	bool _moreFocus;
 	bool _claimSelect;
 	WindowMask *_mask;
+	Common::WriteStream *_currentStr;
 private:
 	/**
 	 * Create a new window
@@ -111,6 +112,11 @@ public:
 	Window *getRoot() const { return _rootWin; }
 
 	void clearSelection();
+
+	/**
+	 * Set the current output stream
+	 */
+	void setCurrent(Common::WriteStream *stream);
 };
 
 /**
