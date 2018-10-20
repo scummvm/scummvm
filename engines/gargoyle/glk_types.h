@@ -219,6 +219,10 @@ enum StyleHint {
 	stylehint_just_RightFlush = 3,
 };
 
+enum FACES { MONOR, MONOB, MONOI, MONOZ, PROPR, PROPB, PROPI, PROPZ };
+enum TYPES { MONOF, PROPF };
+enum STYLES { FONTR, FONTB, FONTI, FONTZ };
+
 #ifdef GLK_MODULE_IMAGE
 
 enum ImageAlign {
