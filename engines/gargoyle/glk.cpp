@@ -22,6 +22,7 @@
 
 #include "gargoyle/glk.h"
 #include "gargoyle/events.h"
+#include "gargoyle/stream.h"
 #include "gargoyle/windows.h"
 
 namespace Gargoyle {
@@ -122,8 +123,7 @@ void Glk::glk_window_move_cursor(winid_t win, glui32 xpos, glui32 ypos) {
 }
 
 strid_t Glk::glk_window_get_stream(winid_t win) {
-	// TODO
-	return nullptr;
+	return win->_stream;
 }
 
 void Glk::glk_window_set_echo_stream(winid_t win, strid_t str) {
@@ -136,7 +136,7 @@ strid_t Glk::glk_window_get_echo_stream(winid_t win) {
 }
 
 void Glk::glk_set_window(winid_t win) {
-	_windows->setCurrent(win ? win->str : nullptr);
+	_windows->setCurrent(win ? win->_stream : nullptr);
 }
 
 strid_t Glk::glk_stream_open_file(frefid_t fileref, glui32 fmode,
@@ -371,27 +371,28 @@ glui32 Glk::glk_buffer_to_title_case_uni(glui32 *buf, glui32 len,
 }
 
 void Glk::glk_put_char_uni(glui32 ch) {
-	// TODO
+	glk_put_char_stream_uni(_windows->getCurrent(), ch);
 }
 
 void Glk::glk_put_string_uni(glui32 *s) {
-	// TODO
+	glk_put_buffer_stream_uni(_windows->getCurrent(), s, strlen_uni(s));
 }
 
 void Glk::glk_put_buffer_uni(glui32 *buf, glui32 len) {
-	// TODO
+	glk_put_buffer_stream_uni(_windows->getCurrent(), buf, len);
 }
 
 void Glk::glk_put_char_stream_uni(strid_t str, glui32 ch) {
-	// TODO
+	str->writeUint32LE(ch);
 }
 
-void Glk::glk_put_string_stream_uni(strid_t str, glui32 *s) {
-	// TODO
+void Glk::glk_put_string_stream_uni(strid_t str, const glui32 *s) {
+	glk_put_buffer_stream_uni(str, s, strlen_uni(s));
 }
 
-void Glk::glk_put_buffer_stream_uni(strid_t str, glui32 *buf, glui32 len) {
-	// TODO
+void Glk::glk_put_buffer_stream_uni(strid_t str, const glui32 *buf, glui32 len) {
+	while (len-- > 0)
+		str->writeUint32LE(*buf++);
 }
 
 glsi32 Glk::glk_get_char_stream_uni(strid_t str) {

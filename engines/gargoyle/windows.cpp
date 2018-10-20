@@ -21,6 +21,7 @@
  */
 
 #include "gargoyle/windows.h"
+#include "gargoyle/stream.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
@@ -281,10 +282,6 @@ void Windows::clearSelection() {
 	_claimSelect = false;
 }
 
-void Windows::setCurrent(Common::WriteStream *stream) {
-	_currentStr = stream;
-}
-
 void Windows::repaint(const Common::Rect &box) {
 	// TODO
 }
@@ -295,7 +292,7 @@ Window::Window(Windows *windows, glui32 rock) : _magicnum(MAGIC_WINDOW_NUM),
 		_windows(windows), _rock(rock), _type(0), parent(nullptr), next(nullptr), prev(nullptr),
 		yadj(0), line_request(0), line_request_uni(0), char_request(0), char_request_uni(0),
 		mouse_request(0), hyper_request(0), more_request(0), scroll_request(0), image_loaded(0),
-		echo_line_input(true),  line_terminators(nullptr), termct(0), str(nullptr), echostr(nullptr) {
+		echo_line_input(true),  line_terminators(nullptr), termct(0), _echoStream(nullptr) {
 	attr.fgset = 0;
 	attr.bgset = 0;
 	attr.reverse = 0;
@@ -307,6 +304,8 @@ Window::Window(Windows *windows, glui32 rock) : _magicnum(MAGIC_WINDOW_NUM),
 	Common::fill(&bgcolor[0], &bgcolor[3], 3);
 	Common::fill(&fgcolor[0], &fgcolor[3], 3);
 	disprock.num = 0;
+
+	_stream = new WindowStream(this, rock);
 }
 
 /*--------------------------------------------------------------------------*/
