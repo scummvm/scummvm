@@ -139,13 +139,13 @@ void Glk::glk_set_window(winid_t win) {
 	_windows->setCurrent(win ? win->_stream : nullptr);
 }
 
-strid_t Glk::glk_stream_open_file(frefid_t fileref, glui32 fmode,
+strid_t Glk::glk_stream_open_file(frefid_t fileref, FileMode fmode,
 	glui32 rock) {
 	// TODO
 	return nullptr;
 }
 
-strid_t Glk::glk_stream_open_memory(char *buf, glui32 buflen, glui32 fmode, glui32 rock) {
+strid_t Glk::glk_stream_open_memory(char *buf, glui32 buflen, FileMode fmode, glui32 rock) {
 	// TODO
 	return nullptr;
 }
@@ -154,14 +154,17 @@ void Glk::glk_stream_close(strid_t str, stream_result_t *result) {
 	// TODO
 }
 
-strid_t Glk::glk_stream_iterate(strid_t str, glui32 *rockptr) {
-	// TODO
-	return nullptr;
+strid_t Glk::glk_stream_iterate(strid_t str, glui32 *rockptr) const {
+	return str ? str->getNext(rockptr) : _streams->getFirst(rockptr);
 }
 
-glui32 Glk::glk_stream_get_rock(strid_t str) {
-	// TODO
-	return 0;
+glui32 Glk::glk_stream_get_rock(strid_t str) const {
+	if (!str) {
+		warning("stream_get_rock: invalid ref");
+		return 0;
+	}
+
+	return str->getRock();
 }
 
 void Glk::glk_stream_set_position(strid_t str, glsi32 pos, glui32 seekmode) {
@@ -257,7 +260,7 @@ frefid_t Glk::glk_fileref_create_by_name(glui32 usage, char *name, glui32 rock) 
 	return nullptr;
 }
 
-frefid_t Glk::glk_fileref_create_by_prompt(glui32 usage, glui32 fmode, glui32 rock) {
+frefid_t Glk::glk_fileref_create_by_prompt(glui32 usage, FileMode fmode, glui32 rock) {
 	// TODO
 	return nullptr;
 }
@@ -383,7 +386,7 @@ void Glk::glk_put_buffer_uni(glui32 *buf, glui32 len) {
 }
 
 void Glk::glk_put_char_stream_uni(strid_t str, glui32 ch) {
-	str->writeUint32LE(ch);
+//	str->writeUint32LE(ch);
 }
 
 void Glk::glk_put_string_stream_uni(strid_t str, const glui32 *s) {
@@ -391,8 +394,7 @@ void Glk::glk_put_string_stream_uni(strid_t str, const glui32 *s) {
 }
 
 void Glk::glk_put_buffer_stream_uni(strid_t str, const glui32 *buf, glui32 len) {
-	while (len-- > 0)
-		str->writeUint32LE(*buf++);
+//	while (len-- > 0) str->writeUint32LE(*buf++);
 }
 
 glsi32 Glk::glk_get_char_stream_uni(strid_t str) {
@@ -410,15 +412,13 @@ glui32 Glk::glk_get_line_stream_uni(strid_t str, glui32 *buf, glui32 len) {
 	return 0;
 }
 
-strid_t Glk::glk_stream_open_file_uni(frefid_t fileref, glui32 fmode, glui32 rock) {
+strid_t Glk::glk_stream_open_file_uni(frefid_t fileref, FileMode fmode, glui32 rock) {
 	// TODO
 	return nullptr;
 }
 
-strid_t Glk::glk_stream_open_memory_uni(glui32 *buf, glui32 buflen,
-	glui32 fmode, glui32 rock) {
-	// TODO
-	return nullptr;
+strid_t Glk::glk_stream_open_memory_uni(glui32 *buf, glui32 buflen, FileMode fmode, glui32 rock) {
+	return _streams->addMemoryStream(buf, buflen, fmode, rock, false);
 }
 
 void Glk::glk_request_char_event_uni(winid_t win) {
