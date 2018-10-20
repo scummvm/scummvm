@@ -20,14 +20,18 @@
  *
  */
 
-#include "gargoyle/stream.h"
+#include "gargoyle/streams.h"
 #include "gargoyle/windows.h"
 
 namespace Gargoyle {
 
-Stream::Stream(bool readable, bool writable, uint32 rock, bool unicode) :
-		_readable(readable), _writable(writable), _readCount(0), _writeCount(0),
-		_prev(nullptr), _next(nullptr), _rock(0) {
+Stream::Stream(Streams *streams, bool readable, bool writable, uint32 rock, bool unicode) :
+		_streams(streams), _readable(readable), _writable(writable), _readCount(0),
+		_writeCount(0), _prev(nullptr), _next(nullptr), _rock(0) {
+}
+
+Stream::~Stream() {
+	_streams->removeStream(this);
 }
 
 Stream *Stream::getNext(uint32 *rock) const {
@@ -45,11 +49,18 @@ void Stream::fillResult(StreamResult *result) {
 }
 
 void Stream::close(StreamResult *result) {
+	// Get the read/write totals
 	fillResult(result);
 
+	// Remove the stream
+	delete this;
 }
 
 /*--------------------------------------------------------------------------*/
+
+void WindowStream::close(StreamResult *result) {
+	warning("cannot close window stream");
+}
 
 void WindowStream::writeChar(unsigned char ch) {
 
@@ -61,8 +72,8 @@ void WindowStream::writeCharUni(uint32 ch) {
 
 /*--------------------------------------------------------------------------*/
 
-MemoryStream::MemoryStream(void *buf, size_t buflen, FileMode mode, uint32 rock, bool unicode) :
-		Stream(mode != filemode_Write, mode != filemode_Read, rock, unicode),
+MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint32 rock, bool unicode) :
+		Stream(streams, mode != filemode_Write, mode != filemode_Read, rock, unicode),
 		_buf(buf), _buflen(buflen), _bufptr(buf) {
 	assert(_buf && _buflen);
 	assert(mode == filemode_Read || mode == filemode_Write || mode == filemode_ReadWrite);
@@ -88,7 +99,8 @@ void MemoryStream::writeCharUni(uint32 ch) {
 
 /*--------------------------------------------------------------------------*/
 
-Streams::Streams() : _streamList(nullptr) {}
+Streams::Streams(GargoyleEngine *engine) : _engine(engine), _streamList(nullptr), _currentStream(nullptr) {
+}
 
 Streams::~Streams() {
 	while (_streamList)
@@ -96,13 +108,13 @@ Streams::~Streams() {
 }
 
 WindowStream *Streams::addWindowStream(Window *window) {
-	WindowStream *stream = new WindowStream(window);
+	WindowStream *stream = new WindowStream(this, window);
 	addStream(stream);
 	return stream;
 }
 
 MemoryStream *Streams::addMemoryStream(void *buf, size_t buflen, FileMode mode, uint32 rock, bool unicode) {
-	MemoryStream *stream = new MemoryStream(buf, buflen, mode, rock, unicode);
+	MemoryStream *stream = new MemoryStream(this, buf, buflen, mode, rock, unicode);
 	addStream(stream);
 	return stream;
 }
@@ -114,7 +126,7 @@ void Streams::addStream(Stream *stream) {
 		stream->_next->_prev = stream;
 }
 
-void Streams::deleteStream(Stream *stream) {
+void Streams::removeStream(Stream *stream) {
 	Stream *prev = stream->_prev;
 	Stream *next = stream->_next;
 
@@ -124,8 +136,6 @@ void Streams::deleteStream(Stream *stream) {
 		_streamList = next;
 	if (next)
 		next->_prev = prev;
-
-	delete stream;
 }
 
 Stream *Streams::getFirst(uint32 *rock) {

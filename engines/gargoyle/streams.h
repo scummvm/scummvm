@@ -20,15 +20,17 @@
  *
  */
 
-#ifndef GARGOYLE_STREAM_H
-#define GARGOYLE_STREAM_H
+#ifndef GARGOYLE_STREAMS_H
+#define GARGOYLE_STREAMS_H
 
 #include "common/scummsys.h"
 #include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
 
+class GargoyleEngine;
 class Window;
+class Streams;
 
 struct StreamResult {
 	uint32 _readCount;
@@ -40,6 +42,7 @@ struct StreamResult {
  */
 class Stream {
 public:
+	Streams *_streams;
 	Stream *_prev;
 	Stream *_next;
 	uint32 _rock;
@@ -51,12 +54,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	Stream(bool readable, bool writable, uint32 rock, bool unicode);
+	Stream(Streams *streams, bool readable, bool writable, uint32 rock, bool unicode);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~Stream() {}
+	virtual ~Stream();
 
 	/**
 	 * Get the next stream
@@ -74,9 +77,9 @@ public:
 	void fillResult(StreamResult *result);
 
 	/**
-	 * Close the stream
+	 * Close and delete the stream
 	 */
-	virtual void close(StreamResult *result = nullptr);
+	void close(StreamResult *result = nullptr);
 
 	/**
 	 * Write a character
@@ -100,8 +103,13 @@ public:
 	/**
 	 * Constructor
 	 */
-	WindowStream(Window *window, uint32 rock = 0, bool unicode = true) :
-		Stream(true, false, rock, unicode), _window(window) {}
+	WindowStream(Streams *streams, Window *window, uint32 rock = 0, bool unicode = true) :
+		Stream(streams, true, false, rock, unicode), _window(window) {}
+
+	/**
+	 * Close the stream
+	 */
+	virtual void close(StreamResult *result = nullptr);
 
 	/**
 	 * Write a character
@@ -128,7 +136,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MemoryStream(void *buf, size_t buflen, FileMode mode, uint32 rock = 0, bool unicode = true);
+	MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint32 rock = 0, bool unicode = true);
 
 	/**
 	 * Write a character
@@ -145,18 +153,26 @@ public:
  * Streams manager
  */
 class Streams {
+	friend class Stream;
 private:
+	GargoyleEngine *_engine;
 	Stream *_streamList;
+	Stream *_currentStream;
 private:
 	/**
 	 * Adds a created stream to the list
 	 */
 	void addStream(Stream *stream);
+
+	/**
+	 * Remove a stream
+	 */
+	void removeStream(Stream *stream);
 public:
 	/**
 	 * Constructor
 	 */
-	Streams();
+	Streams(GargoyleEngine *engine);
 
 	/**
 	 * Destructor
@@ -176,12 +192,27 @@ public:
 	/**
 	 * Delete a stream
 	 */
-	void deleteStream(Stream *stream);
+	void deleteStream(Stream *stream) {
+		delete stream;
+	}
 
 	/**
 	 * Start an Iteration through streams
 	 */
 	Stream *getFirst(uint32 *rock);
+
+	/**
+	 * Set the current output stream
+	 */
+	void setCurrent(Stream *stream) {
+		assert(stream->_writable);
+		_currentStream = stream;
+	}
+
+	/**
+	 * Gets the current output stream
+	 */
+	Stream *getCurrent() const { return _currentStream; }
 };
 
 

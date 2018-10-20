@@ -73,10 +73,7 @@ private:
 	void initialize();
 protected:
 	const GargoyleGameDescription *_gameDescription;
-	Events *_events;
 	Graphics::Screen *_screen;
-	Streams *_streams;
-	Windows *_windows;
 	Common::RandomSource _random;
 	int _loadSaveSlot;
 
@@ -92,6 +89,10 @@ protected:
 	 * Main game loop for the individual interpreters
 	 */
 	virtual void runGame(Common::SeekableReadStream *gameFile) = 0;
+public:
+	Events *_events;
+	Streams *_streams;
+	Windows *_windows;
 public:
 	GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc);
 	virtual ~GargoyleEngine();
