@@ -117,6 +117,11 @@ public:
 	 * Set the current output stream
 	 */
 	void setCurrent(Common::WriteStream *stream);
+
+	/**
+	 * Repaint an area of the windows
+	 */
+	void repaint(const Common::Rect &box);
 };
 
 /**
@@ -442,21 +447,21 @@ public:
  */
 class PairWindow : public Window {
 public:
-	Window *child1, *child2;
+	Window *_child1, *_child2;
 
 	/* split info... */
-	glui32 dir;             ///< winmethod_Left, Right, Above, or Below
-	int vertical, backward; ///< flags
-	glui32 division;        ///< winmethod_Fixed or winmethod_Proportional
-	Window *key;            ///< NULL or a leaf-descendant (not a Pair)
-	int keydamage;          ///< used as scratch space in window closing
-	glui32 size;            ///< size value
-	glui32 wborder;         ///< winMethod_Border, NoBorder
+	glui32 _dir;               ///< winmethod_Left, Right, Above, or Below
+	bool _vertical, _backward; ///< flags
+	glui32 _division;          ///< winmethod_Fixed or winmethod_Proportional
+	Window *_key;              ///< NULL or a leaf-descendant (not a Pair)
+	int _keydamage;            ///< used as scratch space in window closing
+	glui32 _size;              ///< size value
+	glui32 _wborder;           ///< winMethod_Border, NoBorder
 public:
 	/**
 	 * Constructor
 	 */
-	PairWindow(Windows *windows, glui32 method, Window *_key, glui32 _size);
+	PairWindow(Windows *windows, glui32 method, Window *key, glui32 size);
 
 	/**
 	 * Rearranges the window
