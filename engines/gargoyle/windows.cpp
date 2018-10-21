@@ -306,6 +306,16 @@ TextGridWindow::TextGridWindow(Windows *windows, uint32 rock) : Window(windows, 
 	Common::copy(&g_conf->_gStyles[0], &g_conf->_gStyles[style_NUMSTYLES], styles);
 }
 
+TextGridWindow::~TextGridWindow() {
+	if (_inBuf) {
+		if (g_vm->gli_unregister_arr)
+			(*g_vm->gli_unregister_arr)(_inBuf, _inMax, "&+#!Cn", _inArrayRock);
+		_inBuf = nullptr;
+	}
+
+	delete[] _lineTerminators;
+}
+
 void TextGridWindow::rearrange(const Common::Rect &box) {
 	Window::rearrange(box);
 	int newwid, newhgt;
@@ -425,6 +435,24 @@ TextBufferWindow::TextBufferWindow(Windows *windows, uint32 rock) : Window(windo
 	Common::fill(&_history[0], &_history[HISTORYLEN], nullptr);
 
 	Common::copy(&g_conf->_tStyles[0], &g_conf->_tStyles[style_NUMSTYLES], styles);
+}
+
+TextBufferWindow::~TextBufferWindow() {
+	if (_inBuf) {
+		if (g_vm->gli_unregister_arr)
+			(*g_vm->gli_unregister_arr)(_inBuf, _inMax, "&+#!Cn", _inArrayRock);
+		_inBuf = nullptr;
+	}
+
+	delete[] _copyBuf;
+	delete[] _lineTerminators;
+
+	for (int i = 0; i < _scrollBack; i++) {
+		if (_lines[i].lpic)
+			_lines[i].lpic->decrement();
+		if (_lines[i].rpic)
+			_lines[i].rpic->decrement();
+	}
 }
 
 void TextBufferWindow::rearrange(const Common::Rect &box) {
@@ -934,6 +962,10 @@ GraphicsWindow::GraphicsWindow(Windows *windows, uint32 rock) : Window(windows, 
 _w(0), _h(0), _dirty(false), _surface(nullptr) {
 	_type = wintype_Graphics;
 	Common::copy(&_bgColor[0], &_bgColor[3], _bgnd);
+}
+
+GraphicsWindow::~GraphicsWindow() {
+	delete _surface;
 }
 
 void GraphicsWindow::rearrange(const Common::Rect &box) {
