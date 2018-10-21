@@ -23,6 +23,7 @@
 #include "gargoyle/glk.h"
 #include "gargoyle/events.h"
 #include "gargoyle/streams.h"
+#include "gargoyle/string.h"
 #include "gargoyle/windows.h"
 
 namespace Gargoyle {

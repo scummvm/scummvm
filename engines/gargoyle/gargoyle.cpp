@@ -29,6 +29,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "gargoyle/gargoyle.h"
+#include "gargoyle/conf.h"
 #include "gargoyle/events.h"
 #include "gargoyle/streams.h"
 #include "gargoyle/windows.h"
@@ -36,11 +37,12 @@
 namespace Gargoyle {
 
 GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc) :
-		_gameDescription(gameDesc), Engine(syst), _random("Gargoyle"),
+		_gameDescription(gameDesc), Engine(syst), _random("Gargoyle"), _conf(nullptr),
 		_events(nullptr), _screen(nullptr), _windows(nullptr) {
 }
 
 GargoyleEngine::~GargoyleEngine() {
+	delete _conf;
 	delete _events;
 	delete _screen;
 	delete _streams;
