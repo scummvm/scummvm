@@ -23,6 +23,7 @@
 #include "gargoyle/conf.h"
 #include "gargoyle/fonts.h"
 #include "gargoyle/string.h"
+#include "gargoyle/windows.h"
 #include "common/config-manager.h"
 
 namespace Gargoyle {
@@ -31,6 +32,36 @@ const byte WHITE[3] = { 0xff, 0xff, 0xff };
 const byte BLUE[3] = { 0x00, 0x00, 0x60 };
 const byte SCROLL_BG[3] = { 0xb0, 0xb0, 0xb0 };
 const byte SCROLL_FG[3] = { 0x80, 0x80, 0x80 };
+
+WindowStyle T_STYLES[style_NUMSTYLES] = {
+	{ PROPR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Normal
+	{ PROPI,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Emphasized
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Preformatted
+	{ PROPB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Header
+	{ PROPB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Subheader
+	{ PROPZ,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Alert
+	{ PROPR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Note
+	{ PROPR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< BlockQuote
+	{ PROPB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Input
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< User1
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< User2
+};
+
+WindowStyle G_STYLES[style_NUMSTYLES] = {
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Normal
+	{ MONOI,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Emphasized
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Preformatted
+	{ MONOB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Header
+	{ MONOB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Subheader
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Alert
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Note
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< BlockQuote
+	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Input
+	{ MONOR,{ 0x60,0x60,0x60 },{ 0xff,0xff,0xff }, 0 }, ///< User1
+	{ MONOR,{ 0x60,0x60,0x60 },{ 0xff,0xff,0xff }, 0 }, ///< User2
+};
+
+Conf *g_conf;
 
 Conf::Conf() {
 	g_conf = this;
@@ -111,6 +142,55 @@ Conf::Conf() {
 	get("speak_language", _speakLanguage);
 	get("stylehint", _styleHint, 1);
 
+	Common::copy(T_STYLES, T_STYLES + style_NUMSTYLES, _tStyles);
+	Common::copy(G_STYLES, G_STYLES + style_NUMSTYLES, _gStyles);
+
+	char buffer[255];
+	const char *const TG_COLOR[2] = { "tcolor", "gcolor" };
+	for (int idx = 0; idx < 2; ++idx) {
+		if (!ConfMan.hasKey(TG_COLOR[idx]))
+			continue;
+
+		strncpy(buffer, ConfMan.get(TG_COLOR[idx]).c_str(), 254);
+		buffer[255] = '\0';
+		char *style = strtok(buffer, "\r\n\t ");
+		char *fg = strtok(nullptr, "\r\n\t ");
+		char *bg = strtok(nullptr, "\r\n\t ");
+
+		int i = atoi(style);
+		if (i < 0 || i >= style_NUMSTYLES)
+			continue;
+
+		if (idx == 0) {
+			parseColor(fg, _tStyles[i].fg);
+			parseColor(bg, _tStyles[i].bg);
+		} else {
+			parseColor(fg, _gStyles[i].fg);
+			parseColor(bg, _gStyles[i].bg);
+		}
+	}
+
+	const char *const TG_FONT[2] = { "tfont", "gfont" };
+	for (int idx = 0; idx < 2; ++idx) {
+		if (!ConfMan.hasKey(TG_FONT[idx]))
+			continue;
+
+		strncpy(buffer, ConfMan.get(TG_FONT[idx]).c_str(), 254);
+		buffer[255] = '\0';
+		char *style = strtok(buffer, "\r\n\t ");
+		char *font = strtok(nullptr, "\r\n\t ");
+		int i = atoi(style);
+		if (i < 0 || i >= style_NUMSTYLES)
+			continue;
+
+		if (idx == 0)
+			_tStyles[i].font = Fonts::getId(font);
+		else
+			_gStyles[i].font = Fonts::getId(font);
+	}
+
+	Common::copy(_tStyles, _tStyles + style_NUMSTYLES, _tStylesDefault);
+	Common::copy(_gStyles, _gStyles + style_NUMSTYLES, _gStylesDefault);
 }
 
 void Conf::get(const Common::String &key, Common::String &field, const char *defaultVal) {
@@ -119,17 +199,8 @@ void Conf::get(const Common::String &key, Common::String &field, const char *def
 }
 
 void Conf::get(const Common::String &key, byte *color, const byte *defaultColor) {
-	char r[3], g[3], b[3];
-	Common::String str;
-
-	if (ConfMan.hasKey(key) && (str = ConfMan.get(key)).size() == 6) {
-		r[0] = str[0]; r[1] = str[1]; r[2] = 0;
-		g[0] = str[2]; g[1] = str[3]; g[2] = 0;
-		b[0] = str[4]; b[1] = str[5]; b[2] = 0;
-
-		color[0] = strtol(r, NULL, 16);
-		color[1] = strtol(g, NULL, 16);
-		color[2] = strtol(b, NULL, 16);
+	if (ConfMan.hasKey(key)) {
+		parseColor(ConfMan.get(key), color);
 	} else if (defaultColor) {
 		Common::copy(defaultColor, defaultColor + 3, color);
 	} else {
@@ -147,6 +218,20 @@ void Conf::get(const Common::String &key, FACES &field, FACES defaultFont) {
 
 void Conf::get(const Common::String &key, double &field, double defaultVal) {
 	field = ConfMan.hasKey(key) ?  atof(ConfMan.get(key).c_str()) : defaultVal;
+}
+
+void Conf::parseColor(const Common::String &str, byte *color) {
+	char r[3], g[3], b[3];
+
+	if (str.size() == 6) {
+		r[0] = str[0]; r[1] = str[1]; r[2] = 0;
+		g[0] = str[2]; g[1] = str[3]; g[2] = 0;
+		b[0] = str[4]; b[1] = str[5]; b[2] = 0;
+
+		color[0] = strtol(r, NULL, 16);
+		color[1] = strtol(g, NULL, 16);
+		color[2] = strtol(b, NULL, 16);
+	}
 }
 
 } // End of namespace Gargoyle

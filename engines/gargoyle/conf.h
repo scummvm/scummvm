@@ -25,6 +25,7 @@
 
 #include "gargoyle/glk_types.h"
 #include "gargoyle/fonts.h"
+#include "gargoyle/windows.h"
 
 namespace Gargoyle {
 
@@ -55,6 +56,10 @@ private:
 	 */
 	void get(const Common::String &key, double &field, double defaultVal = 0.0);
 
+	/**
+	 * Parse a color
+	 */
+	void parseColor(const Common::String &str, byte *color);
 public:
 	Common::String _morePrompt;
 	byte _moreColor[3], _moreSave[3];
@@ -104,6 +109,10 @@ public:
 	int _speakInput;
 	Common::String _speakLanguage;
 	int _styleHint;
+	WindowStyle _tStyles[style_NUMSTYLES];
+	WindowStyle _gStyles[style_NUMSTYLES];
+	WindowStyle _tStylesDefault[style_NUMSTYLES];
+	WindowStyle _gStylesDefault[style_NUMSTYLES];
 public:
 	/**
 	 * Constructor
