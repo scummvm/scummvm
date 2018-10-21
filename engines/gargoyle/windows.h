@@ -334,6 +334,11 @@ public:
 	TextGridWindow(Windows *windows, uint32 rock);
 
 	/**
+	 * Destructor
+	 */
+	virtual ~TextGridWindow();
+
+	/**
 	 * Rearranges the window
 	 */
 	virtual void rearrange(const Common::Rect &box) override;
@@ -440,6 +445,11 @@ public:
 	TextBufferWindow(Windows *windows, uint32 rock);
 
 	/**
+	 * Destructor
+	 */
+	virtual ~TextBufferWindow();
+
+	/**
 	 * Rearranges the window
 	 */
 	virtual void rearrange(const Common::Rect &box) override;
@@ -476,6 +486,11 @@ public:
 	 * Constructor
 	 */
 	GraphicsWindow(Windows *windows, uint32 rock);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~GraphicsWindow();
 
 	/**
 	 * Rearranges the window
