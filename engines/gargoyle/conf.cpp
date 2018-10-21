@@ -25,6 +25,7 @@
 #include "gargoyle/string.h"
 #include "gargoyle/windows.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 
 namespace Gargoyle {
 
@@ -65,6 +66,9 @@ Conf *g_conf;
 
 Conf::Conf() {
 	g_conf = this;
+	_imageW = g_system->getWidth();
+	_imageH = g_system->getHeight();
+	_cellW = _cellH = 8;
 
 	get("moreprompt", _morePrompt, "\207 more \207");
 	get("morecolor", _moreColor);

@@ -58,6 +58,7 @@ void GargoyleEngine::initialize() {
 
 	initGraphics(640, 480, false);
 	_screen = new Graphics::Screen();
+	_conf = new Conf();
 	_events = new Events();
 	_streams = new Streams(this);
 	_windows = new Windows(this, _screen);

@@ -32,27 +32,6 @@ namespace Gargoyle {
 #define MAGIC_WINDOW_NUM (9876)
 #define GLI_SUBPIX 8
 
-bool Windows::_confLockCols;
-bool Windows::_confLockRows;
-int Windows::_wMarginx;
-int Windows::_wMarginy;
-int Windows::_wPaddingx;
-int Windows::_wPaddingy;
-int Windows::_wBorderx;
-int Windows::_wBordery;
-int Windows::_tMarginx;
-int Windows::_tMarginy;
-int Windows::_wMarginXsave;
-int Windows::_wMarginYsave;
-int Windows::_cols;
-int Windows::_rows;
-int Windows::_imageW;
-int Windows::_imageH;
-int Windows::_cellW;
-int Windows::_cellH;
-int Windows::_baseLine;
-int Windows::_leading;
-int Windows::_scrollWidth;
 bool Windows::_overrideReverse;
 bool Windows::_overrideFgSet;
 bool Windows::_overrideBgSet;
@@ -66,26 +45,6 @@ Windows::Windows(GargoyleEngine *engine, Graphics::Screen *screen) :
 		_engine(engine), _screen(screen), _forceRedraw(true), _moreFocus(false),
 		_windowList(nullptr), _rootWin(nullptr), _focusWin(nullptr), _mask(nullptr),
 		_claimSelect(0) {
-	_imageW = _screen->w;
-	_imageH = _screen->h;
-	_cellW = _cellH = 8;
-	_confLockCols = false;
-	_confLockRows = false;
-	_wMarginx = 15;
-	_wMarginy = 15;
-	_wPaddingx = 0;
-	_wPaddingy = 0;
-	_wBorderx = 1;
-	_wBordery = 1;
-	_tMarginx = 7;
-	_tMarginy = 7;
-	_wMarginXsave = 15;
-	_wMarginYsave = 15;
-	_cols = 60;
-	_rows = 25;
-	_baseLine = 15;
-	_leading = 20;
-	_scrollWidth = 0;
 	_overrideReverse = false;
 	_overrideFgSet = false;
 	_overrideBgSet = false;
@@ -218,26 +177,26 @@ void Windows::rearrange() {
 	if (_rootWin) {
 		Common::Rect box;
 
-		if (_confLockCols) {
-			int desired_width = _wMarginXsave * 2 + _cellW * _cols;
-			if (desired_width > _imageW)
-				_wMarginx = _wMarginXsave;
+		if (g_conf->_lockCols) {
+			int desired_width = g_conf->_wMarginSaveX * 2 + g_conf->_cellW * g_conf->_cols;
+			if (desired_width > g_conf->_imageW)
+				g_conf->_wMarginX = g_conf->_wMarginSaveX;
 			else
-				_wMarginx = (_imageW - _cellW * _cols) / 2;
+				g_conf->_wMarginX = (g_conf->_imageW - g_conf->_cellW * g_conf->_cols) / 2;
 		}
 
-		if (_confLockRows) {
-			int desired_height = _wMarginYsave * 2 + _cellH * _rows;
-			if (desired_height > _imageH)
-				_wMarginy = _wMarginYsave;
+		if (g_conf->_lockRows) {
+			int desired_height = g_conf->_wMarginSaveY * 2 + g_conf->_cellH * g_conf->_rows;
+			if (desired_height > g_conf->_imageH)
+				g_conf->_wMarginY = g_conf->_wMarginSaveY;
 			else
-				_wMarginy = (_imageH - _cellH * _rows) / 2;
+				g_conf->_wMarginY = (g_conf->_imageH - g_conf->_cellH * g_conf->_rows) / 2;
 		}
 
-		box.left = _wMarginx;
-		box.top = _wMarginy;
-		box.right = _imageW - _wMarginx;
-		box.bottom = _imageH - _wMarginy;
+		box.left = g_conf->_wMarginX;
+		box.top = g_conf->_wMarginY;
+		box.right = g_conf->_imageW - g_conf->_wMarginX;
+		box.bottom = g_conf->_imageH - g_conf->_wMarginY;
 
 		_rootWin->rearrange(box);
 	}
@@ -310,8 +269,8 @@ void TextGridWindow::rearrange(const Common::Rect &box) {
 	Window::rearrange(box);
 	int newwid, newhgt;
 
-	newwid = box.width() / Windows::_cellW;
-	newhgt = box.height() / Windows::_cellH;
+	newwid = box.width() / g_conf->_cellW;
+	newhgt = box.height() / g_conf->_cellH;
 
 	if (newwid == width && newhgt == height)
 		return;
@@ -328,9 +287,14 @@ void TextGridWindow::rearrange(const Common::Rect &box) {
 }
 
 void TextGridWindow::touch(int line) {
-	int y = bbox.top + line * Windows::_leading;
+	int y = bbox.top + line * g_conf->_leading;
 	lines[line].dirty = true;
-	_windows->repaint(Common::Rect(bbox.left, y, bbox.right, y + Windows::_leading));
+	_windows->repaint(Common::Rect(bbox.left, y, bbox.right, y + g_conf->_leading));
+}
+
+glui32 TextGridWindow::getSplit(glui32 size, bool vertical) const {
+	return vertical ? size * g_conf->_cellW + g_conf->_tMarginX * 2 :
+		size * g_conf->_cellH + g_conf->_tMarginY * 2;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -362,11 +326,11 @@ void TextBufferWindow::rearrange(const Common::Rect &box) {
 	int newwid, newhgt;
 	int rnd;
 
-	newwid = (box.width() - Windows::_tMarginx * 2 - Windows::_scrollWidth) / Windows::_cellW;
-	newhgt = (box.height() - Windows::_tMarginy * 2) / Windows::_cellH;
+	newwid = (box.width() - g_conf->_tMarginX * 2 - g_conf->_scrollWidth) / g_conf->_cellW;
+	newhgt = (box.height() - g_conf->_tMarginY * 2) / g_conf->_cellH;
 
 	/* align text with bottom */
-	rnd = newhgt * Windows::_cellH + Windows::_tMarginy * 2;
+	rnd = newhgt * g_conf->_cellH + g_conf->_tMarginY * 2;
 	yadj = (box.height() - rnd);
 	bbox.top += (box.height() - rnd);
 
@@ -576,8 +540,8 @@ bool TextBufferWindow::putPicture(Picture *pic, glui32 align, glui32 linkval) {
 		if (lines[0].rpic || numchars)
 			return false;
 
-		radjw = (pic->w + Windows::_tMarginx) * GLI_SUBPIX;
-		radjn = (pic->h + Windows::_cellH - 1) / Windows::_cellH;
+		radjw = (pic->w + g_conf->_tMarginX) * GLI_SUBPIX;
+		radjn = (pic->h + g_conf->_cellH - 1) / g_conf->_cellH;
 		lines[0].rpic = pic;
 		lines[0].rm = radjw;
 		lines[0].rhyper = linkval;
@@ -588,8 +552,8 @@ bool TextBufferWindow::putPicture(Picture *pic, glui32 align, glui32 linkval) {
 		if (lines[0].lpic || numchars)
 			return false;
 
-		ladjw = (pic->w + Windows::_tMarginx) * GLI_SUBPIX;
-		ladjn = (pic->h + Windows::_cellH - 1) / Windows::_cellH;
+		ladjw = (pic->w + g_conf->_tMarginX) * GLI_SUBPIX;
+		ladjn = (pic->h + g_conf->_cellH - 1) / g_conf->_cellH;
 		lines[0].lpic = pic;
 		lines[0].lm = ladjw;
 		lines[0].lhyper = linkval;
@@ -614,7 +578,7 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 
 	gli_tts_speak(&ch, 1);
 
-	pw = (bbox.right - bbox.left - Windows::_tMarginx * 2 - gli_scroll_width) * GLI_SUBPIX;
+	pw = (bbox.right - bbox.left - g_conf->_tMarginX * 2 - gli_scroll_width) * GLI_SUBPIX;
 	pw = pw - 2 * SLOP - radjw - ladjw;
 
 	color = gli_override_bg_set ? gli_window_color : bgcolor;
@@ -760,10 +724,14 @@ void TextBufferWindow::flowBreak() {
 }
 
 void TextBufferWindow::touch(int line) {
-	int y = bbox.top + Windows::_tMarginy + (height - line - 1) * Windows::_leading;
+	int y = bbox.top + g_conf->_tMarginY + (height - line - 1) * g_conf->_leading;
 	lines[line].dirty = 1;
 	_windows->clearSelection();
-	_windows->repaint(Common::Rect(bbox.left, y - 2, bbox.right, y + Windows::_leading + 2));
+	_windows->repaint(Common::Rect(bbox.left, y - 2, bbox.right, y + g_conf->_leading + 2));
+}
+
+glui32 TextBufferWindow::getSplit(glui32 size, bool vertical) const {
+	return (vertical) ? size * g_conf->_cellW : size * g_conf->_cellH;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -867,9 +835,9 @@ void PairWindow::rearrange(const Common::Rect &box) {
 
 	// We now figure split.
 	if (_vertical)
-		splitwid = Windows::_wPaddingx; // want border?
+		splitwid = g_conf->_wPaddingX; // want border?
 	else
-		splitwid = Windows::_wPaddingy; // want border?
+		splitwid = g_conf->_wPaddingY; // want border?
 
 	switch (_division) {
 	case winmethod_Proportional:

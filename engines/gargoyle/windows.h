@@ -74,24 +74,6 @@ private:
 	 */
 	void rearrange();
 public:
-	static bool _confLockCols, _confLockRows;
-	static int _wMarginx;
-	static int _wMarginy;
-	static int _wPaddingx;
-	static int _wPaddingy;
-	static int _wBorderx;
-	static int _wBordery;
-	static int _tMarginx;
-	static int _tMarginy;
-	static int _wMarginXsave;
-	static int _wMarginYsave;
-	static int _cols;
-	static int _rows;
-	static int _imageW, _imageH;
-	static int _cellW, _cellH;
-	static int _baseLine;
-	static int _leading;
-	static int _scrollWidth;
 	static bool _overrideReverse;
 	static bool _overrideFgSet;
 	static bool _overrideBgSet;
@@ -296,10 +278,7 @@ public:
 	/**
 	 * Get window split size within parent pair window
 	 */
-	virtual glui32 getSplit(glui32 size, bool vertical) const override {
-		return vertical ? size * Windows::_cellW + Windows::_tMarginx * 2 :
-			size * Windows::_cellH + Windows::_tMarginy * 2;
-	}
+	virtual glui32 getSplit(glui32 size, bool vertical) const override;
 };
 
 /**
@@ -400,9 +379,7 @@ public:
 	/**
 	 * Get window split size within parent pair window
 	 */
-	virtual glui32 getSplit(glui32 size, bool vertical) const override {
-		return (vertical) ? size * Windows::_cellW : size * Windows::_cellH;
-	}
+	virtual glui32 getSplit(glui32 size, bool vertical) const override;
 
 	/**
 	 * Clear the window
