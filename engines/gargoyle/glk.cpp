@@ -187,11 +187,15 @@ strid_t Glk::glk_stream_get_current(void) {
 }
 
 void Glk::glk_put_char(unsigned char ch) {
-	// TODO
+	_streams->getCurrent()->putChar(ch);
 }
 
 void Glk::glk_put_char_stream(strid_t str, unsigned char ch) {
-	// TODO
+	if (str) {
+		str->putChar(ch);
+	} else {
+		warning("put_char_stream: invalid ref");
+	}
 }
 
 void Glk::glk_put_string(const char *s) {
@@ -375,27 +379,39 @@ glui32 Glk::glk_buffer_to_title_case_uni(glui32 *buf, glui32 len,
 }
 
 void Glk::glk_put_char_uni(glui32 ch) {
-	glk_put_char_stream_uni(_streams->getCurrent(), ch);
+	_streams->getCurrent()->putCharUni(ch);
 }
 
 void Glk::glk_put_string_uni(glui32 *s) {
-	glk_put_buffer_stream_uni(_streams->getCurrent(), s, strlen_uni(s));
+	_streams->getCurrent()->putBufferUni(s, strlen_uni(s));
 }
 
 void Glk::glk_put_buffer_uni(glui32 *buf, glui32 len) {
-	glk_put_buffer_stream_uni(_streams->getCurrent(), buf, len);
+	_streams->getCurrent()->putBufferUni(buf, len);
 }
 
 void Glk::glk_put_char_stream_uni(strid_t str, glui32 ch) {
-//	str->writeUint32LE(ch);
+	if (str) {
+		str->putCharUni(ch);
+	} else {
+		warning("put_char_stream_uni: invalid ref");
+	}
 }
 
 void Glk::glk_put_string_stream_uni(strid_t str, const glui32 *s) {
-	glk_put_buffer_stream_uni(str, s, strlen_uni(s));
+	if (str) {
+		str->putBufferUni(s, strlen_uni(s));
+	} else {
+		warning("put_string_stream_uni: invalid ref");
+	}
 }
 
 void Glk::glk_put_buffer_stream_uni(strid_t str, const glui32 *buf, glui32 len) {
-//	while (len-- > 0) str->writeUint32LE(*buf++);
+	if (str) {
+		str->putBufferUni(buf, len);
+	} else {
+		warning("put_buffer_stream_uni: invalid ref");
+	}
 }
 
 glsi32 Glk::glk_get_char_stream_uni(strid_t str) {

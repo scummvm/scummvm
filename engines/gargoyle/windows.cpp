@@ -38,13 +38,46 @@ bool Windows::_overrideBgSet;
 int Windows::_overrideFgVal;
 int Windows::_overrideBgVal;
 
+/*--------------------------------------------------------------------------*/
+
+Windows::iterator &Windows::iterator::operator++() {
+	if (!_current)
+		return *this;
+
+	PairWindow *pairWin = dynamic_cast<PairWindow *>(_current);
+
+	if (pairWin) {
+		_current = !pairWin->_backward ? pairWin->_child1 : pairWin->_child2;
+	} else {
+		while (_current->_parent) {
+			pairWin = dynamic_cast<PairWindow *>(_current->_parent);
+
+			if (!pairWin->_backward) {
+				if (_current == pairWin->_child1) {
+					_current = pairWin->_child2;
+					return *this;
+				}
+			} else {
+				if (_current == pairWin->_child2) {
+					_current = pairWin->_child1;
+					return *this;
+				}
+			}
+
+			_current = pairWin;
+		}
+
+		_current = nullptr;
+	}
+
+	return *this;
+}
 
 /*--------------------------------------------------------------------------*/
 
-Windows::Windows(GargoyleEngine *engine, Graphics::Screen *screen) :
-		_engine(engine), _screen(screen), _forceRedraw(true), _moreFocus(false),
-		_windowList(nullptr), _rootWin(nullptr), _focusWin(nullptr), _mask(nullptr),
-		_claimSelect(0) {
+Windows::Windows(Graphics::Screen *screen) :
+		_screen(screen), _forceRedraw(true), _moreFocus(false), _windowList(nullptr),
+		_rootWin(nullptr), _focusWin(nullptr), _mask(nullptr), _claimSelect(0) {
 	_overrideReverse = false;
 	_overrideFgSet = false;
 	_overrideBgSet = false;
@@ -89,7 +122,7 @@ Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
 			return nullptr;
 		}
 
-		oldparent = splitwin->parent;
+		oldparent = splitwin->_parent;
 		if (oldparent && oldparent->_type != wintype_Pair)
 		{
 			warning("window_open: parent window is not Pair");
@@ -112,9 +145,9 @@ Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
 		pairwin->_child1 = splitwin;
 		pairwin->_child2 = newwin;
 
-		splitwin->parent = pairwin;
-		newwin->parent = pairwin;
-		pairwin->parent = oldparent;
+		splitwin->_parent = pairwin;
+		newwin->_parent = pairwin;
+		pairwin->_parent = oldparent;
 
 		if (oldparent) {
 			PairWindow *parentWin = dynamic_cast<PairWindow *>(oldparent);
@@ -155,20 +188,20 @@ Window *Windows::newWindow(glui32 type, glui32 rock) {
 		error("Unknown window type");
 	}
 
-	win->next = _windowList;
+	win->_next = _windowList;
 	_windowList = win;
-	if (win->next)
-		win->next->prev = win;
+	if (win->_next)
+		win->_next->_prev = win;
 
 	return win;
 }
 
 PairWindow *Windows::newPairWindow(glui32 method, Window *key, glui32 size) {
 	PairWindow *pwin = new PairWindow(this, method, key, size);
-	pwin->next = _windowList;
+	pwin->_next = _windowList;
 	_windowList = pwin;
-	if (pwin->next)
-		pwin->next->prev = pwin;
+	if (pwin->_next)
+		pwin->_next->_prev = pwin;
 
 	return pwin;
 }
@@ -223,7 +256,7 @@ void Windows::repaint(const Common::Rect &box) {
 /*--------------------------------------------------------------------------*/
 
 Window::Window(Windows *windows, glui32 rock) : _magicnum(MAGIC_WINDOW_NUM),
-		_windows(windows), _rock(rock), _type(0), parent(nullptr), next(nullptr), prev(nullptr),
+		_windows(windows), _rock(rock), _type(0), _parent(nullptr), _next(nullptr), _prev(nullptr),
 		yadj(0), line_request(0), line_request_uni(0), char_request(0), char_request_uni(0),
 		mouse_request(0), hyper_request(0), more_request(0), scroll_request(0), image_loaded(0),
 		echo_line_input(true),  line_terminators(nullptr), termct(0), _echoStream(nullptr) {
@@ -239,8 +272,16 @@ Window::Window(Windows *windows, glui32 rock) : _magicnum(MAGIC_WINDOW_NUM),
 	Common::fill(&fgcolor[0], &fgcolor[3], 3);
 	disprock.num = 0;
 
-	Streams &streams = *windows->_engine->_streams;
+	Streams &streams = *g_vm->_streams;
 	_stream = streams.addWindowStream(this);
+}
+
+void Window::cancelLineEvent(Event *ev) {
+	Event dummyEv;
+	if (!ev)
+		ev = &dummyEv;
+
+	g_vm->_events->clearEvent(ev);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -253,14 +294,14 @@ BlankWindow::BlankWindow(Windows *windows, uint32 rock) : Window(windows, rock) 
 
 TextGridWindow::TextGridWindow(Windows *windows, uint32 rock) : Window(windows, rock) {
 	_type = wintype_TextGrid;
-	width = height = 0;
-	curx = cury = 0;
-	inbuf = nullptr;
-	inorgx = inorgy = 0;
-	inmax = 0;
-	incurs = inlen = 0;
-	inarrayrock.num = 0;
-	line_terminators = nullptr;
+	_width = _height = 0;
+	_curX = _curY = 0;
+	_inBuf = nullptr;
+	_inorgX = _inorgY = 0;
+	_inMax = 0;
+	_inCurs = _inLen = 0;
+	_inArrayRock.num = 0;
+	_lineTerminators = nullptr;
 
 	Common::copy(&g_conf->_gStyles[0], &g_conf->_gStyles[style_NUMSTYLES], styles);
 }
@@ -272,7 +313,7 @@ void TextGridWindow::rearrange(const Common::Rect &box) {
 	newwid = box.width() / g_conf->_cellW;
 	newhgt = box.height() / g_conf->_cellH;
 
-	if (newwid == width && newhgt == height)
+	if (newwid == _width && newhgt == _height)
 		return;
 
 	lines.resize(newhgt);
@@ -282,8 +323,8 @@ void TextGridWindow::rearrange(const Common::Rect &box) {
 	}
 
 	attr.clear();
-	width = newwid;
-	height = newhgt;
+	_width = newwid;
+	_height = newhgt;
 }
 
 void TextGridWindow::touch(int line) {
@@ -295,6 +336,21 @@ void TextGridWindow::touch(int line) {
 glui32 TextGridWindow::getSplit(glui32 size, bool vertical) const {
 	return vertical ? size * g_conf->_cellW + g_conf->_tMarginX * 2 :
 		size * g_conf->_cellH + g_conf->_tMarginY * 2;
+}
+
+void TextGridWindow::cancelLineEvent(Event *ev) {
+	Event dummyEv;
+
+	if (!ev)
+		ev = &dummyEv;
+
+	g_vm->_events->clearEvent(ev);
+
+	if (!line_request && !line_request_uni)
+		return;
+
+
+	// TODO : textgrid_cancel_line
 }
 
 /*--------------------------------------------------------------------------*/
@@ -310,13 +366,13 @@ void TextGridWindow::TextGridRow::resize(size_t newSize) {
 /*--------------------------------------------------------------------------*/
 
 TextBufferWindow::TextBufferWindow(Windows *windows, uint32 rock) : Window(windows, rock),
-		historypos(0), historyfirst(0), historypresent(0), lastseen(0), scrollpos(0),
-		scrollmax(0), scrollback(SCROLLBACK), width(-1), height(-1), inbuf(nullptr),
-		line_terminators(nullptr), echo_line_input(true), ladjw(0), radjw(0), ladjn(0),
-		radjn(0), numchars(0), chars(nullptr), attrs(nullptr),
-		spaced(0), dashed(0), copybuf(0), copypos(0) {
+		_historyPos(0), _historyFirst(0), _historyPresent(0), _lastSeen(0), _scrollPos(0),
+		_scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1), _inBuf(nullptr),
+		_lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0), _ladjn(0),
+		_radjn(0), _numChars(0), _chars(nullptr), _attrs(nullptr),
+		_spaced(0), _dashed(0), copybuf(0), copypos(0) {
 	_type = wintype_TextBuffer;
-	Common::fill(&history[0], &history[HISTORYLEN], nullptr);
+	Common::fill(&_history[0], &_history[HISTORYLEN], nullptr);
 
 	Common::copy(&g_conf->_tStyles[0], &g_conf->_tStyles[style_NUMSTYLES], styles);
 }
@@ -334,31 +390,31 @@ void TextBufferWindow::rearrange(const Common::Rect &box) {
 	yadj = (box.height() - rnd);
 	bbox.top += (box.height() - rnd);
 
-	if (newwid != width) {
-		width = newwid;
+	if (newwid != _width) {
+		_width = newwid;
 		reflow();
 	}
 
-	if (newhgt != height) {
+	if (newhgt != _height) {
 		/* scroll up if we obscure new lines */
-		if (lastseen >= newhgt - 1)
-			scrollpos += (height - newhgt);
+		if (_lastSeen >= newhgt - 1)
+			_scrollPos += (_height - newhgt);
 
-		height = newhgt;
+		_height = newhgt;
 
 		/* keep window within 'valid' lines */
-		if (scrollpos > scrollmax - height + 1)
-			scrollpos = scrollmax - height + 1;
-		if (scrollpos < 0)
-			scrollpos = 0;
+		if (_scrollPos > _scrollMax - _height + 1)
+			_scrollPos = _scrollMax - _height + 1;
+		if (_scrollPos < 0)
+			_scrollPos = 0;
 		touchScroll();
 
 		/* allocate copy buffer */
 		if (copybuf)
 			delete[] copybuf;
-		copybuf = new glui32[height * TBLINELEN];
+		copybuf = new glui32[_height * TBLINELEN];
 
-		for (int i = 0; i < (height * TBLINELEN); i++)
+		for (int i = 0; i < (_height * TBLINELEN); i++)
 			copybuf[i] = 0;
 
 		copypos = 0;
@@ -371,10 +427,10 @@ void TextBufferWindow::reflow() {
 	int i, k, p, s;
 	int x;
 
-	if (height < 4 || width < 20)
+	if (_height < 4 || _width < 20)
 		return;
 
-	lines[0].len = numchars;
+	_lines[0].len = _numChars;
 
 	/* allocate temp buffers */
 	Attributes *attrbuf = new Attributes[SCROLLBACK * TBLINELEN];
@@ -401,38 +457,38 @@ void TextBufferWindow::reflow() {
 
 	x = 0;
 	p = 0;
-	s = scrollmax < SCROLLBACK ? scrollmax : SCROLLBACK - 1;
+	s = _scrollMax < SCROLLBACK ? _scrollMax : SCROLLBACK - 1;
 
 	for (k = s; k >= 0; k--) {
 		if (k == 0 && line_request)
-			inputbyte = p + infence;
+			inputbyte = p + _inFence;
 
-		if (lines[k].lpic) {
+		if (_lines[k].lpic) {
 			offsetbuf[x] = p;
 			alignbuf[x] = imagealign_MarginLeft;
-			pictbuf[x] = lines[k].lpic;
+			pictbuf[x] = _lines[k].lpic;
 
 			if (pictbuf[x]) pictbuf[x]->increment();
-			hyperbuf[x] = lines[k].lhyper;
+			hyperbuf[x] = _lines[k].lhyper;
 			x++;
 		}
 
-		if (lines[k].rpic) {
+		if (_lines[k].rpic) {
 			offsetbuf[x] = p;
 			alignbuf[x] = imagealign_MarginRight;
-			pictbuf[x] = lines[k].rpic;
+			pictbuf[x] = _lines[k].rpic;
 			if (pictbuf[x]) pictbuf[x]->increment();
-			hyperbuf[x] = lines[k].rhyper;
+			hyperbuf[x] = _lines[k].rhyper;
 			x++;
 		}
 
-		for (i = 0; i < lines[k].len; i++) {
-			attrbuf[p] = curattr = lines[k].attr[i];
-			charbuf[p] = lines[k].chars[i];
+		for (i = 0; i < _lines[k].len; i++) {
+			attrbuf[p] = curattr = _lines[k].attr[i];
+			charbuf[p] = _lines[k].chars[i];
 			p++;
 		}
 
-		if (lines[k].newline) {
+		if (_lines[k].newline) {
 			attrbuf[p] = curattr;
 			charbuf[p] = '\n';
 			p++;
@@ -462,13 +518,13 @@ void TextBufferWindow::reflow() {
 	}
 
 	/* terribly sorry about this... */
-	lastseen = 0;
-	scrollpos = 0;
+	_lastSeen = 0;
+	_scrollPos = 0;
 
 	if (inputbyte != -1) {
-		infence = numchars;
-		putTextUnit(charbuf + inputbyte, p - inputbyte, numchars, 0);
-		incurs = numchars;
+		_inFence = _numChars;
+		putTextUnit(charbuf + inputbyte, p - inputbyte, _numChars, 0);
+		_inCurs = _numChars;
 	}
 
 	// free temp buffers
@@ -488,8 +544,8 @@ void TextBufferWindow::touchScroll() {
 	_windows->clearSelection();
 	_windows->repaint(bbox);
 
-	for (int i = 0; i < scrollmax; i++)
-		lines[i].dirty = true;
+	for (int i = 0; i < _scrollMax; i++)
+		_lines[i].dirty = true;
 }
 
 void TextBufferWindow::clear() {
@@ -501,62 +557,62 @@ void TextBufferWindow::clear() {
 	attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : 0;
 	attr.reverse = false;
 
-	ladjw = radjw = 0;
-	ladjn = radjn = 0;
+	_ladjw = _radjw = 0;
+	_ladjn = _radjn = 0;
 
-	spaced = 0;
-	dashed = 0;
+	_spaced = 0;
+	_dashed = 0;
 
-	numchars = 0;
+	_numChars = 0;
 
-	for (i = 0; i < scrollback; i++) {
-		lines[i].len = 0;
+	for (i = 0; i < _scrollBack; i++) {
+		_lines[i].len = 0;
 
-		if (lines[i].lpic) lines[i].lpic->decrement();
-		lines[i].lpic = nullptr;
-		if (lines[i].rpic) lines[i].rpic->decrement();
-		lines[i].rpic = nullptr;
+		if (_lines[i].lpic) _lines[i].lpic->decrement();
+		_lines[i].lpic = nullptr;
+		if (_lines[i].rpic) _lines[i].rpic->decrement();
+		_lines[i].rpic = nullptr;
 
-		lines[i].lhyper = 0;
-		lines[i].rhyper = 0;
-		lines[i].lm = 0;
-		lines[i].rm = 0;
-		lines[i].newline = 0;
-		lines[i].dirty = true;
-		lines[i].repaint = false;
+		_lines[i].lhyper = 0;
+		_lines[i].rhyper = 0;
+		_lines[i].lm = 0;
+		_lines[i].rm = 0;
+		_lines[i].newline = 0;
+		_lines[i].dirty = true;
+		_lines[i].repaint = false;
 	}
 
-	lastseen = 0;
-	scrollpos = 0;
-	scrollmax = 0;
+	_lastSeen = 0;
+	_scrollPos = 0;
+	_scrollMax = 0;
 
-	for (i = 0; i < height; i++)
+	for (i = 0; i < _height; i++)
 		touch(i);
 }
 
 bool TextBufferWindow::putPicture(Picture *pic, glui32 align, glui32 linkval) {
 	if (align == imagealign_MarginRight)
 	{
-		if (lines[0].rpic || numchars)
+		if (_lines[0].rpic || _numChars)
 			return false;
 
-		radjw = (pic->w + g_conf->_tMarginX) * GLI_SUBPIX;
-		radjn = (pic->h + g_conf->_cellH - 1) / g_conf->_cellH;
-		lines[0].rpic = pic;
-		lines[0].rm = radjw;
-		lines[0].rhyper = linkval;
+		_radjw = (pic->w + g_conf->_tMarginX) * GLI_SUBPIX;
+		_radjn = (pic->h + g_conf->_cellH - 1) / g_conf->_cellH;
+		_lines[0].rpic = pic;
+		_lines[0].rm = _radjw;
+		_lines[0].rhyper = linkval;
 	} else {
-		if (align != imagealign_MarginLeft && numchars)
+		if (align != imagealign_MarginLeft && _numChars)
 			putCharUni('\n');
 
-		if (lines[0].lpic || numchars)
+		if (_lines[0].lpic || _numChars)
 			return false;
 
-		ladjw = (pic->w + g_conf->_tMarginX) * GLI_SUBPIX;
-		ladjn = (pic->h + g_conf->_cellH - 1) / g_conf->_cellH;
-		lines[0].lpic = pic;
-		lines[0].lm = ladjw;
-		lines[0].lhyper = linkval;
+		_ladjw = (pic->w + g_conf->_tMarginX) * GLI_SUBPIX;
+		_ladjn = (pic->h + g_conf->_cellH - 1) / g_conf->_cellH;
+		_lines[0].lpic = pic;
+		_lines[0].lm = _ladjw;
+		_lines[0].lhyper = linkval;
 
 		if (align != imagealign_MarginLeft)
 			flowBreak();
@@ -724,14 +780,29 @@ void TextBufferWindow::flowBreak() {
 }
 
 void TextBufferWindow::touch(int line) {
-	int y = bbox.top + g_conf->_tMarginY + (height - line - 1) * g_conf->_leading;
-	lines[line].dirty = 1;
+	int y = bbox.top + g_conf->_tMarginY + (_height - line - 1) * g_conf->_leading;
+	_lines[line].dirty = 1;
 	_windows->clearSelection();
 	_windows->repaint(Common::Rect(bbox.left, y - 2, bbox.right, y + g_conf->_leading + 2));
 }
 
 glui32 TextBufferWindow::getSplit(glui32 size, bool vertical) const {
 	return (vertical) ? size * g_conf->_cellW : size * g_conf->_cellH;
+}
+
+void TextBufferWindow::cancelLineEvent(Event *ev) {
+	Event dummyEv;
+
+	if (!ev)
+		ev = &dummyEv;
+
+	g_vm->_events->clearEvent(ev);
+
+	if (!line_request && !line_request_uni)
+		return;
+
+
+	// TODO : textbuffer_cancel_line
 }
 
 /*--------------------------------------------------------------------------*/

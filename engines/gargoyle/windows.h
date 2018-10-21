@@ -27,6 +27,7 @@
 #include "common/list.h"
 #include "common/rect.h"
 #include "graphics/screen.h"
+#include "gargoyle/events.h"
 #include "gargoyle/glk_types.h"
 #include "gargoyle/fonts.h"
 #include "gargoyle/picture.h"
@@ -34,7 +35,6 @@
 
 namespace Gargoyle {
 
-class GargoyleEngine;
 class Window;
 class PairWindow;
 struct WindowMask;
@@ -47,9 +47,37 @@ struct WindowMask;
  * Main windows manager
  */
 class Windows {
-	friend class Window;
+public:
+	class iterator {
+	private:
+		Window *_current;
+	public:
+		/**
+		 * Constructor
+		 */
+		iterator(Window *start) : _current(start) {}
+
+		/**
+		 * Dereference
+		 */
+		Window *operator*() const { return _current; }
+
+		/**
+		 * Move to next
+		 */
+		iterator &operator++();
+
+		/**
+		 * Equality test
+		 */
+		bool operator==(const iterator &i) { return _current == i._current; }
+
+		/**
+		 * Inequality test
+		 */
+		bool operator!=(const iterator &i) { return _current != i._current; }
+	};
 private:
-	GargoyleEngine *_engine;
 	Graphics::Screen *_screen;
 	Window * _windowList;      ///< List of all windows
 	Window *_rootWin;          ///< The topmost window
@@ -83,7 +111,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Windows(GargoyleEngine *engine, Graphics::Screen *screen);
+	Windows(Graphics::Screen *screen);
 
 	/**
 	 * Open a new window
@@ -102,6 +130,16 @@ public:
 	 * Repaint an area of the windows
 	 */
 	void repaint(const Common::Rect &box);
+
+	/**
+	 * Get an iterator that will move over the tree
+	 */
+	iterator begin() { return iterator(_windowList); }
+
+	/**
+	 * Returns the end point of window iteration
+	 */
+	iterator end() { return iterator(nullptr); }
 };
 
 /**
@@ -159,12 +197,13 @@ public:
 	glui32 _rock;
 	glui32 _type;
 
-	Window *parent;            ///< pair window which contains this one
+	Window *_parent;       ///< pair window which contains this one
+	Window *_next, *_prev; ///< in the big linked list of windows
 	Common::Rect bbox;
 	int yadj;
 
-	Stream *_stream;      ///< the window stream.
-	Stream *_echoStream;  ///< the window's echo stream, if any.
+	Stream *_stream;       ///< the window stream.
+	Stream *_echoStream;   ///< the window's echo stream, if any.
 
 	int line_request;
 	int line_request_uni;
@@ -185,7 +224,6 @@ public:
 	byte fgcolor[3];
 
 	gidispatch_rock_t disprock;
-	Window *next, *prev;       ///< in the big linked list of windows
 public:
 	/**
 	 * Constructor
@@ -206,6 +244,31 @@ public:
 	 * Get window split size within parent pair window
 	 */
 	virtual glui32 getSplit(glui32 size, bool vertical) const { return 0; }
+
+	/**
+	 * Cancel a line event
+	 */
+	virtual void cancelLineEvent(Event *ev);
+
+	/**
+	 * Write a character
+	 */
+	virtual void putChar(unsigned char ch) { /* TODO */ }
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void putCharUni(uint32 ch) { /* TODO */ }
+
+	/**
+	 * Write a buffer
+	 */
+	virtual void putBuffer(const unsigned char *buf, size_t len) { /* TODO */ }
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void putBufferUni(const uint32 *buf, size_t len) { /* TODO */ }
 };
 typedef Window *winid_t;
 
@@ -249,19 +312,19 @@ private:
 	 */
 	void touch(int line);
 public:
-	int width, height;
+	int _width, _height;
 	TextGridRows lines;
 
-	int curx, cury;     ///< the window cursor position
+	int _curX, _curY;    ///< the window cursor position
 
-                        ///< for line input
-	void *inbuf;        ///< unsigned char* for latin1, glui32* for unicode
-	int inorgx, inorgy;
-	int inmax;
-	int incurs, inlen;
-	Attributes origattr;
-	gidispatch_rock_t inarrayrock;
-	glui32 *line_terminators;
+                         ///< for line input
+	void *_inBuf;        ///< unsigned char* for latin1, glui32* for unicode
+	int _inorgX, _inorgY;
+	int _inMax;
+	int _inCurs, _inLen;
+	Attributes _origAttr;
+	gidispatch_rock_t _inArrayRock;
+	glui32 *_lineTerminators;
 
 	WindowStyle styles[style_NUMSTYLES]; ///< style hints and settings
 public:
@@ -279,6 +342,11 @@ public:
 	 * Get window split size within parent pair window
 	 */
 	virtual glui32 getSplit(glui32 size, bool vertical) const override;
+
+	/**
+	 * Cancel a line event
+	 */
+	virtual void cancelLineEvent(Event *ev) override;
 };
 
 /**
@@ -321,43 +389,43 @@ private:
 	 */
 	void touch(int line);
 public:
-	int width, height;
-	int spaced;
-	int dashed;
+	int _width, _height;
+	int _spaced;
+	int _dashed;
 
-	TextBufferRows lines;
-	int scrollback;
+	TextBufferRows _lines;
+	int _scrollBack;
 
-	int numchars;       ///< number of chars in last line: lines[0]
-	glui32 *chars;      ///< alias to lines[0].chars
-	Attributes *attrs;  ///< alias to lines[0].attrs
+	int _numChars;        ///< number of chars in last line: lines[0]
+	glui32 *_chars;       ///< alias to lines[0].chars
+	Attributes *_attrs;  ///< alias to lines[0].attrs
 
-						///< adjust margins temporarily for images
-	int ladjw;
-	int ladjn;
-	int radjw;
-	int radjn;
+    ///< adjust margins temporarily for images
+	int _ladjw;
+	int _ladjn;
+	int _radjw;
+	int _radjn;
 
 	/* Command history. */
-	glui32 *history[HISTORYLEN];
-	int historypos;
-	int historyfirst, historypresent;
+	glui32 *_history[HISTORYLEN];
+	int _historyPos;
+	int _historyFirst, _historyPresent;
 
 	/* for paging */
-	int lastseen;
-	int scrollpos;
-	int scrollmax;
+	int _lastSeen;
+	int _scrollPos;
+	int _scrollMax;
 
 	/* for line input */
-	void *inbuf;        ///< unsigned char* for latin1, glui32* for unicode
-	int inmax;
-	long infence;
-	long incurs;
-	Attributes origattr;
-	gidispatch_rock_t inarrayrock;
+	void *_inBuf;        ///< unsigned char* for latin1, glui32* for unicode
+	int _inMax;
+	long _inFence;
+	long _inCurs;
+	Attributes _origAttr;
+	gidispatch_rock_t _inArrayRock;
 
-	glui32 echo_line_input;
-	glui32 *line_terminators;
+	glui32 _echoLineInput;
+	glui32 *_lineTerminators;
 
 	/* style hints and settings */
 	WindowStyle styles[style_NUMSTYLES];
@@ -380,6 +448,11 @@ public:
 	 * Get window split size within parent pair window
 	 */
 	virtual glui32 getSplit(glui32 size, bool vertical) const override;
+
+	/**
+	 * Cancel a line event
+	 */
+	virtual void cancelLineEvent(Event *ev) override;
 
 	/**
 	 * Clear the window
