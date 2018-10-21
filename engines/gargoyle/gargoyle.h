@@ -33,6 +33,7 @@
 
 namespace Gargoyle {
 
+class Conf;
 class Events;
 class Windows;
 class Streams;
@@ -90,6 +91,7 @@ protected:
 	 */
 	virtual void runGame(Common::SeekableReadStream *gameFile) = 0;
 public:
+	Conf *_conf;
 	Events *_events;
 	Streams *_streams;
 	Windows *_windows;

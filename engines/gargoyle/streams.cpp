@@ -144,13 +144,4 @@ Stream *Streams::getFirst(uint32 *rock) {
 	return _streamList;
 }
 
-/*--------------------------------------------------------------------------*/
-
-size_t strlen_uni(const uint32 *s) {
-	size_t len = 0;
-	while (*s++)
-		++len;
-	return len;
-}
-
 } // End of namespace Gargoyle

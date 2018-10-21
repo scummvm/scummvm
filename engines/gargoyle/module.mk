@@ -1,12 +1,15 @@
 MODULE := engines/gargoyle
 
 MODULE_OBJS := \
+	conf.o \
 	detection.o \
 	events.o \
+	fonts.o \
 	gargoyle.o \
 	glk.o \
 	picture.o \
 	streams.o \
+	string.o \
 	windows.o \
 	scott/detection.o \
 	scott/scott.o
