@@ -257,20 +257,20 @@ void Windows::repaint(const Common::Rect &box) {
 
 Window::Window(Windows *windows, glui32 rock) : _magicnum(MAGIC_WINDOW_NUM),
 		_windows(windows), _rock(rock), _type(0), _parent(nullptr), _next(nullptr), _prev(nullptr),
-		yadj(0), line_request(0), line_request_uni(0), char_request(0), char_request_uni(0),
-		mouse_request(0), hyper_request(0), more_request(0), scroll_request(0), image_loaded(0),
-		echo_line_input(true),  line_terminators(nullptr), termct(0), _echoStream(nullptr) {
-	attr.fgset = 0;
-	attr.bgset = 0;
-	attr.reverse = 0;
-	attr.style = 0;
-	attr.fgcolor = 0;
-	attr.bgcolor = 0;
-	attr.hyper = 0;
+		yadj(0), _lineRequest(0), _lineRequestUni(0), _charRequest(0), _charRequestUni(0),
+		_mouseRequest(0), _hyperRequest(0), _moreRequest(0), _scrollRequest(0), _imageLoaded(0),
+		_echoLineInput(true),  _lineTerminators(nullptr), _termCt(0), _echoStream(nullptr) {
+	_attr.fgset = 0;
+	_attr.bgset = 0;
+	_attr.reverse = 0;
+	_attr.style = 0;
+	_attr.fgcolor = 0;
+	_attr.bgcolor = 0;
+	_attr.hyper = 0;
 
-	Common::fill(&bgcolor[0], &bgcolor[3], 3);
-	Common::fill(&fgcolor[0], &fgcolor[3], 3);
-	disprock.num = 0;
+	Common::fill(&_bgColor[0], &_bgColor[3], 3);
+	Common::fill(&_fgColor[0], &_fgColor[3], 3);
+	_dispRock.num = 0;
 
 	Streams &streams = *g_vm->_streams;
 	_stream = streams.addWindowStream(this);
@@ -322,7 +322,7 @@ void TextGridWindow::rearrange(const Common::Rect &box) {
 		touch(y);
 	}
 
-	attr.clear();
+	_attr.clear();
 	_width = newwid;
 	_height = newhgt;
 }
@@ -346,7 +346,7 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 
 	g_vm->_events->clearEvent(ev);
 
-	if (!line_request && !line_request_uni)
+	if (!_lineRequest && !_lineRequestUni)
 		return;
 
 
@@ -370,7 +370,7 @@ TextBufferWindow::TextBufferWindow(Windows *windows, uint32 rock) : Window(windo
 		_scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1), _inBuf(nullptr),
 		_lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0), _ladjn(0),
 		_radjn(0), _numChars(0), _chars(nullptr), _attrs(nullptr),
-		_spaced(0), _dashed(0), copybuf(0), copypos(0) {
+		_spaced(0), _dashed(0), _copyBuf(0), _copyPos(0) {
 	_type = wintype_TextBuffer;
 	Common::fill(&_history[0], &_history[HISTORYLEN], nullptr);
 
@@ -410,14 +410,14 @@ void TextBufferWindow::rearrange(const Common::Rect &box) {
 		touchScroll();
 
 		/* allocate copy buffer */
-		if (copybuf)
-			delete[] copybuf;
-		copybuf = new glui32[_height * TBLINELEN];
+		if (_copyBuf)
+			delete[] _copyBuf;
+		_copyBuf = new glui32[_height * TBLINELEN];
 
 		for (int i = 0; i < (_height * TBLINELEN); i++)
-			copybuf[i] = 0;
+			_copyBuf[i] = 0;
 
-		copypos = 0;
+		_copyPos = 0;
 	}
 }
 
@@ -452,7 +452,7 @@ void TextBufferWindow::reflow() {
 
 	/* copy text to temp buffers */
 
-	oldattr = attr;
+	oldattr = _attr;
 	curattr.clear();
 
 	x = 0;
@@ -460,7 +460,7 @@ void TextBufferWindow::reflow() {
 	s = _scrollMax < SCROLLBACK ? _scrollMax : SCROLLBACK - 1;
 
 	for (k = s; k >= 0; k--) {
-		if (k == 0 && line_request)
+		if (k == 0 && _lineRequest)
 			inputbyte = p + _inFence;
 
 		if (_lines[k].lpic) {
@@ -507,7 +507,7 @@ void TextBufferWindow::reflow() {
 	for (i = 0; i < p; i++) {
 		if (i == inputbyte)
 			break;
-		attr = attrbuf[i];
+		_attr = attrbuf[i];
 
 		if (offsetbuf[x] == i) {
 			putPicture(pictbuf[x], alignbuf[x], hyperbuf[x]);
@@ -535,7 +535,7 @@ void TextBufferWindow::reflow() {
 	delete[] hyperbuf;
 	delete[] offsetbuf;
 
-	attr = oldattr;
+	_attr = oldattr;
 
 	touchScroll();
 }
@@ -551,11 +551,11 @@ void TextBufferWindow::touchScroll() {
 void TextBufferWindow::clear() {
 	int i;
 
-	attr.fgset = Windows::_overrideFgSet;
-	attr.bgset = Windows::_overrideBgSet;
-	attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : 0;
-	attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : 0;
-	attr.reverse = false;
+	_attr.fgset = Windows::_overrideFgSet;
+	_attr.bgset = Windows::_overrideBgSet;
+	_attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : 0;
+	_attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : 0;
+	_attr.reverse = false;
 
 	_ladjw = _radjw = 0;
 	_ladjn = _radjn = 0;
@@ -798,7 +798,7 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 
 	g_vm->_events->clearEvent(ev);
 
-	if (!line_request && !line_request_uni)
+	if (!_lineRequest && !_lineRequestUni)
 		return;
 
 
@@ -822,9 +822,9 @@ void TextBufferWindow::TextBufferRow::resize(size_t newSize) {
 /*--------------------------------------------------------------------------*/
 
 GraphicsWindow::GraphicsWindow(Windows *windows, uint32 rock) : Window(windows, rock),
-		w(0), h(0), dirty(false), _surface(nullptr) {
+_w(0), _h(0), _dirty(false), _surface(nullptr) {
 	_type = wintype_Graphics;
-	Common::copy(&bgcolor[0], &bgcolor[3], bgnd);
+	Common::copy(&_bgColor[0], &_bgColor[3], _bgnd);
 }
 
 void GraphicsWindow::rearrange(const Common::Rect &box) {
@@ -837,21 +837,21 @@ void GraphicsWindow::rearrange(const Common::Rect &box) {
 
 	newwid = box.width();
 	newhgt = box.height();
-	oldw = w;
-	oldh = h;
+	oldw = _w;
+	oldh = _h;
 
 	if (newwid <= 0 || newhgt <= 0) {
-		w = 0;
-		h = 0;
+		_w = 0;
+		_h = 0;
 		delete _surface;
 		_surface = NULL;
 		return;
 	}
 
-	bothwid = w;
+	bothwid = _w;
 	if (newwid < bothwid)
 		bothwid = newwid;
-	bothhgt = h;
+	bothhgt = _h;
 	if (newhgt < bothhgt)
 		bothhgt = newhgt;
 
@@ -864,14 +864,14 @@ void GraphicsWindow::rearrange(const Common::Rect &box) {
 
 	delete _surface;
 	_surface = newSurface;
-	w = newwid;
-	h = newhgt;
+	_w = newwid;
+	_h = newhgt;
 
 	touch();
 }
 
 void GraphicsWindow::touch() {
-	dirty = true;
+	_dirty = true;
 	_windows->repaint(bbox);
 }
 
@@ -881,10 +881,10 @@ PairWindow::PairWindow(Windows *windows, glui32 method, Window *key, glui32 size
 		Window(windows, 0),
 		_dir(method & winmethod_DirMask),
 		_division(method & winmethod_DivisionMask),
-		_wborder((method & winmethod_BorderMask) == winmethod_Border),
+		_wBorder((method & winmethod_BorderMask) == winmethod_Border),
 		_vertical(_dir == winmethod_Left || _dir == winmethod_Right),
 		_backward(_dir == winmethod_Left || _dir == winmethod_Above),
-		_key(key), _size(size), _keydamage(0), _child1(nullptr), _child2(nullptr) {
+		_key(key), _size(size), _keyDamage(0), _child1(nullptr), _child2(nullptr) {
 	_type = wintype_Pair;
 }
 
