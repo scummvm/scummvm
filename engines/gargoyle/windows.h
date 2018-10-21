@@ -313,13 +313,13 @@ private:
 	void touch(int line);
 public:
 	int _width, _height;
-	TextGridRows lines;
+	TextGridRows _lines;
 
 	int _curX, _curY;    ///< the window cursor position
 
                          ///< for line input
 	void *_inBuf;        ///< unsigned char* for latin1, glui32* for unicode
-	int _inorgX, _inorgY;
+	int _inOrgX, _inOrgY;
 	int _inMax;
 	int _inCurs, _inLen;
 	Attributes _origAttr;

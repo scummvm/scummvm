@@ -297,7 +297,7 @@ TextGridWindow::TextGridWindow(Windows *windows, uint32 rock) : Window(windows, 
 	_width = _height = 0;
 	_curX = _curY = 0;
 	_inBuf = nullptr;
-	_inorgX = _inorgY = 0;
+	_inOrgX = _inOrgY = 0;
 	_inMax = 0;
 	_inCurs = _inLen = 0;
 	_inArrayRock.num = 0;
@@ -316,9 +316,9 @@ void TextGridWindow::rearrange(const Common::Rect &box) {
 	if (newwid == _width && newhgt == _height)
 		return;
 
-	lines.resize(newhgt);
+	_lines.resize(newhgt);
 	for (int y = 0; y < newhgt; ++y) {
-		lines[y].resize(newwid);
+		_lines[y].resize(newwid);
 		touch(y);
 	}
 
@@ -329,7 +329,7 @@ void TextGridWindow::rearrange(const Common::Rect &box) {
 
 void TextGridWindow::touch(int line) {
 	int y = bbox.top + line * g_conf->_leading;
-	lines[line].dirty = true;
+	_lines[line].dirty = true;
 	_windows->repaint(Common::Rect(bbox.left, y, bbox.right, y + g_conf->_leading));
 }
 
@@ -339,6 +339,12 @@ glui32 TextGridWindow::getSplit(glui32 size, bool vertical) const {
 }
 
 void TextGridWindow::cancelLineEvent(Event *ev) {
+	int ix;
+	void *inbuf;
+	int inmax;
+	int unicode = _lineRequestUni;
+	gidispatch_rock_t inarrayrock;
+	TextGridRow *ln = &_lines[_inOrgY];
 	Event dummyEv;
 
 	if (!ev)
@@ -350,7 +356,51 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 		return;
 
 
-	// TODO : textgrid_cancel_line
+	inbuf = _inBuf;
+	inmax = _inMax;
+	inarrayrock = _inArrayRock;
+
+	if (!unicode) {
+		for (ix = 0; ix<_inLen; ix++)
+		{
+			glui32 ch = ln->chars[_inOrgX + ix];
+			if (ch > 0xff)
+				ch = '?';
+			((char *)inbuf)[ix] = (char)ch;
+		}
+		if (_echoStream)
+			_echoStream->echoLine((char *)_inBuf, _inLen);
+	} else {
+		for (ix = 0; ix<_inLen; ix++)
+			((glui32 *)inbuf)[ix] = ln->chars[_inOrgX + ix];
+		if (_echoStream)
+			_echoStream->echoLineUni((glui32 *)inbuf, _inLen);
+	}
+
+	_curY = _inOrgY + 1;
+	_curX = 0;
+	_attr = _origAttr;
+
+	ev->_type = evtype_LineInput;
+	ev->_window = this;
+	ev->_val1 = _inLen;
+	ev->_val2 = 0;
+
+	_lineRequest = false;
+	_lineRequestUni = false;
+
+	if (_lineTerminators) {
+		free(_lineTerminators);
+		_lineTerminators = nullptr;
+	}
+
+	_inBuf = nullptr;
+	_inMax = 0;
+	_inOrgX = 0;
+	_inOrgY = 0;
+
+	if (g_vm->gli_unregister_arr)
+		(*g_vm->gli_unregister_arr)(inbuf, inmax, unicode ? "&+#!Iu" : "&+#!Cn", inarrayrock);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -791,6 +841,12 @@ glui32 TextBufferWindow::getSplit(glui32 size, bool vertical) const {
 }
 
 void TextBufferWindow::cancelLineEvent(Event *ev) {
+	gidispatch_rock_t inarrayrock;
+	int ix;
+	int len;
+	void *inbuf;
+	int inmax;
+	int unicode = _lineRequestUni;
 	Event dummyEv;
 
 	if (!ev)
@@ -801,8 +857,61 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 	if (!_lineRequest && !_lineRequestUni)
 		return;
 
+	if (!_inBuf)
+		return;
 
-	// TODO : textbuffer_cancel_line
+	inbuf = _inBuf;
+	inmax = _inMax;
+	inarrayrock = _inArrayRock;
+
+	len = _numChars - _inFence;
+	if (_echoStream)
+		_echoStream->echoLineUni(_chars + _inFence, len);
+
+	if (len > inmax)
+		len = inmax;
+
+	if (!unicode)
+	{
+		for (ix = 0; ix<len; ix++)
+		{
+			glui32 ch = _chars[_inFence + ix];
+			if (ch > 0xff)
+				ch = '?';
+			((char *)inbuf)[ix] = (char)ch;
+		}
+	}
+	else
+	{
+		for (ix = 0; ix<len; ix++)
+			((glui32 *)inbuf)[ix] = _chars[_inFence + ix];
+	}
+
+	_attr = _origAttr;
+
+	ev->_type = evtype_LineInput;
+	ev->_window = this;
+	ev->_val1 = len;
+	ev->_val2 = 0;
+
+	_lineRequest = false;
+	_lineRequestUni = false;
+	if (_lineTerminators) {
+		free(_lineTerminators);
+		_lineTerminators = nullptr;
+	}
+	_inBuf = nullptr;
+	_inMax = 0;
+
+	if (_echoLineInput) {
+		putCharUni('\n');
+	} else {
+		_numChars = _inFence;
+		touch(0);
+	}
+
+	if (g_vm->gli_unregister_arr)
+		(*g_vm->gli_unregister_arr)(inbuf, inmax, unicode ? "&+#!Iu" : "&+#!Cn", inarrayrock);
 }
 
 /*--------------------------------------------------------------------------*/

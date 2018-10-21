@@ -40,7 +40,8 @@ GargoyleEngine *g_vm;
 
 GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _random("Gargoyle"), _conf(nullptr),
-		_events(nullptr), _screen(nullptr), _windows(nullptr) {
+		_events(nullptr), _screen(nullptr), _windows(nullptr),
+		gli_unregister_obj(nullptr), gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
 	g_vm = this;
 }
 

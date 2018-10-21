@@ -89,22 +89,60 @@ void WindowStream::putCharUni(uint32 ch) {
 		return;
 	++_writeCount;
 
-	//TODO
+	if (_window->_lineRequest || _window->_lineRequestUni) {
+		if (g_conf->_safeClicks && g_vm->_events->_forceClick) {
+			_window->cancelLineEvent(nullptr);
+			g_vm->_events->_forceClick = false;
+		} else {
+			warning("putCharUni: window has pending line request");
+		}
+	}
+
+	_window->putCharUni(ch);
+	if (_window->_echoStream)
+		_window->_echoStream->putCharUni(ch);
 }
 
-void WindowStream::putBuffer(const unsigned char *buf, size_t len) {
+void WindowStream::putBuffer(const char *buf, size_t len) {
 	if (!_writable)
 		return;
-	++_writeCount;
-	//TODO
+	_writeCount += len;
+
+	if (_window->_lineRequest || _window->_lineRequestUni) {
+		if (g_conf->_safeClicks && g_vm->_events->_forceClick) {
+			_window->cancelLineEvent(nullptr);
+			g_vm->_events->_forceClick = false;
+		} else {
+			warning("putBuffer: window has pending line request");
+		}
+	}
+
+	for (size_t lx = 0; lx < len; lx++, buf++)
+		_window->putChar(*buf);
+	if (_window->_echoStream)
+		_window->_echoStream->putBuffer(buf, len);
 
 }
 
 void WindowStream::putBufferUni(const uint32 *buf, size_t len) {
 	if (!_writable)
 		return;
-	++_writeCount;
-	//TODO
+	_writeCount += len;
+
+	if (_window->_lineRequest || _window->_lineRequestUni) {
+		if (g_conf->_safeClicks && g_vm->_events->_forceClick) {
+			_window->cancelLineEvent(nullptr);
+			g_vm->_events->_forceClick = false;
+		}
+		else {
+			warning("putBuffer: window has pending line request");
+		}
+	}
+
+	for (size_t lx = 0; lx < len; lx++, buf++)
+		_window->putCharUni(*buf);
+	if (_window->_echoStream)
+		_window->_echoStream->putBufferUni(buf, len);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -132,7 +170,7 @@ void MemoryStream::putCharUni(uint32 ch) {
 
 }
 
-void MemoryStream::putBuffer(const unsigned char *buf, size_t len) {
+void MemoryStream::putBuffer(const char *buf, size_t len) {
 	//TODO
 
 }
@@ -156,7 +194,7 @@ void FileStream::putCharUni(uint32 ch) {
 	//TODO
 }
 
-void FileStream::putBuffer(const unsigned char *buf, size_t len) {
+void FileStream::putBuffer(const char *buf, size_t len) {
 	//TODO
 }
 
