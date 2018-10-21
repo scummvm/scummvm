@@ -28,7 +28,6 @@
 
 namespace Gargoyle {
 
-class GargoyleEngine;
 class Window;
 class Streams;
 
@@ -84,12 +83,22 @@ public:
 	/**
 	 * Write a character
 	 */
-	virtual void writeChar(unsigned char ch) = 0;
+	virtual void putChar(unsigned char ch) = 0;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void writeCharUni(uint32 ch) = 0;
+	virtual void putCharUni(uint32 ch) = 0;
+
+	/**
+	 * Write a buffer
+	 */
+	virtual void putBuffer(const unsigned char *buf, size_t len) = 0;
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void putBufferUni(const uint32 *buf, size_t len) = 0;
 };
 typedef Stream *strid_t;
 
@@ -114,12 +123,22 @@ public:
 	/**
 	 * Write a character
 	 */
-	virtual void writeChar(unsigned char ch) override;
+	virtual void putChar(unsigned char ch) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void writeCharUni(uint32 ch) override;
+	virtual void putCharUni(uint32 ch) override;
+
+	/**
+	 * Write a buffer
+	 */
+	virtual void putBuffer(const unsigned char *buf, size_t len) override;
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void putBufferUni(const uint32 *buf, size_t len) override;
 };
 
 /**
@@ -141,12 +160,54 @@ public:
 	/**
 	 * Write a character
 	 */
-	virtual void writeChar(unsigned char ch);
+	virtual void putChar(unsigned char ch) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void writeCharUni(uint32 ch);
+	virtual void putCharUni(uint32 ch) override;
+
+	/**
+	 * Write a buffer
+	 */
+	virtual void putBuffer(const unsigned char *buf, size_t len) override;
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+};
+
+/**
+ * Implements a file stream
+ */
+class FileStream : public Stream {
+private:
+public:
+	/**
+	 * Constructor
+	 */
+	FileStream(Streams *streams, uint32 rock = 0, bool unicode = true);
+
+	/**
+	 * Write a character
+	 */
+	virtual void putChar(unsigned char ch) override;
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void putCharUni(uint32 ch) override;
+
+	/**
+	 * Write a buffer
+	 */
+	virtual void putBuffer(const unsigned char *buf, size_t len) override;
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void putBufferUni(const uint32 *buf, size_t len) override;
 };
 
 /**
@@ -155,7 +216,6 @@ public:
 class Streams {
 	friend class Stream;
 private:
-	GargoyleEngine *_engine;
 	Stream *_streamList;
 	Stream *_currentStream;
 private:
@@ -172,7 +232,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Streams(GargoyleEngine *engine);
+	Streams();
 
 	/**
 	 * Destructor

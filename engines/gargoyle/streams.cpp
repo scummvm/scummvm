@@ -21,6 +21,9 @@
  */
 
 #include "gargoyle/streams.h"
+#include "gargoyle/conf.h"
+#include "gargoyle/events.h"
+#include "gargoyle/gargoyle.h"
 #include "gargoyle/windows.h"
 
 namespace Gargoyle {
@@ -62,12 +65,46 @@ void WindowStream::close(StreamResult *result) {
 	warning("cannot close window stream");
 }
 
-void WindowStream::writeChar(unsigned char ch) {
+void WindowStream::putChar(unsigned char ch) {
+	if (!_writable)
+		return;
+	++_writeCount;
+
+	if (_window->line_request || _window->line_request_uni) {
+		if (g_conf->_safeClicks && g_vm->_events->_forceClick) {
+			_window->cancelLineEvent(nullptr);
+			g_vm->_events->_forceClick = false;
+		} else {
+			warning("putChar: window has pending line request");
+		}
+	}
+
+	_window->putChar(ch);
+	if (_window->_echoStream)
+		_window->_echoStream->putChar(ch);
+}
+
+void WindowStream::putCharUni(uint32 ch) {
+	if (!_writable)
+		return;
+	++_writeCount;
+
+	//TODO
+}
+
+void WindowStream::putBuffer(const unsigned char *buf, size_t len) {
+	if (!_writable)
+		return;
+	++_writeCount;
+	//TODO
 
 }
 
-void WindowStream::writeCharUni(uint32 ch) {
-
+void WindowStream::putBufferUni(const uint32 *buf, size_t len) {
+	if (!_writable)
+		return;
+	++_writeCount;
+	//TODO
 }
 
 /*--------------------------------------------------------------------------*/
@@ -85,26 +122,56 @@ MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode 
 	_bufeof = mode == filemode_Write ? _buf : _bufend;
 }
 
-void MemoryStream::writeChar(unsigned char ch) {
+void MemoryStream::putChar(unsigned char ch) {
+	//TODO
 
 }
 
-void MemoryStream::writeCharUni(uint32 ch) {
+void MemoryStream::putCharUni(uint32 ch) {
+	//TODO
+
+}
+
+void MemoryStream::putBuffer(const unsigned char *buf, size_t len) {
+	//TODO
+
+}
+
+void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
+	//TODO
 
 }
 
 /*--------------------------------------------------------------------------*/
 
-/*--------------------------------------------------------------------------*/
+FileStream::FileStream(Streams *streams, uint32 rock, bool unicode) :
+	Stream(streams, true, false, rock, unicode) {
+}
+
+void FileStream::putChar(unsigned char ch) {
+	//TODO
+}
+
+void FileStream::putCharUni(uint32 ch) {
+	//TODO
+}
+
+void FileStream::putBuffer(const unsigned char *buf, size_t len) {
+	//TODO
+}
+
+void FileStream::putBufferUni(const uint32 *buf, size_t len) {
+	//TODO
+}
 
 /*--------------------------------------------------------------------------*/
 
-Streams::Streams(GargoyleEngine *engine) : _engine(engine), _streamList(nullptr), _currentStream(nullptr) {
+Streams::Streams() : _streamList(nullptr), _currentStream(nullptr) {
 }
 
 Streams::~Streams() {
 	while (_streamList)
-		deleteStream(_streamList);
+		delete _streamList;
 }
 
 WindowStream *Streams::addWindowStream(Window *window) {
@@ -136,6 +203,12 @@ void Streams::removeStream(Stream *stream) {
 		_streamList = next;
 	if (next)
 		next->_prev = prev;
+
+	// Remove the stream as the echo stream of any window
+	for (Windows::iterator i = g_vm->_windows->begin(); i != g_vm->_windows->end(); ++i) {
+		if ((*i)->_echoStream == stream)
+			(*i)->_echoStream = nullptr;
+	}
 }
 
 Stream *Streams::getFirst(uint32 *rock) {

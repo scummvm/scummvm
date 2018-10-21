@@ -139,12 +139,13 @@ Conf::Conf() {
 	get("dashes", _dashes, 1);
 	get("spaces", _spaces);
 	get("caps", _caps);
-	get("graphics", _graphics, 1);
-	get("sound", _sound, 1);
+	get("graphics", _graphics, true);
+	get("sound", _sound, true);
 	get("speak", _speak);
 	get("speak_input", _speakInput);
 	get("speak_language", _speakLanguage);
 	get("stylehint", _styleHint, 1);
+	get("safeclicks", _safeClicks);
 
 	Common::copy(T_STYLES, T_STYLES + style_NUMSTYLES, _tStyles);
 	Common::copy(G_STYLES, G_STYLES + style_NUMSTYLES, _gStyles);
@@ -214,6 +215,10 @@ void Conf::get(const Common::String &key, byte *color, const byte *defaultColor)
 
 void Conf::get(const Common::String &key, int &field, int defaultVal) {
 	field = ConfMan.hasKey(key) ? strToInt(ConfMan.get(key).c_str()) : defaultVal;
+}
+
+void Conf::get(const Common::String &key, bool &field, bool defaultVal) {
+	field = ConfMan.hasKey(key) ? strToInt(ConfMan.get(key).c_str()) != 0 : defaultVal;
 }
 
 void Conf::get(const Common::String &key, FACES &field, FACES defaultFont) {

@@ -125,6 +125,8 @@ public:
 	const Common::String &GargoyleEngine::getFilename() const;
 };
 
+extern GargoyleEngine *g_vm;
+
 } // End of namespace Gargoyle
 
 #endif

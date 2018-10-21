@@ -36,9 +36,12 @@
 
 namespace Gargoyle {
 
+GargoyleEngine *g_vm;
+
 GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _random("Gargoyle"), _conf(nullptr),
 		_events(nullptr), _screen(nullptr), _windows(nullptr) {
+	g_vm = this;
 }
 
 GargoyleEngine::~GargoyleEngine() {
@@ -60,8 +63,8 @@ void GargoyleEngine::initialize() {
 	_screen = new Graphics::Screen();
 	_conf = new Conf();
 	_events = new Events();
-	_streams = new Streams(this);
-	_windows = new Windows(this, _screen);
+	_streams = new Streams();
+	_windows = new Windows(_screen);
 }
 
 Common::Error GargoyleEngine::run() {
