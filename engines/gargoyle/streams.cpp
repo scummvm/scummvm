@@ -133,8 +133,7 @@ void WindowStream::putBufferUni(const uint32 *buf, size_t len) {
 		if (g_conf->_safeClicks && g_vm->_events->_forceClick) {
 			_window->cancelLineEvent(nullptr);
 			g_vm->_events->_forceClick = false;
-		}
-		else {
+		} else {
 			warning("putBuffer: window has pending line request");
 		}
 	}
@@ -149,57 +148,265 @@ void WindowStream::putBufferUni(const uint32 *buf, size_t len) {
 
 MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint32 rock, bool unicode) :
 		Stream(streams, mode != filemode_Write, mode != filemode_Read, rock, unicode),
-		_buf(buf), _buflen(buflen), _bufptr(buf) {
-	assert(_buf && _buflen);
+		_buf(buf), _bufLen(buflen), _bufPtr(buf) {
+	assert(_buf && _bufLen);
 	assert(mode == filemode_Read || mode == filemode_Write || mode == filemode_ReadWrite);
 
 	if (unicode)
-		_bufend = (uint32 *)buf + buflen;
+		_bufEnd = (uint32 *)buf + buflen;
 	else
-		_bufend = (byte *)buf + buflen;
-	_bufeof = mode == filemode_Write ? _buf : _bufend;
+		_bufEnd = (byte *)buf + buflen;
+	_bufEof = mode == filemode_Write ? _buf : _bufEnd;
 }
 
 void MemoryStream::putChar(unsigned char ch) {
-	//TODO
+	if (!_writable)
+		return;
+	++_writeCount;
 
+	if (_bufPtr < _bufEnd) {
+		if (_unicode) {
+			*((glui32 *)_bufPtr) = ch;
+			_bufPtr = ((glui32 *)_bufPtr) + 1;
+		} else {
+			*((unsigned char *)_bufPtr) = ch;
+			_bufPtr = ((unsigned char *)_bufPtr) + 1;
+		}
+
+		if (_bufPtr > _bufEof)
+			_bufEof = _bufPtr;
+	}
 }
 
 void MemoryStream::putCharUni(uint32 ch) {
-	//TODO
+	if (!_writable)
+		return;
+	++_writeCount;
 
+	if (_bufPtr < _bufEnd) {
+		if (_unicode) {
+			*((glui32 *)_bufPtr) = ch;
+			_bufPtr = ((glui32 *)_bufPtr) + 1;
+		} else {
+			*((unsigned char *)_bufPtr) = (unsigned char)ch;
+			_bufPtr = ((unsigned char *)_bufPtr) + 1;
+		}
+		if (_bufPtr > _bufEof)
+			_bufEof = _bufPtr;
+	}
 }
 
 void MemoryStream::putBuffer(const char *buf, size_t len) {
-	//TODO
+	size_t lx;
 
+	if (!_writable)
+		return;
+	_writeCount += len;
+
+	if (_bufPtr >= _bufEnd) {
+		len = 0;
+	} else {
+		if (!_unicode) {
+			unsigned char *bp = (unsigned char *)_bufPtr;
+			if (bp + len > (unsigned char *)_bufEnd)
+			{
+				lx = (bp + len) - (unsigned char *)_bufEnd;
+				if (lx < len)
+					len -= lx;
+				else
+					len = 0;
+			}
+			if (len) {
+				memmove(bp, buf, len);
+				bp += len;
+				if (bp >(unsigned char *)_bufEof)
+					_bufEof = bp;
+			}
+			_bufPtr = bp;
+		} else {
+			glui32 *bp = (glui32 *)_bufPtr;
+			if (bp + len > (glui32 *)_bufEnd) {
+				lx = (bp + len) - (glui32 *)_bufEnd;
+				if (lx < len)
+					len -= lx;
+				else
+					len = 0;
+			}
+			if (len) {
+				glui32 i;
+				for (i = 0; i < len; i++)
+					bp[i] = buf[i];
+				bp += len;
+				if (bp >(glui32 *)_bufEof)
+					_bufEof = bp;
+			}
+			_bufPtr = bp;
+		}
+	}
 }
 
 void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
-	//TODO
+	size_t lx;
 
+	if (!_writable)
+		return;
+	_writeCount += len;
+
+	if (_bufPtr >= _bufEnd) {
+		len = 0;
+	} else {
+		if (!_unicode) {
+			unsigned char *bp = (unsigned char *)_bufPtr;
+			if (bp + len > (unsigned char *)_bufEnd) {
+				lx = (bp + len) - (unsigned char *)_bufEnd;
+				if (lx < len)
+					len -= lx;
+				else
+					len = 0;
+			}
+			if (len) {
+				glui32 i;
+				for (i = 0; i < len; i++) {
+					glui32 ch = buf[i];
+					if (ch > 0xff)
+						ch = '?';
+					bp[i] = (unsigned char)ch;
+				}
+				bp += len;
+				if (bp > (unsigned char *)_bufEof)
+					_bufEof = bp;
+			}
+			_bufPtr = bp;
+		} else {
+			glui32 *bp = (glui32 *)_bufPtr;
+			if (bp + len > (glui32 *)_bufEnd) {
+				lx = (bp + len) - (glui32 *)_bufEnd;
+				if (lx < len)
+					len -= lx;
+				else
+					len = 0;
+			}
+			if (len) {
+				memmove(bp, buf, len * 4);
+				bp += len;
+				if (bp >(glui32 *)_bufEof)
+					_bufEof = bp;
+			}
+			_bufPtr = bp;
+		}
+	}
 }
 
 /*--------------------------------------------------------------------------*/
 
 FileStream::FileStream(Streams *streams, uint32 rock, bool unicode) :
-	Stream(streams, true, false, rock, unicode) {
+	Stream(streams, true, false, rock, unicode), _lastOp(0), _textFile(false) {
+	// TODO: Set up files
+	_outFile = nullptr;
+	_inFile = nullptr;
+}
+
+void FileStream::ensureOp(FileMode mode) {
+	// No implementation
 }
 
 void FileStream::putChar(unsigned char ch) {
-	//TODO
+	if (!_writable)
+		return;
+	++_writeCount;
+
+	ensureOp(filemode_Write);
+	if (!_unicode) {
+		_outFile->writeByte(ch);
+	} else if (_textFile) {
+		putCharUtf8((glui32)ch);
+	} else {
+		_outFile->writeUint32BE(ch);
+	}
+
+	_outFile->flush();
 }
 
 void FileStream::putCharUni(uint32 ch) {
-	//TODO
+	if (!_writable)
+		return;
+	++_writeCount;
+
+	ensureOp(filemode_Write);
+	if (!_unicode) {
+		if (ch >= 0x100)
+			ch = '?';
+		_outFile->writeByte(ch);
+	} else if (_textFile) {
+		putCharUtf8(ch);
+	} else {
+		_outFile->writeUint32BE(ch);
+	}
+
+	_outFile->flush();
 }
 
 void FileStream::putBuffer(const char *buf, size_t len) {
-	//TODO
+	if (!_writable)
+		return;
+	_writeCount += len;
+
+	ensureOp(filemode_Write);
+	for (size_t lx = 0; lx < len; lx++) {
+		unsigned char ch = ((unsigned char *)buf)[lx];
+		if (!_unicode) {
+			_outFile->writeByte(ch);
+		} else if (_textFile) {
+			putCharUtf8((glui32)ch);
+		} else {
+			_outFile->writeUint32BE(ch);
+		}
+	}
+
+	_outFile->flush();
 }
 
 void FileStream::putBufferUni(const uint32 *buf, size_t len) {
-	//TODO
+	if (!_writable)
+		return;
+	_writeCount += len;
+
+
+	ensureOp(filemode_Write);
+	for (size_t lx = 0; lx<len; lx++) {
+		glui32 ch = buf[lx];
+		if (!_unicode) {
+			if (ch >= 0x100)
+				ch = '?';
+			_outFile->writeByte(ch);
+		} else if (_textFile) {
+			putCharUtf8(ch);
+		} else {
+			_outFile->writeUint32BE(ch);
+		}
+	}
+
+	_outFile->flush();
+}
+
+void FileStream::putCharUtf8(glui32 val) {
+	if (val < 0x80) {
+		_outFile->writeByte(val);
+	} else if (val < 0x800) {
+		_outFile->writeByte((0xC0 | ((val & 0x7C0) >> 6)));
+		_outFile->writeByte((0x80 | (val & 0x03F)));
+	} else if (val < 0x10000) {
+		_outFile->writeByte((0xE0 | ((val & 0xF000) >> 12)));
+		_outFile->writeByte((0x80 | ((val & 0x0FC0) >> 6)));
+		_outFile->writeByte((0x80 | (val & 0x003F)));
+	} else if (val < 0x200000) {
+		_outFile->writeByte((0xF0 | ((val & 0x1C0000) >> 18)));
+		_outFile->writeByte((0x80 | ((val & 0x03F000) >> 12)));
+		_outFile->writeByte((0x80 | ((val & 0x000FC0) >> 6)));
+		_outFile->writeByte((0x80 | (val & 0x00003F)));
+	} else {
+		_outFile->writeByte('?');
+	}
 }
 
 /*--------------------------------------------------------------------------*/
