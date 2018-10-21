@@ -28,6 +28,7 @@
 #include "common/rect.h"
 #include "graphics/screen.h"
 #include "gargoyle/glk_types.h"
+#include "gargoyle/fonts.h"
 #include "gargoyle/picture.h"
 #include "gargoyle/streams.h"
 
@@ -125,7 +126,7 @@ public:
  * Window styles
  */
 struct WindowStyle {
-	int font;
+	FACES font;
 	byte bg[3];
 	byte fg[3];
 	int reverse;

@@ -215,13 +215,6 @@ public:
 	Stream *getCurrent() const { return _currentStream; }
 };
 
-
-
-/*
- * Get the length of a unicode string
- */
-size_t strlen_uni(const uint32 *s);
-
 } // End of namespace Gargoyle
 
 #endif
