@@ -248,9 +248,9 @@ protected:
 		bool fullscreen;
 		bool aspectRatioCorrection;
 		AspectRatio desiredAspectRatio;
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		bool filtering;
+		
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 		int stretchMode;
 #endif
 
@@ -381,9 +381,7 @@ protected:
 	virtual bool hotswapGFXMode();
 
 	virtual void setAspectRatioCorrection(bool enable);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	void setFilteringMode(bool enable);
-#endif
 
 	virtual bool saveScreenshot(const char *filename);
 	virtual void setGraphicsModeIntern();

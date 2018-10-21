@@ -204,8 +204,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.fullscreen = true;
 #endif
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.filtering = ConfMan.getBool("filtering");
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.stretchMode = STRETCH_FIT;
 #endif
 
@@ -254,8 +254,8 @@ bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureFilteringMode) ||
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 		(f == OSystem::kFeatureStretchMode) ||
 #endif
 		(f == OSystem::kFeatureCursorPalette) ||
@@ -270,11 +270,9 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 	case OSystem::kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
 		break;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureFilteringMode:
 		setFilteringMode(enable);
 		break;
-#endif
 	case OSystem::kFeatureCursorPalette:
 		_cursorPaletteDisabled = !enable;
 		blitCursor();
@@ -299,10 +297,8 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 		return _videoMode.fullscreen;
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	case OSystem::kFeatureFilteringMode:
 		return _videoMode.filtering;
-#endif
 	case OSystem::kFeatureCursorPalette:
 		return !_cursorPaletteDisabled;
 	default:
@@ -371,11 +367,11 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			errors |= OSystem::kTransactionStretchModeSwitchFailed;
 
 			_videoMode.stretchMode = _oldVideoMode.stretchMode;
+#endif
 		} else if (_videoMode.filtering != _oldVideoMode.filtering) {
 			errors |= OSystem::kTransactionFilteringFailed;
 
 			_videoMode.filtering = _oldVideoMode.filtering;
-#endif
 #ifdef USE_RGB_COLOR
 		} else if (_videoMode.format != _oldVideoMode.format) {
 			errors |= OSystem::kTransactionFormatNotSupported;
@@ -395,9 +391,7 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 		if (_videoMode.fullscreen == _oldVideoMode.fullscreen &&
 			_videoMode.aspectRatioCorrection == _oldVideoMode.aspectRatioCorrection &&
 			_videoMode.mode == _oldVideoMode.mode &&
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 			_videoMode.filtering == _oldVideoMode.filtering &&
-#endif
 			_videoMode.screenWidth == _oldVideoMode.screenWidth &&
 			_videoMode.screenHeight == _oldVideoMode.screenHeight) {
 
@@ -1329,7 +1323,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 
 #ifdef USE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
-				r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
+				r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);		
 #endif
 		}
 		SDL_UnlockSurface(srcSurf);
@@ -1520,7 +1514,6 @@ void SurfaceSdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 	}
 }
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 void SurfaceSdlGraphicsManager::setFilteringMode(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
 
@@ -1529,10 +1522,11 @@ void SurfaceSdlGraphicsManager::setFilteringMode(bool enable) {
 
 	if (_transactionMode == kTransactionActive) {
 		_videoMode.filtering = enable;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 		_transactionDetails.needTextureUpdate = true;
+#endif
 	}
 }
-#endif
 
 void SurfaceSdlGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
@@ -1663,9 +1657,8 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool re
 	}
 
 #ifdef USE_SCALERS
-	if (_videoMode.aspectRatioCorrection && !_overlayVisible && !realCoordinates) {
-		makeRectStretchable(x, y, w, h);
-	}
+	if (_videoMode.aspectRatioCorrection && !_overlayVisible && !realCoordinates)
+		makeRectStretchable(x, y, w, h, _videoMode.filtering);
 #endif
 
 	if (w == width && h == height) {
@@ -1825,7 +1818,8 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 #ifdef USE_SCALERS
 	if (_videoMode.aspectRatioCorrection)
 		stretch200To240((uint8 *)_overlayscreen->pixels, _overlayscreen->pitch,
-						_videoMode.overlayWidth, _videoMode.screenHeight * _videoMode.scaleFactor, 0, 0, 0);
+						_videoMode.overlayWidth, _videoMode.screenHeight * _videoMode.scaleFactor, 0, 0, 0,
+						_videoMode.filtering);
 #endif
 	SDL_UnlockSurface(_tmpscreen);
 	SDL_UnlockSurface(_overlayscreen);
@@ -2209,8 +2203,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 }
 
 #ifdef USE_SCALERS
-// Basically it is kVeryFastAndUglyAspectMode of stretch200To240 from
-// common/scale/aspect.cpp
+// Basically it is stretch200To240Nearest from common/scale/aspect.cpp
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
 	int maxDstY = real2Aspect(origSrcY + height - 1);
 	int y;
@@ -2538,7 +2531,6 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		return true;
 	}
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Ctrl-Alt-f toggles filtering
 	if (key == 'f') {
 		beginGFXTransaction();
@@ -2555,7 +2547,6 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		internUpdateScreen();
 		return true;
 	}
-#endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Ctrl+Alt+s cycles through scaling mode (0 to 3)
@@ -2676,9 +2667,9 @@ bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 			if (keyValue >= ARRAYSIZE(s_gfxModeSwitchTable))
 				return false;
 		}
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (event.kbd.keycode == 'f')
 			return true;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (event.kbd.keycode == 's')
 			return true;
 #endif
