@@ -70,7 +70,7 @@ void WindowStream::putChar(unsigned char ch) {
 		return;
 	++_writeCount;
 
-	if (_window->line_request || _window->line_request_uni) {
+	if (_window->_lineRequest || _window->_lineRequestUni) {
 		if (g_conf->_safeClicks && g_vm->_events->_forceClick) {
 			_window->cancelLineEvent(nullptr);
 			g_vm->_events->_forceClick = false;

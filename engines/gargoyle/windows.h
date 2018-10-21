@@ -205,25 +205,25 @@ public:
 	Stream *_stream;       ///< the window stream.
 	Stream *_echoStream;   ///< the window's echo stream, if any.
 
-	int line_request;
-	int line_request_uni;
-	int char_request;
-	int char_request_uni;
-	int mouse_request;
-	int hyper_request;
-	int more_request;
-	int scroll_request;
-	int image_loaded;
+	int _lineRequest;
+	int _lineRequestUni;
+	int _charRequest;
+	int _charRequestUni;
+	int _mouseRequest;
+	int _hyperRequest;
+	int _moreRequest;
+	int _scrollRequest;
+	int _imageLoaded;
 
-	glui32 echo_line_input;
-	glui32 *line_terminators;
-	glui32 termct;
+	glui32 _echoLineInput;
+	glui32 *_lineTerminators;
+	glui32 _termCt;
 
-	Attributes attr;
-	byte bgcolor[3];
-	byte fgcolor[3];
+	Attributes _attr;
+	byte _bgColor[3];
+	byte _fgColor[3];
 
-	gidispatch_rock_t disprock;
+	gidispatch_rock_t _dispRock;
 public:
 	/**
 	 * Constructor
@@ -431,8 +431,8 @@ public:
 	WindowStyle styles[style_NUMSTYLES];
 
 	/* for copy selection */
-	glui32 *copybuf;
-	int copypos;
+	glui32 *_copyBuf;
+	int _copyPos;
 public:
 	/**
 	 * Constructor
@@ -467,9 +467,9 @@ class GraphicsWindow : public Window {
 private:
 	void touch();
 public:
-	unsigned char bgnd[3];
-	bool dirty;
-	int w, h;
+	unsigned char _bgnd[3];
+	bool _dirty;
+	int _w, _h;
 	Graphics::ManagedSurface *_surface;
 public:
 	/**
@@ -502,9 +502,9 @@ public:
 	bool _vertical, _backward; ///< flags
 	glui32 _division;          ///< winmethod_Fixed or winmethod_Proportional
 	Window *_key;              ///< NULL or a leaf-descendant (not a Pair)
-	int _keydamage;            ///< used as scratch space in window closing
+	int _keyDamage;            ///< used as scratch space in window closing
 	glui32 _size;              ///< size value
-	glui32 _wborder;           ///< winMethod_Border, NoBorder
+	glui32 _wBorder;           ///< winMethod_Border, NoBorder
 public:
 	/**
 	 * Constructor
