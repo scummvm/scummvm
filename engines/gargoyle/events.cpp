@@ -28,4 +28,8 @@ void Events::pollEvents() {
 	// TODO
 }
 
+void Events::clearEvent(Event *ev) {
+	// TODO
+}
+
 } // End of namespace Gargoyle

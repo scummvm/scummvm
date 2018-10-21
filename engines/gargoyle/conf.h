@@ -52,6 +52,11 @@ private:
 	void get(const Common::String &key, int &field, int defaultVal = 0);
 
 	/**
+	 * Get a numeric value
+	 */
+	void get(const Common::String &key, bool &field, bool defaultVal = false);
+
+	/**
 	 * Get a double
 	 */
 	void get(const Common::String &key, double &field, double defaultVal = 0.0);
@@ -103,12 +108,13 @@ public:
 	int _dashes;
 	int _spaces;
 	int _caps;
-	int _graphics;
-	int _sound;
-	int _speak;
-	int _speakInput;
+	bool _graphics;
+	bool _sound;
+	bool _speak;
+	bool _speakInput;
 	Common::String _speakLanguage;
 	int _styleHint;
+	bool _safeClicks;
 	WindowStyle _tStyles[style_NUMSTYLES];
 	WindowStyle _gStyles[style_NUMSTYLES];
 	WindowStyle _tStylesDefault[style_NUMSTYLES];
