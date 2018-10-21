@@ -104,7 +104,7 @@ public:
 	 * Constructor
 	 */
 	WindowStream(Streams *streams, Window *window, uint32 rock = 0, bool unicode = true) :
-		Stream(streams, true, false, rock, unicode), _window(window) {}
+		Stream(streams, false, true, rock, unicode), _window(window) {}
 
 	/**
 	 * Close the stream
