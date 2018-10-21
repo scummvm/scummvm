@@ -21,6 +21,7 @@
  */
 
 #include "gargoyle/windows.h"
+#include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/streams.h"
 #include "common/algorithm.h"
@@ -58,34 +59,6 @@ bool Windows::_overrideBgSet;
 int Windows::_overrideFgVal;
 int Windows::_overrideBgVal;
 
-
-WindowStyle T_STYLES[style_NUMSTYLES] = {
-	{ PROPR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Normal
-	{ PROPI,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Emphasized
-	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Preformatted
-	{ PROPB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Header
-	{ PROPB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Subheader
-	{ PROPZ,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Alert
-	{ PROPR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Note
-	{ PROPR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< BlockQuote
-	{ PROPB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Input
-	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< User1
-	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< User2
-};
-
-WindowStyle G_STYLES[style_NUMSTYLES] = {
-	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Normal
-	{ MONOI,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Emphasized
-	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Preformatted
-	{ MONOB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Header
-	{ MONOB,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Subheader
-	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Alert
-	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Note
-	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< BlockQuote
-	{ MONOR,{ 0xff,0xff,0xff },{ 0x00,0x00,0x00 }, 0 }, ///< Input
-	{ MONOR,{ 0x60,0x60,0x60 },{ 0xff,0xff,0xff }, 0 }, ///< User1
-	{ MONOR,{ 0x60,0x60,0x60 },{ 0xff,0xff,0xff }, 0 }, ///< User2
-};
 
 /*--------------------------------------------------------------------------*/
 
@@ -330,7 +303,7 @@ TextGridWindow::TextGridWindow(Windows *windows, uint32 rock) : Window(windows, 
 	inarrayrock.num = 0;
 	line_terminators = nullptr;
 
-	Common::copy(&G_STYLES[0], &G_STYLES[style_NUMSTYLES], styles);
+	Common::copy(&g_conf->_gStyles[0], &g_conf->_gStyles[style_NUMSTYLES], styles);
 }
 
 void TextGridWindow::rearrange(const Common::Rect &box) {
@@ -381,7 +354,7 @@ TextBufferWindow::TextBufferWindow(Windows *windows, uint32 rock) : Window(windo
 	_type = wintype_TextBuffer;
 	Common::fill(&history[0], &history[HISTORYLEN], nullptr);
 
-	Common::copy(&T_STYLES[0], &T_STYLES[style_NUMSTYLES], styles);
+	Common::copy(&g_conf->_tStyles[0], &g_conf->_tStyles[style_NUMSTYLES], styles);
 }
 
 void TextBufferWindow::rearrange(const Common::Rect &box) {
