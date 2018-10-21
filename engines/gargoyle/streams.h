@@ -93,12 +93,28 @@ public:
 	/**
 	 * Write a buffer
 	 */
-	virtual void putBuffer(const unsigned char *buf, size_t len) = 0;
+	virtual void putBuffer(const char *buf, size_t len) = 0;
 
 	/**
 	 * Write a unicode character
 	 */
 	virtual void putBufferUni(const uint32 *buf, size_t len) = 0;
+
+	/**
+	 * Send a line to the stream with a trailing newline
+	 */
+	void echoLine(char *buf, glui32 len) {
+		putBuffer(buf, len);
+		putChar('\n');
+	};
+
+	/**
+	 * Send a line to the stream with a trailing newline
+	 */
+	void echoLineUni(glui32 *buf, glui32 len) {
+		putBufferUni(buf, len);
+		putCharUni('\n');
+	}
 };
 typedef Stream *strid_t;
 
@@ -133,7 +149,7 @@ public:
 	/**
 	 * Write a buffer
 	 */
-	virtual void putBuffer(const unsigned char *buf, size_t len) override;
+	virtual void putBuffer(const char *buf, size_t len) override;
 
 	/**
 	 * Write a unicode character
@@ -170,7 +186,7 @@ public:
 	/**
 	 * Write a buffer
 	 */
-	virtual void putBuffer(const unsigned char *buf, size_t len) override;
+	virtual void putBuffer(const char *buf, size_t len) override;
 
 	/**
 	 * Write a unicode character
@@ -202,7 +218,7 @@ public:
 	/**
 	 * Write a buffer
 	 */
-	virtual void putBuffer(const unsigned char *buf, size_t len) override;
+	virtual void putBuffer(const char *buf, size_t len) override;
 
 	/**
 	 * Write a unicode character

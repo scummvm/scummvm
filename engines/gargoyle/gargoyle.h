@@ -30,6 +30,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/screen.h"
+#include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
 
@@ -95,6 +96,10 @@ public:
 	Events *_events;
 	Streams *_streams;
 	Windows *_windows;
+	void (*gli_unregister_obj)(void *obj, glui32 objclass, gidispatch_rock_t objrock);
+	gidispatch_rock_t (*gli_register_arr)(void *array, glui32 len, const char *typecode);
+	void (*gli_unregister_arr)(void *array, glui32 len, const char *typecode, gidispatch_rock_t objrock);
+
 public:
 	GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc);
 	virtual ~GargoyleEngine();
