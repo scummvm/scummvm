@@ -24,6 +24,7 @@
 #define GARGOYLE_STREAMS_H
 
 #include "common/scummsys.h"
+#include "common/savefile.h"
 #include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
@@ -163,10 +164,10 @@ public:
 class MemoryStream : public Stream {
 private:
 	void *_buf;		///< unsigned char* for latin1, glui32* for unicode
-	void *_bufptr;
-	void *_bufend;
-	void *_bufeof;
-	size_t _buflen;	///< # of bytes for latin1, # of 4-byte words for unicode
+	void *_bufPtr;
+	void *_bufEnd;
+	void *_bufEof;
+	size_t _bufLen;	///< # of bytes for latin1, # of 4-byte words for unicode
 public:
 	/**
 	 * Constructor
@@ -199,6 +200,20 @@ public:
  */
 class FileStream : public Stream {
 private:
+	Common::OutSaveFile *_outFile;
+	Common::InSaveFile *_inFile;
+	uint32 _lastOp;					///< 0, filemode_Write, or filemode_Read
+	bool _textFile;
+private:
+	/**
+	 * Ensure the stream is ready for the given operation
+	 */
+	void ensureOp(FileMode mode);
+
+	/**
+	 * Put a UTF8 character
+	 */
+	void putCharUtf8(glui32 val);
 public:
 	/**
 	 * Constructor
