@@ -1081,6 +1081,10 @@ static const SciScriptPatcherEntry hoyle5Signatures[] = {
 	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
+	// This entry has been placed so that the broken Poker game is disabled. This game uses an external DLL, PENGIN16.DLL,
+	// which is invoked via kWinDLL. We need to reverse the logic in PENGIN16.DLL and call it directly, in order to get this
+	// game to work properly. Until then, this game entry will be disabled.
+	{  true,   975, "disable Poker",                               1, hoyle5SignaturePoker,             hoyle5PatchDisableGame },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
