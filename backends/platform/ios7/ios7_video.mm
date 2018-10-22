@@ -797,7 +797,11 @@ uint getSizeNextPOT(uint size) {
 }
 
 -(void)adjustViewFrameForSafeArea {
-    if ( @available(iOS 11, *) ) {
+#if __has_builtin(__builtin_available)
+    if ( @available(iOS 11,*) ) {
+#else
+    if ( [[UIApplication sharedApplication] keyWindow] respondsToSelector:@selector(safeAreaInsets) ) {
+#endif
         CGRect screenSize = [[UIScreen mainScreen] bounds];
         UIEdgeInsets inset = [[UIApplication sharedApplication] keyWindow].safeAreaInsets;
         UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
