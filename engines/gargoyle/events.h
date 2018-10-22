@@ -118,6 +118,8 @@ public:
 	void pollEvents();
 
 	void clearEvent(Event *ev);
+
+	void eventStore(EvType type, Window *win, uint32 val1 = 0, uint32 val2 = 0);
 };
 
 } // End of namespace Gargoyle

@@ -165,6 +165,20 @@ enum StyleHint {
 	stylehint_just_RightFlush = 3,
 };
 
+/**
+ * These constants define the classes of opaque objects. It's a bit ugly to put
+ * them in this header file, since more classes may be added in the future.
+ * But if you find yourself stuck with an obsolete version of this file,
+ * adding new class definitions will be easy enough -- they will be numbered 
+ * sequentially, and the numeric constants can be found in the Glk specification.
+ */
+enum giDisp {
+	gidisp_Class_Window   = 0,
+	gidisp_Class_Stream   = 1,
+	gidisp_Class_Fileref  = 2,
+	gidisp_Class_Schannel = 3,
+};
+
 #ifdef GLK_MODULE_IMAGE
 
 enum ImageAlign {

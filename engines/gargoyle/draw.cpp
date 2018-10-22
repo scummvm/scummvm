@@ -20,20 +20,13 @@
  *
  */
 
-#include "gargoyle/events.h"
+#include "gargoyle/draw.h"
 
 namespace Gargoyle {
 
-void Events::pollEvents() {
+int Draw::drawStringUni(int x, int y, int fidx, byte *rgb, glui32 *s, int n, int spw) {
 	// TODO
-}
-
-void Events::clearEvent(Event *ev) {
-	// TODO
-}
-
-void Events::eventStore(EvType type, Window *win, uint32 val1, uint32 val2) {
-	// TODO
+	return 0;
 }
 
 } // End of namespace Gargoyle
