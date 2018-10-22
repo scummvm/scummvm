@@ -910,6 +910,25 @@ static const uint16 hoyle5PatchSpinLoop[] = {
 	PATCH_END
 };
 
+// While playing Old Maid (room 200), a repeated typo in the game script
+// means that `setScale` is called accidentally instead of `setScaler`.
+// In SSCI this did not do much because the first argument happened to be
+// smaller than the y-position of `ego`, but in ScummVM the first argument is
+// larger and so a debug message "y value less than vanishingY" is displayed.
+// This is the same issue as with LSL6 hires.
+static const uint16 hoyle5SetScaleSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(setScale), // pushi $14b (setScale)
+	0x38, SIG_UINT16(0x05),         // pushi 5
+	0x51, 0x2c,                     // class 2c (Scaler)
+	SIG_END
+};
+
+static const uint16 hoyle5PatchSetScale[] = {
+	0x38, PATCH_SELECTOR16(setScaler), // pushi $14f (setScaler)
+	PATCH_END
+};
+
 // There are two derived collections of Hoyle Classic Games:
 // 1) The Hoyle Children's Collection, which includes the following games:
 // - Crazy Eights (script 100)
@@ -1058,6 +1077,7 @@ static const uint16 hoyle5PatchDisableGame[] = {
 static const SciScriptPatcherEntry hoyle5Signatures[] = {
 	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true,    23, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,   200, "fix setScale calls",                         11, hoyle5SetScaleSignature,          hoyle5PatchSetScale },
 	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
@@ -1068,6 +1088,7 @@ static const SciScriptPatcherEntry hoyle5Signatures[] = {
 static const SciScriptPatcherEntry hoyle5ChildrensCollectionSignatures[] = {
 	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true,    23, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,   200, "fix setScale calls",                         11, hoyle5SetScaleSignature,          hoyle5PatchSetScale },
 	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
