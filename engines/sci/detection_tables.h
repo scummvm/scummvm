@@ -1173,7 +1173,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "98a39ae535dd01714ac313f8ba925045", 7260363},
 		{"resmap.000", 0, "10267a1542a73d527e50f0340549088b", 4900},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle 5 (Hoyle Classic Games) - Windows
 	{"hoyle5", "", {
@@ -1181,7 +1181,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "55ae04012a73abc15b93debf60a7df71", 16909704},
 		{"resmap.000", 0, "daf64a91344a7934fe4374765267c2af", 5767},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle 5 (Hoyle Classic Games for Laptops) - Windows
 	// SCI 2.100.002
@@ -1190,7 +1190,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "ca50cf09f80a5f982a965afea852cc42", 3278849},
 		{"resmap.000", 0, "d5eef6f2529313e950c4d78251a95b1e", 4213},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Bridge - Windows
 	{"hoyle5bridge", "", {
@@ -1198,7 +1198,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "b83cba09229d3003df9e0c864843f962", 16842499},
 		{"resmap.000", 0, "7b3e3030b0ad5f341053c18afce7d176", 5647},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Children's Collection - Windows
 	{"hoyle5children", "", {
@@ -1206,7 +1206,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "fd1f7dbeebd4510cd37e171a72f2b6ad", 16824349},
 		{"resmap.000", 0, "b0fe1bcc69596e10fe5caa11d0b55b23", 5671},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Solitaire (CD version) - Windows
 	{"hoyle5solitaire", "CD", {
@@ -1214,7 +1214,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "fa4eeb24b1fbf6f33739995360554485", 11628203},
 		{"resmap.000", 0, "3f63df73a49800f080775d2a9ad0e949", 3079},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Solitaire (Hard Drive version) - Windows
 	{"hoyle5solitaire", "Hard Drive", {
@@ -1222,7 +1222,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "da180c67d54d4208c84a48fcd8709671", 8582335},
 		{"resmap.000", 0, "e2feb47ab16f9e22a9b6a8580d1da3f0", 3055},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 #undef GUIO_HOYLE5
 
