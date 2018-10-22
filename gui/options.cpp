@@ -514,6 +514,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("filtering", _domain);
 			ConfMan.removeKey("aspect_ratio", _domain);
 			ConfMan.removeKey("gfx_mode", _domain);
+			ConfMan.removeKey("stretch_mode", _domain);
 			ConfMan.removeKey("render_mode", _domain);
 		}
 	}
