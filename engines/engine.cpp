@@ -210,6 +210,9 @@ void initCommonGFX() {
 
 		if (gameDomain->contains("filtering"))
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+
+		if (gameDomain->contains("stretch_mode"))
+			g_system->setStretchMode(ConfMan.get("stretch_mode").c_str());
 	}
 }
 
