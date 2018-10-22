@@ -4070,6 +4070,47 @@ static const uint16 laurabow2CDPatchFixBugsWithMeat[] = {
 	PATCH_END
 };
 
+// LB2 does a speed test during startup (room 28) to determine the initial
+//  detail level and to use for pacing later scenes. Even with the highest
+//  score the detail level is only set to medium instead of highest like
+//  other SCI games.
+//
+// Platforms such as iOS can introduce a lag during game initialization that
+//  causes the speed test to occasionally get the lowest score, causing
+//  detail to be initialized to lowest and subsequent scenes such as the act 5
+//  chase scene to go very slow.
+//
+// We patch startGame:doit to ignore the score and always set the highest detail
+//  level and cpu speed so that detail needn't be manually increased and act 5
+//  behaves consistently. This also helps touchscreen devices as the game's
+//  detail slider is prohibitively difficult to manually set to highest without
+//  switching from the default touch mode.
+//
+// Applies to: All Floppy and CD versions
+// Responsible method: startGame:doit/<noname57>
+// Fixes bug #10761
+static const uint16 laurabow2SignatureDisableSpeedTest[] = {
+	0x89, 0x57,                         // lsg 87 [ speed test result ]
+	SIG_MAGICDWORD,
+	0x35, 0x03,                         // ldi 03 [ low-speed threshold ]
+	0x24,                               // le?
+	0x31, 0x04,                         // bnt 04
+	0x35, 0x01,                         // ldi 01 [ lowest detail ]
+	0x33, 0x0d,                         // jmp 0d
+	0x89, 0x57,                         // lsg global87 [ speed test result ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchDisableSpeedTest[] = {
+	0x38, PATCH_UINT16(0x0005),         // pushi 0005
+	0x81, 0x01,                         // lag 01
+	0x4a, 0x06,                         // send 06 [ LB2:detailLevel = 5, max detail ]
+	0x35, 0x0f,                         // ldi 0f
+	0xa1, 0x57,                         // sag global87 [ global87 = f, max cpu speed ]
+	0x33, 0x10,                         // jmp 10 [ continue init ]
+	PATCH_END
+};
+
 // Laura Bow 2 CD resets the audio mode to speech on init/restart
 //  We already sync the settings from ScummVM (see SciEngine::syncIngameAudioOptions())
 //  and this script code would make it impossible to see the intro using "dual" mode w/o using debugger command
@@ -4170,6 +4211,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   440, "Floppy: handle armor inset events",              1, laurabow2SignatureHandleArmorInsetEvents,       laurabow2PatchHandleArmorInsetEvents },
 	{  true,   600, "Floppy: fix bugs with meat",                     1, laurabow2FloppySignatureFixBugsWithMeat,        laurabow2FloppyPatchFixBugsWithMeat },
 	{  true,   600, "CD: fix bugs with meat",                         1, laurabow2CDSignatureFixBugsWithMeat,            laurabow2CDPatchFixBugsWithMeat },
+	{  true,    28, "CD/Floppy: disable speed test",                  1, laurabow2SignatureDisableSpeedTest,             laurabow2PatchDisableSpeedTest },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                     1, kq6laurabow2CDSignatureAudioTextSupport1,       kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support 2",                     1, kq6laurabow2CDSignatureAudioTextSupport2,       kq6laurabow2CDPatchAudioTextSupport2 },
