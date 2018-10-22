@@ -191,6 +191,12 @@ void ZVision::initialize() {
 		}
 	}
 
+	Graphics::ModeList modes;
+	modes.push_back(Graphics::Mode(WINDOW_WIDTH, WINDOW_HEIGHT));
+	if (getGameId() == GID_GRANDINQUISITOR && (getFeatures() & GF_DVD))
+		modes.push_back(Graphics::Mode(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT));
+	initGraphicsModes(modes);
+
 	initScreen();
 
 	// Register random source
