@@ -50,7 +50,7 @@ extern "C" int Game_Main(char *path, char *) {
 	int res = scummvm_main(0, 0);
 
 	// Free OSystem
-	delete (OSystem_SDL_SamsungTV *)g_system;
+	g_system->destroy();
 
 	return res;
 }

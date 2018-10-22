@@ -3372,6 +3372,38 @@ static const uint16 laurabow1PatchChapelCandlesPersistence[] = {
 	PATCH_END
 };
 
+// LB1 DOS doesn't acknowledge Lillian's presence in room 44 when she's sitting
+//  on the bed in act 4. Look, talk, etc respond that she's not there.
+//  This is due to not setting global 195 which tracks who is in the room.
+//  We fix this by setting the global as Amiga and Atari ST versions do.
+//
+// Applies to: DOS only
+// Responsible method: Room44:init
+// Fixes bug #10742
+static const uint16 laurabow1SignatureLillianBedFix[] = {
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x10f8),           // lofsa suit2 [ only matches DOS version ]
+	0x4a, 0x14,                         // send 14
+	SIG_ADDTOOFFSET(+8),
+	0x89, 0x76,                         // lsg global118
+	0x35, 0x02,                         // ldi 2
+	0x12,                               // and
+	0x30, SIG_UINT16(0x000d),           // bnt d [ haven't seen Lillian in study ]
+	0x35, 0x01,                         // ldi 1
+	SIG_END
+};
+
+static const uint16 laurabow1PatchLillianBedFix[] = {
+	PATCH_ADDTOOFFSET(+13),
+	0x81, 0x76,                         // lag global118
+	0x7a,                               // push2
+	0x12,                               // and
+	0x31, 0x0f,                         // bnt f [ haven't seen Lillian in study ]
+	0x35, 0x20,                         // ldi 20 [ Lillian ]
+	0xa1, 0xc3,                         // sag global195 [ set Lillian as in the room ]
+	PATCH_END
+};
+
 // When you tell Lilly about Gertie in room 35, Lilly will then walk to the left and off the screen.
 // In case Laura (ego) is in the way, the whole game will basically block and you won't be able
 // to do anything except saving + restoring the game.
@@ -3443,7 +3475,8 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    37, "armor open visor fix",                     1, laurabow1SignatureArmorOpenVisorFix,               laurabow1PatchArmorOpenVisorFix },
 	{  true,    37, "armor move to fix",                        2, laurabow1SignatureArmorMoveToFix,                  laurabow1PatchArmorMoveToFix },
 	{  true,    37, "allowing input, after oiling arm",         1, laurabow1SignatureArmorOilingArmFix,               laurabow1PatchArmorOilingArmFix },
-	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
+	{  true,    44, "lillian bed fix",                          1, laurabow1SignatureLillianBedFix,                   laurabow1PatchLillianBedFix },
+  {  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -3824,6 +3857,49 @@ static const uint16 laurabow2PatchFixCrateRoomEastDoorLockup[] = {
 	PATCH_END
 };
 
+// The act 4 back rub scene in Yvette's (room 550) locks up the game when
+//  entered from Carrington's (room 560) instead of the hallway (room 510).
+//
+// The difference is that entering from the hallway sets the room script to
+//  eRS (Enter Room Script) and entering from Carrington's doesn't set any
+//  room script. When sBackRubInterrupted moves ego off screen to the south,
+//  lRS (Leave Room Script) is run by LBRoom:doit if a room script isn't set,
+//  and lRS:changState(0) calls handsOff. Since control is already disabled,
+//  this unexpected second handsOff causes handsOn(1) to restore the disabled
+//  state in the hallway and the user never regains control.
+//
+// We fix this by setting sBackRubInterrupted as the room's script instead of
+//  backRub's script in backRub:doVerb/<noname300>(0). The script executes the
+//  same but having it set as the room script prevents LBRoom:doit from running
+//  lRS which prevents the extra handsOff. This patch overwrites backRub's
+//  default verb handler but that's okay because that code never executes.
+//  doVerb is only called by sBackRubViewing:changeState(6) which passes verb 0.
+//  The entire scene is in handsOff mode so the user can't send any verbs.
+//
+// Affects: All Floppy and CD versions
+// Responsible method: backRub:doVerb/<noname300> in script 550
+// Fixes bug #10729
+static const uint16 laurabow2SignatureFixBackRubEastEntranceLockup[] = {
+	SIG_MAGICDWORD,
+	0x31, 0x0c,                         // bnt 0c    [ unused default verb handler ]
+	0x38, PATCH_UINT16(0x0092),         // push 0092 [ setScript/<noname146> ]
+	0x78,                               // push1
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa sBackRubInterrupted [ cd: 0c94, floppy: 0c70 ]
+	0x36,                               // push
+	0x54, 0x06,                         // self 6 [ self:setScript sBackRubInterrupted ]
+	0x33, 0x09,                         // jmp 9  [ exit switch ]
+	0x38, SIG_ADDTOOFFSET(+2),          // push doVerb/<noname300> [ cd: 011d, floppy: 012c ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixBackRubEastEntranceLockup[] = {
+	PATCH_ADDTOOFFSET(+10),
+	0x81, 0x02,                         // lag 2  [ rm550 ]
+	0x4a, 0x06,                         // send 6 [ rm550:setScript sBackRubInterrupted ]
+	0x32, PATCH_UINT16(0x0006),         // jmp 6  [ exit switch ]
+	PATCH_END
+};
+
 // LB2 Floppy 1.0 doesn't initialize act 4 correctly when triggered by finding
 //  the dagger, causing the act 4 scene in Yvette's (room 550) to lockup the game.
 //
@@ -3946,6 +4022,122 @@ static const uint16 laurabow2PatchHandleArmorInsetEvents[] = {
 	PATCH_END
 };
 
+// The "bugs with meat" in the basement hallway (room 600) can lockup the game
+//  if they appear while ego is leaving the room through one of the doors.
+//
+// bugsWithMeat cues after 5 seconds in the room and runs sDoMeat if no room
+//  script is set. sDoMeat:changeState(0) calls handsOff. Ego might already be
+//  leaving through the north door in handsOff mode, which is managed by lRS
+//  (Leave Room Script), which doesn't prevent sDoMeat from running because lRS
+//  isn't set as the room script. If the door is animating when the timer goes
+//  off then ego will continue to Wolfe's (room 650) and the unexpected second
+//  handsOff will cause handsOn(1) to restore the disabled state and the user
+//  will never regain control. If sDoMeat runs after the door animates then
+//  ego's movement will be interrupted and the door will be left open and broken.
+//  Similar problems occur with the other door in the room.
+//
+// We fix this by patching bugsWithMeat:cue from testing if the room has no
+//  script to instead testing if the user has control before running sDoMeat.
+//  All of the room's scripts call handsOff in state 0 and handsOn in their
+//  final state so this change just extends the interruption test to include
+//  other handsOff scripts.
+//
+// The signature and patch are duplicated for floppy and cd versions due to
+//  User:canControl having different selector values between versions, floppy
+//  versions not including selector names, and User:canControl's selector
+//  values not appearing in the script being patched.
+//
+// Applies to: All Floppy and CD versions
+// Responsible method: bugsWithMeat:cue/<noname145>
+// Fixes bug #10730
+static const uint16 laurabow2FloppySignatureFixBugsWithMeat[] = {
+	SIG_MAGICDWORD,
+	0x57, 0x32, 0x06,                   // super Actor[32], 6 [ floppy: 32, cd: 31 ]
+	0x3a,                               // toss
+	0x48,                               // ret [ end of bugsWithMeat:<noname300> aka doVerb ]
+	0x38, SIG_UINT16(0x008e),           // pushi 008e [ <noname142> aka script ]
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 2 [ rm600 ]
+	0x4a, 0x04,                         // send 4
+	0x31, 0x0e,                         // bnt 0e [ run sDoMeat if not rm600:<noname142>? ]
+	SIG_END
+};
+
+static const uint16 laurabow2FloppyPatchFixBugsWithMeat[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x38, PATCH_UINT16(0x00ed),         // pushi 00ed [ <noname237> aka canControl ]
+	0x76,                               // push0
+	0x81, 0x50,                         // lag 50 [ User ]
+	0x4a, 0x04,                         // send 4
+	0x2f, 0x0e,                         // bt 0e [ run sDoMeat if User:<noname237>? ]
+	PATCH_END
+};
+
+// cd version of the above signature/patch
+static const uint16 laurabow2CDSignatureFixBugsWithMeat[] = {
+	SIG_MAGICDWORD,
+	0x57, 0x31, 0x06,                   // super Actor[31], 6 [ floppy: 32, cd: 31 ]
+	0x3a,                               // toss
+	0x48,                               // ret [ end of bugsWithMeat:doVerb ]
+	0x38, SIG_UINT16(0x008e),           // pushi 008e [ script ]
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 2 [ rm600 ]
+	0x4a, 0x04,                         // send 4
+	0x31, 0x0e,                         // bnt 0e [ run sDoMeat if not rm600:script? ]
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchFixBugsWithMeat[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x38, PATCH_UINT16(0x00f6),         // pushi 00f6 [ canControl ]
+	0x76,                               // push0
+	0x81, 0x50,                         // lag 50 [ User ]
+	0x4a, 0x04,                         // send 4
+	0x2f, 0x0e,                         // bt 0e [ run sDoMeat if User:canControl? ]
+	PATCH_END
+};
+
+// LB2 does a speed test during startup (room 28) to determine the initial
+//  detail level and to use for pacing later scenes. Even with the highest
+//  score the detail level is only set to medium instead of highest like
+//  other SCI games.
+//
+// Platforms such as iOS can introduce a lag during game initialization that
+//  causes the speed test to occasionally get the lowest score, causing
+//  detail to be initialized to lowest and subsequent scenes such as the act 5
+//  chase scene to go very slow.
+//
+// We patch startGame:doit to ignore the score and always set the highest detail
+//  level and cpu speed so that detail needn't be manually increased and act 5
+//  behaves consistently. This also helps touchscreen devices as the game's
+//  detail slider is prohibitively difficult to manually set to highest without
+//  switching from the default touch mode.
+//
+// Applies to: All Floppy and CD versions
+// Responsible method: startGame:doit/<noname57>
+// Fixes bug #10761
+static const uint16 laurabow2SignatureDisableSpeedTest[] = {
+	0x89, 0x57,                         // lsg 87 [ speed test result ]
+	SIG_MAGICDWORD,
+	0x35, 0x03,                         // ldi 03 [ low-speed threshold ]
+	0x24,                               // le?
+	0x31, 0x04,                         // bnt 04
+	0x35, 0x01,                         // ldi 01 [ lowest detail ]
+	0x33, 0x0d,                         // jmp 0d
+	0x89, 0x57,                         // lsg global87 [ speed test result ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchDisableSpeedTest[] = {
+	0x38, PATCH_UINT16(0x0005),         // pushi 0005
+	0x81, 0x01,                         // lag 01
+	0x4a, 0x06,                         // send 06 [ LB2:detailLevel = 5, max detail ]
+	0x35, 0x0f,                         // ldi 0f
+	0xa1, 0x57,                         // sag global87 [ global87 = f, max cpu speed ]
+	0x33, 0x10,                         // jmp 10 [ continue init ]
+	PATCH_END
+};
+
 // Laura Bow 2 CD resets the audio mode to speech on init/restart
 //  We already sync the settings from ScummVM (see SciEngine::syncIngameAudioOptions())
 //  and this script code would make it impossible to see the intro using "dual" mode w/o using debugger command
@@ -4040,9 +4232,13 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
+	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
 	{  true,    26, "Floppy: fix act 4 initialization",               1, laurabow2SignatureFixAct4Initialization,        laurabow2PatchFixAct4Initialization },
 	{  true,   550, "Floppy: missing desk lamp message",              1, laurabow2SignatureMissingDeskLampMessage,       laurabow2PatchMissingDeskLampMessage },
 	{  true,   440, "Floppy: handle armor inset events",              1, laurabow2SignatureHandleArmorInsetEvents,       laurabow2PatchHandleArmorInsetEvents },
+	{  true,   600, "Floppy: fix bugs with meat",                     1, laurabow2FloppySignatureFixBugsWithMeat,        laurabow2FloppyPatchFixBugsWithMeat },
+	{  true,   600, "CD: fix bugs with meat",                         1, laurabow2CDSignatureFixBugsWithMeat,            laurabow2CDPatchFixBugsWithMeat },
+	{  true,    28, "CD/Floppy: disable speed test",                  1, laurabow2SignatureDisableSpeedTest,             laurabow2PatchDisableSpeedTest },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                     1, kq6laurabow2CDSignatureAudioTextSupport1,       kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support 2",                     1, kq6laurabow2CDSignatureAudioTextSupport2,       kq6laurabow2CDPatchAudioTextSupport2 },
