@@ -3,6 +3,7 @@ MODULE := engines/gargoyle
 MODULE_OBJS := \
 	conf.o \
 	detection.o \
+	draw.o \
 	events.o \
 	fonts.o \
 	gargoyle.o \
@@ -10,6 +11,7 @@ MODULE_OBJS := \
 	picture.o \
 	streams.o \
 	string.o \
+	window_mask.o \
 	windows.o \
 	scott/detection.o \
 	scott/scott.o
