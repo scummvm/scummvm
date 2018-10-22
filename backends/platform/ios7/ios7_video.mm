@@ -797,6 +797,9 @@ uint getSizeNextPOT(uint size) {
 }
 
 -(void)adjustViewFrameForSafeArea {
+#ifndef __has_builtin
+    #define __has_builtin(x) 0
+#endif
 #if __has_builtin(__builtin_available)
     if ( @available(iOS 11,*) ) {
 #else
