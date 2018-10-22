@@ -822,14 +822,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD, GUIO_GK1_CD_DOS },
 
-	// Gabriel Knight - Spanish Windows CD (from jvprat)
-	// Executable scanning reports "2.000.000", VERSION file reports "1.000.000, April 13, 1995"
-	{"gk1", "CD", {
-		{"resource.map", 0, "7cb6e9bba15b544ec7a635c45bde9953", 11404},
-		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13381599},
-		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformWindows, ADGF_CD, GUIO_GK1_CD_WIN },
-
 	// Gabriel Knight - English Macintosh (Floppy!)
 	// This version is hi-res ONLY, so it should NOT get GAMEOPTION_HIGH_RESOLUTION_GRAPHICS
 	// (which is meant for enforcing hi-res graphics), but instead hi-res mode should be enabled all the time.

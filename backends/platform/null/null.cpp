@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
-	delete (OSystem_NULL *)g_system;
+	g_system->destroy();
 	return res;
 }
 

@@ -972,7 +972,7 @@ protected:
 	 * @param resetItem true to reset item.
 	 * @param flag      sound flag
 	 */
-	void playSound(const SavePoint &savepoint, bool resetItem = false, SoundFlag flag = kFlagInvalid);
+	void playSound(const SavePoint &savepoint, bool resetItem = false, SoundFlag flag = kSoundVolumeEntityDefault);
 
 	/**
 	 * Draws the entity

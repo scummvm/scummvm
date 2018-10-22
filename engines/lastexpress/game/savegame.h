@@ -79,8 +79,11 @@
 
 namespace LastExpress {
 
+// our own hack until compression code will be confirmed stable
+#define DISABLE_COMPRESSION 1
+
 // Savegame signatures
-#define SAVEGAME_SIGNATURE       0x12001200    // 301994496
+#define SAVEGAME_SIGNATURE       (0x12001200 ^ DISABLE_COMPRESSION)    // 301994496
 #define SAVEGAME_ENTRY_SIGNATURE 0xE660E660    // 3865110112
 
 #define WRAP_SYNC_FUNCTION(instance, className, method) \

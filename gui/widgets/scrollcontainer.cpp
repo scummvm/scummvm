@@ -49,6 +49,10 @@ void ScrollContainerWidget::init() {
 	recalc();
 }
 
+void ScrollContainerWidget::handleMouseWheel(int x, int y, int direction) {
+	_verticalScroll->handleMouseWheel(x, y, direction);
+}
+
 void ScrollContainerWidget::recalc() {
 	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	_limitH = _h;

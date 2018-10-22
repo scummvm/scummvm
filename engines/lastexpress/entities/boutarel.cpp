@@ -214,7 +214,7 @@ IMPLEMENT_FUNCTION_I(11, Boutarel, function11, bool)
 				break;
 
 			case kChapter1:
-				getSound()->playSound(kEntityBoutarel, "MRB1075", kFlagInvalid, 60);
+				getSound()->playSound(kEntityBoutarel, "MRB1075", kSoundVolumeEntityDefault, 60);
 				break;
 
 			case kChapter3:

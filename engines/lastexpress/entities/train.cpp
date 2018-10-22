@@ -118,7 +118,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 	getObjects()->update((ObjectIndex)params->param1, kEntityTrain, kObjectLocation3, kCursorNormal, kCursorNormal);
 
 	// Knock / closed door sound
-	getSound()->playSound(kEntityTables5, (params->param2 == 8) ? "LIB012" : "LIB013", kFlagDefault);
+	getSound()->playSound(kEntityTables5, (params->param2 == 8) ? "LIB012" : "LIB013", kVolumeFull);
 
 	if (params->param4 && params->param5) {
 
@@ -130,17 +130,17 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 			break;
 
 		case 1:
-			getSound()->playSound(kEntityTables5, "Har1014", kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1014", kVolumeFull, 15);
 			break;
 
 		case 2:
-			getSound()->playSound(kEntityTables5, "Har1013", kFlagDefault, 15);
-			getSound()->playSound(kEntityTables5, "Har1016", kFlagDefault, 150);
+			getSound()->playSound(kEntityTables5, "Har1013", kVolumeFull, 15);
+			getSound()->playSound(kEntityTables5, "Har1016", kVolumeFull, 150);
 			break;
 
 		case 3:
-			getSound()->playSound(kEntityTables5, "Har1015A", kFlagDefault, 15);
-			getSound()->playSound(kEntityTables5, "Har1015", kFlagDefault, 150);
+			getSound()->playSound(kEntityTables5, "Har1015A", kVolumeFull, 15);
+			getSound()->playSound(kEntityTables5, "Har1015", kVolumeFull, 150);
 			break;
 		}
 
@@ -164,15 +164,15 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 			break;
 
 		case 1:
-			getSound()->playSound(kEntityTables5, "Har1014", kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1014", kVolumeFull, 15);
 			break;
 
 		case 2:
-			getSound()->playSound(kEntityTables5, "Har1013", kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1013", kVolumeFull, 15);
 			break;
 
 		case 3:
-			getSound()->playSound(kEntityTables5, "Har1013A", kFlagDefault, 15);
+			getSound()->playSound(kEntityTables5, "Har1013A", kVolumeFull, 15);
 			break;
 		}
 
@@ -191,11 +191,11 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 				break;
 
 			case 1:
-				getSound()->playSound(kEntityTables5, "Har1012", kFlagDefault, 15);
+				getSound()->playSound(kEntityTables5, "Har1012", kVolumeFull, 15);
 				break;
 
 			case 2:
-				getSound()->playSound(kEntityTables5, "Har1012A", kFlagDefault, 15);
+				getSound()->playSound(kEntityTables5, "Har1012A", kVolumeFull, 15);
 				break;
 			}
 
@@ -207,7 +207,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 				ENTITY_PARAM(0, 1)++;
 
 				if (ENTITY_PARAM(0, 1) <= 1)
-					getSound()->playSound(kEntityTables5, "Har1014", kFlagDefault, 15);
+					getSound()->playSound(kEntityTables5, "Har1014", kVolumeFull, 15);
 				else
 					params->param8 = 1;
 
@@ -221,7 +221,7 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 				ENTITY_PARAM(0, 4)++;
 
 				if (ENTITY_PARAM(0, 4) <= 1) {
-					getSound()->playSound(kEntityTables5, "Har1011", kFlagDefault, 15);
+					getSound()->playSound(kEntityTables5, "Har1011", kVolumeFull, 15);
 					handleCompartmentAction();
 					return;
 				}
@@ -241,11 +241,11 @@ IMPLEMENT_FUNCTION_II(7, Train, harem, ObjectIndex, uint32)
 		break;
 
 	case 1:
-		getSound()->playSound(kEntityTables5, "Har1013", kFlagDefault, 15);
+		getSound()->playSound(kEntityTables5, "Har1013", kVolumeFull, 15);
 		break;
 
 	case 2:
-		getSound()->playSound(kEntityTables5, "Har1013A", kFlagDefault, 15);
+		getSound()->playSound(kEntityTables5, "Har1013A", kVolumeFull, 15);
 		break;
 	}
 
@@ -346,7 +346,7 @@ label_process:
 		} else {
 			params->param6 = 0;
 			if (getSoundQueue()->isBuffered("ZFX1001", true))
-				getSoundQueue()->removeFromQueue("ZFX1001");
+				getSoundQueue()->stop("ZFX1001");
 		}
 
 		// Draw moving background behind windows
@@ -568,7 +568,7 @@ void Train::resetParam8() {
 	 && !getEntities()->isInsideCompartment(kEntityPlayer, (CarIndex)params1->param1, (EntityPosition)params1->param3)) {
 
 		if (getSoundQueue()->isBuffered((const char *)&params1->seq))
-			getSoundQueue()->processEntry((const char *)&params1->seq);
+			getSoundQueue()->fade((const char *)&params1->seq);
 
 		params->param8 = 0;
 	}

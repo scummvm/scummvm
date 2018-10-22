@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-09-09 16:14+0200\n"
+"POT-Creation-Date: 2018-10-11 06:45+0200\n"
 "PO-Revision-Date: 2018-06-11 21:45+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -61,8 +61,8 @@ msgstr "Uppåt"
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:43 gui/massadd.cpp:92
 #: gui/options.cpp:1774 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
-#: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:445
-#: gui/saveload-dialog.cpp:740 gui/saveload-dialog.cpp:1134
+#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:451
+#: gui/saveload-dialog.cpp:746 gui/saveload-dialog.cpp:1140
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
 #: engines/engine.cpp:534 backends/events/default/default-events.cpp:190
 #: backends/events/default/default-events.cpp:212
@@ -162,7 +162,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:299
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:504
 #: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1776
-#: gui/saveload-dialog.cpp:1135 engines/engine.cpp:453 engines/engine.cpp:464
+#: gui/saveload-dialog.cpp:1141 engines/engine.cpp:453 engines/engine.cpp:464
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
@@ -1452,7 +1452,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "Inspelare eller återuppspelning"
 
 #: gui/recorderdialog.cpp:68 gui/recorderdialog.cpp:155
-#: gui/saveload-dialog.cpp:387 gui/saveload-dialog.cpp:445
+#: gui/saveload-dialog.cpp:393 gui/saveload-dialog.cpp:451
 msgid "Delete"
 msgstr "Radera"
 
@@ -1490,67 +1490,67 @@ msgstr "Okänd skapare"
 msgid "ScummVM could not access the directory!"
 msgstr "ScummVM kunde inte öppna katalogen!"
 
-#: gui/saveload-dialog.cpp:334
+#: gui/saveload-dialog.cpp:340
 msgid "List view"
 msgstr "Visa som lista"
 
-#: gui/saveload-dialog.cpp:335
+#: gui/saveload-dialog.cpp:341
 msgid "Grid view"
 msgstr "Visa som rutnät"
 
-#: gui/saveload-dialog.cpp:378 gui/saveload-dialog.cpp:545
+#: gui/saveload-dialog.cpp:384 gui/saveload-dialog.cpp:551
 msgid "No date saved"
 msgstr "Inget datum sparat"
 
-#: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:546
+#: gui/saveload-dialog.cpp:385 gui/saveload-dialog.cpp:552
 msgid "No time saved"
 msgstr "Ingen tid sparad"
 
-#: gui/saveload-dialog.cpp:380 gui/saveload-dialog.cpp:547
+#: gui/saveload-dialog.cpp:386 gui/saveload-dialog.cpp:553
 msgid "No playtime saved"
 msgstr "Ingen speltid sparad"
 
-#: gui/saveload-dialog.cpp:444
+#: gui/saveload-dialog.cpp:450
 msgid "Do you really want to delete this saved game?"
 msgstr "Vill du verkligen radera den här spardatan?"
 
-#: gui/saveload-dialog.cpp:571 gui/saveload-dialog.cpp:1083
+#: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:1089
 msgid "Date: "
 msgstr "Datum: "
 
-#: gui/saveload-dialog.cpp:575 gui/saveload-dialog.cpp:1089
+#: gui/saveload-dialog.cpp:581 gui/saveload-dialog.cpp:1095
 msgid "Time: "
 msgstr "Tid: "
 
-#: gui/saveload-dialog.cpp:581 gui/saveload-dialog.cpp:1097
+#: gui/saveload-dialog.cpp:587 gui/saveload-dialog.cpp:1103
 msgid "Playtime: "
 msgstr "Speltid: "
 
-#: gui/saveload-dialog.cpp:594 gui/saveload-dialog.cpp:682
+#: gui/saveload-dialog.cpp:600 gui/saveload-dialog.cpp:688
 msgid "Untitled saved game"
 msgstr "Namnlös sparfil"
 
-#: gui/saveload-dialog.cpp:741
+#: gui/saveload-dialog.cpp:747
 msgid "Next"
 msgstr "Nästa"
 
-#: gui/saveload-dialog.cpp:744
+#: gui/saveload-dialog.cpp:750
 msgid "Prev"
 msgstr "Bakåt"
 
-#: gui/saveload-dialog.cpp:947
+#: gui/saveload-dialog.cpp:953
 msgid "New Save"
 msgstr "Ny sparning"
 
-#: gui/saveload-dialog.cpp:947
+#: gui/saveload-dialog.cpp:953
 msgid "Create a new saved game"
 msgstr "Skapa ett nytt sparat spel"
 
-#: gui/saveload-dialog.cpp:1076
+#: gui/saveload-dialog.cpp:1082
 msgid "Name: "
 msgstr "Namn: "
 
-#: gui/saveload-dialog.cpp:1154
+#: gui/saveload-dialog.cpp:1160
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Ange en beskrivning för position %d:"
@@ -1665,7 +1665,7 @@ msgstr "Kopiera till urklipp"
 msgid "Report game"
 msgstr "Rapportera spelet"
 
-#: gui/unknown-game-dialog.cpp:110
+#: gui/unknown-game-dialog.cpp:114
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
@@ -1673,17 +1673,17 @@ msgstr ""
 "Använd nedanstående knapp för att kopiera all relevant spelinformation till "
 "urklippet."
 
-#: gui/unknown-game-dialog.cpp:117
+#: gui/unknown-game-dialog.cpp:121
 msgid "You can also directly report your game to the Bug Tracker."
 msgstr ""
 "Du kan också rapportera spelet direkt till vårt felrapporteringssystem."
 
-#: gui/unknown-game-dialog.cpp:199
+#: gui/unknown-game-dialog.cpp:203
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr "All relevant spelinformation har kopierats till urklippet"
 
-#: gui/unknown-game-dialog.cpp:201
+#: gui/unknown-game-dialog.cpp:205
 msgid "Copying the game information to the clipboard has failed!"
 msgstr "Det gick inte att kopiera spelinformationen till urklippet!"
 

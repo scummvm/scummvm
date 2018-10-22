@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 // 		res = scummvm_main(argc, argv);
 	scummvm_main(0, nullptr);
 
-	delete dynamic_cast<_3DS::OSystem_3DS*>(g_system);
+	g_system->destroy();
 
 	// Turn on both screen backlights before exiting.
 	if (R_SUCCEEDED(gspLcdInit())) {

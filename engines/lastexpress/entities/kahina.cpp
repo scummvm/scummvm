@@ -608,7 +608,7 @@ label_callback_3:
 
 		if (getEvent(kEventKahinaAskSpeakFirebird)) {
 			if (getSoundQueue()->isBuffered(kEntityKahina))
-				getSoundQueue()->processEntry(kEntityKahina);
+				getSoundQueue()->fade(kEntityKahina);
 
 			if (savepoint.action == kActionKnock)
 				getSound()->playSound(kEntityPlayer, "LIB012");
@@ -1166,7 +1166,7 @@ IMPLEMENT_FUNCTION(24, Kahina, seekCath)
 			if (ENTITY_PARAM(0, 2)) {
 				getEntities()->clearSequences(kEntityKahina);
 				if (getSoundQueue()->isBuffered(kEntityKahina))
-					getSoundQueue()->processEntry(kEntityKahina);
+					getSoundQueue()->fade(kEntityKahina);
 
 				getProgress().field_44 = 0;
 
@@ -1188,7 +1188,7 @@ IMPLEMENT_FUNCTION(24, Kahina, seekCath)
 			getEntities()->updateEntity(kEntityKahina, kCarKronos, kPosition_9270);
 			getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + 750));
 			getSavePoints()->push(kEntityKahina, kEntityKronos, kAction235599361);
-			getSound()->playSound(kEntityKahina, "MUS016", kFlagDefault);
+			getSound()->playSound(kEntityKahina, "MUS016", kVolumeFull);
 			getProgress().field_44 = 1;
 
 			params->param1 = true;
@@ -1201,7 +1201,7 @@ IMPLEMENT_FUNCTION(24, Kahina, seekCath)
 	case kAction137503360:
 		getEntities()->clearSequences(kEntityKahina);
 		if (getSoundQueue()->isBuffered(kEntityKahina))
-			getSoundQueue()->processEntry(kEntityKahina);
+			getSoundQueue()->fade(kEntityKahina);
 
 		getProgress().field_44 = 0;
 

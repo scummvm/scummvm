@@ -486,7 +486,7 @@ IMPLEMENT_FUNCTION(19, Kronos, startConcert)
 
 		case 2:
 			getAction()->playAnimation(kEventConcertStart);
-			getSoundQueue()->setupEntry(kSoundType7, kEntityKronos);
+			getSoundQueue()->assignNISLink(kEntityKronos);
 			getScenes()->loadSceneFromPosition(kCarKronos, 83);
 
 			RESET_ENTITY_STATE(kEntityRebecca, Rebecca, setup_function39);
