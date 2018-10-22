@@ -11,8 +11,12 @@ MODULE_OBJS := \
 	picture.o \
 	streams.o \
 	string.o \
-	window_mask.o \
 	windows.o \
+	window_mask.o \
+	window_graphics.o \
+	window_pair.o \
+	window_text_buffer.o \
+	window_text_grid.o \
 	scott/detection.o \
 	scott/scott.o
 
