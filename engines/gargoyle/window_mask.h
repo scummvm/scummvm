@@ -20,20 +20,48 @@
  *
  */
 
-#include "gargoyle/events.h"
+#ifndef GARGOYLE_WINDOW_MASK_H
+#define GARGOYLE_WINDOW_MASK_H
+
+#include "common/rect.h"
+#include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
 
-void Events::pollEvents() {
-	// TODO
-}
+class Window;
 
-void Events::clearEvent(Event *ev) {
-	// TODO
-}
+struct WindowMask {
+	size_t _hor, _ver;
+	glui32 **_links;
+	Common::Rect _select;
 
-void Events::eventStore(EvType type, Window *win, uint32 val1, uint32 val2) {
-	// TODO
-}
+	static int _lastX, _lastY;
+
+	/**
+	 * Constructor
+	 */
+	WindowMask();
+
+	/**
+	 * Resize the links array
+	 */
+	void resize(size_t x, size_t y);
+
+	void putHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1);
+
+	glui32 getHyperlink(const Common::Point &pos);
+
+	void startSelection(const Common::Point &pos);
+
+	void moveSelection(const Common::Point &pos);
+
+	void clearSelection();
+
+	int checkSelection(uint x0, uint y0, uint x1, uint y1);
+
+	int getSelection(uint x0, uint y0, uint x1, uint y1, uint *rx0, uint *rx1);
+};
 
 } // End of namespace Gargoyle
+
+#endif

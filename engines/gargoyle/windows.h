@@ -27,17 +27,18 @@
 #include "common/list.h"
 #include "common/rect.h"
 #include "graphics/screen.h"
+#include "gargoyle/draw.h"
 #include "gargoyle/events.h"
 #include "gargoyle/glk_types.h"
 #include "gargoyle/fonts.h"
 #include "gargoyle/picture.h"
 #include "gargoyle/streams.h"
+#include "gargoyle/window_mask.h"
 
 namespace Gargoyle {
 
 class Window;
 class PairWindow;
-struct WindowMask;
 
 #define HISTORYLEN 100
 #define SCROLLBACK 512
@@ -47,6 +48,7 @@ struct WindowMask;
  * Main windows manager
  */
 class Windows {
+	friend class Window;
 public:
 	class iterator {
 	private:
@@ -82,7 +84,6 @@ private:
 	Window * _windowList;      ///< List of all windows
 	Window *_rootWin;          ///< The topmost window
 	Window *_focusWin;         ///< The window selected by the player
-	bool _forceRedraw;
 	bool _moreFocus;
 	bool _claimSelect;
 	WindowMask *_mask;
@@ -105,13 +106,26 @@ public:
 	static bool _overrideReverse;
 	static bool _overrideFgSet;
 	static bool _overrideBgSet;
+	static bool _forceRedraw;
 	static int _overrideFgVal;
 	static int _overrideBgVal;
+	static int _zcolor_fg, _zcolor_bg;
+	static byte _zcolor_LightGrey[3];
+	static byte _zcolor_Foreground[3];
+	static byte _zcolor_Background[3];
+	static byte _zcolor_Bright[3];
+
+	static byte *rgbShift(byte *rgb);
 public:
 	/**
 	 * Constructor
 	 */
 	Windows(Graphics::Screen *screen);
+
+	/**
+	 * Destructor
+	 */
+	~Windows();
 
 	/**
 	 * Open a new window
@@ -124,12 +138,33 @@ public:
 	 */
 	Window *getRoot() const { return _rootWin; }
 
+	/**
+	 * Gets the focused window
+	 */
+	Window *getFocusWindow() const { return _focusWin; }
+
+	/**
+	 * Setst the focused window
+	 */
+	void setFocus(Window *win) { _focusWin = win; }
+
 	void clearSelection();
+
+	void selectionChanged();
+
+	void clearClaimSelect() { _claimSelect = false; }
+
+	void redraw();
 
 	/**
 	 * Repaint an area of the windows
 	 */
 	void repaint(const Common::Rect &box);
+
+	/**
+	 * Draw an area of the windows
+	 */
+	void drawRect(int x0, int y0, int w, int h, const byte *rgb);
 
 	/**
 	 * Get an iterator that will move over the tree
@@ -140,6 +175,18 @@ public:
 	 * Returns the end point of window iteration
 	 */
 	iterator end() { return iterator(nullptr); }
+
+	/**
+	 * Gets a hyperlink
+	 */
+	glui32 getHyperlink(const Common::Point &pos) { return _mask->getHyperlink(pos); }
+
+	/**
+	 * Sets a hyperlink
+	 */
+	void setHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1) {
+		return _mask->putHyperlink(linkval, x0, y0, x1, y1);
+	}
 };
 
 /**
@@ -176,21 +223,37 @@ struct Attributes {
 	 * Clear
 	 */
 	void clear();
-};
 
-struct WindowMask {
-	int hor;
-	int ver;
-	glui32 **links;
-	Common::Rect select;
+	/**
+	 * Set the style
+	 */
+	void set(glui32 s) {
+		clear();
+		style = s;
+	}
 
-	WindowMask() : hor(0), ver(0), links(nullptr) {}
+	/**
+	 * Equality comparison
+	 */
+	bool operator==(const Attributes &src) {
+		return fgset == src.fgset && bgset == src.bgset && reverse == src.reverse
+			&& style == src.style && fgcolor == src.fgcolor && bgcolor == src.bgcolor
+			&& hyper == src.hyper;
+	}
+
+	byte *attrBg(WindowStyle *styles);
+	byte *attrFg(WindowStyle *styles);
+
+	/**
+	 * Get the font from the attribute's style
+	 */
+	FACES attrFont(WindowStyle *styles) const { return styles[style].font; }
 };
 
 /**
  * Window definition
  */
-class Window {
+class Window : public Draw {
 public:
 	Windows *_windows;
 	glui32 _magicnum;
@@ -199,8 +262,8 @@ public:
 
 	Window *_parent;       ///< pair window which contains this one
 	Window *_next, *_prev; ///< in the big linked list of windows
-	Common::Rect bbox;
-	int yadj;
+	Common::Rect _bbox;
+	int _yAdj;
 
 	Stream *_stream;       ///< the window stream.
 	Stream *_echoStream;   ///< the window's echo stream, if any.
@@ -216,7 +279,7 @@ public:
 	int _imageLoaded;
 
 	glui32 _echoLineInput;
-	glui32 *_lineTerminators;
+	glui32 *_lineTerminatorsBase;
 	glui32 _termCt;
 
 	Attributes _attr;
@@ -224,6 +287,8 @@ public:
 	byte _fgColor[3];
 
 	gidispatch_rock_t _dispRock;
+protected:
+	bool checkTerminator(glui32 ch);
 public:
 	/**
 	 * Constructor
@@ -233,12 +298,12 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Window() {}
+	virtual ~Window();
 
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Common::Rect &box) { bbox = box; }
+	virtual void rearrange(const Common::Rect &box) { _bbox = box; }
 
 	/**
 	 * Get window split size within parent pair window
@@ -246,29 +311,74 @@ public:
 	virtual glui32 getSplit(glui32 size, bool vertical) const { return 0; }
 
 	/**
-	 * Cancel a line event
-	 */
-	virtual void cancelLineEvent(Event *ev);
-
-	/**
 	 * Write a character
 	 */
-	virtual void putChar(unsigned char ch) { /* TODO */ }
+	virtual void putChar(unsigned char ch) {}
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) { /* TODO */ }
+	virtual void putCharUni(uint32 ch) {}
+
+	/**
+	 * Unput a unicode character
+	 */
+	virtual bool unputCharUni(uint32 ch) { return false; }
 
 	/**
 	 * Write a buffer
 	 */
-	virtual void putBuffer(const unsigned char *buf, size_t len) { /* TODO */ }
+	virtual void putBuffer(const unsigned char *buf, size_t len) {}
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) { /* TODO */ }
+	virtual void putBufferUni(const uint32 *buf, size_t len) {}
+
+	/**
+	 * Move the cursor
+	 */
+	virtual void moveCursor(const Common::Point &newPos) {}
+
+	/**
+	 * Clear the window
+	 */
+	virtual void clear() {}
+
+	/**
+	 * Click the window
+	 */
+	virtual void click(const Common::Point &newPos) {}
+
+	/**
+	 * Prepare for inputing a line
+	 */
+	virtual void requestLineEvent(char *buf, glui32 maxlen, glui32 initlen);
+
+	/**
+	 * Prepare for inputing a line
+	 */
+	virtual void requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen);
+
+	/**
+	 * Cancel an input line event
+	 */
+	virtual void cancelLineEvent(Event *ev);
+
+	/**
+	 * Cancel a mouse event
+	 */
+	virtual void cancelMouseEvent() {}
+
+	/**
+	 * Cancel a hyperlink event
+	 */
+	virtual void cancelHyperlinkEvent() {}
+
+	/**
+	 * Redraw the window
+	 */
+	virtual void redraw();
 };
 typedef Window *winid_t;
 
@@ -291,8 +401,8 @@ class TextGridWindow : public Window {
 	 * Structure for a row within the grid window
 	 */
 	struct TextGridRow {
-		Common::Array<uint32> chars;
-		Common::Array<Attributes> attr;
+		Common::Array<uint32> _chars;
+		Common::Array<Attributes> _attrs;
 		bool dirty;
 
 		/**
@@ -311,13 +421,25 @@ private:
 	 * Mark a given text row as modified
 	 */
 	void touch(int line);
+
+	void acceptReadChar(glui32 arg);
+
+	/**
+	 * Return or enter, during line input. Ends line input. 
+	 */
+	void acceptLine(glui32 keycode);
+
+	/**
+	 * Any regular key, during line input.
+	 */
+	void acceptReadLine(glui32 arg);
 public:
 	int _width, _height;
 	TextGridRows _lines;
 
 	int _curX, _curY;    ///< the window cursor position
 
-                         ///< for line input
+						 ///< for line input
 	void *_inBuf;        ///< unsigned char* for latin1, glui32* for unicode
 	int _inOrgX, _inOrgY;
 	int _inMax;
@@ -349,9 +471,74 @@ public:
 	virtual glui32 getSplit(glui32 size, bool vertical) const override;
 
 	/**
-	 * Cancel a line event
+	 * Write a character
+	 */
+	virtual void putChar(unsigned char ch) override;
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void putCharUni(uint32 ch) override;
+
+	/**
+	 * Unput a unicode character
+	 */
+	virtual bool unputCharUni(uint32 ch) override;
+
+	/**
+	 * Write a buffer
+	 */
+	virtual void putBuffer(const unsigned char *buf, size_t len) override;
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+
+	/**
+	 * Move the cursor
+	 */
+	virtual void moveCursor(const Common::Point &newPos) override;
+
+	/**
+	 * Clear the window
+	 */
+	virtual void clear() override;
+
+	/**
+	 * Click the window
+	 */
+	virtual void click(const Common::Point &newPos) override;
+
+	/**
+	 * Prepare for inputing a line
+	 */
+	virtual void requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) override;
+
+	/**
+	 * Prepare for inputing a line
+	 */
+	virtual void requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen) override;
+
+	/**
+	 * Cancel an input line event
 	 */
 	virtual void cancelLineEvent(Event *ev) override;
+
+	/**
+	 * Cancel a mouse event
+	 */
+	virtual void cancelMouseEvent() override { _mouseRequest = false; }
+
+	/**
+	 * Cancel a hyperlink event
+	 */
+	virtual void cancelHyperlinkEvent() override { _hyperRequest = false; }
+
+	/**
+	 * Redraw the window
+	 */
+	virtual void redraw() override;
 };
 
 /**
@@ -385,8 +572,7 @@ private:
 	void reflow();
 	void touchScroll();
 	bool putPicture(Picture *pic, glui32 align, glui32 linkval);
-	void putCharUni(glui32 ch);
-	void putTextUnit(const glui32 *buf, int len, int pos, int oldlen);
+	void putTextUni(const glui32 *buf, int len, int pos, int oldlen);
 	void flowBreak();
 
 	/**
@@ -460,14 +646,64 @@ public:
 	virtual glui32 getSplit(glui32 size, bool vertical) const override;
 
 	/**
-	 * Cancel a line event
+	 * Write a character
 	 */
-	virtual void cancelLineEvent(Event *ev) override;
+	virtual void putChar(unsigned char ch) override;
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void putCharUni(uint32 ch) override;
+
+	/**
+	 * Unput a unicode character
+	 */
+	virtual bool unputCharUni(uint32 ch) override;
+
+	/**
+	 * Write a buffer
+	 */
+	virtual void putBuffer(const unsigned char *buf, size_t len) override;
+
+	/**
+	 * Write a unicode character
+	 */
+	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+
+	/**
+	 * Move the cursor
+	 */
+	virtual void moveCursor(const Common::Point &newPos) override;
 
 	/**
 	 * Clear the window
 	 */
-	void clear();
+	virtual void clear() override;
+
+	/**
+	 * Prepare for inputing a line
+	 */
+	virtual void requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) override;
+
+	/**
+	 * Prepare for inputing a line
+	 */
+	virtual void requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen) override;
+
+	/**
+	 * Cancel an input line event
+	 */
+	virtual void cancelLineEvent(Event *ev) override;
+
+	/**
+	 * Cancel a hyperlink event
+	 */
+	virtual void cancelHyperlinkEvent() override { _hyperRequest = false; }
+
+	/**
+	 * Redraw the window
+	 */
+	virtual void redraw() override;
 };
 
 /**
@@ -479,7 +715,7 @@ private:
 public:
 	unsigned char _bgnd[3];
 	bool _dirty;
-	int _w, _h;
+	glui32 _w, _h;
 	Graphics::ManagedSurface *_surface;
 public:
 	/**
@@ -502,6 +738,29 @@ public:
 	 */
 	virtual glui32 getSplit(glui32 size, bool vertical) const override {
 		return size;
+	}
+
+	/**
+	 * Cancel a mouse event
+	 */
+	virtual void cancelMouseEvent() override { _mouseRequest = false; }
+
+	/**
+	 * Cancel a hyperlink event
+	 */
+	virtual void cancelHyperlinkEvent() override { _hyperRequest = false; }
+
+	/**
+	 * Redraw the window
+	 */
+	virtual void redraw() override;
+
+	/**
+	 * Get the window dimensions
+	 */
+	void getSize(glui32 *w, glui32 *h) {
+		*w = _w;
+		*h = _h;
 	}
 };
 
@@ -530,6 +789,11 @@ public:
 	 * Rearranges the window
 	 */
 	virtual void rearrange(const Common::Rect &box) override;
+
+	/**
+	 * Redraw the window
+	 */
+	virtual void redraw() override;
 };
 
 } // End of namespace Gargoyle

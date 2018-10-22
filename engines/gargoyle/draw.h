@@ -20,20 +20,19 @@
  *
  */
 
-#include "gargoyle/events.h"
+#ifndef GARGOYLE_DRAW_H
+#define GARGOYLE_DRAW_H
+
+#include "common/events.h"
+#include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
 
-void Events::pollEvents() {
-	// TODO
-}
-
-void Events::clearEvent(Event *ev) {
-	// TODO
-}
-
-void Events::eventStore(EvType type, Window *win, uint32 val1, uint32 val2) {
-	// TODO
-}
+class Draw {
+protected:
+	int drawStringUni(int x, int y, int fidx, byte *rgb, glui32 *s, int n, int spw);
+};
 
 } // End of namespace Gargoyle
+
+#endif

@@ -35,8 +35,15 @@ namespace Gargoyle {
 bool Windows::_overrideReverse;
 bool Windows::_overrideFgSet;
 bool Windows::_overrideBgSet;
+bool Windows::_forceRedraw;
 int Windows::_overrideFgVal;
 int Windows::_overrideBgVal;
+int Windows::_zcolor_fg;
+int Windows::_zcolor_bg;
+byte Windows::_zcolor_LightGrey[3];
+byte Windows::_zcolor_Foreground[3];
+byte Windows::_zcolor_Background[3];
+byte Windows::_zcolor_Bright[3];
 
 /*--------------------------------------------------------------------------*/
 
@@ -76,13 +83,25 @@ Windows::iterator &Windows::iterator::operator++() {
 /*--------------------------------------------------------------------------*/
 
 Windows::Windows(Graphics::Screen *screen) :
-		_screen(screen), _forceRedraw(true), _moreFocus(false), _windowList(nullptr),
+		_screen(screen), _moreFocus(false), _windowList(nullptr),
 		_rootWin(nullptr), _focusWin(nullptr), _mask(nullptr), _claimSelect(0) {
+	_mask = new WindowMask();
 	_overrideReverse = false;
 	_overrideFgSet = false;
 	_overrideBgSet = false;
+	_forceRedraw = true;
 	_overrideFgVal = 0;
 	_overrideBgVal = 0;
+	_zcolor_fg = _zcolor_bg = 0;
+
+	_zcolor_LightGrey[0] = _zcolor_LightGrey[1] = _zcolor_LightGrey[2] = 181;
+	_zcolor_Foreground[0] = _zcolor_Foreground[1] = _zcolor_Foreground[2] = 0;
+	_zcolor_Background[0] = _zcolor_Background[1] = _zcolor_Background[2] = 0;
+	_zcolor_Bright[0] = _zcolor_Bright[1] = _zcolor_Bright[2] = 0;
+}
+
+Windows::~Windows() {
+	delete _mask;
 }
 
 Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
@@ -235,31 +254,43 @@ void Windows::rearrange() {
 	}
 }
 
-void Windows::clearSelection() {
-	if (!_mask) {
-		warning("clear_selection: mask not initialized");
-		return;
-	}
-
-	if (_mask->select.left || _mask->select.right
-		|| _mask->select.top || _mask->select.bottom)
-		_forceRedraw = true;
-
-	_mask->select = Common::Rect();
+void Windows::selectionChanged() {
 	_claimSelect = false;
+	_forceRedraw = true;
+	redraw();
+}
+
+void Windows::clearSelection() {
+	_mask->clearSelection();
+}
+
+void Windows::redraw() {
+	// TODO: gli_windows_redraw
 }
 
 void Windows::repaint(const Common::Rect &box) {
 	// TODO
 }
 
+void Windows::drawRect(int x0, int y0, int w, int h, const byte *rgb) {
+	// TODO
+}
+
+byte *Windows::rgbShift(byte *rgb) {
+	_zcolor_Bright[0] = (rgb[0] + 0x30) < 0xff ? (rgb[0] + 0x30) : 0xff;
+	_zcolor_Bright[1] = (rgb[1] + 0x30) < 0xff ? (rgb[1] + 0x30) : 0xff;
+	_zcolor_Bright[2] = (rgb[2] + 0x30) < 0xff ? (rgb[2] + 0x30) : 0xff;
+
+	return _zcolor_Bright;
+}
+
 /*--------------------------------------------------------------------------*/
 
 Window::Window(Windows *windows, glui32 rock) : _magicnum(MAGIC_WINDOW_NUM),
 		_windows(windows), _rock(rock), _type(0), _parent(nullptr), _next(nullptr), _prev(nullptr),
-		yadj(0), _lineRequest(0), _lineRequestUni(0), _charRequest(0), _charRequestUni(0),
+		_yAdj(0), _lineRequest(0), _lineRequestUni(0), _charRequest(0), _charRequestUni(0),
 		_mouseRequest(0), _hyperRequest(0), _moreRequest(0), _scrollRequest(0), _imageLoaded(0),
-		_echoLineInput(true),  _lineTerminators(nullptr), _termCt(0), _echoStream(nullptr) {
+		_echoLineInput(true), _lineTerminatorsBase(nullptr), _termCt(0), _echoStream(nullptr) {
 	_attr.fgset = 0;
 	_attr.bgset = 0;
 	_attr.reverse = 0;
@@ -276,12 +307,58 @@ Window::Window(Windows *windows, glui32 rock) : _magicnum(MAGIC_WINDOW_NUM),
 	_stream = streams.addWindowStream(this);
 }
 
+Window::~Window() {
+	if (g_vm->gli_unregister_obj)
+		(*g_vm->gli_unregister_obj)(this, gidisp_Class_Window, _dispRock);
+
+	
+	_echoStream = nullptr;
+	delete _stream;
+
+	delete[] _lineTerminatorsBase;
+
+	Window *prev = _prev;
+	Window *next = _next;
+
+	if (prev)
+		prev->_next = next;
+	else
+		_windows->_windowList = next;
+	if (next)
+		next->_prev = prev;
+}
+
 void Window::cancelLineEvent(Event *ev) {
 	Event dummyEv;
 	if (!ev)
 		ev = &dummyEv;
 
 	g_vm->_events->clearEvent(ev);
+}
+
+void Window::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) {
+	warning("requestLineEvent: window does not support keyboard input");
+}
+
+void Window::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen) {
+	warning("requestLineEventUni: window does not support keyboard input");
+}
+
+void Window::redraw() {
+	if (Windows::_forceRedraw) {
+		unsigned char *color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
+		int y0 = _yAdj ? _bbox.top - _yAdj : _bbox.top;
+		_windows->drawRect(_bbox.left, y0, _bbox.width(), _bbox.bottom - y0, color);
+	}
+}
+
+bool Window::checkTerminator(glui32 ch) {
+	if (ch == keycode_Escape)
+		return true;
+	else if (ch >= keycode_Func12 && ch <= keycode_Func1)
+		return true;
+	else
+		return false;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -338,14 +415,259 @@ void TextGridWindow::rearrange(const Common::Rect &box) {
 }
 
 void TextGridWindow::touch(int line) {
-	int y = bbox.top + line * g_conf->_leading;
+	int y = _bbox.top + line * g_conf->_leading;
 	_lines[line].dirty = true;
-	_windows->repaint(Common::Rect(bbox.left, y, bbox.right, y + g_conf->_leading));
+	_windows->repaint(Common::Rect(_bbox.left, y, _bbox.right, y + g_conf->_leading));
 }
 
 glui32 TextGridWindow::getSplit(glui32 size, bool vertical) const {
 	return vertical ? size * g_conf->_cellW + g_conf->_tMarginX * 2 :
 		size * g_conf->_cellH + g_conf->_tMarginY * 2;
+}
+
+void TextGridWindow::putChar(unsigned char ch) {
+
+}
+
+void TextGridWindow::putCharUni(uint32 ch) {
+	TextGridRow *ln;
+
+	// Canonicalize the cursor position. That is, the cursor may have been
+	// left outside the window area; wrap it if necessary.
+	if (_curX < 0) {
+		_curX = 0;
+	} else if (_curX >= _width) {
+		_curX = 0;
+		_curY++;
+	}
+	if (_curY < 0)
+		_curY = 0;
+	else if (_curY >= _height)
+		return; /* outside the window */
+
+	if (ch == '\n') {
+		/* a newline just moves the cursor. */
+		_curY++;
+		_curX = 0;
+		return;
+	}
+
+	touch(_curY);
+
+	ln = &(_lines[_curY]);
+	ln->_chars[_curX] = ch;
+	ln->_attrs[_curX] = _attr;
+
+	_curX++;
+	// We can leave the cursor outside the window, since it will be
+	// canonicalized next time a character is printed.
+}
+
+bool TextGridWindow::unputCharUni(uint32 ch) {
+	TextGridRow *ln;
+	int oldx = _curX, oldy = _curY;
+
+	/* Move the cursor back. */
+	if (_curX >= _width)
+		_curX = _width - 1;
+	else
+		_curX--;
+
+	/* Canonicalize the cursor position. That is, the cursor may have been
+	left outside the window area; wrap it if necessary. */
+	if (_curX < 0) {
+		_curX = _width - 1;
+		_curY--;
+	}
+	if (_curY < 0)
+		_curY = 0;
+	else if (_curY >= _height)
+		return false; // outside the window
+
+	if (ch == '\n') {
+		// a newline just moves the cursor.
+		if (_curX == _width - 1)
+			return 1; // deleted a newline
+		_curX = oldx;
+		_curY = oldy;
+		return 0;    // it wasn't there */
+	}
+
+	ln = &(_lines[_curY]);
+	if (ln->_chars[_curX] == ch) {
+		ln->_chars[_curX] = ' ';
+		ln->_attrs[_curX].clear();
+		touch(_curY);
+		return true; // deleted the char
+	} else {
+		_curX = oldx;
+		_curY = oldy;
+		return false; // it wasn't there
+	}
+}
+
+void TextGridWindow::putBuffer(const unsigned char *buf, size_t len) {
+	// TODO
+}
+
+void TextGridWindow::putBufferUni(const uint32 *buf, size_t len) {
+	// TODO
+}
+
+void TextGridWindow::moveCursor(const Common::Point &pos) {
+	// If the values are negative, they're really huge positive numbers --
+	// remember that they were cast from glui32. So set them huge and
+	// let canonicalization take its course.
+	_curX = (pos.x < 0) ? 32767 : pos.x;
+	_curY = (pos.y < 0) ? 32767 : pos.y;
+}
+
+void TextGridWindow::clear() {
+	_attr.fgset = Windows::_overrideFgSet;
+	_attr.bgset = Windows::_overrideBgSet;
+	_attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : 0;
+	_attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : 0;
+	_attr.reverse = false;
+
+	for (int k = 0; k < _height; k++) {
+		TextGridRow &ln = _lines[k];
+		touch(k);
+		for (uint j = 0; j < ln._attrs.size(); ++j) {
+			ln._chars[j] = ' ';
+			ln._attrs[j].clear();
+		}
+	}
+
+	_curX = 0;
+	_curY = 0;
+}
+
+void TextGridWindow::click(const Common::Point &newPos) {
+	int x = newPos.x - _bbox.left;
+	int y = newPos.y - _bbox.top;
+
+	if (_lineRequest || _charRequest || _lineRequestUni || _charRequestUni
+			|| _moreRequest || _scrollRequest)
+		_windows->setFocus(this);
+
+	if (_mouseRequest) {
+		g_vm->_events->eventStore(evtype_MouseInput, this, x / g_conf->_cellW, y / g_conf->_leading);
+		_mouseRequest = false;
+		if (g_conf->_safeClicks)
+			g_vm->_events->_forceClick = true;
+	}
+
+	if (_hyperRequest) {
+		glui32 linkval = _windows->getHyperlink(newPos);
+		if (linkval)
+		{
+			g_vm->_events->eventStore(evtype_Hyperlink, this, linkval, 0);
+			_hyperRequest = false;
+			if (g_conf->_safeClicks)
+				g_vm->_events->_forceClick = true;
+		}
+	}
+}
+
+void TextGridWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) {
+	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni)
+	{
+		warning("request_line_event: window already has keyboard request");
+		return;
+	}
+
+	if ((int)maxlen > (_width - _curX))
+		maxlen = (_width - _curX);
+
+	_inBuf = buf;
+	_inMax = maxlen;
+	_inLen = 0;
+	_inCurs = 0;
+	_inOrgX = _curX;
+	_inOrgY = _curY;
+	_origAttr = _attr;
+	_attr.set(style_Input);
+
+	if (initlen > maxlen)
+		initlen = maxlen;
+
+	if (initlen) {
+		TextGridRow *ln = &_lines[_inOrgY];
+
+		for (glui32 ix = 0; ix < initlen; ix++) {
+			ln->_attrs[_inOrgX + ix].set(style_Input);
+			ln->_chars[_inOrgX + ix] = buf[ix];
+		}
+
+		_inCurs += initlen;
+		_inLen += initlen;
+		_curX = _inOrgX + _inCurs;
+		_curY = _inOrgY;
+
+		touch(_inOrgY);
+	}
+
+	if (_lineTerminatorsBase && _termCt) {
+		_lineTerminators = new glui32[_termCt + 1];
+
+		if (_lineTerminators) {
+			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(glui32));
+			_lineTerminators[_termCt] = 0;
+		}
+	}
+
+	if (g_vm->gli_register_arr)
+		_inArrayRock = (*g_vm->gli_register_arr)(buf, maxlen, "&+#!Cn");
+}
+
+void TextGridWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen) {
+	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni) {
+		warning("requestLineEventUni: window already has keyboard request");
+		return;
+	}
+
+	if ((int)maxlen > (_width - _curX))
+		maxlen = (_width - _curX);
+
+	_inBuf = buf;
+	_inMax = maxlen;
+	_inLen = 0;
+	_inCurs = 0;
+	_inOrgX = _curX;
+	_inOrgY = _curY;
+	_origAttr = _attr;
+	_attr.set(style_Input);
+
+	if (initlen > maxlen)
+		initlen = maxlen;
+
+	if (initlen) {
+		TextGridRow *ln = &(_lines[_inOrgY]);
+
+		for (glui32 ix = 0; ix<initlen; ix++) {
+			ln->_attrs[_inOrgX + ix].set(style_Input);
+			ln->_chars[_inOrgX + ix] = buf[ix];
+		}
+
+		_inCurs += initlen;
+		_inLen += initlen;
+		_curX = _inOrgX + _inCurs;
+		_curY = _inOrgY;
+
+		touch(_inOrgY);
+	}
+	
+	if (_lineTerminatorsBase && _termCt) {
+		_lineTerminators = new glui32[_termCt + 1];
+
+		if (_lineTerminators) {
+			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(glui32));
+			_lineTerminators[_termCt] = 0;
+		}
+	}
+
+	if (g_vm->gli_register_arr)
+		_inArrayRock = (*g_vm->gli_register_arr)(buf, maxlen, "&+#!Iu");
 }
 
 void TextGridWindow::cancelLineEvent(Event *ev) {
@@ -373,7 +695,7 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 	if (!unicode) {
 		for (ix = 0; ix<_inLen; ix++)
 		{
-			glui32 ch = ln->chars[_inOrgX + ix];
+			glui32 ch = ln->_chars[_inOrgX + ix];
 			if (ch > 0xff)
 				ch = '?';
 			((char *)inbuf)[ix] = (char)ch;
@@ -382,7 +704,7 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 			_echoStream->echoLine((char *)_inBuf, _inLen);
 	} else {
 		for (ix = 0; ix<_inLen; ix++)
-			((glui32 *)inbuf)[ix] = ln->chars[_inOrgX + ix];
+			((glui32 *)inbuf)[ix] = ln->_chars[_inOrgX + ix];
 		if (_echoStream)
 			_echoStream->echoLineUni((glui32 *)inbuf, _inLen);
 	}
@@ -413,14 +735,274 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 		(*g_vm->gli_unregister_arr)(inbuf, inmax, unicode ? "&+#!Iu" : "&+#!Cn", inarrayrock);
 }
 
+void TextGridWindow::acceptReadChar(glui32 arg) {
+	glui32 key;
+
+	switch (arg)
+	{
+	case keycode_Erase:
+		key = keycode_Delete;
+		break;
+	case keycode_MouseWheelUp:
+	case keycode_MouseWheelDown:
+		return;
+	default:
+		key = arg;
+	}
+
+	if (key > 0xff && key < (0xffffffff - keycode_MAXVAL + 1))
+	{
+		if (!(_charRequestUni) || key > 0x10ffff)
+			key = keycode_Unknown;
+	}
+
+	_charRequest = false;
+	_charRequestUni = false;
+	g_vm->_events->eventStore(evtype_CharInput, this, key, 0);
+}
+
+void TextGridWindow::acceptLine(glui32 keycode) {
+	int ix;
+	void *inbuf;
+	int inmax;
+	gidispatch_rock_t inarrayrock;
+	TextGridRow *ln = &(_lines[_inOrgY]);
+	int unicode = _lineRequestUni;
+
+	if (!_inBuf)
+		return;
+
+	inbuf = _inBuf;
+	inmax = _inMax;
+	inarrayrock = _inArrayRock;
+
+	if (!unicode) {
+		for (ix = 0; ix<_inLen; ix++)
+			((char *)inbuf)[ix] = (char)ln->_chars[_inOrgX + ix];
+		if (_echoStream)
+			_echoStream->echoLine((char *)inbuf, _inLen);
+	} else {
+		for (ix = 0; ix<_inLen; ix++)
+			((glui32 *)inbuf)[ix] = ln->_chars[_inOrgX + ix];
+		if (_echoStream)
+			_echoStream->echoLineUni((glui32 *)inbuf, _inLen);
+	}
+
+	_curY = _inOrgY + 1;
+	_curX = 0;
+	_attr = _origAttr;
+
+	if (_lineTerminators)
+	{
+		glui32 val2 = keycode;
+		if (val2 == keycode_Return)
+			val2 = 0;
+		g_vm->_events->eventStore(evtype_LineInput, this, _inLen, val2);
+		free(_lineTerminators);
+		_lineTerminators = NULL;
+	} else {
+		g_vm->_events->eventStore(evtype_LineInput, this, _inLen, 0);
+	}
+	_lineRequest = false;
+	_lineRequestUni = false;
+	_inBuf = NULL;
+	_inMax = 0;
+	_inOrgX = 0;
+	_inOrgY = 0;
+
+	if (g_vm->gli_unregister_arr)
+		(*g_vm->gli_unregister_arr)(inbuf, inmax, unicode ? "&+#!Iu" : "&+#!Cn", inarrayrock);
+}
+
+void TextGridWindow::acceptReadLine(glui32 arg) {
+	int ix;
+	TextGridRow *ln = &(_lines[_inOrgY]);
+
+	if (!_inBuf)
+		return;
+
+	if (_lineTerminators && checkTerminator(arg)) {
+		glui32 *cx;
+		for (cx = _lineTerminators; *cx; cx++) {
+			if (*cx == arg) {
+				acceptLine(arg);
+				return;
+			}
+		}
+	}
+
+	switch (arg) {
+
+		/* Delete keys, during line input. */
+
+	case keycode_Delete:
+		if (_inLen <= 0)
+			return;
+		if (_inCurs <= 0)
+			return;
+		for (ix = _inCurs; ix<_inLen; ix++)
+			ln->_chars[_inOrgX + ix - 1] = ln->_chars[_inOrgX + ix];
+		ln->_chars[_inOrgX + _inLen - 1] = ' ';
+		_inCurs--;
+		_inLen--;
+		break;
+
+	case keycode_Erase:
+		if (_inLen <= 0)
+			return;
+		if (_inCurs >= _inLen)
+			return;
+		for (ix = _inCurs; ix<_inLen - 1; ix++)
+			ln->_chars[_inOrgX + ix] = ln->_chars[_inOrgX + ix + 1];
+		ln->_chars[_inOrgX + _inLen - 1] = ' ';
+		_inLen--;
+		break;
+
+	case keycode_Escape:
+		if (_inLen <= 0)
+			return;
+		for (ix = 0; ix<_inLen; ix++)
+			ln->_chars[_inOrgX + ix] = ' ';
+		_inLen = 0;
+		_inCurs = 0;
+		break;
+
+		/* Cursor movement keys, during line input. */
+
+	case keycode_Left:
+		if (_inCurs <= 0)
+			return;
+		_inCurs--;
+		break;
+
+	case keycode_Right:
+		if (_inCurs >= _inLen)
+			return;
+		_inCurs++;
+		break;
+
+	case keycode_Home:
+		if (_inCurs <= 0)
+			return;
+		_inCurs = 0;
+		break;
+
+	case keycode_End:
+		if (_inCurs >= _inLen)
+			return;
+		_inCurs = _inLen;
+		break;
+
+	case keycode_Return:
+		acceptLine(arg);
+		break;
+
+	default:
+		if (_inLen >= _inMax)
+			return;
+
+		if (arg < 32 || arg > 0xff)
+			return;
+
+		if (g_conf->_caps && (arg > 0x60 && arg < 0x7b))
+			arg -= 0x20;
+
+		for (ix = _inLen; ix>_inCurs; ix--)
+			ln->_chars[_inOrgX + ix] = ln->_chars[_inOrgX + ix - 1];
+		ln->_attrs[_inOrgX + _inLen].set(style_Input);
+		ln->_chars[_inOrgX + _inCurs] = arg;
+
+		_inCurs++;
+		_inLen++;
+	}
+
+	_curX = _inOrgX + _inCurs;
+	_curY = _inOrgY;
+
+	touch(_inOrgY);
+}
+
+void TextGridWindow::redraw() {
+	TextGridRow *ln;
+	int x0, y0;
+	int x, y, w;
+	int i, a, b, k, o;
+	glui32 link;
+	int font;
+	byte *fgcolor, *bgcolor;
+
+	x0 = _bbox.left;
+	y0 = _bbox.top;
+
+	for (i = 0; i < _height; i++) {
+		ln = &_lines[i];
+		if (ln->dirty || Windows::_forceRedraw) {
+			ln->dirty = 0;
+
+			x = x0;
+			y = y0 + i * g_conf->_leading;
+
+			/* clear any stored hyperlink coordinates */
+			_windows->setHyperlink(0, x0, y, x0 + g_conf->_cellW * _width, y + g_conf->_leading);
+
+			a = 0;
+			for (b = 0; b < _width; b++) {
+				if (ln->_attrs[a] == ln->_attrs[b]) {
+					link = ln->_attrs[a].hyper;
+					font = ln->_attrs[a].attrFont(styles);
+					fgcolor = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(styles);
+					bgcolor = ln->_attrs[a].attrBg(styles);
+					w = (b - a) * g_conf->_cellW;
+					_windows->drawRect(x, y, w, g_conf->_leading, bgcolor);
+					o = x;
+
+					for (k = a; k < b; k++) {
+						drawStringUni(o * GLI_SUBPIX,
+							y + g_conf->_baseLine, font, fgcolor,
+							&ln->_chars[k], 1, -1);
+						o += g_conf->_cellW;
+					}
+					if (link) {
+						_windows->drawRect(x, y + g_conf->_baseLine + 1, w,
+							g_conf->_linkStyle, g_conf->_linkColor);
+						_windows->setHyperlink(link, x, y, x + w, y + g_conf->_leading);
+					}
+					x += w;
+					a = b;
+				}
+			}
+			link = ln->_attrs[a].hyper;
+			font = ln->_attrs[a].attrFont(styles);
+			fgcolor = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(styles);
+			bgcolor = ln->_attrs[a].attrBg(styles);
+			w = (b - a) * g_conf->_cellW;
+			w += _bbox.right - (x + w);
+			_windows->drawRect(x, y, w, g_conf->_leading, bgcolor);
+
+			o = x;
+			for (k = a; k < b; k++) {
+				drawStringUni(o * GLI_SUBPIX,
+					y + g_conf->_baseLine, font, fgcolor,
+					&ln->_chars[k], 1, -1);
+				o += g_conf->_cellW;
+			}
+			if (link) {
+				_windows->drawRect(x, y + g_conf->_baseLine + 1, w,
+					g_conf->_linkStyle, g_conf->_linkColor);
+				_windows->setHyperlink(link, x, y, x + w, y + g_conf->_leading);
+			}
+		}
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 void TextGridWindow::TextGridRow::resize(size_t newSize) {
-	chars.clear();
-	attr.clear();
-	chars.resize(newSize);
-	attr.resize(newSize);
-	Common::fill(&chars[0], &chars[0] + newSize, ' ');
+	_chars.clear();
+	_attrs.clear();
+	_chars.resize(newSize);
+	_attrs.resize(newSize);
+	Common::fill(&_chars[0], &_chars[0] + newSize, ' ');
 }
 
 /*--------------------------------------------------------------------------*/
@@ -465,8 +1047,8 @@ void TextBufferWindow::rearrange(const Common::Rect &box) {
 
 	/* align text with bottom */
 	rnd = newhgt * g_conf->_cellH + g_conf->_tMarginY * 2;
-	yadj = (box.height() - rnd);
-	bbox.top += (box.height() - rnd);
+	_yAdj = (box.height() - rnd);
+	_bbox.top += (box.height() - rnd);
 
 	if (newwid != _width) {
 		_width = newwid;
@@ -601,7 +1183,7 @@ void TextBufferWindow::reflow() {
 
 	if (inputbyte != -1) {
 		_inFence = _numChars;
-		putTextUnit(charbuf + inputbyte, p - inputbyte, _numChars, 0);
+		putTextUni(charbuf + inputbyte, p - inputbyte, _numChars, 0);
 		_inCurs = _numChars;
 	}
 
@@ -620,52 +1202,10 @@ void TextBufferWindow::reflow() {
 
 void TextBufferWindow::touchScroll() {
 	_windows->clearSelection();
-	_windows->repaint(bbox);
+	_windows->repaint(_bbox);
 
 	for (int i = 0; i < _scrollMax; i++)
 		_lines[i].dirty = true;
-}
-
-void TextBufferWindow::clear() {
-	int i;
-
-	_attr.fgset = Windows::_overrideFgSet;
-	_attr.bgset = Windows::_overrideBgSet;
-	_attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : 0;
-	_attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : 0;
-	_attr.reverse = false;
-
-	_ladjw = _radjw = 0;
-	_ladjn = _radjn = 0;
-
-	_spaced = 0;
-	_dashed = 0;
-
-	_numChars = 0;
-
-	for (i = 0; i < _scrollBack; i++) {
-		_lines[i].len = 0;
-
-		if (_lines[i].lpic) _lines[i].lpic->decrement();
-		_lines[i].lpic = nullptr;
-		if (_lines[i].rpic) _lines[i].rpic->decrement();
-		_lines[i].rpic = nullptr;
-
-		_lines[i].lhyper = 0;
-		_lines[i].rhyper = 0;
-		_lines[i].lm = 0;
-		_lines[i].rm = 0;
-		_lines[i].newline = 0;
-		_lines[i].dirty = true;
-		_lines[i].repaint = false;
-	}
-
-	_lastSeen = 0;
-	_scrollPos = 0;
-	_scrollMax = 0;
-
-	for (i = 0; i < _height; i++)
-		touch(i);
 }
 
 bool TextBufferWindow::putPicture(Picture *pic, glui32 align, glui32 linkval) {
@@ -696,7 +1236,29 @@ bool TextBufferWindow::putPicture(Picture *pic, glui32 align, glui32 linkval) {
 			flowBreak();
 	}
 
-	return true ;
+	return true;
+}
+
+void TextBufferWindow::flowBreak() {
+	// TODO
+}
+
+void TextBufferWindow::putTextUni(const glui32 *buf, int len, int pos, int oldlen) {
+	// TODO
+}
+
+void TextBufferWindow::touch(int line) {
+	int y = _bbox.top + g_conf->_tMarginY + (_height - line - 1) * g_conf->_leading;
+	_lines[line].dirty = 1;
+	_windows->clearSelection();
+	_windows->repaint(Common::Rect(_bbox.left, y - 2, _bbox.right, y + g_conf->_leading + 2));
+}
+
+glui32 TextBufferWindow::getSplit(glui32 size, bool vertical) const {
+	return (vertical) ? size * g_conf->_cellW : size * g_conf->_cellH;
+}
+
+void TextBufferWindow::putChar(unsigned char ch) {
 }
 
 void TextBufferWindow::putCharUni(glui32 ch) {
@@ -712,10 +1274,10 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 
 	gli_tts_speak(&ch, 1);
 
-	pw = (bbox.right - bbox.left - g_conf->_tMarginX * 2 - gli_scroll_width) * GLI_SUBPIX;
+	pw = (_bbox.right - _bbox.left - g_conf->_tMarginX * 2 - gli_scroll_width) * GLI_SUBPIX;
 	pw = pw - 2 * SLOP - radjw - ladjw;
 
-	color = gli_override_bg_set ? gli_window_color : bgcolor;
+	color = Windows::_overrideBgSet ? gli_window_color : bgcolor;
 
 	// oops ... overflow
 	if (numchars + 1 >= TBLINELEN)
@@ -730,7 +1292,7 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 		// fails for 'tis a wonderful day in the '80s
 		if (gli_conf_quotes > 1 && ch == '\'')
 		{
-			if (numchars == 0 || leftquote(chars[numchars - 1]))
+			if (numchars == 0 || leftquote(_chars[numchars - 1]))
 				ch = UNI_LSQUO;
 		}
 
@@ -742,7 +1304,7 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 
 		if (ch == '"')
 		{
-			if (numchars == 0 || leftquote(chars[numchars - 1]))
+			if (numchars == 0 || leftquote(_chars[numchars - 1]))
 				ch = UNI_LDQUO;
 			else
 				ch = UNI_RDQUO;
@@ -810,23 +1372,23 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 		}
 	}
 
-	chars[numchars] = ch;
+	_chars[numchars] = ch;
 	attrs[numchars] = attr;
 	numchars++;
 
 	// kill spaces at the end for line width calculation
 	linelen = numchars;
-	while (linelen > 1 && chars[linelen - 1] == ' '
+	while (linelen > 1 && _chars[linelen - 1] == ' '
 		&& styles[attrs[linelen - 1].style].bg == color
 		&& !styles[attrs[linelen - 1].style].reverse)
 		linelen--;
 
-	if (calcwidth(dwin, chars, attrs, 0, linelen, -1) >= pw)
+	if (calcwidth(dwin, _chars, attrs, 0, linelen, -1) >= pw)
 	{
 		bpoint = numchars;
 
 		for (i = numchars - 1; i > 0; i--)
-			if (chars[i] == ' ')
+			if (_chars[i] == ' ')
 			{
 				bpoint = i + 1; // skip space
 				break;
@@ -834,13 +1396,13 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 
 		saved = numchars - bpoint;
 
-		memcpy(bchars, chars + bpoint, saved * 4);
+		memcpy(bchars, _chars + bpoint, saved * 4);
 		memcpy(battrs, attrs + bpoint, saved * sizeof(attr_t));
 		numchars = bpoint;
 
 		scrolloneline(dwin, 0);
 
-		memcpy(chars, bchars, saved * 4);
+		memcpy(_chars, bchars, saved * 4);
 		memcpy(attrs, battrs, saved * sizeof(attr_t));
 		numchars = saved;
 	}
@@ -849,23 +1411,83 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 	*/
 }
 
-void TextBufferWindow::putTextUnit(const glui32 *buf, int len, int pos, int oldlen) {
+bool TextBufferWindow::unputCharUni(uint32 ch) {
+	// TODO
+	return false;
+}
+
+void TextBufferWindow::putBuffer(const unsigned char *buf, size_t len) {
 	// TODO
 }
 
-void TextBufferWindow::flowBreak() {
+void TextBufferWindow::putBufferUni(const uint32 *buf, size_t len) {
 	// TODO
 }
 
-void TextBufferWindow::touch(int line) {
-	int y = bbox.top + g_conf->_tMarginY + (_height - line - 1) * g_conf->_leading;
-	_lines[line].dirty = 1;
-	_windows->clearSelection();
-	_windows->repaint(Common::Rect(bbox.left, y - 2, bbox.right, y + g_conf->_leading + 2));
+void TextBufferWindow::moveCursor(const Common::Point &newPos) {
+	// TODO
 }
 
-glui32 TextBufferWindow::getSplit(glui32 size, bool vertical) const {
-	return (vertical) ? size * g_conf->_cellW : size * g_conf->_cellH;
+void TextBufferWindow::clear() {
+	int i;
+
+	_attr.fgset = Windows::_overrideFgSet;
+	_attr.bgset = Windows::_overrideBgSet;
+	_attr.fgcolor = Windows::_overrideFgSet ? Windows::_overrideFgVal : 0;
+	_attr.bgcolor = Windows::_overrideBgSet ? Windows::_overrideBgVal : 0;
+	_attr.reverse = false;
+
+	_ladjw = _radjw = 0;
+	_ladjn = _radjn = 0;
+
+	_spaced = 0;
+	_dashed = 0;
+
+	_numChars = 0;
+
+	for (i = 0; i < _scrollBack; i++) {
+		_lines[i].len = 0;
+
+		if (_lines[i].lpic) _lines[i].lpic->decrement();
+		_lines[i].lpic = nullptr;
+		if (_lines[i].rpic) _lines[i].rpic->decrement();
+		_lines[i].rpic = nullptr;
+
+		_lines[i].lhyper = 0;
+		_lines[i].rhyper = 0;
+		_lines[i].lm = 0;
+		_lines[i].rm = 0;
+		_lines[i].newline = 0;
+		_lines[i].dirty = true;
+		_lines[i].repaint = false;
+	}
+
+	_lastSeen = 0;
+	_scrollPos = 0;
+	_scrollMax = 0;
+
+	for (i = 0; i < _height; i++)
+		touch(i);
+}
+
+void TextBufferWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) {
+	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni)
+	{
+		warning("request_line_event: window already has keyboard request");
+		return;
+	}
+
+	// TODO
+}
+
+void TextBufferWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen) {
+	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni)
+	{
+		warning("request_line_event_uni: window already has keyboard request");
+		return;
+	}
+
+	// TODO
 }
 
 void TextBufferWindow::cancelLineEvent(Event *ev) {
@@ -899,18 +1521,15 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 	if (len > inmax)
 		len = inmax;
 
-	if (!unicode)
-	{
-		for (ix = 0; ix<len; ix++)
-		{
+	if (!unicode) {
+		for (ix = 0; ix<len; ix++) {
 			glui32 ch = _chars[_inFence + ix];
 			if (ch > 0xff)
 				ch = '?';
 			((char *)inbuf)[ix] = (char)ch;
 		}
 	}
-	else
-	{
+	else {
 		for (ix = 0; ix<len; ix++)
 			((glui32 *)inbuf)[ix] = _chars[_inFence + ix];
 	}
@@ -933,13 +1552,18 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 
 	if (_echoLineInput) {
 		putCharUni('\n');
-	} else {
+	}
+	else {
 		_numChars = _inFence;
 		touch(0);
 	}
 
 	if (g_vm->gli_unregister_arr)
 		(*g_vm->gli_unregister_arr)(inbuf, inmax, unicode ? "&+#!Iu" : "&+#!Cn", inarrayrock);
+}
+
+void TextBufferWindow::redraw() {
+	// TODO
 }
 
 /*--------------------------------------------------------------------------*/
@@ -974,7 +1598,7 @@ void GraphicsWindow::rearrange(const Common::Rect &box) {
 	int oldw, oldh;
 	Graphics::ManagedSurface *newSurface;
 
-	bbox = box;
+	_bbox = box;
 
 	newwid = box.width();
 	newhgt = box.height();
@@ -1013,7 +1637,11 @@ void GraphicsWindow::rearrange(const Common::Rect &box) {
 
 void GraphicsWindow::touch() {
 	_dirty = true;
-	_windows->repaint(bbox);
+	_windows->repaint(_bbox);
+}
+
+void GraphicsWindow::redraw() {
+	// TODO
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1034,14 +1662,14 @@ void PairWindow::rearrange(const Common::Rect &box) {
 	int min, diff, split, splitwid, max;
 	Window *ch1, *ch2;
 
-	bbox = box;
+	_bbox = box;
 
 	if (_vertical) {
-		min = bbox.left;
-		max = bbox.right;
+		min = _bbox.left;
+		max = _bbox.right;
 	} else {
-		min = bbox.top;
-		max = bbox.bottom;
+		min = _bbox.top;
+		max = _bbox.bottom;
 	}
 	diff = max - min;
 
@@ -1080,23 +1708,23 @@ void PairWindow::rearrange(const Common::Rect &box) {
 	}
 
 	if (_vertical) {
-		box1.left = bbox.left;
+		box1.left = _bbox.left;
 		box1.right = split;
 		box2.left = split + splitwid;
-		box2.right = bbox.right;
-		box1.top = bbox.top;
-		box1.bottom = bbox.bottom;
-		box2.top = bbox.top;
-		box2.bottom = bbox.bottom;
+		box2.right = _bbox.right;
+		box1.top = _bbox.top;
+		box1.bottom = _bbox.bottom;
+		box2.top = _bbox.top;
+		box2.bottom = _bbox.bottom;
 	} else {
-		box1.top = bbox.top;
+		box1.top = _bbox.top;
 		box1.bottom = split;
 		box2.top = split + splitwid;
-		box2.bottom = bbox.bottom;
-		box1.left = bbox.left;
-		box1.right = bbox.right;
-		box2.left = bbox.left;
-		box2.right = bbox.right;
+		box2.bottom = _bbox.bottom;
+		box1.left = _bbox.left;
+		box1.right = _bbox.right;
+		box2.left = _bbox.left;
+		box2.right = _bbox.right;
 	}
 
 	if (!_backward) {
@@ -1111,6 +1739,10 @@ void PairWindow::rearrange(const Common::Rect &box) {
 	ch2->rearrange(box2);
 }
 
+void PairWindow::redraw() {
+	// TODO
+}
+
 /*--------------------------------------------------------------------------*/
 
 void Attributes::clear() {
@@ -1121,6 +1753,90 @@ void Attributes::clear() {
 	reverse = false;
 	hyper = 0;
 	style = 0;
+}
+
+byte *Attributes::attrBg(WindowStyle *styles) {
+	int revset = reverse || (styles[style].reverse && !Windows::_overrideReverse);
+
+	int zfset = fgset ? fgset : Windows::_overrideFgSet;
+	int zbset = bgset ? bgset : Windows::_overrideBgSet;
+
+	int zfore = fgset ? fgcolor : Windows::_overrideFgVal;
+	int zback = bgset ? bgcolor : Windows::_overrideBgVal;
+
+	if (zfset && zfore != Windows::_zcolor_fg) {
+		Windows::_zcolor_Foreground[0] = (zfore >> 16) & 0xff;
+		Windows::_zcolor_Foreground[1] = (zfore >> 8) & 0xff;
+		Windows::_zcolor_Foreground[2] = (zfore)& 0xff;
+		Windows::_zcolor_fg = zfore;
+	}
+
+	if (zbset && zback != Windows::_zcolor_bg) {
+		Windows::_zcolor_Background[0] = (zback >> 16) & 0xff;
+		Windows::_zcolor_Background[1] = (zback >> 8) & 0xff;
+		Windows::_zcolor_Background[2] = (zback)& 0xff;
+		Windows::_zcolor_bg = zback;
+	}
+
+	if (!revset) {
+		if (zbset)
+			return Windows::_zcolor_Background;
+		else
+			return styles[style].bg;
+	} else {
+		if (zfset)
+			if (zfore == zback)
+				return Windows::rgbShift(Windows::_zcolor_Foreground);
+			else
+				return Windows::_zcolor_Foreground;
+		else
+			if (zbset && !memcmp(styles[style].fg, Windows::_zcolor_Background, 3))
+				return Windows::_zcolor_LightGrey;
+			else
+				return styles[style].fg;
+	}
+}
+
+byte *Attributes::attrFg(WindowStyle *styles) {
+	int revset = reverse || (styles[style].reverse && !Windows::_overrideReverse);
+
+	int zfset = fgset ? fgset : Windows::_overrideFgSet;
+	int zbset = bgset ? bgset : Windows::_overrideBgSet;
+
+	int zfore = fgset ? fgcolor : Windows::_overrideFgVal;
+	int zback = bgset ? bgcolor : Windows::_overrideBgVal;
+
+	if (zfset && zfore != Windows::_zcolor_fg) {
+		Windows::_zcolor_Foreground[0] = (zfore >> 16) & 0xff;
+		Windows::_zcolor_Foreground[1] = (zfore >> 8) & 0xff;
+		Windows::_zcolor_Foreground[2] = (zfore)& 0xff;
+		Windows::_zcolor_fg = zfore;
+	}
+
+	if (zbset && zback != Windows::_zcolor_bg) {
+		Windows::_zcolor_Background[0] = (zback >> 16) & 0xff;
+		Windows::_zcolor_Background[1] = (zback >> 8) & 0xff;
+		Windows::_zcolor_Background[2] = (zback)& 0xff;
+		Windows::_zcolor_bg = zback;
+	}
+
+	if (!revset) {
+		if (zfset)
+			if (zfore == zback)
+				return Windows::rgbShift(Windows::_zcolor_Foreground);
+			else
+				return Windows::_zcolor_Foreground;
+		else
+			if (zbset && !memcmp(styles[style].fg, Windows::_zcolor_Background, 3))
+				return Windows::_zcolor_LightGrey;
+			else
+				return styles[style].fg;
+	} else {
+		if (zbset)
+			return Windows::_zcolor_Background;
+		else
+			return styles[style].bg;
+	}
 }
 
 } // End of namespace Gargoyle
