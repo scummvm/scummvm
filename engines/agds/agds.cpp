@@ -320,8 +320,8 @@ Common::Error AGDSEngine::run() {
 							case Common::KEYCODE_f:
 								if (event.kbd.flags & Common::KBD_CTRL) {
 									_fastMode = !_fastMode;
-									break;
 								}
+								break;
 							default:
 								if (event.kbd.ascii)
 									key = Common::String(static_cast<char>(event.kbd.ascii));
