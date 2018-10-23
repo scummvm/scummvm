@@ -321,16 +321,6 @@ public:
 	virtual bool unputCharUni(uint32 ch) { return false; }
 
 	/**
-	 * Write a buffer
-	 */
-	virtual void putBuffer(const unsigned char *buf, size_t len) {}
-
-	/**
-	 * Write a unicode character
-	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) {}
-
-	/**
 	 * Move the cursor
 	 */
 	virtual void moveCursor(const Common::Point &newPos) {}
