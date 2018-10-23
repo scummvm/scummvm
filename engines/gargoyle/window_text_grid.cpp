@@ -82,10 +82,6 @@ glui32 TextGridWindow::getSplit(glui32 size, bool vertical) const {
 		size * g_conf->_cellH + g_conf->_tMarginY * 2;
 }
 
-void TextGridWindow::putChar(unsigned char ch) {
-
-}
-
 void TextGridWindow::putCharUni(uint32 ch) {
 	TextGridRow *ln;
 

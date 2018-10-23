@@ -133,11 +133,6 @@ public:
 	virtual glui32 getSplit(glui32 size, bool vertical) const override;
 
 	/**
-	 * Write a character
-	 */
-	virtual void putChar(unsigned char ch) override;
-
-	/**
 	 * Write a unicode character
 	 */
 	virtual void putCharUni(uint32 ch) override;

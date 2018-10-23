@@ -277,9 +277,6 @@ glui32 TextBufferWindow::getSplit(glui32 size, bool vertical) const {
 	return (vertical) ? size * g_conf->_cellW : size * g_conf->_cellH;
 }
 
-void TextBufferWindow::putChar(unsigned char ch) {
-}
-
 void TextBufferWindow::putCharUni(glui32 ch) {
 	/*
 	glui32 bchars[TBLINELEN];
