@@ -159,14 +159,6 @@ bool TextGridWindow::unputCharUni(uint32 ch) {
 	}
 }
 
-void TextGridWindow::putBuffer(const unsigned char *buf, size_t len) {
-	// TODO
-}
-
-void TextGridWindow::putBufferUni(const uint32 *buf, size_t len) {
-	// TODO
-}
-
 void TextGridWindow::moveCursor(const Common::Point &pos) {
 	// If the values are negative, they're really huge positive numbers --
 	// remember that they were cast from glui32. So set them huge and

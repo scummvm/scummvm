@@ -115,16 +115,6 @@ public:
 	virtual bool unputCharUni(uint32 ch) override;
 
 	/**
-	 * Write a buffer
-	 */
-	virtual void putBuffer(const unsigned char *buf, size_t len) override;
-
-	/**
-	 * Write a unicode character
-	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) override;
-
-	/**
 	 * Move the cursor
 	 */
 	virtual void moveCursor(const Common::Point &newPos) override;
