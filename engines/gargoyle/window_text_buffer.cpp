@@ -432,14 +432,6 @@ bool TextBufferWindow::unputCharUni(uint32 ch) {
 	return false;
 }
 
-void TextBufferWindow::putBuffer(const unsigned char *buf, size_t len) {
-	// TODO
-}
-
-void TextBufferWindow::putBufferUni(const uint32 *buf, size_t len) {
-	// TODO
-}
-
 void TextBufferWindow::moveCursor(const Common::Point &newPos) {
 	// TODO
 }
