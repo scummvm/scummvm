@@ -313,11 +313,6 @@ public:
 	/**
 	 * Write a character
 	 */
-	virtual void putChar(unsigned char ch) {}
-
-	/**
-	 * Write a unicode character
-	 */
 	virtual void putCharUni(uint32 ch) {}
 
 	/**

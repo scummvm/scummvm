@@ -79,7 +79,7 @@ void WindowStream::putChar(unsigned char ch) {
 		}
 	}
 
-	_window->putChar(ch);
+	_window->putCharUni(ch);
 	if (_window->_echoStream)
 		_window->_echoStream->putChar(ch);
 }
@@ -118,7 +118,7 @@ void WindowStream::putBuffer(const char *buf, size_t len) {
 	}
 
 	for (size_t lx = 0; lx < len; lx++, buf++)
-		_window->putChar(*buf);
+		_window->putCharUni(*buf);
 	if (_window->_echoStream)
 		_window->_echoStream->putBuffer(buf, len);
 
