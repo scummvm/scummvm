@@ -3494,6 +3494,99 @@ static const uint16 laurabow1PatchTellLillyAboutGertieBlockingFix2[] = {
 	PATCH_END
 };
 
+// LB1 contains over 20 commands which lockup the game if entered while ego is
+//  colliding with an obstacle. Opening and moving closets in room 43 are prime
+//  examples. They are all symptoms of a global bug.
+
+// Every cycle, CB1:doit checks to see if ego appears to be walking and blocked,
+//  and if so it stops ego's motion and sets ego's view to 11 (standing). If ego
+//  has just collided with an obstacle but is still displaying view 1 (walking)
+//  when a command is entered which disables input and sets ego's motion without
+//  setting an avoider then CB1:doit will stop that new motion at the start of
+//  the next cycle and lockup the game. This occurs in part because CB1:doit
+//  tests potentially stale values that the new motion hasn't yet had a chance
+//  to set. Scripts which set an avoider aren't vulnerable because CB1:doit
+//  won't stop ego if one is set. Other SCI games don't have this kind of code
+//  in their Game's doit and so they don't have this bug.
+
+// We fix this by clearing the kSignalHitObstacle flag whenever Act:setMotion is
+//  called with a new motion. This causes CB1:doit's subsequent call to
+//  ego:isBlocked to return false, instead of a stale true value, preventing
+//  CB1:doit from stopping the new motion before it's had a chance to start.
+//  Should the new motion actually be blocked then the interpreter will then set
+//  the flag when processing the motion as usual. This patch closes the short
+//  window during which this value is stale and CB1:doit tests it.
+
+// Applies to: DOS, Amiga, Atari ST and occurs in Sierra's interpreter.
+// Responsible method: Act:setMotion
+// Fixes bug #10733
+static const uint16 laurabow1SignatureObstacleCollisionLockupsFix[] = {
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x002f),           // bnt 2f
+	0x38, SIG_UINT16(0x00a3),           // pushi a3 [ startUpd ]
+	0x76,                               // push0
+	0x54, 0x04,                         // self 4
+	0x7a,                               // push2 [ -info- ]
+	0x76,                               // push0
+	0x87, 0x01,                         // lap param1
+	0x4a, 0x04,                         // send 4
+	0x36,                               // push
+	0x34, SIG_UINT16(0x8000),           // ldi 8000
+	0x12,                               // and
+	0x30, SIG_UINT16(0x000a),           // bnt a
+	0x39, 0x56,                         // pushi 56 [ new ]
+	0x76,                               // push0
+	0x87, 0x01,                         // lap param1
+	0x4a, 0x04,                         // send 4
+	0x32, SIG_UINT16(0x0002),           // jmp 2
+	0x87, 0x01,                         // lap param1
+	0x65, 0x4c,                         // aTop mover
+	0x39, 0x57,                         // pushi 57 [ init ]
+	0x78,                               // push1
+	0x7c,                               // pushSelf
+	0x59, 0x02,                         // &rest 2
+	0x63, 0x4c,                         // pToa mover
+	0x4a, 0x06,                         // send 6
+	0x32, SIG_UINT16(0x0004),           // jmp 4
+	0x35, 0x00,                         // ldi 0
+	SIG_END
+};
+
+static const uint16 laurabow1PatchObstacleCollisionLockupsFix[] = {
+	0x31, 0x32,                         // bnt 32 [ save 1 byte ]
+
+	0x63, 0x1c,                         // pToa signal
+	0x38, PATCH_UINT16(0xfbff),         // pushi fbff
+	0x12,                               // and
+	0x65, 0x1c,                         // aTop signal [ clear kSignalHitObstacle (0400) ]
+
+	0x38, PATCH_UINT16(0x00a3),         // pushi a3 [ startUpd ]
+	0x76,                               // push0
+	0x54, 0x04,                         // self 4
+	0x7a,                               // push2 [ -info- ]
+	0x76,                               // push0
+	0x87, 0x01,                         // lap param1
+	0x4a, 0x04,                         // send 4
+	0x38, PATCH_UINT16(0x8000),         // pushi 8000 [ save 1 byte ]
+	0x12,                               // and
+	0x31, 0x09,                         // bnt 9 [ save 1 byte ]
+	0x39, 0x56,                         // pushi 56 [ new ]
+	0x76,                               // push0
+	0x87, 0x01,                         // lap param1
+	0x4a, 0x04,                         // send 4
+	0x33, 0x02,                         // jmp 2 [ save 1 byte ]
+	0x87, 0x01,                         // lap param1
+	0x65, 0x4c,                         // aTop mover
+	0x39, 0x57,                         // pushi 57 [ init ]
+	0x78,                               // push1
+	0x7c,                               // pushSelf
+	0x59, 0x02,                         // &rest 2
+	0x63, 0x4c,                         // pToa mover
+	0x4a, 0x06,                         // send 6
+	0x48,                               // ret  [ save 4 bytes ]
+	PATCH_END
+};
+
 //          script, description,                                signature                                             patch
 static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,     4, "easter egg view fix",                      1, laurabow1SignatureEasterEggViewFix,                laurabow1PatchEasterEggViewFix },
@@ -3504,6 +3597,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
     {  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
+	{  true,   998, "obstacle collision lockups fix",           1, laurabow1SignatureObstacleCollisionLockupsFix,     laurabow1PatchObstacleCollisionLockupsFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
