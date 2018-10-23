@@ -2,9 +2,7 @@ package org.residualvm.residualvm;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
@@ -14,11 +12,12 @@ import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.ClipboardManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,10 +31,16 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ResidualVMActivity extends Activity {
 
-private boolean isBtnsShowing = false;
+	public static final String[] REQUIRED_PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+	static int PERMISSION_REQUEST_REQUIRED_PERMISSIONS = 1001;
+
+	private boolean isBtnsShowing = false;
 
 public View.OnClickListener optionsBtnOnClickListener = new View.OnClickListener() {
         @Override
@@ -106,30 +111,9 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 	}
 
 	private class MyResidualVM extends ResidualVM {
-		private boolean usingSmallScreen() {
-			// Multiple screen sizes came in with Android 1.6.  Have
-			// to use reflection in order to continue supporting 1.5
-			// devices :(
-			DisplayMetrics metrics = new DisplayMetrics();
-			getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-			try {
-				// This 'density' term is very confusing.
-				int DENSITY_LOW = metrics.getClass().getField("DENSITY_LOW").getInt(null);
-				int densityDpi = metrics.getClass().getField("densityDpi").getInt(metrics);
-				return densityDpi <= DENSITY_LOW;
-			} catch (Exception e) {
-				return false;
-			}
-		}
 
 		public MyResidualVM(SurfaceHolder holder) {
 			super(ResidualVMActivity.this.getAssets(), holder);
-
-			// Enable ResidualVM zoning on 'small' screens.
-			// FIXME make this optional for the user
-			// disabled for now since it crops too much
-			//enableZoning(usingSmallScreen());
 		}
 
 		@Override
@@ -229,15 +213,42 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 	private Thread _residualvm_thread;
 
 	private boolean checkPermissions() {
-		return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-				&& ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+		for (String permission : REQUIRED_PERMISSIONS) {
+			if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		boolean have_permissions = checkPermissions();
 
+		if (checkPermissions()) {
+			launchResidualVM();
+		} else {
+			ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSION_REQUEST_REQUIRED_PERMISSIONS);
+		}
+	}
+
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		Set<String> permissionsToCheck = new HashSet<>(Arrays.asList(REQUIRED_PERMISSIONS));
+		for (int i = 0; i < permissions.length; i++) {
+			if (grantResults[i] == PackageManager.PERMISSION_GRANTED)
+				permissionsToCheck.remove(permissions[i]);
+		}
+
+		if (permissionsToCheck.isEmpty()) {
+			launchResidualVM();
+		} else {
+			// TODO
+		}
+	}
+
+	private void launchResidualVM() {
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
 		setContentView(R.layout.main);
@@ -265,10 +276,11 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 		_residualvm = new MyResidualVM(main_surface.getHolder());
 
 		_residualvm.setArgs(new String[] {
-			"ResidualVM",
-			"--config=" + getFileStreamPath("residualvmrc").getPath(),
-			"--path=" + Environment.getExternalStorageDirectory().getPath(),
-			"--savepath=" + savePath
+				"ResidualVM",
+				"--config=" + getFileStreamPath("residualvmrc").getPath(),
+				"--path=" + Environment.getExternalStorageDirectory().getPath(),
+				"--gui-theme=modern",
+				"--savepath=" + savePath
 		});
 
 		Log.d(ResidualVM.LOG_TAG, "Hover available: " + _hoverAvailable);
@@ -292,7 +304,7 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 		_residualvm_thread = new Thread(_residualvm, "ResidualVM");
 		_residualvm_thread.start();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.game_menu, menu);
