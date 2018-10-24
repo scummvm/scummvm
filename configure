@@ -5037,7 +5037,7 @@ else
 int main(void) { setlocale(LC_ALL, ""); return 0; }
 EOF
 		_detectlang=no
-		cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
+		cc_check && _detectlang=yes
 	fi
 
 	define_in_config_h_if_yes $_detectlang 'USE_DETECTLANG'
