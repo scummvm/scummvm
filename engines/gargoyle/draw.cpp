@@ -52,4 +52,8 @@ void Draw::fillArea(const byte *rgb) {
 	// TODO: gli_draw_clear
 }
 
+void Draw::drawRect(int x0, int y0, int w, int h, const byte *rgb) {
+	// TODO: gli_draw_rect
+}
+
 } // End of namespace Gargoyle

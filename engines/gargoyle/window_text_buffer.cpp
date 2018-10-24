@@ -266,7 +266,7 @@ bool TextBufferWindow::putPicture(Picture *pic, glui32 align, glui32 linkval) {
 	return true;
 }
 
-glui32 TextBufferWindow::imageDraw(glui32 image, glui32 align, bool scaled, glui32 width, glui32 height) {
+glui32 TextBufferWindow::drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height) {
 	Picture *pic;
 	glui32 hyperlink;
 	int error;
@@ -953,7 +953,7 @@ void TextBufferWindow::redraw() {
          * fill in background colors
          */
         color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        _windows->drawRect(x0/GLI_SUBPIX, y,
+        drawRect(x0/GLI_SUBPIX, y,
                 (x1-x0) / GLI_SUBPIX, g_conf->_leading,
                 color);
 
@@ -966,11 +966,11 @@ void TextBufferWindow::redraw() {
                 font = ln->_attrs[a].attrFont(_styles);
                 color = ln->_attrs[a].attrBg(_styles);
                 w = stringWidthUni(font, ln->_chars + a, b - a, spw);
-                _windows->drawRect(x/GLI_SUBPIX, y,
+                drawRect(x/GLI_SUBPIX, y,
                         w/GLI_SUBPIX, g_conf->_leading,
                         color);
                 if (link) {
-                    _windows->drawRect(x/GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
+                    drawRect(x/GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
                             w/GLI_SUBPIX + 1, g_conf->_linkStyle,
                             g_conf->_linkColor);
                     g_vm->_windowMask->putHyperlink(link, x/GLI_SUBPIX, y,
@@ -985,10 +985,10 @@ void TextBufferWindow::redraw() {
         font = ln->_attrs[a].attrFont(_styles);
         color = ln->_attrs[a].attrBg(_styles);
         w = stringWidthUni(font, ln->_chars + a, b - a, spw);
-        _windows->drawRect(x/GLI_SUBPIX, y, w/GLI_SUBPIX,
+        drawRect(x/GLI_SUBPIX, y, w/GLI_SUBPIX,
                 g_conf->_leading, color);
         if (link) {
-            _windows->drawRect(x/GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
+            drawRect(x/GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
                     w/GLI_SUBPIX + 1, g_conf->_linkStyle,
                     g_conf->_linkColor);
             g_vm->_windowMask->putHyperlink(link, x/GLI_SUBPIX, y,
@@ -998,7 +998,7 @@ void TextBufferWindow::redraw() {
         x += w;
 
         color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        _windows->drawRect(x/GLI_SUBPIX, y,
+        drawRect(x/GLI_SUBPIX, y,
                 x1/GLI_SUBPIX - x/GLI_SUBPIX, g_conf->_leading,
                 color);
 
@@ -1048,7 +1048,7 @@ void TextBufferWindow::redraw() {
                 x1/GLI_SUBPIX, y + g_conf->_leading);
 
         color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        _windows->drawRect(x/GLI_SUBPIX, y,
+        drawRect(x/GLI_SUBPIX, y,
                 x1/GLI_SUBPIX - x/GLI_SUBPIX, g_conf->_leading,
                 color);
 
@@ -1142,14 +1142,14 @@ void TextBufferWindow::redraw() {
             t0 = t1 = y0;
         }
 
-        _windows->drawRect(x0+1, y0, x1-x0-2, y1-y0, g_conf->_scrollBg);
-        _windows->drawRect(x0+1, t0, x1-x0-2, t1-t0, g_conf->_scrollFg);
+        drawRect(x0+1, y0, x1-x0-2, y1-y0, g_conf->_scrollBg);
+        drawRect(x0+1, t0, x1-x0-2, t1-t0, g_conf->_scrollFg);
 
         for (i = 0; i < g_conf->_scrollWidth / 2 + 1; i++) {
-            _windows->drawRect(x0+g_conf->_scrollWidth/2-i,
+            drawRect(x0+g_conf->_scrollWidth/2-i,
                     y0 - g_conf->_scrollWidth/2 + i,
                     i*2, 1, g_conf->_scrollFg);
-            _windows->drawRect(x0+g_conf->_scrollWidth/2-i,
+            drawRect(x0+g_conf->_scrollWidth/2-i,
                     y1 + g_conf->_scrollWidth/2 - i,
                     i*2, 1, g_conf->_scrollFg);
         }

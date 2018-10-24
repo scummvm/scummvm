@@ -21,6 +21,7 @@
  */
 
 #include "gargoyle/window_graphics.h"
+#include "gargoyle/gargoyle.h"
 
 namespace Gargoyle {
 
@@ -85,12 +86,164 @@ void GraphicsWindow::touch() {
 void GraphicsWindow::redraw() {
 	Window::redraw();
 
-	// TODO
+	if (_dirty || Windows::_forceRedraw) {
+		_dirty = 0;
+
+		if (_surface)
+			g_vm->_screen->blitFrom(*_surface, Common::Point(_bbox.left, _bbox.top));
+	}
 }
 
-glui32 GraphicsWindow::imageDraw(glui32 image, glui32 align, bool scaled, glui32 width, glui32 height) {
-	// TODO: win_graphics_draw_picture
-	return 0;
+glui32 GraphicsWindow::drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int scale,
+		glui32 imagewidth, glui32 imageheight) {
+	Picture *pic = Picture::load(image);
+	glui32 hyperlink = _attr.hyper;
+
+	if (!pic)
+		return false;
+
+	if (!_imageLoaded) {
+		g_vm->_picList->increment();
+		_imageLoaded = true;
+	}
+
+	if (!scale) {
+		imagewidth = pic->w;
+		imageheight = pic->h;
+	}
+
+	drawPicture(pic, xpos, ypos, imagewidth, imageheight, hyperlink);
+	touch();
+
+	return true;
+}
+
+void GraphicsWindow::eraseRect(int whole, glsi32 x0, glsi32 y0, glui32 width, glui32 height) {
+	int x1 = x0 + width;
+	int y1 = y0 + height;
+	int x, y;
+	int hx0, hx1, hy0, hy1;
+
+	if (whole) {
+		x0 = 0;
+		y0 = 0;
+		x1 = _w;
+		y1 = _h;
+	}
+
+	if (x0 < 0) x0 = 0;
+	if (y0 < 0) y0 = 0;
+	if (x1 < 0) x1 = 0;
+	if (y1 < 0) y1 = 0;
+	if ((glui32)x0 >= _w) x0 = _w;
+	if ((glui32)y0 >= _h) y0 = _h;
+	if ((glui32)x1 >= _w) x1 = _w;
+	if ((glui32)y1 >= _h) y1 = _h;
+
+	hx0 = _bbox.left + x0;
+	hx1 = _bbox.left + x1;
+	hy0 = _bbox.top + y0;
+	hy1 = _bbox.top + y1;
+
+	/* zero out hyperlinks for these coordinates */
+	g_vm->_windowMask->putHyperlink(0, hx0, hy0, hx1, hy1);
+
+	_surface->fillRect(Common::Rect(x0, y0, x1, y1), MKTAG(_bgnd[0], _bgnd[1], _bgnd[2], 0));
+	touch();
+}
+
+void GraphicsWindow::fillRect(glui32 color, glsi32 x0, glsi32 y0, glui32 width, glui32 height) {
+	unsigned char col[3];
+	int x1 = x0 + width;
+	int y1 = y0 + height;
+	int x, y;
+	int hx0, hx1, hy0, hy1;
+
+	col[0] = (color >> 16) & 0xff;
+	col[1] = (color >> 8) & 0xff;
+	col[2] = (color >> 0) & 0xff;
+
+	if (x0 < 0) x0 = 0;
+	if (y0 < 0) y0 = 0;
+	if (x1 < 0) x1 = 0;
+	if (y1 < 0) y1 = 0;
+	if ((glui32)x0 > _w) x0 = _w;
+	if ((glui32)y0 > _h) y0 = _h;
+	if ((glui32)x1 > _w) x1 = _w;
+	if ((glui32)y1 > _h) y1 = _h;
+
+	hx0 = _bbox.left + x0;
+	hx1 = _bbox.left + x1;
+	hy0 = _bbox.top + y0;
+	hy1 = _bbox.top + y1;
+
+	/* zero out hyperlinks for these coordinates */
+	g_vm->_windowMask->putHyperlink(0, hx0, hy0, hx1, hy1);
+
+	_surface->fillRect(Common::Rect(x0, y0, x1, y1), MKTAG(col[0], col[1], col[2], 0));
+	touch();
+}
+
+void GraphicsWindow::setBackgroundColor(glui32 color) {
+	_bgnd[0] = (color >> 16) & 0xff;
+	_bgnd[1] = (color >> 8) & 0xff;
+	_bgnd[2] = (color >> 0) & 0xff;
+}
+
+void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int height, glui32 linkval) {
+	unsigned char *sp, *dp;
+	int dx1, dy1, x1, y1, sx0, sy0, sx1, sy1;
+	int x, y, w, h;
+	int hx0, hx1, hy0, hy1;
+
+	if (width != src->w || height != src->h)
+	{
+		src = src->scale(width, height);
+		if (!src)
+			return;
+	}
+
+	sx0 = 0;
+	sy0 = 0;
+	sx1 = src->w;
+	sy1 = src->h;
+	dx1 = _w;
+	dy1 = _h;
+
+	x1 = x0 + src->w;
+	y1 = y0 + src->h;
+
+	if (x1 <= 0 || x0 >= dx1) return;
+	if (y1 <= 0 || y0 >= dy1) return;
+	if (x0 < 0) {
+		sx0 -= x0;
+		x0 = 0;
+	}
+	if (y0 < 0) {
+		sy0 -= y0;
+		y0 = 0;
+	}
+	if (x1 > dx1) {
+		sx1 += dx1 - x1;
+		x1 = dx1;
+	}
+	if (y1 > dy1) {
+		sy1 += dy1 - y1;
+		y1 = dy1;
+	}
+
+	hx0 = _bbox.left + x0;
+	hx1 = _bbox.left + x1;
+	hy0 = _bbox.top + y0;
+	hy1 = _bbox.top + y1;
+
+	/* zero out or set hyperlink for these coordinates */
+	g_vm->_windowMask->putHyperlink(linkval, hx0, hy0, hx1, hy1);
+
+	w = sx1 - sx0;
+	h = sy1 - sy0;
+
+	_surface->blitFrom(*g_vm->_screen, Common::Rect(sx0, sy0, sx0 + w, sy0 + h), Common::Point(0, 0));
 }
 
 } // End of namespace Gargoyle
