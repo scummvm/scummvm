@@ -85,8 +85,6 @@ private:
 	Window * _windowList;      ///< List of all windows
 	Window *_rootWin;          ///< The topmost window
 	Window *_focusWin;         ///< The window selected by the player
-	bool _moreFocus;
-	bool _claimSelect;
 	WindowMask *_mask;
 private:
 	/**
@@ -108,6 +106,8 @@ public:
 	static bool _overrideFgSet;
 	static bool _overrideBgSet;
 	static bool _forceRedraw;
+	static bool _claimSelect;
+	static bool _moreFocus;
 	static int _overrideFgVal;
 	static int _overrideBgVal;
 	static int _zcolor_fg, _zcolor_bg;
@@ -157,6 +157,8 @@ public:
 
 	void redraw();
 
+	void redrawRect(const Common::Rect &r);
+
 	/**
 	 * Repaint an area of the windows
 	 */
@@ -176,18 +178,6 @@ public:
 	 * Returns the end point of window iteration
 	 */
 	iterator end() { return iterator(nullptr); }
-
-	/**
-	 * Gets a hyperlink
-	 */
-	glui32 getHyperlink(const Common::Point &pos) { return _mask->getHyperlink(pos); }
-
-	/**
-	 * Sets a hyperlink
-	 */
-	void setHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1) {
-		return _mask->putHyperlink(linkval, x0, y0, x1, y1);
-	}
 };
 
 /**
@@ -278,7 +268,7 @@ public:
 	int _scrollRequest;
 	int _imageLoaded;
 
-	glui32 _echoLineInput;
+	glui32 _echoLineInputBase;
 	glui32 *_lineTerminatorsBase;
 	glui32 _termCt;
 
@@ -323,7 +313,7 @@ public:
 	/**
 	 * Move the cursor
 	 */
-	virtual void moveCursor(const Common::Point &newPos) {}
+	virtual void moveCursor(const Common::Point &newPos);
 
 	/**
 	 * Clear the window
@@ -364,6 +354,15 @@ public:
 	 * Redraw the window
 	 */
 	virtual void redraw();
+
+	virtual glui32 imageDraw(glui32 image, glui32 align, bool scaled, glui32 width = 0,
+		glui32 height = 0) { return false; }
+
+	virtual void acceptReadLine(glui32 arg);
+
+	virtual void acceptReadChar(glui32 arg);
+
+	int acceptScroll(glui32 arg);
 };
 typedef Window *winid_t;
 

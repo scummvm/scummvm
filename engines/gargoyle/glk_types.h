@@ -53,6 +53,35 @@ class Window;
 typedef struct glk_fileref_struct *frefid_t;
 typedef struct glk_schannel_struct *schanid_t;
 
+/**
+ * Usurp C1 space for ligatures and smart typography glyphs
+ */
+enum Enc {
+	ENC_LIG_FI = 128,
+	ENC_LIG_FL = 129,
+	ENC_LSQUO = 130,
+	ENC_RSQUO = 131,
+	ENC_LDQUO = 132,
+	ENC_RDQUO = 133,
+	ENC_NDASH = 134,
+	ENC_MDASH = 135,
+	ENC_FLOWBREAK = 136
+};
+
+/**
+ * These are the Unicode versions
+ */
+enum UniChars {
+	UNI_LIG_FI = 0xFB01,
+	UNI_LIG_FL = 0xFB02,
+	UNI_LSQUO = 0x2018,
+	UNI_RSQUO = 0x2019,
+	UNI_LDQUO = 0x201c,
+	UNI_RDQUO = 0x201d,
+	UNI_NDASH = 0x2013,
+	UNI_MDASH = 0x2014
+};
+
 enum Gestalt {
 	gestalt_Version                = 0,
 	gestalt_CharInput              = 1,

@@ -77,6 +77,9 @@ public:
 	 */
 	virtual void redraw() override;
 
+	virtual glui32 imageDraw(glui32 image, glui32 align, bool scaled, glui32 width = 0,
+		glui32 height = 0) override;
+
 	/**
 	 * Get the window dimensions
 	 */

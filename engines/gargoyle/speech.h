@@ -20,47 +20,28 @@
  *
  */
 
-#ifndef GARGOYLE_WINDOW_MASK_H
-#define GARGOYLE_WINDOW_MASK_H
+#ifndef GARGOYLE_SPEECH_H
+#define GARGOYLE_SPEECH_H
 
-#include "common/rect.h"
+#include "common/events.h"
 #include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
 
-class Window;
+/**
+ * Currently not implemented
+ */
+class Speech {
+protected:
+	void gli_initialize_tts(void) {}
 
-class WindowMask {
-public:
-	size_t _hor, _ver;
-	glui32 **_links;
-	Common::Rect _select;
+	void gli_tts_flush(void) {}
 
-	static int _lastX, _lastY;
-public:
-	/**
-	 * Constructor
-	 */
-	WindowMask();
+	void gli_tts_purge(void) {}
 
-	/**
-	 * Resize the links array
-	 */
-	void resize(size_t x, size_t y);
+	void gli_tts_speak(const glui32 *buf, size_t len) {}
 
-	void putHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1);
-
-	glui32 getHyperlink(const Common::Point &pos);
-
-	void startSelection(const Common::Point &pos);
-
-	void moveSelection(const Common::Point &pos);
-
-	void clearSelection();
-
-	int checkSelection(uint x0, uint y0, uint x1, uint y1);
-
-	int getSelection(uint x0, uint y0, uint x1, uint y1, int *rx0, int *rx1);
+	void gli_free_tts(void) {}
 };
 
 } // End of namespace Gargoyle
