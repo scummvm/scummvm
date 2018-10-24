@@ -31,8 +31,10 @@
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/conf.h"
 #include "gargoyle/events.h"
+#include "gargoyle/picture.h"
 #include "gargoyle/streams.h"
 #include "gargoyle/windows.h"
+#include "gargoyle/window_mask.h"
 
 namespace Gargoyle {
 
@@ -40,7 +42,8 @@ GargoyleEngine *g_vm;
 
 GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _random("Gargoyle"), _conf(nullptr),
-		_events(nullptr), _screen(nullptr), _windows(nullptr),
+		_events(nullptr), _picList(nullptr), _screen(nullptr), _windows(nullptr),
+		_windowMask(nullptr), _copySelect(false),
 		gli_unregister_obj(nullptr), gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
 	g_vm = this;
 }
@@ -48,9 +51,11 @@ GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gam
 GargoyleEngine::~GargoyleEngine() {
 	delete _conf;
 	delete _events;
+	delete _picList;
 	delete _screen;
 	delete _streams;
 	delete _windows;
+	delete _windowMask;
 }
 
 void GargoyleEngine::initialize() {
@@ -64,8 +69,10 @@ void GargoyleEngine::initialize() {
 	_screen = new Graphics::Screen();
 	_conf = new Conf();
 	_events = new Events();
+	_picList = new PicList();
 	_streams = new Streams();
 	_windows = new Windows(_screen);
+	_windowMask = new WindowMask();
 }
 
 Common::Error GargoyleEngine::run() {

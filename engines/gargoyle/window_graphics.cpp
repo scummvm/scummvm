@@ -86,4 +86,9 @@ void GraphicsWindow::redraw() {
 	// TODO
 }
 
+glui32 GraphicsWindow::imageDraw(glui32 image, glui32 align, bool scaled, glui32 width, glui32 height) {
+	// TODO: win_graphics_draw_picture
+	return 0;
+}
+
 } // End of namespace Gargoyle

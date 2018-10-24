@@ -24,9 +24,28 @@
 
 namespace Gargoyle {
 
-int Draw::drawStringUni(int x, int y, int fidx, byte *rgb, glui32 *s, int n, int spw) {
+int Draw::drawString(int x, int y, int fidx, const byte *rgb, const char *s, int n, int spw) {
 	// TODO
 	return 0;
+}
+
+int Draw::drawStringUni(int x, int y, int fidx, const byte *rgb, const glui32 *s, int n, int spw) {
+	// TODO
+	return 0;
+}
+
+int Draw::stringWidth(int fidx, const char *s, int n, int spw) {
+	// TODO
+	return 0;
+}
+
+int Draw::stringWidthUni(int fidx, const glui32 *s, int n, int spw) {
+	// TODO
+	return 0;
+}
+
+void Draw::drawCaret(const Common::Point &pos) {
+	// TODO
 }
 
 } // End of namespace Gargoyle

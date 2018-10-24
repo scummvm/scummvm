@@ -27,7 +27,17 @@
 
 namespace Gargoyle {
 
+class PicList {
+public:
+	void increment();
+
+	void decrement();
+};
+
 struct Picture : Graphics::Surface {
+public:
+	static Picture *load(uint32 id);
+public:
 	int _refCount;
 	uint32 _id;
 	bool _scaled;
@@ -46,6 +56,16 @@ struct Picture : Graphics::Surface {
 	 * Decrement reference counter
 	 */
 	void decrement();
+
+	/**
+	 * Rescale the picture to a new picture of a given size
+	 */
+	Picture *scale(int sx, int sy);
+
+	/**
+	 * Draw the picture
+	 */
+	void drawPicture(int x0, int y0, int dx0, int dy0, int dx1, int dy1);
 };
 
 } // End of namespace Gargoyle

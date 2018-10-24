@@ -25,47 +25,72 @@
 
 #include "gargoyle/windows.h"
 #include "gargoyle/picture.h"
+#include "gargoyle/speech.h"
 
 namespace Gargoyle {
 
 /**
  * Text Buffer window
  */
-class TextBufferWindow : public Window {
+class TextBufferWindow : public Window, Speech {
 	/**
 	 * Structure for a row within the window
 	 */
 	struct TextBufferRow {
-		Common::Array<uint32> chars;
-		Common::Array<Attributes> attr;
-		int len, newline;
-		bool dirty, repaint;
-		Picture *lpic, *rpic;
-		glui32 lhyper, rhyper;
-		int lm, rm;
+		glui32 _chars[TBLINELEN];
+		Attributes _attrs[TBLINELEN];
+		int _len, _newLine;
+		bool _dirty, _repaint;
+		Picture *_lPic, *_rPic;
+		glui32 _lHyper, _rHyper;
+		int _lm, _rm;
 
 		/**
 		 * Constructor
 		 */
 		TextBufferRow();
-
-		/**
-		 * Resize the row
-		 */
-		void resize(size_t newSize);
 	};
 	typedef Common::Array<TextBufferRow> TextBufferRows;
 private:
 	void reflow();
 	void touchScroll();
 	bool putPicture(Picture *pic, glui32 align, glui32 linkval);
+
+	/**
+	 * @remarks Only for input text
+	 */
+	void putText(const char *buf, int len, int pos, int oldlen);
+
+	/**
+	 * @remarks Only for input text
+	 */
 	void putTextUni(const glui32 *buf, int len, int pos, int oldlen);
-	void flowBreak();
+
+	bool flowBreak();
+
+	void acceptLine(glui32 keycode);
+
+	/**
+	 * Return true if a following quotation mark should be an opening mark,
+	 * false if it should be a closing mark. Opening quotation marks will
+	 * appear following an open parenthesis, open square bracket, or
+	 * whitespace.
+	 */
+	bool leftquote(glui32 c);
 
 	/**
 	 * Mark a given text row as modified
 	 */
 	void touch(int line);
+
+	void scrollOneLine(bool forced);
+	void scrollResize();
+	int calcWidth(glui32 *chars, Attributes *attrs, int startchar, int numchars, int spw);
+
+	/**
+	 * Copy the passed text to the clipboard
+	 */
+	void copyTextToClipboard(const glui32 *text, size_t len);
 public:
 	int _width, _height;
 	int _spaced;
@@ -106,7 +131,7 @@ public:
 	glui32 *_lineTerminators;
 
 	/* style hints and settings */
-	WindowStyle styles[style_NUMSTYLES];
+	WindowStyle _styles[style_NUMSTYLES];
 
 	/* for copy selection */
 	glui32 *_copyBuf;
@@ -143,14 +168,14 @@ public:
 	virtual bool unputCharUni(uint32 ch) override;
 
 	/**
-	 * Move the cursor
-	 */
-	virtual void moveCursor(const Common::Point &newPos) override;
-
-	/**
 	 * Clear the window
 	 */
 	virtual void clear() override;
+
+	/**
+	 * Click the window
+	 */
+	virtual void click(const Common::Point &newPos) override;
 
 	/**
 	 * Prepare for inputing a line
@@ -176,6 +201,15 @@ public:
 	 * Redraw the window
 	 */
 	virtual void redraw() override;
+
+	virtual glui32 imageDraw(glui32 image, glui32 align, bool scaled, glui32 width = 0,
+		glui32 height = 0) override;
+
+	virtual void acceptReadLine(glui32 arg) override;
+
+	virtual void acceptReadChar(glui32 arg) override;
+
+	int acceptScroll(glui32 arg);
 };
 
 } // End of namespace Gargoyle

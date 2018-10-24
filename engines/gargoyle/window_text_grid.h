@@ -56,17 +56,10 @@ private:
 	 */
 	void touch(int line);
 
-	void acceptReadChar(glui32 arg);
-
 	/**
 	 * Return or enter, during line input. Ends line input. 
 	 */
 	void acceptLine(glui32 keycode);
-
-	/**
-	 * Any regular key, during line input.
-	 */
-	void acceptReadLine(glui32 arg);
 public:
 	int _width, _height;
 	TextGridRows _lines;
@@ -158,6 +151,10 @@ public:
 	 * Redraw the window
 	 */
 	virtual void redraw() override;
+
+	virtual void acceptReadLine(glui32 arg) override;
+
+	virtual void acceptReadChar(glui32 arg) override;
 };
 
 } // End of namespace Gargoyle

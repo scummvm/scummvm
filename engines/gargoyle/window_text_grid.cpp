@@ -23,6 +23,7 @@
 #include "gargoyle/window_text_grid.h"
 #include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
+#include "gargoyle/window_mask.h"
 
 namespace Gargoyle {
 
@@ -203,7 +204,7 @@ void TextGridWindow::click(const Common::Point &newPos) {
 	}
 
 	if (_hyperRequest) {
-		glui32 linkval = _windows->getHyperlink(newPos);
+		glui32 linkval = g_vm->_windowMask->getHyperlink(newPos);
 		if (linkval)
 		{
 			g_vm->_events->eventStore(evtype_Hyperlink, this, linkval, 0);
@@ -588,7 +589,7 @@ void TextGridWindow::redraw() {
 			y = y0 + i * g_conf->_leading;
 
 			/* clear any stored hyperlink coordinates */
-			_windows->setHyperlink(0, x0, y, x0 + g_conf->_cellW * _width, y + g_conf->_leading);
+			g_vm->_windowMask->putHyperlink(0, x0, y, x0 + g_conf->_cellW * _width, y + g_conf->_leading);
 
 			a = 0;
 			for (b = 0; b < _width; b++) {
@@ -610,7 +611,7 @@ void TextGridWindow::redraw() {
 					if (link) {
 						_windows->drawRect(x, y + g_conf->_baseLine + 1, w,
 							g_conf->_linkStyle, g_conf->_linkColor);
-						_windows->setHyperlink(link, x, y, x + w, y + g_conf->_leading);
+						g_vm->_windowMask->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 					}
 					x += w;
 					a = b;
@@ -634,7 +635,7 @@ void TextGridWindow::redraw() {
 			if (link) {
 				_windows->drawRect(x, y + g_conf->_baseLine + 1, w,
 					g_conf->_linkStyle, g_conf->_linkColor);
-				_windows->setHyperlink(link, x, y, x + w, y + g_conf->_leading);
+				g_vm->_windowMask->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 			}
 		}
 	}

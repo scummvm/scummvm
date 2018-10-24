@@ -23,14 +23,22 @@
 #ifndef GARGOYLE_DRAW_H
 #define GARGOYLE_DRAW_H
 
-#include "common/events.h"
+#include "common/rect.h"
 #include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
 
 class Draw {
 protected:
-	int drawStringUni(int x, int y, int fidx, byte *rgb, glui32 *s, int n, int spw);
+	int drawString(int x, int y, int fidx, const byte *rgb, const char *s, int n, int spw);
+
+	int drawStringUni(int x, int y, int fidx, const byte *rgb, const glui32 *s, int n, int spw);
+
+	int stringWidth(int fidx, const char *s, int n, int spw);
+
+	int stringWidthUni(int fidx, const glui32 *s, int n, int spw);
+
+	void drawCaret(const Common::Point &pos);
 };
 
 } // End of namespace Gargoyle

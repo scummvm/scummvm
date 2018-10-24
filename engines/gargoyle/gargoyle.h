@@ -36,7 +36,9 @@ namespace Gargoyle {
 
 class Conf;
 class Events;
+class PicList;
 class Windows;
+class WindowMask;
 class Streams;
 
 enum InterpreterType {
@@ -94,8 +96,11 @@ protected:
 public:
 	Conf *_conf;
 	Events *_events;
+	PicList *_picList;
 	Streams *_streams;
 	Windows *_windows;
+	WindowMask *_windowMask;
+	bool _copySelect;
 	void (*gli_unregister_obj)(void *obj, glui32 objclass, gidispatch_rock_t objrock);
 	gidispatch_rock_t (*gli_register_arr)(void *array, glui32 len, const char *typecode);
 	void (*gli_unregister_arr)(void *array, glui32 len, const char *typecode, gidispatch_rock_t objrock);
