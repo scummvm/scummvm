@@ -228,7 +228,7 @@ void TextBufferWindow::reflow() {
 }
 
 void TextBufferWindow::touchScroll() {
-	_windows->clearSelection();
+	g_vm->_windowMask->clearSelection();
 	_windows->repaint(_bbox);
 
 	for (int i = 0; i < _scrollMax; i++)
@@ -370,7 +370,7 @@ void TextBufferWindow::putTextUni(const glui32 *buf, int len, int pos, int oldle
 void TextBufferWindow::touch(int line) {
 	int y = _bbox.top + g_conf->_tMarginY + (_height - line - 1) * g_conf->_leading;
 	_lines[line]._dirty = 1;
-	_windows->clearSelection();
+	g_vm->_windowMask->clearSelection();
 	_windows->repaint(Common::Rect(_bbox.left, y - 2, _bbox.right, y + g_conf->_leading + 2));
 }
 
@@ -796,7 +796,10 @@ void TextBufferWindow::redraw() {
     int selbuf, selrow, selchar, sx0, sx1, selleft, selright;
     int tx, tsc, tsw, lsc, rsc;
 
+	Window::redraw();
+
     _lines[0]._len = _numChars;
+	sx0 = sx1 = selleft = selright = 0;
 
 	ln = new TextBufferRow();
     if (!ln)

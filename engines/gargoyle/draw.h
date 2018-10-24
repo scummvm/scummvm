@@ -39,6 +39,8 @@ protected:
 	int stringWidthUni(int fidx, const glui32 *s, int n, int spw);
 
 	void drawCaret(const Common::Point &pos);
+
+	void fillArea(const byte *rgb);
 };
 
 } // End of namespace Gargoyle

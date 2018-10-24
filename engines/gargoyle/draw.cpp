@@ -48,4 +48,8 @@ void Draw::drawCaret(const Common::Point &pos) {
 	// TODO
 }
 
+void Draw::fillArea(const byte *rgb) {
+	// TODO: gli_draw_clear
+}
+
 } // End of namespace Gargoyle
