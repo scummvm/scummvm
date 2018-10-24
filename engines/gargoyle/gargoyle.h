@@ -77,7 +77,6 @@ private:
 	void initialize();
 protected:
 	const GargoyleGameDescription *_gameDescription;
-	Graphics::Screen *_screen;
 	Common::RandomSource _random;
 	int _loadSaveSlot;
 
@@ -97,6 +96,7 @@ public:
 	Conf *_conf;
 	Events *_events;
 	PicList *_picList;
+	Graphics::Screen *_screen;
 	Streams *_streams;
 	Windows *_windows;
 	WindowMask *_windowMask;

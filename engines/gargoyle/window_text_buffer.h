@@ -202,14 +202,13 @@ public:
 	 */
 	virtual void redraw() override;
 
-	virtual glui32 imageDraw(glui32 image, glui32 align, bool scaled, glui32 width = 0,
-		glui32 height = 0) override;
-
 	virtual void acceptReadLine(glui32 arg) override;
 
 	virtual void acceptReadChar(glui32 arg) override;
 
 	int acceptScroll(glui32 arg);
+
+	glui32 drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height);
 };
 
 } // End of namespace Gargoyle

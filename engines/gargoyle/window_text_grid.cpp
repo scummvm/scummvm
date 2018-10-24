@@ -601,7 +601,7 @@ void TextGridWindow::redraw() {
 					fgcolor = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(styles);
 					bgcolor = ln->_attrs[a].attrBg(styles);
 					w = (b - a) * g_conf->_cellW;
-					_windows->drawRect(x, y, w, g_conf->_leading, bgcolor);
+					drawRect(x, y, w, g_conf->_leading, bgcolor);
 					o = x;
 
 					for (k = a; k < b; k++) {
@@ -611,7 +611,7 @@ void TextGridWindow::redraw() {
 						o += g_conf->_cellW;
 					}
 					if (link) {
-						_windows->drawRect(x, y + g_conf->_baseLine + 1, w,
+						drawRect(x, y + g_conf->_baseLine + 1, w,
 							g_conf->_linkStyle, g_conf->_linkColor);
 						g_vm->_windowMask->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 					}
@@ -625,7 +625,7 @@ void TextGridWindow::redraw() {
 			bgcolor = ln->_attrs[a].attrBg(styles);
 			w = (b - a) * g_conf->_cellW;
 			w += _bbox.right - (x + w);
-			_windows->drawRect(x, y, w, g_conf->_leading, bgcolor);
+			drawRect(x, y, w, g_conf->_leading, bgcolor);
 
 			o = x;
 			for (k = a; k < b; k++) {
@@ -635,7 +635,7 @@ void TextGridWindow::redraw() {
 				o += g_conf->_cellW;
 			}
 			if (link) {
-				_windows->drawRect(x, y + g_conf->_baseLine + 1, w,
+				drawRect(x, y + g_conf->_baseLine + 1, w,
 					g_conf->_linkStyle, g_conf->_linkColor);
 				g_vm->_windowMask->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 			}

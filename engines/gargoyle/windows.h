@@ -164,11 +164,6 @@ public:
 	void repaint(const Common::Rect &box);
 
 	/**
-	 * Draw an area of the windows
-	 */
-	void drawRect(int x0, int y0, int w, int h, const byte *rgb);
-
-	/**
 	 * Get an iterator that will move over the tree
 	 */
 	iterator begin() { return iterator(this, _windowList); }
@@ -354,8 +349,9 @@ public:
 	 */
 	virtual void redraw();
 
-	virtual glui32 imageDraw(glui32 image, glui32 align, bool scaled, glui32 width = 0,
-		glui32 height = 0) { return false; }
+	bool imageDraw(glui32 image, glui32 align, glsi32 val1, glsi32 val2);
+
+	virtual  glui32 drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height) { return false; }
 
 	virtual void acceptReadLine(glui32 arg);
 

@@ -41,6 +41,8 @@ protected:
 	void drawCaret(const Common::Point &pos);
 
 	void fillArea(const byte *rgb);
+
+	void drawRect(int x0, int y0, int w, int h, const byte *rgb);
 };
 
 } // End of namespace Gargoyle
