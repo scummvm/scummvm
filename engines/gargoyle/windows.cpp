@@ -37,6 +37,8 @@ bool Windows::_overrideReverse;
 bool Windows::_overrideFgSet;
 bool Windows::_overrideBgSet;
 bool Windows::_forceRedraw;
+bool Windows::_claimSelect;
+bool Windows::_moreFocus;
 int Windows::_overrideFgVal;
 int Windows::_overrideBgVal;
 int Windows::_zcolor_fg;
@@ -48,14 +50,15 @@ byte Windows::_zcolor_Bright[3];
 
 /*--------------------------------------------------------------------------*/
 
-Windows::Windows(Graphics::Screen *screen) :
-		_screen(screen), _moreFocus(false), _windowList(nullptr),
-		_rootWin(nullptr), _focusWin(nullptr), _mask(nullptr), _claimSelect(0) {
+Windows::Windows(Graphics::Screen *screen) : _screen(screen), _windowList(nullptr),
+		_rootWin(nullptr), _focusWin(nullptr), _mask(nullptr) {
 	_mask = new WindowMask();
 	_overrideReverse = false;
 	_overrideFgSet = false;
 	_overrideBgSet = false;
 	_forceRedraw = true;
+	_claimSelect = false;
+	_moreFocus = false;
 	_overrideFgVal = 0;
 	_overrideBgVal = 0;
 	_zcolor_fg = _zcolor_bg = 0;
@@ -234,6 +237,10 @@ void Windows::redraw() {
 	// TODO: gli_windows_redraw
 }
 
+void Windows::redrawRect(const Common::Rect &r) {
+	// TODO: gli_redraw_rect
+}
+
 void Windows::repaint(const Common::Rect &box) {
 	// TODO
 }
@@ -291,7 +298,7 @@ Window::Window(Windows *windows, glui32 rock) : _windows(windows), _rock(rock),
 		_type(0), _parent(nullptr), _next(nullptr), _prev(nullptr), _yAdj(0),
 		_lineRequest(0), _lineRequestUni(0), _charRequest(0), _charRequestUni(0),
 		_mouseRequest(0), _hyperRequest(0), _moreRequest(0), _scrollRequest(0), _imageLoaded(0),
-		_echoLineInput(true), _lineTerminatorsBase(nullptr), _termCt(0), _echoStream(nullptr) {
+		_echoLineInputBase(true), _lineTerminatorsBase(nullptr), _termCt(0), _echoStream(nullptr) {
 	_attr.fgset = 0;
 	_attr.bgset = 0;
 	_attr.reverse = 0;
@@ -337,6 +344,10 @@ void Window::cancelLineEvent(Event *ev) {
 	g_vm->_events->clearEvent(ev);
 }
 
+void Window::moveCursor(const Common::Point &newPos) {
+	warning("moveCursor: not a TextGrid window");
+}
+
 void Window::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) {
 	warning("requestLineEvent: window does not support keyboard input");
 }
@@ -351,6 +362,14 @@ void Window::redraw() {
 		int y0 = _yAdj ? _bbox.top - _yAdj : _bbox.top;
 		_windows->drawRect(_bbox.left, y0, _bbox.width(), _bbox.bottom - y0, color);
 	}
+}
+
+void Window::acceptReadLine(glui32 arg) {
+	warning("acceptReadLine:: window does not support keyboard input");
+}
+
+void Window::acceptReadChar(glui32 arg) {
+	warning("acceptReadChar:: window does not support keyboard input");
 }
 
 bool Window::checkTerminator(glui32 ch) {

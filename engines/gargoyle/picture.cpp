@@ -24,6 +24,16 @@
 
 namespace Gargoyle {
 
+void PicList::increment() {
+	// TODO
+}
+
+void PicList::decrement() {
+	// TODO
+}
+
+/*--------------------------------------------------------------------------*/
+
 void Picture::increment() {
 	++_refCount;
 }
@@ -34,5 +44,20 @@ void Picture::decrement() {
 		delete this;
 	}
 }
+
+Picture *Picture::load(uint32 id) {
+	// TODO: gli_picture_load
+	return nullptr;
+}
+
+Picture *Picture::scale(int sx, int sy) {
+	// TODO: gli_picture_scale
+	return nullptr;
+}
+
+void Picture::drawPicture(int x0, int y0, int dx0, int dy0, int dx1, int dy1) {
+	// TODO: drawPicture
+}
+
 
 } // End of namespace Gargoyle

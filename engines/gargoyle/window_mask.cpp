@@ -202,7 +202,7 @@ int WindowMask::checkSelection(uint x0, uint y0, uint x1, uint y1) {
 	return false;
 }
 
-int WindowMask::getSelection(uint x0, uint y0, uint x1, uint y1, uint *rx0, uint *rx1) {
+int WindowMask::getSelection(uint x0, uint y0, uint x1, uint y1, int *rx0, int *rx1) {
 	uint row, upper, lower, above, below;
 	int row_selected, found_left, found_right;
 	int from_right, from_below, is_above, is_below;
