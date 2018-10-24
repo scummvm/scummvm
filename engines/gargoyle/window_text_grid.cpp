@@ -577,6 +577,8 @@ void TextGridWindow::redraw() {
 	int font;
 	byte *fgcolor, *bgcolor;
 
+	Window::redraw();
+
 	x0 = _bbox.left;
 	y0 = _bbox.top;
 
