@@ -1431,6 +1431,34 @@ static const uint16 gk1CazanouxPathfindingPatch[] = {
 	PATCH_END
 };
 
+// GK1 english pc floppy locks up on day 10 in the honfour (room 800) when
+//  using the keycard on an unlocked door's keypad. This is due to mistakenly
+//  calling handsOff instead of handsOn. Sierra fixed this in floppy patch 1.0a
+//  and all other versions.
+//
+// We fix this by changing handsOff to handsOn and passing 0 as the caller
+//  to gkMessager:say since the script disposes itself.
+//
+// Applies to: English PC Floppy only
+// Responsible method: sUnlockDoor:changeState(2)
+// Fixes bug #10767
+static const uint16 gk1HonfourUnlockDoorSignature[] = {
+	0x7c,                           // pushSelf
+	0x81, 0x5b,                     // lag 5b
+	0x4a, SIG_MAGICDWORD,           // send e [ gkMessager:say ... self ]
+	SIG_UINT16(0x000e),
+	0x38, SIG_UINT16(0x0216),       // push 0216 [ handsOff ]
+	SIG_END
+};
+
+static const uint16 gk1HonfourUnlockDoorPatch[] = {
+	0x76,                           // push0
+	0x81, 0x5b,                     // lag 5b
+	0x4a, PATCH_UINT16(0x000e),     // send e [ gkMessager:say ... 0 ]
+	0x38, PATCH_UINT16(0x0217),     // push 0217 [ handsOn ]
+	PATCH_END
+};
+
 // GK1 english pc floppy has a missing-points bug on day 5 in room 240.
 //  Showing Mosely the veve sketch and Hartridge's notes awards 2 points
 //  but not if you show the notes before the veve.
@@ -1498,6 +1526,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   240, "fix day 5 mosely veve missing points",        1, gk1Day5MoselyVevePointsSignature, gk1Day5MoselyVevePointsPatch },
 	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
+	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
