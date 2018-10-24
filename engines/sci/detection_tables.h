@@ -3642,13 +3642,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                                GUIO_LINKSPEECHTOSFX, \
                                GUIO_NOASPECT, \
                                GUIO_NOLAUNCHLOAD)
-#define GUIO_PQSWAT      GUIO7(GUIO_NOSUBTITLES, \
+#define GUIO_PQSWAT      GUIO8(GUIO_NOSUBTITLES, \
                                GUIO_NOMIDI, \
                                GUIO_LINKMUSICTOSFX, \
                                GUIO_LINKSPEECHTOSFX, \
                                GUIO_NOASPECT, \
                                GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
-                               GAMEOPTION_HQ_VIDEO)
+                               GAMEOPTION_HQ_VIDEO, \
+                               GAMEOPTION_UPSCALE_VIDEOS)
 
 	// Police Quest: SWAT - English DOS/Windows Demo (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "0.001.200"
