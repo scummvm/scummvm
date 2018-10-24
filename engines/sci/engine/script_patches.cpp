@@ -1459,6 +1459,62 @@ static const uint16 gk1HonfourUnlockDoorPatch[] = {
 	PATCH_END
 };
 
+// GK1 english pc floppy has a missing-points bug on day 5 in room 240.
+//  Showing Mosely the veve sketch and Hartridge's notes awards 2 points
+//  but not if you show the notes before the veve.
+//  Sierra fixed this in floppy patch 1.0b and all other versions.
+//
+// We fix this by awarding 2 points when showing the veve second.
+//
+// Applies to: English PC Floppy
+// Responsible method: showMoselyPaper:changeState(5)
+// Fixes bug #10763
+static const uint16 gk1Day5MoselyVevePointsSignature[] = {
+	0x78,                                   // push1
+	0x39, 0x1b,                             // pushi 1b
+	0x47, 0x0d, 0x00, SIG_UINT16(0x002),    // calle proc13_0 [ is flag 1b set? ]
+	0x30, SIG_UINT16(0x001e),               // bnt 001e [ haven't shown notes yet ]
+	0x78,                                   // push1
+	0x39, 0x1a,                             // pushi 1a
+	0x47, 0x0d, 0x01, SIG_UINT16(0x002),    // calle pro13_1 [ set flag 1a ]
+	0x38, SIG_UINT16(0x00f2),               // pushi 00f2 [ say ]
+	0x38, SIG_UINT16(0x0005),               // pushi 0005
+	0x39, 0x11,                             // pushi 11 [ noun ]
+	SIG_MAGICDWORD,
+	0x39, 0x10,                             // pushi 10 [ verb ]
+	0x39, 0x38,                             // pushi 38 [ cond ]
+	0x76,                                   // push0
+	0x7c,                                   // pushSelf
+	0x81, 0x5b,                             // lag 5b [ GkMessager ]
+	0x4a, SIG_UINT16(0x000e),               // send 000e [ GkMessager:say ]
+	0x32, SIG_UINT16(0x0013),               // jmp 0013
+	0x38, SIG_UINT16(0x00f2),               // pushi 00f2 [ say ]
+	SIG_END
+};
+
+static const uint16 gk1Day5MoselyVevePointsPatch[] = {
+	0x38, SIG_UINT16(0x00f2),               // pushi 00f2 [ say ]
+	0x39, 0x05,                             // pushi 05
+	0x39, 0x11,                             // pushi 11 [ noun ]
+	0x39, 0x10,                             // pushi 10 [ verb ]
+	0x78,                                   // push1
+	0x39, 0x1b,                             // pushi 1b
+	0x47, 0x0d, 0x00, SIG_UINT16(0x002),    // calle proc13_0 [ is flag 1b set? ]
+	0x31, 0x20,                             // bnt 20 [ pushi 37, continue GkMessager:say ]
+	0x38, SIG_UINT16(0x02fa),               // pushi 02fa [ getPoints ]
+	0x7a,                                   // push2
+	0x38, SIG_UINT16(0xfc19),               // pushi fc19 [ no flag ]
+	0x7a,                                   // push2 [ 2 points ]
+	0x81, 0x00,                             // lag 0
+	0x4a, SIG_UINT16(0x0008),               // send 8 [ GKEgo:getPoints -999 2 ]
+	0x78,                                   // push1
+	0x39, 0x1a,                             // pushi 1a
+	0x47, 0x0d, 0x01, SIG_UINT16(0x002),    // calle pro13_1 [ set flag 1a ]
+	0x39, 0x38,                             // pushi 38 [ cond ]
+	0x33, 0x09,                             // jmp 9 [ continue GkMessager:say ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
@@ -1467,6 +1523,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   230, "fix day 6 police beignet timer issue (1/2)",  1, gk1Day6PoliceBeignetSignature1,   gk1Day6PoliceBeignetPatch1 },
 	{  true,   230, "fix day 6 police beignet timer issue (2/2)",  1, gk1Day6PoliceBeignetSignature2,   gk1Day6PoliceBeignetPatch2 },
 	{  true,   230, "fix day 6 police sleep timer issue",          1, gk1Day6PoliceSleepSignature,      gk1Day6PoliceSleepPatch },
+	{  true,   240, "fix day 5 mosely veve missing points",        1, gk1Day5MoselyVevePointsSignature, gk1Day5MoselyVevePointsPatch },
 	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
