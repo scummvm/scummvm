@@ -251,10 +251,6 @@ void Windows::repaint(const Common::Rect &box) {
 	// No implementation
 }
 
-void Windows::drawRect(int x0, int y0, int w, int h, const byte *rgb) {
-	// TODO
-}
-
 byte *Windows::rgbShift(byte *rgb) {
 	_zcolor_Bright[0] = (rgb[0] + 0x30) < 0xff ? (rgb[0] + 0x30) : 0xff;
 	_zcolor_Bright[1] = (rgb[1] + 0x30) < 0xff ? (rgb[1] + 0x30) : 0xff;
@@ -401,6 +397,21 @@ bool Window::checkTerminator(glui32 ch) {
 		return true;
 	else
 		return false;
+}
+
+bool Window::imageDraw(glui32 image, glui32 align, glsi32 val1, glsi32 val2) {
+	if (!g_conf->_graphics)
+		return false;
+
+	TextBufferWindow *bufWin = dynamic_cast<TextBufferWindow *>(this);
+	GraphicsWindow *graWin = dynamic_cast<GraphicsWindow *>(this);
+
+	if (bufWin)
+		return bufWin->drawPicture(image, val1, false, 0, 0);
+	if (graWin)
+		return graWin->drawPicture(image, val1, val2, false, 0, 0);
+
+	return false;
 }
 
 /*--------------------------------------------------------------------------*/

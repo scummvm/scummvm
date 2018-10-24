@@ -34,6 +34,11 @@ namespace Gargoyle {
 class GraphicsWindow : public Window {
 private:
 	void touch();
+
+	void eraseRect(int whole, glsi32 x0, glsi32 y0, glui32 width, glui32 height);
+	void fillRect(glui32 color, glsi32 x0, glsi32 y0, glui32 width, glui32 height);
+	void setBackgroundColor(glui32 color);
+	void drawPicture(Picture *src, int x0, int y0, int width, int height, glui32 linkval);
 public:
 	unsigned char _bgnd[3];
 	bool _dirty;
@@ -77,8 +82,8 @@ public:
 	 */
 	virtual void redraw() override;
 
-	virtual glui32 imageDraw(glui32 image, glui32 align, bool scaled, glui32 width = 0,
-		glui32 height = 0) override;
+	glui32 drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int scale,
+		glui32 imagewidth, glui32 imageheight);
 
 	/**
 	 * Get the window dimensions
@@ -86,6 +91,14 @@ public:
 	void getSize(glui32 *w, glui32 *h) {
 		*w = _w;
 		*h = _h;
+	}
+
+	/**
+	 * Set the window dimensions
+	 */
+	void setSize(glui32 w, glui32 h) {
+		_w = w;
+		_h = h;
 	}
 };
 
