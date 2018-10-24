@@ -51,8 +51,7 @@ byte Windows::_zcolor_Bright[3];
 /*--------------------------------------------------------------------------*/
 
 Windows::Windows(Graphics::Screen *screen) : _screen(screen), _windowList(nullptr),
-		_rootWin(nullptr), _focusWin(nullptr), _mask(nullptr) {
-	_mask = new WindowMask();
+		_rootWin(nullptr), _focusWin(nullptr) {
 	_overrideReverse = false;
 	_overrideFgSet = false;
 	_overrideBgSet = false;
@@ -62,15 +61,12 @@ Windows::Windows(Graphics::Screen *screen) : _screen(screen), _windowList(nullpt
 	_overrideFgVal = 0;
 	_overrideBgVal = 0;
 	_zcolor_fg = _zcolor_bg = 0;
+	_drawSelect = false;
 
 	_zcolor_LightGrey[0] = _zcolor_LightGrey[1] = _zcolor_LightGrey[2] = 181;
 	_zcolor_Foreground[0] = _zcolor_Foreground[1] = _zcolor_Foreground[2] = 0;
 	_zcolor_Background[0] = _zcolor_Background[1] = _zcolor_Background[2] = 0;
 	_zcolor_Bright[0] = _zcolor_Bright[1] = _zcolor_Bright[2] = 0;
-}
-
-Windows::~Windows() {
-	delete _mask;
 }
 
 Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
@@ -229,20 +225,30 @@ void Windows::selectionChanged() {
 	redraw();
 }
 
-void Windows::clearSelection() {
-	_mask->clearSelection();
-}
-
 void Windows::redraw() {
-	// TODO: gli_windows_redraw
+	_claimSelect = false;
+
+	if (_forceRedraw) {
+		repaint(Common::Rect(0, 0, g_conf->_imageW, g_conf->_imageH));
+		fillArea(g_conf->_windowColor);
+	}
+
+	if (_rootWin)
+		_rootWin->redraw();
+
+	if (_moreFocus)
+		refocus(_focusWin);
+
+	_forceRedraw = 0;
 }
 
 void Windows::redrawRect(const Common::Rect &r) {
-	// TODO: gli_redraw_rect
+	_drawSelect = true;
+	repaint(r);
 }
 
 void Windows::repaint(const Common::Rect &box) {
-	// TODO
+	// No implementation
 }
 
 void Windows::drawRect(int x0, int y0, int w, int h, const byte *rgb) {
@@ -260,36 +266,52 @@ byte *Windows::rgbShift(byte *rgb) {
 /*--------------------------------------------------------------------------*/
 
 Windows::iterator &Windows::iterator::operator++() {
-	if (!_current)
-		return *this;
+	_current = _windows->iterateTreeOrder(_current);
+	return *this;
+}
 
-	PairWindow *pairWin = dynamic_cast<PairWindow *>(_current);
-
-	if (pairWin) {
-		_current = !pairWin->_backward ? pairWin->_child1 : pairWin->_child2;
-	} else {
-		while (_current->_parent) {
-			pairWin = dynamic_cast<PairWindow *>(_current->_parent);
-
-			if (!pairWin->_backward) {
-				if (_current == pairWin->_child1) {
-					_current = pairWin->_child2;
-					return *this;
-				}
-			} else {
-				if (_current == pairWin->_child2) {
-					_current = pairWin->_child1;
-					return *this;
-				}
-			}
-
-			_current = pairWin;
+void Windows::refocus(Window *win) {
+	Window *focus = win;
+	do {
+		if (focus && focus->_moreRequest) {
+			_focusWin = focus;
+			return;
 		}
 
-		_current = nullptr;
-	}
+		focus = iterateTreeOrder(focus);
+	} while (focus != win);
 
-	return *this;
+	_moreFocus = false;
+}
+
+Window *Windows::iterateTreeOrder(Window *win) {
+	if (!win)
+		return _rootWin;
+
+	PairWindow *pairWin = dynamic_cast<PairWindow *>(win);
+	if (pairWin) {
+		if (!pairWin->_backward)
+			return pairWin->_child1;
+		else
+			return pairWin->_child2;
+	} else {
+		while (win->_parent) {
+			pairWin = dynamic_cast<PairWindow *>(win->_parent);
+			assert(pairWin);
+
+			if (!pairWin->_backward) {
+				if (win == pairWin->_child1)
+					return pairWin->_child2;
+			} else {
+				if (win == pairWin->_child2)
+					return pairWin->_child1;
+			}
+
+			win = pairWin;
+		}
+
+		return nullptr;
+	}
 }
 
 /*--------------------------------------------------------------------------*/

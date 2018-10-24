@@ -119,6 +119,8 @@ void PairWindow::rearrange(const Common::Rect &box) {
 }
 
 void PairWindow::redraw() {
+	Window::redraw();
+
 	// TODO
 }
 

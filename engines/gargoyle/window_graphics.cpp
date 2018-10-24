@@ -83,6 +83,8 @@ void GraphicsWindow::touch() {
 }
 
 void GraphicsWindow::redraw() {
+	Window::redraw();
+
 	// TODO
 }
 

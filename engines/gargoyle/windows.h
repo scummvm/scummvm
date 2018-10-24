@@ -48,17 +48,18 @@ class PairWindow;
 /**
  * Main windows manager
  */
-class Windows {
+class Windows : public Draw {
 	friend class Window;
 public:
 	class iterator {
 	private:
+		Windows *_windows;
 		Window *_current;
 	public:
 		/**
 		 * Constructor
 		 */
-		iterator(Window *start) : _current(start) {}
+		iterator(Windows *windows, Window *start) : _windows(windows), _current(start) {}
 
 		/**
 		 * Dereference
@@ -80,12 +81,13 @@ public:
 		 */
 		bool operator!=(const iterator &i) { return _current != i._current; }
 	};
+	friend class iterator;
 private:
 	Graphics::Screen *_screen;
 	Window * _windowList;      ///< List of all windows
 	Window *_rootWin;          ///< The topmost window
 	Window *_focusWin;         ///< The window selected by the player
-	WindowMask *_mask;
+	bool _drawSelect;
 private:
 	/**
 	 * Create a new window
@@ -101,6 +103,10 @@ private:
 	 * Rearrange windows
 	 */
 	void rearrange();
+
+	void refocus(Window *win);
+
+	Window *iterateTreeOrder(Window *win);
 public:
 	static bool _overrideReverse;
 	static bool _overrideFgSet;
@@ -124,11 +130,6 @@ public:
 	Windows(Graphics::Screen *screen);
 
 	/**
-	 * Destructor
-	 */
-	~Windows();
-
-	/**
 	 * Open a new window
 	 */
 	Window *windowOpen(Window *splitwin, glui32 method, glui32 size,
@@ -148,8 +149,6 @@ public:
 	 * Setst the focused window
 	 */
 	void setFocus(Window *win) { _focusWin = win; }
-
-	void clearSelection();
 
 	void selectionChanged();
 
@@ -172,12 +171,12 @@ public:
 	/**
 	 * Get an iterator that will move over the tree
 	 */
-	iterator begin() { return iterator(_windowList); }
+	iterator begin() { return iterator(this, _windowList); }
 
 	/**
 	 * Returns the end point of window iteration
 	 */
-	iterator end() { return iterator(nullptr); }
+	iterator end() { return iterator(this, nullptr); }
 };
 
 /**
