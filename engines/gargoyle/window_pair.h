@@ -57,6 +57,10 @@ public:
 	 * Redraw the window
 	 */
 	virtual void redraw() override;
+
+	virtual void getArrangement(glui32 *method, glui32 *size, Window **keyWin) override;
+
+	virtual void setArrangement(glui32 method, glui32 size, Window *keyWin) override;
 };
 
 } // End of namespace Gargoyle

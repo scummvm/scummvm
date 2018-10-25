@@ -25,6 +25,7 @@
 #include "gargoyle/streams.h"
 #include "gargoyle/string.h"
 #include "gargoyle/windows.h"
+#include "gargoyle/window_pair.h"
 
 namespace Gargoyle {
 
@@ -86,14 +87,21 @@ void Glk::glk_window_get_size(winid_t win, glui32 *widthptr, glui32 *heightptr) 
 	// TODO
 }
 
-void Glk::glk_window_set_arrangement(winid_t win, glui32 method,
-	glui32 size, winid_t keywin) {
-	// TODO
+void Glk::glk_window_set_arrangement(winid_t win, glui32 method, glui32 size, winid_t keywin) {
+	if (!win) {
+		warning("window_set_arrangement: invalid ref");
+	} else {
+		win->setArrangement(method, size, keywin);
+	}
 }
 
-void Glk::glk_window_get_arrangement(winid_t win, glui32 *methodptr,
-	glui32 *sizeptr, winid_t *keywinptr) {
-	// TODO
+void Glk::glk_window_get_arrangement(winid_t win, glui32 *method,
+		glui32 *size, winid_t *keyWin) {
+	if (!win) {
+		warning("window_get_arrangement: invalid ref");
+	} else {
+		win->getArrangement(method, size, keyWin);
+	}
 }
 
 winid_t Glk::glk_window_iterate(winid_t win, glui32 *rockptr) {

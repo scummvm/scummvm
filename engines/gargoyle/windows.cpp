@@ -471,6 +471,14 @@ void Window::acceptReadChar(glui32 arg) {
 	warning("acceptReadChar:: window does not support keyboard input");
 }
 
+void Window::getArrangement(glui32 *method, glui32 *size, Window **keyWin) {
+	warning("getArrangement: not a Pair window");
+}
+
+void Window::setArrangement(glui32 method, glui32 size, Window *keyWin) {
+	warning("setArrangement: not a Pair window");
+}
+
 bool Window::checkTerminator(glui32 ch) {
 	if (ch == keycode_Escape)
 		return true;
