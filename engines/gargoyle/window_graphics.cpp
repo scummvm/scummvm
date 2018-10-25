@@ -244,4 +244,9 @@ void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int h
 	_surface->blitFrom(*g_vm->_screen, Common::Rect(sx0, sy0, sx0 + w, sy0 + h), Common::Point(0, 0));
 }
 
+void GraphicsWindow::getSize(glui32 *width, glui32 *height) {
+	*width = _bbox.width();
+	*height = _bbox.height();
+}
+
 } // End of namespace Gargoyle

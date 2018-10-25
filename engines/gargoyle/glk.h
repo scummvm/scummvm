@@ -76,7 +76,7 @@ public:
 		glui32 size, winid_t keyWin);
 	void glk_window_get_arrangement(winid_t win, glui32 *method,
 		glui32 *size, winid_t *keyWin);
-	winid_t glk_window_iterate(winid_t win, glui32 *rockptr);
+	winid_t glk_window_iterate(winid_t win, glui32 *rock);
 	glui32 glk_window_get_rock(winid_t win);
 	glui32 glk_window_get_type(winid_t win);
 	winid_t glk_window_get_parent(winid_t win);
