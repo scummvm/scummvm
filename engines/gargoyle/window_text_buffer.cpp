@@ -23,6 +23,7 @@
 #include "gargoyle/window_text_buffer.h"
 #include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
+#include "gargoyle/screen.h"
 #include "gargoyle/string.h"
 
 namespace Gargoyle {
@@ -795,6 +796,7 @@ void TextBufferWindow::redraw() {
     int hx0, hx1, hy0, hy1;
     int selbuf, selrow, selchar, sx0, sx1, selleft, selright;
     int tx, tsc, tsw, lsc, rsc;
+	Screen &screen = *g_vm->_screen;
 
 	Window::redraw();
 
@@ -953,7 +955,7 @@ void TextBufferWindow::redraw() {
          * fill in background colors
          */
         color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        drawRect(x0/GLI_SUBPIX, y,
+        screen.fillRect(x0/GLI_SUBPIX, y,
                 (x1-x0) / GLI_SUBPIX, g_conf->_leading,
                 color);
 
@@ -965,12 +967,12 @@ void TextBufferWindow::redraw() {
                 link = ln->_attrs[a].hyper;
                 font = ln->_attrs[a].attrFont(_styles);
                 color = ln->_attrs[a].attrBg(_styles);
-                w = stringWidthUni(font, ln->_chars + a, b - a, spw);
-                drawRect(x/GLI_SUBPIX, y,
+                w = screen.stringWidthUni(font, ln->_chars + a, b - a, spw);
+                screen.fillRect(x/GLI_SUBPIX, y,
                         w/GLI_SUBPIX, g_conf->_leading,
                         color);
                 if (link) {
-                    drawRect(x/GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
+                    screen.fillRect(x/GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
                             w/GLI_SUBPIX + 1, g_conf->_linkStyle,
                             g_conf->_linkColor);
                     g_vm->_windowMask->putHyperlink(link, x/GLI_SUBPIX, y,
@@ -984,11 +986,11 @@ void TextBufferWindow::redraw() {
         link = ln->_attrs[a].hyper;
         font = ln->_attrs[a].attrFont(_styles);
         color = ln->_attrs[a].attrBg(_styles);
-        w = stringWidthUni(font, ln->_chars + a, b - a, spw);
-        drawRect(x/GLI_SUBPIX, y, w/GLI_SUBPIX,
+        w = screen.stringWidthUni(font, ln->_chars + a, b - a, spw);
+        screen.fillRect(x/GLI_SUBPIX, y, w/GLI_SUBPIX,
                 g_conf->_leading, color);
         if (link) {
-            drawRect(x/GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
+            screen.fillRect(x/GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
                     w/GLI_SUBPIX + 1, g_conf->_linkStyle,
                     g_conf->_linkColor);
             g_vm->_windowMask->putHyperlink(link, x/GLI_SUBPIX, y,
@@ -998,7 +1000,7 @@ void TextBufferWindow::redraw() {
         x += w;
 
         color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        drawRect(x/GLI_SUBPIX, y,
+        screen.fillRect(x/GLI_SUBPIX, y,
                 x1/GLI_SUBPIX - x/GLI_SUBPIX, g_conf->_leading,
                 color);
 
@@ -1009,7 +1011,7 @@ void TextBufferWindow::redraw() {
         if (_windows->getFocusWindow() == this && i == 0 && (_lineRequest || _lineRequestUni)) {
             w = calcWidth(_chars, _attrs, 0, _inCurs, spw);
             if (w < pw - g_conf->_caretShape * 2 * GLI_SUBPIX)
-                drawCaret(Common::Point(x0 + SLOP + ln->_lm + w, y + g_conf->_baseLine));
+                screen.drawCaret(Common::Point(x0 + SLOP + ln->_lm + w, y + g_conf->_baseLine));
         }
 
         /*
@@ -1024,7 +1026,7 @@ void TextBufferWindow::redraw() {
                 link = ln->_attrs[a].hyper;
                 font = ln->_attrs[a].attrFont(_styles);
                 color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-                x = drawStringUni(x, y + g_conf->_baseLine,
+                x = screen.drawStringUni(x, y + g_conf->_baseLine,
                         font, color, ln->_chars + a, b - a, spw);
                 a = b;
             }
@@ -1032,7 +1034,7 @@ void TextBufferWindow::redraw() {
         link = ln->_attrs[a].hyper;
         font = ln->_attrs[a].attrFont(_styles);
         color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-        drawStringUni(x, y + g_conf->_baseLine,
+        screen.drawStringUni(x, y + g_conf->_baseLine,
                 font, color, ln->_chars + a, linelen - a, spw);
     }
 
@@ -1048,11 +1050,11 @@ void TextBufferWindow::redraw() {
                 x1/GLI_SUBPIX, y + g_conf->_leading);
 
         color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        drawRect(x/GLI_SUBPIX, y,
+        screen.fillRect(x/GLI_SUBPIX, y,
                 x1/GLI_SUBPIX - x/GLI_SUBPIX, g_conf->_leading,
                 color);
 
-        w = stringWidth(g_conf->_moreFont,
+        w = screen.stringWidth(g_conf->_moreFont,
                 g_conf->_morePrompt.c_str(), g_conf->_morePrompt.size(), -1);
 
         if (g_conf->_moreAlign == 1)    /* center */
@@ -1061,7 +1063,7 @@ void TextBufferWindow::redraw() {
             x = x1 - SLOP - w;
 
         color = Windows::_overrideFgSet ? g_conf->_moreColor : _fgColor;
-        drawString(x, y + g_conf->_baseLine, 
+		screen.drawString(x, y + g_conf->_baseLine,
                 g_conf->_moreFont, color,
                 g_conf->_morePrompt.c_str(), g_conf->_morePrompt.size(), -1);
         y1 = y; /* don't want pictures overdrawing "[more]" */
@@ -1142,14 +1144,14 @@ void TextBufferWindow::redraw() {
             t0 = t1 = y0;
         }
 
-        drawRect(x0+1, y0, x1-x0-2, y1-y0, g_conf->_scrollBg);
-        drawRect(x0+1, t0, x1-x0-2, t1-t0, g_conf->_scrollFg);
+        screen.fillRect(x0+1, y0, x1-x0-2, y1-y0, g_conf->_scrollBg);
+        screen.fillRect(x0+1, t0, x1-x0-2, t1-t0, g_conf->_scrollFg);
 
         for (i = 0; i < g_conf->_scrollWidth / 2 + 1; i++) {
-            drawRect(x0+g_conf->_scrollWidth/2-i,
+            screen.fillRect(x0+g_conf->_scrollWidth/2-i,
                     y0 - g_conf->_scrollWidth/2 + i,
                     i*2, 1, g_conf->_scrollFg);
-            drawRect(x0+g_conf->_scrollWidth/2-i,
+            screen.fillRect(x0+g_conf->_scrollWidth/2-i,
                     y1 + g_conf->_scrollWidth/2 - i,
                     i*2, 1, g_conf->_scrollFg);
         }
@@ -1608,19 +1610,20 @@ void TextBufferWindow::scrollResize() {
 
 int TextBufferWindow::calcWidth(glui32 *chars, Attributes *attrs, int startchar,
 		int numChars, int spw) {
+	Screen &screen = *g_vm->_screen;
 	int w = 0;
 	int a, b;
 
 	a = startchar;
 	for (b = startchar; b < numChars; b++) {
 		if (attrs[a] == attrs[b]) {
-			w += stringWidthUni(attrs[a].attrFont(_styles),
+			w += screen.stringWidthUni(attrs[a].attrFont(_styles),
 				chars + a, b - a, spw);
 			a = b;
 		}
 	}
 
-	w += stringWidthUni(attrs[a].attrFont(_styles),
+	w += screen.stringWidthUni(attrs[a].attrFont(_styles),
 		chars + a, b - a, spw);
 
 	return w;

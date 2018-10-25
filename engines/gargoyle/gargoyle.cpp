@@ -32,6 +32,7 @@
 #include "gargoyle/conf.h"
 #include "gargoyle/events.h"
 #include "gargoyle/picture.h"
+#include "gargoyle/screen.h"
 #include "gargoyle/streams.h"
 #include "gargoyle/windows.h"
 #include "gargoyle/window_mask.h"
@@ -66,7 +67,7 @@ void GargoyleEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	initGraphics(640, 480, false);
-	_screen = new Graphics::Screen();
+	_screen = new Screen();
 	_conf = new Conf();
 	_events = new Events();
 	_picList = new PicList();
