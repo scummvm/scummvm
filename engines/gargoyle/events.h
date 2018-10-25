@@ -93,15 +93,16 @@ enum Keycode {
  * Event structure
  */
 struct Event {
-	EvType _type;
-	Window *_window;
-	uint32 _val1, _val2;
+	EvType type;
+	Window *window;
+	uint32 val1, val2;
 
 	/**
 	 * Constructor
 	 */
-	Event() : _type(evtype_None), _window(nullptr), _val1(0), _val2(0) {}
+	Event() : type(evtype_None), window(nullptr), val1(0), val2(0) {}
 };
+typedef Event event_t;
 
 class Events {
 public:

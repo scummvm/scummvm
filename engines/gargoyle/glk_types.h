@@ -220,19 +220,6 @@ enum ImageAlign {
 
 #endif /* GLK_MODULE_IMAGE */
 
-struct event_struct {
-	glui32 type;
-	Window *win;
-	glui32 val1, val2;
-};
-typedef event_struct event_t;
-
-struct stream_result_struct {
-	glui32 readcount;
-	glui32 writecount;
-};
-typedef stream_result_struct stream_result_t;
-
 #ifdef GLK_MODULE_DATETIME
 
 struct glktimeval_struct {

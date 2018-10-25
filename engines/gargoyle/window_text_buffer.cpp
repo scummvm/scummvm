@@ -756,10 +756,10 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 
 	_attr = _origAttr;
 
-	ev->_type = evtype_LineInput;
-	ev->_window = this;
-	ev->_val1 = len;
-	ev->_val2 = 0;
+	ev->type = evtype_LineInput;
+	ev->window = this;
+	ev->val1 = len;
+	ev->val2 = 0;
 
 	_lineRequest = false;
 	_lineRequestUni = false;

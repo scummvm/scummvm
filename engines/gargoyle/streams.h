@@ -36,6 +36,7 @@ struct StreamResult {
 	uint32 _readCount;
 	uint32 _writeCount;
 };
+typedef StreamResult stream_result_t;
 
 /**
  * Base class for streams
