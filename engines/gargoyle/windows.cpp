@@ -27,6 +27,7 @@
 #include "gargoyle/window_text_grid.h"
 #include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
+#include "gargoyle/screen.h"
 #include "gargoyle/streams.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
@@ -230,7 +231,7 @@ void Windows::redraw() {
 
 	if (_forceRedraw) {
 		repaint(Common::Rect(0, 0, g_conf->_imageW, g_conf->_imageH));
-		fillArea(g_conf->_windowColor);
+		g_vm->_screen->fill(g_conf->_windowColor);
 	}
 
 	if (_rootWin)
@@ -378,7 +379,7 @@ void Window::redraw() {
 	if (Windows::_forceRedraw) {
 		unsigned char *color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
 		int y0 = _yAdj ? _bbox.top - _yAdj : _bbox.top;
-		_windows->drawRect(_bbox.left, y0, _bbox.width(), _bbox.bottom - y0, color);
+		g_vm->_screen->fillRect(_bbox.left, y0, _bbox.width(), _bbox.bottom - y0, color);
 	}
 }
 

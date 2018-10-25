@@ -3,12 +3,12 @@ MODULE := engines/gargoyle
 MODULE_OBJS := \
 	conf.o \
 	detection.o \
-	draw.o \
 	events.o \
 	fonts.o \
 	gargoyle.o \
 	glk.o \
 	picture.o \
+	screen.o \
 	streams.o \
 	string.o \
 	windows.o \

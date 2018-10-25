@@ -22,6 +22,7 @@
 
 #include "gargoyle/window_graphics.h"
 #include "gargoyle/gargoyle.h"
+#include "gargoyle/screen.h"
 
 namespace Gargoyle {
 
@@ -84,13 +85,14 @@ void GraphicsWindow::touch() {
 }
 
 void GraphicsWindow::redraw() {
+	Screen &screen = *g_vm->_screen;
 	Window::redraw();
 
 	if (_dirty || Windows::_forceRedraw) {
 		_dirty = 0;
 
 		if (_surface)
-			g_vm->_screen->blitFrom(*_surface, Common::Point(_bbox.left, _bbox.top));
+			screen.blitFrom(*_surface, Common::Point(_bbox.left, _bbox.top));
 	}
 }
 
@@ -121,7 +123,6 @@ glui32 GraphicsWindow::drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int s
 void GraphicsWindow::eraseRect(int whole, glsi32 x0, glsi32 y0, glui32 width, glui32 height) {
 	int x1 = x0 + width;
 	int y1 = y0 + height;
-	int x, y;
 	int hx0, hx1, hy0, hy1;
 
 	if (whole) {
@@ -156,7 +157,6 @@ void GraphicsWindow::fillRect(glui32 color, glsi32 x0, glsi32 y0, glui32 width, 
 	unsigned char col[3];
 	int x1 = x0 + width;
 	int y1 = y0 + height;
-	int x, y;
 	int hx0, hx1, hy0, hy1;
 
 	col[0] = (color >> 16) & 0xff;
@@ -191,13 +191,11 @@ void GraphicsWindow::setBackgroundColor(glui32 color) {
 }
 
 void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int height, glui32 linkval) {
-	unsigned char *sp, *dp;
 	int dx1, dy1, x1, y1, sx0, sy0, sx1, sy1;
-	int x, y, w, h;
 	int hx0, hx1, hy0, hy1;
+	int w, h;
 
-	if (width != src->w || height != src->h)
-	{
+	if (width != src->w || height != src->h) {
 		src = src->scale(width, height);
 		if (!src)
 			return;

@@ -27,7 +27,6 @@
 #include "common/list.h"
 #include "common/rect.h"
 #include "graphics/screen.h"
-#include "gargoyle/draw.h"
 #include "gargoyle/events.h"
 #include "gargoyle/glk_types.h"
 #include "gargoyle/fonts.h"
@@ -48,7 +47,7 @@ class PairWindow;
 /**
  * Main windows manager
  */
-class Windows : public Draw {
+class Windows {
 	friend class Window;
 public:
 	class iterator {
@@ -238,7 +237,7 @@ struct Attributes {
 /**
  * Window definition
  */
-class Window : public Draw {
+class Window {
 public:
 	Windows *_windows;
 	glui32 _rock;
