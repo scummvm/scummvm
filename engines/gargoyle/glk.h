@@ -71,12 +71,11 @@ public:
 		glui32 wintype, glui32 rock = 0) const;
 
 	void glk_window_close(winid_t win, stream_result_t *result);
-	void glk_window_get_size(winid_t win, glui32 *widthptr,
-		glui32 *heightptr);
+	void glk_window_get_size(winid_t win, glui32 *width, glui32 *height);
 	void glk_window_set_arrangement(winid_t win, glui32 method,
-		glui32 size, winid_t keywin);
+		glui32 size, winid_t keyWin);
 	void glk_window_get_arrangement(winid_t win, glui32 *method,
-		glui32 *size, winid_t *keywin);
+		glui32 *size, winid_t *keyWin);
 	winid_t glk_window_iterate(winid_t win, glui32 *rockptr);
 	glui32 glk_window_get_rock(winid_t win);
 	glui32 glk_window_get_type(winid_t win);
