@@ -83,8 +83,12 @@ void Glk::glk_window_close(winid_t win, stream_result_t *result) {
 	}
 }
 
-void Glk::glk_window_get_size(winid_t win, glui32 *widthptr, glui32 *heightptr) {
-	// TODO
+void Glk::glk_window_get_size(winid_t win, glui32 *width, glui32 *height) {
+	if (!win) {
+		warning("window_get_size: invalid ref");
+	} else {
+		win->getSize(width, height);
+	}
 }
 
 void Glk::glk_window_set_arrangement(winid_t win, glui32 method, glui32 size, winid_t keywin) {

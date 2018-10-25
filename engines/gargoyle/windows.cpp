@@ -503,6 +503,13 @@ bool Window::imageDraw(glui32 image, glui32 align, glsi32 val1, glsi32 val2) {
 	return false;
 }
 
+void Window::getSize(glui32 *width, glui32 *height) {
+	if (width)
+		*width = 0;
+	if (height)
+		*height = 0;
+}
+
 /*--------------------------------------------------------------------------*/
 
 BlankWindow::BlankWindow(Windows *windows, uint32 rock) : Window(windows, rock) {

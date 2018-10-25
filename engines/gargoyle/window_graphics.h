@@ -82,24 +82,10 @@ public:
 	 */
 	virtual void redraw() override;
 
+	virtual void getSize(glui32 *width, glui32 *height) override;
+
 	glui32 drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int scale,
 		glui32 imagewidth, glui32 imageheight);
-
-	/**
-	 * Get the window dimensions
-	 */
-	void getSize(glui32 *w, glui32 *h) {
-		*w = _w;
-		*h = _h;
-	}
-
-	/**
-	 * Set the window dimensions
-	 */
-	void setSize(glui32 w, glui32 h) {
-		_w = w;
-		_h = h;
-	}
 };
 
 } // End of namespace Gargoyle

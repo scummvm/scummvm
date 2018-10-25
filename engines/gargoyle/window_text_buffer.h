@@ -206,6 +206,8 @@ public:
 
 	virtual void acceptReadChar(glui32 arg) override;
 
+	virtual void getSize(glui32 *width, glui32 *height) override;
+
 	int acceptScroll(glui32 arg);
 
 	glui32 drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height);
