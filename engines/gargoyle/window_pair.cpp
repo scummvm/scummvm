@@ -124,4 +124,85 @@ void PairWindow::redraw() {
 	// TODO
 }
 
+void PairWindow::getArrangement(glui32 *method, glui32 *size, Window **keyWin) {
+	glui32 val = _dir | _division;
+	if (!_wBorder)
+		val |= winmethod_NoBorder;
+
+	if (size)
+		*size = _size;
+	if (keyWin) {
+		if (_key)
+			*keyWin = _key;
+		else
+			*keyWin = nullptr;
+	}
+
+	if (method)
+		*method = val;
+}
+
+void PairWindow::setArrangement(glui32 method, glui32 size, Window *keyWin) {
+	glui32 newDir;
+	bool newVertical, newBackward;
+
+	if (_key) {
+		Window *wx;
+		PairWindow *pairWin = dynamic_cast<PairWindow *>(_key);
+
+		if (pairWin) {
+			warning("setArrangement: keywin cannot be a Pair");
+			return;
+		}
+
+		for (wx = _key; wx; wx = wx->_parent) {
+			if (wx == this)
+				break;
+		}
+		if (wx == nullptr) {
+			warning("setArrangement: keywin must be a descendant");
+			return;
+		}
+	}
+
+	newDir = method & winmethod_DirMask;
+	newVertical = (newDir == winmethod_Left || newDir == winmethod_Right);
+	newBackward = (newDir == winmethod_Left || newDir == winmethod_Above);
+	if (!keyWin)
+		keyWin = _key;
+
+	if ((newVertical && !_vertical) || (!newVertical && _vertical)) {
+		if (!_vertical)
+			warning("setArrangement: split must stay horizontal");
+		else
+			warning("setArrangement: split must stay vertical");
+		return;
+	}
+
+	if (keyWin && dynamic_cast<BlankWindow *>(keyWin)
+			&& (method & winmethod_DivisionMask) == winmethod_Fixed) {
+		warning("setArrangement: a Blank window cannot have a fixed size");
+		return;
+	}
+
+	if ((newBackward && !_backward) || (!newBackward && _backward)) {
+		// switch the children
+		Window *tmpWin = _child1;
+		_child1 = _child2;
+		_child2 = tmpWin;
+	}
+
+	// set up everything else
+	_dir = newDir;
+	_division = method & winmethod_DivisionMask;
+	_key = keyWin;
+	_size = size;
+	_wBorder = ((method & winmethod_BorderMask) == winmethod_Border);
+
+	_vertical = (_dir == winmethod_Left || _dir == winmethod_Right);
+	_backward = (_dir == winmethod_Left || _dir == winmethod_Above);
+
+	_windows->rearrange();
+}
+
 } // End of namespace Gargoyle
