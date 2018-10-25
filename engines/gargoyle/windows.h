@@ -360,6 +360,8 @@ public:
 
 	bool imageDraw(glui32 image, glui32 align, glsi32 val1, glsi32 val2);
 
+	int acceptScroll(glui32 arg);
+
 	virtual  glui32 drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height) { return false; }
 
 	virtual void acceptReadLine(glui32 arg);
@@ -370,7 +372,7 @@ public:
 
 	virtual void setArrangement(glui32 method, glui32 size, Window *keyWin);
 
-	int acceptScroll(glui32 arg);
+	virtual void getSize(glui32 *width, glui32 *height);
 };
 typedef Window *winid_t;
 
