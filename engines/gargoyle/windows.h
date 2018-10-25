@@ -98,11 +98,6 @@ private:
 	 */
 	PairWindow *newPairWindow(glui32 method, Window *key, glui32 size);
 
-	/**
-	 * Rearrange windows
-	 */
-	void rearrange();
-
 	void refocus(Window *win);
 
 	Window *iterateTreeOrder(Window *win);
@@ -157,6 +152,11 @@ public:
 	void selectionChanged();
 
 	void clearClaimSelect() { _claimSelect = false; }
+
+	/**
+	 * Rearrange windows
+	 */
+	void rearrange();
 
 	void redraw();
 
@@ -365,6 +365,10 @@ public:
 	virtual void acceptReadLine(glui32 arg);
 
 	virtual void acceptReadChar(glui32 arg);
+
+	virtual void getArrangement(glui32 *method, glui32 *size, Window **keyWin);
+
+	virtual void setArrangement(glui32 method, glui32 size, Window *keyWin);
 
 	int acceptScroll(glui32 arg);
 };
