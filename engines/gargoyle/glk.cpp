@@ -73,7 +73,13 @@ winid_t Glk::glk_window_open(winid_t split, glui32 method, glui32 size, glui32 w
 }
 
 void Glk::glk_window_close(winid_t win, stream_result_t *result) {
-	// TODO
+	_windows->_forceRedraw = true;
+
+	if (!win) {
+		warning("glk_window_close: invalid ref");
+	} else {
+		_windows->windowClose(win, result);
+	}
 }
 
 void Glk::glk_window_get_size(winid_t win, glui32 *widthptr, glui32 *heightptr) {

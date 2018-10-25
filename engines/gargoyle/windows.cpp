@@ -73,7 +73,7 @@ Windows::Windows(Graphics::Screen *screen) : _screen(screen), _windowList(nullpt
 Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
 		glui32 wintype, glui32 rock) {
 	Window *newwin, *oldparent;
-	PairWindow *pairwin;
+	PairWindow *pairWin;
 	glui32 val;
 
 	_forceRedraw = true;
@@ -125,30 +125,86 @@ Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
 	if (!splitwin) {
 		_rootWin = newwin;
 	} else {
-		// create pairwin, with newwin as the key
-		pairwin = newPairWindow(method, newwin, size);
-		pairwin->_child1 = splitwin;
-		pairwin->_child2 = newwin;
+		// create pairWin, with newwin as the key
+		pairWin = newPairWindow(method, newwin, size);
+		pairWin->_child1 = splitwin;
+		pairWin->_child2 = newwin;
 
-		splitwin->_parent = pairwin;
-		newwin->_parent = pairwin;
-		pairwin->_parent = oldparent;
+		splitwin->_parent = pairWin;
+		newwin->_parent = pairWin;
+		pairWin->_parent = oldparent;
 
 		if (oldparent) {
 			PairWindow *parentWin = dynamic_cast<PairWindow *>(oldparent);
 			assert(parentWin);
 			if (parentWin->_child1 == splitwin)
-				parentWin->_child1 = pairwin;
+				parentWin->_child1 = pairWin;
 			else
-				parentWin->_child2 = pairwin;
+				parentWin->_child2 = pairWin;
 		} else {
-			_rootWin = pairwin;
+			_rootWin = pairWin;
 		}
 	}
 
 	rearrange();
 
 	return newwin;
+}
+
+void Windows::windowClose(Window *win, StreamResult *result) {
+	if (win == _rootWin || win->_parent == nullptr) {
+		// Close the root window, which means all windows.
+		_rootWin = nullptr;
+
+		// Begin (simpler) closation
+		win->_stream->fillResult(result);
+		win->close(true);
+	} else {
+		// Have to jigger parent
+		Window *sibWin;
+		PairWindow *pairWin = dynamic_cast<PairWindow *>(win->_parent);
+		PairWindow *grandparWin;
+
+		if (win == pairWin->_child1) {
+			sibWin = pairWin->_child2;
+		} else if (win == pairWin->_child2) {
+			sibWin = pairWin->_child1;
+		} else {
+			warning("windowClose: window tree is corrupted");
+			return;
+		}
+
+		grandparWin = dynamic_cast<PairWindow *>(pairWin->_parent);
+		if (!grandparWin) {
+			_rootWin = sibWin;
+			sibWin->_parent = nullptr;
+		} else {
+			if (grandparWin->_child1 == pairWin)
+				grandparWin->_child1 = sibWin;
+			else
+				grandparWin->_child2 = sibWin;
+			sibWin->_parent = grandparWin;
+		}
+
+		// Begin closation
+		win->_stream->fillResult(result);
+
+		// Close the child window (and descendants), so that key-deletion can
+		// crawl up the tree to the root window.
+		win->close(true);
+
+		// This probably isn't necessary, but the child *is* gone, so just in case.
+		if (win == pairWin->_child1)
+			pairWin->_child1 = nullptr;
+		else if (win == pairWin->_child2)
+			pairWin->_child2 = nullptr;
+
+		// Now we can delete the parent pair.
+		pairWin->close(false);
+
+		// Sort out the arrangements
+		rearrange();
+	}
 }
 
 Window *Windows::newWindow(glui32 type, glui32 rock) {
@@ -353,6 +409,30 @@ Window::~Window() {
 		_windows->_windowList = next;
 	if (next)
 		next->_prev = prev;
+}
+
+void Window::close(bool recurse) {
+	if (_windows->getFocusWindow() == this)
+		// Focused window is being removed
+		_windows->setFocus(nullptr);
+
+	for (Window *wx = _parent; wx; wx = wx->_parent) {
+		PairWindow *pairWin = dynamic_cast<PairWindow *>(wx);
+
+		if (pairWin && pairWin->_key == this) {
+			pairWin->_key = nullptr;
+			pairWin->_keyDamage = true;
+		}
+	}
+
+	PairWindow *pairWin = dynamic_cast<PairWindow *>(this);
+	if (pairWin) {
+		pairWin->_child1->close(recurse);
+		pairWin->_child2->close(recurse);
+	}
+
+	// Finally, delete the window
+	delete this;
 }
 
 void Window::cancelLineEvent(Event *ev) {

@@ -135,6 +135,11 @@ public:
 		glui32 wintype, glui32 rock);
 
 	/**
+	 * Close an existing window
+	 */
+	void windowClose(Window *win, StreamResult *result = nullptr);
+
+	/**
 	 * Return the root window
 	 */
 	Window *getRoot() const { return _rootWin; }
@@ -282,6 +287,11 @@ public:
 	 * Destructor
 	 */
 	virtual ~Window();
+
+	/**
+	 * Close and delete the window
+	 */
+	void close(bool recurse = true);
 
 	/**
 	 * Rearranges the window
