@@ -108,28 +108,63 @@ void Glk::glk_window_get_arrangement(winid_t win, glui32 *method,
 	}
 }
 
-winid_t Glk::glk_window_iterate(winid_t win, glui32 *rockptr) {
-	// TODO
+winid_t Glk::glk_window_iterate(winid_t win, glui32 *rock) {
+	win = win ? win->_next : _windows->getRoot();
+
+	if (win) {
+		if (rock)
+			*rock = win->_rock;
+		return win;
+	}
+
+	if (rock)
+		*rock = 0;
+
 	return nullptr;
 }
 
 glui32 Glk::glk_window_get_rock(winid_t win) {
-	// TODO
-	return 0;
+	if (!win) {
+		warning("window_get_rock: invalid ref.");
+		return 0;
+	}
+
+	return win->_rock;
 }
 
 glui32 Glk::glk_window_get_type(winid_t win) {
-	// TODO
-	return 0;
+	if (!win) {
+		warning("window_get_parent: invalid ref");
+		return 0;
+	}
+
+	return win->_type;
 }
 
 winid_t Glk::glk_window_get_parent(winid_t win) {
-	// TODO
-	return nullptr;
+	if (!win) {
+		warning("window_get_parent: invalid ref");
+		return 0;
+	}
+
+	return win->_parent;
 }
 
 winid_t Glk::glk_window_get_sibling(winid_t win) {
-	// TODO
+	if (!win) {
+		warning("window_get_sibling: invalid ref");
+		return nullptr;
+	}
+
+	PairWindow *parentWin = dynamic_cast<PairWindow *>(win->_parent);
+	if (!parentWin)
+		return nullptr;
+
+	if (parentWin->_child1 == win)
+		return parentWin->_child2;
+	else if (parentWin->_child2 == win)
+		return parentWin->_child1;
+
 	return nullptr;
 }
 
@@ -142,16 +177,29 @@ void Glk::glk_window_move_cursor(winid_t win, glui32 xpos, glui32 ypos) {
 }
 
 strid_t Glk::glk_window_get_stream(winid_t win) {
+	if (!win) {
+		warning("window_get_stream: invalid ref");
+		return nullptr;
+	}
+
 	return win->_stream;
 }
 
 void Glk::glk_window_set_echo_stream(winid_t win, strid_t str) {
-	// TODO
+	if (!win) {
+		warning("window_set_echo_stream: invalid window id");
+	} else {
+		win->_echoStream = str;
+	}
 }
 
 strid_t Glk::glk_window_get_echo_stream(winid_t win) {
-	// TODO
-	return nullptr;
+	if (!win) {
+		warning("window_get_echo_stream: invalid ref");
+		return nullptr;
+	}
+
+	return win->_echoStream;
 }
 
 void Glk::glk_set_window(winid_t win) {
