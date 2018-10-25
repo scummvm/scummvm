@@ -20,40 +20,36 @@
  *
  */
 
-#include "gargoyle/draw.h"
+#ifndef GARGOYLE_DRAW_H
+#define GARGOYLE_DRAW_H
+
+#include "graphics/screen.h"
 
 namespace Gargoyle {
 
-int Draw::drawString(int x, int y, int fidx, const byte *rgb, const char *s, int n, int spw) {
-	// TODO
-	return 0;
-}
+class Screen : public Graphics::Screen {
+public:
+	/**
+	 * Fills the screen with a given rgb color
+	 */
+	void fill(const byte *rgb);
 
-int Draw::drawStringUni(int x, int y, int fidx, const byte *rgb, const glui32 *s, int n, int spw) {
-	// TODO
-	return 0;
-}
+	/**
+	 * Fill a given area of the screen with an rgb color
+	 */
+	void fillRect(uint x, uint y, uint w, uint h, const byte *rgb);
 
-int Draw::stringWidth(int fidx, const char *s, int n, int spw) {
-	// TODO
-	return 0;
-}
+	int drawString(int x, int y, int fidx, const byte *rgb, const char *s, int n, int spw);
 
-int Draw::stringWidthUni(int fidx, const glui32 *s, int n, int spw) {
-	// TODO
-	return 0;
-}
+	int drawStringUni(int x, int y, int fidx, const byte *rgb, const uint32 *s, int n, int spw);
 
-void Draw::drawCaret(const Common::Point &pos) {
-	// TODO
-}
+	int stringWidth(int fidx, const char *s, int n, int spw);
 
-void Draw::fillArea(const byte *rgb) {
-	// TODO: gli_draw_clear
-}
+	int stringWidthUni(int fidx, const uint32 *s, int n, int spw);
 
-void Draw::drawRect(int x0, int y0, int w, int h, const byte *rgb) {
-	// TODO: gli_draw_rect
-}
+	void drawCaret(const Common::Point &pos);
+};
 
 } // End of namespace Gargoyle
+
+#endif

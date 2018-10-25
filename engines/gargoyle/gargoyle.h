@@ -29,7 +29,6 @@
 #include "common/serializer.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
-#include "graphics/screen.h"
 #include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
@@ -37,9 +36,10 @@ namespace Gargoyle {
 class Conf;
 class Events;
 class PicList;
+class Screen;
+class Streams;
 class Windows;
 class WindowMask;
-class Streams;
 
 enum InterpreterType {
 	INTERPRETER_SCOTT
@@ -96,7 +96,7 @@ public:
 	Conf *_conf;
 	Events *_events;
 	PicList *_picList;
-	Graphics::Screen *_screen;
+	Screen *_screen;
 	Streams *_streams;
 	Windows *_windows;
 	WindowMask *_windowMask;

@@ -23,6 +23,7 @@
 #include "gargoyle/window_text_grid.h"
 #include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
+#include "gargoyle/screen.h"
 #include "gargoyle/window_mask.h"
 
 namespace Gargoyle {
@@ -576,6 +577,7 @@ void TextGridWindow::redraw() {
 	glui32 link;
 	int font;
 	byte *fgcolor, *bgcolor;
+	Screen &screen = *g_vm->_screen;
 
 	Window::redraw();
 
@@ -601,17 +603,17 @@ void TextGridWindow::redraw() {
 					fgcolor = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(styles);
 					bgcolor = ln->_attrs[a].attrBg(styles);
 					w = (b - a) * g_conf->_cellW;
-					drawRect(x, y, w, g_conf->_leading, bgcolor);
+					screen.fillRect(x, y, w, g_conf->_leading, bgcolor);
 					o = x;
 
 					for (k = a; k < b; k++) {
-						drawStringUni(o * GLI_SUBPIX,
+						screen.drawStringUni(o * GLI_SUBPIX,
 							y + g_conf->_baseLine, font, fgcolor,
 							&ln->_chars[k], 1, -1);
 						o += g_conf->_cellW;
 					}
 					if (link) {
-						drawRect(x, y + g_conf->_baseLine + 1, w,
+						screen.fillRect(x, y + g_conf->_baseLine + 1, w,
 							g_conf->_linkStyle, g_conf->_linkColor);
 						g_vm->_windowMask->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 					}
@@ -625,17 +627,17 @@ void TextGridWindow::redraw() {
 			bgcolor = ln->_attrs[a].attrBg(styles);
 			w = (b - a) * g_conf->_cellW;
 			w += _bbox.right - (x + w);
-			drawRect(x, y, w, g_conf->_leading, bgcolor);
+			screen.fillRect(x, y, w, g_conf->_leading, bgcolor);
 
 			o = x;
 			for (k = a; k < b; k++) {
-				drawStringUni(o * GLI_SUBPIX,
+				screen.drawStringUni(o * GLI_SUBPIX,
 					y + g_conf->_baseLine, font, fgcolor,
 					&ln->_chars[k], 1, -1);
 				o += g_conf->_cellW;
 			}
 			if (link) {
-				drawRect(x, y + g_conf->_baseLine + 1, w,
+				screen.fillRect(x, y + g_conf->_baseLine + 1, w,
 					g_conf->_linkStyle, g_conf->_linkColor);
 				g_vm->_windowMask->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 			}
