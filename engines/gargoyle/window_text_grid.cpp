@@ -360,10 +360,10 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 	_curX = 0;
 	_attr = _origAttr;
 
-	ev->_type = evtype_LineInput;
-	ev->_window = this;
-	ev->_val1 = _inLen;
-	ev->_val2 = 0;
+	ev->type = evtype_LineInput;
+	ev->window = this;
+	ev->val1 = _inLen;
+	ev->val2 = 0;
 
 	_lineRequest = false;
 	_lineRequestUni = false;
