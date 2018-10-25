@@ -278,7 +278,17 @@ void TextObject::setupText() {
 			nextLinePos = message.size();
 			cutLen = nextLinePos;
 		}
-		Common::String currentLine(message.c_str(), message.c_str() + nextLinePos);
+		Common::String currentLine;
+
+		const char *start = message.c_str();
+		// support for hebrew translation - reverse line
+		if (g_grim->getGameLanguage() == Common::HE_ISR) {
+			for (const char *ch = start + nextLinePos - 1; ch > start; --ch)
+				currentLine += *ch;
+		} else {
+			currentLine = Common::String(start, start + nextLinePos);
+		}
+
 		_lines[j] = currentLine;
 		int width = _font->getKernedStringLength(currentLine);
 		if (width > _maxLineWidth)
