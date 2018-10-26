@@ -6739,7 +6739,7 @@ static const uint16 qfg4TrapArrayTypePatch[] = {
 };
 
 // The 'Trap::init' code incorrectly creates an int array for string data.
-// Applies to at least: English floppy
+// Applies to at least: English floppy, German floppy
 static const uint16 qfg4TrapArrayTypeFloppySignature[] = {
 	0x38, SIG_SELECTOR16(new), // pushi new
 	0x78,                      // push1
