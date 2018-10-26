@@ -144,6 +144,18 @@ void WindowStream::putBufferUni(const uint32 *buf, size_t len) {
 		_window->_echoStream->putBufferUni(buf, len);
 }
 
+void WindowStream::setStyle(glui32 val) {
+	if (!_writable)
+		return;
+
+	if (val >= style_NUMSTYLES)
+		val = 0;
+
+	_window->_attr.style = val;
+	if (_window->_echoStream)
+		_window->_echoStream->setStyle(val);
+}
+
 /*--------------------------------------------------------------------------*/
 
 MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint32 rock, bool unicode) :
@@ -297,6 +309,66 @@ void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
 	}
 }
 
+glui32 MemoryStream::getPosition() const {
+	if (_unicode)
+		return ((glui32 *)_bufPtr - (glui32 *)_buf);
+	else
+		return ((unsigned char *)_bufPtr - (unsigned char *)_buf);
+}
+
+void MemoryStream::setPosition(glui32 pos, glui32 seekMode) {
+	if (!_unicode)
+	{
+		if (seekMode == seekmode_Current)
+			pos = ((unsigned char *)_bufPtr - (unsigned char *)_buf) + pos;
+		else if (seekMode == seekmode_End)
+			pos = ((unsigned char *)_bufEof - (unsigned char *)_buf) + pos;
+		else
+			/* pos = pos */;
+		if (pos < 0)
+			pos = 0;
+		if (pos > (glui32)((unsigned char *)_bufEof - (unsigned char *)_buf))
+			pos = ((unsigned char *)_bufEof - (unsigned char *)_buf);
+		_bufPtr = (unsigned char *)_buf + pos;
+	} else {
+		if (seekMode == seekmode_Current)
+			pos = ((glui32 *)_bufPtr - (glui32 *)_buf) + pos;
+		else if (seekMode == seekmode_End)
+			pos = ((glui32 *)_bufEof - (glui32 *)_buf) + pos;
+
+		if (pos < 0)
+			pos = 0;
+		if (pos > (glui32)((glui32 *)_bufEof - (glui32 *)_buf))
+			pos = ((glui32 *)_bufEof - (glui32 *)_buf);
+		_bufPtr = (glui32 *)_buf + pos;
+	}
+}
+
+glsi32 MemoryStream::getChar() {
+	if (!_readable)
+		return -1;
+
+	if (_bufPtr < _bufEnd) {
+		if (!_unicode) {
+			unsigned char ch;
+			ch = *((unsigned char *)_bufPtr);
+			_bufPtr = ((unsigned char *)_bufPtr) + 1;
+			_readCount++;
+			return ch;
+		} else {
+			glui32 ch;
+			ch = *((glui32 *)_bufPtr);
+			_bufPtr = ((glui32 *)_bufPtr) + 1;
+			_readCount++;
+			if (ch > 0xff)
+				ch = '?';
+			return ch;
+		}
+	} else {
+		return -1;
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 FileStream::FileStream(Streams *streams, uint32 rock, bool unicode) :
@@ -406,6 +478,148 @@ void FileStream::putCharUtf8(glui32 val) {
 		_outFile->writeByte((0x80 | (val & 0x00003F)));
 	} else {
 		_outFile->writeByte('?');
+	}
+}
+
+glsi32 FileStream::getCharUtf8() {
+	glui32 res;
+	glui32 val0, val1, val2, val3;
+
+	if (_inFile->eos())
+		return -1;
+	val0 = _inFile->readByte();
+	if (val0 < 0x80) {
+		res = val0;
+		return res;
+	}
+
+	if ((val0 & 0xe0) == 0xc0) {
+		if (_inFile->eos()) {
+			warning("incomplete two-byte character");
+			return -1;
+		}
+
+		val1 = _inFile->readByte();
+		if ((val1 & 0xc0) != 0x80) {
+			warning("malformed two-byte character");
+			return '?';
+		}
+
+		res = (val0 & 0x1f) << 6;
+		res |= (val1 & 0x3f);
+		return res;
+	}
+
+	if ((val0 & 0xf0) == 0xe0) {
+		val1 = _inFile->readByte();
+		val2 = _inFile->readByte();
+		if (_inFile->eos()) {
+			warning("incomplete three-byte character");
+			return -1;
+		}
+		if ((val1 & 0xc0) != 0x80) {
+			warning("malformed three-byte character");
+			return '?';
+		}
+		if ((val2 & 0xc0) != 0x80) {
+			warning("malformed three-byte character");
+			return '?';
+		}
+
+		res = (((val0 & 0xf) << 12) & 0x0000f000);
+		res |= (((val1 & 0x3f) << 6) & 0x00000fc0);
+		res |= (((val2 & 0x3f)) & 0x0000003f);
+		return res;
+	}
+
+	if ((val0 & 0xf0) == 0xf0) {
+		if ((val0 & 0xf8) != 0xf0) {
+			warning("malformed four-byte character");
+			return '?';
+		}
+
+		val1 = _inFile->readByte();
+		val2 = _inFile->readByte();
+		val3 = _inFile->readByte();
+		if (_inFile->eos()) {
+			warning("incomplete four-byte character");
+			return -1;
+		}
+		if ((val1 & 0xc0) != 0x80) {
+			warning("malformed four-byte character");
+			return '?';
+		}
+		if ((val2 & 0xc0) != 0x80) {
+			warning("malformed four-byte character");
+			return '?';
+		}
+		if ((val3 & 0xc0) != 0x80) {
+			warning("malformed four-byte character");
+			return '?';
+		}
+
+		res = (((val0 & 0x7) << 18) & 0x1c0000);
+		res |= (((val1 & 0x3f) << 12) & 0x03f000);
+		res |= (((val2 & 0x3f) << 6) & 0x000fc0);
+		res |= (((val3 & 0x3f)) & 0x00003f);
+		return res;
+	}
+
+	warning("malformed character");
+	return '?';
+}
+
+glui32 FileStream::getPosition() const {
+	return _outFile->pos();
+}
+
+void FileStream::setPosition(glui32 pos, glui32 seekMode) {
+	_lastOp = 0;
+	if (_unicode)
+		pos *= 4;
+	
+	error("FileStream::setPosition - seek not yet supported");
+//	fseek(str->file, pos, ((seekmode == seekmode_Current) ? 1 :
+	//		((seekmode == seekmode_End) ? 2 : 0)));
+}
+
+glsi32 FileStream::getChar() {
+	if (!_readable)
+		return -1;
+
+	ensureOp(filemode_Read);
+	int res;
+	if (!_unicode) {
+		res = _inFile->readByte();
+	} else if (_textFile) {
+		res = getCharUtf8();
+	} else {
+		glui32 ch;
+		res = _inFile->readByte();
+		if (_inFile->eos())
+			return -1;
+		ch = (res & 0xFF);
+		res = _inFile->readByte();
+		if (_inFile->eos())
+			return -1;
+		ch = (ch << 8) | (res & 0xFF);
+		res = _inFile->readByte();
+		if (_inFile->eos())
+			return -1;
+		ch = (ch << 8) | (res & 0xFF);
+		res = _inFile->readByte();
+		if (_inFile->eos())
+			return -1;
+		ch = (ch << 8) | (res & 0xFF);
+		res = ch;
+	}
+	if (res != -1) {
+		_readCount++;
+		if (res >= 0x100)
+			return '?';
+		return (glsi32)res;
+	} else {
+		return -1;
 	}
 }
 

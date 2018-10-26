@@ -335,12 +335,11 @@ strid_t Glk::glk_stream_open_file(frefid_t fileref, FileMode fmode, glui32 rock)
 }
 
 strid_t Glk::glk_stream_open_memory(char *buf, glui32 buflen, FileMode fmode, glui32 rock) {
-	// TODO
-	return nullptr;
+	return _streams->addMemoryStream(buf, buflen, fmode, rock, false);
 }
 
 void Glk::glk_stream_close(strid_t str, stream_result_t *result) {
-	// TODO
+	str->close(result);
 }
 
 strid_t Glk::glk_stream_iterate(strid_t str, glui32 *rockptr) const {
@@ -356,22 +355,29 @@ glui32 Glk::glk_stream_get_rock(strid_t str) const {
 	return str->getRock();
 }
 
-void Glk::glk_stream_set_position(strid_t str, glsi32 pos, glui32 seekmode) {
-	// TODO
+void Glk::glk_stream_set_position(strid_t str, glsi32 pos, glui32 seekMode) {
+	if (!str) {
+		warning("stream_set_position: invalid ref");
+	} else {
+		str->setPosition(pos, seekMode);
+	}
 }
 
-glui32 Glk::glk_stream_get_position(strid_t str) {
-	// TODO
-	return 0;
+glui32 Glk::glk_stream_get_position(strid_t str) const {
+	if (!str) {
+		warning("stream_get_position: invalid ref");
+		return 0;
+	} else {
+		return str->getPosition();
+	}
 }
 
 void Glk::glk_stream_set_current(strid_t str) {
-	// TODO
+	_streams->setCurrent(str);
 }
 
 strid_t Glk::glk_stream_get_current(void) {
-	// TODO
-	return nullptr;
+	return _streams->getCurrent();
 }
 
 void Glk::glk_put_char(unsigned char ch) {
@@ -387,32 +393,40 @@ void Glk::glk_put_char_stream(strid_t str, unsigned char ch) {
 }
 
 void Glk::glk_put_string(const char *s) {
-	// TODO
+	_streams->getCurrent()->putBuffer(s, strlen(s));
 }
 
 void Glk::glk_put_string_stream(strid_t str, const char *s) {
-	// TODO
+	str->putBuffer(s, strlen(s));
 }
 
 void Glk::glk_put_buffer(char *buf, glui32 len) {
-	// TODO
+	_streams->getCurrent()->putBuffer(buf, len);
 }
 
 void Glk::glk_put_buffer_stream(strid_t str, const char *buf, glui32 len) {
-	// TODO
+	str->putBuffer(buf, len);
 }
 
 void Glk::glk_set_style(glui32 styl) {
-	// TODO
+	_streams->getCurrent()->setStyle(styl);
 }
 
 void Glk::glk_set_style_stream(strid_t str, glui32 styl) {
-	// TODO
+	if (str) {
+		str->setStyle(styl);
+	} else {
+		warning("set_style_stream: invalid ref");
+	}
 }
 
 glsi32 Glk::glk_get_char_stream(strid_t str) {
-	// TODO
-	return 0;
+	if (str) {
+		warning("get_char_stream: invalid ref");
+		return -1;
+	} else {
+		return str->getChar();
+	}
 }
 
 glui32 Glk::glk_get_line_stream(strid_t str, char *buf, glui32 len) {
@@ -661,7 +675,7 @@ strid_t Glk::glk_stream_open_file_uni(frefid_t fileref, FileMode fmode, glui32 r
 }
 
 strid_t Glk::glk_stream_open_memory_uni(glui32 *buf, glui32 buflen, FileMode fmode, glui32 rock) {
-	return _streams->addMemoryStream(buf, buflen, fmode, rock, false);
+	return _streams->addMemoryStream(buf, buflen, fmode, rock, true);
 }
 
 void Glk::glk_request_char_event_uni(winid_t win) {
