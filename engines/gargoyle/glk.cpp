@@ -409,19 +409,35 @@ void Glk::glk_request_char_event(winid_t win) {
 }
 
 void Glk::glk_request_mouse_event(winid_t win) {
-	// TODO
+	if (!win) {
+		warning("request_mouse_event: invalid ref");
+	} else {
+		win->requestMouseEvent();
+	}
 }
 
 void Glk::glk_cancel_line_event(winid_t win, event_t *event) {
-	// TODO
+	if (!win) {
+		warning("cancel_line_event: invalid ref");
+	} else {
+		win->cancelLineEvent(event);
+	}
 }
 
 void Glk::glk_cancel_char_event(winid_t win) {
-	// TODO
+	if (!win) {
+		warning("glk_cancel_char_event: invalid ref");
+	} else {
+		win->cancelCharEvent();
+	}
 }
 
 void Glk::glk_cancel_mouse_event(winid_t win) {
-	// TODO
+	if (!win) {
+		warning("cancel_mouse_event: invalid ref");
+	} else {
+		win->cancelMouseEvent();
+	}
 }
 
 #ifdef GLK_MODULE_LINE_ECHO
@@ -685,7 +701,11 @@ void Glk::glk_set_hyperlink_stream(strid_t str, glui32 linkval) {
 }
 
 void Glk::glk_request_hyperlink_event(winid_t win) {
-	// TODO
+	if (!win) {
+		warning("request_hyperlink_event: invalid ref");
+	} else {
+		win->requestHyperlinkEvent();
+	}
 }
 
 void Glk::glk_cancel_hyperlink_event(winid_t win) {
