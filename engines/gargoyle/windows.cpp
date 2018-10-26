@@ -487,6 +487,22 @@ void Window::requestCharEventUni() {
 	warning("requestCharEventUni: window does not support keyboard input");
 }
 
+void Window::flowBreak() {
+	warning("flowBreak: not a text buffer window");
+}
+
+void Window::eraseRect(bool whole, const Common::Rect &box) {
+	warning("eraseRect: not a graphics window");
+}
+
+void Window::fillRect(glui32 color, const Common::Rect &box) {
+	warning("fillRect: not a graphics window");
+}
+
+void Window::setBackgroundColor(glui32 color) {
+	warning("setBackgroundColor: not a graphics window");
+}
+
 void Window::setTerminatorsLineEvent(glui32 *keycodes, glui32 count) {
 	if (dynamic_cast<TextBufferWindow *>(this) || dynamic_cast<TextGridWindow *>(this)) {
 		delete _lineTerminatorsBase;

@@ -120,9 +120,8 @@ glui32 GraphicsWindow::drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int s
 	return true;
 }
 
-void GraphicsWindow::eraseRect(int whole, glsi32 x0, glsi32 y0, glui32 width, glui32 height) {
-	int x1 = x0 + width;
-	int y1 = y0 + height;
+void GraphicsWindow::eraseRect(bool whole, const Common::Rect &box) {
+	int x0 = box.left, y0 = box.top, x1 = box.right, y1 = box.bottom;
 	int hx0, hx1, hy0, hy1;
 
 	if (whole) {
@@ -153,10 +152,9 @@ void GraphicsWindow::eraseRect(int whole, glsi32 x0, glsi32 y0, glui32 width, gl
 	touch();
 }
 
-void GraphicsWindow::fillRect(glui32 color, glsi32 x0, glsi32 y0, glui32 width, glui32 height) {
+void GraphicsWindow::fillRect(glui32 color, const Common::Rect &box) {
 	unsigned char col[3];
-	int x1 = x0 + width;
-	int y1 = y0 + height;
+	int x0 = box.left, y0 = box.top, x1 = box.right, y1 = box.bottom;
 	int hx0, hx1, hy0, hy1;
 
 	col[0] = (color >> 16) & 0xff;
@@ -182,12 +180,6 @@ void GraphicsWindow::fillRect(glui32 color, glsi32 x0, glsi32 y0, glui32 width, 
 
 	_surface->fillRect(Common::Rect(x0, y0, x1, y1), MKTAG(col[0], col[1], col[2], 0));
 	touch();
-}
-
-void GraphicsWindow::setBackgroundColor(glui32 color) {
-	_bgnd[0] = (color >> 16) & 0xff;
-	_bgnd[1] = (color >> 8) & 0xff;
-	_bgnd[2] = (color >> 0) & 0xff;
 }
 
 void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int height, glui32 linkval) {
@@ -247,6 +239,12 @@ void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int h
 void GraphicsWindow::getSize(glui32 *width, glui32 *height) const {
 	*width = _bbox.width();
 	*height = _bbox.height();
+}
+
+void GraphicsWindow::setBackgroundColor(glui32 color) {
+	_bgnd[0] = (color >> 16) & 0xff;
+	_bgnd[1] = (color >> 8) & 0xff;
+	_bgnd[2] = (color >> 0) & 0xff;
 }
 
 } // End of namespace Gargoyle
