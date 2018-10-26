@@ -820,21 +820,6 @@ reg_t kArrayNew(EngineState *s, int argc, reg_t *argv) {
 	uint16 size = argv[0].toUint16();
 	SciArrayType type = (SciArrayType)argv[1].toUint16();
 
-	// WORKAROUND: QFG4 floppy has a different Array class in script 64920 than
-	// the CD version. Script 380 (the trap machine outside of Dr. Cranium's
-	// lab) creates 3 integer arrays, and the largest one is used to hold
-	// messages from the machine. In the CD version, the type of that array is
-	// correctly changed to 2 (a byte array), but in the floppy version, the type
-	// remains 0 (an array of 16-bit integers) inside the Array class.
-	// I haven't found a reliable way to patch the array creation in the game
-	// scripts, so we set the large array in the floppy version to be initialized
-	// with the same parameters as in the same way as in the CD version. This
-	// fixes the trap machine's messages in the floppy version.
-	if (g_sci->getGameId() == GID_QFG4 && !g_sci->isCD() && s->currentRoomNumber() == 380 && size == 128 && type == kArrayTypeInt16) {
-		size = 256;
-		type = kArrayTypeByte;
-	}
-
 	if (type == kArrayTypeString) {
 		++size;
 	}

@@ -6738,6 +6738,25 @@ static const uint16 qfg4TrapArrayTypePatch[] = {
 	PATCH_END
 };
 
+// The 'Trap::init' code incorrectly creates an int array for string data.
+// Applies to at least: English floppy
+static const uint16 qfg4TrapArrayTypeFloppySignature[] = {
+	0x38, SIG_SELECTOR16(new), // pushi new
+	0x78,                      // push1
+	0x38, SIG_UINT16(0x80),    // pushi $80 (128)
+	SIG_MAGICDWORD,
+	0x51, 0x0a,                // class $a (IntArray)
+	0x4a, SIG_UINT16(0x06),    // send 6
+	SIG_END
+};
+
+static const uint16 qfg4TrapArrayTypeFloppyPatch[] = {
+	PATCH_ADDTOOFFSET(+4),     // pushi $92 (new), push1
+	0x38, PATCH_UINT16(0x100), // pushi $100 (256)
+	0x51, 0x0c,                // class $c (ByteArray)
+	PATCH_END
+};
+
 // QFG4 has custom video benchmarking code inside a subroutine, which is called
 // by 'glryInit::init', that needs to be disabled; see sci2BenchmarkSignature
 // Applies to at least: English CD, German Floppy
@@ -6880,6 +6899,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,      sci2VolumeResetPatch },
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
+	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,        sci2NumSavesPatch1 },
