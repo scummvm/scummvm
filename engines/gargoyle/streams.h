@@ -32,6 +32,15 @@ namespace Gargoyle {
 class Window;
 class Streams;
 
+struct FileReference {
+	glui32 _rock;
+	Common::String _filename;
+	int _fileType;
+	int _textMode;
+	gidispatch_rock_t _dispRock;
+};
+typedef FileReference *frefid_t;
+
 struct StreamResult {
 	uint32 _readCount;
 	uint32 _writeCount;
@@ -117,6 +126,14 @@ public:
 		putBufferUni(buf, len);
 		putCharUni('\n');
 	}
+
+	virtual glui32 getPosition() const { return 0; }
+
+	virtual void setPosition(glui32 pos, glui32 seekMode) {}
+
+	virtual void setStyle(glui32 val) {}
+
+	virtual glsi32 getChar() { return -1; }
 };
 typedef Stream *strid_t;
 
@@ -157,6 +174,8 @@ public:
 	 * Write a unicode character
 	 */
 	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+
+	virtual void setStyle(glui32 val) override;
 };
 
 /**
@@ -194,6 +213,12 @@ public:
 	 * Write a unicode character
 	 */
 	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+
+	virtual glui32 getPosition() const override;
+
+	virtual void setPosition(glui32 pos, glui32 seekMode) override;
+
+	virtual glsi32 getChar() override;
 };
 
 /**
@@ -215,6 +240,11 @@ private:
 	 * Put a UTF8 character
 	 */
 	void putCharUtf8(glui32 val);
+
+	/**
+	 * Get a UTF8 character
+	 */
+	glsi32 getCharUtf8();
 public:
 	/**
 	 * Constructor
@@ -240,6 +270,12 @@ public:
 	 * Write a unicode character
 	 */
 	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+
+	virtual glui32 getPosition() const override;
+
+	virtual void setPosition(glui32 pos, glui32 seekMode) override;
+
+	virtual glsi32 getChar() override;
 };
 
 /**

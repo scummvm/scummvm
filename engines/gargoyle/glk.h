@@ -96,8 +96,8 @@ public:
 	void glk_stream_close(strid_t str, stream_result_t *result);
 	strid_t glk_stream_iterate(strid_t str, glui32 *rockptr) const;
 	glui32 glk_stream_get_rock(strid_t str) const;
-	void glk_stream_set_position(strid_t str, glsi32 pos, glui32 seekmode);
-	glui32 glk_stream_get_position(strid_t str);
+	void glk_stream_set_position(strid_t str, glsi32 pos, glui32 seekMode);
+	glui32 glk_stream_get_position(strid_t str) const;
 	void glk_stream_set_current(strid_t str);
 	strid_t glk_stream_get_current(void);
 
