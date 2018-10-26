@@ -123,6 +123,24 @@ public:
 	virtual void click(const Common::Point &newPos) override;
 
 	/**
+	 * Cancel a hyperlink event
+	 */
+	virtual void cancelHyperlinkEvent() override { _hyperRequest = false; }
+
+	/**
+	 * Redraw the window
+	 */
+	virtual void redraw() override;
+
+	virtual void acceptReadLine(glui32 arg) override;
+
+	virtual void acceptReadChar(glui32 arg) override;
+
+	virtual void getSize(glui32 *width, glui32 *height) const override;
+
+	virtual void requestCharEvent() override { _charRequest = true; }
+
+	/**
 	 * Prepare for inputing a line
 	 */
 	virtual void requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) override;
@@ -142,25 +160,13 @@ public:
 	 */
 	virtual void cancelMouseEvent() override { _mouseRequest = false; }
 
-	/**
-	 * Cancel a hyperlink event
-	 */
-	virtual void cancelHyperlinkEvent() override { _hyperRequest = false; }
-
-	/**
-	 * Redraw the window
-	 */
-	virtual void redraw() override;
-
-	virtual void acceptReadLine(glui32 arg) override;
-
-	virtual void acceptReadChar(glui32 arg) override;
-
-	virtual void getSize(glui32 *width, glui32 *height) override;
-
-	virtual void requestCharEvent() override { _charRequest = true; }
-
 	virtual void requestCharEventUni() override { _charRequestUni = true; }
+
+	virtual void requestMouseEvent() override { _mouseRequest = true; }
+
+	virtual void requestHyperlinkEvent() override { _hyperRequest = true; }
+
+	virtual void cancelCharEvent() override { _charRequest = _charRequestUni = false; }
 };
 
 } // End of namespace Gargoyle

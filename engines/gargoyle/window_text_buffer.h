@@ -147,6 +147,10 @@ public:
 	 */
 	virtual ~TextBufferWindow();
 
+	int acceptScroll(glui32 arg);
+
+	glui32 drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height);
+
 	/**
 	 * Rearranges the window
 	 */
@@ -206,7 +210,7 @@ public:
 
 	virtual void acceptReadChar(glui32 arg) override;
 
-	virtual void getSize(glui32 *width, glui32 *height) override;
+	virtual void getSize(glui32 *width, glui32 *height) const override;
 
 	virtual void requestCharEvent() override { _charRequest = true; }
 
@@ -214,9 +218,9 @@ public:
 
 	virtual void setEchoLineEvent(glui32 val) override { _echoLineInput = val != 0; }
 
-	int acceptScroll(glui32 arg);
+	virtual void requestHyperlinkEvent() override { _hyperRequest = true; }
 
-	glui32 drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height);
+	virtual void cancelCharEvent() override { _charRequest = _charRequestUni = false; }
 };
 
 } // End of namespace Gargoyle
