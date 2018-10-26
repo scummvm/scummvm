@@ -479,6 +479,34 @@ void Window::setArrangement(glui32 method, glui32 size, Window *keyWin) {
 	warning("setArrangement: not a Pair window");
 }
 
+void Window::requestCharEvent() {
+	warning("requestCharEvent: window does not support keyboard input");
+}
+
+void Window::requestCharEventUni() {
+	warning("requestCharEventUni: window does not support keyboard input");
+}
+
+void Window::setTerminatorsLineEvent(glui32 *keycodes, glui32 count) {
+	if (dynamic_cast<TextBufferWindow *>(this) || dynamic_cast<TextGridWindow *>(this)) {
+		delete _lineTerminatorsBase;
+		_lineTerminatorsBase = nullptr;
+
+		if (!keycodes || count == 0) {
+			_termCt = 0;
+		} else {
+			_lineTerminatorsBase = new glui32[count + 1];
+			if (_lineTerminatorsBase) {
+				memcpy(_lineTerminatorsBase, keycodes, count * sizeof(glui32));
+				_lineTerminatorsBase[count] = 0;
+				_termCt = count;
+			}
+		}
+	} else {
+		warning("setTerminatorsLineEvent: window does not support keyboard input");
+	}
+}
+
 bool Window::checkTerminator(glui32 ch) {
 	if (ch == keycode_Escape)
 		return true;
