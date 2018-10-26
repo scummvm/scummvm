@@ -157,6 +157,10 @@ public:
 	virtual void acceptReadChar(glui32 arg) override;
 
 	virtual void getSize(glui32 *width, glui32 *height) override;
+
+	virtual void requestCharEvent() override { _charRequest = true; }
+
+	virtual void requestCharEventUni() override { _charRequestUni = true; }
 };
 
 } // End of namespace Gargoyle

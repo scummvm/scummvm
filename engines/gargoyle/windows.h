@@ -362,6 +362,8 @@ public:
 
 	int acceptScroll(glui32 arg);
 
+	void setTerminatorsLineEvent(glui32 *keycodes, glui32 count);
+
 	virtual  glui32 drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height) { return false; }
 
 	virtual void acceptReadLine(glui32 arg);
@@ -373,6 +375,12 @@ public:
 	virtual void setArrangement(glui32 method, glui32 size, Window *keyWin);
 
 	virtual void getSize(glui32 *width, glui32 *height);
+
+	virtual void requestCharEvent();
+
+	virtual void requestCharEventUni();
+
+	virtual void setEchoLineEvent(glui32 val) {}
 };
 typedef Window *winid_t;
 
