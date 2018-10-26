@@ -31,6 +31,7 @@ const LanguageDescription g_languages[] = {
 	{    "zh", "zh_TW", "Chinese (Taiwan)", ZH_TWN },
 	{    "hr", "hr_HR", "Croatian", HR_HRV },
 	{    "cz", "cs_CZ", "Czech", CZ_CZE },
+	{    "da",    "da", "Danish", DA_DAN },
 	{    "nl", "nl_NL", "Dutch", NL_NLD },
 	{    "en",    "en", "English", EN_ANY }, // Generic English (when only one game version exist)
 	{    "gb", "en_GB", "English (GB)", EN_GRB },
