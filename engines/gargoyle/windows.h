@@ -390,6 +390,14 @@ public:
 	virtual void requestMouseEvent() {}
 
 	virtual void requestHyperlinkEvent() {}
+
+	virtual void flowBreak();
+
+	virtual void eraseRect(bool whole, const Common::Rect &box);
+
+	virtual void fillRect(glui32 color, const Common::Rect &box);
+
+	virtual void setBackgroundColor(glui32 color);
 };
 typedef Window *winid_t;
 
