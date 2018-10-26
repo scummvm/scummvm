@@ -655,13 +655,21 @@ void Glk::glk_put_buffer_stream_uni(strid_t str, const glui32 *buf, glui32 len) 
 }
 
 glsi32 Glk::glk_get_char_stream_uni(strid_t str) {
-	// TODO
-	return 0;
+	if (str) {
+		return str->getCharUni();
+	} else {
+		warning("get_char_stream_uni: invalid ref");
+		return -1;
+	}
 }
 
 glui32 Glk::glk_get_buffer_stream_uni(strid_t str, glui32 *buf, glui32 len) {
-	// TODO
-	return 0;
+	if (str) {
+		return str->getBufferUni(buf, len);
+	} else {
+		warning("get_buffer_stream_uni: invalid ref");
+		return 0;
+	}
 }
 
 glui32 Glk::glk_get_line_stream_uni(strid_t str, glui32 *buf, glui32 len) {
