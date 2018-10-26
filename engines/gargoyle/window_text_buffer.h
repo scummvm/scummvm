@@ -208,6 +208,12 @@ public:
 
 	virtual void getSize(glui32 *width, glui32 *height) override;
 
+	virtual void requestCharEvent() override { _charRequest = true; }
+
+	virtual void requestCharEventUni() override { _charRequestUni = true; }
+
+	virtual void setEchoLineEvent(glui32 val) override { _echoLineInput = val != 0; }
+
 	int acceptScroll(glui32 arg);
 
 	glui32 drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height);

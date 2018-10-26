@@ -387,11 +387,25 @@ void Glk::glk_request_timer_events(glui32 millisecs) {
 }
 
 void Glk::glk_request_line_event(winid_t win, char *buf, glui32 maxlen, glui32 initlen) {
-	// TODO
+	if (!win) {
+		warning("request_line_event: invalid ref");
+	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
+			|| win->_lineRequestUni) {
+		warning("request_line_event: window already has keyboard request");
+	} else {
+		win->requestLineEvent(buf, maxlen, initlen);
+	}
 }
 
 void Glk::glk_request_char_event(winid_t win) {
-	// TODO
+	if (!win) {
+		warning("request_char_event: invalid ref");
+	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
+			|| win->_lineRequestUni) {
+		warning("request_char_event: window already has keyboard request");
+	} else {
+		win->requestCharEvent();
+	}
 }
 
 void Glk::glk_request_mouse_event(winid_t win) {
@@ -413,7 +427,11 @@ void Glk::glk_cancel_mouse_event(winid_t win) {
 #ifdef GLK_MODULE_LINE_ECHO
 
 void Glk::glk_set_echo_line_event(winid_t win, glui32 val) {
-	// TODO
+	if (!win) {
+		warning("set_echo_line_event: invalid ref");
+	} else {
+		win->setEchoLineEvent(val);
+	}
 }
 
 #endif /* GLK_MODULE_LINE_ECHO */
@@ -421,7 +439,11 @@ void Glk::glk_set_echo_line_event(winid_t win, glui32 val) {
 #ifdef GLK_MODULE_LINE_TERMINATORS
 
 void Glk::glk_set_terminators_line_event(winid_t win, glui32 *keycodes, glui32 count) {
-	// TODO
+	if (!win) {
+		warning("set_terminators_line_event: invalid ref");
+	} else {
+		win->setTerminatorsLineEvent(keycodes, count);
+	}
 }
 
 #endif /* GLK_MODULE_LINE_TERMINATORS */
@@ -505,12 +527,25 @@ strid_t Glk::glk_stream_open_memory_uni(glui32 *buf, glui32 buflen, FileMode fmo
 }
 
 void Glk::glk_request_char_event_uni(winid_t win) {
-	// TODO
+	if (!win) {
+		warning("request_char_event_uni: invalid ref");
+	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
+			|| win->_lineRequestUni) {
+		warning("request_char_event_uni: window already has keyboard request");
+	} else {
+		win->requestCharEvent();
+	}
 }
 
-void Glk::glk_request_line_event_uni(winid_t win, glui32 *buf,
-	glui32 maxlen, glui32 initlen) {
-	// TODO
+void Glk::glk_request_line_event_uni(winid_t win, glui32 *buf, glui32 maxlen, glui32 initlen) {
+	if (!win) {
+		warning("request_line_event_uni: invalid ref");
+	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
+			|| win->_lineRequestUni) {
+		warning("request_line_event_uni: window already has keyboard request");
+	} else {
+		win->requestLineEventUni(buf, maxlen, initlen);
+	}
 }
 
 #endif /* GLK_MODULE_UNICODE */
