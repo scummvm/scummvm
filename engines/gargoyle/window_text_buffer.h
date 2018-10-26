@@ -66,8 +66,6 @@ private:
 	 */
 	void putTextUni(const glui32 *buf, int len, int pos, int oldlen);
 
-	bool flowBreak();
-
 	void acceptLine(glui32 keycode);
 
 	/**
@@ -221,6 +219,8 @@ public:
 	virtual void requestHyperlinkEvent() override { _hyperRequest = true; }
 
 	virtual void cancelCharEvent() override { _charRequest = _charRequestUni = false; }
+
+	virtual void flowBreak() override;
 };
 
 } // End of namespace Gargoyle

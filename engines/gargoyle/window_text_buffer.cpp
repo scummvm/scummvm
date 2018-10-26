@@ -296,12 +296,6 @@ glui32 TextBufferWindow::drawPicture(glui32 image, glui32 align, glui32 scaled, 
 	return error;
 }
 
-bool TextBufferWindow::flowBreak() {
-	while (_ladjn || _radjn)
-		putCharUni('\n');
-	return true;
-}
-
 void TextBufferWindow::putText(const char *buf, int len, int pos, int oldlen) {
 	int diff = len - oldlen;
 
@@ -1638,6 +1632,11 @@ void TextBufferWindow::getSize(glui32 *width, glui32 *height) const {
 		*width = (_bbox.width() - g_conf->_tMarginX * 2) / g_conf->_cellW;
 	if (height)
 		*height = (_bbox.height() - g_conf->_tMarginY * 2) / g_conf->_cellH;
+}
+
+void TextBufferWindow::flowBreak() {
+	while (_ladjn || _radjn)
+		putCharUni('\n');
 }
 
 /*--------------------------------------------------------------------------*/

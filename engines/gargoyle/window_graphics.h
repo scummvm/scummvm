@@ -35,9 +35,6 @@ class GraphicsWindow : public Window {
 private:
 	void touch();
 
-	void eraseRect(int whole, glsi32 x0, glsi32 y0, glui32 width, glui32 height);
-	void fillRect(glui32 color, glsi32 x0, glsi32 y0, glui32 width, glui32 height);
-	void setBackgroundColor(glui32 color);
 	void drawPicture(Picture *src, int x0, int y0, int width, int height, glui32 linkval);
 public:
 	unsigned char _bgnd[3];
@@ -89,7 +86,13 @@ public:
 	 */
 	virtual void redraw() override;
 
+	virtual void eraseRect(bool whole, const Common::Rect &box) override;
+
+	virtual void fillRect(glui32 color, const Common::Rect &box) override;
+
 	virtual void getSize(glui32 *width, glui32 *height) const override;
+
+	virtual void setBackgroundColor(glui32 color) override;
 };
 
 } // End of namespace Gargoyle

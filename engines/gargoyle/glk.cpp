@@ -21,7 +21,9 @@
  */
 
 #include "gargoyle/glk.h"
+#include "gargoyle/conf.h"
 #include "gargoyle/events.h"
+#include "gargoyle/picture.h"
 #include "gargoyle/streams.h"
 #include "gargoyle/string.h"
 #include "gargoyle/windows.h"
@@ -169,11 +171,27 @@ winid_t Glk::glk_window_get_sibling(winid_t win) {
 }
 
 void Glk::glk_window_clear(winid_t win) {
-	// TODO
+	if (!win) {
+		warning("window_clear: invalid ref");
+	} else if (win->_lineRequest || win->_lineRequestUni) {
+		if (g_conf->_safeClicks && _events->_forceClick) {
+			glk_cancel_line_event(win, NULL);
+			_events->_forceClick = false;
+
+			win->clear();
+		} else {
+			warning("window_clear: window has pending line request");
+			return;
+		}
+	}
 }
 
 void Glk::glk_window_move_cursor(winid_t win, glui32 xpos, glui32 ypos) {
-	// TODO
+	if (!win) {
+		warning("window_move_cursor: invalid ref");
+	} else {
+		win->moveCursor(Common::Point(xpos, ypos));
+	}
 }
 
 strid_t Glk::glk_window_get_stream(winid_t win) {
@@ -583,8 +601,14 @@ glui32 Glk::glk_buffer_canon_normalize_uni(glui32 *buf, glui32 len, glui32 numch
 #ifdef GLK_MODULE_IMAGE
 
 glui32 Glk::glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2) {
-	// TODO
-	return 0;
+/*
+	if (!win) {
+		warning("image_draw: invalid ref");
+	} else if (g_conf->_graphics) {
+		win->imageDraw(image, val1, val2, );
+	}
+	*/
+	return false;
 }
 
 glui32 Glk::glk_image_draw_scaled(winid_t win, glui32 image,
@@ -594,22 +618,44 @@ glui32 Glk::glk_image_draw_scaled(winid_t win, glui32 image,
 }
 
 glui32 Glk::glk_image_get_info(glui32 image, glui32 *width, glui32 *height) {
-	// TODO
-	return 0;
+	if (!g_conf->_graphics)
+		return false;
+
+	Picture *pic = Picture::load(image);
+	if (!pic)
+		return false;
+
+	if (width)
+		*width = pic->w;
+	if (height)
+		*height = pic->h;
+
+	return true;
 }
 
 void Glk::glk_window_flow_break(winid_t win) {
-	// TODO
+	if (!win) {
+		warning("window_erase_rect: invalid ref");
+	} else {
+		win->flowBreak();
+	}
 }
 
-void Glk::glk_window_erase_rect(winid_t win,
-	glsi32 left, glsi32 top, glui32 width, glui32 height) {
-	// TODO
+void Glk::glk_window_erase_rect(winid_t win, glsi32 left, glsi32 top, glui32 width, glui32 height) {
+	if (!win) {
+		warning("window_erase_rect: invalid ref");
+	} else {
+		win->eraseRect(false, Common::Rect(left, top, left + width, top + height));
+	}
 }
 
-void Glk::glk_window_fill_rect(winid_t win, glui32 color,
-	glsi32 left, glsi32 top, glui32 width, glui32 height) {
-	// TODO
+void Glk::glk_window_fill_rect(winid_t win, glui32 color, glsi32 left, glsi32 top,
+		glui32 width, glui32 height) {
+	if (!win) {
+		warning("window_fill_rect: invalid ref");
+	} else {
+		win->eraseRect(color, Common::Rect(left, top, left + width, top + height));
+	}
 }
 
 void Glk::glk_window_set_background_color(winid_t win, glui32 color) {
