@@ -133,7 +133,20 @@ public:
 
 	virtual void setStyle(glui32 val) {}
 
+	/**
+	 * Get a character from the stream
+	 */
 	virtual glsi32 getChar() { return -1; }
+
+	/**
+	 * Get a unicode character from the stream
+	 */
+	virtual glsi32 getCharUni() { return -1; }
+
+	/**
+	 * Get a unicode buffer
+	 */
+	virtual glui32 getBufferUni(glui32 *buf, glui32 len) { return 0; }
 };
 typedef Stream *strid_t;
 
@@ -218,7 +231,20 @@ public:
 
 	virtual void setPosition(glui32 pos, glui32 seekMode) override;
 
+	/**
+	 * Get a character from the stream
+	 */
 	virtual glsi32 getChar() override;
+
+	/**
+	 * Get a unicode character from the stream
+	 */
+	virtual glsi32 getCharUni() override;
+
+	/**
+	 * Get a unicode buffer
+	 */
+	virtual glui32 getBufferUni(glui32 *buf, glui32 len) override;
 };
 
 /**
@@ -275,7 +301,20 @@ public:
 
 	virtual void setPosition(glui32 pos, glui32 seekMode) override;
 
+	/**
+	 * Get a character from the stream
+	 */
 	virtual glsi32 getChar() override;
+
+	/**
+	 * Get a unicode character from the stream
+	 */
+	virtual glsi32 getCharUni() override;
+
+	/**
+	 * Get a unicode buffer
+	 */
+	virtual glui32 getBufferUni(glui32 *buf, glui32 len) override;
 };
 
 /**

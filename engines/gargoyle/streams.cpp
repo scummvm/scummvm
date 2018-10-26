@@ -369,6 +369,81 @@ glsi32 MemoryStream::getChar() {
 	}
 }
 
+glsi32 MemoryStream::getCharUni() {
+	if (!_readable)
+		return -1;
+
+	if (_bufPtr < _bufEnd) {
+		if (!_unicode) {
+			unsigned char ch;
+			ch = *((unsigned char *)_bufPtr);
+			_bufPtr = ((unsigned char *)_bufPtr) + 1;
+			_readCount++;
+			return ch;
+		} else {
+			glui32 ch;
+			ch = *((glui32 *)_bufPtr);
+			_bufPtr = ((glui32 *)_bufPtr) + 1;
+			_readCount++;
+			return ch;
+		}
+	} else {
+		return -1;
+	}
+}
+
+glui32 MemoryStream::getBufferUni(glui32 *buf, glui32 len) {
+	if (!_readable)
+		return 0;
+
+	if (_bufPtr >= _bufEnd) {
+		len = 0;
+	} else {
+		if (!_unicode) {
+			unsigned char *bp = (unsigned char *)_bufPtr;
+			if (bp + len > (unsigned char *)_bufEnd)
+			{
+				glui32 lx;
+				lx = (bp + len) - (unsigned char *)_bufEnd;
+				if (lx < len)
+					len -= lx;
+				else
+					len = 0;
+			}
+			if (len) {
+				glui32 i;
+				for (i = 0; i < len; i++)
+					buf[i] = bp[i];
+				bp += len;
+				if (bp >(unsigned char *)_bufEof)
+					_bufEof = bp;
+			}
+			_readCount += len;
+			_bufPtr = bp;
+		} else {
+			glui32 *bp = (glui32 *)_bufPtr;
+			if (bp + len > (glui32 *)_bufEnd) {
+				glui32 lx;
+				lx = (bp + len) - (glui32 *)_bufEnd;
+				if (lx < len)
+					len -= lx;
+				else
+					len = 0;
+			}
+			if (len) {
+				memcpy(buf, bp, len * 4);
+				bp += len;
+				if (bp >(glui32 *)_bufEof)
+					_bufEof = bp;
+			}
+			_readCount += len;
+			_bufPtr = bp;
+		}
+	}
+
+	return len;
+}
+
 /*--------------------------------------------------------------------------*/
 
 FileStream::FileStream(Streams *streams, uint32 rock, bool unicode) :
@@ -620,6 +695,103 @@ glsi32 FileStream::getChar() {
 		return (glsi32)res;
 	} else {
 		return -1;
+	}
+}
+
+glsi32 FileStream::getCharUni() {
+	if (!_readable)
+		return -1;
+
+	ensureOp(filemode_Read);
+	int res;
+	if (!_unicode) {
+		res = _inFile->readByte();
+	} else if (_textFile) {
+		res = getCharUtf8();
+	} else {
+		glui32 ch;
+		res = _inFile->readByte();
+		if (res == -1)
+			return -1;
+		ch = (res & 0xFF);
+		res = _inFile->readByte();
+		if (res == -1)
+			return -1;
+		ch = (ch << 8) | (res & 0xFF);
+		res = _inFile->readByte();
+		if (res == -1)
+			return -1;
+		ch = (ch << 8) | (res & 0xFF);
+		res = _inFile->readByte();
+		if (res == -1)
+			return -1;
+		ch = (ch << 8) | (res & 0xFF);
+		res = ch;
+	}
+	if (res != -1) {
+		_readCount++;
+		return (glsi32)res;
+	} else {
+		return -1;
+	}
+}
+
+
+glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
+	if (!_readable)
+		return 0;
+
+	ensureOp(filemode_Read);
+	if (!_unicode) {
+		glui32 lx;
+		for (lx = 0; lx<len; lx++) {
+			int res;
+			glui32 ch;
+			res = _inFile->readByte();
+			if (res == -1)
+				break;
+			ch = (res & 0xFF);
+			_readCount++;
+			buf[lx] = ch;
+		}
+		return lx;
+	} else if (_textFile) {
+		glui32 lx;
+		for (lx = 0; lx<len; lx++) {
+			glui32 ch;
+			ch = getCharUtf8();
+			if (ch == -1)
+				break;
+			_readCount++;
+			buf[lx] = ch;
+		}
+		return lx;
+	} else {
+		glui32 lx;
+		for (lx = 0; lx<len; lx++)
+		{
+			int res;
+			glui32 ch;
+			res = _inFile->readByte();
+			if (res == -1)
+				break;
+			ch = (res & 0xFF);
+			res = _inFile->readByte();
+			if (res == -1)
+				break;
+			ch = (ch << 8) | (res & 0xFF);
+			res = _inFile->readByte();
+			if (res == -1)
+				break;
+			ch = (ch << 8) | (res & 0xFF);
+			res = _inFile->readByte();
+			if (res == -1)
+				break;
+			ch = (ch << 8) | (res & 0xFF);
+			_readCount++;
+			buf[lx] = ch;
+		}
+		return lx;
 	}
 }
 
