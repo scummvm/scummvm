@@ -27,16 +27,39 @@
 #include "gargoyle/streams.h"
 #include "gargoyle/string.h"
 #include "gargoyle/windows.h"
+#include "gargoyle/window_graphics.h"
+#include "gargoyle/window_text_buffer.h"
 #include "gargoyle/window_pair.h"
+
 
 namespace Gargoyle {
 
 Glk::Glk(OSystem *syst, const GargoyleGameDescription *gameDesc) : 
-	GargoyleEngine(syst, gameDesc), _gliFirstEvent(false) {
+		GargoyleEngine(syst, gameDesc), _gliFirstEvent(false) {
+	// Set uppercase/lowercase tables
+	int ix, res;
+	for (ix = 0; ix < 256; ix++) {
+		_charToupperTable[ix] = ix;
+		_charTolowerTable[ix] = ix;
+	}
+
+	for (ix = 0; ix < 256; ix++) {
+		if (ix >= 'A' && ix <= 'Z')
+			res = ix + ('a' - 'A');
+		else if (ix >= 0xC0 && ix <= 0xDE && ix != 0xD7)
+			res = ix + 0x20;
+		else
+			res = 0;
+
+		if (res) {
+			_charTolowerTable[ix] = res;
+			_charToupperTable[res] = ix;
+		}
+	}
 }
 
 void Glk::glk_exit(void) {
-	// TODO
+	quitGame();
 }
 
 void Glk::glk_set_interrupt_handler(void(*func)(void)) {
@@ -44,27 +67,109 @@ void Glk::glk_set_interrupt_handler(void(*func)(void)) {
 }
 
 void Glk::glk_tick(void) {
-	// TODO
+	// Nothing needed
 }
 
-glui32 Glk::glk_gestalt(glui32 sel, glui32 val) {
-	// TODO
-	return 0;
+glui32 Glk::glk_gestalt(glui32 id, glui32 val) {
+	return glk_gestalt_ext(id, val, nullptr, 0);
 }
 
-glui32 Glk::glk_gestalt_ext(glui32 sel, glui32 val, glui32 *arr, glui32 arrlen) {
-	// TODO
-	return 0;
+glui32 Glk::glk_gestalt_ext(glui32 id, glui32 val, glui32 *arr, glui32 arrlen) {
+	switch (id) {
+	case gestalt_Version:
+		return 0x00000703;
+
+	case gestalt_LineInput:
+		if (val >= 32 && val < 0x10ffff)
+			return true;
+		else
+			return false;
+
+	case gestalt_CharInput:
+		if (val >= 32 && val < 0x10ffff)
+			return true;
+		else if (val == keycode_Return)
+			return true;
+		else
+			return false;
+
+	case gestalt_CharOutput:
+		if (val >= 32 && val < 0x10ffff) {
+			if (arr && arrlen >= 1)
+				arr[0] = 1;
+			return gestalt_CharOutput_ExactPrint;
+		} else {
+			// cheaply, we don't do any translation of printed characters,
+			// so the output is always one character even if it's wrong.
+			if (arr && arrlen >= 1)
+				arr[0] = 1;
+			return gestalt_CharOutput_CannotPrint;
+		}
+
+	case gestalt_MouseInput:
+		if (val == wintype_TextGrid)
+			return true;
+		if (val == wintype_Graphics)
+			return true;
+		return false;
+
+	case gestalt_Timer:
+		return true;
+
+	case gestalt_Graphics:
+	case gestalt_GraphicsTransparency:
+		return g_conf->_graphics;
+
+	case gestalt_DrawImage:
+		if (val == wintype_TextBuffer)
+			return g_conf->_graphics;
+		if (val == wintype_Graphics)
+			return g_conf->_graphics;
+		return false;
+
+	case gestalt_Sound:
+	case gestalt_SoundVolume:
+	case gestalt_SoundMusic:
+	case gestalt_SoundNotify:
+		return g_conf->_sound;
+
+	case gestalt_Sound2:
+		return false;
+
+	case gestalt_Unicode:
+		return true;
+	case gestalt_UnicodeNorm:
+		return true;
+
+	case gestalt_Hyperlinks:
+		return true;
+	case gestalt_HyperlinkInput:
+		return true;
+
+	case gestalt_LineInputEcho:
+		return true;
+	case gestalt_LineTerminators:
+		return true;
+	case gestalt_LineTerminatorKey:
+		return Window::checkTerminator(val);
+
+	case gestalt_DateTime:
+		return true;
+
+	case gestalt_GarglkText:
+		return true;
+
+	default:
+		return false;
+	}
 }
 
 unsigned char Glk::glk_char_to_lower(unsigned char ch) {
-	// TODO
-	return '\0';
+	return _charTolowerTable[ch];
 }
 
 unsigned char Glk::glk_char_to_upper(unsigned char ch) {
-	// TODO
-	return '\0';
+	return _charToupperTable[ch];
 }
 
 winid_t Glk::glk_window_get_root(void) const {
@@ -224,8 +329,7 @@ void Glk::glk_set_window(winid_t win) {
 	_streams->setCurrent(win ? win->_stream : nullptr);
 }
 
-strid_t Glk::glk_stream_open_file(frefid_t fileref, FileMode fmode,
-	glui32 rock) {
+strid_t Glk::glk_stream_open_file(frefid_t fileref, FileMode fmode, glui32 rock) {
 	// TODO
 	return nullptr;
 }
@@ -601,20 +705,36 @@ glui32 Glk::glk_buffer_canon_normalize_uni(glui32 *buf, glui32 len, glui32 numch
 #ifdef GLK_MODULE_IMAGE
 
 glui32 Glk::glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2) {
-/*
 	if (!win) {
 		warning("image_draw: invalid ref");
 	} else if (g_conf->_graphics) {
-		win->imageDraw(image, val1, val2, );
+		TextBufferWindow *textWin = dynamic_cast<TextBufferWindow *>(win);
+		GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
+
+		if (textWin)
+			textWin->drawPicture(image, val1, false, 0, 0);
+		else if (gfxWin)
+			gfxWin->drawPicture(image, val1, val2, false, 0, 0);
 	}
-	*/
+
 	return false;
 }
 
-glui32 Glk::glk_image_draw_scaled(winid_t win, glui32 image,
-	glsi32 val1, glsi32 val2, glui32 width, glui32 height) {
-	// TODO
-	return 0;
+glui32 Glk::glk_image_draw_scaled(winid_t win, glui32 image, glsi32 val1, glsi32 val2,
+		glui32 width, glui32 height) {
+	if (!win) {
+		warning("image_draw_scaled: invalid ref");
+	} else if (g_conf->_graphics) {
+		TextBufferWindow *textWin = dynamic_cast<TextBufferWindow *>(win);
+		GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
+
+		if (textWin)
+			textWin->drawPicture(image, val1, true, width, height);
+		else if (gfxWin)
+			gfxWin->drawPicture(image, val1, val2, true, width, height);
+	}
+
+	return false;
 }
 
 glui32 Glk::glk_image_get_info(glui32 image, glui32 *width, glui32 *height) {
@@ -659,7 +779,11 @@ void Glk::glk_window_fill_rect(winid_t win, glui32 color, glsi32 left, glsi32 to
 }
 
 void Glk::glk_window_set_background_color(winid_t win, glui32 color) {
-	// TODO
+	if (!win) {
+		warning("window_set_background_color: invalid ref");
+	} else {
+		win->setBackgroundColor(color);
+	}
 }
 
 #endif /* GLK_MODULE_IMAGE */

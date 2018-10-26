@@ -36,6 +36,8 @@ namespace Gargoyle {
 class Glk : public GargoyleEngine {
 private:
 	bool _gliFirstEvent;
+	unsigned char _charTolowerTable[256];
+	unsigned char _charToupperTable[256];
 private:
 	/**
 	 * Pick first window which might want input. This is called after every keystroke.
@@ -53,8 +55,8 @@ public:
 	void glk_set_interrupt_handler(void(*func)(void));
 	void glk_tick(void);
 
-	glui32 glk_gestalt(glui32 sel, glui32 val);
-	glui32 glk_gestalt_ext(glui32 sel, glui32 val, glui32 *arr, glui32 arrlen);
+	glui32 glk_gestalt(glui32 id, glui32 val);
+	glui32 glk_gestalt_ext(glui32 id, glui32 val, glui32 *arr, glui32 arrlen);
 
 	unsigned char glk_char_to_lower(unsigned char ch);
 	unsigned char glk_char_to_upper(unsigned char ch);

@@ -275,8 +275,8 @@ public:
 	byte _fgColor[3];
 
 	gidispatch_rock_t _dispRock;
-protected:
-	bool checkTerminator(glui32 ch);
+public:
+	static bool checkTerminator(glui32 ch);
 public:
 	/**
 	 * Constructor
@@ -368,8 +368,6 @@ public:
 	int acceptScroll(glui32 arg);
 
 	void setTerminatorsLineEvent(glui32 *keycodes, glui32 count);
-
-	virtual  glui32 drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height) { return false; }
 
 	virtual void acceptReadLine(glui32 arg);
 
