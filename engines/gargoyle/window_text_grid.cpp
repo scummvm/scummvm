@@ -645,7 +645,7 @@ void TextGridWindow::redraw() {
 	}
 }
 
-void TextGridWindow::getSize(glui32 *width, glui32 *height) {
+void TextGridWindow::getSize(glui32 *width, glui32 *height) const {
 	if (width)
 		*width = _bbox.width() / g_conf->_cellW;
 	if (height)

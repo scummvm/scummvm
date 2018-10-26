@@ -1633,7 +1633,7 @@ void TextBufferWindow::copyTextToClipboard(const glui32 *text, size_t len) {
 	// TODO
 }
 
-void TextBufferWindow::getSize(glui32 *width, glui32 *height) {
+void TextBufferWindow::getSize(glui32 *width, glui32 *height) const {
 	if (width)
 		*width = (_bbox.width() - g_conf->_tMarginX * 2) / g_conf->_cellW;
 	if (height)

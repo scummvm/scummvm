@@ -55,6 +55,9 @@ public:
 	 */
 	virtual ~GraphicsWindow();
 
+	glui32 drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int scale,
+		glui32 imagewidth, glui32 imageheight);
+
 	/**
 	 * Rearranges the window
 	 */
@@ -77,15 +80,16 @@ public:
 	 */
 	virtual void cancelHyperlinkEvent() override { _hyperRequest = false; }
 
+	virtual void requestMouseEvent() override { _mouseRequest = true; }
+
+	virtual void requestHyperlinkEvent() override { _hyperRequest = true; }
+
 	/**
 	 * Redraw the window
 	 */
 	virtual void redraw() override;
 
-	virtual void getSize(glui32 *width, glui32 *height) override;
-
-	glui32 drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int scale,
-		glui32 imagewidth, glui32 imageheight);
+	virtual void getSize(glui32 *width, glui32 *height) const override;
 };
 
 } // End of namespace Gargoyle

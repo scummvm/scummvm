@@ -344,6 +344,11 @@ public:
 	virtual void cancelLineEvent(Event *ev);
 
 	/**
+	 * Cancel a character event
+	 */
+	virtual void cancelCharEvent() {}
+
+	/**
 	 * Cancel a mouse event
 	 */
 	virtual void cancelMouseEvent() {}
@@ -374,13 +379,17 @@ public:
 
 	virtual void setArrangement(glui32 method, glui32 size, Window *keyWin);
 
-	virtual void getSize(glui32 *width, glui32 *height);
+	virtual void getSize(glui32 *width, glui32 *height) const;
 
 	virtual void requestCharEvent();
 
 	virtual void requestCharEventUni();
 
 	virtual void setEchoLineEvent(glui32 val) {}
+
+	virtual void requestMouseEvent() {}
+
+	virtual void requestHyperlinkEvent() {}
 };
 typedef Window *winid_t;
 

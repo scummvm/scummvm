@@ -531,7 +531,7 @@ bool Window::imageDraw(glui32 image, glui32 align, glsi32 val1, glsi32 val2) {
 	return false;
 }
 
-void Window::getSize(glui32 *width, glui32 *height) {
+void Window::getSize(glui32 *width, glui32 *height) const {
 	if (width)
 		*width = 0;
 	if (height)

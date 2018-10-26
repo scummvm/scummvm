@@ -101,6 +101,15 @@ struct Event {
 	 * Constructor
 	 */
 	Event() : type(evtype_None), window(nullptr), val1(0), val2(0) {}
+
+	/**
+	 * Clear
+	 */
+	void clear() {
+		type = evtype_None;
+		window = nullptr;
+		val1 = val2 = 0;
+	}
 };
 typedef Event event_t;
 
