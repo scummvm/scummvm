@@ -198,7 +198,7 @@ void TextGridWindow::click(const Common::Point &newPos) {
 		_windows->setFocus(this);
 
 	if (_mouseRequest) {
-		g_vm->_events->eventStore(evtype_MouseInput, this, x / g_conf->_cellW, y / g_conf->_leading);
+		g_vm->_events->store(evtype_MouseInput, this, x / g_conf->_cellW, y / g_conf->_leading);
 		_mouseRequest = false;
 		if (g_conf->_safeClicks)
 			g_vm->_events->_forceClick = true;
@@ -208,7 +208,7 @@ void TextGridWindow::click(const Common::Point &newPos) {
 		glui32 linkval = g_vm->_windowMask->getHyperlink(newPos);
 		if (linkval)
 		{
-			g_vm->_events->eventStore(evtype_Hyperlink, this, linkval, 0);
+			g_vm->_events->store(evtype_Hyperlink, this, linkval, 0);
 			_hyperRequest = false;
 			if (g_conf->_safeClicks)
 				g_vm->_events->_forceClick = true;
@@ -405,7 +405,7 @@ void TextGridWindow::acceptReadChar(glui32 arg) {
 
 	_charRequest = false;
 	_charRequestUni = false;
-	g_vm->_events->eventStore(evtype_CharInput, this, key, 0);
+	g_vm->_events->store(evtype_CharInput, this, key, 0);
 }
 
 void TextGridWindow::acceptLine(glui32 keycode) {
@@ -444,11 +444,11 @@ void TextGridWindow::acceptLine(glui32 keycode) {
 		glui32 val2 = keycode;
 		if (val2 == keycode_Return)
 			val2 = 0;
-		g_vm->_events->eventStore(evtype_LineInput, this, _inLen, val2);
+		g_vm->_events->store(evtype_LineInput, this, _inLen, val2);
 		free(_lineTerminators);
 		_lineTerminators = NULL;
 	} else {
-		g_vm->_events->eventStore(evtype_LineInput, this, _inLen, 0);
+		g_vm->_events->store(evtype_LineInput, this, _inLen, 0);
 	}
 	_lineRequest = false;
 	_lineRequestUni = false;

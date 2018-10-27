@@ -574,7 +574,7 @@ void TextBufferWindow::click(const Common::Point &newPos) {
 	if (_hyperRequest) {
 		glui32 linkval = g_vm->_windowMask->getHyperlink(newPos);
 		if (linkval) {
-			g_vm->_events->eventStore(evtype_Hyperlink, this, linkval, 0);
+			g_vm->_events->store(evtype_Hyperlink, this, linkval, 0);
 			_hyperRequest = false;
 			if (g_conf->_safeClicks)
 				g_vm->_events->_forceClick = 1;
@@ -1246,7 +1246,7 @@ void TextBufferWindow::acceptReadChar(glui32 arg) {
 
 	_charRequest = false;
 	_charRequestUni = false;
-	g_vm->_events->eventStore(evtype_CharInput, this, key, 0);
+	g_vm->_events->store(evtype_CharInput, this, key, 0);
 }
 
 void TextBufferWindow::acceptReadLine(glui32 arg) {
@@ -1479,11 +1479,11 @@ void TextBufferWindow::acceptLine(glui32 keycode) {
 		glui32 val2 = keycode;
 		if (val2 == keycode_Return)
 			val2 = 0;
-		g_vm->_events->eventStore(evtype_LineInput, this, len, val2);
+		g_vm->_events->store(evtype_LineInput, this, len, val2);
 		free(_lineTerminators);
 		_lineTerminators = nullptr;
 	} else {
-		g_vm->_events->eventStore(evtype_LineInput, this, len, 0);
+		g_vm->_events->store(evtype_LineInput, this, len, 0);
 	}
 
 	_lineRequest = false;
