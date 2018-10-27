@@ -147,6 +147,12 @@ public:
 	 * Get a unicode buffer
 	 */
 	virtual glui32 getBufferUni(glui32 *buf, glui32 len) { return 0; }
+
+	/**
+	 * Get a unicode line
+	 */
+	virtual glui32 getLineUni(glui32 *ubuf, glui32 len) { return 0; }
+
 };
 typedef Stream *strid_t;
 
@@ -245,6 +251,11 @@ public:
 	 * Get a unicode buffer
 	 */
 	virtual glui32 getBufferUni(glui32 *buf, glui32 len) override;
+
+	/**
+	 * Get a unicode line
+	 */
+	virtual glui32 getLineUni(glui32 *ubuf, glui32 len) override;
 };
 
 /**
@@ -315,6 +326,11 @@ public:
 	 * Get a unicode buffer
 	 */
 	virtual glui32 getBufferUni(glui32 *buf, glui32 len) override;
+
+	/**
+	 * Get a unicode line
+	 */
+	virtual glui32 getLineUni(glui32 *ubuf, glui32 len) override;
 };
 
 /**
