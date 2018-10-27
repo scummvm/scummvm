@@ -215,33 +215,10 @@ enum ImageAlign {
 
 #endif /* GLK_MODULE_IMAGE */
 
-#ifdef GLK_MODULE_DATETIME
-
-struct glktimeval_struct {
-	glsi32 high_sec;
-	glui32 low_sec;
-	glsi32 microsec;
-};
-typedef glktimeval_struct glktimeval_t;
-
-struct glkdate_struct {
-	glsi32 year;     ///< full (four-digit) year */
-	glsi32 month;    ///< 1-12, 1 is January
-	glsi32 day;      ///< 1-31
-	glsi32 weekday;  ///< 0-6, 0 is Sunday
-	glsi32 hour;     ///< 0-23
-	glsi32 minute;   ///< 0-59
-	glsi32 second;   ///< 0-59, maybe 60 during a leap second
-	glsi32 microsec; ///< 0-999999
-};
-typedef glkdate_struct glkdate_t;
-
 union gidispatch_rock_t {
 	glui32 num;
 	void *ptr;
 };
-
-#endif /* GLK_MODULE_DATETIME */
 
 } // End of namespace Gargoyle
 

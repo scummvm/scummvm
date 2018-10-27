@@ -156,6 +156,11 @@ void WindowStream::setStyle(glui32 val) {
 		_window->_echoStream->setStyle(val);
 }
 
+void WindowStream::setHyperlink(glui32 linkVal) {
+	if (_writable)
+		_window->_attr.hyper = linkVal;
+}
+
 /*--------------------------------------------------------------------------*/
 
 MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint32 rock, bool unicode) :
