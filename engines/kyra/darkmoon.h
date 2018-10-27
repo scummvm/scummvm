@@ -119,6 +119,10 @@ private:
 
 	const uint8 *_dscDoorType5Offs;
 
+	// Fight
+	static const uint8 _monsterAcHitChanceTbl1[];
+	static const uint8 _monsterAcHitChanceTbl2[];
+
 	// Rest party
 	void restParty_npc();
 	bool restParty_extraAbortCondition();

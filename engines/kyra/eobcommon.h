@@ -915,6 +915,8 @@ protected:
 	bool _preventMonsterFlash;
 	int16 _foundMonstersArray[5];
 	int8 _monsterBlockPosArray[6];
+	const uint8 *_monsterAcHitChanceTable1;
+	const uint8 *_monsterAcHitChanceTable2;
 
 	// magic
 	void useMagicBookOrSymbol(int charIndex, int type);

@@ -1109,6 +1109,9 @@ void EoBEngine::initStaticResource() {
 		p->dmgModifierEvade = *ps++;
 	}
 
+	_monsterAcHitChanceTable1 = _monsterAcHitChanceTbl1;
+	_monsterAcHitChanceTable2 = _monsterAcHitChanceTbl2;
+
 	static const char *const errorSlotNoNameString[3] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielstaende mues-\r sen einen Namen\r haben!",
@@ -1212,6 +1215,14 @@ const uint8 EoBEngine::_egaDefaultPalette[] = {
 	0, 5, 3, 2, 10, 14, 12, 6, 4, 11, 9, 1, 0, 8, 7, 15
 };
 
+const uint8 EoBEngine::_monsterAcHitChanceTbl1[] = {
+	3, 2, 1, 3
+};
+
+const uint8 EoBEngine::_monsterAcHitChanceTbl2[] = {
+	2, 1, 1, 1
+};
+
 void DarkMoonEngine::initStaticResource() {
 	int temp;
 	_mainMenuStrings = _staticres->loadStrings(kEoB2MainMenuStrings, temp);
@@ -1261,6 +1272,9 @@ void DarkMoonEngine::initStaticResource() {
 	_wallOfForceDsNumW = _staticres->loadRawData(kEoB2WallOfForceNumW, temp);
 	_wallOfForceDsNumH = _staticres->loadRawData(kEoB2WallOfForceNumH, temp);
 	_wallOfForceShpId = _staticres->loadRawData(kEoB2WallOfForceShpId, temp);
+
+	_monsterAcHitChanceTable1 = _monsterAcHitChanceTbl1;
+	_monsterAcHitChanceTable2 = _monsterAcHitChanceTbl2;
 
 	static const char *const errorSlotNoNameString[3] = {
 		" You must specify\r a name for your\r save game!",
@@ -1362,6 +1376,14 @@ const KyraRpgGUISettings DarkMoonEngine::_guiSettings = {
 
 const uint8 DarkMoonEngine::_egaDefaultPalette[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+};
+
+const uint8 DarkMoonEngine::_monsterAcHitChanceTbl1[] = {
+	1, 3, 3, 2
+};
+
+const uint8 DarkMoonEngine::_monsterAcHitChanceTbl2[] = {
+	1, 1, 2, 1
 };
 
 #endif // ENABLE_EOB

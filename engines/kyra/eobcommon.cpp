@@ -66,6 +66,8 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = 0;
 	_blackBoxSmallGrid = _weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
 
+	_monsterAcHitChanceTable1 = _monsterAcHitChanceTable2 = 0;
+	
 	_monsterDustStrings = 0;
 	_enemyMageSpellList = 0;
 	_enemyMageSfx = 0;
@@ -2366,13 +2368,10 @@ int EoBCoreEngine::getDexHitChanceModifier(int charIndex) {
 }
 
 int EoBCoreEngine::getMonsterAcHitChanceModifier(int charIndex, int monsterAc) {
-	static const uint8 mod1[] = { 1, 3, 3, 2 };
-	static const uint8 mod2[] = { 1, 1, 2, 1 };
-
 	int l = _characters[charIndex].level[0] - 1;
 	int cm = _charClassModifier[_characters[charIndex].cClass];
 
-	return (20 - ((l / mod1[cm]) * mod2[cm])) - monsterAc;
+	return (20 - ((l / _monsterAcHitChanceTable1[cm]) * _monsterAcHitChanceTable2[cm])) - monsterAc;
 }
 
 void EoBCoreEngine::explodeMonster(EoBMonsterInPlay *m) {
