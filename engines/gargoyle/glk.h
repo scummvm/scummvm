@@ -38,13 +38,6 @@ private:
 	bool _gliFirstEvent;
 	unsigned char _charTolowerTable[256];
 	unsigned char _charToupperTable[256];
-private:
-	/**
-	 * Pick first window which might want input. This is called after every keystroke.
-	 */
-	void gliInputGuessFocus();
-
-	void gliSelect(event_t *event, bool polled);
 public:
 	/**
 	 * Constructor
