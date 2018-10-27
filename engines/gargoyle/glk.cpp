@@ -25,7 +25,7 @@
 #include "gargoyle/events.h"
 #include "gargoyle/picture.h"
 #include "gargoyle/streams.h"
-#include "gargoyle/string.h"
+#include "gargoyle/unicode.h"
 #include "gargoyle/windows.h"
 #include "gargoyle/window_graphics.h"
 #include "gargoyle/window_text_buffer.h"
@@ -576,8 +576,6 @@ void Glk::glk_cancel_mouse_event(winid_t win) {
 	}
 }
 
-#ifdef GLK_MODULE_LINE_ECHO
-
 void Glk::glk_set_echo_line_event(winid_t win, glui32 val) {
 	if (!win) {
 		warning("set_echo_line_event: invalid ref");
@@ -585,10 +583,6 @@ void Glk::glk_set_echo_line_event(winid_t win, glui32 val) {
 		win->setEchoLineEvent(val);
 	}
 }
-
-#endif /* GLK_MODULE_LINE_ECHO */
-
-#ifdef GLK_MODULE_LINE_TERMINATORS
 
 void Glk::glk_set_terminators_line_event(winid_t win, glui32 *keycodes, glui32 count) {
 	if (!win) {
@@ -598,24 +592,17 @@ void Glk::glk_set_terminators_line_event(winid_t win, glui32 *keycodes, glui32 c
 	}
 }
 
-#endif /* GLK_MODULE_LINE_TERMINATORS */
-
-#ifdef GLK_MODULE_UNICODE
-
 glui32 Glk::glk_buffer_to_lower_case_uni(glui32 *buf, glui32 len, glui32 numchars) {
-	// TODO
-	return 0;
+	return bufferChangeCase(buf, len, numchars, CASE_LOWER, COND_ALL, true);
 }
 
 glui32 Glk::glk_buffer_to_upper_case_uni(glui32 *buf, glui32 len, glui32 numchars) {
-	// TODO
-	return 0;
+	return bufferChangeCase(buf, len, numchars, CASE_UPPER, COND_ALL, true);
 }
 
 glui32 Glk::glk_buffer_to_title_case_uni(glui32 *buf, glui32 len,
 	glui32 numchars, glui32 lowerrest) {
-	// TODO
-	return 0;
+	return bufferChangeCase(buf, len, numchars, CASE_TITLE, COND_LINESTART, lowerrest);
 }
 
 void Glk::glk_put_char_uni(glui32 ch) {
@@ -677,7 +664,7 @@ glui32 Glk::glk_get_line_stream_uni(strid_t str, glui32 *buf, glui32 len) {
 		return str->getLineUni(buf, len);
 	} else  {
 		warning("get_line_stream_uni: invalid ref");
-		return -1;
+		return (glui32 )-1;
 	}
 }
 
@@ -712,10 +699,6 @@ void Glk::glk_request_line_event_uni(winid_t win, glui32 *buf, glui32 maxlen, gl
 	}
 }
 
-#endif /* GLK_MODULE_UNICODE */
-
-#ifdef GLK_MODULE_UNICODE_NORM
-
 glui32 Glk::glk_buffer_canon_decompose_uni(glui32 *buf, glui32 len,
 	glui32 numchars) {
 	// TODO
@@ -725,10 +708,6 @@ glui32 Glk::glk_buffer_canon_decompose_uni(glui32 *buf, glui32 len,
 glui32 Glk::glk_buffer_canon_normalize_uni(glui32 *buf, glui32 len, glui32 numchars) {
 	return 0;
 }
-
-#endif /* GLK_MODULE_UNICODE_NORM */
-
-#ifdef GLK_MODULE_IMAGE
 
 glui32 Glk::glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2) {
 	if (!win) {
@@ -812,10 +791,6 @@ void Glk::glk_window_set_background_color(winid_t win, glui32 color) {
 	}
 }
 
-#endif /* GLK_MODULE_IMAGE */
-
-#ifdef GLK_MODULE_SOUND
-
 schanid_t Glk::glk_schannel_create(glui32 rock) {
 	// TODO
 	return nullptr;
@@ -857,8 +832,6 @@ void Glk::glk_sound_load_hint(glui32 snd, glui32 flag) {
 	// TODO
 }
 
-#ifdef GLK_MODULE_SOUND2
-
 schanid_t Glk::glk_schannel_create_ext(glui32 rock, glui32 volume) {
 	// TODO
 	return nullptr;
@@ -883,11 +856,6 @@ void Glk::glk_schannel_set_volume_ext(schanid_t chan, glui32 vol,
 	// TODO
 }
 
-#endif /* GLK_MODULE_SOUND2 */
-#endif /* GLK_MODULE_SOUND */
-
-#ifdef GLK_MODULE_HYPERLINKS
-
 void Glk::glk_set_hyperlink(glui32 linkval) {
 	// TODO
 }
@@ -907,10 +875,6 @@ void Glk::glk_request_hyperlink_event(winid_t win) {
 void Glk::glk_cancel_hyperlink_event(winid_t win) {
 	// TODO
 }
-
-#endif /* GLK_MODULE_HYPERLINKS */
-
-#ifdef GLK_MODULE_DATETIME
 
 void Glk::glk_current_time(glktimeval_t *time) {
 	// TODO
@@ -954,8 +918,6 @@ glsi32 Glk::glk_date_to_simple_time_local(glkdate_t *date, glui32 factor) {
 	// TODO
 	return 0;
 }
-
-#endif /* GLK_MODULE_DATETIME */
 
 /* XXX non-official Glk functions that may or may not exist */
 
