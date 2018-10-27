@@ -444,6 +444,60 @@ glui32 MemoryStream::getBufferUni(glui32 *buf, glui32 len) {
 	return len;
 }
 
+glui32 MemoryStream::getLineUni(glui32 *ubuf, glui32 len) {
+	bool gotNewline;
+	int lx;
+
+	if (!_readable || len == 0)
+		return 0;
+
+	len -= 1; // for the terminal null
+	if (!_unicode) {
+		if (_bufPtr >= _bufEnd) {
+			len = 0;
+		} else {
+			if ((char *)_bufPtr + len > (char *)_bufEnd) {
+				lx = ((char *)_bufPtr + len) - (char *)_bufEnd;
+				if (lx < (int)len)
+					len -= lx;
+				else
+					len = 0;
+			}
+		}
+		gotNewline = false;
+		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
+			ubuf[lx] = ((unsigned char *)_bufPtr)[lx];
+			gotNewline = (ubuf[lx] == '\n');
+		}
+		ubuf[lx] = '\0';
+		_bufPtr = ((unsigned char *)_bufPtr) + lx;
+	} else {
+		if (_bufPtr >= _bufEnd) {
+			len = 0;
+		} else {
+			if ((glui32 *)_bufPtr + len > (glui32 *)_bufEnd) {
+				lx = ((glui32 *)_bufPtr + len) - (glui32 *)_bufEnd;
+				if (lx < (int)len)
+					len -= lx;
+				else
+					len = 0;
+			}
+		}
+		gotNewline = false;
+		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
+			glui32 ch;
+			ch = ((glui32 *)_bufPtr)[lx];
+			ubuf[lx] = ch;
+			gotNewline = (ch == '\n');
+		}
+		ubuf[lx] = '\0';
+		_bufPtr = ((glui32 *)_bufPtr) + lx;
+	}
+
+	_readCount += lx;
+	return lx;
+}
+
 /*--------------------------------------------------------------------------*/
 
 FileStream::FileStream(Streams *streams, uint32 rock, bool unicode) :
@@ -791,6 +845,75 @@ glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
 			_readCount++;
 			buf[lx] = ch;
 		}
+		return lx;
+	}
+}
+
+glui32 FileStream::getLineUni(glui32 *ubuf, glui32 len) {
+	bool gotNewline;
+	int lx;
+
+	if (!_readable || len == 0)
+		return 0;
+
+	ensureOp(filemode_Read);
+	if (!_unicode) {
+		len -= 1; // for the terminal null
+		gotNewline = false;
+		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
+			int res;
+			glui32 ch;
+			res = _inFile->readByte();
+			if (res == -1)
+				break;
+			ch = (res & 0xFF);
+			_readCount++;
+			ubuf[lx] = ch;
+			gotNewline = (ch == '\n');
+		}
+		ubuf[lx] = '\0';
+		return lx;
+	} else if (_textFile) {
+		len -= 1; /* for the terminal null */
+		gotNewline = false;
+		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
+			glui32 ch;
+			ch = getCharUtf8();
+			if (ch == -1)
+				break;
+			_readCount++;
+			ubuf[lx] = ch;
+			gotNewline = (ch == '\n');
+		}
+		ubuf[lx] = '\0';
+		return lx;
+	} else {
+		len -= 1; // for the terminal null
+		gotNewline = false;
+		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
+			int res;
+			glui32 ch;
+			res = _inFile->readByte();
+			if (res == -1)
+				break;
+			ch = (res & 0xFF);
+			res = _inFile->readByte();
+			if (res == -1)
+				break;
+			ch = (ch << 8) | (res & 0xFF);
+			res = _inFile->readByte();
+			if (res == -1)
+				break;
+			ch = (ch << 8) | (res & 0xFF);
+			res = _inFile->readByte();
+			if (res == -1)
+				break;
+			ch = (ch << 8) | (res & 0xFF);
+			_readCount++;
+			ubuf[lx] = ch;
+			gotNewline = (ch == '\n');
+		}
+		ubuf[lx] = '\0';
 		return lx;
 	}
 }

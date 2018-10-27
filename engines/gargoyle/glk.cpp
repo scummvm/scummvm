@@ -673,8 +673,12 @@ glui32 Glk::glk_get_buffer_stream_uni(strid_t str, glui32 *buf, glui32 len) {
 }
 
 glui32 Glk::glk_get_line_stream_uni(strid_t str, glui32 *buf, glui32 len) {
-	// TODO
-	return 0;
+	if (str) {
+		return str->getLineUni(buf, len);
+	} else  {
+		warning("get_line_stream_uni: invalid ref");
+		return -1;
+	}
 }
 
 strid_t Glk::glk_stream_open_file_uni(frefid_t fileref, FileMode fmode, glui32 rock) {
