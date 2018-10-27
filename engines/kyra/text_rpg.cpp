@@ -148,20 +148,12 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 		if (_vm->gameFlags().lang == Common::JA_JPN) {
 			uint8 cu = (uint8) c;
 			if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
-				if (sjisTextMode) {
-					_currentLine[_numCharsLeft++] = c;
-					_currentLine[_numCharsLeft++] = parseCommand();
-					_currentLine[_numCharsLeft] = '\0';
-				}
-
 				if ((_textDimData[sdx].column + _lineWidth + sjisOffs) > (sd->w << 3))
 					printLine(_currentLine);
 
-				if (!sjisTextMode) {
-					_currentLine[_numCharsLeft++] = c;
-					_currentLine[_numCharsLeft++] = parseCommand();
-					_currentLine[_numCharsLeft] = '\0';
-				}
+				_currentLine[_numCharsLeft++] = c;
+				_currentLine[_numCharsLeft++] = parseCommand();
+				_currentLine[_numCharsLeft] = '\0';
 
 				_lineWidth += sjisOffs;
 				c = parseCommand();
