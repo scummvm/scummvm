@@ -24,7 +24,7 @@
 #include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/screen.h"
-#include "gargoyle/string.h"
+#include "gargoyle/unicode.h"
 
 namespace Gargoyle {
 

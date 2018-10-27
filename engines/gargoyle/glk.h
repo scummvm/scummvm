@@ -157,7 +157,9 @@ public:
 		glui32 count);
 #endif /* GLK_MODULE_LINE_TERMINATORS */
 
-#ifdef GLK_MODULE_UNICODE
+	/** \addtogroup Unicode 
+	 *  @{
+	 */
 
 	glui32 glk_buffer_to_lower_case_uni(glui32 *buf, glui32 len,
 		glui32 numchars);
@@ -184,7 +186,7 @@ public:
 	void glk_request_line_event_uni(winid_t win, glui32 *buf,
 		glui32 maxlen, glui32 initlen);
 
-#endif /* GLK_MODULE_UNICODE */
+	/** @}*/
 
 #ifdef GLK_MODULE_UNICODE_NORM
 

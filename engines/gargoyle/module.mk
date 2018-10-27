@@ -10,7 +10,8 @@ MODULE_OBJS := \
 	picture.o \
 	screen.o \
 	streams.o \
-	string.o \
+	unicode.o \
+	unicode_gen.o \
 	windows.o \
 	window_mask.o \
 	window_graphics.o \
