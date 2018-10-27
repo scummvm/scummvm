@@ -502,20 +502,20 @@ glui32 Glk::glk_fileref_does_file_exist(frefid_t fref) {
 
 void Glk::glk_select(event_t *event) {
 	if (!_gliFirstEvent) {
-		gliInputGuessFocus();
+		_windows->inputGuessFocus();
 		_gliFirstEvent = true;
 	}
 	
-	gliSelect(event, false);
+	_events->getEvent(event, false);
 }
 
 void Glk::glk_select_poll(event_t *event) {
 	if (!_gliFirstEvent) {
-		gliInputGuessFocus();
+		_windows->inputGuessFocus();
 		_gliFirstEvent = true;
 	}
 
-	gliSelect(event, true);
+	_events->getEvent(event, true);
 }
 
 void Glk::glk_request_timer_events(glui32 millisecs) {
@@ -881,6 +881,8 @@ void Glk::glk_cancel_hyperlink_event(winid_t win) {
 	}
 }
 
+/*--------------------------------------------------------------------------*/
+
 void Glk::glk_current_time(glktimeval_t *time) {
 	TimeAndDate td;
 	*time = td;
@@ -934,6 +936,8 @@ glsi32 Glk::glk_date_to_simple_time_local(const glkdate_t *date, glui32 factor) 
 	return ts / factor;
 }
 
+/*--------------------------------------------------------------------------*/
+
 /* XXX non-official Glk functions that may or may not exist */
 
 char *garglk_fileref_get_name(frefid_t fref) {
@@ -985,17 +989,6 @@ void Glk::garglk_set_reversevideo(glui32 reverse) {
 
 void Glk::garglk_set_reversevideo_stream(strid_t str, glui32 reverse) {
 	// TODO
-}
-
-/*--------------------------------------------------------------------------*/
-
-void Glk::gliInputGuessFocus() {
-	// TODO
-}
-
-void Glk::gliSelect(event_t *event, bool polled) {
-	// TODO
-	event->type = evtype_Quit;
 }
 
 } // End of namespace Gargoyle
