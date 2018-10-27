@@ -28,8 +28,36 @@ void Events::getEvent(event_t *event, bool polled) {
 	// TODO
 }
 
-void Events::eventStore(EvType type, Window *win, uint32 val1, uint32 val2) {
-	// TODO
+void Events::store(EvType type, Window *win, uint32 val1, uint32 val2) {
+	Event ev(type, win, val1, val2);
+
+	switch (type) {
+	case evtype_Arrange:
+	case evtype_Redraw:
+	case evtype_SoundNotify:
+	case evtype_Timer:
+		_eventsPolled.push(ev);
+		break;
+
+	default:
+		_eventsLogged.push(ev);
+		break;
+	}
+}
+
+void Events::dispatchEvent(Event &ev, bool polled) {
+	Event dispatch;
+
+	if (!polled) {
+		dispatch = _eventsLogged.retrieve();
+		if (dispatch)
+			dispatch = _eventsPolled.retrieve();
+	} else {
+		dispatch = _eventsPolled.retrieve();
+	}
+
+	if (dispatch)
+		ev = dispatch;
 }
 
 } // End of namespace Gargoyle

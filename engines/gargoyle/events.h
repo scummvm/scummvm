@@ -100,7 +100,17 @@ struct Event {
 	/**
 	 * Constructor
 	 */
-	Event() : type(evtype_None), window(nullptr), val1(0), val2(0) {}
+	Event() { clear(); }
+
+	/**
+	 * Constructor
+	 */
+	Event(EvType evType, Window *evWindow, uint32 evVal1, uint32 evVal2) {
+		type = evType;
+		window = evWindow;
+		val1 = evVal1;
+		val2 = evVal2;
+	}
 
 	/**
 	 * Clear
@@ -110,10 +120,30 @@ struct Event {
 		window = nullptr;
 		val1 = val2 = 0;
 	}
+
+	/**
+	 * Boolean cast to allow checking whether event is filled out
+	 */
+	operator bool() const { return type != evtype_None; }
 };
 typedef Event event_t;
 
+class EventQueue : public Common::Queue<Event> {
+public:
+	/**
+	 * Retrieve a pending event, if any
+	 */
+	Event retrieve() {
+		return empty() ? Event() : pop();
+	}
+};
+
 class Events {
+private:
+	EventQueue _eventsPolled;
+	EventQueue _eventsLogged;
+private:
+	void dispatchEvent(Event &ev, bool polled);
 public:
 	bool _forceClick;
 public:
@@ -130,7 +160,7 @@ public:
 	/**
 	 * Store an event for retrieval
 	 */
-	void eventStore(EvType type, Window *win, uint32 val1 = 0, uint32 val2 = 0);
+	void store(EvType type, Window *win, uint32 val1 = 0, uint32 val2 = 0);
 };
 
 } // End of namespace Gargoyle
