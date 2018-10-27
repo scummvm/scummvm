@@ -857,11 +857,12 @@ void Glk::glk_schannel_set_volume_ext(schanid_t chan, glui32 vol,
 }
 
 void Glk::glk_set_hyperlink(glui32 linkval) {
-	// TODO
+	_streams->getCurrent()->setHyperlink(linkval);
 }
 
 void Glk::glk_set_hyperlink_stream(strid_t str, glui32 linkval) {
-	// TODO
+	if (str)
+		str->setHyperlink(linkval);
 }
 
 void Glk::glk_request_hyperlink_event(winid_t win) {
@@ -873,50 +874,64 @@ void Glk::glk_request_hyperlink_event(winid_t win) {
 }
 
 void Glk::glk_cancel_hyperlink_event(winid_t win) {
-	// TODO
+	if (win) {
+		win->cancelHyperlinkEvent();
+	} else {
+		warning("cancel_hyperlink_event: invalid ref");
+	}
 }
 
 void Glk::glk_current_time(glktimeval_t *time) {
-	// TODO
+	TimeAndDate td;
+	*time = td;
 }
 
 glsi32 Glk::glk_current_simple_time(glui32 factor) {
-	// TODO
-	return 0;
+	assert(factor);
+	TimeAndDate td;
+
+	return td / factor;
 }
 
-void Glk::glk_time_to_date_utc(glktimeval_t *time, glkdate_t *date) {
-	// TODO
+void Glk::glk_time_to_date_utc(const glktimeval_t *time, glkdate_t *date) {
+	// TODO: timezones aren't currently supported
+	*date = TimeAndDate(*time);
 }
 
-void Glk::glk_time_to_date_local(glktimeval_t *time, glkdate_t *date) {
-	// TODO
+void Glk::glk_time_to_date_local(const glktimeval_t *time, glkdate_t *date) {
+	*date = TimeAndDate(*time);
 }
 
 void Glk::glk_simple_time_to_date_utc(glsi32 time, glui32 factor, glkdate_t *date) {
-	// TODO
+	TimeSeconds secs = (int64)time * factor;
+	*date = TimeAndDate(secs);
 }
 
 void Glk::glk_simple_time_to_date_local(glsi32 time, glui32 factor, glkdate_t *date) {
-	// TODO
+	TimeSeconds secs = (int64)time * factor;
+	*date = TimeAndDate(secs);
 }
 
-void Glk::glk_date_to_time_utc(glkdate_t *date, glktimeval_t *time) {
-	// TODO
+void Glk::glk_date_to_time_utc(const glkdate_t *date, glktimeval_t *time) {
+	// TODO: timezones aren't currently supported
+	*time = TimeAndDate(*date);
 }
 
-void Glk::glk_date_to_time_local(glkdate_t *date, glktimeval_t *time) {
-	// TODO
+void Glk::glk_date_to_time_local(const glkdate_t *date, glktimeval_t *time) {
+	*time = TimeAndDate(*date);
 }
 
-glsi32 Glk::glk_date_to_simple_time_utc(glkdate_t *date, glui32 factor) {
-	// TODO
-	return 0;
+glsi32 Glk::glk_date_to_simple_time_utc(const glkdate_t *date, glui32 factor) {
+	// TODO: timezones aren't currently supported
+	assert(factor);
+	TimeSeconds ts = TimeAndDate(*date);
+	return ts / factor;
 }
 
-glsi32 Glk::glk_date_to_simple_time_local(glkdate_t *date, glui32 factor) {
-	// TODO
-	return 0;
+glsi32 Glk::glk_date_to_simple_time_local(const glkdate_t *date, glui32 factor) {
+	assert(factor);
+	TimeSeconds ts = TimeAndDate(*date);
+	return ts / factor;
 }
 
 /* XXX non-official Glk functions that may or may not exist */

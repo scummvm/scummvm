@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	picture.o \
 	screen.o \
 	streams.o \
+	time.o \
 	unicode.o \
 	unicode_gen.o \
 	windows.o \

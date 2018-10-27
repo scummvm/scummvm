@@ -153,6 +153,10 @@ public:
 	 */
 	virtual glui32 getLineUni(glui32 *ubuf, glui32 len) { return 0; }
 
+	/**
+	 * Set a hyperlink
+	 */
+	virtual void setHyperlink(glui32 linkVal) {}
 };
 typedef Stream *strid_t;
 
@@ -195,6 +199,11 @@ public:
 	virtual void putBufferUni(const uint32 *buf, size_t len) override;
 
 	virtual void setStyle(glui32 val) override;
+
+	/**
+	 * Set a hyperlink
+	 */
+	virtual void setHyperlink(glui32 linkVal) override;
 };
 
 /**
