@@ -149,6 +149,11 @@ public:
 	 */
 	void setFocus(Window *win) { _focusWin = win; }
 
+	/**
+	 * Pick first window which might want input. This is called after every keystroke.
+	 */
+	void inputGuessFocus();
+
 	void selectionChanged();
 
 	void clearClaimSelect() { _claimSelect = false; }

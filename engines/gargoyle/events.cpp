@@ -24,11 +24,7 @@
 
 namespace Gargoyle {
 
-void Events::pollEvents() {
-	// TODO
-}
-
-void Events::clearEvent(Event *ev) {
+void Events::getEvent(event_t *event, bool polled) {
 	// TODO
 }
 

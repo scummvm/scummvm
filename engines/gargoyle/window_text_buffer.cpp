@@ -716,7 +716,7 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 	if (!ev)
 		ev = &dummyEv;
 
-	g_vm->_events->clearEvent(ev);
+	ev->clear();
 
 	if (!_lineRequest && !_lineRequestUni)
 		return;

@@ -276,6 +276,24 @@ void Windows::rearrange() {
 	}
 }
 
+void Windows::inputGuessFocus() {
+	Window *altWin = _focusWin;
+
+	do {
+		if (altWin
+			&& (altWin->_lineRequest || altWin->_charRequest ||
+				altWin->_lineRequestUni || altWin->_charRequestUni))
+			break;
+		altWin = iterateTreeOrder(altWin);
+	} while (altWin != _focusWin);
+
+	if (_focusWin != altWin) {
+		_focusWin = altWin;
+		_forceRedraw = true;
+		redraw();
+	}
+}
+
 void Windows::selectionChanged() {
 	_claimSelect = false;
 	_forceRedraw = true;
@@ -440,7 +458,7 @@ void Window::cancelLineEvent(Event *ev) {
 	if (!ev)
 		ev = &dummyEv;
 
-	g_vm->_events->clearEvent(ev);
+	ev->clear();
 }
 
 void Window::moveCursor(const Common::Point &newPos) {
