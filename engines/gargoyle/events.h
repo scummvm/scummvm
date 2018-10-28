@@ -162,6 +162,26 @@ private:
 	 * Handle a key down event
 	 */
 	void handleKeyDown(const Common::KeyState &ks);
+
+	/**
+	 * Handle scroll events
+	 */
+	void handleScroll(bool wheelUp);
+
+	/**
+	 * Handle mouse move events
+	 */
+	void handleMouseMove(const Common::Point &pos);
+
+	/**
+	 * Handle mouse down events
+	 */
+	void handleButtonDown(bool isLeft, const Common::Point &pos);
+
+	/**
+	 * Handle mouse up events
+	 */
+	void handleButtonUp(bool isLeft, const Common::Point &pos);
 public:
 	bool _forceClick;
 public:
