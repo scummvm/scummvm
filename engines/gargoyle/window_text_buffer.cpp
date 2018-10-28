@@ -966,7 +966,7 @@ void TextBufferWindow::redraw() {
                 link = ln->_attrs[a].hyper;
                 font = ln->_attrs[a].attrFont(_styles);
                 color = ln->_attrs[a].attrBg(_styles);
-                w = screen.stringWidthUni(font, ln->_chars + a, b - a, spw);
+                w = screen.stringWidthUni(font, Common::U32String(ln->_chars + a, b - a), spw);
                 screen.fillRect(x/GLI_SUBPIX, y,
                         w/GLI_SUBPIX, g_conf->_leading,
                         color);
@@ -985,7 +985,7 @@ void TextBufferWindow::redraw() {
         link = ln->_attrs[a].hyper;
         font = ln->_attrs[a].attrFont(_styles);
         color = ln->_attrs[a].attrBg(_styles);
-        w = screen.stringWidthUni(font, ln->_chars + a, b - a, spw);
+        w = screen.stringWidthUni(font, Common::U32String(ln->_chars + a, b - a), spw);
         screen.fillRect(x/GLI_SUBPIX, y, w/GLI_SUBPIX,
                 g_conf->_leading, color);
         if (link) {
@@ -1025,16 +1025,16 @@ void TextBufferWindow::redraw() {
                 link = ln->_attrs[a].hyper;
                 font = ln->_attrs[a].attrFont(_styles);
                 color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-                x = screen.drawStringUni(x, y + g_conf->_baseLine,
-                        font, color, ln->_chars + a, b - a, spw);
+                x = screen.drawStringUni(Common::Point(x, y + g_conf->_baseLine),
+                        font, color, Common::U32String(ln->_chars + a, b - a), spw);
                 a = b;
             }
         }
         link = ln->_attrs[a].hyper;
         font = ln->_attrs[a].attrFont(_styles);
         color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-        screen.drawStringUni(x, y + g_conf->_baseLine,
-                font, color, ln->_chars + a, linelen - a, spw);
+        screen.drawStringUni(Common::Point(x, y + g_conf->_baseLine),
+                font, color, Common::U32String(ln->_chars + a, linelen - a), spw);
     }
 
     /*
@@ -1053,8 +1053,7 @@ void TextBufferWindow::redraw() {
                 x1/GLI_SUBPIX - x/GLI_SUBPIX, g_conf->_leading,
                 color);
 
-        w = screen.stringWidth(g_conf->_moreFont,
-                g_conf->_morePrompt.c_str(), g_conf->_morePrompt.size(), -1);
+        w = screen.stringWidth(g_conf->_moreFont, g_conf->_morePrompt);
 
         if (g_conf->_moreAlign == 1)    /* center */
             x = x0 + SLOP + (x1 - x0 - w - SLOP * 2) / 2;
@@ -1062,9 +1061,8 @@ void TextBufferWindow::redraw() {
             x = x1 - SLOP - w;
 
         color = Windows::_overrideFgSet ? g_conf->_moreColor : _fgColor;
-		screen.drawString(x, y + g_conf->_baseLine,
-                g_conf->_moreFont, color,
-                g_conf->_morePrompt.c_str(), g_conf->_morePrompt.size(), -1);
+		screen.drawString(Common::Point(x, y + g_conf->_baseLine),
+                g_conf->_moreFont, color, g_conf->_morePrompt);
         y1 = y; /* don't want pictures overdrawing "[more]" */
 
         /* try to claim the focus */
@@ -1617,13 +1615,12 @@ int TextBufferWindow::calcWidth(glui32 *chars, Attributes *attrs, int startchar,
 	for (b = startchar; b < numChars; b++) {
 		if (attrs[a] == attrs[b]) {
 			w += screen.stringWidthUni(attrs[a].attrFont(_styles),
-				chars + a, b - a, spw);
+				Common::U32String(chars + a, b - a), spw);
 			a = b;
 		}
 	}
 
-	w += screen.stringWidthUni(attrs[a].attrFont(_styles),
-		chars + a, b - a, spw);
+	w += screen.stringWidthUni(attrs[a].attrFont(_styles), Common::U32String(chars + a, b - a), spw);
 
 	return w;
 }
