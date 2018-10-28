@@ -28,8 +28,13 @@
 
 namespace Gargoyle {
 
-class Screen : public Graphics::Screen, Fonts {
+class Screen : public Graphics::Screen, public Fonts {
 public:
+	/**
+	 * Constructor
+	 */
+	Screen() : Graphics::Screen(), Fonts(this) {}
+
 	/**
 	 * Fills the screen with a given rgb color
 	 */
@@ -39,14 +44,6 @@ public:
 	 * Fill a given area of the screen with an rgb color
 	 */
 	void fillRect(uint x, uint y, uint w, uint h, const byte *rgb);
-
-	int drawString(int x, int y, int fidx, const byte *rgb, const char *s, int n, int spw);
-
-	int drawStringUni(int x, int y, int fidx, const byte *rgb, const uint32 *s, int n, int spw);
-
-	int stringWidth(int fidx, const char *s, int n, int spw);
-
-	int stringWidthUni(int fidx, const uint32 *s, int n, int spw);
 
 	void drawCaret(const Common::Point &pos);
 };

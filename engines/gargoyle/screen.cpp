@@ -34,26 +34,6 @@ void Screen::fillRect(uint x, uint y, uint w, uint h, const byte *rgb) {
 	Graphics::Screen::fillRect(Common::Rect(x, y, x + w, y + h), color);
 }
 
-int Screen::drawString(int x, int y, int fidx, const byte *rgb, const char *s, int n, int spw) {
-	// TODO
-	return 0;
-}
-
-int Screen::drawStringUni(int x, int y, int fidx, const byte *rgb, const uint32 *s, int n, int spw) {
-	// TODO
-	return 0;
-}
-
-int Screen::stringWidth(int fidx, const char *s, int n, int spw) {
-	// TODO
-	return 0;
-}
-
-int Screen::stringWidthUni(int fidx, const uint32 *s, int n, int spw) {
-	// TODO
-	return 0;
-}
-
 void Screen::drawCaret(const Common::Point &pos) {
 	// TODO
 }
