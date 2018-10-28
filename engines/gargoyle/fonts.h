@@ -28,16 +28,40 @@
 
 namespace Gargoyle {
 
+#define FONTS_TOTAL 8
+
 enum FACES { MONOR, MONOB, MONOI, MONOZ, PROPR, PROPB, PROPI, PROPZ };
 enum TYPES { MONOF, PROPF };
 enum STYLES { FONTR, FONTB, FONTI, FONTZ };
 
+class Font {
+public:
+	/**
+	 * Constructor
+	 */
+	Font(const char *name, double size, double aspect, STYLES style) {
+		// TODO
+	}
+};
+
 class Fonts {
+private:
+	Font *_fontTable[FONTS_TOTAL];
 public:
 	/**
 	 * Get the index/id of a font by name
 	 */
 	static FACES getId(const Common::String &name);
+public:
+	/**
+	 * Constructor
+	 */
+	Fonts();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Fonts();
 };
 
 } // End of namespace Gargoyle

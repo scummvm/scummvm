@@ -69,9 +69,10 @@ void GargoyleEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	initGraphics(640, 480, false);
-	_screen = new Screen();
-	_clipboard = new Clipboard();
 	_conf = new Conf();
+	_screen = new Screen();
+
+	_clipboard = new Clipboard();
 	_events = new Events();
 	_picList = new PicList();
 	_streams = new Streams();
