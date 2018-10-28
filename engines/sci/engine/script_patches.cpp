@@ -1647,8 +1647,32 @@ static const uint16 gk1DrugStoreEgoSpeedFixPatch[] = {
 	PATCH_END
 };
 
+// French and Spanish CD versions contain an active debugging hotkey, ALT+N,
+//  which brings up a series of unskippable bug-reporting dialogs and
+//  eventually writes files to disk and crashes non-release builds due to
+//  an uninitialized read. This hotkey is always active and not hidden
+//  behind the game's debug mode flag so we just patch it out.
+//
+// Applies to: French and Spanish PC CD
+// Responsible method: GK:handleEvent
+// Fixes bug #10781
+static const uint16 gk1SysLoggerHotKeySignature[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x3100),       // ldi 3100 [ ALT+N ]
+	0x1a,                           // eq?
+	0x31,                           // bnt
+	SIG_END
+};
+
+static const uint16 gk1SysLoggerHotKeyPatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x33,                           // jmp
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
+	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
 	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
 	{  true,   212, "fix day 5 drum book dialogue error",          1, gk1Day5DrumBookDialogueSignature, gk1Day5DrumBookDialoguePatch },
 	{  true,   212, "fix day 5 phone softlock",                    1, gk1Day5PhoneFreezeSignature,      gk1Day5PhoneFreezePatch },
