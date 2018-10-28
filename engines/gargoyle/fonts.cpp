@@ -23,6 +23,8 @@
 #include "gargoyle/fonts.h"
 #include "gargoyle/glk_types.h"
 #include "gargoyle/conf.h"
+#include "common/file.h"
+#include "graphics/fonts/ttf.h"
 
 namespace Gargoyle {
 
@@ -54,15 +56,15 @@ Fonts::Fonts() {
 	double monoSize = g_conf->_monoSize;
 	double propSize = g_conf->_propSize;
 
-	_fontTable[0] = new Font(gli_conf_monor, monoSize, monoAspect, FONTR);
-	_fontTable[1] = new Font(gli_conf_monob, monoSize, monoAspect, FONTB);
-	_fontTable[2] = new Font(gli_conf_monoi, monoSize, monoAspect, FONTI);
-	_fontTable[3] = new Font(gli_conf_monoz, monoSize, monoAspect, FONTZ);
+	_fontTable[0] = loadFont(MONOR, monoSize, monoAspect, FONTR);
+	_fontTable[1] = loadFont(MONOB, monoSize, monoAspect, FONTB);
+	_fontTable[2] = loadFont(MONOI, monoSize, monoAspect, FONTI);
+	_fontTable[3] = loadFont(MONOZ, monoSize, monoAspect, FONTZ);
 
-	_fontTable[4] = new Font(gli_conf_propr, propSize, propAspect, FONTR);
-	_fontTable[5] = new Font(gli_conf_propb, propSize, propAspect, FONTB);
-	_fontTable[6] = new Font(gli_conf_propi, propSize, propAspect, FONTI);
-	_fontTable[7] = new Font(gli_conf_propz, propSize, propAspect, FONTZ);
+	_fontTable[4] = loadFont(PROPR, propSize, propAspect, FONTR);
+	_fontTable[5] = loadFont(PROPB, propSize, propAspect, FONTB);
+	_fontTable[6] = loadFont(PROPI, propSize, propAspect, FONTI);
+	_fontTable[7] = loadFont(PROPZ, propSize, propAspect, FONTZ);
 }
 
 Fonts::~Fonts() {
@@ -82,8 +84,24 @@ FACES Fonts::getId(const Common::String &name) {
 	return MONOR;
 }
 
-/*--------------------------------------------------------------------------*/
+Graphics::Font *Fonts::loadFont(FACES face, double size, double aspect, int style) {
+	static const char *const MAP[8] = {
+		"Go-Mono-Regular",
+		"Go-Mono-Bold",
+		"Go-Mono-Italic",
+		"Go-Mono-BoldItalic",
+		"NotoSerif-Regular",
+		"NotoSerif-Bold",
+		"NotoSerif-Italic",
+		"NotoSerif-BoldItalic"
+	};
 
+	Common::File f;
+	if (!f.open(Common::String::format("%s.ttf", MAP[face])))
+		return nullptr;
+
+	return Graphics::loadTTFFont(f, size, Graphics::kTTFSizeModeCharacter);
+}
 
 
 } // End of namespace Gargoyle
