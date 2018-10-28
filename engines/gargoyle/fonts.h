@@ -25,6 +25,7 @@
 
 #include "gargoyle/glk_types.h"
 #include "common/str.h"
+#include "graphics/font.h"
 
 namespace Gargoyle {
 
@@ -34,19 +35,19 @@ enum FACES { MONOR, MONOB, MONOI, MONOZ, PROPR, PROPB, PROPI, PROPZ };
 enum TYPES { MONOF, PROPF };
 enum STYLES { FONTR, FONTB, FONTI, FONTZ };
 
+/*
 class Font {
+
 public:
-	/**
-	 * Constructor
-	 */
-	Font(const char *name, double size, double aspect, STYLES style) {
-		// TODO
-	}
+	Font(const char *name, double size, double aspect, STYLES style);
 };
+*/
 
 class Fonts {
 private:
-	Font *_fontTable[FONTS_TOTAL];
+	Graphics::Font *_fontTable[FONTS_TOTAL];
+private:
+	Graphics::Font *loadFont(FACES face, double size, double aspect, int style);
 public:
 	/**
 	 * Get the index/id of a font by name
