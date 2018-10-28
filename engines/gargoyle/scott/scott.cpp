@@ -325,7 +325,7 @@ char *Scott::ReadString(Common::SeekableReadStream *f) {
 			tmp[ct++] = c;
 		else
 			tmp[ct++] = '?';
-	} while (1);
+	}
 
 	tmp[ct] = 0;
 	t = (char *)MemAlloc(ct + 1);
@@ -1263,15 +1263,11 @@ int Scott::xstrncasecmp(const char *s1, const char *s2, size_t n) {
 void Scott::readInts(Common::SeekableReadStream *f, size_t count, ...) {
 	va_list va;
 	va_start(va, count);
-	unsigned char c = '\0';
+	unsigned char c = f->readByte();
 
 	for (size_t idx = 0; idx < count; ++idx) {
-		if (idx > 0) {
-			while (f->pos() < f->size() && Common::isSpace(c))
-				c = f->readByte();
-		} else {
+		while (f->pos() < f->size() && Common::isSpace(c))
 			c = f->readByte();
-		}
 
 		// Get the next value
 		int *val = (int *)va_arg(va, int);
