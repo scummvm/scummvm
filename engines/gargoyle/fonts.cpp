@@ -103,24 +103,31 @@ Graphics::Font *Fonts::loadFont(FACES face, double size, double aspect, int styl
 	return Graphics::loadTTFFont(f, size, Graphics::kTTFSizeModeCharacter);
 }
 
-int Fonts::drawString(int x, int y, int fidx, const byte *rgb, const char *s, int n, int spw) {
-	// TODO
-	return 0;
+int Fonts::drawString(const Common::Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw) {
+	Graphics::Font *font = _fontTable[fontIdx];
+	const uint32 color = _surface->format.RGBToColor(rgb[0], rgb[1], rgb[2]);
+	font->drawString(_surface, text, pos.x, pos.y, _surface->w - pos.x, color);
+	return font->getBoundingBox(text, pos.x, pos.y, _surface->w - pos.x).right;
 }
 
-int Fonts::drawStringUni(int x, int y, int fidx, const byte *rgb, const uint32 *s, int n, int spw) {
-	// TODO
-	return 0;
+int Fonts::drawStringUni(const Common::Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw) {
+	Graphics::Font *font = _fontTable[fontIdx];
+	const uint32 color = _surface->format.RGBToColor(rgb[0], rgb[1], rgb[2]);
+	font->drawString(_surface, text, pos.x, pos.y, _surface->w - pos.x, color);
+
+	return font->getBoundingBox(text, pos.x, pos.y, _surface->w - pos.x).right;
 }
 
-int Fonts::stringWidth(int fidx, const char *s, int n, int spw) {
-	// TODO
-	return 0;
+size_t Fonts::stringWidth(int fontIdx, const Common::String &text, int spw) {
+	// TODO: Handle spw
+	Graphics::Font *font = _fontTable[fontIdx];
+	return font->getStringWidth(text);
 }
 
-int Fonts::stringWidthUni(int fidx, const uint32 *s, int n, int spw) {
-	// TODO
-	return 0;
+size_t Fonts::stringWidthUni(int fontIdx, const Common::U32String &text, int spw) {
+	// TODO: Handle spw
+	Graphics::Font *font = _fontTable[fontIdx];
+	return font->getStringWidth(text);
 }
 
 } // End of namespace Gargoyle

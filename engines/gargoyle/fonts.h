@@ -25,6 +25,7 @@
 
 #include "gargoyle/glk_types.h"
 #include "common/str.h"
+#include "common/ustr.h"
 #include "graphics/font.h"
 
 namespace Gargoyle {
@@ -57,13 +58,13 @@ public:
 	 */
 	virtual ~Fonts();
 
-	int drawString(int x, int y, int fidx, const byte *rgb, const char *s, int n, int spw);
+	int drawString(const Common::Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw = 0);
 
-	int drawStringUni(int x, int y, int fidx, const byte *rgb, const uint32 *s, int n, int spw);
+	int drawStringUni(const Common::Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw = 0);
 
-	int stringWidth(int fidx, const char *s, int n, int spw);
+	size_t stringWidth(int fontIdx, const Common::String &text, int spw = -1);
 
-	int stringWidthUni(int fidx, const uint32 *s, int n, int spw);
+	size_t stringWidthUni(int fontIdx, const Common::U32String &text, int spw = -1);
 };
 
 } // End of namespace Gargoyle
