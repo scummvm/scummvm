@@ -35,16 +35,9 @@ enum FACES { MONOR, MONOB, MONOI, MONOZ, PROPR, PROPB, PROPI, PROPZ };
 enum TYPES { MONOF, PROPF };
 enum STYLES { FONTR, FONTB, FONTI, FONTZ };
 
-/*
-class Font {
-
-public:
-	Font(const char *name, double size, double aspect, STYLES style);
-};
-*/
-
 class Fonts {
 private:
+	Graphics::ManagedSurface *_surface;
 	Graphics::Font *_fontTable[FONTS_TOTAL];
 private:
 	Graphics::Font *loadFont(FACES face, double size, double aspect, int style);
@@ -57,12 +50,20 @@ public:
 	/**
 	 * Constructor
 	 */
-	Fonts();
+	Fonts(Graphics::ManagedSurface *surface);
 
 	/**
 	 * Destructor
 	 */
 	virtual ~Fonts();
+
+	int drawString(int x, int y, int fidx, const byte *rgb, const char *s, int n, int spw);
+
+	int drawStringUni(int x, int y, int fidx, const byte *rgb, const uint32 *s, int n, int spw);
+
+	int stringWidth(int fidx, const char *s, int n, int spw);
+
+	int stringWidthUni(int fidx, const uint32 *s, int n, int spw);
 };
 
 } // End of namespace Gargoyle
