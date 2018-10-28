@@ -495,8 +495,8 @@ Window::Window(Windows *windows, glui32 rock) : _windows(windows), _rock(rock),
 	_attr.bgcolor = 0;
 	_attr.hyper = 0;
 
-	Common::fill(&_bgColor[0], &_bgColor[3], 3);
-	Common::fill(&_fgColor[0], &_fgColor[3], 3);
+	Common::copy(&g_conf->_windowColor[0], &g_conf->_windowColor[3], &_bgColor[0]);
+	Common::copy(&g_conf->_moreColor[0], &g_conf->_moreColor[3], _fgColor);
 	_dispRock.num = 0;
 
 	Streams &streams = *g_vm->_streams;
