@@ -92,6 +92,9 @@ Distributed under the GNU software license\n\n");
 
 		if (GetInput(&vb, &no) == -1)
 			continue;
+		if (g_vm->shouldQuit())
+			return;
+
 		switch (PerformActions(vb, no)) {
 		case -1:
 			Output("I don't understand your command. ");
@@ -567,8 +570,9 @@ void Scott::LineInput(char *buf, size_t n) {
 
 	do {
 		glk_select(&ev);
-
-		if (ev.type == evtype_LineInput)
+		if (ev.type == evtype_Quit)
+			return;
+		else if (ev.type == evtype_LineInput)
 			break;
 		else if (ev.type == evtype_Arrange && split_screen)
 			Look();
@@ -654,6 +658,9 @@ int Scott::GetInput(int *vb, int *no) {
 		do {
 			Output("\nTell me what to do ? ");
 			LineInput(buf, sizeof buf);
+			if (g_vm->shouldQuit())
+				return 0;
+
 			num = sscanf(buf, "%9s %9s", verb, noun);
 		} while (num == 0 || *buf == '\n');
 		
