@@ -45,7 +45,7 @@
 
 
 enum {
-	kKyraDatVersion = 89
+	kKyraDatVersion = 90
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -607,7 +607,7 @@ const ExtractFilename extractFilenames[] = {
 
 	{ kLoLCharacterDefs, kLoLCharData, true },
 	{ kLoLIngameSfxFiles, kStringList, false },
-	{ kLoLIngameSfxIndex, kRawData, false },
+	{ kLoLIngameSfxIndex, kRawDataBe16, false },
 	{ kLoLMusicTrackMap, kRawData, false },
 	{ kLoLIngameGMSfxIndex, kRawData, false },
 	{ kLoLIngameMT32SfxIndex, kRawData, false },
