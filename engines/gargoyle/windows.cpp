@@ -294,6 +294,96 @@ void Windows::inputGuessFocus() {
 	}
 }
 
+void Windows::inputMoreFocus() {
+	Window *altWin = _focusWin;
+
+	do {
+		if (altWin && altWin->_moreRequest)
+			break;
+		altWin = iterateTreeOrder(altWin);
+	} while (altWin != _focusWin);
+
+	_focusWin = altWin;
+}
+
+void Windows::inputNextFocus() {
+	Window *altWin = _focusWin;
+
+	do
+	{
+		altWin = iterateTreeOrder(altWin);
+		if (altWin
+			&& (altWin->_lineRequest || altWin->_charRequest ||
+				altWin->_lineRequestUni || altWin->_charRequestUni))
+			break;
+	} while (altWin != _focusWin);
+
+	if (_focusWin  != altWin) {
+		_focusWin = altWin;
+		_forceRedraw = true;
+		redraw();
+	}
+}
+
+void Windows::inputScrollFocus() {
+	Window *altWin = _focusWin;
+
+	do {
+		if (altWin && altWin->_scrollRequest)
+			break;
+		altWin = iterateTreeOrder(altWin);
+	} while (altWin != _focusWin);
+
+	_focusWin = altWin;
+}
+
+void Windows::inputHandleKey(glui32 key) {
+	if (_moreFocus) {
+		inputMoreFocus();
+	} else {
+		switch (key) {
+		case keycode_Tab:
+			inputNextFocus();
+			return;
+		case keycode_PageUp:
+		case keycode_PageDown:
+		case keycode_MouseWheelUp:
+		case keycode_MouseWheelDown:
+			inputScrollFocus();
+			break;
+		default:
+			inputGuessFocus();
+			break;
+		}
+	}
+
+	Window *win = _focusWin;
+	if (!win)
+		return;
+
+	bool deferExit = false;
+
+	TextGridWindow *gridWindow = dynamic_cast<TextGridWindow *>(win);
+	TextBufferWindow *bufWindow = dynamic_cast<TextBufferWindow *>(win);
+
+	if (gridWindow) {
+		if (gridWindow->_charRequest || gridWindow->_charRequestUni)
+			gridWindow->acceptReadChar(key);
+		else if (gridWindow->_lineRequest || gridWindow->_lineRequestUni)
+			gridWindow->acceptReadLine(key);
+	} else if (bufWindow) {
+		if (bufWindow->_charRequest || bufWindow->_charRequestUni)
+			bufWindow->acceptReadChar(key);
+		else if (bufWindow->_lineRequest || bufWindow->_lineRequestUni)
+			bufWindow->acceptReadLine(key);
+		else if (bufWindow->_moreRequest || bufWindow->_scrollRequest)
+			deferExit = bufWindow->acceptScroll(key);
+	}
+
+	if (!deferExit && g_vm->_terminated)
+		g_vm->quitGame();
+}
+
 void Windows::selectionChanged() {
 	_claimSelect = false;
 	_forceRedraw = true;
