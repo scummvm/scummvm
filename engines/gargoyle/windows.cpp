@@ -384,6 +384,11 @@ void Windows::inputHandleKey(glui32 key) {
 		g_vm->quitGame();
 }
 
+void Windows::inputHandleClick(const Common::Point &pos) {
+	if (_rootWin)
+		_rootWin->click(pos);
+}
+
 void Windows::selectionChanged() {
 	_claimSelect = false;
 	_forceRedraw = true;

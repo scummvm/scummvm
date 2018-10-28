@@ -27,15 +27,17 @@
 
 namespace Gargoyle {
 
+enum ClipSource { PRIMARY = 0, CLIPBOARD = 1 };
+
 class Clipboard {
 private:
 	Common::Array<uint32> _text;
 public:
 	void store(const uint32 *text, size_t len);
 
-	void send();
+	void send(ClipSource source);
 
-	void receive();
+	void receive(ClipSource source);
 };
 
 } // End of namespace Gargoyle

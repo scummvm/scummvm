@@ -176,6 +176,11 @@ public:
 	 */
 	void inputHandleKey(glui32 key);
 
+	/**
+	 * Handle mouse clicks
+	 */
+	void inputHandleClick(const Common::Point &pos);
+
 	void selectionChanged();
 
 	void clearClaimSelect() { _claimSelect = false; }

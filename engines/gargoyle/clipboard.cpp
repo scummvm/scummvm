@@ -28,11 +28,11 @@ void Clipboard::store(const uint32 *text, size_t len) {
 	// TODO
 }
 
-void Clipboard::send() {
+void Clipboard::send(ClipSource source) {
 	// TODO
 }
 
-void Clipboard::receive() {
+void Clipboard::receive(ClipSource source) {
 	// TODO
 }
 
