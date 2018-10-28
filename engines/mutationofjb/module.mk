@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	commands/saycommand.o \
 	commands/seqcommand.o \
 	commands/setcolorcommand.o \
+	commands/specialshowcommand.o \
 	commands/talkcommand.o \
 	commands/randomcommand.o \
 	tasks/conversationtask.o \

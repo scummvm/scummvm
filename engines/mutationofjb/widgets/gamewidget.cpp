@@ -108,11 +108,9 @@ void GameWidget::handleNormalScene(const Common::Event &event) {
 
 		bool entityHit = false;
 		if (Door *const door = scene->findDoor(x, y)) {
-			if (door->_destSceneId != 0) {
-				if (_callback)
-					_callback->onGameEntityHovered(this, door->_name);
-				entityHit = true;
-			}
+			if (_callback)
+				_callback->onGameEntityHovered(this, door->_name);
+			entityHit = true;
 		} else if (Static *const stat = scene->findStatic(x, y)) {
 			if (_callback)
 				_callback->onGameEntityHovered(this, stat->_name);

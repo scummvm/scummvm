@@ -27,7 +27,7 @@
 #include "common/str.h"
 
 /** @file
- * "NEWROOM " <sceneId> " " <x> " " <y> " " <frame>
+ * "NEWROOM " <sceneId> " " <x> " " <y> [ " "  <frame> ]
  *
  * NEWROOM changes the current scene. While doing that, it also executes STARTUP section for the new room.
  * However, after that, the execution goes back to the old script to finish commands after NEWROOM.
@@ -39,14 +39,16 @@
 namespace MutationOfJB {
 
 bool NewRoomCommandParser::parse(const Common::String &line, ScriptParseContext &, Command *&command) {
-	if (line.size() < 23 || !line.hasPrefix("NEWROOM")) {
+	if (line.size() < 19 || !line.hasPrefix("NEWROOM")) {
 		return false;
 	}
 
 	const uint8 sceneId = atoi(line.c_str() + 8);
 	const uint16 x = atoi(line.c_str() + 12);
 	const uint16 y = atoi(line.c_str() + 16);
-	const uint8 frame = atoi(line.c_str() + 20);
+	uint8 frame = 0;
+	if (line.size() >= 21)
+		frame = atoi(line.c_str() + 20);
 	command = new NewRoomCommand(sceneId, x, y, frame);
 	return true;
 }

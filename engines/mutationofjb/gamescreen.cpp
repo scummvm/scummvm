@@ -361,7 +361,7 @@ void GameScreen::onInventoryItemClicked(InventoryWidget *, int posInWidget) {
 		if (_currentPickedItem.empty()) {
 			// Inventory items ending with '[' aren't supposed to be combined (e.g. Fisher's mask).
 			if (item.lastChar() == '[')
-				_game.startActionSection(ActionInfo::Look, item);
+				_game.startActionSection(ActionInfo::Use, item);
 			else
 				_currentPickedItem = item;
 		} else {
