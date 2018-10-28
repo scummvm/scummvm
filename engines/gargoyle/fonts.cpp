@@ -50,7 +50,7 @@ const double gli_conf_monosize = 12.5;	///< good size for LiberationMono
 const double gli_conf_propsize = 15.5;	///< good size for Libertine
 #endif
 
-Fonts::Fonts() {
+Fonts::Fonts(Graphics::ManagedSurface *surface) : _surface(surface) {
 	double monoAspect = g_conf->_monoAspect;
 	double propAspect = g_conf->_propAspect;
 	double monoSize = g_conf->_monoSize;
@@ -103,5 +103,24 @@ Graphics::Font *Fonts::loadFont(FACES face, double size, double aspect, int styl
 	return Graphics::loadTTFFont(f, size, Graphics::kTTFSizeModeCharacter);
 }
 
+int Fonts::drawString(int x, int y, int fidx, const byte *rgb, const char *s, int n, int spw) {
+	// TODO
+	return 0;
+}
+
+int Fonts::drawStringUni(int x, int y, int fidx, const byte *rgb, const uint32 *s, int n, int spw) {
+	// TODO
+	return 0;
+}
+
+int Fonts::stringWidth(int fidx, const char *s, int n, int spw) {
+	// TODO
+	return 0;
+}
+
+int Fonts::stringWidthUni(int fidx, const uint32 *s, int n, int spw) {
+	// TODO
+	return 0;
+}
 
 } // End of namespace Gargoyle
