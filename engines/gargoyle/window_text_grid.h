@@ -90,7 +90,7 @@ public:
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Common::Rect &box) override;
+	virtual void rearrange(const Rect &box) override;
 
 	/**
 	 * Get window split size within parent pair window
@@ -110,7 +110,7 @@ public:
 	/**
 	 * Move the cursor
 	 */
-	virtual void moveCursor(const Common::Point &newPos) override;
+	virtual void moveCursor(const Point &newPos) override;
 
 	/**
 	 * Clear the window
@@ -120,7 +120,7 @@ public:
 	/**
 	 * Click the window
 	 */
-	virtual void click(const Common::Point &newPos) override;
+	virtual void click(const Point &newPos) override;
 
 	/**
 	 * Cancel a hyperlink event

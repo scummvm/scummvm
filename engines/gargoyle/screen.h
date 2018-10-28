@@ -43,9 +43,9 @@ public:
 	/**
 	 * Fill a given area of the screen with an rgb color
 	 */
-	void fillRect(uint x, uint y, uint w, uint h, const byte *rgb);
+	void fillRect(const Rect &box, const byte *rgb);
 
-	void drawCaret(const Common::Point &pos);
+	void drawCaret(const Point &pos);
 };
 
 } // End of namespace Gargoyle

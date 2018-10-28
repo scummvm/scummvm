@@ -52,7 +52,7 @@ TextGridWindow::~TextGridWindow() {
 	delete[] _lineTerminators;
 }
 
-void TextGridWindow::rearrange(const Common::Rect &box) {
+void TextGridWindow::rearrange(const Rect &box) {
 	Window::rearrange(box);
 	int newwid, newhgt;
 
@@ -76,7 +76,7 @@ void TextGridWindow::rearrange(const Common::Rect &box) {
 void TextGridWindow::touch(int line) {
 	int y = _bbox.top + line * g_conf->_leading;
 	_lines[line].dirty = true;
-	_windows->repaint(Common::Rect(_bbox.left, y, _bbox.right, y + g_conf->_leading));
+	_windows->repaint(Rect(_bbox.left, y, _bbox.right, y + g_conf->_leading));
 }
 
 glui32 TextGridWindow::getSplit(glui32 size, bool vertical) const {
@@ -161,7 +161,7 @@ bool TextGridWindow::unputCharUni(uint32 ch) {
 	}
 }
 
-void TextGridWindow::moveCursor(const Common::Point &pos) {
+void TextGridWindow::moveCursor(const Point &pos) {
 	// If the values are negative, they're really huge positive numbers --
 	// remember that they were cast from glui32. So set them huge and
 	// let canonicalization take its course.
@@ -189,7 +189,7 @@ void TextGridWindow::clear() {
 	_curY = 0;
 }
 
-void TextGridWindow::click(const Common::Point &newPos) {
+void TextGridWindow::click(const Point &newPos) {
 	int x = newPos.x - _bbox.left;
 	int y = newPos.y - _bbox.top;
 
@@ -603,17 +603,17 @@ void TextGridWindow::redraw() {
 					fgcolor = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(styles);
 					bgcolor = ln->_attrs[a].attrBg(styles);
 					w = (b - a) * g_conf->_cellW;
-					screen.fillRect(x, y, w, g_conf->_leading, bgcolor);
+					screen.fillRect(Rect::fromXYWH(x, y, w, g_conf->_leading), bgcolor);
 					o = x;
 
 					for (k = a; k < b; k++) {
-						screen.drawStringUni(Common::Point(o * GLI_SUBPIX, y + g_conf->_baseLine),
+						screen.drawStringUni(Point(o * GLI_SUBPIX, y + g_conf->_baseLine),
 							font, fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
 						o += g_conf->_cellW;
 					}
 					if (link) {
-						screen.fillRect(x, y + g_conf->_baseLine + 1, w,
-							g_conf->_linkStyle, g_conf->_linkColor);
+						screen.fillRect(Rect::fromXYWH(x, y + g_conf->_baseLine + 1, w,
+							g_conf->_linkStyle), g_conf->_linkColor);
 						g_vm->_windowMask->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 					}
 					x += w;
@@ -626,17 +626,17 @@ void TextGridWindow::redraw() {
 			bgcolor = ln->_attrs[a].attrBg(styles);
 			w = (b - a) * g_conf->_cellW;
 			w += _bbox.right - (x + w);
-			screen.fillRect(x, y, w, g_conf->_leading, bgcolor);
+			screen.fillRect(Rect::fromXYWH(x, y, w, g_conf->_leading), bgcolor);
 
 			o = x;
 			for (k = a; k < b; k++) {
-				screen.drawStringUni(Common::Point(o * GLI_SUBPIX, y + g_conf->_baseLine),
+				screen.drawStringUni(Point(o * GLI_SUBPIX, y + g_conf->_baseLine),
 					font, fgcolor, Common::U32String(&ln->_chars[k], 1));
 				o += g_conf->_cellW;
 			}
 			if (link) {
-				screen.fillRect(x, y + g_conf->_baseLine + 1, w,
-					g_conf->_linkStyle, g_conf->_linkColor);
+				screen.fillRect(Rect::fromXYWH(x, y + g_conf->_baseLine + 1, w, g_conf->_linkStyle),
+					g_conf->_linkColor);
 				g_vm->_windowMask->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 			}
 		}

@@ -20,32 +20,25 @@
  *
  */
 
-#ifndef GARGOYLE_UNICODE_H
-#define GARGOYLE_UNICODE_H
-
-#include "gargoyle/glk_types.h"
+#include "gargoyle/utils.h"
+#include "common/textconsole.h"
 
 namespace Gargoyle {
 
-typedef glui32 gli_case_block_t[2]; /* upper, lower */
-enum BufferChangeCase { CASE_UPPER = 0, CASE_LOWER = 1, CASE_TITLE = 2, CASE_IDENT = 3 };
-enum BufferChangeCond { COND_ALL = 0, COND_LINESTART = 1 };
+int strToInt(const char *s) {
+	if (!*s)
+		// No string at all
+		return 0;
+	else if (toupper(s[strlen(s) - 1]) != 'H')
+		// Standard decimal string
+		return atoi(s);
 
-/*
- * Get the length of a unicode string
- */
-size_t strlen_uni(const uint32 *s);
-
-/**
- * Apply a case change to the buffer. The len is the length of the buffer
- * array; numchars is the number of characters originally in it. (This
- * may be less than len.) The result will be clipped to fit len, but
- * the return value will be the full number of characters that the
- *converted string should have contained.
- */
-extern glui32 bufferChangeCase(glui32 *buf, glui32 len,
-	glui32 numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
+	// Hexadecimal string
+	uint tmp = 0;
+	int read = sscanf(s, "%xh", &tmp);
+	if (read < 1)
+		error("strToInt failed on string \"%s\"", s);
+	return (int)tmp;
+}
 
 } // End of namespace Gargoyle
-
-#endif

@@ -70,7 +70,7 @@ TextBufferWindow::~TextBufferWindow() {
 	}
 }
 
-void TextBufferWindow::rearrange(const Common::Rect &box) {
+void TextBufferWindow::rearrange(const Rect &box) {
 	Window::rearrange(box);
 	int newwid, newhgt;
 	int rnd;
@@ -371,7 +371,7 @@ void TextBufferWindow::touch(int line) {
 	int y = _bbox.top + g_conf->_tMarginY + (_height - line - 1) * g_conf->_leading;
 	_lines[line]._dirty = 1;
 	g_vm->_windowMask->clearSelection();
-	_windows->repaint(Common::Rect(_bbox.left, y - 2, _bbox.right, y + g_conf->_leading + 2));
+	_windows->repaint(Rect(_bbox.left, y - 2, _bbox.right, y + g_conf->_leading + 2));
 }
 
 glui32 TextBufferWindow::getSplit(glui32 size, bool vertical) const {
@@ -567,7 +567,7 @@ void TextBufferWindow::clear() {
 		touch(i);
 }
 
-void TextBufferWindow::click(const Common::Point &newPos) {
+void TextBufferWindow::click(const Point &newPos) {
 	int gh = false;
 	int gs = false;
 
@@ -843,7 +843,7 @@ void TextBufferWindow::redraw() {
 
         /* repaint previously selected lines if needed */
         if (ln->_repaint && !Windows::_forceRedraw)
-            _windows->redrawRect(Common::Rect(x0 / GLI_SUBPIX, y,
+            _windows->redrawRect(Rect(x0 / GLI_SUBPIX, y,
 				x1/GLI_SUBPIX, y + g_conf->_leading));
 
         /* keep selected line dirty and flag for repaint */
@@ -954,8 +954,7 @@ void TextBufferWindow::redraw() {
          * fill in background colors
          */
         color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        screen.fillRect(x0/GLI_SUBPIX, y,
-                (x1-x0) / GLI_SUBPIX, g_conf->_leading,
+        screen.fillRect(Rect::fromXYWH(x0 / GLI_SUBPIX, y, (x1-x0) / GLI_SUBPIX, g_conf->_leading),
                 color);
 
         x = x0 + SLOP + ln->_lm;
@@ -967,13 +966,11 @@ void TextBufferWindow::redraw() {
                 font = ln->_attrs[a].attrFont(_styles);
                 color = ln->_attrs[a].attrBg(_styles);
                 w = screen.stringWidthUni(font, Common::U32String(ln->_chars + a, b - a), spw);
-                screen.fillRect(x/GLI_SUBPIX, y,
-                        w/GLI_SUBPIX, g_conf->_leading,
+                screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, g_conf->_leading),
                         color);
                 if (link) {
-                    screen.fillRect(x/GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
-                            w/GLI_SUBPIX + 1, g_conf->_linkStyle,
-                            g_conf->_linkColor);
+                    screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
+						w / GLI_SUBPIX + 1, g_conf->_linkStyle), g_conf->_linkColor);
                     g_vm->_windowMask->putHyperlink(link, x/GLI_SUBPIX, y,
                             x/GLI_SUBPIX + w/GLI_SUBPIX,
                             y + g_conf->_leading);
@@ -986,22 +983,18 @@ void TextBufferWindow::redraw() {
         font = ln->_attrs[a].attrFont(_styles);
         color = ln->_attrs[a].attrBg(_styles);
         w = screen.stringWidthUni(font, Common::U32String(ln->_chars + a, b - a), spw);
-        screen.fillRect(x/GLI_SUBPIX, y, w/GLI_SUBPIX,
-                g_conf->_leading, color);
+        screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, g_conf->_leading), color);
         if (link) {
-            screen.fillRect(x/GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
-                    w/GLI_SUBPIX + 1, g_conf->_linkStyle,
-                    g_conf->_linkColor);
-            g_vm->_windowMask->putHyperlink(link, x/GLI_SUBPIX, y,
-                    x/GLI_SUBPIX + w/GLI_SUBPIX,
+            screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
+                    w/GLI_SUBPIX + 1, g_conf->_linkStyle), g_conf->_linkColor);
+            g_vm->_windowMask->putHyperlink(link, x / GLI_SUBPIX, y,
+                    x / GLI_SUBPIX + w / GLI_SUBPIX,
                     y + g_conf->_leading);
         }
         x += w;
 
         color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        screen.fillRect(x/GLI_SUBPIX, y,
-                x1/GLI_SUBPIX - x/GLI_SUBPIX, g_conf->_leading,
-                color);
+        screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, x1/GLI_SUBPIX - x/GLI_SUBPIX, g_conf->_leading), color);
 
         /*
          * draw caret
@@ -1010,7 +1003,7 @@ void TextBufferWindow::redraw() {
         if (_windows->getFocusWindow() == this && i == 0 && (_lineRequest || _lineRequestUni)) {
             w = calcWidth(_chars, _attrs, 0, _inCurs, spw);
             if (w < pw - g_conf->_caretShape * 2 * GLI_SUBPIX)
-                screen.drawCaret(Common::Point(x0 + SLOP + ln->_lm + w, y + g_conf->_baseLine));
+                screen.drawCaret(Point(x0 + SLOP + ln->_lm + w, y + g_conf->_baseLine));
         }
 
         /*
@@ -1025,7 +1018,7 @@ void TextBufferWindow::redraw() {
                 link = ln->_attrs[a].hyper;
                 font = ln->_attrs[a].attrFont(_styles);
                 color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-                x = screen.drawStringUni(Common::Point(x, y + g_conf->_baseLine),
+                x = screen.drawStringUni(Point(x, y + g_conf->_baseLine),
                         font, color, Common::U32String(ln->_chars + a, b - a), spw);
                 a = b;
             }
@@ -1033,7 +1026,7 @@ void TextBufferWindow::redraw() {
         link = ln->_attrs[a].hyper;
         font = ln->_attrs[a].attrFont(_styles);
         color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-        screen.drawStringUni(Common::Point(x, y + g_conf->_baseLine),
+        screen.drawStringUni(Point(x, y + g_conf->_baseLine),
                 font, color, Common::U32String(ln->_chars + a, linelen - a), spw);
     }
 
@@ -1049,9 +1042,7 @@ void TextBufferWindow::redraw() {
                 x1/GLI_SUBPIX, y + g_conf->_leading);
 
         color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        screen.fillRect(x/GLI_SUBPIX, y,
-                x1/GLI_SUBPIX - x/GLI_SUBPIX, g_conf->_leading,
-                color);
+        screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, x1 / GLI_SUBPIX - x / GLI_SUBPIX, g_conf->_leading), color);
 
         w = screen.stringWidth(g_conf->_moreFont, g_conf->_morePrompt);
 
@@ -1061,7 +1052,7 @@ void TextBufferWindow::redraw() {
             x = x1 - SLOP - w;
 
         color = Windows::_overrideFgSet ? g_conf->_moreColor : _fgColor;
-		screen.drawString(Common::Point(x, y + g_conf->_baseLine),
+		screen.drawString(Point(x, y + g_conf->_baseLine),
                 g_conf->_moreFont, color, g_conf->_morePrompt);
         y1 = y; /* don't want pictures overdrawing "[more]" */
 
@@ -1141,16 +1132,14 @@ void TextBufferWindow::redraw() {
             t0 = t1 = y0;
         }
 
-        screen.fillRect(x0+1, y0, x1-x0-2, y1-y0, g_conf->_scrollBg);
-        screen.fillRect(x0+1, t0, x1-x0-2, t1-t0, g_conf->_scrollFg);
+        screen.fillRect(Rect::fromXYWH(x0 + 1, y0, x1-x0 - 2, y1 - y0), g_conf->_scrollBg);
+        screen.fillRect(Rect::fromXYWH(x0 + 1, t0, x1-x0 - 2, t1 - t0), g_conf->_scrollFg);
 
         for (i = 0; i < g_conf->_scrollWidth / 2 + 1; i++) {
-            screen.fillRect(x0+g_conf->_scrollWidth/2-i,
-                    y0 - g_conf->_scrollWidth/2 + i,
-                    i*2, 1, g_conf->_scrollFg);
-            screen.fillRect(x0+g_conf->_scrollWidth/2-i,
-                    y1 + g_conf->_scrollWidth/2 - i,
-                    i*2, 1, g_conf->_scrollFg);
+            screen.fillRect(Rect::fromXYWH(x0 + g_conf->_scrollWidth / 2 - i,
+				y0 - g_conf->_scrollWidth/2 + i, i * 2, 1), g_conf->_scrollFg);
+            screen.fillRect(Rect::fromXYWH(x0 + g_conf->_scrollWidth / 2 - i,
+                    y1 + g_conf->_scrollWidth / 2 - i, i * 2, 1), g_conf->_scrollFg);
         }
     }
 

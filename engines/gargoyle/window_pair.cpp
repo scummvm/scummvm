@@ -36,8 +36,8 @@ PairWindow::PairWindow(Windows *windows, glui32 method, Window *key, glui32 size
 	_type = wintype_Pair;
 }
 
-void PairWindow::rearrange(const Common::Rect &box) {
-	Common::Rect box1, box2;
+void PairWindow::rearrange(const Rect &box) {
+	Rect box1, box2;
 	int min, diff, split, splitwid, max;
 	Window *ch1, *ch2;
 

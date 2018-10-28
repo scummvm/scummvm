@@ -58,7 +58,7 @@ public:
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Common::Rect &box) override;
+	virtual void rearrange(const Rect &box) override;
 
 	/**
 	 * Get window split size within parent pair window
@@ -86,9 +86,9 @@ public:
 	 */
 	virtual void redraw() override;
 
-	virtual void eraseRect(bool whole, const Common::Rect &box) override;
+	virtual void eraseRect(bool whole, const Rect &box) override;
 
-	virtual void fillRect(glui32 color, const Common::Rect &box) override;
+	virtual void fillRect(glui32 color, const Rect &box) override;
 
 	virtual void getSize(glui32 *width, glui32 *height) const override;
 

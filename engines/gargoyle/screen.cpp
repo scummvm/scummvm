@@ -29,12 +29,12 @@ void Screen::fill(const byte *rgb) {
 	clear(color);
 }
 
-void Screen::fillRect(uint x, uint y, uint w, uint h, const byte *rgb) {
+void Screen::fillRect(const Rect &box, const byte *rgb) {
 	uint color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
-	Graphics::Screen::fillRect(Common::Rect(x, y, x + w, y + h), color);
+	Graphics::Screen::fillRect(box, color);
 }
 
-void Screen::drawCaret(const Common::Point &pos) {
+void Screen::drawCaret(const Point &pos) {
 	// TODO
 }
 

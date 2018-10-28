@@ -103,14 +103,14 @@ Graphics::Font *Fonts::loadFont(FACES face, double size, double aspect, int styl
 	return Graphics::loadTTFFont(f, size, Graphics::kTTFSizeModeCharacter);
 }
 
-int Fonts::drawString(const Common::Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw) {
+int Fonts::drawString(const Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw) {
 	Graphics::Font *font = _fontTable[fontIdx];
 	const uint32 color = _surface->format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	font->drawString(_surface, text, pos.x, pos.y, _surface->w - pos.x, color);
 	return font->getBoundingBox(text, pos.x, pos.y, _surface->w - pos.x).right;
 }
 
-int Fonts::drawStringUni(const Common::Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw) {
+int Fonts::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw) {
 	Graphics::Font *font = _fontTable[fontIdx];
 	const uint32 color = _surface->format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	font->drawString(_surface, text, pos.x, pos.y, _surface->w - pos.x, color);

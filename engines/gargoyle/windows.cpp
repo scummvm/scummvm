@@ -249,7 +249,7 @@ PairWindow *Windows::newPairWindow(glui32 method, Window *key, glui32 size) {
 
 void Windows::rearrange() {
 	if (_rootWin) {
-		Common::Rect box;
+		Rect box;
 
 		if (g_conf->_lockCols) {
 			int desired_width = g_conf->_wMarginSaveX * 2 + g_conf->_cellW * g_conf->_cols;
@@ -384,7 +384,7 @@ void Windows::inputHandleKey(glui32 key) {
 		g_vm->quitGame();
 }
 
-void Windows::inputHandleClick(const Common::Point &pos) {
+void Windows::inputHandleClick(const Point &pos) {
 	if (_rootWin)
 		_rootWin->click(pos);
 }
@@ -399,7 +399,7 @@ void Windows::redraw() {
 	_claimSelect = false;
 
 	if (_forceRedraw) {
-		repaint(Common::Rect(0, 0, g_conf->_imageW, g_conf->_imageH));
+		repaint(Rect(0, 0, g_conf->_imageW, g_conf->_imageH));
 		g_vm->_screen->fill(g_conf->_windowColor);
 	}
 
@@ -412,12 +412,12 @@ void Windows::redraw() {
 	_forceRedraw = 0;
 }
 
-void Windows::redrawRect(const Common::Rect &r) {
+void Windows::redrawRect(const Rect &r) {
 	_drawSelect = true;
 	repaint(r);
 }
 
-void Windows::repaint(const Common::Rect &box) {
+void Windows::repaint(const Rect &box) {
 	// No implementation
 }
 
@@ -556,7 +556,7 @@ void Window::cancelLineEvent(Event *ev) {
 	ev->clear();
 }
 
-void Window::moveCursor(const Common::Point &newPos) {
+void Window::moveCursor(const Point &newPos) {
 	warning("moveCursor: not a TextGrid window");
 }
 
@@ -572,7 +572,7 @@ void Window::redraw() {
 	if (Windows::_forceRedraw) {
 		unsigned char *color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
 		int y0 = _yAdj ? _bbox.top - _yAdj : _bbox.top;
-		g_vm->_screen->fillRect(_bbox.left, y0, _bbox.width(), _bbox.bottom - y0, color);
+		g_vm->_screen->fillRect(Rect(_bbox.left, y0, _bbox.right, _bbox.bottom), color);
 	}
 }
 
@@ -604,11 +604,11 @@ void Window::flowBreak() {
 	warning("flowBreak: not a text buffer window");
 }
 
-void Window::eraseRect(bool whole, const Common::Rect &box) {
+void Window::eraseRect(bool whole, const Rect &box) {
 	warning("eraseRect: not a graphics window");
 }
 
-void Window::fillRect(glui32 color, const Common::Rect &box) {
+void Window::fillRect(glui32 color, const Rect &box) {
 	warning("fillRect: not a graphics window");
 }
 
