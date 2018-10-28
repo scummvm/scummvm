@@ -807,7 +807,7 @@ uint getSizeNextPOT(uint size) {
     if ( [[[UIApplication sharedApplication] keyWindow] respondsToSelector:@selector(safeAreaInsets)] ) {
 #endif
         CGRect screenSize = [[UIScreen mainScreen] bounds];
-        UIEdgeInsets inset = [[UIApplication sharedApplication] keyWindow].safeAreaInsets;
+        UIEdgeInsets inset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
         UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
         CGRect newFrame = screenSize;
         if ( orientation == UIInterfaceOrientationPortrait ) {
