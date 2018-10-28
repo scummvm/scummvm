@@ -102,7 +102,7 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc) {
-			*engine = new MutationOfJB::MutationOfJBEngine(syst);
+			*engine = new MutationOfJB::MutationOfJBEngine(syst, desc);
 		}
 		return desc != nullptr;
 	}

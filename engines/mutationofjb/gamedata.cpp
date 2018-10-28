@@ -150,6 +150,14 @@ void Static::saveLoadWithSerializer(Common::Serializer &sz) {
 	sz.syncAsByte(_walkToFrame);
 }
 
+bool Static::isCombinable() const {
+	const size_t length = strlen(_name);
+	if (length == 0)
+		return false;
+
+	return _name[length - 1] == '[';
+}
+
 bool Bitmap::loadInitialState(Common::ReadStream &stream) {
 	_roomFrame = stream.readByte();
 	_isVisible = stream.readByte();

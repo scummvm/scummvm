@@ -20,34 +20,31 @@
  *
  */
 
-#include "mutationofjb/assets.h"
+#ifndef MUTATIONOJFB_LABELWIDGET_H
+#define MUTATIONOJFB_LABELWIDGET_H
+
+#include "mutationofjb/widgets/widget.h"
 
 namespace MutationOfJB {
 
-Assets::Assets(Game &game) : _game(game), _toSayList("tosay.ger"), _responseList("response.ger"), _hardcodedStrings(game) {}
+class LabelWidget : public Widget {
+public:
+	LabelWidget(GuiScreen &gui, const Common::Rect &area);
 
-Font &Assets::getSystemFont() {
-	return _systemFont;
-}
+	uint8 getBackgroundColor() const;
+	void setBackgroundColor(uint8 color);
 
-Font &Assets::getSpeechFont() {
-	return _speechFont;
-}
+	const Common::String &getText() const;
+	void setText(const Common::String &text);
 
-ConversationLineList &Assets::getToSayList() {
-	return _toSayList;
-}
+protected:
+	virtual void draw(Graphics::ManagedSurface &) override;
 
-ConversationLineList &Assets::getResponseList() {
-	return _responseList;
-}
-
-InventoryItemDefinitionList &Assets::getInventoryItemDefList() {
-	return _invItemDefList;
-}
-
-HardcodedStrings &Assets::getHardcodedStrings() {
-	return _hardcodedStrings;
-}
+private:
+	uint8 _backgroundColor;
+	Common::String _text;
+};
 
 }
+
+#endif

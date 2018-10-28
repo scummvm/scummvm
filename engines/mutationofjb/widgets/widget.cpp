@@ -43,20 +43,36 @@ void Widget::setVisible(bool visible) {
 	_visible = visible;
 }
 
-void Widget::markDirty() {
-	_dirty = true;
+bool Widget::isEnabled() const {
+	return _enabled;
+}
+
+void Widget::setEnabled(bool enabled) {
+	_enabled = enabled;
+}
+
+Common::Rect Widget::getArea() const {
+	return _area;
+}
+
+void Widget::setArea(const Common::Rect &area) {
+	_area = area;
+}
+
+void Widget::markDirty(uint32 dirtyBits) {
+	_dirtyBits = dirtyBits;
 }
 
 bool Widget::isDirty() const {
-	return _dirty;
+	return _dirtyBits != DIRTY_NONE;
 }
 
 void Widget::update(Graphics::ManagedSurface &surface) {
-	if (_dirty) {
+	if (isDirty()) {
 		if (_visible) {
 			draw(surface);
 		}
-		_dirty = false;
+		_dirtyBits = DIRTY_NONE;
 	}
 }
 

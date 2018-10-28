@@ -26,6 +26,7 @@
 #include "mutationofjb/font.h"
 #include "mutationofjb/conversationlinelist.h"
 #include "mutationofjb/inventoryitemdefinitionlist.h"
+#include "mutationofjb/hardcodedstrings.h"
 
 namespace MutationOfJB {
 
@@ -38,10 +39,33 @@ public:
 	Font &getSystemFont();
 	Font &getSpeechFont();
 
+	/**
+	 * Access to "to say" list for conversations.
+	 *
+	 * @return Conversation line list.
+	 */
 	ConversationLineList &getToSayList();
+
+	/**
+	 * Access to "response" list for conversations.
+	 *
+	 * @return Conversation line list.
+	 */
 	ConversationLineList &getResponseList();
+
+	/**
+	 * Access to inventory definitions.
+	 *
+	 * @return Inventory item definiton list.
+	 */
 	InventoryItemDefinitionList &getInventoryItemDefList();
 
+	/**
+	 * Access to strings hardcoded in game executable.
+	 *
+	 * @return Hardcoded strings.
+	 */
+	HardcodedStrings &getHardcodedStrings();
 private:
 	Game &_game;
 	SystemFont _systemFont;
@@ -49,6 +73,7 @@ private:
 	ConversationLineList _toSayList;
 	ConversationLineList _responseList;
 	InventoryItemDefinitionList _invItemDefList;
+	HardcodedStrings _hardcodedStrings;
 };
 
 }

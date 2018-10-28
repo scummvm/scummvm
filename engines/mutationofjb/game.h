@@ -25,9 +25,9 @@
 
 #include "mutationofjb/assets.h"
 #include "mutationofjb/gamescreen.h"
-#include "mutationofjb/script.h"
 #include "mutationofjb/tasks/taskmanager.h"
 
+#include "common/language.h"
 #include "common/ptr.h"
 #include "common/random.h"
 #include "common/scummsys.h"
@@ -51,6 +51,8 @@ struct Bitmap;
 class Game {
 public:
 	Game(MutationOfJBEngine *vm);
+	MutationOfJBEngine &getEngine();
+
 	Common::RandomSource &getRandomSource();
 	GameData &getGameData();
 	Room &getRoom();
@@ -68,9 +70,6 @@ public:
 
 	GameScreen &getGameScreen();
 
-	ActionInfo::Action getCurrentAction() const;
-	void setCurrentAction(ActionInfo::Action);
-
 	static uint8 colorFromString(const char *colorStr);
 
 	TaskManager &getTaskManager();
@@ -82,6 +81,8 @@ public:
 	void setActiveSayTask(const TaskPtr &sayTask);
 
 	bool loadSaveAllowed() const;
+
+	Common::Language getLanguage() const;
 
 private:
 	bool loadGameData(bool partB);
@@ -98,7 +99,6 @@ private:
 	Script *_delayedLocalScript;
 	Room *_room;
 	GameScreen _gui;
-	ActionInfo::Action _currentAction;
 
 	ScriptExecutionContext _scriptExecCtx;
 

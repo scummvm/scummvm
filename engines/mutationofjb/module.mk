@@ -30,8 +30,10 @@ MODULE_OBJS := \
 	tasks/taskmanager.o \
 	widgets/buttonwidget.o \
 	widgets/conversationwidget.o \
+	widgets/gamewidget.o \
 	widgets/imagewidget.o \
 	widgets/inventorywidget.o \
+	widgets/labelwidget.o \
 	widgets/widget.o \
 	animationdecoder.o \
 	assets.o \
@@ -44,6 +46,7 @@ MODULE_OBJS := \
 	gamedata.o \
 	gamescreen.o \
 	guiscreen.o \
+	hardcodedstrings.o \
 	inventory.o \
 	inventoryitemdefinitionlist.o \
 	mutationofjb.o \

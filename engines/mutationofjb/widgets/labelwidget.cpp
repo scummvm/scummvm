@@ -20,34 +20,45 @@
  *
  */
 
+#include "mutationofjb/widgets/labelwidget.h"
+
 #include "mutationofjb/assets.h"
+#include "mutationofjb/game.h"
+#include "mutationofjb/gamedata.h"
 
 namespace MutationOfJB {
 
-Assets::Assets(Game &game) : _game(game), _toSayList("tosay.ger"), _responseList("response.ger"), _hardcodedStrings(game) {}
+LabelWidget::LabelWidget(GuiScreen &gui, const Common::Rect &area) :
+	Widget(gui, area),
+	_backgroundColor(0x00) {}
 
-Font &Assets::getSystemFont() {
-	return _systemFont;
+uint8 LabelWidget::getBackgroundColor() const {
+	return _backgroundColor;
 }
 
-Font &Assets::getSpeechFont() {
-	return _speechFont;
+void LabelWidget::setBackgroundColor(uint8 color) {
+	if (_backgroundColor == color)
+		return;
+
+	_backgroundColor = color;
+	markDirty();
 }
 
-ConversationLineList &Assets::getToSayList() {
-	return _toSayList;
+const Common::String &LabelWidget::getText() const {
+	return _text;
 }
 
-ConversationLineList &Assets::getResponseList() {
-	return _responseList;
+void LabelWidget::setText(const Common::String &text) {
+	if (_text == text)
+		return;
+
+	_text = text;
+	markDirty();
 }
 
-InventoryItemDefinitionList &Assets::getInventoryItemDefList() {
-	return _invItemDefList;
-}
-
-HardcodedStrings &Assets::getHardcodedStrings() {
-	return _hardcodedStrings;
+void LabelWidget::draw(Graphics::ManagedSurface &surface) {
+	surface.fillRect(_area, _backgroundColor);
+	_gui.getGame().getAssets().getSystemFont().drawString(&surface, _text, _area.left, _area.top, _area.width(), LIGHTGRAY, Graphics::kTextAlignCenter);
 }
 
 }

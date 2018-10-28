@@ -26,6 +26,8 @@
 #include "engines/engine.h"
 #include "mutationofjb/script.h"
 
+struct ADGameDescription;
+
 namespace Common {
 struct Event;
 class Serializer;
@@ -39,6 +41,7 @@ namespace MutationOfJB {
 
 class Console;
 class Game;
+class GuiScreen;
 
 struct SaveHeader {
 	bool sync(Common::Serializer &sz);
@@ -54,14 +57,13 @@ public:
 		CURSOR_ACTIVE
 	};
 
-	MutationOfJBEngine(OSystem *syst);
+	MutationOfJBEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~MutationOfJBEngine();
 
 	virtual Common::Error run();
 	Graphics::Screen *getScreen() const;
 	Game &getGame();
 	void setCursorState(CursorState cursorState);
-	void updateCursor();
 
 	virtual bool hasFeature(EngineFeature f) const override;
 	virtual bool canLoadGameStateCurrently() override;
@@ -69,40 +71,21 @@ public:
 	virtual bool canSaveGameStateCurrently() override;
 	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 
+	const ADGameDescription *getGameDescription() const;
+
 private:
 	bool loadGameData(bool partB);
 	void setupCursor();
-	void updateCursorHitTest(int16 x, int16 y);
 	void updateCursorPalette();
 
-	/**
-	 * Handling for normal (non-map) scenes.
-	 *
-	 * Statics and doors define mouse clickable areas.
-	 * Statics are used to start actions.
-	 * Doors are used to transition between scenes.
-	 *
-	 * @param event ScummVM event.
-	 */
-	void handleNormalScene(const Common::Event &event);
-
-	/**
-	 * Special handling for map scenes.
-	 *
-	 * Bitmaps define mouse clickable areas.
-	 * Statics are used to start actions.
-	 * Objects are used for showing labels.
-	 *
-	 * @param event ScummVM event.
-	 */
-	void handleMapScene(const Common::Event &event);
-
+	const ADGameDescription *_gameDesc;
 	Console *_console;
 	Graphics::Screen *_screen;
 	Game *_game;
 	uint8 _mapObjectId;
 
 	CursorState _cursorState;
+	GuiScreen *_currentScreen;
 };
 
 }

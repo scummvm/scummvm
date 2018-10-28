@@ -248,6 +248,13 @@ struct Static : public Common::Serializable {
 	 * @param sz Serializer.
 	 */
 	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
+
+	/**
+	 * Statics with names ending with '[' are allowed to be combined with other items.
+	 *
+	 * @return True if combinable, false otherwise.
+	 */
+	bool isCombinable() const;
 };
 
 /**

@@ -39,10 +39,9 @@ void ConversationTask::start() {
 	setState(RUNNING);
 
 	Game &game = getTaskManager()->getGame();
+	game.getGameScreen().showConversationWidget(true);
 	ConversationWidget &widget = game.getGameScreen().getConversationWidget();
-
 	widget.setCallback(this);
-	widget.setVisible(true);
 
 	_currentGroupIndex = 0;
 
@@ -219,9 +218,9 @@ void ConversationTask::finish() {
 	setState(FINISHED);
 
 	Game &game = getTaskManager()->getGame();
+	game.getGameScreen().showConversationWidget(false);
 	ConversationWidget &widget = game.getGameScreen().getConversationWidget();
-	widget.setVisible(false);
-	game.getGameScreen().markDirty(); // TODO: Handle automatically when changing visibility.
+	widget.setCallback(nullptr);
 }
 
 void ConversationTask::startExtra() {
