@@ -45,6 +45,10 @@ TextBufferWindow::TextBufferWindow(Windows *windows, uint32 rock) : Window(windo
 	_type = wintype_TextBuffer;
 	Common::fill(&_history[0], &_history[HISTORYLEN], nullptr);
 
+	_lines.resize(SCROLLBACK);
+	_chars = _lines[0]._chars;
+	_attrs = _lines[0]._attrs;
+
 	Common::copy(&g_conf->_tStyles[0], &g_conf->_tStyles[style_NUMSTYLES], _styles);
 }
 
