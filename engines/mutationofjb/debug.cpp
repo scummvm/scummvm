@@ -312,24 +312,27 @@ bool Console::cmd_changescene(int argc, const char **argv) {
 }
 
 bool Console::cmd_dumpsceneinfo(int argc, const char **argv) {
+	uint8 sceneId = _vm->getGame().getGameData()._currentScene;
+
 	if (argc == 2) {
-		const uint8 sceneId = atoi(argv[1]);
-		Scene *scene = _vm->getGame().getGameData().getScene(sceneId);
-		if (scene) {
-			debugPrintf("Startup: %u\n", (unsigned int) scene->_startup);
-			debugPrintf("Delay: %u\n", (unsigned int) scene->_delay);
-			debugPrintf("Doors: %u\n", (unsigned int) scene->_noDoors);
-			debugPrintf("Objects: %u\n", (unsigned int) scene->_noObjects);
-			debugPrintf("Statics: %u\n", (unsigned int) scene->_noStatics);
-			debugPrintf("ObstacleY1: %u\n", (unsigned int) scene->_obstacleY1);
-			debugPrintf("PalRotFirst: %u\n", (unsigned int) scene->_palRotFirst);
-			debugPrintf("PalRotLast: %u\n", (unsigned int) scene->_palRotLast);
-			debugPrintf("PalRotDelay: %u\n", (unsigned int) scene->_palRotDelay);
-		} else {
-			debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
-		}
+		sceneId = atoi(argv[1]);
+	} else if (argc != 1) {
+		debugPrintf("dumpsceneinfo [<sceneid>]\n");
+	}
+
+	if (Scene *const scene = _vm->getGame().getGameData().getScene(sceneId)) {
+		debugPrintf("Scene ID: %u\n", (unsigned int) sceneId);
+		debugPrintf("Startup: %u\n", (unsigned int) scene->_startup);
+		debugPrintf("Delay: %u\n", (unsigned int) scene->_delay);
+		debugPrintf("Doors: %u\n", (unsigned int) scene->_noDoors);
+		debugPrintf("Objects: %u\n", (unsigned int) scene->_noObjects);
+		debugPrintf("Statics: %u\n", (unsigned int) scene->_noStatics);
+		debugPrintf("ObstacleY1: %u\n", (unsigned int) scene->_obstacleY1);
+		debugPrintf("PalRotFirst: %u\n", (unsigned int) scene->_palRotFirst);
+		debugPrintf("PalRotLast: %u\n", (unsigned int) scene->_palRotLast);
+		debugPrintf("PalRotDelay: %u\n", (unsigned int) scene->_palRotDelay);
 	} else {
-		debugPrintf("dumpsceneinfo <sceneid>\n");
+		debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
 	}
 
 	return true;

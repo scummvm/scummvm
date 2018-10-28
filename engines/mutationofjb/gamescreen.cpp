@@ -147,18 +147,23 @@ void GameScreen::handleEvent(const Common::Event &event) {
 		switch (event.kbd.ascii) {
 		case 'g':
 			_currentAction = ActionInfo::Walk;
+			_currentPickedItem.clear();
 			break;
 		case 'r':
 			_currentAction = ActionInfo::Talk;
+			_currentPickedItem.clear();
 			break;
 		case 's':
 			_currentAction = ActionInfo::Look;
+			_currentPickedItem.clear();
 			break;
 		case 'b':
 			_currentAction = ActionInfo::Use;
+			_currentPickedItem.clear();
 			break;
 		case 'n':
 			_currentAction = ActionInfo::PickUp;
+			_currentPickedItem.clear();
 			break;
 		}
 		break;
@@ -368,18 +373,20 @@ void GameScreen::onInventoryItemClicked(InventoryWidget *, int posInWidget) {
 	}
 }
 
-void GameScreen::onGameDoorClicked(GameWidget *, const Door *door) {
+void GameScreen::onGameDoorClicked(GameWidget *, Door *door) {
 	if (!_currentPickedItem.empty()) {
 		_game.startActionSection(_currentAction, _currentPickedItem, door->_name);
+		_currentPickedItem.clear();
 		return;
 	}
 
 	if (!_game.startActionSection(_currentAction, door->_name) && _currentAction == ActionInfo::Walk && door->_destSceneId != 0) {
-		_game.changeScene(door->_destSceneId, _game.getGameData()._partB);
+		if (door->allowsImplicitSceneChange())
+			_game.changeScene(door->_destSceneId, _game.getGameData()._partB);
 	}
 }
 
-void GameScreen::onGameStaticClicked(GameWidget *, const Static *stat) {
+void GameScreen::onGameStaticClicked(GameWidget *, Static *stat) {
 	if (_currentAction == ActionInfo::Use) {
 		if (_currentPickedItem.empty()) {
 			if (stat->isCombinable())
@@ -391,7 +398,15 @@ void GameScreen::onGameStaticClicked(GameWidget *, const Static *stat) {
 			_currentPickedItem.clear();
 		}
 	} else {
-		_game.startActionSection(_currentAction, stat->_name);
+		if (!_game.startActionSection(_currentAction, stat->_name)) {
+			if (_currentAction == ActionInfo::PickUp && stat->allowsImplicitPickup()) {
+				Common::String inventoryName(stat->_name);
+				inventoryName.setChar('`', 0);
+
+				_game.getGameData().getInventory().addItem(inventoryName);
+				stat->_active = 0;
+			}
+		}
 	}
 }
 

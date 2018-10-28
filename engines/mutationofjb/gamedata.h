@@ -57,8 +57,6 @@ struct Door : public Common::Serializable {
 	 *
 	 * If it ends with '+', using the "go" verb on the door will not implicitly change the scene,
 	 * but the player will still walk towards the door.
-	 *
-	 * TODO: Implement the '+' restriction.
 	 */
 	char _name[MAX_ENTITY_NAME_LENGTH + 1];
 	/**
@@ -82,7 +80,11 @@ struct Door : public Common::Serializable {
 	uint16 _walkToX;
 	/** Y coordinate for position player will walk towards after clicking the door (WY register). */
 	uint8  _walkToY;
-	/** Unknown for now - likely not even used. */
+	/**
+	 * Encoded player frames.
+	 *   4 bits - destFrame
+	 *   4 bits - walkToFrame
+	 */
 	uint8  _SP;
 
 	/**
@@ -105,6 +107,13 @@ struct Door : public Common::Serializable {
 	 * @param sz Serializer.
 	 */
 	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
+
+	/**
+	 * Check whether walk action used on this door causes implicit scene change.
+	 *
+	 * @return True if door implicitly changes current scene, false otherwise.
+	 */
+	bool allowsImplicitSceneChange() const;
 };
 
 /**
@@ -216,7 +225,6 @@ struct Static : public Common::Serializable {
 	 * entity.
 	 *
 	 * TODO: Support '~' statics.
-	 * TODO: Support combinable statics.
 	 */
 	char _name[MAX_ENTITY_NAME_LENGTH + 1];
 	/** X coordinate of the static rectangle (XX register). */
@@ -250,11 +258,20 @@ struct Static : public Common::Serializable {
 	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
 
 	/**
+	 * Check whether this static is combinable.
 	 * Statics with names ending with '[' are allowed to be combined with other items.
 	 *
 	 * @return True if combinable, false otherwise.
 	 */
 	bool isCombinable() const;
+
+	/**
+	 * Check whether this static is implicitly picked up.
+	 * Statics with names starting with '~' are implicitly picked up.
+	 *
+	 * @return Returns true if this static is implicitly picked up by pick up action, false otherwise.
+	 */
+	bool allowsImplicitPickup() const;
 };
 
 /**

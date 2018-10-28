@@ -88,6 +88,14 @@ void Door::saveLoadWithSerializer(Common::Serializer &sz) {
 	sz.syncAsByte(_SP);
 }
 
+bool Door::allowsImplicitSceneChange() const {
+	const size_t length = strlen(_name);
+	if (length == 0)
+		return false;
+
+	return _name[length - 1] != '+';
+}
+
 bool Object::loadInitialState(Common::ReadStream &stream) {
 	_active = stream.readByte();
 	_firstFrame = stream.readByte();
@@ -156,6 +164,10 @@ bool Static::isCombinable() const {
 		return false;
 
 	return _name[length - 1] == '[';
+}
+
+bool Static::allowsImplicitPickup() const {
+	return _name[0] == '~';
 }
 
 bool Bitmap::loadInitialState(Common::ReadStream &stream) {

@@ -34,8 +34,8 @@ struct Static;
 class GameWidgetCallback {
 public:
 	virtual ~GameWidgetCallback() {}
-	virtual void onGameDoorClicked(GameWidget *, const Door *door) = 0;
-	virtual void onGameStaticClicked(GameWidget *, const Static *stat) = 0;
+	virtual void onGameDoorClicked(GameWidget *, Door *door) = 0;
+	virtual void onGameStaticClicked(GameWidget *, Static *stat) = 0;
 	virtual void onGameEntityHovered(GameWidget *, const Common::String &entity) = 0;
 };
 

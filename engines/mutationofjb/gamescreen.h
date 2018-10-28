@@ -69,8 +69,8 @@ public:
 	virtual void onButtonClicked(ButtonWidget *) override;
 	virtual void onInventoryItemHovered(InventoryWidget *widget, int posInWidget) override;
 	virtual void onInventoryItemClicked(InventoryWidget *widget, int posInWidget) override;
-	virtual void onGameDoorClicked(GameWidget *, const Door *door) override;
-	virtual void onGameStaticClicked(GameWidget *, const Static *stat) override;
+	virtual void onGameDoorClicked(GameWidget *, Door *door) override;
+	virtual void onGameStaticClicked(GameWidget *, Static *stat) override;
 	virtual void onGameEntityHovered(GameWidget *, const Common::String &entity) override;
 
 	ConversationWidget &getConversationWidget();
