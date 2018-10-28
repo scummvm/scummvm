@@ -602,6 +602,8 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	memset(_seqMovies, 0, sizeof(_seqMovies));
 
 	_screen->_curPage = 0;
+	char inheb[384] = {0};
+	int _idx = 0;
 	while (!_seqQuitFlag && !_vm->shouldQuit()) {
 		if (skipSeq && _vm->seq_skipSequence()) {
 			while (1) {
@@ -619,17 +621,36 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 			if (_seqDisplayedTextTimer < _system->getMillis()) {
 				char charStr[3];
 				charStr[0] = _vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar];
+				if (_vm->gameFlags().lang == Common::HE_ISR) {
+					for (int k = _idx; k > 0; k--) {
+						inheb[k] = inheb[k - 1];
+					}
+					inheb[0] = charStr[0];
+					if (!_idx) {
+						int w = _screen->getTextWidth(_vm->seqTextsTable()[_seqDisplayedText] + _seqDisplayedChar);
+						_seqDisplayedTextX += w;
+					}
+					_idx++;
+				}
 				charStr[1] = charStr[2] = '\0';
 				if (_vm->gameFlags().lang == Common::JA_JPN)
 					charStr[1] = _vm->seqTextsTable()[_seqDisplayedText][++_seqDisplayedChar];
-				_screen->printText(charStr, _seqDisplayedTextX, 180, 0xF, 0xC);
-				_seqDisplayedTextX += _screen->getCharWidth((uint8)charStr[0]);
+				if (_vm->gameFlags().lang == Common::HE_ISR) {
+					_seqDisplayedTextX -= _screen->getCharWidth((uint8)charStr[0]);
+					_screen->printText(inheb, _seqDisplayedTextX, 180, 0xF, 0xC);
+				} else {
+					_screen->printText(charStr, _seqDisplayedTextX, 180, 0xF, 0xC);
+					_seqDisplayedTextX += _screen->getCharWidth((uint8)charStr[0]);
+				}
 				++_seqDisplayedChar;
 
-				if (_vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar] == '\0')
+				if (_vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar] == '\0') {
 					_seqDisplayedTextTimer = 0xFFFFFFFF;
-				else
+					memset(inheb, 0, 384);
+					_idx = 0;
+				} else {
 					_seqDisplayedTextTimer = _system->getMillis() + 1000 / ((_vm->gameFlags().lang == Common::FR_FRA) ? 120 : 60);
+				}
 			}
 		}
 

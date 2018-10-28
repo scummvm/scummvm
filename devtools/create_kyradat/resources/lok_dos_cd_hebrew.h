@@ -1,54 +1,54 @@
 static const char *const k1IntroStringsDOSCDHebrew[51] = {
 	"This is a text test - 1",
 	"This is a text test - 2",
-	"Greetings, Kallak...",
-	"...Powerful leader of the Royal Mystics!",
-	"Did I frighten you?",
-	"Malcolm!",
-	"I heard yesterday of your escape.",
-	"And have expected you before now.",
-	"Why would I rush?",
-	"I rule this land!",
-	"Your puny curse restrains me naught.",
-	"So, slay me now!",
-	"I have little magic left.",
-	"I mean to harm you, have no doubt...",
-	"...Now you are stone...",
-	"...Yet I leave your eyes.",
-	"I shed no tears for Kyrandia...",
-	"...But cannot deny you yours.",
+	"ברכות, חיליק...",
+	"...מנהיגם רב העוצמה של המיסטיקנים המלכותיים!",
+	"הבהלתי אותך?",
+	"מלקולם!",
+	"שמעתי אתמול על אודות הבריחה שלך.",
+	"וציפיתי שתבוא מוקדם יותר.",
+	"למה לי למהר?",
+	"הארץ הזו נתונה למרותי!",
+	"הקללה הפעוטה שלך אינה יכולה לעצור אותי.",
+	"קדימה, קטול אותי עכשיו!",
+	"נותר לי רק מעט קסם.",
+	"אני מתכוון לפגוע בך, בזה אין ספק...",
+	"...עכשיו אתה אבן...",
+	"...אבל את עיניך אני משאיר כפי שהן.",
+	"אינני מזיל דמעה על קירנדיה...",
+	"...אבל לא אוכל לשלול ממך את שלך.",
 	"Malcolm the Jester has broken free!",
 	"He now controls the Kyragem...",
 	"...source of all magic in Kyrandia!",
 	"",
-	"How dare you trip ME!",
-	"But no, something special for you...",
-	"A humorous hex!",
-	"But I shall give fair warning.",
-	"Don't jump on THAT tree!",
-	"Don't climb up THAT tree little squirrel!",
-	"Boo!",
-	"Tis funnier that way...",
-	"...Is it not?",
-	"Ha ha ha...",
-	"Aren't fingers wonderful?",
-	"It's great to be alive!",
-	"Brandon!",
-	"Grandfather! We did it!",
-	"No! YOU did it!",
-	"Long live King Brandon!",
-	"Long live the Royal Mystics!",
+	"אתה מעז להכשיל אותי!",
+	"אך לא, יש לי משהו מיוחד בשבילך...",
+	"כישוף מבדח!",
+	"אבל אתן לך אזהרה הוגנת.",
+	"אל תקפוץ על העץ הזה!",
+	"אל תטפס על העץ הזה סנאי קטן!",
+	"בו!",
+	"זה מצחיק יותר ככה...",
+	"...לא כך?",
+	"חה חה חה...",
+	"האין אצבעות דבר נפלא?",
+	"טוב להיות בחיים!",
+	"ברנדון!",
+	"סבא! עשינו זאת!",
+	"לא! אתה עשית זאת!",
+	"יחי המלך ברנדון!",
+	"לחיי המיסטיקנים המלכותיים!",
 	"Now, let's go put Kyrandia back together!",
-	"Good idea!",
+	"רעיון מצוין!",
 	"As my first Royal Proclamation...",
 	"I name sandals as the official footwear of Kyrandia!",
-	"Well done, Brandon!",
+	"כל הכבוד, ברנדון!",
 	"The Land no longer weeps...",
 	"And your friends have been restored!",
-	"Dear Brynn...",
-	"Malcolm has broken free!",
-	"Soon he will come for me.",
-	"Please help Brandon...",
+	"ברין היקרה...",
+	"מלקולם הצליח להשתחרר!",
+	"בקרוב הוא יגיע אליי.",
+	"נא עזרי לברנדון...",
 	""
 };
 
@@ -285,22 +285,22 @@ static const char *const k1WispJewelStringsDOSCDHebrew[2] = {
 static const StringListProvider k1WispJewelStringsDOSCDHebrewProvider = { ARRAYSIZE(k1WispJewelStringsDOSCDHebrew), k1WispJewelStringsDOSCDHebrew };
 
 static const char *const k1MagicJewelStringsDOSCDHebrew[1] = {
-	"That felt strange."
+	"זו היתה הרגשה מוזרה."
 };
 
 static const StringListProvider k1MagicJewelStringsDOSCDHebrewProvider = { ARRAYSIZE(k1MagicJewelStringsDOSCDHebrew), k1MagicJewelStringsDOSCDHebrew };
 
 static const char *const k1FlaskFullStringDOSCDHebrew[1] = {
-	"This flask is already full."
+	"הבקבוקון כבר מלא."
 };
 
 static const StringListProvider k1FlaskFullStringDOSCDHebrewProvider = { ARRAYSIZE(k1FlaskFullStringDOSCDHebrew), k1FlaskFullStringDOSCDHebrew };
 
 static const char *const k1FullFlaskStringDOSCDHebrew[4] = {
-	"The flask is now filled\rwith fresh, sparkling water.",
-	"The flask is now filled\rwith salt water.",
-	"The flask is now filled\rwith mineral water.",
-	"Magic water."
+	"הבקבוקון מלא עכשיו\rבמים מתוקים ומבעבעים.",
+	"הבקבוקון מלא עכשיו\rבמים מלוחים.",
+	"הבקבוקון מלא עכשיו\rבמים מינרליים.",
+	"מים קסומים."
 };
 
 static const StringListProvider k1FullFlaskStringDOSCDHebrewProvider = { ARRAYSIZE(k1FullFlaskStringDOSCDHebrew), k1FullFlaskStringDOSCDHebrew };
@@ -312,7 +312,7 @@ static const char *const k1OutroHomeStringDOSCDHebrew[1] = {
 static const StringListProvider k1OutroHomeStringDOSCDHebrewProvider = { ARRAYSIZE(k1OutroHomeStringDOSCDHebrew), k1OutroHomeStringDOSCDHebrew };
 
 static const char *const k1VeryCleverStringDOSCDHebrew[1] = {
-	"Very clever!  But your feeble efforts are futile."
+	"שנון ביותר!  אבל המאמצים האומללים הללו לחינם."
 };
 
 static const StringListProvider k1VeryCleverStringDOSCDHebrewProvider = { ARRAYSIZE(k1VeryCleverStringDOSCDHebrew), k1VeryCleverStringDOSCDHebrew };
