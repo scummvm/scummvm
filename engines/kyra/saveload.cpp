@@ -125,7 +125,8 @@ WARN_UNUSED_RESULT KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHea
 
 	if (header.version >= 14) {
 		if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
-			return kRSHEIoError;
+			if (!skipThumbnail)
+				return kRSHEIoError;
 		}
 	}
 
