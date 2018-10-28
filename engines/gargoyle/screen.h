@@ -24,10 +24,11 @@
 #define GARGOYLE_DRAW_H
 
 #include "graphics/screen.h"
+#include "gargoyle/fonts.h"
 
 namespace Gargoyle {
 
-class Screen : public Graphics::Screen {
+class Screen : public Graphics::Screen, Fonts {
 public:
 	/**
 	 * Fills the screen with a given rgb color

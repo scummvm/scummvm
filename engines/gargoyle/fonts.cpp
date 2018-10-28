@@ -22,8 +22,53 @@
 
 #include "gargoyle/fonts.h"
 #include "gargoyle/glk_types.h"
+#include "gargoyle/conf.h"
 
 namespace Gargoyle {
+
+const char *gli_conf_propr = "NotoSerif-Regular";
+const char *gli_conf_propb = "NotoSerif-Bold";
+const char *gli_conf_propi = "NotoSerif-Italic";
+const char *gli_conf_propz = "NotoSerif-BoldItalic";
+
+const char *gli_conf_monor = "GoMono-Regular";
+const char *gli_conf_monob = "GoMono-Bold";
+const char *gli_conf_monoi = "GoMono-Italic";
+const char *gli_conf_monoz = "GoMono-BoldItalic";
+
+#ifdef BUNDLED_FONTS
+const char *gli_conf_monofont = "";
+const char *gli_conf_propfont = "";
+const double gli_conf_monosize = 12.5;	///< good size for GoMono
+const double gli_conf_propsize = 13.4;	///< good size for NotoSerif
+#else
+const char *gli_conf_monofont = "Liberation Mono";
+const char *gli_conf_propfont = "Linux Libertine O";
+const double gli_conf_monosize = 12.5;	///< good size for LiberationMono
+const double gli_conf_propsize = 15.5;	///< good size for Libertine
+#endif
+
+Fonts::Fonts() {
+	double monoAspect = g_conf->_monoAspect;
+	double propAspect = g_conf->_propAspect;
+	double monoSize = g_conf->_monoSize;
+	double propSize = g_conf->_propSize;
+
+	_fontTable[0] = new Font(gli_conf_monor, monoSize, monoAspect, FONTR);
+	_fontTable[1] = new Font(gli_conf_monob, monoSize, monoAspect, FONTB);
+	_fontTable[2] = new Font(gli_conf_monoi, monoSize, monoAspect, FONTI);
+	_fontTable[3] = new Font(gli_conf_monoz, monoSize, monoAspect, FONTZ);
+
+	_fontTable[4] = new Font(gli_conf_propr, propSize, propAspect, FONTR);
+	_fontTable[5] = new Font(gli_conf_propb, propSize, propAspect, FONTB);
+	_fontTable[6] = new Font(gli_conf_propi, propSize, propAspect, FONTI);
+	_fontTable[7] = new Font(gli_conf_propz, propSize, propAspect, FONTZ);
+}
+
+Fonts::~Fonts() {
+	for (int idx = 0; idx < FONTS_TOTAL; ++idx)
+		delete _fontTable[idx];
+}
 
 FACES Fonts::getId(const Common::String &name) {
 	if (name == "monor") return MONOR;
@@ -36,5 +81,9 @@ FACES Fonts::getId(const Common::String &name) {
 	if (name == "propz") return PROPZ;
 	return MONOR;
 }
+
+/*--------------------------------------------------------------------------*/
+
+
 
 } // End of namespace Gargoyle
