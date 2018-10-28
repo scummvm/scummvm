@@ -21,6 +21,7 @@
  */
 
 #include "gargoyle/window_text_buffer.h"
+#include "gargoyle/clipboard.h"
 #include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/screen.h"
@@ -1155,7 +1156,7 @@ void TextBufferWindow::redraw() {
     if (selbuf && _copyPos) {
         Windows::_claimSelect = true;
 
-		copyTextToClipboard(_copyBuf, _copyPos);
+		g_vm->_clipboard->store(_copyBuf, _copyPos);
         for (i = 0; i < _copyPos; i++)
             _copyBuf[i] = 0;
         _copyPos = 0;
@@ -1621,10 +1622,6 @@ int TextBufferWindow::calcWidth(glui32 *chars, Attributes *attrs, int startchar,
 		chars + a, b - a, spw);
 
 	return w;
-}
-
-void TextBufferWindow::copyTextToClipboard(const glui32 *text, size_t len) {
-	// TODO
 }
 
 void TextBufferWindow::getSize(glui32 *width, glui32 *height) const {
