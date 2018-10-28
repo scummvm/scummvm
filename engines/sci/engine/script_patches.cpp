@@ -1519,6 +1519,28 @@ static const uint16 gk1Day5MoselyVevePointsPatch[] = {
 	PATCH_END
 };
 
+// GK1 english pc floppy has a missing message when showing certain items to
+//  Magentia in room 290 such as the flashlight. This triggers an error message.
+//  We fix this by passing GkMessager:say the correct cond as later versions do.
+//
+// Applies to: English PC Floppy 1.0
+// Responsible method: magentia:doVerb
+// Fixes bug #10782
+static const uint16 gk1ShowMagentiaItemSignature[] = {
+	SIG_MAGICDWORD,
+	0x76,                           // push0
+	0x39, 0x23,                     // push 23 [ invalid message cond ]
+	0x76,                           // push0
+	0x81, 0x5b,                     // lag 51 [ GkMessager ]
+	SIG_END
+};
+
+static const uint16 gk1ShowMagentiaItemPatch[] = {
+	PATCH_ADDTOOFFSET(+1),
+	0x39, 0x00,                     // push 0 [ "Does this mean anything to you?" ]
+	PATCH_END
+};
+
 // When entering the police station (room 230) sGabeEnters sets ego speed
 //  to 4 for the door animation but fails to restore it to the game speed
 //  by calling GKEgo:normalize. This leaves ego at 75% speed until doing
@@ -1660,6 +1682,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   240, "fix day 5 mosely veve missing points",        1, gk1Day5MoselyVevePointsSignature, gk1Day5MoselyVevePointsPatch },
 	{  true,   250, "fix ego speed when exiting drug store",       1, gk1DrugStoreEgoSpeedFixSignature, gk1DrugStoreEgoSpeedFixPatch },
 	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
+	{  true,   290, "fix magentia missing message",                1, gk1ShowMagentiaItemSignature,     gk1ShowMagentiaItemPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
