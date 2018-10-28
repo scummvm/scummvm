@@ -31,7 +31,6 @@ void Events::getEvent(event_t *event, bool polled) {
 	_currentEvent  = event;
 	event->clear();
 
-	Common::Event ev;
 	dispatchEvent(*_currentEvent, polled);
 
 	if (!polled) {
@@ -41,6 +40,9 @@ void Events::getEvent(event_t *event, bool polled) {
 
 			dispatchEvent(*_currentEvent, polled);
 		}
+
+		if (g_vm->shouldQuit())
+			_currentEvent->type = evtype_Quit;
 	}
 
 	if (_currentEvent->type == evtype_None && _timeouts) {
