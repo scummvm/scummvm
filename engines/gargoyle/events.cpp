@@ -94,6 +94,13 @@ void Events::pollEvents() {
 		case Common::EVENT_KEYDOWN:
 			handleKeyDown(event.kbd);
 			return;
+		case Common::EVENT_WHEELUP:
+		case Common::EVENT_WHEELDOWN:
+			handleScroll(event.type == Common::EVENT_WHEELUP);
+			return;
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+
 		default:
 			break;
 		}
@@ -108,15 +115,15 @@ void Events::handleKeyDown(const Common::KeyState &ks) {
 		if (ks.keycode == Common::KEYCODE_a)
 			windows.inputHandleKey(keycode_Home);
 		else if (ks.keycode == Common::KEYCODE_c)
-			clipboard.send();
+			clipboard.send(CLIPBOARD);
 		else if (ks.keycode == Common::KEYCODE_e)
 			windows.inputHandleKey(keycode_End);
 		else if (ks.keycode == Common::KEYCODE_u)
 			windows.inputHandleKey(keycode_Escape);
 		else if (ks.keycode == Common::KEYCODE_v)
-			clipboard.receive();
+			clipboard.receive(CLIPBOARD);
 		else if (ks.keycode == Common::KEYCODE_x)
-			clipboard.send();
+			clipboard.send(CLIPBOARD);
 		else if (ks.keycode == Common::KEYCODE_LEFT || ks.keycode == Common::KEYCODE_KP4)
 			windows.inputHandleKey(keycode_SkipWordLeft);
 		else if (ks.keycode == Common::KEYCODE_RIGHT || ks.keycode == Common::KEYCODE_KP6)
@@ -154,6 +161,40 @@ void Events::handleKeyDown(const Common::KeyState &ks) {
 	else if (ks.keycode == Common::KEYCODE_F11) windows.inputHandleKey(keycode_Func11);
 	else if (ks.keycode == Common::KEYCODE_F12) windows.inputHandleKey(keycode_Func12);
 	else windows.inputHandleKey(ks.ascii);
+}
+
+void Events::handleScroll(bool wheelUp) {
+	g_vm->_windows->inputHandleKey(wheelUp ? keycode_MouseWheelUp : keycode_MouseWheelDown);
+}
+
+void Events::handleMouseMove(const Common::Point &pos) {
+	// hyperlinks and selection
+	// TODO: Properly handle commented out lines
+	if (g_vm->_copySelect) {
+		//gdk_window_set_cursor((GTK_WIDGET(widget)->window), gdk_ibeam);
+		g_vm->_windowMask->moveSelection(pos);
+	} else {
+		if (g_vm->_windowMask->getHyperlink(pos)) {
+			//gdk_window_set_cursor((GTK_WIDGET(widget)->window), gdk_hand);
+		} else {
+			//gdk_window_set_cursor((GTK_WIDGET(widget)->window), NULL);
+		}
+	}
+}
+
+void Events::handleButtonDown(bool isLeft, const Common::Point &pos) {
+	if (isLeft)
+		g_vm->_windows->inputHandleClick(pos);
+	else
+		g_vm->_clipboard->receive(PRIMARY);
+}
+
+void Events::handleButtonUp(bool isLeft, const Common::Point &pos) {
+	if (isLeft) {
+		g_vm->_copySelect = false;
+		//gdk_window_set_cursor((GTK_WIDGET(widget)->window), NULL);
+		g_vm->_clipboard->send(PRIMARY);
+	}
 }
 
 } // End of namespace Gargoyle
