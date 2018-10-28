@@ -94,7 +94,7 @@ void WindowMask::putHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1
 	}
 }
 
-glui32 WindowMask::getHyperlink(const Common::Point &pos) {
+glui32 WindowMask::getHyperlink(const Point &pos) {
 	if (!_hor || !_ver) {
 		warning("getHyperlink: struct not initialized");
 		return 0;
@@ -110,7 +110,7 @@ glui32 WindowMask::getHyperlink(const Common::Point &pos) {
 	return _links[pos.x][pos.y];
 }
 
-void WindowMask::startSelection(const Common::Point &pos) {
+void WindowMask::startSelection(const Point &pos) {
 	int tx, ty;
 
 	if (!_hor || !_ver) {
@@ -129,7 +129,7 @@ void WindowMask::startSelection(const Common::Point &pos) {
 	g_vm->_windows->selectionChanged();
 }
 
-void WindowMask::moveSelection(const Common::Point &pos) {
+void WindowMask::moveSelection(const Point &pos) {
 	int tx, ty;
 
 	if (ABS(pos.x - _lastX) < 5 && abs(pos.y - _lastY) < 5)

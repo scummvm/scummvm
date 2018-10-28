@@ -169,7 +169,7 @@ void Events::handleScroll(bool wheelUp) {
 	g_vm->_windows->inputHandleKey(wheelUp ? keycode_MouseWheelUp : keycode_MouseWheelDown);
 }
 
-void Events::handleMouseMove(const Common::Point &pos) {
+void Events::handleMouseMove(const Point &pos) {
 	// hyperlinks and selection
 	// TODO: Properly handle commented out lines
 	if (g_vm->_copySelect) {
@@ -184,14 +184,14 @@ void Events::handleMouseMove(const Common::Point &pos) {
 	}
 }
 
-void Events::handleButtonDown(bool isLeft, const Common::Point &pos) {
+void Events::handleButtonDown(bool isLeft, const Point &pos) {
 	if (isLeft)
 		g_vm->_windows->inputHandleClick(pos);
 	else
 		g_vm->_clipboard->receive(PRIMARY);
 }
 
-void Events::handleButtonUp(bool isLeft, const Common::Point &pos) {
+void Events::handleButtonUp(bool isLeft, const Point &pos) {
 	if (isLeft) {
 		g_vm->_copySelect = false;
 		//gdk_window_set_cursor((GTK_WIDGET(widget)->window), NULL);

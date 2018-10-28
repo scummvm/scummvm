@@ -33,22 +33,6 @@ size_t strlen_uni(const uint32 *s) {
 	return len;
 }
 
-int strToInt(const char *s) {
-	if (!*s)
-		// No string at all
-		return 0;
-	else if (toupper(s[strlen(s) - 1]) != 'H')
-		// Standard decimal string
-		return atoi(s);
-
-	// Hexadecimal string
-	uint tmp = 0;
-	int read = sscanf(s, "%xh", &tmp);
-	if (read < 1)
-		error("strToInt failed on string \"%s\"", s);
-	return (int)tmp;
-}
-
 glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCase destcase,
 		BufferChangeCond cond, int changerest) {
 	glui32 ix, jx;

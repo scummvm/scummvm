@@ -179,7 +179,7 @@ public:
 	/**
 	 * Handle mouse clicks
 	 */
-	void inputHandleClick(const Common::Point &pos);
+	void inputHandleClick(const Point &pos);
 
 	void selectionChanged();
 
@@ -192,12 +192,12 @@ public:
 
 	void redraw();
 
-	void redrawRect(const Common::Rect &r);
+	void redrawRect(const Rect &r);
 
 	/**
 	 * Repaint an area of the windows
 	 */
-	void repaint(const Common::Rect &box);
+	void repaint(const Rect &box);
 
 	/**
 	 * Get an iterator that will move over the tree
@@ -282,7 +282,7 @@ public:
 
 	Window *_parent;       ///< pair window which contains this one
 	Window *_next, *_prev; ///< in the big linked list of windows
-	Common::Rect _bbox;
+	Rect _bbox;
 	int _yAdj;
 
 	Stream *_stream;       ///< the window stream.
@@ -328,7 +328,7 @@ public:
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Common::Rect &box) { _bbox = box; }
+	virtual void rearrange(const Rect &box) { _bbox = box; }
 
 	/**
 	 * Get window split size within parent pair window
@@ -348,7 +348,7 @@ public:
 	/**
 	 * Move the cursor
 	 */
-	virtual void moveCursor(const Common::Point &newPos);
+	virtual void moveCursor(const Point &newPos);
 
 	/**
 	 * Clear the window
@@ -358,7 +358,7 @@ public:
 	/**
 	 * Click the window
 	 */
-	virtual void click(const Common::Point &newPos) {}
+	virtual void click(const Point &newPos) {}
 
 	/**
 	 * Prepare for inputing a line
@@ -423,9 +423,9 @@ public:
 
 	virtual void flowBreak();
 
-	virtual void eraseRect(bool whole, const Common::Rect &box);
+	virtual void eraseRect(bool whole, const Rect &box);
 
-	virtual void fillRect(glui32 color, const Common::Rect &box);
+	virtual void fillRect(glui32 color, const Rect &box);
 
 	virtual void setBackgroundColor(glui32 color);
 };

@@ -25,6 +25,7 @@
 
 #include "common/rect.h"
 #include "gargoyle/glk_types.h"
+#include "gargoyle/utils.h"
 
 namespace Gargoyle {
 
@@ -34,7 +35,7 @@ class WindowMask {
 public:
 	size_t _hor, _ver;
 	glui32 **_links;
-	Common::Rect _select;
+	Rect _select;
 
 	static int _lastX, _lastY;
 public:
@@ -50,11 +51,11 @@ public:
 
 	void putHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1);
 
-	glui32 getHyperlink(const Common::Point &pos);
+	glui32 getHyperlink(const Point &pos);
 
-	void startSelection(const Common::Point &pos);
+	void startSelection(const Point &pos);
 
-	void moveSelection(const Common::Point &pos);
+	void moveSelection(const Point &pos);
 
 	void clearSelection();
 

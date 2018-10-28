@@ -24,6 +24,7 @@
 #define GARGOYLE_EVENTS_H
 
 #include "common/events.h"
+#include "gargoyle/utils.h"
 
 namespace Gargoyle {
 
@@ -171,17 +172,17 @@ private:
 	/**
 	 * Handle mouse move events
 	 */
-	void handleMouseMove(const Common::Point &pos);
+	void handleMouseMove(const Point &pos);
 
 	/**
 	 * Handle mouse down events
 	 */
-	void handleButtonDown(bool isLeft, const Common::Point &pos);
+	void handleButtonDown(bool isLeft, const Point &pos);
 
 	/**
 	 * Handle mouse up events
 	 */
-	void handleButtonUp(bool isLeft, const Common::Point &pos);
+	void handleButtonUp(bool isLeft, const Point &pos);
 public:
 	bool _forceClick;
 public:
