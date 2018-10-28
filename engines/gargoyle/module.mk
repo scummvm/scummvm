@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	time.o \
 	unicode.o \
 	unicode_gen.o \
+	utils.o \
 	windows.o \
 	window_mask.o \
 	window_graphics.o \

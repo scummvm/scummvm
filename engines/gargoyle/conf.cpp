@@ -22,7 +22,7 @@
 
 #include "gargoyle/conf.h"
 #include "gargoyle/fonts.h"
-#include "gargoyle/unicode.h"
+#include "gargoyle/utils.h"
 #include "gargoyle/windows.h"
 #include "common/config-manager.h"
 #include "common/system.h"

@@ -51,7 +51,7 @@ public:
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Common::Rect &box) override;
+	virtual void rearrange(const Rect &box) override;
 
 	/**
 	 * Redraw the window

@@ -24,6 +24,7 @@
 #define GARGOYLE_FONTS_H
 
 #include "gargoyle/glk_types.h"
+#include "gargoyle/utils.h"
 #include "common/str.h"
 #include "common/ustr.h"
 #include "graphics/font.h"
@@ -58,9 +59,9 @@ public:
 	 */
 	virtual ~Fonts();
 
-	int drawString(const Common::Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw = 0);
+	int drawString(const Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw = 0);
 
-	int drawStringUni(const Common::Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw = 0);
+	int drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw = 0);
 
 	size_t stringWidth(int fontIdx, const Common::String &text, int spw = -1);
 

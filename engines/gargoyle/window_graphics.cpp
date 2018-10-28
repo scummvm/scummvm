@@ -36,7 +36,7 @@ GraphicsWindow::~GraphicsWindow() {
 	delete _surface;
 }
 
-void GraphicsWindow::rearrange(const Common::Rect &box) {
+void GraphicsWindow::rearrange(const Rect &box) {
 	int newwid, newhgt;
 	int bothwid, bothhgt;
 	int oldw, oldh;
@@ -92,7 +92,7 @@ void GraphicsWindow::redraw() {
 		_dirty = 0;
 
 		if (_surface)
-			screen.blitFrom(*_surface, Common::Point(_bbox.left, _bbox.top));
+			screen.blitFrom(*_surface, Point(_bbox.left, _bbox.top));
 	}
 }
 
@@ -120,7 +120,7 @@ glui32 GraphicsWindow::drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int s
 	return true;
 }
 
-void GraphicsWindow::eraseRect(bool whole, const Common::Rect &box) {
+void GraphicsWindow::eraseRect(bool whole, const Rect &box) {
 	int x0 = box.left, y0 = box.top, x1 = box.right, y1 = box.bottom;
 	int hx0, hx1, hy0, hy1;
 
@@ -148,11 +148,11 @@ void GraphicsWindow::eraseRect(bool whole, const Common::Rect &box) {
 	/* zero out hyperlinks for these coordinates */
 	g_vm->_windowMask->putHyperlink(0, hx0, hy0, hx1, hy1);
 
-	_surface->fillRect(Common::Rect(x0, y0, x1, y1), MKTAG(_bgnd[0], _bgnd[1], _bgnd[2], 0));
+	_surface->fillRect(Rect(x0, y0, x1, y1), MKTAG(_bgnd[0], _bgnd[1], _bgnd[2], 0));
 	touch();
 }
 
-void GraphicsWindow::fillRect(glui32 color, const Common::Rect &box) {
+void GraphicsWindow::fillRect(glui32 color, const Rect &box) {
 	unsigned char col[3];
 	int x0 = box.left, y0 = box.top, x1 = box.right, y1 = box.bottom;
 	int hx0, hx1, hy0, hy1;
@@ -178,7 +178,7 @@ void GraphicsWindow::fillRect(glui32 color, const Common::Rect &box) {
 	/* zero out hyperlinks for these coordinates */
 	g_vm->_windowMask->putHyperlink(0, hx0, hy0, hx1, hy1);
 
-	_surface->fillRect(Common::Rect(x0, y0, x1, y1), MKTAG(col[0], col[1], col[2], 0));
+	_surface->fillRect(Rect(x0, y0, x1, y1), MKTAG(col[0], col[1], col[2], 0));
 	touch();
 }
 
@@ -233,7 +233,7 @@ void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int h
 	w = sx1 - sx0;
 	h = sy1 - sy0;
 
-	_surface->blitFrom(*g_vm->_screen, Common::Rect(sx0, sy0, sx0 + w, sy0 + h), Common::Point(0, 0));
+	_surface->blitFrom(*g_vm->_screen, Rect(sx0, sy0, sx0 + w, sy0 + h), Point(0, 0));
 }
 
 void GraphicsWindow::getSize(glui32 *width, glui32 *height) const {

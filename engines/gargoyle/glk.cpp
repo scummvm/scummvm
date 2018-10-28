@@ -295,7 +295,7 @@ void Glk::glk_window_move_cursor(winid_t win, glui32 xpos, glui32 ypos) {
 	if (!win) {
 		warning("window_move_cursor: invalid ref");
 	} else {
-		win->moveCursor(Common::Point(xpos, ypos));
+		win->moveCursor(Point(xpos, ypos));
 	}
 }
 
@@ -770,7 +770,7 @@ void Glk::glk_window_erase_rect(winid_t win, glsi32 left, glsi32 top, glui32 wid
 	if (!win) {
 		warning("window_erase_rect: invalid ref");
 	} else {
-		win->eraseRect(false, Common::Rect(left, top, left + width, top + height));
+		win->eraseRect(false, Rect(left, top, left + width, top + height));
 	}
 }
 
@@ -779,7 +779,7 @@ void Glk::glk_window_fill_rect(winid_t win, glui32 color, glsi32 left, glsi32 to
 	if (!win) {
 		warning("window_fill_rect: invalid ref");
 	} else {
-		win->eraseRect(color, Common::Rect(left, top, left + width, top + height));
+		win->eraseRect(color, Rect(left, top, left + width, top + height));
 	}
 }
 

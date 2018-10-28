@@ -20,31 +20,31 @@
  *
  */
 
-#ifndef GARGOYLE_UNICODE_H
-#define GARGOYLE_UNICODE_H
+#ifndef GARGOYLE_UTILS_H
+#define GARGOYLE_UTILS_H
 
+#include "common/rect.h"
 #include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
 
-typedef glui32 gli_case_block_t[2]; /* upper, lower */
-enum BufferChangeCase { CASE_UPPER = 0, CASE_LOWER = 1, CASE_TITLE = 2, CASE_IDENT = 3 };
-enum BufferChangeCond { COND_ALL = 0, COND_LINESTART = 1 };
+typedef Common::Point Point;
 
-/*
- * Get the length of a unicode string
- */
-size_t strlen_uni(const uint32 *s);
+struct Rect : public Common::Rect {
+public:
+	static Rect fromXYWH(int x, int y, int w, int h) {
+		return Rect(x, y, x + w, y + h);
+	}
+
+	Rect() : Common::Rect() {}
+	Rect(int16 w, int16 h) : Common::Rect(w, h) {}
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {}
+};
 
 /**
- * Apply a case change to the buffer. The len is the length of the buffer
- * array; numchars is the number of characters originally in it. (This
- * may be less than len.) The result will be clipped to fit len, but
- * the return value will be the full number of characters that the
- *converted string should have contained.
+ * Converts a decimal or hexadecimal string into a number
  */
-extern glui32 bufferChangeCase(glui32 *buf, glui32 len,
-	glui32 numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
+int strToInt(const char *s);
 
 } // End of namespace Gargoyle
 

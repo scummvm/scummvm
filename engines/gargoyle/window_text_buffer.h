@@ -147,7 +147,7 @@ public:
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Common::Rect &box) override;
+	virtual void rearrange(const Rect &box) override;
 
 	/**
 	 * Get window split size within parent pair window
@@ -172,7 +172,7 @@ public:
 	/**
 	 * Click the window
 	 */
-	virtual void click(const Common::Point &newPos) override;
+	virtual void click(const Point &newPos) override;
 
 	/**
 	 * Prepare for inputing a line
