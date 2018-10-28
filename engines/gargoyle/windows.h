@@ -101,6 +101,23 @@ private:
 	void refocus(Window *win);
 
 	Window *iterateTreeOrder(Window *win);
+
+
+	/**
+	 * Pick first window which has a more request
+	 */
+	void inputMoreFocus();
+
+	/**
+	 *
+	 */
+	void inputNextFocus();
+
+	/**
+	 * Pick first window which might want scrolling.
+	 * This is called after pressing page keys.
+	 */
+	void inputScrollFocus();
 public:
 	static bool _overrideReverse;
 	static bool _overrideFgSet;
@@ -153,6 +170,11 @@ public:
 	 * Pick first window which might want input. This is called after every keystroke.
 	 */
 	void inputGuessFocus();
+
+	/**
+	 * Handle input keypress
+	 */
+	void inputHandleKey(glui32 key);
 
 	void selectionChanged();
 

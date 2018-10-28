@@ -33,6 +33,7 @@
 
 namespace Gargoyle {
 
+class Clipboard;
 class Conf;
 class Events;
 class PicList;
@@ -93,6 +94,7 @@ protected:
 	 */
 	virtual void runGame(Common::SeekableReadStream *gameFile) = 0;
 public:
+	Clipboard *_clipboard;
 	Conf *_conf;
 	Events *_events;
 	PicList *_picList;
@@ -101,6 +103,7 @@ public:
 	Windows *_windows;
 	WindowMask *_windowMask;
 	bool _copySelect;
+	bool _terminated;
 	void (*gli_unregister_obj)(void *obj, glui32 objclass, gidispatch_rock_t objrock);
 	gidispatch_rock_t (*gli_register_arr)(void *array, glui32 len, const char *typecode);
 	void (*gli_unregister_arr)(void *array, glui32 len, const char *typecode, gidispatch_rock_t objrock);

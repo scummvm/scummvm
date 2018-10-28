@@ -1,6 +1,7 @@
 MODULE := engines/gargoyle
 
 MODULE_OBJS := \
+	clipboard.o \
 	conf.o \
 	detection.o \
 	events.o \

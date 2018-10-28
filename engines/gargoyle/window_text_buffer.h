@@ -84,11 +84,6 @@ private:
 	void scrollOneLine(bool forced);
 	void scrollResize();
 	int calcWidth(glui32 *chars, Attributes *attrs, int startchar, int numchars, int spw);
-
-	/**
-	 * Copy the passed text to the clipboard
-	 */
-	void copyTextToClipboard(const glui32 *text, size_t len);
 public:
 	int _width, _height;
 	int _spaced;
