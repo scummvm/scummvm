@@ -801,6 +801,12 @@ uint getSizeNextPOT(uint size) {
 #endif
 
 -(void)adjustViewFrameForSafeArea {
+	// The code below does not quite compile with SDKs older than 11.0.
+	// warning: instance method '-safeAreaInsets' not found (return type defaults to 'id')
+	// error: no viable conversion from 'id' to 'UIEdgeInsets'
+	// So for now disable this code when compiled with an older SDK, which means it is only
+	// available when running on iOS 11+ if it has been compiled on iOS 11+
+#ifdef __IPHONE_11_0
 #if __has_builtin(__builtin_available)
     if ( @available(iOS 11,*) ) {
 #else
@@ -819,6 +825,7 @@ uint getSizeNextPOT(uint size) {
         }
         self.frame = newFrame;
     }
+#endif
 }
 
 - (void)setViewTransformation {
