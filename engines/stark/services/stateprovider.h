@@ -59,15 +59,18 @@ public:
 	void syncAsString32(Common::String &string);
 
 	template<typename T>
-	void syncAsResourceReference(T **object);
+	void syncAsResourceReference(T **object, Version minVersion = 0, Version maxVersion = kLastVersion);
 
 	template<typename T>
 	void syncArraySize(Common::Array<T> &array, Version minVersion = 0, Version maxVersion = kLastVersion);
 };
 
 template<typename T>
-void ResourceSerializer::syncAsResourceReference(T **object) {
+void ResourceSerializer::syncAsResourceReference(T **object, Version minVersion, Version maxVersion) {
 	assert(object);
+
+	if (_version < minVersion || _version > maxVersion)
+		return;	// Ignore anything which is not supposed to be present in this save game version
 
 	if (isLoading()) {
 		ResourceReference reference;
@@ -124,7 +127,7 @@ public:
 	void clear();
 
 	static const uint kMinSaveVersion = 6;
-	static const uint kSaveVersion = 10;
+	static const uint kSaveVersion = 11;
 
 private:
 	class ResourceTreeState {

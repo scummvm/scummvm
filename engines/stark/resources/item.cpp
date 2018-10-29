@@ -245,11 +245,17 @@ void ItemVisual::saveLoadCurrent(ResourceSerializer *serializer) {
 
 	// Apply the animation once again now the data from the item templates has been loaded.
 	// This ensures template level textures and models are applied when loading.
+
+	serializer->syncAsSint32LE(_currentAnimActivity, 11);
+	serializer->syncAsResourceReference(&_animHierarchy, 11);
 	if (serializer->isLoading()) {
 		if (_animHierarchy) {
 			setAnimHierarchy(_animHierarchy);
 		}
+	}
 
+	serializer->syncAsResourceReference(&_actionAnim, 11);
+	if (serializer->isLoading()) {
 		if (_actionAnim) {
 			_actionAnim->applyToItem(this);
 		} else {
