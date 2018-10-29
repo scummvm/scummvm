@@ -765,6 +765,8 @@ protected:
 	uint8 _charExchangeSwap;
 	bool _configHpBarGraphs;
 
+	Graphics::Surface _thumbNail;
+
 	// text
 	void setupDialogueButtons(int presetfirst, int numStr, va_list &args);
 	void initDialogueSequence();

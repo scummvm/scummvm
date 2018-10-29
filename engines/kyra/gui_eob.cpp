@@ -777,12 +777,20 @@ int EoBCoreEngine::clickedCamp(Button *button) {
 	}
 
 	_screen->copyPage(0, 7);
+	
+	// Create a thumbnail from the screen for a possible savegame.
+	// This ensures that all special rendering (EGA dithering, 16bit rendering, Japanese font rendering) will be visible on the thumbnail.
+	::createThumbnailFromScreen(&_thumbNail);
+
 	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 12, Screen::CR_NO_P_CHECK);
 
 	_gui->runCampMenu();
 
 	_screen->copyRegion(0, 0, 0, 120, 176, 24, 12, 2, Screen::CR_NO_P_CHECK);
 	_screen->setScreenDim(cd);
+
+	_thumbNail.free();
+
 	drawScene(0);
 
 	for (int i = 0; i < 6; i++)
@@ -2645,17 +2653,7 @@ bool GUI_EoB::transferFileMenu(Common::String &targetName, Common::String &selec
 }
 
 void GUI_EoB::createScreenThumbnail(Graphics::Surface &dst) {
-	uint8 *screenPal = new uint8[768];
-	_screen->getRealPalette(0, screenPal);
-	uint16 width = Screen::SCREEN_W;
-	uint16 height = Screen::SCREEN_H;
-	if (_vm->gameFlags().useHiRes) {
-		width <<= 1;
-		height <<= 1;
-	}
-
-	::createThumbnail(&dst, _screen->getCPagePtr(7), width, height, screenPal);
-	delete[] screenPal;
+	dst.copyFrom(_vm->_thumbNail);
 }
 
 void GUI_EoB::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int itemOffset) {
