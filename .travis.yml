@@ -22,6 +22,9 @@ addons:
     - libfluidsynth-dev
     - libfreetype6-dev
     - zlib1g-dev
+    - libieee1284-3-dev
+    - libsndio-dev
+    - libunity-dev
 
 before_install:
   - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'osx' ]; then brew update; fi"
@@ -42,7 +45,7 @@ os:
 dist: trusty
 
 script:
-  - ./configure --enable-all-engines
+  - ./configure --enable-all-engines --enable-opl2lpt
   - make -j 2
   - make test
   - make devtools
