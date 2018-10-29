@@ -46,7 +46,7 @@ void Events::getEvent(event_t *event, bool polled) {
 	}
 
 	if (_currentEvent->type == evtype_None && _timeouts) {
-		store(evtype_Timer, NULL, 0, 0);
+		store(evtype_Timer, nullptr, 0, 0);
 		dispatchEvent(*_currentEvent, polled);
 		_timeouts = false;
 	}
@@ -179,7 +179,7 @@ void Events::handleMouseMove(const Point &pos) {
 		if (g_vm->_windowMask->getHyperlink(pos)) {
 			//gdk_window_set_cursor((GTK_WIDGET(widget)->window), gdk_hand);
 		} else {
-			//gdk_window_set_cursor((GTK_WIDGET(widget)->window), NULL);
+			//gdk_window_set_cursor((GTK_WIDGET(widget)->window), nullptr);
 		}
 	}
 }
@@ -194,7 +194,7 @@ void Events::handleButtonDown(bool isLeft, const Point &pos) {
 void Events::handleButtonUp(bool isLeft, const Point &pos) {
 	if (isLeft) {
 		g_vm->_copySelect = false;
-		//gdk_window_set_cursor((GTK_WIDGET(widget)->window), NULL);
+		//gdk_window_set_cursor((GTK_WIDGET(widget)->window), nullptr);
 		g_vm->_clipboard->send(PRIMARY);
 	}
 }

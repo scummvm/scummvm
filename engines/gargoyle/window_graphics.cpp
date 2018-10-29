@@ -53,7 +53,7 @@ void GraphicsWindow::rearrange(const Rect &box) {
 		_w = 0;
 		_h = 0;
 		delete _surface;
-		_surface = NULL;
+		_surface = nullptr;
 		return;
 	}
 

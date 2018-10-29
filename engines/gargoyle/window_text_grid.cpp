@@ -446,13 +446,13 @@ void TextGridWindow::acceptLine(glui32 keycode) {
 			val2 = 0;
 		g_vm->_events->store(evtype_LineInput, this, _inLen, val2);
 		free(_lineTerminators);
-		_lineTerminators = NULL;
+		_lineTerminators = nullptr;
 	} else {
 		g_vm->_events->store(evtype_LineInput, this, _inLen, 0);
 	}
 	_lineRequest = false;
 	_lineRequestUni = false;
-	_inBuf = NULL;
+	_inBuf = nullptr;
 	_inMax = 0;
 	_inOrgX = 0;
 	_inOrgY = 0;
