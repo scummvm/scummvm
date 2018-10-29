@@ -288,15 +288,15 @@ public:
 	Stream *_stream;       ///< the window stream.
 	Stream *_echoStream;   ///< the window's echo stream, if any.
 
-	int _lineRequest;
-	int _lineRequestUni;
-	int _charRequest;
-	int _charRequestUni;
-	int _mouseRequest;
-	int _hyperRequest;
-	int _moreRequest;
-	int _scrollRequest;
-	int _imageLoaded;
+	bool _lineRequest;
+	bool _lineRequestUni;
+	bool _charRequest;
+	bool _charRequestUni;
+	bool _mouseRequest;
+	bool _hyperRequest;
+	bool _moreRequest;
+	bool _scrollRequest;
+	bool _imageLoaded;
 
 	glui32 _echoLineInputBase;
 	glui32 *_lineTerminatorsBase;
