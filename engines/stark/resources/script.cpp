@@ -236,7 +236,7 @@ void Script::updateSuspended() {
 		}
 		case Type::kSpeech: {
 			Speech *speech = Object::cast<Speech>(_suspendingResource);
-			if (!speech->isPlaying()) {
+			if (!StarkDialogPlayer->isSpeechReady(speech) && !speech->isPlaying()) {
 				// Resume the script execution once the speech has stopped playing
 				_suspendingResource = nullptr;
 			}

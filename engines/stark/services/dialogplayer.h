@@ -72,6 +72,7 @@ public:
 
 	/** Can a speech be played? */
 	bool isSpeechReady() const;
+	bool isSpeechReady(Resources::Speech *speech) const;
 
 	/** Return the speech to be played */
 	Resources::Speech *acquireReadySpeech();

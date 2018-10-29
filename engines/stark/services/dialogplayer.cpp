@@ -75,6 +75,10 @@ bool DialogPlayer::isSpeechReady() const {
 	return _speechReady;
 }
 
+bool DialogPlayer::isSpeechReady(Resources::Speech *speech) const {
+	return _speechReady && _singleSpeech == speech;
+}
+
 Resources::Speech *DialogPlayer::acquireReadySpeech() {
 	assert(_speechReady);
 	_speechReady = false;
