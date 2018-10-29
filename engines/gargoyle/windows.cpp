@@ -80,15 +80,15 @@ Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
 
 	if (!_rootWin) {
 		if (splitwin) {
-			warning("window_open: ref must be NULL");
+			warning("window_open: ref must be nullptr");
 			return nullptr;
 		}
 
 		/* ignore method and size now */
-		oldparent = NULL;
+		oldparent = nullptr;
 	} else {
 		if (!splitwin) {
-			warning("window_open: ref must not be NULL");
+			warning("window_open: ref must not be nullptr");
 			return nullptr;
 		}
 
@@ -152,6 +152,8 @@ Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
 }
 
 void Windows::windowClose(Window *win, StreamResult *result) {
+	_forceRedraw = true;
+
 	if (win == _rootWin || win->_parent == nullptr) {
 		// Close the root window, which means all windows.
 		_rootWin = nullptr;

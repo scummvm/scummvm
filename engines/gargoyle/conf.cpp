@@ -237,9 +237,9 @@ void Conf::parseColor(const Common::String &str, byte *color) {
 		g[0] = str[2]; g[1] = str[3]; g[2] = 0;
 		b[0] = str[4]; b[1] = str[5]; b[2] = 0;
 
-		color[0] = strtol(r, NULL, 16);
-		color[1] = strtol(g, NULL, 16);
-		color[2] = strtol(b, NULL, 16);
+		color[0] = strtol(r, nullptr, 16);
+		color[1] = strtol(g, nullptr, 16);
+		color[2] = strtol(b, nullptr, 16);
 	}
 }
 

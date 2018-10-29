@@ -69,7 +69,7 @@ case 0x104:  \
     *blockptr = unigen_case_block_0x104;  \
     break;  \
 default:  \
-    *blockptr = NULL;  \
+    *blockptr = nullptr;  \
 }
 
 #define GET_CASE_SPECIAL(ch, specptr)  \
@@ -420,7 +420,7 @@ case 0xfb17:  \
     *specptr = unigen_special_0xfb17;  \
     break;  \
 default:  \
-    *specptr = NULL;  \
+    *specptr = nullptr;  \
 }
 
 typedef glui32 gli_case_block_t[2];   ///< upper, lower

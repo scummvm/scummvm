@@ -11522,7 +11522,7 @@ switch ((glui32)(ch) >> 8) {  \
         *blockptr = unigen_decomp_block_0x2fa;  \
         break;  \
     default:  \
-        *blockptr = NULL;  \
+        *blockptr = nullptr;  \
 }
 
 #define GET_DECOMP_SPECIAL(ch, countptr, posptr)  \
