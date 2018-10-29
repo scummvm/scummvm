@@ -23,9 +23,27 @@
 #include "gargoyle/events.h"
 #include "gargoyle/clipboard.h"
 #include "gargoyle/gargoyle.h"
+#include "gargoyle/screen.h"
 #include "gargoyle/windows.h"
 
 namespace Gargoyle {
+
+Events::Events() : _forceClick(false), _currentEvent(nullptr), _timeouts(false),
+	_priorFrameTime(0), _frameCounter(0) {
+}
+
+bool Events::checkForNextFrameCounter() {
+	// Check for next game frame
+	uint32 milli = g_system->getMillis();
+	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
+		++_frameCounter;
+		_priorFrameTime = milli;
+
+		return true;
+	}
+
+	return false;
+}
 
 void Events::getEvent(event_t *event, bool polled) {
 	_currentEvent  = event;
@@ -88,6 +106,11 @@ void Events::dispatchEvent(Event &ev, bool polled) {
 
 void Events::pollEvents() {
 	Common::Event event;
+
+	if (checkForNextFrameCounter()) {
+		// Update the screen
+		g_vm->_screen->update();
+	}
 
 	do {
 		g_system->getEventManager()->pollEvent(event);

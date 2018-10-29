@@ -24,6 +24,7 @@
 #include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/windows.h"
+#include "common/system.h"
 
 namespace Gargoyle {
 
@@ -32,6 +33,7 @@ int WindowMask::_lastY;
 
 WindowMask::WindowMask() : _hor(0), _ver(0), _links(nullptr) {
 	_lastX = _lastY = 0;
+	resize(g_system->getWidth(), g_system->getHeight());
 }
 
 void WindowMask::resize(size_t x, size_t y) {
