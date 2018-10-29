@@ -181,8 +181,6 @@ winid_t Glk::glk_window_open(winid_t split, glui32 method, glui32 size, glui32 w
 }
 
 void Glk::glk_window_close(winid_t win, stream_result_t *result) {
-	_windows->_forceRedraw = true;
-
 	if (!win) {
 		warning("glk_window_close: invalid ref");
 	} else {
@@ -280,7 +278,7 @@ void Glk::glk_window_clear(winid_t win) {
 		warning("window_clear: invalid ref");
 	} else if (win->_lineRequest || win->_lineRequestUni) {
 		if (g_conf->_safeClicks && _events->_forceClick) {
-			glk_cancel_line_event(win, NULL);
+			glk_cancel_line_event(win, nullptr);
 			_events->_forceClick = false;
 
 			win->clear();

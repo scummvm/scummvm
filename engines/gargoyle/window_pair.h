@@ -38,7 +38,7 @@ public:
 	glui32 _dir;               ///< winmethod_Left, Right, Above, or Below
 	bool _vertical, _backward; ///< flags
 	glui32 _division;          ///< winmethod_Fixed or winmethod_Proportional
-	Window *_key;              ///< NULL or a leaf-descendant (not a Pair)
+	Window *_key;              ///< nullptr or a leaf-descendant (not a Pair)
 	int _keyDamage;            ///< used as scratch space in window closing
 	glui32 _size;              ///< size value
 	glui32 _wBorder;           ///< winMethod_Border, NoBorder

@@ -63,7 +63,7 @@ glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCa
 	if (dest_block_first == CASE_TITLE)
 		dest_block_first = CASE_UPPER;
 
-	newoutbuf = NULL;
+	newoutbuf = nullptr;
 	outcount = 0;
 	outbuf = buf;
 
