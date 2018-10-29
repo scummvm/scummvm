@@ -223,6 +223,8 @@ void TextGridWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) 
 		return;
 	}
 
+	_lineRequest = true;
+
 	if ((int)maxlen > (_width - _curX))
 		maxlen = (_width - _curX);
 

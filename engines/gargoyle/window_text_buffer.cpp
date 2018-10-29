@@ -611,6 +611,7 @@ void TextBufferWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen
 		return;
 	}
 
+	_lineRequest = true;
 	int pw;
 
 	gli_tts_flush();

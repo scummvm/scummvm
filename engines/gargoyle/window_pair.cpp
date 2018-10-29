@@ -22,6 +22,8 @@
 
 #include "gargoyle/window_pair.h"
 #include "gargoyle/conf.h"
+#include "gargoyle/gargoyle.h"
+#include "gargoyle/screen.h"
 
 namespace Gargoyle {
 
@@ -121,7 +123,25 @@ void PairWindow::rearrange(const Rect &box) {
 void PairWindow::redraw() {
 	Window::redraw();
 
-	// TODO
+	_child1->redraw();
+	_child2->redraw();
+
+	Window *child = !_backward ? _child1 : _child2;
+	Rect box(child->_bbox.left, child->_yAdj ? child->_bbox.top - child->_yAdj : child->_bbox.top,
+		child->_bbox.right, child->_bbox.bottom);
+
+	if (_vertical) {
+		int xBord = _wBorder ? g_conf->_wBorderX : 0;
+		int xPad = (g_conf->_wPaddingX - xBord) / 2;
+		
+		g_vm->_screen->fillRect(Rect(box.right + xPad, box.top, box.right + xPad + xBord, box.bottom),
+			g_conf->_borderColor);
+	} else {
+		int yBord = _wBorder ? g_conf->_wBorderY : 0;
+		int yPad = (g_conf->_wPaddingY - yBord) / 2;
+		g_vm->_screen->fillRect(Rect(box.left, box.bottom + yPad, box.right, box.bottom + yPad + yBord),
+			g_conf->_borderColor);
+	}
 }
 
 void PairWindow::getArrangement(glui32 *method, glui32 *size, Window **keyWin) {
