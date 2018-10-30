@@ -89,7 +89,7 @@ Conf::Conf() {
 	get("propi", _propI);
 	get("propz", _propZ);
 	get("propfont", _propFont, "Linux Libertine O");
-	get("leading", _leading, 20);
+	get("leading", _leading, 8);
 	get("baseline", _baseLine, 15);
 	get("rows", _rows, 25);
 	get("cols", _cols, 60);
