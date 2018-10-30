@@ -599,7 +599,7 @@ void TextGridWindow::redraw() {
 
 			a = 0;
 			for (b = 0; b < _width; b++) {
-				if (ln->_attrs[a] == ln->_attrs[b]) {
+				if (ln->_attrs[a] != ln->_attrs[b]) {
 					link = ln->_attrs[a].hyper;
 					font = ln->_attrs[a].attrFont(styles);
 					fgcolor = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(styles);
