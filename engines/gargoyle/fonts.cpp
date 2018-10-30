@@ -65,6 +65,9 @@ Fonts::Fonts(Graphics::ManagedSurface *surface) : _surface(surface) {
 	_fontTable[5] = loadFont(PROPB, propSize, propAspect, FONTB);
 	_fontTable[6] = loadFont(PROPI, propSize, propAspect, FONTI);
 	_fontTable[7] = loadFont(PROPZ, propSize, propAspect, FONTZ);
+
+	g_conf->_cellW = _fontTable[0]->getStringWidth("0");
+	g_conf->_cellH = _fontTable[0]->getFontHeight();
 }
 
 Fonts::~Fonts() {
