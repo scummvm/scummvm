@@ -80,8 +80,7 @@ void TextGridWindow::touch(int line) {
 }
 
 glui32 TextGridWindow::getSplit(glui32 size, bool vertical) const {
-	return vertical ? size * g_conf->_cellW + g_conf->_tMarginX * 2 :
-		size * g_conf->_cellH + g_conf->_tMarginY * 2;
+	return vertical ? size * g_conf->_cellW : size * g_conf->_cellH;
 }
 
 void TextGridWindow::putCharUni(uint32 ch) {
