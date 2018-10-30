@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	commands/seqcommand.o \
 	commands/setcolorcommand.o \
 	commands/specialshowcommand.o \
+	commands/switchpartcommand.o \
 	commands/talkcommand.o \
 	commands/randomcommand.o \
 	tasks/conversationtask.o \

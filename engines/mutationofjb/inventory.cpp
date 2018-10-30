@@ -143,9 +143,7 @@ void Inventory::saveLoadWithSerializer(Common::Serializer &sz) {
 	if (sz.isLoading()) {
 		uint32 length = 0;
 		sz.syncAsUint32LE(length);
-		if (length) {
-			_items.resize(length);
-		}
+		_items.resize(length);
 	} else {
 		uint32 length = static_cast<uint32>(_items.size());
 		sz.syncAsUint32LE(length);

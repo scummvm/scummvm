@@ -42,6 +42,7 @@ Game::Game(MutationOfJBEngine *vm)
 	: _vm(vm),
 	  _randomSource("mutationofjb"),
 	  _delayedLocalScript(nullptr),
+	  _runDelayedScriptStartup(false),
 	  _gui(*this, _vm->getScreen()),
 	  _scriptExecCtx(*this),
 	  _taskManager(*this),
@@ -148,8 +149,9 @@ void Game::changeScene(uint8 sceneId, bool partB) {
 	}
 }
 
-Script *Game::changeSceneDelayScript(uint8 sceneId, bool partB) {
+Script *Game::changeSceneDelayScript(uint8 sceneId, bool partB, bool runDelayedScriptStartup) {
 	_delayedLocalScript = changeSceneLoadScript(sceneId, partB);
+	_runDelayedScriptStartup = runDelayedScriptStartup;
 	return _delayedLocalScript;
 }
 
@@ -190,7 +192,12 @@ void Game::update() {
 	if (res == Command::Finished && _delayedLocalScript) {
 		delete _localScript;
 		_localScript = _delayedLocalScript;
+
+		if (_localScript && _runDelayedScriptStartup)
+			_scriptExecCtx.startStartupSection();
+
 		_delayedLocalScript = nullptr;
+		_runDelayedScriptStartup = false;
 	}
 
 	_taskManager.update();
@@ -261,6 +268,12 @@ bool Game::loadSaveAllowed() const {
 
 Common::Language Game::getLanguage() const {
 	return _vm->getGameDescription()->language;
+}
+
+void Game::switchToPartB() {
+	getGameData().getInventory().removeAllItems();
+	loadGameData(true);
+	changeSceneDelayScript(3, true, true);
 }
 
 }

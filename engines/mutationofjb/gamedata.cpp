@@ -374,6 +374,7 @@ GameData::GameData()
 	  _lastScene(0),
 	  _partB(false),
 	  _inventory(),
+	  _currentAPK("piggy.apk"),
 	  _color(WHITE) {}
 
 Scene *GameData::getScene(uint8 sceneId) {

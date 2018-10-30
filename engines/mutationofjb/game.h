@@ -60,7 +60,7 @@ public:
 	Script *getLocalScript() const;
 
 	void changeScene(uint8 sceneId, bool partB);
-	Script *changeSceneDelayScript(uint8 sceneId, bool partB);
+	Script *changeSceneDelayScript(uint8 sceneId, bool partB, bool runDelayedScriptStartup = false);
 
 	bool startActionSection(ActionInfo::Action action, const Common::String &entity1Name, const Common::String &entity2Name = Common::String());
 
@@ -84,6 +84,8 @@ public:
 
 	Common::Language getLanguage() const;
 
+	void switchToPartB();
+
 private:
 	bool loadGameData(bool partB);
 	void runActiveCommand();
@@ -97,6 +99,7 @@ private:
 	Script *_globalScript;
 	Script *_localScript;
 	Script *_delayedLocalScript;
+	bool _runDelayedScriptStartup;
 	Room *_room;
 	GameScreen _gui;
 
