@@ -960,9 +960,8 @@ void TextBufferWindow::redraw() {
 
         x = x0 + SLOP + ln->_lm;
         a = 0;
-        for (b = 0; b < linelen; b++)
-        {
-            if (ln->_attrs[a] == ln->_attrs[b]) {
+        for (b = 0; b < linelen; b++) {
+            if (ln->_attrs[a] != ln->_attrs[b]) {
                 link = ln->_attrs[a].hyper;
                 font = ln->_attrs[a].attrFont(_styles);
                 color = ln->_attrs[a].attrBg(_styles);
@@ -1015,7 +1014,7 @@ void TextBufferWindow::redraw() {
         a = 0;
         for (b = 0; b < linelen; b++)
         {
-            if (ln->_attrs[a] == ln->_attrs[b]) {
+            if (ln->_attrs[a] != ln->_attrs[b]) {
                 link = ln->_attrs[a].hyper;
                 font = ln->_attrs[a].attrFont(_styles);
                 color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
@@ -1603,7 +1602,7 @@ int TextBufferWindow::calcWidth(glui32 *chars, Attributes *attrs, int startchar,
 
 	a = startchar;
 	for (b = startchar; b < numChars; b++) {
-		if (attrs[a] == attrs[b]) {
+		if (attrs[a] != attrs[b]) {
 			w += screen.stringWidthUni(attrs[a].attrFont(_styles),
 				Common::U32String(chars + a, b - a), spw);
 			a = b;

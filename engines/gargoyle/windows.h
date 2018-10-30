@@ -261,12 +261,27 @@ struct Attributes {
 			&& style == src.style && fgcolor == src.fgcolor && bgcolor == src.bgcolor
 			&& hyper == src.hyper;
 	}
+	/**
+	 * Inequality comparison
+	 */
+	bool operator!=(const Attributes &src) {
+		return fgset != src.fgset || bgset != src.bgset || reverse != src.reverse
+			|| style != src.style || fgcolor != src.fgcolor || bgcolor != src.bgcolor
+			|| hyper != src.hyper;
+	}
 
+	/**
+	 * Return the background color for the current font style
+	 */
 	byte *attrBg(WindowStyle *styles);
+
+	/**
+	 * Return the foreground color for the current font style
+	 */
 	byte *attrFg(WindowStyle *styles);
 
 	/**
-	 * Get the font from the attribute's style
+	 * Get the font for the current font style
 	 */
 	FACES attrFont(WindowStyle *styles) const { return styles[style].font; }
 };
