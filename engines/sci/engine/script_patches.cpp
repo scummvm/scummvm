@@ -1692,6 +1692,69 @@ static const uint16 gk1SysLoggerHotKeyPatch[] = {
 	PATCH_END
 };
 
+// After interrogating Gran in room 380, clicking on objects while seated
+//  causes Gabriel to briefly flicker into standing and other frames.
+//  This is a script bug that also occurs with Sierra's interpreter.
+//
+// Ego is initialized incorrectly by rm380:init when returning from interrogation
+//  (room 50). Several properties are wrong and it's bad luck that it works as
+//  well as it does or Sierra would have noticed. For comparison, the scripts
+//  egoEnters and sitDown do it correctly. rm380:init first initializes ego for
+//  walking and then applies only some of the properties for sitting in the chair.
+//
+// This leaves ego in a walking/sitting state with several problems:
+//  - signal flag kSignalDoesntTurn isn't set
+//  - cycler is set to StopWalk instead of none
+//  - loop/cel is set to 2 0 instead of 0 5
+//
+// rm380:init sets ego's loop/cel to 0 5 (Gabriel sitting) but the unexpected
+//  StopWalk immediately changes this to 2 0 (Gabriel starts talking) which went
+//  unnoticed because those two frames are similar. This is why Gabriel's hand
+//  is slightly raised when returning from interrogation. The flickering is due
+//  to ego attempting to turn to face items while sitting due to kSignalDoesntTurn
+//  not being set.
+//
+// We fix the flickering by passing a second parameter to GKEgo:setLoop which
+//  causes kSignalDoesntTurn to be set, preventing ego from attempting to face
+//  objects being clicked, just as egoEnters and sitDown do.
+//
+// Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
+// Responsible method: rm380:init
+// Fixes bug #9760
+static const uint16 gk1GranChairFlickerSignature[] = {
+	0x78,                               // push1
+	0x76,                               // push0 [ loop: 0 ]
+	0x38, SIG_SELECTOR16(init),         // pushi init
+	0x76,                               // push0
+	0x38, SIG_SELECTOR16(posn),         // pushi posn
+	SIG_MAGICDWORD,
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x00af),           // pushi 00af
+	0x39, 0x75,                         // pushi 75
+	0x81, 0x00,                         // lag 0
+	0x4a, SIG_UINT16(0x001e),           // send 1e [ GKEgo: ... setLoop: 0 ... ]
+	0x35, 0x01,                         // ldi 1
+	0xa3, 0x00,                         // sal local0
+	SIG_END
+};
+
+static const uint16 gk1GranChairFlickerPatch[] = {
+	0x7a,                               // push2
+	0x76,                               // push0 [ loop: 0 ]
+	0x78,                               // push1 [ 2nd param tells setLoop to set kSignalDoesntTurn ]
+	0x38, PATCH_SELECTOR16(init),       // pushi init
+	0x76,                               // push0
+	0x38, PATCH_SELECTOR16(posn),       // pushi posn
+	0x7a,                               // push2
+	0x38, PATCH_UINT16(0x00af),         // pushi 00af
+	0x39, 0x75,                         // pushi 75
+	0x81, 0x00,                         // lag 0
+	0x4a, PATCH_UINT16(0x0020),         // send 20 [ GKEgo: ... setLoop: 0 1 ... ]
+	0x78,                               // push1 [ save a byte ]
+	0xab, 0x00,                         // ssl local0
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
@@ -1707,6 +1770,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   250, "fix ego speed when exiting drug store",       1, gk1DrugStoreEgoSpeedFixSignature, gk1DrugStoreEgoSpeedFixPatch },
 	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
 	{  true,   290, "fix magentia missing message",                1, gk1ShowMagentiaItemSignature,     gk1ShowMagentiaItemPatch },
+	{  true,   380, "fix ego flicker in Gran's chair",             1, gk1GranChairFlickerSignature,     gk1GranChairFlickerPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
