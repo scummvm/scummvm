@@ -38,18 +38,6 @@ const char *gli_conf_monob = "GoMono-Bold";
 const char *gli_conf_monoi = "GoMono-Italic";
 const char *gli_conf_monoz = "GoMono-BoldItalic";
 
-#ifdef BUNDLED_FONTS
-const char *gli_conf_monofont = "";
-const char *gli_conf_propfont = "";
-const double gli_conf_monosize = 12.5;	///< good size for GoMono
-const double gli_conf_propsize = 13.4;	///< good size for NotoSerif
-#else
-const char *gli_conf_monofont = "Liberation Mono";
-const char *gli_conf_propfont = "Linux Libertine O";
-const double gli_conf_monosize = 12.5;	///< good size for LiberationMono
-const double gli_conf_propsize = 15.5;	///< good size for Libertine
-#endif
-
 Fonts::Fonts(Graphics::ManagedSurface *surface) : _surface(surface) {
 	double monoAspect = g_conf->_monoAspect;
 	double propAspect = g_conf->_propAspect;
@@ -68,6 +56,7 @@ Fonts::Fonts(Graphics::ManagedSurface *surface) : _surface(surface) {
 
 	g_conf->_cellW = _fontTable[0]->getStringWidth("0");
 	g_conf->_cellH = _fontTable[0]->getFontHeight();
+	g_conf->_leading = g_conf->_baseLine = g_conf->_cellH;
 }
 
 Fonts::~Fonts() {

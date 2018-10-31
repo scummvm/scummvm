@@ -588,7 +588,7 @@ void TextGridWindow::redraw() {
 	for (i = 0; i < _height; i++) {
 		ln = &_lines[i];
 		if (ln->dirty || Windows::_forceRedraw) {
-			ln->dirty = 0;
+			ln->dirty = false;
 
 			x = x0;
 			y = y0 + i * g_conf->_leading;
@@ -607,16 +607,15 @@ void TextGridWindow::redraw() {
 					screen.fillRect(Rect::fromXYWH(x, y, w, g_conf->_leading), bgcolor);
 					o = x;
 
-					for (k = a; k < b; k++) {
-						screen.drawStringUni(Point(o * GLI_SUBPIX, y + g_conf->_baseLine),
-							font, fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
-						o += g_conf->_cellW;
+					for (k = a, o = x; k < b; k++, o += g_conf->_cellW) {
+						screen.drawStringUni(Point(o, y), font, fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
 					}
 					if (link) {
 						screen.fillRect(Rect::fromXYWH(x, y + g_conf->_baseLine + 1, w,
 							g_conf->_linkStyle), g_conf->_linkColor);
 						g_vm->_windowMask->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 					}
+
 					x += w;
 					a = b;
 				}
@@ -629,11 +628,8 @@ void TextGridWindow::redraw() {
 			w += _bbox.right - (x + w);
 			screen.fillRect(Rect::fromXYWH(x, y, w, g_conf->_leading), bgcolor);
 
-			o = x;
-			for (k = a; k < b; k++) {
-				screen.drawStringUni(Point(o * GLI_SUBPIX, y + g_conf->_baseLine),
-					font, fgcolor, Common::U32String(&ln->_chars[k], 1));
-				o += g_conf->_cellW;
+			for (k = a, o = x; k < b; k++, o += g_conf->_cellW) {
+				screen.drawStringUni(Point(o, y), font, fgcolor, Common::U32String(&ln->_chars[k], 1));
 			}
 			if (link) {
 				screen.fillRect(Rect::fromXYWH(x, y + g_conf->_baseLine + 1, w, g_conf->_linkStyle),

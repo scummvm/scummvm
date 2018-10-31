@@ -69,6 +69,8 @@ Conf::Conf() {
 	_imageW = g_system->getWidth();
 	_imageH = g_system->getHeight();
 	_cellW = _cellH = 8;
+	_leading = 8;
+	_baseLine = 0;
 
 	get("moreprompt", _morePrompt, "\207 more \207");
 	get("morecolor", _moreColor);
@@ -89,10 +91,17 @@ Conf::Conf() {
 	get("propi", _propI);
 	get("propz", _propZ);
 	get("propfont", _propFont, "Linux Libertine O");
-	get("leading", _leading, 8);
-	get("baseline", _baseLine, 15);
 	get("rows", _rows, 25);
 	get("cols", _cols, 60);
+
+	/* Disabled for now, since Fonts constructor resets them
+	if (ConfMan.hasKey("leading"))
+		_leading = atof(ConfMan.get("leading").c_str()) + 0.5;
+	if (ConfMan.hasKey("baseline"))
+		_baseLine = atof(ConfMan.get("baseline").c_str()) + 0.5;
+	if (!_baseLine)
+		_baseLine = _propSize + 0.5;
+	*/
 
 	if (ConfMan.hasKey("minrows"))
 		_rows = MAX(_rows, strToInt(ConfMan.get("minrows").c_str()));
