@@ -967,9 +967,9 @@ bool ActionStreamVideo::execute() {
 	bool subtitleExists = _engine->getSearchManager()->hasFile(subname);
 	bool switchToHires = false;
 
-// NOTE: We only show the hires MPEG2 videos when libmpeg2 is compiled in,
+// NOTE: We only show the hires MPEG2 videos when libmpeg2 and liba52 are compiled in,
 // otherwise we fall back to the lowres ones
-#ifdef USE_MPEG2
+#if defined(USE_MPEG2) && defined(USE_A52)
 	Common::String hiresFileName = _fileName;
 	hiresFileName.setChar('d', hiresFileName.size() - 8);
 	hiresFileName.setChar('v', hiresFileName.size() - 3);
