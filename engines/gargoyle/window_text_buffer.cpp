@@ -1012,13 +1012,12 @@ void TextBufferWindow::redraw() {
 
         x = x0 + SLOP + ln->_lm;
         a = 0;
-        for (b = 0; b < linelen; b++)
-        {
+        for (b = 0; b < linelen; b++) {
             if (ln->_attrs[a] != ln->_attrs[b]) {
                 link = ln->_attrs[a].hyper;
                 font = ln->_attrs[a].attrFont(_styles);
                 color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-                x = screen.drawStringUni(Point(x, y + g_conf->_baseLine),
+                x = screen.drawStringUni(Point(x / GLI_SUBPIX, y),
                         font, color, Common::U32String(ln->_chars + a, b - a), spw);
                 a = b;
             }
@@ -1026,8 +1025,7 @@ void TextBufferWindow::redraw() {
         link = ln->_attrs[a].hyper;
         font = ln->_attrs[a].attrFont(_styles);
         color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-        screen.drawStringUni(Point(x, y + g_conf->_baseLine),
-                font, color, Common::U32String(ln->_chars + a, linelen - a), spw);
+        screen.drawStringUni(Point(x / GLI_SUBPIX, y), font, color, Common::U32String(ln->_chars + a, linelen - a), spw);
     }
 
     /*
