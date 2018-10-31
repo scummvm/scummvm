@@ -41,7 +41,7 @@ public:
 	Window *_key;              ///< nullptr or a leaf-descendant (not a Pair)
 	int _keyDamage;            ///< used as scratch space in window closing
 	glui32 _size;              ///< size value
-	glui32 _wBorder;           ///< winMethod_Border, NoBorder
+	bool _wBorder;             ///< If windows are separated by border
 public:
 	/**
 	 * Constructor
