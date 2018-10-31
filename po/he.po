@@ -35,7 +35,7 @@ msgstr ""
 
 #: gui/browser.cpp:71 gui/browser_osx.mm:84
 msgid "Show hidden files"
-msgstr "Χ”Χ¦Χ’ Χ§Χ‘Χ¦Χ™Χ Χ Χ΅ΧªΧ¨Χ™Χ"
+msgstr "δφβ χαφιν πρϊψιν"
 
 #: gui/browser.cpp:71
 msgid "Show files marked with the hidden attribute"
@@ -43,7 +43,7 @@ msgstr ""
 
 #: gui/browser.cpp:75 gui/remotebrowser.cpp:57
 msgid "Go up"
-msgstr "ΧΆΧΧ” ΧΧΧΆΧΧ”"
+msgstr "ςμδ μξςμδ"
 
 #: gui/browser.cpp:75 gui/browser.cpp:77 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
@@ -75,48 +75,48 @@ msgstr ""
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:887
 msgid "Cancel"
-msgstr "Χ‘Χ™ΧΧ•Χ"
+msgstr "αιθεμ"
 
 #: gui/browser.cpp:79 gui/browser_osx.mm:151 gui/chooser.cpp:47
 #: gui/filebrowser-dialog.cpp:66 gui/remotebrowser.cpp:61
 #: gui/themebrowser.cpp:56
 msgid "Choose"
-msgstr "Χ‘Χ—Χ™Χ¨Χ”"
+msgstr "αηιψδ"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr "Χ‘Χ—Χ¨ ΧªΧ™Χ§Χ™Χ™Χ” Χ›Χ“Χ™ ΧΧ”Χ•Χ¨Χ™Χ“ Χ§Χ‘Χ¦Χ™ ΧΧ©Χ—Χ§"
+msgstr "αηψ ϊιχιιδ λγι μδεψιγ χαφι ξωηχ"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:481 gui/launcher.cpp:198
 msgid "Select directory with game data"
-msgstr "Χ‘Χ—Χ¨ ΧªΧ™Χ§Χ™Χ™Χ” ΧΆΧ Χ§Χ‘Χ¦Χ™ ΧΧ©Χ—Χ§"
+msgstr "αηψ ϊιχιιδ ςν χαφι ξωηχ"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "From: "
-msgstr "ΧΧΧª: - "
+msgstr "ξΰϊ: - "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:265
 msgid "To: "
-msgstr "ΧΧ: - "
+msgstr "ΰμ: - "
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
-msgstr "Χ‘Χ™ΧΧ•Χ Χ”Χ•Χ¨Χ“Χ”"
+msgstr "αιθεμ δεψγδ"
 
 #: gui/downloaddialog.cpp:66
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr "Χ‘Χ™ΧΧ•Χ Χ”Χ•Χ¨Χ“Χ”"
+msgstr "αιθεμ δεψγδ"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
-msgstr "Χ”Χ΅ΧªΧ¨"
+msgstr "δρϊψ"
 
 #: gui/downloaddialog.cpp:118
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr "Χ Χ¨ΧΧ” Χ›Χ™ Χ”Χ—Χ™Χ‘Χ•Χ¨ Χ©ΧΧ ΧΧ•Χ’Χ‘Χ. Χ”ΧΧ Χ‘ΧΧΧª ΧΧ”Χ•Χ¨Χ™Χ“ Χ§Χ‘Χ¦Χ™Χ?"
+msgstr "πψΰδ λι δηιαεψ ωμκ ξεβαμ. δΰν αΰξϊ μδεψιγ χαφιν?"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -129,7 +129,7 @@ msgstr "Χ Χ¨ΧΧ” Χ›Χ™ Χ”Χ—Χ™Χ‘Χ•Χ¨ Χ©ΧΧ ΧΧ•Χ’Χ‘Χ. Χ”ΧΧ Χ‘ΧΧΧª ΧΧ”Χ•Χ¨Χ™
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 #: engines/sci/graphics/controls32.cpp:820
 msgid "Yes"
-msgstr "Χ›Χ"
+msgstr "λο"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -142,18 +142,18 @@ msgstr "Χ›Χ"
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 #: engines/sci/graphics/controls32.cpp:820
 msgid "No"
-msgstr "ΧΧ"
+msgstr "μΰ"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:547
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVM ΧΧ Χ”Χ¦ΧΧ™Χ— ΧΧ¤ΧªΧ•Χ— ΧΧª Χ”ΧªΧ™Χ§Χ™Χ™Χ” Χ©Χ Χ‘Χ—Χ¨Χ”!"
+msgstr "ScummVM μΰ δφμιη μτϊεη ΰϊ δϊιχιιδ ωπαηψδ!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
-"ΧΧ Χ Χ™ΧªΧ ΧΧ™Χ¦Χ•Χ¨ ΧªΧ™Χ§Χ™Χ™Χ” ΧΧ”Χ•Χ¨Χ“Χ•Χª - Χ™Χ©Χ Χ• Χ§Χ•Χ‘Χ¥ ΧΆΧ ΧΧ•ΧªΧ• Χ©Χ Χ‘ΧªΧ•Χ Χ”ΧªΧ™Χ§Χ™Χ™Χ” Χ©Χ Χ‘Χ—Χ¨Χ”."
+"μΰ πιϊο μιφεψ ϊιχιιδ μδεψγεϊ - ιωπε χεαυ ςν ΰεϊε ων αϊεκ δϊιχιιδ ωπαηψδ."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:299
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:504
@@ -174,7 +174,7 @@ msgstr ""
 #: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
 #: engines/zvision/file/save_manager.cpp:230
 msgid "OK"
-msgstr "ΧΧ•Χ§Χ™Χ™"
+msgstr "ΰεχιι"
 
 #: gui/downloaddialog.cpp:152
 #, c-format
@@ -182,26 +182,26 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"Χ”\"s%\" Χ›Χ‘Χ¨ Χ§Χ™Χ™Χ Χ‘ΧªΧ™Χ™Χ§Χ™Χ” Χ©Χ Χ‘Χ—Χ¨Χ”.\n"
-"Χ”ΧΧ Χ‘ΧΧΧª ΧΧ”Χ•Χ¨Χ™Χ“ Χ§Χ‘Χ¦Χ™Χ ΧΧ ΧªΧ•Χ Χ”ΧªΧ™Χ§Χ™Χ™Χ”?"
+"δ\"s%\" λαψ χιιν αϊιιχιδ ωπαηψδ.\n"
+"δΰν αΰξϊ μδεψιγ χαφιν ΰμ ϊεκ δϊιχιιδ?"
 
 #: gui/downloaddialog.cpp:252
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr "Χ”Χ•Χ¨Χ“Χ• %s %s / %s %s"
+msgstr "δεψγε %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:259
 #, c-format
 msgid "Download speed: %s %s"
-msgstr "ΧΧ”Χ™Χ¨Χ•Χª Χ”Χ•Χ¨Χ“Χ”: %s %s"
+msgstr "ξδιψεϊ δεψγδ: %s %s"
 
 #: gui/editgamedialog.cpp:136
 msgid "Game"
-msgstr "ΧΧ©Χ—Χ§"
+msgstr "ξωηχ"
 
 #: gui/editgamedialog.cpp:140
 msgid "ID:"
-msgstr "ΧΧ–Χ”Χ”:"
+msgstr "ξζδδ:"
 
 #: gui/editgamedialog.cpp:140 gui/editgamedialog.cpp:142
 #: gui/editgamedialog.cpp:143
@@ -209,108 +209,108 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
-"ΧªΧ™ΧΧ•Χ¨ ΧΧ©Χ—Χ§ Χ§Χ¦Χ¨ ΧΧ©Χ™ΧΧ•Χ© Χ›ΧΧ©Χ¨ ΧΧªΧ™Χ™Χ—Χ΅Χ™Χ ΧΧ©ΧΧ™Χ¨Χ•Χª Χ•Χ›Χ“Χ™ ΧΧ”Χ¨Χ™Χ¥ ΧΧª Χ”ΧΧ©Χ—Χ§ ΧΧ©Χ•Χ¨Χª Χ”Χ¤Χ§Χ•Χ“Χ•Χª"
+"ϊιΰεψ ξωηχ χφψ μωιξεω λΰωψ ξϊιιηριν μωξιψεϊ ελγι μδψιυ ΰϊ δξωηχ ξωεψϊ δτχεγεϊ"
 
 #: gui/editgamedialog.cpp:142
 msgctxt "lowres"
 msgid "ID:"
-msgstr "ΧΧ–Χ”Χ”:"
+msgstr "ξζδδ:"
 
 #: gui/editgamedialog.cpp:147 gui/editrecorddialog.cpp:59
 msgid "Name:"
-msgstr "Χ©Χ:"
+msgstr "ων:"
 
 #: gui/editgamedialog.cpp:147 gui/editgamedialog.cpp:149
 #: gui/editgamedialog.cpp:150
 msgid "Full title of the game"
-msgstr "Χ©Χ ΧΧΧ Χ©Χ Χ”ΧΧ©Χ—Χ§"
+msgstr "ων ξμΰ ωμ δξωηχ"
 
 #: gui/editgamedialog.cpp:149
 msgctxt "lowres"
 msgid "Name:"
-msgstr "Χ©Χ:"
+msgstr "ων:"
 
 #: gui/editgamedialog.cpp:153
 msgid "Language:"
-msgstr "Χ©Χ¤Χ”:"
+msgstr "ωτδ:"
 
 #: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:154
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
-msgstr "Χ©Χ¤Χª Χ”ΧΧ©Χ—Χ§. Χ–Χ” ΧΧ Χ™Χ”Χ¤Χ•Χ ΧΧ©Χ—Χ§ Χ‘ΧΧ•Χ¨Χ§Χ™Χª ΧΧΧ©Χ—Χ§ Χ‘ΧΆΧ‘Χ¨Χ™Χª"
+msgstr "ωτϊ δξωηχ. ζδ μΰ ιδτεκ ξωηχ αθεψχιϊ μξωηχ αςαψιϊ"
 
 #: gui/editgamedialog.cpp:155 gui/editgamedialog.cpp:169 gui/options.cpp:1055
 #: gui/options.cpp:1068 gui/options.cpp:1082 gui/options.cpp:1670
 #: audio/null.cpp:41
 msgid "<default>"
-msgstr "<Χ‘Χ—Χ™Χ¨Χª ΧΧ—Χ“Χ>"
+msgstr "<αηιψϊ ξηγμ>"
 
 #: gui/editgamedialog.cpp:165
 msgid "Platform:"
-msgstr "Χ¤ΧΧΧ¤Χ•Χ¨ΧΧ”:"
+msgstr "τμθτεψξδ:"
 
 #: gui/editgamedialog.cpp:165 gui/editgamedialog.cpp:167
 #: gui/editgamedialog.cpp:168
 msgid "Platform the game was originally designed for"
-msgstr "Χ¤ΧΧΧ¤Χ•Χ¨ΧΧ” Χ©Χ”ΧΧ©Χ—Χ§ Χ Χ‘Χ Χ” ΧΧ” Χ‘ΧΧ§Χ•Χ¨"
+msgstr "τμθτεψξδ ωδξωηχ παπδ μδ αξχεψ"
 
 #: gui/editgamedialog.cpp:167
 msgctxt "lowres"
 msgid "Platform:"
-msgstr "Χ¤ΧΧΧ¤Χ•Χ¨ΧΧ”:"
+msgstr "τμθτεψξδ:"
 
 #: gui/editgamedialog.cpp:180
 msgid "Engine"
-msgstr "ΧΧ Χ•ΧΆ"
+msgstr "ξπες"
 
 #: gui/editgamedialog.cpp:188 gui/options.cpp:1415 gui/options.cpp:1523
 msgid "Graphics"
-msgstr "ΧªΧ¦Χ•Χ’Χ”"
+msgstr "ϊφεβδ"
 
 #: gui/editgamedialog.cpp:188 gui/options.cpp:1415 gui/options.cpp:1523
 msgid "GFX"
-msgstr "ΧªΧ¦Χ•Χ’Χ”"
+msgstr "ϊφεβδ"
 
 #: gui/editgamedialog.cpp:193
 msgid "Override global graphic settings"
-msgstr "Χ‘ΧΧ Χ”Χ’Χ“Χ¨Χ•Χª ΧªΧ¦Χ•Χ’Χ” Χ’ΧΧ•Χ‘ΧΧ™Χ•Χª"
+msgstr "αθμ δβγψεϊ ϊφεβδ βμεαμιεϊ"
 
 #: gui/editgamedialog.cpp:195
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "Χ‘ΧΧ Χ”Χ’Χ“Χ¨Χ•Χª ΧªΧ¦Χ•Χ’Χ” Χ’ΧΧ•Χ‘ΧΧ™Χ•Χª"
+msgstr "αθμ δβγψεϊ ϊφεβδ βμεαμιεϊ"
 
 #: gui/editgamedialog.cpp:202 gui/options.cpp:1552
 msgid "Audio"
-msgstr "Χ©ΧΧΆ"
+msgstr "ωξς"
 
 #: gui/editgamedialog.cpp:205
 msgid "Override global audio settings"
-msgstr "Χ‘ΧΧ Χ”Χ’Χ“Χ¨Χ•Χª Χ©ΧΧΆ Χ’ΧΧ•Χ‘ΧΧ™Χ•Χª"
+msgstr "αθμ δβγψεϊ ωξς βμεαμιεϊ"
 
 #: gui/editgamedialog.cpp:207
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "Χ‘ΧΧ Χ”Χ’Χ“Χ¨Χ•Χª Χ©ΧΧΆ Χ’ΧΧ•Χ‘ΧΧ™Χ•Χª"
+msgstr "αθμ δβγψεϊ ωξς βμεαμιεϊ"
 
 #: gui/editgamedialog.cpp:216 gui/options.cpp:1557
 msgid "Volume"
-msgstr "ΧΆΧ•Χ¦ΧΧª Χ©ΧΧΆ"
+msgstr "ςεφξϊ ωξς"
 
 #: gui/editgamedialog.cpp:218 gui/options.cpp:1559
 msgctxt "lowres"
 msgid "Volume"
-msgstr "ΧΆΧ•Χ¦ΧΧª Χ©ΧΧΆ"
+msgstr "ςεφξϊ ωξς"
 
 #: gui/editgamedialog.cpp:221
 msgid "Override global volume settings"
-msgstr "Χ‘ΧΧ Χ”Χ’Χ“Χ¨Χ•Χª ΧΆΧ•Χ¦ΧΧª Χ©ΧΧΆ Χ’ΧΧ•Χ‘ΧΧ™Χ•Χª"
+msgstr "αθμ δβγψεϊ ςεφξϊ ωξς βμεαμιεϊ"
 
 #: gui/editgamedialog.cpp:223
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "Χ‘ΧΧ Χ”Χ’Χ“Χ¨Χ•Χª ΧΆΧ•Χ¦ΧΧª Χ©ΧΧΆ Χ’ΧΧ•Χ‘ΧΧ™Χ•Χª"
+msgstr "αθμ δβγψεϊ ςεφξϊ ωξς βμεαμιεϊ"
 
 #: gui/editgamedialog.cpp:232 gui/options.cpp:1567
 msgid "MIDI"
@@ -318,12 +318,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:235
 msgid "Override global MIDI settings"
-msgstr "Χ‘ΧΧ Χ”Χ’Χ“Χ¨Χ•Χª MIDI Χ’ΧΧ•Χ‘ΧΧ™Χ•Χª"
+msgstr "αθμ δβγψεϊ MIDI βμεαμιεϊ"
 
 #: gui/editgamedialog.cpp:237
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "Χ‘ΧΧ Χ”Χ’Χ“Χ¨Χ•Χª MIDI Χ’ΧΧ•Χ‘ΧΧ™Χ•Χª"
+msgstr "αθμ δβγψεϊ MIDI βμεαμιεϊ"
 
 #: gui/editgamedialog.cpp:247 gui/options.cpp:1577
 msgid "MT-32"
@@ -331,12 +331,12 @@ msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:250
 msgid "Override global MT-32 settings"
-msgstr "Χ‘ΧΧ Χ”Χ’Χ“Χ¨Χ•Χª MT-32 Χ’ΧΧ•Χ‘ΧΧ™Χ•Χª"
+msgstr "αθμ δβγψεϊ MT-32 βμεαμιεϊ"
 
 #: gui/editgamedialog.cpp:252
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr "Χ‘ΧΧ Χ”Χ’Χ“Χ¨Χ•Χª MT-32 Χ’ΧΧ•Χ‘ΧΧ™Χ•Χª"
+msgstr "αθμ δβγψεϊ MT-32 βμεαμιεϊ"
 
 #: gui/editgamedialog.cpp:261 gui/options.cpp:1584
 msgid "Paths"
@@ -434,15 +434,15 @@ msgstr ""
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr "ΧΧ•Χ§Χ™Χ™"
+msgstr "ΰεχιι"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Choose file for loading"
-msgstr "Χ‘Χ—Χ¨ Χ§Χ•Χ‘Χ¥ ΧΧΧΆΧ™Χ Χ”"
+msgstr "αηψ χεαυ μθςιπδ"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Enter filename for saving"
-msgstr "Χ”Χ›Χ Χ΅ Χ©Χ Χ§Χ•Χ‘Χ¥ ΧΧ©ΧΧ™Χ¨Χ”"
+msgstr "δλπρ ων χεαυ μωξιψδ"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
@@ -466,7 +466,7 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:87
 msgid "Width:"
-msgstr "Χ¨Χ•Χ—Χ‘:"
+msgstr "ψεηα:"
 
 #: gui/fluidsynth-dialog.cpp:94 gui/fluidsynth-dialog.cpp:112
 msgid "Level:"
@@ -482,15 +482,15 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
-msgstr "ΧΧ”Χ™Χ¨Χ•Χª:"
+msgstr "ξδιψεϊ:"
 
 #: gui/fluidsynth-dialog.cpp:126
 msgid "Depth:"
-msgstr "ΧΆΧ•ΧΧ§:"
+msgstr "ςεξχ:"
 
 #: gui/fluidsynth-dialog.cpp:133
 msgid "Type:"
-msgstr "Χ΅Χ•Χ’:"
+msgstr "ρεβ:"
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Sine"
@@ -502,7 +502,7 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1630
 msgid "Misc"
-msgstr "ΧΧ—Χ¨"
+msgstr "ΰηψ"
 
 #: gui/fluidsynth-dialog.cpp:141
 msgid "Interpolation:"
@@ -526,31 +526,31 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset"
-msgstr "ΧΧªΧ—Χ•Χ ΧΧ—Χ“Χ©"
+msgstr "ΰϊηεμ ξηγω"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "ΧΧªΧ—Χ ΧΧ—Χ“Χ© ΧΧª Χ”Χ’Χ“Χ¨Χ•Χª FluidSynth ΧΧΧ¦Χ‘Χ Χ”ΧΧ§Χ•Χ¨Χ™."
+msgstr "ΰϊημ ξηγω ΰϊ δβγψεϊ FluidSynth μξφαν δξχεψι."
 
 #: gui/fluidsynth-dialog.cpp:218
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "Χ”ΧΧ Χ‘ΧΧΧª ΧΧΧªΧ—Χ ΧΧ—Χ“Χ© ΧΧª Χ”Χ’Χ“Χ¨Χ•Χª FluidSynth ΧΧΧ¦Χ‘Χ Χ”ΧΧ§Χ•Χ¨Χ™?"
+msgstr "δΰν αΰξϊ μΰϊημ ξηγω ΰϊ δβγψεϊ FluidSynth μξφαν δξχεψι?"
 
 #: gui/gui-manager.cpp:119 gui/unknown-game-dialog.cpp:48
 #: backends/keymapper/remap-dialog.cpp:53 engines/scumm/help.cpp:126
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
 #: engines/scumm/help.cpp:192 engines/scumm/help.cpp:210
 msgid "Close"
-msgstr "Χ΅Χ’Χ™Χ¨Χ”"
+msgstr "ρβιψδ"
 
 #: gui/gui-manager.cpp:122
 msgid "Mouse click"
-msgstr "ΧΧ—Χ™Χ¦Χª ΧΆΧ›Χ‘Χ¨"
+msgstr "μηιφϊ ςλαψ"
 
 #: gui/gui-manager.cpp:126 base/main.cpp:343
 msgid "Display keyboard"
-msgstr "Χ”Χ¦Χ’ ΧΧ§ΧΧ“Χª"
+msgstr "δφβ ξχμγϊ"
 
 #: gui/gui-manager.cpp:130 base/main.cpp:347
 msgid "Remap keys"
@@ -558,15 +558,15 @@ msgstr ""
 
 #: gui/gui-manager.cpp:133 base/main.cpp:350 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
-msgstr "Χ”Χ¤ΧΆΧ/Χ‘ΧΧ ΧΧ΅Χ ΧΧΧ"
+msgstr "δτςμ/αθμ ξρκ ξμΰ"
 
 #: gui/KeysDialog.cpp:41
 msgid "Map"
-msgstr "ΧΧ™Χ¤Χ•Χ™"
+msgstr "ξιτει"
 
 #: gui/KeysDialog.cpp:49
 msgid "Select an action and click 'Map'"
-msgstr "Χ‘Χ—Χ¨ Χ¤ΧΆΧ•ΧΧ” Χ•ΧΧ—Χ¥ ΧΆΧ 'ΧΧ™Χ¤Χ•Χ™'"
+msgstr "αηψ τςεμδ εμηυ ςμ 'ξιτει'"
 
 #: gui/KeysDialog.cpp:80 gui/KeysDialog.cpp:102 gui/KeysDialog.cpp:141
 #, c-format
@@ -579,7 +579,7 @@ msgstr ""
 
 #: gui/KeysDialog.cpp:90
 msgid "Please select an action"
-msgstr "ΧΧ Χ Χ‘Χ—Χ¨ Χ¤ΧΆΧ•ΧΧ”"
+msgstr "ΰπΰ αηψ τςεμδ"
 
 #: gui/KeysDialog.cpp:106
 msgid "Press the key to associate"
@@ -587,15 +587,15 @@ msgstr ""
 
 #: gui/KeysDialog.cpp:145 gui/KeysDialog.h:36
 msgid "Choose an action to map"
-msgstr "Χ‘Χ—Χ¨ Χ¤ΧΆΧ•ΧΧ” ΧΧΧ™Χ¤Χ•Χ™"
+msgstr "αηψ τςεμδ μξιτει"
 
 #: gui/launcher.cpp:142 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:142
 msgid "~Q~uit"
-msgstr "~Χ™~Χ¦Χ™ΧΧ”"
+msgstr "~ι~φιΰδ"
 
 #: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:193
 msgid "Quit ScummVM"
-msgstr "Χ΅Χ’Χ•Χ¨ ΧΧª ScummVM"
+msgstr "ρβεψ ΰϊ ScummVM"
 
 #: gui/launcher.cpp:143
 msgid "A~b~out..."
@@ -619,7 +619,7 @@ msgstr ""
 
 #: gui/launcher.cpp:146
 msgid "Start selected game"
-msgstr "Χ”ΧªΧ—Χ ΧΧ©Χ—Χ§ Χ©Χ Χ‘Χ—Χ¨"
+msgstr "δϊημ ξωηχ ωπαηψ"
 
 #: gui/launcher.cpp:149
 msgid "~L~oad..."
@@ -643,7 +643,7 @@ msgstr ""
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:163
 msgid "Change game options"
-msgstr "Χ©Χ™Χ Χ•Χ™ Χ”Χ’Χ“Χ¨Χ•Χª ΧΧ©Χ—Χ§"
+msgstr "ωιπει δβγψεϊ ξωηχ"
 
 #: gui/launcher.cpp:158
 msgid "~R~emove Game"
@@ -670,18 +670,18 @@ msgstr ""
 
 #: gui/launcher.cpp:173
 msgid "Search in game list"
-msgstr "Χ—Χ™Χ¤Χ•Χ© Χ‘Χ¨Χ©Χ™ΧΧª Χ”ΧΧ©Χ—Χ§Χ™Χ"
+msgstr "ηιτεω αψωιξϊ δξωηχιν"
 
 #: gui/launcher.cpp:177 gui/launcher.cpp:760
 msgid "Search:"
-msgstr "Χ—Χ™Χ¤Χ•Χ©:"
+msgstr "ηιτεω:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:942
 #: engines/mohawk/riven.cpp:662 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
-msgstr "ΧΧΆΧ ΧΧ©Χ—Χ§:"
+msgstr "θςο ξωηχ:"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -692,25 +692,25 @@ msgstr "ΧΧΆΧ ΧΧ©Χ—Χ§:"
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load"
-msgstr "ΧΧΆΧ™Χ Χ”"
+msgstr "θςιπδ"
 
 #: gui/launcher.cpp:325
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
-msgstr "Χ”ΧΧ Χ‘ΧΧΧª ΧΧ”Χ¤ΧΆΧ™Χ ΧΧª ΧΧ’ΧΧ” Χ”ΧΧ©Χ—Χ§Χ™Χ? Χ–Χ” Χ™Χ›Χ•Χ ΧΧ”Χ•Χ΅Χ™Χ£ Χ›ΧΧ•Χª ΧΆΧ Χ§Χ™Χª Χ©Χ ΧΧ©Χ—Χ§Χ™Χ."
+msgstr "δΰν αΰξϊ μδτςιμ ΰϊ ξβμδ δξωηχιν? ζδ ιλεμ μδερισ λξεϊ ςπχιϊ ωμ ξωηχιν."
 
 #: gui/launcher.cpp:384
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr "ΧªΧ™Χ§Χ™Χ™Χ” Χ–Χ• ΧΧ™Χ Χ” Χ Χ™ΧªΧ Χª ΧΧ©Χ™ΧΧ•Χ© Χ›Χ ΧΆΧ•Χ“ Χ™Χ© Χ”Χ•Χ¨Χ“Χ” Χ¤ΧΆΧ™ΧΧ”!"
+msgstr "ϊιχιιδ ζε ΰιπδ πιϊπϊ μωιξεω λμ ςεγ ιω δεψγδ τςιμδ!"
 
 #: gui/launcher.cpp:395
 msgid "Do you really want to remove this game configuration?"
-msgstr "Χ”ΧΧ Χ‘ΧΧΧª ΧΧΧ—Χ•Χ§ ΧΧª ΧªΧ¦Χ•Χ¨Χª Χ”ΧΧ©Χ—Χ§?"
+msgstr "δΰν αΰξϊ μξηεχ ΰϊ ϊφεψϊ δξωηχ?"
 
 #: gui/launcher.cpp:454
 msgid "Do you want to load saved game?"
-msgstr "Χ”ΧΧ ΧΧΧΆΧ•Χ ΧΧª Χ©ΧΧ™Χ¨Χª Χ”ΧΧ©Χ—Χ§?"
+msgstr "δΰν μθςεο ΰϊ ωξιψϊ δξωηχ?"
 
 #: gui/launcher.cpp:504
 msgid "This game does not support loading games from the launcher."
@@ -718,15 +718,15 @@ msgstr ""
 
 #: gui/launcher.cpp:508
 msgid "ScummVM could not find any engine capable of running the selected game!"
-msgstr "ScummVM ΧΧ Χ”Χ¦ΧΧ™Χ— ΧΧΧ¦Χ•Χ ΧΧ Χ•ΧΆ Χ©ΧΧ΅Χ•Χ’Χ ΧΧ”Χ¨Χ™Χ¥ ΧΧª Χ”ΧΧ©Χ—Χ§ Χ©Χ Χ‘Χ—Χ¨!"
+msgstr "ScummVM μΰ δφμιη μξφεΰ ξπες ωξρεβμ μδψιυ ΰϊ δξωηχ ωπαηψ!"
 
 #: gui/launcher.cpp:569
 msgid "ScummVM could not find any game in the specified directory!"
-msgstr "ScummVM ΧΧ ΧΧ¦Χ Χ©Χ•Χ ΧΧ©Χ—Χ§ Χ‘ΧªΧ™Χ§Χ™Χ™Χ” Χ©Χ Χ‘Χ—Χ¨Χ”!"
+msgstr "ScummVM μΰ ξφΰ ωεν ξωηχ αϊιχιιδ ωπαηψδ!"
 
 #: gui/launcher.cpp:582
 msgid "Pick the game:"
-msgstr "Χ‘Χ—Χ¨ ΧΧ©Χ—Χ§:"
+msgstr "αηψ ξωηχ:"
 
 #: gui/launcher.cpp:697
 msgid "Mass Add..."
@@ -742,26 +742,26 @@ msgstr ""
 
 #: gui/massadd.cpp:265
 msgid "Scan complete!"
-msgstr "Χ”Χ΅Χ¨Χ™Χ§Χ” Χ”Χ•Χ©ΧΧΧ”!"
+msgstr "δρψιχδ δεωμξδ!"
 
 #: gui/massadd.cpp:268
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr "Χ”ΧªΧ’ΧΧ• %d ΧΧ©Χ—Χ§Χ™Χ Χ—Χ“Χ©Χ™Χ, Χ“Χ•ΧΧ’ ΧΆΧ %d ΧΧ©Χ—Χ§Χ™Χ Χ§Χ™Χ™ΧΧ™Χ."
+msgstr "δϊβμε %d ξωηχιν ηγωιν, γεμβ ςμ %d ξωηχιν χιιξιν."
 
 #: gui/massadd.cpp:272
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr "Χ Χ΅Χ¨Χ§Χ• %d ΧªΧ™Χ§Χ™Χ•Χª ..."
+msgstr "πρψχε %d ϊιχιεϊ ..."
 
 #: gui/massadd.cpp:275
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr "Χ”ΧªΧ’ΧΧ• %d ΧΧ©Χ—Χ§Χ™Χ Χ—Χ“Χ©Χ™Χ, Χ“Χ•ΧΧ’ ΧΆΧ %d ΧΧ©Χ—Χ§Χ™Χ Χ§Χ™Χ™ΧΧ™Χ ..."
+msgstr "δϊβμε %d ξωηχιν ηγωιν, γεμβ ςμ %d ξωηχιν χιιξιν ..."
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr "ΧΆΧ¦Χ™Χ¨Χ”"
+msgstr "ςφιψδ"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
@@ -769,31 +769,31 @@ msgstr ""
 
 #: gui/onscreendialog.cpp:108
 msgid "Switch to Game"
-msgstr "ΧΆΧ‘Χ•Χ¨ ΧΧ Χ”ΧΧ©Χ—Χ§"
+msgstr "ςαεψ ΰμ δξωηχ"
 
 #: gui/onscreendialog.cpp:110
 msgid "Fast replay"
-msgstr "Χ”Χ™ΧΧ•Χ Χ—Χ•Χ–Χ¨ ΧΧ”Χ™Χ¨"
+msgstr "διμεκ ηεζψ ξδιψ"
 
 #: gui/options.cpp:122 common/updates.cpp:56
 msgid "Never"
-msgstr "ΧΧ£ Χ¤ΧΆΧ"
+msgstr "ΰσ τςν"
 
 #: gui/options.cpp:122
 msgid "Every 5 mins"
-msgstr "Χ›Χ 5 Χ“Χ§Χ•Χª"
+msgstr "λμ 5 γχεϊ"
 
 #: gui/options.cpp:122
 msgid "Every 10 mins"
-msgstr "Χ›Χ 10 Χ“Χ§Χ•Χª"
+msgstr "λμ 10 γχεϊ"
 
 #: gui/options.cpp:122
 msgid "Every 15 mins"
-msgstr "Χ›Χ 15 Χ“Χ§Χ•Χª"
+msgstr "λμ 15 γχεϊ"
 
 #: gui/options.cpp:122
 msgid "Every 30 mins"
-msgstr "Χ›Χ 30 Χ“Χ§Χ•Χª"
+msgstr "λμ 30 γχεϊ"
 
 #: gui/options.cpp:361 gui/options.cpp:691 gui/options.cpp:829
 #: gui/options.cpp:911 gui/options.cpp:1184
@@ -1160,12 +1160,12 @@ msgstr ""
 
 #: gui/options.cpp:1650
 msgid "Autosave:"
-msgstr "Χ©ΧΧ™Χ¨Χ” ΧΧ•ΧΧ•ΧΧΧ™Χª:"
+msgstr "ωξιψδ ΰεθεξθιϊ:"
 
 #: gui/options.cpp:1652
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Χ©ΧΧ™Χ¨Χ” ΧΧ•ΧΧ•ΧΧΧ™Χª:"
+msgstr "ωξιψδ ΰεθεξθιϊ:"
 
 #: gui/options.cpp:1660
 msgid "Keys"
@@ -1189,7 +1189,7 @@ msgstr ""
 
 #: gui/options.cpp:1707
 msgid "Check now"
-msgstr "Χ‘Χ“Χ•Χ§ ΧΆΧ›Χ©Χ™Χ•"
+msgstr "αγεχ ςλωιε"
 
 #: gui/options.cpp:1715
 msgid "Cloud"
