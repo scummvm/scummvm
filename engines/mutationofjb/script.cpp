@@ -48,6 +48,7 @@
 #include "mutationofjb/commands/setcolorcommand.h"
 #include "mutationofjb/commands/specialshowcommand.h"
 #include "mutationofjb/commands/switchpartcommand.h"
+#include "mutationofjb/commands/loadplayercommand.h"
 #include "mutationofjb/game.h"
 
 namespace MutationOfJB {
@@ -79,6 +80,7 @@ static CommandParser **getParsers() {
 		new SetColorCommandParser,
 		new SpecialShowCommandParser,
 		new SwitchPartCommandParser,
+		new LoadPlayerCommandParser,
 		nullptr
 	};
 

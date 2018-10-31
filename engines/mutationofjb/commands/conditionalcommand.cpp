@@ -33,12 +33,12 @@ void ConditionalCommandParser::transition(ScriptParseContext &parseContext, Comm
 	}
 
 	ConditionalCommand *const condCommand = static_cast<ConditionalCommand *>(oldCommand);
-	parseContext.addConditionalCommand(condCommand, _lastTag, _firstHash);
+	parseContext.addConditionalCommand(condCommand, _tags.pop(), _firstHash);
 	condCommand->setTrueCommand(newCommand);
 }
 
 void ConditionalCommandParser::finish(ScriptParseContext &) {
-	_lastTag = 0;
+	_tags.clear();
 }
 
 

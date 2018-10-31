@@ -49,7 +49,7 @@ bool IfPiggyCommandParser::parse(const Common::String &line, ScriptParseContext 
 		return false;
 	}
 
-	_lastTag = 0;
+	_tags.push(0);
 	command = new IfPiggyCommand();
 
 	return true;

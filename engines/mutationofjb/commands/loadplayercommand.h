@@ -20,41 +20,34 @@
  *
  */
 
-#ifndef MUTATIONOFJB_CONDITIONALCOMMAND_H
-#define MUTATIONOFJB_CONDITIONALCOMMAND_H
+#ifndef MUTATIONOFJB_LOADPLAYERCOMMAND_H
+#define MUTATIONOFJB_LOADPLAYERCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
+#include "mutationofjb/commands/seqcommand.h"
 #include "common/scummsys.h"
-#include "common/queue.h"
+#include "mutationofjb/tasks/task.h"
 
 namespace MutationOfJB {
 
-class ConditionalCommandParser : public CommandParser {
+class ConversationTask;
+
+class LoadPlayerCommandParser : public SeqCommandParser {
 public:
-	ConditionalCommandParser(bool firstHash = false) : _firstHash(firstHash) {}
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser);
-	virtual void finish(ScriptParseContext &parseCtx) override;
-protected:
-	Common::Queue<char> _tags;
-private:
-	bool _firstHash;
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
-class ConditionalCommand : public Command {
+class LoadPlayerCommand : public SeqCommand {
 public:
-	ConditionalCommand();
+	LoadPlayerCommand(uint8 apkFrameFirst, uint8 apkFrameLast, uint8 playerFrameFirst, uint8 palIndexFirst, const Common::String &apkFileName) : _apkFrameFirst(apkFrameFirst), _apkFrameLast(apkFrameLast), _playerFrameFirst(playerFrameFirst), _palIndexFirst(palIndexFirst), _apkFileName(apkFileName) {}
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	virtual Common::String debugString() const override;
 
-	Command *getTrueCommand() const;
-	Command *getFalseCommand() const;
-
-	void setTrueCommand(Command *command);
-	void setFalseCommand(Command *command);
-
-	virtual Command *next() const override;
-protected:
-	Command *_trueCommand;
-	Command *_falseCommand;
-	bool _cachedResult;
+private:
+	uint8 _apkFrameFirst;
+	uint8 _apkFrameLast;
+	uint8 _playerFrameFirst;
+	uint8 _palIndexFirst;
+	Common::String _apkFileName;
 };
 
 }

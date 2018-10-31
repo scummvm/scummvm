@@ -46,7 +46,7 @@ public:
 
 	TalkCommand(Mode mode) : _mode(mode) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	virtual Common::String debugString() const override;
 
 private:
 	Mode _mode;

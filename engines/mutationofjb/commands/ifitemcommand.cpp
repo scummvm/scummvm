@@ -60,7 +60,7 @@ bool IfItemCommandParser::parse(const Common::String &line, ScriptParseContext &
 		item.deleteLastChar(); // Remove '!'.
 	}
 
-	_lastTag = 0;
+	_tags.push(0);
 	command = new IfItemCommand(item, negative);
 
 	return true;
