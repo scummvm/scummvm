@@ -28,6 +28,13 @@
 
 namespace Gargoyle {
 
+enum CaretShape {
+	SMALL_DOT = 0, FAT_DOT = 1, THIN_LINE = 2, FAT_LINE = 3, BLOCK = 4
+};
+
+/**
+ * Screen surface class
+ */
 class Screen : public Graphics::Screen, public Fonts {
 public:
 	/**

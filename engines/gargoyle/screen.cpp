@@ -21,6 +21,7 @@
  */
 
 #include "gargoyle/screen.h"
+#include "gargoyle/conf.h"
 
 namespace Gargoyle {
 
@@ -35,7 +36,36 @@ void Screen::fillRect(const Rect &box, const byte *rgb) {
 }
 
 void Screen::drawCaret(const Point &pos) {
-	// TODO
+	const byte *rgb = g_conf->_caretColor;
+	uint color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
+
+	switch (g_conf->_caretShape) {
+	case SMALL_DOT:
+		hLine(pos.x + 0, pos.y + 1, pos.x + 0, color);
+		hLine(pos.x - 1, pos.y + 2, pos.x + 1, color);
+		hLine(pos.x - 2, pos.y + 3, pos.x + 2, color);
+		break;
+
+	case FAT_DOT:
+		hLine(pos.x + 0, pos.y + 1, pos.x + 0, color);
+		hLine(pos.x - 1, pos.y + 2, pos.x + 1, color);
+		hLine(pos.x - 2, pos.y + 3, pos.x + 2, color);
+		hLine(pos.x - 3, pos.y + 4, pos.x + 3, color);
+		break;
+
+	case THIN_LINE:
+		vLine(pos.x, pos.y - g_conf->_baseLine + 1, pos.y - 1, color);
+		break;
+
+	case FAT_LINE:
+		Graphics::Screen::fillRect(Rect(pos.x, pos.y - g_conf->_baseLine + 1, pos.x + 1,  pos.y - 1), color);
+		break;
+
+	default:
+		// BLOCK
+		Graphics::Screen::fillRect(Rect(pos.x, pos.y - g_conf->_baseLine + 1, pos.x + g_conf->_cellW, pos.y - 1), color);
+		break;
+	}
 }
 
 } // End of namespace Gargoyle
