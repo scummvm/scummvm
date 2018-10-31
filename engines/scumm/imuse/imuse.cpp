@@ -169,7 +169,7 @@ bool IMuseInternal::isMT32(int sound) {
 
 	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max
 		// HE games use Roland music
-		if (ptr[8] == 'H' && ptr[9] == 'S')
+		if (ptr[8] == 'H' && ptr[9] == 'S' && _game_id != GID_PUTTMOON)
 			return true;
 		else
 			return false;
