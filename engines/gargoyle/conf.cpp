@@ -121,8 +121,8 @@ Conf::Conf() {
 
 	get("wpaddingx", _wPaddingX);
 	get("wpaddingy", _wPaddingY);
-	get("wborderx", _wBorderX, 1);
-	get("wbordery", _wBorderY, 1);
+	get("wborderx", _wBorderX);
+	get("wbordery", _wBorderY);
 	get("tmarginx", _tMarginX, 7);
 	get("tmarginy", _tMarginY, 7);
 	get("gamma", _gamma, 1.0);
