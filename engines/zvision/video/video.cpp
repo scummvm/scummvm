@@ -23,7 +23,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "video/video_decoder.h"
-#ifdef USE_MPEG2
+#if defined(USE_MPEG2) && defined(USE_A52)
 #include "video/mpegps_decoder.h"
 #endif
 #include "engines/util.h"
@@ -48,7 +48,7 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::String &fileName) {
 		animation = new RLFDecoder();
 	else if (tmpFileName.hasSuffix(".avi"))
 		animation = new ZorkAVIDecoder();
-#ifdef USE_MPEG2
+#if defined(USE_MPEG2) && defined(USE_A52)
 	else if (tmpFileName.hasSuffix(".vob"))
 		animation = new Video::MPEGPSDecoder();
 #endif
