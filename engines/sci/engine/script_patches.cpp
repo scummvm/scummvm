@@ -1669,6 +1669,64 @@ static const uint16 gk1DrugStoreEgoSpeedFixPatch[] = {
 	PATCH_END
 };
 
+// GK1 CD version cuts off Grace's speech when hanging up the phone on day 1.
+//  This is a timing issue that also occurs in the original.
+//
+// startingCartoon:changeState(12) plays Grace's final phone message but doesn't
+//  synchronize it with the script. Instead ego goes through a series of movements
+//  that advance the state while Grace is speaking. Once the sequence is complete
+//  Grace hangs up the phone and starts her next message which interrupts the
+//  previous one. There is no mechanism to make sure that Grace's message has
+//  first completed and so it cut offs the last one or two words. The timing only
+//  worked in the original on slower machines that weren't able to run the
+//  sequence at full speed.
+//
+// We fix this by adding a delay to startingCartoon:changeState(18) so that
+//  Grace's speech has time to complete. This scene occurs before game speed
+//  can be set and it plays at a consistent speed on ScummVM.
+//
+// This patch is only applied to CD versions. Floppies have a different script.
+//
+// Applies to: All CD versions
+// Responsible method: startingCartoon:changeState(18)
+// Fixes bug #10787
+static const uint16 gk1Day1GracePhoneSignature[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x12,                 // ldi 12
+	0x1a,                       // eq?
+	0x31, 0x2c,                 // bnt 2c
+	SIG_ADDTOOFFSET(+28),
+	0x38, SIG_UINT16(0x0003),   // pushi 0003
+	0x51, 0x69,                 // class Osc
+	0x36,                       // push
+	0x78,                       // push1
+	0x7c,                       // pushSelf
+	0x81, 0x00,                 // lag 00
+	0x4a, SIG_UINT16(0x0024),   // send 24 [ GKEgo: ... setCycle: Osc 1 self ]
+	0x32, SIG_ADDTOOFFSET(+2),  // jmp [ end of method ]
+	SIG_END
+};
+
+static const uint16 gk1Day1GracePhonePatch[] = {
+	PATCH_ADDTOOFFSET(+33),
+	0x7a,                       // push2
+	0x51, 0x69,                 // class Osc
+	0x36,                       // push
+	0x78,                       // push1
+	0x81, 0x00,                 // lag 00
+	0x4a, PATCH_UINT16(0x0022), // send 22 [ GKEgo: ... setCycle: Osc 1 ]
+
+	// advance to the next state in 6 seconds instead of when Gabriel finishes
+	//  taking a sip of coffee, which takes 2 seconds, giving Grace's speech
+	//  an extra 4 seconds to complete.
+	0x35, 0x06,                 // ldi 06
+	0x65, 0x1c,                 // aTop seconds
+
+	0x3a,                       // toss
+	0x48,                       // ret
+	PATCH_END
+};
+
 // French and Spanish CD versions contain an active debugging hotkey, ALT+N,
 //  which brings up a series of unskippable bug-reporting dialogs and
 //  eventually writes files to disk and crashes non-release builds due to
@@ -1696,6 +1754,7 @@ static const uint16 gk1SysLoggerHotKeyPatch[] = {
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
 	{  true,    51, "fix interrogation bug",                       1, gk1InterrogationBugSignature,     gk1InterrogationBugPatch },
+	{  true,   211, "fix day 1 grace phone speech timing",         1, gk1Day1GracePhoneSignature,       gk1Day1GracePhonePatch },
 	{  true,   212, "fix day 5 drum book dialogue error",          1, gk1Day5DrumBookDialogueSignature, gk1Day5DrumBookDialoguePatch },
 	{  true,   212, "fix day 5 phone softlock",                    1, gk1Day5PhoneFreezeSignature,      gk1Day5PhoneFreezePatch },
 	{  true,   230, "fix day 6 police beignet timer issue (1/2)",  1, gk1Day6PoliceBeignetSignature1,   gk1Day6PoliceBeignetPatch1 },
