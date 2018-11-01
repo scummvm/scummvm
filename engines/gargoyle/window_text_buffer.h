@@ -66,6 +66,9 @@ private:
 	 */
 	void putTextUni(const glui32 *buf, int len, int pos, int oldlen);
 
+	/**
+	 * Return or enter, during line input. Ends line input.
+	 */
 	void acceptLine(glui32 keycode);
 
 	/**
