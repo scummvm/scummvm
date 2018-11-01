@@ -618,7 +618,7 @@ FreddisFunShop	Freddi Fish's One-Stop Fun Shop
 	4d3fbc888de4e6565013f61dc83da6b6	36245	nl	All	HE 99	-	-	Ben Castricum
 
 gaspocket	A Gaspocket Adventure: Aliens Ate My Cookies
-	38c3b94401236432d27ae519fecba1bc	-1	en	All	HE 100	Demo	-	Devan Wolf
+	38c3b94401236432d27ae519fecba1bc	-1	en	All	-	Demo	-	Devan Wolf
 
 catalog	Humongous Interactive Catalog
 	11e6e244078ff09b0f3832e35420e0a7	-1	en	Windows	-	Demo	-	khalek, sev
