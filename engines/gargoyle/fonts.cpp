@@ -119,13 +119,13 @@ int Fonts::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const C
 size_t Fonts::stringWidth(int fontIdx, const Common::String &text, int spw) {
 	// TODO: Handle spw
 	Graphics::Font *font = _fontTable[fontIdx];
-	return font->getStringWidth(text);
+	return font->getStringWidth(text) * GLI_SUBPIX;
 }
 
 size_t Fonts::stringWidthUni(int fontIdx, const Common::U32String &text, int spw) {
 	// TODO: Handle spw
 	Graphics::Font *font = _fontTable[fontIdx];
-	return font->getStringWidth(text);
+	return font->getStringWidth(text) * GLI_SUBPIX;
 }
 
 } // End of namespace Gargoyle
