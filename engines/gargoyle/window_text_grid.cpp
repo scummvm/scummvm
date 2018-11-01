@@ -608,7 +608,8 @@ void TextGridWindow::redraw() {
 					o = x;
 
 					for (k = a, o = x; k < b; k++, o += g_conf->_cellW) {
-						screen.drawStringUni(Point(o, y), font, fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
+						screen.drawStringUni(Point(o * GLI_SUBPIX, y + g_conf->_baseLine), font,
+							fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
 					}
 					if (link) {
 						screen.fillRect(Rect::fromXYWH(x, y + g_conf->_baseLine + 1, w,
@@ -629,7 +630,8 @@ void TextGridWindow::redraw() {
 			screen.fillRect(Rect::fromXYWH(x, y, w, g_conf->_leading), bgcolor);
 
 			for (k = a, o = x; k < b; k++, o += g_conf->_cellW) {
-				screen.drawStringUni(Point(o, y), font, fgcolor, Common::U32String(&ln->_chars[k], 1));
+				screen.drawStringUni(Point(o * GLI_SUBPIX, y + g_conf->_baseLine), font,
+					fgcolor, Common::U32String(&ln->_chars[k], 1));
 			}
 			if (link) {
 				screen.fillRect(Rect::fromXYWH(x, y + g_conf->_baseLine + 1, w, g_conf->_linkStyle),

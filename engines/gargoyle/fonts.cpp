@@ -54,9 +54,13 @@ Fonts::Fonts(Graphics::ManagedSurface *surface) : _surface(surface) {
 	_fontTable[6] = loadFont(PROPI, propSize, propAspect, FONTI);
 	_fontTable[7] = loadFont(PROPZ, propSize, propAspect, FONTZ);
 
+	if (!g_conf->_leading)
+		g_conf->_leading = g_conf->_propSize + 2;
+	if (!g_conf->_baseLine)
+		g_conf->_baseLine = g_conf->_propSize + 0.5;
+
 	g_conf->_cellW = _fontTable[0]->getStringWidth("0");
-	g_conf->_cellH = _fontTable[0]->getFontHeight();
-	g_conf->_leading = g_conf->_baseLine = g_conf->_cellH;
+	g_conf->_cellH = g_conf->_leading;
 }
 
 Fonts::~Fonts() {
@@ -96,18 +100,20 @@ Graphics::Font *Fonts::loadFont(FACES face, double size, double aspect, int styl
 }
 
 int Fonts::drawString(const Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw) {
+	Point pt(pos.x / GLI_SUBPIX, pos.y - g_conf->_baseLine);
 	Graphics::Font *font = _fontTable[fontIdx];
 	const uint32 color = _surface->format.RGBToColor(rgb[0], rgb[1], rgb[2]);
-	font->drawString(_surface, text, pos.x, pos.y, _surface->w - pos.x, color);
-	return font->getBoundingBox(text, pos.x, pos.y, _surface->w - pos.x).right;
+	font->drawString(_surface, text, pt.x, pt.y, _surface->w - pt.x, color);
+	return font->getBoundingBox(text, pt.x, pt.y, _surface->w - pt.x).right;
 }
 
 int Fonts::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw) {
+	Point pt(pos.x / GLI_SUBPIX, pos.y - g_conf->_baseLine);
 	Graphics::Font *font = _fontTable[fontIdx];
 	const uint32 color = _surface->format.RGBToColor(rgb[0], rgb[1], rgb[2]);
-	font->drawString(_surface, text, pos.x, pos.y, _surface->w - pos.x, color);
+	font->drawString(_surface, text, pt.x, pt.y, _surface->w - pt.x, color);
 
-	return font->getBoundingBox(text, pos.x, pos.y, _surface->w - pos.x).right;
+	return font->getBoundingBox(text, pt.x, pt.y, _surface->w - pt.x).right;
 }
 
 size_t Fonts::stringWidth(int fontIdx, const Common::String &text, int spw) {

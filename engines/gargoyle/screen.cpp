@@ -38,32 +38,33 @@ void Screen::fillRect(const Rect &box, const byte *rgb) {
 void Screen::drawCaret(const Point &pos) {
 	const byte *rgb = g_conf->_caretColor;
 	uint color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
+	int x = pos.x / GLI_SUBPIX, y = pos.y;
 
 	switch (g_conf->_caretShape) {
 	case SMALL_DOT:
-		hLine(pos.x + 0, pos.y + 1, pos.x + 0, color);
-		hLine(pos.x - 1, pos.y + 2, pos.x + 1, color);
-		hLine(pos.x - 2, pos.y + 3, pos.x + 2, color);
+		hLine(x + 0, y + 1, x + 0, color);
+		hLine(x - 1, y + 2, x + 1, color);
+		hLine(x - 2, y + 3, x + 2, color);
 		break;
 
 	case FAT_DOT:
-		hLine(pos.x + 0, pos.y + 1, pos.x + 0, color);
-		hLine(pos.x - 1, pos.y + 2, pos.x + 1, color);
-		hLine(pos.x - 2, pos.y + 3, pos.x + 2, color);
-		hLine(pos.x - 3, pos.y + 4, pos.x + 3, color);
+		hLine(x + 0, y + 1, x + 0, color);
+		hLine(x - 1, y + 2, x + 1, color);
+		hLine(x - 2, y + 3, x + 2, color);
+		hLine(x - 3, y + 4, x + 3, color);
 		break;
 
 	case THIN_LINE:
-		vLine(pos.x, pos.y - g_conf->_baseLine + 1, pos.y - 1, color);
+		vLine(x, y - g_conf->_baseLine + 1, y - 1, color);
 		break;
 
 	case FAT_LINE:
-		Graphics::Screen::fillRect(Rect(pos.x, pos.y - g_conf->_baseLine + 1, pos.x + 1,  pos.y - 1), color);
+		Graphics::Screen::fillRect(Rect(x, y - g_conf->_baseLine + 1, x + 1,  y - 1), color);
 		break;
 
 	default:
 		// BLOCK
-		Graphics::Screen::fillRect(Rect(pos.x, pos.y - g_conf->_baseLine + 1, pos.x + g_conf->_cellW, pos.y - 1), color);
+		Graphics::Screen::fillRect(Rect(x, y - g_conf->_baseLine + 1, x + g_conf->_cellW, y - 1), color);
 		break;
 	}
 }

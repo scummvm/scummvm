@@ -69,7 +69,7 @@ Conf::Conf() {
 	_imageW = g_system->getWidth();
 	_imageH = g_system->getHeight();
 	_cellW = _cellH = 8;
-	_leading = 8;
+	_leading = 0;
 	_baseLine = 0;
 
 	get("moreprompt", _morePrompt, "\207 more \207");
@@ -79,13 +79,13 @@ Conf::Conf() {
 	get("morealign", _moreAlign);
 	get("monoaspect", _monoAspect, 1.0);
 	get("propaspect", _propAspect, 1.0);
-	get("monosize", _monoSize, 12.5);
+	get("monosize", _monoSize, 8);
 	get("monor", _monoR);
 	get("monob", _monoR);
 	get("monoi", _monoI);
 	get("monoz", _monoZ);
 	get("monofont", _monoFont, "Liberation Mono");
-	get("propsize", _propSize, 15.5);
+	get("propsize", _propSize, 12);
 	get("propr", _propR);
 	get("propb", _propR);
 	get("propi", _propI);
@@ -94,14 +94,10 @@ Conf::Conf() {
 	get("rows", _rows, 25);
 	get("cols", _cols, 60);
 
-	/* Disabled for now, since Fonts constructor resets them
 	if (ConfMan.hasKey("leading"))
 		_leading = atof(ConfMan.get("leading").c_str()) + 0.5;
 	if (ConfMan.hasKey("baseline"))
 		_baseLine = atof(ConfMan.get("baseline").c_str()) + 0.5;
-	if (!_baseLine)
-		_baseLine = _propSize + 0.5;
-	*/
 
 	if (ConfMan.hasKey("minrows"))
 		_rows = MAX(_rows, strToInt(ConfMan.get("minrows").c_str()));
