@@ -31,9 +31,51 @@
 #include "dc.h"
 
 
-extern void draw_trans_quad(float x1, float y1, float x2, float y2,
-			    int c0, int c1, int c2, int c3);
+void draw_trans_quad(float x1, float y1, float x2, float y2,
+		     int c0, int c1, int c2, int c3)
+{
+  struct polygon_list mypoly;
+  struct packed_colour_vertex_list myvertex;
 
+  mypoly.cmd =
+    TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
+    TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR|
+    TA_CMD_POLYGON_GOURAUD_SHADING;
+  mypoly.mode1 = TA_POLYMODE1_Z_ALWAYS|TA_POLYMODE1_NO_Z_UPDATE;
+  mypoly.mode2 =
+    TA_POLYMODE2_BLEND_SRC_ALPHA|TA_POLYMODE2_BLEND_DST_INVALPHA|
+    TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_ENABLE_ALPHA;
+  mypoly.texture = 0;
+
+  mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0;
+
+  ta_commit_list(&mypoly);
+
+  myvertex.cmd = TA_CMD_VERTEX;
+  myvertex.ocolour = 0;
+  myvertex.z = 0.5;
+  myvertex.u = 0.0;
+  myvertex.v = 0.0;
+
+  myvertex.colour = c0;
+  myvertex.x = x1;
+  myvertex.y = y1;
+  ta_commit_list(&myvertex);
+
+  myvertex.colour = c1;
+  myvertex.x = x2;
+  ta_commit_list(&myvertex);
+
+  myvertex.colour = c2;
+  myvertex.x = x1;
+  myvertex.y = y2;
+  ta_commit_list(&myvertex);
+
+  myvertex.colour = c3;
+  myvertex.x = x2;
+  myvertex.cmd |= TA_CMD_VERTEX_EOS;
+  ta_commit_list(&myvertex);
+}
 
 static const char key_names[] =
   "Esc\0F1\0F2\0F3\0F4\0F5\0F6\0F7\0F8\0F9\0F10\0"

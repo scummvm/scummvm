@@ -29,43 +29,11 @@
 
 #include "dcloader.h"
 
-extern void draw_solid_quad(float x1, float y1, float x2, float y2,
-			    int c0, int c1, int c2, int c3);
+#include "gui/gui-manager.h"
+#include "gui/widget.h"
+#include "gui/dialog.h"
 
-static void drawPluginProgress(const Common::String &filename)
-{
-  ta_sync();
-  void *mark = ta_txmark();
-  const char *fn = filename.c_str();
-  Label lab1, lab2, lab3;
-  char buf[32];
-  unsigned memleft = 0x8cf00000-((unsigned)sbrk(0));
-  float ffree = memleft*(1.0/(16<<20));
-  int fcol = (memleft < (1<<20)? 0xffff0000:
-	      (memleft < (4<<20)? 0xffffff00: 0xff00ff00));
-  snprintf(buf, sizeof(buf), "%dK free memory", memleft>>10);
-  if (fn[0] == '/') fn++;
-  lab1.create_texture("Loading plugins, please wait...");
-  lab2.create_texture(fn);
-  lab3.create_texture(buf);
-  ta_begin_frame();
-  draw_solid_quad(80.0, 270.0, 560.0, 300.0,
-		  0xff808080, 0xff808080, 0xff808080, 0xff808080);
-  draw_solid_quad(85.0, 275.0, 555.0, 295.0,
-		  0xff202020, 0xff202020, 0xff202020, 0xff202020);
-  draw_solid_quad(85.0, 275.0, 85.0+470.0*ffree, 295.0,
-		  fcol, fcol, fcol, fcol);
-  ta_commit_end();
-  lab1.draw(100.0, 150.0, 0xffffffff);
-  lab2.draw(100.0, 190.0, 0xffaaffaa);
-  lab3.draw(100.0, 230.0, 0xffffffff);
-  ta_commit_frame();
-  ta_sync();
-  ta_txrelease(mark);
-}
-
-
-class OSystem_Dreamcast::DCPlugin : public DynamicPlugin {
+class OSystem_Dreamcast::DCPlugin : public DynamicPlugin, public GUI::Dialog {
 protected:
 	void *_dlHandle;
 
@@ -84,26 +52,47 @@ protected:
 		return tmp;
 	}
 
+private:
+	bool _ret;
 public:
 	DCPlugin(const Common::String &filename)
-		: DynamicPlugin(filename), _dlHandle(0) {}
+		: DynamicPlugin(filename), Dialog(60, 20, 230, 3 * kLineHeight),
+		  _dlHandle(0) {}
 
 	bool loadPlugin() {
+		char buf[64];
+
 		assert(!_dlHandle);
-		drawPluginProgress(_filename);
+
+		snprintf(buf, sizeof(buf), "Loading plugin %s", Common::lastPathComponent(_filename.c_str(), '/').c_str());
+		new GUI::StaticTextWidget(this, 10, 7 + kLineHeight * 0, 200, kLineHeight, buf, Graphics::kTextAlignLeft);
+
+		unsigned memleft = 0x8cf00000-((unsigned)sbrk(0));
+		float ffree = memleft*(1.0/(16<<20));
+		snprintf(buf, sizeof(buf), "%dK (%d%%) free memory", memleft>>10, (int)(ffree * 100));
+		new GUI::StaticTextWidget(this, 10, 7 + kLineHeight * 1, 200, kLineHeight, buf, Graphics::kTextAlignLeft);
+
+		runModal();
+
+		return _ret;
+	}
+
+	void handleTickle() {
 		_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
 
 		if (!_dlHandle) {
 			warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
-			return false;
+			_ret = false;
+			close();
+			return;
 		}
 
-		bool ret = DynamicPlugin::loadPlugin();
+		_ret = DynamicPlugin::loadPlugin();
 
-		if (ret)
+		if (_ret)
 			dlforgetsyms(_dlHandle);
 
-		return ret;
+		close();
 	}
 
 	void unloadPlugin() {
@@ -130,25 +119,21 @@ bool OSystem_Dreamcast::isPluginFilename(const Common::FSNode &node) const {
 	return true;
 }
 
+void OSystem_Dreamcast::setPluginCustomDirectory(const Common::String &path)
+{
+  pluginCustomDirectory = path;
+}
+
 void OSystem_Dreamcast::addCustomDirectories(Common::FSList &dirs) const
 {
   FilePluginProvider::addCustomDirectories(dirs);
-  if (pluginCustomDirectory != NULL)
+  if (!pluginCustomDirectory.empty())
     dirs.push_back(Common::FSNode(pluginCustomDirectory));
 }
 
 PluginList OSystem_Dreamcast::getPlugins()
 {
-  pluginCustomDirectory = NULL;
   PluginList list = FilePluginProvider::getPlugins();
-  if (list.empty()) {
-    Common::String selection;
-    if (selectPluginDir(selection, Common::FSNode("plugins"))) {
-      pluginCustomDirectory = selection.c_str();
-      list = FilePluginProvider::getPlugins();
-      pluginCustomDirectory = NULL;
-    }
-  }
   return list;
 }
 

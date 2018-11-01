@@ -424,7 +424,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 
 	PluginManager::instance().init();
+#ifndef __DC__ // On DC, delay loading plugins until GUI is available
  	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
+#endif
 
 	// If we received an invalid music parameter via command line we check this here.
 	// We can't check this before loading the music plugins.
@@ -605,7 +607,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				ConfMan.setActiveDomain("");
 			}
 
+#ifndef __DC__ // On DC, delay loading plugins until GUI is available
 			PluginManager::instance().loadAllPlugins(); // only for cached manager
+#endif
 		} else {
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 

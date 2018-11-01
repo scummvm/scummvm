@@ -55,8 +55,9 @@ enum {
 
 
 
-MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
+MassAddDialog::MassAddDialog(const Common::FSNode &startDir, bool autoClose)
 	: Dialog("MassAdd"),
+	_autoClose(autoClose),
 	_dirsScanned(0),
 	_oldGamesCount(0),
 	_dirTotal(0),
@@ -86,8 +87,10 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_list->setNumberingMode(kListNumberingOff);
 	_list->setList(l);
 
-	_okButton = new ButtonWidget(this, "MassAdd.Ok", _("OK"), 0, kOkCmd, Common::ASCII_RETURN);
-	_okButton->setEnabled(false);
+	if (!_autoClose) {
+		_okButton = new ButtonWidget(this, "MassAdd.Ok", _("OK"), 0, kOkCmd, Common::ASCII_RETURN);
+		_okButton->setEnabled(false);
+	}
 
 	new ButtonWidget(this, "MassAdd.Cancel", _("Cancel"), 0, kCancelCmd, Common::ASCII_ESCAPE);
 
@@ -129,6 +132,30 @@ struct GameDescLess {
 };
 
 
+void MassAddDialog::finish() {
+	// Sort the detected games. This is not strictly necessary, but nice for
+	// people who want to edit their config file by hand after a mass add.
+	Common::sort(_games.begin(), _games.end(), GameTargetLess());
+	// Add all the detected games to the config
+	for (DetectedGames::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
+		debug(1, "  Added gameid '%s', desc '%s'\n",
+			iter->gameId.c_str(),
+			iter->description.c_str());
+		iter->gameId = EngineMan.createTargetForGame(*iter);
+	}
+
+	// Write everything to disk
+	ConfMan.flushToDisk();
+
+	// And scroll to first detected game
+	if (!_games.empty()) {
+		Common::sort(_games.begin(), _games.end(), GameDescLess());
+		ConfMan.set("temp_selection", _games.front().gameId);
+	}
+
+	close();
+}
+
 void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 #if defined(USE_TASKBAR)
 	// Remove progress bar and count from taskbar
@@ -138,27 +165,7 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 	// FIXME: It's a really bad thing that we use two arbitrary constants
 	if (cmd == kOkCmd) {
-		// Sort the detected games. This is not strictly necessary, but nice for
-		// people who want to edit their config file by hand after a mass add.
-		Common::sort(_games.begin(), _games.end(), GameTargetLess());
-		// Add all the detected games to the config
-		for (DetectedGames::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
-			debug(1, "  Added gameid '%s', desc '%s'\n",
-				iter->gameId.c_str(),
-				iter->description.c_str());
-			iter->gameId = EngineMan.createTargetForGame(*iter);
-		}
-
-		// Write everything to disk
-		ConfMan.flushToDisk();
-
-		// And scroll to first detected game
-		if (!_games.empty()) {
-			Common::sort(_games.begin(), _games.end(), GameDescLess());
-			ConfMan.set("temp_selection", _games.front().gameId);
-		}
-
-		close();
+		finish();
 	} else if (cmd == kCancelCmd) {
 		// User cancelled, so we don't do anything and just leave.
 		_games.clear();
@@ -259,14 +266,19 @@ void MassAddDialog::handleTickle() {
 	Common::String buf;
 
 	if (_scanStack.empty()) {
-		// Enable the OK button
-		_okButton->setEnabled(true);
+		if (!_autoClose) {
+			// Enable the OK button
+			_okButton->setEnabled(true);
 
-		buf = _("Scan complete!");
-		_dirProgressText->setLabel(buf);
+			buf = _("Scan complete!");
+			_dirProgressText->setLabel(buf);
 
-		buf = Common::String::format(_("Discovered %d new games, ignored %d previously added games."), _games.size(), _oldGamesCount);
-		_gameProgressText->setLabel(buf);
+			buf = Common::String::format(_("Discovered %d new games, ignored %d previously added games."), _games.size(), _oldGamesCount);
+			_gameProgressText->setLabel(buf);
+		}
+		else {
+			finish();
+		}
 
 	} else {
 		buf = Common::String::format(_("Scanned %d directories ..."), _dirsScanned);

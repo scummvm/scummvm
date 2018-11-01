@@ -37,7 +37,7 @@ class StaticTextWidget;
 class MassAddDialog : public Dialog {
 	typedef Common::Array<Common::String> StringArray;
 public:
-	MassAddDialog(const Common::FSNode &startDir);
+	MassAddDialog(const Common::FSNode &startDir, bool autoClose = false);
 
 	//void open();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
@@ -50,6 +50,8 @@ public:
 	}
 
 private:
+	void finish();
+
 	Common::Stack<Common::FSNode>  _scanStack;
 	DetectedGames _games;
 
@@ -59,6 +61,8 @@ private:
 	 * config manager.
 	 */
 	Common::HashMap<Common::String, StringArray>	_pathToTargets;
+
+	bool _autoClose;
 
 	int _dirsScanned;
 	int _oldGamesCount;

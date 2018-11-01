@@ -22,13 +22,14 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include <ronin/gddrive.h>
+
 #include <common/scummsys.h>
 #include <engines/engine.h>
 #include <base/main.h>
 #include <base/plugins.h>
 #include "dc.h"
 #include "icon.h"
-#include "DCLauncherDialog.h"
 #include <common/config-manager.h>
 #include <common/memstream.h>
 
@@ -132,11 +133,12 @@ void DCCDManager::stop() {
 }
 
 bool DCCDManager::isPlaying() const {
+	unsigned int param[4];
 	if (DefaultAudioCDManager::isPlaying())
 		return true;
 
-	extern int getCdState();
-	return getCdState() == 3;
+	gdGdcGetDrvStat(param);
+	return param[0] == 3;
 }
 
 void OSystem_Dreamcast::setWindowCaption(const char *caption)
@@ -361,32 +363,4 @@ int main()
   scummvm_main(argc, argv);
 
   g_system->quit();
-}
-
-int DCLauncherDialog::runModal()
-{
-  char *base = NULL, *dir = NULL;
-  Common::Language language = Common::UNK_LANG;
-  Common::Platform platform = Common::kPlatformUnknown;
-
-  if (!selectGame(base, dir, language, platform, icon))
-    g_system->quit();
-
-  // Set the game path.
-  ConfMan.addGameDomain(base);
-  if (dir != NULL)
-    ConfMan.set("path", dir, base);
-
-  // Set the game language.
-  if (language != Common::UNK_LANG)
-    ConfMan.set("language", Common::getLanguageCode(language), base);
-
-  // Set the game platform.
-  if (platform != Common::kPlatformUnknown)
-    ConfMan.set("platform", Common::getPlatformCode(platform), base);
-
-  // Set the target.
-  ConfMan.setActiveDomain(base);
-
-  return 0;
 }

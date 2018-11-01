@@ -1587,7 +1587,6 @@ void GlobalOptionsDialog::build() {
 	else
 		_pathsTabId = tab->addTab(_c("Paths", "lowres"));
 
-#if !defined(__DC__)
 	// These two buttons have to be extra wide, or the text will be
 	// truncated in the small version of the GUI.
 
@@ -1622,7 +1621,6 @@ void GlobalOptionsDialog::build() {
 	else
 		new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _c("Plugins Path:", "lowres"), 0, kChoosePluginsDirCmd);
 	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", _c("None", "path"));
-#endif
 #endif
 
 	//
@@ -1800,7 +1798,6 @@ void GlobalOptionsDialog::build() {
 
 	OptionsDialog::build();
 
-#if !defined(__DC__)
 	// Set _savePath to the current save path
 	Common::String savePath(ConfMan.get("savepath", _domain));
 	Common::String themePath(ConfMan.get("themepath", _domain));
@@ -1831,7 +1828,6 @@ void GlobalOptionsDialog::build() {
 	} else {
 		_pluginsPath->setLabel(pluginsPath);
 	}
-#endif
 #endif
 
 	// Misc Tab

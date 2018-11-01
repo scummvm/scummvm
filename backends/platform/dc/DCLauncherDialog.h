@@ -20,8 +20,21 @@
  *
  */
 
-class DCLauncherDialog {
- public:
-  DCLauncherDialog() {}
-  int runModal();
+#ifndef DC_LAUNCHER_DIALOG_H
+#define DC_LAUNCHER_DIALOG_H
+
+#include "gui/launcher.h"
+
+class DCLauncherDialog : public GUI::LauncherDialog {
+	public:
+		DCLauncherDialog();
+
+	protected:
+		virtual void handleTickle();
+
+	private:
+		void massAdd();
+		bool cdWasOpen;
 };
+
+#endif

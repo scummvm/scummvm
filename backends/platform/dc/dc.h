@@ -194,6 +194,8 @@ public:
   AbstractFSNode *makeCurrentDirectoryFileNode() const;
   AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 
+  void setPluginCustomDirectory(const Common::String &path);
+
  private:
 
   Audio::MixerImpl *_mixer;
@@ -253,8 +255,8 @@ public:
   void addCustomDirectories(Common::FSList &dirs) const;
  public:
   PluginList getPlugins();
- private:
-  const char *pluginCustomDirectory;
+private:
+  Common::String pluginCustomDirectory;
 #endif
 };
 
@@ -262,7 +264,3 @@ public:
 extern int handleInput(struct mapledev *pad,
 		       int &mouse_x, int &mouse_y,
 		       byte &shiftFlags, Interactive *inter = NULL);
-extern bool selectGame(char *&, char *&, Common::Language &, Common::Platform &, class Icon &);
-#ifdef DYNAMIC_MODULES
-extern bool selectPluginDir(Common::String &selection, const Common::FSNode &base);
-#endif
