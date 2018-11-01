@@ -78,7 +78,7 @@ void TextBufferWindow::rearrange(const Rect &box) {
 	newwid = (box.width() - g_conf->_tMarginX * 2 - g_conf->_scrollWidth) / g_conf->_cellW;
 	newhgt = (box.height() - g_conf->_tMarginY * 2) / g_conf->_cellH;
 
-	/* align text with bottom */
+	// align text with bottom
 	rnd = newhgt * g_conf->_cellH + g_conf->_tMarginY * 2;
 	_yAdj = (box.height() - rnd);
 	_bbox.top += (box.height() - rnd);
@@ -89,20 +89,20 @@ void TextBufferWindow::rearrange(const Rect &box) {
 	}
 
 	if (newhgt != _height) {
-		/* scroll up if we obscure new lines */
+		// scroll up if we obscure new lines
 		if (_lastSeen >= newhgt - 1)
 			_scrollPos += (_height - newhgt);
 
 		_height = newhgt;
 
-		/* keep window within 'valid' lines */
+		// keep window within 'valid' lines
 		if (_scrollPos > _scrollMax - _height + 1)
 			_scrollPos = _scrollMax - _height + 1;
 		if (_scrollPos < 0)
 			_scrollPos = 0;
 		touchScroll();
 
-		/* allocate copy buffer */
+		// allocate copy buffer
 		if (_copyBuf)
 			delete[] _copyBuf;
 		_copyBuf = new glui32[_height * TBLINELEN];
@@ -125,7 +125,7 @@ void TextBufferWindow::reflow() {
 
 	_lines[0]._len = _numChars;
 
-	/* allocate temp buffers */
+	// allocate temp buffers
 	Attributes *attrbuf = new Attributes[SCROLLBACK * TBLINELEN];
 	glui32 *charbuf = new glui32[SCROLLBACK * TBLINELEN];
 	int *alignbuf = new int[SCROLLBACK];
@@ -143,7 +143,7 @@ void TextBufferWindow::reflow() {
 		return;
 	}
 
-	/* copy text to temp buffers */
+	// copy text to temp buffers
 
 	oldattr = _attr;
 	curattr.clear();
@@ -190,11 +190,11 @@ void TextBufferWindow::reflow() {
 
 	offsetbuf[x] = -1;
 
-	/* clear window */
+	// clear window
 
 	clear();
 
-	/* and dump text back */
+	// and dump text back
 
 	x = 0;
 	for (i = 0; i < p; i++) {
@@ -210,7 +210,7 @@ void TextBufferWindow::reflow() {
 		putCharUni(charbuf[i]);
 	}
 
-	/* terribly sorry about this... */
+	// terribly sorry about this...
 	_lastSeen = 0;
 	_scrollPos = 0;
 
@@ -369,7 +369,7 @@ void TextBufferWindow::putTextUni(const glui32 *buf, int len, int pos, int oldle
 
 void TextBufferWindow::touch(int line) {
 	int y = _bbox.top + g_conf->_tMarginY + (_height - line - 1) * g_conf->_leading;
-	_lines[line]._dirty = 1;
+	_lines[line]._dirty = true;
 	g_vm->_windowMask->clearSelection();
 	_windows->repaint(Rect(_bbox.left, y - 2, _bbox.right, y + g_conf->_leading + 2));
 }
@@ -447,8 +447,7 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 
 	if (g_conf->_spaces && _attr.style != style_Preformatted
 		&& _styles[_attr.style].bg == color
-		&& !_styles[_attr.style].reverse)
-	{
+		&& !_styles[_attr.style].reverse) {
 		// turn (period space space) into (period space)
 		if (g_conf->_spaces == 1) {
 			if (ch == '.')
@@ -616,13 +615,13 @@ void TextBufferWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen
 
 	gli_tts_flush();
 
-	/* because '>' prompt is ugly without extra space */
+	// because '>' prompt is ugly without extra space
 	if (_numChars && _chars[_numChars - 1] == '>')
 		putCharUni(' ');
 	if (_numChars && _chars[_numChars - 1] == '?')
 		putCharUni(' ');
 
-	/* make sure we have some space left for typing... */
+	// make sure we have some space left for typing...
 	pw = (_bbox.right - _bbox.left - g_conf->_tMarginX * 2) * GLI_SUBPIX;
 	pw = pw - 2 * SLOP - _radjw + _ladjw;
 	if (calcWidth(_chars, _attrs, 0, _numChars, -1) >= pw * 3 / 4)
@@ -667,13 +666,13 @@ void TextBufferWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 in
 
 	gli_tts_flush();
 
-	/* because '>' prompt is ugly without extra space */
+	// because '>' prompt is ugly without extra space
 	if (_numChars && _chars[_numChars - 1] == '>')
 		putCharUni(' ');
 	if (_numChars && _chars[_numChars - 1] == '?')
 		putCharUni(' ');
 
-	/* make sure we have some space left for typing... */
+	// make sure we have some space left for typing...
 	pw = (_bbox.right - _bbox.left - g_conf->_tMarginX * 2) * GLI_SUBPIX;
 	pw = pw - 2 * SLOP - _radjw + _ladjw;
 	if (calcWidth(_chars, _attrs, 0, _numChars, -1) >= pw * 3 / 4)
@@ -814,14 +813,14 @@ void TextBufferWindow::redraw() {
 
     pw = x1 - x0 - 2 * GLI_SUBPIX;
 
-    /* check if any part of buffer is selected */
+    // check if any part of buffer is selected
     selbuf = g_vm->_windowMask->checkSelection(x0/GLI_SUBPIX,y0,x1/GLI_SUBPIX,y1);
 
     for (i = _scrollPos + _height - 1; i >= _scrollPos; i--) {
-        /* top of line */
+        // top of line
         y = y0 + (_height - (i - _scrollPos) - 1) * g_conf->_leading;
 
-        /* check if part of line is selected */
+        // check if part of line is selected
         if (selbuf) {
             selrow = g_vm->_windowMask->getSelection(x0/GLI_SUBPIX, y,
                     x1/GLI_SUBPIX, y + g_conf->_leading,
@@ -832,22 +831,22 @@ void TextBufferWindow::redraw() {
             selrow = false;
         }
 
-        /* mark selected line dirty */
+        // mark selected line dirty
         if (selrow)
             _lines[i]._dirty = true;
 
         memcpy(ln, &_lines[i], sizeof(TextBufferRow));
 
-        /* skip if we can */
+        // skip if we can
         if (!ln->_dirty && !ln->_repaint && !Windows::_forceRedraw && _scrollPos == 0)
             continue;
 
-        /* repaint previously selected lines if needed */
+        // repaint previously selected lines if needed
         if (ln->_repaint && !Windows::_forceRedraw)
             _windows->redrawRect(Rect(x0 / GLI_SUBPIX, y,
 				x1/GLI_SUBPIX, y + g_conf->_leading));
 
-        /* keep selected line dirty and flag for repaint */
+        // keep selected line dirty and flag for repaint
         if (!selrow) {
             _lines[i]._dirty = false;
             _lines[i]._repaint = false;
@@ -855,20 +854,20 @@ void TextBufferWindow::redraw() {
             _lines[i]._repaint = true;
         }
 
-        /* leave bottom line blank for [more] prompt */
+        // leave bottom line blank for [more] prompt
         if (i == _scrollPos && i > 0)
             continue;
 
         linelen = ln->_len;
 
-        /* kill spaces at the end unless they're a different color*/
+        // kill spaces at the end unless they're a different color
         color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
         while (i > 0 && linelen > 1 && ln->_chars[linelen-1] == ' ' 
             && _styles[ln->_attrs[linelen-1].style].bg == color 
             && !_styles[ln->_attrs[linelen-1].style].reverse)
                 linelen --;
 
-        /* kill characters that would overwrite the scroll bar */
+        // kill characters that would overwrite the scroll bar
         while (linelen > 1 && calcWidth(ln->_chars, ln->_attrs, 0, linelen, -1) >= pw)
             linelen --;
 
@@ -888,24 +887,24 @@ void TextBufferWindow::redraw() {
             spw = -1;
         }
 
-        /* find and highlight selected characters */
+        // find and highlight selected characters
         if (selrow && !Windows::_claimSelect) {
             lsc = 0;
             rsc = 0;
             selchar = false;
-            /* optimized case for all chars selected */
+            // optimized case for all chars selected
             if (selleft && selright) {
                 rsc = linelen > 0 ? linelen - 1 : 0;
                 selchar = calcWidth(ln->_chars, ln->_attrs, lsc, rsc, spw)/GLI_SUBPIX;
             } else {
-                /* optimized case for leftmost char selected */
+                // optimized case for leftmost char selected
                 if (selleft) {
                     tsc = linelen > 0 ? linelen - 1 : 0;
                     selchar = calcWidth(ln->_chars, ln->_attrs, lsc, tsc, spw)/GLI_SUBPIX;
                 } else {
-                    /* find the substring contained by the selection */
+                    // find the substring contained by the selection
                     tx = (x0 + SLOP + ln->_lm)/GLI_SUBPIX;
-                    /* measure string widths until we find left char */
+                    // measure string widths until we find left char
                     for (tsc = 0; tsc < linelen; tsc++) {
                         tsw = calcWidth(ln->_chars, ln->_attrs, 0, tsc, spw)/GLI_SUBPIX;
                         if (tsw + tx >= sx0 ||
@@ -917,11 +916,11 @@ void TextBufferWindow::redraw() {
                     }
                 }
                 if (selchar) {
-                    /* optimized case for rightmost char selected */
+                    // optimized case for rightmost char selected
                     if (selright) {
                         rsc = linelen > 0 ? linelen - 1 : 0;
                     } else {
-                    /* measure string widths until we find right char */
+                    // measure string widths until we find right char
                         for (tsc = lsc; tsc < linelen; tsc++) {
                             tsw = calcWidth(ln->_chars, ln->_attrs, lsc, tsc, spw)/GLI_SUBPIX;
                             if (tsw + sx0 < sx1)
@@ -932,7 +931,7 @@ void TextBufferWindow::redraw() {
                     }
                 }
             }
-            /* reverse colors for selected chars */
+            // reverse colors for selected chars
             if (selchar) {
                 for (tsc = lsc; tsc <= rsc; tsc++) {
                     ln->_attrs[tsc].reverse = !ln->_attrs[tsc].reverse;
@@ -940,14 +939,14 @@ void TextBufferWindow::redraw() {
                     _copyPos++;
                 }
             }
-            /* add newline if we reach the end of the line */
+            // add newline if we reach the end of the line
             if (ln->_len == 0 || ln->_len == (rsc+1)) {
                 _copyBuf[_copyPos] = '\n';
                 _copyPos++;
             }
         }
 
-        /* clear any stored hyperlink coordinates */
+        // clear any stored hyperlink coordinates
         g_vm->_windowMask->putHyperlink(0, x0/GLI_SUBPIX, y,
                 x1/GLI_SUBPIX, y + g_conf->_leading);
 
@@ -1043,17 +1042,19 @@ void TextBufferWindow::redraw() {
 
         w = screen.stringWidth(g_conf->_moreFont, g_conf->_morePrompt);
 
-        if (g_conf->_moreAlign == 1)    /* center */
+        if (g_conf->_moreAlign == 1)
+			// center
             x = x0 + SLOP + (x1 - x0 - w - SLOP * 2) / 2;
-        if (g_conf->_moreAlign == 2)    /* right */
+        if (g_conf->_moreAlign == 2)
+			// right
             x = x1 - SLOP - w;
 
         color = Windows::_overrideFgSet ? g_conf->_moreColor : _fgColor;
 		screen.drawString(Point(x, y + g_conf->_baseLine),
                 g_conf->_moreFont, color, g_conf->_morePrompt);
-        y1 = y; /* don't want pictures overdrawing "[more]" */
+        y1 = y; // don't want pictures overdrawing "[more]"
 
-        /* try to claim the focus */
+        // try to claim the focus
         _moreRequest = true;
         Windows::_moreFocus = true;
     } else {
@@ -1103,7 +1104,7 @@ void TextBufferWindow::redraw() {
      * Draw the scrollbar
      */
 
-    /* try to claim scroll keys */
+    // try to claim scroll keys
     _scrollRequest = _scrollMax > _height;
 
     if (_scrollRequest && g_conf->_scrollWidth)
@@ -1140,7 +1141,7 @@ void TextBufferWindow::redraw() {
         }
     }
 
-    /* send selected text to clipboard */
+    // send selected text to clipboard
     if (selbuf && _copyPos) {
         Windows::_claimSelect = true;
 
@@ -1150,7 +1151,7 @@ void TextBufferWindow::redraw() {
         _copyPos = 0;
     }
 
-    /* no more prompt means all text has been seen */
+    // no more prompt means all text has been seen
     if (!_moreRequest)
         _lastSeen = 0;
 
@@ -1158,7 +1159,7 @@ void TextBufferWindow::redraw() {
 }
 
 int TextBufferWindow::acceptScroll(glui32 arg) {
-	int pageht = _height - 2;        /* 1 for prompt, 1 for overlap */
+	int pageht = _height - 2;        // 1 for prompt, 1 for overlap
 	int startpos = _scrollPos;
 
 	switch (arg) {
@@ -1266,9 +1267,7 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 	}
 
 	switch (arg) {
-
-		/* History keys (up and down) */
-
+	// History keys (up and down)
 	case keycode_Up:
 		if (_historyPos == _historyFirst)
 			return;
@@ -1304,8 +1303,7 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 			_numChars - _inFence);
 		break;
 
-		/* Cursor movement keys, during line input. */
-
+	// Cursor movement keys, during line input.
 	case keycode_Left:
 		if (_inCurs <= _inFence)
 			return;
@@ -1344,8 +1342,7 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 			_inCurs++;
 		break;
 
-		/* Delete keys, during line input. */
-
+	// Delete keys, during line input.
 	case keycode_Delete:
 		if (_inCurs <= _inFence)
 			return;
@@ -1364,8 +1361,7 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 		putTextUni(nullptr, 0, _inFence, _numChars - _inFence);
 		break;
 
-		/* Regular keys */
-
+	// Regular keys
 	case keycode_Return:
 		acceptLine(arg);
 		break;
@@ -1383,7 +1379,6 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 	touch(0);
 }
 
-/* Return or enter, during line input. Ends line input. */
 void TextBufferWindow::acceptLine(glui32 keycode) {
 	int ix;
 	int len, olen;
@@ -1445,8 +1440,7 @@ void TextBufferWindow::acceptLine(glui32 keycode) {
 		}
 	}
 
-	/* Store in event buffer. */
-
+	// Store in event buffer.
 	if (len > inmax)
 		len = inmax;
 
@@ -1495,7 +1489,7 @@ bool TextBufferWindow::leftquote(glui32 c) {
 	switch (c) {
 	case '(': case '[':
 
-		/* The following are Unicode characters in the "Separator, Space" category. */
+	// The following are Unicode characters in the "Separator, Space" category.
 	case 0x0020: case 0x00a0: case 0x1680: case 0x2000:
 	case 0x2001: case 0x2002: case 0x2003: case 0x2004:
 	case 0x2005: case 0x2006: case 0x2007: case 0x2008:
@@ -1572,10 +1566,9 @@ void TextBufferWindow::scrollResize() {
 	_chars = _lines[0]._chars;
 	_attrs = _lines[0]._attrs;
 
-	for (i = _scrollBack; i < (_scrollBack + SCROLLBACK); i++)
-	{
-		_lines[i]._dirty = 0;
-		_lines[i]._repaint = 0;
+	for (i = _scrollBack; i < (_scrollBack + SCROLLBACK); i++) {
+		_lines[i]._dirty = false;
+		_lines[i]._repaint = false;
 		_lines[i]._lm = 0;
 		_lines[i]._rm = 0;
 		_lines[i]._lPic = 0;
