@@ -97,10 +97,10 @@ void TextGridWindow::putCharUni(uint32 ch) {
 	if (_curY < 0)
 		_curY = 0;
 	else if (_curY >= _height)
-		return; /* outside the window */
+		return; // outside the window
 
 	if (ch == '\n') {
-		/* a newline just moves the cursor. */
+		// a newline just moves the cursor.
 		_curY++;
 		_curX = 0;
 		return;
@@ -121,14 +121,14 @@ bool TextGridWindow::unputCharUni(uint32 ch) {
 	TextGridRow *ln;
 	int oldx = _curX, oldy = _curY;
 
-	/* Move the cursor back. */
+	// Move the cursor back.
 	if (_curX >= _width)
 		_curX = _width - 1;
 	else
 		_curX--;
 
-	/* Canonicalize the cursor position. That is, the cursor may have been
-	left outside the window area; wrap it if necessary. */
+	// Canonicalize the cursor position. That is, the cursor may have been
+	// left outside the window area; wrap it if necessary.
 	if (_curX < 0) {
 		_curX = _width - 1;
 		_curY--;
@@ -144,7 +144,7 @@ bool TextGridWindow::unputCharUni(uint32 ch) {
 			return 1; // deleted a newline
 		_curX = oldx;
 		_curY = oldy;
-		return 0;    // it wasn't there */
+		return 0;    // it wasn't there
 	}
 
 	ln = &(_lines[_curY]);
@@ -481,8 +481,7 @@ void TextGridWindow::acceptReadLine(glui32 arg) {
 
 	switch (arg) {
 
-		/* Delete keys, during line input. */
-
+	// Delete keys, during line input.
 	case keycode_Delete:
 		if (_inLen <= 0)
 			return;
@@ -515,8 +514,7 @@ void TextGridWindow::acceptReadLine(glui32 arg) {
 		_inCurs = 0;
 		break;
 
-		/* Cursor movement keys, during line input. */
-
+	// Cursor movement keys, during line input.
 	case keycode_Left:
 		if (_inCurs <= 0)
 			return;
@@ -593,7 +591,7 @@ void TextGridWindow::redraw() {
 			x = x0;
 			y = y0 + i * g_conf->_leading;
 
-			/* clear any stored hyperlink coordinates */
+			// clear any stored hyperlink coordinates
 			g_vm->_windowMask->putHyperlink(0, x0, y, x0 + g_conf->_cellW * _width, y + g_conf->_leading);
 
 			a = 0;
