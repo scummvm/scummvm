@@ -496,7 +496,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	c0039ad982999c92d0de81910d640fa0	26159	nl	Windows	HE 71	-	-	adutchguy
 	68530d2e15f339fbbf3150b78b4d2ffb	-1	en	Mac	HE 73	-	-	satz
 	6d1baa1065ac5f7b210be8ebe4235e49	26384	nl	Mac	HE 73	-	-	daniel9
-	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbjörn Andersson
+	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	TorbjÃ¶rn Andersson
 	5ebb57234b2fe5c5dff641e00184ad81	-1	fr	Windows	HE 73	-	-	gist974
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
 	1f2e62b5a9c50589fc342285a6bb3a27	-1	he	Windows	HE 73	-	-	e_orz
@@ -616,6 +616,9 @@ water	Freddi Fish and Luther's Water Worries
 FreddisFunShop	Freddi Fish's One-Stop Fun Shop
 	16542a7342a918bfe4ba512007d36c47	-1	us	All	HE 99L	-	-	Kirben
 	4d3fbc888de4e6565013f61dc83da6b6	36245	nl	All	HE 99	-	-	Ben Castricum
+
+gaspocket	A Gaspocket Adventure: Aliens Ate My Cookies
+	38c3b94401236432d27ae519fecba1bc	-1	en	All	HE 100	Demo	-	Devan Wolf
 
 catalog	Humongous Interactive Catalog
 	11e6e244078ff09b0f3832e35420e0a7	-1	en	Windows	-	Demo	-	khalek, sev
@@ -778,7 +781,7 @@ puttmoon	Putt-Putt Goes to the Moon
 	3c4c471342bd95505a42334367d8f127	12161	ru	Windows	HE 70	-	-	sev
 
 	aa6a91b7f6f119d1b7b1f2a4c9e24d59	6233	en	DOS	Demo	Demo	-
-	4af4a6b248103c1fe9edef619677f540	-1	en	Mac	-	Demo	-	khalek
+	4af4a6b248103c1fe9edef619677f540	-1	en	Mac	Demo	Demo	-	khalek
 	9c143c5905055d5df7a0f014ab379aee	-1	en	Windows	HE 70	Demo	-	khalek
 
 puttcircus	Putt-Putt Joins the Circus
