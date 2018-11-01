@@ -52,6 +52,11 @@ public:
 	 */
 	void fillRect(const Rect &box, const byte *rgb);
 
+	/**
+	 * Draws the text input caret at the given position
+	 * @remarks		The position specifies the caret's bottom-left corner,
+	 *		and the X position is in multiples of GLI_SUBPIX
+	 */
 	void drawCaret(const Point &pos);
 };
 

@@ -1003,7 +1003,7 @@ void TextBufferWindow::redraw() {
         if (_windows->getFocusWindow() == this && i == 0 && (_lineRequest || _lineRequestUni)) {
             w = calcWidth(_chars, _attrs, 0, _inCurs, spw);
             if (w < pw - g_conf->_caretShape * 2 * GLI_SUBPIX)
-                screen.drawCaret(Point((x0 + SLOP + ln->_lm + w) / GLI_SUBPIX, y + g_conf->_baseLine));
+                screen.drawCaret(Point(x0 + SLOP + ln->_lm + w, y + g_conf->_baseLine));
         }
 
         /*
@@ -1017,7 +1017,7 @@ void TextBufferWindow::redraw() {
                 link = ln->_attrs[a].hyper;
                 font = ln->_attrs[a].attrFont(_styles);
                 color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-                x = screen.drawStringUni(Point(x / GLI_SUBPIX, y),
+                x = screen.drawStringUni(Point(x, y + g_conf->_baseLine),
                         font, color, Common::U32String(ln->_chars + a, b - a), spw);
                 a = b;
             }
@@ -1025,14 +1025,13 @@ void TextBufferWindow::redraw() {
         link = ln->_attrs[a].hyper;
         font = ln->_attrs[a].attrFont(_styles);
         color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-        screen.drawStringUni(Point(x / GLI_SUBPIX, y), font, color, Common::U32String(ln->_chars + a, linelen - a), spw);
+        screen.drawStringUni(Point(x, y + g_conf->_baseLine), font, color, Common::U32String(ln->_chars + a, linelen - a), spw);
     }
 
     /*
      * draw more prompt
      */
-    if (_scrollPos && _height > 1)
-    {
+    if (_scrollPos && _height > 1) {
         x = x0 + SLOP;
         y = y0 + (_height - 1) * g_conf->_leading;
 
