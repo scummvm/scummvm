@@ -160,32 +160,36 @@ void Events::handleKeyDown(const Common::KeyState &ks) {
 	if (ks.flags & Common::KBD_ALT)
 		return;
 
-	if (ks.keycode == Common::KEYCODE_RETURN) windows.inputHandleKey(keycode_Return);
-	else if (ks.keycode == Common::KEYCODE_BACKSPACE) windows.inputHandleKey(keycode_Delete);
-	else if (ks.keycode == Common::KEYCODE_DELETE) windows.inputHandleKey(keycode_Erase);
-	else if (ks.keycode == Common::KEYCODE_TAB) windows.inputHandleKey(keycode_Tab);
-	else if (ks.keycode == Common::KEYCODE_UP) windows.inputHandleKey(keycode_PageUp);
-	else if (ks.keycode == Common::KEYCODE_PAGEDOWN) windows.inputHandleKey(keycode_PageDown);
-	else if (ks.keycode == Common::KEYCODE_HOME) windows.inputHandleKey(keycode_Home);
-	else if (ks.keycode == Common::KEYCODE_END) windows.inputHandleKey(keycode_End);
-	else if (ks.keycode == Common::KEYCODE_LEFT) windows.inputHandleKey(keycode_Left);
-	else if (ks.keycode == Common::KEYCODE_RIGHT) windows.inputHandleKey(keycode_Right);
-	else if (ks.keycode == Common::KEYCODE_UP) windows.inputHandleKey(keycode_Up);
-	else if (ks.keycode == Common::KEYCODE_DOWN) windows.inputHandleKey(keycode_Down);
-	else if (ks.keycode == Common::KEYCODE_ESCAPE) windows.inputHandleKey(keycode_Escape);
-	else if (ks.keycode == Common::KEYCODE_F1) windows.inputHandleKey(keycode_Func1);
-	else if (ks.keycode == Common::KEYCODE_F2) windows.inputHandleKey(keycode_Func2);
-	else if (ks.keycode == Common::KEYCODE_F3) windows.inputHandleKey(keycode_Func3);
-	else if (ks.keycode == Common::KEYCODE_F4) windows.inputHandleKey(keycode_Func4);
-	else if (ks.keycode == Common::KEYCODE_F5) windows.inputHandleKey(keycode_Func5);
-	else if (ks.keycode == Common::KEYCODE_F6) windows.inputHandleKey(keycode_Func6);
-	else if (ks.keycode == Common::KEYCODE_F7) windows.inputHandleKey(keycode_Func7);
-	else if (ks.keycode == Common::KEYCODE_F8) windows.inputHandleKey(keycode_Func8);
-	else if (ks.keycode == Common::KEYCODE_F9) windows.inputHandleKey(keycode_Func9);
-	else if (ks.keycode == Common::KEYCODE_F10) windows.inputHandleKey(keycode_Func10);
-	else if (ks.keycode == Common::KEYCODE_F11) windows.inputHandleKey(keycode_Func11);
-	else if (ks.keycode == Common::KEYCODE_F12) windows.inputHandleKey(keycode_Func12);
-	else windows.inputHandleKey(ks.ascii);
+	switch (ks.keycode) {
+	case Common::KEYCODE_RETURN: windows.inputHandleKey(keycode_Return); break;
+	case Common::KEYCODE_BACKSPACE: windows.inputHandleKey(keycode_Delete); break;
+	case Common::KEYCODE_DELETE: windows.inputHandleKey(keycode_Erase); break;
+	case Common::KEYCODE_TAB: windows.inputHandleKey(keycode_Tab); break;
+	case Common::KEYCODE_PAGEUP: windows.inputHandleKey(keycode_PageUp); break;
+	case Common::KEYCODE_PAGEDOWN: windows.inputHandleKey(keycode_PageDown); break;
+	case Common::KEYCODE_HOME: windows.inputHandleKey(keycode_Home); break;
+	case Common::KEYCODE_END: windows.inputHandleKey(keycode_End); break;
+	case Common::KEYCODE_LEFT: windows.inputHandleKey(keycode_Left); break;
+	case Common::KEYCODE_RIGHT: windows.inputHandleKey(keycode_Right); break;
+	case Common::KEYCODE_UP: windows.inputHandleKey(keycode_Up); break;
+	case Common::KEYCODE_DOWN: windows.inputHandleKey(keycode_Down); break;
+	case Common::KEYCODE_ESCAPE: windows.inputHandleKey(keycode_Escape); break;
+	case Common::KEYCODE_F1: windows.inputHandleKey(keycode_Func1); break;
+	case Common::KEYCODE_F2: windows.inputHandleKey(keycode_Func2); break;
+	case Common::KEYCODE_F3: windows.inputHandleKey(keycode_Func3); break;
+	case Common::KEYCODE_F4: windows.inputHandleKey(keycode_Func4); break;
+	case Common::KEYCODE_F5: windows.inputHandleKey(keycode_Func5); break;
+	case Common::KEYCODE_F6: windows.inputHandleKey(keycode_Func6); break;
+	case Common::KEYCODE_F7: windows.inputHandleKey(keycode_Func7); break;
+	case Common::KEYCODE_F8: windows.inputHandleKey(keycode_Func8); break;
+	case Common::KEYCODE_F9: windows.inputHandleKey(keycode_Func9); break;
+	case Common::KEYCODE_F10: windows.inputHandleKey(keycode_Func10); break;
+	case Common::KEYCODE_F11: windows.inputHandleKey(keycode_Func11); break;
+	case Common::KEYCODE_F12: windows.inputHandleKey(keycode_Func12); break;
+	default:
+		windows.inputHandleKey(ks.ascii); break;
+	break;
+	}
 }
 
 void Events::handleScroll(bool wheelUp) {
