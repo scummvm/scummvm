@@ -104,7 +104,9 @@ int Fonts::drawString(const Point &pos, int fontIdx, const byte *rgb, const Comm
 	Graphics::Font *font = _fontTable[fontIdx];
 	const uint32 color = _surface->format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	font->drawString(_surface, text, pt.x, pt.y, _surface->w - pt.x, color);
-	return font->getBoundingBox(text, pt.x, pt.y, _surface->w - pt.x).right;
+
+	pt.x += font->getStringWidth(text);
+	return MIN((int)pt.x, (int)_surface->w) * GLI_SUBPIX;
 }
 
 int Fonts::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw) {
@@ -113,7 +115,8 @@ int Fonts::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const C
 	const uint32 color = _surface->format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	font->drawString(_surface, text, pt.x, pt.y, _surface->w - pt.x, color);
 
-	return font->getBoundingBox(text, pt.x, pt.y, _surface->w - pt.x).right * GLI_SUBPIX;
+	pt.x += font->getStringWidth(text);
+	return MIN((int)pt.x, (int)_surface->w) * GLI_SUBPIX;
 }
 
 size_t Fonts::stringWidth(int fontIdx, const Common::String &text, int spw) {
