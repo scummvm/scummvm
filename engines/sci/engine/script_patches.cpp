@@ -127,6 +127,7 @@ static const char *const selectorNameTable[] = {
 	"has",          // GK1
 	"newRoom",      // GK1
 	"normalize",    // GK1
+	"signal",       // GK1
 	"set",          // Torin
 	"clear",        // Torin
 	"masterVolume", // SCI2 master volume reset
@@ -202,6 +203,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_has,
 	SELECTOR_newRoom,
 	SELECTOR_normalize,
+	SELECTOR_signal,
 	SELECTOR_set,
 	SELECTOR_clear,
 	SELECTOR_masterVolume,
@@ -1541,6 +1543,122 @@ static const uint16 gk1ShowMagentiaItemPatch[] = {
 	PATCH_END
 };
 
+// The day 5 snake attack has speed, audio, and graphics problems.
+//  These occur in all versions and also in Sierra's interpreter.
+//
+// Gabriel automatically walks cautiously in the darkened museum while looking
+//  around and saying lines, then a snake drops on him. Depending on the game's
+//  speed setting, the audio for "Why is it so dark in here?" is interrupted as
+//  much as halfway through by the next line, "Dr. John, hello?". The cautious
+//  walk animation runs at game speed, which can be fast, then abruptly changes
+//  to 10 (33%) when the snake drops, which looks off. Ego doesn't even reach
+//  the snake and instead stops short and warps 17 pixels to the right when the
+//  drop animation starts.
+//
+// We fix all of this. Initializing ego's speed to 10 solves the interrupted
+//  speech and inconsistent speed. It feels like this was the intended pacing.
+//  The snake-warping isn't a speed issue, ego's animation frames for this
+//  scene simply fall short of the snake's location. To fix that we start ego
+//  a little farther in the room and increase ego's final position so that he
+//  ends up directly under the snake and transitions to the drop animation
+//  smoothly. Finally, we initialize ego on the room's first cycle instead of
+//  second so that ego doesn't materialize after the room is already displayed.
+//
+// This patch works with pc floppy and cd even though they have different
+//  snakeAttack scripts. Floppy doesn't have speech to interrupt but it
+//  has the same issues.
+//
+// Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
+// Responsible method: snakeAttack:changeState
+// Fixes bug #10793
+static const uint16 gk1Day5SnakeAttackSignature1[] = {
+	0x65, 0x1a,                         // aTop cycles
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 1
+	SIG_MAGICDWORD,
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0048),           // bnt 0048 [ state 2 ]
+	0x35, 0x01,                         // ldi 1 [ free bytes ]
+	0x39, SIG_SELECTOR8(view),          // pushi view
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x0107),           // pushi 0107
+	0x38, SIG_SELECTOR16(setCel),       // pushi setCel
+	0x78,                               // push1
+	0x76,                               // push0
+	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
+	0x78,                               // push1
+	0x76,                               // push0
+	0x39, SIG_SELECTOR8(signal),        // pushi signal
+	0x78,                               // push1
+	0x39, SIG_SELECTOR8(signal),        // pushi signal
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0004),           // send 4 [ GKEgo:signal? ]
+	SIG_ADDTOOFFSET(+18),
+	0x39, 0x64,                         // pushi 64 [ initial x ]
+	SIG_END
+};
+
+static const uint16 gk1Day5SnakeAttackPatch1[] = {
+	0x39, PATCH_SELECTOR8(view),        // pushi view [ begin initializing ego in state 0 ]
+	0x78,                               // push1
+	0x33, 0x07,                         // jmp 07 [ continue initializing ego in state 0 ]
+	0x3c,                               // dup
+	0x18,                               // not [ acc = 1 ]
+	0x1a,                               // eq?
+	0x65, 0x1a,                         // aTop cycles [ just set cycles to 1 in state 1 ]
+	0x33, 0x48,                         // jmp 47 [ state 2 ]
+	0x38, PATCH_UINT16(0x0107),         // pushi 0107
+	0x39, PATCH_SELECTOR8(cel),         // pushi cel
+	0x78,                               // push1
+	0x76,                               // push0
+	0x38, PATCH_SELECTOR16(setLoop),    // pushi setLoop
+	0x78,                               // push1
+	0x76,                               // push0
+	0x39, PATCH_SELECTOR8(signal),      // pushi signal
+	0x78,                               // push1
+	0x38, PATCH_SELECTOR16(cycleSpeed), // pushi cycleSpeed
+	0x78,                               // push1
+	0x39, 0x0a,                         // pushi 0a
+	PATCH_ADDTOOFFSET(+5),
+	0x4a, PATCH_UINT16(0x000a),         // send a [ GKEgo:signal?, cycleSpeed = a ]
+	PATCH_ADDTOOFFSET(+18),
+	0x39, 0x70,                         // pushi 70 [ new initial x ]
+	PATCH_END
+};
+
+// this just changes ego's second x coordinate but unfortunately that promotes it to 16 bits
+static const uint16 gk1Day5SnakeAttackSignature2[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x7a,                         // push 7a [ x for second walking loop ]
+	0x39, 0x7c,                         // push 7c
+	0x38, SIG_SELECTOR16(setCycle),     // pushi setCycle
+	0x7a,                               // push2
+	0x51, 0x18,                         // class End
+	0x36,                               // push
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0022),           // send 22
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
+	SIG_END
+};
+
+static const uint16 gk1Day5SnakeAttackPatch2[] = {
+	0x38, PATCH_UINT16(0x008b),         // push 008b [ new x for second walking loop ]
+	0x39, 0x7c,                         // push 7c
+	0x38, PATCH_SELECTOR16(setCycle),   // pushi setCycle
+	0x7a,                               // push2
+	0x51, 0x18,                         // class End
+	0x36,                               // push
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x0022),         // send 22
+	0x3a,                               // toss
+	0x48,                               // ret
+	PATCH_END
+};
+
 // When entering the police station (room 230) sGabeEnters sets ego speed
 //  to 4 for the door animation but fails to restore it to the game speed
 //  by calling GKEgo:normalize. This leaves ego at 75% speed until doing
@@ -1705,6 +1823,8 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   230, "fix police station ego speed (version 2)",    1, gk1PoliceEgoSpeedFixV2Signature,  gk1PoliceEgoSpeedFixV2Patch },
 	{  true,   240, "fix day 5 mosely veve missing points",        1, gk1Day5MoselyVevePointsSignature, gk1Day5MoselyVevePointsPatch },
 	{  true,   250, "fix ego speed when exiting drug store",       1, gk1DrugStoreEgoSpeedFixSignature, gk1DrugStoreEgoSpeedFixPatch },
+	{  true,   260, "fix day 5 snake attack (1/2)",                1, gk1Day5SnakeAttackSignature1,     gk1Day5SnakeAttackPatch1 },
+	{  true,   260, "fix day 5 snake attack (2/2)",                1, gk1Day5SnakeAttackSignature2,     gk1Day5SnakeAttackPatch2 },
 	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
 	{  true,   290, "fix magentia missing message",                1, gk1ShowMagentiaItemSignature,     gk1ShowMagentiaItemPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
