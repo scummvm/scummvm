@@ -191,11 +191,9 @@ void TextBufferWindow::reflow() {
 	offsetbuf[x] = -1;
 
 	// clear window
-
 	clear();
 
 	// and dump text back
-
 	x = 0;
 	for (i = 0; i < p; i++) {
 		if (i == inputbyte)
@@ -242,8 +240,7 @@ void TextBufferWindow::touchScroll() {
 }
 
 bool TextBufferWindow::putPicture(Picture *pic, glui32 align, glui32 linkval) {
-	if (align == imagealign_MarginRight)
-	{
+	if (align == imagealign_MarginRight) {
 		if (_lines[0]._rPic || _numChars)
 			return false;
 
@@ -307,8 +304,7 @@ void TextBufferWindow::putText(const char *buf, int len, int pos, int oldlen) {
 	if (_numChars + diff >= TBLINELEN)
 		return;
 
-	if (diff != 0 && pos + oldlen < _numChars)
-	{
+	if (diff != 0 && pos + oldlen < _numChars) {
 		memmove(_chars + pos + len,
 			_chars + pos + oldlen,
 			(_numChars - (pos + oldlen)) * 4);
@@ -317,8 +313,7 @@ void TextBufferWindow::putText(const char *buf, int len, int pos, int oldlen) {
 			(_numChars - (pos + oldlen)) * sizeof(Attributes));
 	}
 	if (len > 0) {
-		int i;
-		for (i = 0; i < len; i++) {
+		for (int i = 0; i < len; i++) {
 			_chars[pos + i] = buf[i];
 			_attrs[pos + i].set(style_Input);
 		}
@@ -368,10 +363,11 @@ void TextBufferWindow::putTextUni(const glui32 *buf, int len, int pos, int oldle
 }
 
 void TextBufferWindow::touch(int line) {
-	int y = _bbox.top + g_conf->_tMarginY + (_height - line - 1) * g_conf->_leading;
 	_lines[line]._dirty = true;
 	g_vm->_windowMask->clearSelection();
-	_windows->repaint(Rect(_bbox.left, y - 2, _bbox.right, y + g_conf->_leading + 2));
+	//int y = _bbox.top + g_conf->_tMarginY + (_height - line - 1) * g_conf->_leading;
+	//_windows->repaint(Rect(_bbox.left, y - 2, _bbox.right, y + g_conf->_leading + 2));
+	redraw();
 }
 
 glui32 TextBufferWindow::getSplit(glui32 size, bool vertical) const {
@@ -468,8 +464,7 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 				_spaced = 1;
 			else if (ch == ' ' && _spaced == 1)
 				_spaced = 2;
-			else if (ch != ' ' && _spaced == 2)
-			{
+			else if (ch != ' ' && _spaced == 2) {
 				_spaced = 0;
 				putCharUni(' ');
 			} else {
@@ -492,11 +487,12 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 	if (calcWidth(_chars, _attrs, 0, linelen, -1) >= pw) {
 		bpoint = _numChars;
 
-		for (i = _numChars - 1; i > 0; i--)
+		for (i = _numChars - 1; i > 0; i--) {
 			if (_chars[i] == ' ') {
 				bpoint = i + 1; // skip space
 				break;
 			}
+		}
 
 		saved = _numChars - bpoint;
 
@@ -747,8 +743,7 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 				ch = '?';
 			((char *)inbuf)[ix] = (char)ch;
 		}
-	}
-	else {
+	} else {
 		for (ix = 0; ix<len; ix++)
 			((glui32 *)inbuf)[ix] = _chars[_inFence + ix];
 	}
@@ -771,8 +766,7 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 
 	if (_echoLineInput) {
 		putCharUni('\n');
-	}
-	else {
+	} else {
 		_numChars = _inFence;
 		touch(0);
 	}
@@ -1107,8 +1101,7 @@ void TextBufferWindow::redraw() {
     // try to claim scroll keys
     _scrollRequest = _scrollMax > _height;
 
-    if (_scrollRequest && g_conf->_scrollWidth)
-    {
+    if (_scrollRequest && g_conf->_scrollWidth) {
         int t0, t1;
         x0 = _bbox.right - g_conf->_scrollWidth;
         x1 = _bbox.right;
@@ -1155,7 +1148,7 @@ void TextBufferWindow::redraw() {
     if (!_moreRequest)
         _lastSeen = 0;
 
-    free(ln);
+    delete ln;
 }
 
 int TextBufferWindow::acceptScroll(glui32 arg) {
@@ -1225,6 +1218,7 @@ void TextBufferWindow::acceptReadChar(glui32 arg) {
 		return;
 	default:
 		key = arg;
+		break;
 	}
 
 	gli_tts_purge();
@@ -1246,10 +1240,7 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 	if (_height < 2)
 		_scrollPos = 0;
 
-	if (_scrollPos
-		|| arg == keycode_PageUp
-		|| arg == keycode_MouseWheelUp)
-	{
+	if (_scrollPos || arg == keycode_PageUp || arg == keycode_MouseWheelUp) {
 		acceptScroll(arg);
 		return;
 	}
@@ -1367,8 +1358,7 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 		break;
 
 	default:
-		if (arg >= 32 && arg <= 0x10FFFF)
-		{
+		if (arg >= 32 && arg <= 0x10FFFF) {
 			if (g_conf->_caps && (arg > 0x60 && arg < 0x7b))
 				arg -= 0x20;
 			putTextUni(&arg, 1, _inCurs, 0);
