@@ -4102,8 +4102,9 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 	int x = _saveSlotX + 4;
 	int y = _saveSlotY + slot * 17 + 20;
 	int w = 167;
-	const char *s = (slot < 6) ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0];
-
+	char slotString[26];
+	Common::strlcpy(slotString, slot < 6 ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], _vm->gameFlags().platform == Common::kPlatformFMTowns ? 25 : 20);
+	
 	if (slot >= 6) {
 		x = _saveSlotX + 118;
 		y = _saveSlotY + 126;
@@ -4119,7 +4120,7 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 		y++;
 	}
 
-	_screen->printShadedText(s, x + 4, y + 3, textCol, 0);
+	_screen->printShadedText(slotString, x + 4, y + 3, textCol, 0);
 	_vm->screen()->setFont(fnt);
 }
 
