@@ -94,7 +94,7 @@ void Events::dispatchEvent(Event &ev, bool polled) {
 
 	if (!polled) {
 		dispatch = _eventsLogged.retrieve();
-		if (dispatch)
+		if (!dispatch)
 			dispatch = _eventsPolled.retrieve();
 	} else {
 		dispatch = _eventsPolled.retrieve();
