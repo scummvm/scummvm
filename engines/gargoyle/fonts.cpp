@@ -113,7 +113,7 @@ int Fonts::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const C
 	const uint32 color = _surface->format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	font->drawString(_surface, text, pt.x, pt.y, _surface->w - pt.x, color);
 
-	return font->getBoundingBox(text, pt.x, pt.y, _surface->w - pt.x).right;
+	return font->getBoundingBox(text, pt.x, pt.y, _surface->w - pt.x).right * GLI_SUBPIX;
 }
 
 size_t Fonts::stringWidth(int fontIdx, const Common::String &text, int spw) {
