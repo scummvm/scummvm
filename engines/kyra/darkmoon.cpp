@@ -339,6 +339,12 @@ void DarkMoonEngine::drawDoorIntern(int type, int, int x, int y, int w, int wall
 
 	drawBlockObject(0, 2, shp, x, y, 5);
 
+	if (_doorType[type] == 2) {
+		shp = _doorShapes[shapeIndex + 3];
+		y = _dscDoorFrameY2[mDim] - shp[1] + (((wall - _dscDoorScaleOffs[wall]) * _dscDoorScaleMult3[mDim]) >> 1) - 1;
+		drawBlockObject(0, 2, shp, x, y, 5);
+	}
+
 	if (_wllShapeMap[wall] == -1 && !_noDoorSwitch[type])
 		drawBlockObject(0, 2, _doorSwitches[shapeIndex].shp, _doorSwitches[shapeIndex].x + w, _doorSwitches[shapeIndex].y, 5);
 }
