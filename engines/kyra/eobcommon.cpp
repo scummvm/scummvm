@@ -1397,7 +1397,12 @@ void EoBCoreEngine::initDialogueSequence() {
 	gui_updateControls();
 	//_allowSkip = true;
 
-	snd_stopSound();
+	// WORKAROUND for bug in the original code (all platforms). Sequence sound would be terminated prematurely.
+	if (_flags.gameID == GI_EOB2 && _currentLevel == 2 && _currentBlock == 654)
+		_sound->stopAllSoundEffects();
+	else
+		snd_stopSound();
+
 	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
 	_screen->loadFileDataToPage(s, 5, 32000);
 	_txt->setupField(9, 0);
