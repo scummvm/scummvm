@@ -338,10 +338,12 @@ struct Scene : Common::Serializable {
 	Door *getDoor(uint8 objectId);
 	Object *getObject(uint8 objectId, bool ignoreNo = false);
 	Static *getStatic(uint8 staticId, bool ignoreNo = false);
+	Bitmap *getBitmap(uint8 bitmapId);
 
 	uint8 getNoDoors(bool ignoreNo = false) const;
 	uint8 getNoObjects(bool ignoreNo = false) const;
 	uint8 getNoStatics(bool ignoreNo = false) const;
+	uint8 getNoBitmaps() const;
 
 	/**
 	 * Finds the door at the given position. By default, only active doors are considered.

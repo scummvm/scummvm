@@ -2,6 +2,7 @@ MODULE := engines/mutationofjb
 
 MODULE_OBJS := \
 	commands/additemcommand.o \
+	commands/bitmapvisibilitycommand.o \
 	commands/callmacrocommand.o \
 	commands/camefromcommand.o \
 	commands/changecommand.o \
@@ -16,6 +17,7 @@ MODULE_OBJS := \
 	commands/labelcommand.o \
 	commands/loadplayercommand.o \
 	commands/newroomcommand.o \
+	commands/playanimationcommand.o \
 	commands/removeallitemscommand.o \
 	commands/removeitemcommand.o \
 	commands/renamecommand.o \

@@ -20,40 +20,32 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ROOM_H
-#define MUTATIONOFJB_ROOM_H
+#ifndef MUTATIONOFJB_BITMAPVISIBILITYCOMMAND_H
+#define MUTATIONOFJB_BITMAPVISIBILITYCOMMAND_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "graphics/surface.h"
-#include "graphics/managed_surface.h"
-
-namespace Graphics {
-class Screen;
-}
+#include "mutationofjb/commands/seqcommand.h"
+#include "common/str.h"
 
 namespace MutationOfJB {
 
-class EncryptedFile;
-class Game;
-
-class Room {
+class BitmapVisibilityCommandParser : public SeqCommandParser {
 public:
-	friend class RoomAnimationDecoderCallback;
-	friend class GuiAnimationDecoderCallback;
+	BitmapVisibilityCommandParser() {}
 
-	Room(Game *game, Graphics::Screen *screen);
-	bool load(uint8 roomNumber, bool roomB);
-	void drawObjectAnimation(uint8 objectId, int animOffset);
-	void drawBitmap(uint8 bitmapId);
-	void drawFrames(uint8 fromFrame, uint8 toFrame, const Common::Rect &area = Common::Rect(), uint8 threshold = 0xFF);
-	void redraw();
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+};
+
+class BitmapVisibilityCommand : public SeqCommand {
+public:
+	BitmapVisibilityCommand(uint8 sceneId, uint8 bitmapId, bool visible) : _sceneId(sceneId), _bitmapId(bitmapId), _visible(visible) {}
+	const Common::String &getName() const;
+
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	virtual Common::String debugString() const override;
 private:
-	Game *_game;
-	Graphics::Screen *_screen;
-	Graphics::ManagedSurface _background;
-	Common::Array<Graphics::Surface> _surfaces;
-	Common::Array<int> _objectsStart;
+	uint8 _sceneId;
+	uint8 _bitmapId;
+	bool _visible;
 };
 
 }

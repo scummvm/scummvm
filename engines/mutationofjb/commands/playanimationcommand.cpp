@@ -20,40 +20,42 @@
  *
  */
 
-#include "mutationofjb/commands/camefromcommand.h"
-#include "mutationofjb/gamedata.h"
+#include "mutationofjb/commands/playanimationcommand.h"
+#include "mutationofjb/game.h"
+#include "mutationofjb/room.h"
 #include "mutationofjb/script.h"
-#include "common/str.h"
 
 /** @file
- * "CAMEFROM " <sceneId>
+ * ( "FLB " | "FLX" ) <fromFrame> " " <toFrame>
  *
- * This command tests whether last scene (the scene player came from) is sceneId.
- * If true, the execution continues after this command.
- * Otherwise the execution continues after first '#' found.
+ * Plays the specified frames from room animation.
+ *
+ * TODO: Parse all arguments of this command.
+ * TODO: Actually play the animation instead of just showing last frame.
  */
 
 namespace MutationOfJB {
 
-bool CameFromCommandParser::parse(const Common::String &line, ScriptParseContext &, Command *&command) {
-	if (line.size() < 10 || !line.hasPrefix("CAMEFROM")) {
+bool PlayAnimationCommandParser::parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) {
+	if (line.size() < 11 || (!line.hasPrefix("FLB ") && !line.hasPrefix("FLX ")))
 		return false;
-	}
 
-	const uint8 sceneId = atoi(line.c_str() + 9);
-	_tags.push(0);
-	command = new CameFromCommand(sceneId);
+	const uint8 fromFrame = (uint8) atoi(line.c_str() + 4);
+	const uint8 toFrame = (uint8) atoi(line.c_str() + 8);
+
+	command = new PlayAnimationCommand(fromFrame, toFrame);
 	return true;
 }
 
-Command::ExecuteResult CameFromCommand::execute(ScriptExecutionContext &scriptExecCtx) {
-	_cachedResult = (scriptExecCtx.getGameData()._lastScene == _sceneId);
+
+Command::ExecuteResult PlayAnimationCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	scriptExecCtx.getGame().getRoom().drawFrames(_fromFrame - 1, _toFrame - 1);
 
 	return Finished;
 }
 
-Common::String CameFromCommand::debugString() const {
-	return Common::String::format("CAMEFROM %d", _sceneId);
+Common::String PlayAnimationCommand::debugString() const {
+	return Common::String::format("PLAYROOMANIM %u %u", (unsigned int) _fromFrame, (unsigned int) _toFrame);
 }
 
 }

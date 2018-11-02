@@ -20,40 +20,31 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ROOM_H
-#define MUTATIONOFJB_ROOM_H
+#ifndef MUTATIONOFJB_PLAYANIMATIONCOMMAND_H
+#define MUTATIONOFJB_PLAYANIMATIONCOMMAND_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "graphics/surface.h"
-#include "graphics/managed_surface.h"
-
-namespace Graphics {
-class Screen;
-}
+#include "mutationofjb/commands/seqcommand.h"
+#include "common/str.h"
 
 namespace MutationOfJB {
 
-class EncryptedFile;
-class Game;
-
-class Room {
+class PlayAnimationCommandParser : public SeqCommandParser {
 public:
-	friend class RoomAnimationDecoderCallback;
-	friend class GuiAnimationDecoderCallback;
+	PlayAnimationCommandParser() {}
 
-	Room(Game *game, Graphics::Screen *screen);
-	bool load(uint8 roomNumber, bool roomB);
-	void drawObjectAnimation(uint8 objectId, int animOffset);
-	void drawBitmap(uint8 bitmapId);
-	void drawFrames(uint8 fromFrame, uint8 toFrame, const Common::Rect &area = Common::Rect(), uint8 threshold = 0xFF);
-	void redraw();
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+};
+
+class PlayAnimationCommand : public SeqCommand {
+public:
+	PlayAnimationCommand(uint8 fromFrame, uint8 toFrame) : _fromFrame(fromFrame), _toFrame(toFrame) {}
+	const Common::String &getName() const;
+
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	virtual Common::String debugString() const override;
 private:
-	Game *_game;
-	Graphics::Screen *_screen;
-	Graphics::ManagedSurface _background;
-	Common::Array<Graphics::Surface> _surfaces;
-	Common::Array<int> _objectsStart;
+	uint8 _fromFrame;
+	uint8 _toFrame;
 };
 
 }

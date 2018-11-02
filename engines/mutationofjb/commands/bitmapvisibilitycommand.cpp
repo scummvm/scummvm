@@ -20,40 +20,39 @@
  *
  */
 
-#include "mutationofjb/commands/camefromcommand.h"
+#include "mutationofjb/commands/bitmapvisibilitycommand.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/script.h"
-#include "common/str.h"
 
 /** @file
- * "CAMEFROM " <sceneId>
+ * "RB " <sceneId> " " <bitmapId> " " <visible>
  *
- * This command tests whether last scene (the scene player came from) is sceneId.
- * If true, the execution continues after this command.
- * Otherwise the execution continues after first '#' found.
+ * Changes visibility of a bitmap in the specified scene.
  */
 
 namespace MutationOfJB {
 
-bool CameFromCommandParser::parse(const Common::String &line, ScriptParseContext &, Command *&command) {
-	if (line.size() < 10 || !line.hasPrefix("CAMEFROM")) {
+bool BitmapVisibilityCommandParser::parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) {
+	if (line.size() < 10 || !line.hasPrefix("RB "))
 		return false;
-	}
 
-	const uint8 sceneId = atoi(line.c_str() + 9);
-	_tags.push(0);
-	command = new CameFromCommand(sceneId);
+	const uint8 sceneId = (uint8) atoi(line.c_str() + 3);
+	const uint8 bitmapId = (uint8) atoi(line.c_str() + 6);
+	const bool visible = (line[9] == '1');
+
+	command = new BitmapVisibilityCommand(sceneId, bitmapId, visible);
 	return true;
 }
 
-Command::ExecuteResult CameFromCommand::execute(ScriptExecutionContext &scriptExecCtx) {
-	_cachedResult = (scriptExecCtx.getGameData()._lastScene == _sceneId);
+
+Command::ExecuteResult BitmapVisibilityCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	scriptExecCtx.getGameData().getScene(_sceneId)->getBitmap(_bitmapId)->_isVisible = _visible;
 
 	return Finished;
 }
 
-Common::String CameFromCommand::debugString() const {
-	return Common::String::format("CAMEFROM %d", _sceneId);
+Common::String BitmapVisibilityCommand::debugString() const {
+	return Common::String::format("SETBITMAPVIS %u %u %s", (unsigned int) _sceneId, (unsigned int) _bitmapId, _visible ? "true" : "false");
 }
 
 }

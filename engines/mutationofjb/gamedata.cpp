@@ -298,6 +298,15 @@ Static *Scene::getStatic(uint8 staticId, bool ignoreNo) {
 	return &_statics[staticId - 1];
 }
 
+Bitmap *Scene::getBitmap(uint8 bitmapId) {
+	if (bitmapId == 0 || bitmapId > ARRAYSIZE(_bitmaps)) {
+		warning("Bitmap %d does not exist", bitmapId);
+		return nullptr;
+	}
+
+	return &_bitmaps[bitmapId - 1];
+}
+
 uint8 Scene::getNoDoors(bool ignoreNo) const {
 	return (!ignoreNo ? MIN(_noDoors, static_cast<uint8>(ARRAYSIZE(_doors))) : ARRAYSIZE(_doors));
 }
@@ -308,6 +317,10 @@ uint8 Scene::getNoObjects(bool ignoreNo) const {
 
 uint8 Scene::getNoStatics(bool ignoreNo) const {
 	return (!ignoreNo ? MIN(_noStatics, static_cast<uint8>(ARRAYSIZE(_statics))) : ARRAYSIZE(_statics));
+}
+
+uint8 Scene::getNoBitmaps() const {
+	return ARRAYSIZE(_bitmaps);
 }
 
 Door *Scene::findDoor(int16 x, int16 y, bool activeOnly, int *index) {

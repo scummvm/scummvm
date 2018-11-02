@@ -48,6 +48,7 @@ private:
 	bool cmd_dumpdoorinfo(int argc, const char **argv);
 	bool cmd_dumpobjectinfo(int argc, const char **argv);
 	bool cmd_dumpstaticinfo(int argc, const char **argv);
+	bool cmd_dumpbitmapinfo(int argc, const char **argv);
 	bool cmd_listinventory(int argc, const char **argv);
 
 	void showIndent(int indentLevel);

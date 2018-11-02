@@ -27,9 +27,12 @@
 
 namespace MutationOfJB {
 
-AnimationDecoder::AnimationDecoder(const Common::String &fileName) : _fileName(fileName) {
+AnimationDecoder::AnimationDecoder(const Common::String &fileName) : _fileName(fileName), _fromFrame(-1), _toFrame(-1), _threshold(0xFF) {
 	_surface.create(IMAGE_WIDTH, IMAGE_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	_owningSurface = true;
 }
+
+AnimationDecoder::AnimationDecoder(const Common::String &fileName, const Graphics::Surface &outSurface) : _fileName(fileName), _surface(outSurface), _owningSurface(false), _fromFrame(-1), _toFrame(-1), _threshold(0xFF) {}
 
 bool AnimationDecoder::decode(AnimationDecoderCallback *callback) {
 	EncryptedFile file;
@@ -60,39 +63,43 @@ bool AnimationDecoder::decode(AnimationDecoderCallback *callback) {
 
 		// Subrecords.
 		if (recordId == 0xF1FA) {
-			if (subrecords == 0) {
-				if (callback) {
-					callback->onFrame(frameNo, _surface); // Empty record, frame identical to the previous one.
-				}
+			if ((_fromFrame != -1 && frameNo < _fromFrame) || (_toFrame != -1 && frameNo > _toFrame)) {
+				file.seek(length - 16, SEEK_CUR);
 			} else {
-				for (int i = 0; i < subrecords; ++i) {
-					int32 filePos = file.pos();
-
-					const uint32 subLength = file.readUint32LE();
-					const uint16 type = file.readUint16LE();
-
-					if (type == 0x0B) {
-						loadPalette(file);
-						if (callback) {
-							callback->onPaletteUpdated(_palette);
-						}
-					} else if (type == 0x0F) {
-						loadFullFrame(file, subLength - 6);
-						if (callback) {
-							callback->onFrame(frameNo, _surface);
-						}
-					} else if (type == 0x0C) {
-						loadDiffFrame(file, subLength - 6);
-						if (callback) {
-							callback->onFrame(frameNo, _surface);
-						}
-					} else {
-						debug("Unsupported record type %02X.", type);
-						file.seek(subLength - 6, SEEK_CUR);
+				if (subrecords == 0) {
+					if (callback) {
+						callback->onFrame(frameNo, _surface); // Empty record, frame identical to the previous one.
 					}
+				} else {
+					for (int i = 0; i < subrecords; ++i) {
+						int32 filePos = file.pos();
 
-					// Makes decoding more robust, because for some reason records might have extra data at the end.
-					file.seek(filePos + subLength, SEEK_SET);
+						const uint32 subLength = file.readUint32LE();
+						const uint16 type = file.readUint16LE();
+
+						if (type == 0x0B) {
+							loadPalette(file);
+							if (callback) {
+								callback->onPaletteUpdated(_palette);
+							}
+						} else if (type == 0x0F) {
+							loadFullFrame(file, subLength - 6);
+							if (callback) {
+								callback->onFrame(frameNo, _surface);
+							}
+						} else if (type == 0x0C) {
+							loadDiffFrame(file, subLength - 6);
+							if (callback) {
+								callback->onFrame(frameNo, _surface);
+							}
+						} else {
+							debug("Unsupported record type %02X.", type);
+							file.seek(subLength - 6, SEEK_CUR);
+						}
+
+						// Makes decoding more robust, because for some reason records might have extra data at the end.
+						file.seek(filePos + subLength, SEEK_SET);
+					}
 				}
 			}
 			frameNo++;
@@ -103,6 +110,13 @@ bool AnimationDecoder::decode(AnimationDecoderCallback *callback) {
 	file.close();
 
 	return true;
+}
+
+void AnimationDecoder::setPartialMode(int fromFrame, int toFrame, const Common::Rect area, uint8 threshold) {
+	_fromFrame = fromFrame;
+	_toFrame = toFrame;
+	_area = area;
+	_threshold = threshold;
 }
 
 void AnimationDecoder::loadPalette(Common::SeekableReadStream &file) {
@@ -165,6 +179,11 @@ void AnimationDecoder::loadDiffFrame(EncryptedFile &file, uint32) {
 
 	for (uint16 line = firstLine; line < firstLine + numLines; ++line) {
 		uint8 *imageData = reinterpret_cast<uint8 *>(_surface.getBasePtr(0, line));
+		uint16 lineOffset = 0;
+
+		// Optimization for skipping the whole line if outside of confined area.
+		const bool skipLineOutput = !_area.isEmpty() && (line < _area.top || line >= _area.bottom);
+		uint8 buf[0x80];
 
 		uint8 runs = file.readByte();
 		while (runs--) {
@@ -172,17 +191,42 @@ void AnimationDecoder::loadDiffFrame(EncryptedFile &file, uint32) {
 			uint8 num = file.readByte();
 
 			imageData += localOffset;
+			lineOffset += localOffset;
 			if (num == 0) {
 				// Ignore?
 				debug("Zero RLE number found.");
 			} else if (num < 0x80) {
-				file.read(imageData, num);
+				if (!skipLineOutput) {
+					if (_area.isEmpty() && _threshold == 0xFF) {
+						file.read(imageData, num);
+					} else {
+						file.read(buf, num);
+						for (uint16 i = 0; i < num; i++) {
+							if ((_area.isEmpty() || _area.contains(lineOffset + i, line)) && imageData[i] <= _threshold)
+								imageData[i] = buf[i];
+						}
+					}
+				} else {
+					file.skip(num);
+				}
+
 				imageData += num;
+				lineOffset += num;
 			} else {
 				const uint8 color = file.readByte();
 				const int no = 0x100 - num;
-				memset(imageData, color, no);
+				if (!skipLineOutput) {
+					if (_area.isEmpty() && _threshold == 0xFF) {
+						memset(imageData, color, no);
+					} else {
+						for (int i = 0; i < no; i++) {
+							if ((_area.isEmpty() || _area.contains(lineOffset + i, line)) && imageData[i] <= _threshold)
+								imageData[i] = color;
+						}
+					}
+				}
 				imageData += no;
+				lineOffset += no;
 			}
 
 		}
@@ -190,7 +234,8 @@ void AnimationDecoder::loadDiffFrame(EncryptedFile &file, uint32) {
 }
 
 AnimationDecoder::~AnimationDecoder() {
-	_surface.free();
+	if (_owningSurface)
+		_surface.free();
 }
 
 }
