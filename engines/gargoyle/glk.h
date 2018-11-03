@@ -110,9 +110,9 @@ public:
 
 	void glk_stylehint_set(glui32 wintype, glui32 styl, glui32 hint,
 		glsi32 val);
-	void glk_stylehint_clear(glui32 wintype, glui32 styl, glui32 hint);
-	glui32 glk_style_distinguish(winid_t win, glui32 styl1, glui32 styl2);
-	glui32 glk_style_measure(winid_t win, glui32 styl, glui32 hint, glui32 *result);
+	void glk_stylehint_clear(glui32 wintype, glui32 style, glui32 hint);
+	glui32 glk_style_distinguish(winid_t win, glui32 style1, glui32 style2);
+	bool glk_style_measure(winid_t win, glui32 style, glui32 hint, glui32 *result);
 
 	frefid_t glk_fileref_create_temp(glui32 usage, glui32 rock);
 	frefid_t glk_fileref_create_by_name(glui32 usage, const char *name, glui32 rock);

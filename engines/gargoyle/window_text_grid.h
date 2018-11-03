@@ -74,8 +74,6 @@ public:
 	Attributes _origAttr;
 	gidispatch_rock_t _inArrayRock;
 	glui32 *_lineTerminators;
-
-	WindowStyle styles[style_NUMSTYLES]; ///< style hints and settings
 public:
 	/**
 	 * Constructor
@@ -167,6 +165,11 @@ public:
 	virtual void requestHyperlinkEvent() override { _hyperRequest = true; }
 
 	virtual void cancelCharEvent() override { _charRequest = _charRequestUni = false; }
+
+	/**
+	 * Returns a pointer to the styles for the window
+	 */
+	virtual const WindowStyle *getStyles() const override { return _styles; }
 };
 
 } // End of namespace Gargoyle

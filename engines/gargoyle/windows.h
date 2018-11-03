@@ -222,7 +222,14 @@ struct WindowStyle {
 	FACES font;
 	byte bg[3];
 	byte fg[3];
-	int reverse;
+	bool reverse;
+
+	/**
+	 * Equality comparison
+	 */
+	bool operator==(const WindowStyle &src) const {
+		return !memcmp(this, &src, sizeof(WindowStyle));
+	}
 };
 
 /**
@@ -295,6 +302,8 @@ struct Attributes {
  * Window definition
  */
 class Window {
+protected:
+	WindowStyle _styles[style_NUMSTYLES]; ///< style hints and settings for grid and buffer windows
 public:
 	Windows *_windows;
 	glui32 _rock;
@@ -448,6 +457,11 @@ public:
 	virtual void fillRect(glui32 color, const Rect &box);
 
 	virtual void setBackgroundColor(glui32 color);
+
+	/**
+	 * Returns a pointer to the styles for the window
+	 */
+	virtual const WindowStyle *getStyles() const;
 };
 typedef Window *winid_t;
 
