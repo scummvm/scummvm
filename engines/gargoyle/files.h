@@ -25,6 +25,7 @@
 
 #include "gargoyle/glk_types.h"
 #include "common/array.h"
+#include "common/ptr.h"
 #include "common/str.h"
 
 namespace Gargoyle {
@@ -65,17 +66,39 @@ struct FileReference {
 	FileUsage _fileType;
 	bool _textMode;
 	gidispatch_rock_t _dispRock;
+
+	/**
+	 * Constructor
+	 */
+	FileReference() : _rock(0), _slotNumber(-1), _fileType(fileusage_Data), _textMode(false) {}
+
+	/**
+	 * Get savegame filename
+	 */
+	const Common::String getSaveName() const;
+
+	/**
+	 * Returns true if the given file exists
+	 */
+	bool exists() const;
+
+	/**
+	 * Delete the given file
+	 */
+	void deleteFile();
 };
+
 typedef FileReference *frefid_t;
+typedef Common::Array< Common::SharedPtr<FileReference> > FileRefArray;
 
 class Files {
 private:
-	Common::Array<FileReference> _fileReferences;
+	FileRefArray _fileReferences;
 public:
 	/**
-	 * Prompt for a file
+	 * Prompt for a savegame to load or save, and populate a file reference from the result
 	 */
-	frefid_t prompt(glui32 usage, FileMode fmode, glui32 rock);
+	frefid_t createByPrompt(glui32 usage, FileMode fmode, glui32 rock);
 
 	/**
 	 * Create a new file reference
@@ -88,9 +111,25 @@ public:
 	frefid_t createRef(const Common::String &filename, glui32 usage, glui32 rock);
 
 	/**
+	 * Create a new temporary file reference
+	 */
+	frefid_t createTemp(glui32 usage, glui32 rock);
+
+	/**
+	 * Create a new file reference from an old one
+	 */
+	frefid_t createFromRef(frefid_t fref, glui32 usage, glui32 rock);
+
+	/**
 	 * Delete a file reference
 	 */
 	void deleteRef(frefid_t fref);
+
+	/**
+	 * Iterates to the next file reference following the specified one,
+	 * or the first if null is passed
+	 */
+	frefid_t iterate(frefid_t fref, glui32 *rock);
 };
 
 } // End of namespace Gargoyle
