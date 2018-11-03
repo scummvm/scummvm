@@ -169,8 +169,7 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 					ev.key.keysym.mod = (SDLMod) key.flags();
 
 					// Translate from SDL keymod event to Scummvm Key Mod Common::Event.
-					// This codes is also present in GP32 backend and in SDL backend as a static function
-					// Perhaps it should be shared.
+					// TODO: Make use of SdlEventSource::SDLModToOSystemKeyFlags?
 					if (key.flags() != 0) {
 						event.kbd.flags = 0;
 
