@@ -230,6 +230,42 @@ struct WindowStyle {
 	bool operator==(const WindowStyle &src) const {
 		return !memcmp(this, &src, sizeof(WindowStyle));
 	}
+
+	/**
+	 * Returns true if the font is proportinate
+	 */
+	bool isProp() const {
+		return font == PROPR || font == PROPI || font == PROPB || font == PROPZ;
+	}
+
+	/**
+	 * Returns true ifont the font is bold
+	 */
+	bool isBold() const {
+		return font == PROPB || font == PROPZ || font == MONOB || font == MONOZ;
+	}
+
+	/**
+	 * Returns true ifont the font is italic
+	 */
+	bool isItalic() const {
+		return font == PROPI || font == PROPZ || font == MONOI || font == MONOZ;
+	}
+
+	/**
+	 * Returns a font that has the following combination of proportinate, bold, and italic
+	 */
+	static FACES makeFont(bool p, bool b, bool i) {
+		if (p && !b && !i) return PROPR;
+		if (p && !b &&  i) return PROPI;
+		if (p &&  b && !i) return PROPB;
+		if (p &&  b &&  i) return PROPZ;
+		if (!p && !b && !i) return MONOR;
+		if (!p && !b &&  i) return MONOI;
+		if (!p &&  b && !i) return MONOB;
+		if (!p &&  b &&  i) return MONOZ;
+		return PROPR;
+	}
 };
 
 /**
@@ -302,8 +338,6 @@ struct Attributes {
  * Window definition
  */
 class Window {
-protected:
-	WindowStyle _styles[style_NUMSTYLES]; ///< style hints and settings for grid and buffer windows
 public:
 	Windows *_windows;
 	glui32 _rock;

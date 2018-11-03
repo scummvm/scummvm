@@ -126,6 +126,9 @@ public:
 	glui32 _echoLineInput;
 	glui32 *_lineTerminators;
 
+	/* style hints and settings */
+	WindowStyle _styles[style_NUMSTYLES];
+
 	/* for copy selection */
 	glui32 *_copyBuf;
 	int _copyPos;
