@@ -121,7 +121,6 @@ void WindowStream::putBuffer(const char *buf, size_t len) {
 		_window->putCharUni(*buf);
 	if (_window->_echoStream)
 		_window->_echoStream->putBuffer(buf, len);
-
 }
 
 void WindowStream::putBufferUni(const uint32 *buf, size_t len) {
