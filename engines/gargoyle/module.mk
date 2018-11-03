@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	conf.o \
 	detection.o \
 	events.o \
+	files.o \
 	fonts.o \
 	gargoyle.o \
 	glk.o \
