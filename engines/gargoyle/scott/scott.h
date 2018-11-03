@@ -147,7 +147,7 @@ private:
 	const char *mapSynonym(const char *word);
 	int matchUpItem(const char *text, int loc);
 	char *readString(Common::SeekableReadStream *f);
-	void loadDatabase(Common::SeekableReadStream *f, int loud);
+	void loadDatabase(Common::SeekableReadStream *f, bool loud);
 	void output(const char *a);
 	void outputNumber(int a);
 	void look(void);

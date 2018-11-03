@@ -21,25 +21,10 @@
  */
 
 #include "gargoyle/scott/scott.h"
+#include "common/config-manager.h"
 
 namespace Gargoyle {
 namespace Scott {
-
-/*
-glkunix_argumentlist_t glkunix_arguments[] =
-{
-	{ "-y",		glkunix_arg_NoValue,		"-y		Generate 'You are', 'You are carrying' type messages for games that use these instead (eg Robin Of Sherwood)" },
-	{ "-i",		glkunix_arg_NoValue,		"-i		Generate 'I am' type messages (default)" },
-	{ "-d",		glkunix_arg_NoValue,		"-d		Debugging info on load " },
-	{ "-s",		glkunix_arg_NoValue,		"-s		Generate authentic Scott Adams driver light messages rather than other driver style ones (Light goes out in n turns..)" },
-	{ "-t",		glkunix_arg_NoValue,		"-t		Generate TRS80 style display (terminal width is 64 characters; a line <-----------------> is displayed after the top stuff; objects have periods after them instead of hyphens" },
-	{ "-p",		glkunix_arg_NoValue,		"-p		Use for prehistoric databases which don't use bit 16" },
-	{ "-w",		glkunix_arg_NoValue,		"-w		Disable upper window" },
-	{ "",		glkunix_arg_ValueFollows,	"filename	file to load" },
-
-	{ nullptr, glkunix_arg_End, nullptr }
-};
-*/
 
 Scott::Scott(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst, gameDesc),
 		Items(nullptr), Rooms(nullptr), Verbs(nullptr), Nouns(nullptr), Messages(nullptr),
@@ -139,61 +124,20 @@ Distributed under the GNU software license\n\n");
 }
 
 void Scott::initialize() {
-	/*
-	int argc = data->argc;
-	char **argv = data->argv;
-
-	if (argc < 1)
-		return 0;
-
-	while (argv[1])
-	{
-		if (*argv[1] != '-')
-			break;
-		switch (argv[1][1])
-		{
-		case 'y':
+	if (ConfMan.hasKey("YOUARE")) {
+		if (ConfMan.getBool("YOUARE"))
 			Options |= YOUARE;
-			break;
-		case 'i':
-			Options &= ~YOUARE;
-			break;
-		case 'd':
-			Options |= DEBUGGING;
-			break;
-		case 's':
-			Options |= SCOTTLIGHT;
-			break;
-		case 't':
-			Options |= TRS80_STYLE;
-			break;
-		case 'p':
-			Options |= PREHISTORIC_LAMP;
-			break;
-		case 'w':
-			split_screen = 0;
-			break;
-		}
-		argv++;
-		argc--;
-	}
-
-	if (argc == 2)
-	{
-		game_file = argv[1];
-#ifdef GARGLK
-		const char *s;
-		if ((s = strrchr(game_file, '/')) != nullptr || (s = strrchr(game_file, '\\')) != nullptr)
-		{
-			garglk_set_story_name(s + 1);
-		}
 		else
-		{
-			garglk_set_story_name(game_file);
-		}
-#endif
+			Options &= ~YOUARE;
 	}
-	*/
+	if (gDebugLevel > 0)
+		Options |= DEBUGGING;
+	if (ConfMan.hasKey("SCOTTLIGHT") && ConfMan.getBool("SCOTTLIGHT"))
+		Options |= SCOTTLIGHT;
+	if (ConfMan.hasKey("TRS80_STYLE") && ConfMan.getBool("TRS80_STYLE"))
+		Options |= TRS80_STYLE;
+	if (ConfMan.hasKey("PREHISTORIC_LAMP") && ConfMan.getBool("PREHISTORIC_LAMP"))
+		Options |= PREHISTORIC_LAMP;
 }
 
 void Scott::display(winid_t w, const char *fmt, ...) {
@@ -336,7 +280,7 @@ char *Scott::readString(Common::SeekableReadStream *f) {
 	return t;
 }
 
-void Scott::loadDatabase(Common::SeekableReadStream *f, int loud) {
+void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	int unused, ni, na, nw, nr, mc, pr, tr, wl, lt, mn, trm;
 	int ct;
 	int lo;
