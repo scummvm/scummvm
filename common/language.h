@@ -56,6 +56,7 @@ enum Language {
 	NB_NOR,
 	PL_POL,
 	PT_BRA,
+	PT_POR,
 	RU_RUS,
 	SK_SVK,
 	ES_ESP,
