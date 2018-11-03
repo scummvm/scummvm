@@ -1585,7 +1585,7 @@ void GlobalOptionsDialog::build() {
 	else
 		_pathsTabId = tab->addTab(_c("Paths", "lowres"));
 
-#if !( defined(__DC__) || defined(__GP32__) )
+#if !defined(__DC__)
 	// These two buttons have to be extra wide, or the text will be
 	// truncated in the small version of the GUI.
 
@@ -1786,7 +1786,7 @@ void GlobalOptionsDialog::build() {
 
 	OptionsDialog::build();
 
-#if !( defined(__DC__) || defined(__GP32__) )
+#if !defined(__DC__)
 	// Set _savePath to the current save path
 	Common::String savePath(ConfMan.get("savepath", _domain));
 	Common::String themePath(ConfMan.get("themepath", _domain));
