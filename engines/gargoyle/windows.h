@@ -98,10 +98,15 @@ private:
 	 */
 	PairWindow *newPairWindow(glui32 method, Window *key, glui32 size);
 
+	/**
+	 * Set the window focus
+	 */
 	void refocus(Window *win);
 
+	/**
+	 * Used to loop over windows in tree order
+	 */
 	Window *iterateTreeOrder(Window *win);
-
 
 	/**
 	 * Pick first window which has a more request

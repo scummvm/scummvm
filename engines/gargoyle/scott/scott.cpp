@@ -93,7 +93,7 @@ Distributed under the GNU software license\n\n");
 		if (GetInput(&vb, &no) == -1)
 			continue;
 		if (g_vm->shouldQuit())
-			return;
+			break;
 
 		switch (PerformActions(vb, no)) {
 		case -1:

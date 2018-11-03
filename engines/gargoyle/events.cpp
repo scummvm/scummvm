@@ -226,4 +226,20 @@ void Events::handleButtonUp(bool isLeft, const Point &pos) {
 	}
 }
 
+void Events::waitForPress() {
+	Common::Event e;
+
+	do {
+		g_system->getEventManager()->pollEvent(e);
+		g_system->delayMillis(10);
+
+		if (checkForNextFrameCounter()) {
+			// Update the screen
+			g_vm->_screen->update();
+		}
+	} while (!g_vm->shouldQuit() && e.type != Common::EVENT_KEYDOWN &&
+		e.type != Common::EVENT_LBUTTONDOWN && e.type != Common::EVENT_RBUTTONDOWN &&
+		e.type != Common::EVENT_MBUTTONDOWN);
+}
+
 } // End of namespace Gargoyle

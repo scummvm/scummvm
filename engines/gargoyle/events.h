@@ -210,6 +210,11 @@ public:
 	 * Store an event for retrieval
 	 */
 	void store(EvType type, Window *win, uint32 val1 = 0, uint32 val2 = 0);
+
+	/**
+	 * Wait for a keyboard or mouse press
+	 */
+	void waitForPress();
 };
 
 } // End of namespace Gargoyle
