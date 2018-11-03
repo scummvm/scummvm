@@ -146,30 +146,6 @@ enum WinMethod {
 	winmethod_BorderMask = 0x100,
 };
 
-enum FileUsage {
-	fileusage_Data        = 0x00,
-	fileusage_SavedGame   = 0x01,
-	fileusage_Transcript  = 0x02,
-	fileusage_InputRecord = 0x03,
-	fileusage_TypeMask    = 0x0f,
-
-	fileusage_TextMode    = 0x100,
-	fileusage_BinaryMode  = 0x000,
-};
-
-enum FileMode {
-	filemode_Write       = 0x01,
-	filemode_Read        = 0x02,
-	filemode_ReadWrite   = 0x03,
-	filemode_WriteAppend = 0x05,
-};
-
-enum SeekMode {
-	seekmode_Start   = 0,
-	seekmode_Current = 1,
-	seekmode_End     = 2,
-};
-
 enum StyleHint {
 	stylehint_Indentation     = 0,
 	stylehint_ParaIndentation = 1,

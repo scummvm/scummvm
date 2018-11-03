@@ -479,7 +479,7 @@ frefid_t Glk::glk_fileref_create_from_fileref(glui32 usage, frefid_t fref, glui3
 }
 
 void Glk::glk_fileref_destroy(frefid_t fref) {
-	// TODO
+	_files->deleteRef(fref);
 }
 
 frefid_t Glk::glk_fileref_iterate(frefid_t fref, glui32 *rockptr) {

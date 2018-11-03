@@ -36,6 +36,7 @@ namespace Gargoyle {
 class Clipboard;
 class Conf;
 class Events;
+class Files;
 class PicList;
 class Screen;
 class Streams;
@@ -97,6 +98,7 @@ public:
 	Clipboard *_clipboard;
 	Conf *_conf;
 	Events *_events;
+	Files *_files;
 	PicList *_picList;
 	Screen *_screen;
 	Streams *_streams;
