@@ -382,7 +382,7 @@ bool GroovieEngine::canLoadGameStateCurrently() {
 bool GroovieEngine::canSaveGameStateCurrently() {
 	// TODO: verify the engine has been initialized
 	if (_script)
-		return true;
+		return _script->canDirectSave();
 	else
 		return false;
 }

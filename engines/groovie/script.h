@@ -61,6 +61,7 @@ public:
 	bool loadScript(Common::String scriptfile);
 	void directGameLoad(int slot);
 	void directGameSave(int slot, const Common::String &desc);
+	bool canDirectSave() const;
 	void step();
 
 	void setMouseClick(uint8 button);
