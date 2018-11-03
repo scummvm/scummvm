@@ -485,6 +485,7 @@ void Debugger_EoB::initialize() {
 	registerCmd("list_monsters", WRAP_METHOD(Debugger_EoB, cmdListMonsters));
 	registerCmd("show_position", WRAP_METHOD(Debugger_EoB, cmdShowPosition));
 	registerCmd("set_position", WRAP_METHOD(Debugger_EoB, cmdSetPosition));
+	registerCmd("print_map", WRAP_METHOD(Debugger_EoB, cmdPrintMap));
 	registerCmd("open_door", WRAP_METHOD(Debugger_EoB, cmdOpenDoor));
 	registerCmd("close_door", WRAP_METHOD(Debugger_EoB, cmdCloseDoor));
 	registerCmd("list_flags", WRAP_METHOD(Debugger_EoB, cmdListFlags));
@@ -620,14 +621,59 @@ bool Debugger_EoB::cmdSetPosition(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger_EoB::cmdPrintMap(int, const char **) {
+	const uint8 illusion1 = _vm->gameFlags().gameID == GI_EOB1 ? 67 : 46;
+	const uint8 illusion2 = _vm->gameFlags().gameID == GI_EOB1 ? 64 : 46;
+	const uint8 plate1 = _vm->gameFlags().gameID == GI_EOB1 ? 28 : 35;
+	const uint8 plate2 = _vm->gameFlags().gameID == GI_EOB1 ? 28 : 36;
+	const uint8 hole = _vm->gameFlags().gameID == GI_EOB1 ? 27 : 38;
+	const uint8 stairsUp = 23;
+	const uint8 stairsDown = 24;
+	const uint8 types[] = { _vm->_teleporterWallId, illusion1, illusion2, stairsUp, stairsDown, hole, plate1, plate2 };
+	const uint8 signs[] = { 1, 15, 15, 'U', 'D', 164, 'O', 'O' };
+
+	for (int i = 0; i < 1024; ++i) {
+		if (!(i % 0x20))
+			debugPrintf("\n");
+		LevelBlockProperty *bl = &_vm->_levelBlockProperties[i];
+		uint8 f = _vm->_wllWallFlags[bl->walls[0]] | _vm->_wllWallFlags[bl->walls[1]] | _vm->_wllWallFlags[bl->walls[2]] | _vm->_wllWallFlags[bl->walls[3]];
+		uint8 s = _vm->_specialWallTypes[bl->walls[0]] | _vm->_specialWallTypes[bl->walls[1]] | _vm->_specialWallTypes[bl->walls[2]] | _vm->_specialWallTypes[bl->walls[3]];
+		uint8 c = ' ';
+		if (s == 3 || s == 4)
+			c = '/';
+		else if (s == 2 || s == 8)
+			c = '°';
+		else if (f & 8)
+			c = 216;
+		else if (f & 1)
+			c = 2;
+
+		if (_vm->_currentBlock == i) {
+			c = 'X';			
+		} else {
+			for (int ii = 0; ii < ARRAYSIZE(types); ++ii) {
+				if (bl->walls[0] == types[ii] || bl->walls[1] == types[ii] || bl->walls[2] == types[ii] || bl->walls[3] == types[ii]) {
+					c = signs[ii];
+					break;
+				}
+			}
+		}
+		
+		debugPrintf("%c", c);
+	}
+	debugPrintf("\n\nParty Position:   %c  Door:             %c  Stairs Up/Down: %c/%c  Plate:      %c   Hole: %c\nSwitch:           %c  Clickable Object: %c  Illusion Wall:  %c    Teleporter: %c\n\n", 'X', 216, 'U', 'D', 'O', 164, '/', '°', 15, 1);
+
+	return true;
+}
+
 bool Debugger_EoB::cmdOpenDoor(int, const char **) {
-	debugPrintf("Warning: Using this command may cause glitches.\n");
 	uint16 block = _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection);
-	int c = (_vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
-	int v = _vm->_levelBlockProperties[block].walls[c];
+	uint8 v = _vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] | _vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[1]];
 	int flg = (_vm->_flags.gameID == GI_EOB1) ? 1 : 0x10;
-	if (_vm->_wllWallFlags[v] & flg) {
+	if (!(v & 8)) {
 		debugPrintf("Couldn't open any door. Make sure you're facing the door you wish to open and standing right in front of it.\n\n");
+	} else if (v & flg) {
+		debugPrintf("The door seems to be already open.\n\n");
 	} else {
 		_vm->openDoor(block);
 		debugPrintf("Trying to open door at block %d.\n\n", block);
@@ -636,12 +682,12 @@ bool Debugger_EoB::cmdOpenDoor(int, const char **) {
 }
 
 bool Debugger_EoB::cmdCloseDoor(int, const char **) {
-	debugPrintf("Warning: Using this command may cause glitches.\n");
 	uint16 block = _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection);
-	int c = (_vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
-	int v = _vm->_levelBlockProperties[block].walls[c];
-	if ((_vm->_flags.gameID == GI_EOB1 && !(_vm->_wllWallFlags[v] & 1)) || (_vm->_flags.gameID == GI_EOB2 && (_vm->_wllWallFlags[v] & 0x20))) {
+	uint8 v = _vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] | _vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[1]];
+	if (!(v & 8)) {
 		debugPrintf("Couldn't close any door. Make sure you're facing the door you wish to close and standing right in front of it.\n\n");
+	} else if ((_vm->_flags.gameID == GI_EOB1 && !(v & 1)) || (_vm->_flags.gameID == GI_EOB2 && (v & 0x20))) {
+		debugPrintf("The door seems to be already closed.\n\n");
 	} else {
 		_vm->closeDoor(block);
 		debugPrintf("Trying to close door at block %d.\n\n", block);
