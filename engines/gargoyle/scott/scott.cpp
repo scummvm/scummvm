@@ -77,30 +77,30 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 		Top = Bottom;
 	}
 
-	Output("\
+	output("\
 Scott Free, A Scott Adams game driver in C.\n\
 Release 1.14, (c) 1993,1994,1995 Swansea University Computer Society.\n\
 Distributed under the GNU software license\n\n");
-	LoadDatabase(gameFile, (Options & DEBUGGING) ? 1 : 0);
+	loadDatabase(gameFile, (Options & DEBUGGING) ? 1 : 0);
 
 	while (!shouldQuit()) {
 		glk_tick();
 
-		PerformActions(0, 0);
+		performActions(0, 0);
 
-		Look();
+		look();
 
-		if (GetInput(&vb, &no) == -1)
+		if (getInput(&vb, &no) == -1)
 			continue;
 		if (g_vm->shouldQuit())
 			break;
 
-		switch (PerformActions(vb, no)) {
+		switch (performActions(vb, no)) {
 		case -1:
-			Output("I don't understand your command. ");
+			output("I don't understand your command. ");
 			break;
 		case -2:
-			Output("I can't do that yet. ");
+			output("I can't do that yet. ");
 			break;
 		default:
 			break;
@@ -114,9 +114,9 @@ Distributed under the GNU software license\n\n");
 				if (Items[LIGHT_SOURCE].Location == CARRIED ||
 					Items[LIGHT_SOURCE].Location == MyLoc) {
 					if (Options&SCOTTLIGHT)
-						Output("Light has run out! ");
+						output("Light has run out! ");
 					else
-						Output("Your light has run out. ");
+						output("Your light has run out. ");
 				}
 				if (Options&PREHISTORIC_LAMP)
 					Items[LIGHT_SOURCE].Location = DESTROYED;
@@ -125,12 +125,12 @@ Distributed under the GNU software license\n\n");
 					Items[LIGHT_SOURCE].Location == MyLoc) {
 
 					if (Options&SCOTTLIGHT) {
-						Output("Light runs out in ");
-						OutputNumber(GameHeader.LightTime);
-						Output(" turns. ");
+						output("Light runs out in ");
+						outputNumber(GameHeader.LightTime);
+						output(" turns. ");
 					} else {
 						if (GameHeader.LightTime % 5 == 0)
-							Output("Your light is growing dim. ");
+							output("Your light is growing dim. ");
 					}
 				}
 			}
@@ -196,7 +196,7 @@ void Scott::initialize() {
 	*/
 }
 
-void Scott::Display(winid_t w, const char *fmt, ...) {
+void Scott::display(winid_t w, const char *fmt, ...) {
 	va_list ap;
 
 	va_start(ap, fmt);
@@ -206,7 +206,7 @@ void Scott::Display(winid_t w, const char *fmt, ...) {
 	glk_put_string_stream(glk_window_get_stream(w), msg.c_str());
 }
 
-void Scott::Delay(int seconds) {
+void Scott::delay(int seconds) {
 	event_t ev;
 
 	if (!glk_gestalt(gestalt_Timer, 0))
@@ -221,26 +221,26 @@ void Scott::Delay(int seconds) {
 	glk_request_timer_events(0);
 }
 
-void Scott::Fatal(const char *x) {
+void Scott::fatal(const char *x) {
 	error(x);
 }
 
-void Scott::ClearScreen(void) {
+void Scott::clearScreen(void) {
 	glk_window_clear(Bottom);
 }
 
-void *Scott::MemAlloc(int size) {
+void *Scott::memAlloc(int size) {
 	void *t = (void *)malloc(size);
 	if (t == nullptr)
-		Fatal("Out of memory");
+		fatal("Out of memory");
 	return t;
 }
 
-bool Scott::RandomPercent(uint n) {
+bool Scott::randomPercent(uint n) {
 	return _random.getRandomNumber(99) < n;
 }
 
-int Scott::CountCarried(void) {
+int Scott::countCarried(void) {
 	int ct = 0;
 	int n = 0;
 	while (ct <= GameHeader.NumItems) {
@@ -251,7 +251,7 @@ int Scott::CountCarried(void) {
 	return n;
 }
 
-const char *Scott::MapSynonym(const char *word) {
+const char *Scott::mapSynonym(const char *word) {
 	int n = 1;
 	const char *tp;
 	static char lastword[16];	/* Last non synonym */
@@ -268,8 +268,8 @@ const char *Scott::MapSynonym(const char *word) {
 	return nullptr;
 }
 
-int Scott::MatchUpItem(const char *text, int loc) {
-	const char *word = MapSynonym(text);
+int Scott::matchUpItem(const char *text, int loc) {
+	const char *word = mapSynonym(text);
 	int ct = 0;
 
 	if (word == nullptr)
@@ -285,7 +285,7 @@ int Scott::MatchUpItem(const char *text, int loc) {
 	return -1;
 }
 
-char *Scott::ReadString(Common::SeekableReadStream *f) {
+char *Scott::readString(Common::SeekableReadStream *f) {
 	char tmp[1024];
 	char *t;
 	int c, nc;
@@ -294,12 +294,12 @@ char *Scott::ReadString(Common::SeekableReadStream *f) {
 		c = f->readByte();
 	} while (f->pos() < f->size() && Common::isSpace(c));
 	if (c != '"') {
-		Fatal("Initial quote expected");
+		fatal("Initial quote expected");
 	}
 
 	for (;;) {
 		if (f->pos() >= f->size())
-			Fatal("EOF in string");
+			fatal("EOF in string");
 
 		c = f->readByte();
 		if (c == '"') {
@@ -331,12 +331,12 @@ char *Scott::ReadString(Common::SeekableReadStream *f) {
 	}
 
 	tmp[ct] = 0;
-	t = (char *)MemAlloc(ct + 1);
+	t = (char *)memAlloc(ct + 1);
 	memcpy(t, tmp, ct + 1);
 	return t;
 }
 
-void Scott::LoadDatabase(Common::SeekableReadStream *f, int loud) {
+void Scott::loadDatabase(Common::SeekableReadStream *f, int loud) {
 	int unused, ni, na, nw, nr, mc, pr, tr, wl, lt, mn, trm;
 	int ct;
 	int lo;
@@ -348,22 +348,22 @@ void Scott::LoadDatabase(Common::SeekableReadStream *f, int loud) {
 	readInts(f, 12, &unused, &ni, &na, &nw, &nr, &mc, &pr, &tr, &wl, &lt, &mn, &trm);
 
 	GameHeader.NumItems = ni;
-	Items = (Item *)MemAlloc(sizeof(Item)*(ni + 1));
+	Items = (Item *)memAlloc(sizeof(Item)*(ni + 1));
 	GameHeader.NumActions = na;
-	Actions = (Action *)MemAlloc(sizeof(Action)*(na + 1));
+	Actions = (Action *)memAlloc(sizeof(Action)*(na + 1));
 	GameHeader.NumWords = nw;
 	GameHeader.WordLength = wl;
-	Verbs = (const char **)MemAlloc(sizeof(char *)*(nw + 1));
-	Nouns = (const char **)MemAlloc(sizeof(char *)*(nw + 1));
+	Verbs = (const char **)memAlloc(sizeof(char *)*(nw + 1));
+	Nouns = (const char **)memAlloc(sizeof(char *)*(nw + 1));
 	GameHeader.NumRooms = nr;
-	Rooms = (Room *)MemAlloc(sizeof(Room)*(nr + 1));
+	Rooms = (Room *)memAlloc(sizeof(Room)*(nr + 1));
 	GameHeader.MaxCarry = mc;
 	GameHeader.PlayerRoom = pr;
 	GameHeader.Treasures = tr;
 	GameHeader.LightTime = lt;
 	LightRefill = lt;
 	GameHeader.NumMessages = mn;
-	Messages = (const char **)MemAlloc(sizeof(char *)*(mn + 1));
+	Messages = (const char **)memAlloc(sizeof(char *)*(mn + 1));
 	GameHeader.TreasureRoom = trm;
 
 	/* Load the actions */
@@ -390,8 +390,8 @@ void Scott::LoadDatabase(Common::SeekableReadStream *f, int loud) {
 	if (loud)
 		debug("Reading %d word pairs.", nw);
 	while (ct<nw + 1) {
-		Verbs[ct] = ReadString(f);
-		Nouns[ct] = ReadString(f);
+		Verbs[ct] = readString(f);
+		Nouns[ct] = readString(f);
 		ct++;
 	}
 	ct = 0;
@@ -403,7 +403,7 @@ void Scott::LoadDatabase(Common::SeekableReadStream *f, int loud) {
 				&rp->Exits[0], &rp->Exits[1], &rp->Exits[2],
 				&rp->Exits[3], &rp->Exits[4], &rp->Exits[5]);
 	
-		rp->Text = ReadString(f);
+		rp->Text = readString(f);
 		ct++;
 		rp++;
 	}
@@ -412,7 +412,7 @@ void Scott::LoadDatabase(Common::SeekableReadStream *f, int loud) {
 	if (loud)
 		debug("Reading %d messages.", mn);
 	while (ct<mn + 1) {
-		Messages[ct] = ReadString(f);
+		Messages[ct] = readString(f);
 		ct++;
 	}
 
@@ -421,7 +421,7 @@ void Scott::LoadDatabase(Common::SeekableReadStream *f, int loud) {
 		debug("Reading %d items.", ni);
 	ip = Items;
 	while (ct < ni + 1) {
-		ip->Text = ReadString(f);
+		ip->Text = readString(f);
 		ip->AutoGet = strchr(ip->Text, '/');
 		/* Some games use // to mean no auto get/drop word! */
 		if (ip->AutoGet && strcmp(ip->AutoGet, "//") && strcmp(ip->AutoGet, "/*")) {
@@ -441,7 +441,7 @@ void Scott::LoadDatabase(Common::SeekableReadStream *f, int loud) {
 	ct = 0;
 	/* Discard Comment Strings */
 	while (ct<na + 1) {
-		free(ReadString(f));
+		free(readString(f));
 		ct++;
 	}
 
@@ -454,15 +454,15 @@ void Scott::LoadDatabase(Common::SeekableReadStream *f, int loud) {
 		debug("%d.\nLoad Complete.\n", ct);
 }
 
-void Scott::Output(const char *a) {
-	Display(Bottom, "%s", a);
+void Scott::output(const char *a) {
+	display(Bottom, "%s", a);
 }
 
-void Scott::OutputNumber(int a) {
-	Display(Bottom, "%d", a);
+void Scott::outputNumber(int a) {
+	display(Bottom, "%d", a);
 }
 
-void Scott::Look(void) {
+void Scott::look(void) {
 	static char *ExitNames[6] = { "North", "South", "East", "West", "Up", "Down" };
 	Room *r;
 	int ct, f;
@@ -474,41 +474,41 @@ void Scott::Look(void) {
 	if ((BitFlags&(1 << DARKBIT)) && Items[LIGHT_SOURCE].Location != CARRIED
 		&& Items[LIGHT_SOURCE].Location != MyLoc) {
 		if (Options&YOUARE)
-			Display(Top, "You can't see. It is too dark!\n");
+			display(Top, "You can't see. It is too dark!\n");
 		else
-			Display(Top, "I can't see. It is too dark!\n");
+			display(Top, "I can't see. It is too dark!\n");
 		if (Options & TRS80_STYLE)
-			Display(Top, TRS80_LINE);
+			display(Top, TRS80_LINE);
 		return;
 	}
 	r = &Rooms[MyLoc];
 	if (*r->Text == '*')
-		Display(Top, "%s\n", r->Text + 1);
+		display(Top, "%s\n", r->Text + 1);
 	else {
 		if (Options&YOUARE)
-			Display(Top, "You are in a %s\n", r->Text);
+			display(Top, "You are in a %s\n", r->Text);
 		else
-			Display(Top, "I'm in a %s\n", r->Text);
+			display(Top, "I'm in a %s\n", r->Text);
 	}
 
 	ct = 0;
 	f = 0;
-	Display(Top, "\nObvious exits: ");
+	display(Top, "\nObvious exits: ");
 	while (ct<6) {
 		if (r->Exits[ct] != 0)
 		{
 			if (f == 0)
 				f = 1;
 			else
-				Display(Top, ", ");
-			Display(Top, "%s", ExitNames[ct]);
+				display(Top, ", ");
+			display(Top, "%s", ExitNames[ct]);
 		}
 		ct++;
 	}
 
 	if (f == 0)
-		Display(Top, "none");
-	Display(Top, ".\n");
+		display(Top, "none");
+	display(Top, ".\n");
 	ct = 0;
 	f = 0;
 	pos = 0;
@@ -516,37 +516,37 @@ void Scott::Look(void) {
 		if (Items[ct].Location == MyLoc) {
 			if (f == 0) {
 				if (Options & YOUARE) {
-					Display(Top, "\nYou can also see: ");
+					display(Top, "\nYou can also see: ");
 					pos = 18;
 				} else {
-					Display(Top, "\nI can also see: ");
+					display(Top, "\nI can also see: ");
 					pos = 16;
 				}
 				f++;
 			} else if (!(Options & TRS80_STYLE)) {
-				Display(Top, " - ");
+				display(Top, " - ");
 				pos += 3;
 			}
 			if (pos + (int)strlen(Items[ct].Text) > (Width - 10)) {
 				pos = 0;
-				Display(Top, "\n");
+				display(Top, "\n");
 			}
-			Display(Top, "%s", Items[ct].Text);
+			display(Top, "%s", Items[ct].Text);
 			pos += strlen(Items[ct].Text);
 			if (Options & TRS80_STYLE) {
-				Display(Top, ". ");
+				display(Top, ". ");
 				pos += 2;
 			}
 		}
 		ct++;
 	}
 
-	Display(Top, "\n");
+	display(Top, "\n");
 	if (Options & TRS80_STYLE)
-		Display(Top, TRS80_LINE);
+		display(Top, TRS80_LINE);
 }
 
-int Scott::WhichWord(const char *word, const char **list) {
+int Scott::whichWord(const char *word, const char **list) {
 	int n = 1;
 	int ne = 1;
 	const char *tp;
@@ -563,7 +563,7 @@ int Scott::WhichWord(const char *word, const char **list) {
 	return -1;
 }
 
-void Scott::LineInput(char *buf, size_t n) {
+void Scott::lineInput(char *buf, size_t n) {
 	event_t ev;
 
 	glk_request_line_event(Bottom, buf, n - 1, 0);
@@ -575,13 +575,13 @@ void Scott::LineInput(char *buf, size_t n) {
 		else if (ev.type == evtype_LineInput)
 			break;
 		else if (ev.type == evtype_Arrange && split_screen)
-			Look();
+			look();
 	} while (ev.type != evtype_Quit);
 
 	buf[ev.val1] = 0;
 }
 
-void Scott::SaveGame(void) {
+void Scott::saveGame(void) {
 	strid_t file;
 	frefid_t ref;
 	int ct;
@@ -610,10 +610,10 @@ void Scott::SaveGame(void) {
 	}
 
 	glk_stream_close(file, nullptr);
-	Output("Saved.\n");
+	output("Saved.\n");
 }
 
-void Scott::LoadGame(void) {
+void Scott::loadGame(void) {
 	strid_t file;
 	frefid_t ref;
 	char buf[128];
@@ -648,7 +648,7 @@ void Scott::LoadGame(void) {
 	}
 }
 
-int Scott::GetInput(int *vb, int *no) {
+int Scott::getInput(int *vb, int *no) {
 	char buf[256];
 	char verb[10], noun[10];
 	int vc, nc;
@@ -656,8 +656,8 @@ int Scott::GetInput(int *vb, int *no) {
 
 	do {
 		do {
-			Output("\nTell me what to do ? ");
-			LineInput(buf, sizeof buf);
+			output("\nTell me what to do ? ");
+			lineInput(buf, sizeof buf);
 			if (g_vm->shouldQuit())
 				return 0;
 
@@ -665,7 +665,7 @@ int Scott::GetInput(int *vb, int *no) {
 		} while (num == 0 || *buf == '\n');
 		
 		if (xstrcasecmp(verb, "restore") == 0) {
-			LoadGame();
+			loadGame();
 			return -1;
 		}
 		if (num == 1)
@@ -682,18 +682,18 @@ int Scott::GetInput(int *vb, int *no) {
 			case 'i':strcpy(verb, "INVENTORY"); break;
 			}
 		}
-		nc = WhichWord(verb, Nouns);
+		nc = whichWord(verb, Nouns);
 		/* The Scott Adams system has a hack to avoid typing 'go' */
 		if (nc >= 1 && nc <= 6) {
 			vc = 1;
 		} else {
-			vc = WhichWord(verb, Verbs);
-			nc = WhichWord(noun, Nouns);
+			vc = whichWord(verb, Verbs);
+			nc = whichWord(noun, Nouns);
 		}
 		*vb = vc;
 		*no = nc;
 		if (vc == -1) {
-			Output("You use word(s) I don't know! ");
+			output("You use word(s) I don't know! ");
 		}
 	} while (vc == -1);
 
@@ -701,7 +701,7 @@ int Scott::GetInput(int *vb, int *no) {
 	return 0;
 }
 
-int Scott::PerformLine(int ct) {
+int Scott::performLine(int ct) {
 	int continuation = 0;
 	int param[5], pptr = 0;
 	int act[4];
@@ -754,11 +754,11 @@ int Scott::PerformLine(int ct) {
 				return 0;
 			break;
 		case 10:
-			if (CountCarried() == 0)
+			if (countCarried() == 0)
 				return 0;
 			break;
 		case 11:
-			if (CountCarried())
+			if (countCarried())
 				return 0;
 			break;
 		case 12:
@@ -808,23 +808,23 @@ int Scott::PerformLine(int ct) {
 	while (cc<4)
 	{
 		if (act[cc] >= 1 && act[cc] < 52) {
-			Output(Messages[act[cc]]);
-			Output("\n");
+			output(Messages[act[cc]]);
+			output("\n");
 		} else if (act[cc] > 101) {
-			Output(Messages[act[cc] - 50]);
-			Output("\n");
+			output(Messages[act[cc] - 50]);
+			output("\n");
 		}
 		else {
 			switch (act[cc]) {
 			case 0:/* NOP */
 				break;
 			case 52:
-				if (CountCarried() == GameHeader.MaxCarry)
+				if (countCarried() == GameHeader.MaxCarry)
 				{
 					if (Options&YOUARE)
-						Output("You are carrying too much. ");
+						output("You are carrying too much. ");
 					else
-						Output("I've too much to carry! ");
+						output("I've too much to carry! ");
 					break;
 				}
 				Items[param[pptr++]].Location = CARRIED;
@@ -855,9 +855,9 @@ int Scott::PerformLine(int ct) {
 				break;
 			case 61:
 				if (Options&YOUARE)
-					Output("You are dead.\n");
+					output("You are dead.\n");
 				else
-					Output("I am dead.\n");
+					output("I am dead.\n");
 				BitFlags &= ~(1 << DARKBIT);
 				MyLoc = GameHeader.NumRooms;/* It seems to be what the code says! */
 				break;
@@ -869,7 +869,7 @@ int Scott::PerformLine(int ct) {
 				break;
 			}
 			case 63:
-				doneit:				Output("The game is now over.\n");
+				doneit:				output("The game is now over.\n");
 									glk_exit();
 									break;
 			case 64:
@@ -886,16 +886,16 @@ int Scott::PerformLine(int ct) {
 					i++;
 				}
 				if (Options&YOUARE)
-					Output("You have stored ");
+					output("You have stored ");
 				else
-					Output("I've stored ");
-				OutputNumber(n);
-				Output(" treasures.  On a scale of 0 to 100, that rates ");
-				OutputNumber((n * 100) / GameHeader.Treasures);
-				Output(".\n");
+					output("I've stored ");
+				outputNumber(n);
+				output(" treasures.  On a scale of 0 to 100, that rates ");
+				outputNumber((n * 100) / GameHeader.Treasures);
+				output(".\n");
 				if (n == GameHeader.Treasures)
 				{
-					Output("Well done.\n");
+					output("Well done.\n");
 					goto doneit;
 				}
 				break;
@@ -905,9 +905,9 @@ int Scott::PerformLine(int ct) {
 				int i = 0;
 				int f = 0;
 				if (Options&YOUARE)
-					Output("You are carrying:\n");
+					output("You are carrying:\n");
 				else
-					Output("I'm carrying:\n");
+					output("I'm carrying:\n");
 				while (i <= GameHeader.NumItems)
 				{
 					if (Items[i].Location == CARRIED)
@@ -915,18 +915,18 @@ int Scott::PerformLine(int ct) {
 						if (f == 1)
 						{
 							if (Options & TRS80_STYLE)
-								Output(". ");
+								output(". ");
 							else
-								Output(" - ");
+								output(" - ");
 						}
 						f = 1;
-						Output(Items[i].Text);
+						output(Items[i].Text);
 					}
 					i++;
 				}
 				if (f == 0)
-					Output("Nothing");
-				Output(".\n");
+					output("Nothing");
+				output(".\n");
 				break;
 			}
 			case 67:
@@ -941,10 +941,10 @@ int Scott::PerformLine(int ct) {
 				BitFlags &= ~(1 << LIGHTOUTBIT);
 				break;
 			case 70:
-				ClearScreen(); /* pdd. */
+				clearScreen(); /* pdd. */
 				break;
 			case 71:
-				SaveGame();
+				saveGame();
 				break;
 			case 72:
 			{
@@ -976,7 +976,7 @@ int Scott::PerformLine(int ct) {
 					CurrentCounter--;
 				break;
 			case 78:
-				OutputNumber(CurrentCounter);
+				outputNumber(CurrentCounter);
 				break;
 			case 79:
 				CurrentCounter = param[pptr++];
@@ -1011,14 +1011,14 @@ int Scott::PerformLine(int ct) {
 				know if there is a maximum value to limit too */
 				break;
 			case 84:
-				Output(NounText);
+				output(NounText);
 				break;
 			case 85:
-				Output(NounText);
-				Output("\n");
+				output(NounText);
+				output("\n");
 				break;
 			case 86:
-				Output("\n");
+				output("\n");
 				break;
 			case 87:
 			{
@@ -1031,7 +1031,7 @@ int Scott::PerformLine(int ct) {
 				break;
 			}
 			case 88:
-				Delay(2);
+				delay(2);
 				break;
 			case 89:
 				pptr++;
@@ -1052,7 +1052,7 @@ int Scott::PerformLine(int ct) {
 	return 1 + continuation;
 }
 
-int Scott::PerformActions(int vb, int no) {
+int Scott::performActions(int vb, int no) {
 	static int disable_sysfunc = 0;	/* Recursion lock */
 	int d = BitFlags&(1 << DARKBIT);
 
@@ -1060,7 +1060,7 @@ int Scott::PerformActions(int vb, int no) {
 	int fl;
 	int doagain = 0;
 	if (vb == 1 && no == -1) {
-		Output("Give me a direction too.");
+		output("Give me a direction too.");
 		return 0;
 	}
 	if (vb == 1 && no >= 1 && no <= 6) {
@@ -1069,7 +1069,7 @@ int Scott::PerformActions(int vb, int no) {
 			Items[LIGHT_SOURCE].Location == CARRIED)
 			d = 0;
 		if (d)
-			Output("Dangerous to move in the dark! ");
+			output("Dangerous to move in the dark! ");
 		nl = Rooms[MyLoc].Exits[no - 1];
 		if (nl != 0) {
 			MyLoc = nl;
@@ -1077,15 +1077,15 @@ int Scott::PerformActions(int vb, int no) {
 		}
 		if (d) {
 			if (Options&YOUARE)
-				Output("You fell down and broke your neck. ");
+				output("You fell down and broke your neck. ");
 			else
-				Output("I fell down and broke my neck. ");
+				output("I fell down and broke my neck. ");
 			glk_exit();
 		}
 		if (Options&YOUARE)
-			Output("You can't go in that direction. ");
+			output("You can't go in that direction. ");
 		else
-			Output("I can't go in that direction. ");
+			output("I can't go in that direction. ");
 		return 0;
 	}
 
@@ -1103,12 +1103,12 @@ int Scott::PerformActions(int vb, int no) {
 		nv = vv % 150;
 		vv /= 150;
 		if ((vv == vb) || (doagain&&Actions[ct].Vocab == 0)) {
-			if ((vv == 0 && RandomPercent(nv)) || doagain ||
+			if ((vv == 0 && randomPercent(nv)) || doagain ||
 					(vv != 0 && (nv == no || nv == 0))) {
 				int f2;
 				if (fl == -1)
 					fl = -2;
-				if ((f2 = PerformLine(ct)) > 0) {
+				if ((f2 = performLine(ct)) > 0) {
 					/* ahah finally figured it out ! */
 					fl = 0;
 					if (f2 == 2)
@@ -1143,57 +1143,57 @@ int Scott::PerformActions(int vb, int no) {
 					int f = 0;
 
 					if (d) {
-						Output("It is dark.\n");
+						output("It is dark.\n");
 						return 0;
 					}
 					while (i <= GameHeader.NumItems) {
 						if (Items[i].Location == MyLoc && Items[i].AutoGet != nullptr && Items[i].AutoGet[0] != '*') {
-							no = WhichWord(Items[i].AutoGet, Nouns);
+							no = whichWord(Items[i].AutoGet, Nouns);
 							disable_sysfunc = 1;	/* Don't recurse into auto get ! */
-							PerformActions(vb, no);	/* Recursively check each items table code */
+							performActions(vb, no);	/* Recursively check each items table code */
 							disable_sysfunc = 0;
-							if (CountCarried() == GameHeader.MaxCarry) {
+							if (countCarried() == GameHeader.MaxCarry) {
 								if (Options&YOUARE)
-									Output("You are carrying too much. ");
+									output("You are carrying too much. ");
 								else
-									Output("I've too much to carry. ");
+									output("I've too much to carry. ");
 								return 0;
 							}
 							Items[i].Location = CARRIED;
-							Output(Items[i].Text);
-							Output(": O.K.\n");
+							output(Items[i].Text);
+							output(": O.K.\n");
 							f = 1;
 						}
 						i++;
 					}
 					if (f == 0)
-						Output("Nothing taken.");
+						output("Nothing taken.");
 					return 0;
 				}
 				if (no == -1)
 				{
-					Output("What ? ");
+					output("What ? ");
 					return 0;
 				}
-				if (CountCarried() == GameHeader.MaxCarry)
+				if (countCarried() == GameHeader.MaxCarry)
 				{
 					if (Options&YOUARE)
-						Output("You are carrying too much. ");
+						output("You are carrying too much. ");
 					else
-						Output("I've too much to carry. ");
+						output("I've too much to carry. ");
 					return 0;
 				}
-				item = MatchUpItem(NounText, MyLoc);
+				item = matchUpItem(NounText, MyLoc);
 				if (item == -1)
 				{
 					if (Options&YOUARE)
-						Output("It is beyond your power to do that. ");
+						output("It is beyond your power to do that. ");
 					else
-						Output("It's beyond my power to do that. ");
+						output("It's beyond my power to do that. ");
 					return 0;
 				}
 				Items[item].Location = CARRIED;
-				Output("O.K. ");
+				output("O.K. ");
 				return 0;
 			}
 			if (vb == 18) {
@@ -1202,35 +1202,35 @@ int Scott::PerformActions(int vb, int no) {
 					int f = 0;
 					while (i <= GameHeader.NumItems) {
 						if (Items[i].Location == CARRIED && Items[i].AutoGet && Items[i].AutoGet[0] != '*') {
-							no = WhichWord(Items[i].AutoGet, Nouns);
+							no = whichWord(Items[i].AutoGet, Nouns);
 							disable_sysfunc = 1;
-							PerformActions(vb, no);
+							performActions(vb, no);
 							disable_sysfunc = 0;
 							Items[i].Location = MyLoc;
-							Output(Items[i].Text);
-							Output(": O.K.\n");
+							output(Items[i].Text);
+							output(": O.K.\n");
 							f = 1;
 						}
 						i++;
 					}
 					if (f == 0)
-						Output("Nothing dropped.\n");
+						output("Nothing dropped.\n");
 					return 0;
 				}
 				if (no == -1) {
-					Output("What ? ");
+					output("What ? ");
 					return 0;
 				}
-				item = MatchUpItem(NounText, CARRIED);
+				item = matchUpItem(NounText, CARRIED);
 				if (item == -1) {
 					if (Options&YOUARE)
-						Output("It's beyond your power to do that.\n");
+						output("It's beyond your power to do that.\n");
 					else
-						Output("It's beyond my power to do that.\n");
+						output("It's beyond my power to do that.\n");
 					return 0;
 				}
 				Items[item].Location = MyLoc;
-				Output("O.K. ");
+				output("O.K. ");
 				return 0;
 			}
 		}

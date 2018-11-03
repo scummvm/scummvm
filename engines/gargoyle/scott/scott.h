@@ -39,11 +39,13 @@ namespace Scott {
 #define DARKBIT		15
 #define LIGHTOUTBIT	16		// Light gone out
 
-#define YOUARE		1		// You are not I am
-#define SCOTTLIGHT	2		// Authentic Scott Adams light messages
-#define DEBUGGING	4		// Info from database load
-#define TRS80_STYLE	8		// Display in style used on TRS-80
-#define PREHISTORIC_LAMP 16	// Destroy the lamp (very old databases)
+enum GameOption {
+	YOUARE      = 1,		///< You are not I am
+	SCOTTLIGHT  = 2,		///< Authentic Scott Adams light messages
+	DEBUGGING   = 4,		///< Info from database load
+	TRS80_STYLE = 8,		///< Display in style used on TRS-80
+	PREHISTORIC_LAMP = 16	///< Destroy the lamp (very old databases)
+};
 
 #define TRS80_LINE	"\n<------------------------------------------------------------>\n"
 #define MyLoc	(GameHeader.PlayerRoom)
@@ -52,7 +54,7 @@ struct Header {
  	int Unknown;
 	int NumItems;
 	int NumActions;
-	int NumWords;			// Smaller of verb/noun is padded to same size
+	int NumWords;			///< Smaller of verb/noun is padded to same size
 	int NumRooms;
 	int MaxCarry;
 	int PlayerRoom;
@@ -135,27 +137,27 @@ private:
 	 */
 	void initialize();
 
-	void Display(winid_t w, const char *fmt, ...);
-	void Delay(int seconds);
-	void Fatal(const char *x);
-	void ClearScreen(void);
-	void *MemAlloc(int size);
-	bool RandomPercent(uint n);
-	int CountCarried(void);
-	const char *MapSynonym(const char *word);
-	int MatchUpItem(const char *text, int loc);
-	char *ReadString(Common::SeekableReadStream *f);
-	void LoadDatabase(Common::SeekableReadStream *f, int loud);
-	void Output(const char *a);
-	void OutputNumber(int a);
-	void Look(void);
-	int WhichWord(const char *word, const char **list);
-	void LineInput(char *buf, size_t n);
-	void SaveGame(void);
-	void LoadGame(void);
-	int GetInput(int *vb, int *no);
-	int PerformLine(int ct);
-	int PerformActions(int vb, int no);
+	void display(winid_t w, const char *fmt, ...);
+	void delay(int seconds);
+	void fatal(const char *x);
+	void clearScreen(void);
+	void *memAlloc(int size);
+	bool randomPercent(uint n);
+	int countCarried(void);
+	const char *mapSynonym(const char *word);
+	int matchUpItem(const char *text, int loc);
+	char *readString(Common::SeekableReadStream *f);
+	void loadDatabase(Common::SeekableReadStream *f, int loud);
+	void output(const char *a);
+	void outputNumber(int a);
+	void look(void);
+	int whichWord(const char *word, const char **list);
+	void lineInput(char *buf, size_t n);
+	void saveGame(void);
+	void loadGame(void);
+	int getInput(int *vb, int *no);
+	int performLine(int ct);
+	int performActions(int vb, int no);
 
 	int xstrcasecmp(const char *, const char *);
 	int xstrncasecmp(const char *, const char *, size_t);
