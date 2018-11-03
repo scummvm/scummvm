@@ -74,6 +74,8 @@ public:
 	Attributes _origAttr;
 	gidispatch_rock_t _inArrayRock;
 	glui32 *_lineTerminators;
+
+	WindowStyle _styles[style_NUMSTYLES]; ///< style hints and settings
 public:
 	/**
 	 * Constructor
