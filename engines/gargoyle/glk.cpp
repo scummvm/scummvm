@@ -59,6 +59,9 @@ Glk::Glk(OSystem *syst, const GargoyleGameDescription *gameDesc) :
 }
 
 void Glk::glk_exit(void) {
+	glk_put_string("[ press any key to exit ]");
+	_events->waitForPress();
+
 	quitGame();
 }
 
