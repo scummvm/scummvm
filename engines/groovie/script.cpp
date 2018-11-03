@@ -439,9 +439,11 @@ void Script::savegame(uint slot) {
 	// Cache the saved name
 	for (int i = 0; i < 15; i++) {
 		newchar = _variables[i] + 0x30;
-		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A)) {
+		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A) && newchar != 0x2E) {
 			save[i] = '\0';
 			break;
+		} else if (newchar == 0x2E) { // '.', generated when space is pressed
+			save[i] = ' ';
 		} else {
 			save[i] = newchar;
 		}
