@@ -486,10 +486,15 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		DEF_LOCALLIB_STATIC("libpng");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS") || CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
+	if (CONTAINS_DEFINE(setup.defines, "USE_OGG")) {
 		DEF_LOCALLIB_STATIC("libogg");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) {
 		DEF_LOCALLIB_STATIC("libvorbis");
 		DEF_LOCALLIB_STATIC("libvorbisfile");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_TREMOR")) {
+		DEF_LOCALLIB_STATIC("libvorbisidec");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
 		DEF_LOCALLIB_STATIC("libtheoradec");
@@ -549,10 +554,15 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		frameworks_iOS.push_back("libpng.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS") || CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
+	if (CONTAINS_DEFINE(setup.defines, "USE_OGG")) {
 		frameworks_iOS.push_back("libogg.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) {
 		frameworks_iOS.push_back("libvorbis.a");
 		frameworks_iOS.push_back("libvorbisfile.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_TREMOR")) {
+		frameworks_iOS.push_back("libvorbisidec.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
 		frameworks_iOS.push_back("libtheoradec.a");
@@ -632,10 +642,15 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		frameworks_osx.push_back("libpng.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS") || CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
+	if (CONTAINS_DEFINE(setup.defines, "USE_OGG")) {
 		frameworks_osx.push_back("libogg.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_VORBIS")) {
 		frameworks_osx.push_back("libvorbis.a");
 		frameworks_osx.push_back("libvorbisfile.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_TREMOR")) {
+		frameworks_osx.push_back("libvorbisidec.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_THEORADEC")) {
 		frameworks_osx.push_back("libtheoradec.a");
