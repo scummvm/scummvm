@@ -32,7 +32,6 @@
 #include "gargoyle/clipboard.h"
 #include "gargoyle/conf.h"
 #include "gargoyle/events.h"
-#include "gargoyle/files.h"
 #include "gargoyle/picture.h"
 #include "gargoyle/screen.h"
 #include "gargoyle/streams.h"
@@ -55,7 +54,6 @@ GargoyleEngine::~GargoyleEngine() {
 	delete _clipboard;
 	delete _conf;
 	delete _events;
-	delete _files;
 	delete _picList;
 	delete _screen;
 	delete _streams;
@@ -76,7 +74,6 @@ void GargoyleEngine::initialize() {
 
 	_clipboard = new Clipboard();
 	_events = new Events();
-	_files = new Files();
 	_picList = new PicList();
 	_streams = new Streams();
 	_windows = new Windows(_screen);

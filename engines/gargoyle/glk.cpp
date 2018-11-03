@@ -626,7 +626,7 @@ bool Glk::glk_style_measure(winid_t win, glui32 style, glui32 hint, glui32 *resu
 }
 
 frefid_t Glk::glk_fileref_create_temp(glui32 usage, glui32 rock) {
-	return _files->createTemp(usage, rock);
+	return _streams->createTemp(usage, rock);
 }
 
 frefid_t Glk::glk_fileref_create_by_name(glui32 usage, const char *name, glui32 rock) {
@@ -637,11 +637,11 @@ frefid_t Glk::glk_fileref_create_by_name(glui32 usage, const char *name, glui32 
 			tempName.setChar(idx, '-');
 	}
 
-	return _files->createRef(tempName, usage, rock);
+	return _streams->createRef(tempName, usage, rock);
 }
 
 frefid_t Glk::glk_fileref_create_by_prompt(glui32 usage, FileMode fmode, glui32 rock) {
-	return _files->createByPrompt(usage, fmode, rock);
+	return _streams->createByPrompt(usage, fmode, rock);
 }
 
 frefid_t Glk::glk_fileref_create_from_fileref(glui32 usage, frefid_t fref, glui32 rock) {
@@ -649,16 +649,16 @@ frefid_t Glk::glk_fileref_create_from_fileref(glui32 usage, frefid_t fref, glui3
 		warning("fileref_create_from_fileref: invalid ref");
 		return nullptr;
 	} else {
-		return _files->createFromRef(fref, usage, rock);
+		return _streams->createFromRef(fref, usage, rock);
 	}
 }
 
 void Glk::glk_fileref_destroy(frefid_t fref) {
-	_files->deleteRef(fref);
+	_streams->deleteRef(fref);
 }
 
 frefid_t Glk::glk_fileref_iterate(frefid_t fref, glui32 *rockptr) {
-	return _files->iterate(fref, rockptr);
+	return _streams->iterate(fref, rockptr);
 }
 
 glui32 Glk::glk_fileref_get_rock(frefid_t fref) {
