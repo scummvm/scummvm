@@ -25,21 +25,13 @@
 
 #include "common/scummsys.h"
 #include "common/savefile.h"
+#include "gargoyle/files.h"
 #include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
 
 class Window;
 class Streams;
-
-struct FileReference {
-	glui32 _rock;
-	Common::String _filename;
-	int _fileType;
-	int _textMode;
-	gidispatch_rock_t _dispRock;
-};
-typedef FileReference *frefid_t;
 
 struct StreamResult {
 	uint32 _readCount;
