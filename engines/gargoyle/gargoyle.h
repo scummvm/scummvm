@@ -138,6 +138,11 @@ public:
 	 * Returns the primary filename for the game
 	 */
 	const Common::String &GargoyleEngine::getFilename() const;
+
+	/**
+	 * Return the game engine's target name
+	 */
+	const Common::String &getTargetName() const { return _targetName; }
 };
 
 extern GargoyleEngine *g_vm;
