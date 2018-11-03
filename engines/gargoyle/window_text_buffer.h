@@ -126,9 +126,6 @@ public:
 	glui32 _echoLineInput;
 	glui32 *_lineTerminators;
 
-	/* style hints and settings */
-	WindowStyle _styles[style_NUMSTYLES];
-
 	/* for copy selection */
 	glui32 *_copyBuf;
 	int _copyPos;
@@ -219,6 +216,11 @@ public:
 	virtual void cancelCharEvent() override { _charRequest = _charRequestUni = false; }
 
 	virtual void flowBreak() override;
+
+	/**
+	 * Returns a pointer to the styles for the window
+	 */
+	virtual const WindowStyle *getStyles() const override { return _styles; }
 };
 
 } // End of namespace Gargoyle

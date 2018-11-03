@@ -444,18 +444,74 @@ void Glk::glk_stylehint_set(glui32 wintype, glui32 styl, glui32 hint, glsi32 val
 	// TODO
 }
 
-void Glk::glk_stylehint_clear(glui32 wintype, glui32 styl, glui32 hint) {
+void Glk::glk_stylehint_clear(glui32 wintype, glui32 style, glui32 hint) {
 	// TODO
 }
 
-glui32 Glk::glk_style_distinguish(winid_t win, glui32 styl1, glui32 styl2) {
-	// TODO
-	return 0;
+glui32 Glk::glk_style_distinguish(winid_t win, glui32 style1, glui32 style2) {
+	const WindowStyle *styles = win->getStyles();
+	if (!styles)
+		return false;
+
+	return styles[style1] == styles[style2] ? 0 : 1;
 }
 
-glui32 Glk::glk_style_measure(winid_t win, glui32 styl, glui32 hint, glui32 *result) {
-	// TODO
-	return 0;
+bool Glk::glk_style_measure(winid_t win, glui32 style, glui32 hint, glui32 *result) {
+	const WindowStyle *styles = win->getStyles();
+	if (!styles)
+		return false;
+
+	switch (hint) {
+	case stylehint_Indentation:
+	case stylehint_ParaIndentation:
+		*result = 0;
+		break;
+
+	case stylehint_Justification:
+		*result = stylehint_just_LeftFlush;
+		break;
+
+	case stylehint_Size:
+		*result = 1;
+		break;
+
+	case stylehint_Weight:
+		*result =
+			(styles[style].font == PROPB || styles[style].font == PROPZ ||
+				styles[style].font == MONOB || styles[style].font == MONOZ);
+		break;
+
+	case stylehint_Oblique:
+		*result =
+			(styles[style].font == PROPI || styles[style].font == PROPZ ||
+				styles[style].font == MONOI || styles[style].font == MONOZ);
+		break;
+
+	case stylehint_Proportional:
+		*result =
+			(styles[style].font == PROPR || styles[style].font == PROPI ||
+				styles[style].font == PROPB || styles[style].font == PROPZ);
+		break;
+
+	case stylehint_TextColor:
+		*result =
+			(styles[style].fg[0] << 16) | (styles[style].fg[1] << 8) | (styles[style].fg[2]);
+		break;
+
+	case stylehint_BackColor:
+		*result =
+			(styles[style].bg[0] << 16) | (styles[style].bg[1] << 8) | (styles[style].bg[2]);
+		break;
+
+	case stylehint_ReverseColor:
+		*result = styles[style].reverse;
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
 }
 
 frefid_t Glk::glk_fileref_create_temp(glui32 usage, glui32 rock) {

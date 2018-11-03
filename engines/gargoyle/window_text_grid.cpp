@@ -39,7 +39,7 @@ TextGridWindow::TextGridWindow(Windows *windows, uint32 rock) : Window(windows, 
 	_inArrayRock.num = 0;
 	_lineTerminators = nullptr;
 
-	Common::copy(&g_conf->_gStyles[0], &g_conf->_gStyles[style_NUMSTYLES], styles);
+	Common::copy(&g_conf->_gStyles[0], &g_conf->_gStyles[style_NUMSTYLES], _styles);
 }
 
 TextGridWindow::~TextGridWindow() {
@@ -598,9 +598,9 @@ void TextGridWindow::redraw() {
 			for (b = 0; b < _width; b++) {
 				if (ln->_attrs[a] != ln->_attrs[b]) {
 					link = ln->_attrs[a].hyper;
-					font = ln->_attrs[a].attrFont(styles);
-					fgcolor = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(styles);
-					bgcolor = ln->_attrs[a].attrBg(styles);
+					font = ln->_attrs[a].attrFont(_styles);
+					fgcolor = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
+					bgcolor = ln->_attrs[a].attrBg(_styles);
 					w = (b - a) * g_conf->_cellW;
 					screen.fillRect(Rect::fromXYWH(x, y, w, g_conf->_leading), bgcolor);
 					o = x;
@@ -620,9 +620,9 @@ void TextGridWindow::redraw() {
 				}
 			}
 			link = ln->_attrs[a].hyper;
-			font = ln->_attrs[a].attrFont(styles);
-			fgcolor = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(styles);
-			bgcolor = ln->_attrs[a].attrBg(styles);
+			font = ln->_attrs[a].attrFont(_styles);
+			fgcolor = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
+			bgcolor = ln->_attrs[a].attrBg(_styles);
 			w = (b - a) * g_conf->_cellW;
 			w += _bbox.right - (x + w);
 			screen.fillRect(Rect::fromXYWH(x, y, w, g_conf->_leading), bgcolor);

@@ -618,6 +618,11 @@ void Window::setBackgroundColor(glui32 color) {
 	warning("setBackgroundColor: not a graphics window");
 }
 
+const WindowStyle *Window::getStyles() const {
+	warning("getStyles: not a text window");
+	return nullptr;
+}
+
 void Window::setTerminatorsLineEvent(glui32 *keycodes, glui32 count) {
 	if (dynamic_cast<TextBufferWindow *>(this) || dynamic_cast<TextGridWindow *>(this)) {
 		delete _lineTerminatorsBase;
