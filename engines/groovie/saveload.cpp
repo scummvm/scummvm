@@ -128,6 +128,7 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 				case 0:
 					break;
 				case 16: // @
+				// fall through intended
 				case 254: // . (generated when pressing space)
 					c = ' ';
 					break;
