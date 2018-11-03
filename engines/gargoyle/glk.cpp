@@ -440,12 +440,123 @@ glui32 Glk::glk_get_buffer_stream(strid_t str, char *buf, glui32 len) {
 	return 0;
 }
 
-void Glk::glk_stylehint_set(glui32 wintype, glui32 styl, glui32 hint, glsi32 val) {
-	// TODO
+void Glk::glk_stylehint_set(glui32 wintype, glui32 style, glui32 hint, glsi32 val) {
+	WindowStyle *styles;
+	bool p, b, i;
+
+	if (wintype == wintype_AllTypes) {
+		glk_stylehint_set(wintype_TextGrid, style, hint, val);
+		glk_stylehint_set(wintype_TextBuffer, style, hint, val);
+		return;
+	}
+
+	if (wintype == wintype_TextGrid)
+		styles = g_conf->_gStyles;
+	else if (wintype == wintype_TextBuffer)
+		styles = g_conf->_tStyles;
+	else
+		return;
+
+	if (!g_conf->_styleHint)
+		return;
+
+	switch (hint) {
+	case stylehint_TextColor:
+		styles[style].fg[0] = (val >> 16) & 0xff;
+		styles[style].fg[1] = (val >> 8) & 0xff;
+		styles[style].fg[2] = (val) & 0xff;
+		break;
+
+	case stylehint_BackColor:
+		styles[style].bg[0] = (val >> 16) & 0xff;
+		styles[style].bg[1] = (val >> 8) & 0xff;
+		styles[style].bg[2] = (val) & 0xff;
+		break;
+
+	case stylehint_ReverseColor:
+		styles[style].reverse = (val != 0);
+		break;
+
+	case stylehint_Proportional:
+		if (wintype == wintype_TextBuffer) {
+			p = val > 0;
+			b = styles[style].isBold();
+			i = styles[style].isItalic();
+			styles[style].font = WindowStyle::makeFont(p, b, i);
+		}
+		break;
+
+	case stylehint_Weight:
+		p = styles[style].isProp();
+		b = val > 0;
+		i = styles[style].isItalic();
+		styles[style].font = WindowStyle::makeFont(p, b, i);
+		break;
+
+	case stylehint_Oblique:
+		p = styles[style].isProp();
+		b = styles[style].isBold();
+		i = val > 0;
+		styles[style].font = WindowStyle::makeFont(p, b, i);
+		break;
+	}
+
+	if (wintype == wintype_TextBuffer && style == style_Normal && hint == stylehint_BackColor) {
+		memcpy(g_conf->_windowColor, styles[style].bg, 3);
+	}
+
+	if (wintype == wintype_TextBuffer && style == style_Normal && hint == stylehint_TextColor) {
+		memcpy(g_conf->_moreColor, styles[style].fg, 3);
+		memcpy(g_conf->_caretColor, styles[style].fg, 3);
+	}
 }
 
 void Glk::glk_stylehint_clear(glui32 wintype, glui32 style, glui32 hint) {
-	// TODO
+	WindowStyle *styles;
+	const WindowStyle *defaults;
+
+	if (wintype == wintype_AllTypes) {
+		glk_stylehint_clear(wintype_TextGrid, style, hint);
+		glk_stylehint_clear(wintype_TextBuffer, style, hint);
+		return;
+	}
+
+	if (wintype == wintype_TextGrid) {
+		styles = g_conf->_gStyles;
+		defaults = g_conf->_gStylesDefault;
+	} else if (wintype == wintype_TextBuffer) {
+		styles = g_conf->_tStyles;
+		defaults = g_conf->_tStylesDefault;
+	} else {
+		return;
+	}
+
+	if (!g_conf->_styleHint)
+		return;
+
+	switch (hint) {
+	case stylehint_TextColor:
+		styles[style].fg[0] = defaults[style].fg[0];
+		styles[style].fg[1] = defaults[style].fg[1];
+		styles[style].fg[2] = defaults[style].fg[2];
+		break;
+
+	case stylehint_BackColor:
+		styles[style].bg[0] = defaults[style].bg[0];
+		styles[style].bg[1] = defaults[style].bg[1];
+		styles[style].bg[2] = defaults[style].bg[2];
+		break;
+
+	case stylehint_ReverseColor:
+		styles[style].reverse = defaults[style].reverse;
+		break;
+
+	case stylehint_Proportional:
+	case stylehint_Weight:
+	case stylehint_Oblique:
+		styles[style].font = defaults[style].font;
+		break;
+	}
 }
 
 glui32 Glk::glk_style_distinguish(winid_t win, glui32 style1, glui32 style2) {
