@@ -112,16 +112,12 @@ public:
 		glsi32 val);
 	void glk_stylehint_clear(glui32 wintype, glui32 styl, glui32 hint);
 	glui32 glk_style_distinguish(winid_t win, glui32 styl1, glui32 styl2);
-	glui32 glk_style_measure(winid_t win, glui32 styl, glui32 hint,
-		glui32 *result);
+	glui32 glk_style_measure(winid_t win, glui32 styl, glui32 hint, glui32 *result);
 
 	frefid_t glk_fileref_create_temp(glui32 usage, glui32 rock);
-	frefid_t glk_fileref_create_by_name(glui32 usage, char *name,
-		glui32 rock);
-	frefid_t glk_fileref_create_by_prompt(glui32 usage, FileMode fmode,
-		glui32 rock);
-	frefid_t glk_fileref_create_from_fileref(glui32 usage, frefid_t fref,
-		glui32 rock);
+	frefid_t glk_fileref_create_by_name(glui32 usage, const char *name, glui32 rock);
+	frefid_t glk_fileref_create_by_prompt(glui32 usage, FileMode fmode, glui32 rock);
+	frefid_t glk_fileref_create_from_fileref(glui32 usage, frefid_t fref, glui32 rock);
 	void glk_fileref_destroy(frefid_t fref);
 	frefid_t glk_fileref_iterate(frefid_t fref, glui32 *rockptr);
 	glui32 glk_fileref_get_rock(frefid_t fref);
