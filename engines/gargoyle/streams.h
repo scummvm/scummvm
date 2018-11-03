@@ -33,11 +33,73 @@ namespace Gargoyle {
 class Window;
 class Streams;
 
+enum FileUsage {
+	fileusage_Data = 0x00,
+	fileusage_SavedGame = 0x01,
+	fileusage_Transcript = 0x02,
+	fileusage_InputRecord = 0x03,
+	fileusage_TypeMask = 0x0f,
+
+	fileusage_TextMode = 0x100,
+	fileusage_BinaryMode = 0x000,
+};
+
+enum FileMode {
+	filemode_Write = 0x01,
+	filemode_Read = 0x02,
+	filemode_ReadWrite = 0x03,
+	filemode_WriteAppend = 0x05,
+};
+
+enum SeekMode {
+	seekmode_Start = 0,
+	seekmode_Current = 1,
+	seekmode_End = 2,
+};
+
 struct StreamResult {
 	uint32 _readCount;
 	uint32 _writeCount;
 };
 typedef StreamResult stream_result_t;
+
+
+/**
+ * File details
+ */
+struct FileReference {
+	glui32 _rock;
+	int _slotNumber;
+	Common::String _description;
+	Common::String _filename;
+	FileUsage _fileType;
+	bool _textMode;
+	gidispatch_rock_t _dispRock;
+
+	/**
+	 * Constructor
+	 */
+	FileReference() : _rock(0), _slotNumber(-1), _fileType(fileusage_Data), _textMode(false) {}
+
+	/**
+	 * Get savegame filename
+	 */
+	const Common::String getSaveName() const;
+
+	/**
+	 * Returns true if the given file exists
+	 */
+	bool exists() const;
+
+	/**
+	 * Delete the given file
+	 */
+	void deleteFile();
+};
+
+typedef FileReference *frefid_t;
+typedef Common::Array< Common::SharedPtr<FileReference> > FileRefArray;
+
 
 /**
  * Base class for streams
@@ -342,6 +404,7 @@ class Streams {
 private:
 	Stream *_streamList;
 	Stream *_currentStream;
+	FileRefArray _fileReferences;
 private:
 	/**
 	 * Adds a created stream to the list
@@ -397,6 +460,42 @@ public:
 	 * Gets the current output stream
 	 */
 	Stream *getCurrent() const { return _currentStream; }
+
+	/**
+	 * Prompt for a savegame to load or save, and populate a file reference from the result
+	 */
+	frefid_t createByPrompt(glui32 usage, FileMode fmode, glui32 rock);
+
+	/**
+	 * Create a new file reference
+	 */
+	frefid_t createRef(int slot, const Common::String &desc, glui32 usage, glui32 rock);
+
+	/**
+	 * Create a new file reference
+	 */
+	frefid_t createRef(const Common::String &filename, glui32 usage, glui32 rock);
+
+	/**
+	 * Create a new temporary file reference
+	 */
+	frefid_t createTemp(glui32 usage, glui32 rock);
+
+	/**
+	 * Create a new file reference from an old one
+	 */
+	frefid_t createFromRef(frefid_t fref, glui32 usage, glui32 rock);
+
+	/**
+	 * Delete a file reference
+	 */
+	void deleteRef(frefid_t fref);
+
+	/**
+	 * Iterates to the next file reference following the specified one,
+	 * or the first if null is passed
+	 */
+	frefid_t iterate(frefid_t fref, glui32 *rock);
 };
 
 } // End of namespace Gargoyle
