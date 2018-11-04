@@ -28,6 +28,7 @@
 class DCLauncherDialog : public GUI::LauncherDialog {
 	public:
 		DCLauncherDialog();
+		virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 	protected:
 		virtual void handleTickle();
