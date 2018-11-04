@@ -162,25 +162,32 @@ DetectedGames GargoyleMetaEngine::detectGames(const Common::FSList &fslist) cons
 static Gargoyle::GargoyleGameDescription gameDescription;
 
 ADDetectedGames GargoyleMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
-	ADDetectedGames detectedGames;
 	static char gameId[100];
 	strcpy(gameId, ConfMan.get("gameid").c_str());
 	Common::String filename = ConfMan.get("filename");
+
+	Common::FSList fslist;
+	DetectedGames detectedGames;
+	fslist.push_back(parent.getChild(filename));
+	ADDetectedGames results;
 	Common::File f;
 
-	if (f.open(parent.getChild(filename))) {
+	Gargoyle::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
+	if (detectedGames.size() > 0 && f.open(parent.getChild(filename))) {
+		DetectedGame gd = detectedGames.front();
+
+		gameDescription._interpType = Gargoyle::INTERPRETER_SCOTT;
 		gameDescription._desc.gameId = gameId;
-		gameDescription._desc.language = language;
-		gameDescription._desc.platform = platform;
-		gameDescription._desc.extra = extra.c_str();
+		gameDescription._desc.language = gd.language;
+		gameDescription._desc.platform = gd.platform;
 		gameDescription._filename = filename;
 		gameDescription._md5 = Common::computeStreamMD5AsString(f, 5000);
 
 		ADDetectedGame dg((ADGameDescription *)&gameDescription);
-		detectedGames.push_back(dg);
+		results.push_back(dg);
 	}
 
-	return detectedGames;
+	return results;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(GARGOYLE)
