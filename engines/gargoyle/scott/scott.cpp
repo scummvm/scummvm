@@ -526,19 +526,29 @@ void Scott::lineInput(char *buf, size_t n) {
 }
 
 void Scott::saveGame(void) {
-	strid_t file;
-	frefid_t ref;
-	int ct;
-	Common::String msg;
+	frefid_t ref = glk_fileref_create_by_prompt(fileusage_TextMode | fileusage_SavedGame,
+		filemode_Write, 0);
+	if (ref == nullptr)
+		return;
 
-	ref = glk_fileref_create_by_prompt(fileusage_TextMode | fileusage_SavedGame, filemode_Write, 0);
-	if (ref == nullptr) return;
-
-	file = glk_stream_open_file(ref, filemode_Write, 0);
+	int slot = ref->_slotNumber;
+	Common::String desc = ref->_description;
 	glk_fileref_destroy(ref);
-	if (file == nullptr) return;
 
-	for (ct = 0; ct < 16; ct++) {
+	saveGameState(slot, desc);
+}
+
+Common::Error Scott::saveGameState(int slot, const Common::String &desc) {
+	Common::String msg;
+	FileReference ref;
+	ref._slotNumber = slot;
+	ref._description = desc;
+
+	strid_t file = glk_stream_open_file(&ref, filemode_Write, 0);
+	if (file == nullptr)
+		return Common::kWritingFailed;
+
+	for (int ct = 0; ct < 16; ct++) {
 		msg = Common::String::format("%d %d\n", Counters[ct], RoomSaved[ct]);
 		glk_put_string_stream(file, msg.c_str());
 	}
@@ -548,29 +558,42 @@ void Scott::saveGame(void) {
 		MyLoc, CurrentCounter, SavedRoom, GameHeader.LightTime);
 	glk_put_string_stream(file, msg.c_str());
 
-	for (ct = 0; ct <= GameHeader.NumItems; ct++) {
+	for (int ct = 0; ct <= GameHeader.NumItems; ct++) {
 		msg = Common::String::format("%hd\n", (short)Items[ct].Location);
 		glk_put_string_stream(file, msg.c_str());
 	}
 
 	glk_stream_close(file, nullptr);
 	output("Saved.\n");
+
+	return Common::kNoError;
 }
 
 void Scott::loadGame(void) {
+	frefid_t ref = glk_fileref_create_by_prompt(fileusage_TextMode | fileusage_SavedGame,
+		filemode_Read, 0);
+	if (ref == nullptr)
+		return;
+
+	int slotNumber = ref->_slotNumber;
+	glk_fileref_destroy(ref);
+
+	loadGameState(slotNumber);
+}
+
+Common::Error Scott::loadGameState(int slot) {
 	strid_t file;
-	frefid_t ref;
 	char buf[128];
 	int ct = 0;
 	short lo;
-	short DarkFlag;
+	short darkFlag;
 
-	ref = glk_fileref_create_by_prompt(fileusage_TextMode | fileusage_SavedGame, filemode_Read, 0);
-	if (ref == nullptr) return;
+	FileReference ref;
+	ref._slotNumber = slot;
 
-	file = glk_stream_open_file(ref, filemode_Read, 0);
-	glk_fileref_destroy(ref);
-	if (file == nullptr) return;
+	file = glk_stream_open_file(&ref, filemode_Read, 0);
+	if (file == nullptr)
+		return Common::kReadingFailed;
 
 	for (ct = 0; ct<16; ct++) {
 		glk_get_line_stream(file, buf, sizeof buf);
@@ -579,17 +602,19 @@ void Scott::loadGame(void) {
 
 	glk_get_line_stream(file, buf, sizeof buf);
 	sscanf(buf, "%ld %hd %d %d %d %d\n",
-		&BitFlags, &DarkFlag, &MyLoc, &CurrentCounter, &SavedRoom,
+		&BitFlags, &darkFlag, &MyLoc, &CurrentCounter, &SavedRoom,
 		&GameHeader.LightTime);
 
-	/* Backward compatibility */
-	if (DarkFlag)
+	// Backward compatibility
+	if (darkFlag)
 		BitFlags |= (1 << 15);
 	for (ct = 0; ct <= GameHeader.NumItems; ct++) {
 		glk_get_line_stream(file, buf, sizeof buf);
 		sscanf(buf, "%hd\n", &lo);
 		Items[ct].Location = (unsigned char)lo;
 	}
+
+	return Common::kNoError;
 }
 
 int Scott::getInput(int *vb, int *no) {

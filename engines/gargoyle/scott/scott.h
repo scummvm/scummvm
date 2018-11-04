@@ -172,6 +172,16 @@ public:
 	 * Execute the game
 	 */
 	virtual void runGame(Common::SeekableReadStream *gameFile) override;
+
+	/**
+	 * Load a savegame
+	 */
+	virtual Common::Error loadGameState(int slot) override;
+
+	/**
+	 * Save the game
+	 */
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 };
 
 } // End of namespace Scott
