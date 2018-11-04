@@ -68,6 +68,9 @@ typedef StreamResult stream_result_t;
 
 struct SavegameHeader {
 	uint8 _version;
+	byte _interpType;
+	byte _language;
+	Common::String _md5;
 	Common::String _saveName;
 	int _year, _month, _day;
 	int _hour, _minute;
@@ -76,8 +79,8 @@ struct SavegameHeader {
 	/**
 	 * Constructor
 	 */
-	SavegameHeader() : _version(0), _year(0), _month(0), _day(0), _hour(0),
-		_minute(0), _totalFrames(0) {}
+	SavegameHeader() : _version(0), _interpType(0), _language(0), _year(0), _month(0), _day(0),
+		_hour(0), _minute(0), _totalFrames(0) {}
 };
 
 /**

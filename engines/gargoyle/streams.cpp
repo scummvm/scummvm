@@ -963,6 +963,15 @@ glui32 FileStream::getLineUni(glui32 *ubuf, glui32 len) {
 	}
 }
 
+static Common::String readString(Common::ReadStream *src) {
+	char c;
+	Common::String result;
+	while ((c = src->readByte()) != 0)
+		result += c;
+
+	return result;
+}
+
 bool FileStream::readSavegameHeader(Common::SeekableReadStream *stream, SavegameHeader &header) {
 	header._totalFrames = 0;
 
@@ -975,10 +984,17 @@ bool FileStream::readSavegameHeader(Common::SeekableReadStream *stream, Savegame
 	if (header._version > SAVEGAME_VERSION)
 		error("Savegame is too recent");
 
+	// Read the interpreter, language, and game Id
+	header._interpType = stream->readByte();
+	header._language = stream->readByte();
+	header._md5 = readString(stream);
+
+	if (header._interpType != g_vm->getInterpreterType() || header._language != g_vm->getLanguage()
+			|| header._md5 != g_vm->getGameMD5())
+		return false;
+
 	// Read in name
-	char c;
-	while ((c = stream->readByte()) != '\0')
-		header._saveName += c;
+	header._saveName = readString(stream);
 
 	// Read in save date/time
 	header._year = stream->readUint16LE();
@@ -994,8 +1010,14 @@ bool FileStream::readSavegameHeader(Common::SeekableReadStream *stream, Savegame
 void FileStream::writeSavegameHeader(Common::WriteStream *stream, const Common::String &saveName) {
 	// Write out a savegame header
 	stream->writeUint32BE(MKTAG('G', 'A', 'R', 'G'));
-
 	stream->writeByte(SAVEGAME_VERSION);
+
+	// Write out intrepreter type, language, and game Id
+	stream->writeByte(g_vm->getInterpreterType());
+	stream->writeByte(g_vm->getLanguage());
+	Common::String md5 = g_vm->getGameMD5();
+	stream->write(md5.c_str(), md5.size());
+	stream->writeByte('\0');
 
 	// Write savegame name
 	stream->write(saveName.c_str(), saveName.size());
