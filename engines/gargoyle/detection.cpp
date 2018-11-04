@@ -128,8 +128,7 @@ bool GargoyleMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSavesSupportMetaInfo);
 }
 
 bool Gargoyle::GargoyleEngine::hasFeature(EngineFeature f) const {
