@@ -43,7 +43,21 @@ class Windows;
 class WindowMask;
 
 enum InterpreterType {
-	INTERPRETER_SCOTT
+	INTERPRETER_ADVSYS = 0,
+	INTERPRETER_AGILITY = 1,
+	INTERPRETER_ALAN2 = 2,
+	INTERPRETER_ALAN3 = 3,
+	INTERPRETER_BOCFEL = 4,
+	INTERPRETER_FROTZ = 5,
+	INTERPRETER_GEAS = 6,
+	INTERPRETER_HUGO = 7,
+	INTERPRETER_JACL = 8,
+	INTERPRETER_LEVEL9 = 9,
+	INTERPRETER_MAGNETIC = 10,
+	INTERPRETER_NITFOL = 11,
+	INTERPRETER_SCARE = 12,
+	INTERPRETER_SCOTT = 13,
+	INTERPRETER_TADS = 14
 };
 
 enum GargoyleDebugChannels {
@@ -131,6 +145,11 @@ public:
 	 * Returns the running interpreter type
 	 */
 	InterpreterType getInterpreterType() const;
+
+	/**
+	 * Returns the game's md5
+	 */
+	const Common::String &getGameMD5() const;
 
 	/**
 	 * Returns the primary filename for the game

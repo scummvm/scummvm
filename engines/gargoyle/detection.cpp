@@ -23,11 +23,12 @@
 #include "gargoyle/gargoyle.h"
 
 #include "base/plugins.h"
+#include "common/md5.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
-#include "common/memstream.h"
-#include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "engines/advancedDetector.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
@@ -36,28 +37,33 @@
 namespace Gargoyle {
 
 struct GargoyleGameDescription {
-	ADGameDescription desc;
-	Common::String filename;
-	InterpreterType interpType;
+	ADGameDescription _desc;
+	Common::String _filename;
+	InterpreterType _interpType;
+	Common::String _md5;
 };
 
 const Common::String &GargoyleEngine::getFilename() const {
-	return _gameDescription->filename;
+	return _gameDescription->_filename;
 }
 uint32 GargoyleEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
+	return _gameDescription->_desc.flags;
 }
 
 bool GargoyleEngine::isDemo() const {
-	return (bool)(_gameDescription->desc.flags & ADGF_DEMO);
+	return (bool)(_gameDescription->_desc.flags & ADGF_DEMO);
 }
 
 Common::Language GargoyleEngine::getLanguage() const {
-	return _gameDescription->desc.language;
+	return _gameDescription->_desc.language;
 }
 
 InterpreterType GargoyleEngine::getInterpreterType() const {
-	return _gameDescription->interpType;
+	return _gameDescription->_interpType;
+}
+
+const Common::String &GargoyleEngine::getGameMD5() const {
+	return _gameDescription->_md5;
 }
 
 } // End of namespace Gargoyle
@@ -117,9 +123,9 @@ bool Gargoyle::GargoyleEngine::hasFeature(EngineFeature f) const {
 
 bool GargoyleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	Gargoyle::GargoyleGameDescription *gd = (Gargoyle::GargoyleGameDescription *)desc;
-	gd->filename = ConfMan.get("filename");
+	gd->_filename = ConfMan.get("filename");
 
-	switch (gd->interpType) {
+	switch (gd->_interpType) {
 	case Gargoyle::INTERPRETER_SCOTT:
 		*engine = new Gargoyle::Scott::Scott(syst, gd);
 		break;
@@ -160,13 +166,15 @@ ADDetectedGames GargoyleMetaEngine::detectGame(const Common::FSNode &parent, con
 	static char gameId[100];
 	strcpy(gameId, ConfMan.get("gameid").c_str());
 	Common::String filename = ConfMan.get("filename");
+	Common::File f;
 
-	if (parent.getChild(filename).exists()) {
-		gameDescription.desc.gameId = gameId;
-		gameDescription.desc.language = language;
-		gameDescription.desc.platform = platform;
-		gameDescription.desc.extra = extra.c_str();
-		gameDescription.filename = filename;
+	if (f.open(parent.getChild(filename))) {
+		gameDescription._desc.gameId = gameId;
+		gameDescription._desc.language = language;
+		gameDescription._desc.platform = platform;
+		gameDescription._desc.extra = extra.c_str();
+		gameDescription._filename = filename;
+		gameDescription._md5 = Common::computeStreamMD5AsString(f, 5000);
 
 		ADDetectedGame dg((ADGameDescription *)&gameDescription);
 		detectedGames.push_back(dg);
