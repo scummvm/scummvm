@@ -29,27 +29,28 @@ namespace Scott {
 
 struct ScottGame {
 	const char *_md5;
+	const char *_gameId;
 	int32 _filesize;
 	const char *_desc;
 };
 
 const ScottGame SCOTT_GAMES[] = {
-	{ "ae541fc1085da2f7d561b72ed20a6bc1", 18003, "Adventureland" },
-	{ "cbd47ab4fcfe00231ffd71d52378d410", 18482, "Pirate Adventure" },
-	{ "9251ab2c64e63559d8a6e9e6246760a5", 17227, "Mission Impossible" },
-	{ "be849c5747c7fc3b201984afb4403b8e", 18140, "Voodoo Castle" },
-	{ "85b75b6079b5ee572b5259b29a0e5d21", 19999, "The Count" },
-	{ "c423cae841ac1927b5b2e503607b21bc", 20115, "Strange Odyssey" },
-	{ "326b98b991d401605074e64d474ce566", 19700, "Mystery Fun House" },
-	{ "8ef9010399f055da9adb15ce7745a11c", 20320, "Pyramid Of Doom" },
-	{ "fcdcca8b2acf76ba2d0006cefa3630a1", 20687, "Ghost Town" },
-	{ "c8aaa80f07c40fa8e4b17432644919dc", 22669, "Save Island, Part 1" },
-	{ "2add0f28d9b236c866890cdf8d86ee60", 21169, "Savage Island, Part 2" },
-	{ "675126bd0477e8ed9230ad3db5afc45f", 21401, "The Golden Voyage" },
-	{ "0ef0def798d895ed766041fa99dd28a0", 22346, "Adventure 13" },
-	{ "0bf1bcc649422798332a38c88588fdff", 22087, "Adventure 14" },
-	{ "a0a5423967287dae9cbeb9abe8324479", 21038, "Buckaroo Banzai" },
-	{ nullptr, 0, nullptr }
+	{ "ae541fc1085da2f7d561b72ed20a6bc1", "adventureland", 18003, "Adventureland" },
+	{ "cbd47ab4fcfe00231ffd71d52378d410", "pirateadventure", 18482, "Pirate Adventure" },
+	{ "9251ab2c64e63559d8a6e9e6246760a5", "missionimpossible", 17227, "Mission Impossible" },
+	{ "be849c5747c7fc3b201984afb4403b8e", "voodoocastle", 18140, "Voodoo Castle" },
+	{ "85b75b6079b5ee572b5259b29a0e5d21", "thecount", 19999, "The Count" },
+	{ "c423cae841ac1927b5b2e503607b21bc", "strangeodyssey", 20115, "Strange Odyssey" },
+	{ "326b98b991d401605074e64d474ce566", "mysteryfunhouse", 19700, "Mystery Fun House" },
+	{ "8ef9010399f055da9adb15ce7745a11c", "pyramidofdoom", 20320, "Pyramid Of Doom" },
+	{ "fcdcca8b2acf76ba2d0006cefa3630a1", "ghosttown", 20687, "Ghost Town" },
+	{ "c8aaa80f07c40fa8e4b17432644919dc", "savageisland1", 22669, "Savage Island, Part 1" },
+	{ "2add0f28d9b236c866890cdf8d86ee60", "savageisland2", 21169, "Savage Island, Part 2" },
+	{ "675126bd0477e8ed9230ad3db5afc45f", "goldenvoyage", 21401, "The Golden Voyage" },
+	{ "0ef0def798d895ed766041fa99dd28a0", "adventure13", 22346, "Adventure 13" },
+	{ "0bf1bcc649422798332a38c88588fdff", "adventure14", 22087, "Adventure 14" },
+	{ "a0a5423967287dae9cbeb9abe8324479", "buckaroobonzai", 21038, "Buckaroo Banzai" },
+	{ nullptr, nullptr, 0, nullptr }
 };
 
 void ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
@@ -71,7 +72,7 @@ void ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 
 			if (p->_filesize) {
 				// Found a match
-				DetectedGame gd("scott", p->_desc, Common::EN_ANY, Common::kPlatformUnknown, "Scott");
+				DetectedGame gd(p->_gameId, p->_desc, Common::EN_ANY, Common::kPlatformUnknown);
 				gd.addExtraEntry("filename", file->getName());
 
 				gameList.push_back(gd);
