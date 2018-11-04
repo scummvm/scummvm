@@ -331,12 +331,11 @@ void Glk::glk_set_window(winid_t win) {
 }
 
 strid_t Glk::glk_stream_open_file(frefid_t fileref, FileMode fmode, glui32 rock) {
-	// TODO
-	return nullptr;
+	return _streams->openFileStream(fileref, fmode, rock, false);
 }
 
 strid_t Glk::glk_stream_open_memory(char *buf, glui32 buflen, FileMode fmode, glui32 rock) {
-	return _streams->addMemoryStream(buf, buflen, fmode, rock, false);
+	return _streams->openMemoryStream(buf, buflen, fmode, rock, false);
 }
 
 void Glk::glk_stream_close(strid_t str, stream_result_t *result) {
@@ -847,12 +846,11 @@ glui32 Glk::glk_get_line_stream_uni(strid_t str, glui32 *buf, glui32 len) {
 }
 
 strid_t Glk::glk_stream_open_file_uni(frefid_t fileref, FileMode fmode, glui32 rock) {
-	// TODO
-	return nullptr;
+	return _streams->openFileStream(fileref, fmode, rock, true);
 }
 
 strid_t Glk::glk_stream_open_memory_uni(glui32 *buf, glui32 buflen, FileMode fmode, glui32 rock) {
-	return _streams->addMemoryStream(buf, buflen, fmode, rock, true);
+	return _streams->openMemoryStream(buf, buflen, fmode, rock, true);
 }
 
 void Glk::glk_request_char_event_uni(winid_t win) {

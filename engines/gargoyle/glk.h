@@ -24,7 +24,6 @@
 #define GARGOYLE_GLK_H
 
 #include "gargoyle/gargoyle.h"
-#include "gargoyle/files.h"
 #include "gargoyle/glk_types.h"
 #include "gargoyle/time.h"
 #include "gargoyle/windows.h"

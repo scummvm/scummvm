@@ -215,6 +215,16 @@ public:
 	 * Wait for a keyboard or mouse press
 	 */
 	void waitForPress();
+
+	/**
+	 * Get the total number of frames played
+	 */
+	uint32 getTotalPlayTicks() const { return _frameCounter; }
+
+	/**
+	 * Set the total number of frames played
+	 */
+	void Events::setTotalPlayTicks(uint frames) { _frameCounter = frames; }
 };
 
 } // End of namespace Gargoyle
