@@ -31,6 +31,9 @@ namespace Scott {
 
 class ScottMetaEngine {
 public:
+	/**
+	 * Detect Scott Adams games
+	 */
 	static void detectGames(const Common::FSList &fslist, DetectedGames &gameList);
 };
 

@@ -72,15 +72,6 @@ enum GargoyleDebugChannels {
 
 struct GargoyleGameDescription;
 
-struct GargoyleSavegameHeader {
-	uint8 _version;
-	Common::String _saveName;
-	Graphics::Surface *_thumbnail;
-	int _year, _month, _day;
-	int _hour, _minute;
-	int _totalFrames;
-};
-
 /**
  * Base class for the different interpreters
  */
