@@ -127,6 +127,16 @@ public:
 	virtual ~GargoyleEngine();
 
 	/**
+	 * Returns true if a savegame can be loaded
+	 */
+	virtual bool canLoadGameStateCurrently() override { return true; }
+
+	/**
+	 * Returns true if the game can be saved
+	 */
+	virtual bool canSaveGameStateCurrently() override { return true; }
+
+	/**
 	 * Returns the bitset of game features
 	 */
 	uint32 getFeatures() const;
