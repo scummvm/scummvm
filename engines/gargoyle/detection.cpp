@@ -69,7 +69,25 @@ const Common::String &GargoyleEngine::getGameMD5() const {
 } // End of namespace Gargoyle
 
 static const PlainGameDescriptor gargoyleGames[] = {
-	{"scott", "Scott Adams Games"},
+	{"scottadams", "Scott Adams Games"},
+
+	// Scott Adams games
+	{ "adventureland", "Adventureland" },
+	{ "pirateadventure", "Pirate Adventure" },
+	{ "missionimpossible", "Mission Impossible" },
+	{ "voodoocastle", "Voodoo Castle" },
+	{ "thecount", "The Count" },
+	{ "strangeodyssey", "Strange Odyssey" },
+	{ "mysteryfunhouse", "Mystery Fun House" },
+	{ "pyramidofdoom", "Pyramid Of Doom" },
+	{ "ghosttown", "Ghost Town" },
+	{ "savageisland1", "Savage Island, Part 1" },
+	{ "savageisland2", "Savage Island, Part 2" },
+	{ "goldenvoyage", "The Golden Voyage" },
+	{ "adventure13", "Adventure 13" },
+	{ "adventure14", "Adventure 14" },
+	{ "buckaroobonzai", "Buckaroo Banzai" },
+
 	{0, 0}
 };
 
@@ -90,7 +108,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Gargoyle Engine (c)";
+		return "Gargoyle Engine (c) 2018";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const override;
