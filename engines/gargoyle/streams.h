@@ -24,11 +24,14 @@
 #define GARGOYLE_STREAMS_H
 
 #include "common/scummsys.h"
+#include "common/file.h"
 #include "common/savefile.h"
-#include "gargoyle/files.h"
+#include "common/str.h"
 #include "gargoyle/glk_types.h"
 
 namespace Gargoyle {
+
+#define SAVEGAME_VERSION 1
 
 class Window;
 class Streams;
@@ -63,6 +66,19 @@ struct StreamResult {
 };
 typedef StreamResult stream_result_t;
 
+struct SavegameHeader {
+	uint8 _version;
+	Common::String _saveName;
+	int _year, _month, _day;
+	int _hour, _minute;
+	int _totalFrames;
+
+	/**
+	 * Constructor
+	 */
+	SavegameHeader() : _version(0), _year(0), _month(0), _day(0), _hour(0),
+		_minute(0), _totalFrames(0) {}
+};
 
 /**
  * File details
@@ -326,8 +342,10 @@ public:
  */
 class FileStream : public Stream {
 private:
+	Common::File _file;
 	Common::OutSaveFile *_outFile;
 	Common::InSaveFile *_inFile;
+	Common::SeekableReadStream *_inStream;
 	uint32 _lastOp;					///< 0, filemode_Write, or filemode_Read
 	bool _textFile;
 private:
@@ -347,9 +365,24 @@ private:
 	glsi32 getCharUtf8();
 public:
 	/**
+	 * Read a savegame header from a stream
+	 */
+	static bool readSavegameHeader(Common::SeekableReadStream *stream, SavegameHeader &header);
+
+	/**
+	 * Write out a savegame header
+	 */
+	static void writeSavegameHeader(Common::WriteStream *stream, const Common::String &saveName);
+public:
+	/**
 	 * Constructor
 	 */
-	FileStream(Streams *streams, uint32 rock = 0, bool unicode = true);
+	FileStream(Streams *streams, frefid_t fref, glui32 fmode, glui32 rock, bool unicode);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~FileStream();
 
 	/**
 	 * Write a character
@@ -427,14 +460,19 @@ public:
 	~Streams();
 
 	/**
-	 * Add a window stream
+	 * Open a file stream
 	 */
-	WindowStream *addWindowStream(Window *window);
+	FileStream *openFileStream(frefid_t fref, glui32 fmode, glui32 rock, bool unicode);
 
 	/**
-	 * Add a memory stream
+	 * Open a window stream
 	 */
-	MemoryStream *addMemoryStream(void *buf, size_t buflen, FileMode mode, uint32 rock = 0, bool unicode = true);
+	WindowStream *openWindowStream(Window *window);
+
+	/**
+	 * Open a memory stream
+	 */
+	MemoryStream *openMemoryStream(void *buf, size_t buflen, FileMode mode, uint32 rock = 0, bool unicode = true);
 
 	/**
 	 * Delete a stream

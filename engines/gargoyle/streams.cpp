@@ -508,11 +508,47 @@ glui32 MemoryStream::getLineUni(glui32 *ubuf, glui32 len) {
 
 /*--------------------------------------------------------------------------*/
 
-FileStream::FileStream(Streams *streams, uint32 rock, bool unicode) :
-	Stream(streams, true, false, rock, unicode), _lastOp(0), _textFile(false) {
-	// TODO: Set up files
-	_outFile = nullptr;
-	_inFile = nullptr;
+FileStream::FileStream(Streams *streams, frefid_t fref, glui32 fmode, glui32 rock, bool unicode) :
+		Stream(streams, true, false, rock, unicode), _lastOp(0), _textFile(false),
+		_inFile(nullptr), _outFile(nullptr), _inStream(nullptr) {
+	Common::String fname = fref->_slotNumber == -1 ? fref->_filename : fref->getSaveName();
+
+	if (fmode == filemode_Write || fmode == filemode_ReadWrite || fmode == filemode_WriteAppend) {
+		_outFile = g_system->getSavefileManager()->openForSaving(fname, fref->_slotNumber != -1);
+		if (!_outFile)
+			error("Could open file for writing - %s", fname.c_str());
+
+		if (fref->_slotNumber != -1)
+			writeSavegameHeader(_outFile, fref->_description);
+	} else if (fmode == filemode_Read) {
+		if (_file.open(fname)) {
+			_inStream = &_file;
+		} else {
+			_inFile = g_system->getSavefileManager()->openForLoading(fname);
+			_inStream = _inFile;
+		}
+
+		if (!_inStream)
+			error("Could not open for reading - %s", fname.c_str());
+
+		if (_inFile) {
+			// It's a save file, so skip over the header
+			SavegameHeader header;
+			if (!readSavegameHeader(_inStream, header))
+				error("Invalid savegame");
+
+			g_vm->_events->setTotalPlayTicks(header._totalFrames);
+		}
+	}
+}
+
+FileStream::~FileStream() {
+	_file.close();
+	delete _inFile;
+	if (_outFile) {
+		_outFile->finalize();
+		delete _outFile;
+	}
 }
 
 void FileStream::ensureOp(FileMode mode) {
@@ -798,7 +834,6 @@ glsi32 FileStream::getCharUni() {
 	}
 }
 
-
 glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
 	if (!_readable)
 		return 0;
@@ -926,6 +961,55 @@ glui32 FileStream::getLineUni(glui32 *ubuf, glui32 len) {
 	}
 }
 
+bool FileStream::readSavegameHeader(Common::SeekableReadStream *stream, SavegameHeader &header) {
+	header._totalFrames = 0;
+
+	// Validate the header Id
+	if (stream->readUint32BE() != MKTAG('G', 'A', 'R', 'G'))
+		return false;
+
+	// Check the savegame version
+	header._version = stream->readByte();
+	if (header._version > SAVEGAME_VERSION)
+		error("Savegame is too recent");
+
+	// Read in name
+	char c;
+	while ((c = stream->readByte()) != '\0')
+		header._saveName += c;
+
+	// Read in save date/time
+	header._year = stream->readUint16LE();
+	header._month = stream->readUint16LE();
+	header._day = stream->readUint16LE();
+	header._hour = stream->readUint16LE();
+	header._minute = stream->readUint16LE();
+	header._totalFrames = stream->readUint32LE();
+
+	return true;
+}
+
+void FileStream::writeSavegameHeader(Common::WriteStream *stream, const Common::String &saveName) {
+	// Write out a savegame header
+	stream->writeUint32BE(MKTAG('G', 'A', 'R', 'G'));
+
+	stream->writeByte(SAVEGAME_VERSION);
+
+	// Write savegame name
+	stream->write(saveName.c_str(), saveName.size());
+	stream->writeByte('\0');
+
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	stream->writeUint16LE(td.tm_year + 1900);
+	stream->writeUint16LE(td.tm_mon + 1);
+	stream->writeUint16LE(td.tm_mday);
+	stream->writeUint16LE(td.tm_hour);
+	stream->writeUint16LE(td.tm_min);
+	stream->writeUint32LE(g_vm->_events->getTotalPlayTicks());
+}
+
 /*--------------------------------------------------------------------------*/
 
 Streams::Streams() : _streamList(nullptr), _currentStream(nullptr) {
@@ -936,13 +1020,19 @@ Streams::~Streams() {
 		delete _streamList;
 }
 
-WindowStream *Streams::addWindowStream(Window *window) {
+FileStream *Streams::openFileStream(frefid_t fref, glui32 fmode, glui32 rock, bool unicode) {
+	FileStream *stream = new FileStream(this, fref, fmode, rock, unicode);
+	addStream(stream);
+	return stream;
+}
+
+WindowStream *Streams::openWindowStream(Window *window) {
 	WindowStream *stream = new WindowStream(this, window);
 	addStream(stream);
 	return stream;
 }
 
-MemoryStream *Streams::addMemoryStream(void *buf, size_t buflen, FileMode mode, uint32 rock, bool unicode) {
+MemoryStream *Streams::openMemoryStream(void *buf, size_t buflen, FileMode mode, uint32 rock, bool unicode) {
 	MemoryStream *stream = new MemoryStream(this, buf, buflen, mode, rock, unicode);
 	addStream(stream);
 	return stream;
