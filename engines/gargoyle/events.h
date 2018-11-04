@@ -153,11 +153,12 @@ private:
 	bool _timeouts;					///< Timer timeouts flag
 	uint32 _priorFrameTime;			///< Time of prior game frame
 	uint32 _frameCounter;			///< Frame counter
+	bool _redraw;					///< Screen needed redrawing
 private:
 	/**
 	 * Checks for whether it's time for the next game frame
 	 */
-	bool checkForNextFrameCounter();
+	void checkForNextFrameCounter();
 
 	/**
 	 * Dispatches an event
@@ -225,6 +226,11 @@ public:
 	 * Set the total number of frames played
 	 */
 	void Events::setTotalPlayTicks(uint frames) { _frameCounter = frames; }
+
+	/**
+	 * Flags the screen for redrawing
+	 */
+	void redraw() { _redraw = true; }
 };
 
 } // End of namespace Gargoyle

@@ -32,17 +32,19 @@ Events::Events() : _forceClick(false), _currentEvent(nullptr), _timeouts(false),
 	_priorFrameTime(0), _frameCounter(0) {
 }
 
-bool Events::checkForNextFrameCounter() {
+void Events::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
 		++_frameCounter;
 		_priorFrameTime = milli;
 
-		return true;
+		if (_redraw)
+			g_vm->_windows->redraw();
+		_redraw = false;
+		g_vm->_screen->update();
+		return;
 	}
-
-	return false;
 }
 
 void Events::getEvent(event_t *event, bool polled) {
@@ -106,11 +108,7 @@ void Events::dispatchEvent(Event &ev, bool polled) {
 
 void Events::pollEvents() {
 	Common::Event event;
-
-	if (checkForNextFrameCounter()) {
-		// Update the screen
-		g_vm->_screen->update();
-	}
+	checkForNextFrameCounter();
 
 	do {
 		g_system->getEventManager()->pollEvent(event);
@@ -232,11 +230,7 @@ void Events::waitForPress() {
 	do {
 		g_system->getEventManager()->pollEvent(e);
 		g_system->delayMillis(10);
-
-		if (checkForNextFrameCounter()) {
-			// Update the screen
-			g_vm->_screen->update();
-		}
+		checkForNextFrameCounter();
 	} while (!g_vm->shouldQuit() && e.type != Common::EVENT_KEYDOWN &&
 		e.type != Common::EVENT_LBUTTONDOWN && e.type != Common::EVENT_RBUTTONDOWN &&
 		e.type != Common::EVENT_MBUTTONDOWN);
