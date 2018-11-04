@@ -38,7 +38,7 @@
 
 namespace Kyra {
 
-Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, _screenDimTable, _screenDimTableCount) {
+Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, _screenDimTable, _screenDimTableCount), _cursorColorKey16Bit(0x8000) {
 	_dsBackgroundFading = false;
 	_dsShapeFadingLevel = 0;
 	_dsBackgroundFadingXOffs = 0;
@@ -133,7 +133,7 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 
 	int mouseW = (shape[2] << 3);
 	int mouseH = (shape[3]);
-	int colorKey = (_renderMode == Common::kRenderCGA) ? 0 : _cursorColorKey;
+	int colorKey = (_renderMode == Common::kRenderCGA) ? 0 : (_bytesPerPixel == 2 ? _cursorColorKey16Bit : _cursorColorKey);
 
 	int scaleFactor = _vm->gameFlags().useHiRes ? 2 : 1;
 	int bpp = _useHiColorScreen ? 2 : 1;
@@ -141,7 +141,6 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	uint8 *cursor = new uint8[mouseW * scaleFactor * bpp * mouseH * scaleFactor];
 	
 	if (_bytesPerPixel == 2) {
-		colorKey = _16bitPalette[colorKey];
 		for (int s = mouseW * scaleFactor * bpp * mouseH * scaleFactor; s; s -= 2)
 			*(uint16*)(cursor + s - 2) = colorKey;
 	} else {

@@ -125,6 +125,8 @@ private:
 	uint8 *_egaDitheringTable;
 	uint8 *_egaDitheringTempPage;
 
+	const uint16 _cursorColorKey16Bit;
+
 	static const uint8 _egaMatchTable[];
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
