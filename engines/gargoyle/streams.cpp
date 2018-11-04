@@ -536,6 +536,9 @@ FileStream::FileStream(Streams *streams, frefid_t fref, glui32 fmode, glui32 roc
 			SavegameHeader header;
 			if (!readSavegameHeader(_inStream, header))
 				error("Invalid savegame");
+			if (header._interpType != g_vm->getInterpreterType() || header._language != g_vm->getLanguage()
+				|| header._md5 != g_vm->getGameMD5())
+				error("Savegame is for a different game");
 
 			g_vm->_events->setTotalPlayTicks(header._totalFrames);
 		}
@@ -988,10 +991,6 @@ bool FileStream::readSavegameHeader(Common::SeekableReadStream *stream, Savegame
 	header._interpType = stream->readByte();
 	header._language = stream->readByte();
 	header._md5 = readString(stream);
-
-	if (header._interpType != g_vm->getInterpreterType() || header._language != g_vm->getLanguage()
-			|| header._md5 != g_vm->getGameMD5())
-		return false;
 
 	// Read in name
 	header._saveName = readString(stream);

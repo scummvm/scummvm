@@ -154,7 +154,33 @@ bool GargoyleMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 }
 
 SaveStateList GargoyleMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String saveDesc;
+	Common::String pattern = Common::String::format("%s.0##", target);
+	Gargoyle::SavegameHeader header;
+
+	filenames = saveFileMan->listSavefiles(pattern);
+
 	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		const char *ext = strrchr(file->c_str(), '.');
+		int slot = ext ? atoi(ext + 1) : -1;
+
+		if (slot >= 0 && slot <= MAX_SAVES) {
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
+
+			if (in) {
+				if (Gargoyle::FileStream::readSavegameHeader(in, header))
+					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+
+				delete in;
+			}
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
