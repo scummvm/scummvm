@@ -658,21 +658,21 @@ glsi32 FileStream::getCharUtf8() {
 	glui32 res;
 	glui32 val0, val1, val2, val3;
 
-	if (_inFile->eos())
+	if (_inStream->eos())
 		return -1;
-	val0 = _inFile->readByte();
+	val0 = _inStream->readByte();
 	if (val0 < 0x80) {
 		res = val0;
 		return res;
 	}
 
 	if ((val0 & 0xe0) == 0xc0) {
-		if (_inFile->eos()) {
+		if (_inStream->eos()) {
 			warning("incomplete two-byte character");
 			return -1;
 		}
 
-		val1 = _inFile->readByte();
+		val1 = _inStream->readByte();
 		if ((val1 & 0xc0) != 0x80) {
 			warning("malformed two-byte character");
 			return '?';
@@ -684,9 +684,9 @@ glsi32 FileStream::getCharUtf8() {
 	}
 
 	if ((val0 & 0xf0) == 0xe0) {
-		val1 = _inFile->readByte();
-		val2 = _inFile->readByte();
-		if (_inFile->eos()) {
+		val1 = _inStream->readByte();
+		val2 = _inStream->readByte();
+		if (_inStream->eos()) {
 			warning("incomplete three-byte character");
 			return -1;
 		}
@@ -711,10 +711,10 @@ glsi32 FileStream::getCharUtf8() {
 			return '?';
 		}
 
-		val1 = _inFile->readByte();
-		val2 = _inFile->readByte();
-		val3 = _inFile->readByte();
-		if (_inFile->eos()) {
+		val1 = _inStream->readByte();
+		val2 = _inStream->readByte();
+		val3 = _inStream->readByte();
+		if (_inStream->eos()) {
 			warning("incomplete four-byte character");
 			return -1;
 		}
@@ -743,7 +743,7 @@ glsi32 FileStream::getCharUtf8() {
 }
 
 glui32 FileStream::getPosition() const {
-	return _outFile->pos();
+	return _outFile ? _outFile->pos() : _inStream->pos();
 }
 
 void FileStream::setPosition(glui32 pos, glui32 seekMode) {
@@ -751,9 +751,11 @@ void FileStream::setPosition(glui32 pos, glui32 seekMode) {
 	if (_unicode)
 		pos *= 4;
 	
-	error("FileStream::setPosition - seek not yet supported");
-//	fseek(str->file, pos, ((seekmode == seekmode_Current) ? 1 :
-	//		((seekmode == seekmode_End) ? 2 : 0)));
+	if (_inStream) {
+		_inStream->seek(pos, SEEK_SET);
+	} else {
+		error("seek not supported for writing files");
+	}
 }
 
 glsi32 FileStream::getChar() {
@@ -763,25 +765,25 @@ glsi32 FileStream::getChar() {
 	ensureOp(filemode_Read);
 	int res;
 	if (!_unicode) {
-		res = _inFile->readByte();
+		res = _inStream->readByte();
 	} else if (_textFile) {
 		res = getCharUtf8();
 	} else {
 		glui32 ch;
-		res = _inFile->readByte();
-		if (_inFile->eos())
+		res = _inStream->readByte();
+		if (_inStream->eos())
 			return -1;
 		ch = (res & 0xFF);
-		res = _inFile->readByte();
-		if (_inFile->eos())
+		res = _inStream->readByte();
+		if (_inStream->eos())
 			return -1;
 		ch = (ch << 8) | (res & 0xFF);
-		res = _inFile->readByte();
-		if (_inFile->eos())
+		res = _inStream->readByte();
+		if (_inStream->eos())
 			return -1;
 		ch = (ch << 8) | (res & 0xFF);
-		res = _inFile->readByte();
-		if (_inFile->eos())
+		res = _inStream->readByte();
+		if (_inStream->eos())
 			return -1;
 		ch = (ch << 8) | (res & 0xFF);
 		res = ch;
@@ -803,24 +805,24 @@ glsi32 FileStream::getCharUni() {
 	ensureOp(filemode_Read);
 	int res;
 	if (!_unicode) {
-		res = _inFile->readByte();
+		res = _inStream->readByte();
 	} else if (_textFile) {
 		res = getCharUtf8();
 	} else {
 		glui32 ch;
-		res = _inFile->readByte();
+		res = _inStream->readByte();
 		if (res == -1)
 			return -1;
 		ch = (res & 0xFF);
-		res = _inFile->readByte();
+		res = _inStream->readByte();
 		if (res == -1)
 			return -1;
 		ch = (ch << 8) | (res & 0xFF);
-		res = _inFile->readByte();
+		res = _inStream->readByte();
 		if (res == -1)
 			return -1;
 		ch = (ch << 8) | (res & 0xFF);
-		res = _inFile->readByte();
+		res = _inStream->readByte();
 		if (res == -1)
 			return -1;
 		ch = (ch << 8) | (res & 0xFF);
@@ -844,7 +846,7 @@ glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
 		for (lx = 0; lx<len; lx++) {
 			int res;
 			glui32 ch;
-			res = _inFile->readByte();
+			res = _inStream->readByte();
 			if (res == -1)
 				break;
 			ch = (res & 0xFF);
@@ -869,19 +871,19 @@ glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
 		{
 			int res;
 			glui32 ch;
-			res = _inFile->readByte();
+			res = _inStream->readByte();
 			if (res == -1)
 				break;
 			ch = (res & 0xFF);
-			res = _inFile->readByte();
+			res = _inStream->readByte();
 			if (res == -1)
 				break;
 			ch = (ch << 8) | (res & 0xFF);
-			res = _inFile->readByte();
+			res = _inStream->readByte();
 			if (res == -1)
 				break;
 			ch = (ch << 8) | (res & 0xFF);
-			res = _inFile->readByte();
+			res = _inStream->readByte();
 			if (res == -1)
 				break;
 			ch = (ch << 8) | (res & 0xFF);
@@ -906,7 +908,7 @@ glui32 FileStream::getLineUni(glui32 *ubuf, glui32 len) {
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
 			int res;
 			glui32 ch;
-			res = _inFile->readByte();
+			res = _inStream->readByte();
 			if (res == -1)
 				break;
 			ch = (res & 0xFF);
@@ -936,19 +938,19 @@ glui32 FileStream::getLineUni(glui32 *ubuf, glui32 len) {
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
 			int res;
 			glui32 ch;
-			res = _inFile->readByte();
+			res = _inStream->readByte();
 			if (res == -1)
 				break;
 			ch = (res & 0xFF);
-			res = _inFile->readByte();
+			res = _inStream->readByte();
 			if (res == -1)
 				break;
 			ch = (ch << 8) | (res & 0xFF);
-			res = _inFile->readByte();
+			res = _inStream->readByte();
 			if (res == -1)
 				break;
 			ch = (ch << 8) | (res & 0xFF);
-			res = _inFile->readByte();
+			res = _inStream->readByte();
 			if (res == -1)
 				break;
 			ch = (ch << 8) | (res & 0xFF);
