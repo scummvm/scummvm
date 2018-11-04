@@ -279,16 +279,21 @@ winid_t Glk::glk_window_get_sibling(winid_t win) {
 void Glk::glk_window_clear(winid_t win) {
 	if (!win) {
 		warning("window_clear: invalid ref");
-	} else if (win->_lineRequest || win->_lineRequestUni) {
-		if (g_conf->_safeClicks && _events->_forceClick) {
-			glk_cancel_line_event(win, nullptr);
-			_events->_forceClick = false;
+	} else {
+		if (win->_lineRequest || win->_lineRequestUni) {
+			if (g_conf->_safeClicks && _events->_forceClick) {
+				glk_cancel_line_event(win, nullptr);
+				_events->_forceClick = false;
 
-			win->clear();
-		} else {
-			warning("window_clear: window has pending line request");
-			return;
+				win->clear();
+			} else {
+				warning("window_clear: window has pending line request");
+				return;
+			}
 		}
+
+		// Clear the window
+		win->clear();
 	}
 }
 

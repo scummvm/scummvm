@@ -420,7 +420,7 @@ void Windows::redrawRect(const Rect &r) {
 }
 
 void Windows::repaint(const Rect &box) {
-	// No implementation
+	g_vm->_events->redraw();
 }
 
 byte *Windows::rgbShift(byte *rgb) {
