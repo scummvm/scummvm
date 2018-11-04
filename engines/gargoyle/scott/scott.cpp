@@ -68,6 +68,13 @@ Release 1.14, (c) 1993,1994,1995 Swansea University Computer Society.\n\
 Distributed under the GNU software license\n\n");
 	loadDatabase(gameFile, (Options & DEBUGGING) ? 1 : 0);
 
+	// Check for savegame
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0)
+			loadGameState(saveSlot);
+	}
+
 	while (!shouldQuit()) {
 		glk_tick();
 
