@@ -502,7 +502,7 @@ Window::Window(Windows *windows, glui32 rock) : _windows(windows), _rock(rock),
 	_dispRock.num = 0;
 
 	Streams &streams = *g_vm->_streams;
-	_stream = streams.addWindowStream(this);
+	_stream = streams.openWindowStream(this);
 }
 
 Window::~Window() {
