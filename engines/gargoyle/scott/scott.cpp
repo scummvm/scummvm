@@ -37,6 +37,7 @@ Scott::Scott(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst,
 
 void Scott::runGame(Common::SeekableReadStream *gameFile) {
 	int vb, no;
+	int saveSlot;
 	initialize();
 
 	Bottom = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
@@ -62,23 +63,25 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 		Top = Bottom;
 	}
 
+	// Check for savegame
+	saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
 	output("\
 Scott Free, A Scott Adams game driver in C.\n\
 Release 1.14, (c) 1993,1994,1995 Swansea University Computer Society.\n\
 Distributed under the GNU software license\n\n");
 	loadDatabase(gameFile, (Options & DEBUGGING) ? 1 : 0);
 
-	// Check for savegame
-	if (ConfMan.hasKey("save_slot")) {
-		int saveSlot = ConfMan.getInt("save_slot");
-		if (saveSlot >= 0)
-			loadGameState(saveSlot);
-	}
-
 	while (!shouldQuit()) {
 		glk_tick();
 
 		performActions(0, 0);
+
+		if (saveSlot >= 0) {
+			// Load any savegame during startup
+			loadGameState(saveSlot);
+			saveSlot = -1;
+		}
 
 		look();
 
@@ -547,9 +550,7 @@ void Scott::saveGame(void) {
 
 Common::Error Scott::saveGameState(int slot, const Common::String &desc) {
 	Common::String msg;
-	FileReference ref;
-	ref._slotNumber = slot;
-	ref._description = desc;
+	FileReference ref(slot, desc, fileusage_TextMode | fileusage_SavedGame);
 
 	strid_t file = glk_stream_open_file(&ref, filemode_Write, 0);
 	if (file == nullptr)
@@ -595,8 +596,7 @@ Common::Error Scott::loadGameState(int slot) {
 	short lo;
 	short darkFlag;
 
-	FileReference ref;
-	ref._slotNumber = slot;
+	FileReference ref(slot, "", fileusage_SavedGame | fileusage_TextMode);
 
 	file = glk_stream_open_file(&ref, filemode_Read, 0);
 	if (file == nullptr)
