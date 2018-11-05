@@ -1463,6 +1463,61 @@ static const uint16 gk1HonfourUnlockDoorPatch[] = {
 	PATCH_END
 };
 
+// GK1 english pc floppy locks up on day 2 when using the binoculars to view
+//  room 410 when the artist's drawing blows away. This is particularly bad
+//  because when using the binoculars you can't use the mouse to access the
+//  control panel to restore.
+//
+// We fix this as Sierra did in later versions by not allowing the drawing to
+//  blow away when viewing through binoculars. To make room for this patch
+//  we remove initializing juggler:cycleSpeed to 6 as this is redundant.
+//  juggler is a Prop and Prop:cycleSpeed's initial value is 6.
+//
+// Applies to: English PC Floppy
+// Responsible method: neJackson:init
+// Fixes bug #10797
+static const uint16 gk1Day2BinocularsLockupSignature[] = {
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x01d6),           // bnt 01d6 [ english pc floppy 1.0 only ]
+	0x38, SIG_SELECTOR16(init),         // pushi init
+	0x76,                               // push0
+	0x38, SIG_SELECTOR16(cycleSpeed),   // pushi cycleSpeed
+	0x78,                               // push1
+	0x39, 0x06,                         // pushi 06
+	0x38, SIG_SELECTOR16(setCycle),     // pushi setCycle
+	0x78,                               // push1
+	0x51, 0x15,                         // class Fwd
+	0x36,                               // push
+	0x72, SIG_UINT16(0x02b0),           // lofsa juggler
+	0x4a, SIG_UINT16(0x0010),           // send 10 [ juggler: init, cycleSpeed: 6, setCycle: Fwd ]
+	0x38, SIG_SELECTOR16(init),         // pushi init
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x0538),           // lofsa easel
+	0x4a, SIG_UINT16(0x0004),           // send 4 [ easel: init ]
+	SIG_END
+};
+
+static const uint16 gk1Day2BinocularsLockupPatch[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x3c,                               // dup
+	0x76,                               // push0
+	0x38, PATCH_SELECTOR16(setCycle),   // pushi setCycle
+	0x78,                               // push1
+	0x51, 0x15,                         // class Fwd
+	0x36,                               // push
+	0x72, PATCH_UINT16(0x02b0),         // lofsa juggler
+	0x4a, PATCH_UINT16(0x000a),         // send a [ juggler: init, setCycle Fwd ]
+	0x76,                               // push0
+	0x72, PATCH_UINT16(0x0538),         // lofsa easel
+	0x4a, PATCH_UINT16(0x0004),         // send 4 [ easel: init ]
+
+	0x89, 0x0c,                         // lsg 0c [ previous room ]
+	0x34, PATCH_UINT16(0x0190),         // ldi 0190 [ overlook ]
+	0x1c,                               // ne?
+	0x31, 0x09,                         // bnt 09 [ drawing doesn't blow away ]
+	PATCH_END
+};
+
 // GK1 english pc floppy has a missing-points bug on day 5 in room 240.
 //  Showing Mosely the veve sketch and Hartridge's notes awards 2 points
 //  but not if you show the notes before the veve.
@@ -1771,6 +1826,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
 	{  true,   290, "fix magentia missing message",                1, gk1ShowMagentiaItemSignature,     gk1ShowMagentiaItemPatch },
 	{  true,   380, "fix ego flicker in Gran's chair",             1, gk1GranChairFlickerSignature,     gk1GranChairFlickerPatch },
+	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
