@@ -125,10 +125,13 @@ public:
 
 bool GargoyleMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-	    (f == kSupportsListSaves) ||
+		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo);
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Gargoyle::GargoyleEngine::hasFeature(EngineFeature f) const {
@@ -192,6 +195,23 @@ void GargoyleMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 SaveStateDescriptor GargoyleMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
+
+	if (in) {
+		Gargoyle::SavegameHeader header;
+		if (Gargoyle::FileStream::readSavegameHeader(in, header)) {
+			// Create the return descriptor
+			SaveStateDescriptor desc(slot, header._saveName);
+			desc.setSaveDate(header._year, header._month, header._day);
+			desc.setSaveTime(header._hour, header._minute);
+			desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
+
+			delete in;
+			return desc;
+		}
+	}
+
 	return SaveStateDescriptor();
 }
 
