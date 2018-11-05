@@ -184,35 +184,35 @@ winid_t Glk::glk_window_open(winid_t split, glui32 method, glui32 size, glui32 w
 }
 
 void Glk::glk_window_close(winid_t win, stream_result_t *result) {
-	if (!win) {
-		warning("glk_window_close: invalid ref");
-	} else {
+	if (win) {
 		_windows->windowClose(win, result);
+	} else {
+		warning("glk_window_close: invalid ref");
 	}
 }
 
 void Glk::glk_window_get_size(winid_t win, glui32 *width, glui32 *height) {
-	if (!win) {
-		warning("window_get_size: invalid ref");
-	} else {
+	if (win) {
 		win->getSize(width, height);
+	} else {
+		warning("window_get_size: invalid ref");
 	}
 }
 
 void Glk::glk_window_set_arrangement(winid_t win, glui32 method, glui32 size, winid_t keywin) {
-	if (!win) {
-		warning("window_set_arrangement: invalid ref");
-	} else {
+	if (win) {
 		win->setArrangement(method, size, keywin);
+	} else {
+		warning("window_set_arrangement: invalid ref");
 	}
 }
 
 void Glk::glk_window_get_arrangement(winid_t win, glui32 *method,
 		glui32 *size, winid_t *keyWin) {
-	if (!win) {
-		warning("window_get_arrangement: invalid ref");
-	} else {
+	if (win) {
 		win->getArrangement(method, size, keyWin);
+	} else {
+		warning("window_get_arrangement: invalid ref");
 	}
 }
 
@@ -232,21 +232,21 @@ winid_t Glk::glk_window_iterate(winid_t win, glui32 *rock) {
 }
 
 glui32 Glk::glk_window_get_rock(winid_t win) {
-	if (!win) {
+	if (win) {
+		return win->_rock;
+	} else {
 		warning("window_get_rock: invalid ref.");
 		return 0;
 	}
-
-	return win->_rock;
 }
 
 glui32 Glk::glk_window_get_type(winid_t win) {
-	if (!win) {
+	if (win) {
+		return win->_type;
+	} else {
 		warning("window_get_parent: invalid ref");
 		return 0;
 	}
-
-	return win->_type;
 }
 
 winid_t Glk::glk_window_get_parent(winid_t win) {
@@ -298,27 +298,27 @@ void Glk::glk_window_clear(winid_t win) {
 }
 
 void Glk::glk_window_move_cursor(winid_t win, glui32 xpos, glui32 ypos) {
-	if (!win) {
-		warning("window_move_cursor: invalid ref");
-	} else {
+	if (win) {
 		win->moveCursor(Point(xpos, ypos));
+	} else {
+		warning("window_move_cursor: invalid ref");
 	}
 }
 
 strid_t Glk::glk_window_get_stream(winid_t win) {
-	if (!win) {
+	if (win) {
+		return win->_stream;
+	} else {
 		warning("window_get_stream: invalid ref");
 		return nullptr;
 	}
-
-	return win->_stream;
 }
 
 void Glk::glk_window_set_echo_stream(winid_t win, strid_t str) {
-	if (!win) {
-		warning("window_set_echo_stream: invalid window id");
-	} else {
+	if (win) {
 		win->_echoStream = str;
+	} else {
+		warning("window_set_echo_stream: invalid window id");
 	}
 }
 
@@ -361,19 +361,19 @@ glui32 Glk::glk_stream_get_rock(strid_t str) const {
 }
 
 void Glk::glk_stream_set_position(strid_t str, glsi32 pos, glui32 seekMode) {
-	if (!str) {
-		warning("stream_set_position: invalid ref");
-	} else {
+	if (str) {
 		str->setPosition(pos, seekMode);
+	} else {
+		warning("stream_set_position: invalid ref");
 	}
 }
 
 glui32 Glk::glk_stream_get_position(strid_t str) const {
-	if (!str) {
+	if (str) {
+		return str->getPosition();
+	} else {
 		warning("stream_get_position: invalid ref");
 		return 0;
-	} else {
-		return str->getPosition();
 	}
 }
 
@@ -427,21 +427,29 @@ void Glk::glk_set_style_stream(strid_t str, glui32 styl) {
 
 glsi32 Glk::glk_get_char_stream(strid_t str) {
 	if (str) {
+		return str->getChar();
+	} else {
 		warning("get_char_stream: invalid ref");
 		return -1;
-	} else {
-		return str->getChar();
 	}
 }
 
 glui32 Glk::glk_get_line_stream(strid_t str, char *buf, glui32 len) {
-	// TODO
-	return 0;
+	if (str) {
+		return str->getLine(buf, len);
+	} else {
+		warning("get_line_stream: invalid ref");
+		return 0;
+	}
 }
 
 glui32 Glk::glk_get_buffer_stream(strid_t str, char *buf, glui32 len) {
-	// TODO
-	return 0;
+	if (str) {
+		return str->getBuffer(buf, len);
+	} else {
+		warning("get_line_stream: invalid ref");
+		return 0;
+	}
 }
 
 void Glk::glk_stylehint_set(glui32 wintype, glui32 style, glui32 hint, glsi32 val) {

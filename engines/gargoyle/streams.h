@@ -101,6 +101,13 @@ struct FileReference {
 	FileReference() : _rock(0), _slotNumber(-1), _fileType(fileusage_Data), _textMode(false) {}
 
 	/**
+	 * Constructor
+	 */
+	FileReference(int slot, const Common::String &desc, glui32 usage, glui32 rock = 0) :
+		_rock(rock), _slotNumber(slot), _description(desc),
+		_fileType((FileUsage)(usage & fileusage_TypeMask)), _textMode(usage & fileusage_TextMode) {}
+
+	/**
 	 * Get savegame filename
 	 */
 	const Common::String getSaveName() const;
@@ -217,9 +224,19 @@ public:
 	virtual glsi32 getCharUni() { return -1; }
 
 	/**
+	 * Get a buffer
+	 */
+	virtual glui32 getBuffer(char *buf, glui32 len) { return 0; }
+
+	/**
 	 * Get a unicode buffer
 	 */
 	virtual glui32 getBufferUni(glui32 *buf, glui32 len) { return 0; }
+
+	/**
+	 * Get a line
+	 */
+	virtual glui32 getLine(char *buf, glui32 len) { return 0; }
 
 	/**
 	 * Get a unicode line
@@ -330,9 +347,19 @@ public:
 	virtual glsi32 getCharUni() override;
 
 	/**
+	 * Get a buffer
+	 */
+	virtual glui32 getBuffer(char *buf, glui32 len) override;
+
+	/**
 	 * Get a unicode buffer
 	 */
 	virtual glui32 getBufferUni(glui32 *buf, glui32 len) override;
+
+	/**
+	 * Get a line
+	 */
+	virtual glui32 getLine(char *buf, glui32 len) override;
 
 	/**
 	 * Get a unicode line
@@ -422,9 +449,19 @@ public:
 	virtual glsi32 getCharUni() override;
 
 	/**
+	 * Get a buffer
+	 */
+	virtual glui32 getBuffer(char *buf, glui32 len) override;
+
+	/**
 	 * Get a unicode buffer
 	 */
 	virtual glui32 getBufferUni(glui32 *buf, glui32 len) override;
+
+	/**
+	 * Get a line
+	 */
+	virtual glui32 getLine(char *buf, glui32 len) override;
 
 	/**
 	 * Get a unicode line
