@@ -637,6 +637,9 @@ void TextBufferWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen
 		putText(buf, initlen, _inCurs, 0);
 	}
 
+	// WORKAROUND: Mark bottom line as dirty so caret will be drawn
+	_lines[0]._dirty = true;
+
 	_echoLineInput = _echoLineInputBase;
 
 	if (_lineTerminatorsBase && _termCt) {
@@ -689,6 +692,9 @@ void TextBufferWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 in
 		touch(0);
 		putTextUni(buf, initlen, _inCurs, 0);
 	}
+
+	// WORKAROUND: Mark bottom line as dirty so caret will be drawn
+	_lines[0]._dirty = true;
 
 	_echoLineInput = _echoLineInputBase;
 
