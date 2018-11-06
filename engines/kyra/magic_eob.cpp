@@ -281,11 +281,10 @@ void EoBCoreEngine::removeAllCharacterEffects(int charIndex) {
 	memset(c->effectsRemainder, 0, 4);
 
 	for (int i = 0; i < 10; i++) {
-		if (c->events[i] < 0) {
+		if (c->events[i] < 0)
 			removeCharacterEffect(-c->events[i], charIndex, 0);
-			c->timers[i] = 0;
-			c->events[i] = 0;
-		}
+		c->timers[i] = 0;
+		c->events[i] = 0;
 	}
 
 	setupCharacterTimers();
