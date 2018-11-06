@@ -22,14 +22,75 @@
 
 #include "gargoyle/events.h"
 #include "gargoyle/clipboard.h"
+#include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/screen.h"
 #include "gargoyle/windows.h"
+#include "graphics/cursorman.h"
 
 namespace Gargoyle {
 
+const byte ARROW[] = {
+	// byte 1: number of skipped pixels
+	// byte 2: number of plotted pixels
+	// then, pixels
+	0, 2, 0xF7, 5,
+	0, 3, 0xF7, 0xF7, 5,
+	0, 3, 0xF7, 0xF7, 5,
+	0, 4, 0xF7, 0xF7, 0xF7, 5,
+	0, 4, 0xF7, 0xF7, 0xF7, 5,
+	0, 5, 0xF7, 0xF7, 0xF7, 0xF7, 5,
+	0, 5, 0xF7, 0xF7, 0xF7, 0xF7, 5,
+	0, 6, 0xF7, 0xF7, 0xF7, 0xF7, 0xF7, 5,
+	0, 6, 0xF7, 0xF7, 0xF7, 0xF7, 0xF7, 5,
+	0, 7, 0xF7, 0xF7, 0xF7, 0xF7, 0xF7, 0xF7, 5,
+	0, 6, 0xF7, 0xF7, 0xF7, 0xF7, 0xF7, 5,
+	0, 5, 0xF7, 0xF7, 0xF7, 0xF7, 5,
+	2, 3, 0xF7, 0xF7, 5,
+	3, 3, 0xF7, 0xF7, 5,
+	3, 3, 0xF7, 0xF7, 5,
+	4, 2, 0xF7, 5
+};
+
 Events::Events() : _forceClick(false), _currentEvent(nullptr), _timeouts(false),
-	_priorFrameTime(0), _frameCounter(0) {
+		_priorFrameTime(0), _frameCounter(0), _cursorId(CURSOR_NONE) {
+	initializeCursors();
+}
+
+Events::~Events() {
+	for (int idx = 1; idx < 3; ++idx)
+		_cursors[idx].free();
+}
+
+void Events::initializeCursors() {
+	const Graphics::PixelFormat format = g_system->getScreenFormat();
+	const int WHITE = format.RGBToColor(0xff, 0xff, 0xff);
+	const int BLACK = 0;
+	const int TRANSPARENT = format.RGBToColor(0x80, 0x80, 0x80);
+
+	// Setup arrow cursor
+	Surface &arr = _cursors[CURSOR_ARROW];
+	arr.create(8, 16, g_system->getScreenFormat());
+	arr.fillRect(Common::Rect(0, 0, 8, 16), TRANSPARENT);
+
+	const byte *p = ARROW;
+	for (int y = 0; y < 16; ++y) {
+		int offset = *p++;
+		int len = *p++;
+
+		for (int x = offset; x < (offset  + len); ++x, ++p) {
+			arr.hLine(x, y, x, (*p == 0xf7) ? WHITE : BLACK);
+		}
+	}
+
+	// Setup selection cusor sized to the vertical line size
+	Surface &sel = _cursors[CURSOR_SELECTION];
+	sel.create(5, g_conf->_leading, g_system->getScreenFormat());
+	sel.fillRect(Common::Rect(0, 0, sel.w, sel.h), TRANSPARENT);
+	sel.hLine(0, 0, 4, 0);
+	sel.hLine(0, sel.h - 1, 4, 0);
+	sel.vLine(2, 1, sel.h - 1, 0);
+	sel._hotspot = Common::Point(2, sel.h - 1);
 }
 
 void Events::checkForNextFrameCounter() {
@@ -115,14 +176,25 @@ void Events::pollEvents() {
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			setCursor(CURSOR_NONE);
 			handleKeyDown(event.kbd);
 			return;
-		case Common::EVENT_WHEELUP:
-		case Common::EVENT_WHEELDOWN:
-			handleScroll(event.type == Common::EVENT_WHEELUP);
-			return;
+
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
+			// TODO
+			return;
+
+		case Common::EVENT_WHEELUP:
+		case Common::EVENT_WHEELDOWN:
+			setCursor(CURSOR_NONE);
+			handleScroll(event.type == Common::EVENT_WHEELUP);
+			return;
+
+		case Common::EVENT_MOUSEMOVE:
+			if (_cursorId == CURSOR_NONE)
+				setCursor(CURSOR_ARROW);
+			break;
 
 		default:
 			break;
@@ -234,6 +306,24 @@ void Events::waitForPress() {
 	} while (!g_vm->shouldQuit() && e.type != Common::EVENT_KEYDOWN &&
 		e.type != Common::EVENT_LBUTTONDOWN && e.type != Common::EVENT_RBUTTONDOWN &&
 		e.type != Common::EVENT_MBUTTONDOWN);
+}
+
+void Events::setCursor(CursorId cursorId) {
+	if (cursorId != _cursorId) {
+		if (cursorId == CURSOR_NONE) {
+			CursorMan.showMouse(false);
+		} else {
+			if (!CursorMan.isVisible())
+				CursorMan.showMouse(true);
+
+			const Surface &s = _cursors[cursorId];
+			const int TRANSPARENT = s.format.RGBToColor(0x80, 0x80, 0x80);
+
+			CursorMan.replaceCursor(s.getPixels(), s.w, s.h, s._hotspot.x, s._hotspot.y, TRANSPARENT, true, &s.format);
+		}
+
+		_cursorId = cursorId;
+	}
 }
 
 } // End of namespace Gargoyle
