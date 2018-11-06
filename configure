@@ -2501,6 +2501,7 @@ case $_host_os in
 				;;
 		esac
 
+		append_var LDFLAGS "-static-libstdc++"
 		append_var CXXFLAGS "-fpic"
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-funwind-tables"
