@@ -7199,8 +7199,48 @@ static const uint16 qg4InnPathfindingPatch[] = {
 	PATCH_END
 };
 
+// When autosave is enabled, Glory::save() (script 0) deletes savegame files in
+// a loop: while disk space is insufficient for a new save, or while there are
+// 20+ saves. Since ScummVM handles slots differently and allows far more
+// slots, this deletes all but the most recent 19 manual saves, merely by
+// walking from room to room!
+//
+// Ironically, kGetSaveFiles() (kfile.cpp) and the debugger's 'list_files'
+// command rely on listSavegames() (file.cpp), which specifically omits the
+// autosave slot, so the script will only ever delete manual saves. And the
+// space check doesn't take into account the reduced demand when overwriting an
+// existing autosave.
+//
+// No good can come of this loop. So we skip it entirely. If the disk truly is
+// out of space, a message box will complain, and the player can delete saves
+// voluntarily.
+//
+// Note: Glory::save() contains another space freeing loop, but it might be
+// unreachable.
+//
+// Applies to at least: English CD, English floppy
+// Responsible method: Glory::save()
+// Fixes bug: #10758
+static const uint16 qg4AutosaveSignature[] = {
+	SIG_MAGICDWORD,
+	0x43, 0x3f, SIG_UINT16(0x0002),     // callk CheckFreeSpace[3f], 02
+	0x18,                               // not
+	0x2f, 0x05,                         // bt 05 [skip other OR condition]
+	0x8d, 0x09,                         // lst temp[9] (savegame file count)
+	0x35, 0x14,                         // ldi 20d
+	0x20,                               // ge?
+	0x30, PATCH_UINT16(0x0038),         // bnt [end the loop]
+	SIG_END
+};
+
+static const uint16 qg4AutosavePatch[] = {
+	0x32, PATCH_UINT16(0x0044),         // jmp [end the loop]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
+	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
 	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,      sci2VolumeResetPatch },
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
