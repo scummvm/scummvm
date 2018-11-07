@@ -19,25 +19,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_BIGFILE_H
-#define SCUMMVM_BIGFILE_H
+#ifndef SCUMMVM_SCENE_H
+#define SCUMMVM_SCENE_H
 
-#include "common/file.h"
-#include "common/language.h"
+#include "common/rect.h"
+#include "common/system.h"
 
 namespace Dragons {
 
-class BigfileArchive {
-private:
-	Common::Language _language;
-	Common::File *_fd;
-public:
-	BigfileArchive(const char *filename, Common::Language language);
-	virtual ~BigfileArchive();
+class Background;
+class DragonRMS;
+class BackgroundResourceLoader;
+class DragonINIResource;
+class BigfileArchive;
+class Screen;
 
-	byte *load(const char *filename, uint32 &dataSize);
+class Scene {
+private:
+	Screen *_screen;
+	Background *_stage;
+	BigfileArchive *_bigfileArchive;
+	DragonRMS *_dragonRMS;
+	DragonINIResource *_dragonINIResource;
+	BackgroundResourceLoader *_backgroundLoader;
+
+	uint16 _currentSceneId;
+	Common::Point _camera;
+
+public:
+	Scene(Screen *screen, BigfileArchive *bigfileArchive, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource);
+
+	void loadScene(uint32 sceneId, uint32 cameraPointId);
+
+	void draw();
 };
 
-} // End of namespace dragons
+} // End of namespace Dragons
 
-#endif //SCUMMVM_BIGFILE_H
+#endif //SCUMMVM_SCENE_H

@@ -1,8 +1,14 @@
 MODULE := engines/dragons
  
 MODULE_OBJS := \
+    background.o \
+    bigfile.o \
 	detection.o \
-	dragons.o
+    dragonini.o \
+    dragonrms.o \
+	dragons.o \
+	scene.o \
+	screen.o
  
 MODULE_DIRS += \
 	engines/dragons

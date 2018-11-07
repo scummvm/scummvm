@@ -19,25 +19,50 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_BIGFILE_H
-#define SCUMMVM_BIGFILE_H
+#ifndef SCUMMVM_DRAGONINI_H
+#define SCUMMVM_DRAGONINI_H
 
-#include "common/file.h"
-#include "common/language.h"
+#include "common/system.h"
+#include "bigfile.h"
 
 namespace Dragons {
 
-class BigfileArchive {
-private:
-	Common::Language _language;
-	Common::File *_fd;
-public:
-	BigfileArchive(const char *filename, Common::Language language);
-	virtual ~BigfileArchive();
+struct DragonINI
+	{
+		int16 iptIndex_maybe;
+		int16 field_2;
+		int16 actorResourceId;
+		int16 frameIndexId_maybe;
+		int16 field_8;
+		uint16 actorId;
+		uint16 sceneId;
+		int16 field_e;
+		uint16 field_10;
+		int16 field_12;
+		int16 field_14;
+		int16 x;
+		int16 y;
+		uint16 field_1a_flags_maybe;
+		int16 field_1c;
+		int16 field_1e;
+		uint16 field_20_actor_field_14;
+	};
 
-	byte *load(const char *filename, uint32 &dataSize);
+class DragonINIResource {
+private:
+	DragonINI *_dragonINI;
+	uint16 _count;
+	DragonINI *_flickerINI;
+public:
+	DragonINIResource(BigfileArchive *bigfileArchive);
+	uint16 totalRecords() { return _count; }
+	DragonINI *getRecord(uint16 index);
+	void setFlickerRecord(DragonINI *dragonINI);
+	DragonINI *getFlickerRecord() {
+		return _flickerINI;
+	}
 };
 
-} // End of namespace dragons
+} // End of namespace Dragons
 
-#endif //SCUMMVM_BIGFILE_H
+#endif //SCUMMVM_DRAGONINI_H

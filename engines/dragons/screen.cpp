@@ -1,0 +1,78 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+#include "common/system.h"
+#include "common/rect.h"
+#include "engines/util.h"
+#include "screen.h"
+
+namespace Dragons {
+
+Screen::Screen() {
+	_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15);
+	initGraphics(320, 200, &_pixelFormat);
+	_backSurface = new Graphics::Surface();
+	_backSurface->create(320, 200, _pixelFormat);
+}
+
+void Screen::updateScreen() {
+	g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(0, 0), _backSurface->pitch, 0, 0, _backSurface->w, _backSurface->h);
+	g_system->updateScreen();
+}
+
+Screen::~Screen() {
+	_backSurface->free();
+	delete _backSurface;
+}
+
+void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY) {
+	copyRectToSurface(srcSurface.getBasePtr(0, 0), srcSurface.pitch, destX, destY, srcSurface.w, srcSurface.h);
+}
+
+void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect) {
+	copyRectToSurface(srcSurface.getBasePtr(srcRect.left, srcRect.top), srcSurface.pitch, destX, destY, srcRect.width(), srcRect.height());
+}
+
+void Screen::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height) {
+	assert(buffer);
+
+	assert(destX >= 0 && destX < _backSurface->w);
+	assert(destY >= 0 && destY < _backSurface->h);
+	assert(height > 0 && destY + height <= _backSurface->h);
+	assert(width > 0 && destX + width <= _backSurface->w);
+
+	// Copy buffer data to internal buffer
+	const byte *src = (const byte *)buffer;
+	byte *dst = (byte *)_backSurface->getBasePtr(destX, destY);
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			if ((src[j * 2 + 1] & 0x80) == 0) {
+				// only copy opaque pixels
+				dst[j * 2] = src[j * 2];
+				dst[j * 2 + 1] = src[j * 2 + 1];
+			}
+		}
+		src += srcPitch;
+		dst += _backSurface->pitch;
+	}
+}
+
+} // End of namespace Dragons

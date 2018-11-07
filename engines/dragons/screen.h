@@ -19,25 +19,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_BIGFILE_H
-#define SCUMMVM_BIGFILE_H
+#ifndef SCUMMVM_SCREEN_H
+#define SCUMMVM_SCREEN_H
 
-#include "common/file.h"
-#include "common/language.h"
+#include "graphics/surface.h"
+#include "graphics/pixelformat.h"
 
 namespace Dragons {
 
-class BigfileArchive {
+class Screen {
 private:
-	Common::Language _language;
-	Common::File *_fd;
+	Graphics::PixelFormat _pixelFormat;
+	Graphics::Surface *_backSurface;
 public:
-	BigfileArchive(const char *filename, Common::Language language);
-	virtual ~BigfileArchive();
+	virtual ~Screen();
 
-	byte *load(const char *filename, uint32 &dataSize);
+	Screen();
+
+	Graphics::PixelFormat getPixelFormat() { return _pixelFormat; }
+	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY);
+	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect);
+	void copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height);
+	void updateScreen();
 };
 
-} // End of namespace dragons
+} // End of namespace Dragons
 
-#endif //SCUMMVM_BIGFILE_H
+#endif //SCUMMVM_SCREEN_H
