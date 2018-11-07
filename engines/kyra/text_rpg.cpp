@@ -727,11 +727,11 @@ void TextDisplayer_rpg::displayWaitButton() {
 
 	_screen->set16bitShadingLevel(4);
 	_screen->fillRect(_vm->_dialogueButtonPosX[0], _vm->_dialogueButtonPosY[0], _vm->_dialogueButtonPosX[0] + _vm->_dialogueButtonWidth - 1, _vm->_dialogueButtonPosY[0] + _vm->guiSettings()->buttons.height - 1, _vm->guiSettings()->colors.fill);
+	clearCurDim();
 	_screen->set16bitShadingLevel(0);
 	_screen->updateScreen();
 	_vm->_dialogueButtonWidth = 95;
 	SWAP(_vm->_dialogueButtonLabelColor1, _vm->_dialogueButtonLabelColor2);
-	clearCurDim();
 }
 
 } // End of namespace Kyra
