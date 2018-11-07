@@ -34,22 +34,23 @@ const byte ARROW[] = {
 	// byte 1: number of skipped pixels
 	// byte 2: number of plotted pixels
 	// then, pixels
-	0, 2, 0xF7, 5,
-	0, 3, 0xF7, 0xF7, 5,
-	0, 3, 0xF7, 0xF7, 5,
-	0, 4, 0xF7, 0xF7, 0xF7, 5,
-	0, 4, 0xF7, 0xF7, 0xF7, 5,
-	0, 5, 0xF7, 0xF7, 0xF7, 0xF7, 5,
-	0, 5, 0xF7, 0xF7, 0xF7, 0xF7, 5,
-	0, 6, 0xF7, 0xF7, 0xF7, 0xF7, 0xF7, 5,
-	0, 6, 0xF7, 0xF7, 0xF7, 0xF7, 0xF7, 5,
-	0, 7, 0xF7, 0xF7, 0xF7, 0xF7, 0xF7, 0xF7, 5,
-	0, 6, 0xF7, 0xF7, 0xF7, 0xF7, 0xF7, 5,
-	0, 5, 0xF7, 0xF7, 0xF7, 0xF7, 5,
-	2, 3, 0xF7, 0xF7, 5,
-	3, 3, 0xF7, 0xF7, 5,
-	3, 3, 0xF7, 0xF7, 5,
-	4, 2, 0xF7, 5
+	0, 1, 5,
+	0, 2, 5, 5,
+	0, 3, 5, 0xF7, 5,
+	0, 3, 5, 0xF7, 5,
+	0, 4, 5, 0xF7, 0xF7, 5,
+	0, 4, 5, 0xF7, 0xF7, 5,
+	0, 5, 5, 0xF7, 0xF7, 0xF7, 5,
+	0, 5, 5, 0xF7, 0xF7, 0xF7, 5,
+	0, 6, 5, 0xF7, 0xF7, 0xF7, 0xF7, 5,
+	0, 6, 5, 0xF7, 0xF7, 0xF7, 0xF7, 5,
+	0, 7, 5, 0xF7, 0xF7, 0xF7, 0xF7, 0xF7, 5,
+	0, 6, 5, 0xF7, 0xF7, 0xF7, 0xF7, 5,
+	0, 5, 5, 0xF7, 0xF7, 0xF7, 5,
+	2, 3, 5, 0xF7, 5,
+	3, 3, 5, 0xF7, 5,
+	3, 3, 5, 0xF7, 5,
+	4, 2, 5, 5
 };
 
 Events::Events() : _forceClick(false), _currentEvent(nullptr), _timeouts(false),
@@ -84,13 +85,15 @@ void Events::initializeCursors() {
 	}
 
 	// Setup selection cusor sized to the vertical line size
-	Surface &sel = _cursors[CURSOR_SELECTION];
+	Surface &sel = _cursors[CURSOR_IBEAM];
 	sel.create(5, g_conf->_leading, g_system->getScreenFormat());
 	sel.fillRect(Common::Rect(0, 0, sel.w, sel.h), TRANSPARENT);
 	sel.hLine(0, 0, 4, 0);
 	sel.hLine(0, sel.h - 1, 4, 0);
 	sel.vLine(2, 1, sel.h - 1, 0);
 	sel._hotspot = Common::Point(2, sel.h - 1);
+
+	// TODO: Hyperlink hand cursor
 }
 
 void Events::checkForNextFrameCounter() {
@@ -169,9 +172,9 @@ void Events::dispatchEvent(Event &ev, bool polled) {
 
 void Events::pollEvents() {
 	Common::Event event;
-	checkForNextFrameCounter();
 
 	do {
+		checkForNextFrameCounter();
 		g_system->getEventManager()->pollEvent(event);
 
 		switch (event.type) {
@@ -192,8 +195,7 @@ void Events::pollEvents() {
 			return;
 
 		case Common::EVENT_MOUSEMOVE:
-			if (_cursorId == CURSOR_NONE)
-				setCursor(CURSOR_ARROW);
+			handleMouseMove(event.mouse);
 			break;
 
 		default:
@@ -267,6 +269,9 @@ void Events::handleScroll(bool wheelUp) {
 }
 
 void Events::handleMouseMove(const Point &pos) {
+	if (_cursorId == CURSOR_NONE)
+		setCursor(CURSOR_ARROW);
+
 	// hyperlinks and selection
 	// TODO: Properly handle commented out lines
 	if (g_vm->_copySelect) {
