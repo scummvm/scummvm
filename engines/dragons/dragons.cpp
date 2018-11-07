@@ -21,22 +21,61 @@
  */
 #include "engines/util.h"
 #include "graphics/thumbnail.h"
+#include "graphics/surface.h"
 #include "common/error.h"
+#include "bigfile.h"
+#include "dragonrms.h"
+#include "dragonini.h"
 #include "dragons.h"
+#include "scene.h"
+#include "screen.h"
 
 namespace Dragons {
 
 DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
-
+	_bigfileArchive = NULL;
+	_dragonRMS = NULL;
+	_backgroundResourceLoader = NULL;
+	_screen = NULL;
 }
 
 DragonsEngine::~DragonsEngine() {
 
 }
 
+void DragonsEngine::updateEvents() {
+	Common::Event event;
+	while (_eventMan->pollEvent(event)) {
+//		_input->processEvent(event);
+		switch (event.type) {
+			case Common::EVENT_QUIT:
+				quitGame();
+				break;
+			default:
+				break;
+		}
+	}
+}
 Common::Error DragonsEngine::run() {
-	Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	initGraphics(320, 240, &pixelFormat16);
+	_screen = new Screen();
+	_bigfileArchive = new BigfileArchive("bigfile.dat", Common::Language::EN_ANY);
+	_dragonRMS = new DragonRMS(_bigfileArchive);
+	_dragonINIResource = new DragonINIResource(_bigfileArchive);
+	_scene = new Scene(_screen, _bigfileArchive, _dragonRMS, _dragonINIResource);
+
+	_scene->loadScene(0x12, 0x1e);
+
+	_scene->draw();
+	_screen->updateScreen();
+	while (!shouldQuit()) {
+		updateEvents();
+	}
+
+	delete _backgroundResourceLoader;
+	delete _dragonRMS;
+	delete _bigfileArchive;
+	delete _screen;
+
 	debug("Ok");
 	return Common::kNoError;
 }

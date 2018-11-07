@@ -24,6 +24,7 @@
 
 #include "gui/EventRecorder.h"
 #include "engines/engine.h"
+#include "background.h"
 
 namespace Dragons {
 
@@ -52,12 +53,26 @@ enum kReadSaveHeaderError {
 	kRSHEInvalidVersion = 2,
 	kRSHEIoError = 3
 };
+class BigfileArchive;
+class DragonRMS;
+class DragonINIResource;
+class Scene;
+class Screen;
 
 class DragonsEngine : public Engine {
+private:
+	Screen *_screen;
+	BigfileArchive *_bigfileArchive;
+	DragonRMS *_dragonRMS;
+	DragonINIResource *_dragonINIResource;
+	BackgroundResourceLoader *_backgroundResourceLoader;
+	Scene *_scene;
+
 public:
 	DragonsEngine(OSystem *syst);
 	~DragonsEngine();
 
+	void updateEvents();
 	virtual Common::Error run();
 
 	const char *getSavegameFilename(int num);
