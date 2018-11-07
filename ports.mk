@@ -358,6 +358,10 @@ ifdef USE_MPEG2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
 endif
 
+ifdef USE_A52
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/liba52.a
+endif
+
 ifdef USE_JPEG
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libjpeg.a
 endif
