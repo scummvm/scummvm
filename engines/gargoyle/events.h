@@ -94,10 +94,14 @@ enum Keycode {
 	keycode_MAXVAL = 28U
 };
 
+/**
+ * List of cursors
+ */
 enum CursorId {
 	CURSOR_NONE = 0,
 	CURSOR_ARROW = 1,
-	CURSOR_SELECTION = 2
+	CURSOR_IBEAM = 2,
+	CURSOR_HAND = 3
 };
 
 /**
@@ -165,7 +169,7 @@ private:
 	uint32 _frameCounter;			///< Frame counter
 	bool _redraw;					///< Screen needed redrawing
 	CursorId _cursorId;				///< Current cursor Id
-	Surface _cursors[3];			///< Cursor pixel data
+	Surface _cursors[4];			///< Cursor pixel data
 private:
 	/**
 	 * Initialize the cursor graphics
