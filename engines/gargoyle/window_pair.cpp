@@ -225,4 +225,12 @@ void PairWindow::setArrangement(glui32 method, glui32 size, Window *keyWin) {
 	_windows->rearrange();
 }
 
+void PairWindow::click(const Point &newPos) {
+	if (_child1->_bbox.contains(newPos))
+		_child1->click(newPos);
+
+	if (_child2->_bbox.contains(newPos))
+		_child2->click(newPos);
+}
+
 } // End of namespace Gargoyle

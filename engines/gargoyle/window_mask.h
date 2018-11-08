@@ -36,8 +36,7 @@ public:
 	size_t _hor, _ver;
 	glui32 **_links;
 	Rect _select;
-
-	static int _lastX, _lastY;
+	Point _last;
 public:
 	/**
 	 * Constructor
@@ -51,17 +50,28 @@ public:
 
 	void putHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1);
 
-	glui32 getHyperlink(const Point &pos);
+	glui32 getHyperlink(const Point &pos) const;
 
+	/**
+	 * Start selecting an area of the screen
+	 * @param pos		Position to start selection area at
+	 */
 	void startSelection(const Point &pos);
 
+	/**
+	 * Move the end point of the selection area
+	 * @param pos		Position to end selection area at
+	 */
 	void moveSelection(const Point &pos);
 
 	void clearSelection();
 
-	int checkSelection(uint x0, uint y0, uint x1, uint y1);
+	/**
+	 * Checks whether the passed area intersects the selection area
+	 */
+	bool checkSelection(const Rect &r) const;
 
-	int getSelection(uint x0, uint y0, uint x1, uint y1, int *rx0, int *rx1);
+	bool getSelection(const Rect &r, int *rx0, int *rx1) const;
 };
 
 } // End of namespace Gargoyle
