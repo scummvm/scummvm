@@ -643,7 +643,8 @@ void EoBCoreEngine::explodeObject(EoBFlyingObject *fo, int block, Item item) {
 
 	int b = _expObjectTlMode ? _expObjectTlMode[tl] : 2;
 
-	if (b == 0 || (b == 1 && (fo->direction & 1) == (_currentDirection & 1))) {
+	uint8 fdr = fo ? fo->direction : 0;
+	if (b == 0 || (b == 1 && (fdr & 1) == (_currentDirection & 1))) {
 		snd_processEnvironmentalSoundEffect(35, _currentBlock);
 		return;
 	}
