@@ -64,6 +64,9 @@ public:
 	 */
 	void moveSelection(const Point &pos);
 
+	/**
+	 * Remove any previously selected area
+	 */
 	void clearSelection();
 
 	/**
