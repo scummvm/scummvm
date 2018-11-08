@@ -21,6 +21,7 @@
  */
 
 #include "gargoyle/window_graphics.h"
+#include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/screen.h"
 
@@ -245,6 +246,27 @@ void GraphicsWindow::setBackgroundColor(glui32 color) {
 	_bgnd[0] = (color >> 16) & 0xff;
 	_bgnd[1] = (color >> 8) & 0xff;
 	_bgnd[2] = (color >> 0) & 0xff;
+}
+
+void GraphicsWindow::click(const Point &newPos) {
+	Point diff = newPos - Point(_bbox.left, _bbox.top);
+
+	if (_mouseRequest) {
+		g_vm->_events->store(evtype_MouseInput, this, diff.x, diff.y);
+		_mouseRequest = false;
+		if (g_conf->_safeClicks)
+			g_vm->_events->_forceClick = true;
+	}
+
+	if (_hyperRequest) {
+		glui32 linkval = g_vm->_windowMask->getHyperlink(newPos);
+		if (linkval) {
+			g_vm->_events->store(evtype_Hyperlink, this, linkval, 0);
+			_hyperRequest = false;
+			if (g_conf->_safeClicks)
+				g_vm->_events->_forceClick = 1;
+		}
+	}
 }
 
 } // End of namespace Gargoyle

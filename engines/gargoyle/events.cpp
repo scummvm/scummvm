@@ -185,8 +185,12 @@ void Events::pollEvents() {
 
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
-			// TODO
+			handleButtonDown(event.type == Common::EVENT_LBUTTONDOWN, event.mouse);
 			return;
+
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
+			handleButtonUp(event.type == Common::EVENT_LBUTTONUP, event.mouse);
 
 		case Common::EVENT_WHEELUP:
 		case Common::EVENT_WHEELDOWN:
@@ -287,16 +291,18 @@ void Events::handleMouseMove(const Point &pos) {
 }
 
 void Events::handleButtonDown(bool isLeft, const Point &pos) {
-	if (isLeft)
+	if (isLeft) {
+		setCursor(CURSOR_IBEAM);
 		g_vm->_windows->inputHandleClick(pos);
-	else
+	} else {
 		g_vm->_clipboard->receive(PRIMARY);
+	}
 }
 
 void Events::handleButtonUp(bool isLeft, const Point &pos) {
 	if (isLeft) {
+		setCursor(CURSOR_ARROW);
 		g_vm->_copySelect = false;
-		//gdk_window_set_cursor((GTK_WIDGET(widget)->window), nullptr);
 		g_vm->_clipboard->send(PRIMARY);
 	}
 }

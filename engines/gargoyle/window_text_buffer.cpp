@@ -793,7 +793,8 @@ void TextBufferWindow::redraw() {
     unsigned char *color;
     int i;
     int hx0, hx1, hy0, hy1;
-    int selbuf, selrow, selchar, sx0, sx1, selleft, selright;
+    int selrow, selchar, sx0, sx1, selleft, selright;
+	bool selBuf;
     int tx, tsc, tsw, lsc, rsc;
 	Screen &screen = *g_vm->_screen;
 
@@ -814,17 +815,16 @@ void TextBufferWindow::redraw() {
     pw = x1 - x0 - 2 * GLI_SUBPIX;
 
     // check if any part of buffer is selected
-    selbuf = g_vm->_windowMask->checkSelection(x0/GLI_SUBPIX,y0,x1/GLI_SUBPIX,y1);
+    selBuf = g_vm->_windowMask->checkSelection(Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
 
     for (i = _scrollPos + _height - 1; i >= _scrollPos; i--) {
         // top of line
         y = y0 + (_height - (i - _scrollPos) - 1) * g_conf->_leading;
 
         // check if part of line is selected
-        if (selbuf) {
-            selrow = g_vm->_windowMask->getSelection(x0/GLI_SUBPIX, y,
-                    x1/GLI_SUBPIX, y + g_conf->_leading,
-                    &sx0, &sx1);
+        if (selBuf) {
+            selrow = g_vm->_windowMask->getSelection(Rect(x0 / GLI_SUBPIX, y,
+				x1 / GLI_SUBPIX, y + g_conf->_leading), &sx0, &sx1);
             selleft = (sx0 == x0/GLI_SUBPIX);
             selright = (sx1 == x1/GLI_SUBPIX);
         } else {
@@ -1141,7 +1141,7 @@ void TextBufferWindow::redraw() {
     }
 
     // send selected text to clipboard
-    if (selbuf && _copyPos) {
+    if (selBuf && _copyPos) {
         Windows::_claimSelect = true;
 
 		g_vm->_clipboard->store(_copyBuf, _copyPos);

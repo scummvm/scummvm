@@ -29,6 +29,9 @@ namespace Gargoyle {
 
 enum ClipSource { PRIMARY = 0, CLIPBOARD = 1 };
 
+/**
+ * Handles selection of text, and copying to and from the clipboard
+ */
 class Clipboard {
 private:
 	Common::Array<uint32> _text;
