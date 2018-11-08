@@ -28,11 +28,8 @@
 
 namespace Gargoyle {
 
-int WindowMask::_lastX;
-int WindowMask::_lastY;
-
 WindowMask::WindowMask() : _hor(0), _ver(0), _links(nullptr) {
-	_lastX = _lastY = 0;
+	_last.x = _last.y = 0;
 	resize(g_system->getWidth(), g_system->getHeight());
 }
 
@@ -96,15 +93,13 @@ void WindowMask::putHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1
 	}
 }
 
-glui32 WindowMask::getHyperlink(const Point &pos) {
+glui32 WindowMask::getHyperlink(const Point &pos) const {
 	if (!_hor || !_ver) {
 		warning("getHyperlink: struct not initialized");
 		return 0;
 	}
 
-	if (pos.x >= (int16)_hor
-		|| pos.y >= (int16)_ver
-		|| !_links[pos.x]) {
+	if (pos.x >= (int16)_hor || pos.y >= (int16)_ver || !_links[pos.x]) {
 		warning("getHyperlink: invalid range given");
 		return 0;
 	}
@@ -123,8 +118,8 @@ void WindowMask::startSelection(const Point &pos) {
 	tx = MIN(pos.x, (int16)_hor);
 	ty = MIN(pos.y, (int16)_ver);
 
-	_select.left = _lastX = tx;
-	_select.top = _lastY = ty;
+	_select.left = _last.x = tx;
+	_select.top = _last.y = ty;
 	_select.right = 0;
 	_select.bottom = 0;
 
@@ -134,7 +129,7 @@ void WindowMask::startSelection(const Point &pos) {
 void WindowMask::moveSelection(const Point &pos) {
 	int tx, ty;
 
-	if (ABS(pos.x - _lastX) < 5 && abs(pos.y - _lastY) < 5)
+	if (ABS(pos.x - _last.x) < 5 && ABS(pos.y - _last.y) < 5)
 		return;
 
 	if (!_hor || !_ver) {
@@ -145,70 +140,35 @@ void WindowMask::moveSelection(const Point &pos) {
 	tx = MIN(pos.x, (int16)_hor);
 	ty = MIN(pos.y, (int16)_ver);
 
-	_select.right = _lastX = tx;
-	_select.bottom = _lastY = ty;
+	_select.right = _last.x = tx;
+	_select.bottom = _last.y = ty;
 
 	g_vm->_windows->selectionChanged();
 }
 
 void WindowMask::clearSelection() {
-	if (_select.left || _select.right
-		|| _select.top || _select.bottom)
+	if (!_select.isEmpty())
 		Windows::_forceRedraw = true;
 
-	_select.left = 0;
-	_select.top = 0;
-	_select.right = 0;
-	_select.bottom = 0;
+	_select = Rect();
 	g_vm->_windows->clearClaimSelect();
 }
 
-int WindowMask::checkSelection(uint x0, uint y0, uint x1, uint y1) {
-	uint cx0, cx1, cy0, cy1;
-
-	cx0 = _select.left < _select.right
-		? _select.left
-		: _select.right;
-
-	cx1 = _select.left < _select.right
-		? _select.right
-		: _select.left;
-
-	cy0 = _select.top < _select.bottom
-		? _select.top
-		: _select.bottom;
-
-	cy1 = _select.top < _select.bottom
-		? _select.bottom
-		: _select.top;
-
-	if (!cx0 || !cx1 || !cy0 || !cy1)
+bool WindowMask::checkSelection(const Rect &r) const {
+	Rect select(MIN(_select.left, _select.right), MAX(_select.left, _select.right),
+		MIN(_select.top, _select.bottom), MAX(_select.top, _select.bottom));
+	if (select.isEmpty())
 		return false;
 
-	if (cx0 >= x0 && cx0 <= x1
-		&& cy0 >= y0 && cy0 <= y1)
-		return true;
-
-	if (cx0 >= x0 && cx0 <= x1
-		&& cy1 >= y0 && cy1 <= y1)
-		return true;
-
-	if (cx1 >= x0 && cx1 <= x1
-		&& cy0 >= y0 && cy0 <= y1)
-		return true;
-
-	if (cx1 >= x0 && cx1 <= x1
-		&& cy1 >= y0 && cy1 <= y1)
-		return true;
-
-	return false;
+	return select.intersects(r);
 }
 
-int WindowMask::getSelection(uint x0, uint y0, uint x1, uint y1, int *rx0, int *rx1) {
+bool WindowMask::getSelection(const Rect &r, int *rx0, int *rx1) const {
 	uint row, upper, lower, above, below;
-	int row_selected, found_left, found_right;
+	bool row_selected, found_left, found_right;
 	int from_right, from_below, is_above, is_below;
 	uint cx0, cx1, cy0, cy1;
+	uint x0 = r.left, y0 = r.top, x1 = r.right, y1 = r.bottom;
 
 	row = (y0 + y1) / 2;
 	upper = row - (row - y0) / 2;
@@ -216,21 +176,10 @@ int WindowMask::getSelection(uint x0, uint y0, uint x1, uint y1, int *rx0, int *
 	above = upper - (g_conf->_leading) / 2;
 	below = lower + (g_conf->_leading) / 2;
 
-	cx0 = _select.left < _select.right
-		? _select.left
-		: _select.right;
-
-	cx1 = _select.left < _select.right
-		? _select.right
-		: _select.left;
-
-	cy0 = _select.top < _select.bottom
-		? _select.top
-		: _select.bottom;
-
-	cy1 = _select.top < _select.bottom
-		? _select.bottom
-		: _select.top;
+	cx0 = MIN(_select.left, _select.right);
+	cx1 = MAX(_select.left, _select.right);
+	cy0 = MIN(_select.top, _select.bottom);
+	cy1 = MAX(_select.top, _select.bottom);
 
 	row_selected = false;
 

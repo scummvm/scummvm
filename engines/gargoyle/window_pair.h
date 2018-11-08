@@ -61,6 +61,11 @@ public:
 	virtual void getArrangement(glui32 *method, glui32 *size, Window **keyWin) override;
 
 	virtual void setArrangement(glui32 method, glui32 size, Window *keyWin) override;
+
+	/**
+	 * Click the window
+	 */
+	virtual void click(const Point &newPos) override;
 };
 
 } // End of namespace Gargoyle

@@ -68,6 +68,11 @@ public:
 	}
 
 	/**
+	 * Click the window
+	 */
+	virtual void click(const Point &newPos) override;
+
+	/**
 	 * Cancel a mouse event
 	 */
 	virtual void cancelMouseEvent() override { _mouseRequest = false; }
