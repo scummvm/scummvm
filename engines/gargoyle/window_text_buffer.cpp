@@ -365,9 +365,9 @@ void TextBufferWindow::putTextUni(const glui32 *buf, int len, int pos, int oldle
 void TextBufferWindow::touch(int line) {
 	_lines[line]._dirty = true;
 	g_vm->_windowMask->clearSelection();
-	//int y = _bbox.top + g_conf->_tMarginY + (_height - line - 1) * g_conf->_leading;
-	//_windows->repaint(Rect(_bbox.left, y - 2, _bbox.right, y + g_conf->_leading + 2));
-	redraw();
+
+	int y = _bbox.top + g_conf->_tMarginY + (_height - line - 1) * g_conf->_leading;
+	_windows->repaint(Rect(_bbox.left, y - 2, _bbox.right, y + g_conf->_leading + 2));
 }
 
 glui32 TextBufferWindow::getSplit(glui32 size, bool vertical) const {
