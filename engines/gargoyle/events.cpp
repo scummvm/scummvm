@@ -191,6 +191,7 @@ void Events::pollEvents() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			handleButtonUp(event.type == Common::EVENT_LBUTTONUP, event.mouse);
+			return;
 
 		case Common::EVENT_WHEELUP:
 		case Common::EVENT_WHEELDOWN:
