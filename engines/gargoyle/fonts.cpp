@@ -23,36 +23,20 @@
 #include "gargoyle/fonts.h"
 #include "gargoyle/glk_types.h"
 #include "gargoyle/conf.h"
-#include "common/file.h"
+#include "gargoyle/gargoyle.h"
+#include "common/memstream.h"
+#include "common/unzip.h"
 #include "graphics/fonts/ttf.h"
+#include "graphics/fontman.h"
 
 namespace Gargoyle {
 
-const char *gli_conf_propr = "NotoSerif-Regular";
-const char *gli_conf_propb = "NotoSerif-Bold";
-const char *gli_conf_propi = "NotoSerif-Italic";
-const char *gli_conf_propz = "NotoSerif-BoldItalic";
+#define FONTS_VERSION 1.0
+#define FONTS_FILENAME "fonts.dat"
 
-const char *gli_conf_monor = "GoMono-Regular";
-const char *gli_conf_monob = "GoMono-Bold";
-const char *gli_conf_monoi = "GoMono-Italic";
-const char *gli_conf_monoz = "GoMono-BoldItalic";
-
-Fonts::Fonts(Graphics::ManagedSurface *surface) : _surface(surface) {
-	double monoAspect = g_conf->_monoAspect;
-	double propAspect = g_conf->_propAspect;
-	double monoSize = g_conf->_monoSize;
-	double propSize = g_conf->_propSize;
-
-	_fontTable[0] = loadFont(MONOR, monoSize, monoAspect, FONTR);
-	_fontTable[1] = loadFont(MONOB, monoSize, monoAspect, FONTB);
-	_fontTable[2] = loadFont(MONOI, monoSize, monoAspect, FONTI);
-	_fontTable[3] = loadFont(MONOZ, monoSize, monoAspect, FONTZ);
-
-	_fontTable[4] = loadFont(PROPR, propSize, propAspect, FONTR);
-	_fontTable[5] = loadFont(PROPB, propSize, propAspect, FONTB);
-	_fontTable[6] = loadFont(PROPI, propSize, propAspect, FONTI);
-	_fontTable[7] = loadFont(PROPZ, propSize, propAspect, FONTZ);
+Fonts::Fonts(Graphics::ManagedSurface *surface) : _surface(surface), _fontsMissing(false) {
+	if (!loadFonts())
+		error("Could not load data file");
 
 	if (!g_conf->_leading)
 		g_conf->_leading = g_conf->_propSize + 2;
@@ -68,6 +52,63 @@ Fonts::~Fonts() {
 		delete _fontTable[idx];
 }
 
+bool Fonts::loadFonts() {
+	Common::Archive *archive = nullptr;
+
+	if (!Common::File::exists(FONTS_FILENAME) || (archive = Common::makeZipArchive(FONTS_FILENAME)) == nullptr)
+		return false;
+
+	// Open the version.txt file within it to validate the version
+	Common::File f;
+	if (!f.open("version.txt", *archive)) {
+		delete archive;
+		return false;
+	}
+
+	// Validate the version
+	char buffer[4];
+	f.read(buffer, 3);
+	buffer[3] = '\0';
+
+	if (Common::String(buffer) != "1.0") {
+		delete archive;
+		return false;
+	}
+
+	// R ead in the fonts
+	double monoAspect = g_conf->_monoAspect;
+	double propAspect = g_conf->_propAspect;
+	double monoSize = g_conf->_monoSize;
+	double propSize = g_conf->_propSize;
+
+	_fontTable[0] = loadFont(MONOR, archive, monoSize, monoAspect, FONTR);
+	_fontTable[1] = loadFont(MONOB, archive, monoSize, monoAspect, FONTB);
+	_fontTable[2] = loadFont(MONOI, archive, monoSize, monoAspect, FONTI);
+	_fontTable[3] = loadFont(MONOZ, archive, monoSize, monoAspect, FONTZ);
+
+	_fontTable[4] = loadFont(PROPR, archive, propSize, propAspect, FONTR);
+	_fontTable[5] = loadFont(PROPB, archive, propSize, propAspect, FONTB);
+	_fontTable[6] = loadFont(PROPI, archive, propSize, propAspect, FONTI);
+	_fontTable[7] = loadFont(PROPZ, archive, propSize, propAspect, FONTZ);
+
+	delete archive;
+	return true;
+}
+
+const Graphics::Font *Fonts::loadFont(FACES face, Common::Archive *archive, double size, double aspect, int
+ style) {
+	const char *const FILENAMES[8] = {
+		"GoMono-Regular.ttf", "GoMono-Bold.ttf", "GoMono-Italic.ttf", "GoMono-Bold-Italic.ttf",
+		"NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-Bold-Italic.ttf"
+	};
+	
+	Common::File f;
+	if (!f.open(FILENAMES[face], *archive))
+		error("Could not load font");
+
+	return Graphics::loadTTFFont(f, size, Graphics::kTTFSizeModeCharacter);
+}
+
 FACES Fonts::getId(const Common::String &name) {
 	if (name == "monor") return MONOR;
 	if (name == "monob") return MONOB;
@@ -80,28 +121,9 @@ FACES Fonts::getId(const Common::String &name) {
 	return MONOR;
 }
 
-Graphics::Font *Fonts::loadFont(FACES face, double size, double aspect, int style) {
-	static const char *const MAP[8] = {
-		"Go-Mono-Regular",
-		"Go-Mono-Bold",
-		"Go-Mono-Italic",
-		"Go-Mono-BoldItalic",
-		"NotoSerif-Regular",
-		"NotoSerif-Bold",
-		"NotoSerif-Italic",
-		"NotoSerif-BoldItalic"
-	};
-
-	Common::File f;
-	if (!f.open(Common::String::format("%s.ttf", MAP[face])))
-		return nullptr;
-
-	return Graphics::loadTTFFont(f, size, Graphics::kTTFSizeModeCharacter);
-}
-
 int Fonts::drawString(const Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw) {
 	Point pt(pos.x / GLI_SUBPIX, pos.y - g_conf->_baseLine);
-	Graphics::Font *font = _fontTable[fontIdx];
+	const Graphics::Font *font = _fontTable[fontIdx];
 	const uint32 color = _surface->format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	font->drawString(_surface, text, pt.x, pt.y, _surface->w - pt.x, color);
 
@@ -111,7 +133,7 @@ int Fonts::drawString(const Point &pos, int fontIdx, const byte *rgb, const Comm
 
 int Fonts::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw) {
 	Point pt(pos.x / GLI_SUBPIX, pos.y - g_conf->_baseLine);
-	Graphics::Font *font = _fontTable[fontIdx];
+	const Graphics::Font *font = _fontTable[fontIdx];
 	const uint32 color = _surface->format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	font->drawString(_surface, text, pt.x, pt.y, _surface->w - pt.x, color);
 
@@ -121,13 +143,13 @@ int Fonts::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const C
 
 size_t Fonts::stringWidth(int fontIdx, const Common::String &text, int spw) {
 	// TODO: Handle spw
-	Graphics::Font *font = _fontTable[fontIdx];
+	const Graphics::Font *font = _fontTable[fontIdx];
 	return font->getStringWidth(text) * GLI_SUBPIX;
 }
 
 size_t Fonts::stringWidthUni(int fontIdx, const Common::U32String &text, int spw) {
 	// TODO: Handle spw
-	Graphics::Font *font = _fontTable[fontIdx];
+	const Graphics::Font *font = _fontTable[fontIdx];
 	return font->getStringWidth(text) * GLI_SUBPIX;
 }
 

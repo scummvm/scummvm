@@ -166,6 +166,11 @@ public:
 	 * Return the game engine's target name
 	 */
 	const Common::String &getTargetName() const { return _targetName; }
+
+	/**
+	 * Display a message in a GUI dialog
+	 */
+	void GUIError(const char *msg, ...);
 };
 
 extern GargoyleEngine *g_vm;
