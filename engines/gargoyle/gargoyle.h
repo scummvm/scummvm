@@ -81,6 +81,11 @@ private:
 	 * Handles basic initialization
 	 */
 	void initialize();
+
+	/**
+	 * Setup the video mode
+	 */
+	void initGraphicsMode();
 protected:
 	const GargoyleGameDescription *_gameDescription;
 	Common::RandomSource _random;

@@ -68,7 +68,7 @@ void GargoyleEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
-	initGraphics(640, 480, false);
+	initGraphicsMode();
 	_conf = new Conf();
 	_screen = new Screen();
 
@@ -78,6 +78,22 @@ void GargoyleEngine::initialize() {
 	_streams = new Streams();
 	_windows = new Windows(_screen);
 	_windowMask = new WindowMask();
+}
+
+void GargoyleEngine::initGraphicsMode() {
+	uint width = ConfMan.hasKey("width") ? ConfMan.getInt("width") : 640;
+	uint height = ConfMan.hasKey("height") ? ConfMan.getInt("height") : 480;
+	Common::List<Graphics::PixelFormat> formats = g_system->getSupportedFormats();
+	Graphics::PixelFormat format = formats.front();
+
+	for (Common::List<Graphics::PixelFormat>::iterator i = formats.begin(); i != formats.end(); ++i) {
+		if ((*i).bytesPerPixel > 1) {
+			format = *i;
+			break;
+		}
+	}
+
+	initGraphics(width, height, &format);
 }
 
 Common::Error GargoyleEngine::run() {
