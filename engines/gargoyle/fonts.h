@@ -25,6 +25,9 @@
 
 #include "gargoyle/glk_types.h"
 #include "gargoyle/utils.h"
+#include "common/archive.h"
+#include "common/array.h"
+#include "common/file.h"
 #include "common/str.h"
 #include "common/ustr.h"
 #include "graphics/font.h"
@@ -37,12 +40,24 @@ enum FACES { MONOR, MONOB, MONOI, MONOZ, PROPR, PROPB, PROPI, PROPZ };
 enum TYPES { MONOF, PROPF };
 enum STYLES { FONTR, FONTB, FONTI, FONTZ };
 
+/**
+ * Fonts manager
+ */
 class Fonts {
 private:
 	Graphics::ManagedSurface *_surface;
-	Graphics::Font *_fontTable[FONTS_TOTAL];
+	const Graphics::Font *_fontTable[FONTS_TOTAL];
+	bool _fontsMissing;
 private:
-	Graphics::Font *loadFont(FACES face, double size, double aspect, int style);
+	/**
+	 * Load all the fonts
+	 */
+	bool loadFonts();
+
+	/**
+	 * Load a single font
+	 */
+	const Graphics::Font *loadFont(FACES face, Common::Archive *archive, double size, double aspect, int style);
 public:
 	/**
 	 * Get the index/id of a font by name
