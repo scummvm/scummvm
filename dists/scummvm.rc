@@ -34,6 +34,9 @@ cryo.dat               FILE    "dists/engine-data/cryo.dat"
 #if ENABLE_DRASCULA   == STATIC_PLUGIN
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
 #endif
+#if ENABLE_GARGOYLE   == STATIC_PLUGIN
+fonts.dat              FILE   "dists/engine-data/fonts.dat"
+#endif
 #if ENABLE_HUGO       == STATIC_PLUGIN
 hugo.dat               FILE    "dists/engine-data/hugo.dat"
 #endif
