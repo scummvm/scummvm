@@ -111,6 +111,7 @@ static const char *const selectorNameTable[] = {
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	"has",          // King's Quest 6, GK1
 	"cycler",       // Space Quest 4 / system selector
 	"setLoop",      // Laura Bow 1 Colonel's Bequest
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
@@ -124,7 +125,6 @@ static const char *const selectorNameTable[] = {
 	"handleEvent",  // Shivers
 	"test",         // Torin
 	"get",          // Torin, GK1
-	"has",          // GK1
 	"newRoom",      // GK1
 	"normalize",    // GK1
 	"set",          // Torin
@@ -185,6 +185,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_startText,
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
+	SELECTOR_has,
 	SELECTOR_cycler,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors
@@ -199,7 +200,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_handleEvent,
 	SELECTOR_test,
 	SELECTOR_get,
-	SELECTOR_has,
 	SELECTOR_newRoom,
 	SELECTOR_normalize,
 	SELECTOR_set,
@@ -2280,6 +2280,52 @@ static const uint16 kq6PatchTicketsOnly[] = {
 	PATCH_END
 };
 
+// Looking at the ribbon in inventory says that there's a hair even after it's
+//  been removed. This occurs after the hair has been put in the skull or is on
+//  a different inventory page than the ribbon.
+//
+// The ribbon's Look handler has incorrect logic for determining if it contains
+//  a hair. It fails to test flag 143 which is set when getting the hair and so
+//  it displays the wrong message. The Do handler tests all the necessary flags.
+//  This bug probably would have been noticed except that both verb handlers
+//  also test inventory for hair, which is redundant as testing flags is enough,
+//  but it causes the right message some of the time. Testing inventory is wrong
+//  because possessing the hair is temporary, which is why the bug emerges after
+//  it's used, and it's broken because testing inventory across pages doesn't
+//  work in KQ6. ego:has returns false for any item on another page when the
+//  inventory window is open. As inventory increases the ribbon and hair end up
+//  on different pages and ribbon:doVerb can no longer see it.
+//
+// We fix the message by changing ribbon:doVerb(1) to test flag 143 like doVerb(5).
+//  This requires overwriting one of the redundant inventory tests.
+//
+// Beauty's clothes also have a hair and clothes:doVerb(1) has similar issues
+//  but it happens to work. Those items are always on the same page due to their
+//  low item numbers and the clothes are removed from inventory before the hair.
+//
+// Applies to: PC Floppy, PC CD, Mac Floppy
+// Responsible method: ribbon:doVerb(1)
+// Fixes bug #10801
+static const uint16 kq6SignatureLookRibbonFix[] = {
+	0x30, SIG_ADDTOOFFSET(+2),          // bnt [ verb != Look ]
+	0x38, SIG_SELECTOR16(has),          // pushi has
+	0x78,                               // push1
+	0x39, 0x04,                         // pushi 04
+	0x81, SIG_MAGICDWORD, 0x00,         // lag 00
+	0x4a, 0x06,                         // send 6 [ ego:has 4 (beauty's hair) ]
+	0x2e,                               // bt [ continue hair tests ]
+	SIG_END
+};
+
+static const uint16 kq6PatchLookRibbonFix[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x008f),         // pushi 008f
+	0x46, PATCH_UINT16(0x0391),         // calle proc913_0 [ is flag 8f set? ]
+	      PATCH_UINT16(0x0000), 0x02,
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2
 //  this patch gets enabled, when the user selects "both" in the ScummVM "Speech + Subtitles" menu
 //  We currently use global 98d to hold a kMemory pointer.
@@ -2690,6 +2736,7 @@ static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   481, "duplicate baby cry",                          1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   907, "inventory stack fix",                         1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
+	{  true,   907, "look ribbon fix",                             1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
 	{  true,    87, "Drink Me bottle fix",                         1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{  true,   640, "Tickets, only fix",                           1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
