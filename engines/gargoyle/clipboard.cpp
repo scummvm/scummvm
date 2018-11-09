@@ -21,6 +21,9 @@
  */
 
 #include "gargoyle/clipboard.h"
+#include "gargoyle/gargoyle.h"
+#include "gargoyle/windows.h"
+#include "common/system.h"
 
 namespace Gargoyle {
 
@@ -33,7 +36,16 @@ void Clipboard::send(ClipSource source) {
 }
 
 void Clipboard::receive(ClipSource source) {
-	// TODO
+	Windows &windows = *g_vm->_windows;
+
+	if (g_system->hasTextInClipboard()) {
+		Common::String text = g_system->getTextFromClipboard();
+		for (uint idx = 0; idx < text.size(); ++idx) {
+			uint c = text[idx];
+			if (c != '\r' && c != '\n' && c != '\b' && c != '\t')
+				windows.inputHandleKey(c);
+		}
+	}
 }
 
 } // End of namespace Gargoyle
