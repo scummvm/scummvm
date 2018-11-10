@@ -68,6 +68,11 @@ void Stream::setZColors(glui32 fg, glui32 bg) {
 		Windows::_forceRedraw = true;
 }
 
+void Stream::setReverseVideo(bool reverse) {
+	if (_writable && g_conf->_styleHint)
+		Windows::_forceRedraw = true;
+}
+
 /*--------------------------------------------------------------------------*/
 
 void WindowStream::close(StreamResult *result) {
@@ -281,6 +286,17 @@ void WindowStream::setZColors(glui32 fg, glui32 bg) {
 
 	if (_window->_echoStream)
 		_window->_echoStream->setZColors(fg, bg);
+}
+
+void WindowStream::setReverseVideo(bool reverse) {
+	if (!_writable || !g_conf->_styleHint)
+		return;
+
+	_window->_attr.reverse = reverse;
+	if (_window->_echoStream)
+		_window->_echoStream->setReverseVideo(reverse);
+
+	Windows::_forceRedraw = true;
 }
 
 /*--------------------------------------------------------------------------*/
