@@ -21,10 +21,10 @@
  */
 
 #include "gargoyle/events.h"
-#include "gargoyle/clipboard.h"
 #include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/screen.h"
+#include "gargoyle/selection.h"
 #include "gargoyle/windows.h"
 #include "graphics/cursorman.h"
 
@@ -217,15 +217,15 @@ void Events::handleKeyDown(const Common::KeyState &ks) {
 		if (ks.keycode == Common::KEYCODE_a)
 			windows.inputHandleKey(keycode_Home);
 		else if (ks.keycode == Common::KEYCODE_c)
-			clipboard.send(CLIPBOARD);
+			clipboard.clipboardSend(CLIPBOARD);
 		else if (ks.keycode == Common::KEYCODE_e)
 			windows.inputHandleKey(keycode_End);
 		else if (ks.keycode == Common::KEYCODE_u)
 			windows.inputHandleKey(keycode_Escape);
 		else if (ks.keycode == Common::KEYCODE_v)
-			clipboard.receive(CLIPBOARD);
+			clipboard.clipboardReceive(CLIPBOARD);
 		else if (ks.keycode == Common::KEYCODE_x)
-			clipboard.send(CLIPBOARD);
+			clipboard.clipboardSend(CLIPBOARD);
 		else if (ks.keycode == Common::KEYCODE_LEFT || ks.keycode == Common::KEYCODE_KP4)
 			windows.inputHandleKey(keycode_SkipWordLeft);
 		else if (ks.keycode == Common::KEYCODE_RIGHT || ks.keycode == Common::KEYCODE_KP6)
@@ -281,9 +281,9 @@ void Events::handleMouseMove(const Point &pos) {
 	// TODO: Properly handle commented out lines
 	if (g_vm->_copySelect) {
 		//gdk_window_set_cursor((GTK_WIDGET(widget)->window), gdk_ibeam);
-		g_vm->_windowMask->moveSelection(pos);
+		g_vm->_selection->moveSelection(pos);
 	} else {
-		if (g_vm->_windowMask->getHyperlink(pos)) {
+		if (g_vm->_selection->getHyperlink(pos)) {
 			//gdk_window_set_cursor((GTK_WIDGET(widget)->window), gdk_hand);
 		} else {
 			//gdk_window_set_cursor((GTK_WIDGET(widget)->window), nullptr);
@@ -296,7 +296,7 @@ void Events::handleButtonDown(bool isLeft, const Point &pos) {
 		setCursor(CURSOR_IBEAM);
 		g_vm->_windows->inputHandleClick(pos);
 	} else {
-		g_vm->_clipboard->receive(PRIMARY);
+		g_vm->_clipboard->clipboardReceive(PRIMARY);
 	}
 }
 
@@ -304,7 +304,7 @@ void Events::handleButtonUp(bool isLeft, const Point &pos) {
 	if (isLeft) {
 		setCursor(CURSOR_ARROW);
 		g_vm->_copySelect = false;
-		g_vm->_clipboard->send(PRIMARY);
+		g_vm->_clipboard->clipboardSend(PRIMARY);
 	}
 }
 

@@ -21,10 +21,10 @@
  */
 
 #include "gargoyle/window_text_buffer.h"
-#include "gargoyle/clipboard.h"
 #include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/screen.h"
+#include "gargoyle/selection.h"
 #include "gargoyle/unicode.h"
 
 namespace Gargoyle {
@@ -232,7 +232,7 @@ void TextBufferWindow::reflow() {
 }
 
 void TextBufferWindow::touchScroll() {
-	g_vm->_windowMask->clearSelection();
+	g_vm->_selection->clearSelection();
 	_windows->repaint(_bbox);
 
 	for (int i = 0; i < _scrollMax; i++)
@@ -364,7 +364,7 @@ void TextBufferWindow::putTextUni(const glui32 *buf, int len, int pos, int oldle
 
 void TextBufferWindow::touch(int line) {
 	_lines[line]._dirty = true;
-	g_vm->_windowMask->clearSelection();
+	g_vm->_selection->clearSelection();
 
 	int y = _bbox.top + g_conf->_tMarginY + (_height - line - 1) * g_conf->_leading;
 	_windows->repaint(Rect(_bbox.left, y - 2, _bbox.right, y + g_conf->_leading + 2));
@@ -572,7 +572,7 @@ void TextBufferWindow::click(const Point &newPos) {
 		_windows->setFocus(this);
 
 	if (_hyperRequest) {
-		glui32 linkval = g_vm->_windowMask->getHyperlink(newPos);
+		glui32 linkval = g_vm->_selection->getHyperlink(newPos);
 		if (linkval) {
 			g_vm->_events->store(evtype_Hyperlink, this, linkval, 0);
 			_hyperRequest = false;
@@ -596,7 +596,7 @@ void TextBufferWindow::click(const Point &newPos) {
 
 	if (!gh && !gs) {
 		g_vm->_copySelect = true;
-		g_vm->_windowMask->startSelection(newPos);
+		g_vm->_selection->startSelection(newPos);
 	}
 }
 
@@ -815,7 +815,7 @@ void TextBufferWindow::redraw() {
     pw = x1 - x0 - 2 * GLI_SUBPIX;
 
     // check if any part of buffer is selected
-    selBuf = g_vm->_windowMask->checkSelection(Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
+    selBuf = g_vm->_selection->checkSelection(Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
 
     for (i = _scrollPos + _height - 1; i >= _scrollPos; i--) {
         // top of line
@@ -823,7 +823,7 @@ void TextBufferWindow::redraw() {
 
         // check if part of line is selected
         if (selBuf) {
-            selrow = g_vm->_windowMask->getSelection(Rect(x0 / GLI_SUBPIX, y,
+            selrow = g_vm->_selection->getSelection(Rect(x0 / GLI_SUBPIX, y,
 				x1 / GLI_SUBPIX, y + g_conf->_leading), &sx0, &sx1);
             selleft = (sx0 == x0/GLI_SUBPIX);
             selright = (sx1 == x1/GLI_SUBPIX);
@@ -947,7 +947,7 @@ void TextBufferWindow::redraw() {
         }
 
         // clear any stored hyperlink coordinates
-        g_vm->_windowMask->putHyperlink(0, x0/GLI_SUBPIX, y,
+        g_vm->_selection->putHyperlink(0, x0/GLI_SUBPIX, y,
                 x1/GLI_SUBPIX, y + g_conf->_leading);
 
         /*
@@ -970,7 +970,7 @@ void TextBufferWindow::redraw() {
                 if (link) {
                     screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
 						w / GLI_SUBPIX + 1, g_conf->_linkStyle), g_conf->_linkColor);
-                    g_vm->_windowMask->putHyperlink(link, x/GLI_SUBPIX, y,
+                    g_vm->_selection->putHyperlink(link, x/GLI_SUBPIX, y,
                             x/GLI_SUBPIX + w/GLI_SUBPIX,
                             y + g_conf->_leading);
                 }
@@ -986,7 +986,7 @@ void TextBufferWindow::redraw() {
         if (link) {
             screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
                     w/GLI_SUBPIX + 1, g_conf->_linkStyle), g_conf->_linkColor);
-            g_vm->_windowMask->putHyperlink(link, x / GLI_SUBPIX, y,
+            g_vm->_selection->putHyperlink(link, x / GLI_SUBPIX, y,
                     x / GLI_SUBPIX + w / GLI_SUBPIX,
                     y + g_conf->_leading);
         }
@@ -1034,7 +1034,7 @@ void TextBufferWindow::redraw() {
         x = x0 + SLOP;
         y = y0 + (_height - 1) * g_conf->_leading;
 
-        g_vm->_windowMask->putHyperlink(0, x0/GLI_SUBPIX, y,
+        g_vm->_selection->putHyperlink(0, x0/GLI_SUBPIX, y,
                 x1/GLI_SUBPIX, y + g_conf->_leading);
 
         color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
@@ -1080,7 +1080,7 @@ void TextBufferWindow::redraw() {
                 hx1 = x0/GLI_SUBPIX + ln->_lPic->w < x1/GLI_SUBPIX
                             ? x0/GLI_SUBPIX + ln->_lPic->w
                             : x1/GLI_SUBPIX;
-                g_vm->_windowMask->putHyperlink(link, hx0, hy0, hx1, hy1);
+                g_vm->_selection->putHyperlink(link, hx0, hy0, hx1, hy1);
             }
         }
 
@@ -1095,7 +1095,7 @@ void TextBufferWindow::redraw() {
                             ? x1/GLI_SUBPIX - ln->_rPic->w
                             : x0/GLI_SUBPIX;
                 hx1 = x1/GLI_SUBPIX;
-                g_vm->_windowMask->putHyperlink(link, hx0, hy0, hx1, hy1);
+                g_vm->_selection->putHyperlink(link, hx0, hy0, hx1, hy1);
             }
         }
     }
@@ -1114,7 +1114,7 @@ void TextBufferWindow::redraw() {
         y0 = _bbox.top + g_conf->_tMarginY;
         y1 = _bbox.bottom - g_conf->_tMarginY;
 
-        g_vm->_windowMask->putHyperlink(0, x0, y0, x1, y1);
+        g_vm->_selection->putHyperlink(0, x0, y0, x1, y1);
 
         y0 += g_conf->_scrollWidth / 2;
         y1 -= g_conf->_scrollWidth / 2;
@@ -1144,7 +1144,7 @@ void TextBufferWindow::redraw() {
     if (selBuf && _copyPos) {
         Windows::_claimSelect = true;
 
-		g_vm->_clipboard->store(_copyBuf, _copyPos);
+		g_vm->_clipboard->clipboardStore(_copyBuf, _copyPos);
         for (i = 0; i < _copyPos; i++)
             _copyBuf[i] = 0;
         _copyPos = 0;
