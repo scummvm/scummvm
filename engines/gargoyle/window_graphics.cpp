@@ -147,7 +147,7 @@ void GraphicsWindow::eraseRect(bool whole, const Rect &box) {
 	hy1 = _bbox.top + y1;
 
 	/* zero out hyperlinks for these coordinates */
-	g_vm->_windowMask->putHyperlink(0, hx0, hy0, hx1, hy1);
+	g_vm->_selection->putHyperlink(0, hx0, hy0, hx1, hy1);
 
 	_surface->fillRect(Rect(x0, y0, x1, y1), MKTAG(_bgnd[0], _bgnd[1], _bgnd[2], 0));
 	touch();
@@ -177,7 +177,7 @@ void GraphicsWindow::fillRect(glui32 color, const Rect &box) {
 	hy1 = _bbox.top + y1;
 
 	/* zero out hyperlinks for these coordinates */
-	g_vm->_windowMask->putHyperlink(0, hx0, hy0, hx1, hy1);
+	g_vm->_selection->putHyperlink(0, hx0, hy0, hx1, hy1);
 
 	_surface->fillRect(Rect(x0, y0, x1, y1), MKTAG(col[0], col[1], col[2], 0));
 	touch();
@@ -229,7 +229,7 @@ void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int h
 	hy1 = _bbox.top + y1;
 
 	/* zero out or set hyperlink for these coordinates */
-	g_vm->_windowMask->putHyperlink(linkval, hx0, hy0, hx1, hy1);
+	g_vm->_selection->putHyperlink(linkval, hx0, hy0, hx1, hy1);
 
 	w = sx1 - sx0;
 	h = sy1 - sy0;
@@ -259,7 +259,7 @@ void GraphicsWindow::click(const Point &newPos) {
 	}
 
 	if (_hyperRequest) {
-		glui32 linkval = g_vm->_windowMask->getHyperlink(newPos);
+		glui32 linkval = g_vm->_selection->getHyperlink(newPos);
 		if (linkval) {
 			g_vm->_events->store(evtype_Hyperlink, this, linkval, 0);
 			_hyperRequest = false;

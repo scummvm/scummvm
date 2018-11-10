@@ -20,17 +20,47 @@
  *
  */
 
-#ifndef GARGOYLE_WINDOW_MASK_H
-#define GARGOYLE_WINDOW_MASK_H
+#ifndef GARGOYLE_SELECTION_H
+#define GARGOYLE_SELECTION_H
 
-#include "common/rect.h"
 #include "gargoyle/glk_types.h"
 #include "gargoyle/utils.h"
+#include "common/array.h"
+#include "common/rect.h"
 
 namespace Gargoyle {
 
+enum ClipSource { PRIMARY = 0, CLIPBOARD = 1 };
+
 class Window;
 
+/**
+ * Acts as interface to and from the system's clipboard storage
+ */
+class Clipboard {
+private:
+	Common::Array<uint32> _text;
+public:
+	/**
+	 * Makes a copy of selected text in preparation for the user copying it
+	 * to the clpboard
+	 */
+	void clipboardStore(const uint32 *text, size_t len);
+
+	/**
+	 * Send previously designated text to the clipboard
+	 */
+	void clipboardSend(ClipSource source);
+
+	/**
+	 * Receive text from the clipboard, and paste it into the current window
+	 */
+	void clipboardReceive(ClipSource source);
+};
+
+/**
+ * Manages hyperlinks for the screen
+ */
 class WindowMask {
 public:
 	size_t _hor, _ver;
@@ -51,7 +81,14 @@ public:
 	void putHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1);
 
 	glui32 getHyperlink(const Point &pos) const;
+};
 
+/**
+ * Overall manager for selecting areas on the screen, copying to/from the clipboard,
+ * and managing hyperlinks
+ */
+class Selection : public Clipboard, public WindowMask {
+public:
 	/**
 	 * Start selecting an area of the screen
 	 * @param pos		Position to start selection area at

@@ -29,14 +29,13 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "gargoyle/gargoyle.h"
-#include "gargoyle/clipboard.h"
 #include "gargoyle/conf.h"
 #include "gargoyle/events.h"
 #include "gargoyle/picture.h"
 #include "gargoyle/screen.h"
+#include "gargoyle/selection.h"
 #include "gargoyle/streams.h"
 #include "gargoyle/windows.h"
-#include "gargoyle/window_mask.h"
 
 namespace Gargoyle {
 
@@ -44,8 +43,8 @@ GargoyleEngine *g_vm;
 
 GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _random("Gargoyle"), _clipboard(nullptr),
-		_conf(nullptr), _events(nullptr), _picList(nullptr), _screen(nullptr), _windows(nullptr),
-		_windowMask(nullptr), _copySelect(false), _terminated(false),
+		_conf(nullptr), _events(nullptr), _picList(nullptr), _screen(nullptr),
+		_selection(nullptr), _windows(nullptr), _copySelect(false), _terminated(false),
 		gli_unregister_obj(nullptr), gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
 	g_vm = this;
 }
@@ -56,9 +55,9 @@ GargoyleEngine::~GargoyleEngine() {
 	delete _events;
 	delete _picList;
 	delete _screen;
+	delete _selection;
 	delete _streams;
 	delete _windows;
-	delete _windowMask;
 }
 
 void GargoyleEngine::initialize() {
@@ -75,9 +74,9 @@ void GargoyleEngine::initialize() {
 	_clipboard = new Clipboard();
 	_events = new Events();
 	_picList = new PicList();
+	_selection = new Selection();
 	_streams = new Streams();
 	_windows = new Windows(_screen);
-	_windowMask = new WindowMask();
 }
 
 void GargoyleEngine::initGraphicsMode() {

@@ -20,13 +20,36 @@
  *
  */
 
-#include "gargoyle/window_mask.h"
+#include "gargoyle/selection.h"
 #include "gargoyle/conf.h"
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/windows.h"
 #include "common/system.h"
 
 namespace Gargoyle {
+
+void Clipboard::clipboardStore(const uint32 *text, size_t len) {
+	// TODO
+}
+
+void Clipboard::clipboardSend(ClipSource source) {
+	// TODO
+}
+
+void Clipboard::clipboardReceive(ClipSource source) {
+	Windows &windows = *g_vm->_windows;
+
+	if (g_system->hasTextInClipboard()) {
+		Common::String text = g_system->getTextFromClipboard();
+		for (uint idx = 0; idx < text.size(); ++idx) {
+			uint c = text[idx];
+			if (c != '\r' && c != '\n' && c != '\b' && c != '\t')
+				windows.inputHandleKey(c);
+		}
+	}
+}
+
+/*--------------------------------------------------------------------------*/
 
 WindowMask::WindowMask() : _hor(0), _ver(0), _links(nullptr) {
 	_last.x = _last.y = 0;
@@ -107,7 +130,9 @@ glui32 WindowMask::getHyperlink(const Point &pos) const {
 	return _links[pos.x][pos.y];
 }
 
-void WindowMask::startSelection(const Point &pos) {
+/*--------------------------------------------------------------------------*/
+
+void Selection::startSelection(const Point &pos) {
 	int tx, ty;
 
 	if (!_hor || !_ver) {
@@ -126,7 +151,7 @@ void WindowMask::startSelection(const Point &pos) {
 	g_vm->_windows->selectionChanged();
 }
 
-void WindowMask::moveSelection(const Point &pos) {
+void Selection::moveSelection(const Point &pos) {
 	int tx, ty;
 
 	if (ABS(pos.x - _last.x) < 5 && ABS(pos.y - _last.y) < 5)
@@ -146,7 +171,7 @@ void WindowMask::moveSelection(const Point &pos) {
 	g_vm->_windows->selectionChanged();
 }
 
-void WindowMask::clearSelection() {
+void Selection::clearSelection() {
 	if (!_select.isEmpty())
 		Windows::_forceRedraw = true;
 
@@ -154,7 +179,7 @@ void WindowMask::clearSelection() {
 	g_vm->_windows->clearClaimSelect();
 }
 
-bool WindowMask::checkSelection(const Rect &r) const {
+bool Selection::checkSelection(const Rect &r) const {
 	Rect select(MIN(_select.left, _select.right), MAX(_select.left, _select.right),
 		MIN(_select.top, _select.bottom), MAX(_select.top, _select.bottom));
 	if (select.isEmpty())
@@ -163,7 +188,7 @@ bool WindowMask::checkSelection(const Rect &r) const {
 	return select.intersects(r);
 }
 
-bool WindowMask::getSelection(const Rect &r, int *rx0, int *rx1) const {
+bool Selection::getSelection(const Rect &r, int *rx0, int *rx1) const {
 	uint row, upper, lower, above, below;
 	bool row_selected, found_left, found_right;
 	int from_right, from_below, is_above, is_below;
