@@ -459,29 +459,31 @@ glui32 MemoryStream::getPosition() const {
 }
 
 void MemoryStream::setPosition(glui32 pos, glui32 seekMode) {
+	glsi32 newPos = pos;
+
 	if (!_unicode) {
 		if (seekMode == seekmode_Current)
-			pos = ((unsigned char *)_bufPtr - (unsigned char *)_buf) + pos;
+			newPos = ((unsigned char *)_bufPtr - (unsigned char *)_buf) + newPos;
 		else if (seekMode == seekmode_End)
-			pos = ((unsigned char *)_bufEof - (unsigned char *)_buf) + pos;
+			newPos = ((unsigned char *)_bufEof - (unsigned char *)_buf) + newPos;
 		else
-			/* pos = pos */;
-		if (pos < 0)
-			pos = 0;
-		if (pos > (glui32)((unsigned char *)_bufEof - (unsigned char *)_buf))
-			pos = ((unsigned char *)_bufEof - (unsigned char *)_buf);
-		_bufPtr = (unsigned char *)_buf + pos;
+			/* newPos = newPos */;
+		if (newPos < 0)
+			newPos = 0;
+		if (newPos > ((unsigned char *)_bufEof - (unsigned char *)_buf))
+			newPos = ((unsigned char *)_bufEof - (unsigned char *)_buf);
+		_bufPtr = (unsigned char *)_buf + newPos;
 	} else {
 		if (seekMode == seekmode_Current)
-			pos = ((glui32 *)_bufPtr - (glui32 *)_buf) + pos;
+			newPos = ((glui32 *)_bufPtr - (glui32 *)_buf) + newPos;
 		else if (seekMode == seekmode_End)
-			pos = ((glui32 *)_bufEof - (glui32 *)_buf) + pos;
+			newPos = ((glui32 *)_bufEof - (glui32 *)_buf) + newPos;
 
-		if (pos < 0)
-			pos = 0;
-		if (pos > (glui32)((glui32 *)_bufEof - (glui32 *)_buf))
-			pos = ((glui32 *)_bufEof - (glui32 *)_buf);
-		_bufPtr = (glui32 *)_buf + pos;
+		if (newPos < 0)
+			newPos = 0;
+		if (newPos > ((glui32 *)_bufEof - (glui32 *)_buf))
+			newPos = ((glui32 *)_bufEof - (glui32 *)_buf);
+		_bufPtr = (glui32 *)_buf + newPos;
 	}
 }
 
