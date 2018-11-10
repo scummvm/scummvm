@@ -53,8 +53,8 @@ const byte ARROW[] = {
 	4, 2, 5, 5
 };
 
-Events::Events() : _forceClick(false), _currentEvent(nullptr), _timeouts(false),
-		_priorFrameTime(0), _frameCounter(0), _cursorId(CURSOR_NONE) {
+Events::Events() : _forceClick(false), _currentEvent(nullptr), _cursorId(CURSOR_NONE),
+		_timerMilli(0), _timerTimeExpiry(0), _priorFrameTime(0), _frameCounter(0) {
 	initializeCursors();
 }
 
@@ -118,7 +118,7 @@ void Events::getEvent(event_t *event, bool polled) {
 	dispatchEvent(*_currentEvent, polled);
 
 	if (!polled) {
-		while (!g_vm->shouldQuit() && _currentEvent->type == evtype_None && !_timeouts) {
+		while (!g_vm->shouldQuit() && _currentEvent->type == evtype_None && !isTimerExpired()) {
 			pollEvents();
 			g_system->delayMillis(10);
 
@@ -129,10 +129,11 @@ void Events::getEvent(event_t *event, bool polled) {
 			_currentEvent->type = evtype_Quit;
 	}
 
-	if (_currentEvent->type == evtype_None && _timeouts) {
+	if (_currentEvent->type == evtype_None && isTimerExpired()) {
 		store(evtype_Timer, nullptr, 0, 0);
 		dispatchEvent(*_currentEvent, polled);
-		_timeouts = false;
+
+		_timerTimeExpiry = g_system->getMillis() + _timerMilli;
 	}
 
 	_currentEvent = nullptr;
@@ -336,6 +337,15 @@ void Events::setCursor(CursorId cursorId) {
 
 		_cursorId = cursorId;
 	}
+}
+
+void Events::setTimerInterval(uint milli) {
+	_timerMilli = milli;
+	_timerTimeExpiry = g_system->getMillis() + milli;
+}
+
+bool Events::isTimerExpired() const {
+	return _timerMilli && g_system->getMillis() >= _timerTimeExpiry;
 }
 
 } // End of namespace Gargoyle

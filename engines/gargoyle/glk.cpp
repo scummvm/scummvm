@@ -709,7 +709,7 @@ void Glk::glk_select_poll(event_t *event) {
 }
 
 void Glk::glk_request_timer_events(glui32 millisecs) {
-	// TODO
+	_events->setTimerInterval(millisecs);
 }
 
 void Glk::glk_request_line_event(winid_t win, char *buf, glui32 maxlen, glui32 initlen) {
