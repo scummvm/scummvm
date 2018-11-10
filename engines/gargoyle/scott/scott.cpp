@@ -1243,10 +1243,17 @@ void Scott::readInts(Common::SeekableReadStream *f, size_t count, ...) {
 		// Get the next value
 		int *val = (int *)va_arg(va, int);
 		*val = 0;
+
+		int factor = c == '-' ? -1 : 1;
+		if (factor == -1)
+			c = f->readByte();
+
 		while (Common::isDigit(c)) {
 			*val = (*val * 10) + (c - '0');
 			c = f->readByte();
 		}
+
+		*val *= factor;		// Handle negatives
 	}
 
 	va_end(va);
