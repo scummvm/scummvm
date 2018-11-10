@@ -98,19 +98,19 @@ public:
 	 * Get the width in pixels of a string
 	 * @param fontIdx   Which font to use
 	 * @param text		Text to get the width of
-	 * @param spw		???
+	 * @param spw		Delta X
 	 * @returns			Width of string multiplied by GLI_SUBPIX
 	 */
-	size_t stringWidth(int fontIdx, const Common::String &text, int spw = -1);
+	size_t stringWidth(int fontIdx, const Common::String &text, int spw = 0);
 
 	/**
 	 * Get the width in pixels of a unicode string
 	 * @param fontIdx   Which font to use
 	 * @param text		Text to get the width of
-	 * @param spw		???
+	 * @param spw		Delta X
 	 * @returns			Width of string multiplied by GLI_SUBPIX
 	 */
-	size_t stringWidthUni(int fontIdx, const Common::U32String &text, int spw = -1);
+	size_t stringWidthUni(int fontIdx, const Common::U32String &text, int spw = 0);
 };
 
 } // End of namespace Gargoyle
