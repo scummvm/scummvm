@@ -1148,11 +1148,15 @@ void Glk::garglk_unput_string_uni(const glui32 *str) {
 }
 
 void Glk::garglk_set_zcolors(glui32 fg, glui32 bg) {
-	// TODO
+	_streams->getCurrent()->setZColors(fg, bg);
 }
 
 void Glk::garglk_set_zcolors_stream(strid_t str, glui32 fg, glui32 bg) {
-	// TODO
+	if (str) {
+		str->setZColors(fg, bg);
+	} else {
+		warning("set_style_stream: Invalid ref");
+	}
 }
 
 void Glk::garglk_set_reversevideo(glui32 reverse) {
