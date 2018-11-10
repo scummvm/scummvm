@@ -1140,11 +1140,11 @@ void TextBufferWindow::redraw() {
         }
     }
 
-    // send selected text to clipboard
+    // Keep track of selected text to be ready when user copies it to the clipboard
     if (selBuf && _copyPos) {
         Windows::_claimSelect = true;
 
-		g_vm->_clipboard->clipboardStore(_copyBuf, _copyPos);
+		g_vm->_clipboard->clipboardStore(Common::U32String(_copyBuf, _copyPos));
         for (i = 0; i < _copyPos; i++)
             _copyBuf[i] = 0;
         _copyPos = 0;
