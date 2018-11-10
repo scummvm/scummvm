@@ -101,7 +101,7 @@ Distributed under the GNU software license\n\n");
 			break;
 		}
 
-		/* Brian Howarth games seem to use -1 for forever */
+		// Brian Howarth games seem to use -1 for forever
 		if (Items[LIGHT_SOURCE].Location/*==-1*/ != DESTROYED && GameHeader.LightTime != -1) {
 			GameHeader.LightTime--;
 			if (GameHeader.LightTime < 1) {
@@ -208,7 +208,7 @@ int Scott::countCarried(void) {
 const char *Scott::mapSynonym(const char *word) {
 	int n = 1;
 	const char *tp;
-	static char lastword[16];	/* Last non synonym */
+	static char lastword[16];	// Last non synonym
 	while (n <= GameHeader.NumWords) {
 		tp = Nouns[n];
 		if (*tp == '*')
@@ -264,20 +264,16 @@ char *Scott::readString(Common::SeekableReadStream *f) {
 			}
 		}
 		if (c == '`')
-			c = '"'; /* pdd */
+			c = '"'; // pdd
 
-					 /* Ensure a valid Glk newline is sent. */
+		// Ensure a valid Glk newline is sent.
 		if (c == '\n')
 			tmp[ct++] = 10;
-		/* Special case: assume CR is part of CRLF in a
-		* DOS-formatted file, and ignore it.
-		*/
+		// Special case: assume CR is part of CRLF in a DOS-formatted file, and ignore it.
 		else if (c == 13)
 			;
-		/* Pass only ASCII to Glk; the other reasonable option
-		* would be to pass Latin-1, but it's probably safe to
-		* assume that Scott Adams games are ASCII only.
-		*/
+		// Pass only ASCII to Glk; the other reasonable option would be to pass Latin-1,
+		// but it's probably safe to assume that Scott Adams games are ASCII only.
 		else if ((c >= 32 && c <= 126))
 			tmp[ct++] = c;
 		else
@@ -297,8 +293,8 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	Action *ap;
 	Room *rp;
 	Item *ip;
-	/* Load the header */
-
+	
+	// Load the header
 	readInts(f, 12, &unused, &ni, &na, &nw, &nr, &mc, &pr, &tr, &wl, &lt, &mn, &trm);
 
 	GameHeader.NumItems = ni;
@@ -320,8 +316,7 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	Messages = (const char **)memAlloc(sizeof(char *)*(mn + 1));
 	GameHeader.TreasureRoom = trm;
 
-	/* Load the actions */
-
+	// Load the actions
 	ct = 0;
 	ap = Actions;
 	if (loud)
@@ -377,7 +372,7 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	while (ct < ni + 1) {
 		ip->Text = readString(f);
 		ip->AutoGet = strchr(ip->Text, '/');
-		/* Some games use // to mean no auto get/drop word! */
+		// Some games use // to mean no auto get/drop word!
 		if (ip->AutoGet && strcmp(ip->AutoGet, "//") && strcmp(ip->AutoGet, "/*")) {
 			char *t;
 			*ip->AutoGet++ = 0;
@@ -393,7 +388,7 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 		ct++;
 	}
 	ct = 0;
-	/* Discard Comment Strings */
+	// Discard Comment Strings
 	while (ct<na + 1) {
 		free(readString(f));
 		ct++;
@@ -654,12 +649,12 @@ int Scott::getInput(int *vb, int *no) {
 			case 'w':strcpy(verb, "WEST"); break;
 			case 'u':strcpy(verb, "UP"); break;
 			case 'd':strcpy(verb, "DOWN"); break;
-				/* Brian Howarth interpreter also supports this */
+			// Brian Howarth interpreter also supports this
 			case 'i':strcpy(verb, "INVENTORY"); break;
 			}
 		}
 		nc = whichWord(verb, Nouns);
-		/* The Scott Adams system has a hack to avoid typing 'go' */
+		// The Scott Adams system has a hack to avoid typing 'go'
 		if (nc >= 1 && nc <= 6) {
 			vc = 1;
 		} else {
@@ -673,7 +668,7 @@ int Scott::getInput(int *vb, int *no) {
 		}
 	} while (vc == -1);
 
-	strcpy(NounText, noun);	/* Needed by GET/DROP hack */
+	strcpy(NounText, noun);	// Needed by GET/DROP hack
 	return 0;
 }
 
@@ -765,14 +760,16 @@ int Scott::performLine(int ct) {
 			if (Items[dv].Location == Items[dv].InitialLoc)
 				return 0;
 			break;
-		case 19:/* Only seen in Brian Howarth games so far */
+		case 19:
+			// Only seen in Brian Howarth games so far
 			if (CurrentCounter != dv)
 				return 0;
 			break;
 		}
 		cc++;
 	}
-	/* Actions */
+
+	// Actions
 	act[0] = Actions[ct].action[0];
 	act[2] = Actions[ct].action[1];
 	act[1] = act[0] % 150;
@@ -789,15 +786,13 @@ int Scott::performLine(int ct) {
 		} else if (act[cc] > 101) {
 			output(Messages[act[cc] - 50]);
 			output("\n");
-		}
-		else {
+		} else {
 			switch (act[cc]) {
-			case 0:/* NOP */
+			case 0:// NOP
 				break;
 			case 52:
-				if (countCarried() == GameHeader.MaxCarry)
-				{
-					if (Options&YOUARE)
+				if (countCarried() == GameHeader.MaxCarry) {
+					if (Options & YOUARE)
 						output("You are carrying too much. ");
 					else
 						output("I've too much to carry! ");
@@ -835,27 +830,25 @@ int Scott::performLine(int ct) {
 				else
 					output("I am dead.\n");
 				BitFlags &= ~(1 << DARKBIT);
-				MyLoc = GameHeader.NumRooms;/* It seems to be what the code says! */
+				MyLoc = GameHeader.NumRooms;// It seems to be what the code says!
 				break;
-			case 62:
-			{
-				/* Bug fix for some systems - before it could get parameters wrong */
+			case 62: {
+				// Bug fix for some systems - before it could get parameters wrong */
 				int i = param[pptr++];
 				Items[i].Location = param[pptr++];
 				break;
 			}
 			case 63:
-				doneit:				output("The game is now over.\n");
-									glk_exit();
-									break;
+doneit:
+				output("The game is now over.\n");
+				glk_exit();
+				break;
 			case 64:
 				break;
-			case 65:
-			{
+			case 65: {
 				int i = 0;
 				int n = 0;
-				while (i <= GameHeader.NumItems)
-				{
+				while (i <= GameHeader.NumItems) {
 					if (Items[i].Location == GameHeader.TreasureRoom &&
 						*Items[i].Text == '*')
 						n++;
@@ -869,27 +862,22 @@ int Scott::performLine(int ct) {
 				output(" treasures.  On a scale of 0 to 100, that rates ");
 				outputNumber((n * 100) / GameHeader.Treasures);
 				output(".\n");
-				if (n == GameHeader.Treasures)
-				{
+				if (n == GameHeader.Treasures) {
 					output("Well done.\n");
 					goto doneit;
 				}
 				break;
 			}
-			case 66:
-			{
+			case 66: {
 				int i = 0;
 				int f = 0;
 				if (Options&YOUARE)
 					output("You are carrying:\n");
 				else
 					output("I'm carrying:\n");
-				while (i <= GameHeader.NumItems)
-				{
-					if (Items[i].Location == CARRIED)
-					{
-						if (f == 1)
-						{
+				while (i <= GameHeader.NumItems) {
+					if (Items[i].Location == CARRIED) {
+						if (f == 1) {
 							if (Options & TRS80_STYLE)
 								output(". ");
 							else
@@ -917,13 +905,12 @@ int Scott::performLine(int ct) {
 				BitFlags &= ~(1 << LIGHTOUTBIT);
 				break;
 			case 70:
-				clearScreen(); /* pdd. */
+				clearScreen(); // pdd.
 				break;
 			case 71:
 				saveGame();
 				break;
-			case 72:
-			{
+			case 72: {
 				int i1 = param[pptr++];
 				int i2 = param[pptr++];
 				int t = Items[i1].Location;
@@ -937,15 +924,15 @@ int Scott::performLine(int ct) {
 			case 74:
 				Items[param[pptr++]].Location = CARRIED;
 				break;
-			case 75:
-			{
+			case 75: {
 				int i1, i2;
 				i1 = param[pptr++];
 				i2 = param[pptr++];
 				Items[i1].Location = Items[i2].Location;
 				break;
 			}
-			case 76:	/* Looking at adventure .. */
+			case 76:
+				// Looking at adventure ..
 				break;
 			case 77:
 				if (CurrentCounter >= 0)
@@ -957,19 +944,16 @@ int Scott::performLine(int ct) {
 			case 79:
 				CurrentCounter = param[pptr++];
 				break;
-			case 80:
-			{
+			case 80: {
 				int t = MyLoc;
 				MyLoc = SavedRoom;
 				SavedRoom = t;
 				break;
 			}
-			case 81:
-			{
-				/* This is somewhat guessed. Claymorgue always
-				seems to do select counter n, thing, select counter n,
-				but uses one value that always seems to exist. Trying
-				a few options I found this gave sane results on ageing */
+			case 81: {
+				// This is somewhat guessed. Claymorgue always seems to do
+				// select counter n, thing, select counter n, but uses one value that always
+				// seems to exist. Trying a few options I found this gave sane results on ageing
 				int t = param[pptr++];
 				int c1 = CurrentCounter;
 				CurrentCounter = Counters[t];
@@ -983,8 +967,8 @@ int Scott::performLine(int ct) {
 				CurrentCounter -= param[pptr++];
 				if (CurrentCounter < -1)
 					CurrentCounter = -1;
-				/* Note: This seems to be needed. I don't yet
-				know if there is a maximum value to limit too */
+				// Note: This seems to be needed. I don't yet know if there
+				// is a maximum value to limit too
 				break;
 			case 84:
 				output(NounText);
@@ -996,10 +980,8 @@ int Scott::performLine(int ct) {
 			case 86:
 				output("\n");
 				break;
-			case 87:
-			{
-				/* Changed this to swap location<->roomflag[x]
-				not roomflag 0 and x */
+			case 87: {
+				// Changed this to swap location<->roomflag[x] not roomflag 0 and x
 				int p = param[pptr++];
 				int sr = MyLoc;
 				MyLoc = RoomSaved[p];
@@ -1011,9 +993,9 @@ int Scott::performLine(int ct) {
 				break;
 			case 89:
 				pptr++;
-				/* SAGA draw picture n */
-				/* Spectrum Seas of Blood - start combat ? */
-				/* Poking this into older spectrum games causes a crash */
+				// SAGA draw picture n
+				// Spectrum Seas of Blood - start combat ?
+				// Poking this into older spectrum games causes a crash
 				break;
 			default:
 				error("Unknown action %d [Param begins %d %d]\n",
@@ -1029,7 +1011,7 @@ int Scott::performLine(int ct) {
 }
 
 int Scott::performActions(int vb, int no) {
-	static int disable_sysfunc = 0;	/* Recursion lock */
+	static int disable_sysfunc = 0;	// Recursion lock
 	int d = BitFlags&(1 << DARKBIT);
 
 	int ct = 0;
@@ -1069,11 +1051,11 @@ int Scott::performActions(int vb, int no) {
 	while (ct <= GameHeader.NumActions) {
 		int vv, nv;
 		vv = Actions[ct].Vocab;
-		/* Think this is now right. If a line we run has an action73
-		run all following lines with vocab of 0,0 */
+		// Think this is now right. If a line we run has an action73
+		// run all following lines with vocab of 0,0
 		if (vb != 0 && (doagain&&vv != 0))
 			break;
-		/* Oops.. added this minor cockup fix 1.11 */
+		// Oops.. added this minor cockup fix 1.11
 		if (vb != 0 && !doagain && fl == 0)
 			break;
 		nv = vv % 150;
@@ -1085,7 +1067,7 @@ int Scott::performActions(int vb, int no) {
 				if (fl == -1)
 					fl = -2;
 				if ((f2 = performLine(ct)) > 0) {
-					/* ahah finally figured it out ! */
+					// ahah finally figured it out !
 					fl = 0;
 					if (f2 == 2)
 						doagain = 1;
@@ -1096,13 +1078,10 @@ int Scott::performActions(int vb, int no) {
 		}
 		ct++;
 
-		/* Previously this did not check ct against
-		* GameHeader.NumActions and would read past the end of
-		* Actions.  I don't know what should happen on the last
-		* action, but doing nothing is better than reading one
-		* past the end.
-		* --Chris
-		*/
+		// Previously this did not check ct against GameHeader.NumActions and would read
+		// past the end of Actions.  I don't know what should happen on the last action,
+		// but doing nothing is better than reading one past the end.
+		// --Chris
 		if (ct <= GameHeader.NumActions && Actions[ct].Vocab != 0)
 			doagain = 0;
 	}
@@ -1112,7 +1091,7 @@ int Scott::performActions(int vb, int no) {
 			Items[LIGHT_SOURCE].Location == CARRIED)
 			d = 0;
 		if (vb == 10 || vb == 18) {
-			/* Yes they really _are_ hardcoded values */
+			// Yes they really _are_ hardcoded values
 			if (vb == 10) {
 				if (xstrcasecmp(NounText, "ALL") == 0) {
 					int i = 0;
@@ -1125,8 +1104,8 @@ int Scott::performActions(int vb, int no) {
 					while (i <= GameHeader.NumItems) {
 						if (Items[i].Location == MyLoc && Items[i].AutoGet != nullptr && Items[i].AutoGet[0] != '*') {
 							no = whichWord(Items[i].AutoGet, Nouns);
-							disable_sysfunc = 1;	/* Don't recurse into auto get ! */
-							performActions(vb, no);	/* Recursively check each items table code */
+							disable_sysfunc = 1;	// Don't recurse into auto get !
+							performActions(vb, no);	// Recursively check each items table code
 							disable_sysfunc = 0;
 							if (countCarried() == GameHeader.MaxCarry) {
 								if (Options&YOUARE)
@@ -1146,13 +1125,11 @@ int Scott::performActions(int vb, int no) {
 						output("Nothing taken.");
 					return 0;
 				}
-				if (no == -1)
-				{
+				if (no == -1) {
 					output("What ? ");
 					return 0;
 				}
-				if (countCarried() == GameHeader.MaxCarry)
-				{
+				if (countCarried() == GameHeader.MaxCarry) {
 					if (Options&YOUARE)
 						output("You are carrying too much. ");
 					else
@@ -1160,8 +1137,7 @@ int Scott::performActions(int vb, int no) {
 					return 0;
 				}
 				item = matchUpItem(NounText, MyLoc);
-				if (item == -1)
-				{
+				if (item == -1) {
 					if (Options&YOUARE)
 						output("It is beyond your power to do that. ");
 					else
