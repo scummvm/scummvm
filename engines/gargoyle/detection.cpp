@@ -243,6 +243,7 @@ ADDetectedGames GargoyleMetaEngine::detectGame(const Common::FSNode &parent, con
 		gameDescription._desc.gameId = gameId;
 		gameDescription._desc.language = gd.language;
 		gameDescription._desc.platform = gd.platform;
+		gameDescription._desc.guiOptions = GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMUSIC, GUIO_NOSUBTITLES);
 		gameDescription._filename = filename;
 		gameDescription._md5 = Common::computeStreamMD5AsString(f, 5000);
 
