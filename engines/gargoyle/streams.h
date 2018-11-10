@@ -262,6 +262,11 @@ public:
 	 * Set the style colors
 	 */
 	virtual void setZColors(glui32 fg, glui32 bg);
+
+	/**
+	 * Set the reverse video style
+	 */
+	virtual void setReverseVideo(bool reverse);
 };
 typedef Stream *strid_t;
 
@@ -324,6 +329,11 @@ public:
 	 * Set the style colors
 	 */
 	virtual void setZColors(glui32 fg, glui32 bg) override;
+
+	/**
+	 * Set the reverse video style
+	 */
+	virtual void setReverseVideo(bool reverse) override;
 };
 
 /**
