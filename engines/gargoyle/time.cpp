@@ -63,15 +63,17 @@ TimeAndDate::operator Timestamp() const {
 
 void TimeAndDate::setTime(const TimeSeconds &ts) {
 	TimeSeconds total = ts;
-	int daysInYear, secsInYear;
+	int daysInYear = 0, secsInYear = 0;
 
 	// Figure out the year
 	this->year = 1969;
 	do {
 		++this->year;
-		daysInYear = ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) ? 365 : 365;
+		total -= secsInYear;
+
+		daysInYear = ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) ? 366 : 365;
 		secsInYear = daysInYear * 24 * 60 * 60;
-	} while (total >= daysInYear);
+	} while (total >= secsInYear);
 
 	// Figure out month and day
 	int dayInYear = total / (24 * 60 * 60);
