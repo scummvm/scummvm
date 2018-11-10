@@ -38,11 +38,14 @@ Fonts::Fonts(Graphics::ManagedSurface *surface) : _surface(surface), _fontsMissi
 	if (!loadFonts())
 		error("Could not load data file");
 
-	if (!g_conf->_leading)
-		g_conf->_leading = g_conf->_propSize + 2;
-	if (!g_conf->_baseLine)
-		g_conf->_baseLine = g_conf->_propSize + 0.5;
+	// TODO: See if there's any better way for getting the leading and baseline
+	Common::Rect r1 = _fontTable[7]->getBoundingBox('o');
+	Common::Rect r2 = _fontTable[7]->getBoundingBox('y');
+	double baseLine = (double)r1.bottom;
+	double leading = (double)r2.bottom + 2;
 
+	g_conf->_leading = MAX((double)g_conf->_leading, leading);
+	g_conf->_baseLine = MAX((double)g_conf->_baseLine, baseLine);
 	g_conf->_cellW = _fontTable[0]->getStringWidth("0");
 	g_conf->_cellH = g_conf->_leading;
 }
@@ -142,13 +145,11 @@ int Fonts::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const C
 }
 
 size_t Fonts::stringWidth(int fontIdx, const Common::String &text, int spw) {
-	// TODO: Handle spw
 	const Graphics::Font *font = _fontTable[fontIdx];
 	return font->getStringWidth(text) * GLI_SUBPIX;
 }
 
 size_t Fonts::stringWidthUni(int fontIdx, const Common::U32String &text, int spw) {
-	// TODO: Handle spw
 	const Graphics::Font *font = _fontTable[fontIdx];
 	return font->getStringWidth(text) * GLI_SUBPIX;
 }
