@@ -116,9 +116,6 @@ glui32 Glk::glk_gestalt_ext(glui32 id, glui32 val, glui32 *arr, glui32 arrlen) {
 			return true;
 		return false;
 
-	case gestalt_Timer:
-		return true;
-
 	case gestalt_Graphics:
 	case gestalt_GraphicsTransparency:
 		return g_conf->_graphics;
@@ -136,32 +133,21 @@ glui32 Glk::glk_gestalt_ext(glui32 id, glui32 val, glui32 *arr, glui32 arrlen) {
 	case gestalt_SoundNotify:
 		return g_conf->_sound;
 
-	case gestalt_Sound2:
-		return false;
-
-	case gestalt_Unicode:
-		return true;
-	case gestalt_UnicodeNorm:
-		return true;
-
-	case gestalt_Hyperlinks:
-		return true;
-	case gestalt_HyperlinkInput:
-		return true;
-
-	case gestalt_LineInputEcho:
-		return true;
-	case gestalt_LineTerminators:
-		return true;
 	case gestalt_LineTerminatorKey:
 		return Window::checkTerminator(val);
 
+	case gestalt_Timer:
+	case gestalt_Unicode:
+	case gestalt_UnicodeNorm:
+	case gestalt_Hyperlinks:
+	case gestalt_HyperlinkInput:
+	case gestalt_LineInputEcho:
+	case gestalt_LineTerminators:
 	case gestalt_DateTime:
-		return true;
-
 	case gestalt_GarglkText:
 		return true;
 
+	case gestalt_Sound2:
 	default:
 		return false;
 	}
