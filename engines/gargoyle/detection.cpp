@@ -69,6 +69,7 @@ const Common::String &GargoyleEngine::getGameMD5() const {
 } // End of namespace Gargoyle
 
 static const PlainGameDescriptor gargoyleGames[] = {
+	{"zcode", "Zcode Games" },
 	{"scottadams", "Scott Adams Games"},
 
 	// Scott Adams games
@@ -94,6 +95,8 @@ static const PlainGameDescriptor gargoyleGames[] = {
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "gargoyle/detection_tables.h"
+#include "gargoyle/frotz/detection.h"
+#include "gargoyle/frotz/frotz.h"
 #include "gargoyle/scott/detection.h"
 #include "gargoyle/scott/scott.h"
 
@@ -145,6 +148,9 @@ bool GargoyleMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 	const Gargoyle::GargoyleGameDescription *gd = (const Gargoyle::GargoyleGameDescription *)desc;
 
 	switch (gd->_interpType) {
+	case Gargoyle::INTERPRETER_FROTZ:
+		*engine = new Gargoyle::Frotz::Frotz(syst, gd);
+		break;
 	case Gargoyle::INTERPRETER_SCOTT:
 		*engine = new Gargoyle::Scott::Scott(syst, gd);
 		break;
@@ -216,6 +222,7 @@ SaveStateDescriptor GargoyleMetaEngine::querySaveMetaInfos(const char *target, i
 
 DetectedGames GargoyleMetaEngine::detectGames(const Common::FSList &fslist) const {
 	DetectedGames detectedGames;
+	Gargoyle::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames);
 	Gargoyle::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
 
 	return detectedGames;
@@ -234,11 +241,19 @@ ADDetectedGames GargoyleMetaEngine::detectGame(const Common::FSNode &parent, con
 	ADDetectedGames results;
 	Common::File f;
 
-	Gargoyle::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
-	if (detectedGames.size() > 0 && f.open(parent.getChild(filename))) {
+	// Check each sub-engine for any detected games
+	if (Gargoyle::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames))
+		gameDescription._interpType = Gargoyle::INTERPRETER_FROTZ;
+	else if (Gargoyle::Scott::ScottMetaEngine::detectGames(fslist, detectedGames))
+		gameDescription._interpType = Gargoyle::INTERPRETER_SCOTT;
+	else
+		// No match found, so return no results
+		return results;
+
+	// Set up the game description and return it
+	if (f.open(parent.getChild(filename))) {
 		DetectedGame gd = detectedGames.front();
 
-		gameDescription._interpType = Gargoyle::INTERPRETER_SCOTT;
 		gameDescription._desc.gameId = gameId;
 		gameDescription._desc.language = gd.language;
 		gameDescription._desc.platform = gd.platform;
