@@ -79,7 +79,7 @@ Conf::Conf() {
 	get("morealign", _moreAlign);
 	get("monoaspect", _monoAspect, 1.0);
 	get("propaspect", _propAspect, 1.0);
-	get("monosize", _monoSize, 8);
+	get("monosize", _monoSize, 11);
 	get("monor", _monoR);
 	get("monob", _monoR);
 	get("monoi", _monoI);
