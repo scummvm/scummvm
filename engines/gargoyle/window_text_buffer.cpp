@@ -43,7 +43,7 @@ TextBufferWindow::TextBufferWindow(Windows *windows, uint32 rock) : Window(windo
 	_radjn(0), _numChars(0), _chars(nullptr), _attrs(nullptr),
 	_spaced(0), _dashed(0), _copyBuf(0), _copyPos(0) {
 	_type = wintype_TextBuffer;
-	Common::fill(&_history[0], &_history[HISTORYLEN], nullptr);
+	Common::fill(&_history[0], &_history[HISTORYLEN], (glui32 *)nullptr);
 
 	_lines.resize(SCROLLBACK);
 	_chars = _lines[0]._chars;
@@ -908,7 +908,7 @@ void TextBufferWindow::redraw() {
 					for (tsc = 0; tsc < linelen; tsc++) {
 						tsw = calcWidth(ln->_chars, ln->_attrs, 0, tsc, spw) / GLI_SUBPIX;
 						if (tsw + tx >= sx0 ||
-						        tsw + tx + GLI_SUBPIX >= sx0 && ln->_chars[tsc] != ' ') {
+						        ((tsw + tx + GLI_SUBPIX) >= sx0 && ln->_chars[tsc] != ' ')) {
 							lsc = tsc;
 							selchar = true;
 							break;

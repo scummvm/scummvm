@@ -44,20 +44,20 @@ enum FileUsage {
 	fileusage_TypeMask = 0x0f,
 
 	fileusage_TextMode = 0x100,
-	fileusage_BinaryMode = 0x000,
+	fileusage_BinaryMode = 0x000
 };
 
 enum FileMode {
 	filemode_Write = 0x01,
 	filemode_Read = 0x02,
 	filemode_ReadWrite = 0x03,
-	filemode_WriteAppend = 0x05,
+	filemode_WriteAppend = 0x05
 };
 
 enum SeekMode {
 	seekmode_Start = 0,
 	seekmode_Current = 1,
-	seekmode_End = 2,
+	seekmode_End = 2
 };
 
 struct StreamResult {

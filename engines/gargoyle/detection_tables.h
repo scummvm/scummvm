@@ -23,19 +23,7 @@
 namespace Gargoyle {
 
 static const GargoyleGameDescription gameDescriptions[] = {
-	{
-		{
-			"Gargoyle",
-			0,
-			AD_ENTRY1s("dummy", "0", 0),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO0()
-		},
-	},
-
-	{ AD_TABLE_END_MARKER }
+	{ AD_TABLE_END_MARKER, "", (InterpreterType)0, "" }
 };
 
 } // End of namespace Gargoyle

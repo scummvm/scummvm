@@ -142,8 +142,7 @@ bool Gargoyle::GargoyleEngine::hasFeature(EngineFeature f) const {
 }
 
 bool GargoyleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	Gargoyle::GargoyleGameDescription *gd = (Gargoyle::GargoyleGameDescription *)desc;
-	gd->_filename = ConfMan.get("filename");
+	const Gargoyle::GargoyleGameDescription *gd = (const Gargoyle::GargoyleGameDescription *)desc;
 
 	switch (gd->_interpType) {
 	case Gargoyle::INTERPRETER_SCOTT:
