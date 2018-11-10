@@ -30,8 +30,8 @@
 #include "gargoyle/events.h"
 #include "gargoyle/glk_types.h"
 #include "gargoyle/fonts.h"
+#include "gargoyle/selection.h"
 #include "gargoyle/streams.h"
-#include "gargoyle/window_mask.h"
 
 namespace Gargoyle {
 

@@ -1,7 +1,6 @@
 MODULE := engines/gargoyle
 
 MODULE_OBJS := \
-	clipboard.o \
 	conf.o \
 	detection.o \
 	events.o \
@@ -10,6 +9,7 @@ MODULE_OBJS := \
 	glk.o \
 	picture.o \
 	screen.o \
+	selection.o \
 	streams.o \
 	time.o \
 	unicode.o \

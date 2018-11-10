@@ -38,9 +38,9 @@ class Conf;
 class Events;
 class PicList;
 class Screen;
+class Selection;
 class Streams;
 class Windows;
-class WindowMask;
 
 enum InterpreterType {
 	INTERPRETER_ADVSYS = 0,
@@ -109,9 +109,9 @@ public:
 	Events *_events;
 	PicList *_picList;
 	Screen *_screen;
+	Selection *_selection;
 	Streams *_streams;
 	Windows *_windows;
-	WindowMask *_windowMask;
 	bool _copySelect;
 	bool _terminated;
 	void (*gli_unregister_obj)(void *obj, glui32 objclass, gidispatch_rock_t objrock);
