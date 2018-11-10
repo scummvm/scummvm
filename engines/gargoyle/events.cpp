@@ -54,7 +54,7 @@ const byte ARROW[] = {
 };
 
 Events::Events() : _forceClick(false), _currentEvent(nullptr), _cursorId(CURSOR_NONE),
-		_timerMilli(0), _timerTimeExpiry(0), _priorFrameTime(0), _frameCounter(0) {
+	_timerMilli(0), _timerTimeExpiry(0), _priorFrameTime(0), _frameCounter(0) {
 	initializeCursors();
 }
 
@@ -239,34 +239,85 @@ void Events::handleKeyDown(const Common::KeyState &ks) {
 		return;
 
 	switch (ks.keycode) {
-	case Common::KEYCODE_RETURN: windows.inputHandleKey(keycode_Return); break;
-	case Common::KEYCODE_BACKSPACE: windows.inputHandleKey(keycode_Delete); break;
-	case Common::KEYCODE_DELETE: windows.inputHandleKey(keycode_Erase); break;
-	case Common::KEYCODE_TAB: windows.inputHandleKey(keycode_Tab); break;
-	case Common::KEYCODE_PAGEUP: windows.inputHandleKey(keycode_PageUp); break;
-	case Common::KEYCODE_PAGEDOWN: windows.inputHandleKey(keycode_PageDown); break;
-	case Common::KEYCODE_HOME: windows.inputHandleKey(keycode_Home); break;
-	case Common::KEYCODE_END: windows.inputHandleKey(keycode_End); break;
-	case Common::KEYCODE_LEFT: windows.inputHandleKey(keycode_Left); break;
-	case Common::KEYCODE_RIGHT: windows.inputHandleKey(keycode_Right); break;
-	case Common::KEYCODE_UP: windows.inputHandleKey(keycode_Up); break;
-	case Common::KEYCODE_DOWN: windows.inputHandleKey(keycode_Down); break;
-	case Common::KEYCODE_ESCAPE: windows.inputHandleKey(keycode_Escape); break;
-	case Common::KEYCODE_F1: windows.inputHandleKey(keycode_Func1); break;
-	case Common::KEYCODE_F2: windows.inputHandleKey(keycode_Func2); break;
-	case Common::KEYCODE_F3: windows.inputHandleKey(keycode_Func3); break;
-	case Common::KEYCODE_F4: windows.inputHandleKey(keycode_Func4); break;
-	case Common::KEYCODE_F5: windows.inputHandleKey(keycode_Func5); break;
-	case Common::KEYCODE_F6: windows.inputHandleKey(keycode_Func6); break;
-	case Common::KEYCODE_F7: windows.inputHandleKey(keycode_Func7); break;
-	case Common::KEYCODE_F8: windows.inputHandleKey(keycode_Func8); break;
-	case Common::KEYCODE_F9: windows.inputHandleKey(keycode_Func9); break;
-	case Common::KEYCODE_F10: windows.inputHandleKey(keycode_Func10); break;
-	case Common::KEYCODE_F11: windows.inputHandleKey(keycode_Func11); break;
-	case Common::KEYCODE_F12: windows.inputHandleKey(keycode_Func12); break;
+	case Common::KEYCODE_RETURN:
+		windows.inputHandleKey(keycode_Return);
+		break;
+	case Common::KEYCODE_BACKSPACE:
+		windows.inputHandleKey(keycode_Delete);
+		break;
+	case Common::KEYCODE_DELETE:
+		windows.inputHandleKey(keycode_Erase);
+		break;
+	case Common::KEYCODE_TAB:
+		windows.inputHandleKey(keycode_Tab);
+		break;
+	case Common::KEYCODE_PAGEUP:
+		windows.inputHandleKey(keycode_PageUp);
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+		windows.inputHandleKey(keycode_PageDown);
+		break;
+	case Common::KEYCODE_HOME:
+		windows.inputHandleKey(keycode_Home);
+		break;
+	case Common::KEYCODE_END:
+		windows.inputHandleKey(keycode_End);
+		break;
+	case Common::KEYCODE_LEFT:
+		windows.inputHandleKey(keycode_Left);
+		break;
+	case Common::KEYCODE_RIGHT:
+		windows.inputHandleKey(keycode_Right);
+		break;
+	case Common::KEYCODE_UP:
+		windows.inputHandleKey(keycode_Up);
+		break;
+	case Common::KEYCODE_DOWN:
+		windows.inputHandleKey(keycode_Down);
+		break;
+	case Common::KEYCODE_ESCAPE:
+		windows.inputHandleKey(keycode_Escape);
+		break;
+	case Common::KEYCODE_F1:
+		windows.inputHandleKey(keycode_Func1);
+		break;
+	case Common::KEYCODE_F2:
+		windows.inputHandleKey(keycode_Func2);
+		break;
+	case Common::KEYCODE_F3:
+		windows.inputHandleKey(keycode_Func3);
+		break;
+	case Common::KEYCODE_F4:
+		windows.inputHandleKey(keycode_Func4);
+		break;
+	case Common::KEYCODE_F5:
+		windows.inputHandleKey(keycode_Func5);
+		break;
+	case Common::KEYCODE_F6:
+		windows.inputHandleKey(keycode_Func6);
+		break;
+	case Common::KEYCODE_F7:
+		windows.inputHandleKey(keycode_Func7);
+		break;
+	case Common::KEYCODE_F8:
+		windows.inputHandleKey(keycode_Func8);
+		break;
+	case Common::KEYCODE_F9:
+		windows.inputHandleKey(keycode_Func9);
+		break;
+	case Common::KEYCODE_F10:
+		windows.inputHandleKey(keycode_Func10);
+		break;
+	case Common::KEYCODE_F11:
+		windows.inputHandleKey(keycode_Func11);
+		break;
+	case Common::KEYCODE_F12:
+		windows.inputHandleKey(keycode_Func12);
+		break;
 	default:
-		windows.inputHandleKey(ks.ascii); break;
-	break;
+		windows.inputHandleKey(ks.ascii);
+		break;
+		break;
 	}
 }
 
@@ -317,8 +368,8 @@ void Events::waitForPress() {
 		g_system->delayMillis(10);
 		checkForNextFrameCounter();
 	} while (!g_vm->shouldQuit() && e.type != Common::EVENT_KEYDOWN &&
-		e.type != Common::EVENT_LBUTTONDOWN && e.type != Common::EVENT_RBUTTONDOWN &&
-		e.type != Common::EVENT_MBUTTONDOWN);
+	         e.type != Common::EVENT_LBUTTONDOWN && e.type != Common::EVENT_RBUTTONDOWN &&
+	         e.type != Common::EVENT_MBUTTONDOWN);
 }
 
 void Events::setCursor(CursorId cursorId) {

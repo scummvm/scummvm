@@ -34,8 +34,8 @@
 
 namespace Gargoyle {
 
-Glk::Glk(OSystem *syst, const GargoyleGameDescription *gameDesc) : 
-		GargoyleEngine(syst, gameDesc), _gliFirstEvent(false) {
+Glk::Glk(OSystem *syst, const GargoyleGameDescription *gameDesc) :
+	GargoyleEngine(syst, gameDesc), _gliFirstEvent(false) {
 	// Set uppercase/lowercase tables
 	int ix, res;
 	for (ix = 0; ix < 256; ix++) {
@@ -59,7 +59,7 @@ Glk::Glk(OSystem *syst, const GargoyleGameDescription *gameDesc) :
 }
 
 void Glk::glk_exit(void) {
- 	glk_put_string("[ press any key to exit ]");
+	glk_put_string("[ press any key to exit ]");
 	_events->waitForPress();
 
 	quitGame();
@@ -194,7 +194,7 @@ void Glk::glk_window_set_arrangement(winid_t win, glui32 method, glui32 size, wi
 }
 
 void Glk::glk_window_get_arrangement(winid_t win, glui32 *method,
-		glui32 *size, winid_t *keyWin) {
+                                     glui32 *size, winid_t *keyWin) {
 	if (win) {
 		win->getArrangement(method, size, keyWin);
 	} else {
@@ -586,30 +586,30 @@ bool Glk::glk_style_measure(winid_t win, glui32 style, glui32 hint, glui32 *resu
 
 	case stylehint_Weight:
 		*result =
-			(styles[style].font == PROPB || styles[style].font == PROPZ ||
-				styles[style].font == MONOB || styles[style].font == MONOZ);
+		    (styles[style].font == PROPB || styles[style].font == PROPZ ||
+		     styles[style].font == MONOB || styles[style].font == MONOZ);
 		break;
 
 	case stylehint_Oblique:
 		*result =
-			(styles[style].font == PROPI || styles[style].font == PROPZ ||
-				styles[style].font == MONOI || styles[style].font == MONOZ);
+		    (styles[style].font == PROPI || styles[style].font == PROPZ ||
+		     styles[style].font == MONOI || styles[style].font == MONOZ);
 		break;
 
 	case stylehint_Proportional:
 		*result =
-			(styles[style].font == PROPR || styles[style].font == PROPI ||
-				styles[style].font == PROPB || styles[style].font == PROPZ);
+		    (styles[style].font == PROPR || styles[style].font == PROPI ||
+		     styles[style].font == PROPB || styles[style].font == PROPZ);
 		break;
 
 	case stylehint_TextColor:
 		*result =
-			(styles[style].fg[0] << 16) | (styles[style].fg[1] << 8) | (styles[style].fg[2]);
+		    (styles[style].fg[0] << 16) | (styles[style].fg[1] << 8) | (styles[style].fg[2]);
 		break;
 
 	case stylehint_BackColor:
 		*result =
-			(styles[style].bg[0] << 16) | (styles[style].bg[1] << 8) | (styles[style].bg[2]);
+		    (styles[style].bg[0] << 16) | (styles[style].bg[1] << 8) | (styles[style].bg[2]);
 		break;
 
 	case stylehint_ReverseColor:
@@ -681,7 +681,7 @@ void Glk::glk_select(event_t *event) {
 		_windows->inputGuessFocus();
 		_gliFirstEvent = true;
 	}
-	
+
 	_events->getEvent(event, false);
 }
 
@@ -702,7 +702,7 @@ void Glk::glk_request_line_event(winid_t win, char *buf, glui32 maxlen, glui32 i
 	if (!win) {
 		warning("request_line_event: invalid ref");
 	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
-			|| win->_lineRequestUni) {
+	           || win->_lineRequestUni) {
 		warning("request_line_event: window already has keyboard request");
 	} else {
 		win->requestLineEvent(buf, maxlen, initlen);
@@ -713,7 +713,7 @@ void Glk::glk_request_char_event(winid_t win) {
 	if (!win) {
 		warning("request_char_event: invalid ref");
 	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
-			|| win->_lineRequestUni) {
+	           || win->_lineRequestUni) {
 		warning("request_char_event: window already has keyboard request");
 	} else {
 		win->requestCharEvent();
@@ -777,7 +777,7 @@ glui32 Glk::glk_buffer_to_upper_case_uni(glui32 *buf, glui32 len, glui32 numchar
 }
 
 glui32 Glk::glk_buffer_to_title_case_uni(glui32 *buf, glui32 len,
-	glui32 numchars, glui32 lowerrest) {
+        glui32 numchars, glui32 lowerrest) {
 	return bufferChangeCase(buf, len, numchars, CASE_TITLE, COND_LINESTART, lowerrest);
 }
 
@@ -840,7 +840,7 @@ glui32 Glk::glk_get_line_stream_uni(strid_t str, glui32 *buf, glui32 len) {
 		return str->getLineUni(buf, len);
 	} else  {
 		warning("get_line_stream_uni: invalid ref");
-		return (glui32 )-1;
+		return (glui32) - 1;
 	}
 }
 
@@ -856,7 +856,7 @@ void Glk::glk_request_char_event_uni(winid_t win) {
 	if (!win) {
 		warning("request_char_event_uni: invalid ref");
 	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
-			|| win->_lineRequestUni) {
+	           || win->_lineRequestUni) {
 		warning("request_char_event_uni: window already has keyboard request");
 	} else {
 		win->requestCharEvent();
@@ -867,7 +867,7 @@ void Glk::glk_request_line_event_uni(winid_t win, glui32 *buf, glui32 maxlen, gl
 	if (!win) {
 		warning("request_line_event_uni: invalid ref");
 	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
-			|| win->_lineRequestUni) {
+	           || win->_lineRequestUni) {
 		warning("request_line_event_uni: window already has keyboard request");
 	} else {
 		win->requestLineEventUni(buf, maxlen, initlen);
@@ -875,7 +875,7 @@ void Glk::glk_request_line_event_uni(winid_t win, glui32 *buf, glui32 maxlen, gl
 }
 
 glui32 Glk::glk_buffer_canon_decompose_uni(glui32 *buf, glui32 len,
-	glui32 numchars) {
+        glui32 numchars) {
 	// TODO
 	return 0;
 }
@@ -901,7 +901,7 @@ glui32 Glk::glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2) 
 }
 
 glui32 Glk::glk_image_draw_scaled(winid_t win, glui32 image, glsi32 val1, glsi32 val2,
-		glui32 width, glui32 height) {
+                                  glui32 width, glui32 height) {
 	if (!win) {
 		warning("image_draw_scaled: invalid ref");
 	} else if (g_conf->_graphics) {
@@ -950,7 +950,7 @@ void Glk::glk_window_erase_rect(winid_t win, glsi32 left, glsi32 top, glui32 wid
 }
 
 void Glk::glk_window_fill_rect(winid_t win, glui32 color, glsi32 left, glsi32 top,
-		glui32 width, glui32 height) {
+                               glui32 width, glui32 height) {
 	if (!win) {
 		warning("window_fill_rect: invalid ref");
 	} else {
@@ -1013,7 +1013,7 @@ schanid_t Glk::glk_schannel_create_ext(glui32 rock, glui32 volume) {
 }
 
 glui32 Glk::glk_schannel_play_multi(schanid_t *chanarray, glui32 chancount,
-	glui32 *sndarray, glui32 soundcount, glui32 notify) {
+                                    glui32 *sndarray, glui32 soundcount, glui32 notify) {
 	// TODO
 	return 0;
 }
@@ -1027,7 +1027,7 @@ void Glk::glk_schannel_unpause(schanid_t chan) {
 }
 
 void Glk::glk_schannel_set_volume_ext(schanid_t chan, glui32 vol,
-	glui32 duration, glui32 notify) {
+                                      glui32 duration, glui32 notify) {
 	// TODO
 }
 

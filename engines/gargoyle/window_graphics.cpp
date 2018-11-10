@@ -28,7 +28,7 @@
 namespace Gargoyle {
 
 GraphicsWindow::GraphicsWindow(Windows *windows, uint32 rock) : Window(windows, rock),
-_w(0), _h(0), _dirty(false), _surface(nullptr) {
+	_w(0), _h(0), _dirty(false), _surface(nullptr) {
 	_type = wintype_Graphics;
 	Common::copy(&_bgColor[0], &_bgColor[3], _bgnd);
 }
@@ -66,7 +66,7 @@ void GraphicsWindow::rearrange(const Rect &box) {
 		bothhgt = newhgt;
 
 	newSurface = new Graphics::ManagedSurface(newwid, newhgt,
-		Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+	        Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
 
 	// If the new surface is equal or bigger than the old one, copy it over
 	if (_surface && bothwid && bothhgt)
@@ -98,7 +98,7 @@ void GraphicsWindow::redraw() {
 }
 
 glui32 GraphicsWindow::drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int scale,
-		glui32 imagewidth, glui32 imageheight) {
+                                   glui32 imagewidth, glui32 imageheight) {
 	Picture *pic = Picture::load(image);
 	glui32 hyperlink = _attr.hyper;
 

@@ -52,7 +52,7 @@ byte Windows::_zcolor_Bright[3];
 /*--------------------------------------------------------------------------*/
 
 Windows::Windows(Graphics::Screen *screen) : _screen(screen), _windowList(nullptr),
-		_rootWin(nullptr), _focusWin(nullptr) {
+	_rootWin(nullptr), _focusWin(nullptr) {
 	_overrideReverse = false;
 	_overrideFgSet = false;
 	_overrideBgSet = false;
@@ -71,7 +71,7 @@ Windows::Windows(Graphics::Screen *screen) : _screen(screen), _windowList(nullpt
 }
 
 Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
-		glui32 wintype, glui32 rock) {
+                            glui32 wintype, glui32 rock) {
 	Window *newwin, *oldparent;
 	PairWindow *pairWin;
 	glui32 val;
@@ -93,23 +93,20 @@ Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
 		}
 
 		val = (method & winmethod_DivisionMask);
-		if (val != winmethod_Fixed && val != winmethod_Proportional)
-		{
+		if (val != winmethod_Fixed && val != winmethod_Proportional) {
 			warning("window_open: invalid method (not fixed or proportional)");
 			return nullptr;
 		}
 
 		val = (method & winmethod_DirMask);
 		if (val != winmethod_Above && val != winmethod_Below
-			&& val != winmethod_Left && val != winmethod_Right)
-		{
+		        && val != winmethod_Left && val != winmethod_Right) {
 			warning("window_open: invalid method (bad direction)");
 			return nullptr;
 		}
 
 		oldparent = splitwin->_parent;
-		if (oldparent && oldparent->_type != wintype_Pair)
-		{
+		if (oldparent && oldparent->_type != wintype_Pair) {
 			warning("window_open: parent window is not Pair");
 			return nullptr;
 		}
@@ -283,8 +280,8 @@ void Windows::inputGuessFocus() {
 
 	do {
 		if (altWin
-			&& (altWin->_lineRequest || altWin->_charRequest ||
-				altWin->_lineRequestUni || altWin->_charRequestUni))
+		        && (altWin->_lineRequest || altWin->_charRequest ||
+		            altWin->_lineRequestUni || altWin->_charRequestUni))
 			break;
 		altWin = iterateTreeOrder(altWin);
 	} while (altWin != _focusWin);
@@ -311,12 +308,11 @@ void Windows::inputMoreFocus() {
 void Windows::inputNextFocus() {
 	Window *altWin = _focusWin;
 
-	do
-	{
+	do {
 		altWin = iterateTreeOrder(altWin);
 		if (altWin
-			&& (altWin->_lineRequest || altWin->_charRequest ||
-				altWin->_lineRequestUni || altWin->_charRequestUni))
+		        && (altWin->_lineRequest || altWin->_charRequest ||
+		            altWin->_lineRequestUni || altWin->_charRequestUni))
 			break;
 	} while (altWin != _focusWin);
 
@@ -485,10 +481,10 @@ Window *Windows::iterateTreeOrder(Window *win) {
 /*--------------------------------------------------------------------------*/
 
 Window::Window(Windows *windows, glui32 rock) : _windows(windows), _rock(rock),
-		_type(0), _parent(nullptr), _next(nullptr), _prev(nullptr), _yAdj(0),
-		_lineRequest(0), _lineRequestUni(0), _charRequest(0), _charRequestUni(0),
-		_mouseRequest(0), _hyperRequest(0), _moreRequest(0), _scrollRequest(0), _imageLoaded(0),
-		_echoLineInputBase(true), _lineTerminatorsBase(nullptr), _termCt(0), _echoStream(nullptr) {
+	_type(0), _parent(nullptr), _next(nullptr), _prev(nullptr), _yAdj(0),
+	_lineRequest(0), _lineRequestUni(0), _charRequest(0), _charRequestUni(0),
+	_mouseRequest(0), _hyperRequest(0), _moreRequest(0), _scrollRequest(0), _imageLoaded(0),
+	_echoLineInputBase(true), _lineTerminatorsBase(nullptr), _termCt(0), _echoStream(nullptr) {
 	_attr.fgset = 0;
 	_attr.bgset = 0;
 	_attr.reverse = 0;
@@ -509,7 +505,7 @@ Window::~Window() {
 	if (g_vm->gli_unregister_obj)
 		(*g_vm->gli_unregister_obj)(this, gidisp_Class_Window, _dispRock);
 
-	
+
 	_echoStream = nullptr;
 	delete _stream;
 
@@ -704,14 +700,14 @@ byte *Attributes::attrBg(WindowStyle *styles) {
 	if (zfset && zfore != Windows::_zcolor_fg) {
 		Windows::_zcolor_Foreground[0] = (zfore >> 16) & 0xff;
 		Windows::_zcolor_Foreground[1] = (zfore >> 8) & 0xff;
-		Windows::_zcolor_Foreground[2] = (zfore)& 0xff;
+		Windows::_zcolor_Foreground[2] = (zfore) & 0xff;
 		Windows::_zcolor_fg = zfore;
 	}
 
 	if (zbset && zback != Windows::_zcolor_bg) {
 		Windows::_zcolor_Background[0] = (zback >> 16) & 0xff;
 		Windows::_zcolor_Background[1] = (zback >> 8) & 0xff;
-		Windows::_zcolor_Background[2] = (zback)& 0xff;
+		Windows::_zcolor_Background[2] = (zback) & 0xff;
 		Windows::_zcolor_bg = zback;
 	}
 
@@ -726,11 +722,10 @@ byte *Attributes::attrBg(WindowStyle *styles) {
 				return Windows::rgbShift(Windows::_zcolor_Foreground);
 			else
 				return Windows::_zcolor_Foreground;
+		else if (zbset && !memcmp(styles[style].fg, Windows::_zcolor_Background, 3))
+			return Windows::_zcolor_LightGrey;
 		else
-			if (zbset && !memcmp(styles[style].fg, Windows::_zcolor_Background, 3))
-				return Windows::_zcolor_LightGrey;
-			else
-				return styles[style].fg;
+			return styles[style].fg;
 	}
 }
 
@@ -746,14 +741,14 @@ byte *Attributes::attrFg(WindowStyle *styles) {
 	if (zfset && zfore != Windows::_zcolor_fg) {
 		Windows::_zcolor_Foreground[0] = (zfore >> 16) & 0xff;
 		Windows::_zcolor_Foreground[1] = (zfore >> 8) & 0xff;
-		Windows::_zcolor_Foreground[2] = (zfore)& 0xff;
+		Windows::_zcolor_Foreground[2] = (zfore) & 0xff;
 		Windows::_zcolor_fg = zfore;
 	}
 
 	if (zbset && zback != Windows::_zcolor_bg) {
 		Windows::_zcolor_Background[0] = (zback >> 16) & 0xff;
 		Windows::_zcolor_Background[1] = (zback >> 8) & 0xff;
-		Windows::_zcolor_Background[2] = (zback)& 0xff;
+		Windows::_zcolor_Background[2] = (zback) & 0xff;
 		Windows::_zcolor_bg = zback;
 	}
 
@@ -763,11 +758,10 @@ byte *Attributes::attrFg(WindowStyle *styles) {
 				return Windows::rgbShift(Windows::_zcolor_Foreground);
 			else
 				return Windows::_zcolor_Foreground;
+		else if (zbset && !memcmp(styles[style].fg, Windows::_zcolor_Background, 3))
+			return Windows::_zcolor_LightGrey;
 		else
-			if (zbset && !memcmp(styles[style].fg, Windows::_zcolor_Background, 3))
-				return Windows::_zcolor_LightGrey;
-			else
-				return styles[style].fg;
+			return styles[style].fg;
 	} else {
 		if (zbset)
 			return Windows::_zcolor_Background;

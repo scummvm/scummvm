@@ -62,8 +62,8 @@ enum InterpreterType {
 
 enum GargoyleDebugChannels {
 	kDebugCore      = 1 << 0,
-	kDebugScripts	= 1 << 1,
-	kDebugGraphics	= 1 << 2,
+	kDebugScripts   = 1 << 1,
+	kDebugGraphics  = 1 << 2,
 	kDebugSound     = 1 << 3
 };
 
@@ -125,12 +125,16 @@ public:
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently() override { return true; }
+	virtual bool canLoadGameStateCurrently() override {
+		return true;
+	}
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently() override { return true; }
+	virtual bool canSaveGameStateCurrently() override {
+		return true;
+	}
 
 	/**
 	 * Returns the bitset of game features
@@ -165,7 +169,9 @@ public:
 	/**
 	 * Return the game engine's target name
 	 */
-	const Common::String &getTargetName() const { return _targetName; }
+	const Common::String &getTargetName() const {
+		return _targetName;
+	}
 
 	/**
 	 * Display a message in a GUI dialog

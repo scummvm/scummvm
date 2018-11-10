@@ -21,7 +21,7 @@
  */
 
 namespace Gargoyle {
-	
+
 static const GargoyleGameDescription gameDescriptions[] = {
 	{
 		{

@@ -169,7 +169,7 @@ enum StyleHint {
  * These constants define the classes of opaque objects. It's a bit ugly to put
  * them in this header file, since more classes may be added in the future.
  * But if you find yourself stuck with an obsolete version of this file,
- * adding new class definitions will be easy enough -- they will be numbered 
+ * adding new class definitions will be easy enough -- they will be numbered
  * sequentially, and the numeric constants can be found in the Glk specification.
  */
 enum giDisp {
@@ -180,10 +180,10 @@ enum giDisp {
 };
 
 enum zcolor {
-	zcolor_Transparent = (uint32)-4,
-	zcolor_Cursor      = (uint32)-3,
-	zcolor_Current     = (uint32)-2,
-	zcolor_Default     = (uint32)-1
+	zcolor_Transparent = (uint32) - 4,
+	zcolor_Cursor      = (uint32) - 3,
+	zcolor_Current     = (uint32) - 2,
+	zcolor_Default     = (uint32) - 1
 };
 
 #ifdef GLK_MODULE_IMAGE

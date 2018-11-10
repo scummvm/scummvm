@@ -76,39 +76,39 @@ public:
 
 	/**
 	 * Draws a string using the specified font at the given co-ordinates
-	 * @param pos		Position for the bottom-left corner the text will be drawn with
-	 * @param fontIdx	Which font to use
-	 * @param rgb		RGB tuplet specifying the text color
-	 * @param text		The text to draw
-	 * @param spw		??
+	 * @param pos       Position for the bottom-left corner the text will be drawn with
+	 * @param fontIdx   Which font to use
+	 * @param rgb       RGB tuplet specifying the text color
+	 * @param text      The text to draw
+	 * @param spw       ??
 	 */
 	int drawString(const Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw = 0);
 
 	/**
 	 * Draws a unicode string using the specified font at the given co-ordinates
-	 * @param pos		Position for the bottom-left corner the text will be drawn with
-	 * @param fontIdx	Which font to use
-	 * @param rgb		RGB tuplet specifying the text color
-	 * @param text		The text to draw
-	 * @param spw		??
+	 * @param pos       Position for the bottom-left corner the text will be drawn with
+	 * @param fontIdx   Which font to use
+	 * @param rgb       RGB tuplet specifying the text color
+	 * @param text      The text to draw
+	 * @param spw       ??
 	 */
 	int drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw = 0);
 
 	/**
 	 * Get the width in pixels of a string
 	 * @param fontIdx   Which font to use
-	 * @param text		Text to get the width of
-	 * @param spw		Delta X
-	 * @returns			Width of string multiplied by GLI_SUBPIX
+	 * @param text      Text to get the width of
+	 * @param spw       Delta X
+	 * @returns         Width of string multiplied by GLI_SUBPIX
 	 */
 	size_t stringWidth(int fontIdx, const Common::String &text, int spw = 0);
 
 	/**
 	 * Get the width in pixels of a unicode string
 	 * @param fontIdx   Which font to use
-	 * @param text		Text to get the width of
-	 * @param spw		Delta X
-	 * @returns			Width of string multiplied by GLI_SUBPIX
+	 * @param text      Text to get the width of
+	 * @param spw       Delta X
+	 * @returns         Width of string multiplied by GLI_SUBPIX
 	 */
 	size_t stringWidthUni(int fontIdx, const Common::U32String &text, int spw = 0);
 };
