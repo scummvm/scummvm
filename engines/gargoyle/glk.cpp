@@ -1115,39 +1115,36 @@ glsi32 Glk::glk_date_to_simple_time_local(const glkdate_t *date, glui32 factor) 
 
 /* XXX non-official Glk functions that may or may not exist */
 
-char *garglk_fileref_get_name(frefid_t fref) {
-	// TODO
-	return nullptr;
+const char *Glk::garglk_fileref_get_name(frefid_t fref) const {
+	return fref->_filename.c_str();
 }
 
 void Glk::garglk_set_program_name(const char *name) {
-	// TODO
+	// Program name isn't displayed
 }
 
 void Glk::garglk_set_program_info(const char *info) {
-	// TODO
+	// Program info isn't displayed
 }
 
 void Glk::garglk_set_story_name(const char *name) {
-	// TODO
+	// Story name isn't displayed
 }
 
 void Glk::garglk_set_story_title(const char *title) {
-	// TODO
+	// Story title isn't displayed
 }
 
 void Glk::garglk_set_config(const char *name) {
-	// TODO
+	// No implementation
 }
 
-/* garglk_unput_string - removes the specified string from the end of the output buffer, if
-* indeed it is there. */
-void Glk::garglk_unput_string(char *str) {
-	// TODO
+void Glk::garglk_unput_string(const char *str) {
+	_streams->getCurrent()->unputBuffer(str, strlen(str));
 }
 
-void Glk::garglk_unput_string_uni(glui32 *str) {
-	// TODO
+void Glk::garglk_unput_string_uni(const glui32 *str) {
+	_streams->getCurrent()->unputBufferUni(str, strlen_uni(str));
 }
 
 void Glk::garglk_set_zcolors(glui32 fg, glui32 bg) {
