@@ -24,7 +24,7 @@
 #define GARGOYLE_SCOTT
 
 /*
- *	Controlling block
+ *  Controlling block
  */
 
 #include "common/scummsys.h"
@@ -33,28 +33,28 @@
 namespace Gargoyle {
 namespace Scott {
 
-#define LIGHT_SOURCE	9	// Always 9 how odd
-#define CARRIED		255		// Carried
-#define DESTROYED	0		// Destroyed
-#define DARKBIT		15
-#define LIGHTOUTBIT	16		// Light gone out
+#define LIGHT_SOURCE    9   // Always 9 how odd
+#define CARRIED     255     // Carried
+#define DESTROYED   0       // Destroyed
+#define DARKBIT     15
+#define LIGHTOUTBIT 16      // Light gone out
 
 enum GameOption {
-	YOUARE      = 1,		///< You are not I am
-	SCOTTLIGHT  = 2,		///< Authentic Scott Adams light messages
-	DEBUGGING   = 4,		///< Info from database load
-	TRS80_STYLE = 8,		///< Display in style used on TRS-80
-	PREHISTORIC_LAMP = 16	///< Destroy the lamp (very old databases)
+	YOUARE      = 1,        ///< You are not I am
+	SCOTTLIGHT  = 2,        ///< Authentic Scott Adams light messages
+	DEBUGGING   = 4,        ///< Info from database load
+	TRS80_STYLE = 8,        ///< Display in style used on TRS-80
+	PREHISTORIC_LAMP = 16   ///< Destroy the lamp (very old databases)
 };
 
-#define TRS80_LINE	"\n<------------------------------------------------------------>\n"
-#define MyLoc	(GameHeader.PlayerRoom)
+#define TRS80_LINE  "\n<------------------------------------------------------------>\n"
+#define MyLoc   (GameHeader.PlayerRoom)
 
 struct Header {
- 	int Unknown;
+	int Unknown;
 	int NumItems;
 	int NumActions;
-	int NumWords;			///< Smaller of verb/noun is padded to same size
+	int NumWords;           ///< Smaller of verb/noun is padded to same size
 	int NumRooms;
 	int MaxCarry;
 	int PlayerRoom;
@@ -90,7 +90,7 @@ struct Room {
 };
 
 struct Item {
-	char *Text;		// PORTABILITY WARNING: THESE TWO MUST BE 8 BIT VALUES.
+	char *Text;     // PORTABILITY WARNING: THESE TWO MUST BE 8 BIT VALUES.
 	byte Location;
 	byte InitialLoc;
 	char *AutoGet;
@@ -125,7 +125,7 @@ private:
 	int SavedRoom;
 	int RoomSaved[16];  ///< Range unknown
 	int Options;        ///< Option flags set
-	int Width;		    ///< Terminal width
+	int Width;          ///< Terminal width
 	int TopHeight;      ///< Height of top window
 
 	bool split_screen;

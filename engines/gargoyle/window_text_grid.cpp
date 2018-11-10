@@ -193,7 +193,7 @@ void TextGridWindow::click(const Point &newPos) {
 	int y = newPos.y - _bbox.top;
 
 	if (_lineRequest || _charRequest || _lineRequestUni || _charRequestUni
-			|| _moreRequest || _scrollRequest)
+	        || _moreRequest || _scrollRequest)
 		_windows->setFocus(this);
 
 	if (_mouseRequest) {
@@ -205,8 +205,7 @@ void TextGridWindow::click(const Point &newPos) {
 
 	if (_hyperRequest) {
 		glui32 linkval = g_vm->_selection->getHyperlink(newPos);
-		if (linkval)
-		{
+		if (linkval) {
 			g_vm->_events->store(evtype_Hyperlink, this, linkval, 0);
 			_hyperRequest = false;
 			if (g_conf->_safeClicks)
@@ -216,8 +215,7 @@ void TextGridWindow::click(const Point &newPos) {
 }
 
 void TextGridWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) {
-	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni)
-	{
+	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni) {
 		warning("request_line_event: window already has keyboard request");
 		return;
 	}
@@ -292,7 +290,7 @@ void TextGridWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 init
 	if (initlen) {
 		TextGridRow *ln = &(_lines[_inOrgY]);
 
-		for (glui32 ix = 0; ix<initlen; ix++) {
+		for (glui32 ix = 0; ix < initlen; ix++) {
 			ln->_attrs[_inOrgX + ix].set(style_Input);
 			ln->_chars[_inOrgX + ix] = buf[ix];
 		}
@@ -304,7 +302,7 @@ void TextGridWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 init
 
 		touch(_inOrgY);
 	}
-	
+
 	if (_lineTerminatorsBase && _termCt) {
 		_lineTerminators = new glui32[_termCt + 1];
 
@@ -341,8 +339,7 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 	inarrayrock = _inArrayRock;
 
 	if (!unicode) {
-		for (ix = 0; ix<_inLen; ix++)
-		{
+		for (ix = 0; ix < _inLen; ix++) {
 			glui32 ch = ln->_chars[_inOrgX + ix];
 			if (ch > 0xff)
 				ch = '?';
@@ -351,7 +348,7 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 		if (_echoStream)
 			_echoStream->echoLine((char *)_inBuf, _inLen);
 	} else {
-		for (ix = 0; ix<_inLen; ix++)
+		for (ix = 0; ix < _inLen; ix++)
 			((glui32 *)inbuf)[ix] = ln->_chars[_inOrgX + ix];
 		if (_echoStream)
 			_echoStream->echoLineUni((glui32 *)inbuf, _inLen);
@@ -386,8 +383,7 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 void TextGridWindow::acceptReadChar(glui32 arg) {
 	glui32 key;
 
-	switch (arg)
-	{
+	switch (arg) {
 	case keycode_Erase:
 		key = keycode_Delete;
 		break;
@@ -398,8 +394,7 @@ void TextGridWindow::acceptReadChar(glui32 arg) {
 		key = arg;
 	}
 
-	if (key > 0xff && key < (0xffffffff - keycode_MAXVAL + 1))
-	{
+	if (key > 0xff && key < (0xffffffff - keycode_MAXVAL + 1)) {
 		if (!(_charRequestUni) || key > 0x10ffff)
 			key = keycode_Unknown;
 	}
@@ -425,12 +420,12 @@ void TextGridWindow::acceptLine(glui32 keycode) {
 	inarrayrock = _inArrayRock;
 
 	if (!unicode) {
-		for (ix = 0; ix<_inLen; ix++)
+		for (ix = 0; ix < _inLen; ix++)
 			((char *)inbuf)[ix] = (char)ln->_chars[_inOrgX + ix];
 		if (_echoStream)
 			_echoStream->echoLine((char *)inbuf, _inLen);
 	} else {
-		for (ix = 0; ix<_inLen; ix++)
+		for (ix = 0; ix < _inLen; ix++)
 			((glui32 *)inbuf)[ix] = ln->_chars[_inOrgX + ix];
 		if (_echoStream)
 			_echoStream->echoLineUni((glui32 *)inbuf, _inLen);
@@ -440,8 +435,7 @@ void TextGridWindow::acceptLine(glui32 keycode) {
 	_curX = 0;
 	_attr = _origAttr;
 
-	if (_lineTerminators)
-	{
+	if (_lineTerminators) {
 		glui32 val2 = keycode;
 		if (val2 == keycode_Return)
 			val2 = 0;
@@ -487,7 +481,7 @@ void TextGridWindow::acceptReadLine(glui32 arg) {
 			return;
 		if (_inCurs <= 0)
 			return;
-		for (ix = _inCurs; ix<_inLen; ix++)
+		for (ix = _inCurs; ix < _inLen; ix++)
 			ln->_chars[_inOrgX + ix - 1] = ln->_chars[_inOrgX + ix];
 		ln->_chars[_inOrgX + _inLen - 1] = ' ';
 		_inCurs--;
@@ -499,7 +493,7 @@ void TextGridWindow::acceptReadLine(glui32 arg) {
 			return;
 		if (_inCurs >= _inLen)
 			return;
-		for (ix = _inCurs; ix<_inLen - 1; ix++)
+		for (ix = _inCurs; ix < _inLen - 1; ix++)
 			ln->_chars[_inOrgX + ix] = ln->_chars[_inOrgX + ix + 1];
 		ln->_chars[_inOrgX + _inLen - 1] = ' ';
 		_inLen--;
@@ -508,7 +502,7 @@ void TextGridWindow::acceptReadLine(glui32 arg) {
 	case keycode_Escape:
 		if (_inLen <= 0)
 			return;
-		for (ix = 0; ix<_inLen; ix++)
+		for (ix = 0; ix < _inLen; ix++)
 			ln->_chars[_inOrgX + ix] = ' ';
 		_inLen = 0;
 		_inCurs = 0;
@@ -553,7 +547,7 @@ void TextGridWindow::acceptReadLine(glui32 arg) {
 		if (g_conf->_caps && (arg > 0x60 && arg < 0x7b))
 			arg -= 0x20;
 
-		for (ix = _inLen; ix>_inCurs; ix--)
+		for (ix = _inLen; ix > _inCurs; ix--)
 			ln->_chars[_inOrgX + ix] = ln->_chars[_inOrgX + ix - 1];
 		ln->_attrs[_inOrgX + _inLen].set(style_Input);
 		ln->_chars[_inOrgX + _inCurs] = arg;
@@ -607,11 +601,11 @@ void TextGridWindow::redraw() {
 
 					for (k = a, o = x; k < b; k++, o += g_conf->_cellW) {
 						screen.drawStringUni(Point(o * GLI_SUBPIX, y + g_conf->_baseLine), font,
-							fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
+						                     fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
 					}
 					if (link) {
 						screen.fillRect(Rect::fromXYWH(x, y + g_conf->_baseLine + 1, w,
-							g_conf->_linkStyle), g_conf->_linkColor);
+						                               g_conf->_linkStyle), g_conf->_linkColor);
 						g_vm->_selection->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 					}
 
@@ -629,11 +623,11 @@ void TextGridWindow::redraw() {
 
 			for (k = a, o = x; k < b; k++, o += g_conf->_cellW) {
 				screen.drawStringUni(Point(o * GLI_SUBPIX, y + g_conf->_baseLine), font,
-					fgcolor, Common::U32String(&ln->_chars[k], 1));
+				                     fgcolor, Common::U32String(&ln->_chars[k], 1));
 			}
 			if (link) {
 				screen.fillRect(Rect::fromXYWH(x, y + g_conf->_baseLine + 1, w, g_conf->_linkStyle),
-					g_conf->_linkColor);
+				                g_conf->_linkColor);
 				g_vm->_selection->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 			}
 		}

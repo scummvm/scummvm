@@ -3861,3325 +3861,3325 @@ gli_case_special_t unigen_special_0xfb16 = { 857, 860, 862 };
 gli_case_special_t unigen_special_0xfb17 = { 865, 868, 870 };
 
 #define RETURN_COMBINING_CLASS(ch)  \
-switch ((glui32)(ch) >> 8) {  \
-case 3:  \
-switch (ch) {  \
-    case 820:  \
-    case 821:  \
-    case 822:  \
-    case 823:  \
-    case 824:  \
-    return 1;  \
-    case 801:  \
-    case 802:  \
-    case 807:  \
-    case 808:  \
-    return 202;  \
-    case 795:  \
-    return 216;  \
-    case 790:  \
-    case 791:  \
-    case 792:  \
-    case 793:  \
-    case 796:  \
-    case 797:  \
-    case 798:  \
-    case 799:  \
-    case 800:  \
-    case 803:  \
-    case 804:  \
-    case 805:  \
-    case 806:  \
-    case 809:  \
-    case 810:  \
-    case 811:  \
-    case 812:  \
-    case 813:  \
-    case 814:  \
-    case 815:  \
-    case 816:  \
-    case 817:  \
-    case 818:  \
-    case 819:  \
-    case 825:  \
-    case 826:  \
-    case 827:  \
-    case 828:  \
-    case 839:  \
-    case 840:  \
-    case 841:  \
-    case 845:  \
-    case 846:  \
-    case 851:  \
-    case 852:  \
-    case 853:  \
-    case 854:  \
-    return 220;  \
-    case 768:  \
-    case 769:  \
-    case 770:  \
-    case 771:  \
-    case 772:  \
-    case 773:  \
-    case 774:  \
-    case 775:  \
-    case 776:  \
-    case 777:  \
-    case 778:  \
-    case 779:  \
-    case 780:  \
-    case 781:  \
-    case 782:  \
-    case 783:  \
-    case 784:  \
-    case 785:  \
-    case 786:  \
-    case 787:  \
-    case 788:  \
-    case 829:  \
-    case 830:  \
-    case 831:  \
-    case 832:  \
-    case 833:  \
-    case 834:  \
-    case 835:  \
-    case 836:  \
-    case 838:  \
-    case 842:  \
-    case 843:  \
-    case 844:  \
-    case 848:  \
-    case 849:  \
-    case 850:  \
-    case 855:  \
-    case 867:  \
-    case 868:  \
-    case 869:  \
-    case 870:  \
-    case 871:  \
-    case 872:  \
-    case 873:  \
-    case 874:  \
-    case 875:  \
-    case 876:  \
-    case 877:  \
-    case 878:  \
-    case 879:  \
-    return 230;  \
-    case 789:  \
-    case 794:  \
-    return 232;  \
-    case 863:  \
-    case 866:  \
-    return 233;  \
-    case 861:  \
-    case 862:  \
-    case 864:  \
-    case 865:  \
-    return 234;  \
-    case 837:  \
-    return 240;  \
-}  \
-return 0;  \
-case 4:  \
-switch (ch) {  \
-    case 1155:  \
-    case 1156:  \
-    case 1157:  \
-    case 1158:  \
-    return 230;  \
-}  \
-return 0;  \
-case 5:  \
-switch (ch) {  \
-    case 1456:  \
-    return 10;  \
-    case 1457:  \
-    return 11;  \
-    case 1458:  \
-    return 12;  \
-    case 1459:  \
-    return 13;  \
-    case 1460:  \
-    return 14;  \
-    case 1461:  \
-    return 15;  \
-    case 1462:  \
-    return 16;  \
-    case 1463:  \
-    return 17;  \
-    case 1464:  \
-    return 18;  \
-    case 1465:  \
-    return 19;  \
-    case 1467:  \
-    return 20;  \
-    case 1468:  \
-    return 21;  \
-    case 1469:  \
-    return 22;  \
-    case 1471:  \
-    return 23;  \
-    case 1473:  \
-    return 24;  \
-    case 1474:  \
-    return 25;  \
-    case 1425:  \
-    case 1430:  \
-    case 1435:  \
-    case 1443:  \
-    case 1444:  \
-    case 1445:  \
-    case 1446:  \
-    case 1447:  \
-    case 1450:  \
-    return 220;  \
-    case 1434:  \
-    case 1453:  \
-    return 222;  \
-    case 1454:  \
-    return 228;  \
-    case 1426:  \
-    case 1427:  \
-    case 1428:  \
-    case 1429:  \
-    case 1431:  \
-    case 1432:  \
-    case 1433:  \
-    case 1436:  \
-    case 1437:  \
-    case 1438:  \
-    case 1439:  \
-    case 1440:  \
-    case 1441:  \
-    case 1448:  \
-    case 1449:  \
-    case 1451:  \
-    case 1452:  \
-    case 1455:  \
-    case 1476:  \
-    return 230;  \
-}  \
-return 0;  \
-case 6:  \
-switch (ch) {  \
-    case 1611:  \
-    return 27;  \
-    case 1612:  \
-    return 28;  \
-    case 1613:  \
-    return 29;  \
-    case 1614:  \
-    return 30;  \
-    case 1615:  \
-    return 31;  \
-    case 1616:  \
-    return 32;  \
-    case 1617:  \
-    return 33;  \
-    case 1618:  \
-    return 34;  \
-    case 1648:  \
-    return 35;  \
-    case 1621:  \
-    case 1622:  \
-    case 1763:  \
-    case 1770:  \
-    case 1773:  \
-    return 220;  \
-    case 1552:  \
-    case 1553:  \
-    case 1554:  \
-    case 1555:  \
-    case 1556:  \
-    case 1557:  \
-    case 1619:  \
-    case 1620:  \
-    case 1623:  \
-    case 1624:  \
-    case 1750:  \
-    case 1751:  \
-    case 1752:  \
-    case 1753:  \
-    case 1754:  \
-    case 1755:  \
-    case 1756:  \
-    case 1759:  \
-    case 1760:  \
-    case 1761:  \
-    case 1762:  \
-    case 1764:  \
-    case 1767:  \
-    case 1768:  \
-    case 1771:  \
-    case 1772:  \
-    return 230;  \
-}  \
-return 0;  \
-case 7:  \
-switch (ch) {  \
-    case 1809:  \
-    return 36;  \
-    case 1841:  \
-    case 1844:  \
-    case 1847:  \
-    case 1848:  \
-    case 1849:  \
-    case 1851:  \
-    case 1852:  \
-    case 1854:  \
-    case 1858:  \
-    case 1860:  \
-    case 1862:  \
-    case 1864:  \
-    return 220;  \
-    case 1840:  \
-    case 1842:  \
-    case 1843:  \
-    case 1845:  \
-    case 1846:  \
-    case 1850:  \
-    case 1853:  \
-    case 1855:  \
-    case 1856:  \
-    case 1857:  \
-    case 1859:  \
-    case 1861:  \
-    case 1863:  \
-    case 1865:  \
-    case 1866:  \
-    return 230;  \
-}  \
-return 0;  \
-case 9:  \
-switch (ch) {  \
-    case 2364:  \
-    case 2492:  \
-    return 7;  \
-    case 2381:  \
-    case 2509:  \
-    return 9;  \
-    case 2386:  \
-    return 220;  \
-    case 2385:  \
-    case 2387:  \
-    case 2388:  \
-    return 230;  \
-}  \
-return 0;  \
-case 10:  \
-switch (ch) {  \
-    case 2620:  \
-    case 2748:  \
-    return 7;  \
-    case 2637:  \
-    case 2765:  \
-    return 9;  \
-}  \
-return 0;  \
-case 11:  \
-switch (ch) {  \
-    case 2876:  \
-    return 7;  \
-    case 2893:  \
-    case 3021:  \
-    return 9;  \
-}  \
-return 0;  \
-case 12:  \
-switch (ch) {  \
-    case 3260:  \
-    return 7;  \
-    case 3149:  \
-    case 3277:  \
-    return 9;  \
-    case 3157:  \
-    return 84;  \
-    case 3158:  \
-    return 91;  \
-}  \
-return 0;  \
-case 13:  \
-switch (ch) {  \
-    case 3405:  \
-    case 3530:  \
-    return 9;  \
-}  \
-return 0;  \
-case 14:  \
-switch (ch) {  \
-    case 3642:  \
-    return 9;  \
-    case 3640:  \
-    case 3641:  \
-    return 103;  \
-    case 3656:  \
-    case 3657:  \
-    case 3658:  \
-    case 3659:  \
-    return 107;  \
-    case 3768:  \
-    case 3769:  \
-    return 118;  \
-    case 3784:  \
-    case 3785:  \
-    case 3786:  \
-    case 3787:  \
-    return 122;  \
-}  \
-return 0;  \
-case 15:  \
-switch (ch) {  \
-    case 3972:  \
-    return 9;  \
-    case 3953:  \
-    return 129;  \
-    case 3954:  \
-    case 3962:  \
-    case 3963:  \
-    case 3964:  \
-    case 3965:  \
-    case 3968:  \
-    return 130;  \
-    case 3956:  \
-    return 132;  \
-    case 3897:  \
-    return 216;  \
-    case 3864:  \
-    case 3865:  \
-    case 3893:  \
-    case 3895:  \
-    case 4038:  \
-    return 220;  \
-    case 3970:  \
-    case 3971:  \
-    case 3974:  \
-    case 3975:  \
-    return 230;  \
-}  \
-return 0;  \
-case 16:  \
-switch (ch) {  \
-    case 4151:  \
-    return 7;  \
-    case 4153:  \
-    return 9;  \
-}  \
-return 0;  \
-case 23:  \
-switch (ch) {  \
-    case 5908:  \
-    case 5940:  \
-    case 6098:  \
-    return 9;  \
-    case 6109:  \
-    return 230;  \
-}  \
-return 0;  \
-case 24:  \
-switch (ch) {  \
-    case 6313:  \
-    return 228;  \
-}  \
-return 0;  \
-case 25:  \
-switch (ch) {  \
-    case 6459:  \
-    return 220;  \
-    case 6457:  \
-    return 222;  \
-    case 6458:  \
-    return 230;  \
-}  \
-return 0;  \
-case 32:  \
-switch (ch) {  \
-    case 8402:  \
-    case 8403:  \
-    case 8408:  \
-    case 8409:  \
-    case 8410:  \
-    case 8421:  \
-    case 8422:  \
-    case 8426:  \
-    return 1;  \
-    case 8424:  \
-    return 220;  \
-    case 8400:  \
-    case 8401:  \
-    case 8404:  \
-    case 8405:  \
-    case 8406:  \
-    case 8407:  \
-    case 8411:  \
-    case 8412:  \
-    case 8417:  \
-    case 8423:  \
-    case 8425:  \
-    return 230;  \
-}  \
-return 0;  \
-case 48:  \
-switch (ch) {  \
-    case 12441:  \
-    case 12442:  \
-    return 8;  \
-    case 12330:  \
-    return 218;  \
-    case 12333:  \
-    return 222;  \
-    case 12334:  \
-    case 12335:  \
-    return 224;  \
-    case 12331:  \
-    return 228;  \
-    case 12332:  \
-    return 232;  \
-}  \
-return 0;  \
-case 251:  \
-switch (ch) {  \
-    case 64286:  \
-    return 26;  \
-}  \
-return 0;  \
-case 254:  \
-switch (ch) {  \
-    case 65056:  \
-    case 65057:  \
-    case 65058:  \
-    case 65059:  \
-    return 230;  \
-}  \
-return 0;  \
-case 465:  \
-switch (ch) {  \
-    case 119143:  \
-    case 119144:  \
-    case 119145:  \
-    return 1;  \
-    case 119141:  \
-    case 119142:  \
-    case 119150:  \
-    case 119151:  \
-    case 119152:  \
-    case 119153:  \
-    case 119154:  \
-    return 216;  \
-    case 119163:  \
-    case 119164:  \
-    case 119165:  \
-    case 119166:  \
-    case 119167:  \
-    case 119168:  \
-    case 119169:  \
-    case 119170:  \
-    case 119178:  \
-    case 119179:  \
-    return 220;  \
-    case 119149:  \
-    return 226;  \
-    case 119173:  \
-    case 119174:  \
-    case 119175:  \
-    case 119176:  \
-    case 119177:  \
-    case 119210:  \
-    case 119211:  \
-    case 119212:  \
-    case 119213:  \
-    return 230;  \
-}  \
-return 0;  \
-}  \
-return 0;
+	switch ((glui32)(ch) >> 8) {  \
+	case 3:  \
+		switch (ch) {  \
+		case 820:  \
+		case 821:  \
+		case 822:  \
+		case 823:  \
+		case 824:  \
+			return 1;  \
+		case 801:  \
+		case 802:  \
+		case 807:  \
+		case 808:  \
+			return 202;  \
+		case 795:  \
+			return 216;  \
+		case 790:  \
+		case 791:  \
+		case 792:  \
+		case 793:  \
+		case 796:  \
+		case 797:  \
+		case 798:  \
+		case 799:  \
+		case 800:  \
+		case 803:  \
+		case 804:  \
+		case 805:  \
+		case 806:  \
+		case 809:  \
+		case 810:  \
+		case 811:  \
+		case 812:  \
+		case 813:  \
+		case 814:  \
+		case 815:  \
+		case 816:  \
+		case 817:  \
+		case 818:  \
+		case 819:  \
+		case 825:  \
+		case 826:  \
+		case 827:  \
+		case 828:  \
+		case 839:  \
+		case 840:  \
+		case 841:  \
+		case 845:  \
+		case 846:  \
+		case 851:  \
+		case 852:  \
+		case 853:  \
+		case 854:  \
+			return 220;  \
+		case 768:  \
+		case 769:  \
+		case 770:  \
+		case 771:  \
+		case 772:  \
+		case 773:  \
+		case 774:  \
+		case 775:  \
+		case 776:  \
+		case 777:  \
+		case 778:  \
+		case 779:  \
+		case 780:  \
+		case 781:  \
+		case 782:  \
+		case 783:  \
+		case 784:  \
+		case 785:  \
+		case 786:  \
+		case 787:  \
+		case 788:  \
+		case 829:  \
+		case 830:  \
+		case 831:  \
+		case 832:  \
+		case 833:  \
+		case 834:  \
+		case 835:  \
+		case 836:  \
+		case 838:  \
+		case 842:  \
+		case 843:  \
+		case 844:  \
+		case 848:  \
+		case 849:  \
+		case 850:  \
+		case 855:  \
+		case 867:  \
+		case 868:  \
+		case 869:  \
+		case 870:  \
+		case 871:  \
+		case 872:  \
+		case 873:  \
+		case 874:  \
+		case 875:  \
+		case 876:  \
+		case 877:  \
+		case 878:  \
+		case 879:  \
+			return 230;  \
+		case 789:  \
+		case 794:  \
+			return 232;  \
+		case 863:  \
+		case 866:  \
+			return 233;  \
+		case 861:  \
+		case 862:  \
+		case 864:  \
+		case 865:  \
+			return 234;  \
+		case 837:  \
+			return 240;  \
+		}  \
+		return 0;  \
+	case 4:  \
+		switch (ch) {  \
+		case 1155:  \
+		case 1156:  \
+		case 1157:  \
+		case 1158:  \
+			return 230;  \
+		}  \
+		return 0;  \
+	case 5:  \
+		switch (ch) {  \
+		case 1456:  \
+			return 10;  \
+		case 1457:  \
+			return 11;  \
+		case 1458:  \
+			return 12;  \
+		case 1459:  \
+			return 13;  \
+		case 1460:  \
+			return 14;  \
+		case 1461:  \
+			return 15;  \
+		case 1462:  \
+			return 16;  \
+		case 1463:  \
+			return 17;  \
+		case 1464:  \
+			return 18;  \
+		case 1465:  \
+			return 19;  \
+		case 1467:  \
+			return 20;  \
+		case 1468:  \
+			return 21;  \
+		case 1469:  \
+			return 22;  \
+		case 1471:  \
+			return 23;  \
+		case 1473:  \
+			return 24;  \
+		case 1474:  \
+			return 25;  \
+		case 1425:  \
+		case 1430:  \
+		case 1435:  \
+		case 1443:  \
+		case 1444:  \
+		case 1445:  \
+		case 1446:  \
+		case 1447:  \
+		case 1450:  \
+			return 220;  \
+		case 1434:  \
+		case 1453:  \
+			return 222;  \
+		case 1454:  \
+			return 228;  \
+		case 1426:  \
+		case 1427:  \
+		case 1428:  \
+		case 1429:  \
+		case 1431:  \
+		case 1432:  \
+		case 1433:  \
+		case 1436:  \
+		case 1437:  \
+		case 1438:  \
+		case 1439:  \
+		case 1440:  \
+		case 1441:  \
+		case 1448:  \
+		case 1449:  \
+		case 1451:  \
+		case 1452:  \
+		case 1455:  \
+		case 1476:  \
+			return 230;  \
+		}  \
+		return 0;  \
+	case 6:  \
+		switch (ch) {  \
+		case 1611:  \
+			return 27;  \
+		case 1612:  \
+			return 28;  \
+		case 1613:  \
+			return 29;  \
+		case 1614:  \
+			return 30;  \
+		case 1615:  \
+			return 31;  \
+		case 1616:  \
+			return 32;  \
+		case 1617:  \
+			return 33;  \
+		case 1618:  \
+			return 34;  \
+		case 1648:  \
+			return 35;  \
+		case 1621:  \
+		case 1622:  \
+		case 1763:  \
+		case 1770:  \
+		case 1773:  \
+			return 220;  \
+		case 1552:  \
+		case 1553:  \
+		case 1554:  \
+		case 1555:  \
+		case 1556:  \
+		case 1557:  \
+		case 1619:  \
+		case 1620:  \
+		case 1623:  \
+		case 1624:  \
+		case 1750:  \
+		case 1751:  \
+		case 1752:  \
+		case 1753:  \
+		case 1754:  \
+		case 1755:  \
+		case 1756:  \
+		case 1759:  \
+		case 1760:  \
+		case 1761:  \
+		case 1762:  \
+		case 1764:  \
+		case 1767:  \
+		case 1768:  \
+		case 1771:  \
+		case 1772:  \
+			return 230;  \
+		}  \
+		return 0;  \
+	case 7:  \
+		switch (ch) {  \
+		case 1809:  \
+			return 36;  \
+		case 1841:  \
+		case 1844:  \
+		case 1847:  \
+		case 1848:  \
+		case 1849:  \
+		case 1851:  \
+		case 1852:  \
+		case 1854:  \
+		case 1858:  \
+		case 1860:  \
+		case 1862:  \
+		case 1864:  \
+			return 220;  \
+		case 1840:  \
+		case 1842:  \
+		case 1843:  \
+		case 1845:  \
+		case 1846:  \
+		case 1850:  \
+		case 1853:  \
+		case 1855:  \
+		case 1856:  \
+		case 1857:  \
+		case 1859:  \
+		case 1861:  \
+		case 1863:  \
+		case 1865:  \
+		case 1866:  \
+			return 230;  \
+		}  \
+		return 0;  \
+	case 9:  \
+		switch (ch) {  \
+		case 2364:  \
+		case 2492:  \
+			return 7;  \
+		case 2381:  \
+		case 2509:  \
+			return 9;  \
+		case 2386:  \
+			return 220;  \
+		case 2385:  \
+		case 2387:  \
+		case 2388:  \
+			return 230;  \
+		}  \
+		return 0;  \
+	case 10:  \
+		switch (ch) {  \
+		case 2620:  \
+		case 2748:  \
+			return 7;  \
+		case 2637:  \
+		case 2765:  \
+			return 9;  \
+		}  \
+		return 0;  \
+	case 11:  \
+		switch (ch) {  \
+		case 2876:  \
+			return 7;  \
+		case 2893:  \
+		case 3021:  \
+			return 9;  \
+		}  \
+		return 0;  \
+	case 12:  \
+		switch (ch) {  \
+		case 3260:  \
+			return 7;  \
+		case 3149:  \
+		case 3277:  \
+			return 9;  \
+		case 3157:  \
+			return 84;  \
+		case 3158:  \
+			return 91;  \
+		}  \
+		return 0;  \
+	case 13:  \
+		switch (ch) {  \
+		case 3405:  \
+		case 3530:  \
+			return 9;  \
+		}  \
+		return 0;  \
+	case 14:  \
+		switch (ch) {  \
+		case 3642:  \
+			return 9;  \
+		case 3640:  \
+		case 3641:  \
+			return 103;  \
+		case 3656:  \
+		case 3657:  \
+		case 3658:  \
+		case 3659:  \
+			return 107;  \
+		case 3768:  \
+		case 3769:  \
+			return 118;  \
+		case 3784:  \
+		case 3785:  \
+		case 3786:  \
+		case 3787:  \
+			return 122;  \
+		}  \
+		return 0;  \
+	case 15:  \
+		switch (ch) {  \
+		case 3972:  \
+			return 9;  \
+		case 3953:  \
+			return 129;  \
+		case 3954:  \
+		case 3962:  \
+		case 3963:  \
+		case 3964:  \
+		case 3965:  \
+		case 3968:  \
+			return 130;  \
+		case 3956:  \
+			return 132;  \
+		case 3897:  \
+			return 216;  \
+		case 3864:  \
+		case 3865:  \
+		case 3893:  \
+		case 3895:  \
+		case 4038:  \
+			return 220;  \
+		case 3970:  \
+		case 3971:  \
+		case 3974:  \
+		case 3975:  \
+			return 230;  \
+		}  \
+		return 0;  \
+	case 16:  \
+		switch (ch) {  \
+		case 4151:  \
+			return 7;  \
+		case 4153:  \
+			return 9;  \
+		}  \
+		return 0;  \
+	case 23:  \
+		switch (ch) {  \
+		case 5908:  \
+		case 5940:  \
+		case 6098:  \
+			return 9;  \
+		case 6109:  \
+			return 230;  \
+		}  \
+		return 0;  \
+	case 24:  \
+		switch (ch) {  \
+		case 6313:  \
+			return 228;  \
+		}  \
+		return 0;  \
+	case 25:  \
+		switch (ch) {  \
+		case 6459:  \
+			return 220;  \
+		case 6457:  \
+			return 222;  \
+		case 6458:  \
+			return 230;  \
+		}  \
+		return 0;  \
+	case 32:  \
+		switch (ch) {  \
+		case 8402:  \
+		case 8403:  \
+		case 8408:  \
+		case 8409:  \
+		case 8410:  \
+		case 8421:  \
+		case 8422:  \
+		case 8426:  \
+			return 1;  \
+		case 8424:  \
+			return 220;  \
+		case 8400:  \
+		case 8401:  \
+		case 8404:  \
+		case 8405:  \
+		case 8406:  \
+		case 8407:  \
+		case 8411:  \
+		case 8412:  \
+		case 8417:  \
+		case 8423:  \
+		case 8425:  \
+			return 230;  \
+		}  \
+		return 0;  \
+	case 48:  \
+		switch (ch) {  \
+		case 12441:  \
+		case 12442:  \
+			return 8;  \
+		case 12330:  \
+			return 218;  \
+		case 12333:  \
+			return 222;  \
+		case 12334:  \
+		case 12335:  \
+			return 224;  \
+		case 12331:  \
+			return 228;  \
+		case 12332:  \
+			return 232;  \
+		}  \
+		return 0;  \
+	case 251:  \
+		switch (ch) {  \
+		case 64286:  \
+			return 26;  \
+		}  \
+		return 0;  \
+	case 254:  \
+		switch (ch) {  \
+		case 65056:  \
+		case 65057:  \
+		case 65058:  \
+		case 65059:  \
+			return 230;  \
+		}  \
+		return 0;  \
+	case 465:  \
+		switch (ch) {  \
+		case 119143:  \
+		case 119144:  \
+		case 119145:  \
+			return 1;  \
+		case 119141:  \
+		case 119142:  \
+		case 119150:  \
+		case 119151:  \
+		case 119152:  \
+		case 119153:  \
+		case 119154:  \
+			return 216;  \
+		case 119163:  \
+		case 119164:  \
+		case 119165:  \
+		case 119166:  \
+		case 119167:  \
+		case 119168:  \
+		case 119169:  \
+		case 119170:  \
+		case 119178:  \
+		case 119179:  \
+			return 220;  \
+		case 119149:  \
+			return 226;  \
+		case 119173:  \
+		case 119174:  \
+		case 119175:  \
+		case 119176:  \
+		case 119177:  \
+		case 119210:  \
+		case 119211:  \
+		case 119212:  \
+		case 119213:  \
+			return 230;  \
+		}  \
+		return 0;  \
+	}  \
+	return 0;
 
 #define RETURN_COMPOSITION(ch1, ch2)  \
-switch ((glui32)(ch1) >> 8) {  \
-case 0:  \
-switch (ch1) {  \
-    case 60:  \
-    switch (ch2) {  \
-        case 824: return 8814;  \
-    }  \
-    return 0;  \
-    case 61:  \
-    switch (ch2) {  \
-        case 824: return 8800;  \
-    }  \
-    return 0;  \
-    case 62:  \
-    switch (ch2) {  \
-        case 824: return 8815;  \
-    }  \
-    return 0;  \
-    case 65:  \
-    switch (ch2) {  \
-        case 768: return 192;  \
-        case 769: return 193;  \
-        case 770: return 194;  \
-        case 771: return 195;  \
-        case 772: return 256;  \
-        case 774: return 258;  \
-        case 775: return 550;  \
-        case 776: return 196;  \
-        case 777: return 7842;  \
-        case 778: return 197;  \
-        case 780: return 461;  \
-        case 783: return 512;  \
-        case 785: return 514;  \
-        case 803: return 7840;  \
-        case 805: return 7680;  \
-        case 808: return 260;  \
-    }  \
-    return 0;  \
-    case 66:  \
-    switch (ch2) {  \
-        case 775: return 7682;  \
-        case 803: return 7684;  \
-        case 817: return 7686;  \
-    }  \
-    return 0;  \
-    case 67:  \
-    switch (ch2) {  \
-        case 769: return 262;  \
-        case 770: return 264;  \
-        case 775: return 266;  \
-        case 780: return 268;  \
-        case 807: return 199;  \
-    }  \
-    return 0;  \
-    case 68:  \
-    switch (ch2) {  \
-        case 775: return 7690;  \
-        case 780: return 270;  \
-        case 803: return 7692;  \
-        case 807: return 7696;  \
-        case 813: return 7698;  \
-        case 817: return 7694;  \
-    }  \
-    return 0;  \
-    case 69:  \
-    switch (ch2) {  \
-        case 768: return 200;  \
-        case 769: return 201;  \
-        case 770: return 202;  \
-        case 771: return 7868;  \
-        case 772: return 274;  \
-        case 774: return 276;  \
-        case 775: return 278;  \
-        case 776: return 203;  \
-        case 777: return 7866;  \
-        case 780: return 282;  \
-        case 783: return 516;  \
-        case 785: return 518;  \
-        case 803: return 7864;  \
-        case 807: return 552;  \
-        case 808: return 280;  \
-        case 813: return 7704;  \
-        case 816: return 7706;  \
-    }  \
-    return 0;  \
-    case 70:  \
-    switch (ch2) {  \
-        case 775: return 7710;  \
-    }  \
-    return 0;  \
-    case 71:  \
-    switch (ch2) {  \
-        case 769: return 500;  \
-        case 770: return 284;  \
-        case 772: return 7712;  \
-        case 774: return 286;  \
-        case 775: return 288;  \
-        case 780: return 486;  \
-        case 807: return 290;  \
-    }  \
-    return 0;  \
-    case 72:  \
-    switch (ch2) {  \
-        case 770: return 292;  \
-        case 775: return 7714;  \
-        case 776: return 7718;  \
-        case 780: return 542;  \
-        case 803: return 7716;  \
-        case 807: return 7720;  \
-        case 814: return 7722;  \
-    }  \
-    return 0;  \
-    case 73:  \
-    switch (ch2) {  \
-        case 768: return 204;  \
-        case 769: return 205;  \
-        case 770: return 206;  \
-        case 771: return 296;  \
-        case 772: return 298;  \
-        case 774: return 300;  \
-        case 775: return 304;  \
-        case 776: return 207;  \
-        case 777: return 7880;  \
-        case 780: return 463;  \
-        case 783: return 520;  \
-        case 785: return 522;  \
-        case 803: return 7882;  \
-        case 808: return 302;  \
-        case 816: return 7724;  \
-    }  \
-    return 0;  \
-    case 74:  \
-    switch (ch2) {  \
-        case 770: return 308;  \
-    }  \
-    return 0;  \
-    case 75:  \
-    switch (ch2) {  \
-        case 769: return 7728;  \
-        case 780: return 488;  \
-        case 803: return 7730;  \
-        case 807: return 310;  \
-        case 817: return 7732;  \
-    }  \
-    return 0;  \
-    case 76:  \
-    switch (ch2) {  \
-        case 769: return 313;  \
-        case 780: return 317;  \
-        case 803: return 7734;  \
-        case 807: return 315;  \
-        case 813: return 7740;  \
-        case 817: return 7738;  \
-    }  \
-    return 0;  \
-    case 77:  \
-    switch (ch2) {  \
-        case 769: return 7742;  \
-        case 775: return 7744;  \
-        case 803: return 7746;  \
-    }  \
-    return 0;  \
-    case 78:  \
-    switch (ch2) {  \
-        case 768: return 504;  \
-        case 769: return 323;  \
-        case 771: return 209;  \
-        case 775: return 7748;  \
-        case 780: return 327;  \
-        case 803: return 7750;  \
-        case 807: return 325;  \
-        case 813: return 7754;  \
-        case 817: return 7752;  \
-    }  \
-    return 0;  \
-    case 79:  \
-    switch (ch2) {  \
-        case 768: return 210;  \
-        case 769: return 211;  \
-        case 770: return 212;  \
-        case 771: return 213;  \
-        case 772: return 332;  \
-        case 774: return 334;  \
-        case 775: return 558;  \
-        case 776: return 214;  \
-        case 777: return 7886;  \
-        case 779: return 336;  \
-        case 780: return 465;  \
-        case 783: return 524;  \
-        case 785: return 526;  \
-        case 795: return 416;  \
-        case 803: return 7884;  \
-        case 808: return 490;  \
-    }  \
-    return 0;  \
-    case 80:  \
-    switch (ch2) {  \
-        case 769: return 7764;  \
-        case 775: return 7766;  \
-    }  \
-    return 0;  \
-    case 82:  \
-    switch (ch2) {  \
-        case 769: return 340;  \
-        case 775: return 7768;  \
-        case 780: return 344;  \
-        case 783: return 528;  \
-        case 785: return 530;  \
-        case 803: return 7770;  \
-        case 807: return 342;  \
-        case 817: return 7774;  \
-    }  \
-    return 0;  \
-    case 83:  \
-    switch (ch2) {  \
-        case 769: return 346;  \
-        case 770: return 348;  \
-        case 775: return 7776;  \
-        case 780: return 352;  \
-        case 803: return 7778;  \
-        case 806: return 536;  \
-        case 807: return 350;  \
-    }  \
-    return 0;  \
-    case 84:  \
-    switch (ch2) {  \
-        case 775: return 7786;  \
-        case 780: return 356;  \
-        case 803: return 7788;  \
-        case 806: return 538;  \
-        case 807: return 354;  \
-        case 813: return 7792;  \
-        case 817: return 7790;  \
-    }  \
-    return 0;  \
-    case 85:  \
-    switch (ch2) {  \
-        case 768: return 217;  \
-        case 769: return 218;  \
-        case 770: return 219;  \
-        case 771: return 360;  \
-        case 772: return 362;  \
-        case 774: return 364;  \
-        case 776: return 220;  \
-        case 777: return 7910;  \
-        case 778: return 366;  \
-        case 779: return 368;  \
-        case 780: return 467;  \
-        case 783: return 532;  \
-        case 785: return 534;  \
-        case 795: return 431;  \
-        case 803: return 7908;  \
-        case 804: return 7794;  \
-        case 808: return 370;  \
-        case 813: return 7798;  \
-        case 816: return 7796;  \
-    }  \
-    return 0;  \
-    case 86:  \
-    switch (ch2) {  \
-        case 771: return 7804;  \
-        case 803: return 7806;  \
-    }  \
-    return 0;  \
-    case 87:  \
-    switch (ch2) {  \
-        case 768: return 7808;  \
-        case 769: return 7810;  \
-        case 770: return 372;  \
-        case 775: return 7814;  \
-        case 776: return 7812;  \
-        case 803: return 7816;  \
-    }  \
-    return 0;  \
-    case 88:  \
-    switch (ch2) {  \
-        case 775: return 7818;  \
-        case 776: return 7820;  \
-    }  \
-    return 0;  \
-    case 89:  \
-    switch (ch2) {  \
-        case 768: return 7922;  \
-        case 769: return 221;  \
-        case 770: return 374;  \
-        case 771: return 7928;  \
-        case 772: return 562;  \
-        case 775: return 7822;  \
-        case 776: return 376;  \
-        case 777: return 7926;  \
-        case 803: return 7924;  \
-    }  \
-    return 0;  \
-    case 90:  \
-    switch (ch2) {  \
-        case 769: return 377;  \
-        case 770: return 7824;  \
-        case 775: return 379;  \
-        case 780: return 381;  \
-        case 803: return 7826;  \
-        case 817: return 7828;  \
-    }  \
-    return 0;  \
-    case 97:  \
-    switch (ch2) {  \
-        case 768: return 224;  \
-        case 769: return 225;  \
-        case 770: return 226;  \
-        case 771: return 227;  \
-        case 772: return 257;  \
-        case 774: return 259;  \
-        case 775: return 551;  \
-        case 776: return 228;  \
-        case 777: return 7843;  \
-        case 778: return 229;  \
-        case 780: return 462;  \
-        case 783: return 513;  \
-        case 785: return 515;  \
-        case 803: return 7841;  \
-        case 805: return 7681;  \
-        case 808: return 261;  \
-    }  \
-    return 0;  \
-    case 98:  \
-    switch (ch2) {  \
-        case 775: return 7683;  \
-        case 803: return 7685;  \
-        case 817: return 7687;  \
-    }  \
-    return 0;  \
-    case 99:  \
-    switch (ch2) {  \
-        case 769: return 263;  \
-        case 770: return 265;  \
-        case 775: return 267;  \
-        case 780: return 269;  \
-        case 807: return 231;  \
-    }  \
-    return 0;  \
-    case 100:  \
-    switch (ch2) {  \
-        case 775: return 7691;  \
-        case 780: return 271;  \
-        case 803: return 7693;  \
-        case 807: return 7697;  \
-        case 813: return 7699;  \
-        case 817: return 7695;  \
-    }  \
-    return 0;  \
-    case 101:  \
-    switch (ch2) {  \
-        case 768: return 232;  \
-        case 769: return 233;  \
-        case 770: return 234;  \
-        case 771: return 7869;  \
-        case 772: return 275;  \
-        case 774: return 277;  \
-        case 775: return 279;  \
-        case 776: return 235;  \
-        case 777: return 7867;  \
-        case 780: return 283;  \
-        case 783: return 517;  \
-        case 785: return 519;  \
-        case 803: return 7865;  \
-        case 807: return 553;  \
-        case 808: return 281;  \
-        case 813: return 7705;  \
-        case 816: return 7707;  \
-    }  \
-    return 0;  \
-    case 102:  \
-    switch (ch2) {  \
-        case 775: return 7711;  \
-    }  \
-    return 0;  \
-    case 103:  \
-    switch (ch2) {  \
-        case 769: return 501;  \
-        case 770: return 285;  \
-        case 772: return 7713;  \
-        case 774: return 287;  \
-        case 775: return 289;  \
-        case 780: return 487;  \
-        case 807: return 291;  \
-    }  \
-    return 0;  \
-    case 104:  \
-    switch (ch2) {  \
-        case 770: return 293;  \
-        case 775: return 7715;  \
-        case 776: return 7719;  \
-        case 780: return 543;  \
-        case 803: return 7717;  \
-        case 807: return 7721;  \
-        case 814: return 7723;  \
-        case 817: return 7830;  \
-    }  \
-    return 0;  \
-    case 105:  \
-    switch (ch2) {  \
-        case 768: return 236;  \
-        case 769: return 237;  \
-        case 770: return 238;  \
-        case 771: return 297;  \
-        case 772: return 299;  \
-        case 774: return 301;  \
-        case 776: return 239;  \
-        case 777: return 7881;  \
-        case 780: return 464;  \
-        case 783: return 521;  \
-        case 785: return 523;  \
-        case 803: return 7883;  \
-        case 808: return 303;  \
-        case 816: return 7725;  \
-    }  \
-    return 0;  \
-    case 106:  \
-    switch (ch2) {  \
-        case 770: return 309;  \
-        case 780: return 496;  \
-    }  \
-    return 0;  \
-    case 107:  \
-    switch (ch2) {  \
-        case 769: return 7729;  \
-        case 780: return 489;  \
-        case 803: return 7731;  \
-        case 807: return 311;  \
-        case 817: return 7733;  \
-    }  \
-    return 0;  \
-    case 108:  \
-    switch (ch2) {  \
-        case 769: return 314;  \
-        case 780: return 318;  \
-        case 803: return 7735;  \
-        case 807: return 316;  \
-        case 813: return 7741;  \
-        case 817: return 7739;  \
-    }  \
-    return 0;  \
-    case 109:  \
-    switch (ch2) {  \
-        case 769: return 7743;  \
-        case 775: return 7745;  \
-        case 803: return 7747;  \
-    }  \
-    return 0;  \
-    case 110:  \
-    switch (ch2) {  \
-        case 768: return 505;  \
-        case 769: return 324;  \
-        case 771: return 241;  \
-        case 775: return 7749;  \
-        case 780: return 328;  \
-        case 803: return 7751;  \
-        case 807: return 326;  \
-        case 813: return 7755;  \
-        case 817: return 7753;  \
-    }  \
-    return 0;  \
-    case 111:  \
-    switch (ch2) {  \
-        case 768: return 242;  \
-        case 769: return 243;  \
-        case 770: return 244;  \
-        case 771: return 245;  \
-        case 772: return 333;  \
-        case 774: return 335;  \
-        case 775: return 559;  \
-        case 776: return 246;  \
-        case 777: return 7887;  \
-        case 779: return 337;  \
-        case 780: return 466;  \
-        case 783: return 525;  \
-        case 785: return 527;  \
-        case 795: return 417;  \
-        case 803: return 7885;  \
-        case 808: return 491;  \
-    }  \
-    return 0;  \
-    case 112:  \
-    switch (ch2) {  \
-        case 769: return 7765;  \
-        case 775: return 7767;  \
-    }  \
-    return 0;  \
-    case 114:  \
-    switch (ch2) {  \
-        case 769: return 341;  \
-        case 775: return 7769;  \
-        case 780: return 345;  \
-        case 783: return 529;  \
-        case 785: return 531;  \
-        case 803: return 7771;  \
-        case 807: return 343;  \
-        case 817: return 7775;  \
-    }  \
-    return 0;  \
-    case 115:  \
-    switch (ch2) {  \
-        case 769: return 347;  \
-        case 770: return 349;  \
-        case 775: return 7777;  \
-        case 780: return 353;  \
-        case 803: return 7779;  \
-        case 806: return 537;  \
-        case 807: return 351;  \
-    }  \
-    return 0;  \
-    case 116:  \
-    switch (ch2) {  \
-        case 775: return 7787;  \
-        case 776: return 7831;  \
-        case 780: return 357;  \
-        case 803: return 7789;  \
-        case 806: return 539;  \
-        case 807: return 355;  \
-        case 813: return 7793;  \
-        case 817: return 7791;  \
-    }  \
-    return 0;  \
-    case 117:  \
-    switch (ch2) {  \
-        case 768: return 249;  \
-        case 769: return 250;  \
-        case 770: return 251;  \
-        case 771: return 361;  \
-        case 772: return 363;  \
-        case 774: return 365;  \
-        case 776: return 252;  \
-        case 777: return 7911;  \
-        case 778: return 367;  \
-        case 779: return 369;  \
-        case 780: return 468;  \
-        case 783: return 533;  \
-        case 785: return 535;  \
-        case 795: return 432;  \
-        case 803: return 7909;  \
-        case 804: return 7795;  \
-        case 808: return 371;  \
-        case 813: return 7799;  \
-        case 816: return 7797;  \
-    }  \
-    return 0;  \
-    case 118:  \
-    switch (ch2) {  \
-        case 771: return 7805;  \
-        case 803: return 7807;  \
-    }  \
-    return 0;  \
-    case 119:  \
-    switch (ch2) {  \
-        case 768: return 7809;  \
-        case 769: return 7811;  \
-        case 770: return 373;  \
-        case 775: return 7815;  \
-        case 776: return 7813;  \
-        case 778: return 7832;  \
-        case 803: return 7817;  \
-    }  \
-    return 0;  \
-    case 120:  \
-    switch (ch2) {  \
-        case 775: return 7819;  \
-        case 776: return 7821;  \
-    }  \
-    return 0;  \
-    case 121:  \
-    switch (ch2) {  \
-        case 768: return 7923;  \
-        case 769: return 253;  \
-        case 770: return 375;  \
-        case 771: return 7929;  \
-        case 772: return 563;  \
-        case 775: return 7823;  \
-        case 776: return 255;  \
-        case 777: return 7927;  \
-        case 778: return 7833;  \
-        case 803: return 7925;  \
-    }  \
-    return 0;  \
-    case 122:  \
-    switch (ch2) {  \
-        case 769: return 378;  \
-        case 770: return 7825;  \
-        case 775: return 380;  \
-        case 780: return 382;  \
-        case 803: return 7827;  \
-        case 817: return 7829;  \
-    }  \
-    return 0;  \
-    case 168:  \
-    switch (ch2) {  \
-        case 768: return 8173;  \
-        case 769: return 901;  \
-        case 834: return 8129;  \
-    }  \
-    return 0;  \
-    case 194:  \
-    switch (ch2) {  \
-        case 768: return 7846;  \
-        case 769: return 7844;  \
-        case 771: return 7850;  \
-        case 777: return 7848;  \
-    }  \
-    return 0;  \
-    case 196:  \
-    switch (ch2) {  \
-        case 772: return 478;  \
-    }  \
-    return 0;  \
-    case 197:  \
-    switch (ch2) {  \
-        case 769: return 506;  \
-    }  \
-    return 0;  \
-    case 198:  \
-    switch (ch2) {  \
-        case 769: return 508;  \
-        case 772: return 482;  \
-    }  \
-    return 0;  \
-    case 199:  \
-    switch (ch2) {  \
-        case 769: return 7688;  \
-    }  \
-    return 0;  \
-    case 202:  \
-    switch (ch2) {  \
-        case 768: return 7872;  \
-        case 769: return 7870;  \
-        case 771: return 7876;  \
-        case 777: return 7874;  \
-    }  \
-    return 0;  \
-    case 207:  \
-    switch (ch2) {  \
-        case 769: return 7726;  \
-    }  \
-    return 0;  \
-    case 212:  \
-    switch (ch2) {  \
-        case 768: return 7890;  \
-        case 769: return 7888;  \
-        case 771: return 7894;  \
-        case 777: return 7892;  \
-    }  \
-    return 0;  \
-    case 213:  \
-    switch (ch2) {  \
-        case 769: return 7756;  \
-        case 772: return 556;  \
-        case 776: return 7758;  \
-    }  \
-    return 0;  \
-    case 214:  \
-    switch (ch2) {  \
-        case 772: return 554;  \
-    }  \
-    return 0;  \
-    case 216:  \
-    switch (ch2) {  \
-        case 769: return 510;  \
-    }  \
-    return 0;  \
-    case 220:  \
-    switch (ch2) {  \
-        case 768: return 475;  \
-        case 769: return 471;  \
-        case 772: return 469;  \
-        case 780: return 473;  \
-    }  \
-    return 0;  \
-    case 226:  \
-    switch (ch2) {  \
-        case 768: return 7847;  \
-        case 769: return 7845;  \
-        case 771: return 7851;  \
-        case 777: return 7849;  \
-    }  \
-    return 0;  \
-    case 228:  \
-    switch (ch2) {  \
-        case 772: return 479;  \
-    }  \
-    return 0;  \
-    case 229:  \
-    switch (ch2) {  \
-        case 769: return 507;  \
-    }  \
-    return 0;  \
-    case 230:  \
-    switch (ch2) {  \
-        case 769: return 509;  \
-        case 772: return 483;  \
-    }  \
-    return 0;  \
-    case 231:  \
-    switch (ch2) {  \
-        case 769: return 7689;  \
-    }  \
-    return 0;  \
-    case 234:  \
-    switch (ch2) {  \
-        case 768: return 7873;  \
-        case 769: return 7871;  \
-        case 771: return 7877;  \
-        case 777: return 7875;  \
-    }  \
-    return 0;  \
-    case 239:  \
-    switch (ch2) {  \
-        case 769: return 7727;  \
-    }  \
-    return 0;  \
-    case 244:  \
-    switch (ch2) {  \
-        case 768: return 7891;  \
-        case 769: return 7889;  \
-        case 771: return 7895;  \
-        case 777: return 7893;  \
-    }  \
-    return 0;  \
-    case 245:  \
-    switch (ch2) {  \
-        case 769: return 7757;  \
-        case 772: return 557;  \
-        case 776: return 7759;  \
-    }  \
-    return 0;  \
-    case 246:  \
-    switch (ch2) {  \
-        case 772: return 555;  \
-    }  \
-    return 0;  \
-    case 248:  \
-    switch (ch2) {  \
-        case 769: return 511;  \
-    }  \
-    return 0;  \
-    case 252:  \
-    switch (ch2) {  \
-        case 768: return 476;  \
-        case 769: return 472;  \
-        case 772: return 470;  \
-        case 780: return 474;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 1:  \
-switch (ch1) {  \
-    case 258:  \
-    switch (ch2) {  \
-        case 768: return 7856;  \
-        case 769: return 7854;  \
-        case 771: return 7860;  \
-        case 777: return 7858;  \
-    }  \
-    return 0;  \
-    case 259:  \
-    switch (ch2) {  \
-        case 768: return 7857;  \
-        case 769: return 7855;  \
-        case 771: return 7861;  \
-        case 777: return 7859;  \
-    }  \
-    return 0;  \
-    case 274:  \
-    switch (ch2) {  \
-        case 768: return 7700;  \
-        case 769: return 7702;  \
-    }  \
-    return 0;  \
-    case 275:  \
-    switch (ch2) {  \
-        case 768: return 7701;  \
-        case 769: return 7703;  \
-    }  \
-    return 0;  \
-    case 332:  \
-    switch (ch2) {  \
-        case 768: return 7760;  \
-        case 769: return 7762;  \
-    }  \
-    return 0;  \
-    case 333:  \
-    switch (ch2) {  \
-        case 768: return 7761;  \
-        case 769: return 7763;  \
-    }  \
-    return 0;  \
-    case 346:  \
-    switch (ch2) {  \
-        case 775: return 7780;  \
-    }  \
-    return 0;  \
-    case 347:  \
-    switch (ch2) {  \
-        case 775: return 7781;  \
-    }  \
-    return 0;  \
-    case 352:  \
-    switch (ch2) {  \
-        case 775: return 7782;  \
-    }  \
-    return 0;  \
-    case 353:  \
-    switch (ch2) {  \
-        case 775: return 7783;  \
-    }  \
-    return 0;  \
-    case 360:  \
-    switch (ch2) {  \
-        case 769: return 7800;  \
-    }  \
-    return 0;  \
-    case 361:  \
-    switch (ch2) {  \
-        case 769: return 7801;  \
-    }  \
-    return 0;  \
-    case 362:  \
-    switch (ch2) {  \
-        case 776: return 7802;  \
-    }  \
-    return 0;  \
-    case 363:  \
-    switch (ch2) {  \
-        case 776: return 7803;  \
-    }  \
-    return 0;  \
-    case 383:  \
-    switch (ch2) {  \
-        case 775: return 7835;  \
-    }  \
-    return 0;  \
-    case 416:  \
-    switch (ch2) {  \
-        case 768: return 7900;  \
-        case 769: return 7898;  \
-        case 771: return 7904;  \
-        case 777: return 7902;  \
-        case 803: return 7906;  \
-    }  \
-    return 0;  \
-    case 417:  \
-    switch (ch2) {  \
-        case 768: return 7901;  \
-        case 769: return 7899;  \
-        case 771: return 7905;  \
-        case 777: return 7903;  \
-        case 803: return 7907;  \
-    }  \
-    return 0;  \
-    case 431:  \
-    switch (ch2) {  \
-        case 768: return 7914;  \
-        case 769: return 7912;  \
-        case 771: return 7918;  \
-        case 777: return 7916;  \
-        case 803: return 7920;  \
-    }  \
-    return 0;  \
-    case 432:  \
-    switch (ch2) {  \
-        case 768: return 7915;  \
-        case 769: return 7913;  \
-        case 771: return 7919;  \
-        case 777: return 7917;  \
-        case 803: return 7921;  \
-    }  \
-    return 0;  \
-    case 439:  \
-    switch (ch2) {  \
-        case 780: return 494;  \
-    }  \
-    return 0;  \
-    case 490:  \
-    switch (ch2) {  \
-        case 772: return 492;  \
-    }  \
-    return 0;  \
-    case 491:  \
-    switch (ch2) {  \
-        case 772: return 493;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 2:  \
-switch (ch1) {  \
-    case 550:  \
-    switch (ch2) {  \
-        case 772: return 480;  \
-    }  \
-    return 0;  \
-    case 551:  \
-    switch (ch2) {  \
-        case 772: return 481;  \
-    }  \
-    return 0;  \
-    case 552:  \
-    switch (ch2) {  \
-        case 774: return 7708;  \
-    }  \
-    return 0;  \
-    case 553:  \
-    switch (ch2) {  \
-        case 774: return 7709;  \
-    }  \
-    return 0;  \
-    case 558:  \
-    switch (ch2) {  \
-        case 772: return 560;  \
-    }  \
-    return 0;  \
-    case 559:  \
-    switch (ch2) {  \
-        case 772: return 561;  \
-    }  \
-    return 0;  \
-    case 658:  \
-    switch (ch2) {  \
-        case 780: return 495;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 3:  \
-switch (ch1) {  \
-    case 776:  \
-    switch (ch2) {  \
-        case 769: return 836;  \
-    }  \
-    return 0;  \
-    case 913:  \
-    switch (ch2) {  \
-        case 768: return 8122;  \
-        case 769: return 902;  \
-        case 772: return 8121;  \
-        case 774: return 8120;  \
-        case 787: return 7944;  \
-        case 788: return 7945;  \
-        case 837: return 8124;  \
-    }  \
-    return 0;  \
-    case 917:  \
-    switch (ch2) {  \
-        case 768: return 8136;  \
-        case 769: return 904;  \
-        case 787: return 7960;  \
-        case 788: return 7961;  \
-    }  \
-    return 0;  \
-    case 919:  \
-    switch (ch2) {  \
-        case 768: return 8138;  \
-        case 769: return 905;  \
-        case 787: return 7976;  \
-        case 788: return 7977;  \
-        case 837: return 8140;  \
-    }  \
-    return 0;  \
-    case 921:  \
-    switch (ch2) {  \
-        case 768: return 8154;  \
-        case 769: return 906;  \
-        case 772: return 8153;  \
-        case 774: return 8152;  \
-        case 776: return 938;  \
-        case 787: return 7992;  \
-        case 788: return 7993;  \
-    }  \
-    return 0;  \
-    case 927:  \
-    switch (ch2) {  \
-        case 768: return 8184;  \
-        case 769: return 908;  \
-        case 787: return 8008;  \
-        case 788: return 8009;  \
-    }  \
-    return 0;  \
-    case 929:  \
-    switch (ch2) {  \
-        case 788: return 8172;  \
-    }  \
-    return 0;  \
-    case 933:  \
-    switch (ch2) {  \
-        case 768: return 8170;  \
-        case 769: return 910;  \
-        case 772: return 8169;  \
-        case 774: return 8168;  \
-        case 776: return 939;  \
-        case 788: return 8025;  \
-    }  \
-    return 0;  \
-    case 937:  \
-    switch (ch2) {  \
-        case 768: return 8186;  \
-        case 769: return 911;  \
-        case 787: return 8040;  \
-        case 788: return 8041;  \
-        case 837: return 8188;  \
-    }  \
-    return 0;  \
-    case 940:  \
-    switch (ch2) {  \
-        case 837: return 8116;  \
-    }  \
-    return 0;  \
-    case 942:  \
-    switch (ch2) {  \
-        case 837: return 8132;  \
-    }  \
-    return 0;  \
-    case 945:  \
-    switch (ch2) {  \
-        case 768: return 8048;  \
-        case 769: return 940;  \
-        case 772: return 8113;  \
-        case 774: return 8112;  \
-        case 787: return 7936;  \
-        case 788: return 7937;  \
-        case 834: return 8118;  \
-        case 837: return 8115;  \
-    }  \
-    return 0;  \
-    case 949:  \
-    switch (ch2) {  \
-        case 768: return 8050;  \
-        case 769: return 941;  \
-        case 787: return 7952;  \
-        case 788: return 7953;  \
-    }  \
-    return 0;  \
-    case 951:  \
-    switch (ch2) {  \
-        case 768: return 8052;  \
-        case 769: return 942;  \
-        case 787: return 7968;  \
-        case 788: return 7969;  \
-        case 834: return 8134;  \
-        case 837: return 8131;  \
-    }  \
-    return 0;  \
-    case 953:  \
-    switch (ch2) {  \
-        case 768: return 8054;  \
-        case 769: return 943;  \
-        case 772: return 8145;  \
-        case 774: return 8144;  \
-        case 776: return 970;  \
-        case 787: return 7984;  \
-        case 788: return 7985;  \
-        case 834: return 8150;  \
-    }  \
-    return 0;  \
-    case 959:  \
-    switch (ch2) {  \
-        case 768: return 8056;  \
-        case 769: return 972;  \
-        case 787: return 8000;  \
-        case 788: return 8001;  \
-    }  \
-    return 0;  \
-    case 961:  \
-    switch (ch2) {  \
-        case 787: return 8164;  \
-        case 788: return 8165;  \
-    }  \
-    return 0;  \
-    case 965:  \
-    switch (ch2) {  \
-        case 768: return 8058;  \
-        case 769: return 973;  \
-        case 772: return 8161;  \
-        case 774: return 8160;  \
-        case 776: return 971;  \
-        case 787: return 8016;  \
-        case 788: return 8017;  \
-        case 834: return 8166;  \
-    }  \
-    return 0;  \
-    case 969:  \
-    switch (ch2) {  \
-        case 768: return 8060;  \
-        case 769: return 974;  \
-        case 787: return 8032;  \
-        case 788: return 8033;  \
-        case 834: return 8182;  \
-        case 837: return 8179;  \
-    }  \
-    return 0;  \
-    case 970:  \
-    switch (ch2) {  \
-        case 768: return 8146;  \
-        case 769: return 912;  \
-        case 834: return 8151;  \
-    }  \
-    return 0;  \
-    case 971:  \
-    switch (ch2) {  \
-        case 768: return 8162;  \
-        case 769: return 944;  \
-        case 834: return 8167;  \
-    }  \
-    return 0;  \
-    case 974:  \
-    switch (ch2) {  \
-        case 837: return 8180;  \
-    }  \
-    return 0;  \
-    case 978:  \
-    switch (ch2) {  \
-        case 769: return 979;  \
-        case 776: return 980;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 4:  \
-switch (ch1) {  \
-    case 1030:  \
-    switch (ch2) {  \
-        case 776: return 1031;  \
-    }  \
-    return 0;  \
-    case 1040:  \
-    switch (ch2) {  \
-        case 774: return 1232;  \
-        case 776: return 1234;  \
-    }  \
-    return 0;  \
-    case 1043:  \
-    switch (ch2) {  \
-        case 769: return 1027;  \
-    }  \
-    return 0;  \
-    case 1045:  \
-    switch (ch2) {  \
-        case 768: return 1024;  \
-        case 774: return 1238;  \
-        case 776: return 1025;  \
-    }  \
-    return 0;  \
-    case 1046:  \
-    switch (ch2) {  \
-        case 774: return 1217;  \
-        case 776: return 1244;  \
-    }  \
-    return 0;  \
-    case 1047:  \
-    switch (ch2) {  \
-        case 776: return 1246;  \
-    }  \
-    return 0;  \
-    case 1048:  \
-    switch (ch2) {  \
-        case 768: return 1037;  \
-        case 772: return 1250;  \
-        case 774: return 1049;  \
-        case 776: return 1252;  \
-    }  \
-    return 0;  \
-    case 1050:  \
-    switch (ch2) {  \
-        case 769: return 1036;  \
-    }  \
-    return 0;  \
-    case 1054:  \
-    switch (ch2) {  \
-        case 776: return 1254;  \
-    }  \
-    return 0;  \
-    case 1059:  \
-    switch (ch2) {  \
-        case 772: return 1262;  \
-        case 774: return 1038;  \
-        case 776: return 1264;  \
-        case 779: return 1266;  \
-    }  \
-    return 0;  \
-    case 1063:  \
-    switch (ch2) {  \
-        case 776: return 1268;  \
-    }  \
-    return 0;  \
-    case 1067:  \
-    switch (ch2) {  \
-        case 776: return 1272;  \
-    }  \
-    return 0;  \
-    case 1069:  \
-    switch (ch2) {  \
-        case 776: return 1260;  \
-    }  \
-    return 0;  \
-    case 1072:  \
-    switch (ch2) {  \
-        case 774: return 1233;  \
-        case 776: return 1235;  \
-    }  \
-    return 0;  \
-    case 1075:  \
-    switch (ch2) {  \
-        case 769: return 1107;  \
-    }  \
-    return 0;  \
-    case 1077:  \
-    switch (ch2) {  \
-        case 768: return 1104;  \
-        case 774: return 1239;  \
-        case 776: return 1105;  \
-    }  \
-    return 0;  \
-    case 1078:  \
-    switch (ch2) {  \
-        case 774: return 1218;  \
-        case 776: return 1245;  \
-    }  \
-    return 0;  \
-    case 1079:  \
-    switch (ch2) {  \
-        case 776: return 1247;  \
-    }  \
-    return 0;  \
-    case 1080:  \
-    switch (ch2) {  \
-        case 768: return 1117;  \
-        case 772: return 1251;  \
-        case 774: return 1081;  \
-        case 776: return 1253;  \
-    }  \
-    return 0;  \
-    case 1082:  \
-    switch (ch2) {  \
-        case 769: return 1116;  \
-    }  \
-    return 0;  \
-    case 1086:  \
-    switch (ch2) {  \
-        case 776: return 1255;  \
-    }  \
-    return 0;  \
-    case 1091:  \
-    switch (ch2) {  \
-        case 772: return 1263;  \
-        case 774: return 1118;  \
-        case 776: return 1265;  \
-        case 779: return 1267;  \
-    }  \
-    return 0;  \
-    case 1095:  \
-    switch (ch2) {  \
-        case 776: return 1269;  \
-    }  \
-    return 0;  \
-    case 1099:  \
-    switch (ch2) {  \
-        case 776: return 1273;  \
-    }  \
-    return 0;  \
-    case 1101:  \
-    switch (ch2) {  \
-        case 776: return 1261;  \
-    }  \
-    return 0;  \
-    case 1110:  \
-    switch (ch2) {  \
-        case 776: return 1111;  \
-    }  \
-    return 0;  \
-    case 1140:  \
-    switch (ch2) {  \
-        case 783: return 1142;  \
-    }  \
-    return 0;  \
-    case 1141:  \
-    switch (ch2) {  \
-        case 783: return 1143;  \
-    }  \
-    return 0;  \
-    case 1240:  \
-    switch (ch2) {  \
-        case 776: return 1242;  \
-    }  \
-    return 0;  \
-    case 1241:  \
-    switch (ch2) {  \
-        case 776: return 1243;  \
-    }  \
-    return 0;  \
-    case 1256:  \
-    switch (ch2) {  \
-        case 776: return 1258;  \
-    }  \
-    return 0;  \
-    case 1257:  \
-    switch (ch2) {  \
-        case 776: return 1259;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 5:  \
-switch (ch1) {  \
-    case 1488:  \
-    switch (ch2) {  \
-        case 1463: return 64302;  \
-        case 1464: return 64303;  \
-        case 1468: return 64304;  \
-    }  \
-    return 0;  \
-    case 1489:  \
-    switch (ch2) {  \
-        case 1468: return 64305;  \
-        case 1471: return 64332;  \
-    }  \
-    return 0;  \
-    case 1490:  \
-    switch (ch2) {  \
-        case 1468: return 64306;  \
-    }  \
-    return 0;  \
-    case 1491:  \
-    switch (ch2) {  \
-        case 1468: return 64307;  \
-    }  \
-    return 0;  \
-    case 1492:  \
-    switch (ch2) {  \
-        case 1468: return 64308;  \
-    }  \
-    return 0;  \
-    case 1493:  \
-    switch (ch2) {  \
-        case 1465: return 64331;  \
-        case 1468: return 64309;  \
-    }  \
-    return 0;  \
-    case 1494:  \
-    switch (ch2) {  \
-        case 1468: return 64310;  \
-    }  \
-    return 0;  \
-    case 1496:  \
-    switch (ch2) {  \
-        case 1468: return 64312;  \
-    }  \
-    return 0;  \
-    case 1497:  \
-    switch (ch2) {  \
-        case 1460: return 64285;  \
-        case 1468: return 64313;  \
-    }  \
-    return 0;  \
-    case 1498:  \
-    switch (ch2) {  \
-        case 1468: return 64314;  \
-    }  \
-    return 0;  \
-    case 1499:  \
-    switch (ch2) {  \
-        case 1468: return 64315;  \
-        case 1471: return 64333;  \
-    }  \
-    return 0;  \
-    case 1500:  \
-    switch (ch2) {  \
-        case 1468: return 64316;  \
-    }  \
-    return 0;  \
-    case 1502:  \
-    switch (ch2) {  \
-        case 1468: return 64318;  \
-    }  \
-    return 0;  \
-    case 1504:  \
-    switch (ch2) {  \
-        case 1468: return 64320;  \
-    }  \
-    return 0;  \
-    case 1505:  \
-    switch (ch2) {  \
-        case 1468: return 64321;  \
-    }  \
-    return 0;  \
-    case 1507:  \
-    switch (ch2) {  \
-        case 1468: return 64323;  \
-    }  \
-    return 0;  \
-    case 1508:  \
-    switch (ch2) {  \
-        case 1468: return 64324;  \
-        case 1471: return 64334;  \
-    }  \
-    return 0;  \
-    case 1510:  \
-    switch (ch2) {  \
-        case 1468: return 64326;  \
-    }  \
-    return 0;  \
-    case 1511:  \
-    switch (ch2) {  \
-        case 1468: return 64327;  \
-    }  \
-    return 0;  \
-    case 1512:  \
-    switch (ch2) {  \
-        case 1468: return 64328;  \
-    }  \
-    return 0;  \
-    case 1513:  \
-    switch (ch2) {  \
-        case 1468: return 64329;  \
-        case 1473: return 64298;  \
-        case 1474: return 64299;  \
-    }  \
-    return 0;  \
-    case 1514:  \
-    switch (ch2) {  \
-        case 1468: return 64330;  \
-    }  \
-    return 0;  \
-    case 1522:  \
-    switch (ch2) {  \
-        case 1463: return 64287;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 6:  \
-switch (ch1) {  \
-    case 1575:  \
-    switch (ch2) {  \
-        case 1619: return 1570;  \
-        case 1620: return 1571;  \
-        case 1621: return 1573;  \
-    }  \
-    return 0;  \
-    case 1608:  \
-    switch (ch2) {  \
-        case 1620: return 1572;  \
-    }  \
-    return 0;  \
-    case 1610:  \
-    switch (ch2) {  \
-        case 1620: return 1574;  \
-    }  \
-    return 0;  \
-    case 1729:  \
-    switch (ch2) {  \
-        case 1620: return 1730;  \
-    }  \
-    return 0;  \
-    case 1746:  \
-    switch (ch2) {  \
-        case 1620: return 1747;  \
-    }  \
-    return 0;  \
-    case 1749:  \
-    switch (ch2) {  \
-        case 1620: return 1728;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 9:  \
-switch (ch1) {  \
-    case 2325:  \
-    switch (ch2) {  \
-        case 2364: return 2392;  \
-    }  \
-    return 0;  \
-    case 2326:  \
-    switch (ch2) {  \
-        case 2364: return 2393;  \
-    }  \
-    return 0;  \
-    case 2327:  \
-    switch (ch2) {  \
-        case 2364: return 2394;  \
-    }  \
-    return 0;  \
-    case 2332:  \
-    switch (ch2) {  \
-        case 2364: return 2395;  \
-    }  \
-    return 0;  \
-    case 2337:  \
-    switch (ch2) {  \
-        case 2364: return 2396;  \
-    }  \
-    return 0;  \
-    case 2338:  \
-    switch (ch2) {  \
-        case 2364: return 2397;  \
-    }  \
-    return 0;  \
-    case 2344:  \
-    switch (ch2) {  \
-        case 2364: return 2345;  \
-    }  \
-    return 0;  \
-    case 2347:  \
-    switch (ch2) {  \
-        case 2364: return 2398;  \
-    }  \
-    return 0;  \
-    case 2351:  \
-    switch (ch2) {  \
-        case 2364: return 2399;  \
-    }  \
-    return 0;  \
-    case 2352:  \
-    switch (ch2) {  \
-        case 2364: return 2353;  \
-    }  \
-    return 0;  \
-    case 2355:  \
-    switch (ch2) {  \
-        case 2364: return 2356;  \
-    }  \
-    return 0;  \
-    case 2465:  \
-    switch (ch2) {  \
-        case 2492: return 2524;  \
-    }  \
-    return 0;  \
-    case 2466:  \
-    switch (ch2) {  \
-        case 2492: return 2525;  \
-    }  \
-    return 0;  \
-    case 2479:  \
-    switch (ch2) {  \
-        case 2492: return 2527;  \
-    }  \
-    return 0;  \
-    case 2503:  \
-    switch (ch2) {  \
-        case 2494: return 2507;  \
-        case 2519: return 2508;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 10:  \
-switch (ch1) {  \
-    case 2582:  \
-    switch (ch2) {  \
-        case 2620: return 2649;  \
-    }  \
-    return 0;  \
-    case 2583:  \
-    switch (ch2) {  \
-        case 2620: return 2650;  \
-    }  \
-    return 0;  \
-    case 2588:  \
-    switch (ch2) {  \
-        case 2620: return 2651;  \
-    }  \
-    return 0;  \
-    case 2603:  \
-    switch (ch2) {  \
-        case 2620: return 2654;  \
-    }  \
-    return 0;  \
-    case 2610:  \
-    switch (ch2) {  \
-        case 2620: return 2611;  \
-    }  \
-    return 0;  \
-    case 2616:  \
-    switch (ch2) {  \
-        case 2620: return 2614;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 11:  \
-switch (ch1) {  \
-    case 2849:  \
-    switch (ch2) {  \
-        case 2876: return 2908;  \
-    }  \
-    return 0;  \
-    case 2850:  \
-    switch (ch2) {  \
-        case 2876: return 2909;  \
-    }  \
-    return 0;  \
-    case 2887:  \
-    switch (ch2) {  \
-        case 2878: return 2891;  \
-        case 2902: return 2888;  \
-        case 2903: return 2892;  \
-    }  \
-    return 0;  \
-    case 2962:  \
-    switch (ch2) {  \
-        case 3031: return 2964;  \
-    }  \
-    return 0;  \
-    case 3014:  \
-    switch (ch2) {  \
-        case 3006: return 3018;  \
-        case 3031: return 3020;  \
-    }  \
-    return 0;  \
-    case 3015:  \
-    switch (ch2) {  \
-        case 3006: return 3019;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 12:  \
-switch (ch1) {  \
-    case 3142:  \
-    switch (ch2) {  \
-        case 3158: return 3144;  \
-    }  \
-    return 0;  \
-    case 3263:  \
-    switch (ch2) {  \
-        case 3285: return 3264;  \
-    }  \
-    return 0;  \
-    case 3270:  \
-    switch (ch2) {  \
-        case 3266: return 3274;  \
-        case 3285: return 3271;  \
-        case 3286: return 3272;  \
-    }  \
-    return 0;  \
-    case 3274:  \
-    switch (ch2) {  \
-        case 3285: return 3275;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 13:  \
-switch (ch1) {  \
-    case 3398:  \
-    switch (ch2) {  \
-        case 3390: return 3402;  \
-        case 3415: return 3404;  \
-    }  \
-    return 0;  \
-    case 3399:  \
-    switch (ch2) {  \
-        case 3390: return 3403;  \
-    }  \
-    return 0;  \
-    case 3545:  \
-    switch (ch2) {  \
-        case 3530: return 3546;  \
-        case 3535: return 3548;  \
-        case 3551: return 3550;  \
-    }  \
-    return 0;  \
-    case 3548:  \
-    switch (ch2) {  \
-        case 3530: return 3549;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 15:  \
-switch (ch1) {  \
-    case 3904:  \
-    switch (ch2) {  \
-        case 4021: return 3945;  \
-    }  \
-    return 0;  \
-    case 3906:  \
-    switch (ch2) {  \
-        case 4023: return 3907;  \
-    }  \
-    return 0;  \
-    case 3916:  \
-    switch (ch2) {  \
-        case 4023: return 3917;  \
-    }  \
-    return 0;  \
-    case 3921:  \
-    switch (ch2) {  \
-        case 4023: return 3922;  \
-    }  \
-    return 0;  \
-    case 3926:  \
-    switch (ch2) {  \
-        case 4023: return 3927;  \
-    }  \
-    return 0;  \
-    case 3931:  \
-    switch (ch2) {  \
-        case 4023: return 3932;  \
-    }  \
-    return 0;  \
-    case 3953:  \
-    switch (ch2) {  \
-        case 3954: return 3955;  \
-        case 3956: return 3957;  \
-        case 3968: return 3969;  \
-    }  \
-    return 0;  \
-    case 3984:  \
-    switch (ch2) {  \
-        case 4021: return 4025;  \
-    }  \
-    return 0;  \
-    case 3986:  \
-    switch (ch2) {  \
-        case 4023: return 3987;  \
-    }  \
-    return 0;  \
-    case 3996:  \
-    switch (ch2) {  \
-        case 4023: return 3997;  \
-    }  \
-    return 0;  \
-    case 4001:  \
-    switch (ch2) {  \
-        case 4023: return 4002;  \
-    }  \
-    return 0;  \
-    case 4006:  \
-    switch (ch2) {  \
-        case 4023: return 4007;  \
-    }  \
-    return 0;  \
-    case 4011:  \
-    switch (ch2) {  \
-        case 4023: return 4012;  \
-    }  \
-    return 0;  \
-    case 4018:  \
-    switch (ch2) {  \
-        case 3968: return 3958;  \
-    }  \
-    return 0;  \
-    case 4019:  \
-    switch (ch2) {  \
-        case 3968: return 3960;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 16:  \
-switch (ch1) {  \
-    case 4133:  \
-    switch (ch2) {  \
-        case 4142: return 4134;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 30:  \
-switch (ch1) {  \
-    case 7734:  \
-    switch (ch2) {  \
-        case 772: return 7736;  \
-    }  \
-    return 0;  \
-    case 7735:  \
-    switch (ch2) {  \
-        case 772: return 7737;  \
-    }  \
-    return 0;  \
-    case 7770:  \
-    switch (ch2) {  \
-        case 772: return 7772;  \
-    }  \
-    return 0;  \
-    case 7771:  \
-    switch (ch2) {  \
-        case 772: return 7773;  \
-    }  \
-    return 0;  \
-    case 7778:  \
-    switch (ch2) {  \
-        case 775: return 7784;  \
-    }  \
-    return 0;  \
-    case 7779:  \
-    switch (ch2) {  \
-        case 775: return 7785;  \
-    }  \
-    return 0;  \
-    case 7840:  \
-    switch (ch2) {  \
-        case 770: return 7852;  \
-        case 774: return 7862;  \
-    }  \
-    return 0;  \
-    case 7841:  \
-    switch (ch2) {  \
-        case 770: return 7853;  \
-        case 774: return 7863;  \
-    }  \
-    return 0;  \
-    case 7864:  \
-    switch (ch2) {  \
-        case 770: return 7878;  \
-    }  \
-    return 0;  \
-    case 7865:  \
-    switch (ch2) {  \
-        case 770: return 7879;  \
-    }  \
-    return 0;  \
-    case 7884:  \
-    switch (ch2) {  \
-        case 770: return 7896;  \
-    }  \
-    return 0;  \
-    case 7885:  \
-    switch (ch2) {  \
-        case 770: return 7897;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 31:  \
-switch (ch1) {  \
-    case 7936:  \
-    switch (ch2) {  \
-        case 768: return 7938;  \
-        case 769: return 7940;  \
-        case 834: return 7942;  \
-        case 837: return 8064;  \
-    }  \
-    return 0;  \
-    case 7937:  \
-    switch (ch2) {  \
-        case 768: return 7939;  \
-        case 769: return 7941;  \
-        case 834: return 7943;  \
-        case 837: return 8065;  \
-    }  \
-    return 0;  \
-    case 7938:  \
-    switch (ch2) {  \
-        case 837: return 8066;  \
-    }  \
-    return 0;  \
-    case 7939:  \
-    switch (ch2) {  \
-        case 837: return 8067;  \
-    }  \
-    return 0;  \
-    case 7940:  \
-    switch (ch2) {  \
-        case 837: return 8068;  \
-    }  \
-    return 0;  \
-    case 7941:  \
-    switch (ch2) {  \
-        case 837: return 8069;  \
-    }  \
-    return 0;  \
-    case 7942:  \
-    switch (ch2) {  \
-        case 837: return 8070;  \
-    }  \
-    return 0;  \
-    case 7943:  \
-    switch (ch2) {  \
-        case 837: return 8071;  \
-    }  \
-    return 0;  \
-    case 7944:  \
-    switch (ch2) {  \
-        case 768: return 7946;  \
-        case 769: return 7948;  \
-        case 834: return 7950;  \
-        case 837: return 8072;  \
-    }  \
-    return 0;  \
-    case 7945:  \
-    switch (ch2) {  \
-        case 768: return 7947;  \
-        case 769: return 7949;  \
-        case 834: return 7951;  \
-        case 837: return 8073;  \
-    }  \
-    return 0;  \
-    case 7946:  \
-    switch (ch2) {  \
-        case 837: return 8074;  \
-    }  \
-    return 0;  \
-    case 7947:  \
-    switch (ch2) {  \
-        case 837: return 8075;  \
-    }  \
-    return 0;  \
-    case 7948:  \
-    switch (ch2) {  \
-        case 837: return 8076;  \
-    }  \
-    return 0;  \
-    case 7949:  \
-    switch (ch2) {  \
-        case 837: return 8077;  \
-    }  \
-    return 0;  \
-    case 7950:  \
-    switch (ch2) {  \
-        case 837: return 8078;  \
-    }  \
-    return 0;  \
-    case 7951:  \
-    switch (ch2) {  \
-        case 837: return 8079;  \
-    }  \
-    return 0;  \
-    case 7952:  \
-    switch (ch2) {  \
-        case 768: return 7954;  \
-        case 769: return 7956;  \
-    }  \
-    return 0;  \
-    case 7953:  \
-    switch (ch2) {  \
-        case 768: return 7955;  \
-        case 769: return 7957;  \
-    }  \
-    return 0;  \
-    case 7960:  \
-    switch (ch2) {  \
-        case 768: return 7962;  \
-        case 769: return 7964;  \
-    }  \
-    return 0;  \
-    case 7961:  \
-    switch (ch2) {  \
-        case 768: return 7963;  \
-        case 769: return 7965;  \
-    }  \
-    return 0;  \
-    case 7968:  \
-    switch (ch2) {  \
-        case 768: return 7970;  \
-        case 769: return 7972;  \
-        case 834: return 7974;  \
-        case 837: return 8080;  \
-    }  \
-    return 0;  \
-    case 7969:  \
-    switch (ch2) {  \
-        case 768: return 7971;  \
-        case 769: return 7973;  \
-        case 834: return 7975;  \
-        case 837: return 8081;  \
-    }  \
-    return 0;  \
-    case 7970:  \
-    switch (ch2) {  \
-        case 837: return 8082;  \
-    }  \
-    return 0;  \
-    case 7971:  \
-    switch (ch2) {  \
-        case 837: return 8083;  \
-    }  \
-    return 0;  \
-    case 7972:  \
-    switch (ch2) {  \
-        case 837: return 8084;  \
-    }  \
-    return 0;  \
-    case 7973:  \
-    switch (ch2) {  \
-        case 837: return 8085;  \
-    }  \
-    return 0;  \
-    case 7974:  \
-    switch (ch2) {  \
-        case 837: return 8086;  \
-    }  \
-    return 0;  \
-    case 7975:  \
-    switch (ch2) {  \
-        case 837: return 8087;  \
-    }  \
-    return 0;  \
-    case 7976:  \
-    switch (ch2) {  \
-        case 768: return 7978;  \
-        case 769: return 7980;  \
-        case 834: return 7982;  \
-        case 837: return 8088;  \
-    }  \
-    return 0;  \
-    case 7977:  \
-    switch (ch2) {  \
-        case 768: return 7979;  \
-        case 769: return 7981;  \
-        case 834: return 7983;  \
-        case 837: return 8089;  \
-    }  \
-    return 0;  \
-    case 7978:  \
-    switch (ch2) {  \
-        case 837: return 8090;  \
-    }  \
-    return 0;  \
-    case 7979:  \
-    switch (ch2) {  \
-        case 837: return 8091;  \
-    }  \
-    return 0;  \
-    case 7980:  \
-    switch (ch2) {  \
-        case 837: return 8092;  \
-    }  \
-    return 0;  \
-    case 7981:  \
-    switch (ch2) {  \
-        case 837: return 8093;  \
-    }  \
-    return 0;  \
-    case 7982:  \
-    switch (ch2) {  \
-        case 837: return 8094;  \
-    }  \
-    return 0;  \
-    case 7983:  \
-    switch (ch2) {  \
-        case 837: return 8095;  \
-    }  \
-    return 0;  \
-    case 7984:  \
-    switch (ch2) {  \
-        case 768: return 7986;  \
-        case 769: return 7988;  \
-        case 834: return 7990;  \
-    }  \
-    return 0;  \
-    case 7985:  \
-    switch (ch2) {  \
-        case 768: return 7987;  \
-        case 769: return 7989;  \
-        case 834: return 7991;  \
-    }  \
-    return 0;  \
-    case 7992:  \
-    switch (ch2) {  \
-        case 768: return 7994;  \
-        case 769: return 7996;  \
-        case 834: return 7998;  \
-    }  \
-    return 0;  \
-    case 7993:  \
-    switch (ch2) {  \
-        case 768: return 7995;  \
-        case 769: return 7997;  \
-        case 834: return 7999;  \
-    }  \
-    return 0;  \
-    case 8000:  \
-    switch (ch2) {  \
-        case 768: return 8002;  \
-        case 769: return 8004;  \
-    }  \
-    return 0;  \
-    case 8001:  \
-    switch (ch2) {  \
-        case 768: return 8003;  \
-        case 769: return 8005;  \
-    }  \
-    return 0;  \
-    case 8008:  \
-    switch (ch2) {  \
-        case 768: return 8010;  \
-        case 769: return 8012;  \
-    }  \
-    return 0;  \
-    case 8009:  \
-    switch (ch2) {  \
-        case 768: return 8011;  \
-        case 769: return 8013;  \
-    }  \
-    return 0;  \
-    case 8016:  \
-    switch (ch2) {  \
-        case 768: return 8018;  \
-        case 769: return 8020;  \
-        case 834: return 8022;  \
-    }  \
-    return 0;  \
-    case 8017:  \
-    switch (ch2) {  \
-        case 768: return 8019;  \
-        case 769: return 8021;  \
-        case 834: return 8023;  \
-    }  \
-    return 0;  \
-    case 8025:  \
-    switch (ch2) {  \
-        case 768: return 8027;  \
-        case 769: return 8029;  \
-        case 834: return 8031;  \
-    }  \
-    return 0;  \
-    case 8032:  \
-    switch (ch2) {  \
-        case 768: return 8034;  \
-        case 769: return 8036;  \
-        case 834: return 8038;  \
-        case 837: return 8096;  \
-    }  \
-    return 0;  \
-    case 8033:  \
-    switch (ch2) {  \
-        case 768: return 8035;  \
-        case 769: return 8037;  \
-        case 834: return 8039;  \
-        case 837: return 8097;  \
-    }  \
-    return 0;  \
-    case 8034:  \
-    switch (ch2) {  \
-        case 837: return 8098;  \
-    }  \
-    return 0;  \
-    case 8035:  \
-    switch (ch2) {  \
-        case 837: return 8099;  \
-    }  \
-    return 0;  \
-    case 8036:  \
-    switch (ch2) {  \
-        case 837: return 8100;  \
-    }  \
-    return 0;  \
-    case 8037:  \
-    switch (ch2) {  \
-        case 837: return 8101;  \
-    }  \
-    return 0;  \
-    case 8038:  \
-    switch (ch2) {  \
-        case 837: return 8102;  \
-    }  \
-    return 0;  \
-    case 8039:  \
-    switch (ch2) {  \
-        case 837: return 8103;  \
-    }  \
-    return 0;  \
-    case 8040:  \
-    switch (ch2) {  \
-        case 768: return 8042;  \
-        case 769: return 8044;  \
-        case 834: return 8046;  \
-        case 837: return 8104;  \
-    }  \
-    return 0;  \
-    case 8041:  \
-    switch (ch2) {  \
-        case 768: return 8043;  \
-        case 769: return 8045;  \
-        case 834: return 8047;  \
-        case 837: return 8105;  \
-    }  \
-    return 0;  \
-    case 8042:  \
-    switch (ch2) {  \
-        case 837: return 8106;  \
-    }  \
-    return 0;  \
-    case 8043:  \
-    switch (ch2) {  \
-        case 837: return 8107;  \
-    }  \
-    return 0;  \
-    case 8044:  \
-    switch (ch2) {  \
-        case 837: return 8108;  \
-    }  \
-    return 0;  \
-    case 8045:  \
-    switch (ch2) {  \
-        case 837: return 8109;  \
-    }  \
-    return 0;  \
-    case 8046:  \
-    switch (ch2) {  \
-        case 837: return 8110;  \
-    }  \
-    return 0;  \
-    case 8047:  \
-    switch (ch2) {  \
-        case 837: return 8111;  \
-    }  \
-    return 0;  \
-    case 8048:  \
-    switch (ch2) {  \
-        case 837: return 8114;  \
-    }  \
-    return 0;  \
-    case 8052:  \
-    switch (ch2) {  \
-        case 837: return 8130;  \
-    }  \
-    return 0;  \
-    case 8060:  \
-    switch (ch2) {  \
-        case 837: return 8178;  \
-    }  \
-    return 0;  \
-    case 8118:  \
-    switch (ch2) {  \
-        case 837: return 8119;  \
-    }  \
-    return 0;  \
-    case 8127:  \
-    switch (ch2) {  \
-        case 768: return 8141;  \
-        case 769: return 8142;  \
-        case 834: return 8143;  \
-    }  \
-    return 0;  \
-    case 8134:  \
-    switch (ch2) {  \
-        case 837: return 8135;  \
-    }  \
-    return 0;  \
-    case 8182:  \
-    switch (ch2) {  \
-        case 837: return 8183;  \
-    }  \
-    return 0;  \
-    case 8190:  \
-    switch (ch2) {  \
-        case 768: return 8157;  \
-        case 769: return 8158;  \
-        case 834: return 8159;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 33:  \
-switch (ch1) {  \
-    case 8592:  \
-    switch (ch2) {  \
-        case 824: return 8602;  \
-    }  \
-    return 0;  \
-    case 8594:  \
-    switch (ch2) {  \
-        case 824: return 8603;  \
-    }  \
-    return 0;  \
-    case 8596:  \
-    switch (ch2) {  \
-        case 824: return 8622;  \
-    }  \
-    return 0;  \
-    case 8656:  \
-    switch (ch2) {  \
-        case 824: return 8653;  \
-    }  \
-    return 0;  \
-    case 8658:  \
-    switch (ch2) {  \
-        case 824: return 8655;  \
-    }  \
-    return 0;  \
-    case 8660:  \
-    switch (ch2) {  \
-        case 824: return 8654;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 34:  \
-switch (ch1) {  \
-    case 8707:  \
-    switch (ch2) {  \
-        case 824: return 8708;  \
-    }  \
-    return 0;  \
-    case 8712:  \
-    switch (ch2) {  \
-        case 824: return 8713;  \
-    }  \
-    return 0;  \
-    case 8715:  \
-    switch (ch2) {  \
-        case 824: return 8716;  \
-    }  \
-    return 0;  \
-    case 8739:  \
-    switch (ch2) {  \
-        case 824: return 8740;  \
-    }  \
-    return 0;  \
-    case 8741:  \
-    switch (ch2) {  \
-        case 824: return 8742;  \
-    }  \
-    return 0;  \
-    case 8764:  \
-    switch (ch2) {  \
-        case 824: return 8769;  \
-    }  \
-    return 0;  \
-    case 8771:  \
-    switch (ch2) {  \
-        case 824: return 8772;  \
-    }  \
-    return 0;  \
-    case 8773:  \
-    switch (ch2) {  \
-        case 824: return 8775;  \
-    }  \
-    return 0;  \
-    case 8776:  \
-    switch (ch2) {  \
-        case 824: return 8777;  \
-    }  \
-    return 0;  \
-    case 8781:  \
-    switch (ch2) {  \
-        case 824: return 8813;  \
-    }  \
-    return 0;  \
-    case 8801:  \
-    switch (ch2) {  \
-        case 824: return 8802;  \
-    }  \
-    return 0;  \
-    case 8804:  \
-    switch (ch2) {  \
-        case 824: return 8816;  \
-    }  \
-    return 0;  \
-    case 8805:  \
-    switch (ch2) {  \
-        case 824: return 8817;  \
-    }  \
-    return 0;  \
-    case 8818:  \
-    switch (ch2) {  \
-        case 824: return 8820;  \
-    }  \
-    return 0;  \
-    case 8819:  \
-    switch (ch2) {  \
-        case 824: return 8821;  \
-    }  \
-    return 0;  \
-    case 8822:  \
-    switch (ch2) {  \
-        case 824: return 8824;  \
-    }  \
-    return 0;  \
-    case 8823:  \
-    switch (ch2) {  \
-        case 824: return 8825;  \
-    }  \
-    return 0;  \
-    case 8826:  \
-    switch (ch2) {  \
-        case 824: return 8832;  \
-    }  \
-    return 0;  \
-    case 8827:  \
-    switch (ch2) {  \
-        case 824: return 8833;  \
-    }  \
-    return 0;  \
-    case 8828:  \
-    switch (ch2) {  \
-        case 824: return 8928;  \
-    }  \
-    return 0;  \
-    case 8829:  \
-    switch (ch2) {  \
-        case 824: return 8929;  \
-    }  \
-    return 0;  \
-    case 8834:  \
-    switch (ch2) {  \
-        case 824: return 8836;  \
-    }  \
-    return 0;  \
-    case 8835:  \
-    switch (ch2) {  \
-        case 824: return 8837;  \
-    }  \
-    return 0;  \
-    case 8838:  \
-    switch (ch2) {  \
-        case 824: return 8840;  \
-    }  \
-    return 0;  \
-    case 8839:  \
-    switch (ch2) {  \
-        case 824: return 8841;  \
-    }  \
-    return 0;  \
-    case 8849:  \
-    switch (ch2) {  \
-        case 824: return 8930;  \
-    }  \
-    return 0;  \
-    case 8850:  \
-    switch (ch2) {  \
-        case 824: return 8931;  \
-    }  \
-    return 0;  \
-    case 8866:  \
-    switch (ch2) {  \
-        case 824: return 8876;  \
-    }  \
-    return 0;  \
-    case 8872:  \
-    switch (ch2) {  \
-        case 824: return 8877;  \
-    }  \
-    return 0;  \
-    case 8873:  \
-    switch (ch2) {  \
-        case 824: return 8878;  \
-    }  \
-    return 0;  \
-    case 8875:  \
-    switch (ch2) {  \
-        case 824: return 8879;  \
-    }  \
-    return 0;  \
-    case 8882:  \
-    switch (ch2) {  \
-        case 824: return 8938;  \
-    }  \
-    return 0;  \
-    case 8883:  \
-    switch (ch2) {  \
-        case 824: return 8939;  \
-    }  \
-    return 0;  \
-    case 8884:  \
-    switch (ch2) {  \
-        case 824: return 8940;  \
-    }  \
-    return 0;  \
-    case 8885:  \
-    switch (ch2) {  \
-        case 824: return 8941;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 42:  \
-switch (ch1) {  \
-    case 10973:  \
-    switch (ch2) {  \
-        case 824: return 10972;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 48:  \
-switch (ch1) {  \
-    case 12358:  \
-    switch (ch2) {  \
-        case 12441: return 12436;  \
-    }  \
-    return 0;  \
-    case 12363:  \
-    switch (ch2) {  \
-        case 12441: return 12364;  \
-    }  \
-    return 0;  \
-    case 12365:  \
-    switch (ch2) {  \
-        case 12441: return 12366;  \
-    }  \
-    return 0;  \
-    case 12367:  \
-    switch (ch2) {  \
-        case 12441: return 12368;  \
-    }  \
-    return 0;  \
-    case 12369:  \
-    switch (ch2) {  \
-        case 12441: return 12370;  \
-    }  \
-    return 0;  \
-    case 12371:  \
-    switch (ch2) {  \
-        case 12441: return 12372;  \
-    }  \
-    return 0;  \
-    case 12373:  \
-    switch (ch2) {  \
-        case 12441: return 12374;  \
-    }  \
-    return 0;  \
-    case 12375:  \
-    switch (ch2) {  \
-        case 12441: return 12376;  \
-    }  \
-    return 0;  \
-    case 12377:  \
-    switch (ch2) {  \
-        case 12441: return 12378;  \
-    }  \
-    return 0;  \
-    case 12379:  \
-    switch (ch2) {  \
-        case 12441: return 12380;  \
-    }  \
-    return 0;  \
-    case 12381:  \
-    switch (ch2) {  \
-        case 12441: return 12382;  \
-    }  \
-    return 0;  \
-    case 12383:  \
-    switch (ch2) {  \
-        case 12441: return 12384;  \
-    }  \
-    return 0;  \
-    case 12385:  \
-    switch (ch2) {  \
-        case 12441: return 12386;  \
-    }  \
-    return 0;  \
-    case 12388:  \
-    switch (ch2) {  \
-        case 12441: return 12389;  \
-    }  \
-    return 0;  \
-    case 12390:  \
-    switch (ch2) {  \
-        case 12441: return 12391;  \
-    }  \
-    return 0;  \
-    case 12392:  \
-    switch (ch2) {  \
-        case 12441: return 12393;  \
-    }  \
-    return 0;  \
-    case 12399:  \
-    switch (ch2) {  \
-        case 12441: return 12400;  \
-        case 12442: return 12401;  \
-    }  \
-    return 0;  \
-    case 12402:  \
-    switch (ch2) {  \
-        case 12441: return 12403;  \
-        case 12442: return 12404;  \
-    }  \
-    return 0;  \
-    case 12405:  \
-    switch (ch2) {  \
-        case 12441: return 12406;  \
-        case 12442: return 12407;  \
-    }  \
-    return 0;  \
-    case 12408:  \
-    switch (ch2) {  \
-        case 12441: return 12409;  \
-        case 12442: return 12410;  \
-    }  \
-    return 0;  \
-    case 12411:  \
-    switch (ch2) {  \
-        case 12441: return 12412;  \
-        case 12442: return 12413;  \
-    }  \
-    return 0;  \
-    case 12445:  \
-    switch (ch2) {  \
-        case 12441: return 12446;  \
-    }  \
-    return 0;  \
-    case 12454:  \
-    switch (ch2) {  \
-        case 12441: return 12532;  \
-    }  \
-    return 0;  \
-    case 12459:  \
-    switch (ch2) {  \
-        case 12441: return 12460;  \
-    }  \
-    return 0;  \
-    case 12461:  \
-    switch (ch2) {  \
-        case 12441: return 12462;  \
-    }  \
-    return 0;  \
-    case 12463:  \
-    switch (ch2) {  \
-        case 12441: return 12464;  \
-    }  \
-    return 0;  \
-    case 12465:  \
-    switch (ch2) {  \
-        case 12441: return 12466;  \
-    }  \
-    return 0;  \
-    case 12467:  \
-    switch (ch2) {  \
-        case 12441: return 12468;  \
-    }  \
-    return 0;  \
-    case 12469:  \
-    switch (ch2) {  \
-        case 12441: return 12470;  \
-    }  \
-    return 0;  \
-    case 12471:  \
-    switch (ch2) {  \
-        case 12441: return 12472;  \
-    }  \
-    return 0;  \
-    case 12473:  \
-    switch (ch2) {  \
-        case 12441: return 12474;  \
-    }  \
-    return 0;  \
-    case 12475:  \
-    switch (ch2) {  \
-        case 12441: return 12476;  \
-    }  \
-    return 0;  \
-    case 12477:  \
-    switch (ch2) {  \
-        case 12441: return 12478;  \
-    }  \
-    return 0;  \
-    case 12479:  \
-    switch (ch2) {  \
-        case 12441: return 12480;  \
-    }  \
-    return 0;  \
-    case 12481:  \
-    switch (ch2) {  \
-        case 12441: return 12482;  \
-    }  \
-    return 0;  \
-    case 12484:  \
-    switch (ch2) {  \
-        case 12441: return 12485;  \
-    }  \
-    return 0;  \
-    case 12486:  \
-    switch (ch2) {  \
-        case 12441: return 12487;  \
-    }  \
-    return 0;  \
-    case 12488:  \
-    switch (ch2) {  \
-        case 12441: return 12489;  \
-    }  \
-    return 0;  \
-    case 12495:  \
-    switch (ch2) {  \
-        case 12441: return 12496;  \
-        case 12442: return 12497;  \
-    }  \
-    return 0;  \
-    case 12498:  \
-    switch (ch2) {  \
-        case 12441: return 12499;  \
-        case 12442: return 12500;  \
-    }  \
-    return 0;  \
-    case 12501:  \
-    switch (ch2) {  \
-        case 12441: return 12502;  \
-        case 12442: return 12503;  \
-    }  \
-    return 0;  \
-    case 12504:  \
-    switch (ch2) {  \
-        case 12441: return 12505;  \
-        case 12442: return 12506;  \
-    }  \
-    return 0;  \
-    case 12507:  \
-    switch (ch2) {  \
-        case 12441: return 12508;  \
-        case 12442: return 12509;  \
-    }  \
-    return 0;  \
-    case 12527:  \
-    switch (ch2) {  \
-        case 12441: return 12535;  \
-    }  \
-    return 0;  \
-    case 12528:  \
-    switch (ch2) {  \
-        case 12441: return 12536;  \
-    }  \
-    return 0;  \
-    case 12529:  \
-    switch (ch2) {  \
-        case 12441: return 12537;  \
-    }  \
-    return 0;  \
-    case 12530:  \
-    switch (ch2) {  \
-        case 12441: return 12538;  \
-    }  \
-    return 0;  \
-    case 12541:  \
-    switch (ch2) {  \
-        case 12441: return 12542;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 251:  \
-switch (ch1) {  \
-    case 64329:  \
-    switch (ch2) {  \
-        case 1473: return 64300;  \
-        case 1474: return 64301;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-case 465:  \
-switch (ch1) {  \
-    case 119127:  \
-    switch (ch2) {  \
-        case 119141: return 119134;  \
-    }  \
-    return 0;  \
-    case 119128:  \
-    switch (ch2) {  \
-        case 119141: return 119135;  \
-    }  \
-    return 0;  \
-    case 119135:  \
-    switch (ch2) {  \
-        case 119150: return 119136;  \
-        case 119151: return 119137;  \
-        case 119152: return 119138;  \
-        case 119153: return 119139;  \
-        case 119154: return 119140;  \
-    }  \
-    return 0;  \
-    case 119225:  \
-    switch (ch2) {  \
-        case 119141: return 119227;  \
-    }  \
-    return 0;  \
-    case 119226:  \
-    switch (ch2) {  \
-        case 119141: return 119228;  \
-    }  \
-    return 0;  \
-    case 119227:  \
-    switch (ch2) {  \
-        case 119150: return 119229;  \
-        case 119151: return 119231;  \
-    }  \
-    return 0;  \
-    case 119228:  \
-    switch (ch2) {  \
-        case 119150: return 119230;  \
-        case 119151: return 119232;  \
-    }  \
-    return 0;  \
-}  \
-return 0;  \
-}  \
-return 0;
+	switch ((glui32)(ch1) >> 8) {  \
+	case 0:  \
+		switch (ch1) {  \
+		case 60:  \
+			switch (ch2) {  \
+			case 824: return 8814;  \
+			}  \
+			return 0;  \
+		case 61:  \
+			switch (ch2) {  \
+			case 824: return 8800;  \
+			}  \
+			return 0;  \
+		case 62:  \
+			switch (ch2) {  \
+			case 824: return 8815;  \
+			}  \
+			return 0;  \
+		case 65:  \
+			switch (ch2) {  \
+			case 768: return 192;  \
+			case 769: return 193;  \
+			case 770: return 194;  \
+			case 771: return 195;  \
+			case 772: return 256;  \
+			case 774: return 258;  \
+			case 775: return 550;  \
+			case 776: return 196;  \
+			case 777: return 7842;  \
+			case 778: return 197;  \
+			case 780: return 461;  \
+			case 783: return 512;  \
+			case 785: return 514;  \
+			case 803: return 7840;  \
+			case 805: return 7680;  \
+			case 808: return 260;  \
+			}  \
+			return 0;  \
+		case 66:  \
+			switch (ch2) {  \
+			case 775: return 7682;  \
+			case 803: return 7684;  \
+			case 817: return 7686;  \
+			}  \
+			return 0;  \
+		case 67:  \
+			switch (ch2) {  \
+			case 769: return 262;  \
+			case 770: return 264;  \
+			case 775: return 266;  \
+			case 780: return 268;  \
+			case 807: return 199;  \
+			}  \
+			return 0;  \
+		case 68:  \
+			switch (ch2) {  \
+			case 775: return 7690;  \
+			case 780: return 270;  \
+			case 803: return 7692;  \
+			case 807: return 7696;  \
+			case 813: return 7698;  \
+			case 817: return 7694;  \
+			}  \
+			return 0;  \
+		case 69:  \
+			switch (ch2) {  \
+			case 768: return 200;  \
+			case 769: return 201;  \
+			case 770: return 202;  \
+			case 771: return 7868;  \
+			case 772: return 274;  \
+			case 774: return 276;  \
+			case 775: return 278;  \
+			case 776: return 203;  \
+			case 777: return 7866;  \
+			case 780: return 282;  \
+			case 783: return 516;  \
+			case 785: return 518;  \
+			case 803: return 7864;  \
+			case 807: return 552;  \
+			case 808: return 280;  \
+			case 813: return 7704;  \
+			case 816: return 7706;  \
+			}  \
+			return 0;  \
+		case 70:  \
+			switch (ch2) {  \
+			case 775: return 7710;  \
+			}  \
+			return 0;  \
+		case 71:  \
+			switch (ch2) {  \
+			case 769: return 500;  \
+			case 770: return 284;  \
+			case 772: return 7712;  \
+			case 774: return 286;  \
+			case 775: return 288;  \
+			case 780: return 486;  \
+			case 807: return 290;  \
+			}  \
+			return 0;  \
+		case 72:  \
+			switch (ch2) {  \
+			case 770: return 292;  \
+			case 775: return 7714;  \
+			case 776: return 7718;  \
+			case 780: return 542;  \
+			case 803: return 7716;  \
+			case 807: return 7720;  \
+			case 814: return 7722;  \
+			}  \
+			return 0;  \
+		case 73:  \
+			switch (ch2) {  \
+			case 768: return 204;  \
+			case 769: return 205;  \
+			case 770: return 206;  \
+			case 771: return 296;  \
+			case 772: return 298;  \
+			case 774: return 300;  \
+			case 775: return 304;  \
+			case 776: return 207;  \
+			case 777: return 7880;  \
+			case 780: return 463;  \
+			case 783: return 520;  \
+			case 785: return 522;  \
+			case 803: return 7882;  \
+			case 808: return 302;  \
+			case 816: return 7724;  \
+			}  \
+			return 0;  \
+		case 74:  \
+			switch (ch2) {  \
+			case 770: return 308;  \
+			}  \
+			return 0;  \
+		case 75:  \
+			switch (ch2) {  \
+			case 769: return 7728;  \
+			case 780: return 488;  \
+			case 803: return 7730;  \
+			case 807: return 310;  \
+			case 817: return 7732;  \
+			}  \
+			return 0;  \
+		case 76:  \
+			switch (ch2) {  \
+			case 769: return 313;  \
+			case 780: return 317;  \
+			case 803: return 7734;  \
+			case 807: return 315;  \
+			case 813: return 7740;  \
+			case 817: return 7738;  \
+			}  \
+			return 0;  \
+		case 77:  \
+			switch (ch2) {  \
+			case 769: return 7742;  \
+			case 775: return 7744;  \
+			case 803: return 7746;  \
+			}  \
+			return 0;  \
+		case 78:  \
+			switch (ch2) {  \
+			case 768: return 504;  \
+			case 769: return 323;  \
+			case 771: return 209;  \
+			case 775: return 7748;  \
+			case 780: return 327;  \
+			case 803: return 7750;  \
+			case 807: return 325;  \
+			case 813: return 7754;  \
+			case 817: return 7752;  \
+			}  \
+			return 0;  \
+		case 79:  \
+			switch (ch2) {  \
+			case 768: return 210;  \
+			case 769: return 211;  \
+			case 770: return 212;  \
+			case 771: return 213;  \
+			case 772: return 332;  \
+			case 774: return 334;  \
+			case 775: return 558;  \
+			case 776: return 214;  \
+			case 777: return 7886;  \
+			case 779: return 336;  \
+			case 780: return 465;  \
+			case 783: return 524;  \
+			case 785: return 526;  \
+			case 795: return 416;  \
+			case 803: return 7884;  \
+			case 808: return 490;  \
+			}  \
+			return 0;  \
+		case 80:  \
+			switch (ch2) {  \
+			case 769: return 7764;  \
+			case 775: return 7766;  \
+			}  \
+			return 0;  \
+		case 82:  \
+			switch (ch2) {  \
+			case 769: return 340;  \
+			case 775: return 7768;  \
+			case 780: return 344;  \
+			case 783: return 528;  \
+			case 785: return 530;  \
+			case 803: return 7770;  \
+			case 807: return 342;  \
+			case 817: return 7774;  \
+			}  \
+			return 0;  \
+		case 83:  \
+			switch (ch2) {  \
+			case 769: return 346;  \
+			case 770: return 348;  \
+			case 775: return 7776;  \
+			case 780: return 352;  \
+			case 803: return 7778;  \
+			case 806: return 536;  \
+			case 807: return 350;  \
+			}  \
+			return 0;  \
+		case 84:  \
+			switch (ch2) {  \
+			case 775: return 7786;  \
+			case 780: return 356;  \
+			case 803: return 7788;  \
+			case 806: return 538;  \
+			case 807: return 354;  \
+			case 813: return 7792;  \
+			case 817: return 7790;  \
+			}  \
+			return 0;  \
+		case 85:  \
+			switch (ch2) {  \
+			case 768: return 217;  \
+			case 769: return 218;  \
+			case 770: return 219;  \
+			case 771: return 360;  \
+			case 772: return 362;  \
+			case 774: return 364;  \
+			case 776: return 220;  \
+			case 777: return 7910;  \
+			case 778: return 366;  \
+			case 779: return 368;  \
+			case 780: return 467;  \
+			case 783: return 532;  \
+			case 785: return 534;  \
+			case 795: return 431;  \
+			case 803: return 7908;  \
+			case 804: return 7794;  \
+			case 808: return 370;  \
+			case 813: return 7798;  \
+			case 816: return 7796;  \
+			}  \
+			return 0;  \
+		case 86:  \
+			switch (ch2) {  \
+			case 771: return 7804;  \
+			case 803: return 7806;  \
+			}  \
+			return 0;  \
+		case 87:  \
+			switch (ch2) {  \
+			case 768: return 7808;  \
+			case 769: return 7810;  \
+			case 770: return 372;  \
+			case 775: return 7814;  \
+			case 776: return 7812;  \
+			case 803: return 7816;  \
+			}  \
+			return 0;  \
+		case 88:  \
+			switch (ch2) {  \
+			case 775: return 7818;  \
+			case 776: return 7820;  \
+			}  \
+			return 0;  \
+		case 89:  \
+			switch (ch2) {  \
+			case 768: return 7922;  \
+			case 769: return 221;  \
+			case 770: return 374;  \
+			case 771: return 7928;  \
+			case 772: return 562;  \
+			case 775: return 7822;  \
+			case 776: return 376;  \
+			case 777: return 7926;  \
+			case 803: return 7924;  \
+			}  \
+			return 0;  \
+		case 90:  \
+			switch (ch2) {  \
+			case 769: return 377;  \
+			case 770: return 7824;  \
+			case 775: return 379;  \
+			case 780: return 381;  \
+			case 803: return 7826;  \
+			case 817: return 7828;  \
+			}  \
+			return 0;  \
+		case 97:  \
+			switch (ch2) {  \
+			case 768: return 224;  \
+			case 769: return 225;  \
+			case 770: return 226;  \
+			case 771: return 227;  \
+			case 772: return 257;  \
+			case 774: return 259;  \
+			case 775: return 551;  \
+			case 776: return 228;  \
+			case 777: return 7843;  \
+			case 778: return 229;  \
+			case 780: return 462;  \
+			case 783: return 513;  \
+			case 785: return 515;  \
+			case 803: return 7841;  \
+			case 805: return 7681;  \
+			case 808: return 261;  \
+			}  \
+			return 0;  \
+		case 98:  \
+			switch (ch2) {  \
+			case 775: return 7683;  \
+			case 803: return 7685;  \
+			case 817: return 7687;  \
+			}  \
+			return 0;  \
+		case 99:  \
+			switch (ch2) {  \
+			case 769: return 263;  \
+			case 770: return 265;  \
+			case 775: return 267;  \
+			case 780: return 269;  \
+			case 807: return 231;  \
+			}  \
+			return 0;  \
+		case 100:  \
+			switch (ch2) {  \
+			case 775: return 7691;  \
+			case 780: return 271;  \
+			case 803: return 7693;  \
+			case 807: return 7697;  \
+			case 813: return 7699;  \
+			case 817: return 7695;  \
+			}  \
+			return 0;  \
+		case 101:  \
+			switch (ch2) {  \
+			case 768: return 232;  \
+			case 769: return 233;  \
+			case 770: return 234;  \
+			case 771: return 7869;  \
+			case 772: return 275;  \
+			case 774: return 277;  \
+			case 775: return 279;  \
+			case 776: return 235;  \
+			case 777: return 7867;  \
+			case 780: return 283;  \
+			case 783: return 517;  \
+			case 785: return 519;  \
+			case 803: return 7865;  \
+			case 807: return 553;  \
+			case 808: return 281;  \
+			case 813: return 7705;  \
+			case 816: return 7707;  \
+			}  \
+			return 0;  \
+		case 102:  \
+			switch (ch2) {  \
+			case 775: return 7711;  \
+			}  \
+			return 0;  \
+		case 103:  \
+			switch (ch2) {  \
+			case 769: return 501;  \
+			case 770: return 285;  \
+			case 772: return 7713;  \
+			case 774: return 287;  \
+			case 775: return 289;  \
+			case 780: return 487;  \
+			case 807: return 291;  \
+			}  \
+			return 0;  \
+		case 104:  \
+			switch (ch2) {  \
+			case 770: return 293;  \
+			case 775: return 7715;  \
+			case 776: return 7719;  \
+			case 780: return 543;  \
+			case 803: return 7717;  \
+			case 807: return 7721;  \
+			case 814: return 7723;  \
+			case 817: return 7830;  \
+			}  \
+			return 0;  \
+		case 105:  \
+			switch (ch2) {  \
+			case 768: return 236;  \
+			case 769: return 237;  \
+			case 770: return 238;  \
+			case 771: return 297;  \
+			case 772: return 299;  \
+			case 774: return 301;  \
+			case 776: return 239;  \
+			case 777: return 7881;  \
+			case 780: return 464;  \
+			case 783: return 521;  \
+			case 785: return 523;  \
+			case 803: return 7883;  \
+			case 808: return 303;  \
+			case 816: return 7725;  \
+			}  \
+			return 0;  \
+		case 106:  \
+			switch (ch2) {  \
+			case 770: return 309;  \
+			case 780: return 496;  \
+			}  \
+			return 0;  \
+		case 107:  \
+			switch (ch2) {  \
+			case 769: return 7729;  \
+			case 780: return 489;  \
+			case 803: return 7731;  \
+			case 807: return 311;  \
+			case 817: return 7733;  \
+			}  \
+			return 0;  \
+		case 108:  \
+			switch (ch2) {  \
+			case 769: return 314;  \
+			case 780: return 318;  \
+			case 803: return 7735;  \
+			case 807: return 316;  \
+			case 813: return 7741;  \
+			case 817: return 7739;  \
+			}  \
+			return 0;  \
+		case 109:  \
+			switch (ch2) {  \
+			case 769: return 7743;  \
+			case 775: return 7745;  \
+			case 803: return 7747;  \
+			}  \
+			return 0;  \
+		case 110:  \
+			switch (ch2) {  \
+			case 768: return 505;  \
+			case 769: return 324;  \
+			case 771: return 241;  \
+			case 775: return 7749;  \
+			case 780: return 328;  \
+			case 803: return 7751;  \
+			case 807: return 326;  \
+			case 813: return 7755;  \
+			case 817: return 7753;  \
+			}  \
+			return 0;  \
+		case 111:  \
+			switch (ch2) {  \
+			case 768: return 242;  \
+			case 769: return 243;  \
+			case 770: return 244;  \
+			case 771: return 245;  \
+			case 772: return 333;  \
+			case 774: return 335;  \
+			case 775: return 559;  \
+			case 776: return 246;  \
+			case 777: return 7887;  \
+			case 779: return 337;  \
+			case 780: return 466;  \
+			case 783: return 525;  \
+			case 785: return 527;  \
+			case 795: return 417;  \
+			case 803: return 7885;  \
+			case 808: return 491;  \
+			}  \
+			return 0;  \
+		case 112:  \
+			switch (ch2) {  \
+			case 769: return 7765;  \
+			case 775: return 7767;  \
+			}  \
+			return 0;  \
+		case 114:  \
+			switch (ch2) {  \
+			case 769: return 341;  \
+			case 775: return 7769;  \
+			case 780: return 345;  \
+			case 783: return 529;  \
+			case 785: return 531;  \
+			case 803: return 7771;  \
+			case 807: return 343;  \
+			case 817: return 7775;  \
+			}  \
+			return 0;  \
+		case 115:  \
+			switch (ch2) {  \
+			case 769: return 347;  \
+			case 770: return 349;  \
+			case 775: return 7777;  \
+			case 780: return 353;  \
+			case 803: return 7779;  \
+			case 806: return 537;  \
+			case 807: return 351;  \
+			}  \
+			return 0;  \
+		case 116:  \
+			switch (ch2) {  \
+			case 775: return 7787;  \
+			case 776: return 7831;  \
+			case 780: return 357;  \
+			case 803: return 7789;  \
+			case 806: return 539;  \
+			case 807: return 355;  \
+			case 813: return 7793;  \
+			case 817: return 7791;  \
+			}  \
+			return 0;  \
+		case 117:  \
+			switch (ch2) {  \
+			case 768: return 249;  \
+			case 769: return 250;  \
+			case 770: return 251;  \
+			case 771: return 361;  \
+			case 772: return 363;  \
+			case 774: return 365;  \
+			case 776: return 252;  \
+			case 777: return 7911;  \
+			case 778: return 367;  \
+			case 779: return 369;  \
+			case 780: return 468;  \
+			case 783: return 533;  \
+			case 785: return 535;  \
+			case 795: return 432;  \
+			case 803: return 7909;  \
+			case 804: return 7795;  \
+			case 808: return 371;  \
+			case 813: return 7799;  \
+			case 816: return 7797;  \
+			}  \
+			return 0;  \
+		case 118:  \
+			switch (ch2) {  \
+			case 771: return 7805;  \
+			case 803: return 7807;  \
+			}  \
+			return 0;  \
+		case 119:  \
+			switch (ch2) {  \
+			case 768: return 7809;  \
+			case 769: return 7811;  \
+			case 770: return 373;  \
+			case 775: return 7815;  \
+			case 776: return 7813;  \
+			case 778: return 7832;  \
+			case 803: return 7817;  \
+			}  \
+			return 0;  \
+		case 120:  \
+			switch (ch2) {  \
+			case 775: return 7819;  \
+			case 776: return 7821;  \
+			}  \
+			return 0;  \
+		case 121:  \
+			switch (ch2) {  \
+			case 768: return 7923;  \
+			case 769: return 253;  \
+			case 770: return 375;  \
+			case 771: return 7929;  \
+			case 772: return 563;  \
+			case 775: return 7823;  \
+			case 776: return 255;  \
+			case 777: return 7927;  \
+			case 778: return 7833;  \
+			case 803: return 7925;  \
+			}  \
+			return 0;  \
+		case 122:  \
+			switch (ch2) {  \
+			case 769: return 378;  \
+			case 770: return 7825;  \
+			case 775: return 380;  \
+			case 780: return 382;  \
+			case 803: return 7827;  \
+			case 817: return 7829;  \
+			}  \
+			return 0;  \
+		case 168:  \
+			switch (ch2) {  \
+			case 768: return 8173;  \
+			case 769: return 901;  \
+			case 834: return 8129;  \
+			}  \
+			return 0;  \
+		case 194:  \
+			switch (ch2) {  \
+			case 768: return 7846;  \
+			case 769: return 7844;  \
+			case 771: return 7850;  \
+			case 777: return 7848;  \
+			}  \
+			return 0;  \
+		case 196:  \
+			switch (ch2) {  \
+			case 772: return 478;  \
+			}  \
+			return 0;  \
+		case 197:  \
+			switch (ch2) {  \
+			case 769: return 506;  \
+			}  \
+			return 0;  \
+		case 198:  \
+			switch (ch2) {  \
+			case 769: return 508;  \
+			case 772: return 482;  \
+			}  \
+			return 0;  \
+		case 199:  \
+			switch (ch2) {  \
+			case 769: return 7688;  \
+			}  \
+			return 0;  \
+		case 202:  \
+			switch (ch2) {  \
+			case 768: return 7872;  \
+			case 769: return 7870;  \
+			case 771: return 7876;  \
+			case 777: return 7874;  \
+			}  \
+			return 0;  \
+		case 207:  \
+			switch (ch2) {  \
+			case 769: return 7726;  \
+			}  \
+			return 0;  \
+		case 212:  \
+			switch (ch2) {  \
+			case 768: return 7890;  \
+			case 769: return 7888;  \
+			case 771: return 7894;  \
+			case 777: return 7892;  \
+			}  \
+			return 0;  \
+		case 213:  \
+			switch (ch2) {  \
+			case 769: return 7756;  \
+			case 772: return 556;  \
+			case 776: return 7758;  \
+			}  \
+			return 0;  \
+		case 214:  \
+			switch (ch2) {  \
+			case 772: return 554;  \
+			}  \
+			return 0;  \
+		case 216:  \
+			switch (ch2) {  \
+			case 769: return 510;  \
+			}  \
+			return 0;  \
+		case 220:  \
+			switch (ch2) {  \
+			case 768: return 475;  \
+			case 769: return 471;  \
+			case 772: return 469;  \
+			case 780: return 473;  \
+			}  \
+			return 0;  \
+		case 226:  \
+			switch (ch2) {  \
+			case 768: return 7847;  \
+			case 769: return 7845;  \
+			case 771: return 7851;  \
+			case 777: return 7849;  \
+			}  \
+			return 0;  \
+		case 228:  \
+			switch (ch2) {  \
+			case 772: return 479;  \
+			}  \
+			return 0;  \
+		case 229:  \
+			switch (ch2) {  \
+			case 769: return 507;  \
+			}  \
+			return 0;  \
+		case 230:  \
+			switch (ch2) {  \
+			case 769: return 509;  \
+			case 772: return 483;  \
+			}  \
+			return 0;  \
+		case 231:  \
+			switch (ch2) {  \
+			case 769: return 7689;  \
+			}  \
+			return 0;  \
+		case 234:  \
+			switch (ch2) {  \
+			case 768: return 7873;  \
+			case 769: return 7871;  \
+			case 771: return 7877;  \
+			case 777: return 7875;  \
+			}  \
+			return 0;  \
+		case 239:  \
+			switch (ch2) {  \
+			case 769: return 7727;  \
+			}  \
+			return 0;  \
+		case 244:  \
+			switch (ch2) {  \
+			case 768: return 7891;  \
+			case 769: return 7889;  \
+			case 771: return 7895;  \
+			case 777: return 7893;  \
+			}  \
+			return 0;  \
+		case 245:  \
+			switch (ch2) {  \
+			case 769: return 7757;  \
+			case 772: return 557;  \
+			case 776: return 7759;  \
+			}  \
+			return 0;  \
+		case 246:  \
+			switch (ch2) {  \
+			case 772: return 555;  \
+			}  \
+			return 0;  \
+		case 248:  \
+			switch (ch2) {  \
+			case 769: return 511;  \
+			}  \
+			return 0;  \
+		case 252:  \
+			switch (ch2) {  \
+			case 768: return 476;  \
+			case 769: return 472;  \
+			case 772: return 470;  \
+			case 780: return 474;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 1:  \
+		switch (ch1) {  \
+		case 258:  \
+			switch (ch2) {  \
+			case 768: return 7856;  \
+			case 769: return 7854;  \
+			case 771: return 7860;  \
+			case 777: return 7858;  \
+			}  \
+			return 0;  \
+		case 259:  \
+			switch (ch2) {  \
+			case 768: return 7857;  \
+			case 769: return 7855;  \
+			case 771: return 7861;  \
+			case 777: return 7859;  \
+			}  \
+			return 0;  \
+		case 274:  \
+			switch (ch2) {  \
+			case 768: return 7700;  \
+			case 769: return 7702;  \
+			}  \
+			return 0;  \
+		case 275:  \
+			switch (ch2) {  \
+			case 768: return 7701;  \
+			case 769: return 7703;  \
+			}  \
+			return 0;  \
+		case 332:  \
+			switch (ch2) {  \
+			case 768: return 7760;  \
+			case 769: return 7762;  \
+			}  \
+			return 0;  \
+		case 333:  \
+			switch (ch2) {  \
+			case 768: return 7761;  \
+			case 769: return 7763;  \
+			}  \
+			return 0;  \
+		case 346:  \
+			switch (ch2) {  \
+			case 775: return 7780;  \
+			}  \
+			return 0;  \
+		case 347:  \
+			switch (ch2) {  \
+			case 775: return 7781;  \
+			}  \
+			return 0;  \
+		case 352:  \
+			switch (ch2) {  \
+			case 775: return 7782;  \
+			}  \
+			return 0;  \
+		case 353:  \
+			switch (ch2) {  \
+			case 775: return 7783;  \
+			}  \
+			return 0;  \
+		case 360:  \
+			switch (ch2) {  \
+			case 769: return 7800;  \
+			}  \
+			return 0;  \
+		case 361:  \
+			switch (ch2) {  \
+			case 769: return 7801;  \
+			}  \
+			return 0;  \
+		case 362:  \
+			switch (ch2) {  \
+			case 776: return 7802;  \
+			}  \
+			return 0;  \
+		case 363:  \
+			switch (ch2) {  \
+			case 776: return 7803;  \
+			}  \
+			return 0;  \
+		case 383:  \
+			switch (ch2) {  \
+			case 775: return 7835;  \
+			}  \
+			return 0;  \
+		case 416:  \
+			switch (ch2) {  \
+			case 768: return 7900;  \
+			case 769: return 7898;  \
+			case 771: return 7904;  \
+			case 777: return 7902;  \
+			case 803: return 7906;  \
+			}  \
+			return 0;  \
+		case 417:  \
+			switch (ch2) {  \
+			case 768: return 7901;  \
+			case 769: return 7899;  \
+			case 771: return 7905;  \
+			case 777: return 7903;  \
+			case 803: return 7907;  \
+			}  \
+			return 0;  \
+		case 431:  \
+			switch (ch2) {  \
+			case 768: return 7914;  \
+			case 769: return 7912;  \
+			case 771: return 7918;  \
+			case 777: return 7916;  \
+			case 803: return 7920;  \
+			}  \
+			return 0;  \
+		case 432:  \
+			switch (ch2) {  \
+			case 768: return 7915;  \
+			case 769: return 7913;  \
+			case 771: return 7919;  \
+			case 777: return 7917;  \
+			case 803: return 7921;  \
+			}  \
+			return 0;  \
+		case 439:  \
+			switch (ch2) {  \
+			case 780: return 494;  \
+			}  \
+			return 0;  \
+		case 490:  \
+			switch (ch2) {  \
+			case 772: return 492;  \
+			}  \
+			return 0;  \
+		case 491:  \
+			switch (ch2) {  \
+			case 772: return 493;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 2:  \
+		switch (ch1) {  \
+		case 550:  \
+			switch (ch2) {  \
+			case 772: return 480;  \
+			}  \
+			return 0;  \
+		case 551:  \
+			switch (ch2) {  \
+			case 772: return 481;  \
+			}  \
+			return 0;  \
+		case 552:  \
+			switch (ch2) {  \
+			case 774: return 7708;  \
+			}  \
+			return 0;  \
+		case 553:  \
+			switch (ch2) {  \
+			case 774: return 7709;  \
+			}  \
+			return 0;  \
+		case 558:  \
+			switch (ch2) {  \
+			case 772: return 560;  \
+			}  \
+			return 0;  \
+		case 559:  \
+			switch (ch2) {  \
+			case 772: return 561;  \
+			}  \
+			return 0;  \
+		case 658:  \
+			switch (ch2) {  \
+			case 780: return 495;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 3:  \
+		switch (ch1) {  \
+		case 776:  \
+			switch (ch2) {  \
+			case 769: return 836;  \
+			}  \
+			return 0;  \
+		case 913:  \
+			switch (ch2) {  \
+			case 768: return 8122;  \
+			case 769: return 902;  \
+			case 772: return 8121;  \
+			case 774: return 8120;  \
+			case 787: return 7944;  \
+			case 788: return 7945;  \
+			case 837: return 8124;  \
+			}  \
+			return 0;  \
+		case 917:  \
+			switch (ch2) {  \
+			case 768: return 8136;  \
+			case 769: return 904;  \
+			case 787: return 7960;  \
+			case 788: return 7961;  \
+			}  \
+			return 0;  \
+		case 919:  \
+			switch (ch2) {  \
+			case 768: return 8138;  \
+			case 769: return 905;  \
+			case 787: return 7976;  \
+			case 788: return 7977;  \
+			case 837: return 8140;  \
+			}  \
+			return 0;  \
+		case 921:  \
+			switch (ch2) {  \
+			case 768: return 8154;  \
+			case 769: return 906;  \
+			case 772: return 8153;  \
+			case 774: return 8152;  \
+			case 776: return 938;  \
+			case 787: return 7992;  \
+			case 788: return 7993;  \
+			}  \
+			return 0;  \
+		case 927:  \
+			switch (ch2) {  \
+			case 768: return 8184;  \
+			case 769: return 908;  \
+			case 787: return 8008;  \
+			case 788: return 8009;  \
+			}  \
+			return 0;  \
+		case 929:  \
+			switch (ch2) {  \
+			case 788: return 8172;  \
+			}  \
+			return 0;  \
+		case 933:  \
+			switch (ch2) {  \
+			case 768: return 8170;  \
+			case 769: return 910;  \
+			case 772: return 8169;  \
+			case 774: return 8168;  \
+			case 776: return 939;  \
+			case 788: return 8025;  \
+			}  \
+			return 0;  \
+		case 937:  \
+			switch (ch2) {  \
+			case 768: return 8186;  \
+			case 769: return 911;  \
+			case 787: return 8040;  \
+			case 788: return 8041;  \
+			case 837: return 8188;  \
+			}  \
+			return 0;  \
+		case 940:  \
+			switch (ch2) {  \
+			case 837: return 8116;  \
+			}  \
+			return 0;  \
+		case 942:  \
+			switch (ch2) {  \
+			case 837: return 8132;  \
+			}  \
+			return 0;  \
+		case 945:  \
+			switch (ch2) {  \
+			case 768: return 8048;  \
+			case 769: return 940;  \
+			case 772: return 8113;  \
+			case 774: return 8112;  \
+			case 787: return 7936;  \
+			case 788: return 7937;  \
+			case 834: return 8118;  \
+			case 837: return 8115;  \
+			}  \
+			return 0;  \
+		case 949:  \
+			switch (ch2) {  \
+			case 768: return 8050;  \
+			case 769: return 941;  \
+			case 787: return 7952;  \
+			case 788: return 7953;  \
+			}  \
+			return 0;  \
+		case 951:  \
+			switch (ch2) {  \
+			case 768: return 8052;  \
+			case 769: return 942;  \
+			case 787: return 7968;  \
+			case 788: return 7969;  \
+			case 834: return 8134;  \
+			case 837: return 8131;  \
+			}  \
+			return 0;  \
+		case 953:  \
+			switch (ch2) {  \
+			case 768: return 8054;  \
+			case 769: return 943;  \
+			case 772: return 8145;  \
+			case 774: return 8144;  \
+			case 776: return 970;  \
+			case 787: return 7984;  \
+			case 788: return 7985;  \
+			case 834: return 8150;  \
+			}  \
+			return 0;  \
+		case 959:  \
+			switch (ch2) {  \
+			case 768: return 8056;  \
+			case 769: return 972;  \
+			case 787: return 8000;  \
+			case 788: return 8001;  \
+			}  \
+			return 0;  \
+		case 961:  \
+			switch (ch2) {  \
+			case 787: return 8164;  \
+			case 788: return 8165;  \
+			}  \
+			return 0;  \
+		case 965:  \
+			switch (ch2) {  \
+			case 768: return 8058;  \
+			case 769: return 973;  \
+			case 772: return 8161;  \
+			case 774: return 8160;  \
+			case 776: return 971;  \
+			case 787: return 8016;  \
+			case 788: return 8017;  \
+			case 834: return 8166;  \
+			}  \
+			return 0;  \
+		case 969:  \
+			switch (ch2) {  \
+			case 768: return 8060;  \
+			case 769: return 974;  \
+			case 787: return 8032;  \
+			case 788: return 8033;  \
+			case 834: return 8182;  \
+			case 837: return 8179;  \
+			}  \
+			return 0;  \
+		case 970:  \
+			switch (ch2) {  \
+			case 768: return 8146;  \
+			case 769: return 912;  \
+			case 834: return 8151;  \
+			}  \
+			return 0;  \
+		case 971:  \
+			switch (ch2) {  \
+			case 768: return 8162;  \
+			case 769: return 944;  \
+			case 834: return 8167;  \
+			}  \
+			return 0;  \
+		case 974:  \
+			switch (ch2) {  \
+			case 837: return 8180;  \
+			}  \
+			return 0;  \
+		case 978:  \
+			switch (ch2) {  \
+			case 769: return 979;  \
+			case 776: return 980;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 4:  \
+		switch (ch1) {  \
+		case 1030:  \
+			switch (ch2) {  \
+			case 776: return 1031;  \
+			}  \
+			return 0;  \
+		case 1040:  \
+			switch (ch2) {  \
+			case 774: return 1232;  \
+			case 776: return 1234;  \
+			}  \
+			return 0;  \
+		case 1043:  \
+			switch (ch2) {  \
+			case 769: return 1027;  \
+			}  \
+			return 0;  \
+		case 1045:  \
+			switch (ch2) {  \
+			case 768: return 1024;  \
+			case 774: return 1238;  \
+			case 776: return 1025;  \
+			}  \
+			return 0;  \
+		case 1046:  \
+			switch (ch2) {  \
+			case 774: return 1217;  \
+			case 776: return 1244;  \
+			}  \
+			return 0;  \
+		case 1047:  \
+			switch (ch2) {  \
+			case 776: return 1246;  \
+			}  \
+			return 0;  \
+		case 1048:  \
+			switch (ch2) {  \
+			case 768: return 1037;  \
+			case 772: return 1250;  \
+			case 774: return 1049;  \
+			case 776: return 1252;  \
+			}  \
+			return 0;  \
+		case 1050:  \
+			switch (ch2) {  \
+			case 769: return 1036;  \
+			}  \
+			return 0;  \
+		case 1054:  \
+			switch (ch2) {  \
+			case 776: return 1254;  \
+			}  \
+			return 0;  \
+		case 1059:  \
+			switch (ch2) {  \
+			case 772: return 1262;  \
+			case 774: return 1038;  \
+			case 776: return 1264;  \
+			case 779: return 1266;  \
+			}  \
+			return 0;  \
+		case 1063:  \
+			switch (ch2) {  \
+			case 776: return 1268;  \
+			}  \
+			return 0;  \
+		case 1067:  \
+			switch (ch2) {  \
+			case 776: return 1272;  \
+			}  \
+			return 0;  \
+		case 1069:  \
+			switch (ch2) {  \
+			case 776: return 1260;  \
+			}  \
+			return 0;  \
+		case 1072:  \
+			switch (ch2) {  \
+			case 774: return 1233;  \
+			case 776: return 1235;  \
+			}  \
+			return 0;  \
+		case 1075:  \
+			switch (ch2) {  \
+			case 769: return 1107;  \
+			}  \
+			return 0;  \
+		case 1077:  \
+			switch (ch2) {  \
+			case 768: return 1104;  \
+			case 774: return 1239;  \
+			case 776: return 1105;  \
+			}  \
+			return 0;  \
+		case 1078:  \
+			switch (ch2) {  \
+			case 774: return 1218;  \
+			case 776: return 1245;  \
+			}  \
+			return 0;  \
+		case 1079:  \
+			switch (ch2) {  \
+			case 776: return 1247;  \
+			}  \
+			return 0;  \
+		case 1080:  \
+			switch (ch2) {  \
+			case 768: return 1117;  \
+			case 772: return 1251;  \
+			case 774: return 1081;  \
+			case 776: return 1253;  \
+			}  \
+			return 0;  \
+		case 1082:  \
+			switch (ch2) {  \
+			case 769: return 1116;  \
+			}  \
+			return 0;  \
+		case 1086:  \
+			switch (ch2) {  \
+			case 776: return 1255;  \
+			}  \
+			return 0;  \
+		case 1091:  \
+			switch (ch2) {  \
+			case 772: return 1263;  \
+			case 774: return 1118;  \
+			case 776: return 1265;  \
+			case 779: return 1267;  \
+			}  \
+			return 0;  \
+		case 1095:  \
+			switch (ch2) {  \
+			case 776: return 1269;  \
+			}  \
+			return 0;  \
+		case 1099:  \
+			switch (ch2) {  \
+			case 776: return 1273;  \
+			}  \
+			return 0;  \
+		case 1101:  \
+			switch (ch2) {  \
+			case 776: return 1261;  \
+			}  \
+			return 0;  \
+		case 1110:  \
+			switch (ch2) {  \
+			case 776: return 1111;  \
+			}  \
+			return 0;  \
+		case 1140:  \
+			switch (ch2) {  \
+			case 783: return 1142;  \
+			}  \
+			return 0;  \
+		case 1141:  \
+			switch (ch2) {  \
+			case 783: return 1143;  \
+			}  \
+			return 0;  \
+		case 1240:  \
+			switch (ch2) {  \
+			case 776: return 1242;  \
+			}  \
+			return 0;  \
+		case 1241:  \
+			switch (ch2) {  \
+			case 776: return 1243;  \
+			}  \
+			return 0;  \
+		case 1256:  \
+			switch (ch2) {  \
+			case 776: return 1258;  \
+			}  \
+			return 0;  \
+		case 1257:  \
+			switch (ch2) {  \
+			case 776: return 1259;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 5:  \
+		switch (ch1) {  \
+		case 1488:  \
+			switch (ch2) {  \
+			case 1463: return 64302;  \
+			case 1464: return 64303;  \
+			case 1468: return 64304;  \
+			}  \
+			return 0;  \
+		case 1489:  \
+			switch (ch2) {  \
+			case 1468: return 64305;  \
+			case 1471: return 64332;  \
+			}  \
+			return 0;  \
+		case 1490:  \
+			switch (ch2) {  \
+			case 1468: return 64306;  \
+			}  \
+			return 0;  \
+		case 1491:  \
+			switch (ch2) {  \
+			case 1468: return 64307;  \
+			}  \
+			return 0;  \
+		case 1492:  \
+			switch (ch2) {  \
+			case 1468: return 64308;  \
+			}  \
+			return 0;  \
+		case 1493:  \
+			switch (ch2) {  \
+			case 1465: return 64331;  \
+			case 1468: return 64309;  \
+			}  \
+			return 0;  \
+		case 1494:  \
+			switch (ch2) {  \
+			case 1468: return 64310;  \
+			}  \
+			return 0;  \
+		case 1496:  \
+			switch (ch2) {  \
+			case 1468: return 64312;  \
+			}  \
+			return 0;  \
+		case 1497:  \
+			switch (ch2) {  \
+			case 1460: return 64285;  \
+			case 1468: return 64313;  \
+			}  \
+			return 0;  \
+		case 1498:  \
+			switch (ch2) {  \
+			case 1468: return 64314;  \
+			}  \
+			return 0;  \
+		case 1499:  \
+			switch (ch2) {  \
+			case 1468: return 64315;  \
+			case 1471: return 64333;  \
+			}  \
+			return 0;  \
+		case 1500:  \
+			switch (ch2) {  \
+			case 1468: return 64316;  \
+			}  \
+			return 0;  \
+		case 1502:  \
+			switch (ch2) {  \
+			case 1468: return 64318;  \
+			}  \
+			return 0;  \
+		case 1504:  \
+			switch (ch2) {  \
+			case 1468: return 64320;  \
+			}  \
+			return 0;  \
+		case 1505:  \
+			switch (ch2) {  \
+			case 1468: return 64321;  \
+			}  \
+			return 0;  \
+		case 1507:  \
+			switch (ch2) {  \
+			case 1468: return 64323;  \
+			}  \
+			return 0;  \
+		case 1508:  \
+			switch (ch2) {  \
+			case 1468: return 64324;  \
+			case 1471: return 64334;  \
+			}  \
+			return 0;  \
+		case 1510:  \
+			switch (ch2) {  \
+			case 1468: return 64326;  \
+			}  \
+			return 0;  \
+		case 1511:  \
+			switch (ch2) {  \
+			case 1468: return 64327;  \
+			}  \
+			return 0;  \
+		case 1512:  \
+			switch (ch2) {  \
+			case 1468: return 64328;  \
+			}  \
+			return 0;  \
+		case 1513:  \
+			switch (ch2) {  \
+			case 1468: return 64329;  \
+			case 1473: return 64298;  \
+			case 1474: return 64299;  \
+			}  \
+			return 0;  \
+		case 1514:  \
+			switch (ch2) {  \
+			case 1468: return 64330;  \
+			}  \
+			return 0;  \
+		case 1522:  \
+			switch (ch2) {  \
+			case 1463: return 64287;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 6:  \
+		switch (ch1) {  \
+		case 1575:  \
+			switch (ch2) {  \
+			case 1619: return 1570;  \
+			case 1620: return 1571;  \
+			case 1621: return 1573;  \
+			}  \
+			return 0;  \
+		case 1608:  \
+			switch (ch2) {  \
+			case 1620: return 1572;  \
+			}  \
+			return 0;  \
+		case 1610:  \
+			switch (ch2) {  \
+			case 1620: return 1574;  \
+			}  \
+			return 0;  \
+		case 1729:  \
+			switch (ch2) {  \
+			case 1620: return 1730;  \
+			}  \
+			return 0;  \
+		case 1746:  \
+			switch (ch2) {  \
+			case 1620: return 1747;  \
+			}  \
+			return 0;  \
+		case 1749:  \
+			switch (ch2) {  \
+			case 1620: return 1728;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 9:  \
+		switch (ch1) {  \
+		case 2325:  \
+			switch (ch2) {  \
+			case 2364: return 2392;  \
+			}  \
+			return 0;  \
+		case 2326:  \
+			switch (ch2) {  \
+			case 2364: return 2393;  \
+			}  \
+			return 0;  \
+		case 2327:  \
+			switch (ch2) {  \
+			case 2364: return 2394;  \
+			}  \
+			return 0;  \
+		case 2332:  \
+			switch (ch2) {  \
+			case 2364: return 2395;  \
+			}  \
+			return 0;  \
+		case 2337:  \
+			switch (ch2) {  \
+			case 2364: return 2396;  \
+			}  \
+			return 0;  \
+		case 2338:  \
+			switch (ch2) {  \
+			case 2364: return 2397;  \
+			}  \
+			return 0;  \
+		case 2344:  \
+			switch (ch2) {  \
+			case 2364: return 2345;  \
+			}  \
+			return 0;  \
+		case 2347:  \
+			switch (ch2) {  \
+			case 2364: return 2398;  \
+			}  \
+			return 0;  \
+		case 2351:  \
+			switch (ch2) {  \
+			case 2364: return 2399;  \
+			}  \
+			return 0;  \
+		case 2352:  \
+			switch (ch2) {  \
+			case 2364: return 2353;  \
+			}  \
+			return 0;  \
+		case 2355:  \
+			switch (ch2) {  \
+			case 2364: return 2356;  \
+			}  \
+			return 0;  \
+		case 2465:  \
+			switch (ch2) {  \
+			case 2492: return 2524;  \
+			}  \
+			return 0;  \
+		case 2466:  \
+			switch (ch2) {  \
+			case 2492: return 2525;  \
+			}  \
+			return 0;  \
+		case 2479:  \
+			switch (ch2) {  \
+			case 2492: return 2527;  \
+			}  \
+			return 0;  \
+		case 2503:  \
+			switch (ch2) {  \
+			case 2494: return 2507;  \
+			case 2519: return 2508;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 10:  \
+		switch (ch1) {  \
+		case 2582:  \
+			switch (ch2) {  \
+			case 2620: return 2649;  \
+			}  \
+			return 0;  \
+		case 2583:  \
+			switch (ch2) {  \
+			case 2620: return 2650;  \
+			}  \
+			return 0;  \
+		case 2588:  \
+			switch (ch2) {  \
+			case 2620: return 2651;  \
+			}  \
+			return 0;  \
+		case 2603:  \
+			switch (ch2) {  \
+			case 2620: return 2654;  \
+			}  \
+			return 0;  \
+		case 2610:  \
+			switch (ch2) {  \
+			case 2620: return 2611;  \
+			}  \
+			return 0;  \
+		case 2616:  \
+			switch (ch2) {  \
+			case 2620: return 2614;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 11:  \
+		switch (ch1) {  \
+		case 2849:  \
+			switch (ch2) {  \
+			case 2876: return 2908;  \
+			}  \
+			return 0;  \
+		case 2850:  \
+			switch (ch2) {  \
+			case 2876: return 2909;  \
+			}  \
+			return 0;  \
+		case 2887:  \
+			switch (ch2) {  \
+			case 2878: return 2891;  \
+			case 2902: return 2888;  \
+			case 2903: return 2892;  \
+			}  \
+			return 0;  \
+		case 2962:  \
+			switch (ch2) {  \
+			case 3031: return 2964;  \
+			}  \
+			return 0;  \
+		case 3014:  \
+			switch (ch2) {  \
+			case 3006: return 3018;  \
+			case 3031: return 3020;  \
+			}  \
+			return 0;  \
+		case 3015:  \
+			switch (ch2) {  \
+			case 3006: return 3019;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 12:  \
+		switch (ch1) {  \
+		case 3142:  \
+			switch (ch2) {  \
+			case 3158: return 3144;  \
+			}  \
+			return 0;  \
+		case 3263:  \
+			switch (ch2) {  \
+			case 3285: return 3264;  \
+			}  \
+			return 0;  \
+		case 3270:  \
+			switch (ch2) {  \
+			case 3266: return 3274;  \
+			case 3285: return 3271;  \
+			case 3286: return 3272;  \
+			}  \
+			return 0;  \
+		case 3274:  \
+			switch (ch2) {  \
+			case 3285: return 3275;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 13:  \
+		switch (ch1) {  \
+		case 3398:  \
+			switch (ch2) {  \
+			case 3390: return 3402;  \
+			case 3415: return 3404;  \
+			}  \
+			return 0;  \
+		case 3399:  \
+			switch (ch2) {  \
+			case 3390: return 3403;  \
+			}  \
+			return 0;  \
+		case 3545:  \
+			switch (ch2) {  \
+			case 3530: return 3546;  \
+			case 3535: return 3548;  \
+			case 3551: return 3550;  \
+			}  \
+			return 0;  \
+		case 3548:  \
+			switch (ch2) {  \
+			case 3530: return 3549;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 15:  \
+		switch (ch1) {  \
+		case 3904:  \
+			switch (ch2) {  \
+			case 4021: return 3945;  \
+			}  \
+			return 0;  \
+		case 3906:  \
+			switch (ch2) {  \
+			case 4023: return 3907;  \
+			}  \
+			return 0;  \
+		case 3916:  \
+			switch (ch2) {  \
+			case 4023: return 3917;  \
+			}  \
+			return 0;  \
+		case 3921:  \
+			switch (ch2) {  \
+			case 4023: return 3922;  \
+			}  \
+			return 0;  \
+		case 3926:  \
+			switch (ch2) {  \
+			case 4023: return 3927;  \
+			}  \
+			return 0;  \
+		case 3931:  \
+			switch (ch2) {  \
+			case 4023: return 3932;  \
+			}  \
+			return 0;  \
+		case 3953:  \
+			switch (ch2) {  \
+			case 3954: return 3955;  \
+			case 3956: return 3957;  \
+			case 3968: return 3969;  \
+			}  \
+			return 0;  \
+		case 3984:  \
+			switch (ch2) {  \
+			case 4021: return 4025;  \
+			}  \
+			return 0;  \
+		case 3986:  \
+			switch (ch2) {  \
+			case 4023: return 3987;  \
+			}  \
+			return 0;  \
+		case 3996:  \
+			switch (ch2) {  \
+			case 4023: return 3997;  \
+			}  \
+			return 0;  \
+		case 4001:  \
+			switch (ch2) {  \
+			case 4023: return 4002;  \
+			}  \
+			return 0;  \
+		case 4006:  \
+			switch (ch2) {  \
+			case 4023: return 4007;  \
+			}  \
+			return 0;  \
+		case 4011:  \
+			switch (ch2) {  \
+			case 4023: return 4012;  \
+			}  \
+			return 0;  \
+		case 4018:  \
+			switch (ch2) {  \
+			case 3968: return 3958;  \
+			}  \
+			return 0;  \
+		case 4019:  \
+			switch (ch2) {  \
+			case 3968: return 3960;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 16:  \
+		switch (ch1) {  \
+		case 4133:  \
+			switch (ch2) {  \
+			case 4142: return 4134;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 30:  \
+		switch (ch1) {  \
+		case 7734:  \
+			switch (ch2) {  \
+			case 772: return 7736;  \
+			}  \
+			return 0;  \
+		case 7735:  \
+			switch (ch2) {  \
+			case 772: return 7737;  \
+			}  \
+			return 0;  \
+		case 7770:  \
+			switch (ch2) {  \
+			case 772: return 7772;  \
+			}  \
+			return 0;  \
+		case 7771:  \
+			switch (ch2) {  \
+			case 772: return 7773;  \
+			}  \
+			return 0;  \
+		case 7778:  \
+			switch (ch2) {  \
+			case 775: return 7784;  \
+			}  \
+			return 0;  \
+		case 7779:  \
+			switch (ch2) {  \
+			case 775: return 7785;  \
+			}  \
+			return 0;  \
+		case 7840:  \
+			switch (ch2) {  \
+			case 770: return 7852;  \
+			case 774: return 7862;  \
+			}  \
+			return 0;  \
+		case 7841:  \
+			switch (ch2) {  \
+			case 770: return 7853;  \
+			case 774: return 7863;  \
+			}  \
+			return 0;  \
+		case 7864:  \
+			switch (ch2) {  \
+			case 770: return 7878;  \
+			}  \
+			return 0;  \
+		case 7865:  \
+			switch (ch2) {  \
+			case 770: return 7879;  \
+			}  \
+			return 0;  \
+		case 7884:  \
+			switch (ch2) {  \
+			case 770: return 7896;  \
+			}  \
+			return 0;  \
+		case 7885:  \
+			switch (ch2) {  \
+			case 770: return 7897;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 31:  \
+		switch (ch1) {  \
+		case 7936:  \
+			switch (ch2) {  \
+			case 768: return 7938;  \
+			case 769: return 7940;  \
+			case 834: return 7942;  \
+			case 837: return 8064;  \
+			}  \
+			return 0;  \
+		case 7937:  \
+			switch (ch2) {  \
+			case 768: return 7939;  \
+			case 769: return 7941;  \
+			case 834: return 7943;  \
+			case 837: return 8065;  \
+			}  \
+			return 0;  \
+		case 7938:  \
+			switch (ch2) {  \
+			case 837: return 8066;  \
+			}  \
+			return 0;  \
+		case 7939:  \
+			switch (ch2) {  \
+			case 837: return 8067;  \
+			}  \
+			return 0;  \
+		case 7940:  \
+			switch (ch2) {  \
+			case 837: return 8068;  \
+			}  \
+			return 0;  \
+		case 7941:  \
+			switch (ch2) {  \
+			case 837: return 8069;  \
+			}  \
+			return 0;  \
+		case 7942:  \
+			switch (ch2) {  \
+			case 837: return 8070;  \
+			}  \
+			return 0;  \
+		case 7943:  \
+			switch (ch2) {  \
+			case 837: return 8071;  \
+			}  \
+			return 0;  \
+		case 7944:  \
+			switch (ch2) {  \
+			case 768: return 7946;  \
+			case 769: return 7948;  \
+			case 834: return 7950;  \
+			case 837: return 8072;  \
+			}  \
+			return 0;  \
+		case 7945:  \
+			switch (ch2) {  \
+			case 768: return 7947;  \
+			case 769: return 7949;  \
+			case 834: return 7951;  \
+			case 837: return 8073;  \
+			}  \
+			return 0;  \
+		case 7946:  \
+			switch (ch2) {  \
+			case 837: return 8074;  \
+			}  \
+			return 0;  \
+		case 7947:  \
+			switch (ch2) {  \
+			case 837: return 8075;  \
+			}  \
+			return 0;  \
+		case 7948:  \
+			switch (ch2) {  \
+			case 837: return 8076;  \
+			}  \
+			return 0;  \
+		case 7949:  \
+			switch (ch2) {  \
+			case 837: return 8077;  \
+			}  \
+			return 0;  \
+		case 7950:  \
+			switch (ch2) {  \
+			case 837: return 8078;  \
+			}  \
+			return 0;  \
+		case 7951:  \
+			switch (ch2) {  \
+			case 837: return 8079;  \
+			}  \
+			return 0;  \
+		case 7952:  \
+			switch (ch2) {  \
+			case 768: return 7954;  \
+			case 769: return 7956;  \
+			}  \
+			return 0;  \
+		case 7953:  \
+			switch (ch2) {  \
+			case 768: return 7955;  \
+			case 769: return 7957;  \
+			}  \
+			return 0;  \
+		case 7960:  \
+			switch (ch2) {  \
+			case 768: return 7962;  \
+			case 769: return 7964;  \
+			}  \
+			return 0;  \
+		case 7961:  \
+			switch (ch2) {  \
+			case 768: return 7963;  \
+			case 769: return 7965;  \
+			}  \
+			return 0;  \
+		case 7968:  \
+			switch (ch2) {  \
+			case 768: return 7970;  \
+			case 769: return 7972;  \
+			case 834: return 7974;  \
+			case 837: return 8080;  \
+			}  \
+			return 0;  \
+		case 7969:  \
+			switch (ch2) {  \
+			case 768: return 7971;  \
+			case 769: return 7973;  \
+			case 834: return 7975;  \
+			case 837: return 8081;  \
+			}  \
+			return 0;  \
+		case 7970:  \
+			switch (ch2) {  \
+			case 837: return 8082;  \
+			}  \
+			return 0;  \
+		case 7971:  \
+			switch (ch2) {  \
+			case 837: return 8083;  \
+			}  \
+			return 0;  \
+		case 7972:  \
+			switch (ch2) {  \
+			case 837: return 8084;  \
+			}  \
+			return 0;  \
+		case 7973:  \
+			switch (ch2) {  \
+			case 837: return 8085;  \
+			}  \
+			return 0;  \
+		case 7974:  \
+			switch (ch2) {  \
+			case 837: return 8086;  \
+			}  \
+			return 0;  \
+		case 7975:  \
+			switch (ch2) {  \
+			case 837: return 8087;  \
+			}  \
+			return 0;  \
+		case 7976:  \
+			switch (ch2) {  \
+			case 768: return 7978;  \
+			case 769: return 7980;  \
+			case 834: return 7982;  \
+			case 837: return 8088;  \
+			}  \
+			return 0;  \
+		case 7977:  \
+			switch (ch2) {  \
+			case 768: return 7979;  \
+			case 769: return 7981;  \
+			case 834: return 7983;  \
+			case 837: return 8089;  \
+			}  \
+			return 0;  \
+		case 7978:  \
+			switch (ch2) {  \
+			case 837: return 8090;  \
+			}  \
+			return 0;  \
+		case 7979:  \
+			switch (ch2) {  \
+			case 837: return 8091;  \
+			}  \
+			return 0;  \
+		case 7980:  \
+			switch (ch2) {  \
+			case 837: return 8092;  \
+			}  \
+			return 0;  \
+		case 7981:  \
+			switch (ch2) {  \
+			case 837: return 8093;  \
+			}  \
+			return 0;  \
+		case 7982:  \
+			switch (ch2) {  \
+			case 837: return 8094;  \
+			}  \
+			return 0;  \
+		case 7983:  \
+			switch (ch2) {  \
+			case 837: return 8095;  \
+			}  \
+			return 0;  \
+		case 7984:  \
+			switch (ch2) {  \
+			case 768: return 7986;  \
+			case 769: return 7988;  \
+			case 834: return 7990;  \
+			}  \
+			return 0;  \
+		case 7985:  \
+			switch (ch2) {  \
+			case 768: return 7987;  \
+			case 769: return 7989;  \
+			case 834: return 7991;  \
+			}  \
+			return 0;  \
+		case 7992:  \
+			switch (ch2) {  \
+			case 768: return 7994;  \
+			case 769: return 7996;  \
+			case 834: return 7998;  \
+			}  \
+			return 0;  \
+		case 7993:  \
+			switch (ch2) {  \
+			case 768: return 7995;  \
+			case 769: return 7997;  \
+			case 834: return 7999;  \
+			}  \
+			return 0;  \
+		case 8000:  \
+			switch (ch2) {  \
+			case 768: return 8002;  \
+			case 769: return 8004;  \
+			}  \
+			return 0;  \
+		case 8001:  \
+			switch (ch2) {  \
+			case 768: return 8003;  \
+			case 769: return 8005;  \
+			}  \
+			return 0;  \
+		case 8008:  \
+			switch (ch2) {  \
+			case 768: return 8010;  \
+			case 769: return 8012;  \
+			}  \
+			return 0;  \
+		case 8009:  \
+			switch (ch2) {  \
+			case 768: return 8011;  \
+			case 769: return 8013;  \
+			}  \
+			return 0;  \
+		case 8016:  \
+			switch (ch2) {  \
+			case 768: return 8018;  \
+			case 769: return 8020;  \
+			case 834: return 8022;  \
+			}  \
+			return 0;  \
+		case 8017:  \
+			switch (ch2) {  \
+			case 768: return 8019;  \
+			case 769: return 8021;  \
+			case 834: return 8023;  \
+			}  \
+			return 0;  \
+		case 8025:  \
+			switch (ch2) {  \
+			case 768: return 8027;  \
+			case 769: return 8029;  \
+			case 834: return 8031;  \
+			}  \
+			return 0;  \
+		case 8032:  \
+			switch (ch2) {  \
+			case 768: return 8034;  \
+			case 769: return 8036;  \
+			case 834: return 8038;  \
+			case 837: return 8096;  \
+			}  \
+			return 0;  \
+		case 8033:  \
+			switch (ch2) {  \
+			case 768: return 8035;  \
+			case 769: return 8037;  \
+			case 834: return 8039;  \
+			case 837: return 8097;  \
+			}  \
+			return 0;  \
+		case 8034:  \
+			switch (ch2) {  \
+			case 837: return 8098;  \
+			}  \
+			return 0;  \
+		case 8035:  \
+			switch (ch2) {  \
+			case 837: return 8099;  \
+			}  \
+			return 0;  \
+		case 8036:  \
+			switch (ch2) {  \
+			case 837: return 8100;  \
+			}  \
+			return 0;  \
+		case 8037:  \
+			switch (ch2) {  \
+			case 837: return 8101;  \
+			}  \
+			return 0;  \
+		case 8038:  \
+			switch (ch2) {  \
+			case 837: return 8102;  \
+			}  \
+			return 0;  \
+		case 8039:  \
+			switch (ch2) {  \
+			case 837: return 8103;  \
+			}  \
+			return 0;  \
+		case 8040:  \
+			switch (ch2) {  \
+			case 768: return 8042;  \
+			case 769: return 8044;  \
+			case 834: return 8046;  \
+			case 837: return 8104;  \
+			}  \
+			return 0;  \
+		case 8041:  \
+			switch (ch2) {  \
+			case 768: return 8043;  \
+			case 769: return 8045;  \
+			case 834: return 8047;  \
+			case 837: return 8105;  \
+			}  \
+			return 0;  \
+		case 8042:  \
+			switch (ch2) {  \
+			case 837: return 8106;  \
+			}  \
+			return 0;  \
+		case 8043:  \
+			switch (ch2) {  \
+			case 837: return 8107;  \
+			}  \
+			return 0;  \
+		case 8044:  \
+			switch (ch2) {  \
+			case 837: return 8108;  \
+			}  \
+			return 0;  \
+		case 8045:  \
+			switch (ch2) {  \
+			case 837: return 8109;  \
+			}  \
+			return 0;  \
+		case 8046:  \
+			switch (ch2) {  \
+			case 837: return 8110;  \
+			}  \
+			return 0;  \
+		case 8047:  \
+			switch (ch2) {  \
+			case 837: return 8111;  \
+			}  \
+			return 0;  \
+		case 8048:  \
+			switch (ch2) {  \
+			case 837: return 8114;  \
+			}  \
+			return 0;  \
+		case 8052:  \
+			switch (ch2) {  \
+			case 837: return 8130;  \
+			}  \
+			return 0;  \
+		case 8060:  \
+			switch (ch2) {  \
+			case 837: return 8178;  \
+			}  \
+			return 0;  \
+		case 8118:  \
+			switch (ch2) {  \
+			case 837: return 8119;  \
+			}  \
+			return 0;  \
+		case 8127:  \
+			switch (ch2) {  \
+			case 768: return 8141;  \
+			case 769: return 8142;  \
+			case 834: return 8143;  \
+			}  \
+			return 0;  \
+		case 8134:  \
+			switch (ch2) {  \
+			case 837: return 8135;  \
+			}  \
+			return 0;  \
+		case 8182:  \
+			switch (ch2) {  \
+			case 837: return 8183;  \
+			}  \
+			return 0;  \
+		case 8190:  \
+			switch (ch2) {  \
+			case 768: return 8157;  \
+			case 769: return 8158;  \
+			case 834: return 8159;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 33:  \
+		switch (ch1) {  \
+		case 8592:  \
+			switch (ch2) {  \
+			case 824: return 8602;  \
+			}  \
+			return 0;  \
+		case 8594:  \
+			switch (ch2) {  \
+			case 824: return 8603;  \
+			}  \
+			return 0;  \
+		case 8596:  \
+			switch (ch2) {  \
+			case 824: return 8622;  \
+			}  \
+			return 0;  \
+		case 8656:  \
+			switch (ch2) {  \
+			case 824: return 8653;  \
+			}  \
+			return 0;  \
+		case 8658:  \
+			switch (ch2) {  \
+			case 824: return 8655;  \
+			}  \
+			return 0;  \
+		case 8660:  \
+			switch (ch2) {  \
+			case 824: return 8654;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 34:  \
+		switch (ch1) {  \
+		case 8707:  \
+			switch (ch2) {  \
+			case 824: return 8708;  \
+			}  \
+			return 0;  \
+		case 8712:  \
+			switch (ch2) {  \
+			case 824: return 8713;  \
+			}  \
+			return 0;  \
+		case 8715:  \
+			switch (ch2) {  \
+			case 824: return 8716;  \
+			}  \
+			return 0;  \
+		case 8739:  \
+			switch (ch2) {  \
+			case 824: return 8740;  \
+			}  \
+			return 0;  \
+		case 8741:  \
+			switch (ch2) {  \
+			case 824: return 8742;  \
+			}  \
+			return 0;  \
+		case 8764:  \
+			switch (ch2) {  \
+			case 824: return 8769;  \
+			}  \
+			return 0;  \
+		case 8771:  \
+			switch (ch2) {  \
+			case 824: return 8772;  \
+			}  \
+			return 0;  \
+		case 8773:  \
+			switch (ch2) {  \
+			case 824: return 8775;  \
+			}  \
+			return 0;  \
+		case 8776:  \
+			switch (ch2) {  \
+			case 824: return 8777;  \
+			}  \
+			return 0;  \
+		case 8781:  \
+			switch (ch2) {  \
+			case 824: return 8813;  \
+			}  \
+			return 0;  \
+		case 8801:  \
+			switch (ch2) {  \
+			case 824: return 8802;  \
+			}  \
+			return 0;  \
+		case 8804:  \
+			switch (ch2) {  \
+			case 824: return 8816;  \
+			}  \
+			return 0;  \
+		case 8805:  \
+			switch (ch2) {  \
+			case 824: return 8817;  \
+			}  \
+			return 0;  \
+		case 8818:  \
+			switch (ch2) {  \
+			case 824: return 8820;  \
+			}  \
+			return 0;  \
+		case 8819:  \
+			switch (ch2) {  \
+			case 824: return 8821;  \
+			}  \
+			return 0;  \
+		case 8822:  \
+			switch (ch2) {  \
+			case 824: return 8824;  \
+			}  \
+			return 0;  \
+		case 8823:  \
+			switch (ch2) {  \
+			case 824: return 8825;  \
+			}  \
+			return 0;  \
+		case 8826:  \
+			switch (ch2) {  \
+			case 824: return 8832;  \
+			}  \
+			return 0;  \
+		case 8827:  \
+			switch (ch2) {  \
+			case 824: return 8833;  \
+			}  \
+			return 0;  \
+		case 8828:  \
+			switch (ch2) {  \
+			case 824: return 8928;  \
+			}  \
+			return 0;  \
+		case 8829:  \
+			switch (ch2) {  \
+			case 824: return 8929;  \
+			}  \
+			return 0;  \
+		case 8834:  \
+			switch (ch2) {  \
+			case 824: return 8836;  \
+			}  \
+			return 0;  \
+		case 8835:  \
+			switch (ch2) {  \
+			case 824: return 8837;  \
+			}  \
+			return 0;  \
+		case 8838:  \
+			switch (ch2) {  \
+			case 824: return 8840;  \
+			}  \
+			return 0;  \
+		case 8839:  \
+			switch (ch2) {  \
+			case 824: return 8841;  \
+			}  \
+			return 0;  \
+		case 8849:  \
+			switch (ch2) {  \
+			case 824: return 8930;  \
+			}  \
+			return 0;  \
+		case 8850:  \
+			switch (ch2) {  \
+			case 824: return 8931;  \
+			}  \
+			return 0;  \
+		case 8866:  \
+			switch (ch2) {  \
+			case 824: return 8876;  \
+			}  \
+			return 0;  \
+		case 8872:  \
+			switch (ch2) {  \
+			case 824: return 8877;  \
+			}  \
+			return 0;  \
+		case 8873:  \
+			switch (ch2) {  \
+			case 824: return 8878;  \
+			}  \
+			return 0;  \
+		case 8875:  \
+			switch (ch2) {  \
+			case 824: return 8879;  \
+			}  \
+			return 0;  \
+		case 8882:  \
+			switch (ch2) {  \
+			case 824: return 8938;  \
+			}  \
+			return 0;  \
+		case 8883:  \
+			switch (ch2) {  \
+			case 824: return 8939;  \
+			}  \
+			return 0;  \
+		case 8884:  \
+			switch (ch2) {  \
+			case 824: return 8940;  \
+			}  \
+			return 0;  \
+		case 8885:  \
+			switch (ch2) {  \
+			case 824: return 8941;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 42:  \
+		switch (ch1) {  \
+		case 10973:  \
+			switch (ch2) {  \
+			case 824: return 10972;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 48:  \
+		switch (ch1) {  \
+		case 12358:  \
+			switch (ch2) {  \
+			case 12441: return 12436;  \
+			}  \
+			return 0;  \
+		case 12363:  \
+			switch (ch2) {  \
+			case 12441: return 12364;  \
+			}  \
+			return 0;  \
+		case 12365:  \
+			switch (ch2) {  \
+			case 12441: return 12366;  \
+			}  \
+			return 0;  \
+		case 12367:  \
+			switch (ch2) {  \
+			case 12441: return 12368;  \
+			}  \
+			return 0;  \
+		case 12369:  \
+			switch (ch2) {  \
+			case 12441: return 12370;  \
+			}  \
+			return 0;  \
+		case 12371:  \
+			switch (ch2) {  \
+			case 12441: return 12372;  \
+			}  \
+			return 0;  \
+		case 12373:  \
+			switch (ch2) {  \
+			case 12441: return 12374;  \
+			}  \
+			return 0;  \
+		case 12375:  \
+			switch (ch2) {  \
+			case 12441: return 12376;  \
+			}  \
+			return 0;  \
+		case 12377:  \
+			switch (ch2) {  \
+			case 12441: return 12378;  \
+			}  \
+			return 0;  \
+		case 12379:  \
+			switch (ch2) {  \
+			case 12441: return 12380;  \
+			}  \
+			return 0;  \
+		case 12381:  \
+			switch (ch2) {  \
+			case 12441: return 12382;  \
+			}  \
+			return 0;  \
+		case 12383:  \
+			switch (ch2) {  \
+			case 12441: return 12384;  \
+			}  \
+			return 0;  \
+		case 12385:  \
+			switch (ch2) {  \
+			case 12441: return 12386;  \
+			}  \
+			return 0;  \
+		case 12388:  \
+			switch (ch2) {  \
+			case 12441: return 12389;  \
+			}  \
+			return 0;  \
+		case 12390:  \
+			switch (ch2) {  \
+			case 12441: return 12391;  \
+			}  \
+			return 0;  \
+		case 12392:  \
+			switch (ch2) {  \
+			case 12441: return 12393;  \
+			}  \
+			return 0;  \
+		case 12399:  \
+			switch (ch2) {  \
+			case 12441: return 12400;  \
+			case 12442: return 12401;  \
+			}  \
+			return 0;  \
+		case 12402:  \
+			switch (ch2) {  \
+			case 12441: return 12403;  \
+			case 12442: return 12404;  \
+			}  \
+			return 0;  \
+		case 12405:  \
+			switch (ch2) {  \
+			case 12441: return 12406;  \
+			case 12442: return 12407;  \
+			}  \
+			return 0;  \
+		case 12408:  \
+			switch (ch2) {  \
+			case 12441: return 12409;  \
+			case 12442: return 12410;  \
+			}  \
+			return 0;  \
+		case 12411:  \
+			switch (ch2) {  \
+			case 12441: return 12412;  \
+			case 12442: return 12413;  \
+			}  \
+			return 0;  \
+		case 12445:  \
+			switch (ch2) {  \
+			case 12441: return 12446;  \
+			}  \
+			return 0;  \
+		case 12454:  \
+			switch (ch2) {  \
+			case 12441: return 12532;  \
+			}  \
+			return 0;  \
+		case 12459:  \
+			switch (ch2) {  \
+			case 12441: return 12460;  \
+			}  \
+			return 0;  \
+		case 12461:  \
+			switch (ch2) {  \
+			case 12441: return 12462;  \
+			}  \
+			return 0;  \
+		case 12463:  \
+			switch (ch2) {  \
+			case 12441: return 12464;  \
+			}  \
+			return 0;  \
+		case 12465:  \
+			switch (ch2) {  \
+			case 12441: return 12466;  \
+			}  \
+			return 0;  \
+		case 12467:  \
+			switch (ch2) {  \
+			case 12441: return 12468;  \
+			}  \
+			return 0;  \
+		case 12469:  \
+			switch (ch2) {  \
+			case 12441: return 12470;  \
+			}  \
+			return 0;  \
+		case 12471:  \
+			switch (ch2) {  \
+			case 12441: return 12472;  \
+			}  \
+			return 0;  \
+		case 12473:  \
+			switch (ch2) {  \
+			case 12441: return 12474;  \
+			}  \
+			return 0;  \
+		case 12475:  \
+			switch (ch2) {  \
+			case 12441: return 12476;  \
+			}  \
+			return 0;  \
+		case 12477:  \
+			switch (ch2) {  \
+			case 12441: return 12478;  \
+			}  \
+			return 0;  \
+		case 12479:  \
+			switch (ch2) {  \
+			case 12441: return 12480;  \
+			}  \
+			return 0;  \
+		case 12481:  \
+			switch (ch2) {  \
+			case 12441: return 12482;  \
+			}  \
+			return 0;  \
+		case 12484:  \
+			switch (ch2) {  \
+			case 12441: return 12485;  \
+			}  \
+			return 0;  \
+		case 12486:  \
+			switch (ch2) {  \
+			case 12441: return 12487;  \
+			}  \
+			return 0;  \
+		case 12488:  \
+			switch (ch2) {  \
+			case 12441: return 12489;  \
+			}  \
+			return 0;  \
+		case 12495:  \
+			switch (ch2) {  \
+			case 12441: return 12496;  \
+			case 12442: return 12497;  \
+			}  \
+			return 0;  \
+		case 12498:  \
+			switch (ch2) {  \
+			case 12441: return 12499;  \
+			case 12442: return 12500;  \
+			}  \
+			return 0;  \
+		case 12501:  \
+			switch (ch2) {  \
+			case 12441: return 12502;  \
+			case 12442: return 12503;  \
+			}  \
+			return 0;  \
+		case 12504:  \
+			switch (ch2) {  \
+			case 12441: return 12505;  \
+			case 12442: return 12506;  \
+			}  \
+			return 0;  \
+		case 12507:  \
+			switch (ch2) {  \
+			case 12441: return 12508;  \
+			case 12442: return 12509;  \
+			}  \
+			return 0;  \
+		case 12527:  \
+			switch (ch2) {  \
+			case 12441: return 12535;  \
+			}  \
+			return 0;  \
+		case 12528:  \
+			switch (ch2) {  \
+			case 12441: return 12536;  \
+			}  \
+			return 0;  \
+		case 12529:  \
+			switch (ch2) {  \
+			case 12441: return 12537;  \
+			}  \
+			return 0;  \
+		case 12530:  \
+			switch (ch2) {  \
+			case 12441: return 12538;  \
+			}  \
+			return 0;  \
+		case 12541:  \
+			switch (ch2) {  \
+			case 12441: return 12542;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 251:  \
+		switch (ch1) {  \
+		case 64329:  \
+			switch (ch2) {  \
+			case 1473: return 64300;  \
+			case 1474: return 64301;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	case 465:  \
+		switch (ch1) {  \
+		case 119127:  \
+			switch (ch2) {  \
+			case 119141: return 119134;  \
+			}  \
+			return 0;  \
+		case 119128:  \
+			switch (ch2) {  \
+			case 119141: return 119135;  \
+			}  \
+			return 0;  \
+		case 119135:  \
+			switch (ch2) {  \
+			case 119150: return 119136;  \
+			case 119151: return 119137;  \
+			case 119152: return 119138;  \
+			case 119153: return 119139;  \
+			case 119154: return 119140;  \
+			}  \
+			return 0;  \
+		case 119225:  \
+			switch (ch2) {  \
+			case 119141: return 119227;  \
+			}  \
+			return 0;  \
+		case 119226:  \
+			switch (ch2) {  \
+			case 119141: return 119228;  \
+			}  \
+			return 0;  \
+		case 119227:  \
+			switch (ch2) {  \
+			case 119150: return 119229;  \
+			case 119151: return 119231;  \
+			}  \
+			return 0;  \
+		case 119228:  \
+			switch (ch2) {  \
+			case 119150: return 119230;  \
+			case 119151: return 119232;  \
+			}  \
+			return 0;  \
+		}  \
+		return 0;  \
+	}  \
+	return 0;
 
 glui32 unigen_decomp_data[3247] = {
 	0x41, 0x300, 0x41, 0x301, 0x41, 0x302, 0x41, 0x303,
@@ -7587,7 +7587,8 @@ glui32 unigen_decomp_data[3247] = {
 	0x980b, 0x9829, 0x295b6, 0x98e2, 0x4b33, 0x9929, 0x99a7, 0x99c2,
 	0x99fe, 0x4bce, 0x29b30, 0x9b12, 0x9c40, 0x9cfd, 0x4cce, 0x4ced,
 	0x9d67, 0x2a0ce, 0x4cf8, 0x2a105, 0x2a20e, 0x2a291, 0x9ebb, 0x4d56,
-	0x9ef9, 0x9efe, 0x9f05, 0x9f0f, 0x9f16, 0x9f3b, 0x2a600, };
+	0x9ef9, 0x9efe, 0x9f05, 0x9f0f, 0x9f16, 0x9f3b, 0x2a600,
+};
 
 gli_decomp_block_t unigen_decomp_block_0x0[256] = {
 	{ 0, 0 },
@@ -11475,351 +11476,351 @@ gli_decomp_block_t unigen_decomp_block_0x2fa[256] = {
 };
 
 #define GET_DECOMP_BLOCK(ch, blockptr)  \
-switch ((glui32)(ch) >> 8) {  \
-    case 0x0:  \
-        *blockptr = unigen_decomp_block_0x0;  \
-        break;  \
-    case 0x1:  \
-        *blockptr = unigen_decomp_block_0x1;  \
-        break;  \
-    case 0x2:  \
-        *blockptr = unigen_decomp_block_0x2;  \
-        break;  \
-    case 0x3:  \
-        *blockptr = unigen_decomp_block_0x3;  \
-        break;  \
-    case 0x4:  \
-        *blockptr = unigen_decomp_block_0x4;  \
-        break;  \
-    case 0x1e:  \
-        *blockptr = unigen_decomp_block_0x1e;  \
-        break;  \
-    case 0x1f:  \
-        *blockptr = unigen_decomp_block_0x1f;  \
-        break;  \
-    case 0x22:  \
-        *blockptr = unigen_decomp_block_0x22;  \
-        break;  \
-    case 0x30:  \
-        *blockptr = unigen_decomp_block_0x30;  \
-        break;  \
-    case 0xf9:  \
-        *blockptr = unigen_decomp_block_0xf9;  \
-        break;  \
-    case 0xfa:  \
-        *blockptr = unigen_decomp_block_0xfa;  \
-        break;  \
-    case 0xfb:  \
-        *blockptr = unigen_decomp_block_0xfb;  \
-        break;  \
-    case 0x2f8:  \
-        *blockptr = unigen_decomp_block_0x2f8;  \
-        break;  \
-    case 0x2f9:  \
-        *blockptr = unigen_decomp_block_0x2f9;  \
-        break;  \
-    case 0x2fa:  \
-        *blockptr = unigen_decomp_block_0x2fa;  \
-        break;  \
-    default:  \
-        *blockptr = nullptr;  \
-}
+	switch ((glui32)(ch) >> 8) {  \
+	case 0x0:  \
+		*blockptr = unigen_decomp_block_0x0;  \
+		break;  \
+	case 0x1:  \
+		*blockptr = unigen_decomp_block_0x1;  \
+		break;  \
+	case 0x2:  \
+		*blockptr = unigen_decomp_block_0x2;  \
+		break;  \
+	case 0x3:  \
+		*blockptr = unigen_decomp_block_0x3;  \
+		break;  \
+	case 0x4:  \
+		*blockptr = unigen_decomp_block_0x4;  \
+		break;  \
+	case 0x1e:  \
+		*blockptr = unigen_decomp_block_0x1e;  \
+		break;  \
+	case 0x1f:  \
+		*blockptr = unigen_decomp_block_0x1f;  \
+		break;  \
+	case 0x22:  \
+		*blockptr = unigen_decomp_block_0x22;  \
+		break;  \
+	case 0x30:  \
+		*blockptr = unigen_decomp_block_0x30;  \
+		break;  \
+	case 0xf9:  \
+		*blockptr = unigen_decomp_block_0xf9;  \
+		break;  \
+	case 0xfa:  \
+		*blockptr = unigen_decomp_block_0xfa;  \
+		break;  \
+	case 0xfb:  \
+		*blockptr = unigen_decomp_block_0xfb;  \
+		break;  \
+	case 0x2f8:  \
+		*blockptr = unigen_decomp_block_0x2f8;  \
+		break;  \
+	case 0x2f9:  \
+		*blockptr = unigen_decomp_block_0x2f9;  \
+		break;  \
+	case 0x2fa:  \
+		*blockptr = unigen_decomp_block_0x2fa;  \
+		break;  \
+	default:  \
+		*blockptr = nullptr;  \
+	}
 
 #define GET_DECOMP_SPECIAL(ch, countptr, posptr)  \
-switch (ch) {  \
-    case 0x622:  \
-        *countptr = 2; *posptr = 686;  \
-        break;  \
-    case 0x623:  \
-        *countptr = 2; *posptr = 688;  \
-        break;  \
-    case 0x624:  \
-        *countptr = 2; *posptr = 690;  \
-        break;  \
-    case 0x625:  \
-        *countptr = 2; *posptr = 692;  \
-        break;  \
-    case 0x626:  \
-        *countptr = 2; *posptr = 694;  \
-        break;  \
-    case 0x6c0:  \
-        *countptr = 2; *posptr = 696;  \
-        break;  \
-    case 0x6c2:  \
-        *countptr = 2; *posptr = 698;  \
-        break;  \
-    case 0x6d3:  \
-        *countptr = 2; *posptr = 700;  \
-        break;  \
-    case 0x929:  \
-        *countptr = 2; *posptr = 702;  \
-        break;  \
-    case 0x931:  \
-        *countptr = 2; *posptr = 704;  \
-        break;  \
-    case 0x934:  \
-        *countptr = 2; *posptr = 706;  \
-        break;  \
-    case 0x958:  \
-        *countptr = 2; *posptr = 708;  \
-        break;  \
-    case 0x959:  \
-        *countptr = 2; *posptr = 710;  \
-        break;  \
-    case 0x95a:  \
-        *countptr = 2; *posptr = 712;  \
-        break;  \
-    case 0x95b:  \
-        *countptr = 2; *posptr = 714;  \
-        break;  \
-    case 0x95c:  \
-        *countptr = 2; *posptr = 716;  \
-        break;  \
-    case 0x95d:  \
-        *countptr = 2; *posptr = 718;  \
-        break;  \
-    case 0x95e:  \
-        *countptr = 2; *posptr = 720;  \
-        break;  \
-    case 0x95f:  \
-        *countptr = 2; *posptr = 722;  \
-        break;  \
-    case 0x9cb:  \
-        *countptr = 2; *posptr = 724;  \
-        break;  \
-    case 0x9cc:  \
-        *countptr = 2; *posptr = 726;  \
-        break;  \
-    case 0x9dc:  \
-        *countptr = 2; *posptr = 728;  \
-        break;  \
-    case 0x9dd:  \
-        *countptr = 2; *posptr = 730;  \
-        break;  \
-    case 0x9df:  \
-        *countptr = 2; *posptr = 732;  \
-        break;  \
-    case 0xa33:  \
-        *countptr = 2; *posptr = 734;  \
-        break;  \
-    case 0xa36:  \
-        *countptr = 2; *posptr = 736;  \
-        break;  \
-    case 0xa59:  \
-        *countptr = 2; *posptr = 738;  \
-        break;  \
-    case 0xa5a:  \
-        *countptr = 2; *posptr = 740;  \
-        break;  \
-    case 0xa5b:  \
-        *countptr = 2; *posptr = 742;  \
-        break;  \
-    case 0xa5e:  \
-        *countptr = 2; *posptr = 744;  \
-        break;  \
-    case 0xb48:  \
-        *countptr = 2; *posptr = 746;  \
-        break;  \
-    case 0xb4b:  \
-        *countptr = 2; *posptr = 748;  \
-        break;  \
-    case 0xb4c:  \
-        *countptr = 2; *posptr = 750;  \
-        break;  \
-    case 0xb5c:  \
-        *countptr = 2; *posptr = 752;  \
-        break;  \
-    case 0xb5d:  \
-        *countptr = 2; *posptr = 754;  \
-        break;  \
-    case 0xb94:  \
-        *countptr = 2; *posptr = 756;  \
-        break;  \
-    case 0xbca:  \
-        *countptr = 2; *posptr = 758;  \
-        break;  \
-    case 0xbcb:  \
-        *countptr = 2; *posptr = 760;  \
-        break;  \
-    case 0xbcc:  \
-        *countptr = 2; *posptr = 762;  \
-        break;  \
-    case 0xc48:  \
-        *countptr = 2; *posptr = 764;  \
-        break;  \
-    case 0xcc0:  \
-        *countptr = 2; *posptr = 766;  \
-        break;  \
-    case 0xcc7:  \
-        *countptr = 2; *posptr = 768;  \
-        break;  \
-    case 0xcc8:  \
-        *countptr = 2; *posptr = 770;  \
-        break;  \
-    case 0xcca:  \
-        *countptr = 2; *posptr = 772;  \
-        break;  \
-    case 0xccb:  \
-        *countptr = 3; *posptr = 774;  \
-        break;  \
-    case 0xd4a:  \
-        *countptr = 2; *posptr = 777;  \
-        break;  \
-    case 0xd4b:  \
-        *countptr = 2; *posptr = 779;  \
-        break;  \
-    case 0xd4c:  \
-        *countptr = 2; *posptr = 781;  \
-        break;  \
-    case 0xdda:  \
-        *countptr = 2; *posptr = 783;  \
-        break;  \
-    case 0xddc:  \
-        *countptr = 2; *posptr = 785;  \
-        break;  \
-    case 0xddd:  \
-        *countptr = 3; *posptr = 787;  \
-        break;  \
-    case 0xdde:  \
-        *countptr = 2; *posptr = 790;  \
-        break;  \
-    case 0xf43:  \
-        *countptr = 2; *posptr = 792;  \
-        break;  \
-    case 0xf4d:  \
-        *countptr = 2; *posptr = 794;  \
-        break;  \
-    case 0xf52:  \
-        *countptr = 2; *posptr = 796;  \
-        break;  \
-    case 0xf57:  \
-        *countptr = 2; *posptr = 798;  \
-        break;  \
-    case 0xf5c:  \
-        *countptr = 2; *posptr = 800;  \
-        break;  \
-    case 0xf69:  \
-        *countptr = 2; *posptr = 802;  \
-        break;  \
-    case 0xf73:  \
-        *countptr = 2; *posptr = 804;  \
-        break;  \
-    case 0xf75:  \
-        *countptr = 2; *posptr = 806;  \
-        break;  \
-    case 0xf76:  \
-        *countptr = 2; *posptr = 808;  \
-        break;  \
-    case 0xf78:  \
-        *countptr = 2; *posptr = 810;  \
-        break;  \
-    case 0xf81:  \
-        *countptr = 2; *posptr = 812;  \
-        break;  \
-    case 0xf93:  \
-        *countptr = 2; *posptr = 814;  \
-        break;  \
-    case 0xf9d:  \
-        *countptr = 2; *posptr = 816;  \
-        break;  \
-    case 0xfa2:  \
-        *countptr = 2; *posptr = 818;  \
-        break;  \
-    case 0xfa7:  \
-        *countptr = 2; *posptr = 820;  \
-        break;  \
-    case 0xfac:  \
-        *countptr = 2; *posptr = 822;  \
-        break;  \
-    case 0xfb9:  \
-        *countptr = 2; *posptr = 824;  \
-        break;  \
-    case 0x1026:  \
-        *countptr = 2; *posptr = 826;  \
-        break;  \
-    case 0x2000:  \
-        *countptr = 1; *posptr = 2037;  \
-        break;  \
-    case 0x2001:  \
-        *countptr = 1; *posptr = 2038;  \
-        break;  \
-    case 0x2126:  \
-        *countptr = 1; *posptr = 2039;  \
-        break;  \
-    case 0x212a:  \
-        *countptr = 1; *posptr = 2040;  \
-        break;  \
-    case 0x212b:  \
-        *countptr = 2; *posptr = 2041;  \
-        break;  \
-    case 0x219a:  \
-        *countptr = 2; *posptr = 2043;  \
-        break;  \
-    case 0x219b:  \
-        *countptr = 2; *posptr = 2045;  \
-        break;  \
-    case 0x21ae:  \
-        *countptr = 2; *posptr = 2047;  \
-        break;  \
-    case 0x21cd:  \
-        *countptr = 2; *posptr = 2049;  \
-        break;  \
-    case 0x21ce:  \
-        *countptr = 2; *posptr = 2051;  \
-        break;  \
-    case 0x21cf:  \
-        *countptr = 2; *posptr = 2053;  \
-        break;  \
-    case 0x2329:  \
-        *countptr = 1; *posptr = 2131;  \
-        break;  \
-    case 0x232a:  \
-        *countptr = 1; *posptr = 2132;  \
-        break;  \
-    case 0x2adc:  \
-        *countptr = 2; *posptr = 2133;  \
-        break;  \
-    case 0x1d15e:  \
-        *countptr = 2; *posptr = 2670;  \
-        break;  \
-    case 0x1d15f:  \
-        *countptr = 2; *posptr = 2672;  \
-        break;  \
-    case 0x1d160:  \
-        *countptr = 3; *posptr = 2674;  \
-        break;  \
-    case 0x1d161:  \
-        *countptr = 3; *posptr = 2677;  \
-        break;  \
-    case 0x1d162:  \
-        *countptr = 3; *posptr = 2680;  \
-        break;  \
-    case 0x1d163:  \
-        *countptr = 3; *posptr = 2683;  \
-        break;  \
-    case 0x1d164:  \
-        *countptr = 3; *posptr = 2686;  \
-        break;  \
-    case 0x1d1bb:  \
-        *countptr = 2; *posptr = 2689;  \
-        break;  \
-    case 0x1d1bc:  \
-        *countptr = 2; *posptr = 2691;  \
-        break;  \
-    case 0x1d1bd:  \
-        *countptr = 3; *posptr = 2693;  \
-        break;  \
-    case 0x1d1be:  \
-        *countptr = 3; *posptr = 2696;  \
-        break;  \
-    case 0x1d1bf:  \
-        *countptr = 3; *posptr = 2699;  \
-        break;  \
-    case 0x1d1c0:  \
-        *countptr = 3; *posptr = 2702;  \
-        break;  \
-    default:  \
-        *countptr = 0;  \
-}
+	switch (ch) {  \
+	case 0x622:  \
+		*countptr = 2; *posptr = 686;  \
+		break;  \
+	case 0x623:  \
+		*countptr = 2; *posptr = 688;  \
+		break;  \
+	case 0x624:  \
+		*countptr = 2; *posptr = 690;  \
+		break;  \
+	case 0x625:  \
+		*countptr = 2; *posptr = 692;  \
+		break;  \
+	case 0x626:  \
+		*countptr = 2; *posptr = 694;  \
+		break;  \
+	case 0x6c0:  \
+		*countptr = 2; *posptr = 696;  \
+		break;  \
+	case 0x6c2:  \
+		*countptr = 2; *posptr = 698;  \
+		break;  \
+	case 0x6d3:  \
+		*countptr = 2; *posptr = 700;  \
+		break;  \
+	case 0x929:  \
+		*countptr = 2; *posptr = 702;  \
+		break;  \
+	case 0x931:  \
+		*countptr = 2; *posptr = 704;  \
+		break;  \
+	case 0x934:  \
+		*countptr = 2; *posptr = 706;  \
+		break;  \
+	case 0x958:  \
+		*countptr = 2; *posptr = 708;  \
+		break;  \
+	case 0x959:  \
+		*countptr = 2; *posptr = 710;  \
+		break;  \
+	case 0x95a:  \
+		*countptr = 2; *posptr = 712;  \
+		break;  \
+	case 0x95b:  \
+		*countptr = 2; *posptr = 714;  \
+		break;  \
+	case 0x95c:  \
+		*countptr = 2; *posptr = 716;  \
+		break;  \
+	case 0x95d:  \
+		*countptr = 2; *posptr = 718;  \
+		break;  \
+	case 0x95e:  \
+		*countptr = 2; *posptr = 720;  \
+		break;  \
+	case 0x95f:  \
+		*countptr = 2; *posptr = 722;  \
+		break;  \
+	case 0x9cb:  \
+		*countptr = 2; *posptr = 724;  \
+		break;  \
+	case 0x9cc:  \
+		*countptr = 2; *posptr = 726;  \
+		break;  \
+	case 0x9dc:  \
+		*countptr = 2; *posptr = 728;  \
+		break;  \
+	case 0x9dd:  \
+		*countptr = 2; *posptr = 730;  \
+		break;  \
+	case 0x9df:  \
+		*countptr = 2; *posptr = 732;  \
+		break;  \
+	case 0xa33:  \
+		*countptr = 2; *posptr = 734;  \
+		break;  \
+	case 0xa36:  \
+		*countptr = 2; *posptr = 736;  \
+		break;  \
+	case 0xa59:  \
+		*countptr = 2; *posptr = 738;  \
+		break;  \
+	case 0xa5a:  \
+		*countptr = 2; *posptr = 740;  \
+		break;  \
+	case 0xa5b:  \
+		*countptr = 2; *posptr = 742;  \
+		break;  \
+	case 0xa5e:  \
+		*countptr = 2; *posptr = 744;  \
+		break;  \
+	case 0xb48:  \
+		*countptr = 2; *posptr = 746;  \
+		break;  \
+	case 0xb4b:  \
+		*countptr = 2; *posptr = 748;  \
+		break;  \
+	case 0xb4c:  \
+		*countptr = 2; *posptr = 750;  \
+		break;  \
+	case 0xb5c:  \
+		*countptr = 2; *posptr = 752;  \
+		break;  \
+	case 0xb5d:  \
+		*countptr = 2; *posptr = 754;  \
+		break;  \
+	case 0xb94:  \
+		*countptr = 2; *posptr = 756;  \
+		break;  \
+	case 0xbca:  \
+		*countptr = 2; *posptr = 758;  \
+		break;  \
+	case 0xbcb:  \
+		*countptr = 2; *posptr = 760;  \
+		break;  \
+	case 0xbcc:  \
+		*countptr = 2; *posptr = 762;  \
+		break;  \
+	case 0xc48:  \
+		*countptr = 2; *posptr = 764;  \
+		break;  \
+	case 0xcc0:  \
+		*countptr = 2; *posptr = 766;  \
+		break;  \
+	case 0xcc7:  \
+		*countptr = 2; *posptr = 768;  \
+		break;  \
+	case 0xcc8:  \
+		*countptr = 2; *posptr = 770;  \
+		break;  \
+	case 0xcca:  \
+		*countptr = 2; *posptr = 772;  \
+		break;  \
+	case 0xccb:  \
+		*countptr = 3; *posptr = 774;  \
+		break;  \
+	case 0xd4a:  \
+		*countptr = 2; *posptr = 777;  \
+		break;  \
+	case 0xd4b:  \
+		*countptr = 2; *posptr = 779;  \
+		break;  \
+	case 0xd4c:  \
+		*countptr = 2; *posptr = 781;  \
+		break;  \
+	case 0xdda:  \
+		*countptr = 2; *posptr = 783;  \
+		break;  \
+	case 0xddc:  \
+		*countptr = 2; *posptr = 785;  \
+		break;  \
+	case 0xddd:  \
+		*countptr = 3; *posptr = 787;  \
+		break;  \
+	case 0xdde:  \
+		*countptr = 2; *posptr = 790;  \
+		break;  \
+	case 0xf43:  \
+		*countptr = 2; *posptr = 792;  \
+		break;  \
+	case 0xf4d:  \
+		*countptr = 2; *posptr = 794;  \
+		break;  \
+	case 0xf52:  \
+		*countptr = 2; *posptr = 796;  \
+		break;  \
+	case 0xf57:  \
+		*countptr = 2; *posptr = 798;  \
+		break;  \
+	case 0xf5c:  \
+		*countptr = 2; *posptr = 800;  \
+		break;  \
+	case 0xf69:  \
+		*countptr = 2; *posptr = 802;  \
+		break;  \
+	case 0xf73:  \
+		*countptr = 2; *posptr = 804;  \
+		break;  \
+	case 0xf75:  \
+		*countptr = 2; *posptr = 806;  \
+		break;  \
+	case 0xf76:  \
+		*countptr = 2; *posptr = 808;  \
+		break;  \
+	case 0xf78:  \
+		*countptr = 2; *posptr = 810;  \
+		break;  \
+	case 0xf81:  \
+		*countptr = 2; *posptr = 812;  \
+		break;  \
+	case 0xf93:  \
+		*countptr = 2; *posptr = 814;  \
+		break;  \
+	case 0xf9d:  \
+		*countptr = 2; *posptr = 816;  \
+		break;  \
+	case 0xfa2:  \
+		*countptr = 2; *posptr = 818;  \
+		break;  \
+	case 0xfa7:  \
+		*countptr = 2; *posptr = 820;  \
+		break;  \
+	case 0xfac:  \
+		*countptr = 2; *posptr = 822;  \
+		break;  \
+	case 0xfb9:  \
+		*countptr = 2; *posptr = 824;  \
+		break;  \
+	case 0x1026:  \
+		*countptr = 2; *posptr = 826;  \
+		break;  \
+	case 0x2000:  \
+		*countptr = 1; *posptr = 2037;  \
+		break;  \
+	case 0x2001:  \
+		*countptr = 1; *posptr = 2038;  \
+		break;  \
+	case 0x2126:  \
+		*countptr = 1; *posptr = 2039;  \
+		break;  \
+	case 0x212a:  \
+		*countptr = 1; *posptr = 2040;  \
+		break;  \
+	case 0x212b:  \
+		*countptr = 2; *posptr = 2041;  \
+		break;  \
+	case 0x219a:  \
+		*countptr = 2; *posptr = 2043;  \
+		break;  \
+	case 0x219b:  \
+		*countptr = 2; *posptr = 2045;  \
+		break;  \
+	case 0x21ae:  \
+		*countptr = 2; *posptr = 2047;  \
+		break;  \
+	case 0x21cd:  \
+		*countptr = 2; *posptr = 2049;  \
+		break;  \
+	case 0x21ce:  \
+		*countptr = 2; *posptr = 2051;  \
+		break;  \
+	case 0x21cf:  \
+		*countptr = 2; *posptr = 2053;  \
+		break;  \
+	case 0x2329:  \
+		*countptr = 1; *posptr = 2131;  \
+		break;  \
+	case 0x232a:  \
+		*countptr = 1; *posptr = 2132;  \
+		break;  \
+	case 0x2adc:  \
+		*countptr = 2; *posptr = 2133;  \
+		break;  \
+	case 0x1d15e:  \
+		*countptr = 2; *posptr = 2670;  \
+		break;  \
+	case 0x1d15f:  \
+		*countptr = 2; *posptr = 2672;  \
+		break;  \
+	case 0x1d160:  \
+		*countptr = 3; *posptr = 2674;  \
+		break;  \
+	case 0x1d161:  \
+		*countptr = 3; *posptr = 2677;  \
+		break;  \
+	case 0x1d162:  \
+		*countptr = 3; *posptr = 2680;  \
+		break;  \
+	case 0x1d163:  \
+		*countptr = 3; *posptr = 2683;  \
+		break;  \
+	case 0x1d164:  \
+		*countptr = 3; *posptr = 2686;  \
+		break;  \
+	case 0x1d1bb:  \
+		*countptr = 2; *posptr = 2689;  \
+		break;  \
+	case 0x1d1bc:  \
+		*countptr = 2; *posptr = 2691;  \
+		break;  \
+	case 0x1d1bd:  \
+		*countptr = 3; *posptr = 2693;  \
+		break;  \
+	case 0x1d1be:  \
+		*countptr = 3; *posptr = 2696;  \
+		break;  \
+	case 0x1d1bf:  \
+		*countptr = 3; *posptr = 2699;  \
+		break;  \
+	case 0x1d1c0:  \
+		*countptr = 3; *posptr = 2702;  \
+		break;  \
+	default:  \
+		*countptr = 0;  \
+	}
 
 } // End of namespace Gargoyle

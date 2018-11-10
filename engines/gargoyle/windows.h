@@ -63,7 +63,9 @@ public:
 		/**
 		 * Dereference
 		 */
-		Window *operator*() const { return _current; }
+		Window *operator*() const {
+			return _current;
+		}
 
 		/**
 		 * Move to next
@@ -73,17 +75,21 @@ public:
 		/**
 		 * Equality test
 		 */
-		bool operator==(const iterator &i) { return _current == i._current; }
+		bool operator==(const iterator &i) {
+			return _current == i._current;
+		}
 
 		/**
 		 * Inequality test
 		 */
-		bool operator!=(const iterator &i) { return _current != i._current; }
+		bool operator!=(const iterator &i) {
+			return _current != i._current;
+		}
 	};
 	friend class iterator;
 private:
 	Graphics::Screen *_screen;
-	Window * _windowList;      ///< List of all windows
+	Window *_windowList;       ///< List of all windows
 	Window *_rootWin;          ///< The topmost window
 	Window *_focusWin;         ///< The window selected by the player
 	bool _drawSelect;
@@ -149,7 +155,7 @@ public:
 	 * Open a new window
 	 */
 	Window *windowOpen(Window *splitwin, glui32 method, glui32 size,
-		glui32 wintype, glui32 rock);
+	                   glui32 wintype, glui32 rock);
 
 	/**
 	 * Close an existing window
@@ -159,17 +165,23 @@ public:
 	/**
 	 * Return the root window
 	 */
-	Window *getRoot() const { return _rootWin; }
+	Window *getRoot() const {
+		return _rootWin;
+	}
 
 	/**
 	 * Gets the focused window
 	 */
-	Window *getFocusWindow() const { return _focusWin; }
+	Window *getFocusWindow() const {
+		return _focusWin;
+	}
 
 	/**
 	 * Setst the focused window
 	 */
-	void setFocus(Window *win) { _focusWin = win; }
+	void setFocus(Window *win) {
+		_focusWin = win;
+	}
 
 	/**
 	 * Pick first window which might want input. This is called after every keystroke.
@@ -188,7 +200,9 @@ public:
 
 	void selectionChanged();
 
-	void clearClaimSelect() { _claimSelect = false; }
+	void clearClaimSelect() {
+		_claimSelect = false;
+	}
 
 	/**
 	 * Rearrange windows
@@ -207,12 +221,16 @@ public:
 	/**
 	 * Get an iterator that will move over the tree
 	 */
-	iterator begin() { return iterator(this, _windowList); }
+	iterator begin() {
+		return iterator(this, _windowList);
+	}
 
 	/**
 	 * Returns the end point of window iteration
 	 */
-	iterator end() { return iterator(this, nullptr); }
+	iterator end() {
+		return iterator(this, nullptr);
+	}
 };
 
 /**
@@ -272,14 +290,14 @@ struct WindowStyle {
  * Window attributes
  */
 struct Attributes {
-    unsigned fgset   : 1;
-    unsigned bgset   : 1;
-    unsigned reverse : 1;
-    unsigned         : 1;
-    unsigned style   : 4;
-    unsigned fgcolor : 24;
-    unsigned bgcolor : 24;
-    unsigned hyper   : 32;
+	unsigned fgset   : 1;
+	unsigned bgset   : 1;
+	unsigned reverse : 1;
+	unsigned         : 1;
+	unsigned style   : 4;
+	unsigned fgcolor : 24;
+	unsigned bgcolor : 24;
+	unsigned hyper   : 32;
 
 	/**
 	 * Constructor
@@ -306,16 +324,16 @@ struct Attributes {
 	 */
 	bool operator==(const Attributes &src) {
 		return fgset == src.fgset && bgset == src.bgset && reverse == src.reverse
-			&& style == src.style && fgcolor == src.fgcolor && bgcolor == src.bgcolor
-			&& hyper == src.hyper;
+		       && style == src.style && fgcolor == src.fgcolor && bgcolor == src.bgcolor
+		       && hyper == src.hyper;
 	}
 	/**
 	 * Inequality comparison
 	 */
 	bool operator!=(const Attributes &src) {
 		return fgset != src.fgset || bgset != src.bgset || reverse != src.reverse
-			|| style != src.style || fgcolor != src.fgcolor || bgcolor != src.bgcolor
-			|| hyper != src.hyper;
+		       || style != src.style || fgcolor != src.fgcolor || bgcolor != src.bgcolor
+		       || hyper != src.hyper;
 	}
 
 	/**
@@ -331,7 +349,9 @@ struct Attributes {
 	/**
 	 * Get the font for the current font style
 	 */
-	FACES attrFont(WindowStyle *styles) const { return styles[style].font; }
+	FACES attrFont(WindowStyle *styles) const {
+		return styles[style].font;
+	}
 };
 
 /**
@@ -391,12 +411,16 @@ public:
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Rect &box) { _bbox = box; }
+	virtual void rearrange(const Rect &box) {
+		_bbox = box;
+	}
 
 	/**
 	 * Get window split size within parent pair window
 	 */
-	virtual glui32 getSplit(glui32 size, bool vertical) const { return 0; }
+	virtual glui32 getSplit(glui32 size, bool vertical) const {
+		return 0;
+	}
 
 	/**
 	 * Write a character
@@ -406,7 +430,9 @@ public:
 	/**
 	 * Unput a unicode character
 	 */
-	virtual bool unputCharUni(uint32 ch) { return false; }
+	virtual bool unputCharUni(uint32 ch) {
+		return false;
+	}
 
 	/**
 	 * Move the cursor

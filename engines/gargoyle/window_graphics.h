@@ -53,7 +53,7 @@ public:
 	virtual ~GraphicsWindow();
 
 	glui32 drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int scale,
-		glui32 imagewidth, glui32 imageheight);
+	                   glui32 imagewidth, glui32 imageheight);
 
 	/**
 	 * Rearranges the window
@@ -75,16 +75,24 @@ public:
 	/**
 	 * Cancel a mouse event
 	 */
-	virtual void cancelMouseEvent() override { _mouseRequest = false; }
+	virtual void cancelMouseEvent() override {
+		_mouseRequest = false;
+	}
 
 	/**
 	 * Cancel a hyperlink event
 	 */
-	virtual void cancelHyperlinkEvent() override { _hyperRequest = false; }
+	virtual void cancelHyperlinkEvent() override {
+		_hyperRequest = false;
+	}
 
-	virtual void requestMouseEvent() override { _mouseRequest = true; }
+	virtual void requestMouseEvent() override {
+		_mouseRequest = true;
+	}
 
-	virtual void requestHyperlinkEvent() override { _hyperRequest = true; }
+	virtual void requestHyperlinkEvent() override {
+		_hyperRequest = true;
+	}
 
 	/**
 	 * Redraw the window

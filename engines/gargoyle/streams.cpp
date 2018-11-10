@@ -33,8 +33,8 @@
 namespace Gargoyle {
 
 Stream::Stream(Streams *streams, bool readable, bool writable, uint32 rock, bool unicode) :
-		_streams(streams), _readable(readable), _writable(writable), _readCount(0),
-		_writeCount(0), _prev(nullptr), _next(nullptr), _rock(0) {
+	_streams(streams), _readable(readable), _writable(writable), _readCount(0),
+	_writeCount(0), _prev(nullptr), _next(nullptr), _rock(0) {
 }
 
 Stream::~Stream() {
@@ -174,7 +174,7 @@ void WindowStream::unputBuffer(const char *buf, size_t len) {
 		}
 	}
 
-	for (lx = 0, cx = buf + len - 1; lx<len; lx++, cx--) {
+	for (lx = 0, cx = buf + len - 1; lx < len; lx++, cx--) {
 		if (!_window->unputCharUni(*cx))
 			break;
 		_writeCount--;
@@ -200,7 +200,7 @@ void WindowStream::unputBufferUni(const glui32 *buf, size_t len) {
 		}
 	}
 
-	for (lx = 0, cx = buf + len - 1; lx<len; lx++, cx--) {
+	for (lx = 0, cx = buf + len - 1; lx < len; lx++, cx--) {
 		if (!_window->unputCharUni(*cx))
 			break;
 		_writeCount--;
@@ -245,7 +245,7 @@ void WindowStream::setZColors(glui32 fg, glui32 bg) {
 			_window->_attr.fgcolor = 0;
 			Windows::_overrideFgSet = false;
 			Windows::_overrideFgVal = 0;
-			
+
 			Common::copy(g_conf->_moreSave, g_conf->_moreSave + 3, g_conf->_moreColor);
 			Common::copy(g_conf->_caretSave, g_conf->_caretSave + 3, g_conf->_caretColor);
 			Common::copy(g_conf->_linkSave, g_conf->_linkSave + 3, g_conf->_linkColor);
@@ -254,7 +254,7 @@ void WindowStream::setZColors(glui32 fg, glui32 bg) {
 			_window->_attr.fgcolor = fg;
 			Windows::_overrideFgSet = true;
 			Windows::_overrideFgVal = fg;
-			
+
 			Common::copy(fore, fore + 3, g_conf->_moreColor);
 			Common::copy(fore, fore + 3, g_conf->_caretColor);
 			Common::copy(fore, fore + 3, g_conf->_linkColor);
@@ -302,8 +302,8 @@ void WindowStream::setReverseVideo(bool reverse) {
 /*--------------------------------------------------------------------------*/
 
 MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint32 rock, bool unicode) :
-		Stream(streams, mode != filemode_Write, mode != filemode_Read, rock, unicode),
-		_buf(buf), _bufLen(buflen), _bufPtr(buf) {
+	Stream(streams, mode != filemode_Write, mode != filemode_Read, rock, unicode),
+	_buf(buf), _bufLen(buflen), _bufPtr(buf) {
 	assert(_buf && _bufLen);
 	assert(mode == filemode_Read || mode == filemode_Write || mode == filemode_ReadWrite);
 
@@ -363,8 +363,7 @@ void MemoryStream::putBuffer(const char *buf, size_t len) {
 	} else {
 		if (!_unicode) {
 			unsigned char *bp = (unsigned char *)_bufPtr;
-			if (bp + len > (unsigned char *)_bufEnd)
-			{
+			if (bp + len > (unsigned char *)_bufEnd) {
 				lx = (bp + len) - (unsigned char *)_bufEnd;
 				if (lx < len)
 					len -= lx;
@@ -374,7 +373,7 @@ void MemoryStream::putBuffer(const char *buf, size_t len) {
 			if (len) {
 				memmove(bp, buf, len);
 				bp += len;
-				if (bp >(unsigned char *)_bufEof)
+				if (bp > (unsigned char *)_bufEof)
 					_bufEof = bp;
 			}
 			_bufPtr = bp;
@@ -392,7 +391,7 @@ void MemoryStream::putBuffer(const char *buf, size_t len) {
 				for (i = 0; i < len; i++)
 					bp[i] = buf[i];
 				bp += len;
-				if (bp >(glui32 *)_bufEof)
+				if (bp > (glui32 *)_bufEof)
 					_bufEof = bp;
 			}
 			_bufPtr = bp;
@@ -444,7 +443,7 @@ void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
 			if (len) {
 				memmove(bp, buf, len * 4);
 				bp += len;
-				if (bp >(glui32 *)_bufEof)
+				if (bp > (glui32 *)_bufEof)
 					_bufEof = bp;
 			}
 			_bufPtr = bp;
@@ -460,8 +459,7 @@ glui32 MemoryStream::getPosition() const {
 }
 
 void MemoryStream::setPosition(glui32 pos, glui32 seekMode) {
-	if (!_unicode)
-	{
+	if (!_unicode) {
 		if (seekMode == seekmode_Current)
 			pos = ((unsigned char *)_bufPtr - (unsigned char *)_buf) + pos;
 		else if (seekMode == seekmode_End)
@@ -556,7 +554,7 @@ glui32 MemoryStream::getBuffer(char *buf, glui32 len) {
 			if (len) {
 				memcpy(buf, bp, len);
 				bp += len;
-				if (bp >(unsigned char *)_bufEof)
+				if (bp > (unsigned char *)_bufEof)
 					_bufEof = bp;
 			}
 
@@ -601,8 +599,7 @@ glui32 MemoryStream::getBufferUni(glui32 *buf, glui32 len) {
 	} else {
 		if (!_unicode) {
 			unsigned char *bp = (unsigned char *)_bufPtr;
-			if (bp + len > (unsigned char *)_bufEnd)
-			{
+			if (bp + len > (unsigned char *)_bufEnd) {
 				glui32 lx;
 				lx = (bp + len) - (unsigned char *)_bufEnd;
 				if (lx < len)
@@ -615,7 +612,7 @@ glui32 MemoryStream::getBufferUni(glui32 *buf, glui32 len) {
 				for (i = 0; i < len; i++)
 					buf[i] = bp[i];
 				bp += len;
-				if (bp >(unsigned char *)_bufEof)
+				if (bp > (unsigned char *)_bufEof)
 					_bufEof = bp;
 			}
 			_readCount += len;
@@ -633,7 +630,7 @@ glui32 MemoryStream::getBufferUni(glui32 *buf, glui32 len) {
 			if (len) {
 				memcpy(buf, bp, len * 4);
 				bp += len;
-				if (bp >(glui32 *)_bufEof)
+				if (bp > (glui32 *)_bufEof)
 					_bufEof = bp;
 			}
 			_readCount += len;
@@ -761,8 +758,8 @@ glui32 MemoryStream::getLineUni(glui32 *ubuf, glui32 len) {
 /*--------------------------------------------------------------------------*/
 
 FileStream::FileStream(Streams *streams, frefid_t fref, glui32 fmode, glui32 rock, bool unicode) :
-		Stream(streams, fmode == filemode_Read, fmode != filemode_Read, rock, unicode),  _lastOp(0),
-		_textFile(fref->_textMode), _inFile(nullptr), _outFile(nullptr), _inStream(nullptr) {
+	Stream(streams, fmode == filemode_Read, fmode != filemode_Read, rock, unicode),  _lastOp(0),
+	_textFile(fref->_textMode), _inFile(nullptr), _outFile(nullptr), _inStream(nullptr) {
 	Common::String fname = fref->_slotNumber == -1 ? fref->_filename : fref->getSaveName();
 
 	if (fmode == filemode_Write || fmode == filemode_ReadWrite || fmode == filemode_WriteAppend) {
@@ -789,7 +786,7 @@ FileStream::FileStream(Streams *streams, frefid_t fref, glui32 fmode, glui32 roc
 			if (!readSavegameHeader(_inStream, header))
 				error("Invalid savegame");
 			if (header._interpType != g_vm->getInterpreterType() || header._language != g_vm->getLanguage()
-				|| header._md5 != g_vm->getGameMD5())
+			        || header._md5 != g_vm->getGameMD5())
 				error("Savegame is for a different game");
 
 			g_vm->_events->setTotalPlayTicks(header._totalFrames);
@@ -873,7 +870,7 @@ void FileStream::putBufferUni(const uint32 *buf, size_t len) {
 
 
 	ensureOp(filemode_Write);
-	for (size_t lx = 0; lx<len; lx++) {
+	for (size_t lx = 0; lx < len; lx++) {
 		glui32 ch = buf[lx];
 		if (!_unicode) {
 			if (ch >= 0x100)
@@ -1005,7 +1002,7 @@ void FileStream::setPosition(glui32 pos, glui32 seekMode) {
 	_lastOp = 0;
 	if (_unicode)
 		pos *= 4;
-	
+
 	if (_inStream) {
 		_inStream->seek(pos, SEEK_SET);
 	} else {
@@ -1100,7 +1097,7 @@ glui32 FileStream::getBuffer(char *buf, glui32 len) {
 		return res;
 	} else if (_textFile) {
 		glui32 lx;
-		for (lx = 0; lx<len; lx++) {
+		for (lx = 0; lx < len; lx++) {
 			glui32 ch;
 			ch = getCharUtf8();
 			if (ch == -1)
@@ -1148,7 +1145,7 @@ glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
 	ensureOp(filemode_Read);
 	if (!_unicode) {
 		glui32 lx;
-		for (lx = 0; lx<len; lx++) {
+		for (lx = 0; lx < len; lx++) {
 			int res;
 			glui32 ch;
 			res = _inStream->readByte();
@@ -1161,7 +1158,7 @@ glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
 		return lx;
 	} else if (_textFile) {
 		glui32 lx;
-		for (lx = 0; lx<len; lx++) {
+		for (lx = 0; lx < len; lx++) {
 			glui32 ch;
 			ch = getCharUtf8();
 			if (ch == -1)
@@ -1172,8 +1169,7 @@ glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
 		return lx;
 	} else {
 		glui32 lx;
-		for (lx = 0; lx<len; lx++)
-		{
+		for (lx = 0; lx < len; lx++) {
 			int res;
 			glui32 ch;
 			res = _inStream->readByte();
@@ -1477,8 +1473,7 @@ frefid_t Streams::createByPrompt(glui32 usage, FileMode fmode, glui32 rock) {
 				Common::String desc = dialog->getResultString();
 				return createRef(slot, desc, usage, rock);
 			}
-		}
-		else if (fmode == filemode_Read) {
+		} else if (fmode == filemode_Read) {
 			// Load a savegame slot
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 
@@ -1486,8 +1481,7 @@ frefid_t Streams::createByPrompt(glui32 usage, FileMode fmode, glui32 rock) {
 			if (slot >= 0) {
 				return createRef(slot, "", usage, rock);
 			}
-		}
-		else {
+		} else {
 			error("Unsupport file mode");
 		}
 		break;
@@ -1527,7 +1521,7 @@ frefid_t Streams::createRef(const Common::String &filename, glui32 usage, glui32
 
 frefid_t Streams::createTemp(glui32 usage, glui32 rock) {
 	return createRef(Common::String::format("%s.tmp", g_vm->getTargetName().c_str()),
-		usage, rock);
+	                 usage, rock);
 }
 
 frefid_t Streams::createFromRef(frefid_t fref, glui32 usage, glui32 rock) {
@@ -1579,8 +1573,7 @@ bool FileReference::exists() const {
 		if (Common::File::exists(_filename))
 			return true;
 		filename = _filename;
-	}
-	else {
+	} else {
 		filename = getSaveName();
 	}
 

@@ -57,7 +57,7 @@ private:
 	void touch(int line);
 
 	/**
-	 * Return or enter, during line input. Ends line input. 
+	 * Return or enter, during line input. Ends line input.
 	 */
 	void acceptLine(glui32 keycode);
 public:
@@ -66,7 +66,7 @@ public:
 
 	int _curX, _curY;    ///< the window cursor position
 
-						 ///< for line input
+	///< for line input
 	void *_inBuf;        ///< unsigned char* for latin1, glui32* for unicode
 	int _inOrgX, _inOrgY;
 	int _inMax;
@@ -125,7 +125,9 @@ public:
 	/**
 	 * Cancel a hyperlink event
 	 */
-	virtual void cancelHyperlinkEvent() override { _hyperRequest = false; }
+	virtual void cancelHyperlinkEvent() override {
+		_hyperRequest = false;
+	}
 
 	/**
 	 * Redraw the window
@@ -138,7 +140,9 @@ public:
 
 	virtual void getSize(glui32 *width, glui32 *height) const override;
 
-	virtual void requestCharEvent() override { _charRequest = true; }
+	virtual void requestCharEvent() override {
+		_charRequest = true;
+	}
 
 	/**
 	 * Prepare for inputing a line
@@ -158,20 +162,32 @@ public:
 	/**
 	 * Cancel a mouse event
 	 */
-	virtual void cancelMouseEvent() override { _mouseRequest = false; }
+	virtual void cancelMouseEvent() override {
+		_mouseRequest = false;
+	}
 
-	virtual void requestCharEventUni() override { _charRequestUni = true; }
+	virtual void requestCharEventUni() override {
+		_charRequestUni = true;
+	}
 
-	virtual void requestMouseEvent() override { _mouseRequest = true; }
+	virtual void requestMouseEvent() override {
+		_mouseRequest = true;
+	}
 
-	virtual void requestHyperlinkEvent() override { _hyperRequest = true; }
+	virtual void requestHyperlinkEvent() override {
+		_hyperRequest = true;
+	}
 
-	virtual void cancelCharEvent() override { _charRequest = _charRequestUni = false; }
+	virtual void cancelCharEvent() override {
+		_charRequest = _charRequestUni = false;
+	}
 
 	/**
 	 * Returns a pointer to the styles for the window
 	 */
-	virtual const WindowStyle *getStyles() const override { return _styles; }
+	virtual const WindowStyle *getStyles() const override {
+		return _styles;
+	}
 };
 
 } // End of namespace Gargoyle

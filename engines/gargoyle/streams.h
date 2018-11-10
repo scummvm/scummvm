@@ -159,7 +159,9 @@ public:
 	/**
 	 * Get the rock value for the stream
 	 */
-	uint32 getRock() const { return _rock; }
+	uint32 getRock() const {
+		return _rock;
+	}
 
 	/**
 	 * Fill out the total amount read and/or written
@@ -217,7 +219,9 @@ public:
 		putCharUni('\n');
 	}
 
-	virtual glui32 getPosition() const { return 0; }
+	virtual glui32 getPosition() const {
+		return 0;
+	}
 
 	virtual void setPosition(glui32 pos, glui32 seekMode) {}
 
@@ -226,32 +230,44 @@ public:
 	/**
 	 * Get a character from the stream
 	 */
-	virtual glsi32 getChar() { return -1; }
+	virtual glsi32 getChar() {
+		return -1;
+	}
 
 	/**
 	 * Get a unicode character from the stream
 	 */
-	virtual glsi32 getCharUni() { return -1; }
+	virtual glsi32 getCharUni() {
+		return -1;
+	}
 
 	/**
 	 * Get a buffer
 	 */
-	virtual glui32 getBuffer(char *buf, glui32 len) { return 0; }
+	virtual glui32 getBuffer(char *buf, glui32 len) {
+		return 0;
+	}
 
 	/**
 	 * Get a unicode buffer
 	 */
-	virtual glui32 getBufferUni(glui32 *buf, glui32 len) { return 0; }
+	virtual glui32 getBufferUni(glui32 *buf, glui32 len) {
+		return 0;
+	}
 
 	/**
 	 * Get a line
 	 */
-	virtual glui32 getLine(char *buf, glui32 len) { return 0; }
+	virtual glui32 getLine(char *buf, glui32 len) {
+		return 0;
+	}
 
 	/**
 	 * Get a unicode line
 	 */
-	virtual glui32 getLineUni(glui32 *ubuf, glui32 len) { return 0; }
+	virtual glui32 getLineUni(glui32 *ubuf, glui32 len) {
+		return 0;
+	}
 
 	/**
 	 * Set a hyperlink
@@ -341,11 +357,11 @@ public:
  */
 class MemoryStream : public Stream {
 private:
-	void *_buf;		///< unsigned char* for latin1, glui32* for unicode
+	void *_buf;     ///< unsigned char* for latin1, glui32* for unicode
 	void *_bufPtr;
 	void *_bufEnd;
 	void *_bufEof;
-	size_t _bufLen;	///< # of bytes for latin1, # of 4-byte words for unicode
+	size_t _bufLen; ///< # of bytes for latin1, # of 4-byte words for unicode
 public:
 	/**
 	 * Constructor
@@ -416,7 +432,7 @@ private:
 	Common::OutSaveFile *_outFile;
 	Common::InSaveFile *_inFile;
 	Common::SeekableReadStream *_inStream;
-	uint32 _lastOp;					///< 0, filemode_Write, or filemode_Read
+	uint32 _lastOp;                 ///< 0, filemode_Write, or filemode_Read
 	bool _textFile;
 private:
 	/**
@@ -577,7 +593,9 @@ public:
 	/**
 	 * Gets the current output stream
 	 */
-	Stream *getCurrent() const { return _currentStream; }
+	Stream *getCurrent() const {
+		return _currentStream;
+	}
 
 	/**
 	 * Prompt for a savegame to load or save, and populate a file reference from the result
