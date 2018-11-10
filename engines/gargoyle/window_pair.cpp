@@ -28,13 +28,13 @@
 namespace Gargoyle {
 
 PairWindow::PairWindow(Windows *windows, glui32 method, Window *key, glui32 size) :
-		Window(windows, 0),
-		_dir(method & winmethod_DirMask),
-		_division(method & winmethod_DivisionMask),
-		_wBorder((method & winmethod_BorderMask) == winmethod_Border),
-		_vertical(_dir == winmethod_Left || _dir == winmethod_Right),
-		_backward(_dir == winmethod_Left || _dir == winmethod_Above),
-		_key(key), _size(size), _keyDamage(0), _child1(nullptr), _child2(nullptr) {
+	Window(windows, 0),
+	_dir(method & winmethod_DirMask),
+	_division(method & winmethod_DivisionMask),
+	_wBorder((method & winmethod_BorderMask) == winmethod_Border),
+	_vertical(_dir == winmethod_Left || _dir == winmethod_Right),
+	_backward(_dir == winmethod_Left || _dir == winmethod_Above),
+	_key(key), _size(size), _keyDamage(0), _child1(nullptr), _child2(nullptr) {
 	_type = wintype_Pair;
 }
 
@@ -128,19 +128,19 @@ void PairWindow::redraw() {
 
 	Window *child = !_backward ? _child1 : _child2;
 	Rect box(child->_bbox.left, child->_yAdj ? child->_bbox.top - child->_yAdj : child->_bbox.top,
-		child->_bbox.right, child->_bbox.bottom);
+	         child->_bbox.right, child->_bbox.bottom);
 
 	if (_vertical) {
 		int xBord = _wBorder ? g_conf->_wBorderX : 0;
 		int xPad = (g_conf->_wPaddingX - xBord) / 2;
-		
+
 		g_vm->_screen->fillRect(Rect(box.right + xPad, box.top, box.right + xPad + xBord, box.bottom),
-			g_conf->_borderColor);
+		                        g_conf->_borderColor);
 	} else {
 		int yBord = _wBorder ? g_conf->_wBorderY : 0;
 		int yPad = (g_conf->_wPaddingY - yBord) / 2;
 		g_vm->_screen->fillRect(Rect(box.left, box.bottom + yPad, box.right, box.bottom + yPad + yBord),
-			g_conf->_borderColor);
+		                        g_conf->_borderColor);
 	}
 }
 
@@ -200,7 +200,7 @@ void PairWindow::setArrangement(glui32 method, glui32 size, Window *keyWin) {
 	}
 
 	if (keyWin && dynamic_cast<BlankWindow *>(keyWin)
-			&& (method & winmethod_DivisionMask) == winmethod_Fixed) {
+	        && (method & winmethod_DivisionMask) == winmethod_Fixed) {
 		warning("setArrangement: a Blank window cannot have a fixed size");
 		return;
 	}

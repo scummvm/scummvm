@@ -42,10 +42,10 @@ namespace Gargoyle {
 GargoyleEngine *g_vm;
 
 GargoyleEngine::GargoyleEngine(OSystem *syst, const GargoyleGameDescription *gameDesc) :
-		_gameDescription(gameDesc), Engine(syst), _random("Gargoyle"), _clipboard(nullptr),
-		_conf(nullptr), _events(nullptr), _picList(nullptr), _screen(nullptr),
-		_selection(nullptr), _windows(nullptr), _copySelect(false), _terminated(false),
-		gli_unregister_obj(nullptr), gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
+	_gameDescription(gameDesc), Engine(syst), _random("Gargoyle"), _clipboard(nullptr),
+	_conf(nullptr), _events(nullptr), _picList(nullptr), _screen(nullptr),
+	_selection(nullptr), _windows(nullptr), _copySelect(false), _terminated(false),
+	gli_unregister_obj(nullptr), gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
 	g_vm = this;
 }
 

@@ -37,11 +37,11 @@ namespace Gargoyle {
 
 
 TextBufferWindow::TextBufferWindow(Windows *windows, uint32 rock) : Window(windows, rock),
-		_historyPos(0), _historyFirst(0), _historyPresent(0), _lastSeen(0), _scrollPos(0),
-		_scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1), _inBuf(nullptr),
-		_lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0), _ladjn(0),
-		_radjn(0), _numChars(0), _chars(nullptr), _attrs(nullptr),
-		_spaced(0), _dashed(0), _copyBuf(0), _copyPos(0) {
+	_historyPos(0), _historyFirst(0), _historyPresent(0), _lastSeen(0), _scrollPos(0),
+	_scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1), _inBuf(nullptr),
+	_lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0), _ladjn(0),
+	_radjn(0), _numChars(0), _chars(nullptr), _attrs(nullptr),
+	_spaced(0), _dashed(0), _copyBuf(0), _copyPos(0) {
 	_type = wintype_TextBuffer;
 	Common::fill(&_history[0], &_history[HISTORYLEN], nullptr);
 
@@ -306,11 +306,11 @@ void TextBufferWindow::putText(const char *buf, int len, int pos, int oldlen) {
 
 	if (diff != 0 && pos + oldlen < _numChars) {
 		memmove(_chars + pos + len,
-			_chars + pos + oldlen,
-			(_numChars - (pos + oldlen)) * 4);
+		        _chars + pos + oldlen,
+		        (_numChars - (pos + oldlen)) * 4);
 		memmove(_attrs + pos + len,
-			_attrs + pos + oldlen,
-			(_numChars - (pos + oldlen)) * sizeof(Attributes));
+		        _attrs + pos + oldlen,
+		        (_numChars - (pos + oldlen)) * sizeof(Attributes));
 	}
 	if (len > 0) {
 		for (int i = 0; i < len; i++) {
@@ -338,11 +338,11 @@ void TextBufferWindow::putTextUni(const glui32 *buf, int len, int pos, int oldle
 
 	if (diff != 0 && pos + oldlen < _numChars) {
 		memmove(_chars + pos + len,
-			_chars + pos + oldlen,
-			(_numChars - (pos + oldlen)) * 4);
+		        _chars + pos + oldlen,
+		        (_numChars - (pos + oldlen)) * 4);
 		memmove(_attrs + pos + len,
-			_attrs + pos + oldlen,
-			(_numChars - (pos + oldlen)) * sizeof(Attributes));
+		        _attrs + pos + oldlen,
+		        (_numChars - (pos + oldlen)) * sizeof(Attributes));
 	}
 	if (len > 0) {
 		int i;
@@ -442,8 +442,8 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 	}
 
 	if (g_conf->_spaces && _attr.style != style_Preformatted
-		&& _styles[_attr.style].bg == color
-		&& !_styles[_attr.style].reverse) {
+	        && _styles[_attr.style].bg == color
+	        && !_styles[_attr.style].reverse) {
 		// turn (period space space) into (period space)
 		if (g_conf->_spaces == 1) {
 			if (ch == '.')
@@ -480,8 +480,8 @@ void TextBufferWindow::putCharUni(glui32 ch) {
 	// kill spaces at the end for line width calculation
 	linelen = _numChars;
 	while (linelen > 1 && _chars[linelen - 1] == ' '
-		&& _styles[_attrs[linelen - 1].style].bg == color
-		&& !_styles[_attrs[linelen - 1].style].reverse)
+	        && _styles[_attrs[linelen - 1].style].bg == color
+	        && !_styles[_attrs[linelen - 1].style].reverse)
 		linelen--;
 
 	if (calcWidth(_chars, _attrs, 0, linelen, -1) >= pw) {
@@ -567,8 +567,8 @@ void TextBufferWindow::click(const Point &newPos) {
 	int gs = false;
 
 	if (_lineRequest || _charRequest
-		|| _lineRequestUni || _charRequestUni
-		|| _moreRequest || _scrollRequest)
+	        || _lineRequestUni || _charRequestUni
+	        || _moreRequest || _scrollRequest)
 		_windows->setFocus(this);
 
 	if (_hyperRequest) {
@@ -743,14 +743,14 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 		len = inmax;
 
 	if (!unicode) {
-		for (ix = 0; ix<len; ix++) {
+		for (ix = 0; ix < len; ix++) {
 			glui32 ch = _chars[_inFence + ix];
 			if (ch > 0xff)
 				ch = '?';
 			((char *)inbuf)[ix] = (char)ch;
 		}
 	} else {
-		for (ix = 0; ix<len; ix++)
+		for (ix = 0; ix < len; ix++)
 			((glui32 *)inbuf)[ix] = _chars[_inFence + ix];
 	}
 
@@ -782,379 +782,379 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 }
 
 void TextBufferWindow::redraw() {
-    TextBufferRow *ln;
-    int linelen;
-    int nsp, spw, pw;
-    int x0, y0, x1, y1;
-    int x, y, w;
-    int a, b;
-    glui32 link;
-    int font;
-    unsigned char *color;
-    int i;
-    int hx0, hx1, hy0, hy1;
-    int selrow, selchar, sx0, sx1, selleft, selright;
+	TextBufferRow *ln;
+	int linelen;
+	int nsp, spw, pw;
+	int x0, y0, x1, y1;
+	int x, y, w;
+	int a, b;
+	glui32 link;
+	int font;
+	unsigned char *color;
+	int i;
+	int hx0, hx1, hy0, hy1;
+	int selrow, selchar, sx0, sx1, selleft, selright;
 	bool selBuf;
-    int tx, tsc, tsw, lsc, rsc;
+	int tx, tsc, tsw, lsc, rsc;
 	Screen &screen = *g_vm->_screen;
 
 	Window::redraw();
 
-    _lines[0]._len = _numChars;
+	_lines[0]._len = _numChars;
 	sx0 = sx1 = selleft = selright = 0;
 
 	ln = new TextBufferRow();
-    if (!ln)
-        return;
+	if (!ln)
+		return;
 
-    x0 = (_bbox.left + g_conf->_tMarginX) * GLI_SUBPIX;
-    x1 = (_bbox.right - g_conf->_tMarginX - g_conf->_scrollWidth) * GLI_SUBPIX;
-    y0 = _bbox.top + g_conf->_tMarginY;
-    y1 = _bbox.bottom - g_conf->_tMarginY;
+	x0 = (_bbox.left + g_conf->_tMarginX) * GLI_SUBPIX;
+	x1 = (_bbox.right - g_conf->_tMarginX - g_conf->_scrollWidth) * GLI_SUBPIX;
+	y0 = _bbox.top + g_conf->_tMarginY;
+	y1 = _bbox.bottom - g_conf->_tMarginY;
 
-    pw = x1 - x0 - 2 * GLI_SUBPIX;
+	pw = x1 - x0 - 2 * GLI_SUBPIX;
 
-    // check if any part of buffer is selected
-    selBuf = g_vm->_selection->checkSelection(Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
+	// check if any part of buffer is selected
+	selBuf = g_vm->_selection->checkSelection(Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
 
-    for (i = _scrollPos + _height - 1; i >= _scrollPos; i--) {
-        // top of line
-        y = y0 + (_height - (i - _scrollPos) - 1) * g_conf->_leading;
+	for (i = _scrollPos + _height - 1; i >= _scrollPos; i--) {
+		// top of line
+		y = y0 + (_height - (i - _scrollPos) - 1) * g_conf->_leading;
 
-        // check if part of line is selected
-        if (selBuf) {
-            selrow = g_vm->_selection->getSelection(Rect(x0 / GLI_SUBPIX, y,
-				x1 / GLI_SUBPIX, y + g_conf->_leading), &sx0, &sx1);
-            selleft = (sx0 == x0/GLI_SUBPIX);
-            selright = (sx1 == x1/GLI_SUBPIX);
-        } else {
-            selrow = false;
-        }
+		// check if part of line is selected
+		if (selBuf) {
+			selrow = g_vm->_selection->getSelection(Rect(x0 / GLI_SUBPIX, y,
+			                                        x1 / GLI_SUBPIX, y + g_conf->_leading), &sx0, &sx1);
+			selleft = (sx0 == x0 / GLI_SUBPIX);
+			selright = (sx1 == x1 / GLI_SUBPIX);
+		} else {
+			selrow = false;
+		}
 
-        // mark selected line dirty
-        if (selrow)
-            _lines[i]._dirty = true;
+		// mark selected line dirty
+		if (selrow)
+			_lines[i]._dirty = true;
 
-        memcpy(ln, &_lines[i], sizeof(TextBufferRow));
+		memcpy(ln, &_lines[i], sizeof(TextBufferRow));
 
-        // skip if we can
-        if (!ln->_dirty && !ln->_repaint && !Windows::_forceRedraw && _scrollPos == 0)
-            continue;
+		// skip if we can
+		if (!ln->_dirty && !ln->_repaint && !Windows::_forceRedraw && _scrollPos == 0)
+			continue;
 
-        // repaint previously selected lines if needed
-        if (ln->_repaint && !Windows::_forceRedraw)
-            _windows->redrawRect(Rect(x0 / GLI_SUBPIX, y,
-				x1/GLI_SUBPIX, y + g_conf->_leading));
+		// repaint previously selected lines if needed
+		if (ln->_repaint && !Windows::_forceRedraw)
+			_windows->redrawRect(Rect(x0 / GLI_SUBPIX, y,
+			                          x1 / GLI_SUBPIX, y + g_conf->_leading));
 
-        // keep selected line dirty and flag for repaint
-        if (!selrow) {
-            _lines[i]._dirty = false;
-            _lines[i]._repaint = false;
-        } else {
-            _lines[i]._repaint = true;
-        }
+		// keep selected line dirty and flag for repaint
+		if (!selrow) {
+			_lines[i]._dirty = false;
+			_lines[i]._repaint = false;
+		} else {
+			_lines[i]._repaint = true;
+		}
 
-        // leave bottom line blank for [more] prompt
-        if (i == _scrollPos && i > 0)
-            continue;
+		// leave bottom line blank for [more] prompt
+		if (i == _scrollPos && i > 0)
+			continue;
 
-        linelen = ln->_len;
+		linelen = ln->_len;
 
-        // kill spaces at the end unless they're a different color
-        color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        while (i > 0 && linelen > 1 && ln->_chars[linelen-1] == ' ' 
-            && _styles[ln->_attrs[linelen-1].style].bg == color 
-            && !_styles[ln->_attrs[linelen-1].style].reverse)
-                linelen --;
+		// kill spaces at the end unless they're a different color
+		color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
+		while (i > 0 && linelen > 1 && ln->_chars[linelen - 1] == ' '
+		        && _styles[ln->_attrs[linelen - 1].style].bg == color
+		        && !_styles[ln->_attrs[linelen - 1].style].reverse)
+			linelen --;
 
-        // kill characters that would overwrite the scroll bar
-        while (linelen > 1 && calcWidth(ln->_chars, ln->_attrs, 0, linelen, -1) >= pw)
-            linelen --;
+		// kill characters that would overwrite the scroll bar
+		while (linelen > 1 && calcWidth(ln->_chars, ln->_attrs, 0, linelen, -1) >= pw)
+			linelen --;
 
-        /*
-         * count spaces and width for justification
-         */
-        if (g_conf->_justify && !ln->_newLine && i > 0) {
-            for (a = 0, nsp = 0; a < linelen; a++)
-                if (ln->_chars[a] == ' ')
-                    nsp ++;
-            w = calcWidth(ln->_chars, ln->_attrs, 0, linelen, 0);
-            if (nsp)
-                spw = (x1 - x0 - ln->_lm - ln->_rm - 2 * SLOP - w) / nsp;
-            else
-                spw = 0;
-        } else {
-            spw = -1;
-        }
+		/*
+		 * count spaces and width for justification
+		 */
+		if (g_conf->_justify && !ln->_newLine && i > 0) {
+			for (a = 0, nsp = 0; a < linelen; a++)
+				if (ln->_chars[a] == ' ')
+					nsp ++;
+			w = calcWidth(ln->_chars, ln->_attrs, 0, linelen, 0);
+			if (nsp)
+				spw = (x1 - x0 - ln->_lm - ln->_rm - 2 * SLOP - w) / nsp;
+			else
+				spw = 0;
+		} else {
+			spw = -1;
+		}
 
-        // find and highlight selected characters
-        if (selrow && !Windows::_claimSelect) {
-            lsc = 0;
-            rsc = 0;
-            selchar = false;
-            // optimized case for all chars selected
-            if (selleft && selright) {
-                rsc = linelen > 0 ? linelen - 1 : 0;
-                selchar = calcWidth(ln->_chars, ln->_attrs, lsc, rsc, spw)/GLI_SUBPIX;
-            } else {
-                // optimized case for leftmost char selected
-                if (selleft) {
-                    tsc = linelen > 0 ? linelen - 1 : 0;
-                    selchar = calcWidth(ln->_chars, ln->_attrs, lsc, tsc, spw)/GLI_SUBPIX;
-                } else {
-                    // find the substring contained by the selection
-                    tx = (x0 + SLOP + ln->_lm)/GLI_SUBPIX;
-                    // measure string widths until we find left char
-                    for (tsc = 0; tsc < linelen; tsc++) {
-                        tsw = calcWidth(ln->_chars, ln->_attrs, 0, tsc, spw)/GLI_SUBPIX;
-                        if (tsw + tx >= sx0 ||
-                                tsw + tx + GLI_SUBPIX >= sx0 && ln->_chars[tsc] != ' ') {
-                            lsc = tsc;
-                            selchar = true;
-                            break;
-                        }
-                    }
-                }
-                if (selchar) {
-                    // optimized case for rightmost char selected
-                    if (selright) {
-                        rsc = linelen > 0 ? linelen - 1 : 0;
-                    } else {
-                    // measure string widths until we find right char
-                        for (tsc = lsc; tsc < linelen; tsc++) {
-                            tsw = calcWidth(ln->_chars, ln->_attrs, lsc, tsc, spw)/GLI_SUBPIX;
-                            if (tsw + sx0 < sx1)
-                                rsc = tsc;
-                        }
-                        if (lsc && !rsc)
-                            rsc = lsc;
-                    }
-                }
-            }
-            // reverse colors for selected chars
-            if (selchar) {
-                for (tsc = lsc; tsc <= rsc; tsc++) {
-                    ln->_attrs[tsc].reverse = !ln->_attrs[tsc].reverse;
-                    _copyBuf[_copyPos] = ln->_chars[tsc];
-                    _copyPos++;
-                }
-            }
-            // add newline if we reach the end of the line
-            if (ln->_len == 0 || ln->_len == (rsc+1)) {
-                _copyBuf[_copyPos] = '\n';
-                _copyPos++;
-            }
-        }
+		// find and highlight selected characters
+		if (selrow && !Windows::_claimSelect) {
+			lsc = 0;
+			rsc = 0;
+			selchar = false;
+			// optimized case for all chars selected
+			if (selleft && selright) {
+				rsc = linelen > 0 ? linelen - 1 : 0;
+				selchar = calcWidth(ln->_chars, ln->_attrs, lsc, rsc, spw) / GLI_SUBPIX;
+			} else {
+				// optimized case for leftmost char selected
+				if (selleft) {
+					tsc = linelen > 0 ? linelen - 1 : 0;
+					selchar = calcWidth(ln->_chars, ln->_attrs, lsc, tsc, spw) / GLI_SUBPIX;
+				} else {
+					// find the substring contained by the selection
+					tx = (x0 + SLOP + ln->_lm) / GLI_SUBPIX;
+					// measure string widths until we find left char
+					for (tsc = 0; tsc < linelen; tsc++) {
+						tsw = calcWidth(ln->_chars, ln->_attrs, 0, tsc, spw) / GLI_SUBPIX;
+						if (tsw + tx >= sx0 ||
+						        tsw + tx + GLI_SUBPIX >= sx0 && ln->_chars[tsc] != ' ') {
+							lsc = tsc;
+							selchar = true;
+							break;
+						}
+					}
+				}
+				if (selchar) {
+					// optimized case for rightmost char selected
+					if (selright) {
+						rsc = linelen > 0 ? linelen - 1 : 0;
+					} else {
+						// measure string widths until we find right char
+						for (tsc = lsc; tsc < linelen; tsc++) {
+							tsw = calcWidth(ln->_chars, ln->_attrs, lsc, tsc, spw) / GLI_SUBPIX;
+							if (tsw + sx0 < sx1)
+								rsc = tsc;
+						}
+						if (lsc && !rsc)
+							rsc = lsc;
+					}
+				}
+			}
+			// reverse colors for selected chars
+			if (selchar) {
+				for (tsc = lsc; tsc <= rsc; tsc++) {
+					ln->_attrs[tsc].reverse = !ln->_attrs[tsc].reverse;
+					_copyBuf[_copyPos] = ln->_chars[tsc];
+					_copyPos++;
+				}
+			}
+			// add newline if we reach the end of the line
+			if (ln->_len == 0 || ln->_len == (rsc + 1)) {
+				_copyBuf[_copyPos] = '\n';
+				_copyPos++;
+			}
+		}
 
-        // clear any stored hyperlink coordinates
-        g_vm->_selection->putHyperlink(0, x0/GLI_SUBPIX, y,
-                x1/GLI_SUBPIX, y + g_conf->_leading);
+		// clear any stored hyperlink coordinates
+		g_vm->_selection->putHyperlink(0, x0 / GLI_SUBPIX, y,
+		                               x1 / GLI_SUBPIX, y + g_conf->_leading);
 
-        /*
-         * fill in background colors
-         */
-        color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        screen.fillRect(Rect::fromXYWH(x0 / GLI_SUBPIX, y, (x1-x0) / GLI_SUBPIX, g_conf->_leading),
-                color);
+		/*
+		 * fill in background colors
+		 */
+		color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
+		screen.fillRect(Rect::fromXYWH(x0 / GLI_SUBPIX, y, (x1 - x0) / GLI_SUBPIX, g_conf->_leading),
+		                color);
 
-        x = x0 + SLOP + ln->_lm;
-        a = 0;
-        for (b = 0; b < linelen; b++) {
-            if (ln->_attrs[a] != ln->_attrs[b]) {
-                link = ln->_attrs[a].hyper;
-                font = ln->_attrs[a].attrFont(_styles);
-                color = ln->_attrs[a].attrBg(_styles);
-                w = screen.stringWidthUni(font, Common::U32String(ln->_chars + a, b - a), spw);
-                screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, g_conf->_leading),
-                        color);
-                if (link) {
-                    screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
-						w / GLI_SUBPIX + 1, g_conf->_linkStyle), g_conf->_linkColor);
-                    g_vm->_selection->putHyperlink(link, x/GLI_SUBPIX, y,
-                            x/GLI_SUBPIX + w/GLI_SUBPIX,
-                            y + g_conf->_leading);
-                }
-                x += w;
-                a = b;
-            }
-        }
-        link = ln->_attrs[a].hyper;
-        font = ln->_attrs[a].attrFont(_styles);
-        color = ln->_attrs[a].attrBg(_styles);
-        w = screen.stringWidthUni(font, Common::U32String(ln->_chars + a, b - a), spw);
-        screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, g_conf->_leading), color);
-        if (link) {
-            screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
-                    w/GLI_SUBPIX + 1, g_conf->_linkStyle), g_conf->_linkColor);
-            g_vm->_selection->putHyperlink(link, x / GLI_SUBPIX, y,
-                    x / GLI_SUBPIX + w / GLI_SUBPIX,
-                    y + g_conf->_leading);
-        }
-        x += w;
+		x = x0 + SLOP + ln->_lm;
+		a = 0;
+		for (b = 0; b < linelen; b++) {
+			if (ln->_attrs[a] != ln->_attrs[b]) {
+				link = ln->_attrs[a].hyper;
+				font = ln->_attrs[a].attrFont(_styles);
+				color = ln->_attrs[a].attrBg(_styles);
+				w = screen.stringWidthUni(font, Common::U32String(ln->_chars + a, b - a), spw);
+				screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, g_conf->_leading),
+				                color);
+				if (link) {
+					screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
+					                               w / GLI_SUBPIX + 1, g_conf->_linkStyle), g_conf->_linkColor);
+					g_vm->_selection->putHyperlink(link, x / GLI_SUBPIX, y,
+					                               x / GLI_SUBPIX + w / GLI_SUBPIX,
+					                               y + g_conf->_leading);
+				}
+				x += w;
+				a = b;
+			}
+		}
+		link = ln->_attrs[a].hyper;
+		font = ln->_attrs[a].attrFont(_styles);
+		color = ln->_attrs[a].attrBg(_styles);
+		w = screen.stringWidthUni(font, Common::U32String(ln->_chars + a, b - a), spw);
+		screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, g_conf->_leading), color);
+		if (link) {
+			screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + g_conf->_baseLine + 1,
+			                               w / GLI_SUBPIX + 1, g_conf->_linkStyle), g_conf->_linkColor);
+			g_vm->_selection->putHyperlink(link, x / GLI_SUBPIX, y,
+			                               x / GLI_SUBPIX + w / GLI_SUBPIX,
+			                               y + g_conf->_leading);
+		}
+		x += w;
 
-        color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, x1/GLI_SUBPIX - x/GLI_SUBPIX, g_conf->_leading), color);
+		color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
+		screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, x1 / GLI_SUBPIX - x / GLI_SUBPIX, g_conf->_leading), color);
 
-        /*
-         * draw caret
-         */
+		/*
+		 * draw caret
+		 */
 
-        if (_windows->getFocusWindow() == this && i == 0 && (_lineRequest || _lineRequestUni)) {
-            w = calcWidth(_chars, _attrs, 0, _inCurs, spw);
-            if (w < pw - g_conf->_caretShape * 2 * GLI_SUBPIX)
-                screen.drawCaret(Point(x0 + SLOP + ln->_lm + w, y + g_conf->_baseLine));
-        }
+		if (_windows->getFocusWindow() == this && i == 0 && (_lineRequest || _lineRequestUni)) {
+			w = calcWidth(_chars, _attrs, 0, _inCurs, spw);
+			if (w < pw - g_conf->_caretShape * 2 * GLI_SUBPIX)
+				screen.drawCaret(Point(x0 + SLOP + ln->_lm + w, y + g_conf->_baseLine));
+		}
 
-        /*
-         * draw text
-         */
+		/*
+		 * draw text
+		 */
 
-        x = x0 + SLOP + ln->_lm;
-        a = 0;
-        for (b = 0; b < linelen; b++) {
-            if (ln->_attrs[a] != ln->_attrs[b]) {
-                link = ln->_attrs[a].hyper;
-                font = ln->_attrs[a].attrFont(_styles);
-                color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-                x = screen.drawStringUni(Point(x, y + g_conf->_baseLine),
-                        font, color, Common::U32String(ln->_chars + a, b - a), spw);
-                a = b;
-            }
-        }
-        link = ln->_attrs[a].hyper;
-        font = ln->_attrs[a].attrFont(_styles);
-        color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
-        screen.drawStringUni(Point(x, y + g_conf->_baseLine), font, color, Common::U32String(ln->_chars + a, linelen - a), spw);
-    }
+		x = x0 + SLOP + ln->_lm;
+		a = 0;
+		for (b = 0; b < linelen; b++) {
+			if (ln->_attrs[a] != ln->_attrs[b]) {
+				link = ln->_attrs[a].hyper;
+				font = ln->_attrs[a].attrFont(_styles);
+				color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
+				x = screen.drawStringUni(Point(x, y + g_conf->_baseLine),
+				                         font, color, Common::U32String(ln->_chars + a, b - a), spw);
+				a = b;
+			}
+		}
+		link = ln->_attrs[a].hyper;
+		font = ln->_attrs[a].attrFont(_styles);
+		color = link ? g_conf->_linkColor : ln->_attrs[a].attrFg(_styles);
+		screen.drawStringUni(Point(x, y + g_conf->_baseLine), font, color, Common::U32String(ln->_chars + a, linelen - a), spw);
+	}
 
-    /*
-     * draw more prompt
-     */
-    if (_scrollPos && _height > 1) {
-        x = x0 + SLOP;
-        y = y0 + (_height - 1) * g_conf->_leading;
+	/*
+	 * draw more prompt
+	 */
+	if (_scrollPos && _height > 1) {
+		x = x0 + SLOP;
+		y = y0 + (_height - 1) * g_conf->_leading;
 
-        g_vm->_selection->putHyperlink(0, x0/GLI_SUBPIX, y,
-                x1/GLI_SUBPIX, y + g_conf->_leading);
+		g_vm->_selection->putHyperlink(0, x0 / GLI_SUBPIX, y,
+		                               x1 / GLI_SUBPIX, y + g_conf->_leading);
 
-        color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-        screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, x1 / GLI_SUBPIX - x / GLI_SUBPIX, g_conf->_leading), color);
+		color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
+		screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, x1 / GLI_SUBPIX - x / GLI_SUBPIX, g_conf->_leading), color);
 
-        w = screen.stringWidth(g_conf->_moreFont, g_conf->_morePrompt);
+		w = screen.stringWidth(g_conf->_moreFont, g_conf->_morePrompt);
 
-        if (g_conf->_moreAlign == 1)
+		if (g_conf->_moreAlign == 1)
 			// center
-            x = x0 + SLOP + (x1 - x0 - w - SLOP * 2) / 2;
-        if (g_conf->_moreAlign == 2)
+			x = x0 + SLOP + (x1 - x0 - w - SLOP * 2) / 2;
+		if (g_conf->_moreAlign == 2)
 			// right
-            x = x1 - SLOP - w;
+			x = x1 - SLOP - w;
 
-        color = Windows::_overrideFgSet ? g_conf->_moreColor : _fgColor;
+		color = Windows::_overrideFgSet ? g_conf->_moreColor : _fgColor;
 		screen.drawString(Point(x, y + g_conf->_baseLine),
-                g_conf->_moreFont, color, g_conf->_morePrompt);
-        y1 = y; // don't want pictures overdrawing "[more]"
+		                  g_conf->_moreFont, color, g_conf->_morePrompt);
+		y1 = y; // don't want pictures overdrawing "[more]"
 
-        // try to claim the focus
-        _moreRequest = true;
-        Windows::_moreFocus = true;
-    } else {
-        _moreRequest = false;
-        y1 = y0 + _height * g_conf->_leading;
-    }
+		// try to claim the focus
+		_moreRequest = true;
+		Windows::_moreFocus = true;
+	} else {
+		_moreRequest = false;
+		y1 = y0 + _height * g_conf->_leading;
+	}
 
-    /*
-     * draw the images
-     */
-    for (i = 0; i < _scrollBack; i++) {
-        memcpy(ln, &_lines[i], sizeof(TextBufferRow));
+	/*
+	 * draw the images
+	 */
+	for (i = 0; i < _scrollBack; i++) {
+		memcpy(ln, &_lines[i], sizeof(TextBufferRow));
 
-        y = y0 + (_height - (i - _scrollPos) - 1) * g_conf->_leading;
+		y = y0 + (_height - (i - _scrollPos) - 1) * g_conf->_leading;
 
-        if (ln->_lPic) {
-            if (y < y1 && y + ln->_lPic->h > y0) {
-				ln->_lPic->drawPicture(x0/GLI_SUBPIX, y, x0/GLI_SUBPIX, y0, x1/GLI_SUBPIX, y1);
-                link = ln->_lHyper;
-                hy0 = y > y0 ? y : y0;
-                hy1 = y + ln->_lPic->h < y1 ? y + ln->_lPic->h : y1;
-                hx0 = x0/GLI_SUBPIX;
-                hx1 = x0/GLI_SUBPIX + ln->_lPic->w < x1/GLI_SUBPIX
-                            ? x0/GLI_SUBPIX + ln->_lPic->w
-                            : x1/GLI_SUBPIX;
-                g_vm->_selection->putHyperlink(link, hx0, hy0, hx1, hy1);
-            }
-        }
+		if (ln->_lPic) {
+			if (y < y1 && y + ln->_lPic->h > y0) {
+				ln->_lPic->drawPicture(x0 / GLI_SUBPIX, y, x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1);
+				link = ln->_lHyper;
+				hy0 = y > y0 ? y : y0;
+				hy1 = y + ln->_lPic->h < y1 ? y + ln->_lPic->h : y1;
+				hx0 = x0 / GLI_SUBPIX;
+				hx1 = x0 / GLI_SUBPIX + ln->_lPic->w < x1 / GLI_SUBPIX
+				      ? x0 / GLI_SUBPIX + ln->_lPic->w
+				      : x1 / GLI_SUBPIX;
+				g_vm->_selection->putHyperlink(link, hx0, hy0, hx1, hy1);
+			}
+		}
 
-        if (ln->_rPic) {
-            if (y < y1 && y + ln->_rPic->h > y0) {
-				ln->_rPic->drawPicture(x1/GLI_SUBPIX - ln->_rPic->w, y,
-					x0/GLI_SUBPIX, y0, x1/GLI_SUBPIX, y1);
-                link = ln->_rHyper;
-                hy0 = y > y0 ? y : y0;
-                hy1 = y + ln->_rPic->h < y1 ? y + ln->_rPic->h : y1;
-                hx0 = x1/GLI_SUBPIX - ln->_rPic->w > x0/GLI_SUBPIX
-                            ? x1/GLI_SUBPIX - ln->_rPic->w
-                            : x0/GLI_SUBPIX;
-                hx1 = x1/GLI_SUBPIX;
-                g_vm->_selection->putHyperlink(link, hx0, hy0, hx1, hy1);
-            }
-        }
-    }
+		if (ln->_rPic) {
+			if (y < y1 && y + ln->_rPic->h > y0) {
+				ln->_rPic->drawPicture(x1 / GLI_SUBPIX - ln->_rPic->w, y,
+				                       x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1);
+				link = ln->_rHyper;
+				hy0 = y > y0 ? y : y0;
+				hy1 = y + ln->_rPic->h < y1 ? y + ln->_rPic->h : y1;
+				hx0 = x1 / GLI_SUBPIX - ln->_rPic->w > x0 / GLI_SUBPIX
+				      ? x1 / GLI_SUBPIX - ln->_rPic->w
+				      : x0 / GLI_SUBPIX;
+				hx1 = x1 / GLI_SUBPIX;
+				g_vm->_selection->putHyperlink(link, hx0, hy0, hx1, hy1);
+			}
+		}
+	}
 
-    /*
-     * Draw the scrollbar
-     */
+	/*
+	 * Draw the scrollbar
+	 */
 
-    // try to claim scroll keys
-    _scrollRequest = _scrollMax > _height;
+	// try to claim scroll keys
+	_scrollRequest = _scrollMax > _height;
 
-    if (_scrollRequest && g_conf->_scrollWidth) {
-        int t0, t1;
-        x0 = _bbox.right - g_conf->_scrollWidth;
-        x1 = _bbox.right;
-        y0 = _bbox.top + g_conf->_tMarginY;
-        y1 = _bbox.bottom - g_conf->_tMarginY;
+	if (_scrollRequest && g_conf->_scrollWidth) {
+		int t0, t1;
+		x0 = _bbox.right - g_conf->_scrollWidth;
+		x1 = _bbox.right;
+		y0 = _bbox.top + g_conf->_tMarginY;
+		y1 = _bbox.bottom - g_conf->_tMarginY;
 
-        g_vm->_selection->putHyperlink(0, x0, y0, x1, y1);
+		g_vm->_selection->putHyperlink(0, x0, y0, x1, y1);
 
-        y0 += g_conf->_scrollWidth / 2;
-        y1 -= g_conf->_scrollWidth / 2;
+		y0 += g_conf->_scrollWidth / 2;
+		y1 -= g_conf->_scrollWidth / 2;
 
-        // pos = thbot, pos - ht = thtop, max = wtop, 0 = wbot
-        t0 = (_scrollMax - _scrollPos) - (_height - 1);
-        t1 = (_scrollMax - _scrollPos);
-        if (_scrollMax > _height) {
-            t0 = t0 * (y1 - y0) / _scrollMax + y0;
-            t1 = t1 * (y1 - y0) / _scrollMax + y0;
-        } else {
-            t0 = t1 = y0;
-        }
+		// pos = thbot, pos - ht = thtop, max = wtop, 0 = wbot
+		t0 = (_scrollMax - _scrollPos) - (_height - 1);
+		t1 = (_scrollMax - _scrollPos);
+		if (_scrollMax > _height) {
+			t0 = t0 * (y1 - y0) / _scrollMax + y0;
+			t1 = t1 * (y1 - y0) / _scrollMax + y0;
+		} else {
+			t0 = t1 = y0;
+		}
 
-        screen.fillRect(Rect::fromXYWH(x0 + 1, y0, x1-x0 - 2, y1 - y0), g_conf->_scrollBg);
-        screen.fillRect(Rect::fromXYWH(x0 + 1, t0, x1-x0 - 2, t1 - t0), g_conf->_scrollFg);
+		screen.fillRect(Rect::fromXYWH(x0 + 1, y0, x1 - x0 - 2, y1 - y0), g_conf->_scrollBg);
+		screen.fillRect(Rect::fromXYWH(x0 + 1, t0, x1 - x0 - 2, t1 - t0), g_conf->_scrollFg);
 
-        for (i = 0; i < g_conf->_scrollWidth / 2 + 1; i++) {
-            screen.fillRect(Rect::fromXYWH(x0 + g_conf->_scrollWidth / 2 - i,
-				y0 - g_conf->_scrollWidth/2 + i, i * 2, 1), g_conf->_scrollFg);
-            screen.fillRect(Rect::fromXYWH(x0 + g_conf->_scrollWidth / 2 - i,
-                    y1 + g_conf->_scrollWidth / 2 - i, i * 2, 1), g_conf->_scrollFg);
-        }
-    }
+		for (i = 0; i < g_conf->_scrollWidth / 2 + 1; i++) {
+			screen.fillRect(Rect::fromXYWH(x0 + g_conf->_scrollWidth / 2 - i,
+			                               y0 - g_conf->_scrollWidth / 2 + i, i * 2, 1), g_conf->_scrollFg);
+			screen.fillRect(Rect::fromXYWH(x0 + g_conf->_scrollWidth / 2 - i,
+			                               y1 + g_conf->_scrollWidth / 2 - i, i * 2, 1), g_conf->_scrollFg);
+		}
+	}
 
-    // Keep track of selected text to be ready when user copies it to the clipboard
-    if (selBuf && _copyPos) {
-        Windows::_claimSelect = true;
+	// Keep track of selected text to be ready when user copies it to the clipboard
+	if (selBuf && _copyPos) {
+		Windows::_claimSelect = true;
 
 		g_vm->_clipboard->clipboardStore(Common::U32String(_copyBuf, _copyPos));
-        for (i = 0; i < _copyPos; i++)
-            _copyBuf[i] = 0;
-        _copyPos = 0;
-    }
+		for (i = 0; i < _copyPos; i++)
+			_copyBuf[i] = 0;
+		_copyPos = 0;
+	}
 
-    // no more prompt means all text has been seen
-    if (!_moreRequest)
-        _lastSeen = 0;
+	// no more prompt means all text has been seen
+	if (!_moreRequest)
+		_lastSeen = 0;
 
-    delete ln;
+	delete ln;
 }
 
 int TextBufferWindow::acceptScroll(glui32 arg) {
@@ -1209,8 +1209,8 @@ void TextBufferWindow::acceptReadChar(glui32 arg) {
 		_scrollPos = 0;
 
 	if (_scrollPos
-		|| arg == keycode_PageUp
-		|| arg == keycode_MouseWheelUp) {
+	        || arg == keycode_PageUp
+	        || arg == keycode_MouseWheelUp) {
 		acceptScroll(arg);
 		return;
 	}
@@ -1286,7 +1286,7 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 			_historyPos += HISTORYLEN;
 		cx = _history[_historyPos];
 		putTextUni(cx, cx ? strlen_uni(cx) : 0, _inFence,
-			_numChars - _inFence);
+		           _numChars - _inFence);
 		break;
 
 	case keycode_Down:
@@ -1297,7 +1297,7 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 			_historyPos -= HISTORYLEN;
 		cx = _history[_historyPos];
 		putTextUni(cx, cx ? strlen_uni(cx) : 0, _inFence,
-			_numChars - _inFence);
+		           _numChars - _inFence);
 		break;
 
 	// Cursor movement keys, during line input.
@@ -1441,14 +1441,14 @@ void TextBufferWindow::acceptLine(glui32 keycode) {
 		len = inmax;
 
 	if (!unicode) {
-		for (ix = 0; ix<len; ix++) {
+		for (ix = 0; ix < len; ix++) {
 			glui32 ch = _chars[_inFence + ix];
 			if (ch > 0xff)
 				ch = '?';
 			((char *)inbuf)[ix] = (char)ch;
 		}
 	} else {
-		for (ix = 0; ix<len; ix++)
+		for (ix = 0; ix < len; ix++)
 			((glui32 *)inbuf)[ix] = _chars[_inFence + ix];
 	}
 
@@ -1483,13 +1483,26 @@ void TextBufferWindow::acceptLine(glui32 keycode) {
 
 bool TextBufferWindow::leftquote(glui32 c) {
 	switch (c) {
-	case '(': case '[':
+	case '(':
+	case '[':
 
 	// The following are Unicode characters in the "Separator, Space" category.
-	case 0x0020: case 0x00a0: case 0x1680: case 0x2000:
-	case 0x2001: case 0x2002: case 0x2003: case 0x2004:
-	case 0x2005: case 0x2006: case 0x2007: case 0x2008:
-	case 0x2009: case 0x200a: case 0x202f: case 0x205f:
+	case 0x0020:
+	case 0x00a0:
+	case 0x1680:
+	case 0x2000:
+	case 0x2001:
+	case 0x2002:
+	case 0x2003:
+	case 0x2004:
+	case 0x2005:
+	case 0x2006:
+	case 0x2007:
+	case 0x2008:
+	case 0x2009:
+	case 0x200a:
+	case 0x202f:
+	case 0x205f:
 	case 0x3000:
 		return true;
 	default:
@@ -1502,7 +1515,7 @@ void TextBufferWindow::scrollOneLine(bool forced) {
 	_scrollMax++;
 
 	if (_scrollMax > _scrollBack - 1
-		|| _lastSeen > _scrollBack - 1)
+	        || _lastSeen > _scrollBack - 1)
 		scrollResize();
 
 	if (_lastSeen >= _height)
@@ -1581,7 +1594,7 @@ void TextBufferWindow::scrollResize() {
 }
 
 int TextBufferWindow::calcWidth(glui32 *chars, Attributes *attrs, int startchar,
-		int numChars, int spw) {
+                                int numChars, int spw) {
 	Screen &screen = *g_vm->_screen;
 	int w = 0;
 	int a, b;
@@ -1590,7 +1603,7 @@ int TextBufferWindow::calcWidth(glui32 *chars, Attributes *attrs, int startchar,
 	for (b = startchar; b < numChars; b++) {
 		if (attrs[a] != attrs[b]) {
 			w += screen.stringWidthUni(attrs[a].attrFont(_styles),
-				Common::U32String(chars + a, b - a), spw);
+			                           Common::U32String(chars + a, b - a), spw);
 			a = b;
 		}
 	}
@@ -1615,8 +1628,8 @@ void TextBufferWindow::flowBreak() {
 /*--------------------------------------------------------------------------*/
 
 TextBufferWindow::TextBufferRow::TextBufferRow() : _len(0), _newLine(0), _dirty(false),
-		_repaint(false), _lPic(nullptr), _rPic(nullptr), _lHyper(0), _rHyper(0),
-		_lm(0), _rm(0) {
+	_repaint(false), _lPic(nullptr), _rPic(nullptr), _lHyper(0), _rHyper(0),
+	_lm(0), _rm(0) {
 	Common::fill(&_chars[0], &_chars[TBLINELEN], 0);
 }
 

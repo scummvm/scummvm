@@ -34,7 +34,7 @@ size_t strlen_uni(const uint32 *s) {
 }
 
 glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCase destcase,
-		BufferChangeCond cond, int changerest) {
+                        BufferChangeCond cond, int changerest) {
 	glui32 ix, jx;
 	glui32 *outbuf;
 	glui32 *newoutbuf;
@@ -92,8 +92,7 @@ glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCa
 				res = block[ch & 0xFF][target];
 		}
 
-		if (res != 0xFFFFFFFF || res == ch)
-		{
+		if (res != 0xFFFFFFFF || res == ch) {
 			/* simple case */
 			if (outcount < len)
 				outbuf[outcount] = res;
@@ -130,7 +129,7 @@ glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCa
 			outbuf = newoutbuf;
 		}
 
-		for (jx = 0; jx<speccount; jx++) {
+		for (jx = 0; jx < speccount; jx++) {
 			if (outcount < len)
 				outbuf[outcount] = ptr[jx];
 			outcount++;

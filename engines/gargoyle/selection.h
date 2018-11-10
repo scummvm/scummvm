@@ -92,13 +92,13 @@ class Selection : public Clipboard, public WindowMask {
 public:
 	/**
 	 * Start selecting an area of the screen
-	 * @param pos		Position to start selection area at
+	 * @param pos       Position to start selection area at
 	 */
 	void startSelection(const Point &pos);
 
 	/**
 	 * Move the end point of the selection area
-	 * @param pos		Position to end selection area at
+	 * @param pos       Position to end selection area at
 	 */
 	void moveSelection(const Point &pos);
 

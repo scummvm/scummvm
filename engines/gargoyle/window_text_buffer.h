@@ -99,7 +99,7 @@ public:
 	glui32 *_chars;       ///< alias to lines[0].chars
 	Attributes *_attrs;  ///< alias to lines[0].attrs
 
-    ///< adjust margins temporarily for images
+	///< adjust margins temporarily for images
 	int _ladjw;
 	int _ladjn;
 	int _radjw;
@@ -195,7 +195,9 @@ public:
 	/**
 	 * Cancel a hyperlink event
 	 */
-	virtual void cancelHyperlinkEvent() override { _hyperRequest = false; }
+	virtual void cancelHyperlinkEvent() override {
+		_hyperRequest = false;
+	}
 
 	/**
 	 * Redraw the window
@@ -208,22 +210,34 @@ public:
 
 	virtual void getSize(glui32 *width, glui32 *height) const override;
 
-	virtual void requestCharEvent() override { _charRequest = true; }
+	virtual void requestCharEvent() override {
+		_charRequest = true;
+	}
 
-	virtual void requestCharEventUni() override { _charRequestUni = true; }
+	virtual void requestCharEventUni() override {
+		_charRequestUni = true;
+	}
 
-	virtual void setEchoLineEvent(glui32 val) override { _echoLineInput = val != 0; }
+	virtual void setEchoLineEvent(glui32 val) override {
+		_echoLineInput = val != 0;
+	}
 
-	virtual void requestHyperlinkEvent() override { _hyperRequest = true; }
+	virtual void requestHyperlinkEvent() override {
+		_hyperRequest = true;
+	}
 
-	virtual void cancelCharEvent() override { _charRequest = _charRequestUni = false; }
+	virtual void cancelCharEvent() override {
+		_charRequest = _charRequestUni = false;
+	}
 
 	virtual void flowBreak() override;
 
 	/**
 	 * Returns a pointer to the styles for the window
 	 */
-	virtual const WindowStyle *getStyles() const override { return _styles; }
+	virtual const WindowStyle *getStyles() const override {
+		return _styles;
+	}
 };
 
 } // End of namespace Gargoyle

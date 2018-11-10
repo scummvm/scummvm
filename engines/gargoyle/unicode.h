@@ -44,7 +44,7 @@ size_t strlen_uni(const uint32 *s);
  *converted string should have contained.
  */
 extern glui32 bufferChangeCase(glui32 *buf, glui32 len,
-	glui32 numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
+                               glui32 numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
 
 } // End of namespace Gargoyle
 

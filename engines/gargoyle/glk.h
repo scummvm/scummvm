@@ -63,14 +63,14 @@ public:
 	 * Open a new window
 	 */
 	winid_t glk_window_open(winid_t split, glui32 method, glui32 size,
-		glui32 wintype, glui32 rock = 0) const;
+	                        glui32 wintype, glui32 rock = 0) const;
 
 	void glk_window_close(winid_t win, stream_result_t *result);
 	void glk_window_get_size(winid_t win, glui32 *width, glui32 *height);
 	void glk_window_set_arrangement(winid_t win, glui32 method,
-		glui32 size, winid_t keyWin);
+	                                glui32 size, winid_t keyWin);
 	void glk_window_get_arrangement(winid_t win, glui32 *method,
-		glui32 *size, winid_t *keyWin);
+	                                glui32 *size, winid_t *keyWin);
 	winid_t glk_window_iterate(winid_t win, glui32 *rock);
 	glui32 glk_window_get_rock(winid_t win);
 	glui32 glk_window_get_type(winid_t win);
@@ -108,7 +108,7 @@ public:
 	glui32 glk_get_buffer_stream(strid_t str, char *buf, glui32 len);
 
 	void glk_stylehint_set(glui32 wintype, glui32 styl, glui32 hint,
-		glsi32 val);
+	                       glsi32 val);
 	void glk_stylehint_clear(glui32 wintype, glui32 style, glui32 hint);
 	glui32 glk_style_distinguish(winid_t win, glui32 style1, glui32 style2);
 	bool glk_style_measure(winid_t win, glui32 style, glui32 hint, glui32 *result);
@@ -129,7 +129,7 @@ public:
 	void glk_request_timer_events(glui32 millisecs);
 
 	void glk_request_line_event(winid_t win, char *buf, glui32 maxlen,
-		glui32 initlen);
+	                            glui32 initlen);
 	void glk_request_char_event(winid_t win);
 	void glk_request_mouse_event(winid_t win);
 
@@ -143,19 +143,19 @@ public:
 
 #ifdef GLK_MODULE_LINE_TERMINATORS
 	void glk_set_terminators_line_event(winid_t win, glui32 *keycodes,
-		glui32 count);
+	                                    glui32 count);
 #endif /* GLK_MODULE_LINE_TERMINATORS */
 
-	/** \addtogroup Unicode 
+	/** \addtogroup Unicode
 	 *  @{
 	 */
 
 	glui32 glk_buffer_to_lower_case_uni(glui32 *buf, glui32 len,
-		glui32 numchars);
+	                                    glui32 numchars);
 	glui32 glk_buffer_to_upper_case_uni(glui32 *buf, glui32 len,
-		glui32 numchars);
+	                                    glui32 numchars);
 	glui32 glk_buffer_to_title_case_uni(glui32 *buf, glui32 len,
-		glui32 numchars, glui32 lowerrest);
+	                                    glui32 numchars, glui32 lowerrest);
 
 	void glk_put_char_uni(glui32 ch);
 	void glk_put_string_uni(glui32 *s);
@@ -173,16 +173,16 @@ public:
 
 	void glk_request_char_event_uni(winid_t win);
 	void glk_request_line_event_uni(winid_t win, glui32 *buf,
-		glui32 maxlen, glui32 initlen);
+	                                glui32 maxlen, glui32 initlen);
 
 	/** @}*/
 
 #ifdef GLK_MODULE_UNICODE_NORM
 
 	glui32 glk_buffer_canon_decompose_uni(glui32 *buf, glui32 len,
-		glui32 numchars);
+	                                      glui32 numchars);
 	glui32 glk_buffer_canon_normalize_uni(glui32 *buf, glui32 len,
-		glui32 numchars);
+	                                      glui32 numchars);
 
 #endif /* GLK_MODULE_UNICODE_NORM */
 
@@ -190,15 +190,15 @@ public:
 
 	glui32 glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2);
 	glui32 glk_image_draw_scaled(winid_t win, glui32 image,
-		glsi32 val1, glsi32 val2, glui32 width, glui32 height);
+	                             glsi32 val1, glsi32 val2, glui32 width, glui32 height);
 	glui32 glk_image_get_info(glui32 image, glui32 *width, glui32 *height);
 
 	void glk_window_flow_break(winid_t win);
 
 	void glk_window_erase_rect(winid_t win,
-		glsi32 left, glsi32 top, glui32 width, glui32 height);
+	                           glsi32 left, glsi32 top, glui32 width, glui32 height);
 	void glk_window_fill_rect(winid_t win, glui32 color,
-		glsi32 left, glsi32 top, glui32 width, glui32 height);
+	                          glsi32 left, glsi32 top, glui32 width, glui32 height);
 	void glk_window_set_background_color(winid_t win, glui32 color);
 
 #endif /* GLK_MODULE_IMAGE */
@@ -212,7 +212,7 @@ public:
 
 	glui32 glk_schannel_play(schanid_t chan, glui32 snd);
 	glui32 glk_schannel_play_ext(schanid_t chan, glui32 snd, glui32 repeats,
-		glui32 notify);
+	                             glui32 notify);
 	void glk_schannel_stop(schanid_t chan);
 	void glk_schannel_set_volume(schanid_t chan, glui32 vol);
 
@@ -224,11 +224,11 @@ public:
 
 	schanid_t glk_schannel_create_ext(glui32 rock, glui32 volume);
 	glui32 glk_schannel_play_multi(schanid_t *chanarray, glui32 chancount,
-		glui32 *sndarray, glui32 soundcount, glui32 notify);
+	                               glui32 *sndarray, glui32 soundcount, glui32 notify);
 	void glk_schannel_pause(schanid_t chan);
 	void glk_schannel_unpause(schanid_t chan);
 	void glk_schannel_set_volume_ext(schanid_t chan, glui32 vol,
-		glui32 duration, glui32 notify);
+	                                 glui32 duration, glui32 notify);
 
 #endif /* GLK_MODULE_SOUND2 */
 #endif /* GLK_MODULE_SOUND */
@@ -258,7 +258,7 @@ public:
 #endif /* GLK_MODULE_DATETIME */
 
 	/* XXX non-official Glk functions that may or may not exist */
-	#define GARGLK 1
+#define GARGLK 1
 
 	const char *garglk_fileref_get_name(frefid_t fref) const;
 
