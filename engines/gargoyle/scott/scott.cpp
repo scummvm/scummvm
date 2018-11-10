@@ -29,7 +29,7 @@ namespace Scott {
 Scott::Scott(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst, gameDesc),
 	Items(nullptr), Rooms(nullptr), Verbs(nullptr), Nouns(nullptr), Messages(nullptr),
 	Actions(nullptr), CurrentCounter(0), SavedRoom(0), Options(0), Width(0), TopHeight(0),
-	split_screen(true), Bottom(0), Top(0), BitFlags(0) {
+	split_screen(true), Bottom(0), Top(0), BitFlags(0), _saveSlot(-1) {
 	Common::fill(&NounText[0], &NounText[16], '\0');
 	Common::fill(&Counters[0], &Counters[16], 0);
 	Common::fill(&RoomSaved[0], &RoomSaved[16], 0);
@@ -37,7 +37,6 @@ Scott::Scott(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst,
 
 void Scott::runGame(Common::SeekableReadStream *gameFile) {
 	int vb, no;
-	int saveSlot;
 	initialize();
 
 	Bottom = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
@@ -63,24 +62,24 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 		Top = Bottom;
 	}
 
-	// Check for savegame
-	saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	output("ScummVM support adapted from Scott Free, A Scott Adams game driver in C.\n\n");
 
-	output("\
-Scott Free, A Scott Adams game driver in C.\n\
-Release 1.14, (c) 1993,1994,1995 Swansea University Computer Society.\n\
-Distributed under the GNU software license\n\n");
+	// Check for savegame
+	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
+	// Load the game
 	loadDatabase(gameFile, (Options & DEBUGGING) ? 1 : 0);
 
+	// Main game loop
 	while (!shouldQuit()) {
 		glk_tick();
 
 		performActions(0, 0);
 
-		if (saveSlot >= 0) {
+		if (_saveSlot >= 0) {
 			// Load any savegame during startup
-			loadGameState(saveSlot);
-			saveSlot = -1;
+			loadGameState(_saveSlot);
+			_saveSlot = -1;
 		}
 
 		look();
@@ -404,7 +403,8 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 }
 
 void Scott::output(const char *a) {
-	display(Bottom, "%s", a);
+	if (_saveSlot == -1)
+		display(Bottom, "%s", a);
 }
 
 void Scott::outputNumber(int a) {
