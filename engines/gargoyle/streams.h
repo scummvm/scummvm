@@ -257,6 +257,11 @@ public:
 	 * Set a hyperlink
 	 */
 	virtual void setHyperlink(glui32 linkVal) {}
+
+	/**
+	 * Set the style colors
+	 */
+	virtual void setZColors(glui32 fg, glui32 bg);
 };
 typedef Stream *strid_t;
 
@@ -314,6 +319,11 @@ public:
 	 * Set a hyperlink
 	 */
 	virtual void setHyperlink(glui32 linkVal) override;
+
+	/**
+	 * Set the style colors
+	 */
+	virtual void setZColors(glui32 fg, glui32 bg) override;
 };
 
 /**

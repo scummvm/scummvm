@@ -63,6 +63,11 @@ void Stream::close(StreamResult *result) {
 	delete this;
 }
 
+void Stream::setZColors(glui32 fg, glui32 bg) {
+	if (_writable && g_conf->_styleHint)
+		Windows::_forceRedraw = true;
+}
+
 /*--------------------------------------------------------------------------*/
 
 void WindowStream::close(StreamResult *result) {
@@ -215,6 +220,67 @@ void WindowStream::setStyle(glui32 val) {
 void WindowStream::setHyperlink(glui32 linkVal) {
 	if (_writable)
 		_window->_attr.hyper = linkVal;
+}
+
+void WindowStream::setZColors(glui32 fg, glui32 bg) {
+	if (!_writable || !g_conf->_styleHint)
+		return;
+
+	byte fore[3], back[3];
+	fore[0] = (fg >> 16) & 0xff;
+	fore[1] = (fg >> 8) & 0xff;
+	fore[2] = (fg) & 0xff;
+	back[0] = (bg >> 16) & 0xff;
+	back[1] = (bg >> 8) & 0xff;
+	back[2] = (bg) & 0xff;
+
+	if (fg != zcolor_Transparent && fg != zcolor_Cursor) {
+		if (fg == zcolor_Default) {
+			_window->_attr.fgset = 0;
+			_window->_attr.fgcolor = 0;
+			Windows::_overrideFgSet = false;
+			Windows::_overrideFgVal = 0;
+			
+			Common::copy(g_conf->_moreSave, g_conf->_moreSave + 3, g_conf->_moreColor);
+			Common::copy(g_conf->_caretSave, g_conf->_caretSave + 3, g_conf->_caretColor);
+			Common::copy(g_conf->_linkSave, g_conf->_linkSave + 3, g_conf->_linkColor);
+		} else if (fg != zcolor_Current) {
+			_window->_attr.fgset = 1;
+			_window->_attr.fgcolor = fg;
+			Windows::_overrideFgSet = true;
+			Windows::_overrideFgVal = fg;
+			
+			Common::copy(fore, fore + 3, g_conf->_moreColor);
+			Common::copy(fore, fore + 3, g_conf->_caretColor);
+			Common::copy(fore, fore + 3, g_conf->_linkColor);
+		}
+	}
+
+	if (bg != zcolor_Transparent && bg != zcolor_Cursor) {
+		if (bg == zcolor_Default) {
+			_window->_attr.bgset = 0;
+			_window->_attr.bgcolor = 0;
+			Windows::_overrideBgSet = false;
+			Windows::_overrideBgVal = 0;
+
+			Common::copy(g_conf->_windowSave, g_conf->_windowSave + 3, g_conf->_windowColor);
+			Common::copy(g_conf->_borderSave, g_conf->_borderSave + 3, g_conf->_borderColor);
+		} else if (bg != zcolor_Current) {
+			_window->_attr.bgset = 1;
+			_window->_attr.bgcolor = bg;
+			Windows::_overrideBgSet = true;
+			Windows::_overrideBgVal = bg;
+
+			Common::copy(back, back + 3, g_conf->_windowColor);
+			Common::copy(back, back + 3, g_conf->_borderColor);
+		}
+	}
+
+	Windows::_overrideReverse = !(fg == zcolor_Default && bg == zcolor_Default);
+	Windows::_forceRedraw = true;
+
+	if (_window->_echoStream)
+		_window->_echoStream->setZColors(fg, bg);
 }
 
 /*--------------------------------------------------------------------------*/
