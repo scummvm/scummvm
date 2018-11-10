@@ -258,7 +258,7 @@ public:
 	/**
 	 * Set the total number of frames played
 	 */
-	void Events::setTotalPlayTicks(uint frames) {
+	void setTotalPlayTicks(uint frames) {
 		_frameCounter = frames;
 	}
 

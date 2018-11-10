@@ -16,7 +16,6 @@ MODULE_OBJS := \
 	unicode_gen.o \
 	utils.o \
 	windows.o \
-	window_mask.o \
 	window_graphics.o \
 	window_pair.o \
 	window_text_buffer.o \

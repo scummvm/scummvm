@@ -175,7 +175,7 @@ void Scott::delay(int seconds) {
 }
 
 void Scott::fatal(const char *x) {
-	error(x);
+	error("%s", x);
 }
 
 void Scott::clearScreen(void) {
@@ -412,7 +412,7 @@ void Scott::outputNumber(int a) {
 }
 
 void Scott::look(void) {
-	static char *ExitNames[6] = { "North", "South", "East", "West", "Up", "Down" };
+	const char *const ExitNames[6] = { "North", "South", "East", "West", "Up", "Down" };
 	Room *r;
 	int ct, f;
 	int pos;
@@ -555,7 +555,7 @@ Common::Error Scott::saveGameState(int slot, const Common::String &desc) {
 		glk_put_string_stream(file, msg.c_str());
 	}
 
-	msg = Common::String::format("%lu %d %hd %d %d %hd\n",
+	msg = Common::String::format("%u %d %hd %d %d %hd\n",
 	                             BitFlags, (BitFlags & (1 << DARKBIT)) ? 1 : 0,
 	                             MyLoc, CurrentCounter, SavedRoom, GameHeader.LightTime);
 	glk_put_string_stream(file, msg.c_str());
@@ -602,7 +602,7 @@ Common::Error Scott::loadGameState(int slot) {
 	}
 
 	glk_get_line_stream(file, buf, sizeof buf);
-	sscanf(buf, "%ld %hd %d %d %d %d\n",
+	sscanf(buf, "%u %hd %d %d %d %d\n",
 	       &BitFlags, &darkFlag, &MyLoc, &CurrentCounter, &SavedRoom,
 	       &GameHeader.LightTime);
 
