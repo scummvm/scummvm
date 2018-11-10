@@ -850,7 +850,7 @@ void FileStream::putBuffer(const char *buf, size_t len) {
 
 	ensureOp(filemode_Write);
 	for (size_t lx = 0; lx < len; lx++) {
-		unsigned char ch = ((unsigned char *)buf)[lx];
+		unsigned char ch = ((const unsigned char *)buf)[lx];
 		if (!_unicode) {
 			_outFile->writeByte(ch);
 		} else if (_textFile) {
@@ -1100,7 +1100,7 @@ glui32 FileStream::getBuffer(char *buf, glui32 len) {
 		for (lx = 0; lx < len; lx++) {
 			glui32 ch;
 			ch = getCharUtf8();
-			if (ch == -1)
+			if (ch == (glui32)-1)
 				break;
 			_readCount++;
 			if (ch >= 0x100)
@@ -1161,7 +1161,7 @@ glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
 		for (lx = 0; lx < len; lx++) {
 			glui32 ch;
 			ch = getCharUtf8();
-			if (ch == -1)
+			if (ch == (glui32)-1)
 				break;
 			_readCount++;
 			buf[lx] = ch;
@@ -1221,7 +1221,7 @@ glui32 FileStream::getLine(char *buf, glui32 len) {
 		for (lx = 0; lx < len && !gotNewline; lx++) {
 			glui32 ch;
 			ch = getCharUtf8();
-			if (ch == -1)
+			if (ch == (glui32)-1)
 				break;
 			_readCount++;
 			if (ch >= 0x100)
@@ -1295,7 +1295,7 @@ glui32 FileStream::getLineUni(glui32 *ubuf, glui32 len) {
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
 			glui32 ch;
 			ch = getCharUtf8();
-			if (ch == -1)
+			if (ch == (glui32)-1)
 				break;
 			_readCount++;
 			ubuf[lx] = ch;

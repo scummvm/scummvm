@@ -103,7 +103,7 @@ enum Gestalt {
 	gestalt_LineTerminatorKey      = 19,
 	gestalt_DateTime               = 20,
 	gestalt_Sound2                 = 21,
-	gestalt_GarglkText             = 0x1100,
+	gestalt_GarglkText             = 0x1100
 };
 
 enum Style {
@@ -118,7 +118,7 @@ enum Style {
 	style_Input        = 8,
 	style_User1        = 9,
 	style_User2        = 10,
-	style_NUMSTYLES    = 11,
+	style_NUMSTYLES    = 11
 };
 
 enum WinType {
@@ -127,7 +127,7 @@ enum WinType {
 	wintype_Blank      = 2,
 	wintype_TextBuffer = 3,
 	wintype_TextGrid   = 4,
-	wintype_Graphics   = 5,
+	wintype_Graphics   = 5
 };
 
 enum WinMethod {
@@ -143,7 +143,7 @@ enum WinMethod {
 
 	winmethod_Border     = 0x000,
 	winmethod_NoBorder   = 0x100,
-	winmethod_BorderMask = 0x100,
+	winmethod_BorderMask = 0x100
 };
 
 enum StyleHint {
@@ -162,7 +162,7 @@ enum StyleHint {
 	stylehint_just_LeftFlush  = 0,
 	stylehint_just_LeftRight  = 1,
 	stylehint_just_Centered   = 2,
-	stylehint_just_RightFlush = 3,
+	stylehint_just_RightFlush = 3
 };
 
 /**
@@ -176,7 +176,7 @@ enum giDisp {
 	gidisp_Class_Window   = 0,
 	gidisp_Class_Stream   = 1,
 	gidisp_Class_Fileref  = 2,
-	gidisp_Class_Schannel = 3,
+	gidisp_Class_Schannel = 3
 };
 
 enum zcolor {
