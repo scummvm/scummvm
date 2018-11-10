@@ -192,6 +192,16 @@ public:
 	virtual void putBufferUni(const uint32 *buf, size_t len) = 0;
 
 	/**
+	 * Remove a string from the end of the stream, if indeed it is at the end
+	 */
+	virtual void unputBuffer(const char *buf, size_t len) {}
+
+	/**
+	 * Remove a string from the end of the stream, if indeed it is at the end
+	 */
+	virtual void unputBufferUni(const glui32 *buf, size_t len) {}
+
+	/**
 	 * Send a line to the stream with a trailing newline
 	 */
 	void echoLine(char *buf, glui32 len) {
@@ -287,6 +297,16 @@ public:
 	 * Write a unicode character
 	 */
 	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+
+	/**
+	 * Remove a string from the end of the stream, if indeed it is at the end
+	 */
+	virtual void unputBuffer(const char *buf, size_t len) override;
+
+	/**
+	 * Remove a string from the end of the stream, if indeed it is at the end
+	 */
+	virtual void unputBufferUni(const glui32 *buf, size_t len) override;
 
 	virtual void setStyle(glui32 val) override;
 

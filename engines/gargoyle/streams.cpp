@@ -147,6 +147,59 @@ void WindowStream::putBufferUni(const uint32 *buf, size_t len) {
 		_window->_echoStream->putBufferUni(buf, len);
 }
 
+void WindowStream::unputBuffer(const char *buf, size_t len) {
+	glui32 lx;
+	const char *cx;
+
+	if (!_writable)
+		return;
+
+	if (_window->_lineRequest || _window->_lineRequestUni) {
+		if (g_conf->_safeClicks && g_vm->_events->_forceClick) {
+			_window->cancelLineEvent(nullptr);
+			g_vm->_events->_forceClick = false;
+		} else {
+			warning("unput_buffer: window has pending line request");
+			return;
+		}
+	}
+
+	for (lx = 0, cx = buf + len - 1; lx<len; lx++, cx--) {
+		if (!_window->unputCharUni(*cx))
+			break;
+		_writeCount--;
+	}
+	if (_window->_echoStream)
+		_window->_echoStream->unputBuffer(buf, len);
+}
+
+void WindowStream::unputBufferUni(const glui32 *buf, size_t len) {
+	glui32 lx;
+	const glui32 *cx;
+
+	if (!_writable)
+		return;
+
+	if (_window->_lineRequest || _window->_lineRequestUni) {
+		if (g_conf->_safeClicks && g_vm->_events->_forceClick) {
+			_window->cancelLineEvent(nullptr);
+			g_vm->_events->_forceClick = false;
+		} else {
+			warning("unput_buffer: window has pending line request");
+			return;
+		}
+	}
+
+	for (lx = 0, cx = buf + len - 1; lx<len; lx++, cx--) {
+		if (!_window->unputCharUni(*cx))
+			break;
+		_writeCount--;
+	}
+
+	if (_window->_echoStream)
+		_window->_echoStream->unputBufferUni(buf, len);
+}
+
 void WindowStream::setStyle(glui32 val) {
 	if (!_writable)
 		return;
