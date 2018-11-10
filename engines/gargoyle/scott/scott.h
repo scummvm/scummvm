@@ -131,6 +131,7 @@ private:
 	bool split_screen;
 	winid_t Bottom, Top;
 	uint32 BitFlags;    ///< Might be >32 flags - I haven't seen >32 yet
+	int _saveSlot;		///< Save slot when loading savegame from launcher
 private:
 	/**
 	 * Initialization code
