@@ -156,47 +156,44 @@ Conf::Conf() {
 	Common::copy(G_STYLES, G_STYLES + style_NUMSTYLES, _gStyles);
 
 	char buffer[255];
-	const char *const TG_COLOR[2] = { "tcolor", "gcolor" };
-	for (int idx = 0; idx < 2; ++idx) {
-		if (!ConfMan.hasKey(TG_COLOR[idx]))
-			continue;
+	const char *const TG_COLOR[2] = { "tcolor_%d", "gcolor_%d" };
+	for (int tg = 0; tg < 2; ++tg) {
+		for (int style = 0; style <= 10; ++style) {
+			Common::String key = Common::String::format(TG_COLOR[tg], style);
+			if (!ConfMan.hasKey(key))
+				continue;
 
-		strncpy(buffer, ConfMan.get(TG_COLOR[idx]).c_str(), 254);
-		buffer[255] = '\0';
-		char *style = strtok(buffer, "\r\n\t ");
-		char *fg = strtok(nullptr, "\r\n\t ");
-		char *bg = strtok(nullptr, "\r\n\t ");
+			strncpy(buffer, ConfMan.get(key).c_str(), 254);
+			buffer[255] = '\0';
+			char *fg = strtok(buffer, "\r\n\t ");
+			char *bg = strtok(nullptr, "\r\n\t ");
 
-		int i = atoi(style);
-		if (i < 0 || i >= style_NUMSTYLES)
-			continue;
-
-		if (idx == 0) {
-			parseColor(fg, _tStyles[i].fg);
-			parseColor(bg, _tStyles[i].bg);
-		} else {
-			parseColor(fg, _gStyles[i].fg);
-			parseColor(bg, _gStyles[i].bg);
+			if (tg == 0) {
+				parseColor(fg, _tStyles[style].fg);
+				parseColor(bg, _tStyles[style].bg);
+			} else {
+				parseColor(fg, _gStyles[style].fg);
+				parseColor(bg, _gStyles[style].bg);
+			}
 		}
 	}
 
-	const char *const TG_FONT[2] = { "tfont", "gfont" };
-	for (int idx = 0; idx < 2; ++idx) {
-		if (!ConfMan.hasKey(TG_FONT[idx]))
-			continue;
+	const char *const TG_FONT[2] = { "tfont_%d", "gfont_%d" };
+	for (int tg = 0; tg < 2; ++tg) {
+		for (int style = 0; style <= 10; ++style) {
+			Common::String key = Common::String::format(TG_FONT[tg], style);
+			if (!ConfMan.hasKey(key))
+				continue;
 
-		strncpy(buffer, ConfMan.get(TG_FONT[idx]).c_str(), 254);
-		buffer[255] = '\0';
-		char *style = strtok(buffer, "\r\n\t ");
-		char *font = strtok(nullptr, "\r\n\t ");
-		int i = atoi(style);
-		if (i < 0 || i >= style_NUMSTYLES)
-			continue;
+			strncpy(buffer, ConfMan.get(key).c_str(), 254);
+			buffer[255] = '\0';
+			char *font = strtok(buffer, "\r\n\t ");
 
-		if (idx == 0)
-			_tStyles[i].font = Fonts::getId(font);
-		else
-			_gStyles[i].font = Fonts::getId(font);
+			if (tg == 0)
+				_tStyles[style].font = Fonts::getId(font);
+			else
+				_gStyles[style].font = Fonts::getId(font);
+		}
 	}
 
 	Common::copy(_tStyles, _tStyles + style_NUMSTYLES, _tStylesDefault);
