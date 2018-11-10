@@ -1160,11 +1160,15 @@ void Glk::garglk_set_zcolors_stream(strid_t str, glui32 fg, glui32 bg) {
 }
 
 void Glk::garglk_set_reversevideo(glui32 reverse) {
-	// TODO
+	_streams->getCurrent()->setReverseVideo(reverse != 0);
 }
 
 void Glk::garglk_set_reversevideo_stream(strid_t str, glui32 reverse) {
-	// TODO
+	if (str) {
+		str->setReverseVideo(reverse != 0);
+	} else {
+		warning("set_reversevideo: Invalid ref");
+	}
 }
 
 } // End of namespace Gargoyle
