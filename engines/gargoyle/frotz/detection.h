@@ -20,16 +20,16 @@
  *
  */
 
-#ifndef GARGOYLE_SCOTT_DETECTION
-#define GARGOYLE_SCOTT_DETECTION
+#ifndef GARGOYLE_FROTZ_DETECTION
+#define GARGOYLE_FROTZ_DETECTION
 
 #include "common/fs.h"
 #include "engines/game.h"
 
 namespace Gargoyle {
-namespace Scott {
+namespace Frotz {
 
-class ScottMetaEngine {
+class FrotzMetaEngine {
 public:
 	/**
 	 * Detect supported games
@@ -37,7 +37,7 @@ public:
 	static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);
 };
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Gargoyle
 
 #endif

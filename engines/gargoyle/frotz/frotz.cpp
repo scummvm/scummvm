@@ -20,24 +20,26 @@
  *
  */
 
-#ifndef GARGOYLE_SCOTT_DETECTION
-#define GARGOYLE_SCOTT_DETECTION
-
-#include "common/fs.h"
-#include "engines/game.h"
+#include "gargoyle/frotz/frotz.h"
+#include "gargoyle/frotz/frotz_types.h"
 
 namespace Gargoyle {
-namespace Scott {
+namespace Frotz {
 
-class ScottMetaEngine {
-public:
-	/**
-	 * Detect supported games
-	 */
-	static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);
-};
+Frotz::Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst, gameDesc) {
+}
+
+void Frotz::runGame(Common::SeekableReadStream *gameFile) {
+	// TODO
+}
+
+Common::Error Frotz::loadGameState(int slot) {
+	return Common::kNoError;
+}
+
+Common::Error Frotz::saveGameState(int slot, const Common::String &desc) {
+	return Common::kNoError;
+}
 
 } // End of namespace Scott
 } // End of namespace Gargoyle
-
-#endif
