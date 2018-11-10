@@ -20,53 +20,47 @@
  *
  */
 
-#include "gargoyle/scott/detection.h"
+#include "gargoyle/frotz/detection.h"
 #include "common/file.h"
 #include "common/md5.h"
 
 namespace Gargoyle {
-namespace Scott {
+namespace Frotz {
 
-struct ScottGame {
+struct FrotzGame {
 	const char *_md5;
 	const char *_gameId;
 	int32 _filesize;
 	const char *_desc;
 };
 
-const ScottGame SCOTT_GAMES[] = {
-	{ "ae541fc1085da2f7d561b72ed20a6bc1", "adventureland", 18003, "Adventureland" },
-	{ "cbd47ab4fcfe00231ffd71d52378d410", "pirateadventure", 18482, "Pirate Adventure" },
-	{ "9251ab2c64e63559d8a6e9e6246760a5", "missionimpossible", 17227, "Mission Impossible" },
-	{ "be849c5747c7fc3b201984afb4403b8e", "voodoocastle", 18140, "Voodoo Castle" },
-	{ "85b75b6079b5ee572b5259b29a0e5d21", "thecount", 19999, "The Count" },
-	{ "c423cae841ac1927b5b2e503607b21bc", "strangeodyssey", 20115, "Strange Odyssey" },
-	{ "326b98b991d401605074e64d474ce566", "mysteryfunhouse", 19700, "Mystery Fun House" },
-	{ "8ef9010399f055da9adb15ce7745a11c", "pyramidofdoom", 20320, "Pyramid Of Doom" },
-	{ "fcdcca8b2acf76ba2d0006cefa3630a1", "ghosttown", 20687, "Ghost Town" },
-	{ "c8aaa80f07c40fa8e4b17432644919dc", "savageisland1", 22669, "Savage Island, Part 1" },
-	{ "2add0f28d9b236c866890cdf8d86ee60", "savageisland2", 21169, "Savage Island, Part 2" },
-	{ "675126bd0477e8ed9230ad3db5afc45f", "goldenvoyage", 21401, "The Golden Voyage" },
-	{ "0ef0def798d895ed766041fa99dd28a0", "adventure13", 22346, "Adventure 13" },
-	{ "0bf1bcc649422798332a38c88588fdff", "adventure14", 22087, "Adventure 14" },
-	{ "a0a5423967287dae9cbeb9abe8324479", "buckaroobonzai", 21038, "Buckaroo Banzai" },
+const FrotzGame FROTZ_GAMES[] = {
 	{ nullptr, nullptr, 0, nullptr }
 };
 
-bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
+bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
 	Common::File gameFile;
 	Common::String md5;
+	const char *const EXTENSIONS[9] = { ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8", ".zblorb" };
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory() || !file->getName().hasSuffix(".saga"))
+		// Check for a recognised filename
+		if (file->isDirectory())
+			continue;
+		Common::String filename = file->getName();
+		bool hasExt = false;
+		for (int idx = 0; idx < 9 && !hasExt; ++idx)
+			hasExt = filename.hasSuffixIgnoreCase(EXTENSIONS[idx]);
+		if (!hasExt)
 			continue;
 
+		// Check for known game
 		if (gameFile.open(*file)) {
 			md5 = Common::computeStreamMD5AsString(gameFile, 5000);
 
-			// Scan through the Scott game list for a match
-			const ScottGame *p = SCOTT_GAMES;
+			// Scan through the game list for a match
+			const FrotzGame *p = FROTZ_GAMES;
 			while (p->_md5 && p->_filesize != gameFile.size() && md5 != p->_md5)
 				++p;
 
@@ -85,5 +79,5 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 	return !gameList.empty();
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Gargoyle
