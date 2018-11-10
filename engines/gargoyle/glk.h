@@ -260,7 +260,7 @@ public:
 	/* XXX non-official Glk functions that may or may not exist */
 	#define GARGLK 1
 
-	char* garglk_fileref_get_name(frefid_t fref);
+	const char *garglk_fileref_get_name(frefid_t fref) const;
 
 	void garglk_set_program_name(const char *name);
 	void garglk_set_program_info(const char *info);
@@ -268,10 +268,17 @@ public:
 	void garglk_set_story_title(const char *title);
 	void garglk_set_config(const char *name);
 
-	/* garglk_unput_string - removes the specified string from the end of the output buffer, if
-	* indeed it is there. */
-	void garglk_unput_string(char *str);
-	void garglk_unput_string_uni(glui32 *str);
+	/**
+	 * Removes the specified string from the end of the output buffer, if
+	 * indeed it is there.
+	 */
+	void garglk_unput_string(const char *str);
+
+	/**
+	 * Removes the specified string from the end of the output buffer, if
+	 * indeed it is there.
+	 */
+	void garglk_unput_string_uni(const glui32 *str);
 
 	void garglk_set_zcolors(glui32 fg, glui32 bg);
 	void garglk_set_zcolors_stream(strid_t str, glui32 fg, glui32 bg);
