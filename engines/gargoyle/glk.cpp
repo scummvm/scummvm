@@ -1090,7 +1090,7 @@ void Glk::glk_simple_time_to_date_local(glsi32 time, glui32 factor, glkdate_t *d
 }
 
 void Glk::glk_date_to_time_utc(const glkdate_t *date, glktimeval_t *time) {
-	// TODO: timezones aren't currently supported
+	// WORKAROUND: timezones aren't currently supported
 	*time = TimeAndDate(*date);
 }
 
@@ -1099,7 +1099,7 @@ void Glk::glk_date_to_time_local(const glkdate_t *date, glktimeval_t *time) {
 }
 
 glsi32 Glk::glk_date_to_simple_time_utc(const glkdate_t *date, glui32 factor) {
-	// TODO: timezones aren't currently supported
+	// WORKAROUND: timezones aren't currently supported
 	assert(factor);
 	TimeSeconds ts = TimeAndDate(*date);
 	return ts / factor;
@@ -1113,7 +1113,7 @@ glsi32 Glk::glk_date_to_simple_time_local(const glkdate_t *date, glui32 factor) 
 
 /*--------------------------------------------------------------------------*/
 
-/* XXX non-official Glk functions that may or may not exist */
+/* XXX non-official Glk functions */
 
 const char *Glk::garglk_fileref_get_name(frefid_t fref) const {
 	return fref->_filename.c_str();
