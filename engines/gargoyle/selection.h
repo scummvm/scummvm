@@ -27,6 +27,7 @@
 #include "gargoyle/utils.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/ustr.h"
 
 namespace Gargoyle {
 
@@ -39,13 +40,13 @@ class Window;
  */
 class Clipboard {
 private:
-	Common::Array<uint32> _text;
+	Common::U32String _text;
 public:
 	/**
 	 * Makes a copy of selected text in preparation for the user copying it
 	 * to the clpboard
 	 */
-	void clipboardStore(const uint32 *text, size_t len);
+	void clipboardStore(const Common::U32String &text);
 
 	/**
 	 * Send previously designated text to the clipboard
