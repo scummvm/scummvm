@@ -33,10 +33,44 @@ namespace Frotz {
  * Frotz interpreter for Z-code games
  */
 class Frotz : public Glk {
-private:
-	/**
-	 *
-	 */
+public:
+	UserOptions _options;
+	Header _header;
+
+	// Story file name, id number and size
+	Common::String _storyName;
+	Story _storyId;
+	size_t _storySize;
+
+	// Stack data
+	zword _stack[STACK_SIZE];
+	zword *_sp;
+	zword *_fp;
+	zword _frameCount;
+
+	// IO streams
+	bool _ostream_screen;
+	bool _ostream_script;
+	bool _ostream_memory;
+	bool _ostream_record;
+	bool _istream_replay;
+	bool _message;
+
+	// Current window and mouse data
+	int _cwin;
+	int _mwin;
+	int _mouse_y;
+	int _mouse_x;
+	int _menu_selected;
+
+	// Window attributes
+	bool _enableWrapping;
+	bool _enableScripting;
+	bool _enableScrolling;
+	bool _enableBuffering;
+
+	// Size of memory to reserve (in bytes)
+	size_t _reserveMem;
 public:
 	/**
 	 * Constructor
@@ -58,6 +92,8 @@ public:
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 };
+
+extern Frotz *g_vm;
 
 } // End of namespace Frotz
 } // End of namespace Gargoyle
