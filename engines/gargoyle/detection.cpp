@@ -242,6 +242,8 @@ int GargoyleMetaEngine::getMaximumSaveSlot() const {
 }
 
 void GargoyleMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor GargoyleMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
