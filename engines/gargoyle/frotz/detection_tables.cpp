@@ -25,49 +25,49 @@
 namespace Gargoyle {
 namespace Frotz {
 
-const char *const AMFV = "A Mind Forever Voyaging";
-const char *const ARTHUR = "Arthur: The Quest for Excalibur";
-const char *const BALLYHOO = "Ballyhoo";
-const char *const BEYONDZORK = "Beyond Zork";
-const char *const BORDERZONE = "Border Zone";
-const char *const BUREAUCRACY = "Bureaucracy";
-const char *const CUTTHROATS = "Cutthroats";
-const char *const DEADLINE = "Deadline";
-const char *const ENCHANTER = "Enchanter";
-const char *const HHGTTG = "The Hitchhiker's Guide to the Galaxy";
-const char *const HIJINX = "Hollywood Hijinx";
-const char *const INFIDEL = "Infidel";
-const char *const JOURNEY = "Journey";
-const char *const LGOP = "Leather Goddesses of Phobos";
-const char *const LGOP2 = "Leather Goddesses of Phobos 2";
-const char *const LURKING = "The Lurking Horror";
-const char *const MINIZORK1 = "Mini Zork I: The Great Underground Empire";
-const char *const MOONMIST = "Moonmist";
-const char *const NORDBERT = "Nord and Bert Couldn't Make Head or Tail of It";
-const char *const PLANETFALL = "Planetfall";
-const char *const PLUNDERED = "Plundered Hearts";
-const char *const SAMPLER1 = "Infocom Sampler 1";
-const char *const SAMPLER2 = "Infocom Sampler 2";
-const char *const SEASTALKER = "Seastalker";
-const char *const SHERLOCKRIDDLE = "Sherlock: The Riddle of the Crown Jewels";
-const char *const SHOGUN = "James Clavell's Shogun";
-const char *const SORCERER = "Sorcerer";
-const char *const SPELLBREAKER = "Spellbreaker";
-const char *const STARCROSS = "Starcross";
-const char *const STATIONFALL = "Stationfall";
-const char *const SUSPECT = "Suspect";
-const char *const SUSPENDED = "Suspended";
-const char *const TRINITY = "Trinity";
-const char *const WISHBRINGER = "Wishbringer";
-const char *const WITNESS = "The Witness";
-const char *const ZORK0 = "Zork Zero: The Revenge of Megaboz";
-const char *const ZORK1 = "Zork I: The Great Underground Empire";
-const char *const ZORK2 = "Zork II: The Wizard of Frobozz";
-const char *const ZORK3 = "Zork III: The Dungeon Master";
-const char *const ZTUU = "Zork: The Undiscovered Underground";
+const char *const AMFV_DESC = "A Mind Forever Voyaging";
+const char *const ARTHUR_DESC = "Arthur: The Quest for Excalibur";
+const char *const BALLYHOO_DESC = "Ballyhoo";
+const char *const BEYONDZORK_DESC = "Beyond Zork";
+const char *const BORDERZONE_DESC = "Border Zone";
+const char *const BUREAUCRACY_DESC = "Bureaucracy";
+const char *const CUTTHROATS_DESC = "Cutthroats";
+const char *const DEADLINE_DESC = "Deadline";
+const char *const ENCHANTER_DESC = "Enchanter";
+const char *const HHGTTG_DESC = "The Hitchhiker's Guide to the Galaxy";
+const char *const HIJINX_DESC = "Hollywood Hijinx";
+const char *const INFIDEL_DESC = "Infidel";
+const char *const JOURNEY_DESC = "Journey";
+const char *const LGOP_DESC = "Leather Goddesses of Phobos";
+const char *const LGOP2_DESC = "Leather Goddesses of Phobos 2";
+const char *const LURKING_DESC = "The Lurking Horror";
+const char *const MINIZORK1_DESC = "Mini Zork I: The Great Underground Empire";
+const char *const MOONMIST_DESC = "Moonmist";
+const char *const NORDBERT_DESC = "Nord and Bert Couldn't Make Head or Tail of It";
+const char *const PLANETFALL_DESC = "Planetfall";
+const char *const PLUNDERED_DESC = "Plundered Hearts";
+const char *const SAMPLER1_DESC = "Infocom Sampler 1";
+const char *const SAMPLER2_DESC = "Infocom Sampler 2";
+const char *const SEASTALKER_DESC = "Seastalker";
+const char *const SHERLOCKRIDDLE_DESC = "Sherlock: The Riddle of the Crown Jewels";
+const char *const SHOGUN_DESC = "James Clavell's Shogun";
+const char *const SORCERER_DESC = "Sorcerer";
+const char *const SPELLBREAKER_DESC = "Spellbreaker";
+const char *const STARCROSS_DESC = "Starcross";
+const char *const STATIONFALL_DESC = "Stationfall";
+const char *const SUSPECT_DESC = "Suspect";
+const char *const SUSPENDED_DESC = "Suspended";
+const char *const TRINITY_DESC = "Trinity";
+const char *const WISHBRINGER_DESC = "Wishbringer";
+const char *const WITNESS_DESC = "The Witness";
+const char *const ZORK0_DESC = "Zork Zero: The Revenge of Megaboz";
+const char *const ZORK1_DESC = "Zork I: The Great Underground Empire";
+const char *const ZORK2_DESC = "Zork II: The Wizard of Frobozz";
+const char *const ZORK3_DESC = "Zork III: The Dungeon Master";
+const char *const ZTUU_DESC = "Zork: The Undiscovered Underground";
 
 #define NONE GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMUSIC, GUIO_NOSUBTITLES)
-#define ENTRY0(ID, DESC, VERSION, MD5, FILESIZE) { ID, DESC, VERSION, MD5, FILESIZE, Common::EN_ANY, NONE }
+#define ENTRY0(ID, DESCRIPTION, VERSION, MD5, FILESIZE) { ID, DESCRIPTION##_DESC, VERSION, MD5, FILESIZE, Common::EN_ANY, NONE }
 #define FROTZ_TABLE_END_MARKER { nullptr, nullptr, nullptr, nullptr, 0, Common::EN_ANY, "" }
 
 const FrotzGameDescription FROTZ_GAMES[] = {
