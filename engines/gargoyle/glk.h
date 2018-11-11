@@ -25,6 +25,7 @@
 
 #include "gargoyle/gargoyle.h"
 #include "gargoyle/glk_types.h"
+#include "gargoyle/blorb.h"
 #include "gargoyle/time.h"
 #include "gargoyle/windows.h"
 
@@ -33,7 +34,7 @@ namespace Gargoyle {
 /**
  * Implements the GLK interface
  */
-class Glk : public GargoyleEngine {
+class Glk : public GargoyleEngine, public Blorb {
 private:
 	bool _gliFirstEvent;
 	unsigned char _charTolowerTable[256];
