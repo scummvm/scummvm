@@ -24,23 +24,12 @@
 #include "common/file.h"
 #include "common/md5.h"
 
+#include "gargoyle/frotz/detection_tables.h"
+
 namespace Gargoyle {
 namespace Frotz {
 
-struct FrotzGame {
-	const char *_md5;
-	const char *_gameId;
-	int32 _filesize;
-	const char *_desc;
-};
-
-const FrotzGame FROTZ_GAMES[] = {
-	{ nullptr, nullptr, 0, nullptr }
-};
-
 bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	Common::File gameFile;
-	Common::String md5;
 	const char *const EXTENSIONS[9] = { ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8", ".zblorb" };
 
 	// Loop through the files of the folder
@@ -55,25 +44,33 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		if (!hasExt)
 			continue;
 
+		// Open up the file and calculate the md5
+		Common::File gameFile;
+		if (!gameFile.open(*file))
+			continue;
+		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
+		size_t filesize = gameFile.size();
+		gameFile.close();
+
 		// Check for known game
-		if (gameFile.open(*file)) {
-			md5 = Common::computeStreamMD5AsString(gameFile, 5000);
+		const FrotzGameDescription *p = FROTZ_GAMES;
+		while (p->_gameId && p->_md5 && (md5 != p->_md5 || filesize != p->_filesize))
+			++p;
 
-			// Scan through the game list for a match
-			const FrotzGame *p = FROTZ_GAMES;
-			while (p->_md5 && p->_filesize != gameFile.size() && md5 != p->_md5)
-				++p;
+		DetectedGame gd;
+		if (!p->_gameId) {
+			// Generic .dat files don't get reported as matches unless they have a known md5
+			if (filename.hasSuffixIgnoreCase(".dat"))
+				continue;
 
-			if (p->_filesize) {
-				// Found a match
-				DetectedGame gd(p->_gameId, p->_desc, Common::EN_ANY, Common::kPlatformUnknown);
-				gd.addExtraEntry("filename", file->getName());
-
-				gameList.push_back(gd);
-			}
-
-			gameFile.close();
+			warning("Uknown zcode game %s - %s %d", filename.c_str(), md5.c_str(), filesize);
+			gd = DetectedGame("zcode", "Unrecognised zcode game", Common::UNK_LANG, Common::kPlatformUnknown);
+		} else {
+			gd = DetectedGame(p->_gameId, p->_description, p->_language, Common::kPlatformUnknown, p->_extra);
 		}
+
+		gd.addExtraEntry("filename", filename);
+		gameList.push_back(gd);
 	}
 
 	return !gameList.empty();

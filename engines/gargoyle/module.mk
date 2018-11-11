@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	window_text_buffer.o \
 	window_text_grid.o \
 	frotz/detection.o \
+	frotz/detection_tables.o \
 	frotz/frotz.o \
 	scott/detection.o \
 	scott/scott.o
