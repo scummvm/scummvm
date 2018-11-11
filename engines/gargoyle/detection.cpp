@@ -68,9 +68,54 @@ const Common::String &GargoyleEngine::getGameMD5() const {
 
 } // End of namespace Gargoyle
 
+#include "gargoyle/frotz/detection_tables.h"
+#define ZCODE(ID, NAME) { ID, Gargoyle::Frotz::NAME }
+
 static const PlainGameDescriptor gargoyleGames[] = {
 	{"zcode", "Zcode Games" },
 	{"scottadams", "Scott Adams Games"},
+
+	// Infocom/Z-code games
+	ZCODE("amfv", AMFV),
+	ZCODE("arthur", ARTHUR),
+	ZCODE("ballyhoo", BALLYHOO),
+	ZCODE("beyondzork", BEYONDZORK),
+	ZCODE("borderzone", BORDERZONE),
+	ZCODE("bureaucracy", BUREAUCRACY),
+	ZCODE("cutthroats", CUTTHROATS),
+	ZCODE("deadline", DEADLINE),
+	ZCODE("enchanter", ENCHANTER),
+	ZCODE("hhgttg", HHGTTG),
+	ZCODE("hijinx", HIJINX),
+	ZCODE("infidel", INFIDEL),
+	ZCODE("journey", JOURNEY),
+	ZCODE("lgop", LGOP),
+	ZCODE("lgop2", LGOP2),
+	ZCODE("lurking", LURKING),
+	ZCODE("minizork1", MINIZORK1),
+	ZCODE("moonmist", MOONMIST),
+	ZCODE("nordbert", NORDBERT),
+	ZCODE("planetfall", PLANETFALL),
+	ZCODE("plundered", PLUNDERED),
+	ZCODE("sampler1", SAMPLER1),
+	ZCODE("sampler2", SAMPLER2),
+	ZCODE("seastalker", SEASTALKER),
+	ZCODE("sherlockriddle", SHERLOCKRIDDLE),
+	ZCODE("shogun", SHOGUN),
+	ZCODE("sorcerer", SORCERER),
+	ZCODE("spellbreaker", SPELLBREAKER),
+	ZCODE("starcross", STARCROSS),
+	ZCODE("stationfall", STATIONFALL),
+	ZCODE("suspect", SUSPECT),
+	ZCODE("suspended", SUSPENDED),
+	ZCODE("trinity", TRINITY),
+	ZCODE("wishbringer", WISHBRINGER),
+	ZCODE("witness", WITNESS),
+	ZCODE("zork0", ZORK0),
+	ZCODE("zork1", ZORK1),
+	ZCODE("zork2", ZORK2),
+	ZCODE("zork3", ZORK3),
+	ZCODE("ztuu", ZTUU),
 
 	// Scott Adams games
 	{ "adventureland", "Adventureland" },
