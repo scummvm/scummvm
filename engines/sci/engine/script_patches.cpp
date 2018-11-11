@@ -113,7 +113,7 @@ static const char *const selectorNameTable[] = {
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"has",          // King's Quest 6, GK1
 	"cycler",       // Space Quest 4 / system selector
-	"setLoop",      // Laura Bow 1 Colonel's Bequest
+	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
@@ -151,6 +151,7 @@ static const char *const selectorNameTable[] = {
 	"plane",        // RAMA
 	"state",        // RAMA
 	"getSubscriberObj", // RAMA
+	"setLooper",    // QFG4
 #endif
 	NULL
 };
@@ -225,7 +226,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_priority,
 	SELECTOR_plane,
 	SELECTOR_state,
-	SELECTOR_getSubscriberObj
+	SELECTOR_getSubscriberObj,
+	SELECTOR_setLooper
 #endif
 };
 
@@ -7285,14 +7287,85 @@ static const uint16 qg4AutosavePatch[] = {
 	PATCH_END
 };
 
+// The swamp areas have typos where a Grooper object is passed to
+// View::setLoop(), a method which expects an integer to store in the "loop"
+// property. This leads to arithmetic crashes later. We change it to
+// Actor::setLooper().
+//
+// Applies to at least: English CD, English floppy
+// Responsible method:
+//                     Script 440
+//                         sToWater::changeState()
+//                     Script 530, 535
+//                         sGlideFromTuff::changeState(1)
+//                         sGoGlide::changeState(2)
+//                         sFromWest::changeState(0)
+//                         sFromSouth::changeState(0)
+//                     Script 541, 542, 543
+//                         sGlideFromTuff::changeState(1)
+//                         sFromEast::changeState(0)
+//                         sFromNorth::changeState(0)
+//                         sFromWest::changeState(0)
+//                         sFromSouth::changeState(0)
+//                     Script 545
+//                         sCombatEnter::changeState(0)
+//                         sGlideFromTuff::changeState(2)
+//                         sFromNorth::changeState(0)
+//                         sFromEast::changeState(0)
+//                         sFromWest::changeState(0)
+// Fixes bug: #10777
+static const uint16 qg4SetLooperSignature1[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
+	0x78,                               // push 1
+	0x51, 0x5a,                         // class Grooper
+	SIG_END
+};
+
+static const uint16 qg4SetLooperPatch1[] = {
+	0x38, PATCH_SELECTOR16(setLooper),  // pushi setLooper
+	PATCH_END
+};
+
+// As above, except it's an exported subclass of Grooper: stopGroop.
+//
+// Applies to at least: English CD, English floppy
+// Responsible method:
+//                      Script 10
+//                          sJumpWater::changeState(3)
+//                          sToJump::changeState(2)
+// Fixes bug: #10777
+static const uint16 qg4SetLooperSignature2[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x39, 0x1c,                         // pushi 28d
+	0x78,                               // push1
+	0x43, 0x02, SIG_UINT16(0x0004),     // callk 04 (ScriptID 28 1)
+	SIG_END
+};
+static const uint16 qg4SetLooperPatch2[] = {
+	0x38, PATCH_SELECTOR16(setLooper),  // pushi setLooper
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
 	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,      sci2VolumeResetPatch },
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
+	{  true,    10, "fix setLooper calls (2/2)",                   2, qg4SetLooperSignature2,        qg4SetLooperPatch2 },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
+	{  true,   440, "fix setLooper calls (1/2)",                   1, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   530, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   535, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   541, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   542, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   543, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   545, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,        sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,        sci2NumSavesPatch2 },
