@@ -32,6 +32,18 @@ namespace Frotz {
 #define MAX_UNDO_SLOTS 500
 #define STACK_SIZE 20
 
+#define lo(v)	(v & 0xff)
+#define hi(v)	(v >> 8)
+
+#define SET_WORD(addr,v)  WRITE_BE_UINT16(addr,v)
+#define LOW_WORD(addr,v)  READ_BE_UINT16(addr,v)
+#define HIGH_WORD(addr,v) READ_BE_UINT16(addr,v)
+#define HIGH_LONG(addr,v) READ_BE_UINT32(addr,v)
+#define CODE_WORD(v)       v = g_vm->_mem.readWord()
+#define CODE_IDX_WORD(v,i) v = g_vm->_mem.readWord(i)
+#define GET_PC(v)          v = g_vm->_mem.getPC()
+#define SET_PC(v)          g_vm->_mem.setPC(v);
+
 /* There are four error reporting modes: never report errors;
  * report only the first time a given error type occurs;
  * report every time an error occurs;
@@ -131,67 +143,6 @@ struct UserOptions {
 		_undo_slots(MAX_UNDO_SLOTS), _expand_abbreviations(0), _script_cols(80),
 		_save_quetzal(true),
 		_err_report_mode(ERR_DEFAULT_REPORT_MODE), _sound(true) {
-	}
-};
-
-/**
- * Story file header data
- */
-struct Header {
-	zbyte _version;
-	zbyte _config;
-	zword _release;
-	zword _resident_size;
-	zword _start_pc;
-	zword _dictionary;
-	zword _objects;
-	zword _globals;
-	zword _dynamic_size;
-	zword _flags;
-	zbyte _serial[6];
-	zword _abbreviations;
-	zword _file_size;
-	zword _checksum;
-	zbyte _interpreter_number;
-	zbyte _interpreter_version;
-	zbyte _screen_rows;
-	zbyte _screen_cols;
-	zword _screen_width;
-	zword _screen_height;
-	zbyte _font_height = 1;
-	zbyte _font_width = 1;
-	zword _functions_offset;
-	zword _strings_offset;
-	zbyte _default_background;
-	zbyte _default_foreground;
-	zword _terminating_keys;
-	zword _line_width;
-	zbyte _standard_high;
-	zbyte _standard_low;
-	zword _alphabet;
-	zword _extension_table;
-	zbyte _user_name[8];
-
-	zword _hx_table_size;
-	zword _hx_mouse_x;
-	zword _hx_mouse_y;
-	zword _hx_unicode_table;
-	zword _hx_flags;
-	zword _hx_fore_colour;
-	zword _hx_back_colour;
-
-	Header() : _version(0), _config(0), _release(0), _resident_size(0), _start_pc(0),
-			_dictionary(0), _objects(0), _globals(0), _dynamic_size(0), _flags(0),
-			_abbreviations(0), _file_size(0), _checksum(0), _interpreter_number(0),
-			_interpreter_version(0), _screen_rows(0), _screen_cols(0), _screen_width(0),
-			_screen_height(0), _font_height(1), _font_width(1), _functions_offset(0),
-			_strings_offset(0), _default_background(0), _default_foreground(0),
-			_terminating_keys(0), _line_width(0), _standard_high(1), _standard_low(1),
-			_alphabet(0), _extension_table(0),
-			_hx_table_size(0), _hx_mouse_x(0), _hx_mouse_y(0), _hx_unicode_table(0),
-			_hx_flags(0), _hx_fore_colour(0), _hx_back_colour(0) {
-		Common::fill(&_serial[0], &_serial[6], '\0');
-		Common::fill(&_user_name[0], &_user_name[8], '\0');
 	}
 };
 

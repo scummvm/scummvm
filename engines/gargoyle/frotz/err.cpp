@@ -85,7 +85,8 @@ void Errors::runtimeError(int errNum) {
     
     if ((g_vm->_options._err_report_mode == ERR_REPORT_ALWAYS)
 			|| (g_vm->_options._err_report_mode == ERR_REPORT_ONCE && wasfirst)) {
-		long pc = g_vm->getPC();
+		long pc;
+		GET_PC(pc);
 		printString("Warning: ");
 		printString(ERR_MESSAGES[errNum - 1]);
 		printString(" (PC = ");

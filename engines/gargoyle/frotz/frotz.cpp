@@ -57,10 +57,5 @@ Common::Error Frotz::saveGameState(int slot, const Common::String &desc) {
 	return Common::kNoError;
 }
 
-uint Frotz::getPC() const {
-	// TODO
-	return 0;
-}
-
 } // End of namespace Scott
 } // End of namespace Gargoyle
