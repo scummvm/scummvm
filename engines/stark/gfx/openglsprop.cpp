@@ -36,7 +36,8 @@ namespace Gfx {
 OpenGLSPropRenderer::OpenGLSPropRenderer(Driver *gfx) :
 		VisualProp(),
 		_gfx(gfx),
-		_faceVBO(-1) {
+		_faceVBO(0),
+		_modelIsDirty(true) {
 	static const char* attributes[] = { "position", "normal", "texcoord", nullptr };
 	_shader = OpenGL::Shader::fromFiles("stark_prop", attributes);
 }
@@ -48,10 +49,11 @@ OpenGLSPropRenderer::~OpenGLSPropRenderer() {
 }
 
 void OpenGLSPropRenderer::render(const Math::Vector3d position, float direction) {
-	if (_faceVBO == -1) {
+	if (_modelIsDirty) {
 		// Update the OpenGL Buffer Objects if required
 		clearVertices();
 		uploadVertices();
+		_modelIsDirty = false;
 	}
 
 	_gfx->set3DMode();
@@ -97,7 +99,6 @@ void OpenGLSPropRenderer::render(const Math::Vector3d position, float direction)
 
 void OpenGLSPropRenderer::clearVertices() {
 	OpenGL::Shader::freeBuffer(_faceVBO);
-	_faceVBO = -1;
 
 	for (FaceBufferMap::iterator it = _faceEBO.begin(); it != _faceEBO.end(); ++it) {
 		OpenGL::Shader::freeBuffer(it->_value);
@@ -115,13 +116,13 @@ void OpenGLSPropRenderer::uploadVertices() {
 	}
 }
 
-uint32 OpenGLSPropRenderer::createFaceVBO() {
+GLuint OpenGLSPropRenderer::createFaceVBO() {
 	const Common::Array<Formats::BiffMesh::Vertex> &vertices = _model->getVertices();
 
 	return OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 9 * vertices.size(), &vertices.front());
 }
 
-uint32 OpenGLSPropRenderer::createFaceEBO(const Face *face) {
+GLuint OpenGLSPropRenderer::createFaceEBO(const Face *face) {
 	return OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->vertexIndices.size(), &face->vertexIndices.front());
 }
 

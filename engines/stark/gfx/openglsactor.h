@@ -23,11 +23,13 @@
 #ifndef STARK_GFX_OPENGL_S_ACTOR_H
 #define STARK_GFX_OPENGL_S_ACTOR_H
 
+#include "engines/stark/gfx/renderentry.h"
+#include "engines/stark/visual/actor.h"
+
 #include "common/hashmap.h"
 #include "common/hash-ptr.h"
 
-#include "engines/stark/gfx/renderentry.h"
-#include "engines/stark/visual/actor.h"
+#include "graphics/opengl/system_headers.h"
 
 namespace OpenGL {
 	class Shader;
@@ -46,18 +48,18 @@ public:
 	void render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) override;
 
 protected:
-	typedef Common::HashMap<Face *, uint32> FaceBufferMap;
+	typedef Common::HashMap<Face *, GLuint> FaceBufferMap;
 
 	OpenGLSDriver *_gfx;
 	OpenGL::Shader *_shader, *_shadowShader;
 
-	uint32 _faceVBO;
+	GLuint _faceVBO;
 	FaceBufferMap _faceEBO;
 
 	void clearVertices();
 	void uploadVertices();
-	uint32 createModelVBO(const Model *model);
-	uint32 createFaceEBO(const Face *face);
+	GLuint createModelVBO(const Model *model);
+	GLuint createFaceEBO(const Face *face);
 	void setBonePositionArrayUniform(OpenGL::Shader *shader, const char *uniform);
 	void setBoneRotationArrayUniform(OpenGL::Shader *shader, const char *uniform);
 	void setLightArrayUniform(const LightEntryArray &lights);

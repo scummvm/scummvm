@@ -25,7 +25,6 @@
 #include "engines/stark/gfx/driver.h"
 
 #include "graphics/surface.h"
-#include "graphics/opengl/system_headers.h"
 
 namespace Stark {
 namespace Gfx {

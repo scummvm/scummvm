@@ -29,6 +29,8 @@
 
 #include "engines/stark/gfx/driver.h"
 
+#include "graphics/opengl/system_headers.h"
+
 namespace OpenGL {
 class Shader;
 }
@@ -77,8 +79,8 @@ private:
 	OpenGL::Shader *_actorShader;
 	OpenGL::Shader *_fadeShader;
 	OpenGL::Shader *_shadowShader;
-	uint32 _surfaceVBO;
-	uint32 _fadeVBO;
+	GLuint _surfaceVBO;
+	GLuint _fadeVBO;
 };
 
 } // End of namespace Gfx
