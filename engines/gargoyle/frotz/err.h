@@ -20,41 +20,56 @@
  *
  */
 
-#include "gargoyle/frotz/frotz.h"
+#ifndef GARGOYLE_FROTZ_ERR
+#define GARGOYLE_FROTZ_ERR
+
 #include "gargoyle/frotz/frotz_types.h"
 
 namespace Gargoyle {
 namespace Frotz {
 
-Frotz *g_vm;
+#define ERR_NUM_ERRORS 33
+#define ERR_MAX_FATAL 19
 
-Frotz::Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst, gameDesc),
-		_storyId(STORY_UNKNOWN), _storySize(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
-		_ostream_screen(true), _ostream_script(false), _ostream_memory(false),
-		_ostream_record(false), _istream_replay(false), _message(false),
-		_cwin(0), _mwin(0), _mouse_x(0), _mouse_y(0), _menu_selected(0),
-		_enableWrapping(false), _enableScripting(true), _enableScrolling(false),
-		_enableBuffering(false), _reserveMem(0) {
-	g_vm = this;
-	Common::fill(&_stack[0], &_stack[STACK_SIZE], 0);
-}
+class Errors {
+private:
+	static const char *const ERR_MESSAGES[ERR_NUM_ERRORS];
+	int _count[ERR_NUM_ERRORS];
+public:
+	/**
+	 * Constructor
+	 */
+	Errors();
 
-void Frotz::runGame(Common::SeekableReadStream *gameFile) {
-	// TODO
-}
+	/**
+	 * An error has occurred. Ignore it, pass it to os_fatal or report
+	 * it according to err_report_mode.
+	 * @param errNum		Numeric code for error (1 to ERR_NUM_ERRORS)
+	 */
+	void runtimeError(int errNum);
 
-Common::Error Frotz::loadGameState(int slot) {
-	return Common::kNoError;
-}
+	/**
+	 * Print an unsigned 32bit number in decimal or hex.
+	 */
+	void printLong(uint value, int base);
 
-Common::Error Frotz::saveGameState(int slot, const Common::String &desc) {
-	return Common::kNoError;
-}
+	/**
+	 * Print a character
+	 */
+	void printChar(const char c);
 
-uint Frotz::getPC() const {
-	// TODO
-	return 0;
-}
+	/**
+	 * Print a string
+	 */
+	void printString(const char *str);
 
-} // End of namespace Scott
+	/**
+	 * Add a newline
+	 */
+	void newLine();
+};
+
+} // End of namespace Frotz
 } // End of namespace Gargoyle
+
+#endif
