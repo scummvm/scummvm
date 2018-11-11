@@ -69,7 +69,7 @@ const Common::String &GargoyleEngine::getGameMD5() const {
 } // End of namespace Gargoyle
 
 #include "gargoyle/frotz/detection_tables.h"
-#define ZCODE(ID, NAME) { ID, Gargoyle::Frotz::NAME }
+#define ZCODE(ID, NAME) { ID, Gargoyle::Frotz::NAME##_DESC }
 
 static const PlainGameDescriptor gargoyleGames[] = {
 	{"zcode", "Zcode Games" },
