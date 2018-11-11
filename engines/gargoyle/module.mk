@@ -1,6 +1,7 @@
 MODULE := engines/gargoyle
 
 MODULE_OBJS := \
+	blorb.o \
 	conf.o \
 	detection.o \
 	events.o \
