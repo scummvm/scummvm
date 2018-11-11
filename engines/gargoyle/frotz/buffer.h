@@ -20,36 +20,53 @@
  *
  */
 
-#include "gargoyle/frotz/frotz.h"
+#ifndef GARGOYLE_FROTZ_BUFFER
+#define GARGOYLE_FROTZ_BUFFER
+
 #include "gargoyle/frotz/frotz_types.h"
 
 namespace Gargoyle {
 namespace Frotz {
 
-Frotz *g_vm;
+#define TEXT_BUFFER_SIZE 200
 
-Frotz::Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst, gameDesc),
-		_storyId(STORY_UNKNOWN), _storySize(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
-		_ostream_screen(true), _ostream_script(false), _ostream_memory(false),
-		_ostream_record(false), _istream_replay(false), _message(false),
-		_cwin(0), _mwin(0), _mouse_x(0), _mouse_y(0), _menu_selected(0),
-		_enableWrapping(false), _enableScripting(true), _enableScrolling(false),
-		_enableBuffering(false), _reserveMem(0) {
-	g_vm = this;
-	Common::fill(&_stack[0], &_stack[STACK_SIZE], 0);
-}
+/**
+ * Text buffer class
+ */
+class Buffer {
+public:
+	zchar _buffer[TEXT_BUFFER_SIZE];
+	size_t _bufPos;
+	bool _locked;
+	zchar _prevC;
+public:
+	/**
+	 * Constructor
+	 */
+	Buffer();
 
-void Frotz::runGame(Common::SeekableReadStream *gameFile) {
-	// TODO
-}
+	/**
+	 * Copy the contents of the text buffer to the output streams.
+	 */
+	void flush();
 
-Common::Error Frotz::loadGameState(int slot) {
-	return Common::kNoError;
-}
+	 /**
+	  * High level output function.
+	  */
+	void printChar(zchar c);
 
-Common::Error Frotz::saveGameState(int slot, const Common::String &desc) {
-	return Common::kNoError;
-}
+	 /**
+	  * High level newline function.
+	  */
+	void newLine();
 
-} // End of namespace Scott
+	/**
+	 * Returns true if the buffer is empty
+	 */
+	bool empty() const { return !_bufPos; }
+};
+
+} // End of namespace Frotz
 } // End of namespace Gargoyle
+
+#endif
