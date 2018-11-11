@@ -25,6 +25,8 @@
 
 #include "gargoyle/glk.h"
 #include "gargoyle/frotz/frotz_types.h"
+#include "gargoyle/frotz/buffer.h"
+#include "gargoyle/frotz/err.h"
 
 namespace Gargoyle {
 namespace Frotz {
@@ -36,6 +38,7 @@ class Frotz : public Glk {
 public:
 	UserOptions _options;
 	Header _header;
+	Buffer _buffer;
 
 	// Story file name, id number and size
 	Common::String _storyName;
@@ -91,6 +94,11 @@ public:
 	 * Save the game
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+
+	/**
+	 * Get the current PC
+	 */
+	uint getPC() const;
 };
 
 extern Frotz *g_vm;
