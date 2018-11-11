@@ -101,11 +101,6 @@ public:
 	 * Save the game
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
-
-	/**
-	 * Get the current PC
-	 */
-	uint getPC() const;
 };
 
 extern Frotz *g_vm;
