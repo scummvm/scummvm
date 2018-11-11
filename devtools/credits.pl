@@ -623,6 +623,13 @@ begin_credits("Credits");
 			begin_section("Fullpipe");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
+
+			begin_section("Gargoyle");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Tor Andersson", "", "GLK library");
+				add_person("Stefan Jokisch", "", "Frotz interpreter");
+				add_person("Alan Cox", "", "ScottFree interpreter");
+			end_section();
 			
 			begin_section("Gnap");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
