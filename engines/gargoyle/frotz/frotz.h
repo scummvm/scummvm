@@ -36,6 +36,11 @@ namespace Frotz {
  * Frotz interpreter for Z-code games
  */
 class Frotz : public Glk {
+private:
+	/**
+	 * Perform any initialization
+	 */
+	void initialize();
 public:
 	UserOptions _options;
 	Header _header;
@@ -43,7 +48,7 @@ public:
 	Mem _mem;
 
 	// Story file name, id number and size
-	Common::String _storyName;
+	Common::SeekableReadStream *_gameFile;
 	Story _storyId;
 	size_t _storySize;
 

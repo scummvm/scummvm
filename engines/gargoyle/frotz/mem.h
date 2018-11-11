@@ -35,6 +35,24 @@ class Mem {
 		char _serial[7];
 	};
 	static const StoryEntry RECORDS[25];
+private:
+	Common::SeekableReadStream *story_fp;
+	uint blorb_ofs, blorb_len;
+private:
+	/**
+	 * Handles setting the story file, parsing it if it's a Blorb file
+	 */
+	void initializeStoryFile();
+public:
+	/**
+	 * Constructor
+	 */
+	Mem();
+
+	/**
+	 * Initialize
+	 */
+	void initialize();
 };
 
 } // End of namespace Frotz
