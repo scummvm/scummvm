@@ -91,18 +91,18 @@ enum ZCode {
 };
 
 enum Story {
-	STORY_BEYOND_ZORK,
-	STORY_SHERLOCK,
-	STORY_ZORK_ZERO,
-	STORY_SHOGUN,
-	STORY_ARTHUR,
-	STORY_JOURNEY,
-	STORY_LURKING_HORROR,
-	STORY_UNKNOWN
+	BEYOND_ZORK,
+	SHERLOCK,
+	ZORK_ZERO,
+	SHOGUN,
+	ARTHUR,
+	JOURNEY,
+	LURKING_HORROR,
+	UNKNOWN
 };
 
 typedef byte zbyte;
-typedef char zchar;
+typedef uint zchar;
 typedef uint16 zword;
 
 /**

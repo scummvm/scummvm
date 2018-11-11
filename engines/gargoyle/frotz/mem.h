@@ -20,41 +20,24 @@
  *
  */
 
-#include "gargoyle/frotz/frotz.h"
+#ifndef GARGOYLE_FROTZ_MEM
+#define GARGOYLE_FROTZ_MEM
+
 #include "gargoyle/frotz/frotz_types.h"
 
 namespace Gargoyle {
 namespace Frotz {
 
-Frotz *g_vm;
+class Mem {
+	struct StoryEntry {
+		Story _storyId;
+		zword _release;
+		char _serial[7];
+	};
+	static const StoryEntry RECORDS[25];
+};
 
-Frotz::Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst, gameDesc),
-		_storyId(UNKNOWN), _storySize(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
-		_ostream_screen(true), _ostream_script(false), _ostream_memory(false),
-		_ostream_record(false), _istream_replay(false), _message(false),
-		_cwin(0), _mwin(0), _mouse_x(0), _mouse_y(0), _menu_selected(0),
-		_enableWrapping(false), _enableScripting(true), _enableScrolling(false),
-		_enableBuffering(false), _reserveMem(0) {
-	g_vm = this;
-	Common::fill(&_stack[0], &_stack[STACK_SIZE], 0);
-}
-
-void Frotz::runGame(Common::SeekableReadStream *gameFile) {
-	// TODO
-}
-
-Common::Error Frotz::loadGameState(int slot) {
-	return Common::kNoError;
-}
-
-Common::Error Frotz::saveGameState(int slot, const Common::String &desc) {
-	return Common::kNoError;
-}
-
-uint Frotz::getPC() const {
-	// TODO
-	return 0;
-}
-
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Gargoyle
+
+#endif

@@ -27,6 +27,7 @@
 #include "gargoyle/frotz/frotz_types.h"
 #include "gargoyle/frotz/buffer.h"
 #include "gargoyle/frotz/err.h"
+#include "gargoyle/frotz/mem.h"
 
 namespace Gargoyle {
 namespace Frotz {
@@ -39,6 +40,7 @@ public:
 	UserOptions _options;
 	Header _header;
 	Buffer _buffer;
+	Mem _mem;
 
 	// Story file name, id number and size
 	Common::String _storyName;
