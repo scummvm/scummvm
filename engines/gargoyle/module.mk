@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	frotz/buffer.o \
 	frotz/detection.o \
 	frotz/detection_tables.o \
+	frotz/err.o \
 	frotz/frotz.o \
 	scott/detection.o \
 	scott/scott.o
