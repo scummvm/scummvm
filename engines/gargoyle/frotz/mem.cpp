@@ -21,6 +21,7 @@
  */
 
 #include "gargoyle/frotz/mem.h"
+#include "gargoyle/frotz/frotz.h"
 #include "common/textconsole.h"
 
 namespace Gargoyle {
@@ -54,6 +55,51 @@ const Mem::StoryEntry Mem::RECORDS[25] = {
 	{        UNKNOWN,   0, "------" }
 };
 
+Mem::Mem() : story_fp(nullptr), blorb_ofs(0), blorb_len(0) {
+}
+
+void Mem::initialize() {
+/*
+	long size;
+	zword addr;
+	unsigned n;
+	int i, j;
+	*/
+	initializeStoryFile();
+
+	// TODO: More stuff
+}
+
+void Mem::initializeStoryFile() {
+	Common::SeekableReadStream *f = g_vm->_gameFile;
+	giblorb_map_t *map;
+	giblorb_result_t res;
+	uint32 magic;
+
+	story_fp = f;
+	magic = f->readUint32BE();
+
+	if (magic == MKTAG('F', 'O', 'R', 'M')) {
+		if (g_vm->giblorb_set_resource_map(f))
+			error("This Blorb file seems to be invalid.");
+
+		map = g_vm->giblorb_get_resource_map();
+
+		if (g_vm->giblorb_load_resource(map, giblorb_method_FilePos, &res, giblorb_ID_Exec, 0))
+			error("This Blorb file does not contain an executable chunk.");
+		if (res.chunktype != MKTAG('Z', 'C', 'O', 'D'))
+			error("This Blorb file contains an executable chunk, but it is not a Z-code file.");
+
+		blorb_ofs = res.data.startpos;
+		blorb_len = res.length;
+	} else {
+		blorb_ofs = 0;
+		blorb_len = f->size();
+	}
+
+	if (blorb_len < 64)
+		error("This file is too small to be a Z-code file.");
+}
 
 } // End of namespace Scott
 } // End of namespace Gargoyle

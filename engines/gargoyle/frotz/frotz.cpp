@@ -40,7 +40,13 @@ Frotz::Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst,
 }
 
 void Frotz::runGame(Common::SeekableReadStream *gameFile) {
+	initialize();
+
 	// TODO
+}
+
+void Frotz::initialize() {
+	_mem.initialize();
 }
 
 Common::Error Frotz::loadGameState(int slot) {
