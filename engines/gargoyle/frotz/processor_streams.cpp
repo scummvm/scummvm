@@ -28,10 +28,6 @@ namespace Frotz {
 // TODO: Implement method stubs
 static void os_scrollback_char(zchar) {}
 static void os_scrollback_erase(zword) {}
-static void memory_open(zword, zword, bool) {}
-static void memory_close() {}
-static void memory_word(const zchar *) {}
-static void memory_new_line() {}
 static zchar console_read_key(zword) { return 0; }
 static zchar console_read_input(uint, zchar *, uint, bool) { return 0; }
 

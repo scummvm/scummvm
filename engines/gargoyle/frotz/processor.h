@@ -26,6 +26,8 @@
 #include "gargoyle/frotz/err.h"
 #include "gargoyle/frotz/mem.h"
 #include "gargoyle/frotz/glk_interface.h"
+#include "gargoyle/frotz/frotz_types.h"
+#include "common/stack.h"
 
 namespace Gargoyle {
 namespace Frotz {
@@ -83,6 +85,7 @@ private:
 	// Stream related fields
 	int script_width;
 	strid_t sfp, rfp, pfp;
+	Common::FixedStack<Redirect, MAX_NESTING> _redirect;
 private:
 	/**
 	 * \defgroup General support methods
@@ -232,6 +235,26 @@ private:
 	 * This function does the dirty work for z_restore_undo.
 	 */
 	int restore_undo();
+
+	/**
+	 * Begin output redirection to the memory of the Z-machine.
+	 */
+	void memory_open(zword table, zword xsize, bool buffering);
+
+	/**
+	 * End of output redirection.
+	 */
+	void memory_close();
+
+	/**
+	 * Redirect a newline to the memory of the Z-machine.
+	 */
+	void memory_new_line();
+
+	/**
+	 * Redirect a string of characters to the memory of the Z-machine.
+	 */
+	void memory_word(const zchar *s);
 
 	/**@}*/
 
