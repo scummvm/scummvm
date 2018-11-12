@@ -404,5 +404,95 @@ void GlkInterface::gos_cancel_pending_line() {
 	gos_linepending = 0;
 }
 
+zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
+	event_t ev;
+	winid_t win = gos_curwin ? gos_curwin : gos_lower;
+
+	if (gos_linepending)
+		gos_cancel_pending_line();
+
+	glk_request_char_event_uni(win);
+	if (timeout != 0)
+		glk_request_timer_events(timeout * 100);
+
+	while (!shouldQuit()) {
+		glk_select(&ev);
+		if (ev.type == evtype_Arrange) {
+			gos_update_height();
+			gos_update_width();
+		} else if (ev.type == evtype_Timer) {
+			glk_cancel_char_event(win);
+			glk_request_timer_events(0);
+			return ZC_TIME_OUT;
+		} else if (ev.type == evtype_CharInput)
+			break;
+	}
+	if (shouldQuit())
+		return 0;
+
+	glk_request_timer_events(0);
+
+	if (gos_upper && mach_status_ht < curr_status_ht)
+		reset_status_ht();
+	curr_status_ht = 0;
+
+	switch (ev.val1) {
+	case keycode_Escape: return ZC_ESCAPE;
+	case keycode_PageUp: return ZC_ARROW_MIN;
+	case keycode_PageDown: return ZC_ARROW_MAX;
+	case keycode_Left: return ZC_ARROW_LEFT;
+	case keycode_Right: return ZC_ARROW_RIGHT;
+	case keycode_Up: return ZC_ARROW_UP;
+	case keycode_Down: return ZC_ARROW_DOWN;
+	case keycode_Return: return ZC_RETURN;
+	case keycode_Delete: return ZC_BACKSPACE;
+	case keycode_Tab: return ZC_INDENT;
+	default:
+		return ev.val1;
+	}
+}
+
+zchar GlkInterface::os_read_line(int max, zchar *buf, int timeout, int width, int continued) {
+	event_t ev;
+	winid_t win = gos_curwin ? gos_curwin : gos_lower;
+
+	if (!continued && gos_linepending)
+		gos_cancel_pending_line();
+
+	if (!continued || !gos_linepending) {
+		glk_request_line_event_uni(win, buf, max, os_string_length(buf));
+		if (timeout != 0)
+			glk_request_timer_events(timeout * 100);
+	}
+
+	gos_linepending = 0;
+
+	while (!shouldQuit()) {
+		glk_select(&ev);
+		if (ev.type == evtype_Arrange) {
+			gos_update_height();
+			gos_update_width();
+		} else if (ev.type == evtype_Timer) {
+			gos_linewin = win;
+			gos_linepending = 1;
+			gos_linebuf = buf;
+			return ZC_TIME_OUT;
+		} else if (ev.type == evtype_LineInput) {
+			break;
+		}
+	}
+	if (shouldQuit())
+		return 0;
+
+	glk_request_timer_events(0);
+	buf[ev.val1] = '\0';
+
+	if (gos_upper && mach_status_ht < curr_status_ht)
+		reset_status_ht();
+	curr_status_ht = 0;
+
+	return ZC_RETURN;
+}
+
 } // End of namespace Scott
 } // End of namespace Gargoyle

@@ -309,6 +309,16 @@ private:
 	 */
 
 	/**
+	 * Waits for the user to type an input line
+	 */
+	zchar console_read_input(int max, zchar *buf, zword timeout, bool continued);
+
+	/**
+	 * Waits for a keypress
+	 */
+	zchar console_read_key(zword timeout);
+
+	/**
 	 * Write a single character to the scrollback buffer.
 	 *
 	 */
