@@ -25,10 +25,6 @@
 namespace Gargoyle {
 namespace Frotz {
 
-// TODO: Replace method stubs
-static void storew(zword, zword) {}
-
-
 void Processor::z_dec() {
 	zword value;
 
