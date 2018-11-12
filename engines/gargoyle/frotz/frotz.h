@@ -39,6 +39,11 @@ public:
 	Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc);
 
 	/**
+	 * Initialization
+	 */
+	void initialize();
+
+	/**
 	 * Execute the game
 	 */
 	virtual void runGame(Common::SeekableReadStream *gameFile) override;
