@@ -27,11 +27,6 @@
 namespace Gargoyle {
 namespace Frotz {
 
-// TODO: Replace these method stubs with correct calls
-void stream_char(zchar) {}
-void stream_word(const zchar *) {}
-void stream_new_line(void) {}
-
 void Processor::flush_buffer() {
 	/* Make sure we stop when flush_buffer is called from flush_buffer.
 	 * Note that this is difficult to avoid as we might print a newline

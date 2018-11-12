@@ -25,10 +25,6 @@
 namespace Gargoyle {
 namespace Frotz {
 
-// TODO: Implement method stubs
-static zword os_read_mouse() { return 0; }
-
-
 #define INPUT_BUFFER_SIZE 200
 
 bool Processor::read_yes_or_no(const char *s) {

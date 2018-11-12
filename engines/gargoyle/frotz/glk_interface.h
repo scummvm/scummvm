@@ -143,9 +143,22 @@ protected:
 	void smartstatusline();
 
 	/**
+	 * Cancels any pending line
+	 */
+	void gos_cancel_pending_line();
+
+	/**
 	 * Called during game restarts
 	 */
 	void os_restart_game(RestartAction) {}
+
+	/**
+	 * Reads the mouse buttons
+	 */
+	zword os_read_mouse() {
+		// Not implemented
+		return 0;
+	}
 public:
 	/**
 	 * Constructor

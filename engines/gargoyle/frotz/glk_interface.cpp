@@ -397,5 +397,12 @@ void GlkInterface::smartstatusline() {
 	glk_window_move_cursor(gos_upper, cury - 1, curx - 1);
 }
 
+void GlkInterface::gos_cancel_pending_line() {
+	event_t ev;
+	glk_cancel_line_event(gos_linewin, &ev);
+	gos_linebuf[ev.val1] = '\0';
+	gos_linepending = 0;
+}
+
 } // End of namespace Scott
 } // End of namespace Gargoyle
