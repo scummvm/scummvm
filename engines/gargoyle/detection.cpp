@@ -133,7 +133,8 @@ static const PlainGameDescriptor gargoyleGames[] = {
 	{ "adventure13", "Adventure 13" },
 	{ "adventure14", "Adventure 14" },
 	{ "buckaroobonzai", "Buckaroo Banzai" },
-
+	{ "marveladventure", "Marvel Adventure #1" },
+	{ "scottsampler", "Adventure International's Mini-Adventure Sampler" },
 	{0, 0}
 };
 
