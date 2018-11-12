@@ -28,25 +28,16 @@ namespace Frotz {
 
 Frotz *g_vm;
 
-Frotz::Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst, gameDesc),
-		_storyId(UNKNOWN), _storySize(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
-		_ostream_screen(true), _ostream_script(false), _ostream_memory(false),
-		_ostream_record(false), _istream_replay(false), _message(false),
-		_cwin(0), _mwin(0), _mouse_x(0), _mouse_y(0), _menu_selected(0),
-		_enableWrapping(false), _enableScripting(true), _enableScrolling(false),
-		_enableBuffering(false), _reserveMem(0) {
+Frotz::Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc) :
+		Processor(syst, gameDesc) {
 	g_vm = this;
-	Common::fill(&_stack[0], &_stack[STACK_SIZE], 0);
 }
 
 void Frotz::runGame(Common::SeekableReadStream *gameFile) {
+	story_fp = gameFile;
 	initialize();
 
 	// TODO
-}
-
-void Frotz::initialize() {
-	_mem.initialize();
 }
 
 Common::Error Frotz::loadGameState(int slot) {

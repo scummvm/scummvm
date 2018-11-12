@@ -72,7 +72,7 @@ public:
 	                                glui32 size, winid_t keyWin);
 	void glk_window_get_arrangement(winid_t win, glui32 *method,
 	                                glui32 *size, winid_t *keyWin);
-	winid_t glk_window_iterate(winid_t win, glui32 *rock);
+	winid_t glk_window_iterate(winid_t win, glui32 *rock = 0);
 	glui32 glk_window_get_rock(winid_t win);
 	glui32 glk_window_get_type(winid_t win);
 	winid_t glk_window_get_parent(winid_t win);
@@ -85,8 +85,8 @@ public:
 	strid_t glk_window_get_echo_stream(winid_t win);
 	void glk_set_window(winid_t win);
 
-	strid_t glk_stream_open_file(frefid_t fileref, FileMode fmode, glui32 rock);
-	strid_t glk_stream_open_memory(char *buf, glui32 buflen, FileMode fmode, glui32 rock);
+	strid_t glk_stream_open_file(frefid_t fileref, FileMode fmode, glui32 rock = 0);
+	strid_t glk_stream_open_memory(char *buf, glui32 buflen, FileMode fmode, glui32 rock = 0);
 	void glk_stream_close(strid_t str, stream_result_t *result);
 	strid_t glk_stream_iterate(strid_t str, glui32 *rockptr) const;
 	glui32 glk_stream_get_rock(strid_t str) const;
@@ -114,10 +114,10 @@ public:
 	glui32 glk_style_distinguish(winid_t win, glui32 style1, glui32 style2);
 	bool glk_style_measure(winid_t win, glui32 style, glui32 hint, glui32 *result);
 
-	frefid_t glk_fileref_create_temp(glui32 usage, glui32 rock);
-	frefid_t glk_fileref_create_by_name(glui32 usage, const char *name, glui32 rock);
-	frefid_t glk_fileref_create_by_prompt(glui32 usage, FileMode fmode, glui32 rock);
-	frefid_t glk_fileref_create_from_fileref(glui32 usage, frefid_t fref, glui32 rock);
+	frefid_t glk_fileref_create_temp(glui32 usage, glui32 rock = 0);
+	frefid_t glk_fileref_create_by_name(glui32 usage, const char *name, glui32 rock = 0);
+	frefid_t glk_fileref_create_by_prompt(glui32 usage, FileMode fmode, glui32 rock = 0);
+	frefid_t glk_fileref_create_from_fileref(glui32 usage, frefid_t fref, glui32 rock = 0);
 	void glk_fileref_destroy(frefid_t fref);
 	frefid_t glk_fileref_iterate(frefid_t fref, glui32 *rockptr);
 	glui32 glk_fileref_get_rock(frefid_t fref);
@@ -169,8 +169,8 @@ public:
 	glui32 glk_get_buffer_stream_uni(strid_t str, glui32 *buf, glui32 len);
 	glui32 glk_get_line_stream_uni(strid_t str, glui32 *buf, glui32 len);
 
-	strid_t glk_stream_open_file_uni(frefid_t fileref, FileMode fmode, glui32 rock);
-	strid_t glk_stream_open_memory_uni(glui32 *buf, glui32 buflen, FileMode fmode, glui32 rock);
+	strid_t glk_stream_open_file_uni(frefid_t fileref, FileMode fmode, glui32 rock = 0);
+	strid_t glk_stream_open_memory_uni(glui32 *buf, glui32 buflen, FileMode fmode, glui32 rock = 0);
 
 	void glk_request_char_event_uni(winid_t win);
 	void glk_request_line_event_uni(winid_t win, glui32 *buf,
@@ -206,7 +206,7 @@ public:
 
 #ifdef GLK_MODULE_SOUND
 
-	schanid_t glk_schannel_create(glui32 rock);
+	schanid_t glk_schannel_create(glui32 rock = 0);
 	void glk_schannel_destroy(schanid_t chan);
 	schanid_t glk_schannel_iterate(schanid_t chan, glui32 *rockptr);
 	glui32 glk_schannel_get_rock(schanid_t chan);

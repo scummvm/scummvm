@@ -67,14 +67,15 @@ Errors::Errors() {
 	Common::fill(&_count[0], &_count[ERR_NUM_ERRORS], 0);
 }
 
-void Errors::runtimeError(int errNum) {
-    int wasfirst;
+void Errors::runtimeError(ErrorCode errNum) {
+#ifdef TODO
+	int wasfirst;
     
     if (errNum <= 0 || errNum > ERR_NUM_ERRORS)
 	return;
 
-    if (g_vm->_options._err_report_mode == ERR_REPORT_FATAL
-		|| (!g_vm->_options._ignore_errors && errNum <= ERR_MAX_FATAL)) {
+    if (g_vm->_err_report_mode == ERR_REPORT_FATAL
+		|| (!g_vm->_ignore_errors && errNum <= ERR_MAX_FATAL)) {
 		g_vm->_buffer.flush();
 		error(ERR_MESSAGES[errNum - 1]);
 		return;
@@ -83,9 +84,9 @@ void Errors::runtimeError(int errNum) {
     wasfirst = (_count[errNum - 1] == 0);
     _count[errNum - 1]++;
     
-    if ((g_vm->_options._err_report_mode == ERR_REPORT_ALWAYS)
-			|| (g_vm->_options._err_report_mode == ERR_REPORT_ONCE && wasfirst)) {
-		long pc;
+    if ((g_vm->_err_report_mode == ERR_REPORT_ALWAYS)
+			|| (_err_report_mode == ERR_REPORT_ONCE && wasfirst)) {
+		long pc = g_vm->_processor
 		GET_PC(pc);
 		printString("Warning: ");
 		printString(ERR_MESSAGES[errNum - 1]);
@@ -93,7 +94,7 @@ void Errors::runtimeError(int errNum) {
 		printLong(pc, 16);
 		printChar(')');
         
-		if (g_vm->_options._err_report_mode == ERR_REPORT_ONCE) {
+		if (_err_report_mode == ERR_REPORT_ONCE) {
 			printString(" (will ignore further occurrences)");
 		} else {
 			printString(" (occurence ");
@@ -103,6 +104,7 @@ void Errors::runtimeError(int errNum) {
 
 		newLine();
     }
+#endif
 }
 
 void Errors::printLong(uint value, int base) {
