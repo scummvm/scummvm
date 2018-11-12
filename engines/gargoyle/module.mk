@@ -21,7 +21,6 @@ MODULE_OBJS := \
 	window_pair.o \
 	window_text_buffer.o \
 	window_text_grid.o \
-	frotz/buffer.o \
 	frotz/detection.o \
 	frotz/detection_tables.o \
 	frotz/err.o \
@@ -29,6 +28,7 @@ MODULE_OBJS := \
 	frotz/glk_interface.o \
 	frotz/mem.o \
 	frotz/processor.o \
+	frotz/processor_buffer.o \
 	frotz/processor_input.o \
 	frotz/processor_maths.o \
 	frotz/processor_objects.o \
