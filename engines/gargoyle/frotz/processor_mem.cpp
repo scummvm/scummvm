@@ -118,5 +118,101 @@ int Processor::restore_undo(void) {
 	return 2;
 }
 
+/**
+ * TOR: glkify -- this is for V6 only
+ */
+static zword get_max_width(zword win) { return 80; }
+
+void Processor::memory_open(zword table, zword xsize, bool buffering) {
+	if (_redirect.size() < MAX_NESTING) {
+		if (!buffering)
+			xsize = 0xffff;
+		if (buffering && (short)xsize <= 0)
+			xsize = get_max_width((zword)(-(short)xsize));
+
+		storew(table, 0);
+
+		_redirect.push(Redirect(xsize, table));
+		ostream_memory = true;
+	} else {
+		runtimeError(ERR_STR3_NESTING);
+	}
+}
+
+void Processor::memory_new_line() {
+	zword size;
+	zword addr;
+
+	Redirect &r = _redirect.top();
+	r._total += r._width;
+	r._width = 0;
+
+	addr = r._table;
+
+	LOW_WORD(addr, size);
+	addr += 2;
+
+	if (r._xSize != 0xffff) {
+		r._table = addr + size;
+		size = 0;
+	} else {
+		storeb((zword)(addr + (size++)), 13);
+	}
+
+	storew(r._table, size);
+}
+
+void Processor::memory_word(const zchar *s) {
+	zword size;
+	zword addr;
+	zchar c;
+
+	Redirect &r = _redirect.top();
+	if (h_version == V6) {
+		int width = os_string_width(s);
+
+		if (r._xSize != 0xffff) {
+			if (r._width + width > r._xSize) {
+
+				if (*s == ' ' || *s == ZC_INDENT || *s == ZC_GAP)
+					width = os_string_width(++s);
+
+				memory_new_line();
+			}
+		}
+
+		r._width += width;
+	}
+
+	addr = r._table;
+
+	LOW_WORD(addr, size);
+	addr += 2;
+
+	while ((c = *s++) != 0)
+		storeb((zword)(addr + (size++)), translate_to_zscii(c));
+
+	storew(r._table, size);
+}
+
+void Processor::memory_close(void) {
+	if (!_redirect.empty()) {
+		Redirect &r = _redirect.top();
+
+		if (r._xSize != 0xffff)
+			memory_new_line();
+
+		if (h_version == V6) {
+			h_line_width = (r._xSize != 0xffff) ? r._total : r._width;
+
+			SET_WORD(H_LINE_WIDTH, h_line_width);
+		}
+
+		_redirect.pop();
+		if (_redirect.empty())
+			ostream_memory = false;
+	}
+}
+
 } // End of namespace Scott
 } // End of namespace Gargoyle
