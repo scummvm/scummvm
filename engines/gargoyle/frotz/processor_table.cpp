@@ -25,11 +25,6 @@
 namespace Gargoyle {
 namespace Frotz {
 
-// TODO: Method stubs to implement
-static void storeb(zword, zbyte) {}
-static void storew(zword, zword) {}
-
-
 void Processor::z_copy_table() {
     zword addr;
     zword size = zargs[2];

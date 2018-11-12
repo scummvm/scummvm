@@ -26,8 +26,6 @@ namespace Gargoyle {
 namespace Frotz {
 
 // TODO: Implement method stubs
-static void storeb(zword, zchar) {}
-static void storew(zword, zword) {}
 static void save_undo() {}
 static zword os_read_mouse() { return 0; }
 
@@ -80,7 +78,35 @@ int Processor::read_number() {
 	    value = 10 * value + buffer[i] - '0';
 
     return value;
+}
 
+void Processor::storeb(zword addr, zbyte value) {
+	if (addr >= h_dynamic_size)
+		runtimeError(ERR_STORE_RANGE);
+
+	if (addr == H_FLAGS + 1) {	/* flags register is modified */
+
+		h_flags &= ~(SCRIPTING_FLAG | FIXED_FONT_FLAG);
+		h_flags |= value & (SCRIPTING_FLAG | FIXED_FONT_FLAG);
+
+		if (value & SCRIPTING_FLAG) {
+			if (!ostream_script)
+				script_open();
+		} else {
+			if (ostream_script)
+				script_close();
+		}
+
+		// TOR - glkified / refresh_text_style ();
+	}
+
+	SET_BYTE(addr, value);
+
+}
+
+void Processor::storew(zword addr, zword value) {
+	storeb((zword)(addr + 0), hi(value));
+	storeb((zword)(addr + 1), lo(value));
 }
 
 void Processor::z_read() {
