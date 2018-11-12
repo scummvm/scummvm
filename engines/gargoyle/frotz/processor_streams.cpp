@@ -25,12 +25,13 @@
 namespace Gargoyle {
 namespace Frotz {
 
-// TODO: Implement method stubs
-static void os_scrollback_char(zchar) {}
-static void os_scrollback_erase(zword) {}
-static zchar console_read_key(zword) { return 0; }
-static zchar console_read_input(uint, zchar *, uint, bool) { return 0; }
+zchar Processor::console_read_input(int max, zchar *buf, zword timeout, bool continued) {
+	return os_read_line(max, buf, timeout, max, continued);
+}
 
+zchar Processor::console_read_key(zword timeout) {
+	return os_read_key(timeout, 0);
+}
 
 void Processor::scrollback_char(zchar c) {
     if (c == ZC_INDENT)

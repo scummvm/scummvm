@@ -159,6 +159,24 @@ protected:
 		// Not implemented
 		return 0;
 	}
+
+	void os_scrollback_char(zchar z) {
+		// Not implemented
+	}
+
+	void os_scrollback_erase(int amount) {
+		// Not implemented
+	}
+
+	/**
+	 * Waits for a keypress
+	 */
+	zchar os_read_key(int timeout, bool show_cursor);
+
+	/**
+	 * Waits for the user to type an input line
+	 */
+	zchar os_read_line(int max, zchar *buf, int timeout, int width, int continued);
 public:
 	/**
 	 * Constructor
