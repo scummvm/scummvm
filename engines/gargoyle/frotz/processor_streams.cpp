@@ -28,8 +28,6 @@ namespace Frotz {
 // TODO: Implement method stubs
 static void os_scrollback_char(zchar) {}
 static void os_scrollback_erase(zword) {}
-static void script_open() {}
-static void script_close() {}
 static void script_mssg_on() {}
 static void script_mssg_off() {}
 static void script_char(zchar) {}
@@ -51,7 +49,6 @@ static void record_open() {}
 static void record_close() {}
 static void record_write_key(zchar) {}
 static void record_write_input(zchar *, zchar) {}
-static void os_restart_game(zword) {}
 static void restart_header() {}
 
 
