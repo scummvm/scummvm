@@ -35,5 +35,88 @@ void Processor::flagsChanged(zbyte value) {
 	}
 }
 
+int Processor::save_undo() {
+	long diff_size;
+	zword stack_size;
+	undo_t *p;
+
+	if (_undo_slots == 0)
+		// undo feature unavailable
+		return -1;
+
+	// save undo possible
+	while (last_undo != curr_undo) {
+		p = last_undo;
+		last_undo = last_undo->prev;
+		delete p;
+		undo_count--;
+	}
+	if (last_undo)
+		last_undo->next = nullptr;
+	else
+		first_undo = nullptr;
+
+	if (undo_count == _undo_slots)
+		free_undo(1);
+
+	diff_size = mem_diff(zmp, prev_zmp, h_dynamic_size, undo_diff);
+	stack_size = _stack + STACK_SIZE - _sp;
+	do {
+		p = (undo_t *) malloc(sizeof(undo_t) + diff_size + stack_size * sizeof(*_sp));
+		if (p == nullptr)
+			free_undo(1);
+	} while (!p && undo_count);
+	if (p == nullptr)
+		return -1;
+
+	GET_PC(p->pc);
+	p->frame_count = _frameCount;
+	p->diff_size = diff_size;
+	p->stack_size = stack_size;
+	p->frame_offset = _fp - _stack;
+	memcpy(p + 1, undo_diff, diff_size);
+	memcpy((zbyte *)(p + 1) + diff_size, _sp, stack_size * sizeof(*_sp));
+
+	if (!first_undo) {
+		p->prev = nullptr;
+		first_undo = p;
+	} else {
+		last_undo->next = p;
+		p->prev = last_undo;
+	}
+
+	p->next = nullptr;
+	curr_undo = last_undo = p;
+	undo_count++;
+
+	return 1;
+}
+
+int Processor::restore_undo(void) {
+	if (_undo_slots == 0)
+		// undo feature unavailable
+		return -1;
+
+	if (curr_undo == nullptr)
+		// no saved game state
+		return 0;
+
+	// undo possible
+	memcpy(zmp, prev_zmp, h_dynamic_size);
+	SET_PC(curr_undo->pc);
+	_sp = _stack + STACK_SIZE - curr_undo->stack_size;
+	_fp = _stack + curr_undo->frame_offset;
+	_frameCount = curr_undo->frame_count;
+	mem_undiff((zbyte *)(curr_undo + 1), curr_undo->diff_size, prev_zmp);
+	memcpy(_sp, (zbyte *)(curr_undo + 1) + curr_undo->diff_size,
+		curr_undo->stack_size * sizeof(*_sp));
+
+	curr_undo = curr_undo->prev;
+
+	restart_header();
+
+	return 2;
+}
+
 } // End of namespace Scott
 } // End of namespace Gargoyle

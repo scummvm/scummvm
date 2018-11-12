@@ -220,6 +220,18 @@ private:
 	virtual void flagsChanged(zbyte value) override;
 
 	/**
+	 * This function does the dirty work for z_save_undo.
+	 */
+	int save_undo();
+
+	/**
+	 * This function does the dirty work for z_restore_undo.
+	 */
+	int restore_undo();
+
+	/**@}*/
+
+	/**
 	 * \defgroup Object support methods
 	 * @{
 	 */
