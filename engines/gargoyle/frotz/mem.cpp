@@ -112,11 +112,15 @@ void Header::loadHeader(Common::SeekableReadStream &f) {
 
 /*--------------------------------------------------------------------------*/
 
-Mem::Mem() : story_fp(nullptr), blorb_ofs(0), blorb_len(0), story_size(0) {
+Mem::Mem() : story_fp(nullptr), blorb_ofs(0), blorb_len(0), story_size(0),
+		first_undo(nullptr), last_undo(nullptr), curr_undo(nullptr),
+		undo_mem(nullptr), prev_zmp(nullptr), undo_diff(nullptr),
+		undo_count(0), reserve_mem(0) {
 }
 
 void Mem::initialize() {
 	initializeStoryFile();
+	initializeUndo();
 	loadGameHeader();
 
 	// Allocate memory for story data
@@ -171,6 +175,29 @@ void Mem::initializeStoryFile() {
 
 	if (blorb_len < 64)
 		error("This file is too small to be a Z-code file.");
+}
+
+void Mem::initializeUndo() {
+	void *reserved = nullptr;
+
+	if (reserve_mem != 0) {
+		if ((reserved = malloc(reserve_mem)) == NULL)
+			return;
+	}
+
+	// Allocate h_dynamic_size bytes for previous dynamic zmp state
+	// + 1.5 h_dynamic_size for Quetzal diff + 2.
+	undo_mem = new zbyte[(h_dynamic_size * 5) / 2 + 2];
+	if (undo_mem != nullptr) {
+		prev_zmp = undo_mem;
+		undo_diff = undo_mem + h_dynamic_size;
+		memcpy(prev_zmp, zmp, h_dynamic_size);
+	} else {
+		_undo_slots = 0;
+	}
+
+	if (reserve_mem != 0)
+		delete reserved;
 }
 
 void Mem::loadGameHeader() {

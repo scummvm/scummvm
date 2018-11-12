@@ -82,6 +82,21 @@ enum {
 };
 
 /**
+ * Stores undo information
+ */
+struct undo_struct {
+	undo_struct *next;
+	undo_struct *prev;
+	long pc;
+	long diff_size;
+	zword frame_count;
+	zword stack_size;
+	zword frame_offset;
+	// undo diff and stack data follow
+};
+typedef undo_struct undo_t;
+
+/**
  * Story file header data
  */
 struct Header {
@@ -160,18 +175,28 @@ public:
 	void loadHeader(Common::SeekableReadStream &f);
 };
 
-class Mem : public Header {
+class Mem : public Header, public virtual UserOptions {
 protected:
 	Common::SeekableReadStream *story_fp;
 	uint blorb_ofs, blorb_len;
 	uint story_size;
 	byte *pcp;
 	byte *zmp;
+
+	undo_t *first_undo, *last_undo, *curr_undo;
+	zbyte *undo_mem, *prev_zmp, *undo_diff;
+	int undo_count;
+	int reserve_mem;
 private:
 	/**
 	 * Handles setting the story file, parsing it if it's a Blorb file
 	 */
 	void initializeStoryFile();
+
+	/**
+	 * Setup undo data
+	 */
+	void initializeUndo();
 
 	/**
 	 * Handles loading the game header

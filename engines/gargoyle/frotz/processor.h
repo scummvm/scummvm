@@ -412,7 +412,7 @@ private:
 	zchar unicode_tolower(zchar c);
 
 	/**@}*/
-private:
+protected:
 	/**
 	 * \defgroup General Opcode methods
 	 * @{

@@ -74,6 +74,9 @@ void Frotz::initialize() {
 
 	// Call process initialization
 	Processor::initialize();
+
+	// Restart the game
+	z_restart();
 }
 
 Common::Error Frotz::loadGameState(int slot) {
