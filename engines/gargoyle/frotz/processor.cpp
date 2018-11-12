@@ -135,7 +135,8 @@ Processor::Processor(OSystem *syst, const GargoyleGameDescription *gameDesc) :
 		GlkInterface(syst, gameDesc), Errors(),
 		_finished(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
 		zargc(0), _decoded(nullptr), _encoded(nullptr), _resolution(0),
-		_randomInterval(0), _randomCtr(0), first_restart(true) {
+		_randomInterval(0), _randomCtr(0), first_restart(true), _bufPos(0),
+		_locked(false), _prevC('\0') {
 	static const Opcode OP0_OPCODES[16] = {
 		&Processor::z_rtrue,
 		&Processor::z_rfalse,
@@ -177,6 +178,7 @@ Processor::Processor(OSystem *syst, const GargoyleGameDescription *gameDesc) :
 	Common::copy(&OP1_OPCODES[0], &OP1_OPCODES[16], op1_opcodes);
 	Common::fill(&_stack[0], &_stack[STACK_SIZE], 0);
 	Common::fill(&zargs[0], &zargs[8], 0);
+	Common::fill(&_buffer[0], &_buffer[TEXT_BUFFER_SIZE], '\0');
 }
 
 void Processor::initialize() {
