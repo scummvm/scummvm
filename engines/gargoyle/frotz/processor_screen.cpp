@@ -25,28 +25,106 @@
 namespace Gargoyle {
 namespace Frotz {
 
-void Processor::screen_char(zchar c) {
-	// TODO
-}
-
-void Processor::screen_new_line() {
-	// TODO
-}
-
-void Processor::screen_word(const zchar *s) {
-	// TODO
-}
-
 void Processor::screen_mssg_on() {
-	// TODO
+	if (gos_curwin == gos_lower) {
+		oldstyle = curstyle;
+		glk_set_style(style_Preformatted);
+		glk_put_string("\n    ");
+	}
 }
 
 void Processor::screen_mssg_off() {
-	// TODO
+	if (gos_curwin == gos_lower) {
+		glk_put_char('\n');
+		zargs[0] = 0;
+		z_set_text_style();
+		zargs[0] = oldstyle;
+		z_set_text_style();
+	}
+}
+
+void Processor::screen_char(zchar c) {
+	if (gos_linepending && (gos_curwin == gos_linewin)) {
+		gos_cancel_pending_line();
+		if (gos_curwin == gos_upper) {
+			curx = 1;
+			cury ++;
+		}
+		if (c == '\n')
+			return;
+	}
+
+	// check fixed flag in header, game can change it at whim
+	int forcefix = ((h_flags & FIXED_FONT_FLAG) != 0);
+	int curfix = ((curstyle & FIXED_WIDTH_STYLE) != 0);
+	if (forcefix && !curfix) {
+		zargs[0] = 0xf000;	// tickle tickle!
+		z_set_text_style();
+		fixforced = true;
+	} else if (!forcefix && fixforced) {
+		zargs[0] = 0xf000;	// tickle tickle!
+		z_set_text_style();
+		fixforced = false;
+	}
+
+	if (gos_upper && gos_curwin == gos_upper) {
+		if (c == '\n' || c == ZC_RETURN) {
+			glk_put_char('\n');
+			curx = 1;
+			cury ++;
+		} else {
+			if (cury == 1) {
+				if (curx <= ((sizeof statusline / sizeof(zchar)) - 1)) {
+					statusline[curx - 1] = c;
+					statusline[curx] = 0;
+				}
+				if (curx < h_screen_cols) {
+					glk_put_char_uni(c);
+				} else if (curx == h_screen_cols) {
+					glk_put_char_uni(c);
+					glk_window_move_cursor(gos_curwin, curx-1, cury-1);
+				} else {
+					smartstatusline();
+				}
+
+				curx++;
+			} else {
+				if (curx < h_screen_cols) {
+					glk_put_char_uni(c);
+				} else if (curx == (h_screen_cols)) {
+					glk_put_char_uni(c);
+					glk_window_move_cursor(gos_curwin, curx-1, cury-1);
+				}
+
+				curx++;
+			}
+		}
+	} else if (gos_curwin == gos_lower) {
+		if (c == ZC_RETURN)
+			glk_put_char('\n');
+		else glk_put_char_uni(c);
+	}
+}
+
+void Processor::screen_new_line() {
+	screen_char('\n');
+}
+
+void Processor::screen_word(const zchar *s) {
+	zchar c;
+	while ((c = *s++) != 0) {
+		if (c == ZC_NEW_FONT)
+			s++;
+		else if (c == ZC_NEW_STYLE)
+			s++;
+		else
+			screen_char(c);
+	}
 }
 
 
 void Processor::z_buffer_mode() {
+	// No implementation
 }
 
 void Processor::z_buffer_screen() {
