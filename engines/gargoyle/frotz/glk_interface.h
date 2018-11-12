@@ -40,7 +40,7 @@ enum SoundEffect {
  * Implements an intermediate interface on top of the GLK layer, providing screen
  * and sound effect handling
  */
-class GlkInterface : public Glk, public virtual Mem {
+class GlkInterface : public Glk, public UserOptions, public virtual Mem {
 public:
 	zchar statusline[256];
 	int oldstyle;
@@ -139,6 +139,11 @@ public:
 	 * Constructor
 	 */
 	GlkInterface(OSystem *syst, const GargoyleGameDescription *gameDesc);
+
+	/**
+	 * Initialization
+	 */
+	void initialize();
 };
 
 } // End of namespace Frotz

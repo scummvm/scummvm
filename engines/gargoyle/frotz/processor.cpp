@@ -132,7 +132,7 @@ Opcode Processor::ext_opcodes[64] = {
 };
 
 Processor::Processor(OSystem *syst, const GargoyleGameDescription *gameDesc) : 
-		GlkInterface(syst, gameDesc), Mem(), Errors(), UserOptions(),
+		GlkInterface(syst, gameDesc), Mem(), Errors(),
 		_finished(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
 		zargc(0), _decoded(nullptr), _encoded(nullptr), _resolution(0),
 		_randomInterval(0), _randomCtr(0), first_restart(true) {
@@ -181,6 +181,7 @@ Processor::Processor(OSystem *syst, const GargoyleGameDescription *gameDesc) :
 
 void Processor::initialize() {
 	Mem::initialize();
+	GlkInterface::initialize();
 
 	if (h_version <= V4) {
 		op0_opcodes[9] = &Processor::z_pop;

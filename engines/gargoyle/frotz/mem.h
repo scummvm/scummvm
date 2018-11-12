@@ -186,7 +186,7 @@ public:
 	/**
 	 * Initialize
 	 */
-	virtual void initialize();
+	void initialize();
 
 	/**
 	 * Read a word
