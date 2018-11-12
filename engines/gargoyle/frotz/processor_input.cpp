@@ -26,7 +26,6 @@ namespace Gargoyle {
 namespace Frotz {
 
 // TODO: Implement method stubs
-static void save_undo() {}
 static zword os_read_mouse() { return 0; }
 
 

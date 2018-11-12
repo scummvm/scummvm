@@ -320,6 +320,103 @@ void Mem::storew(zword addr, zword value) {
 	storeb((zword)(addr + 1), lo(value));
 }
 
+void Mem::free_undo(int count) {
+	undo_t *p;
+
+	if (count > undo_count)
+		count = undo_count;
+	while (count--) {
+		p = first_undo;
+		if (curr_undo == first_undo)
+			curr_undo = curr_undo->next;
+		first_undo = first_undo->next;
+		free(p);
+		undo_count--;
+	}
+	if (first_undo)
+		first_undo->prev = NULL;
+	else
+		last_undo = NULL;
+}
+
+void Mem::reset_memory() {
+	story_fp = nullptr;
+	blorb_ofs = 0;
+	blorb_len = 0;
+
+	if (undo_mem) {
+		free_undo(undo_count);
+		delete undo_mem;
+	}
+
+	undo_mem = nullptr;
+	undo_count = 0;
+	delete[] zmp;
+	zmp = nullptr;
+}
+
+long Mem::mem_diff(zbyte *a, zbyte *b, zword mem_size, zbyte *diff) {
+	unsigned size = mem_size;
+	zbyte *p = diff;
+	unsigned j;
+	zbyte c = 0;
+
+	for (;;) {
+		for (j = 0; size > 0 && (c = *a++ ^ *b++) == 0; j++)
+			size--;
+		if (size == 0) break;
+		size--;
+		if (j > 0x8000) {
+			*p++ = 0;
+			*p++ = 0xff;
+			*p++ = 0xff;
+			j -= 0x8000;
+		}
+		if (j > 0) {
+			*p++ = 0;
+			j--;
+			if (j <= 0x7f) {
+				*p++ = j;
+			} else {
+				*p++ = (j & 0x7f) | 0x80;
+				*p++ = (j & 0x7f80) >> 7;
+			}
+		}
+
+		*p++ = c;
+		*(b - 1) ^= c;
+	}
+
+	return p - diff;
+}
+
+void Mem::mem_undiff(zbyte *diff, long diff_length, zbyte *dest) {
+	zbyte c;
+
+	while (diff_length) {
+		c = *diff++;
+		diff_length--;
+		if (c == 0) {
+			unsigned runlen;
+
+			if (!diff_length)
+				return;  // Incomplete run
+			runlen = *diff++;
+			diff_length--;
+			if (runlen & 0x80) {
+				if (!diff_length)
+					return; // Incomplete extended run
+				c = *diff++;
+				diff_length--;
+				runlen = (runlen & 0x7f) | (((unsigned)c) << 7);
+			}
+
+			dest += runlen + 1;
+		} else {
+			*dest++ ^= c;
+		}
+	}
+}
 
 } // End of namespace Scott
 } // End of namespace Gargoyle
