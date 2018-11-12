@@ -26,8 +26,6 @@ namespace Gargoyle {
 namespace Frotz {
 
 // TODO: Implement method stubs
-static zchar stream_read_key(zword, zword, bool) { return 0; }
-static zchar stream_read_input(int, zchar *, zword, zword, bool, bool) { return 0;}
 static void storeb(zword, zchar) {}
 static void storew(zword, zword) {}
 static void save_undo() {}

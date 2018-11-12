@@ -48,7 +48,7 @@ typedef void (Processor::*Opcode)();
 /**
  * Zcode processor
  */
-class Processor : public virtual Mem, public Errors, public GlkInterface, public UserOptions {
+class Processor : public virtual Mem, public Errors, public GlkInterface {
 private:
 	Opcode op0_opcodes[16];
 	Opcode op1_opcodes[16];
@@ -1308,7 +1308,7 @@ public:
 	/**
 	 * Initialization
 	 */
-	virtual void initialize() override;
+	void initialize();
 
 	/**
 	 * Z-code interpreter main loop

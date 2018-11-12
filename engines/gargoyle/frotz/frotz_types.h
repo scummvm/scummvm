@@ -234,13 +234,14 @@ struct UserOptions {
 	bool _save_quetzal;
 	int _err_report_mode;
 	bool _sound;
+	bool _user_tandy_bit;
 
 	UserOptions() : _attribute_assignment(0), _attribute_testing(0),
 		_context_lines(0), _object_locating(0), _object_movement(0),
 		_left_margin(0), _right_margin(0), _ignore_errors(false), _piracy(false),
 		_undo_slots(MAX_UNDO_SLOTS), _expand_abbreviations(0), _script_cols(80),
-		_save_quetzal(true),
-		_err_report_mode(ERR_DEFAULT_REPORT_MODE), _sound(true) {
+		_save_quetzal(true), _err_report_mode(ERR_DEFAULT_REPORT_MODE), _sound(true),
+		_user_tandy_bit(false) {
 	}
 };
 

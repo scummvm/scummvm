@@ -26,7 +26,7 @@ namespace Gargoyle {
 namespace Frotz {
 
 GlkInterface::GlkInterface(OSystem *syst, const GargoyleGameDescription *gameDesc) :
-		Glk(syst, gameDesc),
+		Glk(syst, gameDesc), UserOptions(),
 		oldstyle(0), curstyle(0), cury(1), curx(1), fixforced(0),
 		curr_fg(-2), curr_bg(-2), curr_font(1), prev_font(1), temp_font(0),
 		curr_status_ht(0), mach_status_ht(0), gos_status(nullptr), gos_upper(nullptr),
@@ -38,6 +38,135 @@ GlkInterface::GlkInterface(OSystem *syst, const GargoyleGameDescription *gameDes
 		enable_buffering(false), next_sample(0), next_volume(0),
 		_soundLocked(false), _soundPlaying(false) {
 	Common::fill(&statusline[0], &statusline[256], '\0');
+}
+
+void GlkInterface::initialize() {
+	uint width, height;
+
+	/*
+	 * Init glk stuff
+	 */
+
+	// monor
+	glk_stylehint_set(wintype_AllTypes,   style_Preformatted, stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_Preformatted, stylehint_Weight, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_Preformatted, stylehint_Oblique, 0);
+
+	// monob
+	glk_stylehint_set(wintype_AllTypes,   style_Subheader,    stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_Subheader,    stylehint_Weight, 1);
+	glk_stylehint_set(wintype_AllTypes,   style_Subheader,    stylehint_Oblique, 0);
+
+	// monoi
+	glk_stylehint_set(wintype_AllTypes,   style_Alert,        stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_Alert,        stylehint_Weight, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_Alert,        stylehint_Oblique, 1);
+
+	// monoz
+	glk_stylehint_set(wintype_AllTypes,   style_BlockQuote,   stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_BlockQuote,   stylehint_Weight, 1);
+	glk_stylehint_set(wintype_AllTypes,   style_BlockQuote,   stylehint_Oblique, 1);
+
+	// propr
+	glk_stylehint_set(wintype_TextBuffer, style_Normal,       stylehint_Proportional, 1);
+	glk_stylehint_set(wintype_TextGrid,   style_Normal,       stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_Normal,       stylehint_Weight, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_Normal,       stylehint_Oblique, 0);
+
+	// propb
+	glk_stylehint_set(wintype_TextBuffer, style_Header,       stylehint_Proportional, 1);
+	glk_stylehint_set(wintype_TextGrid,   style_Header,       stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_Header,       stylehint_Weight, 1);
+	glk_stylehint_set(wintype_AllTypes,   style_Header,       stylehint_Oblique, 0);
+
+	// propi
+	glk_stylehint_set(wintype_TextBuffer, style_Emphasized,   stylehint_Proportional, 1);
+	glk_stylehint_set(wintype_TextGrid,   style_Emphasized,   stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_Emphasized,   stylehint_Weight, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_Emphasized,   stylehint_Oblique, 1);
+
+	// propi
+	glk_stylehint_set(wintype_TextBuffer, style_Note,         stylehint_Proportional, 1);
+	glk_stylehint_set(wintype_TextGrid,   style_Note,         stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes,   style_Note,         stylehint_Weight, 1);
+	glk_stylehint_set(wintype_AllTypes,   style_Note,         stylehint_Oblique, 1);
+
+	gos_lower = glk_window_open(0, 0, 0, wintype_TextGrid, 0);
+	if (!gos_lower)
+		gos_lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	glk_window_get_size(gos_lower, &width, &height);
+	glk_window_close(gos_lower, NULL);
+
+	gos_lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	gos_upper = glk_window_open(gos_lower,
+			winmethod_Above | winmethod_Fixed,
+			0,
+			wintype_TextGrid, 0);
+
+	gos_channel = NULL;
+
+	glk_set_window(gos_lower);
+	gos_curwin = gos_lower;
+
+	/*
+	 * Icky magic bit setting
+	 */
+
+	if (h_version == V3 && _user_tandy_bit)
+		h_config |= CONFIG_TANDY;
+
+	if (h_version == V3 && gos_upper)
+		h_config |= CONFIG_SPLITSCREEN;
+
+	if (h_version == V3 && !gos_upper)
+		h_config |= CONFIG_NOSTATUSLINE;
+
+	if (h_version >= V4)
+		h_config |= CONFIG_BOLDFACE | CONFIG_EMPHASIS |
+			CONFIG_FIXED | CONFIG_TIMEDINPUT | CONFIG_COLOUR;
+
+	if (h_version >= V5)
+		h_flags &= ~(GRAPHICS_FLAG | MOUSE_FLAG | MENU_FLAG);
+
+	if ((h_version >= 5) && (h_flags & SOUND_FLAG))
+		h_flags |= SOUND_FLAG;
+
+	if ((h_version == 3) && (h_flags & OLD_SOUND_FLAG))
+		h_flags |= OLD_SOUND_FLAG;
+
+	if ((h_version == 6) && (_sound != 0)) 
+		h_config |= CONFIG_SOUND;
+
+	if (h_version >= V5 && (h_flags & UNDO_FLAG))
+		if (_undo_slots == 0)
+			h_flags &= ~UNDO_FLAG;
+
+	h_screen_cols = width;
+	h_screen_rows = height;
+
+	h_screen_height = h_screen_rows;
+	h_screen_width = h_screen_cols;
+
+	h_font_width = 1;
+	h_font_height = 1;
+
+	/* Must be after screen dimensions are computed.  */
+	if (h_version == V6) {
+		h_flags &= ~GRAPHICS_FLAG;
+	}
+
+	// Use the ms-dos interpreter number for v6, because that's the
+	// kind of graphics files we understand.  Otherwise, use DEC.
+	h_interpreter_number = h_version == 6 ? INTERP_MSDOS : INTERP_DEC_20;
+	h_interpreter_version = 'F';
+
+	{
+		// Set these per spec 8.3.2.
+		h_default_foreground = WHITE_COLOUR;
+		h_default_background = BLACK_COLOUR;
+		if (h_flags & COLOUR_FLAG)
+			h_flags &= ~COLOUR_FLAG;
+	}
 }
 
 int GlkInterface::os_char_width(zchar z) {
@@ -118,7 +247,7 @@ void GlkInterface::gos_update_width() {
 		glk_window_get_size(gos_upper, &width, nullptr);
 		h_screen_cols = width;
 		SET_BYTE(H_SCREEN_COLS, width);
-		if (curx > width) {
+		if ((uint)curx > width) {
 			glk_window_move_cursor(gos_upper, 0, cury - 1);
 			curx = 1;
 		}
@@ -140,7 +269,7 @@ void GlkInterface::reset_status_ht() {
 	glui32 height;
 	if (gos_upper) {
 		glk_window_get_size(gos_upper, nullptr, &height);
-		if (mach_status_ht != height) {
+		if ((uint)mach_status_ht != height) {
 			glk_window_set_arrangement(
 				glk_window_get_parent(gos_upper),
 				winmethod_Above | winmethod_Fixed,
