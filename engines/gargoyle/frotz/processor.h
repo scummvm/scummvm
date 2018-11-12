@@ -23,7 +23,6 @@
 #ifndef GARGOYLE_FROTZ_PROCESSOR
 #define GARGOYLE_FROTZ_PROCESSOR
 
-#include "gargoyle/frotz/buffer.h"
 #include "gargoyle/frotz/err.h"
 #include "gargoyle/frotz/mem.h"
 #include "gargoyle/frotz/glk_interface.h"
@@ -37,6 +36,7 @@ namespace Frotz {
 #define GET_PC(v)          v = pcp - zmp
 #define SET_PC(v)          pcp = zmp + v
 
+#define TEXT_BUFFER_SIZE 200
 
 enum string_type {
 	LOW_STRING, ABBREVIATION, HIGH_STRING, EMBEDDED_STRING, VOCABULARY
@@ -48,12 +48,8 @@ typedef void (Processor::*Opcode)();
 /**
  * Zcode processor
  */
-class Processor : public virtual Mem, public Errors, public GlkInterface {
+class Processor : public Errors, public GlkInterface, public virtual Mem {
 private:
-	Opcode op0_opcodes[16];
-	Opcode op1_opcodes[16];
-	static Opcode var_opcodes[64];
-	static Opcode ext_opcodes[64];
 	int _finished;
 	zword zargs[8];
 	int zargc;
@@ -71,6 +67,17 @@ private:
 	static zchar ZSCII_TO_LATIN1[];
 	zchar *_decoded, *_encoded;
 	int _resolution;
+
+	// Buffer related fields
+	zchar _buffer[TEXT_BUFFER_SIZE];
+	size_t _bufPos;
+	bool _locked;
+	zchar _prevC;
+
+	Opcode op0_opcodes[16];
+	Opcode op1_opcodes[16];
+	static Opcode var_opcodes[64];
+	static Opcode ext_opcodes[64];
 private:
 	/**
 	 * \defgroup General support methods
@@ -137,6 +144,33 @@ private:
 	 * Set the seed value for the random number generator.
 	 */
 	void seed_random(int value);
+
+	/**@}*/
+
+	/**
+	 * \defgroup Input support methods
+	 * @{
+	 */
+
+	/**
+	 * Copy the contents of the text buffer to the output streams.
+	 */
+	void flush_buffer();
+
+	 /**
+	  * High level output function.
+	  */
+	void print_char(zchar c);
+
+	 /**
+	  * High level newline function.
+	  */
+	void new_line();
+
+	/**
+	 * Returns true if the buffer is empty
+	 */
+	bool bufferEmpty() const { return !_bufPos; }
 
 	/**@}*/
 

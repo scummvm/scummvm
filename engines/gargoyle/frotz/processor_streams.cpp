@@ -28,7 +28,6 @@ namespace Frotz {
 // TODO: Implement method stubs
 static void os_scrollback_char(zchar) {}
 static void os_scrollback_erase(zword) {}
-static void flush_buffer() {}
 static void script_open() {}
 static void script_close() {}
 static void script_mssg_on() {}

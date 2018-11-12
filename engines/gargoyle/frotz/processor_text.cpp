@@ -26,8 +26,6 @@ namespace Gargoyle {
 namespace Frotz {
 
 // TODO: Replace method stubs
-static void new_line() {}
-static void print_char(zchar) {}
 static void storeb(zword, zchar) {}
 static void storew(zword, zword) {}
 

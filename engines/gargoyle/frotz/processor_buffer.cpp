@@ -20,8 +20,7 @@
  *
  */
 
-#include "gargoyle/frotz/buffer.h"
-#include "gargoyle/frotz/frotz.h"
+#include "gargoyle/frotz/processor.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
@@ -33,17 +32,13 @@ void stream_char(zchar) {}
 void stream_word(const zchar *) {}
 void stream_new_line(void) {}
 
-Buffer::Buffer() : _bufPos(0), _locked(false), _prevC('\0') {
-	Common::fill(&_buffer[0], &_buffer[TEXT_BUFFER_SIZE], '\0');
-}
-
-void Buffer::flush() {
+void Processor::flush_buffer() {
 	/* Make sure we stop when flush_buffer is called from flush_buffer.
 	 * Note that this is difficult to avoid as we might print a newline
 	 * during flush_buffer, which might cause a newline interrupt, that
 	 * might execute any arbitrary opcode, which might flush the buffer.
 	 */
-	if (_locked || empty())
+	if (_locked || bufferEmpty())
 		return;
 
 	// Send the buffer to the output streams
@@ -58,14 +53,14 @@ void Buffer::flush() {
 	_prevC = '\0';
 }
 
-void Buffer::printChar(zchar c) {
+void Processor::print_char(zchar c) {
 	static bool flag = false;
 
-	if (g_vm->message || g_vm->ostream_memory || g_vm->enable_buffering) {
+	if (message || ostream_memory || enable_buffering) {
 		if (!flag) {
 			// Characters 0 and ZC_RETURN are special cases
 			if (c == ZC_RETURN) {
-				newLine();
+				new_line();
 				return;
 			}
 			if (c == 0)
@@ -73,7 +68,7 @@ void Buffer::printChar(zchar c) {
 
 			// Flush the buffer before a whitespace or after a hyphen
 			if (c == ' ' || c == ZC_INDENT || c == ZC_GAP || (_prevC == '-' && c != '-'))
-				flush();
+				flush_buffer();
 
 			// Set the flag if this is part one of a style or font change
 			if (c == ZC_NEW_FONT || c == ZC_NEW_STYLE)
@@ -95,8 +90,8 @@ void Buffer::printChar(zchar c) {
 	}
 }
 
-void Buffer::newLine()  {
-	flush();
+void Processor::new_line()  {
+	flush_buffer();
 	stream_new_line();
 }
 
