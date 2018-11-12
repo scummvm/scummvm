@@ -1563,7 +1563,7 @@ frefid_t Streams::iterate(frefid_t fref, glui32 *rock) {
 
 const Common::String FileReference::getSaveName() const {
 	assert(_slotNumber != -1);
-	return Common::String::format("%s.%.3d", g_vm->getTargetName().c_str(), _slotNumber);
+	return g_vm->getSaveName(_slotNumber);
 }
 
 bool FileReference::exists() const {

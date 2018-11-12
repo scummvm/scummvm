@@ -96,7 +96,7 @@ protected:
 	/**
 	 * Get the PC. Is implemented by the Processor class, which derives from Errors
 	 */
-	virtual zword getPC() const = 0;
+	virtual uint getPC() const = 0;
 public:
 	/**
 	 * Constructor
