@@ -25,9 +25,6 @@
 namespace Gargoyle {
 namespace Frotz {
 
-// TODO: Method stubs to implement
-static void new_line() {}
-
 #define MAX_OBJECT 2000
 
 enum O1 {

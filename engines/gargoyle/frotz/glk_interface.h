@@ -36,6 +36,13 @@ enum SoundEffect {
 	EFFECT_FINISH_WITH = 4
 };
 
+enum RestartAction {
+	RESTART_BEGIN = 0,
+	RESTART_WPROP_SET = 1,
+	RESTART_END = 2
+};
+
+
 /**
  * Implements an intermediate interface on top of the GLK layer, providing screen
  * and sound effect handling
@@ -134,6 +141,11 @@ protected:
 	void packspaces(zchar *src, zchar *dst);
 
 	void smartstatusline();
+
+	/**
+	 * Called during game restarts
+	 */
+	void os_restart_game(RestartAction) {}
 public:
 	/**
 	 * Constructor

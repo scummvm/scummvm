@@ -199,12 +199,6 @@ enum FontStyle {
 #define BEEP_HIGH       1
 #define BEEP_LOW        2
 
-/*** Constants for os_restart_game */
-
-#define RESTART_BEGIN 0
-#define RESTART_WPROP_SET 1
-#define RESTART_END 2
-
 /*** Constants for os_menu */
 
 #define MENU_NEW 0

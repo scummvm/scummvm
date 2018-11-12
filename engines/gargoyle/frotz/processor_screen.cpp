@@ -25,11 +25,6 @@
 namespace Gargoyle {
 namespace Frotz {
 
-// TODO: Method stubs to implement
-static void storew(zword, zword) {}
-static void print_char(zchar) {}
-
-
 void Processor::screen_char(zchar c) {
 	// TODO
 }
