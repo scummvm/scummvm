@@ -31,13 +31,6 @@ static zword os_read_mouse() { return 0; }
 
 #define INPUT_BUFFER_SIZE 200
 
-void Processor::z_make_menu() {
-    // This opcode was only used for the Macintosh version of Journey.
-	// It controls menus with numbers greater than 2 (menus 0, 1 and 2
-    // are system menus).
-    branch (false);
-}
-
 bool Processor::read_yes_or_no(const char *s) {
     zchar key;
 
@@ -63,6 +56,39 @@ void Processor::read_string(int max, zchar *buffer) {
     do {
 		key = stream_read_input(max, buffer, 0, 0, false, false);
     } while (key != ZC_RETURN);
+}
+
+bool Processor::is_terminator(zchar key) {
+	if (key == ZC_TIME_OUT)
+		return true;
+	if (key == ZC_RETURN)
+		return true;
+	if (key >= ZC_HKEY_MIN && key <= ZC_HKEY_MAX)
+		return true;
+
+	if (h_terminating_keys != 0) {
+		if (key >= ZC_ARROW_MIN && key <= ZC_MENU_CLICK) {
+
+			zword addr = h_terminating_keys;
+			zbyte c;
+
+			do {
+				LOW_BYTE(addr, c);
+				if (c == 255 || key == translate_from_zscii(c))
+					return true;
+				addr++;
+			} while (c != 0);
+		}
+	}
+
+	return false;
+}
+
+void Processor::z_make_menu() {
+	// This opcode was only used for the Macintosh version of Journey.
+	// It controls menus with numbers greater than 2 (menus 0, 1 and 2
+	// are system menus).
+	branch(false);
 }
 
 int Processor::read_number() {

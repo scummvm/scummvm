@@ -79,6 +79,10 @@ private:
 	Opcode op1_opcodes[16];
 	static Opcode var_opcodes[64];
 	static Opcode ext_opcodes[64];
+
+	// Stream related fields
+	int script_width;
+	strid_t sfp, rfp, pfp;
 private:
 	/**
 	 * \defgroup General support methods
@@ -358,7 +362,102 @@ private:
 	 */
 	void script_close();
 
-	 /**@}*/
+	/**
+	 * Write a newline to the transscript file.
+	 */
+	void script_new_line();
+
+	/**
+	 * Write a single character to the transscript file.
+	 */
+	void script_char(zchar c);
+
+	/**
+	 * Write a string to the transscript file.
+	 */
+	void script_word(const zchar *s);
+
+	/**
+	 * Send an input line to the transscript file.
+	 */
+	void script_write_input(const zchar *buf, zchar key);
+
+	/**
+	 * Remove an input line from the transscript file.
+	 */
+	void script_erase_input(const zchar *buf);
+
+	/**
+	 * Start sending a "debugging" message to the transscript file.
+	 */
+	void script_mssg_on();
+
+	/**
+	 * Stop writing a "debugging" message.
+	 */
+	void script_mssg_off();
+
+	/**
+	 * Open a file to record the player's input.
+	 */
+	void record_open();
+
+	/**
+	 * Stop recording the player's input.
+	 */
+	void record_close();
+
+	/**
+	 * Helper function for record_char.
+	 */
+	void record_code(int c, bool force_encoding);
+
+	/**
+	 * Write a character to the command file.
+	 */
+	void record_char(zchar c);
+
+	/**
+	 * Copy a keystroke to the command file.
+	 */
+	void record_write_key(zchar key);
+
+	/**
+	 * Copy a line of input to a command file.
+	 */
+	void record_write_input(const zchar *buf, zchar key);
+
+	/**
+	 * Open a file of commands for playback.
+	 */
+	void replay_open();
+
+	/**
+	 * Stop playback of commands.
+	 */
+	void replay_close();
+
+	/*
+	 * Helper function for replay_key and replay_line.
+	 */
+	int replay_code();
+
+	/**
+	 * Read a character from the command file.
+	 */
+	zchar replay_char();
+
+	/**
+	 * Read a keystroke from a command file.
+	 */
+	zchar replay_read_key();
+
+	/*
+	 * Read a line of input from a command file.
+	 */
+	zchar replay_read_input(zchar *buf);
+
+	/**@}*/
 
 	/**
 	 * \defgroup Text support methods

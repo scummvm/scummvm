@@ -458,32 +458,30 @@ glui32 MemoryStream::getPosition() const {
 		return ((unsigned char *)_bufPtr - (unsigned char *)_buf);
 }
 
-void MemoryStream::setPosition(glui32 pos, glui32 seekMode) {
-	glsi32 newPos = pos;
-
+void MemoryStream::setPosition(glsi32 pos, glui32 seekMode) {
 	if (!_unicode) {
 		if (seekMode == seekmode_Current)
-			newPos = ((unsigned char *)_bufPtr - (unsigned char *)_buf) + newPos;
+			pos = ((unsigned char *)_bufPtr - (unsigned char *)_buf) + pos;
 		else if (seekMode == seekmode_End)
-			newPos = ((unsigned char *)_bufEof - (unsigned char *)_buf) + newPos;
+			pos = ((unsigned char *)_bufEof - (unsigned char *)_buf) + pos;
 		else
-			/* newPos = newPos */;
-		if (newPos < 0)
-			newPos = 0;
-		if (newPos > ((unsigned char *)_bufEof - (unsigned char *)_buf))
-			newPos = ((unsigned char *)_bufEof - (unsigned char *)_buf);
-		_bufPtr = (unsigned char *)_buf + newPos;
+			/* pos = pos */;
+		if (pos < 0)
+			pos = 0;
+		if (pos > ((unsigned char *)_bufEof - (unsigned char *)_buf))
+			pos = ((unsigned char *)_bufEof - (unsigned char *)_buf);
+		_bufPtr = (unsigned char *)_buf + pos;
 	} else {
 		if (seekMode == seekmode_Current)
-			newPos = ((glui32 *)_bufPtr - (glui32 *)_buf) + newPos;
+			pos = ((glui32 *)_bufPtr - (glui32 *)_buf) + pos;
 		else if (seekMode == seekmode_End)
-			newPos = ((glui32 *)_bufEof - (glui32 *)_buf) + newPos;
+			pos = ((glui32 *)_bufEof - (glui32 *)_buf) + pos;
 
-		if (newPos < 0)
-			newPos = 0;
-		if (newPos > ((glui32 *)_bufEof - (glui32 *)_buf))
-			newPos = ((glui32 *)_bufEof - (glui32 *)_buf);
-		_bufPtr = (glui32 *)_buf + newPos;
+		if (pos < 0)
+			pos = 0;
+		if (pos > ((glui32 *)_bufEof - (glui32 *)_buf))
+			pos = ((glui32 *)_bufEof - (glui32 *)_buf);
+		_bufPtr = (glui32 *)_buf + pos;
 	}
 }
 
@@ -1000,7 +998,7 @@ glui32 FileStream::getPosition() const {
 	return _outFile ? _outFile->pos() : _inStream->pos();
 }
 
-void FileStream::setPosition(glui32 pos, glui32 seekMode) {
+void FileStream::setPosition(glsi32 pos, glui32 seekMode) {
 	_lastOp = 0;
 	if (_unicode)
 		pos *= 4;
