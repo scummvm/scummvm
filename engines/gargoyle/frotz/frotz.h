@@ -23,11 +23,7 @@
 #ifndef GARGOYLE_FROTZ_FROTZ
 #define GARGOYLE_FROTZ_FROTZ
 
-#include "gargoyle/glk.h"
-#include "gargoyle/frotz/frotz_types.h"
-#include "gargoyle/frotz/buffer.h"
-#include "gargoyle/frotz/err.h"
-#include "gargoyle/frotz/mem.h"
+#include "gargoyle/frotz/processor.h"
 
 namespace Gargoyle {
 namespace Frotz {
@@ -35,52 +31,7 @@ namespace Frotz {
 /**
  * Frotz interpreter for Z-code games
  */
-class Frotz : public Glk {
-private:
-	/**
-	 * Perform any initialization
-	 */
-	void initialize();
-public:
-	UserOptions _options;
-	Header _header;
-	Buffer _buffer;
-	Mem _mem;
-
-	// Story file name, id number and size
-	Common::SeekableReadStream *_gameFile;
-	Story _storyId;
-	size_t _storySize;
-
-	// Stack data
-	zword _stack[STACK_SIZE];
-	zword *_sp;
-	zword *_fp;
-	zword _frameCount;
-
-	// IO streams
-	bool _ostream_screen;
-	bool _ostream_script;
-	bool _ostream_memory;
-	bool _ostream_record;
-	bool _istream_replay;
-	bool _message;
-
-	// Current window and mouse data
-	int _cwin;
-	int _mwin;
-	int _mouse_y;
-	int _mouse_x;
-	int _menu_selected;
-
-	// Window attributes
-	bool _enableWrapping;
-	bool _enableScripting;
-	bool _enableScrolling;
-	bool _enableBuffering;
-
-	// Size of memory to reserve (in bytes)
-	size_t _reserveMem;
+class Frotz : public Processor {
 public:
 	/**
 	 * Constructor
