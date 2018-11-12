@@ -26,7 +26,17 @@ MODULE_OBJS := \
 	frotz/detection_tables.o \
 	frotz/err.o \
 	frotz/frotz.o \
+	frotz/glk_interface.o \
 	frotz/mem.o \
+	frotz/processor.o \
+	frotz/processor_input.o \
+	frotz/processor_maths.o \
+	frotz/processor_objects.o \
+	frotz/processor_screen.o \
+	frotz/processor_streams.o \
+	frotz/processor_table.o \
+	frotz/processor_text.o \
+	frotz/processor_variables.o \
 	scott/detection.o \
 	scott/scott.o
 

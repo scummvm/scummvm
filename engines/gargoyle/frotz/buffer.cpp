@@ -61,7 +61,7 @@ void Buffer::flush() {
 void Buffer::printChar(zchar c) {
 	static bool flag = false;
 
-	if (g_vm->_message || g_vm->_ostream_memory || g_vm->_enableBuffering) {
+	if (g_vm->message || g_vm->ostream_memory || g_vm->enable_buffering) {
 		if (!flag) {
 			// Characters 0 and ZC_RETURN are special cases
 			if (c == ZC_RETURN) {

@@ -22,12 +22,13 @@
 
 #include "gargoyle/frotz/mem.h"
 #include "gargoyle/frotz/frotz.h"
+#include "common/memstream.h"
 #include "common/textconsole.h"
 
 namespace Gargoyle {
 namespace Frotz {
 
-const Mem::StoryEntry Mem::RECORDS[25] = {
+const Header::StoryEntry Header::RECORDS[25] = {
 	{       SHERLOCK,  21, "871214" },
 	{       SHERLOCK,  26, "880127" },
 	{    BEYOND_ZORK,  47, "870915" },
@@ -55,28 +56,99 @@ const Mem::StoryEntry Mem::RECORDS[25] = {
 	{        UNKNOWN,   0, "------" }
 };
 
-Mem::Mem() : story_fp(nullptr), blorb_ofs(0), blorb_len(0) {
+void Header::loadHeader(Common::SeekableReadStream &f) {
+	h_version = f.readByte();
+	h_config = f.readByte();
+
+	if (h_version < V1 || h_version > V8)
+		error("Unknown Z-code version");
+
+	if (h_version == V6)
+		error("Cannot play Z-code version 6");
+
+	if (h_version == V3 && (h_config & CONFIG_BYTE_SWAPPED))
+		error("Byte swapped story file");
+
+	h_release = f.readUint16BE();
+	h_resident_size = f.readUint16BE();
+	h_start_pc = f.readUint16BE();
+	h_dictionary = f.readUint16BE();
+	h_objects = f.readUint16BE();
+	h_globals = f.readUint16BE();
+	h_dynamic_size = f.readUint16BE();
+	h_flags = f.readUint16BE();
+	f.read(h_serial, 6);
+	
+	/* Auto-detect buggy story files that need special fixes */
+	_storyId = UNKNOWN;
+
+	for (int i = 0; RECORDS[i]._storyId != UNKNOWN; ++i) {
+		if (h_release == RECORDS[i]._release) {
+			if (!strncmp((const char *)h_serial, RECORDS[i]._serial, 6)) {
+				_storyId = RECORDS[i]._storyId;
+				break;
+			}
+		}
+	}
+
+	h_abbreviations = f.readUint16BE();
+	h_file_size = f.readUint16BE();
+	h_checksum = f.readUint16BE();
+	
+	f.seek(H_FUNCTIONS_OFFSET);
+	h_functions_offset = f.readUint16BE();
+	h_strings_offset = f.readUint16BE();
+	f.seek(H_TERMINATING_KEYS);
+	h_terminating_keys = f.readUint16BE();
+	f.seek(H_ALPHABET);
+	h_alphabet = f.readUint16BE();
+	h_extension_table = f.readUint16BE();
+
+
+	// Zork Zero Macintosh doesn't have the graphics flag set
+	if (_storyId == ZORK_ZERO && h_release == 296)
+		h_flags |= GRAPHICS_FLAG;
+}
+
+/*--------------------------------------------------------------------------*/
+
+Mem::Mem() : story_fp(nullptr), blorb_ofs(0), blorb_len(0), story_size(0) {
 }
 
 void Mem::initialize() {
-/*
-	long size;
-	zword addr;
-	unsigned n;
-	int i, j;
-	*/
 	initializeStoryFile();
+	loadGameHeader();
 
-	// TODO: More stuff
+	// Allocate memory for story data
+	if ((zmp = (zbyte *)realloc(zmp, story_size)) == nullptr)
+		error("Out of memory");
+
+	// Load story file in chunks of 32KB
+	uint n = 0x8000;
+
+	for (uint size = 64; size < story_size; size += n) {
+		if (story_size - size < 0x8000)
+			n = story_size - size;
+
+		setPC(size);
+
+		if (story_fp->read(pcp, n) != n)
+			error("Story file read error");
+
+	}
+
+	// Read header extension table
+	hx_table_size = get_header_extension(HX_TABLE_SIZE);
+	hx_unicode_table = get_header_extension(HX_UNICODE_TABLE);
+	hx_flags = get_header_extension(HX_FLAGS);
 }
 
 void Mem::initializeStoryFile() {
-	Common::SeekableReadStream *f = g_vm->_gameFile;
+	Common::SeekableReadStream *f = story_fp;
 	giblorb_map_t *map;
 	giblorb_result_t res;
 	uint32 magic;
 
-	story_fp = f;
 	magic = f->readUint32BE();
 
 	if (magic == MKTAG('F', 'O', 'R', 'M')) {
@@ -99,6 +171,42 @@ void Mem::initializeStoryFile() {
 
 	if (blorb_len < 64)
 		error("This file is too small to be a Z-code file.");
+}
+
+void Mem::loadGameHeader() {
+	// Load header
+	zmp = new byte[64];
+	story_fp->seek(blorb_ofs);
+	story_fp->read(zmp, 64);
+
+	Common::MemoryReadStream h(zmp, 64);
+	loadHeader(h);
+
+	// Calculate story file size in bytes
+	if (h_file_size != 0) {
+		story_size = (long)2 * h_file_size;
+
+		if (h_version >= V4)
+			story_size *= 2;
+		if (h_version >= V6)
+			story_size *= 2;
+	} else {
+		// Some old games lack the file size entry
+		story_size = blorb_len;
+	}
+}
+
+zword Mem::get_header_extension(int entry) {
+	zword addr;
+	zword val;
+
+	if (h_extension_table == 0 || entry > hx_table_size)
+		return 0;
+
+	addr = h_extension_table + 2 * entry;
+	LOW_WORD(addr, val);
+
+	return val;   
 }
 
 } // End of namespace Scott
