@@ -7267,10 +7267,17 @@ static const uint16 qg4InnPathfindingPatch[] = {
 // Note: Glory::save() contains another space freeing loop, but it might be
 // unreachable.
 //
-// Applies to at least: English CD, English floppy
+// Applies to at least: English CD, English floppy, German floppy
 // Responsible method: Glory::save()
 // Fixes bug: #10758
 static const uint16 qg4AutosaveSignature[] = {
+	0x30, SIG_ADDTOOFFSET(+2),          // bnt [end the loop]
+	0x78,                               // push1
+	0x39, 0x79,                         // pushi data
+	0x76,                               // push0
+	SIG_ADDTOOFFSET(+2),                // CD="lag global29", floppy="lat temp6"
+	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x36,                               // push
 	SIG_MAGICDWORD,
 	0x43, 0x3f, SIG_UINT16(0x0002),     // callk CheckFreeSpace[3f], 02
 	0x18,                               // not
@@ -7278,12 +7285,11 @@ static const uint16 qg4AutosaveSignature[] = {
 	0x8d, 0x09,                         // lst temp[9] (savegame file count)
 	0x35, 0x14,                         // ldi 20d
 	0x20,                               // ge?
-	0x30, PATCH_UINT16(0x0038),         // bnt [end the loop]
 	SIG_END
 };
 
 static const uint16 qg4AutosavePatch[] = {
-	0x32, PATCH_UINT16(0x0044),         // jmp [end the loop]
+	0x32, // ...                        // jmp [end the loop]
 	PATCH_END
 };
 
