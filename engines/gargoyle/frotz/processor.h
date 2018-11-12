@@ -208,14 +208,16 @@ private:
 	 */
 
 	/**
-	 * Write a byte value to the dynamic Z-machine memory.
+	 * Generates a runtime error
 	 */
-	void storeb(zword addr, zbyte value);
+	virtual void runtimeError(ErrorCode errNum) override {
+		Errors::runtimeError(errNum);
+	}
 
 	/**
-	 * Write a word value to the dynamic Z-machine memory.
+	 * Called when the H_FLAGS field of the header has changed
 	 */
-	void storew(zword addr, zword value);
+	virtual void flagsChanged(zbyte value) override;
 
 	/**
 	 * \defgroup Object support methods

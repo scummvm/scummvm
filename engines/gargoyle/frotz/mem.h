@@ -24,6 +24,7 @@
 #define GARGOYLE_FROTZ_MEM
 
 #include "gargoyle/frotz/frotz_types.h"
+#include "gargoyle/frotz/err.h"
 
 namespace Gargoyle {
 namespace Frotz {
@@ -202,6 +203,41 @@ private:
 	 * Handles loading the game header
 	 */
 	void loadGameHeader();
+protected:
+	/**
+	 * Read a value from the header extension (former mouse table).
+	 */
+	zword get_header_extension(int entry);
+
+	/**
+	 * Set an entry in the header extension (former mouse table).
+	 */
+	void set_header_extension(int entry, zword val);
+
+	/**
+	 * Set all header fields which hold information about the interpreter.
+	 */
+	void restart_header();
+
+	/**
+	 * Write a byte value to the dynamic Z-machine memory.
+	 */
+	void storeb(zword addr, zbyte value);
+
+	/**
+	 * Write a word value to the dynamic Z-machine memory.
+	 */
+	void storew(zword addr, zword value);
+
+	/**
+	 * Generates a runtime error
+	 */
+	virtual void runtimeError(ErrorCode errNum) = 0;
+
+	/**
+	 * Called when the flags are changed
+	 */
+	virtual void flagsChanged(zbyte value) = 0;
 public:
 	/**
 	 * Constructor
@@ -212,36 +248,6 @@ public:
 	 * Initialize
 	 */
 	void initialize();
-
-	/**
-	 * Read a word
-	 */
-	zword readWord() {
-		pcp += 2;
-		return READ_BE_UINT16(pcp - 2);
-	}
-
-	/**
-	 * Read a word at a given index relative to pcp
-	 */
-	zword readWord(size_t ofs) {
-		return READ_BE_UINT16(pcp + ofs);
-	}
-
-	/**
-	 * Get the PC
-	 */
-	uint getPC() const { return pcp - zmp; }
-
-	/**
-	 * Set the PC
-	 */
-	void setPC(uint ofs) { pcp = zmp + ofs; }
-
-	/**
-	 * Read a value from the header extension (former mouse table).
-	 */
-	zword get_header_extension(int entry);
 };
 
 } // End of namespace Frotz

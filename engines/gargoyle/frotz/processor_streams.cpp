@@ -49,7 +49,6 @@ static void record_open() {}
 static void record_close() {}
 static void record_write_key(zchar) {}
 static void record_write_input(zchar *, zchar) {}
-static void restart_header() {}
 
 
 void Processor::scrollback_char (zchar c) {
