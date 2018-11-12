@@ -239,6 +239,18 @@ struct UserOptions {
 	}
 };
 
+#define MAX_NESTING 16
+struct Redirect {
+	zword _xSize;
+	zword _table;
+	zword _width;
+	zword _total;
+
+	Redirect() : _xSize(0), _table(0), _width(0), _total(0) {}
+	Redirect(zword xSize, zword table, zword width = 0, zword total = 0) :
+		_xSize(xSize), _table(table), _width(width), _total(total) {}
+};
+
 } // End of namespace Frotz
 } // End of namespace Gargoyle
 
