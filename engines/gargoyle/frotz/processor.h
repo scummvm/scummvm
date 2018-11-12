@@ -56,6 +56,7 @@ private:
 	uint _randomInterval;
 	uint _randomCtr;
 	bool first_restart;
+	bool script_valid;
 
 	// Stack data
 	zword _stack[STACK_SIZE];
@@ -202,6 +203,21 @@ private:
 	/**@}*/
 
 	/**
+	 * \defgroup Memory support methods
+	 * @{
+	 */
+
+	/**
+	 * Write a byte value to the dynamic Z-machine memory.
+	 */
+	void storeb(zword addr, zbyte value);
+
+	/**
+	 * Write a word value to the dynamic Z-machine memory.
+	 */
+	void storew(zword addr, zword value);
+
+	/**
 	 * \defgroup Object support methods
 	 * @{
 	 */
@@ -307,6 +323,26 @@ private:
 	 */
 	zchar stream_read_input(int max, zchar *buf, zword timeout, zword routine,
 		bool hot_keys, bool no_scripting);
+
+	/*
+	 * script_open
+	 *
+	 * Open the transscript file. 'AMFV' makes this more complicated as it
+	 * turns transscription on/off several times to exclude some text from
+	 * the transscription file. This wasn't a problem for the original V4
+	 * interpreters which always sent transscription to the printer, but it
+	 * means a problem to modern interpreters that offer to open a new file
+	 * every time transscription is turned on. Our solution is to append to
+	 * the old transscription file in V1 to V4, and to ask for a new file
+	 * name in V5+.
+	 *
+	 */
+	void script_open();
+
+	/*
+	 * Stop transscription.
+	 */
+	void script_close();
 
 	 /**@}*/
 

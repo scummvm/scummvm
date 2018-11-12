@@ -25,11 +25,6 @@
 namespace Gargoyle {
 namespace Frotz {
 
-// TODO: Replace method stubs
-static void storeb(zword, zchar) {}
-static void storew(zword, zword) {}
-
-
 zchar Processor::ZSCII_TO_LATIN1[] = {
     0x0e4, 0x0f6, 0x0fc, 0x0c4, 0x0d6, 0x0dc, 0x0df, 0x0bb,
     0x0ab, 0x0eb, 0x0ef, 0x0ff, 0x0cb, 0x0cf, 0x0e1, 0x0e9,

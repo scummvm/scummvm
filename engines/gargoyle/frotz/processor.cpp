@@ -135,8 +135,8 @@ Processor::Processor(OSystem *syst, const GargoyleGameDescription *gameDesc) :
 		GlkInterface(syst, gameDesc), Errors(),
 		_finished(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
 		zargc(0), _decoded(nullptr), _encoded(nullptr), _resolution(0),
-		_randomInterval(0), _randomCtr(0), first_restart(true), _bufPos(0),
-		_locked(false), _prevC('\0') {
+		_randomInterval(0), _randomCtr(0), first_restart(true), script_valid(false),
+		_bufPos(0), _locked(false), _prevC('\0') {
 	static const Opcode OP0_OPCODES[16] = {
 		&Processor::z_rtrue,
 		&Processor::z_rfalse,
