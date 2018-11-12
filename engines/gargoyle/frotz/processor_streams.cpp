@@ -21,6 +21,7 @@
  */
 
 #include "gargoyle/frotz/processor.h"
+#include "gargoyle/frotz/quetzal.h"
 
 namespace Gargoyle {
 namespace Frotz {
@@ -574,7 +575,7 @@ void Processor::z_save() {
 		if ((gfp = frotzopenprompt (FILE_SAVE)) == nullptr)
 			goto finished;
 
-		if (option_save_quetzal) {
+		if (_save_quetzal) {
 			success = save_quetzal (gfp, story_fp, blorb_ofs);
 		} else {
 			/* Write game file */
@@ -670,7 +671,7 @@ void Processor::z_restore() {
 		if ((gfp = frotzopenprompt(FILE_RESTORE)) == nullptr)
 			goto finished;
 
-		if (option_save_quetzal) {
+		if (_save_quetzal) {
 			success = restore_quetzal (gfp, story_fp, blorb_ofs);
 
 		} else {

@@ -174,6 +174,13 @@ public:
 	}
 
 	/**
+	 * Return the filename for a given save slot
+	 */
+	Common::String getSaveName(uint slot) const {
+		return Common::String::format("%s.%.3u", getTargetName().c_str(), slot);
+	}
+
+	/**
 	 * Display a message in a GUI dialog
 	 */
 	void GUIError(const char *msg, ...);

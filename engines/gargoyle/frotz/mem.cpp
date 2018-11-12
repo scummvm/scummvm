@@ -129,14 +129,11 @@ void Mem::initialize() {
 
 	// Load story file in chunks of 32KB
 	uint n = 0x8000;
-
 	for (uint size = 64; size < story_size; size += n) {
 		if (story_size - size < 0x8000)
 			n = story_size - size;
 
-		SET_PC(size);
-
-		if (story_fp->read(pcp, n) != n)
+		if (story_fp->read(zmp + size, n) != n)
 			error("Story file read error");
 	}
 

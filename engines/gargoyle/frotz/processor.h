@@ -32,25 +32,27 @@
 namespace Gargoyle {
 namespace Frotz {
 
-#define CODE_BYTE(v)	   v = *pcp++
-#define CODE_WORD(v)       v = READ_BE_UINT16(pcp += 2)
-#define CODE_IDX_WORD(v,i) v = READ_BE_UINT16(pcp + i)
-#define GET_PC(v)          v = pcp - zmp
-#define SET_PC(v)          pcp = zmp + v
-
 #define TEXT_BUFFER_SIZE 200
+
+#define CODE_BYTE(v)	   v = codeByte()
+#define CODE_WORD(v)       v = codeWord()
+#define CODE_IDX_WORD(v,i) v = codeWordIdx(i)
+#define GET_PC(v)          v = getPC()
+#define SET_PC(v)          setPC(v)
 
 enum string_type {
 	LOW_STRING, ABBREVIATION, HIGH_STRING, EMBEDDED_STRING, VOCABULARY
 };
 
 class Processor;
+class Quetzal;
 typedef void (Processor::*Opcode)();
 
 /**
  * Zcode processor
  */
 class Processor : public Errors, public GlkInterface, public virtual Mem {
+	friend class Quetzal;
 private:
 	int _finished;
 	zword zargs[8];
@@ -1510,11 +1512,6 @@ protected:
 	void z_store();
 
 	/**@}*/
-protected:
-	/**
-	 * Get the PC. Is implemented by the Processor class, which derives from Errors
-	 */
-	virtual zword getPC() const { return pcp - zmp; }
 public:
 	/**
 	 * Constructor
@@ -1530,6 +1527,50 @@ public:
 	 * Z-code interpreter main loop
 	 */
 	void interpret();
+
+	/**
+	 * \defgroup Memory access methods
+	 * @{
+	 */
+
+	/**
+	 * Square brackets operator
+	 */
+	zbyte &operator[](uint addr) { return zmp[addr]; }
+
+	/**
+	 * Read a code byte
+	 */
+	zbyte codeByte() { return *pcp++; }
+
+	/**
+	 * Read a code word
+	 */
+	zword codeWord() {
+		zword v = READ_BE_UINT16(pcp);
+		pcp += 2;
+		return v;
+	}
+
+	/**
+	 * Return a code word at a given address
+	 */
+	zword codeWordIdx(uint addr) const {
+		return READ_BE_UINT16(pcp + addr);
+	}
+
+	/**
+	 * Return the current program execution offset
+	 * @remarks		This virtual as a convenient way for the ancestor Err class to access
+	 */
+	virtual uint getPC() const override { return pcp - zmp; }
+
+	/**
+	 * Set the program execution offset
+	 */
+	void setPC(uint addr) { pcp = zmp + addr; }
+
+	 /**@}*/
 };
 
 } // End of namespace Frotz

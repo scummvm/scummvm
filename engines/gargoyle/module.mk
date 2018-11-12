@@ -38,6 +38,7 @@ MODULE_OBJS := \
 	frotz/processor_table.o \
 	frotz/processor_text.o \
 	frotz/processor_variables.o \
+	frotz/quetzal.o \
 	scott/detection.o \
 	scott/scott.o
 
