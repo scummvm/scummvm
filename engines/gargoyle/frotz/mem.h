@@ -230,6 +230,11 @@ protected:
 	void storew(zword addr, zword value);
 
 	/**
+	 * Free count undo blocks from the beginning of the undo list
+	 */
+	void free_undo(int count);
+
+	/**
 	 * Generates a runtime error
 	 */
 	virtual void runtimeError(ErrorCode errNum) = 0;
@@ -238,6 +243,26 @@ protected:
 	 * Called when the flags are changed
 	 */
 	virtual void flagsChanged(zbyte value) = 0;
+
+	/**
+	 * Close the story file and deallocate memory.
+	 */
+	void reset_memory();
+
+	/**
+	 * Set diff to a Quetzal-like difference between a and b,
+	 * copying a to b as we go.  It is assumed that diff points to a
+	 * buffer which is large enough to hold the diff.
+	 * mem_size is the number of bytes to compare.
+	 * Returns the number of bytes copied to diff.
+	 *
+	 */
+	long mem_diff(zbyte *a, zbyte *b, zword mem_size, zbyte *diff);
+
+	/**
+	 * Applies a quetzal-like diff to dest
+	 */
+	void mem_undiff(zbyte *diff, long diff_length, zbyte *dest);
 public:
 	/**
 	 * Constructor
