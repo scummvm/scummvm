@@ -222,6 +222,14 @@ continue_input:
     return key;
 }
 
+void Processor::script_open() {
+	// TODO
+}
+
+void Processor::script_close() {
+	// TODO
+}
+
 void Processor::z_input_stream() {
 	flush_buffer();
 
