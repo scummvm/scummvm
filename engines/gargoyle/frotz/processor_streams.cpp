@@ -28,30 +28,15 @@ namespace Frotz {
 // TODO: Implement method stubs
 static void os_scrollback_char(zchar) {}
 static void os_scrollback_erase(zword) {}
-static void script_mssg_on() {}
-static void script_mssg_off() {}
-static void script_char(zchar) {}
-static void script_word(const zchar *) {}
-static void script_new_line() {}
-static void script_erase_input(const zchar *) {}
-static void script_write_input(zchar *, char) {}
 static void memory_open(zword, zword, bool) {}
 static void memory_close() {}
 static void memory_word(const zchar *) {}
 static void memory_new_line() {}
-static void replay_open() {}
-static void replay_close() {}
-static zchar replay_read_key() { return 0; }
-static zchar replay_read_input(zchar *) { return 0; }
 static zchar console_read_key(zword) { return 0; }
 static zchar console_read_input(uint, zchar *, uint, bool) { return 0; }
-static void record_open() {}
-static void record_close() {}
-static void record_write_key(zchar) {}
-static void record_write_input(zchar *, zchar) {}
 
 
-void Processor::scrollback_char (zchar c) {
+void Processor::scrollback_char(zchar c) {
     if (c == ZC_INDENT)
         { scrollback_char (' '); scrollback_char (' '); scrollback_char (' '); return; }
     if (c == ZC_GAP)
@@ -219,12 +204,281 @@ continue_input:
 }
 
 void Processor::script_open() {
-	// TODO
+	h_flags &= ~SCRIPTING_FLAG;
+
+	frefid_t fref = glk_fileref_create_by_prompt(fileusage_Transcript,
+		filemode_WriteAppend);
+	sfp = glk_stream_open_file(fref, filemode_WriteAppend);
+
+	if (sfp != nullptr) {
+		sfp->setPosition(0, seekmode_End);
+
+		h_flags |= SCRIPTING_FLAG;
+
+		script_valid = true;
+		ostream_script = true;
+
+		script_width = 0;
+	} else {
+		print_string("Cannot open file\n");
+	}
+
+	SET_WORD(H_FLAGS, h_flags);
 }
 
 void Processor::script_close() {
-	// TODO
+	h_flags &= ~SCRIPTING_FLAG;
+	SET_WORD(H_FLAGS, h_flags);
+
+	glk_stream_close(sfp);
+	ostream_script = false;
 }
+
+void Processor::script_new_line() {
+	script_char('\n');
+	script_width = 0;
+}
+
+void Processor::script_char(zchar c) {
+	if (c == ZC_INDENT && script_width != 0)
+		c = ' ';
+
+	if (c == ZC_INDENT) {
+		script_char(' ');
+		script_char(' ');
+		script_char(' ');
+		return;
+	}
+	if (c == ZC_GAP) {
+		script_char(' ');
+		script_char(' ');
+		return;
+	}
+
+	sfp->putCharUni(c);
+	script_width++;
+}
+
+void Processor::script_word(const zchar *s) {
+	int width;
+	int i;
+
+	if (*s == ZC_INDENT && script_width != 0)
+		script_char(*s++);
+
+	for (i = 0, width = 0; s[i] != 0; i++) {
+		if (s[i] == ZC_NEW_STYLE || s[i] == ZC_NEW_FONT)
+			i++;
+		else if (s[i] == ZC_GAP)
+			width += 3;
+		else if (s[i] == ZC_INDENT)
+			width += 2;
+		else
+			width += 1;
+	}
+
+	if (_script_cols != 0 && script_width + width > _script_cols) {
+		if (*s == ' ' || *s == ZC_INDENT || *s == ZC_GAP)
+			s++;
+
+		script_new_line();
+	}
+
+	for (i = 0; s[i] != 0; i++) {
+		if (s[i] == ZC_NEW_FONT || s[i] == ZC_NEW_STYLE)
+			i++;
+		else
+			script_char(s[i]);
+	}
+}
+
+void Processor::script_write_input(const zchar *buf, zchar key) {
+	int width;
+	int i;
+
+	for (i = 0, width = 0; buf[i] != 0; i++)
+		width++;
+
+	if (_script_cols != 0 && script_width + width > _script_cols)
+		script_new_line();
+
+	for (i = 0; buf[i] != 0; i++)
+		script_char(buf[i]);
+
+	if (key == ZC_RETURN)
+		script_new_line();
+}
+
+void Processor::script_erase_input(const zchar *buf) {
+	int width;
+	int i;
+
+	for (i = 0, width = 0; buf[i] != 0; i++)
+		width++;
+
+	sfp->setPosition(-width, seekmode_Current);
+	script_width -= width;
+}
+
+void Processor::script_mssg_on() {
+	if (script_width != 0)
+		script_new_line();
+
+	script_char(ZC_INDENT);
+}
+
+void Processor::script_mssg_off() {
+	script_new_line();
+}
+
+void Processor::record_open() {
+	frefid_t fref = glk_fileref_create_by_prompt(fileusage_Transcript, filemode_Write);
+	if ((rfp = glk_stream_open_file(fref, filemode_Write)) != nullptr)
+		ostream_record = true;
+	else
+		print_string("Cannot open file\n");
+}
+
+void Processor::record_close() {
+	glk_stream_close(rfp);
+	ostream_record = false;
+}
+
+void Processor::record_code(int c, bool force_encoding) {
+	if (force_encoding || c == '[' || c < 0x20 || c > 0x7e) {
+		int i;
+
+		rfp->putChar('[');
+
+		for (i = 10000; i != 0; i /= 10)
+			if (c >= i || i == 1)
+				rfp->putChar('0' + (c / i) % 10);
+
+		rfp->putChar(']');
+	} else {
+		rfp->putChar(c);
+	}
+}
+
+void Processor::record_char(zchar c) {
+	if (c != ZC_RETURN) {
+		if (c < ZC_HKEY_MIN || c > ZC_HKEY_MAX) {
+			record_code(translate_to_zscii(c), false);
+			if (c == ZC_SINGLE_CLICK || c == ZC_DOUBLE_CLICK) {
+				record_code(mouse_x, true);
+				record_code(mouse_y, true);
+			}
+		} else {
+			record_code(1000 + c - ZC_HKEY_MIN, true);
+		}
+	}
+}
+
+void Processor::record_write_key(zchar key) {
+	record_char(key);
+	rfp->putChar('\n');
+}
+
+void Processor::record_write_input(const zchar *buf, zchar key) {
+	zchar c;
+
+	while ((c = *buf++) != 0)
+		record_char(c);
+
+	record_write_key(key);
+}
+
+void Processor::replay_open() {
+	frefid_t fref = glk_fileref_create_by_prompt(fileusage_Transcript, filemode_Read);
+	if ((pfp = glk_stream_open_file(fref, filemode_Read)) != nullptr)
+		istream_replay = true;
+	else
+		print_string("Cannot open file\n");
+}
+
+void Processor::replay_close() {
+	glk_stream_close(pfp);
+	istream_replay = false;
+}
+
+int Processor::replay_code() {
+	int c;
+
+	if ((c = pfp->getChar()) == '[') {
+		int c2;
+
+		c = 0;
+
+		while ((c2 = pfp->getChar()) != EOF && c2 >= '0' && c2 <= '9')
+			c = 10 * c + c2 - '0';
+
+		return (c2 == ']') ? c : EOF;
+	} else {
+		return c;
+	}
+}
+
+zchar Processor::replay_char() {
+	int c;
+
+	if ((c = replay_code()) != EOF) {
+		if (c != '\n') {
+			if (c < 1000) {
+
+				c = translate_from_zscii(c);
+
+				if (c == ZC_SINGLE_CLICK || c == ZC_DOUBLE_CLICK) {
+					mouse_x = replay_code();
+					mouse_y = replay_code();
+				}
+
+				return c;
+			} else {
+				return ZC_HKEY_MIN + c - 1000;
+			}
+		}
+
+		pfp->unputBuffer("\n", 1);
+		return ZC_RETURN;
+
+	} else {
+		return ZC_BAD;
+	}
+}
+
+zchar Processor::replay_read_key() {
+	zchar key = replay_char();
+
+	if (pfp->getChar() != '\n') {
+		replay_close();
+		return ZC_BAD;
+	} else {
+		return key;
+	}
+}
+
+zchar Processor::replay_read_input(zchar *buf) {
+	zchar c;
+
+	for (;;) {
+		c = replay_char();
+
+		if (c == ZC_BAD || is_terminator(c))
+			break;
+
+		*buf++ = c;
+	}
+
+	*buf = 0;
+
+	if (pfp->getChar() != '\n') {
+		replay_close();
+		return ZC_BAD;
+	} else {
+		return c;
+	}
+}
+
 
 void Processor::z_input_stream() {
 	flush_buffer();
@@ -260,7 +514,7 @@ void Processor::z_output_stream() {
     }
 }
 
-void Processor::z_restart(void) {
+void Processor::z_restart() {
 	flush_buffer();
 
 	os_restart_game(RESTART_BEGIN);
@@ -293,8 +547,7 @@ void Processor::z_restart(void) {
 	os_restart_game(RESTART_END);
 }
 
-
-void Processor::z_save(void) {
+void Processor::z_save() {
 #ifdef TODO
 	bool success = false;
 
@@ -310,8 +563,7 @@ void Processor::z_save(void) {
 
 		glk_put_buffer_stream(f, (const char *)zmp + zargs[0], zargs[1]);
 
-		stream_result_t result;
-		glk_stream_close(f, &result);
+		glk_stream_close(f);
 
 	} else {
 		long pc;
@@ -430,8 +682,8 @@ void Processor::z_restore() {
 			release = (unsigned) fgetc (gfp) << 8;
 			release |= fgetc (gfp);
 
-			(void) fgetc (gfp);
-			(void) fgetc (gfp);
+			() fgetc (gfp);
+			() fgetc (gfp);
 
 			/* Check the release number */
 
@@ -460,7 +712,7 @@ void Processor::z_restore() {
 					for (i = 0; i < skip; i++)
 						zmp[addr++] = fgetc (story_fp);
 					zmp[addr] = fgetc (gfp);
-					(void) fgetc (story_fp);
+					() fgetc (story_fp);
 				}
 
 				/* Check for errors */
@@ -519,7 +771,7 @@ finished:
 #endif
 }
 
-void Processor::z_verify(void) {
+void Processor::z_verify() {
 	zword checksum = 0;
 
 	// Sum all bytes in story file except header bytes
