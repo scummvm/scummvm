@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	frotz/processor_buffer.o \
 	frotz/processor_input.o \
 	frotz/processor_maths.o \
+	frotz/processor_mem.o \
 	frotz/processor_objects.o \
 	frotz/processor_screen.o \
 	frotz/processor_streams.o \

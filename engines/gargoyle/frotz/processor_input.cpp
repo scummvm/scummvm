@@ -80,35 +80,6 @@ int Processor::read_number() {
     return value;
 }
 
-void Processor::storeb(zword addr, zbyte value) {
-	if (addr >= h_dynamic_size)
-		runtimeError(ERR_STORE_RANGE);
-
-	if (addr == H_FLAGS + 1) {	/* flags register is modified */
-
-		h_flags &= ~(SCRIPTING_FLAG | FIXED_FONT_FLAG);
-		h_flags |= value & (SCRIPTING_FLAG | FIXED_FONT_FLAG);
-
-		if (value & SCRIPTING_FLAG) {
-			if (!ostream_script)
-				script_open();
-		} else {
-			if (ostream_script)
-				script_close();
-		}
-
-		// TOR - glkified / refresh_text_style ();
-	}
-
-	SET_BYTE(addr, value);
-
-}
-
-void Processor::storew(zword addr, zword value) {
-	storeb((zword)(addr + 0), hi(value));
-	storeb((zword)(addr + 1), lo(value));
-}
-
 void Processor::z_read() {
     zchar buffer[INPUT_BUFFER_SIZE];
     zword addr;

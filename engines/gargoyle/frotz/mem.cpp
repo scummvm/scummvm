@@ -134,11 +134,10 @@ void Mem::initialize() {
 		if (story_size - size < 0x8000)
 			n = story_size - size;
 
-		setPC(size);
+		SET_PC(size);
 
 		if (story_fp->read(pcp, n) != n)
 			error("Story file read error");
-
 	}
 
 	// Read header extension table
@@ -235,6 +234,92 @@ zword Mem::get_header_extension(int entry) {
 
 	return val;   
 }
+
+void Mem::set_header_extension(int entry, zword val) {
+	zword addr;
+
+	if (h_extension_table == 0 || entry > hx_table_size)
+		return;
+
+	addr = h_extension_table + 2 * entry;
+	SET_WORD(addr, val);
+}
+
+void Mem::restart_header(void) {
+	zword screen_x_size;
+	zword screen_y_size;
+	zbyte font_x_size;
+	zbyte font_y_size;
+
+	int i;
+
+	SET_BYTE(H_CONFIG, h_config);
+	SET_WORD(H_FLAGS, h_flags);
+
+	if (h_version >= V4) {
+		SET_BYTE(H_INTERPRETER_NUMBER, h_interpreter_number);
+		SET_BYTE(H_INTERPRETER_VERSION, h_interpreter_version);
+		SET_BYTE(H_SCREEN_ROWS, h_screen_rows);
+		SET_BYTE(H_SCREEN_COLS, h_screen_cols);
+	}
+
+	/* It's less trouble to use font size 1x1 for V5 games, especially
+	because of a bug in the unreleased German version of "Zork 1" */
+
+	if (h_version != V6) {
+		screen_x_size = (zword)h_screen_cols;
+		screen_y_size = (zword)h_screen_rows;
+		font_x_size = 1;
+		font_y_size = 1;
+	} else {
+		screen_x_size = h_screen_width;
+		screen_y_size = h_screen_height;
+		font_x_size = h_font_width;
+		font_y_size = h_font_height;
+	}
+
+	if (h_version >= V5) {
+		SET_WORD(H_SCREEN_WIDTH, screen_x_size);
+		SET_WORD(H_SCREEN_HEIGHT, screen_y_size);
+		SET_BYTE(H_FONT_HEIGHT, font_y_size);
+		SET_BYTE(H_FONT_WIDTH, font_x_size);
+		SET_BYTE(H_DEFAULT_BACKGROUND, h_default_background);
+		SET_BYTE(H_DEFAULT_FOREGROUND, h_default_foreground);
+	}
+
+	if (h_version == V6)
+		for (i = 0; i < 8; i++)
+			storeb((zword)(H_USER_NAME + i), h_user_name[i]);
+
+	SET_BYTE(H_STANDARD_HIGH, h_standard_high);
+	SET_BYTE(H_STANDARD_LOW, h_standard_low);
+
+	set_header_extension(HX_FLAGS, hx_flags);
+	set_header_extension(HX_FORE_COLOUR, hx_fore_colour);
+	set_header_extension(HX_BACK_COLOUR, hx_back_colour);
+}
+
+void Mem::storeb(zword addr, zbyte value) {
+	if (addr >= h_dynamic_size)
+		runtimeError(ERR_STORE_RANGE);
+
+	if (addr == H_FLAGS + 1) {
+		// flags register is modified
+
+		h_flags &= ~(SCRIPTING_FLAG | FIXED_FONT_FLAG);
+		h_flags |= value & (SCRIPTING_FLAG | FIXED_FONT_FLAG);
+
+		flagsChanged(value);
+	}
+
+	SET_BYTE(addr, value);
+}
+
+void Mem::storew(zword addr, zword value) {
+	storeb((zword)(addr + 0), hi(value));
+	storeb((zword)(addr + 1), lo(value));
+}
+
 
 } // End of namespace Scott
 } // End of namespace Gargoyle
