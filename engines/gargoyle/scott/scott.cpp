@@ -1241,7 +1241,7 @@ void Scott::readInts(Common::SeekableReadStream *f, size_t count, ...) {
 			c = f->readByte();
 
 		// Get the next value
-		int *val = (int *)va_arg(va, int);
+		int *val = va_arg(va, int *);
 		*val = 0;
 
 		int factor = c == '-' ? -1 : 1;
