@@ -66,7 +66,7 @@ public:
 	winid_t glk_window_open(winid_t split, glui32 method, glui32 size,
 	                        glui32 wintype, glui32 rock = 0) const;
 
-	void glk_window_close(winid_t win, stream_result_t *result);
+	void glk_window_close(winid_t win, stream_result_t *result = nullptr);
 	void glk_window_get_size(winid_t win, glui32 *width, glui32 *height);
 	void glk_window_set_arrangement(winid_t win, glui32 method,
 	                                glui32 size, winid_t keyWin);
@@ -87,7 +87,7 @@ public:
 
 	strid_t glk_stream_open_file(frefid_t fileref, FileMode fmode, glui32 rock = 0);
 	strid_t glk_stream_open_memory(char *buf, glui32 buflen, FileMode fmode, glui32 rock = 0);
-	void glk_stream_close(strid_t str, stream_result_t *result);
+	void glk_stream_close(strid_t str, stream_result_t *result = nullptr);
 	strid_t glk_stream_iterate(strid_t str, glui32 *rockptr) const;
 	glui32 glk_stream_get_rock(strid_t str) const;
 	void glk_stream_set_position(strid_t str, glsi32 pos, glui32 seekMode);

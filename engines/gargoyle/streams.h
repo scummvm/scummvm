@@ -223,7 +223,7 @@ public:
 		return 0;
 	}
 
-	virtual void setPosition(glui32 pos, glui32 seekMode) {}
+	virtual void setPosition(glsi32 pos, glui32 seekMode) {}
 
 	virtual void setStyle(glui32 val) {}
 
@@ -390,7 +390,7 @@ public:
 
 	virtual glui32 getPosition() const override;
 
-	virtual void setPosition(glui32 pos, glui32 seekMode) override;
+	virtual void setPosition(glsi32 pos, glui32 seekMode) override;
 
 	/**
 	 * Get a character from the stream
@@ -492,7 +492,7 @@ public:
 
 	virtual glui32 getPosition() const override;
 
-	virtual void setPosition(glui32 pos, glui32 seekMode) override;
+	virtual void setPosition(glsi32 pos, glui32 seekMode) override;
 
 	/**
 	 * Get a character from the stream
