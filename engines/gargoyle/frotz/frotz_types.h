@@ -30,7 +30,7 @@ namespace Gargoyle {
 namespace Frotz {
 
 #define MAX_UNDO_SLOTS 500
-#define STACK_SIZE 20
+#define STACK_SIZE 32768
 
 #define lo(v)	(v & 0xff)
 #define hi(v)	(v >> 8)
