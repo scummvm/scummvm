@@ -518,13 +518,6 @@ endif
 	unix2dos $(WIN32PATH)/doc/no-nb/*.txt
 	unix2dos $(WIN32PATH)/doc/se/*.txt
 
-# Special target to create a win32 NSIS installer
-win32setup: $(EXECUTABLE)
-	mkdir -p $(srcdir)/$(STAGINGPATH)
-	$(STRIP) $(EXECUTABLE) -o $(srcdir)/$(STAGINGPATH)/$(EXECUTABLE)
-	cp /usr/local/bin/SDL.dll $(srcdir)/$(STAGINGPATH)
-	makensis -V2 -Dtop_srcdir="../.." -Dstaging_dir="../../$(STAGINGPATH)" -Darch=$(ARCH) $(srcdir)/dists/win32/scummvm.nsi
-
 
 #
 # Special target to generate project files for various IDEs
