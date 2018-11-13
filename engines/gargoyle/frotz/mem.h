@@ -24,7 +24,6 @@
 #define GARGOYLE_FROTZ_MEM
 
 #include "gargoyle/frotz/frotz_types.h"
-#include "gargoyle/frotz/err.h"
 
 namespace Gargoyle {
 namespace Frotz {

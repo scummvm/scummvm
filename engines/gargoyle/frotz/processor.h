@@ -23,7 +23,6 @@
 #ifndef GARGOYLE_FROTZ_PROCESSOR
 #define GARGOYLE_FROTZ_PROCESSOR
 
-#include "gargoyle/frotz/err.h"
 #include "gargoyle/frotz/mem.h"
 #include "gargoyle/frotz/glk_interface.h"
 #include "gargoyle/frotz/frotz_types.h"
@@ -51,9 +50,15 @@ typedef void (Processor::*Opcode)();
 /**
  * Zcode processor
  */
-class Processor : public Errors, public GlkInterface, public virtual Mem {
+class Processor : public GlkInterface, public virtual Mem {
 	friend class Quetzal;
 private:
+	Opcode op0_opcodes[16];
+	Opcode op1_opcodes[16];
+	static const char *const ERR_MESSAGES[ERR_NUM_ERRORS];
+	static Opcode var_opcodes[64];
+	static Opcode ext_opcodes[64];
+
 	int _finished;
 	zword zargs[8];
 	int zargc;
@@ -72,17 +77,13 @@ private:
 	static zchar ZSCII_TO_LATIN1[];
 	zchar *_decoded, *_encoded;
 	int _resolution;
+	int _errorCount[ERR_NUM_ERRORS];
 
 	// Buffer related fields
-	zchar _buffer[TEXT_BUFFER_SIZE];
-	size_t _bufPos;
 	bool _locked;
 	zchar _prevC;
-
-	Opcode op0_opcodes[16];
-	Opcode op1_opcodes[16];
-	static Opcode var_opcodes[64];
-	static Opcode ext_opcodes[64];
+	zchar _buffer[TEXT_BUFFER_SIZE];
+	size_t _bufPos;
 
 	// Stream related fields
 	int script_width;
@@ -172,6 +173,16 @@ private:
 	  */
 	void print_char(zchar c);
 
+	/**
+	 * Print a string of ASCII characters.
+	 */
+	void print_string(const char *s);
+
+	/**
+	 * Print an unsigned 32bit number in decimal or hex.
+	 */
+	void print_long(uint value, int base);
+
 	 /**
 	  * High level newline function.
 	  */
@@ -181,6 +192,13 @@ private:
 	 * Returns true if the buffer is empty
 	 */
 	bool bufferEmpty() const { return !_bufPos; }
+
+	/**
+	 * An error has occurred. Ignore it, pass it to os_fatal or report
+	 * it according to err_report_mode.
+	 * @param errNum		Numeric code for error (1 to ERR_NUM_ERRORS)
+	 */
+	void runtimeError(ErrorCode errNum);
 
 	/**@}*/
 
@@ -215,13 +233,6 @@ private:
 	 * \defgroup Memory support methods
 	 * @{
 	 */
-
-	/**
-	 * Generates a runtime error
-	 */
-	virtual void runtimeError(ErrorCode errNum) override {
-		Errors::runtimeError(errNum);
-	}
 
 	/**
 	 * Called when the H_FLAGS field of the header has changed
@@ -1395,11 +1406,6 @@ protected:
 	void z_print_ret();
 
 	/**
-	 * Print a string of ASCII characters.
-	 */
-	void print_string(const char *s);
-
-	/**
 	 * Print unicode character
 	 *
 	 * 	zargs[0] = Unicode
@@ -1561,9 +1567,8 @@ public:
 
 	/**
 	 * Return the current program execution offset
-	 * @remarks		This virtual as a convenient way for the ancestor Err class to access
 	 */
-	virtual uint getPC() const override { return pcp - zmp; }
+	uint getPC() const { return pcp - zmp; }
 
 	/**
 	 * Set the program execution offset
