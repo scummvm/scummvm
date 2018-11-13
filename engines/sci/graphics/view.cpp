@@ -140,6 +140,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 	switch (curViewType) {
 	case kViewEga: // SCI0 (and Amiga 16 colors)
 		isEGA = true;
+		// fall through
 	case kViewAmiga: // Amiga ECS (32 colors)
 	case kViewAmiga64: // Amiga AGA (64 colors)
 	case kViewVga: // View-format SCI1
@@ -578,6 +579,7 @@ void unpackCelData(const SciSpan<const byte> &inBuffer, SciSpan<byte> &celBitmap
 			switch (curByte & 0xC0) {
 			case 0x40: // copy bytes as is (In copy case, runLength can go up to 127 i.e. pixel & 0x40). Fixes bug #3135872.
 				runLength += 64;
+				// fall through
 			case 0x00: // copy bytes as-is
 				if (!literalPos) {
 					memcpy(outPtr + pixelNr,        rlePtr, MIN<uint16>(runLength, pixelCount - pixelNr));
