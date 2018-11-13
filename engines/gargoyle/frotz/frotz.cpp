@@ -34,11 +34,16 @@ Frotz::Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc) :
 	g_vm = this;
 }
 
+Frotz::~Frotz() {
+	reset_memory();
+}
+
 void Frotz::runGame(Common::SeekableReadStream *gameFile) {
 	story_fp = gameFile;
 	initialize();
 
-	// TODO
+	// Game loop
+	interpret();
 }
 
 void Frotz::initialize() {

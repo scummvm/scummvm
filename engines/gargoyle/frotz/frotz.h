@@ -39,6 +39,11 @@ public:
 	Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc);
 
 	/**
+	 * Destructor
+	 */
+	virtual ~Frotz();
+
+	/**
 	 * Initialization
 	 */
 	void initialize();
