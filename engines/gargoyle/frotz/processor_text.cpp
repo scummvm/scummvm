@@ -479,17 +479,6 @@ void Processor::print_object(zword object) {
 	}
 }
 
-void Processor::print_string(const char *s) {
-	char c;
-
-	while ((c = *s++) != 0) {
-		if (c == '\n')
-			new_line();
-		else
-			print_char(c);
-	}
-}
-
 zword Processor::lookup_text(int padding, zword dct) {
 	zword entry_addr;
 	zword entry_count;

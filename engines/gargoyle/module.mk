@@ -23,7 +23,6 @@ MODULE_OBJS := \
 	window_text_grid.o \
 	frotz/detection.o \
 	frotz/detection_tables.o \
-	frotz/err.o \
 	frotz/frotz.o \
 	frotz/glk_interface.o \
 	frotz/mem.o \

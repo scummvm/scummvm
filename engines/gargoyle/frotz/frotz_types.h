@@ -149,19 +149,59 @@ enum {
 	TRANSPARENT_FLAG = 0x0001 ///< Game wants to use transparency     - V6
 };
 
+enum ErrorCode {
+	ERR_TEXT_BUF_OVF   = 1,		///< Text buffer overflow
+	ERR_STORE_RANGE    = 2,		///< Store out of dynamic memory
+	ERR_DIV_ZERO       = 3,		///< Division by zero
+	ERR_ILL_OBJ        = 4,		///< Illegal object
+	ERR_ILL_ATTR       = 5,		///< Illegal attribute
+	ERR_NO_PROP        = 6,		///< No such property
+	ERR_STK_OVF        = 7,		///< Stack overflow
+	ERR_ILL_CALL_ADDR  = 8,		///< Call to illegal address
+	ERR_CALL_NON_RTN   = 9,		///< Call to non-routine
+	ERR_STK_UNDF       = 10,	///< Stack underflow
+	ERR_ILL_OPCODE     = 11,	///< Illegal opcode
+	ERR_BAD_FRAME      = 12,	///< Bad stack frame
+	ERR_ILL_JUMP_ADDR  = 13,	///< Jump to illegal address
+	ERR_SAVE_IN_INTER  = 14,	///< Can't save while in interrupt
+	ERR_STR3_NESTING   = 15,	///< Nesting stream #3 too deep
+	ERR_ILL_WIN        = 16,	///< Illegal window
+	ERR_ILL_WIN_PROP   = 17,	///< Illegal window property
+	ERR_ILL_PRINT_ADDR = 18,	///< Print at illegal address
+	ERR_DICT_LEN       = 19,	///< Illegal dictionary word length
+	ERR_MAX_FATAL      = 19,
+
+	// Less serious errors
+	ERR_JIN_0            = 20,	///< @jin called with object 0
+	ERR_GET_CHILD_0      = 21,	///< @get_child called with object 0
+	ERR_GET_PARENT_0     = 22,	///< @get_parent called with object 0
+	ERR_GET_SIBLING_0    = 23,	///< @get_sibling called with object 0
+	ERR_GET_PROP_ADDR_0  = 24,	///< @get_prop_addr called with object 0
+	ERR_GET_PROP_0       = 25,	///< @get_prop called with object 0
+	ERR_PUT_PROP_0       = 26,	///< @put_prop called with object 0
+	ERR_CLEAR_ATTR_0     = 27,	///< @clear_attr called with object 0
+	ERR_SET_ATTR_0       = 28,	///< @set_attr called with object 0
+	ERR_TEST_ATTR_0      = 29,	///< @test_attr called with object 0
+	ERR_MOVE_OBJECT_0    = 30,	///< @move_object called moving object 0
+	ERR_MOVE_OBJECT_TO_0 = 31,	///< @move_object called moving into object 0
+	ERR_REMOVE_OBJECT_0  = 32,	///< @remove_object called with object 0
+	ERR_GET_NEXT_PROP_0  = 33,	///< @get_next_prop called with object 0
+	ERR_NUM_ERRORS       = 33
+};
+
 enum FrotzInterp {
-#define INTERP_DEFAULT 0
-#define INTERP_DEC_20 1
-#define INTERP_APPLE_IIE 2
-#define INTERP_MACINTOSH 3
-#define INTERP_AMIGA 4
-#define INTERP_ATARI_ST 5
-#define INTERP_MSDOS 6
-#define INTERP_CBM_128 7
-#define INTERP_CBM_64 8
-#define INTERP_APPLE_IIC 9
-#define INTERP_APPLE_IIGS 10
-#define INTERP_TANDY 11
+	INTERP_DEFAULT    =  0,
+	INTERP_DEC_20     =  1,
+	INTERP_APPLE_IIE  =  2,
+	INTERP_MACINTOSH  =  3,
+	INTERP_AMIGA      =  4,
+	INTERP_ATARI_ST   =  5,
+	INTERP_MSDOS      =  6,
+	INTERP_CBM_128    =  7,
+	INTERP_CBM_64     =  8,
+	INTERP_APPLE_IIC  =  9,
+	INTERP_APPLE_IIGS = 10,
+	INTERP_TANDY      = 11
 };
 
 enum Colour {
