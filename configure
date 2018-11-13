@@ -2765,6 +2765,7 @@ case $_host_os in
 		append_var LIBS "-lmingw32 -lwinmm -lgdi32"
 		append_var OBJS "scummvmwinres.o"
 		add_line_to_config_mk 'WIN32 = 1'
+		_port_mk="backends/platform/sdl/win32/win32.mk"
 		;;
 	mint*)
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
