@@ -423,7 +423,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			default:
 				return false;
 			}
-			//no break
+			// fall through
 		case 9:
 			if (Random_Query(1, 2) - 1 == 1) {
 				AI_Movement_Track_Append(kActorOfficerLeary, 433, 10);
@@ -452,7 +452,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		default:
 			return false;
 		}
-		//no break
+		// fall through
 	case 306:
 		Actor_Set_Goal_Number(kActorOfficerLeary, 305);
 		return true;
