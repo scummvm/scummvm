@@ -7356,11 +7356,45 @@ static const uint16 qg4SetLooperPatch2[] = {
 	PATCH_END
 };
 
+// The panel showing time of day gets stuck displaying consecutive moonrises.
+// Despite time actually advancing, the sun will never rise again because
+// local[5] is set to 1 for night UI and never resets until hero moves to
+// another room.
+//
+// temp[0] is not used in this method. Thus we can safely ignore and reuse the
+// code block that manipulates it in order to fix this bug.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: showTime::init() in script 7
+// Fixes bug: #10775
+static const uint16 qfg4MoonriseSignature[] = {
+	SIG_MAGICDWORD,
+	0x81, 0x7a,                         // lag global[122]
+	0xa5, 0x00,                         // sat temp[0]
+	0x89, 0x7b,                         // lsg global[123]
+	0x35, 0x06,                         // ldi 6
+	0x1c,                               // ne?
+	0x2f, 0x06,                         // bt 6d [skip remaining OR conditions]
+	0x89, 0x78,                         // lsg 120d
+	0x34, SIG_UINT16(0x01f4),           // ldi 500d
+	0x1e,                               // gt?
+	0x31, 0x02,                         // bnt 2d [skip the if block]
+	0xc5, 0x00,                         // +at temp[0]
+	SIG_END
+};
+static const uint16 qfg4MoonrisePatch[] = {
+	0x35, 0x00,                         // ldi 0 (reset the is-night var)
+	0xa3, 0x05,                         // sal local[5]
+	0x33, 0x0f,                         // jmp 15d (skip waste bytes)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
 	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,      sci2VolumeResetPatch },
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
+	{  true,     7, "fix consecutive moonrises",                   1, qfg4MoonriseSignature,         qfg4MoonrisePatch },
 	{  true,    10, "fix setLooper calls (2/2)",                   2, qg4SetLooperSignature2,        qg4SetLooperPatch2 },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
