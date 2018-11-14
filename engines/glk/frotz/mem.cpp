@@ -25,7 +25,7 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 const Header::StoryEntry Header::RECORDS[25] = {
@@ -416,4 +416,4 @@ void Mem::mem_undiff(zbyte *diff, long diff_length, zbyte *dest) {
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

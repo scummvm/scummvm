@@ -26,7 +26,7 @@
 #include "common/events.h"
 #include "glk/glk_types.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 /**
  * Currently not implemented
@@ -44,6 +44,6 @@ protected:
 	void gli_free_tts(void) {}
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

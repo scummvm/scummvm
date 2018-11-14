@@ -22,7 +22,7 @@
 
 #include "glk/picture.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 void PicList::increment() {
 	// TODO
@@ -60,4 +60,4 @@ void Picture::drawPicture(int x0, int y0, int dx0, int dy0, int dx1, int dy1) {
 }
 
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

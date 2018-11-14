@@ -22,10 +22,10 @@
 
 #include "glk/window_pair.h"
 #include "glk/conf.h"
-#include "glk/gargoyle.h"
+#include "glk/glk.h"
 #include "glk/screen.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 PairWindow::PairWindow(Windows *windows, glui32 method, Window *key, glui32 size) :
 	Window(windows, 0),
@@ -233,4 +233,4 @@ void PairWindow::click(const Point &newPos) {
 		_child2->click(newPos);
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

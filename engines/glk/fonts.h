@@ -32,7 +32,7 @@
 #include "common/ustr.h"
 #include "graphics/font.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 #define FONTS_TOTAL 8
 
@@ -113,6 +113,6 @@ public:
 	size_t stringWidthUni(int fontIdx, const Common::U32String &text, int spw = 0);
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

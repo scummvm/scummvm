@@ -20,7 +20,7 @@
  *
  */
 
-#include "glk/gargoyle.h"
+#include "glk/glk.h"
 
 #include "base/plugins.h"
 #include "common/md5.h"
@@ -34,44 +34,44 @@
 
 #define MAX_SAVES 99
 
-namespace Gargoyle {
+namespace Glk {
 
-struct GargoyleGameDescription {
+struct GlkGameDescription {
 	ADGameDescription _desc;
 	Common::String _filename;
 	InterpreterType _interpType;
 	Common::String _md5;
 };
 
-const Common::String &GargoyleEngine::getFilename() const {
+const Common::String &GlkEngine::getFilename() const {
 	return _gameDescription->_filename;
 }
-uint32 GargoyleEngine::getFeatures() const {
+uint32 GlkEngine::getFeatures() const {
 	return _gameDescription->_desc.flags;
 }
 
-bool GargoyleEngine::isDemo() const {
+bool GlkEngine::isDemo() const {
 	return (bool)(_gameDescription->_desc.flags & ADGF_DEMO);
 }
 
-Common::Language GargoyleEngine::getLanguage() const {
+Common::Language GlkEngine::getLanguage() const {
 	return _gameDescription->_desc.language;
 }
 
-InterpreterType GargoyleEngine::getInterpreterType() const {
+InterpreterType GlkEngine::getInterpreterType() const {
 	return _gameDescription->_interpType;
 }
 
-const Common::String &GargoyleEngine::getGameMD5() const {
+const Common::String &GlkEngine::getGameMD5() const {
 	return _gameDescription->_md5;
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #include "glk/frotz/detection_tables.h"
-#define ZCODE(ID, NAME) { ID, Gargoyle::Frotz::NAME##_DESC }
+#define ZCODE(ID, NAME) { ID, Glk::Frotz::NAME##_DESC }
 
-static const PlainGameDescriptor gargoyleGames[] = {
+static const PlainGameDescriptor glkGames[] = {
 	{"zcode", "Zcode Games" },
 	{"scottadams", "Scott Adams Games"},
 
@@ -146,9 +146,9 @@ static const PlainGameDescriptor gargoyleGames[] = {
 #include "glk/scott/detection.h"
 #include "glk/scott/scott.h"
 
-class GargoyleMetaEngine : public AdvancedMetaEngine {
+class GlkMetaEngine : public AdvancedMetaEngine {
 public:
-	GargoyleMetaEngine() : AdvancedMetaEngine(Gargoyle::gameDescriptions, sizeof(Gargoyle::GargoyleGameDescription), gargoyleGames) {
+	GlkMetaEngine() : AdvancedMetaEngine(Glk::gameDescriptions, sizeof(Glk::GlkGameDescription), glkGames) {
 		_maxScanDepth = 3;
 	}
 
@@ -172,7 +172,7 @@ public:
 	virtual ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const override;
 };
 
-bool GargoyleMetaEngine::hasFeature(MetaEngineFeature f) const {
+bool GlkMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 	    (f == kSupportsListSaves) ||
 	    (f == kSupportsLoadingDuringStartup) ||
@@ -183,22 +183,22 @@ bool GargoyleMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSimpleSavesNames);
 }
 
-bool Gargoyle::GargoyleEngine::hasFeature(EngineFeature f) const {
+bool Glk::GlkEngine::hasFeature(EngineFeature f) const {
 	return
 	    (f == kSupportsRTL) ||
 	    (f == kSupportsLoadingDuringRuntime) ||
 	    (f == kSupportsSavingDuringRuntime);
 }
 
-bool GargoyleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Gargoyle::GargoyleGameDescription *gd = (const Gargoyle::GargoyleGameDescription *)desc;
+bool GlkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	const Glk::GlkGameDescription *gd = (const Glk::GlkGameDescription *)desc;
 
 	switch (gd->_interpType) {
-	case Gargoyle::INTERPRETER_FROTZ:
-		*engine = new Gargoyle::Frotz::Frotz(syst, gd);
+	case Glk::INTERPRETER_FROTZ:
+		*engine = new Glk::Frotz::Frotz(syst, gd);
 		break;
-	case Gargoyle::INTERPRETER_SCOTT:
-		*engine = new Gargoyle::Scott::Scott(syst, gd);
+	case Glk::INTERPRETER_SCOTT:
+		*engine = new Glk::Scott::Scott(syst, gd);
 		break;
 	default:
 		error("Unknown interpreter");
@@ -207,12 +207,12 @@ bool GargoyleMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 	return gd != 0;
 }
 
-SaveStateList GargoyleMetaEngine::listSaves(const char *target) const {
+SaveStateList GlkMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
 	Common::String pattern = Common::String::format("%s.0##", target);
-	Gargoyle::SavegameHeader header;
+	Glk::SavegameHeader header;
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
@@ -225,7 +225,7 @@ SaveStateList GargoyleMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
-				if (Gargoyle::FileStream::readSavegameHeader(in, header))
+				if (Glk::FileStream::readSavegameHeader(in, header))
 					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
 				delete in;
@@ -238,22 +238,22 @@ SaveStateList GargoyleMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-int GargoyleMetaEngine::getMaximumSaveSlot() const {
+int GlkMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
 }
 
-void GargoyleMetaEngine::removeSaveState(const char *target, int slot) const {
+void GlkMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-SaveStateDescriptor GargoyleMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+SaveStateDescriptor GlkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
 
 	if (in) {
-		Gargoyle::SavegameHeader header;
-		if (Gargoyle::FileStream::readSavegameHeader(in, header)) {
+		Glk::SavegameHeader header;
+		if (Glk::FileStream::readSavegameHeader(in, header)) {
 			// Create the return descriptor
 			SaveStateDescriptor desc(slot, header._saveName);
 			desc.setSaveDate(header._year, header._month, header._day);
@@ -268,17 +268,17 @@ SaveStateDescriptor GargoyleMetaEngine::querySaveMetaInfos(const char *target, i
 	return SaveStateDescriptor();
 }
 
-DetectedGames GargoyleMetaEngine::detectGames(const Common::FSList &fslist) const {
+DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	DetectedGames detectedGames;
-	Gargoyle::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames);
-	Gargoyle::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
+	Glk::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames);
+	Glk::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
 
 	return detectedGames;
 }
 
-static Gargoyle::GargoyleGameDescription gameDescription;
+static Glk::GlkGameDescription gameDescription;
 
-ADDetectedGames GargoyleMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
+ADDetectedGames GlkMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
 	static char gameId[100];
 	strcpy(gameId, ConfMan.get("gameid").c_str());
 	Common::String filename = ConfMan.get("filename");
@@ -290,10 +290,10 @@ ADDetectedGames GargoyleMetaEngine::detectGame(const Common::FSNode &parent, con
 	Common::File f;
 
 	// Check each sub-engine for any detected games
-	if (Gargoyle::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames))
-		gameDescription._interpType = Gargoyle::INTERPRETER_FROTZ;
-	else if (Gargoyle::Scott::ScottMetaEngine::detectGames(fslist, detectedGames))
-		gameDescription._interpType = Gargoyle::INTERPRETER_SCOTT;
+	if (Glk::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames))
+		gameDescription._interpType = Glk::INTERPRETER_FROTZ;
+	else if (Glk::Scott::ScottMetaEngine::detectGames(fslist, detectedGames))
+		gameDescription._interpType = Glk::INTERPRETER_SCOTT;
 	else
 		// No match found, so return no results
 		return results;
@@ -317,7 +317,7 @@ ADDetectedGames GargoyleMetaEngine::detectGame(const Common::FSNode &parent, con
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(GLK)
-REGISTER_PLUGIN_DYNAMIC(GLK, PLUGIN_TYPE_ENGINE, GargoyleMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(GLK, PLUGIN_TYPE_ENGINE, GlkMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(GLK, PLUGIN_TYPE_ENGINE, GargoyleMetaEngine);
+REGISTER_PLUGIN_STATIC(GLK, PLUGIN_TYPE_ENGINE, GlkMetaEngine);
 #endif

@@ -28,7 +28,7 @@
 #include "glk/frotz/frotz_types.h"
 #include "common/stack.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 #define TEXT_BUFFER_SIZE 200
@@ -1522,7 +1522,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Processor(OSystem *syst, const GargoyleGameDescription *gameDesc);
+	Processor(OSystem *syst, const GlkGameDescription *gameDesc);
 
 	/**
 	 * Initialization
@@ -1579,6 +1579,6 @@ public:
 };
 
 } // End of namespace Frotz
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

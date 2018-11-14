@@ -24,12 +24,12 @@
 #include "glk/frotz/frotz_types.h"
 #include "common/config-manager.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 Frotz *g_vm;
 
-Frotz::Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc) :
+Frotz::Frotz(OSystem *syst, const GlkGameDescription *gameDesc) :
 		Processor(syst, gameDesc) {
 	g_vm = this;
 }
@@ -95,4 +95,4 @@ Common::Error Frotz::saveGameState(int slot, const Common::String &desc) {
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

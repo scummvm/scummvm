@@ -25,7 +25,7 @@
 
 #include "graphics/surface.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 class PicList {
 public:
@@ -68,6 +68,6 @@ public:
 	void drawPicture(int x0, int y0, int dx0, int dy0, int dx1, int dy1);
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

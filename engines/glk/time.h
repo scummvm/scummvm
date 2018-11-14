@@ -25,7 +25,7 @@
 
 #include "glk/glk_types.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 typedef int64 TimeSeconds;
 
@@ -88,6 +88,6 @@ public:
 };
 typedef TimeAndDate glkdate_t;
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

@@ -29,7 +29,7 @@
 #include "common/rect.h"
 #include "common/ustr.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 enum ClipSource { PRIMARY = 0, CLIPBOARD = 1 };
 
@@ -115,6 +115,6 @@ public:
 	bool getSelection(const Rect &r, int *rx0, int *rx1) const;
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

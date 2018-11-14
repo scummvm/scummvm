@@ -26,13 +26,13 @@
 #include "glk/window_text_buffer.h"
 #include "glk/window_text_grid.h"
 #include "glk/conf.h"
-#include "glk/gargoyle.h"
+#include "glk/glk.h"
 #include "glk/screen.h"
 #include "glk/streams.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 bool Windows::_overrideReverse;
 bool Windows::_overrideFgSet;
@@ -770,4 +770,4 @@ byte *Attributes::attrFg(WindowStyle *styles) {
 	}
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

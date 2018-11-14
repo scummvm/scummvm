@@ -26,7 +26,7 @@
 #include "common/fs.h"
 #include "engines/game.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 class FrotzMetaEngine {
@@ -38,6 +38,6 @@ public:
 };
 
 } // End of namespace Frotz
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

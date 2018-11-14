@@ -27,7 +27,7 @@
 
 #include "glk/unicode_gen.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 gli_case_block_t unigen_case_block_0x0[256] = {
 	{ 0x0, 0x0 },
@@ -11823,4 +11823,4 @@ gli_decomp_block_t unigen_decomp_block_0x2fa[256] = {
 		*countptr = 0;  \
 	}
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

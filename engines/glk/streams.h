@@ -29,7 +29,7 @@
 #include "common/str.h"
 #include "glk/glk_types.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 #define SAVEGAME_VERSION 1
 
@@ -634,6 +634,6 @@ public:
 	frefid_t iterate(frefid_t fref, glui32 *rock);
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

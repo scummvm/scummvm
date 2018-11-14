@@ -26,7 +26,7 @@
 #include "glk/glk_types.h"
 #include "common/algorithm.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 #define MAX_UNDO_SLOTS 500
@@ -292,6 +292,6 @@ struct Redirect {
 };
 
 } // End of namespace Frotz
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

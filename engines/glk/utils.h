@@ -26,7 +26,7 @@
 #include "common/rect.h"
 #include "glk/glk_types.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 typedef Common::Point Point;
 
@@ -46,6 +46,6 @@ public:
  */
 int strToInt(const char *s);
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

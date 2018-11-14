@@ -25,7 +25,7 @@
 
 #include "glk/windows.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 /**
  * Text Grid window
@@ -190,6 +190,6 @@ public:
 	}
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

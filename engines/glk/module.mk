@@ -6,8 +6,8 @@ MODULE_OBJS := \
 	detection.o \
 	events.o \
 	fonts.o \
-	gargoyle.o \
 	glk.o \
+	glk_api.o \
 	picture.o \
 	screen.o \
 	selection.o \

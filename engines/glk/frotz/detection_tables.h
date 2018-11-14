@@ -23,7 +23,7 @@
 #include "engines/advancedDetector.h"
 #include "common/language.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 /**
@@ -82,4 +82,4 @@ extern const char *const ZORK3_DESC;
 extern const char *const ZTUU_DESC;
 
 } // End of namespace Frotz
-} // End of namespace Gargoyle
+} // End of namespace Glk

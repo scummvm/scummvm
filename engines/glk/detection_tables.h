@@ -20,10 +20,10 @@
  *
  */
 
-namespace Gargoyle {
+namespace Glk {
 
-static const GargoyleGameDescription gameDescriptions[] = {
+static const GlkGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, "", (InterpreterType)0, "" }
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

@@ -27,7 +27,7 @@
 #include "glk/picture.h"
 #include "glk/speech.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 /**
  * Text Buffer window
@@ -240,6 +240,6 @@ public:
 	}
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

@@ -23,10 +23,10 @@
 #ifndef GLK_FROTZ_GLK_INTERFACE
 #define GLK_FROTZ_GLK_INTERFACE
 
-#include "glk/glk.h"
+#include "glk/glk_api.h"
 #include "glk/frotz/mem.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 enum SoundEffect {
@@ -47,7 +47,7 @@ enum RestartAction {
  * Implements an intermediate interface on top of the GLK layer, providing screen
  * and sound effect handling
  */
-class GlkInterface : public Glk, public virtual UserOptions, public virtual Mem {
+class GlkInterface : public GlkAPI, public virtual UserOptions, public virtual Mem {
 public:
 	zchar statusline[256];
 	int oldstyle;
@@ -181,7 +181,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	GlkInterface(OSystem *syst, const GargoyleGameDescription *gameDesc);
+	GlkInterface(OSystem *syst, const GlkGameDescription *gameDesc);
 
 	/**
 	 * Initialization
@@ -190,6 +190,6 @@ public:
 };
 
 } // End of namespace Frotz
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

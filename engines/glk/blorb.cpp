@@ -22,7 +22,7 @@
 
 #include "glk/blorb.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 #define giblorb_Inited_Magic 0xB7012BEDU
 
@@ -540,4 +540,4 @@ bool Blorb::giblorb_is_resource_map(void) const {
 	return _map != nullptr;
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

@@ -25,7 +25,7 @@
 
 #include "glk/windows.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 /**
  * Pair window
@@ -68,6 +68,6 @@ public:
 	virtual void click(const Point &newPos) override;
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

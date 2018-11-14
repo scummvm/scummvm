@@ -23,7 +23,7 @@
 #include "glk/frotz/processor.h"
 #include "glk/frotz/quetzal.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 zchar Processor::console_read_input(int max, zchar *buf, zword timeout, bool continued) {
@@ -783,4 +783,4 @@ void Processor::z_verify() {
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

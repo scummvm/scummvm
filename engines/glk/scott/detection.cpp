@@ -24,7 +24,7 @@
 #include "common/file.h"
 #include "common/md5.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Scott {
 
 struct ScottGame {
@@ -106,4 +106,4 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

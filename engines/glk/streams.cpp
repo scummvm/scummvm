@@ -23,14 +23,14 @@
 #include "glk/streams.h"
 #include "glk/conf.h"
 #include "glk/events.h"
-#include "glk/gargoyle.h"
+#include "glk/glk.h"
 #include "glk/windows.h"
 #include "gui/saveload.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/translation.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 Stream::Stream(Streams *streams, bool readable, bool writable, uint32 rock, bool unicode) :
 	_streams(streams), _readable(readable), _writable(writable), _readCount(0),
@@ -1589,4 +1589,4 @@ void FileReference::deleteFile() {
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

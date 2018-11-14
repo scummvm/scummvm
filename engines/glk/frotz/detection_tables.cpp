@@ -22,7 +22,7 @@
 
 #include "glk/frotz/detection_tables.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 const char *const AMFV_DESC = "A Mind Forever Voyaging";
@@ -82,4 +82,4 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 
 } // End of namespace Frotz
-} // End of namespace Gargoyle
+} // End of namespace Glk
