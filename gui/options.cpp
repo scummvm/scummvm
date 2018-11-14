@@ -1523,6 +1523,7 @@ void GlobalOptionsDialog::build() {
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GlobalOptions_Graphics.Container", kGraphicsTabContainerReflowCmd);
 	graphicsContainer->setTarget(this);
+	graphicsContainer->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
 	addGraphicControls(graphicsContainer, "GlobalOptions_Graphics_Container.");
 
 	//
@@ -1718,6 +1719,7 @@ void GlobalOptionsDialog::build() {
 
 	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", kCloudTabContainerReflowCmd);
 	container->setTarget(this);
+	container->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
 
 	_storagePopUpDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(container, "GlobalOptions_Cloud_Container.StoragePopup");

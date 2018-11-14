@@ -34,6 +34,7 @@ class ScrollContainerWidget: public Widget, public CommandSender {
 	int16 _scrolledX, _scrolledY;
 	uint16 _limitH;
 	uint32 _reflowCmd;
+	ThemeEngine::DialogBackground _backgroundType;
 
 	void recalc();
 
@@ -51,6 +52,9 @@ public:
 	Common::Rect getClipRect() const override;
 
 	void handleMouseWheel(int x, int y, int direction);
+
+	void setBackgroundType(ThemeEngine::DialogBackground backgroundType);
+
 protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.
