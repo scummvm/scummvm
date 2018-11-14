@@ -69,6 +69,7 @@ namespace {
 #define EOB_PC98_FLAGS FLAGS(false, false, false, false, true, true, false, false, false, Kyra::GI_EOB1)
 #define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB2)
 #define EOB2_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, true, false, false, Kyra::GI_EOB2)
+#define EOB2_PC98_FLAGS FLAGS(false, false, false, false, true, false, false, false, false, Kyra::GI_EOB2)
 #define EOB2_TALKIE_FLAGS FLAGS(false, false, true, false, false, false, false, false, false, Kyra::GI_EOB2)
 
 static const char msg_missingLangResources[]			= _s("Missing language specific game code and/or resources.");
@@ -2101,6 +2102,22 @@ const KYRAGameDescription adGameDescs[] = {
 			GUIO5(GUIO_NOSPEECH, GUIO_MIDIAMIGA, GUIO_RENDERAMIGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
 		},
 		EOB2_FLAGS
+	},
+
+	{
+		{
+			"eob2",
+			0,
+			{
+				{ "AAD_LOGO.CPS", 0, "a0951ff3cce7fcbd57b8152278eac3eb", -1 },
+				{ 0, 0, 0, 0 }
+			},
+				Common::JA_JPN,
+				Common::kPlatformPC98,
+				ADGF_NO_FLAGS,
+				GUIO7(GUIO_NOSPEECH, GUIO_MIDIPC98, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_RENDERPC9821, GUIO_RENDERPC9801, GAMEOPTION_EOB_HPGRAPHS)
+		},
+		EOB2_PC98_FLAGS
 	},
 
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
