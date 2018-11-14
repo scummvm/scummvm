@@ -39,6 +39,7 @@ MODULE_OBJS := \
 	frotz/processor_variables.o \
 	frotz/quetzal.o \
 	scott/detection.o \
+	scott/detection_tables.o \
 	scott/scott.o
 
 # This module can be built as a plugin

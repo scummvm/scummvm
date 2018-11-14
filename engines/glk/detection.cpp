@@ -68,7 +68,9 @@ const Common::String &GlkEngine::getGameMD5() const {
 
 } // End of namespace Glk
 
+#include "glk/scott/detection_tables.h"
 #include "glk/frotz/detection_tables.h"
+#define SCOTT(ID, NAME) { ID, Glk::Scott::NAME##_DESC }
 #define ZCODE(ID, NAME) { ID, Glk::Frotz::NAME##_DESC }
 
 static const PlainGameDescriptor glkGames[] = {
@@ -118,23 +120,23 @@ static const PlainGameDescriptor glkGames[] = {
 	ZCODE("ztuu", ZTUU),
 
 	// Scott Adams games
-	{ "adventureland", "Adventureland" },
-	{ "pirateadventure", "Pirate Adventure" },
-	{ "missionimpossible", "Mission Impossible" },
-	{ "voodoocastle", "Voodoo Castle" },
-	{ "thecount", "The Count" },
-	{ "strangeodyssey", "Strange Odyssey" },
-	{ "mysteryfunhouse", "Mystery Fun House" },
-	{ "pyramidofdoom", "Pyramid Of Doom" },
-	{ "ghosttown", "Ghost Town" },
-	{ "savageisland1", "Savage Island, Part 1" },
-	{ "savageisland2", "Savage Island, Part 2" },
-	{ "goldenvoyage", "The Golden Voyage" },
-	{ "adventure13", "Adventure 13" },
-	{ "adventure14", "Adventure 14" },
-	{ "buckaroobonzai", "Buckaroo Banzai" },
-	{ "marveladventure", "Marvel Adventure #1" },
-	{ "scottsampler", "Adventure International's Mini-Adventure Sampler" },
+	SCOTT("adventureland", ADVENTURELAND),
+	SCOTT("pirateadventure", PIRATE_ADVENTURE),
+	SCOTT("missionimpossible", MISSION_IMPOSSIBLE),
+	SCOTT("voodoocastle", VOODOO_CASTLE),
+	SCOTT("thecount", THE_COUNT),
+	SCOTT("strangeodyssey", STRANGE_ODYSSEY),
+	SCOTT("mysteryfunhouse", MYSTERY_FUN_HOUSE),
+	SCOTT("pyramidofdoom", PYRAMID_OF_DOOM),
+	SCOTT("ghosttown", GHOST_TOWN),
+	SCOTT("savageisland1", SAVAGE_ISLAND1),
+	SCOTT("savageisland2", SAVAGE_ISLAND2),
+	SCOTT("goldenvoyage", THE_GOLDEN_VOYAGE),
+	SCOTT("adventure13", ADVENTURE13),
+	SCOTT("adventure14", ADVENTURE14),
+	SCOTT("buckaroobanzai", BUCKAROO_BANZAI),
+	SCOTT("marveladventure", MARVEL_ADVENTURE),
+	SCOTT("scottsampler", MINI_SAMPLER),
 	{0, 0}
 };
 
