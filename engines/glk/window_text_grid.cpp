@@ -22,11 +22,11 @@
 
 #include "glk/window_text_grid.h"
 #include "glk/conf.h"
-#include "glk/gargoyle.h"
+#include "glk/glk.h"
 #include "glk/selection.h"
 #include "glk/screen.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 TextGridWindow::TextGridWindow(Windows *windows, uint32 rock) : Window(windows, rock) {
 	_type = wintype_TextGrid;
@@ -651,4 +651,4 @@ void TextGridWindow::TextGridRow::resize(size_t newSize) {
 	Common::fill(&_chars[0], &_chars[0] + newSize, ' ');
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

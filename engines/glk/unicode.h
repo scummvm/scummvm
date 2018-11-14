@@ -25,7 +25,7 @@
 
 #include "glk/glk_types.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 typedef glui32 gli_case_block_t[2]; /* upper, lower */
 enum BufferChangeCase { CASE_UPPER = 0, CASE_LOWER = 1, CASE_TITLE = 2, CASE_IDENT = 3 };
@@ -46,6 +46,6 @@ size_t strlen_uni(const uint32 *s);
 extern glui32 bufferChangeCase(glui32 *buf, glui32 len,
                                glui32 numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

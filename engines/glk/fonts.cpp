@@ -23,13 +23,13 @@
 #include "glk/fonts.h"
 #include "glk/glk_types.h"
 #include "glk/conf.h"
-#include "glk/gargoyle.h"
+#include "glk/glk.h"
 #include "common/memstream.h"
 #include "common/unzip.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 #define FONTS_VERSION 1.0
 #define FONTS_FILENAME "fonts.dat"
@@ -154,4 +154,4 @@ size_t Fonts::stringWidthUni(int fontIdx, const Common::U32String &text, int spw
 	return font->getStringWidth(text) * GLI_SUBPIX;
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

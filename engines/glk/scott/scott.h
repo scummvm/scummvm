@@ -28,9 +28,9 @@
  */
 
 #include "common/scummsys.h"
-#include "glk/glk.h"
+#include "glk/glk_api.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Scott {
 
 #define LIGHT_SOURCE    9   // Always 9 how odd
@@ -109,7 +109,7 @@ struct Tail {
 /**
  * Scott Adams game interpreter
  */
-class Scott : public Glk {
+class Scott : public GlkAPI {
 private:
 	Header GameHeader;
 	Item *Items;
@@ -167,7 +167,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Scott(OSystem *syst, const GargoyleGameDescription *gameDesc);
+	Scott(OSystem *syst, const GlkGameDescription *gameDesc);
 
 	/**
 	 * Execute the game
@@ -186,6 +186,6 @@ public:
 };
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

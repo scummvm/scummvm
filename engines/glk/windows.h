@@ -33,7 +33,7 @@
 #include "glk/selection.h"
 #include "glk/streams.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 class Window;
 class PairWindow;
@@ -536,6 +536,6 @@ public:
 	BlankWindow(Windows *windows, uint32 rock);
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

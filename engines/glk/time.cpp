@@ -23,7 +23,7 @@
 #include "glk/time.h"
 #include "common/system.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 TimeAndDate::TimeAndDate() {
 	::TimeDate t;
@@ -117,4 +117,4 @@ TimeSeconds TimeAndDate::getTime() const {
 	return totalMinutes * 60 + second;
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

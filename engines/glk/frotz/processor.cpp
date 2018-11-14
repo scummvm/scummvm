@@ -23,7 +23,7 @@
 #include "glk/frotz/processor.h"
 #include "glk/frotz/frotz.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 // TODO: Stubs to replace with actual code
@@ -131,7 +131,7 @@ Opcode Processor::ext_opcodes[64] = {
 	&Processor::z_buffer_screen,	// spec 1.1
 };
 
-Processor::Processor(OSystem *syst, const GargoyleGameDescription *gameDesc) : 
+Processor::Processor(OSystem *syst, const GlkGameDescription *gameDesc) : 
 		GlkInterface(syst, gameDesc),
 		_finished(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
 		zargc(0), _decoded(nullptr), _encoded(nullptr), _resolution(0),
@@ -661,4 +661,4 @@ void Processor::z_restore_undo(void) {
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

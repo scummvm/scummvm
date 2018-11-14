@@ -22,11 +22,11 @@
 
 #include "glk/selection.h"
 #include "glk/conf.h"
-#include "glk/gargoyle.h"
+#include "glk/glk.h"
 #include "glk/windows.h"
 #include "common/system.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 void Clipboard::clipboardStore(const Common::U32String &text) {
 	_text = text;
@@ -318,4 +318,4 @@ bool Selection::getSelection(const Rect &r, int *rx0, int *rx1) const {
 	return (rx0 && rx1);
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

@@ -23,7 +23,7 @@
 #include "glk/utils.h"
 #include "common/textconsole.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 int strToInt(const char *s) {
 	if (!*s)
@@ -41,4 +41,4 @@ int strToInt(const char *s) {
 	return (int)tmp;
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

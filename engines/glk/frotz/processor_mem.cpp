@@ -22,7 +22,7 @@
 
 #include "glk/frotz/processor.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 void Processor::flagsChanged(zbyte value) {
@@ -215,4 +215,4 @@ void Processor::memory_close(void) {
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

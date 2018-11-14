@@ -26,7 +26,7 @@
 
 #include "glk/frotz/detection_tables.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
@@ -77,4 +77,4 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 }
 
 } // End of namespace Frotz
-} // End of namespace Gargoyle
+} // End of namespace Glk

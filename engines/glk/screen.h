@@ -26,7 +26,7 @@
 #include "graphics/screen.h"
 #include "glk/fonts.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 enum CaretShape {
 	SMALL_DOT = 0, FAT_DOT = 1, THIN_LINE = 2, FAT_LINE = 3, BLOCK = 4
@@ -60,6 +60,6 @@ public:
 	void drawCaret(const Point &pos);
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

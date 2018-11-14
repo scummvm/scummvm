@@ -22,7 +22,7 @@
 
 #include "glk/frotz/processor.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 void Processor::screen_mssg_on() {
@@ -525,4 +525,4 @@ void Processor::z_split_window() {
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

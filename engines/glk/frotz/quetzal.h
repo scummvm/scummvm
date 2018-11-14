@@ -26,7 +26,7 @@
 #include "glk/glk_types.h"
 #include "glk/frotz/frotz_types.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 enum QueztalTag {
@@ -92,6 +92,6 @@ public:
 };
 
 } // End of namespace Frotz
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

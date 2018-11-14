@@ -22,7 +22,7 @@
 
 #include "glk/frotz/processor.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 void Processor::z_copy_table() {
@@ -117,4 +117,4 @@ void Processor::z_storew() {
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

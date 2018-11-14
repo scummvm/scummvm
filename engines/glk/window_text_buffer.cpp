@@ -22,12 +22,12 @@
 
 #include "glk/window_text_buffer.h"
 #include "glk/conf.h"
-#include "glk/gargoyle.h"
+#include "glk/glk.h"
 #include "glk/screen.h"
 #include "glk/selection.h"
 #include "glk/unicode.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 /**
  *
@@ -1633,4 +1633,4 @@ TextBufferWindow::TextBufferRow::TextBufferRow() : _len(0), _newLine(0), _dirty(
 	Common::fill(&_chars[0], &_chars[TBLINELEN], 0);
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

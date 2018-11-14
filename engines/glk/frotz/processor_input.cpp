@@ -22,7 +22,7 @@
 
 #include "glk/frotz/processor.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 #define INPUT_BUFFER_SIZE 200
@@ -220,4 +220,4 @@ void Processor::z_read_mouse(){
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

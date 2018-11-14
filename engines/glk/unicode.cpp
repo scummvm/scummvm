@@ -24,7 +24,7 @@
 #include "glk/unicode_gen.h"
 #include "common/textconsole.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 size_t strlen_uni(const uint32 *s) {
 	size_t len = 0;
@@ -148,4 +148,4 @@ glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCa
 	return outcount;
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

@@ -25,7 +25,7 @@
 
 #include "glk/frotz/frotz_types.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 #define SET_WORD(addr,v)  zmp[addr] = hi(v); zmp[addr+1] = lo(v)
@@ -275,6 +275,6 @@ public:
 };
 
 } // End of namespace Frotz
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

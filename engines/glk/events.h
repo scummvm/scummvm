@@ -27,7 +27,7 @@
 #include "graphics/surface.h"
 #include "glk/utils.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 #define GAME_FRAME_RATE 100
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
@@ -286,6 +286,6 @@ public:
 	bool isTimerExpired() const;
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

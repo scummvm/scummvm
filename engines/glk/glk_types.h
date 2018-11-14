@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "common/stream.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 typedef uint32 glui32;
 typedef int32 glsi32;
@@ -203,6 +203,6 @@ union gidispatch_rock_t {
 	void *ptr;
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

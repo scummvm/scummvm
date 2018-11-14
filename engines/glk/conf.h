@@ -27,7 +27,7 @@
 #include "glk/fonts.h"
 #include "glk/windows.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 class Conf {
 private:
@@ -131,6 +131,6 @@ public:
 
 extern Conf *g_conf;
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

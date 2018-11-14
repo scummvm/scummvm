@@ -24,7 +24,7 @@
 #include "glk/frotz/processor.h"
 #include "common/memstream.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 /**
@@ -482,4 +482,4 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

@@ -25,7 +25,7 @@
 
 #include "glk/glk_types.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 #define GET_CASE_BLOCK(ch, blockptr)  \
 	switch ((glui32)(ch) >> 8) {  \
@@ -558,6 +558,6 @@ extern gli_case_special_t unigen_special_0xfb16;
 extern gli_case_special_t unigen_special_0xfb17;
 extern glui32 unigen_special_array[];
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

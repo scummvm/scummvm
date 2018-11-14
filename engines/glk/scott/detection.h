@@ -26,7 +26,7 @@
 #include "common/fs.h"
 #include "engines/game.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Scott {
 
 class ScottMetaEngine {
@@ -38,6 +38,6 @@ public:
 };
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

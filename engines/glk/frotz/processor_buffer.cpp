@@ -24,7 +24,7 @@
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 const char *const Processor::ERR_MESSAGES[ERR_NUM_ERRORS] = {
@@ -189,4 +189,4 @@ void Processor::runtimeError(ErrorCode errNum) {
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

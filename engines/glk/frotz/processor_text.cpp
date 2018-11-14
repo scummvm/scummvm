@@ -22,7 +22,7 @@
 
 #include "glk/frotz/processor.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 zchar Processor::ZSCII_TO_LATIN1[] = {
@@ -883,4 +883,4 @@ void Processor::z_tokenise() {
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

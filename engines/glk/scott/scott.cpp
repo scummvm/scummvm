@@ -23,10 +23,10 @@
 #include "glk/scott/scott.h"
 #include "common/config-manager.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Scott {
 
-Scott::Scott(OSystem *syst, const GargoyleGameDescription *gameDesc) : Glk(syst, gameDesc),
+Scott::Scott(OSystem *syst, const GlkGameDescription *gameDesc) : GlkAPI(syst, gameDesc),
 	Items(nullptr), Rooms(nullptr), Verbs(nullptr), Nouns(nullptr), Messages(nullptr),
 	Actions(nullptr), CurrentCounter(0), SavedRoom(0), Options(0), Width(0), TopHeight(0),
 	split_screen(true), Bottom(0), Top(0), BitFlags(0), _saveSlot(-1) {
@@ -1260,4 +1260,4 @@ void Scott::readInts(Common::SeekableReadStream *f, size_t count, ...) {
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

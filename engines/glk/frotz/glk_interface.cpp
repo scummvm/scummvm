@@ -22,11 +22,11 @@
 
 #include "glk/frotz/glk_interface.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
-GlkInterface::GlkInterface(OSystem *syst, const GargoyleGameDescription *gameDesc) :
-		Glk(syst, gameDesc),
+GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription *gameDesc) :
+		GlkAPI(syst, gameDesc),
 		oldstyle(0), curstyle(0), cury(1), curx(1), fixforced(0),
 		curr_fg(-2), curr_bg(-2), curr_font(1), prev_font(1), temp_font(0),
 		curr_status_ht(0), mach_status_ht(0), gos_status(nullptr), gos_upper(nullptr),
@@ -495,4 +495,4 @@ zchar GlkInterface::os_read_line(int max, zchar *buf, int timeout, int width, in
 }
 
 } // End of namespace Scott
-} // End of namespace Gargoyle
+} // End of namespace Glk

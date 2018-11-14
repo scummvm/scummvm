@@ -22,13 +22,13 @@
 
 #include "glk/events.h"
 #include "glk/conf.h"
-#include "glk/gargoyle.h"
+#include "glk/glk.h"
 #include "glk/screen.h"
 #include "glk/selection.h"
 #include "glk/windows.h"
 #include "graphics/cursorman.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 const byte ARROW[] = {
 	// byte 1: number of skipped pixels
@@ -399,4 +399,4 @@ bool Events::isTimerExpired() const {
 	return _timerMilli && g_system->getMillis() >= _timerTimeExpiry;
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

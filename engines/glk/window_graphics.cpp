@@ -22,10 +22,10 @@
 
 #include "glk/window_graphics.h"
 #include "glk/conf.h"
-#include "glk/gargoyle.h"
+#include "glk/glk.h"
 #include "glk/screen.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 GraphicsWindow::GraphicsWindow(Windows *windows, uint32 rock) : Window(windows, rock),
 	_w(0), _h(0), _dirty(false), _surface(nullptr) {
@@ -269,4 +269,4 @@ void GraphicsWindow::click(const Point &newPos) {
 	}
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

@@ -27,7 +27,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 const byte WHITE[3] = { 0xff, 0xff, 0xff };
 const byte BLUE[3] = { 0x00, 0x00, 0x60 };
@@ -251,4 +251,4 @@ void Conf::parseColor(const Common::String &str, byte *color) {
 	}
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk

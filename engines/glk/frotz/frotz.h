@@ -25,7 +25,7 @@
 
 #include "glk/frotz/processor.h"
 
-namespace Gargoyle {
+namespace Glk {
 namespace Frotz {
 
 /**
@@ -36,7 +36,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Frotz(OSystem *syst, const GargoyleGameDescription *gameDesc);
+	Frotz(OSystem *syst, const GlkGameDescription *gameDesc);
 
 	/**
 	 * Destructor
@@ -67,6 +67,6 @@ public:
 extern Frotz *g_vm;
 
 } // End of namespace Frotz
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

@@ -26,7 +26,7 @@
 #include "glk/glk_types.h"
 #include "glk/streams.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 
 /**
@@ -141,6 +141,6 @@ public:
 		glui32 usage, glui32 *num, glui32 *min, glui32 *max);
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

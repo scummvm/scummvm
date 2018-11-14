@@ -26,7 +26,7 @@
 #include "glk/windows.h"
 #include "glk/picture.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 /**
  * Graphics window
@@ -108,6 +108,6 @@ public:
 	virtual void setBackgroundColor(glui32 color) override;
 };
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
 
 #endif

@@ -23,7 +23,7 @@
 #include "glk/screen.h"
 #include "glk/conf.h"
 
-namespace Gargoyle {
+namespace Glk {
 
 void Screen::fill(const byte *rgb) {
 	uint color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
@@ -69,4 +69,4 @@ void Screen::drawCaret(const Point &pos) {
 	}
 }
 
-} // End of namespace Gargoyle
+} // End of namespace Glk
