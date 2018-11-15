@@ -41,6 +41,8 @@
 #define MAX_SAVES 99
 
 class GlkMetaEngine : public MetaEngine {
+private:
+	Common::String findFileByGameId(const Common::String &gameId) const;
 public:
 	GlkMetaEngine() : MetaEngine() {}
 
@@ -98,10 +100,27 @@ bool Glk::GlkEngine::hasFeature(EngineFeature f) const {
 Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 
+	// Populate the game description
 	Glk::GlkGameDescription gameDesc;
 	gameDesc._gameId = ConfMan.get("gameid");
 	gameDesc._filename = ConfMan.get("filename");
 
+	gameDesc._language = Common::UNK_LANG;
+	gameDesc._platform = Common::kPlatformUnknown;
+	if (ConfMan.hasKey("language"))
+		gameDesc._language = Common::parseLanguage(ConfMan.get("language"));
+	if (ConfMan.hasKey("platform"))
+		gameDesc._platform = Common::parsePlatform(ConfMan.get("platform"));
+
+	// If the game description has no filename, the engine has been launched directly from
+	// the command line. Do a scan for supported games for that Id in the game folder
+	if (gameDesc._filename.empty()) {
+		gameDesc._filename = findFileByGameId(gameDesc._gameId);
+		if (gameDesc._filename.empty())
+			return Common::kNoGameDataFoundError;
+	}
+
+	// Correct the correct engine
 	if (Glk::Frotz::FrotzMetaEngine::findGame(gameDesc._gameId.c_str()).description)
 		*engine = new Glk::Frotz::Frotz(syst, gameDesc);
 	else if (Glk::Scott::ScottMetaEngine::findGame(gameDesc._gameId.c_str()).description)
@@ -110,6 +129,28 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 		return Common::kNoGameDataFoundError;
 
 	return Common::kNoError;
+}
+
+Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) const {
+	// Get the list of files in the folder and return detection against them
+	Common::FSNode folder = Common::FSNode(ConfMan.get("path"));
+	Common::FSList fslist;
+	folder.getChildren(fslist, Common::FSNode::kListFilesOnly);
+	
+	// Iterate over the files
+	for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {
+		// Run a detection on each file in the folder individually
+		Common::FSList singleList;
+		singleList.push_back(*i);
+		DetectedGames games = detectGames(singleList);
+
+		// If a detection was found with the correct game Id, we have a winner
+		if (!games.empty() && games.front().gameId == gameId)
+			return (*i).getName();
+	}
+
+	// No match found
+	return Common::String();
 }
 
 PlainGameList GlkMetaEngine::getSupportedGames() const {

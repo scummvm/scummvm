@@ -73,6 +73,7 @@ enum GlkDebugChannels {
 struct GlkGameDescription {
 	Common::String _gameId;
 	Common::Language _language;
+	Common::Platform _platform;
 	Common::String _filename;
 	InterpreterType _interpType;
 	Common::String _md5;
