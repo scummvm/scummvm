@@ -32,6 +32,16 @@ namespace Scott {
 class ScottMetaEngine {
 public:
 	/**
+	 * Get a list of supported games
+	 */
+	static void getSupportedGames(PlainGameList &games);
+
+	/**
+	 * Returns a game description for the given game Id, if it's supported
+	 */
+	static PlainGameDescriptor findGame(const char *gameId);
+
+	/**
 	 * Detect supported games
 	 */
 	static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);

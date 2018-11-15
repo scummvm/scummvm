@@ -29,7 +29,7 @@ namespace Frotz {
 
 Frotz *g_vm;
 
-Frotz::Frotz(OSystem *syst, const GlkGameDescription *gameDesc) :
+Frotz::Frotz(OSystem *syst, const GlkGameDescription &gameDesc) :
 		Processor(syst, gameDesc) {
 	g_vm = this;
 }

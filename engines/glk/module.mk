@@ -22,7 +22,6 @@ MODULE_OBJS := \
 	window_text_buffer.o \
 	window_text_grid.o \
 	frotz/detection.o \
-	frotz/detection_tables.o \
 	frotz/frotz.o \
 	frotz/glk_interface.o \
 	frotz/mem.o \
@@ -39,7 +38,6 @@ MODULE_OBJS := \
 	frotz/processor_variables.o \
 	frotz/quetzal.o \
 	scott/detection.o \
-	scott/detection_tables.o \
 	scott/scott.o
 
 # This module can be built as a plugin

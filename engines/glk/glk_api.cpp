@@ -34,7 +34,7 @@
 
 namespace Glk {
 
-GlkAPI::GlkAPI(OSystem *syst, const GlkGameDescription *gameDesc) :
+GlkAPI::GlkAPI(OSystem *syst, const GlkGameDescription &gameDesc) :
 	GlkEngine(syst, gameDesc), _gliFirstEvent(false) {
 	// Set uppercase/lowercase tables
 	int ix, res;

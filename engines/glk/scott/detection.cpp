@@ -24,9 +24,24 @@
 #include "glk/scott/detection_tables.h"
 #include "common/file.h"
 #include "common/md5.h"
+#include "engines/game.h"
 
 namespace Glk {
 namespace Scott {
+
+void ScottMetaEngine::getSupportedGames(PlainGameList &games) {
+	for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd)
+		games.push_back(*pd);
+}
+
+PlainGameDescriptor ScottMetaEngine::findGame(const char *gameId) {
+	for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd) {
+		if (!strcmp(gameId, pd->gameId))
+			return *pd;
+	}
+
+	return PlainGameDescriptor();;
+}
 
 bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
 	Common::File gameFile;
@@ -48,7 +63,8 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 
 			if (p->_filesize) {
 				// Found a match
-				DetectedGame gd(p->_gameId, p->_desc, Common::EN_ANY, Common::kPlatformUnknown);
+				PlainGameDescriptor gameDesc = findGame(p->_gameId);
+				DetectedGame gd(p->_gameId, gameDesc.description, Common::EN_ANY, Common::kPlatformUnknown);
 				gd.addExtraEntry("filename", file->getName());
 
 				gameList.push_back(gd);

@@ -41,7 +41,7 @@ namespace Glk {
 
 GlkEngine *g_vm;
 
-GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription *gameDesc) :
+GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc) :
 	_gameDescription(gameDesc), Engine(syst), _random("Glk"), _clipboard(nullptr),
 	_conf(nullptr), _events(nullptr), _picList(nullptr), _screen(nullptr),
 	_selection(nullptr), _windows(nullptr), _copySelect(false), _terminated(false),

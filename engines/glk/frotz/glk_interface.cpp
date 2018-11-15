@@ -25,7 +25,7 @@
 namespace Glk {
 namespace Frotz {
 
-GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription *gameDesc) :
+GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) :
 		GlkAPI(syst, gameDesc),
 		oldstyle(0), curstyle(0), cury(1), curx(1), fixforced(0),
 		curr_fg(-2), curr_bg(-2), curr_font(1), prev_font(1), temp_font(0),

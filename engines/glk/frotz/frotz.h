@@ -36,7 +36,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Frotz(OSystem *syst, const GlkGameDescription *gameDesc);
+	Frotz(OSystem *syst, const GlkGameDescription &gameDesc);
 
 	/**
 	 * Destructor

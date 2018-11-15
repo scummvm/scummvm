@@ -70,7 +70,13 @@ enum GlkDebugChannels {
 
 #define GLK_SAVEGAME_VERSION 1
 
-struct GlkGameDescription;
+struct GlkGameDescription {
+	Common::String _gameId;
+	Common::Language _language;
+	Common::String _filename;
+	InterpreterType _interpType;
+	Common::String _md5;
+};
 
 /**
  * Base class for the different interpreters
@@ -87,7 +93,7 @@ private:
 	 */
 	void initGraphicsMode();
 protected:
-	const GlkGameDescription *_gameDescription;
+	const GlkGameDescription _gameDescription;
 	Common::RandomSource _random;
 	int _loadSaveSlot;
 
@@ -119,7 +125,7 @@ public:
 	void (*gli_unregister_arr)(void *array, glui32 len, const char *typecode, gidispatch_rock_t objrock);
 
 public:
-	GlkEngine(OSystem *syst, const GlkGameDescription *gameDesc);
+	GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc);
 	virtual ~GlkEngine();
 
 	/**
@@ -149,22 +155,22 @@ public:
 	/**
 	 * Returns the language
 	 */
-	Common::Language getLanguage() const;
+	Common::Language getLanguage() const { return _gameDescription._language; };
 
 	/**
 	 * Returns the running interpreter type
 	 */
-	InterpreterType getInterpreterType() const;
+	InterpreterType getInterpreterType() const { return _gameDescription._interpType; }
 
 	/**
 	 * Returns the game's md5
 	 */
-	const Common::String &getGameMD5() const;
+	const Common::String &getGameMD5() const { return _gameDescription._md5; }
 
 	/**
 	 * Returns the primary filename for the game
 	 */
-	const Common::String &getFilename() const;
+	const Common::String &getFilename() const { return _gameDescription._filename; }
 
 	/**
 	 * Return the game engine's target name
