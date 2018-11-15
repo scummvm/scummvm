@@ -137,7 +137,8 @@ Processor::Processor(OSystem *syst, const GlkGameDescription &gameDesc) :
 		zargc(0), _decoded(nullptr), _encoded(nullptr), _resolution(0),
 		_randomInterval(0), _randomCtr(0), first_restart(true), script_valid(false),
 		_bufPos(0), _locked(false), _prevC('\0'), script_width(0),
-		sfp(nullptr), rfp(nullptr), pfp(nullptr) {
+		sfp(nullptr), rfp(nullptr), pfp(nullptr), ostream_screen(true), ostream_script(false),
+		ostream_memory(false), ostream_record(false), istream_replay(false), message(false) {
 	static const Opcode OP0_OPCODES[16] = {
 		&Processor::z_rtrue,
 		&Processor::z_rfalse,

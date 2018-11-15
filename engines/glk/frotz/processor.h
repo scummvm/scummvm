@@ -88,6 +88,12 @@ private:
 	// Stream related fields
 	int script_width;
 	strid_t sfp, rfp, pfp;
+	bool ostream_screen;
+	bool ostream_script;
+	bool ostream_memory;
+	bool ostream_record;
+	bool istream_replay;
+	bool message;
 	Common::FixedStack<Redirect, MAX_NESTING> _redirect;
 private:
 	/**

@@ -81,14 +81,6 @@ public:
 	int mouse_x;
 	int menu_selected;
 
-	// IO streams
-	bool ostream_screen;
-	bool ostream_script;
-	bool ostream_memory;
-	bool ostream_record;
-	bool istream_replay;
-	bool message;
-
 	// Window attributes
 	bool enable_wrapping;
 	bool enable_scripting;
