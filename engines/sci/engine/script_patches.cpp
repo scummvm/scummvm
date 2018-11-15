@@ -7606,6 +7606,107 @@ static const uint16 qfg4MoonrisePatch[] = {
 	PATCH_END
 };
 
+// Visiting the inn after rescuing Igor sets a plot flag. Such flags are tested
+// on subsequent visits to decide the dialogue options when clicking MOUTH on
+// hero. That particular check neglects time of day, allowing hero to talk to
+// an empty room after midnight... and get responses from the absent innkeeper.
+//
+// The inn's init() has a series of cond blocks to boil down all the checks
+// into values for local[2], representing discrete situations. Then there's a
+// switch block in sInitShit() that acts on those values, making arrival
+// announcements and setting new flags.
+//
+// "So Dmitri says the gypsy didn't really kill Igor after all." sets flag 132.
+// "I must thank you for saving our Tanya." sets flag 134.
+//
+// There are two bugged situations. When you have flag 132 and haven't gotten
+// 134 yet, local[2] = 11. When you get flag 134, local[2] = 12. Neither
+// of them consider the time of day, talking as if the innkeeper were always
+// present.
+//
+// A day in QFG4 is broken up into 3-hour spans: 6,7,0,1,2,3,4,5. Where 6 is
+// midnight. The sun rises in 0 and sets in 4. Current span is global[123]. The
+// innkeeper sprite is not around from midnight to morning.
+//
+// To make room, we optimize block 10's time check:
+// "t <= 3 || t is in [4, 5]" becomes "t <= 5". No need for a lengthy call
+// to do a simple comparison. Conceptually it meant, "daytime and evening".
+//
+// That gap is used to insert similar pre-midnight checks before block 11 and
+// block 12. This will sync them with the sprite's schedule. Ideally, the
+// sprite never would've been scheduled separately in the first place.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: rm320::init()
+// Fixes bug: #10753
+static const uint16 qfg4AbsentInnkeeperSignature[] = {
+	SIG_MAGICDWORD,                     // (Block 10, partway through.)
+	0x31, 0x1c,                         // bnt 28d [block 11]
+	0x89, 0x7b,                         // lsg global[123]
+	0x35, 0x03,                         // ldi 3d
+	0x24,                               // le?
+                                        // (~~ Junk begins ~~)
+	0x2f, 0x0f,                         // bt 15d [after the calle]
+	0x39, 0x03,                         // pushi 3d
+	0x89, 0x7b,                         // lsg global[123]
+	0x39, 0x04,                         // pushi 4d
+	0x39, 0x05,                         // pushi 5d
+	0x46, SIG_UINT16(0xfde7), SIG_UINT16(0x0005), SIG_UINT16(0x0006), // calle proc64999_5(global[123], 4, 5) 06
+                                        // (~~ Junk ends ~~)
+	0x31, 0x04,                         // bnt 4d [block 11]
+	0x35, 0x0a,                         // ldi 10d
+	0x33, 0x29,                         // jmp 41d (done, local[2]=acc)
+                                        //
+	SIG_ADDTOOFFSET(+25),               // (...Block 11...) (Patch ends after this.)
+	SIG_ADDTOOFFSET(+14),               // (...Block 12...)
+	SIG_ADDTOOFFSET(+2),                // (...Else 0...)
+	0xa3, 0x02,                         // sal local[2] (all blocks set acc and jmp here)
+	PATCH_END
+};
+
+static const uint16 qfg4AbsentInnkeeperPatch[] = {
+	0x31, 0x0e,                         // bnt 14d [block 11]
+	0x89, 0x7b,                         // lsg global[123]
+	0x35, 0x05,                         // ldi 5d (make it t <= 5)
+	0x24,                               // le?
+                                        // (*snip*)
+	0x31, 0x07,                         // bnt 7d [block 11]
+	0x35, 0x0a,                         // ldi 10d
+	0x33, 0x3a,                         // jmp 58d (done, local[2]=acc)
+                                        //
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
+                                        // (14 freed bytes remain.)
+                                        // (Use 7 freed bytes to prepend block 11.)
+                                        // (And shift all of block 11 up by 7 bytes.)
+                                        // (Use that new gap below to prepend block 12.)
+                                        //
+                                        // (Block 11. Prepend a time check.)
+	0x89, 0x7b,                         // lsg global[123]
+	0x35, 0x05,                         // ldi 5d
+	0x24,                               // le?
+	0x31, 0x19,                         // bnt 25d [block 12]
+                                        // (Block 11 original ops shift up.)
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x0084),         // pushi 132
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4(132) 02
+	0x31, 0x0f,                         // bnt 15d [next block]
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x0086),         // pushi 134
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4(134) 02
+	0x18,                               // not
+	0x31, 0x04,                         // bnt 4d [block 12]
+	0x35, 0x0b,                         // ldi 11d
+	0x33, 0x17,                         // jmp 23d (done, local[2]=acc)
+                                        //
+                                        // (Block 12. Prepend a time check.)
+	0x89, 0x7b,                         // lsg global[123]
+	0x35, 0x05,                         // ldi 5d
+	0x24,                               // le?
+	0x31, 0x0e,                         // bnt 14d [else block]
+                                        // (Block 12 original ops continue here.)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -7616,6 +7717,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
+	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
 	{  true,   440, "fix setLooper calls (1/2)",                   1, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   530, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   535, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
