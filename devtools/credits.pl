@@ -64,15 +64,19 @@ sub html_entities_to_ascii {
 	# &igrave;  -> i
 	# &oacute;  -> o
 	# &oslash;  -> o
+	# &uacute;  -> u
 	# &ouml;    -> o / oe
 	# &auml;    -> a
 	# &euml;    -> e
 	# &uuml;    -> ue
 	# &aring;   -> aa
 	# &amp;     -> &
+	# &#261;    -> a
+	# &#321;    -> L
 	# &#322;    -> l
 	# &#347;    -> s
 	# &Scaron;  -> S
+	# &Lcaron;  -> L
 	# &ntilde;  -> n
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
@@ -80,8 +84,12 @@ sub html_entities_to_ascii {
 	$text =~ s/&igrave;/i/g;
 	$text =~ s/&oacute;/o/g;
 	$text =~ s/&oslash;/o/g;
+	$text =~ s/&uacute;/u/g;
+	$text =~ s/&#261;/a/g;
+	$text =~ s/&#321;/L/g;
 	$text =~ s/&#322;/l/g;
 	$text =~ s/&#347;/s/g;
+	$text =~ s/&Lcaron;/L/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/aa/g;
 	$text =~ s/&ntilde;/n/g;
@@ -109,8 +117,12 @@ sub html_entities_to_cpp {
 	$text =~ s/&igrave;/\\354/g;
 	$text =~ s/&oacute;/\\363/g;
 	$text =~ s/&oslash;/\\370/g;
+	$text =~ s/&uacute;/\\372/g;
+	$text =~ s/&#261;/a/g;
+	$text =~ s/&#321;/L/g;
 	$text =~ s/&#322;/l/g;
 	$text =~ s/&#347;/s/g;
+	$text =~ s/&Lcaron;/L/g;
 	$text =~ s/&Scaron;/S/g;
 	$text =~ s/&aring;/\\345/g;
 	$text =~ s/&ntilde;/\\361/g;
@@ -136,10 +148,14 @@ sub html_entities_to_rtf {
 	$text =~ s/&igrave;/\\'93/g;
 	$text =~ s/&oacute;/\\'97/g;
 	$text =~ s/&oslash;/\\'bf/g;
+	$text =~ s/&uacute;/\\'9c/g;
 	$text =~ s/&aring;/\\'8c/g;
 	# The following numerical values are decimal!
+	$text =~ s/&#261;/\\uc0\\u261 /g;
+	$text =~ s/&#321;/\\uc0\\u321 /g;
 	$text =~ s/&#322;/\\uc0\\u322 /g;
 	$text =~ s/&#347;/\\uc0\\u347 /g;
+	$text =~ s/&Lcaron;/\\uc0\\u317 /g;
 	$text =~ s/&Scaron;/\\uc0\\u352 /g;
 
 	# Back to hex numbers
@@ -591,6 +607,11 @@ begin_credits("Credits");
 				add_person("Thierry Crozat", "criezy", "");
 			end_section();
 
+			begin_section("DM");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Bendeg&uacute;z Nagy", "WinterGrascph", "");
+			end_section();
+
 			begin_section("DreamWeb");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 				add_person("Bertrand Augereau", "Tramb", "");
@@ -630,6 +651,11 @@ begin_credits("Credits");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Oystein Eftevaag", "vinterstum", "");
 				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+
+			begin_section("Illusions");
+				add_person("Benjamin Haisch", "john_doe", "");
+				add_person("Eric Fry", "yuv422", "");
 			end_section();
 
 			begin_section("Kyra");
@@ -683,6 +709,11 @@ begin_credits("Credits");
 				add_person("Paul Gilbert", "dreammaster", "");
 			end_section();
 
+			begin_section("MutationOfJB");
+				add_person("&Lcaron;ubom&iacute;r Rem&aacute;k", "LubomirR", "");
+				add_person("Miroslav Rem&aacute;k", "MiroslavR", "");
+			end_section();
+
 			begin_section("Neverhood");
 				add_person("Benjamin Haisch", "john_doe", "");
 				add_person("Filippos Karapetis", "[md5]", "");
@@ -694,6 +725,12 @@ begin_credits("Credits");
 
 			begin_section("Pegasus");
 				add_person("Matthew Hoops", "clone2727", "(retired)");
+			end_section();
+
+			begin_section("Prince");
+				add_person("Eugene Sandulenko", "sev", "");
+				add_person("&#321;ukasz W&#261;tka", "lukaslw", "");
+				add_person("Kamil Zbr&oacute;g", "", "");
 			end_section();
 
 			begin_section("Queen");
