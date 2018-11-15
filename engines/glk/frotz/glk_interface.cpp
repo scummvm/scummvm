@@ -155,7 +155,7 @@ void GlkInterface::initialize() {
 
 	// Use the ms-dos interpreter number for v6, because that's the
 	// kind of graphics files we understand.  Otherwise, use DEC.
-	h_interpreter_number = h_version == 6 ? INTERP_MSDOS : INTERP_DEC_20;
+	h_interpreter_number = h_version == 6 ? INTERP_MSDOS : INTERP_AMIGA;
 	h_interpreter_version = 'F';
 
 	{

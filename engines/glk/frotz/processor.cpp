@@ -285,7 +285,7 @@ void Processor::interpret() {
 		if (end_of_sound_flag)
 			end_of_sound();
 #endif
-	} while (!_finished);
+	} while (!shouldQuit() && !_finished);
 
 	_finished--;
 }
