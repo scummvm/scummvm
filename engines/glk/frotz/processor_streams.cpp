@@ -145,6 +145,8 @@ continue_input:
 			key = replay_read_key();
 		else
 			key = console_read_key(timeout);
+		if (shouldQuit())
+			return ZC_BAD;
     } while (key == ZC_BAD);
 
     // Copy key to the command file
