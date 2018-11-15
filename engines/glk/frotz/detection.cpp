@@ -77,7 +77,8 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 				continue;
 
 			warning("Uknown zcode game %s - %s %d", filename.c_str(), md5.c_str(), filesize);
-			gd = DetectedGame("zcode", "Unrecognised zcode game", Common::UNK_LANG, Common::kPlatformUnknown);
+			const PlainGameDescriptor &desc = FROTZ_GAME_LIST[0];
+			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
 			gd = DetectedGame(p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);

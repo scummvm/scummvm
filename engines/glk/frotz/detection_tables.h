@@ -40,6 +40,9 @@ struct FrotzGameDescription {
 };
 
 const PlainGameDescriptor FROTZ_GAME_LIST[] = {
+	{ "zcode", "Unknown Z-code game" },
+
+	// Infocom games
 	{ "amfv", "A Mind Forever Voyaging" },
 	{ "arthur", "Arthur: The Quest for Excalibur" },
 	{ "ballyhoo", "Ballyhoo" },
