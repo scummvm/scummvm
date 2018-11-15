@@ -272,6 +272,8 @@ void TextGridWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 init
 		return;
 	}
 
+	_lineRequestUni = true;
+
 	if ((int)maxlen > (_width - _curX))
 		maxlen = (_width - _curX);
 
