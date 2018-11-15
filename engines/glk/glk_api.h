@@ -43,7 +43,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	GlkAPI(OSystem *syst, const GlkGameDescription *gameDesc);
+	GlkAPI(OSystem *syst, const GlkGameDescription &gameDesc);
 
 	void glk_exit(void);
 	void glk_set_interrupt_handler(void(*func)(void));

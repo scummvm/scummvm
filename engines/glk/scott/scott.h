@@ -167,7 +167,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Scott(OSystem *syst, const GlkGameDescription *gameDesc);
+	Scott(OSystem *syst, const GlkGameDescription &gameDesc);
 
 	/**
 	 * Execute the game

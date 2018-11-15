@@ -26,7 +26,7 @@
 namespace Glk {
 namespace Scott {
 
-Scott::Scott(OSystem *syst, const GlkGameDescription *gameDesc) : GlkAPI(syst, gameDesc),
+Scott::Scott(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 	Items(nullptr), Rooms(nullptr), Verbs(nullptr), Nouns(nullptr), Messages(nullptr),
 	Actions(nullptr), CurrentCounter(0), SavedRoom(0), Options(0), Width(0), TopHeight(0),
 	split_screen(true), Bottom(0), Top(0), BitFlags(0), _saveSlot(-1) {

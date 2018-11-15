@@ -20,7 +20,8 @@
  *
  */
 
-#include "engines/advancedDetector.h"
+#include "engines/game.h"
+#include "common/gui_options.h"
 #include "common/language.h"
 
 namespace Glk {
@@ -31,7 +32,6 @@ namespace Frotz {
  */
 struct FrotzGameDescription {
 	const char *const _gameId;
-	const char *const _description;
 	const char *const _extra;
 	const char *const _md5;
 	size_t _filesize;
@@ -39,47 +39,63 @@ struct FrotzGameDescription {
 	const char *const _guiOptions;
 };
 
-extern const FrotzGameDescription FROTZ_GAMES[];
-extern const char *const AMFV_DESC;
-extern const char *const ARTHUR_DESC;
-extern const char *const BALLYHOO_DESC;
-extern const char *const BEYONDZORK_DESC;
-extern const char *const BORDERZONE_DESC;
-extern const char *const BUREAUCRACY_DESC;
-extern const char *const CUTTHROATS_DESC;
-extern const char *const DEADLINE_DESC;
-extern const char *const ENCHANTER_DESC;
-extern const char *const HHGTTG_DESC;
-extern const char *const HIJINX_DESC;
-extern const char *const INFIDEL_DESC;
-extern const char *const JOURNEY_DESC;
-extern const char *const LGOP_DESC;
-extern const char *const LGOP2_DESC;
-extern const char *const LURKING_DESC;
-extern const char *const MINIZORK1_DESC;
-extern const char *const MOONMIST_DESC;
-extern const char *const NORDBERT_DESC;
-extern const char *const PLANETFALL_DESC;
-extern const char *const PLUNDERED_DESC;
-extern const char *const SAMPLER1_DESC;
-extern const char *const SAMPLER2_DESC;
-extern const char *const SEASTALKER_DESC;
-extern const char *const SHERLOCKRIDDLE_DESC;
-extern const char *const SHOGUN_DESC;
-extern const char *const SORCERER_DESC;
-extern const char *const SPELLBREAKER_DESC;
-extern const char *const STARCROSS_DESC;
-extern const char *const STATIONFALL_DESC;
-extern const char *const SUSPECT_DESC;
-extern const char *const SUSPENDED_DESC;
-extern const char *const TRINITY_DESC;
-extern const char *const WISHBRINGER_DESC;
-extern const char *const WITNESS_DESC;
-extern const char *const ZORK0_DESC;
-extern const char *const ZORK1_DESC;
-extern const char *const ZORK2_DESC;
-extern const char *const ZORK3_DESC;
-extern const char *const ZTUU_DESC;
+const PlainGameDescriptor FROTZ_GAME_LIST[] = {
+	{ "amfv", "A Mind Forever Voyaging" },
+	{ "arthur", "Arthur: The Quest for Excalibur" },
+	{ "ballyhoo", "Ballyhoo" },
+	{ "beyondzork", "Beyond Zork" },
+	{ "borderzone", "Border Zone" },
+	{ "bureaucracy", "Bureaucracy" },
+	{ "cutthroats", "Cutthroats" },
+	{ "deadline", "Deadline" },
+	{ "enchanter", "Enchanter" },
+	{ "hhgttg", "The Hitchhiker's Guide to the Galaxy" },
+	{ "hollywoodhijinx", "Hollywood Hijinx" },
+	{ "infidel", "Infidel" },
+	{ "journey", "Journey" },
+	{ "lgop", "Leather Goddesses of Phobos" },
+	{ "lgop2", "Leather Goddesses of Phobos 2" },
+	{ "lurkinghorror", "The Lurking Horror" },
+	{ "minizork", "Mini Zork I: The Great Underground Empire" },
+	{ "moonmist", "Moonmist" },
+	{ "nordbert", "Nord and Bert Couldn't Make Head or Tail of It" },
+	{ "planetfall", "Planetfall" },
+	{ "plunderedhearts", "Plundered Hearts" },
+	{ "infocomsampler1", "Infocom Sampler 1" },
+	{ "infocomsampler2", "Infocom Sampler 2" },
+	{ "seastalker", "Seastalker" },
+	{ "sherlockriddle", "Sherlock: The Riddle of the Crown Jewels" },
+	{ "shogun", "James Clavell's Shogun" },
+	{ "sorcerer", "Sorcerer" },
+	{ "spellbreaker", "Spellbreaker" },
+	{ "starcross", "Starcross" },
+	{ "stationfall", "Stationfall" },
+	{ "suspect", "Suspect" },
+	{ "suspended", "Suspended" },
+	{ "trinity", "Trinity" },
+	{ "wishbringer", "Wishbringer" },
+	{ "thewitness", "The Witness" },
+	{ "zork0", "Zork Zero: The Revenge of Megaboz" },
+	{ "zork1", "Zork I: The Great Underground Empire" },
+	{ "zork2", "Zork II: The Wizard of Frobozz" },
+	{ "zork3", "Zork III: The Dungeon Master" },
+	{ "ztuu", "Zork: The Undiscovered Underground" },
+	{ nullptr, nullptr }
+};
+
+#define NONE GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMUSIC, GUIO_NOSUBTITLES)
+#define ENTRY0(ID, VERSION, MD5, FILESIZE) { ID, VERSION, MD5, FILESIZE, Common::EN_ANY, NONE }
+#define FROTZ_TABLE_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY, "" }
+
+const FrotzGameDescription FROTZ_GAMES[] = {
+	ENTRY0("hhgttg", "v31 Solid Gold", "379022bcd4ec74b90274c6100c33f579", 158412),
+	ENTRY0("hhgttg", "v47", "fdda8f4239819402c62db866bb61a648", 112622),
+	ENTRY0("hhgttg", "v56", "a214fcb42bc9f554d07d983a12f6a062", 113444),
+	ENTRY0("hhgttg", "v58", "e867d49ad1fb9406ff4e0678a4ee2ac9", 113332),
+	ENTRY0("hhgttg", "v59", "34f6abc1f2a42be127ef434fc475f0ee", 113334),
+
+	FROTZ_TABLE_END_MARKER
+};
 
 } // End of namespace Frotz
 } // End of namespace Glk

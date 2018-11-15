@@ -1522,7 +1522,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Processor(OSystem *syst, const GlkGameDescription *gameDesc);
+	Processor(OSystem *syst, const GlkGameDescription &gameDesc);
 
 	/**
 	 * Initialization

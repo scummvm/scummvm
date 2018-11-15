@@ -181,7 +181,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	GlkInterface(OSystem *syst, const GlkGameDescription *gameDesc);
+	GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc);
 
 	/**
 	 * Initialization

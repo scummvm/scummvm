@@ -21,13 +21,26 @@
  */
 
 #include "glk/frotz/detection.h"
+#include "glk/frotz/detection_tables.h"
 #include "common/file.h"
 #include "common/md5.h"
 
-#include "glk/frotz/detection_tables.h"
-
 namespace Glk {
 namespace Frotz {
+
+void FrotzMetaEngine::getSupportedGames(PlainGameList &games) {
+	for (const PlainGameDescriptor *pd = FROTZ_GAME_LIST; pd->gameId; ++pd)
+		games.push_back(*pd);
+}
+
+PlainGameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
+	for (const PlainGameDescriptor *pd = FROTZ_GAME_LIST; pd->gameId; ++pd) {
+		if (!strcmp(gameId, pd->gameId))
+			return *pd;
+	}
+
+	return PlainGameDescriptor();;
+}
 
 bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
 	const char *const EXTENSIONS[9] = { ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8", ".zblorb" };
@@ -66,7 +79,8 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			warning("Uknown zcode game %s - %s %d", filename.c_str(), md5.c_str(), filesize);
 			gd = DetectedGame("zcode", "Unrecognised zcode game", Common::UNK_LANG, Common::kPlatformUnknown);
 		} else {
-			gd = DetectedGame(p->_gameId, p->_description, p->_language, Common::kPlatformUnknown, p->_extra);
+			PlainGameDescriptor gameDesc = findGame(p->_gameId);
+			gd = DetectedGame(p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);
 		}
 
 		gd.addExtraEntry("filename", filename);

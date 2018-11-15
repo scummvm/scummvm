@@ -131,7 +131,7 @@ Opcode Processor::ext_opcodes[64] = {
 	&Processor::z_buffer_screen,	// spec 1.1
 };
 
-Processor::Processor(OSystem *syst, const GlkGameDescription *gameDesc) : 
+Processor::Processor(OSystem *syst, const GlkGameDescription &gameDesc) : 
 		GlkInterface(syst, gameDesc),
 		_finished(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
 		zargc(0), _decoded(nullptr), _encoded(nullptr), _resolution(0),
