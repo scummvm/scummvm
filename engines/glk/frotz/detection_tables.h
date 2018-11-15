@@ -88,11 +88,11 @@ const PlainGameDescriptor FROTZ_GAME_LIST[] = {
 #define FROTZ_TABLE_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY, "" }
 
 const FrotzGameDescription FROTZ_GAMES[] = {
-	ENTRY0("hhgttg", "v31 Solid Gold", "379022bcd4ec74b90274c6100c33f579", 158412),
-	ENTRY0("hhgttg", "v47", "fdda8f4239819402c62db866bb61a648", 112622),
-	ENTRY0("hhgttg", "v56", "a214fcb42bc9f554d07d983a12f6a062", 113444),
-	ENTRY0("hhgttg", "v58", "e867d49ad1fb9406ff4e0678a4ee2ac9", 113332),
-	ENTRY0("hhgttg", "v59", "34f6abc1f2a42be127ef434fc475f0ee", 113334),
+	ENTRY0("hhgttg", "R47-840914", "fdda8f4239819402c62db866bb61a648", 112622),
+	ENTRY0("hhgttg", "R56-841221", "a214fcb42bc9f554d07d983a12f6a062", 113444),
+	ENTRY0("hhgttg", "R58-851002", "e867d49ad1fb9406ff4e0678a4ee2ac9", 113332),
+	ENTRY0("hhgttg", "R59-851108", "34f6abc1f2a42be127ef434fc475f0ee", 113334),
+	ENTRY0("hhgttg", "R31-871119", "379022bcd4ec74b90274c6100c33f579", 158412),
 
 	FROTZ_TABLE_END_MARKER
 };
