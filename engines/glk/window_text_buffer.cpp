@@ -663,6 +663,7 @@ void TextBufferWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 in
 
 	int pw;
 
+	_lineRequestUni = true;
 	gli_tts_flush();
 
 	// because '>' prompt is ugly without extra space
@@ -692,9 +693,6 @@ void TextBufferWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 in
 		touch(0);
 		putTextUni(buf, initlen, _inCurs, 0);
 	}
-
-	// WORKAROUND: Mark bottom line as dirty so caret will be drawn
-	_lines[0]._dirty = true;
 
 	_echoLineInput = _echoLineInputBase;
 
