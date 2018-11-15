@@ -32,10 +32,8 @@ GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) :
 		curr_status_ht(0), mach_status_ht(0), gos_status(nullptr), gos_upper(nullptr),
 		gos_lower(nullptr), gos_curwin(nullptr), gos_linepending(0), gos_linebuf(nullptr),
 		gos_linewin(nullptr), gos_channel(nullptr), cwin(0), mwin(0), mouse_x(0), mouse_y(0),
-		menu_selected(0), ostream_screen(false), ostream_script(false), ostream_memory(false),
-		ostream_record(false), istream_replay(false), message(false),
-		enable_wrapping(false), enable_scripting(false), enable_scrolling(false),
-		enable_buffering(false), next_sample(0), next_volume(0),
+		menu_selected(0), enable_wrapping(false), enable_scripting(false),
+		enable_scrolling(false), enable_buffering(false), next_sample(0), next_volume(0),
 		_soundLocked(false), _soundPlaying(false) {
 	Common::fill(&statusline[0], &statusline[256], '\0');
 }
