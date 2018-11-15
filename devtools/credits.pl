@@ -624,9 +624,9 @@ begin_credits("Credits");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
 
-			begin_section("Gargoyle");
+			begin_section("ScummGlk");
 				add_person("Paul Gilbert", "dreammaster", "");
-				add_person("Tor Andersson", "", "GLK library");
+				add_person("Tor Andersson", "", "GarGlk library");
 				add_person("Stefan Jokisch", "", "Frotz interpreter");
 				add_person("Alan Cox", "", "ScottFree interpreter");
 			end_section();
