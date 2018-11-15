@@ -182,6 +182,8 @@ continue_input:
 			key = replay_read_input(buf);
 		else
 			key = console_read_input(max, buf, timeout, key != ZC_BAD);
+		if (shouldQuit())
+			return ZC_BAD;
     } while (key == ZC_BAD);
 
     // Copy input line to the command file
