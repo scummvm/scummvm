@@ -4832,6 +4832,46 @@ static const uint16 laurabow2CDPatchFixBugsWithMeat[] = {
 	PATCH_END
 };
 
+// LB2 CD ends act 5 in the middle of the finale music instead of waiting for
+//  it to complete. This is a script bug and occurs in Sierra's interpreter.
+//
+// When catching the killer in room 480, sWrapMusic is used to play the chomp
+//  sound followed by the finale music. sWrapMusic uses localSound to play both
+//  resources. sOrileyCaught:doit waits for the music to complete by testing
+//  localSound:prevSignal for -1 before proceeding to act 6. This worked in
+//  floppy versions.
+//
+// The problem is that CD versions include a newer Sound class with different
+//  behavior. This new Sound:play doesn't call Sound:init on subsequent plays.
+//  Sound:init is what initializes prevSignal to 0, and so localSound:prevSignal
+//  is no longer re-initialized from -1 to 0 after playing the chomp, causing
+//  sOrileyCaught:doit to treat the music as having immediately completed.
+//
+// We fix this by changing sOrileyCaught:doit to instead test localSound:handle
+//  to determine if the music has completed. Sound:handle is always set when
+//  playing and cleared when stopped or disposed.
+//
+// Applies to: All CD versions
+// Responsible method: sOrileyCaught:doit
+// Fixes bug #10808
+static const uint16 laurabow2CDSignatureFixAct5FinaleMusic[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00ab),           // pushi 00ab [ prevSignal ]
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x083a),           // lofsa localSound
+	0x4a, 0x04,                         // send 4
+	0x36,                               // push
+	0x35, 0xff,                         // ldi ff
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchFixAct5FinaleMusic[] = {
+	0x38, PATCH_UINT16(0x005a),         // pushi 005a [ handle ]
+	PATCH_ADDTOOFFSET(+7),
+	0x35, 0x00,                         // ldi 00
+	PATCH_END
+};
+
 // LB2 does a speed test during startup (room 28) to determine the initial
 //  detail level and to use for pacing later scenes. Even with the highest
 //  score the detail level is only set to medium instead of highest like
@@ -4973,6 +5013,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   440, "Floppy: handle armor inset events",              1, laurabow2SignatureHandleArmorInsetEvents,       laurabow2PatchHandleArmorInsetEvents },
 	{  true,   600, "Floppy: fix bugs with meat",                     1, laurabow2FloppySignatureFixBugsWithMeat,        laurabow2FloppyPatchFixBugsWithMeat },
 	{  true,   600, "CD: fix bugs with meat",                         1, laurabow2CDSignatureFixBugsWithMeat,            laurabow2CDPatchFixBugsWithMeat },
+	{  true,   480, "CD: fix act 5 finale music",                     1, laurabow2CDSignatureFixAct5FinaleMusic,         laurabow2CDPatchFixAct5FinaleMusic },
 	{  true,    28, "CD/Floppy: disable speed test",                  1, laurabow2SignatureDisableSpeedTest,             laurabow2PatchDisableSpeedTest },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                     1, kq6laurabow2CDSignatureAudioTextSupport1,       kq6laurabow2CDPatchAudioTextSupport1 },
