@@ -81,21 +81,21 @@ struct Action {
 };
 
 struct Room {
-	char *Text;
+	Common::String Text;
 	short Exits[6];
 
-	Room() : Text(0) {
+	Room() {
 		Common::fill(&Exits[0], &Exits[6], 0);
 	}
 };
 
 struct Item {
-	char *Text;     // PORTABILITY WARNING: THESE TWO MUST BE 8 BIT VALUES.
+	Common::String Text;
 	byte Location;
 	byte InitialLoc;
-	char *AutoGet;
+	Common::String AutoGet;
 
-	Item() : Text(nullptr), Location(0), InitialLoc(0), AutoGet(nullptr) {}
+	Item() : Location(0), InitialLoc(0) {}
 };
 
 struct Tail {
@@ -112,12 +112,12 @@ struct Tail {
 class Scott : public GlkAPI {
 private:
 	Header GameHeader;
-	Item *Items;
-	Room *Rooms;
-	const char **Verbs;
-	const char **Nouns;
-	const char **Messages;
-	Action *Actions;
+	Common::Array<Item> Items;
+	Common::Array<Room> Rooms;
+	Common::StringArray Verbs;
+	Common::StringArray Nouns;
+	Common::StringArray Messages;
+	Common::Array<Action> Actions;
 	int LightRefill;
 	char NounText[16];
 	int Counters[16];   ///< Range unknown
@@ -142,17 +142,16 @@ private:
 	void delay(int seconds);
 	void fatal(const char *x);
 	void clearScreen(void);
-	void *memAlloc(int size);
 	bool randomPercent(uint n);
 	int countCarried(void);
 	const char *mapSynonym(const char *word);
 	int matchUpItem(const char *text, int loc);
-	char *readString(Common::SeekableReadStream *f);
+	Common::String readString(Common::SeekableReadStream *f);
 	void loadDatabase(Common::SeekableReadStream *f, bool loud);
-	void output(const char *a);
+	void output(const Common::String &a);
 	void outputNumber(int a);
 	void look(void);
-	int whichWord(const char *word, const char **list);
+	int whichWord(const char *word, const Common::StringArray &list);
 	void lineInput(char *buf, size_t n);
 	void saveGame(void);
 	void loadGame(void);

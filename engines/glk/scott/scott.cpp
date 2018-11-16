@@ -27,9 +27,8 @@ namespace Glk {
 namespace Scott {
 
 Scott::Scott(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-	Items(nullptr), Rooms(nullptr), Verbs(nullptr), Nouns(nullptr), Messages(nullptr),
-	Actions(nullptr), CurrentCounter(0), SavedRoom(0), Options(0), Width(0), TopHeight(0),
-	split_screen(true), Bottom(0), Top(0), BitFlags(0), _saveSlot(-1) {
+		CurrentCounter(0), SavedRoom(0), Options(0), Width(0), TopHeight(0), split_screen(true),
+		Bottom(0), Top(0), BitFlags(0), _saveSlot(-1) {
 	Common::fill(&NounText[0], &NounText[16], '\0');
 	Common::fill(&Counters[0], &Counters[16], 0);
 	Common::fill(&RoomSaved[0], &RoomSaved[16], 0);
@@ -182,13 +181,6 @@ void Scott::clearScreen(void) {
 	glk_window_clear(Bottom);
 }
 
-void *Scott::memAlloc(int size) {
-	void *t = (void *)malloc(size);
-	if (t == nullptr)
-		fatal("Out of memory");
-	return t;
-}
-
 bool Scott::randomPercent(uint n) {
 	return _random.getRandomNumber(99) < n;
 }
@@ -209,7 +201,7 @@ const char *Scott::mapSynonym(const char *word) {
 	const char *tp;
 	static char lastword[16];   // Last non synonym
 	while (n <= GameHeader.NumWords) {
-		tp = Nouns[n];
+		tp = Nouns[n].c_str();
 		if (*tp == '*')
 			tp++;
 		else
@@ -229,8 +221,8 @@ int Scott::matchUpItem(const char *text, int loc) {
 		word = text;
 
 	while (ct <= GameHeader.NumItems) {
-		if (Items[ct].AutoGet && Items[ct].Location == loc &&
-		        xstrncasecmp(Items[ct].AutoGet, word, GameHeader.WordLength) == 0)
+		if (!Items[ct].AutoGet.empty() && Items[ct].Location == loc &&
+		        xstrncasecmp(Items[ct].AutoGet.c_str(), word, GameHeader.WordLength) == 0)
 			return ct;
 		ct++;
 	}
@@ -238,9 +230,8 @@ int Scott::matchUpItem(const char *text, int loc) {
 	return -1;
 }
 
-char *Scott::readString(Common::SeekableReadStream *f) {
+Common::String Scott::readString(Common::SeekableReadStream *f) {
 	char tmp[1024];
-	char *t;
 	int c, nc;
 	int ct = 0;
 	do {
@@ -280,9 +271,7 @@ char *Scott::readString(Common::SeekableReadStream *f) {
 	}
 
 	tmp[ct] = 0;
-	t = (char *)memAlloc(ct + 1);
-	memcpy(t, tmp, ct + 1);
-	return t;
+	return Common::String(tmp);
 }
 
 void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
@@ -297,27 +286,27 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	readInts(f, 12, &unused, &ni, &na, &nw, &nr, &mc, &pr, &tr, &wl, &lt, &mn, &trm);
 
 	GameHeader.NumItems = ni;
-	Items = (Item *)memAlloc(sizeof(Item) * (ni + 1));
+	Items.resize(ni + 1);
 	GameHeader.NumActions = na;
-	Actions = (Action *)memAlloc(sizeof(Action) * (na + 1));
+	Actions.resize(na + 1);
 	GameHeader.NumWords = nw;
 	GameHeader.WordLength = wl;
-	Verbs = (const char **)memAlloc(sizeof(char *) * (nw + 1));
-	Nouns = (const char **)memAlloc(sizeof(char *) * (nw + 1));
+	Verbs.resize(nw + 1);
+	Nouns.resize(nw + 1);
 	GameHeader.NumRooms = nr;
-	Rooms = (Room *)memAlloc(sizeof(Room) * (nr + 1));
+	Rooms.resize(nr + 1);
 	GameHeader.MaxCarry = mc;
 	GameHeader.PlayerRoom = pr;
 	GameHeader.Treasures = tr;
 	GameHeader.LightTime = lt;
 	LightRefill = lt;
 	GameHeader.NumMessages = mn;
-	Messages = (const char **)memAlloc(sizeof(char *) * (mn + 1));
+	Messages.resize(mn + 1);
 	GameHeader.TreasureRoom = trm;
 
 	// Load the actions
 	ct = 0;
-	ap = Actions;
+	ap = &Actions[0];
 	if (loud)
 		debug("Reading %d actions.", na);
 	while (ct < na + 1) {
@@ -343,7 +332,7 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 		ct++;
 	}
 	ct = 0;
-	rp = Rooms;
+	rp = &Rooms[0];
 	if (loud)
 		debug("Reading %d rooms.", nr);
 	while (ct < nr + 1) {
@@ -367,17 +356,23 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	ct = 0;
 	if (loud)
 		debug("Reading %d items.", ni);
-	ip = Items;
+	ip = &Items[0];
 	while (ct < ni + 1) {
 		ip->Text = readString(f);
-		ip->AutoGet = strchr(ip->Text, '/');
-		// Some games use // to mean no auto get/drop word!
-		if (ip->AutoGet && strcmp(ip->AutoGet, "//") && strcmp(ip->AutoGet, "/*")) {
-			char *t;
-			*ip->AutoGet++ = 0;
-			t = strchr(ip->AutoGet, '/');
-			if (t != nullptr)
-				*t = 0;
+
+		const char *p = strchr(ip->Text.c_str(), '/');
+		if (p) {
+			ip->AutoGet = Common::String(p);
+
+			// Some games use // to mean no auto get/drop word!
+			if (!ip->AutoGet.hasPrefix("//") && !ip->AutoGet.hasPrefix("/*")) {
+				ip->Text = Common::String(ip->Text.c_str(), p);
+				ip->AutoGet.deleteChar(0);
+
+				const char *t = strchr(ip->AutoGet.c_str(), '/');
+				if (t)
+					ip->AutoGet = Common::String(ip->AutoGet.c_str(), t);
+			}
 		}
 
 		readInts(f, 1, &lo);
@@ -387,9 +382,10 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 		ct++;
 	}
 	ct = 0;
-	// Discard Comment Strings
+
+	// Skip Comment Strings
 	while (ct < na + 1) {
-		free(readString(f));
+		readString(f);
 		ct++;
 	}
 
@@ -402,9 +398,9 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 		debug("%d.\nLoad Complete.\n", ct);
 }
 
-void Scott::output(const char *a) {
+void Scott::output(const Common::String &a) {
 	if (_saveSlot == -1)
-		display(Bottom, "%s", a);
+		display(Bottom, "%s", a.c_str());
 }
 
 void Scott::outputNumber(int a) {
@@ -431,13 +427,13 @@ void Scott::look(void) {
 		return;
 	}
 	r = &Rooms[MyLoc];
-	if (*r->Text == '*')
-		display(Top, "%s\n", r->Text + 1);
+	if (r->Text.hasPrefix("*"))
+		display(Top, "%s\n", r->Text.c_str() + 1);
 	else {
 		if (Options & YOUARE)
-			display(Top, "You are in a %s\n", r->Text);
+			display(Top, "You are in a %s\n", r->Text.c_str());
 		else
-			display(Top, "I'm in a %s\n", r->Text);
+			display(Top, "I'm in a %s\n", r->Text.c_str());
 	}
 
 	ct = 0;
@@ -475,12 +471,12 @@ void Scott::look(void) {
 				display(Top, " - ");
 				pos += 3;
 			}
-			if (pos + (int)strlen(Items[ct].Text) > (Width - 10)) {
+			if (pos + (int)Items[ct].Text.size() > (Width - 10)) {
 				pos = 0;
 				display(Top, "\n");
 			}
-			display(Top, "%s", Items[ct].Text);
-			pos += strlen(Items[ct].Text);
+			display(Top, "%s", Items[ct].Text.c_str());
+			pos += Items[ct].Text.size();
 			if (Options & TRS80_STYLE) {
 				display(Top, ". ");
 				pos += 2;
@@ -494,12 +490,12 @@ void Scott::look(void) {
 		display(Top, TRS80_LINE);
 }
 
-int Scott::whichWord(const char *word, const char **list) {
+int Scott::whichWord(const char *word, const Common::StringArray &list) {
 	int n = 1;
 	int ne = 1;
 	const char *tp;
 	while (ne <= GameHeader.NumWords) {
-		tp = list[ne];
+		tp = list[ne].c_str();
 		if (*tp == '*')
 			tp++;
 		else
@@ -862,7 +858,7 @@ doneit:
 				int n = 0;
 				while (i <= GameHeader.NumItems) {
 					if (Items[i].Location == GameHeader.TreasureRoom &&
-					        *Items[i].Text == '*')
+					        Items[i].Text.hasPrefix("*"))
 						n++;
 					i++;
 				}
@@ -1115,7 +1111,7 @@ int Scott::performActions(int vb, int no) {
 					}
 					while (i <= GameHeader.NumItems) {
 						if (Items[i].Location == MyLoc && Items[i].AutoGet != nullptr && Items[i].AutoGet[0] != '*') {
-							no = whichWord(Items[i].AutoGet, Nouns);
+							no = whichWord(Items[i].AutoGet.c_str(), Nouns);
 							disable_sysfunc = 1;    // Don't recurse into auto get !
 							performActions(vb, no); // Recursively check each items table code
 							disable_sysfunc = 0;
@@ -1165,8 +1161,9 @@ int Scott::performActions(int vb, int no) {
 					int i = 0;
 					int f = 0;
 					while (i <= GameHeader.NumItems) {
-						if (Items[i].Location == CARRIED && Items[i].AutoGet && Items[i].AutoGet[0] != '*') {
-							no = whichWord(Items[i].AutoGet, Nouns);
+						if (Items[i].Location == CARRIED && !Items[i].AutoGet.empty()
+								&& !Items[i].AutoGet.hasPrefix("*")) {
+							no = whichWord(Items[i].AutoGet.c_str(), Nouns);
 							disable_sysfunc = 1;
 							performActions(vb, no);
 							disable_sysfunc = 0;
