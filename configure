@@ -4459,7 +4459,8 @@ extern "C" {
 }
 
 int main(void) {
-	a52_init(0);
+	a52_state_t *state = a52_init(0);
+	a52_free(state);
 	return 0;
 }
 EOF
