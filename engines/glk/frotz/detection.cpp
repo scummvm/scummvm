@@ -22,6 +22,7 @@
 
 #include "glk/frotz/detection.h"
 #include "glk/frotz/detection_tables.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 
@@ -63,6 +64,11 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			continue;
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
 		size_t filesize = gameFile.size();
+		char serial[7] = "unkown";
+		if (!filename.hasSuffixIgnoreCase(".zblorb")) {
+			gameFile.seek(18);
+			gameFile.read(&serial[0], 6);
+		}
 		gameFile.close();
 
 		// Check for known game
@@ -76,7 +82,20 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			if (filename.hasSuffixIgnoreCase(".dat"))
 				continue;
 
-			warning("Uknown zcode game %s - %s %d", filename.c_str(), md5.c_str(), filesize);
+			if (gDebugLevel > 0) {
+				// Print an entry suitable for putting into the detection_tables.h, using the
+				// name of the parent folder the game is in as the presumed game Id
+				Common::String folderName = file->getParent().getName();
+				if (folderName.hasSuffix("\\"))
+					folderName.deleteLastChar();
+				Common::String fname = filename;
+				const char *dot = strchr(fname.c_str(), '.');
+				if (dot)
+					fname = Common::String(fname.c_str(), dot);
+
+				debug("ENTRY0(\"%s\", \"%s-%s\", \"%s\", %u),",
+					folderName.c_str(), fname.c_str(), serial, md5.c_str(), filesize);
+			}
 			const PlainGameDescriptor &desc = FROTZ_GAME_LIST[0];
 			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
 		} else {
