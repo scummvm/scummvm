@@ -81,7 +81,9 @@ void ConditionInventoryItemOwner::deserialize(Archive &archive) {
 bool ConditionInventoryItemOwner::evaluate(Actor *actor) {
 	InventoryMgr *mgr = actor->getInventoryMgr();
 	InventoryItem *item = mgr->findInventoryItem(_item);
-	return item->getCurrentOwner() == _owner;
+	if (item)
+		return item->getCurrentOwner() == _owner;
+	return false;
 }
 
 void ConditionInventoryItemOwner::toConsole() {
