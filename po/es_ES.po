@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-10-25 00:11+0200\n"
-"PO-Revision-Date: 2018-11-10 20:39+0000\n"
-"Last-Translator: juan <jpgross.mail@gmail.com>\n"
+"PO-Revision-Date: 2018-11-16 05:19+0000\n"
+"Last-Translator: Thunderforge <wjherrmann@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -1065,7 +1065,6 @@ msgid "Don't use Roland MT-32 music"
 msgstr "No usar música Roland MT-32"
 
 #: gui/options.cpp:1248
-#, fuzzy
 msgid "Text and speech:"
 msgstr "Texto y voces:"
 
@@ -1086,7 +1085,6 @@ msgid "Subtitle speed:"
 msgstr "Vel. de subtítulos:"
 
 #: gui/options.cpp:1258
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "Texto y voces:"
@@ -1663,9 +1661,8 @@ msgid "Copy to clipboard"
 msgstr "Copiar al portapapeles"
 
 #: gui/unknown-game-dialog.cpp:67
-#, fuzzy
 msgid "Report game"
-msgstr "Cargar partida:"
+msgstr "Cargar partida"
 
 #: gui/unknown-game-dialog.cpp:114
 msgid ""
