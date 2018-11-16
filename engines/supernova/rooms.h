@@ -23,9 +23,9 @@
 #ifndef SUPERNOVA_ROOMS_H
 #define SUPERNOVA_ROOMS_H
 
-#include "common/scummsys.h"
+#include "common/str.h"
 
-#include "msn_def.h"
+#include "supernova/msn_def.h"
 
 namespace Common {
 class ReadStream;

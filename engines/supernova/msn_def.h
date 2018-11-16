@@ -23,6 +23,8 @@
 #ifndef SUPERNOVA_MSN_DEF_H
 #define SUPERNOVA_MSN_DEF_H
 
+#include "common/scummsys.h"
+
 namespace Supernova {
 
 const int kTextSpeed[] = {19, 14, 10, 7, 4};
