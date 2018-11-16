@@ -152,10 +152,8 @@ void Selection::startSelection(const Point &pos) {
 	tx = MIN(pos.x, (int16)_hor);
 	ty = MIN(pos.y, (int16)_ver);
 
-	_select.left = _last.x = tx;
-	_select.top = _last.y = ty;
-	_select.right = 0;
-	_select.bottom = 0;
+	_select.left = _select.right = _last.x = tx;
+	_select.top = _select.bottom = _last.y = ty;
 
 	g_vm->_windows->selectionChanged();
 }
@@ -189,8 +187,8 @@ void Selection::clearSelection() {
 }
 
 bool Selection::checkSelection(const Rect &r) const {
-	Rect select(MIN(_select.left, _select.right), MAX(_select.left, _select.right),
-	            MIN(_select.top, _select.bottom), MAX(_select.top, _select.bottom));
+	Rect select(MIN(_select.left, _select.right), MIN(_select.top, _select.bottom),		
+		MAX(_select.left, _select.right), MAX(_select.top, _select.bottom));
 	if (select.isEmpty())
 		return false;
 
