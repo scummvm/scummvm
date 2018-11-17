@@ -4592,6 +4592,29 @@ static const uint16 laurabow2PatchFixCrateRoomEastDoorLockup[] = {
 	PATCH_END
 };
 
+// Ego can get stuck in the elevator (room 660) by walking to the lower left.
+//  This also happens in Sierra's interpreter. We adjust the room's obstacle
+//  polygon so that ego can't reach the problematic corner positions.
+//  This is a heap patch for the coordinates used in poly2660a:points.
+//
+// Applies to: All Floppy and CD versions
+// Fixes bug #10702
+static const uint16 laurabow2SignatureFixElevatorLockup[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16(0x008b),                 // x = 139d
+	SIG_UINT16(0x0072),                 // y = 114d
+	SIG_UINT16(0x007b),                 // x = 123d
+	SIG_UINT16(0x008d),                 // y = 141d
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixElevatorLockup[] = {
+	PATCH_UINT16(0x008f),               // x = 143d
+	PATCH_ADDTOOFFSET(+4),
+	PATCH_UINT16(0x00aa),               // y = 170d
+	PATCH_END
+};
+
 // The act 4 back rub scene in Yvette's (room 550) locks up the game when
 //  entered from Carrington's (room 560) instead of the hallway (room 510).
 //
@@ -5007,6 +5030,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
+	{  true,  2660, "CD/Floppy: fix elevator lockup",                 1, laurabow2SignatureFixElevatorLockup,            laurabow2PatchFixElevatorLockup },
 	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
 	{  true,    26, "Floppy: fix act 4 initialization",               1, laurabow2SignatureFixAct4Initialization,        laurabow2PatchFixAct4Initialization },
 	{  true,   550, "Floppy: missing desk lamp message",              1, laurabow2SignatureMissingDeskLampMessage,       laurabow2PatchMissingDeskLampMessage },
