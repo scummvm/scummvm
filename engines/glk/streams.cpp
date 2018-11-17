@@ -75,6 +75,10 @@ void Stream::setReverseVideo(bool reverse) {
 
 /*--------------------------------------------------------------------------*/
 
+WindowStream::~WindowStream() {
+	_window->_stream = nullptr;
+}
+
 void WindowStream::close(StreamResult *result) {
 	warning("cannot close window stream");
 }
@@ -1407,8 +1411,10 @@ Streams::Streams() : _streamList(nullptr), _currentStream(nullptr) {
 }
 
 Streams::~Streams() {
-	while (_streamList)
-		delete _streamList;
+	for (Stream *currStream = _streamList, *nextStream; currStream; currStream = nextStream) {
+		nextStream = currStream->_next;
+		delete currStream;
+	}
 }
 
 FileStream *Streams::openFileStream(frefid_t fref, glui32 fmode, glui32 rock, bool unicode) {
