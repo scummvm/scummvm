@@ -48,62 +48,62 @@ enum GameOption {
 };
 
 #define TRS80_LINE  "\n<------------------------------------------------------------>\n"
-#define MyLoc   (GameHeader.PlayerRoom)
+#define MY_LOC   (_gameHeader._playerRoom)
 
 struct Header {
-	int Unknown;
-	int NumItems;
-	int NumActions;
-	int NumWords;           ///< Smaller of verb/noun is padded to same size
-	int NumRooms;
-	int MaxCarry;
-	int PlayerRoom;
-	int Treasures;
-	int WordLength;
-	int LightTime;
-	int NumMessages;
-	int TreasureRoom;
+	int _unknown;
+	int _numItems;
+	int _numActions;
+	int _numWords;           ///< Smaller of verb/noun is padded to same size
+	int _numRooms;
+	int _maxCarry;
+	int _playerRoom;
+	int _treasures;
+	int _wordLength;
+	int _lightTime;
+	int _numMessages;
+	int _treasureRoom;
 
-	Header() : Unknown(0), NumItems(0), NumActions(0), NumWords(0), NumRooms(0),
-		MaxCarry(0), PlayerRoom(0), Treasures(0), WordLength(0), LightTime(0),
-		NumMessages(0), TreasureRoom(0) {}
+	Header() : _unknown(0), _numItems(0), _numActions(0), _numWords(0), _numRooms(0),
+		_maxCarry(0), _playerRoom(0), _treasures(0), _wordLength(0), _lightTime(0),
+		_numMessages(0), _treasureRoom(0) {}
 };
 
 struct Action {
-	uint Vocab;
-	uint Condition[5];
-	uint action[2];
+	uint _vocab;
+	uint _condition[5];
+	uint _action[2];
 
-	Action() : Vocab(0) {
-		Common::fill(&Condition[0], &Condition[5], 0);
-		Common::fill(&action[0], &action[2], 0);
+	Action() : _vocab(0) {
+		Common::fill(&_condition[0], &_condition[5], 0);
+		Common::fill(&_action[0], &_action[2], 0);
 	}
 };
 
 struct Room {
-	Common::String Text;
-	short Exits[6];
+	Common::String _text;
+	short _exits[6];
 
 	Room() {
-		Common::fill(&Exits[0], &Exits[6], 0);
+		Common::fill(&_exits[0], &_exits[6], 0);
 	}
 };
 
 struct Item {
-	Common::String Text;
-	byte Location;
-	byte InitialLoc;
-	Common::String AutoGet;
+	Common::String _text;
+	byte _location;
+	byte _initialLoc;
+	Common::String _autoGet;
 
-	Item() : Location(0), InitialLoc(0) {}
+	Item() : _location(0), _initialLoc(0) {}
 };
 
 struct Tail {
-	int Version;
-	int AdventureNumber;
-	int Unknown;
+	int _version;
+	int _adventureNumber;
+	int _unknown;
 
-	Tail() : Version(0), AdventureNumber(0), Unknown(0) {}
+	Tail() : _version(0), _adventureNumber(0), _unknown(0) {}
 };
 
 /**
@@ -111,27 +111,27 @@ struct Tail {
  */
 class Scott : public GlkAPI {
 private:
-	Header GameHeader;
-	Common::Array<Item> Items;
-	Common::Array<Room> Rooms;
-	Common::StringArray Verbs;
-	Common::StringArray Nouns;
-	Common::StringArray Messages;
-	Common::Array<Action> Actions;
-	int LightRefill;
-	char NounText[16];
-	int Counters[16];   ///< Range unknown
-	int CurrentCounter;
-	int SavedRoom;
-	int RoomSaved[16];  ///< Range unknown
-	int Options;        ///< Option flags set
-	int Width;          ///< Terminal width
-	int TopHeight;      ///< Height of top window
+	Header _gameHeader;
+	Common::Array<Item> _items;
+	Common::Array<Room> _rooms;
+	Common::StringArray _verbs;
+	Common::StringArray _nouns;
+	Common::StringArray _messages;
+	Common::Array<Action> _actions;
+	int _lightRefill;
+	char _nounText[16];
+	int _counters[16];   ///< Range unknown
+	int _currentCounter;
+	int _savedRoom;
+	int _roomSaved[16];  ///< Range unknown
+	int _options;        ///< Option flags set
+	int _width;          ///< Terminal width
+	int _topHeight;      ///< Height of top window
 
-	bool split_screen;
-	winid_t Bottom, Top;
-	uint32 BitFlags;    ///< Might be >32 flags - I haven't seen >32 yet
-	int _saveSlot;		///< Save slot when loading savegame from launcher
+	bool _splitScreen;
+	winid_t _bottomWindow, _topWindow;
+	uint32 _bitFlags;    ///< Might be >32 flags - I haven't seen >32 yet
+	int _saveSlot;		 ///< Save slot when loading savegame from launcher
 private:
 	/**
 	 * Initialization code
