@@ -300,6 +300,11 @@ public:
 		Stream(streams, false, true, rock, unicode), _window(window) {}
 
 	/**
+	 * Destructor
+	 */
+	virtual ~WindowStream();
+
+	/**
 	 * Close the stream
 	 */
 	virtual void close(StreamResult *result = nullptr);

@@ -72,10 +72,10 @@ WindowMask::~WindowMask() {
 void WindowMask::clear() {
 	for (size_t i = 0; i < _hor; i++) {
 		if (_links[i])
-			delete _links[i];
+			delete[] _links[i];
 	}
 
-	delete _links;
+	delete[] _links;
 }
 
 void WindowMask::resize(size_t x, size_t y) {
