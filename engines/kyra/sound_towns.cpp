@@ -236,7 +236,6 @@ void SoundTowns::updateVolumeSettings() {
 		return;
 
 	bool mute = false;
-	_player->driver()->setSoundEffectVolume(ConfMan.getInt("sfx_volume"));
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
@@ -505,7 +504,6 @@ void SoundPC98::updateVolumeSettings() {
 		return;
 
 	bool mute = false;
-	_driver->setSoundEffectVolume(ConfMan.getInt("sfx_volume"));
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
@@ -739,7 +737,6 @@ void SoundTownsPC98_v2::updateVolumeSettings() {
 		return;
 
 	bool mute = false;
-	_driver->setSoundEffectVolume(ConfMan.getInt("sfx_volume"));
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
