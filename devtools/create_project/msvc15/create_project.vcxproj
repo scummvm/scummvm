@@ -87,13 +87,12 @@
     </Link>
     <PostBuildEvent>
       <Command>@echo off
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc15\"        
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc15\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc14\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc12\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc11\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc10\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc9\"
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc8\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\codeblocks\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
     </PostBuildEvent>
@@ -184,7 +183,6 @@ xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc12\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc11\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc10\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc9\"
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc8\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\codeblocks\"
 xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
     </PostBuildEvent>
