@@ -65,14 +65,21 @@ WindowMask::WindowMask() : _hor(0), _ver(0), _links(nullptr) {
 	resize(g_system->getWidth(), g_system->getHeight());
 }
 
-void WindowMask::resize(size_t x, size_t y) {
-	// Deallocate old storage
+WindowMask::~WindowMask() {
+	clear();
+}
+
+void WindowMask::clear() {
 	for (size_t i = 0; i < _hor; i++) {
 		if (_links[i])
 			delete _links[i];
 	}
 
 	delete _links;
+}
+
+void WindowMask::resize(size_t x, size_t y) {
+	clear();
 
 	_hor = x + 1;
 	_ver = y + 1;

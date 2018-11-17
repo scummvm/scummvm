@@ -63,6 +63,11 @@ public:
  * Manages hyperlinks for the screen
  */
 class WindowMask {
+private:
+	/**
+	 * Clear the links data
+	 */
+	void clear();
 public:
 	size_t _hor, _ver;
 	glui32 **_links;
@@ -73,6 +78,11 @@ public:
 	 * Constructor
 	 */
 	WindowMask();
+
+	/**
+	 * Destructor
+	 */
+	~WindowMask();
 
 	/**
 	 * Resize the links array
