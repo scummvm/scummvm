@@ -35,7 +35,7 @@ struct giblorb_chunkdesc_struct {
     glui32 startpos;	///< start of chunk header
     glui32 datpos;		///< start of data (either startpos or startpos+8)
 
-    void *ptr;		///< pointer to malloc'd data, if loaded
+    byte *ptr;		///< pointer to malloc'd data, if loaded
     int auxdatnum;	///< entry in the auxsound/auxpict array; -1 if none. This only applies to chunks that represent resources;
 };
 typedef giblorb_chunkdesc_struct giblorb_chunkdesc_t;
@@ -406,7 +406,7 @@ giblorb_err_t Blorb::giblorb_load_chunk_by_number(giblorb_map_t *map,
 		glui32 method, giblorb_result_t *res, glui32 chunknum) {
 	giblorb_chunkdesc_t *chu;
 
-	if (chunknum < 0 || chunknum >= map->numchunks)
+	if (chunknum >= map->numchunks)
 		return giblorb_err_NotFound;
 
 	chu = &(map->chunks[chunknum]);
@@ -451,7 +451,7 @@ giblorb_err_t Blorb::giblorb_load_chunk_by_number(giblorb_map_t *map,
 giblorb_err_t Blorb::giblorb_unload_chunk(giblorb_map_t *map, glui32 chunknum) {
 	giblorb_chunkdesc_t *chu;
 
-	if (chunknum < 0 || chunknum >= map->numchunks)
+	if (chunknum >= map->numchunks)
 		return giblorb_err_NotFound;
 
 	chu = &(map->chunks[chunknum]);

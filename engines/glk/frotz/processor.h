@@ -1529,6 +1529,7 @@ public:
 	 * Constructor
 	 */
 	Processor(OSystem *syst, const GlkGameDescription &gameDesc);
+	virtual ~Processor() {}
 
 	/**
 	 * Initialization

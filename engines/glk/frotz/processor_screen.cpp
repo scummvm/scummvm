@@ -74,7 +74,7 @@ void Processor::screen_char(zchar c) {
 			cury ++;
 		} else {
 			if (cury == 1) {
-				if (curx <= ((sizeof statusline / sizeof(zchar)) - 1)) {
+				if (curx <= (int)((sizeof statusline / sizeof(zchar)) - 1)) {
 					statusline[curx - 1] = c;
 					statusline[curx] = 0;
 				}

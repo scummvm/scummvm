@@ -40,15 +40,12 @@ GraphicsWindow::~GraphicsWindow() {
 void GraphicsWindow::rearrange(const Rect &box) {
 	int newwid, newhgt;
 	int bothwid, bothhgt;
-	int oldw, oldh;
 	Graphics::ManagedSurface *newSurface;
 
 	_bbox = box;
 
 	newwid = box.width();
 	newhgt = box.height();
-	oldw = _w;
-	oldh = _h;
 
 	if (newwid <= 0 || newhgt <= 0) {
 		_w = 0;
