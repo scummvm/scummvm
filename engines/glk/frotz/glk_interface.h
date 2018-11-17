@@ -94,10 +94,33 @@ public:
 	bool _soundLocked;
 	bool _soundPlaying;
 protected:
+	/**
+	 * Return the length of the character in screen units.
+	 */
 	int os_char_width(zchar z);
+
+	/**
+	 * Calculate the length of a word in screen units. Apart from letters,
+	 * the word may contain special codes:
+	 *
+	 *    ZC_NEW_STYLE - next character is a new text style
+	 *    ZC_NEW_FONT  - next character is a new font
+	 */
 	int os_string_width(const zchar *s);
+
+	/**
+	 * Return the length of a string
+	 */
 	int os_string_length(zchar *s);
+
+	/**
+	 * Prepare a sample for playing
+	 */
 	void os_prepare_sample(int a);
+
+	/**
+	 * Signal that a given sample is finished with
+	 */
 	void os_finish_with_sample(int a);
 
 	/**

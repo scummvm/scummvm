@@ -174,7 +174,7 @@ zchar Processor::stream_read_input(int max, zchar *buf, zword timeout, zword rou
 
     // Remove initial input from the transscript file or from the screen
     if (ostream_script && enable_scripting && !no_scripting)
-	script_erase_input(buf);
+		script_erase_input(buf);
 
     // Read input line from current input stream
 continue_input:

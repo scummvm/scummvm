@@ -158,7 +158,7 @@ void Processor::runtimeError(ErrorCode errNum) {
 	if (_err_report_mode == ERR_REPORT_FATAL
 		|| (!_ignore_errors && errNum <= ERR_MAX_FATAL)) {
 		flush_buffer();
-		error(ERR_MESSAGES[errNum - 1]);
+		error("%s", ERR_MESSAGES[errNum - 1]);
 		return;
 	}
 
