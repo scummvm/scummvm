@@ -152,6 +152,11 @@ public:
 	Windows(Graphics::Screen *screen);
 
 	/**
+	 * Destructor
+	 */
+	~Windows();
+
+	/**
 	 * Open a new window
 	 */
 	Window *windowOpen(Window *splitwin, glui32 method, glui32 size,

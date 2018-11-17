@@ -70,6 +70,10 @@ Windows::Windows(Graphics::Screen *screen) : _screen(screen), _windowList(nullpt
 	_zcolor_Bright[0] = _zcolor_Bright[1] = _zcolor_Bright[2] = 0;
 }
 
+Windows::~Windows() {
+	delete _rootWin;
+}
+
 Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
                             glui32 wintype, glui32 rock) {
 	Window *newwin, *oldparent;
