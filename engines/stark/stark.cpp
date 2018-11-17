@@ -430,6 +430,9 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	// Read the diary state
 	_diary->readStateFromStream(&stream, metadata.version);
 
+	// Read the location stack
+	_resourceProvider->readLocationStack(&stream, metadata.version);
+
 	if (stream.eos()) {
 		warning("Unexpected end of file reached when reading '%s'", filename.c_str());
 		return Common::kReadingFailed;
@@ -485,6 +488,9 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 
 	// 3. Write the diary state
 	_diary->writeStateToStream(save);
+
+	// 4. Write the location stack
+	_resourceProvider->writeLocationStack(save);
 
 	delete save;
 

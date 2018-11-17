@@ -64,6 +64,10 @@ public:
 	void pushAndChangeLocation(int16 level, int16 location);
 	void returnToPushedLocation();
 
+	/** Save and restore the previous location stack */
+	void readLocationStack(Common::SeekableReadStream *stream, uint32 version);
+	void writeLocationStack(Common::WriteStream *stream);
+
 	/**
 	 * Apply a location change request.
 	 *
@@ -99,7 +103,9 @@ private:
 
 	void pushCurrentLocation();
 	void popCurrentLocation();
-	Common::List<PreviousLocation> _locationStack;
+	void saveLoadLocationStack(ResourceSerializer &serializer);
+	Common::Array<PreviousLocation> _locationStack;
+
 	typedef Common::List<Current *> CurrentList;
 
 	Current *findLevel(uint16 level) const;

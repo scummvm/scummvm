@@ -127,7 +127,7 @@ public:
 	void clear();
 
 	static const uint kMinSaveVersion = 6;
-	static const uint kSaveVersion = 11;
+	static const uint kSaveVersion = 12;
 
 private:
 	class ResourceTreeState {

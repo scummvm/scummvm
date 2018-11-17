@@ -352,6 +352,8 @@ void ResourceProvider::commitActiveLocationsState() {
 void ResourceProvider::shutdown() {
 	_stateProvider->clear();
 
+	_locationStack.clear();
+
 	// Flush the locations list
 	for (CurrentList::const_iterator it = _locations.begin(); it != _locations.end(); it++) {
 		Current *location = *it;
@@ -389,6 +391,26 @@ Resources::Level *ResourceProvider::getLevelFromLocation(Resources::Location *lo
 	}
 
 	return nullptr;
+}
+
+void ResourceProvider::readLocationStack(Common::SeekableReadStream *stream, uint32 version) {
+	ResourceSerializer serializer(stream, nullptr, version);
+	saveLoadLocationStack(serializer);
+}
+
+void ResourceProvider::writeLocationStack(Common::WriteStream *stream) {
+	ResourceSerializer serializer(nullptr, stream, StateProvider::kSaveVersion);
+	saveLoadLocationStack(serializer);
+}
+
+void ResourceProvider::saveLoadLocationStack(ResourceSerializer &serializer) {
+	serializer.syncArraySize(_locationStack, 12);
+
+	for (uint i = 0; i < _locationStack.size(); i++) {
+		serializer.syncAsUint16LE(_locationStack[i].level);
+		serializer.syncAsUint16LE(_locationStack[i].location);
+		serializer.syncAsUint32LE(_locationStack[i].inventoryOpen);
+	}
 }
 
 } // End of namespace Stark
