@@ -122,7 +122,6 @@ void Processor::screen_word(const zchar *s) {
 	}
 }
 
-
 void Processor::z_buffer_mode() {
 	// No implementation
 }

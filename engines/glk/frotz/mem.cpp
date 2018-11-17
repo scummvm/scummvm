@@ -174,10 +174,10 @@ void Mem::initializeStoryFile() {
 }
 
 void Mem::initializeUndo() {
-	void *reserved = nullptr;
+	byte *reserved = nullptr;
 
 	if (reserve_mem != 0) {
-		if ((reserved = malloc(reserve_mem)) == NULL)
+		if ((reserved = new byte[reserve_mem]) == nullptr)
 			return;
 	}
 

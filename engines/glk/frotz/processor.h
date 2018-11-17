@@ -314,11 +314,32 @@ private:
 	 * @{
 	 */
 
-	void screen_char(zchar c);
-	void screen_new_line();
-	void screen_word(const zchar *s);
+	/**
+	 * Start printing a so-called debugging message. The contents of the
+	 * message are passed to the message stream, a Frotz specific output
+	 * stream with maximum priority.
+	 */
 	void screen_mssg_on();
+
+	/**
+	 * Stop printing a "debugging" message
+	 */
 	void screen_mssg_off();
+
+	/**
+	 * Display a single character on the screen.
+	 */
+	void screen_char(zchar c);
+
+	/**
+	 * Print a newline to the screen.
+	 */
+	void screen_new_line();
+
+	/**
+	 * Print a newline to the screen.
+	 */
+	void screen_word(const zchar *s);
 
 	/**@}*/
 
