@@ -128,8 +128,8 @@ public:
 	zbyte h_screen_cols;
 	zword h_screen_width;
 	zword h_screen_height;
-	zbyte h_font_height = 1;
-	zbyte h_font_width = 1;
+	zbyte h_font_height;
+	zbyte h_font_width;
 	zword h_functions_offset;
 	zword h_strings_offset;
 	zbyte h_default_background;
@@ -267,6 +267,7 @@ public:
 	 * Constructor
 	 */
 	Mem();
+	virtual ~Mem() {}
 
 	/**
 	 * Initialize

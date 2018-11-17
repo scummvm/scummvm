@@ -174,6 +174,7 @@ public:
 	 * Constructor
 	 */
 	GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc);
+	virtual ~GlkInterface() {}
 
 	/**
 	 * Initialization
