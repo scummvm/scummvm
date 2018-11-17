@@ -104,7 +104,7 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 		}
 
 		// Brian Howarth games seem to use -1 for forever
-		if (_items[LIGHT_SOURCE]._location/*==-1*/ != DESTROYED && _gameHeader._lightTime != -1) {
+		if (_items[LIGHT_SOURCE]._location != DESTROYED && _gameHeader._lightTime != -1) {
 			_gameHeader._lightTime--;
 			if (_gameHeader._lightTime < 1) {
 				_bitFlags |= (1 << LIGHTOUTBIT);
@@ -282,9 +282,6 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	int unused, ni, na, nw, nr, mc, pr, tr, wl, lt, mn, trm;
 	int ct;
 	int lo;
-	Action *ap;
-	Room *rp;
-	Item *ip;
 
 	// Load the header
 	readInts(f, 12, &unused, &ni, &na, &nw, &nr, &mc, &pr, &tr, &wl, &lt, &mn, &trm);
@@ -309,89 +306,66 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	_gameHeader._treasureRoom = trm;
 
 	// Load the actions
-	ct = 0;
-	ap = &_actions[0];
 	if (loud)
 		debug("Reading %d actions.", na);
-	while (ct < na + 1) {
+
+	for (uint idx = 0; idx < na + 1; ++idx) {
+		Action &a = _actions[idx];
 		readInts(f, 8,
-		         &ap->_vocab,
-		         &ap->_condition[0],
-		         &ap->_condition[1],
-		         &ap->_condition[2],
-		         &ap->_condition[3],
-		         &ap->_condition[4],
-		         &ap->_action[0],
-		         &ap->_action[1]);
-		ap++;
-		ct++;
+			&a._vocab, &a._condition[0], &a._condition[1], &a._condition[2],
+			&a._condition[3], &a._condition[4], &a._action[0], &a._action[1]);
 	}
 
-	ct = 0;
 	if (loud)
 		debug("Reading %d word pairs.", nw);
-	while (ct < nw + 1) {
-		_verbs[ct] = readString(f);
-		_nouns[ct] = readString(f);
-		ct++;
+	for (int idx = 0; idx < nw + 1; ++idx) {
+		_verbs[idx] = readString(f);
+		_nouns[idx] = readString(f);
 	}
-	ct = 0;
-	rp = &_rooms[0];
+
 	if (loud)
 		debug("Reading %d rooms.", nr);
-	while (ct < nr + 1) {
-		readInts(f, 6,
-		         &rp->_exits[0], &rp->_exits[1], &rp->_exits[2],
-		         &rp->_exits[3], &rp->_exits[4], &rp->_exits[5]);
-
-		rp->_text = readString(f);
-		ct++;
-		rp++;
+	for (int idx = 0; idx < nr + 1; ++idx) {
+		Room &r = _rooms[idx];
+		readInts(f, 6, &r._exits[0], &r._exits[1], &r._exits[2],
+		         &r._exits[3], &r._exits[4], &r._exits[5]);
+		r._text =  readString(f);
 	}
 
-	ct = 0;
 	if (loud)
 		debug("Reading %d messages.", mn);
-	while (ct < mn + 1) {
-		_messages[ct] = readString(f);
-		ct++;
-	}
+	for (int idx = 0; idx < mn + 1; ++idx)
+		_messages[idx] = readString(f);
 
-	ct = 0;
 	if (loud)
 		debug("Reading %d items.", ni);
-	ip = &_items[0];
-	while (ct < ni + 1) {
-		ip->_text = readString(f);
+	for (int idx = 0; idx < ni + 1; ++idx) {
+		Item &i = _items[idx];
+		i._text = readString(f);
 
-		const char *p = strchr(ip->_text.c_str(), '/');
+		const char *p = strchr(i._text.c_str(), '/');
 		if (p) {
-			ip->_autoGet = Common::String(p);
+			i._autoGet = Common::String(p);
 
 			// Some games use // to mean no auto get/drop word!
-			if (!ip->_autoGet.hasPrefix("//") && !ip->_autoGet.hasPrefix("/*")) {
-				ip->_text = Common::String(ip->_text.c_str(), p);
-				ip->_autoGet.deleteChar(0);
+			if (!i._autoGet.hasPrefix("//") && !i._autoGet.hasPrefix("/*")) {
+				i._text = Common::String(i._text.c_str(), p);
+				i._autoGet.deleteChar(0);
 
-				const char *t = strchr(ip->_autoGet.c_str(), '/');
+				const char *t = strchr(i._autoGet.c_str(), '/');
 				if (t)
-					ip->_autoGet = Common::String(ip->_autoGet.c_str(), t);
+					i._autoGet = Common::String(i._autoGet.c_str(), t);
 			}
 		}
 
 		readInts(f, 1, &lo);
-		ip->_location = (unsigned char)lo;
-		ip->_initialLoc = ip->_location;
-		ip++;
-		ct++;
+		i._location = (unsigned char)lo;
+		i._initialLoc = i._location;
 	}
-	ct = 0;
 
 	// Skip Comment Strings
-	while (ct < na + 1) {
+	for (int idx = 0; idx < na + 1; ++idx)
 		readString(f);
-		ct++;
-	}
 
 	readInts(f, 1, &ct);
 	if (loud)
