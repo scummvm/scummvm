@@ -70,9 +70,9 @@ struct Header {
 };
 
 struct Action {
-	uint _vocab;
-	uint _condition[5];
-	uint _action[2];
+	int _vocab;
+	int _condition[5];
+	int _action[2];
 
 	Action() : _vocab(0) {
 		Common::fill(&_condition[0], &_condition[5], 0);
@@ -82,7 +82,7 @@ struct Action {
 
 struct Room {
 	Common::String _text;
-	short _exits[6];
+	int _exits[6];
 
 	Room() {
 		Common::fill(&_exits[0], &_exits[6], 0);
