@@ -165,11 +165,6 @@ continue_input:
 zchar Processor::stream_read_input(int max, zchar *buf, zword timeout, zword routine,
 			  bool hot_keys, bool no_scripting) {
     zchar key = ZC_BAD;
-    bool no_scrollback = no_scripting;
-
-    if (h_version == V6 && _storyId == UNKNOWN && !ostream_script)
-		no_scrollback = false;
-
     flush_buffer();
 
     // Remove initial input from the transscript file or from the screen
