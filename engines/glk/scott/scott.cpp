@@ -39,8 +39,10 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 	initialize();
 
 	_bottomWindow = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
-	if (_bottomWindow == nullptr)
+	if (_bottomWindow == nullptr) {
 		glk_exit();
+		return;
+	}
 	glk_set_window(_bottomWindow);
 
 	if (_options & TRS80_STYLE) {
@@ -74,6 +76,8 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 		glk_tick();
 
 		performActions(0, 0);
+		if (shouldQuit())
+			break;
 
 		if (_saveSlot >= 0) {
 			// Load any savegame during startup
@@ -1019,7 +1023,7 @@ doneit:
 }
 
 int Scott::performActions(int vb, int no) {
-	static int disable_sysfunc = 0; // Recursion lock
+	static bool disableSysFunc = false; // Recursion lock
 	int d = _bitFlags & (1 << DARKBIT);
 
 	int ct = 0;
@@ -1047,6 +1051,7 @@ int Scott::performActions(int vb, int no) {
 			else
 				output("I fell down and broke my neck. ");
 			glk_exit();
+			return 0;
 		}
 		if (_options & YOUARE)
 			output("You can't go in that direction. ");
@@ -1093,7 +1098,7 @@ int Scott::performActions(int vb, int no) {
 		if (ct <= _gameHeader._numActions && _actions[ct]._vocab != 0)
 			doagain = 0;
 	}
-	if (fl != 0 && disable_sysfunc == 0) {
+	if (fl != 0 && disableSysFunc == 0) {
 		int item;
 		if (_items[LIGHT_SOURCE]._location == MY_LOC ||
 		        _items[LIGHT_SOURCE]._location == CARRIED)
@@ -1112,9 +1117,12 @@ int Scott::performActions(int vb, int no) {
 					while (i <= _gameHeader._numItems) {
 						if (_items[i]._location == MY_LOC && _items[i]._autoGet != nullptr && _items[i]._autoGet[0] != '*') {
 							no = whichWord(_items[i]._autoGet.c_str(), _nouns);
-							disable_sysfunc = 1;    // Don't recurse into auto get !
-							performActions(vb, no); // Recursively check each items table code
-							disable_sysfunc = 0;
+							disableSysFunc = true;    // Don't recurse into auto get !
+							performActions(vb, no);   // Recursively check each items table code
+							disableSysFunc = false;
+							if (shouldQuit())
+								return 0;
+
 							if (countCarried() == _gameHeader._maxCarry) {
 								if (_options & YOUARE)
 									output("You are carrying too much. ");
@@ -1164,9 +1172,12 @@ int Scott::performActions(int vb, int no) {
 						if (_items[i]._location == CARRIED && !_items[i]._autoGet.empty()
 								&& !_items[i]._autoGet.hasPrefix("*")) {
 							no = whichWord(_items[i]._autoGet.c_str(), _nouns);
-							disable_sysfunc = 1;
+							disableSysFunc = true;
 							performActions(vb, no);
-							disable_sysfunc = 0;
+							disableSysFunc = false;
+							if (shouldQuit())
+								return 0;
+
 							_items[i]._location = MY_LOC;
 							output(_items[i]._text);
 							output(": O.K.\n");
