@@ -629,6 +629,8 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+extern void showScummVMDialog(const Common::String &message);
+
 #ifdef ENABLE_SCI32
 reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 	enum Operation {
@@ -693,8 +695,6 @@ reg_t kWinExec(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-extern void showScummVMDialog(const Common::String &message);
-
 reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 	Common::String dllName = s->_segMan->getString(argv[1]);
@@ -725,6 +725,25 @@ reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
 }
 
 #endif
+
+reg_t kKawaHacks(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 0: { // DoAlert
+		showScummVMDialog(s->_segMan->getString(argv[1]));
+		return NULL_REG;
+	}
+	case 1: // ZaWarudo
+		// Unused, would invert the color palette for the specified range.
+		return NULL_REG;
+	case 2: // SetTitleColors
+		// Unused, would change the colors for plain windows' title bars.
+		return NULL_REG;
+	case 3: // IsDebug
+		// Should return 1 if running with an internal debugger, 2 if we have AddMenu support, 3 if both.
+		return TRUE_REG;
+	}
+	return NULL_REG;
+}
 
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
 	// Placeholder for empty kernel functions which are still called from the
