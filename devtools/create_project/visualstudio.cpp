@@ -238,6 +238,8 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	properties << "\t\tRuntimeTypeInfo=\"false\"\n";
 #endif
 
+	const bool windowsSubsystem = !isFeatureEnabled("console-window", setup.features) && !setup.devTools && !setup.tests;
+
 	properties << "\t\tWarningLevel=\"4\"\n"
 	              "\t\tWarnAsError=\"false\"\n"
 	              "\t\tCompileAs=\"0\"\n"
@@ -249,7 +251,7 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	              "\t<Tool\n"
 	              "\t\tName=\"VCLinkerTool\"\n"
 	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	              "\t\tSubSystem=\"1\"\n";
+	              "\t\tSubSystem=\"" << (windowsSubsystem ? "2" : "1") << "\"\n";
 
 	if (!setup.devTools && !setup.tests)
 		properties << "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n";

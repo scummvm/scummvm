@@ -390,13 +390,15 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	properties << "\t\t\t<RuntimeTypeInfo>false</RuntimeTypeInfo>\n";
 #endif
 
+	const bool windowsSubsystem = !isFeatureEnabled("console-window", setup.features) && !setup.devTools && !setup.tests;
+
 	properties << "\t\t\t<WarningLevel>Level4</WarningLevel>\n"
 	              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n"
 	              "\t\t\t<CompileAs>Default</CompileAs>\n"
 	              "\t\t</ClCompile>\n"
 	              "\t\t<Link>\n"
 	              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
-	              "\t\t\t<SubSystem>Console</SubSystem>\n";
+	              "\t\t\t<SubSystem>" << (windowsSubsystem ? "Windows" : "Console") << "</SubSystem>\n";
 
 	if (!setup.devTools && !setup.tests)
 		properties << "\t\t\t<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n";

@@ -55,6 +55,9 @@ ifdef USE_SPARKLE
 	cp $(WIN32SPARKLEPATH)/WinSparkle.dll $(WIN32PATH)
 	sed -e '/WinSparkle\.dll/ s/^;//' -i $(WIN32PATH)/ScummVM.iss
 endif
+ifdef ENABLE_CONSOLE_WINDOW
+	sed -e '/--no-console/ s/^;//g' -i $(WIN32PATH)/ScummVM.iss
+endif
 	unix2dos $(WIN32PATH)/*.txt
 	unix2dos $(WIN32PATH)/doc/*.txt
 	unix2dos $(WIN32PATH)/doc/cz/*.txt

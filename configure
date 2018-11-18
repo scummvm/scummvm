@@ -170,6 +170,7 @@ _optimizations=auto
 _use_cxx11=no
 _verbose_build=no
 _text_console=no
+_console_window=yes
 _mt32emu=yes
 _build_scalers=yes
 _build_hq_scalers=yes
@@ -1009,6 +1010,7 @@ Optional Features:
   --disable-eventrecorder  disable event recording functionality
   --enable-updates         build support for updates
   --enable-text-console    use text console instead of graphical console
+  --disable-console-window disable the console window (Windows only)
   --enable-verbose-build   enable regular echoing of commands during build
                            process
   --disable-bink           don't build with Bink video support
@@ -1229,6 +1231,8 @@ for ac_option in $@; do
 	--disable-eventrecorder)  _eventrec=no   ;;
 	--enable-text-console)    _text_console=yes ;;
 	--disable-text-console)   _text_console=no ;;
+	--enable-console-window)  _console_window=yes ;;
+	--disable-console-window) _console_window=no  ;;
 	--with-fluidsynth-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
@@ -3614,6 +3618,12 @@ case $_backend in
 		else
 			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
 		fi
+
+		# On Windows, sdl-config adds -mwindows to the linker flags.
+		# We remove it here as we want ScummVM to decide by itself which
+		# subsystem it is targeting.
+		LIBS=$(echo $LIBS | sed 's/-mwindows//g')
+
 		append_var DEFINES "-DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
 
@@ -5134,6 +5144,37 @@ fi
 define_in_config_if_yes $_taskbar 'USE_TASKBAR'
 
 #
+# Check whether to enable the console window on Windows
+#
+case $_host_os in
+	mingw*)
+		# When the console window option is enabled, the main executable is
+		# built as a Console subsystem program so that Windows opens a console
+		# on startup. The program is blocking when started by cmd.exe.
+		# The --no-console runtime command line argument allows to hide the
+		# console window as soon as possible, but it remains visible for a
+		# small amount of time.
+		#
+		# When the console window is disabled, the main executable is built as
+		# a Windows subsystem program. Windows does not open a console window.
+		# ScummVM attaches to the parent console output stream when possible,
+		# but the output is mixed with the output of subsequent commands.
+		# It is not possible to create a console window using command line
+		# arguments.
+		if test "$_console_window" = yes; then
+			append_var LIBS "-mconsole"
+		else
+			append_var LIBS "-mwindows"
+		fi
+
+		define_in_config_if_yes $_console_window 'ENABLE_CONSOLE_WINDOW'
+		;;
+	*)
+		_console_window=no
+		;;
+esac
+
+#
 # Check whether to build Bink video support
 #
 echo_n "Building Bink video support... "
@@ -5240,6 +5281,10 @@ fi
 
 if test "$_text_console" = yes ; then
 	echo_n ", text console"
+fi
+
+if test "$_console_window" = yes ; then
+	echo_n ", console window"
 fi
 
 if test "$_vkeybd" = yes ; then

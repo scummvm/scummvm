@@ -34,6 +34,7 @@
 #define _WIN32_IE 0x500
 #endif
 #include <shlobj.h>
+#include <io.h>
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -52,7 +53,37 @@
 
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 
+#if !defined(ENABLE_CONSOLE_WINDOW)
+static bool hasStandardOutput() {
+	if (_fileno(stdout) >= 0 || _fileno(stderr) >= 0) {
+		// _fileno was broken for SUBSYSTEM:WINDOWS from VS2010 to VS2012/2013.
+		// http://crbug.com/358267. Confirm that the underlying HANDLE is valid.
+		intptr_t stdoutHandle = _get_osfhandle(_fileno(stdout));
+		intptr_t stderrHandle = _get_osfhandle(_fileno(stderr));
+		if (stdoutHandle >= 0 || stderrHandle >= 0)
+			return true;
+	}
+
+	return false;
+}
+#endif
+
 void OSystem_Win32::init() {
+#if !defined(ENABLE_CONSOLE_WINDOW)
+	// Initialize standard output. This is done early so the output
+	// from the command line parsing is visible in the console window.
+	//
+	// If we already have console output, don't do anything.
+	// This is the case when called from a terminal emulator like mintty.
+	//
+	// Otherwise, if the parent process has a console, attach to it.
+	if (!hasStandardOutput() && AttachConsole(ATTACH_PARENT_PROCESS)) {
+		freopen("CONIN$",  "r", stdin);
+		freopen("CONOUT$", "w", stdout);
+		freopen("CONOUT$", "w", stderr);
+	}
+#endif
+
 	// Initialize File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
 
@@ -69,20 +100,17 @@ void OSystem_Win32::init() {
 }
 
 void OSystem_Win32::initBackend() {
+#if defined(ENABLE_CONSOLE_WINDOW)
 	// Console window is enabled by default on Windows
 	ConfMan.registerDefault("console", true);
 
 	// Enable or disable the window console window
 	if (ConfMan.getBool("console")) {
-		if (AllocConsole()) {
-			freopen("CONIN$","r",stdin);
-			freopen("CONOUT$","w",stdout);
-			freopen("CONOUT$","w",stderr);
-		}
 		SetConsoleTitle("ScummVM Status Window");
 	} else {
 		FreeConsole();
 	}
+#endif
 
 	// Create the savefile manager
 	if (_savefileManager == 0)
