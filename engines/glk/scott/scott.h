@@ -153,8 +153,6 @@ private:
 	void look(void);
 	int whichWord(const char *word, const Common::StringArray &list);
 	void lineInput(char *buf, size_t n);
-	void saveGame(void);
-	void loadGame(void);
 	int getInput(int *vb, int *no);
 	int performLine(int ct);
 	int performActions(int vb, int no);
@@ -174,14 +172,14 @@ public:
 	virtual void runGame(Common::SeekableReadStream *gameFile) override;
 
 	/**
-	 * Load a savegame
+	 * Load a savegame from the passed stream
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error loadGameData(strid_t file) override;
 
 	/**
-	 * Save the game
+	 * Save the game to the passed stream
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual Common::Error saveGameData(strid_t file) override;
 };
 
 } // End of namespace Scott

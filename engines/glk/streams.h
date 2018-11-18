@@ -563,7 +563,7 @@ public:
 	/**
 	 * Open a file stream
 	 */
-	FileStream *openFileStream(frefid_t fref, glui32 fmode, glui32 rock, bool unicode);
+	FileStream *openFileStream(frefid_t fref, glui32 fmode, glui32 rock = 0, bool unicode = false);
 
 	/**
 	 * Open a window stream
