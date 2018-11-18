@@ -102,6 +102,8 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 		default:
 			break;
 		}
+		if (shouldQuit())
+			return;
 
 		// Brian Howarth games seem to use -1 for forever
 		if (_items[LIGHT_SOURCE]._location != DESTROYED && _gameHeader._lightTime != -1) {
@@ -789,7 +791,7 @@ int Scott::performLine(int ct) {
 doneit:
 				output("The game is now over.\n");
 				glk_exit();
-				break;
+				return 0;
 			case 64:
 				break;
 			case 65: {
@@ -1022,6 +1024,9 @@ int Scott::performActions(int vb, int no) {
 					if (vb != 0 && doagain == 0)
 						return 0;
 				}
+
+				if (shouldQuit())
+					return 0;
 			}
 		}
 		ct++;
