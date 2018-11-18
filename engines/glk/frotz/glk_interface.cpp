@@ -106,6 +106,9 @@ void GlkInterface::initialize() {
 	glk_set_window(gos_lower);
 	gos_curwin = gos_lower;
 
+	// Set the screen colors
+	garglk_set_zcolors(_defaultForeground, _defaultBackground);
+
 	/*
 	 * Icky magic bit setting
 	 */
@@ -148,13 +151,13 @@ void GlkInterface::initialize() {
 	h_font_width = 1;
 	h_font_height = 1;
 
-	/* Must be after screen dimensions are computed.  */
+	// Must be after screen dimensions are computed
 	if (h_version == V6) {
 		h_flags &= ~GRAPHICS_FLAG;
 	}
 
 	// Use the ms-dos interpreter number for v6, because that's the
-	// kind of graphics files we understand.  Otherwise, use DEC.
+	// kind of graphics files we understand
 	h_interpreter_number = h_version == 6 ? INTERP_MSDOS : INTERP_AMIGA;
 	h_interpreter_version = 'F';
 
