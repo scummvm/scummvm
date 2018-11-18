@@ -34,7 +34,7 @@ class PairWindow : public Window {
 public:
 	Window *_child1, *_child2;
 
-	/* split info... */
+	// split info...
 	glui32 _dir;               ///< winmethod_Left, Right, Above, or Below
 	bool _vertical, _backward; ///< flags
 	glui32 _division;          ///< winmethod_Fixed or winmethod_Proportional

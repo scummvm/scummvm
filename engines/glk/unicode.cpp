@@ -93,7 +93,7 @@ glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCa
 		}
 
 		if (res != 0xFFFFFFFF || res == ch) {
-			/* simple case */
+			// simple case
 			if (outcount < len)
 				outbuf[outcount] = res;
 			outcount++;
@@ -102,7 +102,7 @@ glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCa
 
 		target = (isfirst ? dest_spec_first : dest_spec_rest);
 
-		/* complicated cases */
+		// complicated cases
 		GET_CASE_SPECIAL(ch, &special);
 		if (!special) {
 			warning("inconsistency in cgunigen.c");
@@ -112,7 +112,7 @@ glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCa
 		speccount = *(ptr++);
 
 		if (speccount == 1) {
-			/* simple after all */
+			// simple after all
 			if (outcount < len)
 				outbuf[outcount] = ptr[0];
 			outcount++;

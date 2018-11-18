@@ -31,17 +31,17 @@ void Processor::z_copy_table() {
     zbyte value;
     int i;
 
-    if (zargs[1] == 0)      				/* zero table */
-
-	for (i = 0; i < size; i++)
-	    storeb((zword) (zargs[0] + i), 0);
-
-    else if ((short) size < 0 || zargs[0] > zargs[1])	/* copy forwards */
-
-	for (i = 0; i < (((short) size < 0) ? - (short) size : size); i++) {
-	    addr = zargs[0] + i;
-		LOW_BYTE(addr, value);
-	    storeb((zword) (zargs[1] + i), value);
+	if (zargs[1] == 0) {
+		// zero table
+		for (i = 0; i < size; i++)
+			storeb((zword)(zargs[0] + i), 0);
+	} else if ((short) size < 0 || zargs[0] > zargs[1])	{
+		// copy forwards
+		for (i = 0; i < (((short)size < 0) ? -(short)size : size); i++) {
+			addr = zargs[0] + i;
+			LOW_BYTE(addr, value);
+			storeb((zword)(zargs[1] + i), value);
+		}
 	} else {
 		// copy backwards
 		for (i = size - 1; i >= 0; i--) {

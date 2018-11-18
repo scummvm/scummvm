@@ -652,7 +652,7 @@ glui32 MemoryStream::getLine(char *buf, glui32 len) {
 	if (len == 0)
 		return 0;
 
-	len -= 1; /* for the terminal null */
+	len -= 1; // for the terminal null
 	if (!_unicode) {
 		if (_bufPtr >= _bufEnd) {
 			len = 0;
@@ -1294,7 +1294,7 @@ glui32 FileStream::getLineUni(glui32 *ubuf, glui32 len) {
 		ubuf[lx] = '\0';
 		return lx;
 	} else if (_textFile) {
-		len -= 1; /* for the terminal null */
+		len -= 1; // for the terminal null
 		gotNewline = false;
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
 			glui32 ch;

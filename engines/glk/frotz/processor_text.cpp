@@ -444,15 +444,13 @@ void Processor::decode_text(enum string_type st, zword addr) {
 void Processor::print_num(zword value) {
 	int i;
 
-	/* Print sign */
-
+	// Print sign
 	if ((short)value < 0) {
 		print_char('-');
 		value = -(short)value;
 	}
 
-	/* Print absolute value */
-
+	// Print absolute value
 	for (i = 10000; i != 0; i /= 10)
 		if (value >= i || i == 1)
 			print_char('0' + (value / i) % 10);

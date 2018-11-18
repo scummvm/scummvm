@@ -85,7 +85,9 @@ enum {
  */
 typedef struct giblorb_map_struct giblorb_map_t;
 
-/* giblorb_result_t: Result when you try to load a chunk. */
+/**
+ * giblorb_result_t: Result when you try to load a chunk.
+ */
 typedef struct giblorb_result_struct {
 	glui32 chunknum; // The chunk number (for use in giblorb_unload_chunk(), etc.)
 	union {

@@ -312,7 +312,8 @@ void Processor::z_set_font() {
 			store (curr_font);
 			break;
 
-		case 1: /* normal font */
+		case 1:
+			// normal font
 			prev_font = curr_font;
 			curr_font = 1;
 			zargs[0] = 0xf000;	// tickle tickle!
@@ -320,7 +321,8 @@ void Processor::z_set_font() {
 			store (prev_font);
 			break; 
 
-		case 4: /* fixed-pitch font*/
+		case 4:
+			// fixed-pitch font
 			prev_font = curr_font;
 			curr_font = 4;
 			zargs[0] = 0xf000;	// tickle tickle!
@@ -355,7 +357,8 @@ void Processor::z_set_text_style() {
 
 	if (zargs[0] == 0)
 		curstyle = 0;
-	else if (zargs[0] != 0xf000) /* not tickle time */
+	else if (zargs[0] != 0xf000)
+		// not tickle time
 		curstyle |= zargs[0];
 
 	if (h_flags & FIXED_FONT_FLAG || curr_font == 4)
