@@ -49,6 +49,11 @@ public:
 	void initialize();
 
 	/**
+	 * Returns the running interpreter type
+	 */
+	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_FROTZ; }
+
+	/**
 	 * Execute the game
 	 */
 	virtual void runGame(Common::SeekableReadStream *gameFile) override;
