@@ -148,6 +148,8 @@ struct UserOptions {
 	int _undo_slots;
 	int _script_cols;
 	int _err_report_mode;
+	uint _defaultForeground;
+	uint _defaultBackground;
 
 	/**
 	 * Constructor
