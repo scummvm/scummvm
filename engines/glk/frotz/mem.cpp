@@ -176,8 +176,8 @@ void Mem::restart_header(void) {
 		SET_BYTE(H_SCREEN_COLS, h_screen_cols);
 	}
 
-	/* It's less trouble to use font size 1x1 for V5 games, especially
-	because of a bug in the unreleased German version of "Zork 1" */
+	// It's less trouble to use font size 1x1 for V5 games, especially because of
+	// a bug in the unreleased German version of "Zork 1"
 
 	if (h_version != V6) {
 		screen_x_size = (zword)h_screen_cols;

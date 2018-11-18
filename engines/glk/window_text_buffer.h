@@ -107,17 +107,17 @@ public:
 	int _radjw;
 	int _radjn;
 
-	/* Command history. */
+	// Command history.
 	Common::Array<Common::U32String> _history;
 	int _historyPos;
 	int _historyFirst, _historyPresent;
 
-	/* for paging */
+	// for paging
 	int _lastSeen;
 	int _scrollPos;
 	int _scrollMax;
 
-	/* for line input */
+	// for line input
 	void *_inBuf;        ///< unsigned char* for latin1, glui32* for unicode
 	int _inMax;
 	long _inFence;
@@ -128,10 +128,10 @@ public:
 	glui32 _echoLineInput;
 	glui32 *_lineTerminators;
 
-	/* style hints and settings */
+	// style hints and settings
 	WindowStyle _styles[style_NUMSTYLES];
 
-	/* for copy selection */
+	// for copy selection
 	glui32 *_copyBuf;
 	int _copyPos;
 public:

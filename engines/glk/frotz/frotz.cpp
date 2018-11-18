@@ -62,7 +62,7 @@ Common::Error Frotz::saveGameData(strid_t file) {
 	int skip;
 	int i;
 
-	/* Open game file */
+	// Open game file
 
 	if ((gfp = frotzopenprompt(FILE_SAVE)) == nullptr)
 		goto finished;
@@ -71,7 +71,7 @@ Common::Error Frotz::saveGameData(strid_t file) {
 		success = save_quetzal(gfp, story_fp, blorb_ofs);
 	}
 	else {
-		/* Write game file */
+		// Write game file
 
 		fputc((int)hi(h_release), gfp);
 		fputc((int)lo(h_release), gfp);
@@ -108,15 +108,14 @@ Common::Error Frotz::saveGameData(strid_t file) {
 			else skip++;
 	}
 
-	/* Close game file and check for errors */
+	// Close game file and check for errors
 
 	if (fclose(gfp) == EOF || ferror(story_fp)) {
 		print_string("Error writing save file\n");
 		goto finished;
 	}
 
-	/* Success */
-
+	// Success
 	success = 1;
 #endif
 	return Common::kNoError;
@@ -129,8 +128,7 @@ Common::Error Frotz::loadGameData(strid_t file) {
 	zword addr;
 	int i;
 
-	/* Open game file */
-
+	// Open game file
 	if ((gfp = frotzopenprompt(FILE_RESTORE)) == nullptr)
 		goto finished;
 
@@ -138,7 +136,7 @@ Common::Error Frotz::loadGameData(strid_t file) {
 		success = restore_quetzal (gfp, story_fp, blorb_ofs);
 
 	} else {
-		/* Load game file */
+		// Load game file
 
 		release = (unsigned) fgetc (gfp) << 8;
 		release |= fgetc (gfp);
@@ -146,8 +144,7 @@ Common::Error Frotz::loadGameData(strid_t file) {
 		() fgetc (gfp);
 		() fgetc (gfp);
 
-		/* Check the release number */
-
+		// Check the release number
 		if (release == h_release) {
 
 			pc = (long) fgetc (gfp) << 16;
@@ -176,14 +173,12 @@ Common::Error Frotz::loadGameData(strid_t file) {
 				() fgetc (story_fp);
 			}
 
-			/* Check for errors */
-
+			// Check for errors
 			if (ferror (gfp) || ferror (story_fp) || addr != h_dynamic_size)
 				success = -1;
 			else
 
-				/* Success */
-
+				// Success
 				success = 2;
 
 		} else print_string ("Invalid save file\n");
@@ -191,15 +186,14 @@ Common::Error Frotz::loadGameData(strid_t file) {
 
 	if ((short) success >= 0) {
 
-		/* Close game file */
-
+		// Close game file
 		fclose (gfp);
 
 		if ((short) success > 0) {
 			zbyte old_screen_rows;
 			zbyte old_screen_cols;
 
-			/* In V3, reset the upper window. */
+			// In V3, reset the upper window.
 			if (h_version == V3)
 				split_window (0);
 

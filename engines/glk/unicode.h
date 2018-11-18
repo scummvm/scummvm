@@ -27,7 +27,7 @@
 
 namespace Glk {
 
-typedef glui32 gli_case_block_t[2]; /* upper, lower */
+typedef glui32 gli_case_block_t[2]; // upper, lower
 enum BufferChangeCase { CASE_UPPER = 0, CASE_LOWER = 1, CASE_TITLE = 2, CASE_IDENT = 3 };
 enum BufferChangeCond { COND_ALL = 0, COND_LINESTART = 1 };
 

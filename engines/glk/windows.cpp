@@ -88,7 +88,7 @@ Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
 			return nullptr;
 		}
 
-		/* ignore method and size now */
+		// ignore method and size now
 		oldparent = nullptr;
 	} else {
 		if (!splitwin) {
