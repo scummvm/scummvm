@@ -76,7 +76,6 @@ struct GlkGameDescription {
 	Common::Language _language;
 	Common::Platform _platform;
 	Common::String _filename;
-	InterpreterType _interpType;
 	Common::String _md5;
 };
 
@@ -162,7 +161,7 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	InterpreterType getInterpreterType() const { return _gameDescription._interpType; }
+	virtual InterpreterType getInterpreterType() const = 0;
 
 	/**
 	 * Returns the game's md5

@@ -120,13 +120,22 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 			return Common::kNoGameDataFoundError;
 	}
 
-	// Correct the correct engine
-	if (Glk::Frotz::FrotzMetaEngine::findGame(gameDesc._gameId.c_str()).description)
-		*engine = new Glk::Frotz::Frotz(syst, gameDesc);
-	else if (Glk::Scott::ScottMetaEngine::findGame(gameDesc._gameId.c_str()).description)
-		*engine = new Glk::Scott::Scott(syst, gameDesc);
-	else
+	// Get the MD5
+	Common::File f;
+	if (!f.open(Common::FSNode(ConfMan.get("path")).getChild(gameDesc._filename)))
 		return Common::kNoGameDataFoundError;
+
+	gameDesc._md5 = Common::computeStreamMD5AsString(f, 5000);
+	f.close();
+
+	// Correct the correct engine
+	if (Glk::Frotz::FrotzMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
+		*engine = new Glk::Frotz::Frotz(syst, gameDesc);
+	} else if (Glk::Scott::ScottMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
+		*engine = new Glk::Scott::Scott(syst, gameDesc);
+	} else {
+		return Common::kNoGameDataFoundError;
+	}
 
 	return Common::kNoError;
 }

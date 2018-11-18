@@ -167,6 +167,11 @@ public:
 	Scott(OSystem *syst, const GlkGameDescription &gameDesc);
 
 	/**
+	 * Returns the running interpreter type
+	 */
+	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_SCOTT; }
+
+	/**
 	 * Execute the game
 	 */
 	virtual void runGame(Common::SeekableReadStream *gameFile) override;

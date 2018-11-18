@@ -149,7 +149,7 @@ Common::Error GlkEngine::loadGameState(int slot) {
 	if (file == nullptr)
 		return Common::kReadingFailed;
 
-	Common::Error result = saveGameData(file);
+	Common::Error result = loadGameData(file);
 
 	file->close();
 	return result;
@@ -163,7 +163,7 @@ Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc) {
 	if (file == nullptr)
 		return Common::kWritingFailed;
 
-	Common::Error result = loadGameData(file);
+	Common::Error result = saveGameData(file);
 
 	file->close();
 	return result;
