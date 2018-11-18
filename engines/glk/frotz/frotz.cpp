@@ -50,6 +50,9 @@ void Frotz::initialize() {
 	// Call process initialization
 	Processor::initialize();
 
+	// Set the screen colors
+	garglk_set_zcolors(_defaultForeground, _defaultBackground);
+
 	// Restart the game
 	z_restart();
 }
