@@ -35,22 +35,6 @@ namespace Frotz {
 #define lo(v)	(v & 0xff)
 #define hi(v)	(v >> 8)
 
-/* There are four error reporting modes: never report errors;
- * report only the first time a given error type occurs;
- * report every time an error occurs;
- * or treat all errors as fatal errors, killing the interpreter.
- * I strongly recommend "report once" as the default. But you can compile in a
- * different default by changing the definition of ERR_DEFAULT_REPORT_MODE.
- */
-enum ErrorReport {
-	ERR_REPORT_NEVER  = 0,
-	ERR_REPORT_ONCE   = 1,
-	ERR_REPORT_ALWAYS = 2,
-	ERR_REPORT_FATAL  = 3,
-
-	ERR_DEFAULT_REPORT_MODE = ERR_REPORT_NEVER
-};
-
 /**
  * Character codes
  */
@@ -114,35 +98,6 @@ enum Version {
 	V7 = 7,
 	V8 = 8,
 	V9 = 9
-};
-
-enum ConfigFlag {
-	CONFIG_BYTE_SWAPPED = 0x01, ///< Story file is byte swapped         - V3 
-	CONFIG_TIME         = 0x02, ///< Status line displays time          - V3 
-	CONFIG_TWODISKS     = 0x04, ///< Story file occupied two disks      - V3 
-	CONFIG_TANDY        = 0x08, ///< Tandy licensed game                - V3 
-	CONFIG_NOSTATUSLINE = 0x10, ///< Interpr can't support status lines - V3 
-	CONFIG_SPLITSCREEN  = 0x20, ///< Interpr supports split screen mode - V3 
-	CONFIG_PROPORTIONAL = 0x40, ///< Interpr uses proportional font     - V3 
-	
-	CONFIG_COLOUR       = 0x01, ///< Interpr supports colour            - V5+
-	CONFIG_PICTURES	    = 0x02, ///< Interpr supports pictures	        - V6 
-	CONFIG_BOLDFACE     = 0x04, ///< Interpr supports boldface style    - V4+
-	CONFIG_EMPHASIS     = 0x08, ///< Interpr supports emphasis style    - V4+
-	CONFIG_FIXED        = 0x10, ///< Interpr supports fixed width style - V4+
-	CONFIG_SOUND	    = 0x20, ///< Interpr supports sound             - V6 
-	CONFIG_TIMEDINPUT   = 0x80, ///< Interpr supports timed input       - V4+
-	
-	SCRIPTING_FLAG	  = 0x0001, ///< Outputting to transscription file  - V1+
-	FIXED_FONT_FLAG   = 0x0002, ///< Use fixed width font               - V3+
-	REFRESH_FLAG 	  = 0x0004, ///< Refresh the screen                 - V6 
-	GRAPHICS_FLAG	  = 0x0008, ///< Game wants to use graphics         - V5+
-	OLD_SOUND_FLAG	  = 0x0010, ///< Game wants to use sound effects    - V3 
-	UNDO_FLAG	  = 0x0010, ///< Game wants to use UNDO feature     - V5+
-	MOUSE_FLAG	  = 0x0020, ///< Game wants to use a mouse          - V5+
-	COLOUR_FLAG	  = 0x0040, ///< Game wants to use colours          - V5+
-	SOUND_FLAG	  = 0x0080, ///< Game wants to use sound effects    - V5+
-	MENU_FLAG	  = 0x0100  ///< Game wants to use menus            - V6 
 };
 
 enum {
@@ -248,36 +203,6 @@ enum FontStyle {
 typedef byte zbyte;
 typedef uint zchar;
 typedef uint16 zword;
-
-/**
- * User options
- */
-struct UserOptions {
-	int _attribute_assignment;
-	int _attribute_testing;
-	int _context_lines;
-	int _object_locating;
-	int _object_movement;
-	int _left_margin;
-	int _right_margin;
-	bool _ignore_errors;
-	bool _piracy;
-	int _undo_slots;
-	int _expand_abbreviations;
-	int _script_cols;
-	bool _save_quetzal;
-	int _err_report_mode;
-	bool _sound;
-	bool _user_tandy_bit;
-
-	UserOptions() : _attribute_assignment(0), _attribute_testing(0),
-		_context_lines(0), _object_locating(0), _object_movement(0),
-		_left_margin(0), _right_margin(0), _ignore_errors(false), _piracy(false),
-		_undo_slots(MAX_UNDO_SLOTS), _expand_abbreviations(0), _script_cols(80),
-		_save_quetzal(true), _err_report_mode(ERR_DEFAULT_REPORT_MODE), _sound(true),
-		_user_tandy_bit(false) {
-	}
-};
 
 #define MAX_NESTING 16
 struct Redirect {

@@ -304,7 +304,7 @@ void Processor::call(zword routine, int argc, zword *args, int ct) {
 	*--_sp = (zword)(pc >> 9);
 	*--_sp = (zword)(pc & 0x1ff);
 	*--_sp = (zword)(_fp - _stack - 1);
-	*--_sp = (zword)(argc | (ct << (_save_quetzal ? 12 : 8)));
+	*--_sp = (zword)(argc | (ct << (_quetzal ? 12 : 8)));
 
 	_fp = _sp;
 	_frameCount++;
@@ -337,7 +337,7 @@ void Processor::call(zword routine, int argc, zword *args, int ct) {
 	if (_sp - _stack < count)
 		runtimeError(ERR_STK_OVF);
 
-	if (_save_quetzal)
+	if (_quetzal)
 		_fp[0] |= (zword)count << 8;	// Save local var count for Quetzal.
 
 	value = 0;
@@ -363,7 +363,7 @@ void Processor::ret(zword value) {
 
 	_sp = _fp;
 
-	ct = *_sp++ >> (_save_quetzal ? 12 : 8);
+	ct = *_sp++ >> (_quetzal ? 12 : 8);
 	_frameCount--;
 	_fp = _stack + 1 + *_sp++;
 	pc = *_sp++;
@@ -496,11 +496,11 @@ void Processor::__illegal__() {
 }
 
 void Processor::z_catch() {
-	store(_save_quetzal ? _frameCount : (zword)(_fp - _stack));
+	store(_quetzal ? _frameCount : (zword)(_fp - _stack));
 }
 
 void Processor::z_throw() {
-	if (_save_quetzal) {
+	if (_quetzal) {
 		if (zargs[1] > _frameCount)
 			runtimeError(ERR_BAD_FRAME);
 

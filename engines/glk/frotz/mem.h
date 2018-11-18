@@ -24,7 +24,7 @@
 #define GLK_FROTZ_MEM
 
 #include "glk/frotz/frotz_types.h"
-#include "glk/frotz/header.h"
+#include "glk/frotz/config.h"
 
 namespace Glk {
 namespace Frotz {
