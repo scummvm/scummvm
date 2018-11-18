@@ -49,6 +49,11 @@ public:
 	PairWindow(Windows *windows, glui32 method, Window *key, glui32 size);
 
 	/**
+	 * Destructor
+	 */
+	~PairWindow();
+
+	/**
 	 * Rearranges the window
 	 */
 	virtual void rearrange(const Rect &box) override;

@@ -38,6 +38,11 @@ PairWindow::PairWindow(Windows *windows, glui32 method, Window *key, glui32 size
 	_type = wintype_Pair;
 }
 
+PairWindow::~PairWindow() {
+	delete _child1;
+	delete _child2;
+}
+
 void PairWindow::rearrange(const Rect &box) {
 	Rect box1, box2;
 	int min, diff, split, splitwid, max;
