@@ -62,7 +62,10 @@ void GlkAPI::glk_exit(void) {
 	glk_put_string("[ press any key to exit ]");
 	_events->waitForPress();
 
+	// Trigger a ScumMVM shutdown of game
 	quitGame();
+	Common::Event e;
+	g_system->getEventManager()->pollEvent(e);
 }
 
 void GlkAPI::glk_set_interrupt_handler(void(*func)(void)) {
