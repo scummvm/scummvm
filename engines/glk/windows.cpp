@@ -509,12 +509,20 @@ Window::~Window() {
 	if (g_vm->gli_unregister_obj)
 		(*g_vm->gli_unregister_obj)(this, gidisp_Class_Window, _dispRock);
 
+	// Remove the window from any parent
+	PairWindow *parent = dynamic_cast<PairWindow *>(_parent);
+	if (parent && parent->_child1 == this)
+		parent->_child1 = nullptr;
+	if (parent && parent->_child2 == this)
+		parent->_child2 = nullptr;
 
+	// Delete any attached window stream
 	_echoStream = nullptr;
 	delete _stream;
 
 	delete[] _lineTerminatorsBase;
 
+	// Remove the window from the master list of windows
 	Window *prev = _prev;
 	Window *next = _next;
 
