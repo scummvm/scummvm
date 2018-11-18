@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	frotz/detection.o \
 	frotz/frotz.o \
 	frotz/glk_interface.o \
+	frotz/header.o \
 	frotz/mem.o \
 	frotz/processor.o \
 	frotz/processor_buffer.o \
