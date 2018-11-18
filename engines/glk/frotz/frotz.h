@@ -54,14 +54,14 @@ public:
 	virtual void runGame(Common::SeekableReadStream *gameFile) override;
 
 	/**
-	 * Load a savegame
+	 * Load a savegame from the passed stream
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error loadGameData(strid_t file) override;
 
 	/**
-	 * Save the game
+	 * Save the game to the passed stream
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual Common::Error saveGameData(strid_t file) override;
 };
 
 extern Frotz *g_vm;

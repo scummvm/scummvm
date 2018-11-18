@@ -30,6 +30,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "glk/glk_types.h"
+#include "glk/streams.h"
 
 namespace Glk {
 
@@ -181,6 +182,11 @@ public:
 	}
 
 	/**
+	 * Display a message in a GUI dialog
+	 */
+	void GUIError(const char *msg, ...);
+
+	/**
 	 * Return the filename for a given save slot
 	 */
 	Common::String getSaveName(uint slot) const {
@@ -188,9 +194,34 @@ public:
 	}
 
 	/**
-	 * Display a message in a GUI dialog
+	 * Prompt the user for a savegame to load, and then load it
 	 */
-	void GUIError(const char *msg, ...);
+	Common::Error loadGame();
+
+	/**
+	 * Prompt the user to save their game, and then save it
+	 */
+	Common::Error saveGame();
+
+	/**
+	 * Load a savegame from a given slot
+	 */
+	virtual Common::Error loadGameState(int slot) override;
+
+	/**
+	 * Save the game to a given slot
+	 */
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+
+	/**
+	 * Load a savegame from the passed file
+	 */
+	virtual Common::Error loadGameData(strid_t file) = 0;
+
+	/**
+	 * Save the game to the passed file
+	 */
+	virtual Common::Error saveGameData(strid_t file) = 0;
 };
 
 extern GlkEngine *g_vm;

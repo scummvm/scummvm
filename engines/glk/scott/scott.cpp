@@ -309,7 +309,7 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	if (loud)
 		debug("Reading %d actions.", na);
 
-	for (uint idx = 0; idx < na + 1; ++idx) {
+	for (int idx = 0; idx < na + 1; ++idx) {
 		Action &a = _actions[idx];
 		readInts(f, 8,
 			&a._vocab, &a._condition[0], &a._condition[1], &a._condition[2],
@@ -503,26 +503,8 @@ void Scott::lineInput(char *buf, size_t n) {
 	buf[ev.val1] = 0;
 }
 
-void Scott::saveGame(void) {
-	frefid_t ref = glk_fileref_create_by_prompt(fileusage_TextMode | fileusage_SavedGame,
-	               filemode_Write, 0);
-	if (ref == nullptr)
-		return;
-
-	int slot = ref->_slotNumber;
-	Common::String desc = ref->_description;
-	glk_fileref_destroy(ref);
-
-	saveGameState(slot, desc);
-}
-
-Common::Error Scott::saveGameState(int slot, const Common::String &desc) {
+Common::Error Scott::saveGameData(strid_t file) {
 	Common::String msg;
-	FileReference ref(slot, desc, fileusage_TextMode | fileusage_SavedGame);
-
-	strid_t file = glk_stream_open_file(&ref, filemode_Write, 0);
-	if (file == nullptr)
-		return Common::kWritingFailed;
 
 	for (int ct = 0; ct < 16; ct++) {
 		msg = Common::String::format("%d %d\n", _counters[ct], _roomSaved[ct]);
@@ -539,36 +521,15 @@ Common::Error Scott::saveGameState(int slot, const Common::String &desc) {
 		glk_put_string_stream(file, msg.c_str());
 	}
 
-	glk_stream_close(file, nullptr);
 	output("Saved.\n");
-
 	return Common::kNoError;
 }
 
-void Scott::loadGame(void) {
-	frefid_t ref = glk_fileref_create_by_prompt(fileusage_TextMode | fileusage_SavedGame,
-	               filemode_Read, 0);
-	if (ref == nullptr)
-		return;
-
-	int slotNumber = ref->_slotNumber;
-	glk_fileref_destroy(ref);
-
-	loadGameState(slotNumber);
-}
-
-Common::Error Scott::loadGameState(int slot) {
-	strid_t file;
+Common::Error Scott::loadGameData(strid_t file) {
 	char buf[128];
 	int ct = 0;
 	short lo;
 	short darkFlag;
-
-	FileReference ref(slot, "", fileusage_SavedGame | fileusage_TextMode);
-
-	file = glk_stream_open_file(&ref, filemode_Read, 0);
-	if (file == nullptr)
-		return Common::kReadingFailed;
 
 	for (ct = 0; ct < 16; ct++) {
 		glk_get_line_stream(file, buf, sizeof buf);

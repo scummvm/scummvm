@@ -117,4 +117,56 @@ void GlkEngine::GUIError(const char *msg, ...) {
 	GUIErrorMessage(buffer);
 }
 
+Common::Error GlkEngine::loadGame() {
+	frefid_t ref = _streams->createByPrompt(fileusage_BinaryMode | fileusage_SavedGame,
+		filemode_Read, 0);
+	if (ref == nullptr)
+		return Common::kReadingFailed;
+
+	int slotNumber = ref->_slotNumber;
+	_streams->deleteRef(ref);
+
+	return loadGameState(slotNumber);
+}
+
+Common::Error GlkEngine::saveGame() {
+	frefid_t ref = _streams->createByPrompt(fileusage_BinaryMode | fileusage_SavedGame,
+		filemode_Write, 0);
+	if (ref == nullptr)
+		return Common::kWritingFailed;
+
+	int slot = ref->_slotNumber;
+	Common::String desc = ref->_description;
+	_streams->deleteRef(ref);
+
+	return saveGameState(slot, desc);
+}
+
+Common::Error GlkEngine::loadGameState(int slot) {
+	FileReference ref(slot, "", fileusage_SavedGame | fileusage_TextMode);
+
+	strid_t file = _streams->openFileStream(&ref, filemode_Read);
+	if (file == nullptr)
+		return Common::kReadingFailed;
+
+	Common::Error result = saveGameData(file);
+
+	file->close();
+	return result;
+}
+
+Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc) {
+	Common::String msg;
+	FileReference ref(slot, desc, fileusage_BinaryMode | fileusage_SavedGame);
+
+	strid_t file = _streams->openFileStream(&ref, filemode_Write);
+	if (file == nullptr)
+		return Common::kWritingFailed;
+
+	Common::Error result = loadGameData(file);
+
+	file->close();
+	return result;
+}
+
 } // End of namespace Glk
