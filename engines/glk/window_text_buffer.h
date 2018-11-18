@@ -26,6 +26,8 @@
 #include "glk/windows.h"
 #include "glk/picture.h"
 #include "glk/speech.h"
+#include "common/array.h"
+#include "common/ustr.h"
 
 namespace Glk {
 
@@ -106,7 +108,7 @@ public:
 	int _radjn;
 
 	/* Command history. */
-	glui32 *_history[HISTORYLEN];
+	Common::Array<Common::U32String> _history;
 	int _historyPos;
 	int _historyFirst, _historyPresent;
 

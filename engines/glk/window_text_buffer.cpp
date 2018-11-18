@@ -37,13 +37,13 @@ namespace Glk {
 
 
 TextBufferWindow::TextBufferWindow(Windows *windows, uint32 rock) : Window(windows, rock),
-	_historyPos(0), _historyFirst(0), _historyPresent(0), _lastSeen(0), _scrollPos(0),
-	_scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1), _inBuf(nullptr),
-	_lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0), _ladjn(0),
-	_radjn(0), _numChars(0), _chars(nullptr), _attrs(nullptr),
-	_spaced(0), _dashed(0), _copyBuf(0), _copyPos(0) {
+		_historyPos(0), _historyFirst(0), _historyPresent(0), _lastSeen(0), _scrollPos(0),
+		_scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1), _inBuf(nullptr),
+		_lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0), _ladjn(0),
+		_radjn(0), _numChars(0), _chars(nullptr), _attrs(nullptr),
+		_spaced(0), _dashed(0), _copyBuf(0), _copyPos(0) {
 	_type = wintype_TextBuffer;
-	Common::fill(&_history[0], &_history[HISTORYLEN], (glui32 *)nullptr);
+	_history.resize(HISTORYLEN);
 
 	_lines.resize(SCROLLBACK);
 	_chars = _lines[0]._chars;
@@ -1239,6 +1239,7 @@ void TextBufferWindow::acceptReadChar(glui32 arg) {
 
 void TextBufferWindow::acceptReadLine(glui32 arg) {
 	glui32 *cx;
+	Common::U32String s;
 	int len;
 
 	if (_height < 2)
@@ -1268,23 +1269,17 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 			return;
 		if (_historyPos == _historyPresent) {
 			len = _numChars - _inFence;
-			if (len > 0) {
-				cx = new glui32[len + 1];
-				memcpy(cx, &(_chars[_inFence]), len * 4);
-				cx[len] = 0;
-			} else {
-				cx = nullptr;
-			}
-			if (_history[_historyPos])
-				free(_history[_historyPos]);
-			_history[_historyPos] = cx;
+
+			if (len > 0)
+				s = Common::U32String(&(_chars[_inFence]), len);
+			_history[_historyPos] = s;
 		}
+
 		_historyPos--;
 		if (_historyPos < 0)
 			_historyPos += HISTORYLEN;
-		cx = _history[_historyPos];
-		putTextUni(cx, cx ? strlen_uni(cx) : 0, _inFence,
-		           _numChars - _inFence);
+		s = _history[_historyPos];
+		putTextUni(s.c_str(), s.size(), _inFence, _numChars - _inFence);
 		break;
 
 	case keycode_Down:
@@ -1293,9 +1288,8 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 		_historyPos++;
 		if (_historyPos >= HISTORYLEN)
 			_historyPos -= HISTORYLEN;
-		cx = _history[_historyPos];
-		putTextUni(cx, cx ? strlen_uni(cx) : 0, _inFence,
-		           _numChars - _inFence);
+		s = _history[_historyPos];
+		putTextUni(s.c_str(), s.size(), _inFence, _numChars - _inFence);
 		break;
 
 	// Cursor movement keys, during line input.
@@ -1377,7 +1371,7 @@ void TextBufferWindow::acceptLine(glui32 keycode) {
 	int ix;
 	int len, olen;
 	void *inbuf;
-	glui32 *s, *o;
+	Common::U32String s, o;
 	int inmax;
 	gidispatch_rock_t inarrayrock;
 	int unicode = _lineRequestUni;
@@ -1407,17 +1401,13 @@ void TextBufferWindow::acceptLine(glui32 keycode) {
 	* A history entry should not repeat the string from the entry before it.
 	*/
 	if (len) {
-		s = new glui32[len + 1];
-		memcpy(s, _chars + _inFence, len * sizeof(glui32));
-		s[len] = 0;
-
-		free(_history[_historyPresent]);
-		_history[_historyPresent] = nullptr;
+		s = Common::U32String(_chars + _inFence, len);
+		_history[_historyPresent].clear();
 
 		o = _history[(_historyPresent == 0 ? HISTORYLEN : _historyPresent) - 1];
-		olen = o ? strlen_uni(o) : 0;
+		olen = o.size();
 
-		if (len != olen || memcmp(s, o, olen * sizeof(glui32))) {
+		if (len != olen || !s.equals(o)) {
 			_history[_historyPresent] = s;
 
 			_historyPresent++;
@@ -1429,8 +1419,6 @@ void TextBufferWindow::acceptLine(glui32 keycode) {
 				if (_historyFirst == HISTORYLEN)
 					_historyFirst = 0;
 			}
-		} else {
-			free(s);
 		}
 	}
 
