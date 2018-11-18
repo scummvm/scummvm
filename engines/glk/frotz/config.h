@@ -20,14 +20,66 @@
  *
  */
 
-#ifndef GLK_FROTZ_HEADER
-#define GLK_FROTZ_HEADER
+#ifndef GLK_FROTZ_CONFIG
+#define GLK_FROTZ_CONFIG
 
 #include "glk/frotz/frotz_types.h"
 
 namespace Glk {
 namespace Frotz {
 
+/**
+ * Configuration flags
+ */
+enum ConfigFlag {
+	CONFIG_BYTE_SWAPPED = 0x01, ///< Story file is byte swapped         - V3 
+	CONFIG_TIME         = 0x02, ///< Status line displays time          - V3 
+	CONFIG_TWODISKS     = 0x04, ///< Story file occupied two disks      - V3 
+	CONFIG_TANDY        = 0x08, ///< Tandy licensed game                - V3 
+	CONFIG_NOSTATUSLINE = 0x10, ///< Interpr can't support status lines - V3 
+	CONFIG_SPLITSCREEN  = 0x20, ///< Interpr supports split screen mode - V3 
+	CONFIG_PROPORTIONAL = 0x40, ///< Interpr uses proportional font     - V3 
+	
+	CONFIG_COLOUR       = 0x01, ///< Interpr supports colour            - V5+
+	CONFIG_PICTURES	    = 0x02, ///< Interpr supports pictures	        - V6 
+	CONFIG_BOLDFACE     = 0x04, ///< Interpr supports boldface style    - V4+
+	CONFIG_EMPHASIS     = 0x08, ///< Interpr supports emphasis style    - V4+
+	CONFIG_FIXED        = 0x10, ///< Interpr supports fixed width style - V4+
+	CONFIG_SOUND	    = 0x20, ///< Interpr supports sound             - V6 
+	CONFIG_TIMEDINPUT   = 0x80, ///< Interpr supports timed input       - V4+
+	
+	SCRIPTING_FLAG	  = 0x0001, ///< Outputting to transscription file  - V1+
+	FIXED_FONT_FLAG   = 0x0002, ///< Use fixed width font               - V3+
+	REFRESH_FLAG 	  = 0x0004, ///< Refresh the screen                 - V6 
+	GRAPHICS_FLAG	  = 0x0008, ///< Game wants to use graphics         - V5+
+	OLD_SOUND_FLAG	  = 0x0010, ///< Game wants to use sound effects    - V3 
+	UNDO_FLAG	  = 0x0010, ///< Game wants to use UNDO feature     - V5+
+	MOUSE_FLAG	  = 0x0020, ///< Game wants to use a mouse          - V5+
+	COLOUR_FLAG	  = 0x0040, ///< Game wants to use colours          - V5+
+	SOUND_FLAG	  = 0x0080, ///< Game wants to use sound effects    - V5+
+	MENU_FLAG	  = 0x0100  ///< Game wants to use menus            - V6 
+};
+
+/**
+ * There are four error reporting modes: never report errors;
+ * report only the first time a given error type occurs;
+ * report every time an error occurs;
+ * or treat all errors as fatal errors, killing the interpreter.
+ * I strongly recommend "report once" as the default. But you can compile in a
+ * different default by changing the definition of ERR_DEFAULT_REPORT_MODE.
+ */
+enum ErrorReport {
+	ERR_REPORT_NEVER  = 0,
+	ERR_REPORT_ONCE   = 1,
+	ERR_REPORT_ALWAYS = 2,
+	ERR_REPORT_FATAL  = 3,
+
+	ERR_DEFAULT_REPORT_MODE = ERR_REPORT_NEVER
+};
+
+/**
+ * Enumeration of the game header byte indexes
+ */
 enum HeaderByte {
 	H_VERSION             = 0,
 	H_CONFIG              = 1,
@@ -64,6 +116,9 @@ enum HeaderByte {
 	H_USER_NAME           = 56
 };
 
+/**
+ * Header extension fields
+ */
 enum {
 	HX_TABLE_SIZE    = 0,
 	HX_MOUSE_X       = 1,
@@ -72,6 +127,32 @@ enum {
 	HX_FLAGS         = 4,
 	HX_FORE_COLOUR   = 5,
 	HX_BACK_COLOUR   = 6
+};
+
+/**
+ * User options
+ */
+struct UserOptions {
+	bool _attribute_assignment;
+	bool _attribute_testing;
+	bool _object_locating;
+	bool _object_movement;
+	bool _expand_abbreviations;
+	bool _ignore_errors;
+	bool _piracy;
+	bool _quetzal;
+	bool _sound;
+	bool _tandyBit;
+	int _left_margin;
+	int _right_margin;
+	int _undo_slots;
+	int _script_cols;
+	int _err_report_mode;
+
+	/**
+	 * Constructor
+	 */
+	UserOptions();
 };
 
 /**
@@ -133,19 +214,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Header() : h_version(0), h_config(0), h_release(0), h_resident_size(0), h_start_pc(0),
-			h_dictionary(0), h_objects(0), h_globals(0), h_dynamic_size(0), h_flags(0),
-			h_abbreviations(0), h_file_size(0), h_checksum(0), h_interpreter_number(0),
-			h_interpreter_version(0), h_screen_rows(0), h_screen_cols(0), h_screen_width(0),
-			h_screen_height(0), h_font_height(1), h_font_width(1), h_functions_offset(0),
-			h_strings_offset(0), h_default_background(0), h_default_foreground(0),
-			h_terminating_keys(0), h_line_width(0), h_standard_high(1), h_standard_low(1),
-			h_alphabet(0), h_extension_table(0),
-			hx_table_size(0), hx_mouse_x(0), hx_mouse_y(0), hx_unicode_table(0),
-			hx_flags(0), hx_fore_colour(0), hx_back_colour(0), _storyId(UNKNOWN) {
-		Common::fill(&h_serial[0], &h_serial[6], '\0');
-		Common::fill(&h_user_name[0], &h_user_name[8], '\0');
-	}
+	Header();
 
 	/**
 	 * Load the header

@@ -21,10 +21,10 @@ MODULE_OBJS := \
 	window_pair.o \
 	window_text_buffer.o \
 	window_text_grid.o \
+	frotz/config.o \
 	frotz/detection.o \
 	frotz/frotz.o \
 	frotz/glk_interface.o \
-	frotz/header.o \
 	frotz/mem.o \
 	frotz/processor.o \
 	frotz/processor_buffer.o \

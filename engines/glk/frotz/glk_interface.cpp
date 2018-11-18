@@ -110,7 +110,7 @@ void GlkInterface::initialize() {
 	 * Icky magic bit setting
 	 */
 
-	if (h_version == V3 && _user_tandy_bit)
+	if (h_version == V3 && _tandyBit)
 		h_config |= CONFIG_TANDY;
 
 	if (h_version == V3 && gos_upper)
