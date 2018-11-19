@@ -1063,6 +1063,7 @@ const Feature s_features[] = {
 	{       "keymapper",     "ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
 	{   "eventrecorder", "ENABLE_EVENTRECORDER",         "", false, "Event recorder support"},
 	{         "updates",          "USE_UPDATES",         "", false, "Updates support"},
+	{         "dialogs",       "USE_SYSDIALOGS",         "", true,  "System dialogs support"},
 	{      "langdetect",       "USE_DETECTLANG",         "", true,  "System language detection support" } // This feature actually depends on "translation", there
 	                                                                                                      // is just no current way of properly detecting this...
 };

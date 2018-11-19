@@ -49,6 +49,9 @@ class TaskbarManager;
 #if defined(USE_UPDATES)
 class UpdateManager;
 #endif
+#if defined(USE_SYSDIALOGS)
+class DialogManager;
+#endif
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
@@ -177,6 +180,15 @@ protected:
 	 * @note _updateManager is deleted by the OSystem destructor.
 	 */
 	Common::UpdateManager *_updateManager;
+#endif
+
+#if defined(USE_SYSDIALOGS)
+	/**
+	 * No default value is provided for _dialogManager by OSystem.
+	 *
+	 * @note _dialogManager is deleted by the OSystem destructor.
+	 */
+	Common::DialogManager *_dialogManager;
 #endif
 
 	/**
@@ -1302,6 +1314,17 @@ public:
 	 */
 	virtual Common::UpdateManager *getUpdateManager() {
 		return _updateManager;
+	}
+#endif
+
+#if defined(USE_SYSDIALOGS)
+	/**
+	 * Returns the DialogManager, used to handle system dialogs.
+	 *
+	 * @return the DialogManager for the current architecture
+	 */
+	virtual Common::DialogManager *getDialogManager() {
+		return _dialogManager;
 	}
 #endif
 
