@@ -21,6 +21,8 @@
  */
 
 #include "glk/picture.h"
+#include "glk/glk.h"
+#include "glk/screen.h"
 #include "common/file.h"
 #include "image/jpeg.h"
 #include "image/png.h"
@@ -29,8 +31,8 @@ namespace Glk {
 
 void Pictures::clear() {
 	for (uint idx = 0; idx < _store.size(); ++idx) {
-		delete _store[idx]._picture;
-		delete _store[idx]._scaled;
+		_store[idx]._picture->decrement();
+		_store[idx]._scaled->decrement();
 	}
 
 	_store.clear();
@@ -139,6 +141,7 @@ Picture *Pictures::scale(Picture *src, size_t sx, size_t sy) {
 	dst->transBlitFrom(*src, src->getBounds(), dst->getBounds(), (uint)-1);
 
 	storeScaled(dst);
+	return dst;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -154,9 +157,9 @@ void Picture::decrement() {
 	}
 }
 
-void Picture::drawPicture(int x0, int y0, int dx0, int dy0, int dx1, int dy1) {
-	// TODO: drawPicture
+void Picture::drawPicture(const Common::Point &destPos, const Common::Rect &box) {
+	Graphics::Surface s = g_vm->_screen->getSubArea(box);
+	s.copyRectToSurface(*this, destPos.x - box.left, destPos.y, getBounds());
 }
-
 
 } // End of namespace Glk

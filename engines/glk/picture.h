@@ -61,7 +61,7 @@ public:
 	/**
 	 * Draw the picture
 	 */
-	void drawPicture(int x0, int y0, int dx0, int dy0, int dx1, int dy1);
+	void drawPicture(const Common::Point &destPos, const Common::Rect &box);
 };
 
 /**
