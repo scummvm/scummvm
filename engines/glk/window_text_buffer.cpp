@@ -286,7 +286,7 @@ glui32 TextBufferWindow::drawPicture(glui32 image, glui32 align, glui32 scaled, 
 
 	if (scaled) {
 		Picture *tmp;
-		tmp = pic->scale(width, height);
+		tmp = g_vm->_pictures->scale(pic, width, height);
 		pic = tmp;
 	}
 

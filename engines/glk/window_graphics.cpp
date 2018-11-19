@@ -186,7 +186,7 @@ void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int h
 	int w, h;
 
 	if (width != src->w || height != src->h) {
-		src = src->scale(width, height);
+		src = g_vm->_pictures->scale(src, width, height);
 		if (!src)
 			return;
 	}
