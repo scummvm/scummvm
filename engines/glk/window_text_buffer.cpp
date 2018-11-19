@@ -274,13 +274,13 @@ glui32 TextBufferWindow::drawPicture(glui32 image, glui32 align, glui32 scaled, 
 	glui32 hyperlink;
 	int error;
 
-	pic = Picture::load(image);
+	pic = g_vm->_pictures->load(image);
 
 	if (!pic)
 		return false;
 
 	if (!_imageLoaded) {
-		g_vm->_picList->increment();
+		g_vm->_pictures->increment();
 		_imageLoaded = true;
 	}
 

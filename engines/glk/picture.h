@@ -23,20 +23,15 @@
 #ifndef GLK_PICTURE_H
 #define GLK_PICTURE_H
 
-#include "graphics/surface.h"
+#include "common/array.h"
+#include "graphics/managed_surface.h"
 
 namespace Glk {
 
-class PicList {
-public:
-	void increment();
-
-	void decrement();
-};
-
-struct Picture : Graphics::Surface {
-public:
-	static Picture *load(uint32 id);
+/**
+ * Picture/image class
+ */
+struct Picture : Graphics::ManagedSurface {
 public:
 	int _refCount;
 	uint32 _id;
@@ -45,7 +40,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Picture() : Graphics::Surface(), _refCount(0), _id(0), _scaled(0) {}
+	Picture() : Graphics::ManagedSurface(), _refCount(0), _id(0), _scaled(0) {}
 
 	/**
 	 * Increment reference counter
@@ -66,6 +61,79 @@ public:
 	 * Draw the picture
 	 */
 	void drawPicture(int x0, int y0, int dx0, int dy0, int dx1, int dy1);
+};
+
+/**
+ * Picture entry in the in-memory store
+ */
+struct PictureEntry {
+	Picture *_picture;
+	Picture *_scaled;
+	PictureEntry() : _picture(nullptr), _scaled(nullptr) {}
+};
+
+/**
+ * Pictures manager
+ */
+class Pictures {
+private:
+	int _refCount;
+	Common::Array<PictureEntry> _store;
+private:
+	/**
+	 * Stores an original picture in the store
+	 */
+	void storeOriginal(Picture *pic);
+
+	/**
+	 * Stores a scaled picture in the store
+	 */
+	void storeScaled(Picture *pic);
+public:
+	/**
+	 * Constructor
+	 */
+	Pictures() : _refCount(0) {}
+
+	/**
+	 * Destructor
+	 */
+	~Pictures() { clear(); }
+
+	/**
+	 * Clear the picture list
+	 */
+	void clear();
+
+	/**
+	 * Increments the count of the number of pictures in use
+	 */
+	void increment();
+
+	/**
+	 * Decrements the count of the number of pictures in use
+	 */
+	void decrement();
+
+	/**
+	 * Searches for an existing picture entry
+	 */
+	PictureEntry *search(uint id);
+
+	/**
+	 * Stores a picture in the store
+	 */
+	void store(Picture *pic);
+
+	/**
+	 * Retrieves a picture from the store
+	 */
+	Picture *retrieve(uint id, bool scaled);
+
+	/**
+	 * Load a given picture
+	 */
+	Picture *load(uint32 id);
 };
 
 } // End of namespace Glk
