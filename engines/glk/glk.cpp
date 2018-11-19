@@ -68,7 +68,7 @@ void GlkEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	initGraphicsMode();
-	_conf = new Conf();
+	_conf = new Conf(getInterpreterType());
 	_screen = new Screen();
 
 	_clipboard = new Clipboard();

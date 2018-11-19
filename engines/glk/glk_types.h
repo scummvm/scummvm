@@ -33,6 +33,27 @@ typedef int32 glsi32;
 class Window;
 
 /**
+ * List of the different sub-engines the engine will likely eventually support
+ */
+enum InterpreterType {
+	INTERPRETER_ADVSYS = 0,
+	INTERPRETER_AGILITY = 1,
+	INTERPRETER_ALAN2 = 2,
+	INTERPRETER_ALAN3 = 3,
+	INTERPRETER_BOCFEL = 4,
+	INTERPRETER_FROTZ = 5,
+	INTERPRETER_GEAS = 6,
+	INTERPRETER_HUGO = 7,
+	INTERPRETER_JACL = 8,
+	INTERPRETER_LEVEL9 = 9,
+	INTERPRETER_MAGNETIC = 10,
+	INTERPRETER_NITFOL = 11,
+	INTERPRETER_SCARE = 12,
+	INTERPRETER_SCOTT = 13,
+	INTERPRETER_TADS = 14
+};
+
+/**
  * These are the compile-time conditionals that reveal various Glk optional modules.
  */
 #define GLK_MODULE_LINE_ECHO

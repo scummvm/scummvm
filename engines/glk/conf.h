@@ -29,6 +29,11 @@
 
 namespace Glk {
 
+
+
+/**
+ * Engine configuration
+ */
 class Conf {
 private:
 	/**
@@ -126,7 +131,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Conf();
+	Conf(InterpreterType interpType);
 };
 
 extern Conf *g_conf;
