@@ -40,7 +40,13 @@ public:
 	/**
 	 * Constructor
 	 */
-	Picture() : Graphics::ManagedSurface(), _refCount(0), _id(0), _scaled(0) {}
+	Picture() : Graphics::ManagedSurface(), _refCount(0), _id(0), _scaled(false) {}
+
+	/**
+	 * Constructor
+	 */
+	Picture(int width, int height, const Graphics::PixelFormat &format) :
+		Graphics::ManagedSurface(width, height, format), _refCount(0), _id(0), _scaled(false) {}
 
 	/**
 	 * Increment reference counter
@@ -51,11 +57,6 @@ public:
 	 * Decrement reference counter
 	 */
 	void decrement();
-
-	/**
-	 * Rescale the picture to a new picture of a given size
-	 */
-	Picture *scale(int sx, int sy);
 
 	/**
 	 * Draw the picture
@@ -134,6 +135,11 @@ public:
 	 * Load a given picture
 	 */
 	Picture *load(uint32 id);
+
+	/**
+	 * Rescale the passed picture to a new picture of a given size
+	 */
+	Picture *scale(Picture *src, size_t sx, size_t sy);
 };
 
 } // End of namespace Glk

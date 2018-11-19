@@ -126,6 +126,21 @@ Picture *Pictures::load(uint32 id) {
     return pic;
 }
 
+Picture *Pictures::scale(Picture *src, size_t sx, size_t sy) {
+	// Check for the presence of an already scaled version of that size
+	Picture *dst = retrieve(src->_id, true);
+	if (dst && dst->w == sx && dst->h == sy)
+		return dst;
+
+	// Create a new picture of the destination size and rescale the source picture
+	dst = new Picture(sx, sy, src->format);
+	dst->_id = src->_id;
+	dst->_scaled = true;
+	dst->transBlitFrom(*src, src->getBounds(), dst->getBounds(), (uint)-1);
+
+	storeScaled(dst);
+}
+
 /*--------------------------------------------------------------------------*/
 
 void Picture::increment() {
@@ -137,11 +152,6 @@ void Picture::decrement() {
 		// No longer any references to this picture, so remove it
 		delete this;
 	}
-}
-
-Picture *Picture::scale(int sx, int sy) {
-	// TODO: gli_picture_scale
-	return nullptr;
 }
 
 void Picture::drawPicture(int x0, int y0, int dx0, int dy0, int dx1, int dy1) {
