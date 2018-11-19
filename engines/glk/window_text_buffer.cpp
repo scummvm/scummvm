@@ -1070,7 +1070,8 @@ void TextBufferWindow::redraw() {
 
 		if (ln->_lPic) {
 			if (y < y1 && y + ln->_lPic->h > y0) {
-				ln->_lPic->drawPicture(x0 / GLI_SUBPIX, y, x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1);
+				ln->_lPic->drawPicture(Point(x0 / GLI_SUBPIX, y),
+					Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
 				link = ln->_lHyper;
 				hy0 = y > y0 ? y : y0;
 				hy1 = y + ln->_lPic->h < y1 ? y + ln->_lPic->h : y1;
@@ -1084,8 +1085,8 @@ void TextBufferWindow::redraw() {
 
 		if (ln->_rPic) {
 			if (y < y1 && y + ln->_rPic->h > y0) {
-				ln->_rPic->drawPicture(x1 / GLI_SUBPIX - ln->_rPic->w, y,
-				                       x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1);
+				ln->_rPic->drawPicture(Point(x1 / GLI_SUBPIX - ln->_rPic->w, y),
+					Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
 				link = ln->_rHyper;
 				hy0 = y > y0 ? y : y0;
 				hy1 = y + ln->_rPic->h < y1 ? y + ln->_rPic->h : y1;
