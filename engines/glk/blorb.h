@@ -25,9 +25,10 @@
 
 #include "glk/glk_types.h"
 #include "glk/streams.h"
+#include "common/archive.h"
+#include "common/array.h"
 
 namespace Glk {
-
 
 /**
  * Error type
@@ -101,46 +102,81 @@ typedef struct giblorb_result_struct {
 
 typedef struct giblorb_resdesc_struct giblorb_resdesc_t;
 
-class Blorb {
+/**
+ * Blorb file manager
+ */
+class Blorb : public Common::Archive {
 private:
-	bool _libInited;
-	Common::SeekableReadStream *_file;
+	Common::File _file;
+	InterpreterType _interpType;
 	giblorb_map_t *_map;
 private:
 	/**
-	 * Initializes Blorb
+	 * Parses the Blorb file index to load in a list of the chunks
 	 */
-	giblorb_err_t giblorb_initialize();
+	giblorb_err_t create_map();
 
-	giblorb_err_t giblorb_initialize_map(giblorb_map_t *map);
-	void giblorb_qsort(giblorb_resdesc_t **list, size_t len);
-	giblorb_resdesc_t *giblorb_bsearch(giblorb_resdesc_t *sample,
-		giblorb_resdesc_t **list, int len);
+	giblorb_err_t initialize_map();
+	void qsort(giblorb_resdesc_t **list, size_t len);
+	giblorb_resdesc_t *bsearch(giblorb_resdesc_t *sample, giblorb_resdesc_t **list, int len);
 	int sortsplot(giblorb_resdesc_t *v1, giblorb_resdesc_t *v2);
 public:
 	/**
 	 * Constructor
 	 */
-	Blorb() : _libInited(false), _file(nullptr), _map(nullptr) {}
+	Blorb(const Common::String &filename, InterpreterType interpType);
 
-	giblorb_err_t giblorb_set_resource_map(Common::SeekableReadStream *file);
-	giblorb_map_t *giblorb_get_resource_map(void);
-	bool giblorb_is_resource_map(void) const;
+	/**
+	 * Destructor
+	 */
+	~Blorb();
 
+	/**
+	 * Check if a member with the given name is present in the Archive.
+	 * Patterns are not allowed, as this is meant to be a quick File::exists()
+	 * replacement.
+	 */
+	virtual bool hasFile(const Common::String &name) const override;
 
-	giblorb_err_t giblorb_create_map(Common::SeekableReadStream *file, giblorb_map_t **newmap);
-	giblorb_err_t giblorb_destroy_map(giblorb_map_t *map);
+	/**
+	 * Add all members of the Archive matching the specified pattern to list.
+	 * Must only append to list, and not remove elements from it.
+	 *
+	 * @return the number of members added to list
+	 */
+	virtual int listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const override;
 
-	giblorb_err_t giblorb_load_chunk_by_type(giblorb_map_t *map,
-		glui32 method, giblorb_result_t *res, glui32 chunktype, glui32 count);
-	giblorb_err_t giblorb_load_chunk_by_number(giblorb_map_t *map,
-		glui32 method, giblorb_result_t *res, glui32 chunknum);
-	giblorb_err_t giblorb_unload_chunk(giblorb_map_t *map, glui32 chunknum);
+	/**
+	 * Add all members of the Archive to list.
+	 * Must only append to list, and not remove elements from it.
+	 *
+	 * @return the number of names added to list
+	 */
+	virtual int listMembers(Common::ArchiveMemberList &list) const override;
 
-	giblorb_err_t giblorb_load_resource(giblorb_map_t *map, glui32 method,
-		giblorb_result_t *res, glui32 usage, glui32 resnum);
-	giblorb_err_t giblorb_count_resources(giblorb_map_t *map,
-		glui32 usage, glui32 *num, glui32 *min, glui32 *max);
+	/**
+	 * Returns a ArchiveMember representation of the given file.
+	 */
+	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+
+	/**
+	 * Create a stream bound to a member with the specified name in the
+	 * archive. If no member with this name exists, 0 is returned.
+	 * @return the newly created input stream
+	 */
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+public:
+	/**
+	 * Get a pointer to the Blorb's resource map
+	 */
+	giblorb_map_t *get_resource_map() const { return _map; }
+
+	giblorb_err_t load_chunk_by_type(glui32 method, giblorb_result_t *res, glui32 chunktype, glui32 count);
+	giblorb_err_t load_chunk_by_number(glui32 method, giblorb_result_t *res, glui32 chunknum);
+	giblorb_err_t unload_chunk(glui32 chunknum);
+
+	giblorb_err_t load_resource(glui32 method, giblorb_result_t *res, glui32 usage, glui32 resnum);
+	giblorb_err_t count_resources(glui32 usage, glui32 *num, glui32 *min, glui32 *max);
 };
 
 } // End of namespace Glk

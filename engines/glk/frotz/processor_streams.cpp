@@ -519,7 +519,7 @@ void Processor::z_restart() {
 	seed_random(0);
 
 	if (!first_restart) {
-		story_fp->seek(blorb_ofs);
+		story_fp->seek(0);
 
 		if (story_fp->read(zmp, h_dynamic_size) != h_dynamic_size)
 			error("Story file read error");
@@ -599,7 +599,7 @@ void Processor::z_verify() {
 	zword checksum = 0;
 
 	// Sum all bytes in story file except header bytes
-	story_fp->seek(blorb_ofs + 64);
+	story_fp->seek(64);
 
 	for (uint i = 64; i < story_size; i++)
 		checksum += story_fp->readByte();

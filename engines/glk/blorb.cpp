@@ -54,7 +54,6 @@ struct giblorb_resdesc_struct {
  */
 struct giblorb_map_struct {
     glui32 inited; ///< holds giblorb_Inited_Magic if the map structure is valid
-	Common::SeekableReadStream *file;
 
     uint numchunks;
     giblorb_chunkdesc_t *chunks;	///< list of chunk descriptors
@@ -66,13 +65,68 @@ struct giblorb_map_struct {
 
 /*--------------------------------------------------------------------------*/
 
-giblorb_err_t Blorb::giblorb_initialize() {
-	_file = nullptr;
-	_map = nullptr;
-	return giblorb_err_None;
+Blorb::Blorb(const Common::String &filename, InterpreterType interpType) :
+		Common::Archive(), _interpType(interpType), _map(nullptr) {
+	if (!_file.open(filename))
+		error("Could not open blorb file");
+
+	if (create_map() != giblorb_err_None)
+		error("Could not parse blorb file");
 }
 
-giblorb_err_t Blorb::giblorb_create_map(Common::SeekableReadStream *file, giblorb_map_t **newmap) {
+Blorb::~Blorb() {
+	for (uint ix = 0; ix < _map->numchunks; ix++) {
+		giblorb_chunkdesc_t *chu = &(_map->chunks[ix]);
+		if (chu->ptr) {
+			delete chu->ptr;
+			chu->ptr = nullptr;
+		}
+	}
+
+	if (_map->chunks) {
+		delete[] _map->chunks;
+		_map->chunks = nullptr;
+	}
+
+	_map->numchunks = 0;
+
+	if (_map->resources) {
+		delete[] _map->resources;
+		_map->resources = nullptr;
+	}
+
+	if (_map->ressorted) {
+		delete[] _map->ressorted;
+		_map->ressorted = nullptr;
+	}
+
+	_map->numresources = 0;
+	_map->inited = 0;
+
+	delete _map;
+}
+
+bool Blorb::hasFile(const Common::String &name) const {
+	return false;
+}
+
+int Blorb::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const {
+	return 0;
+}
+
+int Blorb::listMembers(Common::ArchiveMemberList &list) const {
+	return 0;
+}
+
+const Common::ArchiveMemberPtr Blorb::getMember(const Common::String &name) const {
+	return Common::ArchiveMemberPtr();
+}
+
+Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::String &name) const {
+	return nullptr;
+}
+
+giblorb_err_t Blorb::create_map() {
 	giblorb_err_t err;
 	giblorb_map_t *map;
 	glui32 readlen;
@@ -81,21 +135,12 @@ giblorb_err_t Blorb::giblorb_create_map(Common::SeekableReadStream *file, giblor
 	int chunks_size, numchunks;
 	char buffer[16];
 
-	*newmap = nullptr;
+	// First, chew through the file and index the chunks
+	_file.seek(0);
 
-	if (!_libInited) {
-		err = giblorb_initialize();
-		if (err)
-			return err;
-		_libInited = true;
-	}
-
-	/* First, chew through the file and index the chunks. */
-	file->seek(0);
-
-	readlen = file->read(buffer, 12);
+	readlen = _file.read(buffer, 12);
 	if (readlen != 12)
-		return giblorb_err_Read;
+		return giblorb_err_Format;
 
 	if (READ_BE_INT32(buffer + 0) != giblorb_ID_FORM)
 		return giblorb_err_Format;
@@ -114,9 +159,9 @@ giblorb_err_t Blorb::giblorb_create_map(Common::SeekableReadStream *file, giblor
 		int chunum;
 		giblorb_chunkdesc_t *chu;
 
-		file->seek(nextpos);
+		_file.seek(nextpos);
 
-		readlen = file->read(buffer, 8);
+		readlen = _file.read(buffer, 8);
 		if (readlen != 8) {
 			delete[] chunks;
 			return giblorb_err_Read;
@@ -158,34 +203,29 @@ giblorb_err_t Blorb::giblorb_create_map(Common::SeekableReadStream *file, giblor
 
 	// The basic IFF structure seems to be ok, and we have a list of chunks.
 	// Now we allocate the map structure itself.
-	map = new giblorb_map_t();
-	if (!map) {
+	_map = new giblorb_map_t();
+	if (!_map) {
 		delete[] chunks;
 		return giblorb_err_Alloc;
 	}
 
-	map->inited = giblorb_Inited_Magic;
-	map->file = file;
-	map->chunks = chunks;
-	map->numchunks = numchunks;
-	map->resources = nullptr;
-	map->ressorted = nullptr;
-	map->numresources = 0;
+	_map->inited = giblorb_Inited_Magic;
+	_map->chunks = chunks;
+	_map->numchunks = numchunks;
+	_map->resources = nullptr;
+	_map->ressorted = nullptr;
+	_map->numresources = 0;
 
 	// Now we do everything else involved in loading the Blorb file,
 	// such as building resource lists.
-	err = giblorb_initialize_map(map);
-	if (err) {
-		giblorb_destroy_map(map);
+	err = initialize_map();
+	if (err)
 		return err;
-	}
 
-	*newmap = map;
 	return giblorb_err_None;
 }
 
-
-giblorb_err_t Blorb::giblorb_initialize_map(giblorb_map_t *map) {
+giblorb_err_t Blorb::initialize_map() {
 	// It is important that the map structure be kept valid during this function.
 	// If this returns an error, giblorb_destroy_map() will be called.
 	uint ix, jx;
@@ -196,8 +236,8 @@ giblorb_err_t Blorb::giblorb_initialize_map(giblorb_map_t *map) {
 	glui32 numres;
 	int gotindex = false;
 
-	for (ix = 0; ix<map->numchunks; ix++) {
-		giblorb_chunkdesc_t *chu = &map->chunks[ix];
+	for (ix = 0; ix < _map->numchunks; ix++) {
+		giblorb_chunkdesc_t *chu = &_map->chunks[ix];
 
 		switch (chu->type) {
 		case giblorb_ID_RIdx:
@@ -205,7 +245,7 @@ giblorb_err_t Blorb::giblorb_initialize_map(giblorb_map_t *map) {
 
 			if (gotindex)
 				return giblorb_err_Format; // duplicate index chunk
-			err = giblorb_load_chunk_by_number(map, giblorb_method_Memory, &chunkres, ix);
+			err = load_chunk_by_number(giblorb_method_Memory, &chunkres, ix);
 			if (err)
 				return err;
 
@@ -238,12 +278,12 @@ giblorb_err_t Blorb::giblorb_initialize_map(giblorb_map_t *map) {
 					res->resnum = READ_BE_INT32(ptr + jx * 12 + 8);
 					respos = READ_BE_INT32(ptr + jx * 12 + 12);
 
-					while (ix2 < map->numchunks
-						&& map->chunks[ix2].startpos < respos)
+					while (ix2 < _map->numchunks
+						&& _map->chunks[ix2].startpos < respos)
 						ix2++;
 
-					if (ix2 >= map->numchunks
-						|| map->chunks[ix2].startpos != respos) {
+					if (ix2 >= _map->numchunks
+						|| _map->chunks[ix2].startpos != respos) {
 						delete[] resources;
 						delete[] ressorted;
 						return giblorb_err_Format; // start pos does not match a real chunk
@@ -254,16 +294,16 @@ giblorb_err_t Blorb::giblorb_initialize_map(giblorb_map_t *map) {
 					ressorted[jx] = res;
 				}
 
-				// Sort a resource list (actually a list of pointers to structures in map->resources.)
+				// Sort a resource list (actually a list of pointers to structures in _map->resources.)
 				// This makes it easy to find resources by usage and resource number.
-				giblorb_qsort(ressorted, numres);
+				qsort(ressorted, numres);
 
-				map->numresources = numres;
-				map->resources = resources;
-				map->ressorted = ressorted;
+				_map->numresources = numres;
+				_map->resources = resources;
+				_map->ressorted = ressorted;
 			}
 
-			giblorb_unload_chunk(map, ix);
+			unload_chunk(ix);
 			gotindex = true;
 			break;
 		}
@@ -272,7 +312,7 @@ giblorb_err_t Blorb::giblorb_initialize_map(giblorb_map_t *map) {
 	return giblorb_err_None;
 }
 
-void Blorb::giblorb_qsort(giblorb_resdesc_t **list, size_t len) {
+void Blorb::qsort(giblorb_resdesc_t **list, size_t len) {
 	int ix, jx, res;
 	giblorb_resdesc_t *tmpptr, *pivot;
 
@@ -306,12 +346,12 @@ void Blorb::giblorb_qsort(giblorb_resdesc_t **list, size_t len) {
 		}
 		ix++;
 		// Sort the halves.
-		giblorb_qsort(list + 0, ix);
-		giblorb_qsort(list + ix, len - ix);
+		qsort(list + 0, ix);
+		qsort(list + ix, len - ix);
 	}
 }
 
-giblorb_resdesc_t *Blorb::giblorb_bsearch(giblorb_resdesc_t *sample,
+giblorb_resdesc_t *Blorb::bsearch(giblorb_resdesc_t *sample,
 	giblorb_resdesc_t **list, int len) {
 	int top, bot, val, res;
 
@@ -345,71 +385,31 @@ int Blorb::sortsplot(giblorb_resdesc_t *v1, giblorb_resdesc_t *v2) {
 	return 0;
 }
 
-giblorb_err_t Blorb::giblorb_destroy_map(giblorb_map_t *map) {
-	if (!map || !map->chunks || map->inited != giblorb_Inited_Magic)
-		return giblorb_err_NotAMap;
-
-	for (uint ix = 0; ix<map->numchunks; ix++) {
-		giblorb_chunkdesc_t *chu = &(map->chunks[ix]);
-		if (chu->ptr) {
-			delete chu->ptr;
-			chu->ptr = nullptr;
-		}
-	}
-
-	if (map->chunks) {
-		delete[] map->chunks;
-		map->chunks = nullptr;
-	}
-
-	map->numchunks = 0;
-
-	if (map->resources) {
-		delete[] map->resources;
-		map->resources = nullptr;
-	}
-
-	if (map->ressorted) {
-		delete[] map->ressorted;
-		map->ressorted = nullptr;
-	}
-
-	map->numresources = 0;
-	map->file = nullptr;
-	map->inited = 0;
-
-	delete map;
-
-	return giblorb_err_None;
-}
-
-giblorb_err_t Blorb::giblorb_load_chunk_by_type(giblorb_map_t *map,
-		glui32 method, giblorb_result_t *res, glui32 chunktype, glui32 count) {
+giblorb_err_t Blorb::load_chunk_by_type(glui32 method, giblorb_result_t *res, glui32 chunktype, glui32 count) {
 	uint ix;
 
-	for (ix = 0; ix < map->numchunks; ix++) {
-		if (map->chunks[ix].type == chunktype) {
+	for (ix = 0; ix < _map->numchunks; ix++) {
+		if (_map->chunks[ix].type == chunktype) {
 			if (count == 0)
 				break;
 			count--;
 		}
 	}
 
-	if (ix >= map->numchunks) {
+	if (ix >= _map->numchunks) {
 		return giblorb_err_NotFound;
 	}
 
-	return giblorb_load_chunk_by_number(map, method, res, ix);
+	return load_chunk_by_number(method, res, ix);
 }
 
-giblorb_err_t Blorb::giblorb_load_chunk_by_number(giblorb_map_t *map,
-		glui32 method, giblorb_result_t *res, glui32 chunknum) {
+giblorb_err_t Blorb::load_chunk_by_number(glui32 method, giblorb_result_t *res, glui32 chunknum) {
 	giblorb_chunkdesc_t *chu;
 
-	if (chunknum >= map->numchunks)
+	if (chunknum >= _map->numchunks)
 		return giblorb_err_NotFound;
 
-	chu = &(map->chunks[chunknum]);
+	chu = &(_map->chunks[chunknum]);
 
 	switch (method) {
 	case giblorb_method_DontLoad:
@@ -428,9 +428,9 @@ giblorb_err_t Blorb::giblorb_load_chunk_by_number(giblorb_map_t *map,
 			if (!dat)
 				return giblorb_err_Alloc;
 
-			map->file->seek(chu->datpos);
+			_file.seek(chu->datpos);
 
-			readlen = map->file->read(dat, chu->len);
+			readlen = _file.read(dat, chu->len);
 			if (readlen != chu->len)
 				return giblorb_err_Read;
 
@@ -448,13 +448,13 @@ giblorb_err_t Blorb::giblorb_load_chunk_by_number(giblorb_map_t *map,
 	return giblorb_err_None;
 }
 
-giblorb_err_t Blorb::giblorb_unload_chunk(giblorb_map_t *map, glui32 chunknum) {
+giblorb_err_t Blorb::unload_chunk(glui32 chunknum) {
 	giblorb_chunkdesc_t *chu;
 
-	if (chunknum >= map->numchunks)
+	if (chunknum >= _map->numchunks)
 		return giblorb_err_NotFound;
 
-	chu = &(map->chunks[chunknum]);
+	chu = &(_map->chunks[chunknum]);
 
 	if (chu->ptr) {
 		delete chu->ptr;
@@ -464,24 +464,22 @@ giblorb_err_t Blorb::giblorb_unload_chunk(giblorb_map_t *map, glui32 chunknum) {
 	return giblorb_err_None;
 }
 
-giblorb_err_t Blorb::giblorb_load_resource(giblorb_map_t *map, glui32 method,
-		giblorb_result_t *res, glui32 usage, glui32 resnum) {
+giblorb_err_t Blorb::load_resource(glui32 method, giblorb_result_t *res, glui32 usage, glui32 resnum) {
 	giblorb_resdesc_t sample;
 	giblorb_resdesc_t *found;
 
 	sample.usage = usage;
 	sample.resnum = resnum;
 
-	found = giblorb_bsearch(&sample, map->ressorted, map->numresources);
+	found = bsearch(&sample, _map->ressorted, _map->numresources);
 
 	if (!found)
 		return giblorb_err_NotFound;
 
-	return giblorb_load_chunk_by_number(map, method, res, found->chunknum);
+	return load_chunk_by_number(method, res, found->chunknum);
 }
 
-giblorb_err_t Blorb::giblorb_count_resources(giblorb_map_t *map,
-		glui32 usage, glui32 *num, glui32 *min, glui32 *max) {
+giblorb_err_t Blorb::count_resources(glui32 usage, glui32 *num, glui32 *min, glui32 *max) {
 	int ix;
 	int count;
 	glui32 val;
@@ -491,9 +489,9 @@ giblorb_err_t Blorb::giblorb_count_resources(giblorb_map_t *map,
 	minval = 0;
 	maxval = 0;
 
-	for (ix = 0; ix<map->numresources; ix++) {
-		if (map->resources[ix].usage == usage) {
-			val = map->resources[ix].resnum;
+	for (ix = 0; ix<_map->numresources; ix++) {
+		if (_map->resources[ix].usage == usage) {
+			val = _map->resources[ix].resnum;
 			if (count == 0) {
 				count++;
 				minval = val;
@@ -517,27 +515,6 @@ giblorb_err_t Blorb::giblorb_count_resources(giblorb_map_t *map,
 		*max = maxval;
 
 	return giblorb_err_None;
-}
-
-giblorb_err_t Blorb::giblorb_set_resource_map(Common::SeekableReadStream *file) {
-	giblorb_err_t err;
-
-	err = giblorb_create_map(file, &_map);
-	if (err) {
-		_map = nullptr;
-		return err;
-	}
-
-	_file = file;
-	return giblorb_err_None;
-}
-
-giblorb_map_t *Blorb::giblorb_get_resource_map(void) {
-	return _map;
-}
-
-bool Blorb::giblorb_is_resource_map(void) const {
-	return _map != nullptr;
 }
 
 } // End of namespace Glk

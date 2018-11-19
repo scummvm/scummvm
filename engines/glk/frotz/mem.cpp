@@ -28,10 +28,9 @@
 namespace Glk {
 namespace Frotz {
 
-Mem::Mem() : story_fp(nullptr), blorb_ofs(0), blorb_len(0), story_size(0),
-		first_undo(nullptr), last_undo(nullptr), curr_undo(nullptr),
-		undo_mem(nullptr), prev_zmp(nullptr), undo_diff(nullptr),
-		undo_count(0), reserve_mem(0) {
+Mem::Mem() : story_fp(nullptr), story_size(0), first_undo(nullptr), last_undo(nullptr),
+		curr_undo(nullptr), undo_mem(nullptr), zmp(nullptr), prev_zmp(nullptr),
+		undo_diff(nullptr), undo_count(0), reserve_mem(0) {
 }
 
 void Mem::initialize() {
@@ -60,32 +59,7 @@ void Mem::initialize() {
 }
 
 void Mem::initializeStoryFile() {
-	Common::SeekableReadStream *f = story_fp;
-	giblorb_map_t *map;
-	giblorb_result_t res;
-	uint32 magic;
-
-	magic = f->readUint32BE();
-
-	if (magic == MKTAG('F', 'O', 'R', 'M')) {
-		if (g_vm->giblorb_set_resource_map(f))
-			error("This Blorb file seems to be invalid.");
-
-		map = g_vm->giblorb_get_resource_map();
-
-		if (g_vm->giblorb_load_resource(map, giblorb_method_FilePos, &res, giblorb_ID_Exec, 0))
-			error("This Blorb file does not contain an executable chunk.");
-		if (res.chunktype != MKTAG('Z', 'C', 'O', 'D'))
-			error("This Blorb file contains an executable chunk, but it is not a Z-code file.");
-
-		blorb_ofs = res.data.startpos;
-		blorb_len = res.length;
-	} else {
-		blorb_ofs = 0;
-		blorb_len = f->size();
-	}
-
-	if (blorb_len < 64)
+	if (story_fp->size() < 64)
 		error("This file is too small to be a Z-code file.");
 }
 
@@ -115,7 +89,7 @@ void Mem::initializeUndo() {
 void Mem::loadGameHeader() {
 	// Load header
 	zmp = new byte[64];
-	story_fp->seek(blorb_ofs);
+	story_fp->seek(0);
 	story_fp->read(zmp, 64);
 
 	Common::MemoryReadStream h(zmp, 64);
@@ -131,7 +105,7 @@ void Mem::loadGameHeader() {
 			story_size *= 2;
 	} else {
 		// Some old games lack the file size entry
-		story_size = blorb_len;
+		story_size = story_fp->size();
 	}
 }
 
@@ -254,8 +228,6 @@ void Mem::free_undo(int count) {
 
 void Mem::reset_memory() {
 	story_fp = nullptr;
-	blorb_ofs = 0;
-	blorb_len = 0;
 
 	if (undo_mem) {
 		free_undo(undo_count);

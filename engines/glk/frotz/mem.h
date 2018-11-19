@@ -57,7 +57,6 @@ typedef undo_struct undo_t;
 class Mem : public Header, public virtual UserOptions {
 protected:
 	Common::SeekableReadStream *story_fp;
-	uint blorb_ofs, blorb_len;
 	uint story_size;
 	byte *pcp;
 	byte *zmp;
