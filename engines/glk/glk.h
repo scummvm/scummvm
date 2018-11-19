@@ -35,6 +35,7 @@
 namespace Glk {
 
 class Clipboard;
+class Blorb;
 class Conf;
 class Events;
 class Pictures;
@@ -93,6 +94,7 @@ protected:
 	 */
 	virtual void runGame(Common::SeekableReadStream *gameFile) = 0;
 public:
+	Blorb *_blorb;
 	Clipboard *_clipboard;
 	Conf *_conf;
 	Events *_events;

@@ -29,6 +29,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "glk/glk.h"
+#include "glk/blorb.h"
 #include "glk/conf.h"
 #include "glk/events.h"
 #include "glk/picture.h"
@@ -42,14 +43,16 @@ namespace Glk {
 GlkEngine *g_vm;
 
 GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc) :
-	_gameDescription(gameDesc), Engine(syst), _random("Glk"), _clipboard(nullptr),
-	_conf(nullptr), _events(nullptr), _pictures(nullptr), _screen(nullptr),
-	_selection(nullptr), _windows(nullptr), _copySelect(false), _terminated(false),
-	gli_unregister_obj(nullptr), gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
+		_gameDescription(gameDesc), Engine(syst), _random("Glk"), _blorb(nullptr),
+		_clipboard(nullptr), _conf(nullptr), _events(nullptr), _pictures(nullptr),
+		_screen(nullptr), _selection(nullptr), _windows(nullptr), _copySelect(false),
+		_terminated(false), gli_unregister_obj(nullptr), gli_register_arr(nullptr),
+		gli_unregister_arr(nullptr) {
 	g_vm = this;
 }
 
 GlkEngine::~GlkEngine() {
+	delete _blorb;
 	delete _clipboard;
 	delete _conf;
 	delete _events;
@@ -96,11 +99,26 @@ void GlkEngine::initGraphicsMode() {
 }
 
 Common::Error GlkEngine::run() {
+	Common::File f;
+	Common::String filename = getFilename();
+	if (!Common::File::exists(filename))
+		return Common::kNoGameDataFoundError;
+
 	initialize();
 
-	Common::File f;
-	if (f.open(getFilename()))
-		runGame(&f);
+	if (filename.hasSuffixIgnoreCase(".blorb") || filename.hasSuffixIgnoreCase(".zblorb")) {
+		// Blorb archive
+		_blorb = new Blorb(filename, getInterpreterType());
+		SearchMan.add("blorb", _blorb, 99, false);
+
+		if (!f.open("EXEC", *_blorb))
+			return Common::kNoGameDataFoundError;
+	} else {
+		if (!f.open(filename))
+			return Common::kNoGameDataFoundError;
+	}
+
+	runGame(&f);
 
 	return Common::kNoError;
 }

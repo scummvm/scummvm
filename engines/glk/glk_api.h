@@ -34,7 +34,7 @@ namespace Glk {
 /**
  * Implements the GLK interface
  */
-class GlkAPI : public GlkEngine, public Blorb {
+class GlkAPI : public GlkEngine {
 private:
 	bool _gliFirstEvent;
 	unsigned char _charTolowerTable[256];
