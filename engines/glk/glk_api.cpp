@@ -924,7 +924,7 @@ glui32 GlkAPI::glk_image_get_info(glui32 image, glui32 *width, glui32 *height) {
 	if (!g_conf->_graphics)
 		return false;
 
-	Picture *pic = Picture::load(image);
+	Picture *pic = g_vm->_pictures->load(image);
 	if (!pic)
 		return false;
 

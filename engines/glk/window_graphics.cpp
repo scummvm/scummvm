@@ -96,14 +96,14 @@ void GraphicsWindow::redraw() {
 
 glui32 GraphicsWindow::drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int scale,
                                    glui32 imagewidth, glui32 imageheight) {
-	Picture *pic = Picture::load(image);
+	Picture *pic = g_vm->_pictures->load(image);
 	glui32 hyperlink = _attr.hyper;
 
 	if (!pic)
 		return false;
 
 	if (!_imageLoaded) {
-		g_vm->_picList->increment();
+		g_vm->_pictures->increment();
 		_imageLoaded = true;
 	}
 

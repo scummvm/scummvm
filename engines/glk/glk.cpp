@@ -43,7 +43,7 @@ GlkEngine *g_vm;
 
 GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc) :
 	_gameDescription(gameDesc), Engine(syst), _random("Glk"), _clipboard(nullptr),
-	_conf(nullptr), _events(nullptr), _picList(nullptr), _screen(nullptr),
+	_conf(nullptr), _events(nullptr), _pictures(nullptr), _screen(nullptr),
 	_selection(nullptr), _windows(nullptr), _copySelect(false), _terminated(false),
 	gli_unregister_obj(nullptr), gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
 	g_vm = this;
@@ -53,7 +53,7 @@ GlkEngine::~GlkEngine() {
 	delete _clipboard;
 	delete _conf;
 	delete _events;
-	delete _picList;
+	delete _pictures;
 	delete _screen;
 	delete _selection;
 	delete _streams;
@@ -73,7 +73,7 @@ void GlkEngine::initialize() {
 
 	_clipboard = new Clipboard();
 	_events = new Events();
-	_picList = new PicList();
+	_pictures = new Pictures();
 	_selection = new Selection();
 	_streams = new Streams();
 	_windows = new Windows(_screen);

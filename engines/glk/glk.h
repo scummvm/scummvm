@@ -37,7 +37,7 @@ namespace Glk {
 class Clipboard;
 class Conf;
 class Events;
-class PicList;
+class Pictures;
 class Screen;
 class Selection;
 class Streams;
@@ -96,7 +96,7 @@ public:
 	Clipboard *_clipboard;
 	Conf *_conf;
 	Events *_events;
-	PicList *_picList;
+	Pictures *_pictures;
 	Screen *_screen;
 	Selection *_selection;
 	Streams *_streams;
