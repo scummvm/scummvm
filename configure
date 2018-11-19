@@ -163,6 +163,7 @@ _freetype2=auto
 _taskbar=auto
 _updates=no
 _libunity=auto
+_dialogs=auto
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
@@ -1003,6 +1004,7 @@ Optional Features:
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
   --disable-cloud          don't build cloud support
+  --disable-system-dialogs don't build support for system dialogs
   --enable-vkeybd          build virtual keyboard support
   --enable-keymapper       build key mapper support
   --enable-eventrecorder   enable event recording functionality
@@ -1197,6 +1199,8 @@ for ac_option in $@; do
 	--disable-freetype2)      _freetype2=no   ;;
 	--enable-taskbar)         _taskbar=yes    ;;
 	--disable-taskbar)        _taskbar=no     ;;
+	--enable-system-dialogs)  _dialogs=yes    ;;
+	--disable-system-dialogs) _dialogs=no     ;;
 	--enable-sdlnet)          _sdlnet=yes     ;;
 	--disable-sdlnet)         _sdlnet=no      ;;
 	--enable-libcurl)         _libcurl=yes     ;;
@@ -5133,6 +5137,31 @@ else
 	esac
 fi
 define_in_config_if_yes $_taskbar 'USE_TASKBAR'
+
+#
+# Check whether to build system dialogs support
+#
+echo_n "Building system dialogs support... "
+if test "$_dialogs" = "no"; then
+	echo "no"
+else
+	case $_host_os in
+	mingw*)
+		append_var LIBS "-lole32 -luuid"
+		echo "win32"
+		_dialogs=yes
+		;;
+	darwin*)
+		echo "osx"
+		_dialogs=yes
+		;;
+	*)
+		echo "no"
+		_dialogs=no
+		;;
+	esac
+fi
+define_in_config_if_yes $_dialogs 'USE_SYSDIALOGS'
 
 #
 # Check whether to build Bink video support
