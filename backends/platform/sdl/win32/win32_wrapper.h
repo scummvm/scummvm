@@ -20,19 +20,31 @@
  *
  */
 
-#ifndef BACKENDS_PLATFORM_SDL_WIN32_WIN32_WINDOW_H
-#define BACKENDS_PLATFORM_SDL_WIN32_WIN32_WINDOW_H
+#ifndef PLATFORM_SDL_WIN32_WRAPPER_H
+#define PLATFORM_SDL_WIN32_WRAPPER_H
 
-#ifdef WIN32
+// Helper functions
+namespace Win32 {
 
-#include "backends/platform/sdl/sdl-window.h"
+/**
+ * Checks if the current running Windows version is greater or equal to the specified version.
+ * See: https://docs.microsoft.com/en-us/windows/desktop/sysinfo/operating-system-version
+ *
+ * @param majorVersion The major version number (x.0)
+ * @param minorVersion The minor version number (0.x)
+ */
+bool confirmWindowsVersion(int majorVersion, int minorVersion);
+/**
+ * Converts a C string into a Windows wide-character string.
+ * Used to interact with Win32 Unicode APIs with no ANSI fallback.
+ *
+ * @param s Source string
+ * @return Converted string
+ *
+ * @note Return value must be freed by the caller.
+ */
+wchar_t *ansiToUnicode(const char *s);
 
-class SdlWindow_Win32 : public SdlWindow {
-public:
-	virtual void setupIcon();
-	HWND getHwnd();
-};
-
-#endif
+}
 
 #endif
