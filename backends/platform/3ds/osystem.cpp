@@ -24,6 +24,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
+#include <3ds.h>
 #include "osystem.h"
 
 #include "backends/saves/default/default-saves.h"

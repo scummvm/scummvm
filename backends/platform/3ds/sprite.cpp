@@ -22,7 +22,6 @@
 
 #include "backends/platform/3ds/sprite.h"
 #include "common/util.h"
-#include <3ds.h>
 
 static uint nextHigher2(uint v) {
 	if (v == 0)
