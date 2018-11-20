@@ -45,13 +45,13 @@ void OSystem_3DS::initGraphics() {
 	// Initialize the render targets
 	_renderTargetTop =
 	    C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-	C3D_RenderTargetSetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x0000000, 0);
+	C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x0000000, 0);
 	C3D_RenderTargetSetOutput(_renderTargetTop, GFX_TOP, GFX_LEFT,
 	                          DISPLAY_TRANSFER_FLAGS);
 
 	_renderTargetBottom =
 	    C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-	C3D_RenderTargetSetClear(_renderTargetBottom, C3D_CLEAR_ALL, 0x00000000, 0);
+	C3D_RenderTargetClear(_renderTargetBottom, C3D_CLEAR_ALL, 0x00000000, 0);
 	C3D_RenderTargetSetOutput(_renderTargetBottom, GFX_BOTTOM, GFX_LEFT,
 	                          DISPLAY_TRANSFER_FLAGS);
 
@@ -69,12 +69,12 @@ void OSystem_3DS::initGraphics() {
 	AttrInfo_AddLoader(attrInfo, 0, GPU_FLOAT, 3); // v0=position
 	AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, 2); // v1=texcoord
 
-	Mtx_OrthoTilt(&_projectionTop, 0.0, 400.0, 240.0, 0.0, 0.0, 1.0);
-	Mtx_OrthoTilt(&_projectionBottom, 0.0, 320.0, 240.0, 0.0, 0.0, 1.0);
+	Mtx_OrthoTilt(&_projectionTop, 0.0, 400.0, 240.0, 0.0, 0.0, 1.0, true);
+	Mtx_OrthoTilt(&_projectionBottom, 0.0, 320.0, 240.0, 0.0, 0.0, 1.0, true);
 
 	C3D_TexEnv *env = C3D_GetTexEnv(0);
-	C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, 0, 0);
-	C3D_TexEnvOp(env, C3D_Both, 0, 0, 0);
+	C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_PRIMARY_COLOR, GPU_PRIMARY_COLOR);
+	C3D_TexEnvOpRgb(env, GPU_TEVOP_RGB_SRC_COLOR, GPU_TEVOP_RGB_SRC_COLOR, GPU_TEVOP_RGB_SRC_COLOR);
 	C3D_TexEnvFunc(env, C3D_Both, GPU_REPLACE);
 
 	C3D_DepthTest(false, GPU_GEQUAL, GPU_WRITE_ALL);
@@ -387,7 +387,7 @@ void OSystem_3DS::updateFocus() {
 			_focusScaleY += _focusStepScaleY;
 
 		Mtx_Identity(&_focusMatrix);
-		Mtx_Translate(&_focusMatrix, -_focusPosX, -_focusPosY, 0);
+		Mtx_Translate(&_focusMatrix, -_focusPosX, -_focusPosY, 0, true);
 		Mtx_Scale(&_focusMatrix, _focusScaleX, _focusScaleY, 1.f);
 	}
 }

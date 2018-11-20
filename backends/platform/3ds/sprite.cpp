@@ -104,8 +104,8 @@ void Sprite::render() {
 	if (dirtyPixels) {
 		dirtyPixels = false;
 		GSPGPU_FlushDataCache(pixels, w * h * format.bytesPerPixel);
-		C3D_SafeDisplayTransfer((u32*)pixels, GX_BUFFER_DIM(w, h), (u32*)texture.data, GX_BUFFER_DIM(w, h), TEXTURE_TRANSFER_FLAGS);
 		gspWaitForPPF();
+		C3D_SyncDisplayTransfer((u32*)pixels, GX_BUFFER_DIM(w, h), (u32*)texture.data, GX_BUFFER_DIM(w, h), TEXTURE_TRANSFER_FLAGS);
 	}
 	C3D_TexBind(0, &texture);
 
@@ -137,7 +137,7 @@ C3D_Mtx* Sprite::getMatrix() {
 		dirtyMatrix = false;
 		Mtx_Identity(&modelview);
 		Mtx_Scale(&modelview, scaleX, scaleY, 1.f);
-		Mtx_Translate(&modelview, posX, posY, 0);
+		Mtx_Translate(&modelview, posX, posY, 0, true);
 	}
 	return &modelview;
 }
