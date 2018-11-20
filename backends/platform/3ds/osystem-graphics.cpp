@@ -273,6 +273,7 @@ void OSystem_3DS::updateScreen() {
 
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		// Render top screen
+		C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x00000000, 0);
 		C3D_FrameDrawOn(_renderTargetTop);
 		if (config.screen == kScreenTop || config.screen == kScreenBoth) {
 			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionTop);
@@ -290,6 +291,7 @@ void OSystem_3DS::updateScreen() {
 		}
 
 		// Render bottom screen
+		C3D_RenderTargetClear(_renderTargetBottom, C3D_CLEAR_ALL, 0x00000000, 0);
 		C3D_FrameDrawOn(_renderTargetBottom);
 		if (config.screen == kScreenBottom || config.screen == kScreenBoth) {
 			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionBottom);
