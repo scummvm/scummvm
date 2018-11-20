@@ -22,8 +22,11 @@
 
 // Disable symbol overrides so that we can use system headers
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/scummsys.h"
 
-#include "gui/browser.h"
+#if defined(MACOSX) && defined(USE_SYSDIALOGS)
+
+#include "backends/dialogs/macosx/macosx-dialogs.h"
 
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -127,13 +130,9 @@
 
 @end
 
-namespace GUI {
+Common::DialogManager::DialogResult MacOSXDialogManager::showFileBrowser(const char *title, Common::FSNode &choice, bool isDirBrowser) {
 
-BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
-	: Dialog("Browser") {
-
-	// remember whether this is a file browser or a directory browser.
-	_isDirBrowser = dirBrowser;
+	DialogResult result = kDialogCancel;
 
 	// Get current encoding
 #ifdef USE_TRANSLATION
@@ -144,20 +143,9 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	CFStringEncoding stringEncoding = kCFStringEncodingASCII;
 #endif
 
-	// Convert title to NSString
-	_titleRef = CFStringCreateWithCString(0, title, stringEncoding);
-
-	// Convert button text to NSString
-	_chooseRef = CFStringCreateWithCString(0, _("Choose"), stringEncoding);
-}
-
-BrowserDialog::~BrowserDialog() {
-	CFRelease(_titleRef);
-	CFRelease(_chooseRef);
-}
-
-int BrowserDialog::runModal() {
-	bool choiceMade = false;
+	// Convert labels to NSString
+	CFStringRef titleRef = CFStringCreateWithCString(0, title, stringEncoding);
+	CFStringRef chooseRef = CFStringCreateWithCString(0, _("Choose"), stringEncoding);
 
 	// If in fullscreen mode, switch to windowed mode
 	bool wasFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
@@ -175,24 +163,27 @@ int BrowserDialog::runModal() {
 
 
 	NSOpenPanel *panel = [NSOpenPanel openPanel];
-	[panel setCanChooseFiles:!_isDirBrowser];
-	[panel setCanChooseDirectories:_isDirBrowser];
-	if (_isDirBrowser)
+	[panel setCanChooseFiles:!isDirBrowser];
+	[panel setCanChooseDirectories:isDirBrowser];
+	if (isDirBrowser)
 		[panel setTreatsFilePackagesAsDirectories:true];
-	[panel setTitle:(NSString *)_titleRef];
-	[panel setPrompt:(NSString *)_chooseRef];
+	[panel setTitle:(NSString *)titleRef];
+	[panel setPrompt:(NSString *)chooseRef];
 
 	BrowserDialogPresenter* presenter = [[BrowserDialogPresenter alloc] init];
 	[presenter performSelectorOnMainThread:@selector(showOpenPanel:) withObject:panel waitUntilDone:YES];
 	if (presenter->_url) {
 		Common::String filename = [[presenter->_url path] UTF8String];
-		_choice = Common::FSNode(filename);
-		choiceMade = true;
+		choice = Common::FSNode(filename);
+		result = kDialogOk;
 	}
 	[presenter release];
 
 	[pool release];
 	[keyWindow makeKeyAndOrderFront:nil];
+
+	CFRelease(titleRef);
+	CFRelease(chooseRef);
 
 	// While the native macOS file browser is open, any input events (e.g. keypresses) are
 	// still received by the NSApplication. With SDL backend for example this results in the
@@ -209,7 +200,7 @@ int BrowserDialog::runModal() {
 		g_system->endGFXTransaction();
 	}
 
-	return choiceMade;
+	return result;
 }
 
-} // End of namespace GUI
+#endif
