@@ -391,14 +391,6 @@ void XcodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 		// for folders, we shouldn't add folders as file references, obviously.
 		if (node->children.empty()) {
 			group->addChildFile(node->name);
-
-			// HACK: Also add browser_osx.mm, since browser.cpp is added for
-			// iOS and browser_osx.mm for macOS, and create_project cannot
-			// deal with two competing exclusive ifdefs in module.mk going
-			// into one project
-			if (filePrefix.find("/gui/") == filePrefix.size() - 5 && node->name == "browser.cpp") {
-				group->addChildFile("browser_osx.mm");
-			}
 		}
 		// Process child nodes
 		if (!node->children.empty())
@@ -1121,11 +1113,6 @@ void XcodeProvider::setupAdditionalSources(std::string targetName, Property &fil
 	if (targetIsIOS(targetName)) {
 		const std::string absoluteCatalogPath = _projectRoot + "/dists/ios7/Images.xcassets";
 		ADD_SETTING_ORDER_NOVALUE(files, getHash(absoluteCatalogPath), "Image Asset Catalog", order++);
-	} else {
-		// HACK: browser_osx.mm needs to be added
-		const std::string browserPath = "gui/browser_osx.mm";
-		const std::string comment = "browser_osx.mm in Sources";
-		ADD_SETTING_ORDER_NOVALUE(files, getHash(browserPath), comment, order++);
 	}
 }
 

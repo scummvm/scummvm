@@ -2,6 +2,7 @@ MODULE := gui
 
 MODULE_OBJS := \
 	about.o \
+	browser.o \
 	chooser.o \
 	console.o \
 	debugger.o \
@@ -37,19 +38,6 @@ MODULE_OBJS := \
 	widgets/scrollbar.o \
 	widgets/scrollcontainer.o \
 	widgets/tab.o
-
-ifdef IPHONE
-MODULE_OBJS += \
-	browser.o
-else
-ifdef MACOSX
-MODULE_OBJS += \
-	browser_osx.o
-else
-MODULE_OBJS += \
-	browser.o
-endif
-endif
 
 ifdef USE_CLOUD
 ifdef USE_LIBCURL
