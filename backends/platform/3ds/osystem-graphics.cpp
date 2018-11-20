@@ -479,7 +479,10 @@ void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
 		_cursorTexture.create(w, h, _pfGameTexture);
 	}
 
-	_cursor.copyRectToSurface(buf, w, 0, 0, w, h);
+	if ( w != 0 && h != 0 ) {
+		_cursor.copyRectToSurface(buf, w, 0, 0, w, h);
+	}
+
 	flushCursor();
 
 	warpMouse(_cursorX, _cursorY);
