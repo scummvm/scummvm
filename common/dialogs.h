@@ -24,7 +24,7 @@
 #define COMMON_DIALOG_MANAGER_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
+#include "common/fs.h"
 
 #if defined(USE_SYSDIALOGS)
 
@@ -48,9 +48,14 @@ public:
 	virtual ~DialogManager() {}
 
 	/**
-	 * Displays a dialog for selecting a file or folder.
+	 * Displays a dialog for selecting a file or folder in the filesystem.
+	 *
+	 * @param title The dialog title
+	 * @param choice The path selected by the user
+	 * @param isDirBrowser Restrict selection to directories
+	 * @return The dialog result
 	 */
-	virtual DialogResult showFileBrowser() { return kDialogError; }
+	virtual DialogResult showFileBrowser(const char *title, FSNode &choice, bool isDirBrowser = false) { return kDialogError; }
 };
 
 } // End of namespace Common
