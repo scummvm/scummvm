@@ -104,8 +104,8 @@ void Sprite::render() {
 	if (dirtyPixels) {
 		dirtyPixels = false;
 		GSPGPU_FlushDataCache(pixels, w * h * format.bytesPerPixel);
-		gspWaitForPPF();
 		C3D_SyncDisplayTransfer((u32*)pixels, GX_BUFFER_DIM(w, h), (u32*)texture.data, GX_BUFFER_DIM(w, h), TEXTURE_TRANSFER_FLAGS);
+// 		gspWaitForPPF();
 	}
 	C3D_TexBind(0, &texture);
 
