@@ -32,6 +32,7 @@
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/updates/macosx/macosx-updates.h"
 #include "backends/taskbar/macosx/macosx-taskbar.h"
+#include "backends/dialogs/macosx/macosx-dialogs.h"
 #include "backends/platform/sdl/macosx/macosx_wrapper.h"
 
 #include "common/archive.h"
@@ -58,6 +59,11 @@ void OSystem_MacOSX::init() {
 #if defined(USE_TASKBAR)
 	// Initialize taskbar manager
 	_taskbarManager = new MacOSXTaskbarManager();
+#endif
+
+#if defined(USE_SYSDIALOGS)
+	// Initialize dialog manager
+	_dialogManager = new MacOSXDialogManager();
 #endif
 
 	// Invoke parent implementation of this method
