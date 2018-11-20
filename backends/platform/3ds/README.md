@@ -147,8 +147,12 @@ the following scripts in your `/opt/devkitpro` folder:
  - `devkitarm.sh`
  - `3dsvars.sh`
 
-Execute them one after the other (`devkitarm.sh` should be executed first), in order
-to setup your environment variables for cross-compiling.
+Run them one after the other with `source` in order to setup your environment variables
+for cross-compiling:
+```
+ $ source /opt/devkitpro/devkitarm.sh
+ $ source /opt/devkitpro/3dsvars.sh
+```
 
 After that, you can download the libraries you want to cross compile, run any autoconf
 scripts that they may have, and then they can usually be built with the following steps
@@ -201,6 +205,15 @@ Afterwards, the library can be built with:
 
 4.2) Compiling ScummVM
 ----------------------
+Do the following in a fresh terminal.
+
+In case you get a "compiler not found" message, add the toolchain's executables to your PATH:
+```$ export PATH=$DEVKITARM/bin:$PATH```
+
+Note: In more recent codebases of ScummVM, you may or may not need to set the following beforehand:
+```$ export PKG_CONFIG_LIBDIR=$PORTLIBS/lib/pkgconfig```
+See above for $PORTLIBS.
+
 From the root of the scummvm repository:
 ```
  $ ./configure --host=3ds
@@ -211,6 +224,8 @@ Additionally compile to specific formats to be used on the 3DS:
  $ make scummvm.3dsx
  $ make scummvm.cia
 ```
+**_Read the warning about build sizes below._**
+
 Assuming everything was successful, you'll be able to find the binary
 files in the root of your scummvm folder.
 
@@ -220,7 +235,7 @@ not supplied with devkitPro.
 4.3) Warning for build sizes
 ---------------------------
 The above configuration command will include all game engines by default and will
-likely be too massive to run with stability using either the 3DSX or the CIA format.
+likely be too massive to be stable using either the 3DSX or the CIA format.
 Until dynamic modules are figured out, you should configure engines like this:
 ```
  $ ./configure --host=3ds --disable-all-engines--enable-engine=scumm-7-8,myst,riven, \
