@@ -28,6 +28,9 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/algorithm.h"
+#if defined(USE_SYSDIALOGS)
+#include "common/dialogs.h"
+#endif
 
 #include "common/translation.h"
 
@@ -49,6 +52,7 @@ enum {
 BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	: Dialog("Browser") {
 
+	_title = title;
 	_isDirBrowser = dirBrowser;
 	_fileList = NULL;
 	_currentPath = NULL;
@@ -77,6 +81,21 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 		new ButtonWidget(this, "Browser.Up", _c("Go up", "lowres"), _("Go to previous directory level"), kGoUpCmd);
 	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), 0, kCloseCmd);
 	new ButtonWidget(this, "Browser.Choose", _("Choose"), 0, kChooseCmd);
+}
+
+int BrowserDialog::runModal() {
+#if defined(USE_SYSDIALOGS)
+	// Try to use the backend browser
+	Common::DialogManager *dialogManager = g_system->getDialogManager();
+	if (dialogManager) {
+		Common::DialogManager::DialogResult result = dialogManager->showFileBrowser(_title, _choice, _isDirBrowser);
+		if (result != Common::DialogManager::kDialogError) {
+			return result;
+		}
+	}
+#endif
+	// If all else fails, use the GUI browser
+	return Dialog::runModal();
 }
 
 void BrowserDialog::open() {
