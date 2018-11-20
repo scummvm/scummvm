@@ -23,7 +23,7 @@ clean_3ds:
 	$(RM) $(TARGET).cia
 
 $(TARGET).smdh: $(APP_ICON)
-	@bannertool makesmdh -s "$(APP_TITLE)" -l "$(APP_DESCRIPTION)" -p "$(APP_AUTHOR)" -i $(APP_ICON) -o $@
+	@smdhtool --create "$(APP_TITLE)" "$(APP_DESCRIPTION)" "$(APP_AUTHOR)" $(APP_ICON) $@
 	@echo built ... $(notdir $@)
 
 $(TARGET).3dsx: $(EXECUTABLE) $(TARGET).smdh
