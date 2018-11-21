@@ -178,6 +178,16 @@ void FloorFace::enable(bool e) {
 	}
 }
 
+bool FloorFace::isEnabled() const {
+	for (uint i = 0; i < _edges.size(); i++) {
+		if (_edges[i]->isEnabled()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void FloorFace::readData(Formats::XRCReadStream *stream) {
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_indices[i] = stream->readSint16LE();

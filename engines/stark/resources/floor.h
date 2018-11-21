@@ -150,6 +150,8 @@ public:
 	/**
 	 * Check if a ray is intersecting the floor
 	 *
+	 * Faces where walking is disabled are ignored.
+	 *
 	 * @param ray The ray
 	 * @param intersection The intersection between the ray and the floor. Only valid when the return value is positive.
 	 * @return -1 if no face contains the point, the hit face index otherwise
@@ -158,6 +160,8 @@ public:
 
 	/**
 	 * Find the floor face center closest to the ray
+	 *
+	 * Faces where walking is disabled are ignored.
 	 *
 	 * @param ray The ray
 	 * @param center The closest face center to the ray. Only valid when the return value is positive.

@@ -102,6 +102,7 @@ public:
 
 	/** Allow or disallow characters to walk on this face */
 	void enable(bool enable);
+	bool isEnabled() const;
 
 protected:
 	void readData(Formats::XRCReadStream *stream) override;
