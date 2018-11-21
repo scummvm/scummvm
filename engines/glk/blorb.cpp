@@ -24,497 +24,162 @@
 
 namespace Glk {
 
-#define giblorb_Inited_Magic 0xB7012BEDU
+enum {
+	ID_FORM = MKTAG('F', 'O', 'R', 'M'),
+	ID_IFRS = MKTAG('I', 'F', 'R', 'S'),
+	ID_RIdx = MKTAG('R', 'I', 'd', 'x'),
 
-/**
- * Describes one chunk of the Blorb file.
- */
-struct giblorb_chunkdesc_struct {
-    glui32 type;
-    glui32 len;
-    glui32 startpos;	///< start of chunk header
-    glui32 datpos;		///< start of data (either startpos or startpos+8)
+	ID_Snd = MKTAG('S', 'n', 'd', ' '),
+	ID_Exec = MKTAG('E', 'x', 'e', 'c'),
+	ID_Pict = MKTAG('P', 'i', 'c', 't'),
+	ID_Data = MKTAG('D', 'a', 't', 'a'),
 
-    byte *ptr;		///< pointer to malloc'd data, if loaded
-    int auxdatnum;	///< entry in the auxsound/auxpict array; -1 if none. This only applies to chunks that represent resources;
-};
-typedef giblorb_chunkdesc_struct giblorb_chunkdesc_t;
+	ID_Copyright = MKTAG('(', 'c', ')', ' '),
+	ID_AUTH = MKTAG('A', 'U', 'T', 'H'),
+	ID_ANNO = MKTAG('A', 'N', 'N', 'O'),
 
-/**
- * Describes one resource in the Blorb file.
- */
-struct giblorb_resdesc_struct {
-	glui32 usage;
-	glui32 resnum;
-	glui32 chunknum;
-};
+	ID_JPEG = MKTAG('J', 'P', 'E', 'G'),
+	ID_PNG  = MKTAG('P', 'N', 'G', ' '),
 
-/**
- * Holds the complete description of an open Blorb file. 
- */
-struct giblorb_map_struct {
-    glui32 inited; ///< holds giblorb_Inited_Magic if the map structure is valid
-
-    uint numchunks;
-    giblorb_chunkdesc_t *chunks;	///< list of chunk descriptors
-
-    int numresources;
-    giblorb_resdesc_t *resources;	///< list of resource descriptors
-    giblorb_resdesc_t **ressorted;	///< list of pointers to descriptors in map->resources -- sorted by usage and resource number.
+	ID_MIDI = MKTAG('M', 'I', 'D', 'I'),
+	ID_MP3 = MKTAG('M', 'P', '3', ' '),
+	ID_WAVE = MKTAG('W', 'A', 'V', 'E'),
+	ID_AIFF = MKTAG('A', 'I', 'F', 'F'),
+	ID_OGG = MKTAG('O', 'G', 'G', ' '),
+	ID_MOD = MKTAG('M', 'O', 'D', ' '),
 };
 
 /*--------------------------------------------------------------------------*/
 
 Blorb::Blorb(const Common::String &filename, InterpreterType interpType) :
-		Common::Archive(), _interpType(interpType), _map(nullptr) {
-	if (!_file.open(filename))
-		error("Could not open blorb file");
-
-	if (create_map() != giblorb_err_None)
+		Common::Archive(), _filename(filename), _interpType(interpType) {
+	if (load() != Common::kNoError)
 		error("Could not parse blorb file");
 }
 
-Blorb::~Blorb() {
-	for (uint ix = 0; ix < _map->numchunks; ix++) {
-		giblorb_chunkdesc_t *chu = &(_map->chunks[ix]);
-		if (chu->ptr) {
-			delete chu->ptr;
-			chu->ptr = nullptr;
-		}
-	}
-
-	if (_map->chunks) {
-		delete[] _map->chunks;
-		_map->chunks = nullptr;
-	}
-
-	_map->numchunks = 0;
-
-	if (_map->resources) {
-		delete[] _map->resources;
-		_map->resources = nullptr;
-	}
-
-	if (_map->ressorted) {
-		delete[] _map->ressorted;
-		_map->ressorted = nullptr;
-	}
-
-	_map->numresources = 0;
-	_map->inited = 0;
-
-	delete _map;
-}
-
 bool Blorb::hasFile(const Common::String &name) const {
+	for (uint idx = 0; idx < _chunks.size(); ++idx) {
+		if (_chunks[idx]._filename.equalsIgnoreCase(name))
+			return true;
+	}
+
 	return false;
 }
 
-int Blorb::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const {
-	return 0;
-}
-
 int Blorb::listMembers(Common::ArchiveMemberList &list) const {
-	return 0;
+	for (uint idx = 0; idx < _chunks.size(); ++idx) {
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(_chunks[idx]._filename, this)));
+	}
+
+	return (int)_chunks.size();
 }
 
 const Common::ArchiveMemberPtr Blorb::getMember(const Common::String &name) const {
-	return Common::ArchiveMemberPtr();
+	if (!hasFile(name))
+		return Common::ArchiveMemberPtr();
+
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
 Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::String &name) const {
+	for (uint idx = 0; idx < _chunks.size(); ++idx) {
+		if (_chunks[idx]._filename.equalsIgnoreCase(name)) {
+			Common::File f;
+			if (!f.open(_filename))
+				error("Reading failed");
+
+			f.seek(_chunks[idx]._offset);
+			Common::SeekableReadStream *result = f.readStream(_chunks[idx]._size);
+			f.close();
+
+			return result;
+		}
+	}
+
 	return nullptr;
 }
 
-giblorb_err_t Blorb::create_map() {
-	giblorb_err_t err;
-	giblorb_map_t *map;
-	glui32 readlen;
-	glui32 nextpos, totallength;
-	giblorb_chunkdesc_t *chunks;
-	int chunks_size, numchunks;
-	char buffer[16];
-
+Common::ErrorCode Blorb::load() {
 	// First, chew through the file and index the chunks
-	_file.seek(0);
+	Common::File f;
+	if (!f.open(_filename) || f.size() < 12)
+		return Common::kReadingFailed;
 
-	readlen = _file.read(buffer, 12);
-	if (readlen != 12)
-		return giblorb_err_Format;
+	if (f.readUint32BE() != ID_FORM)
+		return Common::kReadingFailed;
+	f.readUint32BE();
+	if (f.readUint32BE() != ID_IFRS)
+		return Common::kReadingFailed;
+	if (f.readUint32BE() != ID_RIdx)
+		return Common::kReadingFailed;
 
-	if (READ_BE_INT32(buffer + 0) != giblorb_ID_FORM)
-		return giblorb_err_Format;
-	if (READ_BE_INT32(buffer + 8) != giblorb_ID_IFRS)
-		return giblorb_err_Format;
+	f.readUint32BE();
+	uint count = f.readUint32BE();
 
-	totallength = READ_BE_INT32(buffer + 4) + 8;
-	nextpos = 12;
+	// First read in the resource index
+	for (uint idx = 0; idx < count; ++idx) {
+		ChunkEntry ce;
+		ce._type = f.readUint32BE();
+		ce._number = f.readUint32BE();
+		ce._offset = f.readUint32BE();
 
-	chunks_size = 8;
-	numchunks = 0;
-	chunks = new giblorb_chunkdesc_t[chunks_size];
-
-	while (nextpos < totallength) {
-		glui32 type, len;
-		int chunum;
-		giblorb_chunkdesc_t *chu;
-
-		_file.seek(nextpos);
-
-		readlen = _file.read(buffer, 8);
-		if (readlen != 8) {
-			delete[] chunks;
-			return giblorb_err_Read;
-		}
-
-		type = READ_BE_INT32(buffer + 0);
-		len = READ_BE_INT32(buffer + 4);
-
-		if (numchunks >= chunks_size) {
-			chunks_size *= 2;
-			chunks = new giblorb_chunkdesc_t[chunks_size];
-		}
-
-		chunum = numchunks;
-		chu = &(chunks[chunum]);
-		numchunks++;
-
-		chu->type = type;
-		chu->startpos = nextpos;
-		if (type == giblorb_ID_FORM) {
-			chu->datpos = nextpos;
-			chu->len = len + 8;
-		} else {
-			chu->datpos = nextpos + 8;
-			chu->len = len;
-		}
-		chu->ptr = nullptr;
-		chu->auxdatnum = -1;
-
-		nextpos = nextpos + len + 8;
-		if (nextpos & 1)
-			nextpos++;
-
-		if (nextpos > totallength) {
-			delete[] chunks;
-			return giblorb_err_Format;
-		}
+		_chunks.push_back(ce);
 	}
 
-	// The basic IFF structure seems to be ok, and we have a list of chunks.
-	// Now we allocate the map structure itself.
-	_map = new giblorb_map_t();
-	if (!_map) {
-		delete[] chunks;
-		return giblorb_err_Alloc;
-	}
+	// Further iterate through the resources
+	for (uint idx = 0; idx < _chunks.size(); ++idx) {
+		ChunkEntry &ce = _chunks[idx];
+		f.seek(ce._offset);
+		ce._offset += 8;
 
-	_map->inited = giblorb_Inited_Magic;
-	_map->chunks = chunks;
-	_map->numchunks = numchunks;
-	_map->resources = nullptr;
-	_map->ressorted = nullptr;
-	_map->numresources = 0;
+		ce._id = f.readUint32BE();
+		ce._size = f.readUint32BE();
 
-	// Now we do everything else involved in loading the Blorb file,
-	// such as building resource lists.
-	err = initialize_map();
-	if (err)
-		return err;
+		if (ce._type == ID_Pict) {
+			ce._filename = Common::String::format("pic%u", ce._number);
+			if (ce._id == ID_JPEG)
+				ce._filename += ".jpeg";
+			else if (ce._id == ID_PNG)
+				ce._filename += ".png";
 
-	return giblorb_err_None;
-}
+		} else if (ce._type == ID_Snd) {
+			ce._filename = Common::String::format("snd%u", ce._number);
+			if (ce._id == ID_MIDI)
+				ce._filename += ".midi";
+			else if (ce._id == ID_MP3)
+				ce._filename += ".mp3";
+			else if (ce._id == ID_WAVE)
+				ce._filename += ".wav";
+			else if (ce._id == ID_AIFF)
+				ce._filename += ".aiff";
+			else if (ce._id == ID_OGG)
+				ce._filename += ".ogg";
+			else if (ce._id == ID_MOD)
+				ce._filename += ".mod";
 
-giblorb_err_t Blorb::initialize_map() {
-	// It is important that the map structure be kept valid during this function.
-	// If this returns an error, giblorb_destroy_map() will be called.
-	uint ix, jx;
-	giblorb_result_t chunkres;
-	giblorb_err_t err;
-	char *ptr;
-	glui32 len;
-	glui32 numres;
-	int gotindex = false;
+		} else if (ce._type == ID_Data) {
+			ce._filename = Common::String::format("data%u", ce._number);
 
-	for (ix = 0; ix < _map->numchunks; ix++) {
-		giblorb_chunkdesc_t *chu = &_map->chunks[ix];
+		} else if (ce._type == ID_Exec) {
+			char buffer[5];
+			WRITE_BE_UINT32(buffer, ce._id);
+			buffer[4] = '\0';
+			Common::String type(buffer);
 
-		switch (chu->type) {
-		case giblorb_ID_RIdx:
-			// Resource index chunk: build the resource list and sort it.
-
-			if (gotindex)
-				return giblorb_err_Format; // duplicate index chunk
-			err = load_chunk_by_number(giblorb_method_Memory, &chunkres, ix);
-			if (err)
-				return err;
-
-			ptr = (char *)chunkres.data.ptr;
-			len = chunkres.length;
-			numres = READ_BE_INT32(ptr + 0);
-
-			if (numres) {
-				uint ix2;
-				giblorb_resdesc_t *resources;
-				giblorb_resdesc_t **ressorted;
-
-				if (len != numres * 12 + 4)
-					return giblorb_err_Format; // bad length field
-
-				resources = new giblorb_resdesc_t[numres];
-				ressorted = new giblorb_resdesc_t *[numres];
-				if (!ressorted || !resources) {
-					delete[] resources;
-					delete[] ressorted;
-					return giblorb_err_Alloc;
-				}
-
-				ix2 = 0;
-				for (jx = 0; jx < numres; jx++) {
-					giblorb_resdesc_t *res = &(resources[jx]);
-					glui32 respos;
-
-					res->usage = READ_BE_INT32(ptr + jx * 12 + 4);
-					res->resnum = READ_BE_INT32(ptr + jx * 12 + 8);
-					respos = READ_BE_INT32(ptr + jx * 12 + 12);
-
-					while (ix2 < _map->numchunks
-						&& _map->chunks[ix2].startpos < respos)
-						ix2++;
-
-					if (ix2 >= _map->numchunks
-						|| _map->chunks[ix2].startpos != respos) {
-						delete[] resources;
-						delete[] ressorted;
-						return giblorb_err_Format; // start pos does not match a real chunk
-					}
-
-					res->chunknum = ix2;
-
-					ressorted[jx] = res;
-				}
-
-				// Sort a resource list (actually a list of pointers to structures in _map->resources.)
-				// This makes it easy to find resources by usage and resource number.
-				qsort(ressorted, numres);
-
-				_map->numresources = numres;
-				_map->resources = resources;
-				_map->ressorted = ressorted;
-			}
-
-			unload_chunk(ix);
-			gotindex = true;
-			break;
-		}
-	}
-
-	return giblorb_err_None;
-}
-
-void Blorb::qsort(giblorb_resdesc_t **list, size_t len) {
-	int ix, jx, res;
-	giblorb_resdesc_t *tmpptr, *pivot;
-
-	if (len < 6) {
-		// The list is short enough for a bubble-sort.
-		for (jx = len - 1; jx>0; jx--) {
-			for (ix = 0; ix<jx; ix++) {
-				res = sortsplot(list[ix], list[ix + 1]);
-				if (res > 0) {
-					tmpptr = list[ix];
-					list[ix] = list[ix + 1];
-					list[ix + 1] = tmpptr;
-				}
-			}
-		}
-	} else {
-		// Split the list.
-		pivot = list[len / 2];
-		ix = 0;
-		jx = len;
-		for (;;) {
-			while (ix < jx - 1 && sortsplot(list[ix], pivot) < 0)
-				ix++;
-			while (ix < jx - 1 && sortsplot(list[jx - 1], pivot) > 0)
-				jx--;
-			if (ix >= jx - 1)
-				break;
-			tmpptr = list[ix];
-			list[ix] = list[jx - 1];
-			list[jx - 1] = tmpptr;
-		}
-		ix++;
-		// Sort the halves.
-		qsort(list + 0, ix);
-		qsort(list + ix, len - ix);
-	}
-}
-
-giblorb_resdesc_t *Blorb::bsearch(giblorb_resdesc_t *sample,
-	giblorb_resdesc_t **list, int len) {
-	int top, bot, val, res;
-
-	bot = 0;
-	top = len;
-
-	while (bot < top) {
-		val = (top + bot) / 2;
-		res = sortsplot(list[val], sample);
-		if (res == 0)
-			return list[val];
-		if (res < 0) {
-			bot = val + 1;
-		} else {
-			top = val;
-		}
-	}
-
-	return nullptr;
-}
-
-int Blorb::sortsplot(giblorb_resdesc_t *v1, giblorb_resdesc_t *v2) {
-	if (v1->usage < v2->usage)
-		return -1;
-	if (v1->usage > v2->usage)
-		return 1;
-	if (v1->resnum < v2->resnum)
-		return -1;
-	if (v1->resnum > v2->resnum)
-		return 1;
-	return 0;
-}
-
-giblorb_err_t Blorb::load_chunk_by_type(glui32 method, giblorb_result_t *res, glui32 chunktype, glui32 count) {
-	uint ix;
-
-	for (ix = 0; ix < _map->numchunks; ix++) {
-		if (_map->chunks[ix].type == chunktype) {
-			if (count == 0)
-				break;
-			count--;
-		}
-	}
-
-	if (ix >= _map->numchunks) {
-		return giblorb_err_NotFound;
-	}
-
-	return load_chunk_by_number(method, res, ix);
-}
-
-giblorb_err_t Blorb::load_chunk_by_number(glui32 method, giblorb_result_t *res, glui32 chunknum) {
-	giblorb_chunkdesc_t *chu;
-
-	if (chunknum >= _map->numchunks)
-		return giblorb_err_NotFound;
-
-	chu = &(_map->chunks[chunknum]);
-
-	switch (method) {
-	case giblorb_method_DontLoad:
-		// do nothing
-		break;
-
-	case giblorb_method_FilePos:
-		res->data.startpos = chu->datpos;
-		break;
-
-	case giblorb_method_Memory:
-		if (!chu->ptr) {
-			glui32 readlen;
-			byte *dat = new byte[chu->len];
-
-			if (!dat)
-				return giblorb_err_Alloc;
-
-			_file.seek(chu->datpos);
-
-			readlen = _file.read(dat, chu->len);
-			if (readlen != chu->len)
-				return giblorb_err_Read;
-
-			chu->ptr = dat;
-		}
-
-		res->data.ptr = chu->ptr;
-		break;
-	}
-
-	res->chunknum = chunknum;
-	res->length = chu->len;
-	res->chunktype = chu->type;
-
-	return giblorb_err_None;
-}
-
-giblorb_err_t Blorb::unload_chunk(glui32 chunknum) {
-	giblorb_chunkdesc_t *chu;
-
-	if (chunknum >= _map->numchunks)
-		return giblorb_err_NotFound;
-
-	chu = &(_map->chunks[chunknum]);
-
-	if (chu->ptr) {
-		delete chu->ptr;
-		chu->ptr = nullptr;
-	}
-
-	return giblorb_err_None;
-}
-
-giblorb_err_t Blorb::load_resource(glui32 method, giblorb_result_t *res, glui32 usage, glui32 resnum) {
-	giblorb_resdesc_t sample;
-	giblorb_resdesc_t *found;
-
-	sample.usage = usage;
-	sample.resnum = resnum;
-
-	found = bsearch(&sample, _map->ressorted, _map->numresources);
-
-	if (!found)
-		return giblorb_err_NotFound;
-
-	return load_chunk_by_number(method, res, found->chunknum);
-}
-
-giblorb_err_t Blorb::count_resources(glui32 usage, glui32 *num, glui32 *min, glui32 *max) {
-	int ix;
-	int count;
-	glui32 val;
-	glui32 minval, maxval;
-
-	count = 0;
-	minval = 0;
-	maxval = 0;
-
-	for (ix = 0; ix<_map->numresources; ix++) {
-		if (_map->resources[ix].usage == usage) {
-			val = _map->resources[ix].resnum;
-			if (count == 0) {
-				count++;
-				minval = val;
-				maxval = val;
-			}
-			else {
-				count++;
-				if (val < minval)
-					minval = val;
-				if (val > maxval)
-					maxval = val;
+			if (
+				(_interpType == INTERPRETER_FROTZ && type == "ZCOD") ||
+				(_interpType == INTERPRETER_TADS && (type == "TAD2" || type == "TAD3")) ||
+				(_interpType == INTERPRETER_HUGO && type == "HUGO")
+			) {
+				// Game executable
+				ce._filename = "game";
+			} else {
+				ce._filename = type;
 			}
 		}
 	}
 
-	if (num)
-		*num = count;
-	if (min)
-		*min = minval;
-	if (max)
-		*max = maxval;
-
-	return giblorb_err_None;
+	return Common::kNoError;
 }
 
 } // End of namespace Glk

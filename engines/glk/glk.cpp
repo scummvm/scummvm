@@ -111,7 +111,7 @@ Common::Error GlkEngine::run() {
 		_blorb = new Blorb(filename, getInterpreterType());
 		SearchMan.add("blorb", _blorb, 99, false);
 
-		if (!f.open("EXEC", *_blorb))
+		if (!f.open("game", *_blorb))
 			return Common::kNoGameDataFoundError;
 	} else {
 		if (!f.open(filename))
