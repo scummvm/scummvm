@@ -56,7 +56,7 @@ card so that all files reside in the `/3ds/scummvm/` directory.
 1.3) Additional files
 ---------------------
 In order to use the Virtual Keyboard, you need to get the:
-`backends/vkeybd/packs/vkeybd_zmall.zip` file from ScummVM's repository, and
+`backends/vkeybd/packs/vkeybd_small.zip` file from ScummVM's repository, and
 place it on your SD card, in the `/3ds/scummvm/kb` folder.
 
 In case you want a translated GUI, you need to get the:
@@ -238,7 +238,7 @@ The above configuration command will include all game engines by default and wil
 likely be too massive to be stable using either the 3DSX or the CIA format.
 Until dynamic modules are figured out, you should configure engines like this:
 ```
- $ ./configure --host=3ds --disable-all-engines--enable-engine=scumm-7-8,myst,riven, \
+ $ ./configure --host=3ds --disable-all-engines --enable-engine=scumm-7-8,myst,riven, \
      sword1,sword2,sword25,sci,lure,sky,agi,agos
 ```
 Choose whatever engines you want, but if the ELF's .text section exceeds ~10MB-12MB,
