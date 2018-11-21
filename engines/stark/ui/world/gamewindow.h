@@ -58,7 +58,7 @@ protected:
 	void onDoubleClick(const Common::Point &pos) override;
 	void onRender() override;
 
-	void checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem, int16 &singlePossibleAction, bool &isDefaultAction);
+	void checkObjectAtPos(const Common::Point &pos, int16 selectedInventoryItem, int16 &singlePossibleAction, bool &isDefaultAction);
 
 	ActionMenu *_actionMenu;
 	InventoryWindow *_inventory;

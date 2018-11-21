@@ -159,4 +159,19 @@ void Cursor::setMouseHint(const Common::String &hint) {
 	}
 }
 
+Common::Rect Cursor::getHotRectangle() const {
+	if (!_cursorImage) {
+		return Common::Rect();
+	} else {
+		Common::Point hotSpot = _cursorImage->getHotspot();
+
+		Common::Rect hotRectangle;
+		hotRectangle.setWidth(_cursorImage->getWidth());
+		hotRectangle.setHeight(_cursorImage->getHeight());
+		hotRectangle.translate(-hotSpot.x, -hotSpot.y);
+
+		return hotRectangle;
+	}
+}
+
 } // End of namespace Stark

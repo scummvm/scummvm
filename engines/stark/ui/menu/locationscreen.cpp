@@ -176,7 +176,7 @@ bool StaticLocationWidget::isMouseInside(const Common::Point &mousePos) const {
 	if (!_renderEntry) return false;
 
 	Common::Point relativePosition;
-	return _renderEntry->containsPoint(mousePos, relativePosition);
+	return _renderEntry->containsPoint(mousePos, relativePosition, Common::Rect());
 }
 
 void StaticLocationWidget::onClick() {

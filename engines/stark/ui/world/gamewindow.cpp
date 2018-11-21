@@ -220,17 +220,23 @@ void GameWindow::onDoubleClick(const Common::Point &pos) {
 	}
 }
 
-void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem, int16 &singlePossibleAction, bool &isDefaultAction) {
+void GameWindow::checkObjectAtPos(const Common::Point &pos, int16 selectedInventoryItem, int16 &singlePossibleAction, bool &isDefaultAction) {
 	_objectUnderCursor = nullptr;
 	singlePossibleAction = -1;
 	isDefaultAction = false;
 
 	Math::Ray ray = StarkScene->makeRayFromMouse(_cursor->getMousePosition(true));
 
+	Common::Rect cursorRect;
+	if (selectedInventoryItem != -1) {
+		cursorRect = _cursor->getHotRectangle();
+		cursorRect.translate(pos.x, pos.y);
+	}
+
 	// Render entries are sorted from the farthest to the camera to the nearest
 	// Loop in reverse order
 	for (int i = _renderEntries.size() - 1; i >= 0; i--) {
-		if (_renderEntries[i]->containsPoint(pos, _objectRelativePosition)
+		if (_renderEntries[i]->containsPoint(pos, _objectRelativePosition, cursorRect)
 		    || _renderEntries[i]->intersectRay(ray)) {
 			_objectUnderCursor = _renderEntries[i]->getOwner();
 			break;

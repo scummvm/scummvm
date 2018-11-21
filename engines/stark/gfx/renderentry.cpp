@@ -127,7 +127,7 @@ bool RenderEntry::compare(const RenderEntry *x, const RenderEntry *y) {
 	}
 }
 
-bool RenderEntry::containsPoint(const Common::Point &position, Common::Point &relativePosition) const {
+bool RenderEntry::containsPoint(const Common::Point &position, Common::Point &relativePosition, const Common::Rect &cursorRect) const {
 	if (!_visual || !_clickable) {
 		return false;
 	}
@@ -141,6 +141,16 @@ bool RenderEntry::containsPoint(const Common::Point &position, Common::Point &re
 		relativePosition.x = position.x - imageRect.left - image->getHotspot().x;
 		relativePosition.y = position.y - imageRect.top - image->getHotspot().y;
 		if (imageRect.contains(position) && image->isPointSolid(relativePosition)) {
+			return true;
+		}
+
+		if (imageRect.width() < 32 && imageRect.height() < 32
+				&& !cursorRect.isEmpty() && cursorRect.intersects(imageRect)) {
+			// If the item in the scene is way smaller than the cursor,
+			// use the whole cursor as a hit rectangle.
+			relativePosition.x = 1 - image->getHotspot().x;
+			relativePosition.y = 1 - image->getHotspot().y;
+
 			return true;
 		}
 	}

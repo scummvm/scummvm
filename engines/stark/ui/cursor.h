@@ -57,6 +57,9 @@ public:
 
 	Common::Point getMousePosition(bool unscaled = false) const;
 
+	/** Rectangle at the mouse position to consider to hit test small world items */
+	Common::Rect getHotRectangle() const;
+
 	enum CursorType {
 		kImage = -1,
 		kDefault = 0,
