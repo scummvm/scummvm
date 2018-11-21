@@ -127,7 +127,7 @@ The following libraries can be downloaded with pacman:
 |  Library      |  Package              |
 ----------------|------------------------
 |  zlib         |  3ds-zlib             |
-|  libpng       |  3ds-zlib             |
+|  libpng       |  3ds-libpng           |
 |  libjpeg      |  3ds-libjpeg-turbo    |
 |  freetype2    |  3ds-freetype         |
 |  libmad       |  3ds-libmad           |
