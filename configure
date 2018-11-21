@@ -2442,6 +2442,7 @@ case $_host_os in
 		else
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
+		append_var LDFLAGS "-L$DEVKITPRO/libctru/lib"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/3ds/lib"
 		append_var LIBS "-lcitro3d -lctru"
 		;;
