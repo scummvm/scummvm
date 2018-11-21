@@ -29,7 +29,6 @@
 #include "gui/widgets/list.h"
 #include "gui/widgets/tab.h"
 #include "osystem.h"
-#include "engines/scumm/scumm.h"
 #include "gui/widgets/popup.h"
 
 #include "common/translation.h"
