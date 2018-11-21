@@ -71,6 +71,8 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("say", WRAP_METHOD(Debugger, cmdSay));
 	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("var", WRAP_METHOD(Debugger, cmdVariable));
+	registerCmd("load", WRAP_METHOD(Debugger, cmdLoad));
+	registerCmd("save", WRAP_METHOD(Debugger, cmdSave));
 }
 
 Debugger::~Debugger() {
@@ -355,6 +357,59 @@ bool Debugger::cmdVariable(int argc, const char **argv) {
 	} else {
 		debugPrintf("Variable id must be between 0 and %i\n", variableCount - 1);
 	}
+	return true;
+}
+
+bool Debugger::cmdLoad(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Loads a save game from original format.\n");
+		debugPrintf("Usage: %s <file path>\n", argv[0]);
+		return true;
+	}
+
+	Common::FSNode fs(argv[1]);
+
+	if (!fs.isReadable()) {
+		debugPrintf("Warning: File %s does not exist or is not readable\n", argv[1]);
+		return true;
+	}
+
+	Common::SeekableReadStream *saveFile = fs.createReadStream();
+
+	_vm->loadGame(*saveFile);
+
+	delete saveFile;
+
+	return false;
+}
+
+bool Debugger::cmdSave(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Saves game to original format.\n");
+		debugPrintf("Usage: %s <file path>\n", argv[0]);
+		return true;
+	}
+
+	Common::FSNode fs(argv[1]);
+
+	if (fs.exists() && !fs.isWritable()) {
+		debugPrintf("Warning: File %s is not writable\n", argv[1]);
+		return true;
+	}
+
+	Common::WriteStream *saveFile = fs.createWriteStream();
+
+	uint16 *thumbnail = new uint16[SaveFile::kThumbnailSize];
+	_vm->generateThumbnail(thumbnail);
+
+	_vm->saveGame(*saveFile, thumbnail);
+
+	saveFile->finalize();
+
+	delete[] thumbnail;
+
+	delete saveFile;
+
 	return true;
 }
 

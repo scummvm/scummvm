@@ -50,7 +50,7 @@ void SceneScriptRC01::InitializeScene() {
 #if BLADERUNNER_DEBUG_GAME
 	//TODO: not part of game, remove
 	Game_Flag_Set(kFlagIntroPlayed); // force skip intro
-	 Game_Flag_Set(kFlagRC02toRC01); // no landing
+	Game_Flag_Set(kFlagRC02toRC01); // no landing
 	// Game_Flag_Set(kFlagRC01PoliceDone);
 	// Game_Flag_Set(kFlagKIAPrivacyAddon);
 	// Game_Flag_Set(kFlagZubenRetired);
@@ -74,7 +74,7 @@ void SceneScriptRC01::InitializeScene() {
 	// Global_Variable_Set(kVariableChapter, 2);
 	// Chapter_Enter(2, kSetRC03, kSceneRC03);
 
-	Set_Enter(14, 73);
+	// Set_Enter(14, 73);
 
 #endif
 

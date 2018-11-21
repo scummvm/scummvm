@@ -96,7 +96,6 @@ public:
 	int getPhotoShapeId(int photoId) const;
 	int getPhotoNotUsed(int photoId) const;
 
-private:
 	void reset();
 };
 

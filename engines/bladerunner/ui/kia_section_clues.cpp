@@ -80,6 +80,18 @@ KIASectionClues::~KIASectionClues() {
 	delete _uiContainer;
 }
 
+void KIASectionClues::reset() {
+	_debugIntangible = false;
+	_debugNop = 0;
+
+	_mouseX = 0;
+	_mouseY = 0;
+
+	for (int i = 0; i < _filterCount; ++i) {
+		_filters[i] = true;
+	}
+}
+
 void KIASectionClues::open() {
 	_isOpen = true;
 

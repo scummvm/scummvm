@@ -51,7 +51,8 @@ Actor::Actor(BladeRunnerEngine *vm, int actorId) {
 
 	_walkInfo      = new ActorWalk(vm);
 	_movementTrack = new MovementTrack();
-	_clues         = new ActorClues(vm, (actorId && actorId != 99) ? 2 : 4);
+	_cluesLimit    = (actorId == 0 || actorId == 99) ? 4 : 2;
+	_clues         = new ActorClues(vm, _cluesLimit);
 	_combatInfo    = new ActorCombat(vm);
 
 	_friendlinessToOther.resize(_vm->_gameInfo->getActorCount());
@@ -1105,6 +1106,10 @@ void Actor::addClueToDatabase(int clueId, int weight, bool clueAcquired, bool un
 	_clues->add(_id, clueId, weight, clueAcquired, unknownFlag, fromActorId);
 }
 
+bool Actor::canAcquireClue(int clueId) const {
+	return _clues->exists(clueId);
+}
+
 void Actor::acquireClue(int clueId, bool unknownFlag, int fromActorId) {
 	bool hasAlready = hasClue(clueId);
 	_clues->acquire(clueId, unknownFlag, fromActorId);
@@ -1124,7 +1129,7 @@ bool Actor::hasClue(int clueId) const {
 void Actor::copyClues(int actorId) {
 	Actor *otherActor = _vm->_actors[actorId];
 	for (int i = 0; i < (int)_vm->_gameInfo->getClueCount(); i++) {
-		if (hasClue(i) && !_clues->isPrivate(i) && !otherActor->hasClue(i)) {
+		if (hasClue(i) && !_clues->isPrivate(i) && otherActor->canAcquireClue(i) && !otherActor->hasClue(i)) {
 			int fromActorId = _id;
 			if (_id == BladeRunnerEngine::kActorVoiceOver) {
 				fromActorId = _clues->getFromActorId(i);
@@ -1258,8 +1263,9 @@ void Actor::save(SaveFileWriteStream &f) {
 
 	f.writeInt(_honesty);
 	f.writeInt(_intelligence);
-	f.writeInt(_stability);
 	f.writeInt(_combatAggressiveness);
+	f.writeInt(_stability);
+
 	f.writeInt(_goalNumber);
 
 	f.writeInt(_currentHP);
@@ -1271,7 +1277,8 @@ void Actor::save(SaveFileWriteStream &f) {
 	f.writeInt(_movementTrackNextAngle);
 	f.writeBool(_movementTrackNextRunning);
 
-	f.writeInt(0); // TODO: _clueType
+	f.writeInt(_cluesLimit);
+
 	f.writeBool(_isMoving);
 	f.writeBool(_isTarget);
 	f.writeBool(_inCombat);
@@ -1302,7 +1309,7 @@ void Actor::save(SaveFileWriteStream &f) {
 
 	uint32 now = _vm->getTotalPlayTime(); // TODO: should be last lock time
 	for (int i = 0; i < 7; ++i) {
-		f.writeInt(_timersLast[i] - now);
+		f.writeInt(now - _timersLast[i]);
 	}
 
 	int actorCount = _vm->_gameInfo->getActorCount();
@@ -1316,9 +1323,10 @@ void Actor::save(SaveFileWriteStream &f) {
 
 	_walkInfo->save(f);
 
-	f.writeBoundingBox(_bbox);
+	f.writeBoundingBox(_bbox, false);
 
 	_combatInfo->save(f);
+
 	f.writeInt(_animationModeCombatIdle);
 	f.writeInt(_animationModeCombatWalk);
 	f.writeInt(_animationModeCombatRun);
@@ -1334,8 +1342,9 @@ void Actor::load(SaveFileReadStream &f) {
 
 	_honesty = f.readInt();
 	_intelligence = f.readInt();
-	_stability = f.readInt();
 	_combatAggressiveness = f.readInt();
+	_stability = f.readInt();
+
 	_goalNumber = f.readInt();
 
 	_currentHP = f.readInt();
@@ -1347,7 +1356,8 @@ void Actor::load(SaveFileReadStream &f) {
 	_movementTrackNextAngle = f.readInt();
 	_movementTrackNextRunning = f.readBool();
 
-	f.skip(4); // TODO: _clueType
+	_cluesLimit = f.readInt();
+
 	_isMoving = f.readBool();
 	_isTarget = f.readBool();
 	_inCombat = f.readBool();
@@ -1378,7 +1388,7 @@ void Actor::load(SaveFileReadStream &f) {
 
 	uint32 now = _vm->getTotalPlayTime(); // TODO: should be last lock time
 	for (int i = 0; i < 7; ++i) {
-		_timersLast[i] = f.readInt() + now;
+		_timersLast[i] = now - f.readInt();
 	}
 
 	int actorCount = _vm->_gameInfo->getActorCount();
@@ -1392,7 +1402,7 @@ void Actor::load(SaveFileReadStream &f) {
 
 	_walkInfo->load(f);
 
-	_bbox = f.readBoundingBox();
+	_bbox = f.readBoundingBox(false);
 
 	_combatInfo->load(f);
 

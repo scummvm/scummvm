@@ -589,7 +589,7 @@ void ScriptBase::Loop_Actor_Travel_Stairs(int actorId, int stepCount, bool up, i
 				break;
 			}
 		}
-	} while (true);
+	} while (_vm->_gameIsRunning);
 	actor->setImmunityToObstacles(immunityToObstacles);
 
 	actor->setAtXYZ(Vector3(actor->getX(), targetY, actor->getZ()), actor->getFacing(), true, false, false);
@@ -632,7 +632,7 @@ void ScriptBase::Loop_Actor_Travel_Ladder(int actorId, int stepCount, bool up, i
 				break;
 			}
 		}
-	} while (true);
+	} while (_vm->_gameIsRunning);
 	actor->setImmunityToObstacles(immunityToObstacles);
 
 	actor->setAtXYZ(Vector3(actor->getX(), targetY, actor->getZ()), actor->getFacing(), true, false, false);
@@ -730,7 +730,7 @@ int ScriptBase::Animation_Skip_To_Frame() {
 void ScriptBase::Delay(int miliseconds) {
 	Player_Loses_Control();
 	int endTime = _vm->getTotalPlayTime() + miliseconds;
-	while ((int)_vm->getTotalPlayTime() < endTime) {
+	while (_vm->_gameIsRunning && (int)_vm->getTotalPlayTime() < endTime) {
 		_vm->gameTick();
 	}
 	Player_Gains_Control();

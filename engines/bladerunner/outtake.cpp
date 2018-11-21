@@ -44,9 +44,9 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 
 	resName = resName + ".VQA";
 
-	VQAPlayer vqa_player(_vm, &_vm->_surfaceFront);
+	VQAPlayer vqa_player(_vm, &_vm->_surfaceFront, resName);
 
-	vqa_player.open(resName);
+	vqa_player.open();
 
 	_vm->_mixer->stopAll();
 	while (!_vm->shouldQuit()) {

@@ -81,6 +81,8 @@ public:
 	DialogueMenu(BladeRunnerEngine *vm);
 	~DialogueMenu();
 
+	void clear();
+
 	bool loadText(const Common::String &name);
 
 	bool show();
@@ -106,7 +108,6 @@ private:
 	int  getAnswerIndex(int answer) const;
 	const char *getText(int id) const;
 	void calculatePosition(int unusedX = 0, int unusedY = 0);
-	void clear();
 	void reset();
 
 	static void darkenRect(Graphics::Surface &s, int x1, int y1, int x2, int y2);

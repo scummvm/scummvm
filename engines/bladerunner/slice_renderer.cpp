@@ -207,15 +207,13 @@ void SliceRenderer::calculateBoundingRect() {
 	 * Calculate min and max X
 	 */
 
-	/* TODO, there is something off with X scaling when Y is high like in rc02, on sides, x seems to be ofsetted a bit more than it should. Start/top vector is doing that  */
-
 	Matrix3x2 facingRotation = calculateFacingRotationMatrix();
 
 	Matrix3x2 mProjection(_view->_viewportPosition.z / bottom.z,  0.0f, 0.0f,
 	                                                       0.0f, 25.5f, 0.0f);
 
 	Matrix3x2 mOffset(1.0f, 0.0f, _framePos.x,
-                      0.0f, 1.0f, _framePos.y);
+	                  0.0f, 1.0f, _framePos.y);
 
 	Matrix3x2 mScale(_frameScale.x,          0.0f, 0.0f,
 	                          0.0f, _frameScale.y, 0.0f);
@@ -281,7 +279,6 @@ void SliceRenderer::loadFrame(int animation, int frame) {
 }
 
 struct SliceLineIterator {
-	// int _sliceMatrix[2][3];
 	Matrix3x2 _sliceMatrix;
 	int _startY;
 	int _endY;

@@ -49,6 +49,7 @@ class VQAPlayer {
 	friend class Debugger;
 
 	BladeRunnerEngine           *_vm;
+	Common::String               _name;
 	Common::SeekableReadStream  *_s;
 	VQADecoder                   _decoder;
 	Audio::QueuingAudioStream   *_audioStream;
@@ -77,8 +78,9 @@ class VQAPlayer {
 
 public:
 
-	VQAPlayer(BladeRunnerEngine *vm, Graphics::Surface *surface)
+	VQAPlayer(BladeRunnerEngine *vm, Graphics::Surface *surface, const Common::String &name)
 		: _vm(vm),
+		  _name(name),
 		  _s(nullptr),
 		  _surface(surface),
 		  _decoder(),
@@ -103,7 +105,7 @@ public:
 		close();
 	}
 
-	bool open(const Common::String &name);
+	bool open();
 	void close();
 
 	int  update(bool forceDraw = false, bool advanceFrame = true, Graphics::Surface *customSurface = nullptr);

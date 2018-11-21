@@ -203,7 +203,80 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 }
 
 bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
-	return f == kSupportsRTL;
+	return
+		f == kSupportsRTL ||
+		f == kSupportsLoadingDuringRuntime ||
+		f == kSupportsSavingDuringRuntime;
+}
+
+bool BladeRunnerEngine::canLoadGameStateCurrently() {
+	return
+		playerHasControl() &&
+		!_sceneScript->isInsideScript() &&
+		!_aiScripts->isInsideScript() &&
+		!_kia->isOpen() &&
+		!_spinner->isOpen() &&
+		!_vk->isOpen() &&
+		!_elevator->isOpen();
+}
+
+Common::Error BladeRunnerEngine::loadGameState(int slot) {
+	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+
+	Common::InSaveFile *saveFile = getSaveFileManager()->openForLoading(saveName);
+	if (saveFile == nullptr || saveFile->err()) {
+		delete saveFile;
+		return Common::kReadingFailed;
+	}
+
+	BladeRunner::SaveFileHeader header;
+	if (!BladeRunner::SaveFile::readHeader(*saveFile, header)) {
+		error("Invalid savegame");
+	}
+
+	loadGame(*saveFile);
+
+	delete saveFile;
+
+	return Common::kNoError;
+}
+
+bool BladeRunnerEngine::canSaveGameStateCurrently() {
+	return
+		playerHasControl() &&
+		!_sceneScript->isInsideScript() &&
+		!_aiScripts->isInsideScript() &&
+		!_kia->isOpen() &&
+		!_spinner->isOpen() &&
+		!_vk->isOpen() &&
+		!_elevator->isOpen();
+}
+
+Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &desc) {
+	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(saveName);
+	if (saveFile == nullptr || saveFile->err()) {
+		delete saveFile;
+		return Common::kReadingFailed;
+	}
+
+	byte *thumbnail = new byte[SaveFile::kThumbnailSize];
+	generateThumbnail(thumbnail);
+
+	BladeRunner::SaveFileHeader header;
+	header._name = desc;
+	BladeRunner::SaveFile::writeHeader(*saveFile, header);
+
+	saveGame(*saveFile, thumbnail);
+
+	saveFile->finalize();
+
+	delete[] thumbnail;
+
+	delete saveFile;
+
+	return Common::kNoError;
 }
 
 Common::Error BladeRunnerEngine::run() {
@@ -315,8 +388,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// Seed rand
 
 	// TODO: Sine and cosine lookup tables for intervals of 1.0, 4.0, and 12.0
-	_cosTable1024 = new Common::CosineTable(1024); // 10-bits = 1024 points for 2*PI;	
-	_sinTable1024 = new Common::SineTable(1024);	
+	_cosTable1024 = new Common::CosineTable(1024); // 10-bits = 1024 points for 2*PI;
+	_sinTable1024 = new Common::SineTable(1024);
 
 	_view = new View();
 
@@ -1640,22 +1713,16 @@ void BladeRunnerEngine::playerGainsControl() {
 	}
 }
 
-bool BladeRunnerEngine::saveGame(const Common::String &filename, byte *thumbnail) {
-	warning("BladeRunnerEngine::saveGame not finished");
-
+bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, const void *thumbnail) {
 	if (!playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript()) {
 		return false;
 	}
 
-	Common::OutSaveFile *commonSaveFile = getSaveFileManager()->openForSaving(filename, false);
-	if (commonSaveFile->err()) {
-		return false;
-	}
+	Common::MemoryWriteStreamDynamic memoryStream(DisposeAfterUse::Flag::YES);
+	SaveFileWriteStream s(memoryStream);
 
-	SaveFileWriteStream s;
-
-	s.padBytes(9600); // TODO: thumbnail
-	s.writeFloat(-1.0f);
+	s.write(thumbnail, SaveFile::kThumbnailSize);
+	s.writeFloat(1.0f);
 	_settings->save(s);
 	_scene->save(s);
 	_scene->_exits->save(s);
@@ -1691,49 +1758,43 @@ bool BladeRunnerEngine::saveGame(const Common::String &filename, byte *thumbnail
 		s.writeInt(nextAnimation);
 	}
 	_actors[kActorVoiceOver]->save(s);
-
 	_policeMaze->save(s);
 	_crimesDatabase->save(s);
 
 	s.finalize();
-	assert(0 && "ok");
 
-	commonSaveFile->writeUint32LE(s.size() + 4);
-	commonSaveFile->write(s.getData(), s.size());
+	stream.writeUint32LE(memoryStream.size() + 4);
+	stream.write(memoryStream.getData(), memoryStream.size());
+	stream.flush();
 
-	return !commonSaveFile->err();
+	return true;
 }
 
-void BladeRunnerEngine::loadGame(const Common::String &filename, byte *thumbnail) {
-	warning("BladeRunnerEngine::loadGame not finished");
-
+bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 	if (!playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript()) {
-		return;
+		return false;
 	}
 
-	Common::InSaveFile *commonSaveFile = getSaveFileManager()->openForLoading(filename);
-	if (commonSaveFile->err()) {
-		return;
-	}
-
-	void *buf = malloc(commonSaveFile->size());
-	int dataSize = commonSaveFile->read(buf, commonSaveFile->size());
-
-	SaveFileReadStream s((const byte*)buf, dataSize);
+	SaveFileReadStream s(stream);
 
 	_ambientSounds->removeAllNonLoopingSounds(true);
 	_ambientSounds->removeAllLoopingSounds(1);
 	_music->stop(2);
 	_audioSpeech->stopSpeech();
 	_actorDialogueQueue->flush(true, false);
+	_screenEffects->_entries.clear();
 
 	int size = s.readInt();
 
-	if (size != dataSize) {
-		return;
+	if (size != s.size() - s.pos() + 4) {
+		_gameIsLoading = false;
+		return false;
 	}
 
-	s.skip(9600); // thumbnail
+	_gameIsLoading = true;
+	_settings->setLoadingGame();
+	s.skip(SaveFile::kThumbnailSize); // skip the thumbnail
+	s.skip(4);// always float 1.0, but never used
 	_settings->load(s);
 	_scene->load(s);
 	_scene->_exits->load(s);
@@ -1757,7 +1818,6 @@ void BladeRunnerEngine::loadGame(const Common::String &filename, byte *thumbnail
 	_obstacles->load(s);
 	_actorDialogueQueue->load(s);
 	_waypoints->load(s);
-
 	for (uint i = 0; i != _gameInfo->getActorCount(); ++i) {
 		_actors[i]->load(s);
 
@@ -1768,21 +1828,69 @@ void BladeRunnerEngine::loadGame(const Common::String &filename, byte *thumbnail
 		_aiScripts->setAnimationState(i, animationState, animationFrame, animationStateNext, nextAnimation);
 	}
 	_actors[kActorVoiceOver]->load(s);
-
 	_policeMaze->load(s);
 	_crimesDatabase->load(s);
 
+	_gameIsLoading = false;
+
 	_settings->setNewSetAndScene(_settings->getSet(), _settings->getScene());
 	_settings->setChapter(_settings->getChapter());
+
+	return true;
+}
+
+void BladeRunnerEngine::newGame(int difficulty) {
+	_settings->reset();
+	_combat->reset();
+
+	for (uint i = 0; i < _gameInfo->getActorCount(); ++i) {
+		_actors[i]->setup(i);
+	}
+	_actors[kActorVoiceOver]->setup(99);
+
+	for (uint i = 0; i < _gameInfo->getSuspectCount(); ++i) {
+		_suspectsDatabase->get(i)->reset();
+	}
+
+	_gameFlags->clear();
+
+	_gameInfo->getGlobalVarCount();
+
+	for (uint i = 0; i < _gameInfo->getGlobalVarCount(); ++i) {
+		_gameVars[i] = 0;
+	}
+
+	_items->reset();
+	_scores->reset();
+	_kia->reset();
+	_dialogueMenu->clear();
+	_scene->_exits->enable();
+
+	if (difficulty >= 0 && difficulty < 3) {
+		_settings->setDifficulty(difficulty);
+	}
+
+	_settings->setStartingGame();
 }
 
 void BladeRunnerEngine::ISez(const Common::String &str) {
 	debug("\t%s", str.c_str());
 }
 
-void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) {
+void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) const {
 	_system->copyRectToScreen(src.getPixels(), src.pitch, 0, 0, src.w, src.h);
 	_system->updateScreen();
+}
+
+void BladeRunnerEngine::generateThumbnail(void *thumbnail) const {
+	uint16 *dstPixels = (uint16*)thumbnail;
+
+	for (int y = 0; y < 480; y += 8) {
+		for (int x = 0; x < 640; x += 8) {
+			*dstPixels = *(const uint16 *)_surfaceFront.getBasePtr(x, y);
+			++dstPixels;
+		}
+	}
 }
 
 GUI::Debugger *BladeRunnerEngine::getDebugger() {

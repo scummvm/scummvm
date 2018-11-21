@@ -87,7 +87,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	const Common::String sceneName = _vm->_gameInfo->getSceneName(_sceneId);
 
 	if (isLoadingGame) {
-		// TODO: _vm->overlays->resume()
+		_vm->_overlays->resume(true);
 	} else {
 		_regions->clear();
 		_exits->clear();
@@ -113,7 +113,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		delete _vqaPlayer;
 	}
 
-	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
+	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, vqaName);
 
 	if (!_vm->_sceneScript->open(sceneName)) {
 		return false;
@@ -138,7 +138,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		return true;
 	}
 
-	if (!_vqaPlayer->open(vqaName)) {
+	if (!_vqaPlayer->open()) {
 		return false;
 	}
 
@@ -253,7 +253,9 @@ void Scene::resume(bool isLoadingGame) {
 
 	int targetFrame = _frame;
 
-	if (!isLoadingGame) {
+	if (isLoadingGame) {
+		_vqaPlayer->open();
+	} else {
 		_vm->_zbuffer->disable();
 	}
 

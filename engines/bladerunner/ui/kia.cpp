@@ -88,6 +88,8 @@ KIA::KIA(BladeRunnerEngine *vm) {
 
 	_pogoPos = 0;
 
+	_thumbnail = nullptr;
+
 	_buttons = new UIImagePicker(_vm, 22);
 
 	_crimesSection     = new KIASectionCrimes(_vm, _vm->_playerActor->_clues);
@@ -122,6 +124,18 @@ KIA::~KIA() {
 	delete _shapes;
 	delete _log;
 	delete _script;
+}
+
+void KIA::reset() {
+	_lastSectionIdKIA = kKIASectionCrimes;
+	_lastSectionIdOptions = kKIASectionSettings;
+	_playerVqaFrame = 0;
+	_playerVisualizerState = 0;
+	_playerSliceModelAngle = 0.0f;
+
+	_crimesSection->reset();
+	_suspectsSection->reset();
+	_cluesSection->reset();
 }
 
 void KIA::openLastOpened() {
@@ -169,8 +183,8 @@ void KIA::open(KIASections sectionId) {
 			_mainVqaPlayer = nullptr;
 		}
 
-		_mainVqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
-		_mainVqaPlayer->open(name);
+		_mainVqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, name);
+		_mainVqaPlayer->open();
 	}
 
 	if (_transitionId) {
@@ -621,6 +635,9 @@ void KIA::loopEnded(void *callbackData, int frame, int loopId) {
 }
 
 void KIA::init() {
+	_thumbnail = new byte[SaveFile::kThumbnailSize];
+	_vm->generateThumbnail(_thumbnail);
+
 	if (!_vm->openArchive("MODE.MIX")) {
 		return;
 	}
@@ -640,8 +657,8 @@ void KIA::init() {
 	_vm->_mouse->setCursor(0);
 	if (_playerVqaPlayer == nullptr) {
 
-		_playerVqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceFront);
-		_playerVqaPlayer->open("kiaover.vqa");
+		_playerVqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceFront, "kiaover.vqa");
+		_playerVqaPlayer->open();
 		_playerVqaPlayer->setLoop(0, -1, kLoopSetModeJustStart, nullptr, nullptr);
 	}
 	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(501), 70, 0, 0, 50, 0);
@@ -650,6 +667,9 @@ void KIA::init() {
 }
 
 void KIA::unload() {
+	delete[] _thumbnail;
+	_thumbnail = nullptr;
+
 	if (!isOpen()) {
 		return;
 	}
@@ -684,7 +704,7 @@ void KIA::unload() {
 
 	// TODO: Unfreeze game time
 
-	if (!_vm->_settings->getLoadingGame() && _vm->_gameIsRunning) {
+	if (!_vm->_settings->isLoadingGame() && _vm->_gameIsRunning) {
 		_vm->_scene->resume();
 	}
 }

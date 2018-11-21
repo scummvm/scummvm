@@ -117,6 +117,8 @@ class KIA {
 
 	int                   _pogoPos;
 
+	byte                 *_thumbnail;
+
 public:
 	KIALog     *_log;
 	KIAScript  *_script;
@@ -125,6 +127,8 @@ public:
 public:
 	KIA(BladeRunnerEngine *vm);
 	~KIA();
+
+	void reset();
 
 	void openLastOpened();
 	void open(KIASections sectionId);
