@@ -42,6 +42,24 @@ MSNImage::MSNImage() {
 	_pitch = 0;
 	_numSections = 0;
 	_numClickFields = 0;
+
+	for (int i = 0; i < kMaxSections; ++i) {
+		_section[i].x1 = 0;
+		_section[i].x2 = 0;
+		_section[i].y1 = 0;
+		_section[i].y2 = 0;
+		_section[i].next = 0;
+		_section[i].addressLow = 0xFFFF;
+		_section[i].addressHigh = 0xFF;
+	}
+
+	for (int i = 0; i < kMaxClickFields; ++i) {
+		_clickField[i].x1 = 0;
+		_clickField[i].x2 = 0;
+		_clickField[i].y1 = 0;
+		_clickField[i].y2 = 0;
+		_clickField[i].next = 0;
+	}
 }
 
 MSNImage::~MSNImage() {

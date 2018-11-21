@@ -32,6 +32,11 @@ namespace Supernova {
 
 Room::Room() {
 	_seen = false;
+	_fileNumber = 0;
+	_id = NULLROOM;
+	_vm = nullptr;
+	_gm = nullptr;
+
 	for (int i = 0; i < kMaxSection; ++i)
 		_shown[i] = kShownFalse;
 	for (int i = 0; i < kMaxDialog; ++i)
@@ -704,6 +709,7 @@ ShipSleepCabin::ShipSleepCabin(SupernovaEngine *vm, GameManager *gm) {
 	_fileNumber = 33;
 	_id = SLEEP;
 	_shown[0] = kShownTrue;
+	_color = kColorBlack;
 
 	_objectState[0] = Object(_id, kStringHatch, kStringStasisHatchDescription2, CABINS, NULLTYPE, 0, 0, 0, NULLROOM, 0);
 	_objectState[1] = Object(_id, kStringHatch, kStringStasisHatchDescription2, CABIN, NULLTYPE, 1, 1, 0, NULLROOM, 0);
@@ -916,6 +922,7 @@ ShipCockpit::ShipCockpit(SupernovaEngine *vm, GameManager *gm) {
 	_fileNumber = 9;
 	_id = COCKPIT;
 	_shown[0] = kShownTrue;
+	_color = kColorBlack;
 
 	_objectState[0] = Object(_id, kStringInstruments, kStringInstrumentsDescription1, INSTRUMENTS, NULLTYPE, 2, 2, 0, NULLROOM, 0);
 	_objectState[1] = Object(_id, kStringMonitor, kStringDefaultDescription, MONITOR, NULLTYPE, 0, 0, 0, NULLROOM, 0);
@@ -1907,6 +1914,8 @@ ArsanoMeetup::ArsanoMeetup(SupernovaEngine *vm, GameManager *gm) {
 	_fileNumber = 37;
 	_id = MEETUP;
 	_shown[0] = kShownTrue;
+	_sign = 0;
+	_beacon = 0;
 
 	_objectState[0] = Object(_id, kStringCave,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,CAVE,22);
 	_objectState[1] = Object(_id, kStringSign,kStringSignDescription,MEETUP_SIGN,NULLTYPE,0,0,0);
@@ -2273,6 +2282,7 @@ ArsanoRemaining::ArsanoRemaining(SupernovaEngine *vm, GameManager *gm) {
 	_objectState[2] = Object(_id, kStringShoes,kStringShoesDescription,NULLOBJECT,NULLTYPE,2,2,0);
 
 	_chewing = kShownTrue;
+	_i = 0;
 }
 
 void ArsanoRemaining::animation() {
@@ -2459,6 +2469,7 @@ ArsanoRoger::ArsanoRoger(SupernovaEngine *vm, GameManager *gm) {
 	_dialog1[3] = kStringDialogSeparator;
 
 	_eyewitness = 5;
+	_hands = 0;
 }
 
 void ArsanoRoger::onEntrance() {
@@ -2592,6 +2603,7 @@ ArsanoGlider::ArsanoGlider(SupernovaEngine *vm, GameManager *gm) {
 	_fileNumber = 19;
 	_id = GLIDER;
 	_shown[0] = kShownTrue;
+	_sinus = 0;
 
 	_objectState[0] = Object(_id, kStringExit,kStringDefaultDescription,NULLOBJECT,EXIT,255,255,0,MEETUP,15);
 	_objectState[1] = Object(_id, kStringButton,kStringDefaultDescription,GLIDER_BUTTON1,PRESS,0,0,0);

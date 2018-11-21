@@ -68,8 +68,10 @@ public:
 	Inventory(Object *nullObject, int &inventoryScroll)
 		: _numObjects(0)
 		, _nullObject(nullObject)
-		, _inventoryScroll(inventoryScroll)
-	{}
+	    , _inventoryScroll(inventoryScroll) {
+		for (int i = 0; i < kMaxCarry; ++i)
+			_inventory[i] = nullptr;
+	}
 
 	void add(Object &obj);
 	void remove(Object &obj);

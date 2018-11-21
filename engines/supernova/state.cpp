@@ -290,7 +290,8 @@ StringId GameManager::guiStatusCommands[] = {
 GameManager::GameManager(SupernovaEngine *vm, Sound *sound)
 	: _inventory(&_nullObject, _inventoryScroll)
 	, _vm(vm)
-	, _sound(sound) {
+    , _sound(sound)
+    , _mouseClickType(Common::EVENT_INVALID) {
 	initRooms();
 	changeRoom(INTRO);
 	initState();
