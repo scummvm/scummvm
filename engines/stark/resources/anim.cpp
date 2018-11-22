@@ -104,7 +104,6 @@ int Anim::getPointHotspotIndex(const Common::Point &point) const {
 }
 
 uint32 Anim::getDuration() const {
-	// TODO: Implement for each anim type
 	warning("Anim::getDuration is not implemented");
 	return 0;
 }
@@ -115,13 +114,11 @@ void Anim::playAsAction(ItemVisual *item) {
 }
 
 bool Anim::isAtTime(uint32 time) const {
-	// TODO: Implement for each anim type
 	warning("Anim::isAtTime is not implemented");
 	return true;
 }
 
 uint32 Anim::getRemainingTime() const {
-	// TODO: Implement for each anim type
 	warning("Anim::getRemainingTime is not implemented");
 	return 0;
 }

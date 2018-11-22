@@ -46,7 +46,6 @@ MainMenuScreen::~MainMenuScreen() {
 void MainMenuScreen::open() {
 	StaticLocationScreen::open();
 
-	//TODO: Implement each handler
 	_widgets.push_back(new StaticLocationWidget(
 			"BGImage",
 			nullptr,

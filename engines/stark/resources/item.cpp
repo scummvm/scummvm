@@ -750,7 +750,7 @@ void FloorPositionedItem::placeOnBookmark(Bookmark *target) {
 
 	// Set the z coordinate using the floor height at that position
 	if (_floorFaceIndex < 0) {
-		warning("Item '%s' has been place out of the floor field", getName().c_str());
+		warning("Item '%s' has been placed out of the floor field", getName().c_str());
 	}
 }
 

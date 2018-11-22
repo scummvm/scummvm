@@ -64,9 +64,6 @@ public:
 	virtual void saveLoad(ResourceSerializer *serializer) override;
 	virtual void saveLoadCurrent(ResourceSerializer *serializer) override;
 
-	/** Obtain the render entry for the background item */
-	virtual Gfx::RenderEntry *getBackgroundRenderEntry() = 0;
-
 	/** Obtain the render entries for all items, including the background */
 	virtual Gfx::RenderEntryArray listRenderEntries() = 0;
 
@@ -112,7 +109,6 @@ public:
 	void onExitLocation() override;
 
 	// Layer API
-	Gfx::RenderEntry *getBackgroundRenderEntry() override;
 	Gfx::RenderEntryArray listRenderEntries() override;
 
 protected:
@@ -137,8 +133,10 @@ public:
 	void onAllLoaded() override;
 
 	// Layer API
-	Gfx::RenderEntry *getBackgroundRenderEntry() override;
 	Gfx::RenderEntryArray listRenderEntries() override;
+
+	/** Obtain the render entry for the background item */
+	Gfx::RenderEntry *getBackgroundRenderEntry();
 
 protected:
 	void printData() override;

@@ -212,7 +212,7 @@ void StarkEngine::processEvents() {
 				pauseEngine(false);
 			}
 			continue;
-		} 
+		}
 
 		if (e.type == Common::EVENT_KEYDOWN) {
 			if (e.kbdRepeat) {

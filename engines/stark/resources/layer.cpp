@@ -154,11 +154,6 @@ void Layer2D::onExitLocation() {
 	_items.clear();
 }
 
-Gfx::RenderEntry *Layer2D::getBackgroundRenderEntry() {
-	// TODO
-	return nullptr;
-}
-
 Gfx::RenderEntryArray Layer2D::listRenderEntries() {
 	Gfx::RenderEntryArray renderEntries;
 	for (uint i = 0; i < _items.size(); i++) {

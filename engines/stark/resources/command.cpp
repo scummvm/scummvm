@@ -686,12 +686,12 @@ Command *Command::opScriptEnable(const ResourceReference &scriptRef, int32 enabl
 }
 
 Command *Command::opShowPlay(Script *script, const ResourceReference &ref, int32 suspend) {
-	assert(_arguments.size() == 3);
 	Speech *speech = ref.resolve<Speech>();
-	warning("(TODO: Implement) opShowPlay(%s %d) %s : %s", speech->getName().c_str(), suspend, speech->getPhrase().c_str(), ref.describe().c_str());
-
 	speech->setPlayTalkAnim(true);
+
 	StarkDialogPlayer->playSingle(speech);
+
+	// TODO: Only set the anim activity if the next opcode is not going to do it
 
 	if (suspend) {
 		script->suspend(speech);
@@ -949,9 +949,6 @@ Command *Command::opLocationScrollSet(const ResourceReference &scrollRef) {
 }
 
 Command *Command::opFullMotionVideoPlay(Script *script, const ResourceReference &movieRef, int32 unknown) {
-	FMV *movie =  movieRef.resolve<FMV>();
-	warning("(TODO: Implement) opFullMotionVideoPlay(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
-
 	// Stop skipping frames
 	StarkGlobal->setNormalSpeed();
 
@@ -960,6 +957,9 @@ Command *Command::opFullMotionVideoPlay(Script *script, const ResourceReference 
 	Location *location = current->getLocation();
 	location->resetAnimationBlending();
 
+	// TODO: Pause the engine while the video is playing
+
+	FMV *movie =  movieRef.resolve<FMV>();
 	movie->requestPlayback();
 
 	// Unconditional suspension
@@ -1160,12 +1160,9 @@ Command *Command::opItem3DSetWalkTarget(const ResourceReference &itemRef, const 
 }
 
 Command *Command::opSpeakWithoutTalking(Script *script, const ResourceReference &speechRef, int32 suspend) {
-	assert(_arguments.size() == 3);
 	Speech *speech = speechRef.resolve<Speech>();
-	warning("(TODO: Implement) opSpeakWithoutTalking(%s, %d) : %s", speech->getName().c_str(), suspend, speechRef.describe().c_str());
-
-	// TODO: Complete
 	speech->setPlayTalkAnim(false);
+
 	StarkDialogPlayer->playSingle(speech);
 
 	if (suspend) {
