@@ -215,6 +215,10 @@ void StarkEngine::processEvents() {
 		} 
 
 		if (e.type == Common::EVENT_KEYDOWN) {
+			if (e.kbdRepeat) {
+				continue;
+			}
+
 			if (e.kbd.keycode == Common::KEYCODE_d) {
 				if (e.kbd.flags & Common::KBD_CTRL) {
 					_console->attach();
