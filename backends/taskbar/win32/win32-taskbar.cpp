@@ -77,7 +77,7 @@ const PROPERTYKEY PKEY_Title = { /* fmtid = */ { 0xF29F85E0, 0x4FF9, 0x1068, { 0
 
 Win32TaskbarManager::Win32TaskbarManager(SdlWindow_Win32 *window) : _window(window), _taskbar(NULL), _count(0), _icon(NULL) {
 	// Do nothing if not running on Windows 7 or later
-	if (!Win32::confirmWindowsVersion(10, 0) && !Win32::confirmWindowsVersion(6, 1))
+	if (!Win32::confirmWindowsVersion(6, 1))
 		return;
 
 	CoInitialize(NULL);
