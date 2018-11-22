@@ -20,11 +20,12 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 #include "config.h"
 #include "osystem.h"
 #include "options-dialog.h"
 #include "common/config-manager.h"
-#include <3ds.h>
 
 namespace _3DS {
 

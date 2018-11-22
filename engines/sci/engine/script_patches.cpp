@@ -112,6 +112,7 @@ static const char *const selectorNameTable[] = {
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"has",          // King's Quest 6, GK1
+	"modeless",     // King's Quest 6 CD
 	"cycler",       // Space Quest 4 / system selector
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
@@ -141,8 +142,8 @@ static const char *const selectorNameTable[] = {
 	"fore",         // KQ7
 	"back",         // KQ7
 	"font",         // KQ7
-	"setScale",     // LSL6hires
-	"setScaler",    // LSL6hires
+	"setScale",     // LSL6hires, QFG4
+	"setScaler",    // LSL6hires, QFG4
 	"readWord",     // LSL7, Phant1, Torin
 	"points",       // PQ4
 	"select",       // PQ4
@@ -188,6 +189,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
 	SELECTOR_has,
+	SELECTOR_modeless,
 	SELECTOR_cycler,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors
@@ -2504,6 +2506,53 @@ static const uint16 kq6PatchLookRibbonFix[] = {
 	PATCH_END
 };
 
+// KQ6 CD introduced a bug in the wallflower dance in room 480. The dance is
+//  supposed to last until the music ends but in Text mode it stops after only
+//  three seconds once the user gains control. This isn't usually enough time
+//  to get the hole in the wall. This bug also occurs in Sierra's interpreter.
+//
+// wallFlowerDance was changed in the CD version for Speech mode but broke Text.
+//  In Text mode, changeState(9) creates a dialog with Print, which blocks, and
+//  then sets ticks to 12. Meanwhile, wallFlowerDance:handleEvent cues if an
+//  event is received in state 9. A mouse click starts a 12 tick race which
+//  handleEvent wins, cueing before the countdown expires, and so the countdown
+//  expires on state 10, skipping ahead to the three second fadeout. Closing the
+//  dialog with the keyboard works because Dialog claims keyboard events when
+//  blocking, preventing wallFlowerDance:handleEvent from receiving and cueing.
+//
+// We fix this by setting the Print dialog to modeless as it was in the floppy
+//  version and removing the countdown. wallFlowerDance:handleEvent now receives
+//  all events and is the only one responsible for advancing state 9 to 10 in
+//  Text mode. This patch does not affect audio modes Speech and Both.
+//
+// Applies to: PC CD
+// Responsible method: wallFlowerDance:changeState(9)
+// Fixes bug #10811
+static const uint16 kq6CDSignatureWallFlowerDanceFix[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(init),          // pushi init
+	0x76,                               // push0
+	0x51, 0x15,                         // class Print [ Print: ... init ]
+	0x4a, 0x24,                         // send 24
+	0x35, 0x0c,                         // ldi 0c
+	0x65, 0x20,                         // aTop ticks
+	0x32, SIG_UINT16(0x00d0),           // jmp 00d0 [ end of method ]
+	SIG_END
+};
+
+static const uint16 kq6CDPatchWallFlowerDanceFix[] = {
+	0x38, PATCH_SELECTOR16(modeless),   // pushi modeless
+	0x78,                               // push1
+	0x78,                               // push1
+	0x39, PATCH_SELECTOR8(init),        // pushi init
+	0x76,                               // push0
+	0x51, 0x15,                         // class Print [ Print: ... modeless: 1, init ]
+	0x4a, 0x2a,                         // send 2a
+	0x3a,                               // toss
+	0x48,                               // ret
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2
 //  this patch gets enabled, when the user selects "both" in the ScummVM "Speech + Subtitles" menu
 //  We currently use global 98d to hold a kMemory pointer.
@@ -2917,6 +2966,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   907, "look ribbon fix",                             1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
 	{  true,    87, "Drink Me bottle fix",                         1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{  true,   640, "Tickets, only fix",                           1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
+	{  true,   480, "CD: wallflower dance fix",                    1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	// *** King's Quest 6 audio + text support ***
 	{ false,   924, "CD: audio + text support KQ6&LB2 1",             1, kq6laurabow2CDSignatureAudioTextSupport1,     kq6laurabow2CDPatchAudioTextSupport1 },
@@ -4592,6 +4642,29 @@ static const uint16 laurabow2PatchFixCrateRoomEastDoorLockup[] = {
 	PATCH_END
 };
 
+// Ego can get stuck in the elevator (room 660) by walking to the lower left.
+//  This also happens in Sierra's interpreter. We adjust the room's obstacle
+//  polygon so that ego can't reach the problematic corner positions.
+//  This is a heap patch for the coordinates used in poly2660a:points.
+//
+// Applies to: All Floppy and CD versions
+// Fixes bug #10702
+static const uint16 laurabow2SignatureFixElevatorLockup[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16(0x008b),                 // x = 139d
+	SIG_UINT16(0x0072),                 // y = 114d
+	SIG_UINT16(0x007b),                 // x = 123d
+	SIG_UINT16(0x008d),                 // y = 141d
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixElevatorLockup[] = {
+	PATCH_UINT16(0x008f),               // x = 143d
+	PATCH_ADDTOOFFSET(+4),
+	PATCH_UINT16(0x00aa),               // y = 170d
+	PATCH_END
+};
+
 // The act 4 back rub scene in Yvette's (room 550) locks up the game when
 //  entered from Carrington's (room 560) instead of the hallway (room 510).
 //
@@ -5007,6 +5080,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
+	{  true,  2660, "CD/Floppy: fix elevator lockup",                 1, laurabow2SignatureFixElevatorLockup,            laurabow2PatchFixElevatorLockup },
 	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
 	{  true,    26, "Floppy: fix act 4 initialization",               1, laurabow2SignatureFixAct4Initialization,        laurabow2PatchFixAct4Initialization },
 	{  true,   550, "Floppy: missing desk lamp message",              1, laurabow2SignatureMissingDeskLampMessage,       laurabow2PatchMissingDeskLampMessage },
@@ -7641,6 +7715,27 @@ static const uint16 qfg4StairwayPathfindingPatch[] = {
 	PATCH_ADDTOOFFSET(+87),             // ...
 	0x38, PATCH_UINT16(0x00fd),         // pushi 253d (point 19 hugs the wall)
 	0x39, 0x2b,                         // pushi 43d
+
+// Whenever levitate is cast, a cryptic error message appears in-game.
+// "<Prop setScale:> y value less than vanishingY"
+//
+// There are typos where hero is passed to Prop::setScale(), a method which
+// expects integers. We change it to Prop::setScaler().
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sLevitate::changeState(3) in script 31
+//                     sLevitating::changeState(0) in script 800 (CD only)
+// Fixes bug: #10726
+static const uint16 qfg4SetScalerSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(setScale),     // pushi setScale
+	0x78,                               // push1
+	0x89, 0x00,                         // lsg global[0] (hero)
+	SIG_END
+};
+
+static const uint16 qfg4SetScalerPatch[] = {
+	0x38, PATCH_SELECTOR16(setScaler),  // pushi setScaler
 	PATCH_END
 };
 
@@ -7651,6 +7746,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
 	{  true,     7, "fix consecutive moonrises",                   1, qfg4MoonriseSignature,         qfg4MoonrisePatch },
 	{  true,    10, "fix setLooper calls (2/2)",                   2, qg4SetLooperSignature2,        qg4SetLooperPatch2 },
+	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
@@ -7662,6 +7758,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   543, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
+	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,        sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,        sci2NumSavesPatch2 },
