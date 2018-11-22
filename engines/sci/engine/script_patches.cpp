@@ -112,6 +112,7 @@ static const char *const selectorNameTable[] = {
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"has",          // King's Quest 6, GK1
+	"modeless",     // King's Quest 6 CD
 	"cycler",       // Space Quest 4 / system selector
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
@@ -188,6 +189,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
 	SELECTOR_has,
+	SELECTOR_modeless,
 	SELECTOR_cycler,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors
@@ -2504,6 +2506,53 @@ static const uint16 kq6PatchLookRibbonFix[] = {
 	PATCH_END
 };
 
+// KQ6 CD introduced a bug in the wallflower dance in room 480. The dance is
+//  supposed to last until the music ends but in Text mode it stops after only
+//  three seconds once the user gains control. This isn't usually enough time
+//  to get the hole in the wall. This bug also occurs in Sierra's interpreter.
+//
+// wallFlowerDance was changed in the CD version for Speech mode but broke Text.
+//  In Text mode, changeState(9) creates a dialog with Print, which blocks, and
+//  then sets ticks to 12. Meanwhile, wallFlowerDance:handleEvent cues if an
+//  event is received in state 9. A mouse click starts a 12 tick race which
+//  handleEvent wins, cueing before the countdown expires, and so the countdown
+//  expires on state 10, skipping ahead to the three second fadeout. Closing the
+//  dialog with the keyboard works because Dialog claims keyboard events when
+//  blocking, preventing wallFlowerDance:handleEvent from receiving and cueing.
+//
+// We fix this by setting the Print dialog to modeless as it was in the floppy
+//  version and removing the countdown. wallFlowerDance:handleEvent now receives
+//  all events and is the only one responsible for advancing state 9 to 10 in
+//  Text mode. This patch does not affect audio modes Speech and Both.
+//
+// Applies to: PC CD
+// Responsible method: wallFlowerDance:changeState(9)
+// Fixes bug #10811
+static const uint16 kq6CDSignatureWallFlowerDanceFix[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(init),          // pushi init
+	0x76,                               // push0
+	0x51, 0x15,                         // class Print [ Print: ... init ]
+	0x4a, 0x24,                         // send 24
+	0x35, 0x0c,                         // ldi 0c
+	0x65, 0x20,                         // aTop ticks
+	0x32, SIG_UINT16(0x00d0),           // jmp 00d0 [ end of method ]
+	SIG_END
+};
+
+static const uint16 kq6CDPatchWallFlowerDanceFix[] = {
+	0x38, PATCH_SELECTOR16(modeless),   // pushi modeless
+	0x78,                               // push1
+	0x78,                               // push1
+	0x39, PATCH_SELECTOR8(init),        // pushi init
+	0x76,                               // push0
+	0x51, 0x15,                         // class Print [ Print: ... modeless: 1, init ]
+	0x4a, 0x2a,                         // send 2a
+	0x3a,                               // toss
+	0x48,                               // ret
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2
 //  this patch gets enabled, when the user selects "both" in the ScummVM "Speech + Subtitles" menu
 //  We currently use global 98d to hold a kMemory pointer.
@@ -2917,6 +2966,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   907, "look ribbon fix",                             1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
 	{  true,    87, "Drink Me bottle fix",                         1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{  true,   640, "Tickets, only fix",                           1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
+	{  true,   480, "CD: wallflower dance fix",                    1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	// *** King's Quest 6 audio + text support ***
 	{ false,   924, "CD: audio + text support KQ6&LB2 1",             1, kq6laurabow2CDSignatureAudioTextSupport1,     kq6laurabow2CDPatchAudioTextSupport1 },
