@@ -7715,6 +7715,8 @@ static const uint16 qfg4StairwayPathfindingPatch[] = {
 	PATCH_ADDTOOFFSET(+87),             // ...
 	0x38, PATCH_UINT16(0x00fd),         // pushi 253d (point 19 hugs the wall)
 	0x39, 0x2b,                         // pushi 43d
+	PATCH_END
+};
 
 // Whenever levitate is cast, a cryptic error message appears in-game.
 // "<Prop setScale:> y value less than vanishingY"
