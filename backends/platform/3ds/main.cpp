@@ -38,7 +38,9 @@ int main(int argc, char *argv[]) {
 // 		res = scummvm_main(argc-2, &argv[2]);
 // 	else
 // 		res = scummvm_main(argc, argv);
-	scummvm_main(0, nullptr);
+//	scummvm_main(0, nullptr);
+
+	int res = scummvm_main(argc, argv);
 
 	g_system->destroy();
 
@@ -50,5 +52,5 @@ int main(int argc, char *argv[]) {
 
 	cfguExit();
 	gfxExit();
-	return 0;
+	return res;
 }

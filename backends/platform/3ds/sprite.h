@@ -23,8 +23,11 @@
 #ifndef GRAPHICS_SPRITE_3DS_H
 #define GRAPHICS_SPRITE_3DS_H
 
-#include <citro3d.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 #include "graphics/surface.h"
+#include <3ds.h>
+#include <citro3d.h>
 
 #define TEXTURE_TRANSFER_FLAGS \
 	(GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) | GX_TRANSFER_RAW_COPY(0) | \

@@ -2138,7 +2138,7 @@ fi
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-android | androidsdl | gamecube | ps2 | psp | tizen | wii | webos)
+3ds | android | androidsdl | gamecube | ps2 | psp | tizen | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2442,6 +2442,7 @@ case $_host_os in
 		else
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
+		append_var LDFLAGS "-L$DEVKITPRO/libctru/lib"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/3ds/lib"
 		append_var LIBS "-lcitro3d -lctru"
 		;;
@@ -5267,6 +5268,7 @@ fi
 case $_backend in
 	3ds)
 		if test "$_freetype2" = yes -a "$_png" = yes; then
+			append_var LIBS "-lbz2"
 			append_var LIBS "-lpng"
 		fi
 		if test "$_tremor" = yes -o "$_flac" = yes; then

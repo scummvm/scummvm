@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 #include "options-dialog.h"
 #include "config.h"
 #include "gui/dialog.h"
@@ -27,7 +29,6 @@
 #include "gui/widgets/list.h"
 #include "gui/widgets/tab.h"
 #include "osystem.h"
-#include "engines/scumm/scumm.h"
 #include "gui/widgets/popup.h"
 
 #include "common/translation.h"
