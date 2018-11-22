@@ -29,8 +29,8 @@
 
 // VerSetConditionMask and VerifyVersionInfo didn't appear until Windows 2000,
 // so we need to check for them at runtime
-LONGLONG VerSetConditionMaskFunc(ULONGLONG dwlConditionMask, DWORD dwTypeMask, BYTE dwConditionMask) {
-	typedef BOOL(WINAPI *VerSetConditionMaskFunction)(ULONGLONG conditionMask, DWORD typeMask, BYTE conditionOperator);
+ULONGLONG VerSetConditionMaskFunc(ULONGLONG dwlConditionMask, DWORD dwTypeMask, BYTE dwConditionMask) {
+	typedef ULONGLONG(WINAPI *VerSetConditionMaskFunction)(ULONGLONG conditionMask, DWORD typeMask, BYTE conditionOperator);
 
 	VerSetConditionMaskFunction verSetConditionMask = (VerSetConditionMaskFunction)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "VerSetConditionMask");
 	if (verSetConditionMask == NULL)
@@ -52,11 +52,11 @@ BOOL VerifyVersionInfoFunc(LPOSVERSIONINFOEXA lpVersionInformation, DWORD dwType
 namespace Win32 {
 
 bool confirmWindowsVersion(int majorVersion, int minorVersion) {
-	OSVERSIONINFOEX versionInfo;
+	OSVERSIONINFOEXA versionInfo;
 	DWORDLONG conditionMask = 0;
 
-	ZeroMemory(&versionInfo, sizeof(OSVERSIONINFOEX));
-	versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	ZeroMemory(&versionInfo, sizeof(OSVERSIONINFOEXA));
+	versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA);
 	versionInfo.dwMajorVersion = majorVersion;
 	versionInfo.dwMinorVersion = minorVersion;
 
