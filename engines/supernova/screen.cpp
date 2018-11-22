@@ -385,14 +385,14 @@ void Screen::renderImage(ImageId id, bool removeImage) {
 }
 
 void Screen::renderImage(int section) {
-	if (!_currentImage)
-		return;
-
 	bool removeImage = false;
 	if (section > 128) {
 		removeImage = true;
 		section -= 128;
 	}
+
+	if (!_currentImage || section >= kMaxSection)
+		return;
 
 	do {
 		renderImageSection(_currentImage, section, removeImage);
