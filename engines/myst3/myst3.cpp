@@ -1448,6 +1448,11 @@ int16 Myst3Engine::openDialog(uint16 id) {
 
 	delete dialog;
 
+	// Reset the input state because events consumed while the dialog was open
+	// can lead to unbalanced states where the engine believes keys are still
+	// pressed while they are not.
+	resetInput();
+
 	return result;
 }
 
