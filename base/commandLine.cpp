@@ -284,6 +284,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("gui_saveload_last_pos", "0");
 
 	ConfMan.registerDefault("gui_browser_show_hidden", false);
+	ConfMan.registerDefault("gui_browser_native", true);
 	ConfMan.registerDefault("game", "");
 
 #ifdef USE_FLUIDSYNTH

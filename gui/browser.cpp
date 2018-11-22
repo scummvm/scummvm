@@ -88,9 +88,11 @@ int BrowserDialog::runModal() {
 	// Try to use the backend browser
 	Common::DialogManager *dialogManager = g_system->getDialogManager();
 	if (dialogManager) {
-		Common::DialogManager::DialogResult result = dialogManager->showFileBrowser(_title, _choice, _isDirBrowser);
-		if (result != Common::DialogManager::kDialogError) {
-			return result;
+		if (ConfMan.getBool("gui_browser_native", Common::ConfigManager::kApplicationDomain)) {
+			Common::DialogManager::DialogResult result = dialogManager->showFileBrowser(_title, _choice, _isDirBrowser);
+			if (result != Common::DialogManager::kDialogError) {
+				return result;
+			}
 		}
 	}
 #endif
