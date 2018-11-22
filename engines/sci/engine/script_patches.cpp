@@ -141,8 +141,8 @@ static const char *const selectorNameTable[] = {
 	"fore",         // KQ7
 	"back",         // KQ7
 	"font",         // KQ7
-	"setScale",     // LSL6hires
-	"setScaler",    // LSL6hires
+	"setScale",     // LSL6hires, QFG4
+	"setScaler",    // LSL6hires, QFG4
 	"readWord",     // LSL7, Phant1, Torin
 	"points",       // PQ4
 	"select",       // PQ4
@@ -7630,6 +7630,29 @@ static const uint16 qfg4MoonrisePatch[] = {
 	PATCH_END
 };
 
+// Whenever levitate is cast, a cryptic error message appears in-game.
+// "<Prop setScale:> y value less than vanishingY"
+//
+// There are typos where hero is passed to Prop::setScale(), a method which
+// expects integers. We change it to Prop::setScaler().
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sLevitate::changeState(3) in script 31
+//                     sLevitating::changeState(0) in script 800 (CD only)
+// Fixes bug: #10726
+static const uint16 qfg4SetScalerSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(setScale),     // pushi setScale
+	0x78,                               // push1
+	0x89, 0x00,                         // lsg global[0] (hero)
+	SIG_END
+};
+
+static const uint16 qfg4SetScalerPatch[] = {
+	0x38, PATCH_SELECTOR16(setScaler),  // pushi setScaler
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -7637,6 +7660,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
 	{  true,     7, "fix consecutive moonrises",                   1, qfg4MoonriseSignature,         qfg4MoonrisePatch },
 	{  true,    10, "fix setLooper calls (2/2)",                   2, qg4SetLooperSignature2,        qg4SetLooperPatch2 },
+	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
@@ -7647,6 +7671,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   542, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   543, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,        sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,        sci2NumSavesPatch2 },
