@@ -57,7 +57,7 @@ bool Room::serialize(Common::WriteStream *out) {
 		out->writeByte(_sentenceRemoved[i]);
 
 	int numObjects = 0;
-	while ((_objectState[numObjects]._id != INVALIDOBJECT) && (numObjects < kMaxObject))
+	while ((numObjects < kMaxObject) && (_objectState[numObjects]._id != INVALIDOBJECT))
 		++numObjects;
 	out->writeSint32LE(numObjects);
 
