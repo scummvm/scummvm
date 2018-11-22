@@ -44,7 +44,7 @@ PlainGameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
 }
 
 bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[9] = { ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8", ".zblorb" };
+	const char *const EXTENSIONS[10] = { ".dat", ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8", ".zblorb" };
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -53,7 +53,7 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			continue;
 		Common::String filename = file->getName();
 		bool hasExt = false;
-		for (int idx = 0; idx < 9 && !hasExt; ++idx)
+		for (int idx = 0; idx < 10 && !hasExt; ++idx)
 			hasExt = filename.hasSuffixIgnoreCase(EXTENSIONS[idx]);
 		if (!hasExt)
 			continue;
@@ -71,9 +71,12 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		}
 		gameFile.close();
 
-		// Check for known game
+		// Check for known games. Note that there has been some variation in exact filesizes
+		// for Infocom games due to padding at the end of files. So we match on md5s for the
+		// first 5Kb, and only worry about filesize for more recent Blorb based Zcode games
 		const FrotzGameDescription *p = FROTZ_GAMES;
-		while (p->_gameId && p->_md5 && (md5 != p->_md5 || filesize != p->_filesize))
+		while (p->_gameId && p->_md5 && (md5 != p->_md5 ||
+				(filesize != p->_filesize && filename.hasSuffix(".zblorb"))))
 			++p;
 
 		DetectedGame gd;
