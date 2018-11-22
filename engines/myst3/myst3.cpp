@@ -481,6 +481,11 @@ void Myst3Engine::processInput(bool interactive) {
 				continue;
 			}
 
+			if (event.kbdRepeat) {
+				// Ignore keyboard repeat except when entering save names
+				continue;
+			}
+
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 				_inputEscapePressed = true;
