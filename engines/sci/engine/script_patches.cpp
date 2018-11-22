@@ -7680,6 +7680,44 @@ static const uint16 qfg4MoonrisePatch[] = {
 	PATCH_END
 };
 
+// When entering flipped stairways from the upper door, hero is initially
+// placed outside the walkable area. As a result, hero will float around
+// inappropriately in stairways leading to Tanya's room (620) and to the iron
+// safe (624).
+//
+// The polygon's first and final points are the top of the stairs. It's quite
+// narrow up there, and the final segment doesn't trace the wall very well. We
+// move the final point down and over to round out the path. Point 0 takes 19's
+// original place. Point 1 takes 0's original place.
+//
+// Disregard the responsible method's misleading name.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: rm620Code::init() in script 633
+// Fixes bug: #10757
+static const uint16 qfg4StairwayPathfindingSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00e2),           // pushi 226d (point 0 is top-left)
+	0x39, 0x20,                         // pushi 32d
+	0x38, SIG_UINT16(0x00ed),           // pushi 237d (point 1 is below on left)
+	0x39, 0x26,                         // pushi 38d
+	SIG_ADDTOOFFSET(+87),               // ...
+	0x38, SIG_UINT16(0x00e9),           // pushi 233d (point 19 is top-right)
+	0x39, 0x20,                         // pushi 32d
+	SIG_END
+};
+
+static const uint16 qfg4StairwayPathfindingPatch[] = {
+	0x38, PATCH_UINT16(0x00e9),         // pushi 233d (point 0 gets 19's coords)
+	0x39, 0x20,                         // pushi 32d
+	0x38, PATCH_UINT16(0x00e2),         // pushi 226d (point 1 gets 0's coords)
+	0x39, 0x20,                         // pushi 32d
+	PATCH_ADDTOOFFSET(+87),             // ...
+	0x38, PATCH_UINT16(0x00fd),         // pushi 253d (point 19 hugs the wall)
+	0x39, 0x2b,                         // pushi 43d
+	PATCH_END
+};
+
 // Whenever levitate is cast, a cryptic error message appears in-game.
 // "<Prop setScale:> y value less than vanishingY"
 //
@@ -7721,6 +7759,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   542, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   543, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,        sci2NumSavesPatch1 },
