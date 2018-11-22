@@ -20,16 +20,48 @@
  *
  */
 
+// We cannot use common/scummsys.h directly as it will include
+// windows.h and we need to do it by hand to allow excluded functions
+#if defined(HAVE_CONFIG_H)
+#include "config.h"
+#endif
+
 #if defined(WIN32) && defined(USE_SYSDIALOGS)
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-#include <windows.h>
-#include <shlobj.h>
-#if defined(ARRAYSIZE)
-#undef ARRAYSIZE
+// HACK: To get __MINGW64_VERSION_foo defines we need to manually include
+// _mingw.h in this file because we do not include any system headers at this
+// point on purpose. The defines are required to detect whether this is a
+// classic MinGW toolchain or a MinGW-w64 based one.
+#if defined(__MINGW32__)
+#include <_mingw.h>
 #endif
+
+// Needed for dialog functions
+// HACK: MinGW-w64 based toolchains include the symbols we require in their
+// headers. The 32 bit incarnation only defines __MINGW32__. This leads to
+// build breakage due to clashes with our compat header. Luckily MinGW-w64
+// based toolchains define __MINGW64_VERSION_foo macros inside _mingw.h,
+// which is included from all system headers. Thus we abuse that to detect
+// them.
+#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
+	#include "backends/dialogs/win32/mingw-compat.h"
+#else
+	// We use functionality introduced with Vista in this file.
+	// To assure that including the respective system headers gives us all
+	// required definitions we set Vista as minimum version we target.
+	// See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx#macros_for_conditional_declarations
+	#include <sdkddkver.h>
+	#undef _WIN32_WINNT
+	#define _WIN32_WINNT _WIN32_WINNT_VISTA
+
+	#define WIN32_LEAN_AND_MEAN
+	#include <windows.h>
+	#if defined(ARRAYSIZE)
+		#undef ARRAYSIZE
+	#endif
+#endif
+
+#include <shlobj.h>
 
 #include "common/scummsys.h"
 
@@ -61,7 +93,8 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const ch
 	HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog,
 	                              NULL,
 	                              CLSCTX_INPROC_SERVER,
-	                              IID_PPV_ARGS(&dialog));
+	                              IID_IFileOpenDialog,
+	                              reinterpret_cast<void **> (&(dialog)));
 
 	if (SUCCEEDED(hr)) {
 		// If in fullscreen mode, switch to windowed mode
