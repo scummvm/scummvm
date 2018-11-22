@@ -47,6 +47,7 @@
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/taskbar/win32/win32-taskbar.h"
 #include "backends/updates/win32/win32-updates.h"
+#include "backends/dialogs/win32/win32-dialogs.h"
 
 #include "common/memstream.h"
 
@@ -62,6 +63,11 @@ void OSystem_Win32::init() {
 #if defined(USE_TASKBAR)
 	// Initialize taskbar manager
 	_taskbarManager = new Win32TaskbarManager((SdlWindow_Win32*)_window);
+#endif
+
+#if defined(USE_SYSDIALOGS)
+	// Initialize dialog manager
+	_dialogManager = new Win32DialogManager((SdlWindow_Win32*)_window);
 #endif
 
 	// Invoke parent implementation of this method

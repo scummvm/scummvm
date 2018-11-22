@@ -20,16 +20,10 @@
  *
  */
 
-// Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/scummsys.h"
 // We need certain functions that are excluded by default
 #undef NONLS
 #include <windows.h>
-#if defined(ARRAYSIZE)
-#undef ARRAYSIZE
-#endif
 
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
@@ -72,12 +66,24 @@ bool confirmWindowsVersion(int majorVersion, int minorVersion) {
 	return VerifyVersionInfoFunc(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask);
 }
 
-LPWSTR ansiToUnicode(const char *s) {
+wchar_t *ansiToUnicode(const char *s) {
 	DWORD size = MultiByteToWideChar(0, 0, s, -1, NULL, 0);
 
 	if (size > 0) {
 		LPWSTR result = new WCHAR[size];
 		if (MultiByteToWideChar(0, 0, s, -1, result, size) != 0)
+			return result;
+	}
+
+	return NULL;
+}
+
+char *unicodeToAnsi(const wchar_t *s) {
+	DWORD size = WideCharToMultiByte(0, 0, s, -1, NULL, 0, 0, 0);
+
+	if (size > 0) {
+		char *result = new char[size];
+		if (WideCharToMultiByte(0, 0, s, -1, result, size, 0, 0) != 0)
 			return result;
 	}
 
