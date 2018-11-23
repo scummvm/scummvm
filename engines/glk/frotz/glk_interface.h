@@ -42,6 +42,7 @@ enum RestartAction {
 	RESTART_END = 2
 };
 
+class Pics;
 
 /**
  * Implements an intermediate interface on top of the GLK layer, providing screen
@@ -49,6 +50,7 @@ enum RestartAction {
  */
 class GlkInterface : public GlkAPI, public virtual UserOptions, public virtual Mem {
 public:
+	Pics *_pics;
 	zchar statusline[256];
 	int oldstyle;
 	int curstyle;
@@ -93,6 +95,11 @@ public:
 
 	bool _soundLocked;
 	bool _soundPlaying;
+private:
+	/**
+	 * Loads the pictures file for Infocom V6 games
+	 */
+	bool initPictures();
 protected:
 	/**
 	 * Return the length of the character in screen units.
@@ -133,8 +140,28 @@ protected:
 	 */
 	void os_start_sample(int number, int volume, int repeats, zword eos);
 
+	/**
+	 * Stop playing a given sound number
+	 */
 	void os_stop_sample(int a);
+
+	/**
+	 * Make a beep sound
+	 */
 	void os_beep(int volume);
+
+	/**
+	 * Return true if the given picture is available. If so, write the
+	 * width and height of the picture into the appropriate variables.
+	 * Only when picture 0 is asked for, write the number of available
+	 * pictures and the release number instead.
+	 */
+	bool os_picture_data(int picture, glui32 *height, glui32 *width);
+
+	/**
+	 * Display a picture at the given coordinates. Top left is (1,1).
+	 */
+	void os_draw_picture(int picture, winid_t win, const Common::Point &pos);
 
 	/**
 	 * Call the IO interface to play a sample.
@@ -165,7 +192,7 @@ protected:
 	/**
 	 * Called during game restarts
 	 */
-	void os_restart_game(RestartAction) {}
+	void os_restart_game(RestartAction stage);
 
 	/**
 	 * Reads the mouse buttons
@@ -197,7 +224,11 @@ public:
 	 * Constructor
 	 */
 	GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc);
-	virtual ~GlkInterface() {}
+
+	/**
+	 * Destructor
+	 */
+	virtual ~GlkInterface();
 
 	/**
 	 * Initialization

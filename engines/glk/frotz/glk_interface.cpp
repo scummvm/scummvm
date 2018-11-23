@@ -21,13 +21,16 @@
  */
 
 #include "glk/frotz/glk_interface.h"
+#include "glk/frotz/pics.h"
+#include "glk/conf.h"
+#include "glk/screen.h"
 
 namespace Glk {
 namespace Frotz {
 
 GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) :
 		GlkAPI(syst, gameDesc),
-		oldstyle(0), curstyle(0), cury(1), curx(1), fixforced(0),
+		_pics(nullptr), oldstyle(0), curstyle(0), cury(1), curx(1), fixforced(0),
 		curr_fg(-2), curr_bg(-2), curr_font(1), prev_font(1), temp_font(0),
 		curr_status_ht(0), mach_status_ht(0), gos_status(nullptr), gos_upper(nullptr),
 		gos_lower(nullptr), gos_curwin(nullptr), gos_linepending(0), gos_linebuf(nullptr),
@@ -36,6 +39,10 @@ GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) :
 		enable_scrolling(false), enable_buffering(false), next_sample(0), next_volume(0),
 		_soundLocked(false), _soundPlaying(false) {
 	Common::fill(&statusline[0], &statusline[256], '\0');
+}
+
+GlkInterface::~GlkInterface() {
+	delete _pics;
 }
 
 void GlkInterface::initialize() {
@@ -152,8 +159,13 @@ void GlkInterface::initialize() {
 	h_font_height = 1;
 
 	// Must be after screen dimensions are computed
-	if (h_version == V6) {
-		h_flags &= ~GRAPHICS_FLAG;
+	if (g_conf->_graphics) {
+		if (_blorb)
+			// Blorb file containers allow graphics
+			h_flags |= GRAPHICS_FLAG;
+		else if ((h_version == V6 || _storyId == BEYOND_ZORK) && initPictures())
+			// Earlier Infocom game with picture files
+			h_flags |= GRAPHICS_FLAG;
 	}
 
 	// Use the ms-dos interpreter number for v6, because that's the
@@ -168,6 +180,18 @@ void GlkInterface::initialize() {
 		if (h_flags & COLOUR_FLAG)
 			h_flags &= ~COLOUR_FLAG;
 	}
+}
+
+bool GlkInterface::initPictures() {
+	if (Pics::exists()) {
+		_pics = new Pics();
+		SearchMan.add("Pics", _pics, 99, false);
+		return true;
+	}
+
+	if (h_version == V6)
+		warning("Could not locate MG1 file");
+	return false;
 }
 
 int GlkInterface::os_char_width(zchar z) {
@@ -233,6 +257,18 @@ void GlkInterface::os_stop_sample(int a) {
 
 void GlkInterface::os_beep(int volume) {
 }
+
+bool GlkInterface::os_picture_data(int picture, glui32 *height, glui32 *width) {
+	if (_pics && picture == 0) {
+		*width = _pics->version();
+		*height = _pics->size();
+		return true;
+	} else {
+		return glk_image_get_info(picture, width, height);
+	}
+}
+
+
 
 void GlkInterface::start_sample(int number, int volume, int repeats, zword eos) {
 	// TODO
@@ -403,6 +439,24 @@ void GlkInterface::gos_cancel_pending_line() {
 	glk_cancel_line_event(gos_linewin, &ev);
 	gos_linebuf[ev.val1] = '\0';
 	gos_linepending = 0;
+}
+
+void GlkInterface::os_restart_game(RestartAction stage) {
+	// Show Beyond Zork's title screen
+	if ((stage == RESTART_END) && (_storyId == BEYOND_ZORK)) {
+/*
+		uint w, h;
+		if (os_picture_data(1, &h, &w)) {
+			_screen->clear();
+			os_draw_picture(1, Common::Point(1, 1));
+			_events->waitForPress();
+		}
+		*/
+	}
+}
+
+void GlkInterface::os_draw_picture(int picture, winid_t win, const Common::Point &pos) {
+	glk_image_draw(win, picture, pos.x - 1, pos.y - 1);
 }
 
 zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {

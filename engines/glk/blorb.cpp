@@ -40,6 +40,7 @@ enum {
 
 	ID_JPEG = MKTAG('J', 'P', 'E', 'G'),
 	ID_PNG  = MKTAG('P', 'N', 'G', ' '),
+	ID_Rect = MKTAG('R', 'e', 'c', 't'),
 
 	ID_MIDI = MKTAG('M', 'I', 'D', 'I'),
 	ID_MP3 = MKTAG('M', 'P', '3', ' '),
@@ -138,9 +139,11 @@ Common::ErrorCode Blorb::load() {
 		if (ce._type == ID_Pict) {
 			ce._filename = Common::String::format("pic%u", ce._number);
 			if (ce._id == ID_JPEG)
-				ce._filename += ".jpeg";
+				ce._filename += ".jpg";
 			else if (ce._id == ID_PNG)
 				ce._filename += ".png";
+			else if (ce._id == ID_Rect)
+				ce._filename += ".rect";
 
 		} else if (ce._type == ID_Snd) {
 			ce._filename = Common::String::format("snd%u", ce._number);
