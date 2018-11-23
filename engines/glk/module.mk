@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	frotz/frotz.o \
 	frotz/glk_interface.o \
 	frotz/mem.o \
+	frotz/pics.o \
 	frotz/processor.o \
 	frotz/processor_buffer.o \
 	frotz/processor_input.o \

@@ -155,6 +155,10 @@ Conf::Conf(InterpreterType interpType) {
 	get("stylehint", _styleHint, 1);
 	get("safeclicks", _safeClicks);
 
+	// For simplicity's sake, only allow graphics when in non-paletted graphics modes
+	if (g_system->getScreenFormat().bytesPerPixel == 1)
+		_graphics = false;
+
 	Common::copy(T_STYLES, T_STYLES + style_NUMSTYLES, _tStyles);
 	Common::copy(G_STYLES, G_STYLES + style_NUMSTYLES, _gStyles);
 

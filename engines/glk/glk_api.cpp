@@ -920,7 +920,7 @@ glui32 GlkAPI::glk_image_draw_scaled(winid_t win, glui32 image, glsi32 val1, gls
 	return false;
 }
 
-glui32 GlkAPI::glk_image_get_info(glui32 image, glui32 *width, glui32 *height) {
+bool GlkAPI::glk_image_get_info(glui32 image, glui32 *width, glui32 *height) {
 	if (!g_conf->_graphics)
 		return false;
 

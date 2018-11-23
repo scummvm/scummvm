@@ -193,7 +193,7 @@ public:
 	glui32 glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2);
 	glui32 glk_image_draw_scaled(winid_t win, glui32 image,
 	                             glsi32 val1, glsi32 val2, glui32 width, glui32 height);
-	glui32 glk_image_get_info(glui32 image, glui32 *width, glui32 *height);
+	bool glk_image_get_info(glui32 image, glui32 *width, glui32 *height);
 
 	void glk_window_flow_break(winid_t win);
 
