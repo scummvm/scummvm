@@ -282,7 +282,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	return result;
 }
 
-static void setupGraphics(OSystem &system) {
+static void setupGraphics(OSystem &system, bool isInitialSetup) {
 
 	system.beginGFXTransaction();
 		// Set the user specified graphics mode (if any).
@@ -292,7 +292,7 @@ static void setupGraphics(OSystem &system) {
 
 		if (ConfMan.hasKey("aspect_ratio"))
 			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
-		if (ConfMan.hasKey("fullscreen"))
+		if (isInitialSetup && ConfMan.hasKey("fullscreen"))
 			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 		if (ConfMan.hasKey("filtering"))
 			system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
@@ -459,7 +459,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (settings.contains("disable-display")) {
 		ConfMan.setInt("disable-display", 1, Common::ConfigManager::kTransientDomain);
 	}
-	setupGraphics(system);
+	setupGraphics(system, true);
 
 	// Init the different managers that are used by the engines.
 	// Do it here to prevent fragmentation later
@@ -601,7 +601,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		}
 
 		// reset the graphics to default
-		setupGraphics(system);
+		setupGraphics(system, false);
 		if (0 == ConfMan.getActiveDomain()) {
 			launcherDialog();
 		}
