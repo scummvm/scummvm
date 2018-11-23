@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	glk.o \
 	glk_api.o \
 	picture.o \
+	raw_decoder.o \
 	screen.o \
 	selection.o \
 	streams.o \
