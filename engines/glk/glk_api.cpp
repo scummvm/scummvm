@@ -887,7 +887,7 @@ glui32 GlkAPI::glk_buffer_canon_normalize_uni(glui32 *buf, glui32 len, glui32 nu
 	return 0;
 }
 
-glui32 GlkAPI::glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2) {
+bool GlkAPI::glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2) {
 	if (!win) {
 		warning("image_draw: invalid ref");
 	} else if (g_conf->_graphics) {
@@ -903,7 +903,7 @@ glui32 GlkAPI::glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val
 	return false;
 }
 
-glui32 GlkAPI::glk_image_draw_scaled(winid_t win, glui32 image, glsi32 val1, glsi32 val2,
+bool GlkAPI::glk_image_draw_scaled(winid_t win, glui32 image, glsi32 val1, glsi32 val2,
                                   glui32 width, glui32 height) {
 	if (!win) {
 		warning("image_draw_scaled: invalid ref");

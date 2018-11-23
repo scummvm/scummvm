@@ -22,6 +22,7 @@
 
 #include "glk/picture.h"
 #include "glk/glk.h"
+#include "glk/raw_decoder.h"
 #include "glk/screen.h"
 #include "common/file.h"
 #include "image/jpeg.h"
@@ -102,7 +103,9 @@ Picture *Pictures::retrieve(uint id, bool scaled) {
 Picture *Pictures::load(uint32 id) {
 	::Image::PNGDecoder png;
 	::Image::JPEGDecoder jpg;
+	RawDecoder raw;
 	const Graphics::Surface *img;
+	const byte *palette = nullptr;
 	Picture *pic;
 
 	// Check if the picture is already in the store
@@ -114,15 +117,25 @@ Picture *Pictures::load(uint32 id) {
 	if (f.open(Common::String::format("PIC%lu.png", id))) {
 		png.loadStream(f);
 		img = png.getSurface();
+		palette = png.getPalette();
 	} else if (f.open(Common::String::format("PIC%lu.jpg", id))) {
 		jpg.loadStream(f);
 		img = jpg.getSurface();
+	} else if (f.open(Common::String::format("PIC%lu.raw", id))) {
+		raw.loadStream(f);
+		img = raw.getSurface();
+		palette = raw.getPalette();
 	}
 
 	pic = new Picture();
 	pic->_refCount = 1;
     pic->_id = id;
     pic->_scaled = false;
+	pic->create(img->w, img->h, g_system->getScreenFormat());
+	pic->blitFrom(*img);
+
+	if (palette)
+		pic->convertToInPlace(g_system->getScreenFormat(), palette);
 
     store(pic);
     return pic;
