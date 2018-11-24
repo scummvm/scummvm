@@ -21,7 +21,9 @@
  */
 
 #include "glk/frotz/pics.h"
+#include "glk/frotz/pics_decoder.h"
 #include "glk/glk.h"
+#include "common/algorithm.h"
 
 namespace Glk {
 namespace Frotz {
@@ -38,21 +40,53 @@ Pics::Pics() : Common::Archive(), _filename(getFilename()) {
 	if (!f.open(_filename))
 		error("Error reading Pics file");
 
+	Common::Array<uint> offsets;
 	byte buffer[16];
 	f.read(buffer, 16);
 	_index.resize(READ_LE_UINT16(&buffer[PIC_FILE_HEADER_NUM_IMAGES]));
 	_entrySize = buffer[PIC_FILE_HEADER_ENTRY_SIZE];
 	_version = buffer[PIC_FILE_HEADER_FLAGS];
+	assert(_entrySize >= 6 && _entrySize <= 14);
 
 	// Iterate through loading the index
 	for (uint idx = 0; idx < _index.size(); ++idx) {
 		Entry &e = _index[idx];
-		e._number = f.readUint16LE();
-		e._offset = f.pos();
-		e._size = _entrySize - 2;
-		f.skip(_entrySize - 2);
+		f.read(buffer, _entrySize);
 
-		e._filename = Common::String::format("PIC%u", e._number);
+		e._number = READ_LE_UINT16(buffer);
+		e._width = READ_LE_UINT16(buffer + 2);
+		e._height = READ_LE_UINT16(buffer + 4);
+
+		if (_entrySize >= 11) {
+			e._dataOffset = READ_BE_UINT32(buffer + 7) & 0xffffff;
+			if (e._dataOffset)
+				offsets.push_back(e._dataOffset);
+
+			if (_entrySize == 14) {
+				e._paletteOffset = READ_BE_UINT32(buffer + 10) & 0xffffff;
+				e._paletteSize = e._dataOffset - e._paletteOffset;
+				assert((e._paletteSize % 3) == 0);
+			}
+		}
+
+		e._filename = Common::String::format("pic%u.raw", e._number);
+	}
+
+	// Further processing of index to calculate data sizes
+	Common::sort(offsets.begin(), offsets.end());
+
+	for (uint idx = 0; idx < _index.size(); ++idx) {
+		Entry &e = _index[idx];
+		if (!e._dataOffset)
+			continue;
+
+		// Find the entry in the offsets array
+		uint oidx = 0;
+		while (oidx < offsets.size() && offsets[oidx] != e._dataOffset)
+			++oidx;
+
+		// Set the size
+		e._dataSize = (oidx == (offsets.size() - 1) ? f.size() : offsets[oidx + 1]) - e._dataOffset;
 	}
 
 	f.close();
@@ -96,16 +130,27 @@ const Common::ArchiveMemberPtr Pics::getMember(const Common::String &name) const
 
 Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String &name) const {
 	for (uint idx = 0; idx < _index.size(); ++idx) {
-		if (_index[idx]._filename.equalsIgnoreCase(name)) {
+		const Entry &e = _index[idx];
+		if (e._filename.equalsIgnoreCase(name)) {
 			Common::File f;
 			if (!f.open(_filename))
 				error("Reading failed");
 
-			f.seek(_index[idx]._offset);
-			Common::SeekableReadStream *result = f.readStream(_index[idx]._size);
-			f.close();
+			// Read in the image's palette
+			assert(e._paletteSize);
+			Common::Array<byte> palette;
+			palette.resize(e._paletteSize);
+			f.seek(e._paletteOffset);
+			f.read(&palette[0], e._paletteSize);
 
-			return result;
+			if (e._dataSize) {
+				Common::SeekableReadStream *src = f.readStream(e._dataSize);
+				f.close();
+				return PictureDecoder::decode(*src, &palette[0]);
+
+			} else {
+				error("TODO: Empty rect renderings");
+			}
 		}
 	}
 

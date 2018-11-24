@@ -100,6 +100,11 @@ private:
 	 * Loads the pictures file for Infocom V6 games
 	 */
 	bool initPictures();
+
+	/**
+	 * Displays the title screen for the game Beyond Zork
+	 */
+	void showBeyondZorkTitle();
 protected:
 	/**
 	 * Return the length of the character in screen units.
@@ -192,7 +197,7 @@ protected:
 	/**
 	 * Called during game restarts
 	 */
-	void os_restart_game(RestartAction stage);
+	void os_restart_game(RestartAction stage) {}
 
 	/**
 	 * Reads the mouse buttons

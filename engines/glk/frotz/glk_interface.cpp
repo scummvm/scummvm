@@ -96,11 +96,17 @@ void GlkInterface::initialize() {
 	glk_stylehint_set(wintype_AllTypes,   style_Note,         stylehint_Weight, 1);
 	glk_stylehint_set(wintype_AllTypes,   style_Note,         stylehint_Oblique, 1);
 
+	/*
+	 * Open game windows
+	 */
+	if (_storyId == BEYOND_ZORK)
+		showBeyondZorkTitle();
+
 	gos_lower = glk_window_open(0, 0, 0, wintype_TextGrid, 0);
 	if (!gos_lower)
 		gos_lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 	glk_window_get_size(gos_lower, &width, &height);
-	glk_window_close(gos_lower, NULL);
+	glk_window_close(gos_lower, nullptr);
 
 	gos_lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 	gos_upper = glk_window_open(gos_lower,
@@ -108,7 +114,7 @@ void GlkInterface::initialize() {
 			0,
 			wintype_TextGrid, 0);
 
-	gos_channel = NULL;
+	gos_channel = nullptr;
 
 	glk_set_window(gos_lower);
 	gos_curwin = gos_lower;
@@ -441,18 +447,17 @@ void GlkInterface::gos_cancel_pending_line() {
 	gos_linepending = 0;
 }
 
-void GlkInterface::os_restart_game(RestartAction stage) {
-	// Show Beyond Zork's title screen
-	if ((stage == RESTART_END) && (_storyId == BEYOND_ZORK)) {
-/*
-		uint w, h;
-		if (os_picture_data(1, &h, &w)) {
-			_screen->clear();
-			os_draw_picture(1, Common::Point(1, 1));
-			_events->waitForPress();
-		}
-		*/
+void GlkInterface::showBeyondZorkTitle() {
+	uint winW, winH, imgW, imgH;
+	winid_t win = glk_window_open(0, 0, 0, wintype_TextGrid, 0);
+	glk_window_get_size(gos_lower, &winW, &winH);
+
+	if (os_picture_data(1, &imgW, &imgH)) {
+		os_draw_picture(1, win, Common::Point(1, 1));
+		_events->waitForPress();
 	}
+
+	glk_window_close(win, nullptr);
 }
 
 void GlkInterface::os_draw_picture(int picture, winid_t win, const Common::Point &pos) {
