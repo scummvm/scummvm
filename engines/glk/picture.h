@@ -45,8 +45,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	Picture(int width, int height, const Graphics::PixelFormat &format) :
-		Graphics::ManagedSurface(width, height, format), _refCount(0), _id(0), _scaled(false) {}
+	Picture(int width, int height, const Graphics::PixelFormat &fmt) :
+		Graphics::ManagedSurface(width, height, fmt), _refCount(0), _id(0), _scaled(false) {}
 
 	/**
 	 * Increment reference counter
