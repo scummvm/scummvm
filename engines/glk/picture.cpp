@@ -109,22 +109,25 @@ Picture *Pictures::load(uint32 id) {
 	Picture *pic;
 
 	// Check if the picture is already in the store
-    pic = retrieve(id, false);
-    if (pic)
-        return pic;
+	pic = retrieve(id, false);
+	if (pic)
+		return pic;
 
 	Common::File f;
-	if (f.open(Common::String::format("PIC%lu.png", id))) {
+	if (f.open(Common::String::format("PIC%u.png", id))) {
 		png.loadStream(f);
 		img = png.getSurface();
 		palette = png.getPalette();
-	} else if (f.open(Common::String::format("PIC%lu.jpg", id))) {
+	} else if (f.open(Common::String::format("PIC%u.jpg", id))) {
 		jpg.loadStream(f);
 		img = jpg.getSurface();
-	} else if (f.open(Common::String::format("PIC%lu.raw", id))) {
+	} else if (f.open(Common::String::format("PIC%u.raw", id))) {
 		raw.loadStream(f);
 		img = raw.getSurface();
 		palette = raw.getPalette();
+	} else {
+		// No such picture
+		return nullptr;
 	}
 
 	pic = new Picture();
