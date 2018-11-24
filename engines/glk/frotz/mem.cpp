@@ -231,7 +231,7 @@ void Mem::reset_memory() {
 
 	if (undo_mem) {
 		free_undo(undo_count);
-		delete undo_mem;
+		delete[] undo_mem;
 	}
 
 	undo_mem = nullptr;
