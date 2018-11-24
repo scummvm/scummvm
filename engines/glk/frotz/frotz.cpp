@@ -44,6 +44,11 @@ void Frotz::runGame(Common::SeekableReadStream *gameFile) {
 
 	// Game loop
 	interpret();
+
+	if (!shouldQuit()) {
+		flush_buffer();
+		glk_exit();
+	}
 }
 
 void Frotz::initialize() {

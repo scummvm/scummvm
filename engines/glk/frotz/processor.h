@@ -169,11 +169,6 @@ private:
 	 * @{
 	 */
 
-	/**
-	 * Copy the contents of the text buffer to the output streams.
-	 */
-	void flush_buffer();
-
 	 /**
 	  * High level output function.
 	  */
@@ -1543,6 +1538,18 @@ protected:
 	 *      zargs[1] = value to write
 	 */
 	void z_store();
+
+	/**@}*/
+
+	/**
+	 * \defgroup Input support methods
+	 * @{
+	 */
+
+	/**
+	 * Copy the contents of the text buffer to the output streams.
+	 */
+	void flush_buffer();
 
 	/**@}*/
 public:
