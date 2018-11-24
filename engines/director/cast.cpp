@@ -29,6 +29,7 @@ namespace Director {
 
 BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
 	if (version < 4) {
+		pitch = 0;
 		flags = stream.readByte();
 		someFlaggyThing = stream.readUint16();
 		initialRect = Score::readRect(stream);
@@ -42,8 +43,8 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 			unk2 = stream.readUint16();
 		}
 	} else if (version == 4) {
-		stream.readByte();
-		stream.readByte();
+		pitch = stream.readUint16();
+		pitch &= 0x0fff;
 
 		flags = 0;
 		someFlaggyThing = 0;
@@ -67,6 +68,7 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 
 		warning("BitmapCast: %d bytes left", tail);
 	} else if (version == 5) {
+		pitch = 0;
 		uint16 count = stream.readUint16();
 		for (uint16 cc = 0; cc < count; cc++)
 			stream.readUint32();
