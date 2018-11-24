@@ -1718,7 +1718,7 @@ bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, const void *thumbn
 		return false;
 	}
 
-	Common::MemoryWriteStreamDynamic memoryStream(DisposeAfterUse::Flag::YES);
+	Common::MemoryWriteStreamDynamic memoryStream(DisposeAfterUse::YES);
 	SaveFileWriteStream s(memoryStream);
 
 	s.write(thumbnail, SaveFile::kThumbnailSize);
