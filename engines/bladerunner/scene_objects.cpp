@@ -353,7 +353,6 @@ void SceneObjects::load(SaveFileReadStream &f) {
 		_sceneObjects[i].id = f.readInt();
 		_sceneObjects[i].type = (SceneObjectType)f.readInt();
 		_sceneObjects[i].boundingBox = f.readBoundingBox(true);
-		debug("screenRectangle[%i]: %08x", i, f.pos());
 		_sceneObjects[i].screenRectangle = f.readRect();
 		_sceneObjects[i].distanceToCamera = f.readFloat();
 		_sceneObjects[i].isPresent = f.readBool();

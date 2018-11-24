@@ -58,13 +58,13 @@ bool SaveFile::readHeader(Common::SeekableReadStream &in, SaveFileHeader &header
 	header._thumbnail = nullptr;
 
 	if (!skipThumbnail) {
-		header._thumbnail = new Graphics::Surface();
+		header._thumbnail = new Graphics::Surface(); // freed by ScummVM's smartptr
 
 		int32 pos = s.pos();
 
 		s.skip(4); //skip size;
 
-		void *thumbnailData = new byte[kThumbnailSize];
+		void *thumbnailData = new byte[kThumbnailSize]; // freed by ScummVM's smartptr
 		s.read(thumbnailData, kThumbnailSize);
 
 		// TODO: cleanup - remove magic constants
