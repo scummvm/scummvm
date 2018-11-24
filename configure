@@ -1509,7 +1509,7 @@ arm-*riscos)
 	_host_os=riscos
 	_host_cpu=arm
 	_host_alias=$_host
-	datarootdir='/\<ScummVM\$$Dir\>'
+	datarootdir='/\<ResidualVM\$$Dir\>'
 	datadir='${datarootdir}/data'
 	docdir='${datarootdir}/docs'
 	;;
