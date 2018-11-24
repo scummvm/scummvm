@@ -420,6 +420,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_KQ6,           520,   520,  0,              "rm520", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // going to boiling water trap on beast isle
 	{ GID_KQ6,            -1,   903,  0,         "controlWin", "open",                            NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // when opening the controls window (save, load etc)
 	{ GID_KQ6,            -1,   907,  0,             "tomato", "doVerb",                          NULL,     2,     2, { WORKAROUND_FAKE,   0 } }, // when looking at the rotten tomato in the inventory - bug #5331
+	{ GID_KQ6,            -1,   921, -1,              "Print", "addEdit",                         NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when displaying the game debugger's teleport dialog
 	{ GID_KQ6,            -1,   928,  0,                 NULL, "startText",                       NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // gets caused by Text+Audio support (see script patcher)
 	{ GID_KQ7,            -1, 64996,  0,               "User", "handleEvent",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // called when pushing a keyboard key
 	{ GID_KQ7,          2450,  2450,  0,           "exBridge", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // called when walking up to the throne in the cave in chapter 2
