@@ -22,6 +22,7 @@
 
 #include "glk/raw_decoder.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
 
 namespace Glk {
 
@@ -44,7 +45,7 @@ bool RawDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	uint width = stream.readUint16LE();
 	uint height = stream.readUint16LE();
-	_paletteColorCount = stream.readByte();
+	_paletteColorCount = stream.readUint16LE();
 	assert(_paletteColorCount > 0);
 
 	// Read in the palette
@@ -52,8 +53,18 @@ bool RawDecoder::loadStream(Common::SeekableReadStream &stream) {
 	stream.read(_palette, _paletteColorCount * 3);
 
 	// Set up the surface and read it in
+	stream.readByte();
 	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	stream.read(_surface.getPixels(), width * height);
+
+	assert((stream.size() - stream.pos()) == (int)(width * height));
+	byte *pixels = (byte *)_surface.getPixels();
+	stream.read(pixels, width * height);
+
+	for (uint idx = 0; idx < width * height; ++idx, ++pixels) {
+		assert(*pixels != 0xff);
+		if (*pixels >= _paletteColorCount)
+			*pixels = _paletteColorCount - 1;
+	}
 
 	return true;
 }

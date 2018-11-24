@@ -29,24 +29,36 @@
 namespace Glk {
 namespace Frotz {
 
+enum PicturesMode {
+	MONO  = 0,
+	TEXT  = 1,
+	CGA   = 2,
+	MCGA  = 3,
+	EGA   = 4,
+	AMIGA = 5
+};
+
 /**
  * Infocom graphics file manager
  */
 class Pics : public Common::Archive {
 	/**
-	 * Describes one chunk of the Blorb file.
+	 * Describes a single index entry
 	 */
 	struct Entry {
 		uint _number;
 		size_t _width, _height;
+		uint _flags;
 		size_t _dataOffset;
 		size_t _dataSize;
 		size_t _paletteOffset;
-		size_t _paletteSize;
 		Common::String _filename;
 
-		Entry() : _number(0), _width(0), _height(0), _dataOffset(0), _dataSize(0),
-			_paletteOffset(0), _paletteSize(0) {}
+		/**
+		 * Constructor
+		 */
+		Entry() : _number(0), _width(0), _height(0), _flags(0), _dataOffset(0), _dataSize(0),
+			_paletteOffset(0) {}
 	};
 private:
 	Common::String _filename;
