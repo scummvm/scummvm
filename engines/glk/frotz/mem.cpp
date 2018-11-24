@@ -88,7 +88,7 @@ void Mem::initializeUndo() {
 
 void Mem::loadGameHeader() {
 	// Load header
-	zmp = new byte[64];
+	zmp = (byte *)malloc(64);
 	story_fp->seek(0);
 	story_fp->read(zmp, 64);
 
@@ -236,7 +236,7 @@ void Mem::reset_memory() {
 
 	undo_mem = nullptr;
 	undo_count = 0;
-	delete[] zmp;
+	free(zmp);
 	zmp = nullptr;
 }
 
