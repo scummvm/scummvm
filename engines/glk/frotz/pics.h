@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GLK_FROTZ_PICS
-#define GLK_FROTZ_PICS
+#ifndef GLK_FROTZ_PICS_H
+#define GLK_FROTZ_PICS_H
 
 #include "common/archive.h"
 #include "common/array.h"
@@ -38,9 +38,15 @@ class Pics : public Common::Archive {
 	 */
 	struct Entry {
 		uint _number;
-		size_t _offset;
-		size_t _size;
+		size_t _width, _height;
+		size_t _dataOffset;
+		size_t _dataSize;
+		size_t _paletteOffset;
+		size_t _paletteSize;
 		Common::String _filename;
+
+		Entry() : _number(0), _width(0), _height(0), _dataOffset(0), _dataSize(0),
+			_paletteOffset(0), _paletteSize(0) {}
 	};
 private:
 	Common::String _filename;
