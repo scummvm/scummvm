@@ -22,6 +22,7 @@
 
 #include "glk/scott/scott.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 namespace Glk {
 namespace Scott {
@@ -94,10 +95,10 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 
 		switch (performActions(vb, no)) {
 		case -1:
-			output("I don't understand your command. ");
+			output(_("I don't understand your command. "));
 			break;
 		case -2:
-			output("I can't do that yet. ");
+			output(_("I can't do that yet. "));
 			break;
 		default:
 			break;
@@ -113,9 +114,9 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 				if (_items[LIGHT_SOURCE]._location == CARRIED ||
 				        _items[LIGHT_SOURCE]._location == MY_LOC) {
 					if (_options & SCOTTLIGHT)
-						output("Light has run out! ");
+						output(_("Light has run out! "));
 					else
-						output("Your light has run out. ");
+						output(_("Your light has run out. "));
 				}
 				if (_options & PREHISTORIC_LAMP)
 					_items[LIGHT_SOURCE]._location = DESTROYED;
@@ -124,12 +125,12 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 				        _items[LIGHT_SOURCE]._location == MY_LOC) {
 
 					if (_options & SCOTTLIGHT) {
-						output("Light runs out in ");
+						output(_("Light runs out in "));
 						outputNumber(_gameHeader._lightTime);
-						output(" turns. ");
+						output(_(" turns. "));
 					} else {
 						if (_gameHeader._lightTime % 5 == 0)
-							output("Your light is growing dim. ");
+							output(_("Your light is growing dim. "));
 					}
 				}
 			}
@@ -388,7 +389,9 @@ void Scott::outputNumber(int a) {
 }
 
 void Scott::look(void) {
-	const char *const ExitNames[6] = { "North", "South", "East", "West", "Up", "Down" };
+	const char *const ExitNames[6] = {
+		_("North"), _("South"), _("East"), _("West"), _("Up"), _("Down")
+	};
 	Room *r;
 	int ct, f;
 	int pos;
@@ -399,9 +402,9 @@ void Scott::look(void) {
 	if ((_bitFlags & (1 << DARKBIT)) && _items[LIGHT_SOURCE]._location != CARRIED
 	        && _items[LIGHT_SOURCE]._location != MY_LOC) {
 		if (_options & YOUARE)
-			display(_topWindow, "You can't see. It is too dark!\n");
+			display(_topWindow, _("You can't see. It is too dark!\n"));
 		else
-			display(_topWindow, "I can't see. It is too dark!\n");
+			display(_topWindow, _("I can't see. It is too dark!\n"));
 		if (_options & TRS80_STYLE)
 			display(_topWindow, TRS80_LINE);
 		return;
@@ -411,14 +414,14 @@ void Scott::look(void) {
 		display(_topWindow, "%s\n", r->_text.c_str() + 1);
 	else {
 		if (_options & YOUARE)
-			display(_topWindow, "You are in a %s\n", r->_text.c_str());
+			display(_topWindow, _("You are in a %s\n"), r->_text.c_str());
 		else
-			display(_topWindow, "I'm in a %s\n", r->_text.c_str());
+			display(_topWindow, _("I'm in a %s\n"), r->_text.c_str());
 	}
 
 	ct = 0;
 	f = 0;
-	display(_topWindow, "\nObvious exits: ");
+	display(_topWindow, _("\nObvious exits: "));
 	while (ct < 6) {
 		if (r->_exits[ct] != 0) {
 			if (f == 0)
@@ -431,7 +434,7 @@ void Scott::look(void) {
 	}
 
 	if (f == 0)
-		display(_topWindow, "none");
+		display(_topWindow, _("none"));
 	display(_topWindow, ".\n");
 	ct = 0;
 	f = 0;
@@ -440,10 +443,10 @@ void Scott::look(void) {
 		if (_items[ct]._location == MY_LOC) {
 			if (f == 0) {
 				if (_options & YOUARE) {
-					display(_topWindow, "\nYou can also see: ");
+					display(_topWindow, _("\nYou can also see: "));
 					pos = 18;
 				} else {
-					display(_topWindow, "\nI can also see: ");
+					display(_topWindow, _("\nI can also see: "));
 					pos = 16;
 				}
 				f++;
@@ -523,7 +526,7 @@ Common::Error Scott::saveGameData(strid_t file) {
 		glk_put_string_stream(file, msg.c_str());
 	}
 
-	output("Saved.\n");
+	output(_("Saved.\n"));
 	return Common::kNoError;
 }
 
@@ -614,7 +617,7 @@ int Scott::getInput(int *vb, int *no) {
 		*vb = vc;
 		*no = nc;
 		if (vc == -1) {
-			output("You use word(s) I don't know! ");
+			output(_("You use word(s) I don't know! "));
 		}
 	} while (vc == -1);
 
@@ -742,9 +745,9 @@ int Scott::performLine(int ct) {
 			case 52:
 				if (countCarried() == _gameHeader._maxCarry) {
 					if (_options & YOUARE)
-						output("You are carrying too much. ");
+						output(_("You are carrying too much. "));
 					else
-						output("I've too much to carry! ");
+						output(_("I've too much to carry! "));
 					break;
 				}
 				_items[param[pptr++]]._location = CARRIED;
@@ -775,9 +778,9 @@ int Scott::performLine(int ct) {
 				break;
 			case 61:
 				if (_options & YOUARE)
-					output("You are dead.\n");
+					output(_("You are dead.\n"));
 				else
-					output("I am dead.\n");
+					output(_("I am dead.\n"));
 				_bitFlags &= ~(1 << DARKBIT);
 				MY_LOC = _gameHeader._numRooms;// It seems to be what the code says!
 				break;
@@ -789,7 +792,7 @@ int Scott::performLine(int ct) {
 			}
 			case 63:
 doneit:
-				output("The game is now over.\n");
+				output(_("The game is now over.\n"));
 				glk_exit();
 				return 0;
 			case 64:
@@ -804,15 +807,15 @@ doneit:
 					i++;
 				}
 				if (_options & YOUARE)
-					output("You have stored ");
+					output(_("You have stored "));
 				else
-					output("I've stored ");
+					output(_("I've stored "));
 				outputNumber(n);
-				output(" treasures.  On a scale of 0 to 100, that rates ");
+				output(_(" treasures.  On a scale of 0 to 100, that rates "));
 				outputNumber((n * 100) / _gameHeader._treasures);
 				output(".\n");
 				if (n == _gameHeader._treasures) {
-					output("Well done.\n");
+					output(_("Well done.\n"));
 					goto doneit;
 				}
 				break;
@@ -821,9 +824,9 @@ doneit:
 				int i = 0;
 				int f = 0;
 				if (_options & YOUARE)
-					output("You are carrying:\n");
+					output(_("You are carrying:\n"));
 				else
-					output("I'm carrying:\n");
+					output(_("I'm carrying:\n"));
 				while (i <= _gameHeader._numItems) {
 					if (_items[i]._location == CARRIED) {
 						if (f == 1) {
@@ -838,7 +841,7 @@ doneit:
 					i++;
 				}
 				if (f == 0)
-					output("Nothing");
+					output(_("Nothing"));
 				output(".\n");
 				break;
 			}
@@ -967,7 +970,7 @@ int Scott::performActions(int vb, int no) {
 	int fl;
 	int doagain = 0;
 	if (vb == 1 && no == -1) {
-		output("Give me a direction too.");
+		output(_("Give me a direction too."));
 		return 0;
 	}
 	if (vb == 1 && no >= 1 && no <= 6) {
@@ -976,7 +979,7 @@ int Scott::performActions(int vb, int no) {
 		        _items[LIGHT_SOURCE]._location == CARRIED)
 			d = 0;
 		if (d)
-			output("Dangerous to move in the dark! ");
+			output(_("Dangerous to move in the dark! "));
 		nl = _rooms[MY_LOC]._exits[no - 1];
 		if (nl != 0) {
 			MY_LOC = nl;
@@ -984,16 +987,16 @@ int Scott::performActions(int vb, int no) {
 		}
 		if (d) {
 			if (_options & YOUARE)
-				output("You fell down and broke your neck. ");
+				output(_("You fell down and broke your neck. "));
 			else
-				output("I fell down and broke my neck. ");
+				output(_("I fell down and broke my neck. "));
 			glk_exit();
 			return 0;
 		}
 		if (_options & YOUARE)
-			output("You can't go in that direction. ");
+			output(_("You can't go in that direction. "));
 		else
-			output("I can't go in that direction. ");
+			output(_("I can't go in that direction. "));
 		return 0;
 	}
 
@@ -1051,7 +1054,7 @@ int Scott::performActions(int vb, int no) {
 					int f = 0;
 
 					if (d) {
-						output("It is dark.\n");
+						output(_("It is dark.\n"));
 						return 0;
 					}
 					while (i <= _gameHeader._numItems) {
@@ -1065,43 +1068,43 @@ int Scott::performActions(int vb, int no) {
 
 							if (countCarried() == _gameHeader._maxCarry) {
 								if (_options & YOUARE)
-									output("You are carrying too much. ");
+									output(_("You are carrying too much. "));
 								else
-									output("I've too much to carry. ");
+									output(_("I've too much to carry. "));
 								return 0;
 							}
 							_items[i]._location = CARRIED;
 							output(_items[i]._text);
-							output(": O.K.\n");
+							output(_(": O.K.\n"));
 							f = 1;
 						}
 						i++;
 					}
 					if (f == 0)
-						output("Nothing taken.");
+						output(_("Nothing taken."));
 					return 0;
 				}
 				if (no == -1) {
-					output("What ? ");
+					output(_("What ? "));
 					return 0;
 				}
 				if (countCarried() == _gameHeader._maxCarry) {
 					if (_options & YOUARE)
-						output("You are carrying too much. ");
+						output(_("You are carrying too much. "));
 					else
-						output("I've too much to carry. ");
+						output(_("I've too much to carry. "));
 					return 0;
 				}
 				item = matchUpItem(_nounText, MY_LOC);
 				if (item == -1) {
 					if (_options & YOUARE)
-						output("It is beyond your power to do that. ");
+						output(_("It is beyond your power to do that. "));
 					else
-						output("It's beyond my power to do that. ");
+						output(_("It's beyond my power to do that. "));
 					return 0;
 				}
 				_items[item]._location = CARRIED;
-				output("O.K. ");
+				output(_("O.K. "));
 				return 0;
 			}
 			if (vb == 18) {
@@ -1120,25 +1123,25 @@ int Scott::performActions(int vb, int no) {
 
 							_items[i]._location = MY_LOC;
 							output(_items[i]._text);
-							output(": O.K.\n");
+							output(_(": O.K.\n"));
 							f = 1;
 						}
 						i++;
 					}
 					if (f == 0)
-						output("Nothing dropped.\n");
+						output(_("Nothing dropped.\n"));
 					return 0;
 				}
 				if (no == -1) {
-					output("What ? ");
+					output(_("What ? "));
 					return 0;
 				}
 				item = matchUpItem(_nounText, CARRIED);
 				if (item == -1) {
 					if (_options & YOUARE)
-						output("It's beyond your power to do that.\n");
+						output(_("It's beyond your power to do that.\n"));
 					else
-						output("It's beyond my power to do that.\n");
+						output(_("It's beyond my power to do that.\n"));
 					return 0;
 				}
 				_items[item]._location = MY_LOC;

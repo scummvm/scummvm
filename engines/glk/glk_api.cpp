@@ -30,7 +30,7 @@
 #include "glk/window_graphics.h"
 #include "glk/window_text_buffer.h"
 #include "glk/window_pair.h"
-
+#include "common/translation.h"
 
 namespace Glk {
 
@@ -59,7 +59,7 @@ GlkAPI::GlkAPI(OSystem *syst, const GlkGameDescription &gameDesc) :
 }
 
 void GlkAPI::glk_exit(void) {
-	glk_put_string("[ press any key to exit ]");
+	glk_put_string(_("[ press any key to exit ]"));
 	_events->waitForPress();
 
 	// Trigger a ScumMVM shutdown of game
