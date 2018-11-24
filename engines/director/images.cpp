@@ -205,13 +205,8 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 * BITD V4+
 ****************************/
 
-BITDDecoderV4::BITDDecoderV4(int w, int h, uint16 bitsPerPixel) {
+BITDDecoderV4::BITDDecoderV4(int w, int h, uint16 bitsPerPixel, uint16 pitch) {
 	_surface = new Graphics::Surface();
-
-	// We make the surface pitch a multiple of 16.
-	int pitch = w;
-	if (w % 16)
-		pitch += 16 - (w % 16);
 
 	Graphics::PixelFormat pf = Graphics::PixelFormat::createFormatCLUT8();
 	switch (bitsPerPixel) {

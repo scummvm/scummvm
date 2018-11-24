@@ -65,6 +65,7 @@ class BitmapCast : public Cast {
 public:
 	BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version = 2);
 
+	uint16 pitch;
 	uint16 regX;
 	uint16 regY;
 	uint8 flags;

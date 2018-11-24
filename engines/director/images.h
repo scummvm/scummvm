@@ -83,7 +83,7 @@ private:
 
 class BITDDecoderV4 : public Image::ImageDecoder {
 public:
-	BITDDecoderV4(int w, int h, uint16 bitsPerPixel);
+	BITDDecoderV4(int w, int h, uint16 bitsPerPixel, uint16 pitch);
 	virtual ~BITDDecoderV4();
 
 	// ImageDecoder API
