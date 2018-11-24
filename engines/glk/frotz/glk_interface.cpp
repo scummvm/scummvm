@@ -97,10 +97,8 @@ void GlkInterface::initialize() {
 	glk_stylehint_set(wintype_AllTypes,   style_Note,         stylehint_Oblique, 1);
 
 	/*
-	 * Open game windows
+	 * Get the screen size
 	 */
-	if (_storyId == BEYOND_ZORK)
-		showBeyondZorkTitle();
 
 	gos_lower = glk_window_open(0, 0, 0, wintype_TextGrid, 0);
 	if (!gos_lower)
@@ -108,19 +106,7 @@ void GlkInterface::initialize() {
 	glk_window_get_size(gos_lower, &width, &height);
 	glk_window_close(gos_lower, nullptr);
 
-	gos_lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
-	gos_upper = glk_window_open(gos_lower,
-			winmethod_Above | winmethod_Fixed,
-			0,
-			wintype_TextGrid, 0);
-
 	gos_channel = nullptr;
-
-	glk_set_window(gos_lower);
-	gos_curwin = gos_lower;
-
-	// Set the screen colors
-	garglk_set_zcolors(_defaultForeground, _defaultBackground);
 
 	/*
 	 * Icky magic bit setting
@@ -186,6 +172,24 @@ void GlkInterface::initialize() {
 		if (h_flags & COLOUR_FLAG)
 			h_flags &= ~COLOUR_FLAG;
 	}
+
+	/*
+	 * Open the windows
+	 */
+	if (_storyId == BEYOND_ZORK)
+		showBeyondZorkTitle();
+
+	gos_lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	gos_upper = glk_window_open(gos_lower,
+		winmethod_Above | winmethod_Fixed,
+		0,
+		wintype_TextGrid, 0);
+
+	glk_set_window(gos_lower);
+	gos_curwin = gos_lower;
+
+	// Set the screen colors
+	garglk_set_zcolors(_defaultForeground, _defaultBackground);
 }
 
 bool GlkInterface::initPictures() {
@@ -273,8 +277,6 @@ bool GlkInterface::os_picture_data(int picture, glui32 *height, glui32 *width) {
 		return glk_image_get_info(picture, width, height);
 	}
 }
-
-
 
 void GlkInterface::start_sample(int number, int volume, int repeats, zword eos) {
 	// TODO

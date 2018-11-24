@@ -130,11 +130,10 @@ Picture *Pictures::load(uint32 id) {
 		return nullptr;
 	}
 
-	pic = new Picture();
+	pic = new Picture(img->w, img->h, img->format);
 	pic->_refCount = 1;
     pic->_id = id;
     pic->_scaled = false;
-	pic->create(img->w, img->h, g_system->getScreenFormat());
 	pic->blitFrom(*img);
 
 	if (palette)

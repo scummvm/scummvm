@@ -46,7 +46,7 @@ Pics::Pics() : Common::Archive(), _filename(getFilename()) {
 	_index.resize(READ_LE_UINT16(&buffer[PIC_FILE_HEADER_NUM_IMAGES]));
 	_entrySize = buffer[PIC_FILE_HEADER_ENTRY_SIZE];
 	_version = buffer[PIC_FILE_HEADER_FLAGS];
-	assert(_entrySize >= 6 && _entrySize <= 14);
+	assert(_entrySize >= 8 && _entrySize <= 14);
 
 	// Iterate through loading the index
 	for (uint idx = 0; idx < _index.size(); ++idx) {
@@ -56,6 +56,7 @@ Pics::Pics() : Common::Archive(), _filename(getFilename()) {
 		e._number = READ_LE_UINT16(buffer);
 		e._width = READ_LE_UINT16(buffer + 2);
 		e._height = READ_LE_UINT16(buffer + 4);
+		e._flags = READ_LE_UINT16(buffer + 6);
 
 		if (_entrySize >= 11) {
 			e._dataOffset = READ_BE_UINT32(buffer + 7) & 0xffffff;
@@ -64,8 +65,6 @@ Pics::Pics() : Common::Archive(), _filename(getFilename()) {
 
 			if (_entrySize == 14) {
 				e._paletteOffset = READ_BE_UINT32(buffer + 10) & 0xffffff;
-				e._paletteSize = e._dataOffset - e._paletteOffset;
-				assert((e._paletteSize % 3) == 0);
 			}
 		}
 
@@ -132,25 +131,29 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String
 	for (uint idx = 0; idx < _index.size(); ++idx) {
 		const Entry &e = _index[idx];
 		if (e._filename.equalsIgnoreCase(name)) {
+			Common::Array<byte> palette;
 			Common::File f;
+			Common::SeekableReadStream *dest;
 			if (!f.open(_filename))
 				error("Reading failed");
 
 			// Read in the image's palette
-			assert(e._paletteSize);
-			Common::Array<byte> palette;
-			palette.resize(e._paletteSize);
+			assert(e._paletteOffset);
 			f.seek(e._paletteOffset);
-			f.read(&palette[0], e._paletteSize);
+			palette.resize(f.readByte() * 3);
+			f.read(&palette[0], palette.size());
 
+			PictureDecoder decoder;
 			if (e._dataSize) {
 				Common::SeekableReadStream *src = f.readStream(e._dataSize);
-				f.close();
-				return PictureDecoder::decode(*src, &palette[0]);
-
+				dest = decoder.decode(*src, e._flags, palette, MCGA, e._width, e._height);
+				delete src;
 			} else {
 				error("TODO: Empty rect renderings");
 			}
+
+			f.close();
+			return dest;
 		}
 	}
 
