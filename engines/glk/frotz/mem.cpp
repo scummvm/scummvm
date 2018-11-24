@@ -35,8 +35,8 @@ Mem::Mem() : story_fp(nullptr), story_size(0), first_undo(nullptr), last_undo(nu
 
 void Mem::initialize() {
 	initializeStoryFile();
-	initializeUndo();
 	loadGameHeader();
+	initializeUndo();
 
 	// Allocate memory for story data
 	if ((zmp = (zbyte *)realloc(zmp, story_size)) == nullptr)
