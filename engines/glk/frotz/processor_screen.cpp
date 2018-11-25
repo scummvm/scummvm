@@ -302,39 +302,30 @@ void Processor::z_set_font() {
 	zword font = zargs[0];
 
 	switch (font) {
-		case 0:
-			// previous font
-			temp_font = curr_font;
-			curr_font = prev_font;
-			prev_font = temp_font;
-			zargs[0] = 0xf000;	// tickle tickle!
-			z_set_text_style();
-			store (curr_font);
-			break;
+	case PREVIOUS_FONT:
+		// previous font
+		temp_font = curr_font;
+		curr_font = prev_font;
+		prev_font = temp_font;
+		zargs[0] = 0xf000;	// tickle tickle!
+		z_set_text_style();
+		store(curr_font);
+		break;
 
-		case 1:
-			// normal font
-			prev_font = curr_font;
-			curr_font = 1;
-			zargs[0] = 0xf000;	// tickle tickle!
-			z_set_text_style();
-			store (prev_font);
-			break; 
+	case TEXT_FONT:
+	case GRAPHICS_FONT:
+	case FIXED_WIDTH_FONT:
+		prev_font = curr_font;
+		curr_font = font;
+		zargs[0] = 0xf000;	// tickle tickle!
+		z_set_text_style();
+		store(prev_font);
+		break;
 
-		case 4:
-			// fixed-pitch font
-			prev_font = curr_font;
-			curr_font = 4;
-			zargs[0] = 0xf000;	// tickle tickle!
-			z_set_text_style();
-			store (prev_font);
-			break;
-
-		case 2: // picture font, undefined per 1.1
-		case 3: // character graphics font
-		default: // unavailable
-			store (0);
-			break;
+	case PICTURE_FONT: // picture font, undefined per 1.1
+	default:           // unavailable
+		store(0);
+		break;
 	}
 }
 
@@ -361,7 +352,7 @@ void Processor::z_set_text_style() {
 		// not tickle time
 		curstyle |= zargs[0];
 
-	if (h_flags & FIXED_FONT_FLAG || curr_font == 4)
+	if (h_flags & FIXED_FONT_FLAG || curr_font == FIXED_WIDTH_FONT)
 		style = curstyle | FIXED_WIDTH_STYLE;
 	else
 		style = curstyle;

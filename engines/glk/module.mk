@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	window_pair.o \
 	window_text_buffer.o \
 	window_text_grid.o \
+	frotz/bitmap_font.o \
 	frotz/config.o \
 	frotz/detection.o \
 	frotz/frotz.o \
