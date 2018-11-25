@@ -183,6 +183,7 @@ enum Style {
 };
 
 enum FontStyle {
+	PREVIOUS_FONT    = 0,
 	TEXT_FONT        = 1,
 	PICTURE_FONT     = 2,
 	GRAPHICS_FONT    = 3,

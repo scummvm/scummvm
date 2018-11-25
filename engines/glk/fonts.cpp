@@ -24,10 +24,12 @@
 #include "glk/glk_types.h"
 #include "glk/conf.h"
 #include "glk/glk.h"
+#include "glk/frotz/bitmap_font.h"
 #include "common/memstream.h"
 #include "common/unzip.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
+#include "image/bmp.h"
 
 namespace Glk {
 
@@ -100,16 +102,27 @@ bool Fonts::loadFonts() {
 
 const Graphics::Font *Fonts::loadFont(FACES face, Common::Archive *archive, double size, double aspect, int
  style) {
+	Common::File f;
 	const char *const FILENAMES[8] = {
 		"GoMono-Regular.ttf", "GoMono-Bold.ttf", "GoMono-Italic.ttf", "GoMono-Bold-Italic.ttf",
 		"NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-Bold-Italic.ttf"
 	};
 	
-	Common::File f;
-	if (!f.open(FILENAMES[face], *archive))
-		error("Could not load font");
+	// TODO: Properly create a derived Fonts manager for the Frotz sub-engine
+	if (face == MONOZ && g_vm->getInterpreterType() == INTERPRETER_FROTZ) {
+		if (!f.open("infocom_graphics.bmp", *archive))
+			error("Could not load font");
 
-	return Graphics::loadTTFFont(f, size, Graphics::kTTFSizeModeCharacter);
+		Image::BitmapDecoder decoder;
+		decoder.loadStream(f);
+		return new Frotz::BitmapFont(*decoder.getSurface());
+
+	} else {
+		if (!f.open(FILENAMES[face], *archive))
+			error("Could not load font");
+
+		return Graphics::loadTTFFont(f, size, Graphics::kTTFSizeModeCharacter);
+	}
 }
 
 FACES Fonts::getId(const Common::String &name) {

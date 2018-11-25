@@ -106,7 +106,7 @@ Picture *Pictures::load(uint32 id) {
 	RawDecoder raw;
 	const Graphics::Surface *img;
 	const byte *palette = nullptr;
-	int palCount = 0;
+	uint palCount = 0;
 	Picture *pic;
 
 	// Check if the picture is already in the store
