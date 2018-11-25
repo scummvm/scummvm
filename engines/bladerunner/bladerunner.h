@@ -24,7 +24,6 @@
 #define BLADERUNNER_BLADERUNNER_H
 
 #include "bladerunner/archive.h"
-#include "bladerunner/savefile.h"
 
 #include "common/array.h"
 #include "common/cosinetables.h"
@@ -238,7 +237,6 @@ public:
 	void shutdown();
 
 	bool loadSplash();
-	bool init2();
 
 	Common::Point getMousePos() const;
 	bool isMouseButtonDown() const;
@@ -276,7 +274,7 @@ public:
 	void playerLosesControl();
 	void playerGainsControl();
 
-	bool saveGame(Common::WriteStream &stream, const void *thumbnail);
+	bool saveGame(Common::WriteStream &stream, const Graphics::Surface &thumbnail);
 	bool loadGame(Common::SeekableReadStream &stream);
 	void newGame(int difficulty);
 	void autoSaveGame();
@@ -284,9 +282,10 @@ public:
 	void ISez(const Common::String &str);
 
 	void blitToScreen(const Graphics::Surface &src) const;
-	void generateThumbnail(void *thumbnail) const;
+	Graphics::Surface generateThumbnail() const;
 
 	GUI::Debugger *getDebugger();
+	Common::String getTargetName() const;
 };
 
 static inline const Graphics::PixelFormat createRGB555() {

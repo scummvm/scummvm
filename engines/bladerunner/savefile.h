@@ -23,10 +23,13 @@
 #ifndef BLADERUNNER_SAVEFILE_H
 #define BLADERUNNER_SAVEFILE_H
 
+#include "common/array.h"
 #include "common/memstream.h"
 #include "common/types.h"
 
 #include "graphics/surface.h"
+
+#include "engines/savestate.h"
 
 namespace Common {
 class OutSaveFile;
@@ -40,6 +43,7 @@ class Vector2;
 class Vector3;
 class BoundingBox;
 
+
 struct SaveFileHeader {
 	uint8              _version;
 	Common::String     _name;
@@ -51,7 +55,7 @@ struct SaveFileHeader {
 	Graphics::Surface *_thumbnail;
 };
 
-class SaveFile {
+class SaveFileManager {
 private:
 	static const uint32 kTag = MKTAG('B', 'R', 'S', 'V');
 	static const uint32 kVersion = 1;
@@ -59,6 +63,9 @@ private:
 
 public:
 	static const uint32 kThumbnailSize = 9600; // 80x60x16bpp
+
+	static SaveStateList list(const Common::String &target);
+	static SaveStateDescriptor queryMetaInfos(const Common::String &target, int slot);
 
 	static bool readHeader(Common::SeekableReadStream &in, SaveFileHeader &header, bool skipThumbnail = true);
 	static bool writeHeader(Common::WriteStream &out, SaveFileHeader &header);

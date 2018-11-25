@@ -31,6 +31,7 @@
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/script/kia_script.h"
@@ -66,7 +67,7 @@ KIA::KIA(BladeRunnerEngine *vm) {
 	_log = new KIALog(_vm);
 	_shapes = new KIAShapes(_vm);
 
-	_forceOpen = 0;
+	_forceOpen = false;
 	_currentSectionId = kKIASectionNone;
 	_lastSectionIdKIA = kKIASectionCrimes;
 	_lastSectionIdOptions = kKIASectionSettings;
@@ -88,8 +89,6 @@ KIA::KIA(BladeRunnerEngine *vm) {
 
 	_pogoPos = 0;
 
-	_thumbnail = nullptr;
-
 	_buttons = new UIImagePicker(_vm, 22);
 
 	_crimesSection     = new KIASectionCrimes(_vm, _vm->_playerActor->_clues);
@@ -109,6 +108,7 @@ KIA::KIA(BladeRunnerEngine *vm) {
 }
 
 KIA::~KIA() {
+	_thumbnail.free();
 	delete _crimesSection;
 	delete _suspectsSection;
 	delete _cluesSection;
@@ -118,7 +118,7 @@ KIA::~KIA() {
 	delete _loadSection;
 	delete _diagnosticSection;
 	delete _pogoSection;
-
+	_playerImage.free();
 	delete _playerPhotograph;
 	delete _buttons;
 	delete _shapes;
@@ -129,6 +129,7 @@ KIA::~KIA() {
 void KIA::reset() {
 	_lastSectionIdKIA = kKIASectionCrimes;
 	_lastSectionIdOptions = kKIASectionSettings;
+	_playerImage.free();
 	_playerVqaFrame = 0;
 	_playerVisualizerState = 0;
 	_playerSliceModelAngle = 0.0f;
@@ -226,7 +227,7 @@ void KIA::tick() {
 	if (_playerActorDialogueQueueSize == _playerActorDialogueQueuePosition) {
 		_playerActorDialogueState = 0;
 	} else if (_playerActorDialogueState == 0) {
-		if (_playerSliceModelId == -1 && _playerPhotographId == -1) { //&& !this->_playerImage
+		if (_playerSliceModelId == -1 && _playerPhotographId == -1 && _playerImage.getPixels() == nullptr) {
 			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(495), 70, 0, 0, 50, 0);
 		}
 		_playerActorDialogueState = 1;
@@ -251,18 +252,17 @@ void KIA::tick() {
 	int timeDiffDiv48 = (timeNow - _playerVqaTimeLast) / 48;
 	if (timeDiffDiv48 > 0) {
 		_playerVqaTimeLast = timeNow;
-		if (_playerActorDialogueQueueSize == _playerActorDialogueQueuePosition || _playerSliceModelId != -1 || _playerPhotographId != -1) { // || this->_viewerImage
+		if (_playerActorDialogueQueueSize == _playerActorDialogueQueuePosition || _playerSliceModelId != -1 || _playerPhotographId != -1 || _playerImage.getPixels() != nullptr) {
 			if (_playerVisualizerState > 0) {
 				_playerVisualizerState = MAX(_playerVisualizerState - timeDiffDiv48, 0);
 			}
 		} else {
 			if (_playerVisualizerState < 2) {
 				_playerVisualizerState = MIN(_playerVisualizerState + timeDiffDiv48, 2);
-
 			}
 		}
 
-		if ( _playerSliceModelId != -1 || _playerPhotographId != -1 ) { // || _playerImage
+		if ( _playerSliceModelId != -1 || _playerPhotographId != -1 || _playerImage.getPixels() != nullptr) {
 			if (_playerVqaFrame < 8) {
 				int newVqaFrame  = MIN(timeDiffDiv48 + _playerVqaFrame, 8);
 				if (_playerVqaFrame <= 0 && newVqaFrame > 0) {
@@ -325,10 +325,10 @@ void KIA::tick() {
 			int width  = _playerPhotograph->getWidth();
 			int height  = _playerPhotograph->getHeight();
 			_playerPhotograph->draw(_vm->_surfaceFront, 590 - width / 2, 80 - height / 2);
+		} else if (_playerImage.getPixels() != nullptr) {
+			_vm->_surfaceFront.fillRect(Common::Rect(549, 49, 631, 111), 0x7FFF);
+			_vm->_surfaceFront.copyRectToSurface(_playerImage.getPixels(), _playerImage.pitch, 550, 50, _playerImage.w,  _playerImage.h);
 		}
-		// else if (_playerImage) {
-		// ...
-		// }
 	}
 
 	if (_playerVisualizerState == 1) {
@@ -530,8 +530,7 @@ void KIA::playerReset() {
 		_playerPhotograph = nullptr;
 	}
 	_playerPhotographId = -1;
-	// delete _playerImage;
-	// _playerImage = nullptr;
+	_playerImage.free();
 	_playerActorDialogueState = 0;
 }
 
@@ -562,6 +561,10 @@ void KIA::playPhotograph(int photographId) {
 	_playerPhotographId = photographId;
 	_playerPhotograph = new Shape(_vm);
 	_playerPhotograph->open("photos.shp", photographId);
+}
+
+void KIA::playImage(const Graphics::Surface &image) {
+	_playerImage.copyFrom(image);
 }
 
 void KIA::mouseDownCallback(int buttonId, void *callbackData) {
@@ -635,8 +638,7 @@ void KIA::loopEnded(void *callbackData, int frame, int loopId) {
 }
 
 void KIA::init() {
-	_thumbnail = new byte[SaveFile::kThumbnailSize];
-	_vm->generateThumbnail(_thumbnail);
+	_thumbnail = _vm->generateThumbnail();
 
 	if (!_vm->openArchive("MODE.MIX")) {
 		return;
@@ -667,8 +669,7 @@ void KIA::init() {
 }
 
 void KIA::unload() {
-	delete[] _thumbnail;
-	_thumbnail = nullptr;
+	_thumbnail.free();
 
 	if (!isOpen()) {
 		return;

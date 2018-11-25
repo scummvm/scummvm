@@ -33,7 +33,52 @@
 
 namespace BladeRunner {
 
-bool SaveFile::readHeader(Common::SeekableReadStream &in, SaveFileHeader &header, bool skipThumbnail) {
+SaveStateList SaveFileManager::list(const Common::String &target) {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray files = saveFileMan->listSavefiles(target + ".###");
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator fileName = files.begin(); fileName != files.end(); ++fileName) {
+		Common::InSaveFile *saveFile = saveFileMan->openForLoading(*fileName);
+		if (saveFile == nullptr || saveFile->err()) {
+			continue;
+		}
+
+		BladeRunner::SaveFileHeader header;
+		readHeader(*saveFile, header);
+
+		int slotNum = atoi(fileName->c_str() + fileName->size() - 3);
+		saveList.push_back(SaveStateDescriptor(slotNum, header._name));
+	}
+
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+
+	return saveList;
+}
+
+SaveStateDescriptor SaveFileManager::queryMetaInfos(const Common::String &target, int slot) {
+	Common::String filename = Common::String::format("%s.%03d", target.c_str(), slot);
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(filename);
+
+	if (saveFile == nullptr || saveFile->err()) {
+		return SaveStateDescriptor();
+	}
+
+	BladeRunner::SaveFileHeader header;
+	if (!BladeRunner::SaveFileManager::readHeader(*saveFile, header, false)) {
+		delete saveFile;
+		return SaveStateDescriptor();
+	}
+	delete saveFile;
+
+	SaveStateDescriptor desc(slot, header._name);
+	desc.setThumbnail(header._thumbnail);
+	desc.setSaveDate(header._year, header._month, header._day);
+	desc.setSaveTime(header._hour, header._minute);
+	return desc;
+}
+
+bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader &header, bool skipThumbnail) {
 	SaveFileReadStream s(in);
 
 	if (s.readUint32BE() != kTag) {
@@ -76,7 +121,7 @@ bool SaveFile::readHeader(Common::SeekableReadStream &in, SaveFileHeader &header
 	return true;
 }
 
-bool SaveFile::writeHeader(Common::WriteStream &out, SaveFileHeader &header) {
+bool SaveFileManager::writeHeader(Common::WriteStream &out, SaveFileHeader &header) {
 	SaveFileWriteStream s(out);
 
 	s.writeUint32BE(kTag);

@@ -87,27 +87,7 @@ bool BladeRunnerMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 SaveStateList BladeRunnerMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray files = saveFileMan->listSavefiles(Common::String::format("%s.###", target));
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator fileName = files.begin(); fileName != files.end(); ++fileName) {
-		Common::InSaveFile *saveFile = saveFileMan->openForLoading(*fileName);
-		if (saveFile == nullptr || saveFile->err()) {
-			warning("Cannot open save file '%s'", fileName->c_str());
-			continue;
-		}
-
-		BladeRunner::SaveFileHeader header;
-		BladeRunner::SaveFile::readHeader(*saveFile, header);
-
-		int slotNum = atoi(fileName->c_str() + fileName->size() - 3);
-		saveList.push_back(SaveStateDescriptor(slotNum, header._name));
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
+	return BladeRunner::SaveFileManager::list(target);
 }
 
 int BladeRunnerMetaEngine::getMaximumSaveSlot() const {
@@ -120,25 +100,7 @@ void BladeRunnerMetaEngine::removeSaveState(const char *target, int slot) const 
 }
 
 SaveStateDescriptor BladeRunnerMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(filename);
-
-	if (saveFile == nullptr || saveFile->err()) {
-		return SaveStateDescriptor();
-	}
-
-	BladeRunner::SaveFileHeader header;
-	if (!BladeRunner::SaveFile::readHeader(*saveFile, header, false)) {
-		delete saveFile;
-		return SaveStateDescriptor();
-	}
-	delete saveFile;
-
-	SaveStateDescriptor desc(slot, header._name);
-	desc.setThumbnail(header._thumbnail);
-	desc.setSaveDate(header._year, header._month, header._day);
-	desc.setSaveTime(header._hour, header._minute);
-	return desc;
+	return BladeRunner::SaveFileManager::queryMetaInfos(target, slot);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BLADERUNNER)

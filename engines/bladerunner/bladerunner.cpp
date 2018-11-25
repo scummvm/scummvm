@@ -230,7 +230,7 @@ Common::Error BladeRunnerEngine::loadGameState(int slot) {
 	}
 
 	BladeRunner::SaveFileHeader header;
-	if (!BladeRunner::SaveFile::readHeader(*saveFile, header)) {
+	if (!BladeRunner::SaveFileManager::readHeader(*saveFile, header)) {
 		error("Invalid savegame");
 	}
 
@@ -261,18 +261,18 @@ Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &d
 		return Common::kReadingFailed;
 	}
 
-	byte *thumbnail = new byte[SaveFile::kThumbnailSize];
-	generateThumbnail(thumbnail);
+	Graphics::Surface thumbnail = generateThumbnail();
 
 	BladeRunner::SaveFileHeader header;
 	header._name = desc;
-	BladeRunner::SaveFile::writeHeader(*saveFile, header);
+
+	BladeRunner::SaveFileManager::writeHeader(*saveFile, header);
 
 	saveGame(*saveFile, thumbnail);
 
 	saveFile->finalize();
 
-	delete[] thumbnail;
+	thumbnail.free();
 
 	delete saveFile;
 
@@ -285,19 +285,29 @@ Common::Error BladeRunnerEngine::run() {
 
 	_system->showMouse(true);
 
-	if (!startup()) {
+	bool hasSavegames = !SaveFileManager::list(_targetName).empty();
+
+	if (!startup(hasSavegames)) {
 		shutdown();
 		return Common::Error(Common::kUnknownError, "Failed to initialize resources");
 	}
+
+
 
 #if BLADERUNNER_DEBUG_GAME
 	{
 #else
 	if (warnUserAboutUnsupportedGame()) {
 #endif
-		init2();
+		if (hasSavegames) {
+			_kia->_forceOpen = true;
+			_kia->open(kKIASectionLoad);
+		}
+		// TODO: why is game starting new game here when everything is done in startup?
+		//  else {
+		// 	newGame(1);
+		// }
 
-		/* TODO: Check for save games and enter KIA */
 		gameLoop();
 
 		_mouse->disable();
@@ -361,7 +371,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 		return false;
 	}
 
-	_combat = new Combat(this);
 
 	// TODO: Create datetime - not used
 
@@ -377,13 +386,11 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_waypoints = new Waypoints(this, _gameInfo->getWaypointCount());
 
-	// TODO: Cover waypoints
-
-	// TODO: Flee waypoints
+	_combat = new Combat(this);
 
 	_gameVars = new int[_gameInfo->getGlobalVarCount()]();
 
-	// TODO: Actor AI DLL init
+	// TODO: Init Actor AI Update counter
 
 	// Seed rand
 
@@ -789,10 +796,6 @@ bool BladeRunnerEngine::loadSplash() {
 	return true;
 }
 
-bool BladeRunnerEngine::init2() {
-	return true;
-}
-
 Common::Point BladeRunnerEngine::getMousePos() const {
 	Common::Point p = _eventMan->getMousePos();
 	p.x = CLIP(p.x, int16(0), int16(639));
@@ -816,8 +819,7 @@ void BladeRunnerEngine::gameTick() {
 	handleEvents();
 
 	if (_gameIsRunning && _windowIsActive) {
-		// TODO: Only run if not in Kia, script, nor AI
-		if (!_sceneScript->isInsideScript() && !_aiScripts->isInsideScript()) {
+		if (!_kia->isOpen() && !_sceneScript->isInsideScript() && !_aiScripts->isInsideScript()) {
 			_settings->openNewScene();
 		}
 
@@ -1713,7 +1715,7 @@ void BladeRunnerEngine::playerGainsControl() {
 	}
 }
 
-bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, const void *thumbnail) {
+bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, const Graphics::Surface &thumbnail) {
 	if (!playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript()) {
 		return false;
 	}
@@ -1721,7 +1723,7 @@ bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, const void *thumbn
 	Common::MemoryWriteStreamDynamic memoryStream(DisposeAfterUse::YES);
 	SaveFileWriteStream s(memoryStream);
 
-	s.write(thumbnail, SaveFile::kThumbnailSize);
+	s.write(thumbnail.getPixels(), SaveFileManager::kThumbnailSize);
 	s.writeFloat(1.0f);
 	_settings->save(s);
 	_scene->save(s);
@@ -1793,7 +1795,7 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 
 	_gameIsLoading = true;
 	_settings->setLoadingGame();
-	s.skip(SaveFile::kThumbnailSize); // skip the thumbnail
+	s.skip(SaveFileManager::kThumbnailSize); // skip the thumbnail
 	s.skip(4);// always float 1.0, but never used
 	_settings->load(s);
 	_scene->load(s);
@@ -1870,6 +1872,10 @@ void BladeRunnerEngine::newGame(int difficulty) {
 		_settings->setDifficulty(difficulty);
 	}
 
+	InitScript initScript(this);
+	initScript.SCRIPT_Initialize_Game();
+	initChapterAndScene();
+
 	_settings->setStartingGame();
 }
 
@@ -1882,19 +1888,28 @@ void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) const {
 	_system->updateScreen();
 }
 
-void BladeRunnerEngine::generateThumbnail(void *thumbnail) const {
-	uint16 *dstPixels = (uint16*)thumbnail;
+Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
+	Graphics::Surface thumbnail;
+	thumbnail.create(640 / 8, 480 / 8, createRGB555());
 
-	for (int y = 0; y < 480; y += 8) {
-		for (int x = 0; x < 640; x += 8) {
-			*dstPixels = *(const uint16 *)_surfaceFront.getBasePtr(x, y);
-			++dstPixels;
+	for (int y = 0; y < thumbnail.h; ++y) {
+		for (int x = 0; x < thumbnail.w; ++x) {
+			uint16       *dstPixel = (uint16 *)thumbnail.getBasePtr(x, y);
+			const uint16 *srcPixel = (const uint16 *)_surfaceFront.getBasePtr(x * 8, y * 8);
+
+			*dstPixel = *srcPixel;
 		}
 	}
+
+	return thumbnail;
 }
 
 GUI::Debugger *BladeRunnerEngine::getDebugger() {
 	return _debugger;
+}
+
+Common::String BladeRunnerEngine::getTargetName() const {
+	return _targetName;
 }
 
 void blit(const Graphics::Surface &src, Graphics::Surface &dst) {

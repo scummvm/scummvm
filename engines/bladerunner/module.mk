@@ -257,6 +257,7 @@ MODULE_OBJS = \
 	ui/kia_section_crimes.o \
 	ui/kia_section_diagnostic.o \
 	ui/kia_section_help.o \
+	ui/kia_section_load.o \
 	ui/kia_section_pogo.o \
 	ui/kia_section_settings.o \
 	ui/kia_section_suspects.o \

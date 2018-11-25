@@ -33,6 +33,7 @@
 #include "bladerunner/light.h"
 #include "bladerunner/lights.h"
 #include "bladerunner/regions.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/settings.h"
@@ -399,14 +400,13 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 
 	Common::WriteStream *saveFile = fs.createWriteStream();
 
-	uint16 *thumbnail = new uint16[SaveFile::kThumbnailSize];
-	_vm->generateThumbnail(thumbnail);
+	Graphics::Surface thumbnail = _vm->generateThumbnail();
 
 	_vm->saveGame(*saveFile, thumbnail);
 
 	saveFile->finalize();
 
-	delete[] thumbnail;
+	thumbnail.free();
 
 	delete saveFile;
 

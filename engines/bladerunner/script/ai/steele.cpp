@@ -43,7 +43,7 @@ void AIScriptSteele::Initialize() {
 	Actor_Put_In_Set(kActorSteele, kSetFreeSlotG);
 	Actor_Set_At_Waypoint(kActorSteele, 39, 0);
 	Actor_Set_Goal_Number(kActorSteele, 0);
-	Actor_Clue_Acquire(kActorSteele, 178, 1, -1);
+	Actor_Clue_Acquire(kActorSteele, kClueCrimeSceneNotes, 1, -1);
 }
 
 bool AIScriptSteele::Update() {
