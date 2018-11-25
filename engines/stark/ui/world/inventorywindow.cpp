@@ -68,10 +68,18 @@ InventoryWindow::InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *a
 }
 
 void InventoryWindow::open() {
+	if (!_visible) {
+		_actionMenu->close();
+	}
+
 	_visible = true;
 }
 
 void InventoryWindow::close() {
+	if (_visible) {
+		_actionMenu->close();
+	}
+
 	_visible = false;
 }
 
@@ -170,6 +178,10 @@ void InventoryWindow::onMouseMove(const Common::Point &pos) {
 	if (_selectedInventoryItem == -1) {
 		if (hoveredItem) {
 			_cursor->setCursorType(Cursor::kActive);
+		} else if ((canScrollDown() && _scrollDownArrowRect.contains(pos))
+		           || (canScrollUp() && _scrollUpArrowRect.contains(pos))) {
+			_cursor->setCursorType(Cursor::kActive);
+			_cursor->setFading(false);
 		} else {
 			_cursor->setCursorType(Cursor::kDefault);
 		}
@@ -210,10 +222,14 @@ void InventoryWindow::onClick(const Common::Point &pos) {
 				_actionMenu->open(clickedItem, Common::Point());
 			}
 		}
-	} else if (canScrollDown() && _scrollDownArrowRect.contains(pos)) {
-		scrollDown();
-	} else if (canScrollUp() && _scrollUpArrowRect.contains(pos)) {
-		scrollUp();
+	} else if (_scrollDownArrowRect.contains(pos)) {
+		if (canScrollDown()) {
+			scrollDown();
+		}
+	} else if (_scrollUpArrowRect.contains(pos)) {
+		if (canScrollUp()) {
+			scrollUp();
+		}
 	} else {
 		// Nothing was under the mouse cursor, close the inventory
 		close();

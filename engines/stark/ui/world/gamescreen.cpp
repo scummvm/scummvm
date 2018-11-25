@@ -96,6 +96,7 @@ void GameScreen::reset() {
 	_dialogPanel->reset();
 	_gameWindow->reset();
 	_inventoryWindow->reset();
+	_actionMenu->close();
 }
 
 GameWindow *GameScreen::getGameWindow() const {

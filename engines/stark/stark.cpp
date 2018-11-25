@@ -264,20 +264,20 @@ void StarkEngine::processEvents() {
 					}
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_a) {
-				if (_userInterface->isInGameScreen()) {
+				if (_userInterface->isInteractive()) {
 					_userInterface->cycleBackInventory();
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_s) {
-				if (_userInterface->isInGameScreen()) {
+				if (_userInterface->isInteractive()) {
 					_userInterface->cycleForwardInventory();
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_i) {
-				if (_userInterface->isInGameScreen()) {
+				if (_userInterface->isInteractive()) {
 					_userInterface->inventoryOpen(!_userInterface->isInventoryOpen());
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_x
 					&& !e.kbd.hasFlags(Common::KBD_ALT)) {
-				if (_userInterface->isInGameScreen()) {
+				if (_userInterface->isInteractive()) {
 					_userInterface->toggleExitDisplay();
 				}
 			} else if ((e.kbd.keycode == Common::KEYCODE_x
@@ -419,6 +419,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	_userInterface->clearLocationDependentState();
 	_userInterface->setInteractive(true);
 	_userInterface->changeScreen(Screen::kScreenGame);
+	_userInterface->inventoryOpen(false);
 	_userInterface->restoreScreenHistory();
 
 	// Clear the previous world resources
