@@ -22,6 +22,7 @@
 
 #include "glk/frotz/frotz.h"
 #include "glk/frotz/frotz_types.h"
+#include "glk/frotz/screen.h"
 #include "common/config-manager.h"
 
 namespace Glk {
@@ -36,6 +37,10 @@ Frotz::Frotz(OSystem *syst, const GlkGameDescription &gameDesc) :
 
 Frotz::~Frotz() {
 	reset_memory();
+}
+
+Screen *Frotz::createScreen() {
+	return new FrotzScreen();
 }
 
 void Frotz::runGame(Common::SeekableReadStream *gameFile) {

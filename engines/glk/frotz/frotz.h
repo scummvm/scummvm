@@ -32,6 +32,11 @@ namespace Frotz {
  * Frotz interpreter for Z-code games
  */
 class Frotz : public Processor {
+protected:
+	/**
+	 * Create the screen class
+	 */
+	virtual Screen *createScreen() override;
 public:
 	/**
 	 * Constructor

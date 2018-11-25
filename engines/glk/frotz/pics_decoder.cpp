@@ -42,15 +42,14 @@ Common::SeekableReadStream *PictureDecoder::decode(Common::ReadStream &src, uint
 	Common::MemoryWriteStreamDynamic out(DisposeAfterUse::NO);
 	byte buf[512];
     byte transparent;
-    int colour_shift;
-	int first_colour;
+    int colour_shift = 0;
+	int first_colour = 0;
     int code, prev_code = 0;
     int next_entry;
     int bits_per_code;
     int bits_shift;
     int bits;
     int bufpos = 0;
-    int i;
 
 	/*
 	 * Write out dimensions of image
@@ -83,6 +82,7 @@ Common::SeekableReadStream *PictureDecoder::decode(Common::ReadStream &src, uint
 		first_colour = 65;
 		break;
 	default:
+		error("Unsupported mode");
 		break;
 	}
 	

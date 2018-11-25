@@ -21,9 +21,25 @@
  */
 
 #include "glk/frotz/screen.h"
+#include "common/file.h"
+#include "image/bmp.h"
 
 namespace Glk {
 namespace Frotz {
+
+void FrotzScreen::loadFonts(Common::Archive *archive) {
+	Screen::loadFonts(archive);
+
+	Image::BitmapDecoder decoder;
+	Common::File f;
+	if (!f.open("infocom_graphics.bmp", *archive))
+		error("Could not load font");
+
+	decoder.loadStream(f);
+	_fonts.push_back(new Frotz::BitmapFont(*decoder.getSurface()));
+}
+
+/*--------------------------------------------------------------------------*/
 
 BitmapFont::BitmapFont(const Graphics::Surface &src, uint charWidth,
 		uint charHeight, unsigned char startingChar) : _startingChar(startingChar) {

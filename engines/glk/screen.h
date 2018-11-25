@@ -46,10 +46,8 @@ enum STYLES { FONTR, FONTB, FONTI, FONTZ };
  */
 class Screen : public Graphics::Screen {
 private:
-	Common::Array<const Graphics::Font *> _fonts;
-private:
 	/**
-	 * Load all the fonts
+	 * Open the fonts archive and load all the fonts
 	 */
 	bool loadFonts();
 
@@ -58,6 +56,13 @@ private:
 	 */
 	const Graphics::Font *loadFont(FACES face, Common::Archive *archive,
 		double size, double aspect, int style);
+protected:
+	Common::Array<const Graphics::Font *> _fonts;
+protected:
+	/**
+	 * Load the fonts
+	 */
+	virtual void loadFonts(Common::Archive *archive);
 public:
 	/**
 	 * Return the font Id for a given name
@@ -67,12 +72,17 @@ public:
 	/**
 	 * Constructor
 	 */
-	Screen();
+	Screen() : Graphics::Screen() {}
 
 	/**
 	 * Destructor
 	 */
 	virtual ~Screen();
+
+	/**
+	 * Initialize the screen
+	 */
+	void initialize();
 
 	/**
 	 * Fills the screen with a given rgb color
