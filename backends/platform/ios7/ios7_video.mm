@@ -349,29 +349,39 @@ uint getSizeNextPOT(uint size) {
 }
 
 - (void)setupGestureRecognizers {
-	UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeRight:)];
-	swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
-	swipeRight.numberOfTouchesRequired = 2;
-	swipeRight.delaysTouchesBegan = NO;
-	swipeRight.delaysTouchesEnded = NO;
+	for (NSUInteger numberOfTouchesRequired = 1; numberOfTouchesRequired <= 2; numberOfTouchesRequired++) {
+		UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeRight:)];
+		swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
+		swipeRight.numberOfTouchesRequired = numberOfTouchesRequired;
+		swipeRight.delaysTouchesBegan = NO;
+		swipeRight.delaysTouchesEnded = NO;
+		[self addGestureRecognizer:swipeRight];
+		[swipeRight release];
 
-	UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeLeft:)];
-	swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
-	swipeLeft.numberOfTouchesRequired = 2;
-	swipeLeft.delaysTouchesBegan = NO;
-	swipeLeft.delaysTouchesEnded = NO;
+		UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeLeft:)];
+		swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+		swipeLeft.numberOfTouchesRequired = numberOfTouchesRequired;
+		swipeLeft.delaysTouchesBegan = NO;
+		swipeLeft.delaysTouchesEnded = NO;
+		[self addGestureRecognizer:swipeLeft];
+		[swipeLeft release];
 
-	UISwipeGestureRecognizer *swipeUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeUp:)];
-	swipeUp.direction = UISwipeGestureRecognizerDirectionUp;
-	swipeUp.numberOfTouchesRequired = 2;
-	swipeUp.delaysTouchesBegan = NO;
-	swipeUp.delaysTouchesEnded = NO;
+		UISwipeGestureRecognizer *swipeUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeUp:)];
+		swipeUp.direction = UISwipeGestureRecognizerDirectionUp;
+		swipeUp.numberOfTouchesRequired = numberOfTouchesRequired;
+		swipeUp.delaysTouchesBegan = NO;
+		swipeUp.delaysTouchesEnded = NO;
+		[self addGestureRecognizer:swipeUp];
+		[swipeUp release];
 
-	UISwipeGestureRecognizer *swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeDown:)];
-	swipeDown.direction = UISwipeGestureRecognizerDirectionDown;
-	swipeDown.numberOfTouchesRequired = 2;
-	swipeDown.delaysTouchesBegan = NO;
-	swipeDown.delaysTouchesEnded = NO;
+		UISwipeGestureRecognizer *swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeDown:)];
+		swipeDown.direction = UISwipeGestureRecognizerDirectionDown;
+		swipeDown.numberOfTouchesRequired = numberOfTouchesRequired;
+		swipeDown.delaysTouchesBegan = NO;
+		swipeDown.delaysTouchesEnded = NO;
+		[self addGestureRecognizer:swipeDown];
+		[swipeDown release];
+	}
 
 	UITapGestureRecognizer *doubleTapTwoFingers = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersDoubleTap:)];
 	doubleTapTwoFingers.numberOfTapsRequired = 2;
@@ -379,16 +389,8 @@ uint getSizeNextPOT(uint size) {
 	doubleTapTwoFingers.delaysTouchesBegan = NO;
 	doubleTapTwoFingers.delaysTouchesEnded = NO;
 
-	[self addGestureRecognizer:swipeRight];
-	[self addGestureRecognizer:swipeLeft];
-	[self addGestureRecognizer:swipeUp];
-	[self addGestureRecognizer:swipeDown];
 	[self addGestureRecognizer:doubleTapTwoFingers];
 
-	[swipeRight release];
-	[swipeLeft release];
-	[swipeUp release];
-	[swipeDown release];
 	[doubleTapTwoFingers release];
 }
 
@@ -998,20 +1000,20 @@ uint getSizeNextPOT(uint size) {
 	_secondTouch = nil;
 }
 
-- (void)twoFingersSwipeRight:(UISwipeGestureRecognizer *)recognizer {
-	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeRight, 2)];
+- (void)swipeRight:(UISwipeGestureRecognizer *)recognizer {
+	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeRight, recognizer.numberOfTouchesRequired)];
 }
 
-- (void)twoFingersSwipeLeft:(UISwipeGestureRecognizer *)recognizer {
-	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeLeft, 2)];
+- (void)swipeLeft:(UISwipeGestureRecognizer *)recognizer {
+	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeLeft, recognizer.numberOfTouchesRequired)];
 }
 
-- (void)twoFingersSwipeUp:(UISwipeGestureRecognizer *)recognizer {
-	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeUp, 2)];
+- (void)swipeUp:(UISwipeGestureRecognizer *)recognizer {
+	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeUp, recognizer.numberOfTouchesRequired)];
 }
 
-- (void)twoFingersSwipeDown:(UISwipeGestureRecognizer *)recognizer {
-	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeDown, 2)];
+- (void)swipeDown:(UISwipeGestureRecognizer *)recognizer {
+	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeDown, recognizer.numberOfTouchesRequired)];
 }
 
 - (void)twoFingersDoubleTap:(UITapGestureRecognizer *)recognizer {
