@@ -935,7 +935,7 @@ audio tracks should be encoded and renamed as track32 through to track60.
 
 For the GOG Might and Magic 4-5 installation, install the game to your
 computer, and do the following steps:
-* The game1.inst (CUE) and game1.gog (BIN) file from the game folder is a 
+* The game1.inst (CUE) and game1.gog (BIN) file from the game folder is a
 CD image. Use software like Virtual CloneDrive to mount it as a drive.
 Linux and MacOS users can use bchunk to convert it to an ISO.
 * Copy all the .cc files from the subfolder in the mounted drive to a new
@@ -2044,7 +2044,7 @@ versions.
     - Rename the saved game to 'simon2.xxx'
 
   Starship Titanic
-    - Rename the saved game to 'titanic-win.xxx' for saves from the English 
+    - Rename the saved game to 'titanic-win.xxx' for saves from the English
       version and 'titanic-win-de.xxx' for saves from the German version
     - Saved games between different languages are not interchangeable
 
@@ -2690,7 +2690,7 @@ The following keywords are recognized:
     cdrom              number   Number of CD-ROM unit to use for audio. If
                                 negative, don't even try to access the CD-ROM.
     joystick_num       number   Number of joystick device to use for input
-    controller_map_db  string   A custom controller mapping file to load to 
+    controller_map_db  string   A custom controller mapping file to load to
                                 complete default database (SDL backend only).
                                 Otherwise, file gamecontrollerdb.txt will be
                                 loaded from extrapath.
