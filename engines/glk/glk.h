@@ -90,6 +90,11 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 
 	/**
+	 * Create the screen
+	 */
+	virtual Screen *createScreen();
+
+	/**
 	 * Main game loop for the individual interpreters
 	 */
 	virtual void runGame(Common::SeekableReadStream *gameFile) = 0;

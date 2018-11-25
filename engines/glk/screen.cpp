@@ -33,7 +33,12 @@ namespace Glk {
 #define FONTS_VERSION 1.0
 #define FONTS_FILENAME "fonts.dat"
 
-Screen::Screen() {
+Screen::~Screen() {
+	for (int idx = 0; idx < FONTS_TOTAL; ++idx)
+		delete _fonts[idx];
+}
+
+void Screen::initialize() {
 	if (!loadFonts())
 		error("Could not load data file");
 
@@ -47,11 +52,6 @@ Screen::Screen() {
 	g_conf->_baseLine = MAX((double)g_conf->_baseLine, baseLine);
 	g_conf->_cellW = _fonts[0]->getStringWidth("0");
 	g_conf->_cellH = g_conf->_leading;
-}
-
-Screen::~Screen() {
-	for (int idx = 0; idx < FONTS_TOTAL; ++idx)
-		delete _fonts[idx];
 }
 
 void Screen::fill(const byte *rgb) {
@@ -100,7 +100,6 @@ void Screen::drawCaret(const Point &pos) {
 
 bool Screen::loadFonts() {
 	Common::Archive *archive = nullptr;
-	_fonts.resize(FONTS_TOTAL);
 
 	if (!Common::File::exists(FONTS_FILENAME) || (archive = Common::makeZipArchive(FONTS_FILENAME)) == nullptr)
 		return false;
@@ -122,12 +121,20 @@ bool Screen::loadFonts() {
 		return false;
 	}
 
+	loadFonts(archive);
+
+	delete archive;
+	return true;
+}
+
+void Screen::loadFonts(Common::Archive *archive) {
 	// R ead in the fonts
 	double monoAspect = g_conf->_monoAspect;
 	double propAspect = g_conf->_propAspect;
 	double monoSize = g_conf->_monoSize;
 	double propSize = g_conf->_propSize;
 
+	_fonts.resize(FONTS_TOTAL);
 	_fonts[0] = loadFont(MONOR, archive, monoSize, monoAspect, FONTR);
 	_fonts[1] = loadFont(MONOB, archive, monoSize, monoAspect, FONTB);
 	_fonts[2] = loadFont(MONOI, archive, monoSize, monoAspect, FONTI);
@@ -137,9 +144,6 @@ bool Screen::loadFonts() {
 	_fonts[5] = loadFont(PROPB, archive, propSize, propAspect, FONTB);
 	_fonts[6] = loadFont(PROPI, archive, propSize, propAspect, FONTI);
 	_fonts[7] = loadFont(PROPZ, archive, propSize, propAspect, FONTZ);
-
-	delete archive;
-	return true;
 }
 
 const Graphics::Font *Screen::loadFont(FACES face, Common::Archive *archive, double size, double aspect, int

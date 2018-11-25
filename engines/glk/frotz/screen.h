@@ -28,9 +28,21 @@
 #include "common/archive.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "glk/screen.h"
 
 namespace Glk {
 namespace Frotz {
+
+/**
+ * Derived screen class that adds in the Infocom character graphics font
+ */
+class FrotzScreen : public Glk::Screen {
+protected:
+	/**
+	 * Load the fonts
+	 */
+	virtual void loadFonts(Common::Archive *archive) override;
+};
 
 /**
  * Implements a fixed width font stored as a grid on a passed surface

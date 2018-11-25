@@ -71,15 +71,20 @@ void GlkEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	initGraphicsMode();
-	_conf = new Conf(getInterpreterType());
-	_screen = new Screen();
 
+	_conf = new Conf(getInterpreterType());
+	_screen = createScreen();
+	_screen->initialize();
 	_clipboard = new Clipboard();
 	_events = new Events();
 	_pictures = new Pictures();
 	_selection = new Selection();
 	_streams = new Streams();
 	_windows = new Windows(_screen);
+}
+
+Screen *GlkEngine::createScreen() {
+	return new Screen();
 }
 
 void GlkEngine::initGraphicsMode() {
