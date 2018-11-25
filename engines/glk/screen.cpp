@@ -22,8 +22,37 @@
 
 #include "glk/screen.h"
 #include "glk/conf.h"
+#include "common/unzip.h"
+#include "image/bmp.h"
+#include "graphics/fonts/ttf.h"
+#include "graphics/fontman.h"
 
 namespace Glk {
+
+
+#define FONTS_VERSION 1.0
+#define FONTS_FILENAME "fonts.dat"
+
+Screen::Screen() {
+	if (!loadFonts())
+		error("Could not load data file");
+
+	// TODO: See if there's any better way for getting the leading and baseline
+	Common::Rect r1 = _fonts[7]->getBoundingBox('o');
+	Common::Rect r2 = _fonts[7]->getBoundingBox('y');
+	double baseLine = (double)r1.bottom;
+	double leading = (double)r2.bottom + 2;
+
+	g_conf->_leading = MAX((double)g_conf->_leading, leading);
+	g_conf->_baseLine = MAX((double)g_conf->_baseLine, baseLine);
+	g_conf->_cellW = _fonts[0]->getStringWidth("0");
+	g_conf->_cellH = g_conf->_leading;
+}
+
+Screen::~Screen() {
+	for (int idx = 0; idx < FONTS_TOTAL; ++idx)
+		delete _fonts[idx];
+}
 
 void Screen::fill(const byte *rgb) {
 	uint color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
@@ -67,6 +96,106 @@ void Screen::drawCaret(const Point &pos) {
 		Graphics::Screen::fillRect(Rect(x, y - g_conf->_baseLine + 1, x + g_conf->_cellW, y - 1), color);
 		break;
 	}
+}
+
+bool Screen::loadFonts() {
+	Common::Archive *archive = nullptr;
+	_fonts.resize(FONTS_TOTAL);
+
+	if (!Common::File::exists(FONTS_FILENAME) || (archive = Common::makeZipArchive(FONTS_FILENAME)) == nullptr)
+		return false;
+
+	// Open the version.txt file within it to validate the version
+	Common::File f;
+	if (!f.open("version.txt", *archive)) {
+		delete archive;
+		return false;
+	}
+
+	// Validate the version
+	char buffer[4];
+	f.read(buffer, 3);
+	buffer[3] = '\0';
+
+	if (Common::String(buffer) != "1.0") {
+		delete archive;
+		return false;
+	}
+
+	// R ead in the fonts
+	double monoAspect = g_conf->_monoAspect;
+	double propAspect = g_conf->_propAspect;
+	double monoSize = g_conf->_monoSize;
+	double propSize = g_conf->_propSize;
+
+	_fonts[0] = loadFont(MONOR, archive, monoSize, monoAspect, FONTR);
+	_fonts[1] = loadFont(MONOB, archive, monoSize, monoAspect, FONTB);
+	_fonts[2] = loadFont(MONOI, archive, monoSize, monoAspect, FONTI);
+	_fonts[3] = loadFont(MONOZ, archive, monoSize, monoAspect, FONTZ);
+
+	_fonts[4] = loadFont(PROPR, archive, propSize, propAspect, FONTR);
+	_fonts[5] = loadFont(PROPB, archive, propSize, propAspect, FONTB);
+	_fonts[6] = loadFont(PROPI, archive, propSize, propAspect, FONTI);
+	_fonts[7] = loadFont(PROPZ, archive, propSize, propAspect, FONTZ);
+
+	delete archive;
+	return true;
+}
+
+const Graphics::Font *Screen::loadFont(FACES face, Common::Archive *archive, double size, double aspect, int
+ style) {
+	Common::File f;
+	const char *const FILENAMES[8] = {
+		"GoMono-Regular.ttf", "GoMono-Bold.ttf", "GoMono-Italic.ttf", "GoMono-Bold-Italic.ttf",
+		"NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-Bold-Italic.ttf"
+	};
+
+	if (!f.open(FILENAMES[face], *archive))
+		error("Could not load font");
+
+	return Graphics::loadTTFFont(f, size, Graphics::kTTFSizeModeCharacter);
+}
+
+FACES Screen::getFontId(const Common::String &name) {
+	if (name == "monor") return MONOR;
+	if (name == "monob") return MONOB;
+	if (name == "monoi") return MONOI;
+	if (name == "monoz") return MONOZ;
+	if (name == "propr") return PROPR;
+	if (name == "propb") return PROPB;
+	if (name == "propi") return PROPI;
+	if (name == "propz") return PROPZ;
+	return MONOR;
+}
+
+int Screen::drawString(const Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw) {
+	Point pt(pos.x / GLI_SUBPIX, pos.y - g_conf->_baseLine);
+	const Graphics::Font *font = _fonts[fontIdx];
+	const uint32 color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
+	font->drawString(this, text, pt.x, pt.y, w - pt.x, color);
+
+	pt.x += font->getStringWidth(text);
+	return MIN((int)pt.x, (int)w) * GLI_SUBPIX;
+}
+
+int Screen::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw) {
+	Point pt(pos.x / GLI_SUBPIX, pos.y - g_conf->_baseLine);
+	const Graphics::Font *font = _fonts[fontIdx];
+	const uint32 color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
+	font->drawString(this, text, pt.x, pt.y, w - pt.x, color);
+
+	pt.x += font->getStringWidth(text);
+	return MIN((int)pt.x, (int)w) * GLI_SUBPIX;
+}
+
+size_t Screen::stringWidth(int fontIdx, const Common::String &text, int spw) {
+	const Graphics::Font *font = _fonts[fontIdx];
+	return font->getStringWidth(text) * GLI_SUBPIX;
+}
+
+size_t Screen::stringWidthUni(int fontIdx, const Common::U32String &text, int spw) {
+	const Graphics::Font *font = _fonts[fontIdx];
+	return font->getStringWidth(text) * GLI_SUBPIX;
 }
 
 } // End of namespace Glk

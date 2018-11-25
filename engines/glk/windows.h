@@ -29,7 +29,7 @@
 #include "graphics/screen.h"
 #include "glk/events.h"
 #include "glk/glk_types.h"
-#include "glk/fonts.h"
+#include "glk/screen.h"
 #include "glk/selection.h"
 #include "glk/streams.h"
 

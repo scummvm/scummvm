@@ -24,12 +24,9 @@
 #define GLK_CONF_H
 
 #include "glk/glk_types.h"
-#include "glk/fonts.h"
 #include "glk/windows.h"
 
 namespace Glk {
-
-
 
 /**
  * Engine configuration

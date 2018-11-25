@@ -5,7 +5,6 @@ MODULE_OBJS := \
 	conf.o \
 	detection.o \
 	events.o \
-	fonts.o \
 	glk.o \
 	glk_api.o \
 	picture.o \
@@ -22,7 +21,6 @@ MODULE_OBJS := \
 	window_pair.o \
 	window_text_buffer.o \
 	window_text_grid.o \
-	frotz/bitmap_font.o \
 	frotz/config.o \
 	frotz/detection.o \
 	frotz/frotz.o \
@@ -42,6 +40,7 @@ MODULE_OBJS := \
 	frotz/processor_text.o \
 	frotz/processor_variables.o \
 	frotz/quetzal.o \
+	frotz/screen.o \
 	scott/detection.o \
 	scott/scott.o
 
