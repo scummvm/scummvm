@@ -21,7 +21,6 @@
  */
 
 #include "glk/conf.h"
-#include "glk/fonts.h"
 #include "glk/utils.h"
 #include "glk/windows.h"
 #include "common/config-manager.h"
@@ -197,9 +196,9 @@ Conf::Conf(InterpreterType interpType) {
 			char *font = strtok(buffer, "\r\n\t ");
 
 			if (tg == 0)
-				_tStyles[style].font = Fonts::getId(font);
+				_tStyles[style].font = Screen::getFontId(font);
 			else
-				_gStyles[style].font = Fonts::getId(font);
+				_gStyles[style].font = Screen::getFontId(font);
 		}
 	}
 
@@ -231,7 +230,7 @@ void Conf::get(const Common::String &key, bool &field, bool defaultVal) {
 }
 
 void Conf::get(const Common::String &key, FACES &field, FACES defaultFont) {
-	field = ConfMan.hasKey(key) ? Fonts::getId(ConfMan.get(key)) : defaultFont;
+	field = ConfMan.hasKey(key) ? Screen::getFontId(ConfMan.get(key)) : defaultFont;
 }
 
 void Conf::get(const Common::String &key, double &field, double defaultVal) {

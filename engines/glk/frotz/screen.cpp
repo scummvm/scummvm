@@ -20,7 +20,7 @@
  *
  */
 
-#include "glk/frotz/bitmap_font.h"
+#include "glk/frotz/screen.h"
 
 namespace Glk {
 namespace Frotz {
