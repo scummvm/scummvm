@@ -411,7 +411,7 @@ void Windows::redraw() {
 	if (_moreFocus)
 		refocus(_focusWin);
 
-	_forceRedraw = 0;
+	_forceRedraw = false;
 }
 
 void Windows::redrawRect(const Rect &r) {
