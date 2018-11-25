@@ -165,13 +165,11 @@ void GlkInterface::initialize() {
 	h_interpreter_number = h_version == 6 ? INTERP_MSDOS : INTERP_AMIGA;
 	h_interpreter_version = 'F';
 
-	{
-		// Set these per spec 8.3.2.
-		h_default_foreground = WHITE_COLOUR;
-		h_default_background = BLACK_COLOUR;
-		if (h_flags & COLOUR_FLAG)
-			h_flags &= ~COLOUR_FLAG;
-	}
+	// Set these per spec 8.3.2.
+	h_default_foreground = WHITE_COLOUR;
+	h_default_background = BLACK_COLOUR;
+	if (h_flags & COLOUR_FLAG)
+		h_flags &= ~COLOUR_FLAG;
 
 	/*
 	 * Open the windows
@@ -451,11 +449,11 @@ void GlkInterface::gos_cancel_pending_line() {
 
 void GlkInterface::showBeyondZorkTitle() {
 	uint winW, winH, imgW, imgH;
-	winid_t win = glk_window_open(0, 0, 0, wintype_TextGrid, 0);
-	glk_window_get_size(gos_lower, &winW, &winH);
+	winid_t win = glk_window_open(0, 0, 0, wintype_Graphics, 0);
+	glk_window_get_size(win, &winW, &winH);
 
 	if (os_picture_data(1, &imgW, &imgH)) {
-		os_draw_picture(1, win, Common::Point(1, 1));
+		os_draw_picture(1, win, Common::Rect(0, 0, winW, winH));
 		_events->waitForPress();
 	}
 
@@ -464,6 +462,10 @@ void GlkInterface::showBeyondZorkTitle() {
 
 void GlkInterface::os_draw_picture(int picture, winid_t win, const Common::Point &pos) {
 	glk_image_draw(win, picture, pos.x - 1, pos.y - 1);
+}
+
+void GlkInterface::os_draw_picture(int picture, winid_t win, const Common::Rect &r) {
+	glk_image_draw_scaled(win, picture, r.left, r.top, r.width(), r.height());
 }
 
 zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {

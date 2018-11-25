@@ -42,8 +42,8 @@ Common::SeekableReadStream *PictureDecoder::decode(Common::ReadStream &src, uint
 	Common::MemoryWriteStreamDynamic out(DisposeAfterUse::NO);
 	byte buf[512];
     byte transparent;
-//    int colour_shift;
-//    int first_colour;
+    int colour_shift;
+	int first_colour;
     int code, prev_code = 0;
     int next_entry;
     int bits_per_code;
@@ -66,7 +66,7 @@ Common::SeekableReadStream *PictureDecoder::decode(Common::ReadStream &src, uint
 	 * Colours 0 and 1 were used for text; changing the text colours actually changed
      * palette entries 0 and 1. This interface uses the same trick in Amiga mode.)
 	 */
-/*
+
 	switch (display) {
 	case CGA:
 		colour_shift = -2;
@@ -85,7 +85,11 @@ Common::SeekableReadStream *PictureDecoder::decode(Common::ReadStream &src, uint
 	default:
 		break;
 	}
-	*/
+	
+	// Note: we don't actually use paletted indexes, so adjust colour_shift
+	// relative to first_colour
+	colour_shift -= first_colour;
+
 	out.writeUint16LE(palette.size() / 3);
 	if (!palette.empty())
 		out.write(&palette[0], palette.size());
@@ -162,6 +166,12 @@ next_code:
 	if (code == 0)
 		goto reset_table;
 	if (code == 1) {
+		bool t[256];
+		// *******DEBUG*******
+		Common::fill(&t[0], &t[256], false);
+		for (uint idx = 0; idx < out.size(); ++idx)
+			t[*((byte *)out.getData() + idx)] = true;
+
 		return new Common::MemoryReadStream(out.getData(), out.size(), DisposeAfterUse::YES);
 	}
 
@@ -217,7 +227,7 @@ reverse_buffer:
 		byte v = code;
 
 		if (v != transparent) {
-			//v += colour_shift;
+			v += colour_shift;
 
 			if (display != MCGA) {
 				// TODO

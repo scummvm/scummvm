@@ -62,8 +62,7 @@ void GraphicsWindow::rearrange(const Rect &box) {
 	if (newhgt < bothhgt)
 		bothhgt = newhgt;
 
-	newSurface = new Graphics::ManagedSurface(newwid, newhgt,
-	        Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
+	newSurface = new Graphics::ManagedSurface(newwid, newhgt, g_system->getScreenFormat());
 
 	// If the new surface is equal or bigger than the old one, copy it over
 	if (_surface && bothwid && bothhgt)
@@ -231,7 +230,7 @@ void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int h
 	w = sx1 - sx0;
 	h = sy1 - sy0;
 
-	_surface->blitFrom(*g_vm->_screen, Rect(sx0, sy0, sx0 + w, sy0 + h), Point(0, 0));
+	_surface->blitFrom(*src, Rect(sx0, sy0, sx0 + w, sy0 + h), Point(0, 0));
 }
 
 void GraphicsWindow::getSize(glui32 *width, glui32 *height) const {

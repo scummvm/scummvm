@@ -106,6 +106,7 @@ Picture *Pictures::load(uint32 id) {
 	RawDecoder raw;
 	const Graphics::Surface *img;
 	const byte *palette = nullptr;
+	int palCount = 0;
 	Picture *pic;
 
 	// Check if the picture is already in the store
@@ -114,30 +115,46 @@ Picture *Pictures::load(uint32 id) {
 		return pic;
 
 	Common::File f;
-	if (f.open(Common::String::format("PIC%u.png", id))) {
+	if (f.open(Common::String::format("pic%u.png", id))) {
 		png.loadStream(f);
 		img = png.getSurface();
 		palette = png.getPalette();
-	} else if (f.open(Common::String::format("PIC%u.jpg", id))) {
+		palCount = png.getPaletteColorCount();
+	} else if (f.open(Common::String::format("pic%u.jpg", id))) {
 		jpg.loadStream(f);
 		img = jpg.getSurface();
-	} else if (f.open(Common::String::format("PIC%u.raw", id))) {
+	} else if (f.open(Common::String::format("pic%u.raw", id))) {
 		raw.loadStream(f);
 		img = raw.getSurface();
 		palette = raw.getPalette();
+		palCount = raw.getPaletteColorCount();
 	} else {
 		// No such picture
 		return nullptr;
 	}
 
-	pic = new Picture(img->w, img->h, img->format);
+	pic = new Picture(img->w, img->h, g_system->getScreenFormat());
 	pic->_refCount = 1;
     pic->_id = id;
     pic->_scaled = false;
-	pic->blitFrom(*img);
 
-	if (palette)
-		pic->convertToInPlace(g_system->getScreenFormat(), palette);
+	if (!palette) {
+		pic->blitFrom(*img);
+	} else {
+		uint pal[256];
+		for (uint idx = 0; idx < palCount; ++idx)
+			pal[idx] = pic->format.RGBToColor(palette[idx * 3],
+				palette[idx * 3 + 1], palette[idx * 3 + 2]);
+		
+		byte *srcP = (byte *)img->getPixels(), *destP = (byte *)pic->getPixels();
+		for (int idx = 0; idx < img->w * img->h; ++idx, srcP++, destP += pic->format.bytesPerPixel) {
+			uint val = (*srcP >= palCount) ? 0 : pal[*srcP];
+			if (pic->format.bytesPerPixel == 2)
+				WRITE_LE_UINT16(destP, val);
+			else
+				WRITE_LE_UINT32(destP, val);
+		}
+	}
 
     store(pic);
     return pic;

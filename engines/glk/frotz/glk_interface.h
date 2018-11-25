@@ -169,6 +169,11 @@ protected:
 	void os_draw_picture(int picture, winid_t win, const Common::Point &pos);
 
 	/**
+	 * Display a picture using the specified bounds
+	 */
+	void os_draw_picture(int picture, winid_t win, const Common::Rect &r);
+
+	/**
 	 * Call the IO interface to play a sample.
 	 */
 	void start_sample(int number, int volume, int repeats, zword eos);
