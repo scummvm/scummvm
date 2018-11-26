@@ -355,6 +355,7 @@ uint getSizeNextPOT(uint size) {
 		swipeRight.numberOfTouchesRequired = numberOfTouchesRequired;
 		swipeRight.delaysTouchesBegan = NO;
 		swipeRight.delaysTouchesEnded = NO;
+		swipeRight.cancelsTouchesInView = NO;
 		[self addGestureRecognizer:swipeRight];
 		[swipeRight release];
 
@@ -363,6 +364,7 @@ uint getSizeNextPOT(uint size) {
 		swipeLeft.numberOfTouchesRequired = numberOfTouchesRequired;
 		swipeLeft.delaysTouchesBegan = NO;
 		swipeLeft.delaysTouchesEnded = NO;
+		swipeLeft.cancelsTouchesInView = NO;
 		[self addGestureRecognizer:swipeLeft];
 		[swipeLeft release];
 
@@ -371,6 +373,7 @@ uint getSizeNextPOT(uint size) {
 		swipeUp.numberOfTouchesRequired = numberOfTouchesRequired;
 		swipeUp.delaysTouchesBegan = NO;
 		swipeUp.delaysTouchesEnded = NO;
+		swipeUp.cancelsTouchesInView = NO;
 		[self addGestureRecognizer:swipeUp];
 		[swipeUp release];
 
@@ -379,6 +382,7 @@ uint getSizeNextPOT(uint size) {
 		swipeDown.numberOfTouchesRequired = numberOfTouchesRequired;
 		swipeDown.delaysTouchesBegan = NO;
 		swipeDown.delaysTouchesEnded = NO;
+		swipeDown.cancelsTouchesInView = NO;
 		[self addGestureRecognizer:swipeDown];
 		[swipeDown release];
 	}
