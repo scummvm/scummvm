@@ -25,6 +25,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
+#include "common/translation.h"
 
 namespace Glk {
 namespace Frotz {
@@ -111,6 +112,38 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 	}
 
 	return !gameList.empty();
+}
+
+bool FrotzMetaEngine::readSavegameHeader(Common::SeekableReadStream *stream, Glk::SavegameHeader &header) {
+	stream->seek(0);
+	if (stream->readUint32BE() != MKTAG('F', 'O', 'R', 'M'))
+		return false;
+	stream->readUint32BE();
+	if (stream->readUint32BE() != MKTAG('I', 'F', 'Z', 'S'))
+		return false;
+
+	header._saveName = _("Unnamed savegame");
+
+	while (stream->pos() < stream->size()) {
+		uint type = stream->readUint32BE();
+		size_t len = stream->readUint32BE();
+
+		if (type == MKTAG('A', 'N', 'N', 'O')) {
+			// Read savegame name from the annotation chunk
+			char *buffer = new char[len + 1];
+			stream->read(buffer, len);
+			buffer[len] = '\0';
+			header._saveName = Common::String(buffer);
+			break;
+		} else {
+			if (len & 1)
+				// Length must be even
+				++len;
+			stream->skip(len);
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Frotz

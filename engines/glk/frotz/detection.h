@@ -25,6 +25,7 @@
 
 #include "common/fs.h"
 #include "engines/game.h"
+#include "glk/streams.h"
 
 namespace Glk {
 namespace Frotz {
@@ -46,6 +47,11 @@ public:
 	 * Detect supported games
 	 */
 	static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);
+
+	/**
+	 * Check a passed stream for a Quetzal save, and if so, get header information
+	 */
+	static bool readSavegameHeader(Common::SeekableReadStream *stream, Glk::SavegameHeader &header);
 };
 
 } // End of namespace Frotz
