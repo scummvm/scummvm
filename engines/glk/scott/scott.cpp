@@ -508,7 +508,7 @@ void Scott::lineInput(char *buf, size_t n) {
 	buf[ev.val1] = 0;
 }
 
-Common::Error Scott::saveGameData(strid_t file) {
+Common::Error Scott::saveGameData(strid_t file, const Common::String &desc) {
 	Common::String msg;
 
 	for (int ct = 0; ct < 16; ct++) {

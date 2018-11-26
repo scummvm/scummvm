@@ -186,7 +186,7 @@ Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc) {
 	if (file == nullptr)
 		return Common::kWritingFailed;
 
-	Common::Error result = saveGameData(file);
+	Common::Error result = saveGameData(file, desc);
 
 	file->close();
 	return result;

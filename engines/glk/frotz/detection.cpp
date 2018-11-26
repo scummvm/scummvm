@@ -122,6 +122,7 @@ bool FrotzMetaEngine::readSavegameHeader(Common::SeekableReadStream *stream, Glk
 	if (stream->readUint32BE() != MKTAG('I', 'F', 'Z', 'S'))
 		return false;
 
+	header._interpType = INTERPRETER_FROTZ;
 	header._saveName = _("Unnamed savegame");
 
 	while (stream->pos() < stream->size()) {
@@ -143,6 +144,7 @@ bool FrotzMetaEngine::readSavegameHeader(Common::SeekableReadStream *stream, Glk
 		}
 	}
 
+	stream->seek(0);
 	return true;
 }
 

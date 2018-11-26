@@ -25,6 +25,7 @@
 #include "glk/events.h"
 #include "glk/glk.h"
 #include "glk/windows.h"
+#include "glk/frotz/detection.h"
 #include "gui/saveload.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -771,7 +772,9 @@ FileStream::FileStream(Streams *streams, frefid_t fref, glui32 fmode, glui32 roc
 		if (!_outFile)
 			error("Could open file for writing - %s", fname.c_str());
 
-		if (fref->_slotNumber != -1)
+		// For creating savegames, write out the header. Frotz is a special case,
+		// since the Quetzal format is used for compatibility
+		if (fref->_slotNumber != -1 && g_vm->getInterpreterType() != INTERPRETER_FROTZ)
 			writeSavegameHeader(_outFile, fref->_description);
 	} else if (fmode == filemode_Read) {
 		if (_file.open(fname)) {
@@ -787,8 +790,11 @@ FileStream::FileStream(Streams *streams, frefid_t fref, glui32 fmode, glui32 roc
 		if (_inFile) {
 			// It's a save file, so skip over the header
 			SavegameHeader header;
-			if (!readSavegameHeader(_inStream, header))
+			if (!(g_vm->getInterpreterType() == INTERPRETER_FROTZ ?
+					Frotz::FrotzMetaEngine::readSavegameHeader(_inStream, header) :
+					readSavegameHeader(_inStream, header)))
 				error("Invalid savegame");
+
 			if (header._interpType != g_vm->getInterpreterType() || header._language != g_vm->getLanguage()
 			        || header._md5 != g_vm->getGameMD5())
 				error("Savegame is for a different game");

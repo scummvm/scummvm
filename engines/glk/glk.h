@@ -209,7 +209,7 @@ public:
 	/**
 	 * Save the game to the passed file
 	 */
-	virtual Common::Error saveGameData(strid_t file) = 0;
+	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) = 0;
 };
 
 extern GlkEngine *g_vm;
