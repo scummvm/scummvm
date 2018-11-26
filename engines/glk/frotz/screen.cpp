@@ -21,11 +21,16 @@
  */
 
 #include "glk/frotz/screen.h"
+#include "glk/conf.h"
 #include "common/file.h"
 #include "image/bmp.h"
 
 namespace Glk {
 namespace Frotz {
+
+FrotzScreen::FrotzScreen() : Glk::Screen() {
+	g_conf->_tStyles[style_User1].font = CUSTOM;
+}
 
 void FrotzScreen::loadFonts(Common::Archive *archive) {
 	Screen::loadFonts(archive);
@@ -66,7 +71,7 @@ void BitmapFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint
 		const byte *srcP = (const byte *)_surface.getBasePtr(r.left, r.top + yCtr);
 
 		for (int xCtr = 0; xCtr < r.width(); ++xCtr, ++srcP) {
-			if (*srcP)
+			if (!*srcP)
 				dst->hLine(x + xCtr, y + yCtr, x + xCtr, color);
 		}
 	}

@@ -352,7 +352,7 @@ void Processor::z_set_text_style() {
 		// not tickle time
 		curstyle |= zargs[0];
 
-	if (h_flags & FIXED_FONT_FLAG || curr_font == FIXED_WIDTH_FONT)
+	if (h_flags & FIXED_FONT_FLAG || curr_font == FIXED_WIDTH_FONT || curr_font == GRAPHICS_FONT)
 		style = curstyle | FIXED_WIDTH_STYLE;
 	else
 		style = curstyle;
@@ -367,7 +367,9 @@ void Processor::z_set_text_style() {
 	}
 
 	if (style & FIXED_WIDTH_STYLE) {
-		if (style & BOLDFACE_STYLE && style & EMPHASIS_STYLE)
+		if (curr_font == GRAPHICS_FONT)
+			glk_set_style(style_User1);			// character graphics
+		else if (style & BOLDFACE_STYLE && style & EMPHASIS_STYLE)
 			glk_set_style(style_BlockQuote);	// monoz
 		else if (style & EMPHASIS_STYLE)
 			glk_set_style(style_Alert);			// monoi
