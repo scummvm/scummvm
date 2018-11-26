@@ -42,6 +42,11 @@ protected:
 	 * Load the fonts
 	 */
 	virtual void loadFonts(Common::Archive *archive) override;
+public:
+	/**
+	 * Constructor
+	 */
+	FrotzScreen();
 };
 
 /**
