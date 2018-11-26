@@ -64,7 +64,7 @@ void Frotz::initialize() {
 	z_restart();
 }
 
-Common::Error Frotz::saveGameData(strid_t file) {
+Common::Error Frotz::saveGameData(strid_t file, const Common::String &desc) {
 #ifdef TODO
 	long pc;
 	zword addr;

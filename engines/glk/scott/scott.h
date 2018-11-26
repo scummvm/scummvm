@@ -184,7 +184,7 @@ public:
 	/**
 	 * Save the game to the passed stream
 	 */
-	virtual Common::Error saveGameData(strid_t file) override;
+	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
 };
 
 } // End of namespace Scott
