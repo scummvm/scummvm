@@ -210,6 +210,8 @@ SaveStateList GlkMetaEngine::listSaves(const char *target) const {
 			if (in) {
 				if (Glk::FileStream::readSavegameHeader(in, header))
 					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+				else if (Glk::Frotz::FrotzMetaEngine::readSavegameHeader(in, header))
+					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
 				delete in;
 			}
