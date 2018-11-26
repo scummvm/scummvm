@@ -54,37 +54,30 @@ public:
  */
 class BitmapFont : public Graphics::Font {
 private:
-	Graphics::Surface _surface;
-	Common::Array<Common::Rect> _chars;
+	Common::Array<Graphics::ManagedSurface> _chars;
 	size_t _startingChar;
+	Common::Point _size;
 public:
 	/**
 	 * Constructor
 	 */
-	BitmapFont(const Graphics::Surface &src, uint charWidth = 8, uint charHeight = 8,
-		unsigned char startingChar = ' ');
-	
-	/**
-	 * Destructor
-	 */
-	~BitmapFont();
+	BitmapFont(const Graphics::Surface &src, const Common::Point &size,
+		uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ');
 
 	/**
 	 * Get the font height
 	 */
-	virtual int getFontHeight() const override { return _chars[0].height(); }
+	virtual int getFontHeight() const override { return _size.y; }
 
 	/**
 	 * Get the maximum character width
 	 */
-	virtual int getMaxCharWidth() const override { return _chars[0].width(); }
+	virtual int getMaxCharWidth() const override { return _size.x; }
 
 	/**
 	 * Get the width of the given character
 	 */
-	virtual int getCharWidth(uint32 chr) const override {
-		return _chars[chr - _startingChar].width();
-	}
+	virtual int getCharWidth(uint32 chr) const override { return _size.x; }
 
 	/**
 	 * Draw a character

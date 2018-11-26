@@ -40,37 +40,40 @@ void FrotzScreen::loadFonts(Common::Archive *archive) {
 	if (!f.open("infocom_graphics.bmp", *archive))
 		error("Could not load font");
 
+	Common::Point fontSize(_fonts[0]->getMaxCharWidth(), _fonts[0]->getFontHeight());
 	decoder.loadStream(f);
-	_fonts.push_back(new Frotz::BitmapFont(*decoder.getSurface()));
+	_fonts.push_back(new Frotz::BitmapFont(*decoder.getSurface(), fontSize));
 }
 
 /*--------------------------------------------------------------------------*/
 
-BitmapFont::BitmapFont(const Graphics::Surface &src, uint charWidth,
-		uint charHeight, unsigned char startingChar) : _startingChar(startingChar) {
+BitmapFont::BitmapFont(const Graphics::Surface &src, const Common::Point &size,
+		uint srcWidth, uint srcHeight, unsigned char startingChar) :
+		_startingChar(startingChar), _size(size) {
 	assert(src.format.bytesPerPixel == 1);
-	assert((src.w % charWidth) == 0);
-	assert((src.h % charHeight) == 0);
-	_surface.copyFrom(src);
+	assert((src.w % srcWidth) == 0);
+	assert((src.h % srcHeight) == 0);
 
-	Common::Rect r(charWidth, charHeight);
-	for (uint y = 0; y < src.h; y += charHeight) {
-		r.moveTo(0, y);
-		for (uint x = 0; x < src.w; x += charWidth, r.translate(charWidth, 0))
-			_chars.push_back(r);
+	// Set up a characters array
+	_chars.resize((src.w / srcWidth) * (src.h / srcHeight));
+
+	// Iterate through loading characters
+	Common::Rect r(srcWidth, srcHeight);
+	int charsPerRow = src.w / srcWidth;
+	for (uint idx = 0; idx < _chars.size(); ++idx) {
+		r.moveTo((idx % charsPerRow) * srcWidth, (idx / charsPerRow) * srcHeight);
+
+		_chars[idx].create(size.x, size.y, src.format);
+		_chars[idx].transBlitFrom(src, r, Common::Rect(0, 0, size.x, size.y));
 	}
 }
 
-BitmapFont::~BitmapFont() {
-	_surface.free();
-}
-
 void BitmapFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
-	const Common::Rect &r = _chars[chr - _startingChar];
-	for (int yCtr = 0; yCtr < r.height(); ++yCtr) {
-		const byte *srcP = (const byte *)_surface.getBasePtr(r.left, r.top + yCtr);
+	const Graphics::ManagedSurface &c = _chars[chr - _startingChar];
+	for (int yCtr = 0; yCtr < c.h; ++yCtr) {
+		const byte *srcP = (const byte *)c.getBasePtr(0, yCtr);
 
-		for (int xCtr = 0; xCtr < r.width(); ++xCtr, ++srcP) {
+		for (int xCtr = 0; xCtr < c.w; ++xCtr, ++srcP) {
 			if (!*srcP)
 				dst->hLine(x + xCtr, y + yCtr, x + xCtr, color);
 		}
