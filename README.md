@@ -1475,7 +1475,7 @@ arguments -- see the next section.
 
 The meaning of most long options (that is, those options starting with a
 double-dash) can be inverted by prefixing them with "no-". For example,
---no-aspect-ratio will turn aspect ratio correction off. This is useful
+`--no-aspect-ratio` will turn aspect ratio correction off. This is useful
 if you want to override a setting in the configuration file.
 
 The short game name ('game target') you see at the end of the command
@@ -1485,16 +1485,17 @@ built-in gameid. A brief list of the latter can be found in section 3.0.
 
 Examples:
 
-  - Win32: Running Monkey Island, fullscreen, from a hard disk:  
-    C:\\Games\\LucasArts\\scummvm.exe -f
-    -pC:\\Games\\LucasArts\\monkey\\ monkey Running Full Throttle from
-    CD, fullscreen and with subtitles enabled:
-    C:\\Games\\LucasArts\\scummvm.exe -f -n -pD:\\resource\\ ft
+  - Win32:  
+    Running Monkey Island, fullscreen, from a hard disk:  
+    `C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey`  
+    Running Full Throttle from CD, fullscreen and with subtitles enabled:  
+    `C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft`
 
-  - Unix: Running Monkey Island, fullscreen, from a hard disk:  
-    /path/to/scummvm -f -p/games/LucasArts/monkey/ monkey Running Full
-    Throttle from CD, fullscreen and with subtitles enabled:
-    /path/to/scummvm -f -n -p/cdrom/resource/ ft
+  - Unix:  
+    Running Monkey Island, fullscreen, from a hard disk:  
+    `/path/to/scummvm -f -p/games/LucasArts/monkey/ monkey`  
+    Running Full Throttle from CD, fullscreen and with subtitles enabled:  
+    `/path/to/scummvm -f -n -p/cdrom/resource/ ft`
 
 ### 5.2) Global Menu
 
@@ -1903,20 +1904,19 @@ based on the presence of the path `~/.scummvm`.
 
 **Windows Vista/7:**
 
-\\Users\\username\\AppData\\Roaming\\ScummVM\\Saved games\\
+`\Users\username\AppData\Roaming\ScummVM\Saved games\`
 
 **Windows 2000/XP:**
 
-\\Documents and Settings\\username\\Application Data\\ScummVM\\Saved
-games\\
+`\Documents and Settings\username\Application Data\ScummVM\Saved games\`
 
 **Windows NT4:**
 
-<windir>\\Profiles\\username\\Application Data\\ScummVM\\Saved games\\
+`<windir>\Profiles\username\Application Data\ScummVM\Saved games\`
 
 Saved games are stored under a hidden area in Windows
 NT4/2000/XP/Vista/7, which can be accessed by running
-`%APPDATA%\\ScummVM\\Saved Games` or by enabling hidden files in Windows
+`%APPDATA%\ScummVM\Saved Games` or by enabling hidden files in Windows
 Explorer.
 
 Note for Windows NT4/2000/XP/Vista/7 users: The default saved games
@@ -2006,77 +2006,77 @@ Where `xxx` is exact the saved game slot (i.e., 001) under ScummVM
 
 ### 6.3) Viewing/Loading saved games from the command line
 
-    --list-saves:
-    
-       This switch may be used to display a list of the current saved games
-       of the specified target game and their corresponding save slots. If no
-       target is specified, it lists saved games for all known target.
-    
-       Usage: --list-saves --game=[TARGET], where [TARGET] is the target game.
-    
-       Engines which currently support --list-saves are:
-    
-           AGI
-           AGOS
-           CGE
-           CINE
-           CRUISE
-           DRACI
-           GROOVIE
-           HUGO
-           KYRA
-           LURE
-           MOHAWK
-           PARALLACTION
-           QUEEN
-           SAGA
-           SCI
-           SCUMM
-           SKY
-           SWORD1
-           SWORD2
-           TEENAGENT
-           TINSEL
-           TITANIC
-           TOON
-           TOUCHE
-           TSAGE
-           TUCKER
-           ZVISION
-    
-    --save-slot/-x:
-    
-       This switch may be used to load a saved game directly from the command line.
-    
-       Usage: --save-slot[SLOT] or -x[SLOT], where [SLOT] is the save slot number.
-    
-       Engines which currently support --save-slot/-x are:
-    
-           AGI
-           CGE
-           CINE
-           CRUISE
-           DRACI
-           GROOVIE
-           HUGO
-           KYRA
-           LURE
-           MOHAWK
-           QUEEN
-           SAGA
-           SCI
-           SCUMM
-           SKY
-           SWORD1
-           SWORD2
-           TEENAGENT
-           TINSEL
-           TITANIC
-           TOON
-           TOUCHE
-           TSAGE
-           TUCKER
-           ZVISION
+**`--list-saves`**
+
+This switch may be used to display a list of the current saved games
+of the specified target game and their corresponding save slots. If no
+target is specified, it lists saved games for all known target.
+
+Usage: `--list-saves --game=[TARGET]`, where \[TARGET\] is the target game.
+
+Engines which currently support ``--list-saves`` are:
+
+  - AGI
+  - AGOS
+  - CGE
+  - CINE
+  - CRUISE
+  - DRACI
+  - GROOVIE
+  - HUGO
+  - KYRA
+  - LURE
+  - MOHAWK
+  - PARALLACTION
+  - QUEEN
+  - SAGA
+  - SCI
+  - SCUMM
+  - SKY
+  - SWORD1
+  - SWORD2
+  - TEENAGENT
+  - TINSEL
+  - TITANIC
+  - TOON
+  - TOUCHE
+  - TSAGE
+  - TUCKER
+  - ZVISION
+
+**`--save-slot/-x`**
+
+This switch may be used to load a saved game directly from the command line.
+
+Usage: `--save-slot[SLOT]` or `-x[SLOT]`, where \[SLOT\] is the save slot number.
+
+Engines which currently support `--save-slot` / `-x are`:
+
+  - AGI
+  - CGE
+  - CINE
+  - CRUISE
+  - DRACI
+  - GROOVIE
+  - HUGO
+  - KYRA
+  - LURE
+  - MOHAWK
+  - QUEEN
+  - SAGA
+  - SCI
+  - SCUMM
+  - SKY
+  - SWORD1
+  - SWORD2
+  - TEENAGENT
+  - TINSEL
+  - TITANIC
+  - TOON
+  - TOUCHE
+  - TSAGE
+  - TUCKER
+  - ZVISION
 
 ## 7.0) Music and Sound
 
@@ -2105,9 +2105,9 @@ depending on your operating system and configuration.
     windows    - Windows MIDI. Uses built-in sequencer, for Windows users
 
 To select a sound driver, select it in the Launcher, or pass its name
-via the '-e' option to scummvm, for example:
+via the `-e` option to scummvm, for example:
 
-    scummvm -eadlib monkey2
+`scummvm -eadlib monkey2`
 
 ### 7.1) AdLib emulation
 
@@ -2506,23 +2506,22 @@ By default, the configuration file is saved in, and loaded from:
 
 **Windows Vista/7:**
 
-\\Users\\username\\AppData\\Roaming\\ScummVM\\scummvm.ini,
+`\Users\username\AppData\Roaming\ScummVM\scummvm.ini`
 
 **Windows 2000/XP:**
 
-\\Documents and Settings\\username\\Application
-Data\\ScummVM\\scummvm.ini,
+`\Documents and Settings\username\Application Data\ScummVM\scummvm.ini`
 
 **Windows NT4:**
 
-<windir>\\Profiles\\username\\Application Data\\ScummVM\\scummvm.ini,
+`<windir>\Profiles\username\Application Data\ScummVM\scummvm.ini`
 
 **Windows 95/98/ME:**
 
-<windir>\\scummvm.ini,
+`<windir>\scummvm.ini`
 
 If an earlier version of ScummVM was installed under Windows, the
-previous default location of '<windir>\\scummvm.ini' will be kept.
+previous default location of `<windir>\scummvm.ini` will be kept.
 
 **Unix:**
 
@@ -2537,12 +2536,12 @@ previous default location of `~/.scummvmrc` will be kept.
 
 **Mac OS X:**
 
-`~/Library/Preferences/ScummVM Preferences` (here, \~ refers to your
+`~/Library/Preferences/ScummVM Preferences` (here, `~` refers to your
 home directory)
 
 **Others:**
 
-scummvm.ini in the current directory
+`scummvm.ini` in the current directory
 
 An example config file looks as follows:
 
