@@ -1990,6 +1990,40 @@ static const uint16 gk1GranChairFlickerPatch[] = {
 	PATCH_END
 };
 
+// Using the money on the fortune teller Lorelei is scripted to respond with
+//  a different message depending on whether she's sitting or dancing. This
+//  feature manages to have three bugs which all occur in Sierra's interpreter.
+//
+// Bug 1: The script transposes the sitting and dancing responses.
+//        We reverse the test so that the right messages are attempted.
+//
+// Bug 2: The script passes the wrong message tuple when Lorelei is sitting
+//        and so a missing message error occurs. We pass the right tuple.
+//
+// Bug 3: The audio36 resource for message 420 2 32 0 1 has the wrong tuple and
+//        so no audio plays when using the money on Lorelei while dancing.
+//        This is a CD resource bug which we fix in the audio loader.
+//
+// Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
+// Responsible method: lorelei:doVerb(32)
+// Fixes bug #10819
+static const uint16 gk1LoreleiMoneySignature[] = {
+	0x30, SIG_UINT16(0x000d),           // bnt 000d [ lorelei is sitting ]
+	SIG_ADDTOOFFSET(+19),
+	SIG_MAGICDWORD,
+	0x7a,                               // pushi2   [ noun ]
+	0x8f, 0x01,                         // lsp 01   [ verb (32d) ]
+	0x39, 0x03,                         // pushi 03 [ cond ]
+	SIG_END
+};
+
+static const uint16 gk1LoreleiMoneyPatch[] = {
+	0x2e, PATCH_UINT16(0x000d),         // bt 000d [ lorelei is dancing ]
+	PATCH_ADDTOOFFSET(+22),
+	0x39, 0x02,                         // pushi 02 [ correct cond ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
@@ -2010,6 +2044,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   290, "fix magentia missing message",                1, gk1ShowMagentiaItemSignature,     gk1ShowMagentiaItemPatch },
 	{  true,   380, "fix ego flicker in Gran's chair",             1, gk1GranChairFlickerSignature,     gk1GranChairFlickerPatch },
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
+	{  true,   420, "fix lorelei money messages",                  1, gk1LoreleiMoneySignature,         gk1LoreleiMoneyPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
