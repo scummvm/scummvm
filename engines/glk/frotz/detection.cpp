@@ -22,6 +22,7 @@
 
 #include "glk/frotz/detection.h"
 #include "glk/frotz/detection_tables.h"
+#include "glk/frotz/quetzal.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
@@ -116,10 +117,10 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 
 bool FrotzMetaEngine::readSavegameHeader(Common::SeekableReadStream *stream, Glk::SavegameHeader &header) {
 	stream->seek(0);
-	if (stream->readUint32BE() != MKTAG('F', 'O', 'R', 'M'))
+	if (stream->readUint32BE() != ID_FORM)
 		return false;
 	stream->readUint32BE();
-	if (stream->readUint32BE() != MKTAG('I', 'F', 'Z', 'S'))
+	if (stream->readUint32BE() != ID_IFZS)
 		return false;
 
 	header._interpType = INTERPRETER_FROTZ;
@@ -129,13 +130,14 @@ bool FrotzMetaEngine::readSavegameHeader(Common::SeekableReadStream *stream, Glk
 		uint type = stream->readUint32BE();
 		size_t len = stream->readUint32BE();
 
-		if (type == MKTAG('A', 'N', 'N', 'O')) {
+		if (type == ID_ANNO) {
 			// Read savegame name from the annotation chunk
 			char *buffer = new char[len + 1];
 			stream->read(buffer, len);
 			buffer[len] = '\0';
 			header._saveName = Common::String(buffer);
 			break;
+
 		} else {
 			if (len & 1)
 				// Length must be even

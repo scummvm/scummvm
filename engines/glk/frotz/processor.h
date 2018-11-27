@@ -95,7 +95,7 @@ private:
 	bool istream_replay;
 	bool message;
 	Common::FixedStack<Redirect, MAX_NESTING> _redirect;
-private:
+protected:
 	/**
 	 * \defgroup General support methods
 	 * @{
@@ -188,6 +188,11 @@ private:
 	  * High level newline function.
 	  */
 	void new_line();
+
+	/**
+	 * Copy the contents of the text buffer to the output streams.
+	 */
+	void flush_buffer();
 
 	/**
 	 * Returns true if the buffer is empty
@@ -1538,18 +1543,6 @@ protected:
 	 *      zargs[1] = value to write
 	 */
 	void z_store();
-
-	/**@}*/
-
-	/**
-	 * \defgroup Input support methods
-	 * @{
-	 */
-
-	/**
-	 * Copy the contents of the text buffer to the output streams.
-	 */
-	void flush_buffer();
 
 	/**@}*/
 public:

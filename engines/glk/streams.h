@@ -283,6 +283,16 @@ public:
 	 * Set the reverse video style
 	 */
 	virtual void setReverseVideo(bool reverse);
+
+	/**
+	 * Cast a stream to a ScummVM write stream
+	 */
+	virtual operator Common::WriteStream *() const { return nullptr; }
+
+	/**
+	 * Cast a stream to a ScummVM read stream
+	 */
+	virtual operator Common::SeekableReadStream *() const { return nullptr; }
 };
 typedef Stream *strid_t;
 
@@ -528,6 +538,16 @@ public:
 	 * Get a unicode line
 	 */
 	virtual glui32 getLineUni(glui32 *ubuf, glui32 len) override;
+
+	/**
+	 * Cast a stream to a ScummVM write stream
+	 */
+	virtual operator Common::WriteStream *() const override { return _outFile; }
+
+	/**
+	 * Cast a stream to a ScummVM read stream
+	 */
+	virtual operator Common::SeekableReadStream *() const override { return _inStream; }
 };
 
 /**
