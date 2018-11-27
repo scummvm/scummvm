@@ -73,12 +73,7 @@ page at: <https://www.scummvm.org/>
       - [5.3) Graphics filters](#53-graphics-filters)
       - [5.4) Hotkeys](#54-hotkeys)
       - [5.5) Language options](#55-language-options)
-  - [6.0) Saved Games](#60-saved-games)
-      - [Mac OS X:](#mac-os-x-)
-      - [Other unices:](#other-unices-)
-      - [Windows Vista/7:](#windows-vista-7-)
-      - [Windows 2000/XP:](#windows-2000-xp-)
-          - [Windows NT4:](#windows-nt4-)
+  - [6.0) Saved Games](#60-saved-games)    
       - [6.1) Autosaves](#61-autosaves)
       - [6.2) Converting Saved Games](#62-converting-saved-games)
       - [6.3) Viewing/Loading saved games from the command
@@ -1894,11 +1889,11 @@ config file later in this README.
 
 The platforms that currently have a different default directory are:
 
-### Mac OS X:
+**Mac OS X:**
 
 $HOME/Documents/ScummVM Savegames/
 
-### Other unices:
+**Other unices:**
 
 We follow the XDG Base Directory Specification. This means by default
 saved games can be found in: `$XDG_DATA_HOME/scummvm/saves/`
@@ -1910,16 +1905,16 @@ If an earlier version of ScummVM was installed on your system, the
 previous default location of `~/.scummvm` will be kept. This is detected
 based on the presence of the path `~/.scummvm`.
 
-### Windows Vista/7:
+**Windows Vista/7:**
 
 \\Users\\username\\AppData\\Roaming\\ScummVM\\Saved games\\
 
-### Windows 2000/XP:
+**Windows 2000/XP:**
 
 \\Documents and Settings\\username\\Application Data\\ScummVM\\Saved
 games\\
 
-##### Windows NT4:
+**Windows NT4:**
 
 <windir>\\Profiles\\username\\Application Data\\ScummVM\\Saved games\\
 
