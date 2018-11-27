@@ -115,11 +115,7 @@ page at: <https://www.scummvm.org/>
           - [7.8.9) Compressing speech/music in Broken Sword
             II](#789-compressing-speech-music-in-broken-sword-ii)
       - [7.9) Output sample rate](#79-output-sample-rate)
-  - [8.0) Configuration file](#80-configuration-file) - [Windows
-    Vista/7:](#windows-vista-7-1) - [Windows
-    2000/XP:](#windows-2000-xp-1) - [Windows NT4:](#windows-nt4-1) -
-    [Windows 95/98/ME:](#windows-95-98-me-) - [Unix:](#unix-) - [Mac OS
-    X:](#mac-os-x-1) - [Others:](#others-)
+  - [8.0) Configuration file](#80-configuration-file) 
       - [8.1) Recognized configuration
         keywords](#81-recognized-configuration-keywords)
       - [8.2) Custom game options that can be toggled via the
@@ -2508,27 +2504,27 @@ the original frequency.
 
 By default, the configuration file is saved in, and loaded from:
 
-##### Windows Vista/7:
+**Windows Vista/7:**
 
 \\Users\\username\\AppData\\Roaming\\ScummVM\\scummvm.ini,
 
-##### Windows 2000/XP:
+**Windows 2000/XP:**
 
 \\Documents and Settings\\username\\Application
 Data\\ScummVM\\scummvm.ini,
 
-##### Windows NT4:
+**Windows NT4:**
 
 <windir>\\Profiles\\username\\Application Data\\ScummVM\\scummvm.ini,
 
-##### Windows 95/98/ME:
+**Windows 95/98/ME:**
 
 <windir>\\scummvm.ini,
 
 If an earlier version of ScummVM was installed under Windows, the
 previous default location of '<windir>\\scummvm.ini' will be kept.
 
-##### Unix:
+**Unix:**
 
 We follow the XDG Base Directory Specification. This means our
 configuration can be found in: `$XDG_CONFIG_HOME/scummvm/scummvm.ini`
@@ -2539,12 +2535,12 @@ as value for `XDG_CONFIG_HOME` in accordance with the specification.
 If an earlier version of ScummVM was installed on your system, the
 previous default location of `~/.scummvmrc` will be kept.
 
-##### Mac OS X:
+**Mac OS X:**
 
 `~/Library/Preferences/ScummVM Preferences` (here, \~ refers to your
 home directory)
 
-##### Others:
+**Others:**
 
 scummvm.ini in the current directory
 
