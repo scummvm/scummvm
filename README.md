@@ -1299,7 +1299,7 @@ you are not using a Macintosh for this, accessing the CD/floppy data
 might be tricky. The reason for this is that the mac uses a special disk
 format called HFS which other systems usually do not support. However,
 there are various free tools which allow reading such HFS volumes. For
-example "HFSExplorer" for Windows and "hfsutils" for Linux and other
+example `HFSExplorer` for Windows and `hfsutils` for Linux and other
 Unix-like operating systems.
 
 Most of the newer games on the Macintosh shipped with only a single data
@@ -1916,7 +1916,7 @@ games\\
 
 Saved games are stored under a hidden area in Windows
 NT4/2000/XP/Vista/7, which can be accessed by running
-"%APPDATA%\\ScummVM\\Saved Games" or by enabling hidden files in Windows
+`%APPDATA%\\ScummVM\\Saved Games` or by enabling hidden files in Windows
 Explorer.
 
 Note for Windows NT4/2000/XP/Vista/7 users: The default saved games
@@ -2837,14 +2837,14 @@ can use alt+s to take snapshots (see section 5.4 - Hotkeys).
 
 You can specify the directory in which you want the screenshots to be
 created in the config file. To do so add a screenshotpath value under
-the \[scummvm\] section:
+the `[scummvm]` section:
 
     [scummvm]
     screenshotpath=/path/to/screenshots/
 
 The default location, when no screenshot path is defined in the config
-file, depends on the OS: Windows: In Users\\username\\My
-Pictures\\ScummVM Screenshots. macOS X: On the Desktop. Any other OS: In
+file, depends on the OS: Windows: In `Users\username\My
+Pictures\ScummVM Screenshots`. macOS X: On the Desktop. Any other OS: In
 the current directory.
 
 ## 10.0) Compiling
