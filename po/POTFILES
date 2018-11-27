@@ -2,7 +2,6 @@
 
 gui/about.cpp
 gui/browser.cpp
-gui/browser_osx.mm
 gui/chooser.cpp
 gui/downloaddialog.cpp
 gui/editgamedialog.cpp
@@ -52,6 +51,8 @@ audio/softsynth/pcspk.cpp
 audio/softsynth/sid.cpp
 
 backends/cloud/storage.cpp
+backends/dialogs/macosx/macosx-dialogs.mm
+backends/dialogs/win32/win32-dialogs.cpp
 backends/events/default/default-events.cpp
 backends/events/gph/gph-events.cpp
 backends/events/maemosdl/maemosdl-events.cpp
