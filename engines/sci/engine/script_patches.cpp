@@ -1990,6 +1990,25 @@ static const uint16 gk1GranChairFlickerPatch[] = {
 	PATCH_END
 };
 
+// Using the photocopy of the veve on the artist causes a missing message error
+//  after giving the sketch from the lake and then the original veve file.
+//  This is due to using the wrong verb in the message tuple, which we fix.
+//
+// Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
+// Responsible method: artist:doVerb(24)
+// Fixes bug #10818
+static const uint16 gk1ArtistVeveCopySignature[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x30,                         // pushi 30 [ verb: original veve file ]
+	0x39, 0x1f,                         // pushi 1f [ cond ]
+	SIG_END
+};
+
+static const uint16 gk1ArtistVeveCopyPatch[] = {
+	0x39, 0x18,                         // pushi 18 [ verb: veve photocopy ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
@@ -2010,6 +2029,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   290, "fix magentia missing message",                1, gk1ShowMagentiaItemSignature,     gk1ShowMagentiaItemPatch },
 	{  true,   380, "fix ego flicker in Gran's chair",             1, gk1GranChairFlickerSignature,     gk1GranChairFlickerPatch },
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
+	{ true,    410, "fix artist veve photocopy missing message",   1, gk1ArtistVeveCopySignature,       gk1ArtistVeveCopyPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
