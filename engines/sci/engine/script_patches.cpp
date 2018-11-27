@@ -7741,6 +7741,31 @@ static const uint16 qfg4SetScalerPatch[] = {
 	PATCH_END
 };
 
+// When the fortune teller's wagon room is disposed, it attempts to call
+// hero::show(), hero has a null "plane" property, and ScummVM crashes.
+//
+// The problematic line was removed in the CD edition. We remove it, too.
+//
+// Note: This patch is a workaround. The floppy edition SSCI did not crash, and
+// its implementation of AddScreenItem() should be checked to find out why.
+//
+// Applies to at least: English floppy, German floppy
+// Responsible method: rm470::dispose()
+// Fixes bug: #10778
+static const uint16 qfg4MagdaDisposalSignature[] = {
+	0x38, SIG_SELECTOR16(posn),         // posn
+	SIG_ADDTOOFFSET(+8),                // ...
+	SIG_MAGICDWORD,
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, SIG_UINT16(0x000c),           // send 12d (posn: 1000 1000 show:)
+	SIG_END
+};
+
+static const uint16 qfg4MagdaDisposalPatch[] = {
+	0x33, 0x0e,                         // jmp 14d (skip the entire hero send)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -7753,6 +7778,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
 	{  true,   440, "fix setLooper calls (1/2)",                   1, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   470, "fix Magda room disposal",                     1, qfg4MagdaDisposalSignature,    qfg4MagdaDisposalPatch },
 	{  true,   530, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   535, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   541, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
