@@ -145,11 +145,10 @@ void Header::loadHeader(Common::SeekableReadStream &f) {
 
 /*--------------------------------------------------------------------------*/
 
-UserOptions::UserOptions() : _undo_slots(MAX_UNDO_SLOTS), _sound(true) {
+UserOptions::UserOptions() : _undo_slots(MAX_UNDO_SLOTS), _sound(true), _quetzal(true) {
 	_err_report_mode = getConfigInt("err_report_mode", ERR_REPORT_ONCE, ERR_REPORT_FATAL);
 	_ignore_errors = getConfigBool("ignore_errors");
 	_expand_abbreviations = getConfigBool("expand_abbreviations");
-	_quetzal = getConfigBool("quetzal", true);
 	_tandyBit = getConfigBool("tandy_bit");
 	_piracy = getConfigBool("piracy");
 	_script_cols = getConfigInt("wrap_script_lines", 80, 999);

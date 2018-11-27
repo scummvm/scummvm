@@ -36,7 +36,8 @@ enum QueztalTag {
 	ID_UMem = MKTAG('U', 'M', 'e', 'm'),
 	ID_CMem = MKTAG('C', 'M', 'e', 'm'),
 	ID_Stks = MKTAG('S', 't', 'k', 's'),
-	ID_ANNO = MKTAG('A', 'N', 'N', 'O')
+	ID_ANNO = MKTAG('A', 'N', 'N', 'O'),
+	ID_SCVM = MKTAG('S', 'C', 'V', 'M')
 };
 
 class Processor;
@@ -45,8 +46,6 @@ class Quetzal {
 private:
 	Common::SeekableReadStream *_storyFile;
 	Common::WriteStream *_out;
-	size_t _blorbOffset;
-	int _slot;
 	zword frames[STACK_SIZE / 4 + 1];
 private:
 	/**
@@ -63,7 +62,7 @@ private:
 	void write_bytx(zword b) { _out->writeByte(b & 0xFF); }
 	void write_word(zword w) { _out->writeUint16BE(w); }
 	void write_long(uint l) { _out->writeUint32BE(l); }
-	void write_run(zword run) { _out->writeUint16LE(run); }
+	void write_run(zword run) { write_byte(0); write_byte(run); }
 	void write_chnk(QueztalTag id, zword len) {
 		_out->writeUint32BE(id);
 		_out->writeUint32BE(len);
@@ -72,19 +71,21 @@ public:
 	/**
 	 * Constructor
 	 */
-	Quetzal(Common::SeekableReadStream *storyFile, size_t blorbOffset, int slot) :
-		_storyFile(storyFile), _blorbOffset(blorbOffset), _slot(slot) {}
+	Quetzal(Common::SeekableReadStream *storyFile) : _storyFile(storyFile) {}
 
 	/*
 	 * Save a game using Quetzal format.
 	 * @param svf	Savegame file
+	 * @param proc	Pointer to the Frotz processor
+	 * @param desc	Savegame description
 	 * @returns		Returns true if OK, false if failed
 	 */
-	bool save(Common::WriteStream *svf, Processor *proc);
+	bool save(Common::WriteStream *svf, Processor *proc, const Common::String &desc);
 
 	/**
 	 * Restore a saved game using Quetzal format
 	 * @param svf	Savegame file
+	 * @param proc	Pointer to the Frotz processor
 	 * @returns		Return 2 if OK, 0 if an error occurred before any damage was done,
 	 *				-1 on a fatal error
 	 */

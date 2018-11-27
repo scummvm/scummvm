@@ -768,7 +768,7 @@ FileStream::FileStream(Streams *streams, frefid_t fref, glui32 fmode, glui32 roc
 	Common::String fname = fref->_slotNumber == -1 ? fref->_filename : fref->getSaveName();
 
 	if (fmode == filemode_Write || fmode == filemode_ReadWrite || fmode == filemode_WriteAppend) {
-		_outFile = g_system->getSavefileManager()->openForSaving(fname, fref->_slotNumber != -1);
+		_outFile = g_system->getSavefileManager()->openForSaving(fname, fref->_slotNumber != -1 && g_vm->getInterpreterType() != INTERPRETER_FROTZ);
 		if (!_outFile)
 			error("Could open file for writing - %s", fname.c_str());
 
@@ -795,11 +795,13 @@ FileStream::FileStream(Streams *streams, frefid_t fref, glui32 fmode, glui32 roc
 					readSavegameHeader(_inStream, header)))
 				error("Invalid savegame");
 
-			if (header._interpType != g_vm->getInterpreterType() || header._language != g_vm->getLanguage()
-			        || header._md5 != g_vm->getGameMD5())
-				error("Savegame is for a different game");
+			if (g_vm->getInterpreterType() != INTERPRETER_FROTZ) {
+				if (header._interpType != g_vm->getInterpreterType() || header._language != g_vm->getLanguage()
+						|| header._md5 != g_vm->getGameMD5())
+					error("Savegame is for a different game");
 
-			g_vm->_events->setTotalPlayTicks(header._totalFrames);
+				g_vm->_events->setTotalPlayTicks(header._totalFrames);
+			}
 		}
 	}
 }

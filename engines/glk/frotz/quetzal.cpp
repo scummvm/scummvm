@@ -50,9 +50,9 @@ bool Quetzal::read_long(Common::ReadStream *f, uint *result) {
 	return true;
 }
 
-bool Quetzal::save(Common::WriteStream *svf, Processor *proc) {
+bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::String &desc) {
 	Processor &p = *proc;
-	uint ifzslen = 0, cmemlen = 0, stkslen = 0;
+	uint ifzslen = 0, cmemlen = 0, stkslen = 0, descLen = 0;
 	uint pc;
 	zword i, j, n;
 	zword nvars, nargs, nstk;
@@ -79,10 +79,20 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc) {
 	write_word(p.h_checksum);
 	write_long(pc << 8);		// Includes pad
 
+	// Write 'ANNO' chunk
+	descLen = desc.size() + 1;
+	write_chnk(ID_ANNO, descLen);
+	saveData.write(desc.c_str(), desc.size());
+	write_byte(0);
+	if ((desc.size() % 2) == 0) {
+		write_byte(0);
+		++descLen;
+	}
+
 	// Write `CMem' chunk.
-	cmempos = svf->pos();
+	cmempos = saveData.pos();
 	write_chnk(ID_CMem, 0);
-	_storyFile->seek(_blorbOffset);
+	_storyFile->seek(0);
 
 	// j holds current run length.
 	for (i = 0, j = 0, cmemlen = 0; i < p.h_dynamic_size; ++i) {
@@ -116,7 +126,7 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc) {
 		write_byte(0);
 
 	// Write `Stks' chunk. You are not expected to understand this. ;)
-	stkspos = _storyFile->pos();
+	stkspos = saveData.pos();
 	write_chnk(ID_Stks, 0);
 
 	// We construct a list of frame indices, most recent first, in `frames'.
@@ -182,7 +192,7 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc) {
 	}
 
 	// Fill in variable chunk lengths
-	ifzslen = 3 * 8 + 4 + 14 + cmemlen + stkslen;
+	ifzslen = 4 * 8 + 4 + 14 + cmemlen + stkslen + descLen;
 	if (cmemlen & 1)
 		++ifzslen;
 
@@ -281,7 +291,7 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 			fatal = -1;		// Setting PC means errors must be fatal
 			p.setPC(pc);
 
-			svf->skip(13);	// Skip rest of chunk
+			svf->skip(currlen - 13);	// Skip rest of chunk
 			break;
 
 		// `Stks' stacks chunk; restoring this is quite complex. ;)
@@ -394,8 +404,7 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 		// `CMem' compressed memory chunk; uncompress it
 		case ID_CMem:
 			if (!(progress & GOT_MEMORY)) {
-				// Don't complain if two
-				_storyFile->seek(_blorbOffset);
+				_storyFile->seek(0);
 				
 				i = 0;	// Bytes written to data area
 				for (; currlen > 0; --currlen) {
@@ -416,10 +425,10 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 						--currlen;
 						x = svf->readByte();
 						for (; x >= 0 && i < p.h_dynamic_size; --x, ++i)
-							p[i] = svf->readByte();
+							p[i] = _storyFile->readByte();
 					} else {
 						// Not a run
-						y = svf->readByte();
+						y = _storyFile->readByte();
 						p[i] = (zbyte)(x ^ y);
 						++i;
 					}
@@ -434,14 +443,14 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 
 				// If chunk is short, assume a run
 				for (; i < p.h_dynamic_size; ++i)
-					p[i] = svf->readByte();
+					p[i] = _storyFile->readByte();
 
 				if (currlen == 0)
 					progress |= GOT_MEMORY;		// Only if succeeded
 				break;
 			}
 
-			// Intentional fall-through
+			// Intentional fall-through on error
 
 		case ID_UMem:
 			if (!(progress & GOT_MEMORY)) {
@@ -458,7 +467,7 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 				// Fall into default action (skip chunk) on errors
 			}
 
-			// Intentional fall-through
+			// Intentional fall-through on error
 
 		default:
 			svf->seek(currlen, SEEK_CUR);		// Skip chunk
