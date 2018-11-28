@@ -41,7 +41,6 @@
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/ui/ui_scroll_box.h"
 
-
 #include "graphics/surface.h"
 
 namespace BladeRunner {
@@ -71,6 +70,7 @@ KIASectionCrimes::KIASectionCrimes(BladeRunnerEngine *vm, ActorClues *clues) : K
 
 	_suspectSelected = -1;
 	_suspectPhotoShapeId = -1;
+	_suspectPhotoNotUsed = -1;
 	_suspectPhotoShape = nullptr;
 	_suspectsFoundCount = 0;
 	_suspectsFound.resize(_vm->_gameInfo->getSuspectCount());
@@ -85,6 +85,18 @@ KIASectionCrimes::~KIASectionCrimes() {
 	delete _cluesScrollBox;
 	delete _buttons;
 	delete _uiContainer;
+}
+
+void KIASectionCrimes::reset() {
+	_acquiredClueCount = 0;
+    _crimesFoundCount = 0;
+    _suspectsFoundCount = 0;
+    _mouseX = 0;
+    _mouseY = 0;
+    _suspectSelected = -1;
+    _crimeSelected = -1;
+    _suspectPhotoShapeId = -1;
+    _suspectPhotoNotUsed = -1;
 }
 
 void KIASectionCrimes::open() {
@@ -277,7 +289,7 @@ void KIASectionCrimes::populateAcquiredClues() {
 			++_acquiredClueCount;
 		}
 	}
-	// sort clues by name, is it necessary
+	// sort clues by name, is it necessary?
 }
 
 void KIASectionCrimes::populateCrimes() {
@@ -391,18 +403,20 @@ void KIASectionCrimes::updateSuspectPhoto() {
 	SuspectDatabaseEntry *suspect = _vm->_suspectsDatabase->get(_suspectSelected);
 
 	_suspectPhotoShapeId = -1;
+	_suspectPhotoNotUsed = -1;
 	int photoCluesCount = suspect->getPhotoCount();
 	if (photoCluesCount > 0) {
 		for (int i = 0 ; i < photoCluesCount; i++) {
-			//TODO: weird stuff going on here... it's using index instead id, also some field is used but its always -1
+			//TODO: weird stuff going on here... original game is using internal clue index instead id
 			if (_clues->isAcquired(suspect->getPhotoClueId(i))) {
 				_suspectPhotoShapeId = suspect->getPhotoShapeId(i);
+				_suspectPhotoNotUsed = suspect->getPhotoNotUsed(i);
 				break;
 			}
 		}
 	}
 
-	if (_suspectPhotoShapeId == -1) {
+	if (_suspectPhotoShapeId == -1 && _suspectPhotoNotUsed == -1) {
 		if (suspect->getSex()) {
 			_suspectPhotoShapeId = 14;
 		} else {

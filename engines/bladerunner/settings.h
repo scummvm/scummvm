@@ -70,6 +70,8 @@ class Settings {
 public:
 	Settings(BladeRunnerEngine *vm);
 
+	void reset();
+
 	void setGamma(float gamma) {
 		_gamma = gamma;
 	}
@@ -109,16 +111,16 @@ public:
 		_newChapter = newChapter;
 	}
 
-	void setLoadingGame(bool loadingGame) {
-		_loadingGame = loadingGame;
+	void setLoadingGame() {
+		_loadingGame = true;
 	}
 
-	bool getLoadingGame() const {
+	bool isLoadingGame() const {
 		return _loadingGame;
 	}
 
-	void setStartingGame(bool startingGame) {
-		_startingGame = startingGame;
+	void setStartingGame() {
+		_startingGame = true;
 	}
 
 	bool openNewScene();
@@ -130,6 +132,7 @@ public:
 	void decreaseAmmo();
 
 	int getDifficulty() const;
+	void setDifficulty(int difficulty);
 
 	int getPlayerAgenda() const;
 	void setPlayerAgenda(int agenda);

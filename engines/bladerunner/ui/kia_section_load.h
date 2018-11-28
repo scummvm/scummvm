@@ -25,13 +25,49 @@
 
 #include "bladerunner/ui/kia_section_base.h"
 
+#include "common/scummsys.h"
+#include "common/str.h"
+
+namespace Graphics {
+struct Surface;
+}
+
 namespace BladeRunner {
+
+class UIContainer;
+class UIScrollBox;
 
 class KIASectionLoad : public KIASectionBase {
 
-public:
-	KIASectionLoad(BladeRunnerEngine *vm): KIASectionBase(vm){}
+	struct Save {
+		Common::String name;
+		int slotNum;
+	};
 
+	UIContainer *_uiContainer;
+	UIScrollBox *_scrollBox;
+
+	uint32       _timeLast;
+	uint32       _timeLeft;
+
+	int          _hoveredSaveSlot;
+	int          _saveSlotMax;
+
+public:
+	KIASectionLoad(BladeRunnerEngine *vm);
+	~KIASectionLoad();
+
+	void open();
+	void close();
+
+	void draw(Graphics::Surface &surface);
+
+	void handleMouseMove(int mouseX, int mouseY);
+	void handleMouseDown(bool mainButton);
+	void handleMouseUp(bool mainButton);
+
+private:
+	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);
 };
 
 } // End of namespace BladeRunner

@@ -107,8 +107,8 @@ void ESPER::open(Graphics::Surface *surface) {
 
 	_shapesPhotos.resize(10);
 
-	_vqaPlayerMain = new VQAPlayer(_vm, &_vm->_surfaceBack);
-	if (!_vqaPlayerMain->open("ESPER.VQA")) {
+	_vqaPlayerMain = new VQAPlayer(_vm, &_vm->_surfaceBack, "ESPER.VQA");
+	if (!_vqaPlayerMain->open()) {
 		return;
 	}
 	_vqaPlayerMain->setLoop(2, -1, kLoopSetModeJustStart, nullptr, nullptr);
@@ -534,7 +534,7 @@ void ESPER::wait(int timeout) {
 	if (!_isWaiting) {
 		_isWaiting = true;
 		uint timeEnd = timeout + _vm->getTotalPlayTime();
-		while (_vm->getTotalPlayTime() < timeEnd) {
+		while (_vm->_gameIsRunning && _vm->getTotalPlayTime() < timeEnd) {
 			_vm->gameTick();
 		}
 		_isWaiting = false;
@@ -866,8 +866,8 @@ void ESPER::drawPhotoZoomOut(Graphics::Surface &surface) {
 
 void ESPER::drawVideoZooming(Graphics::Surface &surface) {
 	if (_vqaPlayerPhoto == nullptr) {
-		_vqaPlayerPhoto = new VQAPlayer(_vm, &_surfaceViewport);
-		if (!_vqaPlayerPhoto->open(Common::String(_regions[_regionSelected].name) + ".VQA")) {
+		_vqaPlayerPhoto = new VQAPlayer(_vm, &_surfaceViewport, Common::String(_regions[_regionSelected].name) + ".VQA");
+		if (!_vqaPlayerPhoto->open()) {
 			setStatePhoto(kEsperPhotoStateShow);
 			_vm->_mouse->enable();
 

@@ -60,9 +60,10 @@ public:
 	};
 
 public:
-	ActorClues(BladeRunnerEngine *_vm, int cluesType);
+	ActorClues(BladeRunnerEngine *_vm, int cluesLimit);
 
 	void add(int actorId, int clueId, int unknown, bool acquired, bool unknownFlag, int fromActorId);
+	bool exists(int clueId) const;
 
 	void acquire(int clueId, bool flag2, int fromActorId);
 	void lose(int clueId);
@@ -95,7 +96,6 @@ public:
 	void load(SaveFileReadStream &f);
 
 private:
-	bool exists(int clueId) const;
 	int findClueIndex(int clueId) const;
 	void remove(int clueIndex);
 };

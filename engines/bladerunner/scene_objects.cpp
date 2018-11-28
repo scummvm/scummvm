@@ -331,7 +331,7 @@ void SceneObjects::save(SaveFileWriteStream &f) {
 	for (int i = 0; i < kSceneObjectCount; ++i) {
 		f.writeInt(_sceneObjects[i].id);
 		f.writeInt(_sceneObjects[i].type);
-		f.writeBoundingBox(_sceneObjects[i].boundingBox);
+		f.writeBoundingBox(_sceneObjects[i].boundingBox, true);
 		f.writeRect(_sceneObjects[i].screenRectangle);
 		f.writeFloat(_sceneObjects[i].distanceToCamera);
 		f.writeBool(_sceneObjects[i].isPresent);
@@ -352,7 +352,7 @@ void SceneObjects::load(SaveFileReadStream &f) {
 	for (int i = 0; i < kSceneObjectCount; ++i) {
 		_sceneObjects[i].id = f.readInt();
 		_sceneObjects[i].type = (SceneObjectType)f.readInt();
-		_sceneObjects[i].boundingBox = f.readBoundingBox();
+		_sceneObjects[i].boundingBox = f.readBoundingBox(true);
 		_sceneObjects[i].screenRectangle = f.readRect();
 		_sceneObjects[i].distanceToCamera = f.readFloat();
 		_sceneObjects[i].isPresent = f.readBool();

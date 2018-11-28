@@ -175,7 +175,7 @@ void PoliceMazeTargetTrack::clear(bool isLoadingGame) {
 void PoliceMazeTargetTrack::add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, const int *instructions, bool isActive) {
 	_data = (const int *)instructions;
 
-	if (true /* !GameIsLoading */) { // TODO: FIXME
+	if (!_vm->_gameIsLoading) {
 		_itemId = trackId;
 		_pointCount = steps;
 		_dataIndex = 0;

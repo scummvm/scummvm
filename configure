@@ -3164,7 +3164,6 @@ if test -n "$_host"; then
 		ios7)
 			append_var DEFINES "-DIPHONE"
 			_backend="ios7"
-			_build_scalers=no
 			_seq_midi=no
 			_timidity=no
 			;;

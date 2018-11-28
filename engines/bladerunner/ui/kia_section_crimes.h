@@ -69,6 +69,7 @@ class KIASectionCrimes : public KIASectionBase {
 	int   _mouseY;
 
 	int    _suspectPhotoShapeId;
+	int    _suspectPhotoNotUsed;
 	Shape *_suspectPhotoShape;
 
 public:
@@ -77,6 +78,8 @@ public:
 public:
 	KIASectionCrimes(BladeRunnerEngine *vm, ActorClues *clues);
 	~KIASectionCrimes();
+
+	void reset();
 
 	void open();
 	void close();

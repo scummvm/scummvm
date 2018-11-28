@@ -73,14 +73,14 @@ const char *CrimesDatabase::getClueText(int clueId) const {
 
 void CrimesDatabase::save(SaveFileWriteStream &f) {
 	for (int i = 0; i < _crimeCount; ++i) {
-		uint8 c = _crimes[i];
-		f.writeByte(c);
+		int8 c = _crimes[i];
+		f.writeSByte(c);
 	}
 }
 
 void CrimesDatabase::load(SaveFileReadStream &f) {
 	for (int i = 0; i < _crimeCount; ++i) {
-		_crimes[i] = f.readByte();
+		_crimes[i] = f.readSByte();
 	}
 }
 

@@ -23,6 +23,8 @@
 #ifndef BLADERUNNER_DETECTION_TABLES_H
 #define BLADERUNNER_DETECTION_TABLES_H
 
+#include "engines/advancedDetector.h"
+
 namespace BladeRunner {
 
 static const ADGameDescription gameDescriptions[] = {

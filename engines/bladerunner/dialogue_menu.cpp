@@ -183,7 +183,7 @@ int DialogueMenu::queryInput() {
 				}
 
 				_vm->gameTick();
-			} while (_waitingForInput);
+			} while (_vm->_gameIsRunning && _waitingForInput);
 		} else if (agenda == kPlayerAgendaErratic) {
 			int tries = 0;
 			bool searching = true;

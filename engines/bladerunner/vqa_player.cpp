@@ -30,8 +30,8 @@
 
 namespace BladeRunner {
 
-bool VQAPlayer::open(const Common::String &name) {
-	_s = _vm->getResourceStream(name);
+bool VQAPlayer::open() {
+	_s = _vm->getResourceStream(_name);
 	if (!_s) {
 		return false;
 	}

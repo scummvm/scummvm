@@ -50,9 +50,9 @@ void Scores::open() {
 		return;
 	}
 
-	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
+	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, "SCORE.VQA");
 
-	if (!_vqaPlayer->open("SCORE.VQA")) {
+	if (!_vqaPlayer->open()) {
 		return;
 	}
 
