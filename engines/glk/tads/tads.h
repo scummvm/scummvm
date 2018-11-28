@@ -45,11 +45,6 @@ public:
 	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_SCOTT; }
 
 	/**
-	 * Execute the game
-	 */
-	virtual void runGame(Common::SeekableReadStream *gameFile) override;
-
-	/**
 	 * Load a savegame from the passed stream
 	 */
 	virtual Common::Error loadGameData(strid_t file) override;

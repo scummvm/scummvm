@@ -20,53 +20,19 @@
  *
  */
 
-#ifndef GLK_TADS_DETECTION
-#define GLK_TADS_DETECTION
-
-#include "common/fs.h"
-#include "engines/game.h"
+#include "glk/tads/tads3/tads3.h"
 
 namespace Glk {
 namespace TADS {
+namespace TADS3 {
 
-/**
- * TADS game descriptior
- */
-struct TADSDescriptor {
-	const char *gameId;
-	const char *description;
-	bool isTADS3;
+TADS3::TADS3(OSystem *syst, const GlkGameDescription &gameDesc) : TADS(syst, gameDesc) {
+}
 
-	operator PlainGameDescriptor() const {
-		PlainGameDescriptor pd;
-		pd.gameId = gameId;
-		pd.description = description;
-		return pd;
-	}
-};
+void TADS3::runGame(Common::SeekableReadStream *gameFile) {
+	// TODO
+}
 
-/**
- * Meta engine for TADS interpreter
- */
-class TADSMetaEngine {
-public:
-	/**
-	 * Get a list of supported games
-	 */
-	static void getSupportedGames(PlainGameList &games);
-
-	/**
-	 * Returns a game description for the given game Id, if it's supported
-	 */
-	static TADSDescriptor findGame(const char *gameId);
-
-	/**
-	 * Detect supported games
-	 */
-	static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);
-};
-
+} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
-
-#endif
