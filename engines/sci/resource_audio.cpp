@@ -454,6 +454,13 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				break;
 			}
 
+			// GK1CD has a message whose audio36 resource has the wrong tuple and never plays.
+			//  The message tuple is 420 2 32 0 1 but the audio36 tuple is 420 2 32 3 1. bug #10819
+			if (g_sci->getGameId() == GID_GK1 && g_sci->isCD() &&
+				map->_mapNumber == 420 && n == 0x02200301) {
+				n = 0x02200001;
+			}
+
 			if (isEarly) {
 				offset = ptr.getUint32LE();
 				ptr += 4;
