@@ -2056,7 +2056,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   380, "fix ego flicker in Gran's chair",             1, gk1GranChairFlickerSignature,     gk1GranChairFlickerPatch },
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
 	{  true,   410, "fix artist veve photocopy missing message",   1, gk1ArtistVeveCopySignature,       gk1ArtistVeveCopyPatch },
-  {  true,   420, "fix lorelei chair missing message",           1, gk1OperateLoreleiChairSignature,  gk1OperateLoreleiChairPatch },
+	{  true,   420, "fix lorelei chair missing message",           1, gk1OperateLoreleiChairSignature,  gk1OperateLoreleiChairPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
