@@ -22,6 +22,7 @@
 
 #include "glk/tads/detection.h"
 #include "glk/tads/detection_tables.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
@@ -45,34 +46,52 @@ TADSDescriptor TADSMetaEngine::findGame(const char *gameId) {
 }
 
 bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	Common::File gameFile;
-	Common::String md5;
-
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory() || !(file->getName().hasSuffixIgnoreCase(".gam")
-				|| file->getName().hasSuffixIgnoreCase(".t3")))
+		// Check for a recognised filename
+		Common::String filename = file->getName();
+		if (file->isDirectory() || !(filename.hasSuffixIgnoreCase(".gam")
+				|| filename.hasSuffixIgnoreCase(".blorb")))
 			continue;
 
-		if (gameFile.open(*file)) {
-			md5 = Common::computeStreamMD5AsString(gameFile, 5000);
+		// Open up the file and calculate the md5
+		Common::File gameFile;
+		if (!gameFile.open(*file))
+			continue;
+		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
+		size_t filesize = gameFile.size();
+		gameFile.close();
 
-			// Scan through the TADS game list for a match
-			const TADSGame *p = TADS_GAMES;
-			while (p->_md5 && p->_filesize != gameFile.size() && md5 != p->_md5)
-				++p;
+		// Check for known games
+		const TADSGameDescription *p = TADS_GAMES;
+		while (p->_gameId && p->_md5 && (md5 != p->_md5 || filesize != p->_filesize))
+			++p;
 
-			if (p->_filesize) {
-				// Found a match
-				TADSDescriptor gameDesc = findGame(p->_gameId);
-				DetectedGame gd(p->_gameId, gameDesc.description, Common::EN_ANY, Common::kPlatformUnknown);
-				gd.addExtraEntry("filename", file->getName());
+		DetectedGame gd;
+		if (!p->_gameId) {
+			if (!filename.hasSuffixIgnoreCase(".gam"))
+				continue;
 
-				gameList.push_back(gd);
+			if (gDebugLevel > 0) {
+				// Print an entry suitable for putting into the detection_tables.h, using the
+				Common::String fname = filename;
+				const char *dot = strchr(fname.c_str(), '.');
+				if (dot)
+					fname = Common::String(fname.c_str(), dot);
+
+				debug("ENTRY0(\"%s\", \"%s\", %lu),",
+					fname.c_str(), md5.c_str(), filesize);
 			}
-
-			gameFile.close();
+			const TADSDescriptor &desc = TADS_GAME_LIST[0];
+			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
 		}
+		else {
+			PlainGameDescriptor gameDesc = findGame(p->_gameId);
+			gd = DetectedGame(p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);
+		}
+
+		gd.addExtraEntry("filename", filename);
+		gameList.push_back(gd);
 	}
 
 	return !gameList.empty();
