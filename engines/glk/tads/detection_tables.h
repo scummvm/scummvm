@@ -28,22 +28,32 @@ namespace Glk {
 namespace TADS {
 
 /**
- * Game descriptor
+ * Game description
  */
-struct TADSGame {
-	const char *_md5;
-	const char *_gameId;
-	int32 _filesize;
+struct TADSGameDescription {
+	const char *const _gameId;
+	const char *const _extra;
+	const char *const _md5;
+	size_t _filesize;
+	Common::Language _language;
 };
 
 const TADSDescriptor TADS_GAME_LIST[] = {
+	// TADS 2 Games
 	{ "tads2", "TADS 2 Game", false },
+	{ "oncefuture", "Once and Future", false },
+
+	// TADS 3 Games
 	{ "tads3", "TADS 3 Game", true },
 	{ nullptr, nullptr, false }
 };
 
-const TADSGame TADS_GAMES[] = {
-	{ nullptr, nullptr, 0 }
+#define ENTRY0(ID, MD5, FILESIZE) { ID, "", MD5, FILESIZE, Common::EN_ANY }
+#define TABLE_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY }
+
+const TADSGameDescription TADS_GAMES[] = {
+	ENTRY0("oncefuture", "4ed995d0784520ca6f0ec5391d92f4d8", 909993),
+	TABLE_END_MARKER
 };
 
 } // End of namespace Frotz
