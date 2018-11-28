@@ -1,4 +1,4 @@
-# [ScummVM README](https://www.scummvm.org/) &middot; [![Build Status](https://travis-ci.org/scummvm/scummvm.svg?branch=master)](https://travis-ci.org/scummvm/scummvm) [![Translation status](https://translations.scummvm.org/widgets/scummvm/-/scummvm/svg-badge.svg)](https://translations.scummvm.org/engage/scummvm/?utm_source=widget) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests) 
+# [ScummVM README](https://www.scummvm.org/) · [![Build Status](https://travis-ci.org/scummvm/scummvm.svg?branch=master)](https://travis-ci.org/scummvm/scummvm) [![Translation status](https://translations.scummvm.org/widgets/scummvm/-/scummvm/svg-badge.svg)](https://translations.scummvm.org/engage/scummvm/?utm_source=widget) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests)
 
 For more information, compatibility lists, details on donating, the
 latest release, progress reports and more, please visit the ScummVM home
@@ -73,7 +73,7 @@ page at: <https://www.scummvm.org/>
       - [5.3) Graphics filters](#53-graphics-filters)
       - [5.4) Hotkeys](#54-hotkeys)
       - [5.5) Language options](#55-language-options)
-  - [6.0) Saved Games](#60-saved-games)    
+  - [6.0) Saved Games](#60-saved-games)
       - [6.1) Autosaves](#61-autosaves)
       - [6.2) Converting Saved Games](#62-converting-saved-games)
       - [6.3) Viewing/Loading saved games from the command
@@ -115,7 +115,7 @@ page at: <https://www.scummvm.org/>
           - [7.8.9) Compressing speech/music in Broken Sword
             II](#789-compressing-speech-music-in-broken-sword-ii)
       - [7.9) Output sample rate](#79-output-sample-rate)
-  - [8.0) Configuration file](#80-configuration-file) 
+  - [8.0) Configuration file](#80-configuration-file)
       - [8.1) Recognized configuration
         keywords](#81-recognized-configuration-keywords)
       - [8.2) Custom game options that can be toggled via the
@@ -1475,8 +1475,8 @@ arguments -- see the next section.
 
 The meaning of most long options (that is, those options starting with a
 double-dash) can be inverted by prefixing them with "no-". For example,
-`--no-aspect-ratio` will turn aspect ratio correction off. This is useful
-if you want to override a setting in the configuration file.
+`--no-aspect-ratio` will turn aspect ratio correction off. This is
+useful if you want to override a setting in the configuration file.
 
 The short game name ('game target') you see at the end of the command
 line specifies which game is started. It either corresponds to an
@@ -1487,14 +1487,17 @@ Examples:
 
   - Win32:  
     Running Monkey Island, fullscreen, from a hard disk:  
-    `C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\ monkey`  
-    Running Full Throttle from CD, fullscreen and with subtitles enabled:  
+    `C:\Games\LucasArts\scummvm.exe -f -pC:\Games\LucasArts\monkey\
+    monkey`  
+    Running Full Throttle from CD, fullscreen and with subtitles
+    enabled:  
     `C:\Games\LucasArts\scummvm.exe -f -n -pD:\resource\ ft`
 
   - Unix:  
     Running Monkey Island, fullscreen, from a hard disk:  
     `/path/to/scummvm -f -p/games/LucasArts/monkey/ monkey`  
-    Running Full Throttle from CD, fullscreen and with subtitles enabled:  
+    Running Full Throttle from CD, fullscreen and with subtitles
+    enabled:  
     `/path/to/scummvm -f -n -p/cdrom/resource/ ft`
 
 ### 5.2) Global Menu
@@ -2008,13 +2011,14 @@ Where `xxx` is exact the saved game slot (i.e., 001) under ScummVM
 
 **`--list-saves`**
 
-This switch may be used to display a list of the current saved games
-of the specified target game and their corresponding save slots. If no
+This switch may be used to display a list of the current saved games of
+the specified target game and their corresponding save slots. If no
 target is specified, it lists saved games for all known target.
 
-Usage: `--list-saves --game=[TARGET]`, where \[TARGET\] is the target game.
+Usage: `--list-saves --game=[TARGET]`, where \[TARGET\] is the target
+game.
 
-Engines which currently support ``--list-saves`` are:
+Engines which currently support `--list-saves` are:
 
   - AGI
   - AGOS
@@ -2046,9 +2050,11 @@ Engines which currently support ``--list-saves`` are:
 
 **`--save-slot/-x`**
 
-This switch may be used to load a saved game directly from the command line.
+This switch may be used to load a saved game directly from the command
+line.
 
-Usage: `--save-slot[SLOT]` or `-x[SLOT]`, where \[SLOT\] is the save slot number.
+Usage: `--save-slot[SLOT]` or `-x[SLOT]`, where \[SLOT\] is the save
+slot number.
 
 Engines which currently support `--save-slot` / `-x are`:
 
@@ -2842,9 +2848,11 @@ the `[scummvm]` section:
     screenshotpath=/path/to/screenshots/
 
 The default location, when no screenshot path is defined in the config
-file, depends on the OS: Windows: In `Users\username\My
-Pictures\ScummVM Screenshots`. macOS X: On the Desktop. Any other OS: In
-the current directory.
+file, depends on the OS:
+
+  - Windows: In `Users\username\My Pictures\ScummVM Screenshots`.
+  - macOS X: On the Desktop.
+  - Any other OS: In the current directory.
 
 ## 10.0) Compiling
 
