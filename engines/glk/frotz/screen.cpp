@@ -30,6 +30,7 @@ namespace Frotz {
 
 FrotzScreen::FrotzScreen() : Glk::Screen() {
 	g_conf->_tStyles[style_User1].font = CUSTOM;
+	g_conf->_gStyles[style_User1].font = CUSTOM;
 }
 
 void FrotzScreen::loadFonts(Common::Archive *archive) {
