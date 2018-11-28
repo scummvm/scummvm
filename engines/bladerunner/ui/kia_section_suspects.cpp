@@ -86,6 +86,7 @@ KIASectionSuspects::KIASectionSuspects(BladeRunnerEngine *vm, ActorClues *clues)
 
 	_suspectSelected = -1;
 	_suspectPhotoShapeId = -1;
+	_suspectPhotoNotUsed = -1;
 	_suspectPhotoShape = nullptr;
 	_suspectsFoundCount = 0;
 	_suspectsFound.resize(_vm->_gameInfo->getSuspectCount());
@@ -106,6 +107,22 @@ KIASectionSuspects::~KIASectionSuspects() {
 	delete _whereaboutsCheckBox;
 	delete _buttons;
 	delete _uiContainer;
+}
+
+void KIASectionSuspects::reset() {
+	_acquiredClueCount = 0;
+	_suspectsFoundCount = 0;
+	_mouseX = 0;
+	_mouseY = 0;
+	_suspectSelected = -1;
+	_crimeSelected = -1;
+	_suspectPhotoShapeId = -1;
+	_suspectPhotoNotUsed = -1;
+	_whereaboutsFilter  = true;
+	_MOFilter = true;
+	_replicantFilter = true;
+	_nonReplicantFilter = true;
+	_othersFilter = true;
 }
 
 void KIASectionSuspects::open() {
@@ -168,7 +185,6 @@ void KIASectionSuspects::draw(Graphics::Surface &surface) {
 	_othersCheckBox->setChecked(_othersFilter);
 
 	_uiContainer->draw(surface);
-
 
 	_vm->_mainFont->drawColor(_vm->_textKIA->getText(0),  surface, 300, 162, 0x77DF);
 	_vm->_mainFont->drawColor(_vm->_textKIA->getText(46), surface, 142, 248, 0x77DF);
@@ -479,18 +495,20 @@ void KIASectionSuspects::updateSuspectPhoto() {
 	SuspectDatabaseEntry *suspect = _vm->_suspectsDatabase->get(_suspectSelected);
 
 	_suspectPhotoShapeId = -1;
+	_suspectPhotoNotUsed = -1;
 	int photoCluesCount = suspect->getPhotoCount();
 	if (photoCluesCount > 0) {
 		for (int i = 0 ; i < photoCluesCount; i++) {
-			//TODO: weird stuff going on here... it's using index instead id, also some field is used but its always -1
+			//TODO: weird stuff going on here... original game is using internal clue index instead id
 			if (_clues->isAcquired(suspect->getPhotoClueId(i))) {
 				_suspectPhotoShapeId = suspect->getPhotoShapeId(i);
+				_suspectPhotoNotUsed = suspect->getPhotoNotUsed(i);
 				break;
 			}
 		}
 	}
 
-	if (_suspectPhotoShapeId == -1) {
+	if (_suspectPhotoShapeId == -1 && _suspectPhotoNotUsed == -1) {
 		if (suspect->getSex()) {
 			_suspectPhotoShapeId = 14;
 		} else {

@@ -186,10 +186,10 @@ void ActorDialogueQueue::save(SaveFileWriteStream &f) {
 
 void ActorDialogueQueue::load(SaveFileReadStream &f) {
 	_entries.clear();
-	int count = f.readInt();
+	uint count = f.readInt();
 	assert(count <= kMaxEntries);
 	_entries.resize(count);
-	for (int i = 0; i < count; ++i) {
+	for (uint i = 0; i < count; ++i) {
 		Entry &e = _entries[i];
 		e.isNotPause = f.readBool();
 		e.isPause = f.readBool();

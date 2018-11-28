@@ -212,6 +212,15 @@ StringList getFeatureLibraries(const FeatureList &features);
 bool setFeatureBuildState(const std::string &name, FeatureList &features, bool enable);
 
 /**
+ * Gets the state of a given feature.
+ *
+ * @param name Name of the feature.
+ * @param features List of features to operate on.
+ * @return "true", when the feature is enabled, "false" otherwise.
+ */
+bool getFeatureBuildState(const std::string &name, FeatureList &features);
+
+/**
  * Structure to describe a build setup.
  *
  * This includes various information about which engines to

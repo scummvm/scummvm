@@ -66,8 +66,8 @@ int Elevator::activate(int elevatorId) {
 		return 0;
 	}
 
-	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
-	if (!_vqaPlayer->open(vqaName)) {
+	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, vqaName);
+	if (!_vqaPlayer->open()) {
 		return 0;
 	}
 
@@ -161,7 +161,7 @@ int Elevator::activate(int elevatorId) {
 	_buttonClicked = -1;
 	do {
 		_vm->gameTick();
-	} while (_buttonClicked == -1);
+	} while (_vm->_gameIsRunning && _buttonClicked == -1);
 
 	_imagePicker->deactivate();
 

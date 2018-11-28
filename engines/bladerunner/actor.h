@@ -70,6 +70,7 @@ private:
 	int     _targetFacing;
 	int     _walkboxId;
 
+	int     _cluesLimit;
 	int     _timer4RemainDefault;
 
 	// Flags
@@ -242,9 +243,10 @@ public:
 	bool isSpeeching();
 
 	void addClueToDatabase(int clueId, int unknown, bool clueAcquired, bool unknownFlag, int fromActorId);
+	bool canAcquireClue(int clueId) const;
 	void acquireClue(int clueId, bool unknownFlag, int fromActorId);
 	void loseClue(int clueId);
-	bool hasClue(int clueId)  const;
+	bool hasClue(int clueId) const;
 	void copyClues(int actorId);
 	void acquireCluesByRelations();
 

@@ -36,14 +36,19 @@ GameFlags::~GameFlags() {
 	delete[] _flags;
 }
 
+void GameFlags::clear() {
+	for (int i = 0; i <= _flagCount; ++i) {
+		reset(i);
+	}
+}
+
 void GameFlags::setFlagCount(int count) {
 	assert(count > 0);
 
 	_flagCount = count;
 	_flags = new uint32[count / 32 + 1]();
 
-	for (int i = 0; i <= _flagCount; ++i)
-		reset(i);
+	clear();
 }
 
 void GameFlags::set(int flag) {

@@ -381,12 +381,12 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 }
 
 void OSystem_SDL::quit() {
-	delete this;
+	destroy();
 	exit(0);
 }
 
 void OSystem_SDL::fatalError() {
-	delete this;
+	destroy();
 	exit(1);
 }
 

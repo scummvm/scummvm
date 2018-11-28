@@ -23,8 +23,13 @@
 #ifndef BLADERUNNER_SAVEFILE_H
 #define BLADERUNNER_SAVEFILE_H
 
+#include "common/array.h"
 #include "common/memstream.h"
 #include "common/types.h"
+
+#include "graphics/surface.h"
+
+#include "engines/savestate.h"
 
 namespace Common {
 class OutSaveFile;
@@ -38,27 +43,71 @@ class Vector2;
 class Vector3;
 class BoundingBox;
 
-class SaveFileWriteStream : public Common::MemoryWriteStreamDynamic {
+
+struct SaveFileHeader {
+	uint8              _version;
+	Common::String     _name;
+	int                _year;
+	int                _month;
+	int                _day;
+	int                _hour;
+	int                _minute;
+	Graphics::Surface *_thumbnail;
+};
+
+class SaveFileManager {
+private:
+	static const uint32 kTag = MKTAG('B', 'R', 'S', 'V');
+	static const uint32 kVersion = 1;
+	static const uint32 kNameLength = 32;
+
 public:
-	SaveFileWriteStream();
+	static const uint32 kThumbnailSize = 9600; // 80x60x16bpp
+
+	static SaveStateList list(const Common::String &target);
+	static SaveStateDescriptor queryMetaInfos(const Common::String &target, int slot);
+
+	static bool readHeader(Common::SeekableReadStream &in, SaveFileHeader &header, bool skipThumbnail = true);
+	static bool writeHeader(Common::WriteStream &out, SaveFileHeader &header);
+};
+
+class SaveFileWriteStream : public Common::WriteStream {
+private:
+	Common::WriteStream &_s;
+
+public:
+	SaveFileWriteStream(Common::WriteStream &s);
+
+	uint32 write(const void *dataPtr, uint32 dataSize) override { return _s.write(dataPtr, dataSize); }
+	bool flush() override { return _s.flush(); }
+	int32 pos() const override { return _s.pos(); }
 
 	void debug(char *p);
 
 	void padBytes(int count);
 
 	void writeInt(int v);
-	void writeFloat(int v);
+	void writeFloat(float v);
 	void writeBool(bool v);
 	void writeStringSz(const Common::String &s, int sz);
 	void writeVector2(const Vector2 &v);
 	void writeVector3(const Vector3 &v);
 	void writeRect(const Common::Rect &v);
-	void writeBoundingBox(const BoundingBox &v);
+	void writeBoundingBox(const BoundingBox &v, bool serialized);
 };
 
-class SaveFileReadStream : public Common::MemoryReadStream {
+class SaveFileReadStream : public Common::SeekableReadStream {
+private:
+	Common::SeekableReadStream &_s;
+
 public:
-	SaveFileReadStream(const byte *dataPtr, uint32 dataSize);
+	SaveFileReadStream(Common::SeekableReadStream &s);
+
+	bool eos() const override { return _s.eos(); }
+	uint32 read(void *dataPtr, uint32 dataSize) override { return _s.read(dataPtr, dataSize); }
+	int32 pos() const override { return _s.pos(); }
+	int32 size() const override { return _s.size(); }
+	bool seek(int32 offset, int whence = SEEK_SET) override { return _s.seek(offset, whence); }
 
 	int readInt();
 	float readFloat();
@@ -67,7 +116,7 @@ public:
 	Vector2 readVector2();
 	Vector3 readVector3();
 	Common::Rect readRect();
-	BoundingBox readBoundingBox();
+	BoundingBox readBoundingBox(bool serialized);
 };
 
 } // End of namespace BladeRunner

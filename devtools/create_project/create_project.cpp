@@ -314,6 +314,11 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	// HACK: Vorbis and Tremor can not be enabled simultaneously
+	if (getFeatureBuildState("tremor", setup.features)) {
+		setFeatureBuildState("vorbis", setup.features, false);
+	}
+
 	// Print status
 	cout << "Enabled engines:\n\n";
 	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
@@ -1027,7 +1032,9 @@ const Feature s_features[] = {
 	// Libraries
 	{      "libz",        "USE_ZLIB", "zlib",             true,  "zlib (compression) support" },
 	{       "mad",         "USE_MAD", "libmad",           true,  "libmad (MP3) support" },
-	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
+	{       "ogg",         "USE_OGG", "libogg_static",    true,  "Ogg support" },
+	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static", true, "Vorbis support" },
+	{    "tremor",      "USE_TREMOR", "libtremor", false, "Tremor support" },
 	{      "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   true, "FLAC support" },
 	{       "png",         "USE_PNG", "libpng16",         true,  "libpng support" },
 	{      "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
@@ -1115,6 +1122,15 @@ bool setFeatureBuildState(const std::string &name, FeatureList &features, bool e
 	if (i != features.end()) {
 		i->enable = enable;
 		return true;
+	} else {
+		return false;
+	}
+}
+
+bool getFeatureBuildState(const std::string &name, FeatureList &features) {
+	FeatureList::iterator i = std::find(features.begin(), features.end(), name);
+	if (i != features.end()) {
+		return i->enable;
 	} else {
 		return false;
 	}

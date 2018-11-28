@@ -364,7 +364,6 @@ void AIScripts::queryAnimationState(int actor, int *animationState, int *animati
 
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {
-		_AIScripts[actor]->FledCombat();
 		_AIScripts[actor]->QueryAnimationState(animationState, animationFrame, animationStateNext, animationNext);
 	}
 	_inScriptCounter--;

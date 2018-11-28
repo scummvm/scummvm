@@ -74,14 +74,14 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	} else {
 		_vm->playerLosesControl();
 		_vm->_scene->loopStartSpecial(kSceneLoopModeSpinner, loopId, immediately);
-		while (!_isOpen) {
+		while (_vm->_gameIsRunning && !_isOpen) {
 			_vm->gameTick();
 		}
 		_vm->playerGainsControl();
 	}
 
-	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
-	if (!_vqaPlayer->open("SPINNER.VQA")) {
+	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, "SPINNER.VQA");
+	if (!_vqaPlayer->open()) {
 		return 0;
 	}
 
@@ -159,7 +159,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	_selectedDestination = -1;
 	do {
 		_vm->gameTick();
-	} while (_selectedDestination == -1);
+	} while (_vm->_gameIsRunning && _selectedDestination == -1);
 
 	_imagePicker->deactivate();
 

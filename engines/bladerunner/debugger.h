@@ -59,6 +59,8 @@ public:
 	bool cmdSay(int argc, const char **argv);
 	bool cmdScene(int argc, const char **argv);
 	bool cmdVariable(int argc, const char **argv);
+	bool cmdLoad(int argc, const char **argv);
+	bool cmdSave(int argc, const char **argv);
 
 	void drawBBox(Vector3 start, Vector3 end, View *view, Graphics::Surface *surface, int color);
 	void drawSceneObjects();

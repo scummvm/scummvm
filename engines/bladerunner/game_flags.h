@@ -38,6 +38,7 @@ public:
 	GameFlags();
 	~GameFlags();
 
+	void clear();
 	void setFlagCount(int count);
 
 	void set(int flag);

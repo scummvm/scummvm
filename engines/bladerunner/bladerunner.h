@@ -224,7 +224,11 @@ public:
 	BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc);
 	~BladeRunnerEngine();
 
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	Common::Error run();
 
@@ -233,7 +237,6 @@ public:
 	void shutdown();
 
 	bool loadSplash();
-	bool init2();
 
 	Common::Point getMousePos() const;
 	bool isMouseButtonDown() const;
@@ -271,16 +274,18 @@ public:
 	void playerLosesControl();
 	void playerGainsControl();
 
-	bool saveGame(const Common::String &filename, byte *thumbnail);
-	void loadGame(const Common::String &filename, byte *thumbnail);
-	void newGame();
+	bool saveGame(Common::WriteStream &stream, const Graphics::Surface &thumbnail);
+	bool loadGame(Common::SeekableReadStream &stream);
+	void newGame(int difficulty);
 	void autoSaveGame();
 
 	void ISez(const Common::String &str);
 
-	void blitToScreen(const Graphics::Surface &src);
+	void blitToScreen(const Graphics::Surface &src) const;
+	Graphics::Surface generateThumbnail() const;
 
 	GUI::Debugger *getDebugger();
+	Common::String getTargetName() const;
 };
 
 static inline const Graphics::PixelFormat createRGB555() {
