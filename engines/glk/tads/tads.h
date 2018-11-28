@@ -33,6 +33,10 @@ namespace TADS {
  * tads game interpreter
  */
 class TADS : public GlkAPI {
+protected:
+	winid_t mainwin, statuswin;
+	glui32 mainfg, mainbg;
+	glui32 statusfg, statusbg;
 public:
 	/**
 	 * Constructor
