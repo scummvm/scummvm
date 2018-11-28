@@ -25,6 +25,8 @@
 #include "glk/frotz/frotz.h"
 #include "glk/scott/detection.h"
 #include "glk/scott/scott.h"
+#include "glk/tads/detection.h"
+#include "glk/tads/tads.h"
 
 #include "base/plugins.h"
 #include "common/md5.h"
@@ -133,6 +135,8 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 		*engine = new Glk::Frotz::Frotz(syst, gameDesc);
 	} else if (Glk::Scott::ScottMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
 		*engine = new Glk::Scott::Scott(syst, gameDesc);
+	} else if (Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
+		*engine = new Glk::TADS::TADS(syst, gameDesc);
 	} else {
 		return Common::kNoGameDataFoundError;
 	}
@@ -166,6 +170,7 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 	PlainGameList list;
 	Glk::Frotz::FrotzMetaEngine::getSupportedGames(list);
 	Glk::Scott::ScottMetaEngine::getSupportedGames(list);
+	Glk::TADS::TADSMetaEngine::getSupportedGames(list);
 
 	return list;
 }
@@ -179,6 +184,9 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 	gd = Glk::Scott::ScottMetaEngine::findGame(gameId);
 	if (gd.description) return gd;
 
+	gd = Glk::TADS::TADSMetaEngine::findGame(gameId);
+	if (gd.description) return gd;
+
 	return PlainGameDescriptor();
 }
 
@@ -186,6 +194,7 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	DetectedGames detectedGames;
 	Glk::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
+	Glk::TADS::TADSMetaEngine::detectGames(fslist, detectedGames);
 
 	return detectedGames;
 }

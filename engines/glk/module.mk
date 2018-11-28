@@ -42,7 +42,9 @@ MODULE_OBJS := \
 	frotz/quetzal.o \
 	frotz/screen.o \
 	scott/detection.o \
-	scott/scott.o
+	scott/scott.o \
+	tads/detection.o \
+	tads/tads.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GLK), DYNAMIC_PLUGIN)
