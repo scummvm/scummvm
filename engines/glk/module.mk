@@ -44,7 +44,9 @@ MODULE_OBJS := \
 	scott/detection.o \
 	scott/scott.o \
 	tads/detection.o \
-	tads/tads.o
+	tads/tads.o \
+	tads/tads2/tads2.o \
+	tads/tads3/tads3.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GLK), DYNAMIC_PLUGIN)

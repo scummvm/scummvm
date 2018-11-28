@@ -26,7 +26,8 @@
 #include "glk/scott/detection.h"
 #include "glk/scott/scott.h"
 #include "glk/tads/detection.h"
-#include "glk/tads/tads.h"
+#include "glk/tads/tads2/tads2.h"
+#include "glk/tads/tads3/tads3.h"
 
 #include "base/plugins.h"
 #include "common/md5.h"
@@ -100,6 +101,7 @@ bool Glk::GlkEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+	Glk::TADS::TADSDescriptor td;
 	assert(engine);
 
 	// Populate the game description
@@ -135,8 +137,11 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 		*engine = new Glk::Frotz::Frotz(syst, gameDesc);
 	} else if (Glk::Scott::ScottMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
 		*engine = new Glk::Scott::Scott(syst, gameDesc);
-	} else if (Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
-		*engine = new Glk::TADS::TADS(syst, gameDesc);
+	} else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str())).description) {
+		if (td.isTADS3)
+			*engine = new Glk::TADS::TADS3::TADS3(syst, gameDesc);
+		else
+			*engine = new Glk::TADS::TADS2::TADS2(syst, gameDesc);
 	} else {
 		return Common::kNoGameDataFoundError;
 	}

@@ -30,17 +30,18 @@ namespace Glk {
 namespace TADS {
 
 void TADSMetaEngine::getSupportedGames(PlainGameList &games) {
-	for (const PlainGameDescriptor *pd = TADS_GAME_LIST; pd->gameId; ++pd)
+	for (const TADSDescriptor *pd = TADS_GAME_LIST; pd->gameId; ++pd) {
 		games.push_back(*pd);
+	}
 }
 
-PlainGameDescriptor TADSMetaEngine::findGame(const char *gameId) {
-	for (const PlainGameDescriptor *pd = TADS_GAME_LIST; pd->gameId; ++pd) {
+TADSDescriptor TADSMetaEngine::findGame(const char *gameId) {
+	for (const TADSDescriptor *pd = TADS_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
 			return *pd;
 	}
 
-	return PlainGameDescriptor();;
+	return TADSDescriptor();;
 }
 
 bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
@@ -49,8 +50,8 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory() || !(file->getName().hasSuffixIgnoreCase(".saga")
-				|| file->getName().hasSuffixIgnoreCase(".dat")))
+		if (file->isDirectory() || !(file->getName().hasSuffixIgnoreCase(".gam")
+				|| file->getName().hasSuffixIgnoreCase(".t3")))
 			continue;
 
 		if (gameFile.open(*file)) {
@@ -63,7 +64,7 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 
 			if (p->_filesize) {
 				// Found a match
-				PlainGameDescriptor gameDesc = findGame(p->_gameId);
+				TADSDescriptor gameDesc = findGame(p->_gameId);
 				DetectedGame gd(p->_gameId, gameDesc.description, Common::EN_ANY, Common::kPlatformUnknown);
 				gd.addExtraEntry("filename", file->getName());
 

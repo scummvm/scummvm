@@ -30,10 +30,6 @@ namespace TADS {
 TADS::TADS(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
 }
 
-void TADS::runGame(Common::SeekableReadStream *gameFile) {
-	// TODO
-}
-
 Common::Error TADS::loadGameData(strid_t file) {
 	// TODO
 	return Common::kNoError;

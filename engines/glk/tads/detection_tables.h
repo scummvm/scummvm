@@ -36,9 +36,10 @@ struct TADSGame {
 	int32 _filesize;
 };
 
-const PlainGameDescriptor TADS_GAME_LIST[] = {
-	{ "tads",     "TADS" },
-	{ nullptr, nullptr }
+const TADSDescriptor TADS_GAME_LIST[] = {
+	{ "tads2", "TADS 2 Game", false },
+	{ "tads3", "TADS 3 Game", true },
+	{ nullptr, nullptr, false }
 };
 
 const TADSGame TADS_GAMES[] = {
