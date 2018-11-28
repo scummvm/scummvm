@@ -147,6 +147,7 @@ static const char *const selectorNameTable[] = {
 	"readWord",     // LSL7, Phant1, Torin
 	"points",       // PQ4
 	"select",       // PQ4
+	"addObstacle",  // QFG4
 	"handle",       // RAMA
 	"saveFilePtr",  // RAMA
 	"priority",     // RAMA
@@ -225,6 +226,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_readWord,
 	SELECTOR_points,
 	SELECTOR_select,
+	SELECTOR_addObstacle,
 	SELECTOR_handle,
 	SELECTOR_saveFilePtr,
 	SELECTOR_priority,
@@ -7924,6 +7926,35 @@ static const uint16 qfg4SetScalerPatch[] = {
 	PATCH_END
 };
 
+// The castle's great hall has a doorMat region that intermittently sends hero
+// back to the room they just left (the barrel room) the instant they arrive.
+//
+// Entry from room 623 starts hero at (0, 157), the edge of the doorMat. We
+// shrink the region by 2 pixels. Then sEnterTheRoom moves hero safely across.
+// The region is a rectangle. Point 0 is top-left. Point 3 is bottom-left.
+//
+// Does not apply to English floppy 1.0. It lacked a western doorMat entirely.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: vClosentDoor::init()
+// Fixes bug: #10731
+static const uint16 qfg4GreatHallEntrySignature[] = {
+	SIG_MAGICDWORD,
+	0x76,                               // push0 (point 0)
+	0x38, SIG_UINT16(0x0088),           // pushi 136
+	SIG_ADDTOOFFSET(+10),               // ...
+	0x76,                               // push0 0d (point 3)
+	0x38, SIG_UINT16(0x00b4),           // pushi 180d
+	SIG_END
+};
+
+static const uint16 qfg4GreatHallEntryPatch[] = {
+	0x7a,                               // push2
+	PATCH_ADDTOOFFSET(+13),             // ...
+	0x7a,                               // push2
+	PATCH_END
+};
+
 // In QFG4, the kernel func SetNowSeen() returns void - meaning it doesn't
 // modify the accumulator to store a result. Yet math was performed on it!
 //
@@ -8001,6 +8032,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   542, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   543, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
