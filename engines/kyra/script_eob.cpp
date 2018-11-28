@@ -1495,7 +1495,8 @@ int EoBInfProcessor::oeob_sequence(int8 *data) {
 		break;
 
 	case -1:
-		_vm->_runFlag = _vm->checkPassword();
+		if (_vm->gameFlags().platform == Common::kPlatformDOS)
+			_vm->_runFlag = _vm->checkPassword();
 		break;
 
 	default:

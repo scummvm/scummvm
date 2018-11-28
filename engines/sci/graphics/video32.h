@@ -319,7 +319,7 @@ public:
 	 * Initializes the VMD rendering parameters for the current VMD. This must
 	 * be called after `open`.
 	 */
-	void init(const int16 x, const int16 y, const PlayFlags flags, const int16 boostPercent, const int16 boostStartColor, const int16 boostEndColor);
+	void init(int16 x, int16 y, const PlayFlags flags, const int16 boostPercent, const int16 boostStartColor, const int16 boostEndColor);
 
 	/**
 	 * Stops playback and closes the currently open VMD stream.

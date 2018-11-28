@@ -67,6 +67,8 @@ public:
 	KIASectionClues(BladeRunnerEngine *vm, ActorClues *clues);
 	~KIASectionClues();
 
+	void reset();
+
 	void open();
 	void close();
 

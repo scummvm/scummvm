@@ -75,10 +75,13 @@ void TextDisplayer_rpg::setupField(int dim, bool mode) {
 	_textDimData[dim].color2 = _vm->guiSettings()->colors.fill;
 	_screen->setScreenDim(dim);
 
-	if (mode)
+	if (mode) {
+		_screen->set16bitShadingLevel(4);
 		clearCurDim();
-	else
+		_screen->set16bitShadingLevel(0);
+	} else {
 		resetDimTextPositions(dim);
+	}
 }
 
 void TextDisplayer_rpg::resetDimTextPositions(int dim) {
@@ -123,7 +126,8 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 	int sdx = _screen->curDimIndex();
 
 	bool sjisTextMode = (_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
-	int sjisOffs = sjisTextMode ? 8 : 9;
+	int sjisOffs = (sjisTextMode || _vm->game() == GI_EOB2) ? 8 : 9;
+	Screen::FontId of = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? _screen->setFont(Screen::FID_8_FNT) : _screen->_currentFont;
 
 	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charWidth);
 
@@ -148,20 +152,12 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 		if (_vm->gameFlags().lang == Common::JA_JPN) {
 			uint8 cu = (uint8) c;
 			if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
-				if (sjisTextMode) {
-					_currentLine[_numCharsLeft++] = c;
-					_currentLine[_numCharsLeft++] = parseCommand();
-					_currentLine[_numCharsLeft] = '\0';
-				}
-
 				if ((_textDimData[sdx].column + _lineWidth + sjisOffs) > (sd->w << 3))
 					printLine(_currentLine);
 
-				if (!sjisTextMode) {
-					_currentLine[_numCharsLeft++] = c;
-					_currentLine[_numCharsLeft++] = parseCommand();
-					_currentLine[_numCharsLeft] = '\0';
-				}
+				_currentLine[_numCharsLeft++] = c;
+				_currentLine[_numCharsLeft++] = parseCommand();
+				_currentLine[_numCharsLeft] = '\0';
 
 				_lineWidth += sjisOffs;
 				c = parseCommand();
@@ -233,6 +229,8 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 
 	if (_numCharsLeft)
 		printLine(_currentLine);
+
+	_screen->setFont(of);
 }
 
 char TextDisplayer_rpg::parseCommand() {
@@ -291,7 +289,7 @@ void TextDisplayer_rpg::readNextPara() {
 void TextDisplayer_rpg::printLine(char *str) {
 	const ScreenDim *sd = _screen->_curDim;
 	int sdx = _screen->curDimIndex();
-	bool sjisTextMode = (_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
+	bool sjisTextMode = _vm->gameFlags().lang == Common::JA_JPN && (_vm->gameFlags().use16ColorMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
 
 	int fh = (_screen->_currentFont == Screen::FID_SJIS_FNT) ? 9 : (_screen->getFontHeight() + _screen->_charOffset);
 	int lines = (sd->h - _screen->_charOffset) / fh;
@@ -309,7 +307,10 @@ void TextDisplayer_rpg::printLine(char *str) {
 		if (h2)
 			_screen->copyRegion(sd->sx << 3, sd->sy + fh, sd->sx << 3, sd->sy, sd->w << 3, h2, _screen->_curPage, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
+		_screen->set16bitShadingLevel(4);
 		_screen->fillRect(sd->sx << 3, sd->sy + h1, ((sd->sx + sd->w) << 3) - 1, sd->sy + sd->h - 1, _textDimData[sdx].color2);
+		_screen->set16bitShadingLevel(0);
+
 		if (_textDimData[sdx].line)
 			_textDimData[sdx].line--;
 	}
@@ -490,7 +491,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	str[len] = 0;
 
 	_numCharsLeft = strlen(str);
-	_lineWidth = sjisTextMode ? (_numCharsLeft << 2) : (_screen->_currentFont == Screen::FID_SJIS_FNT ? _numCharsLeft * 9: _screen->getTextWidth(str));
+	_lineWidth = sjisTextMode ? (_numCharsLeft << 2) : (_screen->_currentFont == Screen::FID_SJIS_FNT ? _numCharsLeft * 9 : _screen->getTextWidth(str));
 
 	if (!_numCharsLeft && (_textDimData[sdx].column + twoByteCharOffs) <= (sd->w << 3))
 		return;
@@ -507,7 +508,9 @@ void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakStr
 	assert(strlen(str) < kEoBTextBufferSize);
 	Common::strlcpy(_dialogueBuffer, str, kEoBTextBufferSize);
 
+	_screen->set16bitShadingLevel(4);
 	displayText(_dialogueBuffer);
+	_screen->set16bitShadingLevel(0);
 
 	if (pageBreakString) {
 		if (pageBreakString[0]) {
@@ -574,7 +577,7 @@ void TextDisplayer_rpg::textPageBreak() {
 		SWAP(_vm->_dialogueButtonLabelColor1, _vm->_dialogueButtonLabelColor2);
 
 	int cp = _screen->setCurPage(0);
-	Screen::FontId cf = _screen->setFont((_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	Screen::FontId cf = _screen->setFont((_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode) ? Screen::FID_SJIS_FNT : ((_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? Screen::FID_8_FNT : Screen::FID_6_FNT));
 
 	if (_vm->game() == GI_LOL)
 		_vm->_timer->pauseSingleTimer(11, true);
@@ -622,8 +625,11 @@ void TextDisplayer_rpg::textPageBreak() {
 		_vm->gui_drawBox(x + 8, (y & ~7) - 1, 66, 10, 0xEE, 0xCC, -1);
 		_screen->printText(_pageBreakString, (x + 37 - (strlen(_pageBreakString) << 1) + 4) & ~3, (y + 2) & ~7, 0xC1, 0);
 	} else {
+		int yOffs = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? 1 : 2;
+		_screen->set16bitShadingLevel(4);
 		_vm->gui_drawBox(x, y, w, _vm->guiSettings()->buttons.height, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
-		_screen->printText(_pageBreakString, x + (w >> 1) - (_vm->screen()->getTextWidth(_pageBreakString) >> 1), y + 2, _vm->_dialogueButtonLabelColor1, 0);
+		_screen->set16bitShadingLevel(0);
+		_screen->printText(_pageBreakString, x + (w >> 1) - (_vm->screen()->getTextWidth(_pageBreakString) >> 1), y + yOffs, _vm->_dialogueButtonLabelColor1, 0);
 	}
 
 	_vm->removeInputTop();
@@ -667,12 +673,14 @@ void TextDisplayer_rpg::textPageBreak() {
 		}
 	} while (loop && !_vm->shouldQuit());
 
+	_screen->set16bitShadingLevel(4);
 	if (_vm->gameFlags().use16ColorMode)
 		_screen->fillRect(x + 8, y, x + 57, y + 9, _textDimData[_screen->curDimIndex()].color2);
 	else
-		_screen->fillRect(x, y, x + w - 1, y + 8, _textDimData[_screen->curDimIndex()].color2);
+		_screen->fillRect(x, y, x + w - 1, y + _vm->guiSettings()->buttons.height - 1, _textDimData[_screen->curDimIndex()].color2);
 
 	clearCurDim();
+	_screen->set16bitShadingLevel(0);
 	_screen->updateScreen();
 
 	if (_vm->game() == GI_LOL)
@@ -717,11 +725,13 @@ void TextDisplayer_rpg::displayWaitButton() {
 
 	while (!_vm->processDialogue() && !_vm->shouldQuit()) {}
 
+	_screen->set16bitShadingLevel(4);
 	_screen->fillRect(_vm->_dialogueButtonPosX[0], _vm->_dialogueButtonPosY[0], _vm->_dialogueButtonPosX[0] + _vm->_dialogueButtonWidth - 1, _vm->_dialogueButtonPosY[0] + _vm->guiSettings()->buttons.height - 1, _vm->guiSettings()->colors.fill);
+	clearCurDim();
+	_screen->set16bitShadingLevel(0);
 	_screen->updateScreen();
 	_vm->_dialogueButtonWidth = 95;
 	SWAP(_vm->_dialogueButtonLabelColor1, _vm->_dialogueButtonLabelColor2);
-	clearCurDim();
 }
 
 } // End of namespace Kyra

@@ -324,6 +324,7 @@ Common::Error FullpipeEngine::run() {
 		_system->updateScreen();
 	}
 
+	delete _modalObject;
 	freeGameLoader();
 
 	cleanup();

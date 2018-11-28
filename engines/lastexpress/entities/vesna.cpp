@@ -1049,8 +1049,6 @@ IMPLEMENT_FUNCTION(29, Vesna, guarding)
 
 	case kActionOpenDoor:
 		setCallback(1);
-
-		getData()->currentCall++;
 		setup_savegame(kSavegameTypeEvent, kEventCathVesnaRestaurantKilled);
 		break;
 
@@ -1081,7 +1079,7 @@ IMPLEMENT_FUNCTION(30, Vesna, climbing)
 	case kActionNone:
 		if (!params->param1) {
 			if (Entity::updateParameter(params->param3, getState()->timeTicks, 120)) {
-				getSound()->playSound(kEntityVesna, "Ves5001", kFlagDefault);
+				getSound()->playSound(kEntityVesna, "Ves5001", kVolumeFull);
 				params->param1 = 1;
 			}
 		}
@@ -1118,6 +1116,7 @@ IMPLEMENT_FUNCTION(30, Vesna, climbing)
 				getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, params->param2 == Fight::kFightEndLost);
 			} else {
 				getSound()->playSound(kEntityPlayer, "TUNNEL");
+				// TODO: fade to black screen
 
 				getState()->time = (TimeValue)(getState()->time + 1800);
 
@@ -1145,7 +1144,7 @@ IMPLEMENT_FUNCTION(30, Vesna, climbing)
 			setCallback(2);
 			setup_savegame(kSavegameTypeEvent, kEventCathVesnaTrainTopKilled);
 		} else {
-			getSound()->playSound(kEntityVesna, "Ves5001", kFlagDefault);
+			getSound()->playSound(kEntityVesna, "Ves5001", kVolumeFull);
 			params->param1 = 1;
 		}
 		break;

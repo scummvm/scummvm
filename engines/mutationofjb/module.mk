@@ -2,6 +2,7 @@ MODULE := engines/mutationofjb
 
 MODULE_OBJS := \
 	commands/additemcommand.o \
+	commands/bitmapvisibilitycommand.o \
 	commands/callmacrocommand.o \
 	commands/camefromcommand.o \
 	commands/changecommand.o \
@@ -14,13 +15,17 @@ MODULE_OBJS := \
 	commands/ifitemcommand.o \
 	commands/ifpiggycommand.o \
 	commands/labelcommand.o \
+	commands/loadplayercommand.o \
 	commands/newroomcommand.o \
+	commands/playanimationcommand.o \
 	commands/removeallitemscommand.o \
 	commands/removeitemcommand.o \
 	commands/renamecommand.o \
 	commands/saycommand.o \
 	commands/seqcommand.o \
 	commands/setcolorcommand.o \
+	commands/specialshowcommand.o \
+	commands/switchpartcommand.o \
 	commands/talkcommand.o \
 	commands/randomcommand.o \
 	tasks/conversationtask.o \
@@ -30,8 +35,10 @@ MODULE_OBJS := \
 	tasks/taskmanager.o \
 	widgets/buttonwidget.o \
 	widgets/conversationwidget.o \
+	widgets/gamewidget.o \
 	widgets/imagewidget.o \
 	widgets/inventorywidget.o \
+	widgets/labelwidget.o \
 	widgets/widget.o \
 	animationdecoder.o \
 	assets.o \
@@ -44,6 +51,7 @@ MODULE_OBJS := \
 	gamedata.o \
 	gamescreen.o \
 	guiscreen.o \
+	hardcodedstrings.o \
 	inventory.o \
 	inventoryitemdefinitionlist.o \
 	mutationofjb.o \

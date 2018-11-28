@@ -175,7 +175,15 @@ void Script::directGameLoad(int slot) {
 		return;
 	}
 
-	// TODO: Return to the main script, likely reusing most of o_returnscript()
+	// Return to the main script if required
+	if (_savedCode) {
+		// Returning the correct spot, dealing with _savedVariables, etc
+		// is not needed as game state is getting nuked anyway
+		delete[] _code;
+		_code = _savedCode;
+		_codeSize = _savedCodeSize;
+		_savedCode = nullptr;
+	}
 
 	// HACK: We set the slot to load in the appropriate variable, and set the
 	// current instruction to the one that actually loads the saved game
@@ -396,6 +404,11 @@ void Script::loadgame(uint slot) {
 	_vm->_grvCursorMan->show(false);
 }
 
+bool Script::canDirectSave() const {
+	// Disallow when running a subscript
+	return _savedCode == nullptr;
+}
+
 void Script::directGameSave(int slot, const Common::String &desc) {
 	if (slot < 0 || slot > MAX_SAVES - 1) {
 		return;
@@ -426,9 +439,11 @@ void Script::savegame(uint slot) {
 	// Cache the saved name
 	for (int i = 0; i < 15; i++) {
 		newchar = _variables[i] + 0x30;
-		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A)) {
+		if ((newchar < 0x30 || newchar > 0x39) && (newchar < 0x41 || newchar > 0x7A) && newchar != 0x2E) {
 			save[i] = '\0';
 			break;
+		} else if (newchar == 0x2E) { // '.', generated when space is pressed
+			save[i] = ' ';
 		} else {
 			save[i] = newchar;
 		}

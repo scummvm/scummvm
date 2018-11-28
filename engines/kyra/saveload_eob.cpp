@@ -38,6 +38,7 @@ namespace Kyra {
 Common::Error EoBCoreEngine::loadGameState(int slot) {
 	// Special slot id -1 for EOB1 party transfer
 	const char *fileName = (slot == -1) ? _savegameFilename.c_str() : getSavegameFilename(slot);
+	setHandItem(-1);
 
 	SaveHeader header;
 	Common::InSaveFile *saveFile = openSaveForReading(fileName, header, (slot != -1));
@@ -54,7 +55,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 		EoBCharacter *c = &_characters[i];
 		c->id = in.readByte();
 		c->flags = in.readByte();
-		in.read(c->name, 11);
+		in.read(c->name, (header.version < 18) ? 11 : 21);
 		c->strengthCur = in.readSByte();
 		c->strengthMax = in.readSByte();
 		c->strengthExtCur = in.readSByte();
@@ -273,6 +274,9 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	}
 
 	loadLevel(_currentLevel, _currentSub);
+	if (_flags.platform == Common::kPlatformFMTowns && _gameToLoad != -1)
+		_screen->setScreenPalette(_screen->getPalette(0));
+
 	_sceneUpdateRequired = true;
 	_screen->setFont(Screen::FID_6_FNT);
 
@@ -282,6 +286,9 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 				spellCallback_start_trueSeeing();
 		}
 	}
+
+	if (!_updateFlags)
+		_screen->fillRect(64, 121, 175, 176, 0, 2);
 
 	_screen->setCurPage(0);
 	gui_drawPlayField(false);
@@ -316,6 +323,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) {
 	Common::String saveNameTmp;
 	const char *fileName = 0;
+	setHandItem(-1);
 
 	// Special slot id -1 to create final save for party transfer
 	if (slot == -1) {
@@ -345,7 +353,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 
 		out->writeByte(c->id);
 		out->writeByte(c->flags);
-		out->write(c->name, 11);
+		out->write(c->name, 21);
 		out->writeSByte(c->strengthCur);
 		out->writeSByte(c->strengthMax);
 		out->writeSByte(c->strengthExtCur);
@@ -525,6 +533,8 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 
 	_gui->notifyUpdateSaveSlotsList();
 
+	setHandItem(_itemInHand);
+
 	return Common::kNoError;
 }
 
@@ -636,13 +646,27 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 
 	Common::SeekableSubReadStreamEndian in(fs, 0, fs->size(), _flags.platform == Common::kPlatformAmiga, DisposeAfterUse::YES);
 
+	// detect source platform
+	Common::Platform sourcePlatform = Common::kPlatformDOS;
+	in.seek(32);
+	uint16 testSJIS = in.readByte();
+	in.seek(53);
+	int8 testStr = in.readSByte();
+	in.seek(66);
+	int8 testChr = in.readSByte();
+	in.seek(0);
+	if (testStr >= 0 && testStr <= 25 && testChr >= 0 && testChr <= 25) {
+		if (testSJIS >= 0xE0 || (testSJIS > 0x80 && testSJIS < 0xA0))
+			sourcePlatform = Common::kPlatformFMTowns;
+	}
+
 	if (_flags.gameID == GI_EOB1) {
 		// Nothing to read here for EOB 1. Original EOB 1 has
 		// only one save slot without save file description.
 		desc = "<IMPORTED GAME>";
 	} else {
-		char tempStr[20];
-		in.read(tempStr, 20);
+		char tempStr[30];
+		in.read(tempStr, sourcePlatform == Common::kPlatformFMTowns ? 30 : 20);
 		desc = tempStr;
 	}
 
@@ -650,7 +674,9 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		EoBCharacter *c = &_characters[i];
 		c->id = in.readByte();
 		c->flags = in.readByte();
-		in.read(c->name, 11);
+		in.read(c->name, sourcePlatform == Common::kPlatformFMTowns ? 21 : 11);
+		if (_flags.platform != sourcePlatform)
+			c->name[10] = '\0';
 		c->strengthCur = in.readSByte();
 		c->strengthMax = in.readSByte();
 		c->strengthExtCur = in.readSByte();
@@ -696,7 +722,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		c->effectFlags = in.readUint32();
 		if (c->effectFlags && _flags.gameID == GI_EOB1) {
 			// Spell effect flags are completely different in EOB I. We only use EOB II style flags in ScummVM.
-			// Doesn't matter much, since these are the temporary spell effects only anyway.
+			// Doesn't matter much, since these are only temporary spell effects.
 			warning("EoBCoreEngine::readOriginalSaveFile(): Unhandled character effect flags encountered in original EOB1 save file '%s' ('%s')", file.c_str(), desc.c_str());
 			c->effectFlags = 0;
 		}
@@ -716,13 +742,13 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	_partyEffectFlags = (_flags.gameID == GI_EOB1) ? in.readUint16() : in.readUint32();
 	if (_partyEffectFlags && _flags.gameID == GI_EOB1) {
 		// Spell effect flags are completely different in EOB I. We only use EOB II style flags in ScummVM.
-		// Doesn't matter much, since these are the temporary spell effects only anyway.
+		// Doesn't matter much, since these are only temporary spell effects.
 		warning("EoBCoreEngine::readOriginalSaveFile(): Unhandled party effect flags encountered in original EOB1 save file '%s' ('%s')", file.c_str(), desc.c_str());
 		_partyEffectFlags = 0;
 	}
 	if (_flags.gameID == GI_EOB2)
 		in.skip(1);
-
+	
 	_inf->loadState(in, true);
 
 	int numItems = (_flags.gameID == GI_EOB1) ? 500 : 600;
@@ -742,7 +768,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	}
 
 	int numParts = (_flags.gameID == GI_EOB1) ? 12 : 17;
-	int partSize = (_flags.gameID == GI_EOB1) ? 2040 : 2130;
+	int partSize = (sourcePlatform == Common::kPlatformFMTowns) ? 5030 : (_flags.gameID == GI_EOB1 ? 2040 : 2130);
 	uint32 nextPart = in.pos();
 	uint8 *cmpData = new uint8[1200];
 
@@ -777,8 +803,12 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		memset(lw, 0, 5 * sizeof(WallOfForce));
 		l->wallsOfForce = lw;
 
-		in.read(cmpData, 1200);
-		_screen->decodeFrame4(cmpData, l->wallsXorData, 4096);
+		if (sourcePlatform == Common::kPlatformFMTowns) {
+			in.read(l->wallsXorData, 4096);
+		} else {
+			in.read(cmpData, 1200);
+			_screen->decodeFrame4(cmpData, l->wallsXorData, 4096);
+		}
 		_curBlockFile = getBlockFileName(i + 1, 0);
 		const uint8 *p = getBlockFileData();
 		uint16 len = READ_LE_UINT16(p + 4);
@@ -789,6 +819,9 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 			for (int iii = 0; iii < 4; iii++)
 				*d++ ^= p[ii * len + iii];
 		}
+
+		if (sourcePlatform == Common::kPlatformFMTowns)
+			in.skip(4);
 
 		for (int ii = 0; ii < 30; ii++) {
 			EoBMonsterInPlay *m = &lm[ii];
@@ -998,8 +1031,8 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 	Common::OutSaveFile *out = new Common::OutSaveFile(nf.createWriteStream());
 
 	if (_flags.gameID == GI_EOB2) {
-		static const char tempStr[20] = "SCUMMVM EXPORT     ";
-		out->write(tempStr, 20);
+		static const char tempStr[31] = "SCUMMVM EXPORT     ";
+		out->write(tempStr, (_flags.platform == Common::kPlatformFMTowns) ? 30 : 20);
 	}
 
 	completeDoorOperations();
@@ -1014,7 +1047,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 		EoBCharacter *c = &_characters[i];
 		out->writeByte(c->id);
 		out->writeByte(c->flags);
-		out->write(c->name, 11);
+		out->write(c->name, (_flags.platform == Common::kPlatformFMTowns) ? 21 : 11);
 		out->writeSByte(c->strengthCur);
 		out->writeSByte(c->strengthMax);
 		out->writeSByte(c->strengthExtCur);
@@ -1110,13 +1143,14 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 	}
 
 	int numParts = (_flags.gameID == GI_EOB1) ? 12 : 17;
-	int partSize = (_flags.gameID == GI_EOB1) ? 2040 : 2130;
-	uint8 *tempData = new uint8[4096];
+	int partSize = (_flags.platform == Common::kPlatformFMTowns) ? 5030 :(_flags.gameID == GI_EOB1) ? 2040 : 2130;
+	
+	uint8 *tempData = new uint8[5030];
 	uint8 *cmpData = new uint8[1200];
 
 	for (int i = 0; i < numParts; i++) {
 		LevelTempData *l = _lvlTempData[i];
-		memset(tempData, 0, 4096);
+		memset(tempData, 0, 5030);
 		memset(cmpData, 0, 1200);
 
 		if (!l || !(_hasTempDataFlags & (1 << i))) {
@@ -1135,11 +1169,18 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 				*d++ = l->wallsXorData[ii * len + iii] ^ p[ii * len + iii];
 		}
 
-		uint32 outsize = encodeFrame4(tempData, cmpData, 4096);
-		if (outsize > 1200)
-			error("Map compression failure: size of map = %d", outsize);
+		if (_flags.platform == Common::kPlatformFMTowns) {
+			out->write(tempData, 4096);
+		} else {
+			uint32 outsize = encodeFrame4(tempData, cmpData, 4096);
+			if (outsize > 1200)
+				error("Map compression failure: size of map = %d", outsize);
 
-		out->write(cmpData, 1200);
+			out->write(cmpData, 1200);
+		}
+
+		if (_flags.platform == Common::kPlatformFMTowns)
+			out->writeUint32BE(0);
 
 		for (int ii = 0; ii < 30; ii++) {
 			EoBMonsterInPlay *m = &((EoBMonsterInPlay*)l->monsters)[ii];

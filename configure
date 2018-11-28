@@ -38,7 +38,7 @@ SAVED_CXXFLAGS=$CXXFLAGS
 SAVED_DWP=$DWP
 SAVED_LD=$LD
 SAVED_LDFLAGS=$LDFLAGS
-SAVED_PKG_CONFIG_LIBDIR=$PKG_CONFIG_LIBDIR
+SAVED_PKG_CONFIG_LIBDIR=${PKG_CONFIG_LIBDIR:-unset}
 SAVED_RANLIB=$RANLIB
 SAVED_SDL_CONFIG=$SDL_CONFIG
 SAVED_STRIP=$STRIP
@@ -149,6 +149,7 @@ _sndio=auto
 _timidity=auto
 _zlib=auto
 _mpeg2=auto
+_a52=auto
 _sparkle=auto
 _osxdockplugin=auto
 _jpeg=auto
@@ -1048,7 +1049,10 @@ Optional Libraries:
   --with-mpeg2-prefix=DIR  prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
 
-  --with-jpeg-prefix=DIR   prefix where libjpeg is installed (optional)
+  --with-a52-prefix=DIR    Prefix where liba52 is installed (optional)
+  --enable-a52             enable a52 codec for MPEG decoder [autodetect]
+
+  --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
 
   --with-png-prefix=DIR    prefix where libpng is installed (optional)
@@ -1178,6 +1182,8 @@ for ac_option in $@; do
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-mpeg2)          _mpeg2=no       ;;
+	--enable-a52)             _a52=yes        ;;
+	--disable-a52)            _a52=no         ;;
 	--disable-jpeg)           _jpeg=no        ;;
 	--enable-jpeg)            _jpeg=yes       ;;
 	--disable-png)            _png=no         ;;
@@ -1234,6 +1240,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		MPEG2_CFLAGS="-I$arg/include"
 		MPEG2_LIBS="-L$arg/lib"
+		;;
+	--with-a52-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		A52_CFLAGS="-I$arg/include"
+		A52_LIBS="-L$arg/lib"
 		;;
 	--with-alsa-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2139,7 +2150,7 @@ fi
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-android | androidsdl | gamecube | ps2 | psp | switch | tizen | wii | webos)
+3ds | android | androidsdl | gamecube | ps2 | psp | switch | tizen | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2443,6 +2454,7 @@ case $_host_os in
 		else
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
+		append_var LDFLAGS "-L$DEVKITPRO/libctru/lib"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/3ds/lib"
 		append_var LIBS "-lcitro3d -lctru"
 		;;
@@ -2766,6 +2778,7 @@ case $_host_os in
 		append_var LIBS "-lmingw32 -lwinmm -lgdi32"
 		append_var OBJS "scummvmwinres.o"
 		add_line_to_config_mk 'WIN32 = 1'
+		_port_mk="backends/platform/sdl/win32/win32.mk"
 		;;
 	mint*)
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -3179,7 +3192,6 @@ if test -n "$_host"; then
 		ios7)
 			append_var DEFINES "-DIPHONE"
 			_backend="ios7"
-			_build_scalers=no
 			_seq_midi=no
 			_timidity=no
 			;;
@@ -3465,12 +3477,14 @@ case $_backend in
 		append_var LDFLAGS "-Wl,-Ttext,0x8c010000"
 		append_var LDFLAGS "-nostartfiles"
 		append_var LDFLAGS "-L$RONINDIR/lib"
-		append_var LIBS "$RONINDIR/lib/crt0.o"
+		append_var LDFLAGS "$RONINDIR/lib/crt0.o"
 		# Enable serial debugging output only when --enable-debug is passed
 		if test "$_release_build" = yes -o "$_debug_build" != yes; then
 			append_var LIBS "-lronin-noserial -lm"
+			append_var LDFLAGS "-lronin-noserial -lm"
 		else
 			append_var LIBS "-lronin -lm"
+			append_var LDFLAGS "-lronin -lm"
 		fi
 		;;
 	dingux)
@@ -4470,6 +4484,47 @@ define_in_config_if_yes "$_mpeg2" 'USE_MPEG2'
 echo "$_mpeg2"
 
 #
+# Check for liba52
+#
+echocheck "liba52"
+if test "$_a52" = auto ; then
+	_a52=no
+	cat > $TMPC << EOF
+typedef signed $type_1_byte int8_t;
+typedef signed $type_2_byte int16_t;
+typedef signed $type_4_byte int32_t;
+
+typedef unsigned $type_1_byte uint8_t;
+typedef unsigned $type_2_byte uint16_t;
+typedef unsigned $type_4_byte uint32_t;
+
+extern "C" {
+#include <a52dec/a52.h>
+}
+
+int main(void) {
+	a52_state_t *state = a52_init(0);
+	a52_free(state);
+	return 0;
+}
+EOF
+
+	if test -n "$_host"; then
+		# don't execute while cross compiling
+		cc_check $A52_CFLAGS $A52_LIBS -la52 && _a52=yes
+	else
+		cc_check_no_clean $A52_CFLAGS $A52_LIBS -la52 && $TMPO$HOSTEXEEXT && _a52=yes
+		cc_check_clean
+	fi
+fi
+if test "$_a52" = yes ; then
+	INCLUDES="$INCLUDES $A52_FLAGS"
+	LIBS="$LIBS $A52_LIBS -la52"
+fi
+define_in_config_if_yes "$_a52" 'USE_A52'
+echo "$_a52"
+
+#
 # Check for Sparkle if updates support is enabled
 #
 case $_host_os in
@@ -5081,7 +5136,7 @@ else
 int main(void) { setlocale(LC_ALL, ""); return 0; }
 EOF
 		_detectlang=no
-		cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
+		cc_check && _detectlang=yes
 	fi
 
 	define_in_config_h_if_yes $_detectlang 'USE_DETECTLANG'
@@ -5256,6 +5311,7 @@ fi
 case $_backend in
 	3ds)
 		if test "$_freetype2" = yes -a "$_png" = yes; then
+			append_var LIBS "-lbz2"
 			append_var LIBS "-lpng"
 		fi
 		if test "$_tremor" = yes -o "$_flac" = yes; then

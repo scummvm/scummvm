@@ -29,23 +29,17 @@
 namespace Kyra {
 
 DarkMoonEngine::DarkMoonEngine(OSystem *system, const GameFlags &flags) : EoBCoreEngine(system, flags) {
-	_animIntro = _animFinale = 0;
-	_shapesIntro = _shapesFinale = 0;
 	_dscDoorType5Offs = 0;
 	_numSpells = 70;
 	_menuChoiceInit = 4;
 
-	_introStrings = _cpsFilesIntro = _cpsFilesFinale = _finaleStrings = _kheldranStrings = _npcStrings[0] = _npcStrings[1] = _hornStrings = 0;
-	_shapesIntro = _shapesFinale = 0;
-	_creditsData = _npcShpData = _dscDoorType5Offs = _hornSounds = 0;
+	_kheldranStrings = _npcStrings[0] = _npcStrings[1] = _hornStrings = 0;
+	_utilMenuStrings = _ascii2SjisTables = _ascii2SjisTables2 = 0;
+	_npcShpData = _dscDoorType5Offs = _hornSounds = 0;
 	_dreamSteps = 0;
 }
 
 DarkMoonEngine::~DarkMoonEngine() {
-	delete[] _animIntro;
-	delete[] _animFinale;
-	delete[] _shapesIntro;
-	delete[] _shapesFinale;
 }
 
 Common::Error DarkMoonEngine::init() {
@@ -63,8 +57,14 @@ Common::Error DarkMoonEngine::init() {
 		_screen->setScreenPalette(pal);
 	}
 
-	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
+	_screen->loadPalette(_flags.platform == Common::kPlatformFMTowns ? "MENU.PAL" : "PALETTE.COL", _screen->getPalette(0));
 	_screen->setScreenPalette(_screen->getPalette(0));
+
+	// adjust menu settings for EOB II FM-Towns
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		_screen->modifyScreenDim(6, 10, 100, 21, 40);
+		_screen->modifyScreenDim(27, 0, 0, 21, 2);
+	}
 
 	return Common::kNoError;
 }
@@ -193,29 +193,32 @@ void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterInde
 	_screen->setCurPage(cp);
 }
 
-void DarkMoonEngine::loadMonsterDecoration(const char *file, int16 monsterIndex) {
-	Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.dcr", file));
-	if (!s)
-		return;
-
-	int len = s->readUint16LE();
+void DarkMoonEngine::loadMonsterDecoration(Common::SeekableReadStream *stream, int16 monsterIndex) {
+	int len = stream->readUint16LE();
+	Common::List<SpriteDecoration*> activeDecorations;
 
 	for (int i = 0; i < len; i++) {
 		for (int ii = 0; ii < 6; ii++) {
 			uint8 dc[6];
-			s->read(dc, 6);
+			stream->read(dc, 6);
 			if (!dc[2] || !dc[3])
 				continue;
 
 			SpriteDecoration *m = &_monsterDecorations[i * 6 + ii + monsterIndex];
-
-			m->shp = _screen->encodeShape(dc[0], dc[1], dc[2], dc[3]);
+			if (_flags.platform != Common::kPlatformFMTowns)
+				m->shp = _screen->encodeShape(dc[0], dc[1], dc[2], dc[3]);
 			m->x = (int8)dc[4];
 			m->y = (int8)dc[5];
+			activeDecorations.push_back(m);
 		}
 	}
 
-	delete s;
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		while (!activeDecorations.empty()) {
+			activeDecorations.front()->shp = loadTownsShape(stream);
+			activeDecorations.pop_front();
+		}
+	}
 }
 
 void DarkMoonEngine::replaceMonster(int unit, uint16 block, int pos, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem) {
@@ -339,6 +342,12 @@ void DarkMoonEngine::drawDoorIntern(int type, int, int x, int y, int w, int wall
 
 	drawBlockObject(0, 2, shp, x, y, 5);
 
+	if (_doorType[type] == 2) {
+		shp = _doorShapes[shapeIndex + 3];
+		y = _dscDoorFrameY2[mDim] - shp[1] + (((wall - _dscDoorScaleOffs[wall]) * _dscDoorScaleMult3[mDim]) >> 1) - 1;
+		drawBlockObject(0, 2, shp, x, y, 5);
+	}
+
 	if (_wllShapeMap[wall] == -1 && !_noDoorSwitch[type])
 		drawBlockObject(0, 2, _doorSwitches[shapeIndex].shp, _doorSwitches[shapeIndex].x + w, _doorSwitches[shapeIndex].y, 5);
 }
@@ -376,6 +385,10 @@ void DarkMoonEngine::restParty_npc() {
 	gui_drawAllCharPortraitsWithStats();
 
 	_screen->setClearScreenDim(10);
+	_screen->set16bitShadingLevel(4);
+	gui_drawBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, guiSettings()->colors.frame1, guiSettings()->colors.frame2, -1);
+	gui_drawBox((_screen->_curDim->sx << 3) + 1, _screen->_curDim->sy + 1, (_screen->_curDim->w << 3) - 2, _screen->_curDim->h - 2, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
+	_screen->set16bitShadingLevel(0);
 	_gui->messageDialogue2(11, 63, 6);
 	_gui->messageDialogue2(11, 64, 6);
 }
@@ -472,7 +485,7 @@ void DarkMoonEngine::characterLevelGain(int charIndex) {
 }
 
 const KyraRpgGUISettings *DarkMoonEngine::guiSettings() {
-	return &_guiSettings;
+	return (_flags.platform == Common::kPlatformFMTowns) ? &_guiSettingsFMTowns : &_guiSettingsDOS;
 }
 
 } // End of namespace Kyra

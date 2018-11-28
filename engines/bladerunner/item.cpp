@@ -177,7 +177,7 @@ bool Item::isUnderMouse(int mouseX, int mouseY) const {
 void Item::save(SaveFileWriteStream &f) {
 	f.writeInt(_setId);
 	f.writeInt(_itemId);
-	f.writeBoundingBox(_boundingBox);
+	f.writeBoundingBox(_boundingBox, false);
 	f.writeRect(_screenRectangle);
 	f.writeInt(_animationId);
 	f.writeVector3(_position);
@@ -199,7 +199,7 @@ void Item::save(SaveFileWriteStream &f) {
 void Item::load(SaveFileReadStream &f) {
 	_setId = f.readInt();
 	_itemId = f.readInt();
-	_boundingBox = f.readBoundingBox();
+	_boundingBox = f.readBoundingBox(false);
 	_screenRectangle = f.readRect();
 	_animationId = f.readInt();
 	_position = f.readVector3();

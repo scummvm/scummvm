@@ -45,6 +45,8 @@ public:
 	Room(Game *game, Graphics::Screen *screen);
 	bool load(uint8 roomNumber, bool roomB);
 	void drawObjectAnimation(uint8 objectId, int animOffset);
+	void drawBitmap(uint8 bitmapId);
+	void drawFrames(uint8 fromFrame, uint8 toFrame, const Common::Rect &area = Common::Rect(), uint8 threshold = 0xFF);
 	void redraw();
 private:
 	Game *_game;

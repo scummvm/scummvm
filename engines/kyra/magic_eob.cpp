@@ -281,11 +281,10 @@ void EoBCoreEngine::removeAllCharacterEffects(int charIndex) {
 	memset(c->effectsRemainder, 0, 4);
 
 	for (int i = 0; i < 10; i++) {
-		if (c->events[i] < 0) {
+		if (c->events[i] < 0)
 			removeCharacterEffect(-c->events[i], charIndex, 0);
-			c->timers[i] = 0;
-			c->events[i] = 0;
-		}
+		c->timers[i] = 0;
+		c->events[i] = 0;
 	}
 
 	setupCharacterTimers();
@@ -421,14 +420,14 @@ void EoBCoreEngine::sparkEffectDefensive(int charIndex) {
 void EoBCoreEngine::sparkEffectOffensive() {
 	disableSysTimer(2);
 	_screen->copyRegion(0, 0, 0, 0, 176, 120, 0, 2, Screen::CR_NO_P_CHECK);
+	int sh = _flags.useHiColorMode ? 9 : 8;
 
 	for (int i = 0; i < 16; i++)
-		_screen->copyRegionToBuffer(0, _sparkEffectOfX[i], _sparkEffectOfY[i], 16, 16, &_spellAnimBuffer[i << 8]);
-	_screen->updateScreen();
+		_screen->copyRegionToBuffer(0, _sparkEffectOfX[i], _sparkEffectOfY[i], 16, 16, &_spellAnimBuffer[i << sh]);
 
 	for (int i = 0; i < 11; i++) {
 		for (int ii = 0; ii < 16; ii++)
-			_screen->copyBlockToPage(2, _sparkEffectOfX[ii], _sparkEffectOfY[ii], 16, 16, &_spellAnimBuffer[ii << 8]);
+			_screen->copyBlockToPage(2, _sparkEffectOfX[ii], _sparkEffectOfY[ii], 16, 16, &_spellAnimBuffer[ii << sh]);
 
 		for (int ii = 0; ii < 16; ii++) {
 			int shpIndex = (_sparkEffectOfFlags1[i] & _sparkEffectOfFlags2[ii]) >> _sparkEffectOfShift[ii];
@@ -441,7 +440,7 @@ void EoBCoreEngine::sparkEffectOffensive() {
 	}
 
 	for (int i = 0; i < 16; i++)
-		_screen->copyBlockToPage(0, _sparkEffectOfX[i], _sparkEffectOfY[i], 16, 16, &_spellAnimBuffer[i << 8]);
+		_screen->copyBlockToPage(0, _sparkEffectOfX[i], _sparkEffectOfY[i], 16, 16, &_spellAnimBuffer[i << sh]);
 
 	_screen->updateScreen();
 	enableSysTimer(2);

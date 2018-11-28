@@ -34,14 +34,16 @@
 #include "common/str.h"
 #include "common/util.h"
 
+#include "engines/advancedDetector.h"
+
 namespace MutationOfJB {
 
 Game::Game(MutationOfJBEngine *vm)
 	: _vm(vm),
 	  _randomSource("mutationofjb"),
 	  _delayedLocalScript(nullptr),
+	  _runDelayedScriptStartup(false),
 	  _gui(*this, _vm->getScreen()),
-	  _currentAction(ActionInfo::Walk),
 	  _scriptExecCtx(*this),
 	  _taskManager(*this),
 	  _assets(*this) {
@@ -61,6 +63,10 @@ Game::Game(MutationOfJBEngine *vm)
 	_gui.init();
 
 	_taskManager.startTask(TaskPtr(new ObjectAnimationTask));
+}
+
+MutationOfJBEngine &Game::getEngine() {
+	return *_vm;
 }
 
 Common::RandomSource &Game::getRandomSource() {
@@ -109,7 +115,7 @@ Script *Game::changeSceneLoadScript(uint8 sceneId, bool partB) {
 	_gameData->_partB = partB;
 
 	_room->load(_gameData->_currentScene, partB);
-	_room->redraw();
+	_gui.refreshAfterSceneChanged();
 
 	EncryptedFile scriptFile;
 	Common::String fileName = Common::String::format("scrn%d%s.atn", sceneId, partB ? "b" : "");
@@ -128,8 +134,6 @@ Script *Game::changeSceneLoadScript(uint8 sceneId, bool partB) {
 	localScript->loadFromStream(scriptFile);
 	scriptFile.close();
 
-	_vm->updateCursor();
-
 	return localScript;
 }
 
@@ -145,8 +149,9 @@ void Game::changeScene(uint8 sceneId, bool partB) {
 	}
 }
 
-Script *Game::changeSceneDelayScript(uint8 sceneId, bool partB) {
+Script *Game::changeSceneDelayScript(uint8 sceneId, bool partB, bool runDelayedScriptStartup) {
 	_delayedLocalScript = changeSceneLoadScript(sceneId, partB);
+	_runDelayedScriptStartup = runDelayedScriptStartup;
 	return _delayedLocalScript;
 }
 
@@ -187,23 +192,19 @@ void Game::update() {
 	if (res == Command::Finished && _delayedLocalScript) {
 		delete _localScript;
 		_localScript = _delayedLocalScript;
+
+		if (_localScript && _runDelayedScriptStartup)
+			_scriptExecCtx.startStartupSection();
+
 		_delayedLocalScript = nullptr;
+		_runDelayedScriptStartup = false;
 	}
 
-	_gui.update();
 	_taskManager.update();
 }
 
 GameScreen &Game::getGameScreen() {
 	return _gui;
-}
-
-ActionInfo::Action Game::getCurrentAction() const {
-	return _currentAction;
-}
-
-void Game::setCurrentAction(ActionInfo::Action action) {
-	_currentAction = action;
 }
 
 uint8 Game::colorFromString(const char *colorStr) {
@@ -263,6 +264,16 @@ bool Game::loadSaveAllowed() const {
 		return false;
 
 	return true;
+}
+
+Common::Language Game::getLanguage() const {
+	return _vm->getGameDescription()->language;
+}
+
+void Game::switchToPartB() {
+	getGameData().getInventory().removeAllItems();
+	loadGameData(true);
+	changeSceneDelayScript(3, true, true);
 }
 
 }

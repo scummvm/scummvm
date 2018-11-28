@@ -33,17 +33,40 @@
 namespace Kyra {
 
 void EoBCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
-	_screen->loadShapeSetBitmap(filename, 3, 3);
-	const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		Common::String tmp = Common::String::format("%s.MNT", filename);
+		Common::SeekableReadStream *s = _res->createReadStream(tmp);
+		if (!s)
+			error("Screen_EoB::loadMonsterShapes(): Failed to load file '%s'", tmp.c_str());
 
-	for (int i = 0; i < 6; i++, enc += 4)
-		_monsterShapes[monsterIndex + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaMappingDefault);
+		for (int i = 0; i < 6; i++)
+			_monsterShapes[monsterIndex + i] = loadTownsShape(s);
 
-	generateMonsterPalettes(filename, monsterIndex);
+		for (int i = 0; i < 6; i++) {
+			for (int ii = 0; ii < 2; ii++)
+				s->read(_monsterPalettes[(monsterIndex >= 18 ? i + 6 : i) * 2 + ii], 16);
+		}
 
-	if (hasDecorations)
-		loadMonsterDecoration(filename, monsterIndex);
+		if (hasDecorations)
+			loadMonsterDecoration(s, monsterIndex);
 
+		delete s;
+	} else {
+		_screen->loadShapeSetBitmap(filename, 3, 3);
+		const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
+
+		for (int i = 0; i < 6; i++, enc += 4)
+			_monsterShapes[monsterIndex + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, _cgaMappingDefault);
+
+		generateMonsterPalettes(filename, monsterIndex);
+
+		if (hasDecorations) {
+			Common::SeekableReadStream *s = _res->createReadStream(Common::String::format("%s.DCR", filename));
+			if (s)
+				loadMonsterDecoration(s, monsterIndex);
+			delete s;
+		}
+	}
 	_screen->_curPage = 0;
 }
 
@@ -54,6 +77,15 @@ void EoBCoreEngine::releaseMonsterShapes(int first, int num) {
 		delete[] _monsterDecorations[i].shp;
 		_monsterDecorations[i].shp = 0;
 	}
+}
+
+uint8 *EoBCoreEngine::loadTownsShape(Common::SeekableReadStream *stream) {
+	uint32 size = stream->readUint32LE();
+	uint8 *shape= new uint8[size];
+	stream->read(shape, size);
+	if (shape[0] == 1)
+		shape[0]++;
+	return shape;
 }
 
 const uint8 *EoBCoreEngine::loadMonsterProperties(const uint8 *data) {
@@ -429,7 +461,7 @@ void EoBCoreEngine::drawBlockItems(int index) {
 					y += itemPosFin[(o >> 1) & 7];
 
 				drawBlockObject(0, 2, shp, x, y, 5);
-				_screen->setShapeFadeMode(1, false);
+				_screen->setShapeFadingLevel(0);
 			}
 		}
 
@@ -535,7 +567,7 @@ void EoBCoreEngine::drawMonsters(int index) {
 		drawMonsterShape(shp, x, y, f >= 0 ? 0 : 1, d->flags, palIndex);
 
 		if (_flags.gameID == GI_EOB1) {
-			_screen->setShapeFadeMode(1, false);
+			_screen->setShapeFadingLevel(0);
 			continue;
 		}
 
@@ -559,7 +591,7 @@ void EoBCoreEngine::drawMonsters(int index) {
 
 			drawMonsterShape(shp, x + ((f < 0) ? (w - dx - (shp[2] << 3)) : dx), y + dy, f >= 0 ? 0 : 1, d->flags, -1);
 		}
-		_screen->setShapeFadeMode(1, false);
+		_screen->setShapeFadingLevel(0);
 	}
 }
 
@@ -614,12 +646,12 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 		int flipped = 0;
 
 		if (sclValue < 0) {
-			_screen->setShapeFadeMode(1, false);
+			_screen->setShapeFadingLevel(0);
 			continue;
 		}
 
 		const uint8 *shp = 0;
-		bool rstFade = false;
+		bool noFade = false;
 
 		if (fo->enable == 1) {
 			int shpIx = _dscItemShapeMap[_items[fo->item].icon];
@@ -634,7 +666,7 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 			}
 
 		} else {
-			rstFade = true;
+			noFade = true;
 			shp = (fo->objectType < _numThrownItemShapes) ? _thrownItemShapes[fo->objectType] : _spellShapes[fo->objectType - _numThrownItemShapes];
 			flipped = _flightObjFlipIndex[(fo->direction << 2) + (fo->curPos & 3)];
 
@@ -648,16 +680,16 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 
 		shp = _screen->scaleShape(shp, sclValue);
 
-		if (rstFade) {
-			_screen->setShapeFadeMode(1, false);
-			rstFade = false;
+		if (noFade) {
+			_screen->setShapeFadingLevel(0);
+			noFade = false;
 		}
 
 		x -= (shp[2] << 2);
 		y -= (y == 44 ? (shp[1]  >> 1) : shp[1]);
 
 		drawBlockObject(flipped, 2, shp, x, y, 5);
-		_screen->setShapeFadeMode(1, false);
+		_screen->setShapeFadingLevel(0);
 	}
 }
 

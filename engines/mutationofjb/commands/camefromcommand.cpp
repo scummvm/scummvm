@@ -41,6 +41,7 @@ bool CameFromCommandParser::parse(const Common::String &line, ScriptParseContext
 	}
 
 	const uint8 sceneId = atoi(line.c_str() + 9);
+	_tags.push(0);
 	command = new CameFromCommand(sceneId);
 	return true;
 }

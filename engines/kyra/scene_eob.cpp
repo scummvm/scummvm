@@ -36,6 +36,8 @@ namespace Kyra {
 void EoBCoreEngine::loadLevel(int level, int sub) {
 	_currentLevel = level;
 	_currentSub = sub;
+	if (!_loading)
+		setHandItem(-1);
 	uint32 end = _system->getMillis() + 500;
 
 	readLevelFileData(level);
@@ -99,12 +101,13 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 	_sceneDrawPage1 = 2;
 	_sceneDrawPage2 = 1;
 	_screen->setCurPage(0);
+	setHandItem(_itemInHand);
 }
 
 void EoBCoreEngine::readLevelFileData(int level) {
 	Common::String file;
 	Common::SeekableReadStream *s = 0;
-	static const char *const suffix[] = { "INF", "DRO", "ELO", 0 };
+	static const char *const suffix[] = { "INF", "DRO", "ELO", "JOT", 0 };
 
 	for (const char *const *sf = suffix; *sf && !s; sf++) {
 		file = Common::String::format("LEVEL%d.%s", level, *sf);
@@ -112,7 +115,7 @@ void EoBCoreEngine::readLevelFileData(int level) {
 	}
 
 	if (!s)
-		error("Failed to load level file LEVEL%d.INF/DRO/ELO", level);
+		error("Failed to load level file LEVEL%d.INF/DRO/ELO/JOT", level);
 
 	if (s->readUint16LE() + 2 == s->size()) {
 		if (s->readUint16LE() == 4) {
@@ -148,7 +151,7 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 
 		const char *vmpPattern = (_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)) ? "%s.EMP" : "%s.VMP";
 		Common::SeekableReadStream *s = _res->createReadStream(Common::String::format(vmpPattern, (const char *)pos));
-		uint16 size = s->readUint16LE();
+		uint16 size = (_flags.platform == Common::kPlatformFMTowns) ? 2916 : s->readUint16LE();
 		delete[] _vmpPtr;
 		_vmpPtr = new uint16[size];
 		for (int i = 0; i < size; i++)
@@ -168,27 +171,35 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 
 		if (_flags.gameID == GI_EOB1) {
 			pos += 11;
-			_screen->setShapeFadeMode(0, false);
-			_screen->setShapeFadeMode(1, false);
+			_screen->setShapeFadingLevel(0);
+			_screen->enableShapeBackgroundFading(false);
 		}
 
 		if (_flags.gameID == GI_EOB2 || _configRenderMode != Common::kRenderEGA)
 			_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(0));
 
-		if (_configRenderMode != Common::kRenderCGA) {
+		if (_flags.platform == Common::kPlatformFMTowns) {
+			uint16 *src = (uint16*)_screen->getPalette(0).getData();
+			_screen->createFadeTable16bit(src, (uint16*)_greenFadingTable, 4, 75);
+			_screen->createFadeTable16bit(src, (uint16*)_blackFadingTable, 12, 200);
+			_screen->createFadeTable16bit(src, (uint16*)_blueFadingTable, 10, 85);
+			_screen->createFadeTable16bit(src, (uint16*)_lightBlueFadingTable, 11, 125);
+			_screen->createFadeTable16bit(src, (uint16*)_greyFadingTable, 0, 85);
+			_screen->setScreenPalette(_screen->getPalette(0));
+		} else if (_configRenderMode != Common::kRenderCGA) {
 			Palette backupPal(256);
 			backupPal.copy(_screen->getPalette(0), 224, 32, 224);
 			_screen->getPalette(0).fill(224, 32, 0x3F);
 			uint8 *src = _screen->getPalette(0).getData();
 
-			_screen->createFadeTable(src, _screen->getFadeTable(0), 4, 75);     // green
-			_screen->createFadeTable(src, _screen->getFadeTable(1), 12, 200);   // black
-			_screen->createFadeTable(src, _screen->getFadeTable(2), 10, 85);    // blue
-			_screen->createFadeTable(src, _screen->getFadeTable(3), 11, 125);   // light blue
+			_screen->createFadeTable(src, _greenFadingTable, 4, 75);
+			_screen->createFadeTable(src, _blackFadingTable, 12, 200);
+			_screen->createFadeTable(src, _blueFadingTable, 10, 85);
+			_screen->createFadeTable(src, _lightBlueFadingTable, 11, 125);
 
 			_screen->getPalette(0).copy(backupPal, 224, 32, 224);
-			_screen->createFadeTable(src, _screen->getFadeTable(4), 12, 85);    // grey (shadow)
-			_screen->setFadeTableIndex(4);
+			_screen->createFadeTable(src, _greyFadingTable, 12, 85);
+			_screen->setFadeTable(_greyFadingTable);
 			if (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA)
 				_screen->setScreenPalette(_screen->getPalette(0));
 		}
@@ -283,7 +294,14 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	if (file)
 		strcpy(_lastBlockDataFile, file);
 
-	const char *filePattern = (_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)) ? "%s.ECN" : "%s.VCN";
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		uint32 size;
+		delete[] _vcnBlocks;
+		_vcnBlocks = _res->fileData(Common::String::format("%s.VCC", _lastBlockDataFile).c_str(), &size);
+		return;
+	}
+
+	const char *filePattern = ((_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)) ? "%s.ECN" : "%s.VCN");
 	_screen->loadBitmap(Common::String::format(filePattern, _lastBlockDataFile).c_str(), 3, 3, 0);
 	const uint8 *pos = _screen->getCPagePtr(3);
 

@@ -25,16 +25,17 @@
 
 #include "mutationofjb/commands/command.h"
 #include "common/scummsys.h"
+#include "common/queue.h"
 
 namespace MutationOfJB {
 
 class ConditionalCommandParser : public CommandParser {
 public:
-	ConditionalCommandParser(bool firstHash = false) : _lastTag(0), _firstHash(firstHash) {}
+	ConditionalCommandParser(bool firstHash = false) : _firstHash(firstHash) {}
 	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser);
 	virtual void finish(ScriptParseContext &parseCtx) override;
 protected:
-	char _lastTag;
+	Common::Queue<char> _tags;
 private:
 	bool _firstHash;
 };

@@ -60,6 +60,7 @@ private:
 	// Main Menu
 	int mainMenu();
 	int mainMenuLoop();
+	void townsUtilitiesMenu();
 
 	int _menuChoiceInit;
 
@@ -71,22 +72,6 @@ private:
 	void seq_playIntro();
 	void seq_playFinale();
 	void seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *data, int sd, int backupPage, int tempPage, int speed);
-
-	const char *const *_introStrings;
-	const char *const *_cpsFilesIntro;
-	const DarkMoonAnimCommand **_animIntro;
-	const DarkMoonShapeDef **_shapesIntro;
-
-	const char *const *_finaleStrings;
-	const uint8 *_creditsData;
-	const char *const *_cpsFilesFinale;
-	const DarkMoonAnimCommand **_animFinale;
-	const DarkMoonShapeDef **_shapesFinale;
-
-	static const char *const _palFilesIntroVGA[];
-	static const char *const _palFilesIntroEGA[];
-	static const char *const _palFilesFinaleVGA[];
-	static const char *const _palFilesFinaleEGA[];
 
 	// Ingame sequence
 	void seq_nightmare();
@@ -108,7 +93,7 @@ private:
 
 	// Monsters
 	void generateMonsterPalettes(const char *file, int16 monsterIndex);
-	void loadMonsterDecoration(const char *file, int16 monsterIndex);
+	void loadMonsterDecoration(Common::SeekableReadStream *stream, int16 monsterIndex);
 	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem);
 	bool killMonsterExtra(EoBMonsterInPlay *m);
 
@@ -118,6 +103,10 @@ private:
 	void drawDoorIntern(int type, int, int x, int y, int w, int wall, int mDim, int16, int16);
 
 	const uint8 *_dscDoorType5Offs;
+
+	// Fight
+	static const uint8 _monsterAcHitChanceTbl1[];
+	static const uint8 _monsterAcHitChanceTbl2[];
 
 	// Rest party
 	void restParty_npc();
@@ -136,7 +125,10 @@ private:
 	const char *const *_hornStrings;
 	const uint8 *_hornSounds;
 
-	static const KyraRpgGUISettings _guiSettings;
+	const char *const *_utilMenuStrings;
+
+	static const KyraRpgGUISettings _guiSettingsDOS;
+	static const KyraRpgGUISettings _guiSettingsFMTowns;
 	static const uint8 _egaDefaultPalette[];
 };
 

@@ -22,6 +22,7 @@
 
 #include "kyra/eob.h"
 #include "kyra/resource.h"
+#include "kyra/sound_intern.h"
 
 
 namespace Kyra {
@@ -164,7 +165,7 @@ const ScreenDim Screen_EoB::_screenDimTable[] = {
 	{ 0x01, 0x14, 0x14, 0x58, 0x0F, 0x02, 0x00, 0x00 },
 	{ 0x02, 0x06, 0x23, 0x78, 0x0F, 0x02, 0x00, 0x00 },
 	{ 0x09, 0x14, 0x16, 0x38, 0x0F, 0x02, 0x00, 0x00 },
-	{ 0x01, 0x96, 0x26, 0x31, 0x0F, 0x00, 0x00, 0x00 },
+	{ 0x01, 0x96, 0x26, 0x32, 0x0F, 0x00, 0x00, 0x00 },
 	{ 0x01, 0x08, 0x26, 0x80, 0x0C, 0x0F, 0x00, 0x00 },
 	{ 0x01, 0x10, 0x26, 0x14, 0x00, 0x0F, 0x06, 0x00 },
 	{ 0x00, 0x10, 0x10, 0x0C, 0x00, 0x0F, 0x06, 0x00 },
@@ -407,7 +408,6 @@ void EoBCoreEngine::initStaticResource() {
 	_wllFlagPreset = _staticres->loadRawData(kEoBBaseWllFlagPreset, _wllFlagPresetSize);
 	_dscShapeCoords = (const int16 *)_staticres->loadRawDataBe16(kEoBBaseDscShapeCoords, temp);
 
-	_dscDoorScaleOffs = _staticres->loadRawData(kEoBBaseDscDoorScaleOffs, temp);
 	_dscDoorScaleMult1 = _staticres->loadRawData(kEoBBaseDscDoorScaleMult1, temp);
 	_dscDoorScaleMult2 = _staticres->loadRawData(kEoBBaseDscDoorScaleMult2, temp);
 	_dscDoorScaleMult3 = _staticres->loadRawData(kEoBBaseDscDoorScaleMult3, temp);
@@ -471,10 +471,11 @@ void EoBCoreEngine::initStaticResource() {
 		{   0,          0,					0,					0			}
 	};
 
-	static const char *const errorSlotEmptyString[4] = {
+	static const char *const errorSlotEmptyString[5] = {
 		"There is no game\rsaved in that slot!",
 		"Hier ist noch kein\rSpiel gespeichert!",
 		"Non c'\x0E alcun gioco\rsalvato in quella\rposizione!",
+		"\r ""\x82\xBB\x82\xCC\x83""X""\x83\x8D\x83""b""\x83""g""\x82\xC9\x82\xCD\x83""Q""\x81""[""\x83\x80\x82\xAA\x83""Z""\x81""[""\x83""u\r ""\x82\xB3\x82\xEA\x82\xC4\x82\xA2\x82\xDC\x82\xB9\x82\xF1\x81""B",
 		0
 	};
 
@@ -487,10 +488,15 @@ void EoBCoreEngine::initStaticResource() {
 	} else if (_flags.lang == Common::IT_ITA) {
 		_saveLoadStrings = saveLoadStrings[2];
 		_errorSlotEmptyString = errorSlotEmptyString[2];
-	} else {
-		_saveLoadStrings = saveLoadStrings[3];
+	} else if (_flags.lang == Common::JA_JPN) {
+		// EOB II FM-Towns uses English here.
+		// Only the empty slot warning is in Japanese.
+		_saveLoadStrings = saveLoadStrings[0];
 		_errorSlotEmptyString = errorSlotEmptyString[3];
-	}
+	} else {
+		_saveLoadStrings = saveLoadStrings[4];
+		_errorSlotEmptyString = errorSlotEmptyString[4];
+	}	
 
 	_menuOkString = "OK";
 }
@@ -602,7 +608,24 @@ void EoBCoreEngine::initButtonData() {
 		{ 110, 0, 0x1100, 75, 168, 97, 6, 0 }
 	};
 
-	_buttonDefs = buttonDefs;
+	_buttonDefs = new EoBGuiButtonDef[ARRAYSIZE(buttonDefs)];
+	memcpy(_buttonDefs, buttonDefs, sizeof(buttonDefs));
+	
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		static const uint16 keyCodesFMTowns[] = {
+			93, 94, 95, 96, 67, 27, 24, 349, 350, 351, 352, 80, 27, 24, 30, 0, 31, 0, 29, 0, 28, 0, 127, 18, 27, 93, 94, 95, 96,
+			49, 50, 51, 52, 53, 93, 94, 95, 96, 60, 62, 32, 353, 354, 97, 98, 27, 27, 97, 98, 97, 98, 54, 49, 50, 51, 52, 53, 27
+		};
+
+		const uint16 *c = keyCodesFMTowns;
+		for (int i = 0; i < ARRAYSIZE(buttonDefs); ++i) {
+			if (_buttonDefs[i].keyCode)
+				_buttonDefs[i].keyCode = *c++;
+			if (_buttonDefs[i].keyCode2)
+				_buttonDefs[i].keyCode2 = *c++;
+		}
+	}
+
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(ARRAYSIZE(buttonDefs));
 
@@ -696,7 +719,12 @@ void EoBCoreEngine::initMenus() {
 		{  32,  40,  16,  24,  20,   3,  5  },
 		{  33,  72,  16,  24,  20,   4,  5  },
 		{  34, 104,  16,  24,  20,   5,  5  },
-		{  35, 136,  16,  24,  20,   6,  5  }
+		{  35, 136,  16,  24,  20,   6,  5  },
+		// FM-Towns options menu
+		{  18,  12,  20, 158,  14,  32,  3  },
+		{  19,  12,  37, 158,  14,  50,  3  },
+		{  20,  12,  54, 158,  14,  21,  3  },
+		{  8,  128, 122,  40,  14,  19,  7  }
 	};
 
 	_menuButtonDefs = buttonDefs;
@@ -719,6 +747,12 @@ void EoBCoreEngine::initMenus() {
 		// assign EOB 1 style memorize/pray menu
 		_menuDefs[4].numButtons = 8;
 		_menuDefs[4].firstButtonStrId = 36;
+	}
+
+	if (_flags.platform == Common::kPlatformFMTowns) {
+		// assign FM-Towns style options menu
+		_menuDefs[2].numButtons = 4;
+		_menuDefs[2].firstButtonStrId = 44;
 	}
 }
 
@@ -1109,6 +1143,9 @@ void EoBEngine::initStaticResource() {
 		p->dmgModifierEvade = *ps++;
 	}
 
+	_monsterAcHitChanceTable1 = _monsterAcHitChanceTbl1;
+	_monsterAcHitChanceTable2 = _monsterAcHitChanceTbl2;
+
 	static const char *const errorSlotNoNameString[3] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielstaende mues-\r sen einen Namen\r haben!",
@@ -1212,38 +1249,17 @@ const uint8 EoBEngine::_egaDefaultPalette[] = {
 	0, 5, 3, 2, 10, 14, 12, 6, 4, 11, 9, 1, 0, 8, 7, 15
 };
 
+const uint8 EoBEngine::_monsterAcHitChanceTbl1[] = {
+	3, 2, 1, 3
+};
+
+const uint8 EoBEngine::_monsterAcHitChanceTbl2[] = {
+	2, 1, 1, 1
+};
+
 void DarkMoonEngine::initStaticResource() {
 	int temp;
 	_mainMenuStrings = _staticres->loadStrings(kEoB2MainMenuStrings, temp);
-	_introStrings = _staticres->loadStrings(kEoB2IntroStrings, temp);
-	_cpsFilesIntro = _staticres->loadStrings(kEoB2IntroCPSFiles, temp);
-
-	_animIntro = new const DarkMoonAnimCommand*[44];
-	for (int i = 0; i < 44; i++)
-		_animIntro[i] = _staticres->loadEoB2SeqData(kEoB2IntroAnimData00 + i, temp);
-
-	_shapesIntro = new const DarkMoonShapeDef*[13];
-	memset(_shapesIntro, 0, sizeof(DarkMoonShapeDef *) * 13);
-	_shapesIntro[0] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes00, temp);
-	_shapesIntro[1] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes01, temp);
-	_shapesIntro[4] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes04, temp);
-	_shapesIntro[7] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes07, temp);
-
-	_finaleStrings = _staticres->loadStrings(kEoB2FinaleStrings, temp);
-	_creditsData = _staticres->loadRawData(kEoB2CreditsData, temp);
-	_cpsFilesFinale = _staticres->loadStrings(kEoB2FinaleCPSFiles, temp);
-
-	_animFinale = new const DarkMoonAnimCommand*[21];
-	for (int i = 0; i < 21; i++)
-		_animFinale[i] = _staticres->loadEoB2SeqData(kEoB2FinaleAnimData00 + i, temp);
-
-	_shapesFinale = new const DarkMoonShapeDef*[13];
-	memset(_shapesFinale, 0, sizeof(DarkMoonShapeDef *) * 13);
-	_shapesFinale[0] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes00, temp);
-	_shapesFinale[3] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes03, temp);
-	_shapesFinale[7] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes07, temp);
-	_shapesFinale[9] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes09, temp);
-	_shapesFinale[10] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes10, temp);
 
 	_dscDoorType5Offs = _staticres->loadRawData(kEoBBaseDscDoorType5Offs, temp);
 
@@ -1261,6 +1277,29 @@ void DarkMoonEngine::initStaticResource() {
 	_wallOfForceDsNumW = _staticres->loadRawData(kEoB2WallOfForceNumW, temp);
 	_wallOfForceDsNumH = _staticres->loadRawData(kEoB2WallOfForceNumH, temp);
 	_wallOfForceShpId = _staticres->loadRawData(kEoB2WallOfForceShpId, temp);
+
+	_utilMenuStrings = _staticres->loadStrings(kEoB2UtilMenuStrings, temp);
+	_2431Strings = _staticres->loadStrings(kEoB2Config2431Strings, temp);
+	_katakanaLines = _staticres->loadStrings(kEoB2KatakanaLines, temp);
+	_katakanaSelectStrings = _staticres->loadStrings(kEoB2KanaSelectStrings, temp);
+
+	_ascii2SjisTables = _staticres->loadStrings(kEoB2Ascii2SjisTables, temp);
+	_ascii2SjisTables2 = _staticres->loadStrings(kEoB2Ascii2SjisTables2, temp);
+	_saveNamePatterns = _staticres->loadStrings(kEoB2SaveNamePatterns, temp);
+
+	const uint8 *data = _staticres->loadRawData(kEoB2PcmSoundEffectsIngame, temp);
+	SoundResourceInfo_TownsEoB ingame(data, temp, 127);
+	data = _staticres->loadRawData(kEoB2PcmSoundEffectsIntro, temp);
+	SoundResourceInfo_TownsEoB intro(data, temp, 40);
+	data = _staticres->loadRawData(kEoB2PcmSoundEffectsFinale, temp);
+	SoundResourceInfo_TownsEoB finale(data, temp, 40);
+
+	_sound->initAudioResourceInfo(kMusicIngame, &ingame);
+	_sound->initAudioResourceInfo(kMusicIntro, &intro);
+	_sound->initAudioResourceInfo(kMusicFinale, &finale);
+
+	_monsterAcHitChanceTable1 = _monsterAcHitChanceTbl1;
+	_monsterAcHitChanceTable2 = _monsterAcHitChanceTbl2;
 
 	static const char *const errorSlotNoNameString[3] = {
 		" You must specify\r a name for your\r save game!",
@@ -1313,55 +1352,26 @@ void DarkMoonEngine::initSpells() {
 	}
 }
 
-const char *const DarkMoonEngine::_palFilesIntroVGA[] = {
-	"PALETTE1.PAL",
-	"PALETTE3.PAL",
-	"PALETTE2.PAL",
-	"PALETTE4.PAL",
-	0
+const KyraRpgGUISettings DarkMoonEngine::_guiSettingsFMTowns = {
+	{ 9, 15, 95, 11, 7, { 221, 76 }, { 187, 162 }, { 95, 95 } },
+	{ 186, 181, 183, 133, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180 }
 };
 
-const char *const DarkMoonEngine::_palFilesIntroEGA[] = {
-	"PALETTE0.PAL",
-	"PALETTE3.PAL",
-	"PALETTE2.PAL",
-	"PALETTE4.PAL",
-	0
-};
-
-const char *const DarkMoonEngine::_palFilesFinaleVGA[] = {
-	"FINALE_0.PAL",
-	"FINALE_0.PAL",
-	"FINALE_1.PAL",
-	"FINALE_2.PAL",
-	"FINALE_3.PAL",
-	"FINALE_4.PAL",
-	"FINALE_5.PAL",
-	"FINALE_6.PAL",
-	"FINALE_7.PAL",
-	0
-};
-
-const char *const DarkMoonEngine::_palFilesFinaleEGA[] = {
-	"FINALE_0.PAL",
-	"FINALE_0.PAL",
-	"FINALE_1.PAL",
-	"FINALE_2.PAL",
-	"FINALE_3.PAL",
-	"FINALE_4.PAL",
-	"FINALE_5.PAL",
-	"FINALE_0.PAL",
-	"FINALE_0.PAL",
-	0
-};
-
-const KyraRpgGUISettings DarkMoonEngine::_guiSettings = {
+const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS = {
 	{ 9, 15, 95, 9, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
 	{ 186, 181, 183, 133, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180 }
 };
 
 const uint8 DarkMoonEngine::_egaDefaultPalette[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+};
+
+const uint8 DarkMoonEngine::_monsterAcHitChanceTbl1[] = {
+	1, 3, 3, 2
+};
+
+const uint8 DarkMoonEngine::_monsterAcHitChanceTbl2[] = {
+	1, 1, 2, 1
 };
 
 #endif // ENABLE_EOB

@@ -340,7 +340,7 @@ void Set::save(SaveFileWriteStream &f) {
 
 	for (int i = 0; i != _objectCount; ++i) {
 		f.writeStringSz(_objects[i].name, 20);
-		f.writeBoundingBox(_objects[i].bbox);
+		f.writeBoundingBox(_objects[i].bbox, true);
 		f.writeBool(_objects[i].isObstacle);
 		f.writeBool(_objects[i].isClickable);
 		f.writeBool(_objects[i].isHotMouse);
@@ -375,7 +375,7 @@ void Set::load(SaveFileReadStream &f) {
 
 	for (int i = 0; i != _objectCount; ++i) {
 		_objects[i].name = f.readStringSz(20);
-		_objects[i].bbox = f.readBoundingBox();
+		_objects[i].bbox = f.readBoundingBox(true);
 		_objects[i].isObstacle = f.readBool();
 		_objects[i].isClickable = f.readBool();
 		_objects[i].isHotMouse = f.readBool();

@@ -25,7 +25,8 @@ DisableStartupPrompt=true
 AppendDefaultDirName=false
 SolidCompression=true
 DirExistsWarning=no
-SetupIconFile=graphics\scummvm-install.icoUninstallDisplayIcon={app}\scummvm.exe
+SetupIconFile=graphics\scummvm-install.ico
+UninstallDisplayIcon={app}\scummvm.exe
 WizardImageFile=graphics\left.bmp
 WizardSmallImageFile=graphics\scummvm-install.bmp
 ShowLanguageDialog=yes
@@ -187,6 +188,7 @@ Name: galician; MessagesFile: compiler:Languages\Galician.isl
 Name: greek; MessagesFile: compiler:Languages\Greek.isl
 Name: polish; MessagesFile: compiler:Languages\Polish.isl
 Name: ukrainian; MessagesFile: compiler:Languages\Ukrainian.isl
+Name: hebrew; MessagesFile: compiler:Languages\Hebrew.isl
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}" 
@@ -202,9 +204,9 @@ Name: {group}\ScummVM; Filename: {app}\scummvm.exe; WorkingDir: {app}; Comment: 
 Name: {group}\ScummVM (noconsole); Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex: 0; Languages: not german
 Name: {group}\ScummVM (ohne Konsolenfenster); Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex:0; Languages: german
 Name: {group}\Saved Games\Saved Games; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Saved Games; IconIndex: 0; MinVersion: 0, 1; Languages: not german
-Name: {group}\Spielstände\Spielstände; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Spielstände; IconIndex: 0; MinVersion: 0, 1; Languages: german
+Name: {group}\Spielstï¿½nde\Spielstï¿½nde; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Spielstï¿½nde; IconIndex: 0; MinVersion: 0, 1; Languages: german
 Name: {group}\Saved Games\Saved Games (old default); Filename: {app}; WorkingDir: {app}; Comment: Saved Games (old default); IconIndex: 0; MinVersion: 0, 1; Languages: not german
-Name: {group}\Spielstände\Spielstände (alter Standard); Filename: {app}; WorkingDir: {app}; Comment: Spielstände (alter Standard); IconIndex: 0; MinVersion: 0, 1; Languages: german
+Name: {group}\Spielstï¿½nde\Spielstï¿½nde (alter Standard); Filename: {app}; WorkingDir: {app}; Comment: Spielstï¿½nde (alter Standard); IconIndex: 0; MinVersion: 0, 1; Languages: german
 
 ; DOCUMENTATION
 Name: {group}\Authors; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists; Languages: not german

@@ -348,6 +348,7 @@ bool KyraRpgEngine::checkSceneUpdateNeed(int block) {
 void KyraRpgEngine::drawVcnBlocks() {
 	uint8 *d = _sceneWindowBuffer;
 	uint16 *bdb = _blockDrawingBuffer;
+	uint16 *hiColorPal = screen()->get16bitPalette();
 
 	for (int y = 0; y < 15; y++) {
 		for (int x = 0; x < 22; x++) {
@@ -369,9 +370,9 @@ void KyraRpgEngine::drawVcnBlocks() {
 				vcnOffset &= 0x3FFF;
 			}
 
-			uint8 *src = 0;
+			const uint8 *src = 0;
 			if (vcnOffset) {
-				src = &_vcnBlocks[vcnOffset << 5];
+				src = &_vcnBlocks[vcnOffset << (4 + _vcnBpp)];
 				wllVcnOffset = _wllVcnOffset;
 			} else {
 				// floor/ceiling blocks
@@ -381,36 +382,46 @@ void KyraRpgEngine::drawVcnBlocks() {
 					vcnOffset &= 0x3FFF;
 				}
 
-				src = (_vcfBlocks ? _vcfBlocks : _vcnBlocks) + (vcnOffset << 5);
+				src = (_vcfBlocks ? _vcfBlocks : _vcnBlocks) + (vcnOffset << (4 + _vcnBpp));
 			}
 
 			uint8 shift = _vcnShift ? _vcnShift[vcnOffset] : _blockBrightness;
 
 			if (horizontalFlip) {
 				for (int blockY = 0; blockY < 8; blockY++) {
-					src += 3;
-					for (int blockX = 0; blockX < 4; blockX++) {
-						uint8 bl = *src--;
-						*d++ = _vcnColTable[((bl & 0x0F) + wllVcnOffset) | shift];
-						*d++ = _vcnColTable[((bl >> 4) + wllVcnOffset) | shift];
+					src += ((_vcnBpp << 2) - 1);
+					for (int blockX = 0; blockX < 4 * _vcnBpp; blockX++) {
+						if (_vcnBpp == 2) {
+							*(uint16*)d = hiColorPal[*src--];
+							d += 2;
+						} else {
+							uint8 bl = *src--;
+							*d++ = _vcnColTable[((bl & 0x0F) + wllVcnOffset) | shift];
+							*d++ = _vcnColTable[((bl >> 4) + wllVcnOffset) | shift];
+						}
 					}
-					src += 5;
-					d += 168;
+					src += ((_vcnBpp << 2) + 1);
+					d += 168 * _vcnBpp;
 				}
 			} else {
 				for (int blockY = 0; blockY < 8; blockY++) {
-					for (int blockX = 0; blockX < 4; blockX++) {
-						uint8 bl = *src++;
-						*d++ = _vcnColTable[((bl >> 4) + wllVcnOffset) | shift];
-						*d++ = _vcnColTable[((bl & 0x0F) + wllVcnOffset) | shift];
+					for (int blockX = 0; blockX < 4 * _vcnBpp; blockX++) {
+						if (_vcnBpp == 2) {
+							*(uint16*)d = hiColorPal[*src++];
+							d += 2;
+						} else {
+							uint8 bl = *src++;
+							*d++ = _vcnColTable[((bl >> 4) + wllVcnOffset) | shift];
+							*d++ = _vcnColTable[((bl & 0x0F) + wllVcnOffset) | shift];
+						}
 					}
-					d += 168;
+					d += 168 * _vcnBpp;
 				}
 			}
-			d -= 1400;
+			d -= 1400 * _vcnBpp;
 
 			if (vcnExtraOffsetWll) {
-				d -= 8;
+				d -= 8 * _vcnBpp;
 				horizontalFlip = false;
 
 				if (vcnExtraOffsetWll & 0x4000) {
@@ -419,62 +430,76 @@ void KyraRpgEngine::drawVcnBlocks() {
 				}
 
 				shift = _vcnShift ? _vcnShift[vcnExtraOffsetWll] : _blockBrightness;
-				src = &_vcnBlocks[vcnExtraOffsetWll << 5];
+				src = &_vcnBlocks[vcnExtraOffsetWll << (4 + _vcnBpp)];
 				uint8 *maskTable = _vcnTransitionMask ? &_vcnTransitionMask[vcnExtraOffsetWll << 5] : 0;
 
 				if (horizontalFlip) {
 					for (int blockY = 0; blockY < 8; blockY++) {
-						src += 3;
+						src += ((_vcnBpp << 2) - 1);
 						maskTable += 3;
-						for (int blockX = 0; blockX < 4; blockX++) {
-							uint8 bl = *src--;
-							uint8 mask = _vcnTransitionMask ? *maskTable-- : 0;
-							uint8 h = _vcnColTable[((bl & 0x0F) + wllVcnRmdOffset) | shift];
-							uint8 l = _vcnColTable[((bl >> 4) + wllVcnRmdOffset) | shift];
+						for (int blockX = 0; blockX < 4 * _vcnBpp; blockX++) {
+							if (_vcnBpp == 2) {
+								uint8 bl = *src--;
+								if (bl)
+									*(uint16*)d = hiColorPal[bl];
+								d += 2;
+							} else {
+								uint8 bl = *src--;
+								uint8 mask = _vcnTransitionMask ? *maskTable-- : 0;
+								uint8 h = _vcnColTable[((bl & 0x0F) + wllVcnRmdOffset) | shift];
+								uint8 l = _vcnColTable[((bl >> 4) + wllVcnRmdOffset) | shift];
 
-							if (_vcnTransitionMask)
-								*d = (*d & (mask & 0x0F)) | h;
-							else if (h)
-								*d = h;
-							d++;
+								if (_vcnTransitionMask)
+									*d = (*d & (mask & 0x0F)) | h;
+								else if (h)
+									*d = h;
+								d++;
 
-							if (_vcnTransitionMask)
-								*d = (*d & (mask >> 4)) | l;
-							else if (l)
-								*d = l;
-							d++;
+								if (_vcnTransitionMask)
+									*d = (*d & (mask >> 4)) | l;
+								else if (l)
+									*d = l;
+								d++;
+								}
 						}
-						src += 5;
+						src += ((_vcnBpp << 2) + 1);
 						maskTable += 5;
-						d += 168;
+						d += 168 * _vcnBpp;
 					}
 				} else {
 					for (int blockY = 0; blockY < 8; blockY++) {
-						for (int blockX = 0; blockX < 4; blockX++) {
-							uint8 bl = *src++;
-							uint8 mask = _vcnTransitionMask ? *maskTable++ : 0;
-							uint8 h = _vcnColTable[((bl >> 4) + wllVcnRmdOffset) | shift];
-							uint8 l = _vcnColTable[((bl & 0x0F) + wllVcnRmdOffset) | shift];
+						for (int blockX = 0; blockX < 4 * _vcnBpp; blockX++) {
+							if (_vcnBpp == 2) {
+								uint8 bl = *src++;
+								if (bl)
+									*(uint16*)d = hiColorPal[bl];
+								d += 2;
+							} else {
+								uint8 bl = *src++;
+								uint8 mask = _vcnTransitionMask ? *maskTable++ : 0;
+								uint8 h = _vcnColTable[((bl >> 4) + wllVcnRmdOffset) | shift];
+								uint8 l = _vcnColTable[((bl & 0x0F) + wllVcnRmdOffset) | shift];
 
-							if (_vcnTransitionMask)
-								*d = (*d & (mask >> 4)) | h;
-							else if (h)
-								*d = h;
-							d++;
+								if (_vcnTransitionMask)
+									*d = (*d & (mask >> 4)) | h;
+								else if (h)
+									*d = h;
+								d++;
 
-							if (_vcnTransitionMask)
-								*d = (*d & (mask & 0x0F)) | l;
-							else if (l)
-								*d = l;
-							d++;
+								if (_vcnTransitionMask)
+									*d = (*d & (mask & 0x0F)) | l;
+								else if (l)
+									*d = l;
+								d++;
+							}
 						}
-						d += 168;
+						d += 168 * _vcnBpp;
 					}
 				}
-				d -= 1400;
+				d -= 1400 * _vcnBpp;
 			}
 		}
-		d += 1232;
+		d += 1232 * _vcnBpp;
 	}
 
 	screen()->copyBlockToPage(_sceneDrawPage1, _sceneXoffset, 0, 176, 120, _sceneWindowBuffer);

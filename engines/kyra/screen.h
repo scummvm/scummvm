@@ -94,6 +94,11 @@ public:
 	virtual void setColorMap(const uint8 *src) = 0;
 
 	/**
+	* Sets a text 16bit palette map. Only used in in EOB II FM-Towns. The map contains 2 entries.
+	*/
+	virtual void set16bitColorMap(const uint16 *src) {}
+
+	/**
 	 * Draws a specific character.
 	 *
 	 * TODO/FIXME: Replace this with a nicer API. Currently
@@ -101,7 +106,7 @@ public:
 	 * We use this API, since it's hard to assure dirty rect
 	 * handling from outside Screen.
 	 */
-	virtual void drawChar(uint16 c, byte *dst, int pitch) const = 0;
+	virtual void drawChar(uint16 c, byte *dst, int pitch, int bpp) const = 0;
 };
 
 /**
@@ -120,7 +125,7 @@ public:
 	int getWidth() const { return _width; }
 	int getCharWidth(uint16 c) const;
 	void setColorMap(const uint8 *src) { _colorMap = src; }
-	void drawChar(uint16 c, byte *dst, int pitch) const;
+	void drawChar(uint16 c, byte *dst, int pitch, int) const;
 
 private:
 	void unload();
@@ -140,10 +145,10 @@ private:
 
 #ifdef ENABLE_EOB
 /**
- * Implementation of the Font interface for old DOS fonts used
- * in EOB and EOB II.
- *
- */
+* Implementation of the Font interface for old DOS fonts used
+* in EOB and EOB II.
+*
+*/
 class OldDOSFont : public Font {
 public:
 	OldDOSFont(Common::RenderMode mode);
@@ -153,8 +158,9 @@ public:
 	int getHeight() const { return _height; }
 	int getWidth() const { return _width; }
 	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src) { _colorMap = src; }
-	void drawChar(uint16 c, byte *dst, int pitch) const;
+	void setColorMap(const uint8 *src) { _colorMap8bit = src; }
+	void set16bitColorMap(const uint16 *src) { _colorMap16bit = src; }
+	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const;
 
 private:
 	void unload();
@@ -163,7 +169,8 @@ private:
 	uint16 *_bitmapOffsets;
 
 	int _width, _height;
-	const uint8 *_colorMap;
+	const uint8 *_colorMap8bit;
+	const uint16 *_colorMap16bit;
 
 	int _numGlyphs;
 
@@ -187,7 +194,7 @@ public:
 	int getWidth() const { return _width; }
 	int getCharWidth(uint16 c) const;
 	void setColorMap(const uint8 *src) {}
-	void drawChar(uint16 c, byte *dst, int pitch) const;
+	void drawChar(uint16 c, byte *dst, int pitch, int) const;
 
 private:
 	void unload();
@@ -211,34 +218,35 @@ private:
  */
 class SJISFont : public Font {
 public:
-	SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing);
-	~SJISFont() { unload(); }
+	SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool drawOutline, bool fatPrint, int extraSpacing);
+	virtual ~SJISFont() { unload(); }
 
-	bool usesOverlay() const { return true; }
+	virtual bool usesOverlay() const { return true; }
 
 	bool load(Common::SeekableReadStream &) { return true; }
 	int getHeight() const;
 	int getWidth() const;
 	int getCharWidth(uint16 c) const;
 	void setColorMap(const uint8 *src);
-	void drawChar(uint16 c, byte *dst, int pitch) const;
-private:
+	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
+
+protected:
 	void unload();
 
 	const uint8 *_colorMap;
+	Graphics::FontSJIS *_font;	
+	int _sjisWidth, _asciiWidth;
+	int _fontHeight;
+	const bool _drawOutline;
 
-	Graphics::FontSJIS *_font;
+private:
 	const uint8 _invisColor;
 	const bool _is16Color;
-	const bool _drawOutline;
 	// We use this for cases where the font width returned by getWidth() or getCharWidth() does not match the original.
 	// The original Japanese game versions use hard coded sjis font widths of 8 or 9. However, this does not necessarily
 	// depend on whether an outline is used or not (neither LOL/PC-9801 nor LOL/FM-TOWNS use an outline, but the first
 	// version uses a font width of 8 where the latter uses a font width of 9).
 	const int _sjisWidthOffset;
-
-	int _sjisWidth, _asciiWidth;
-	int _fontHeight;
 };
 
 /**
@@ -261,6 +269,11 @@ public:
 	 * Load a VGA palette from the given stream.
 	 */
 	void loadVGAPalette(Common::ReadStream &stream, int startIndex, int colors);
+
+	/**
+	* Load a HiColor palette from the given stream.
+	*/
+	void loadHiColorPalette(Common::ReadStream &stream, int startIndex, int colors);
 
 	/**
 	 * Load a EGA palette from the given stream.
@@ -382,7 +395,12 @@ public:
 		DSF_Y_FLIPPED  = 0x02,
 		DSF_SCALE      = 0x04,
 		DSF_WND_COORDS = 0x10,
-		DSF_CENTER     = 0x20
+		DSF_CENTER     = 0x20,
+
+		DSF_SHAPE_FADING		= 0x100,
+		DSF_TRANSPARENCY		= 0x1000,
+		DSF_BACKGROUND_FADING	= 0x2000,
+		DSF_CUSTOM_PALETTE		= 0x8000
 	};
 
 	enum FontId {
@@ -395,6 +413,8 @@ public:
 		FID_GOLDFONT_FNT,
 		FID_INTRO_FNT,
 		FID_SJIS_FNT,
+		FID_SJIS_LARGE_FNT,
+		FID_SJIS_SMALL_FNT,
 		FID_NUM
 	};
 
@@ -404,6 +424,7 @@ public:
 	// init
 	virtual bool init();
 	virtual void setResolution();
+	virtual void enableHiColorMode(bool enabled);
 
 	void updateScreen();
 
@@ -434,7 +455,7 @@ public:
 
 	void clearPage(int pageNum);
 
-	uint8 getPagePixel(int pageNum, int x, int y);
+	int getPagePixel(int pageNum, int x, int y);
 	void setPagePixel(int pageNum, int x, int y, uint8 color);
 
 	const uint8 *getCPagePtr(int pageNum) const;
@@ -467,7 +488,7 @@ public:
 	void drawBox(int x1, int y1, int x2, int y2, int color);
 
 	// font/text handling
-	bool loadFont(FontId fontId, const char *filename);
+	virtual bool loadFont(FontId fontId, const char *filename);
 	FontId setFont(FontId fontId);
 
 	int getFontHeight() const;
@@ -480,6 +501,7 @@ public:
 
 	virtual void setTextColorMap(const uint8 *cmap) = 0;
 	void setTextColor(const uint8 *cmap, int a, int b);
+	void setTextColor16bit(const uint16 *cmap16);
 
 	const ScreenDim *getScreenDim(int dim) const;
 	void modifyScreenDim(int dim, int x, int y, int w, int h);
@@ -551,7 +573,11 @@ public:
 	// RPG specific, this does not belong here
 	void crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 
+	uint16 *get16bitPalette() { return _16bitPalette; }
+	void set16bitShadingLevel(int lvl) { _16bitShadingLevel = lvl; }
+
 protected:
+	void resetPagePtrsAndBuffers(int pageSize);
 	uint8 *getPagePtr(int pageNum);
 	virtual void updateDirtyRects();
 	void updateDirtyRectsAmiga();
@@ -583,8 +609,11 @@ protected:
 	bool _useSJIS;
 	bool _use16ColorMode;
 	bool _useHiResEGADithering;
+	bool _useHiColorScreen;
 	bool _isAmiga;
 	Common::RenderMode _renderMode;
+	int _bytesPerPixel;
+	int _screenPageSize;
 
 	uint8 _sjisInvisibleColor;
 	bool _sjisMixedFontMode;
@@ -593,8 +622,15 @@ protected:
 	Common::Array<Palette *> _palettes;
 	Palette *_internFadePalette;
 
+	uint16 shade16bitColor(uint16 col);
+
+	uint16 *_16bitPalette;
+	uint16 *_16bitConversionPalette;
+	uint8 _16bitShadingLevel;
+
 	Font *_fonts[FID_NUM];
 	uint8 _textColorsMap[16];
+	uint16 _textColorsMap16bit[2];
 
 	uint8 *_decodeShapeBuffer;
 	int _decodeShapeBufferSize;
@@ -668,12 +704,12 @@ protected:
 	DsLineFunc _dsProcessLine;
 	DsPlotFunc _dsPlot;
 
-	const uint8 *_dsTable;
-	int _dsTableLoopCount;
-	const uint8 *_dsTable2;
-	const uint8 *_dsTable3;
-	const uint8 *_dsTable4;
-	const uint8 *_dsTable5;
+	const uint8 *_dsShapeFadingTable;
+	int _dsShapeFadingLevel;
+	const uint8 *_dsColorTable;
+	const uint8 *_dsTransparencyTable1;
+	const uint8 *_dsTransparencyTable2;
+	const uint8 *_dsBackgroundFadingTable;
 	int _dsDrawLayer;
 	uint8 *_dsDstPage;
 	int _dsTmpWidth;

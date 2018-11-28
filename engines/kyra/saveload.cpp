@@ -29,7 +29,7 @@
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
-#define CURRENT_SAVE_VERSION 17
+#define CURRENT_SAVE_VERSION 18
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)
@@ -125,7 +125,8 @@ WARN_UNUSED_RESULT KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHea
 
 	if (header.version >= 14) {
 		if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
-			return kRSHEIoError;
+			if (!skipThumbnail)
+				return kRSHEIoError;
 		}
 	}
 

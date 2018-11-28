@@ -108,7 +108,7 @@ IMPLEMENT_FUNCTION(5, Vassili, chapter1Handler)
 			if (!Entity::updateParameterCheck(params->param3, getState()->time, 450))
 				break;
 
-			if (!params->param2 && getObjects()->get(kObjectCompartmentA).status == kObjectLocation1) {
+			if (!params->param2 && getObjects()->get(kObjectCompartmentA).model == kObjectModel1) {
 				params->param2 = 1;
 				getEntities()->drawSequenceLeft(kEntityVassili, "303A");
 				getObjects()->update(kObjectCompartmentA, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
@@ -265,7 +265,7 @@ IMPLEMENT_FUNCTION(8, Vassili, function8)
 		getSavePoints()->push(kEntityVassili, kEntityAnna, kAction226031488);
 		getSavePoints()->push(kEntityVassili, kEntityVerges, kAction226031488);
 		getSavePoints()->push(kEntityVassili, kEntityCoudert, kAction226031488);
-		getSound()->playSound(kEntityVassili, "VAS1027", kFlagDefault);
+		getSound()->playSound(kEntityVassili, "VAS1027", kVolumeFull);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -292,12 +292,12 @@ IMPLEMENT_FUNCTION(9, Vassili, function9)
 		|| getEntities()->isPlayerPosition(kCarRedSleeping, 41)) {
 
 			if (savepoint.action == kActionDrawScene)
-				getSoundQueue()->processEntry(kEntityVassili);
+				getSoundQueue()->fade(kEntityVassili);
 
 			setup_seizure();
 		} else {
 			if (savepoint.action == kActionDefault)
-				getSound()->playSound(kEntityVassili, "VAS1028", kFlagDefault);
+				getSound()->playSound(kEntityVassili, "VAS1028", kVolumeFull);
 		}
 		break;
 	}
@@ -313,19 +313,19 @@ IMPLEMENT_FUNCTION(10, Vassili, seizure)
 		// Check that we have removed the body from the train and changed jacket
 		if (!getProgress().eventCorpseMovedFromFloor) {
 			getAction()->playAnimation(kEventMertensCorpseFloor);
-			getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, false);
+			getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, true);
 			break;
 		}
 
 		if (!getProgress().eventCorpseThrown) {
 			getAction()->playAnimation(kEventMertensCorpseBed);
-			getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, false);
+			getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, true);
 			break;
 		}
 
 		if (getProgress().jacket == kJacketBlood) {
 			getAction()->playAnimation(kEventMertensBloodJacket);
-			getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, false);
+			getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, true);
 			break;
 		}
 
@@ -410,7 +410,7 @@ IMPLEMENT_FUNCTION(13, Vassili, sleeping)
 		break;
 
 	case kActionDefault:
-		params->param5 = 5 * (3 * rnd(25) + 15);
+		params->param1 = 5 * (3 * rnd(25) + 15);
 		getEntities()->drawSequenceLeft(kEntityVassili, "303A");
 		break;
 
@@ -475,7 +475,7 @@ IMPLEMENT_FUNCTION(15, Vassili, stealEgg)
 		break;
 
 	case kActionDefault:
-		params->param5 = 5 * (3 * rnd(25) + 15);
+		params->param1 = 5 * (3 * rnd(25) + 15);
 		getEntities()->drawSequenceLeft(kEntityVassili, "303A");
 		break;
 
@@ -555,7 +555,7 @@ IMPLEMENT_FUNCTION(17, Vassili, chapter4Handler)
 		break;
 
 	case kActionDefault:
-		params->param5 = 5 * (3 * rnd(25) + 15);
+		params->param1 = 5 * (3 * rnd(25) + 15);
 		getEntities()->drawSequenceLeft(kEntityVassili, "303A");
 		break;
 

@@ -2568,6 +2568,13 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		debugPrintf("Command not available / implemented for SCI32 games.\n");
+		return true;
+	}
+#endif
+
 	int map = atoi(argv[1]);
 
 	switch (map) {
@@ -2575,7 +2582,9 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 	case 1:
 	case 2:
 	case 3:
-		_engine->_gfxScreen->debugShowMap(map);
+		if (_engine->_gfxScreen) {
+			_engine->_gfxScreen->debugShowMap(map);
+		}
 		break;
 
 	default:

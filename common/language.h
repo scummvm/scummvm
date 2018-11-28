@@ -37,6 +37,7 @@ enum Language {
 	ZH_TWN,
 	HR_HRV,
 	CZ_CZE,
+	DA_DAN,
 	NL_NLD,
 	EN_ANY,     // Generic English (when only one game version exist)
 	EN_GRB,
@@ -55,6 +56,7 @@ enum Language {
 	NB_NOR,
 	PL_POL,
 	PT_BRA,
+	PT_POR,
 	RU_RUS,
 	SK_SVK,
 	ES_ESP,

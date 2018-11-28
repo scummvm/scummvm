@@ -818,7 +818,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kArrayNew(EngineState *s, int argc, reg_t *argv) {
 	uint16 size = argv[0].toUint16();
-	const SciArrayType type = (SciArrayType)argv[1].toUint16();
+	SciArrayType type = (SciArrayType)argv[1].toUint16();
 
 	if (type == kArrayTypeString) {
 		++size;

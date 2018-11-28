@@ -96,6 +96,10 @@ private:
 	const uint8 *_doorSwitchShapeEncodeDefs;
 	const uint8 *_doorSwitchCoords;
 
+	// Fight
+	static const uint8 _monsterAcHitChanceTbl1[];
+	static const uint8 _monsterAcHitChanceTbl2[];
+
 	// Magic
 	void turnUndeadAuto();
 	void turnUndeadAutoHit();

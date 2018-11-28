@@ -300,8 +300,8 @@ void Font::drawString(Surface *dst, const Common::String &str, int x, int y, int
 	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax);
 }
 
-void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align) const {
-	drawStringImpl(*this, dst, str, x, y, w, color, align, 0);
+void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) const {
+	drawStringImpl(*this, dst, str, x, y, w, color, align, deltax);
 }
 
 void Font::drawString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
@@ -311,8 +311,8 @@ void Font::drawString(ManagedSurface *dst, const Common::String &str, int x, int
 	}
 }
 
-void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align) const {
-	drawString(&dst->_innerSurface, str, x, y, w, color, align);
+void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax) const {
+	drawString(&dst->_innerSurface, str, x, y, w, color, align, deltax);
 	if (w != 0) {
 		dst->addDirtyRect(getBoundingBox(str, x, y, w, align));
 	}

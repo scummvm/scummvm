@@ -400,4 +400,10 @@ void iOS7_main(int argc, char **argv) {
 	// Invoke the actual ScummVM main entry point:
 	scummvm_main(argc, (const char *const *) argv);
 	g_system->quit();       // TODO: Consider removing / replacing this!
+
+	if (newfp != NULL) {
+		//*stdout = NULL;
+		//*stderr = NULL;
+		fclose(newfp);
+	}
 }

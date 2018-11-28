@@ -59,10 +59,11 @@ public:
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd = -1, int flags = 0, ...);
 	const uint8 *scaleShape(const uint8 *shapeData, int blockDistance);
 	const uint8 *scaleShapeStep(const uint8 *shp);
-	const uint8 *generateShapeOverlay(const uint8 *shp, int paletteOverlayIndex);
+	const uint8 *generateShapeOverlay(const uint8 *shp, const uint8 *fadingTable);
 
 	void setShapeFrame(int x1, int y1, int x2, int y2);
-	void setShapeFadeMode(uint8 i, bool b);
+	void enableShapeBackgroundFading(bool enable);
+	void setShapeFadingLevel(int val);
 
 	void setGfxParameters(int x, int y, int col);
 	void drawExplosion(int scale, int radius, int numElements, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize);
@@ -74,12 +75,19 @@ public:
 	void setTextColorMap(const uint8 *cmap) {}
 	int getRectSize(int w, int h);
 
-	void setFadeTableIndex(int index);
-	void createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
-	uint8 *getFadeTable(int index);
-
+	void setFadeTable(const uint8 *table);
+	void createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
+	void createFadeTable16bit(const uint16 *palData, uint16 *dst, uint16 rootColor, uint8 weight);
+	
 	const uint16 *getCGADitheringTable(int index);
 	const uint8 *getEGADitheringTable();
+
+	bool loadFont(FontId fontId, const char *filename);
+
+	// FM-Towns specific
+	void decodeSHP(const uint8 *data, int dstPage);
+	void convertToHiColor(int page);
+	void shadeRect(int x1, int y1, int x2, int y2, int shadingLevel);
 
 private:
 	void updateDirtyRects();
@@ -90,23 +98,26 @@ private:
 	void scaleShapeProcessLine4Bit(uint8 *&dst, const uint8 *&src);
 	bool posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2);
 
+	void setPagePixel16bit(int pageNum, int x, int y, uint16 color);
+
 	void generateEGADitheringTable(const Palette &pal);
 	void generateCGADitheringTables(const uint8 *mappingData);
 
 	int _dsDiv, _dsRem, _dsScaleTrans;
 	uint8 *_cgaScaleTable;
 	int16 _gfxX, _gfxY;
-	uint8 _gfxCol;
+	uint16 _gfxCol;
 	const uint8 *_gfxMaxY;
 
 	int16 _dsX1, _dsX2, _dsY1, _dsY2;
-	bool _shapeFadeMode[2];
-	uint16 _shapeFadeInternal;
-	uint8 *_fadeData;
-	int _fadeDataIndex;
+	
+	bool _dsBackgroundFading;
+	int16 _dsBackgroundFadingXOffs;
 	uint8 _shapeOverlay[16];
 
 	uint8 *_dsTempPage;
+	uint8 *_shpBuffer;
+	uint8 *_convertHiColorBuffer;
 
 	uint16 *_cgaDitheringTables[2];
 	const uint8 *_cgaMappingDefault;
@@ -114,9 +125,49 @@ private:
 	uint8 *_egaDitheringTable;
 	uint8 *_egaDitheringTempPage;
 
+	const uint16 _cursorColorKey16Bit;
+
 	static const uint8 _egaMatchTable[];
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
+};
+
+/**
+* SJIS Font variant used in the intro and outro of EOB II FM-Towns. It appears twice as large, since it is not rendered on the hires overlay pages
+*/
+class SJISFontLarge : public SJISFont {
+public:
+	SJISFontLarge(Graphics::FontSJIS *font);
+	virtual ~SJISFontLarge() { unload(); }
+
+	virtual bool usesOverlay() const { return false; }
+	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
+};
+
+/**
+* 12 x 12 SJIS font for EOB II FM-Towns. The data for this font comes from a file, not from the font rom.
+*/
+class SJISFont12x12 : public Font {
+public:
+	SJISFont12x12(const uint16 *searchTable);
+	virtual ~SJISFont12x12() { unload(); }
+
+	virtual bool load(Common::SeekableReadStream &file);
+	virtual bool usesOverlay() const { return true; }
+	virtual int getHeight() const { return _height; }
+	virtual int getWidth() const { return _width; }
+	virtual int getCharWidth(uint16 c) const { return _width; }
+	virtual void setColorMap(const uint8 *src) { _colorMap = src; }
+	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
+
+private:
+	void unload();
+
+	uint8 *_data;
+	Common::HashMap<uint16, uint8> _searchTable;
+
+	const uint8 *_colorMap;
+	const int _height, _width;
 };
 
 } // End of namespace Kyra

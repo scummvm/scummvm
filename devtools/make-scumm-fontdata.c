@@ -883,5 +883,8 @@ int main() {
 
 	printf("};\n");
 
+	free(specialCharsetData);
+	specialCharsetData = NULL;
+
 	return 0;
 }

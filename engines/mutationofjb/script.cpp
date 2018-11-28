@@ -46,6 +46,11 @@
 #include "mutationofjb/commands/talkcommand.h"
 #include "mutationofjb/commands/randomcommand.h"
 #include "mutationofjb/commands/setcolorcommand.h"
+#include "mutationofjb/commands/specialshowcommand.h"
+#include "mutationofjb/commands/switchpartcommand.h"
+#include "mutationofjb/commands/loadplayercommand.h"
+#include "mutationofjb/commands/bitmapvisibilitycommand.h"
+#include "mutationofjb/commands/playanimationcommand.h"
 #include "mutationofjb/game.h"
 
 namespace MutationOfJB {
@@ -75,6 +80,11 @@ static CommandParser **getParsers() {
 		new RandomCommandParser,
 		new RandomBlockStartParser,
 		new SetColorCommandParser,
+		new SpecialShowCommandParser,
+		new SwitchPartCommandParser,
+		new LoadPlayerCommandParser,
+		new BitmapVisibilityCommandParser,
+		new PlayAnimationCommandParser,
 		nullptr
 	};
 

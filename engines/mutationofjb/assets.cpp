@@ -24,7 +24,7 @@
 
 namespace MutationOfJB {
 
-Assets::Assets(Game &game) : _game(game), _toSayList("tosay.ger"), _responseList("response.ger") {}
+Assets::Assets(Game &game) : _game(game), _toSayList("tosay.ger"), _responseList("response.ger"), _hardcodedStrings(game) {}
 
 Font &Assets::getSystemFont() {
 	return _systemFont;
@@ -44,6 +44,10 @@ ConversationLineList &Assets::getResponseList() {
 
 InventoryItemDefinitionList &Assets::getInventoryItemDefList() {
 	return _invItemDefList;
+}
+
+HardcodedStrings &Assets::getHardcodedStrings() {
+	return _hardcodedStrings;
 }
 
 }

@@ -1576,6 +1576,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Just Grandma and Me
+	// From bug Trac #6745
+	{
+		{
+			"grandma",
+			"v1.3.0.5",
+			AD_ENTRY1("outline", "33074daec5263ba209abcce3ee60ee38"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	// Just Grandma and Me 2.0 Macintosh
 	// From aluff in bug #3461368
 	{
@@ -2027,6 +2044,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"BIRTHDAY.EXE"
+	},
+
+	// From Maikel-Nait in bug Trac #10705
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("BIRTHDAY.512", "fd0c7b73b9f40400e145efd06240b84b"),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_ADDENGLISH,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_LIVINGBOOKSV1,
@@ -2705,6 +2738,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"stellaluna",
 			"",
 			AD_ENTRY1("STELLA.LB", "763bb4a4721aebb5af316ca8e1b478ed"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// Stellaluna 1.0
+	// From bug Trac #6745
+	{
+		{
+			"stellaluna",
+			"",
+			AD_ENTRY1("STELLA.LB", "ff8ae44b52fb19f039e82730f6a1bb51"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,

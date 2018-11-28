@@ -69,14 +69,15 @@ int Overlays::play(const Common::String &name, int loopId, bool loopForever, boo
 		_videos[index].loaded = true;
 		_videos[index].name = name;
 		_videos[index].hash = hash;
-		_videos[index].vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceFront);
+		_videos[index].loopId = loopId;
+		_videos[index].loopForever = loopForever;
+		_videos[index].vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceFront, Common::String::format("%s.VQA", name.c_str()));
 
 		// repeat forever
 		_videos[index].vqaPlayer->setBeginAndEndFrame(0, 0, -1, kLoopSetModeJustStart, nullptr, nullptr);
 	}
 
-	Common::String resourceName = Common::String::format("%s.VQA", name.c_str());
-	_videos[index].vqaPlayer->open(resourceName);
+	_videos[index].vqaPlayer->open();
 	_videos[index].vqaPlayer->setLoop(
 		loopId,
 		loopForever ? -1 : 0,
@@ -84,6 +85,29 @@ int Overlays::play(const Common::String &name, int loopId, bool loopForever, boo
 		nullptr, nullptr);
 
 	return index;
+}
+
+void Overlays::resume(bool isLoadingGame) {
+
+	for (int i = 0; i < kOverlayVideos; ++i) {
+		if (_videos[i].loaded && isLoadingGame) {
+			_videos[i].vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceFront, Common::String::format("%s.VQA", _videos[i].name.c_str()));
+			if (!_videos[i].vqaPlayer) {
+				resetSingle(i);
+				continue;
+			}
+
+			_videos[i].vqaPlayer->open();
+			_videos[i].vqaPlayer->setLoop(
+				_videos[i].loopId,
+				_videos[i].loopForever ? -1 : 0,
+				kLoopSetModeImmediate,
+				nullptr, nullptr);
+
+			_videos[i].vqaPlayer->seekToFrame(_videos[i].frame);
+			_videos[i].vqaPlayer->update(true);
+		}
+	}
 }
 
 void Overlays::remove(const Common::String &name) {
@@ -104,8 +128,8 @@ void Overlays::removeAll() {
 void Overlays::tick() {
 	for (int i = 0; i < kOverlayVideos; ++i) {
 		if (_videos[i].loaded) {
-			int frame = _videos[i].vqaPlayer->update(true);
-			if (frame < 0) {
+			_videos[i].frame = _videos[i].vqaPlayer->update(true);
+			if (_videos[i].frame < 0) {
 				resetSingle(i);
 			}
 		}
@@ -138,7 +162,7 @@ void Overlays::resetSingle(int i) {
 	}
 	_videos[i].loaded = false;
 	_videos[i].hash = 0;
-	_videos[i].field2 = -1;
+	_videos[i].frame = -1;
 	_videos[i].name.clear();
 }
 
@@ -155,9 +179,9 @@ void Overlays::save(SaveFileWriteStream &f) {
 		f.writeInt(0); // vqaPlayer pointer
 		f.writeStringSz(ov.name, 13);
 		f.writeSint32LE(ov.hash);
-		f.writeInt(ov.field0);
-		f.writeInt(ov.field1);
-		f.writeInt(ov.field2);
+		f.writeInt(ov.loopId);
+		f.writeBool(ov.loopForever);
+		f.writeInt(ov.frame);
 	}
 }
 
@@ -171,9 +195,9 @@ void Overlays::load(SaveFileReadStream &f) {
 		ov.vqaPlayer = nullptr;
 		ov.name = f.readStringSz(13);
 		ov.hash = f.readSint32LE();
-		ov.field0 = f.readInt();
-		ov.field1 = f.readInt();
-		ov.field2 = f.readInt();
+		ov.loopId = f.readInt();
+		ov.loopForever = f.readBool();
+		ov.frame = f.readInt();
 	}
 }
 

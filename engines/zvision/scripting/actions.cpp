@@ -967,9 +967,9 @@ bool ActionStreamVideo::execute() {
 	bool subtitleExists = _engine->getSearchManager()->hasFile(subname);
 	bool switchToHires = false;
 
-// NOTE: We only show the hires MPEG2 videos when libmpeg2 is compiled in,
+// NOTE: We only show the hires MPEG2 videos when libmpeg2 and liba52 are compiled in,
 // otherwise we fall back to the lowres ones
-#ifdef USE_MPEG2
+#if defined(USE_MPEG2) && defined(USE_A52)
 	Common::String hiresFileName = _fileName;
 	hiresFileName.setChar('d', hiresFileName.size() - 8);
 	hiresFileName.setChar('v', hiresFileName.size() - 3);
@@ -977,12 +977,8 @@ bool ActionStreamVideo::execute() {
 	hiresFileName.setChar('b', hiresFileName.size() - 1);
 
 	if (_scriptManager->getStateValue(StateKey_MPEGMovies) == 1 &&_engine->getSearchManager()->hasFile(hiresFileName)) {
-		// TODO: Enable once AC3 support is implemented
-		if (!_engine->getSearchManager()->hasFile(_fileName))	// Check for the regular video
-			return true;
-		warning("The hires videos of the DVD version of ZGI aren't supported yet, using lowres");
-		//_fileName = hiresFileName;
-		//switchToHires = true;
+		_fileName = hiresFileName;
+		switchToHires = true;
 	} else if (!_engine->getSearchManager()->hasFile(_fileName))
 		return true;
 #else

@@ -82,20 +82,30 @@ EXECUTABLE  := $(EXEPRE)scummvm$(EXEEXT)
 
 include $(srcdir)/Makefile.common
 
-# check if configure has been run or has been changed since last run
 ENGINE_SUBDIRS_CONFIGURE := $(wildcard $(srcdir)/engines/*/configure.engine)
+
+config.h:
+SAVED_ENV_VARS = AR AS ASFLAGS CPPFLAGS CXX CXXFLAGS LD LDFLAGS RANLIB SDL_CONFIG STRIP WINDRES WINDRESFLAGS
+
+# The environment variable PKG_CONFIG_LIBDIR has a different meaning
+# for pkg-config when it is empty and when it is not defined.
+# When PKG_CONFIG_LIBDIR is defined but empty, the .pc files cannot
+# be found because the search path is empty.
+# Here we make sure not to define PKG_CONFIG_LIBDIR when automatically
+# running configure and it was not set for the previous run
+# so pkg-config uses the system default search path for the .pc files.
+ifneq ($(SAVED_PKG_CONFIG_LIBDIR),unset)
+	SAVED_ENV_VARS += PKG_CONFIG_LIBDIR
+endif
+
+# check if configure has been run or has been changed since last run
 config.h: $(srcdir)/configure $(ENGINE_SUBDIRS_CONFIGURE)
 ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 	@echo "Running $(srcdir)/configure with the last specified parameters"
 	@sleep 2
-	AR="$(SAVED_AR)" AS="$(SAVED_AS)" ASFLAGS="$(SAVED_ASFLAGS)" \
-		CPPFLAGS="$(SAVED_CPPFLAGS)" CXX="$(SAVED_CXX)" \
-		CXXFLAGS="$(SAVED_CXXFLAGS)" LD="$(SAVED_LD)" \
-		LDFLAGS="$(SAVED_LDFLAGS)" PKG_CONFIG_LIBDIR="$(SAVED_PKG_CONFIG_LIBDIR)" \
-		RANLIB="$(SAVED_RANLIB)" SDL_CONFIG="$(SAVED_SDL_CONFIG)" \
-		STRIP="$(SAVED_STRIP)" WINDRES="$(SAVED_WINDRES)" \
-		WINDRESFLAGS="$(SAVED_WINDRESFLAGS)" \
-			$(srcdir)/configure $(SAVED_CONFIGFLAGS)
+
+	$(foreach VAR,$(SAVED_ENV_VARS),$(VAR)="$(SAVED_$(VAR))") \
+		$(srcdir)/configure $(SAVED_CONFIGFLAGS)
 else
 	$(error You need to run $(srcdir)/configure before you can run make. Check $(srcdir)/configure --help for a list of parameters)
 endif
@@ -112,9 +122,15 @@ ifneq ($(origin port_mk), undefined)
 include $(srcdir)/$(port_mk)
 endif
 
-.PHONY: print-dists print-executables
+.PHONY: print-dists print-executables print-version print-distversion
 print-dists:
-	@echo $(DIST_FILES_DOCS) $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) $(srcdir)/doc
+	@echo $(DIST_FILES_DOCS) $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_PLATFORM) $(srcdir)/doc
 
 print-executables:
 	@echo $(if $(DIST_EXECUTABLES),$(DIST_EXECUTABLES),$(EXECUTABLE) $(PLUGINS))
+
+print-version:
+	@echo $(VERSION)
+
+print-distversion:
+	@echo $(DISTVERSION)

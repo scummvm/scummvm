@@ -284,7 +284,6 @@
 	#if defined(__DC__) || \
 		  defined(__DS__) || \
 		  defined(__3DS__) || \
-		  defined(__GP32__) || \
 		  defined(IPHONE) || \
 		  defined(__PLAYSTATION2__) || \
 		  defined(__PSP__) || \
@@ -344,6 +343,9 @@
 
 #endif
 
+#if defined(USE_TREMOR) && !defined(USE_VORBIS)
+#define USE_VORBIS // make sure this one is defined together with USE_TREMOR!
+#endif
 
 //
 // Fallbacks / default values for various special macros

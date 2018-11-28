@@ -87,8 +87,8 @@ void VK::open(int actorId, int calibrationRatio) {
 		_shapes[i]->open("VK.SHP", i);
 	}
 
-	_vqaPlayerMain = new VQAPlayer(_vm, &_vm->_surfaceBack);
-	if (!_vqaPlayerMain->open("VK.VQA")) {
+	_vqaPlayerMain = new VQAPlayer(_vm, &_vm->_surfaceBack, "VK.VQA");
+	if (!_vqaPlayerMain->open()) {
 		return;
 	}
 
@@ -114,8 +114,8 @@ void VK::open(int actorId, int calibrationRatio) {
 	}
 
 	_surfaceEye.create(172, 116, createRGB555());
-	_vqaPlayerEye = new VQAPlayer(_vm, &_surfaceEye);
-	if (!_vqaPlayerEye->open(eyeVqa)) {
+	_vqaPlayerEye = new VQAPlayer(_vm, &_surfaceEye, eyeVqa);
+	if (!_vqaPlayerEye->open()) {
 		return;
 	}
 	if (!_vqaPlayerEye->setLoop(0, -1, kLoopSetModeEnqueue, nullptr, nullptr)) {

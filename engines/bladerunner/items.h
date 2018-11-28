@@ -42,6 +42,8 @@ public:
 	Items(BladeRunnerEngine *vm);
 	~Items();
 
+	void reset();
+
 	void getXYZ(int itemId, float *x, float *y, float *z) const;
 	void setXYZ(int itemId, Vector3 position);
 	void getWidthHeight(int itemId, int *width, int *height) const;

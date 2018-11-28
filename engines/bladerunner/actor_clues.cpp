@@ -33,11 +33,11 @@
 
 namespace BladeRunner {
 
-ActorClues::ActorClues(BladeRunnerEngine *vm, int cluesType) {
+ActorClues::ActorClues(BladeRunnerEngine *vm, int cluesLimit) {
 	_vm = vm;
 	_count = 0;
 	_maxCount = 0;
-	switch (cluesType) {
+	switch (cluesLimit) {
 	case 4:
 		_maxCount = _vm->_gameInfo->getClueCount();
 		break;
@@ -83,11 +83,11 @@ bool ActorClues::isAcquired(int clueId) const {
 	if (clueIndex == -1) {
 		return false;
 	}
-#if BLADERUNNER_DEBUG_GAME
-	return true;
-#else
+// #if BLADERUNNER_DEBUG_GAME
+// 	return true;
+// #else
 	return _clues[clueIndex].flags & 0x01;
-#endif
+// #endif
 }
 
 int ActorClues::getWeight(int clueId) const {
@@ -346,6 +346,10 @@ void ActorClues::add(int actorId, int clueId, int weight, bool acquired, bool un
 	++_count;
 }
 
+bool ActorClues::exists(int clueId) const {
+	return findClueIndex(clueId) != -1;
+}
+
 void ActorClues::remove(int index) {
 	if (_vm->_crimesDatabase) {
 		debug("Actor removed clue: \"%s\"", _vm->_crimesDatabase->getClueText(_clues[index].clueId));
@@ -367,7 +371,7 @@ void ActorClues::remove(int index) {
 void ActorClues::save(SaveFileWriteStream &f) {
 	f.writeInt(_count);
 	f.writeInt(_maxCount);
-	for (int i = 0; i < _count; ++i) {
+	for (int i = 0; i < _maxCount; ++i) {
 		Clue &c = _clues[i];
 		f.writeInt(c.clueId);
 		f.writeInt(c.weight);
@@ -387,7 +391,7 @@ void ActorClues::load(SaveFileReadStream &f) {
 	_maxCount = f.readInt();
 	_clues.clear();
 	_clues.resize(_maxCount);
-	for (int i = 0; i < _count; ++i) {
+	for (int i = 0; i < _maxCount; ++i) {
 		Clue &c = _clues[i];
 		c.clueId = f.readInt();
 		c.weight = f.readInt();
@@ -400,10 +404,6 @@ void ActorClues::load(SaveFileReadStream &f) {
 		c.field8 = f.readInt();
 		c.flags = f.readByte();
 	}
-}
-
-bool ActorClues::exists(int clueId) const {
-	return findClueIndex(clueId) != -1;
 }
 
 } // End of namespace BladeRunner

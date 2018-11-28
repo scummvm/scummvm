@@ -26,13 +26,16 @@
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
+#include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/inventory.h"
 #include "mutationofjb/util.h"
-#include "mutationofjb/widgets/widget.h"
-#include "mutationofjb/widgets/inventorywidget.h"
-#include "mutationofjb/widgets/imagewidget.h"
 #include "mutationofjb/widgets/conversationwidget.h"
+#include "mutationofjb/widgets/gamewidget.h"
+#include "mutationofjb/widgets/imagewidget.h"
+#include "mutationofjb/widgets/inventorywidget.h"
+#include "mutationofjb/widgets/labelwidget.h"
 
+#include "common/events.h"
 #include "common/rect.h"
 
 #include "graphics/screen.h"
@@ -61,14 +64,20 @@ enum {
 	CONVERSATION_X = 0,
 	CONVERSATION_Y = 139,
 	CONVERSATION_WIDTH = 320,
-	CONVERSATION_HEIGHT = 61
+	CONVERSATION_HEIGHT = 61,
+	STATUS_BAR_X = 0,
+	STATUS_BAR_Y = 140,
+	STATUS_BAR_WIDTH = 320,
+	STATUS_BAR_HEIGHT = 8
 };
 
 
 GameScreen::GameScreen(Game &game, Graphics::Screen *screen)
 	: GuiScreen(game, screen),
 	  _inventoryWidget(nullptr),
-	  _conversationWidget(nullptr) {}
+	  _conversationWidget(nullptr),
+	  _statusBarWidget(nullptr),
+	  _currentAction(ActionInfo::Walk) {}
 
 GameScreen::~GameScreen() {}
 
@@ -111,8 +120,13 @@ bool GameScreen::init() {
 		ButtonWidget *button = new ButtonWidget(*this, ButtonRects[i], normalSurface, pressedSurface);
 		button->setId(i);
 		button->setCallback(this);
+		_buttons.push_back(button);
 		addWidget(button);
 	}
+
+	const Common::Rect statusBarRect(STATUS_BAR_X, STATUS_BAR_Y, STATUS_BAR_X + STATUS_BAR_WIDTH, STATUS_BAR_Y + STATUS_BAR_HEIGHT);
+	_statusBarWidget = new LabelWidget(*this, statusBarRect);
+	addWidget(_statusBarWidget);
 
 	const Common::Rect conversationRect(CONVERSATION_X, CONVERSATION_Y, CONVERSATION_X + CONVERSATION_WIDTH, CONVERSATION_Y + CONVERSATION_HEIGHT);
 	const Graphics::Surface conversationSurface = _hudSurfaces[2].getSubArea(conversationRect);
@@ -120,11 +134,94 @@ bool GameScreen::init() {
 	_conversationWidget->setVisible(false);
 	addWidget(_conversationWidget);
 
+	_gameWidget = new GameWidget(*this);
+	_gameWidget->setCallback(this);
+	addWidget(_gameWidget);
+
 	return true;
+}
+
+void GameScreen::handleEvent(const Common::Event &event) {
+	switch (event.type) {
+	case Common::EVENT_KEYUP: {
+		switch (event.kbd.ascii) {
+		case 'g':
+			_currentAction = ActionInfo::Walk;
+			_currentPickedItem.clear();
+			break;
+		case 'r':
+			_currentAction = ActionInfo::Talk;
+			_currentPickedItem.clear();
+			break;
+		case 's':
+			_currentAction = ActionInfo::Look;
+			_currentPickedItem.clear();
+			break;
+		case 'b':
+			_currentAction = ActionInfo::Use;
+			_currentPickedItem.clear();
+			break;
+		case 'n':
+			_currentAction = ActionInfo::PickUp;
+			_currentPickedItem.clear();
+			break;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+
+	GuiScreen::handleEvent(event);
 }
 
 ConversationWidget &GameScreen::getConversationWidget() {
 	return *_conversationWidget;
+}
+
+void GameScreen::showConversationWidget(bool show) {
+	_gameWidget->setEnabled(!show);
+	_conversationWidget->setVisible(show);
+	_statusBarWidget->setText(Common::String());
+
+	for (Common::Array<ButtonWidget *>::const_iterator it = _buttons.begin(); it != _buttons.end(); ++it) {
+		(*it)->setVisible(!show);
+	}
+	_inventoryWidget->setVisible(!show);
+}
+
+void GameScreen::refreshAfterSceneChanged() {
+	const Widgets &widgets = getWidgets();
+
+	if (!getGame().isCurrentSceneMap()) {
+		_gameWidget->setArea(Common::Rect(GameWidget::GAME_NORMAL_AREA_WIDTH, GameWidget::GAME_NORMAL_AREA_HEIGHT));
+
+		for (Widgets::const_iterator it = widgets.begin(); it != widgets.end(); ++it) {
+			if (*it == _gameWidget || *it == _conversationWidget)
+				continue;
+
+			(*it)->setVisible(true);
+		}
+	} else {
+		_gameWidget->setArea(Common::Rect(GameWidget::GAME_FULL_AREA_WIDTH, GameWidget::GAME_FULL_AREA_HEIGHT));
+		for (Widgets::const_iterator it = widgets.begin(); it != widgets.end(); ++it) {
+			if (*it == _gameWidget || *it == _conversationWidget)
+				continue;
+
+			(*it)->setVisible(false);
+		}
+	}
+
+	_gameWidget->clearState();
+
+	// Fake mouse move event to update the cursor.
+	Common::Event event;
+	event.type = Common::EVENT_MOUSEMOVE;
+	event.mouse = _game.getEngine().getEventManager()->getMousePos();
+	_gameWidget->handleEvent(event);
+
+	_gameWidget->markDirty();
+	_gameWidget->update(*_screen); // Force immediate update.
 }
 
 class InventoryAnimationDecoderCallback : public AnimationDecoderCallback {
@@ -180,6 +277,56 @@ bool GameScreen::loadHudGfx() {
 	return decoder.decode(&callback);
 }
 
+void GameScreen::updateStatusBarText(const Common::String &entity, bool inventory) {
+	const bool hasPrevPickedItem = !_currentPickedItem.empty();
+	const bool hasCurrentItem = !entity.empty();
+
+	if (!hasPrevPickedItem && !hasCurrentItem) {
+		_statusBarWidget->setText(Common::String());
+		return;
+	}
+
+	HardcodedStrings::StringType actionStringType = HardcodedStrings::LOOK;
+
+	if (inventory) {
+		switch (_currentAction) {
+		case ActionInfo::Use:
+			actionStringType = HardcodedStrings::USE;
+			break;
+		default:
+			actionStringType = HardcodedStrings::LOOK;
+			break;
+		}
+	} else {
+		switch (_currentAction) {
+		case ActionInfo::Look:
+			actionStringType = HardcodedStrings::LOOK;
+			break;
+		case ActionInfo::Walk:
+			actionStringType = HardcodedStrings::WALK;
+			break;
+		case ActionInfo::Talk:
+			actionStringType = HardcodedStrings::TALK;
+			break;
+		case ActionInfo::Use:
+			actionStringType = HardcodedStrings::USE;
+			break;
+		case ActionInfo::PickUp:
+			actionStringType = HardcodedStrings::PICKUP;
+			break;
+		}
+	}
+
+	Common::String text = _game.getAssets().getHardcodedStrings().getString(actionStringType);
+
+	if (hasPrevPickedItem)
+		text += " " + _currentPickedItem;
+	if (hasCurrentItem)
+		text += " " + entity;
+
+	_statusBarWidget->setText(text);
+}
+
 void GameScreen::onInventoryChanged() {
 	_inventoryWidget->markDirty();
 }
@@ -188,7 +335,8 @@ void GameScreen::onButtonClicked(ButtonWidget *button) {
 	const int buttonId = button->getId();
 	if (buttonId <= BUTTON_PICKUP) {
 		const ActionInfo::Action actions[] = {ActionInfo::Walk, ActionInfo::Talk, ActionInfo::Look, ActionInfo::Use, ActionInfo::PickUp};
-		_game.setCurrentAction(actions[buttonId]);
+		_currentAction = actions[buttonId];
+		_currentPickedItem.clear();
 	} else if (buttonId == BUTTON_SCROLL_LEFT) {
 		_game.getGameData().getInventory().scrollLeft();
 	} else if (buttonId == BUTTON_SCROLL_RIGHT) {
@@ -196,19 +344,74 @@ void GameScreen::onButtonClicked(ButtonWidget *button) {
 	}
 }
 
-void GameScreen::onInventoryItemHovered(InventoryWidget *widget, int posInWidget) {
-	// TODO
+void GameScreen::onInventoryItemHovered(InventoryWidget *, int posInWidget) {
+	if (posInWidget == -1) {
+		updateStatusBarText(Common::String(), true);
+	} else {
+		const Common::String &item = _game.getGameData().getInventory().getItems()[posInWidget];
+		updateStatusBarText(item, true);
+	}
 }
 
-void GameScreen::onInventoryItemClicked(InventoryWidget *widget, int posInWidget) {
+void GameScreen::onInventoryItemClicked(InventoryWidget *, int posInWidget) {
 	// Position in widget should match the position in inventory.
-	const Common::String &item = getGame().getGameData().getInventory().getItems()[posInWidget];
+	const Common::String &item = _game.getGameData().getInventory().getItems()[posInWidget];
 
-	if (_game.getCurrentAction() == ActionInfo::Use) {
-		// TODO
+	if (_currentAction == ActionInfo::Use) {
+		if (_currentPickedItem.empty()) {
+			// Inventory items ending with '[' aren't supposed to be combined (e.g. Fisher's mask).
+			if (item.lastChar() == '[')
+				_game.startActionSection(ActionInfo::Use, item);
+			else
+				_currentPickedItem = item;
+		} else {
+			_game.startActionSection(ActionInfo::Use, _currentPickedItem, item);
+			_currentPickedItem.clear();
+		}
 	} else {
 		_game.startActionSection(ActionInfo::Look, item);
 	}
+}
+
+void GameScreen::onGameDoorClicked(GameWidget *, Door *door) {
+	if (!_currentPickedItem.empty()) {
+		_game.startActionSection(_currentAction, _currentPickedItem, door->_name);
+		_currentPickedItem.clear();
+		return;
+	}
+
+	if (!_game.startActionSection(_currentAction, door->_name) && _currentAction == ActionInfo::Walk && door->_destSceneId != 0) {
+		if (door->allowsImplicitSceneChange())
+			_game.changeScene(door->_destSceneId, _game.getGameData()._partB);
+	}
+}
+
+void GameScreen::onGameStaticClicked(GameWidget *, Static *stat) {
+	if (_currentAction == ActionInfo::Use) {
+		if (_currentPickedItem.empty()) {
+			if (stat->isCombinable())
+				_currentPickedItem = stat->_name;
+			else
+				_game.startActionSection(ActionInfo::Use, stat->_name);
+		} else {
+			_game.startActionSection(_currentAction, _currentPickedItem, stat->_name);
+			_currentPickedItem.clear();
+		}
+	} else {
+		if (!_game.startActionSection(_currentAction, stat->_name)) {
+			if (_currentAction == ActionInfo::PickUp && stat->allowsImplicitPickup()) {
+				Common::String inventoryName(stat->_name);
+				inventoryName.setChar('`', 0);
+
+				_game.getGameData().getInventory().addItem(inventoryName);
+				stat->_active = 0;
+			}
+		}
+	}
+}
+
+void GameScreen::onGameEntityHovered(GameWidget *, const Common::String &entity) {
+	updateStatusBarText(entity, false);
 }
 
 }

@@ -450,6 +450,8 @@ void SciEngine::scriptDebug() {
 				case kDebugSeekSpecialCallk:
 					if (paramb1 != _debugState.seekSpecial)
 						return;
+					// fall through
+					// FIXME: fall through intended?
 
 				case kDebugSeekCallk:
 					if (op != op_callk)

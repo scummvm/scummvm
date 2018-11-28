@@ -146,6 +146,41 @@ void Room::drawObjectAnimation(uint8 objectId, int animOffset) {
 	blit_if(_surfaces[animFrame], *_screen, Common::Point(object->_x, object->_y), ThresholdBlitOperation());
 }
 
+void Room::drawBitmap(uint8 bitmapId) {
+	GameData &gameData = _game->getGameData();
+
+	Scene *const scene = gameData.getCurrentScene();
+	if (!scene) {
+		return;
+	}
+	Bitmap *const bitmap = scene->getBitmap(bitmapId);
+	if (!bitmap) {
+		return;
+	}
+
+	Common::Rect bitmapArea(bitmap->_x1, bitmap->_y1, bitmap->_x2 + 1, bitmap->_y2 + 1);
+	drawFrames(bitmap->_roomFrame - 1, bitmap->_roomFrame - 1, bitmapArea, 0xC0);
+}
+
+void Room::drawFrames(uint8 fromFrame, uint8 toFrame, const Common::Rect &area, uint8 threshold) {
+	GameData &gameData = _game->getGameData();
+
+	Scene *const scene = gameData.getCurrentScene();
+	if (!scene) {
+		return;
+	}
+
+	const Common::String fileName = Common::String::format("room%d%s.dat", gameData._currentScene, gameData._partB ? "b" : "");
+
+	AnimationDecoder decoder(fileName, *_screen);
+	decoder.setPartialMode(fromFrame, toFrame, area, threshold);
+	decoder.decode(nullptr);
+	if (!area.isEmpty())
+		_screen->getSubArea(area); // Add dirty rect.
+	else
+		_screen->makeAllDirty();
+}
+
 void Room::redraw() {
 	if (!_game->isCurrentSceneMap()) {
 		Common::Rect rect(0, 0, GAME_AREA_WIDTH, GAME_AREA_HEIGHT);
@@ -157,6 +192,13 @@ void Room::redraw() {
 		Object *const obj = currentScene->getObject(i + 1);
 		if (obj->_active) {
 			drawObjectAnimation(i + 1, obj->_currentFrame - _objectsStart[i] - 1);
+		}
+	}
+
+	for (uint8 i = 0; i < currentScene->getNoBitmaps(); ++i) {
+		Bitmap *const bitmap = currentScene->getBitmap(i + 1);
+		if (bitmap->_isVisible && bitmap->_roomFrame > 0) {
+			drawBitmap(i + 1);
 		}
 	}
 }

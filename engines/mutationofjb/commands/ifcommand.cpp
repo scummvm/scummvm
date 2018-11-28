@@ -69,7 +69,7 @@ bool IfCommandParser::parse(const Common::String &line, ScriptParseContext &, Co
 	const uint8 value = atoi(cstr + 9);
 	const bool negative = (line.lastChar() == '!');
 
-	_lastTag = tag;
+	_tags.push(tag);
 
 	command = new IfCommand(sceneId, objectId, value, negative);
 

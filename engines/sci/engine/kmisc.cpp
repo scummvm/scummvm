@@ -415,7 +415,15 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->strcpy(data, "");
 	} else if (setting == "game") {
 		// Hoyle 5 startup, specifies the number of the game to start.
-		s->_segMan->strcpy(data, "");
+		if (g_sci->getGameId() == GID_HOYLE5 &&
+			!g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 100)) &&
+			g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700))) {
+			// Special case for Hoyle 5 Bridge: only one game is included (Bridge),
+			// so mimic the setting in 700.cfg and set the starting room number to 700.
+			s->_segMan->strcpy(data, "700");
+		} else {
+			s->_segMan->strcpy(data, "");
+		}
 	} else if (setting == "laptop") {
 		// Hoyle 5 startup.
 		s->_segMan->strcpy(data, "");

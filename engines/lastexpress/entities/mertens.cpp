@@ -281,7 +281,7 @@ IMPLEMENT_FUNCTION_S(8, Mertens, playSound16)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityMertens, (char *)&params->seq1, kFlagDefault);
+		getSound()->playSound(kEntityMertens, (char *)&params->seq1, kVolumeFull);
 		break;
 
 	case kActionCallback:
@@ -400,6 +400,10 @@ IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
 
 			if (params->param1 != 3 || (params->param2 != kPosition_8200 && params->param2 != kPosition_9510)) {
 				loadSceneFromPosition();
+				if (getEntities()->updateEntity(kEntityMertens, (CarIndex)params->param1, (EntityPosition)params->param2)) {
+					getData()->inventoryItem = kItemNone;
+					callbackAction();
+				}
 				break;
 			}
 
@@ -432,6 +436,10 @@ IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
 			}
 
 			loadSceneFromPosition();
+			if (getEntities()->updateEntity(kEntityMertens, (CarIndex)params->param1, (EntityPosition)params->param2)) {
+				getData()->inventoryItem = kItemNone;
+				callbackAction();
+			}
 			break;
 
 		case 4:
@@ -439,6 +447,10 @@ IMPLEMENT_FUNCTION_II(10, Mertens, updateEntity, CarIndex, EntityPosition)
 			ENTITY_PARAM(2, 4) = 0;
 
 			loadSceneFromPosition();
+			if (getEntities()->updateEntity(kEntityMertens, (CarIndex)params->param1, (EntityPosition)params->param2)) {
+				getData()->inventoryItem = kItemNone;
+				callbackAction();
+			}
 			break;
 
 		case 5:
@@ -501,7 +513,6 @@ IMPLEMENT_FUNCTION_I(12, Mertens, bonsoir, EntityIndex)
 				getSound()->playSound(kEntityMertens, "CON1112F");
 			} else {
 				switch (rnd(3)) {
-				default:
 				case 0:
 					getSound()->playSound(kEntityMertens, "CON1061");
 					break;
@@ -577,7 +588,7 @@ IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, EntityIndex)
 
 		if (!getSoundQueue()->isBuffered(kEntityMertens)) {
 			if (getProgress().chapter == kChapter3 && !params->param1 && getState()->time < kTime2173500 &&
-			 (getState()->time > kTime2106000 || params->param2 != kEntityPlayer && getState()->time > kTime2079000)) {
+			 (getState()->time > kTime2106000 || (params->param2 != kEntityPlayer && getState()->time > kTime2079000))) {
 				// guide guests to the concert
 				if (params->param2 == kEntityAugust)
 					getSound()->playSound(kEntityMertens, "CON3052");
@@ -907,7 +918,7 @@ IMPLEMENT_FUNCTION(17, Mertens, function17)
 		} else {
 			// Got the passenger list, Mertens is looking for it before sitting
 			ENTITY_PARAM(0, 2) = 1;
-			getSound()->playSound(kEntityMertens, "CON1058", kFlagInvalid, 75);
+			getSound()->playSound(kEntityMertens, "CON1058", kSoundVolumeEntityDefault, 75);
 			getEntities()->drawSequenceRight(kEntityMertens, "601D");
 		}
 
@@ -995,7 +1006,7 @@ IMPLEMENT_FUNCTION(18, Mertens, function18)
 			getEntities()->drawSequenceRight(kEntityMertens, "601A");
 		} else {
 			ENTITY_PARAM(0, 2) = 1;
-			getSound()->playSound(kEntityMertens, "CON1058", kFlagInvalid, 75);
+			getSound()->playSound(kEntityMertens, "CON1058", kSoundVolumeEntityDefault, 75);
 			getEntities()->drawSequenceRight(kEntityMertens, "601D");
 		}
 
@@ -1211,7 +1222,7 @@ IMPLEMENT_FUNCTION(22, Mertens, function22)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMertens);
 			if (!getSoundQueue()->isBuffered(kEntityMertens))
-				getSound()->playSound(kEntityMertens, "MAH1172", kFlagInvalid, 225);
+				getSound()->playSound(kEntityMertens, "MAH1172", kSoundVolumeEntityDefault, 225);
 
 			setCallback(7);
 			setup_function21(kObjectCompartment4, kObject20);
@@ -1964,6 +1975,7 @@ label_callback11:
 		case 27:
 			getAction()->playAnimation(kEventMertensBloodJacket);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverBloodJacket, true);
+			// BUG: for [case 13] the original game continues executing code here
 			break;
 
 		case 14:
@@ -3040,10 +3052,10 @@ IMPLEMENT_FUNCTION(42, Mertens, function42)
 					}
 
 					if (params->param4 >= getState()->time)
-						break;
+						goto label_callback_8;
 				}
 
-				ENTITY_PARAM(0, 4) = kTimeInvalid;
+				params->param4 = kTimeInvalid;
 				getData()->inventoryItem = kItemNone;
 
 				setCallback(8);
@@ -3240,7 +3252,7 @@ label_callback_5_6:
 			goto label_callback_2_4;
 
 		case 3:
-			getAction()->playAnimation(getProgress().jacket == kJacketOriginal ? kEventMertensLastCarOriginalJacket : kEventMertensLastCar);
+			getAction()->playAnimation(getProgress().jacket == kJacketGreen ? kEventMertensLastCar : kEventMertensLastCarOriginalJacket);
 			getEntities()->drawSequenceRight(kEntityMertens, "601A");
 			getScenes()->loadSceneFromPosition(kCarGreenSleeping, 6);
 			getScenes()->loadSceneFromItemPosition(kItem7);

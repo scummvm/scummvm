@@ -124,6 +124,7 @@ protected:
 	bool cmdListMonsters(int argc, const char **argv);
 	bool cmdShowPosition(int argc, const char **argv);
 	bool cmdSetPosition(int argc, const char **argv);
+	bool cmdPrintMap(int argc, const char **argv);
 	bool cmdOpenDoor(int argc, const char **argv);
 	bool cmdCloseDoor(int argc, const char **argv);
 	bool cmdListFlags(int argc, const char **argv);

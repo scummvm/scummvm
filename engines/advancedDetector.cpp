@@ -91,7 +91,11 @@ DetectedGame AdvancedMetaEngine::toDetectedGame(const ADDetectedGame &adGame) co
 		extra = "";
 	} else {
 		const PlainGameDescriptor *pgd = findPlainGameDescriptor(desc->gameId, _gameIds);
-		title = pgd->description;
+		if (pgd) {
+			title = pgd->description;
+		} else {
+			title = "";
+		}
 		extra = desc->extra;
 	}
 

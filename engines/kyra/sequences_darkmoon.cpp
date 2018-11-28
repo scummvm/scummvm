@@ -41,18 +41,7 @@ public:
 		kFinale
 	};
 
-	struct Config {
-		Config(Mode m, const char *const *str, const char *const *cps, const char *const *pal, const DarkMoonShapeDef **shp, const DarkMoonAnimCommand **anim, bool paletteFading) : mode(m), strings(str), cpsFiles(cps), palFiles(pal), shapeDefs(shp), animData(anim), palFading(paletteFading) {}
-		Mode mode;
-		const char *const *strings;
-		const char *const *cpsFiles;
-		const char *const *palFiles;
-		const DarkMoonShapeDef **shapeDefs;
-		const DarkMoonAnimCommand **animData;
-		bool palFading;
-	};
-
-	DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, const Config *config);
+	DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, Mode mode);
 	~DarkmoonSequenceHelper();
 
 	void loadScene(int index, int pageNum);
@@ -79,22 +68,51 @@ private:
 	OSystem *_system;
 	DarkMoonEngine *_vm;
 	Screen_EoB *_screen;
+	
+	struct Config {
+		Config(const char *const *str, const char *const *cpsfiles, const uint8 **cpsdata, const char *const *pal, const DarkMoonShapeDef **shp, const DarkMoonAnimCommand **anim, bool loadScenePalette, bool paletteFading, bool animCmdRestorePalette, bool shapeBackgroundFading, int animPalOffset, int animType1ShapeDim, bool animCmd5SetPalette, int animCmd5ExtraPage) : strings(str), cpsFiles(cpsfiles), cpsData(cpsdata), palFiles(pal), shapeDefs(shp), animData(anim), loadScenePal(loadScenePalette), palFading(paletteFading), animCmdRestorePal(animCmdRestorePalette), shpBackgroundFading(shapeBackgroundFading), animPalOffs(animPalOffset), animCmd1ShapeFrame(animType1ShapeDim), animCmd5SetPal(animCmd5SetPalette), animCmd5AltPage(animCmd5ExtraPage) {}
+		const char *const *strings;
+		const char *const *cpsFiles;
+		const uint8 **cpsData;
+		const char *const *palFiles;
+		const DarkMoonShapeDef **shapeDefs;
+		const DarkMoonAnimCommand **animData;
+		bool loadScenePal;
+		bool palFading;
+		bool animCmdRestorePal;
+		bool shpBackgroundFading;
+		int animPalOffs;
+		int animCmd1ShapeFrame;
+		bool animCmd5SetPal;
+		int animCmd5AltPage;
+	};
+	
 	const Config *_config;
 
-	Palette *_palettes[12];
+	Palette *_palettes[13];
+	uint8 *_fadingTables[7];
 
 	const uint8 **_shapes;
 
 	uint32 _fadePalTimer;
 	int _fadePalRate;
 	int _fadePalIndex;
+
+	Screen::FontId _prevFont;
+
+	static const char *const _palFilesIntroVGA[];
+	static const char *const _palFilesIntroEGA[];
+	static const char *const _palFilesFinaleVGA[];
+	static const char *const _palFilesFinaleEGA[];
 };
 
 int DarkMoonEngine::mainMenu() {
 	int menuChoice = _menuChoiceInit;
 	_menuChoiceInit = 0;
 
+	_sound->selectAudioResourceSet(kMusicIntro);
 	_sound->loadSoundFile("INTRO");
+
 	Screen::FontId of = _screen->_currentFont;
 	int op = 0;
 	Common::SeekableReadStream *s = 0;
@@ -102,17 +120,23 @@ int DarkMoonEngine::mainMenu() {
 	while (menuChoice >= 0 && !shouldQuit()) {
 		switch (menuChoice) {
 		case 0: {
-			s = _res->createReadStream("XENU.CPS");
-			if (s) {
-				s->read(_screen->getPalette(0).getData(), 768);
-				_screen->loadFileDataToPage(s, 3, 64000);
-				delete s;
+			if (_flags.platform == Common::kPlatformFMTowns) {
+				_screen->loadPalette("MENU.PAL", _screen->getPalette(0));
+				_screen->setScreenPalette(_screen->getPalette(0));
+				_screen->loadEoBBitmap("MENU", 0, 3, 3, 2);
 			} else {
-				_screen->loadBitmap("MENU.CPS", 3, 3, &_screen->getPalette(0));
-			}
+				s = _res->createReadStream("XENU.CPS");
+				if (s) {
+					s->read(_screen->getPalette(0).getData(), 768);
+					_screen->loadFileDataToPage(s, 3, 64000);
+					delete s;
+				} else {
+					_screen->loadBitmap("MENU.CPS", 3, 3, &_screen->getPalette(0));
+				}
 
-			if (_configRenderMode == Common::kRenderEGA)
-				_screen->loadPalette("MENU.EGA", _screen->getPalette(0));
+				if (_configRenderMode == Common::kRenderEGA)
+					_screen->loadPalette("MENU.EGA", _screen->getPalette(0));
+			}
 
 			_screen->setScreenPalette(_screen->getPalette(0));
 			_screen->convertPage(3, 2, 0);
@@ -120,10 +144,11 @@ int DarkMoonEngine::mainMenu() {
 			of = _screen->setFont(Screen::FID_6_FNT);
 			op = _screen->setCurPage(2);
 			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
-			_screen->printText(versionString.c_str(), 267 - versionString.size() * 6, 160, 13, 0);
+			_screen->printText(versionString.c_str(), 267 - versionString.size() * 6, _flags.platform == Common::kPlatformFMTowns ? 152 : 160, 13, 0);
 			_screen->setFont(of);
 			_screen->_curPage = op;
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->shadeRect(78, 99, 249, 141, 4);
 			_screen->updateScreen();
 			_allowImport = true;
 			menuChoice = mainMenuLoop();
@@ -171,12 +196,30 @@ int DarkMoonEngine::mainMenuLoop() {
 			sel = _gui->simpleMenu_process(6, _mainMenuStrings, 0, -1, 0);
 	} while ((sel < 0 || sel > 5) && !shouldQuit());
 
+	if (_flags.platform == Common::kPlatformFMTowns && sel == 2) {
+		townsUtilitiesMenu();
+		sel = -1;
+	}
+
 	return sel + 1;
 }
 
+void DarkMoonEngine::townsUtilitiesMenu() {
+	_screen->copyRegion(78, 99, 78, 99, 172, 43, 2, 0, Screen::CR_NO_P_CHECK);
+	int sel = -1;
+	do {
+		_gui->simpleMenu_setup(8, 0, _utilMenuStrings, -1, 0, 0);
+		while (sel == -1 && !shouldQuit())
+			sel = _gui->simpleMenu_process(8, _utilMenuStrings, 0, -1, 0);
+		if (sel == 0) {
+			_config2431 ^= true;
+			sel = -1;
+		}
+	} while ((sel < 0 || sel > 1) && !shouldQuit());
+}
+
 void DarkMoonEngine::seq_playIntro() {
-	DarkmoonSequenceHelper::Config config(DarkmoonSequenceHelper::kIntro, _introStrings, _cpsFilesIntro, _configRenderMode == Common::kRenderEGA ? _palFilesIntroEGA : _palFilesIntroVGA, _shapesIntro,	_animIntro,	false);
-	DarkmoonSequenceHelper sq(_system, this, _screen, &config);
+	DarkmoonSequenceHelper sq(_system, this, _screen, DarkmoonSequenceHelper::kIntro);
 
 	_screen->setCurPage(0);
 	_screen->clearCurPage();
@@ -205,13 +248,13 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(6, 18);
 	sq.animCommand(0);
 
-	sq.waitForSongNotifier(1);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 229 : 1);
 
 	sq.animCommand(_configRenderMode == Common::kRenderEGA ? 12 : 11);
 	sq.animCommand(7, 6);
 	sq.animCommand(2, 6);
 
-	sq.waitForSongNotifier(2);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 447 : 2);
 
 	sq.animCommand(_configRenderMode == Common::kRenderEGA ? 39 : 38);
 	sq.animCommand(3);
@@ -220,7 +263,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(0, 6);
 	sq.animCommand(2);
 
-	sq.waitForSongNotifier(3);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 670 : 3);
 
 	_screen->setClearScreenDim(17);
 	_screen->setCurPage(2);
@@ -248,7 +291,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.printText(3, 16);    // The message was urgent.
 
 	sq.loadScene(1, 2);
-	sq.waitForSongNotifier(4);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 1380 : 4);
 
 	// intro scroll
 	if (!skipFlag() && !shouldQuit()) {
@@ -309,7 +352,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(14);
 	sq.loadScene(5, 2);
 
-	sq.waitForSongNotifier(5);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 2037 : 5);
 
 	sq.fadeText();
 	_screen->clearCurPage();
@@ -364,7 +407,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.loadScene(9, 2);
 	sq.fadeText();
 
-	sq.waitForSongNotifier(6);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 3000 : 6);
 
 	sq.update(2);
 	sq.animCommand(34);
@@ -469,12 +512,12 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.animCommand(29);
 
-	sq.waitForSongNotifier(7);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 4475 : 7);
 
 	sq.animCommand(30);
 	sq.animCommand(31);
 
-	sq.waitForSongNotifier(8, true);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 4825 : 8, true);
 
 	if (skipFlag() || shouldQuit()) {
 		snd_fadeOut();
@@ -495,17 +538,16 @@ void DarkMoonEngine::seq_playIntro() {
 }
 
 void DarkMoonEngine::seq_playFinale() {
-	DarkmoonSequenceHelper::Config config(DarkmoonSequenceHelper::kFinale, _finaleStrings, _cpsFilesFinale, _configRenderMode == Common::kRenderEGA ? _palFilesFinaleEGA : _palFilesFinaleVGA, _shapesFinale, _animFinale, true);
-	DarkmoonSequenceHelper sq(_system, this, _screen, &config);
+	DarkmoonSequenceHelper sq(_system, this, _screen, DarkmoonSequenceHelper::kFinale);
 
 	_screen->setCurPage(0);
-	_screen->setFont(Screen::FID_8_FNT);
 
-	_sound->loadSoundFile("FINALE1");
+	_sound->loadSoundFile(_flags.platform == Common::kPlatformFMTowns ?  "FINALE" : "FINALE1");
 	snd_stopSound();
 	sq.delay(3);
 
 	_screen->clearCurPage();
+	_screen->clearPage(2);
 	_screen->updateScreen();
 
 	sq.loadScene(0, 2);
@@ -531,7 +573,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.fadeText();
 	sq.animCommand(2);
 
-	sq.waitForSongNotifier(1);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 475 : 1);
 
 	sq.printText(1, 10);            // Suddenly, your friend Khelben appears
 	sq.animCommand(4);
@@ -623,7 +665,7 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.loadScene(4, 2);
 
-	sq.waitForSongNotifier(2);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 2030 : 2);
 
 	_screen->clearCurPage();
 	sq.update(2);
@@ -636,7 +678,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(90);
 	sq.fadeText();
 
-	sq.waitForSongNotifier(3);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 2200 : 3);
 
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(7);
@@ -668,7 +710,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(72);
 	sq.fadeText();
 
-	sq.waitForSongNotifier(4);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 2752 : 4);
 
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(7);
@@ -702,7 +744,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.fadeText();
 	sq.loadScene(12, 2);
 
-	sq.waitForSongNotifier(5);
+	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 3475 : 5);
 
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(6);
@@ -781,16 +823,24 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.loadScene(10, 2);
 	sq.loadScene(9, 2);
+
 	snd_stopSound();
 	sq.delay(3);
 
-	_sound->loadSoundFile("FINALE2");
+	if (_flags.platform != Common::kPlatformFMTowns)
+		_sound->loadSoundFile("FINALE2");
 
 	sq.delay(18);
 	if (!skipFlag() && !shouldQuit())
-		snd_playSong(1);
+		snd_playSong(_flags.platform == Common::kPlatformFMTowns ? 16 : 1);
 
-	seq_playCredits(&sq, _creditsData, 18, 2, 6, 2);
+	int temp = 0;
+	const uint8 *creditsData = (_flags.platform == Common::kPlatformFMTowns) ? _res->fileData("CREDITS.TXT", 0) : _staticres->loadRawData(kEoB2CreditsData, temp);
+	
+	seq_playCredits(&sq, creditsData, 18, 2, 6, 2);
+	
+	if (_flags.platform == Common::kPlatformFMTowns)
+		delete[] creditsData;
 
 	sq.delay(90);
 
@@ -816,6 +866,9 @@ void DarkMoonEngine::seq_playFinale() {
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 
+	if (_flags.platform == Common::kPlatformFMTowns)
+		sq.copyPalette(12, 0);
+	
 	sq.setPalette(9);
 	sq.fadePalette(0, 18);
 
@@ -830,7 +883,9 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 	if (!data)
 		return;
 
+	_screen->setFont(Screen::FID_8_FNT);
 	_screen->setScreenDim(sd);
+
 	const ScreenDim *dm = _screen->_curDim;
 
 	_screen->copyRegion(dm->sx << 3, dm->sy, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 0, backupPage, Screen::CR_NO_P_CHECK);
@@ -954,8 +1009,74 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 		delete[] items[i].str;
 }
 
-DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, const Config *config) :
-	_system(system), _vm(vm), _screen(screen), _config(config) {
+DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, Mode mode) :
+	_system(system), _vm(vm), _screen(screen) {
+	
+	int size = 0;
+
+	if (mode == kIntro) {
+		_config = new Config(
+			_vm->staticres()->loadStrings(kEoB2IntroStrings, size),
+			_vm->staticres()->loadStrings(kEoB2IntroCPSFiles, size),
+			new const uint8*[13],
+			_vm->_configRenderMode == Common::kRenderEGA ? _palFilesIntroEGA : _palFilesIntroVGA,
+			new const DarkMoonShapeDef*[13],
+			new const DarkMoonAnimCommand *[44],
+			false,
+			false,
+			true,
+			true,
+			0,
+			0,
+			false,
+			2
+			);
+
+		for (int i = 0; i < 44; i++)
+			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2IntroAnimData00 + i, size);
+
+		for (int i = 0; i < 13; i++)
+			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2IntroCpsDataStreet1 + i, size);
+
+		memset(_config->shapeDefs, 0, 13 * sizeof(DarkMoonShapeDef*));
+		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes00, size);
+		_config->shapeDefs[1] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes01, size);
+		_config->shapeDefs[4] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes04, size);
+		_config->shapeDefs[7] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes07, size);
+
+	} else {
+		_config = new Config(
+			_vm->staticres()->loadStrings(kEoB2FinaleStrings, size),
+			_vm->staticres()->loadStrings(kEoB2FinaleCPSFiles, size),
+			new const uint8*[13],
+			_vm->_configRenderMode == Common::kRenderEGA ? _palFilesFinaleEGA : _palFilesFinaleVGA,
+			new const DarkMoonShapeDef*[13],
+			new const DarkMoonAnimCommand *[21],
+			true,
+			true,
+			false,
+			false,
+			1,
+			18,
+			true,
+			6
+			);
+
+		for (int i = 0; i < 21; i++)
+			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2FinaleAnimData00 + i, size);
+
+		for (int i = 0; i < 13; i++)
+			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2FinaleCpsDataDragon1 + i, size);
+
+		memset(_config->shapeDefs, 0, 13 * sizeof(DarkMoonShapeDef*));
+		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes00, size);
+		_config->shapeDefs[3] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes03, size);
+		_config->shapeDefs[7] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes07, size);
+		_config->shapeDefs[9] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes09, size);
+		_config->shapeDefs[10] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes10, size);
+	}
+
+	_screen->enableHiColorMode(false);
 
 	for (int i = 0; _config->palFiles[i]; i++) {
 		if (i < 4)
@@ -965,12 +1086,36 @@ DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *
 		_screen->loadPalette(_config->palFiles[i], *_palettes[i]);
 	}
 
-	_palettes[9] = new Palette(256);
+	for (int i = 9; i < 13; ++i)
+		_palettes[i] = new Palette(256);
+
 	_palettes[9]->fill(0, 256, 0);
-	_palettes[10] = new Palette(256);
 	_palettes[10]->fill(0, 256, 63);
-	_palettes[11] = new Palette(256);
 	_palettes[11]->fill(0, 256, 0);
+
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+		_screen->loadPalette("PALETTE.COL", *_palettes[12]);
+
+	for (int i = 0; i < 7; i++)
+		_fadingTables[i] = 0;
+
+	uint8 *fadeData = (_vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) ? _vm->resource()->fileData("FADING.DAT", 0) : 0;
+	
+	if (fadeData) {
+		for (int i = 0; i < 7; i++) {
+			_fadingTables[i] = new uint8[256];
+			memcpy(_fadingTables[i], fadeData + (i << 8), 256);
+		}
+	} else {
+		if (_vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) {
+			uint8 *pal = _vm->resource()->fileData("PALETTE1.PAL", 0);
+			for (int i = 0; i < 7; i++)
+				_screen->createFadeTable(pal, _fadingTables[i], 18, (i + 1) * 36);
+			delete[] pal;
+		}
+	}
+
+	delete[] fadeData;
 
 	_shapes = new const uint8*[30];
 	memset(_shapes, 0, 30 * sizeof(uint8 *));
@@ -979,7 +1124,7 @@ DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *
 	_fadePalRate = 0;
 
 	_screen->setScreenPalette(*_palettes[0]);
-	_screen->setFont(Screen::FID_8_FNT);
+	_prevFont = _screen->setFont(_vm->gameFlags().platform == Common::kPlatformFMTowns ? Screen::FID_SJIS_LARGE_FNT : Screen::FID_8_FNT);
 	_screen->hideMouse();
 
 	_vm->delay(150);
@@ -990,15 +1135,24 @@ DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *
 DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 	for (int i = 4; _config->palFiles[i]; i++)
 		delete _palettes[i];
-	delete _palettes[9];
-	delete _palettes[10];
-	delete _palettes[11];
+	for (int i = 9; i < 13; ++i)
+		delete _palettes[i];
+
+	for (int i = 0; i < 7; i++)
+		delete[] _fadingTables[i];
 
 	for (int i = 0; i < 30; i++)
 		delete[] _shapes[i];
 	delete[] _shapes;
 
+	delete[] _config->animData;
+	delete[] _config->shapeDefs;
+	delete[] _config->cpsData;
+	delete _config;
+
+	_screen->enableHiColorMode(true);
 	_screen->clearCurPage();
+	_screen->setFont(_prevFont);
 	_screen->showMouse();
 	_screen->updateScreen();
 
@@ -1008,17 +1162,23 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 }
 
 void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {
-	char file[13];
-	strcpy(file, _config->cpsFiles[index]);
-
-	Common::SeekableReadStream *s = _vm->resource()->createReadStream(file);
+	char file[13] = "";
+	Common::SeekableReadStream *s = 0;
 	uint32 chunkID = 0;
+
+	if (_config->cpsFiles) {
+		strcpy(file, _config->cpsFiles[index]);
+		s = _vm->resource()->createReadStream(file);
+	}
+	
 	if (s) {
 		chunkID = s->readUint32LE();
 		s->seek(0);
 	}
 
-	if (s && chunkID == MKTAG('F', 'O', 'R', 'M')) {
+	if (_config->cpsData[index]) {
+		_screen->decodeSHP(_config->cpsData[index], pageNum);
+	} else if (s && chunkID == MKTAG('F', 'O', 'R', 'M')) {
 		// The original code also handles files with FORM chunks and ILBM and PBM sub chunks. This will probably be necessary for Amiga versions.
 		// The DOS versions do not need this, but still have the code for it. We error out for now.
 		error("DarkmoonSequenceHelper::loadScene(): CPS file loading failure in scene %d - unhandled FORM chunk encountered", index);
@@ -1034,7 +1194,7 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {
 		if (!s)
 			error("DarkmoonSequenceHelper::loadScene(): CPS file loading failure in scene %d", index);
 
-		if (_config->mode == kFinale)
+		if (_config->loadScenePal)
 			s->read(_palettes[0]->getData(), 768);
 		else
 			s->seek(768);
@@ -1071,8 +1231,10 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 	uint32 end = 0;
 
 	for (const DarkMoonAnimCommand *s = _config->animData[index]; s->command != 0xFF && !_vm->skipFlag() && !_vm->shouldQuit(); s++) {
-		int palIndex = _config->mode == kFinale ? (s->pal + 1) : s->pal;
+		int palIndex = s->pal + _config->animPalOffs;
 		int x = s->x1;
+		if (x >= Screen::SCREEN_W)
+			x >>= 1;
 		int y = s->y1;
 		int x2 = 0;
 		uint16 shapeW = 0;
@@ -1084,7 +1246,7 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 			if (_vm->_configRenderMode != Common::kRenderEGA && s->pal)
 				setPaletteWithoutTextColor(palIndex);
 			delay(s->delay);
-			if (_vm->_configRenderMode != Common::kRenderEGA && _config->mode == kIntro && s->pal)
+			if (_vm->_configRenderMode != Common::kRenderEGA && _config->animCmdRestorePal && s->pal)
 				setPaletteWithoutTextColor(0);
 			break;
 
@@ -1093,7 +1255,7 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 			shapeW = _shapes[s->obj][2];
 			shapeH = _shapes[s->obj][3];
 
-			if (_config->mode == kFinale) {
+			if (_config->animCmd1ShapeFrame == 18) {
 				_screen->setScreenDim(18);
 				x -= (_screen->_curDim->sx << 3);
 				y -= _screen->_curDim->sy;
@@ -1103,7 +1265,7 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 					x2 = x;
 			}
 
-			_screen->drawShape(0, _shapes[s->obj], x, y, _config->mode == kIntro ? 0 : 18);
+			_screen->drawShape(0, _shapes[s->obj], x, y, _config->animCmd1ShapeFrame);
 
 			if (_vm->_configRenderMode != Common::kRenderEGA && s->pal)
 				setPaletteWithoutTextColor(palIndex);
@@ -1112,7 +1274,7 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 
 			delay(s->delay);
 
-			if (_config->mode == kIntro) {
+			if (_config->animCmd1ShapeFrame == 0) {
 				if (_vm->_configRenderMode != Common::kRenderEGA && s->pal)
 					setPaletteWithoutTextColor(0);
 				_screen->copyRegion(x - 8, y - 8, x, y, (shapeW + 1) << 3, shapeH, 2, 0, Screen::CR_NO_P_CHECK);
@@ -1134,14 +1296,14 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 
 			delay(s->delay);
 
-			if (_vm->_configRenderMode != Common::kRenderEGA && _config->mode == kIntro && s->pal)
+			if (_vm->_configRenderMode != Common::kRenderEGA && _config->animCmdRestorePal && s->pal)
 				setPaletteWithoutTextColor(0);
 			break;
 
 		case 3:
 		case 4:
 			// fade shape in or out or restore background
-			if (_config->mode == kFinale)
+			if (!_config->shpBackgroundFading)
 				break;
 
 			if (_vm->_configRenderMode == Common::kRenderEGA) {
@@ -1152,13 +1314,13 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 				_screen->updateScreen();
 				delay(s->delay /** 7*/);
 			} else {
-				_screen->setShapeFadeMode(0, true);
-				_screen->setShapeFadeMode(1, true);
+				_screen->enableShapeBackgroundFading(true);
+				_screen->setShapeFadingLevel(1);
 
 				end = _system->getMillis() + s->delay * _vm->tickLength();
 
 				if (palIndex) {
-					_screen->setFadeTableIndex(palIndex - 1);
+					_screen->setFadeTable(_fadingTables[palIndex - 1]);
 
 					_screen->copyRegion(s->x1 - 8, s->y1 - 8, 0, 0, (_shapes[s->obj][2] + 1) << 3, _shapes[s->obj][3], 2, 4, Screen::CR_NO_P_CHECK);
 					_screen->drawShape(4, _shapes[s->obj], s->x1 & 7, 0, 0);
@@ -1169,17 +1331,17 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 				_screen->updateScreen();
 
 				_vm->delayUntil(end);
-				_screen->setShapeFadeMode(0, false);
-				_screen->setShapeFadeMode(1, false);
+				_screen->enableShapeBackgroundFading(false);
+				_screen->setShapeFadingLevel(0);
 			}
 			break;
 
 		case 5:
 			// copy region
-			if (_config->mode == kFinale && s->pal)
+			if (_config->animCmd5SetPal && s->pal)
 				setPaletteWithoutTextColor(palIndex);
 
-			_screen->copyRegion(s->x2 << 3, s->y2, s->x1, s->y1, s->w << 3, s->h, (s->obj && _config->mode == kFinale) ? 6 : 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(s->x2 << 3, s->y2, s->x1, s->y1, s->w << 3, s->h, s->obj ? _config->animCmd5AltPage : 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 			delay(s->delay);
 			break;
@@ -1225,8 +1387,9 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 	strcpy(str, _config->strings[index]);
 
 	const ScreenDim *dm = _screen->_curDim;
+	int fontHeight = _screen->getFontHeight() + 1;
 
-	for (int yOffs = 0; *str; yOffs += 9) {
+	for (int yOffs = 0; *str; yOffs += fontHeight) {
 		char *cr = strchr(str, 13);
 
 		if (cr)
@@ -1358,8 +1521,52 @@ void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim
 	}
 }
 
+const char *const DarkmoonSequenceHelper::_palFilesIntroVGA[] = {
+	"PALETTE1.PAL",
+	"PALETTE3.PAL",
+	"PALETTE2.PAL",
+	"PALETTE4.PAL",
+	0
+};
+
+const char *const DarkmoonSequenceHelper::_palFilesIntroEGA[] = {
+	"PALETTE0.PAL",
+	"PALETTE3.PAL",
+	"PALETTE2.PAL",
+	"PALETTE4.PAL",
+	0
+};
+
+const char *const DarkmoonSequenceHelper::_palFilesFinaleVGA[] = {
+	"FINALE_0.PAL",
+	"FINALE_0.PAL",
+	"FINALE_1.PAL",
+	"FINALE_2.PAL",
+	"FINALE_3.PAL",
+	"FINALE_4.PAL",
+	"FINALE_5.PAL",
+	"FINALE_6.PAL",
+	"FINALE_7.PAL",
+	0
+};
+
+const char *const DarkmoonSequenceHelper::_palFilesFinaleEGA[] = {
+	"FINALE_0.PAL",
+	"FINALE_0.PAL",
+	"FINALE_1.PAL",
+	"FINALE_2.PAL",
+	"FINALE_3.PAL",
+	"FINALE_4.PAL",
+	"FINALE_5.PAL",
+	"FINALE_0.PAL",
+	"FINALE_0.PAL",
+	0
+};
+
 void DarkMoonEngine::seq_nightmare() {
 	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+	if (_flags.lang == Common::JA_JPN)
+		_screen->clearCurDim();
 	_screen->copyRegion(0, 0, 0, 120, 176, 24, 12, 2, Screen::CR_NO_P_CHECK);
 
 	initDialogueSequence();
@@ -1391,6 +1598,7 @@ void DarkMoonEngine::seq_kheldran() {
 	gui_drawDialogueBox();
 
 	static const char file[] = "KHELDRAN";
+	_screen->set16bitShadingLevel(4);
 	_txt->printDialogueText(_kheldranStrings[0]);
 	drawSequenceBitmap(file, 0, 0, 0, 0);
 	_txt->printDialogueText(20, _moreStrings[0]);

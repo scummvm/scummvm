@@ -71,7 +71,7 @@ void FontSJIS::drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 
 }
 
 FontSJISBase::FontSJISBase()
-	: _drawMode(kDefaultMode), _flippedMode(false), _fontWidth(16), _fontHeight(16), _bitPosNewLineMask(0) {
+: _drawMode(kDefaultMode), _flippedMode(false), _fatPrint(false), _fontWidth(16), _fontHeight(16), _bitPosNewLineMask(0) {
 }
 
 void FontSJISBase::setDrawingMode(DrawingMode mode) {
@@ -86,6 +86,13 @@ void FontSJISBase::toggleFlippedMode(bool enable) {
 		_flippedMode = enable;
 	else
 		warning("Flipped mode unsupported by this font");
+}
+
+void FontSJISBase::toggleFatPrint(bool enable) {
+	if (hasFeature(kFeatFatPrint))
+		_fatPrint = enable;
+	else
+		warning("Fat print unsupported by this font");
 }
 
 uint FontSJISBase::getFontHeight() const {
@@ -207,6 +214,25 @@ const uint8 *FontSJISBase::flipCharacter(const uint8 *glyph, const int w) const 
 }
 #endif
 
+const uint8 *FontSJISBase::makeFatCharacter(const uint8 *glyph, const int w) const {
+	// This is the EOB II FM-Towns implementation.
+	// The last bit to the right of each line is cut off so that the fat
+	// character actually has the same width as it would normally have.
+	if (w == 8) {
+		for (int i = 0; i < 16; ++i) {
+			_tempGlyph2[i] = *glyph | (*glyph >> 1);
+			glyph++;
+		}
+	} else {
+		for (int i = 0; i < 16; ++i) {
+			uint16 l = READ_BE_UINT16(glyph);
+			WRITE_BE_UINT16(&_tempGlyph2[i << 1], l | (l >> 1));
+			glyph += 2;
+		}
+	}
+	return _tempGlyph2;
+}
+
 void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW, int maxH) const {
 	const uint8 *glyphSource = 0;
 	int width = 0, height = 0;
@@ -243,11 +269,14 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 		return;
 	}
 
+	if (_fatPrint)
+		glyphSource = makeFatCharacter(glyphSource, width);
+
 #ifndef DISABLE_FLIPPED_MODE
 	if (_flippedMode)
 		glyphSource = flipCharacter(glyphSource, width);
 #endif
-
+	
 	uint8 outline[18 * 18];
 	if (_drawMode == kOutlineMode) {
 		memset(outline, 0, sizeof(outline));
@@ -409,7 +438,7 @@ const uint8 *FontTowns::getCharData(uint16 ch) const {
 }
 
 bool FontTowns::hasFeature(int feat) const {
-	static const int features = kFeatDefault | kFeatOutline | kFeatShadow | kFeatFMTownsShadow | kFeatFlipped;
+	static const int features = kFeatDefault | kFeatOutline | kFeatShadow | kFeatFMTownsShadow | kFeatFlipped | kFeatFatPrint;
 	return (features & feat) ? true : false;
 }
 
@@ -577,7 +606,7 @@ bool FontSjisSVM::hasFeature(int feat) const {
 	// Flipped mode is not supported since the hard coded table (taken from SCUMM 5 FM-TOWNS)
 	// is set up for font sizes of 8/16. This mode is also not required at the moment, since
 	// there aren't any SCUMM 5 PC-Engine games.
-	static const int features16 = kFeatDefault | kFeatOutline | kFeatShadow | kFeatFMTownsShadow | kFeatFlipped;
+	static const int features16 = kFeatDefault | kFeatOutline | kFeatShadow | kFeatFMTownsShadow | kFeatFlipped | kFeatFatPrint;
 	static const int features12 = kFeatDefault | kFeatOutline | kFeatShadow | kFeatFMTownsShadow;
 	return (((_fontWidth == 12) ? features12 : features16) & feat) ? true : false;
 }

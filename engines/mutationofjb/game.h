@@ -25,9 +25,9 @@
 
 #include "mutationofjb/assets.h"
 #include "mutationofjb/gamescreen.h"
-#include "mutationofjb/script.h"
 #include "mutationofjb/tasks/taskmanager.h"
 
+#include "common/language.h"
 #include "common/ptr.h"
 #include "common/random.h"
 #include "common/scummsys.h"
@@ -51,6 +51,8 @@ struct Bitmap;
 class Game {
 public:
 	Game(MutationOfJBEngine *vm);
+	MutationOfJBEngine &getEngine();
+
 	Common::RandomSource &getRandomSource();
 	GameData &getGameData();
 	Room &getRoom();
@@ -58,7 +60,7 @@ public:
 	Script *getLocalScript() const;
 
 	void changeScene(uint8 sceneId, bool partB);
-	Script *changeSceneDelayScript(uint8 sceneId, bool partB);
+	Script *changeSceneDelayScript(uint8 sceneId, bool partB, bool runDelayedScriptStartup = false);
 
 	bool startActionSection(ActionInfo::Action action, const Common::String &entity1Name, const Common::String &entity2Name = Common::String());
 
@@ -67,9 +69,6 @@ public:
 	void update();
 
 	GameScreen &getGameScreen();
-
-	ActionInfo::Action getCurrentAction() const;
-	void setCurrentAction(ActionInfo::Action);
 
 	static uint8 colorFromString(const char *colorStr);
 
@@ -82,6 +81,10 @@ public:
 	void setActiveSayTask(const TaskPtr &sayTask);
 
 	bool loadSaveAllowed() const;
+
+	Common::Language getLanguage() const;
+
+	void switchToPartB();
 
 private:
 	bool loadGameData(bool partB);
@@ -96,9 +99,9 @@ private:
 	Script *_globalScript;
 	Script *_localScript;
 	Script *_delayedLocalScript;
+	bool _runDelayedScriptStartup;
 	Room *_room;
 	GameScreen _gui;
-	ActionInfo::Action _currentAction;
 
 	ScriptExecutionContext _scriptExecCtx;
 

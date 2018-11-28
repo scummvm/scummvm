@@ -68,6 +68,11 @@ void GuiScreen::update() {
 
 void GuiScreen::addWidget(Widget *widget) {
 	_widgets.push_back(widget);
+	widget->markDirty();
+}
+
+const GuiScreen::Widgets &GuiScreen::getWidgets() const {
+	return _widgets;
 }
 
 }

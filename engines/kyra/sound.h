@@ -66,6 +66,13 @@ struct SoundResourceInfo_TownsPC98V2 {
 	uint cdaTableSize;
 };
 
+struct SoundResourceInfo_TownsEoB {
+	SoundResourceInfo_TownsEoB(const uint8 *pcmdata, uint dataSize, int pcmvolume) : pcmData(pcmdata), pcmDataSize(dataSize), pcmVolume(pcmvolume) {}
+	const uint8 *pcmData;
+	uint pcmDataSize;
+	int pcmVolume;
+};
+
 /**
  * Analog audio output device API for Kyrandia games.
  * It contains functionality to play music tracks,

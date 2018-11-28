@@ -24,9 +24,11 @@
 #define MUTATIONOFJB_GUI_H
 
 #include "mutationofjb/inventory.h"
+#include "mutationofjb/script.h"
+#include "mutationofjb/guiscreen.h"
 #include "mutationofjb/widgets/buttonwidget.h"
 #include "mutationofjb/widgets/inventorywidget.h"
-#include "mutationofjb/guiscreen.h"
+#include "mutationofjb/widgets/gamewidget.h"
 
 #include "common/array.h"
 #include "common/hashmap.h"
@@ -48,8 +50,10 @@ class Game;
 class Widget;
 class InventoryWidget;
 class ConversationWidget;
+class LabelWidget;
+class GameWidget;
 
-class GameScreen : public GuiScreen, public InventoryObserver, public ButtonWidgetCallback, public InventoryWidgetCallback {
+class GameScreen : public GuiScreen, public InventoryObserver, public ButtonWidgetCallback, public InventoryWidgetCallback, public GameWidgetCallback {
 public:
 	friend class InventoryAnimationDecoderCallback;
 	friend class HudAnimationDecoderCallback;
@@ -59,12 +63,20 @@ public:
 
 	bool init();
 
+	virtual void handleEvent(const Common::Event &event) override;
+
 	virtual void onInventoryChanged() override;
 	virtual void onButtonClicked(ButtonWidget *) override;
 	virtual void onInventoryItemHovered(InventoryWidget *widget, int posInWidget) override;
 	virtual void onInventoryItemClicked(InventoryWidget *widget, int posInWidget) override;
+	virtual void onGameDoorClicked(GameWidget *, Door *door) override;
+	virtual void onGameStaticClicked(GameWidget *, Static *stat) override;
+	virtual void onGameEntityHovered(GameWidget *, const Common::String &entity) override;
 
 	ConversationWidget &getConversationWidget();
+
+	void showConversationWidget(bool show);
+	void refreshAfterSceneChanged();
 
 private:
 	bool loadInventoryGfx();
@@ -72,11 +84,19 @@ private:
 	void drawInventoryItem(const Common::String &item, int pos);
 	void drawInventory();
 
+	void updateStatusBarText(const Common::String &entity, bool inventory);
+
 	Common::Array<Graphics::Surface> _inventorySurfaces;
 	Common::Array<Graphics::Surface> _hudSurfaces;
 
+	Common::Array<ButtonWidget *> _buttons;
 	InventoryWidget *_inventoryWidget;
 	ConversationWidget *_conversationWidget;
+	LabelWidget *_statusBarWidget;
+	GameWidget *_gameWidget;
+
+	ActionInfo::Action _currentAction;
+	Common::String _currentPickedItem;
 };
 
 }

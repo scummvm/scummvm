@@ -63,7 +63,8 @@ namespace Hopkins {
 #define SCREEN_HEIGHT 480
 
 enum HopkinsDebugChannels {
-	kDebugPath      = 1 <<  0
+	kDebugPath     = 1 << 0,
+	kDebugGraphics = 1 << 1
 };
 
 /**

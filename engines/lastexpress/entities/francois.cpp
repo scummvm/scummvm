@@ -375,7 +375,7 @@ label_callback:
 			getData()->inventoryItem = kItemNone;
 
 			if (getSoundQueue()->isBuffered(kEntityFrancois))
-				getSoundQueue()->processEntry(kEntityFrancois);
+				getSoundQueue()->fade(kEntityFrancois);
 
 			setCallback(4);
 			setup_doWalk(kCarRedSleeping, kPosition_5790);
@@ -386,7 +386,7 @@ label_callback:
 		getData()->inventoryItem = kItemNone;
 
 		if (getSoundQueue()->isBuffered(kEntityFrancois))
-			getSoundQueue()->processEntry(kEntityFrancois);
+			getSoundQueue()->fade(kEntityFrancois);
 
 		setCallback(6);
 		setup_savegame(kSavegameTypeEvent, kEventFrancoisWhistle);

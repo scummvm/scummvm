@@ -60,7 +60,7 @@ public:
 	 *
 	 * @param event ScummVM event.
 	 */
-	void handleEvent(const Common::Event &event);
+	virtual void handleEvent(const Common::Event &event);
 
 	/**
 	 * Updates all visible widgets.
@@ -76,11 +76,15 @@ public:
 	void addWidget(Widget *widget);
 
 protected:
+	typedef Common::Array<Widget *> Widgets;
+
 	Game &_game;
 	Graphics::Screen *_screen;
 
+	const Widgets &getWidgets() const;
+
 private:
-	Common::Array<Widget *> _widgets;
+	Widgets _widgets;
 };
 
 }

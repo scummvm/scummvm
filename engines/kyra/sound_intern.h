@@ -349,6 +349,59 @@ protected:
 	int _tableSfxGame_Size;
 };
 
+class SoundTowns_Darkmoon : public Sound, public TownsAudioInterfacePluginDriver {
+public:
+	SoundTowns_Darkmoon(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	virtual ~SoundTowns_Darkmoon();
+
+	virtual kType getMusicType() const { return kTowns; }
+
+	virtual bool init();
+
+	void timerCallback(int timerId);
+
+	virtual void initAudioResourceInfo(int set, void *info);
+	virtual void selectAudioResourceSet(int set);
+	virtual bool hasSoundFile(uint file) const;
+	virtual void loadSoundFile(uint file) {}
+	virtual void loadSoundFile(Common::String name);
+
+	virtual void playTrack(uint8 track);
+	virtual void haltTrack();
+	virtual bool isPlaying() const;
+
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
+	virtual void stopAllSoundEffects();
+
+	virtual void beginFadeOut();
+
+	virtual void updateVolumeSettings();
+
+	virtual int checkTrigger();
+
+	virtual void resetTrigger();
+
+private:
+	struct SoundTableEntry {
+		int8 type;
+		int32 para1;
+		int16 para2;
+	} _soundTable[120];
+
+	uint8 _lastSfxChan;
+	uint8 _lastEnvChan;
+	uint8 *_pcmData;
+	uint32 _pcmDataSize;
+	uint8 _pcmVol;
+
+	int _timer;
+	int _timerSwitch;
+
+	SoundResourceInfo_TownsEoB *_pcmResource[3];
+
+	TownsAudioInterface *_intf;
+};
+
 } // End of namespace Kyra
 
 #endif

@@ -46,6 +46,7 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	_vcnTransitionMask = 0;
 	_vcnShift = 0;
 	_vcnColTable = 0;
+	_vcnBpp = flags.useHiColorMode ? 2 : 1;
 	_vmpPtr = 0;
 	_blockBrightness = _wllVcnOffset = 0;
 	_blockDrawingBuffer = 0;
@@ -84,7 +85,7 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	_dscShapeX = 0;
 	_dscTileIndex = 0;
-	_dscUnk2 = 0;
+	_dscDoorScaleOffs = 0;
 	_dscDim1 = 0;
 	_dscDim2 = 0;
 	_dscBlockMap = 0;
@@ -168,8 +169,9 @@ Common::Error KyraRpgEngine::init() {
 
 	_blockDrawingBuffer = new uint16[1320];
 	memset(_blockDrawingBuffer, 0, 1320 * sizeof(uint16));
-	_sceneWindowBuffer = new uint8[21120];
-	memset(_sceneWindowBuffer, 0, 21120);
+	int windowBufferSize = _flags.useHiColorMode ? 42240 : 21120;
+	_sceneWindowBuffer = new uint8[windowBufferSize];
+	memset(_sceneWindowBuffer, 0, windowBufferSize);
 
 	_lvlShapeTop = new int16[18];
 	memset(_lvlShapeTop, 0, 18 * sizeof(int16));
@@ -187,7 +189,7 @@ Common::Error KyraRpgEngine::init() {
 
 	initStaticResource();
 
-	_envSfxDistThreshold = (_sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr) ? 15 : 3;
+	_envSfxDistThreshold = (_flags.gameID == GI_EOB2 || _sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr) ? 15 : 3;
 
 	_dialogueButtonLabelColor1 = guiSettings()->buttons.labelColor1;
 	_dialogueButtonLabelColor2 = guiSettings()->buttons.labelColor2;
@@ -204,7 +206,7 @@ bool KyraRpgEngine::posWithinRect(int posX, int posY, int x1, int y1, int x2, in
 
 void KyraRpgEngine::drawDialogueButtons() {
 	int cp = screen()->setCurPage(0);
-	Screen::FontId of = screen()->setFont(_flags.lang == Common::JA_JPN && _flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+	Screen::FontId of = screen()->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : ((_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns) ? Screen::FID_8_FNT : Screen::FID_6_FNT));
 
 	for (int i = 0; i < _dialogueNumButtons; i++) {
 		int x = _dialogueButtonPosX[i];
@@ -213,8 +215,10 @@ void KyraRpgEngine::drawDialogueButtons() {
 			screen()->printText(_dialogueButtonString[i], (x + 37 - (screen()->getTextWidth(_dialogueButtonString[i])) / 2) & ~3,
 			                    ((_dialogueButtonYoffs + _dialogueButtonPosY[i]) + 2) & ~7, _dialogueHighlightedButton == i ? 0xC1 : 0xE1, 0);
 		} else {
-			int sjisYOffset = (_flags.lang == Common::JA_JPN && (_dialogueButtonString[i][0] & 0x80)) ? 2 : 0;
+			int sjisYOffset = (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns) ? 1 : ((_flags.lang == Common::JA_JPN && (_dialogueButtonString[i][0] & 0x80)) ? 2 : 0);
+			screen()->set16bitShadingLevel(4);
 			gui_drawBox(x, (_dialogueButtonYoffs + _dialogueButtonPosY[i]), _dialogueButtonWidth, guiSettings()->buttons.height, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
+			screen()->set16bitShadingLevel(0);
 			screen()->printText(_dialogueButtonString[i], x + (_dialogueButtonWidth >> 1) - (screen()->getTextWidth(_dialogueButtonString[i])) / 2,
 			                    (_dialogueButtonYoffs + _dialogueButtonPosY[i]) + 2 - sjisYOffset, _dialogueHighlightedButton == i ? _dialogueButtonLabelColor1 : _dialogueButtonLabelColor2, 0);
 		}
@@ -348,7 +352,7 @@ bool KyraRpgEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) 
 	}
 
 	_environmentSfx = soundId;
-	_environmentSfxVol = (15 - ((block || (_flags.gameID == GI_LOL && dist < 2)) ? dist : 0)) << 4;
+	_environmentSfxVol = (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns) ? (dist ? (16 - dist) * 8 - 1 : 127) : ((15 - ((block || (_flags.gameID == GI_LOL && dist < 2)) ? dist : 0)) << 4);
 
 	return true;
 }

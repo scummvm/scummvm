@@ -405,7 +405,8 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureVirtualKeyboard ||
 			f == kFeatureOverlaySupportsAlpha ||
 			f == kFeatureOpenUrl ||
-			f == kFeatureTouchpadMode);
+			f == kFeatureTouchpadMode ||
+			f == kFeatureClipboardSupport);
 }
 
 void OSystem_Android::setFeatureState(Feature f, bool enable) {
@@ -598,6 +599,18 @@ Common::String OSystem_Android::getSystemLanguage() const {
 
 bool OSystem_Android::openUrl(const Common::String &url) {
 	return JNI::openUrl(url.c_str());
+}
+
+bool OSystem_Android::hasTextInClipboard() {
+	return JNI::hasTextInClipboard();
+}
+
+Common::String OSystem_Android::getTextFromClipboard() {
+	return JNI::getTextFromClipboard();
+}
+
+bool OSystem_Android::setTextInClipboard(const Common::String &text) {
+	return JNI::setTextInClipboard(text);
 }
 
 Common::String OSystem_Android::getSystemProperty(const char *name) const {

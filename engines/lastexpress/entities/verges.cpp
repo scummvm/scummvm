@@ -123,7 +123,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_NOSETUP(5, Verges, playSound16)
-	Entity::playSound(savepoint, false, kFlagDefault);
+	Entity::playSound(savepoint, false, kVolumeFull);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -700,12 +700,12 @@ IMPLEMENT_FUNCTION(24, Verges, policeGettingOffTrain)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityVerges, "POL1101", kFlagDefault);
+		getSound()->playSound(kEntityVerges, "POL1101", kVolumeFull);
 		break;
 
 	case kActionCallback:
 		if (getCallback() == 1) {
-			getSoundQueue()->processEntry(kEntityVerges);
+			getSoundQueue()->fade(kEntityVerges);
 			getAction()->playAnimation(kEventGendarmesArrestation);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverPolice1, true);
 		}
@@ -1083,6 +1083,7 @@ IMPLEMENT_FUNCTION(28, Verges, chapter2Handler)
 		if (getEntities()->isInBaggageCarEntrance(kEntityPlayer)) {
 			setCallback(1);
 			setup_baggageCar(false);
+			break;
 		}
 
 label_callback_1:
@@ -1708,7 +1709,7 @@ IMPLEMENT_FUNCTION(38, Verges, resetState)
 
 		getData()->entityPosition = kPosition_6469;
 		getData()->location = kLocationOutsideCompartment;
-		getData()->car = kCarGreenSleeping;
+		getData()->car = kCarRedSleeping;
 		break;
 
 	case kActionCallback:
@@ -1780,10 +1781,10 @@ IMPLEMENT_FUNCTION(40, Verges, chapter5Handler)
 
 	case kActionOpenDoor:
 		if (getSoundQueue()->isBuffered(kEntityVerges))
-			getSoundQueue()->processEntry(kEntityVerges);
+			getSoundQueue()->fade(kEntityVerges);
 
 		if (getSoundQueue()->isBuffered("MUS050"))
-			getSoundQueue()->processEntry("MUS050");
+			getSoundQueue()->fade("MUS050");
 
 		getObjects()->update(kObject65, kEntityPlayer, kObjectLocationNone, kCursorNormal, kCursorForward);
 

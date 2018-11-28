@@ -514,6 +514,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("filtering", _domain);
 			ConfMan.removeKey("aspect_ratio", _domain);
 			ConfMan.removeKey("gfx_mode", _domain);
+			ConfMan.removeKey("stretch_mode", _domain);
 			ConfMan.removeKey("render_mode", _domain);
 		}
 	}
@@ -1522,6 +1523,7 @@ void GlobalOptionsDialog::build() {
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GlobalOptions_Graphics.Container", kGraphicsTabContainerReflowCmd);
 	graphicsContainer->setTarget(this);
+	graphicsContainer->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
 	addGraphicControls(graphicsContainer, "GlobalOptions_Graphics_Container.");
 
 	//
@@ -1584,7 +1586,7 @@ void GlobalOptionsDialog::build() {
 	else
 		_pathsTabId = tab->addTab(_c("Paths", "lowres"));
 
-#if !( defined(__DC__) || defined(__GP32__) )
+#if !defined(__DC__)
 	// These two buttons have to be extra wide, or the text will be
 	// truncated in the small version of the GUI.
 
@@ -1717,6 +1719,7 @@ void GlobalOptionsDialog::build() {
 
 	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", kCloudTabContainerReflowCmd);
 	container->setTarget(this);
+	container->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
 
 	_storagePopUpDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(container, "GlobalOptions_Cloud_Container.StoragePopup");
@@ -1785,7 +1788,7 @@ void GlobalOptionsDialog::build() {
 
 	OptionsDialog::build();
 
-#if !( defined(__DC__) || defined(__GP32__) )
+#if !defined(__DC__)
 	// Set _savePath to the current save path
 	Common::String savePath(ConfMan.get("savepath", _domain));
 	Common::String themePath(ConfMan.get("themepath", _domain));

@@ -24,6 +24,7 @@
 #include "sci/engine/message.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
+#include "sci/engine/state.h"
 #include "sci/util.h"
 
 namespace Sci {
@@ -249,6 +250,18 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			t.noun == 0 && t.verb == 0 && t.cond == 0 && t.seq == 1) {
 			// Talking with the Leshy and telling him about "bush in goo" - bug #10137
 			t.verb = 1;
+		}
+
+		if (g_sci->getGameId() == GID_LAURABOW2 && !g_sci->isCD() && stack.getModule() == 1885 &&
+			t.noun == 1 && t.verb == 6 && t.cond == 16 && t.seq == 4 &&
+			(g_sci->getEngineState()->currentRoomNumber() == 350 ||
+			 g_sci->getEngineState()->currentRoomNumber() == 360 ||
+			 g_sci->getEngineState()->currentRoomNumber() == 370)) {
+			// Asking Yvette about Tut in act 2 party - bug #10723
+			// Skip the last two lines of dialogue about a murder that hasn't occurred yet.
+			// Sierra fixed this in cd version by creating a copy of this message without those lines.
+			// Room-specific as the message is used again later where it should display in full.
+			t.seq += 2;
 		}
 
 		// Fill in known missing message tuples

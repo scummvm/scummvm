@@ -228,7 +228,7 @@ void MassAddDialog::handleTickle() {
 				}
 				if (duplicate) {
 					_oldGamesCount++;
-					break;	// Skip duplicates
+					continue;	// Skip duplicates
 				}
 			}
 			_games.push_back(result);

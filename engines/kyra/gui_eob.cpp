@@ -103,7 +103,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		if (index == _exchangeCharacterId)
 			_screen->printText(_characterGuiStringsSt[0], x2 + 2, y2 + 2, 8, guiSettings()->colors.fill);
 		else
-			_screen->printText(c->name, x2 + 2, y2 + 2, txtCol1, guiSettings()->colors.fill);
+			_screen->printText(c->name, x2 + 2, y2 + (_flags.platform == Common::kPlatformFMTowns ? 1 : 2), txtCol1, guiSettings()->colors.fill);
 
 		gui_drawFaceShape(index);
 		gui_drawWeaponSlot(index, 0);
@@ -236,18 +236,18 @@ void EoBCoreEngine::gui_drawFaceShape(int index) {
 		}
 	} else {
 		if (c->effectFlags & 0x140) {
-			_screen->setFadeTableIndex(1);
-			_screen->setShapeFadeMode(1, true);
+			_screen->setFadeTable(_blackFadingTable);
+			_screen->setShapeFadingLevel(1);
 		}
 
 		if (c->flags & 2) {
-			_screen->setFadeTableIndex(0);
-			_screen->setShapeFadeMode(1, true);
+			_screen->setFadeTable(_greenFadingTable);
+			_screen->setShapeFadingLevel(1);
 		}
 
 		if (c->flags & 8) {
-			_screen->setFadeTableIndex(2);
-			_screen->setShapeFadeMode(1, true);
+			_screen->setFadeTable(_blueFadingTable);
+			_screen->setShapeFadingLevel(1);
 		}
 	}
 
@@ -256,8 +256,10 @@ void EoBCoreEngine::gui_drawFaceShape(int index) {
 	if (c->hitPointsCur < 1)
 		_screen->drawShape(_screen->_curPage, _disabledCharGrid, x, y, 0);
 
-	_screen->setFadeTableIndex(4);
-	_screen->setShapeFadeMode(1, false);
+	if (c->flags & 8 || c->flags & 2 || c->effectFlags & 0x140) {
+		_screen->setFadeTable(_greyFadingTable);
+		_screen->setShapeFadingLevel(0);
+	}
 }
 
 void EoBCoreEngine::gui_drawWeaponSlot(int charIndex, int slot) {
@@ -527,8 +529,10 @@ void EoBCoreEngine::gui_drawCompass(bool force) {
 }
 
 void EoBCoreEngine::gui_drawDialogueBox() {
+	_screen->set16bitShadingLevel(4);
 	gui_drawBox(0, 121, 320, 79, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	txt()->clearCurDim();
+	_screen->set16bitShadingLevel(0);
 }
 
 void EoBCoreEngine::gui_drawSpellbook() {
@@ -563,7 +567,9 @@ void EoBCoreEngine::gui_drawSpellbook() {
 			gui_drawBox(i * 21 + 71, 122, 21, 9, col1, col2, col3);
 			_screen->printText(_magicStrings7[i], i * 21 + 73, 123, 12, 0);
 		} else {
+			_screen->set16bitShadingLevel(4);
 			gui_drawBox(i * 18 + 68, 121, 18, 9, col1, col2, col3);
+			_screen->set16bitShadingLevel(0);
 			_screen->printText(Common::String::format("%d", i + 1).c_str(), i * 18 + 75, 123, 12, 0);
 		}
 	}
@@ -571,7 +577,9 @@ void EoBCoreEngine::gui_drawSpellbook() {
 	if (_flags.gameID == GI_EOB1)
 		gui_drawBox(71, 131, 105, 44, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	else {
+		_screen->set16bitShadingLevel(4);
 		gui_drawBox(68, 130, 108, 47, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
+		_screen->set16bitShadingLevel(0);
 		gui_drawBox(68, 168, 78, 9, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
 		gui_drawBox(146, 168, 14, 9, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
 		gui_drawBox(160, 168, 16, 9, guiSettings()->colors.extraFrame1, guiSettings()->colors.extraFrame2, guiSettings()->colors.extraFill);
@@ -600,6 +608,7 @@ void EoBCoreEngine::gui_drawSpellbook() {
 		int d = _openBookAvailableSpells[_openBookSpellLevel * 10 + _openBookSpellListOffset + i];
 		if (_openBookSpellSelectedItem == i) {
 			if (d >= 0 && i < 6 && (i + _openBookSpellListOffset) < 9) {
+				_screen->fillRect(textXs, 132 + 6 * i, textXs + _screen->getTextWidth(_openBookSpellList[d]) - 1, 137 + 6 * i, textCol2);
 				_screen->printText(_openBookSpellList[d], textXs, 132 + 6 * i, textCol1, textCol2);
 			} else if (i == 6) {
 				if (_flags.gameID == GI_EOB2)
@@ -777,12 +786,20 @@ int EoBCoreEngine::clickedCamp(Button *button) {
 	}
 
 	_screen->copyPage(0, 7);
+	
+	// Create a thumbnail from the screen for a possible savegame.
+	// This ensures that all special rendering (EGA dithering, 16bit rendering, Japanese font rendering) will be visible on the thumbnail.
+	::createThumbnailFromScreen(&_thumbNail);
+
 	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 12, Screen::CR_NO_P_CHECK);
 
 	_gui->runCampMenu();
 
 	_screen->copyRegion(0, 0, 0, 120, 176, 24, 12, 2, Screen::CR_NO_P_CHECK);
 	_screen->setScreenDim(cd);
+
+	_thumbNail.free();
+
 	drawScene(0);
 
 	for (int i = 0; i < 6; i++)
@@ -1065,6 +1082,7 @@ int EoBCoreEngine::clickedInventoryNextPage(Button *button) {
 int EoBCoreEngine::clickedPortraitRestore(Button *button) {
 	_currentControlMode = 0;
 	_screen->_curPage = 2;
+	_screen->fillRect(0, 0, 143, 167, 0);
 	_screen->copyRegion(0, 0, 0, 0, 144, 168, 5, _screen->_curPage, Screen::CR_NO_P_CHECK);
 	gui_drawAllCharPortraitsWithStats();
 	_screen->_curPage = 0;
@@ -1170,6 +1188,8 @@ int EoBCoreEngine::clickedSceneSpecial(Button *button) {
 
 int EoBCoreEngine::clickedSpellbookAbort(Button *button) {
 	_updateFlags = 0;
+	_screen->fillRect(64, 121, 175, 176, 0, 0);
+	_screen->fillRect(64, 121, 175, 176, 0, 2);
 	_screen->copyRegion(0, 0, 64, 121, 112, 56, 10, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 	gui_drawCompass(true);
@@ -1364,8 +1384,8 @@ GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 
 	_saveSlotStringsTemp = new char*[6];
 	for (int i = 0; i < 6; i++) {
-		_saveSlotStringsTemp[i] = new char[20];
-		memset(_saveSlotStringsTemp[i], 0, 20);
+		_saveSlotStringsTemp[i] = new char[26];
+		memset(_saveSlotStringsTemp[i], 0, 26);
 	}
 	_saveSlotIdTemp = new int16[6];
 	_savegameOffset = 0;
@@ -2022,6 +2042,7 @@ void GUI_EoB::runCampMenu() {
 	int newMenu = 0;
 	int lastMenu = -1;
 	bool redrawPortraits = false;
+	bool keepButtons = false;
 
 	_charSelectRedraw = false;
 	_needRest = false;
@@ -2032,23 +2053,26 @@ void GUI_EoB::runCampMenu() {
 			updateOptionsStrings();
 
 		if (newMenu != -1) {
-			releaseButtons(buttonList);
+			if (!keepButtons) {
+				releaseButtons(buttonList);
 
-			_vm->_menuDefs[0].titleStrId = newMenu ? 1 : 56;
-			if (newMenu == 2)
-				_vm->_menuDefs[2].titleStrId = 57;
-			else if (newMenu == 1)
-				_vm->_menuDefs[1].titleStrId = 58;
+				_vm->_menuDefs[0].titleStrId = newMenu ? 1 : 56;
+				if (newMenu == 2)
+					_vm->_menuDefs[2].titleStrId = 57;
+				else if (newMenu == 1)
+					_vm->_menuDefs[1].titleStrId = 58;
 
-			buttonList = initMenu(newMenu);
+				buttonList = initMenu(newMenu);
 
-			if (newMenu != lastMenu) {
-				highlightButton = buttonList;
-				prevHighlightButton = 0;
+				if (newMenu != lastMenu) {
+					highlightButton = buttonList;
+					prevHighlightButton = 0;
+				}
 			}
 
 			lastMenu = newMenu;
 			newMenu = -1;
+			keepButtons = false;
 		}
 
 		int inputFlag = _vm->checkInput(buttonList, false, 0) & 0x80FF;
@@ -2081,6 +2105,8 @@ void GUI_EoB::runCampMenu() {
 			if (prevHighlightButton) {
 				int dir = (inputFlag == _vm->_keyMap[Common::KEYCODE_UP]) ? -1 : 1;
 				int s = prevHighlightButton->index + dir;
+				if (lastMenu == 2 && _vm->gameFlags().platform == Common::kPlatformFMTowns)
+					s += 32;
 				int a = _vm->_menuDefs[lastMenu].firstButtonStrId + 1;
 				int b = a + _vm->_menuDefs[lastMenu].numButtons - 1;
 
@@ -2094,10 +2120,12 @@ void GUI_EoB::runCampMenu() {
 					s += dir;
 				} while (!_vm->shouldQuit());
 
+				if (lastMenu == 2 && _vm->gameFlags().platform == Common::kPlatformFMTowns)
+					s -= 32;
 				highlightButton = _vm->gui_getButton(buttonList, s);
 			}
 
-		} else if (inputFlag > 0x8000 && inputFlag < 0x8010) {
+		} else if (inputFlag > 0x8000 && inputFlag < 0x8011) {
 			int i = 0;
 			int cnt = 0;
 
@@ -2140,7 +2168,7 @@ void GUI_EoB::runCampMenu() {
 				// fall through
 
 			case 0x800C:
-			case 0x800F:
+			case 0x8010:
 				if (lastMenu == 1 || lastMenu == 2)
 					newMenu = 0;
 				else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE])
@@ -2191,13 +2219,24 @@ void GUI_EoB::runCampMenu() {
 			case 0x800D:
 				_vm->_configSounds ^= true;
 				_vm->_configMusic = _vm->_configSounds ? 1 : 0;
+				keepButtons = true;
 				newMenu = 2;
 				break;
 
 			case 0x800E:
 				_vm->_configHpBarGraphs ^= true;
 				newMenu = 2;
-				redrawPortraits = true;
+				redrawPortraits = keepButtons = true;
+				break;
+
+			case 0x800F:
+				if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+					_vm->_config2431 ^= true;
+					newMenu = 2;
+					redrawPortraits = keepButtons = true;
+				} else {
+					newMenu = 0;
+				}
 				break;
 
 			default:
@@ -2225,7 +2264,7 @@ void GUI_EoB::runCampMenu() {
 
 		if (prevHighlightButton != highlightButton && newMenu == -1 && runLoop) {
 			drawMenuButton(prevHighlightButton, false, false, true);
-			drawMenuButton(highlightButton, false, true, true);
+			drawMenuButton(highlightButton, false, true, false);
 			_screen->updateScreen();
 			prevHighlightButton = highlightButton;
 		}
@@ -2314,7 +2353,7 @@ bool GUI_EoB::confirmDialogue2(int dim, int id, int deflt) {
 
 		if (newHighlight != lastHighlight) {
 			for (int i = 0; i < 2; i++)
-				_screen->printShadedText(_vm->_menuYesNoStrings[i], x[i] + 16 - (strlen(_vm->_menuYesNoStrings[i]) << 2) + 1, y + 3, i == newHighlight ? 6 : 15, 0);
+				_screen->printShadedText(_vm->_menuYesNoStrings[i], x[i] + 16 - (_screen->getTextWidth(_vm->_menuYesNoStrings[i]) / 2) + 1, y + 3, i == newHighlight ? 6 : 15, 0);
 			_screen->updateScreen();
 			lastHighlight = newHighlight;
 		}
@@ -2341,9 +2380,9 @@ void GUI_EoB::messageDialogue(int dim, int id, int buttonTextCol) {
 	drawTextBox(dim, id);
 	const ScreenDim *dm = _screen->getScreenDim(dim);
 
-	int bx = ((dm->sx + dm->w) << 3) - ((strlen(_vm->_menuOkString) << 3) + 16);
+	int bx = ((dm->sx + dm->w) << 3) - (_screen->getTextWidth(_vm->_menuOkString) + 16);
 	int by = dm->sy + dm->h - 19;
-	int bw = (strlen(_vm->_menuOkString) << 3) + 7;
+	int bw = _screen->getTextWidth(_vm->_menuOkString) + 7;
 
 	drawMenuButtonBox(bx, by, bw, 14, false, false);
 	_screen->printShadedText(_vm->_menuOkString, bx + 4, by + 3, buttonTextCol, 0);
@@ -2374,8 +2413,6 @@ void GUI_EoB::messageDialogue(int dim, int id, int buttonTextCol) {
 }
 
 void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
-	drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
-
 	_screen->_curPage = 2;
 	_screen->setClearScreenDim(dim);
 	drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
@@ -2383,9 +2420,9 @@ void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 	_screen->_curPage = 0;
 	_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 2, 0, Screen::CR_NO_P_CHECK);
 
-	int x = (_screen->_curDim->sx << 3) + (_screen->_curDim->w << 2) - (strlen(_vm->_menuOkString) << 2);
+	int x = (_screen->_curDim->sx << 3) + (_screen->_curDim->w << 2) - (_screen->getTextWidth(_vm->_menuOkString) / 2);
 	int y = _screen->_curDim->sy + _screen->_curDim->h - 21;
-	int w = (strlen(_vm->_menuOkString) << 3) + 8;
+	int w = _screen->getTextWidth(_vm->_menuOkString) + 8;
 	drawMenuButtonBox(x, y, w, 14, false, false);
 	_screen->printShadedText(_vm->_menuOkString, x + 4, y + 3, buttonTextCol, 0);
 	_screen->updateScreen();
@@ -2402,7 +2439,9 @@ void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 		}
 	}
 
+	_screen->set16bitShadingLevel(4);
 	_vm->gui_drawBox(x, y, w, 14, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill, -1);
+	_screen->set16bitShadingLevel(0);
 	_screen->updateScreen();
 	_vm->_system->delayMillis(80);
 	drawMenuButtonBox(x, y, w, 14, false, false);
@@ -2448,7 +2487,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 #endif
 
 	uint8 cursorState = 1;
-	char sufx[] = " ";
+	char sufx[3] = " \0";
 
 	int len = strlen(dest);
 	if (len > destMaxLen) {
@@ -2461,11 +2500,16 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		pos--;
 
 	_screen->copyRegion((x - 1) << 3, y, 0, 191, (destMaxLen + 2) << 3, 9, 0, 2, Screen::CR_NO_P_CHECK);
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+		_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 	_screen->printShadedText(dest, x << 3, y, textColor1, textColor2);
 
 	uint32 next = _vm->_system->getMillis() + 2 * _vm->_tickLength;
 	sufx[0] = (pos < len) ? dest[pos] : 32;
 	_screen->printText(sufx, (x + pos) << 3, y, textColor1, cursorColor);
+
+	_menuCur = -1;
+	printKatakanaOptions(0);
 
 	int in = 0;
 
@@ -2479,33 +2523,58 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 					_screen->copyRegion((pos + 1) << 3, 191, (x + pos) << 3, y, 8, 9, 2, 0, Screen::CR_NO_P_CHECK);
 					_screen->printShadedText(sufx, (x + pos) << 3, y, textColor1, textColor2);
 				} else {
+					_screen->fillRect((x + pos) << 3, y, ((x + pos) << 3) + 7, y + 7, cursorColor);
 					_screen->printText(sufx, (x + pos) << 3, y, textColor1, cursorColor);
 				}
 
 				_screen->updateScreen();
 				cursorState ^= 1;
-				next = _vm->_system->getMillis() + 2 * _vm->_tickLength;
+				next = _vm->_system->getMillis() + 4 * _vm->_tickLength;
 			}
 
 			_vm->updateInput();
+			in = checkKatakanaSelection();
+
 			for (Common::List<KyraEngine_v1::Event>::const_iterator evt = _vm->_eventList.begin(); evt != _vm->_eventList.end(); ++evt) {
 				if (evt->event.type == Common::EVENT_KEYDOWN) {
 					_keyPressed = evt->event.kbd;
 					in = _keyPressed.ascii;
+
+					if (_vm->_flags.platform == Common::kPlatformFMTowns && _keyPressed.ascii > 31 && _keyPressed.ascii < 123) {
+						Common::String s;
+						s.insertChar(in & 0xff, 0);
+						s = _vm->convertAsciiToSjis(s);
+						if (s.empty()) {
+							in = 0;
+						} else {
+							_csjis[0] = s[0];
+							_csjis[1] = s[1];
+							_csjis[2] = 0;
+							in = 0x89;
+						}
+					}
 				}
 			}
 			_vm->removeInputTop();
 		}
 
 		if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE) {
-			if (pos >= len && len > 0) {
-				dest[--len] = 0;
-				pos--;
+			if (pos > 0 && pos < len ) {
+				for (int i = pos; i < len; i++) {
+					if (dest[i * 2] & 0x80) {
+						dest[(i - 1) * 2] = dest[i * 2];
+						dest[(i - 1) * 2 + 1] = dest[i * 2 + 1];
+					} else {
+						dest[i - 1] = dest[i];
+					}
+				}
+			}
 
-			} else if (pos > 0) {
-				for (int i = pos; i < destMaxLen; i++)
-					dest[i - 1] = dest[i];
-				dest[--len] = 0;
+			if (pos > 0) {
+				if (dest[(len - 1) * 2] & 0x80)
+					dest[--len * 2] = 0;
+				else
+					dest[--len] = 0;
 				pos--;
 			}
 
@@ -2517,28 +2586,45 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			if (pos < len && pos < (destMaxLen - 1))
 				pos++;
 
-		} else if (in > 31 && in < 126) {
+		} else if ((in > 31 && in < 126) || (in == 0x89)) {
 			if (!(in == 32 && pos == 0)) {
 				if (in >= 97 && in <= 122)
 					in -= 32;
 
 				if (pos < len) {
-					for (int i = destMaxLen - 1; i >= pos; i--)
-						dest[i + 1] = dest[i];
+					for (int i = destMaxLen - 2; i >= pos; i--) {
+						if (in == 0x89) {
+							dest[(i + 1) * 2] = dest[i * 2];
+							dest[(i + 1) * 2 + 1] = dest[i * 2 + 1];
+						} else {
+							dest[i + 1] = dest[i];
+						}
+					}
 
-					dest[pos++] = in;
-
-					if (len == destMaxLen)
-						dest[len] = 0;
-
+					if (in == 0x89) {
+						dest[pos * 2] = _csjis[0];
+						dest[pos++ * 2 + 1] = _csjis[1];
+						if (len == destMaxLen)
+							dest[len * 2] = 0;
+					} else {
+						dest[pos++] = in;
+						if (len == destMaxLen)
+							dest[len] = 0;
+					}
 				} else {
 					if (pos == destMaxLen) {
 						pos--;
 						len--;
 					}
 
-					dest[pos++] = in;
-					dest[pos] = 0;
+					if (in == 0x89) {
+						dest[pos * 2] = _csjis[0];
+						dest[pos * 2 + 1] = _csjis[1];
+						dest[++pos * 2] = 0;
+					} else {
+						dest[pos++] = in;
+						dest[pos] = 0;
+					}
 				}
 
 				if (++len > destMaxLen)
@@ -2551,7 +2637,18 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 
 		_screen->copyRegion(0, 191, (x - 1) << 3, y, (destMaxLen + 2) << 3, 9, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->printShadedText(dest, x << 3, y, textColor1, textColor2);
-		sufx[0] = (pos < len) ? dest[pos] : 32;
+		
+		if (_vm->_flags.platform == Common::kPlatformFMTowns) {
+			if (pos < len) {
+				sufx[0] = dest[pos * 2];
+				sufx[1] = dest[pos * 2 + 1];
+			} else {
+				sufx[0] = 32;
+				sufx[1] = 0;
+			}			
+		} else {
+			sufx[0] = (pos < len) ? dest[pos] : 32;
+		}
 
 		if (cursorState)
 			_screen->printText(sufx, (x + pos) << 3, y, textColor1, cursorColor);
@@ -2566,6 +2663,108 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 #endif
 
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
+}
+
+int GUI_EoB::checkKatakanaSelection() {
+	if (_vm->_flags.platform != Common::kPlatformFMTowns)
+		return 0;
+
+	static uint16 kanaSelXCrds[] = { 224, 272, 186 };
+	Common::Point mousePos = _vm->getMousePos();
+	int highlight = -1;
+	_csjis[0] = _csjis[2] = 0;
+
+	for (int y = 112; y < 168; y += 16) {
+		for (int x = 152; x < 288; x += 8) {
+			if (!_vm->posWithinRect(mousePos.x, mousePos.y, x, y, x + 9, y + 9))
+				continue;
+
+			int lineOffs = (y - 112) >> 4;
+			int column = (x - 152) >> 2;
+
+			_csjis[0] = _vm->_katakanaLines[_currentKanaPage * 4 + lineOffs][column];
+			_csjis[1] = _vm->_katakanaLines[_currentKanaPage * 4 + lineOffs][column + 1];
+
+			if (_csjis[0] != '\x81' || _csjis[1] != '\x40') {
+				highlight = lineOffs << 8 | column;
+				_screen->printShadedText(_csjis, x & ~7, y & ~15, 6, 0);
+			}
+
+			x = 288; y = 168;
+		}
+	}
+
+	if (highlight == -1) {
+		for (int i = 0; i < 3; i++) {
+			if (!_vm->posWithinRect(mousePos.x, mousePos.y, kanaSelXCrds[i], 176, kanaSelXCrds[i] + _screen->getTextWidth(_vm->_katakanaSelectStrings[i]), 184))
+				continue;
+
+			highlight = 0x400 | i;
+			_screen->printShadedText(_vm->_katakanaSelectStrings[i], kanaSelXCrds[i], 176, 6, 0);
+			i = 3;
+		}
+	}
+
+	int in = 0;
+	for (Common::List<KyraEngine_v1::Event>::const_iterator evt = _vm->_eventList.begin(); evt != _vm->_eventList.end(); ++evt) {
+		if (evt->event.type == Common::EVENT_LBUTTONDOWN)
+			in = 1;
+	}
+
+	if ((highlight == -1 || highlight == _menuCur) && !in)
+		return 0;
+
+	if (_menuCur != -1) {
+		if (_menuCur & 0x400) {
+			_screen->printShadedText(_vm->_katakanaSelectStrings[_menuCur & 3], kanaSelXCrds[_menuCur & 3], 176, 15, 0);
+		} else {
+			char osjis[3];
+			osjis[0] = _vm->_katakanaLines[_currentKanaPage * 4 + (_menuCur >> 8)][_menuCur & 0xFF];
+			osjis[1] = _vm->_katakanaLines[_currentKanaPage * 4 + (_menuCur >> 8)][(_menuCur & 0xFF) + 1];
+			osjis[2] = 0;
+			_screen->printShadedText(osjis, 152 + ((_menuCur & 0xFF) << 2), 112 + ((_menuCur >> 4) & ~0x0F), 15, 0);
+		}
+	}
+
+	_menuCur = highlight;
+
+	if (in && highlight != -1) {
+		if (highlight & 0x400) {
+			switch (highlight & 3) {
+			case 0:
+				printKatakanaOptions((_currentKanaPage + 1) % 3);
+				break;
+			case 1:
+				_keyPressed.keycode = Common::KEYCODE_RETURN;
+				break;
+			case 2:
+				_keyPressed.keycode = Common::KEYCODE_BACKSPACE;
+				break;
+			default:
+				break;
+			}
+		} else if (_csjis[0]) {
+			if (_csjis[0] == '\x81' && _csjis[1] == '\x51')
+				_csjis[1] = '\x40';
+			return 0x89;
+		}
+	}
+
+	return in;
+}
+
+void GUI_EoB::printKatakanaOptions(int page) {
+	if (_vm->_flags.platform != Common::kPlatformFMTowns)
+		return;
+
+	_currentKanaPage = page;
+	_screen->copyRegion(160, 44, 144, 108, 160, 84, 2, 0, Screen::CR_NO_P_CHECK);
+	for (int i = 0; i < 4; i++)
+		_screen->printShadedText(_vm->_katakanaLines[page * 4 + i], 152, (i << 4) + 112, 15, 0);
+
+	static uint16 kanaSelCrds[] = { 224, 272, 186 };
+	for (int i = 0; i < 3; i++)
+		_screen->printShadedText(_vm->_katakanaSelectStrings[i], kanaSelCrds[i], 176, 15, 0);
 }
 
 void GUI_EoB::transferWaitBox() {
@@ -2645,17 +2844,7 @@ bool GUI_EoB::transferFileMenu(Common::String &targetName, Common::String &selec
 }
 
 void GUI_EoB::createScreenThumbnail(Graphics::Surface &dst) {
-	uint8 *screenPal = new uint8[768];
-	_screen->getRealPalette(0, screenPal);
-	uint16 width = Screen::SCREEN_W;
-	uint16 height = Screen::SCREEN_H;
-	if (_vm->gameFlags().useHiRes) {
-		width <<= 1;
-		height <<= 1;
-	}
-
-	::createThumbnail(&dst, _screen->getCPagePtr(7), width, height, screenPal);
-	delete[] screenPal;
+	dst.copyFrom(_vm->_thumbNail);
 }
 
 void GUI_EoB::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int itemOffset) {
@@ -2700,10 +2889,21 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 
 			int fx = (x + 1) << 3;
 			int fy = y + slot * 17 + 23;
+			Screen::FontId of = _screen->_currentFont;
+			_screen->set16bitShadingLevel(4);
 
 			for (int in = -1; in == -1 && !_vm->shouldQuit();) {
 				_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
-				in = getTextInput(_saveSlotStringsTemp[slot], x + 1, fy, 19, 2, 0, 8);
+				if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+					TimeDate td;
+					_vm->_system->getTimeAndDate(td);					
+					Common::strlcpy(_saveSlotStringsTemp[slot], Common::String::format(_vm->_saveNamePatterns[_vm->_currentLevel * 2 + _vm->_currentSub], td.tm_mon + 1, td.tm_mday, td.tm_hour, td.tm_min).c_str(), 25);
+					in = strlen(_saveSlotStringsTemp[slot]);
+					of = _vm->screen()->setFont(Screen::FID_6_FNT);
+					y++;
+				} else {
+					in = getTextInput(_saveSlotStringsTemp[slot], x + 1, fy, 19, 2, 0, 8);
+				}
 				if (in == -1) {
 					useSlot = false;
 					break;
@@ -2721,6 +2921,9 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 
 			_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
 			_screen->printShadedText(_saveSlotStringsTemp[slot], (x + 1) << 3, fy, 15, 0);
+			_screen->set16bitShadingLevel(0);
+			_screen->setFont(of);
+			_screen->updateScreen();
 
 			Graphics::Surface thumb;
 			createScreenThumbnail(thumb);
@@ -2833,7 +3036,9 @@ int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 			// Display highlighted slot index in the bottom left corner to avoid people getting lost with the 990 save slots
 			_screen->setFont(Screen::FID_6_FNT);
 			int sli = (newHighlight == 6) ?  _savegameOffset : (_savegameOffset + newHighlight);
+			_screen->set16bitShadingLevel(4);
 			_screen->printText(Common::String::format("%03d/989", sli).c_str(), _saveSlotX + 5, _saveSlotY + 135, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
+			_screen->set16bitShadingLevel(0);
 			_screen->setFont(Screen::FID_8_FNT);
 
 			_screen->updateScreen();
@@ -2992,7 +3197,9 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 
 		if (updateDesc) {
 			updateDesc = false;
+			_screen->set16bitShadingLevel(4);
 			_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, 9, _vm->guiSettings()->colors.fill);
+			_screen->set16bitShadingLevel(0);
 		}
 
 		if (newHighLightText < 0)
@@ -3666,6 +3873,13 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 
 	result = -2;
 	int hlCur = -1;
+	for (int i = 0; i < 6; ++i) {
+		if (found[i] != -1) {
+			hlCur = i;
+			break;
+		}
+	}
+
 	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
 
 	while (result == -2 && !_vm->shouldQuit()) {
@@ -3790,6 +4004,8 @@ Button *GUI_EoB::initMenu(int id) {
 		b->index = m->firstButtonStrId + i + 1;
 		if (id == 4 && _vm->game() == GI_EOB1)
 			b->index -= 14;
+		else if (id == 2 && _vm->gameFlags().platform == Common::kPlatformFMTowns)
+			b->index -= 32;
 
 		b->data0Val2 = 12;
 		b->data1Val2 = b->data2Val2 = 15;
@@ -3832,7 +4048,7 @@ void GUI_EoB::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFil
 		int yOffs = 3;
 
 		if (d->flags & 4) {
-			xOffs = ((b->width - (strlen(s) << 3)) >> 1) + 1;
+			xOffs = ((b->width - _screen->getTextWidth(s)) >> 1) + 1;
 			yOffs = (b->height - 7) >> 1;
 		}
 
@@ -3852,8 +4068,10 @@ void GUI_EoB::drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool n
 	if (clicked)
 		col1 = col2 = _vm->guiSettings()->colors.fill;
 
+	_screen->set16bitShadingLevel(4);
 	_vm->gui_drawBox(x, y, w, h, col1, col2, -1);
 	_vm->gui_drawBox(x + 1, y + 1, w - 2, h - 2, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, noFill ? -1 : _vm->guiSettings()->colors.fill);
+	_screen->set16bitShadingLevel(0);
 }
 
 void GUI_EoB::drawTextBox(int dim, int id) {
@@ -3884,8 +4102,9 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 	int x = _saveSlotX + 4;
 	int y = _saveSlotY + slot * 17 + 20;
 	int w = 167;
-	const char *s = (slot < 6) ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0];
-
+	char slotString[26];
+	Common::strlcpy(slotString, slot < 6 ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], _vm->gameFlags().platform == Common::kPlatformFMTowns ? 25 : 20);
+	
 	if (slot >= 6) {
 		x = _saveSlotX + 118;
 		y = _saveSlotY + 126;
@@ -3895,7 +4114,14 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 	if (redrawBox)
 		drawMenuButtonBox(x, y, w, 14, (redrawBox - 1) ? true : false, false);
 
-	_screen->printShadedText(s, x + 4, y + 3, textCol, 0);
+	Screen::FontId fnt = _screen->_currentFont;
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+		fnt = _vm->screen()->setFont(Screen::FID_6_FNT);
+		y++;
+	}
+
+	_screen->printShadedText(slotString, x + 4, y + 3, textCol, 0);
+	_vm->screen()->setFont(fnt);
 }
 
 void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight) {
@@ -3904,17 +4130,28 @@ void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 
 	int y = bookPageIndex * 9 + 50;
 	int col1 = (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : 15;
+	_screen->set16bitShadingLevel(4);
 
 	if (spellId) {
-		Common::String s(Common::String::format(_vm->_menuStringsMgc[0], spellType ? _vm->_clericSpellList[spellId] : _vm->_mageSpellList[spellId], _numAssignedSpellsOfType[spellId * 2 - 2]));
+		Common::String s;
+		if (_vm->_flags.platform == Common::kPlatformFMTowns) {
+			s = spellType ? _vm->_clericSpellList[spellId] : _vm->_mageSpellList[spellId];
+			for (int i = s.size() >> 1; i < 17; ++i)
+				s.insertChar(' ', s.size());
+			s.insertChar((char)(_numAssignedSpellsOfType[spellId * 2 - 2] + 48), s.size());
+		} else {
+			s = Common::String::format(_vm->_menuStringsMgc[0], spellType ? _vm->_clericSpellList[spellId] : _vm->_mageSpellList[spellId], _numAssignedSpellsOfType[spellId * 2 - 2]);
+		}
+
 		if (noFill)
 			_screen->printText(s.c_str(), 8, y, highLight ? 6 : col1, 0);
 		else
 			_screen->printShadedText(s.c_str(), 8, y, highLight ? 6 : col1, _vm->guiSettings()->colors.fill);
-
 	} else {
 		_screen->fillRect(6, y, 168, y + 8,  _vm->guiSettings()->colors.fill);
 	}
+
+	_screen->set16bitShadingLevel(0);
 }
 
 void GUI_EoB::updateOptionsStrings() {
@@ -3926,7 +4163,7 @@ void GUI_EoB::updateOptionsStrings() {
 	Common::strlcpy(_menuStringsPrefsTemp[0], Common::String::format(_vm->_menuStringsPrefs[0], _vm->_menuStringsOnOff[_vm->_configMusic ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[0]) + 8);
 	Common::strlcpy(_menuStringsPrefsTemp[1], Common::String::format(_vm->_menuStringsPrefs[1], _vm->_menuStringsOnOff[_vm->_configSounds ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[1]) + 8);
 	Common::strlcpy(_menuStringsPrefsTemp[2], Common::String::format(_vm->_menuStringsPrefs[2], _vm->_menuStringsOnOff[_vm->_configHpBarGraphs ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[2]) + 8);
-	Common::strlcpy(_menuStringsPrefsTemp[3], Common::String::format(_vm->_menuStringsPrefs[3], _vm->_menuStringsOnOff[_vm->_configMouse ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[3]) + 8);
+	Common::strlcpy(_menuStringsPrefsTemp[3], Common::String::format(_vm->_menuStringsPrefs[3], _vm->gameFlags().platform == Common::kPlatformFMTowns ?	_vm->_2431Strings[_vm->_config2431 ? 0 : 1] : _vm->_menuStringsOnOff[_vm->_configMouse ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[3]) + 8);
 }
 
 const char *GUI_EoB::getMenuString(int id) {
@@ -4012,12 +4249,12 @@ void GUI_EoB::setupSaveMenuSlots() {
 	for (int i = 0; i < 6; ++i) {
 		if (_savegameOffset + i < _savegameListSize) {
 			if (_savegameList[i + _savegameOffset]) {
-				Common::strlcpy(_saveSlotStringsTemp[i], _savegameList[i + _savegameOffset], 20);
+				Common::strlcpy(_saveSlotStringsTemp[i], _savegameList[i + _savegameOffset], 25);
 				_saveSlotIdTemp[i] = i + _savegameOffset;
 				continue;
 			}
 		}
-		Common::strlcpy(_saveSlotStringsTemp[i], _vm->_saveLoadStrings[1], 20);
+		Common::strlcpy(_saveSlotStringsTemp[i], _vm->_saveLoadStrings[1], 25);
 		_saveSlotIdTemp[i] = -1;
 	}
 }
@@ -4057,14 +4294,13 @@ void GUI_EoB::restParty_updateRestTime(int hours, bool init) {
 		_screen->printShadedText(getMenuString(42), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 5, 9, 0);
 	}
 
-	_screen->setCurPage(2);
-	_screen->printShadedText(Common::String::format(_vm->_menuStringsRest2[3], hours).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 20, 15, _vm->guiSettings()->colors.fill);
 	_screen->setCurPage(0);
-	_screen->copyRegion(((_screen->_curDim->sx + 1) << 3) - 1, _screen->_curDim->sy + 20, ((_screen->_curDim->sx + 1) << 3) - 1, _screen->_curDim->sy + 20, 144, 8, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->set16bitShadingLevel(4);
+	_screen->fillRect((_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 20, ((_screen->_curDim->sx + 19) << 3) + 1, _screen->_curDim->sy + 29, _vm->guiSettings()->colors.fill);
+	_screen->printShadedText(Common::String::format(_vm->_menuStringsRest2[3], hours).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 20, 15, _vm->guiSettings()->colors.fill);
+	_screen->set16bitShadingLevel(0);
 	_screen->updateScreen();
-
 	_vm->delay(160);
-
 	_screen->setScreenDim(od);
 	_screen->setFont(of);
 }

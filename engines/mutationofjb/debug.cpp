@@ -69,6 +69,7 @@ Console::Console(MutationOfJBEngine *vm) : _vm(vm) {
 	registerCmd("dumpdoorinfo", WRAP_METHOD(Console, cmd_dumpdoorinfo));
 	registerCmd("dumpobjectinfo", WRAP_METHOD(Console, cmd_dumpobjectinfo));
 	registerCmd("dumpstaticinfo", WRAP_METHOD(Console, cmd_dumpstaticinfo));
+	registerCmd("dumpbitmapinfo", WRAP_METHOD(Console, cmd_dumpbitmapinfo));
 	registerCmd("listinventory", WRAP_METHOD(Console, cmd_listinventory));
 }
 
@@ -312,24 +313,27 @@ bool Console::cmd_changescene(int argc, const char **argv) {
 }
 
 bool Console::cmd_dumpsceneinfo(int argc, const char **argv) {
+	uint8 sceneId = _vm->getGame().getGameData()._currentScene;
+
 	if (argc == 2) {
-		const uint8 sceneId = atoi(argv[1]);
-		Scene *scene = _vm->getGame().getGameData().getScene(sceneId);
-		if (scene) {
-			debugPrintf("Startup: %u\n", (unsigned int) scene->_startup);
-			debugPrintf("Delay: %u\n", (unsigned int) scene->_delay);
-			debugPrintf("Doors: %u\n", (unsigned int) scene->_noDoors);
-			debugPrintf("Objects: %u\n", (unsigned int) scene->_noObjects);
-			debugPrintf("Statics: %u\n", (unsigned int) scene->_noStatics);
-			debugPrintf("ObstacleY1: %u\n", (unsigned int) scene->_obstacleY1);
-			debugPrintf("PalRotFirst: %u\n", (unsigned int) scene->_palRotFirst);
-			debugPrintf("PalRotLast: %u\n", (unsigned int) scene->_palRotLast);
-			debugPrintf("PalRotDelay: %u\n", (unsigned int) scene->_palRotDelay);
-		} else {
-			debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
-		}
+		sceneId = atoi(argv[1]);
+	} else if (argc != 1) {
+		debugPrintf("dumpsceneinfo [<sceneid>]\n");
+	}
+
+	if (Scene *const scene = _vm->getGame().getGameData().getScene(sceneId)) {
+		debugPrintf("Scene ID: %u\n", (unsigned int) sceneId);
+		debugPrintf("Startup: %u\n", (unsigned int) scene->_startup);
+		debugPrintf("Delay: %u\n", (unsigned int) scene->_delay);
+		debugPrintf("Doors: %u\n", (unsigned int) scene->_noDoors);
+		debugPrintf("Objects: %u\n", (unsigned int) scene->_noObjects);
+		debugPrintf("Statics: %u\n", (unsigned int) scene->_noStatics);
+		debugPrintf("ObstacleY1: %u\n", (unsigned int) scene->_obstacleY1);
+		debugPrintf("PalRotFirst: %u\n", (unsigned int) scene->_palRotFirst);
+		debugPrintf("PalRotLast: %u\n", (unsigned int) scene->_palRotLast);
+		debugPrintf("PalRotDelay: %u\n", (unsigned int) scene->_palRotDelay);
 	} else {
-		debugPrintf("dumpsceneinfo <sceneid>\n");
+		debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
 	}
 
 	return true;
@@ -429,6 +433,34 @@ bool Console::cmd_dumpstaticinfo(int argc, const char **argv) {
 		}
 	} else {
 		debugPrintf("dumpstaticinfo <sceneid> <staticid>\n");
+	}
+
+	return true;
+}
+
+bool Console::cmd_dumpbitmapinfo(int argc, const char **argv) {
+	if (argc == 3) {
+		const uint8 sceneId = atoi(argv[1]);
+		const uint8 bitmapId = atoi(argv[2]);
+
+		Scene *const scene = _vm->getGame().getGameData().getScene(sceneId);
+		if (scene) {
+			Bitmap *const bitmap = scene->getBitmap(bitmapId);
+			if (bitmap) {
+				debugPrintf("Room Frame: %u\n", (unsigned int) bitmap->_roomFrame);
+				debugPrintf("Visible: %u\n", (unsigned int) bitmap->_isVisible);
+				debugPrintf("X1: %u\n", (unsigned int) bitmap->_x1);
+				debugPrintf("Y1: %u\n", (unsigned int) bitmap->_y1);
+				debugPrintf("X2: %u\n", (unsigned int) bitmap->_x2);
+				debugPrintf("Y2: %u\n", (unsigned int) bitmap->_y2);
+			} else {
+				debugPrintf("Bitmap %u not found.\n", (unsigned int) bitmapId);
+			}
+		} else {
+			debugPrintf("Scene %u not found.\n", (unsigned int) sceneId);
+		}
+	} else {
+		debugPrintf("dumpbitmapinfo <sceneid> <bitmapid>\n");
 	}
 
 	return true;

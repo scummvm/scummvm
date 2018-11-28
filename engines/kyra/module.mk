@@ -120,6 +120,7 @@ MODULE_OBJS += \
 	script_eob.o \
 	sequences_eob.o \
 	sequences_darkmoon.o \
+	sound_towns_darkmoon.o \
 	sprites_eob.o \
 	staticres_eob.o \
 	timer_eob.o

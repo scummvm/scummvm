@@ -153,19 +153,6 @@ void SliceRenderer::calculateBoundingRect() {
 		return;
 	}
 
-	Matrix3x2 facingRotation = calculateFacingRotationMatrix();
-
-	Matrix3x2 mProjection(_view->_viewportPosition.z / bottom.z,  0.0f, 0.0f,
-	                                                       0.0f, 25.5f, 0.0f);
-
-	Matrix3x2 mOffset(1.0f, 0.0f, _framePos.x,
-                      0.0f, 1.0f, _framePos.y);
-
-	Matrix3x2 mScale(_frameScale.x,          0.0f, 0.0f,
-	                          0.0f, _frameScale.y, 0.0f);
-
-	_mvpMatrix = mProjection * (facingRotation * (mOffset * mScale));
-
 	Vector4 startScreenVector(
 	           _view->_viewportPosition.x + (top.x / top.z) * _view->_viewportPosition.z,
 	           _view->_viewportPosition.y + (top.y / top.z) * _view->_viewportPosition.z,
@@ -220,6 +207,19 @@ void SliceRenderer::calculateBoundingRect() {
 	 * Calculate min and max X
 	 */
 
+	Matrix3x2 facingRotation = calculateFacingRotationMatrix();
+
+	Matrix3x2 mProjection(_view->_viewportPosition.z / bottom.z,  0.0f, 0.0f,
+	                                                       0.0f, 25.5f, 0.0f);
+
+	Matrix3x2 mOffset(1.0f, 0.0f, _framePos.x,
+	                  0.0f, 1.0f, _framePos.y);
+
+	Matrix3x2 mScale(_frameScale.x,          0.0f, 0.0f,
+	                          0.0f, _frameScale.y, 0.0f);
+
+	_mvpMatrix = mProjection * (facingRotation * (mOffset * mScale));
+
 	Matrix3x2 mStart(
 		1.0f, 0.0f, startScreenVector.x,
 		0.0f, 1.0f, 25.5f / startScreenVector.z
@@ -236,8 +236,8 @@ void SliceRenderer::calculateBoundingRect() {
 	float minX =  640.0f;
 	float maxX =    0.0f;
 
-	for (float i = 0.0f; i <= 256.0f; i += 255.0f) {
-		for (float j = 0.0f; j <= 256.0f; j += 255.0f) {
+	for (float i = 0.0f; i <= 255.0f; i += 255.0f) {
+		for (float j = 0.0f; j <= 255.0f; j += 255.0f) {
 			Vector2 v1 = mStartMVP * Vector2(i, j);
 			minX = MIN(minX, v1.x);
 			maxX = MAX(maxX, v1.x);
@@ -279,19 +279,20 @@ void SliceRenderer::loadFrame(int animation, int frame) {
 }
 
 struct SliceLineIterator {
-	// int _sliceMatrix[2][3];
 	Matrix3x2 _sliceMatrix;
 	int _startY;
 	int _endY;
+	int _currentY;
 
 	float _currentZ;
 	float _stepZ;
 	float _currentSlice;
 	float _stepSlice;
+
 	float _currentX;
 	float _stepX;
-	int   _field_38;
-	int   _currentY;
+
+	float _field_38;
 
 	void setup(float endScreenX,   float endScreenY,   float endScreenZ,
 	           float startScreenX, float startScreenY, float startScreenZ,
@@ -306,8 +307,9 @@ void SliceLineIterator::setup(
 		float startScreenX, float startScreenY, float startScreenZ,
 		float endSlice,     float startSlice,
 		Matrix3x2 m) {
-	_startY = (int)startScreenY;
-	_endY   = (int)endScreenY;
+	_startY   = (int)startScreenY;
+	_endY     = (int)endScreenY;
+	_currentY = _startY;
 
 	float size = endScreenY - startScreenY;
 
@@ -324,21 +326,18 @@ void SliceLineIterator::setup(
 	_currentX = startScreenX;
 	_stepX    = (endScreenX - startScreenX) / size;
 
-	_field_38 = (int)((25.5f / size) * (1.0f / endScreenZ - 1.0f / startScreenZ) * 64.0f);
-	_currentY = _startY;
+	_field_38 = (25.5f / size) * (1.0f / endScreenZ - 1.0f / startScreenZ);
 
 	float offsetX =         _currentX;
 	float offsetZ = 25.5f / _currentZ;
 
-	Matrix3x2 translate_matrix = Matrix3x2(1.0f, 0.0f, offsetX,
-	                                       0.0f, 1.0f, offsetZ);
+	Matrix3x2 mTranslate = Matrix3x2(1.0f, 0.0f, offsetX,
+	                                 0.0f, 1.0f, offsetZ);
 
-	Matrix3x2 scale_matrix = Matrix3x2(65536.0f,  0.0f, 0.0f,
-	                                       0.0f, 64.0f, 0.0f);
+	Matrix3x2 mScale = Matrix3x2(65536.0f,  0.0f, 0.0f,  // x position is using fixed-point precisson with 16 bits
+	                                 0.0f, 64.0f, 0.0f); // z position is using fixed-point precisson with 6 bits
 
-	m = scale_matrix * (translate_matrix * m);
-
-	_sliceMatrix = m;
+	_sliceMatrix = mScale * (mTranslate * m);
 }
 
 float SliceLineIterator::line() {
@@ -354,12 +353,13 @@ float SliceLineIterator::line() {
 }
 
 void SliceLineIterator::advance() {
-	_currentZ          += _stepZ;
-	_currentSlice      += _stepSlice;
-	_currentX          += _stepX;
-	_currentY          += 1;
-	_sliceMatrix._m[0][2] += (int)(65536.0f * _stepX);
-	_sliceMatrix._m[1][2] += _field_38;
+	_currentZ     += _stepZ;
+	_currentSlice += _stepSlice;
+	_currentX     += _stepX;
+	_currentY     += 1;
+
+	_sliceMatrix._m[0][2] += _stepX * 65536.0f;
+	_sliceMatrix._m[1][2] += _field_38 * 64.0f;
 }
 
 static void setupLookupTable(int t[256], int inc) {
@@ -375,7 +375,8 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 	assert(_setEffects);
 	//assert(_view);
 
-	_vm->_sliceRenderer->setupFrameInWorld(animationId, animationFrame, position, facing);
+	setupFrameInWorld(animationId, animationFrame, position, facing);
+
 	assert(_sliceFramePtr);
 
 	if (_screenRectangle.isEmpty()) {
@@ -445,6 +446,8 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 	uint16 *zBufferLinePtr = zbuffer + 640 * frameY;
 
 	while (sliceLineIterator._currentY <= sliceLineIterator._endY) {
+		_m13 = sliceLineIterator._sliceMatrix(0, 2);
+		_m23 = sliceLineIterator._sliceMatrix(1, 2);
 		sliceLine = sliceLineIterator.line();
 
 		sliceRendererLights.calculateColorSlice(Vector3(_position.x, _position.y, _position.z + _frameBottomZ + sliceLine * _frameSliceHeight));
@@ -494,22 +497,22 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	float s = sin(_facing);
 	float c = cos(_facing);
 
-	Matrix3x2 m_rotation(c, -s, 0.0f,
-	                     s,  c, 0.0f);
+	Matrix3x2 mRotation(c, -s, 0.0f,
+	                    s,  c, 0.0f);
 
-	Matrix3x2 m_frame(_frameScale.x, 0.0f, _framePos.x,
-	                  0.0f, _frameScale.y, _framePos.y);
+	Matrix3x2 mFrame(_frameScale.x,           0.0f, _framePos.x,
+	                           0.0f, _frameScale.y, _framePos.y);
 
-	Matrix3x2 m_scale_size_25_5(size,  0.0f, 0.0f,
-	                            0.0f, 25.5f, 0.0f);
+	Matrix3x2 mScale(size,  0.0f, 0.0f,
+	                 0.0f, 25.5f, 0.0f);
 
-	Matrix3x2 m_translate_x_32k(1.0f, 0.0f, screenX,
-	                            0.0f, 1.0f, 32768.0f);
+	Matrix3x2 mTranslate(1.0f, 0.0f, screenX,
+	                     0.0f, 1.0f, 32768.0f);
 
-	Matrix3x2 m_scale_64k_64(65536.0f,  0.0f, 0.0f,
-	                             0.0f, 64.0f, 0.0f);
+	Matrix3x2 mScaleFixed(65536.0f,  0.0f, 0.0f,  // x position is using fixed-point precisson with 16 bits
+	                          0.0f, 64.0f, 0.0f); // z position is using fixed-point precisson with 6 bits
 
-	Matrix3x2 m = m_scale_64k_64 * (m_translate_x_32k * (m_scale_size_25_5 * (m_rotation * m_frame)));
+	Matrix3x2 m = mScaleFixed * (mTranslate * (mScale * (mRotation * mFrame)));
 
 	setupLookupTable(_m11lookup, m(0, 0));
 	setupLookupTable(_m12lookup, m(0, 1));
@@ -561,15 +564,15 @@ void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, ui
 			continue;
 
 		uint32 lastVertex = vertexCount - 1;
-		int lastVertexX = MAX((_m11lookup[p[3 * lastVertex]] + _m12lookup[p[3 * lastVertex + 1]] + _m13) >> 16, 0);
+		int lastVertexX = MAX((_m11lookup[p[3 * lastVertex]] + _m12lookup[p[3 * lastVertex + 1]] + _m13) / 65536, 0);
 
 		int previousVertexX = lastVertexX;
 
 		while (vertexCount--) {
-			int vertexX = CLIP((_m11lookup[p[0]] + _m12lookup[p[1]] + _m13) >> 16, 0, 640);
+			int vertexX = CLIP((_m11lookup[p[0]] + _m12lookup[p[1]] + _m13) / 65536, 0, 640);
 
 			if (vertexX > previousVertexX) {
-				int vertexZ = (_m21lookup[p[0]] + _m22lookup[p[1]] + _m23) >> 6;
+				int vertexZ = (_m21lookup[p[0]] + _m22lookup[p[1]] + _m23) / 64;
 
 				if (vertexZ >= 0 && vertexZ < 65536) {
 					int color555 = palette.color555[p[2]];
@@ -578,9 +581,9 @@ void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, ui
 						_screenEffects->getColor(&aescColor, vertexX, y, vertexZ);
 
 						Color256 color = palette.color[p[2]];
-						color.r = ((int)(_setEffectColor.r + _lightsColor.r * color.r) >> 16) + aescColor.r;
-						color.g = ((int)(_setEffectColor.g + _lightsColor.g * color.g) >> 16) + aescColor.g;
-						color.b = ((int)(_setEffectColor.b + _lightsColor.b * color.b) >> 16) + aescColor.b;
+						color.r = ((int)(_setEffectColor.r + _lightsColor.r * color.r) / 65536) + aescColor.r;
+						color.g = ((int)(_setEffectColor.g + _lightsColor.g * color.g) / 65536) + aescColor.g;
+						color.b = ((int)(_setEffectColor.b + _lightsColor.b * color.b) / 65536) + aescColor.b;
 
 						int bladeToScummVmConstant = 256 / 32;
 						color555 = _pixelFormat.RGBToColor(CLIP(color.r * bladeToScummVmConstant, 0, 255), CLIP(color.g * bladeToScummVmConstant, 0, 255), CLIP(color.b * bladeToScummVmConstant, 0, 255));

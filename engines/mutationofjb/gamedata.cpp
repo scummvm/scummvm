@@ -88,6 +88,14 @@ void Door::saveLoadWithSerializer(Common::Serializer &sz) {
 	sz.syncAsByte(_SP);
 }
 
+bool Door::allowsImplicitSceneChange() const {
+	const size_t length = strlen(_name);
+	if (length == 0)
+		return false;
+
+	return _name[length - 1] != '+';
+}
+
 bool Object::loadInitialState(Common::ReadStream &stream) {
 	_active = stream.readByte();
 	_firstFrame = stream.readByte();
@@ -148,6 +156,18 @@ void Static::saveLoadWithSerializer(Common::Serializer &sz) {
 	sz.syncAsUint16LE(_walkToX);
 	sz.syncAsByte(_walkToY);
 	sz.syncAsByte(_walkToFrame);
+}
+
+bool Static::isCombinable() const {
+	const size_t length = strlen(_name);
+	if (length == 0)
+		return false;
+
+	return _name[length - 1] == '[';
+}
+
+bool Static::allowsImplicitPickup() const {
+	return _name[0] == '~';
 }
 
 bool Bitmap::loadInitialState(Common::ReadStream &stream) {
@@ -278,6 +298,15 @@ Static *Scene::getStatic(uint8 staticId, bool ignoreNo) {
 	return &_statics[staticId - 1];
 }
 
+Bitmap *Scene::getBitmap(uint8 bitmapId) {
+	if (bitmapId == 0 || bitmapId > ARRAYSIZE(_bitmaps)) {
+		warning("Bitmap %d does not exist", bitmapId);
+		return nullptr;
+	}
+
+	return &_bitmaps[bitmapId - 1];
+}
+
 uint8 Scene::getNoDoors(bool ignoreNo) const {
 	return (!ignoreNo ? MIN(_noDoors, static_cast<uint8>(ARRAYSIZE(_doors))) : ARRAYSIZE(_doors));
 }
@@ -288,6 +317,10 @@ uint8 Scene::getNoObjects(bool ignoreNo) const {
 
 uint8 Scene::getNoStatics(bool ignoreNo) const {
 	return (!ignoreNo ? MIN(_noStatics, static_cast<uint8>(ARRAYSIZE(_statics))) : ARRAYSIZE(_statics));
+}
+
+uint8 Scene::getNoBitmaps() const {
+	return ARRAYSIZE(_bitmaps);
 }
 
 Door *Scene::findDoor(int16 x, int16 y, bool activeOnly, int *index) {
@@ -354,6 +387,7 @@ GameData::GameData()
 	  _lastScene(0),
 	  _partB(false),
 	  _inventory(),
+	  _currentAPK("piggy.apk"),
 	  _color(WHITE) {}
 
 Scene *GameData::getScene(uint8 sceneId) {

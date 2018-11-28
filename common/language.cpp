@@ -31,6 +31,7 @@ const LanguageDescription g_languages[] = {
 	{    "zh", "zh_TW", "Chinese (Taiwan)", ZH_TWN },
 	{    "hr", "hr_HR", "Croatian", HR_HRV },
 	{    "cz", "cs_CZ", "Czech", CZ_CZE },
+	{    "da",    "da", "Danish", DA_DAN },
 	{    "nl", "nl_NL", "Dutch", NL_NLD },
 	{    "en",    "en", "English", EN_ANY }, // Generic English (when only one game version exist)
 	{    "gb", "en_GB", "English (GB)", EN_GRB },
@@ -49,7 +50,8 @@ const LanguageDescription g_languages[] = {
 	{    "lv", "lv_LV", "Latvian", LV_LAT },
 	{    "nb", "nb_NO", "Norwegian Bokm\xE5l", NB_NOR },
 	{    "pl", "pl_PL", "Polish", PL_POL },
-	{    "br", "pt_BR", "Portuguese", PT_BRA },
+	{    "br", "pt_BR", "Portuguese (Brazil)", PT_BRA },
+	{    "pt", "pt_PT", "Portuguese (Portugal)", PT_POR },
 	{    "ru", "ru_RU", "Russian", RU_RUS },
 	{    "sk", "sk_SK", "Slovak", SK_SVK },
 	{    "es", "es_ES", "Spanish", ES_ESP },

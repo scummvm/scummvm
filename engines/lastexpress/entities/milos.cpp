@@ -111,7 +111,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(7, Milos, playSound16)
-	Entity::playSound(savepoint, false, kFlagDefault);
+	Entity::playSound(savepoint, false, kVolumeFull);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -141,7 +141,6 @@ IMPLEMENT_FUNCTION_II(10, Milos, enterCompartmentDialog, CarIndex, EntityPositio
 		if (getEvent(kEventMilosTylerCompartmentDefeat)) {
 			// Robert saying: "Milos"
 			switch(rnd(3)) {
-			default:
 			case 0:
 				getSound()->playSound(kEntityPlayer, "CAT1014");
 				break;
@@ -443,7 +442,7 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 					++params->param5;
 					switch (params->param5) {
 					default:
-						getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
+						getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 == 0 ? kCursorTalk : kCursorNormal, kCursorHand);
 						CURRENT_PARAM(1, 2) = 0;
 						break;
 
@@ -467,7 +466,7 @@ IMPLEMENT_FUNCTION(14, Milos, function14)
 
 						if (params->param7 < 3) {
 							params->param5 = 1;
-							getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
+							getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 == 0 ? kCursorTalk : kCursorNormal, kCursorHand);
 							CURRENT_PARAM(1, 2) = 0;
 							break;
 						}
@@ -645,7 +644,7 @@ label_callback_12:
 		case 7:
 		case 9:
 		case 11:
-			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 < 1 ? kCursorTalk : kCursorNormal, kCursorHand);
+			getObjects()->update(kObjectCompartment1, kEntityMilos, getObjects()->get(kObjectCompartment1).status, params->param3 == 0 ? kCursorTalk : kCursorNormal, kCursorHand);
 			CURRENT_PARAM(1, 2) = 0;
 			break;
 
@@ -1367,9 +1366,13 @@ IMPLEMENT_FUNCTION(25, Milos, function25)
 
 		case 3:
 			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorTalk, kCursorNormal);
-			getObjects()->update(kObjectCompartmentG, kEntityMilos, kObjectLocation1, kCursorHandKnock, kCursorHand);
 
 			params->param1 = 1;
+			// BUG: the original game executes the last line of [case 4:] here too, resetting cursor once again.
+			// We get here when Cath knocks or tries to enter the compartment G when Vesna is there,
+			// after Vesna says VES1015A (in Serbian, supposedly a variant of "Who is it?").
+			// The action for next knock / attempt to enter is saying CAT1505/CAT1505A,
+			// so the cursor should be kCursorTalk and not kCursorHandKnock as in the original game.
 			break;
 
 		case 4:
@@ -1524,7 +1527,6 @@ IMPLEMENT_FUNCTION(29, Milos, chapter4Handler)
 		getSound()->playSound(kEntityMilos, sound); \
 		if (getEntities()->isDistanceBetweenEntities(kEntityMilos, kEntityPlayer, 2000)) \
 			getProgress().field_94 = 1; \
-		break; \
 	}
 
 	switch (savepoint.action) {
@@ -1590,7 +1592,7 @@ IMPLEMENT_FUNCTION(29, Milos, chapter4Handler)
 
 	case kAction221683008:
 		if (getSoundQueue()->isBuffered(kEntityMilos))
-			getSoundQueue()->processEntry(kEntityMilos);
+			getSoundQueue()->fade(kEntityMilos);
 
 		params->param1 = 1;
 		getSavePoints()->push(kEntityMilos, kEntityCoudert, kAction123199584);
@@ -1733,14 +1735,14 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 
 		case 2:
 			if (getSoundQueue()->isBuffered("MUS050"))
-				getSoundQueue()->processEntry("MUS050");
+				getSoundQueue()->fade("MUS050");
 
 			if (getSoundQueue()->isBuffered("ARRIVE"))
-				getSoundQueue()->removeFromQueue("ARRIVE");
+				getSoundQueue()->stop("ARRIVE");
 
-			getSoundQueue()->processEntries();
+			getSoundQueue()->endAmbient();
 			getAction()->playAnimation(getProgress().isNightTime ? kEventLocomotiveMilosDay : kEventLocomotiveMilosNight);
-			getSoundQueue()->setupEntry(kSoundType7, kEntityMilos);
+			getSoundQueue()->assignNISLink(kEntityMilos);
 			getScenes()->loadSceneFromPosition(kCarCoalTender, 1);
 			break;
 
@@ -1752,7 +1754,7 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 		case 4:
 			getAction()->playAnimation(kEventLocomotiveRestartTrain);
 			getAction()->playAnimation(kEventLocomotiveOldBridge);
-			getSoundQueue()->resetState();
+			getSoundQueue()->startAmbient();
 			getState()->time = kTime2983500;
 
 			setCallback(5);
@@ -1796,7 +1798,7 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 			break;
 		}
 
-		getSoundQueue()->processEntry(kEntityMilos);
+		getSoundQueue()->fade(kEntityMilos);
 		if (getState()->time < kTime2949300)
 			getState()->time = kTime2949300;
 

@@ -227,6 +227,7 @@ protected:
 	uint8 *_vcnTransitionMask;
 	uint8 *_vcnShift;
 	uint8 *_vcnColTable;
+	uint8 _vcnBpp;
 	uint16 *_blockDrawingBuffer;
 	uint8 *_sceneWindowBuffer;
 	uint8 _blockBrightness;
@@ -263,7 +264,7 @@ protected:
 	const int8 *_dscDim1;
 	const int8 *_dscDim2;
 	const int16 *_dscShapeX;
-	const uint8 *_dscUnk2;
+	const uint8 *_dscDoorScaleOffs;
 	const uint8 *_dscBlockMap;
 	const int8 *_dscBlockIndex;
 	const uint8 *_dscTileIndex;

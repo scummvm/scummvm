@@ -45,9 +45,9 @@ class Overlays {
 		VQAPlayer      *vqaPlayer;
 		Common::String  name;
 		int32           hash;
-		int             field0;
-		int             field1;
-		int             field2;
+		int             loopId;
+		bool            loopForever;
+		int             frame;
 	};
 
 	BladeRunnerEngine *_vm;
@@ -59,6 +59,7 @@ public:
 	~Overlays();
 
 	int play(const Common::String &name, int loopId, bool loopForever, bool startNow, int a6);
+	void resume(bool isLoadingGame);
 	void remove(const Common::String &name);
 	void removeAll();
 	void tick();

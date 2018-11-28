@@ -275,6 +275,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Codename: Iceman - English DOS v1.022 (supplied by misterhands in bug report Trac #10678)
+	// SCI interpreter version 0.000.668
+	{"iceman", "", {
+		{"resource.map", 0, "7cca4017825bc21186aed5542912fbcd", 5670},
+		{"resource.000", 0, "b1bccd827453d4cb834bfd5b45bef63c", 26974},
+		{"resource.001", 0, "005bd332d4b0f9d8e99d3b905223a332", 438601},
+		{"resource.002", 0, "250b859381ebf2bf8922bd99683b0cc1", 566571},
+		{"resource.003", 0, "1f2f79e399098859c73e49ac6a3545d8", 622122},
+		{"resource.004", 0, "64f342463f6f35ba71b3509ef696ae3f", 669179},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Codename: Iceman - English DOS (supplied by ssburnout in bug report #3049193)
 	// 1.022 9x5.25" (label: Int#0.000.668)
 	{"iceman", "", {
@@ -810,14 +822,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD, GUIO_GK1_CD_DOS },
 
-	// Gabriel Knight - Spanish Windows CD (from jvprat)
-	// Executable scanning reports "2.000.000", VERSION file reports "1.000.000, April 13, 1995"
-	{"gk1", "CD", {
-		{"resource.map", 0, "7cb6e9bba15b544ec7a635c45bde9953", 11404},
-		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13381599},
-		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformWindows, ADGF_CD, GUIO_GK1_CD_WIN },
-
 	// Gabriel Knight - English Macintosh (Floppy!)
 	// This version is hi-res ONLY, so it should NOT get GAMEOPTION_HIGH_RESOLUTION_GRAPHICS
 	// (which is meant for enforcing hi-res graphics), but instead hi-res mode should be enabled all the time.
@@ -1169,7 +1173,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "98a39ae535dd01714ac313f8ba925045", 7260363},
 		{"resmap.000", 0, "10267a1542a73d527e50f0340549088b", 4900},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle 5 (Hoyle Classic Games) - Windows
 	{"hoyle5", "", {
@@ -1177,7 +1181,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "55ae04012a73abc15b93debf60a7df71", 16909704},
 		{"resmap.000", 0, "daf64a91344a7934fe4374765267c2af", 5767},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+
+	// Hoyle 5 (Hoyle Classic Games for Laptops) - Windows
+	// SCI 2.100.002
+	// Reported by misterhands in bug Trac #10676
+	{"hoyle5", "", {
+		{"ressci.000", 0, "ca50cf09f80a5f982a965afea852cc42", 3278849},
+		{"resmap.000", 0, "d5eef6f2529313e950c4d78251a95b1e", 4213},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Bridge - Windows
 	{"hoyle5bridge", "", {
@@ -1185,7 +1198,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "b83cba09229d3003df9e0c864843f962", 16842499},
 		{"resmap.000", 0, "7b3e3030b0ad5f341053c18afce7d176", 5647},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Children's Collection - Windows
 	{"hoyle5children", "", {
@@ -1193,7 +1206,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "fd1f7dbeebd4510cd37e171a72f2b6ad", 16824349},
 		{"resmap.000", 0, "b0fe1bcc69596e10fe5caa11d0b55b23", 5671},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Solitaire (CD version) - Windows
 	{"hoyle5solitaire", "CD", {
@@ -1201,7 +1214,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "fa4eeb24b1fbf6f33739995360554485", 11628203},
 		{"resmap.000", 0, "3f63df73a49800f080775d2a9ad0e949", 3079},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 	// Hoyle Solitaire (Hard Drive version) - Windows
 	{"hoyle5solitaire", "Hard Drive", {
@@ -1209,7 +1222,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "da180c67d54d4208c84a48fcd8709671", 8582335},
 		{"resmap.000", 0, "e2feb47ab16f9e22a9b6a8580d1da3f0", 3055},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_DROPPLATFORM, GUIO_HOYLE5 },
 
 #undef GUIO_HOYLE5
 
@@ -3629,13 +3642,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                                GUIO_LINKSPEECHTOSFX, \
                                GUIO_NOASPECT, \
                                GUIO_NOLAUNCHLOAD)
-#define GUIO_PQSWAT      GUIO7(GUIO_NOSUBTITLES, \
+#define GUIO_PQSWAT      GUIO8(GUIO_NOSUBTITLES, \
                                GUIO_NOMIDI, \
                                GUIO_LINKMUSICTOSFX, \
                                GUIO_LINKSPEECHTOSFX, \
                                GUIO_NOASPECT, \
                                GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
-                               GAMEOPTION_HQ_VIDEO)
+                               GAMEOPTION_HQ_VIDEO, \
+                               GAMEOPTION_UPSCALE_VIDEOS)
 
 	// Police Quest: SWAT - English DOS/Windows Demo (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "0.001.200"
@@ -4424,6 +4438,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Space Quest 3 - English DOS 6 x 360k Floppy (from misterhands, bug report Trac #10677 and goodoldgeorge, bug report Trac #10636)
+	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
+	{"sq3", "", {
+		{"resource.map", 0, "590ed699f9a4789e9357c1e55ba4b1eb", 6078},
+		{"resource.001", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 175038},
+		{"resource.002", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 316877},
+		{"resource.003", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 330305},
+		{"resource.004", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 325779},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Space Quest 3 - English DOS (from telanus, bug report Trac#9626)
 	// Game version 1.0P 1989-03-22
 	// SCI interpreter version 0.000.453
@@ -5063,6 +5088,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("LockerGnome Quest", "3eeff9130206cad0c4e1551e2b9dd2c5", 420, "ae05ca90806fd90cc43f147c82d3547c", 158906),
 	FANMADE("LockerGnome Quest Redux", "55b0081dbdd77a07807c76cec3606970", 492, "75c9c5e8a475a7b5f1a6cb18edad67f2", 168069),
 	FANMADE("LockerGnome Quest Redux", "6299578d8ab709cc181baea6b984a0a7", 492, "c0ff4bfcc62fb111337343967e4001fd", 167383),
+	FANMADE("Manic Mansion", "f2882af62d22d4bee991ee96ab3d9bd2", 912, "49e58214bfb738081d813912f2ba89b1", 648976),
 	FANMADE("New Year's Mystery", "e4dcab1b1d3cb4a2c070a07a9c9589e0", 708, "e00ca5e44fd4e98d8174b467b31b0f21", 295425),
 	FANMADE("New Year's Mystery (Updated)", "efd1beb5120293725065c95959144f81", 714, "b3bd3c2372ed6efa28adb12403c4c31a", 305027),
 	FANMADE("Ocean Battle", "c2304a0568e0eb84f8e9a0915f01170a", 408, "46c520c1ac9b63528854d0f58c7e1b74", 142234),

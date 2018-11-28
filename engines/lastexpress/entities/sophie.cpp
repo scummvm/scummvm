@@ -70,8 +70,8 @@ IMPLEMENT_FUNCTION_II(2, Sophie, updateEntity, CarIndex, EntityPosition)
 		CarIndex rebeccaCar = getEntityData(kEntityRebecca)->car;
 
 		if (getEntities()->isDistanceBetweenEntities(kEntitySophie, kEntityRebecca, 500)
-		|| (direction == kDirectionUp && (car > rebeccaCar || car == rebeccaCar && position > rebecca_position))
-		|| (direction == kDirectionDown && (car < rebeccaCar || car == rebeccaCar && position < rebecca_position))) {
+		|| (direction == kDirectionUp && (car > rebeccaCar || (car == rebeccaCar && position > rebecca_position)))
+		|| (direction == kDirectionDown && (car < rebeccaCar || (car == rebeccaCar && position < rebecca_position)))) {
 			 getData()->field_49B = 0;
 			 params->param3 = 1;
 		}

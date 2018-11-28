@@ -90,10 +90,6 @@ namespace std
 #define DISABLE_COMMAND_LINE
 #define USE_RGB_COLOR
 
-#if defined(USE_TREMOR) && !defined(USE_VORBIS)
-#define USE_VORBIS // make sure this one is defined together with USE_TREMOR!
-#endif
-
 // hack in some tricks to work around not having these fcns for Symbian
 // and we _really_ don't wanna link with any other windows LIBC library!
 #if defined(__GCC32__)
