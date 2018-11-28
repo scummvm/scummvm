@@ -7823,6 +7823,63 @@ static const uint16 qfg4SetScalerPatch[] = {
 	PATCH_END
 };
 
+// In QFG4, the kernel func SetNowSeen() returns void - meaning it doesn't
+// modify the accumulator to store a result. Yet math was performed on it!
+//
+// The function updates boundary box properties of a given View object, prior
+// to collision tests. IF (collision detection is warranted, and IF those tests
+// are true), THEN respond to the collision.
+//
+// SetNowSeen() was inserted in the middle of the IF block's list of conditions.
+// That way it can be short-circuited, and it runs before the tests.
+//
+// Problem: void functions make no promise about their truth value. After the
+// call, acc will be *whatever* happened to already be in there. This is bad.
+//
+// "(| (SetNowSeen horror) $0001)"
+//
+// Someone wrapped the func in a bitwise OR against 1. Thus *every* value is
+// guaranteed to become non-zero, always true. And the IF block won't break.
+//
+// In later SCI2 versions, SetNowSeen() would change to return a boolean.
+//
+// Whether a lucky confusion or ugly hack, the wrapped void IF condition works.
+// When an object leaks into the accumulator. SSCI doesn't mind OR'ing it, too.
+// ScummVM detects unsafe arithmetic and crashes. ScummVM needs proper numbers.
+// 
+// "Invalid arithmetic operation (bitwise OR - params: 002e:1694 and 0000:0001)"
+//
+// We leave the OR wrapper. When the call returns, we manually feed the OR a
+// literal 1. Same effect. The IF block goes on evaluating conditions.
+//
+// Wraith, Vorpal Bunny, and Badder scripts are not affected.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method:
+// (ego1, combat hero) Script 41 - xSlash::doit(), xDuck::doit(), xParryLow::doit()
+// (ego1, combat hero) Script 810 - slash::doit()
+//          (Revenant) Script 830 - revenantForward::doit()
+//            (Wyvern) Script 835 - doRSlash::doit(), doLSlash::doit(), tailAttack::doit()
+//          (Chernovy) Script 840 - doLSlash::doit(), doRSlash::doit()
+//        (Pit Horror) Script 855 - wipeSpell::doit()
+//         (Necrotaur) Script 870 - attackLeft::doit(), attackRight::doit(),
+//                                  headAttack::doit(), hurtMyself::changeState(1)
+// Fixes bug: #10138, #10419, #10710, #10814
+static const uint16 qfg4ConditionalVoidSignature[] = {
+	SIG_MAGICDWORD,
+	0x43, 0x0a, SIG_UINT16(0x00002),    // callk 02 (SetNowSeen stackedView)
+	0x36,                               // push (void func didn't set acc!)
+	0x35, 0x01,                         // ldi 1d
+	0x14,                               // or (whatever that was, make it non-zero)
+	SIG_END
+};
+
+static const uint16 qfg4ConditionalVoidPatch[] = {
+	PATCH_ADDTOOFFSET(+4),              //
+	0x78,                               // push1 (Feed OR a literal 1)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -7831,6 +7888,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     7, "fix consecutive moonrises",                   1, qfg4MoonriseSignature,         qfg4MoonrisePatch },
 	{  true,    10, "fix setLooper calls (2/2)",                   2, qg4SetLooperSignature2,        qg4SetLooperPatch2 },
 	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
+	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
@@ -7844,6 +7902,12 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
+	{  true,   810, "fix conditional void calls",                  1, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
+	{  true,   830, "fix conditional void calls",                  2, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
+	{  true,   835, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
+	{  true,   840, "fix conditional void calls",                  2, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
+	{  true,   855, "fix conditional void calls",                  1, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
+	{  true,   870, "fix conditional void calls",                  5, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,        sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,        sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,        sci2ChangeDirPatch },
