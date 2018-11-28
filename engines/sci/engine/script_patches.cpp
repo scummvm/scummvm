@@ -103,6 +103,7 @@ static const char *const selectorNameTable[] = {
 	"setStep",      // system selector
 	"cycleSpeed",   // system selector
 	"handsOff",     // system selector
+	"handsOn",      // system selector
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
 	"say",          // Quest For Glory 1 VGA
@@ -181,6 +182,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setStep,
 	SELECTOR_cycleSpeed,
 	SELECTOR_handsOff,
+	SELECTOR_handsOn,
 	SELECTOR_localize,
 	SELECTOR_put,
 	SELECTOR_say,
@@ -8025,6 +8027,110 @@ static const uint16 qfg4SetScalerPatch[] = {
 	PATCH_END
 };
 
+// The castle's crest-operated bookshelf has an unconditional HAND message
+// which always says, "you haven't found the trigger yet," even after it's
+// open.
+//
+// We schedule the walk-out script (sLeaveSecretly) at the end of the opening
+// script (sSecret) to force hero to leave immediately, preventing any
+// interaction with an open bookshelf.
+//
+// An automatic exit is consistent with the other bookshelf passage rooms:
+// Chandelier (662) and EXIT (661).
+//
+// Clobbers Glory::handsOn() and sSecret::dispose() to do Room::setScript().
+// Both of them are made redundant by setScript's built-in disposal and
+// sLeaveSecretly's immediate use of Glory::handsOff().
+//
+// This patch has two variants, toggled to match the detected edition with
+// enablePatch() below. Aside from the patched lofsa value, they are identical.
+//
+// Applies to at least: English CD
+// Responsible method: sSecret::changeState(4) in script 663
+// Fixes bug: #10756
+static const uint16 qfg4CrestBookshelfCDSignature[] = {
+	SIG_MAGICDWORD,
+	0x4a, SIG_UINT16(0x003e),           // send 3e
+	0x36,                               // push
+	SIG_ADDTOOFFSET(+5),                // ...
+	0x38, SIG_SELECTOR16(handsOn),      // pushi handsOn (begin clobbering)
+	0x76,                               // push0
+	0x81, 0x01,                         // lag global[1] (Glory)
+	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04
+	SIG_END
+};
+
+static const uint16 qfg4CrestBookshelfCDPatch[] = {
+	PATCH_ADDTOOFFSET(+9),
+	0x38, PATCH_SELECTOR16(setScript),  // pushi setScript
+	0x78,                               // push1
+	0x72, PATCH_UINT16(0x01a4),         // lofsa sLeaveSecretly
+	0x36,                               // push
+	0x81, 0x02,                         // lag global[2] (rm663)
+	0x4a, PATCH_UINT16(0x0006),         // send 06
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
+	PATCH_END
+};
+
+// Applies to at least: English floppy, German floppy
+static const uint16 qfg4CrestBookshelfFloppySignature[] = {
+	SIG_MAGICDWORD,
+	0x4a, SIG_UINT16(0x003e),           // send 3e
+	0x36,                               // push
+	SIG_ADDTOOFFSET(+5),                // ...
+	0x38, SIG_SELECTOR16(handsOn),      // pushi handsOn (begin clobbering)
+	0x76,                               // push0
+	0x81, 0x01,                         // lag global[1] (Glory)
+	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04
+	SIG_END
+};
+
+static const uint16 qfg4CrestBookshelfFloppyPatch[] = {
+	PATCH_ADDTOOFFSET(+9),
+	0x38, PATCH_SELECTOR16(setScript),  // pushi setScript
+	0x78,                               // push1
+	0x72, PATCH_UINT16(0x018c),         // lofsa sLeaveSecretly
+	0x36,                               // push
+	0x81, 0x02,                         // lag global[2] (rm663)
+	0x4a, PATCH_UINT16(0x0006),         // send 06
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
+	PATCH_END
+};
+
+// Modifies room 663's sLeaveSecretly to avoid obstacles.
+//
+// Originally intended to start when hero arrives at a doorMat region, room
+// 663's walk-out script (sLeaveSecretly) ignores obstacles. The crest
+// bookshelf patch repurposes this script and requires collision detection to
+// exit properly, walking around the open bookshelf.
+//
+// Class numbers for MoveTo and PolyPath differ between CD vs floppy editions.
+// Their intervals happen to be the same, so we simply offset whatever is
+// there.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sLeaveSecretly::changeState(1) in script 663
+// Fixes bug: #10756
+static const uint16 qfg4CrestBookshelfMotionSignature[] = {
+	0x51, SIG_ADDTOOFFSET(+1),          // class MoveTo
+	0x36,                               // push
+	SIG_MAGICDWORD,
+	0x39, 0x1d,                         // pushi x = 29d
+	0x38, SIG_UINT16(0x0097),           // pushi y = 151d
+	SIG_END
+};
+
+static const uint16 qfg4CrestBookshelfMotionPatch[] = {
+	0x51, PATCH_GETORIGINALBYTEADJUST(+1, +6), // class PolyPath
+	PATCH_END
+};
+ 
 // The castle's great hall has a doorMat region that intermittently sends hero
 // back to the room they just left (the barrel room) the instant they arrive.
 //
@@ -8133,6 +8239,9 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
+	{  false,  663, "CD: fix crest bookshelf",                     1, qfg4CrestBookshelfCDSignature, qfg4CrestBookshelfCDPatch },
+	{  false,  663, "Floppy: fix crest bookshelf",                 1, qfg4CrestBookshelfFloppySignature,   qfg4CrestBookshelfFloppyPatch },
+	{  true,   663, "CD/Floppy: fix crest bookshelf motion",       1, qfg4CrestBookshelfMotionSignature,   qfg4CrestBookshelfMotionPatch },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
 	{  true,   810, "fix conditional void calls",                  1, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
@@ -9934,6 +10043,14 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				if (g_sci->isCD()) {
 					// Enables Dual mode patches (audio + subtitles at the same time) for Laura Bow 2
 					enablePatch(signatureTable, "CD: audio + text support");
+				}
+				break;
+			case GID_QFG4:
+				// Chooses between similar signatures that patch with a different lofsa address
+				if (g_sci->isCD()) {
+					enablePatch(signatureTable, "CD: fix crest bookshelf");
+				} else {
+					enablePatch(signatureTable, "Floppy: fix crest bookshelf");
 				}
 				break;
 			default:
