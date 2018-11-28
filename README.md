@@ -1,4 +1,4 @@
-# ScummVM README
+# [ScummVM README](https://www.scummvm.org/) &middot; [![Build Status](https://travis-ci.org/scummvm/scummvm.svg?branch=master)](https://travis-ci.org/scummvm/scummvm) [![Translation status](https://translations.scummvm.org/widgets/scummvm/-/scummvm/svg-badge.svg)](https://translations.scummvm.org/engage/scummvm/?utm_source=widget) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests) 
 
 For more information, compatibility lists, details on donating, the
 latest release, progress reports and more, please visit the ScummVM home
