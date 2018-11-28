@@ -6789,6 +6789,104 @@ static const uint16 qfg1vgaPatchSpeedTest[] = {
 	PATCH_END
 };
 
+// The baby antwerps in room 78 lockup the game if they get in ego's way when
+//  exiting south. They also crash the interpreter if they wander too far off
+//  the screen. These problems also occur in Sierra's interpreter.
+//
+// The antwerps are controlled by the Wander motion which randomly moves them
+//  around. There's nothing stopping them from moving past the southern edge of
+//  the screen and they tend to do so. When ego moves south of 180, sExitAll
+//  disables control and moves ego off screen, but if an antwerp is in the way
+//  then ego stops and the user never regains control. Once an antwerp has
+//  escaped the screen it continues to wander until its position overflows
+//  several minutes later. This freezes Sierra's interpreter and currently
+//  causes ours to fail an assertion due to constructing an invalid Rect.
+//
+// We fix both problems by not allowing antwerps south of 180 so that they
+//  remain on screen and can't block ego's exit. This is consistent with room 85
+//  where they also appear but without a southern exit. The Wander motion is
+//  only used by antwerps and the sparkles above Yorick in room 96 so it can be
+//  safely patched to enforce a southern limit. We make room for this patch by
+//  replacing Wander's calculations with their known results, since the default
+//  Wander:distance of 30 is always used, and by overwriting Wander:onTarget
+//  which no script calls and just returns zero.
+//
+// Applies to: PC Floppy, Mac Floppy
+// Responsible method: Wander:setTarget
+// Fixes bug #9564
+static const uint16 qfg1vgaSignatureAntwerpWander[] = {
+	SIG_MAGICDWORD,
+	0x3f, 0x01,                             // link 01
+	0x78,                                   // push1
+	0x76,                                   // push0
+	0x63, 0x12,                             // pToa client
+	0x4a, 0x04,                             // send 4
+	0x36,                                   // push
+	0x67, 0x30,                             // pTos distance
+	0x7a,                                   // push2
+	0x76,                                   // push0
+	0x67, 0x30,                             // pTos distance
+	0x35, 0x02,                             // ldi 02
+	0x06,                                   // mul
+	0xa5, 0x00,                             // sat 00 [ temp0 = distance * 2 ]
+	0x36,                                   // push
+	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x04,                                   // sub
+	0x02,                                   // add
+	0x65, 0x16,                             // aTop x [ x = client:x + (distance - Random(0, temp0)) ]
+	0x76,                                   // push0
+	0x76,                                   // push0
+	0x63, 0x12,                             // pToa client
+	0x4a, 0x04,                             // send 4
+	0x36,                                   // push
+	0x67, 0x30,                             // pTos distance
+	0x7a,                                   // push2
+	0x76,                                   // push0
+	0x8d, 0x00,                             // lst 00
+	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x04,                                   // sub
+	0x02,                                   // add
+	0x65, 0x18,                             // aTop y [ y = client:y + (distance - Random(0, temp0)) ]
+	0x48,                                   // ret
+	0x35, 0x00,                             // ldi 00 [ start of Wander:onTarget, returns 0 and isn't called ]
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchAntwerpWander[] = {
+	0x78,                                   // push1
+	0x76,                                   // push0
+	0x63, 0x12,                             // pToa client
+	0x4a, 0x04,                             // send 4
+	0x36,                                   // push
+	0x39, 0x1e,                             // pushi 1e
+	0x7a,                                   // push2
+	0x76,                                   // push0
+	0x39, 0x3c,                             // pushi 3c
+	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x04,                                   // sub
+	0x02,                                   // add
+	0x65, 0x16,                             // aTop x [ x = client:x + (30d - Random(0, 60d)) ]
+	0x76,                                   // push0
+	0x76,                                   // push0
+	0x63, 0x12,                             // pToa client
+	0x4a, 0x04,                             // send 4
+	0x36,                                   // push
+	0x39, 0x1e,                             // pushi 1e
+	0x7a,                                   // push2
+	0x76,                                   // push0
+	0x39, 0x3c,                             // pushi 3c
+	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x04,                                   // sub
+	0x02,                                   // add
+	0x7a,                                   // push2
+	0x36,                                   // push
+	0x38, PATCH_UINT16(0x00b4),             // pushi 00b4
+	0x46, PATCH_UINT16(0x03e7),             // calle proc999_2 4 [ Min ]
+	      PATCH_UINT16(0x0002), 0x04,
+	0x65, 0x18,                             // aTop y [ y = Min(client:y + (30d - Random(0, 60d))), 180d) ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
@@ -6803,6 +6901,7 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
 	{  true,   814, "window text temp space",                      1, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
 	{  true,   814, "dialog header offset",                        3, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
+	{  true,   970, "antwerps wandering off-screen",               1, qfg1vgaSignatureAntwerpWander,       qfg1vgaPatchAntwerpWander },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
