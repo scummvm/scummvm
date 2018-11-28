@@ -1990,6 +1990,32 @@ static const uint16 gk1GranChairFlickerPatch[] = {
 	PATCH_END
 };
 
+// Using "Operate" on the fortune teller Lorelei's right chair causes a
+//  missing message error when she's standing in english pc floppy.
+//  We fix the message tuple as Sierra did in later versions.
+//
+// Applies to: English PC Floppy 1.0
+// Responsible method: chair2:doVerb(8)
+// Fixes bug #10820
+static const uint16 gk1OperateLoreleiChairSignature[] = {
+	// we have to reach far ahead of the doVerb method for a unique byte
+	//  sequence to base a signature off of. chair2:doVerb has no unique bytes
+	//  and is surrounded by doVerb methods which are duplicates of others.
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x023a),           // lofsa sPickupVeil
+	0x36,                               // push
+	SIG_ADDTOOFFSET(+913),
+	0x39, 0x03,                         // pushi 03 [ cond ]
+	0x81, 0x5b,                         // lag 5b [ gkMessager ]
+	SIG_END
+};
+
+static const uint16 gk1OperateLoreleiChairPatch[] = {
+	PATCH_ADDTOOFFSET(+917),
+	0x39, 0x07,                         // pushi 07 [ correct cond ]
+	PATCH_END
+};
+
 // Using the photocopy of the veve on the artist causes a missing message error
 //  after giving the sketch from the lake and then the original veve file.
 //  This is due to using the wrong verb in the message tuple, which we fix.
@@ -2029,7 +2055,8 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   290, "fix magentia missing message",                1, gk1ShowMagentiaItemSignature,     gk1ShowMagentiaItemPatch },
 	{  true,   380, "fix ego flicker in Gran's chair",             1, gk1GranChairFlickerSignature,     gk1GranChairFlickerPatch },
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
-	{ true,    410, "fix artist veve photocopy missing message",   1, gk1ArtistVeveCopySignature,       gk1ArtistVeveCopyPatch },
+	{  true,   410, "fix artist veve photocopy missing message",   1, gk1ArtistVeveCopySignature,       gk1ArtistVeveCopyPatch },
+  {  true,   420, "fix lorelei chair missing message",           1, gk1OperateLoreleiChairSignature,  gk1OperateLoreleiChairPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
