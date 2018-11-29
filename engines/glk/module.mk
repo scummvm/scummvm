@@ -45,6 +45,7 @@ MODULE_OBJS := \
 	scott/scott.o \
 	tads/detection.o \
 	tads/tads.o \
+	tads/tads2/ler.o \
 	tads/tads2/tads2.o \
 	tads/tads3/tads3.o
 
