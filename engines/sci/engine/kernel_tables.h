@@ -780,6 +780,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Random),            SIG_EVERYWHERE,           "(i)(i)",                NULL,            kRandom_workarounds },
 	{ MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                     NULL,            kReadNumber_workarounds },
 	{ MAP_CALL(RemapColors),       SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(i)",         NULL,            NULL },
+	{ MAP_CALL(RemapColorsKawa),   SIG_SCI16, SIGFOR_ALL,    "i(i)(i)(i)(i)(i)",      NULL,            NULL },
 #ifdef ENABLE_SCI32
 	{ "RemapColors", kRemapColors32, SIG_SCI32, SIGFOR_ALL,  "i(i)(i)(i)(i)(i)",      kRemapColors_subops, NULL },
 #endif

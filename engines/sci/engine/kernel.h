@@ -406,6 +406,7 @@ reg_t kTextColors(EngineState *s, int argc, reg_t *argv);
 reg_t kTextFonts(EngineState *s, int argc, reg_t *argv);
 reg_t kShow(EngineState *s, int argc, reg_t *argv);
 reg_t kRemapColors(EngineState *s, int argc, reg_t *argv);
+reg_t kRemapColorsKawa(EngineState *s, int argc, reg_t *argv);
 reg_t kDummy(EngineState *s, int argc, reg_t *argv);
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv);
 reg_t kStub(EngineState *s, int argc, reg_t *argv);
