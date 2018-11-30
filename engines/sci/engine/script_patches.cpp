@@ -4678,6 +4678,32 @@ static const uint16 laurabow2PatchRememberWiredEastDoor[] = {
 	PATCH_END
 };
 
+// It's possible to walk through the closed door in room 448 and enter the crate
+//  room before act 5 due to differences in our pathfinding algorithm from Sierra's.
+//  Ego is able to stand one pixel farther than Sierra's algorithm allowed and
+//  reach the control area behind the door which triggers the room change.
+//  We work around this by expanding the closed door's polygon points by one
+//  pixel to prevent ego from being able to reach the control area.
+//
+// Applies to: All Floppy and CD versions
+// Responsible method: transomDoor:createPoly
+// Fixes bug #9952
+static const uint16 laurabow2SignatureFixArmorHallDoorPathfinding[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x6c,                         // pushi 6c [ x = 108 ]
+	0x39, 0x78,                         // pushi 78 [ y = 120 ]
+	0x39, 0x58,                         // pushi 58 [ x =  88 ]
+	0x38, SIG_UINT16(0x0083),           // pushi 83 [ y = 131 ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixArmorHallDoorPathfinding[] = {
+	0x39, 0x6d,                         // pushi 6d [ x = 109 ]
+	PATCH_ADDTOOFFSET(+4),
+	0x38, PATCH_UINT16(0x0084),         // pushi 84 [ y = 132 ]
+	PATCH_END
+};
+
 // The crate room (room 460) in act 5 locks up the game if you enter from the
 //  elevator (room 660), swing the hanging crate, and then attempt to leave
 //  back through the elevator door.
@@ -5165,6 +5191,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   350, "CD/Floppy: museum party fix entering south 2/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth2, laurabow2PatchMuseumPartyFixEnteringSouth2 },
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
+	{  true,   448, "CD/Floppy: fix armor hall door pathfinding",     1, laurabow2SignatureFixArmorHallDoorPathfinding,  laurabow2PatchFixArmorHallDoorPathfinding },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
 	{  true,  2660, "CD/Floppy: fix elevator lockup",                 1, laurabow2SignatureFixElevatorLockup,            laurabow2PatchFixElevatorLockup },
 	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
