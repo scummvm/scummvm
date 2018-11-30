@@ -31,33 +31,34 @@ TADS::TADS(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 	/*
 	 * GLK Initialization
 	 */
-	mainwin = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 
-	if (!mainwin)
+	// Open the story window
+	story_win = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	if (!story_win)
 		error("fatal: could not open window!\n");
 
 	// get default colors for main window
-	if (!glk_style_measure(mainwin, style_Normal, stylehint_TextColor, &mainfg))
+	if (!glk_style_measure(story_win, style_Normal, stylehint_TextColor, &mainfg))
 		mainfg = 0;
 
-	if (!glk_style_measure(mainwin, style_Normal, stylehint_BackColor, &mainbg))
+	if (!glk_style_measure(story_win, style_Normal, stylehint_BackColor, &mainbg))
 		mainbg = 0;
 
 	// get default colors for status window
-	statuswin = glk_window_open(mainwin, winmethod_Above | winmethod_Fixed, 1,
+	status_win = glk_window_open(story_win, winmethod_Above | winmethod_Fixed, 1,
 		wintype_TextGrid, 0);
 
-	if (!glk_style_measure(statuswin, style_Normal, stylehint_TextColor, &statusfg))
+	if (!glk_style_measure(status_win, style_Normal, stylehint_TextColor, &statusfg))
 		statusfg = 0;
 
-	if (!glk_style_measure(statuswin, style_Normal, stylehint_BackColor, &statusbg))
+	if (!glk_style_measure(status_win, style_Normal, stylehint_BackColor, &statusbg))
 		statusbg = 0;
 
 	// close status window; reopened on request
-	glk_window_close(statuswin, 0);
-	statuswin = nullptr;
+	glk_window_close(status_win, 0);
+	status_win = nullptr;
 
-	glk_set_window(mainwin);
+	glk_set_window(story_win);
 }
 
 Common::Error TADS::loadGameData(strid_t file) {

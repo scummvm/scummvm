@@ -394,7 +394,7 @@ void GlkAPI::glk_put_string_stream(strid_t str, const char *s) {
 	str->putBuffer(s, strlen(s));
 }
 
-void GlkAPI::glk_put_buffer(char *buf, glui32 len) {
+void GlkAPI::glk_put_buffer(const char *buf, glui32 len) {
 	_streams->getCurrent()->putBuffer(buf, len);
 }
 

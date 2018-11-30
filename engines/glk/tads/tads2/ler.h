@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "common/algorithm.h"
 
 namespace Glk {
 namespace TADS {
@@ -49,26 +50,47 @@ struct errdef {
 
 #define ERRBUFSIZ 512
 
+class TADS2;
+
 // seek location record for an error message by number
 struct errmfdef {
     uint  errmfnum;   // error number
     size_t errmfseek; // seek location of this message
 };
 
-struct errcxdef {
-    errdef   *errcxptr;               // current error frame
-    void    (*errcxlog)(void *, char *fac, int err, int argc, erradef *);
-                                      // error logging callback function
+class errcxdef {
+public:
+	errdef   *errcxptr;               // current error frame
     void     *errcxlgc;               // context for error logging callback
     int       errcxofs;               // offset in argument buffer
     char      errcxbuf[ERRBUFSIZ];    // space for argument strings
-    Common::SeekableReadStream *errcxfp;                // message file, if one is being used
+    Common::SeekableReadStream *errcxfp;  // message file, if one is being used
     errmfdef *errcxseek;              // seek locations of messages in file
     uint      errcxsksz;              // size of errcxseek array
     size_t    errcxbase;              // offset in physical file of logical error file
-    struct appctxdef *errcxappctx;    // host application context
+    TADS2 *   errcxappctx;            // host application context
+public:
+	/**
+	 *   Format an error message, sprintf-style, using arguments in an
+	 *   erradef array (which is passed to the error-logging callback).
+	 *   Returns the length of the output string, even if the actual
+	 *   output string was truncated because the outbuf was too short.
+	 *   (If called with outbufl == 0, nothing will be written out, but
+	 *   the size of the buffer needed, minus the terminating null byte,
+	 *   will be computed and returned.)
+	 */
+	static int errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv);
+ public:
+	errcxdef() : errcxptr(nullptr), errcxlgc(nullptr), errcxofs(0),
+		errcxseek(nullptr), errcxsksz(0), errcxbase(0), errcxappctx(nullptr) {
+		Common::fill(&errcxbuf[0], &errcxbuf[ERRBUFSIZ], '\0');
+	}
+
+	/**
+	 * Error logging method
+	 */
+	void errcxlog(void *ctx0, char *fac, int err, int argc, erradef *argv);
 };
-typedef struct errcxdef errcxdef;
 
 // begin protected code
 #define ERRBEGIN(ctx) \
@@ -252,18 +274,7 @@ void errlogf(errcxdef *ctx, char *facility, int err);
  (errargv(ctx,0,typ1,arg1),errargv(ctx,1,typ2,arg2),\
   errargc(ctx,2),errlogn(ctx,e,fac))
 
-
-/**
- *   Format an error message, sprintf-style, using arguments in an
- *   erradef array (which is passed to the error-logging callback).
- *   Returns the length of the output string, even if the actual
- *   output string was truncated because the outbuf was too short.
- *   (If called with outbufl == 0, nothing will be written out, but
- *   the size of the buffer needed, minus the terminating null byte,
- *   will be computed and returned.)
- */
-extern int errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv);
-  
+ 
 // get the text of an error
 void errmsg(errcxdef *ctx, char *outbuf, uint outbufl, uint err);
   

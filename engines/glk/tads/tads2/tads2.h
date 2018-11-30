@@ -23,7 +23,8 @@
 #ifndef GLK_TADS_TADS2
 #define GLK_TADS_TADS2
 
-#include "glk/tads/tads.h"
+#include "glk/tads/tads2/os.h"
+#include "glk/tads/tads2/ler.h"
 
 namespace Glk {
 namespace TADS {
@@ -32,7 +33,10 @@ namespace TADS2 {
 /**
  * TADS 2 game interpreter
  */
-class TADS2 : public TADS {
+class TADS2 : public OS {
+private:
+	// STUBS
+	void os_printz(const Common::String &s) {}
 public:
 	/**
 	 * Constructor
@@ -48,7 +52,16 @@ public:
 	 * Returns the running interpreter type
 	 */
 	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_TADS2; }
+
+	void trdmain1(errcxdef *errctx);
+
+	/**
+	 * printf-style formatting
+	 */
+	void trdptf(const char *fmt, ...);
 };
+
+typedef TADS2 appctxdef;
 
 } // End of namespace TADS2
 } // End of namespace TADS
