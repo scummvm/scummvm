@@ -163,6 +163,7 @@ static const char *const selectorNameTable[] = {
 	"state",        // RAMA
 	"getSubscriberObj", // RAMA
 	"approachVerbs", // QFG4
+	"changeState",  // QFG4
 	"cue",          // QFG4
 	"heading",      // QFG4
 	"moveSpeed",    // QFG4
@@ -257,6 +258,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_state,
 	SELECTOR_getSubscriberObj,
 	SELECTOR_approachVerbs,
+	SELECTOR_changeState,
 	SELECTOR_cue,
 	SELECTOR_heading,
 	SELECTOR_moveSpeed,
@@ -9106,6 +9108,192 @@ static const uint16 qfg4CrestBookshelfMotionPatch[] = {
 	PATCH_END
 };
 
+// In the crest bookshelf room (663) connected to the upper door of the
+// bat-infested stairway, peering through the keyhole *always* reports bats.
+//
+// As you kill the bats, global plot flags are set. Normally flags 331-334
+// would be checked via proc0_4(). They're in a bitmask, among other flags, so
+// we can check all simultaneously (0000000000011110).
+//
+// global[520] & 30 == 30
+//
+// Patch 1: There was no space for this in the responsible method. Instead, we
+//  rewrite a different method that became obsolete after the crest bookshelf
+//  patch: sCloseSecretDoor::changeState().
+//
+// Patch 2: We modify sPeepingTom to call our rewritten sCloseSecretDoor. This
+//  has two variants, toggled to match the detected edition with enablePatch()
+//  below. Aside from the patched lofsa value, they are identical.
+//
+// Requires patch: qfg4CrestBookshelf (CD or Floppy)
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sPeepingTom::changeState(1) in script 663
+// Fixes bug: #10789
+static const uint16 qfg4UpperPeerBatsSignature1[] = {
+	0x87, 0x01,                         // lap param[1]
+	SIG_ADDTOOFFSET(+41),               // ...
+	SIG_MAGICDWORD,
+	0x4a, SIG_UINT16(0x0006),           // send 6d
+	0x35, 0x1e,                         // ldi 30d
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop ticks
+	SIG_ADDTOOFFSET(+9),                // ...
+	0x38, SIG_SELECTOR16(setCycle),     // pushi setCycle
+	SIG_END
+};
+
+static const uint16 qfg4UpperPeerBatsPatch1[] = {
+	0x38, PATCH_SELECTOR16(say),        // pushi say (decide the message as args are stacked up)
+	0x39, 0x06,                         // pushi 6d
+	0x7a,                               // push2
+	0x38, PATCH_UINT16(0x009b),         // pushi 155d
+
+	0x39, 0x1e,                         // pushi 30d (stack up for eq)
+	0x3c,                               // dup (stack up another for AND)
+	0x80, PATCH_UINT16(0x0208),         // lag global[520] (plot flags bitmask)
+	0x12,                               // and
+	0x1a,                               // eq? (Were all dead bat flags set?)
+	0x2f, 0x04,                         // bt 4d [after this jmp]
+	0x39, 0x1d,                         // pushi 29d (bat message)
+	0x33, 0x02,                         // jmp 2d [after deciding message]
+
+	0x39, 0x1b,                         // pushi 27d (killed all bats, generic message)
+
+	0x78,                               // push1
+	0x76,                               // push0 (don't cue() afterward)
+	0x38, PATCH_UINT16(0x0280),         // pushi 640d
+	0x81, 0x5b,                         // lag global[91] (gloryMessager)
+	0x4a, PATCH_UINT16(0x0010),         // send 16d
+	0x48,                               // ret
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (erase 3 bytes to keep disasm aligned)
+	PATCH_END
+};
+
+// Applies to at least: English CD
+static const uint16 qfg4UpperPeerBatsCDSignature2[] = {
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	SIG_ADDTOOFFSET(+3),
+	SIG_MAGICDWORD,
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x009b),           // pushi 155d
+	0x39, 0x1d,                         // pushi 29d (bat message)
+	SIG_ADDTOOFFSET(+7),
+	0x4a, SIG_UINT16(0x0010),           // send 16d (say: 2 155 29 1 self 640)
+	PATCH_END
+};
+
+static const uint16 qfg4UpperPeerBatsCDPatch2[] = {
+	0x38, PATCH_SELECTOR16(changeState), // pushi changeState
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, PATCH_UINT16(0x0176),         // lofsa sCloseSecretDoor
+	0x4a, PATCH_UINT16(0x0006),         // send 6d (call the rewritten method)
+	0x38, PATCH_SELECTOR16(cue),        // pushi cue
+	0x76,                               // push0
+	0x54, PATCH_UINT16(0x0004),         // self 4d (self-cue)
+	0x35, 0x00,                         // ldi 0 (waste 2 bytes)
+	0x35, 0x00,                         // ldi 0 (waste 2 bytes)
+	PATCH_END
+};
+
+// Applies to at least: English floppy, German floppy
+static const uint16 qfg4UpperPeerBatsFloppySignature2[] = {
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	SIG_ADDTOOFFSET(+3),
+	SIG_MAGICDWORD,
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x009b),           // pushi 155d
+	0x39, 0x1d,                         // pushi 29d (bat message)
+	SIG_ADDTOOFFSET(+7),
+	0x4a, SIG_UINT16(0x0010),           // send 16d (say: 2 155 29 1 self 640)
+	PATCH_END
+};
+
+static const uint16 qfg4UpperPeerBatsFloppyPatch2[] = {
+	0x38, PATCH_SELECTOR16(changeState), // pushi changeState
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, PATCH_UINT16(0x0160),         // lofsa sCloseSecretDoor
+	0x4a, PATCH_UINT16(0x0006),         // send 6d (call the rewritten method)
+	0x38, PATCH_SELECTOR16(cue),        // pushi cue
+	0x76,                               // push0
+	0x54, PATCH_UINT16(0x0004),         // self 4d (self-cue)
+	0x35, 0x00,                         // ldi 0 (waste 2 bytes)
+	0x35, 0x00,                         // ldi 0 (waste 2 bytes)
+	PATCH_END
+};
+
+// In the room (644) connected to the lower door of the bat-infested stairway,
+// peering through the keyhole *always* reports bats.
+//
+// As you kill the bats, global plot flags are set. Normally flags 331-334
+// would be checked via proc0_4(). They're in a bitmask, among other flags, so
+// we can check all simultaneously (0000000000011110).
+//
+// global[520] & 30 == 30
+//
+// Room 644 has an IF-ELSE deciding between largely redundant calls to
+// gloryMessager::say(). We make room by combining them.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sPeepingTom::changeState(1) in script 644
+// Fixes bug: #10789
+static const uint16 qfg4LowerPeerBatsSignature[] = {
+	SIG_MAGICDWORD,
+	0x78,                               // push1 x (check if hero's near the left door)
+	0x76,                               // push0
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, SIG_UINT16(0x0004),           // send 4d
+	0x36,                               // push
+	0x35, 0x3c,                         // ldi 60d
+	0x22,                               // lt?
+	0x31, 0x18,                         // bnt 24d [else right door w/ bats]
+	0x38, SIG_SELECTOR16(say),          // pushi say (left door, generic message)
+	SIG_ADDTOOFFSET(+14),               // ...
+	0x81, 0x5b,                         // lag global[91] (gloryMessager)
+	0x4a, SIG_UINT16(0x0010),           // send 16d (say: 2 155 27 1 self 640)
+	0x33, SIG_ADDTOOFFSET(+1),          // jmp [end the case]
+	SIG_ADDTOOFFSET(+22),               // (right door, say(), 3rd arg is 29 for bat message)
+	0x33, SIG_ADDTOOFFSET(+1),          // jmp [end the case]
+	SIG_END
+};
+
+static const uint16 qfg4LowerPeerBatsPatch[] = {
+	0x38, PATCH_SELECTOR16(say),        // pushi say (decide the message as args are stacked up)
+	0x39, 0x06,                         // pushi 6d
+	0x7a,                               // push2
+	0x38, PATCH_UINT16(0x009b),         // pushi 155d
+
+	0x78,                               // push1 x (check if left door)
+	0x76,                               // push0
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, PATCH_UINT16(0x0004),         // send 4d
+	0x36,                               // push
+	0x35, 0x3c,                         // ldi 60d
+	0x22,                               // lt?
+	0x31, 0x04,                         // bnt 4d [after this jmp]
+	0x39, 0x1b,                         // pushi 27d (left door, generic message)
+	0x33, 0x10,                         // jmp 16d [after deciding message]
+
+	0x39, 0x1e,                         // pushi 30d (stack up for eq)
+	0x3c,                               // dup (stack up another for AND)
+	0x80, PATCH_UINT16(0x0208),         // lag global[520] (plot flags bitmask)
+	0x12,                               // and
+	0x1a,                               // eq? (Were all dead bat flags set?)
+	0x2f, 0x04,                         // bt 4d [after this jmp]
+	0x39, 0x1d,                         // pushi 29d (right door, bat message)
+	0x33, 0x02,                         // jmp 2d [after deciding message]
+
+	0x39, 0x1b,                         // pushi 27d (right door, killed all bats, generic message)
+
+	0x78,                               // push1
+	0x7c,                               // pushSelf
+	0x38, PATCH_UINT16(0x0280),         // pushi 640d
+	0x81, 0x5b,                         // lag global[91] (gloryMessager)
+	0x4a, PATCH_UINT16(0x0010),         // send 16d
+	0x33, PATCH_GETORIGINALBYTEADJUST(60, +7), // jmp [end the case]
+	PATCH_END
+};
+
 // The castle's great hall (630) has a doorMat region that intermittently sends
 // hero back to the room they just left (barrel room) the instant they arrive.
 //
@@ -10508,10 +10696,14 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   643, "fix iron safe's east door sending hero west", 1, qfg4SafeDoorEastSignature,     qfg4SafeDoorEastPatch },
 	{  true,   643, "fix iron safe's door oil flags",              1, qfg4SafeDoorOilSignature,      qfg4SafeDoorOilPatch },
 	{  true,   644, "fix castle door open message for rogue",      2, qfg4StuckDoorSignature,        qfg4StuckDoorPatch },
+	{  true,   644, "fix peer bats, lower door",                   1, qfg4LowerPeerBatsSignature,    qfg4LowerPeerBatsPatch },
 	{  true,   645, "fix extraneous door sound in the castle",     1, qfg4DoubleDoorSoundSignature,  qfg4DoubleDoorSoundPatch },
-	{  false,  663, "CD: fix crest bookshelf",                     1, qfg4CrestBookshelfCDSignature, qfg4CrestBookshelfCDPatch },
+	{  false,  663, "CD: fix crest bookshelf",                     1, qfg4CrestBookshelfCDSignature,     qfg4CrestBookshelfCDPatch },
 	{  false,  663, "Floppy: fix crest bookshelf",                 1, qfg4CrestBookshelfFloppySignature, qfg4CrestBookshelfFloppyPatch },
 	{  true,   663, "CD/Floppy: fix crest bookshelf motion",       1, qfg4CrestBookshelfMotionSignature, qfg4CrestBookshelfMotionPatch },
+	{  true,   663, "CD/Floppy: fix peer bats, upper door (1/2)",  1, qfg4UpperPeerBatsSignature1,       qfg4UpperPeerBatsPatch1 },
+	{  false,  663, "CD: fix peer bats, upper door (2/2)",         1, qfg4UpperPeerBatsCDSignature2,     qfg4UpperPeerBatsCDPatch2 },
+	{  false,  663, "Floppy: fix peer bats, upper door (2/2)",     1, qfg4UpperPeerBatsFloppySignature2, qfg4UpperPeerBatsFloppyPatch2 },
 	{  true,   710, "fix tentacle wriggle cycler",                 1, qfg4TentacleWriggleSignature,  qfg4TentacleWrigglePatch },
 	{  true,   710, "fix tentacle retraction for fighter",         1, qfg4PitRopeFighterSignature,   qfg4PitRopeFighterPatch },
 	{  true,   710, "fix tentacle retraction for mage (1/2)",      1, qfg4PitRopeMageSignature1,     qfg4PitRopeMagePatch1 },
@@ -12370,9 +12562,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					// Similar signatures that patch with different addresses/offsets
 					enablePatch(signatureTable, "CD: fix guild tunnel access (3/3)");
 					enablePatch(signatureTable, "CD: fix crest bookshelf");
+					enablePatch(signatureTable, "CD: fix peer bats, upper door (2/2)");
 				} else {
 					enablePatch(signatureTable, "Floppy: fix guild tunnel access (3/3)");
 					enablePatch(signatureTable, "Floppy: fix crest bookshelf");
+					enablePatch(signatureTable, "Floppy: fix peer bats, upper door (2/2)");
 				}
 				break;
 			default:
