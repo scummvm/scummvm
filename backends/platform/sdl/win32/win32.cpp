@@ -166,10 +166,8 @@ Common::String OSystem_Win32::getSystemLanguage() const {
 	char langName[9];
 	char ctryName[9];
 
-	const LCID languageIdentifier = GetUserDefaultUILanguage();
-
-	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
-		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
+	if (GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
+		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
 		Common::String localeName = langName;
 		localeName += "_";
 		localeName += ctryName;
@@ -189,12 +187,23 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 		return screenshotsPath;
 	}
 
+	// Use the My Pictures folder.
 	char picturesPath[MAXPATHLEN];
 
-	// Use the My Pictures folder.
-	if (SHGetFolderPath(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
-		warning("Unable to access My Pictures directory");
-		return Common::String();
+	// SHGetFolderPath didn't appear until Windows 2000, so we need to check for it at runtime
+	typedef HRESULT (WINAPI *SHGetFolderPathFunc)(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, LPSTR pszPath);
+	SHGetFolderPathFunc pSHGetFolderPath = (SHGetFolderPathFunc)GetProcAddress(GetModuleHandle(TEXT("shell32.dll")), "SHGetFolderPathA");
+
+	if (pSHGetFolderPath) {
+		if (pSHGetFolderPath(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
+			warning("Unable to access My Pictures directory");
+			return Common::String();
+		}
+	} else {
+		if (!SHGetSpecialFolderPath(NULL, picturesPath, CSIDL_MYPICTURES, FALSE)) {
+			warning("Unable to access My Pictures directory");
+			return Common::String();
+		}
 	}
 
 	screenshotsPath = Common::String(picturesPath) + "\\ScummVM Screenshots\\";
