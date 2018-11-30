@@ -34,7 +34,7 @@ namespace TADS {
  */
 class TADS : public GlkAPI {
 protected:
-	winid_t mainwin, statuswin;
+	winid_t story_win, status_win;
 	glui32 mainfg, mainbg;
 	glui32 statusfg, statusbg;
 public:

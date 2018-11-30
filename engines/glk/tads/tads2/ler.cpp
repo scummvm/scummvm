@@ -26,7 +26,9 @@ namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-int errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv) {
+#define TRDLOGERR_PREFIX "\n[An error has occurred within TADS: "
+
+int errcxdef::errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv) {
     int    outlen = 0;
     int    argi   = 0;
     int    len;
@@ -125,54 +127,25 @@ int errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv) {
     return outlen;
 }
 
-#if defined(DEBUG) && !defined(ERR_NO_MACRO)
-void errjmp(jmp_buf buf, int e) {
-    longjmp(buf, e);
+void errcxdef::errcxlog(void *ctx0, char *fac, int err, int argc, erradef *argv) {
+#ifdef TODO
+	errcxdef *ctx = (errcxdef *)ctx0;
+	char      buf[256];
+	char      msg[256];
+
+	// display the prefix message to the console and log file
+	sprintf(buf, TRDLOGERR_PREFIX, fac, err);
+	trdptf("%s", buf);
+	out_logfile_print(buf, false);
+
+	/* display the error message text to the console and log file */
+	errmsg(ctx, msg, (uint)sizeof(msg), err);
+	errfmt(buf, (int)sizeof(buf), msg, argc, argv);
+	trdptf("%s]\n", buf);
+	out_logfile_print(buf, false);
+	out_logfile_print("]", true);
+#endif
 }
-#endif /* DEBUG */
-
-#ifdef ERR_NO_MACRO
-
-void errsign(errcxdef *ctx, int e, char *facility) {
-    strncpy(ctx->errcxptr->errfac, facility, ERRFACMAX);
-    ctx->errcxptr->errfac[ERRFACMAX] = '\0';
-    ctx->errcxofs = 0;
-    longjmp(ctx->errcxptr->errbuf, e);
-}
-
-void errsigf(errcxdef *ctx, char *facility, int e) {
-    errargc(ctx, 0);
-    errsign(ctx, e, facility);
-}
-
-char *errstr(errcxdef *ctx, const char *str, int len) {
-    char *ret = &ctx->errcxbuf[ctx->errcxofs];
-    
-    memcpy(ret, str, (size_t)len);
-    ret[len] = '\0';
-    ctx->errcxofs += len + 1;
-    return(ret);
-}
-
-void errrse1(errcxdef *ctx, errdef *fr) {
-    errargc(ctx, fr->erraac);
-    memcpy(ctx->errcxptr->erraav, fr->erraav,
-           (size_t)(fr->erraac * sizeof(erradef)));
-    errsign(ctx, fr->errcode, fr->errfac);
-}
-
-void errlogn(errcxdef *ctx, int err, char *facility) {
-    ctx->errcxofs = 0;
-    (*ctx->errcxlog)(ctx->errcxlgc, facility, err, ctx->errcxptr->erraac,
-                     ctx->errcxptr->erraav);
-}
-
-void errlogf(errcxdef *ctx, char *facility, int err) {
-    errargc(ctx, 0);
-    errlogn(ctx, err, facility);
-}
-
-#endif /* ERR_NO_MACRO */
 
 } // End of namespace TADS2
 } // End of namespace TADS
