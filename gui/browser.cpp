@@ -89,7 +89,7 @@ int BrowserDialog::runModal() {
 	Common::DialogManager *dialogManager = g_system->getDialogManager();
 	if (dialogManager) {
 		if (ConfMan.getBool("gui_browser_native", Common::ConfigManager::kApplicationDomain)) {
-			Common::DialogManager::DialogResult result = dialogManager->showFileBrowser(_title, _choice, _isDirBrowser);
+			Common::DialogManager::DialogResult result = dialogManager->showFileBrowser(_title.c_str(), _choice, _isDirBrowser);
 			if (result != Common::DialogManager::kDialogError) {
 				return result;
 			}
