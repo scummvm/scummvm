@@ -95,6 +95,9 @@ void SciMusic::init() {
 			deviceFlags |= MDT_TOWNS;
 	}
 
+	if (g_sci->getPlatform() == Common::kPlatformPC98)
+		deviceFlags |= MDT_PC98;
+
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
 	_musicType = MidiDriver::getMusicType(dev);
 
@@ -128,6 +131,9 @@ void SciMusic::init() {
 		break;
 	case MT_TOWNS:
 		_pMidiDrv = MidiPlayer_FMTowns_create(_soundVersion);
+		break;
+	case MT_PC98:		
+		_pMidiDrv = MidiPlayer_PC9801_create(_soundVersion);
 		break;
 	default:
 		if (ConfMan.getBool("native_fb01"))
