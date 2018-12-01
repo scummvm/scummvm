@@ -133,6 +133,7 @@ extern MidiPlayer *MidiPlayer_CMS_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_Midi_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_Fb01_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_FMTowns_create(SciVersion version);
+extern MidiPlayer *MidiPlayer_PC9801_create(SciVersion version);
 
 } // End of namespace Sci
 
