@@ -71,7 +71,7 @@ Math::Matrix4 VisualProp::getModelMatrix(const Math::Vector3d& position, float d
 	return posMatrix * rot1 * rot2 * modelTransform;
 }
 
-bool VisualProp::intersectRay(const Math::Ray &ray, const Math::Vector3d position, float direction) {
+bool VisualProp::intersectRay(const Math::Ray &ray, const Math::Vector3d &position, float direction) {
 	Math::Matrix4 inverseModelMatrix = getModelMatrix(position, direction);
 	inverseModelMatrix.inverse();
 

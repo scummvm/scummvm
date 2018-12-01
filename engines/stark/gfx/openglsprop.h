@@ -43,10 +43,10 @@ class Driver;
 
 class OpenGLSPropRenderer : public VisualProp {
 public:
-	OpenGLSPropRenderer(Driver *gfx);
-	virtual ~OpenGLSPropRenderer();
+	explicit OpenGLSPropRenderer(Driver *gfx);
+	~OpenGLSPropRenderer() override;
 
-	void render(const Math::Vector3d position, float direction) override;
+	void render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) override;
 
 protected:
 	typedef Common::HashMap<const Face *, GLuint> FaceBufferMap;
@@ -62,6 +62,9 @@ protected:
 	void uploadVertices();
 	GLuint createFaceVBO();
 	GLuint createFaceEBO(const Face *face);
+
+	void setLightArrayUniform(const LightEntryArray &lights);
+
 };
 
 } // End of namespace Gfx

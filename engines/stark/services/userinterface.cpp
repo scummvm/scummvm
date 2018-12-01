@@ -329,7 +329,7 @@ void UserInterface::optionsOpen() {
 void UserInterface::saveGameScreenThumbnail() {
 	freeGameScreenThumbnail();
 
-	if (StarkGlobal->getLevel()) {
+	if (StarkGlobal->getLevel() && StarkGlobal->getCurrent()) {
 		// Re-render the screen to exclude the cursor
 		StarkGfx->clearScreen();
 		_gameScreen->render();

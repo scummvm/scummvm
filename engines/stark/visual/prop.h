@@ -28,6 +28,7 @@
 #include "math/vector3d.h"
 
 #include "engines/stark/visual/visual.h"
+#include "engines/stark/gfx/renderentry.h"
 
 namespace Stark {
 
@@ -44,13 +45,13 @@ public:
 	static const VisualType TYPE = Visual::kRendered;
 
 	VisualProp();
-	virtual ~VisualProp();
+	~VisualProp() override;
 
 	void setModel(Formats::BiffMesh *model);
 	void setTexture(Gfx::TextureSet *texture);
 
-	bool intersectRay(const Math::Ray &ray, const Math::Vector3d position, float direction);
-	virtual void render(const Math::Vector3d position, float direction) = 0;
+	bool intersectRay(const Math::Ray &ray, const Math::Vector3d &position, float direction);
+	virtual void render(const Math::Vector3d &position, float direction, const Gfx::LightEntryArray &lights) = 0;
 
 protected:
 	Formats::BiffMesh *_model;

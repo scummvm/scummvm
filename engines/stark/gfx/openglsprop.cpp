@@ -48,7 +48,7 @@ OpenGLSPropRenderer::~OpenGLSPropRenderer() {
 	delete _shader;
 }
 
-void OpenGLSPropRenderer::render(const Math::Vector3d position, float direction) {
+void OpenGLSPropRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) {
 	if (_modelIsDirty) {
 		// Update the OpenGL Buffer Objects if required
 		clearVertices();
@@ -62,14 +62,26 @@ void OpenGLSPropRenderer::render(const Math::Vector3d position, float direction)
 	Math::Matrix4 view = StarkScene->getViewMatrix();
 	Math::Matrix4 projection = StarkScene->getProjectionMatrix();
 
-	Math::Matrix4 mvp = projection * view * model;
-	mvp.transpose();
+	Math::Matrix4 modelViewMatrix = view * model;
+	modelViewMatrix.transpose(); // OpenGL expects matrices transposed when compared to ResidualVM's
+
+	Math::Matrix4 projectionMatrix = projection;
+	projectionMatrix.transpose(); // OpenGL expects matrices transposed when compared to ResidualVM's
+
+	Math::Matrix4 normalMatrix = modelViewMatrix;
+	normalMatrix.invertAffineOrthonormal();
+	//normalMatrix.transpose(); // OpenGL expects matrices transposed when compared to ResidualVM's
+	//normalMatrix.transpose(); // No need to transpose twice in a row
 
 	_shader->enableVertexAttribute("position", _faceVBO, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 0);
 	_shader->enableVertexAttribute("normal", _faceVBO, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 12);
 	_shader->enableVertexAttribute("texcoord", _faceVBO, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 24);
 	_shader->use(true);
-	_shader->setUniform("mvp", mvp);
+
+	_shader->setUniform("modelViewMatrix", modelViewMatrix);
+	_shader->setUniform("projectionMatrix", projectionMatrix);
+	_shader->setUniform("normalMatrix", normalMatrix.getRotation());
+	setLightArrayUniform(lights);
 
 	const Common::Array<Face> &faces = _model->getFaces();
 	const Common::Array<Material> &materials = _model->getMaterials();
@@ -124,6 +136,56 @@ GLuint OpenGLSPropRenderer::createFaceVBO() {
 
 GLuint OpenGLSPropRenderer::createFaceEBO(const Face *face) {
 	return OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->vertexIndices.size(), &face->vertexIndices.front());
+}
+
+void OpenGLSPropRenderer::setLightArrayUniform(const LightEntryArray &lights) {
+	static const uint maxLights = 10;
+
+	assert(lights.size() >= 1);
+	assert(lights.size() <= maxLights);
+
+	const LightEntry *ambient = lights[0];
+	assert(ambient->type == LightEntry::kAmbient); // The first light must be the ambient light
+	_shader->setUniform("ambientColor", ambient->color);
+
+	Math::Matrix4 viewMatrix = StarkScene->getViewMatrix();
+	Math::Matrix3 viewMatrixRot = viewMatrix.getRotation();
+
+	for (uint i = 0; i < lights.size() - 1; i++) {
+		const LightEntry *l = lights[i + 1];
+
+		Math::Vector4d worldPosition;
+		worldPosition.x() = l->position.x();
+		worldPosition.y() = l->position.y();
+		worldPosition.z() = l->position.z();
+		worldPosition.w() = 1.0;
+
+		Math::Vector4d eyePosition = viewMatrix * worldPosition;
+
+		// The light type is stored in the w coordinate of the position to save an uniform slot
+		eyePosition.w() = l->type;
+
+		Math::Vector3d worldDirection = l->direction;
+		Math::Vector3d eyeDirection = viewMatrixRot * worldDirection;
+		eyeDirection.normalize();
+
+		_shader->setUniform(Common::String::format("lights[%d].position", i).c_str(), eyePosition);
+		_shader->setUniform(Common::String::format("lights[%d].direction", i).c_str(), eyeDirection);
+		_shader->setUniform(Common::String::format("lights[%d].color", i).c_str(), l->color);
+
+		Math::Vector4d params;
+		params.x() = l->falloffNear;
+		params.y() = l->falloffFar;
+		params.z() = l->innerConeAngle.getCosine();
+		params.w() = l->outerConeAngle.getCosine();
+
+		_shader->setUniform(Common::String::format("lights[%d].params", i).c_str(), params);
+	}
+
+	for (uint i = lights.size() - 1; i < maxLights; i++) {
+		// Make sure unused lights are disabled
+		_shader->setUniform(Common::String::format("lights[%d].position", i).c_str(), Math::Vector4d());
+	}
 }
 
 } // End of namespace Gfx

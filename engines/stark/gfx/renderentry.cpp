@@ -65,7 +65,7 @@ void RenderEntry::render(const LightEntryArray &lights) {
 
 	VisualProp *prop = _visual->get<VisualProp>();
 	if (prop) {
-		prop->render(_position3D, _direction3D);
+		prop->render(_position3D, _direction3D, lights);
 	}
 
 	VisualSmacker *smacker = _visual->get<VisualSmacker>();
