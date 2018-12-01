@@ -1278,12 +1278,12 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// Later SCI32-style kRemapColors, but in SCI16.
+// Later SCI32-style kRemapColors, but in SCI11+.
 reg_t kRemapColorsKawa(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
 	switch (operation) {
-	case 0: //off
+	case 0: // off
 		break;
 	case 1: { // remap by percent
 		uint16 from = argv[1].toUint16();
@@ -1301,7 +1301,7 @@ reg_t kRemapColorsKawa(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	default:
-		error("Unsupported SCI16-style kRemapColors(%d) has been called", operation);
+		error("Unsupported SCI32-style kRemapColors(%d) has been called", operation);
 		break;
 	}
 	return s->r_acc;

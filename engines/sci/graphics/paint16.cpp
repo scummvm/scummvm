@@ -481,7 +481,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 	bool doSaveUnder = false;
 	Common::Rect rect;
 	reg_t result = NULL_REG;
-	int16 stroke = 0; //Kawa's SCI16+
+	int16 stroke = 0; // Kawa's SCI11+
 
 	// Make a "backup" of the port settings (required for some SCI0LATE and
 	// SCI01+ only)
@@ -541,7 +541,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 		case SCI_DISPLAY_DONTSHOWBITS:
 			bRedraw = 0;
 			break;
-		case SCI_DISPLAY_SETSTROKE: //From Kawa's SCI16+
+		case SCI_DISPLAY_SETSTROKE: // From Kawa's SCI11+
 			stroke = argv[0].toUint16();
 			argc--; argv++;
 			break;
@@ -569,7 +569,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 		rect.moveTo(_ports->getPort()->curLeft, _ports->getPort()->curTop);
 	}
 
-	//Kawa's SCI16+
+	// Kawa's SCI11+
 	if (stroke)
 		rect.grow(1);
 
@@ -578,18 +578,18 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 	if (colorBack != -1)
 		fillRect(rect, GFX_SCREEN_MASK_VISUAL, colorBack, 0, 0);
 
-	//Kawa's SCI16+
+	// Kawa's SCI11+
 	if (stroke)	{
 		_ports->penColor(0);
-		rect.translate(1, 0); if (stroke & 1) _text16->Box(text, languageSplitter, false, rect, alignment, -1); //right
-		rect.translate(0, 1); if (stroke & 2) _text16->Box(text, languageSplitter, false, rect, alignment, -1); //bottom right
-		rect.translate(-1, 0); if (stroke & 4) _text16->Box(text, languageSplitter, false, rect, alignment, -1); //bottom
-		rect.translate(-1, 0); if (stroke & 8) _text16->Box(text, languageSplitter, false, rect, alignment, -1); //bottom left
-		rect.translate(0, -1); if (stroke & 16) _text16->Box(text, languageSplitter, false, rect, alignment, -1); //left
-		rect.translate(0, -1); if (stroke & 32) _text16->Box(text, languageSplitter, false, rect, alignment, -1); //top left
-		rect.translate(1, 0); if (stroke & 64) _text16->Box(text, languageSplitter, false, rect, alignment, -1); //top
-		rect.translate(1, 0); if (stroke & 128) _text16->Box(text, languageSplitter, false, rect, alignment, -1); //top right
-		rect.translate(-1, 1); //and back to center
+		rect.translate(1, 0); if (stroke & 1) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // right
+		rect.translate(0, 1); if (stroke & 2) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom right
+		rect.translate(-1, 0); if (stroke & 4) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom
+		rect.translate(-1, 0); if (stroke & 8) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom left
+		rect.translate(0, -1); if (stroke & 16) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // left
+		rect.translate(0, -1); if (stroke & 32) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // top left
+		rect.translate(1, 0); if (stroke & 64) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // top
+		rect.translate(1, 0); if (stroke & 128) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // top right
+		rect.translate(-1, 1); // and back to center
 		_ports->penColor(colorPen);
 	}
 
