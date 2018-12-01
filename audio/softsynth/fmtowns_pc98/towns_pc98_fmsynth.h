@@ -116,8 +116,6 @@ private:
 			frqModSvty = value << 5;
 		}
 
-		uint16 frqTemp;
-		uint8 fmIndex;
 		bool enableLeft;
 		bool enableRight;
 		bool updateEnvelopeParameters;
