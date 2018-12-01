@@ -103,6 +103,7 @@ static const char *const selectorNameTable[] = {
 	"setStep",      // system selector
 	"cycleSpeed",   // system selector
 	"handsOff",     // system selector
+	"handsOn",      // system selector
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
 	"say",          // Quest For Glory 1 VGA
@@ -147,6 +148,7 @@ static const char *const selectorNameTable[] = {
 	"readWord",     // LSL7, Phant1, Torin
 	"points",       // PQ4
 	"select",       // PQ4
+	"addObstacle",  // QFG4
 	"handle",       // RAMA
 	"saveFilePtr",  // RAMA
 	"priority",     // RAMA
@@ -180,6 +182,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setStep,
 	SELECTOR_cycleSpeed,
 	SELECTOR_handsOff,
+	SELECTOR_handsOn,
 	SELECTOR_localize,
 	SELECTOR_put,
 	SELECTOR_say,
@@ -225,6 +228,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_readWord,
 	SELECTOR_points,
 	SELECTOR_select,
+	SELECTOR_addObstacle,
 	SELECTOR_handle,
 	SELECTOR_saveFilePtr,
 	SELECTOR_priority,
@@ -1990,6 +1994,85 @@ static const uint16 gk1GranChairFlickerPatch[] = {
 	PATCH_END
 };
 
+// Using the money on the fortune teller Lorelei is scripted to respond with
+//  a different message depending on whether she's sitting or dancing. This
+//  feature manages to have three bugs which all occur in Sierra's interpreter.
+//
+// Bug 1: The script transposes the sitting and dancing responses.
+//        We reverse the test so that the right messages are attempted.
+//
+// Bug 2: The script passes the wrong message tuple when Lorelei is sitting
+//        and so a missing message error occurs. We pass the right tuple.
+//
+// Bug 3: The audio36 resource for message 420 2 32 0 1 has the wrong tuple and
+//        so no audio plays when using the money on Lorelei while dancing.
+//        This is a CD resource bug which we fix in the audio loader.
+//
+// Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
+// Responsible method: lorelei:doVerb(32)
+// Fixes bug #10819
+static const uint16 gk1LoreleiMoneySignature[] = {
+	0x30, SIG_UINT16(0x000d),           // bnt 000d [ lorelei is sitting ]
+	SIG_ADDTOOFFSET(+19),
+	SIG_MAGICDWORD,
+	0x7a,                               // pushi2   [ noun ]
+	0x8f, 0x01,                         // lsp 01   [ verb (32d) ]
+	0x39, 0x03,                         // pushi 03 [ cond ]
+	SIG_END
+};
+
+static const uint16 gk1LoreleiMoneyPatch[] = {
+	0x2e, PATCH_UINT16(0x000d),         // bt 000d [ lorelei is dancing ]
+	PATCH_ADDTOOFFSET(+22),
+	0x39, 0x02,                         // pushi 02 [ correct cond ]
+	PATCH_END
+};
+
+// Using "Operate" on the fortune teller Lorelei's right chair causes a
+//  missing message error when she's standing in english pc floppy.
+//  We fix the message tuple as Sierra did in later versions.
+//
+// Applies to: English PC Floppy 1.0
+// Responsible method: chair2:doVerb(8)
+// Fixes bug #10820
+static const uint16 gk1OperateLoreleiChairSignature[] = {
+	// we have to reach far ahead of the doVerb method for a unique byte
+	//  sequence to base a signature off of. chair2:doVerb has no unique bytes
+	//  and is surrounded by doVerb methods which are duplicates of others.
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x023a),           // lofsa sPickupVeil
+	0x36,                               // push
+	SIG_ADDTOOFFSET(+913),
+	0x39, 0x03,                         // pushi 03 [ cond ]
+	0x81, 0x5b,                         // lag 5b [ gkMessager ]
+	SIG_END
+};
+
+static const uint16 gk1OperateLoreleiChairPatch[] = {
+	PATCH_ADDTOOFFSET(+917),
+	0x39, 0x07,                         // pushi 07 [ correct cond ]
+	PATCH_END
+};
+
+// Using the photocopy of the veve on the artist causes a missing message error
+//  after giving the sketch from the lake and then the original veve file.
+//  This is due to using the wrong verb in the message tuple, which we fix.
+//
+// Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
+// Responsible method: artist:doVerb(24)
+// Fixes bug #10818
+static const uint16 gk1ArtistVeveCopySignature[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x30,                         // pushi 30 [ verb: original veve file ]
+	0x39, 0x1f,                         // pushi 1f [ cond ]
+	SIG_END
+};
+
+static const uint16 gk1ArtistVeveCopyPatch[] = {
+	0x39, 0x18,                         // pushi 18 [ verb: veve photocopy ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
@@ -2010,6 +2093,9 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   290, "fix magentia missing message",                1, gk1ShowMagentiaItemSignature,     gk1ShowMagentiaItemPatch },
 	{  true,   380, "fix ego flicker in Gran's chair",             1, gk1GranChairFlickerSignature,     gk1GranChairFlickerPatch },
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
+	{  true,   410, "fix artist veve photocopy missing message",   1, gk1ArtistVeveCopySignature,       gk1ArtistVeveCopyPatch },
+	{  true,   420, "fix lorelei chair missing message",           1, gk1OperateLoreleiChairSignature,  gk1OperateLoreleiChairPatch },
+  {  true,   420, "fix lorelei money messages",                  1, gk1LoreleiMoneySignature,         gk1LoreleiMoneyPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
@@ -6705,6 +6791,104 @@ static const uint16 qfg1vgaPatchSpeedTest[] = {
 	PATCH_END
 };
 
+// The baby antwerps in room 78 lockup the game if they get in ego's way when
+//  exiting south. They also crash the interpreter if they wander too far off
+//  the screen. These problems also occur in Sierra's interpreter.
+//
+// The antwerps are controlled by the Wander motion which randomly moves them
+//  around. There's nothing stopping them from moving past the southern edge of
+//  the screen and they tend to do so. When ego moves south of 180, sExitAll
+//  disables control and moves ego off screen, but if an antwerp is in the way
+//  then ego stops and the user never regains control. Once an antwerp has
+//  escaped the screen it continues to wander until its position overflows
+//  several minutes later. This freezes Sierra's interpreter and currently
+//  causes ours to fail an assertion due to constructing an invalid Rect.
+//
+// We fix both problems by not allowing antwerps south of 180 so that they
+//  remain on screen and can't block ego's exit. This is consistent with room 85
+//  where they also appear but without a southern exit. The Wander motion is
+//  only used by antwerps and the sparkles above Yorick in room 96 so it can be
+//  safely patched to enforce a southern limit. We make room for this patch by
+//  replacing Wander's calculations with their known results, since the default
+//  Wander:distance of 30 is always used, and by overwriting Wander:onTarget
+//  which no script calls and just returns zero.
+//
+// Applies to: PC Floppy, Mac Floppy
+// Responsible method: Wander:setTarget
+// Fixes bug #9564
+static const uint16 qfg1vgaSignatureAntwerpWander[] = {
+	SIG_MAGICDWORD,
+	0x3f, 0x01,                             // link 01
+	0x78,                                   // push1
+	0x76,                                   // push0
+	0x63, 0x12,                             // pToa client
+	0x4a, 0x04,                             // send 4
+	0x36,                                   // push
+	0x67, 0x30,                             // pTos distance
+	0x7a,                                   // push2
+	0x76,                                   // push0
+	0x67, 0x30,                             // pTos distance
+	0x35, 0x02,                             // ldi 02
+	0x06,                                   // mul
+	0xa5, 0x00,                             // sat 00 [ temp0 = distance * 2 ]
+	0x36,                                   // push
+	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x04,                                   // sub
+	0x02,                                   // add
+	0x65, 0x16,                             // aTop x [ x = client:x + (distance - Random(0, temp0)) ]
+	0x76,                                   // push0
+	0x76,                                   // push0
+	0x63, 0x12,                             // pToa client
+	0x4a, 0x04,                             // send 4
+	0x36,                                   // push
+	0x67, 0x30,                             // pTos distance
+	0x7a,                                   // push2
+	0x76,                                   // push0
+	0x8d, 0x00,                             // lst 00
+	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x04,                                   // sub
+	0x02,                                   // add
+	0x65, 0x18,                             // aTop y [ y = client:y + (distance - Random(0, temp0)) ]
+	0x48,                                   // ret
+	0x35, 0x00,                             // ldi 00 [ start of Wander:onTarget, returns 0 and isn't called ]
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchAntwerpWander[] = {
+	0x78,                                   // push1
+	0x76,                                   // push0
+	0x63, 0x12,                             // pToa client
+	0x4a, 0x04,                             // send 4
+	0x36,                                   // push
+	0x39, 0x1e,                             // pushi 1e
+	0x7a,                                   // push2
+	0x76,                                   // push0
+	0x39, 0x3c,                             // pushi 3c
+	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x04,                                   // sub
+	0x02,                                   // add
+	0x65, 0x16,                             // aTop x [ x = client:x + (30d - Random(0, 60d)) ]
+	0x76,                                   // push0
+	0x76,                                   // push0
+	0x63, 0x12,                             // pToa client
+	0x4a, 0x04,                             // send 4
+	0x36,                                   // push
+	0x39, 0x1e,                             // pushi 1e
+	0x7a,                                   // push2
+	0x76,                                   // push0
+	0x39, 0x3c,                             // pushi 3c
+	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x04,                                   // sub
+	0x02,                                   // add
+	0x7a,                                   // push2
+	0x36,                                   // push
+	0x38, PATCH_UINT16(0x00b4),             // pushi 00b4
+	0x46, PATCH_UINT16(0x03e7),             // calle proc999_2 4 [ Min ]
+	      PATCH_UINT16(0x0002), 0x04,
+	0x65, 0x18,                             // aTop y [ y = Min(client:y + (30d - Random(0, 60d))), 180d) ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
@@ -6719,6 +6903,7 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
 	{  true,   814, "window text temp space",                      1, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
 	{  true,   814, "dialog header offset",                        3, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
+	{  true,   970, "antwerps wandering off-screen",               1, qfg1vgaSignatureAntwerpWander,       qfg1vgaPatchAntwerpWander },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -7680,6 +7865,107 @@ static const uint16 qfg4MoonrisePatch[] = {
 	PATCH_END
 };
 
+// Visiting the inn after rescuing Igor sets a plot flag. Such flags are tested
+// on subsequent visits to decide the dialogue options when clicking MOUTH on
+// hero. That particular check neglects time of day, allowing hero to talk to
+// an empty room after midnight... and get responses from the absent innkeeper.
+//
+// The inn's init() has a series of cond blocks to boil down all the checks
+// into values for local[2], representing discrete situations. Then there's a
+// switch block in sInitShit() that acts on those values, making arrival
+// announcements and setting new flags.
+//
+// "So Dmitri says the gypsy didn't really kill Igor after all." sets flag 132.
+// "I must thank you for saving our Tanya." sets flag 134.
+//
+// There are two bugged situations. When you have flag 132 and haven't gotten
+// 134 yet, local[2] = 11. When you get flag 134, local[2] = 12. Neither
+// of them consider the time of day, talking as if the innkeeper were always
+// present.
+//
+// A day in QFG4 is broken up into 3-hour spans: 6,7,0,1,2,3,4,5. Where 6 is
+// midnight. The sun rises in 0 and sets in 4. Current span is global[123]. The
+// innkeeper sprite is not around from midnight to morning.
+//
+// To make room, we optimize block 10's time check:
+// "t <= 3 || t is in [4, 5]" becomes "t <= 5". No need for a lengthy call
+// to do a simple comparison. Conceptually it meant, "daytime and evening".
+//
+// That gap is used to insert similar pre-midnight checks before block 11 and
+// block 12. This will sync them with the sprite's schedule. Ideally, the
+// sprite never would've been scheduled separately in the first place.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: rm320::init()
+// Fixes bug: #10753
+static const uint16 qfg4AbsentInnkeeperSignature[] = {
+	SIG_MAGICDWORD,                     // (Block 10, partway through.)
+	0x31, 0x1c,                         // bnt 28d [block 11]
+	0x89, 0x7b,                         // lsg global[123]
+	0x35, 0x03,                         // ldi 3d
+	0x24,                               // le?
+                                        // (~~ Junk begins ~~)
+	0x2f, 0x0f,                         // bt 15d [after the calle]
+	0x39, 0x03,                         // pushi 3d
+	0x89, 0x7b,                         // lsg global[123]
+	0x39, 0x04,                         // pushi 4d
+	0x39, 0x05,                         // pushi 5d
+	0x46, SIG_UINT16(0xfde7), SIG_UINT16(0x0005), SIG_UINT16(0x0006), // calle proc64999_5(global[123], 4, 5) 06
+                                        // (~~ Junk ends ~~)
+	0x31, 0x04,                         // bnt 4d [block 11]
+	0x35, 0x0a,                         // ldi 10d
+	0x33, 0x29,                         // jmp 41d (done, local[2]=acc)
+                                        //
+	SIG_ADDTOOFFSET(+25),               // (...Block 11...) (Patch ends after this.)
+	SIG_ADDTOOFFSET(+14),               // (...Block 12...)
+	SIG_ADDTOOFFSET(+2),                // (...Else 0...)
+	0xa3, 0x02,                         // sal local[2] (all blocks set acc and jmp here)
+	PATCH_END
+};
+
+static const uint16 qfg4AbsentInnkeeperPatch[] = {
+	0x31, 0x0e,                         // bnt 14d [block 11]
+	0x89, 0x7b,                         // lsg global[123]
+	0x35, 0x05,                         // ldi 5d (make it t <= 5)
+	0x24,                               // le?
+                                        // (*snip*)
+	0x31, 0x07,                         // bnt 7d [block 11]
+	0x35, 0x0a,                         // ldi 10d
+	0x33, 0x3a,                         // jmp 58d (done, local[2]=acc)
+                                        //
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
+                                        // (14 freed bytes remain.)
+                                        // (Use 7 freed bytes to prepend block 11.)
+                                        // (And shift all of block 11 up by 7 bytes.)
+                                        // (Use that new gap below to prepend block 12.)
+                                        //
+                                        // (Block 11. Prepend a time check.)
+	0x89, 0x7b,                         // lsg global[123]
+	0x35, 0x05,                         // ldi 5d
+	0x24,                               // le?
+	0x31, 0x19,                         // bnt 25d [block 12]
+                                        // (Block 11 original ops shift up.)
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x0084),         // pushi 132
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4(132) 02
+	0x31, 0x0f,                         // bnt 15d [next block]
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x0086),         // pushi 134
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4(134) 02
+	0x18,                               // not
+	0x31, 0x04,                         // bnt 4d [block 12]
+	0x35, 0x0b,                         // ldi 11d
+	0x33, 0x17,                         // jmp 23d (done, local[2]=acc)
+                                        //
+                                        // (Block 12. Prepend a time check.)
+	0x89, 0x7b,                         // lsg global[123]
+	0x35, 0x05,                         // ldi 5d
+	0x24,                               // le?
+	0x31, 0x0e,                         // bnt 14d [else block]
+                                        // (Block 12 original ops continue here.)
+  	PATCH_END
+};
+
 // When entering flipped stairways from the upper door, hero is initially
 // placed outside the walkable area. As a result, hero will float around
 // inappropriately in stairways leading to Tanya's room (620) and to the iron
@@ -7766,6 +8052,196 @@ static const uint16 qfg4MagdaDisposalPatch[] = {
 	PATCH_END
 };
 
+// The castle's crest-operated bookshelf has an unconditional HAND message
+// which always says, "you haven't found the trigger yet," even after it's
+// open.
+//
+// We schedule the walk-out script (sLeaveSecretly) at the end of the opening
+// script (sSecret) to force hero to leave immediately, preventing any
+// interaction with an open bookshelf.
+//
+// An automatic exit is consistent with the other bookshelf passage rooms:
+// Chandelier (662) and EXIT (661).
+//
+// Clobbers Glory::handsOn() and sSecret::dispose() to do Room::setScript().
+// Both of them are made redundant by setScript's built-in disposal and
+// sLeaveSecretly's immediate use of Glory::handsOff().
+//
+// This patch has two variants, toggled to match the detected edition with
+// enablePatch() below. Aside from the patched lofsa value, they are identical.
+//
+// Applies to at least: English CD
+// Responsible method: sSecret::changeState(4) in script 663
+// Fixes bug: #10756
+static const uint16 qfg4CrestBookshelfCDSignature[] = {
+	SIG_MAGICDWORD,
+	0x4a, SIG_UINT16(0x003e),           // send 3e
+	0x36,                               // push
+	SIG_ADDTOOFFSET(+5),                // ...
+	0x38, SIG_SELECTOR16(handsOn),      // pushi handsOn (begin clobbering)
+	0x76,                               // push0
+	0x81, 0x01,                         // lag global[1] (Glory)
+	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04
+	SIG_END
+};
+
+static const uint16 qfg4CrestBookshelfCDPatch[] = {
+	PATCH_ADDTOOFFSET(+9),
+	0x38, PATCH_SELECTOR16(setScript),  // pushi setScript
+	0x78,                               // push1
+	0x72, PATCH_UINT16(0x01a4),         // lofsa sLeaveSecretly
+	0x36,                               // push
+	0x81, 0x02,                         // lag global[2] (rm663)
+	0x4a, PATCH_UINT16(0x0006),         // send 06
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
+	PATCH_END
+};
+
+// Applies to at least: English floppy, German floppy
+static const uint16 qfg4CrestBookshelfFloppySignature[] = {
+	SIG_MAGICDWORD,
+	0x4a, SIG_UINT16(0x003e),           // send 3e
+	0x36,                               // push
+	SIG_ADDTOOFFSET(+5),                // ...
+	0x38, SIG_SELECTOR16(handsOn),      // pushi handsOn (begin clobbering)
+	0x76,                               // push0
+	0x81, 0x01,                         // lag global[1] (Glory)
+	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04
+	SIG_END
+};
+
+static const uint16 qfg4CrestBookshelfFloppyPatch[] = {
+	PATCH_ADDTOOFFSET(+9),
+	0x38, PATCH_SELECTOR16(setScript),  // pushi setScript
+	0x78,                               // push1
+	0x72, PATCH_UINT16(0x018c),         // lofsa sLeaveSecretly
+	0x36,                               // push
+	0x81, 0x02,                         // lag global[2] (rm663)
+	0x4a, PATCH_UINT16(0x0006),         // send 06
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
+	PATCH_END
+};
+
+// Modifies room 663's sLeaveSecretly to avoid obstacles.
+//
+// Originally intended to start when hero arrives at a doorMat region, room
+// 663's walk-out script (sLeaveSecretly) ignores obstacles. The crest
+// bookshelf patch repurposes this script and requires collision detection to
+// exit properly, walking around the open bookshelf.
+//
+// Class numbers for MoveTo and PolyPath differ between CD vs floppy editions.
+// Their intervals happen to be the same, so we simply offset whatever is
+// there.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sLeaveSecretly::changeState(1) in script 663
+// Fixes bug: #10756
+static const uint16 qfg4CrestBookshelfMotionSignature[] = {
+	0x51, SIG_ADDTOOFFSET(+1),          // class MoveTo
+	0x36,                               // push
+	SIG_MAGICDWORD,
+	0x39, 0x1d,                         // pushi x = 29d
+	0x38, SIG_UINT16(0x0097),           // pushi y = 151d
+	SIG_END
+};
+
+static const uint16 qfg4CrestBookshelfMotionPatch[] = {
+	0x51, PATCH_GETORIGINALBYTEADJUST(+1, +6), // class PolyPath
+	PATCH_END
+};
+ 
+// The castle's great hall has a doorMat region that intermittently sends hero
+// back to the room they just left (the barrel room) the instant they arrive.
+//
+// Entry from room 623 starts hero at (0, 157), the edge of the doorMat. We
+// shrink the region by 2 pixels. Then sEnterTheRoom moves hero safely across.
+// The region is a rectangle. Point 0 is top-left. Point 3 is bottom-left.
+//
+// Does not apply to English floppy 1.0. It lacked a western doorMat entirely.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: vClosentDoor::init()
+// Fixes bug: #10731
+static const uint16 qfg4GreatHallEntrySignature[] = {
+	SIG_MAGICDWORD,
+	0x76,                               // push0 (point 0)
+	0x38, SIG_UINT16(0x0088),           // pushi 136
+	SIG_ADDTOOFFSET(+10),               // ...
+	0x76,                               // push0 0d (point 3)
+	0x38, SIG_UINT16(0x00b4),           // pushi 180d
+	SIG_END
+};
+
+static const uint16 qfg4GreatHallEntryPatch[] = {
+	0x7a,                               // push2
+	PATCH_ADDTOOFFSET(+13),             // ...
+	0x7a,                               // push2
+	PATCH_END
+};
+
+// In QFG4, the kernel func SetNowSeen() returns void - meaning it doesn't
+// modify the accumulator to store a result. Yet math was performed on it!
+//
+// The function updates boundary box properties of a given View object, prior
+// to collision tests. IF (collision detection is warranted, and IF those tests
+// are true), THEN respond to the collision.
+//
+// SetNowSeen() was inserted in the middle of the IF block's list of conditions.
+// That way it can be short-circuited, and it runs before the tests.
+//
+// Problem: void functions make no promise about their truth value. After the
+// call, acc will be *whatever* happened to already be in there. This is bad.
+//
+// "(| (SetNowSeen horror) $0001)"
+//
+// Someone wrapped the func in a bitwise OR against 1. Thus *every* value is
+// guaranteed to become non-zero, always true. And the IF block won't break.
+//
+// In later SCI2 versions, SetNowSeen() would change to return a boolean.
+//
+// Whether a lucky confusion or ugly hack, the wrapped void IF condition works.
+// When an object leaks into the accumulator. SSCI doesn't mind OR'ing it, too.
+// ScummVM detects unsafe arithmetic and crashes. ScummVM needs proper numbers.
+// 
+// "Invalid arithmetic operation (bitwise OR - params: 002e:1694 and 0000:0001)"
+//
+// We leave the OR wrapper. When the call returns, we manually feed the OR a
+// literal 1. Same effect. The IF block goes on evaluating conditions.
+//
+// Wraith, Vorpal Bunny, and Badder scripts are not affected.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method:
+// (ego1, combat hero) Script 41 - xSlash::doit(), xDuck::doit(), xParryLow::doit()
+// (ego1, combat hero) Script 810 - slash::doit()
+//          (Revenant) Script 830 - revenantForward::doit()
+//            (Wyvern) Script 835 - doRSlash::doit(), doLSlash::doit(), tailAttack::doit()
+//          (Chernovy) Script 840 - doLSlash::doit(), doRSlash::doit()
+//        (Pit Horror) Script 855 - wipeSpell::doit()
+//         (Necrotaur) Script 870 - attackLeft::doit(), attackRight::doit(),
+//                                  headAttack::doit(), hurtMyself::changeState(1)
+// Fixes bug: #10138, #10419, #10710, #10814
+static const uint16 qfg4ConditionalVoidSignature[] = {
+	SIG_MAGICDWORD,
+	0x43, 0x0a, SIG_UINT16(0x00002),    // callk 02 (SetNowSeen stackedView)
+	0x36,                               // push (void func didn't set acc!)
+	0x35, 0x01,                         // ldi 1d
+	0x14,                               // or (whatever that was, make it non-zero)
+	SIG_END
+};
+
+static const uint16 qfg4ConditionalVoidPatch[] = {
+	PATCH_ADDTOOFFSET(+4),              //
+	0x78,                               // push1 (Feed OR a literal 1)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -7774,9 +8250,11 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     7, "fix consecutive moonrises",                   1, qfg4MoonriseSignature,         qfg4MoonrisePatch },
 	{  true,    10, "fix setLooper calls (2/2)",                   2, qg4SetLooperSignature2,        qg4SetLooperPatch2 },
 	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
+	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
+	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
 	{  true,   440, "fix setLooper calls (1/2)",                   1, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   470, "fix Magda room disposal",                     1, qfg4MagdaDisposalSignature,    qfg4MagdaDisposalPatch },
 	{  true,   530, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
@@ -7785,9 +8263,19 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   542, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   543, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
+	{  false,  663, "CD: fix crest bookshelf",                     1, qfg4CrestBookshelfCDSignature, qfg4CrestBookshelfCDPatch },
+	{  false,  663, "Floppy: fix crest bookshelf",                 1, qfg4CrestBookshelfFloppySignature,   qfg4CrestBookshelfFloppyPatch },
+	{  true,   663, "CD/Floppy: fix crest bookshelf motion",       1, qfg4CrestBookshelfMotionSignature,   qfg4CrestBookshelfMotionPatch },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
+	{  true,   810, "fix conditional void calls",                  1, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
+	{  true,   830, "fix conditional void calls",                  2, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
+	{  true,   835, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
+	{  true,   840, "fix conditional void calls",                  2, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
+	{  true,   855, "fix conditional void calls",                  1, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
+	{  true,   870, "fix conditional void calls",                  5, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,        sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,        sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,        sci2ChangeDirPatch },
@@ -9581,6 +10069,14 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				if (g_sci->isCD()) {
 					// Enables Dual mode patches (audio + subtitles at the same time) for Laura Bow 2
 					enablePatch(signatureTable, "CD: audio + text support");
+				}
+				break;
+			case GID_QFG4:
+				// Chooses between similar signatures that patch with a different lofsa address
+				if (g_sci->isCD()) {
+					enablePatch(signatureTable, "CD: fix crest bookshelf");
+				} else {
+					enablePatch(signatureTable, "Floppy: fix crest bookshelf");
 				}
 				break;
 			default:

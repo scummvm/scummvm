@@ -7,17 +7,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-11-18 01:38+0100\n"
-"PO-Revision-Date: 2018-08-06 21:33+0000\n"
-"Last-Translator: Pavel Kungurtsev <i@kyotohongaku.com>\n"
+"PO-Revision-Date: 2018-12-01 15:45+0000\n"
+"Last-Translator: Alex ASP <hshunt@questzone.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 2.9\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 3.2.2\n"
 "X-Language-name: Russian\n"
 
 #: gui/about.cpp:94
@@ -794,24 +794,20 @@ msgid "Never"
 msgstr "Никогда"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 5 mins"
-msgstr "каждые 5 минут"
+msgstr "Каждые 5 минут"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 10 mins"
-msgstr "каждые 10 минут"
+msgstr "Каждые 10 минут"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 15 mins"
-msgstr "каждые 15 минут"
+msgstr "Каждые 15 минут"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 30 mins"
-msgstr "каждые 30 минут"
+msgstr "Каждые 30 минут"
 
 #: gui/options.cpp:361 gui/options.cpp:691 gui/options.cpp:829
 #: gui/options.cpp:911 gui/options.cpp:1184
@@ -2558,7 +2554,7 @@ msgstr "Свернуть"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:198
 msgid "Help"
-msgstr ""
+msgstr "Помощь"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:199
 #, fuzzy
@@ -2567,31 +2563,31 @@ msgstr "Прервано пользователем"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:201
 msgid "General Information"
-msgstr ""
+msgstr "Общая информация"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:202
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "Что нового в ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:204
 msgid "Credits"
-msgstr ""
+msgstr "Авторы"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:205
 msgid "GPL License"
-msgstr ""
+msgstr "Лицензия GPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:206
 msgid "LGPL License"
-msgstr ""
+msgstr "Лицензия LGPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:207
 msgid "Freefont License"
-msgstr ""
+msgstr "Лицензия Freefont"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:208
 msgid "BSD License"
-msgstr ""
+msgstr "Лицензия BSD"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -3479,6 +3475,8 @@ msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
+"Вы действительно хотите загрузить сохранённую игру? Все несохранённые "
+"действия будут утеряны."
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
@@ -3491,6 +3489,8 @@ msgstr "Загрузить игру:"
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
+"Вы действительно хотите начать новую игру? Все несохранённые действия будут "
+"утеряны."
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
@@ -3715,6 +3715,8 @@ msgstr "Использовать качественное масштабирование видео"
 #: engines/sci/detection.cpp:435
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
+"Использовать специальный \"мультяшный\" алгоритм масштабирования для "
+"отрисовки спрайтов персонажей"
 
 #: engines/sci/detection.cpp:444
 msgid "Prefer digital sound effects"
@@ -3778,11 +3780,11 @@ msgstr "Включить встроенное необязательное цензурирование содержимого"
 
 #: engines/sci/detection.cpp:519
 msgid "Upscale videos"
-msgstr ""
+msgstr "Масштабировать видеоролики"
 
 #: engines/sci/detection.cpp:520
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "Увеличивать масштаб видеороликов вдвое"
 
 #: engines/sci/detection.cpp:849 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
@@ -4828,21 +4830,24 @@ msgstr "Применить билинейную фильтрацию для индивидуальных спрайтов"
 
 #: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "Показывать стоимость предметов в инвентаре"
 
 #: engines/xeen/detection.cpp:90
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
+"Показывать стоимость предметов в инвентаре, что позволит их сравнивать по "
+"цене"
 
 #: engines/xeen/detection.cpp:99
 msgid "More durable armor"
-msgstr ""
+msgstr "Более надёжная броня"
 
 #: engines/xeen/detection.cpp:100
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
+"Броня не будет ломаться до тех пор, пока у героя на станет -80HP, а не -10HP"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
