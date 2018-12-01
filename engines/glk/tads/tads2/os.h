@@ -30,6 +30,17 @@ namespace TADS {
 namespace TADS2 {
 
 /**
+ * Allocate a memory block
+ */
+#define mchalo(CTX, SIZE, COMMENT) ((byte *)new byte[SIZE])
+
+/**
+ * Free a memory block
+ */
+#define mchfre(PTR) delete[] (byte *)PTR
+
+
+/**
  * The character (or characters) which mark the beginning of a special fileref string.
  * The important thing is that the string be one that is either not allowed in
  * filenames on your platform or is unlikely to be the first part of a filename.
@@ -288,10 +299,17 @@ protected:
 	 */
 	void os_print(const char *str, size_t len);
 
+	/**@}*/
+
+	/**
+	 * \defgroup Memory routines
+	 * @{
+	 */
+
 	/**
 	 * Compare two strings
 	 */
-	int memicmp(char *s1, char *s2, int len);
+	int memicmp(const char *s1, const char *s2, int len);
 
 	/**@}*/
 

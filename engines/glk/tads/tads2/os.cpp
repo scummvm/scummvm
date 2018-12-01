@@ -215,7 +215,7 @@ void OS::oss_change_status_right(const char *str) {
 	oss_draw_status_line();
 }
 
-int OS::memicmp(char *s1, char *s2, int len) {
+int OS::memicmp(const char *s1, const char *s2, int len) {
 	char *x1, *x2;
 	int i, result;
 
