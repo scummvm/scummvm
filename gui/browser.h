@@ -25,6 +25,7 @@
 
 #include "gui/dialog.h"
 #include "common/fs.h"
+#include "common/str.h"
 
 namespace GUI {
 
@@ -53,7 +54,7 @@ protected:
 	CheckboxWidget *_showHiddenWidget;
 
 	Common::FSNode	_choice;
-	const char		*_title;
+	Common::String	_title;
 	bool			_isDirBrowser;
 
 	void updateListing();
