@@ -149,15 +149,16 @@ void DialogPanel::onRender() {
 	// Draw options if available
 	if (!_options.empty()) {
 		_activeBackGroundTexture->render(Common::Point(0, 0), false);
+
 		renderOptions();
 		renderScrollArrows();
 	} else {
 		_passiveBackGroundTexture->render(Common::Point(0, 0), false);
-	}
 
-	// Draw subtitle if available
-	if (_subtitleVisual && StarkSettings->getBoolSetting(Settings::kSubtitle)) {
-		_subtitleVisual->render(Common::Point(_optionsLeft, _optionsTop));
+		// Draw subtitle if available
+		if (_subtitleVisual && StarkSettings->getBoolSetting(Settings::kSubtitle)) {
+			_subtitleVisual->render(Common::Point(_optionsLeft, _optionsTop));
+		}
 	}
 }
 
