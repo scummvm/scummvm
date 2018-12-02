@@ -23,6 +23,8 @@
 #ifndef GLK_TADS_TADS2_DATA
 #define GLK_TADS_TADS2_DATA
 
+#include "common/scummsys.h"
+
 namespace Glk {
 namespace TADS {
 namespace TADS2 {
