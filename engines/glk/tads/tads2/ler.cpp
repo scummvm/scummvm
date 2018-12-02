@@ -33,7 +33,7 @@ int errcxdef::errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *ar
     int    argi   = 0;
     int    len;
     char   buf[20];
-    char  *p = nullptr;
+    const char  *p = nullptr;
     char   fmtchar;
 
     while (*fmt != '\0' && outbufl > 1) {

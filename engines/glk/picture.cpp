@@ -146,7 +146,8 @@ Picture *Pictures::load(uint32 id) {
 			pal[idx] = pic->format.RGBToColor(palette[idx * 3],
 				palette[idx * 3 + 1], palette[idx * 3 + 2]);
 		
-		byte *srcP = (byte *)img->getPixels(), *destP = (byte *)pic->getPixels();
+		const byte *srcP = (const byte *)img->getPixels();
+		byte *destP = (byte *)pic->getPixels();
 		for (int idx = 0; idx < img->w * img->h; ++idx, srcP++, destP += pic->format.bytesPerPixel) {
 			uint val = (*srcP >= palCount) ? 0 : pal[*srcP];
 			if (pic->format.bytesPerPixel == 2)

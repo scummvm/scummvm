@@ -51,6 +51,7 @@ glui32 OS::oss_convert_file_type(int type) {
 }
 
 glui32 OS::oss_convert_fileref_to_string(frefid_t file_to_convert, char *buffer, int buf_len) {
+#ifdef TODO
 	char   temp_string[32];
 	glui32 value, i = 0, digit,
 		digit_flag = false,     // Have we put a digit in the string yet?
@@ -74,10 +75,12 @@ glui32 OS::oss_convert_fileref_to_string(frefid_t file_to_convert, char *buffer,
 		return false;
 	sprintf(buffer, "%s%s%s", OSS_FILEREF_STRING_PREFIX,
 		temp_string, OSS_FILEREF_STRING_SUFFIX);
+#endif
 	return true;
 }
 
 frefid_t OS::oss_convert_string_to_fileref(char *buffer, glui32 usage) {
+#ifdef TODO
 	char temp_string[32];
 	glui32 value = 0, i, multiplier = 1;
 
@@ -97,6 +100,9 @@ frefid_t OS::oss_convert_string_to_fileref(char *buffer, glui32 usage) {
 
 	// If not, return the new fileref
 	return (glk_fileref_create_by_name(usage, os_get_root_name(buffer), 0));
+#else
+	return nullptr;
+#endif
 }
 
 bool OS::oss_is_string_a_fileref(char *buffer) {
