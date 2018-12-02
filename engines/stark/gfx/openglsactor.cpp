@@ -58,7 +58,9 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 		_modelIsDirty = false;
 	}
 
+	// TODO: Move updates outside of the rendering code
 	_animHandler->animate(_time);
+	_model->updateBoundingBox();
 
 	_gfx->set3DMode();
 

@@ -238,15 +238,19 @@ void Location::setScrollPosition(const Common::Point &position) {
 }
 
 Common::Point Location::getCharacterScrollPosition(ModelItem *item) {
-	// TODO: Use April's 2D bounding box
 	Common::Point position2D = StarkScene->convertPosition3DToGameScreenOriginal(item->getPosition3D());
-
 
 	Common::Point newScroll;
 	if (_maxScroll.x > 0) {
 		newScroll.x = _scroll.x + position2D.x - Gfx::Driver::kGameViewportWidth / 2;
 		newScroll.y = _scroll.y;
 	} else {
+		Gfx::RenderEntry *renderEntry = item->getRenderEntry(_scroll);
+		Common::Rect boundingRect = renderEntry->getBoundingRect();
+		if (!boundingRect.isEmpty()) {
+			position2D.y = (boundingRect.top + boundingRect.bottom) / 2;
+		}
+
 		newScroll.x = _scroll.x;
 		newScroll.y = _scroll.y + position2D.y - Gfx::Driver::kGameViewportHeight / 2;
 	}

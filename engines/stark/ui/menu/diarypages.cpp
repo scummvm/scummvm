@@ -121,9 +121,6 @@ DiaryWidget::DiaryWidget(uint diaryIndex):
 
 	// Diary page layer contains only one item, the text
 	_renderEntry = layer->listRenderEntries()[0];
-
-	// RenderEntry need to be refreshed in case the screen resolution changed
-	onScreenChanged();
 }
 
 } // End of namespace Stark

@@ -70,6 +70,9 @@ public:
 	/** Perform a collision test with the ray */
 	bool intersectRay(const Math::Ray &ray) const;
 
+	/** Expand a bounding box with the model space BB of this bone */
+	void expandModelSpaceBB(Math::AABB &aabb) const;
+
 	Common::String _name;
 	float _u1;
 	Common::Array<uint32> _children;
@@ -104,6 +107,12 @@ public:
 	/** Perform a collision test with a ray */
 	bool intersectRay(const Math::Ray &ray) const;
 
+	/** Update the model bounding box with the current animation state */
+	void updateBoundingBox();
+
+	/** Retrieve the model space bounding box for the current animation state */
+	Math::AABB getBoundingBox() const;
+
 private:
 	void buildBonesBoundingBoxes();
 	void buildBoneBoundingBox(BoneNode *bone) const;
@@ -117,6 +126,7 @@ private:
 	Common::Array<Material *> _materials;
 	Common::Array<Face *> _faces;
 	Common::Array<BoneNode *> _bones;
+	Math::AABB _boundingBox;
 };
 
 } // End of namespace Stark

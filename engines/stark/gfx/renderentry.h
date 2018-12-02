@@ -106,6 +106,12 @@ public:
 	/** Compare two render entries by their sort keys */
 	static bool compare(const RenderEntry *x, const RenderEntry *y);
 
+	/**
+	 * Compute the 2D screen space bounding rect for the item,
+	 * in original game view coordinates.
+	 */
+	Common::Rect getBoundingRect() const;
+
 protected:
 	Common::String _name;
 	Resources::ItemVisual *_owner;

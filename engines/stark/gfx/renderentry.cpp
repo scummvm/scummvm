@@ -217,5 +217,19 @@ VisualText *RenderEntry::getText() const {
 	return _visual->get<VisualText>();
 }
 
+Common::Rect RenderEntry::getBoundingRect() const {
+	if (!_visual) {
+		return Common::Rect();
+	}
+
+	VisualActor *actor = _visual->get<VisualActor>();
+	if (actor) {
+		return actor->getBoundingRect(_position3D, _direction3D);
+	}
+
+	warning("RenderEntry::getBoundingRect is not implemented for '%s'", _name.c_str());
+	return Common::Rect();
+}
+
 } // End of namespace Gfx
 } // End of namespace Stark

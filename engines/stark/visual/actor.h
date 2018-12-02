@@ -26,6 +26,7 @@
 #include "engines/stark/visual/visual.h"
 
 #include "common/array.h"
+#include "common/rect.h"
 
 #include "math/matrix4.h"
 #include "math/ray.h"
@@ -52,7 +53,7 @@ public:
 	static const VisualType TYPE = Visual::kActor;
 
 	VisualActor();
-	virtual ~VisualActor();
+	~VisualActor() override;
 
 	void setModel(Model *model);
 	void setTexture(Gfx::TextureSet *texture);
@@ -67,6 +68,8 @@ public:
 	void setCastShadow(bool cast) { _castsShadow = cast; }
 
 	bool intersectRay(const Math::Ray &ray, const Math::Vector3d &position, float direction);
+	Common::Rect getBoundingRect(const Math::Vector3d &position3d, float direction) const;
+
 	virtual void render(const Math::Vector3d &position, float direction, const Common::Array<Gfx::LightEntry *> &lights) = 0;
 
 protected:
@@ -79,7 +82,7 @@ protected:
 	bool _modelIsDirty;
 	bool _castsShadow;
 
-	Math::Matrix4 getModelMatrix(const Math::Vector3d &position, float direction);
+	Math::Matrix4 getModelMatrix(const Math::Vector3d &position, float direction) const;
 	const Gfx::Texture *resolveTexture(const Material *material) const;
 };
 

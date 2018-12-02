@@ -190,12 +190,45 @@ bool Model::intersectRay(const Math::Ray &ray) const {
 	return false;
 }
 
+void Model::updateBoundingBox() {
+	_boundingBox.reset();
+	for (uint i = 0; i < _bones.size(); i++) {
+		_bones[i]->expandModelSpaceBB(_boundingBox);
+	}
+}
+
+Math::AABB Model::getBoundingBox() const {
+	return _boundingBox;
+}
+
 bool BoneNode::intersectRay(const Math::Ray &ray) const {
 	Math::Ray localRay = ray;
 	localRay.translate(-_animPos);
 	localRay.rotate(_animRot.inverse());
 
 	return localRay.intersectAABB(_boundingBox);
+}
+
+void BoneNode::expandModelSpaceBB(Math::AABB &aabb) const {
+	// Transform the bounding box
+	Math::Vector3d min = _boundingBox.getMin();
+	Math::Vector3d max = _boundingBox.getMax();
+
+	Math::Vector3d verts[8];
+	verts[0].set(min.x(), min.y(), min.z());
+	verts[1].set(max.x(), min.y(), min.z());
+	verts[2].set(min.x(), max.y(), min.z());
+	verts[3].set(min.x(), min.y(), max.z());
+	verts[4].set(max.x(), max.y(), min.z());
+	verts[5].set(max.x(), min.y(), max.z());
+	verts[6].set(min.x(), max.y(), max.z());
+	verts[7].set(max.x(), max.y(), max.z());
+
+	for (int i = 0; i < 8; ++i) {
+		_animRot.transform(verts[i]);
+		verts[i] += _animPos;
+		aabb.expand(verts[i]);
+	}
 }
 
 } // End of namespace Stark
