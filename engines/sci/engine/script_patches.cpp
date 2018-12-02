@@ -1412,6 +1412,8 @@ static const uint16 gk1InterrogationBugPatch[] = {
 	PATCH_END
 };
 
+// WORKAROUND: Script needed, because of differences in our pathfinding
+// algorithm.
 // In Madame Cazanoux's house, when Gabriel is leaving, he is placed on
 // the edge of the walkable area initially. This leads to a failure in
 // the pathfinding algorithm, and the pathfinding area is then ignored,
@@ -2095,7 +2097,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
 	{  true,   410, "fix artist veve photocopy missing message",   1, gk1ArtistVeveCopySignature,       gk1ArtistVeveCopyPatch },
 	{  true,   420, "fix lorelei chair missing message",           1, gk1OperateLoreleiChairSignature,  gk1OperateLoreleiChairPatch },
-  {  true,   420, "fix lorelei money messages",                  1, gk1LoreleiMoneySignature,         gk1LoreleiMoneyPatch },
+	{  true,   420, "fix lorelei money messages",                  1, gk1LoreleiMoneySignature,         gk1LoreleiMoneyPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
@@ -4678,6 +4680,8 @@ static const uint16 laurabow2PatchRememberWiredEastDoor[] = {
 	PATCH_END
 };
 
+// WORKAROUND: Script needed, because of differences in our pathfinding
+// algorithm
 // It's possible to walk through the closed door in room 448 and enter the crate
 //  room before act 5 due to differences in our pathfinding algorithm from Sierra's.
 //  Ego is able to stand one pixel farther than Sierra's algorithm allowed and
@@ -7711,6 +7715,8 @@ static const uint16 qfg4SlidingDownSlopePatch[] = {
 	PATCH_END
 };
 
+// WORKAROUND: Script needed, because of differences in our pathfinding
+// algorithm.
 // At the inn, there is a path that goes off screen. In our pathfinding
 // algorithm, we move all the pathfinding points so that they are within
 // the visible area. However, two points of the path are outside the
@@ -7993,6 +7999,8 @@ static const uint16 qfg4AbsentInnkeeperPatch[] = {
   	PATCH_END
 };
 
+// WORKAROUND: Script needed, because of differences in our pathfinding
+// algorithm.
 // When entering flipped stairways from the upper door, hero is initially
 // placed outside the walkable area. As a result, hero will float around
 // inappropriately in stairways leading to Tanya's room (620) and to the iron
@@ -8960,6 +8968,8 @@ static const uint16 sq5PatchToolboxFix[] = {
 	PATCH_END
 };
 
+// WORKAROUND: Script needed, because of differences in our pathfinding
+// algorithm
 // After entering the drive bay (room 1000) through the hallway, clicking walk
 //  in most places causes ego to automatically turn around and return to the
 //  previous room. This is due to differences in our pathfinding algorithm from
