@@ -80,7 +80,7 @@ void GfxPaint16::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mi
 }
 
 // This one is the only one that updates screen!
-void GfxPaint16::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
+void GfxPaint16::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, uint16 scaleSignal) {
 	GfxView *view = _cache->getView(viewId);
 	Common::Rect celRect;
 
@@ -90,7 +90,7 @@ void GfxPaint16::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo,
 		celRect.right = celRect.left + view->getWidth(loopNo, celNo);
 		celRect.bottom = celRect.top + view->getHeight(loopNo, celNo);
 
-		drawCel(view, loopNo, celNo, celRect, priority, paletteNo, scaleX, scaleY);
+		drawCel(view, loopNo, celNo, celRect, priority, paletteNo, scaleX, scaleY, scaleSignal);
 
 		if (getSciVersion() >= SCI_VERSION_1_1) {
 			if (!_screen->_picNotValidSci11) {
@@ -104,12 +104,12 @@ void GfxPaint16::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo,
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void GfxPaint16::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
-	drawCel(_cache->getView(viewId), loopNo, celNo, celRect, priority, paletteNo, scaleX, scaleY);
+void GfxPaint16::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, uint16 scaleSignal) {
+	drawCel(_cache->getView(viewId), loopNo, celNo, celRect, priority, paletteNo, scaleX, scaleY, scaleSignal);
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
+void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, uint16 scaleSignal) {
 	Common::Rect clipRect = celRect;
 	clipRect.clip(_ports->_curPort->rect);
 	if (clipRect.isEmpty()) // nothing to draw
@@ -118,9 +118,9 @@ void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common:
 	Common::Rect clipRectTranslated = clipRect;
 	_ports->offsetRect(clipRectTranslated);
 	if (scaleX == 128 && scaleY == 128)
-		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, false);
+		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, false, scaleSignal);
 	else
-		view->drawScaled(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, scaleX, scaleY);
+		view->drawScaled(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, scaleX, scaleY, scaleSignal);
 }
 
 // This is used as replacement for drawCelAndShow() when hires-cels are drawn to
@@ -472,6 +472,7 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_SAVEUNDER			107
 #define SCI_DISPLAY_RESTOREUNDER		108
 #define SCI_DISPLAY_DONTSHOWBITS		121
+#define SCI_DISPLAY_SETSTROKE			122
 
 reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int argc, reg_t *argv) {
 	reg_t displayArg;
@@ -480,6 +481,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 	bool doSaveUnder = false;
 	Common::Rect rect;
 	reg_t result = NULL_REG;
+	int16 stroke = 0; // Kawa's SCI11+
 
 	// Make a "backup" of the port settings (required for some SCI0LATE and
 	// SCI01+ only)
@@ -539,6 +541,10 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 		case SCI_DISPLAY_DONTSHOWBITS:
 			bRedraw = 0;
 			break;
+		case SCI_DISPLAY_SETSTROKE: // From Kawa's SCI11+
+			stroke = argv[0].toUint16();
+			argc--; argv++;
+			break;
 
 		default:
 			SciCallOrigin originReply;
@@ -563,10 +569,30 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 		rect.moveTo(_ports->getPort()->curLeft, _ports->getPort()->curTop);
 	}
 
+	// Kawa's SCI11+
+	if (stroke)
+		rect.grow(1);
+
 	if (doSaveUnder)
 		result = bitsSave(rect, GFX_SCREEN_MASK_VISUAL);
 	if (colorBack != -1)
 		fillRect(rect, GFX_SCREEN_MASK_VISUAL, colorBack, 0, 0);
+
+	// Kawa's SCI11+
+	if (stroke)	{
+		_ports->penColor(0);
+		rect.translate(1, 0); if (stroke & 1) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // right
+		rect.translate(0, 1); if (stroke & 2) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom right
+		rect.translate(-1, 0); if (stroke & 4) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom
+		rect.translate(-1, 0); if (stroke & 8) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom left
+		rect.translate(0, -1); if (stroke & 16) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // left
+		rect.translate(0, -1); if (stroke & 32) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // top left
+		rect.translate(1, 0); if (stroke & 64) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // top
+		rect.translate(1, 0); if (stroke & 128) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // top right
+		rect.translate(-1, 1); // and back to center
+		_ports->penColor(colorPen);
+	}
+
 	_text16->Box(text, languageSplitter, false, rect, alignment, -1);
 	if (_screen->_picNotValid == 0 && bRedraw)
 		bitsShow(rect);

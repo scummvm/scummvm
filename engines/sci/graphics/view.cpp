@@ -776,7 +776,7 @@ void GfxView::unditherBitmap(SciSpan<byte> &bitmapPtr, int16 width, int16 height
 }
 
 void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated,
-			int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires) {
+			int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires, uint16 scaleSignal) {
 	const Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	const SciSpan<const byte> &bitmap = getBitmap(loopNo, celNo);
@@ -832,6 +832,9 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 						// SCI16 remapping (QFG4 demo)
 						if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
 							outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
+						// SCI16+ remapping (Catdate)
+						if ((scaleSignal & 0x200) && g_sci->_gfxRemap16 && !g_sci->_gfxRemap16->isRemapped(outputColor))
+							outputColor = g_sci->_gfxRemap16->remapColor(253, outputColor);
 						_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
 					}
 				}
@@ -846,7 +849,7 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
  * matter because the scaled cel rect is definitely the same as in sierra sci.
  */
 void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated,
-			int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY) {
+			int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY, uint16 scaleSignal) {
 	const Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	const SciSpan<const byte> &bitmap = getBitmap(loopNo, celNo);
@@ -923,6 +926,9 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 				// SCI16 remapping (QFG4 demo)
 				if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
 					outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
+				// SCI16+ remapping (Catdate)
+				if ((scaleSignal & 0x200) && g_sci->_gfxRemap16 && !g_sci->_gfxRemap16->isRemapped(outputColor))
+					outputColor = g_sci->_gfxRemap16->remapColor(253, outputColor);
 				_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
 			}
 		}

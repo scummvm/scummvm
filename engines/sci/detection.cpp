@@ -103,6 +103,8 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"gk1demo",         "Gabriel Knight: Sins of the Fathers"},
 	{"qfg4demo",        "Quest for Glory IV: Shadows of Darkness"},
 	{"pq4demo",         "Police Quest IV: Open Season"},
+	// === SCI1.1+ games ======================================================
+	{"catdate",         "The Dating Pool"},
 	// === SCI2 games =========================================================
 	{"gk1",             "Gabriel Knight: Sins of the Fathers"},
 	{"pq4",             "Police Quest IV: Open Season"}, // floppy is SCI2, CD SCI2.1
@@ -207,6 +209,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "qfg4",            GID_QFG4 },
 	{ "qfg4demo",        GID_QFG4DEMO },
 	{ "rama",            GID_RAMA },
+	{ "catdate",         GID_CATDATE },
 	{ "sci-fanmade",     GID_FANMADE },	// FIXME: Do we really need/want this?
 	{ "shivers",         GID_SHIVERS },
 	//{ "shivers2",        GID_SHIVERS2 },	// Not SCI
@@ -319,6 +322,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 		sierraId == "mg" || sierraId == "pq" ||
 		sierraId == "jones" ||
 		sierraId == "cardgames" || sierraId == "solitare" ||
+		sierraId == "catdate" ||
 		sierraId == "hoyle4")
 		demoThreshold = 40;
 	if (sierraId == "hoyle3")

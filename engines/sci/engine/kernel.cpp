@@ -781,6 +781,9 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 				_kernelNames[0x84] = "ShowMovie";
 		} else if (g_sci->getGameId() == GID_QFG4DEMO) {
 			_kernelNames[0x7b] = "RemapColors"; // QFG4 Demo has this SCI2 function instead of StrSplit
+		} else if (g_sci->getGameId() == GID_CATDATE) {
+			_kernelNames[0x7b] = "RemapColorsKawa";
+			_kernelNames[0x89] = "KawaHacks";
 		}
 
 		_kernelNames[0x71] = "PalVary";

@@ -1278,4 +1278,33 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// Later SCI32-style kRemapColors, but in SCI11+.
+reg_t kRemapColorsKawa(EngineState *s, int argc, reg_t *argv) {
+	uint16 operation = argv[0].toUint16();
+
+	switch (operation) {
+	case 0: // off
+		break;
+	case 1: { // remap by percent
+		uint16 from = argv[1].toUint16();
+		uint16 percent = argv[2].toUint16();
+		g_sci->_gfxRemap16->resetRemapping();
+		g_sci->_gfxRemap16->setRemappingPercent(from, percent);
+		}
+		break;
+	case 2: { // remap by range
+		uint16 from = argv[1].toUint16();
+		uint16 to = argv[2].toUint16();
+		uint16 base = argv[3].toUint16();
+		g_sci->_gfxRemap16->resetRemapping();
+		g_sci->_gfxRemap16->setRemappingRange(254, from, to, base);
+		}
+		break;
+	default:
+		error("Unsupported SCI32-style kRemapColors(%d) has been called", operation);
+		break;
+	}
+	return s->r_acc;
+}
+
 } // End of namespace Sci
