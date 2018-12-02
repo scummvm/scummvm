@@ -228,6 +228,9 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 		MessageTuple &t = stack.top();
 
 		// Fix known incorrect message tuples
+		// TODO: Add a more generic mechanism, like the one we have for
+		// script workarounds, for cases with incorrect sync resources,
+		// like the ones below.
 		if (g_sci->getGameId() == GID_QFG1VGA && stack.getModule() == 322 &&
 			t.noun == 14 && t.verb == 1 && t.cond == 19 && t.seq == 1) {
 			// Talking to Kaspar the shopkeeper - bug #3604944
