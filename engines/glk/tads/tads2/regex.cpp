@@ -1069,19 +1069,18 @@ int re_context::match(const char *entire_str, const char *str, size_t origlen,
 
 			case RE_RANGE:
 			case RE_RANGE_EXCL: {
-				int match;
+				int match_val;
 
 				// make sure we have a character to match
 				if (curlen == 0)
 					return -1;
 
 				// see if we match
-				match = re_is_bit_set(tuple->char_range,
-										(int)(unsigned char)*p);
+				match_val = re_is_bit_set(tuple->char_range, (int)(unsigned char)*p);
 					
 				// make sure we got what we wanted
-				if ((tuple->ch == RE_RANGE && !match)
-					|| (tuple->ch == RE_RANGE_EXCL && match))
+				if ((tuple->ch == RE_RANGE && !match_val)
+					|| (tuple->ch == RE_RANGE_EXCL && match_val))
 					return -1;
 
 				// skip this character of the input
