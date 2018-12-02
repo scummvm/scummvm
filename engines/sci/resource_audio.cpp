@@ -476,6 +476,12 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				// FIXME: The sync36 resource seems to be two bytes too big in KQ6CD
 				// (bytes taken from the RAVE resource right after it)
 				if (syncSize > 0) {
+					// LB2CD is missing the sync resource for message 1885 1 6 30 2 but it's a duplicate
+					//  of 1885 1 6 16 2 which does have a sync resource so use that for both. bug #9956
+					if (g_sci->getGameId() == GID_LAURABOW2 && map->_mapNumber == 1885 && n == 0x01061002) {
+						addResource(ResourceId(kResourceTypeSync36, map->_mapNumber, 0x01061e02), src, offset, syncSize, map->getLocationName());
+					}
+
 					addResource(ResourceId(kResourceTypeSync36, map->_mapNumber, n & 0xffffff3f), src, offset, syncSize, map->getLocationName());
 				}
 			}
