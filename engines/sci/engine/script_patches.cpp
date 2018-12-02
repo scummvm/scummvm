@@ -8960,9 +8960,35 @@ static const uint16 sq5PatchToolboxFix[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                        patch
+// After entering the drive bay (room 1000) through the hallway, clicking walk
+//  in most places causes ego to automatically turn around and return to the
+//  previous room. This is due to differences in our pathfinding algorithm from
+//  Sierra's which results in ego first walking backwards into the control area
+//  that triggers the script sExitToHall.
+//
+// We work around this by adjusting ego's initial MoveTo position by a few
+//  pixels to one which doesn't cause pathfinding to send ego backwards.
+//
+// Applies to: PC Floppy
+// Responsible method: sEnterFromHall:changeState(0)
+// Fixes bug #7155
+static const uint16 sq5SignatureDriveBayPathfindingFix[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x0e,                     // pushi 0e [ x = 14d ]
+	0x39, 0x6e,                     // pushi 6e [ y = 110d ]
+	SIG_END
+};
+
+static const uint16 sq5PatchDriveBayPathfindingFix[] = {
+	0x39, 0x10,                     // pushi 10 [ x = 16d ]
+	0x39, 0x6f,                     // pushi 6f [ y = 111d ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
-	{  true,   226, "toolbox fix",                                 1, sq5SignatureToolboxFix,          sq5PatchToolboxFix },
+	{  true,   226, "toolbox fix",                                 1, sq5SignatureToolboxFix,               sq5PatchToolboxFix },
+	{  true,  1000, "drive bay pathfinding fix",                   1, sq5SignatureDriveBayPathfindingFix,   sq5PatchDriveBayPathfindingFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
