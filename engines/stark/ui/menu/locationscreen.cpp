@@ -35,6 +35,7 @@
 
 #include "engines/stark/visual/text.h"
 
+#include "audio/mixer.h"
 #include "common/system.h"
 
 namespace Stark {
@@ -135,6 +136,14 @@ void StaticLocationScreen::onScreenChanged() {
 	}
 }
 
+void StaticLocationScreen::waitForSoundsToComplete() {
+	while (g_system->getMixer()->hasActiveChannelOfType(Audio::Mixer::kSFXSoundType)) {
+		StarkGfx->clearScreen();
+		g_system->delayMillis(10);
+		StarkGfx->flipBuffer();
+	}
+}
+
 StaticLocationWidget::StaticLocationWidget(const char *renderEntryName, WidgetOnClickCallback *onClickCallback,
                                            WidgetOnMouseMoveCallback *onMouseMoveCallback):
 		_onClick(onClickCallback),
@@ -184,11 +193,7 @@ void StaticLocationWidget::onClick() {
 
 	if (_soundMouseClick) {
 		_soundMouseClick->play();
-		// Ensure the click sound is played completely
-		while (_soundMouseClick->isPlaying()) {
-			g_system->delayMillis(10);
-			StarkGfx->flipBuffer();
-		}
+		_soundMouseClick->setStopOnDestroy(false);
 	}
 
 	if (_onClick) {

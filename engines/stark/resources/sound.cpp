@@ -54,7 +54,8 @@ Sound::Sound(Object *parent, byte subType, uint16 index, const Common::String &n
 		_volume(0),
 		_fadeDurationRemaining(0),
 		_fadeTargetVolume(0.0),
-		_fadeTargetPan(0.0) {
+		_fadeTargetPan(0.0),
+		_shouldStopOnDestroy(true) {
 	_type = TYPE;
 }
 
@@ -140,7 +141,10 @@ void Sound::stop() {
 
 void Sound::onPreDestroy() {
 	Object::onPreDestroy();
-	stop();
+
+	if (_shouldStopOnDestroy) {
+		stop();
+	}
 }
 
 void Sound::readData(Formats::XRCReadStream *stream) {
@@ -253,6 +257,10 @@ void Sound::saveLoadCurrent(ResourceSerializer *serializer) {
 
 void Sound::onEnginePause(bool pause) {
 	g_system->getMixer()->pauseHandle(_handle, pause);
+}
+
+void Sound::setStopOnDestroy(bool stopOnDestroy) {
+	_shouldStopOnDestroy = stopOnDestroy;
 }
 
 } // End of namespace Resources

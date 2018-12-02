@@ -135,11 +135,14 @@ void MainMenuScreen::helpTextHandler(StaticLocationWidget &widget, const Common:
 
 void MainMenuScreen::creditsHandler() {
 	if (!StarkSettings->isDemo()) {
+		waitForSoundsToComplete();
 		StarkUserInterface->requestFMVPlayback("0e02.bbb");
 	}
 }
 
 void MainMenuScreen::newGameHandler() {
+	waitForSoundsToComplete();
+
 	StarkUserInterface->changeScreen(kScreenGame);
 
 	StarkResourceProvider->initGlobal();
@@ -182,6 +185,7 @@ void MainMenuScreen::boxHandler() {
 
 void MainMenuScreen::quitHandler() {
 	if (StarkUserInterface->confirm(GameMessage::kQuitPrompt)) {
+		waitForSoundsToComplete();
 		StarkUserInterface->notifyShouldExit();
 	}
 }

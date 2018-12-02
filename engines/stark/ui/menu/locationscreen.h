@@ -46,12 +46,21 @@ class StaticLocationWidget;
 class StaticLocationScreen : public SingleWindowScreen {
 public:
 	StaticLocationScreen(Gfx::Driver *gfx, Cursor *cursor, const char *locationName, Screen::Name screenName);
-	virtual ~StaticLocationScreen();
+	~StaticLocationScreen() override;
 
 	// Screen API
 	void open() override;
 	void close() override;
 	void onScreenChanged() override;
+
+	/**
+	 * Wait for all effect sounds to complete
+	 *
+	 * Used to ensure the button press sounds are no longer
+	 * playing before performing the next action that
+	 * would produce a sound.
+	 */
+	void waitForSoundsToComplete();
 
 protected:
 	// Window API

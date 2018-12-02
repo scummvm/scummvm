@@ -87,6 +87,12 @@ public:
 	/** Set whether to loop or not */
 	void setLooping(bool looping) { _looping = looping; }
 
+	/**
+	 * In the menus, we don't want sounds to be cut when changing screens.
+	 * The actual sounds need to outlive the entity. This flag allows to do so.
+	 */
+	void setStopOnDestroy(bool stopOnDestroy);
+
 protected:
 	void printData() override;
 
@@ -107,6 +113,7 @@ protected:
 	uint32 _soundType;
 	float _pan;
 	float _volume;
+	bool _shouldStopOnDestroy;
 
 	int32 _fadeDurationRemaining;
 	float _fadeTargetVolume;
