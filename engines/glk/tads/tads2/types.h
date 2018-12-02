@@ -23,6 +23,8 @@
 #ifndef GLK_TADS_TADS2_TYPES
 #define GLK_TADS_TADS2_TYPES
 
+#include "common/stream.h"
+
 namespace Glk {
 namespace TADS {
 namespace TADS2 {

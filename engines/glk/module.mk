@@ -45,11 +45,13 @@ MODULE_OBJS := \
 	scott/scott.o \
 	tads/detection.o \
 	tads/tads.o \
+	tads/tads2/data.o \
 	tads/tads2/ler.o \
 	tads/tads2/os.o \
 	tads/tads2/regex.o \
 	tads/tads2/tads2.o \
 	tads/tads2/tads2_cmap.o \
+	tads/tads2/vocabulary.o \
 	tads/tads3/tads3.o
 
 # This module can be built as a plugin
