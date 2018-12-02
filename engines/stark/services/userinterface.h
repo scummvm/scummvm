@@ -101,10 +101,11 @@ public:
 	/** Back to the previous displayed screen */
 	void backPrevScreen();
 
+	/** Apply the scheduled screen change if any */
+	void doQueuedScreenChange();
+
 	/** Back to the main menu screen and rest resources */
 	void requestQuitToMainMenu() { _quitToMainMenu = true; }
-	bool hasQuitToMainMenuRequest() { return _quitToMainMenu; }
-	void performQuitToMainMenu();
 
 	/** Restore the screen travelling history to the initial state*/
 	void restoreScreenHistory();
@@ -230,6 +231,9 @@ private:
 	bool _interactionAttemptDenied;
 
 	bool _shouldToggleSubtitle;
+
+	// TODO: Generalize to all screen changes
+	bool _shouldGoBackToPreviousScreen;
 
 	Graphics::Surface *_gameWindowThumbnail;
 };

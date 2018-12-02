@@ -184,9 +184,7 @@ void StarkEngine::mainLoop() {
 			break;
 		}
 
-		if (_userInterface->hasQuitToMainMenuRequest()) {
-			_userInterface->performQuitToMainMenu();
-		}
+		_userInterface->doQueuedScreenChange();
 
 		if (_resourceProvider->hasLocationChangeRequest()) {
 			_global->setNormalSpeed();

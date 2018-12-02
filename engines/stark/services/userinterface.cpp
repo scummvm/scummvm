@@ -70,13 +70,13 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_exitGame(false),
 		_quitToMainMenu(false),
 		_shouldToggleSubtitle(false),
+		_shouldGoBackToPreviousScreen(false),
 		_fmvScreen(nullptr),
 		_gameScreen(nullptr),
 		_interactive(true),
 		_interactionAttemptDenied(false),
 		_currentScreen(nullptr),
-		_gameWindowThumbnail(nullptr),
-		_prevScreenNameStack() {
+		_gameWindowThumbnail(nullptr) {
 }
 
 UserInterface::~UserInterface() {
@@ -151,12 +151,12 @@ void UserInterface::handleDoubleClick() {
 }
 
 void UserInterface::handleEscape() {
-	bool handled = false;
+	bool handled = StarkGameInterface->skipCurrentSpeeches();
 
-	handled = StarkGameInterface->skipCurrentSpeeches();
 	if (!handled) {
 		handled = skipFMV();
 	}
+
 	if (!handled) {
 		Screen::Name curScreenName = _currentScreen->getName();
 		if (curScreenName != Screen::kScreenGame && curScreenName != Screen::kScreenMainMenu) {
@@ -195,7 +195,7 @@ void UserInterface::requestFMVPlayback(const Common::String &name) {
 }
 
 void UserInterface::onFMVStopped() {
-	backPrevScreen();
+	_shouldGoBackToPreviousScreen = true;
 }
 
 void UserInterface::changeScreen(Screen::Name screenName) {
@@ -218,17 +218,8 @@ void UserInterface::backPrevScreen() {
 	_prevScreenNameStack.pop();
 }
 
-void UserInterface::performQuitToMainMenu() {
-	assert(_quitToMainMenu);
-
-	changeScreen(Screen::kScreenGame);
-	StarkResourceProvider->shutdown();
-	changeScreen(Screen::kScreenMainMenu);
-	_prevScreenNameStack.clear();
-	_quitToMainMenu = false;
-}
-
 void UserInterface::restoreScreenHistory() {
+	_shouldGoBackToPreviousScreen = false;
 	_prevScreenNameStack.clear();
 	_prevScreenNameStack.push(Screen::kScreenMainMenu);
 }
@@ -463,6 +454,21 @@ void UserInterface::selectDialogOptionByIndex(uint index) {
 
 void UserInterface::toggleExitDisplay() {
 	_gameScreen->getGameWindow()->toggleExitDisplay();
+}
+
+void UserInterface::doQueuedScreenChange() {
+	if (_quitToMainMenu) {
+		changeScreen(Screen::kScreenGame);
+		StarkResourceProvider->shutdown();
+		changeScreen(Screen::kScreenMainMenu);
+		_prevScreenNameStack.clear();
+		_quitToMainMenu = false;
+	}
+
+	if (_shouldGoBackToPreviousScreen) {
+		backPrevScreen();
+		_shouldGoBackToPreviousScreen = false;
+	}
 }
 
 } // End of namespace Stark
