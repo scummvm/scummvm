@@ -178,6 +178,42 @@ osfildef *OS::oss_open_stream(char *buffer, glui32 tadsusage, glui32 tbusage,
 	return *osf;
 }
 
+osfildef *OS::osfoprb(const char *fname, uint typ) {
+	Common::File *f = new Common::File();
+	if (f->open(fname))
+		return f;
+
+	f->close();
+	delete f;
+	return nullptr;
+}
+
+void OS::os_gen_charmap_filename(char *filename, const char *internal_id,
+		const char *argv0) {
+	const char *p;
+	const char *rootname;
+	size_t pathlen;
+
+	// find the path prefix of the original executable filename
+	for (p = rootname = argv0; *p != '\0'; ++p) {
+		if (*p == '/' || *p == '\\' || *p == ':')
+			rootname = p + 1;
+	}
+
+	// copy the path prefix
+	pathlen = rootname - argv0;
+	memcpy(filename, argv0, pathlen);
+
+	// if there's no trailing backslash, add one
+	if (pathlen == 0 || filename[pathlen - 1] != '\\')
+		filename[pathlen++] = '\\';
+
+	// add "win_", plus the character set ID, plus the extension
+	strcpy(filename + pathlen, "win_");
+	strcat(filename + pathlen, internal_id);
+	strcat(filename + pathlen, ".tcp");
+}
+
 void OS::oss_put_string_with_hilite(winid_t win, const char *str, size_t len) {
 	glk_set_window(win);
 	glk_put_buffer(str, len);

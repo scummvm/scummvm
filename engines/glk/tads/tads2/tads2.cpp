@@ -27,6 +27,7 @@ namespace TADS {
 namespace TADS2 {
 
 TADS2::TADS2(OSystem *syst, const GlkGameDescription &gameDesc) : OS(syst, gameDesc) {
+	cmap_init_default();
 }
 
 void TADS2::runGame(Common::SeekableReadStream *gameFile) {
