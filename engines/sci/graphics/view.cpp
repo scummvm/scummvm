@@ -832,8 +832,8 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 						// SCI16 remapping (QFG4 demo)
 						if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
 							outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
-						// SCI16+ remapping (Catdate)
-						if ((scaleSignal & 0x200) && g_sci->_gfxRemap16 && !g_sci->_gfxRemap16->isRemapped(outputColor))
+						// SCI11+ remapping (Catdate)
+						if ((scaleSignal & 0x200) && g_sci->_gfxRemap16)
 							outputColor = g_sci->_gfxRemap16->remapColor(253, outputColor);
 						_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
 					}
@@ -926,8 +926,8 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 				// SCI16 remapping (QFG4 demo)
 				if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
 					outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
-				// SCI16+ remapping (Catdate)
-				if ((scaleSignal & 0x200) && g_sci->_gfxRemap16 && !g_sci->_gfxRemap16->isRemapped(outputColor))
+				// SCI11+ remapping (Catdate)
+				if ((scaleSignal & 0x200) && g_sci->_gfxRemap16)
 					outputColor = g_sci->_gfxRemap16->remapColor(253, outputColor);
 				_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
 			}
