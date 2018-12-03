@@ -60,6 +60,8 @@ public:
 	Graphics::Surface *getMgLayer() { return _mgLayer; }
 	Graphics::Surface *getFgLayer() { return _fgLayer; }
 	Common::Point getPoint2(uint32 pointIndex);
+	byte *getPalette() { return _palette; }
+
 private:
 	Common::Point *loadPoints(Common::SeekableReadStream &stream);
 	Graphics::Surface *loadGfxLayer(TileMap &tileMap, byte *tiles);
