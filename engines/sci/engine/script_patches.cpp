@@ -159,6 +159,7 @@ static const char *const selectorNameTable[] = {
 	"state",        // RAMA
 	"getSubscriberObj", // RAMA
 	"loop",         // QFG4
+	"moveSpeed",    // QFG4
 	"setLooper",    // QFG4
 	"value",        // QFG4
 #endif
@@ -244,6 +245,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_state,
 	SELECTOR_getSubscriberObj,
 	SELECTOR_loop,
+	SELECTOR_moveSpeed,
 	SELECTOR_setLooper,
 	SELECTOR_value
 #endif
@@ -9038,6 +9040,228 @@ static const uint16 qfg4RopeScalerPatch[] = {
 	PATCH_END
 };
 
+// The fortune teller's third reading has the wrong card at the center. The 3rd
+// and 4th reading are about different people, yet both have "Queen of Cups".
+//
+// The 1st reading establishes "Queen of Cups" as: a woman of wisdom and love,
+// kind, generous, and virtuous. This fits the 4th reading: she uses her power
+// joyfully, giving gracefully and lovingly to others.
+//
+// The 1st reading establishes "Queen of Swords" as: a deceiver or deceived,
+// having suffered through terrible hardship, she faces her sorrows bravely,
+// but with deep loneliness. This fits the 3rd reading better: some cruel event
+// shaped her life... ambition, self-deception, and she is falling in love.
+//
+// We change the 3rd reading's center card to "Queen of Swords".
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sThirdReading:changeState(3) in script 475
+// Fixes bug: #10824
+static const uint16 qfg4Tarot3QueenSignature[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x03f1),           // ldi 1009d (Queen of Cups)
+	0xa3, 0x00,                         // sal local[0]
+	SIG_ADDTOOFFSET(+46),               // ...
+	0x39, 0x1f,                         // pushi 31d (say: 1 6 31 0 self)
+	SIG_END
+};
+
+static const uint16 qfg4Tarot3QueenPatch[] = {
+	0x34, PATCH_UINT16(0x03ed),         // ldi 1005d (Queen of Swords)
+	PATCH_END
+};
+
+// The fortune teller's third reading displays a right-turned "The Devil" card,
+// but Magda says it is "Death".
+//
+// We change the card to a right-turned "Death".
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sThirdReading:changeState(15) in script 475
+// Fixes bug: #10823
+static const uint16 qfg4Tarot3DeathSignature[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x03fa),           // ldi 1018d (The Devil)
+	0xa3, 0x00,                         // sal local[0]
+	SIG_ADDTOOFFSET(+46),               // ...
+	0x39, 0x23,                         // pushi 35d (say: 1 6 35 0 self)
+	SIG_END
+};
+
+static const uint16 qfg4Tarot3DeathPatch[] = {
+	0x34, PATCH_UINT16(0x03fd),         // ldi 1021d (Death)
+	PATCH_END
+};
+
+// The fortune teller's third reading places the "Two of Cups" across another
+// card, off-center. That View (1023) is cropped (130x64). All other horizontal
+// cards (130x86, 130x87) are padded at the bottom with transparent pixels.
+//
+// A utility script (sShowCard) is scheduled to create each card with a given
+// View (passed as local[0]) and move it onto a given pile (passed as local[2]:
+// center, west, south, east, north). It has a switch block deciding x,y coords
+// depending on the pile.
+//
+// We optimize a couple cases by consolidating their common code in a
+// subroutine to make room. The rewritten case for the east pile checks if the
+// requested card was "Two of Cups". If so, a special Y value is used.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sShowCard::changeState() in script 475
+// Fixes bug: #10822
+static const uint16 qfg4Tarot3TwoOfCupsSignature[] = {
+	SIG_MAGICDWORD,
+	0x3c,                               // dup
+	0x35, 0x04,                         // ldi 4d (case 4)
+	0x1a,                               // eq?
+	SIG_ADDTOOFFSET(+7),                // ...
+	0x38, SIG_SELECTOR16(setStep),      // pushi setStep
+	SIG_ADDTOOFFSET(+11),               // ...
+	0x51, SIG_ADDTOOFFSET(+1),          // class Scaler
+	SIG_ADDTOOFFSET(+16),               // ...
+	0x51, SIG_ADDTOOFFSET(+1),          // class MoveTo
+	SIG_ADDTOOFFSET(+72),               // ...
+	0x3a,                               // toss (end of this local[2] switch)
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [end the state switch]
+	SIG_END
+};
+
+static const uint16 qfg4Tarot3TwoOfCupsPatch[] = {
+	0x33, 0x31,                         // jmp 49d (skip subroutine declaration)
+	0x38, PATCH_SELECTOR16(moveSpeed),  // pushi moveSpeed
+	0x78,                               // push1
+	0x76,                               // push0
+	0x38, PATCH_SELECTOR16(setStep),    // pushi setStep
+	0x7a,                               // push2
+	0x39, 0x1e,                         // pushi 30d
+	0x39, 0x0a,                         // pushi 10d
+	0x38, PATCH_SELECTOR16(setScaler),  // pushi setScaler
+	0x39, 0x05,                         // pushi 5d
+	0x51, PATCH_GETORIGINALBYTE(26),    // class Scaler
+	0x36,                               // push
+	0x39, 0x64,                         // pushi 100d
+	0x39, 0x23,                         // pushi 35d
+	0x38, PATCH_UINT16(0x0096),         // pushi 150d
+	0x8f, 0x01,                         // lsp param[1] (setScalar, arg 5 varies)
+	0x38, PATCH_SELECTOR16(setMotion),  // pushi setMotion
+	0x39, 0x04,                         // pushi 4d
+	0x51, PATCH_GETORIGINALBYTE(44),    // class MoveTo
+	0x36,                               // push
+	0x8f, 0x02,                         // lsp param[2] (setMotion, x arg varies)
+	0x8f, 0x03,                         // lsp param[3] (setMotion, y arg varies)
+	0x7c,                               // pushSelf
+	0x83, 0x01,                         // lal local[1]
+	0x4a, PATCH_UINT16(0x0028),         // send 40d
+	0x48,                               // ret
+
+	0x3c,                               // dup
+	0x35, 0x04,                         // ldi 4d (case 4)
+	0x1a,                               // eq?
+	0x31, 0x1b,                         // bnt 27d [next case]
+	0x39, 0x03,                         // pushi 3d (call has 3 args)
+	0x39, 0x6e,                         // pushi 110d (setScalar, arg 5)
+	0x38, PATCH_UINT16(0x00d2),         // pushi 210d (setMotion, x arg)
+                                        //
+	0x8b, 0x00,                         // lsl local[0] (test the card's View number)
+	0x34, PATCH_UINT16(0x03ff),         // ldi 1023 (Two of Cups is special)
+	0x1a,                               // eq?
+	0x31, 0x04,                         // bnt 4d [regular y arg]
+	0x39, 0x66,                         // pushi 102d  (setMotion, special y arg)
+	0x33, 0x02,                         // jmp 2d [to the call]
+	0x39, 0x6e,                         // pushi 110d (setMotion, regular y arg)
+                                        //
+	0x41, 0xb0, PATCH_UINT16(0x0006),   // call 6d [-80]
+	0x33, 0x13,                         // jmp 19d [end the local[2] switch]
+
+	0x3c,                               // dup
+	0x35, 0x05,                         // ldi 5d (case 5)
+	0x1a,                               // eq?
+	0x31, 0x0d,                         // bnt 13d [end the local[2] switch]
+	0x39, 0x03,                         // pushi 3d (call has 3 args)
+	0x39, 0x32,                         // pushi 50d (setScalar, arg 5)
+	0x38, PATCH_UINT16(0x0090),         // pushi 144d (setMotion, x arg)
+	0x39, 0x32,                         // pushi 50d (setMotion, y arg)
+	0x41, 0x9b, PATCH_UINT16(0x0006),   // call 6d [-101]
+
+	0x33, 0x0c,                         // jmp 12d (skip to the original toss that ends this switch)
+	PATCH_END
+};
+
+// The fortune teller's third reading places horizontal cards on top of
+// vertical ones. Some then fall *through* the vertical card to the bottom.
+//
+// A utility script (sShowCard) creates each card and moves it onto a pile
+// (center, west, south, east, north). Then the card is assigned a priority
+// with setPri(). Generally these piles are two cards deep. Center has one.
+//
+// Every pile ought to start with priority 0 and increment thereafter. Somebody
+// mixed up the setPri() sequence. We change 0;1,0;1,0 to 0;0,1;0,1.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sThirdReading:changeState() in script 475
+// Fixes bug: #10845
+static const uint16 qfg4Tarot3PrioritySignature[] = {
+	0x78,                               // push1 (setPri: 1, "Eight of Swords", West, V)
+	SIG_ADDTOOFFSET(+14),               // ...
+	0x39, 0x20,                         // pushi 32 (say cond:32)
+	SIG_ADDTOOFFSET(+68),               // ...
+	0x76,                               // push0 (setPri: 0, "Strength", West, H)
+	SIG_ADDTOOFFSET(+84),               // ...
+	0x78,                               // push1 (setPri: 1, "The Magician", South, V)
+	SIG_ADDTOOFFSET(+84),               // ...
+	0x76,                               // push0 (setPri: 0, "Death", South, H)
+	SIG_ADDTOOFFSET(+12),               // ...
+	SIG_MAGICDWORD,
+	0x39, 0x06,                         // pushi 6 (say verb:6)
+	0x39, 0x23,                         // pushi 36 (say cond:35)
+	SIG_END
+};
+
+static const uint16 qfg4Tarot3PriorityPatch[] = {
+	0x76,                               // push0 (setPri: 0, "Eight of Swords", West, V)
+	PATCH_ADDTOOFFSET(+84),             // ...
+	0x78,                               // push1 (setPri: 1, "Strength", West, H)
+	PATCH_ADDTOOFFSET(+84),             // ...
+	0x76,                               // push0 (setPri: 0, "The Magician", South, V)
+	PATCH_ADDTOOFFSET(+84),             // ...
+	0x78,                               // push1 (setPri: 1, "Death", South, H)
+	PATCH_END
+};
+
+// The fortune teller's fifth reading is unusual. It places all cards at the
+// center pile, periodically fading out to clear the table. When Magda
+// talks about the Sense Ritual, the "Six of Swords" (view 1048) sinks below
+// the previous card.
+//
+// A shared utility script that creates and places cards (sSetTheSignificator)
+// uses priority 12 as it deals, after which each card is given a lower value
+// with setPri(). "The Falling Tower" (view 1031) did *not* get a new priority.
+// Thus "Six of Swords", when given priority 1, sinks below 12.
+//
+// "Six of Swords" is the last card before a fade. We simply leave its priority
+// at 12 as well. Being the most recent card, it will be on top. No worry
+// about covering a subsequent card because the table will be cleared.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sFifthReading:changeState(32) in script 475
+// Fixes bug: #10846
+static const uint16 qfg4Tarot5PrioritySignature[] = {
+	0x39, SIG_ADDTOOFFSET(+1),          // pushi setPri
+	0x78,                               // push1
+	0x78,                               // push1 (setPri: 1, "Six of Swords")
+	SIG_MAGICDWORD,
+	0x83, 0x01,                         // lal local[1] (card obj)
+	0x4a, SIG_UINT16(0x0006),           // send 06
+	SIG_ADDTOOFFSET(+9),                // ...
+	0x39, 0x44,                         // pushi 68 (say cond:68)
+	SIG_END
+};
+
+static const uint16 qfg4Tarot5PriorityPatch[] = {
+	0x33, 0x07,                         // jmp 7d [skip the setPri() send]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -9056,6 +9280,11 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   370, "Floppy: fix copy protection",                 1, qfg4CopyProtectionSignature,   qfg4CopyProtectionPatch },
 	{  true,   440, "fix setLooper calls (1/2)",                   1, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   470, "fix Magda room disposal",                     1, qfg4MagdaDisposalSignature,    qfg4MagdaDisposalPatch },
+	{  true,   475, "fix tarot 3 queen card",                      1, qfg4Tarot3QueenSignature,      qfg4Tarot3QueenPatch },
+	{  true,   475, "fix tarot 3 death card",                      1, qfg4Tarot3DeathSignature,      qfg4Tarot3DeathPatch },
+	{  true,   475, "fix tarot 3 two of cups placement",           1, qfg4Tarot3TwoOfCupsSignature,  qfg4Tarot3TwoOfCupsPatch },
+	{  true,   475, "fix tarot 3 card priority",                   1, qfg4Tarot3PrioritySignature,  qfg4Tarot3PriorityPatch },
+	{  true,   475, "fix tarot 5 card priority",                   1, qfg4Tarot5PrioritySignature,  qfg4Tarot5PriorityPatch },
 	{  false,  500, "CD: fix rope during Igor rescue (1/2)",       1, qfg4GraveyardRopeSignature1,   qfg4GraveyardRopePatch1 },
 	{  false,  500, "CD: fix rope during Igor rescue (2/2)",       1, qfg4GraveyardRopeSignature2,   qfg4GraveyardRopePatch2 },
 	{  true,   530, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
