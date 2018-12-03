@@ -474,7 +474,7 @@ void GfxAnimate::drawCels() {
 			writeSelector(_s->_segMan, it->object, SELECTOR(underBits), bitsHandle);
 
 			// draw corresponding cel
-			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
+			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY, it->scaleSignal);
 			it->showBitsFlag = true;
 
 			if (it->signal & kSignalRemoveView)
