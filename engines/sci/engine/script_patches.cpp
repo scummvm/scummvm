@@ -8288,6 +8288,46 @@ static const uint16 qfg4ConditionalVoidPatch[] = {
 	PATCH_END
 };
 
+// The copy protection in floppy versions has a script bug which uses disposed
+//  objects and crashes our interpreter. This appears to work in Sierra's
+//  interpreter although they fixed the script bug in the CD version.
+//
+// When asking Dr. Cranium in room 370 about certain potions the game switches
+//  to a copy protection screen and then back to the conversation. Before the
+//  switch, craniumTalker is disposed, which in turn disposes craniumThumbs and
+//  craniumBrow. Disposing these views clears their planes. After returning from
+//  the protection screen craniumTalker:showAgain is called even though it has
+//  been disposed. This causes kAddScreenItem to be called on views without
+//  planes, which is currently an error in our interpreter.
+//
+// We work around this by reinitializing craniumTalker after the copy protection
+//  so that showAgain can be safely called. craniumTalker is reinitialized when
+//  navigating through the conversation menus so this is normal behavior.
+//
+// Applies to: English PC Floppy, German PC Floppy
+// Responsible method: delayMsg:changeState(0)
+// Fixes bug: #10773
+static const uint16 qfg4CopyProtectionSignature[] = {
+	0x31, 0x06,                         // bnt 06
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x24,                         // aTop register
+	SIG_ADDTOOFFSET(+6),
+	0x38, SIG_UINT16(0x0300),           // pushi 0300 [ showAgain, hard-coded for floppy ]
+	SIG_ADDTOOFFSET(+11),
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ craniumTalker: showAgain ]
+	SIG_END
+};
+
+static const uint16 qfg4CopyProtectionPatch[] = {
+	0x65, 0x24,                         // aTop register
+	0x38, PATCH_SELECTOR16(init),       // pushi init
+	0x76,                               // push0
+	PATCH_ADDTOOFFSET(+20),
+	0x4a, PATCH_UINT16(0x0008),         // send 08 [ craniumTalker: init, showAgain ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -8301,6 +8341,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
+	{  true,   370, "Floppy: fix copy protection",                 1, qfg4CopyProtectionSignature,   qfg4CopyProtectionPatch },
 	{  true,   440, "fix setLooper calls (1/2)",                   1, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   470, "fix Magda room disposal",                     1, qfg4MagdaDisposalSignature,    qfg4MagdaDisposalPatch },
 	{  true,   530, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
