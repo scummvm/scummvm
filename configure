@@ -283,12 +283,12 @@ cc_check_no_clean() {
 	echo >> "$TMPLOG"
 	cat "$TMPC" >> "$TMPLOG"
 	echo >> "$TMPLOG"
-	echo "$CXX $LDFLAGS $CXXFLAGS $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
+	echo "$CXX $LDFLAGS $CXXFLAGS $DEFINES $INCLUDES $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
 	rm -f "$TMPO$HOSTEXEEXT"
 	if test "-c" = "$*" ; then
-		( $CXX $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
+		( $CXX $CXXFLAGS $DEFINES $INCLUDES "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
 	else
-		( $CXX $LDFLAGS $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
+		( $CXX $LDFLAGS $CXXFLAGS $DEFINES $INCLUDES "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
 	fi
 	TMPR="$?"
 	echo "return code: $TMPR" >> "$TMPLOG"
