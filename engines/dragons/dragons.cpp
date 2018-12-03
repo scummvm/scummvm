@@ -23,6 +23,8 @@
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 #include "common/error.h"
+#include "actor.h"
+#include "actorresource.h"
 #include "bigfile.h"
 #include "dragonrms.h"
 #include "dragonini.h"
@@ -61,7 +63,9 @@ Common::Error DragonsEngine::run() {
 	_bigfileArchive = new BigfileArchive("bigfile.dat", Common::Language::EN_ANY);
 	_dragonRMS = new DragonRMS(_bigfileArchive);
 	_dragonINIResource = new DragonINIResource(_bigfileArchive);
-	_scene = new Scene(_screen, _bigfileArchive, _dragonRMS, _dragonINIResource);
+	ActorResourceLoader *actorResourceLoader = new ActorResourceLoader(_bigfileArchive);
+	ActorManager *actorManager = new ActorManager(actorResourceLoader);
+	_scene = new Scene(_screen, _bigfileArchive, actorManager, _dragonRMS, _dragonINIResource);
 
 	_scene->loadScene(0x12, 0x1e);
 

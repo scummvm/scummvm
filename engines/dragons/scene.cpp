@@ -21,14 +21,15 @@
  */
 #include "scene.h"
 
+#include "actor.h"
 #include "background.h"
 #include "dragonini.h"
 #include "screen.h"
 
 namespace Dragons {
 
-Scene::Scene(Screen *screen, BigfileArchive *bigfileArchive, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource)
-		: _screen(screen), _stage(0), _bigfileArchive(bigfileArchive), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource) {
+Scene::Scene(Screen *screen, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource)
+		: _screen(screen), _stage(0), _bigfileArchive(bigfileArchive), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource) {
 	_backgroundLoader = new BackgroundResourceLoader(_bigfileArchive, _dragonRMS);
 }
 
@@ -64,7 +65,16 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 	for(int i=0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
 		if (ini->sceneId == sceneId && (ini->field_1a_flags_maybe & 1)) {
-			debug("Actor %d %d (%d, %d)", ini->actorResourceId, ini->field_1a_flags_maybe, ini->x, ini->y);
+			Actor *actor = _actorManager->loadActor(ini->actorResourceId, ini->frameIndexId_maybe, ini->x, ini->y, 0);
+			Graphics::Surface *s = actor->getCurrentFrame();
+			int x = ini->x - actor->frame_vram_x;
+			int y = ini->y - actor->frame_vram_y;
+			if (x >= 0 && y >= 0 && x + s->w < 320 && y + s->h < 200) {
+				debug("Actor %d %d (%d, %d)", ini->actorResourceId, ini->field_1a_flags_maybe, ini->x, ini->y);
+				_stage->getFgLayer()->copyRectToSurface(*s, x, y, Common::Rect(s->w,s->h));
+			}
+			_stage->getFgLayer()->drawLine(ini->x, ini->y, ini->x + 8, ini->y + 8, 0x7c00);
+			//break;
 		}
 	}
 

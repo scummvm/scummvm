@@ -19,43 +19,50 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_SCENE_H
-#define SCUMMVM_SCENE_H
+#ifndef SCUMMVM_ACTORRESOURCE_H
+#define SCUMMVM_ACTORRESOURCE_H
 
-#include "common/rect.h"
 #include "common/system.h"
 
 namespace Dragons {
 
-class ActorManager;
-class Background;
-class DragonRMS;
-class BackgroundResourceLoader;
-class DragonINIResource;
 class BigfileArchive;
-class Screen;
+class ActorResource;
 
-class Scene {
+struct ActorFrame {
+	int16 field_0;
+	int16 field_2;
+	uint8 width;
+	uint8 height;
+	byte *frameDataOffset;
+	uint16 flags;
+	uint16 field_c;
+};
+
+class ActorResourceLoader {
 private:
-	Screen *_screen;
-	ActorManager *_actorManager;
-	Background *_stage;
-	BigfileArchive *_bigfileArchive;
-	DragonRMS *_dragonRMS;
-	DragonINIResource *_dragonINIResource;
-	BackgroundResourceLoader *_backgroundLoader;
-
-	uint16 _currentSceneId;
-	Common::Point _camera;
+	BigfileArchive *_bigFileArchive;
 
 public:
-	Scene(Screen *screen, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource);
+	ActorResourceLoader(BigfileArchive *bigFileArchive);
+	ActorResource *load(uint32 resourceId);
+};
 
-	void loadScene(uint32 sceneId, uint32 cameraPointId);
+class ActorResource {
+private:
+	byte *data;
+	ActorFrame *_frames;
+	uint16 _framesCount;
+	byte _palette[512];
 
-	void draw();
+public:
+	bool load(byte *dataStart, Common::SeekableReadStream &stream);
+	Graphics::Surface *loadFrame(uint16 frameNumber);
+	ActorFrame *getFrameHeader(uint16 frameNumber);
+private:
+	void writePixelBlock(byte *pixels, byte *data);
 };
 
 } // End of namespace Dragons
 
-#endif //SCUMMVM_SCENE_H
+#endif //SCUMMVM_ACTORRESOURCE_H

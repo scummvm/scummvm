@@ -31,8 +31,8 @@ struct DragonINI
 	{
 		int16 iptIndex_maybe;
 		int16 field_2;
-		int16 actorResourceId;
-		int16 frameIndexId_maybe;
+		uint16 actorResourceId;
+		uint16 frameIndexId_maybe;
 		int16 field_8;
 		uint16 actorId;
 		uint16 sceneId;
