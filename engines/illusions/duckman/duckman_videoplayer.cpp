@@ -69,7 +69,7 @@ void DuckmanVideoPlayer::update() {
 	} else if (_videoDecoder->needsUpdate()) {
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
 		Graphics::Surface *backSurface = _vm->_screen->getBackSurface();
-		if (frame->format.bytesPerPixel == g_system->getScreenFormat().bytesPerPixel) {
+		if (frame && frame->format.bytesPerPixel == g_system->getScreenFormat().bytesPerPixel) {
 			const int width = MIN(frame->w, backSurface->w);
 			const int height = MIN(frame->h, backSurface->h);
 			const byte *src = (const byte*)frame->getPixels();
