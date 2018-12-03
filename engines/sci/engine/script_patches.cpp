@@ -1933,9 +1933,10 @@ static const uint16 gk1SysLoggerHotKeyPatch[] = {
 	PATCH_END
 };
 
-// After interrogating Gran in room 380, clicking on objects while seated
-//  causes Gabriel to briefly flicker into standing and other frames.
-//  This is a script bug that also occurs with Sierra's interpreter.
+// After interrogating Gran in room 380, the room is re-initialized incorrectly.
+//  Clicking on objects while seated causes Gabriel to briefly flicker into
+//  standing and other frames. After standing, the knitting basket can be walked
+//  through. These are script bugs which also occur in Sierra's interpreter.
 //
 // Ego is initialized incorrectly by rm380:init when returning from interrogation
 //  (room 50). Several properties are wrong and it's bad luck that it works as
@@ -1957,12 +1958,18 @@ static const uint16 gk1SysLoggerHotKeyPatch[] = {
 //
 // We fix the flickering by passing a second parameter to GKEgo:setLoop which
 //  causes kSignalDoesntTurn to be set, preventing ego from attempting to face
-//  objects being clicked, just as egoEnters and sitDown do.
+//  objects being clicked, just as egoEnters and sitDown do. We fix the knitting
+//  basket by adding its obstacle polygon to the room even when returning from
+//  interrogation, which Sierra forgot to do.
 //
 // Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
 // Responsible method: rm380:init
-// Fixes bug #9760
-static const uint16 gk1GranChairFlickerSignature[] = {
+// Fixes bugs #9760, #10707
+static const uint16 gk1GranRoomInitSignature[] = {
+	0x38, SIG_SELECTOR16(setCel),       // pushi setCel
+	0x78,                               // push1
+	0x39, 0x05,                         // pushi 05
+	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
 	0x78,                               // push1
 	0x76,                               // push0 [ loop: 0 ]
 	0x38, SIG_SELECTOR16(init),         // pushi init
@@ -1973,13 +1980,17 @@ static const uint16 gk1GranChairFlickerSignature[] = {
 	0x38, SIG_UINT16(0x00af),           // pushi 00af
 	0x39, 0x75,                         // pushi 75
 	0x81, 0x00,                         // lag 0
-	0x4a, SIG_UINT16(0x001e),           // send 1e [ GKEgo: ... setLoop: 0 ... ]
+	0x4a, SIG_UINT16(0x001e),           // send 1e [ GKEgo: ... setCel: 5, setLoop: 0 ... ]
 	0x35, 0x01,                         // ldi 1
-	0xa3, 0x00,                         // sal local0
+	0xa3, 0x00,                         // sal local0 [ local0 = 1, a non-zero value indicates ego is sitting ]
 	SIG_END
 };
 
-static const uint16 gk1GranChairFlickerPatch[] = {
+static const uint16 gk1GranRoomInitPatch[] = {
+	0x39, PATCH_SELECTOR8(cel),         // pushi cel [ use cel instead of equivalent setCel to save a byte ]
+	0x78,                               // push1
+	0x39, 0x05,                         // pushi 05
+	0x38, PATCH_SELECTOR16(setLoop),    // pushi setLoop
 	0x7a,                               // push2
 	0x76,                               // push0 [ loop: 0 ]
 	0x78,                               // push1 [ 2nd param tells setLoop to set kSignalDoesntTurn ]
@@ -1990,9 +2001,9 @@ static const uint16 gk1GranChairFlickerPatch[] = {
 	0x38, PATCH_UINT16(0x00af),         // pushi 00af
 	0x39, 0x75,                         // pushi 75
 	0x81, 0x00,                         // lag 0
-	0x4a, PATCH_UINT16(0x0020),         // send 20 [ GKEgo: ... setLoop: 0 1 ... ]
-	0x78,                               // push1 [ save a byte ]
-	0xab, 0x00,                         // ssl local0
+	0xa3, 0x00,                         // sal local0 [ setting local0 to a non-zero object instead of 1 saves 2 bytes ]
+	0x4a, PATCH_UINT16(0x0020),         // send 20 [ GKEgo: ... cel: 5, setLoop: 0 1 ... ]
+	0x33, 0x87,                         // jmp -79 [ add knitting basket obstacle to room ]
 	PATCH_END
 };
 
@@ -2093,7 +2104,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   260, "fix day 5 snake attack (2/2)",                1, gk1Day5SnakeAttackSignature2,     gk1Day5SnakeAttackPatch2 },
 	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
 	{  true,   290, "fix magentia missing message",                1, gk1ShowMagentiaItemSignature,     gk1ShowMagentiaItemPatch },
-	{  true,   380, "fix ego flicker in Gran's chair",             1, gk1GranChairFlickerSignature,     gk1GranChairFlickerPatch },
+	{  true,   380, "fix Gran's room obstacles and ego flicker",   1, gk1GranRoomInitSignature,         gk1GranRoomInitPatch },
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
 	{  true,   410, "fix artist veve photocopy missing message",   1, gk1ArtistVeveCopySignature,       gk1ArtistVeveCopyPatch },
 	{  true,   420, "fix lorelei chair missing message",           1, gk1OperateLoreleiChairSignature,  gk1OperateLoreleiChairPatch },
