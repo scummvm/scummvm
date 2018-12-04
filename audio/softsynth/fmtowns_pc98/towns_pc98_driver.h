@@ -53,13 +53,14 @@ public:
 	void pause();
 	void cont();
 
-	bool looping();
-	bool musicPlaying();
+	bool looping() const;
+	bool musicPlaying() const;
 
 	void setMusicVolume(int volume);
 	void setSoundEffectVolume(int volume);
 
 private:
+	uint8 readReg(uint8 part, uint8 reg);
 	void writeReg(uint8 part, uint8 reg, uint8 val);
 	void preventRegisterWrite(bool prevent);
 
@@ -78,17 +79,9 @@ private:
 	TownsPC98_MusicChannelPCM *_rhythmChannel;
 #endif
 
-	const uint8 *_opnCarrier;
-	const uint8 *_opnFreqTable;
-	const uint8 *_opnFreqTableSSG;
-	const uint8 *_opnFxCmdLen;
-	const uint8 *_opnLvlPresets;
-
 	uint8 *_musicBuffer;
 	uint8 *_sfxBuffer;
-	uint8 *_trackPtr;
-	uint8 *_patches;
-	uint8 *_ssgPatches;
+	const uint8 *_patchData;
 
 	uint8 _updateChannelsFlag;
 	uint8 _updateSSGFlag;
@@ -109,14 +102,19 @@ private:
 	uint8 *_sfxData;
 	uint16 _sfxOffsets[2];
 
+	uint8 *_trackPtr;
 	bool _regWriteProtect;
+
 	PC98AudioCore *_pc98a;
 
 	const int _numChanFM;
 	const int _numChanSSG;
 	const int _numChanRHY;
 
-	static const uint8 _drvTables[];
+	static const uint8 _channelPreset[36];
+	static const uint8 _levelPresetFMTOWNS[24];
+	static const uint8 _levelPresetPC98[24];
+	const uint8 *_levelPresets;
 
 	bool _ready;
 };
