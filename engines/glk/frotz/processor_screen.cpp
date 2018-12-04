@@ -181,8 +181,9 @@ void Processor::z_get_cursor() {
 
 void Processor::z_print_table() {
 	zword addr = zargs[0];
-	zword x;
+	zword xs = curx;
 	int i, j;
+	zbyte c;
 
 	// Supply default arguments
 	if (zargc < 3)
@@ -191,18 +192,10 @@ void Processor::z_print_table() {
 		zargs[3] = 0;
 
 	// Write text in width x height rectangle
-	x = curx;
-
-	for (i = 0; i < zargs[2]; i++) {
-		if (i != 0) {
-			cury += 1;
-			curx = x;
-		}
+	for (i = 0; i < zargs[2]; i++, curx = xs, cury++) {
+		glk_window_move_cursor(cwin == 0 ? gos_lower : gos_upper, xs - 1, cury - 1);
 
 		for (j = 0; j < zargs[1]; j++) {
-
-			zbyte c;
-
 			LOW_BYTE(addr, c);
 			addr++;
 
@@ -330,17 +323,33 @@ void Processor::z_set_font() {
 }
 
 void Processor::z_set_cursor() {
-	cury = zargs[0];
-	curx = zargs[1];
+	int x = (int16)zargs[1], y = (int16)zargs[0];
+	assert(gos_upper);
 
-	if (gos_upper) {
-		if (cury > mach_status_ht) {
-			mach_status_ht = cury;
-			reset_status_ht();
-		}
+	flush_buffer();
 
-		glk_window_move_cursor(gos_upper, curx - 1, cury - 1);
+	if (y < 0) {
+		// Cursor on/off
+		error("TODO: Turning cursor on/off");
 	}
+
+	if (!x || !y) {
+		Point cursorPos = gos_upper->getCursor();
+		if (!x)
+			x = cursorPos.x;
+		if (!y)
+			y = cursorPos.y;
+	}
+
+	curx = x;
+	cury = y;
+
+	if (cury > mach_status_ht) {
+		mach_status_ht = cury;
+		reset_status_ht();
+	}
+
+	glk_window_move_cursor(gos_upper, curx - 1, cury - 1);
 }
 
 void Processor::z_set_text_style() {

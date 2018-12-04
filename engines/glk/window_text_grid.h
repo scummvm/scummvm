@@ -108,6 +108,11 @@ public:
 	virtual bool unputCharUni(uint32 ch) override;
 
 	/**
+	 * Get the cursor position
+	 */
+	virtual Point getCursor() const override { return Point(_curX, _curY); }
+
+	/**
 	 * Move the cursor
 	 */
 	virtual void moveCursor(const Point &newPos) override;
