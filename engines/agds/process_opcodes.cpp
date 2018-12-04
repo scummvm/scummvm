@@ -322,6 +322,12 @@ void Process::setCloneVar() {
 	push(arg3);
 }
 
+void Process::cloneName() {
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("cloneName: stub %s %s", arg1.c_str(), arg2.c_str());
+}
+
 void Process::disableUser() {
 	debug("disableUser");
 	_engine->enableUser(false);
@@ -459,10 +465,6 @@ void Process::stub173() {
 
 void Process::stub174() {
 	debug("stub174: mouse pointer mode 1?");
-}
-
-void Process::stub176() {
-	debug("stub176");
 }
 
 void Process::stub192() {
@@ -1022,7 +1024,7 @@ ProcessExitCode Process::execute() {
 			OP		(kGetRandomNumber, getRandomNumber);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
 			OP		(kAppendNameToSharedStorage, appendNameToSharedStorage);
-			OP		(kStub176, stub176);
+			OP		(kCloneName, cloneName);
 			OP		(kSetCloneVar, setCloneVar);
 			OP		(kStub152, stub152);
 			OP		(kStub153, stub153);
