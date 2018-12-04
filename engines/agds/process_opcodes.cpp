@@ -323,9 +323,11 @@ void Process::setCloneVar() {
 }
 
 void Process::cloneName() {
-	Common::String arg2 = popString();
+	int arg2 = pop();
 	Common::String arg1 = popString();
-	debug("cloneName: stub %s %s", arg1.c_str(), arg2.c_str());
+	Common::String name = Common::String::format("%s.%d", arg1.c_str(), arg2);
+	debug("cloneName: %s %d -> %s", arg1.c_str(), arg2, name.c_str());
+	push(_engine->appendToSharedStorage(name));
 }
 
 void Process::disableUser() {
