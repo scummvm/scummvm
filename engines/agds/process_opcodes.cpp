@@ -442,9 +442,10 @@ void Process::stub155() {
 }
 
 void Process::stub166() {
+	int arg3 = pop();
 	int arg2 = pop();
-	int arg1 = pop();
-	debug("stub166 %d %d", arg1, arg2);
+	Common::String arg1 = popString();
+	debug("stub166 %s %d %d", arg1.c_str(), arg2, arg3);
 }
 
 void Process::stub172() {
