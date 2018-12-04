@@ -485,7 +485,7 @@ void Process::disableMouseAreas() {
 }
 
 void Process::stub194() {
-	debug("stub194");
+	debug("stub194: mute?");
 }
 
 void Process::stub199() {
