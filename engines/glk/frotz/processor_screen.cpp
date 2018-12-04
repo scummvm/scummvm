@@ -396,9 +396,9 @@ void Processor::z_set_text_style() {
 }
 
 void Processor::z_set_window() {
-	int win = zargs[0];
+	cwin = zargs[0];
 
-	if (win == 0) {
+	if (cwin == 0) {
 		glk_set_window(gos_lower);
 		gos_curwin = gos_lower;
 	} else {
@@ -407,7 +407,7 @@ void Processor::z_set_window() {
 		gos_curwin = gos_upper;
 	}
 
-	if (win == 0)
+	if (cwin == 0)
 		enable_scripting = true;
 	else
 		enable_scripting = false;
