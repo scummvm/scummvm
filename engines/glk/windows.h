@@ -440,6 +440,11 @@ public:
 	}
 
 	/**
+	 * Get the cursor position
+	 */
+	virtual Point getCursor() const { return Point(); }
+
+	/**
 	 * Move the cursor
 	 */
 	virtual void moveCursor(const Point &newPos);
