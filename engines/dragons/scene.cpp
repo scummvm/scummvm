@@ -66,6 +66,43 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
 		if (ini->sceneId == sceneId && (ini->field_1a_flags_maybe & 1)) {
 			Actor *actor = _actorManager->loadActor(ini->actorResourceId, ini->frameIndexId_maybe, ini->x, ini->y, 0);
+
+			if (ini->frameIndexId_maybe & 0x1000) {
+				actor->frame_flags |= 0x10;
+			} else {
+				if (ini->field_1a_flags_maybe & 0x2000) {
+					actor->frame_flags |= 0x20;
+				} else {
+					actor->frame_flags &= 0xffef;
+				}
+			}
+
+			actor->_sequenceID2 = ini->field_20_actor_field_14;
+
+			if (ini->field_1a_flags_maybe & 2) {
+				actor->flags |= 0x80;
+			} else {
+				actor->flags &= 0xfeff;
+			}
+
+			if (ini->field_1a_flags_maybe & 0x20) {
+				actor->flags |= 0x100;
+			} else {
+				actor->flags &= 0xfeff;
+			}
+
+			if (ini->field_1a_flags_maybe & 4) {
+				actor->flags |= 0x8000;
+			} else {
+				actor->flags &= 0x7fff;
+			}
+
+			if (ini->field_1a_flags_maybe & 0x100) {
+				actor->flags |= 0x4000;
+			} else {
+				actor->flags &= 0xbfff;
+			}
+
 			Graphics::Surface *s = actor->getCurrentFrame();
 			int x = ini->x - actor->frame_vram_x;
 			int y = ini->y - actor->frame_vram_y;

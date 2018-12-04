@@ -1,6 +1,8 @@
 MODULE := engines/dragons
  
 MODULE_OBJS := \
+    actor.o \
+    actorresource.o \
     background.o \
     bigfile.o \
 	detection.o \
