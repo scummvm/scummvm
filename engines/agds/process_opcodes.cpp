@@ -816,6 +816,12 @@ void Process::moveCharacter(bool usermove) {
 		suspend();
 }
 
+void Process::animateCharacter() {
+	int arg2 = pop();
+	Common::String arg1 = popString();
+	debug("animateCharacter: %s %d", arg1.c_str(), arg2);
+}
+
 void Process::showCharacter() {
 	Common::String name = popString();
 	debug("showCharacter %s", name.c_str());
@@ -840,6 +846,13 @@ void Process::pointCharacter() {
 	debug("pointCharacter %s %s", arg1.c_str(), arg2.c_str());
 	suspend();
 }
+
+void Process::getCharacterAnimationPhase() {
+	Common::String name = popString();
+	debug("getCharacterAnimationPhase: stub");
+	push(100);
+}
+
 
 void Process::fogOnCharacter() {
 	int arg2 = pop();
@@ -992,6 +1005,7 @@ ProcessExitCode Process::execute() {
 			OP		(kSetNextScreenSaveInHistory, setNextScreenSaveInHistory);
 			OP		(kStub82, stub82);
 			OP		(kStub83, stub83);
+			OP		(kAnimateCharacter, animateCharacter);
 			OP		(kLoadCharacter, loadCharacter);
 			OP		(kSetObjectHeight, setObjectHeight);
 			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
@@ -1024,6 +1038,7 @@ ProcessExitCode Process::execute() {
 			OP		(kSetSystemIntegerVariable, setIntegerSystemVariable);
 			OP		(kGetRegionCenterX, getRegionCenterX);
 			OP		(kGetRegionCenterY, getRegionCenterY);
+			OP		(kGetCharacterAnimationPhase, getCharacterAnimationPhase);
 			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);
 			OP		(kGetRandomNumber, getRandomNumber);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);

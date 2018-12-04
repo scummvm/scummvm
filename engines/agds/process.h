@@ -157,6 +157,8 @@ private:
 	void leaveCharacter();
 	void setCharacter();
 	void pointCharacter();
+	void animateCharacter();
+	void getCharacterAnimationPhase();
 	void quit();
 
 	void setDialogForNextFilm();
