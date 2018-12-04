@@ -193,7 +193,7 @@ enum Opcode {
 	kStub173						= 173,
 	kStub174						= 174,
 	kAppendToSharedStorage			= 175,
-	kStub176						= 176,
+	kCloneName						= 176,
 	kAppendNameToSharedStorage		= 177,
 	kGetCloneVar					= 178,
 	kSetCloneVar					= 179,

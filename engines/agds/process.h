@@ -183,6 +183,7 @@ private:
 	void appendToSharedStorage();
 	void appendNameToSharedStorage();
 	void setCloneVar();
+	void cloneName();
 
 	void disableUser();
 	void enableUser();
@@ -214,7 +215,6 @@ private:
 	void stub172();
 	void stub173();
 	void stub174();
-	void stub176();
 	void stub184();
 	void stub190();
 	void stub192();
