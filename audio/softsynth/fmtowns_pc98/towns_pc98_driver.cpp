@@ -615,7 +615,7 @@ void TownsPC98_MusicChannelSSG::processEvents() {
 	if (_flags & CHS_EOT)
 		return;
 
-	_drv->toggleRegProtection(_flags & CHS_PROTECT ? true : false);
+	_drv->preventRegisterWrite(_flags & CHS_PROTECT ? true : false);
 
 	if (!_hold && _ticksLeft == _keyOffTime)
 		nextShape();
@@ -750,7 +750,7 @@ void TownsPC98_MusicChannelSSG::keyOn() {
 	if (!(_algorithm & 0x80))
 		_drv->writeReg(_part, 6, _algorithm & 0x7f);
 
-	uint8 e = (_drv->readSSGStatus() & c) | t;
+	uint8 e = (_drv->_pc98a->readReg(0, 7) & c) | t;
 	_drv->writeReg(_part, 7, e);
 }
 
@@ -768,7 +768,7 @@ void TownsPC98_MusicChannelSSG::restore() {
 }
 
 void TownsPC98_MusicChannelSSG::loadData(uint8 *data) {
-	_drv->toggleRegProtection(_flags & CHS_PROTECT ? true : false);
+	_drv->preventRegisterWrite(_flags & CHS_PROTECT ? true : false);
 	TownsPC98_MusicChannel::loadData(data);
 	setOutputLevel(0);
 	_algorithm = 0x80;
@@ -1017,7 +1017,7 @@ bool TownsPC98_MusicChannelPCM::control_ff_endOfTrack(uint8 para) {
 }
 #endif // DISABLE_PC98_RHYTHM_CHANNEL
 
-TownsPC98_AudioDriver::TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type) : TownsPC98_FmSynth(mixer, type),
+TownsPC98_AudioDriver::TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type) :
 	_channels(0), _ssgChannels(0), _sfxChannels(0),
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	_rhythmChannel(0),
@@ -1036,32 +1036,27 @@ TownsPC98_AudioDriver::TownsPC98_AudioDriver(Audio::Mixer *mixer, EmuType type) 
 #else
 	0x00
 #endif
-	: 0x00), _finishedRhythmFlag(0),
-	_updateSfxFlag(0), _finishedSfxFlag(0),
-
-	_musicTickCounter(0),
-
-	_musicVolume(255), _sfxVolume(255),
-
+	: 0x00),
+	_numChanFM(type == kType26 ? 3 : 6), _numChanSSG(type == kTypeTowns ? 0 : 3), _numChanRHY(type == kType86 ? 1 : 0),
+	_finishedRhythmFlag(0), _updateSfxFlag(0), _finishedSfxFlag(0),
+	_musicTickCounter(0), _regWriteProtect(false),
 	_musicPlaying(false), _sfxPlaying(false), _fading(false), _looping(0), _ready(false) {
-
 	_sfxOffsets[0] = _sfxOffsets[1] = 0;
+	_pc98a = new PC98AudioCore(mixer, this, type);
 }
 
 TownsPC98_AudioDriver::~TownsPC98_AudioDriver() {
 	_ready = false;
-	deinit();
-
-	Common::StackLock lock(_mutex);
+	delete _pc98a;
 
 	if (_channels) {
-		for (int i = 0; i < _numChan; i++)
+		for (int i = 0; i < _numChanFM; i++)
 			delete _channels[i];
 		delete[] _channels;
 	}
 
 	if (_ssgChannels) {
-		for (int i = 0; i < _numSSG; i++)
+		for (int i = 0; i < _numChanSSG; i++)
 			delete _ssgChannels[i];
 		delete[] _ssgChannels;
 	}
@@ -1084,24 +1079,25 @@ bool TownsPC98_AudioDriver::init() {
 		return true;
 	}
 
-	TownsPC98_FmSynth::init();
+	if (!_pc98a->init())
+		return false;
 
-	setVolumeChannelMasks(-1, 0);
+	_pc98a->setSoundEffectChanMask(0);
 
-	_channels = new TownsPC98_MusicChannel *[_numChan];
-	for (int i = 0; i < _numChan; i++) {
+	_channels = new TownsPC98_MusicChannel *[_numChanFM];
+	for (int i = 0; i < _numChanFM; i++) {
 		int ii = i * 6;
 		_channels[i] = new TownsPC98_MusicChannel(this, _drvTables[ii], _drvTables[ii + 1],
 		        _drvTables[ii + 2], _drvTables[ii + 3], _drvTables[ii + 4], _drvTables[ii + 5]);
 		_channels[i]->init();
 	}
 
-	if (_numSSG) {
+	if (_numChanSSG) {
 		_ssgPatches = new uint8[256];
 		memcpy(_ssgPatches, _drvTables + 156, 256);
 
-		_ssgChannels = new TownsPC98_MusicChannelSSG *[_numSSG];
-		for (int i = 0; i < _numSSG; i++) {
+		_ssgChannels = new TownsPC98_MusicChannelSSG *[_numChanSSG];
+		for (int i = 0; i < _numChanSSG; i++) {
 			int ii = i * 6;
 			_ssgChannels[i] = new TownsPC98_MusicChannelSSG(this, _drvTables[ii], _drvTables[ii + 1],
 			        _drvTables[ii + 2], _drvTables[ii + 3], _drvTables[ii + 4], _drvTables[ii + 5]);
@@ -1118,7 +1114,7 @@ bool TownsPC98_AudioDriver::init() {
 	}
 
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
-	if (_hasPercussion) {
+	if (_numChanRHY) {
 		_rhythmChannel = new TownsPC98_MusicChannelPCM(this, 0, 0, 0, 0, 0, 1);
 		_rhythmChannel->init();
 	}
@@ -1145,7 +1141,7 @@ void TownsPC98_AudioDriver::loadMusicData(uint8 *data, bool loadPaused) {
 
 	reset();
 
-	Common::StackLock lock(_mutex);
+	PC98AudioCore::MutexLock lock = _pc98a->stackLockMutex();
 	uint8 *src_a = _trackPtr = _musicBuffer = data;
 
 	for (uint8 i = 0; i < 3; i++) {
@@ -1153,24 +1149,24 @@ void TownsPC98_AudioDriver::loadMusicData(uint8 *data, bool loadPaused) {
 		src_a += 2;
 	}
 
-	for (int i = 0; i < _numSSG; i++) {
+	for (int i = 0; i < _numChanSSG; i++) {
 		_ssgChannels[i]->loadData(data + READ_LE_UINT16(src_a));
 		src_a += 2;
 	}
 
-	for (uint8 i = 3; i < _numChan; i++) {
+	for (uint8 i = 3; i < _numChanFM; i++) {
 		_channels[i]->loadData(data + READ_LE_UINT16(src_a));
 		src_a += 2;
 	}
 
-	if (_hasPercussion) {
+	if (_numChanRHY) {
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 		_rhythmChannel->loadData(data + READ_LE_UINT16(src_a));
 #endif
 		src_a += 2;
 	}
 
-	toggleRegProtection(false);
+	preventRegisterWrite(false);
 
 	_patches = src_a + 4;
 	_finishedChannelsFlag = _finishedSSGFlag = _finishedRhythmFlag = 0;
@@ -1194,7 +1190,7 @@ void TownsPC98_AudioDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
 		return;
 	}
 
-	Common::StackLock lock(_mutex);
+	PC98AudioCore::MutexLock lock = _pc98a->stackLockMutex();
 	_sfxData = _sfxBuffer = data;
 	_sfxOffsets[0] = READ_LE_UINT16(&_sfxData[(trackNum << 2)]);
 	_sfxOffsets[1] = READ_LE_UINT16(&_sfxData[(trackNum << 2) + 2]);
@@ -1203,7 +1199,7 @@ void TownsPC98_AudioDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
 }
 
 void TownsPC98_AudioDriver::reset() {
-	Common::StackLock lock(_mutex);
+	PC98AudioCore::MutexLock lock = _pc98a->stackLockMutex();
 
 	_musicPlaying = false;
 	_sfxPlaying = false;
@@ -1212,14 +1208,14 @@ void TownsPC98_AudioDriver::reset() {
 	_musicTickCounter = 0;
 	_sfxData = 0;
 
-	TownsPC98_FmSynth::reset();
+	_pc98a->reset();
 
-	for (int i = 0; i < _numChan; i++)
+	for (int i = 0; i < _numChanFM; i++)
 		_channels[i]->reset();
-	for (int i = 0; i < _numSSG; i++)
+	for (int i = 0; i < _numChanSSG; i++)
 		_ssgChannels[i]->reset();
 
-	if (_numSSG) {
+	if (_numChanSSG) {
 		for (int i = 0; i < 2; i++)
 			_sfxChannels[i]->reset();
 
@@ -1236,12 +1232,12 @@ void TownsPC98_AudioDriver::fadeStep() {
 	if (!_musicPlaying)
 		return;
 
-	for (int j = 0; j < _numChan; j++) {
+	for (int j = 0; j < _numChanFM; j++) {
 		if (_updateChannelsFlag & _channels[j]->_idFlag)
 			_channels[j]->fadeStep();
 	}
 
-	for (int j = 0; j < _numSSG; j++) {
+	for (int j = 0; j < _numChanSSG; j++) {
 		if (_updateSSGFlag & _ssgChannels[j]->_idFlag)
 			_ssgChannels[j]->fadeStep();
 	}
@@ -1249,7 +1245,7 @@ void TownsPC98_AudioDriver::fadeStep() {
 	if (!_fading) {
 		_fading = 19;
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
-		if (_hasPercussion) {
+		if (_numChanRHY) {
 			if (_updateRhythmFlag & _rhythmChannel->_idFlag)
 				_rhythmChannel->reset();
 		}
@@ -1277,13 +1273,20 @@ bool TownsPC98_AudioDriver::musicPlaying() {
 }
 
 void TownsPC98_AudioDriver::setMusicVolume(int volume) {
-	_musicVolume = volume;
-	setVolumeIntern(_musicVolume, _sfxVolume);
+	_pc98a->setMusicVolume(volume);
 }
 
 void TownsPC98_AudioDriver::setSoundEffectVolume(int volume) {
-	_sfxVolume = volume;
-	setVolumeIntern(_musicVolume, _sfxVolume);
+	_pc98a->setSoundEffectVolume(volume);
+}
+
+void TownsPC98_AudioDriver::writeReg(uint8 part, uint8 reg, uint8 val) {
+	if (!_regWriteProtect)
+		_pc98a->writeReg(part, reg, val);
+}
+
+void TownsPC98_AudioDriver::preventRegisterWrite(bool prevent) {
+	_regWriteProtect = prevent;
 }
 
 void TownsPC98_AudioDriver::timerCallbackA() {
@@ -1307,7 +1310,7 @@ void TownsPC98_AudioDriver::timerCallbackA() {
 	if (_updateSfxFlag && _finishedSfxFlag == _updateSfxFlag) {
 		_sfxPlaying = false;
 		_updateSfxFlag = 0;
-		setVolumeChannelMasks(-1, 0);
+		_pc98a->setSoundEffectChanMask(0);
 	}
 }
 
@@ -1317,14 +1320,14 @@ void TownsPC98_AudioDriver::timerCallbackB() {
 	if (_musicPlaying) {
 		_musicTickCounter++;
 
-		for (int i = 0; i < _numChan; i++) {
+		for (int i = 0; i < _numChanFM; i++) {
 			if (_updateChannelsFlag & _channels[i]->_idFlag) {
 				_channels[i]->processEvents();
 				_channels[i]->processFrequency();
 			}
 		}
 
-		for (int i = 0; i < _numSSG; i++) {
+		for (int i = 0; i < _numChanSSG; i++) {
 			if (_updateSSGFlag & _ssgChannels[i]->_idFlag) {
 				_ssgChannels[i]->processEvents();
 				_ssgChannels[i]->processFrequency();
@@ -1332,13 +1335,13 @@ void TownsPC98_AudioDriver::timerCallbackB() {
 		}
 
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
-		if (_hasPercussion)
+		if (_numChanRHY)
 			if (_updateRhythmFlag & _rhythmChannel->_idFlag)
 				_rhythmChannel->processEvents();
 #endif
 	}
 
-	toggleRegProtection(false);
+	preventRegisterWrite(false);
 
 	if (_finishedChannelsFlag == _updateChannelsFlag && _finishedSSGFlag == _updateSSGFlag && _finishedRhythmFlag == _updateRhythmFlag)
 		_musicPlaying = false;
@@ -1353,14 +1356,14 @@ void TownsPC98_AudioDriver::startSoundEffect() {
 			_sfxChannels[i]->reset();
 			_sfxChannels[i]->loadData(_sfxData + _sfxOffsets[i]);
 			_updateSfxFlag |= _sfxChannels[i]->_idFlag;
-			volFlags |= (_sfxChannels[i]->_idFlag << _numChan);
+			volFlags |= (_sfxChannels[i]->_idFlag << _numChanFM);
 		} else {
 			_ssgChannels[i + 1]->restore();
 			_updateSfxFlag &= ~_sfxChannels[i]->_idFlag;
 		}
 	}
 
-	setVolumeChannelMasks(~volFlags, volFlags);
+	_pc98a->setSoundEffectChanMask(volFlags);
 	_sfxData = 0;
 }
 

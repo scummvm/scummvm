@@ -23,7 +23,7 @@
 #ifndef TOWNS_PC98_AUDIODRIVER_H
 #define TOWNS_PC98_AUDIODRIVER_H
 
-#include "audio/softsynth/fmtowns_pc98/towns_pc98_fmsynth.h"
+#include "audio/softsynth/fmtowns_pc98/pc98_audio.h"
 
 class TownsPC98_MusicChannel;
 class TownsPC98_MusicChannelSSG;
@@ -32,7 +32,7 @@ class TownsPC98_SfxChannel;
 class TownsPC98_MusicChannelPCM;
 #endif
 
-class TownsPC98_AudioDriver : public TownsPC98_FmSynth {
+class TownsPC98_AudioDriver : public PC98AudioPluginDriver {
 friend class TownsPC98_MusicChannel;
 friend class TownsPC98_MusicChannelSSG;
 friend class TownsPC98_SfxChannel;
@@ -60,6 +60,9 @@ public:
 	void setSoundEffectVolume(int volume);
 
 private:
+	void writeReg(uint8 part, uint8 reg, uint8 val);
+	void preventRegisterWrite(bool prevent);
+
 	void timerCallbackA();
 	void timerCallbackB();
 
@@ -106,8 +109,12 @@ private:
 	uint8 *_sfxData;
 	uint16 _sfxOffsets[2];
 
-	uint16 _musicVolume;
-	uint16 _sfxVolume;
+	bool _regWriteProtect;
+	PC98AudioCore *_pc98a;
+
+	const int _numChanFM;
+	const int _numChanSSG;
+	const int _numChanRHY;
 
 	static const uint8 _drvTables[];
 
