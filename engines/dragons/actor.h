@@ -52,11 +52,11 @@ public:
 	uint16 _sequenceID;
 	uint16 _sequenceID2;
 	uint16 field16;
-	uint16 field_18_flags_maybe;
+	uint16 flags;
 	int16 x_pos;
 	int16 y_pos;
-	uint16 target_x_pos;
-	uint16 target_y_pos;
+	int16 target_x_pos;
+	int16 target_y_pos;
 	uint32 field_24;
 	uint32 field_28;
 	uint32 field_2c;
@@ -76,7 +76,7 @@ public:
 	uint16 clut;
 public:
 
-	Actor(ActorResourceLoader *actorResourceLoader, uint32 resourceID, int16 x, int16 y, uint16 sequenceID);
+	Actor(ActorResourceLoader *actorResourceLoader, uint32 resourceID, int16 x, int16 y, uint32 sequenceID);
 	Graphics::Surface *getCurrentFrame();
 	void updateSequence(uint16 newSequenceID);
 };

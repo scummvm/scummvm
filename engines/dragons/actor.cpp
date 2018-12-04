@@ -30,11 +30,23 @@ ActorManager::ActorManager(ActorResourceLoader *actorResourceLoader) : _actorRes
 Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y, uint16 field16) {
 	debug("Load actor: resourceId: %d, SequenceId: %d, position: (%d,%d) field16: %d", resourceId, sequenceId, x, y, field16);
 	//ActorResource *resource = _actorResourceLoader->load(resourceId);
-	return new Actor(_actorResourceLoader, resourceId, x, y, sequenceId);
+	Actor *actor = new Actor(_actorResourceLoader, resourceId, x, y, sequenceId);
+	return actor;
 }
 
-Actor::Actor(ActorResourceLoader *actorResourceLoader, uint32 resourceID, int16 x, int16 y, uint16 sequenceID): _actorResourceLoader(actorResourceLoader), resourceID(resourceID), x_pos(x), y_pos(y), _sequenceID(sequenceID) {
+Actor::Actor(ActorResourceLoader *actorResourceLoader, uint32 resourceID, int16 x, int16 y, uint32 sequenceID): _actorResourceLoader(actorResourceLoader), resourceID(resourceID), x_pos(x), y_pos(y) {
 	frameIndex_maybe = 0;
+	target_x_pos = x;
+	target_y_pos = y;
+	var_e = 0x100;
+	_sequenceID2 = 0;
+	flags = (0x40 | 4);
+	frame_width = 0;
+	frame_height = 0;
+	frame_flags = 4;
+	//TODO sub_80017010();
+
+	updateSequence((uint16)sequenceID);
 }
 
 Graphics::Surface *Actor::getCurrentFrame() {
@@ -46,8 +58,8 @@ Graphics::Surface *Actor::getCurrentFrame() {
 
 void Actor::updateSequence(uint16 newSequenceID) {
 	_sequenceID = newSequenceID;
-	field_18_flags_maybe &= 0xfbf1;
-	field_18_flags_maybe |= 1;
+	flags &= 0xfbf1;
+	flags |= 1;
 }
 
 } // End of namespace Dragons
