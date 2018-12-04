@@ -151,7 +151,7 @@ private:
 	void getObjectPictureHeight();
 	void loadCharacter();
 	void enableCharacter();
-	void moveCharacter();
+	void moveCharacter(bool usermove);
 	void showCharacter();
 	void fogOnCharacter();
 	void leaveCharacter();

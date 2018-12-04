@@ -807,11 +807,11 @@ void Process::enableCharacter() {
 	debug("enableCharacter %s", name.c_str());
 }
 
-void Process::moveCharacter() {
+void Process::moveCharacter(bool usermove) {
 	int arg3 = pop();
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
-	debug("moveCharacter %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
+	debug("moveCharacter %s %s %d, usermove: %d", arg1.c_str(), arg2.c_str(), arg3, usermove);
 	if (_status == kStatusPassive)
 		suspend();
 }
@@ -899,6 +899,9 @@ void Process::stub235() {
 #define OP(NAME, METHOD) \
 	case NAME: METHOD (); break
 
+#define OP_I(NAME, METHOD, IMM) \
+	case NAME: { METHOD (IMM); } break
+
 #define OP_C(NAME, METHOD) \
 	case NAME: { int8 arg = next(); METHOD (arg); } break
 
@@ -974,7 +977,7 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadAnimationFromObject, loadAnimationFromObject);
 			OP		(kShowCharacter, showCharacter);
 			OP		(kEnableCharacter, enableCharacter);
-			OP		(kMoveCharacter, moveCharacter);
+			OP_I	(kMoveCharacterUserMove, moveCharacter, true);
 			OP		(kLeaveCharacter, leaveCharacter);
 			OP		(kSetCharacter, setCharacter);
 			OP		(kPointCharacter, pointCharacter);
@@ -1073,6 +1076,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub200, stub200);
 			OP		(kModifyMouseArea, modifyMouseArea);
 			OP_U	(kStub209, stub209);
+			OP_I	(kMoveCharacterNoUserMove, moveCharacter, false);
 			OP_U	(kOnKey, onKey);
 			OP		(kGetSampleVolume, getSampleVolume);
 			OP		(kStub233, stub233);
