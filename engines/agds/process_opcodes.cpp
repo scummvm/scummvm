@@ -812,7 +812,8 @@ void Process::moveCharacter() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 	debug("moveCharacter %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
-	suspend();
+	if (_status == kStatusPassive)
+		suspend();
 }
 
 void Process::showCharacter() {
