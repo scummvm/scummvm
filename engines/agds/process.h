@@ -122,6 +122,7 @@ private:
 	void loadFont();
 	void removeScreenObject();
 	void changeScreenPatch();
+	void setObjectHeight();
 	void setScreenHeight();
 	void updateScreenHeightToDisplay();
 	void addMouseArea();
@@ -195,7 +196,6 @@ private:
 	void onScreenBD(unsigned size);
 
 	void stub63(unsigned size);
-	void stub74();
 	void stub82();
 	void stub83();
 	void stub119();

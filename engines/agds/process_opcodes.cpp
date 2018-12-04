@@ -360,10 +360,10 @@ void Process::stub63(unsigned size) {
 	_ip += size;
 }
 
-void Process::stub74() {
+void Process::setScreenHeight() {
 	int arg2 = pop();
 	int arg1 = pop();
-	debug("stub74: %d %d", arg1, arg2);
+	debug("setScreenHeight: %d %d", arg1, arg2);
 }
 
 void Process::stub82() {
@@ -728,9 +728,9 @@ void Process::enableInventory() {
 	debug("enableInventory");
 }
 
-void Process::setScreenHeight() {
+void Process::setObjectHeight() {
 	int height = pop();
-	debug("setScreenHeight %d", height);
+	debug("setObjectHeight %d", height);
 }
 
 void Process::updateScreenHeightToDisplay() {
@@ -990,10 +990,10 @@ ProcessExitCode Process::execute() {
 			OP		(kStub82, stub82);
 			OP		(kStub83, stub83);
 			OP		(kLoadCharacter, loadCharacter);
-			OP		(kSetScreenHeight, setScreenHeight);
+			OP		(kSetObjectHeight, setObjectHeight);
 			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
 			OP		(kLoadTextFromObject, loadTextFromObject);
-			OP		(kStub74, stub74);
+			OP		(kScreenSetHeight, setScreenHeight);
 			OP		(kScreenLoadObject, loadScreenObject);
 			OP		(kScreenLoadRegion, loadScreenRegion);
 			OP		(kScreenCloneObject, cloneObject);
