@@ -196,6 +196,7 @@ private:
 	void getCloneVar();
 	void setCloneVar();
 	void cloneName();
+	void setDelay();
 
 	void disableUser();
 	void enableUser();
@@ -212,8 +213,8 @@ private:
 	void stub119();
 	void stub128();
 	void stub129();
-	void stub130();
-	void stub131();
+	void setCycles();
+	void setRandom();
 	void stub133();
 	void stub136();
 	void stub137();
