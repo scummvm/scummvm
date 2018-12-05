@@ -8288,9 +8288,10 @@ static const uint16 qfg4ConditionalVoidPatch[] = {
 	PATCH_END
 };
 
-// The copy protection in floppy versions has a script bug which uses disposed
-//  objects and crashes our interpreter. This appears to work in Sierra's
-//  interpreter although they fixed the script bug in the CD version.
+// The copy protection in floppy versions has a script bug which attempts to add
+//  views with no planes to the screen. Our interpreter does not allow this and
+//  treats it as an error. This appears to work in Sierra's interpreter, which
+//  presumably ignores it, although the script bug was fixed in the CD version.
 //
 // When asking Dr. Cranium in room 370 about certain potions the game switches
 //  to a copy protection screen and then back to the conversation. Before the
@@ -8298,7 +8299,7 @@ static const uint16 qfg4ConditionalVoidPatch[] = {
 //  craniumBrow. Disposing these views clears their planes. After returning from
 //  the protection screen craniumTalker:showAgain is called even though it has
 //  been disposed. This causes kAddScreenItem to be called on views without
-//  planes, which is currently an error in our interpreter.
+//  planes, which is treated as an error by our interpreter.
 //
 // We work around this by reinitializing craniumTalker after the copy protection
 //  so that showAgain can be safely called. craniumTalker is reinitialized when
