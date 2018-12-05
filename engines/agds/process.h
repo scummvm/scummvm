@@ -238,6 +238,7 @@ private:
 	void stub221();
 	void stub223();
 	void stub225();
+	void stub231();
 	void stub233();
 	void stub235();
 	void debug(const char *str, ...);
