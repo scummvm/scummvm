@@ -192,6 +192,8 @@ private:
 
 	void appendToSharedStorage();
 	void appendNameToSharedStorage();
+	Common::String getCloneVarName(const Common::String & arg1, const Common::String & arg2);
+	void getCloneVar();
 	void setCloneVar();
 	void cloneName();
 
