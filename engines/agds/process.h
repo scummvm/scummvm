@@ -183,6 +183,13 @@ private:
 	void decrementGlobalByTop() { decrementGlobal(top()); }
 	void multiplyGlobalByTop();
 	void divideGlobalByTop();
+	void modGlobalByTop();
+	void shlGlobalByTop();
+	void shrGlobalByTop();
+	void andGlobalByTop();
+	void orGlobalByTop();
+	void xorGlobalByTop();
+
 	void appendToSharedStorage();
 	void appendNameToSharedStorage();
 	void setCloneVar();
