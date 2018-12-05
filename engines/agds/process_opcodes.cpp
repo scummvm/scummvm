@@ -341,11 +341,7 @@ void Process::appendNameToSharedStorage() {
 	push(index);
 }
 
-void Process::setCloneVar() {
-	int arg3 = pop();
-	Common::String arg2 = popString();
-	Common::String arg1 = popString();
-	debug("setCloneVar %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
+Common::String Process::getCloneVarName(const Common::String & arg1, const Common::String & arg2) {
 	bool isNumeric = false;
 	size_t prefixLength;
 	{
@@ -365,6 +361,24 @@ void Process::setCloneVar() {
 	} else {
 		name = arg1 + "." + arg2;
 	}
+	return name;
+}
+
+void Process::getCloneVar() {
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("getCloneVar %s %s", arg1.c_str(), arg2.c_str());
+	Common::String name = getCloneVarName(arg1, arg2);
+	debug("global name for clone: %s", name.c_str());
+	push(_engine->getGlobal(name));
+}
+
+void Process::setCloneVar() {
+	int arg3 = pop();
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("setCloneVar %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
+	Common::String name = getCloneVarName(arg1, arg2);
 	debug("global name for clone: %s", name.c_str());
 	_engine->setGlobal(name, arg3);
 	push(arg3);
@@ -1106,6 +1120,7 @@ ProcessExitCode Process::execute() {
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
 			OP		(kAppendNameToSharedStorage, appendNameToSharedStorage);
 			OP		(kCloneName, cloneName);
+			OP		(kGetCloneVar, getCloneVar);
 			OP		(kSetCloneVar, setCloneVar);
 			OP		(kStub152, stub152);
 			OP		(kStub153, stub153);
