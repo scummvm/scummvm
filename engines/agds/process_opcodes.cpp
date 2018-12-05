@@ -431,6 +431,21 @@ void Process::setScreenHeight() {
 	debug("setScreenHeight: %d %d", arg1, arg2);
 }
 
+void Process::setDelay() {
+	int delay = pop();
+	debug("setDelay stub %d", delay);
+}
+
+void Process::setCycles() {
+	int value = pop();
+	debug("setCycles stub %d", value);
+}
+
+void Process::setRandom() {
+	int value = pop();
+	debug("setRandom stub %d", value);
+}
+
 void Process::stub82() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
@@ -457,15 +472,6 @@ void Process::stub129() {
 	debug("stub129 %d animation duration?", value);
 }
 
-void Process::stub130() {
-	int value = pop();
-	debug("stub130 %d sample loops?", value);
-}
-
-void Process::stub131() {
-	int value = pop();
-	debug("stub130 %d random sample?", value);
-}
 void Process::stub133() {
 	int pan = pop();
 	int volume = pop();
@@ -1116,8 +1122,8 @@ ProcessExitCode Process::execute() {
 			OP		(kSetTimer, setTimer);
 			OP		(kProcessCleanupStub128, stub128);
 			OP		(kStub129, stub129);
-			OP		(kStub130, stub130);
-			OP		(kStub131, stub131);
+			OP		(kSetCycles, setCycles);
+			OP		(kSetRandom, setRandom);
 			OP		(kStub133, stub133);
 			OP		(kSetAnimationPosition, setAnimationPosition);
 			OP		(kResetPhaseVar, resetPhaseVar);
@@ -1143,6 +1149,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub154, stub154);
 			OP		(kStub155, stub155);
 			OP		(kStub166, stub166);
+			OP		(kSetDelay, setDelay);
 			OP		(kStub172, stub172);
 			OP		(kStub173, stub173);
 			OP		(kStub174, stub174);
