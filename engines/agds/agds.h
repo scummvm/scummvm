@@ -51,6 +51,7 @@ namespace Graphics { struct TransparentSurface; }
 namespace AGDS {
 
 class Animation;
+class Character;
 class Font;
 class Object;
 class Process;
@@ -143,6 +144,9 @@ public:
 	Font *getFont(int id) const;
 
 	Animation * loadAnimation(const Common::String &name);
+	Character * loadCharacter(const Common::String &name);
+	Character * getCharacter(const Common::String &name) const;
+
 	void loadDefaultMouseCursor(const Common::String &name) {
 		_defaultMouseCursor = loadAnimation(name);
 	}
@@ -161,6 +165,7 @@ private:
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
 	typedef Common::HashMap<Common::String, Animation *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> AnimationsType;
+	typedef Common::HashMap<Common::String, Character *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CharactersType;
 	typedef Common::HashMap<int, Font *> FontsType;
 
 	const ADGameDescription *	_gameDescription;
@@ -173,6 +178,7 @@ private:
 	ObjectsType					_objects;
 	RegionsType					_regions;
 	AnimationsType				_animations;
+	CharactersType				_characters;
 	ProcessListType				_processes;
 	int							_sharedStorageIndex;
 	Common::String				_sharedStorage[10];

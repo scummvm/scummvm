@@ -22,6 +22,7 @@
 
 #include "agds/process.h"
 #include "agds/agds.h"
+#include "agds/character.h"
 #include "agds/opcode.h"
 #include "agds/region.h"
 #include "agds/screen.h"
@@ -862,13 +863,19 @@ void Process::addMouseArea() {
 void Process::loadCharacter() {
 	Common::String arg3 = popString();
 	Common::String arg2 = popString();
-	Common::String arg1 = popString();
-	debug("loadCharacter %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
+	Common::String name = popString();
+	debug("loadCharacter %s %s %s", name.c_str(), arg2.c_str(), arg3.c_str());
+	_engine->loadCharacter(name);
 }
 
 void Process::enableCharacter() {
 	Common::String name = popString();
 	debug("enableCharacter %s", name.c_str());
+	Character *character = _engine->getCharacter(name);
+	if (character)
+		character->enable();
+	else
+		warning("character %s could not be found", name.c_str());
 }
 
 void Process::moveCharacter(bool usermove) {
@@ -882,8 +889,14 @@ void Process::moveCharacter(bool usermove) {
 
 void Process::animateCharacter() {
 	int arg2 = pop();
-	Common::String arg1 = popString();
-	debug("animateCharacter: %s %d", arg1.c_str(), arg2);
+	Common::String name = popString();
+	debug("animateCharacter: stub %s %d", name.c_str(), arg2);
+
+	Character *character = _engine->getCharacter(name);
+	if (character)
+		character->animate(arg2);
+	else
+		warning("character %s could not be found", name.c_str());
 }
 
 void Process::showCharacter() {
@@ -913,8 +926,11 @@ void Process::pointCharacter() {
 
 void Process::getCharacterAnimationPhase() {
 	Common::String name = popString();
-	debug("getCharacterAnimationPhase: stub");
-	push(100);
+	debug("getCharacterAnimationPhase: stub %s", name.c_str());
+	Character *character = _engine->getCharacter(name);
+	int phase = character? character->getPhase(): -1;
+	debug("animation phase = %d", phase);
+	push(phase);
 }
 
 
