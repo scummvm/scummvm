@@ -22,6 +22,7 @@
 
 #include "agds/agds.h"
 #include "agds/animation.h"
+#include "agds/character.h"
 #include "agds/font.h"
 #include "agds/mjpgPlayer.h"
 #include "agds/object.h"
@@ -417,6 +418,9 @@ Common::Error AGDSEngine::run() {
 			mouseCursor->paint(*this, *backbuffer, _mouse);
 		}
 
+		for(CharactersType::iterator i = _characters.begin(); i != _characters.end(); ++i)
+			i->_value->paint(*this, *backbuffer);
+
 		_system->unlockScreen();
 		_system->updateScreen();
 
@@ -481,6 +485,26 @@ Animation * AGDSEngine::loadAnimation(const Common::String &name) {
 		error("could not load animation from %s", name.c_str());
 	_animations[name] = animation;
 	return animation;
+}
+
+Character * AGDSEngine::loadCharacter(const Common::String &name) {
+	CharactersType::iterator i = _characters.find(name);
+	if (i != _characters.end())
+		return i->_value;
+
+//	Common::SeekableReadStream *stream = _resourceManager.getResource(name);
+//	if (!stream)
+//		error("could not load character from %s", name.c_str());
+	Character *character = new Character();
+//	if (!character->load(stream))
+//		error("could not load character from %s", name.c_str());
+	_characters[name] = character;
+	return character;
+}
+
+Character * AGDSEngine::getCharacter(const Common::String &name) const {
+	CharactersType::const_iterator i = _characters.find(name);
+	return i != _characters.end() ? i->_value: NULL;
 }
 
 Graphics::TransparentSurface * AGDSEngine::loadPicture(const Common::String &name)
