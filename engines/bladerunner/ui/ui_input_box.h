@@ -37,8 +37,7 @@ class UIInputBox : public UIComponent {
 	bool                 _isVisible;
 	Common::Rect         _rect;
 
-	int                  _maxLength;
-	int                  _length;
+	uint                 _maxLength;
 	Common::String       _text;
 
 	bool                 _cursorIsVisible;
@@ -48,7 +47,7 @@ class UIInputBox : public UIComponent {
 public:
 	UIInputBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int maxLength, const Common::String &text);
 
-	void draw(Graphics::Surface &surface);
+	void draw(Graphics::Surface &surface) override;
 
 	void setText(const Common::String &text);
 	const Common::String &getText();
@@ -56,7 +55,8 @@ public:
 	void show();
 	void hide();
 
-	void handleKeyUp(const Common::KeyState &kbd);
+	void handleKeyUp(const Common::KeyState &kbd) override;
+	void handleKeyDown(const Common::KeyState &kbd) override;
 
 private:
 	bool charIsValid(const Common::KeyState &kbd);

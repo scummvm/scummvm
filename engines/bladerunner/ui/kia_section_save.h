@@ -25,13 +25,72 @@
 
 #include "bladerunner/ui/kia_section_base.h"
 
+#include "common/scummsys.h"
+#include "common/str.h"
+
+#include "engines/savestate.h"
+
+namespace Graphics {
+struct Surface;
+}
+
 namespace BladeRunner {
 
+class UIContainer;
+class UIScrollBox;
+class UIInputBox;
+class UIImagePicker;
+
 class KIASectionSave : public KIASectionBase {
+	enum State {
+		kStateNormal    = 0,
+		kStateOverwrite = 1,
+		kStateDelete    = 2
+	};
+
+	UIContainer   *_uiContainer;
+	UIScrollBox   *_scrollBox;
+	UIInputBox    *_inputBox;
+	UIImagePicker *_buttons;
+
+	uint32        _timeLast;
+	uint32        _timeLeft;
+
+	SaveStateList _saveList;
+
+	State         _state;
+
+	int           _mouseX;
+	int           _mouseY;
+
+	int           _hoveredLineId;
+	int           _selectedLineId;
+	int           _newSaveLineId;
 
 public:
-	KIASectionSave(BladeRunnerEngine *vm): KIASectionBase(vm){}
+	KIASectionSave(BladeRunnerEngine *vm);
+	~KIASectionSave();
 
+	void open() override;
+	void close() override;
+
+	void draw(Graphics::Surface &surface) override;
+
+	void handleKeyUp(const Common::KeyState &kbd) override;
+	void handleKeyDown(const Common::KeyState &kbd) override;
+	void handleMouseMove(int mouseX, int mouseY) override;
+	void handleMouseDown(bool mainButton) override;
+	void handleMouseUp(bool mainButton) override;
+
+private:
+	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);
+	static void inputBoxCallback(void *callbackData, void *source);
+
+	static void onButtonPressed(int buttonId, void *callbackData);
+
+	void changeState(State state);
+	void save();
+	void deleteSave();
 };
 
 } // End of namespace BladeRunner

@@ -28,6 +28,8 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
+#include "engines/savestate.h"
+
 namespace Graphics {
 struct Surface;
 }
@@ -38,33 +40,31 @@ class UIContainer;
 class UIScrollBox;
 
 class KIASectionLoad : public KIASectionBase {
+	UIContainer  *_uiContainer;
+	UIScrollBox  *_scrollBox;
 
-	struct Save {
-		Common::String name;
-		int slotNum;
-	};
+	uint32        _timeLast;
+	uint32        _timeLeft;
 
-	UIContainer *_uiContainer;
-	UIScrollBox *_scrollBox;
+	SaveStateList _saveList;
 
-	uint32       _timeLast;
-	uint32       _timeLeft;
-
-	int          _hoveredSaveSlot;
-	int          _saveSlotMax;
+	int           _hoveredLineId;
+	int           _newGameEasyLineId;
+	int           _newGameMediumLineId;
+	int           _newGameHardLineId;
 
 public:
 	KIASectionLoad(BladeRunnerEngine *vm);
 	~KIASectionLoad();
 
-	void open();
-	void close();
+	void open() override;
+	void close() override;
 
-	void draw(Graphics::Surface &surface);
+	void draw(Graphics::Surface &surface) override;
 
-	void handleMouseMove(int mouseX, int mouseY);
-	void handleMouseDown(bool mainButton);
-	void handleMouseUp(bool mainButton);
+	void handleMouseMove(int mouseX, int mouseY) override;
+	void handleMouseDown(bool mainButton) override;
+	void handleMouseUp(bool mainButton) override;
 
 private:
 	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);

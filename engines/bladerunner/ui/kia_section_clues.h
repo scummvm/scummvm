@@ -45,10 +45,10 @@ class KIASectionClues : public KIASectionBase {
 		int flags;
 	};
 
-	UIContainer         *_uiContainer;
-	UIImagePicker       *_buttons;
-	UIScrollBox         *_cluesScrollBox;
-	UIScrollBox         *_filterScrollBox;
+	UIContainer        *_uiContainer;
+	UIImagePicker      *_buttons;
+	UIScrollBox        *_cluesScrollBox;
+	UIScrollBox        *_filterScrollBox;
 
 	bool                _isOpen;
 	bool                _debugIntangible;

@@ -115,14 +115,15 @@ class KIA {
 
 	int                   _pogoPos;
 
-	Graphics::Surface     _thumbnail;
 
 public:
-	bool        _forceOpen;
+	bool              _forceOpen;
 
-	KIALog     *_log;
-	KIAScript  *_script;
-	KIAShapes  *_shapes;
+	KIALog           *_log;
+	KIAScript        *_script;
+	KIAShapes        *_shapes;
+
+	Graphics::Surface _thumbnail;
 
 public:
 	KIA(BladeRunnerEngine *vm);

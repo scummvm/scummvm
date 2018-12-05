@@ -95,8 +95,7 @@ int BladeRunnerMetaEngine::getMaximumSaveSlot() const {
 }
 
 void BladeRunnerMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+	BladeRunner::SaveFileManager::remove(target, slot);
 }
 
 SaveStateDescriptor BladeRunnerMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
