@@ -280,6 +280,54 @@ void Process::divideGlobalByTop() {
 	_engine->setGlobal(name, value / div);
 }
 
+void Process::modGlobalByTop() {
+	Common::String name = popString();
+	int div = top();
+	int value = _engine->getGlobal(name);
+	debug("mod global %s %d by %d", name.c_str(), value, div);
+	_engine->setGlobal(name, value % div);
+}
+
+void Process::shlGlobalByTop() {
+	Common::String name = popString();
+	int bits = top();
+	int value = _engine->getGlobal(name);
+	debug("shift global left %s %d by %d", name.c_str(), value, bits);
+	_engine->setGlobal(name, value << bits);
+}
+
+void Process::shrGlobalByTop() {
+	Common::String name = popString();
+	int bits = top();
+	int value = _engine->getGlobal(name);
+	debug("shift global right %s %d by %d", name.c_str(), value, bits);
+	_engine->setGlobal(name, value >> bits);
+}
+
+void Process::andGlobalByTop() {
+	Common::String name = popString();
+	int arg = top();
+	int value = _engine->getGlobal(name);
+	debug("and global %s %d by %d", name.c_str(), value, arg);
+	_engine->setGlobal(name, value & arg);
+}
+
+void Process::orGlobalByTop() {
+	Common::String name = popString();
+	int arg = top();
+	int value = _engine->getGlobal(name);
+	debug("or global %s %d by %d", name.c_str(), value, arg);
+	_engine->setGlobal(name, value | arg);
+}
+
+void Process::xorGlobalByTop() {
+	Common::String name = popString();
+	int arg = top();
+	int value = _engine->getGlobal(name);
+	debug("xor global %s %d by %d", name.c_str(), value, arg);
+	_engine->setGlobal(name, value ^ arg);
+}
+
 void Process::appendToSharedStorage() {
 	Common::String value = popString();
 	int index = _engine->appendToSharedStorage(value);
@@ -962,6 +1010,12 @@ ProcessExitCode Process::execute() {
 			OP		(kDecrementGlobalByTop, decrementGlobalByTop);
 			OP		(kMultiplyGlobalByTop, multiplyGlobalByTop);
 			OP		(kDivideGlobalByTop, divideGlobalByTop);
+			OP		(kModGlobalByTop, modGlobalByTop);
+			OP		(kShlGlobalByTop, shlGlobalByTop);
+			OP		(kShrGlobalByTop, shrGlobalByTop);
+			OP		(kAndGlobalByTop, andGlobalByTop);
+			OP		(kOrGlobalByTop, orGlobalByTop);
+			OP		(kXorGlobalByTop, xorGlobalByTop);
 			OP		(kEquals, equals);
 			OP		(kNotEquals, notEquals);
 			OP		(kGreater, greater);
