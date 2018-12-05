@@ -26,9 +26,10 @@
 #include "common/textconsole.h"
 
 EuphonyPlayer::EuphonyPlayer(Audio::Mixer *mixer) : _partConfig_enable(0), _partConfig_type(0), _partConfig_ordr(0), _partConfig_volume(0),
-	_partConfig_transpose(0), _musicPos(0), _musicStart(0), _playing(false), _savedEventsChain(0),
-	_tempoControlMode(0), _timerSetting(0), _tempoMode1PulseCounter(0), _parseToBar(0), _tempoMode1UpdateF8(0), _loop(false),
-	_endOfTrack(false), _paused(false), _musicTrackSize(0) {
+	_partConfig_transpose(0), _musicPos(0), _musicStart(0), _playing(false), _savedEventsChain(0), _tempoModifier(0), _bar(0),
+	_beat(0), _defaultBarLength(0), _barLength(0), _playerUpdatesLeft(0), _updatesPerPulseRemainder(0),	_updatesPerPulse(0),
+	_deltaTicks(0), _defaultTempo(0), _trackTempo(0), _tempoControlMode(0), _timerSetting(0), _tempoMode1PulseCounter(0),
+	_parseToBar(0), _tempoMode1UpdateF8(0), _loop(false), _endOfTrack(false), _paused(false), _musicTrackSize(0) {
 	_drivers[0] = _eupDriver = new EuphonyDriver(mixer, this);
 	_drivers[1] = new Type0Driver(this);
 	_drivers[2] = 0;
