@@ -38,13 +38,16 @@ void Screen::add(Object *object) {
 	_children.push_back(object);
 }
 
-void Screen::remove(const Common::String &name) {
+bool Screen::remove(const Common::String &name) {
+	bool found = false;
 	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ) {
-		if ((*i)->getName() == name)
+		if ((*i)->getName() == name) {
 			i = _children.erase(i);
-		else
+			found = true;
+		} else
 			++i;
 	}
+	return found;
 }
 
 

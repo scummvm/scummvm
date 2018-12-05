@@ -115,7 +115,7 @@ public:
 	}
 
 	void add(Object *object);
-	void remove(const Common::String & name);
+	bool remove(const Common::String & name);
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer);
 	Object *find(Common::Point pos) const;
 	KeyHandler findKeyHandler(const Common::String &keyName);

@@ -183,8 +183,10 @@ void Process::removeScreenObject() {
 	Common::String name = popString();
 	debug("removeScreenObject: %s", name.c_str());
 	Screen *screen = _engine->getCurrentScreen();
-	if (screen)
-		screen->remove(name);
+	if (screen) {
+		if (!screen->remove(name))
+			warning("removeScreenObject: object %s not found", name.c_str());
+	}
 }
 
 void Process::loadFont() {
