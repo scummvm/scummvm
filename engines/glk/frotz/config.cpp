@@ -96,9 +96,6 @@ void Header::loadHeader(Common::SeekableReadStream &f) {
 	if (h_version < V1 || h_version > V8)
 		error("Unknown Z-code version");
 
-	if (h_version == V6)
-		error("Cannot play Z-code version 6");
-
 	if (h_version == V3 && (h_config & CONFIG_BYTE_SWAPPED))
 		error("Byte swapped story file");
 

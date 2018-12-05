@@ -104,10 +104,10 @@ Opcode Processor::ext_opcodes[64] = {
 	&Processor::z_log_shift,
 	&Processor::z_art_shift,
 	&Processor::z_set_font,
-	&Processor::__illegal__,		// glkify - Processor::z_draw_picture,
-	&Processor::__illegal__,		// glkify - Processor::z_picture_data,
-	&Processor::__illegal__,		// glkify - Processor::z_erase_picture,
-	&Processor::__illegal__,		// glkify - Processor::z_set_margins,
+	&Processor::z_draw_picture,
+	&Processor::z_picture_data,
+	&Processor::z_erase_picture,
+	&Processor::z_set_margins,
 	&Processor::z_save_undo,
 	&Processor::z_restore_undo,
 	&Processor::z_print_unicode,
@@ -115,20 +115,20 @@ Opcode Processor::ext_opcodes[64] = {
 	&Processor::z_set_true_colour,	// spec 1.1
 	&Processor::__illegal__,
 	&Processor::__illegal__,
-	&Processor::__illegal__,		// glkify - Processor::z_move_window,
-	&Processor::__illegal__,		// glkify - Processor::z_window_size,
-	&Processor::__illegal__,		// glkify - Processor::z_window_style,
-	&Processor::__illegal__,		// glkify - Processor::z_get_wind_prop,
-	&Processor::__illegal__,		// glkify - Processor::z_scroll_window,
+	&Processor::z_move_window,
+	&Processor::z_window_size,
+	&Processor::z_window_style,
+	&Processor::z_get_wind_prop,
+	&Processor::z_scroll_window,
 	&Processor::z_pop_stack,
-	&Processor::__illegal__,		// glkify - Processor::z_read_mouse,
-	&Processor::__illegal__,		// glkify - Processor::z_mouse_window,
+	&Processor::z_read_mouse,
+	&Processor::z_mouse_window,
 	&Processor::z_push_stack,
-	&Processor::__illegal__,		// glkify - Processor::z_put_wind_prop,
+	&Processor::z_put_wind_prop,
 	&Processor::z_print_form,
 	&Processor::z_make_menu,
-	&Processor::__illegal__,		// glkify - Processor::z_picture_table
-	&Processor::z_buffer_screen,	// spec 1.1
+	&Processor::z_picture_table,
+	&Processor::z_buffer_screen		// spec 1.1
 };
 
 Processor::Processor(OSystem *syst, const GlkGameDescription &gameDesc) : 
