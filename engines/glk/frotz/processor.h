@@ -1545,6 +1545,116 @@ protected:
 	void z_store();
 
 	/**@}*/
+
+	/**
+	 * \defgroup Window/V6 Opcode methods
+	 * @{
+	 */
+
+	/**
+	 * z_draw_picture, draw a picture.
+	 *
+	 *	zargs[0] = number of picture to draw
+	 *	zargs[1] = y-coordinate of top left corner
+	 *	zargs[2] = x-coordinate of top left corner
+	 */
+	void z_draw_picture();
+
+	/**
+	 * Get information on a picture or the graphics file.
+	 *
+	 *	zargs[0] = number of picture or 0 for the graphics file
+	 *	zargs[1] = address to write information to
+	 */
+	void z_picture_data();
+
+	/**
+	 * Erase a picture with background colour.
+	 *
+	 *	zargs[0] = number of picture to erase
+	 *	zargs[1] = y-coordinate of top left corner (optional)
+	 *	zargs[2] = x-coordinate of top left corner (optional)
+	 */
+	void z_erase_picture();
+
+	/**
+	 * Set the left and right margins of a window.
+	 *
+	 *	zargs[0] = left margin in pixels
+	 *	zargs[1] = right margin in pixels
+	 *	zargs[2] = window (-3 is the current one, optional)
+	 */
+	void z_set_margins();
+
+
+	/**
+	 * Place a window on the screen.
+	 *
+	 *	zargs[0] = window (-3 is the current one)
+	 *	zargs[1] = y-coordinate
+	 *	zargs[2] = x-coordinate
+	 *
+	 */
+	void z_move_window();
+
+	/**
+	 * Change the width and height of a window.
+	 *
+	 *	zargs[0] = window (-3 is the current one)
+	 *	zargs[1] = new height in screen units
+	 *	zargs[2] = new width in screen units
+	 */
+	void z_window_size();
+
+	/**
+	 * Set / clear / toggle window attributes.
+	 *
+	 *	zargs[0] = window (-3 is the current one)
+	 *	zargs[1] = window attribute flags
+	 *	zargs[2] = operation to perform (optional, defaults to 0)
+	 */
+	void z_window_style();
+
+	/**
+	 * Store the value of a window property.
+	 *
+	 *	zargs[0] = window (-3 is the current one)
+	 *	zargs[1] = number of window property to be stored
+	 */
+	void z_get_wind_prop();
+
+	/**
+	 * Set the value of a window property.
+	 *
+	 *	zargs[0] = window (-3 is the current one)
+	 *	zargs[1] = number of window property to set
+	 *	zargs[2] = value to set window property to
+	 */
+	void z_put_wind_prop();
+
+	/**
+	 * Scroll a window up or down.
+	 *
+	 *	zargs[0] = window (-3 is the current one)
+	 *	zargs[1] = #screen units to scroll up (positive) or down (negative)
+	 */
+	void z_scroll_window();
+
+	/**
+	 * Select a window as mouse window.
+	 *
+	 *	zargs[0] = window number (-3 is the current) or -1 for the screen
+	 */
+	void z_mouse_window();
+
+	/**
+	 * Prepare a group of pictures for faster display.
+	 *
+	 *	zargs[0] = address of table holding the picture numbers
+	 */
+	void z_picture_table();
+
+	 /**@}*/
 public:
 	/**
 	 * Constructor

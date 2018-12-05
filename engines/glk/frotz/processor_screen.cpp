@@ -127,7 +127,11 @@ void Processor::z_buffer_mode() {
 }
 
 void Processor::z_buffer_screen() {
+#ifdef TODO
+store((zword)os_buffer_screen((zargs[0] == (zword)-1) ? -1 : zargs[0]));
+#else
 	store(0);
+#endif
 }
 
 void Processor::z_erase_line() {
