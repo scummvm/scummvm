@@ -943,6 +943,12 @@ void Process::setTimer() {
 	suspend();
 }
 
+void Process::stub231() {
+	int arg2 = pop();
+	int arg1 = pop();
+	debug("stub231 %d %d", arg1, arg2);
+}
+
 void Process::stub233() {
 	Common::String name = popString();
 	debug("stub233 %s", name.c_str());
@@ -1150,6 +1156,7 @@ ProcessExitCode Process::execute() {
 			OP_I	(kMoveCharacterNoUserMove, moveCharacter, false);
 			OP_U	(kOnKey, onKey);
 			OP		(kGetSampleVolume, getSampleVolume);
+			OP		(kStub231, stub231);
 			OP		(kStub233, stub233);
 			OP		(kStub235, stub235);
 			OP		(kRunDialog, runDialog);
