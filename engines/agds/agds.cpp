@@ -125,29 +125,27 @@ Common::String AGDSEngine::loadText(const Common::String &entryName) {
 	return ResourceManager::loadText(_data.getEntry(entryName));
 }
 
-Object *AGDSEngine::loadObject(const Common::String & name, const Common::String &prototype) {
-	ObjectsType::iterator i = _objects.find(name);
-	Object *object = i != _objects.end()? i->_value: NULL;
-	if (!object) {
-		Common::String clone = prototype.empty()? name: prototype;
-		Common::SeekableReadStream * stream = _data.getEntry(clone);
-		if (!stream)
-			error("no database entry for %s\n", clone.c_str());
+ObjectPtr AGDSEngine::loadObject(const Common::String & name, const Common::String &prototype) {
+	debug("loadObject %s %s", name.c_str(), prototype.c_str());
+	Common::String clone = prototype.empty()? name: prototype;
+	Common::SeekableReadStream * stream = _data.getEntry(clone);
+	if (!stream)
+		error("no database entry for %s\n", clone.c_str());
 
-		object = new Object(name, stream);
-		_objects.setVal(name, object);
-		delete stream;
-	}
+	ObjectPtr object(new Object(name, stream));
+	delete stream;
 	return object;
 }
 
-void AGDSEngine::runObject(Object *object) {
-	runProcess(object);
+void AGDSEngine::runObject(ObjectPtr object) {
 	if (_currentScreen)
 		_currentScreen->add(object);
+	else
+		warning("object leak");
+	runProcess(object);
 }
 
-void AGDSEngine::runProcess(Object *object, uint ip) {
+void AGDSEngine::runProcess(ObjectPtr object, uint ip) {
 	_processes.push_front(Process(this, object, ip));
 	ProcessListType::iterator it = _processes.begin();
 	runProcess(it);
@@ -155,7 +153,10 @@ void AGDSEngine::runProcess(Object *object, uint ip) {
 
 void AGDSEngine::runObject(const Common::String & name, const Common::String &prototype)
 {
-	runObject(loadObject(name, prototype));
+	ObjectPtr object = getCurrentScreenObject(name);
+	if (!object)
+		object = loadObject(name, prototype);
+	runObject(object);
 }
 
 void AGDSEngine::loadScreen(const Common::String & name) {
@@ -164,7 +165,7 @@ void AGDSEngine::loadScreen(const Common::String & name) {
 	_currentScreenName = name;
 	_currentScreen = new Screen(loadObject(name), _mouseMap);
 	_mouseMap.clear();
-	runObject(name); //is it called once or per screen activation?
+	runObject(_currentScreen->getObject()); //is it called once or per screen activation?
 }
 
 void AGDSEngine::setCurrentScreen(Screen *screen) {
@@ -360,7 +361,7 @@ Common::Error AGDSEngine::run() {
 					_mouse = event.mouse;
 					if (_userEnabled) {
 						debug("lclick %d, %d", _mouse.x, _mouse.y);
-						Object *object = _currentScreen->find(_mouse);
+						ObjectPtr object = _currentScreen->find(_mouse);
 						if (object) {
 							uint ip = object->getClickHandler();
 							if (ip) {
@@ -378,7 +379,7 @@ Common::Error AGDSEngine::run() {
 		Animation *mouseCursor = NULL;
 
 		if (_userEnabled && _currentScreen) {
-			Object *object = _currentScreen->find(_mouse);
+			ObjectPtr object = _currentScreen->find(_mouse);
 			Animation *cursor = object? object->getMouseCursor(): NULL;
 			if (cursor)
 				mouseCursor = cursor;

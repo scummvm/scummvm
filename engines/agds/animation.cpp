@@ -22,6 +22,7 @@
 
 #include "agds/animation.h"
 #include "agds/agds.h"
+#include "agds/object.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "graphics/transparent_surface.h"

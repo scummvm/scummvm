@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/list.h"
+#include "common/ptr.h"
 #include "common/str.h"
 #include "common/rect.h"
 
@@ -36,6 +37,7 @@ namespace AGDS {
 
 class AGDSEngine;
 class Object;
+typedef Common::SharedPtr<Object> ObjectPtr;
 struct Region;
 
 struct MouseRegion {
@@ -89,22 +91,28 @@ public:
 };
 
 class Screen {
-	typedef Common::List<Object *> ChildrenType;
+	typedef Common::List<ObjectPtr> ChildrenType;
 
+	ObjectPtr		_object;
 	Common::String	_name;
 	ChildrenType	_children;
 	MouseMap		_mouseMap;
 
 public:
 	struct KeyHandler {
-		Object *	object;
+		ObjectPtr	object;
 		uint		ip;
 
 		KeyHandler(): object(), ip() { }
 		KeyHandler(Object *o, uint i): object(o), ip(i) { }
 	};
 
-	Screen(Object *object, const MouseMap &mouseMap);
+	Screen(ObjectPtr object, const MouseMap &mouseMap);
+	~Screen();
+
+	ObjectPtr getObject() {
+		return _object;
+	}
 
 	const Common::String &getName() const {
 		return _name;
@@ -114,10 +122,11 @@ public:
 		return _mouseMap;
 	}
 
-	void add(Object *object);
+	void add(ObjectPtr object);
 	bool remove(const Common::String & name);
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer);
-	Object *find(Common::Point pos) const;
+	ObjectPtr find(Common::Point pos) const;
+	ObjectPtr find(const Common::String &name);
 	KeyHandler findKeyHandler(const Common::String &keyName);
 };
 

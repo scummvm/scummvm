@@ -43,7 +43,7 @@ private:
 
 	AGDSEngine *	_engine;
 	Common::String	_parentScreen;
-	Object *		_object;
+	ObjectPtr		_object;
 	StackType		_stack;
 	unsigned		_ip, _lastIp;
 	Status			_status;
@@ -294,7 +294,7 @@ private:
 	}
 
 public:
-	Process(AGDSEngine *engine, Object *object, unsigned ip = 0);
+	Process(AGDSEngine *engine, ObjectPtr object, unsigned ip = 0);
 
 	const Common::String & getName() const {
 		return _object->getName();

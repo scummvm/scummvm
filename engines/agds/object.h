@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/hash-str.h"
 #include "common/hashmap.h"
+#include "common/ptr.h"
 #include "common/rect.h"
 #include "common/stream.h"
 
@@ -159,6 +160,7 @@ public:
 		return i != _keyHandlers.end()? i->_value: 0;
 	}
 };
+typedef Common::SharedPtr<Object> ObjectPtr;
 
 
 } // End of namespace AGDS
