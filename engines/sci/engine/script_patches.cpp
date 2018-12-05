@@ -3479,10 +3479,47 @@ static const uint16 longbowPatchBerryBushFix[] = {
 	PATCH_END
 };
 
+// The Amiga version of room 530 adds a broken fDrunk:onMe method which prevents
+//  messages when clicking on the drunk on the floor of the pub and causes a
+//  signature mismatch on every click in the room. fDrunk:onMe passes an Event
+//  object as an integer x coordinate and an uninitialized parameter as a y
+//  coordinate to kOnControl. This is a signature mismatch and would cause onMe
+//  to return false on every click and prevent hit testing from dispatching
+//  events to fDrunk. It's unclear why Sierra added this method to this one
+//  Feature in the room. Even if it worked, Feature:onMe already does this.
+//
+// We fix this by replacing fDrunk:onMe's contents with a call to super:onMe
+//  which calls kOnControl correctly and does proper hit testing, making its
+//  behavior consistent with the DOS version, which doesn't override onMe.
+//
+// Applies to: English Amiga Floppy
+// Responsible method: fDrunk:onMe
+// Fixes bug #9688
+static const uint16 longbowSignatureAmigaPubFix[] = {
+	SIG_MAGICDWORD,
+	0x67, 0x20,                     // pTos onMeCheck
+	0x39, 0x03,                     // pushi 03
+	0x39, 0x04,                     // pushi 04
+	0x8f, 0x01,                     // lsp 01
+	0x8f, 0x02,                     // lsp 02
+	0x43, 0x4e, 0x06,               // callk OnControl 6
+	SIG_END
+};
+
+static const uint16 longbowPatchAmigaPubFix[] = {
+	0x38, PATCH_UINT16(0x00c4),     // pushi 00c4 [ onMe, hard-coded for amiga ]
+	0x76,                           // push0
+	0x59, 0x01,                     // &rest 1
+	0x57, 0x2c, 0x04,               // super Feature 4 [ super: onMe &rest ]
+	0x48,                           // ret
+	PATCH_END
+};
+
 //          script, description,                                      signature                     patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode, longbowPatchShowHandCode },
 	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix, longbowPatchBerryBushFix },
+	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,  longbowPatchAmigaPubFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
