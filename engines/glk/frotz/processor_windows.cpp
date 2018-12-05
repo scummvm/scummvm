@@ -41,37 +41,43 @@ static struct {
 };
 
 void Processor::z_draw_picture() {
-#ifdef TODO
-    zword pic = zargs[0];
-    zword y = zargs[1];
-    zword x = zargs[2];
-    int i;
+	zword pic = zargs[0];
+	zword y = zargs[1];
+	zword x = zargs[2];
+	int i;
 
-    flush_buffer ();
+	flush_buffer ();
 
-    if (y == 0)			// use cursor line if y-coordinate is 0
-		y = cwp->y_cursor;
-    if (x == 0)    		// use cursor column if x-coordinate is 0 */
-		x = cwp->x_cursor;
+	if (!x || !y) {
+		// Currently I only support getting the cursor for the text grid area
+		assert(cwin == 1);
+		Point cursPos = gos_upper->getCursor();
+		// use cursor column if x-coordinate is 0
+		if (!x)
+			x = cursPos.x;
+		// use cursor line if y-coordinate is 0
+		if (!y)
+			y = cursPos.y;
+	}
 
-    y += cwp->y_pos - 1;
-    x += cwp->x_pos - 1;
+//	y += cwp->y_pos - 1;
+//	x += cwp->x_pos - 1;
 
-    /* The following is necessary to make Amiga and Macintosh story
-       files work with MCGA graphics files.  Some screen-filling
-       pictures of the original Amiga release like the borders of
-       Zork Zero were split into several MCGA pictures (left, right
-       and top borders).  We pretend this has not happened. */
-
-    for (i = 0; mapper[i].story_id != UNKNOWN; i++) {
+	/* The following is necessary to make Amiga and Macintosh story
+	 * files work with MCGA graphics files.  Some screen-filling
+	 *  pictures of the original Amiga release like the borders of
+	 *  Zork Zero were split into several MCGA pictures (left, right
+	 *  and top borders).  We pretend this has not happened.
+	 */
+	for (i = 0; mapper[i].story_id != UNKNOWN; i++) {
 		if (_storyId == mapper[i].story_id && pic == mapper[i].pic) {
-			int height1, width1;
-			int height2, width2;
+			glui32 height1, width1;
+			glui32 height2, width2;
 
 			int delta = 0;
 
-			os_picture_data (pic, &height1, &width1);
-			os_picture_data (mapper[i].pic2, &height2, &width2);
+			os_picture_data(pic, &height1, &width1);
+			os_picture_data(mapper[i].pic2, &height2, &width2);
 
 			if (_storyId == ARTHUR && pic == 54)
 			delta = h_screen_width / 160;
@@ -81,51 +87,43 @@ void Processor::z_draw_picture() {
 		}
 	}
 
-    os_draw_picture(pic, gos_lower, Point(x, y));
+	os_draw_picture(pic, gos_lower, Point(x, y));
 
-    if (_storyId == SHOGUN && pic == 3) {
-	    glui32 height, width;
+	if (_storyId == SHOGUN && pic == 3) {
+		glui32 height, width;
 
-	    os_picture_data(59, &height, &width);
-	    os_draw_picture(59, gos_lower, Point(h_screen_width - width + 1, y));
+		os_picture_data(59, &height, &width);
+		os_draw_picture(59, gos_lower, Point(h_screen_width - width + 1, y));
 	}
-#endif
 }
 
 void Processor::z_picture_data() {
-#ifdef TODO
 	zword pic = zargs[0];
 	zword table = zargs[1];
-
-	int height, width;
+	glui32 height, width;
 	int i;
 
 	bool avail = os_picture_data(pic, &height, &width);
 
-	for (i = 0; mapper[i].story_id != UNKNOWN; i++)
-
-		if (story_id == mapper[i].story_id) {
-
+	for (i = 0; mapper[i].story_id != UNKNOWN; i++) {
+		if (_storyId == mapper[i].story_id) {
 			if (pic == mapper[i].pic) {
-
-				int height2, width2;
+				glui32 height2, width2;
 
 				avail &= os_picture_data(mapper[i].pic1, &height2, &width2);
 				avail &= os_picture_data(mapper[i].pic2, &height2, &width2);
 
 				height += height2;
-
+			} else if (pic == mapper[i].pic1 || pic == mapper[i].pic2) {
+				avail = false;
 			}
-			else if (pic == mapper[i].pic1 || pic == mapper[i].pic2)
-
-				avail = FALSE;
 		}
+	}
 
 	storew((zword)(table + 0), (zword)(height));
 	storew((zword)(table + 2), (zword)(width));
 
 	branch(avail);
-#endif
 }
 
 void Processor::z_erase_picture() {
@@ -299,9 +297,8 @@ void Processor::z_scroll_window() {
 }
 
 void Processor::z_mouse_window() {
-#ifdef TODO
-	mwin = ((short)zargs[0] == -1) ? -1 : winarg0();
-#endif
+	// No implementation - since ScummVM can run as a window, it's better
+	// not to constrain the area the mouse can move
 }
 
 void Processor::z_picture_table() {
