@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/hashmap.h"
+#include "common/ptr.h"
 #include "common/random.h"
 #include "common/rect.h"
 #include "engines/advancedDetector.h"
@@ -54,6 +55,7 @@ class Animation;
 class Character;
 class Font;
 class Object;
+typedef Common::SharedPtr<Object> ObjectPtr;
 class Process;
 struct Region;
 struct MouseRegion;
@@ -86,10 +88,10 @@ private:
 	void runProcess();
 
 public:
-	Object * loadObject(const Common::String & name, const Common::String & prototype = Common::String());
-	void runObject(Object *object);
+	ObjectPtr loadObject(const Common::String & name, const Common::String & prototype = Common::String());
+	void runObject(ObjectPtr object);
 	void runObject(const Common::String & name, const Common::String &prototype = Common::String());
-	void runProcess(Object *object, uint ip = 0);
+	void runProcess(ObjectPtr object, uint ip = 0);
 
 	void resetCurrentScreen();
 	void loadScreen(const Common::String & name);
@@ -119,6 +121,10 @@ public:
 
 	Screen * getCurrentScreen() {
 		return _currentScreen;
+	}
+
+	ObjectPtr getCurrentScreenObject(const Common::String &name) {
+		return _currentScreen? _currentScreen->find(name): ObjectPtr();
 	}
 
 	Common::String & getCurrentScreenName() {
@@ -175,7 +181,6 @@ private:
 	PictureCacheType			_pictureCache;
 	int							_pictureCacheId;
 	FontsType					_fonts;
-	ObjectsType					_objects;
 	RegionsType					_regions;
 	AnimationsType				_animations;
 	CharactersType				_characters;

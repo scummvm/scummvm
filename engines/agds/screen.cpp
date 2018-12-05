@@ -26,11 +26,19 @@
 
 namespace AGDS {
 
-Screen::Screen(Object *object, const MouseMap &mouseMap) : _name(object->getName()), _mouseMap(mouseMap) {
+Screen::Screen(ObjectPtr object, const MouseMap &mouseMap) : _object(object), _name(object->getName()), _mouseMap(mouseMap) {
 	add(object);
 }
 
-void Screen::add(Object *object) {
+Screen::~Screen() {
+	_children.clear();
+}
+
+void Screen::add(ObjectPtr object) {
+	if (object == NULL) {
+		warning("refusing to add null to scene");
+		return;
+	}
 	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
 		if (*i == object)
 			return;
@@ -38,11 +46,19 @@ void Screen::add(Object *object) {
 	_children.push_back(object);
 }
 
+ObjectPtr Screen::find(const Common::String &name) {
+	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
+		if ((*i)->getName() == name)
+			return *i;
+	}
+	return ObjectPtr();
+}
+
 bool Screen::remove(const Common::String &name) {
 	bool found = false;
 	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ) {
 		if ((*i)->getName() == name) {
-			i = _children.erase(i);
+			i = _children.erase(i); //fixme: object leak
 			found = true;
 		} else
 			++i;
@@ -53,25 +69,24 @@ bool Screen::remove(const Common::String &name) {
 
 void Screen::paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
 	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
-		Object *object = *i;
-		object->paint(engine, backbuffer);
+		(*i)->paint(engine, backbuffer);
 	}
 }
 
-Object *Screen::find(Common::Point pos) const {
+ObjectPtr Screen::find(Common::Point pos) const {
 	for(ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
-		Object *object = *i;
+		ObjectPtr object = *i;
 		Region *region = object->getRegion();
 		if (region && region->pointIn(pos))
 			return object;
 	}
-	return NULL;
+	return ObjectPtr();
 }
 
 Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {
 	KeyHandler keyHandler;
 	for(ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
-		Object *object = *i;
+		ObjectPtr object = *i;
 		uint ip = object->getKeyHandler(keyName);
 		if (ip) {
 			keyHandler.ip = ip;

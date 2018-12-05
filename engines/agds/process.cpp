@@ -27,7 +27,7 @@
 
 namespace AGDS {
 
-Process::Process(AGDSEngine *engine, Object* object, unsigned ip) :
+Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) :
 	_engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object), _ip(ip), _status(kStatusActive), _exitCode(kExitCodeDestroy),
 	_glyphWidth(16), _glyphHeight(16) {
 }

@@ -25,22 +25,25 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/ptr.h"
 
 namespace AGDS {
 class Object;
+typedef Common::SharedPtr<Object> ObjectPtr;
 
 class Inventory {
-	typedef Common::Array<Object *> EntriesType;
+	typedef Common::Array<ObjectPtr> EntriesType;
 	EntriesType _entries;
 
 public:
 	static const int kMaxSize = 35;
 
-	Inventory(): _entries(kMaxSize) { }
+	Inventory();
+	~Inventory();
 
-	int add(Object *object);
+	int add(ObjectPtr object);
 
-	Object *get(int index) const {
+	ObjectPtr get(int index) const {
 		return _entries[index];
 	}
 

@@ -163,13 +163,23 @@ void Process::updatePhaseVarOr4() {
 void Process::loadScreenObject() {
 	Common::String name = popString();
 	debug("loadScreenObject: %s", name.c_str());
+	Screen * screen = _engine->getCurrentScreen();
+	if (!screen->find(name)) {
+		screen->add(_engine->loadObject(name));
+	} else{
+		warning("loadScreenObject: object %s already loaded", name.c_str());
+	}
 	suspend(kExitCodeLoadScreenObject, name);
 }
 
 void Process::loadScreenRegion() {
 	Common::String name = popString();
 	debug("loadScreenRegion %s", name.c_str());
-	_engine->loadObject(_engine->getCurrentScreenName())->setRegion(_engine->loadRegion(name));
+	Screen * screen = _engine->getCurrentScreen();
+	if (screen)
+		screen->getObject()->setRegion(_engine->loadRegion(name));
+	else
+		warning("no current screen");
 }
 
 void Process::cloneObject() {
@@ -418,7 +428,11 @@ void Process::fadeObject() {
 	int value = pop();
 	Common::String name = popString();
 	debug("fadeObject %s %d", name.c_str(), value);
-	_engine->loadObject(name)->setAlpha(value);
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	if (object)
+		object->setAlpha(value);
+	else
+		warning("fadeObject: object %s not found", name.c_str());
 }
 
 void Process::stub63(unsigned size) {
@@ -650,7 +664,11 @@ void Process::setObjectText() {
 	Common::String text = popText();
 	Common::String name = popString();
 	debug("setObjectText %s \"%s\" %d", name.c_str(), text.c_str(), arg3);
-	_engine->loadObject(name)->setText(text);
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	if (object)
+		object->setText(text);
+	else
+		warning("setObjectText: object %s not found", name.c_str());
 }
 
 
@@ -681,10 +699,13 @@ void Process::clearScreen() {
 void Process::moveScreenObject() {
 	int arg3 = pop();
 	int arg2 = pop();
-	Common::String arg1 = popString();
-	debug("moveScreenObject %s %d %d", arg1.c_str(), arg2, arg3);
-	Object *object = _engine->loadObject(arg1);
-	object->move(Common::Point(arg2, arg3));
+	Common::String name = popString();
+	debug("moveScreenObject %s %d %d", name.c_str(), arg2, arg3);
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	if (object)
+		object->move(Common::Point(arg2, arg3));
+	else
+		warning("moveScreenObject: object %s not found", name.c_str());
 }
 
 void Process::quit() {
@@ -725,21 +746,31 @@ void Process::runDialog() {
 void Process::getObjectPictureWidth() {
 	Common::String name = popString();
 	debug("getObjectPictureWidth %s", name.c_str());
-	Object *object = _engine->loadObject(name);
-	const Graphics::Surface *picture = object->getPicture();
-	int value = picture? picture->w: 0;
-	debug("\t->%d", value);
-	push(value);
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	if (object) {
+		const Graphics::Surface *picture = object->getPicture();
+		int value = picture? picture->w: 0;
+		debug("\t->%d", value);
+		push(value);
+	} else {
+		warning("getObjectPictureWidth: object %s not found", name.c_str());
+		push(0);
+	}
 }
 
 void Process::getObjectPictureHeight() {
 	Common::String name = popString();
 	debug("getObjectPictureHeight %s", name.c_str());
-	Object *object = _engine->loadObject(name);
-	const Graphics::Surface *picture = object->getPicture();
-	int value = picture? picture->h: 0;
-	debug("\t->%d", value);
-	push(value);
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	if (object) {
+		const Graphics::Surface *picture = object->getPicture();
+		int value = picture? picture->h: 0;
+		debug("\t->%d", value);
+		push(value);
+	} else {
+		warning("getObjectPictureHeight: object %s not found", name.c_str());
+		push(0);
+	}
 }
 
 void Process::playFilm() {
@@ -777,7 +808,7 @@ void Process::getInventoryFreeSpace() {
 void Process::appendInventoryObjectNameToSharedSpace() {
 	int index = pop();
 	debug("appendInventoryObjectNameToSharedSpace %d", index);
-	Object *object = _engine->inventory().get(index);
+	ObjectPtr object = _engine->inventory().get(index);
 	push(_engine->appendToSharedStorage(object? object->getName(): Common::String()));
 }
 

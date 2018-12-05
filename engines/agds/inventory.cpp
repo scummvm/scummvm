@@ -21,10 +21,13 @@
  */
 
 #include "agds/inventory.h"
+#include "agds/object.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
 
 namespace AGDS {
+Inventory::Inventory(): _entries(kMaxSize) { }
+Inventory::~Inventory() { }
 
 int Inventory::free() const {
 	int free = 0;
@@ -34,7 +37,7 @@ int Inventory::free() const {
 	return free;
 }
 
-int Inventory::add(Object *object) {
+int Inventory::add(ObjectPtr object) {
 	for(uint i = 0; i < _entries.size(); ++i) {
 		if (!_entries[i]) {
 			_entries[i] = object;
@@ -46,7 +49,7 @@ int Inventory::add(Object *object) {
 
 void Inventory::clear() {
 	for(uint i = 0; i < _entries.size(); ++i) {
-		_entries[i] = NULL;
+		_entries[i].reset();
 	}
 }
 

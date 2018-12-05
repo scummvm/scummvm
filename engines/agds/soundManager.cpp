@@ -22,6 +22,7 @@
 
 #include "agds/soundManager.h"
 #include "agds/agds.h"
+#include "agds/object.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/textconsole.h"

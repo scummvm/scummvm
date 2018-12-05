@@ -21,6 +21,7 @@
  */
 
 #include "agds/agds.h"
+#include "agds/object.h"
 
 #include "engines/advancedDetector.h"
 
