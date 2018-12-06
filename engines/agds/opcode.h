@@ -237,7 +237,7 @@ enum Opcode {
 	kStub217						= 217,
 	kStub218						= 218,
 	kStub219						= 219,
-	kStub220						= 220,
+	kStopCharacter					= 220,
 	kStub221						= 221,
 	kStub222						= 222,
 	kStub223						= 223,

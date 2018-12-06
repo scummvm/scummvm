@@ -474,6 +474,11 @@ void Process::stub83() {
 	debug("stub83: %s %s", arg1.c_str(), arg2.c_str());
 }
 
+void Process::stub102() {
+	Common::String name = popString();
+	debug("stub102: load picture? %s");
+}
+
 void Process::stub119() {
 	debug("stub119");
 }
@@ -977,6 +982,11 @@ void Process::getCharacterAnimationPhase() {
 	push(phase);
 }
 
+void Process::stopCharacter() {
+	int arg = pop();
+	Common::String name = popString();
+	debug("stopCharacter: stub %s %d", name.c_str(), arg);
+}
 
 void Process::fogOnCharacter() {
 	int arg2 = pop();
@@ -1134,6 +1144,7 @@ ProcessExitCode Process::execute() {
 			OP		(kEnableUser, enableUser);
 			OP		(kUpdatePhaseVarOr2, updatePhaseVarOr2);
 			OP		(kUpdatePhaseVarOr4, updatePhaseVarOr4);
+			OP		(kStub102, stub102);
 			OP		(kClearScreen, clearScreen);
 			OP		(kInventoryClear, inventoryClear);
 			OP		(kLoadMouse, loadMouse);
@@ -1217,6 +1228,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub215, stub215);
 			OP		(kStub216, stub216);
 			OP		(kStub217, stub217);
+			OP		(kStopCharacter, stopCharacter);
 			OP		(kStub221, stub221);
 			OP		(kStub223, stub223);
 			OP		(kStub225, stub225);

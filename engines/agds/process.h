@@ -159,6 +159,7 @@ private:
 	void pointCharacter();
 	void animateCharacter();
 	void getCharacterAnimationPhase();
+	void stopCharacter();
 	void quit();
 
 	void setDialogForNextFilm();
@@ -210,6 +211,7 @@ private:
 	void stub63(unsigned size);
 	void stub82();
 	void stub83();
+	void stub102();
 	void stub119();
 	void stub128();
 	void stub129();
