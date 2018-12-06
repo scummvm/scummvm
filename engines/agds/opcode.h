@@ -255,7 +255,7 @@ enum Opcode {
 	kStub235						= 235,
 	kStub236						= 236,
 	kStub237						= 237,
-	kStub238						= 238,
+	kInventoryHasObject				= 238,
 	kStub239						= 239,
 	kRunDialog						= 240,
 	kStub241						= 241,

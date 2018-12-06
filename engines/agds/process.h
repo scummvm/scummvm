@@ -108,6 +108,7 @@ private:
 	void enableInventory();
 	void inventoryClear();
 	void inventoryAddObject();
+	void inventoryHasObject();
 	void getMaxInventorySize();
 	void getInventoryFreeSpace();
 	void appendInventoryObjectNameToSharedSpace();
@@ -232,6 +233,7 @@ private:
 	void stub184();
 	void stub190();
 	void stub192();
+	void stub193();
 	void stub194();
 	void stub199();
 	void stub202(unsigned size);
