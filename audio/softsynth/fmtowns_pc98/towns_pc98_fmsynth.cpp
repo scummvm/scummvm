@@ -1317,16 +1317,14 @@ void TownsPC98_FmSynth::setLevelSSG(int vol) {
 
 void TownsPC98_FmSynth::generateTables() {
 	delete[] _oprRates;
-	_oprRates = new uint8[128];
+	_oprRates = new uint8[130];
 
 	WRITE_BE_UINT32(_oprRates + 32, _numChan == 6 ? 0x90900000 : 0x00081018);
 	WRITE_BE_UINT32(_oprRates + 36, _numChan == 6 ? 0x00001010 : 0x00081018);
 	memset(_oprRates, 0x90, 32);
-	memset(&_oprRates[96], 0x80, 32);
+	memset(&_oprRates[96], 0x80, 34);
 	uint8 *dst = (uint8 *)_oprRates + 40;
 	for (int i = 0; i < 40; i += 4)
-		WRITE_BE_UINT32(dst + i, 0x00081018);
-	for (int i = 0; i < 48; i += 4)
 		WRITE_BE_UINT32(dst + i, 0x00081018);
 	dst += 40;
 	for (uint8 i = 0; i < 16; i ++) {
@@ -1335,8 +1333,8 @@ void TownsPC98_FmSynth::generateTables() {
 	}
 
 	delete[] _oprRateshift;
-	_oprRateshift = new uint8[128];
-	memset(_oprRateshift, 0, 128);
+	_oprRateshift = new uint8[130];
+	memset(_oprRateshift, 0, 130);
 	dst = (uint8 *)_oprRateshift + 32;
 	for (int i = 11; i; i--) {
 		memset(dst, i, 4);
