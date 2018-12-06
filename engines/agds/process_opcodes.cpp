@@ -594,8 +594,13 @@ void Process::stub200() {
 	debug("stub200: %d", value);
 }
 
+void Process::stub201(unsigned size) {
+	debug("stub201, [handler] %u instructions", size);
+	_ip += size;
+}
+
 void Process::stub202(unsigned size) {
-	debug("stub203, [handler] %u instructions", size);
+	debug("stub202, [handler] %u instructions", size);
 	_ip += size;
 }
 
@@ -1248,6 +1253,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub225, stub225);
 			OP		(kFadeObject, fadeObject);
 			OP		(kLoadFont, loadFont);
+			OP_U	(kStub201Handler, stub201);
 			OP_U	(kStub202ScreenHandler, stub202);
 			OP		(kPlayFilm, playFilm);
 			OP		(kAddMouseArea, addMouseArea);

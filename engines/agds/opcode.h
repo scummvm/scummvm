@@ -218,7 +218,7 @@ enum Opcode {
 	kLoadPicture					= 198,
 	kStub199						= 199,
 	kStub200						= 200,
-	kStub201						= 201,
+	kStub201Handler					= 201,
 	kStub202ScreenHandler			= 202,
 	kPlayFilm						= 203,
 	kStub204						= 204,
