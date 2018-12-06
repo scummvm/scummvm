@@ -565,6 +565,10 @@ void Process::stub192() {
 	debug("stub192: %s: set some object flag to %d", name.c_str(), value);
 }
 
+void Process::stub193() {
+	debug("stub193: removing inventory object 0?");
+}
+
 void Process::stub190() {
 	int value = pop();
 	debug("stub190 %d", value);
@@ -795,7 +799,16 @@ void Process::inventoryClear() {
 void Process::inventoryAddObject() {
 	Common::String name = popString();
 	debug("inventoryAddObject %s", name.c_str());
+	_engine->inventory().add(_engine->loadObject(name));
 	suspend(kExitCodeLoadInventoryObject, name);
+}
+
+void Process::inventoryHasObject() {
+	Common::String name = popString();
+	debug("inventoryHasObject %s", name.c_str());
+	int index = _engine->inventory().find(name);
+	debug("\t->%d", index);
+	push(index);
 }
 
 void Process::getMaxInventorySize() {
@@ -1218,6 +1231,7 @@ ProcessExitCode Process::execute() {
 			OP		(kSetObjectText, setObjectText);
 			OP		(kStub190, stub190);
 			OP		(kStub191, disableMouseAreas);
+			OP		(kStub193, stub193);
 			OP		(kStub194, stub194);
 			OP		(kGetObjectPictureWidth, getObjectPictureWidth);
 			OP		(kGetObjectPictureHeight, getObjectPictureHeight);
@@ -1247,6 +1261,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub231, stub231);
 			OP		(kStub233, stub233);
 			OP		(kStub235, stub235);
+			OP		(kInventoryHasObject, inventoryHasObject);
 			OP		(kRunDialog, runDialog);
 			OP		(kHasGlobal, hasGlobal);
 			OP		(kSetDialogForNextFilm, setDialogForNextFilm);

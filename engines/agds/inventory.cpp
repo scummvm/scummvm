@@ -47,6 +47,13 @@ int Inventory::add(ObjectPtr object) {
 	error("inventory overflow");
 }
 
+int Inventory::find(const Common::String &name) const {
+	for(uint i = 0; i < _entries.size(); ++i)
+		if (_entries[i] && _entries[i]->getName() == name)
+			return i;
+	return -1;
+}
+
 void Inventory::clear() {
 	for(uint i = 0; i < _entries.size(); ++i) {
 		_entries[i].reset();

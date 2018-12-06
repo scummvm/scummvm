@@ -46,6 +46,7 @@ public:
 	ObjectPtr get(int index) const {
 		return _entries[index];
 	}
+	int find(const Common::String &name) const;
 
 	int free() const;
 	void clear();
