@@ -29,6 +29,7 @@
 #include "image/bmp.h"
 #include "image/pcx.h"
 #include "graphics/surface.h"
+#include "video/flic_decoder.h"
 
 namespace AGDS {
 	ResourceManager::ResourceManager()
@@ -183,6 +184,14 @@ namespace AGDS {
 		} else if (lname.hasSuffix(".pcx")) {
 			Image::PCXDecoder pcx;
 			return pcx.loadStream(*stream)? pcx.getSurface()->convertTo(format): NULL;
+		} else if (lname.hasSuffix(".flc")) {
+			Video::FlicDecoder flic;
+			if (!flic.loadStream(stream)) {
+				warning("flic decoder failed to load %s", name.c_str());
+				return NULL;
+			}
+			const Graphics::Surface *surface = flic.decodeNextFrame();
+			return surface? surface->convertTo(format, flic.getPalette()): surface;
 		} else
 			warning("unknown extensions for resource %s", name.c_str());
 		return NULL;
