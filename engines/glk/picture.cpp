@@ -103,6 +103,7 @@ Picture *Pictures::retrieve(uint id, bool scaled) {
 Picture *Pictures::load(uint32 id) {
 	::Image::PNGDecoder png;
 	::Image::JPEGDecoder jpg;
+	Graphics::Surface rectImg;
 	RawDecoder raw;
 	const Graphics::Surface *img;
 	const byte *palette = nullptr;
@@ -128,6 +129,10 @@ Picture *Pictures::load(uint32 id) {
 		img = raw.getSurface();
 		palette = raw.getPalette();
 		palCount = raw.getPaletteColorCount();
+	} else if (f.open(Common::String::format("pic%u.rect", id))) {
+		rectImg.w = f.readUint16LE();
+		rectImg.h = f.readUint16LE();
+		img = &rectImg;
 	} else {
 		// No such picture
 		return nullptr;
@@ -138,7 +143,9 @@ Picture *Pictures::load(uint32 id) {
     pic->_id = id;
     pic->_scaled = false;
 
-	if (!palette) {
+	if (!img->getPixels()) {
+		// Area definition without any content
+	} else if (!palette) {
 		pic->blitFrom(*img);
 	} else {
 		uint pal[256];

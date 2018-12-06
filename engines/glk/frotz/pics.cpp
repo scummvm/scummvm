@@ -24,6 +24,7 @@
 #include "glk/frotz/pics_decoder.h"
 #include "glk/glk.h"
 #include "common/algorithm.h"
+#include "common/memstream.h"
 
 namespace Glk {
 namespace Frotz {
@@ -68,7 +69,10 @@ Pics::Pics() : Common::Archive(), _filename(getFilename()) {
 			}
 		}
 
-		e._filename = Common::String::format("pic%u.raw", e._number);
+		if (e._dataOffset)
+			e._filename = Common::String::format("pic%u.raw", e._number);
+		else
+			e._filename = Common::String::format("pic%u.rect", e._number);
 	}
 
 	// Further processing of index to calculate data sizes
@@ -128,6 +132,8 @@ const Common::ArchiveMemberPtr Pics::getMember(const Common::String &name) const
 }
 
 Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String &name) const {
+	PictureDecoder decoder;
+
 	for (uint idx = 0; idx < _index.size(); ++idx) {
 		const Entry &e = _index[idx];
 		if (e._filename.equalsIgnoreCase(name)) {
@@ -137,19 +143,21 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String
 			if (!f.open(_filename))
 				error("Reading failed");
 
-			// Read in the image's palette
-			assert(e._paletteOffset);
-			f.seek(e._paletteOffset);
-			palette.resize(f.readByte() * 3);
-			f.read(&palette[0], palette.size());
-
-			PictureDecoder decoder;
 			if (e._dataSize) {
+				// Read in the image's palette
+				assert(e._paletteOffset);
+				f.seek(e._paletteOffset);
+				palette.resize(f.readByte() * 3);
+				f.read(&palette[0], palette.size());
+
 				Common::SeekableReadStream *src = f.readStream(e._dataSize);
 				dest = decoder.decode(*src, e._flags, palette, MCGA, e._width, e._height);
 				delete src;
 			} else {
-				error("TODO: Empty rect renderings");
+				byte *rect = (byte *)malloc(2 * sizeof(uint16));
+				WRITE_LE_UINT16(rect, e._width);
+				WRITE_LE_UINT16(rect + 2, e._height);
+				dest = new Common::MemoryReadStream(rect, 2 * sizeof(uint16), DisposeAfterUse::YES);
 			}
 
 			f.close();
