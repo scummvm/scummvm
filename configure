@@ -3072,6 +3072,11 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-fdelete-null-pointer-checks"
 			_backend="dc"
 			_build_scalers=no
+			# These two are needed due to shortcomings of the
+			# detection systems.  Do not remove until auto-
+			# detection works correctly.
+			_mad=yes
+			_zlib=yes
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		ds)
