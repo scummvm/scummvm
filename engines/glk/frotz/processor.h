@@ -549,7 +549,6 @@ protected:
 
 	/**
 	 * Map a Unicode character onto the ZSCII alphabet.
-	 *
 	 */
 	zbyte translate_to_zscii(zchar c);
 
@@ -668,6 +667,26 @@ protected:
 	zchar unicode_tolower(zchar c);
 
 	/**@}*/
+
+	/**
+	 * \defgroup Window/V6 Opcode methods
+	 * @{
+	 */
+
+	/**
+	 * Return the window number in zargs[0]. In V6 only, -3 refers to the
+	 * current window.
+	 */
+	zword winarg0();
+
+	/**
+	 * Return the (optional) window number in zargs[2]. -3 refers to the
+	 * current window. This optional window number was only used by some
+	 * V6 opcodes: set_cursor, set_margins, set_colour.
+	 */
+	zword winarg2();
+
+	 /**@}*/
 protected:
 	/**
 	 * \defgroup General Opcode methods

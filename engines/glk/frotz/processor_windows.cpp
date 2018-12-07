@@ -255,7 +255,7 @@ void Processor::z_get_wind_prop() {
 
 	}
 	else
-		runtime_error(ERR_ILL_WIN_PROP);
+		runtimeError(ERR_ILL_WIN_PROP);
 #endif
 }
 
@@ -264,7 +264,7 @@ void Processor::z_put_wind_prop() {
 	flush_buffer();
 
 	if (zargs[1] >= 16)
-		runtime_error(ERR_ILL_WIN_PROP);
+		runtimeError(ERR_ILL_WIN_PROP);
 
 	((zword *)(wp + winarg0()))[zargs[1]] = zargs[2];
 #endif
@@ -307,6 +307,26 @@ void Processor::z_picture_table() {
 	 * not very helpful to hold the picture data in memory because
 	 * even a small disk cache avoids re-loading of data.
 	 */
+}
+
+zword Processor::winarg0() {
+	if (h_version == V6 && (short)zargs[0] == -3)
+		return cwin;
+
+	if (zargs[0] >= ((h_version == V6) ? 8 : 2))
+		runtimeError(ERR_ILL_WIN);
+
+	return zargs[0];
+}
+
+zword Processor::winarg2() {
+	if (zargc < 3 || (short)zargs[2] == -3)
+		return cwin;
+
+	if (zargs[2] >= 8)
+		runtimeError(ERR_ILL_WIN);
+
+	return zargs[2];
 }
 
 } // End of namespace Scott
