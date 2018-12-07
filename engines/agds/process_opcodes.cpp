@@ -1053,7 +1053,10 @@ void Process::stub231() {
 
 void Process::stub233() {
 	Common::String name = popString();
-	debug("stub233 %s", name.c_str());
+	debug("stub233 %s unload picture?", name.c_str());
+	ObjectPtr object = _engine->getCurrentScreenObject(name);
+	if (object)
+		object->setPicture(NULL);
 }
 
 void Process::stub235() {
