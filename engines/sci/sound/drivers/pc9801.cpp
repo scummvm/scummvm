@@ -553,17 +553,21 @@ void SoundChannel_PC9801::processSounds() {
 	}
 
 	if (_flags & kChanVbrDecrease) {
-		int16 s = _vbrCur - (_vbrDecrStep & 0xFF);
-		_vbrCur = s & 0xFF;
-		if (s >= 0)
+		uint8 sL = _vbrDecrStep & 0xFF;
+		uint8 sH = _vbrDecrStep >> 8;
+		bool ovrflow = (sL > _vbrCur);
+		_vbrCur -= sL;
+		if (!ovrflow)
 			return;
-		_vbrFrequencyModifier -= ((_vbrDecrStep >> 8) + 1);			
-	} else {	
-		uint16 s = _vbrCur + (_vbrIncrStep & 0xFF);
-		_vbrCur = s & 0xFF;
-		if (s <= 255)
+		_vbrFrequencyModifier -= (sH + 1);
+	} else {
+		uint8 sL = _vbrDecrStep & 0xFF;
+		uint8 sH = _vbrDecrStep >> 8;
+		bool ovrflow = (sL + _vbrCur > 255);
+		_vbrCur += sL;
+		if (!ovrflow)
 			return;
-		_vbrFrequencyModifier += ((_vbrIncrStep >> 8) + 1);
+		_vbrFrequencyModifier += (sH + 1);
 	}
 
 	sendFrequency();
@@ -794,23 +798,31 @@ void SoundChannel_PC9801_FM2OP::processSounds() {
 	}
 
 	if (_flags & kChanVbrDecrease) {
-		int16 s = _vbrCur - (_vbrDecrStep & 0xFF);
-		_vbrCur = s & 0xFF;
-		if (s < 0)
-			_vbrFrequencyModifier -= ((_vbrDecrStep >> 8) + 1);
-		s = _vbrCur2 - (_vbrDecrStep2 & 0xFF);
-		_vbrCur2 = s & 0xFF;
-		if (s < 0)
-			_vbrFrequencyModifier2 -= ((_vbrDecrStep2 >> 8) + 1);
+		uint8 sL = _vbrDecrStep & 0xFF;
+		uint8 sH = _vbrDecrStep >> 8;
+		bool ovrflow = (sL > _vbrCur);
+		_vbrCur -= sL;
+		if (ovrflow)
+			_vbrFrequencyModifier -= (sH + 1);
+		sL = _vbrDecrStep2 & 0xFF;
+		sH = _vbrDecrStep2 >> 8;
+		ovrflow = (sL > _vbrCur2);
+		_vbrCur2 -= sL;
+		if (ovrflow)
+			_vbrFrequencyModifier2 -= (sH + 1);
 	} else {
-		uint16 s = _vbrCur + (_vbrIncrStep & 0xFF);
-		_vbrCur = s & 0xFF;
-		if (s > 255)
-			_vbrFrequencyModifier += ((_vbrIncrStep >> 8) + 1);
-		s = _vbrCur2 + (_vbrIncrStep2 & 0xFF);
-		_vbrCur2 = s & 0xFF;
-		if (s > 255)
-			_vbrFrequencyModifier2 += ((_vbrIncrStep2 >> 8) + 1);
+		uint8 sL = _vbrDecrStep & 0xFF;
+		uint8 sH = _vbrDecrStep >> 8;
+		bool ovrflow = (sL + _vbrCur > 255);
+		_vbrCur += sL;
+		if (ovrflow)
+			_vbrFrequencyModifier += (sH + 1);
+		sL = _vbrDecrStep2 & 0xFF;
+		sH = _vbrDecrStep2 >> 8;
+		ovrflow = (sL + _vbrCur2 > 255);
+		_vbrCur2 += sL;
+		if (ovrflow)
+			_vbrFrequencyModifier2 += (sH + 1);
 	}
 
 	sendFrequency();
@@ -958,7 +970,7 @@ void SoundChannel_PC9801_SSG::processSounds() {
 		if (_ssgEnvelopeState == (kEnvSSG_keyOn | kEnvSSG_decay)) {
 			_ssgLevel = _selectedInstrument[15];
 			_ssgSpeed = _selectedInstrument[16];
-			vol = (uint8)CLIP<int16>(vol + (int8)(_selectedInstrument[20] << 4), 0, 255);
+			vol = (uint8)CLIP<int16>(vol + (int8)((_selectedInstrument[20] & 0x0F) << 4), 0, 255);
 		}
 	}
 	
@@ -1523,7 +1535,8 @@ void MidiDriver_PC9801::initTrack(SciSpan<const byte> &header) {
 	for (int i = 0; i < _numChan; ++i)
 		_chan[i]->reset();
 
-	uint8 caps = *header++;
+	uint8 readPos = 0;
+	uint8 caps = header.getInt8At(readPos++);
 	int numChan = (caps == 2) ? 15 : 16;
 	if (caps != 0 && caps != 2)
 		return;
@@ -1531,9 +1544,10 @@ void MidiDriver_PC9801::initTrack(SciSpan<const byte> &header) {
 	for (int i = 0; i < numChan; ++i) {
 		_parts[i]->controlChangeVolume(103);
 			
-		uint8 num = (_internalVersion == 1) ? (*header & 0x7F): 1;
-		header++;
-		uint8 flags = *header++;
+		uint8 num = (_internalVersion == 1) ? (header.getInt8At(readPos) & 0x7F) : 1;
+		readPos++;
+		uint8 flags = header.getInt8At(readPos);
+		readPos++;
 
 		if (flags & _channelMask1 && num)
 			_parts[i]->addChannels(num, -1, 0);
