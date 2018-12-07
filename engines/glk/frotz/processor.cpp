@@ -628,12 +628,11 @@ void Processor::z_sound_effect() {
 		_soundPlaying = false;
 
 		switch (effect) {
-
 		case EFFECT_PREPARE:
-			os_prepare_sample (number);
+			os_prepare_sample(number);
 			break;
 		case EFFECT_PLAY:
-			start_sample(number, lo (volume), hi (volume), (zargc == 4) ? zargs[3] : 0);
+			start_sample(number, lo(volume), hi(volume), (zargc == 4) ? zargs[3] : 0);
 			break;
 		case EFFECT_STOP:
 			os_stop_sample (number);

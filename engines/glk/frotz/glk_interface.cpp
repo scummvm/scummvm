@@ -279,11 +279,27 @@ bool GlkInterface::os_picture_data(int picture, glui32 *height, glui32 *width) {
 }
 
 void GlkInterface::start_sample(int number, int volume, int repeats, zword eos) {
-	// TODO
+	static zbyte LURKING_REPEATS[] = {
+		0x00, 0x00, 0x00, 0x01, 0xff,
+		0x00, 0x01, 0x01, 0x01, 0x01,
+		0xff, 0x01, 0x01, 0xff, 0x00,
+		0xff, 0xff, 0xff, 0xff, 0xff
+	};
+
+	if (_storyId == LURKING_HORROR)
+		repeats = LURKING_REPEATS[number];
+
+	os_start_sample(number, volume, repeats, eos);
+
+	_soundPlaying = true;
 }
 
 void GlkInterface::start_next_sample() {
-	// TODO
+	if (next_sample != 0)
+		start_sample(next_sample, next_volume, 0, 0);
+
+	next_sample = 0;
+	next_volume = 0;
 }
 
 void GlkInterface::gos_update_width() {
