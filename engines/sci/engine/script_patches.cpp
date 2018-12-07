@@ -1353,6 +1353,84 @@ static const uint16 gk1Day9VineSwingPatch[] = {
 	PATCH_END
 };
 
+// The mummies on day 9 move without animating if ego exits to the north before
+//  the first one finishes standing. This also occurs in Sierra's interpreter.
+//
+// The 12 outer rooms of the African mound all take place in room 710, which
+//  reinitializes its contents on each room change. Each room's mummy is guard1
+//  repositioned with a different view. When the mummies come to life,
+//  keyWorks:changeState(6) starts guard1's standing animation after which
+//  state 7 initializes guard1 for chasing ego. Ego however can leave before
+//  guard1 finishes standing, preventing state 7 from occurring. The script for
+//  exiting to the north assumes state 7 has run, otherwise guard1 remains on
+//  the wrong view with no cycler or looper in subsequent rooms.
+//
+// This bug is due to the script rightWay only partially initializing guard1 for
+//  chasing as opposed to wrongWay and backTrack which fully initialize. We fix
+//  this by replacing rightWay's partial initialization with the full version
+//  from keyWorks state 7. There are two versions of this patch due to
+//  significant differences between floppy and CD versions of this script.
+//
+// This patch is not applied to the NRS versions of this script, which address
+//  this bug by disabling control until guard1 finishes standing, giving the
+//  player less time to escape.
+//
+// Applies to: All PC Floppy and CD versions. TODO: Test Mac
+// Responsible method: rightWay:changeState(1)
+// Fixes bug #10828
+static const uint16 gk1MummyAnimateFloppySignature[] = {
+    0x39, SIG_SELECTOR8(view),          // pushi view [ full guard1 init ]
+    SIG_MAGICDWORD,
+    0x78,                               // push1
+    0x38, SIG_UINT16(0x02c5),           // pushi 709d
+    SIG_ADDTOOFFSET(+674),
+    0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion [ partial guard1 init ]
+    0x38, SIG_UINT16(0x0004),           // pushi 0004
+    0x51, 0x70,                         // class PChase
+    0x36,                               // push
+    0x89, 0x00,                         // lsg 00
+    0x39, 0x0f,                         // pushi 0f
+    SIG_END
+};
+
+static const uint16 gk1MummyAnimateFloppyPatch[] = {
+    PATCH_ADDTOOFFSET(+680),
+    0x39, PATCH_SELECTOR8(view),        // pushi view [ waste 6 stack items to be compatible with ]
+    0x76,                               // push0      [  the send instruction in full guard1 init ]
+    0x39, PATCH_SELECTOR8(view),        // pushi view
+    0x76,                               // push0
+    0x39, PATCH_SELECTOR8(view),        // pushi view
+    0x39, 00,                           // pushi 00
+    0x32, PATCH_UINT16(0xfd4b),         // jmp -693d [ continue full guard1 init in keyWorks state 7 ]
+    PATCH_END
+};
+
+static const uint16 gk1MummyAnimateCDSignature[] = {
+    0x39, SIG_SELECTOR8(view),          // pushi view [ full guard1 init ]
+    SIG_MAGICDWORD,
+    0x78,                               // push1
+    0x38, SIG_UINT16(0x02c5),           // pushi 709d
+    SIG_ADDTOOFFSET(+750),
+    0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion [ partial guard1 init ]
+    0x38, SIG_UINT16(0x0004),           // pushi 0004
+    0x51, 0x70,                         // class PChase
+    0x36,                               // push
+    0x89, 0x00,                         // lsg 00
+    0x39, 0x0f,                         // pushi 0f
+    SIG_END
+};
+
+static const uint16 gk1MummyAnimateCDPatch[] = {
+    PATCH_ADDTOOFFSET(+756),
+    0x39, PATCH_SELECTOR8(view),        // pushi view [ waste 6 stack items to be compatible with ]
+    0x76,                               // push0      [  the send instruction in full guard1 init ]
+    0x39, PATCH_SELECTOR8(view),        // pushi view
+    0x76,                               // push0
+    0x39, PATCH_SELECTOR8(view),        // pushi view
+    0x39, 00,                           // pushi 00
+    0x32, PATCH_UINT16(0xfcff),         // jmp -769d [ continue full guard1 init in keyWorks state 7 ]
+    PATCH_END
+};
 
 // In GK1, the `view` selector is used to store view numbers in some cases and
 // object references to Views in other cases. `Interrogation::dispose` compares
@@ -2110,6 +2188,8 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   420, "fix lorelei chair missing message",           1, gk1OperateLoreleiChairSignature,  gk1OperateLoreleiChairPatch },
 	{  true,   420, "fix lorelei money messages",                  1, gk1LoreleiMoneySignature,         gk1LoreleiMoneyPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
+	{  true,   710, "fix day 9 mummy animation (floppy)",          1, gk1MummyAnimateFloppySignature,   gk1MummyAnimateFloppyPatch },
+	{  true,   710, "fix day 9 mummy animation (cd)",              1, gk1MummyAnimateCDSignature,       gk1MummyAnimateCDPatch },
 	{  true,   800, "fix day 10 honfour unlock door lockup",       1, gk1HonfourUnlockDoorSignature,    gk1HonfourUnlockDoorPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
