@@ -539,6 +539,11 @@ void Process::stub155() {
 	push(155);
 }
 
+void Process::stub160() {
+	int arg = pop();
+	debug("stub160: %d", arg);
+}
+
 void Process::stub166() {
 	int arg3 = pop();
 	int arg2 = pop();
@@ -1218,6 +1223,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub153, stub153);
 			OP		(kStub154, stub154);
 			OP		(kStub155, stub155);
+			OP		(kStub160, stub160);
 			OP		(kStub166, stub166);
 			OP		(kSetDelay, setDelay);
 			OP		(kStub172, stub172);
