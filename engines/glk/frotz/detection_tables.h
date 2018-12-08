@@ -88,6 +88,8 @@ const PlainGameDescriptor FROTZ_GAME_LIST[] = {
 #define NONE GUIO4(GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMUSIC, GUIO_NOSUBTITLES)
 #define ENTRY0(ID, VERSION, MD5, FILESIZE) { ID, VERSION, MD5, FILESIZE, Common::EN_ANY, NONE }
 #define ENTRY1(ID, VERSION, MD5, FILESIZE, LANG) { ID, VERSION, MD5, FILESIZE, LANG, NONE }
+#define ENTRYS(ID, VERSION, MD5, FILESIZE) { ID, VERSION, MD5, FILESIZE, Common::EN_ANY, GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES) }
+
 #define FROTZ_TABLE_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY, "" }
 
 const FrotzGameDescription FROTZ_GAMES[] = {
@@ -124,9 +126,9 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("lgop", "R0", "69b3534570851b90d7f53ebe9d224a6a", 128998),
 	ENTRY0("lgop", "R4-880405", "6bdae7434df7c03f3589ece0bed3317d", 159928),
 	ENTRY0("lgop", "R59-860730", "e81237e220a612c5a93fbcc1fdf85a0a", 129022),
-	ENTRY0("lurkinghorror", "R203", "e2d2505510479fec0405727e3d0abc10", 128986),
-	ENTRY0("lurkinghorror", "R219", "83936d75c2cfd71fb64bf63c4696b9ac", 129704),
-	ENTRY0("lurkinghorror", "R221", "c60cd0bf3c6eda867241378c7cb5464a", 129944),
+	ENTRYS("lurkinghorror", "R203", "e2d2505510479fec0405727e3d0abc10", 128986),
+	ENTRYS("lurkinghorror", "R219", "83936d75c2cfd71fb64bf63c4696b9ac", 129704),
+	ENTRYS("lurkinghorror", "R221", "c60cd0bf3c6eda867241378c7cb5464a", 129944),
 	ENTRY0("minizork1", "R34-871124", "0d7700679e5e63dec97f712698610a46", 52216),
 	ENTRY0("moonmist", "R4-860918", "284797c3025ffaf76aecfa5c2bbffa86", 129002),
 	ENTRY0("moonmist", "R9-861022", "698475de2769c66bc5a1eca600c71561", 128866),
@@ -146,8 +148,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("seastalker", "R16-850515", "eb39dff7beb3589c8581dd2e3569eb78", 117752),
 	ENTRY0("seastalker", "R16-850603", "bccf194b1e823e37db2431b586662773", 117762),
 	ENTRY0("seastalker", "R86-840320", "64fb27e7b9fd682ff4f0d0ec6616a468", 116456),
-	ENTRY0("sherlockriddle", "R21-871214", "69862f7f07a4e977159ea4da7f2f2ba6", 188444),
-	ENTRY0("sherlockriddle", "R26-880127", "2cb2bda2e34eb7f9494cb585720e74cd", 190180),
+	ENTRYS("sherlockriddle", "R21-871214", "69862f7f07a4e977159ea4da7f2f2ba6", 188444),
+	ENTRYS("sherlockriddle", "R26-880127", "2cb2bda2e34eb7f9494cb585720e74cd", 190180),
 	ENTRY0("shogun", "R322-890706", "62cca41feb94082442026f44f3e48e19", 344816),
 	ENTRY0("sorcerer", "R4-840131", "d4a914fdfe90f5cd055a03b9aa24addd", 109734),
 	ENTRY0("sorcerer", "R6-840508", "7ee357c10a9e049fe7c641a4817ee575", 109482),
