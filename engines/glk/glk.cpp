@@ -122,6 +122,20 @@ Common::Error GlkEngine::run() {
 		if (!f.open("game", *_blorb))
 			return Common::kNoGameDataFoundError;
 	} else {
+		// Check for a secondary blorb file with the same filename
+		Common::String baseName = filename;
+		while (baseName.contains('.'))
+			baseName.deleteLastChar();
+
+		if (f.exists(baseName + ".blorb")) {
+			_blorb = new Blorb(baseName + ".blorb", getInterpreterType());
+			SearchMan.add("blorb", _blorb, 99, false);
+		} else if (f.exists(baseName + ".blb")) {
+			_blorb = new Blorb(baseName + ".blb", getInterpreterType());
+			SearchMan.add("blorb", _blorb, 99, false);
+		}
+
+		// Open up the game file
 		if (!f.open(filename))
 			return Common::kNoGameDataFoundError;
 	}

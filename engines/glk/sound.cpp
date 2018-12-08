@@ -25,6 +25,7 @@
 #include "glk/events.h"
 #include "common/file.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/aiff.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/wave.h"
@@ -92,6 +93,7 @@ glui32 SoundChannel::play(glui32 soundNum, glui32 repeats, glui32 notify) {
 	Common::String nameSnd = Common::String::format("sound%u.snd", soundNum);
 	Common::String nameMp3 = Common::String::format("sound%u.mp3", soundNum);
 	Common::String nameWav = Common::String::format("sound%u.wav", soundNum);
+	Common::String nameAiff = Common::String::format("sound%u.aiff", soundNum);
 
 	if (f.exists(nameSnd) && f.open(nameSnd)) {
 		if (f.readUint16BE() != (f.size() - 2))
@@ -112,6 +114,10 @@ glui32 SoundChannel::play(glui32 soundNum, glui32 repeats, glui32 notify) {
 	} else if (f.exists(nameWav) && f.open(nameWav)) {
 		Common::SeekableReadStream *s = f.readStream(f.size());
 		stream = Audio::makeWAVStream(s, DisposeAfterUse::YES);
+
+	} else if (f.exists(nameAiff) && f.open(nameAiff)) {
+		Common::SeekableReadStream *s = f.readStream(f.size());
+		stream = Audio::makeAIFFStream(s, DisposeAfterUse::YES);
 
 	} else {
 		warning("Could not find sound %u", soundNum);
