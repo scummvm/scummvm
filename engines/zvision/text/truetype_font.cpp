@@ -118,12 +118,15 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 	bool sharp = (_style & TTF_STYLE_SHARP) == TTF_STYLE_SHARP;
 
 	Common::File file;
+	Graphics::Font *newFont;
 	if (!file.open(newFontName) && !_engine->getSearchManager()->openFile(file, newFontName) &&
 		!file.open(liberationFontName) && !_engine->getSearchManager()->openFile(file, liberationFontName) &&
-		!file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, freeFontName))
-		error("Unable to open font file %s (Liberation Font alternative: %s, FreeFont alternative: %s)", newFontName.c_str(), liberationFontName.c_str(), freeFontName.c_str());
+		!file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, freeFontName)) {
+		newFont = Graphics::loadTTFFontFromArchive(freeFontName, point, Graphics::kTTFSizeModeCell, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
+	} else {
+		newFont = Graphics::loadTTFFont(file, point, Graphics::kTTFSizeModeCell, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
+	}
 
-	Graphics::Font *newFont = Graphics::loadTTFFont(file, point, Graphics::kTTFSizeModeCell, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
 	if (newFont == nullptr) {
 		return false;
 	}

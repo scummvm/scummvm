@@ -285,7 +285,8 @@ Common::Error ZVision::run() {
 
 			if (!Common::File::exists(fontName) && !_searchManager->hasFile(fontName) &&
 				!Common::File::exists(liberationFontName) && !_searchManager->hasFile(liberationFontName) &&
-				!Common::File::exists(freeFontName) && !_searchManager->hasFile(freeFontName)) {
+				!Common::File::exists(freeFontName) && !_searchManager->hasFile(freeFontName) &&
+				!Common::File::exists("fonts.dat") && !_searchManager->hasFile("fonts.dat")) {
 				foundAllFonts = false;
 				break;
 			}
