@@ -42,6 +42,7 @@ MODULE_OBJS := \
 	frotz/processor_windows.o \
 	frotz/quetzal.o \
 	frotz/screen.o \
+	frotz/sound_folder.o \
 	scott/detection.o \
 	scott/scott.o \
 	tads/detection.o \

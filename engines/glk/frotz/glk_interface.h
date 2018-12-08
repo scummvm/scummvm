@@ -105,6 +105,11 @@ private:
 	 * Displays the title screen for the game Beyond Zork
 	 */
 	void showBeyondZorkTitle();
+
+	/**
+	 * Add any Sound subfolder or sound zip file for access
+	 */
+	void addSound();
 protected:
 	/**
 	 * Return the length of the character in screen units.
