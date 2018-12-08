@@ -35,6 +35,7 @@
 #include "glk/picture.h"
 #include "glk/screen.h"
 #include "glk/selection.h"
+#include "glk/sound.h"
 #include "glk/streams.h"
 #include "glk/windows.h"
 
@@ -45,9 +46,9 @@ GlkEngine *g_vm;
 GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _random("Glk"), _blorb(nullptr),
 		_clipboard(nullptr), _conf(nullptr), _events(nullptr), _pictures(nullptr),
-		_screen(nullptr), _selection(nullptr), _windows(nullptr), _copySelect(false),
-		_terminated(false), gli_unregister_obj(nullptr), gli_register_arr(nullptr),
-		gli_unregister_arr(nullptr) {
+		_screen(nullptr), _selection(nullptr), _sounds(nullptr), _windows(nullptr),
+		_copySelect(false), _terminated(false), gli_unregister_obj(nullptr),
+		gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
 	g_vm = this;
 }
 
@@ -59,6 +60,7 @@ GlkEngine::~GlkEngine() {
 	delete _pictures;
 	delete _screen;
 	delete _selection;
+	delete _sounds;
 	delete _streams;
 	delete _windows;
 }
@@ -79,6 +81,7 @@ void GlkEngine::initialize() {
 	_events = new Events();
 	_pictures = new Pictures();
 	_selection = new Selection();
+	_sounds = new Sounds();
 	_streams = new Streams();
 	_windows = new Windows(_screen);
 }

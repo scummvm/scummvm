@@ -41,6 +41,7 @@ class Events;
 class Pictures;
 class Screen;
 class Selection;
+class Sounds;
 class Streams;
 class Windows;
 
@@ -107,6 +108,7 @@ public:
 	Screen *_screen;
 	Selection *_selection;
 	Streams *_streams;
+	Sounds *_sounds;
 	Windows *_windows;
 	bool _copySelect;
 	bool _terminated;
