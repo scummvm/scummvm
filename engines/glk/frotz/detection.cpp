@@ -106,6 +106,7 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
 			gd = DetectedGame(p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);
+			gd.setGUIOptions(p->_guiOptions);
 		}
 
 		gd.addExtraEntry("filename", filename);
