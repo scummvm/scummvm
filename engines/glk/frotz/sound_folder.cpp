@@ -71,7 +71,7 @@ const Common::ArchiveMemberPtr SoundSubfolder::getMember(const Common::String &n
 
 Common::SeekableReadStream *SoundSubfolder::createReadStreamForMember(const Common::String &name) const {
 	Common::File *f = new Common::File();
-	if (f->open(_folder.getChild(name)))
+	if (_filenames.contains(name) && f->open(_folder.getChild(_filenames[name])))
 		return f;
 
 	delete f;

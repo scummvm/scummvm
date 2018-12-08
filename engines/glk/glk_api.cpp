@@ -975,7 +975,11 @@ schanid_t GlkAPI::glk_schannel_create(glui32 rock) {
 }
 
 void GlkAPI::glk_schannel_destroy(schanid_t chan) {
-	delete chan;
+	if (chan) {
+		delete chan;
+	} else {
+		warning("schannel_dest roy: invalid ref");
+	}
 }
 
 schanid_t GlkAPI::glk_schannel_iterate(schanid_t chan, glui32 *rockptr) {
@@ -983,21 +987,38 @@ schanid_t GlkAPI::glk_schannel_iterate(schanid_t chan, glui32 *rockptr) {
 }
 
 glui32 GlkAPI::glk_schannel_get_rock(schanid_t chan) {
-	return chan->_rock;
+	if (chan) {
+		return chan->_rock;
+	} else {
+		warning("schannel_get_rock: invalid ref");
+		return 0;
+	}
 }
 
 glui32 GlkAPI::glk_schannel_play(schanid_t chan, glui32 snd) {
-	// TODO
-	return 0;
+	if (chan) {
+		return chan->play(snd);
+	} else {
+		warning("schannel_play_ext: invalid ref");
+		return 0;
+	}
 }
 
 glui32 GlkAPI::glk_schannel_play_ext(schanid_t chan, glui32 snd, glui32 repeats, glui32 notify) {
-	// TODO
-	return 0;
+	if (chan) {
+		chan->play(snd, repeats, notify);
+	} else {
+		warning("schannel_play_ext: invalid ref");
+		return 0;
+	}
 }
 
 void GlkAPI::glk_schannel_stop(schanid_t chan) {
-	// TODO
+	if (chan) {
+		chan->stop();
+	} else {
+		warning("schannel_stop: invalid ref");
+	}
 }
 
 void GlkAPI::glk_schannel_set_volume(schanid_t chan, glui32 vol) {
@@ -1005,17 +1026,17 @@ void GlkAPI::glk_schannel_set_volume(schanid_t chan, glui32 vol) {
 }
 
 void GlkAPI::glk_sound_load_hint(glui32 snd, glui32 flag) {
-	// TODO
+	// No implementation
 }
 
 schanid_t GlkAPI::glk_schannel_create_ext(glui32 rock, glui32 volume) {
-	// TODO
+	// No implementation
 	return nullptr;
 }
 
 glui32 GlkAPI::glk_schannel_play_multi(schanid_t *chanarray, glui32 chancount,
                                     glui32 *sndarray, glui32 soundcount, glui32 notify) {
-	// TODO
+	// No implementation
 	return 0;
 }
 
