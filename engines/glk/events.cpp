@@ -25,6 +25,7 @@
 #include "glk/glk.h"
 #include "glk/screen.h"
 #include "glk/selection.h"
+#include "glk/sound.h"
 #include "glk/windows.h"
 #include "graphics/cursorman.h"
 
@@ -107,7 +108,9 @@ void Events::checkForNextFrameCounter() {
 			g_vm->_windows->redraw();
 		_redraw = false;
 		g_vm->_screen->update();
-		return;
+
+		// Poll for any finished sounds
+		g_vm->_sounds->poll();
 	}
 }
 

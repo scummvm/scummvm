@@ -21,6 +21,13 @@
  */
 
 #include "glk/sound.h"
+#include "glk/glk.h"
+#include "glk/events.h"
+#include "common/file.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/wave.h"
 
 namespace Glk {
 
@@ -39,7 +46,7 @@ void Sounds::removeSound(schanid_t snd) {
 }
 
 schanid_t Sounds::create(glui32 rock) {
-	schanid_t snd = new SoundChannel();
+	schanid_t snd = new SoundChannel(this);
 	_sounds.push_back(snd);
 	return snd;
 }
@@ -58,15 +65,83 @@ schanid_t Sounds::iterate(schanid_t chan, glui32 *rockptr) {
 	return nullptr;
 }
 
-/*--------------------------------------------------------------------------*/
-
-SoundChannel::~SoundChannel() {
-	_owner->removeSound(this);
-	delete _stream;
+void Sounds::poll() {
+	for (uint idx = 0; idx < _sounds.size(); ++idx)
+		_sounds[idx]->poll();
 }
 
-void SoundChannel::play(uint soundNum) {
-	// TODO
+/*--------------------------------------------------------------------------*/
+
+SoundChannel::SoundChannel(Sounds *owner) : _owner(owner), _soundNum(0),
+		_rock(0), _notify(0) {
+}
+
+SoundChannel::~SoundChannel() {
+	stop();
+	_owner->removeSound(this);
+}
+
+glui32 SoundChannel::play(glui32 soundNum, glui32 repeats, glui32 notify) {
+	stop();
+	if (repeats == 0)
+		return 1;
+
+	// Find a sound of the given name
+	Audio::AudioStream *stream;
+	Common::File f;
+	Common::String nameSnd = Common::String::format("sound%u.snd", soundNum);
+	Common::String nameMp3 = Common::String::format("sound%u.mp3", soundNum);
+	Common::String nameWav = Common::String::format("sound%u.wav", soundNum);
+
+	if (f.exists(nameSnd) && f.open(nameSnd)) {
+		if (f.readUint16BE() != (f.size() - 2))
+			error("Invalid sound filesize");
+		repeats = f.readByte();
+		f.skip(1);
+		uint freq = f.readUint16BE();
+		f.skip(2);
+		uint size = f.readUint16BE();
+
+		Common::SeekableReadStream *s = f.readStream(size);
+		stream = Audio::makeRawStream(s, freq, Audio::FLAG_UNSIGNED);
+
+	} else if (f.exists(nameMp3) && f.open(nameMp3)) {
+		Common::SeekableReadStream *s = f.readStream(f.size());
+		stream = Audio::makeMP3Stream(s, DisposeAfterUse::YES);
+
+	} else if (f.exists(nameWav) && f.open(nameWav)) {
+		Common::SeekableReadStream *s = f.readStream(f.size());
+		stream = Audio::makeWAVStream(s, DisposeAfterUse::YES);
+
+	} else {
+		warning("Could not find sound %u", soundNum);
+		return 1;
+	}
+
+	_soundNum = soundNum;
+	_notify = notify;
+
+	// Set up a repeat if multiple repeats are specified
+	if (repeats > 1) {
+		Audio::RewindableAudioStream *rwStream = dynamic_cast<Audio::RewindableAudioStream *>(stream);
+		assert(rwStream);
+		stream = new Audio::LoopingAudioStream(rwStream, repeats, DisposeAfterUse::YES);
+	}
+
+	// Start playing the audio
+	g_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, stream);
+	return 0;
+}
+
+void SoundChannel::stop() {
+	g_vm->_mixer->stopHandle(_handle);
+}
+
+void SoundChannel::poll() {
+	if (!g_vm->_mixer->isSoundHandleActive(_handle) && _notify != 0)
+		g_vm->_events->store(evtype_SoundNotify, 0,
+			_soundNum, _notify);
+
 }
 
 } // End of namespace Glk

@@ -25,6 +25,7 @@
 
 #include "glk/glk_types.h"
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "common/array.h"
 
 namespace Glk {
@@ -34,15 +35,19 @@ class Sounds;
 /**
  * Holds the data for a playing sound
  */
-struct SoundChannel {
+class SoundChannel {
+private:
 	Sounds *_owner;
-	Audio::AudioStream *_stream;
+	glui32 _soundNum;
+	glui32 _notify;
+	Audio::SoundHandle _handle;
+public:
 	glui32 _rock;
-
+public:
 	/**
-	 * Destructor
+	 * Constructor
 	 */
-	SoundChannel() : _stream(nullptr), _rock(0) {}
+	SoundChannel(Sounds *owner);
 
 	/**
 	 * Destructor
@@ -52,7 +57,17 @@ struct SoundChannel {
 	/**
 	 * Play a sound
 	 */
-	void play(uint soundNum);
+	glui32 play(glui32 soundNum, glui32 repeats = 1, glui32 notify = 0);
+
+	/**
+	 * Stop playing sound
+	 */
+	void stop();
+
+	/**
+	 * Poll for whether a playing sound was finished
+	 */
+	void poll();
 };
 typedef SoundChannel *schanid_t;
 
@@ -60,7 +75,7 @@ typedef SoundChannel *schanid_t;
  * Sound manager
  */
 class Sounds {
-	friend struct SoundChannel;
+	friend class SoundChannel;
 private:
 	Common::Array<schanid_t> _sounds;
 private:
@@ -80,6 +95,11 @@ public:
 	 * Used to iterate over the current list of sound channels
 	 */
 	schanid_t iterate(schanid_t chan, glui32 *rockptr = nullptr);
+
+	/**
+	 * Poll for whether any playing sounds are finished
+	 */
+	void poll();
 };
 
 } // End of namespace Glk
