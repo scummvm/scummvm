@@ -146,7 +146,7 @@ Common::ErrorCode Blorb::load() {
 				ce._filename += ".rect";
 
 		} else if (ce._type == ID_Snd) {
-			ce._filename = Common::String::format("snd%u", ce._number);
+			ce._filename = Common::String::format("sound%u", ce._number);
 			if (ce._id == ID_MIDI)
 				ce._filename += ".midi";
 			else if (ce._id == ID_MP3)
@@ -156,7 +156,7 @@ Common::ErrorCode Blorb::load() {
 			else if (ce._id == ID_AIFF)
 				ce._filename += ".aiff";
 			else if (ce._id == ID_OGG)
-				ce._filename += ".ogg";
+				ce._filename += ".ogg"; 
 			else if (ce._id == ID_MOD)
 				ce._filename += ".mod";
 

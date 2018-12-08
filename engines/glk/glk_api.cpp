@@ -24,6 +24,7 @@
 #include "glk/conf.h"
 #include "glk/events.h"
 #include "glk/picture.h"
+#include "glk/sound.h"
 #include "glk/streams.h"
 #include "glk/unicode.h"
 #include "glk/windows.h"
@@ -970,22 +971,19 @@ void GlkAPI::glk_window_set_background_color(winid_t win, glui32 color) {
 }
 
 schanid_t GlkAPI::glk_schannel_create(glui32 rock) {
-	// TODO
-	return nullptr;
+	return _sounds->create(rock);
 }
 
 void GlkAPI::glk_schannel_destroy(schanid_t chan) {
-	// TODO
+	delete chan;
 }
 
 schanid_t GlkAPI::glk_schannel_iterate(schanid_t chan, glui32 *rockptr) {
-	// TODO
-	return nullptr;
+	return _sounds->iterate(chan, rockptr);
 }
 
 glui32 GlkAPI::glk_schannel_get_rock(schanid_t chan) {
-	// TODO
-	return 0;
+	return chan->_rock;
 }
 
 glui32 GlkAPI::glk_schannel_play(schanid_t chan, glui32 snd) {

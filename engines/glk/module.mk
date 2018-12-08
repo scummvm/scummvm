@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	raw_decoder.o \
 	screen.o \
 	selection.o \
+	sound.o \
 	streams.o \
 	time.o \
 	unicode.o \

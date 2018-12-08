@@ -26,6 +26,7 @@
 #include "glk/glk.h"
 #include "glk/glk_types.h"
 #include "glk/blorb.h"
+#include "glk/sound.h"
 #include "glk/time.h"
 #include "glk/windows.h"
 

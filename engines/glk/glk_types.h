@@ -68,8 +68,6 @@ enum InterpreterType {
 #define GLK_MODULE_DATETIME
 #define GLK_MODULE_GARGLKTEXT
 
-typedef struct glk_schannel_struct *schanid_t;
-
 /**
  * Usurp C1 space for ligatures and smart typography glyphs
  */
