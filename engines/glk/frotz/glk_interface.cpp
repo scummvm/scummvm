@@ -22,8 +22,11 @@
 
 #include "glk/frotz/glk_interface.h"
 #include "glk/frotz/pics.h"
+#include "glk/frotz/sound_folder.h"
 #include "glk/conf.h"
 #include "glk/screen.h"
+#include "common/config-manager.h"
+#include "common/unzip.h"
 
 namespace Glk {
 namespace Frotz {
@@ -52,49 +55,49 @@ void GlkInterface::initialize() {
 	 * Init glk stuff
 	 */
 
-	// monor
-	glk_stylehint_set(wintype_AllTypes,   style_Preformatted, stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_Preformatted, stylehint_Weight, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_Preformatted, stylehint_Oblique, 0);
+	 // monor
+	glk_stylehint_set(wintype_AllTypes, style_Preformatted, stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Preformatted, stylehint_Weight, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Preformatted, stylehint_Oblique, 0);
 
 	// monob
-	glk_stylehint_set(wintype_AllTypes,   style_Subheader,    stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_Subheader,    stylehint_Weight, 1);
-	glk_stylehint_set(wintype_AllTypes,   style_Subheader,    stylehint_Oblique, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Subheader, stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Subheader, stylehint_Weight, 1);
+	glk_stylehint_set(wintype_AllTypes, style_Subheader, stylehint_Oblique, 0);
 
 	// monoi
-	glk_stylehint_set(wintype_AllTypes,   style_Alert,        stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_Alert,        stylehint_Weight, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_Alert,        stylehint_Oblique, 1);
+	glk_stylehint_set(wintype_AllTypes, style_Alert, stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Alert, stylehint_Weight, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Alert, stylehint_Oblique, 1);
 
 	// monoz
-	glk_stylehint_set(wintype_AllTypes,   style_BlockQuote,   stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_BlockQuote,   stylehint_Weight, 1);
-	glk_stylehint_set(wintype_AllTypes,   style_BlockQuote,   stylehint_Oblique, 1);
+	glk_stylehint_set(wintype_AllTypes, style_BlockQuote, stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes, style_BlockQuote, stylehint_Weight, 1);
+	glk_stylehint_set(wintype_AllTypes, style_BlockQuote, stylehint_Oblique, 1);
 
 	// propr
-	glk_stylehint_set(wintype_TextBuffer, style_Normal,       stylehint_Proportional, 1);
-	glk_stylehint_set(wintype_TextGrid,   style_Normal,       stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_Normal,       stylehint_Weight, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_Normal,       stylehint_Oblique, 0);
+	glk_stylehint_set(wintype_TextBuffer, style_Normal, stylehint_Proportional, 1);
+	glk_stylehint_set(wintype_TextGrid, style_Normal, stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Normal, stylehint_Weight, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Normal, stylehint_Oblique, 0);
 
 	// propb
-	glk_stylehint_set(wintype_TextBuffer, style_Header,       stylehint_Proportional, 1);
-	glk_stylehint_set(wintype_TextGrid,   style_Header,       stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_Header,       stylehint_Weight, 1);
-	glk_stylehint_set(wintype_AllTypes,   style_Header,       stylehint_Oblique, 0);
+	glk_stylehint_set(wintype_TextBuffer, style_Header, stylehint_Proportional, 1);
+	glk_stylehint_set(wintype_TextGrid, style_Header, stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Header, stylehint_Weight, 1);
+	glk_stylehint_set(wintype_AllTypes, style_Header, stylehint_Oblique, 0);
 
 	// propi
-	glk_stylehint_set(wintype_TextBuffer, style_Emphasized,   stylehint_Proportional, 1);
-	glk_stylehint_set(wintype_TextGrid,   style_Emphasized,   stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_Emphasized,   stylehint_Weight, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_Emphasized,   stylehint_Oblique, 1);
+	glk_stylehint_set(wintype_TextBuffer, style_Emphasized, stylehint_Proportional, 1);
+	glk_stylehint_set(wintype_TextGrid, style_Emphasized, stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Emphasized, stylehint_Weight, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Emphasized, stylehint_Oblique, 1);
 
 	// propi
-	glk_stylehint_set(wintype_TextBuffer, style_Note,         stylehint_Proportional, 1);
-	glk_stylehint_set(wintype_TextGrid,   style_Note,         stylehint_Proportional, 0);
-	glk_stylehint_set(wintype_AllTypes,   style_Note,         stylehint_Weight, 1);
-	glk_stylehint_set(wintype_AllTypes,   style_Note,         stylehint_Oblique, 1);
+	glk_stylehint_set(wintype_TextBuffer, style_Note, stylehint_Proportional, 1);
+	glk_stylehint_set(wintype_TextGrid, style_Note, stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_AllTypes, style_Note, stylehint_Weight, 1);
+	glk_stylehint_set(wintype_AllTypes, style_Note, stylehint_Oblique, 1);
 
 	/*
 	 * Get the screen size
@@ -123,7 +126,7 @@ void GlkInterface::initialize() {
 
 	if (h_version >= V4)
 		h_config |= CONFIG_BOLDFACE | CONFIG_EMPHASIS |
-			CONFIG_FIXED | CONFIG_TIMEDINPUT | CONFIG_COLOUR;
+		CONFIG_FIXED | CONFIG_TIMEDINPUT | CONFIG_COLOUR;
 
 	if (h_version >= V5)
 		h_flags &= ~(GRAPHICS_FLAG | MOUSE_FLAG | MENU_FLAG);
@@ -134,7 +137,7 @@ void GlkInterface::initialize() {
 	if ((h_version == 3) && (h_flags & OLD_SOUND_FLAG))
 		h_flags |= OLD_SOUND_FLAG;
 
-	if ((h_version == 6) && (_sound != 0)) 
+	if ((h_version == 6) && (_sound != 0))
 		h_config |= CONFIG_SOUND;
 
 	if (h_version >= V5 && (h_flags & UNDO_FLAG))
@@ -188,6 +191,15 @@ void GlkInterface::initialize() {
 
 	// Set the screen colors
 	garglk_set_zcolors(_defaultForeground, _defaultBackground);
+
+	// Add any sound folder or zip
+	addSound();
+}
+
+void GlkInterface::addSound() {
+	Common::FSNode gameDir(ConfMan.get("path"));
+	SoundSubfolder::check(gameDir);
+	SoundZip::check(gameDir, _storyId);
 }
 
 bool GlkInterface::initPictures() {
