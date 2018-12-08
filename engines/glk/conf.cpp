@@ -107,7 +107,7 @@ Conf::Conf(InterpreterType interpType) {
 	if (ConfMan.hasKey("maxcols"))
 		_cols = MIN(_cols, strToInt(ConfMan.get("maxcols").c_str()));
 
-	const int DEFAULT_MARGIN_X = (interpType == INTERPRETER_FROTZ) ? 2 : 15;
+	const int DEFAULT_MARGIN_X = (interpType == INTERPRETER_FROTZ) ? 0 : 15;
 	const int DEFAULT_MARGIN_Y = (interpType == INTERPRETER_FROTZ) ? 0 : 15;
 
 	get("lockrows", _lockRows);
