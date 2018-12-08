@@ -90,7 +90,7 @@ void SoundZip::check(const Common::FSNode &gameDir, Story story) {
 	if (!zipNode.exists())
 		return;
 
-	SearchMan.add("sound", Common::makeZipArchive(zipNode));
+	SearchMan.add("sound", new SoundZip(Common::makeZipArchive(zipNode)));
 }
 
 SoundZip::SoundZip(Common::Archive *zip) : _zip(zip) {
