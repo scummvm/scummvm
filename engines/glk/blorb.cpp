@@ -153,7 +153,7 @@ Common::ErrorCode Blorb::load() {
 				ce._filename += ".mp3";
 			else if (ce._id == ID_WAVE)
 				ce._filename += ".wav";
-			else if (ce._id == ID_AIFF)
+			else if (ce._id == ID_AIFF || ce._id == ID_FORM)
 				ce._filename += ".aiff";
 			else if (ce._id == ID_OGG)
 				ce._filename += ".ogg"; 
