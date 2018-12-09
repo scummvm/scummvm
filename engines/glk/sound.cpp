@@ -26,8 +26,8 @@
 #include "common/file.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
-#include "audio/decoders/raw.h"
 #include "audio/decoders/mp3.h"
+#include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 
 namespace Glk {
@@ -91,9 +91,11 @@ glui32 SoundChannel::play(glui32 soundNum, glui32 repeats, glui32 notify) {
 	Audio::AudioStream *stream;
 	Common::File f;
 	Common::String nameSnd = Common::String::format("sound%u.snd", soundNum);
-	Common::String nameMp3 = Common::String::format("sound%u.mp3", soundNum);
 	Common::String nameWav = Common::String::format("sound%u.wav", soundNum);
 	Common::String nameAiff = Common::String::format("sound%u.aiff", soundNum);
+#ifdef USE_MAD
+	Common::String nameMp3 = Common::String::format("sound%u.mp3", soundNum);
+#endif
 
 	if (f.exists(nameSnd) && f.open(nameSnd)) {
 		if (f.readUint16BE() != (f.size() - 2))
@@ -107,10 +109,11 @@ glui32 SoundChannel::play(glui32 soundNum, glui32 repeats, glui32 notify) {
 		Common::SeekableReadStream *s = f.readStream(size);
 		stream = Audio::makeRawStream(s, freq, Audio::FLAG_UNSIGNED);
 
+#ifdef USE_MAD
 	} else if (f.exists(nameMp3) && f.open(nameMp3)) {
 		Common::SeekableReadStream *s = f.readStream(f.size());
 		stream = Audio::makeMP3Stream(s, DisposeAfterUse::YES);
-
+#endif
 	} else if (f.exists(nameWav) && f.open(nameWav)) {
 		Common::SeekableReadStream *s = f.readStream(f.size());
 		stream = Audio::makeWAVStream(s, DisposeAfterUse::YES);

@@ -469,8 +469,10 @@ void MemoryStream::setPosition(glsi32 pos, glui32 seekMode) {
 			pos = ((unsigned char *)_bufPtr - (unsigned char *)_buf) + pos;
 		else if (seekMode == seekmode_End)
 			pos = ((unsigned char *)_bufEof - (unsigned char *)_buf) + pos;
-		else
-			/* pos = pos */;
+		else {
+			// pos = pos
+		}
+
 		if (pos < 0)
 			pos = 0;
 		if (pos > ((unsigned char *)_bufEof - (unsigned char *)_buf))

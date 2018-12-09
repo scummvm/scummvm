@@ -48,8 +48,8 @@ void Screen::initialize() {
 	double baseLine = (double)r1.bottom;
 	double leading = (double)r2.bottom + 2;
 
-	g_conf->_leading = MAX((double)g_conf->_leading, leading);
-	g_conf->_baseLine = MAX((double)g_conf->_baseLine, baseLine);
+	g_conf->_leading = static_cast<int>(MAX((double)g_conf->_leading, leading));
+	g_conf->_baseLine = static_cast<int>(MAX((double)g_conf->_baseLine, baseLine));
 	g_conf->_cellW = _fonts[0]->getStringWidth("0");
 	g_conf->_cellH = g_conf->_leading;
 }
@@ -157,7 +157,7 @@ const Graphics::Font *Screen::loadFont(FACES face, Common::Archive *archive, dou
 	if (!f.open(FILENAMES[face], *archive))
 		error("Could not load font");
 
-	return Graphics::loadTTFFont(f, size, Graphics::kTTFSizeModeCharacter);
+	return Graphics::loadTTFFont(f, (int)size, Graphics::kTTFSizeModeCharacter);
 }
 
 FACES Screen::getFontId(const Common::String &name) {

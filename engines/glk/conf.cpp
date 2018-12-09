@@ -94,9 +94,9 @@ Conf::Conf(InterpreterType interpType) {
 	get("cols", _cols, 60);
 
 	if (ConfMan.hasKey("leading"))
-		_leading = atof(ConfMan.get("leading").c_str()) + 0.5;
+		_leading = static_cast<int>(atof(ConfMan.get("leading").c_str()) + 0.5);
 	if (ConfMan.hasKey("baseline"))
-		_baseLine = atof(ConfMan.get("baseline").c_str()) + 0.5;
+		_baseLine = static_cast<int>(atof(ConfMan.get("baseline").c_str()) + 0.5);
 
 	if (ConfMan.hasKey("minrows"))
 		_rows = MAX(_rows, strToInt(ConfMan.get("minrows").c_str()));
