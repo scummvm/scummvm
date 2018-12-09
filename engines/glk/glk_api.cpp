@@ -1022,7 +1022,11 @@ void GlkAPI::glk_schannel_stop(schanid_t chan) {
 }
 
 void GlkAPI::glk_schannel_set_volume(schanid_t chan, glui32 vol) {
-	// TODO
+	if (chan) {
+		chan->setVolume(vol);
+	} else {
+		warning("schannel_set_volume: invalid ref");
+	}
 }
 
 void GlkAPI::glk_sound_load_hint(glui32 snd, glui32 flag) {
@@ -1041,16 +1045,28 @@ glui32 GlkAPI::glk_schannel_play_multi(schanid_t *chanarray, glui32 chancount,
 }
 
 void GlkAPI::glk_schannel_pause(schanid_t chan) {
-	// TODO
+	if (chan) {
+		chan->pause();
+	} else {
+		warning("schannel_pause: invalid ref");
+	}
 }
 
 void GlkAPI::glk_schannel_unpause(schanid_t chan) {
-	// TODO
+	if (chan) {
+		chan->unpause();
+	} else {
+		warning("schannel_unpause: invalid ref");
+	}
 }
 
 void GlkAPI::glk_schannel_set_volume_ext(schanid_t chan, glui32 vol,
                                       glui32 duration, glui32 notify) {
-	// TODO
+	if (chan) {
+		chan->setVolume(vol, duration, notify);
+	} else {
+		warning("schannel_set_volume_ext: invalid ref");
+	}
 }
 
 void GlkAPI::glk_set_hyperlink(glui32 linkval) {

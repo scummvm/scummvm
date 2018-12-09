@@ -144,10 +144,29 @@ void SoundChannel::stop() {
 }
 
 void SoundChannel::poll() {
-	if (!g_vm->_mixer->isSoundHandleActive(_handle) && _notify != 0)
-		g_vm->_events->store(evtype_SoundNotify, 0,
-			_soundNum, _notify);
+	if (!g_vm->_mixer->isSoundHandleActive(_handle) && _notify != 0) {
+		glui32 notify = _notify;
+		_notify = 0;
+		g_vm->_events->store(evtype_SoundNotify, nullptr, _soundNum, notify);
+	}
+}
 
+void SoundChannel::setVolume(uint volume, uint duration, uint notify) {
+	uint newVol = volume * 255 / 0x10000;
+	g_vm->_mixer->setChannelVolume(_handle, newVol);
+
+	if (notify) {
+		warning("TODO: Gradual volume change");
+		g_vm->_events->store(evtype_VolumeNotify, nullptr, 0, notify);	
+	}
+}
+
+void SoundChannel::pause() {
+	g_vm->_mixer->pauseHandle(_handle, true);
+}
+
+void SoundChannel::unpause() {
+	g_vm->_mixer->pauseHandle(_handle, false);
 }
 
 } // End of namespace Glk

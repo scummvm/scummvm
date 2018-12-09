@@ -68,6 +68,25 @@ public:
 	 * Poll for whether a playing sound was finished
 	 */
 	void poll();
+
+	/**
+	 * Change the volume
+	 * @param volume		Volume from 0 (silence) to 0x10000 (full volume)
+	 * @param duration		Optional duration for a gradual volume change
+	 * @param notify		If non-zero, triggers a evtype_VolumeNotify when
+	 *						the volume change duration finishes
+	 */
+	void setVolume(uint volume, uint duration = 0, uint notify = 0);
+
+	/**
+	 * Pause playback
+	 */
+	void pause();
+
+	/**
+	 * Unpause playback
+	 */
+	void unpause();
 };
 typedef SoundChannel *schanid_t;
 
