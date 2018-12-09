@@ -258,9 +258,6 @@ void Processor::z_set_colour() {
 
 	switch (zfore) {
 	case -1:
-		zfore = -3;
-		break;
-
 	case 0:
 	case 1:
 		zfore = zcolor_map[zfore];
@@ -274,8 +271,6 @@ void Processor::z_set_colour() {
 
 	switch (zback) {
 	case -1:
-		zback = -3;
-
 	case 0:
 	case 1:
 		zback = zcolor_map[zback];
@@ -287,9 +282,7 @@ void Processor::z_set_colour() {
 		break;
 	}
 
-#ifdef GARGLK
 	garglk_set_zcolors(zfore, zback);
-#endif /* GARGLK */
 
 	curr_fg = zfore;
 	curr_bg = zback;

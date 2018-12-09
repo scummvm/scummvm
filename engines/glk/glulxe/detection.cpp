@@ -89,7 +89,7 @@ bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 				if (dot)
 					fname = Common::String(fname.c_str(), dot);
 
-				debug("ENTRY0(\"%s\", \"%s\", %u),", fname.c_str(), md5.c_str(), filesize);
+				debug("ENTRY0(\"%s\", \"%s\", %u),", fname.c_str(), md5.c_str(), (uint)filesize);
 			}
 			const PlainGameDescriptor &desc = GLULXE_GAME_LIST[0];
 			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
