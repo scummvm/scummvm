@@ -50,6 +50,7 @@ install: build
 # for optified version we can also add engine datafiles
 	install -m0644 dists/engine-data/access.dat debian/scummvm/opt/scummvm/share
 	install -m0644 dists/engine-data/drascula.dat debian/scummvm/opt/scummvm/share
+	install -m0644 dists/engine-data/fonts.dat debian/scummvm/opt/scummvm/share
 	install -m0644 dists/engine-data/hugo.dat debian/scummvm/opt/scummvm/share
 	install -m0644 dists/engine-data/kyra.dat debian/scummvm/opt/scummvm/share
 	install -m0644 dists/engine-data/lure.dat debian/scummvm/opt/scummvm/share
