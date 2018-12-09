@@ -450,7 +450,7 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 				break;
 			}
 
-			// Intentional fall-through on error
+			// fall through
 
 		case ID_UMem:
 			if (!(progress & GOT_MEMORY)) {
@@ -467,7 +467,7 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 				// Fall into default action (skip chunk) on errors
 			}
 
-			// Intentional fall-through on error
+			// fall through
 
 		default:
 			svf->seek(currlen, SEEK_CUR);		// Skip chunk
