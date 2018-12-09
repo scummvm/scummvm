@@ -44,6 +44,8 @@ MODULE_OBJS := \
 	frotz/quetzal.o \
 	frotz/screen.o \
 	frotz/sound_folder.o \
+	glulxe/detection.o \
+	glulxe/glulxe.o \
 	scott/detection.o \
 	scott/scott.o \
 	tads/detection.o \
