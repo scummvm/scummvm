@@ -107,6 +107,7 @@ static const char *const selectorNameTable[] = {
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
 	"say",          // Quest For Glory 1 VGA
+	"script",       // Quest For Glory 1 VGA
 	"solvePuzzle",  // Quest For Glory 3
 	"timesShownID", // Space Quest 1 VGA
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
@@ -186,6 +187,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_localize,
 	SELECTOR_put,
 	SELECTOR_say,
+	SELECTOR_script,
 	SELECTOR_solvePuzzle,
 	SELECTOR_timesShownID,
 	SELECTOR_startText,
@@ -6707,6 +6709,60 @@ static const uint16 qfg1vgaPatchMoveToCrusher[] = {
 	PATCH_END
 };
 
+// Clicking "Do" on Crusher in room 331 while standing near the card table locks
+//  up the game. This is due to a script bug which also occurs in the original.
+//  This is unrelated to bug #6180 in which clicking "Do" on Crusher while
+//  sneaking also locks up.
+//
+// rm331:doit sets ego's script to cardScript when ego enters a rectangle around
+//  the card table and sets ego's script to none when exiting. This assumes that
+//  ego can't have a different script set. Clicking "Do" on Crusher sets ego's
+//  script to moveToCrusher. If moveToCrusher causes ego to enter or exit the
+//  table's rectangle then the script will be stopped. When ego reaches Crusher
+//  he will have no script to continue the sequence and the game will be stuck
+//  in handsOff mode.
+//
+// We fix this by skipping the card table code in rm331:doit if ego already has
+//  a script other than cardScript. This prevents the card game from interfering
+//  with running scripts such as moveToCrusher.
+//
+// This bug was fixed in the Macintosh version by changing the card game to no
+//  longer involve setting ego's script and removing the code from rm331:doit.
+//
+// Applies to: PC Floppy
+// Responsible method: rm331:doit
+// Fixes bug #10826
+static const uint16 qfg1vgaSignatureCrusherCardGame[] = {
+	SIG_MAGICDWORD,
+	0x63, 0x12,                         // pToa script
+	0x31, 0x02,                         // bnt 02
+	0x33, 0x28,                         // jmp 28 [ card table location tests ]
+	0x38, SIG_SELECTOR16(script),       // pushi script
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 4 [ ego:script? ]
+	0x31, 0x04,                         // bnt 04
+	0x35, 0x00,                         // ldi 00 [ does nothing ]
+	0x33, 0x1a,                         // jmp 1a [ card table location tests ]
+	SIG_ADDTOOFFSET(0x71),
+	0x39, SIG_SELECTOR8(doit),          // pushi doit [ pc version only ]
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchCrusherCardGame[] = {
+	0x38, PATCH_SELECTOR16(script),     // pushi script
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 4 [ ego:script? ]
+	0x31, 0x06,                         // bnt 06
+	0x74, PATCH_UINT16(0x0ee4),         // lofss cardScript
+	0x1a,                               // eq?
+	0x31, 0x75,                         // bnt 75 [ skip card table location tests ]
+	0x63, 0x12,                         // pToa script
+	0x2f, 0x1a,                         // bt 1a [ card table location tests ]
+	PATCH_END
+};
+
 // Same pathfinding bug as above, where Ego is set to move to an impossible
 // spot when sneaking. In GuardsTrumpet::changeState, we change the final
 // location where Ego is moved from 111, 111 to 116, 116.
@@ -7060,6 +7116,7 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,   216, "weapon master event issue",                   1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{  true,   299, "speedtest",                                   1, qfg1vgaSignatureSpeedTest,           qfg1vgaPatchSpeedTest },
 	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
+	{  true,   331, "moving to crusher from card game",            1, qfg1vgaSignatureCrusherCardGame,     qfg1vgaPatchCrusherCardGame },
 	{  true,   814, "window text temp space",                      1, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
 	{  true,   814, "dialog header offset",                        3, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
 	{  true,   970, "antwerps wandering off-screen",               1, qfg1vgaSignatureAntwerpWander,       qfg1vgaPatchAntwerpWander },
