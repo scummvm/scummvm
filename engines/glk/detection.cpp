@@ -52,11 +52,11 @@ public:
 	GlkMetaEngine() : MetaEngine() {}
 
 	virtual const char *getName() const {
-		return "ScummGlk Engine";
+		return "ScummGlk";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "ScummGlk Engine (c) 2018";
+		return "Infocom games (C) Infocom\nScott Adams games (C) Scott Adams";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const override;
