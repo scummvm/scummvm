@@ -1006,7 +1006,7 @@ glui32 GlkAPI::glk_schannel_play(schanid_t chan, glui32 snd) {
 
 glui32 GlkAPI::glk_schannel_play_ext(schanid_t chan, glui32 snd, glui32 repeats, glui32 notify) {
 	if (chan) {
-		chan->play(snd, repeats, notify);
+		return chan->play(snd, repeats, notify);
 	} else {
 		warning("schannel_play_ext: invalid ref");
 		return 0;

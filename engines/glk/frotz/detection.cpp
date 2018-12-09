@@ -98,7 +98,7 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 				if (dot)
 					fname = Common::String(fname.c_str(), dot);
 
-				debug("ENTRY0(\"%s\", \"%s-%s\", \"%s\", %lu),",
+				debug("ENTRY0(\"%s\", \"%s-%s\", \"%s\", %u),",
 					folderName.c_str(), fname.c_str(), serial, md5.c_str(), filesize);
 			}
 			const PlainGameDescriptor &desc = FROTZ_GAME_LIST[0];
