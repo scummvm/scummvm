@@ -82,6 +82,27 @@ const PlainGameDescriptor FROTZ_GAME_LIST[] = {
 	{ "zork2", "Zork II: The Wizard of Frobozz" },
 	{ "zork3", "Zork III: The Dungeon Master" },
 	{ "ztuu", "Zork: The Undiscovered Underground" },
+
+	// Converted Scott Adams games
+	{ "adventureland",     "Adventureland" },
+	{ "pirateadventure",   "Pirate Adventure" },
+	{ "missionimpossible", "Mission Impossible" },
+	{ "voodoocastle",      "Voodoo Castle" },
+	{ "thecount",          "The Count" },
+	{ "strangeodyssey",    "Strange Odyssey" },
+	{ "mysteryfunhouse",   "Mystery Fun House" },
+	{ "pyramidofdoom",     "Pyramid Of Doom" },
+	{ "ghosttown",         "Ghost Town" },
+	{ "savageisland1",     "Savage Island, Part 1" },
+	{ "savageisland2",     "Savage Island, Part 2" },
+	{ "goldenvoyage",      "The Golden Voyage" },
+	{ "adventure13",       "Adventure 13" },
+	{ "adventure14",       "Adventure 14" },
+	{ "buckaroobanzai",    "Buckaroo Banzai" },
+	{ "marveladventure",   "Marvel Adventure #1" },
+	{ "questprobe2",       "Questprobe 2: Spiderman" },
+	{ "scottsampler",      "Adventure International's Mini-Adventure Sampler" },
+
 	{ nullptr, nullptr }
 };
 
@@ -208,6 +229,27 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// Infocom Games - Foreign
 	ENTRY1("zork1", "R3-880113", "9f336c92c1fd392fc7e81288e5c9b6ab", 116216, Common::DE_DEU),
+
+	// Converted Scott Adams games
+	ENTRY0("adventureland", "941017", "cde66d37efaff46f18e67b0f39e4d0cd", 43008),
+	ENTRY0("scottsampler", "980329", "86c473c81e86637105108afa943c3ced", 23040),
+	ENTRY0("buckaroobanzai", "980329", "cdbf748cdcee3cade378cf62cfe01d43", 24064),
+	ENTRY0("thecount", "980329", "a0060ef9c9fa5cc3d3dbbc060f6451c2", 25088),
+	ENTRY0("mysteryfunhouse", "980329", "4b78c1883356db8184b351c5a269fdce", 24064),
+	ENTRY0("ghosttown", "980329", "0240f4119bb9b8e8197f37049c9b4f82", 25600),
+	ENTRY0("goldenvoyage", "980329", "d986f2ac673abdce741c90e8b9fc3acf", 26112),
+	ENTRY0("marveladventure", "HULK-980329", "964dfa22fcd54d2674123951af79136b", 25600),
+	ENTRY0("strangeodyssey", "980329", "8216fc5ca7ed593d6a9c4265064d83a4", 24576),
+	ENTRY0("pirateadventure", "980329", "0c3d27eaa6563835bfb1aadd309e7a00", 24064),
+	ENTRY0("pyramidofdoom", "980329", "a6fc7fd81b7330bc254afbac17b29058", 26112),
+	ENTRY0("adventure14", "980329", "56e5d7c33d5403ed59a62f67744f4d02", 26624),
+	ENTRY0("savageisland1", "980329", "6f6cf307a97becb32524fe66a910587e", 24576),
+	ENTRY0("savageisland2", "980329", "a43ab1063e6a8d4849ad3b69f1e4cacb", 25600),
+	ENTRY0("missionimpossible", "980329", "9c759b65e43e2d9d6aa02122248040ae", 24064),
+	ENTRY0("adventure13", "980329", "54cc89bbead7dac21455b9c00f32f604", 25088),
+	ENTRY0("questprobe2", "980329", "6b9cb86c332c092b3a93973ba9f4c946", 27136),
+	ENTRY0("voodoocastle", "980329", "bff285e6c9291fc6ba77c9743b610c2d", 24064),
+
 
 	FROTZ_TABLE_END_MARKER
 };
