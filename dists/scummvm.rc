@@ -24,6 +24,9 @@ translations.dat       FILE    "gui/themes/translations.dat"
 #ifdef USE_SDL_NET
 wwwroot.zip            FILE    "dists/networking/wwwroot.zip"
 #endif
+#ifdef USE_FREETYPE2
+fonts.dat              FILE    "dists/engine-data/fonts.dat"
+#endif
 
 #if ENABLE_ACCESS   == STATIC_PLUGIN
 access.dat           FILE    "dists/engine-data/access.dat"
@@ -33,9 +36,6 @@ cryo.dat               FILE    "dists/engine-data/cryo.dat"
 #endif
 #if ENABLE_DRASCULA   == STATIC_PLUGIN
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
-#endif
-#if ENABLE_GLK        == STATIC_PLUGIN
-fonts.dat              FILE   "dists/engine-data/fonts.dat"
 #endif
 #if ENABLE_HUGO       == STATIC_PLUGIN
 hugo.dat               FILE    "dists/engine-data/hugo.dat"

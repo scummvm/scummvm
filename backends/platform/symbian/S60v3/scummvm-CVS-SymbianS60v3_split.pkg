@@ -67,6 +67,7 @@
 
 ; Common datafiles needed for some games
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\data\scummvm\drascula.dat"
+"..\..\..\..\dists\engine-data\fonts.dat"-"c:\data\scummvm\fonts.dat"
 "..\..\..\..\dists\engine-data\hugo.dat"-"c:\data\scummvm\hugo.dat"
 "..\..\..\..\dists\engine-data\kyra.dat"-"c:\data\scummvm\kyra.dat"
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\data\scummvm\lure.dat"

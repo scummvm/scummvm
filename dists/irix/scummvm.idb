@@ -6,6 +6,7 @@ f 0644 root sys usr/ScummVM/README README scummvm.man.readme
 f 0755 root sys usr/ScummVM/scummvm scummvm scummvm.sw.eoe tag('0x5260dbec')
 f 0644 root sys usr/ScummVM/share/pixmaps/scummvm.xpm scummvm.xpm scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/drascula.dat drascula.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/fonts.dat fonts.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/kyra.dat kyra.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/lure.dat lure.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/pred.dic pred.dic scummvm.sw.eoe
