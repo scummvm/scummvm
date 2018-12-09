@@ -27,10 +27,16 @@
 namespace Glk {
 namespace Glulxe {
 
-Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
+Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
+		vm_exited_cleanly(false) {
 }
 
 void Glulxe::runGame(Common::SeekableReadStream *gameFile) {
+	_gameFile = gameFile;
+
+	if (!is_gamefile_valid())
+		return;
+
 	// TODO
 }
 
@@ -42,6 +48,31 @@ Common::Error Glulxe::loadGameData(strid_t file) {
 Common::Error Glulxe::saveGameData(strid_t file, const Common::String &desc) {
 	// TODO
 	return Common::kNoError;
+}
+
+bool Glulxe::is_gamefile_valid() {
+	if (_gameFile->size() < 8) {
+		GUIError(_("This is too short to be a valid Glulx file."));
+		return false;
+	}
+
+	if (_gameFile->readUint32BE() != MKTAG('G', 'l', 'u', 'l')) {
+		GUIError(_("This is not a valid Glulx file."));
+		return false;
+	}
+
+	// We support version 2.0 through 3.1.*
+	uint version = _gameFile->readUint32BE();
+	if (version < 0x20000) {
+		GUIError(_("This Glulx file is too old a version to execute."));
+		return false;
+	}
+	if (version >= 0x30200) {
+		GUIError(_("This Glulx file is too new a version to execute."));
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Glulxe

@@ -34,6 +34,14 @@ namespace Glulxe {
  */
 class Glulxe : public GlkAPI {
 public:
+	Common::SeekableReadStream *_gameFile;
+	bool vm_exited_cleanly;
+private:
+	/**
+	 * Validates the game file, and if it's invalid, displays an error dialog
+	 */
+	bool is_gamefile_valid();
+public:
 	/**
 	 * Constructor
 	 */
