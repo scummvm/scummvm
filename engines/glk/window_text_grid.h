@@ -59,7 +59,7 @@ private:
 	/**
 	 * Return or enter, during line input. Ends line input.
 	 */
-	void acceptLine(glui32 keycode);
+	void acceptLine(uint keycode);
 public:
 	int _width, _height;
 	TextGridRows _lines;
@@ -67,13 +67,13 @@ public:
 	int _curX, _curY;    ///< the window cursor position
 
 	///< for line input
-	void *_inBuf;        ///< unsigned char* for latin1, glui32* for unicode
+	void *_inBuf;        ///< unsigned char* for latin1, uint* for unicode
 	int _inOrgX, _inOrgY;
 	int _inMax;
 	int _inCurs, _inLen;
 	Attributes _origAttr;
 	gidispatch_rock_t _inArrayRock;
-	glui32 *_lineTerminators;
+	uint *_lineTerminators;
 
 	WindowStyle _styles[style_NUMSTYLES]; ///< style hints and settings
 public:
@@ -95,12 +95,12 @@ public:
 	/**
 	 * Get window split size within parent pair window
 	 */
-	virtual glui32 getSplit(glui32 size, bool vertical) const override;
+	virtual uint getSplit(uint size, bool vertical) const override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(glui32 ch) override;
+	virtual void putCharUni(uint ch) override;
 
 	/**
 	 * Unput a unicode character
@@ -139,11 +139,11 @@ public:
 	 */
 	virtual void redraw() override;
 
-	virtual void acceptReadLine(glui32 arg) override;
+	virtual void acceptReadLine(uint arg) override;
 
-	virtual void acceptReadChar(glui32 arg) override;
+	virtual void acceptReadChar(uint arg) override;
 
-	virtual void getSize(glui32 *width, glui32 *height) const override;
+	virtual void getSize(uint *width, uint *height) const override;
 
 	virtual void requestCharEvent() override {
 		_charRequest = true;
@@ -152,12 +152,12 @@ public:
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) override;
+	virtual void requestLineEvent(char *buf, uint maxlen, uint initlen) override;
 
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen) override;
+	virtual void requestLineEventUni(uint *buf, uint maxlen, uint initlen) override;
 
 	/**
 	 * Cancel an input line event

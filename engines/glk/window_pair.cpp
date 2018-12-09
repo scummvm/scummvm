@@ -27,7 +27,7 @@
 
 namespace Glk {
 
-PairWindow::PairWindow(Windows *windows, glui32 method, Window *key, glui32 size) :
+PairWindow::PairWindow(Windows *windows, uint method, Window *key, uint size) :
 	Window(windows, 0),
 	_dir(method & winmethod_DirMask),
 	_division(method & winmethod_DivisionMask),
@@ -149,8 +149,8 @@ void PairWindow::redraw() {
 	}
 }
 
-void PairWindow::getArrangement(glui32 *method, glui32 *size, Window **keyWin) {
-	glui32 val = _dir | _division;
+void PairWindow::getArrangement(uint *method, uint *size, Window **keyWin) {
+	uint val = _dir | _division;
 	if (!_wBorder)
 		val |= winmethod_NoBorder;
 
@@ -167,8 +167,8 @@ void PairWindow::getArrangement(glui32 *method, glui32 *size, Window **keyWin) {
 		*method = val;
 }
 
-void PairWindow::setArrangement(glui32 method, glui32 size, Window *keyWin) {
-	glui32 newDir;
+void PairWindow::setArrangement(uint method, uint size, Window *keyWin) {
+	uint newDir;
 	bool newVertical, newBackward;
 
 	if (_key) {

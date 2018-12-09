@@ -70,7 +70,7 @@ private:
 	void clear();
 public:
 	size_t _hor, _ver;
-	glui32 **_links;
+	uint **_links;
 	Rect _select;
 	Point _last;
 public:
@@ -89,9 +89,9 @@ public:
 	 */
 	void resize(size_t x, size_t y);
 
-	void putHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1);
+	void putHyperlink(uint linkval, uint x0, uint y0, uint x1, uint y1);
 
-	glui32 getHyperlink(const Point &pos) const;
+	uint getHyperlink(const Point &pos) const;
 };
 
 /**

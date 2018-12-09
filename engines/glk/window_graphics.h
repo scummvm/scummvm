@@ -35,11 +35,11 @@ class GraphicsWindow : public Window {
 private:
 	void touch();
 
-	void drawPicture(Picture *src, int x0, int y0, int width, int height, glui32 linkval);
+	void drawPicture(Picture *src, int x0, int y0, int width, int height, uint linkval);
 public:
 	unsigned char _bgnd[3];
 	bool _dirty;
-	glui32 _w, _h;
+	uint _w, _h;
 	Graphics::ManagedSurface *_surface;
 public:
 	/**
@@ -52,8 +52,8 @@ public:
 	 */
 	virtual ~GraphicsWindow();
 
-	glui32 drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int scale,
-	                   glui32 imagewidth, glui32 imageheight);
+	uint drawPicture(uint image, int xpos, int ypos, int scale,
+	                   uint imagewidth, uint imageheight);
 
 	/**
 	 * Rearranges the window
@@ -63,7 +63,7 @@ public:
 	/**
 	 * Get window split size within parent pair window
 	 */
-	virtual glui32 getSplit(glui32 size, bool vertical) const override {
+	virtual uint getSplit(uint size, bool vertical) const override {
 		return size;
 	}
 
@@ -101,11 +101,11 @@ public:
 
 	virtual void eraseRect(bool whole, const Rect &box) override;
 
-	virtual void fillRect(glui32 color, const Rect &box) override;
+	virtual void fillRect(uint color, const Rect &box) override;
 
-	virtual void getSize(glui32 *width, glui32 *height) const override;
+	virtual void getSize(uint *width, uint *height) const override;
 
-	virtual void setBackgroundColor(glui32 color) override;
+	virtual void setBackgroundColor(uint color) override;
 };
 
 } // End of namespace Glk

@@ -77,11 +77,11 @@ void GlkAPI::glk_tick(void) {
 	// Nothing needed
 }
 
-glui32 GlkAPI::glk_gestalt(glui32 id, glui32 val) {
+uint GlkAPI::glk_gestalt(uint id, uint val) {
 	return glk_gestalt_ext(id, val, nullptr, 0);
 }
 
-glui32 GlkAPI::glk_gestalt_ext(glui32 id, glui32 val, glui32 *arr, glui32 arrlen) {
+uint GlkAPI::glk_gestalt_ext(uint id, uint val, uint *arr, uint arrlen) {
 	switch (id) {
 	case gestalt_Version:
 		return 0x00000703;
@@ -169,7 +169,7 @@ winid_t GlkAPI::glk_window_get_root(void) const {
 	return _windows->getRoot();
 }
 
-winid_t GlkAPI::glk_window_open(winid_t split, glui32 method, glui32 size, glui32 wintype, glui32 rock) const {
+winid_t GlkAPI::glk_window_open(winid_t split, uint method, uint size, uint wintype, uint rock) const {
 	return _windows->windowOpen(split, method, size, wintype, rock);
 }
 
@@ -181,7 +181,7 @@ void GlkAPI::glk_window_close(winid_t win, stream_result_t *result) {
 	}
 }
 
-void GlkAPI::glk_window_get_size(winid_t win, glui32 *width, glui32 *height) {
+void GlkAPI::glk_window_get_size(winid_t win, uint *width, uint *height) {
 	if (win) {
 		win->getSize(width, height);
 	} else {
@@ -189,7 +189,7 @@ void GlkAPI::glk_window_get_size(winid_t win, glui32 *width, glui32 *height) {
 	}
 }
 
-void GlkAPI::glk_window_set_arrangement(winid_t win, glui32 method, glui32 size, winid_t keywin) {
+void GlkAPI::glk_window_set_arrangement(winid_t win, uint method, uint size, winid_t keywin) {
 	if (win) {
 		win->setArrangement(method, size, keywin);
 	} else {
@@ -197,8 +197,8 @@ void GlkAPI::glk_window_set_arrangement(winid_t win, glui32 method, glui32 size,
 	}
 }
 
-void GlkAPI::glk_window_get_arrangement(winid_t win, glui32 *method,
-                                     glui32 *size, winid_t *keyWin) {
+void GlkAPI::glk_window_get_arrangement(winid_t win, uint *method,
+                                     uint *size, winid_t *keyWin) {
 	if (win) {
 		win->getArrangement(method, size, keyWin);
 	} else {
@@ -206,7 +206,7 @@ void GlkAPI::glk_window_get_arrangement(winid_t win, glui32 *method,
 	}
 }
 
-winid_t GlkAPI::glk_window_iterate(winid_t win, glui32 *rock) {
+winid_t GlkAPI::glk_window_iterate(winid_t win, uint *rock) {
 	win = win ? win->_next : _windows->getRoot();
 
 	if (win) {
@@ -221,7 +221,7 @@ winid_t GlkAPI::glk_window_iterate(winid_t win, glui32 *rock) {
 	return nullptr;
 }
 
-glui32 GlkAPI::glk_window_get_rock(winid_t win) {
+uint GlkAPI::glk_window_get_rock(winid_t win) {
 	if (win) {
 		return win->_rock;
 	} else {
@@ -230,7 +230,7 @@ glui32 GlkAPI::glk_window_get_rock(winid_t win) {
 	}
 }
 
-glui32 GlkAPI::glk_window_get_type(winid_t win) {
+uint GlkAPI::glk_window_get_type(winid_t win) {
 	if (win) {
 		return win->_type;
 	} else {
@@ -287,7 +287,7 @@ void GlkAPI::glk_window_clear(winid_t win) {
 	}
 }
 
-void GlkAPI::glk_window_move_cursor(winid_t win, glui32 xpos, glui32 ypos) {
+void GlkAPI::glk_window_move_cursor(winid_t win, uint xpos, uint ypos) {
 	if (win) {
 		win->moveCursor(Point(xpos, ypos));
 	} else {
@@ -325,11 +325,11 @@ void GlkAPI::glk_set_window(winid_t win) {
 	_streams->setCurrent(win ? win->_stream : nullptr);
 }
 
-strid_t GlkAPI::glk_stream_open_file(frefid_t fileref, FileMode fmode, glui32 rock) {
+strid_t GlkAPI::glk_stream_open_file(frefid_t fileref, FileMode fmode, uint rock) {
 	return _streams->openFileStream(fileref, fmode, rock, false);
 }
 
-strid_t GlkAPI::glk_stream_open_memory(char *buf, glui32 buflen, FileMode fmode, glui32 rock) {
+strid_t GlkAPI::glk_stream_open_memory(char *buf, uint buflen, FileMode fmode, uint rock) {
 	return _streams->openMemoryStream(buf, buflen, fmode, rock, false);
 }
 
@@ -337,11 +337,11 @@ void GlkAPI::glk_stream_close(strid_t str, stream_result_t *result) {
 	str->close(result);
 }
 
-strid_t GlkAPI::glk_stream_iterate(strid_t str, glui32 *rockptr) const {
+strid_t GlkAPI::glk_stream_iterate(strid_t str, uint *rockptr) const {
 	return str ? str->getNext(rockptr) : _streams->getFirst(rockptr);
 }
 
-glui32 GlkAPI::glk_stream_get_rock(strid_t str) const {
+uint GlkAPI::glk_stream_get_rock(strid_t str) const {
 	if (!str) {
 		warning("stream_get_rock: invalid ref");
 		return 0;
@@ -350,7 +350,7 @@ glui32 GlkAPI::glk_stream_get_rock(strid_t str) const {
 	return str->getRock();
 }
 
-void GlkAPI::glk_stream_set_position(strid_t str, glsi32 pos, glui32 seekMode) {
+void GlkAPI::glk_stream_set_position(strid_t str, int pos, uint seekMode) {
 	if (str) {
 		str->setPosition(pos, seekMode);
 	} else {
@@ -358,7 +358,7 @@ void GlkAPI::glk_stream_set_position(strid_t str, glsi32 pos, glui32 seekMode) {
 	}
 }
 
-glui32 GlkAPI::glk_stream_get_position(strid_t str) const {
+uint GlkAPI::glk_stream_get_position(strid_t str) const {
 	if (str) {
 		return str->getPosition();
 	} else {
@@ -395,19 +395,19 @@ void GlkAPI::glk_put_string_stream(strid_t str, const char *s) {
 	str->putBuffer(s, strlen(s));
 }
 
-void GlkAPI::glk_put_buffer(const char *buf, glui32 len) {
+void GlkAPI::glk_put_buffer(const char *buf, uint len) {
 	_streams->getCurrent()->putBuffer(buf, len);
 }
 
-void GlkAPI::glk_put_buffer_stream(strid_t str, const char *buf, glui32 len) {
+void GlkAPI::glk_put_buffer_stream(strid_t str, const char *buf, uint len) {
 	str->putBuffer(buf, len);
 }
 
-void GlkAPI::glk_set_style(glui32 styl) {
+void GlkAPI::glk_set_style(uint styl) {
 	_streams->getCurrent()->setStyle(styl);
 }
 
-void GlkAPI::glk_set_style_stream(strid_t str, glui32 styl) {
+void GlkAPI::glk_set_style_stream(strid_t str, uint styl) {
 	if (str) {
 		str->setStyle(styl);
 	} else {
@@ -415,7 +415,7 @@ void GlkAPI::glk_set_style_stream(strid_t str, glui32 styl) {
 	}
 }
 
-glsi32 GlkAPI::glk_get_char_stream(strid_t str) {
+int GlkAPI::glk_get_char_stream(strid_t str) {
 	if (str) {
 		return str->getChar();
 	} else {
@@ -424,7 +424,7 @@ glsi32 GlkAPI::glk_get_char_stream(strid_t str) {
 	}
 }
 
-glui32 GlkAPI::glk_get_line_stream(strid_t str, char *buf, glui32 len) {
+uint GlkAPI::glk_get_line_stream(strid_t str, char *buf, uint len) {
 	if (str) {
 		return str->getLine(buf, len);
 	} else {
@@ -433,7 +433,7 @@ glui32 GlkAPI::glk_get_line_stream(strid_t str, char *buf, glui32 len) {
 	}
 }
 
-glui32 GlkAPI::glk_get_buffer_stream(strid_t str, char *buf, glui32 len) {
+uint GlkAPI::glk_get_buffer_stream(strid_t str, char *buf, uint len) {
 	if (str) {
 		return str->getBuffer(buf, len);
 	} else {
@@ -442,7 +442,7 @@ glui32 GlkAPI::glk_get_buffer_stream(strid_t str, char *buf, glui32 len) {
 	}
 }
 
-void GlkAPI::glk_stylehint_set(glui32 wintype, glui32 style, glui32 hint, glsi32 val) {
+void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
 	WindowStyle *styles;
 	bool p, b, i;
 
@@ -513,7 +513,7 @@ void GlkAPI::glk_stylehint_set(glui32 wintype, glui32 style, glui32 hint, glsi32
 	}
 }
 
-void GlkAPI::glk_stylehint_clear(glui32 wintype, glui32 style, glui32 hint) {
+void GlkAPI::glk_stylehint_clear(uint wintype, uint style, uint hint) {
 	WindowStyle *styles;
 	const WindowStyle *defaults;
 
@@ -561,7 +561,7 @@ void GlkAPI::glk_stylehint_clear(glui32 wintype, glui32 style, glui32 hint) {
 	}
 }
 
-glui32 GlkAPI::glk_style_distinguish(winid_t win, glui32 style1, glui32 style2) {
+uint GlkAPI::glk_style_distinguish(winid_t win, uint style1, uint style2) {
 	const WindowStyle *styles = win->getStyles();
 	if (!styles)
 		return false;
@@ -569,7 +569,7 @@ glui32 GlkAPI::glk_style_distinguish(winid_t win, glui32 style1, glui32 style2) 
 	return styles[style1] == styles[style2] ? 0 : 1;
 }
 
-bool GlkAPI::glk_style_measure(winid_t win, glui32 style, glui32 hint, glui32 *result) {
+bool GlkAPI::glk_style_measure(winid_t win, uint style, uint hint, uint *result) {
 	const WindowStyle *styles = win->getStyles();
 	if (!styles)
 		return false;
@@ -627,11 +627,11 @@ bool GlkAPI::glk_style_measure(winid_t win, glui32 style, glui32 hint, glui32 *r
 	return true;
 }
 
-frefid_t GlkAPI::glk_fileref_create_temp(glui32 usage, glui32 rock) {
+frefid_t GlkAPI::glk_fileref_create_temp(uint usage, uint rock) {
 	return _streams->createTemp(usage, rock);
 }
 
-frefid_t GlkAPI::glk_fileref_create_by_name(glui32 usage, const char *name, glui32 rock) {
+frefid_t GlkAPI::glk_fileref_create_by_name(uint usage, const char *name, uint rock) {
 	// Take out all dangerous characters
 	Common::String tempName(name);
 	for (uint idx = 0; idx < tempName.size(); ++idx) {
@@ -642,11 +642,11 @@ frefid_t GlkAPI::glk_fileref_create_by_name(glui32 usage, const char *name, glui
 	return _streams->createRef(tempName, usage, rock);
 }
 
-frefid_t GlkAPI::glk_fileref_create_by_prompt(glui32 usage, FileMode fmode, glui32 rock) {
+frefid_t GlkAPI::glk_fileref_create_by_prompt(uint usage, FileMode fmode, uint rock) {
 	return _streams->createByPrompt(usage, fmode, rock);
 }
 
-frefid_t GlkAPI::glk_fileref_create_from_fileref(glui32 usage, frefid_t fref, glui32 rock) {
+frefid_t GlkAPI::glk_fileref_create_from_fileref(uint usage, frefid_t fref, uint rock) {
 	if (!fref) {
 		warning("fileref_create_from_fileref: invalid ref");
 		return nullptr;
@@ -659,11 +659,11 @@ void GlkAPI::glk_fileref_destroy(frefid_t fref) {
 	_streams->deleteRef(fref);
 }
 
-frefid_t GlkAPI::glk_fileref_iterate(frefid_t fref, glui32 *rockptr) {
+frefid_t GlkAPI::glk_fileref_iterate(frefid_t fref, uint *rockptr) {
 	return _streams->iterate(fref, rockptr);
 }
 
-glui32 GlkAPI::glk_fileref_get_rock(frefid_t fref) {
+uint GlkAPI::glk_fileref_get_rock(frefid_t fref) {
 	if (!fref) {
 		warning("fileref_get_rock: invalid ref.");
 		return 0;
@@ -676,7 +676,7 @@ void GlkAPI::glk_fileref_delete_file(frefid_t fref) {
 	fref->deleteFile();
 }
 
-glui32 GlkAPI::glk_fileref_does_file_exist(frefid_t fref) {
+uint GlkAPI::glk_fileref_does_file_exist(frefid_t fref) {
 	return fref->exists();
 }
 
@@ -698,11 +698,11 @@ void GlkAPI::glk_select_poll(event_t *event) {
 	_events->getEvent(event, true);
 }
 
-void GlkAPI::glk_request_timer_events(glui32 millisecs) {
+void GlkAPI::glk_request_timer_events(uint millisecs) {
 	_events->setTimerInterval(millisecs);
 }
 
-void GlkAPI::glk_request_line_event(winid_t win, char *buf, glui32 maxlen, glui32 initlen) {
+void GlkAPI::glk_request_line_event(winid_t win, char *buf, uint maxlen, uint initlen) {
 	if (!win) {
 		warning("request_line_event: invalid ref");
 	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
@@ -756,7 +756,7 @@ void GlkAPI::glk_cancel_mouse_event(winid_t win) {
 	}
 }
 
-void GlkAPI::glk_set_echo_line_event(winid_t win, glui32 val) {
+void GlkAPI::glk_set_echo_line_event(winid_t win, uint val) {
 	if (!win) {
 		warning("set_echo_line_event: invalid ref");
 	} else {
@@ -764,7 +764,7 @@ void GlkAPI::glk_set_echo_line_event(winid_t win, glui32 val) {
 	}
 }
 
-void GlkAPI::glk_set_terminators_line_event(winid_t win, glui32 *keycodes, glui32 count) {
+void GlkAPI::glk_set_terminators_line_event(winid_t win, uint *keycodes, uint count) {
 	if (!win) {
 		warning("set_terminators_line_event: invalid ref");
 	} else {
@@ -772,32 +772,32 @@ void GlkAPI::glk_set_terminators_line_event(winid_t win, glui32 *keycodes, glui3
 	}
 }
 
-glui32 GlkAPI::glk_buffer_to_lower_case_uni(glui32 *buf, glui32 len, glui32 numchars) {
+uint GlkAPI::glk_buffer_to_lower_case_uni(uint *buf, uint len, uint numchars) {
 	return bufferChangeCase(buf, len, numchars, CASE_LOWER, COND_ALL, true);
 }
 
-glui32 GlkAPI::glk_buffer_to_upper_case_uni(glui32 *buf, glui32 len, glui32 numchars) {
+uint GlkAPI::glk_buffer_to_upper_case_uni(uint *buf, uint len, uint numchars) {
 	return bufferChangeCase(buf, len, numchars, CASE_UPPER, COND_ALL, true);
 }
 
-glui32 GlkAPI::glk_buffer_to_title_case_uni(glui32 *buf, glui32 len,
-        glui32 numchars, glui32 lowerrest) {
+uint GlkAPI::glk_buffer_to_title_case_uni(uint *buf, uint len,
+        uint numchars, uint lowerrest) {
 	return bufferChangeCase(buf, len, numchars, CASE_TITLE, COND_LINESTART, lowerrest);
 }
 
-void GlkAPI::glk_put_char_uni(glui32 ch) {
+void GlkAPI::glk_put_char_uni(uint ch) {
 	_streams->getCurrent()->putCharUni(ch);
 }
 
-void GlkAPI::glk_put_string_uni(glui32 *s) {
+void GlkAPI::glk_put_string_uni(uint *s) {
 	_streams->getCurrent()->putBufferUni(s, strlen_uni(s));
 }
 
-void GlkAPI::glk_put_buffer_uni(glui32 *buf, glui32 len) {
+void GlkAPI::glk_put_buffer_uni(uint *buf, uint len) {
 	_streams->getCurrent()->putBufferUni(buf, len);
 }
 
-void GlkAPI::glk_put_char_stream_uni(strid_t str, glui32 ch) {
+void GlkAPI::glk_put_char_stream_uni(strid_t str, uint ch) {
 	if (str) {
 		str->putCharUni(ch);
 	} else {
@@ -805,7 +805,7 @@ void GlkAPI::glk_put_char_stream_uni(strid_t str, glui32 ch) {
 	}
 }
 
-void GlkAPI::glk_put_string_stream_uni(strid_t str, const glui32 *s) {
+void GlkAPI::glk_put_string_stream_uni(strid_t str, const uint *s) {
 	if (str) {
 		str->putBufferUni(s, strlen_uni(s));
 	} else {
@@ -813,7 +813,7 @@ void GlkAPI::glk_put_string_stream_uni(strid_t str, const glui32 *s) {
 	}
 }
 
-void GlkAPI::glk_put_buffer_stream_uni(strid_t str, const glui32 *buf, glui32 len) {
+void GlkAPI::glk_put_buffer_stream_uni(strid_t str, const uint *buf, uint len) {
 	if (str) {
 		str->putBufferUni(buf, len);
 	} else {
@@ -821,7 +821,7 @@ void GlkAPI::glk_put_buffer_stream_uni(strid_t str, const glui32 *buf, glui32 le
 	}
 }
 
-glsi32 GlkAPI::glk_get_char_stream_uni(strid_t str) {
+int GlkAPI::glk_get_char_stream_uni(strid_t str) {
 	if (str) {
 		return str->getCharUni();
 	} else {
@@ -830,7 +830,7 @@ glsi32 GlkAPI::glk_get_char_stream_uni(strid_t str) {
 	}
 }
 
-glui32 GlkAPI::glk_get_buffer_stream_uni(strid_t str, glui32 *buf, glui32 len) {
+uint GlkAPI::glk_get_buffer_stream_uni(strid_t str, uint *buf, uint len) {
 	if (str) {
 		return str->getBufferUni(buf, len);
 	} else {
@@ -839,20 +839,20 @@ glui32 GlkAPI::glk_get_buffer_stream_uni(strid_t str, glui32 *buf, glui32 len) {
 	}
 }
 
-glui32 GlkAPI::glk_get_line_stream_uni(strid_t str, glui32 *buf, glui32 len) {
+uint GlkAPI::glk_get_line_stream_uni(strid_t str, uint *buf, uint len) {
 	if (str) {
 		return str->getLineUni(buf, len);
 	} else  {
 		warning("get_line_stream_uni: invalid ref");
-		return (glui32) - 1;
+		return (uint) - 1;
 	}
 }
 
-strid_t GlkAPI::glk_stream_open_file_uni(frefid_t fileref, FileMode fmode, glui32 rock) {
+strid_t GlkAPI::glk_stream_open_file_uni(frefid_t fileref, FileMode fmode, uint rock) {
 	return _streams->openFileStream(fileref, fmode, rock, true);
 }
 
-strid_t GlkAPI::glk_stream_open_memory_uni(glui32 *buf, glui32 buflen, FileMode fmode, glui32 rock) {
+strid_t GlkAPI::glk_stream_open_memory_uni(uint *buf, uint buflen, FileMode fmode, uint rock) {
 	return _streams->openMemoryStream(buf, buflen, fmode, rock, true);
 }
 
@@ -867,7 +867,7 @@ void GlkAPI::glk_request_char_event_uni(winid_t win) {
 	}
 }
 
-void GlkAPI::glk_request_line_event_uni(winid_t win, glui32 *buf, glui32 maxlen, glui32 initlen) {
+void GlkAPI::glk_request_line_event_uni(winid_t win, uint *buf, uint maxlen, uint initlen) {
 	if (!win) {
 		warning("request_line_event_uni: invalid ref");
 	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
@@ -878,17 +878,17 @@ void GlkAPI::glk_request_line_event_uni(winid_t win, glui32 *buf, glui32 maxlen,
 	}
 }
 
-glui32 GlkAPI::glk_buffer_canon_decompose_uni(glui32 *buf, glui32 len,
-        glui32 numchars) {
+uint GlkAPI::glk_buffer_canon_decompose_uni(uint *buf, uint len,
+        uint numchars) {
 	// TODO
 	return 0;
 }
 
-glui32 GlkAPI::glk_buffer_canon_normalize_uni(glui32 *buf, glui32 len, glui32 numchars) {
+uint GlkAPI::glk_buffer_canon_normalize_uni(uint *buf, uint len, uint numchars) {
 	return 0;
 }
 
-bool GlkAPI::glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2) {
+bool GlkAPI::glk_image_draw(winid_t win, uint image, int val1, int val2) {
 	if (!win) {
 		warning("image_draw: invalid ref");
 	} else if (g_conf->_graphics) {
@@ -904,8 +904,8 @@ bool GlkAPI::glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2)
 	return false;
 }
 
-bool GlkAPI::glk_image_draw_scaled(winid_t win, glui32 image, glsi32 val1, glsi32 val2,
-                                  glui32 width, glui32 height) {
+bool GlkAPI::glk_image_draw_scaled(winid_t win, uint image, int val1, int val2,
+                                  uint width, uint height) {
 	if (!win) {
 		warning("image_draw_scaled: invalid ref");
 	} else if (g_conf->_graphics) {
@@ -921,7 +921,7 @@ bool GlkAPI::glk_image_draw_scaled(winid_t win, glui32 image, glsi32 val1, glsi3
 	return false;
 }
 
-bool GlkAPI::glk_image_get_info(glui32 image, glui32 *width, glui32 *height) {
+bool GlkAPI::glk_image_get_info(uint image, uint *width, uint *height) {
 	if (!g_conf->_graphics)
 		return false;
 
@@ -945,7 +945,7 @@ void GlkAPI::glk_window_flow_break(winid_t win) {
 	}
 }
 
-void GlkAPI::glk_window_erase_rect(winid_t win, glsi32 left, glsi32 top, glui32 width, glui32 height) {
+void GlkAPI::glk_window_erase_rect(winid_t win, int left, int top, uint width, uint height) {
 	if (!win) {
 		warning("window_erase_rect: invalid ref");
 	} else {
@@ -953,8 +953,8 @@ void GlkAPI::glk_window_erase_rect(winid_t win, glsi32 left, glsi32 top, glui32 
 	}
 }
 
-void GlkAPI::glk_window_fill_rect(winid_t win, glui32 color, glsi32 left, glsi32 top,
-                               glui32 width, glui32 height) {
+void GlkAPI::glk_window_fill_rect(winid_t win, uint color, int left, int top,
+                               uint width, uint height) {
 	if (!win) {
 		warning("window_fill_rect: invalid ref");
 	} else {
@@ -962,7 +962,7 @@ void GlkAPI::glk_window_fill_rect(winid_t win, glui32 color, glsi32 left, glsi32
 	}
 }
 
-void GlkAPI::glk_window_set_background_color(winid_t win, glui32 color) {
+void GlkAPI::glk_window_set_background_color(winid_t win, uint color) {
 	if (!win) {
 		warning("window_set_background_color: invalid ref");
 	} else {
@@ -970,7 +970,7 @@ void GlkAPI::glk_window_set_background_color(winid_t win, glui32 color) {
 	}
 }
 
-schanid_t GlkAPI::glk_schannel_create(glui32 rock) {
+schanid_t GlkAPI::glk_schannel_create(uint rock) {
 	return _sounds->create(rock);
 }
 
@@ -982,11 +982,11 @@ void GlkAPI::glk_schannel_destroy(schanid_t chan) {
 	}
 }
 
-schanid_t GlkAPI::glk_schannel_iterate(schanid_t chan, glui32 *rockptr) {
+schanid_t GlkAPI::glk_schannel_iterate(schanid_t chan, uint *rockptr) {
 	return _sounds->iterate(chan, rockptr);
 }
 
-glui32 GlkAPI::glk_schannel_get_rock(schanid_t chan) {
+uint GlkAPI::glk_schannel_get_rock(schanid_t chan) {
 	if (chan) {
 		return chan->_rock;
 	} else {
@@ -995,7 +995,7 @@ glui32 GlkAPI::glk_schannel_get_rock(schanid_t chan) {
 	}
 }
 
-glui32 GlkAPI::glk_schannel_play(schanid_t chan, glui32 snd) {
+uint GlkAPI::glk_schannel_play(schanid_t chan, uint snd) {
 	if (chan) {
 		return chan->play(snd);
 	} else {
@@ -1004,7 +1004,7 @@ glui32 GlkAPI::glk_schannel_play(schanid_t chan, glui32 snd) {
 	}
 }
 
-glui32 GlkAPI::glk_schannel_play_ext(schanid_t chan, glui32 snd, glui32 repeats, glui32 notify) {
+uint GlkAPI::glk_schannel_play_ext(schanid_t chan, uint snd, uint repeats, uint notify) {
 	if (chan) {
 		return chan->play(snd, repeats, notify);
 	} else {
@@ -1021,7 +1021,7 @@ void GlkAPI::glk_schannel_stop(schanid_t chan) {
 	}
 }
 
-void GlkAPI::glk_schannel_set_volume(schanid_t chan, glui32 vol) {
+void GlkAPI::glk_schannel_set_volume(schanid_t chan, uint vol) {
 	if (chan) {
 		chan->setVolume(vol);
 	} else {
@@ -1029,17 +1029,17 @@ void GlkAPI::glk_schannel_set_volume(schanid_t chan, glui32 vol) {
 	}
 }
 
-void GlkAPI::glk_sound_load_hint(glui32 snd, glui32 flag) {
+void GlkAPI::glk_sound_load_hint(uint snd, uint flag) {
 	// No implementation
 }
 
-schanid_t GlkAPI::glk_schannel_create_ext(glui32 rock, glui32 volume) {
+schanid_t GlkAPI::glk_schannel_create_ext(uint rock, uint volume) {
 	// No implementation
 	return nullptr;
 }
 
-glui32 GlkAPI::glk_schannel_play_multi(schanid_t *chanarray, glui32 chancount,
-                                    glui32 *sndarray, glui32 soundcount, glui32 notify) {
+uint GlkAPI::glk_schannel_play_multi(schanid_t *chanarray, uint chancount,
+                                    uint *sndarray, uint soundcount, uint notify) {
 	// No implementation
 	return 0;
 }
@@ -1060,8 +1060,8 @@ void GlkAPI::glk_schannel_unpause(schanid_t chan) {
 	}
 }
 
-void GlkAPI::glk_schannel_set_volume_ext(schanid_t chan, glui32 vol,
-                                      glui32 duration, glui32 notify) {
+void GlkAPI::glk_schannel_set_volume_ext(schanid_t chan, uint vol,
+                                      uint duration, uint notify) {
 	if (chan) {
 		chan->setVolume(vol, duration, notify);
 	} else {
@@ -1069,11 +1069,11 @@ void GlkAPI::glk_schannel_set_volume_ext(schanid_t chan, glui32 vol,
 	}
 }
 
-void GlkAPI::glk_set_hyperlink(glui32 linkval) {
+void GlkAPI::glk_set_hyperlink(uint linkval) {
 	_streams->getCurrent()->setHyperlink(linkval);
 }
 
-void GlkAPI::glk_set_hyperlink_stream(strid_t str, glui32 linkval) {
+void GlkAPI::glk_set_hyperlink_stream(strid_t str, uint linkval) {
 	if (str)
 		str->setHyperlink(linkval);
 }
@@ -1101,7 +1101,7 @@ void GlkAPI::glk_current_time(glktimeval_t *time) {
 	*time = td;
 }
 
-glsi32 GlkAPI::glk_current_simple_time(glui32 factor) {
+int GlkAPI::glk_current_simple_time(uint factor) {
 	assert(factor);
 	TimeAndDate td;
 
@@ -1117,12 +1117,12 @@ void GlkAPI::glk_time_to_date_local(const glktimeval_t *time, glkdate_t *date) {
 	*date = TimeAndDate(*time);
 }
 
-void GlkAPI::glk_simple_time_to_date_utc(glsi32 time, glui32 factor, glkdate_t *date) {
+void GlkAPI::glk_simple_time_to_date_utc(int time, uint factor, glkdate_t *date) {
 	TimeSeconds secs = (int64)time * factor;
 	*date = TimeAndDate(secs);
 }
 
-void GlkAPI::glk_simple_time_to_date_local(glsi32 time, glui32 factor, glkdate_t *date) {
+void GlkAPI::glk_simple_time_to_date_local(int time, uint factor, glkdate_t *date) {
 	TimeSeconds secs = (int64)time * factor;
 	*date = TimeAndDate(secs);
 }
@@ -1136,14 +1136,14 @@ void GlkAPI::glk_date_to_time_local(const glkdate_t *date, glktimeval_t *time) {
 	*time = TimeAndDate(*date);
 }
 
-glsi32 GlkAPI::glk_date_to_simple_time_utc(const glkdate_t *date, glui32 factor) {
+int GlkAPI::glk_date_to_simple_time_utc(const glkdate_t *date, uint factor) {
 	// WORKAROUND: timezones aren't currently supported
 	assert(factor);
 	TimeSeconds ts = TimeAndDate(*date);
 	return ts / factor;
 }
 
-glsi32 GlkAPI::glk_date_to_simple_time_local(const glkdate_t *date, glui32 factor) {
+int GlkAPI::glk_date_to_simple_time_local(const glkdate_t *date, uint factor) {
 	assert(factor);
 	TimeSeconds ts = TimeAndDate(*date);
 	return ts / factor;
@@ -1181,15 +1181,15 @@ void GlkAPI::garglk_unput_string(const char *str) {
 	_streams->getCurrent()->unputBuffer(str, strlen(str));
 }
 
-void GlkAPI::garglk_unput_string_uni(const glui32 *str) {
+void GlkAPI::garglk_unput_string_uni(const uint *str) {
 	_streams->getCurrent()->unputBufferUni(str, strlen_uni(str));
 }
 
-void GlkAPI::garglk_set_zcolors(glui32 fg, glui32 bg) {
+void GlkAPI::garglk_set_zcolors(uint fg, uint bg) {
 	_streams->getCurrent()->setZColors(fg, bg);
 }
 
-void GlkAPI::garglk_set_zcolors_stream(strid_t str, glui32 fg, glui32 bg) {
+void GlkAPI::garglk_set_zcolors_stream(strid_t str, uint fg, uint bg) {
 	if (str) {
 		str->setZColors(fg, bg);
 	} else {
@@ -1197,11 +1197,11 @@ void GlkAPI::garglk_set_zcolors_stream(strid_t str, glui32 fg, glui32 bg) {
 	}
 }
 
-void GlkAPI::garglk_set_reversevideo(glui32 reverse) {
+void GlkAPI::garglk_set_reversevideo(uint reverse) {
 	_streams->getCurrent()->setReverseVideo(reverse != 0);
 }
 
-void GlkAPI::garglk_set_reversevideo_stream(strid_t str, glui32 reverse) {
+void GlkAPI::garglk_set_reversevideo_stream(strid_t str, uint reverse) {
 	if (str) {
 		str->setReverseVideo(reverse != 0);
 	} else {

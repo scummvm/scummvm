@@ -27,7 +27,7 @@
 
 namespace Glk {
 
-typedef glui32 gli_case_block_t[2]; // upper, lower
+typedef uint gli_case_block_t[2]; // upper, lower
 enum BufferChangeCase { CASE_UPPER = 0, CASE_LOWER = 1, CASE_TITLE = 2, CASE_IDENT = 3 };
 enum BufferChangeCond { COND_ALL = 0, COND_LINESTART = 1 };
 
@@ -43,8 +43,8 @@ size_t strlen_uni(const uint32 *s);
  * the return value will be the full number of characters that the
  *converted string should have contained.
  */
-extern glui32 bufferChangeCase(glui32 *buf, glui32 len,
-                               glui32 numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
+extern uint bufferChangeCase(uint *buf, uint len,
+                               uint numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
 
 } // End of namespace Glk
 

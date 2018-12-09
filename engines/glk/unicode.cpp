@@ -33,12 +33,12 @@ size_t strlen_uni(const uint32 *s) {
 	return len;
 }
 
-glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCase destcase,
+uint bufferChangeCase(uint *buf, uint len, uint numchars, BufferChangeCase destcase,
                         BufferChangeCond cond, int changerest) {
-	glui32 ix, jx;
-	glui32 *outbuf;
-	glui32 *newoutbuf;
-	glui32 outcount;
+	uint ix, jx;
+	uint *outbuf;
+	uint *newoutbuf;
+	uint outcount;
 	int dest_block_rest = 0, dest_block_first = 0;
 	int dest_spec_rest = 0, dest_spec_first = 0;
 
@@ -70,11 +70,11 @@ glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCa
 	for (ix = 0; ix < numchars; ix++) {
 		int target;
 		int isfirst;
-		glui32 res;
-		glui32 *special;
-		glui32 *ptr;
-		glui32 speccount;
-		glui32 ch = buf[ix];
+		uint res;
+		uint *special;
+		uint *ptr;
+		uint speccount;
+		uint ch = buf[ix];
 
 		isfirst = (ix == 0);
 
@@ -121,11 +121,11 @@ glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCa
 
 		// Now we have to allocate a new buffer, if we haven't already.
 		if (!newoutbuf) {
-			newoutbuf = new glui32[len + 1];
+			newoutbuf = new uint[len + 1];
 			if (!newoutbuf)
 				return 0;
 			if (outcount)
-				memcpy(newoutbuf, buf, outcount * sizeof(glui32));
+				memcpy(newoutbuf, buf, outcount * sizeof(uint));
 			outbuf = newoutbuf;
 		}
 
@@ -137,11 +137,11 @@ glui32 bufferChangeCase(glui32 *buf, glui32 len, glui32 numchars, BufferChangeCa
 	}
 
 	if (newoutbuf) {
-		glui32 finallen = outcount;
+		uint finallen = outcount;
 		if (finallen > len)
 			finallen = len;
 		if (finallen)
-			memcpy(buf, newoutbuf, finallen * sizeof(glui32));
+			memcpy(buf, newoutbuf, finallen * sizeof(uint));
 		free(newoutbuf);
 	}
 

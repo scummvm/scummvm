@@ -74,11 +74,11 @@ Windows::~Windows() {
 	delete _rootWin;
 }
 
-Window *Windows::windowOpen(Window *splitwin, glui32 method, glui32 size,
-                            glui32 wintype, glui32 rock) {
+Window *Windows::windowOpen(Window *splitwin, uint method, uint size,
+                            uint wintype, uint rock) {
 	Window *newwin, *oldparent;
 	PairWindow *pairWin;
-	glui32 val;
+	uint val;
 
 	_forceRedraw = true;
 
@@ -210,7 +210,7 @@ void Windows::windowClose(Window *win, StreamResult *result) {
 	}
 }
 
-Window *Windows::newWindow(glui32 type, glui32 rock) {
+Window *Windows::newWindow(uint type, uint rock) {
 	Window *win;
 
 	switch (type) {
@@ -240,7 +240,7 @@ Window *Windows::newWindow(glui32 type, glui32 rock) {
 	return win;
 }
 
-PairWindow *Windows::newPairWindow(glui32 method, Window *key, glui32 size) {
+PairWindow *Windows::newPairWindow(uint method, Window *key, uint size) {
 	PairWindow *pwin = new PairWindow(this, method, key, size);
 	pwin->_next = _windowList;
 	_windowList = pwin;
@@ -339,7 +339,7 @@ void Windows::inputScrollFocus() {
 	_focusWin = altWin;
 }
 
-void Windows::inputHandleKey(glui32 key) {
+void Windows::inputHandleKey(uint key) {
 	if (_moreFocus) {
 		inputMoreFocus();
 	} else {
@@ -484,7 +484,7 @@ Window *Windows::iterateTreeOrder(Window *win) {
 
 /*--------------------------------------------------------------------------*/
 
-Window::Window(Windows *windows, glui32 rock) : _windows(windows), _rock(rock),
+Window::Window(Windows *windows, uint rock) : _windows(windows), _rock(rock),
 	_type(0), _parent(nullptr), _next(nullptr), _prev(nullptr), _yAdj(0),
 	_lineRequest(0), _lineRequestUni(0), _charRequest(0), _charRequestUni(0),
 	_mouseRequest(0), _hyperRequest(0), _moreRequest(0), _scrollRequest(0), _imageLoaded(0),
@@ -570,11 +570,11 @@ void Window::moveCursor(const Point &newPos) {
 	warning("moveCursor: not a TextGrid window");
 }
 
-void Window::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) {
+void Window::requestLineEvent(char *buf, uint maxlen, uint initlen) {
 	warning("requestLineEvent: window does not support keyboard input");
 }
 
-void Window::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen) {
+void Window::requestLineEventUni(uint *buf, uint maxlen, uint initlen) {
 	warning("requestLineEventUni: window does not support keyboard input");
 }
 
@@ -586,19 +586,19 @@ void Window::redraw() {
 	}
 }
 
-void Window::acceptReadLine(glui32 arg) {
+void Window::acceptReadLine(uint arg) {
 	warning("acceptReadLine:: window does not support keyboard input");
 }
 
-void Window::acceptReadChar(glui32 arg) {
+void Window::acceptReadChar(uint arg) {
 	warning("acceptReadChar:: window does not support keyboard input");
 }
 
-void Window::getArrangement(glui32 *method, glui32 *size, Window **keyWin) {
+void Window::getArrangement(uint *method, uint *size, Window **keyWin) {
 	warning("getArrangement: not a Pair window");
 }
 
-void Window::setArrangement(glui32 method, glui32 size, Window *keyWin) {
+void Window::setArrangement(uint method, uint size, Window *keyWin) {
 	warning("setArrangement: not a Pair window");
 }
 
@@ -618,11 +618,11 @@ void Window::eraseRect(bool whole, const Rect &box) {
 	warning("eraseRect: not a graphics window");
 }
 
-void Window::fillRect(glui32 color, const Rect &box) {
+void Window::fillRect(uint color, const Rect &box) {
 	warning("fillRect: not a graphics window");
 }
 
-void Window::setBackgroundColor(glui32 color) {
+void Window::setBackgroundColor(uint color) {
 	warning("setBackgroundColor: not a graphics window");
 }
 
@@ -631,7 +631,7 @@ const WindowStyle *Window::getStyles() const {
 	return nullptr;
 }
 
-void Window::setTerminatorsLineEvent(glui32 *keycodes, glui32 count) {
+void Window::setTerminatorsLineEvent(uint *keycodes, uint count) {
 	if (dynamic_cast<TextBufferWindow *>(this) || dynamic_cast<TextGridWindow *>(this)) {
 		delete _lineTerminatorsBase;
 		_lineTerminatorsBase = nullptr;
@@ -639,9 +639,9 @@ void Window::setTerminatorsLineEvent(glui32 *keycodes, glui32 count) {
 		if (!keycodes || count == 0) {
 			_termCt = 0;
 		} else {
-			_lineTerminatorsBase = new glui32[count + 1];
+			_lineTerminatorsBase = new uint[count + 1];
 			if (_lineTerminatorsBase) {
-				memcpy(_lineTerminatorsBase, keycodes, count * sizeof(glui32));
+				memcpy(_lineTerminatorsBase, keycodes, count * sizeof(uint));
 				_lineTerminatorsBase[count] = 0;
 				_termCt = count;
 			}
@@ -651,7 +651,7 @@ void Window::setTerminatorsLineEvent(glui32 *keycodes, glui32 count) {
 	}
 }
 
-bool Window::checkTerminator(glui32 ch) {
+bool Window::checkTerminator(uint ch) {
 	if (ch == keycode_Escape)
 		return true;
 	else if (ch >= keycode_Func12 && ch <= keycode_Func1)
@@ -660,7 +660,7 @@ bool Window::checkTerminator(glui32 ch) {
 		return false;
 }
 
-bool Window::imageDraw(glui32 image, glui32 align, glsi32 val1, glsi32 val2) {
+bool Window::imageDraw(uint image, uint align, int val1, int val2) {
 	if (!g_conf->_graphics)
 		return false;
 
@@ -675,7 +675,7 @@ bool Window::imageDraw(glui32 image, glui32 align, glsi32 val1, glsi32 val2) {
 	return false;
 }
 
-void Window::getSize(glui32 *width, glui32 *height) const {
+void Window::getSize(uint *width, uint *height) const {
 	if (width)
 		*width = 0;
 	if (height)

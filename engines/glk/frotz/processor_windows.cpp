@@ -71,8 +71,8 @@ void Processor::z_draw_picture() {
 	 */
 	for (i = 0; mapper[i].story_id != UNKNOWN; i++) {
 		if (_storyId == mapper[i].story_id && pic == mapper[i].pic) {
-			glui32 height1, width1;
-			glui32 height2, width2;
+			uint height1, width1;
+			uint height2, width2;
 
 			int delta = 0;
 
@@ -90,7 +90,7 @@ void Processor::z_draw_picture() {
 	os_draw_picture(pic, gos_lower, Point(x, y));
 
 	if (_storyId == SHOGUN && pic == 3) {
-		glui32 height, width;
+		uint height, width;
 
 		os_picture_data(59, &height, &width);
 		os_draw_picture(59, gos_lower, Point(h_screen_width - width + 1, y));
@@ -100,7 +100,7 @@ void Processor::z_draw_picture() {
 void Processor::z_picture_data() {
 	zword pic = zargs[0];
 	zword table = zargs[1];
-	glui32 height, width;
+	uint height, width;
 	int i;
 
 	bool avail = os_picture_data(pic, &height, &width);
@@ -108,7 +108,7 @@ void Processor::z_picture_data() {
 	for (i = 0; mapper[i].story_id != UNKNOWN; i++) {
 		if (_storyId == mapper[i].story_id) {
 			if (pic == mapper[i].pic) {
-				glui32 height2, width2;
+				uint height2, width2;
 
 				avail &= os_picture_data(mapper[i].pic1, &height2, &width2);
 				avail &= os_picture_data(mapper[i].pic2, &height2, &width2);

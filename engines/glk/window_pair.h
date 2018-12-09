@@ -35,18 +35,18 @@ public:
 	Window *_child1, *_child2;
 
 	// split info...
-	glui32 _dir;               ///< winmethod_Left, Right, Above, or Below
+	uint _dir;               ///< winmethod_Left, Right, Above, or Below
 	bool _vertical, _backward; ///< flags
-	glui32 _division;          ///< winmethod_Fixed or winmethod_Proportional
+	uint _division;          ///< winmethod_Fixed or winmethod_Proportional
 	Window *_key;              ///< nullptr or a leaf-descendant (not a Pair)
 	int _keyDamage;            ///< used as scratch space in window closing
-	glui32 _size;              ///< size value
+	uint _size;              ///< size value
 	bool _wBorder;             ///< If windows are separated by border
 public:
 	/**
 	 * Constructor
 	 */
-	PairWindow(Windows *windows, glui32 method, Window *key, glui32 size);
+	PairWindow(Windows *windows, uint method, Window *key, uint size);
 
 	/**
 	 * Destructor
@@ -63,9 +63,9 @@ public:
 	 */
 	virtual void redraw() override;
 
-	virtual void getArrangement(glui32 *method, glui32 *size, Window **keyWin) override;
+	virtual void getArrangement(uint *method, uint *size, Window **keyWin) override;
 
-	virtual void setArrangement(glui32 method, glui32 size, Window *keyWin) override;
+	virtual void setArrangement(uint method, uint size, Window *keyWin) override;
 
 	/**
 	 * Click the window

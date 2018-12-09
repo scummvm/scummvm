@@ -28,8 +28,6 @@
 
 namespace Glk {
 
-typedef uint glui32;
-typedef int glsi32;
 class Window;
 
 /**
@@ -220,7 +218,7 @@ enum ImageAlign {
 #endif /* GLK_MODULE_IMAGE */
 
 union gidispatch_rock_t {
-	glui32 num;
+	uint num;
 	void *ptr;
 };
 

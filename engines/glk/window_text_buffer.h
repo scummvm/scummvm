@@ -39,12 +39,12 @@ class TextBufferWindow : public Window, Speech {
 	 * Structure for a row within the window
 	 */
 	struct TextBufferRow {
-		glui32 _chars[TBLINELEN];
+		uint _chars[TBLINELEN];
 		Attributes _attrs[TBLINELEN];
 		int _len, _newLine;
 		bool _dirty, _repaint;
 		Picture *_lPic, *_rPic;
-		glui32 _lHyper, _rHyper;
+		uint _lHyper, _rHyper;
 		int _lm, _rm;
 
 		/**
@@ -56,7 +56,7 @@ class TextBufferWindow : public Window, Speech {
 private:
 	void reflow();
 	void touchScroll();
-	bool putPicture(Picture *pic, glui32 align, glui32 linkval);
+	bool putPicture(Picture *pic, uint align, uint linkval);
 
 	/**
 	 * @remarks Only for input text
@@ -66,12 +66,12 @@ private:
 	/**
 	 * @remarks Only for input text
 	 */
-	void putTextUni(const glui32 *buf, int len, int pos, int oldlen);
+	void putTextUni(const uint *buf, int len, int pos, int oldlen);
 
 	/**
 	 * Return or enter, during line input. Ends line input.
 	 */
-	void acceptLine(glui32 keycode);
+	void acceptLine(uint keycode);
 
 	/**
 	 * Return true if a following quotation mark should be an opening mark,
@@ -79,7 +79,7 @@ private:
 	 * appear following an open parenthesis, open square bracket, or
 	 * whitespace.
 	 */
-	bool leftquote(glui32 c);
+	bool leftquote(uint c);
 
 	/**
 	 * Mark a given text row as modified
@@ -88,7 +88,7 @@ private:
 
 	void scrollOneLine(bool forced);
 	void scrollResize();
-	int calcWidth(glui32 *chars, Attributes *attrs, int startchar, int numchars, int spw);
+	int calcWidth(uint *chars, Attributes *attrs, int startchar, int numchars, int spw);
 public:
 	int _width, _height;
 	int _spaced;
@@ -98,7 +98,7 @@ public:
 	int _scrollBack;
 
 	int _numChars;        ///< number of chars in last line: lines[0]
-	glui32 *_chars;       ///< alias to lines[0].chars
+	uint *_chars;       ///< alias to lines[0].chars
 	Attributes *_attrs;  ///< alias to lines[0].attrs
 
 	///< adjust margins temporarily for images
@@ -118,21 +118,21 @@ public:
 	int _scrollMax;
 
 	// for line input
-	void *_inBuf;        ///< unsigned char* for latin1, glui32* for unicode
+	void *_inBuf;        ///< unsigned char* for latin1, uint* for unicode
 	int _inMax;
 	long _inFence;
 	long _inCurs;
 	Attributes _origAttr;
 	gidispatch_rock_t _inArrayRock;
 
-	glui32 _echoLineInput;
-	glui32 *_lineTerminators;
+	uint _echoLineInput;
+	uint *_lineTerminators;
 
 	// style hints and settings
 	WindowStyle _styles[style_NUMSTYLES];
 
 	// for copy selection
-	glui32 *_copyBuf;
+	uint *_copyBuf;
 	int _copyPos;
 public:
 	/**
@@ -145,9 +145,9 @@ public:
 	 */
 	virtual ~TextBufferWindow();
 
-	int acceptScroll(glui32 arg);
+	int acceptScroll(uint arg);
 
-	glui32 drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height);
+	uint drawPicture(uint image, uint align, uint scaled, uint width, uint height);
 
 	/**
 	 * Rearranges the window
@@ -157,12 +157,12 @@ public:
 	/**
 	 * Get window split size within parent pair window
 	 */
-	virtual glui32 getSplit(glui32 size, bool vertical) const override;
+	virtual uint getSplit(uint size, bool vertical) const override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(glui32 ch) override;
+	virtual void putCharUni(uint ch) override;
 
 	/**
 	 * Unput a unicode character
@@ -182,12 +182,12 @@ public:
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) override;
+	virtual void requestLineEvent(char *buf, uint maxlen, uint initlen) override;
 
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen) override;
+	virtual void requestLineEventUni(uint *buf, uint maxlen, uint initlen) override;
 
 	/**
 	 * Cancel an input line event
@@ -206,11 +206,11 @@ public:
 	 */
 	virtual void redraw() override;
 
-	virtual void acceptReadLine(glui32 arg) override;
+	virtual void acceptReadLine(uint arg) override;
 
-	virtual void acceptReadChar(glui32 arg) override;
+	virtual void acceptReadChar(uint arg) override;
 
-	virtual void getSize(glui32 *width, glui32 *height) const override;
+	virtual void getSize(uint *width, uint *height) const override;
 
 	virtual void requestCharEvent() override {
 		_charRequest = true;
@@ -220,7 +220,7 @@ public:
 		_charRequestUni = true;
 	}
 
-	virtual void setEchoLineEvent(glui32 val) override {
+	virtual void setEchoLineEvent(uint val) override {
 		_echoLineInput = val != 0;
 	}
 

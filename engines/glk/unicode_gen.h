@@ -28,7 +28,7 @@
 namespace Glk {
 
 #define GET_CASE_BLOCK(ch, blockptr)  \
-	switch ((glui32)(ch) >> 8) {  \
+	switch ((uint)(ch) >> 8) {  \
 	case 0x0:  \
 		*blockptr = unigen_case_block_0x0;  \
 		break;  \
@@ -423,9 +423,9 @@ namespace Glk {
 		*specptr = nullptr;  \
 	}
 
-typedef glui32 gli_case_block_t[2];   ///< upper, lower
-typedef glui32 gli_case_special_t[3]; ///< upper, lower, title
-typedef glui32 gli_decomp_block_t[2]; ///< count, position
+typedef uint gli_case_block_t[2];   ///< upper, lower
+typedef uint gli_case_special_t[3]; ///< upper, lower, title
+typedef uint gli_decomp_block_t[2]; ///< count, position
 
 extern gli_case_block_t unigen_case_block_0x0[256];
 extern gli_case_block_t unigen_case_block_0x1[256];
@@ -556,7 +556,7 @@ extern gli_case_special_t unigen_special_0xfb14;
 extern gli_case_special_t unigen_special_0xfb15;
 extern gli_case_special_t unigen_special_0xfb16;
 extern gli_case_special_t unigen_special_0xfb17;
-extern glui32 unigen_special_array[];
+extern uint unigen_special_array[];
 
 } // End of namespace Glk
 

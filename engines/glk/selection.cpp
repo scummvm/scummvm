@@ -85,7 +85,7 @@ void WindowMask::resize(size_t x, size_t y) {
 	_ver = y + 1;
 
 	// allocate new storage
-	_links = new glui32 *[_hor];
+	_links = new uint *[_hor];
 	if (!_links) {
 		warning("resize_mask: out of memory");
 		_hor = _ver = 0;
@@ -93,7 +93,7 @@ void WindowMask::resize(size_t x, size_t y) {
 	}
 
 	for (size_t i = 0; i < _hor; i++) {
-		_links[i] = new glui32[_ver];
+		_links[i] = new uint[_ver];
 		if (!_links[i]) {
 			warning("resize_mask: could not allocate new memory");
 			return;
@@ -106,7 +106,7 @@ void WindowMask::resize(size_t x, size_t y) {
 	_select.bottom = 0;
 }
 
-void WindowMask::putHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1) {
+void WindowMask::putHyperlink(uint linkval, uint x0, uint y0, uint x1, uint y1) {
 	uint i, k;
 	size_t tx0 = x0 < x1 ? x0 : x1;
 	size_t tx1 = x0 < x1 ? x1 : x0;
@@ -132,7 +132,7 @@ void WindowMask::putHyperlink(glui32 linkval, uint x0, uint y0, uint x1, uint y1
 	}
 }
 
-glui32 WindowMask::getHyperlink(const Point &pos) const {
+uint WindowMask::getHyperlink(const Point &pos) const {
 	if (!_hor || !_ver) {
 		warning("getHyperlink: struct not initialized");
 		return 0;

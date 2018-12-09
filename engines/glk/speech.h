@@ -39,7 +39,7 @@ protected:
 
 	void gli_tts_purge(void) {}
 
-	void gli_tts_speak(const glui32 *buf, size_t len) {}
+	void gli_tts_speak(const uint *buf, size_t len) {}
 
 	void gli_free_tts(void) {}
 };

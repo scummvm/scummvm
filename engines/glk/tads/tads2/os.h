@@ -57,12 +57,12 @@ protected:
 	/**
 	 * Change a TADS prompt type (OS_AFP_*) into a Glk prompt type.
 	 */
-	glui32 oss_convert_prompt_type(int type);
+	uint oss_convert_prompt_type(int type);
 	
 	/**
 	 * Change a TADS file type (OSFT*) into a Glk file type.
 	 */
-	glui32 oss_convert_file_type(int type);
+	uint oss_convert_file_type(int type);
 
 	/**
 	 * Change a fileref ID (frefid_t) to a special string and put it in the
@@ -73,7 +73,7 @@ protected:
 	 * 64-bit pointers I'll have to start using a hash table or use hex
 	 * numbers.
 	 */
-	glui32 oss_convert_fileref_to_string(frefid_t file_to_convert, char *buffer, int buf_len);
+	uint oss_convert_fileref_to_string(frefid_t file_to_convert, char *buffer, int buf_len);
 
 	/**
 	 * Turn a filename or a special fileref string into an actual fileref.
@@ -81,7 +81,7 @@ protected:
 	 * call oss_check_path, which should do the OS-dependent path changing
 	 * in the event that the filename contains path information
 	 */
-	frefid_t oss_convert_string_to_fileref(char *buffer, glui32 usage);
+	frefid_t oss_convert_string_to_fileref(char *buffer, uint usage);
 
 	/**
 	 * Tell us if the passed string is a hashed fileref or not
@@ -91,7 +91,7 @@ protected:
 	/**
 	 * Change a Glk key into a TADS one, using the CMD_xxx codes
 	 */
-	unsigned char oss_convert_keystroke_to_tads(glui32 key);
+	unsigned char oss_convert_keystroke_to_tads(uint key);
 
 	/**@}*/
 
@@ -117,8 +117,8 @@ protected:
 	 * TADS filemode (OSFT*); tbusage is either fileusage_TextMode or
 	 * fileusage_BinaryMode (from Glk).
 	 */
-	osfildef *oss_open_stream(char *buffer, glui32 tadsusage, glui32 tbusage,
-		glui32 fmode, glui32 rock);
+	osfildef *oss_open_stream(char *buffer, uint tadsusage, uint tbusage,
+		uint fmode, uint rock);
 
 	/**
 	 * Get a pointer to the root name portion of a filename.  This is the part

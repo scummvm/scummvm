@@ -93,10 +93,10 @@ void GraphicsWindow::redraw() {
 	}
 }
 
-glui32 GraphicsWindow::drawPicture(glui32 image, glsi32 xpos, glsi32 ypos, int scale,
-                                   glui32 imagewidth, glui32 imageheight) {
+uint GraphicsWindow::drawPicture(uint image, int xpos, int ypos, int scale,
+                                   uint imagewidth, uint imageheight) {
 	Picture *pic = g_vm->_pictures->load(image);
-	glui32 hyperlink = _attr.hyper;
+	uint hyperlink = _attr.hyper;
 
 	if (!pic)
 		return false;
@@ -132,10 +132,10 @@ void GraphicsWindow::eraseRect(bool whole, const Rect &box) {
 	if (y0 < 0) y0 = 0;
 	if (x1 < 0) x1 = 0;
 	if (y1 < 0) y1 = 0;
-	if ((glui32)x0 >= _w) x0 = _w;
-	if ((glui32)y0 >= _h) y0 = _h;
-	if ((glui32)x1 >= _w) x1 = _w;
-	if ((glui32)y1 >= _h) y1 = _h;
+	if ((uint)x0 >= _w) x0 = _w;
+	if ((uint)y0 >= _h) y0 = _h;
+	if ((uint)x1 >= _w) x1 = _w;
+	if ((uint)y1 >= _h) y1 = _h;
 
 	hx0 = _bbox.left + x0;
 	hx1 = _bbox.left + x1;
@@ -149,7 +149,7 @@ void GraphicsWindow::eraseRect(bool whole, const Rect &box) {
 	touch();
 }
 
-void GraphicsWindow::fillRect(glui32 color, const Rect &box) {
+void GraphicsWindow::fillRect(uint color, const Rect &box) {
 	unsigned char col[3];
 	int x0 = box.left, y0 = box.top, x1 = box.right, y1 = box.bottom;
 	int hx0, hx1, hy0, hy1;
@@ -162,10 +162,10 @@ void GraphicsWindow::fillRect(glui32 color, const Rect &box) {
 	if (y0 < 0) y0 = 0;
 	if (x1 < 0) x1 = 0;
 	if (y1 < 0) y1 = 0;
-	if ((glui32)x0 > _w) x0 = _w;
-	if ((glui32)y0 > _h) y0 = _h;
-	if ((glui32)x1 > _w) x1 = _w;
-	if ((glui32)y1 > _h) y1 = _h;
+	if ((uint)x0 > _w) x0 = _w;
+	if ((uint)y0 > _h) y0 = _h;
+	if ((uint)x1 > _w) x1 = _w;
+	if ((uint)y1 > _h) y1 = _h;
 
 	hx0 = _bbox.left + x0;
 	hx1 = _bbox.left + x1;
@@ -179,7 +179,7 @@ void GraphicsWindow::fillRect(glui32 color, const Rect &box) {
 	touch();
 }
 
-void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int height, glui32 linkval) {
+void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int height, uint linkval) {
 	int dx1, dy1, x1, y1, sx0, sy0, sx1, sy1;
 	int hx0, hx1, hy0, hy1;
 	int w, h;
@@ -233,12 +233,12 @@ void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int h
 	_surface->blitFrom(*src, Rect(sx0, sy0, sx0 + w, sy0 + h), Point(0, 0));
 }
 
-void GraphicsWindow::getSize(glui32 *width, glui32 *height) const {
+void GraphicsWindow::getSize(uint *width, uint *height) const {
 	*width = _bbox.width();
 	*height = _bbox.height();
 }
 
-void GraphicsWindow::setBackgroundColor(glui32 color) {
+void GraphicsWindow::setBackgroundColor(uint color) {
 	_bgnd[0] = (color >> 16) & 0xff;
 	_bgnd[1] = (color >> 8) & 0xff;
 	_bgnd[2] = (color >> 0) & 0xff;
@@ -255,7 +255,7 @@ void GraphicsWindow::click(const Point &newPos) {
 	}
 
 	if (_hyperRequest) {
-		glui32 linkval = g_vm->_selection->getHyperlink(newPos);
+		uint linkval = g_vm->_selection->getHyperlink(newPos);
 		if (linkval) {
 			g_vm->_events->store(evtype_Hyperlink, this, linkval, 0);
 			_hyperRequest = false;

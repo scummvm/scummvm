@@ -46,13 +46,13 @@ void Sounds::removeSound(schanid_t snd) {
 	}
 }
 
-schanid_t Sounds::create(glui32 rock) {
+schanid_t Sounds::create(uint rock) {
 	schanid_t snd = new SoundChannel(this);
 	_sounds.push_back(snd);
 	return snd;
 }
 
-schanid_t Sounds::iterate(schanid_t chan, glui32 *rockptr) {
+schanid_t Sounds::iterate(schanid_t chan, uint *rockptr) {
 	for (int idx = 0; idx < (int)_sounds.size() - 1; ++idx) {
 		if (_sounds[idx] == chan) {
 			schanid_t next = _sounds[idx + 1];
@@ -82,7 +82,7 @@ SoundChannel::~SoundChannel() {
 	_owner->removeSound(this);
 }
 
-glui32 SoundChannel::play(glui32 soundNum, glui32 repeats, glui32 notify) {
+uint SoundChannel::play(uint soundNum, uint repeats, uint notify) {
 	stop();
 	if (repeats == 0)
 		return 1;
@@ -148,7 +148,7 @@ void SoundChannel::stop() {
 
 void SoundChannel::poll() {
 	if (!g_vm->_mixer->isSoundHandleActive(_handle) && _notify != 0) {
-		glui32 notify = _notify;
+		uint notify = _notify;
 		_notify = 0;
 		g_vm->_events->store(evtype_SoundNotify, nullptr, _soundNum, notify);
 	}

@@ -161,7 +161,7 @@ Conf::Conf(InterpreterType interpType) {
 	Common::copy(T_STYLES, T_STYLES + style_NUMSTYLES, _tStyles);
 	Common::copy(G_STYLES, G_STYLES + style_NUMSTYLES, _gStyles);
 
-	char buffer[255];
+	char buffer[256];
 	const char *const TG_COLOR[2] = { "tcolor_%d", "gcolor_%d" };
 	for (int tg = 0; tg < 2; ++tg) {
 		for (int style = 0; style <= 10; ++style) {

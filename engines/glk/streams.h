@@ -87,7 +87,7 @@ struct SavegameHeader {
  * File details
  */
 struct FileReference {
-	glui32 _rock;
+	uint _rock;
 	int _slotNumber;
 	Common::String _description;
 	Common::String _filename;
@@ -103,7 +103,7 @@ struct FileReference {
 	/**
 	 * Constructor
 	 */
-	FileReference(int slot, const Common::String &desc, glui32 usage, glui32 rock = 0) :
+	FileReference(int slot, const Common::String &desc, uint usage, uint rock = 0) :
 		_rock(rock), _slotNumber(slot), _description(desc),
 		_fileType((FileUsage)(usage & fileusage_TypeMask)), _textMode(usage & fileusage_TextMode) {}
 
@@ -181,7 +181,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(glui32 ch) = 0;
+	virtual void putCharUni(uint ch) = 0;
 
 	/**
 	 * Write a buffer
@@ -191,7 +191,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const glui32 *buf, size_t len) = 0;
+	virtual void putBufferUni(const uint *buf, size_t len) = 0;
 
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
@@ -201,12 +201,12 @@ public:
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
 	 */
-	virtual void unputBufferUni(const glui32 *buf, size_t len) {}
+	virtual void unputBufferUni(const uint *buf, size_t len) {}
 
 	/**
 	 * Send a line to the stream with a trailing newline
 	 */
-	void echoLine(const char *buf, glui32 len) {
+	void echoLine(const char *buf, uint len) {
 		putBuffer(buf, len);
 		putChar('\n');
 	};
@@ -214,70 +214,70 @@ public:
 	/**
 	 * Send a line to the stream with a trailing newline
 	 */
-	void echoLineUni(const glui32 *buf, glui32 len) {
+	void echoLineUni(const uint *buf, uint len) {
 		putBufferUni(buf, len);
 		putCharUni('\n');
 	}
 
-	virtual glui32 getPosition() const {
+	virtual uint getPosition() const {
 		return 0;
 	}
 
-	virtual void setPosition(glsi32 pos, glui32 seekMode) {}
+	virtual void setPosition(int pos, uint seekMode) {}
 
-	virtual void setStyle(glui32 val) {}
+	virtual void setStyle(uint val) {}
 
 	/**
 	 * Get a character from the stream
 	 */
-	virtual glsi32 getChar() {
+	virtual int getChar() {
 		return -1;
 	}
 
 	/**
 	 * Get a unicode character from the stream
 	 */
-	virtual glsi32 getCharUni() {
+	virtual int getCharUni() {
 		return -1;
 	}
 
 	/**
 	 * Get a buffer
 	 */
-	virtual glui32 getBuffer(char *buf, glui32 len) {
+	virtual uint getBuffer(char *buf, uint len) {
 		return 0;
 	}
 
 	/**
 	 * Get a unicode buffer
 	 */
-	virtual glui32 getBufferUni(glui32 *buf, glui32 len) {
+	virtual uint getBufferUni(uint *buf, uint len) {
 		return 0;
 	}
 
 	/**
 	 * Get a line
 	 */
-	virtual glui32 getLine(char *buf, glui32 len) {
+	virtual uint getLine(char *buf, uint len) {
 		return 0;
 	}
 
 	/**
 	 * Get a unicode line
 	 */
-	virtual glui32 getLineUni(glui32 *ubuf, glui32 len) {
+	virtual uint getLineUni(uint *ubuf, uint len) {
 		return 0;
 	}
 
 	/**
 	 * Set a hyperlink
 	 */
-	virtual void setHyperlink(glui32 linkVal) {}
+	virtual void setHyperlink(uint linkVal) {}
 
 	/**
 	 * Set the style colors
 	 */
-	virtual void setZColors(glui32 fg, glui32 bg);
+	virtual void setZColors(uint fg, uint bg);
 
 	/**
 	 * Set the reverse video style
@@ -327,7 +327,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(glui32 ch) override;
+	virtual void putCharUni(uint ch) override;
 
 	/**
 	 * Write a buffer
@@ -337,7 +337,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const glui32 *buf, size_t len) override;
+	virtual void putBufferUni(const uint *buf, size_t len) override;
 
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
@@ -347,19 +347,19 @@ public:
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
 	 */
-	virtual void unputBufferUni(const glui32 *buf, size_t len) override;
+	virtual void unputBufferUni(const uint *buf, size_t len) override;
 
-	virtual void setStyle(glui32 val) override;
+	virtual void setStyle(uint val) override;
 
 	/**
 	 * Set a hyperlink
 	 */
-	virtual void setHyperlink(glui32 linkVal) override;
+	virtual void setHyperlink(uint linkVal) override;
 
 	/**
 	 * Set the style colors
 	 */
-	virtual void setZColors(glui32 fg, glui32 bg) override;
+	virtual void setZColors(uint fg, uint bg) override;
 
 	/**
 	 * Set the reverse video style
@@ -372,7 +372,7 @@ public:
  */
 class MemoryStream : public Stream {
 private:
-	void *_buf;     ///< unsigned char* for latin1, glui32* for unicode
+	void *_buf;     ///< unsigned char* for latin1, uint* for unicode
 	void *_bufPtr;
 	void *_bufEnd;
 	void *_bufEof;
@@ -391,7 +391,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(glui32 ch) override;
+	virtual void putCharUni(uint ch) override;
 
 	/**
 	 * Write a buffer
@@ -401,41 +401,41 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const glui32 *buf, size_t len) override;
+	virtual void putBufferUni(const uint *buf, size_t len) override;
 
-	virtual glui32 getPosition() const override;
+	virtual uint getPosition() const override;
 
-	virtual void setPosition(glsi32 pos, glui32 seekMode) override;
+	virtual void setPosition(int pos, uint seekMode) override;
 
 	/**
 	 * Get a character from the stream
 	 */
-	virtual glsi32 getChar() override;
+	virtual int getChar() override;
 
 	/**
 	 * Get a unicode character from the stream
 	 */
-	virtual glsi32 getCharUni() override;
+	virtual int getCharUni() override;
 
 	/**
 	 * Get a buffer
 	 */
-	virtual glui32 getBuffer(char *buf, glui32 len) override;
+	virtual uint getBuffer(char *buf, uint len) override;
 
 	/**
 	 * Get a unicode buffer
 	 */
-	virtual glui32 getBufferUni(glui32 *buf, glui32 len) override;
+	virtual uint getBufferUni(uint *buf, uint len) override;
 
 	/**
 	 * Get a line
 	 */
-	virtual glui32 getLine(char *buf, glui32 len) override;
+	virtual uint getLine(char *buf, uint len) override;
 
 	/**
 	 * Get a unicode line
 	 */
-	virtual glui32 getLineUni(glui32 *ubuf, glui32 len) override;
+	virtual uint getLineUni(uint *ubuf, uint len) override;
 };
 
 /**
@@ -458,12 +458,12 @@ private:
 	/**
 	 * Put a UTF8 character
 	 */
-	void putCharUtf8(glui32 val);
+	void putCharUtf8(uint val);
 
 	/**
 	 * Get a UTF8 character
 	 */
-	glsi32 getCharUtf8();
+	int getCharUtf8();
 public:
 	/**
 	 * Read a savegame header from a stream
@@ -478,7 +478,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	FileStream(Streams *streams, frefid_t fref, glui32 fmode, glui32 rock, bool unicode);
+	FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, bool unicode);
 
 	/**
 	 * Destructor
@@ -493,7 +493,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(glui32 ch) override;
+	virtual void putCharUni(uint ch) override;
 
 	/**
 	 * Write a buffer
@@ -503,41 +503,41 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const glui32 *buf, size_t len) override;
+	virtual void putBufferUni(const uint *buf, size_t len) override;
 
-	virtual glui32 getPosition() const override;
+	virtual uint getPosition() const override;
 
-	virtual void setPosition(glsi32 pos, glui32 seekMode) override;
+	virtual void setPosition(int pos, uint seekMode) override;
 
 	/**
 	 * Get a character from the stream
 	 */
-	virtual glsi32 getChar() override;
+	virtual int getChar() override;
 
 	/**
 	 * Get a unicode character from the stream
 	 */
-	virtual glsi32 getCharUni() override;
+	virtual int getCharUni() override;
 
 	/**
 	 * Get a buffer
 	 */
-	virtual glui32 getBuffer(char *buf, glui32 len) override;
+	virtual uint getBuffer(char *buf, uint len) override;
 
 	/**
 	 * Get a unicode buffer
 	 */
-	virtual glui32 getBufferUni(glui32 *buf, glui32 len) override;
+	virtual uint getBufferUni(uint *buf, uint len) override;
 
 	/**
 	 * Get a line
 	 */
-	virtual glui32 getLine(char *buf, glui32 len) override;
+	virtual uint getLine(char *buf, uint len) override;
 
 	/**
 	 * Get a unicode line
 	 */
-	virtual glui32 getLineUni(glui32 *ubuf, glui32 len) override;
+	virtual uint getLineUni(uint *ubuf, uint len) override;
 
 	/**
 	 * Cast a stream to a ScummVM write stream
@@ -583,7 +583,7 @@ public:
 	/**
 	 * Open a file stream
 	 */
-	FileStream *openFileStream(frefid_t fref, glui32 fmode, glui32 rock = 0, bool unicode = false);
+	FileStream *openFileStream(frefid_t fref, uint fmode, uint rock = 0, bool unicode = false);
 
 	/**
 	 * Open a window stream
@@ -625,27 +625,27 @@ public:
 	/**
 	 * Prompt for a savegame to load or save, and populate a file reference from the result
 	 */
-	frefid_t createByPrompt(glui32 usage, FileMode fmode, glui32 rock);
+	frefid_t createByPrompt(uint usage, FileMode fmode, uint rock);
 
 	/**
 	 * Create a new file reference
 	 */
-	frefid_t createRef(int slot, const Common::String &desc, glui32 usage, glui32 rock);
+	frefid_t createRef(int slot, const Common::String &desc, uint usage, uint rock);
 
 	/**
 	 * Create a new file reference
 	 */
-	frefid_t createRef(const Common::String &filename, glui32 usage, glui32 rock);
+	frefid_t createRef(const Common::String &filename, uint usage, uint rock);
 
 	/**
 	 * Create a new temporary file reference
 	 */
-	frefid_t createTemp(glui32 usage, glui32 rock);
+	frefid_t createTemp(uint usage, uint rock);
 
 	/**
 	 * Create a new file reference from an old one
 	 */
-	frefid_t createFromRef(frefid_t fref, glui32 usage, glui32 rock);
+	frefid_t createFromRef(frefid_t fref, uint usage, uint rock);
 
 	/**
 	 * Delete a file reference
@@ -656,7 +656,7 @@ public:
 	 * Iterates to the next file reference following the specified one,
 	 * or the first if null is passed
 	 */
-	frefid_t iterate(frefid_t fref, glui32 *rock);
+	frefid_t iterate(frefid_t fref, uint *rock);
 };
 
 } // End of namespace Glk

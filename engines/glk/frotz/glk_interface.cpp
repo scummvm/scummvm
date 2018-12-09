@@ -49,7 +49,7 @@ GlkInterface::~GlkInterface() {
 }
 
 void GlkInterface::initialize() {
-	glui32 width, height;
+	uint width, height;
 
 	/*
 	 * Init glk stuff
@@ -280,7 +280,7 @@ void GlkInterface::os_stop_sample(int a) {
 void GlkInterface::os_beep(int volume) {
 }
 
-bool GlkInterface::os_picture_data(int picture, glui32 *height, glui32 *width) {
+bool GlkInterface::os_picture_data(int picture, uint *height, uint *width) {
 	if (_pics && picture == 0) {
 		*width = _pics->version();
 		*height = _pics->size();
@@ -315,7 +315,7 @@ void GlkInterface::start_next_sample() {
 }
 
 void GlkInterface::gos_update_width() {
-	glui32 width;
+	uint width;
 	if (gos_upper) {
 		glk_window_get_size(gos_upper, &width, nullptr);
 		h_screen_cols = width;
@@ -328,8 +328,8 @@ void GlkInterface::gos_update_width() {
 }
 
 void GlkInterface::gos_update_height() {
-	glui32 height_upper;
-	glui32 height_lower;
+	uint height_upper;
+	uint height_lower;
 	if (gos_curwin) {
 		glk_window_get_size(gos_upper, nullptr, &height_upper);
 		glk_window_get_size(gos_lower, nullptr, &height_lower);
@@ -339,7 +339,7 @@ void GlkInterface::gos_update_height() {
 }
 
 void GlkInterface::reset_status_ht() {
-	glui32 height;
+	uint height;
 	if (gos_upper) {
 		glk_window_get_size(gos_upper, nullptr, &height);
 		if ((uint)mach_status_ht != height) {
@@ -377,7 +377,7 @@ void GlkInterface::split_window(zword lines) {
 		lines++;
 
 	if (!lines || lines > curr_status_ht) {
-		glui32 height;
+		uint height;
 
 		glk_window_get_size(gos_upper, nullptr, &height);
 		if (lines != height)
@@ -425,7 +425,7 @@ void GlkInterface::packspaces(zchar *src, zchar *dst) {
 
 void GlkInterface::smartstatusline() {
 	zchar packed[256];
-	glui32 buf[256];
+	uint buf[256];
 	zchar *a, *b, *c, *d;
 	int roomlen, scorelen, scoreofs;
 	int len, tmp;
@@ -478,7 +478,7 @@ void GlkInterface::gos_cancel_pending_line() {
 }
 
 void GlkInterface::showBeyondZorkTitle() {
-	glui32 winW, winH, imgW, imgH;
+	uint winW, winH, imgW, imgH;
 	winid_t win = glk_window_open(0, 0, 0, wintype_Graphics, 0);
 	glk_window_get_size(win, &winW, &winH);
 

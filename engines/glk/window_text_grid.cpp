@@ -79,7 +79,7 @@ void TextGridWindow::touch(int line) {
 	_windows->repaint(Rect(_bbox.left, y, _bbox.right, y + g_conf->_leading));
 }
 
-glui32 TextGridWindow::getSplit(glui32 size, bool vertical) const {
+uint TextGridWindow::getSplit(uint size, bool vertical) const {
 	return vertical ? size * g_conf->_cellW : size * g_conf->_cellH;
 }
 
@@ -162,7 +162,7 @@ bool TextGridWindow::unputCharUni(uint32 ch) {
 
 void TextGridWindow::moveCursor(const Point &pos) {
 	// If the values are negative, they're really huge positive numbers --
-	// remember that they were cast from glui32. So set them huge and
+	// remember that they were cast from uint. So set them huge and
 	// let canonicalization take its course.
 	_curX = (pos.x < 0) ? 32767 : pos.x;
 	_curY = (pos.y < 0) ? 32767 : pos.y;
@@ -204,7 +204,7 @@ void TextGridWindow::click(const Point &newPos) {
 	}
 
 	if (_hyperRequest) {
-		glui32 linkval = g_vm->_selection->getHyperlink(newPos);
+		uint linkval = g_vm->_selection->getHyperlink(newPos);
 		if (linkval) {
 			g_vm->_events->store(evtype_Hyperlink, this, linkval, 0);
 			_hyperRequest = false;
@@ -214,7 +214,7 @@ void TextGridWindow::click(const Point &newPos) {
 	}
 }
 
-void TextGridWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) {
+void TextGridWindow::requestLineEvent(char *buf, uint maxlen, uint initlen) {
 	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni) {
 		warning("request_line_event: window already has keyboard request");
 		return;
@@ -240,7 +240,7 @@ void TextGridWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) 
 	if (initlen) {
 		TextGridRow *ln = &_lines[_inOrgY];
 
-		for (glui32 ix = 0; ix < initlen; ix++) {
+		for (uint ix = 0; ix < initlen; ix++) {
 			ln->_attrs[_inOrgX + ix].set(style_Input);
 			ln->_chars[_inOrgX + ix] = buf[ix];
 		}
@@ -254,10 +254,10 @@ void TextGridWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) 
 	}
 
 	if (_lineTerminatorsBase && _termCt) {
-		_lineTerminators = new glui32[_termCt + 1];
+		_lineTerminators = new uint[_termCt + 1];
 
 		if (_lineTerminators) {
-			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(glui32));
+			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(uint));
 			_lineTerminators[_termCt] = 0;
 		}
 	}
@@ -266,7 +266,7 @@ void TextGridWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) 
 		_inArrayRock = (*g_vm->gli_register_arr)(buf, maxlen, "&+#!Cn");
 }
 
-void TextGridWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen) {
+void TextGridWindow::requestLineEventUni(uint *buf, uint maxlen, uint initlen) {
 	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni) {
 		warning("requestLineEventUni: window already has keyboard request");
 		return;
@@ -292,7 +292,7 @@ void TextGridWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 init
 	if (initlen) {
 		TextGridRow *ln = &(_lines[_inOrgY]);
 
-		for (glui32 ix = 0; ix < initlen; ix++) {
+		for (uint ix = 0; ix < initlen; ix++) {
 			ln->_attrs[_inOrgX + ix].set(style_Input);
 			ln->_chars[_inOrgX + ix] = buf[ix];
 		}
@@ -306,10 +306,10 @@ void TextGridWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 init
 	}
 
 	if (_lineTerminatorsBase && _termCt) {
-		_lineTerminators = new glui32[_termCt + 1];
+		_lineTerminators = new uint[_termCt + 1];
 
 		if (_lineTerminators) {
-			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(glui32));
+			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(uint));
 			_lineTerminators[_termCt] = 0;
 		}
 	}
@@ -342,7 +342,7 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 
 	if (!unicode) {
 		for (ix = 0; ix < _inLen; ix++) {
-			glui32 ch = ln->_chars[_inOrgX + ix];
+			uint ch = ln->_chars[_inOrgX + ix];
 			if (ch > 0xff)
 				ch = '?';
 			((char *)inbuf)[ix] = (char)ch;
@@ -351,9 +351,9 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 			_echoStream->echoLine((char *)_inBuf, _inLen);
 	} else {
 		for (ix = 0; ix < _inLen; ix++)
-			((glui32 *)inbuf)[ix] = ln->_chars[_inOrgX + ix];
+			((uint *)inbuf)[ix] = ln->_chars[_inOrgX + ix];
 		if (_echoStream)
-			_echoStream->echoLineUni((glui32 *)inbuf, _inLen);
+			_echoStream->echoLineUni((uint *)inbuf, _inLen);
 	}
 
 	_curY = _inOrgY + 1;
@@ -382,8 +382,8 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 		(*g_vm->gli_unregister_arr)(inbuf, inmax, unicode ? "&+#!Iu" : "&+#!Cn", inarrayrock);
 }
 
-void TextGridWindow::acceptReadChar(glui32 arg) {
-	glui32 key;
+void TextGridWindow::acceptReadChar(uint arg) {
+	uint key;
 
 	switch (arg) {
 	case keycode_Erase:
@@ -406,7 +406,7 @@ void TextGridWindow::acceptReadChar(glui32 arg) {
 	g_vm->_events->store(evtype_CharInput, this, key, 0);
 }
 
-void TextGridWindow::acceptLine(glui32 keycode) {
+void TextGridWindow::acceptLine(uint keycode) {
 	int ix;
 	void *inbuf;
 	int inmax;
@@ -428,9 +428,9 @@ void TextGridWindow::acceptLine(glui32 keycode) {
 			_echoStream->echoLine((char *)inbuf, _inLen);
 	} else {
 		for (ix = 0; ix < _inLen; ix++)
-			((glui32 *)inbuf)[ix] = ln->_chars[_inOrgX + ix];
+			((uint *)inbuf)[ix] = ln->_chars[_inOrgX + ix];
 		if (_echoStream)
-			_echoStream->echoLineUni((glui32 *)inbuf, _inLen);
+			_echoStream->echoLineUni((uint *)inbuf, _inLen);
 	}
 
 	_curY = _inOrgY + 1;
@@ -438,7 +438,7 @@ void TextGridWindow::acceptLine(glui32 keycode) {
 	_attr = _origAttr;
 
 	if (_lineTerminators) {
-		glui32 val2 = keycode;
+		uint val2 = keycode;
 		if (val2 == keycode_Return)
 			val2 = 0;
 		g_vm->_events->store(evtype_LineInput, this, _inLen, val2);
@@ -458,7 +458,7 @@ void TextGridWindow::acceptLine(glui32 keycode) {
 		(*g_vm->gli_unregister_arr)(inbuf, inmax, unicode ? "&+#!Iu" : "&+#!Cn", inarrayrock);
 }
 
-void TextGridWindow::acceptReadLine(glui32 arg) {
+void TextGridWindow::acceptReadLine(uint arg) {
 	int ix;
 	TextGridRow *ln = &(_lines[_inOrgY]);
 
@@ -466,7 +466,7 @@ void TextGridWindow::acceptReadLine(glui32 arg) {
 		return;
 
 	if (_lineTerminators && checkTerminator(arg)) {
-		glui32 *cx;
+		uint *cx;
 		for (cx = _lineTerminators; *cx; cx++) {
 			if (*cx == arg) {
 				acceptLine(arg);
@@ -569,7 +569,7 @@ void TextGridWindow::redraw() {
 	int x0, y0;
 	int x, y, w;
 	int i, a, b, k, o;
-	glui32 link;
+	uint link;
 	int font;
 	byte *fgcolor, *bgcolor;
 	Screen &screen = *g_vm->_screen;
@@ -636,7 +636,7 @@ void TextGridWindow::redraw() {
 	}
 }
 
-void TextGridWindow::getSize(glui32 *width, glui32 *height) const {
+void TextGridWindow::getSize(uint *width, uint *height) const {
 	if (width)
 		*width = _bbox.width() / g_conf->_cellW;
 	if (height)

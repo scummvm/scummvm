@@ -64,7 +64,7 @@ void Stream::close(StreamResult *result) {
 	delete this;
 }
 
-void Stream::setZColors(glui32 fg, glui32 bg) {
+void Stream::setZColors(uint fg, uint bg) {
 	if (_writable && g_conf->_styleHint)
 		Windows::_forceRedraw = true;
 }
@@ -163,7 +163,7 @@ void WindowStream::putBufferUni(const uint32 *buf, size_t len) {
 }
 
 void WindowStream::unputBuffer(const char *buf, size_t len) {
-	glui32 lx;
+	uint lx;
 	const char *cx;
 
 	if (!_writable)
@@ -188,9 +188,9 @@ void WindowStream::unputBuffer(const char *buf, size_t len) {
 		_window->_echoStream->unputBuffer(buf, len);
 }
 
-void WindowStream::unputBufferUni(const glui32 *buf, size_t len) {
-	glui32 lx;
-	const glui32 *cx;
+void WindowStream::unputBufferUni(const uint *buf, size_t len) {
+	uint lx;
+	const uint *cx;
 
 	if (!_writable)
 		return;
@@ -215,7 +215,7 @@ void WindowStream::unputBufferUni(const glui32 *buf, size_t len) {
 		_window->_echoStream->unputBufferUni(buf, len);
 }
 
-void WindowStream::setStyle(glui32 val) {
+void WindowStream::setStyle(uint val) {
 	if (!_writable)
 		return;
 
@@ -227,12 +227,12 @@ void WindowStream::setStyle(glui32 val) {
 		_window->_echoStream->setStyle(val);
 }
 
-void WindowStream::setHyperlink(glui32 linkVal) {
+void WindowStream::setHyperlink(uint linkVal) {
 	if (_writable)
 		_window->_attr.hyper = linkVal;
 }
 
-void WindowStream::setZColors(glui32 fg, glui32 bg) {
+void WindowStream::setZColors(uint fg, uint bg) {
 	if (!_writable || !g_conf->_styleHint)
 		return;
 
@@ -326,8 +326,8 @@ void MemoryStream::putChar(unsigned char ch) {
 
 	if (_bufPtr < _bufEnd) {
 		if (_unicode) {
-			*((glui32 *)_bufPtr) = ch;
-			_bufPtr = ((glui32 *)_bufPtr) + 1;
+			*((uint *)_bufPtr) = ch;
+			_bufPtr = ((uint *)_bufPtr) + 1;
 		} else {
 			*((unsigned char *)_bufPtr) = ch;
 			_bufPtr = ((unsigned char *)_bufPtr) + 1;
@@ -345,8 +345,8 @@ void MemoryStream::putCharUni(uint32 ch) {
 
 	if (_bufPtr < _bufEnd) {
 		if (_unicode) {
-			*((glui32 *)_bufPtr) = ch;
-			_bufPtr = ((glui32 *)_bufPtr) + 1;
+			*((uint *)_bufPtr) = ch;
+			_bufPtr = ((uint *)_bufPtr) + 1;
 		} else {
 			*((unsigned char *)_bufPtr) = (unsigned char)ch;
 			_bufPtr = ((unsigned char *)_bufPtr) + 1;
@@ -383,20 +383,20 @@ void MemoryStream::putBuffer(const char *buf, size_t len) {
 			}
 			_bufPtr = bp;
 		} else {
-			glui32 *bp = (glui32 *)_bufPtr;
-			if (bp + len > (glui32 *)_bufEnd) {
-				lx = (bp + len) - (glui32 *)_bufEnd;
+			uint *bp = (uint *)_bufPtr;
+			if (bp + len > (uint *)_bufEnd) {
+				lx = (bp + len) - (uint *)_bufEnd;
 				if (lx < len)
 					len -= lx;
 				else
 					len = 0;
 			}
 			if (len) {
-				glui32 i;
+				uint i;
 				for (i = 0; i < len; i++)
 					bp[i] = buf[i];
 				bp += len;
-				if (bp > (glui32 *)_bufEof)
+				if (bp > (uint *)_bufEof)
 					_bufEof = bp;
 			}
 			_bufPtr = bp;
@@ -424,9 +424,9 @@ void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
 					len = 0;
 			}
 			if (len) {
-				glui32 i;
+				uint i;
 				for (i = 0; i < len; i++) {
-					glui32 ch = buf[i];
+					uint ch = buf[i];
 					if (ch > 0xff)
 						ch = '?';
 					bp[i] = (unsigned char)ch;
@@ -437,9 +437,9 @@ void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
 			}
 			_bufPtr = bp;
 		} else {
-			glui32 *bp = (glui32 *)_bufPtr;
-			if (bp + len > (glui32 *)_bufEnd) {
-				lx = (bp + len) - (glui32 *)_bufEnd;
+			uint *bp = (uint *)_bufPtr;
+			if (bp + len > (uint *)_bufEnd) {
+				lx = (bp + len) - (uint *)_bufEnd;
 				if (lx < len)
 					len -= lx;
 				else
@@ -448,7 +448,7 @@ void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
 			if (len) {
 				memmove(bp, buf, len * 4);
 				bp += len;
-				if (bp > (glui32 *)_bufEof)
+				if (bp > (uint *)_bufEof)
 					_bufEof = bp;
 			}
 			_bufPtr = bp;
@@ -456,14 +456,14 @@ void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
 	}
 }
 
-glui32 MemoryStream::getPosition() const {
+uint MemoryStream::getPosition() const {
 	if (_unicode)
-		return ((glui32 *)_bufPtr - (glui32 *)_buf);
+		return ((uint *)_bufPtr - (uint *)_buf);
 	else
 		return ((unsigned char *)_bufPtr - (unsigned char *)_buf);
 }
 
-void MemoryStream::setPosition(glsi32 pos, glui32 seekMode) {
+void MemoryStream::setPosition(int pos, uint seekMode) {
 	if (!_unicode) {
 		if (seekMode == seekmode_Current)
 			pos = ((unsigned char *)_bufPtr - (unsigned char *)_buf) + pos;
@@ -480,19 +480,19 @@ void MemoryStream::setPosition(glsi32 pos, glui32 seekMode) {
 		_bufPtr = (unsigned char *)_buf + pos;
 	} else {
 		if (seekMode == seekmode_Current)
-			pos = ((glui32 *)_bufPtr - (glui32 *)_buf) + pos;
+			pos = ((uint *)_bufPtr - (uint *)_buf) + pos;
 		else if (seekMode == seekmode_End)
-			pos = ((glui32 *)_bufEof - (glui32 *)_buf) + pos;
+			pos = ((uint *)_bufEof - (uint *)_buf) + pos;
 
 		if (pos < 0)
 			pos = 0;
-		if (pos > ((glui32 *)_bufEof - (glui32 *)_buf))
-			pos = ((glui32 *)_bufEof - (glui32 *)_buf);
-		_bufPtr = (glui32 *)_buf + pos;
+		if (pos > ((uint *)_bufEof - (uint *)_buf))
+			pos = ((uint *)_bufEof - (uint *)_buf);
+		_bufPtr = (uint *)_buf + pos;
 	}
 }
 
-glsi32 MemoryStream::getChar() {
+int MemoryStream::getChar() {
 	if (!_readable)
 		return -1;
 
@@ -504,9 +504,9 @@ glsi32 MemoryStream::getChar() {
 			_readCount++;
 			return ch;
 		} else {
-			glui32 ch;
-			ch = *((glui32 *)_bufPtr);
-			_bufPtr = ((glui32 *)_bufPtr) + 1;
+			uint ch;
+			ch = *((uint *)_bufPtr);
+			_bufPtr = ((uint *)_bufPtr) + 1;
 			_readCount++;
 			if (ch > 0xff)
 				ch = '?';
@@ -517,7 +517,7 @@ glsi32 MemoryStream::getChar() {
 	}
 }
 
-glsi32 MemoryStream::getCharUni() {
+int MemoryStream::getCharUni() {
 	if (!_readable)
 		return -1;
 
@@ -529,9 +529,9 @@ glsi32 MemoryStream::getCharUni() {
 			_readCount++;
 			return ch;
 		} else {
-			glui32 ch;
-			ch = *((glui32 *)_bufPtr);
-			_bufPtr = ((glui32 *)_bufPtr) + 1;
+			uint ch;
+			ch = *((uint *)_bufPtr);
+			_bufPtr = ((uint *)_bufPtr) + 1;
 			_readCount++;
 			return ch;
 		}
@@ -540,7 +540,7 @@ glsi32 MemoryStream::getCharUni() {
 	}
 }
 
-glui32 MemoryStream::getBuffer(char *buf, glui32 len) {
+uint MemoryStream::getBuffer(char *buf, uint len) {
 	if (!_readable)
 		return 0;
 
@@ -550,7 +550,7 @@ glui32 MemoryStream::getBuffer(char *buf, glui32 len) {
 		if (!_unicode) {
 			unsigned char *bp = (unsigned char *)_bufPtr;
 			if (bp + len > (unsigned char *)_bufEnd) {
-				glui32 lx;
+				uint lx;
 				lx = (bp + len) - (unsigned char *)_bufEnd;
 				if (lx < len)
 					len -= lx;
@@ -568,24 +568,24 @@ glui32 MemoryStream::getBuffer(char *buf, glui32 len) {
 			_readCount += len;
 			_bufPtr = bp;
 		} else {
-			glui32 *bp = (glui32 *)_bufPtr;
-			if (bp + len > (glui32 *)_bufEnd) {
-				glui32 lx;
-				lx = (bp + len) - (glui32 *)_bufEnd;
+			uint *bp = (uint *)_bufPtr;
+			if (bp + len > (uint *)_bufEnd) {
+				uint lx;
+				lx = (bp + len) - (uint *)_bufEnd;
 				if (lx < len)
 					len -= lx;
 				else
 					len = 0;
 			}
 			if (len) {
-				glui32 i;
+				uint i;
 				for (i = 0; i < len; i++) {
-					glui32 ch = *bp++;
+					uint ch = *bp++;
 					if (ch > 0xff)
 						ch = '?';
 					*buf++ = (char)ch;
 				}
-				if (bp > (glui32 *)_bufEof)
+				if (bp > (uint *)_bufEof)
 					_bufEof = bp;
 			}
 
@@ -597,7 +597,7 @@ glui32 MemoryStream::getBuffer(char *buf, glui32 len) {
 	return len;
 }
 
-glui32 MemoryStream::getBufferUni(glui32 *buf, glui32 len) {
+uint MemoryStream::getBufferUni(uint *buf, uint len) {
 	if (!_readable)
 		return 0;
 
@@ -607,7 +607,7 @@ glui32 MemoryStream::getBufferUni(glui32 *buf, glui32 len) {
 		if (!_unicode) {
 			unsigned char *bp = (unsigned char *)_bufPtr;
 			if (bp + len > (unsigned char *)_bufEnd) {
-				glui32 lx;
+				uint lx;
 				lx = (bp + len) - (unsigned char *)_bufEnd;
 				if (lx < len)
 					len -= lx;
@@ -615,7 +615,7 @@ glui32 MemoryStream::getBufferUni(glui32 *buf, glui32 len) {
 					len = 0;
 			}
 			if (len) {
-				glui32 i;
+				uint i;
 				for (i = 0; i < len; i++)
 					buf[i] = bp[i];
 				bp += len;
@@ -625,10 +625,10 @@ glui32 MemoryStream::getBufferUni(glui32 *buf, glui32 len) {
 			_readCount += len;
 			_bufPtr = bp;
 		} else {
-			glui32 *bp = (glui32 *)_bufPtr;
-			if (bp + len > (glui32 *)_bufEnd) {
-				glui32 lx;
-				lx = (bp + len) - (glui32 *)_bufEnd;
+			uint *bp = (uint *)_bufPtr;
+			if (bp + len > (uint *)_bufEnd) {
+				uint lx;
+				lx = (bp + len) - (uint *)_bufEnd;
 				if (lx < len)
 					len -= lx;
 				else
@@ -637,7 +637,7 @@ glui32 MemoryStream::getBufferUni(glui32 *buf, glui32 len) {
 			if (len) {
 				memcpy(buf, bp, len * 4);
 				bp += len;
-				if (bp > (glui32 *)_bufEof)
+				if (bp > (uint *)_bufEof)
 					_bufEof = bp;
 			}
 			_readCount += len;
@@ -648,8 +648,8 @@ glui32 MemoryStream::getBufferUni(glui32 *buf, glui32 len) {
 	return len;
 }
 
-glui32 MemoryStream::getLine(char *buf, glui32 len) {
-	glui32 lx;
+uint MemoryStream::getLine(char *buf, uint len) {
+	uint lx;
 	bool gotNewline;
 
 	if (len == 0)
@@ -692,8 +692,8 @@ glui32 MemoryStream::getLine(char *buf, glui32 len) {
 
 		gotNewline = false;
 		for (lx = 0; lx < len && !gotNewline; lx++) {
-			glui32 ch;
-			ch = ((glui32 *)_bufPtr)[lx];
+			uint ch;
+			ch = ((uint *)_bufPtr)[lx];
 			if (ch >= 0x100)
 				ch = '?';
 			buf[lx] = (char)ch;
@@ -701,14 +701,14 @@ glui32 MemoryStream::getLine(char *buf, glui32 len) {
 		}
 
 		buf[lx] = '\0';
-		_bufPtr = ((glui32 *)_bufPtr) + lx;
+		_bufPtr = ((uint *)_bufPtr) + lx;
 	}
 
 	_readCount += lx;
 	return lx;
 }
 
-glui32 MemoryStream::getLineUni(glui32 *ubuf, glui32 len) {
+uint MemoryStream::getLineUni(uint *ubuf, uint len) {
 	bool gotNewline;
 	int lx;
 
@@ -739,8 +739,8 @@ glui32 MemoryStream::getLineUni(glui32 *ubuf, glui32 len) {
 		if (_bufPtr >= _bufEnd) {
 			len = 0;
 		} else {
-			if ((glui32 *)_bufPtr + len > (glui32 *)_bufEnd) {
-				lx = ((glui32 *)_bufPtr + len) - (glui32 *)_bufEnd;
+			if ((uint *)_bufPtr + len > (uint *)_bufEnd) {
+				lx = ((uint *)_bufPtr + len) - (uint *)_bufEnd;
 				if (lx < (int)len)
 					len -= lx;
 				else
@@ -749,13 +749,13 @@ glui32 MemoryStream::getLineUni(glui32 *ubuf, glui32 len) {
 		}
 		gotNewline = false;
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
-			glui32 ch;
-			ch = ((glui32 *)_bufPtr)[lx];
+			uint ch;
+			ch = ((uint *)_bufPtr)[lx];
 			ubuf[lx] = ch;
 			gotNewline = (ch == '\n');
 		}
 		ubuf[lx] = '\0';
-		_bufPtr = ((glui32 *)_bufPtr) + lx;
+		_bufPtr = ((uint *)_bufPtr) + lx;
 	}
 
 	_readCount += lx;
@@ -764,7 +764,7 @@ glui32 MemoryStream::getLineUni(glui32 *ubuf, glui32 len) {
 
 /*--------------------------------------------------------------------------*/
 
-FileStream::FileStream(Streams *streams, frefid_t fref, glui32 fmode, glui32 rock, bool unicode) :
+FileStream::FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, bool unicode) :
 	Stream(streams, fmode == filemode_Read, fmode != filemode_Read, rock, unicode),  _lastOp(0),
 	_textFile(fref->_textMode), _inFile(nullptr), _outFile(nullptr), _inStream(nullptr) {
 	Common::String fname = fref->_slotNumber == -1 ? fref->_filename : fref->getSaveName();
@@ -830,7 +830,7 @@ void FileStream::putChar(unsigned char ch) {
 	if (!_unicode) {
 		_outFile->writeByte(ch);
 	} else if (_textFile) {
-		putCharUtf8((glui32)ch);
+		putCharUtf8((uint)ch);
 	} else {
 		_outFile->writeUint32BE(ch);
 	}
@@ -868,7 +868,7 @@ void FileStream::putBuffer(const char *buf, size_t len) {
 		if (!_unicode) {
 			_outFile->writeByte(ch);
 		} else if (_textFile) {
-			putCharUtf8((glui32)ch);
+			putCharUtf8((uint)ch);
 		} else {
 			_outFile->writeUint32BE(ch);
 		}
@@ -885,7 +885,7 @@ void FileStream::putBufferUni(const uint32 *buf, size_t len) {
 
 	ensureOp(filemode_Write);
 	for (size_t lx = 0; lx < len; lx++) {
-		glui32 ch = buf[lx];
+		uint ch = buf[lx];
 		if (!_unicode) {
 			if (ch >= 0x100)
 				ch = '?';
@@ -900,7 +900,7 @@ void FileStream::putBufferUni(const uint32 *buf, size_t len) {
 	_outFile->flush();
 }
 
-void FileStream::putCharUtf8(glui32 val) {
+void FileStream::putCharUtf8(uint val) {
 	if (val < 0x80) {
 		_outFile->writeByte(val);
 	} else if (val < 0x800) {
@@ -920,9 +920,9 @@ void FileStream::putCharUtf8(glui32 val) {
 	}
 }
 
-glsi32 FileStream::getCharUtf8() {
-	glui32 res;
-	glui32 val0, val1, val2, val3;
+int FileStream::getCharUtf8() {
+	uint res;
+	uint val0, val1, val2, val3;
 
 	if (_inStream->eos())
 		return -1;
@@ -1008,11 +1008,11 @@ glsi32 FileStream::getCharUtf8() {
 	return '?';
 }
 
-glui32 FileStream::getPosition() const {
+uint FileStream::getPosition() const {
 	return _outFile ? _outFile->pos() : _inStream->pos();
 }
 
-void FileStream::setPosition(glsi32 pos, glui32 seekMode) {
+void FileStream::setPosition(int pos, uint seekMode) {
 	_lastOp = 0;
 	if (_unicode)
 		pos *= 4;
@@ -1024,7 +1024,7 @@ void FileStream::setPosition(glsi32 pos, glui32 seekMode) {
 	}
 }
 
-glsi32 FileStream::getChar() {
+int FileStream::getChar() {
 	if (!_readable)
 		return -1;
 
@@ -1035,7 +1035,7 @@ glsi32 FileStream::getChar() {
 	} else if (_textFile) {
 		res = getCharUtf8();
 	} else {
-		glui32 ch;
+		uint ch;
 		res = _inStream->readByte();
 		if (_inStream->eos())
 			return -1;
@@ -1058,13 +1058,13 @@ glsi32 FileStream::getChar() {
 		_readCount++;
 		if (res >= 0x100)
 			return '?';
-		return (glsi32)res;
+		return (int)res;
 	} else {
 		return -1;
 	}
 }
 
-glsi32 FileStream::getCharUni() {
+int FileStream::getCharUni() {
 	if (!_readable)
 		return -1;
 
@@ -1075,7 +1075,7 @@ glsi32 FileStream::getCharUni() {
 	} else if (_textFile) {
 		res = getCharUtf8();
 	} else {
-		glui32 ch;
+		uint ch;
 		res = _inStream->readByte();
 		if (res == -1)
 			return -1;
@@ -1096,25 +1096,25 @@ glsi32 FileStream::getCharUni() {
 	}
 	if (res != -1) {
 		_readCount++;
-		return (glsi32)res;
+		return (int)res;
 	} else {
 		return -1;
 	}
 }
 
-glui32 FileStream::getBuffer(char *buf, glui32 len) {
+uint FileStream::getBuffer(char *buf, uint len) {
 	ensureOp(filemode_Read);
 	if (!_unicode) {
-		glui32 res;
+		uint res;
 		res = _inStream->read(buf, len);
 		_readCount += res;
 		return res;
 	} else if (_textFile) {
-		glui32 lx;
+		uint lx;
 		for (lx = 0; lx < len; lx++) {
-			glui32 ch;
+			uint ch;
 			ch = getCharUtf8();
-			if (ch == (glui32)-1)
+			if (ch == (uint)-1)
 				break;
 			_readCount++;
 			if (ch >= 0x100)
@@ -1123,10 +1123,10 @@ glui32 FileStream::getBuffer(char *buf, glui32 len) {
 		}
 		return lx;
 	} else {
-		glui32 lx;
+		uint lx;
 		for (lx = 0; lx < len; lx++) {
 			int res;
-			glui32 ch;
+			uint ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1152,16 +1152,16 @@ glui32 FileStream::getBuffer(char *buf, glui32 len) {
 	}
 }
 
-glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
+uint FileStream::getBufferUni(uint *buf, uint len) {
 	if (!_readable)
 		return 0;
 
 	ensureOp(filemode_Read);
 	if (!_unicode) {
-		glui32 lx;
+		uint lx;
 		for (lx = 0; lx < len; lx++) {
 			int res;
-			glui32 ch;
+			uint ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1171,21 +1171,21 @@ glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
 		}
 		return lx;
 	} else if (_textFile) {
-		glui32 lx;
+		uint lx;
 		for (lx = 0; lx < len; lx++) {
-			glui32 ch;
+			uint ch;
 			ch = getCharUtf8();
-			if (ch == (glui32)-1)
+			if (ch == (uint)-1)
 				break;
 			_readCount++;
 			buf[lx] = ch;
 		}
 		return lx;
 	} else {
-		glui32 lx;
+		uint lx;
 		for (lx = 0; lx < len; lx++) {
 			int res;
-			glui32 ch;
+			uint ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1209,8 +1209,8 @@ glui32 FileStream::getBufferUni(glui32 *buf, glui32 len) {
 	}
 }
 
-glui32 FileStream::getLine(char *buf, glui32 len) {
-	glui32 lx;
+uint FileStream::getLine(char *buf, uint len) {
+	uint lx;
 	bool gotNewline;
 
 	if (len == 0)
@@ -1233,9 +1233,9 @@ glui32 FileStream::getLine(char *buf, glui32 len) {
 		len -= 1; // for the terminal null
 		gotNewline = false;
 		for (lx = 0; lx < len && !gotNewline; lx++) {
-			glui32 ch;
+			uint ch;
 			ch = getCharUtf8();
-			if (ch == (glui32)-1)
+			if (ch == (uint)-1)
 				break;
 			_readCount++;
 			if (ch >= 0x100)
@@ -1250,7 +1250,7 @@ glui32 FileStream::getLine(char *buf, glui32 len) {
 		gotNewline = false;
 		for (lx = 0; lx < len && !gotNewline; lx++) {
 			int res;
-			glui32 ch;
+			uint ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1279,7 +1279,7 @@ glui32 FileStream::getLine(char *buf, glui32 len) {
 	}
 }
 
-glui32 FileStream::getLineUni(glui32 *ubuf, glui32 len) {
+uint FileStream::getLineUni(uint *ubuf, uint len) {
 	bool gotNewline;
 	int lx;
 
@@ -1292,7 +1292,7 @@ glui32 FileStream::getLineUni(glui32 *ubuf, glui32 len) {
 		gotNewline = false;
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
 			int res;
-			glui32 ch;
+			uint ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1307,9 +1307,9 @@ glui32 FileStream::getLineUni(glui32 *ubuf, glui32 len) {
 		len -= 1; // for the terminal null
 		gotNewline = false;
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
-			glui32 ch;
+			uint ch;
 			ch = getCharUtf8();
-			if (ch == (glui32)-1)
+			if (ch == (uint)-1)
 				break;
 			_readCount++;
 			ubuf[lx] = ch;
@@ -1322,7 +1322,7 @@ glui32 FileStream::getLineUni(glui32 *ubuf, glui32 len) {
 		gotNewline = false;
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
 			int res;
-			glui32 ch;
+			uint ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1427,7 +1427,7 @@ Streams::~Streams() {
 	}
 }
 
-FileStream *Streams::openFileStream(frefid_t fref, glui32 fmode, glui32 rock, bool unicode) {
+FileStream *Streams::openFileStream(frefid_t fref, uint fmode, uint rock, bool unicode) {
 	FileStream *stream = new FileStream(this, fref, fmode, rock, unicode);
 	addStream(stream);
 	return stream;
@@ -1477,7 +1477,7 @@ Stream *Streams::getFirst(uint32 *rock) {
 }
 
 
-frefid_t Streams::createByPrompt(glui32 usage, FileMode fmode, glui32 rock) {
+frefid_t Streams::createByPrompt(uint usage, FileMode fmode, uint rock) {
 	switch (usage & fileusage_TypeMask) {
 	case fileusage_SavedGame: {
 		if (fmode == filemode_Write) {
@@ -1514,7 +1514,7 @@ frefid_t Streams::createByPrompt(glui32 usage, FileMode fmode, glui32 rock) {
 	return nullptr;
 }
 
-frefid_t Streams::createRef(int slot, const Common::String &desc, glui32 usage, glui32 rock) {
+frefid_t Streams::createRef(int slot, const Common::String &desc, uint usage, uint rock) {
 	frefid_t fref = new FileReference();
 	fref->_slotNumber = slot;
 	fref->_description = desc;
@@ -1525,7 +1525,7 @@ frefid_t Streams::createRef(int slot, const Common::String &desc, glui32 usage, 
 	return fref;
 }
 
-frefid_t Streams::createRef(const Common::String &filename, glui32 usage, glui32 rock) {
+frefid_t Streams::createRef(const Common::String &filename, uint usage, uint rock) {
 	frefid_t fref = new FileReference();
 	fref->_filename = filename;
 	fref->_textMode = ((usage & fileusage_TextMode) != 0);
@@ -1535,12 +1535,12 @@ frefid_t Streams::createRef(const Common::String &filename, glui32 usage, glui32
 	return fref;
 }
 
-frefid_t Streams::createTemp(glui32 usage, glui32 rock) {
+frefid_t Streams::createTemp(uint usage, uint rock) {
 	return createRef(Common::String::format("%s.tmp", g_vm->getTargetName().c_str()),
 	                 usage, rock);
 }
 
-frefid_t Streams::createFromRef(frefid_t fref, glui32 usage, glui32 rock) {
+frefid_t Streams::createFromRef(frefid_t fref, uint usage, uint rock) {
 	return createRef(fref->_filename, usage, rock);
 }
 
@@ -1553,7 +1553,7 @@ void Streams::deleteRef(frefid_t fref) {
 	}
 }
 
-frefid_t Streams::iterate(frefid_t fref, glui32 *rock) {
+frefid_t Streams::iterate(frefid_t fref, uint *rock) {
 	// Find reference following the specified one
 	int index = -1;
 	for (uint idx = 0; idx < _fileReferences.size(); ++idx) {

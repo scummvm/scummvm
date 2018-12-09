@@ -97,12 +97,12 @@ private:
 	/**
 	 * Create a new window
 	 */
-	Window *newWindow(glui32 type, glui32 rock);
+	Window *newWindow(uint type, uint rock);
 
 	/**
 	 * Create a new pair window
 	 */
-	PairWindow *newPairWindow(glui32 method, Window *key, glui32 size);
+	PairWindow *newPairWindow(uint method, Window *key, uint size);
 
 	/**
 	 * Set the window focus
@@ -159,8 +159,8 @@ public:
 	/**
 	 * Open a new window
 	 */
-	Window *windowOpen(Window *splitwin, glui32 method, glui32 size,
-	                   glui32 wintype, glui32 rock);
+	Window *windowOpen(Window *splitwin, uint method, uint size,
+	                   uint wintype, uint rock);
 
 	/**
 	 * Close an existing window
@@ -196,7 +196,7 @@ public:
 	/**
 	 * Handle input keypress
 	 */
-	void inputHandleKey(glui32 key);
+	void inputHandleKey(uint key);
 
 	/**
 	 * Handle mouse clicks
@@ -319,7 +319,7 @@ struct Attributes {
 	/**
 	 * Set the style
 	 */
-	void set(glui32 s) {
+	void set(uint s) {
 		clear();
 		style = s;
 	}
@@ -365,8 +365,8 @@ struct Attributes {
 class Window {
 public:
 	Windows *_windows;
-	glui32 _rock;
-	glui32 _type;
+	uint _rock;
+	uint _type;
 
 	Window *_parent;       ///< pair window which contains this one
 	Window *_next, *_prev; ///< in the big linked list of windows
@@ -386,9 +386,9 @@ public:
 	bool _scrollRequest;
 	bool _imageLoaded;
 
-	glui32 _echoLineInputBase;
-	glui32 *_lineTerminatorsBase;
-	glui32 _termCt;
+	uint _echoLineInputBase;
+	uint *_lineTerminatorsBase;
+	uint _termCt;
 
 	Attributes _attr;
 	byte _bgColor[3];
@@ -396,7 +396,7 @@ public:
 
 	gidispatch_rock_t _dispRock;
 public:
-	static bool checkTerminator(glui32 ch);
+	static bool checkTerminator(uint ch);
 public:
 	/**
 	 * Constructor
@@ -423,14 +423,14 @@ public:
 	/**
 	 * Get window split size within parent pair window
 	 */
-	virtual glui32 getSplit(glui32 size, bool vertical) const {
+	virtual uint getSplit(uint size, bool vertical) const {
 		return 0;
 	}
 
 	/**
 	 * Write a character
 	 */
-	virtual void putCharUni(glui32 ch) {}
+	virtual void putCharUni(uint ch) {}
 
 	/**
 	 * Unput a unicode character
@@ -462,12 +462,12 @@ public:
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEvent(char *buf, glui32 maxlen, glui32 initlen);
+	virtual void requestLineEvent(char *buf, uint maxlen, uint initlen);
 
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen);
+	virtual void requestLineEventUni(uint *buf, uint maxlen, uint initlen);
 
 	/**
 	 * Cancel an input line event
@@ -494,27 +494,27 @@ public:
 	 */
 	virtual void redraw();
 
-	bool imageDraw(glui32 image, glui32 align, glsi32 val1, glsi32 val2);
+	bool imageDraw(uint image, uint align, int val1, int val2);
 
-	int acceptScroll(glui32 arg);
+	int acceptScroll(uint arg);
 
-	void setTerminatorsLineEvent(glui32 *keycodes, glui32 count);
+	void setTerminatorsLineEvent(uint *keycodes, uint count);
 
-	virtual void acceptReadLine(glui32 arg);
+	virtual void acceptReadLine(uint arg);
 
-	virtual void acceptReadChar(glui32 arg);
+	virtual void acceptReadChar(uint arg);
 
-	virtual void getArrangement(glui32 *method, glui32 *size, Window **keyWin);
+	virtual void getArrangement(uint *method, uint *size, Window **keyWin);
 
-	virtual void setArrangement(glui32 method, glui32 size, Window *keyWin);
+	virtual void setArrangement(uint method, uint size, Window *keyWin);
 
-	virtual void getSize(glui32 *width, glui32 *height) const;
+	virtual void getSize(uint *width, uint *height) const;
 
 	virtual void requestCharEvent();
 
 	virtual void requestCharEventUni();
 
-	virtual void setEchoLineEvent(glui32 val) {}
+	virtual void setEchoLineEvent(uint val) {}
 
 	virtual void requestMouseEvent() {}
 
@@ -524,9 +524,9 @@ public:
 
 	virtual void eraseRect(bool whole, const Rect &box);
 
-	virtual void fillRect(glui32 color, const Rect &box);
+	virtual void fillRect(uint color, const Rect &box);
 
-	virtual void setBackgroundColor(glui32 color);
+	virtual void setBackgroundColor(uint color);
 
 	/**
 	 * Returns a pointer to the styles for the window

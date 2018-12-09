@@ -38,11 +38,11 @@ class Sounds;
 class SoundChannel {
 private:
 	Sounds *_owner;
-	glui32 _soundNum;
-	glui32 _notify;
+	uint _soundNum;
+	uint _notify;
 	Audio::SoundHandle _handle;
 public:
-	glui32 _rock;
+	uint _rock;
 public:
 	/**
 	 * Constructor
@@ -57,7 +57,7 @@ public:
 	/**
 	 * Play a sound
 	 */
-	glui32 play(glui32 soundNum, glui32 repeats = 1, glui32 notify = 0);
+	uint play(uint soundNum, uint repeats = 1, uint notify = 0);
 
 	/**
 	 * Stop playing sound
@@ -108,12 +108,12 @@ public:
 	/**
 	 * Create a new channel
 	 */
-	schanid_t create(glui32 rock = 0);
+	schanid_t create(uint rock = 0);
 
 	/**
 	 * Used to iterate over the current list of sound channels
 	 */
-	schanid_t iterate(schanid_t chan, glui32 *rockptr = nullptr);
+	schanid_t iterate(schanid_t chan, uint *rockptr = nullptr);
 
 	/**
 	 * Poll for whether any playing sounds are finished

@@ -166,7 +166,7 @@ protected:
 	 * Only when picture 0 is asked for, write the number of available
 	 * pictures and the release number instead.
 	 */
-	bool os_picture_data(int picture, glui32 *height, glui32 *width);
+	bool os_picture_data(int picture, uint *height, uint *width);
 
 	/**
 	 * Display a picture at the given coordinates. Top left is (1,1).

@@ -105,7 +105,7 @@ void TextBufferWindow::rearrange(const Rect &box) {
 		// allocate copy buffer
 		if (_copyBuf)
 			delete[] _copyBuf;
-		_copyBuf = new glui32[_height * TBLINELEN];
+		_copyBuf = new uint[_height * TBLINELEN];
 
 		for (int i = 0; i < (_height * TBLINELEN); i++)
 			_copyBuf[i] = 0;
@@ -127,10 +127,10 @@ void TextBufferWindow::reflow() {
 
 	// allocate temp buffers
 	Attributes *attrbuf = new Attributes[SCROLLBACK * TBLINELEN];
-	glui32 *charbuf = new glui32[SCROLLBACK * TBLINELEN];
+	uint *charbuf = new uint[SCROLLBACK * TBLINELEN];
 	int *alignbuf = new int[SCROLLBACK];
 	Picture **pictbuf = new Picture *[SCROLLBACK];
-	glui32 *hyperbuf = new glui32[SCROLLBACK];
+	uint *hyperbuf = new uint[SCROLLBACK];
 	int *offsetbuf = new int[SCROLLBACK];
 
 	if (!attrbuf || !charbuf || !alignbuf || !pictbuf || !hyperbuf || !offsetbuf) {
@@ -239,7 +239,7 @@ void TextBufferWindow::touchScroll() {
 		_lines[i]._dirty = true;
 }
 
-bool TextBufferWindow::putPicture(Picture *pic, glui32 align, glui32 linkval) {
+bool TextBufferWindow::putPicture(Picture *pic, uint align, uint linkval) {
 	if (align == imagealign_MarginRight) {
 		if (_lines[0]._rPic || _numChars)
 			return false;
@@ -269,9 +269,9 @@ bool TextBufferWindow::putPicture(Picture *pic, glui32 align, glui32 linkval) {
 	return true;
 }
 
-glui32 TextBufferWindow::drawPicture(glui32 image, glui32 align, glui32 scaled, glui32 width, glui32 height) {
+uint TextBufferWindow::drawPicture(uint image, uint align, uint scaled, uint width, uint height) {
 	Picture *pic;
-	glui32 hyperlink;
+	uint hyperlink;
 	int error;
 
 	pic = g_vm->_pictures->load(image);
@@ -330,7 +330,7 @@ void TextBufferWindow::putText(const char *buf, int len, int pos, int oldlen) {
 	touch(0);
 }
 
-void TextBufferWindow::putTextUni(const glui32 *buf, int len, int pos, int oldlen) {
+void TextBufferWindow::putTextUni(const uint *buf, int len, int pos, int oldlen) {
 	int diff = len - oldlen;
 
 	if (_numChars + diff >= TBLINELEN)
@@ -370,12 +370,12 @@ void TextBufferWindow::touch(int line) {
 	_windows->repaint(Rect(_bbox.left, y - 2, _bbox.right, y + g_conf->_leading + 2));
 }
 
-glui32 TextBufferWindow::getSplit(glui32 size, bool vertical) const {
+uint TextBufferWindow::getSplit(uint size, bool vertical) const {
 	return (vertical) ? size * g_conf->_cellW : size * g_conf->_cellH;
 }
 
-void TextBufferWindow::putCharUni(glui32 ch) {
-	glui32 bchars[TBLINELEN];
+void TextBufferWindow::putCharUni(uint ch) {
+	uint bchars[TBLINELEN];
 	Attributes battrs[TBLINELEN];
 	int pw;
 	int bpoint;
@@ -572,7 +572,7 @@ void TextBufferWindow::click(const Point &newPos) {
 		_windows->setFocus(this);
 
 	if (_hyperRequest) {
-		glui32 linkval = g_vm->_selection->getHyperlink(newPos);
+		uint linkval = g_vm->_selection->getHyperlink(newPos);
 		if (linkval) {
 			g_vm->_events->store(evtype_Hyperlink, this, linkval, 0);
 			_hyperRequest = false;
@@ -600,7 +600,7 @@ void TextBufferWindow::click(const Point &newPos) {
 	}
 }
 
-void TextBufferWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen) {
+void TextBufferWindow::requestLineEvent(char *buf, uint maxlen, uint initlen) {
 	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni) {
 		warning("request_line_event: window already has keyboard request");
 		return;
@@ -643,10 +643,10 @@ void TextBufferWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen
 	_echoLineInput = _echoLineInputBase;
 
 	if (_lineTerminatorsBase && _termCt) {
-		_lineTerminators = new glui32[_termCt + 1];
+		_lineTerminators = new uint[_termCt + 1];
 
 		if (_lineTerminators) {
-			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(glui32));
+			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(uint));
 			_lineTerminators[_termCt] = 0;
 		}
 	}
@@ -655,7 +655,7 @@ void TextBufferWindow::requestLineEvent(char *buf, glui32 maxlen, glui32 initlen
 		_inArrayRock = (*g_vm->gli_register_arr)(buf, maxlen, "&+#!Cn");
 }
 
-void TextBufferWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 initlen) {
+void TextBufferWindow::requestLineEventUni(uint *buf, uint maxlen, uint initlen) {
 	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni) {
 		warning("request_line_event_uni: window already has keyboard request");
 		return;
@@ -697,10 +697,10 @@ void TextBufferWindow::requestLineEventUni(glui32 *buf, glui32 maxlen, glui32 in
 	_echoLineInput = _echoLineInputBase;
 
 	if (_lineTerminatorsBase && _termCt) {
-		_lineTerminators = new glui32[_termCt + 1];
+		_lineTerminators = new uint[_termCt + 1];
 
 		if (_lineTerminators) {
-			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(glui32));
+			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(uint));
 			_lineTerminators[_termCt] = 0;
 		}
 	}
@@ -742,14 +742,14 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 
 	if (!unicode) {
 		for (ix = 0; ix < len; ix++) {
-			glui32 ch = _chars[_inFence + ix];
+			uint ch = _chars[_inFence + ix];
 			if (ch > 0xff)
 				ch = '?';
 			((char *)inbuf)[ix] = (char)ch;
 		}
 	} else {
 		for (ix = 0; ix < len; ix++)
-			((glui32 *)inbuf)[ix] = _chars[_inFence + ix];
+			((uint *)inbuf)[ix] = _chars[_inFence + ix];
 	}
 
 	_attr = _origAttr;
@@ -786,7 +786,7 @@ void TextBufferWindow::redraw() {
 	int x0, y0, x1, y1;
 	int x, y, w;
 	int a, b;
-	glui32 link;
+	uint link;
 	int font;
 	unsigned char *color;
 	int i;
@@ -1156,7 +1156,7 @@ void TextBufferWindow::redraw() {
 	delete ln;
 }
 
-int TextBufferWindow::acceptScroll(glui32 arg) {
+int TextBufferWindow::acceptScroll(uint arg) {
 	int pageht = _height - 2;        // 1 for prompt, 1 for overlap
 	int startpos = _scrollPos;
 
@@ -1201,8 +1201,8 @@ int TextBufferWindow::acceptScroll(glui32 arg) {
 	return (startpos || _scrollPos);
 }
 
-void TextBufferWindow::acceptReadChar(glui32 arg) {
-	glui32 key;
+void TextBufferWindow::acceptReadChar(uint arg) {
+	uint key;
 
 	if (_height < 2)
 		_scrollPos = 0;
@@ -1238,8 +1238,8 @@ void TextBufferWindow::acceptReadChar(glui32 arg) {
 	g_vm->_events->store(evtype_CharInput, this, key, 0);
 }
 
-void TextBufferWindow::acceptReadLine(glui32 arg) {
-	glui32 *cx;
+void TextBufferWindow::acceptReadLine(uint arg) {
+	uint *cx;
 	Common::U32String s;
 	int len;
 
@@ -1368,7 +1368,7 @@ void TextBufferWindow::acceptReadLine(glui32 arg) {
 	touch(0);
 }
 
-void TextBufferWindow::acceptLine(glui32 keycode) {
+void TextBufferWindow::acceptLine(uint keycode) {
 	int ix;
 	int len, olen;
 	void *inbuf;
@@ -1392,7 +1392,7 @@ void TextBufferWindow::acceptLine(glui32 keycode) {
 	if (g_conf->_speakInput) {
 		const uint32 NEWLINE = '\n';
 		gli_tts_speak(_chars + _inFence, len);
-		gli_tts_speak((const glui32 *)&NEWLINE, 1);
+		gli_tts_speak((const uint *)&NEWLINE, 1);
 	}
 
 	/*
@@ -1429,20 +1429,20 @@ void TextBufferWindow::acceptLine(glui32 keycode) {
 
 	if (!unicode) {
 		for (ix = 0; ix < len; ix++) {
-			glui32 ch = _chars[_inFence + ix];
+			uint ch = _chars[_inFence + ix];
 			if (ch > 0xff)
 				ch = '?';
 			((char *)inbuf)[ix] = (char)ch;
 		}
 	} else {
 		for (ix = 0; ix < len; ix++)
-			((glui32 *)inbuf)[ix] = _chars[_inFence + ix];
+			((uint *)inbuf)[ix] = _chars[_inFence + ix];
 	}
 
 	_attr = _origAttr;
 
 	if (_lineTerminators) {
-		glui32 val2 = keycode;
+		uint val2 = keycode;
 		if (val2 == keycode_Return)
 			val2 = 0;
 		g_vm->_events->store(evtype_LineInput, this, len, val2);
@@ -1468,7 +1468,7 @@ void TextBufferWindow::acceptLine(glui32 keycode) {
 		(*g_vm->gli_unregister_arr)(inbuf, inmax, unicode ? "&+#!Iu" : "&+#!Cn", inarrayrock);
 }
 
-bool TextBufferWindow::leftquote(glui32 c) {
+bool TextBufferWindow::leftquote(uint c) {
 	switch (c) {
 	case '(':
 	case '[':
@@ -1580,7 +1580,7 @@ void TextBufferWindow::scrollResize() {
 	_scrollBack += SCROLLBACK;
 }
 
-int TextBufferWindow::calcWidth(glui32 *chars, Attributes *attrs, int startchar,
+int TextBufferWindow::calcWidth(uint *chars, Attributes *attrs, int startchar,
                                 int numChars, int spw) {
 	Screen &screen = *g_vm->_screen;
 	int w = 0;
@@ -1600,7 +1600,7 @@ int TextBufferWindow::calcWidth(glui32 *chars, Attributes *attrs, int startchar,
 	return w;
 }
 
-void TextBufferWindow::getSize(glui32 *width, glui32 *height) const {
+void TextBufferWindow::getSize(uint *width, uint *height) const {
 	if (width)
 		*width = (_bbox.width() - g_conf->_tMarginX * 2) / g_conf->_cellW;
 	if (height)

@@ -36,13 +36,13 @@ void OS::os_terminate(int rc) {
 	glk_exit();
 }
 
-glui32 OS::oss_convert_prompt_type(int type) {
+uint OS::oss_convert_prompt_type(int type) {
 	if (type == OS_AFP_OPEN)
 		return filemode_Read;
 	return filemode_ReadWrite;
 }
 
-glui32 OS::oss_convert_file_type(int type) {
+uint OS::oss_convert_file_type(int type) {
 	if (type == OSFTSAVE)
 		return fileusage_SavedGame;
 	if (type == OSFTLOG || type == OSFTTEXT)
@@ -50,15 +50,15 @@ glui32 OS::oss_convert_file_type(int type) {
 	return fileusage_Data;
 }
 
-glui32 OS::oss_convert_fileref_to_string(frefid_t file_to_convert, char *buffer, int buf_len) {
+uint OS::oss_convert_fileref_to_string(frefid_t file_to_convert, char *buffer, int buf_len) {
 #ifdef TODO
 	char   temp_string[32];
-	glui32 value, i = 0, digit,
+	uint value, i = 0, digit,
 		digit_flag = false,     // Have we put a digit in the string yet?
 		divisor = 1e9;          // The max 32-bit integer is 4294967295
 
 	// This could probably be done by using sprintf("%s%ld%s") but I don't want to risk it
-	value = (glui32)file_to_convert;
+	value = (uint)file_to_convert;
 	while (divisor != 1) {
 		digit = (char)(value / divisor);
 		if (digit != 0 || digit_flag) {     // This lets us handle, eg, 102
@@ -79,10 +79,10 @@ glui32 OS::oss_convert_fileref_to_string(frefid_t file_to_convert, char *buffer,
 	return true;
 }
 
-frefid_t OS::oss_convert_string_to_fileref(char *buffer, glui32 usage) {
+frefid_t OS::oss_convert_string_to_fileref(char *buffer, uint usage) {
 #ifdef TODO
 	char temp_string[32];
-	glui32 value = 0, i, multiplier = 1;
+	uint value = 0, i, multiplier = 1;
 
 	// Does the buffer contain a hashed fileref?
 	if (oss_is_string_a_fileref(buffer)) {
@@ -92,7 +92,7 @@ frefid_t OS::oss_convert_string_to_fileref(char *buffer, glui32 usage) {
 		temp_string[i] = 0;
 		while (i != 0) {
 			i--;
-			value += ((glui32)(temp_string[i] - '0') * multiplier);
+			value += ((uint)(temp_string[i] - '0') * multiplier);
 			multiplier *= 10;
 		}
 		return ((frefid_t)value);
@@ -115,7 +115,7 @@ bool OS::oss_is_string_a_fileref(char *buffer) {
 	return false;
 }
 
-unsigned char OS::oss_convert_keystroke_to_tads(glui32 key) {
+unsigned char OS::oss_convert_keystroke_to_tads(uint key) {
 	// Characters 0 - 255 we return per normal */
 	if (key <= 255)
 		return ((unsigned char)key);
@@ -169,8 +169,8 @@ void OS::oss_revert_path() {
 	// No implementation
 }
 
-osfildef *OS::oss_open_stream(char *buffer, glui32 tadsusage, glui32 tbusage,
-		glui32 fmode, glui32 rock) {
+osfildef *OS::oss_open_stream(char *buffer, uint tadsusage, uint tbusage,
+		uint fmode, uint rock) {
 	frefid_t fileref;
 	strid_t osf;
 	int      changed_dirs;
@@ -226,7 +226,7 @@ void OS::oss_put_string_with_hilite(winid_t win, const char *str, size_t len) {
 }
 
 void OS::oss_draw_status_line(void) {
-	glui32 width, height, division;
+	uint width, height, division;
 
 	if (status_win == nullptr) return;  // In case this is a CheapGlk port
 

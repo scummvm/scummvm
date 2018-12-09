@@ -3396,7 +3396,7 @@ gli_case_block_t unigen_case_block_0x104[256] = {
 	{ 0x104ff, 0x104ff },
 };
 
-glui32 unigen_special_array[] = {
+uint unigen_special_array[] = {
 	2, 0x53, 0x53,  /* 0xdf upcase */
 	1, 0xdf,  /* 0xdf downcase */
 	2, 0x53, 0x73,  /* 0xdf titlecase */
@@ -3861,7 +3861,7 @@ gli_case_special_t unigen_special_0xfb16 = { 857, 860, 862 };
 gli_case_special_t unigen_special_0xfb17 = { 865, 868, 870 };
 
 #define RETURN_COMBINING_CLASS(ch)  \
-	switch ((glui32)(ch) >> 8) {  \
+	switch ((uint)(ch) >> 8) {  \
 	case 3:  \
 		switch (ch) {  \
 		case 820:  \
@@ -4395,7 +4395,7 @@ gli_case_special_t unigen_special_0xfb17 = { 865, 868, 870 };
 	return 0;
 
 #define RETURN_COMPOSITION(ch1, ch2)  \
-	switch ((glui32)(ch1) >> 8) {  \
+	switch ((uint)(ch1) >> 8) {  \
 	case 0:  \
 		switch (ch1) {  \
 		case 60:  \
@@ -7181,7 +7181,7 @@ gli_case_special_t unigen_special_0xfb17 = { 865, 868, 870 };
 	}  \
 	return 0;
 
-glui32 unigen_decomp_data[3247] = {
+uint unigen_decomp_data[3247] = {
 	0x41, 0x300, 0x41, 0x301, 0x41, 0x302, 0x41, 0x303,
 	0x41, 0x308, 0x41, 0x30a, 0x43, 0x327, 0x45, 0x300,
 	0x45, 0x301, 0x45, 0x302, 0x45, 0x308, 0x49, 0x300,
@@ -11476,7 +11476,7 @@ gli_decomp_block_t unigen_decomp_block_0x2fa[256] = {
 };
 
 #define GET_DECOMP_BLOCK(ch, blockptr)  \
-	switch ((glui32)(ch) >> 8) {  \
+	switch ((uint)(ch) >> 8) {  \
 	case 0x0:  \
 		*blockptr = unigen_decomp_block_0x0;  \
 		break;  \

@@ -516,7 +516,7 @@ Common::Error Scott::saveGameData(strid_t file, const Common::String &desc) {
 		glk_put_string_stream(file, msg.c_str());
 	}
 
-	msg = Common::String::format("%u %d %hd %d %d %hd\n",
+	msg = Common::String::format("%u %d %d %d %d %d\n",
 	                             _bitFlags, (_bitFlags & (1 << DARKBIT)) ? 1 : 0,
 	                             MY_LOC, _currentCounter, _savedRoom, _gameHeader._lightTime);
 	glk_put_string_stream(file, msg.c_str());

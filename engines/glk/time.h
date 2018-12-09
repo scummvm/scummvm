@@ -30,21 +30,21 @@ namespace Glk {
 typedef int64 TimeSeconds;
 
 struct Timestamp {
-	glsi32 high_sec;
-	glui32 low_sec;
-	glsi32 microsec;
+	int high_sec;
+	uint low_sec;
+	int microsec;
 };
 typedef Timestamp glktimeval_t;
 
 struct TimeAndDate {
-	glsi32 year;     ///< full (four-digit) year
-	glsi32 month;    ///< 1-12, 1 is January
-	glsi32 day;      ///< 1-31
-	glsi32 weekday;  ///< 0-6, 0 is Sunday
-	glsi32 hour;     ///< 0-23
-	glsi32 minute;   ///< 0-59
-	glsi32 second;   ///< 0-59, maybe 60 during a leap second
-	glsi32 microsec; ///< 0-999999
+	int year;     ///< full (four-digit) year
+	int month;    ///< 1-12, 1 is January
+	int day;      ///< 1-31
+	int weekday;  ///< 0-6, 0 is Sunday
+	int hour;     ///< 0-23
+	int minute;   ///< 0-59
+	int second;   ///< 0-59, maybe 60 during a leap second
+	int microsec; ///< 0-999999
 private:
 	/**
 	 * Get the number of seconds since the start of 1970
