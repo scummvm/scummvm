@@ -27,7 +27,7 @@
 
 namespace Glk {
 
-GraphicsWindow::GraphicsWindow(Windows *windows, uint32 rock) : Window(windows, rock),
+GraphicsWindow::GraphicsWindow(Windows *windows, uint rock) : Window(windows, rock),
 	_w(0), _h(0), _dirty(false), _surface(nullptr) {
 	_type = wintype_Graphics;
 	Common::copy(&_bgColor[0], &_bgColor[3], _bgnd);

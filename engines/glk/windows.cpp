@@ -574,7 +574,7 @@ void Window::requestLineEvent(char *buf, uint maxlen, uint initlen) {
 	warning("requestLineEvent: window does not support keyboard input");
 }
 
-void Window::requestLineEventUni(uint *buf, uint maxlen, uint initlen) {
+void Window::requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) {
 	warning("requestLineEventUni: window does not support keyboard input");
 }
 
@@ -586,7 +586,7 @@ void Window::redraw() {
 	}
 }
 
-void Window::acceptReadLine(uint arg) {
+void Window::acceptReadLine(uint32 arg) {
 	warning("acceptReadLine:: window does not support keyboard input");
 }
 
@@ -631,7 +631,7 @@ const WindowStyle *Window::getStyles() const {
 	return nullptr;
 }
 
-void Window::setTerminatorsLineEvent(uint *keycodes, uint count) {
+void Window::setTerminatorsLineEvent(const uint32 *keycodes, uint count) {
 	if (dynamic_cast<TextBufferWindow *>(this) || dynamic_cast<TextGridWindow *>(this)) {
 		delete _lineTerminatorsBase;
 		_lineTerminatorsBase = nullptr;
@@ -651,7 +651,7 @@ void Window::setTerminatorsLineEvent(uint *keycodes, uint count) {
 	}
 }
 
-bool Window::checkTerminator(uint ch) {
+bool Window::checkTerminator(uint32 ch) {
 	if (ch == keycode_Escape)
 		return true;
 	else if (ch >= keycode_Func12 && ch <= keycode_Func1)
@@ -684,7 +684,7 @@ void Window::getSize(uint *width, uint *height) const {
 
 /*--------------------------------------------------------------------------*/
 
-BlankWindow::BlankWindow(Windows *windows, uint32 rock) : Window(windows, rock) {
+BlankWindow::BlankWindow(Windows *windows, uint rock) : Window(windows, rock) {
 	_type = wintype_Blank;
 }
 

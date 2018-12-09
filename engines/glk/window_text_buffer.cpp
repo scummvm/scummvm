@@ -36,7 +36,7 @@ namespace Glk {
 #define SLOP (2 * GLI_SUBPIX)
 
 
-TextBufferWindow::TextBufferWindow(Windows *windows, uint32 rock) : Window(windows, rock),
+TextBufferWindow::TextBufferWindow(Windows *windows, uint rock) : Window(windows, rock),
 		_historyPos(0), _historyFirst(0), _historyPresent(0), _lastSeen(0), _scrollPos(0),
 		_scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1), _inBuf(nullptr),
 		_lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0), _ladjn(0),
@@ -105,7 +105,7 @@ void TextBufferWindow::rearrange(const Rect &box) {
 		// allocate copy buffer
 		if (_copyBuf)
 			delete[] _copyBuf;
-		_copyBuf = new uint[_height * TBLINELEN];
+		_copyBuf = new uint32[_height * TBLINELEN];
 
 		for (int i = 0; i < (_height * TBLINELEN); i++)
 			_copyBuf[i] = 0;
@@ -127,7 +127,7 @@ void TextBufferWindow::reflow() {
 
 	// allocate temp buffers
 	Attributes *attrbuf = new Attributes[SCROLLBACK * TBLINELEN];
-	uint *charbuf = new uint[SCROLLBACK * TBLINELEN];
+	uint32 *charbuf = new uint32[SCROLLBACK * TBLINELEN];
 	int *alignbuf = new int[SCROLLBACK];
 	Picture **pictbuf = new Picture *[SCROLLBACK];
 	uint *hyperbuf = new uint[SCROLLBACK];
@@ -330,7 +330,7 @@ void TextBufferWindow::putText(const char *buf, int len, int pos, int oldlen) {
 	touch(0);
 }
 
-void TextBufferWindow::putTextUni(const uint *buf, int len, int pos, int oldlen) {
+void TextBufferWindow::putTextUni(const uint32 *buf, int len, int pos, int oldlen) {
 	int diff = len - oldlen;
 
 	if (_numChars + diff >= TBLINELEN)
@@ -374,7 +374,7 @@ uint TextBufferWindow::getSplit(uint size, bool vertical) const {
 	return (vertical) ? size * g_conf->_cellW : size * g_conf->_cellH;
 }
 
-void TextBufferWindow::putCharUni(uint ch) {
+void TextBufferWindow::putCharUni(uint32 ch) {
 	uint bchars[TBLINELEN];
 	Attributes battrs[TBLINELEN];
 	int pw;
@@ -655,7 +655,7 @@ void TextBufferWindow::requestLineEvent(char *buf, uint maxlen, uint initlen) {
 		_inArrayRock = (*g_vm->gli_register_arr)(buf, maxlen, "&+#!Cn");
 }
 
-void TextBufferWindow::requestLineEventUni(uint *buf, uint maxlen, uint initlen) {
+void TextBufferWindow::requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) {
 	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni) {
 		warning("request_line_event_uni: window already has keyboard request");
 		return;
@@ -742,7 +742,7 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 
 	if (!unicode) {
 		for (ix = 0; ix < len; ix++) {
-			uint ch = _chars[_inFence + ix];
+			uint32 ch = _chars[_inFence + ix];
 			if (ch > 0xff)
 				ch = '?';
 			((char *)inbuf)[ix] = (char)ch;
@@ -1238,7 +1238,7 @@ void TextBufferWindow::acceptReadChar(uint arg) {
 	g_vm->_events->store(evtype_CharInput, this, key, 0);
 }
 
-void TextBufferWindow::acceptReadLine(uint arg) {
+void TextBufferWindow::acceptReadLine(uint32 arg) {
 	uint *cx;
 	Common::U32String s;
 	int len;
@@ -1368,7 +1368,7 @@ void TextBufferWindow::acceptReadLine(uint arg) {
 	touch(0);
 }
 
-void TextBufferWindow::acceptLine(uint keycode) {
+void TextBufferWindow::acceptLine(uint32 keycode) {
 	int ix;
 	int len, olen;
 	void *inbuf;
@@ -1392,7 +1392,7 @@ void TextBufferWindow::acceptLine(uint keycode) {
 	if (g_conf->_speakInput) {
 		const uint32 NEWLINE = '\n';
 		gli_tts_speak(_chars + _inFence, len);
-		gli_tts_speak((const uint *)&NEWLINE, 1);
+		gli_tts_speak((const uint32 *)&NEWLINE, 1);
 	}
 
 	/*
@@ -1429,7 +1429,7 @@ void TextBufferWindow::acceptLine(uint keycode) {
 
 	if (!unicode) {
 		for (ix = 0; ix < len; ix++) {
-			uint ch = _chars[_inFence + ix];
+			uint32 ch = _chars[_inFence + ix];
 			if (ch > 0xff)
 				ch = '?';
 			((char *)inbuf)[ix] = (char)ch;
@@ -1468,7 +1468,7 @@ void TextBufferWindow::acceptLine(uint keycode) {
 		(*g_vm->gli_unregister_arr)(inbuf, inmax, unicode ? "&+#!Iu" : "&+#!Cn", inarrayrock);
 }
 
-bool TextBufferWindow::leftquote(uint c) {
+bool TextBufferWindow::leftquote(uint32 c) {
 	switch (c) {
 	case '(':
 	case '[':
@@ -1580,7 +1580,7 @@ void TextBufferWindow::scrollResize() {
 	_scrollBack += SCROLLBACK;
 }
 
-int TextBufferWindow::calcWidth(uint *chars, Attributes *attrs, int startchar,
+int TextBufferWindow::calcWidth(uint32 *chars, Attributes *attrs, int startchar,
                                 int numChars, int spw) {
 	Screen &screen = *g_vm->_screen;
 	int w = 0;

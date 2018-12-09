@@ -43,7 +43,7 @@ size_t strlen_uni(const uint32 *s);
  * the return value will be the full number of characters that the
  *converted string should have contained.
  */
-extern uint bufferChangeCase(uint *buf, uint len,
+extern uint bufferChangeCase(uint32 *buf, uint len,
                                uint numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
 
 } // End of namespace Glk

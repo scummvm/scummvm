@@ -34,7 +34,7 @@ namespace Glk {
 struct Picture : Graphics::ManagedSurface {
 public:
 	int _refCount;
-	uint32 _id;
+	uint _id;
 	bool _scaled;
 
 	/**

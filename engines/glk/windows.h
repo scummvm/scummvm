@@ -396,12 +396,12 @@ public:
 
 	gidispatch_rock_t _dispRock;
 public:
-	static bool checkTerminator(uint ch);
+	static bool checkTerminator(uint32 ch);
 public:
 	/**
 	 * Constructor
 	 */
-	Window(Windows *windows, uint32 rock);
+	Window(Windows *windows, uint rock);
 
 	/**
 	 * Destructor
@@ -430,7 +430,7 @@ public:
 	/**
 	 * Write a character
 	 */
-	virtual void putCharUni(uint ch) {}
+	virtual void putCharUni(uint32 ch) {}
 
 	/**
 	 * Unput a unicode character
@@ -467,7 +467,7 @@ public:
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEventUni(uint *buf, uint maxlen, uint initlen);
+	virtual void requestLineEventUni(uint32 *buf, uint maxlen, uint initlen);
 
 	/**
 	 * Cancel an input line event
@@ -498,9 +498,9 @@ public:
 
 	int acceptScroll(uint arg);
 
-	void setTerminatorsLineEvent(uint *keycodes, uint count);
+	void setTerminatorsLineEvent(const uint32 *keycodes, uint count);
 
-	virtual void acceptReadLine(uint arg);
+	virtual void acceptReadLine(uint32 arg);
 
 	virtual void acceptReadChar(uint arg);
 
@@ -543,7 +543,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	BlankWindow(Windows *windows, uint32 rock);
+	BlankWindow(Windows *windows, uint rock);
 };
 
 } // End of namespace Glk

@@ -142,7 +142,7 @@ void Events::getEvent(event_t *event, bool polled) {
 	_currentEvent = nullptr;
 }
 
-void Events::store(EvType type, Window *win, uint32 val1, uint32 val2) {
+void Events::store(EvType type, Window *win, uint val1, uint val2) {
 	Event ev(type, win, val1, val2);
 
 	switch (type) {

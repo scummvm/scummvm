@@ -59,7 +59,7 @@ private:
 	/**
 	 * Return or enter, during line input. Ends line input.
 	 */
-	void acceptLine(uint keycode);
+	void acceptLine(uint32 keycode);
 public:
 	int _width, _height;
 	TextGridRows _lines;
@@ -67,20 +67,20 @@ public:
 	int _curX, _curY;    ///< the window cursor position
 
 	///< for line input
-	void *_inBuf;        ///< unsigned char* for latin1, uint* for unicode
+	void *_inBuf;        ///< unsigned char* for latin1, uint32* for unicode
 	int _inOrgX, _inOrgY;
 	int _inMax;
 	int _inCurs, _inLen;
 	Attributes _origAttr;
 	gidispatch_rock_t _inArrayRock;
-	uint *_lineTerminators;
+	uint32 *_lineTerminators;
 
 	WindowStyle _styles[style_NUMSTYLES]; ///< style hints and settings
 public:
 	/**
 	 * Constructor
 	 */
-	TextGridWindow(Windows *windows, uint32 rock);
+	TextGridWindow(Windows *windows, uint rock);
 
 	/**
 	 * Destructor
@@ -100,7 +100,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint ch) override;
+	virtual void putCharUni(uint32 ch) override;
 
 	/**
 	 * Unput a unicode character
@@ -139,7 +139,7 @@ public:
 	 */
 	virtual void redraw() override;
 
-	virtual void acceptReadLine(uint arg) override;
+	virtual void acceptReadLine(uint32 arg) override;
 
 	virtual void acceptReadChar(uint arg) override;
 
@@ -157,7 +157,7 @@ public:
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEventUni(uint *buf, uint maxlen, uint initlen) override;
+	virtual void requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) override;
 
 	/**
 	 * Cancel an input line event

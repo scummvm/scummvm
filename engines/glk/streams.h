@@ -61,8 +61,8 @@ enum SeekMode {
 };
 
 struct StreamResult {
-	uint32 _readCount;
-	uint32 _writeCount;
+	uint _readCount;
+	uint _writeCount;
 };
 typedef StreamResult stream_result_t;
 
@@ -135,16 +135,16 @@ public:
 	Streams *_streams;
 	Stream *_prev;
 	Stream *_next;
-	uint32 _rock;
+	uint _rock;
 	bool _unicode;
-	uint32 _readCount;
-	uint32 _writeCount;
+	uint _readCount;
+	uint _writeCount;
 	bool _readable, _writable;
 public:
 	/**
 	 * Constructor
 	 */
-	Stream(Streams *streams, bool readable, bool writable, uint32 rock, bool unicode);
+	Stream(Streams *streams, bool readable, bool writable, uint rock, bool unicode);
 
 	/**
 	 * Destructor
@@ -154,12 +154,12 @@ public:
 	/**
 	 * Get the next stream
 	 */
-	Stream *getNext(uint32 *rock) const;
+	Stream *getNext(uint *rock) const;
 
 	/**
 	 * Get the rock value for the stream
 	 */
-	uint32 getRock() const {
+	uint getRock() const {
 		return _rock;
 	}
 
@@ -181,7 +181,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint ch) = 0;
+	virtual void putCharUni(uint32 ch) = 0;
 
 	/**
 	 * Write a buffer
@@ -191,7 +191,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint *buf, size_t len) = 0;
+	virtual void putBufferUni(const uint32 *buf, size_t len) = 0;
 
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
@@ -201,7 +201,7 @@ public:
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
 	 */
-	virtual void unputBufferUni(const uint *buf, size_t len) {}
+	virtual void unputBufferUni(const uint32 *buf, size_t len) {}
 
 	/**
 	 * Send a line to the stream with a trailing newline
@@ -214,7 +214,7 @@ public:
 	/**
 	 * Send a line to the stream with a trailing newline
 	 */
-	void echoLineUni(const uint *buf, uint len) {
+	void echoLineUni(const uint32 *buf, uint len) {
 		putBufferUni(buf, len);
 		putCharUni('\n');
 	}
@@ -251,7 +251,7 @@ public:
 	/**
 	 * Get a unicode buffer
 	 */
-	virtual uint getBufferUni(uint *buf, uint len) {
+	virtual uint getBufferUni(uint32 *buf, uint len) {
 		return 0;
 	}
 
@@ -265,7 +265,7 @@ public:
 	/**
 	 * Get a unicode line
 	 */
-	virtual uint getLineUni(uint *ubuf, uint len) {
+	virtual uint getLineUni(uint32 *ubuf, uint len) {
 		return 0;
 	}
 
@@ -306,7 +306,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	WindowStream(Streams *streams, Window *window, uint32 rock = 0, bool unicode = true) :
+	WindowStream(Streams *streams, Window *window, uint rock = 0, bool unicode = true) :
 		Stream(streams, false, true, rock, unicode), _window(window) {}
 
 	/**
@@ -327,7 +327,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint ch) override;
+	virtual void putCharUni(uint32 ch) override;
 
 	/**
 	 * Write a buffer
@@ -337,7 +337,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint *buf, size_t len) override;
+	virtual void putBufferUni(const uint32 *buf, size_t len) override;
 
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
@@ -347,7 +347,7 @@ public:
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
 	 */
-	virtual void unputBufferUni(const uint *buf, size_t len) override;
+	virtual void unputBufferUni(const uint32 *buf, size_t len) override;
 
 	virtual void setStyle(uint val) override;
 
@@ -381,7 +381,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint32 rock = 0, bool unicode = true);
+	MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint rock = 0, bool unicode = true);
 
 	/**
 	 * Write a character
@@ -391,7 +391,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint ch) override;
+	virtual void putCharUni(uint32 ch) override;
 
 	/**
 	 * Write a buffer
@@ -401,7 +401,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint *buf, size_t len) override;
+	virtual void putBufferUni(const uint32 *buf, size_t len) override;
 
 	virtual uint getPosition() const override;
 
@@ -425,7 +425,7 @@ public:
 	/**
 	 * Get a unicode buffer
 	 */
-	virtual uint getBufferUni(uint *buf, uint len) override;
+	virtual uint getBufferUni(uint32 *buf, uint len) override;
 
 	/**
 	 * Get a line
@@ -435,7 +435,7 @@ public:
 	/**
 	 * Get a unicode line
 	 */
-	virtual uint getLineUni(uint *ubuf, uint len) override;
+	virtual uint getLineUni(uint32 *ubuf, uint len) override;
 };
 
 /**
@@ -447,7 +447,7 @@ private:
 	Common::OutSaveFile *_outFile;
 	Common::InSaveFile *_inFile;
 	Common::SeekableReadStream *_inStream;
-	uint32 _lastOp;                 ///< 0, filemode_Write, or filemode_Read
+	uint _lastOp;                 ///< 0, filemode_Write, or filemode_Read
 	bool _textFile;
 private:
 	/**
@@ -493,7 +493,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint ch) override;
+	virtual void putCharUni(uint32 ch) override;
 
 	/**
 	 * Write a buffer
@@ -503,7 +503,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint *buf, size_t len) override;
+	virtual void putBufferUni(const uint32 *buf, size_t len) override;
 
 	virtual uint getPosition() const override;
 
@@ -527,7 +527,7 @@ public:
 	/**
 	 * Get a unicode buffer
 	 */
-	virtual uint getBufferUni(uint *buf, uint len) override;
+	virtual uint getBufferUni(uint32 *buf, uint len) override;
 
 	/**
 	 * Get a line
@@ -537,7 +537,7 @@ public:
 	/**
 	 * Get a unicode line
 	 */
-	virtual uint getLineUni(uint *ubuf, uint len) override;
+	virtual uint getLineUni(uint32 *ubuf, uint len) override;
 
 	/**
 	 * Cast a stream to a ScummVM write stream
@@ -593,7 +593,7 @@ public:
 	/**
 	 * Open a memory stream
 	 */
-	MemoryStream *openMemoryStream(void *buf, size_t buflen, FileMode mode, uint32 rock = 0, bool unicode = true);
+	MemoryStream *openMemoryStream(void *buf, size_t buflen, FileMode mode, uint rock = 0, bool unicode = true);
 
 	/**
 	 * Delete a stream
@@ -605,7 +605,7 @@ public:
 	/**
 	 * Start an Iteration through streams
 	 */
-	Stream *getFirst(uint32 *rock);
+	Stream *getFirst(uint *rock);
 
 	/**
 	 * Set the current output stream

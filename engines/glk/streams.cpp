@@ -33,7 +33,7 @@
 
 namespace Glk {
 
-Stream::Stream(Streams *streams, bool readable, bool writable, uint32 rock, bool unicode) :
+Stream::Stream(Streams *streams, bool readable, bool writable, uint rock, bool unicode) :
 	_streams(streams), _readable(readable), _writable(writable), _rock(0), _unicode(unicode),
 	_readCount(0), _writeCount(0), _prev(nullptr), _next(nullptr) {
 }
@@ -42,7 +42,7 @@ Stream::~Stream() {
 	_streams->removeStream(this);
 }
 
-Stream *Stream::getNext(uint32 *rock) const {
+Stream *Stream::getNext(uint *rock) const {
 	Stream *stream = _next;
 	if (rock)
 		*rock = stream ? stream->_rock : 0;
@@ -188,9 +188,9 @@ void WindowStream::unputBuffer(const char *buf, size_t len) {
 		_window->_echoStream->unputBuffer(buf, len);
 }
 
-void WindowStream::unputBufferUni(const uint *buf, size_t len) {
+void WindowStream::unputBufferUni(const uint32 *buf, size_t len) {
 	uint lx;
-	const uint *cx;
+	const uint32 *cx;
 
 	if (!_writable)
 		return;
@@ -306,7 +306,7 @@ void WindowStream::setReverseVideo(bool reverse) {
 
 /*--------------------------------------------------------------------------*/
 
-MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint32 rock, bool unicode) :
+MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint rock, bool unicode) :
 	Stream(streams, mode != filemode_Write, mode != filemode_Read, rock, unicode),
 	_buf(buf), _bufLen(buflen), _bufPtr(buf) {
 	assert(_buf && _bufLen);
@@ -326,8 +326,8 @@ void MemoryStream::putChar(unsigned char ch) {
 
 	if (_bufPtr < _bufEnd) {
 		if (_unicode) {
-			*((uint *)_bufPtr) = ch;
-			_bufPtr = ((uint *)_bufPtr) + 1;
+			*((uint32 *)_bufPtr) = ch;
+			_bufPtr = ((uint32 *)_bufPtr) + 1;
 		} else {
 			*((unsigned char *)_bufPtr) = ch;
 			_bufPtr = ((unsigned char *)_bufPtr) + 1;
@@ -345,8 +345,8 @@ void MemoryStream::putCharUni(uint32 ch) {
 
 	if (_bufPtr < _bufEnd) {
 		if (_unicode) {
-			*((uint *)_bufPtr) = ch;
-			_bufPtr = ((uint *)_bufPtr) + 1;
+			*((uint32 *)_bufPtr) = ch;
+			_bufPtr = ((uint32 *)_bufPtr) + 1;
 		} else {
 			*((unsigned char *)_bufPtr) = (unsigned char)ch;
 			_bufPtr = ((unsigned char *)_bufPtr) + 1;
@@ -383,9 +383,9 @@ void MemoryStream::putBuffer(const char *buf, size_t len) {
 			}
 			_bufPtr = bp;
 		} else {
-			uint *bp = (uint *)_bufPtr;
-			if (bp + len > (uint *)_bufEnd) {
-				lx = (bp + len) - (uint *)_bufEnd;
+			uint32 *bp = (uint32 *)_bufPtr;
+			if (bp + len > (uint32 *)_bufEnd) {
+				lx = (bp + len) - (uint32 *)_bufEnd;
 				if (lx < len)
 					len -= lx;
 				else
@@ -396,7 +396,7 @@ void MemoryStream::putBuffer(const char *buf, size_t len) {
 				for (i = 0; i < len; i++)
 					bp[i] = buf[i];
 				bp += len;
-				if (bp > (uint *)_bufEof)
+				if (bp > (uint32 *)_bufEof)
 					_bufEof = bp;
 			}
 			_bufPtr = bp;
@@ -426,7 +426,7 @@ void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
 			if (len) {
 				uint i;
 				for (i = 0; i < len; i++) {
-					uint ch = buf[i];
+					uint32 ch = buf[i];
 					if (ch > 0xff)
 						ch = '?';
 					bp[i] = (unsigned char)ch;
@@ -437,9 +437,9 @@ void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
 			}
 			_bufPtr = bp;
 		} else {
-			uint *bp = (uint *)_bufPtr;
-			if (bp + len > (uint *)_bufEnd) {
-				lx = (bp + len) - (uint *)_bufEnd;
+			uint32 *bp = (uint32 *)_bufPtr;
+			if (bp + len > (uint32 *)_bufEnd) {
+				lx = (bp + len) - (uint32 *)_bufEnd;
 				if (lx < len)
 					len -= lx;
 				else
@@ -448,7 +448,7 @@ void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
 			if (len) {
 				memmove(bp, buf, len * 4);
 				bp += len;
-				if (bp > (uint *)_bufEof)
+				if (bp > (uint32 *)_bufEof)
 					_bufEof = bp;
 			}
 			_bufPtr = bp;
@@ -458,7 +458,7 @@ void MemoryStream::putBufferUni(const uint32 *buf, size_t len) {
 
 uint MemoryStream::getPosition() const {
 	if (_unicode)
-		return ((uint *)_bufPtr - (uint *)_buf);
+		return ((uint32 *)_bufPtr - (uint32 *)_buf);
 	else
 		return ((unsigned char *)_bufPtr - (unsigned char *)_buf);
 }
@@ -480,15 +480,15 @@ void MemoryStream::setPosition(int pos, uint seekMode) {
 		_bufPtr = (unsigned char *)_buf + pos;
 	} else {
 		if (seekMode == seekmode_Current)
-			pos = ((uint *)_bufPtr - (uint *)_buf) + pos;
+			pos = ((uint32 *)_bufPtr - (uint32 *)_buf) + pos;
 		else if (seekMode == seekmode_End)
-			pos = ((uint *)_bufEof - (uint *)_buf) + pos;
+			pos = ((uint32 *)_bufEof - (uint32 *)_buf) + pos;
 
 		if (pos < 0)
 			pos = 0;
-		if (pos > ((uint *)_bufEof - (uint *)_buf))
-			pos = ((uint *)_bufEof - (uint *)_buf);
-		_bufPtr = (uint *)_buf + pos;
+		if (pos > ((uint32 *)_bufEof - (uint32 *)_buf))
+			pos = ((uint32 *)_bufEof - (uint32 *)_buf);
+		_bufPtr = (uint32 *)_buf + pos;
 	}
 }
 
@@ -504,9 +504,9 @@ int MemoryStream::getChar() {
 			_readCount++;
 			return ch;
 		} else {
-			uint ch;
-			ch = *((uint *)_bufPtr);
-			_bufPtr = ((uint *)_bufPtr) + 1;
+			uint32 ch;
+			ch = *((uint32 *)_bufPtr);
+			_bufPtr = ((uint32 *)_bufPtr) + 1;
 			_readCount++;
 			if (ch > 0xff)
 				ch = '?';
@@ -529,9 +529,9 @@ int MemoryStream::getCharUni() {
 			_readCount++;
 			return ch;
 		} else {
-			uint ch;
-			ch = *((uint *)_bufPtr);
-			_bufPtr = ((uint *)_bufPtr) + 1;
+			uint32 ch;
+			ch = *((uint32 *)_bufPtr);
+			_bufPtr = ((uint32 *)_bufPtr) + 1;
 			_readCount++;
 			return ch;
 		}
@@ -568,10 +568,10 @@ uint MemoryStream::getBuffer(char *buf, uint len) {
 			_readCount += len;
 			_bufPtr = bp;
 		} else {
-			uint *bp = (uint *)_bufPtr;
-			if (bp + len > (uint *)_bufEnd) {
+			uint32 *bp = (uint32 *)_bufPtr;
+			if (bp + len > (uint32 *)_bufEnd) {
 				uint lx;
-				lx = (bp + len) - (uint *)_bufEnd;
+				lx = (bp + len) - (uint32 *)_bufEnd;
 				if (lx < len)
 					len -= lx;
 				else
@@ -580,12 +580,12 @@ uint MemoryStream::getBuffer(char *buf, uint len) {
 			if (len) {
 				uint i;
 				for (i = 0; i < len; i++) {
-					uint ch = *bp++;
+					uint32 ch = *bp++;
 					if (ch > 0xff)
 						ch = '?';
 					*buf++ = (char)ch;
 				}
-				if (bp > (uint *)_bufEof)
+				if (bp > (uint32 *)_bufEof)
 					_bufEof = bp;
 			}
 
@@ -597,7 +597,7 @@ uint MemoryStream::getBuffer(char *buf, uint len) {
 	return len;
 }
 
-uint MemoryStream::getBufferUni(uint *buf, uint len) {
+uint MemoryStream::getBufferUni(uint32 *buf, uint len) {
 	if (!_readable)
 		return 0;
 
@@ -625,10 +625,10 @@ uint MemoryStream::getBufferUni(uint *buf, uint len) {
 			_readCount += len;
 			_bufPtr = bp;
 		} else {
-			uint *bp = (uint *)_bufPtr;
-			if (bp + len > (uint *)_bufEnd) {
+			uint32 *bp = (uint32 *)_bufPtr;
+			if (bp + len > (uint32 *)_bufEnd) {
 				uint lx;
-				lx = (bp + len) - (uint *)_bufEnd;
+				lx = (bp + len) - (uint32 *)_bufEnd;
 				if (lx < len)
 					len -= lx;
 				else
@@ -637,7 +637,7 @@ uint MemoryStream::getBufferUni(uint *buf, uint len) {
 			if (len) {
 				memcpy(buf, bp, len * 4);
 				bp += len;
-				if (bp > (uint *)_bufEof)
+				if (bp > (uint32 *)_bufEof)
 					_bufEof = bp;
 			}
 			_readCount += len;
@@ -692,8 +692,8 @@ uint MemoryStream::getLine(char *buf, uint len) {
 
 		gotNewline = false;
 		for (lx = 0; lx < len && !gotNewline; lx++) {
-			uint ch;
-			ch = ((uint *)_bufPtr)[lx];
+			uint32 ch;
+			ch = ((uint32 *)_bufPtr)[lx];
 			if (ch >= 0x100)
 				ch = '?';
 			buf[lx] = (char)ch;
@@ -701,14 +701,14 @@ uint MemoryStream::getLine(char *buf, uint len) {
 		}
 
 		buf[lx] = '\0';
-		_bufPtr = ((uint *)_bufPtr) + lx;
+		_bufPtr = ((uint32 *)_bufPtr) + lx;
 	}
 
 	_readCount += lx;
 	return lx;
 }
 
-uint MemoryStream::getLineUni(uint *ubuf, uint len) {
+uint MemoryStream::getLineUni(uint32 *ubuf, uint len) {
 	bool gotNewline;
 	int lx;
 
@@ -739,8 +739,8 @@ uint MemoryStream::getLineUni(uint *ubuf, uint len) {
 		if (_bufPtr >= _bufEnd) {
 			len = 0;
 		} else {
-			if ((uint *)_bufPtr + len > (uint *)_bufEnd) {
-				lx = ((uint *)_bufPtr + len) - (uint *)_bufEnd;
+			if ((uint32 *)_bufPtr + len > (uint32 *)_bufEnd) {
+				lx = ((uint32 *)_bufPtr + len) - (uint32 *)_bufEnd;
 				if (lx < (int)len)
 					len -= lx;
 				else
@@ -749,13 +749,13 @@ uint MemoryStream::getLineUni(uint *ubuf, uint len) {
 		}
 		gotNewline = false;
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
-			uint ch;
-			ch = ((uint *)_bufPtr)[lx];
+			uint32 ch;
+			ch = ((uint32 *)_bufPtr)[lx];
 			ubuf[lx] = ch;
 			gotNewline = (ch == '\n');
 		}
 		ubuf[lx] = '\0';
-		_bufPtr = ((uint *)_bufPtr) + lx;
+		_bufPtr = ((uint32 *)_bufPtr) + lx;
 	}
 
 	_readCount += lx;
@@ -885,7 +885,7 @@ void FileStream::putBufferUni(const uint32 *buf, size_t len) {
 
 	ensureOp(filemode_Write);
 	for (size_t lx = 0; lx < len; lx++) {
-		uint ch = buf[lx];
+		uint32 ch = buf[lx];
 		if (!_unicode) {
 			if (ch >= 0x100)
 				ch = '?';
@@ -1035,7 +1035,7 @@ int FileStream::getChar() {
 	} else if (_textFile) {
 		res = getCharUtf8();
 	} else {
-		uint ch;
+		uint32 ch;
 		res = _inStream->readByte();
 		if (_inStream->eos())
 			return -1;
@@ -1075,7 +1075,7 @@ int FileStream::getCharUni() {
 	} else if (_textFile) {
 		res = getCharUtf8();
 	} else {
-		uint ch;
+		uint32 ch;
 		res = _inStream->readByte();
 		if (res == -1)
 			return -1;
@@ -1112,7 +1112,7 @@ uint FileStream::getBuffer(char *buf, uint len) {
 	} else if (_textFile) {
 		uint lx;
 		for (lx = 0; lx < len; lx++) {
-			uint ch;
+			uint32 ch;
 			ch = getCharUtf8();
 			if (ch == (uint)-1)
 				break;
@@ -1126,7 +1126,7 @@ uint FileStream::getBuffer(char *buf, uint len) {
 		uint lx;
 		for (lx = 0; lx < len; lx++) {
 			int res;
-			uint ch;
+			uint32 ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1152,7 +1152,7 @@ uint FileStream::getBuffer(char *buf, uint len) {
 	}
 }
 
-uint FileStream::getBufferUni(uint *buf, uint len) {
+uint FileStream::getBufferUni(uint32 *buf, uint len) {
 	if (!_readable)
 		return 0;
 
@@ -1161,7 +1161,7 @@ uint FileStream::getBufferUni(uint *buf, uint len) {
 		uint lx;
 		for (lx = 0; lx < len; lx++) {
 			int res;
-			uint ch;
+			uint32 ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1173,7 +1173,7 @@ uint FileStream::getBufferUni(uint *buf, uint len) {
 	} else if (_textFile) {
 		uint lx;
 		for (lx = 0; lx < len; lx++) {
-			uint ch;
+			uint32 ch;
 			ch = getCharUtf8();
 			if (ch == (uint)-1)
 				break;
@@ -1185,7 +1185,7 @@ uint FileStream::getBufferUni(uint *buf, uint len) {
 		uint lx;
 		for (lx = 0; lx < len; lx++) {
 			int res;
-			uint ch;
+			uint32 ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1233,7 +1233,7 @@ uint FileStream::getLine(char *buf, uint len) {
 		len -= 1; // for the terminal null
 		gotNewline = false;
 		for (lx = 0; lx < len && !gotNewline; lx++) {
-			uint ch;
+			uint32 ch;
 			ch = getCharUtf8();
 			if (ch == (uint)-1)
 				break;
@@ -1250,7 +1250,7 @@ uint FileStream::getLine(char *buf, uint len) {
 		gotNewline = false;
 		for (lx = 0; lx < len && !gotNewline; lx++) {
 			int res;
-			uint ch;
+			uint32 ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1279,7 +1279,7 @@ uint FileStream::getLine(char *buf, uint len) {
 	}
 }
 
-uint FileStream::getLineUni(uint *ubuf, uint len) {
+uint FileStream::getLineUni(uint32 *ubuf, uint len) {
 	bool gotNewline;
 	int lx;
 
@@ -1292,7 +1292,7 @@ uint FileStream::getLineUni(uint *ubuf, uint len) {
 		gotNewline = false;
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
 			int res;
-			uint ch;
+			uint32 ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1307,7 +1307,7 @@ uint FileStream::getLineUni(uint *ubuf, uint len) {
 		len -= 1; // for the terminal null
 		gotNewline = false;
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
-			uint ch;
+			uint32 ch;
 			ch = getCharUtf8();
 			if (ch == (uint)-1)
 				break;
@@ -1322,7 +1322,7 @@ uint FileStream::getLineUni(uint *ubuf, uint len) {
 		gotNewline = false;
 		for (lx = 0; lx < (int)len && !gotNewline; lx++) {
 			int res;
-			uint ch;
+			uint32 ch;
 			res = _inStream->readByte();
 			if (res == -1)
 				break;
@@ -1439,7 +1439,7 @@ WindowStream *Streams::openWindowStream(Window *window) {
 	return stream;
 }
 
-MemoryStream *Streams::openMemoryStream(void *buf, size_t buflen, FileMode mode, uint32 rock, bool unicode) {
+MemoryStream *Streams::openMemoryStream(void *buf, size_t buflen, FileMode mode, uint rock, bool unicode) {
 	MemoryStream *stream = new MemoryStream(this, buf, buflen, mode, rock, unicode);
 	addStream(stream);
 	return stream;
@@ -1470,7 +1470,7 @@ void Streams::removeStream(Stream *stream) {
 	}
 }
 
-Stream *Streams::getFirst(uint32 *rock) {
+Stream *Streams::getFirst(uint *rock) {
 	if (rock)
 		*rock = _streamList ? _streamList->_rock : 0;
 	return _streamList;

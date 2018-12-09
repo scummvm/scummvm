@@ -764,7 +764,7 @@ void GlkAPI::glk_set_echo_line_event(winid_t win, uint val) {
 	}
 }
 
-void GlkAPI::glk_set_terminators_line_event(winid_t win, uint *keycodes, uint count) {
+void GlkAPI::glk_set_terminators_line_event(winid_t win, const uint32 *keycodes, uint count) {
 	if (!win) {
 		warning("set_terminators_line_event: invalid ref");
 	} else {
@@ -772,32 +772,32 @@ void GlkAPI::glk_set_terminators_line_event(winid_t win, uint *keycodes, uint co
 	}
 }
 
-uint GlkAPI::glk_buffer_to_lower_case_uni(uint *buf, uint len, uint numchars) {
+uint GlkAPI::glk_buffer_to_lower_case_uni(uint32 *buf, uint len, uint numchars) {
 	return bufferChangeCase(buf, len, numchars, CASE_LOWER, COND_ALL, true);
 }
 
-uint GlkAPI::glk_buffer_to_upper_case_uni(uint *buf, uint len, uint numchars) {
+uint GlkAPI::glk_buffer_to_upper_case_uni(uint32 *buf, uint len, uint numchars) {
 	return bufferChangeCase(buf, len, numchars, CASE_UPPER, COND_ALL, true);
 }
 
-uint GlkAPI::glk_buffer_to_title_case_uni(uint *buf, uint len,
+uint GlkAPI::glk_buffer_to_title_case_uni(uint32 *buf, uint len,
         uint numchars, uint lowerrest) {
 	return bufferChangeCase(buf, len, numchars, CASE_TITLE, COND_LINESTART, lowerrest);
 }
 
-void GlkAPI::glk_put_char_uni(uint ch) {
+void GlkAPI::glk_put_char_uni(uint32 ch) {
 	_streams->getCurrent()->putCharUni(ch);
 }
 
-void GlkAPI::glk_put_string_uni(uint *s) {
+void GlkAPI::glk_put_string_uni(const uint32 *s) {
 	_streams->getCurrent()->putBufferUni(s, strlen_uni(s));
 }
 
-void GlkAPI::glk_put_buffer_uni(uint *buf, uint len) {
+void GlkAPI::glk_put_buffer_uni(const uint32 *buf, uint len) {
 	_streams->getCurrent()->putBufferUni(buf, len);
 }
 
-void GlkAPI::glk_put_char_stream_uni(strid_t str, uint ch) {
+void GlkAPI::glk_put_char_stream_uni(strid_t str, uint32 ch) {
 	if (str) {
 		str->putCharUni(ch);
 	} else {
@@ -805,7 +805,7 @@ void GlkAPI::glk_put_char_stream_uni(strid_t str, uint ch) {
 	}
 }
 
-void GlkAPI::glk_put_string_stream_uni(strid_t str, const uint *s) {
+void GlkAPI::glk_put_string_stream_uni(strid_t str, const uint32 *s) {
 	if (str) {
 		str->putBufferUni(s, strlen_uni(s));
 	} else {
@@ -813,7 +813,7 @@ void GlkAPI::glk_put_string_stream_uni(strid_t str, const uint *s) {
 	}
 }
 
-void GlkAPI::glk_put_buffer_stream_uni(strid_t str, const uint *buf, uint len) {
+void GlkAPI::glk_put_buffer_stream_uni(strid_t str, const uint32 *buf, uint len) {
 	if (str) {
 		str->putBufferUni(buf, len);
 	} else {
@@ -830,7 +830,7 @@ int GlkAPI::glk_get_char_stream_uni(strid_t str) {
 	}
 }
 
-uint GlkAPI::glk_get_buffer_stream_uni(strid_t str, uint *buf, uint len) {
+uint GlkAPI::glk_get_buffer_stream_uni(strid_t str, uint32 *buf, uint len) {
 	if (str) {
 		return str->getBufferUni(buf, len);
 	} else {
@@ -839,7 +839,7 @@ uint GlkAPI::glk_get_buffer_stream_uni(strid_t str, uint *buf, uint len) {
 	}
 }
 
-uint GlkAPI::glk_get_line_stream_uni(strid_t str, uint *buf, uint len) {
+uint GlkAPI::glk_get_line_stream_uni(strid_t str, uint32 *buf, uint len) {
 	if (str) {
 		return str->getLineUni(buf, len);
 	} else  {
@@ -852,7 +852,7 @@ strid_t GlkAPI::glk_stream_open_file_uni(frefid_t fileref, FileMode fmode, uint 
 	return _streams->openFileStream(fileref, fmode, rock, true);
 }
 
-strid_t GlkAPI::glk_stream_open_memory_uni(uint *buf, uint buflen, FileMode fmode, uint rock) {
+strid_t GlkAPI::glk_stream_open_memory_uni(uint32 *buf, uint buflen, FileMode fmode, uint rock) {
 	return _streams->openMemoryStream(buf, buflen, fmode, rock, true);
 }
 
@@ -867,7 +867,7 @@ void GlkAPI::glk_request_char_event_uni(winid_t win) {
 	}
 }
 
-void GlkAPI::glk_request_line_event_uni(winid_t win, uint *buf, uint maxlen, uint initlen) {
+void GlkAPI::glk_request_line_event_uni(winid_t win, uint32 *buf, uint maxlen, uint initlen) {
 	if (!win) {
 		warning("request_line_event_uni: invalid ref");
 	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
@@ -878,13 +878,12 @@ void GlkAPI::glk_request_line_event_uni(winid_t win, uint *buf, uint maxlen, uin
 	}
 }
 
-uint GlkAPI::glk_buffer_canon_decompose_uni(uint *buf, uint len,
-        uint numchars) {
+uint GlkAPI::glk_buffer_canon_decompose_uni(uint32 *buf, uint len, uint numchars) {
 	// TODO
 	return 0;
 }
 
-uint GlkAPI::glk_buffer_canon_normalize_uni(uint *buf, uint len, uint numchars) {
+uint GlkAPI::glk_buffer_canon_normalize_uni(uint32 *buf, uint len, uint numchars) {
 	return 0;
 }
 
@@ -1181,7 +1180,7 @@ void GlkAPI::garglk_unput_string(const char *str) {
 	_streams->getCurrent()->unputBuffer(str, strlen(str));
 }
 
-void GlkAPI::garglk_unput_string_uni(const uint *str) {
+void GlkAPI::garglk_unput_string_uni(const uint32 *str) {
 	_streams->getCurrent()->unputBufferUni(str, strlen_uni(str));
 }
 

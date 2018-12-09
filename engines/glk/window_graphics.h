@@ -45,7 +45,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	GraphicsWindow(Windows *windows, uint32 rock);
+	GraphicsWindow(Windows *windows, uint rock);
 
 	/**
 	 * Destructor

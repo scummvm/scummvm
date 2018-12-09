@@ -110,7 +110,7 @@ enum CursorId {
 struct Event {
 	EvType type;
 	Window *window;
-	uint32 val1, val2;
+	uint val1, val2;
 
 	/**
 	 * Constructor
@@ -122,7 +122,7 @@ struct Event {
 	/**
 	 * Constructor
 	 */
-	Event(EvType evType, Window *evWindow, uint32 evVal1, uint32 evVal2) {
+	Event(EvType evType, Window *evWindow, uint evVal1, uint evVal2) {
 		type = evType;
 		window = evWindow;
 		val1 = evVal1;
@@ -241,7 +241,7 @@ public:
 	/**
 	 * Store an event for retrieval
 	 */
-	void store(EvType type, Window *win, uint32 val1 = 0, uint32 val2 = 0);
+	void store(EvType type, Window *win, uint val1 = 0, uint val2 = 0);
 
 	/**
 	 * Wait for a keyboard or mouse press

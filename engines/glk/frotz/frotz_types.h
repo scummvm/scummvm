@@ -202,7 +202,7 @@ enum FontStyle {
 #define MENU_REMOVE 2
 
 typedef byte zbyte;
-typedef uint zchar;
+typedef uint32 zchar;
 typedef uint16 zword;
 
 #define MAX_NESTING 16

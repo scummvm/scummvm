@@ -145,47 +145,40 @@ public:
 #endif /* GLK_MODULE_LINE_ECHO */
 
 #ifdef GLK_MODULE_LINE_TERMINATORS
-	void glk_set_terminators_line_event(winid_t win, uint *keycodes,
-	                                    uint count);
+	void glk_set_terminators_line_event(winid_t win, const uint32 *keycodes, uint count);
 #endif /* GLK_MODULE_LINE_TERMINATORS */
 
 	/** \addtogroup Unicode
 	 *  @{
 	 */
 
-	uint glk_buffer_to_lower_case_uni(uint *buf, uint len,
-	                                    uint numchars);
-	uint glk_buffer_to_upper_case_uni(uint *buf, uint len,
-	                                    uint numchars);
-	uint glk_buffer_to_title_case_uni(uint *buf, uint len,
-	                                    uint numchars, uint lowerrest);
+	uint glk_buffer_to_lower_case_uni(uint32 *buf, uint len, uint numchars);
+	uint glk_buffer_to_upper_case_uni(uint32 *buf, uint len, uint numchars);
+	uint glk_buffer_to_title_case_uni(uint32 *buf, uint len, uint numchars, uint lowerrest);
 
-	void glk_put_char_uni(uint ch);
-	void glk_put_string_uni(uint *s);
-	void glk_put_buffer_uni(uint *buf, uint len);
-	void glk_put_char_stream_uni(strid_t str, uint ch);
-	void glk_put_string_stream_uni(strid_t str, const uint *s);
-	void glk_put_buffer_stream_uni(strid_t str, const uint *buf, uint len);
+	void glk_put_char_uni(uint32 ch);
+	void glk_put_string_uni(const uint32 *s);
+	void glk_put_buffer_uni(const uint32 *buf, uint len);
+	void glk_put_char_stream_uni(strid_t str, uint32 ch);
+	void glk_put_string_stream_uni(strid_t str, const uint32 *s);
+	void glk_put_buffer_stream_uni(strid_t str, const uint32 *buf, uint len);
 
 	int glk_get_char_stream_uni(strid_t str);
-	uint glk_get_buffer_stream_uni(strid_t str, uint *buf, uint len);
-	uint glk_get_line_stream_uni(strid_t str, uint *buf, uint len);
+	uint glk_get_buffer_stream_uni(strid_t str, uint32 *buf, uint len);
+	uint glk_get_line_stream_uni(strid_t str, uint32 *buf, uint len);
 
 	strid_t glk_stream_open_file_uni(frefid_t fileref, FileMode fmode, uint rock = 0);
-	strid_t glk_stream_open_memory_uni(uint *buf, uint buflen, FileMode fmode, uint rock = 0);
+	strid_t glk_stream_open_memory_uni(uint32 *buf, uint buflen, FileMode fmode, uint rock = 0);
 
 	void glk_request_char_event_uni(winid_t win);
-	void glk_request_line_event_uni(winid_t win, uint *buf,
-	                                uint maxlen, uint initlen);
+	void glk_request_line_event_uni(winid_t win, uint32 *buf, uint maxlen, uint initlen);
 
 	/** @}*/
 
 #ifdef GLK_MODULE_UNICODE_NORM
 
-	uint glk_buffer_canon_decompose_uni(uint *buf, uint len,
-	                                      uint numchars);
-	uint glk_buffer_canon_normalize_uni(uint *buf, uint len,
-	                                      uint numchars);
+	uint glk_buffer_canon_decompose_uni(uint32 *buf, uint len, uint numchars);
+	uint glk_buffer_canon_normalize_uni(uint32 *buf, uint len, uint numchars);
 
 #endif /* GLK_MODULE_UNICODE_NORM */
 
@@ -281,7 +274,7 @@ public:
 	 * Removes the specified string from the end of the output buffer, if
 	 * indeed it is there.
 	 */
-	void garglk_unput_string_uni(const uint *str);
+	void garglk_unput_string_uni(const uint32 *str);
 
 	void garglk_set_zcolors(uint fg, uint bg);
 	void garglk_set_zcolors_stream(strid_t str, uint fg, uint bg);

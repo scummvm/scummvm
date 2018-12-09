@@ -33,11 +33,11 @@ size_t strlen_uni(const uint32 *s) {
 	return len;
 }
 
-uint bufferChangeCase(uint *buf, uint len, uint numchars, BufferChangeCase destcase,
+uint bufferChangeCase(uint32 *buf, uint len, uint numchars, BufferChangeCase destcase,
                         BufferChangeCond cond, int changerest) {
 	uint ix, jx;
-	uint *outbuf;
-	uint *newoutbuf;
+	uint32 *outbuf;
+	uint32 *newoutbuf;
 	uint outcount;
 	int dest_block_rest = 0, dest_block_first = 0;
 	int dest_spec_rest = 0, dest_spec_first = 0;
@@ -74,7 +74,7 @@ uint bufferChangeCase(uint *buf, uint len, uint numchars, BufferChangeCase destc
 		uint *special;
 		uint *ptr;
 		uint speccount;
-		uint ch = buf[ix];
+		uint32 ch = buf[ix];
 
 		isfirst = (ix == 0);
 
@@ -121,11 +121,11 @@ uint bufferChangeCase(uint *buf, uint len, uint numchars, BufferChangeCase destc
 
 		// Now we have to allocate a new buffer, if we haven't already.
 		if (!newoutbuf) {
-			newoutbuf = new uint[len + 1];
+			newoutbuf = new uint32[len + 1];
 			if (!newoutbuf)
 				return 0;
 			if (outcount)
-				memcpy(newoutbuf, buf, outcount * sizeof(uint));
+				memcpy(newoutbuf, buf, outcount * sizeof(uint32));
 			outbuf = newoutbuf;
 		}
 

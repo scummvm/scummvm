@@ -28,7 +28,7 @@
 
 namespace Glk {
 
-TextGridWindow::TextGridWindow(Windows *windows, uint32 rock) : Window(windows, rock) {
+TextGridWindow::TextGridWindow(Windows *windows, uint rock) : Window(windows, rock) {
 	_type = wintype_TextGrid;
 	_width = _height = 0;
 	_curX = _curY = 0;
@@ -254,10 +254,10 @@ void TextGridWindow::requestLineEvent(char *buf, uint maxlen, uint initlen) {
 	}
 
 	if (_lineTerminatorsBase && _termCt) {
-		_lineTerminators = new uint[_termCt + 1];
+		_lineTerminators = new uint32[_termCt + 1];
 
 		if (_lineTerminators) {
-			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(uint));
+			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(uint32));
 			_lineTerminators[_termCt] = 0;
 		}
 	}
@@ -266,7 +266,7 @@ void TextGridWindow::requestLineEvent(char *buf, uint maxlen, uint initlen) {
 		_inArrayRock = (*g_vm->gli_register_arr)(buf, maxlen, "&+#!Cn");
 }
 
-void TextGridWindow::requestLineEventUni(uint *buf, uint maxlen, uint initlen) {
+void TextGridWindow::requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) {
 	if (_charRequest || _lineRequest || _charRequestUni || _lineRequestUni) {
 		warning("requestLineEventUni: window already has keyboard request");
 		return;
@@ -306,7 +306,7 @@ void TextGridWindow::requestLineEventUni(uint *buf, uint maxlen, uint initlen) {
 	}
 
 	if (_lineTerminatorsBase && _termCt) {
-		_lineTerminators = new uint[_termCt + 1];
+		_lineTerminators = new uint32[_termCt + 1];
 
 		if (_lineTerminators) {
 			memcpy(_lineTerminators, _lineTerminatorsBase, _termCt * sizeof(uint));
@@ -342,7 +342,7 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 
 	if (!unicode) {
 		for (ix = 0; ix < _inLen; ix++) {
-			uint ch = ln->_chars[_inOrgX + ix];
+			uint32 ch = ln->_chars[_inOrgX + ix];
 			if (ch > 0xff)
 				ch = '?';
 			((char *)inbuf)[ix] = (char)ch;
@@ -353,7 +353,7 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 		for (ix = 0; ix < _inLen; ix++)
 			((uint *)inbuf)[ix] = ln->_chars[_inOrgX + ix];
 		if (_echoStream)
-			_echoStream->echoLineUni((uint *)inbuf, _inLen);
+			_echoStream->echoLineUni((uint32 *)inbuf, _inLen);
 	}
 
 	_curY = _inOrgY + 1;
@@ -406,7 +406,7 @@ void TextGridWindow::acceptReadChar(uint arg) {
 	g_vm->_events->store(evtype_CharInput, this, key, 0);
 }
 
-void TextGridWindow::acceptLine(uint keycode) {
+void TextGridWindow::acceptLine(uint32 keycode) {
 	int ix;
 	void *inbuf;
 	int inmax;
@@ -430,7 +430,7 @@ void TextGridWindow::acceptLine(uint keycode) {
 		for (ix = 0; ix < _inLen; ix++)
 			((uint *)inbuf)[ix] = ln->_chars[_inOrgX + ix];
 		if (_echoStream)
-			_echoStream->echoLineUni((uint *)inbuf, _inLen);
+			_echoStream->echoLineUni((const uint32 *)inbuf, _inLen);
 	}
 
 	_curY = _inOrgY + 1;
@@ -458,7 +458,7 @@ void TextGridWindow::acceptLine(uint keycode) {
 		(*g_vm->gli_unregister_arr)(inbuf, inmax, unicode ? "&+#!Iu" : "&+#!Cn", inarrayrock);
 }
 
-void TextGridWindow::acceptReadLine(uint arg) {
+void TextGridWindow::acceptReadLine(uint32 arg) {
 	int ix;
 	TextGridRow *ln = &(_lines[_inOrgY]);
 
@@ -466,7 +466,7 @@ void TextGridWindow::acceptReadLine(uint arg) {
 		return;
 
 	if (_lineTerminators && checkTerminator(arg)) {
-		uint *cx;
+		const uint32 *cx;
 		for (cx = _lineTerminators; *cx; cx++) {
 			if (*cx == arg) {
 				acceptLine(arg);

@@ -39,7 +39,7 @@ class TextBufferWindow : public Window, Speech {
 	 * Structure for a row within the window
 	 */
 	struct TextBufferRow {
-		uint _chars[TBLINELEN];
+		uint32 _chars[TBLINELEN];
 		Attributes _attrs[TBLINELEN];
 		int _len, _newLine;
 		bool _dirty, _repaint;
@@ -66,12 +66,12 @@ private:
 	/**
 	 * @remarks Only for input text
 	 */
-	void putTextUni(const uint *buf, int len, int pos, int oldlen);
+	void putTextUni(const uint32 *buf, int len, int pos, int oldlen);
 
 	/**
 	 * Return or enter, during line input. Ends line input.
 	 */
-	void acceptLine(uint keycode);
+	void acceptLine(uint32 keycode);
 
 	/**
 	 * Return true if a following quotation mark should be an opening mark,
@@ -79,7 +79,7 @@ private:
 	 * appear following an open parenthesis, open square bracket, or
 	 * whitespace.
 	 */
-	bool leftquote(uint c);
+	bool leftquote(uint32 c);
 
 	/**
 	 * Mark a given text row as modified
@@ -88,7 +88,7 @@ private:
 
 	void scrollOneLine(bool forced);
 	void scrollResize();
-	int calcWidth(uint *chars, Attributes *attrs, int startchar, int numchars, int spw);
+	int calcWidth(uint32 *chars, Attributes *attrs, int startchar, int numchars, int spw);
 public:
 	int _width, _height;
 	int _spaced;
@@ -98,8 +98,8 @@ public:
 	int _scrollBack;
 
 	int _numChars;        ///< number of chars in last line: lines[0]
-	uint *_chars;       ///< alias to lines[0].chars
-	Attributes *_attrs;  ///< alias to lines[0].attrs
+	uint32 *_chars;       ///< alias to lines[0].chars
+	Attributes *_attrs;   ///< alias to lines[0].attrs
 
 	///< adjust margins temporarily for images
 	int _ladjw;
@@ -132,13 +132,13 @@ public:
 	WindowStyle _styles[style_NUMSTYLES];
 
 	// for copy selection
-	uint *_copyBuf;
+	uint32 *_copyBuf;
 	int _copyPos;
 public:
 	/**
 	 * Constructor
 	 */
-	TextBufferWindow(Windows *windows, uint32 rock);
+	TextBufferWindow(Windows *windows, uint rock);
 
 	/**
 	 * Destructor
@@ -162,7 +162,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint ch) override;
+	virtual void putCharUni(uint32 ch) override;
 
 	/**
 	 * Unput a unicode character
@@ -187,7 +187,7 @@ public:
 	/**
 	 * Prepare for inputing a line
 	 */
-	virtual void requestLineEventUni(uint *buf, uint maxlen, uint initlen) override;
+	virtual void requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) override;
 
 	/**
 	 * Cancel an input line event
@@ -206,7 +206,7 @@ public:
 	 */
 	virtual void redraw() override;
 
-	virtual void acceptReadLine(uint arg) override;
+	virtual void acceptReadLine(uint32 arg) override;
 
 	virtual void acceptReadChar(uint arg) override;
 

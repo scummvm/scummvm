@@ -425,7 +425,7 @@ void GlkInterface::packspaces(zchar *src, zchar *dst) {
 
 void GlkInterface::smartstatusline() {
 	zchar packed[256];
-	uint buf[256];
+	uint32 buf[256];
 	zchar *a, *b, *c, *d;
 	int roomlen, scorelen, scoreofs;
 	int len, tmp;
