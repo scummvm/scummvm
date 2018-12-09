@@ -28,8 +28,8 @@
 
 namespace Glk {
 
-typedef uint32 glui32;
-typedef int32 glsi32;
+typedef uint glui32;
+typedef int glsi32;
 class Window;
 
 /**

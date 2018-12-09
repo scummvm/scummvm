@@ -49,7 +49,7 @@ GlkInterface::~GlkInterface() {
 }
 
 void GlkInterface::initialize() {
-	uint width, height;
+	glui32 width, height;
 
 	/*
 	 * Init glk stuff
@@ -425,7 +425,7 @@ void GlkInterface::packspaces(zchar *src, zchar *dst) {
 
 void GlkInterface::smartstatusline() {
 	zchar packed[256];
-	zchar buf[256];
+	glui32 buf[256];
 	zchar *a, *b, *c, *d;
 	int roomlen, scorelen, scoreofs;
 	int len, tmp;
@@ -478,7 +478,7 @@ void GlkInterface::gos_cancel_pending_line() {
 }
 
 void GlkInterface::showBeyondZorkTitle() {
-	uint winW, winH, imgW, imgH;
+	glui32 winW, winH, imgW, imgH;
 	winid_t win = glk_window_open(0, 0, 0, wintype_Graphics, 0);
 	glk_window_get_size(win, &winW, &winH);
 
