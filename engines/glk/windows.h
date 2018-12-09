@@ -430,7 +430,7 @@ public:
 	/**
 	 * Write a character
 	 */
-	virtual void putCharUni(uint32 ch) {}
+	virtual void putCharUni(glui32 ch) {}
 
 	/**
 	 * Unput a unicode character

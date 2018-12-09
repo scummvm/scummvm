@@ -181,7 +181,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) = 0;
+	virtual void putCharUni(glui32 ch) = 0;
 
 	/**
 	 * Write a buffer
@@ -191,7 +191,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) = 0;
+	virtual void putBufferUni(const glui32 *buf, size_t len) = 0;
 
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
@@ -206,7 +206,7 @@ public:
 	/**
 	 * Send a line to the stream with a trailing newline
 	 */
-	void echoLine(char *buf, glui32 len) {
+	void echoLine(const char *buf, glui32 len) {
 		putBuffer(buf, len);
 		putChar('\n');
 	};
@@ -214,7 +214,7 @@ public:
 	/**
 	 * Send a line to the stream with a trailing newline
 	 */
-	void echoLineUni(glui32 *buf, glui32 len) {
+	void echoLineUni(const glui32 *buf, glui32 len) {
 		putBufferUni(buf, len);
 		putCharUni('\n');
 	}
@@ -327,7 +327,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) override;
+	virtual void putCharUni(glui32 ch) override;
 
 	/**
 	 * Write a buffer
@@ -337,7 +337,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+	virtual void putBufferUni(const glui32 *buf, size_t len) override;
 
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
@@ -391,7 +391,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) override;
+	virtual void putCharUni(glui32 ch) override;
 
 	/**
 	 * Write a buffer
@@ -401,7 +401,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+	virtual void putBufferUni(const glui32 *buf, size_t len) override;
 
 	virtual glui32 getPosition() const override;
 
@@ -493,7 +493,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) override;
+	virtual void putCharUni(glui32 ch) override;
 
 	/**
 	 * Write a buffer
@@ -503,7 +503,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+	virtual void putBufferUni(const glui32 *buf, size_t len) override;
 
 	virtual glui32 getPosition() const override;
 

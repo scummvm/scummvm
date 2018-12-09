@@ -162,7 +162,7 @@ public:
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) override;
+	virtual void putCharUni(glui32 ch) override;
 
 	/**
 	 * Unput a unicode character
