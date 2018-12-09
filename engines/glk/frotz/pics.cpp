@@ -151,7 +151,7 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String
 				f.read(&palette[0], palette.size());
 
 				Common::SeekableReadStream *src = f.readStream(e._dataSize);
-				dest = decoder.decode(*src, e._flags, palette, MCGA, e._width, e._height);
+				dest = decoder.decode(*src, e._flags, palette, kMCGA, e._width, e._height);
 				delete src;
 			} else {
 				byte *rect = (byte *)malloc(2 * sizeof(uint16));

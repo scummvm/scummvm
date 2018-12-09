@@ -67,17 +67,17 @@ Common::SeekableReadStream *PictureDecoder::decode(Common::ReadStream &src, uint
 	 */
 
 	switch (display) {
-	case CGA:
+	case kCGA:
 		colour_shift = -2;
 		break;
-	case EGA:
+	case kEGA:
 		colour_shift = 0;
 		break;
-	case MCGA:
+	case kMCGA:
 		colour_shift = 32;
 		first_colour = 34;
 		break;
-	case AMIGA:
+	case kAmiga:
 		colour_shift = -1;
 		first_colour = 65;
 		break;
@@ -221,7 +221,7 @@ reverse_buffer:
 	 * respectively. The pixel may have to be painted several times if the scaling
 	 * factor is greater than one.
 	 */
-    if (display == CGA && transparent == 0xff) {
+    if (display == kCGA && transparent == 0xff) {
 		// TODO
     } else {
 		byte v = code;
@@ -229,7 +229,7 @@ reverse_buffer:
 		if (v != transparent) {
 			v += colour_shift;
 
-			if (display != MCGA) {
+			if (display != kMCGA) {
 				// TODO
 			} else {
 				// position shift
@@ -237,7 +237,7 @@ reverse_buffer:
 
 			out.writeByte(v);
 
-			if (display == AMIGA) {
+			if (display == kAmiga) {
 				// TODO
 			}
 		}

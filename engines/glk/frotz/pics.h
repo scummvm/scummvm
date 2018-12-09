@@ -30,12 +30,12 @@ namespace Glk {
 namespace Frotz {
 
 enum PicturesMode {
-	MONO  = 0,
-	TEXT  = 1,
-	CGA   = 2,
-	MCGA  = 3,
-	EGA   = 4,
-	AMIGA = 5
+	kMONO  = 0,
+	kTEXT  = 1,
+	kCGA   = 2,
+	kMCGA  = 3,
+	kEGA   = 4,
+	kAmiga = 5
 };
 
 /**
