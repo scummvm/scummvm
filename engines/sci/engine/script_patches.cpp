@@ -8446,6 +8446,30 @@ static const uint16 qfg4CopyProtectionPatch[] = {
 	PATCH_END
 };
 
+// Rooms 622 and 623 play an extra door sound when entering. They both
+// delegate to script 645. It schedules sEnter, which indeed has an extra
+// sound. The CD edition removed the line. We remove it, too.
+//
+// Applies to at least: English floppy, German floppy
+// Responsible method: sEnter::changeState(4) in script 645
+// Fixes bug: #10827
+static const uint16 qfg4DoubleDoorSoundSignature[] = {
+	0x35, 0x04,                         // ldi 4d (state 4)
+	SIG_ADDTOOFFSET(+3),                // ...
+	SIG_MAGICDWORD,
+	0x39, 0x33,                         // pushi play
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x0376),           // lofsa doorSound
+	0x4a, SIG_UINT16(0x0004),           // send 04
+	SIG_END
+};
+
+static const uint16 qfg4DoubleDoorSoundPatch[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x33, 0x07,                         // jmp 7d (skip waste bytes)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -8470,6 +8494,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
+	{  true,   645, "fix extraneous door sound in the castle",     1, qfg4DoubleDoorSoundSignature,  qfg4DoubleDoorSoundPatch },
 	{  false,  663, "CD: fix crest bookshelf",                     1, qfg4CrestBookshelfCDSignature, qfg4CrestBookshelfCDPatch },
 	{  false,  663, "Floppy: fix crest bookshelf",                 1, qfg4CrestBookshelfFloppySignature,   qfg4CrestBookshelfFloppyPatch },
 	{  true,   663, "CD/Floppy: fix crest bookshelf motion",       1, qfg4CrestBookshelfMotionSignature,   qfg4CrestBookshelfMotionPatch },
