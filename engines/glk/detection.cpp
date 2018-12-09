@@ -23,6 +23,8 @@
 #include "glk/glk.h"
 #include "glk/frotz/detection.h"
 #include "glk/frotz/frotz.h"
+#include "glk/glulxe/detection.h"
+#include "glk/glulxe/glulxe.h"
 #include "glk/scott/detection.h"
 #include "glk/scott/scott.h"
 #include "glk/tads/detection.h"
@@ -132,9 +134,11 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	gameDesc._md5 = Common::computeStreamMD5AsString(f, 5000);
 	f.close();
 
-	// Correct the correct engine
+	// Create the correct engine
 	if (Glk::Frotz::FrotzMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
 		*engine = new Glk::Frotz::Frotz(syst, gameDesc);
+	} else if (Glk::Glulxe::GlulxeMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
+		*engine = new Glk::Glulxe::Glulxe(syst, gameDesc);
 	} else if (Glk::Scott::ScottMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
 		*engine = new Glk::Scott::Scott(syst, gameDesc);
 	} else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str())).description) {
@@ -174,6 +178,7 @@ Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) con
 PlainGameList GlkMetaEngine::getSupportedGames() const {
 	PlainGameList list;
 	Glk::Frotz::FrotzMetaEngine::getSupportedGames(list);
+	Glk::Glulxe::GlulxeMetaEngine::getSupportedGames(list);
 	Glk::Scott::ScottMetaEngine::getSupportedGames(list);
 	Glk::TADS::TADSMetaEngine::getSupportedGames(list);
 
@@ -184,6 +189,9 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 	PlainGameDescriptor gd;
 
 	gd = Glk::Frotz::FrotzMetaEngine::findGame(gameId);
+	if (gd.description) return gd;
+
+	gd = Glk::Glulxe::GlulxeMetaEngine::findGame(gameId);
 	if (gd.description) return gd;
 
 	gd = Glk::Scott::ScottMetaEngine::findGame(gameId);
@@ -198,6 +206,7 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	DetectedGames detectedGames;
 	Glk::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames);
+	Glk::Glulxe::GlulxeMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
 	Glk::TADS::TADSMetaEngine::detectGames(fslist, detectedGames);
 

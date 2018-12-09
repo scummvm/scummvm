@@ -171,6 +171,7 @@ Common::ErrorCode Blorb::load() {
 
 			if (
 				(_interpType == INTERPRETER_FROTZ && type == "ZCOD") ||
+				(_interpType == INTERPRETER_GLULXE && type == "GLUL") ||
 				(_interpType == INTERPRETER_TADS2 && type == "TAD2") ||
 				(_interpType == INTERPRETER_TADS3 && type == "TAD3") ||
 				(_interpType == INTERPRETER_HUGO && type == "HUGO")
