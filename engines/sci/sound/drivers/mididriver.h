@@ -24,6 +24,7 @@
 #define SCI_SFX_SOFTSEQ_MIDIDRIVER_H
 
 #include "sci/sci.h"
+#include "sci/util.h"
 #include "audio/mididrv.h"
 #include "common/error.h"
 
@@ -106,8 +107,6 @@ public:
 		return _driver ? _driver->property(MIDI_PROP_MASTER_VOLUME, 0xffff) : 0;
 	}
 
-	virtual void onNewSound() {}
-
 	// Returns the current reverb, or -1 when no reverb is active
 	int8 getReverb() const { return _reverb; }
 	// Sets the current reverb, used mainly in MT-32
@@ -120,6 +119,12 @@ public:
 				_driver->send(0xb0 + i, SCI_MIDI_CHANNEL_NOTES_OFF, 0);
 		}
 	}
+
+	// Prepares the driver for the playback of SCI0 midi tracks.
+	// The main purpose is the assignment of voices ("hardware" sound channels) to the 16 midi parts.
+	// This is basically the predecessor of the 0x4B midi event.
+	// Some drivers also do other things in here.
+	virtual void initTrack(SciSpan<const byte> &) {}
 
 protected:
 	SciVersion _version;

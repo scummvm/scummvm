@@ -158,10 +158,10 @@ public:
 	int getFirstChannel() const override;
 	int getLastChannel() const override;
 	void setVolume(byte volume) override;
-	virtual void onNewSound() override;
 	int getVolume() override;
 	void setReverb(int8 reverb) override;
 	void playSwitch(bool play) override;
+	virtual void initTrack(SciSpan<const byte> &) override;
 
 private:
 	bool isMt32GmPatch(const SciSpan<const byte> &data);
@@ -479,14 +479,6 @@ int MidiPlayer_Midi::getVolume() {
 	return _masterVolume;
 }
 
-void MidiPlayer_Midi::onNewSound() {
-	if (_defaultReverb >= 0)
-		// SCI0 in combination with MT-32 requires a reset of the reverb to
-		// the default value that is present in either the MT-32 patch data
-		// or MT32.DRV itself.
-		setReverb(_defaultReverb);
-}
-
 void MidiPlayer_Midi::setReverb(int8 reverb) {
 	assert(reverb < kReverbConfigNr);
 
@@ -505,6 +497,43 @@ void MidiPlayer_Midi::playSwitch(bool play) {
 		for (uint i = 1; i < 10; i++)
 			_driver->send(0xb0 | i, 7, 0);
 	}
+}
+
+void MidiPlayer_Midi::initTrack(SciSpan<const byte> &header) {
+	if (_version > SCI_VERSION_0_LATE)
+		return;
+
+	if (_defaultReverb >= 0)
+		// SCI0 in combination with MT-32 requires a reset of the reverb to
+		// the default value that is present in either the MT-32 patch data
+		// or MT32.DRV itself.
+		setReverb(_defaultReverb);
+
+	/* TODO: I have no idea what SCI_VERSION_0_EARLY games do here.
+	Therefore the extra code is restricted to SCI_VERSION_0_LATE for now.*/
+	if (_version == SCI_VERSION_0_EARLY)
+		return;
+
+	uint8 caps = header.getInt8At(0);
+	if (caps != 0 && caps != 2)
+		return;
+
+	uint8 readPos = 3;
+	byte msg[9];
+	uint8 flags = 0;
+
+	for (int i = 1; i < 9; ++i) {
+		readPos++;
+		flags = header.getInt8At(readPos++);
+		msg[i - 1] = (flags & 1) ? i : 0x10;
+	}
+
+	flags = header.getInt8At(readPos);
+	msg[8] = (flags & 0x80) ? 9 : 0x10;
+
+	// assign channels
+	Sci::SciSpan<const byte> s(msg, 9);
+	sendMt32SysEx(0x10000D, s, false);
 }
 
 bool MidiPlayer_Midi::isMt32GmPatch(const SciSpan<const byte> &data) {
