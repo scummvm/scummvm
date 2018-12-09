@@ -180,6 +180,7 @@ _no_undefined_var_template=no
 _no_pragma_pack=no
 _bink=yes
 _cloud=auto
+_convert_readme=no
 # Default vkeybd/keymapper/eventrec options
 _vkeybd=no
 _keymapper=no
@@ -224,6 +225,8 @@ _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
 _tainted_build=no
+_pandocpath="$PATH"
+PANDOCFLAGS=""
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -1005,6 +1008,7 @@ Optional Features:
   --disable-taskbar        don't build support for taskbar and launcher integration
   --disable-cloud          don't build cloud support
   --disable-system-dialogs don't build support for system dialogs
+  --enable-pandoc          convert README.md to README
   --enable-vkeybd          build virtual keyboard support
   --enable-keymapper       build key mapper support
   --enable-eventrecorder   enable event recording functionality
@@ -1180,6 +1184,8 @@ for ac_option in $@; do
 	--disable-osx-dock-plugin) _osxdockplugin=no;;
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
+	--enable-pandoc)          _convert_readme=yes;;
+	--disable-pandoc)         _convert_readme=no;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-mpeg2)          _mpeg2=no       ;;
 	--enable-a52)             _a52=yes        ;;
@@ -5070,6 +5076,33 @@ fi
 define_in_config_if_yes $_nasm 'USE_NASM'
 
 #
+# Check for pandoc
+#
+if test "$_convert_readme" = yes ; then
+  echocheck "pandoc"
+
+  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
+
+  for path_dir in $_pandocpath; do
+    if test -x "$path_dir/pandoc$NATIVEEXEEXT" ; then
+      PANDOC="$path_dir/pandoc$NATIVEEXEEXT"
+      PANDOCFLAGS="-f gfm -t plain -o README README.md"
+      break
+    fi
+  done
+
+	IFS="$ac_save_ifs"
+
+  if ! test "$PANDOC" ; then
+    _convert_readme = no
+  fi
+
+fi
+
+echo $_convert_readme
+define_in_config_if_yes $_convert_readme 'USE_PANDOC'
+
+#
 # Enable vkeybd / keymapper / event recorder
 #
 define_in_config_if_yes $_vkeybd 'ENABLE_VKEYBD'
@@ -5545,6 +5578,7 @@ EXEPRE := $HOSTEXEPRE
 EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
+PANDOCFLAGS := $PANDOCFLAGS
 ZLIB_LIBS := $ZLIB_LIBS
 ZLIB_CFLAGS := $ZLIB_CFLAGS
 
