@@ -90,7 +90,7 @@ void ActionText::start() {
 		_txtWnd->move(_xLeft, _yTop);
 		_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
 
-		if (_actor->getPage()->getGame()->getGameDesc().language == Common::EN_ANY)
+		if (_actor->getPage()->getGame()->getLanguage() == Common::EN_ANY)
 			_txtWnd->appendText(str, font);
 	} else {
 		director->addTextAction(this);

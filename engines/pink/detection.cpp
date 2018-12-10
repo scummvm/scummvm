@@ -20,9 +20,19 @@
  *
  */
 
-#include "gui/EventRecorder.h"
+#include "common/system.h"
+
+#include "engines/advancedDetector.h"
 
 #include "pink/pink.h"
+
+namespace Pink {
+
+Common::Language PinkEngine::getLanguage() const {
+	return _desc->language;
+}
+
+} // End of Namespace Pink
 
 static const PlainGameDescriptor pinkGames[] = {
 	{"peril", "The Pink Panther: Passport to Peril"},

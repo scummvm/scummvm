@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "graphics/thumbnail.h"
 
 #include "pink/pink.h"
