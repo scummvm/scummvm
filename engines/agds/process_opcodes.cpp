@@ -920,14 +920,14 @@ void Process::enableUser() {
 }
 
 void Process::addMouseArea() {
-	Common::String arg3 = popString();
-	Common::String arg2 = popString();
-	Common::String arg1 = popString();
+	Common::String onLeave = popString();
+	Common::String onEnter = popString();
+	Common::String name = popString();
 
-	debug("addMouseArea (region: %s) %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
-	Region *region = _engine->loadRegion(arg1);
+	debug("addMouseArea (region: %s) %s %s", name.c_str(), onEnter.c_str(), onLeave.c_str());
+	Region *region = _engine->loadRegion(name);
 
-	int value = _engine->_mouseMap.add(MouseRegion(region, arg2, arg3));
+	int value = _engine->_mouseMap.add(MouseRegion(region, onEnter, onLeave));
 	debug("\tmouse area id -> %d", value);
 	push(value);
 }
