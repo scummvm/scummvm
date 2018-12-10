@@ -27,7 +27,6 @@
 #include "common/random.h"
 #include "common/system.h"
 #include "common/serializer.h"
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "glk/glk_types.h"
 #include "glk/streams.h"
