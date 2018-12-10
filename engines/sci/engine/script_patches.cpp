@@ -8503,6 +8503,58 @@ static const uint16 qfg4CopyProtectionPatch[] = {
 	PATCH_END
 };
 
+// In the graveyard rescuing Igor, ropes are briefly obscured by crypt pillars
+// in the background Pic. The Pic assigns a priority to the pillars for depth.
+// Ropes are initialized without priority. Then there's a setPri() call.
+//
+// The floppy edition's Actor::doit() readily calls UpdateScreenItem(). Thus it
+// promptly responds to the new priority, bringing the ropes to the front.
+//
+// The CD edition changed Actor to require a bit flag on the "signal" property
+// before it would call UpdateScreenItem(). So the CD edition graphics don't
+// update until much later, when the ropes begin an animation.
+//
+// We patch the heap for script 500 (the graveyard) to give rope1 and rope2
+// that "signal" bit as soon as they're created. This'll be toggled with
+// enablePatch() below to only apply to the CD edition.
+//
+// Applies to at least: English CD
+// Responsible method: Actor::doit() in script 64998
+// Fixes bug: #10751
+static const uint16 qfg4GraveyardRopeSignature1[] = {
+	SIG_MAGICDWORD,                     // (rope1 properties)
+	SIG_UINT16(0x0064),                 // x = 100
+	SIG_UINT16(0xfff6),                 // y = -10
+	SIG_ADDTOOFFSET(+24),               // ...
+	SIG_UINT16(0x01f6),                 // view = 502
+	SIG_ADDTOOFFSET(+8),                // ...
+	SIG_UINT16(0x6000),                 // signal = 0x6000
+	SIG_END
+};
+
+static const uint16 qfg4GraveyardRopePatch1[] = {
+	PATCH_ADDTOOFFSET(+38),
+	PATCH_UINT16(0x6001),               // signal = 0x6001
+	PATCH_END
+};
+
+static const uint16 qfg4GraveyardRopeSignature2[] = {
+	SIG_MAGICDWORD,                     // (rope2 properties)
+	SIG_UINT16(0x007f),                 // x = 127
+	SIG_UINT16(0xfffb),                 // y = -5
+	SIG_ADDTOOFFSET(+24),               // ...
+	SIG_UINT16(0x01f6),                 // view = 502
+	SIG_ADDTOOFFSET(+8),                // ...
+	SIG_UINT16(0x6000),                 // signal = 0x6000
+	SIG_END
+};
+
+static const uint16 qfg4GraveyardRopePatch2[] = {
+	PATCH_ADDTOOFFSET(+38),
+	PATCH_UINT16(0x6001),               // signal = 0x6001
+	PATCH_END
+};
+  
 // Rooms 622 and 623 play an extra door sound when entering. They both
 // delegate to script 645. It schedules sEnter, which indeed has an extra
 // sound. The CD edition removed the line. We remove it, too.
@@ -8543,6 +8595,8 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   370, "Floppy: fix copy protection",                 1, qfg4CopyProtectionSignature,   qfg4CopyProtectionPatch },
 	{  true,   440, "fix setLooper calls (1/2)",                   1, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   470, "fix Magda room disposal",                     1, qfg4MagdaDisposalSignature,    qfg4MagdaDisposalPatch },
+	{  false,  500, "CD: fix rope during Igor rescue (1/2)",       1, qfg4GraveyardRopeSignature1,   qfg4GraveyardRopePatch1 },
+	{  false,  500, "CD: fix rope during Igor rescue (2/2)",       1, qfg4GraveyardRopeSignature2,   qfg4GraveyardRopePatch2 },
 	{  true,   530, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   535, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   541, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
@@ -10387,8 +10441,12 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				}
 				break;
 			case GID_QFG4:
-				// Chooses between similar signatures that patch with a different lofsa address
 				if (g_sci->isCD()) {
+					// Floppy doesn't need this
+					enablePatch(signatureTable, "CD: fix rope during Igor rescue (1/2)");
+					enablePatch(signatureTable, "CD: fix rope during Igor rescue (2/2)");
+
+					// Similar signatures that patch with a different lofsa address
 					enablePatch(signatureTable, "CD: fix crest bookshelf");
 				} else {
 					enablePatch(signatureTable, "Floppy: fix crest bookshelf");
