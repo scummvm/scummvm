@@ -149,7 +149,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "MADS (c) Microprose";
+		return "MADS (C) Microprose";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

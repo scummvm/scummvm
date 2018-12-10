@@ -118,7 +118,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Xeen (c) 1992-1993 New World Computing, Inc.";
+		return "Xeen (C) 1992-1993 New World Computing, Inc.";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

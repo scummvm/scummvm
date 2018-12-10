@@ -111,7 +111,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Hopkins FBI (c) 1997-2003 MP Entertainment";
+		return "Hopkins FBI (C) 1997-2003 MP Entertainment";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
