@@ -76,7 +76,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "DreamWeb engine";
+		return "DreamWeb";
 	}
 
 	virtual const char *getOriginalCopyright() const {

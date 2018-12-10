@@ -70,7 +70,7 @@ public:
 	VideoPlayer(EventManager *eventMan, Video::VideoDecoder *decoder = nullptr) :
 		_eventMan(eventMan),
 		_decoder(decoder)
-#ifdef USE_RGB_MODE
+#ifdef USE_RGB_COLOR
 		,
 		_hqVideoMode(false)
 #endif

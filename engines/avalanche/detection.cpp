@@ -83,7 +83,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const {
-		return "Avalanche Engine Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.";
+		return "Avalanche (C) 1994-1995 Mike, Mark and Thomas Thurman.";
 	}
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;

@@ -311,7 +311,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Star Trek Engine";
+		return "Star Trek";
 	}
 
 	virtual const char *getOriginalCopyright() const {

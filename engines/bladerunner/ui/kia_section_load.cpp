@@ -35,8 +35,6 @@
 #include "common/error.h"
 #include "common/system.h"
 
-#include "engines/savestate.h"
-
 namespace BladeRunner {
 
 KIASectionLoad::KIASectionLoad(BladeRunnerEngine *vm) : KIASectionBase(vm) {
@@ -56,34 +54,35 @@ void KIASectionLoad::open() {
 	_scrollBox->show();
 	_scrollBox->clearLines();
 
-	SaveStateList saveList = SaveFileManager::list(_vm->getTargetName());
+	_saveList = SaveFileManager::list(_vm->getTargetName());
 
-	_saveSlotMax = -1;
-
-	if (!saveList.empty()) {
+	if (!_saveList.empty()) {
 		_scrollBox->addLine(_vm->_textOptions->getText(36), -1, 4); // Load game:
-		for (Common::Array<SaveStateDescriptor>::iterator save = saveList.begin(); save != saveList.end(); save++) {
-			_scrollBox->addLine(save->getDescription(), save->getSaveSlot(), 0);
-			_saveSlotMax = MAX(_saveSlotMax, save->getSaveSlot());
+		for (uint i = 0; i < _saveList.size(); ++i) {
+			_scrollBox->addLine(_saveList[i].getDescription(), i, 0);
 		}
 		_scrollBox->addLine("", -1, 4);
 	}
 
+	_newGameEasyLineId = _saveList.size();
+	_newGameMediumLineId = _saveList.size() + 1;
+	_newGameHardLineId = _saveList.size() + 2;
 
 	_scrollBox->addLine(_vm->_textOptions->getText(37), -1, 4); // New game:
-	_scrollBox->addLine(_vm->_textOptions->getText(20), _saveSlotMax + 1, 0); // Easy
-	_scrollBox->addLine(_vm->_textOptions->getText(28), _saveSlotMax + 2, 0); // Medium
-	_scrollBox->addLine(_vm->_textOptions->getText(29), _saveSlotMax + 3, 0); // Hard
+	_scrollBox->addLine(_vm->_textOptions->getText(20), _newGameEasyLineId, 0); // Easy
+	_scrollBox->addLine(_vm->_textOptions->getText(28), _newGameMediumLineId, 0); // Medium
+	_scrollBox->addLine(_vm->_textOptions->getText(29), _newGameHardLineId, 0); // Hard
 
-	_hoveredSaveSlot = -1;
+	_hoveredLineId = -1;
 	_timeLast = _vm->getTotalPlayTime();
 	_timeLeft = 800;
 }
 
 void KIASectionLoad::close() {
 	_scrollBox->hide();
-
 	_vm->_kia->playerReset();
+
+	_saveList.clear();
 }
 
 void KIASectionLoad::draw(Graphics::Surface &surface){
@@ -91,12 +90,12 @@ void KIASectionLoad::draw(Graphics::Surface &surface){
 
 	_uiContainer->draw(surface);
 
-	int selectedSaveSlot = _scrollBox->getSelectedLineData();
+	int selectedLineId = _scrollBox->getSelectedLineData();
 
-	if (_hoveredSaveSlot != selectedSaveSlot) {
-		if (selectedSaveSlot >= 0) {
+	if (_hoveredLineId != selectedLineId) {
+		if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size()) {
 			if (_timeLeft == 0) {
-				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), selectedSaveSlot);
+				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), selectedLineId);
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
 					_vm->_kia->playImage(*thumbnail);
@@ -106,15 +105,15 @@ void KIASectionLoad::draw(Graphics::Surface &surface){
 			_vm->_kia->playerReset();
 			_timeLeft = 800;
 		}
-		_hoveredSaveSlot = selectedSaveSlot;
+		_hoveredLineId = selectedLineId;
 	}
 
 	uint32 now = _vm->getTotalPlayTime();
-	if (selectedSaveSlot >= 0) {
+	if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size()) {
 		if (_timeLeft) {
 			uint32 timeDiff = now - _timeLast;
 			if (timeDiff >= _timeLeft) {
-				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), selectedSaveSlot);
+				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), _saveList[selectedLineId].getSaveSlot());
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
 					_vm->_kia->playImage(*thumbnail);
@@ -144,11 +143,11 @@ void KIASectionLoad::scrollBoxCallback(void *callbackData, void *source, int lin
 	KIASectionLoad *self = (KIASectionLoad *)callbackData;
 
 	if (mouseButton == 0 && source == self->_scrollBox && lineData >= 0) {
-		if (lineData == self->_saveSlotMax + 1) {
+		if (lineData == self->_newGameEasyLineId) {
 			self->_vm->newGame(0);
-		} else if (lineData == self->_saveSlotMax + 2) {
+		} else if (lineData == self->_newGameMediumLineId) {
 			self->_vm->newGame(1);
-		} else if (lineData == self->_saveSlotMax + 3) {
+		} else if (lineData == self->_newGameHardLineId) {
 			self->_vm->newGame(2);
 		} else {
 			self->_vm->loadGameState(lineData);

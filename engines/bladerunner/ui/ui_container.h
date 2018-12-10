@@ -43,6 +43,7 @@ public:
 	void handleMouseDown(bool alternateButton);
 	void handleMouseUp(bool alternateButton);
 	void handleKeyUp(const Common::KeyState &kbd);
+	void handleKeyDown(const Common::KeyState &kbd);
 
 	void add(UIComponent *component);
 	void clear();

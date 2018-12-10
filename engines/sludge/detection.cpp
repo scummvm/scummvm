@@ -84,11 +84,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Sludge Engine";
+		return "Sludge";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Copyright (C) 2000-2014 Hungry Software and contributors";
+		return "Sludge (C) 2000-2014 Hungry Software and contributors";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

@@ -121,6 +121,14 @@ ScummVM Team
     Fullpipe:
        Eugene Sandulenko
 
+    ScummGlk:
+       Paul Gilbert
+       Tor Andersson                - GarGlk library
+       Stefan Jokisch               - Frotz interpreter
+       Andrew Plotkin               - Glulxe interpreter
+       Alan Cox                     - ScottFree interpreter
+       Michael J. Roberts           - TADS interpreter
+
     Gnap:
        Arnaud Boutonne
        Benjamin Haisch

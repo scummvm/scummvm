@@ -499,7 +499,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Queen";
+		return "Flight of the Amazon Queen";
 	}
 
 	virtual const char *getOriginalCopyright() const {

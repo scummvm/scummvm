@@ -210,11 +210,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Toltecs Engine";
+		return "3 Skulls of the Toltecs";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Toltecs Engine Revistronic (C) 1996";
+		return "3 Skulls of the Toltecs (C) Revistronic 1996";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

@@ -24,6 +24,7 @@
 #include "common/winexe_pe.h"
 #include "common/config-manager.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
@@ -40,7 +41,7 @@ namespace Pink {
 
 PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	: Engine(system), _console(nullptr), _rnd("pink"),
-	_desc(*desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
+	_desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
 	_module(nullptr), _director(nullptr), _pdaMgr(this) {
 
 	DebugMan.addDebugChannel(kPinkDebugGeneral, "general", "General issues");
@@ -300,7 +301,7 @@ void PinkEngine::pauseEngineIntern(bool pause) {
 }
 
 bool PinkEngine::isPeril() {
-	return !strcmp(_desc.gameId, kPeril);
+	return !strcmp(_desc->gameId, kPeril);
 }
 
 }

@@ -344,11 +344,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Drascula";
+		return "Drascula: The Vampire Strikes Back";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Drascula Engine (C) 2000 Alcachofa Soft, (C) 1996 Digital Dreams Multimedia, (C) 1994 Emilio de Paz";
+		return "Drascula: The Vampire Strikes Back (C) 2000 Alcachofa Soft, (C) 1996 Digital Dreams Multimedia, (C) 1994 Emilio de Paz";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;

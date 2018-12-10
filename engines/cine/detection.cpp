@@ -89,11 +89,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Cine";
+		return "Cinematique evo 1";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Future Wars & Operation Stealth (C) Delphine Software";
+		return "Cinematique evo 1 (C) Delphine Software";
 	}
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {

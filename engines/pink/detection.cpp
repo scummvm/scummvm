@@ -20,9 +20,19 @@
  *
  */
 
-#include "gui/EventRecorder.h"
+#include "common/system.h"
+
+#include "engines/advancedDetector.h"
 
 #include "pink/pink.h"
+
+namespace Pink {
+
+Common::Language PinkEngine::getLanguage() const {
+	return _desc->language;
+}
+
+} // End of Namespace Pink
 
 static const PlainGameDescriptor pinkGames[] = {
 	{"peril", "The Pink Panther: Passport to Peril"},
@@ -47,11 +57,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Pink Panther Engine";
+		return "Pink Panther";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Pink Panther Engine (C) Wanderlust Interactive";
+		return "Pink Panther (C) Wanderlust Interactive";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

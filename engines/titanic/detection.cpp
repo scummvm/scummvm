@@ -63,11 +63,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Titanic Engine";
+		return "Starship Titanic";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Titanic Engine (c) The Digital Village";
+		return "Starship Titanic (C) The Digital Village";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

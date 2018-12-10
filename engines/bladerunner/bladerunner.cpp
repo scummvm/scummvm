@@ -221,9 +221,7 @@ bool BladeRunnerEngine::canLoadGameStateCurrently() {
 }
 
 Common::Error BladeRunnerEngine::loadGameState(int slot) {
-	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
-
-	Common::InSaveFile *saveFile = getSaveFileManager()->openForLoading(saveName);
+	Common::InSaveFile *saveFile = BladeRunner::SaveFileManager::openForLoading(_targetName, slot);
 	if (saveFile == nullptr || saveFile->err()) {
 		delete saveFile;
 		return Common::kReadingFailed;
@@ -253,9 +251,7 @@ bool BladeRunnerEngine::canSaveGameStateCurrently() {
 }
 
 Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &desc) {
-	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
-
-	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(saveName);
+	Common::OutSaveFile *saveFile = BladeRunner::SaveFileManager::openForSaving(_targetName, slot);
 	if (saveFile == nullptr || saveFile->err()) {
 		delete saveFile;
 		return Common::kReadingFailed;
@@ -1097,6 +1093,7 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 
 	if (_kia->isOpen()) {
 		_kia->handleKeyDown(event.kbd);
+		return;
 	}
 
 	if (_spinner->isOpen()) {

@@ -56,6 +56,12 @@ void UIContainer::handleKeyUp(const Common::KeyState &kbd) {
 	}
 }
 
+void UIContainer::handleKeyDown(const Common::KeyState &kbd) {
+	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); component++) {
+		(*component)->handleKeyDown(kbd);
+	}
+}
+
 void UIContainer::add(UIComponent *component) {
 	_components.push_back(component);
 }

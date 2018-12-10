@@ -71,7 +71,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Voyeur Engine";
+		return "Voyeur";
 	}
 
 	virtual const char *getOriginalCopyright() const {

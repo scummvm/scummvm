@@ -24,12 +24,13 @@
 #define PINK_PINK_H
 
 #include "common/random.h"
+#include "common/savefile.h"
 
 #include "engines/engine.h"
+#include "engines/savestate.h"
 
 #include "graphics/wincursor.h"
 
-#include "gui/EventRecorder.h"
 #include "gui/debugger.h"
 
 #include "pink/constants.h"
@@ -58,6 +59,8 @@
  *      PDA is not usable(ActionText is not implemented)
  *      missing menu
  */
+
+struct ADGameDescription;
 
 namespace Graphics {
 class MacMenu;
@@ -115,7 +118,7 @@ public:
 
 	void executeMenuCommand(uint id);
 
-	const ADGameDescription &getGameDesc() { return _desc; }
+	Common::Language getLanguage() const;
 	OrbFile *getOrb()  { return &_orb; }
 	BroFile *getBro()  { return _bro; }
 	Common::RandomSource &getRnd() { return _rnd; };
@@ -158,7 +161,7 @@ private:
 	StringMap _variables;
 	PDAMgr _pdaMgr;
 
-	const ADGameDescription _desc;
+	const ADGameDescription *_desc;
 };
 
 WARN_UNUSED_RESULT bool readSaveHeader(Common::InSaveFile &in, SaveStateDescriptor &desc, bool skipThumbnail = true);

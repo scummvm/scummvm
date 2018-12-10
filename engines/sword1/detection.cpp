@@ -80,10 +80,10 @@ static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files h
 class SwordMetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const {
-		return "Sword1";
+		return "Broken Sword: The Shadow of the Templars";
 	}
 	virtual const char *getOriginalCopyright() const {
-		return "Broken Sword Games (C) Revolution";
+		return "Broken Sword: The Shadow of the Templars (C) Revolution";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

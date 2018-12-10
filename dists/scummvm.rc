@@ -34,6 +34,9 @@ cryo.dat               FILE    "dists/engine-data/cryo.dat"
 #if ENABLE_DRASCULA   == STATIC_PLUGIN
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
 #endif
+#if ENABLE_GLK        == STATIC_PLUGIN
+fonts.dat              FILE   "dists/engine-data/fonts.dat"
+#endif
 #if ENABLE_HUGO       == STATIC_PLUGIN
 hugo.dat               FILE    "dists/engine-data/hugo.dat"
 #endif
@@ -99,7 +102,7 @@ BEGIN
         BEGIN
             VALUE "Comments", "Look! A three headed monkey (TM)! .. Nice use of the TM!\0"
             VALUE "CompanyName", "scummvm.org\0"
-            VALUE "FileDescription", "http://www.scummvm.org/\0"
+            VALUE "FileDescription", "ScummVM: A free implementation of various adventure game engines\0"
             VALUE "FileVersion", SCUMMVM_VERSION "\0"
             VALUE "InternalName", "scummvm\0"
             VALUE "LegalCopyright", "Copyright © 2001-2018 The ScummVM Team\0"

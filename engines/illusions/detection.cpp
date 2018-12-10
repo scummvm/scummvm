@@ -40,6 +40,15 @@ static const PlainGameDescriptor illusionsGames[] = {
 
 namespace Illusions {
 
+struct IllusionsGameDescription {
+	ADGameDescription desc;
+	int gameId;
+};
+
+int IllusionsEngine::getGameId() const {
+	return _gameDescription->gameId;
+}
+
 static const IllusionsGameDescription gameDescriptions[] = {
 	{
 		{

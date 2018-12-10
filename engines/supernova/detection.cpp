@@ -88,7 +88,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Supernova Engine";
+		return "Mission Supernova";
 	}
 
 	virtual const char *getOriginalCopyright() const {

@@ -54,6 +54,7 @@ public:
 	virtual void handleMouseDown(bool alternateButton) {}
 	virtual void handleMouseUp(bool alternateButton) {}
 	virtual void handleKeyUp(const Common::KeyState &kbd) {}
+	virtual void handleKeyDown(const Common::KeyState &kbd) {}
 };
 
 } // End of namespace BladeRunner

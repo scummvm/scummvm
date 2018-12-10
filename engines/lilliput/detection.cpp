@@ -131,7 +131,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const {
-		return "Lilliput Engine copyright S.L.Grand, Brainware, 1991-1992";
+		return "Lilliput (C) S.L.Grand, Brainware, 1991-1992";
 	}
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
