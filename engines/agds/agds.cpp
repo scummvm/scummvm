@@ -187,7 +187,8 @@ void AGDSEngine::resetCurrentScreen()
 		_currentRegion = NULL;
 	}
 
-	delete _currentScreen;
+	if (_currentScreen != _previousScreen) //we didnt come from back command, fixme: refactor it
+		delete _currentScreen;
 	_currentScreen = NULL;
 }
 
@@ -224,7 +225,6 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		if (_currentScreen) {
 			delete _previousScreen;
 			_previousScreen = _currentScreen;
-			_currentScreen = NULL;
 		}
 		loadScreen(process.getExitArg1());
 		destroy = true;
