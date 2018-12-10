@@ -69,7 +69,7 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		char serial[9] = "";
 		if (!filename.hasSuffixIgnoreCase(".zblorb")) {
 			gameFile.seek(18);
-			strcpy(&serial[0], " \"");
+			strcpy(&serial[0], "\"");
 			gameFile.read(&serial[1], 6);
 			strcpy(&serial[7], "\"");
 		}
