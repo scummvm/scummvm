@@ -66,10 +66,12 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			continue;
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
 		size_t filesize = gameFile.size();
-		char serial[7] = "unkown";
+		char serial[9] = "";
 		if (!filename.hasSuffixIgnoreCase(".zblorb")) {
 			gameFile.seek(18);
-			gameFile.read(&serial[0], 6);
+			strcpy(&serial[0], " \"");
+			gameFile.read(&serial[1], 6);
+			strcpy(&serial[7], "\"");
 		}
 		gameFile.close();
 
@@ -98,8 +100,8 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 				if (dot)
 					fname = Common::String(fname.c_str(), dot);
 
-				debug("ENTRY0(\"%s\", \"%s-%s\", \"%s\", %u),",
-					folderName.c_str(), fname.c_str(), serial, md5.c_str(), (uint)filesize);
+				debug("ENTRY0(\"%s\", %s, \"%s\", %u),",
+					fname.c_str(), strlen(serial) ? serial : "nullptr", md5.c_str(), (uint)filesize);
 			}
 			const PlainGameDescriptor &desc = FROTZ_GAME_LIST[0];
 			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
