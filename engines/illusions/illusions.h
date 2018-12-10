@@ -36,11 +36,8 @@
 #include "common/system.h"
 #include "common/winexe.h"
 #include "common/winexe_pe.h"
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
-
-struct ADGameDescription;
 
 namespace Illusions {
 
@@ -64,6 +61,7 @@ class Cursor;
 class Dictionary;
 struct Fader;
 class FramesList;
+struct IllusionsGameDescription;
 class Input;
 class Screen;
 class ScreenText;
@@ -82,11 +80,6 @@ class ScreenPaletteBase;
 enum {
 	kGameIdBBDOU   = 1,
 	kGameIdDuckman = 2
-};
-
-struct IllusionsGameDescription {
-	ADGameDescription desc;
-	int gameId;
 };
 
 class IllusionsEngine : public Engine {
@@ -153,9 +146,7 @@ public:
 
 	int16 _menuChoiceOfs;
 
-	int getGameId() const {
-		return _gameDescription->gameId;
-	}
+	int getGameId() const;
 
 	void runUpdateFunctions();
 	int updateActors(uint flags);
