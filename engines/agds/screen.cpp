@@ -58,7 +58,7 @@ bool Screen::remove(const Common::String &name) {
 	bool found = false;
 	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ) {
 		if ((*i)->getName() == name) {
-			i = _children.erase(i); //fixme: object leak
+			i = _children.erase(i);
 			found = true;
 		} else
 			++i;
