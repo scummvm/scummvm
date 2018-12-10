@@ -141,7 +141,7 @@ void AGDSEngine::runObject(ObjectPtr object) {
 	if (_currentScreen)
 		_currentScreen->add(object);
 	else
-		warning("object leak");
+		warning("object %s has been loaded, but was not added to any screen", object->getName().c_str());
 	runProcess(object);
 }
 
