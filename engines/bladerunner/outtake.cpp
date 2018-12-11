@@ -45,7 +45,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	Common::String resNameNoVQASuffix = resName;
 	resName = resName + ".VQA";
 
-	VQAPlayer vqa_player(_vm, &_vm->_surfaceBack); // surfaceBack is needed here for subtitles rendering properly, original was _surfaceFront here
+	VQAPlayer vqa_player(_vm, &_vm->_surfaceBack, resName); // surfaceBack is needed here for subtitles rendering properly, original was _surfaceFront here
 
 	vqa_player.open();
 
