@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-11 06:36+0100\n"
-"PO-Revision-Date: 2018-09-02 19:37+0000\n"
-"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
+"PO-Revision-Date: 2018-12-12 03:07+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2.9\n"
+"X-Generator: Weblate 3.3\n"
 "X-Language-name: Suomi\n"
 
 #: gui/about.cpp:94
@@ -1203,7 +1203,7 @@ msgstr "ScummVM käyttöliittymän kieli"
 
 #: gui/options.cpp:1695
 msgid "Switch the GUI language to the game language"
-msgstr ""
+msgstr "Käytä pelin kieltä ScummVM:ssä"
 
 #: gui/options.cpp:1696
 msgid ""
@@ -1211,6 +1211,9 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they arein the same "
 "language as the game."
 msgstr ""
+"Käytä pelin kieltä ScummVM:ssä pelin ollessa käynnissä. Näin pelin "
+"mahdollisesti avaamat ScummVM:n dialogit ovat samalla kielellä kuin itse "
+"peli."
 
 #: gui/options.cpp:1708 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -3128,239 +3131,238 @@ msgstr "Näytä grafiikat käyttäen pelin kirkasta palettia"
 
 #: engines/glk/scott/scott.cpp:98
 msgid "I don't understand your command. "
-msgstr ""
+msgstr "En ymmärrä komentoasi. "
 
 #: engines/glk/scott/scott.cpp:101
 msgid "I can't do that yet. "
-msgstr ""
+msgstr "En pysty tekemään tuota vielä. "
 
 #: engines/glk/scott/scott.cpp:117
 msgid "Light has run out! "
-msgstr ""
+msgstr "Valo on sammunut! "
 
 #: engines/glk/scott/scott.cpp:119
 msgid "Your light has run out. "
-msgstr ""
+msgstr "Valosi on sammunut. "
 
 #: engines/glk/scott/scott.cpp:128
 msgid "Light runs out in "
-msgstr ""
+msgstr "Valo sammuu "
 
 #: engines/glk/scott/scott.cpp:130
-#, fuzzy
 msgid " turns. "
-msgstr "Kytke päälle"
+msgstr " vuorossa. "
 
 #: engines/glk/scott/scott.cpp:133
 msgid "Your light is growing dim. "
-msgstr ""
+msgstr "Valosi hiipuu. "
 
 #: engines/glk/scott/scott.cpp:393
 msgid "North"
-msgstr ""
+msgstr "Pohjoinen"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "South"
-msgstr ""
+msgstr "Etelä"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "East"
-msgstr ""
+msgstr "Itä"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "West"
-msgstr ""
+msgstr "Länsi"
 
 #: engines/glk/scott/scott.cpp:405
 msgid "You can't see. It is too dark!\n"
-msgstr ""
+msgstr "Et näe mitään. On liian pimeää!\n"
 
 #: engines/glk/scott/scott.cpp:407
 msgid "I can't see. It is too dark!\n"
-msgstr ""
+msgstr "En näe mitään. On liian pimeää!\n"
 
 #: engines/glk/scott/scott.cpp:417
 #, c-format
 msgid "You are in a %s\n"
-msgstr ""
+msgstr "Olet paikassa %s\n"
 
 #: engines/glk/scott/scott.cpp:419
 #, c-format
 msgid "I'm in a %s\n"
-msgstr ""
+msgstr "Olen paikassa %s\n"
 
 #: engines/glk/scott/scott.cpp:424
 msgid ""
 "\n"
 "Obvious exits: "
 msgstr ""
+"\n"
+"Ilmeiset uloskäynnit: "
 
 #: engines/glk/scott/scott.cpp:437
-#, fuzzy
 msgid "none"
-msgstr "<tyhjä>"
+msgstr "ei ainuttakaan"
 
 #: engines/glk/scott/scott.cpp:446
 msgid ""
 "\n"
 "You can also see: "
 msgstr ""
+"\n"
+"Näet myös: "
 
 #: engines/glk/scott/scott.cpp:449
 msgid ""
 "\n"
 "I can also see: "
 msgstr ""
+"\n"
+"Näen myös: "
 
 #: engines/glk/scott/scott.cpp:529
-#, fuzzy
 msgid "Saved.\n"
-msgstr "Tallenna"
+msgstr "Tallennettu.\n"
 
 #: engines/glk/scott/scott.cpp:620
 msgid "You use word(s) I don't know! "
-msgstr ""
+msgstr "Käytät sanoja joita en ymmärrä! "
 
 #: engines/glk/scott/scott.cpp:748 engines/glk/scott/scott.cpp:1071
 #: engines/glk/scott/scott.cpp:1093
 msgid "You are carrying too much. "
-msgstr ""
+msgstr "Sinulla on liikaa kannettavaa. "
 
 #: engines/glk/scott/scott.cpp:750
 msgid "I've too much to carry! "
-msgstr ""
+msgstr "Minulla on liikaa kannettavaa! "
 
 #: engines/glk/scott/scott.cpp:781
 msgid "You are dead.\n"
-msgstr ""
+msgstr "Olet kuollut.\n"
 
 #: engines/glk/scott/scott.cpp:783
 msgid "I am dead.\n"
-msgstr ""
+msgstr "Olen kuollut.\n"
 
 #: engines/glk/scott/scott.cpp:795
-#, fuzzy
 msgid "The game is now over.\n"
-msgstr "Peliä EI ladattu"
+msgstr "Peli on nyt loppu.\n"
 
 #: engines/glk/scott/scott.cpp:810
 msgid "You have stored "
-msgstr ""
+msgstr "Olet kerännyt "
 
 #: engines/glk/scott/scott.cpp:812
-#, fuzzy
 msgid "I've stored "
-msgstr "Lataa tallenne"
+msgstr "Olen kerännyt "
 
 #: engines/glk/scott/scott.cpp:814
 msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr ""
+msgstr " aarretta.  Mittapuulla 0-100, se on "
 
 #: engines/glk/scott/scott.cpp:818
 msgid "Well done.\n"
-msgstr ""
+msgstr "Hyvin tehty.\n"
 
 #: engines/glk/scott/scott.cpp:827
 msgid "You are carrying:\n"
-msgstr ""
+msgstr "Sinulla on kannossa:\n"
 
 #: engines/glk/scott/scott.cpp:829
 msgid "I'm carrying:\n"
-msgstr ""
+msgstr "Minulla on kannossa:\n"
 
 #: engines/glk/scott/scott.cpp:844
 msgid "Nothing"
-msgstr ""
+msgstr "Ei mitään"
 
 #: engines/glk/scott/scott.cpp:973
 msgid "Give me a direction too."
-msgstr ""
+msgstr "Kerro minulle myös suunta."
 
 #: engines/glk/scott/scott.cpp:982
 msgid "Dangerous to move in the dark! "
-msgstr ""
+msgstr "On vaarallista liikkua pimeällä! "
 
 #: engines/glk/scott/scott.cpp:990
 msgid "You fell down and broke your neck. "
-msgstr ""
+msgstr "Putosit ja taitoit niskasi. "
 
 #: engines/glk/scott/scott.cpp:992
 msgid "I fell down and broke my neck. "
-msgstr ""
+msgstr "Putosin ja taitoin niskani. "
 
 #: engines/glk/scott/scott.cpp:997
 msgid "You can't go in that direction. "
-msgstr ""
+msgstr "Et voi mennä siihen suuntaan. "
 
 #: engines/glk/scott/scott.cpp:999
 msgid "I can't go in that direction. "
-msgstr ""
+msgstr "En voi mennä siihen suuntaan. "
 
 #: engines/glk/scott/scott.cpp:1057
 msgid "It is dark.\n"
-msgstr ""
+msgstr "On pimeää.\n"
 
 #: engines/glk/scott/scott.cpp:1073 engines/glk/scott/scott.cpp:1095
 msgid "I've too much to carry. "
-msgstr ""
+msgstr "Minulla on liikaa kannettavaa. "
 
 #: engines/glk/scott/scott.cpp:1078 engines/glk/scott/scott.cpp:1126
 msgid ": O.K.\n"
-msgstr ""
+msgstr ": O.K.\n"
 
 #: engines/glk/scott/scott.cpp:1084
 msgid "Nothing taken."
-msgstr ""
+msgstr "Mitään ei otettu."
 
 #: engines/glk/scott/scott.cpp:1088 engines/glk/scott/scott.cpp:1136
-#, fuzzy
 msgid "What ? "
-msgstr "Mitä on"
+msgstr "Mitä ? "
 
 #: engines/glk/scott/scott.cpp:1101
 msgid "It is beyond your power to do that. "
-msgstr ""
+msgstr "Se on kykyjesi ulkopuolella. "
 
 #: engines/glk/scott/scott.cpp:1103
 msgid "It's beyond my power to do that. "
-msgstr ""
+msgstr "Se on kykyjeni ulkopuolella. "
 
 #: engines/glk/scott/scott.cpp:1107
 msgid "O.K. "
-msgstr ""
+msgstr "O.K. "
 
 #: engines/glk/scott/scott.cpp:1132
 msgid "Nothing dropped.\n"
-msgstr ""
+msgstr "Mitään ei pudotettu.\n"
 
 #: engines/glk/scott/scott.cpp:1142
 msgid "It's beyond your power to do that.\n"
-msgstr ""
+msgstr "Se on kykyjesi ulkopuolella.\n"
 
 #: engines/glk/scott/scott.cpp:1144
 msgid "It's beyond my power to do that.\n"
-msgstr ""
+msgstr "Se on kykyjeni ulkopuolella.\n"
 
 #: engines/glk/frotz/detection.cpp:130
-#, fuzzy
 msgid "Unnamed savegame"
 msgstr "Nimetön pelitallennus"
 
 #: engines/glk/glulxe/glulxe.cpp:55
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "Tämä on liian lyhyt ollakseen validi Glulx-tiedosto."
 
 #: engines/glk/glulxe/glulxe.cpp:60
 msgid "This is not a valid Glulx file."
-msgstr ""
+msgstr "Tämä ei ole validi Glulx-tiedosto."
 
 #: engines/glk/glulxe/glulxe.cpp:67
 msgid "This Glulx file is too old a version to execute."
-msgstr ""
+msgstr "Tämä Glulx-tiedosto on versioltaan liian vanha ajettavaksi."
 
 #: engines/glk/glulxe/glulxe.cpp:71
 msgid "This Glulx file is too new a version to execute."
-msgstr ""
+msgstr "Tämä Glulx-tiedosto on versioltaan liian uusi ajettavaksi."
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
