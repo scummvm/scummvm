@@ -79,7 +79,11 @@ int SaveLoadChooser::runModalWithCurrentTarget() {
 	const Plugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
 
+#ifndef __DC__
 	return runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+#else
+	return runModalWithPluginAndTarget(plugin, gameId);
+#endif
 }
 
 int SaveLoadChooser::runModalWithPluginAndTarget(const Plugin *plugin, const String &target) {

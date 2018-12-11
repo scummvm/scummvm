@@ -144,7 +144,11 @@ Engine::Engine(OSystem *syst)
 		_timer(_system->getTimerManager()),
 		_eventMan(_system->getEventManager()),
 		_saveFileMan(_system->getSavefileManager()),
+#ifndef __DC__
 		_targetName(ConfMan.getActiveDomainName()),
+#else
+		_targetName(ConfMan.get("gameid")),
+#endif
 		_pauseLevel(0),
 		_pauseStartTime(0),
 		_saveSlotToLoad(-1),

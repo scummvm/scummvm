@@ -680,7 +680,11 @@ void MenuActionLoadGame::execute() {
 	int slot;
 
 	dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+#ifndef __DC__
 	slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+#else
+	slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.get("gameid"));
+#endif
 
 	delete dialog;
 
@@ -705,7 +709,11 @@ void MenuActionSaveGame::execute() {
 	int slot;
 
 	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+#ifndef __DC__
 	slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+#else
+	slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.get("gameid"));
+#endif
 	desc = dialog->getResultString().c_str();
 
 	delete dialog;

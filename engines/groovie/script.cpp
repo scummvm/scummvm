@@ -393,7 +393,11 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 }
 
 void Script::loadgame(uint slot) {
+#ifndef __DC__
 	Common::InSaveFile *file = SaveLoad::openForLoading(ConfMan.getActiveDomainName(), slot);
+#else
+	Common::InSaveFile *file = SaveLoad::openForLoading(ConfMan.get("gameid"), slot);
+#endif
 
 	// Loading the variables. It is endian safe because they're byte variables
 	file->read(_variables, 0x400);
@@ -423,7 +427,11 @@ void Script::directGameSave(int slot, const Common::String &desc) {
 void Script::savegame(uint slot) {
 	char save[15];
 	char newchar;
+#ifndef __DC__
 	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.getActiveDomainName(), slot);
+#else
+	Common::OutSaveFile *file = SaveLoad::openForSaving(ConfMan.get("gameid"), slot);
+#endif
 
 	if (!file) {
 		debugC(9, kDebugScript, "Save file pointer is null");
@@ -1399,7 +1407,11 @@ void Script::o_checkvalidsaves() {
 	}
 
 	// Get the list of savefiles
+#ifndef __DC__
 	SaveStateList list = SaveLoad::listValidSaves(ConfMan.getActiveDomainName());
+#else
+	SaveStateList list = SaveLoad::listValidSaves(ConfMan.get("gameid"));
+#endif
 
 	// Mark the existing savefiles as valid
 	uint count = 0;
