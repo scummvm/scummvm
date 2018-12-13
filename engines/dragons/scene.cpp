@@ -67,48 +67,51 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 		if (ini->sceneId == sceneId && (ini->field_1a_flags_maybe & 1)) {
 			Actor *actor = _actorManager->loadActor(ini->actorResourceId, ini->frameIndexId_maybe, ini->x, ini->y, 0);
 
-			if (ini->frameIndexId_maybe & 0x1000) {
-				actor->frame_flags |= 0x10;
-			} else {
-				if (ini->field_1a_flags_maybe & 0x2000) {
-					actor->frame_flags |= 0x20;
+			if (actor) {
+				ini->actor = actor;
+				if (ini->frameIndexId_maybe & 0x1000) {
+					actor->frame_flags |= 0x10;
 				} else {
-					actor->frame_flags &= 0xffef;
+					if (ini->field_1a_flags_maybe & 0x2000) {
+						actor->frame_flags |= 0x20;
+					} else {
+						actor->frame_flags &= 0xffef;
+					}
 				}
-			}
 
-			actor->_sequenceID2 = ini->field_20_actor_field_14;
+				actor->_sequenceID2 = ini->field_20_actor_field_14;
 
-			if (ini->field_1a_flags_maybe & 2) {
-				actor->flags |= 0x80;
-			} else {
-				actor->flags &= 0xfeff;
-			}
+				if (ini->field_1a_flags_maybe & 2) {
+					actor->flags |= Dragons::ACTOR_FLAG_80;
+				} else {
+					actor->flags &= 0xfeff;
+				}
 
-			if (ini->field_1a_flags_maybe & 0x20) {
-				actor->flags |= 0x100;
-			} else {
-				actor->flags &= 0xfeff;
-			}
+				if (ini->field_1a_flags_maybe & 0x20) {
+					actor->flags |= Dragons::ACTOR_FLAG_100;
+				} else {
+					actor->flags &= 0xfeff;
+				}
 
-			if (ini->field_1a_flags_maybe & 4) {
-				actor->flags |= 0x8000;
-			} else {
-				actor->flags &= 0x7fff;
-			}
+				if (ini->field_1a_flags_maybe & 4) {
+					actor->flags |= Dragons::ACTOR_FLAG_8000;
+				} else {
+					actor->flags &= 0x7fff;
+				}
 
-			if (ini->field_1a_flags_maybe & 0x100) {
-				actor->flags |= 0x4000;
-			} else {
-				actor->flags &= 0xbfff;
-			}
+				if (ini->field_1a_flags_maybe & 0x100) {
+					actor->flags |= Dragons::ACTOR_FLAG_4000;
+				} else {
+					actor->flags &= 0xbfff;
+				}
 
-			Graphics::Surface *s = actor->getCurrentFrame();
-			int x = ini->x - actor->frame_vram_x;
-			int y = ini->y - actor->frame_vram_y;
-			if (x >= 0 && y >= 0 && x + s->w < 320 && y + s->h < 200) {
-				debug("Actor %d %d (%d, %d)", ini->actorResourceId, ini->field_1a_flags_maybe, ini->x, ini->y);
-				_stage->getFgLayer()->copyRectToSurface(*s, x, y, Common::Rect(s->w,s->h));
+				Graphics::Surface *s = actor->getCurrentFrame();
+				int x = ini->x - actor->frame_vram_x;
+				int y = ini->y - actor->frame_vram_y;
+				if (x >= 0 && y >= 0 && x + s->w < 320 && y + s->h < 200) {
+					debug("Actor %d %d (%d, %d)", ini->actorResourceId, ini->field_1a_flags_maybe, ini->x, ini->y);
+					_stage->getFgLayer()->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h));
+				}
 			}
 			_stage->getFgLayer()->drawLine(ini->x, ini->y, ini->x + 8, ini->y + 8, 0x7c00);
 			//break;

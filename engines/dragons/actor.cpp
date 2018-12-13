@@ -25,22 +25,76 @@
 
 namespace Dragons {
 
-ActorManager::ActorManager(ActorResourceLoader *actorResourceLoader) : _actorResourceLoader(actorResourceLoader) {}
+ActorManager::ActorManager(ActorResourceLoader *actorResourceLoader) : _actorResourceLoader(actorResourceLoader) {
+	for (uint16 i = 0; i < 64; i++) {
+		_actors.push_back(Actor(i));
+	}
+}
+
 
 Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y, uint16 field16) {
-	debug("Load actor: resourceId: %d, SequenceId: %d, position: (%d,%d) field16: %d", resourceId, sequenceId, x, y, field16);
-	//ActorResource *resource = _actorResourceLoader->load(resourceId);
-	Actor *actor = new Actor(_actorResourceLoader, resourceId, x, y, sequenceId);
+	Actor *actor = loadActor(resourceId, sequenceId, x, y);
+	if(actor) {
+		actor->field16 = field16;
+	}
 	return actor;
 }
 
-Actor::Actor(ActorResourceLoader *actorResourceLoader, uint32 resourceID, int16 x, int16 y, uint32 sequenceID): _actorResourceLoader(actorResourceLoader), resourceID(resourceID), x_pos(x), y_pos(y) {
+Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y) {
+	debug("Load actor: resourceId: %d, SequenceId: %d, position: (%d,%d)", resourceId, sequenceId, x, y);
+	ActorResource *resource = _actorResourceLoader->load(resourceId);
+	//Actor *actor = new Actor(_actorResourceLoader->load(resourceId), x, y, sequenceId);
+	Actor *actor = findFreeActor((int16)resourceId);
+	if (actor) {
+		actor->init(resource, x, y, sequenceId);
+	} else {
+		//TODO run find by resource and remove from mem logic here. @0x800358c8
+		debug("Unable to find free actor slot!!");
+	}
+	return actor;
+}
+
+Actor *ActorManager::findFreeActor(int16 resourceId) {
+	int i = 0;
+	for (ActorsIterator it = _actors.begin(); it != _actors.end() && i < 23; ++it, i++) {
+		Actor *actor = it;
+		if (!(actor->flags & Dragons::ACTOR_FLAG_40)) {
+			actor->resourceID = resourceId;
+			actor->field_7c = 0x100000;
+			return actor;
+		}
+	}
+	return NULL;
+}
+
+Actor::Actor(uint16 id) : _actorID(id) {
+	_actorResource = NULL;
+	resourceID = -1;
+	_seqCodeIp = 0;
+	frame_pointer_maybe = NULL;
+	field16 = 3;
+	x_pos = 160;
+	y_pos = 110;
+	target_x_pos = 0;
+	target_y_pos = 0;
+	field_7c = 0;
+	flags = 0;
+	frame_width = 0;
+	frame_height = 0;
+	frame_flags = 0;
+	clut = 0;
+}
+
+void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
+	_actorResource = resource;
+	x_pos = x;
+	y_pos = y;
 	frameIndex_maybe = 0;
 	target_x_pos = x;
 	target_y_pos = y;
 	var_e = 0x100;
 	_sequenceID2 = 0;
-	flags = (0x40 | 4);
+	flags = (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_4);
 	frame_width = 0;
 	frame_height = 0;
 	frame_flags = 4;
@@ -50,16 +104,15 @@ Actor::Actor(ActorResourceLoader *actorResourceLoader, uint32 resourceID, int16 
 }
 
 Graphics::Surface *Actor::getCurrentFrame() {
-	ActorResource *resource = _actorResourceLoader->load(resourceID);
-	frame_vram_x = resource->getFrameHeader(frameIndex_maybe)->field_0;
-	frame_vram_y = resource->getFrameHeader(frameIndex_maybe)->field_2;
-	return resource->loadFrame(frameIndex_maybe);
+	frame_vram_x = _actorResource->getFrameHeader(frameIndex_maybe)->field_0;
+	frame_vram_y = _actorResource->getFrameHeader(frameIndex_maybe)->field_2;
+	return _actorResource->loadFrame(frameIndex_maybe);
 }
 
 void Actor::updateSequence(uint16 newSequenceID) {
 	_sequenceID = newSequenceID;
 	flags &= 0xfbf1;
-	flags |= 1;
+	flags |= Dragons::ACTOR_FLAG_1;
 }
 
 } // End of namespace Dragons

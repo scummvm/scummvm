@@ -67,6 +67,8 @@ private:
 	DragonINIResource *_dragonINIResource;
 	BackgroundResourceLoader *_backgroundResourceLoader;
 	Scene *_scene;
+	uint32 _nextUpdatetime;
+	uint32 _flags;
 
 public:
 	DragonsEngine(OSystem *syst);
@@ -78,6 +80,11 @@ public:
 	const char *getSavegameFilename(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
+private:
+	void gameLoop();
+	void updateHandler();
+	uint32 calulateTimeLeft();
+	void wait();
 };
 
 } // End of namespace Dragons

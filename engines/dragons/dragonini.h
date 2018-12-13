@@ -27,6 +27,8 @@
 
 namespace Dragons {
 
+class Actor;
+
 struct DragonINI
 	{
 		int16 iptIndex_maybe;
@@ -34,7 +36,7 @@ struct DragonINI
 		uint16 actorResourceId;
 		uint16 frameIndexId_maybe;
 		int16 field_8;
-		uint16 actorId;
+		Actor *actor;
 		uint16 sceneId;
 		int16 field_e;
 		uint16 field_10;
