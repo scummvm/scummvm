@@ -23,15 +23,20 @@ extern Icon icon;
 DCLauncherDialog::DCLauncherDialog()
 	: LauncherDialog(), cdWasOpen(false)
 {
+	Common::String lastpath;
+
 	PluginManager::instance().loadAllPlugins();
 #if defined(DYNAMIC_MODULES)
 	if (PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE).empty()) {
 		GUI::BrowserDialog browser(_("Select plugin directory"), true);
+		lastpath = ConfMan.get("browser_lastpath");
+		ConfMan.set("browser_lastpath", "/plugins");
 		if (browser.runModal() > 0) {
 			Common::FSNode result = browser.getResult();
 			((OSystem_Dreamcast *)g_system)->setPluginCustomDirectory(result.getPath());
 			PluginManager::instance().loadAllPlugins();
 		}
+		ConfMan.set("browser_lastpath", lastpath);
 	}
 #endif
 	massAdd();
