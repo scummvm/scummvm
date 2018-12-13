@@ -118,7 +118,7 @@ Graphics::Surface *Background::loadGfxLayer(TileMap &tileMap, byte *tiles) {
 	for(int y = 0; y < tileMap.h; y++) {
 		for(int x = 0; x < tileMap.w; x++) {
 			uint16 idx = READ_LE_UINT16(&tileMap.map[(y * tileMap.w + x) * 2]) + tileMap.tileIndexOffset;
-			debug("tileIdx: %d", idx);
+			//debug("tileIdx: %d", idx);
 			drawTileToSurface(surface, tiles + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
 		}
 	}

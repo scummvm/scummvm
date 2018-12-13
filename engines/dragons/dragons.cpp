@@ -34,11 +34,15 @@
 
 namespace Dragons {
 
+#define DRAGONS_TICK_INTERVAL 17
+
 DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_bigfileArchive = NULL;
 	_dragonRMS = NULL;
 	_backgroundResourceLoader = NULL;
 	_screen = NULL;
+	_nextUpdatetime = 0;
+	_flags = 0;
 }
 
 DragonsEngine::~DragonsEngine() {
@@ -71,9 +75,8 @@ Common::Error DragonsEngine::run() {
 
 	_scene->draw();
 	_screen->updateScreen();
-	while (!shouldQuit()) {
-		updateEvents();
-	}
+
+	gameLoop();
 
 	delete _backgroundResourceLoader;
 	delete _dragonRMS;
@@ -82,6 +85,17 @@ Common::Error DragonsEngine::run() {
 
 	debug("Ok");
 	return Common::kNoError;
+}
+
+void DragonsEngine::gameLoop() {
+	while (!shouldQuit()) {
+		updateEvents();
+		wait();
+	}
+}
+
+void DragonsEngine::updateHandler() {
+
 }
 
 const char *DragonsEngine::getSavegameFilename(int num) {
@@ -120,6 +134,24 @@ kReadSaveHeaderError DragonsEngine::readSaveHeader(Common::SeekableReadStream *i
 	header.playTime = in->readUint32LE();
 
 	return ((in->eos() || in->err()) ? kRSHEIoError : kRSHENoError);
+}
+
+uint32 DragonsEngine::calulateTimeLeft() {
+	uint32 now;
+
+	now = _system->getMillis();
+
+	if ( _nextUpdatetime <= now ) {
+		_nextUpdatetime = now + DRAGONS_TICK_INTERVAL;
+		return(0);
+	}
+	uint32 delay = _nextUpdatetime - now;
+	_nextUpdatetime += DRAGONS_TICK_INTERVAL;
+	return(delay);
+}
+
+void DragonsEngine::wait() {
+	_system->delayMillis(calulateTimeLeft());
 }
 
 } // End of namespace Dragons

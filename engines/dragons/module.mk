@@ -10,8 +10,9 @@ MODULE_OBJS := \
     dragonrms.o \
 	dragons.o \
 	scene.o \
-	screen.o
- 
+	screen.o \
+	sequenceopcodes.o
+
 MODULE_DIRS += \
 	engines/dragons
  

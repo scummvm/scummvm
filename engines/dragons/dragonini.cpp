@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include <common/debug.h>
 #include "common/memstream.h"
 #include "dragonini.h"
 
@@ -40,7 +41,8 @@ DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive) {
 		_dragonINI[i].actorResourceId = readStream->readSint16LE();
 		_dragonINI[i].frameIndexId_maybe = readStream->readSint16LE();
 		_dragonINI[i].field_8 = readStream->readSint16LE();
-		_dragonINI[i].actorId = readStream->readUint16LE();
+		readStream->readUint16LE(); // actorId
+		_dragonINI[i].actor = NULL;
 		_dragonINI[i].sceneId = readStream->readUint16LE();
 		_dragonINI[i].field_e = readStream->readSint16LE();
 		_dragonINI[i].field_10 = readStream->readUint16LE();
