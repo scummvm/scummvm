@@ -23,6 +23,7 @@
 #include "glk/frotz/detection.h"
 #include "glk/frotz/detection_tables.h"
 #include "glk/frotz/quetzal.h"
+#include "glk/blorb.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
@@ -60,13 +61,15 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		if (!hasExt)
 			continue;
 
-		// Open up the file and calculate the md5
+		// Open up the file and calculate the md5, and get the serial
 		Common::File gameFile;
 		if (!gameFile.open(*file))
 			continue;
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
 		size_t filesize = gameFile.size();
 		char serial[9] = "";
+		bool emptyBlorb = false;
+
 		if (!filename.hasSuffixIgnoreCase(".zblorb")) {
 			gameFile.seek(18);
 			strcpy(&serial[0], "\"");
@@ -74,6 +77,19 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			strcpy(&serial[7], "\"");
 		}
 		gameFile.close();
+		if (filename.hasSuffixIgnoreCase(".zblorb")) {
+			Blorb b(*file, INTERPRETER_FROTZ);
+			Common::SeekableReadStream *f = b.createReadStreamForMember("game");
+			emptyBlorb = f == nullptr;
+
+			if (!emptyBlorb) {
+				f->seek(18);
+				strcpy(&serial[0], "\"");
+				f->read(&serial[1], 6);
+				strcpy(&serial[7], "\"");
+				delete f;
+			}
+		}
 
 		// Check for known games. Note that there has been some variation in exact filesizes
 		// for Infocom games due to padding at the end of files. So we match on md5s for the
@@ -86,7 +102,7 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		DetectedGame gd;
 		if (!p->_gameId) {
 			// Generic .dat/.zip files don't get reported as matches unless they have a known md5
-			if (filename.hasSuffixIgnoreCase(".dat") || filename.hasSuffixIgnoreCase(".zip"))
+			if (filename.hasSuffixIgnoreCase(".dat") || filename.hasSuffixIgnoreCase(".zip") || emptyBlorb)
 				continue;
 
 			if (gDebugLevel > 0) {

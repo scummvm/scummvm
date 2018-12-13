@@ -58,6 +58,12 @@ Blorb::Blorb(const Common::String &filename, InterpreterType interpType) :
 		error("Could not parse blorb file");
 }
 
+Blorb::Blorb(const Common::FSNode &fileNode, InterpreterType interpType) :
+		Common::Archive(), _fileNode(fileNode), _interpType(interpType) {
+	if (load() != Common::kNoError)
+		error("Could not parse blorb file");
+}
+
 bool Blorb::hasFile(const Common::String &name) const {
 	for (uint idx = 0; idx < _chunks.size(); ++idx) {
 		if (_chunks[idx]._filename.equalsIgnoreCase(name))
@@ -86,7 +92,8 @@ Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::Strin
 	for (uint idx = 0; idx < _chunks.size(); ++idx) {
 		if (_chunks[idx]._filename.equalsIgnoreCase(name)) {
 			Common::File f;
-			if (!f.open(_filename))
+			if ((!_filename.empty() && !f.open(_filename)) ||
+					(_filename.empty() && !f.open(_fileNode)))
 				error("Reading failed");
 
 			f.seek(_chunks[idx]._offset);
@@ -103,7 +110,9 @@ Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::Strin
 Common::ErrorCode Blorb::load() {
 	// First, chew through the file and index the chunks
 	Common::File f;
-	if (!f.open(_filename) || f.size() < 12)
+	if ((!_filename.empty() && !f.open(_filename)) ||
+			(_filename.empty() && !f.open(_fileNode)) ||
+			f.size() < 12)
 		return Common::kReadingFailed;
 
 	if (f.readUint32BE() != ID_FORM)
