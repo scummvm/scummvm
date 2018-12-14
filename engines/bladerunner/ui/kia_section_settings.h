@@ -23,7 +23,6 @@
 #ifndef BLADERUNNER_KIA_SECTION_SETTINGS_H
 #define BLADERUNNER_KIA_SECTION_SETTINGS_H
 
-#include "bladerunner/bladerunner.h" // to get the macro defines
 #include "bladerunner/ui/kia_section_base.h"
 
 namespace BladeRunner {

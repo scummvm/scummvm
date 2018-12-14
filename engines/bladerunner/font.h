@@ -23,8 +23,6 @@
 #ifndef BLADERUNNER_FONT_H
 #define BLADERUNNER_FONT_H
 
-#include "bladerunner/bladerunner.h" // needed for definition of Common::ScopedPtr (subtitles font external font file support) -- and for the subtitles relevant macro defines
-#include "common/util.h"
 #include "common/str.h"
 
 namespace Graphics {
