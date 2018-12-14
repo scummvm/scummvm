@@ -176,8 +176,10 @@ Processor::Processor(OSystem *syst, const GlkGameDescription &gameDesc) :
 		&Processor::z_call_n
 	};
 
-	Common::copy(&OP0_OPCODES[0], &OP0_OPCODES[16], op0_opcodes);
-	Common::copy(&OP1_OPCODES[0], &OP1_OPCODES[16], op1_opcodes);
+	op0_opcodes.resize(16);
+	op1_opcodes.resize(16);
+	Common::copy(&OP0_OPCODES[0], &OP0_OPCODES[16], &op0_opcodes[0]);
+	Common::copy(&OP1_OPCODES[0], &OP1_OPCODES[16], &op1_opcodes[0]);
 	Common::fill(&_stack[0], &_stack[STACK_SIZE], 0);
 	Common::fill(&zargs[0], &zargs[8], 0);
 	Common::fill(&_buffer[0], &_buffer[TEXT_BUFFER_SIZE], '\0');
