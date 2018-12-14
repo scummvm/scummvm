@@ -68,33 +68,6 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 		_characters[i].width = stream->readUint32LE();
 		_characters[i].height = stream->readUint32LE();
 		_characters[i].dataOffset = stream->readUint32LE();
-		// Commented out. Explicit fixes don't really make sense if we can override the TAHOMA18 font
-//		// special explicit alignment fixes for TAHOMA18 (INTERNAL) font
-//		if (fileName == "TAHOMA18.FON") {
-//			switch (i) {
-//			case 46:	// '-'
-//			case 72:	// G
-//			case 74:	// I
-//			case 75:	// J
-//				_characters[i].x -= 1;						// original value was 1
-//				break;
-//			case 81:	// P (ascii code 80  + 1)
-//				_characters[i].x -= 1;						// original value was 1
-//				_characters[i].y += 1;						// original value was 6 -- bring them down for one (1) pixel
-//				break;
-//			case 83:	// R
-//			case 84:	// S
-//			case 86:	// U
-//			case 87:	// V
-//			case 88:	// W
-//			case 89:	// X
-//			case 90:	// Y
-//			case 91:	// Z
-//				_characters[i].y += 1;						// original value was 6 -- bring them down for one (1) pixel
-//				break;
-//			}
-//		}
-//		debug("char::%d character x: %d, y: %d, w: %d, h:%d, do: %d", i, _characters[i].x, _characters[i].y, _characters[i].width, _characters[i].height, _characters[i].dataOffset);
 	}
 	for (int i = 0; i < _dataSize; i++) {
 		_data[i] = stream->readUint16LE();
