@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-12-11 06:36+0100\n"
+"POT-Creation-Date: 2018-12-14 04:41+0100\n"
 "PO-Revision-Date: 2018-09-01 10:35+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3334,7 +3334,7 @@ msgstr ""
 msgid "It's beyond my power to do that.\n"
 msgstr ""
 
-#: engines/glk/frotz/detection.cpp:130
+#: engines/glk/frotz/detection.cpp:146
 #, fuzzy
 msgid "Unnamed savegame"
 msgstr "Névtelen játékállás"

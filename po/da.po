@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-12-11 06:36+0100\n"
+"POT-Creation-Date: 2018-12-14 04:41+0100\n"
 "PO-Revision-Date: 2018-12-11 08:41+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -3343,7 +3343,7 @@ msgstr "Det er ikke i din magt at gøre det.\n"
 msgid "It's beyond my power to do that.\n"
 msgstr "Det er ikke i min magt at gøre det.\n"
 
-#: engines/glk/frotz/detection.cpp:130
+#: engines/glk/frotz/detection.cpp:146
 msgid "Unnamed savegame"
 msgstr "Unavngivet savegame"
 
