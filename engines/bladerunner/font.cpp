@@ -94,7 +94,7 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 //				break;
 //			}
 //		}
-		//debug("char::%d character x: %d, y: %d, w: %d, h:%d, do: %d", i, _characters[i].x, _characters[i].y, _characters[i].width, _characters[i].height, _characters[i].dataOffset);
+//		debug("char::%d character x: %d, y: %d, w: %d, h:%d, do: %d", i, _characters[i].x, _characters[i].y, _characters[i].width, _characters[i].height, _characters[i].dataOffset);
 	}
 	for (int i = 0; i < _dataSize; i++) {
 		_data[i] = stream->readUint16LE();

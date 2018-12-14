@@ -23,8 +23,6 @@
 #ifndef BLADERUNNER_TEXT_RESOURCE_H
 #define BLADERUNNER_TEXT_RESOURCE_H
 
-#include "bladerunner/bladerunner.h" // needed for definition of Common::ScopedPtr (subtitles font external font file support)
-#include "common/util.h"
 #include "common/str.h"
 
 namespace BladeRunner {
