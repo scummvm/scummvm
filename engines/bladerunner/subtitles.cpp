@@ -36,12 +36,7 @@ namespace BladeRunner {
 /*
  * Optional support for subtitles
  * CHECK what happens in VQA where the audio plays separately (are the finales such VQAs ?)
- *
- * TODO in python script (FON from png glyphs) check if you can have semi-transparent pixels to better outline the fringe points of the glyphs - check what happens when MSB is set (transparency) and the rest of the color value is not all 0s.
  * TODO Catch error for bad symbol in a quote (one that causes the font to crash) - this could happen with the corrupted internal font (TAHOMA18) -> font crash or bad font display / garbage character
- * TODO have a debug script to detect/report problematic lines (too long)
- *
- * TODO? add a keyboard shortcut key to enable / disable subtitles?
  * TODO? Use another escape sequence to progressively display text in a line (like in SCUMM games) <-- this could be very useful with very long lines - might also need an extra manual time or ticks parameter to determine when during the display of the first segment we should switch to the second.
  * TODO? A more advanced subtitles system
  *          TODO: subtitles could be independent from sound playing (but should disappear when switching between UI screens)
