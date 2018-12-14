@@ -3561,6 +3561,34 @@ static const uint16 longbowPatchBerryBushFix[] = {
 	PATCH_END
 };
 
+// On day 9, room 350 outside the cobbler's hut is initialized incorrectly if
+//  disguised as a monk. The entrance to the hut is broken and several minor
+//  messages are incorrect. This is due to the room's script assuming that the
+//  only disguises that day are yeoman and merchant. A monk disguise causes some
+//  tests to pass and others to fail, leaving the room in an inconsistent state.
+//
+// We fix this by changing the yeoman disguise tests in the script to include
+//  the monk disguises. The disguise global is set to 4 for yeoman and 5 or 6
+//  for monk disguises so we patch the tests to be greater than or equals to.
+//
+// Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
+// Responsible methods: rm350:init, lobbsHut:doVerb, lobbsDoor:doVerb,
+//                      lobbsCover:doVerb, tailorDoor:doVerb
+// Fixes bug #10834
+static const uint16 longbowSignatureCobblerHut[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x7e,                     // lsg 7e [ current disguise ]
+	0x35, 0x04,                     // ldi 04 [ yeoman ]
+	0x1a,                           // eq?    [ is current disguise yeoman? ]
+	SIG_END
+};
+
+static const uint16 longbowPatchCobblerHut[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x20,                           // ge? [ is current disguise yeoman or monk? ]
+	PATCH_END
+};
+
 // The Amiga version of room 530 adds a broken fDrunk:onMe method which prevents
 //  messages when clicking on the drunk on the floor of the pub and causes a
 //  signature mismatch on every click in the room. fDrunk:onMe passes an Event
@@ -3601,6 +3629,7 @@ static const uint16 longbowPatchAmigaPubFix[] = {
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode, longbowPatchShowHandCode },
 	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix, longbowPatchBerryBushFix },
+	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,   longbowPatchCobblerHut },
 	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,  longbowPatchAmigaPubFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
