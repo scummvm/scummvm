@@ -156,6 +156,12 @@ endif
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_AS)$(AS) $(ASFLAGS) $(<) -o $*.o
 
+# Build rule for Windows resource files
+# TODO: Support dependency tracking
+%.o: %.rc
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_WINDRES)$(WINDRES) $(WINDRESFLAGS) $(CPPFLAGS) $(<) -o $*.o
+
 ifdef USE_NASM
 # Build rule for NASM assembler files
 %.o: %.asm
