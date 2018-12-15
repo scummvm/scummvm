@@ -2764,7 +2764,7 @@ case $_host_os in
 		append_var DEFINES "-D__USE_MINGW_ANSI_STDIO=0"
 		append_var LDFLAGS "-static-libgcc -static-libstdc++"
 		append_var LIBS "-lmingw32 -lwinmm -lgdi32"
-		append_var OBJS "scummvmwinres.o"
+		append_var OBJS "dists/scummvm.o"
 		add_line_to_config_mk 'WIN32 = 1'
 		_port_mk="backends/platform/sdl/win32/win32.mk"
 		;;
