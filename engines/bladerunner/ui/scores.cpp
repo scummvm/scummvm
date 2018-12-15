@@ -27,6 +27,7 @@
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/time.h"
 #include "bladerunner/vqa_player.h"
 
 #include "common/keyboard.h"
@@ -58,7 +59,7 @@ void Scores::open() {
 
 	_vqaPlayer->setLoop(1, -1, 0, nullptr, nullptr);
 
-	// TODO: Freeze game time
+	_vm->_time->pause();
 
 	_txtScorers = new TextResource(_vm);
 	_txtScorers->open("SCORERS");

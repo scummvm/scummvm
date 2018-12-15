@@ -43,7 +43,7 @@ UIInputBox::UIInputBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedC
 	setText(text);
 
 	_cursorIsVisible = false;
-	_timeLast = _vm->getTotalPlayTime();
+	_timeLast = _vm->getTotalPlayTime(); // Original game is using system timer
 }
 
 void UIInputBox::draw(Graphics::Surface &surface) {
@@ -60,7 +60,7 @@ void UIInputBox::draw(Graphics::Surface &surface) {
 		surface.vLine(textHalfWidth + rectHalfWidth + 2, _rect.top, _rect.bottom - 1, 0x7FDD); // 11111 11110 11101
 	}
 
-	if (_vm->getTotalPlayTime() - _timeLast > 500) {
+	if (_vm->getTotalPlayTime() - _timeLast > 500) { // Original game is using system timer
 		_timeLast = _vm->getTotalPlayTime();
 		_cursorIsVisible = !_cursorIsVisible;
 	}

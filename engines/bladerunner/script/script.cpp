@@ -50,6 +50,7 @@
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/time.h"
 #include "bladerunner/ui/elevator.h"
 #include "bladerunner/ui/esper.h"
 #include "bladerunner/ui/kia.h"
@@ -729,8 +730,8 @@ int ScriptBase::Animation_Skip_To_Frame() {
 
 void ScriptBase::Delay(int miliseconds) {
 	Player_Loses_Control();
-	int endTime = _vm->getTotalPlayTime() + miliseconds;
-	while (_vm->_gameIsRunning && (int)_vm->getTotalPlayTime() < endTime) {
+	int endTime = _vm->_time->current() + miliseconds;
+	while (_vm->_gameIsRunning && (_vm->_time->current() < endTime)) {
 		_vm->gameTick();
 	}
 	Player_Gains_Control();

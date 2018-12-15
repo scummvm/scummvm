@@ -148,7 +148,7 @@ public:
 	SliceRenderer      *_sliceRenderer;
 	Spinner            *_spinner;
 	SuspectsDatabase   *_suspectsDatabase;
-	Time               *_gameTime;
+	Time               *_time;
 	View               *_view;
 	VK                 *_vk;
 	Waypoints          *_waypoints;

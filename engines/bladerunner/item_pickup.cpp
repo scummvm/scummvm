@@ -56,7 +56,7 @@ void ItemPickup::setup(int animationId, int screenX, int screenY) {
 	int pan = (150 * _screenX - 48000) / 640;
 	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(335), 80, pan, pan, 50, 0);
 
-	_timeLast = _vm->getTotalPlayTime();
+	_timeLast = _vm->getTotalPlayTime(); // Original game is using system timer
 }
 
 void ItemPickup::reset() {
@@ -75,7 +75,7 @@ void ItemPickup::tick() {
 		return;
 	}
 
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->getTotalPlayTime(); // Original game is using system timer
 	int timeDiff = timeNow - _timeLast;
 	_timeLast = timeNow;
 	timeDiff = MIN(MIN(timeDiff, 67), _timeLeft);

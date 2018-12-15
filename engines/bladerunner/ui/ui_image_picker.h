@@ -54,7 +54,7 @@ class UIImagePicker {
 	int _imageCount;
 	int _hoveredImageIndex;
 	int _pressedImageIndex;
-	uint32 _hoverStartTimestamp;
+	int _hoverStartTimestamp;
 	int _isButtonDown;
 	Common::Array<Image> _images;
 

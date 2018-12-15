@@ -149,7 +149,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_lights                  = nullptr;
 	_obstacles               = nullptr;
 	_sceneScript             = nullptr;
-	_gameTime                = nullptr;
+	_time                = nullptr;
 	_gameInfo                = nullptr;
 	_waypoints               = nullptr;
 	_gameVars                = nullptr;
@@ -352,7 +352,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_surfaceBack.create(640, 480, createRGB555());
 	_surface4.create(640, 480, createRGB555());
 
-	_gameTime = new Time(this);
+	_time = new Time(this);
 
 	r = openArchive("STARTUP.MIX");
 	if (!r)
@@ -740,8 +740,8 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Delete MIXArchives here
 
-	delete _gameTime;
-	_gameTime = nullptr;
+	delete _time;
+	_time = nullptr;
 
 	// These are static objects in original game
 
@@ -1148,7 +1148,7 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool bu
 	x = CLIP(x, 0, 639);
 	y = CLIP(y, 0, 479);
 
-	int timeNow = getTotalPlayTime();
+	int timeNow = _time->current();
 
 	if (buttonDown) {
 		_mouseClickTimeDiff = timeNow - _mouseClickTimeLast;

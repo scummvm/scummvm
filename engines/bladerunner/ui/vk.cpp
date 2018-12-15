@@ -38,6 +38,7 @@
 #include "bladerunner/script/vk_script.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/time.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
 
@@ -198,7 +199,7 @@ void VK::tick() {
 	_vm->blitToScreen(_vm->_surfaceFront);
 	_vm->_system->delayMillis(10);
 
-	if (_isClosing && (int)_vm->getTotalPlayTime() >= _timeClose && !_script->isInsideScript()) {
+	if (_isClosing && _vm->_time->current() >= _timeClose && !_script->isInsideScript()) {
 		close();
 		_vm->_mouse->enable();
 		reset();
@@ -250,8 +251,8 @@ void VK::playSpeechLine(int actorId, int sentenceId, float duration) {
 	}
 
 	if (duration > 0.0f && !_vm->_speechSkipped) {
-		int timeEnd = duration * 1000.0f + _vm->getTotalPlayTime();
-		while (timeEnd > (int)_vm->getTotalPlayTime() && _vm->_gameIsRunning) {
+		int timeEnd = duration * 1000.0f + _vm->_time->current();
+		while ((timeEnd > _vm->_time->current()) && _vm->_gameIsRunning) {
 			_vm->gameTick();
 		}
 	}
@@ -265,7 +266,7 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 	humanResponse     = CLIP(humanResponse, -20, 20);
 	replicantResponse = CLIP(replicantResponse, -20, 20);
 
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->current();
 
 	if (intensity > 0) {
 		_needleValueTarget = 78 * intensity / 100;
@@ -509,7 +510,7 @@ void VK::draw() {
 
 	Graphics::Surface &surface = _vm->_surfaceFront;
 
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->current();
 
 	if (_isAdjusting && !_testStarted && !_vm->isMouseButtonDown()) {
 		_isAdjusting = false;
@@ -670,7 +671,7 @@ void VK::draw() {
 
 void VK::drawNeedle(Graphics::Surface &surface) {
 	int x = _needleValue + 165;
-	if ((int)_vm->getTotalPlayTime() >= _timeNextNeedleOscillate && x > 165) {
+	if ((_vm->_time->current() >= _timeNextNeedleOscillate) && (x > 165)) {
 		x = CLIP(x + (int)_vm->_rnd.getRandomNumberRng(0, 4) - 2, 165, 245);
 	}
 
@@ -851,7 +852,7 @@ void VK::stopAdjustement() {
 void VK::animateAdjustment(int target) {
 	_adjustmentTarget = MAX(target - 4, 154);
 	_adjustmentDelta = (_adjustmentTarget - _adjustment) / 5;
-	_timeNextAdjustementStep = _vm->getTotalPlayTime() + 50;
+	_timeNextAdjustementStep = _vm->_time->current() + 50;
 }
 
 void VK::setAdjustment(int x) {
@@ -920,7 +921,7 @@ void VK::askQuestion(int intensity) {
 	} else if (!_isClosing && !_script->isInsideScript()) {
 		_isClosing = true;
 		_vm->_mouse->disable();
-		_timeClose = _vm->getTotalPlayTime() + 3000;
+		_timeClose = _vm->_time->current() + 3000;
 	}
 }
 

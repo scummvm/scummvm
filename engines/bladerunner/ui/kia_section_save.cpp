@@ -121,7 +121,7 @@ void KIASectionSave::open() {
 	}
 
 	_hoveredLineId = -1;
-	_timeLast = _vm->getTotalPlayTime();
+	_timeLast = _vm->getTotalPlayTime(); // Original game is using system timer
 	_timeLeft = 800;
 }
 
@@ -191,7 +191,7 @@ void KIASectionSave::draw(Graphics::Surface &surface){
 		_hoveredLineId = selectedLineId;
 	}
 
-	uint32 now = _vm->getTotalPlayTime();
+	uint32 now = _vm->getTotalPlayTime(); // Original game is using system timer
 	if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size()) {
 		if (_timeLeft) {
 			uint32 timeDiff = now - _timeLast;

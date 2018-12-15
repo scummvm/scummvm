@@ -40,6 +40,7 @@
 #include "bladerunner/set.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/time.h"
 #include "bladerunner/waypoints.h"
 #include "bladerunner/zbuffer.h"
 
@@ -104,7 +105,7 @@ void Actor::setup(int actorId) {
 
 	for (int i = 0; i != 7; ++i) {
 		_timersLeft[i] = 0;
-		_timersLast[i] = _vm->getTotalPlayTime();
+		_timersLast[i] = _vm->_time->current();
 	}
 
 	_honesty              = 50;
@@ -174,7 +175,7 @@ void Actor::increaseFPS() {
 void Actor::timerStart(int timerId, int interval) {
 	assert(timerId >= 0 && timerId < 7);
 	_timersLeft[timerId] = interval;
-	_timersLast[timerId] = _vm->getTotalPlayTime();
+	_timersLast[timerId] = _vm->_time->current();
 }
 
 void Actor::timerReset(int timerId) {
@@ -198,7 +199,7 @@ void Actor::timerUpdate(int timerId) {
 		return;
 	}
 
-	uint32 timeNow = _vm->getTotalPlayTime();
+	uint32 timeNow = _vm->_time->current();
 	int timeDiff = timeNow - _timersLast[timerId];
 	_timersLast[timerId] = timeNow;
 	_timersLeft[timerId] -= timeDiff;
@@ -1307,7 +1308,7 @@ void Actor::save(SaveFileWriteStream &f) {
 		f.writeInt(_timersLeft[i]);
 	}
 
-	uint32 now = _vm->getTotalPlayTime(); // TODO: should be last lock time
+	uint32 now = _vm->_time->getPauseStart();
 	for (int i = 0; i < 7; ++i) {
 		f.writeInt(now - _timersLast[i]);
 	}
@@ -1386,7 +1387,7 @@ void Actor::load(SaveFileReadStream &f) {
 		_timersLeft[i] = f.readInt();
 	}
 
-	uint32 now = _vm->getTotalPlayTime(); // TODO: should be last lock time
+	uint32 now = _vm->_time->getPauseStart();
 	for (int i = 0; i < 7; ++i) {
 		_timersLast[i] = now - f.readInt();
 	}

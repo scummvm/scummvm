@@ -33,6 +33,7 @@
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/shape.h"
+#include "bladerunner/time.h"
 #include "bladerunner/view.h"
 #include "bladerunner/zbuffer.h"
 
@@ -262,7 +263,7 @@ void Mouse::draw(Graphics::Surface &surface, int x, int y) {
 }
 
 void Mouse::updateCursorFrame() {
-	uint32 now = _vm->getTotalPlayTime();
+	uint32 now = _vm->_time->current();
 	const int offset[4] = { 0, 6, 12, 6 };
 
 	if (now - _lastFrameTime < 66) {
