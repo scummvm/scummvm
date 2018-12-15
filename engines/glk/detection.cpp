@@ -82,6 +82,11 @@ public:
 	 * Query the engine for a PlainGameDescriptor for the specified gameid, if any.
 	 */
 	virtual PlainGameDescriptor findGame(const char *gameId) const override;
+
+	/**
+	 * Calls each sub-engine in turn to ensure no game Id accidentally shares the same Id
+	 */
+	void detectClashes() const;
 };
 
 bool GlkMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -204,6 +209,9 @@ PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 }
 
 DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
+	// This is as good a place as any to detect multiple sub-engines using the same Ids
+	detectClashes();
+
 	DetectedGames detectedGames;
 	Glk::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Glulxe::GlulxeMetaEngine::detectGames(fslist, detectedGames);
@@ -211,6 +219,14 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	Glk::TADS::TADSMetaEngine::detectGames(fslist, detectedGames);
 
 	return detectedGames;
+}
+
+void GlkMetaEngine::detectClashes() const {
+	Common::StringMap map;
+	Glk::Frotz::FrotzMetaEngine::detectClashes(map);
+	Glk::Glulxe::GlulxeMetaEngine::detectClashes(map);
+	Glk::Scott::ScottMetaEngine::detectClashes(map);
+	Glk::TADS::TADSMetaEngine::detectClashes(map);
 }
 
 SaveStateList GlkMetaEngine::listSaves(const char *target) const {

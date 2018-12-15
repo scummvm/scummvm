@@ -134,6 +134,14 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 	return !gameList.empty();
 }
 
+void FrotzMetaEngine::detectClashes(Common::StringMap &map) {
+	for (const PlainGameDescriptor *pd = FROTZ_GAME_LIST; pd->gameId; ++pd) {
+		if (map.contains(pd->gameId))
+			error("Duplicate game Id found - %s", pd->gameId);
+		map[pd->gameId] = "";
+	}
+}
+
 bool FrotzMetaEngine::readSavegameHeader(Common::SeekableReadStream *stream, Glk::SavegameHeader &header) {
 	stream->seek(0);
 	if (stream->readUint32BE() != ID_FORM)
