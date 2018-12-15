@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-12-14 04:41+0100\n"
+"POT-Creation-Date: 2018-12-15 03:25+0100\n"
 "PO-Revision-Date: 2018-09-06 21:44+0000\n"
 "Last-Translator: Purple T <zeonk@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -3372,7 +3372,7 @@ msgstr ""
 msgid "It's beyond my power to do that.\n"
 msgstr ""
 
-#: engines/glk/frotz/detection.cpp:146
+#: engines/glk/frotz/detection.cpp:154
 #, fuzzy
 msgid "Unnamed savegame"
 msgstr "Sauvegarde sans nom"
