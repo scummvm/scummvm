@@ -1035,8 +1035,8 @@ void ScalpelEngine::startScene() {
 			// Blackwood's capture
 			_res->addToCache("final2.vda", "epilogue.lib");
 			_res->addToCache("final2.vdx", "epilogue.lib");
-			_animation->play("final1", false, 1, 3, true, 4);
-			_animation->play("final2", false, 1, 0, false, 4);
+			_animation->play("final1", false, 1, 3, true, 2);
+			_animation->play("final2", false, 1, 0, false, 2);
 			break;
 
 		case RESCUE_ANNA:
