@@ -100,7 +100,9 @@ uint SoundChannel::play(uint soundNum, uint repeats, uint notify) {
 	if (f.exists(nameSnd) && f.open(nameSnd)) {
 		if (f.readUint16BE() != (f.size() - 2))
 			error("Invalid sound filesize");
-		repeats = f.readByte();
+		byte headerRepeats = f.readByte();
+		if (headerRepeats > 0)
+			repeats = headerRepeats;
 		f.skip(1);
 		uint freq = f.readUint16BE();
 		f.skip(2);
