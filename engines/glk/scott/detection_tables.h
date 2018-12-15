@@ -69,9 +69,16 @@ const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	{ "10indians", "Mysterious Adventures 10: Ten Little Indians" },
 	{ "waxworks", "Mysterious Adventures 11: Waxworks" },
 
-
-	// Miscellaneous
+	// Other Games
 	{ "desert",            "Desert Adventure" },
+	{ "jamesbondadv",      "James Bond Adventure" },
+	{ "burglarsadv",       "Burglar's Adventure" },
+	{ "underseaconquest",  "Undersea Conquest part 1" },
+	{ "gammaworld",        "Gamma World" },
+	{ "marooned",          "Marooned" },
+	{ "minersadv",         "Miner's Adventure" },
+	{ "romulanadv",        "Romulan Adventure" },
+	{ "topsecretadv",      "Top Secret Adventure" },
 
 	{ nullptr, nullptr }
 };
@@ -137,7 +144,15 @@ const ScottGame SCOTT_GAMES[] = {
 	{ "4d4ee8aa1f24e1745ab1aa017590dcff", "waxworks", 54556 },
 
 	// Other games
-	{ "c43e19228bae08eab74bc080e17bbe16", "desert",            12287 },
+	{ "c43e19228bae08eab74bc080e17bbe16", "desert", 12287 },
+	{ "5c59396a2db040148a5d86beb37b2bb9", "jamesbondadv", 12405 },
+	{ "0072d8afcd30aa1577350dcfad269e47", "burglarsadv", 11541 },
+	{ "d57705f8f17f0b6044a575accf9cbfd1", "underseaconquest", 5616 },
+	{ "b980c44e8a49aa9d71e92f6b6bf1d136", "gammaworld", 11531 },
+	{ "a1ac54630a0583c19269901ec10cd0b1", "marooned", 12576 },
+	{ "0000d9da5a13701601fb3e7399daa128", "minersadv", 11898 },
+	{ "d97b5cb5ed66eb276ef9f1c1bae0b8dd", "romulanadv", 13959 },
+	{ "effb411e74dfe3a8d69b57b9bc3a2cef", "topsecretadv", 15575 },
 
 	{ nullptr, nullptr, 0 }
 };

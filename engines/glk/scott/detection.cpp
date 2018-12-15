@@ -61,7 +61,7 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			const ScottGame *p = SCOTT_GAMES;
 			while (p->_md5 && p->_filesize != gameFile.size() && md5 != p->_md5)
 				++p;
-warning("{ \"%s\", \"%s\", %d }", md5.c_str(), file->getName().c_str(), gameFile.size());
+
 			if (p->_filesize) {
 				// Found a match
 				PlainGameDescriptor gameDesc = findGame(p->_gameId);
