@@ -49,8 +49,9 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory() || !(file->getName().hasSuffixIgnoreCase(".saga")
-				|| file->getName().hasSuffixIgnoreCase(".dat")))
+		Common::String name = file->getName();
+		if (file->isDirectory() || !(name.hasSuffixIgnoreCase(".saga")
+				|| name.hasSuffixIgnoreCase(".dat") || name.hasSuffixIgnoreCase(".blb")))
 			continue;
 
 		if (gameFile.open(*file)) {
@@ -60,7 +61,7 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			const ScottGame *p = SCOTT_GAMES;
 			while (p->_md5 && p->_filesize != gameFile.size() && md5 != p->_md5)
 				++p;
-
+warning("{ \"%s\", \"%s\", %d }", md5.c_str(), file->getName().c_str(), gameFile.size());
 			if (p->_filesize) {
 				// Found a match
 				PlainGameDescriptor gameDesc = findGame(p->_gameId);

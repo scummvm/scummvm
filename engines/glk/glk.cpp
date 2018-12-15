@@ -114,8 +114,7 @@ Common::Error GlkEngine::run() {
 
 	initialize();
 
-	if (filename.hasSuffixIgnoreCase(".blorb") || filename.hasSuffixIgnoreCase(".zblorb")
-			|| filename.hasSuffixIgnoreCase(".gblorb")) {
+	if (Blorb::isBlorb(filename)) {
 		// Blorb archive
 		_blorb = new Blorb(filename, getInterpreterType());
 		SearchMan.add("blorb", _blorb, 99, false);

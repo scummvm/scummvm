@@ -183,7 +183,8 @@ Common::ErrorCode Blorb::load() {
 				(_interpType == INTERPRETER_GLULXE && type == "GLUL") ||
 				(_interpType == INTERPRETER_TADS2 && type == "TAD2") ||
 				(_interpType == INTERPRETER_TADS3 && type == "TAD3") ||
-				(_interpType == INTERPRETER_HUGO && type == "HUGO")
+				(_interpType == INTERPRETER_HUGO && type == "HUGO") ||
+				(_interpType == INTERPRETER_SCOTT && type == "SAAI")
 			) {
 				// Game executable
 				ce._filename = "game";
@@ -194,6 +195,11 @@ Common::ErrorCode Blorb::load() {
 	}
 
 	return Common::kNoError;
+}
+
+bool Blorb::isBlorb(const Common::String &filename) {
+	return filename.hasSuffixIgnoreCase(".blorb") || filename.hasSuffixIgnoreCase(".zblorb")
+		|| filename.hasSuffixIgnoreCase(".gblorb") || filename.hasSuffixIgnoreCase(".blb");
 }
 
 } // End of namespace Glk

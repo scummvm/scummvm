@@ -93,6 +93,11 @@ public:
 	 * @return the newly created input stream
 	 */
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+
+	/**
+	 * Returns true if a given filename specifies a Blorb file
+	 */
+	static bool isBlorb(const Common::String &filename);
 };
 
 } // End of namespace Glk

@@ -37,6 +37,7 @@ struct ScottGame {
 };
 
 const PlainGameDescriptor SCOTT_GAME_LIST[] = {
+	// Scott Adams games
 	{ "adventureland",     "Adventureland" },
 	{ "pirateadventure",   "Pirate Adventure" },
 	{ "missionimpossible", "Mission Impossible" },
@@ -54,6 +55,24 @@ const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	{ "buckaroobanzai",    "Buckaroo Banzai" },
 	{ "marveladventure",   "Marvel Adventure #1" },
 	{ "scottsampler",      "Adventure International's Mini-Adventure Sampler" },
+
+	// 11 Mysterious Adventures by Brian Howarth
+	{ "goldenbaton", "Mysterious Adventures 1: The Golden Baton" },
+	{ "timemachine", "Mysterious Adventures 2: The Time Machine" },
+	{ "arrowofdeath1", "Mysterious Adventures 3: Arrow of Death Part 1" },
+	{ "arrowofdeath2", "Mysterious Adventures 4: Arrow of Death Part 2" },
+	{ "pulsar7", "Mysterious Adventures 5: Escape from Pulsar 7" },
+	{ "circus", "Mysterious Adventures 6: Circus" },
+	{ "feasibility", "Mysterious Adventures 7: Feasibility Experiment" },
+	{ "akyrz", "Mysterious Adventures 8: The Wizard of Akyrz" },
+	{ "perseus", "Mysterious Adventures 9: Perseus and Andromeda" },
+	{ "10indians", "Mysterious Adventures 10: Ten Little Indians" },
+	{ "waxworks", "Mysterious Adventures 11: Waxworks" },
+
+
+	// Miscellaneous
+	{ "desert",            "Desert Adventure" },
+
 	{ nullptr, nullptr }
 };
 
@@ -92,6 +111,34 @@ const ScottGame SCOTT_GAMES[] = {
 	{ "0ef0def798d895ed766041fa99dd28a0", "adventure13",       22346 },
 	{ "0bf1bcc649422798332a38c88588fdff", "adventure14",       22087 },
 	{ "a0a5423967287dae9cbeb9abe8324479", "buckaroobanzai",    21038 },
+
+	// 11 Mysterious Adventures
+	{ "2ebf7b1dd515aff34b99b40f27af00e3", "goldenbaton", 13373 },
+	{ "a10cde2063bb56694000013b32dc0798", "timemachine", 13742 },
+	{ "6f7040fe091eeb9ebdc2fd7533b94ceb", "arrowofdeath1", 13412 },
+	{ "c5758034b83b06258e46091a80abebde", "arrowofdeath2", 15554 },
+	{ "7597704b423c1ca2bea3a48263b5f4dc", "pulsar7", 17777 },
+	{ "93a7947e2edb7c45036446168b427546", "circus", 13621 },
+	{ "c8f423a79ad0e508f43ba4ce91f1e573", "feasibility", 13441 },
+	{ "645c089d6d66324472d939993793eb57", "akyrz", 16803 },
+	{ "2f5bb15b461fbdc000243acabd324c67", "perseus", 15080 },
+	{ "3bb85fd505b4d42bd1767c1a76347e2f", "10indians", 14215 },
+	{ "af134c32cc0d50329d6e7335639ded88", "waxworks", 16068 },
+	{ "028303fd062c39b59b28982cde75f085", "goldenbaton", 53374 },
+	{ "b2ff405412d92b06373d9a5efbb048d4", "timemachine", 54062 },
+	{ "f11f85802eff8aed9e212aef7f26ede1", "arrowofdeath1", 68150 },
+	{ "8f2609b1270248c93cdf254435f9d410", "arrowofdeath2", 77544 },
+	{ "72e14dbfca7ced5c0aadf019b47b4024", "pulsar7", 55516 },
+	{ "64d44e66c4f5353150f8fbaceaa99800", "circus", 48624 },
+	{ "2d717aa4f0eba77b77e259f81f92fc37", "feasibility", 78456 },
+	{ "3467e09eb247c474ae7e8a8d503968d0", "akyrz", 65008 },
+	{ "4d8389c0ea3425bd4d92492538f63b19", "perseus", 56914 },
+	{ "72e91da7590138b78d370a3cb1448f3c", "10indians", 64660 },
+	{ "4d4ee8aa1f24e1745ab1aa017590dcff", "waxworks", 54556 },
+
+	// Other games
+	{ "c43e19228bae08eab74bc080e17bbe16", "desert",            12287 },
+
 	{ nullptr, nullptr, 0 }
 };
 
