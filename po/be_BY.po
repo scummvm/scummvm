@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-12-15 03:25+0100\n"
+"POT-Creation-Date: 2018-12-16 11:48+0100\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Fiodar <fedor_qd@mail.ru>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -33,29 +33,29 @@ msgstr "Уключаныя ў зборку опцыі:"
 msgid "Available engines:"
 msgstr "Даступныя рухавічкі:"
 
-#: gui/browser.cpp:71 gui/browser_osx.mm:84
+#: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:87
 msgid "Show hidden files"
 msgstr "Паказваць схаваныя файлы"
 
-#: gui/browser.cpp:71
+#: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
 msgstr "Паказваць файлы з атрыбутам \"схаваны\""
 
-#: gui/browser.cpp:75 gui/remotebrowser.cpp:57
+#: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
 msgstr "Уверх"
 
-#: gui/browser.cpp:75 gui/browser.cpp:77 gui/remotebrowser.cpp:57
+#: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
 msgstr "Перайсці на дырэкторыю ўзроўнем вышэй"
 
-#: gui/browser.cpp:77 gui/remotebrowser.cpp:59
+#: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
 msgid "Go up"
 msgstr "Уверх"
 
-#: gui/browser.cpp:78 gui/chooser.cpp:46 gui/editgamedialog.cpp:299
+#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:299
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:43 gui/massadd.cpp:92
 #: gui/options.cpp:1789 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
@@ -77,9 +77,10 @@ msgstr "Уверх"
 msgid "Cancel"
 msgstr "Адмена"
 
-#: gui/browser.cpp:79 gui/browser_osx.mm:151 gui/chooser.cpp:47
-#: gui/filebrowser-dialog.cpp:66 gui/remotebrowser.cpp:61
-#: gui/themebrowser.cpp:56
+#: gui/browser.cpp:83 gui/chooser.cpp:47 gui/filebrowser-dialog.cpp:66
+#: gui/remotebrowser.cpp:61 gui/themebrowser.cpp:56
+#: backends/dialogs/macosx/macosx-dialogs.mm:148
+#: backends/dialogs/win32/win32-dialogs.cpp:148
 msgid "Choose"
 msgstr "Абраць"
 
