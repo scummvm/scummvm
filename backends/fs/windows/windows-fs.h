@@ -23,12 +23,13 @@
 #ifndef WINDOWS_FILESYSTEM_H
 #define WINDOWS_FILESYSTEM_H
 
-#include "backends/fs/abstract-fs.h"
-
 #include <windows.h>
 #ifdef _WIN32_WCE
 #undef GetCurrentDirectory
 #endif
+
+#include "backends/fs/abstract-fs.h"
+
 #include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
