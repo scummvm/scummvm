@@ -20,16 +20,15 @@
  *
  */
 
-#include "common/scummsys.h"
-// We need certain functions that are excluded by default
-#undef NONLS
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
-// required for SHGetSpecialFolderPath in shlobj.h
+ // required for SHGetSpecialFolderPath in shlobj.h
 #define _WIN32_IE 0x400
 #endif
 #include <shlobj.h>
 
+#include "common/scummsys.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
 // VerSetConditionMask, VerifyVersionInfo and SHGetFolderPath didn't appear until Windows 2000,
