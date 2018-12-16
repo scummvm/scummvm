@@ -55,9 +55,6 @@
 	#define _WIN32_WINNT _WIN32_WINNT_WIN7
 
 	#include <windows.h>
-	#if defined(ARRAYSIZE)
-		#undef ARRAYSIZE
-	#endif
 #endif
 
 #include <shlobj.h>
