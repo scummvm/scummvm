@@ -22,10 +22,10 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include <curl/curl.h>
 #include "backends/networking/curl/networkreadstream.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "base/version.h"
-#include <curl/curl.h>
 
 namespace Networking {
 
