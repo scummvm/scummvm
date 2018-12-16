@@ -266,8 +266,7 @@ void GlkInterface::os_start_sample(int number, int volume, int repeats, zword eo
 	default:  vol = 0x20000; break;
 	}
 
-	// we dont do repeating or eos-callback for now...
-	glk_schannel_play_ext(gos_channel, number, 1, 0);
+	glk_schannel_play_ext(gos_channel, number, repeats, eos);
 	glk_schannel_set_volume(gos_channel, vol);
 }
 

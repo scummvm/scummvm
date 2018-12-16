@@ -29,6 +29,7 @@
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/police_maze.h"
 #include "bladerunner/script/scene_script.h"
+#include "bladerunner/time.h"
 
 namespace BladeRunner {
 
@@ -78,7 +79,7 @@ void PoliceMaze::setPauseState(bool state) {
 	warning("PAUSE: %d", state);
 	_isPaused = state;
 
-	uint32 t = _vm->getTotalPlayTime();
+	uint32 t = _vm->_time->current();
 
 	for (int i = 0; i < kNumMazeTracks; i++) {
 		_tracks[i]->setTime(t);
@@ -207,7 +208,7 @@ bool PoliceMazeTargetTrack::tick() {
 	}
 
 	uint32 oldTime = _time;
-	_time = _vm->getTotalPlayTime();
+	_time = _vm->_time->current();
 	int32 timeDiff = _time - oldTime;
 	_timeLeftUpdate -= timeDiff;
 

@@ -26,6 +26,7 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
+#include "bladerunner/time.h"
 
 #include "common/debug.h"
 #include "common/system.h"
@@ -185,7 +186,7 @@ void AmbientSounds::removeAllLoopingSounds(int delay) {
 }
 
 void AmbientSounds::tick() {
-	uint32 now = g_system->getMillis();
+	uint32 now = _vm->_time->current();
 
 	for (int i = 0; i != kNonLoopingSounds; ++i) {
 		NonLoopingSound &track = _nonLoopingSounds[i];
@@ -303,7 +304,7 @@ void AmbientSounds::addSoundByName(
 
 	NonLoopingSound &track = _nonLoopingSounds[i];
 
-	uint32 now = _vm->getTotalPlayTime();
+	uint32 now = _vm->_time->current();
 
 	track.isActive = true;
 	track.name = name;
@@ -392,7 +393,7 @@ void AmbientSounds::load(SaveFileReadStream &f) {
 
 	f.skip(4); // TODO: _isDisabled
 
-	uint32 now = g_system->getMillis();
+	uint32 now = _vm->_time->getPauseStart();
 
 	for (int i = 0; i != kNonLoopingSounds; ++i) {
 		NonLoopingSound &track = _nonLoopingSounds[i];

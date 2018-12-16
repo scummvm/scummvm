@@ -35,6 +35,7 @@
 #include "bladerunner/shape.h"
 #include "bladerunner/script/esper_script.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/time.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
 
@@ -82,7 +83,8 @@ void ESPER::open(Graphics::Surface *surface) {
 		_vm->_mouse->enable();
 	}
 
-	//TODO: time->lock()
+	_vm->_time->pause();
+
 	_ambientVolume = _vm->_ambientSounds->getVolume();
 	_vm->_ambientSounds->setVolume(_ambientVolume / 2);
 
@@ -151,7 +153,8 @@ void ESPER::close() {
 
 	_vm->closeArchive("MODE.MIX");
 
-	//TODO: time->unlock()
+	_vm->_time->resume();
+
 	_vm->_ambientSounds->setVolume(_ambientVolume);
 	_vm->_scene->resume();
 	reset();
@@ -533,8 +536,8 @@ void ESPER::setStatePhoto(EsperPhotoStates state) {
 void ESPER::wait(int timeout) {
 	if (!_isWaiting) {
 		_isWaiting = true;
-		uint timeEnd = timeout + _vm->getTotalPlayTime();
-		while (_vm->_gameIsRunning && _vm->getTotalPlayTime() < timeEnd) {
+		int timeEnd = timeout + _vm->_time->current();
+		while (_vm->_gameIsRunning && (_vm->_time->current() < timeEnd)) {
 			_vm->gameTick();
 		}
 		_isWaiting = false;
@@ -652,7 +655,7 @@ void ESPER::draw(Graphics::Surface &surface) {
 
 void ESPER::drawPhotoOpening(Graphics::Surface &surface) {
 	bool needMoreZooming = true;
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->current();
 	if (timeNow >= _timePhotoOpeningNext) {
 		_photoOpeningWidth  = MIN(_photoOpeningWidth  + 8, _screen.right  - 1);
 		_photoOpeningHeight = MIN(_photoOpeningHeight + 7, _screen.bottom - 1);
@@ -682,7 +685,7 @@ void ESPER::drawPhotoOpening(Graphics::Surface &surface) {
 bool ESPER::drawSelectionZooming(Graphics::Surface &surface) {
 	bool zooming = false;
 	bool needMoreZooming = true;
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->current();
 	if (timeNow > _timeSelectionZoomNext) {
 		zooming = true;
 		_selection.left   += _selectionDelta.left;
@@ -713,7 +716,7 @@ bool ESPER::drawSelectionZooming(Graphics::Surface &surface) {
 
 bool ESPER::drawSelectionBlinking(Graphics::Surface &surface) {
 	bool needMoreBlinking = true;
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->current();
 	if (timeNow > _timeSelectionBlinkingNext) {
 		_timeSelectionBlinkingNext = timeNow + 100;
 		_selectionBlinkingStyle ^= 1;
@@ -731,7 +734,7 @@ bool ESPER::drawSelectionBlinking(Graphics::Surface &surface) {
 }
 
 void ESPER::drawPhotoZooming(Graphics::Surface &surface) {
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->current();
 	if ((timeNow > _timeZoomNext) && (_zoomStep < _zoomSteps)) {
 		_flash = true;
 
@@ -799,7 +802,7 @@ void ESPER::drawPhotoZooming(Graphics::Surface &surface) {
 }
 
 void ESPER::drawPhotoSharpening(Graphics::Surface &surface) {
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->current();
 	bool needMoreSharpening = true;
 	if (timeNow >= _timePhotoOpeningNext) {
 		_photoOpeningWidth  = MIN(_photoOpeningWidth  + 8, _screen.right  - 1);
@@ -840,7 +843,7 @@ void ESPER::drawPhotoSharpening(Graphics::Surface &surface) {
 }
 
 void ESPER::drawPhotoZoomOut(Graphics::Surface &surface) {
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->current();
 	if (timeNow >= _timeZoomOutNext) {
 		_timeZoomOutNext = timeNow + 300;
 
@@ -882,7 +885,7 @@ void ESPER::drawVideoZooming(Graphics::Surface &surface) {
 
 	bool flash = false;
 	bool advanceFrame = false;
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->current();
 	if (timeNow > _timeZoomNext) {
 		_timeZoomNext = timeNow + 300;
 		playSound(419, 25);
@@ -907,7 +910,7 @@ void ESPER::drawVideoZooming(Graphics::Surface &surface) {
 void ESPER::drawVideoZoomOut(Graphics::Surface &surface) {
 	bool flash = false;
 	bool advanceFrame = false;
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->current();
 	if (timeNow > _timeZoomNext && _vqaLastFrame > 0) {
 		_timeZoomNext = timeNow + 300;
 		playSound(419, 25);
@@ -1379,7 +1382,7 @@ void ESPER::tickSound() {
 }
 
 void ESPER::tickScroll() {
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->current();
 	if (timeNow <= _timeScrollNext) {
 		return;
 	}

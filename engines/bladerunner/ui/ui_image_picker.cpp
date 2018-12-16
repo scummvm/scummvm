@@ -27,6 +27,7 @@
 #include "bladerunner/font.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/shape.h"
+#include "bladerunner/time.h"
 
 #include "common/rect.h"
 #include "common/str.h"
@@ -226,7 +227,12 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 		return;
 	}
 
-	if (_hoveredImageIndex == -1 || _vm->_mouse->isDisabled() || !_images[_hoveredImageIndex].active || _vm->getTotalPlayTime() < _hoverStartTimestamp + 1000) {
+	if (
+		(_hoveredImageIndex == -1) ||
+		(_vm->_mouse->isDisabled()) ||
+		(!_images[_hoveredImageIndex].active) ||
+		(_vm->_time->current() < _hoverStartTimestamp + 1000)
+	) {
 		return;
 	}
 
@@ -293,7 +299,7 @@ bool UIImagePicker::handleMouseAction(int x, int y, bool down, bool up, bool ign
 				}
 			}
 		}
-		_hoverStartTimestamp = _vm->getTotalPlayTime();
+		_hoverStartTimestamp = _vm->_time->current();
 		_hoveredImageIndex = hoveredImageIndex;
 	}
 

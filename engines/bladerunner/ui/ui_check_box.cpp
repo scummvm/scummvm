@@ -47,7 +47,7 @@ UICheckBox::UICheckBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedC
 		_frame = 0;
 	}
 
-	_timeLast = _vm->getTotalPlayTime();
+	_timeLast = _vm->getTotalPlayTime(); // Original game is using system timer
 	_rect = rect;
 	_isChecked = isChecked;
 }
@@ -56,7 +56,7 @@ UICheckBox::UICheckBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedC
 void UICheckBox::draw(Graphics::Surface &surface) {
 	int shapeId;
 	if (_rect.right > _rect.left && _rect.bottom > _rect.top) {
-		uint timeNow = _vm->getTotalPlayTime();
+		uint timeNow = _vm->getTotalPlayTime(); // Original game is using system timer
 		if (timeNow - _timeLast > 67) {
 			int frameDelta = (timeNow - _timeLast) / 67u;
 			_timeLast = timeNow;

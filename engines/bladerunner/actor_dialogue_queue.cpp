@@ -28,6 +28,7 @@
 #include "bladerunner/audio_speech.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
+#include "bladerunner/time.h"
 
 #include "bladerunner/script/scene_script.h"
 
@@ -107,7 +108,7 @@ void ActorDialogueQueue::flush(int a1, bool callScript) {
 void ActorDialogueQueue::tick() {
 	if (!_vm->_audioSpeech->isPlaying()) {
 		if (_isPause) {
-			int time = _vm->getTotalPlayTime();
+			int time = _vm->_time->current();
 			int timeDiff = time - _timeLast;
 			_timeLast = time;
 			_delay -= timeDiff;
@@ -154,7 +155,7 @@ void ActorDialogueQueue::tick() {
 			} else if (firstEntry.isPause) {
 				_isPause = true;
 				_delay = firstEntry.delay;
-				_timeLast = _vm->getTotalPlayTime();
+				_timeLast = _vm->_time->current();
 			}
 		}
 	}

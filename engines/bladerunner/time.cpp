@@ -53,7 +53,7 @@ int Time::getPauseStart() {
 	return _pauseStart;
 }
 
-int Time::unpause() {
+int Time::resume() {
 	assert(_pauseCount > 0);
 	if (--_pauseCount == 0) {
 		_offset += current() - _pauseStart;

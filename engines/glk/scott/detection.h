@@ -24,6 +24,7 @@
 #define GLK_SCOTT_DETECTION
 
 #include "common/fs.h"
+#include "common/hash-str.h"
 #include "engines/game.h"
 
 namespace Glk {
@@ -45,6 +46,11 @@ public:
 	 * Detect supported games
 	 */
 	static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);
+
+	/**
+	 * Check for game Id clashes with other sub-engines
+	 */
+	static void detectClashes(Common::StringMap &map);
 };
 
 } // End of namespace Scott

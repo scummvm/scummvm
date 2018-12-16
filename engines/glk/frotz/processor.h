@@ -53,11 +53,11 @@ typedef void (Processor::*Opcode)();
 class Processor : public GlkInterface, public virtual Mem {
 	friend class Quetzal;
 private:
-	Opcode op0_opcodes[16];
-	Opcode op1_opcodes[16];
 	static const char *const ERR_MESSAGES[ERR_NUM_ERRORS];
 	static Opcode var_opcodes[64];
 	static Opcode ext_opcodes[64];
+	Common::Array<Opcode> op0_opcodes;
+	Common::Array<Opcode> op1_opcodes;
 
 	int _finished;
 	zword zargs[8];

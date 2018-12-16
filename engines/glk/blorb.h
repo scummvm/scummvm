@@ -48,6 +48,7 @@ struct ChunkEntry {
 class Blorb : public Common::Archive {
 private:
 	Common::String _filename;
+	Common::FSNode _fileNode;
 	InterpreterType _interpType;
 	Common::Array<ChunkEntry> _chunks;	///< list of chunk descriptors
 private:
@@ -60,6 +61,11 @@ public:
 	 * Constructor
 	 */
 	Blorb(const Common::String &filename, InterpreterType interpType);
+
+	/**
+	 * Constructor
+	 */
+	Blorb(const Common::FSNode &fileNode, InterpreterType interpType);
 
 	/**
 	 * Check if a member with the given name is present in the Archive.
@@ -87,6 +93,11 @@ public:
 	 * @return the newly created input stream
 	 */
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+
+	/**
+	 * Returns true if a given filename specifies a Blorb file
+	 */
+	static bool isBlorb(const Common::String &filename);
 };
 
 } // End of namespace Glk

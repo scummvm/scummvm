@@ -49,8 +49,9 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory() || !(file->getName().hasSuffixIgnoreCase(".saga")
-				|| file->getName().hasSuffixIgnoreCase(".dat")))
+		Common::String name = file->getName();
+		if (file->isDirectory() || !(name.hasSuffixIgnoreCase(".saga")
+				|| name.hasSuffixIgnoreCase(".dat") || name.hasSuffixIgnoreCase(".blb")))
 			continue;
 
 		if (gameFile.open(*file)) {
@@ -75,6 +76,14 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 	}
 
 	return !gameList.empty();
+}
+
+void ScottMetaEngine::detectClashes(Common::StringMap &map) {
+	for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd) {
+		if (map.contains(pd->gameId))
+			error("Duplicate game Id found - %s", pd->gameId);
+		map[pd->gameId] = "";
+	}
 }
 
 } // End of namespace Scott

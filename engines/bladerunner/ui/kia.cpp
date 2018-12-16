@@ -38,6 +38,7 @@
 #include "bladerunner/settings.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/time.h"
 #include "bladerunner/ui/kia_log.h"
 #include "bladerunner/ui/kia_section_base.h"
 #include "bladerunner/ui/kia_section_clues.h"
@@ -665,7 +666,7 @@ void KIA::init() {
 	}
 	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(501), 70, 0, 0, 50, 0);
 
-	// TODO: time->lock();
+	_vm->_time->pause();
 }
 
 void KIA::unload() {
@@ -703,7 +704,7 @@ void KIA::unload() {
 
 	_currentSectionId = kKIASectionNone;
 
-	// TODO: Unfreeze game time
+	_vm->_time->resume();
 
 	if (!_vm->_settings->isLoadingGame() && _vm->_gameIsRunning) {
 		_vm->_scene->resume();

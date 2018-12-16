@@ -3561,6 +3561,34 @@ static const uint16 longbowPatchBerryBushFix[] = {
 	PATCH_END
 };
 
+// On day 9, room 350 outside the cobbler's hut is initialized incorrectly if
+//  disguised as a monk. The entrance to the hut is broken and several minor
+//  messages are incorrect. This is due to the room's script assuming that the
+//  only disguises that day are yeoman and merchant. A monk disguise causes some
+//  tests to pass and others to fail, leaving the room in an inconsistent state.
+//
+// We fix this by changing the yeoman disguise tests in the script to include
+//  the monk disguises. The disguise global is set to 4 for yeoman and 5 or 6
+//  for monk disguises so we patch the tests to be greater than or equals to.
+//
+// Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
+// Responsible methods: rm350:init, lobbsHut:doVerb, lobbsDoor:doVerb,
+//                      lobbsCover:doVerb, tailorDoor:doVerb
+// Fixes bug #10834
+static const uint16 longbowSignatureCobblerHut[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x7e,                     // lsg 7e [ current disguise ]
+	0x35, 0x04,                     // ldi 04 [ yeoman ]
+	0x1a,                           // eq?    [ is current disguise yeoman? ]
+	SIG_END
+};
+
+static const uint16 longbowPatchCobblerHut[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x20,                           // ge? [ is current disguise yeoman or monk? ]
+	PATCH_END
+};
+
 // The Amiga version of room 530 adds a broken fDrunk:onMe method which prevents
 //  messages when clicking on the drunk on the floor of the pub and causes a
 //  signature mismatch on every click in the room. fDrunk:onMe passes an Event
@@ -3601,6 +3629,7 @@ static const uint16 longbowPatchAmigaPubFix[] = {
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode, longbowPatchShowHandCode },
 	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix, longbowPatchBerryBushFix },
+	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,   longbowPatchCobblerHut },
 	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,  longbowPatchAmigaPubFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -8651,6 +8680,77 @@ static const uint16 qfg4SafeDoorOilPatch[] = {
 	PATCH_END
 };
 
+// Waking after a dream by the staff in town prevents the room from creating a
+// doorMat at nightfall, if hero rests repeatedly. The town gate closes at
+// night. Without the doorMat, hero isn't prompted to climb over the gate.
+// Instead, hero casually walks south and gets stuck in the next room behind
+// the closed gate.
+//
+// Since hero wakes in the morning, sAfterTheDream disposes any existing
+// doorMat. It neglects to reset local[2], which toggles rm270::doit()'s
+// constant checks for nightfall to replace the doorMat.
+//
+// We cache an object lookup and use the spare bytes to reset local[2].
+//
+// Note: There was never any sunrise detection. If hero rests repeatedly until
+// morning, the doorMat will linger to needlessly prompt about climbing the
+// then-open gate. Harmless. The prompt sets global[423] (1=climb, 2=levitate).
+// The gate room only honors that global at night, so hero will simply walk
+// through. Heroes unable to climb/levitate would be denied until they re-enter
+// the room.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sAfterTheDream::changeState(2) in script 270
+// Fixes bug: #10830
+static const uint16 qfg4DreamGateSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x43,                         // pushi heading
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
+	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x31, 0x1a,                         // bnt 26d [skip disposing/nulling] (no heading)
+                                        //
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x39, 0x43,                         // pushi heading
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
+	0x4a, SIG_UINT16(0x0004),           // send 04 (accumulate heading)
+	0x4a, SIG_UINT16(0x0004),           // send 04 (dispose heading)
+                                        //
+	0x39, 0x43,                         // pushi heading
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
+	0x4a, SIG_UINT16(0x0006),           // send 06 (set fSouth's heading to null)
+	SIG_END
+};
+
+static const uint16 qfg4DreamGatePatch[] = {
+	0x3f, 0x01,                         // link 1d (cache heading for reuse)
+	0x39, 0x43,                         // pushi heading
+	0x76,                               // push0
+	0x72, PATCH_GETORIGINALUINT16(4),   // lofsa fSouth
+	0x4a, PATCH_UINT16(0x0004),         // send 04
+	0xa5, 0x00,                         // sat temp[0]
+	0x31, 0x13,                         // bnt 19d [skip disposing/nulling] (no heading)
+                                        //
+	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
+	0x76,                               // push0
+	0x85, 0x00,                         // lat temp[0]
+	0x4a, PATCH_UINT16(0x0004),         // send 04 (dispose heading)
+                                        //
+	0x39, 0x43,                         // pushi heading
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, PATCH_GETORIGINALUINT16(4),   // lofsa fSouth
+	0x4a, PATCH_UINT16(0x0006),         // send 06 (set fSouth's heading to null)
+                                        //
+	0x76,                               // push0
+	0xab, 0x02,                         // ssl local[2] (let doit() watch for nightfall)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -8662,6 +8762,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
+	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
 	{  true,   370, "Floppy: fix copy protection",                 1, qfg4CopyProtectionSignature,   qfg4CopyProtectionPatch },

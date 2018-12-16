@@ -95,7 +95,7 @@ void EndCredits::show() {
 	_vm->_vqaStopIsRequested = false;
 
 	double position = 0.0;
-	uint32 timeLast = _vm->getTotalPlayTime();
+	uint32 timeLast = _vm->getTotalPlayTime(); // Original game is using system timer
 
 	while (!_vm->_vqaStopIsRequested && !_vm->shouldQuit()) {
 		if (position >= textPositions[textCount - 1]) {
@@ -106,12 +106,12 @@ void EndCredits::show() {
 		_vm->handleEvents();
 
 		if (!_vm->_gameIsRunning) {
-			timeLast = _vm->getTotalPlayTime();
+			timeLast = _vm->getTotalPlayTime(); // Original game is using system timer
 
 			continue;
 		}
 
-		uint32 timeNow = _vm->getTotalPlayTime();
+		uint32 timeNow = _vm->getTotalPlayTime(); // Original game is using system timer
 		position += (double)(timeNow - timeLast) * 0.05f;
 		timeLast = timeNow;
 

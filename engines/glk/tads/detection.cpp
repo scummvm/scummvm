@@ -96,5 +96,13 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 	return !gameList.empty();
 }
 
+void TADSMetaEngine::detectClashes(Common::StringMap &map) {
+	for (const TADSDescriptor *pd = TADS_GAME_LIST; pd->gameId; ++pd) {
+		if (map.contains(pd->gameId))
+			error("Duplicate game Id found - %s", pd->gameId);
+		map[pd->gameId] = "";
+	}
+}
+
 } // End of namespace TADS
 } // End of namespace Glk

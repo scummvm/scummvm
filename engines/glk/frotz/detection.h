@@ -24,6 +24,7 @@
 #define GLK_FROTZ_DETECTION
 
 #include "common/fs.h"
+#include "common/hash-str.h"
 #include "engines/game.h"
 #include "glk/streams.h"
 
@@ -47,6 +48,11 @@ public:
 	 * Detect supported games
 	 */
 	static bool detectGames(const Common::FSList &fslist, DetectedGames &gameList);
+
+	/**
+	 * Check for game Id clashes with other sub-engines
+	 */
+	static void detectClashes(Common::StringMap &map);
 
 	/**
 	 * Check a passed stream for a Quetzal save, and if so, get header information

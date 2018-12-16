@@ -49,6 +49,9 @@ class TaskbarManager;
 #if defined(USE_UPDATES)
 class UpdateManager;
 #endif
+#if defined(USE_SYSDIALOGS)
+class DialogManager;
+#endif
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
@@ -179,6 +182,15 @@ protected:
 	Common::UpdateManager *_updateManager;
 #endif
 
+#if defined(USE_SYSDIALOGS)
+	/**
+	 * No default value is provided for _dialogManager by OSystem.
+	 *
+	 * @note _dialogManager is deleted by the OSystem destructor.
+	 */
+	Common::DialogManager *_dialogManager;
+#endif
+
 	/**
 	 * No default value is provided for _fsFactory by OSystem.
 	 *
@@ -287,7 +299,7 @@ public:
 		kFeatureStretchMode,
 
 		/**
-		 * Determine whether a virtual keyboard is too be shown or not.
+		 * Determine whether a virtual keyboard is to be shown or not.
 		 * This would mostly be implemented by backends for hand held devices,
 		 * like PocketPC, Palms, Symbian phones like the P800, Zaurus, etc.
 		 */
@@ -361,7 +373,7 @@ public:
 		 *
 		 * This feature has no associated state.
 		 */
-		kFeatureOpenUrl	,
+		kFeatureOpenUrl,
 
 		/**
 		* show on-screen control
@@ -391,7 +403,13 @@ public:
 		/**
 		* shaders
 		*/
-		kFeatureShader
+		kFeatureShader,
+
+		/**
+		* Supports for using the native system file browser dialog
+		 through the DialogManager.
+		*/
+		kFeatureNativeFileBowserDialog
 
 	};
 
@@ -1302,6 +1320,17 @@ public:
 	 */
 	virtual Common::UpdateManager *getUpdateManager() {
 		return _updateManager;
+	}
+#endif
+
+#if defined(USE_SYSDIALOGS)
+	/**
+	 * Returns the DialogManager, used to handle system dialogs.
+	 *
+	 * @return the DialogManager for the current architecture
+	 */
+	virtual Common::DialogManager *getDialogManager() {
+		return _dialogManager;
 	}
 #endif
 

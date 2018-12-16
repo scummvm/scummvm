@@ -1468,6 +1468,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_guiLanguagePopUpDesc = 0;
 	_guiLanguagePopUp = 0;
 	_guiLanguageUseGameLanguageCheckbox = nullptr;
+	_useSystemDialogsCheckbox = 0;
 #ifdef USE_UPDATES
 	_updatesPopUpDesc = 0;
 	_updatesPopUp = 0;
@@ -1703,6 +1704,17 @@ void GlobalOptionsDialog::build() {
 	}
 
 #endif // USE_TRANSLATION
+
+	if (g_system->hasFeature(OSystem::kFeatureNativeFileBowserDialog)) {
+		_useSystemDialogsCheckbox = new CheckboxWidget(tab, "GlobalOptions_Misc.UseSystemDialogs",
+			_("Use native system file browser"),
+			_("Use the native system file browser instead of the ScummVM one to select a file or directory.")
+		);
+
+		if (ConfMan.hasKey("gui_browser_native")) {
+			_useSystemDialogsCheckbox->setState(ConfMan.getBool("gui_browser_native", _domain));
+		}
+	}
 
 #ifdef USE_UPDATES
 	_updatesPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.UpdatesPopupDesc", _("Update check:"), _("How often to check ScummVM updates"));
@@ -1976,6 +1988,10 @@ void GlobalOptionsDialog::apply() {
 	bool guiUseGameLanguage = _guiLanguageUseGameLanguageCheckbox->getState();
 	ConfMan.setBool("gui_use_game_language", guiUseGameLanguage, _domain);
 #endif
+
+	if (_useSystemDialogsCheckbox) {
+		ConfMan.setBool("gui_browser_native", _useSystemDialogsCheckbox->getState(), _domain);
+	}
 
 	GUI::ThemeEngine::GraphicsMode gfxMode = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
 	Common::String oldGfxConfig = ConfMan.get("gui_renderer");

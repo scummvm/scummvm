@@ -62,7 +62,7 @@ UIScrollBox::UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelecte
 	_isVisible  = false;
 	_style      = style;
 	_center     = center;
-	_timeLastScroll    = _vm->getTotalPlayTime();
+	_timeLastScroll    = _vm->getTotalPlayTime(); // Original game is using system timer
 	_timeLastCheckbox  = _vm->getTotalPlayTime();
 	_timeLastHighlight = _vm->getTotalPlayTime();
 
@@ -113,7 +113,7 @@ void UIScrollBox::show() {
 	_scrollAreaDownHover   = false;
 	_scrollBarHover        = false;
 
-	_timeLastScroll    = _vm->getTotalPlayTime();
+	_timeLastScroll    = _vm->getTotalPlayTime(); // Original game is using system timer
 	_timeLastCheckbox  = _vm->getTotalPlayTime();
 	_timeLastHighlight = _vm->getTotalPlayTime();
 
@@ -267,7 +267,7 @@ void UIScrollBox::handleMouseDown(bool alternateButton) {
 	if (!alternateButton) {
 		if (_scrollUpButtonHover) {
 			_scrollUpButtonState = 2;
-			_timeLastScroll = _vm->getTotalPlayTime() - 160;
+			_timeLastScroll = _vm->getTotalPlayTime() - 160; // Original game is using system timer
 		} else {
 			_scrollUpButtonState = 1;
 		}
@@ -283,13 +283,13 @@ void UIScrollBox::handleMouseDown(bool alternateButton) {
 		}
 		if (_scrollAreaUpHover) {
 			_scrollAreaUpState = 2;
-			_timeLastScroll = _vm->getTotalPlayTime() - 160;
+			_timeLastScroll = _vm->getTotalPlayTime() - 160; // Original game is using system timer
 		} else {
 			_scrollAreaUpState = 1;
 		}
 		if (_scrollAreaDownHover) {
 			_scrollAreaDownState = 2;
-			_timeLastScroll = _vm->getTotalPlayTime() - 160;
+			_timeLastScroll = _vm->getTotalPlayTime() - 160; // Original game is using system timer
 		} else {
 			_scrollAreaDownState = 1;
 		}
@@ -321,7 +321,7 @@ int UIScrollBox::getSelectedLineData() {
 }
 
 void UIScrollBox::draw(Graphics::Surface &surface) {
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->getTotalPlayTime(); // Original game is using system timer
 
 	// update scrolling
 	if (_scrollUpButtonState == 2 && _scrollUpButtonHover) {
