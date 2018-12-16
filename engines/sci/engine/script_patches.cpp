@@ -8608,6 +8608,77 @@ static const uint16 qfg4DoubleDoorSoundPatch[] = {
 	PATCH_END
 };
 
+// Waking after a dream by the staff in town prevents the room from creating a
+// doorMat at nightfall, if hero rests repeatedly. The town gate closes at
+// night. Without the doorMat, hero isn't prompted to climb over the gate.
+// Instead, hero casually walks south and gets stuck in the next room behind
+// the closed gate.
+//
+// Since hero wakes in the morning, sAfterTheDream disposes any existing
+// doorMat. It neglects to reset local[2], which toggles rm270::doit()'s
+// constant checks for nightfall to replace the doorMat.
+//
+// We cache an object lookup and use the spare bytes to reset local[2].
+//
+// Note: There was never any sunrise detection. If hero rests repeatedly until
+// morning, the doorMat will linger to needlessly prompt about climbing the
+// then-open gate. Harmless. The prompt sets global[423] (1=climb, 2=levitate).
+// The gate room only honors that global at night, so hero will simply walk
+// through. Heroes unable to climb/levitate would be denied until they re-enter
+// the room.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sAfterTheDream::changeState(2) in script 270
+// Fixes bug: #10830
+static const uint16 qfg4DreamGateSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x43,                         // pushi heading
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
+	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x31, 0x1a,                         // bnt 26d [skip disposing/nulling] (no heading)
+                                        //
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x39, 0x43,                         // pushi heading
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
+	0x4a, SIG_UINT16(0x0004),           // send 04 (accumulate heading)
+	0x4a, SIG_UINT16(0x0004),           // send 04 (dispose heading)
+                                        //
+	0x39, 0x43,                         // pushi heading
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
+	0x4a, SIG_UINT16(0x0006),           // send 06 (set fSouth's heading to null)
+	SIG_END
+};
+
+static const uint16 qfg4DreamGatePatch[] = {
+	0x3f, 0x01,                         // link 1d (cache heading for reuse)
+	0x39, 0x43,                         // pushi heading
+	0x76,                               // push0
+	0x72, PATCH_GETORIGINALUINT16(4),   // lofsa fSouth
+	0x4a, PATCH_UINT16(0x0004),         // send 04
+	0xa5, 0x00,                         // sat temp[0]
+	0x31, 0x13,                         // bnt 19d [skip disposing/nulling] (no heading)
+                                        //
+	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
+	0x76,                               // push0
+	0x85, 0x00,                         // lat temp[0]
+	0x4a, PATCH_UINT16(0x0004),         // send 04 (dispose heading)
+                                        //
+	0x39, 0x43,                         // pushi heading
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, PATCH_GETORIGINALUINT16(4),   // lofsa fSouth
+	0x4a, PATCH_UINT16(0x0006),         // send 06 (set fSouth's heading to null)
+                                        //
+	0x76,                               // push0
+	0xab, 0x02,                         // ssl local[2] (let doit() watch for nightfall)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -8619,6 +8690,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
+	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
 	{  true,   370, "Floppy: fix copy protection",                 1, qfg4CopyProtectionSignature,   qfg4CopyProtectionPatch },
