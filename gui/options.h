@@ -282,6 +282,8 @@ protected:
 	StaticTextWidget *_guiLanguagePopUpDesc;
 	PopUpWidget *_guiLanguagePopUp;
 	CheckboxWidget *_guiLanguageUseGameLanguageCheckbox;
+	CheckboxWidget *_useSystemDialogsCheckbox;
+
 
 #ifdef USE_UPDATES
 	StaticTextWidget *_updatesPopUpDesc;
