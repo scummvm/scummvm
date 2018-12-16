@@ -8608,6 +8608,78 @@ static const uint16 qfg4DoubleDoorSoundPatch[] = {
 	PATCH_END
 };
 
+// In the castle's iron safe room (643), the righthand door may send hero west
+// instead of east - if it was oiled before it was opened (not picked).
+//
+// The room uses local[2] to remember which door it last decided was nearest.
+// The proximity check when opening the right door doesn't reliably set
+// local[2]. The assignment was buried inside an IF block testing the oiled
+// flag to decide whether the door should squeak. So if the door's been oiled,
+// local[2] is not set. If hero had entered the safe from from the west,
+// rm643::init() would set local[2] to the left door, and sOpenTheDoor would
+// remember LEFT as it decided where to send hero to next.
+//
+// We move the local[2] assignment out of the IF block, to always run.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sOpenTheDoor::changeState(0) in script 643
+// Fixes bug: #10829
+static const uint16 qfg4SafeDoorEastSignature[] = {
+	SIG_MAGICDWORD,                     // (else block, right door)
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x00d7),           // pushi 215d
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb 02 (proc0_4(215), test right door oiled flag)
+	0x18,                               // not
+	0x31, SIG_ADDTOOFFSET(+1),          // bnt [end the else block]
+                                        //
+	0x35, 0x00,                         // ldi 0
+	0xa3, 0x02,                         // sal local[2]
+	SIG_END
+};
+
+static const uint16 qfg4SafeDoorEastPatch[] = {
+	0x35, 0x00,                         // ldi 0
+	0xa3, 0x02,                         // sal local[2]
+                                        //
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x00d7),         // pushi 215d
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb 02 (proc0_4(215))
+	0x18,                               // not
+	0x31, PATCH_GETORIGINALBYTEADJUST(10, -4), // bnt [end the else block]
+	PATCH_END
+};
+
+// In the castle's iron safe room (643), plot flags are mixed up. When hero
+// oils either door, the other door's flag is set. Adjacent rooms oil their
+// respective doors properly from the outside. We switch the flags inside.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: Script 643 - vBackDoor::doVerb(32), vLeftDoor::doVerb(32)
+// Fixes bug: #10829
+static const uint16 qfg4SafeDoorOilSignature[] = {
+	0x35, 0x20,                         // ldi 32d (vBackDoor::doVerb(oil), right door)
+	SIG_ADDTOOFFSET(+5),                // ...
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00d6),           // pushi 214d
+	0x45, 0x02, SIG_UINT16(0x0002),     // callb 02 (proc0_2(214), set left oiled flag!?)
+
+	SIG_ADDTOOFFSET(+152),              // ...
+
+	0x35, 0x20,                         // ldi 32d (vLeftDoor::doVerb(oil), left door)
+	SIG_ADDTOOFFSET(+5),                // ...
+	0x38, SIG_UINT16(0x00d7),           // pushi 215d
+	0x45, 0x02, SIG_UINT16(0x0002),     // callb 02 (proc0_2(215), set right oiled flag!?)
+	SIG_END
+};
+
+static const uint16 qfg4SafeDoorOilPatch[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x38, PATCH_UINT16(0x00d7),         // pushi 215d (right door, set right oiled flag)
+	PATCH_ADDTOOFFSET(+4+152+7),
+	0x38, PATCH_UINT16(0x00d6),         // pushi 214d (left door, set left oiled flag)
+	PATCH_END
+};
+
 // Waking after a dream by the staff in town prevents the room from creating a
 // doorMat at nightfall, if hero rests repeatedly. The town gate closes at
 // night. Without the doorMat, hero isn't prompted to climb over the gate.
@@ -8706,6 +8778,8 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
 	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
+	{  true,   643, "fix iron safe's east door sending hero west", 1, qfg4SafeDoorEastSignature,     qfg4SafeDoorEastPatch },
+	{  true,   643, "fix iron safe's door oil flags",              1, qfg4SafeDoorOilSignature,     qfg4SafeDoorOilPatch },
 	{  true,   645, "fix extraneous door sound in the castle",     1, qfg4DoubleDoorSoundSignature,  qfg4DoubleDoorSoundPatch },
 	{  false,  663, "CD: fix crest bookshelf",                     1, qfg4CrestBookshelfCDSignature, qfg4CrestBookshelfCDPatch },
 	{  false,  663, "Floppy: fix crest bookshelf",                 1, qfg4CrestBookshelfFloppySignature,   qfg4CrestBookshelfFloppyPatch },
