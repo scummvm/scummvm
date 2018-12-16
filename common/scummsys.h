@@ -117,11 +117,6 @@
 
 		#endif
 
-		#if defined(ARRAYSIZE)
-		// VS2005beta2 introduces new stuff in winnt.h
-		#undef ARRAYSIZE
-		#endif
-
 	#endif
 
 	#if defined(__QNXNTO__)

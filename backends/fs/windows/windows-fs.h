@@ -25,12 +25,7 @@
 
 #include "backends/fs/abstract-fs.h"
 
-#if defined(ARRAYSIZE)
-#undef ARRAYSIZE
-#endif
 #include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
 #ifdef _WIN32_WCE
 #undef GetCurrentDirectory
 #endif

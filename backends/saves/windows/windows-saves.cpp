@@ -22,12 +22,8 @@
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
-#if defined(ARRAYSIZE)
-#undef ARRAYSIZE
-#endif
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 #if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
  // required for SHGFP_TYPE_CURRENT in shlobj.h
 #define _WIN32_IE 0x500

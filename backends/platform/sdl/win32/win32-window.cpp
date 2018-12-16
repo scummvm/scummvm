@@ -29,7 +29,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
 void SdlWindow_Win32::setupIcon() {
 	HMODULE handle = GetModuleHandle(NULL);

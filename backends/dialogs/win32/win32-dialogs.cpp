@@ -56,9 +56,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#if defined(ARRAYSIZE)
-#undef ARRAYSIZE
-#endif
 #endif
 
 #include <shlobj.h>
