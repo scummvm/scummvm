@@ -327,6 +327,11 @@ protected:
 	void screen_mssg_off();
 
 	/**
+	 * Map a runic character to its Unicode equivalent, if there is one
+	 */
+	uint32 zchar_to_unicode_rune(zchar c);
+
+	/**
 	 * Display a single character on the screen.
 	 */
 	void screen_char(zchar c);

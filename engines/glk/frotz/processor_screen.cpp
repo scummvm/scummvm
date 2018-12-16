@@ -43,6 +43,49 @@ void Processor::screen_mssg_off() {
 	}
 }
 
+static const uint32 zchar_runes[] = {
+	// This mapping is based on the Amiga font in the Z-Machine
+	// specification, with some liberties taken.
+	//
+	// There are only runic characters for a-z. As I recall it, there was
+	// at least one scene in Beyond Zork where it would use the runic font
+	// to display text which contained upper case letters (if your
+	// intelligence was too low to understand it), which came out as a
+	// mixture of runes and map-drawing characters. Maybe that can be
+	// fixed later?
+
+	0x16AA, // RUNIC LETTER AC A
+	0x16D2, // RUNIC LETTER BERKANAN BEORC BJARKAN B
+	0x16C7, // RUNIC LETTER IWAZ EOH
+	0x16D1, // RUNIC LETTER DAGAZ DAEG D
+	0x16D6, // RUNIC LETTER EHWAZ EH E
+	0x16A0, // RUNIC LETTER FEHU FEOH FE F
+	0x16B7, // RUNIC LETTER GEBO GYFU G
+	0x16BB, // RUNIC LETTER HAEGL H
+	0x16C1, // RUNIC LETTER ISAZ IS ISS I
+	0x16C4, // RUNIC LETTER GER
+	0x16E6, // RUNIC LETTER LONG-BRANCH-YR
+	0x16DA, // RUNIC LETTER LAUKAZ LAGU LOGR L
+	0x16D7, // RUNIC LETTER MANNAZ MAN M
+	0x16BE, // RUNIC LETTER NAUDIZ NYD NAUD N
+	0x16A9, // RUNIC LETTER OS O
+	0x16C8, // RUNIC LETTER PERTHO PEORTH P
+	0x16B3, // RUNIC LETTER CEN
+	0x16B1, // RUNIC LETTER RAIDO RAD REID R
+	0x16CB, // RUNIC LETTER SIGEL LONG-BRANCH-SOL S
+	0x16CF, // RUNIC LETTER TIWAZ TIR TYR T
+	0x16A2, // RUNIC LETTER URUZ UR U
+	0x16E0, // RUNIC LETTER EAR
+	0x16B9, // RUNIC LETTER WUNJO WYNN W
+	0x16C9, // RUNIC LETTER ALGIZ EOLHX
+	0x16A5, // RUNIC LETTER W
+	0x16DF  // RUNIC LETTER OTHALAN ETHEL O
+};
+
+uint32 Processor::zchar_to_unicode_rune(zchar c) {
+	return (c >= 'a' && c <= 'z') ? zchar_runes[c - 'a'] : 0;
+}
+
 void Processor::screen_char(zchar c) {
 	if (gos_linepending && (gos_curwin == gos_linewin)) {
 		gos_cancel_pending_line();
@@ -102,7 +145,21 @@ void Processor::screen_char(zchar c) {
 	} else if (gos_curwin == gos_lower) {
 		if (c == ZC_RETURN)
 			glk_put_char('\n');
-		else glk_put_char_uni(c);
+		else {
+			if (curr_font == GRAPHICS_FONT) {
+				uint32 runic_char = zchar_to_unicode_rune(c);
+				if (runic_char != 0) {
+					// FIXME: This will only work if we have a font which
+					// supports the Unicode Runic block. We currently don't.
+					// Perhaps Junicode is a good candidate for this?
+					glk_set_style(style_Normal);
+					glk_put_char_uni(runic_char);
+					glk_set_style(style_User1);
+				} else
+					glk_put_char_uni(c);
+			} else
+				glk_put_char_uni(c);
+		}
 	}
 }
 
