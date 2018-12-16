@@ -176,20 +176,6 @@ void Font::replaceColor(uint16 oldColor, uint16 newColor) {
 	}
 }
 
-// This is useful when using a duplicate of the internal font to act as shadow effect for the glyphs for subtitles
-// Mainly needed for the internal font for subtitles, since an external font can have shadow already drawn for the glyphs
-void Font::setBlackColor() {
-	if (!_data || !_dataSize) {
-		return;
-	}
-	for (int i = 0; i < _dataSize; i++) {
-		//debug("COLOR EXISTING: %d", _data[i]);
-		if (_data[i] != 32768) { 	// 0x8000 is transparent
-			_data[i] = 0x0000; 		// black
-		}
-	}
-}
-
 void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int x, int y) const {
 	uint8 characterIndex = character + 1;
 	if (x < 0 || x >= _screenWidth || y < 0 || y >= _screenHeight || !_data || characterIndex >= _characterCount) {
