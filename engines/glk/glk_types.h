@@ -137,7 +137,8 @@ enum Style {
 	style_Input        = 8,
 	style_User1        = 9,
 	style_User2        = 10,
-	style_NUMSTYLES    = 11
+	style_User3        = 11,
+	style_NUMSTYLES    = 12
 };
 
 enum WinType {

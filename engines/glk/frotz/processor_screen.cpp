@@ -46,13 +46,6 @@ void Processor::screen_mssg_off() {
 static const uint32 zchar_runes[] = {
 	// This mapping is based on the Amiga font in the Z-Machine
 	// specification, with some liberties taken.
-	//
-	// There are only runic characters for a-z. As I recall it, there was
-	// at least one scene in Beyond Zork where it would use the runic font
-	// to display text which contained upper case letters (if your
-	// intelligence was too low to understand it), which came out as a
-	// mixture of runes and map-drawing characters. Maybe that can be
-	// fixed later?
 
 	0x16AA, // RUNIC LETTER AC A
 	0x16D2, // RUNIC LETTER BERKANAN BEORC BJARKAN B
@@ -83,7 +76,23 @@ static const uint32 zchar_runes[] = {
 };
 
 uint32 Processor::zchar_to_unicode_rune(zchar c) {
-	return (c >= 'a' && c <= 'z') ? zchar_runes[c - 'a'] : 0;
+	// There are only runic characters for a-z. Some versions of Beyond
+ 	// Zork will render the conversation between Prince Foo and the black
+	// rider in runic script, even though it contained upper case letters.
+	// This produced an ugly mix of runes and map-drawing characters, etc.
+	// which is probably why it was removed in later versions.
+	//
+	// Apart from the runes, I believe the up/down arrows are the only
+	// special characters to be printed in the lower window. Maybe they,
+	// too, should be mapped to Unicode characters, but since they are
+	// mapped to \ and ] respectively that probably menas we can convert
+	// upper case to lower case and use the appropriate rune for that.
+	if (c >= 'a' && c <= 'z')
+		return zchar_runes[c - 'a'];
+	else if (c >= 'A' && c <= 'Z')
+		return zchar_runes[c - 'A'];
+	else
+		return 0;
 }
 
 void Processor::screen_char(zchar c) {
@@ -149,10 +158,7 @@ void Processor::screen_char(zchar c) {
 			if (curr_font == GRAPHICS_FONT) {
 				uint32 runic_char = zchar_to_unicode_rune(c);
 				if (runic_char != 0) {
-					// FIXME: This will only work if we have a font which
-					// supports the Unicode Runic block. We currently don't.
-					// Perhaps Junicode is a good candidate for this?
-					glk_set_style(style_Normal);
+					glk_set_style(style_User3);
 					glk_put_char_uni(runic_char);
 					glk_set_style(style_User1);
 				} else
