@@ -403,7 +403,13 @@ public:
 		/**
 		* shaders
 		*/
-		kFeatureShader
+		kFeatureShader,
+
+		/**
+		* Supports for using the native system file browser dialog
+		 through the DialogManager.
+		*/
+		kFeatureNativeFileBowserDialog
 
 	};
 

@@ -109,6 +109,11 @@ bool OSystem_Win32::hasFeature(Feature f) {
 	if (f == kFeatureDisplayLogFile || f == kFeatureOpenUrl)
 		return true;
 
+#ifdef USE_SYSDIALOGS
+	if (f == kFeatureNativeFileBowserDialog)
+		return true;
+#endif
+
 	return OSystem_SDL::hasFeature(f);
 }
 

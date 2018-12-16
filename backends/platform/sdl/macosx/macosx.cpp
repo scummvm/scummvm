@@ -110,6 +110,12 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 bool OSystem_MacOSX::hasFeature(Feature f) {
 	if (f == kFeatureDisplayLogFile || f == kFeatureClipboardSupport || f == kFeatureOpenUrl)
 		return true;
+
+#ifdef USE_SYSDIALOGS
+	if (f == kFeatureNativeFileBowserDialog)
+		return true;
+#endif
+
 	return OSystem_POSIX::hasFeature(f);
 }
 
