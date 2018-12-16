@@ -24,10 +24,15 @@
 // We need certain functions that are excluded by default
 #undef NONLS
 #include <windows.h>
+#if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
+// required for SHGetSpecialFolderPath in shlobj.h
+#define _WIN32_IE 0x400
+#endif
+#include <shlobj.h>
 
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
-// VerSetConditionMask and VerifyVersionInfo didn't appear until Windows 2000,
+// VerSetConditionMask, VerifyVersionInfo and SHGetFolderPath didn't appear until Windows 2000,
 // so we need to check for them at runtime
 ULONGLONG VerSetConditionMaskFunc(ULONGLONG dwlConditionMask, DWORD dwTypeMask, BYTE dwConditionMask) {
 	typedef ULONGLONG(WINAPI *VerSetConditionMaskFunction)(ULONGLONG conditionMask, DWORD typeMask, BYTE conditionOperator);
@@ -47,6 +52,16 @@ BOOL VerifyVersionInfoFunc(LPOSVERSIONINFOEXA lpVersionInformation, DWORD dwType
 		return FALSE;
 
 	return verifyVersionInfo(lpVersionInformation, dwTypeMask, dwlConditionMask);
+}
+
+HRESULT SHGetFolderPathFunc(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, LPSTR pszPath) {
+	typedef HRESULT (WINAPI *SHGetFolderPathFunc)(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, LPSTR pszPath);
+
+	SHGetFolderPathFunc pSHGetFolderPath = (SHGetFolderPathFunc)GetProcAddress(GetModuleHandle(TEXT("shell32.dll")), "SHGetFolderPathA");
+	if (pSHGetFolderPath)
+		return pSHGetFolderPath(hwnd, csidl, hToken, dwFlags, pszPath);
+
+	return SHGetSpecialFolderPath(hwnd, pszPath, csidl & !CSIDL_FLAG_MASK, csidl & CSIDL_FLAG_CREATE) ? S_OK : E_NOTIMPL;
 }
 
 namespace Win32 {
