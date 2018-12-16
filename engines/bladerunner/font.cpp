@@ -213,7 +213,7 @@ void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int 
 	// but that table get corrupted past the 176th entry. The image data glyph part of the FON file also only covers the 176 entries.
 	// So the following if clause-check will return here if the width and height values are unnaturally big.
 	// The bug only affects debug cases where all character glyph need to be displayed...
-	// ...or potential custom dialogue / translations that reference characters that are not within the range of Ascii values for the normal Latin characters.
+	// ...or potential custom dialogue / translations that reference characters that are not within the range of ASCII values for the normal Latin characters.
 	if (width > 100 || height > 100) {
 		return;
 	}
