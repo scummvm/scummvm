@@ -26,17 +26,14 @@
 #include "bladerunner/font.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/audio_speech.h"
-#include "bladerunner/game_flags.h" // for Game_Flag_Query declaration (actually script.h, but this seems to be included in other source files instead)
-#include "bladerunner/game_constants.h" // for EDS flags - for subtitle checkbox flag state
 #include "common/debug.h"
-#include "common/util.h"
 
 namespace BladeRunner {
 
 /*
  * Optional support for subtitles
  * CHECK what happens in VQA where the audio plays separately (are the finales such VQAs ?)
- * TODO Catch error for bad symbol in a quote (one that causes the font to crash) - this could happen with the corrupted internal font (TAHOMA18) -> font crash or bad font display / garbage character
+ * TODO? Catch error for bad symbol in a quote (one that causes the font to crash) - this could happen with the corrupted internal font (TAHOMA18) -> font crash or bad font display / garbage character
  * TODO? Use another escape sequence to progressively display text in a line (like in SCUMM games) <-- this could be very useful with very long lines - might also need an extra manual time or ticks parameter to determine when during the display of the first segment we should switch to the second.
  * TODO? A more advanced subtitles system
  *          TODO: subtitles could be independent from sound playing (but should disappear when switching between UI screens)
@@ -45,9 +42,8 @@ namespace BladeRunner {
  *          TODO?: If the subtitle is the last one then extend its duration to another predefined delay.
  *          TODO?: A system to auto-split a dialogue after some max characters per both lines to a new dialogue set (delete previous 2 lines, start a new one(s) with the rest of the quote).
  *
- * DONE Minor fixes In internal font TAHOMA18 some letters like 'P' and 'o' and not rightly aligned in the font. also not good spacing with '-' and a few other chars
- *          Also seems that this particular font is corrupted!
- *          Create and Support proper external FON for subtitles.
+ * DONE Removed support for internal font TAHOMA18 - this particular font is corrupted!
+ * DONE Create and Support proper external FON for subtitles.
  * DONE split at new line character (priority over auto-split)
  * DONE auto-split a long line into two
  * DONE support the basic 2 line subtitles
@@ -60,7 +56,6 @@ namespace BladeRunner {
  */
 
 const Common::String Subtitles::SUBTITLES_FONT_FILENAME_EXTERNAL = "SUBTLS_E.FON";
-const Common::String Subtitles::SUBTITLES_FONT_FILENAME_INTERNAL = "TAHOMA18.FON";
 
 /*
 * All entries need to have the language code appended (after a '_').
@@ -107,7 +102,6 @@ Subtitles::Subtitles(BladeRunnerEngine *vm) {
 		_vqaSubsTextResourceEntries[i] = nullptr;
 	}
 	_subsFont = nullptr;
-	_subsBgFont = nullptr;
 	reset();
 }
 
@@ -128,12 +122,6 @@ Subtitles::~Subtitles() {
 		_subsFont->close();
 		delete _subsFont;
 		_subsFont = nullptr;
-	}
-	// _subsBgFont is only used for the internal subtitles font case
-	if (_subsBgFont != nullptr) {
-		_subsBgFont->close();
-		delete _subsBgFont;
-		_subsBgFont = nullptr;
 	}
 }
 
@@ -164,26 +152,11 @@ void Subtitles::init(void) {
 	if (_subsFont ->open(SUBTITLES_FONT_FILENAME_EXTERNAL, 640, 480, -1, 0, 0)) { // Color setting does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here?
 		_subsFont->setSpacing(-1, 0);
 		_subsFontsLoaded = true;
-		_subsFontsExternal = true;
-	} else if (_subsFont ->open(SUBTITLES_FONT_FILENAME_INTERNAL, 640, 480, -1, 0, 0)) {
-		_subsFont->setSpacing(1, 0);
-		_subsFontsLoaded = true;
-		_subsFontsExternal = false;
 	} else {
-		_subsFontsExternal = false;
 		_subsFontsLoaded = false;
 	}
 
-	if (!_subsFontsExternal) {
-		_subsBgFont = new Font(_vm);
-		if (_subsFontsLoaded && _subsBgFont ->open(SUBTITLES_FONT_FILENAME_INTERNAL, 640, 480, -1, 0, 0)) { // TODO dark color? --- color does not seem to affect the TAHOMA fonts or does it affect the black outline since we give 0 here? ?? - we should give the original color here. What is it for TAHOMA?
-			_subsBgFont ->setSpacing(1, 0);
-			_subsBgFont ->setBlackColor();
-		} else {
-			_subsFontsLoaded = false;
-		}
-	}
-	//Done - Initializing/Loading Subtitles' Fonts
+	//Done - Initializing/Loading Subtitles Fonts
 	//
 	// calculate the Screen Y position of the subtitle lines
 	// getTextHeight("") returns the maxHeight of the font glyphs regardless of the actual text parameter
@@ -368,23 +341,8 @@ void Subtitles::draw(Graphics::Surface &s) {
 		_subtitlesQuoteChanged = false;
 	}
 
-	if (_subsFontsExternal) {
-		for (int i = 0; i < _currentSubtitleLines; ++i) {
-			_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i]);
-		}
-	} else {
-		// INTERNAL FONT. NEEDS HACK (_subsBgFont) FOR SHADOW EFFECT
-		for (int i = 0; i < _currentSubtitleLines; ++i) {
-			_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i] - 1);
-			_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i] + 1);
-			_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[i] + 1);
-			_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] + 1, _subtitleLineScreenY[i] - 1);
-			if (_subtitleLineScreenX[i] > 0) {
-				_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[i] - 1);
-				_subsBgFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i] - 1, _subtitleLineScreenY[i] + 1);
-			}
-			_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i],  _subtitleLineScreenY[i]);
-		}
+	for (int i = 0; i < _currentSubtitleLines; ++i) {
+		_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i]);
 	}
 }
 
@@ -574,14 +532,7 @@ void Subtitles::reset() {
 		_subsFont = nullptr;
 	}
 
-	if (_subsBgFont != nullptr) {
-		_subsBgFont->close();
-		delete _subsBgFont;
-		_subsBgFont = nullptr;
-	}
-
 	_subsFontsLoaded = false;
-	_subsFontsExternal = false;
 }
 
 } // End of namespace BladeRunner
