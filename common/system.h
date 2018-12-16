@@ -299,7 +299,7 @@ public:
 		kFeatureStretchMode,
 
 		/**
-		 * Determine whether a virtual keyboard is too be shown or not.
+		 * Determine whether a virtual keyboard is to be shown or not.
 		 * This would mostly be implemented by backends for hand held devices,
 		 * like PocketPC, Palms, Symbian phones like the P800, Zaurus, etc.
 		 */
@@ -373,7 +373,7 @@ public:
 		 *
 		 * This feature has no associated state.
 		 */
-		kFeatureOpenUrl	,
+		kFeatureOpenUrl,
 
 		/**
 		* show on-screen control
