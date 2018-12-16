@@ -43,6 +43,7 @@
 #include "backends/audiocd/win32/win32-audiocd.h"
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/platform/sdl/win32/win32-window.h"
+#include "backends/platform/sdl/win32/win32_wrapper.h"
 #include "backends/saves/windows/windows-saves.h"
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/taskbar/win32/win32-taskbar.h"
@@ -196,20 +197,9 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 	// Use the My Pictures folder.
 	char picturesPath[MAXPATHLEN];
 
-	// SHGetFolderPath didn't appear until Windows 2000, so we need to check for it at runtime
-	typedef HRESULT (WINAPI *SHGetFolderPathFunc)(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, LPSTR pszPath);
-	SHGetFolderPathFunc pSHGetFolderPath = (SHGetFolderPathFunc)GetProcAddress(GetModuleHandle(TEXT("shell32.dll")), "SHGetFolderPathA");
-
-	if (pSHGetFolderPath) {
-		if (pSHGetFolderPath(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
-			warning("Unable to access My Pictures directory");
-			return Common::String();
-		}
-	} else {
-		if (!SHGetSpecialFolderPath(NULL, picturesPath, CSIDL_MYPICTURES, FALSE)) {
-			warning("Unable to access My Pictures directory");
-			return Common::String();
-		}
+	if (SHGetFolderPathFunc(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
+		warning("Unable to access My Pictures directory");
+		return Common::String();
 	}
 
 	screenshotsPath = Common::String(picturesPath) + "\\ScummVM Screenshots\\";
@@ -227,30 +217,8 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 Common::String OSystem_Win32::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-		// Use the Application Data directory of the user profile.
-		if (win32OsVersion.dwMajorVersion >= 5) {
-			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
-				error("Unable to access application data directory");
-		} else {
-			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
-				error("Unable to access user profile directory");
-
-			strcat(configFile, "\\Application Data");
-
-			// If the directory already exists (as it should in most cases),
-			// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
-			if (!CreateDirectory(configFile, NULL)) {
-				if (GetLastError() != ERROR_ALREADY_EXISTS)
-					error("Cannot create Application data folder");
-			}
-		}
-
+	// Use the Application Data directory of the user profile.
+	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, configFile) == S_OK) {
 		strcat(configFile, "\\ScummVM");
 		if (!CreateDirectory(configFile, NULL)) {
 			if (GetLastError() != ERROR_ALREADY_EXISTS)
@@ -277,6 +245,7 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 			fclose(tmp);
 		}
 	} else {
+		warning("Unable to access application data directory");
 		// Check windows directory
 		uint ret = GetWindowsDirectory(configFile, MAXPATHLEN);
 		if (ret == 0 || ret > MAXPATHLEN)
@@ -295,24 +264,8 @@ Common::WriteStream *OSystem_Win32::createLogFile() {
 
 	char logFile[MAXPATHLEN];
 
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-		// Use the Application Data directory of the user profile.
-		if (win32OsVersion.dwMajorVersion >= 5) {
-			if (!GetEnvironmentVariable("APPDATA", logFile, sizeof(logFile)))
-				error("Unable to access application data directory");
-		} else {
-			if (!GetEnvironmentVariable("USERPROFILE", logFile, sizeof(logFile)))
-				error("Unable to access user profile directory");
-
-			strcat(logFile, "\\Application Data");
-			CreateDirectory(logFile, NULL);
-		}
-
+	// Use the Application Data directory of the user profile.
+	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, logFile) == S_OK) {
 		strcat(logFile, "\\ScummVM");
 		CreateDirectory(logFile, NULL);
 		strcat(logFile, "\\Logs");
@@ -326,6 +279,7 @@ Common::WriteStream *OSystem_Win32::createLogFile() {
 
 		return stream;
 	} else {
+		warning("Unable to access application data directory");
 		return 0;
 	}
 }
