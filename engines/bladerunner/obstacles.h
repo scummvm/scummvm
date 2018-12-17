@@ -23,7 +23,7 @@
 #ifndef BLADERUNNER_OBSTACLES_H
 #define BLADERUNNER_OBSTACLES_H
 
-#include "bladerunner/rect.h"
+#include "bladerunner/rect_float.h"
 #include "bladerunner/vector.h"
 
 namespace BladeRunner {
@@ -52,7 +52,7 @@ class Obstacles {
 	struct Polygon {
 		bool       isPresent;
 		int        verticeCount;
-		Rect       rect;
+		RectFloat  rect;
 		Vector2    vertices[kPolygonVertexCount];
 		VertexType vertexType[kPolygonVertexCount];
 
@@ -79,8 +79,8 @@ public:
 	~Obstacles();
 
 	void clear();
-	void add(Rect rect);
-	void add(float x0, float z0, float x1, float z1) { add(Rect(x0, z0, x1, z1)); }
+	void add(RectFloat rect);
+	void add(float x0, float z0, float x1, float z1) { add(RectFloat(x0, z0, x1, z1)); }
 	int findEmptyPolygon() const;
 	static float getLength(float x0, float z0, float x1, float z1);
 	bool find(const Vector3 &from, const Vector3 &to, Vector3 *next) const;

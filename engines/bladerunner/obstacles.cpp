@@ -247,7 +247,7 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 	return flagDidMergePolygons;
 }
 
-void Obstacles::add(Rect rect) {
+void Obstacles::add(RectFloat rect) {
 	int polygonIndex = findEmptyPolygon();
 	if (polygonIndex < 0) {
 		return;

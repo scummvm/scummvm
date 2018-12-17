@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BLADERUNNER_RECT_H
-#define BLADERUNNER_RECT_H
+#ifndef BLADERUNNER_RECT_FLOAT_H
+#define BLADERUNNER_RECT_FLOAT_H
 
 #include "common/debug.h"
 #include "common/types.h"
@@ -29,16 +29,16 @@
 
 namespace BladeRunner {
 
-struct Rect {
+struct RectFloat {
 	float x0;
 	float y0;
 	float x1;
 	float y1;
 
-	Rect()
+	RectFloat()
 		: x0(0.0f), y0(0.0f), x1(0.0f), y1(0.0f)
 	{}
-	Rect(float x0_, float y0_, float x1_, float y1_)
+	RectFloat(float x0_, float y0_, float x1_, float y1_)
 		: x0(x0_), y0(y0_), x1(x1_), y1(y1_)
 	{}
 
@@ -57,12 +57,12 @@ struct Rect {
 	}
 };
 
-inline bool overlaps(const Rect &a, const Rect &b) {
+inline bool overlaps(const RectFloat &a, const RectFloat &b) {
 	return !(a.y1 < b.y0 || a.y0 > b.y1 || a.x0 > b.x1 || a.x1 < b.x0);
 }
 
-inline Rect merge(const Rect &a, const Rect &b) {
-	Rect c;
+inline RectFloat merge(const RectFloat &a, const RectFloat &b) {
+	RectFloat c;
 	c.x0 = MIN(a.x0, b.x0);
 	c.y0 = MIN(a.y0, b.y0);
 	c.x1 = MAX(a.x1, b.x1);
