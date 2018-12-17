@@ -53,7 +53,7 @@
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <DisableSpecificWarnings>4003;4512;4127;4100</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4003;4512;4127;4100;4244</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
