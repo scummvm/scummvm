@@ -62,7 +62,7 @@ public:
 public:
 	Actor *loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y);
 	Actor *loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y, uint16 field16);
-
+	Actor *getActor(uint16 actorId);
 private:
 	Actor *findFreeActor(int16 resourceID);
 };

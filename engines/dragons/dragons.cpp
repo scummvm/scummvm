@@ -68,8 +68,9 @@ Common::Error DragonsEngine::run() {
 	_dragonRMS = new DragonRMS(_bigfileArchive);
 	_dragonINIResource = new DragonINIResource(_bigfileArchive);
 	ActorResourceLoader *actorResourceLoader = new ActorResourceLoader(_bigfileArchive);
-	ActorManager *actorManager = new ActorManager(actorResourceLoader);
-	_scene = new Scene(_screen, _bigfileArchive, actorManager, _dragonRMS, _dragonINIResource);
+	_actorManager = new ActorManager(actorResourceLoader);
+	_scene = new Scene(_screen, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource);
+	_flags = 0x1046;
 
 	_scene->loadScene(0x12, 0x1e);
 
@@ -78,6 +79,8 @@ Common::Error DragonsEngine::run() {
 
 	gameLoop();
 
+	delete _scene;
+	delete _actorManager;
 	delete _backgroundResourceLoader;
 	delete _dragonRMS;
 	delete _bigfileArchive;
@@ -89,13 +92,14 @@ Common::Error DragonsEngine::run() {
 
 void DragonsEngine::gameLoop() {
 	while (!shouldQuit()) {
+		updateHandler();
 		updateEvents();
 		wait();
 	}
 }
 
 void DragonsEngine::updateHandler() {
-
+	updateActorSequences();
 }
 
 const char *DragonsEngine::getSavegameFilename(int num) {
@@ -152,6 +156,33 @@ uint32 DragonsEngine::calulateTimeLeft() {
 
 void DragonsEngine::wait() {
 	_system->delayMillis(calulateTimeLeft());
+}
+
+void DragonsEngine::updateActorSequences() {
+	if (!(_flags & Dragons::ENGINE_FLAG_4)) {
+		return;
+	}
+
+	//TODO ResetRCnt(0xf2000001);
+
+	int16 actorId = _flags & Dragons::ENGINE_FLAG_80 ? (int16)64 : (int16)23;
+
+	while (actorId >= 0) {
+		actorId--;
+		Actor *actor = _actorManager->getActor((uint16)actorId);
+		if (actorId < 2 && _flags & Dragons::ENGINE_FLAG_40) {
+			continue;
+		}
+
+		if (actor->flags & Dragons::ACTOR_FLAG_40 &&
+				!(actor->flags & Dragons::ACTOR_FLAG_4) &&
+				!(actor->flags & Dragons::ACTOR_FLAG_400) &&
+				(actor->frameIndex_maybe == 0 || actor->flags & Dragons::ACTOR_FLAG_1)) {
+			debug("Actor[%d] execute sequenceOp", actorId);
+			//TODO execute sequence Opcode here.
+			return;
+		}
+	}
 }
 
 } // End of namespace Dragons

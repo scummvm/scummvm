@@ -67,6 +67,11 @@ Actor *ActorManager::findFreeActor(int16 resourceId) {
 	return NULL;
 }
 
+Actor *ActorManager::getActor(uint16 actorId) {
+	assert(actorId < 64);
+	return &_actors[actorId];
+}
+
 Actor::Actor(uint16 id) : _actorID(id) {
 	_actorResource = NULL;
 	resourceID = -1;
