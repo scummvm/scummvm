@@ -1810,80 +1810,27 @@ static const uint16 gk1Day5SnakeAttackPatch2[] = {
 //  something that does call normalize.
 //
 // We fix this by calling GKEgo:normalize after Gabriel finishes walking
-//  through the door in sGabeEnters:changeState(5). This requires overwriting
-//  the instructions in state 4 which set GKEgo:ignoreActors to 0 but that's
-//  okay because normalize does that.
-//
-// There are two versions of this patch due to two significantly different
-//  versions of this script. The first is in english pc floppy prior to
-//  Sierra's 1.0b patch and the second is in cd and localized floppies. The
-//  script was restructured and the compiler used different sized instructions.
+//  through the door in sGabeEnters:changeState(4). This replaces setting
+//  GKEgo:ignoreActors to 0 but that's okay because normalize does that.
 //
 // Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
-// Responsible method: sGabeEnters:changeState
+// Responsible method: sGabeEnters:changeState(4)
 // Fixes bug #10780
-static const uint16 gk1PoliceEgoSpeedFixV1Signature[] = {
-	0x31, 0x1f,                         // bnt 1f [ state 5 ]
-	SIG_ADDTOOFFSET(+19),
-	0x38, SIG_SELECTOR16(ignoreActors), // pushi ignoreActors
+static const uint16 gk1PoliceEgoSpeedFixSignature[] = {
+	0x38, SIG_MAGICDWORD,               // pushi ignoreActors
+	      SIG_SELECTOR16(ignoreActors),
 	0x78,                               // push1
 	0x76,                               // push0
-	0x81, 0x00,                         // lag 0
-	0x4a, SIG_UINT16(0x000c),           // send c [ GKEgo:setPri: -1, ignoreActors: 0 ]
-	0x33, 0x45,                         // jmp 45 [ end of method ]
-	SIG_MAGICDWORD,
-	0x3c,                               // dup
-	0x35, 0x05,                         // ldi 5
-	0x1a,                               // eq?
-	0x31, 0x3f,                         // bnt 3f [ end of method ]
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x000c),           // send c [ GKEgo: ..., ignoreActors: 0 ]
 	SIG_END
 };
 
-static const uint16 gk1PoliceEgoSpeedFixV1Patch[] = {
-	0x31, 0x1b,                         // bnt 1b [ state 5 ]
-	SIG_ADDTOOFFSET(+19),
-	0x81, 0x00,                         // lag 0
-	0x4a, PATCH_UINT16(0x0006),         // send 6 [ GKEgo:setPri: -1 ]
-	0x3a,                               // toss
-	0x48,                               // ret
-	0x33, 0x00,                         // jmp 0 [ waste 2 bytes ]
+static const uint16 gk1PoliceEgoSpeedFixPatch[] = {
 	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
-	0x76,                               // push0
-	0x81, 0x00,                         // lag 0
-	0x4a, PATCH_UINT16(0x0004),         // send 4 [ GKEgo:normalize ]
-	PATCH_END
-};
-
-// cd / localized floppy / floppy 1.0b version of the above signature/patch
-static const uint16 gk1PoliceEgoSpeedFixV2Signature[] = {
-	0x31, 0x27,                         // bnt 27 [ state 5 ]
-	SIG_ADDTOOFFSET(+26),
-	0x38, SIG_SELECTOR16(ignoreActors), // pushi ignoreActors
-	0x78,                               // push1
-	0x76,                               // push0
-	0x81, 0x00,                         // lag 0
-	0x4a, SIG_UINT16(0x000c),           // send c [ GKEgo:setPri: -1, ignoreActors: 0 ]
-	0x32, SIG_UINT16(0x004c),           // jmp 004c [ end of method ]
-	SIG_MAGICDWORD,
-	0x3c,                               // dup
-	0x35, 0x05,                         // ldi 5
-	0x1a,                               // eq?
-	0x31, 0x46,                         // bnt 46 [ end of method ]
-	SIG_END
-};
-
-static const uint16 gk1PoliceEgoSpeedFixV2Patch[] = {
-	0x31, 0x24,                         // bnt 24 [ state 5 ]
-	SIG_ADDTOOFFSET(+26),
-	0x81, 0x00,                         // lag 0
-	0x4a, PATCH_UINT16(0x0006),         // send 6 [ GKEgo:setPri: -1 ]
-	0x3a,                               // toss
-	0x48,                               // ret
-	0x32, PATCH_UINT16(0x0000),         // jmp 0 [ waste 3 bytes ]
-	0x38, PATCH_SELECTOR16(normalize),  // pushi 0300 [ normalize ]
-	0x76,                               // push0
-	0x81, 0x00,                         // lag 0
-	0x4a, PATCH_UINT16(0x0004),         // send 4 [ GKEgo:normalize ]
+	0x39, 0x00,                         // pushi 00
+	0x81, 0x00,                         // lag 00
+	0x4a, PATCH_UINT16(0x000a),         // send a [ GKEgo: ..., normalize ]
 	PATCH_END
 };
 
@@ -2176,8 +2123,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   230, "fix day 6 police beignet timer issue (1/2)",  1, gk1Day6PoliceBeignetSignature1,   gk1Day6PoliceBeignetPatch1 },
 	{  true,   230, "fix day 6 police beignet timer issue (2/2)",  1, gk1Day6PoliceBeignetSignature2,   gk1Day6PoliceBeignetPatch2 },
 	{  true,   230, "fix day 6 police sleep timer issue",          1, gk1Day6PoliceSleepSignature,      gk1Day6PoliceSleepPatch },
-	{  true,   230, "fix police station ego speed (version 1)",    1, gk1PoliceEgoSpeedFixV1Signature,  gk1PoliceEgoSpeedFixV1Patch },
-	{  true,   230, "fix police station ego speed (version 2)",    1, gk1PoliceEgoSpeedFixV2Signature,  gk1PoliceEgoSpeedFixV2Patch },
+	{  true,   230, "fix police station ego speed",                1, gk1PoliceEgoSpeedFixSignature,    gk1PoliceEgoSpeedFixPatch },
 	{  true,   240, "fix day 5 mosely veve missing points",        1, gk1Day5MoselyVevePointsSignature, gk1Day5MoselyVevePointsPatch },
 	{  true,   250, "fix ego speed when exiting drug store",       1, gk1DrugStoreEgoSpeedFixSignature, gk1DrugStoreEgoSpeedFixPatch },
 	{  true,   260, "fix day 5 snake attack (1/2)",                1, gk1Day5SnakeAttackSignature1,     gk1Day5SnakeAttackPatch1 },
