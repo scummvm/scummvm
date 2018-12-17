@@ -8995,6 +8995,49 @@ static const uint16 qfg4RestartPatch[] = {
 	PATCH_END
 };
 
+// At the squid monolith (room 800), using the grapnel on the eastern ledge
+// disposes hero's scaler to freeze hero's size. A scaler dynamically shrinks
+// hero into the horizon as y-pos increases. It makes sense that hero should
+// maintain their size while climbing a vertical rope.
+//
+// Problem: After climbing the rope, both standing on the ledge and back on the
+// ground, hero's scaler will remain null. An exception will occur if a script
+// calls Prop::setScaler(hero) while hero's scaler is null. Casting Trigger on
+// the monolith, from either location, does it. As will climbing down, then
+// casting Levitate. Both spells have auras intended to fit hero's size. They
+// expect hero to have a scaler, not null.
+//
+// Ideally the climb script would've swapped in a dummy scaler, then swapped
+// the original scaler back upon return to ground level. Implementing that with
+// patches would be messy. There's no room to patch setScaler() itself to
+// broadly tolerate nulls. That'd avoid exceptions but wouldn't restore normal
+// scaling after a climb.
+//
+// As last resort, we simply leave the original scaler on hero, erasing the
+// setScale() call that would freeze hero's size. hero shrinks/grows a little
+// while climbing as a side effect.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sUseTheGrapnel::changeState(5) in script 800
+// Fixes bug: #10837
+static const uint16 qfg4RopeScalerSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(setScale),     // pushi setScale
+	0x76,                               // push0 (no args, disposes scaler & freezes size)
+	SIG_ADDTOOFFSET(+14),               // ...
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, SIG_UINT16(0x0026),           // send 38d
+	SIG_END
+};
+
+static const uint16 qfg4RopeScalerPatch[] = {
+	0x35, 0x01,                         // ldi 0 (erase 2 bytes)
+	0x35, 0x01,                         // ldi 0 (erase 2 bytes)
+	PATCH_ADDTOOFFSET(+14+2),           // ...
+	0x4a, PATCH_UINT16(0x0022),         // send 34d
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -9030,6 +9073,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  false,  663, "Floppy: fix crest bookshelf",                 1, qfg4CrestBookshelfFloppySignature,   qfg4CrestBookshelfFloppyPatch },
 	{  true,   663, "CD/Floppy: fix crest bookshelf motion",       1, qfg4CrestBookshelfMotionSignature,   qfg4CrestBookshelfMotionPatch },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
+	{  true,   800, "fix grapnel removing hero's scaler",          1, qfg4RopeScalerSignature,       qfg4RopeScalerPatch },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
 	{  true,   810, "fix conditional void calls",                  1, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,   830, "fix conditional void calls",                  2, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
