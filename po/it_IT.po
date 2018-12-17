@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-17 11:28+0100\n"
-"PO-Revision-Date: 2018-10-10 04:25+0000\n"
-"Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
+"PO-Revision-Date: 2018-12-17 18:27+0000\n"
+"Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
 "Language: it_IT\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2.9\n"
+"X-Generator: Weblate 3.3\n"
 "X-Language-name: Italiano\n"
 
 #: gui/about.cpp:94
@@ -1209,7 +1209,7 @@ msgstr "Lingua dell'interfaccia grafica di ScummVM"
 
 #: gui/options.cpp:1696
 msgid "Switch the GUI language to the game language"
-msgstr ""
+msgstr "Usa la lingua di gioco per l'interfaccia grafica"
 
 #: gui/options.cpp:1697
 msgid ""
@@ -1220,7 +1220,7 @@ msgstr ""
 
 #: gui/options.cpp:1710
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Usa il selettore file originale"
 
 #: gui/options.cpp:1711
 msgid ""
@@ -3178,9 +3178,8 @@ msgid "Light runs out in "
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:130
-#, fuzzy
 msgid " turns. "
-msgstr "Accendi"
+msgstr " .gira. "
 
 #: engines/glk/scott/scott.cpp:133
 msgid "Your light is growing dim. "
@@ -3227,9 +3226,8 @@ msgid ""
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:437
-#, fuzzy
 msgid "none"
-msgstr "<nessuno>"
+msgstr "nessuno"
 
 #: engines/glk/scott/scott.cpp:446
 msgid ""
@@ -3244,9 +3242,8 @@ msgid ""
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:529
-#, fuzzy
 msgid "Saved.\n"
-msgstr "Salva"
+msgstr "Salvato\n"
 
 #: engines/glk/scott/scott.cpp:620
 msgid "You use word(s) I don't know! "
@@ -3270,18 +3267,16 @@ msgid "I am dead.\n"
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:795
-#, fuzzy
 msgid "The game is now over.\n"
-msgstr "La partita NON è stata caricata"
+msgstr "La partita è finita\n"
 
 #: engines/glk/scott/scott.cpp:810
 msgid "You have stored "
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:812
-#, fuzzy
 msgid "I've stored "
-msgstr "Ripristina"
+msgstr "Ho messo nell'inventario "
 
 #: engines/glk/scott/scott.cpp:814
 msgid " treasures.  On a scale of 0 to 100, that rates "
@@ -3344,9 +3339,8 @@ msgid "Nothing taken."
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:1088 engines/glk/scott/scott.cpp:1136
-#, fuzzy
 msgid "What ? "
-msgstr "Che cos'è"
+msgstr "Cosa? "
 
 #: engines/glk/scott/scott.cpp:1101
 msgid "It is beyond your power to do that. "
@@ -3373,9 +3367,8 @@ msgid "It's beyond my power to do that.\n"
 msgstr ""
 
 #: engines/glk/frotz/detection.cpp:154
-#, fuzzy
 msgid "Unnamed savegame"
-msgstr "Salvataggio senza titolo"
+msgstr "Salvataggio senza nome"
 
 #: engines/glk/glulxe/glulxe.cpp:55
 msgid "This is too short to be a valid Glulx file."
