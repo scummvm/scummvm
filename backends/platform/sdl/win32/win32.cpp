@@ -109,7 +109,7 @@ bool OSystem_Win32::hasFeature(Feature f) {
 		return true;
 
 #ifdef USE_SYSDIALOGS
-	if (f == kFeatureNativeFileBowserDialog)
+	if (f == kFeatureSystemBrowserDialog)
 		return true;
 #endif
 

@@ -1705,7 +1705,7 @@ void GlobalOptionsDialog::build() {
 
 #endif // USE_TRANSLATION
 
-	if (g_system->hasFeature(OSystem::kFeatureNativeFileBowserDialog)) {
+	if (g_system->hasFeature(OSystem::kFeatureSystemBrowserDialog)) {
 		_useSystemDialogsCheckbox = new CheckboxWidget(tab, "GlobalOptions_Misc.UseSystemDialogs",
 			_("Use native system file browser"),
 			_("Use the native system file browser instead of the ScummVM one to select a file or directory.")
