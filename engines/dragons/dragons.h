@@ -53,11 +53,24 @@ enum kReadSaveHeaderError {
 	kRSHEInvalidVersion = 2,
 	kRSHEIoError = 3
 };
+
+enum Flags {
+	ENGINE_FLAG_1 = 1,
+	ENGINE_FLAG_2 = 2,
+	ENGINE_FLAG_4 = 4,
+	ENGINE_FLAG_8 = 8,
+	ENGINE_FLAG_10 = 10,
+	ENGINE_FLAG_20 = 20,
+	ENGINE_FLAG_40 = 40,
+	ENGINE_FLAG_80 = 80
+};
+
 class BigfileArchive;
 class DragonRMS;
 class DragonINIResource;
 class Scene;
 class Screen;
+class ActorManager;
 
 class DragonsEngine : public Engine {
 private:
@@ -66,6 +79,7 @@ private:
 	DragonRMS *_dragonRMS;
 	DragonINIResource *_dragonINIResource;
 	BackgroundResourceLoader *_backgroundResourceLoader;
+	ActorManager *_actorManager;
 	Scene *_scene;
 	uint32 _nextUpdatetime;
 	uint32 _flags;
@@ -80,6 +94,9 @@ public:
 	const char *getSavegameFilename(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
+
+	void updateActorSequences();
+
 private:
 	void gameLoop();
 	void updateHandler();
