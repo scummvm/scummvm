@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-17 11:28+0100\n"
-"PO-Revision-Date: 2018-12-11 08:41+0000\n"
+"PO-Revision-Date: 2018-12-17 18:27+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
@@ -1212,13 +1212,15 @@ msgstr ""
 
 #: gui/options.cpp:1710
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Brug systemets egen filbrowser"
 
 #: gui/options.cpp:1711
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Brug systemets egen filbrowser i stedet for ScummVMs til at vælge en fil "
+"eller mappe."
 
 #: gui/options.cpp:1720 gui/updates-dialog.cpp:86
 msgid "Update check:"
