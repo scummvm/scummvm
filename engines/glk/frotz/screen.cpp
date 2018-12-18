@@ -23,6 +23,7 @@
 #include "glk/frotz/screen.h"
 #include "glk/conf.h"
 #include "common/file.h"
+#include "graphics/fonts/ttf.h"
 #include "image/bmp.h"
 
 namespace Glk {
@@ -31,11 +32,13 @@ namespace Frotz {
 FrotzScreen::FrotzScreen() : Glk::Screen() {
 	g_conf->_tStyles[style_User1].font = CUSTOM;
 	g_conf->_gStyles[style_User1].font = CUSTOM;
+	g_conf->_tStyles[style_User2].font = CUSTOM2;
 }
 
 void FrotzScreen::loadFonts(Common::Archive *archive) {
 	Screen::loadFonts(archive);
 
+	// Add character graphics font
 	Image::BitmapDecoder decoder;
 	Common::File f;
 	if (!f.open("infocom_graphics.bmp", *archive))
@@ -44,6 +47,15 @@ void FrotzScreen::loadFonts(Common::Archive *archive) {
 	Common::Point fontSize(_fonts[0]->getMaxCharWidth(), _fonts[0]->getFontHeight());
 	decoder.loadStream(f);
 	_fonts.push_back(new Frotz::BitmapFont(*decoder.getSurface(), fontSize));
+	f.close();
+
+	// Add Runic font. It provides cleaner versions of the runic characters in the
+	// character graphics font
+	if (!f.open("NotoSansRunic-Regular.ttf", *archive))
+		error("Could not load font");
+
+	_fonts.push_back(Graphics::loadTTFFont(f, g_conf->_propSize, Graphics::kTTFSizeModeCharacter));
+	f.close();
 }
 
 /*--------------------------------------------------------------------------*/

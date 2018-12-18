@@ -158,7 +158,7 @@ void Processor::screen_char(zchar c) {
 			if (curr_font == GRAPHICS_FONT) {
 				uint32 runic_char = zchar_to_unicode_rune(c);
 				if (runic_char != 0) {
-					glk_set_style(style_User3);
+					glk_set_style(style_User2);
 					glk_put_char_uni(runic_char);
 					glk_set_style(style_User1);
 				} else

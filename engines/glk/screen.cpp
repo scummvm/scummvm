@@ -144,17 +144,13 @@ void Screen::loadFonts(Common::Archive *archive) {
 	_fonts[5] = loadFont(PROPB, archive, propSize, propAspect, FONTB);
 	_fonts[6] = loadFont(PROPI, archive, propSize, propAspect, FONTI);
 	_fonts[7] = loadFont(PROPZ, archive, propSize, propAspect, FONTZ);
-
-	_fonts[8] = loadFont(RUNIC, archive, propSize, propAspect, RUNIC);
 }
 
-const Graphics::Font *Screen::loadFont(FACES face, Common::Archive *archive, double size, double aspect, int
- style) {
+const Graphics::Font *Screen::loadFont(FACES face, Common::Archive *archive, double size, double aspect, int style) {
 	Common::File f;
-	const char *const FILENAMES[9] = {
+	const char *const FILENAMES[8] = {
 		"GoMono-Regular.ttf", "GoMono-Bold.ttf", "GoMono-Italic.ttf", "GoMono-Bold-Italic.ttf",
-		"NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-Bold-Italic.ttf",
-		"NotoSansRunic-Regular.ttf"
+		"NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-Bold-Italic.ttf"
 	};
 
 	if (!f.open(FILENAMES[face], *archive))
