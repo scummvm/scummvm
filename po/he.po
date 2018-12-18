@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-17 21:38+0100\n"
-"PO-Revision-Date: 2018-10-31 20:20+0000\n"
+"PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Matan Bareket <mataniko@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 3.2.2\n"
+"X-Generator: Weblate 3.3\n"
 "X-Language-name: Hebrew\n"
 
 #: gui/about.cpp:94
@@ -891,115 +891,124 @@ msgstr "Shader חומרה:"
 
 #: gui/options.cpp:1035
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Shaders שונים נותנים אפקטים אחרים"
 
 #: gui/options.cpp:1052
 msgid "Graphics mode:"
-msgstr ""
+msgstr "מצב תצוגה:"
 
 #: gui/options.cpp:1066
+#, fuzzy
 msgid "Render mode:"
-msgstr ""
+msgstr "מצב רינדור:"
 
 #: gui/options.cpp:1066 gui/options.cpp:1067
+#, fuzzy
 msgid "Special dithering modes supported by some games"
-msgstr ""
+msgstr "מצב מיזוג צבעים מיוחד אשר נתמך על ידי כמה משחקים"
 
 #: gui/options.cpp:1079
 msgid "Stretch mode:"
-msgstr ""
+msgstr "מצב מתיחה:"
 
 #: gui/options.cpp:1090 backends/graphics/openglsdl/openglsdl-graphics.cpp:637
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2687
 msgid "Fullscreen mode"
-msgstr ""
+msgstr "מצב מסך מלא"
 
 #: gui/options.cpp:1093
+#, fuzzy
 msgid "Filter graphics"
-msgstr ""
+msgstr "מסנן גרפיקה"
 
 #: gui/options.cpp:1093
+#, fuzzy
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "השתמש בסינון ליניארי בזמן ביצוע שינוי קנה מידה של גרפיקה"
 
 #: gui/options.cpp:1096
 msgid "Aspect ratio correction"
-msgstr ""
+msgstr "תיקון יחסי גודל"
 
 #: gui/options.cpp:1096
 msgid "Correct aspect ratio for 320x200 games"
-msgstr ""
+msgstr "תיקון יחסי גודל למשחקים בגודל 320x200"
 
 #: gui/options.cpp:1104
 msgid "Preferred device:"
-msgstr ""
+msgstr "התקן מועדף:"
 
 #: gui/options.cpp:1104
+#, fuzzy
 msgid "Music device:"
-msgstr ""
+msgstr "התקן מוזיקה:"
 
 #: gui/options.cpp:1104 gui/options.cpp:1106
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr ""
+msgstr "מציין התקן קול או אמולטור כרטיס קול מועדף"
 
 #: gui/options.cpp:1104 gui/options.cpp:1106 gui/options.cpp:1107
 msgid "Specifies output sound device or sound card emulator"
-msgstr ""
+msgstr "מציין התקן שמע פלט או אמולטור כרטיס כול מועדף"
 
 #: gui/options.cpp:1106
+#, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr ""
+msgstr "פיתוח מועדף:"
 
 #: gui/options.cpp:1106
 msgctxt "lowres"
 msgid "Music device:"
-msgstr ""
+msgstr "התקן מוזיקה:"
 
 #: gui/options.cpp:1133
 msgid "AdLib emulator:"
-msgstr ""
+msgstr "אמולטור AdLib:"
 
 #: gui/options.cpp:1133 gui/options.cpp:1134
 msgid "AdLib is used for music in many games"
-msgstr ""
+msgstr "AdLib נמצא בשימוש על ידי הרבה משחקים"
 
 #: gui/options.cpp:1147
 msgid "GM device:"
-msgstr ""
+msgstr "התקן מידי כללי:"
 
 #: gui/options.cpp:1147
+#, fuzzy
 msgid "Specifies default sound device for General MIDI output"
-msgstr ""
+msgstr "מציין ברירת מחדל להתקן קול בשביל ניגון מידי כללי"
 
 #: gui/options.cpp:1158
+#, fuzzy
 msgid "Don't use General MIDI music"
-msgstr ""
+msgstr "אל תשתמש במוזיקת מידי"
 
 #: gui/options.cpp:1169 gui/options.cpp:1231
 msgid "Use first available device"
-msgstr ""
+msgstr "השתמש בהתקן הפנוי הראשון"
 
 #: gui/options.cpp:1181
 msgid "SoundFont:"
-msgstr ""
+msgstr "גופן קול (SoundFont):"
 
 #: gui/options.cpp:1181 gui/options.cpp:1183 gui/options.cpp:1184
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
-msgstr ""
+msgstr "גופן קול נתמך על ידי מספר כרטיסי קול, FluidSynth ו-Timidity"
 
 #: gui/options.cpp:1183
 msgctxt "lowres"
 msgid "SoundFont:"
-msgstr ""
+msgstr "גופן קול (SoundFont):"
 
 #: gui/options.cpp:1189
 msgid "Mixed AdLib/MIDI mode"
-msgstr ""
+msgstr "מצב מידי/AdLib מעורב"
 
 #: gui/options.cpp:1189
+#, fuzzy
 msgid "Use both MIDI and AdLib sound generation"
-msgstr ""
+msgstr "השתמש במידי ו-AdLib בשביל ליצר קול"
 
 #: gui/options.cpp:1192
 msgid "MIDI gain:"
@@ -1007,7 +1016,7 @@ msgstr ""
 
 #: gui/options.cpp:1202
 msgid "MT-32 Device:"
-msgstr ""
+msgstr "התקן MT-32:"
 
 #: gui/options.cpp:1202
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
