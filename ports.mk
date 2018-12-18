@@ -398,44 +398,33 @@ iphone: $(OBJS)
 # TODO: Replace AUTHORS by Credits.rtf
 osxsnap: bundle
 	mkdir ScummVM-snapshot
-	$(srcdir)/devtools/credits.pl --text > $(srcdir)/AUTHORS
-	cp $(srcdir)/AUTHORS ./ScummVM-snapshot/Authors
-	cp $(srcdir)/COPYING ./ScummVM-snapshot/License\ \(GPL\)
-	cp $(srcdir)/COPYING.BSD ./ScummVM-snapshot/License\ \(BSD\)
-	cp $(srcdir)/COPYING.LGPL ./ScummVM-snapshot/License\ \(LGPL\)
-	cp $(srcdir)/COPYING.FREEFONT ./ScummVM-snapshot/License\ \(FREEFONT\)
-	cp $(srcdir)/COPYRIGHT ./ScummVM-snapshot/Copyright\ Holders
-	cp $(srcdir)/NEWS ./ScummVM-snapshot/News
-	cp $(srcdir)/README ./ScummVM-snapshot/ScummVM\ ReadMe
+	cp $(DIST_FILES_DOCS) ./ScummVM-snapshot/
+	mv ./ScummVM-snapshot/COPYING ./ScummVM-snapshot/License\ \(GPL\)
+	mv ./ScummVM-snapshot/COPYING.LGPL ./ScummVM-snapshot/License\ \(LGPL\)
+	mv ./ScummVM-snapshot/COPYING.FREEFONT ./ScummVM-snapshot/License\ \(FREEFONT\)
+	mv ./ScummVM-snapshot/COPYING.BSD ./ScummVM-snapshot/License\ \(BSD\)
+	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	mkdir ScummVM-snapshot/doc
 	cp $(srcdir)/doc/QuickStart ./ScummVM-snapshot/doc/QuickStart
 	mkdir ScummVM-snapshot/doc/cz
-	cp $(srcdir)/doc/cz/PrectiMe ./ScummVM-snapshot/doc/cz/PrectiMe
+	cp $(DIST_FILES_DOCS_cz) ./ScummVM-snapshot/doc/cz/
 	mkdir ScummVM-snapshot/doc/da
-	cp $(srcdir)/doc/da/HurtigStart ./ScummVM-snapshot/doc/da/HurtigStart
+	cp $(DIST_FILES_DOCS_da) ./ScummVM-snapshot/doc/da/
 	mkdir ScummVM-snapshot/doc/de
-	cp $(srcdir)/doc/de/LIESMICH ./ScummVM-snapshot/doc/de/LIESMICH
-	cp $(srcdir)/doc/de/Schnellstart ./ScummVM-snapshot/doc/de/Schnellstart
+	cp $(DIST_FILES_DOCS_de) ./ScummVM-snapshot/doc/de/
 	mkdir ScummVM-snapshot/doc/es
-	cp $(srcdir)/doc/es/InicioRapido ./ScummVM-snapshot/doc/es
+	cp $(DIST_FILES_DOCS_es) ./ScummVM-snapshot/doc/es/
 	mkdir ScummVM-snapshot/doc/fr
-	cp $(srcdir)/doc/fr/DemarrageRapide ./ScummVM-snapshot/doc/fr/DemarrageRapide
+	cp $(DIST_FILES_DOCS_fr) ./ScummVM-snapshot/doc/fr/
 	mkdir ScummVM-snapshot/doc/it
-	cp $(srcdir)/doc/it/GuidaRapida ./ScummVM-snapshot/doc/it/GuidaRapida
+	cp $(DIST_FILES_DOCS_it) ./ScummVM-snapshot/doc/it/
 	mkdir ScummVM-snapshot/doc/no-nb
-	cp $(srcdir)/doc/no-nb/HurtigStart ./ScummVM-snapshot/doc/no-nb/HurtigStart
+	cp $(DIST_FILES_DOCS_no-nb) ./ScummVM-snapshot/doc/no-nb/
 	mkdir ScummVM-snapshot/doc/se
-	cp $(srcdir)/doc/se/LasMig ./ScummVM-snapshot/doc/se/LasMig
-	cp $(srcdir)/doc/se/Snabbstart ./ScummVM-snapshot/doc/se/Snabbstart
-	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
-	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/cz/*
-	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/da/*
-	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/de/*
-	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/es/*
-	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/fr/*
-	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/it/*
-	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/no-nb/*
-	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/se/*
+	cp $(DIST_FILES_DOCS_se) ./ScummVM-snapshot/doc/se/
+	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/QuickStart
+	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/*/*
+	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/*/*
 	$(XCODETOOLSPATH)/CpMac -r $(bundle_name) ./ScummVM-snapshot/
 	cp $(srcdir)/dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
 	cp $(srcdir)/dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
