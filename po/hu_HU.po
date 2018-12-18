@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-17 21:38+0100\n"
-"PO-Revision-Date: 2018-12-16 17:50+0000\n"
+"PO-Revision-Date: 2018-12-18 05:04+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1200,7 +1200,6 @@ msgid "Switch the GUI language to the game language"
 msgstr "Kapcsolja át a GUI nyelvét a játék nyelvére"
 
 #: gui/options.cpp:1697
-#, fuzzy
 msgid ""
 "When starting a game, change the GUI language to the game language.That way, "
 "if a game uses the ScummVM save and load dialogs, they are in the same "
@@ -3191,12 +3190,12 @@ msgstr "Nem látom. Túl sötét van!\n"
 #: engines/glk/scott/scott.cpp:417
 #, c-format
 msgid "You are in a %s\n"
-msgstr ""
+msgstr "Itt vagy %s\n"
 
 #: engines/glk/scott/scott.cpp:419
 #, c-format
 msgid "I'm in a %s\n"
-msgstr ""
+msgstr "Itt vagyok %s\n"
 
 #: engines/glk/scott/scott.cpp:424
 msgid ""
@@ -3336,7 +3335,6 @@ msgid "It's beyond my power to do that. "
 msgstr "Ez a kívül esik lehetõségeimen. "
 
 #: engines/glk/scott/scott.cpp:1107
-#, fuzzy
 msgid "O.K. "
 msgstr "O.K. "
 
