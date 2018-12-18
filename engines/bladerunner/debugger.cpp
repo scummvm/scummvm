@@ -432,7 +432,15 @@ bool Debugger::cmdScene(int argc, const char **argv) {
 		return false;
 	}
 
-	debugPrintf("chapter = %i\nset = %i\nscene = %i\n", _vm->_settings->getChapter(), _vm->_scene->getSetId(), _vm->_scene->getSceneId());
+	uint i;
+	for (i = 0; sceneList[i].chapter != 0; i++) {
+		if (sceneList[i].chapter == _vm->_settings->getChapter() && sceneList[i].set == _vm->_scene->getSetId()
+				&& sceneList[i].scene == _vm->_scene->getSceneId())
+			break;
+	}
+
+	debugPrintf("chapter = %i\nset = %i\nscene = %i '%s'\n", _vm->_settings->getChapter(), _vm->_scene->getSetId(),
+				_vm->_scene->getSceneId(), sceneList[i].name);
 	return true;
 }
 
