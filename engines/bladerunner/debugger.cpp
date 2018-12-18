@@ -441,7 +441,7 @@ bool Debugger::cmdScene(int argc, const char **argv) {
 
 		uint i;
 		for (i = 0; sceneList[i].chapter != 0; i++) {
-			if (sceneList[i].chapter == chapterId && sceneName.equalsIgnoreCase(sceneList[i].name))
+			if (sceneList[i].chapter == chapterIdNormalized && sceneName.equalsIgnoreCase(sceneList[i].name))
 				break;
 		}
 
