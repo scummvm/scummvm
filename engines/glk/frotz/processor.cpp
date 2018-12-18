@@ -131,7 +131,7 @@ Opcode Processor::ext_opcodes[64] = {
 	&Processor::z_buffer_screen		// spec 1.1
 };
 
-Processor::Processor(OSystem *syst, const GlkGameDescription &gameDesc) : 
+Processor::Processor(OSystem *syst, const GlkGameDescription &gameDesc) :
 		GlkInterface(syst, gameDesc),
 		_finished(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
 		zargc(0), _decoded(nullptr), _encoded(nullptr), _resolution(0),
@@ -575,12 +575,12 @@ void Processor::z_rtrue() {
 }
 
 void Processor::z_random() {
-    if ((short) zargs[0] <= 0) {
+	if ((short) zargs[0] <= 0) {
 		// set random seed
 		seed_random(- (short) zargs[0]);
 		store(0);
 
-    } else {
+	} else {
 		// generate random number
 		zword result;
 		if (_randomInterval != 0) {
@@ -594,22 +594,22 @@ void Processor::z_random() {
 		}
 
 		store((zword)(result % zargs[0] + 1));
-    }
+	}
 }
 
 void Processor::z_sound_effect() {
-    zword number = zargs[0];
-    zword effect = zargs[1];
-    zword volume = zargs[2];
+	zword number = zargs[0];
+	zword effect = zargs[1];
+	zword volume = zargs[2];
 
-    if (zargc < 1)
+	if (zargc < 1)
 		number = 0;
-    if (zargc < 2)
+	if (zargc < 2)
 		effect = EFFECT_PLAY;
-    if (zargc < 3)
+	if (zargc < 3)
 		volume = 8;
 
-    if (number >= 3 || number == 0) {
+	if (number >= 3 || number == 0) {
 		_soundLocked = true;
 
 		if (_storyId == LURKING_HORROR && (number == 9 || number == 16)) {

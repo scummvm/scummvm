@@ -75,7 +75,7 @@ Windows::~Windows() {
 }
 
 Window *Windows::windowOpen(Window *splitwin, uint method, uint size,
-                            uint wintype, uint rock) {
+							uint wintype, uint rock) {
 	Window *newwin, *oldparent;
 	PairWindow *pairWin;
 	uint val;
@@ -104,7 +104,7 @@ Window *Windows::windowOpen(Window *splitwin, uint method, uint size,
 
 		val = (method & winmethod_DirMask);
 		if (val != winmethod_Above && val != winmethod_Below
-		        && val != winmethod_Left && val != winmethod_Right) {
+				&& val != winmethod_Left && val != winmethod_Right) {
 			warning("window_open: invalid method (bad direction)");
 			return nullptr;
 		}
@@ -284,8 +284,8 @@ void Windows::inputGuessFocus() {
 
 	do {
 		if (altWin
-		        && (altWin->_lineRequest || altWin->_charRequest ||
-		            altWin->_lineRequestUni || altWin->_charRequestUni))
+				&& (altWin->_lineRequest || altWin->_charRequest ||
+					altWin->_lineRequestUni || altWin->_charRequestUni))
 			break;
 		altWin = iterateTreeOrder(altWin);
 	} while (altWin != _focusWin);
@@ -315,8 +315,8 @@ void Windows::inputNextFocus() {
 	do {
 		altWin = iterateTreeOrder(altWin);
 		if (altWin
-		        && (altWin->_lineRequest || altWin->_charRequest ||
-		            altWin->_lineRequestUni || altWin->_charRequestUni))
+				&& (altWin->_lineRequest || altWin->_charRequest ||
+					altWin->_lineRequestUni || altWin->_charRequestUni))
 			break;
 	} while (altWin != _focusWin);
 

@@ -44,7 +44,7 @@ size_t strlen_uni(const uint32 *s);
  *converted string should have contained.
  */
 extern uint bufferChangeCase(uint32 *buf, uint len,
-                               uint numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
+							   uint numchars, BufferChangeCase destcase, BufferChangeCond cond, int changerest);
 
 } // End of namespace Glk
 

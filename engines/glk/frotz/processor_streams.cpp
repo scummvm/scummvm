@@ -35,16 +35,16 @@ zchar Processor::console_read_key(zword timeout) {
 }
 
 void Processor::scrollback_char(zchar c) {
-    if (c == ZC_INDENT)
-        { scrollback_char (' '); scrollback_char (' '); scrollback_char (' '); return; }
-    if (c == ZC_GAP)
-        { scrollback_char (' '); scrollback_char (' '); return; }
+	if (c == ZC_INDENT)
+		{ scrollback_char (' '); scrollback_char (' '); scrollback_char (' '); return; }
+	if (c == ZC_GAP)
+		{ scrollback_char (' '); scrollback_char (' '); return; }
 
-    os_scrollback_char(c);
+	os_scrollback_char(c);
 }
 
 void Processor::scrollback_word(const zchar *s) {
-    int i;
+	int i;
 
 	for (i = 0; s[i] != 0; i++) {
 		if (s[i] == ZC_NEW_FONT || s[i] == ZC_NEW_STYLE)
@@ -55,149 +55,149 @@ void Processor::scrollback_word(const zchar *s) {
 }
 
 void Processor::scrollback_write_input(const zchar *buf, zchar key) {
-    int i;
+	int i;
 
-    for (i = 0; buf[i] != 0; i++)
-        scrollback_char (buf[i]);
+	for (i = 0; buf[i] != 0; i++)
+		scrollback_char (buf[i]);
 
-    if (key == ZC_RETURN)
-        scrollback_char ('\n');
+	if (key == ZC_RETURN)
+		scrollback_char ('\n');
 }
 
 void Processor::scrollback_erase_input(const zchar *buf) {
-    int width;
-    int i;
+	int width;
+	int i;
 
-    for (i = 0, width = 0; buf[i] != 0; i++)
-        width++;
+	for (i = 0, width = 0; buf[i] != 0; i++)
+		width++;
 
-    os_scrollback_erase(width);
+	os_scrollback_erase(width);
 
 }
 
 void Processor::stream_mssg_on() {
-    flush_buffer();
+	flush_buffer();
 
-    if (ostream_screen)
-	    screen_mssg_on();
-    if (ostream_script && enable_scripting)
+	if (ostream_screen)
+		screen_mssg_on();
+	if (ostream_script && enable_scripting)
 	script_mssg_on();
 
-    message = true;
+	message = true;
 }
 
 void Processor::stream_mssg_off() {
-    flush_buffer();
+	flush_buffer();
 
-    if (ostream_screen)
+	if (ostream_screen)
 		screen_mssg_off();
-    if (ostream_script && enable_scripting)
+	if (ostream_script && enable_scripting)
 		script_mssg_off();
 
-    message = false;
+	message = false;
 }
 
 void Processor::stream_char(zchar c) {
-    if (ostream_screen)
+	if (ostream_screen)
 		screen_char(c);
-    if (ostream_script && enable_scripting)
+	if (ostream_script && enable_scripting)
 		script_char(c);
-    if (enable_scripting)
+	if (enable_scripting)
 		scrollback_char(c);
 }
 
 void Processor::stream_word(const zchar *s) {
-    if (ostream_memory && !message)
+	if (ostream_memory && !message)
 		memory_word(s);
-    else {
+	else {
 		if (ostream_screen)
 			screen_word(s);
 		if (ostream_script && enable_scripting)
 			script_word(s);
 		if (enable_scripting)
 			scrollback_word(s);
-    }
+	}
 }
 
 void Processor::stream_new_line() {
-    if (ostream_memory && !message)
+	if (ostream_memory && !message)
 		memory_new_line();
-    else {
+	else {
 		if (ostream_screen)
 			screen_new_line();
 		if (ostream_script && enable_scripting)
 			script_new_line();
 		if (enable_scripting)
 			os_scrollback_char ('\n');
-    }
+	}
 }
 
 zchar Processor::stream_read_key(zword timeout, zword routine, bool hot_keys) {
-    zchar key = ZC_BAD;
+	zchar key = ZC_BAD;
 
-    flush_buffer();
+	flush_buffer();
 
-    // Read key from current input stream
+	// Read key from current input stream
 continue_input:
 
-    do {
+	do {
 		if (istream_replay)
 			key = replay_read_key();
 		else
 			key = console_read_key(timeout);
 		if (shouldQuit())
 			return ZC_BAD;
-    } while (key == ZC_BAD);
+	} while (key == ZC_BAD);
 
-    // Copy key to the command file
-    if (ostream_record && !istream_replay)
+	// Copy key to the command file
+	if (ostream_record && !istream_replay)
 		record_write_key(key);
 
-    // Handle timeouts
-    if (key == ZC_TIME_OUT)
+	// Handle timeouts
+	if (key == ZC_TIME_OUT)
 		if (direct_call (routine) == 0)
 			goto continue_input;
 
-    // Return key
-    return key;
+	// Return key
+	return key;
 }
 
 zchar Processor::stream_read_input(int max, zchar *buf, zword timeout, zword routine,
 			  bool hot_keys, bool no_scripting) {
-    zchar key = ZC_BAD;
-    flush_buffer();
+	zchar key = ZC_BAD;
+	flush_buffer();
 
-    // Remove initial input from the transscript file or from the screen
-    if (ostream_script && enable_scripting && !no_scripting)
+	// Remove initial input from the transscript file or from the screen
+	if (ostream_script && enable_scripting && !no_scripting)
 		script_erase_input(buf);
 
-    // Read input line from current input stream
+	// Read input line from current input stream
 continue_input:
 
-    do {
+	do {
 		if (istream_replay)
 			key = replay_read_input(buf);
 		else
 			key = console_read_input(max, buf, timeout, key != ZC_BAD);
 		if (shouldQuit())
 			return ZC_BAD;
-    } while (key == ZC_BAD);
+	} while (key == ZC_BAD);
 
-    // Copy input line to the command file
-    if (ostream_record && !istream_replay)
+	// Copy input line to the command file
+	if (ostream_record && !istream_replay)
 		record_write_input(buf, key);
 
-    // Handle timeouts
-    if (key == ZC_TIME_OUT)
+	// Handle timeouts
+	if (key == ZC_TIME_OUT)
 	if (direct_call(routine) == 0)
-	    goto continue_input;
+		goto continue_input;
 
-    // Copy input line to transscript file or to the screen
-    if (ostream_script && enable_scripting && !no_scripting)
+	// Copy input line to transscript file or to the screen
+	if (ostream_script && enable_scripting && !no_scripting)
 		script_write_input(buf, key);
 
-    // Return terminating key
-    return key;
+	// Return terminating key
+	return key;
 }
 
 void Processor::script_open() {
@@ -487,28 +487,28 @@ void Processor::z_input_stream() {
 }
 
 void Processor::z_output_stream() {
-    flush_buffer();
+	flush_buffer();
 
-    switch ((short) zargs[0]) {
-    case  1: ostream_screen = true;
-	     break;
-    case -1: ostream_screen = false;
-	     break;
-    case  2: if (!ostream_script) script_open();
-	     break;
-    case -2: if (ostream_script) script_close();
-	     break;
-    case  3: memory_open(zargs[1], zargs[2], zargc >= 3);
-	     break;
-    case -3: memory_close();
-	     break;
-    case  4: if (!ostream_record) record_open();
-	     break;
-    case -4: if (ostream_record) record_close();
-	     break;
+	switch ((short) zargs[0]) {
+	case  1: ostream_screen = true;
+		 break;
+	case -1: ostream_screen = false;
+		 break;
+	case  2: if (!ostream_script) script_open();
+		 break;
+	case -2: if (ostream_script) script_close();
+		 break;
+	case  3: memory_open(zargs[1], zargs[2], zargc >= 3);
+		 break;
+	case -3: memory_close();
+		 break;
+	case  4: if (!ostream_record) record_open();
+		 break;
+	case -4: if (ostream_record) record_close();
+		 break;
 	default:
 		break;
-    }
+	}
 }
 
 void Processor::z_restart() {

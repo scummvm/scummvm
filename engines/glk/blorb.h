@@ -37,7 +37,7 @@ struct ChunkEntry {
 	uint _type;
 	uint _number;
 	uint _id;
-    size_t _offset;
+	size_t _offset;
 	size_t _size;
 	Common::String _filename;
 };

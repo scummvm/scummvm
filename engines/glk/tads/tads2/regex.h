@@ -48,11 +48,11 @@ typedef int re_state_id;
 
 /**
  *   Group register structure.  Each register keeps track of the starting
- *   and ending offset of the group's text.  
+ *   and ending offset of the group's text.
  */
 struct re_group_register {
-    const char *start_ofs;
-    const char *end_ofs;
+	const char *start_ofs;
+	const char *end_ofs;
 };
 
 /**
@@ -65,26 +65,26 @@ struct re_group_register {
  * complete set of transitions out of a particular state.  A particular
  * state can have one character transition, or two epsilon transitions.
  * Note that we don't need to store the state ID in the tuple, because
- * the state ID is the index of the tuple in an array of state tuples.  
+ * the state ID is the index of the tuple in an array of state tuples.
  */
 struct re_tuple {
-    // the character we must match to transition to the target state
-    char ch;
+	// the character we must match to transition to the target state
+	char ch;
 
-    // the target states
-    re_state_id next_state_1;
-    re_state_id next_state_2;
+	// the target states
+	re_state_id next_state_1;
+	re_state_id next_state_2;
 
-    // character range match table, if used
-    unsigned char *char_range;
+	// character range match table, if used
+	unsigned char *char_range;
 
-    // flags
-    byte flags;
+	// flags
+	byte flags;
 };
 
 
 /**
- * Tuple flags 
+ * Tuple flags
  */
 enum {
 	// this state is the start of a group - the 'ch' value is the group ID
@@ -95,25 +95,25 @@ enum {
 };
 
 /**
- * Status codes 
+ * Status codes
  */
 typedef enum {
-    // success
-    RE_STATUS_SUCCESS = 0,
+	// success
+	RE_STATUS_SUCCESS = 0,
 
-    // compilation error - group nesting too deep
-    RE_STATUS_GROUP_NESTING_TOO_DEEP
+	// compilation error - group nesting too deep
+	RE_STATUS_GROUP_NESTING_TOO_DEEP
 } re_status_t;
 
 
 /**
  * Regular expression compilation.  This tracks the state of the compilation and
- * stores the resources associated with the compiled expression.  
+ * stores the resources associated with the compiled expression.
  */
 class re_context {
 	/**
 	 * A machine description.  Machines are fully described by their initial
-	 * and final state ID's.  
+	 * and final state ID's.
 	 */
 	struct re_machine {
 		re_state_id init;		///< the machine's initial state
@@ -168,7 +168,7 @@ private:
 	void build_group_matcher(re_machine *machine, int group_num);
 
 	/**
-	 *   Build a concatenation recognizer 
+	 *   Build a concatenation recognizer
 	 */
 	void build_concat(re_machine *new_machine, re_machine *lhs, re_machine *rhs);
 
@@ -180,7 +180,7 @@ private:
 	void build_group(re_machine *new_machine, re_machine *sub_machine, int group_id);
 
 	/**
-	 * Build an alternation recognizer 
+	 * Build an alternation recognizer
 	 */
 	void build_alter(re_machine *new_machine, re_machine *lhs, re_machine *rhs);
 
@@ -202,12 +202,12 @@ private:
 	 * first machine with the resulting machine.  If the first machine is a
 	 * null machine, this simply replaces the first machine with the second
 	 * machine.  If the second machine is null, this simply leaves the first
-	 * machine unchanged. 
+	 * machine unchanged.
 	 */
 	void alternate_onto(re_machine *dest, re_machine *rhs);
 
 	/**
-	 * Compile an expression 
+	 * Compile an expression
 	 */
 	re_status_t compile(const char *expr, size_t exprlen, re_machine *result_machine);
 
@@ -243,42 +243,42 @@ private:
 	void save_search_str(const char *str, size_t len);
 public:
 	errcxdef *_errctx;			///< error context
-    re_state_id _next_state;	///< next available state ID 
+	re_state_id _next_state;	///< next available state ID
 
-    /**
-     * The array of transition tuples.  We'll allocate this array and
-     * expand it as necessary.  
-     */
-    Common::Array<re_tuple> _tuple_arr;
+	/**
+	 * The array of transition tuples.  We'll allocate this array and
+	 * expand it as necessary.
+	 */
+	Common::Array<re_tuple> _tuple_arr;
 
-    // current group ID
-    int _cur_group;
+	// current group ID
+	int _cur_group;
 
-    // group registers
-    re_group_register _regs[RE_GROUP_REG_CNT];
+	// group registers
+	re_group_register _regs[RE_GROUP_REG_CNT];
 
-    /**
-     * Buffer for retaining a copy of the last string we scanned.  We
-     * retain our own copy of each string, and point the group registers
-     * into this copy rather than the caller's original string -- this
-     * ensures that the group registers remain valid even after the
-     * caller has deallocated the original string.  
-     */
-    char *_strbuf;
+	/**
+	 * Buffer for retaining a copy of the last string we scanned.  We
+	 * retain our own copy of each string, and point the group registers
+	 * into this copy rather than the caller's original string -- this
+	 * ensures that the group registers remain valid even after the
+	 * caller has deallocated the original string.
+	 */
+	char *_strbuf;
 
-    /**
+	/**
 	 * length of the string currently in the buffer
 	 */
-    size_t _curlen;
+	size_t _curlen;
 
-    /**
+	/**
 	 * size of the buffer allocated to strbuf
 	 */
-    size_t _strbufsiz;
+	size_t _strbufsiz;
 public:
 	/**
 	 * Constructor.  The memory for the context structure itself
-	 * must be allocated and maintained by the caller. 
+	 * must be allocated and maintained by the caller.
 	 */
 	re_context(errcxdef *errctx);
 
@@ -288,13 +288,13 @@ public:
 	~re_context();
 
 	/**
-	 * Allocate a new state ID 
+	 * Allocate a new state ID
 	 */
 	re_state_id alloc_state();
 
 	/**
 	 * Compile an expression and search for a match within the given string.
-	 * Returns the offset of the match, or -1 if no match was found.  
+	 * Returns the offset of the match, or -1 if no match was found.
 	 */
 	int compile_and_search(const char *pattern, size_t patlen,
 		const char *searchstr, size_t searchlen, int *result_len);
@@ -302,7 +302,7 @@ public:
 	/**
 	 * Compile an expression and check for a match.  Returns the length of the match
 	 * if we found a match, -1 if we found no match.  This is not a search function;
-	 * we merely match the leading substring of the given string to the given pattern.  
+	 * we merely match the leading substring of the given string to the given pattern.
 	 */
 	int compile_and_match(const char *pattern, size_t patlen,
 		const char *searchstr, size_t searchlen);

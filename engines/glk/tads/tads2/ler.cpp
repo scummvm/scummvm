@@ -29,102 +29,102 @@ namespace TADS2 {
 #define TRDLOGERR_PREFIX "\n[An error has occurred within TADS: "
 
 int errcxdef::errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv) {
-    int    outlen = 0;
-    int    argi   = 0;
-    int    len;
-    char   buf[20];
-    const char  *p = nullptr;
-    char   fmtchar;
+	int    outlen = 0;
+	int    argi   = 0;
+	int    len;
+	char   buf[20];
+	const char  *p = nullptr;
+	char   fmtchar;
 
-    while (*fmt != '\0' && outbufl > 1) {
-        switch(*fmt) {
-        case '\\':
-            ++fmt;
-            len = 1;
-            switch(*fmt) {
-            case '\0':
-                --fmt;
-                break;
-            case '\n':
-                p = "\n";
-                break;
-            case '\t':
-                p = "\t";
-                break;
-            default:
-                p = fmt;
-                break;
-            }
-            break;
-            
-        case '%':
-            ++fmt;
-            fmtchar = *fmt;
-            if (argi >= argc) fmtchar = 1;          // too many - ignore it
-            switch(fmtchar) {
-            case '\0':
-                --fmt;
-                len = 0;
-                break;
-                
-            case '%':
-                p = "%";
-                len = 1;
-                break;
-                
-            case 'd':
-                sprintf(buf, "%d", argv[argi].erraint);
-                len = strlen(buf);
-                p = buf;
-                break;
-                
-            case 'u':
-                sprintf(buf, "%u", argv[argi].erraint);
-                len = strlen(buf);
-                p = buf;
-                break;
-                
-            case 's':
-                p = argv[argi].errastr;
-                len = strlen(p);
-                break;
-                
-            default:
-                p = "";
-                len = 0;
-                --argi;
-                break;
-            }
-            ++argi;
-            break;
-            
-        default:
-            p = fmt;
-            len = 1;
-            break;
-        }
+	while (*fmt != '\0' && outbufl > 1) {
+		switch(*fmt) {
+		case '\\':
+			++fmt;
+			len = 1;
+			switch(*fmt) {
+			case '\0':
+				--fmt;
+				break;
+			case '\n':
+				p = "\n";
+				break;
+			case '\t':
+				p = "\t";
+				break;
+			default:
+				p = fmt;
+				break;
+			}
+			break;
 
-        /* copy output that was set up above */
-        if (len != 0) {
-            if (outbufl >= len) {
-                memcpy(outbuf, p, (size_t)len);
-                outbufl -= len;
-                outbuf += len;
-            } else if (outbufl > 1) {
-                memcpy(outbuf, p, (size_t)outbufl - 1);
-                outbufl = 1;
-            }
-            outlen += len;
-        }
-        ++fmt;
-    }
+		case '%':
+			++fmt;
+			fmtchar = *fmt;
+			if (argi >= argc) fmtchar = 1;          // too many - ignore it
+			switch(fmtchar) {
+			case '\0':
+				--fmt;
+				len = 0;
+				break;
 
-    // add a null terminator
-    if (outbufl != 0)
-        *outbuf++ = '\0';
+			case '%':
+				p = "%";
+				len = 1;
+				break;
 
-    // return the length
-    return outlen;
+			case 'd':
+				sprintf(buf, "%d", argv[argi].erraint);
+				len = strlen(buf);
+				p = buf;
+				break;
+
+			case 'u':
+				sprintf(buf, "%u", argv[argi].erraint);
+				len = strlen(buf);
+				p = buf;
+				break;
+
+			case 's':
+				p = argv[argi].errastr;
+				len = strlen(p);
+				break;
+
+			default:
+				p = "";
+				len = 0;
+				--argi;
+				break;
+			}
+			++argi;
+			break;
+
+		default:
+			p = fmt;
+			len = 1;
+			break;
+		}
+
+		/* copy output that was set up above */
+		if (len != 0) {
+			if (outbufl >= len) {
+				memcpy(outbuf, p, (size_t)len);
+				outbufl -= len;
+				outbuf += len;
+			} else if (outbufl > 1) {
+				memcpy(outbuf, p, (size_t)outbufl - 1);
+				outbufl = 1;
+			}
+			outlen += len;
+		}
+		++fmt;
+	}
+
+	// add a null terminator
+	if (outbufl != 0)
+		*outbuf++ = '\0';
+
+	// return the length
+	return outlen;
 }
 
 void errcxdef::errcxlog(void *ctx0, char *fac, int err, int argc, erradef *argv) {

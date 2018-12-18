@@ -28,39 +28,39 @@ namespace Glk {
 namespace Frotz {
 
 const char *const Processor::ERR_MESSAGES[ERR_NUM_ERRORS] = {
-    "Text buffer overflow",
-    "Store out of dynamic memory",
-    "Division by zero",
-    "Illegal object",
-    "Illegal attribute",
-    "No such property",
-    "Stack overflow",
-    "Call to illegal address",
-    "Call to non-routine",
-    "Stack underflow",
-    "Illegal opcode",
-    "Bad stack frame",
-    "Jump to illegal address",
-    "Can't save while in interrupt",
-    "Nesting stream #3 too deep",
-    "Illegal window",
-    "Illegal window property",
-    "Print at illegal address",
-    "Illegal dictionary word length",
-    "@jin called with object 0",
-    "@get_child called with object 0",
-    "@get_parent called with object 0",
-    "@get_sibling called with object 0",
-    "@get_prop_addr called with object 0",
-    "@get_prop called with object 0",
-    "@put_prop called with object 0",
-    "@clear_attr called with object 0",
-    "@set_attr called with object 0",
-    "@test_attr called with object 0",
-    "@move_object called moving object 0",
-    "@move_object called moving into object 0",
-    "@remove_object called with object 0",
-    "@get_next_prop called with object 0"
+	"Text buffer overflow",
+	"Store out of dynamic memory",
+	"Division by zero",
+	"Illegal object",
+	"Illegal attribute",
+	"No such property",
+	"Stack overflow",
+	"Call to illegal address",
+	"Call to non-routine",
+	"Stack underflow",
+	"Illegal opcode",
+	"Bad stack frame",
+	"Jump to illegal address",
+	"Can't save while in interrupt",
+	"Nesting stream #3 too deep",
+	"Illegal window",
+	"Illegal window property",
+	"Print at illegal address",
+	"Illegal dictionary word length",
+	"@jin called with object 0",
+	"@get_child called with object 0",
+	"@get_parent called with object 0",
+	"@get_sibling called with object 0",
+	"@get_prop_addr called with object 0",
+	"@get_prop called with object 0",
+	"@put_prop called with object 0",
+	"@clear_attr called with object 0",
+	"@set_attr called with object 0",
+	"@test_attr called with object 0",
+	"@move_object called moving object 0",
+	"@move_object called moving into object 0",
+	"@remove_object called with object 0",
+	"@get_next_prop called with object 0"
 };
 
 void Processor::flush_buffer() {
@@ -74,7 +74,7 @@ void Processor::flush_buffer() {
 
 	// Send the buffer to the output streams
 	_buffer[_bufPos] = '\0';
-	
+
 	_locked = true;
 	stream_word(_buffer);
 	_locked = false;

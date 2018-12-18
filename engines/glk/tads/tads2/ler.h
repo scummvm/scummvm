@@ -337,22 +337,22 @@ enum ErrorCode {
 /*
  *   Special error flag - this is returned from execmd() when preparseCmd
  *   returns a command list.  This indicates to voc1cmd that it should try
- *   the command over again, using the words in the new list. 
+ *   the command over again, using the words in the new list.
  */
 #define ERR_PREPRSCMDREDO  30000             /* preparseCmd returned a list */
 #define ERR_PREPRSCMDCAN   30001    /* preparseCmd returned 'nil' to cancel */
 
 union erradef {
-    int   erraint;		// integer argument
-    char *errastr;		// text string argument
+	int   erraint;		// integer argument
+	char *errastr;		// text string argument
 };
 
 struct errdef {
-    errdef *       errprv;               // previous error frame
-    int            errcode;              // error code of exception being handled
-    char           errfac[ERRFACMAX+1];  // facility of current error
-    erradef        erraav[10];           // parameters for error
-    int            erraac;               // count of parameters in argc
+	errdef *       errprv;               // previous error frame
+	int            errcode;              // error code of exception being handled
+	char           errfac[ERRFACMAX+1];  // facility of current error
+	erradef        erraav[10];           // parameters for error
+	int            erraac;               // count of parameters in argc
 //    jmp_buf        errbuf;               // jump buffer for current error frame
 };
 
@@ -362,21 +362,21 @@ class TADS2;
 
 // seek location record for an error message by number
 struct errmfdef {
-    uint  errmfnum;   // error number
-    size_t errmfseek; // seek location of this message
+	uint  errmfnum;   // error number
+	size_t errmfseek; // seek location of this message
 };
 
 class errcxdef {
 public:
 	errdef   *errcxptr;               // current error frame
-    void     *errcxlgc;               // context for error logging callback
-    int       errcxofs;               // offset in argument buffer
-    char      errcxbuf[ERRBUFSIZ];    // space for argument strings
-    Common::SeekableReadStream *errcxfp;  // message file, if one is being used
-    errmfdef *errcxseek;              // seek locations of messages in file
-    uint      errcxsksz;              // size of errcxseek array
-    size_t    errcxbase;              // offset in physical file of logical error file
-    TADS2 *   errcxappctx;            // host application context
+	void     *errcxlgc;               // context for error logging callback
+	int       errcxofs;               // offset in argument buffer
+	char      errcxbuf[ERRBUFSIZ];    // space for argument strings
+	Common::SeekableReadStream *errcxfp;  // message file, if one is being used
+	errmfdef *errcxseek;              // seek locations of messages in file
+	uint      errcxsksz;              // size of errcxseek array
+	size_t    errcxbase;              // offset in physical file of logical error file
+	TADS2 *   errcxappctx;            // host application context
 public:
 	/**
 	 *   Format an error message, sprintf-style, using arguments in an
@@ -403,45 +403,45 @@ public:
 // begin protected code
 #define ERRBEGIN(ctx) \
   { \
-    errdef fr_; \
-    if ((fr_.errcode = setjmp(fr_.errbuf)) == 0) \
-    { \
-      fr_.errprv = (ctx)->errcxptr; \
-      (ctx)->errcxptr = &fr_;
+	errdef fr_; \
+	if ((fr_.errcode = setjmp(fr_.errbuf)) == 0) \
+	{ \
+	  fr_.errprv = (ctx)->errcxptr; \
+	  (ctx)->errcxptr = &fr_;
 
 // end protected code, begin error handler
 #define ERRCATCH(ctx, e) \
-      assert(1==1 && (ctx)->errcxptr != fr_.errprv); \
-      (ctx)->errcxptr = fr_.errprv; \
-    } \
-    else \
-    { \
-      assert(2==2 && (ctx)->errcxptr != fr_.errprv); \
-      (e) = fr_.errcode; \
-      (ctx)->errcxptr = fr_.errprv;
+	  assert(1==1 && (ctx)->errcxptr != fr_.errprv); \
+	  (ctx)->errcxptr = fr_.errprv; \
+	} \
+	else \
+	{ \
+	  assert(2==2 && (ctx)->errcxptr != fr_.errprv); \
+	  (e) = fr_.errcode; \
+	  (ctx)->errcxptr = fr_.errprv;
 
 // retrieve argument (int, string) in current error frame
 #define errargint(argnum) (fr_.erraav[argnum].erraint)
 #define errargstr(argnum) (fr_.erraav[argnum].errastr)
 
-    
+
 #define ERREND(ctx) \
-    } \
+	} \
   }
 
 // end protected code, begin cleanup (no handling; just cleaning up)
 #define ERRCLEAN(ctx) \
-      assert((ctx)->errcxptr != fr_.errprv); \
-      (ctx)->errcxptr = fr_.errprv; \
-    } \
-    else \
-    { \
-      assert((ctx)->errcxptr != fr_.errprv); \
-      (ctx)->errcxptr = fr_.errprv;
+	  assert((ctx)->errcxptr != fr_.errprv); \
+	  (ctx)->errcxptr = fr_.errprv; \
+	} \
+	else \
+	{ \
+	  assert((ctx)->errcxptr != fr_.errprv); \
+	  (ctx)->errcxptr = fr_.errprv;
 
 #define ERRENDCLN(ctx) \
-      errrse(ctx); \
-    } \
+	  errrse(ctx); \
+	} \
   }
 
 
@@ -457,7 +457,7 @@ public:
 #ifdef ERR_NO_MACRO
 char *errstr(errcxdef *ctx, const char *str, int len);
 #else /* ERR_NO_MACRO */
-  
+
 #define errstr(ctx,str,len) \
   ((memcpy(&(ctx)->errcxbuf[(ctx)->errcxofs],str,(size_t)len), \
    (ctx)->errcxofs += (len), \
@@ -478,13 +478,13 @@ void errsign(errcxdef *ctx, int e, char *facility);
 void errjmp(jmp_buf buf, int e);
 #  define errsign(ctx, e, fac) \
    (strncpy((ctx)->errcxptr->errfac, fac, ERRFACMAX),\
-    (ctx)->errcxptr->errfac[ERRFACMAX]='\0',\
-    (ctx)->errcxofs=0, errjmp((ctx)->errcxptr->errbuf, e))
+	(ctx)->errcxptr->errfac[ERRFACMAX]='\0',\
+	(ctx)->errcxofs=0, errjmp((ctx)->errcxptr->errbuf, e))
 # else /* DEBUG */
 #  define errsign(ctx, e, fac) \
    (strncpy((ctx)->errcxptr->errfac, fac, ERRFACMAX),\
-    (ctx)->errcxptr->errfac[ERRFACMAX]='\0',\
-    (ctx)->errcxofs=0, longjmp((ctx)->errcxptr->errbuf, e))
+	(ctx)->errcxptr->errfac[ERRFACMAX]='\0',\
+	(ctx)->errcxofs=0, longjmp((ctx)->errcxptr->errbuf, e))
 # endif /* DEBUG */
 #endif /* ERR_NO_MACRO */
 
@@ -495,7 +495,7 @@ void errsigf(errcxdef *ctx, char *facility, int err);
 #else /* ERR_NO_MACRO */
 #define errsigf(ctx, fac, e) (errargc(ctx,0),errsign(ctx,e,fac))
 #endif /* ERR_NO_MACRO */
-  
+
 // signal an error with one argument
 #define errsigf1(ctx, fac, e, typ1, arg1) \
   (errargv(ctx,0,typ1,arg1),errargc(ctx,1),errsign(ctx,e,fac))
@@ -515,7 +515,7 @@ void errrse1(errcxdef *ctx, errdef *fr);
 # define errrse(ctx) \
   (errargc(ctx, fr_.erraac),\
    memcpy((ctx)->errcxptr->erraav, fr_.erraav, \
-    (size_t)(fr_.erraac*sizeof(erradef))),\
+	(size_t)(fr_.erraac*sizeof(erradef))),\
    errsign(ctx, fr_.errcode, fr_.errfac))
 
 #endif /* ERR_NO_MACRO */
@@ -525,20 +525,20 @@ void errrse1(errcxdef *ctx, errdef *fr);
  *   parameters from the error currently being handled to the enclosing
  *   frame.  This is useful when "keeping" an error being handled - i.e.,
  *   the arguments will continue to be used outside of the
- *   ERRCATCH..ERREND code. 
+ *   ERRCATCH..ERREND code.
  */
 #define errkeepargs(ctx) errcopyargs(ctx, &fr_)
 
-/** 
+/**
  *   copy the parameters for an error from another frame into the current
  *   frame - this can be used when we want to be able to display an error
  *   that occurred in an inner frame within code that is protected by a
- *   new enclosing error frame 
+ *   new enclosing error frame
  */
 #define errcopyargs(ctx, fr) \
    (errargc((ctx), (fr)->erraac), \
-    memcpy((ctx)->errcxptr->erraav, (fr)->erraav, \
-           (size_t)((fr)->erraac*sizeof(erradef))))
+	memcpy((ctx)->errcxptr->erraav, (fr)->erraav, \
+		   (size_t)((fr)->erraac*sizeof(erradef))))
 
 // log error that's been caught, using arguments already caught
 #define errclog(ctx) \
@@ -576,14 +576,14 @@ void errlogf(errcxdef *ctx, char *facility, int err);
 // log an error with one argument
 #define errlogf1(ctx, fac, e, typ1, arg1) \
  (errargv(ctx,0,typ1,arg1),errargc(ctx,1),errlogn(ctx,e,fac))
-  
+
 // log an error with two arguments
 #define errlogf2(ctx, fac, e, typ1, arg1, typ2, arg2) \
  (errargv(ctx,0,typ1,arg1),errargv(ctx,1,typ2,arg2),\
   errargc(ctx,2),errlogn(ctx,e,fac))
 
 /**
- * For compatility with old facility-free mechanism, signal with facility "TADS" 
+ * For compatility with old facility-free mechanism, signal with facility "TADS"
  */
 #define errsig(ctx, err) errsigf(ctx, "TADS", err)
 #define errsig1(c, e, t, a) errsigf1(c,"TADS",e,t,a)
@@ -593,10 +593,10 @@ void errlogf(errcxdef *ctx, char *facility, int err);
 #define errlog2(c, e, t1, a1, t2, a2) errlogf2(c,"TADS",e,t1,a1,t2,a2)
 
 #define errsig2(c, e, t1, a1, t2, a2) error("Error occurred")
- 
+
 // get the text of an error
 void errmsg(errcxdef *ctx, char *outbuf, uint outbufl, uint err);
-  
+
 // initialize error subsystem, opening error message file if necessary
 void errini(errcxdef *ctx, Common::SeekableReadStream *fp);
 
@@ -606,8 +606,8 @@ void      lerfre(errcxdef *ctx);
 
 // error message structure - number + text
 struct errmdef {
-    uint   errmerr;		// error number
-    char  *errmtxt;     // text of error message
+	uint   errmerr;		// error number
+	char  *errmtxt;     // text of error message
 };
 
 } // End of namespace TADS2

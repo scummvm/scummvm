@@ -26,29 +26,29 @@ namespace Glk {
 namespace Frotz {
 
 void Processor::z_add() {
-    store((zword)((short)zargs[0] + (short)zargs[1]));
+	store((zword)((short)zargs[0] + (short)zargs[1]));
 }
 
 void Processor::z_and() {
-    store((zword)(zargs[0] & zargs[1]));
+	store((zword)(zargs[0] & zargs[1]));
 }
 
 void Processor::z_art_shift() {
-    if ((short)zargs[1] > 0)
+	if ((short)zargs[1] > 0)
 		store((zword)((short)zargs[0] << (short)zargs[1]));
-    else
+	else
 		store((zword)((short)zargs[0] >> - (short)zargs[1]));
 }
 
 void Processor::z_div() {
-    if (zargs[1] == 0)
+	if (zargs[1] == 0)
 		runtimeError(ERR_DIV_ZERO);
 
-    store((zword)((short)zargs[0] / (short)zargs[1]));
+	store((zword)((short)zargs[0] / (short)zargs[1]));
 }
 
 void Processor::z_je() {
-    branch(
+	branch(
 		zargc > 1 && (zargs[0] == zargs[1] || (
 		zargc > 2 && (zargs[0] == zargs[2] || (
 		zargc > 3 && (zargs[0] == zargs[3])))))
@@ -56,45 +56,45 @@ void Processor::z_je() {
 }
 
 void Processor::z_jg() {
-    branch((short)zargs[0] > (short)zargs[1]);
+	branch((short)zargs[0] > (short)zargs[1]);
 }
 
 void Processor::z_jl() {
-    branch((short)zargs[0] < (short)zargs[1]);
+	branch((short)zargs[0] < (short)zargs[1]);
 }
 
 void Processor::z_jz() {
-    branch((short)zargs[0] == 0);
+	branch((short)zargs[0] == 0);
 }
 
 void Processor::z_log_shift() {
-    if ((short)zargs[1] > 0)
+	if ((short)zargs[1] > 0)
 		store((zword)(zargs[0] << (short)zargs[1]));
-    else
+	else
 		store((zword)(zargs[0] >> - (short)zargs[1]));
 }
 
 void Processor::z_mod() {
-    if (zargs[1] == 0)
+	if (zargs[1] == 0)
 		runtimeError(ERR_DIV_ZERO);
 
-    store((zword)((short)zargs[0] % (short)zargs[1]));
+	store((zword)((short)zargs[0] % (short)zargs[1]));
 }
 
 void Processor::z_mul() {
-    store((zword)((short)zargs[0] * (short)zargs[1]));
+	store((zword)((short)zargs[0] * (short)zargs[1]));
 }
 
 void Processor::z_not() {
-    store((zword)~zargs[0]);
+	store((zword)~zargs[0]);
 }
 
 void Processor::z_or() {
-    store((zword)(zargs[0] | zargs[1]));
+	store((zword)(zargs[0] | zargs[1]));
 }
 
 void Processor::z_sub() {
-    store((zword)((short)zargs[0] - (short)zargs[1]));
+	store((zword)((short)zargs[0] - (short)zargs[1]));
 }
 
 void Processor::z_test() {

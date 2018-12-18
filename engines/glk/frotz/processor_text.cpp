@@ -26,26 +26,26 @@ namespace Glk {
 namespace Frotz {
 
 zchar Processor::ZSCII_TO_LATIN1[] = {
-    0x0e4, 0x0f6, 0x0fc, 0x0c4, 0x0d6, 0x0dc, 0x0df, 0x0bb,
-    0x0ab, 0x0eb, 0x0ef, 0x0ff, 0x0cb, 0x0cf, 0x0e1, 0x0e9,
-    0x0ed, 0x0f3, 0x0fa, 0x0fd, 0x0c1, 0x0c9, 0x0cd, 0x0d3,
-    0x0da, 0x0dd, 0x0e0, 0x0e8, 0x0ec, 0x0f2, 0x0f9, 0x0c0,
-    0x0c8, 0x0cc, 0x0d2, 0x0d9, 0x0e2, 0x0ea, 0x0ee, 0x0f4,
-    0x0fb, 0x0c2, 0x0ca, 0x0ce, 0x0d4, 0x0db, 0x0e5, 0x0c5,
-    0x0f8, 0x0d8, 0x0e3, 0x0f1, 0x0f5, 0x0c3, 0x0d1, 0x0d5,
-    0x0e6, 0x0c6, 0x0e7, 0x0c7, 0x0fe, 0x0f0, 0x0de, 0x0d0,
-    0x0a3, 0x153, 0x152, 0x0a1, 0x0bf
+	0x0e4, 0x0f6, 0x0fc, 0x0c4, 0x0d6, 0x0dc, 0x0df, 0x0bb,
+	0x0ab, 0x0eb, 0x0ef, 0x0ff, 0x0cb, 0x0cf, 0x0e1, 0x0e9,
+	0x0ed, 0x0f3, 0x0fa, 0x0fd, 0x0c1, 0x0c9, 0x0cd, 0x0d3,
+	0x0da, 0x0dd, 0x0e0, 0x0e8, 0x0ec, 0x0f2, 0x0f9, 0x0c0,
+	0x0c8, 0x0cc, 0x0d2, 0x0d9, 0x0e2, 0x0ea, 0x0ee, 0x0f4,
+	0x0fb, 0x0c2, 0x0ca, 0x0ce, 0x0d4, 0x0db, 0x0e5, 0x0c5,
+	0x0f8, 0x0d8, 0x0e3, 0x0f1, 0x0f5, 0x0c3, 0x0d1, 0x0d5,
+	0x0e6, 0x0c6, 0x0e7, 0x0c7, 0x0fe, 0x0f0, 0x0de, 0x0d0,
+	0x0a3, 0x153, 0x152, 0x0a1, 0x0bf
 };
 
 zchar Processor::translate_from_zscii(zbyte c) {
-    if (c == 0xfc)
+	if (c == 0xfc)
 		return ZC_MENU_CLICK;
-    if (c == 0xfd)
+	if (c == 0xfd)
 		return ZC_DOUBLE_CLICK;
-    if (c == 0xfe)
+	if (c == 0xfe)
 		return ZC_SINGLE_CLICK;
 
-    if (c >= 0x9b && _storyId != BEYOND_ZORK) {
+	if (c >= 0x9b && _storyId != BEYOND_ZORK) {
 		if (hx_unicode_table != 0) {
 			// game has its own Unicode table
 			zbyte N;
@@ -72,15 +72,15 @@ zchar Processor::translate_from_zscii(zbyte c) {
 				return '?';
 			}
 		}
-    }
+	}
 
-    return (zchar)c;
+	return (zchar)c;
 }
 
 zbyte Processor::unicode_to_zscii(zchar c) {
-    int i;
+	int i;
 
-    if (c >= ZC_LATIN1_MIN) {
+	if (c >= ZC_LATIN1_MIN) {
 		if (hx_unicode_table != 0) {
 			// game has its own Unicode table
 			zbyte N;
@@ -105,34 +105,34 @@ zbyte Processor::unicode_to_zscii(zchar c) {
 
 			return 0;
 		}
-    }
+	}
 
-    return (zbyte)c;
+	return (zbyte)c;
 }
 
 zbyte Processor::translate_to_zscii(zchar c) {
-    if (c == ZC_SINGLE_CLICK)
+	if (c == ZC_SINGLE_CLICK)
 		return 0xfe;
-    if (c == ZC_DOUBLE_CLICK)
+	if (c == ZC_DOUBLE_CLICK)
 		return 0xfd;
-    if (c == ZC_MENU_CLICK)
+	if (c == ZC_MENU_CLICK)
 		return 0xfc;
-    if (c == 0)
+	if (c == 0)
 		return 0;
 
-    c = unicode_to_zscii (c);
-    if (c == 0)
+	c = unicode_to_zscii (c);
+	if (c == 0)
 	c = '?';
 
-    return (zbyte)c;
+	return (zbyte)c;
 }
 
 zchar Processor::alphabet(int set, int index) {
-    if (h_version > V1 && set == 2 && index == 1)
+	if (h_version > V1 && set == 2 && index == 1)
 		// always newline
 		return '\r';
 
-    if (h_alphabet != 0) {
+	if (h_alphabet != 0) {
 		// game uses its own alphabet
 		zbyte c;
 
@@ -140,7 +140,7 @@ zchar Processor::alphabet(int set, int index) {
 		LOW_BYTE(addr, c);
 
 		return translate_from_zscii(c);
-    } else {
+	} else {
 		// game uses default alphabet
 		if (set == 0)
 			return 'a' + index;
@@ -154,21 +154,21 @@ zchar Processor::alphabet(int set, int index) {
 }
 
 void Processor::find_resolution() {
-    zword dct = h_dictionary;
-    zword entry_count;
-    zbyte sep_count;
-    zbyte entry_len;
+	zword dct = h_dictionary;
+	zword entry_count;
+	zbyte sep_count;
+	zbyte entry_len;
 
 	LOW_BYTE(dct, sep_count);
-    dct += 1 + sep_count;  // skip word separators
+	dct += 1 + sep_count;  // skip word separators
 	LOW_BYTE(dct, entry_len);
-    dct += 1;              // skip entry length
+	dct += 1;              // skip entry length
 	LOW_WORD(dct, entry_count);
-    dct += 2;              // get number of entries
+	dct += 2;              // get number of entries
 
-    if (h_version < V9) {
+	if (h_version < V9) {
 		_resolution = (h_version <= V3) ? 2 : 3;
-    } else {
+	} else {
 		zword addr = dct;
 		zword code;
 
@@ -186,16 +186,16 @@ void Processor::find_resolution() {
 
 	if (2 * _resolution > entry_len) {
 		runtimeError(ERR_DICT_LEN);
-    }
+	}
 
-    _decoded = (zchar *)malloc (sizeof (zchar) * (3 * _resolution) + 1);
-    _encoded = (zchar *)malloc (sizeof (zchar) * _resolution);
+	_decoded = (zchar *)malloc (sizeof (zchar) * (3 * _resolution) + 1);
+	_encoded = (zchar *)malloc (sizeof (zchar) * _resolution);
 }
 
 void Processor::load_string (zword addr, zword length) {
-    int i = 0;
+	int i = 0;
 
-    if (_resolution == 0)
+	if (_resolution == 0)
 		find_resolution();
 
 	while (i < 3 * _resolution) {
@@ -212,21 +212,21 @@ void Processor::load_string (zword addr, zword length) {
 }
 
 void Processor::encode_text(int padding) {
-    static const zchar again[] = { 'a', 'g', 'a', 'i', 'n', 0, 0, 0, 0 };
-    static const zchar examine[] = { 'e', 'x', 'a', 'm', 'i', 'n', 'e', 0, 0 };
-    static const zchar wait[] = { 'w', 'a', 'i', 't', 0, 0, 0, 0, 0 };
+	static const zchar again[] = { 'a', 'g', 'a', 'i', 'n', 0, 0, 0, 0 };
+	static const zchar examine[] = { 'e', 'x', 'a', 'm', 'i', 'n', 'e', 0, 0 };
+	static const zchar wait[] = { 'w', 'a', 'i', 't', 0, 0, 0, 0, 0 };
 
-    zbyte *zchars;
-    const zchar *ptr;
-    zchar c;
-    int i = 0;
+	zbyte *zchars;
+	const zchar *ptr;
+	zchar c;
+	int i = 0;
 
-    if (_resolution == 0) find_resolution();
+	if (_resolution == 0) find_resolution();
 
-    zchars = new byte[3 * (_resolution + 1)];
-    ptr = _decoded;
+	zchars = new byte[3 * (_resolution + 1)];
+	ptr = _decoded;
 
-    // Expand abbreviations that some old Infocom games lack
+	// Expand abbreviations that some old Infocom games lack
 	if (_expand_abbreviations && (h_version <= V8)) {
 		if (padding == 0x05 && _decoded[1] == 0) {
 			switch (_decoded[0]) {
@@ -238,8 +238,8 @@ void Processor::encode_text(int padding) {
 		}
 	}
 
-    // Translate string to a sequence of Z-characters
-    while (i < 3 * _resolution) {
+	// Translate string to a sequence of Z-characters
+	while (i < 3 * _resolution) {
 		if ((c = *ptr++) != 0) {
 			int index, set;
 			zbyte c2;
@@ -276,13 +276,13 @@ void Processor::encode_text(int padding) {
 	}
 
 	// Three Z-characters make a 16bit word
-    for (i = 0; i < _resolution; i++)
+	for (i = 0; i < _resolution; i++)
 		_encoded[i] =
 			(zchars[3 * i + 0] << 10) |
 			(zchars[3 * i + 1] << 5) |
 			(zchars[3 * i + 2]);
 
-    _encoded[_resolution - 1] |= 0x8000;
+	_encoded[_resolution - 1] |= 0x8000;
 	delete[]  zchars;
 }
 
@@ -625,7 +625,7 @@ void Processor::tokenise_line(zword text, zword token, zword dct, bool flag) {
 		else
 			LOW_BYTE(addr1, c);
 
-		// Check for separator 
+		// Check for separator
 		sep_addr = dct;
 
 		LOW_BYTE(sep_addr, sep_count);
@@ -772,13 +772,13 @@ zchar Processor::unicode_tolower(zchar c) {
 
 
 void Processor::z_check_unicode() {
-    zword c = zargs[0];
-    zword result = 0;
+	zword c = zargs[0];
+	zword result = 0;
 
-    if (c <= 0x1f) {
+	if (c <= 0x1f) {
 		if ((c == 0x08) || (c == 0x0d) || (c == 0x1b))
 			result = 2;
-    } else if (c <= 0x7e) {
+	} else if (c <= 0x7e) {
 		result = 3;
 	} else {
 		// we support unicode
@@ -789,39 +789,39 @@ void Processor::z_check_unicode() {
 }
 
 void Processor::z_encode_text() {
-    int i;
+	int i;
 
-    load_string((zword) (zargs[0] + zargs[2]), zargs[1]);
+	load_string((zword) (zargs[0] + zargs[2]), zargs[1]);
 
-    encode_text(0x05);
+	encode_text(0x05);
 
-    for (i = 0; i < _resolution; i++)
+	for (i = 0; i < _resolution; i++)
 	storew((zword) (zargs[3] + 2 * i), _encoded[i]);
 
 }
 
 void Processor::z_new_line() {
-    new_line ();
+	new_line ();
 }
 
 void Processor::z_print () {
-    decode_text(EMBEDDED_STRING, 0);
+	decode_text(EMBEDDED_STRING, 0);
 }
 
 void Processor::z_print_addr() {
-    decode_text(LOW_STRING, zargs[0]);
+	decode_text(LOW_STRING, zargs[0]);
 }
 
 void Processor::z_print_char() {
-    print_char (translate_from_zscii(zargs[0]));
+	print_char (translate_from_zscii(zargs[0]));
 }
 
 void Processor::z_print_form() {
-    zword count;
-    zword addr = zargs[0];
-    bool first = true;
+	zword count;
+	zword addr = zargs[0];
+	bool first = true;
 
-    for (;;) {
+	for (;;) {
 		LOW_WORD(addr, count);
 		addr += 2;
 
@@ -841,43 +841,43 @@ void Processor::z_print_form() {
 		}
 
 		first = false;
-    }
+	}
 }
 
 void Processor::z_print_num() {
-    print_num (zargs[0]);
+	print_num (zargs[0]);
 }
 
 void Processor::z_print_obj() {
-    print_object(zargs[0]);
+	print_object(zargs[0]);
 }
 
 void Processor::z_print_paddr() {
-    decode_text (HIGH_STRING, zargs[0]);
+	decode_text (HIGH_STRING, zargs[0]);
 }
 
 void Processor::z_print_ret() {
-    decode_text(EMBEDDED_STRING, 0);
-    new_line();
-    ret(1);
+	decode_text(EMBEDDED_STRING, 0);
+	new_line();
+	ret(1);
 }
 
 void Processor::z_print_unicode() {
-    if (zargs[0] < 0x20)
+	if (zargs[0] < 0x20)
 		print_char('?');
-    else
+	else
 		print_char(zargs[0]);
 }
 
 void Processor::z_tokenise() {
-    // Supply default arguments
-    if (zargc < 3)
+	// Supply default arguments
+	if (zargc < 3)
 		zargs[2] = 0;
-    if (zargc < 4)
+	if (zargc < 4)
 		zargs[3] = 0;
 
-    // Call tokenise_line to do the real work
-    tokenise_line(zargs[0], zargs[1], zargs[2], zargs[3] != 0);
+	// Call tokenise_line to do the real work
+	tokenise_line(zargs[0], zargs[1], zargs[2], zargs[3] != 0);
 }
 
 } // End of namespace Scott

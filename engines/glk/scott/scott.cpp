@@ -112,7 +112,7 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 			if (_gameHeader._lightTime < 1) {
 				_bitFlags |= (1 << LIGHTOUTBIT);
 				if (_items[LIGHT_SOURCE]._location == CARRIED ||
-				        _items[LIGHT_SOURCE]._location == MY_LOC) {
+						_items[LIGHT_SOURCE]._location == MY_LOC) {
 					if (_options & SCOTTLIGHT)
 						output(_("Light has run out! "));
 					else
@@ -122,7 +122,7 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 					_items[LIGHT_SOURCE]._location = DESTROYED;
 			} else if (_gameHeader._lightTime < 25) {
 				if (_items[LIGHT_SOURCE]._location == CARRIED ||
-				        _items[LIGHT_SOURCE]._location == MY_LOC) {
+						_items[LIGHT_SOURCE]._location == MY_LOC) {
 
 					if (_options & SCOTTLIGHT) {
 						output(_("Light runs out in "));
@@ -229,7 +229,7 @@ int Scott::matchUpItem(const char *text, int loc) {
 
 	while (ct <= _gameHeader._numItems) {
 		if (!_items[ct]._autoGet.empty() && _items[ct]._location == loc &&
-		        xstrncasecmp(_items[ct]._autoGet.c_str(), word, _gameHeader._wordLength) == 0)
+				xstrncasecmp(_items[ct]._autoGet.c_str(), word, _gameHeader._wordLength) == 0)
 			return ct;
 		ct++;
 	}
@@ -331,7 +331,7 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	for (int idx = 0; idx < nr + 1; ++idx) {
 		Room &r = _rooms[idx];
 		readInts(f, 6, &r._exits[0], &r._exits[1], &r._exits[2],
-		         &r._exits[3], &r._exits[4], &r._exits[5]);
+				 &r._exits[3], &r._exits[4], &r._exits[5]);
 		r._text =  readString(f);
 	}
 
@@ -400,7 +400,7 @@ void Scott::look(void) {
 		glk_window_clear(_topWindow);
 
 	if ((_bitFlags & (1 << DARKBIT)) && _items[LIGHT_SOURCE]._location != CARRIED
-	        && _items[LIGHT_SOURCE]._location != MY_LOC) {
+			&& _items[LIGHT_SOURCE]._location != MY_LOC) {
 		if (_options & YOUARE)
 			display(_topWindow, _("You can't see. It is too dark!\n"));
 		else
@@ -517,8 +517,8 @@ Common::Error Scott::saveGameData(strid_t file, const Common::String &desc) {
 	}
 
 	msg = Common::String::format("%u %d %d %d %d %d\n",
-	                             _bitFlags, (_bitFlags & (1 << DARKBIT)) ? 1 : 0,
-	                             MY_LOC, _currentCounter, _savedRoom, _gameHeader._lightTime);
+								 _bitFlags, (_bitFlags & (1 << DARKBIT)) ? 1 : 0,
+								 MY_LOC, _currentCounter, _savedRoom, _gameHeader._lightTime);
 	glk_put_string_stream(file, msg.c_str());
 
 	for (int ct = 0; ct <= _gameHeader._numItems; ct++) {
@@ -543,8 +543,8 @@ Common::Error Scott::loadGameData(strid_t file) {
 
 	glk_get_line_stream(file, buf, sizeof buf);
 	sscanf(buf, "%u %hd %d %d %d %d\n",
-	       &_bitFlags, &darkFlag, &MY_LOC, &_currentCounter, &_savedRoom,
-	       &_gameHeader._lightTime);
+		   &_bitFlags, &darkFlag, &MY_LOC, &_currentCounter, &_savedRoom,
+		   &_gameHeader._lightTime);
 
 	// Backward compatibility
 	if (darkFlag)
@@ -650,7 +650,7 @@ int Scott::performLine(int ct) {
 			break;
 		case 3:
 			if (_items[dv]._location != CARRIED &&
-			        _items[dv]._location != MY_LOC)
+					_items[dv]._location != MY_LOC)
 				return 0;
 			break;
 		case 4:
@@ -802,7 +802,7 @@ doneit:
 				int n = 0;
 				while (i <= _gameHeader._numItems) {
 					if (_items[i]._location == _gameHeader._treasureRoom &&
-					        _items[i]._text.hasPrefix("*"))
+							_items[i]._text.hasPrefix("*"))
 						n++;
 					i++;
 				}
@@ -951,7 +951,7 @@ doneit:
 				break;
 			default:
 				error("Unknown action %d [Param begins %d %d]\n",
-				      act[cc], param[pptr], param[pptr + 1]);
+					  act[cc], param[pptr], param[pptr + 1]);
 				break;
 			}
 		}
@@ -976,7 +976,7 @@ int Scott::performActions(int vb, int no) {
 	if (vb == 1 && no >= 1 && no <= 6) {
 		int nl;
 		if (_items[LIGHT_SOURCE]._location == MY_LOC ||
-		        _items[LIGHT_SOURCE]._location == CARRIED)
+				_items[LIGHT_SOURCE]._location == CARRIED)
 			d = 0;
 		if (d)
 			output(_("Dangerous to move in the dark! "));
@@ -1015,7 +1015,7 @@ int Scott::performActions(int vb, int no) {
 		vv /= 150;
 		if ((vv == vb) || (doagain && _actions[ct]._vocab == 0)) {
 			if ((vv == 0 && randomPercent(nv)) || doagain ||
-			        (vv != 0 && (nv == no || nv == 0))) {
+					(vv != 0 && (nv == no || nv == 0))) {
 				int f2;
 				if (fl == -1)
 					fl = -2;
@@ -1044,7 +1044,7 @@ int Scott::performActions(int vb, int no) {
 	if (fl != 0 && disableSysFunc == 0) {
 		int item;
 		if (_items[LIGHT_SOURCE]._location == MY_LOC ||
-		        _items[LIGHT_SOURCE]._location == CARRIED)
+				_items[LIGHT_SOURCE]._location == CARRIED)
 			d = 0;
 		if (vb == 10 || vb == 18) {
 			// Yes they really _are_ hardcoded values

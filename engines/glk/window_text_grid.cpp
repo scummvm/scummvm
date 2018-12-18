@@ -193,7 +193,7 @@ void TextGridWindow::click(const Point &newPos) {
 	int y = newPos.y - _bbox.top;
 
 	if (_lineRequest || _charRequest || _lineRequestUni || _charRequestUni
-	        || _moreRequest || _scrollRequest)
+			|| _moreRequest || _scrollRequest)
 		_windows->setFocus(this);
 
 	if (_mouseRequest) {
@@ -603,11 +603,11 @@ void TextGridWindow::redraw() {
 
 					for (k = a, o = x; k < b; k++, o += g_conf->_cellW) {
 						screen.drawStringUni(Point(o * GLI_SUBPIX, y + g_conf->_baseLine), font,
-						                     fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
+											 fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
 					}
 					if (link) {
 						screen.fillRect(Rect::fromXYWH(x, y + g_conf->_baseLine + 1, w,
-						                               g_conf->_linkStyle), g_conf->_linkColor);
+													   g_conf->_linkStyle), g_conf->_linkColor);
 						g_vm->_selection->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 					}
 
@@ -625,11 +625,11 @@ void TextGridWindow::redraw() {
 
 			for (k = a, o = x; k < b; k++, o += g_conf->_cellW) {
 				screen.drawStringUni(Point(o * GLI_SUBPIX, y + g_conf->_baseLine), font,
-				                     fgcolor, Common::U32String(&ln->_chars[k], 1));
+									 fgcolor, Common::U32String(&ln->_chars[k], 1));
 			}
 			if (link) {
 				screen.fillRect(Rect::fromXYWH(x, y + g_conf->_baseLine + 1, w, g_conf->_linkStyle),
-				                g_conf->_linkColor);
+								g_conf->_linkColor);
 				g_vm->_selection->putHyperlink(link, x, y, x + w, y + g_conf->_leading);
 			}
 		}

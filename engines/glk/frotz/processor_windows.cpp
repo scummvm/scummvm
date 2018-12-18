@@ -26,18 +26,18 @@ namespace Glk {
 namespace Frotz {
 
 static struct {
-    Story story_id;
-    int pic;
-    int pic1;
-    int pic2;
+	Story story_id;
+	int pic;
+	int pic1;
+	int pic2;
 } mapper[] = {
-    { ZORK_ZERO,  5, 497, 498 },
-    { ZORK_ZERO,  6, 501, 502 },
-    { ZORK_ZERO,  7, 499, 500 },
-    { ZORK_ZERO,  8, 503, 504 },
-    {    ARTHUR, 54, 170, 171 },
-    {    SHOGUN, 50,  61,  62 },
-    {   UNKNOWN,  0,   0,   0 }
+	{ ZORK_ZERO,  5, 497, 498 },
+	{ ZORK_ZERO,  6, 501, 502 },
+	{ ZORK_ZERO,  7, 499, 500 },
+	{ ZORK_ZERO,  8, 503, 504 },
+	{    ARTHUR, 54, 170, 171 },
+	{    SHOGUN, 50,  61,  62 },
+	{   UNKNOWN,  0,   0,   0 }
 };
 
 void Processor::z_draw_picture() {

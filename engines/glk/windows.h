@@ -160,7 +160,7 @@ public:
 	 * Open a new window
 	 */
 	Window *windowOpen(Window *splitwin, uint method, uint size,
-	                   uint wintype, uint rock);
+					   uint wintype, uint rock);
 
 	/**
 	 * Close an existing window
@@ -329,16 +329,16 @@ struct Attributes {
 	 */
 	bool operator==(const Attributes &src) {
 		return fgset == src.fgset && bgset == src.bgset && reverse == src.reverse
-		       && style == src.style && fgcolor == src.fgcolor && bgcolor == src.bgcolor
-		       && hyper == src.hyper;
+			   && style == src.style && fgcolor == src.fgcolor && bgcolor == src.bgcolor
+			   && hyper == src.hyper;
 	}
 	/**
 	 * Inequality comparison
 	 */
 	bool operator!=(const Attributes &src) {
 		return fgset != src.fgset || bgset != src.bgset || reverse != src.reverse
-		       || style != src.style || fgcolor != src.fgcolor || bgcolor != src.bgcolor
-		       || hyper != src.hyper;
+			   || style != src.style || fgcolor != src.fgcolor || bgcolor != src.bgcolor
+			   || hyper != src.hyper;
 	}
 
 	/**
