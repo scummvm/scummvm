@@ -20,6 +20,9 @@
       </Synthetic>
       <Item Name="[channels]" Condition="format.bytesPerPixel==1">1</Item>
       <Item Name="[channels]" Condition="format.bytesPerPixel==2">2</Item>
+      <Synthetic Name="[channels]" Condition="format.bytesPerPixel==3">
+        <DisplayString>RGB</DisplayString>
+      </Synthetic>
       <Synthetic Name="[channels]" Condition="format.bytesPerPixel==4">
         <DisplayString>RGBA</DisplayString>
       </Synthetic>
@@ -31,7 +34,7 @@
   </Type>
 
   <Type Name="Common::Array&lt;*&gt;">
-    <DisplayString>{{size = {_size}}}</DisplayString>
+    <DisplayString>{{ size={_size} }}</DisplayString>
     <Expand>
       <Item Name="[size]">_size</Item>
       <Item Name="[capacity]">_capacity</Item>
@@ -43,7 +46,7 @@
   </Type>
 
   <Type Name="Common::HashMap&lt;*,*,*,*&gt;">
-    <DisplayString>{{ size = {_size} }}</DisplayString>
+    <DisplayString>{{ size={_size} }}</DisplayString>
     <Expand>
       <Item Name="[size]">_size</Item>
       <Item Name="[capacity]">_mask + 1</Item>
@@ -81,8 +84,8 @@
   </Type>
 
   <Type Name="Common::String">
-    <DisplayString>{_str,[_size]}</DisplayString>
-    <StringView>_str,[_size]</StringView>
+    <DisplayString>{_str,na}</DisplayString>
+    <StringView>_str,na</StringView>
     <Expand>
       <Item Name="[size]">_size</Item>
       <Item Condition="_str != _storage" Name="[capacity]">_extern._capacity</Item>
