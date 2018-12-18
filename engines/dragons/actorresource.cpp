@@ -47,8 +47,9 @@ ActorResource *ActorResourceLoader::load(uint32 resourceId) {
 }
 
 bool ActorResource::load(byte *dataStart, Common::SeekableReadStream &stream) {
+	_data = dataStart;
 	stream.seek(0x6);
-	uint16 sequenceOffset = stream.readUint16LE();
+	_sequenceTableOffset = stream.readUint16LE();
 	uint16 frameOffset = stream.readUint16LE();
 	uint16 paletteOffset = stream.readUint16LE();
 
@@ -151,6 +152,12 @@ ActorFrame *ActorResource::getFrameHeader(uint16 frameNumber) {
 	assert (frameNumber < _framesCount);
 
 	return &_frames[frameNumber];
+}
+
+byte *ActorResource::getSequenceData(int16 sequenceId)
+{
+	uint16 offset = READ_LE_UINT16(_data + _sequenceTableOffset + (sequenceId * 2));
+	return &_data[offset];
 }
 
 } // End of namespace Dragons

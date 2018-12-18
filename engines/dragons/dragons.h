@@ -71,6 +71,7 @@ class DragonINIResource;
 class Scene;
 class Screen;
 class ActorManager;
+class SequenceOpcodes;
 
 class DragonsEngine : public Engine {
 private:
@@ -81,6 +82,7 @@ private:
 	BackgroundResourceLoader *_backgroundResourceLoader;
 	ActorManager *_actorManager;
 	Scene *_scene;
+	SequenceOpcodes *_sequenceOpcodes;
 	uint32 _nextUpdatetime;
 	uint32 _flags;
 

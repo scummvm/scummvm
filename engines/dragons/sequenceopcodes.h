@@ -67,6 +67,7 @@ protected:
 
 	// Opcodes
 	void opSetFramePointer(Actor *actor, OpCall &opCall);
+	void opSetFieldC(Actor *actor, OpCall &opCall);
 
 };
 

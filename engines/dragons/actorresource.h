@@ -50,15 +50,19 @@ public:
 
 class ActorResource {
 private:
-	byte *data;
+	byte *_data;
 	ActorFrame *_frames;
 	uint16 _framesCount;
 	byte _palette[512];
+	uint16 _sequenceTableOffset;
+	uint16 _sequenceCount;
 
 public:
 	bool load(byte *dataStart, Common::SeekableReadStream &stream);
 	Graphics::Surface *loadFrame(uint16 frameNumber);
 	ActorFrame *getFrameHeader(uint16 frameNumber);
+	byte *getSequenceData(int16 sequenceId);
+
 private:
 	void writePixelBlock(byte *pixels, byte *data);
 };
